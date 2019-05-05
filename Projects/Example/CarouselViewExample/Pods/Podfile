@@ -1,0 +1,14 @@
+workspace "../CarouselViewExample.xcworkspace"
+project "../CarouselViewExample/CarouselViewExample.xcodeproj"
+platform  :ios, "8.0"
+
+target 'CarouselViewExample' do
+	use_frameworks!
+
+    pod "XZKit/CarouselView", :path => "../../../../"
+    
+    pod "SDWebImage"
+
+end
+
+

@@ -1,0 +1,12 @@
+TARGET_NAME = "AppRedirection"
+
+workspace "../#{TARGET_NAME}Example.xcworkspace"
+project "../#{TARGET_NAME}Example/#{TARGET_NAME}Example.xcodeproj"
+platform  :ios, "8.0"
+
+target "#{TARGET_NAME}Example" do
+    use_frameworks!
+
+    pod "XZKit/#{TARGET_NAME}", :path => "../../../../"
+
+end

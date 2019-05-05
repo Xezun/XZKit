@@ -1,0 +1,11 @@
+workspace "../XZKitExample.xcworkspace"
+project "../XZKitExample/XZKitExample.xcodeproj"
+platform  :ios, "8.0"
+
+target 'XZKitExample' do
+    use_frameworks!
+
+    pod "XZKit", :path => "../../../../"
+    pod "SDWebImage"
+    pod "AFNetworking"
+end

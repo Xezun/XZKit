@@ -1,0 +1,410 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 51;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		28B42B12224F3C2E00845EA3 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 28B42B11224F3C2E00845EA3 /* AppDelegate.swift */; };
+		28B42B14224F3C2E00845EA3 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 28B42B13224F3C2E00845EA3 /* ViewController.swift */; };
+		28B42B17224F3C2E00845EA3 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 28B42B15224F3C2E00845EA3 /* Main.storyboard */; };
+		28B42B19224F3C2F00845EA3 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 28B42B18224F3C2F00845EA3 /* Assets.xcassets */; };
+		28B42B1C224F3C2F00845EA3 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 28B42B1A224F3C2F00845EA3 /* LaunchScreen.storyboard */; };
+		3CEE5E1267A15C65C00B26C6 /* Pods_DataCryptorExample.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D4E0C86E06294D5AE35B4D7E /* Pods_DataCryptorExample.framework */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXFileReference section */
+		28B42B0E224F3C2E00845EA3 /* DataCryptorExample.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = DataCryptorExample.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		28B42B11224F3C2E00845EA3 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
+		28B42B13224F3C2E00845EA3 /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
+		28B42B16224F3C2E00845EA3 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
+		28B42B18224F3C2F00845EA3 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		28B42B1B224F3C2F00845EA3 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
+		28B42B1D224F3C2F00845EA3 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		7FD5C42A4FD288C216251283 /* Pods-DataCryptorExample.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-DataCryptorExample.debug.xcconfig"; path = "../../DataCryptorExample/Pods/Pods/Target Support Files/Pods-DataCryptorExample/Pods-DataCryptorExample.debug.xcconfig"; sourceTree = "<group>"; };
+		9A55E45AF8626C5855F5E563 /* Pods-DataCryptorExample.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-DataCryptorExample.release.xcconfig"; path = "../../DataCryptorExample/Pods/Pods/Target Support Files/Pods-DataCryptorExample/Pods-DataCryptorExample.release.xcconfig"; sourceTree = "<group>"; };
+		D4E0C86E06294D5AE35B4D7E /* Pods_DataCryptorExample.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_DataCryptorExample.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		28B42B0B224F3C2E00845EA3 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				3CEE5E1267A15C65C00B26C6 /* Pods_DataCryptorExample.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		28B42B05224F3C2E00845EA3 = {
+			isa = PBXGroup;
+			children = (
+				28B42B10224F3C2E00845EA3 /* DataCryptorExample */,
+				28B42B0F224F3C2E00845EA3 /* Products */,
+				4B8E8E47EA3DC0E1C352CC0D /* Pods */,
+				FE5AAC550049C66C6A0863FB /* Frameworks */,
+			);
+			sourceTree = "<group>";
+		};
+		28B42B0F224F3C2E00845EA3 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				28B42B0E224F3C2E00845EA3 /* DataCryptorExample.app */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		28B42B10224F3C2E00845EA3 /* DataCryptorExample */ = {
+			isa = PBXGroup;
+			children = (
+				28B42B11224F3C2E00845EA3 /* AppDelegate.swift */,
+				28B42B13224F3C2E00845EA3 /* ViewController.swift */,
+				28B42B15224F3C2E00845EA3 /* Main.storyboard */,
+				28B42B18224F3C2F00845EA3 /* Assets.xcassets */,
+				28B42B1A224F3C2F00845EA3 /* LaunchScreen.storyboard */,
+				28B42B1D224F3C2F00845EA3 /* Info.plist */,
+			);
+			path = DataCryptorExample;
+			sourceTree = "<group>";
+		};
+		4B8E8E47EA3DC0E1C352CC0D /* Pods */ = {
+			isa = PBXGroup;
+			children = (
+				7FD5C42A4FD288C216251283 /* Pods-DataCryptorExample.debug.xcconfig */,
+				9A55E45AF8626C5855F5E563 /* Pods-DataCryptorExample.release.xcconfig */,
+			);
+			name = Pods;
+			path = ../../Pods/Pods;
+			sourceTree = "<group>";
+		};
+		FE5AAC550049C66C6A0863FB /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				D4E0C86E06294D5AE35B4D7E /* Pods_DataCryptorExample.framework */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		28B42B0D224F3C2E00845EA3 /* DataCryptorExample */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 28B42B20224F3C2F00845EA3 /* Build configuration list for PBXNativeTarget "DataCryptorExample" */;
+			buildPhases = (
+				8DC030C1C812091756187C8E /* [CP] Check Pods Manifest.lock */,
+				28B42B0A224F3C2E00845EA3 /* Sources */,
+				28B42B0B224F3C2E00845EA3 /* Frameworks */,
+				28B42B0C224F3C2E00845EA3 /* Resources */,
+				CAC36E2C987F832691741858 /* [CP] Embed Pods Frameworks */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = DataCryptorExample;
+			productName = DataCryptorExample;
+			productReference = 28B42B0E224F3C2E00845EA3 /* DataCryptorExample.app */;
+			productType = "com.apple.product-type.application";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		28B42B06224F3C2E00845EA3 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				LastSwiftUpdateCheck = 1020;
+				LastUpgradeCheck = 1020;
+				ORGANIZATIONNAME = mlibai;
+				TargetAttributes = {
+					28B42B0D224F3C2E00845EA3 = {
+						CreatedOnToolsVersion = 10.2;
+					};
+				};
+			};
+			buildConfigurationList = 28B42B09224F3C2E00845EA3 /* Build configuration list for PBXProject "DataCryptorExample" */;
+			compatibilityVersion = "Xcode 9.3";
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+				Base,
+			);
+			mainGroup = 28B42B05224F3C2E00845EA3;
+			productRefGroup = 28B42B0F224F3C2E00845EA3 /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				28B42B0D224F3C2E00845EA3 /* DataCryptorExample */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		28B42B0C224F3C2E00845EA3 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				28B42B1C224F3C2F00845EA3 /* LaunchScreen.storyboard in Resources */,
+				28B42B19224F3C2F00845EA3 /* Assets.xcassets in Resources */,
+				28B42B17224F3C2E00845EA3 /* Main.storyboard in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXShellScriptBuildPhase section */
+		8DC030C1C812091756187C8E /* [CP] Check Pods Manifest.lock */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+				"${PODS_PODFILE_DIR_PATH}/Podfile.lock",
+				"${PODS_ROOT}/Manifest.lock",
+			);
+			name = "[CP] Check Pods Manifest.lock";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+				"$(DERIVED_FILE_DIR)/Pods-DataCryptorExample-checkManifestLockResult.txt",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
+			showEnvVarsInLog = 0;
+		};
+		CAC36E2C987F832691741858 /* [CP] Embed Pods Frameworks */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-DataCryptorExample/Pods-DataCryptorExample-frameworks-${CONFIGURATION}-input-files.xcfilelist",
+			);
+			name = "[CP] Embed Pods Frameworks";
+			outputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-DataCryptorExample/Pods-DataCryptorExample-frameworks-${CONFIGURATION}-output-files.xcfilelist",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-DataCryptorExample/Pods-DataCryptorExample-frameworks.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
+/* End PBXShellScriptBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		28B42B0A224F3C2E00845EA3 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				28B42B14224F3C2E00845EA3 /* ViewController.swift in Sources */,
+				28B42B12224F3C2E00845EA3 /* AppDelegate.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXVariantGroup section */
+		28B42B15224F3C2E00845EA3 /* Main.storyboard */ = {
+			isa = PBXVariantGroup;
+			children = (
+				28B42B16224F3C2E00845EA3 /* Base */,
+			);
+			name = Main.storyboard;
+			sourceTree = "<group>";
+		};
+		28B42B1A224F3C2F00845EA3 /* LaunchScreen.storyboard */ = {
+			isa = PBXVariantGroup;
+			children = (
+				28B42B1B224F3C2F00845EA3 /* Base */,
+			);
+			name = LaunchScreen.storyboard;
+			sourceTree = "<group>";
+		};
+/* End PBXVariantGroup section */
+
+/* Begin XCBuildConfiguration section */
+		28B42B1E224F3C2F00845EA3 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 12.2;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = iphoneos;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+			};
+			name = Debug;
+		};
+		28B42B1F224F3C2F00845EA3 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 12.2;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				MTL_FAST_MATH = YES;
+				SDKROOT = iphoneos;
+				SWIFT_COMPILATION_MODE = wholemodule;
+				SWIFT_OPTIMIZATION_LEVEL = "-O";
+				VALIDATE_PRODUCT = YES;
+			};
+			name = Release;
+		};
+		28B42B21224F3C2F00845EA3 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 7FD5C42A4FD288C216251283 /* Pods-DataCryptorExample.debug.xcconfig */;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_STYLE = Automatic;
+				INFOPLIST_FILE = DataCryptorExample/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.mlibai.example.DataCryptor;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		28B42B22224F3C2F00845EA3 /* Release */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 9A55E45AF8626C5855F5E563 /* Pods-DataCryptorExample.release.xcconfig */;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_STYLE = Automatic;
+				INFOPLIST_FILE = DataCryptorExample/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.mlibai.example.DataCryptor;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		28B42B09224F3C2E00845EA3 /* Build configuration list for PBXProject "DataCryptorExample" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				28B42B1E224F3C2F00845EA3 /* Debug */,
+				28B42B1F224F3C2F00845EA3 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		28B42B20224F3C2F00845EA3 /* Build configuration list for PBXNativeTarget "DataCryptorExample" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				28B42B21224F3C2F00845EA3 /* Debug */,
+				28B42B22224F3C2F00845EA3 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = 28B42B06224F3C2E00845EA3 /* Project object */;
+}

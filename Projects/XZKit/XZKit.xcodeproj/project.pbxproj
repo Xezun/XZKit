@@ -1,0 +1,954 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 50;
+	objects = {
+
+/* Begin PBXAggregateTarget section */
+		28D014852275A9AD00B53668 /* XZKit Aggregate */ = {
+			isa = PBXAggregateTarget;
+			buildConfigurationList = 28D014882275A9AD00B53668 /* Build configuration list for PBXAggregateTarget "XZKit Aggregate" */;
+			buildPhases = (
+				28D014892275A9C600B53668 /* ShellScript */,
+			);
+			dependencies = (
+			);
+			name = "XZKit Aggregate";
+			productName = "XZKit Aggregate";
+		};
+/* End PBXAggregateTarget section */
+
+/* Begin PBXBuildFile section */
+		288391E2224DB57B00FB0209 /* XZKit+UIView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 288391E1224DB57B00FB0209 /* XZKit+UIView.swift */; };
+		28C066A3224F65BF0011F052 /* XZKit+HexadecimalEncoding.h in Headers */ = {isa = PBXBuildFile; fileRef = 28C066A2224F65BF0011F052 /* XZKit+HexadecimalEncoding.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		28C066A5224F65D20011F052 /* XZKit+HexadecimalEncoding.m in Sources */ = {isa = PBXBuildFile; fileRef = 28C066A4224F65D20011F052 /* XZKit+HexadecimalEncoding.m */; };
+		28C096382272E6F50096F118 /* XZDisplayTimer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 28C096372272E6F50096F118 /* XZDisplayTimer.swift */; };
+		28CA185722478E8300F16621 /* XZKit.h in Headers */ = {isa = PBXBuildFile; fileRef = 28CA17F022478E8300F16621 /* XZKit.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		28CA185822478E8300F16621 /* XZNavigationController.AnimationController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 28CA17F222478E8300F16621 /* XZNavigationController.AnimationController.swift */; };
+		28CA185922478E8300F16621 /* XZNavigationBarCustomizable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 28CA17F322478E8300F16621 /* XZNavigationBarCustomizable.swift */; };
+		28CA185A22478E8300F16621 /* UINavigationBar+XZNavigationController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 28CA17F422478E8300F16621 /* UINavigationBar+XZNavigationController.swift */; };
+		28CA185B22478E8300F16621 /* XZNavigationGestureDrivable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 28CA17F522478E8300F16621 /* XZNavigationGestureDrivable.swift */; };
+		28CA185C22478E8300F16621 /* XZNavigationBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = 28CA17F622478E8300F16621 /* XZNavigationBar.swift */; };
+		28CA185D22478E8300F16621 /* XZNavigationController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 28CA17F722478E8300F16621 /* XZNavigationController.swift */; };
+		28CA185E22478E8300F16621 /* UITabBar+XZNavigationController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 28CA17F822478E8300F16621 /* UITabBar+XZNavigationController.swift */; };
+		28CA185F22478E8300F16621 /* XZNavigationController.TransitionController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 28CA17F922478E8300F16621 /* XZNavigationController.TransitionController.swift */; };
+		28CA186022478E8300F16621 /* XZAppRedirection.m in Sources */ = {isa = PBXBuildFile; fileRef = 28CA17FB22478E8300F16621 /* XZAppRedirection.m */; };
+		28CA186122478E8300F16621 /* XZAppRedirection.h in Headers */ = {isa = PBXBuildFile; fileRef = 28CA17FC22478E8300F16621 /* XZAppRedirection.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		28CA186822478E8300F16621 /* XZCacheManger.swift in Sources */ = {isa = PBXBuildFile; fileRef = 28CA180522478E8300F16621 /* XZCacheManger.swift */; };
+		28CA186922478E8300F16621 /* XZImageCacheManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 28CA180622478E8300F16621 /* XZImageCacheManager.swift */; };
+		28CA186A22478E8300F16621 /* XZDataDigester.m in Sources */ = {isa = PBXBuildFile; fileRef = 28CA180822478E8300F16621 /* XZDataDigester.m */; };
+		28CA186B22478E8300F16621 /* XZDataDigester.h in Headers */ = {isa = PBXBuildFile; fileRef = 28CA180922478E8300F16621 /* XZDataDigester.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		28CA186C22478E8300F16621 /* UIAlertController+XZKit.swift in Sources */ = {isa = PBXBuildFile; fileRef = 28CA180C22478E8300F16621 /* UIAlertController+XZKit.swift */; };
+		28CA186E22478E8300F16621 /* UIDevice+XZKit.swift in Sources */ = {isa = PBXBuildFile; fileRef = 28CA180E22478E8300F16621 /* UIDevice+XZKit.swift */; };
+		28CA186F22478E8300F16621 /* UIImageView+XZKit.swift in Sources */ = {isa = PBXBuildFile; fileRef = 28CA180F22478E8300F16621 /* UIImageView+XZKit.swift */; };
+		28CA187122478E8300F16621 /* UIWebView+XZKit.swift in Sources */ = {isa = PBXBuildFile; fileRef = 28CA181122478E8300F16621 /* UIWebView+XZKit.swift */; };
+		28CA187322478E8300F16621 /* UIApplication+XZKit.swift in Sources */ = {isa = PBXBuildFile; fileRef = 28CA181322478E8300F16621 /* UIApplication+XZKit.swift */; };
+		28CA187422478E8300F16621 /* UIView+XZKit.m in Sources */ = {isa = PBXBuildFile; fileRef = 28CA181522478E8300F16621 /* UIView+XZKit.m */; };
+		28CA187622478E8300F16621 /* UIImage+XZKit.h in Headers */ = {isa = PBXBuildFile; fileRef = 28CA181722478E8300F16621 /* UIImage+XZKit.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		28CA187822478E8300F16621 /* UIColor+XZKit.m in Sources */ = {isa = PBXBuildFile; fileRef = 28CA181922478E8300F16621 /* UIColor+XZKit.m */; };
+		28CA187922478E8300F16621 /* UIView+XZKit.h in Headers */ = {isa = PBXBuildFile; fileRef = 28CA181A22478E8300F16621 /* UIView+XZKit.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		28CA187A22478E8300F16621 /* UIImage+XZKit.m in Sources */ = {isa = PBXBuildFile; fileRef = 28CA181B22478E8300F16621 /* UIImage+XZKit.m */; };
+		28CA187C22478E8300F16621 /* UIColor+XZKit.h in Headers */ = {isa = PBXBuildFile; fileRef = 28CA181D22478E8300F16621 /* UIColor+XZKit.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		28CA187E22478E8300F16621 /* XZAPIManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 28CA182022478E8300F16621 /* XZAPIManager.swift */; };
+		28CA187F22478E8300F16621 /* XZAPIConcurrency.swift in Sources */ = {isa = PBXBuildFile; fileRef = 28CA182122478E8300F16621 /* XZAPIConcurrency.swift */; };
+		28CA188022478E8300F16621 /* XZAPIMethod.swift in Sources */ = {isa = PBXBuildFile; fileRef = 28CA182222478E8300F16621 /* XZAPIMethod.swift */; };
+		28CA188122478E8300F16621 /* XZAPIResponse.swift in Sources */ = {isa = PBXBuildFile; fileRef = 28CA182322478E8300F16621 /* XZAPIResponse.swift */; };
+		28CA188222478E8300F16621 /* XZAPIRequest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 28CA182422478E8300F16621 /* XZAPIRequest.swift */; };
+		28CA188322478E8300F16621 /* XZAPIError.swift in Sources */ = {isa = PBXBuildFile; fileRef = 28CA182522478E8300F16621 /* XZAPIError.swift */; };
+		28CA188422478E8300F16621 /* URL+XZKit.swift in Sources */ = {isa = PBXBuildFile; fileRef = 28CA182822478E8300F16621 /* URL+XZKit.swift */; };
+		28CA188722478E8300F16621 /* Data+XZKit.swift in Sources */ = {isa = PBXBuildFile; fileRef = 28CA182B22478E8300F16621 /* Data+XZKit.swift */; };
+		28CA188822478E8300F16621 /* DispatchQueue+XZKit.swift in Sources */ = {isa = PBXBuildFile; fileRef = 28CA182C22478E8300F16621 /* DispatchQueue+XZKit.swift */; };
+		28CA188B22478E8300F16621 /* JSON+XZKit.swift in Sources */ = {isa = PBXBuildFile; fileRef = 28CA182F22478E8300F16621 /* JSON+XZKit.swift */; };
+		28CA188C22478E8300F16621 /* XZKit+String.swift in Sources */ = {isa = PBXBuildFile; fileRef = 28CA183022478E8300F16621 /* XZKit+String.swift */; };
+		28CA188D22478E8300F16621 /* NSData+XZKit.m in Sources */ = {isa = PBXBuildFile; fileRef = 28CA183222478E8300F16621 /* NSData+XZKit.m */; };
+		28CA188F22478E8300F16621 /* NSString+XZKit.h in Headers */ = {isa = PBXBuildFile; fileRef = 28CA183422478E8300F16621 /* NSString+XZKit.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		28CA189022478E8300F16621 /* NSBundle+XZKit.m in Sources */ = {isa = PBXBuildFile; fileRef = 28CA183522478E8300F16621 /* NSBundle+XZKit.m */; };
+		28CA189222478E8300F16621 /* NSData+XZKit.h in Headers */ = {isa = PBXBuildFile; fileRef = 28CA183722478E8300F16621 /* NSData+XZKit.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		28CA189322478E8300F16621 /* NSBundle+XZKit.h in Headers */ = {isa = PBXBuildFile; fileRef = 28CA183822478E8300F16621 /* NSBundle+XZKit.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		28CA189422478E8300F16621 /* NSString+XZKit.m in Sources */ = {isa = PBXBuildFile; fileRef = 28CA183922478E8300F16621 /* NSString+XZKit.m */; };
+		28CA189522478E8300F16621 /* XZContentStatus.swift in Sources */ = {isa = PBXBuildFile; fileRef = 28CA183B22478E8300F16621 /* XZContentStatus.swift */; };
+		28CA189622478E8300F16621 /* XZContentStatusRepresentable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 28CA183C22478E8300F16621 /* XZContentStatusRepresentable.swift */; };
+		28CA189722478E8300F16621 /* XZContentStatusView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 28CA183D22478E8300F16621 /* XZContentStatusView.swift */; };
+		28CA189822478E8300F16621 /* XZCollectionViewFlowLayout.swift in Sources */ = {isa = PBXBuildFile; fileRef = 28CA183F22478E8300F16621 /* XZCollectionViewFlowLayout.swift */; };
+		28CA189922478E8300F16621 /* XZTextImageControl.swift in Sources */ = {isa = PBXBuildFile; fileRef = 28CA184122478E8300F16621 /* XZTextImageControl.swift */; };
+		28CA189A22478E8300F16621 /* XZTextImageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 28CA184222478E8300F16621 /* XZTextImageView.swift */; };
+		28CA189B22478E8300F16621 /* XZTextImageLayout.swift in Sources */ = {isa = PBXBuildFile; fileRef = 28CA184322478E8300F16621 /* XZTextImageLayout.swift */; };
+		28CA189C22478E8300F16621 /* XZDataCryptor.m in Sources */ = {isa = PBXBuildFile; fileRef = 28CA184522478E8300F16621 /* XZDataCryptor.m */; };
+		28CA189F22478E8300F16621 /* XZDataCryptor.h in Headers */ = {isa = PBXBuildFile; fileRef = 28CA184822478E8300F16621 /* XZDataCryptor.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		28CA18A122478E8300F16621 /* XZAppLanguage.m in Sources */ = {isa = PBXBuildFile; fileRef = 28CA184B22478E8300F16621 /* XZAppLanguage.m */; };
+		28CA18A222478E8300F16621 /* XZAppLanguage.h in Headers */ = {isa = PBXBuildFile; fileRef = 28CA184C22478E8300F16621 /* XZAppLanguage.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		28CA18A322478E8300F16621 /* XZAppLanguage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 28CA184D22478E8300F16621 /* XZAppLanguage.swift */; };
+		28CA18A622478E8300F16621 /* XZProgressView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 28CA185222478E8300F16621 /* XZProgressView.swift */; };
+		28CA18A722478E8300F16621 /* XZKitConstants.m in Sources */ = {isa = PBXBuildFile; fileRef = 28CA185422478E8300F16621 /* XZKitConstants.m */; };
+		28CA18A822478E8300F16621 /* XZKitConstants.h in Headers */ = {isa = PBXBuildFile; fileRef = 28CA185522478E8300F16621 /* XZKitConstants.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		28CA18A922478E8300F16621 /* XZKitConstants.swift in Sources */ = {isa = PBXBuildFile; fileRef = 28CA185622478E8300F16621 /* XZKitConstants.swift */; };
+		28E3B72A22716E31005ECB02 /* XZCarouselView.ScrollView.m in Sources */ = {isa = PBXBuildFile; fileRef = 28E3B72622716E31005ECB02 /* XZCarouselView.ScrollView.m */; };
+		28E3B72B22716E31005ECB02 /* XZCarouselView.ItemView.h in Headers */ = {isa = PBXBuildFile; fileRef = 28E3B72722716E31005ECB02 /* XZCarouselView.ItemView.h */; };
+		28E3B72C22716E31005ECB02 /* XZCarouselView.ScrollView.h in Headers */ = {isa = PBXBuildFile; fileRef = 28E3B72822716E31005ECB02 /* XZCarouselView.ScrollView.h */; };
+		28E3B72D22716E31005ECB02 /* XZCarouselView.ItemView.m in Sources */ = {isa = PBXBuildFile; fileRef = 28E3B72922716E31005ECB02 /* XZCarouselView.ItemView.m */; };
+		28E3B73622716E4C005ECB02 /* XZCarouselView.h in Headers */ = {isa = PBXBuildFile; fileRef = 28E3B72E22716E4B005ECB02 /* XZCarouselView.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		28E3B73722716E4C005ECB02 /* XZCarouselViewController.h in Headers */ = {isa = PBXBuildFile; fileRef = 28E3B72F22716E4B005ECB02 /* XZCarouselViewController.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		28E3B73822716E4C005ECB02 /* XZImageViewer.m in Sources */ = {isa = PBXBuildFile; fileRef = 28E3B73022716E4C005ECB02 /* XZImageViewer.m */; };
+		28E3B73922716E4C005ECB02 /* XZCarouselViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 28E3B73122716E4C005ECB02 /* XZCarouselViewController.m */; };
+		28E3B73A22716E4C005ECB02 /* XZImageViewer.h in Headers */ = {isa = PBXBuildFile; fileRef = 28E3B73222716E4C005ECB02 /* XZImageViewer.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		28E3B73B22716E4C005ECB02 /* XZImageCarouselView.m in Sources */ = {isa = PBXBuildFile; fileRef = 28E3B73322716E4C005ECB02 /* XZImageCarouselView.m */; };
+		28E3B73C22716E4C005ECB02 /* XZImageCarouselView.h in Headers */ = {isa = PBXBuildFile; fileRef = 28E3B73422716E4C005ECB02 /* XZImageCarouselView.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		28E3B73D22716E4C005ECB02 /* XZCarouselView.m in Sources */ = {isa = PBXBuildFile; fileRef = 28E3B73522716E4C005ECB02 /* XZCarouselView.m */; };
+		28F4F2B3224A867E00E7B23C /* XZKit+Geometry.h in Headers */ = {isa = PBXBuildFile; fileRef = 28F4F2B1224A867E00E7B23C /* XZKit+Geometry.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		28F4F2B4224A867E00E7B23C /* XZKit+Geometry.m in Sources */ = {isa = PBXBuildFile; fileRef = 28F4F2B2224A867E00E7B23C /* XZKit+Geometry.m */; };
+		28F4F2B6224A86C400E7B23C /* XZKit+Geometry.swift in Sources */ = {isa = PBXBuildFile; fileRef = 28F4F2B5224A86C400E7B23C /* XZKit+Geometry.swift */; };
+		28F4F2B9224A886200E7B23C /* XZKit+Runtime.h in Headers */ = {isa = PBXBuildFile; fileRef = 28F4F2B7224A886200E7B23C /* XZKit+Runtime.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		28F4F2BA224A886200E7B23C /* XZKit+Runtime.m in Sources */ = {isa = PBXBuildFile; fileRef = 28F4F2B8224A886200E7B23C /* XZKit+Runtime.m */; };
+		28F4F2BC224A89C600E7B23C /* XZKit+Date.swift in Sources */ = {isa = PBXBuildFile; fileRef = 28F4F2BB224A89C600E7B23C /* XZKit+Date.swift */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXFileReference section */
+		288391E1224DB57B00FB0209 /* XZKit+UIView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "XZKit+UIView.swift"; sourceTree = "<group>"; };
+		28C066A2224F65BF0011F052 /* XZKit+HexadecimalEncoding.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "XZKit+HexadecimalEncoding.h"; sourceTree = "<group>"; };
+		28C066A4224F65D20011F052 /* XZKit+HexadecimalEncoding.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "XZKit+HexadecimalEncoding.m"; sourceTree = "<group>"; };
+		28C096372272E6F50096F118 /* XZDisplayTimer.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = XZDisplayTimer.swift; sourceTree = "<group>"; };
+		28CA17F022478E8300F16621 /* XZKit.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XZKit.h; sourceTree = "<group>"; };
+		28CA17F222478E8300F16621 /* XZNavigationController.AnimationController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = XZNavigationController.AnimationController.swift; sourceTree = "<group>"; };
+		28CA17F322478E8300F16621 /* XZNavigationBarCustomizable.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = XZNavigationBarCustomizable.swift; sourceTree = "<group>"; };
+		28CA17F422478E8300F16621 /* UINavigationBar+XZNavigationController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "UINavigationBar+XZNavigationController.swift"; sourceTree = "<group>"; };
+		28CA17F522478E8300F16621 /* XZNavigationGestureDrivable.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = XZNavigationGestureDrivable.swift; sourceTree = "<group>"; };
+		28CA17F622478E8300F16621 /* XZNavigationBar.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = XZNavigationBar.swift; sourceTree = "<group>"; };
+		28CA17F722478E8300F16621 /* XZNavigationController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = XZNavigationController.swift; sourceTree = "<group>"; };
+		28CA17F822478E8300F16621 /* UITabBar+XZNavigationController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "UITabBar+XZNavigationController.swift"; sourceTree = "<group>"; };
+		28CA17F922478E8300F16621 /* XZNavigationController.TransitionController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = XZNavigationController.TransitionController.swift; sourceTree = "<group>"; };
+		28CA17FB22478E8300F16621 /* XZAppRedirection.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = XZAppRedirection.m; sourceTree = "<group>"; };
+		28CA17FC22478E8300F16621 /* XZAppRedirection.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XZAppRedirection.h; sourceTree = "<group>"; };
+		28CA180522478E8300F16621 /* XZCacheManger.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = XZCacheManger.swift; sourceTree = "<group>"; };
+		28CA180622478E8300F16621 /* XZImageCacheManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = XZImageCacheManager.swift; sourceTree = "<group>"; };
+		28CA180822478E8300F16621 /* XZDataDigester.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = XZDataDigester.m; sourceTree = "<group>"; };
+		28CA180922478E8300F16621 /* XZDataDigester.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XZDataDigester.h; sourceTree = "<group>"; };
+		28CA180C22478E8300F16621 /* UIAlertController+XZKit.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "UIAlertController+XZKit.swift"; sourceTree = "<group>"; };
+		28CA180E22478E8300F16621 /* UIDevice+XZKit.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "UIDevice+XZKit.swift"; sourceTree = "<group>"; };
+		28CA180F22478E8300F16621 /* UIImageView+XZKit.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "UIImageView+XZKit.swift"; sourceTree = "<group>"; };
+		28CA181122478E8300F16621 /* UIWebView+XZKit.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "UIWebView+XZKit.swift"; sourceTree = "<group>"; };
+		28CA181322478E8300F16621 /* UIApplication+XZKit.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "UIApplication+XZKit.swift"; sourceTree = "<group>"; };
+		28CA181522478E8300F16621 /* UIView+XZKit.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIView+XZKit.m"; sourceTree = "<group>"; };
+		28CA181722478E8300F16621 /* UIImage+XZKit.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIImage+XZKit.h"; sourceTree = "<group>"; };
+		28CA181922478E8300F16621 /* UIColor+XZKit.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIColor+XZKit.m"; sourceTree = "<group>"; };
+		28CA181A22478E8300F16621 /* UIView+XZKit.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIView+XZKit.h"; sourceTree = "<group>"; };
+		28CA181B22478E8300F16621 /* UIImage+XZKit.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIImage+XZKit.m"; sourceTree = "<group>"; };
+		28CA181D22478E8300F16621 /* UIColor+XZKit.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIColor+XZKit.h"; sourceTree = "<group>"; };
+		28CA182022478E8300F16621 /* XZAPIManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = XZAPIManager.swift; sourceTree = "<group>"; };
+		28CA182122478E8300F16621 /* XZAPIConcurrency.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = XZAPIConcurrency.swift; sourceTree = "<group>"; };
+		28CA182222478E8300F16621 /* XZAPIMethod.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = XZAPIMethod.swift; sourceTree = "<group>"; };
+		28CA182322478E8300F16621 /* XZAPIResponse.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = XZAPIResponse.swift; sourceTree = "<group>"; };
+		28CA182422478E8300F16621 /* XZAPIRequest.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = XZAPIRequest.swift; sourceTree = "<group>"; };
+		28CA182522478E8300F16621 /* XZAPIError.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = XZAPIError.swift; sourceTree = "<group>"; };
+		28CA182822478E8300F16621 /* URL+XZKit.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "URL+XZKit.swift"; sourceTree = "<group>"; };
+		28CA182B22478E8300F16621 /* Data+XZKit.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "Data+XZKit.swift"; sourceTree = "<group>"; };
+		28CA182C22478E8300F16621 /* DispatchQueue+XZKit.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "DispatchQueue+XZKit.swift"; sourceTree = "<group>"; };
+		28CA182F22478E8300F16621 /* JSON+XZKit.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "JSON+XZKit.swift"; sourceTree = "<group>"; };
+		28CA183022478E8300F16621 /* XZKit+String.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "XZKit+String.swift"; sourceTree = "<group>"; };
+		28CA183222478E8300F16621 /* NSData+XZKit.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSData+XZKit.m"; sourceTree = "<group>"; };
+		28CA183422478E8300F16621 /* NSString+XZKit.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSString+XZKit.h"; sourceTree = "<group>"; };
+		28CA183522478E8300F16621 /* NSBundle+XZKit.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSBundle+XZKit.m"; sourceTree = "<group>"; };
+		28CA183722478E8300F16621 /* NSData+XZKit.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSData+XZKit.h"; sourceTree = "<group>"; };
+		28CA183822478E8300F16621 /* NSBundle+XZKit.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSBundle+XZKit.h"; sourceTree = "<group>"; };
+		28CA183922478E8300F16621 /* NSString+XZKit.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSString+XZKit.m"; sourceTree = "<group>"; };
+		28CA183B22478E8300F16621 /* XZContentStatus.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = XZContentStatus.swift; sourceTree = "<group>"; };
+		28CA183C22478E8300F16621 /* XZContentStatusRepresentable.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = XZContentStatusRepresentable.swift; sourceTree = "<group>"; };
+		28CA183D22478E8300F16621 /* XZContentStatusView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = XZContentStatusView.swift; sourceTree = "<group>"; };
+		28CA183F22478E8300F16621 /* XZCollectionViewFlowLayout.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = XZCollectionViewFlowLayout.swift; sourceTree = "<group>"; };
+		28CA184122478E8300F16621 /* XZTextImageControl.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = XZTextImageControl.swift; sourceTree = "<group>"; };
+		28CA184222478E8300F16621 /* XZTextImageView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = XZTextImageView.swift; sourceTree = "<group>"; };
+		28CA184322478E8300F16621 /* XZTextImageLayout.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = XZTextImageLayout.swift; sourceTree = "<group>"; };
+		28CA184522478E8300F16621 /* XZDataCryptor.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = XZDataCryptor.m; sourceTree = "<group>"; };
+		28CA184822478E8300F16621 /* XZDataCryptor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XZDataCryptor.h; sourceTree = "<group>"; };
+		28CA184B22478E8300F16621 /* XZAppLanguage.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = XZAppLanguage.m; sourceTree = "<group>"; };
+		28CA184C22478E8300F16621 /* XZAppLanguage.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XZAppLanguage.h; sourceTree = "<group>"; };
+		28CA184D22478E8300F16621 /* XZAppLanguage.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = XZAppLanguage.swift; sourceTree = "<group>"; };
+		28CA185222478E8300F16621 /* XZProgressView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = XZProgressView.swift; sourceTree = "<group>"; };
+		28CA185422478E8300F16621 /* XZKitConstants.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = XZKitConstants.m; sourceTree = "<group>"; };
+		28CA185522478E8300F16621 /* XZKitConstants.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XZKitConstants.h; sourceTree = "<group>"; };
+		28CA185622478E8300F16621 /* XZKitConstants.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = XZKitConstants.swift; sourceTree = "<group>"; };
+		28E3B72622716E31005ECB02 /* XZCarouselView.ScrollView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = XZCarouselView.ScrollView.m; sourceTree = "<group>"; };
+		28E3B72722716E31005ECB02 /* XZCarouselView.ItemView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XZCarouselView.ItemView.h; sourceTree = "<group>"; };
+		28E3B72822716E31005ECB02 /* XZCarouselView.ScrollView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XZCarouselView.ScrollView.h; sourceTree = "<group>"; };
+		28E3B72922716E31005ECB02 /* XZCarouselView.ItemView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = XZCarouselView.ItemView.m; sourceTree = "<group>"; };
+		28E3B72E22716E4B005ECB02 /* XZCarouselView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XZCarouselView.h; sourceTree = "<group>"; };
+		28E3B72F22716E4B005ECB02 /* XZCarouselViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XZCarouselViewController.h; sourceTree = "<group>"; };
+		28E3B73022716E4C005ECB02 /* XZImageViewer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = XZImageViewer.m; sourceTree = "<group>"; };
+		28E3B73122716E4C005ECB02 /* XZCarouselViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = XZCarouselViewController.m; sourceTree = "<group>"; };
+		28E3B73222716E4C005ECB02 /* XZImageViewer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XZImageViewer.h; sourceTree = "<group>"; };
+		28E3B73322716E4C005ECB02 /* XZImageCarouselView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = XZImageCarouselView.m; sourceTree = "<group>"; };
+		28E3B73422716E4C005ECB02 /* XZImageCarouselView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XZImageCarouselView.h; sourceTree = "<group>"; };
+		28E3B73522716E4C005ECB02 /* XZCarouselView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = XZCarouselView.m; sourceTree = "<group>"; };
+		28F4F2B1224A867E00E7B23C /* XZKit+Geometry.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "XZKit+Geometry.h"; sourceTree = "<group>"; };
+		28F4F2B2224A867E00E7B23C /* XZKit+Geometry.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "XZKit+Geometry.m"; sourceTree = "<group>"; };
+		28F4F2B5224A86C400E7B23C /* XZKit+Geometry.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "XZKit+Geometry.swift"; sourceTree = "<group>"; };
+		28F4F2B7224A886200E7B23C /* XZKit+Runtime.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "XZKit+Runtime.h"; sourceTree = "<group>"; };
+		28F4F2B8224A886200E7B23C /* XZKit+Runtime.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "XZKit+Runtime.m"; sourceTree = "<group>"; };
+		28F4F2BB224A89C600E7B23C /* XZKit+Date.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "XZKit+Date.swift"; sourceTree = "<group>"; };
+		DD30EF4121A4330000C4C73C /* XZKit.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = XZKit.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		DD30EF4521A4330000C4C73C /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		DD30EF3E21A4330000C4C73C /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		282E8D3521E8A2F60037BBDC /* Resource */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			name = Resource;
+			path = ../../../XZKit/Resource;
+			sourceTree = "<group>";
+		};
+		28C096362272E6F40096F118 /* DisplayTimer */ = {
+			isa = PBXGroup;
+			children = (
+				28C096372272E6F50096F118 /* XZDisplayTimer.swift */,
+			);
+			path = DisplayTimer;
+			sourceTree = "<group>";
+		};
+		28CA17EF22478E8300F16621 /* Code */ = {
+			isa = PBXGroup;
+			children = (
+				28CA17F022478E8300F16621 /* XZKit.h */,
+				28C096362272E6F40096F118 /* DisplayTimer */,
+				28CA17F122478E8300F16621 /* NavigationController */,
+				28CA17FA22478E8300F16621 /* AppRedirection */,
+				28CA17FD22478E8300F16621 /* CarouselView */,
+				28CA180422478E8300F16621 /* CacheManager */,
+				28CA184422478E8300F16621 /* DataCryptor */,
+				28CA180722478E8300F16621 /* DataDigester */,
+				28CA180A22478E8300F16621 /* UIKit */,
+				28CA181F22478E8300F16621 /* Networking */,
+				28CA182622478E8300F16621 /* Foundation */,
+				28CA183A22478E8300F16621 /* ContentStatus */,
+				28CA183E22478E8300F16621 /* UICollectionViewFlowLayout */,
+				28CA184A22478E8300F16621 /* AppLanguage */,
+				28CA184022478E8300F16621 /* TextImageView */,
+				28CA184E22478E8300F16621 /* Casting */,
+				28CA185022478E8300F16621 /* ProgressView */,
+				28CA185322478E8300F16621 /* XZKitConstants */,
+			);
+			name = Code;
+			path = ../../../XZKit/Code;
+			sourceTree = "<group>";
+		};
+		28CA17F122478E8300F16621 /* NavigationController */ = {
+			isa = PBXGroup;
+			children = (
+				28CA17F722478E8300F16621 /* XZNavigationController.swift */,
+				28CA17F222478E8300F16621 /* XZNavigationController.AnimationController.swift */,
+				28CA17F922478E8300F16621 /* XZNavigationController.TransitionController.swift */,
+				28CA17F322478E8300F16621 /* XZNavigationBarCustomizable.swift */,
+				28CA17F522478E8300F16621 /* XZNavigationGestureDrivable.swift */,
+				28CA17F622478E8300F16621 /* XZNavigationBar.swift */,
+				28CA17F422478E8300F16621 /* UINavigationBar+XZNavigationController.swift */,
+				28CA17F822478E8300F16621 /* UITabBar+XZNavigationController.swift */,
+			);
+			path = NavigationController;
+			sourceTree = "<group>";
+		};
+		28CA17FA22478E8300F16621 /* AppRedirection */ = {
+			isa = PBXGroup;
+			children = (
+				28CA17FB22478E8300F16621 /* XZAppRedirection.m */,
+				28CA17FC22478E8300F16621 /* XZAppRedirection.h */,
+			);
+			path = AppRedirection;
+			sourceTree = "<group>";
+		};
+		28CA17FD22478E8300F16621 /* CarouselView */ = {
+			isa = PBXGroup;
+			children = (
+				28E3B72522716E31005ECB02 /* Private */,
+				28E3B71422716E27005ECB02 /* Public */,
+			);
+			path = CarouselView;
+			sourceTree = "<group>";
+		};
+		28CA180422478E8300F16621 /* CacheManager */ = {
+			isa = PBXGroup;
+			children = (
+				28CA180522478E8300F16621 /* XZCacheManger.swift */,
+				28CA180622478E8300F16621 /* XZImageCacheManager.swift */,
+			);
+			path = CacheManager;
+			sourceTree = "<group>";
+		};
+		28CA180722478E8300F16621 /* DataDigester */ = {
+			isa = PBXGroup;
+			children = (
+				28CA180922478E8300F16621 /* XZDataDigester.h */,
+				28CA180822478E8300F16621 /* XZDataDigester.m */,
+			);
+			path = DataDigester;
+			sourceTree = "<group>";
+		};
+		28CA180A22478E8300F16621 /* UIKit */ = {
+			isa = PBXGroup;
+			children = (
+				28CA180B22478E8300F16621 /* Swift */,
+				28CA181422478E8300F16621 /* ObjectiveC */,
+			);
+			path = UIKit;
+			sourceTree = "<group>";
+		};
+		28CA180B22478E8300F16621 /* Swift */ = {
+			isa = PBXGroup;
+			children = (
+				28CA180C22478E8300F16621 /* UIAlertController+XZKit.swift */,
+				28CA180E22478E8300F16621 /* UIDevice+XZKit.swift */,
+				28CA180F22478E8300F16621 /* UIImageView+XZKit.swift */,
+				28CA181122478E8300F16621 /* UIWebView+XZKit.swift */,
+				28CA181322478E8300F16621 /* UIApplication+XZKit.swift */,
+			);
+			path = Swift;
+			sourceTree = "<group>";
+		};
+		28CA181422478E8300F16621 /* ObjectiveC */ = {
+			isa = PBXGroup;
+			children = (
+				28CA181A22478E8300F16621 /* UIView+XZKit.h */,
+				28CA181522478E8300F16621 /* UIView+XZKit.m */,
+				28CA181722478E8300F16621 /* UIImage+XZKit.h */,
+				28CA181B22478E8300F16621 /* UIImage+XZKit.m */,
+				28CA181D22478E8300F16621 /* UIColor+XZKit.h */,
+				28CA181922478E8300F16621 /* UIColor+XZKit.m */,
+			);
+			path = ObjectiveC;
+			sourceTree = "<group>";
+		};
+		28CA181F22478E8300F16621 /* Networking */ = {
+			isa = PBXGroup;
+			children = (
+				28CA182022478E8300F16621 /* XZAPIManager.swift */,
+				28CA182122478E8300F16621 /* XZAPIConcurrency.swift */,
+				28CA182222478E8300F16621 /* XZAPIMethod.swift */,
+				28CA182322478E8300F16621 /* XZAPIResponse.swift */,
+				28CA182422478E8300F16621 /* XZAPIRequest.swift */,
+				28CA182522478E8300F16621 /* XZAPIError.swift */,
+			);
+			path = Networking;
+			sourceTree = "<group>";
+		};
+		28CA182622478E8300F16621 /* Foundation */ = {
+			isa = PBXGroup;
+			children = (
+				28CA182722478E8300F16621 /* Swift */,
+				28CA183122478E8300F16621 /* ObjectiveC */,
+			);
+			path = Foundation;
+			sourceTree = "<group>";
+		};
+		28CA182722478E8300F16621 /* Swift */ = {
+			isa = PBXGroup;
+			children = (
+				28CA182822478E8300F16621 /* URL+XZKit.swift */,
+				28CA182B22478E8300F16621 /* Data+XZKit.swift */,
+				28CA182C22478E8300F16621 /* DispatchQueue+XZKit.swift */,
+				28CA182F22478E8300F16621 /* JSON+XZKit.swift */,
+			);
+			path = Swift;
+			sourceTree = "<group>";
+		};
+		28CA183122478E8300F16621 /* ObjectiveC */ = {
+			isa = PBXGroup;
+			children = (
+				28CA183422478E8300F16621 /* NSString+XZKit.h */,
+				28CA183922478E8300F16621 /* NSString+XZKit.m */,
+				28CA183722478E8300F16621 /* NSData+XZKit.h */,
+				28CA183222478E8300F16621 /* NSData+XZKit.m */,
+				28CA183822478E8300F16621 /* NSBundle+XZKit.h */,
+				28CA183522478E8300F16621 /* NSBundle+XZKit.m */,
+			);
+			path = ObjectiveC;
+			sourceTree = "<group>";
+		};
+		28CA183A22478E8300F16621 /* ContentStatus */ = {
+			isa = PBXGroup;
+			children = (
+				28CA183B22478E8300F16621 /* XZContentStatus.swift */,
+				28CA183C22478E8300F16621 /* XZContentStatusRepresentable.swift */,
+				28CA183D22478E8300F16621 /* XZContentStatusView.swift */,
+			);
+			path = ContentStatus;
+			sourceTree = "<group>";
+		};
+		28CA183E22478E8300F16621 /* UICollectionViewFlowLayout */ = {
+			isa = PBXGroup;
+			children = (
+				28CA183F22478E8300F16621 /* XZCollectionViewFlowLayout.swift */,
+			);
+			path = UICollectionViewFlowLayout;
+			sourceTree = "<group>";
+		};
+		28CA184022478E8300F16621 /* TextImageView */ = {
+			isa = PBXGroup;
+			children = (
+				28CA184322478E8300F16621 /* XZTextImageLayout.swift */,
+				28CA184222478E8300F16621 /* XZTextImageView.swift */,
+				28CA184122478E8300F16621 /* XZTextImageControl.swift */,
+			);
+			path = TextImageView;
+			sourceTree = "<group>";
+		};
+		28CA184422478E8300F16621 /* DataCryptor */ = {
+			isa = PBXGroup;
+			children = (
+				28CA184822478E8300F16621 /* XZDataCryptor.h */,
+				28CA184522478E8300F16621 /* XZDataCryptor.m */,
+			);
+			path = DataCryptor;
+			sourceTree = "<group>";
+		};
+		28CA184A22478E8300F16621 /* AppLanguage */ = {
+			isa = PBXGroup;
+			children = (
+				28CA184C22478E8300F16621 /* XZAppLanguage.h */,
+				28CA184B22478E8300F16621 /* XZAppLanguage.m */,
+				28CA184D22478E8300F16621 /* XZAppLanguage.swift */,
+			);
+			path = AppLanguage;
+			sourceTree = "<group>";
+		};
+		28CA184E22478E8300F16621 /* Casting */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = Casting;
+			sourceTree = "<group>";
+		};
+		28CA185022478E8300F16621 /* ProgressView */ = {
+			isa = PBXGroup;
+			children = (
+				28CA185222478E8300F16621 /* XZProgressView.swift */,
+			);
+			path = ProgressView;
+			sourceTree = "<group>";
+		};
+		28CA185322478E8300F16621 /* XZKitConstants */ = {
+			isa = PBXGroup;
+			children = (
+				28CA185522478E8300F16621 /* XZKitConstants.h */,
+				28CA185422478E8300F16621 /* XZKitConstants.m */,
+				28CA185622478E8300F16621 /* XZKitConstants.swift */,
+				28CA183022478E8300F16621 /* XZKit+String.swift */,
+				28F4F2BB224A89C600E7B23C /* XZKit+Date.swift */,
+				28F4F2B1224A867E00E7B23C /* XZKit+Geometry.h */,
+				28F4F2B2224A867E00E7B23C /* XZKit+Geometry.m */,
+				28F4F2B5224A86C400E7B23C /* XZKit+Geometry.swift */,
+				28C066A2224F65BF0011F052 /* XZKit+HexadecimalEncoding.h */,
+				28C066A4224F65D20011F052 /* XZKit+HexadecimalEncoding.m */,
+				28F4F2B7224A886200E7B23C /* XZKit+Runtime.h */,
+				28F4F2B8224A886200E7B23C /* XZKit+Runtime.m */,
+				288391E1224DB57B00FB0209 /* XZKit+UIView.swift */,
+			);
+			path = XZKitConstants;
+			sourceTree = "<group>";
+		};
+		28E3B71422716E27005ECB02 /* Public */ = {
+			isa = PBXGroup;
+			children = (
+				28E3B72E22716E4B005ECB02 /* XZCarouselView.h */,
+				28E3B73522716E4C005ECB02 /* XZCarouselView.m */,
+				28E3B72F22716E4B005ECB02 /* XZCarouselViewController.h */,
+				28E3B73122716E4C005ECB02 /* XZCarouselViewController.m */,
+				28E3B73422716E4C005ECB02 /* XZImageCarouselView.h */,
+				28E3B73322716E4C005ECB02 /* XZImageCarouselView.m */,
+				28E3B73222716E4C005ECB02 /* XZImageViewer.h */,
+				28E3B73022716E4C005ECB02 /* XZImageViewer.m */,
+			);
+			path = Public;
+			sourceTree = "<group>";
+		};
+		28E3B72522716E31005ECB02 /* Private */ = {
+			isa = PBXGroup;
+			children = (
+				28E3B72722716E31005ECB02 /* XZCarouselView.ItemView.h */,
+				28E3B72922716E31005ECB02 /* XZCarouselView.ItemView.m */,
+				28E3B72822716E31005ECB02 /* XZCarouselView.ScrollView.h */,
+				28E3B72622716E31005ECB02 /* XZCarouselView.ScrollView.m */,
+			);
+			path = Private;
+			sourceTree = "<group>";
+		};
+		DD30EF3721A4330000C4C73C = {
+			isa = PBXGroup;
+			children = (
+				DD30EF4321A4330000C4C73C /* XZKit */,
+				DD30EF4221A4330000C4C73C /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		DD30EF4221A4330000C4C73C /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				DD30EF4121A4330000C4C73C /* XZKit.framework */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		DD30EF4321A4330000C4C73C /* XZKit */ = {
+			isa = PBXGroup;
+			children = (
+				28CA17EF22478E8300F16621 /* Code */,
+				282E8D3521E8A2F60037BBDC /* Resource */,
+				DD30EF4521A4330000C4C73C /* Info.plist */,
+			);
+			path = XZKit;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXHeadersBuildPhase section */
+		DD30EF3C21A4330000C4C73C /* Headers */ = {
+			isa = PBXHeadersBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				28CA189F22478E8300F16621 /* XZDataCryptor.h in Headers */,
+				28CA187C22478E8300F16621 /* UIColor+XZKit.h in Headers */,
+				28E3B72C22716E31005ECB02 /* XZCarouselView.ScrollView.h in Headers */,
+				28F4F2B9224A886200E7B23C /* XZKit+Runtime.h in Headers */,
+				28CA186B22478E8300F16621 /* XZDataDigester.h in Headers */,
+				28E3B72B22716E31005ECB02 /* XZCarouselView.ItemView.h in Headers */,
+				28CA187622478E8300F16621 /* UIImage+XZKit.h in Headers */,
+				28CA188F22478E8300F16621 /* NSString+XZKit.h in Headers */,
+				28CA189322478E8300F16621 /* NSBundle+XZKit.h in Headers */,
+				28E3B73C22716E4C005ECB02 /* XZImageCarouselView.h in Headers */,
+				28E3B73622716E4C005ECB02 /* XZCarouselView.h in Headers */,
+				28C066A3224F65BF0011F052 /* XZKit+HexadecimalEncoding.h in Headers */,
+				28CA189222478E8300F16621 /* NSData+XZKit.h in Headers */,
+				28E3B73722716E4C005ECB02 /* XZCarouselViewController.h in Headers */,
+				28CA18A822478E8300F16621 /* XZKitConstants.h in Headers */,
+				28CA18A222478E8300F16621 /* XZAppLanguage.h in Headers */,
+				28F4F2B3224A867E00E7B23C /* XZKit+Geometry.h in Headers */,
+				28E3B73A22716E4C005ECB02 /* XZImageViewer.h in Headers */,
+				28CA185722478E8300F16621 /* XZKit.h in Headers */,
+				28CA187922478E8300F16621 /* UIView+XZKit.h in Headers */,
+				28CA186122478E8300F16621 /* XZAppRedirection.h in Headers */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXHeadersBuildPhase section */
+
+/* Begin PBXNativeTarget section */
+		DD30EF4021A4330000C4C73C /* XZKit */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = DD30EF4921A4330000C4C73C /* Build configuration list for PBXNativeTarget "XZKit" */;
+			buildPhases = (
+				DD30EF3C21A4330000C4C73C /* Headers */,
+				DD30EF3D21A4330000C4C73C /* Sources */,
+				DD30EF3E21A4330000C4C73C /* Frameworks */,
+				DD30EF3F21A4330000C4C73C /* Resources */,
+				28DDB9282275A843005E7B65 /* ShellScript */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = XZKit;
+			productName = XZKit;
+			productReference = DD30EF4121A4330000C4C73C /* XZKit.framework */;
+			productType = "com.apple.product-type.framework";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		DD30EF3821A4330000C4C73C /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				LastUpgradeCheck = 1010;
+				ORGANIZATIONNAME = mlibai;
+				TargetAttributes = {
+					28D014852275A9AD00B53668 = {
+						CreatedOnToolsVersion = 10.2.1;
+					};
+					DD30EF4021A4330000C4C73C = {
+						CreatedOnToolsVersion = 10.1;
+						LastSwiftMigration = 1020;
+					};
+				};
+			};
+			buildConfigurationList = DD30EF3B21A4330000C4C73C /* Build configuration list for PBXProject "XZKit" */;
+			compatibilityVersion = "Xcode 9.3";
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+				Base,
+			);
+			mainGroup = DD30EF3721A4330000C4C73C;
+			productRefGroup = DD30EF4221A4330000C4C73C /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				DD30EF4021A4330000C4C73C /* XZKit */,
+				28D014852275A9AD00B53668 /* XZKit Aggregate */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		DD30EF3F21A4330000C4C73C /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXShellScriptBuildPhase section */
+		28D014892275A9C600B53668 /* ShellScript */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+			);
+			outputFileListPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "#!/bin/sh\n\n# 发生错误立即退出脚本。\nset -e\n\n# 框架名称。\nXZ_PRODUCT_NAME=\"XZKit\"\n\n# 项目跟目录。\nXZ_PROJECT_ROOT=$(cd \"${SRCROOT}/../../\"; pwd)\n\n# 包输出目录。\nXZ_PRODUCT_DIR=\"${XZ_PROJECT_ROOT}/Products\"\n\nif [ ! -d \"${XZ_PRODUCT_DIR}\" ]; then\nmkdir -p \"${XZ_PRODUCT_DIR}\"\nfi\n\n# 包的路径。\nXZ_PRODUCT_PATH=\"${XZ_PRODUCT_DIR}/${XZ_PRODUCT_NAME}.framework\"\n\n# 打包目录\nif [ -d \"${BUILD_DIR}\" ]; then\nrm -rf \"${BUILD_DIR}\"\nfi\n\n# 打包，其它可能用到的参数。\n# -arch arm64 -arch armv7 -arch armv7s\n# ENABLE_BITCODE=YES OTHER_CFLAGS=\"-fembed-bitcode\"\n\n# 真机所用的包。\nxcodebuild  -target \"${XZ_PRODUCT_NAME}\" \\\n-configuration Release \\\nBITCODE_GENERATION_MODE=bitcode \\\nONLY_ACTIVE_ARCH=NO \\\nDEFINES_MODULE=YES \\\n-sdk \"iphoneos\" \\\nBUILD_DIR=\"${BUILD_DIR}\" BUILD_ROOT=\"${BUILD_ROOT}\" \\\nclean build\n\n# 模拟器所有的包。\nxcodebuild  -target \"${XZ_PRODUCT_NAME}\" \\\n-configuration Release \\\nBITCODE_GENERATION_MODE=bitcode \\\nONLY_ACTIVE_ARCH=NO \\\nDEFINES_MODULE=YES \\\n-sdk \"iphonesimulator\" \\\nBUILD_DIR=\"${BUILD_DIR}\" BUILD_ROOT=\"${BUILD_ROOT}\" \\\nclean build\n\n# 删除已存在的包。\nif [ -d \"${XZ_PRODUCT_PATH}\" ]; then\nrm -rf \"${XZ_PRODUCT_PATH}\"\nfi\n\n# 将新的拷贝过去。\ncp -r \"${BUILD_DIR}/Release-iphoneos/${XZ_PRODUCT_NAME}.framework\" \"${XZ_PRODUCT_PATH}\"\n\n# 将模拟器与真机的可执行文件合并成一个。\nlipo -create -output \"${XZ_PRODUCT_PATH}/${XZ_PRODUCT_NAME}\" \\\n\"${BUILD_DIR}/Release-iphoneos/${XZ_PRODUCT_NAME}.framework/${XZ_PRODUCT_NAME}\" \\\n\"${BUILD_DIR}/Release-iphonesimulator/${XZ_PRODUCT_NAME}.framework/${XZ_PRODUCT_NAME}\"\n\n# 复制 swiftmodule 文件，真机的已经在里面了。\ncp -r \"${BUILD_DIR}/Release-iphonesimulator/${XZ_PRODUCT_NAME}.framework/Modules/${XZ_PRODUCT_NAME}.swiftmodule/\" \\\n\"${XZ_PRODUCT_PATH}/Modules/${XZ_PRODUCT_NAME}.swiftmodule\"\n\n# 删除构建目录。\nif [ -d \"${BUILD_DIR}\" ]; then\nrm -rf \"${BUILD_DIR}\"\nfi\n";
+		};
+		28DDB9282275A843005E7B65 /* ShellScript */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+			);
+			outputFileListPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "# ---------------------------\n# Build version autoincrement\nif [ $CONFIGURATION == Release ]; then\necho \"Build version increasing...\"\nXZ_INFO_PLIST=${PROJECT_DIR}/${INFOPLIST_FILE}\n\n# increment the build number (ie 115 to 116)\nXZ_BUILD_VERSION=$(/usr/libexec/PlistBuddy -c \"Print CFBundleVersion\" \"${XZ_INFO_PLIST}\")\nif [[ \"${XZ_BUILD_VERSION}\" == \"\" ]]; then\necho \"No build version in ${XZ_INFO_PLIST}\"\nexit 2\nfi\n\nXZ_BUILD_VERSION=$(expr ${XZ_BUILD_VERSION} + 1)\n/usr/libexec/Plistbuddy -c \"Set CFBundleVersion ${XZ_BUILD_VERSION}\" \"${XZ_INFO_PLIST}\"\necho \"Build version is ${XZ_BUILD_VERSION} now.\"\nelse\necho $CONFIGURATION \"Skip increasing build version increasing for Debug Mode.\"\nfi\n";
+		};
+/* End PBXShellScriptBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		DD30EF3D21A4330000C4C73C /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				28C066A5224F65D20011F052 /* XZKit+HexadecimalEncoding.m in Sources */,
+				28CA189522478E8300F16621 /* XZContentStatus.swift in Sources */,
+				28CA187322478E8300F16621 /* UIApplication+XZKit.swift in Sources */,
+				28CA188B22478E8300F16621 /* JSON+XZKit.swift in Sources */,
+				28CA189C22478E8300F16621 /* XZDataCryptor.m in Sources */,
+				28CA185C22478E8300F16621 /* XZNavigationBar.swift in Sources */,
+				28CA18A922478E8300F16621 /* XZKitConstants.swift in Sources */,
+				28CA188C22478E8300F16621 /* XZKit+String.swift in Sources */,
+				28E3B73922716E4C005ECB02 /* XZCarouselViewController.m in Sources */,
+				28CA186022478E8300F16621 /* XZAppRedirection.m in Sources */,
+				28E3B73D22716E4C005ECB02 /* XZCarouselView.m in Sources */,
+				28CA189722478E8300F16621 /* XZContentStatusView.swift in Sources */,
+				28E3B72D22716E31005ECB02 /* XZCarouselView.ItemView.m in Sources */,
+				28CA188322478E8300F16621 /* XZAPIError.swift in Sources */,
+				28CA189922478E8300F16621 /* XZTextImageControl.swift in Sources */,
+				28CA185D22478E8300F16621 /* XZNavigationController.swift in Sources */,
+				28CA18A722478E8300F16621 /* XZKitConstants.m in Sources */,
+				28CA18A122478E8300F16621 /* XZAppLanguage.m in Sources */,
+				28CA185822478E8300F16621 /* XZNavigationController.AnimationController.swift in Sources */,
+				28CA186922478E8300F16621 /* XZImageCacheManager.swift in Sources */,
+				28C096382272E6F50096F118 /* XZDisplayTimer.swift in Sources */,
+				28CA189822478E8300F16621 /* XZCollectionViewFlowLayout.swift in Sources */,
+				28CA188122478E8300F16621 /* XZAPIResponse.swift in Sources */,
+				28CA189A22478E8300F16621 /* XZTextImageView.swift in Sources */,
+				28CA186C22478E8300F16621 /* UIAlertController+XZKit.swift in Sources */,
+				288391E2224DB57B00FB0209 /* XZKit+UIView.swift in Sources */,
+				28CA186A22478E8300F16621 /* XZDataDigester.m in Sources */,
+				28CA187F22478E8300F16621 /* XZAPIConcurrency.swift in Sources */,
+				28E3B72A22716E31005ECB02 /* XZCarouselView.ScrollView.m in Sources */,
+				28CA188422478E8300F16621 /* URL+XZKit.swift in Sources */,
+				28CA188022478E8300F16621 /* XZAPIMethod.swift in Sources */,
+				28CA187122478E8300F16621 /* UIWebView+XZKit.swift in Sources */,
+				28CA185A22478E8300F16621 /* UINavigationBar+XZNavigationController.swift in Sources */,
+				28CA188D22478E8300F16621 /* NSData+XZKit.m in Sources */,
+				28CA187A22478E8300F16621 /* UIImage+XZKit.m in Sources */,
+				28CA187E22478E8300F16621 /* XZAPIManager.swift in Sources */,
+				28CA188822478E8300F16621 /* DispatchQueue+XZKit.swift in Sources */,
+				28CA187822478E8300F16621 /* UIColor+XZKit.m in Sources */,
+				28F4F2BC224A89C600E7B23C /* XZKit+Date.swift in Sources */,
+				28E3B73822716E4C005ECB02 /* XZImageViewer.m in Sources */,
+				28CA189422478E8300F16621 /* NSString+XZKit.m in Sources */,
+				28E3B73B22716E4C005ECB02 /* XZImageCarouselView.m in Sources */,
+				28CA185B22478E8300F16621 /* XZNavigationGestureDrivable.swift in Sources */,
+				28CA187422478E8300F16621 /* UIView+XZKit.m in Sources */,
+				28CA189022478E8300F16621 /* NSBundle+XZKit.m in Sources */,
+				28CA188722478E8300F16621 /* Data+XZKit.swift in Sources */,
+				28CA189622478E8300F16621 /* XZContentStatusRepresentable.swift in Sources */,
+				28CA185922478E8300F16621 /* XZNavigationBarCustomizable.swift in Sources */,
+				28CA185E22478E8300F16621 /* UITabBar+XZNavigationController.swift in Sources */,
+				28F4F2B4224A867E00E7B23C /* XZKit+Geometry.m in Sources */,
+				28CA186F22478E8300F16621 /* UIImageView+XZKit.swift in Sources */,
+				28CA18A622478E8300F16621 /* XZProgressView.swift in Sources */,
+				28F4F2BA224A886200E7B23C /* XZKit+Runtime.m in Sources */,
+				28CA185F22478E8300F16621 /* XZNavigationController.TransitionController.swift in Sources */,
+				28CA189B22478E8300F16621 /* XZTextImageLayout.swift in Sources */,
+				28F4F2B6224A86C400E7B23C /* XZKit+Geometry.swift in Sources */,
+				28CA18A322478E8300F16621 /* XZAppLanguage.swift in Sources */,
+				28CA188222478E8300F16621 /* XZAPIRequest.swift in Sources */,
+				28CA186E22478E8300F16621 /* UIDevice+XZKit.swift in Sources */,
+				28CA186822478E8300F16621 /* XZCacheManger.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin XCBuildConfiguration section */
+		28D014862275A9AD00B53668 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Debug;
+		};
+		28D014872275A9AD00B53668 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Release;
+		};
+		DD30EF4721A4330000C4C73C /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				COPY_PHASE_STRIP = NO;
+				CURRENT_PROJECT_VERSION = 1;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_TREAT_WARNINGS_AS_ERRORS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 12.1;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = iphoneos;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_TREAT_WARNINGS_AS_ERRORS = YES;
+				VERSIONING_SYSTEM = "apple-generic";
+				VERSION_INFO_PREFIX = "";
+			};
+			name = Debug;
+		};
+		DD30EF4821A4330000C4C73C /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				COPY_PHASE_STRIP = NO;
+				CURRENT_PROJECT_VERSION = 1;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_TREAT_WARNINGS_AS_ERRORS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 12.1;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				MTL_FAST_MATH = YES;
+				SDKROOT = iphoneos;
+				SWIFT_COMPILATION_MODE = wholemodule;
+				SWIFT_OPTIMIZATION_LEVEL = "-O";
+				SWIFT_TREAT_WARNINGS_AS_ERRORS = YES;
+				VALIDATE_PRODUCT = YES;
+				VERSIONING_SYSTEM = "apple-generic";
+				VERSION_INFO_PREFIX = "";
+			};
+			name = Release;
+		};
+		DD30EF4A21A4330000C4C73C /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_IDENTITY = "";
+				CODE_SIGN_STYLE = Manual;
+				DEFINES_MODULE = YES;
+				DEVELOPMENT_TEAM = "";
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"XZKIT_FRAMEWORK=1",
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				INFOPLIST_FILE = XZKit/Info.plist;
+				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.mlibai.XZKit;
+				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
+				PROVISIONING_PROFILE_SPECIFIER = "";
+				SKIP_INSTALL = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		DD30EF4B21A4330000C4C73C /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_IDENTITY = "";
+				CODE_SIGN_STYLE = Manual;
+				DEFINES_MODULE = YES;
+				DEVELOPMENT_TEAM = "";
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				GCC_PREPROCESSOR_DEFINITIONS = "XZKIT_FRAMEWORK=1";
+				INFOPLIST_FILE = XZKit/Info.plist;
+				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.mlibai.XZKit;
+				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
+				PROVISIONING_PROFILE_SPECIFIER = "";
+				SKIP_INSTALL = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		28D014882275A9AD00B53668 /* Build configuration list for PBXAggregateTarget "XZKit Aggregate" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				28D014862275A9AD00B53668 /* Debug */,
+				28D014872275A9AD00B53668 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		DD30EF3B21A4330000C4C73C /* Build configuration list for PBXProject "XZKit" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				DD30EF4721A4330000C4C73C /* Debug */,
+				DD30EF4821A4330000C4C73C /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		DD30EF4921A4330000C4C73C /* Build configuration list for PBXNativeTarget "XZKit" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				DD30EF4A21A4330000C4C73C /* Debug */,
+				DD30EF4B21A4330000C4C73C /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = DD30EF3821A4330000C4C73C /* Project object */;
+}
