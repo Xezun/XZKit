@@ -31,25 +31,25 @@ import Foundation
 /// ```
 public struct DateFormat: RawRepresentable, ExpressibleByStringLiteral, Equatable {
     
-    /// 标准日期时间格式，如 2016-09-13 13:02:46 。
+    /// 标准日期时间格式：yyyy.MM.dd HH:mm:ss 。
     public static let dateTime        = DateFormat("yyyy.MM.dd HH:mm:ss");
-    /// 短日期时间格式，如 2016-9-13 13:2:46 。
+    /// 短日期时间格式：y.M.d H:m:s 。
     public static let shortDateTime   = DateFormat("y.M.d H:m:s");
-    /// 标准日期格式，如 2016-09-13 。
+    /// 标准日期格式：yyyy.MM.dd 。
     public static let date            = DateFormat("yyyy.MM.dd");
-    /// 短日期格式，如 2016-9-13 。
+    /// 短日期格式：y.M.d 。
     public static let shortDate       = DateFormat("y.M.d");
-    /// 标准日月格式，如 09-13 。
+    /// 标准日月格式：MM-dd 。
     public static let monthDay        = DateFormat("MM-dd");
-    /// 短日月格式，如 9-13 。
+    /// 短日月格式：M-d 。
     public static let shortMonthDay   = DateFormat("M-d");
-    /// 标准时间格式，如 13:02:46 。
+    /// 标准时间格式：HH:mm:ss 。
     public static let time            = DateFormat("HH:mm:ss");
-    /// 短时间格式，如 13:2:46 。
+    /// 短时间格式：H:m:s 。
     public static let shortTime       = DateFormat("H:m:s");
-    /// 标准时分格式，如 13:02 。
+    /// 标准时分格式：HH:mm 。
     public static let hourMinute      = DateFormat("HH:mm");
-    /// 短时分格式，如 13:2 。
+    /// 短时分格式：H:m 。
     public static let shortHourMinute = DateFormat("H:m");
     
     public typealias RawValue = String
