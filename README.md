@@ -1,7 +1,7 @@
 # XZKit
 
 [![Build](https://img.shields.io/badge/build-pass-brightgreen.svg)](https://cocoapods.org/pods/XZKit)
-[![Version](https://img.shields.io/badge/Version-4.2.7-blue.svg?style=flat)](http://cocoapods.org/pods/XZKit)
+[![Version](https://img.shields.io/badge/Version-4.2.8-blue.svg?style=flat)](http://cocoapods.org/pods/XZKit)
 [![License](https://img.shields.io/badge/License-MIT-green.svg)](http://cocoapods.org/pods/XZKit)
 [![Platform](https://img.shields.io/badge/Platform-iOS-yellow.svg)](http://cocoapods.org/pods/XZKit)
 

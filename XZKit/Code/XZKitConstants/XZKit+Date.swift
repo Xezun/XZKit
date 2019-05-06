@@ -31,25 +31,25 @@ import Foundation
 /// ```
 public struct DateFormat: RawRepresentable, ExpressibleByStringLiteral, Equatable {
     
-    /// 标准日期时间格式：yyyy.MM.dd HH:mm:ss 。
-    public static let dateTime        = DateFormat("yyyy.MM.dd HH:mm:ss");
-    /// 短日期时间格式：y.M.d H:m:s 。
-    public static let shortDateTime   = DateFormat("y.M.d H:m:s");
-    /// 标准日期格式：yyyy.MM.dd 。
-    public static let date            = DateFormat("yyyy.MM.dd");
-    /// 短日期格式：y.M.d 。
-    public static let shortDate       = DateFormat("y.M.d");
-    /// 标准日月格式：MM-dd 。
+    /// yyyy-MM-dd HH:mm:ss
+    public static let dateTime        = DateFormat("yyyy-MM-dd HH:mm:ss");
+    /// y-M-d H:m:s
+    public static let shortDateTime   = DateFormat("y-M-d H:m:s");
+    /// yyyy-MM-dd
+    public static let date            = DateFormat("yyyy-MM-dd");
+    /// y-M-d
+    public static let shortDate       = DateFormat("y-M-d");
+    /// MM-dd
     public static let monthDay        = DateFormat("MM-dd");
-    /// 短日月格式：M-d 。
+    /// M-d
     public static let shortMonthDay   = DateFormat("M-d");
-    /// 标准时间格式：HH:mm:ss 。
+    /// HH:mm:ss
     public static let time            = DateFormat("HH:mm:ss");
-    /// 短时间格式：H:m:s 。
+    /// H:m:s
     public static let shortTime       = DateFormat("H:m:s");
-    /// 标准时分格式：HH:mm 。
+    /// HH:mm
     public static let hourMinute      = DateFormat("HH:mm");
-    /// 短时分格式：H:m 。
+    /// H:m
     public static let shortHourMinute = DateFormat("H:m");
     
     public typealias RawValue = String
@@ -120,6 +120,18 @@ extension Date {
     // 在用户当前日历下，获取日期中的天，如 2017-12-08 中的 08 。
     public var day: Int {
         return Calendar.current.component(.day, from: self);
+    }
+    
+    public var hour: Int {
+        return Calendar.current.component(.hour, from: self)
+    }
+    
+    public var minute: Int {
+        return Calendar.current.component(.minute, from: self)
+    }
+    
+    public var second: Int {
+        return Calendar.current.component(.second, from: self)
     }
     
     // 在用户当前日历下，获取日期所在周的次序，具体是星期几与周首设置有关。

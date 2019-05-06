@@ -11,7 +11,7 @@ Pod::Spec.new do |s|
     s.cocoapods_version = ">= 1.7.0.beta.3"
   
     s.name    = "XZKit"
-    s.version = "4.2.7"
+    s.version = "4.2.8"
     s.summary = "XZKit 封装了 iOS App 开发过程中常用的功能和组件!"
     
     # This description is used to generate tags and improve search results.

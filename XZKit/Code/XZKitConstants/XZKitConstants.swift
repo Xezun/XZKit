@@ -64,7 +64,7 @@ public func XZLog(_ format: String, file: String = #file, function: String = #fu
     guard isDebugMode else {
         return
     }
-    let date = String.init(date: Date(), format: "yyyy-MM-dd HH:mm:ss.SSS")
+    let date = Date().formatted(with: "yyyy-MM-dd HH:mm:ss.SSS")
     let comment = "§ \(file.split(separator: "/").last!)(\(line)) § \(function) § \(date) §"
     let line = String.init(repeating: "-", count: comment.count)
     print("\(line)\n\(comment)\n\(line)\n\(String.init(formats: format, arguments: arguments))\n")
