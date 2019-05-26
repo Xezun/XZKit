@@ -21,6 +21,7 @@
 /* End PBXAggregateTarget section */
 
 /* Begin PBXBuildFile section */
+		2828CDBC229AF0B80025D736 /* WKWebView+XZKit.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2828CDBB229AF0B80025D736 /* WKWebView+XZKit.swift */; };
 		288391E2224DB57B00FB0209 /* XZKit+UIView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 288391E1224DB57B00FB0209 /* XZKit+UIView.swift */; };
 		28C066A3224F65BF0011F052 /* XZKit+HexadecimalEncoding.h in Headers */ = {isa = PBXBuildFile; fileRef = 28C066A2224F65BF0011F052 /* XZKit+HexadecimalEncoding.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		28C066A5224F65D20011F052 /* XZKit+HexadecimalEncoding.m in Sources */ = {isa = PBXBuildFile; fileRef = 28C066A4224F65D20011F052 /* XZKit+HexadecimalEncoding.m */; };
@@ -43,7 +44,6 @@
 		28CA186C22478E8300F16621 /* UIAlertController+XZKit.swift in Sources */ = {isa = PBXBuildFile; fileRef = 28CA180C22478E8300F16621 /* UIAlertController+XZKit.swift */; };
 		28CA186E22478E8300F16621 /* UIDevice+XZKit.swift in Sources */ = {isa = PBXBuildFile; fileRef = 28CA180E22478E8300F16621 /* UIDevice+XZKit.swift */; };
 		28CA186F22478E8300F16621 /* UIImageView+XZKit.swift in Sources */ = {isa = PBXBuildFile; fileRef = 28CA180F22478E8300F16621 /* UIImageView+XZKit.swift */; };
-		28CA187122478E8300F16621 /* UIWebView+XZKit.swift in Sources */ = {isa = PBXBuildFile; fileRef = 28CA181122478E8300F16621 /* UIWebView+XZKit.swift */; };
 		28CA187322478E8300F16621 /* UIApplication+XZKit.swift in Sources */ = {isa = PBXBuildFile; fileRef = 28CA181322478E8300F16621 /* UIApplication+XZKit.swift */; };
 		28CA187422478E8300F16621 /* UIView+XZKit.m in Sources */ = {isa = PBXBuildFile; fileRef = 28CA181522478E8300F16621 /* UIView+XZKit.m */; };
 		28CA187622478E8300F16621 /* UIImage+XZKit.h in Headers */ = {isa = PBXBuildFile; fileRef = 28CA181722478E8300F16621 /* UIImage+XZKit.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -105,6 +105,7 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		2828CDBB229AF0B80025D736 /* WKWebView+XZKit.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "WKWebView+XZKit.swift"; sourceTree = "<group>"; };
 		288391E1224DB57B00FB0209 /* XZKit+UIView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "XZKit+UIView.swift"; sourceTree = "<group>"; };
 		28C066A2224F65BF0011F052 /* XZKit+HexadecimalEncoding.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "XZKit+HexadecimalEncoding.h"; sourceTree = "<group>"; };
 		28C066A4224F65D20011F052 /* XZKit+HexadecimalEncoding.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "XZKit+HexadecimalEncoding.m"; sourceTree = "<group>"; };
@@ -127,7 +128,6 @@
 		28CA180C22478E8300F16621 /* UIAlertController+XZKit.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "UIAlertController+XZKit.swift"; sourceTree = "<group>"; };
 		28CA180E22478E8300F16621 /* UIDevice+XZKit.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "UIDevice+XZKit.swift"; sourceTree = "<group>"; };
 		28CA180F22478E8300F16621 /* UIImageView+XZKit.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "UIImageView+XZKit.swift"; sourceTree = "<group>"; };
-		28CA181122478E8300F16621 /* UIWebView+XZKit.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "UIWebView+XZKit.swift"; sourceTree = "<group>"; };
 		28CA181322478E8300F16621 /* UIApplication+XZKit.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "UIApplication+XZKit.swift"; sourceTree = "<group>"; };
 		28CA181522478E8300F16621 /* UIView+XZKit.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIView+XZKit.m"; sourceTree = "<group>"; };
 		28CA181722478E8300F16621 /* UIImage+XZKit.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIImage+XZKit.h"; sourceTree = "<group>"; };
@@ -309,7 +309,7 @@
 				28CA180C22478E8300F16621 /* UIAlertController+XZKit.swift */,
 				28CA180E22478E8300F16621 /* UIDevice+XZKit.swift */,
 				28CA180F22478E8300F16621 /* UIImageView+XZKit.swift */,
-				28CA181122478E8300F16621 /* UIWebView+XZKit.swift */,
+				2828CDBB229AF0B80025D736 /* WKWebView+XZKit.swift */,
 				28CA181322478E8300F16621 /* UIApplication+XZKit.swift */,
 			);
 			path = Swift;
@@ -681,7 +681,6 @@
 				28E3B72A22716E31005ECB02 /* XZCarouselView.ScrollView.m in Sources */,
 				28CA188422478E8300F16621 /* URL+XZKit.swift in Sources */,
 				28CA188022478E8300F16621 /* XZAPIMethod.swift in Sources */,
-				28CA187122478E8300F16621 /* UIWebView+XZKit.swift in Sources */,
 				28CA185A22478E8300F16621 /* UINavigationBar+XZNavigationController.swift in Sources */,
 				28CA188D22478E8300F16621 /* NSData+XZKit.m in Sources */,
 				28CA187A22478E8300F16621 /* UIImage+XZKit.m in Sources */,
@@ -691,6 +690,7 @@
 				28F4F2BC224A89C600E7B23C /* XZKit+Date.swift in Sources */,
 				28E3B73822716E4C005ECB02 /* XZImageViewer.m in Sources */,
 				28CA189422478E8300F16621 /* NSString+XZKit.m in Sources */,
+				2828CDBC229AF0B80025D736 /* WKWebView+XZKit.swift in Sources */,
 				28E3B73B22716E4C005ECB02 /* XZImageCarouselView.m in Sources */,
 				28CA185B22478E8300F16621 /* XZNavigationGestureDrivable.swift in Sources */,
 				28CA187422478E8300F16621 /* UIView+XZKit.m in Sources */,
