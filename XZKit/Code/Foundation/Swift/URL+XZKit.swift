@@ -8,10 +8,6 @@
 
 import Foundation
 
-
-struct URLQuery {
-    
-}
 extension URL {
     
     /// URL 的查询字段。
@@ -28,47 +24,49 @@ extension URL {
     }
     
     /// URL 的查询字段的字典形式。
-    /// - Note: 字段值类型为 String? 或者 [String?] 。
-    public var queryValues: [String: Any?]? {
+    public var queryValues: [String: [String?]]? {
         guard var queryItems = self.queryItems, queryItems.count > 0 else { return nil }
-        var queryValues = [String: Any?]()
+        var queryValues = [String: [String?]]()
         
         while !queryItems.isEmpty {
             let queryItem = queryItems.removeLast()
             
-            let name = queryItem.name
+            let queryKey = queryItem.name
             
-            var values = [queryItem.value]
+            var queryValue = [queryItem.value]
             queryItems.removeAll(where: { (item) -> Bool in
-                guard item.name == name else {
+                guard item.name == queryKey else {
                     return false
                 }
-                values.append(item.value)
+                queryValue.append(item.value)
                 return true
             })
             
-            if values.count > 1 {
-                queryValues[name] = values
-            } else {
-                queryValues.updateValue(queryItem.value, forKey: name)
-            }
+            queryValues[queryKey] = queryValue;
         }
         return queryValues
     }
     
     /// 设置查询字段的值，该方法删除所有已设置的同名查询字段，然后再添加新的字段。
-    /// - Note: 设置 nil 不会删除查询字段。
+    /// - Note: 设置 nil 不会删除查询字段，请使用 remove 方法。
     ///
     /// - Parameters:
     ///   - value: 查询字段值。
     ///   - name: 查询字段名。
     public mutating func setQueryValue(_ queryValue: Any?, forKey queryKey: String) {
-        if var queryItems = self.queryItems?.filter({ $0.name != queryKey }) {
-            queryItems.append(URLQueryItem.init(name: queryKey, value: String(queryValue)))
-            self.queryItems = queryItems
+        var queryItems = self.queryItems?.filter({ $0.name != queryKey }) ?? []
+        if let queryValue = queryValue {
+            if let queryValues = queryValue as? [Any] {
+                for queryValue in queryValues {
+                    queryItems.append(.init(name: queryKey, value: String(queryValue)))
+                }
+            } else {
+                queryItems.append(.init(name: queryKey, value: String(queryValue)))
+            }
         } else {
-            self.queryItems = [URLQueryItem.init(name: queryKey, value: String(queryValue))]
+            queryItems.append(URLQueryItem.init(name: queryKey, value: nil))
         }
+        self.queryItems = queryItems
     }
     
     /// 添加一个查询字段。
@@ -76,20 +74,27 @@ extension URL {
     /// - Parameters:
     ///   - value: 查询字段值。
     ///   - name: 查询字段名。
-    public mutating func addQueryValue(_ value: Any?, forKey name: String) {
-        if var queryItems = self.queryItems {
-            queryItems.append(URLQueryItem.init(name: name, value: String(value)))
-            self.queryItems = queryItems
+    public mutating func addQueryValue(_ queryValue: Any?, forKey queryKey: String) {
+        var queryItems = self.queryItems ?? []
+        if let queryValue = queryValue {
+            if let queryValues = queryValue as? [Any] {
+                for queryValue in queryValues {
+                    queryItems.append(.init(name: queryKey, value: String(queryValue)))
+                }
+            } else {
+                queryItems.append(.init(name: queryKey, value: String(queryValue)))
+            }
         } else {
-            self.queryItems = [URLQueryItem.init(name: name, value: String(value))]
+            queryItems.append(URLQueryItem.init(name: queryKey, value: nil))
         }
+        self.queryItems = queryItems
     }
     
     /// 获取 URL 中查询字段值，String? 或者 [String?]。
     ///
     /// - Parameter name: 查询字段名。
     /// - Returns: 查询字段值。
-    public func queryValue(forKey name: String) -> Any? {
+    public func queryValue(forKey name: String) -> [String?]? {
         guard let queryItems = self.queryItems else { return nil }
         
         var value: [String?]? = nil
@@ -102,15 +107,7 @@ extension URL {
                 value!.append(queryItem.value)
             }
         }
-        
-        if value == nil {
-            return nil
-        }
-        
-        if value!.count == 1 {
-            return value![0]
-        }
-        
+
         return value
     }
     
@@ -128,7 +125,7 @@ extension URL {
     ///
     /// - Parameter name: 查询字段。
     /// - Returns: 是否包含。
-    public func containsQueryKey(_ name: String) -> Bool {
+    public func containsQueryValue(forKey name: String) -> Bool {
         guard let queryItems = self.queryItems else { return false }
         return queryItems.contains(where: { $0.name == name })
     }
@@ -137,11 +134,11 @@ extension URL {
     /// - Note: 除字典、数组以外其它的值都将作为单个值。
     ///
     /// - Parameter keyedValues: 带添加的键值字典。
-    public mutating func addQueryItems(from value: Any?) {
-        self = self.addingQueryItems(from: value)
+    public mutating func addQueryValues(from value: Any?) {
+        self = self.addingQueryValues(from: value)
     }
     
-    public func addingQueryItems(from value: Any?) -> URL {
+    public func addingQueryValues(from value: Any?) -> URL {
         guard let value = value else { return self }
         
         var newQueryItems: [URLQueryItem]! = nil

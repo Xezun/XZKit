@@ -261,8 +261,8 @@
 		28CA17FA22478E8300F16621 /* AppRedirection */ = {
 			isa = PBXGroup;
 			children = (
-				28CA17FB22478E8300F16621 /* XZAppRedirection.m */,
 				28CA17FC22478E8300F16621 /* XZAppRedirection.h */,
+				28CA17FB22478E8300F16621 /* XZAppRedirection.m */,
 			);
 			path = AppRedirection;
 			sourceTree = "<group>";
