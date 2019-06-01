@@ -122,14 +122,17 @@ extension Date {
         return Calendar.current.component(.day, from: self);
     }
     
+    /// 小时数。
     public var hour: Int {
         return Calendar.current.component(.hour, from: self)
     }
     
+    /// 分钟数。
     public var minute: Int {
         return Calendar.current.component(.minute, from: self)
     }
     
+    /// 秒数。
     public var second: Int {
         return Calendar.current.component(.second, from: self)
     }

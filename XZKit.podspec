@@ -8,7 +8,7 @@
 
 Pod::Spec.new do |s|
   
-    s.cocoapods_version = ">= 1.7.0.beta.3"
+    s.cocoapods_version = ">= 1.7.1"
   
     s.name    = "XZKit"
     s.version = "4.2.8"
@@ -33,8 +33,7 @@ Pod::Spec.new do |s|
     s.social_media_url = 'https://xzkit.mlibai.com/'
     
     s.module_name    = 'XZKit'
-    s.swift_version  = "5.0"
-    s.swift_versions = ["4.2", "5.0"]
+    s.swift_versions = ["5.0"]
     s.requires_arc   = true
     s.ios.deployment_target = '8.0'
     

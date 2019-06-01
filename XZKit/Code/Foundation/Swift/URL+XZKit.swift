@@ -25,26 +25,33 @@ extension URL {
     
     /// URL 的查询字段的字典形式。
     public var queryValues: [String: [String?]]? {
-        guard var queryItems = self.queryItems, queryItems.count > 0 else { return nil }
-        var queryValues = [String: [String?]]()
-        
-        while !queryItems.isEmpty {
-            let queryItem = queryItems.removeLast()
+        get {
+            guard var queryItems = self.queryItems, queryItems.count > 0 else {
+                return nil
+            }
+            var queryValues = [String: [String?]]()
             
-            let queryKey = queryItem.name
-            
-            var queryValue = [queryItem.value]
-            queryItems.removeAll(where: { (item) -> Bool in
-                guard item.name == queryKey else {
-                    return false
-                }
-                queryValue.append(item.value)
-                return true
-            })
-            
-            queryValues[queryKey] = queryValue;
+            while !queryItems.isEmpty {
+                let queryItem = queryItems.removeLast()
+                
+                let queryKey = queryItem.name
+                
+                var queryValue = [queryItem.value]
+                queryItems.removeAll(where: { (item) -> Bool in
+                    guard item.name == queryKey else {
+                        return false
+                    }
+                    queryValue.append(item.value)
+                    return true
+                })
+                
+                queryValues[queryKey] = queryValue;
+            }
+            return queryValues
         }
-        return queryValues
+        set {
+            
+        }
     }
     
     /// 设置查询字段的值，该方法删除所有已设置的同名查询字段，然后再添加新的字段。
@@ -125,9 +132,9 @@ extension URL {
     ///
     /// - Parameter name: 查询字段。
     /// - Returns: 是否包含。
-    public func containsQueryValue(forKey name: String) -> Bool {
+    public func contains(queryKey: String) -> Bool {
         guard let queryItems = self.queryItems else { return false }
-        return queryItems.contains(where: { $0.name == name })
+        return queryItems.contains(where: { $0.name == queryKey })
     }
     
     /// 将值添加到查询字符串中。
