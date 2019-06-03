@@ -36,6 +36,7 @@ void xz_print(NSString *format, ...) {
 }
 
 void xz_print_v(NSString *format, va_list args) {
+    // 使用 stderr 错误输出，立即输出内容（printf 使用 stdout 标准输出，遇到 \n 才输出）。
     fprintf(stderr, "%s\n", [[[NSString alloc] initWithFormat:format arguments:args] UTF8String]);
 }
 
