@@ -9,7 +9,7 @@
 import UIKit
 import XZKit
 
-class Example1Style2ViewController: UIViewController, ImageCarouselViewDelegate, CarouselViewTransitioningDelegate {
+class Example1Style2ViewController: UIViewController, ImageCarouselViewDelegate {
     
     @IBOutlet fileprivate weak var imageCarouselView: ImageCarouselView!
     
@@ -66,12 +66,4 @@ class Example1Style2ViewController: UIViewController, ImageCarouselViewDelegate,
         })
     }
     
-    func carouselView(_ carouselView: CarouselView, animateTransition isInteractive: Bool) {
-        
-    }
-    
-    func carouselView(_ carouselView: CarouselView, animationEnded transitionCompleted: Bool) {
-        
-    }
-
 }

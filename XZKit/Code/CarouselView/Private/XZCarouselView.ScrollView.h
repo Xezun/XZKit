@@ -18,6 +18,7 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
+/// 私有类用于处理轮播视图横向或垂直滚动的 UIScrollView 。
 @interface _XZCarouselViewScrollView : UIScrollView {
     @package
     XZCarouselView * __unsafe_unretained _Nonnull _carouselView;
@@ -29,12 +30,18 @@ NS_ASSUME_NONNULL_BEGIN
     XZCarouselViewPagingOrientation _pagingOrientation;
 }
 
+/// 懒加载。
 @property (nonatomic, readonly, nonnull) _XZCarouselViewItemView *itemView0;
+/// 前一个视图容器。
 @property (nonatomic, readonly, nonnull) _XZCarouselViewItemView *itemView1;
+/// 当前视图容器。
 @property (nonatomic, readonly, nonnull) _XZCarouselViewItemView *itemView2;
+/// 后一个视图容器。
 @property (nonatomic, readonly, nonnull) _XZCarouselViewItemView *itemView3;
+/// 懒加载。
 @property (nonatomic, readonly, nonnull) _XZCarouselViewItemView *itemView4;
 
+/// 视图层级。
 @property (nonatomic) XZCarouselViewTransitionViewHierarchy itemViewHierarchy;
 
 @property (nonatomic, readonly, getter=isPrevItemViewVisiable) BOOL prevItemViewVisiable;

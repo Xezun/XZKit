@@ -110,7 +110,7 @@ extension Example1Style1ViewController: ImageCarouselViewDelegate {
 
 extension Example1Style1ViewController: CarouselViewTransitioningDelegate {
     
-    func carouselView(_ carouselView: CarouselView, animateTransition isInteractive: Bool) {
+    func carouselView(_ carouselView: CarouselView, beginTransitioning isInteractive: Bool) {
         let width = carouselView.frame.width * 0.5
         
         let transformAnimation = CAKeyframeAnimation(keyPath: #keyPath(CALayer.transform))
@@ -162,8 +162,10 @@ extension Example1Style1ViewController: CarouselViewTransitioningDelegate {
         carouselView.forwardTransitioningView.layer.add(anchorPointAnimation, forKey: "anchorPoint")
     }
     
-    func carouselView(_ carouselView: CarouselView, animationEnded transitionCompleted: Bool) {
-        
+    func carouselView(_ carouselView: CarouselView, endTransitioning transitionCompleted: Bool) {
+        carouselView.backwardTransitioningView.layer.removeAllAnimations()
+        carouselView.transitioningView.layer.removeAllAnimations()
+        carouselView.forwardTransitioningView.layer.removeAllAnimations()
     }
     
 }

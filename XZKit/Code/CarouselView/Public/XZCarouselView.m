@@ -1249,10 +1249,11 @@ static void XZCarouselViewAddTransitionAnimationIfNeeded(XZCarouselView * const 
         return;
     }
     
-    if (carouselView->_transitioningDelegate != nil) {
+    if (carouselView->_transitioningDelegate) {
+        // 优先使用代理的自定义动画。
         carouselView->_isTransitioning = YES;
         
-        [carouselView->_transitioningDelegate carouselView:carouselView animateTransition:isInteractive];
+        [carouselView->_transitioningDelegate carouselView:carouselView beginTransitioning:isInteractive];
         
         carouselView->_scrollView->_itemView1.transitionViewIfLoaded.layer.speed = 0;
         carouselView->_scrollView->_itemView2.transitionViewIfLoaded.layer.speed = 0;
@@ -1300,50 +1301,47 @@ static void XZCarouselViewRemoveTransitionAnimationIfNeeded(XZCarouselView * con
         return;
     }
     
-    if (carouselView->_transitioningDelegate != nil) {
-        UIView * const __unsafe_unretained transitionView1 = carouselView->_scrollView->_itemView1.transitionViewIfLoaded;
-        if (transitionView1 != nil) {
-            [carouselView->_scrollView->_itemView1 bringBackTransitionViewIfNeeded];
-            
-            [transitionView1.layer removeAllAnimations];
-            transitionView1.layer.speed = 1.0;
-            transitionView1.layer.timeOffset = 0.0;
-        }
-        
-        UIView * const __unsafe_unretained transitionView3 = carouselView->_scrollView->_itemView3.transitionViewIfLoaded;
-        if (transitionView3 != nil) {
-            [carouselView->_scrollView->_itemView3 bringBackTransitionViewIfNeeded];
-            
-            [transitionView3.layer removeAllAnimations];
-            transitionView3.layer.speed = 1.0;
-            transitionView3.layer.timeOffset = 0.0;
-        }
-        
-        UIView * const __unsafe_unretained transitionView2 = carouselView->_scrollView->_itemView2.transitionViewIfLoaded;
-        if (transitionView2 != nil) {
-            [carouselView->_scrollView->_itemView2 bringBackTransitionViewIfNeeded];
-            
-            [transitionView2.layer removeAllAnimations];
-            transitionView2.layer.speed = 1.0;
-            transitionView2.layer.timeOffset = 0.0;
-        }
-    } else {
-        [carouselView->_scrollView.itemView1.transitionView.layer removeAnimationForKey:XZCarouselViewTransitionAnimationKey];
-        [carouselView->_scrollView.itemView1 transitionView].layer.speed = 1.0;
-        [carouselView->_scrollView.itemView1 transitionView].layer.timeOffset = 0.0;
-        
-        [carouselView->_scrollView.itemView2.transitionView.layer removeAnimationForKey:XZCarouselViewTransitionAnimationKey];
-        [carouselView->_scrollView.itemView2 transitionView].layer.speed = 1.0;
-        [carouselView->_scrollView.itemView2 transitionView].layer.timeOffset = 0.0;
-        
-        [carouselView->_scrollView.itemView3.transitionView.layer removeAnimationForKey:XZCarouselViewTransitionAnimationKey];
-        [carouselView->_scrollView.itemView3 transitionView].layer.speed = 1.0;
-        [carouselView->_scrollView.itemView3 transitionView].layer.timeOffset = 0.0;
-    }
-    
     carouselView->_isTransitioning = NO;
     
-    [carouselView->_transitioningDelegate carouselView:carouselView animationEnded:isCompleted];
+    UIView * const __unsafe_unretained transitionViews[3] = {
+        [carouselView->_scrollView->_itemView1 transitionViewIfLoaded],
+        [carouselView->_scrollView->_itemView2 transitionViewIfLoaded],
+        [carouselView->_scrollView->_itemView3 transitionViewIfLoaded]
+    };
+    
+    if (carouselView->_transitioningDelegate) {
+        // Bring transitionViews back to itemViews if needed.
+        UIView * const __unsafe_unretained itemViews[3] = {
+            carouselView->_scrollView->_itemView1,
+            carouselView->_scrollView->_itemView2,
+            carouselView->_scrollView->_itemView3
+        };
+        
+        for (NSInteger i = 0; i < 3; i++) {
+            if (transitionViews[i].superview == itemViews[i]) {
+                continue;
+            }
+            [itemViews[i] addSubview:transitionViews[i]];
+        }
+        
+        // The delegate should remove the animations added to the transitionView.
+        // [transitionView1.layer removeAllAnimations];
+        // [transitionView2.layer removeAllAnimations];
+        // [transitionView3.layer removeAllAnimations];
+        [carouselView->_transitioningDelegate carouselView:carouselView endTransitioning:isCompleted];
+    } else {
+        [transitionViews[0].layer removeAnimationForKey:XZCarouselViewTransitionAnimationKey];
+        [transitionViews[1].layer removeAnimationForKey:XZCarouselViewTransitionAnimationKey];
+        [transitionViews[2].layer removeAnimationForKey:XZCarouselViewTransitionAnimationKey];
+    }
+    
+    // reset the animation state.
+    transitionViews[0].layer.speed = 1.0;
+    transitionViews[1].layer.speed = 1.0;
+    transitionViews[2].layer.speed = 1.0;
+    transitionViews[0].layer.timeOffset = 0.0;
+    transitionViews[1].layer.timeOffset = 0.0;
+    transitionViews[2].layer.timeOffset = 0.0;
 }
 
 static CGFloat XZCarouselViewScrollViewGetTransition(_XZCarouselViewScrollView * const scrollView) {

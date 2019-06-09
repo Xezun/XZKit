@@ -78,16 +78,6 @@
     return _transitionView;
 }
 
-- (void)bringBackTransitionViewIfNeeded {
-    if (_transitionView.superview == self) {
-        return;
-    }
-    // 恢复到初始状态。
-    _transitionView.transform = CGAffineTransformIdentity;
-    [self addSubview:_transitionView];
-    [self layoutIfNeeded];
-}
-
 - (UIScrollView *)zoomingView {
     if (_zoomingView != nil) {
         return _zoomingView;

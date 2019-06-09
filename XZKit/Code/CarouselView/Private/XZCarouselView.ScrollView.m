@@ -128,20 +128,20 @@ static UIUserInterfaceLayoutDirection UIViewGetUserInterfaceLayoutDirection(UIVi
             case XZCarouselViewTransitionViewHierarchyInvertedCarousel:
                 [self bringSubviewToFront:_itemView1];
                 [self bringSubviewToFront:_itemView3];
-                [self bringSubviewToFront:_itemView0];
-                [self bringSubviewToFront:_itemView4];
+                if (_itemView0) { [self bringSubviewToFront:_itemView0]; }
+                if (_itemView4) { [self bringSubviewToFront:_itemView4]; }
                 break;
             case XZCarouselViewTransitionViewHierarchyPageCurl:
                 [self bringSubviewToFront:_itemView3];
                 [self bringSubviewToFront:_itemView2];
                 [self bringSubviewToFront:_itemView1];
-                [self bringSubviewToFront:_itemView0];
+                if (_itemView0) { [self bringSubviewToFront:_itemView0]; }
                 break;
             case XZCarouselViewTransitionViewHierarchyNavigation:
                 [self bringSubviewToFront:_itemView1];
                 [self bringSubviewToFront:_itemView2];
                 [self bringSubviewToFront:_itemView3];
-                [self bringSubviewToFront:_itemView4];
+                if (_itemView4) { [self bringSubviewToFront:_itemView4]; }
                 break;
         }
     }
