@@ -370,7 +370,7 @@ typedef NS_ENUM(NSInteger, XZCarouselViewTransitionViewHierarchy) {
 NS_SWIFT_NAME(CarouselViewTransitioningDelegate)
 @protocol XZCarouselViewTransitioningDelegate <NSObject>
 
-/// 当转场开始时，通过此方法为 transitioningView 添加动画。
+/// 当转场开始时，此方法会被调用。一般情况下，此方法用于处理 transitioningView 的转场动画。
 ///
 /// @note 当 currentIndex 增加，transitioningView 隐藏的动画时间段为 0.0 ~ 1.0 。
 /// @note 当 currentIndex 减小，transitioningView 隐藏的动画时间段为 2.0 ~ 3.0 。
@@ -381,15 +381,15 @@ NS_SWIFT_NAME(CarouselViewTransitioningDelegate)
 ///
 /// @param carouselView 调用此方法的 XZCarouselView 对象。
 /// @param isInteractive 该转场是否是由为交互式的。
-- (void)carouselView:(XZCarouselView *)carouselView beginTransitioning:(BOOL)isInteractive;
+- (void)carouselView:(XZCarouselView *)carouselView animateTransition:(BOOL)isInteractive;
 
-/// 当转场结束时，此方法会被调用，在此方法中移除已添的转场动画。
+/// 当转场结束时，此方法会被调用。一般情况下，此方法用于执行移除转场动画的操作。
 /// @note 如果转场动画将 transitionView 添加到别的视图上，那么此方法触发前，会将其放回原始父视图上；
 ///       如果转场动画改变了 frame、transform 等属性，也应该此方法中恢复。
 ///
 /// @param carouselView 调用此方法的 XZCarouselView 对象。
 /// @param transitionCompleted 转场是否完成。
-- (void)carouselView:(XZCarouselView *)carouselView endTransitioning:(BOOL)transitionCompleted;
+- (void)carouselView:(XZCarouselView *)carouselView animationEnded:(BOOL)transitionCompleted;
 
 @end
 

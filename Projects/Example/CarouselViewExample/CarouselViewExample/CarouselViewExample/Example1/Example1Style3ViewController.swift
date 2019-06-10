@@ -71,7 +71,7 @@ class Example1Style3ViewController: UIViewController, CarouselViewDelegate, Caro
         print("didTransition: \(carouselView.currentIndex) -> \(transition)")
     }
     
-    func carouselView(_ carouselView: CarouselView, beginTransitioning isInteractive: Bool) {
+    func carouselView(_ carouselView: CarouselView, animateTransition isInteractive: Bool) {
         let height = carouselView.frame.height * 0.5
         
         let transformAnimation = CAKeyframeAnimation(keyPath: #keyPath(CALayer.transform))
@@ -123,7 +123,7 @@ class Example1Style3ViewController: UIViewController, CarouselViewDelegate, Caro
         carouselView.forwardTransitioningView.layer.add(anchorPointAnimation, forKey: "anchorPoint")
     }
     
-    func carouselView(_ carouselView: CarouselView, endTransitioning transitionCompleted: Bool) {
+    func carouselView(_ carouselView: CarouselView, animationEnded transitionCompleted: Bool) {
         carouselView.backwardTransitioningView.layer.removeAllAnimations()
         carouselView.transitioningView.layer.removeAllAnimations()
         carouselView.forwardTransitioningView.layer.removeAllAnimations()

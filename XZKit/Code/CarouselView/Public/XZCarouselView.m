@@ -393,6 +393,9 @@ static CGFloat XZCarouselViewScrollViewGetTransition(_XZCarouselViewScrollView *
                 break;
         }
         
+        // 添加自定义转场动画。
+        XZCarouselViewAddTransitionAnimationIfNeeded(self, NO);
+        
         // 更新 _currentIndex 。
         _currentIndex = newIndex;
         // 加载指定的视图。
@@ -403,13 +406,11 @@ static CGFloat XZCarouselViewScrollViewGetTransition(_XZCarouselViewScrollView *
         [_scrollView setContentOffset:targetItemView.frame.origin animated:NO]; // 移动到显示位置到当前视图的位置。
         [_scrollView setDelegate:self];
         
-        // 添加自定义转场动画。
-        XZCarouselViewAddTransitionAnimationIfNeeded(self, NO);
-        
         // UIView 动画和 CAnimation 虽然可以一起使用，但是对于 _transitionAnimation 只需要其中一段动画的需求，由于 UIView 动画不能精确控制
         // 时间，导致 _transitionAnimation 动画的执行时间不能控制在指定区间内。特别是动画时间越短，误差就越大，动画不一致的情况越严重。
         // 因此，多种方案尝试后，还是采用  setContentOffset:animated: 来制造滚动，通过进度来控制动画，来避免上面的问题。
         
+        // 滚动到目标位置。
         CGPoint const newOffset = self->_scrollView.itemView2.frame.origin;
         [self->_scrollView setContentOffset:newOffset animated:YES];
         
@@ -1250,10 +1251,10 @@ static void XZCarouselViewAddTransitionAnimationIfNeeded(XZCarouselView * const 
     }
     
     if (carouselView->_transitioningDelegate) {
-        // 优先使用代理的自定义动画。
         carouselView->_isTransitioning = YES;
         
-        [carouselView->_transitioningDelegate carouselView:carouselView beginTransitioning:isInteractive];
+        // 优先使用代理的自定义动画。
+        [carouselView->_transitioningDelegate carouselView:carouselView animateTransition:isInteractive];
         
         carouselView->_scrollView->_itemView1.transitionViewIfLoaded.layer.speed = 0;
         carouselView->_scrollView->_itemView2.transitionViewIfLoaded.layer.speed = 0;
@@ -1328,7 +1329,7 @@ static void XZCarouselViewRemoveTransitionAnimationIfNeeded(XZCarouselView * con
         // [transitionView1.layer removeAllAnimations];
         // [transitionView2.layer removeAllAnimations];
         // [transitionView3.layer removeAllAnimations];
-        [carouselView->_transitioningDelegate carouselView:carouselView endTransitioning:isCompleted];
+        [carouselView->_transitioningDelegate carouselView:carouselView animationEnded:isCompleted];
     } else {
         [transitionViews[0].layer removeAnimationForKey:XZCarouselViewTransitionAnimationKey];
         [transitionViews[1].layer removeAnimationForKey:XZCarouselViewTransitionAnimationKey];

@@ -287,7 +287,7 @@ extension Example3ViewController: CarouselViewControllerDelegate {
 
 extension Example3ViewController: CarouselViewTransitioningDelegate {
     
-    func carouselView(_ carouselView: CarouselView, beginTransitioning isInteractive: Bool) {
+    func carouselView(_ carouselView: CarouselView, animateTransition isInteractive: Bool) {
         let width: CGFloat = floor(UIScreen.main.bounds.width / 3.0)
         
         let timingFunction = isInteractive ? nil : CAMediaTimingFunction(name: .easeInEaseOut)
@@ -382,7 +382,7 @@ extension Example3ViewController: CarouselViewTransitioningDelegate {
         carouselView.forwardTransitioningView.layer.add(shadowOffsetAnimation, forKey: "shadowOffset")
     }
     
-    func carouselView(_ carouselView: CarouselView, endTransitioning transitionCompleted: Bool) {
+    func carouselView(_ carouselView: CarouselView, animationEnded transitionCompleted: Bool) {
         carouselView.backwardTransitioningView.layer.removeAllAnimations()
         carouselView.transitioningView.layer.removeAllAnimations()
         carouselView.forwardTransitioningView.layer.removeAllAnimations()
