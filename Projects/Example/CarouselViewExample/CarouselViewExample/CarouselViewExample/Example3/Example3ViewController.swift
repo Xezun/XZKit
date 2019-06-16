@@ -224,7 +224,7 @@ extension Example3ViewController: CarouselViewControllerDelegate {
                 menuTranstion(to: menuIndex - 1, transition: -transition)
             } else { // 滚动取消
                 menuTranstion(to: menuIndex, transition: 0)
-                collectionView.reloadData() // 重置上面目标菜单的转场进度。
+                collectionView.reloadData() // 重置菜单文字颜色。
             }
         } else { // 页面已跳转到新的 index 。
             if (transition == 0) { // 完成跳转
@@ -241,6 +241,7 @@ extension Example3ViewController: CarouselViewControllerDelegate {
     
     private func menuTranstion(to newIndex: Int, transition: CGFloat) {
         if menuIndex != newIndex, let targetMenuCell = collectionView.cellForItem(at: IndexPath(item: newIndex, section: 0)) as? Example3MenuCell {
+            // 菜单发生切换，且目标位置可以看到。
             targetMenuCell.transition = transition
             if let currentMenuCell = collectionView.cellForItem(at: IndexPath(item: menuIndex, section: 0)) as? Example3MenuCell {
                 currentMenuCell.transition = 1.0 - transition
@@ -270,11 +271,13 @@ extension Example3ViewController: CarouselViewControllerDelegate {
                 indicatorView.frame = CGRect.init(x: p2.x - 5.0, y: 37, width: 10, height: 3.0)
             }
         } else if let currentMenuCell = collectionView.cellForItem(at: IndexPath(item: menuIndex, section: 0)) as? Example3MenuCell {
+            // 只能看到当前菜单。
             currentMenuCell.transition = 1.0 - transition
             
             let p1 = currentMenuCell.center
             indicatorView.frame = CGRect.init(x: p1.x - 5.0, y: 37, width: 10, height: 3.0)
         } else {
+            // 看不到当前菜单。
             collectionView.performBatchUpdates({
                 self.collectionView.reloadData()
             }, completion: { (_) in

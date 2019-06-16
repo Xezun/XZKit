@@ -30,9 +30,10 @@
 
 @implementation _XZCarouselViewItemView
 
-@synthesize zoomingView = _zoomingView;
-@synthesize transitionView = _transitionView;
-@synthesize wrapperView = _wrapperView;
+@synthesize contentView = _contentView; // 内容视图
+@synthesize wrapperView = _wrapperView; // 盛放内容视图的视图，缩放时，实际缩放的是此视图（根据适配规则，可能只显示内容视图的部分区域）。
+@synthesize zoomingView = _zoomingView; // 处理缩放的视图。
+@synthesize transitionView = _transitionView; // 处理转场动画的视图。
 @synthesize minimumZoomScale = _minimumZoomScale;
 @synthesize maximumZoomScale = _maximumZoomScale;
 @synthesize contentOffset = _contentOffset;
@@ -226,12 +227,9 @@
 - (void)layoutSubviews {
     [super layoutSubviews];
     
-    // 重置缩放放到 _XZCarouselView 的 layoutSubviews 方法中，
-    // 因为横向滚动时，会调用其子视图的 layoutSubviews 方法，在这里重置的话就会导致，只要横向滚动就会重置缩放。
-    // 所以这里只有在缩放比为 1.0 时，才执行布局。
+    // 重置缩放：当 _XZCarouselView 的 layoutSubviews 方法执行时，会先重置缩放；因为横向滚动时，会调用其子视图的 layoutSubviews 方法，即此方法会被调用，故不能在这里重置缩放，否则只要横向滚动就会重置缩放。
+    // 因此，只有在缩放比为 1.0 时，才需要执行布局。
     // 需要重新布局时，不需要调整 _zoomingView 的位置，其由 autosizing 控制。
-    // _zoomingView.zoomScale = 1.0;
-    // _zoomingView.contentOffset = CGPointZero;
     
     if (_zoomingView == nil || _zoomingView.zoomScale == 1.0) {
         [self _XZCarouselViewItemViewLayoutSubviews];
@@ -242,13 +240,13 @@
     // 如果 _transitionView 不在当前视图上，不处理。
     CGRect const kBounds      = self.bounds;
     CGRect const contentFrame = XZCarouselViewFittingContentWithMode(kBounds, _preferredContentSize, self.contentMode);
+    
     // 自定义动画期间，_transitionView 可能脱离当前视图。
     if (_transitionView && _transitionView.superview == self) {
-        CGAffineTransform const transform = _transitionView.transform;
-        _transitionView.transform = CGAffineTransformIdentity;
-        _transitionView.frame     = kBounds;
-        _transitionView.transform = transform;
+        _transitionView.frame = CGRectApplyAffineTransform(kBounds, _transitionView.transform);
     }
+
+    //
     if (_zoomingView != nil) {
         CGFloat const zoomScale = _zoomingView.zoomScale;
         CGPoint const contentOffset = _zoomingView.contentOffset;
@@ -267,6 +265,7 @@
         _zoomingView.contentOffset = contentOffset;
         _zoomingView.bouncesZoom = zoomScale != 1.0;
     } else if (_wrapperView != nil) {
+        // 没有缩放视图，且存在内容视图。
         if (_zoomScale == 1.0) {
             _contentView.frame = contentFrame;
         } else {
