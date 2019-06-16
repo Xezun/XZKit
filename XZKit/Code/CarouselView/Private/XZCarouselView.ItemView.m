@@ -246,7 +246,12 @@
         _transitionView.frame = CGRectApplyAffineTransform(kBounds, _transitionView.transform);
     }
 
-    //
+    // 调整间距，会改变 _zoomingView 或 _wrapperView 的 frame 。
+    // 因为 _contentView 的 autosizingMask 未知，所以如果先更新了 _contentView ，那么在设置 _wrapperView 的 frame 时，
+    // _contentView 可能因其 autosizingMask 而自动改变了 frame ，达不到预期目的。
+    [self _XZCarouselViewItemViewUpdateInteritemSpacing:kBounds];
+    
+    // 缩放视图存在时，计算规则要根据 _wrapperView 计算。
     if (_zoomingView != nil) {
         CGFloat const zoomScale = _zoomingView.zoomScale;
         CGPoint const contentOffset = _zoomingView.contentOffset;
@@ -264,28 +269,35 @@
         _zoomingView.zoomScale = zoomScale;
         _zoomingView.contentOffset = contentOffset;
         _zoomingView.bouncesZoom = zoomScale != 1.0;
-    } else if (_wrapperView != nil) {
-        // 没有缩放视图，且存在内容视图。
-        if (_zoomScale == 1.0) {
-            _contentView.frame = contentFrame;
-        } else {
-            CGSize const zoomedSize = CGSizeMake(contentFrame.size.width * _zoomScale, contentFrame.size.height * _zoomScale);
-            CGRect frame = CGRectMake(contentFrame.origin.x * _zoomScale, contentFrame.origin.y * _zoomScale, zoomedSize.width, zoomedSize.height);
-            if (zoomedSize.width <= kBounds.size.width) {
-                frame.origin.x = (kBounds.size.width - zoomedSize.width) * 0.5;
-            } else if (frame.origin.x > 0) {
-                frame.origin.x = 0;
-            }
-            if (zoomedSize.height <= kBounds.size.height) {
-                frame.origin.y = (kBounds.size.height - zoomedSize.height) * 0.5;
-            } else if (frame.origin.y > 0) {
-                frame.origin.y = 0;
-            }
-            frame = CGRectOffset(frame, -_contentOffset.x, -_contentOffset.y);
-            _contentView.frame = frame;
-        }
+        return;
     }
-    [self _XZCarouselViewItemViewUpdateInteritemSpacing:kBounds];
+    
+    // 如果 _wrapperView 不存在，则说明 _contentView 也没有。
+    if (_wrapperView == nil) {
+        return;
+    }
+    
+    // 没有缩放视图，且存在内容视图。
+    if (_zoomScale == 1.0) {
+        _contentView.frame = contentFrame;
+        return;
+    }
+    
+    // 没有缩放视图，但是缩放倍率不为 1 需模拟缩放情况来布局 _contentView 。
+    CGSize const zoomedSize = CGSizeMake(contentFrame.size.width * _zoomScale, contentFrame.size.height * _zoomScale);
+    CGRect frame = CGRectMake(contentFrame.origin.x * _zoomScale, contentFrame.origin.y * _zoomScale, zoomedSize.width, zoomedSize.height);
+    if (zoomedSize.width <= kBounds.size.width) {
+        frame.origin.x = (kBounds.size.width - zoomedSize.width) * 0.5;
+    } else if (frame.origin.x > 0) {
+        frame.origin.x = 0;
+    }
+    if (zoomedSize.height <= kBounds.size.height) {
+        frame.origin.y = (kBounds.size.height - zoomedSize.height) * 0.5;
+    } else if (frame.origin.y > 0) {
+        frame.origin.y = 0;
+    }
+    frame = CGRectOffset(frame, -_contentOffset.x, -_contentOffset.y);
+    _contentView.frame = frame;
 }
 
 - (void)_XZCarouselViewItemViewUpdateInteritemSpacing:(CGRect const)kBounds {
