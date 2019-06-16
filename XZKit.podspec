@@ -11,7 +11,7 @@ Pod::Spec.new do |s|
     s.cocoapods_version = ">= 1.7.1"
   
     s.name    = "XZKit"
-    s.version = "4.2.8"
+    s.version = "4.3.0"
     s.summary = "XZKit 封装了 iOS App 开发过程中常用的功能和组件!"
     
     # This description is used to generate tags and improve search results.
@@ -21,9 +21,9 @@ Pod::Spec.new do |s|
     #   * Finally, don't worry about the indent, CocoaPods strips it!
     
     s.description = <<-DESC
-    本框架主要包含：常用拓展库、多线程、缓存、数据摘要和加密、视图状态组件、自定义导航控制器及导航条、网络框架规范、控制器重定向、
-    轮播组件和轮播图、进度条、UICollectionView 自定义布局、App 内容语言切换等功能。
-    DESC
+                    本框架主要包含：常用拓展库、多线程、缓存、数据摘要和加密、视图状态组件、自定义导航控制器及导航条、网络框架规范、控制器重定向、
+                    轮播组件和轮播图、进度条、UICollectionView 自定义布局、App 内容语言切换等功能。
+                    DESC
     
     s.homepage = 'https://xzkit.mlibai.com'
     # s.screenshots     = 'www.example.com/screenshots_1', 'www.example.com/screenshots_2'
@@ -33,7 +33,7 @@ Pod::Spec.new do |s|
     s.social_media_url = 'https://xzkit.mlibai.com/'
     
     s.module_name    = 'XZKit'
-    s.swift_versions = ["5.0"]
+    s.swift_versions = ["4.2", "5.0"]
     s.requires_arc   = true
     s.ios.deployment_target = '8.0'
     

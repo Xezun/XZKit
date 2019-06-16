@@ -23,6 +23,8 @@ pod "XZKit"
 pod "XZKit/CarouselView"
 ```
 
+*需要 CocoaPods 1.7.1 版本以上，请使用 `sudo gem cocoapods install` 命令更新版本。*
+
 ## 组件
 
 ### [轮播视图：CarouselView](./Documentation/CarouselView)
