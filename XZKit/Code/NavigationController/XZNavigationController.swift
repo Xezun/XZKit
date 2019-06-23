@@ -43,20 +43,3 @@ open class NavigationController: UINavigationController, UINavigationControllerD
 }
 
 
-
-extension CGRect {
-    
-    /// 判断某点是否在 CGRect 指定边距内。
-    ///
-    /// - Parameters:
-    ///   - point: 待判定的点。
-    ///   - edgeInsets: 边距。
-    /// - Returns: 是否包含。
-    public func contains(_ point: CGPoint, in edgeInsets: UIEdgeInsets) -> Bool {
-        return (point.x <= minX + edgeInsets.left) || (point.x >= maxX - edgeInsets.right) || (point.y <= minY + edgeInsets.top) || (point.y >= maxY - edgeInsets.bottom);
-    }
-    
-}
-
-
-

@@ -42,6 +42,16 @@ extension UIEdgeInsets {
 
 extension CGRect {
     
+    /// 判断某点是否在 CGRect 指定边距内。
+    ///
+    /// - Parameters:
+    ///   - point: 待判定的点。
+    ///   - edgeInsets: 边距。
+    /// - Returns: 是否包含。
+    public func contains(_ point: CGPoint, in edgeInsets: UIEdgeInsets) -> Bool {
+        return (point.x < minX + edgeInsets.left) || (point.x > maxX - edgeInsets.right) || (point.y < minY + edgeInsets.top) || (point.y > maxY - edgeInsets.bottom);
+    }
+    
     /// 获取将指定大小的内容按指定模式，在当前 CGRect 内的 frame 。
     ///
     /// - Parameters:

@@ -10,6 +10,13 @@
 
 XZEdgeInsets const XZEdgeInsetsZero = {0, 0, 0, 0};
 
+BOOL XZEdgeInsetsEqualToEdgeInsets(XZEdgeInsets edgeInsets1, XZEdgeInsets edgeInsets2) {
+    return edgeInsets1.top      == edgeInsets2.top
+        && edgeInsets1.leading  == edgeInsets2.leading
+        && edgeInsets1.trailing == edgeInsets2.trailing
+        && edgeInsets1.bottom   == edgeInsets2.bottom;
+}
+
 XZEdgeInsets XZEdgeInsetsMake(CGFloat top, CGFloat leading, CGFloat bottom, CGFloat trailing) {
     XZEdgeInsets edgeInsets;
     edgeInsets.top = top;
@@ -35,4 +42,8 @@ UIEdgeInsets UIEdgeInsetsFromXZEdgeInsets(XZEdgeInsets edgeInsets, UIUserInterfa
         case UIUserInterfaceLayoutDirectionRightToLeft:
             return UIEdgeInsetsMake(edgeInsets.top, edgeInsets.trailing, edgeInsets.bottom, edgeInsets.leading);
     }
+}
+
+BOOL CGRectContainsPointInEdgeInsets(CGRect bounds, UIEdgeInsets edgeInsets, CGPoint point) {
+    return (point.x < CGRectGetMinX(bounds) + edgeInsets.left) || (point.x > CGRectGetMaxX(bounds) - edgeInsets.right) || (point.y < CGRectGetMinY(bounds) + edgeInsets.top) || (point.y > CGRectGetMaxY(bounds) - edgeInsets.bottom);
 }

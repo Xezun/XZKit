@@ -7,6 +7,7 @@
 //
 
 #import <UIKit/UIKit.h>
+#import <XZKit/XZKit+Geometry.h>
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -59,9 +60,10 @@ NS_SWIFT_NAME(CarouselViewDelegate)
 ///
 /// @param carouselView 调用此方法的 XZCarouselView 对象。
 /// @param view 将要添加的视图。
-/// @param index 视图的 index 。
+/// @param index 视图所代表的 index 。
 /// @param animated 此方法被调用时，是否处于动画或滚动过程中。
 - (void)carouselView:(XZCarouselView *)carouselView willBeginTransitioningView:(UIView *)view atIndex:(NSInteger)index animated:(BOOL)animated;
+
 /// 视图已被添加到 carouselView 上参与切换过程。
 ///
 /// @param carouselView 调用此方法的 XZCarouselView 对象。
@@ -69,6 +71,7 @@ NS_SWIFT_NAME(CarouselViewDelegate)
 /// @param index 视图的 index 。
 /// @param animated 此方法被调用时，是否处于动画或滚动过程中。
 - (void)carouselView:(XZCarouselView *)carouselView didBeginTransitioningView:(UIView *)view atIndex:(NSInteger)index animated:(BOOL)animated;
+
 /// 视图将要从 carouselView 上移除。
 ///
 /// @param carouselView 调用此方法的 XZCarouselView 对象。
@@ -76,12 +79,14 @@ NS_SWIFT_NAME(CarouselViewDelegate)
 /// @param index 被移除的视图的 index 。
 /// @param animated 此方法被调用时，是否处于动画或滚动过程中。
 - (void)carouselView:(XZCarouselView *)carouselView willEndTransitioningView:(UIView *)view atIndex:(NSInteger)index animated:(BOOL)animated;
+
 /// 视图已从 XZCarouselView 上移除。在重用模式下，此方法调用后，视图将被加入重用池。
 ///
 /// @param carouselView 调用此方法的 XZCarouselView 对象。
 /// @param view 被移除的视图。
 /// @param index 被移除的视图的 index 。
 - (void)carouselView:(XZCarouselView *)carouselView didEndTransitioningView:(UIView *)view atIndex:(NSInteger)index animated:(BOOL)animated;
+
 /// 当 XZCarouselView 发生横向滚动或当前视图发生改变时，此方法会被调用。
 /// @note 参数 transition 始终表示是当前视图的位置关系：
 ///         等于 0 时表示 XZCarouselView 当前正好全部显示的当前视图，其它视图都在 XZCarouselView 有效显示区域外；
@@ -109,17 +114,28 @@ NS_SWIFT_NAME(CarouselViewDelegate)
 /// @param carouselView 调用此方法的 XZCarouselView 对象。
 /// @param index 将要被缩放的视图的索引。
 - (void)carouselView:(XZCarouselView *)carouselView willBeginZoomingView:(UIView *)view atIndex:(NSInteger)index;
+
 /// XZCarouselView 缩放了指定的视图。
 ///
 /// @param carouselView 调用此方法的 XZCarouselView 对象。
 /// @param index 正在被缩放的视图的索引。
 - (void)carouselView:(XZCarouselView *)carouselView didZoomView:(UIView *)view atIndex:(NSInteger)index;
+
 /// XZCarouselView 完成了缩放指定的视图。
 ///
 /// @param carouselView 调用此方法的 XZCarouselView 对象。
 /// @param index 被缩放的视图 index 值。
 /// @param scale 缩放比。
 - (void)carouselView:(XZCarouselView *)carouselView didEndZoomingView:(UIView *)view atIndex:(NSInteger)index atScale:(CGFloat)scale;
+
+/// 在某些情况下，如果希望只在内容视图的边缘区域才能触发手势页面切换（手势转场），那么可以通过此方法返回这个边缘范围区域。
+/// 若此方法不实现，或者返回值为 XZEdgeInsetsZero ，则表示整个视图区域都可以触发页面切换。
+///
+/// @param carouselView 调用此方法的 XZCarouselView 对象。
+/// @param view 希望控制手势转场的的内容视图。
+/// @param index 内容视图的 index 。
+/// @return XZEdgeInsets
+- (XZEdgeInsets)carouselView:(XZCarouselView *)carouselView edgeInsetsForGestureTransitioningView:(nullable UIView *)view atIndex:(NSInteger)index;
 
 @end
 
@@ -323,6 +339,7 @@ NS_SWIFT_NAME(CarouselView)
 - (void)scrollViewDidEndDecelerating:(UIScrollView *)scrollView NS_REQUIRES_SUPER;
 - (void)scrollViewDidScroll:(UIScrollView *)scrollView NS_REQUIRES_SUPER;
 - (void)scrollViewDidEndScrollingAnimation:(UIScrollView *)scrollView NS_REQUIRES_SUPER;
+- (BOOL)gestureRecognizer:(UIGestureRecognizer *)gestureRecognizer shouldReceiveTouch:(UITouch *)touch NS_REQUIRES_SUPER;
 
 @end
 

@@ -8,10 +8,10 @@
 
 Pod::Spec.new do |s|
   
-    s.cocoapods_version = ">= 1.7.1"
+    s.cocoapods_version = ">= 1.7.2"
   
     s.name    = "XZKit"
-    s.version = "4.3.0"
+    s.version = "4.3.1"
     s.summary = "XZKit 封装了 iOS App 开发过程中常用的功能和组件!"
     
     # This description is used to generate tags and improve search results.
@@ -117,6 +117,8 @@ Pod::Spec.new do |s|
                                  'XZKit/Code/CarouselView/Public/**/*.h'
         ss.source_files = 'XZKit/Code/XZKit.h',
                           'XZKit/Code/CarouselView/**/*.{h,m,swift}'
+       
+       ss.dependency "XZKit/XZKitConstants"
     end
     
     s.subspec 'ContentStatus' do |ss|

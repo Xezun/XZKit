@@ -7,6 +7,7 @@
 //
 
 #import <UIKit/UIKit.h>
+#import <XZKit/XZKitConstants.h>
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -34,6 +35,15 @@ typedef NS_OPTIONS(NSUInteger, XZRectEdge) {
 /// 边距全部为零的常量。
 UIKIT_EXTERN XZEdgeInsets const XZEdgeInsetsZero NS_SWIFT_NAME(EdgeInsets.zero);
 
+/**
+ 判断两个 XZEdgeInsets 是否相等。
+
+ @param edgeInsets1 XZEdgeInsets
+ @param edgeInsets2 XZEdgeInsets
+ @return 是否相等。
+ */
+UIKIT_EXTERN BOOL XZEdgeInsetsEqualToEdgeInsets(XZEdgeInsets edgeInsets1, XZEdgeInsets edgeInsets2);
+
 /// 构造 XZEdgeInsets 。
 ///
 /// @param top 上边距。
@@ -42,17 +52,27 @@ UIKIT_EXTERN XZEdgeInsets const XZEdgeInsetsZero NS_SWIFT_NAME(EdgeInsets.zero);
 /// @param trailing 后边距。
 /// @return XZEdgeInsets 值。
 UIKIT_EXTERN XZEdgeInsets XZEdgeInsetsMake(CGFloat top, CGFloat leading, CGFloat bottom, CGFloat trailing) NS_SWIFT_UNAVAILABLE("Use EdgeInsets.init(top:leading:bottom:trailing:) instead.");
+
 /// 将 UIEdgeInsets 转换为 XZEdgeInsets 。
 ///
 /// @param edgeInsets 待转换的 UIEdgeInsets 值。
 /// @param layoutDirection UIEdgeInsets 值的布局方向。
 /// @return XZEdgeInsets 值。
 UIKIT_EXTERN XZEdgeInsets XZEdgeInsetsFromUIEdgeInsets(UIEdgeInsets edgeInsets, UIUserInterfaceLayoutDirection layoutDirection) NS_SWIFT_UNAVAILABLE("Use EdgeInsets.init(_:layoutDirection:) instead.");
+
 /// 将 XZEdgeInsets 转换为 UIEdgeInsets 。
 ///
 /// @param edgeInsets 待转换的 XZEdgeInsets 值。
 /// @param layoutDirection 指定布局方向。
 /// @return UIEdgeInsets 值。
 UIKIT_EXTERN UIEdgeInsets UIEdgeInsetsFromXZEdgeInsets(XZEdgeInsets edgeInsets, UIUserInterfaceLayoutDirection layoutDirection) NS_SWIFT_UNAVAILABLE("Use UIEdgeInsets.init(_:layoutDirection:) instead.");
+
+/// 判断某点是否在指定的区域点边缘内。
+///
+/// @param bounds CGRect
+/// @param edgeInsets UIEdgeInsets
+/// @param point CGPoint
+/// @return YES or NO
+UIKIT_EXTERN BOOL CGRectContainsPointInEdgeInsets(CGRect bounds, UIEdgeInsets edgeInsets, CGPoint point) NS_SWIFT_UNAVAILABLE("Use CGRect.contains(_:in:) instead.");
 
 NS_ASSUME_NONNULL_END

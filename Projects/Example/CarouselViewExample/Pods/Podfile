@@ -3,7 +3,7 @@ project "../CarouselViewExample/CarouselViewExample.xcodeproj"
 platform  :ios, "8.0"
 
 target 'CarouselViewExample' do
-	use_frameworks!
+    use_frameworks!
 
     pod "XZKit/CarouselView", :path => "../../../../"
     

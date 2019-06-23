@@ -353,6 +353,13 @@ static void _XZSetTransitionAppearance(UIViewController * _Nonnull viewControlle
     }
 }
 
+- (XZEdgeInsets)carouselView:(XZCarouselView *)carouselView edgeInsetsForGestureTransitioningView:(UIView *)view atIndex:(NSInteger)index {
+    if ([_delegate respondsToSelector:@selector(carouselViewController:edgeInsetsForGestureTransitionViewController:atIndex:)]) {
+        return [_delegate carouselViewController:self edgeInsetsForGestureTransitionViewController:(UIViewController *)[view nextResponder] atIndex:index];
+    }
+    return XZEdgeInsetsZero;
+}
+
 @end
 
 

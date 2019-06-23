@@ -9,6 +9,7 @@
 #import "XZCarouselView.h"
 #import "XZCarouselView.ItemView.h"
 #import "XZCarouselView.ScrollView.h"
+#import <XZKit/XZKit-Swift.h>
 
 NSTimeInterval const XZCarouselViewAnimationDuration = 0.3;
 NSInteger      const XZCarouselViewNotFound          = -1;
@@ -458,8 +459,8 @@ static CGFloat XZCarouselViewScrollViewGetTransition(_XZCarouselViewScrollView *
 #pragma mark - <UIScrollViewDelegate.拖动>
 
 /// 横向滚动的 UIScrollView 的手势事件。
-- (void)_XZCarouselViewScrollViewPanGestureRecognizerAction:(UIPanGestureRecognizer *)panGestureRecognizerAction {
-    switch (panGestureRecognizerAction.state) {
+- (void)_XZCarouselViewScrollViewPanGestureRecognizerAction:(UIPanGestureRecognizer *)panGestureRecognizer {
+    switch (panGestureRecognizer.state) {
         case UIGestureRecognizerStateBegan:
             XZCarouselViewAddTransitionAnimationIfNeeded(self, YES);
             break;
@@ -560,6 +561,7 @@ static CGFloat XZCarouselViewScrollViewGetTransition(_XZCarouselViewScrollView *
     CGFloat const transition = XZCarouselViewScrollViewGetTransition(_scrollView);
     
     if (transition <= 1.0 && transition >= -1.0) {
+        // 1, 2, 3 之间滚动，直接发送转场进度事件就可以了。
         return XZCarouselViewTransitionDidChange(self, transition, NO, YES, YES);
     }
     
@@ -874,7 +876,6 @@ static CGFloat XZCarouselViewScrollViewGetTransition(_XZCarouselViewScrollView *
 - (void)setKeepsTransitioningViews:(BOOL)showsLeadingTrailingViews {
     if (_keepsTransitioningViews != showsLeadingTrailingViews) {
         _keepsTransitioningViews = showsLeadingTrailingViews;
-        
         if (_numberOfViews == 0) {
             return;
         }
@@ -894,6 +895,19 @@ static CGFloat XZCarouselViewScrollViewGetTransition(_XZCarouselViewScrollView *
 
 - (CGFloat)interitemSpacing {
     return _scrollView->_itemView2.interitemSpacing;
+}
+
+- (BOOL)gestureRecognizer:(UIScreenEdgePanGestureRecognizer *)gestureRecognizer shouldReceiveTouch:(UITouch *)touch {
+    if ([_delegate respondsToSelector:@selector(carouselView:edgeInsetsForGestureTransitioningView:atIndex:)]) {
+        XZEdgeInsets const edgeInsets1 = [_delegate carouselView:self edgeInsetsForGestureTransitioningView:_scrollView.itemView2.contentView atIndex:_currentIndex];
+        if (XZEdgeInsetsEqualToEdgeInsets(edgeInsets1, XZEdgeInsetsZero)) { // zero 表示全屏返回。
+            return YES;
+        }
+        CGPoint const location = [touch locationInView:self];
+        UIEdgeInsets const edgeInsets2 = UIEdgeInsetsFromXZEdgeInsets(edgeInsets1, self.xz_userInterfaceLayoutDirection);
+        return CGRectContainsPointInEdgeInsets(self.bounds, edgeInsets2, location);
+    }
+    return YES;
 }
 
 @end

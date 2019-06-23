@@ -7,23 +7,27 @@
 
 ## 环境需求
 
-iOS 8.0, Swift 4.2, Xcode 10.0.
+iOS 8.0, Swift 5.0, Xcode 10.0.
 
 ## 安装集成
 
 推荐使用 [CocoaPods](http://cocoapods.org) 快速集成到项目中。
 
 ```ruby
+use_frameworks!
+
 pod "XZKit"
 ```
 
-只使用其中某一个子模块，如只使用轮播视图子模块。
+只使用其中某一个子模块，如只使用 CarouselView 模块。
 
 ```ruby
+use_frameworks!
+
 pod "XZKit/CarouselView"
 ```
 
-*需要 CocoaPods 1.7.1 版本以上，请使用 `sudo gem install cocoapods` 命令更新版本。*
+*需要 CocoaPods 1.7.2 版本以上，请使用  `sudo gem install cocoapods` 命令更新 CocoaPods 版本。*
 
 ## 组件
 

@@ -28,6 +28,7 @@ NS_SWIFT_NAME(CarouselViewControllerDelegate)
 - (void)carouselViewController:(XZCarouselViewController *)carouselViewController didTransition:(CGFloat)transition animated:(BOOL)animated;
 - (void)carouselViewController:(XZCarouselViewController *)carouselViewController willEndTransitioningViewController:(UIViewController *)viewController atIndex:(NSInteger)index animated:(BOOL)animated;
 - (void)carouselViewController:(XZCarouselViewController *)carouselViewController didEndTransitioningViewController:(UIViewController *)viewController atIndex:(NSInteger)index animated:(BOOL)animated;
+- (XZEdgeInsets)carouselViewController:(XZCarouselViewController *)carouselView edgeInsetsForGestureTransitionViewController:(nullable UIViewController *)viewController atIndex:(NSInteger)index;
 @end
 
 NS_SWIFT_NAME(CarouselViewControllerDataSource)

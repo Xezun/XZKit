@@ -7,9 +7,12 @@
 //
 
 #import "XZCarouselView.ScrollView.h"
+#import <XZKit/XZKit-Swift.h>
 
-/// 获取视图的布局方向。
-static UIUserInterfaceLayoutDirection UIViewGetUserInterfaceLayoutDirection(UIView * const _Nonnull view);
+@interface UIScrollView (_XZCarouselViewScrollView) <UIGestureRecognizerDelegate>
+@end
+@implementation UIScrollView (_XZCarouselViewScrollView)
+@end
 
 @implementation _XZCarouselViewScrollView
 
@@ -198,7 +201,7 @@ static UIUserInterfaceLayoutDirection UIViewGetUserInterfaceLayoutDirection(UIVi
     
     switch (_pagingOrientation) {
         case XZCarouselViewPagingOrientationHorizontal:
-            switch (UIViewGetUserInterfaceLayoutDirection(self)) {
+            switch (self.xz_userInterfaceLayoutDirection) {
                 case UIUserInterfaceLayoutDirectionLeftToRight:
                     if (_isPrevItemViewVisiable && _isNextItemViewVisiable) {
                         _itemView0.frame = CGRectMake(kBounds.size.width * -1, 0, kBounds.size.width, kBounds.size.height);
@@ -279,7 +282,7 @@ static UIUserInterfaceLayoutDirection UIViewGetUserInterfaceLayoutDirection(UIVi
 }
 
 - (void)updateTransitionForItemViews:(CGFloat const)transition {
-    if (_pagingOrientation == XZCarouselViewPagingOrientationVertical || UIViewGetUserInterfaceLayoutDirection(self) == UIUserInterfaceLayoutDirectionLeftToRight) {
+    if (_pagingOrientation == XZCarouselViewPagingOrientationVertical || self.xz_userInterfaceLayoutDirection == UIUserInterfaceLayoutDirectionLeftToRight) {
         _itemView0.transition = -(2.0 + transition);
         _itemView1.transition = -(1.0 + transition);
         _itemView2.transition = -transition;
@@ -294,24 +297,17 @@ static UIUserInterfaceLayoutDirection UIViewGetUserInterfaceLayoutDirection(UIVi
     }
 }
 
+- (BOOL)gestureRecognizer:(UIGestureRecognizer *)gestureRecognizer shouldReceiveTouch:(UITouch *)touch {
+    if ([gestureRecognizer isEqual:self.panGestureRecognizer]) {
+        return [_carouselView gestureRecognizer:gestureRecognizer shouldReceiveTouch:touch];
+    }
+#if __IPHONE_OS_VERSION_MIN_REQUIRED < __IPHONE_12_0
+    if ([self.superclass instancesRespondToSelector:@selector(gestureRecognizer:shouldReceiveTouch:)]) {
+        return [super gestureRecognizer:gestureRecognizer shouldReceiveTouch:touch];
+    }
+#endif
+    return [super gestureRecognizer:gestureRecognizer shouldReceiveTouch:touch];
+}
+
 @end
 
-
-UIUserInterfaceLayoutDirection UIViewGetUserInterfaceLayoutDirection(UIView * const view) {
-#if __IPHONE_OS_VERSION_MIN_REQUIRED < __IPHONE_9_0
-    if (@available(iOS 10.0, *)) {
-        return view.effectiveUserInterfaceLayoutDirection;
-    }
-    if (@available(iOS 9.0, *)) {
-        return [UIView userInterfaceLayoutDirectionForSemanticContentAttribute:view.semanticContentAttribute];
-    }
-    return UIApplication.sharedApplication.userInterfaceLayoutDirection;
-#elif __IPHONE_OS_VERSION_MIN_REQUIRED < __IPHONE_10_0
-    if (@available(iOS 10.0, *)) {
-        return view.effectiveUserInterfaceLayoutDirection;
-    }
-    return [UIView userInterfaceLayoutDirectionForSemanticContentAttribute:view.semanticContentAttribute];
-#else
-    return view.effectiveUserInterfaceLayoutDirection;
-#endif
-}
