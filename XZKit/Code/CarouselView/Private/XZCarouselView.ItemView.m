@@ -79,6 +79,16 @@
     return _transitionView;
 }
 
+- (void)bringBackTransitionViewIfNeeded {
+    if (!_transitionView) {
+        return;
+    }
+    if (_transitionView.superview == self) {
+        return;
+    }
+    [self addSubview:_transitionView];
+}
+
 - (UIScrollView *)zoomingView {
     if (_zoomingView != nil) {
         return _zoomingView;

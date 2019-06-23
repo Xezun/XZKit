@@ -23,6 +23,7 @@ NS_SWIFT_NAME(CarouselViewDataSource)
 /// @param carouselView 调用此方法的 XZCarouselView 对象。
 /// @return XZCarouselView 中视图的数量。
 - (NSInteger)numberOfViewsInCarouselView:(XZCarouselView *)carouselView;
+
 /// XZCarouselView 获取指定位置 index 上待显示的视图。
 ///
 /// @note 如果待显示的视图具有不同的大小，请在此方法中设定视图的初始大小，当轮播图大小或 contentMode 改变时，将以此大小为偏好值对视图进行适配。

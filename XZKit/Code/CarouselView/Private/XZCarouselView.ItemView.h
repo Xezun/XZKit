@@ -56,6 +56,7 @@ NS_ASSUME_NONNULL_BEGIN
 /// 自定义过渡动画作用在此上视图，该视图直接添加到当前视图上。懒加载。
 @property (nonatomic, readonly, nonnull) UIView *transitionView;
 @property (nonatomic, readonly, nullable) UIView *transitionViewIfLoaded;
+- (void)bringBackTransitionViewIfNeeded;
 
 /// 内容视图，改变该属性，请用设置方法。
 @property (nonatomic, readonly, nullable) UIView *contentView;
