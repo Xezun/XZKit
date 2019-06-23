@@ -686,6 +686,7 @@ static CGFloat XZCarouselViewScrollViewGetTransition(_XZCarouselViewScrollView *
 - (void)_XZCarouselViewAutoScrollIfNeeded {
     if (_timeInterval > 0 && self.window != nil) {
         if (_scrollTimer == nil) {
+            // 不在 window 上不能启动 timer ，以避免内存泄漏。
             _scrollTimer = [NSTimer scheduledTimerWithTimeInterval:CGFLOAT_MAX target:self selector:@selector(_XZCarouselViewScrollTimerAction:) userInfo:nil repeats:YES];
         }
         _scrollTimer.fireDate = [NSDate dateWithTimeIntervalSinceNow:_timeInterval];
