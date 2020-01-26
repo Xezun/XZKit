@@ -64,7 +64,6 @@ class DataCryptorSampleViewController: UIViewController {
             case 3: return .CTR(vector: vector)
                 
             case 6: return .OFB(vector: vector)
-            case 7: return .XTS(tweak: vector)
             case 8: return .RC4
             case 9: return .CFB8(vector: vector)
             default: return .ECB

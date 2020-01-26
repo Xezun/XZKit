@@ -399,10 +399,7 @@ static BOOL XZDataCryptorErrorHandler(CCCryptorStatus status, NSError * _Nullabl
         case kCCModeCBC:    return @"CBC";
         case kCCModeCFB:    return @"CFB";
         case kCCModeCTR:    return @"CTR";
-        case kCCModeF8:     return @"F8";
-        case kCCModeLRW:    return @"LRW";
         case kCCModeOFB:    return @"OFB";
-        case kCCModeXTS:    return @"XTS";
         case kCCModeRC4:    return @"RC4";
         case kCCModeCFB8:   return @"CFB8";
         default:            return @"Unkonwn";
@@ -425,22 +422,8 @@ static BOOL XZDataCryptorErrorHandler(CCCryptorStatus status, NSError * _Nullabl
     return [[XZDataCryptorMode alloc] initWithRawValue:kCCModeCTR vector:vector tweak:nil];
 }
 
-+ (XZDataCryptorMode *)F8Mode {
-    NSAssert(NO, @"Unimplemented for now (not included).");
-    return nil;
-}
-
-+ (XZDataCryptorMode *)LRWMode {
-    NSAssert(NO, @"Unimplemented for now (not included).");
-    return nil;
-}
-
 + (XZDataCryptorMode *)OFBModeWithVector:(NSString *)vector {
     return [[XZDataCryptorMode alloc] initWithRawValue:kCCModeOFB vector:vector tweak:nil];
-}
-
-+ (XZDataCryptorMode *)XTSModeWithTweak:(NSString *)tweak {
-    return [[XZDataCryptorMode alloc] initWithRawValue:kCCModeXTS vector:nil tweak:tweak];
 }
 
 + (XZDataCryptorMode *)RC4Mode {
@@ -454,17 +437,29 @@ static BOOL XZDataCryptorErrorHandler(CCCryptorStatus status, NSError * _Nullabl
 @end
 
 
+FOUNDATION_STATIC_INLINE CCOperation CCOperationFromOperation(XZDataCryptorOperation operation) {
+    switch (operation) {
+        case XZDataCryptorOperationDecrypt: return kCCDecrypt;
+        case XZDataCryptorOperationEncrypt: return kCCEncrypt;
+    }
+}
 
+FOUNDATION_STATIC_INLINE CCPadding CCPaddingFromPadding(XZDataCryptorPadding padding) {
+    switch (padding) {
+        case XZDataCryptorNoPadding:    return ccNoPadding;
+        case XZDataCryptorPKCS7Padding: return ccPKCS7Padding;
+    }
+}
 
 
 CCCryptorRef CCCryptorContextMake(XZDataCryptorAlgorithm *algorithm, XZDataCryptorOperation operation, XZDataCryptorMode *mode, XZDataCryptorPadding padding, NSError * _Nullable __autoreleasing *error) {
     NSString * const vector = [mode vectorForAlgorithm:algorithm];
     NSString * const tweak = [mode tweakForAlgorithm:algorithm];
     CCCryptorRef context = NULL;
-    CCCryptorStatus status = CCCryptorCreateWithMode(operation,
+    CCCryptorStatus status = CCCryptorCreateWithMode(CCOperationFromOperation(operation),
                                                      (CCMode)mode.rawValue,
                                                      (CCAlgorithm)algorithm.rawValue,
-                                                     padding,
+                                                     CCPaddingFromPadding(padding),
                                                      vector.UTF8String,
                                                      algorithm.key.UTF8String,
                                                      algorithm.key.length,

@@ -11,7 +11,7 @@ Pod::Spec.new do |s|
     s.cocoapods_version = ">= 1.7.2"
   
     s.name    = "XZKit"
-    s.version = "4.3.1"
+    s.version = "4.3.2"
     s.summary = "XZKit 封装了 iOS App 开发过程中常用的功能和组件!"
     
     # This description is used to generate tags and improve search results.
@@ -25,12 +25,12 @@ Pod::Spec.new do |s|
                     轮播组件和轮播图、进度条、UICollectionView 自定义布局、App 内容语言切换等功能。
                     DESC
     
-    s.homepage = 'https://xzkit.mlibai.com'
+    s.homepage = 'https://xzkit.xezun.com'
     # s.screenshots     = 'www.example.com/screenshots_1', 'www.example.com/screenshots_2'
     s.license  = { :type => 'MIT', :file => 'LICENSE' }
-    s.author   = { 'mlibai' => 'mlibai@163.com' }
-    s.source   = { :git => 'https://github.com/mlibai/XZKit.git', :tag => s.version.to_s }
-    s.social_media_url = 'https://xzkit.mlibai.com/'
+    s.author   = { 'mlibai' => 'developer@xezun.com' }
+    s.source   = { :git => 'https://github.com/xezun/XZKit.git', :tag => s.version.to_s }
+    s.social_media_url = 'https://xzkit.xezun.com/'
     
     s.module_name    = 'XZKit'
     s.swift_versions = ["4.2", "5.0"]

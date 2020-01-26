@@ -51,7 +51,7 @@ class SampleContentStatusViewController: UIViewController {
         
         self.contentView.backgroundColor = UIColor.white
         
-        contentView.setImage(#imageLiteral(resourceName: "img_empty"), for: .empty)
+        contentView.setImage(UIImage(named: "img_empty"), for: .empty)
         contentView.setTitle("没有了...", for: .empty)
         contentView.setTitleColor(UIColor.gray, for: .empty)
         contentView.setTitleFont(UIFont.systemFont(ofSize: 12.0), for: .empty)
@@ -64,7 +64,7 @@ class SampleContentStatusViewController: UIViewController {
         contentView.setTitleFont(UIFont.systemFont(ofSize: 12.0), for: .loading)
         contentView.setTitleInsets(EdgeInsets.init(top: 10, leading: 0, bottom: -10, trailing: 0), for: .loading)
         
-        contentView.setImage(#imageLiteral(resourceName: "img_404"), for: .error)
+        contentView.setImage(UIImage(named: "img_404"), for: .error)
         contentView.setTitle("找不到...", for: .error)
         contentView.setTitleColor(UIColor(0xc73420ff), for: .error)
         contentView.setTitleFont(UIFont.systemFont(ofSize: 12.0), for: .error)

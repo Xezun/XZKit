@@ -853,15 +853,17 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 61ECD04176779E4E71059C50 /* Pods-XZKitExample.debug.xcconfig */;
 			buildSettings = {
-				CODE_SIGN_STYLE = Automatic;
+				CODE_SIGN_STYLE = Manual;
+				DEVELOPMENT_TEAM = MGP5RF9XXP;
 				INFOPLIST_FILE = XZKitExample/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = com.mlibai.example.XZKit;
+				PRODUCT_BUNDLE_IDENTIFIER = com.xezun.example.XZKit;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE_SPECIFIER = "Xezun Wildcard Development";
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = 1;
 			};
@@ -871,15 +873,17 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = A7F05B4B91A337F7D4D2B711 /* Pods-XZKitExample.release.xcconfig */;
 			buildSettings = {
-				CODE_SIGN_STYLE = Automatic;
+				CODE_SIGN_STYLE = Manual;
+				DEVELOPMENT_TEAM = MGP5RF9XXP;
 				INFOPLIST_FILE = XZKitExample/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = com.mlibai.example.XZKit;
+				PRODUCT_BUNDLE_IDENTIFIER = com.xezun.example.XZKit;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE_SPECIFIER = "Xezun Wildcard Development";
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = 1;
 			};

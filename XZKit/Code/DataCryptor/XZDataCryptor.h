@@ -181,9 +181,6 @@ NS_SWIFT_NAME(DataCryptor.Mode) @interface XZDataCryptorMode: NSObject
 /// @return 加密/解密模式。
 + (XZDataCryptorMode *)CTRModeWithVector:(nullable NSString *)vector NS_SWIFT_NAME(CTR(vector:));
 
-@property (class, nonatomic, readonly) XZDataCryptorMode *F8Mode NS_UNAVAILABLE;
-@property (class, nonatomic, readonly) XZDataCryptorMode *LRWMode NS_UNAVAILABLE;
-
 /// OFB 输出反馈模式。
 ///
 /// @note 向量长度一般与块大小相同，请参考 XZDataCryptorAlgorithm 中的说明。
@@ -192,15 +189,6 @@ NS_SWIFT_NAME(DataCryptor.Mode) @interface XZDataCryptorMode: NSObject
 /// @param vector 初始化向量。
 /// @return 加密/解密模式。
 + (XZDataCryptorMode *)OFBModeWithVector:(nullable NSString *)vector NS_SWIFT_NAME(OFB(vector:));
-
-/// XTS 基于XEX(XOR-ENCRYPT-XOR)的密文窃取算法的可调整的密码本模式。
-///
-/// @note 向量长度一般与块大小相同，请参考 XZDataCryptorAlgorithm 中的说明。
-/// @note 可调整值在使用时，如果长度小于块大小，末尾自动补 \0 。
-///
-/// @param tweak 可调整值。
-/// @return 加密/解密模式。
-+ (XZDataCryptorMode *)XTSModeWithTweak:(nullable NSString *)tweak NS_SWIFT_NAME(XTS(tweak:));
 
 /// RC4 模式。
 @property (class, nonatomic, readonly) XZDataCryptorMode *RC4Mode NS_SWIFT_NAME(RC4);

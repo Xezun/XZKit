@@ -176,7 +176,7 @@ extension APINetworking {
             #if DEBUG
             var url = apiRequest.url;
             if let dict = apiRequest.data as? [String: Any] {
-                url.addQueryItems(from: dict)
+                url.addQueryValues(from: dict)
             }
             let headers = manager.requestSerializer.httpRequestHeaders.map({ (itemClick) -> String in
                 return "\(itemClick.key): \(itemClick.value)"
