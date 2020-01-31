@@ -11,7 +11,7 @@ import UIKit
 /// 自定义导航条可以继承 NavigationBar 也可以继承其它视图控件，实现 NavigationBaring 协议即可。
 /// 自定义导航条所必须实现的协议。
 /// - Note: 因为 tintColor 会自动从父视图继承，所以自定义导航条没有设置 tintColor 的话，那么最终可能会影响自定义导航条的外观，因为自定义导航条的父视图，在转场过程中会发生变化。
-public protocol NavigationBaring: ObjectProtocol where Self: UIView {
+public protocol NavigationBaring: UIView {
     var isTranslucent: Bool { get set }
     var prefersLargeTitles: Bool { get set }
 }

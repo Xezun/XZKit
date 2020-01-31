@@ -7,12 +7,12 @@
 //
 
 #import <UIKit/UIKit.h>
-#import <XZKit/XZKitConstants.h>
+#import <XZKit/XZKit+Constants.h>
 
 NS_ASSUME_NONNULL_BEGIN
 
 /// 与 UIEdgeInsets 相同，只不过方便适配 LTR/RTL 布局。
-typedef struct {
+typedef struct XZ_BOXABLE {
     /// 上边距。
     CGFloat top;
     /// 前边距。
@@ -22,7 +22,6 @@ typedef struct {
     /// 后边距。
     CGFloat trailing;
 } XZEdgeInsets NS_SWIFT_NAME(EdgeInsets);
-//typedef struct XZEdgeInsets XZEdgeInsets;
 
 /// 与 UIRectEdge 相同，只不过方便适配 LTR/RTL 布局。
 typedef NS_OPTIONS(NSUInteger, XZRectEdge) {
@@ -35,13 +34,11 @@ typedef NS_OPTIONS(NSUInteger, XZRectEdge) {
 /// 边距全部为零的常量。
 UIKIT_EXTERN XZEdgeInsets const XZEdgeInsetsZero NS_SWIFT_NAME(EdgeInsets.zero);
 
-/**
- 判断两个 XZEdgeInsets 是否相等。
-
- @param edgeInsets1 XZEdgeInsets
- @param edgeInsets2 XZEdgeInsets
- @return 是否相等。
- */
+/// 判断两个 XZEdgeInsets 是否相等。
+///
+/// @param edgeInsets1 XZEdgeInsets
+/// @param edgeInsets2 XZEdgeInsets
+/// @return 是否相等。
 UIKIT_EXTERN BOOL XZEdgeInsetsEqualToEdgeInsets(XZEdgeInsets edgeInsets1, XZEdgeInsets edgeInsets2);
 
 /// 构造 XZEdgeInsets 。
@@ -74,5 +71,21 @@ UIKIT_EXTERN UIEdgeInsets UIEdgeInsetsFromXZEdgeInsets(XZEdgeInsets edgeInsets, 
 /// @param point CGPoint
 /// @return YES or NO
 UIKIT_EXTERN BOOL CGRectContainsPointInEdgeInsets(CGRect bounds, UIEdgeInsets edgeInsets, CGPoint point) NS_SWIFT_UNAVAILABLE("Use CGRect.contains(_:in:) instead.");
+
+
+FOUNDATION_EXPORT NSString *NSStringFromXZEdgeInsets(XZEdgeInsets edgeInsets);
+FOUNDATION_EXPORT XZEdgeInsets XZEdgeInsetsFromString(NSString * _Nullable aString);
+FOUNDATION_EXPORT NSString *NSStringFromXZRectEdge(XZRectEdge rectEdge);
+FOUNDATION_EXPORT XZRectEdge XZRectEdgeFromString(NSString * _Nullable aString);
+
+@interface NSValue (XZKitGeometry)
+
++ (NSValue *)valueWithXZEdgeInsets:(XZEdgeInsets)edgeInsets;
++ (NSValue *)valueWithXZRectEdge:(XZRectEdge)rectEdge;
+
+@property (nonatomic, readonly) XZEdgeInsets XZEdgeInsetsValue;
+@property (nonatomic, readonly) XZRectEdge XZRectEdgeValue;
+
+@end
 
 NS_ASSUME_NONNULL_END

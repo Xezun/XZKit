@@ -20,7 +20,7 @@ extension String {
             return nil
         }
         if someValue is Array<Any> || someValue is Dictionary<String, Any> {
-            guard let data = try? JSONSerialization.data(withJSONObject: someValue, options: .none) else {
+            guard let data = try? JSONSerialization.data(withJSONObject: someValue, options: []) else {
                 return nil
             }
             self.init(data: data, encoding: .utf8)
@@ -28,10 +28,10 @@ extension String {
             let stringDict = hashDict.reduce(into: [String: Any](), { (result, item) in
                 result[item.key.description] = item.value
             })
-            guard let data = try? JSONSerialization.data(withJSONObject: stringDict, options: .none) else { return nil }
+            guard let data = try? JSONSerialization.data(withJSONObject: stringDict, options: []) else { return nil }
             self.init(data: data, encoding: .utf8)
         } else if let setValue = someValue as? Set<AnyHashable> {
-            guard let data = try? JSONSerialization.data(withJSONObject: Array(setValue), options: .none) else { return nil }
+            guard let data = try? JSONSerialization.data(withJSONObject: Array(setValue), options: []) else { return nil }
             self.init(data: data, encoding: .utf8)
         } else {
             return nil

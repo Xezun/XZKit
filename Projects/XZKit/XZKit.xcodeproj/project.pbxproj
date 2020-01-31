@@ -23,8 +23,9 @@
 /* Begin PBXBuildFile section */
 		2828CDBC229AF0B80025D736 /* WKWebView+XZKit.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2828CDBB229AF0B80025D736 /* WKWebView+XZKit.swift */; };
 		288391E2224DB57B00FB0209 /* XZKit+UIView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 288391E1224DB57B00FB0209 /* XZKit+UIView.swift */; };
-		28C066A3224F65BF0011F052 /* XZKit+HexadecimalEncoding.h in Headers */ = {isa = PBXBuildFile; fileRef = 28C066A2224F65BF0011F052 /* XZKit+HexadecimalEncoding.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		28C066A5224F65D20011F052 /* XZKit+HexadecimalEncoding.m in Sources */ = {isa = PBXBuildFile; fileRef = 28C066A4224F65D20011F052 /* XZKit+HexadecimalEncoding.m */; };
+		289EC08123E2FCB6002F7419 /* XZKitConstantsSwiftTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 289EC08023E2FCB6002F7419 /* XZKitConstantsSwiftTests.swift */; };
+		28C066A3224F65BF0011F052 /* XZKit+Encoding.h in Headers */ = {isa = PBXBuildFile; fileRef = 28C066A2224F65BF0011F052 /* XZKit+Encoding.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		28C066A5224F65D20011F052 /* XZKit+Encoding.m in Sources */ = {isa = PBXBuildFile; fileRef = 28C066A4224F65D20011F052 /* XZKit+Encoding.m */; };
 		28C096382272E6F50096F118 /* XZDisplayTimer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 28C096372272E6F50096F118 /* XZDisplayTimer.swift */; };
 		28CA185722478E8300F16621 /* XZKit.h in Headers */ = {isa = PBXBuildFile; fileRef = 28CA17F022478E8300F16621 /* XZKit.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		28CA185822478E8300F16621 /* XZNavigationController.AnimationController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 28CA17F222478E8300F16621 /* XZNavigationController.AnimationController.swift */; };
@@ -81,9 +82,9 @@
 		28CA18A222478E8300F16621 /* XZAppLanguage.h in Headers */ = {isa = PBXBuildFile; fileRef = 28CA184C22478E8300F16621 /* XZAppLanguage.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		28CA18A322478E8300F16621 /* XZAppLanguage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 28CA184D22478E8300F16621 /* XZAppLanguage.swift */; };
 		28CA18A622478E8300F16621 /* XZProgressView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 28CA185222478E8300F16621 /* XZProgressView.swift */; };
-		28CA18A722478E8300F16621 /* XZKitConstants.m in Sources */ = {isa = PBXBuildFile; fileRef = 28CA185422478E8300F16621 /* XZKitConstants.m */; };
-		28CA18A822478E8300F16621 /* XZKitConstants.h in Headers */ = {isa = PBXBuildFile; fileRef = 28CA185522478E8300F16621 /* XZKitConstants.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		28CA18A922478E8300F16621 /* XZKitConstants.swift in Sources */ = {isa = PBXBuildFile; fileRef = 28CA185622478E8300F16621 /* XZKitConstants.swift */; };
+		28CA18A722478E8300F16621 /* XZKit+Constants.m in Sources */ = {isa = PBXBuildFile; fileRef = 28CA185422478E8300F16621 /* XZKit+Constants.m */; };
+		28CA18A822478E8300F16621 /* XZKit+Constants.h in Headers */ = {isa = PBXBuildFile; fileRef = 28CA185522478E8300F16621 /* XZKit+Constants.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		28CA18A922478E8300F16621 /* XZKit+Constants.swift in Sources */ = {isa = PBXBuildFile; fileRef = 28CA185622478E8300F16621 /* XZKit+Constants.swift */; };
 		28E3B72A22716E31005ECB02 /* XZCarouselView.ScrollView.m in Sources */ = {isa = PBXBuildFile; fileRef = 28E3B72622716E31005ECB02 /* XZCarouselView.ScrollView.m */; };
 		28E3B72B22716E31005ECB02 /* XZCarouselView.ItemView.h in Headers */ = {isa = PBXBuildFile; fileRef = 28E3B72722716E31005ECB02 /* XZCarouselView.ItemView.h */; };
 		28E3B72C22716E31005ECB02 /* XZCarouselView.ScrollView.h in Headers */ = {isa = PBXBuildFile; fileRef = 28E3B72822716E31005ECB02 /* XZCarouselView.ScrollView.h */; };
@@ -102,13 +103,27 @@
 		28F4F2B9224A886200E7B23C /* XZKit+Runtime.h in Headers */ = {isa = PBXBuildFile; fileRef = 28F4F2B7224A886200E7B23C /* XZKit+Runtime.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		28F4F2BA224A886200E7B23C /* XZKit+Runtime.m in Sources */ = {isa = PBXBuildFile; fileRef = 28F4F2B8224A886200E7B23C /* XZKit+Runtime.m */; };
 		28F4F2BC224A89C600E7B23C /* XZKit+Date.swift in Sources */ = {isa = PBXBuildFile; fileRef = 28F4F2BB224A89C600E7B23C /* XZKit+Date.swift */; };
+		28F608DA23E0353500C394B9 /* XZKitTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 28F608D923E0353500C394B9 /* XZKitTests.m */; };
+		28F608DC23E0353500C394B9 /* XZKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DD30EF4121A4330000C4C73C /* XZKit.framework */; };
+		28F608E323E04F5800C394B9 /* XZKitConstantsTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 28F608E223E04F5800C394B9 /* XZKitConstantsTests.m */; };
 /* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		28F608DD23E0353500C394B9 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = DD30EF3821A4330000C4C73C /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = DD30EF4021A4330000C4C73C;
+			remoteInfo = XZKit;
+		};
+/* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
 		2828CDBB229AF0B80025D736 /* WKWebView+XZKit.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "WKWebView+XZKit.swift"; sourceTree = "<group>"; };
 		288391E1224DB57B00FB0209 /* XZKit+UIView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "XZKit+UIView.swift"; sourceTree = "<group>"; };
-		28C066A2224F65BF0011F052 /* XZKit+HexadecimalEncoding.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "XZKit+HexadecimalEncoding.h"; sourceTree = "<group>"; };
-		28C066A4224F65D20011F052 /* XZKit+HexadecimalEncoding.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "XZKit+HexadecimalEncoding.m"; sourceTree = "<group>"; };
+		289EC08023E2FCB6002F7419 /* XZKitConstantsSwiftTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = XZKitConstantsSwiftTests.swift; sourceTree = "<group>"; };
+		28C066A2224F65BF0011F052 /* XZKit+Encoding.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "XZKit+Encoding.h"; sourceTree = "<group>"; };
+		28C066A4224F65D20011F052 /* XZKit+Encoding.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "XZKit+Encoding.m"; sourceTree = "<group>"; };
 		28C096372272E6F50096F118 /* XZDisplayTimer.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = XZDisplayTimer.swift; sourceTree = "<group>"; };
 		28CA17F022478E8300F16621 /* XZKit.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XZKit.h; sourceTree = "<group>"; };
 		28CA17F222478E8300F16621 /* XZNavigationController.AnimationController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = XZNavigationController.AnimationController.swift; sourceTree = "<group>"; };
@@ -165,9 +180,9 @@
 		28CA184C22478E8300F16621 /* XZAppLanguage.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XZAppLanguage.h; sourceTree = "<group>"; };
 		28CA184D22478E8300F16621 /* XZAppLanguage.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = XZAppLanguage.swift; sourceTree = "<group>"; };
 		28CA185222478E8300F16621 /* XZProgressView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = XZProgressView.swift; sourceTree = "<group>"; };
-		28CA185422478E8300F16621 /* XZKitConstants.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = XZKitConstants.m; sourceTree = "<group>"; };
-		28CA185522478E8300F16621 /* XZKitConstants.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XZKitConstants.h; sourceTree = "<group>"; };
-		28CA185622478E8300F16621 /* XZKitConstants.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = XZKitConstants.swift; sourceTree = "<group>"; };
+		28CA185422478E8300F16621 /* XZKit+Constants.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "XZKit+Constants.m"; sourceTree = "<group>"; };
+		28CA185522478E8300F16621 /* XZKit+Constants.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "XZKit+Constants.h"; sourceTree = "<group>"; };
+		28CA185622478E8300F16621 /* XZKit+Constants.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "XZKit+Constants.swift"; sourceTree = "<group>"; };
 		28E3B72622716E31005ECB02 /* XZCarouselView.ScrollView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = XZCarouselView.ScrollView.m; sourceTree = "<group>"; };
 		28E3B72722716E31005ECB02 /* XZCarouselView.ItemView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XZCarouselView.ItemView.h; sourceTree = "<group>"; };
 		28E3B72822716E31005ECB02 /* XZCarouselView.ScrollView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XZCarouselView.ScrollView.h; sourceTree = "<group>"; };
@@ -186,11 +201,23 @@
 		28F4F2B7224A886200E7B23C /* XZKit+Runtime.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "XZKit+Runtime.h"; sourceTree = "<group>"; };
 		28F4F2B8224A886200E7B23C /* XZKit+Runtime.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "XZKit+Runtime.m"; sourceTree = "<group>"; };
 		28F4F2BB224A89C600E7B23C /* XZKit+Date.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "XZKit+Date.swift"; sourceTree = "<group>"; };
+		28F608D723E0353500C394B9 /* XZKitTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = XZKitTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		28F608D923E0353500C394B9 /* XZKitTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = XZKitTests.m; sourceTree = "<group>"; };
+		28F608DB23E0353500C394B9 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		28F608E223E04F5800C394B9 /* XZKitConstantsTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = XZKitConstantsTests.m; sourceTree = "<group>"; };
 		DD30EF4121A4330000C4C73C /* XZKit.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = XZKit.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		DD30EF4521A4330000C4C73C /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
+		28F608D423E0353500C394B9 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				28F608DC23E0353500C394B9 /* XZKit.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		DD30EF3E21A4330000C4C73C /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
@@ -439,19 +466,8 @@
 		28CA185322478E8300F16621 /* XZKitConstants */ = {
 			isa = PBXGroup;
 			children = (
-				28CA185522478E8300F16621 /* XZKitConstants.h */,
-				28CA185422478E8300F16621 /* XZKitConstants.m */,
-				28CA185622478E8300F16621 /* XZKitConstants.swift */,
-				28CA183022478E8300F16621 /* XZKit+String.swift */,
-				28F4F2BB224A89C600E7B23C /* XZKit+Date.swift */,
-				28F4F2B1224A867E00E7B23C /* XZKit+Geometry.h */,
-				28F4F2B2224A867E00E7B23C /* XZKit+Geometry.m */,
-				28F4F2B5224A86C400E7B23C /* XZKit+Geometry.swift */,
-				28C066A2224F65BF0011F052 /* XZKit+HexadecimalEncoding.h */,
-				28C066A4224F65D20011F052 /* XZKit+HexadecimalEncoding.m */,
-				28F4F2B7224A886200E7B23C /* XZKit+Runtime.h */,
-				28F4F2B8224A886200E7B23C /* XZKit+Runtime.m */,
-				288391E1224DB57B00FB0209 /* XZKit+UIView.swift */,
+				28F608E523E0511E00C394B9 /* ObjectiveC */,
+				28F608E423E0510E00C394B9 /* Swift */,
 			);
 			path = XZKitConstants;
 			sourceTree = "<group>";
@@ -482,10 +498,49 @@
 			path = Private;
 			sourceTree = "<group>";
 		};
+		28F608D823E0353500C394B9 /* XZKitTests */ = {
+			isa = PBXGroup;
+			children = (
+				28F608D923E0353500C394B9 /* XZKitTests.m */,
+				28F608E223E04F5800C394B9 /* XZKitConstantsTests.m */,
+				289EC08023E2FCB6002F7419 /* XZKitConstantsSwiftTests.swift */,
+				28F608DB23E0353500C394B9 /* Info.plist */,
+			);
+			path = XZKitTests;
+			sourceTree = "<group>";
+		};
+		28F608E423E0510E00C394B9 /* Swift */ = {
+			isa = PBXGroup;
+			children = (
+				28CA185622478E8300F16621 /* XZKit+Constants.swift */,
+				28CA183022478E8300F16621 /* XZKit+String.swift */,
+				28F4F2BB224A89C600E7B23C /* XZKit+Date.swift */,
+				28F4F2B5224A86C400E7B23C /* XZKit+Geometry.swift */,
+				288391E1224DB57B00FB0209 /* XZKit+UIView.swift */,
+			);
+			path = Swift;
+			sourceTree = "<group>";
+		};
+		28F608E523E0511E00C394B9 /* ObjectiveC */ = {
+			isa = PBXGroup;
+			children = (
+				28CA185522478E8300F16621 /* XZKit+Constants.h */,
+				28CA185422478E8300F16621 /* XZKit+Constants.m */,
+				28F4F2B1224A867E00E7B23C /* XZKit+Geometry.h */,
+				28F4F2B2224A867E00E7B23C /* XZKit+Geometry.m */,
+				28C066A2224F65BF0011F052 /* XZKit+Encoding.h */,
+				28C066A4224F65D20011F052 /* XZKit+Encoding.m */,
+				28F4F2B7224A886200E7B23C /* XZKit+Runtime.h */,
+				28F4F2B8224A886200E7B23C /* XZKit+Runtime.m */,
+			);
+			path = ObjectiveC;
+			sourceTree = "<group>";
+		};
 		DD30EF3721A4330000C4C73C = {
 			isa = PBXGroup;
 			children = (
 				DD30EF4321A4330000C4C73C /* XZKit */,
+				28F608D823E0353500C394B9 /* XZKitTests */,
 				DD30EF4221A4330000C4C73C /* Products */,
 			);
 			sourceTree = "<group>";
@@ -494,6 +549,7 @@
 			isa = PBXGroup;
 			children = (
 				DD30EF4121A4330000C4C73C /* XZKit.framework */,
+				28F608D723E0353500C394B9 /* XZKitTests.xctest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -526,10 +582,10 @@
 				28CA189322478E8300F16621 /* NSBundle+XZKit.h in Headers */,
 				28E3B73C22716E4C005ECB02 /* XZImageCarouselView.h in Headers */,
 				28E3B73622716E4C005ECB02 /* XZCarouselView.h in Headers */,
-				28C066A3224F65BF0011F052 /* XZKit+HexadecimalEncoding.h in Headers */,
+				28C066A3224F65BF0011F052 /* XZKit+Encoding.h in Headers */,
 				28CA189222478E8300F16621 /* NSData+XZKit.h in Headers */,
 				28E3B73722716E4C005ECB02 /* XZCarouselViewController.h in Headers */,
-				28CA18A822478E8300F16621 /* XZKitConstants.h in Headers */,
+				28CA18A822478E8300F16621 /* XZKit+Constants.h in Headers */,
 				28CA18A222478E8300F16621 /* XZAppLanguage.h in Headers */,
 				28F4F2B3224A867E00E7B23C /* XZKit+Geometry.h in Headers */,
 				28E3B73A22716E4C005ECB02 /* XZImageViewer.h in Headers */,
@@ -542,6 +598,24 @@
 /* End PBXHeadersBuildPhase section */
 
 /* Begin PBXNativeTarget section */
+		28F608D623E0353500C394B9 /* XZKitTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 28F608E123E0353500C394B9 /* Build configuration list for PBXNativeTarget "XZKitTests" */;
+			buildPhases = (
+				28F608D323E0353500C394B9 /* Sources */,
+				28F608D423E0353500C394B9 /* Frameworks */,
+				28F608D523E0353500C394B9 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				28F608DE23E0353500C394B9 /* PBXTargetDependency */,
+			);
+			name = XZKitTests;
+			productName = XZKitTests;
+			productReference = 28F608D723E0353500C394B9 /* XZKitTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
 		DD30EF4021A4330000C4C73C /* XZKit */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = DD30EF4921A4330000C4C73C /* Build configuration list for PBXNativeTarget "XZKit" */;
@@ -567,11 +641,16 @@
 		DD30EF3821A4330000C4C73C /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
+				CLASSPREFIX = XZ;
 				LastUpgradeCheck = 1010;
-				ORGANIZATIONNAME = mlibai;
+				ORGANIZATIONNAME = "Xezun Inc";
 				TargetAttributes = {
 					28D014852275A9AD00B53668 = {
 						CreatedOnToolsVersion = 10.2.1;
+					};
+					28F608D623E0353500C394B9 = {
+						CreatedOnToolsVersion = 11.3.1;
+						LastSwiftMigration = 1130;
 					};
 					DD30EF4021A4330000C4C73C = {
 						CreatedOnToolsVersion = 10.1;
@@ -594,11 +673,19 @@
 			targets = (
 				DD30EF4021A4330000C4C73C /* XZKit */,
 				28D014852275A9AD00B53668 /* XZKit Aggregate */,
+				28F608D623E0353500C394B9 /* XZKitTests */,
 			);
 		};
 /* End PBXProject section */
 
 /* Begin PBXResourcesBuildPhase section */
+		28F608D523E0353500C394B9 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		DD30EF3F21A4330000C4C73C /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -646,17 +733,27 @@
 /* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
+		28F608D323E0353500C394B9 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				28F608E323E04F5800C394B9 /* XZKitConstantsTests.m in Sources */,
+				28F608DA23E0353500C394B9 /* XZKitTests.m in Sources */,
+				289EC08123E2FCB6002F7419 /* XZKitConstantsSwiftTests.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		DD30EF3D21A4330000C4C73C /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				28C066A5224F65D20011F052 /* XZKit+HexadecimalEncoding.m in Sources */,
+				28C066A5224F65D20011F052 /* XZKit+Encoding.m in Sources */,
 				28CA189522478E8300F16621 /* XZContentStatus.swift in Sources */,
 				28CA187322478E8300F16621 /* UIApplication+XZKit.swift in Sources */,
 				28CA188B22478E8300F16621 /* JSON+XZKit.swift in Sources */,
 				28CA189C22478E8300F16621 /* XZDataCryptor.m in Sources */,
 				28CA185C22478E8300F16621 /* XZNavigationBar.swift in Sources */,
-				28CA18A922478E8300F16621 /* XZKitConstants.swift in Sources */,
+				28CA18A922478E8300F16621 /* XZKit+Constants.swift in Sources */,
 				28CA188C22478E8300F16621 /* XZKit+String.swift in Sources */,
 				28E3B73922716E4C005ECB02 /* XZCarouselViewController.m in Sources */,
 				28CA186022478E8300F16621 /* XZAppRedirection.m in Sources */,
@@ -666,7 +763,7 @@
 				28CA188322478E8300F16621 /* XZAPIError.swift in Sources */,
 				28CA189922478E8300F16621 /* XZTextImageControl.swift in Sources */,
 				28CA185D22478E8300F16621 /* XZNavigationController.swift in Sources */,
-				28CA18A722478E8300F16621 /* XZKitConstants.m in Sources */,
+				28CA18A722478E8300F16621 /* XZKit+Constants.m in Sources */,
 				28CA18A122478E8300F16621 /* XZAppLanguage.m in Sources */,
 				28CA185822478E8300F16621 /* XZNavigationController.AnimationController.swift in Sources */,
 				28CA186922478E8300F16621 /* XZImageCacheManager.swift in Sources */,
@@ -715,6 +812,14 @@
 		};
 /* End PBXSourcesBuildPhase section */
 
+/* Begin PBXTargetDependency section */
+		28F608DE23E0353500C394B9 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = DD30EF4021A4330000C4C73C /* XZKit */;
+			targetProxy = 28F608DD23E0353500C394B9 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
 /* Begin XCBuildConfiguration section */
 		28D014862275A9AD00B53668 /* Debug */ = {
 			isa = XCBuildConfiguration;
@@ -729,6 +834,47 @@
 			buildSettings = {
 				CODE_SIGN_STYLE = Automatic;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Release;
+		};
+		28F608DF23E0353500C394B9 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
+				CLANG_ENABLE_MODULES = YES;
+				CODE_SIGN_STYLE = Automatic;
+				INFOPLIST_FILE = XZKitTests/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 13.2;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.xezun.XZKitTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		28F608E023E0353500C394B9 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
+				CLANG_ENABLE_MODULES = YES;
+				CODE_SIGN_STYLE = Automatic;
+				INFOPLIST_FILE = XZKitTests/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 13.2;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.xezun.XZKitTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Release;
 		};
@@ -883,7 +1029,8 @@
 					"@executable_path/Frameworks",
 					"@loader_path/Frameworks",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = com.mlibai.XZKit;
+				MARKETING_VERSION = 4.3.3;
+				PRODUCT_BUNDLE_IDENTIFIER = com.xezun.XZKit;
 				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SKIP_INSTALL = YES;
@@ -910,7 +1057,8 @@
 					"@executable_path/Frameworks",
 					"@loader_path/Frameworks",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = com.mlibai.XZKit;
+				MARKETING_VERSION = 4.3.3;
+				PRODUCT_BUNDLE_IDENTIFIER = com.xezun.XZKit;
 				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SKIP_INSTALL = YES;
@@ -926,6 +1074,15 @@
 			buildConfigurations = (
 				28D014862275A9AD00B53668 /* Debug */,
 				28D014872275A9AD00B53668 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		28F608E123E0353500C394B9 /* Build configuration list for PBXNativeTarget "XZKitTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				28F608DF23E0353500C394B9 /* Debug */,
+				28F608E023E0353500C394B9 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;

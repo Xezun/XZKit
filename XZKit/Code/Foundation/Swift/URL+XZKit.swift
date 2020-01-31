@@ -65,10 +65,10 @@ extension URL {
         if let queryValue = queryValue {
             if let queryValues = queryValue as? [Any] {
                 for queryValue in queryValues {
-                    queryItems.append(.init(name: queryKey, value: String(queryValue)))
+                    queryItems.append(.init(name: queryKey, value: String(casting: queryValue)))
                 }
             } else {
-                queryItems.append(.init(name: queryKey, value: String(queryValue)))
+                queryItems.append(.init(name: queryKey, value: String(casting: queryValue)))
             }
         } else {
             queryItems.append(URLQueryItem.init(name: queryKey, value: nil))
@@ -86,10 +86,10 @@ extension URL {
         if let queryValue = queryValue {
             if let queryValues = queryValue as? [Any] {
                 for queryValue in queryValues {
-                    queryItems.append(.init(name: queryKey, value: String(queryValue)))
+                    queryItems.append(.init(name: queryKey, value: String(casting: queryValue)))
                 }
             } else {
-                queryItems.append(.init(name: queryKey, value: String(queryValue)))
+                queryItems.append(.init(name: queryKey, value: String(casting: queryValue)))
             }
         } else {
             queryItems.append(URLQueryItem.init(name: queryKey, value: nil))
@@ -151,19 +151,19 @@ extension URL {
         var newQueryItems: [URLQueryItem]! = nil
         if let keyedValues = value as? [String: Any?] {
             newQueryItems = keyedValues.map { (item) -> URLQueryItem in
-                return URLQueryItem.init(name: item.key, value: String.init(item.value))
+                return URLQueryItem.init(name: item.key, value: String.init(casting: item.value))
             }
         } else if let values = value as? [Any] {
             for item in values {
-                guard let aString = String.init(item) else { continue }
+                guard let aString = String.init(casting: item) else { continue }
                 if newQueryItems == nil {
-                    newQueryItems = [URLQueryItem.init(name: aString, value: nil)]
+                    newQueryItems = [URLQueryItem.init(name: aString.description, value: nil)]
                 } else {
-                    newQueryItems.append(URLQueryItem.init(name: aString, value: nil))
+                    newQueryItems.append(URLQueryItem.init(name: aString.description, value: nil))
                 }
             }
-        } else if let aString = String.init(value) {
-            newQueryItems = [URLQueryItem.init(name: aString, value: nil)]
+        } else if let aString = String.init(casting: value) {
+            newQueryItems = [URLQueryItem.init(name: aString.description, value: nil)]
         } else {
             return self
         }

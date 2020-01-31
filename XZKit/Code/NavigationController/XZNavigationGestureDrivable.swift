@@ -11,7 +11,7 @@ import UIKit
 /// 本协议用于控制器，用于自定义手势导航行为。
 /// - Note: 控制器所在的导航控制器必须为 XZKit.UINavigationController 。
 /// - Note: 在应用协议前，须设置当前控制器所在的导航控制器的 isNavigationGestureDrivable 属性为 true 。
-public protocol NavigationGestureDrivable: ObjectProtocol where Self: UIViewController {
+public protocol NavigationGestureDrivable: UIViewController {
     
     /// 当一个 Push 手势触发时，此方法会被调用。控制应该在此方法中返回需要 Push 的下级控制器。
     /// - Note: 默认返回 nil ，表示没有下级页面。

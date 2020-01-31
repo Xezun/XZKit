@@ -6,17 +6,21 @@
 //  Copyright © 2018年 mlibai. All rights reserved.
 //
 
-#import "XZKitConstants.h"
+#import "XZKit+Constants.h"
 #import <sys/time.h>
 #import <XZKit/XZKit-Swift.h>
 
 bool XZKitDebugMode = NO;
 
-void __XZKitLoadDebugMode(void) {
+@implementation NSObject (XZKitConstants)
+
++ (void)load {
     XZKitDebugMode = (bool)[NSProcessInfo.processInfo.arguments containsObject:@"-XZKitDEBUG"];
 }
 
-void __xz_defer__(void (^ _Nonnull * _Nonnull operation)(void)) {
+@end
+
+void __xz_defer_obsv__(void (^ _Nonnull * _Nonnull operation)(void)) {
     (*operation)();
 }
 

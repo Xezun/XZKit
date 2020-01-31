@@ -40,12 +40,9 @@ NS_ASSUME_NONNULL_BEGIN
 #define XZ_VARIABLE_OBSERVER(anObserver) __attribute__((cleanup(anObserver)))
 
 
-
-
 #pragma mark - 类型定义及常量
 /// 当前是否为 DEBUG 模式，程序启动参数添加了 -XZKitDEBUG 参数。
 FOUNDATION_EXTERN bool XZKitDebugMode NS_SWIFT_NAME(isDebugMode);
-FOUNDATION_EXTERN void __XZKitLoadDebugMode(void) XZ_CONSTRUCTOR NS_UNAVAILABLE;
 
 /// 字符串字符大小写样式。
 ///
@@ -56,27 +53,40 @@ typedef NS_ENUM(BOOL, XZCharacterCase) {
     XZCharacterUppercase = YES
 } NS_SWIFT_NAME(CharacterCase);
 
-#pragma mark - 函数
+
+#pragma mark - defer
 
 /// defer 闭包的执行函数，请不要直接调用此函数。
 ///
 /// @param operation 待执行的清理操作。
-FOUNDATION_EXPORT void __xz_defer__(void (^ _Nonnull * _Nonnull operation)(void)) NS_SWIFT_UNAVAILABLE("Use Swift.defer instead.");
-/// 宏 defer 可以定义一个在当前作用域结束时需执行 block。
+FOUNDATION_EXPORT void __xz_defer_obsv__(void (^ _Nonnull * _Nonnull operation)(void)) NS_SWIFT_UNAVAILABLE("Use Swift.defer instead.");
+/// 连接两个宏参数。
+/// 中转，将宏参数替换成宏代表的值。
+#define __xz_defer_impl__(L, S) void (^__NSX_PASTE__(__xz_defer_stmt_, L))(void) __attribute__((cleanup(__xz_defer_obsv__), unused)) = S
+/// 定义当前作用域结束时需执行清理操作。
+#define xz_defer(statements) __xz_defer_impl__(__COUNTER__, statements)
+
+#ifndef defer
+/// 使用 defer 封装的代码，不会立即执行，而是在运行至当前作用域结束时才执行。
+/// 这在函数返回时，需要执行清理操作的逻辑中，特别是有多个返回分支的逻辑中非常有用，可以提前处理清理逻辑。
+/// @param operation 需执行的代码。
 FOUNDATION_EXPORT void defer(void (^ _Nonnull operation)(void)) NS_SWIFT_UNAVAILABLE("Use Swift.defer instead.");
 #undef defer
-/// 连接两个宏参数。
-#define __xz_defer_var_v__(X, Y) X##Y
-/// 中转，将宏参数替换成宏代表的值。
-#define __xz_defer_var_m__(X, Y) __xz_defer_var_v__(X, Y)
-/// 定义当前作用域结束时需执行清理操作。
-#define defer(statements) void(^__xz_defer_var_m__(__xz_defer_var_, __COUNTER__))(void) __attribute__((cleanup(__xz_defer__), unused)) = statements
+#define defer(statements) xz_defer(statements)
+#endif
+
+
+#pragma mark - timestamp
 
 /// 获取当前时间戳，精确到微秒。
 /// @note 在 Swift 中，请使用 `TimeInterval.since1970` 代替。
 ///
 /// @return 单位为秒，小数点后为微秒。
 FOUNDATION_EXTERN NSTimeInterval xz_timestamp(void) NS_REFINED_FOR_SWIFT;
+
+
+#pragma mark - print
+
 /// 输出信息到控制台，末尾自动换行。不附加任何其它信息。
 ///
 /// @param format 输出格式。
@@ -102,11 +112,14 @@ FOUNDATION_EXTERN void xz_print_v(NSString * _Nonnull format, va_list _Nonnull a
 FOUNDATION_EXTERN void XZLogv(const char * const filePath, int const line, const char * const function, NSString * const _Nonnull format, ...) NS_FORMAT_FUNCTION(4, 5) NS_SWIFT_UNAVAILABLE("Use Swift XZKit.XZLog instead.");
 /// 控制台输出宏 XZLog 仅在程序添加了启动参数 -XZKitDEBUG 才执行控制台输出的函数。
 FOUNDATION_EXTERN void XZLog(NSString * _Nonnull format, ...) NS_SWIFT_UNAVAILABLE("There is a copy implementation of XZLog for Swift.");
-/// 没有说明
+
 #undef XZLog
-/// 如何说明。
 #define XZLog(format, ...) XZLogv(__FILE__, (int)__LINE__, __func__, format, ##__VA_ARGS__)
 
+
+@interface NSObject (XZKitConstants)
++ (void)load;
+@end
 
 
 NS_ASSUME_NONNULL_END

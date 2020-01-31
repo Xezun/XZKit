@@ -12,14 +12,14 @@ extension Data {
     
     /// 返回数据的十六进制字符串形式，默认大写字母。
     public var hexadecimalEncodedString: String {
-        return hexadecimalEncodedString(with: .uppercase)
+        return hexadecimalEncodedString(using: .uppercase)
     }
     
     /// 按指定大小写，返回数据的十六进制字符串形式。
     ///
     /// - Parameter characterCase: 字符大小写方式。
     /// - Returns: 十六进制的字符串。
-    public func hexadecimalEncodedString(with characterCase: CharacterCase) -> String {
+    public func hexadecimalEncodedString(using characterCase: CharacterCase) -> String {
         switch characterCase {
         case .lowercase:
             let Table: [Character] = ["0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "a", "b", "c", "d", "e", "f"]
@@ -30,7 +30,7 @@ extension Data {
         default:
             let Table: [Character] = ["0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "A", "B", "C", "D", "E", "F"]
             return self.reduce(into: String(), { (result, item) in
-                result.append(Table[Int(item >> 2)]);
+                result.append(Table[Int(item >> 4)]);
                 result.append(Table[Int(item & 0x0f)]);
             });
         }

@@ -20,6 +20,7 @@ extension String {
     ///   - arguments: 参数列表。
     public init(formats format: String, _ arguments: Any? ...) {
         self.init(formats: format, arguments: arguments)
+        
     }
     
     /// 格式化字符串，与原生的构造方法相比，本方法支持任意类型的参数。
@@ -45,12 +46,12 @@ extension String {
                 // 如果值对应的占位符不为 %@ ，且其可以转换成 CVarArg ，则使用其 CVarArg 值，否则将其转换成 String 值。
                 if charactor != "@", let cValue = value as? CVarArg {
                     parameters.append(cValue)
-                } else if let string = unwrap(value) {
+                } else if let string = value {
                     parameters.append(String.init(describing: string))
                 } else {
                     parameters.append("nil")
                 }
-                // 下一个参数，如果已经匹配所有参赛，则结束循环。
+                // 下一个参数，如果已经匹配所有参数，则结束循环。
                 index += 1
                 guard index < arguments.count else {
                     break
@@ -111,11 +112,8 @@ extension String {
     /// - Note: 除 nil、NSNull 外，所有的值都使用 String.init(describing:) 转换为 String 对象。
     ///
     /// - Parameter value: 任意值。
-    public init?(_ value: Any?) {
-        guard let anyValue = unwrap(value) else {
-            return nil
-        }
-        if anyValue is NSNull {
+    public init?(casting value: Any?) {
+        guard let anyValue = value, !(anyValue is NSNull) else {
             return nil
         }
         self.init(describing: anyValue)
@@ -155,7 +153,8 @@ extension String {
     
     /// 中文文字转拼音。 transformingMandarinToLatin / mandarinToLatinTransformed.
     public var transformingMandarinToLatin: String {
-        let mutableStringRef: CFMutableString! = CFStringCreateMutableCopy(kCFAllocatorDefault, count, self as CFString)
+        let string = self as CFString
+        let mutableStringRef: CFMutableString! = CFStringCreateMutableCopy(kCFAllocatorDefault, CFStringGetLength(string), string)
         CFStringTransform(mutableStringRef, nil, kCFStringTransformMandarinLatin, false);
         CFStringTransform(mutableStringRef, nil, kCFStringTransformStripDiacritics, false);
         return (mutableStringRef as String)
@@ -164,13 +163,13 @@ extension String {
     /// 当前字符串 URL 编码后的字符串。
     /// - Note: 字符集合 CharacterSet.urlFragmentAllowed 中的字符不会被转义。
     public var addingURIEncoding: String? {
-        return addingPercentEncoding(withAllowedCharacters: .urlFragmentAllowed)
+        return addingPercentEncoding(withAllowedCharacters: .URIEncodingAllowed)
     }
     
     /// 当前字符串 URL 编码后的字符串。
     /// - Note: 转义除字符集合 .alphanumerics 以外的所有字符。
     public var addingURIComponentEncoding: String? {
-        return addingPercentEncoding(withAllowedCharacters: .alphanumerics)
+        return addingPercentEncoding(withAllowedCharacters: .URIComponentEncodingAllowed)
     }
     
     /// 当前字符串 URL 解码后的字符串。
@@ -325,3 +324,14 @@ extension String {
 
 
 
+extension CharacterSet {
+    
+    public static let URIEncodingAllowed: CharacterSet = { () -> CharacterSet in
+        return CharacterSet(charactersIn: "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789;,/?:@&=+$-_.!~*'()#")
+    }()
+    
+    public static let URIComponentEncodingAllowed: CharacterSet = { () -> CharacterSet in
+        return CharacterSet(charactersIn: "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789().!~*'-_")
+    }()
+    
+}

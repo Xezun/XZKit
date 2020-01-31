@@ -11,7 +11,7 @@ import UIKit
 /// 实现了一个包含文本和图片的视图布局逻辑。
 /// - Note: 控件实现协议需重写 layoutSubviews 方法，并执行 layoutTextImageViews 方法。
 /// - Note: 如果需要支持 AutoLayout 自适应大小，需要重写 intrinsicContentSize 方法，并返回 intrinsicTextImageSize 。
-public protocol TextImageLayout: ObjectProtocol where Self: UIView {
+public protocol TextImageLayout: UIView {
     /// 标题文本控件。
     var textLabelIfLoaded: UILabel? { get }
     /// 图片控件。

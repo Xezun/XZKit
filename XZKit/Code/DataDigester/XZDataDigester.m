@@ -8,7 +8,7 @@
 
 #import "XZDataDigester.h"
 #import <CommonCrypto/CommonDigest.h>
-#import "XZKit+HexadecimalEncoding.h"
+#import "XZKit+Encoding.h"
 
 /// 在 CommonDigest.h 头文件中，消息摘要是通过 init、update、final 三个过程函数以及 context 结构体实现的。
 /// 以下三个函数类型，分别代表这三种通用的操作，通过 DataDigesterContextCreate() 函数关联实际的操作函数。
@@ -60,7 +60,7 @@ static void *_XZDataDigesterExecuteWithBlock(NSData * _Nonnull data, XZDataDiges
 
 + (NSString *)digest:(NSData *)data algorithm:(XZDataDigesterAlgorithm)algorithm hexadecimalEncoding:(XZCharacterCase)characterCase {
     return (__bridge_transfer NSString *)_XZDataDigesterExecuteWithBlock(data, algorithm, ^(const unsigned char *buffer, CC_LONG length) {
-        return (__bridge_retained void *)[NSString xz_hexadecimalEncodedStringWithBytes:buffer length:length characterCase:characterCase];
+        return (__bridge_retained void *)[NSString xz_stringHexadecimalEncodedWithBytes:buffer length:length characterCase:characterCase];
     });
 }
 
@@ -113,7 +113,7 @@ static void *_XZDataDigesterExecuteWithBlock(NSData * _Nonnull data, XZDataDiges
 
 - (NSString *)hexadecimalEncodedString:(XZCharacterCase)characterCase {
     return [self finishByUsingBlock:^id _Nullable(const unsigned char * _Nonnull output, NSUInteger length) {
-        return [NSString xz_hexadecimalEncodedStringWithBytes:output length:length characterCase:characterCase];
+        return [NSString xz_stringHexadecimalEncodedWithBytes:output length:length characterCase:characterCase];
     }];
 }
 
