@@ -12,7 +12,7 @@
 #import <XZKit/XZDataDigester.h>
 #import <XZKit/XZDataCryptor.h>
 #else
-#import "XZKit+Constants.h"
+#import "XZKitConstants.h"
 #import "XZDataDigester.h"
 #import "XZDataCryptor.h"
 #endif

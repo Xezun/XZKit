@@ -43,8 +43,8 @@ FOUNDATION_EXPORT const unsigned char XZKitVersionString[];
 #else // not __has_include(<XZKit/XZKit-umbrella.h>) start.
 
 // MARK: - Constants
-#if __has_include(<XZKit/XZKit+Constants.h>)
-#import <XZKit/XZKit+Constants.h>
+#if __has_include(<XZKit/XZKitConstants.h>)
+#import <XZKit/XZKitConstants.h>
 #endif
 #if __has_include(<XZKit/XZKit+Geometry.h>)
 #import <XZKit/XZKit+Geometry.h>
@@ -119,7 +119,7 @@ FOUNDATION_EXPORT const unsigned char XZKitVersionString[];
 
 
 // MARK: - Constants
-#import <XZKit/XZKit+Constants.h>
+#import <XZKit/XZKitConstants.h>
 #import <XZKit/XZKit+Geometry.h>
 #import <XZKit/XZKit+Runtime.h>
 #import <XZKit/XZKit+Encoding.h>

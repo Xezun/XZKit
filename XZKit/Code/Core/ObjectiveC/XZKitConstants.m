@@ -1,12 +1,13 @@
 //
-//  ObjectiveC.m
+//  XZKitConstants.m
 //  XZKit
 //
 //  Created by mlibai on 2018/4/14.
 //  Copyright © 2018年 mlibai. All rights reserved.
 //
 
-#import "XZKit+Constants.h"
+#define XZKIT_CONSTANTS_DEBUG_SUPPORTING
+#import "XZKitConstants.h"
 #import <sys/time.h>
 #import <XZKit/XZKit-Swift.h>
 

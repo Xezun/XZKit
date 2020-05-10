@@ -8,12 +8,15 @@
 
 import UIKit
 
+@available(*, unavailable, renamed: "TimeKeepable")
+public typealias Timeable = TimeKeepable;
+
 /// 实现本协议的对象自动获得计时的能力。
-public protocol Timable: DisplayTimerDelegate {
+public protocol TimeKeepable: DisplayTimerDelegate {
     
 }
 
-extension Timable {
+extension TimeKeepable {
     
     /// 用于处理计时的 DisplayTimer 对象。
     public var displayTimer: DisplayTimer {

@@ -82,9 +82,9 @@
 		28CA18A222478E8300F16621 /* XZAppLanguage.h in Headers */ = {isa = PBXBuildFile; fileRef = 28CA184C22478E8300F16621 /* XZAppLanguage.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		28CA18A322478E8300F16621 /* XZAppLanguage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 28CA184D22478E8300F16621 /* XZAppLanguage.swift */; };
 		28CA18A622478E8300F16621 /* XZProgressView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 28CA185222478E8300F16621 /* XZProgressView.swift */; };
-		28CA18A722478E8300F16621 /* XZKit+Constants.m in Sources */ = {isa = PBXBuildFile; fileRef = 28CA185422478E8300F16621 /* XZKit+Constants.m */; };
-		28CA18A822478E8300F16621 /* XZKit+Constants.h in Headers */ = {isa = PBXBuildFile; fileRef = 28CA185522478E8300F16621 /* XZKit+Constants.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		28CA18A922478E8300F16621 /* XZKit+Constants.swift in Sources */ = {isa = PBXBuildFile; fileRef = 28CA185622478E8300F16621 /* XZKit+Constants.swift */; };
+		28CA18A722478E8300F16621 /* XZKitConstants.m in Sources */ = {isa = PBXBuildFile; fileRef = 28CA185422478E8300F16621 /* XZKitConstants.m */; };
+		28CA18A822478E8300F16621 /* XZKitConstants.h in Headers */ = {isa = PBXBuildFile; fileRef = 28CA185522478E8300F16621 /* XZKitConstants.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		28CA18A922478E8300F16621 /* XZKitConstants.swift in Sources */ = {isa = PBXBuildFile; fileRef = 28CA185622478E8300F16621 /* XZKitConstants.swift */; };
 		28E3B72A22716E31005ECB02 /* XZCarouselView.ScrollView.m in Sources */ = {isa = PBXBuildFile; fileRef = 28E3B72622716E31005ECB02 /* XZCarouselView.ScrollView.m */; };
 		28E3B72B22716E31005ECB02 /* XZCarouselView.ItemView.h in Headers */ = {isa = PBXBuildFile; fileRef = 28E3B72722716E31005ECB02 /* XZCarouselView.ItemView.h */; };
 		28E3B72C22716E31005ECB02 /* XZCarouselView.ScrollView.h in Headers */ = {isa = PBXBuildFile; fileRef = 28E3B72822716E31005ECB02 /* XZCarouselView.ScrollView.h */; };
@@ -180,9 +180,9 @@
 		28CA184C22478E8300F16621 /* XZAppLanguage.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XZAppLanguage.h; sourceTree = "<group>"; };
 		28CA184D22478E8300F16621 /* XZAppLanguage.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = XZAppLanguage.swift; sourceTree = "<group>"; };
 		28CA185222478E8300F16621 /* XZProgressView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = XZProgressView.swift; sourceTree = "<group>"; };
-		28CA185422478E8300F16621 /* XZKit+Constants.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "XZKit+Constants.m"; sourceTree = "<group>"; };
-		28CA185522478E8300F16621 /* XZKit+Constants.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "XZKit+Constants.h"; sourceTree = "<group>"; };
-		28CA185622478E8300F16621 /* XZKit+Constants.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "XZKit+Constants.swift"; sourceTree = "<group>"; };
+		28CA185422478E8300F16621 /* XZKitConstants.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = XZKitConstants.m; sourceTree = "<group>"; };
+		28CA185522478E8300F16621 /* XZKitConstants.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XZKitConstants.h; sourceTree = "<group>"; };
+		28CA185622478E8300F16621 /* XZKitConstants.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = XZKitConstants.swift; sourceTree = "<group>"; };
 		28E3B72622716E31005ECB02 /* XZCarouselView.ScrollView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = XZCarouselView.ScrollView.m; sourceTree = "<group>"; };
 		28E3B72722716E31005ECB02 /* XZCarouselView.ItemView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XZCarouselView.ItemView.h; sourceTree = "<group>"; };
 		28E3B72822716E31005ECB02 /* XZCarouselView.ScrollView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XZCarouselView.ScrollView.h; sourceTree = "<group>"; };
@@ -248,6 +248,8 @@
 			isa = PBXGroup;
 			children = (
 				28CA17F022478E8300F16621 /* XZKit.h */,
+				28CA185322478E8300F16621 /* Core */,
+				28ECD7FD246836C100BF436E /* Category */,
 				28C096362272E6F40096F118 /* DisplayTimer */,
 				28CA17F122478E8300F16621 /* NavigationController */,
 				28CA17FA22478E8300F16621 /* AppRedirection */,
@@ -255,16 +257,12 @@
 				28CA180422478E8300F16621 /* CacheManager */,
 				28CA184422478E8300F16621 /* DataCryptor */,
 				28CA180722478E8300F16621 /* DataDigester */,
-				28CA180A22478E8300F16621 /* UIKit */,
 				28CA181F22478E8300F16621 /* Networking */,
-				28CA182622478E8300F16621 /* Foundation */,
 				28CA183A22478E8300F16621 /* ContentStatus */,
 				28CA183E22478E8300F16621 /* UICollectionViewFlowLayout */,
 				28CA184A22478E8300F16621 /* AppLanguage */,
 				28CA184022478E8300F16621 /* TextImageView */,
-				28CA184E22478E8300F16621 /* Casting */,
 				28CA185022478E8300F16621 /* ProgressView */,
-				28CA185322478E8300F16621 /* XZKitConstants */,
 			);
 			name = Code;
 			path = ../../../XZKit/Code;
@@ -448,13 +446,6 @@
 			path = AppLanguage;
 			sourceTree = "<group>";
 		};
-		28CA184E22478E8300F16621 /* Casting */ = {
-			isa = PBXGroup;
-			children = (
-			);
-			path = Casting;
-			sourceTree = "<group>";
-		};
 		28CA185022478E8300F16621 /* ProgressView */ = {
 			isa = PBXGroup;
 			children = (
@@ -463,13 +454,13 @@
 			path = ProgressView;
 			sourceTree = "<group>";
 		};
-		28CA185322478E8300F16621 /* XZKitConstants */ = {
+		28CA185322478E8300F16621 /* Core */ = {
 			isa = PBXGroup;
 			children = (
-				28F608E523E0511E00C394B9 /* ObjectiveC */,
 				28F608E423E0510E00C394B9 /* Swift */,
+				28F608E523E0511E00C394B9 /* ObjectiveC */,
 			);
-			path = XZKitConstants;
+			path = Core;
 			sourceTree = "<group>";
 		};
 		28E3B71422716E27005ECB02 /* Public */ = {
@@ -498,6 +489,15 @@
 			path = Private;
 			sourceTree = "<group>";
 		};
+		28ECD7FD246836C100BF436E /* Category */ = {
+			isa = PBXGroup;
+			children = (
+				28CA182622478E8300F16621 /* Foundation */,
+				28CA180A22478E8300F16621 /* UIKit */,
+			);
+			path = Category;
+			sourceTree = "<group>";
+		};
 		28F608D823E0353500C394B9 /* XZKitTests */ = {
 			isa = PBXGroup;
 			children = (
@@ -512,7 +512,7 @@
 		28F608E423E0510E00C394B9 /* Swift */ = {
 			isa = PBXGroup;
 			children = (
-				28CA185622478E8300F16621 /* XZKit+Constants.swift */,
+				28CA185622478E8300F16621 /* XZKitConstants.swift */,
 				28CA183022478E8300F16621 /* XZKit+String.swift */,
 				28F4F2BB224A89C600E7B23C /* XZKit+Date.swift */,
 				28F4F2B5224A86C400E7B23C /* XZKit+Geometry.swift */,
@@ -524,8 +524,8 @@
 		28F608E523E0511E00C394B9 /* ObjectiveC */ = {
 			isa = PBXGroup;
 			children = (
-				28CA185522478E8300F16621 /* XZKit+Constants.h */,
-				28CA185422478E8300F16621 /* XZKit+Constants.m */,
+				28CA185522478E8300F16621 /* XZKitConstants.h */,
+				28CA185422478E8300F16621 /* XZKitConstants.m */,
 				28F4F2B1224A867E00E7B23C /* XZKit+Geometry.h */,
 				28F4F2B2224A867E00E7B23C /* XZKit+Geometry.m */,
 				28C066A2224F65BF0011F052 /* XZKit+Encoding.h */,
@@ -585,7 +585,7 @@
 				28C066A3224F65BF0011F052 /* XZKit+Encoding.h in Headers */,
 				28CA189222478E8300F16621 /* NSData+XZKit.h in Headers */,
 				28E3B73722716E4C005ECB02 /* XZCarouselViewController.h in Headers */,
-				28CA18A822478E8300F16621 /* XZKit+Constants.h in Headers */,
+				28CA18A822478E8300F16621 /* XZKitConstants.h in Headers */,
 				28CA18A222478E8300F16621 /* XZAppLanguage.h in Headers */,
 				28F4F2B3224A867E00E7B23C /* XZKit+Geometry.h in Headers */,
 				28E3B73A22716E4C005ECB02 /* XZImageViewer.h in Headers */,
@@ -753,7 +753,7 @@
 				28CA188B22478E8300F16621 /* JSON+XZKit.swift in Sources */,
 				28CA189C22478E8300F16621 /* XZDataCryptor.m in Sources */,
 				28CA185C22478E8300F16621 /* XZNavigationBar.swift in Sources */,
-				28CA18A922478E8300F16621 /* XZKit+Constants.swift in Sources */,
+				28CA18A922478E8300F16621 /* XZKitConstants.swift in Sources */,
 				28CA188C22478E8300F16621 /* XZKit+String.swift in Sources */,
 				28E3B73922716E4C005ECB02 /* XZCarouselViewController.m in Sources */,
 				28CA186022478E8300F16621 /* XZAppRedirection.m in Sources */,
@@ -763,7 +763,7 @@
 				28CA188322478E8300F16621 /* XZAPIError.swift in Sources */,
 				28CA189922478E8300F16621 /* XZTextImageControl.swift in Sources */,
 				28CA185D22478E8300F16621 /* XZNavigationController.swift in Sources */,
-				28CA18A722478E8300F16621 /* XZKit+Constants.m in Sources */,
+				28CA18A722478E8300F16621 /* XZKitConstants.m in Sources */,
 				28CA18A122478E8300F16621 /* XZAppLanguage.m in Sources */,
 				28CA185822478E8300F16621 /* XZNavigationController.AnimationController.swift in Sources */,
 				28CA186922478E8300F16621 /* XZImageCacheManager.swift in Sources */,

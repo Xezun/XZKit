@@ -8,7 +8,7 @@
 //  Requires XZKitConstants
 
 #import <Foundation/Foundation.h>
-#import <XZKit/XZKit+Constants.h>
+#import <XZKit/XZKitConstants.h>
 
 NS_ASSUME_NONNULL_BEGIN
 

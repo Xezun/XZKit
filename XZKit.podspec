@@ -11,7 +11,7 @@ Pod::Spec.new do |s|
     s.cocoapods_version = ">= 1.7.2"
   
     s.name    = "XZKit"
-    s.version = "4.3.3"
+    s.version = "4.3.4"
     s.summary = "XZKit 封装了 iOS App 开发过程中常用的功能和组件!"
     
     # This description is used to generate tags and improve search results.
@@ -78,11 +78,11 @@ Pod::Spec.new do |s|
     #     ss.vendored_frameworks = 'Products/XZKit.framework'
     # end
 
-    s.subspec 'XZKitConstants' do |ss|
+    s.subspec 'Core' do |ss|
       ss.public_header_files = 'XZKit/Code/XZKit.h',
-                               'XZKit/Code/XZKitConstants/**/*.h'
+                               'XZKit/Code/Core/**/*.h'
       ss.source_files = 'XZKit/Code/XZKit.h',
-                        'XZKit/Code/XZKitConstants/**/*.{h,m,swift}'
+                        'XZKit/Code/Core/**/*.{h,m,swift}'
     end
     
     s.subspec 'AppLanguage' do |ss|
@@ -91,7 +91,7 @@ Pod::Spec.new do |s|
         ss.source_files = 'XZKit/Code/XZKit.h',
                           'XZKit/Code/AppLanguage/**/*.{h,m,swift}'
                           
-        ss.dependency 'XZKit/XZKitConstants'
+        ss.dependency 'XZKit/Core'
     end
     
     s.subspec 'AppRedirection' do |ss|
@@ -100,7 +100,7 @@ Pod::Spec.new do |s|
         ss.source_files = 'XZKit/Code/XZKit.h',
                           'XZKit/Code/AppRedirection/*.{h,m,swift}'
 
-        ss.dependency "XZKit/XZKitConstants"
+        ss.dependency "XZKit/Core"
     end
     
     s.subspec 'CacheManager' do |ss|
@@ -109,7 +109,7 @@ Pod::Spec.new do |s|
         ss.source_files = 'XZKit/Code/XZKit.h',
                           'XZKit/Code/CacheManager/*.{h,m,swift}'
 
-        ss.dependency 'XZKit/Foundation'
+        ss.dependency 'XZKit/Category/Foundation'
     end
     
     s.subspec 'CarouselView' do |ss|
@@ -118,7 +118,7 @@ Pod::Spec.new do |s|
         ss.source_files = 'XZKit/Code/XZKit.h',
                           'XZKit/Code/CarouselView/**/*.{h,m,swift}'
        
-       ss.dependency "XZKit/XZKitConstants"
+       ss.dependency "XZKit/Core"
     end
     
     s.subspec 'ContentStatus' do |ss|
@@ -142,26 +142,17 @@ Pod::Spec.new do |s|
         ss.source_files = 'XZKit/Code/XZKit.h',
                           'XZKit/Code/DataDigester/*.{h,m,swift}'
 
-        ss.dependency "XZKit/XZKitConstants"
+        ss.dependency "XZKit/Core"
     end
     
-    s.subspec 'Foundation' do |ss|
-        ss.public_header_files = 'XZKit/Code/XZKit.h',
-                                 'XZKit/Code/Foundation/**/*.h'
-        ss.source_files = 'XZKit/Code/XZKit.h',
-                          'XZKit/Code/Foundation/**/*.{h,m,swift}'
-                        
-        ss.dependency "XZKit/XZKitConstants"
-        ss.dependency "XZKit/DataDigester"
-        ss.dependency "XZKit/DataCryptor"
-    end
+    
     
     s.subspec 'NavigationController' do |ss|
         ss.public_header_files = 'XZKit/Code/XZKit.h'
         ss.source_files = 'XZKit/Code/XZKit.h',
                           'XZKit/Code/NavigationController/*.{h,m,swift}'
 
-        ss.dependency "XZKit/XZKitConstants"
+        ss.dependency "XZKit/Core"
     end
     
     s.subspec 'Networking' do |ss|
@@ -188,7 +179,7 @@ Pod::Spec.new do |s|
         ss.source_files = 'XZKit/Code/XZKit.h',
                           'XZKit/Code/TextImageView/*.{h,m,swift}'
                           
-        ss.dependency "XZKit/XZKitConstants"
+        ss.dependency "XZKit/Core"
     end
     
     s.subspec 'UICollectionViewFlowLayout' do |ss|
@@ -196,18 +187,31 @@ Pod::Spec.new do |s|
         ss.source_files = 'XZKit/Code/XZKit.h',
                           'XZKit/Code/UICollectionViewFlowLayout/*.{h,m,swift}'
 
-        ss.dependency "XZKit/XZKitConstants"
+        ss.dependency "XZKit/Core"
     end
     
-    s.subspec 'UIKit' do |ss|
-        ss.public_header_files = 'XZKit/Code/XZKit.h',
-                                 'XZKit/Code/UIKit/**/*.h'
-        ss.source_files = 'XZKit/Code/XZKit.h',
-                          'XZKit/Code/UIKit/**/*.{h,m,swift}'
+    s.subspec 'Category' do |ss|
+	    ss.subspec 'Foundation' do |sss|
+	        sss.public_header_files = 'XZKit/Code/XZKit.h',
+	                                  'XZKit/Code/Category/Foundation/**/*.h'
+	        sss.source_files = 'XZKit/Code/XZKit.h',
+	                           'XZKit/Code/Category/Foundation/**/*.{h,m,swift}'
+	                        
+	        sss.dependency "XZKit/Core"
+	        sss.dependency "XZKit/DataDigester"
+	        sss.dependency "XZKit/DataCryptor"
+	    end
 
-        ss.dependency "XZKit/XZKitConstants"
-        ss.dependency "XZKit/Foundation"
-        ss.dependency "XZKit/CacheManager"
+	    ss.subspec 'UIKit' do |sss|
+	        sss.public_header_files = 'XZKit/Code/XZKit.h',
+	                                  'XZKit/Code/Category/UIKit/**/*.h'
+	        sss.source_files = 'XZKit/Code/XZKit.h',
+	                           'XZKit/Code/Category/UIKit/**/*.{h,m,swift}'
+
+	        sss.dependency "XZKit/Core"
+	        sss.dependency "XZKit/Category/Foundation"
+	        sss.dependency "XZKit/CacheManager"
+	    end
     end
     
 end

@@ -12,11 +12,11 @@ import XZKit
 class XZKitConstantsSwiftTests: XCTestCase {
 
     override func setUp() {
-        isDebugMode = true
+        XZLog("isDebugMode: %@", isDebugMode);
     }
 
     override func tearDown() {
-        isDebugMode = false
+        
     }
 
     func testConstants() {
@@ -53,6 +53,8 @@ class XZKitConstantsSwiftTests: XCTestCase {
         第一行：ABC
         第二行：EDF
         """)
+        
+        
     }
 
     func testPerformanceExample() {
