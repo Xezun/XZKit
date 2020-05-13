@@ -5,10 +5,10 @@
 //  Created by M. X. Z. on 16/7/28.
 //  Copyright © 2016年 J. W. Z. All rights reserved.
 //
-//  Requires XZKitConstants
+//  Requires XZKitDefines
 
 #import <Foundation/Foundation.h>
-#import <XZKit/XZKitConstants.h>
+#import <XZKit/XZKitDefines.h>
 
 NS_ASSUME_NONNULL_BEGIN
 

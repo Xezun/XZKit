@@ -7,7 +7,7 @@
 //
 
 #import <Foundation/Foundation.h>
-#import <XZKit/XZKitConstants.h>
+#import <XZKit/XZKitDefines.h>
 
 NS_ASSUME_NONNULL_BEGIN
 

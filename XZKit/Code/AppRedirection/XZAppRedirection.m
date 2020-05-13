@@ -8,7 +8,7 @@
 
 #import "XZAppRedirection.h"
 #import <objc/runtime.h>
-#import <XZKit/XZKitConstants.h>
+#import <XZKit/XZKitDefines.h>
 
 static const void * const _redirection = &_redirection;
 static const void * const _isAppearing = &_isAppearing;

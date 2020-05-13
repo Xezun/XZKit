@@ -7,12 +7,12 @@
 //
 
 #import <Foundation/Foundation.h>
-#if __has_include(<XZKit/XZKitConstants.h>)
-#import <XZKit/XZKitConstants.h>
+#if __has_include(<XZKit/XZKitDefines.h>)
+#import <XZKit/XZKitDefines.h>
 #import <XZKit/XZDataDigester.h>
 #import <XZKit/XZDataCryptor.h>
 #else
-#import "XZKitConstants.h"
+#import "XZKitDefines.h"
 #import "XZDataDigester.h"
 #import "XZDataCryptor.h"
 #endif

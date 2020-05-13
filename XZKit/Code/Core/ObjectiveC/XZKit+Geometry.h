@@ -7,12 +7,12 @@
 //
 
 #import <UIKit/UIKit.h>
-#import <XZKit/XZKitConstants.h>
+#import <XZKit/XZKitDefines.h>
 
 NS_ASSUME_NONNULL_BEGIN
 
 /// 与 UIEdgeInsets 相同，只不过方便适配 LTR/RTL 布局。
-typedef struct XZ_BOXABLE {
+typedef struct XZ_OBJC_BOXABLE {
     /// 上边距。
     CGFloat top;
     /// 前边距。

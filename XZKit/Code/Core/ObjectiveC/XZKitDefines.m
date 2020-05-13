@@ -1,5 +1,5 @@
 //
-//  XZKitConstants.m
+//  XZKitDefines.m
 //  XZKit
 //
 //  Created by mlibai on 2018/4/14.
@@ -7,13 +7,13 @@
 //
 
 #define XZKIT_CONSTANTS_DEBUG_SUPPORTING
-#import "XZKitConstants.h"
+#import "XZKitDefines.h"
 #import <sys/time.h>
 #import <XZKit/XZKit-Swift.h>
 
 bool XZKitDebugMode = NO;
 
-@implementation NSObject (XZKitConstants)
+@implementation NSObject (XZKitDefines)
 
 + (void)load {
     XZKitDebugMode = (bool)[NSProcessInfo.processInfo.arguments containsObject:@"-XZKitDEBUG"];
@@ -60,4 +60,13 @@ void XZLogv(const char * const filePath, int const line, const char * const func
     va_end(va_list_pointer);
     
     xz_print(@"%@\n%@\n%@\n%@\n", dividerLine, commentMessage, dividerLine, content);
+}
+
+#import <UIKit/UIKit.h>
+
+XZ_OBJC_RUNTIME_NAME("BarFoo") @interface FooBar : NSObject
+@end
+
+void foo(NSInteger bar) {
+    
 }

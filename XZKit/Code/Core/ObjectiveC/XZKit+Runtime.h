@@ -7,7 +7,7 @@
 //
 
 #import <Foundation/Foundation.h>
-#import <XZKit/XZKitConstants.h>
+#import <XZKit/XZKitDefines.h>
 #import <objc/runtime.h>
 
 NS_ASSUME_NONNULL_BEGIN
@@ -17,14 +17,14 @@ NS_ASSUME_NONNULL_BEGIN
 ///
 /// @param existedClass 以此类名作为前缀。
 /// @return 新的类名。
-FOUNDATION_EXTERN NSString *xz_objc_class_name_create(Class existedClass) NS_SWIFT_NAME(objc_class_name_create(_:)) XZ_FUNCTION_OVERLOADABLE;
+FOUNDATION_EXTERN NSString *xz_objc_class_name_create(Class existedClass) NS_SWIFT_NAME(objc_class_name_create(_:)) XZ_OBJC_FUNCTION_OVERLOADABLE;
 
 /// 以指定名字为基础，构造一个唯一的类名称。
 /// @note 用于动态构造已有类的子类来替换现有的类。
 ///
 /// @param classNameBase 原始类名称。
 /// @return 新的类名称。
-FOUNDATION_EXTERN NSString *xz_objc_class_name_create(NSString * classNameBase) NS_SWIFT_NAME(objc_class_name_create(_:)) XZ_FUNCTION_OVERLOADABLE;
+FOUNDATION_EXTERN NSString *xz_objc_class_name_create(NSString * classNameBase) NS_SWIFT_NAME(objc_class_name_create(_:)) XZ_OBJC_FUNCTION_OVERLOADABLE;
 
 /// 将指定类的 方法1 与 方法2 的方法体互换。
 /// @note 如果 方法1 不存在（包括继承自父类但是没有重写的方法），则给类增加一个与方法2相同方法体的方法。

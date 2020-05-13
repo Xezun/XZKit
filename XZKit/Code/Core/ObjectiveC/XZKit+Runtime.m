@@ -8,11 +8,11 @@
 
 #import "XZKit+Runtime.h"
 
-NSString * _Nonnull xz_objc_class_name_create(Class _Nonnull existedClass) XZ_FUNCTION_OVERLOADABLE {
+NSString * _Nonnull xz_objc_class_name_create(Class _Nonnull existedClass) XZ_OBJC_FUNCTION_OVERLOADABLE {
     return xz_objc_class_name_create(NSStringFromClass(existedClass));
 }
 
-NSString * _Nonnull xz_objc_class_name_create(NSString * _Nonnull classNameBase) XZ_FUNCTION_OVERLOADABLE {
+NSString * _Nonnull xz_objc_class_name_create(NSString * _Nonnull classNameBase) XZ_OBJC_FUNCTION_OVERLOADABLE {
     NSString *className = [NSString stringWithFormat:@"XZKit.%@", classNameBase];
     long flag = 1;
     while (objc_getClass(className.UTF8String) != nil) {

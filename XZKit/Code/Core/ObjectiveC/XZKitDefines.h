@@ -1,5 +1,5 @@
 //
-//  XZKitConstants.h
+//  XZKitDefines.h
 //  XZKit
 //
 //  Created by mlibai on 2018/4/14.
@@ -10,34 +10,85 @@
 #import <UIKit/UIKit.h>
 #import <objc/runtime.h>
 
+#ifndef XZKIT_DEFINES
+#define XZKIT_DEFINES
+
 NS_ASSUME_NONNULL_BEGIN
+
+typedef NSInteger XZKitMacro;
+
 
 #pragma mark - 宏定义
 
-/// 声明类不可以被继承。
-#define XZ_SUBCLASSING_RESTRICTED __attribute__((objc_subclassing_restricted))
-/// 定义类在运行时的名称。
-#define XZ_RUNTIME_NAME(runtimeName) __attribute__((objc_runtime_name(runtimeName)))
-/// 结构体可以用语法糖包裹成 NSValue 对象。
-#define XZ_BOXABLE __attribute__((objc_boxable))
+/// 用于类声明，限制类不可以被继承。
+/// @code
+/// XZ_OBJC_SUBCLASSING_RESTRICTED @interface FooBar : NSObject
+/// @end
+/// @endcode
+#define XZ_OBJC_SUBCLASSING_RESTRICTED __attribute__((objc_subclassing_restricted))
+
+/// 用于类或协议声明，指定其在运行时的名称。
+/// @code
+/// XZ_OBJC_RUNTIME_NAME("Bar") @interface Foo : NSObject
+/// @end
+/// @endcode
+#define XZ_OBJC_RUNTIME_NAME(runtimeName) __attribute__((objc_runtime_name(runtimeName)))
+
+/// 用于结构体声明，使其可以用语法糖 @(value) 包裹成 NSValue 对象。
+/// @code
+/// typedef struct XZ_OBJC_BOXABLE {
+///     CGFloat bar;
+/// } Foo;
+/// @endcode
+#define XZ_OBJC_BOXABLE __attribute__((objc_boxable))
+
 /// 声明函数为构造函数，在 main 函数执行前运行。
-#define XZ_CONSTRUCTOR __attribute__((constructor))
+/// @code
+/// void foo(NSInteger bar) XZ_OBJC_CONSTRUCTOR;
+/// @endcode
+#define XZ_OBJC_CONSTRUCTOR __attribute__((constructor))
+
 /// 声明函数为构造函数，在 main 函数执行前运行，按优先级数字值从小到大依次执行。
-#define XZ_CONSTRUCTOR_WITH_PRIORITY(priorityNumber) __attribute__((constructor(priorityNumber)))
+/// @code
+/// void foo1(NSInteger bar) XZ_OBJC_CONSTRUCTOR_WITH_PRIORITY(1);
+/// void foo2(NSInteger bar) XZ_OBJC_CONSTRUCTOR_WITH_PRIORITY(2);
+/// @endcode
+#define XZ_OBJC_CONSTRUCTOR_WITH_PRIORITY(priorityNumber) __attribute__((constructor(priorityNumber)))
+
 /// 声明函数为析构函数，在 main 函数执行后运行。
-#define XZ_DESTRUCTOR __attribute__((constructor))
+/// @code
+/// void foo(NSInteger bar) XZ_OBJC_DESTRUCTOR;
+/// @endcode
+#define XZ_OBJC_DESTRUCTOR __attribute__((constructor))
+
 /// 声明函数为析构函数，在 main 函数执行后运行，按优先级数字值从小到大依次执行。
-#define XZ_DESTRUCTOR_WITH_PRIORITY(priorityNumber) __attribute__((constructor(priorityNumber)))
+/// @code
+/// void foo1(NSInteger bar) XZ_OBJC_DESTRUCTOR_WITH_PRIORITY(1);
+/// void foo2(NSInteger bar) XZ_OBJC_DESTRUCTOR_WITH_PRIORITY(2);
+/// @endcode
+#define XZ_OBJC_DESTRUCTOR_WITH_PRIORITY(priorityNumber) __attribute__((constructor(priorityNumber)))
+
 /// 编译器函数参数检查。
-#define XZ_FUNCTION_PARAMETER_ASSERT(condition, message) __attribute__((enable_if(condition, message)))
+/// @code
+/// void fooBar(NSInteger foo, NSInteger bar)
+/// XZ_OBJC_FUNCTION_PARAMETER_ASSERT(foo > 2, "参数 foo 必须大于 2 ！")
+/// XZ_OBJC_FUNCTION_PARAMETER_ASSERT(bar > 1, "参数 bar 必须大于 1 ！");
+/// @endcode
+#define XZ_OBJC_FUNCTION_PARAMETER_ASSERT(condition, message) __attribute__((enable_if(condition, message)))
+
 /// 函数重载，放在函数末尾。
-#define XZ_FUNCTION_OVERLOADABLE __attribute__((overloadable))
+#define XZ_OBJC_FUNCTION_OVERLOADABLE __attribute__((overloadable))
+
 /// 变量观察者。当变量结束生命周期时，将自动执行指定的函数，该函数参数为指向被观察变量的指针。
 /// @code
-/// void observer(Int *anInt) { printf("%d", *anInt); }
-/// Int someInt XZ_VARIABLE_OBSERVER(observer) = 0;
+/// void observer(Int *anInt) {
+///     printf("%d", *anInt);
+/// }
+/// void main() {
+///     Int someInt XZ_OBJC_VARIABLE_OBSERVER(observer) = 0;
+/// }
 /// @endcode
-#define XZ_VARIABLE_OBSERVER(anObserver) __attribute__((cleanup(anObserver)))
+#define XZ_OBJC_VARIABLE_OBSERVER(anObserver) __attribute__((cleanup(anObserver)))
 
 
 #pragma mark - 类型定义及常量
@@ -123,12 +174,14 @@ FOUNDATION_EXTERN void XZLog(NSString * _Nonnull format, ...) NS_SWIFT_UNAVAILAB
 #define XZLog(format, ...) XZLogv(__FILE__, (int)__LINE__, __func__, format, ##__VA_ARGS__)
 
 
-@interface NSObject (XZKitConstants)
+@interface NSObject (XZKitDefines)
 + (void)load;
 @end
+
 
 
 NS_ASSUME_NONNULL_END
 
 
 
+#endif
