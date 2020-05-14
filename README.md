@@ -147,4 +147,4 @@ pod "XZKit/CarouselView"
 
 ## License
 
-XZKit is available under the MIT license. See the LICENSE file for more info.
+XZKit is available under the MIT license. Read the LICENSE file for more info.
