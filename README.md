@@ -143,7 +143,7 @@ pod "XZKit/CarouselView"
 
 ## 联系作者
 
-[mlibai@163.com](mailto://mlibai@163.com)
+[developer@xezun.com](mailto://developer@xezun.com)
 
 ## License
 
