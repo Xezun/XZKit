@@ -61,12 +61,3 @@ void XZLogv(const char * const filePath, int const line, const char * const func
     
     xz_print(@"%@\n%@\n%@\n%@\n", dividerLine, commentMessage, dividerLine, content);
 }
-
-#import <UIKit/UIKit.h>
-
-XZ_OBJC_RUNTIME_NAME("BarFoo") @interface FooBar : NSObject
-@end
-
-void foo(NSInteger bar) {
-    
-}

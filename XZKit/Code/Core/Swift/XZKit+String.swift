@@ -65,31 +65,26 @@ extension String {
 
 extension String {
     
-    // 字符串替换匹配规则：在指定边界字符之间的字符（包括边界字符）。
-    public struct BoundaryPredicate: ExpressibleByStringLiteral {
-        
-        public static let `default` = BoundaryPredicate(start: "{", end: "}")
-        
-        public let start: Character
-        public let end: Character
-        
-        public typealias StringLiteralType = String
-
-        public init(start: Character, end: Character) {
-            self.start = start
-            self.end = end
+    /// 将任意值强转成 String 。
+    /// - Note: 除 nil、NSNull 外，所有的值都使用 String.init(describing:) 转换为 String 对象。
+    ///
+    /// - Parameter value: 任意值。
+    public init?(casting value: Any?) {
+        guard let anyValue = value else {
+            return nil
         }
-        public init(stringLiteral value: String) {
-            if value.isEmpty {
-                self = .default
-            } else {
-                self = BoundaryPredicate(start: value.first!, end: value.last!)
-            }
+        if anyValue is NSNull {
+            return nil
         }
+        self.init(describing: anyValue)
     }
     
-    /// 字符独立书写方向控制的方向枚举。
-    /// 独立的书写顺序控制字符：当字符串中包含不同书写方向的字符时，字符串的显示效果可能与预期结果不一致，此时需要使用特殊的控制字符来控制指定字符的显示书写方向。
+}
+
+extension String {
+    
+    /// 字符的书写顺序控制字符枚举。
+    /// - Note: 书写方向不同的语言在一起拍版时，需要特殊的字符来控制它们的书写方向：
     /// - 自左向右：\u{2066}
     /// - 自右向左：\u{2067}
     /// - 以第一个字符为准：\u{2068}
@@ -106,17 +101,6 @@ extension String {
         public var terminator: String {
             return "\u{2069}"
         }
-    }
-    
-    /// 将任意值强转成 String 。
-    /// - Note: 除 nil、NSNull 外，所有的值都使用 String.init(describing:) 转换为 String 对象。
-    ///
-    /// - Parameter value: 任意值。
-    public init?(casting value: Any?) {
-        guard let anyValue = value, !(anyValue is NSNull) else {
-            return nil
-        }
-        self.init(describing: anyValue)
     }
     
     /// 将字符指定为独立的书写方向。
@@ -138,6 +122,33 @@ extension String {
     ///   - direction: 书写方向。
     public init(isolating string: String, direction: String.IsolateDirection) {
         self = direction.rawValue + string + direction.terminator
+    }
+    
+}
+
+extension String {
+    
+    // 字符串替换匹配规则：在指定边界字符之间的字符（包括边界字符）。
+    public struct IsolateBoundary: ExpressibleByStringLiteral {
+        
+        public static let `default` = IsolateBoundary(start: "{", end: "}")
+        
+        public let start: Character
+        public let end: Character
+        
+        public typealias StringLiteralType = String
+
+        public init(start: Character, end: Character) {
+            self.start = start
+            self.end = end
+        }
+        public init(stringLiteral value: String) {
+            if value.isEmpty {
+                self = .default
+            } else {
+                self = IsolateBoundary(start: value.first!, end: value.last!)
+            }
+        }
     }
     
     /// 过滤掉字符串首尾指定字符。
@@ -198,7 +209,7 @@ extension String {
     ///   - match: 匹配字符。
     ///   - predicate: 匹配条件，匹配字符的首尾字符，默认 ("{", "}")。
     /// - Returns: 字符串。
-    public init(replacing format: String, with transform: (_ match: String) -> String, predicate: String.BoundaryPredicate = .default) {
+    public init(replacing format: String, with transform: (_ match: String) -> String, predicate: String.IsolateBoundary = .default) {
         var result = String.init()
         var match = String.init()
         var isMatching = false
@@ -208,26 +219,22 @@ extension String {
                 if !isMatching {
                     // 当前非数字识别模式，则开始数字识别模式。
                     isMatching = true;
-                } else if predicate.start == predicate.end {
-                    // 如果开始边界符与结束边界符相等，则结束数字识别。
+                } else if predicate.start == predicate.end { // 如果开始边界符与结束边界符相等，则结束数字识别。
                     isMatching = false
                     result.append(transform(match))
                     match.removeAll() // 清除已识别的字符
-                } else {
-                    // 开始边界符与结束边界符不相等，且当前已经是数字识别模式，则结束当前的，开始新的。
-                    result.append(predicate.start)       // 追加开始符。
-                    result.append(match) // 将待识别的字符到字符串。
-                    match.removeAll()    // 清除待识别的字符。
+                } else { // 开始边界符与结束边界符不相等，且当前已经是数字识别模式，则结束当前的，开始新的。
+                    result.append(predicate.start)  // 追加开始符。
+                    result.append(match)            // 将待识别的字符到字符串。
+                    match.removeAll()               // 清除待识别的字符。
                 }
                 
             case predicate.end:
-                if isMatching {
-                    // 当前为数字识别模式，则结束数字识别。
+                if isMatching { // 当前为数字识别模式，则结束数字识别。
                     isMatching = false
                     result.append(transform(match))
                     match.removeAll() // 清除已识别的字符
-                } else {
-                    // 当前是非数字识别模式，直接将字符添加到新字符串中。
+                } else { // 当前是非数字识别模式，直接将字符添加到新字符串中。
                     result.append(char)
                 }
                 
@@ -259,7 +266,7 @@ extension String {
     ///   - dictionary: 字典。
     ///   - predicate: 匹配条件，匹配字符的首尾字符，默认 ("{", "}")。
     /// - Returns: 字符串。
-    public init(replacing format: String, with dictionary: [String: Any], predicate: String.BoundaryPredicate = .default) {
+    public init(replacing format: String, with dictionary: [String: Any], predicate: String.IsolateBoundary = .default) {
         self.init(replacing: format, with: { (match) -> String in
             if let value = dictionary[match] {
                 return String.init(describing: value)
@@ -279,7 +286,7 @@ extension String {
     ///   - array: 数组。
     ///   - predicate: 匹配条件，匹配字符的首尾字符，默认 ("{", "}")。
     /// - Returns: 字符串。
-    public init(replacing format: String, with array: [Any], predicate: String.BoundaryPredicate = .default) {
+    public init(replacing format: String, with array: [Any], predicate: String.IsolateBoundary = .default) {
         self.init(replacing: format, with: { (match) -> String in
             guard let index = Int(match) else { return match }
             guard index < array.count else {
@@ -300,23 +307,23 @@ extension String {
     ///   - arguments: 参数。
     ///   - predicate: 匹配条件，匹配字符的首尾字符，默认 ("{", "}")。
     /// - Returns: 字符串。
-    public init(replacing format: String, _ arguments: Any..., predicate: String.BoundaryPredicate = .default) {
+    public init(replacing format: String, _ arguments: Any..., predicate: String.IsolateBoundary = .default) {
         self.init(replacing: format, with: arguments, predicate: predicate)
     }
     
-    public func replacingOccurrences(of predicate: String.BoundaryPredicate, with replacement: Any...) -> String {
+    public func replacingOccurrences(of predicate: String.IsolateBoundary, with replacement: Any...) -> String {
         return String.init(replacing: self, with: replacement, predicate: predicate)
     }
     
-    public func replacingOccurrences(of predicate: String.BoundaryPredicate, with replacement: (String) -> String ) -> String {
+    public func replacingOccurrences(of predicate: String.IsolateBoundary, with replacement: (String) -> String ) -> String {
         return String.init(replacing: self, with: replacement, predicate: predicate)
     }
     
-    public func replacingOccurrences(of predicate: String.BoundaryPredicate, with replacement: [String: Any]) -> String {
+    public func replacingOccurrences(of predicate: String.IsolateBoundary, with replacement: [String: Any]) -> String {
         return String.init(replacing: self, with: replacement, predicate: predicate)
     }
     
-    public func replacingOccurrences(of predicate: String.BoundaryPredicate, with replacement: [Any]) -> String {
+    public func replacingOccurrences(of predicate: String.IsolateBoundary, with replacement: [Any]) -> String {
         return String.init(replacing: self, with: replacement, predicate: predicate)
     }
     

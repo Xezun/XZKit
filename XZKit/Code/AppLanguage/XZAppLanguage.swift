@@ -51,7 +51,7 @@ extension AppLanguage: ExpressibleByStringLiteral {
 ///   - surroundings: 动态参数界定字符，默认 ("{", "}")。
 ///   - comment: 描述 `key` 文本。
 /// - Returns: 国际化字符串。
-public func LocalizedString(_ key: String, _ arguments: Any ..., predicate: String.BoundaryPredicate = .default, comment: String) -> String {
+public func LocalizedString(_ key: String, _ arguments: Any ..., predicate: String.IsolateBoundary = .default, comment: String) -> String {
     return LocalizedString(key, arguments: arguments, predicate: predicate, comment: comment)
 }
 
@@ -78,7 +78,7 @@ public func LocalizedString(_ key: String, _ arguments: Any ..., predicate: Stri
 ///   - surroundings: 动态参数界定字符，默认 ("{", "}")。
 ///   - comment: 描述 `key` 文本。
 /// - Returns: 国际化字符串。
-public func LocalizedString(_ key: String, arguments: [Any], predicate: String.BoundaryPredicate = .default, comment: String) -> String {
+public func LocalizedString(_ key: String, arguments: [Any], predicate: String.IsolateBoundary = .default, comment: String) -> String {
     if arguments.isEmpty {
         return NSLocalizedString(key, comment: comment)
     }

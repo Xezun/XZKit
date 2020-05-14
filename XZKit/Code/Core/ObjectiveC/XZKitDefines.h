@@ -15,9 +15,6 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-typedef NSInteger XZKitMacro;
-
-
 #pragma mark - 宏定义
 
 /// 用于类声明，限制类不可以被继承。
@@ -97,12 +94,9 @@ typedef NSInteger XZKitMacro;
 #ifndef XZKIT_CONSTANTS_DEBUG_SUPPORTING
 #define XZKIT_CONSTANTS_DEBUG_SUPPORTING
 FOUNDATION_EXTERN bool const XZKitDebugMode NS_SWIFT_NAME(isDebugMode);
-#else
-FOUNDATION_EXTERN bool XZKitDebugMode NS_SWIFT_NAME(isDebugMode);
 #endif
 
 /// 字符串字符大小写样式。
-///
 /// - XZCharacterLowercase: 小写字符。
 /// - XZCharacterUppercase: 大写字符。
 typedef NS_ENUM(NSInteger, XZCharacterCase) {
@@ -127,6 +121,16 @@ FOUNDATION_EXPORT void __xz_defer_obsv__(void (^ _Nonnull * _Nonnull operation)(
 /// 使用 defer 封装的代码，不会立即执行，而是在运行至当前作用域结束时才执行。
 /// 这在函数返回时，需要执行清理操作的逻辑中，特别是有多个返回分支的逻辑中非常有用，可以提前处理清理逻辑。
 /// @param operation 需执行的代码。
+/// @code
+/// - (void)fooBar {
+///     DataBase *db = [DataBase dataBase];
+///     [db open:@"SELECT * FROM table"];
+///     defer({
+///         [db close]; // 本方法结束时，这句会被执行。
+///     });
+///     // more operations with the db.
+/// }
+/// @endcode
 FOUNDATION_EXPORT void defer(void (^ _Nonnull operation)(void)) NS_SWIFT_UNAVAILABLE("Use Swift.defer instead.");
 #undef defer
 #define defer(statements) xz_defer(statements)
@@ -137,7 +141,6 @@ FOUNDATION_EXPORT void defer(void (^ _Nonnull operation)(void)) NS_SWIFT_UNAVAIL
 
 /// 获取当前时间戳，精确到微秒。
 /// @note 在 Swift 中，请使用 `TimeInterval.since1970` 代替。
-///
 /// @return 单位为秒，小数点后为微秒。
 FOUNDATION_EXTERN NSTimeInterval xz_timestamp(void) NS_REFINED_FOR_SWIFT;
 
@@ -178,10 +181,6 @@ FOUNDATION_EXTERN void XZLog(NSString * _Nonnull format, ...) NS_SWIFT_UNAVAILAB
 + (void)load;
 @end
 
-
-
 NS_ASSUME_NONNULL_END
-
-
 
 #endif
