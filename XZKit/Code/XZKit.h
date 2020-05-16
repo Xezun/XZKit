@@ -10,7 +10,7 @@
 
 
 // 规范相关：
-// 域、标识符使用 com.mlibai.XZKit.子模块 结构。
+// 域、标识符前缀：com.mlibai.XZKit.<Moudle> 。
 //
 // EdgeInsets 命名规范：
 // 1. 表示具体的边距，省略edge：contentInsets、sectionInsets

@@ -15,12 +15,12 @@ extension String {
     /// - Note: 其它对象使用 `String.init(describing:)` 方法。
     ///
     /// - Parameter value: JSON 对象，比如 Array、Dictionary 。
-    public init?(json value: Any?) {
+    public init?(json value: Any?, options: JSONSerialization.WritingOptions = []) {
         guard let someValue = value else {
             return nil
         }
         if someValue is Array<Any> || someValue is Dictionary<String, Any> {
-            guard let data = try? JSONSerialization.data(withJSONObject: someValue, options: []) else {
+            guard let data = try? JSONSerialization.data(withJSONObject: someValue, options: options) else {
                 return nil
             }
             self.init(data: data, encoding: .utf8)
@@ -28,10 +28,10 @@ extension String {
             let stringDict = hashDict.reduce(into: [String: Any](), { (result, item) in
                 result[item.key.description] = item.value
             })
-            guard let data = try? JSONSerialization.data(withJSONObject: stringDict, options: []) else { return nil }
+            guard let data = try? JSONSerialization.data(withJSONObject: stringDict, options: options) else { return nil }
             self.init(data: data, encoding: .utf8)
         } else if let setValue = someValue as? Set<AnyHashable> {
-            guard let data = try? JSONSerialization.data(withJSONObject: Array(setValue), options: []) else { return nil }
+            guard let data = try? JSONSerialization.data(withJSONObject: Array(setValue), options: options) else { return nil }
             self.init(data: data, encoding: .utf8)
         } else {
             return nil
@@ -54,9 +54,9 @@ extension Dictionary {
     /// 解析 JSON 数据，转换成字典。
     ///
     /// - Parameter json: 字典格式的 JSON 二进制数据。
-    public init?(json: Data?) {
+    public init?(json: Data?, options: JSONSerialization.ReadingOptions = .allowFragments) {
         guard let json = json else { return nil }
-        guard let dict = (try? JSONSerialization.jsonObject(with: json, options: .allowFragments)) as? [Key: Value] else {
+        guard let dict = (try? JSONSerialization.jsonObject(with: json, options: options)) as? [Key: Value] else {
             return nil
         }
         self = dict
@@ -78,9 +78,9 @@ extension Array {
     /// 解析 JSON 数据，转换成数组。
     ///
     /// - Parameter json: 数组格式的 JSON 数据。
-    public init?(json: Data?) {
+    public init?(json: Data?, options: JSONSerialization.ReadingOptions = .allowFragments) {
         guard let json = json else { return nil }
-        guard let array = (try? JSONSerialization.jsonObject(with: json, options: .allowFragments)) as? [Element] else {
+        guard let array = (try? JSONSerialization.jsonObject(with: json, options: options)) as? [Element] else {
             return nil
         }
         self = array

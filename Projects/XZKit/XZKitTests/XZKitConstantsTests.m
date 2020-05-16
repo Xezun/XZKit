@@ -17,11 +17,11 @@
 @implementation XZKitConstantsTests
 
 - (void)setUp {
-    XZKitDebugMode = YES;
+    
 }
 
 - (void)tearDown {
-    XZKitDebugMode = NO;
+    
 }
 
 - (void)testDefer {

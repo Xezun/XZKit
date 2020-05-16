@@ -106,6 +106,7 @@
 		28F608DA23E0353500C394B9 /* XZKitTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 28F608D923E0353500C394B9 /* XZKitTests.m */; };
 		28F608DC23E0353500C394B9 /* XZKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DD30EF4121A4330000C4C73C /* XZKit.framework */; };
 		28F608E323E04F5800C394B9 /* XZKitConstantsTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 28F608E223E04F5800C394B9 /* XZKitConstantsTests.m */; };
+		2976826E2470227D00A2C2E7 /* XZURLTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2976826D2470227D00A2C2E7 /* XZURLTests.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -205,6 +206,7 @@
 		28F608D923E0353500C394B9 /* XZKitTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = XZKitTests.m; sourceTree = "<group>"; };
 		28F608DB23E0353500C394B9 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		28F608E223E04F5800C394B9 /* XZKitConstantsTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = XZKitConstantsTests.m; sourceTree = "<group>"; };
+		2976826D2470227D00A2C2E7 /* XZURLTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = XZURLTests.swift; sourceTree = "<group>"; };
 		DD30EF4121A4330000C4C73C /* XZKit.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = XZKit.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		DD30EF4521A4330000C4C73C /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -502,6 +504,7 @@
 			isa = PBXGroup;
 			children = (
 				28F608D923E0353500C394B9 /* XZKitTests.m */,
+				2976826D2470227D00A2C2E7 /* XZURLTests.swift */,
 				28F608E223E04F5800C394B9 /* XZKitConstantsTests.m */,
 				289EC08023E2FCB6002F7419 /* XZKitConstantsSwiftTests.swift */,
 				28F608DB23E0353500C394B9 /* Info.plist */,
@@ -740,6 +743,7 @@
 				28F608E323E04F5800C394B9 /* XZKitConstantsTests.m in Sources */,
 				28F608DA23E0353500C394B9 /* XZKitTests.m in Sources */,
 				289EC08123E2FCB6002F7419 /* XZKitConstantsSwiftTests.swift in Sources */,
+				2976826E2470227D00A2C2E7 /* XZURLTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

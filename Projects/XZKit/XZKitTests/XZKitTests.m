@@ -16,11 +16,11 @@
 @implementation XZKitTests
 
 - (void)setUp {
-    XZKitDebugMode = YES;
+    
 }
 
 - (void)tearDown {
-    XZKitDebugMode = NO;
+    
 }
 
 - (void)testExample {
