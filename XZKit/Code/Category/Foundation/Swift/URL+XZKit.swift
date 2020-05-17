@@ -231,7 +231,7 @@ public struct URLQueryComponent: CustomStringConvertible {
     
     /// 更新字段，支持 String、[String: Any?]、[Any?] 类型，**同名字段将被覆盖**。
     /// - Parameter value: 字段值（名）。
-    public mutating func updateValuesForKeys(from value: Any?) {
+    public mutating func setValuesForKeys(from value: Any?) {
         guard let value = value else { return }
         var queryItems = components.queryItems ?? []
         
@@ -264,9 +264,9 @@ public struct URLQueryComponent: CustomStringConvertible {
     /// 更新字段，并生成新的 URLQueryComponent 对象，支持 String、[String: Any?]、[Any?] 类型，**同名字段将被覆盖**。
     /// - Parameter value: 字段。
     /// - Returns: 新的 URLQueryComponent 对象。
-    public func updatingValuesForKeys(from value: Any?) -> URLQueryComponent {
+    public func settingValuesForKeys(from value: Any?) -> URLQueryComponent {
         var queryComponent = self
-        queryComponent.updateValuesForKeys(from: value)
+        queryComponent.setValuesForKeys(from: value)
         return queryComponent
     }
     

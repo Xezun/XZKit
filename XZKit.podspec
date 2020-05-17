@@ -167,10 +167,10 @@ Pod::Spec.new do |s|
                           'XZKit/Code/ProgressView/*.{h,m,swift}'
     end
 
-    s.subspec 'DisplayTimer' do |ss|
+    s.subspec 'TimeKeeper' do |ss|
         ss.public_header_files = 'XZKit/Code/XZKit.h'
         ss.source_files = 'XZKit/Code/XZKit.h',
-                          'XZKit/Code/DisplayTimer/*.{h,m,swift}'
+                          'XZKit/Code/TimeKeeper/*.{h,m,swift}'
     end
 
     s.subspec 'TextImageView' do |ss|

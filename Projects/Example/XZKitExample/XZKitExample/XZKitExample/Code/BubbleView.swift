@@ -86,7 +86,7 @@ public class BubbleView: UIView {
         
         let bounds = self.bounds;
         
-        var roundedRect: CGRect = bounds.insetBy(dx: pointerHeight, dy: pointerHeight);
+        let roundedRect: CGRect = bounds.insetBy(dx: pointerHeight, dy: pointerHeight);
         let path = UIBezierPath.init(roundedRect: roundedRect, cornerRadius: cornerRadius);
         
         /// 检查并将箭头坐标转换成一个合法的坐标。

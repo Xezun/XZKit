@@ -17,33 +17,33 @@ extension UIControl.Event {
 }
 
 /// 显示一个倒计时的 Button，当倒计时完成时，会触发 UIControlEvents.timeout（或 valueChanged）事件。
-open class TimerButton: UIButton, Timable {
+open class TimerButton: UIButton, TimeKeepable {
     
-    public func displayTimer(_ displayTimer: DisplayTimer, didTime timeInterval: TimeInterval) {
+    public func timeKeeper(_ timeKeeper: TimeKeeper, didKeep timeInterval: TimeInterval) {
         self.progressView.progress = CGFloat(currentTime / duration)
     }
     
     public var currentTime: TimeInterval {
         get {
-            return (self as Timable).currentTime
+            return (self as TimeKeepable).currentTime
         }
         set {
-            (self as Timable).currentTime = newValue
+            (self as TimeKeepable).currentTime = newValue
             self.progressView.progress = CGFloat(currentTime / duration)
         }
     }
 
     public var duration: TimeInterval {
         get {
-            return (self as Timable).duration
+            return (self as TimeKeepable).duration
         }
         set {
-            (self as Timable).duration = newValue
+            (self as TimeKeepable).duration = newValue
             self.progressView.progress = CGFloat(currentTime / duration)
         }
     }
     
-    let displayTimer = DisplayTimer.init()
+    let displayTimer = TimeKeeper.init()
     let progressView = ProgressView.init()
 
     public override init(frame: CGRect) {
