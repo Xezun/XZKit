@@ -36,6 +36,17 @@ class SampleTitleImageViewController: UIViewController {
         view.addSubview(menuBarItemView3)
         
         menuBarItemView3.addTarget(self, action: #selector(buttonAction(_:)), for: .touchUpInside)
+        
+        
+        let button = TimerButton(type: .custom)
+        button.frame = CGRect(x: 100, y: 200, width: 50, height: 50)
+        view.addSubview(button)
+        
+        button.duration = 3
+        button.timeInterval = 0.04
+        button.isPaused = false
+        
+        button.addTarget(self, action: #selector(timerAction(_:)), for: .timeout)
     }
     
     @objc func buttonAction(_ button: TextImageControl) {
@@ -44,6 +55,16 @@ class SampleTitleImageViewController: UIViewController {
 
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
+    }
+    
+    @objc func timerAction(_ button: TimerButton) {
+        DispatchQueue.main.asyncAfter(0.5) {
+            button.currentTime = 0;
+            button.progressView.setProgress(0, animated: true)
+            DispatchQueue.main.asyncAfter(0.5) {
+                button.isPaused = false
+            }
+        }
     }
     
 }

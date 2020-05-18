@@ -26,7 +26,6 @@
 		289EC08123E2FCB6002F7419 /* XZKitConstantsSwiftTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 289EC08023E2FCB6002F7419 /* XZKitConstantsSwiftTests.swift */; };
 		28C066A3224F65BF0011F052 /* XZKit+Encoding.h in Headers */ = {isa = PBXBuildFile; fileRef = 28C066A2224F65BF0011F052 /* XZKit+Encoding.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		28C066A5224F65D20011F052 /* XZKit+Encoding.m in Sources */ = {isa = PBXBuildFile; fileRef = 28C066A4224F65D20011F052 /* XZKit+Encoding.m */; };
-		28C096382272E6F50096F118 /* XZDisplayTimer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 28C096372272E6F50096F118 /* XZDisplayTimer.swift */; };
 		28CA185722478E8300F16621 /* XZKit.h in Headers */ = {isa = PBXBuildFile; fileRef = 28CA17F022478E8300F16621 /* XZKit.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		28CA185822478E8300F16621 /* XZNavigationController.AnimationController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 28CA17F222478E8300F16621 /* XZNavigationController.AnimationController.swift */; };
 		28CA185922478E8300F16621 /* XZNavigationBarCustomizable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 28CA17F322478E8300F16621 /* XZNavigationBarCustomizable.swift */; };
@@ -107,6 +106,7 @@
 		28F608DC23E0353500C394B9 /* XZKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DD30EF4121A4330000C4C73C /* XZKit.framework */; };
 		28F608E323E04F5800C394B9 /* XZKitConstantsTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 28F608E223E04F5800C394B9 /* XZKitConstantsTests.m */; };
 		2976826E2470227D00A2C2E7 /* XZURLTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2976826D2470227D00A2C2E7 /* XZURLTests.swift */; };
+		297682712472E63000A2C2E7 /* XZTimekeeper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 297682702472E63000A2C2E7 /* XZTimekeeper.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -125,7 +125,6 @@
 		289EC08023E2FCB6002F7419 /* XZKitConstantsSwiftTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = XZKitConstantsSwiftTests.swift; sourceTree = "<group>"; };
 		28C066A2224F65BF0011F052 /* XZKit+Encoding.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "XZKit+Encoding.h"; sourceTree = "<group>"; };
 		28C066A4224F65D20011F052 /* XZKit+Encoding.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "XZKit+Encoding.m"; sourceTree = "<group>"; };
-		28C096372272E6F50096F118 /* XZDisplayTimer.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = XZDisplayTimer.swift; sourceTree = "<group>"; };
 		28CA17F022478E8300F16621 /* XZKit.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XZKit.h; sourceTree = "<group>"; };
 		28CA17F222478E8300F16621 /* XZNavigationController.AnimationController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = XZNavigationController.AnimationController.swift; sourceTree = "<group>"; };
 		28CA17F322478E8300F16621 /* XZNavigationBarCustomizable.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = XZNavigationBarCustomizable.swift; sourceTree = "<group>"; };
@@ -207,6 +206,7 @@
 		28F608DB23E0353500C394B9 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		28F608E223E04F5800C394B9 /* XZKitConstantsTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = XZKitConstantsTests.m; sourceTree = "<group>"; };
 		2976826D2470227D00A2C2E7 /* XZURLTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = XZURLTests.swift; sourceTree = "<group>"; };
+		297682702472E63000A2C2E7 /* XZTimekeeper.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = XZTimekeeper.swift; sourceTree = "<group>"; };
 		DD30EF4121A4330000C4C73C /* XZKit.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = XZKit.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		DD30EF4521A4330000C4C73C /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -238,21 +238,13 @@
 			path = ../../../XZKit/Resource;
 			sourceTree = "<group>";
 		};
-		28C096362272E6F40096F118 /* DisplayTimer */ = {
-			isa = PBXGroup;
-			children = (
-				28C096372272E6F50096F118 /* XZDisplayTimer.swift */,
-			);
-			path = DisplayTimer;
-			sourceTree = "<group>";
-		};
 		28CA17EF22478E8300F16621 /* Code */ = {
 			isa = PBXGroup;
 			children = (
 				28CA17F022478E8300F16621 /* XZKit.h */,
+				2976826F2472E63000A2C2E7 /* Timekeeper */,
 				28CA185322478E8300F16621 /* Core */,
 				28ECD7FD246836C100BF436E /* Category */,
-				28C096362272E6F40096F118 /* DisplayTimer */,
 				28CA17F122478E8300F16621 /* NavigationController */,
 				28CA17FA22478E8300F16621 /* AppRedirection */,
 				28CA17FD22478E8300F16621 /* CarouselView */,
@@ -539,6 +531,14 @@
 			path = ObjectiveC;
 			sourceTree = "<group>";
 		};
+		2976826F2472E63000A2C2E7 /* Timekeeper */ = {
+			isa = PBXGroup;
+			children = (
+				297682702472E63000A2C2E7 /* XZTimekeeper.swift */,
+			);
+			path = Timekeeper;
+			sourceTree = "<group>";
+		};
 		DD30EF3721A4330000C4C73C = {
 			isa = PBXGroup;
 			children = (
@@ -771,7 +771,6 @@
 				28CA18A122478E8300F16621 /* XZAppLanguage.m in Sources */,
 				28CA185822478E8300F16621 /* XZNavigationController.AnimationController.swift in Sources */,
 				28CA186922478E8300F16621 /* XZImageCacheManager.swift in Sources */,
-				28C096382272E6F50096F118 /* XZDisplayTimer.swift in Sources */,
 				28CA189822478E8300F16621 /* XZCollectionViewFlowLayout.swift in Sources */,
 				28CA188122478E8300F16621 /* XZAPIResponse.swift in Sources */,
 				28CA189A22478E8300F16621 /* XZTextImageView.swift in Sources */,
@@ -794,6 +793,7 @@
 				2828CDBC229AF0B80025D736 /* WKWebView+XZKit.swift in Sources */,
 				28E3B73B22716E4C005ECB02 /* XZImageCarouselView.m in Sources */,
 				28CA185B22478E8300F16621 /* XZNavigationGestureDrivable.swift in Sources */,
+				297682712472E63000A2C2E7 /* XZTimekeeper.swift in Sources */,
 				28CA187422478E8300F16621 /* UIView+XZKit.m in Sources */,
 				28CA189022478E8300F16621 /* NSBundle+XZKit.m in Sources */,
 				28CA188722478E8300F16621 /* Data+XZKit.swift in Sources */,
