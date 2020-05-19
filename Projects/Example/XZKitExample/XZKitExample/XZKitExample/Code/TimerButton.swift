@@ -20,13 +20,13 @@ extension UIControl.Event {
 open class TimerButton: UIButton, Timekeepable {
     
     public func timekeeper(_ timekeeper: Timekeeper, didTime timeInterval: TimeInterval) {
-        self.progressView.setProgress(CGFloat(currentTime / duration), animated: false)
+        self.progressView.setProgress(CGFloat(currentTime / duration), animated: timekeeper.timeInterval > 0.5)
         
         if currentTime - duration > -0.01 {
             sendActions(for: .valueChanged)
         }
         
-        XZLog("%.2f / %.2f", currentTime, duration)
+        XZLog("%.3f / %.3f", currentTime, duration)
     }
     
     let progressView = ProgressView.init()

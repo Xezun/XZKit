@@ -42,11 +42,17 @@ class SampleTitleImageViewController: UIViewController {
         button.frame = CGRect(x: 100, y: 200, width: 50, height: 50)
         view.addSubview(button)
         
-        button.duration = 3
-        button.timeInterval = 0.04
+        button.duration = 2.0
+        if #available(iOS 10.3, *) {
+            button.timeInterval = 1.0 / TimeInterval(UIScreen.main.maximumFramesPerSecond)
+        } else {
+            // Fallback on earlier versions
+        }
         button.isPaused = false
         
         button.addTarget(self, action: #selector(timerAction(_:)), for: .timeout)
+        
+        button.addTarget(self, action: #selector(timerButtonClicked(_:)), for: .touchUpInside)
     }
     
     @objc func buttonAction(_ button: TextImageControl) {
@@ -65,6 +71,10 @@ class SampleTitleImageViewController: UIViewController {
                 button.isPaused = false
             }
         }
+    }
+    
+    @objc func timerButtonClicked(_ button: TimerButton) {
+        button.isPaused = !button.isPaused
     }
     
 }
