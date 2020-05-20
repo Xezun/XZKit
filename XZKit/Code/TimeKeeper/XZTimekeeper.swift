@@ -29,40 +29,48 @@ open class Timekeeper: Timekeeping {
     /// 代理。
     open weak var delegate: TimekeeperDelegate?
     
-    /// 计时的时间间隔。
-    /// - Note: 计时器开始后设置无效。
-    open var timeInterval: TimeInterval = 0.0
+    open var timeInterval: TimeInterval = 0
     
-    /// 计时器最大运行时长。
-    open var duration: TimeInterval = TimeInterval.greatestFiniteMagnitude
+    open var timePrecision: TimePrecision = .milliseconds
     
-    /// 当前时间，已计时时长。设置此属性不会触发代理方法。
+    open var timeLeeway: TimeLeeway = .milliseconds(0)
+    
+    open var duration: TimeInterval = 0
+    
     open var currentTime: TimeInterval = 0
     
-    /// 计时器是否暂停，默认 true 。
     open var isPaused: Bool = true {
         didSet {
             if oldValue == isPaused {
                 return
             }
+            
             if isPaused {
-                dispatchTimerAction()
                 dispatchTimer.suspend()
+                if currentTime < duration { // 计时器尚未结束，记录并发送当前状态
+                    let delta = (CACurrentMediaTime() - timestamp)
+                    currentTime += delta
+                    delegate?.timekeeper(self, didTime: delta)
+                }
                 return
             }
             
-            // 启动计时器时，重置已完成的计时器。
             if currentTime >= duration {
-                currentTime = 0
+                currentTime = 0 // 重置已完成的计时器
             }
             
             timestamp = CACurrentMediaTime()
             
-            let a = Int(currentTime * 1000)
-            let b = Int(timeInterval * 1000)
-            let c = TimeInterval(b - a % b) * 0.001
-            
-            dispatchTimer.schedule(wallDeadline: .now() + c, repeating: .milliseconds(Int(timeInterval * 1000)), leeway: .seconds(0))
+            if timeInterval <= 0 {
+                dispatchTimer.schedule(wallDeadline: .now() + duration, repeating: .never, leeway: timeLeeway)
+            } else {
+                let a = currentTime * timePrecision
+                let b = timeInterval * timePrecision
+                let c = min(TimeInterval(b - a % b) / timePrecision, duration - currentTime)
+                
+                let repeatInterval = DispatchTimeInterval(timeInterval: timeInterval, timePrecision: timePrecision)
+                dispatchTimer.schedule(wallDeadline: .now() + c, repeating: repeatInterval, leeway: timeLeeway)
+            }
             dispatchTimer.resume()
         }
     }
@@ -84,38 +92,58 @@ open class Timekeeper: Timekeeping {
     private var timestamp: TimeInterval = 0
     
     private func dispatchTimerAction() {
-        // 计算时长。displayLink.duration * TimeInterval(displayLink.frameInterval)
-        let timestamp = CACurrentMediaTime()   // 当前时间
-        let timedelta = (timestamp - self.timestamp) // 与上次的时间差
+        // 计算时长。
+        let now = CACurrentMediaTime()   // 当前时间
+        let delta = (now - timestamp) // 与上次的时间差
         
         // 下一个计时开始时间
-        self.timestamp = timestamp
+        timestamp = now
         
-        let newTime = self.currentTime + timedelta
+        let newTime = currentTime + delta
         
         // 超过总时长，暂停倒计时。
-        if newTime - self.duration > -0.001 {
-            self.isPaused = true
-            self.currentTime = self.duration
+        if (newTime - duration) * timePrecision > -1 {
+            currentTime = duration
+            isPaused = true
         } else {
-            self.currentTime = newTime
+            currentTime = newTime
         }
         
-        self.delegate?.timekeeper(self, didTime: timeInterval)
+        delegate?.timekeeper(self, didTime: delta)
+    }
+    
+    private func didTimeout() {
+        
     }
     
 }
 
-/// 实现本协议的对象自动获得计时的能力。
+/// 定义了计时器的精确度级别。
+public enum TimePrecision: Int {
+    case seconds      = 1
+    case milliseconds = 1_000
+    case microseconds = 1_000_000
+    case nanoseconds  = 1_000_000_000
+}
+
+public typealias TimeLeeway = DispatchTimeInterval
+
+/// 定义了计时器。
 public protocol Timekeeping: AnyObject {
     
-    /// 计时器嘀嗒一次的时长，计时间隔。
+    /// 计时间隔，单位秒。在达到最大计时期前，每隔一段时间计时一次，并发送代理事件。默认 0 不发送。
     var timeInterval: TimeInterval { get set }
     
-    /// 是否暂停计时。
+    /// 精确度，属性 timeInterval 小数点后的有效位，默认毫秒。
+    var timePrecision: TimePrecision { get set }
+    
+    /// 计时器允许的误差，默认 0 毫秒。计时器尽可能的保证每个计时间隔的时长，在误差范围内。
+    var timeLeeway: TimeLeeway { get set }
+    
+    /// 是否暂停计时，设置 false 启动计时器。
     var isPaused: Bool { get set }
     
-    /// 计时总时长。
+    /// 计时器默认的最大计时时长，默认 0。
     var duration: TimeInterval { get set }
     
     /// 当前时间，即已计时时长。
@@ -125,7 +153,6 @@ public protocol Timekeeping: AnyObject {
 
 extension Timekeepable {
     
-    /// 计时周期时长，计时间隔。
     public var timeInterval: TimeInterval {
         get {
             return timekeeper.timeInterval
@@ -135,7 +162,24 @@ extension Timekeepable {
         }
     }
     
-    /// 是否暂停计时。
+    public var timePrecision: TimePrecision {
+        get {
+            return timekeeper.timePrecision
+        }
+        set {
+            timekeeper.timePrecision = newValue
+        }
+    }
+    
+    public var timeLeeway: TimeLeeway  {
+        get {
+            return timekeeper.timeLeeway
+        }
+        set {
+            timekeeper.timeLeeway = newValue
+        }
+    }
+    
     public var isPaused: Bool {
         get {
             return timekeeper.isPaused
@@ -145,7 +189,6 @@ extension Timekeepable {
         }
     }
     
-    /// 计时总时长。
     public var duration: TimeInterval {
         get {
             return timekeeper.duration
@@ -155,7 +198,6 @@ extension Timekeepable {
         }
     }
     
-    /// 当前时间，即已计时时长。
     public var currentTime: TimeInterval {
         get {
             return timekeeper.currentTime
@@ -165,15 +207,20 @@ extension Timekeepable {
         }
     }
     
-    /// 用于处理计时的 DisplayTimer 对象。
+    /// 用于处理计时的 DisplayTimer 对象，默认主线程。
     public var timekeeper: Timekeeper {
-        if let displayTimer = objc_getAssociatedObject(self, &AssociationKey.timekeeper) as? Timekeeper {
-            return displayTimer
+        get {
+            if let timekeeper = objc_getAssociatedObject(self, &AssociationKey.timekeeper) as? Timekeeper {
+                return timekeeper
+            }
+            let timekeeper = Timekeeper.init(queue: .main)
+            timekeeper.delegate = self
+            self.timekeeper = timekeeper
+            return timekeeper
         }
-        let displayTimer = Timekeeper.init(queue: .main)
-        displayTimer.delegate = self
-        objc_setAssociatedObject(self, &AssociationKey.timekeeper, displayTimer, .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
-        return displayTimer
+        set {
+            objc_setAssociatedObject(self, &AssociationKey.timekeeper, newValue, .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
+        }
     }
     
 }
@@ -182,9 +229,44 @@ private struct AssociationKey {
     static var timekeeper = 0
 }
 
+extension DispatchTimeInterval {
+    
+    public init(timeInterval: TimeInterval, timePrecision: TimePrecision) {
+        let value = timeInterval * timePrecision
+        switch timePrecision {
+        case .seconds:
+            self = .seconds(value)
+        case .milliseconds:
+            self = .milliseconds(value)
+        case .microseconds:
+            self = .microseconds(value)
+        case .nanoseconds:
+            self = .nanoseconds(value)
+        }
+    }
+    
+}
 
-
-
+extension TimeInterval {
+    
+    public static func * (lhs: TimeInterval, rhs: TimePrecision) -> Int {
+        return Int(lhs * TimeInterval(rhs.rawValue))
+    }
+    
+    public static func / (lhs: TimeInterval, rhs: TimePrecision) -> TimeInterval {
+        switch rhs {
+        case .seconds:
+            return lhs
+        case .milliseconds:
+            return lhs * 1e-3
+        case .microseconds:
+            return lhs * 1.0e-6
+        case .nanoseconds:
+            return lhs * 1.0e-9
+        }
+    }
+    
+}
 
 
 

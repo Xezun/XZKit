@@ -34,7 +34,7 @@ open class LaunchViewController: UIViewController {
         advertisementView.autoresizingMask = [.flexibleHeight, .flexibleWidth]
         view.addSubview(advertisementView)
         
-        advertisementView.timerButton.addTarget(self, action: #selector(timerAction(_:)), for: [.touchUpInside, .timeout])
+        advertisementView.timerButton.addTarget(self, action: #selector(timerButtonWasTimeout(_:)), for: [.touchUpInside, .timeout])
         advertisementView.advertisementImageView.image = #imageLiteral(resourceName: "20170704142100")
     }
     
@@ -45,7 +45,7 @@ open class LaunchViewController: UIViewController {
         advertisementView.timerButton.isPaused = false
     }
     
-    @objc private func timerAction(_ timerButton: TimerButton) {
+    @objc private func timerButtonWasTimeout(_ timerButton: TimerButton) {
         advertisementWasTimeout()
     }
     

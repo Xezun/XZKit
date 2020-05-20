@@ -39,20 +39,18 @@ class SampleTitleImageViewController: UIViewController {
         
         
         let button = TimerButton(type: .custom)
-        button.frame = CGRect(x: 100, y: 200, width: 50, height: 50)
+        button.frame = CGRect(x: 37.5, y: 200, width: 300, height: 300)
+        button.setTitle("开始", for: .normal)
+        button.setTitle("暂停", for: .selected)
+        button.setTitleColor(.green, for: .normal)
+        button.setTitleColor(.red, for: .selected)
         view.addSubview(button)
         
-        button.duration = 2.0
-        if #available(iOS 10.3, *) {
-            button.timeInterval = 1.0 / TimeInterval(UIScreen.main.maximumFramesPerSecond)
-        } else {
-            // Fallback on earlier versions
-        }
-        button.isPaused = false
+        button.duration = 1.0
+        button.timeInterval = 0.3
         
-        button.addTarget(self, action: #selector(timerAction(_:)), for: .timeout)
-        
-        button.addTarget(self, action: #selector(timerButtonClicked(_:)), for: .touchUpInside)
+        button.addTarget(self, action: #selector(timerButtonWasTimeout(_:)), for: .timeout)
+        button.addTarget(self, action: #selector(timerButtonWasClicked(_:)), for: .touchUpInside)
     }
     
     @objc func buttonAction(_ button: TextImageControl) {
@@ -63,18 +61,14 @@ class SampleTitleImageViewController: UIViewController {
         super.didReceiveMemoryWarning()
     }
     
-    @objc func timerAction(_ button: TimerButton) {
-        DispatchQueue.main.asyncAfter(0.5) {
-            button.currentTime = 0;
-            button.progressView.setProgress(0, animated: true)
-            DispatchQueue.main.asyncAfter(0.5) {
-                button.isPaused = false
-            }
-        }
+    @objc func timerButtonWasTimeout(_ button: TimerButton) {
+        button.isSelected = !button.isPaused
     }
     
-    @objc func timerButtonClicked(_ button: TimerButton) {
+    @objc func timerButtonWasClicked(_ button: TimerButton) {
         button.isPaused = !button.isPaused
+        button.isSelected = !button.isPaused
+        button.progressView.progress = CGFloat(button.currentTime / button.duration)
     }
     
 }
