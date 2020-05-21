@@ -29,13 +29,14 @@ open class Timekeeper: Timekeeping {
     /// 代理。
     open weak var delegate: TimekeeperDelegate?
     
-    open var timeInterval: TimeInterval = 0
+    open var timeInterval: DispatchTimeInterval = 0.0
     
-    open var timePrecision: TimePrecision = .milliseconds
-    
-    open var timeLeeway: TimeLeeway = .milliseconds(0)
+    open var timeLeeway: DispatchTimeInterval = 0.0
     
     open var duration: TimeInterval = 0
+    
+    /// 记录了上次的计时的绝对时间点，或者暂停前已执行的周期时长。
+    private var timestamp: TimeInterval = 0
     
     open var currentTime: TimeInterval = 0
     
@@ -47,9 +48,10 @@ open class Timekeeper: Timekeeping {
             
             if isPaused {
                 dispatchTimer.suspend()
-                if currentTime < duration { // 计时器尚未结束，记录并发送当前状态
+                if timestamp > 0 { // 计时器尚未结束，记录并发送当前状态
                     let delta = (CACurrentMediaTime() - timestamp)
                     currentTime += delta
+                    timestamp = delta
                     delegate?.timekeeper(self, didTime: delta)
                 }
                 return
@@ -59,18 +61,11 @@ open class Timekeeper: Timekeeping {
                 currentTime = 0 // 重置已完成的计时器
             }
             
+            let delta = timeInterval - timestamp
+            
             timestamp = CACurrentMediaTime()
             
-            if timeInterval <= 0 {
-                dispatchTimer.schedule(wallDeadline: .now() + duration, repeating: .never, leeway: timeLeeway)
-            } else {
-                let a = currentTime * timePrecision
-                let b = timeInterval * timePrecision
-                let c = min(TimeInterval(b - a % b) / timePrecision, duration - currentTime)
-                
-                let repeatInterval = DispatchTimeInterval(timeInterval: timeInterval, timePrecision: timePrecision)
-                dispatchTimer.schedule(wallDeadline: .now() + c, repeating: repeatInterval, leeway: timeLeeway)
-            }
+            dispatchTimer.schedule(wallDeadline: .now() + delta, repeating: timeInterval, leeway: timeLeeway)
             dispatchTimer.resume()
         }
     }
@@ -88,27 +83,29 @@ open class Timekeeper: Timekeeping {
     
     private let dispatchTimer: DispatchSourceTimer
     
-    // CADisplayLink 开始时的计时。
-    private var timestamp: TimeInterval = 0
+
     
     private func dispatchTimerAction() {
         // 计算时长。
         let now = CACurrentMediaTime()   // 当前时间
         let delta = (now - timestamp) // 与上次的时间差
         
-        // 下一个计时开始时间
-        timestamp = now
+        let newTime = currentTime + delta // 新的时间点
+        let remain  = duration - newTime  // 剩余时长
         
-        let newTime = currentTime + delta
-        
-        // 超过总时长，暂停倒计时。
-        if (newTime - duration) * timePrecision > -1 {
+        // 如果没有剩余时长，那么倒计时结束；如果不够一个间隔，则重新设置倒计时。
+        if remain <= 0 {
             currentTime = duration
+            timestamp = 0
             isPaused = true
         } else {
+            if remain < TimeInterval(timeInterval) {
+                dispatchTimer.schedule(deadline: .now() + remain, repeating: .never, leeway: timeLeeway)
+            }
+            timestamp = now
             currentTime = newTime
         }
-        
+
         delegate?.timekeeper(self, didTime: delta)
     }
     
@@ -118,42 +115,29 @@ open class Timekeeper: Timekeeping {
     
 }
 
-/// 定义了计时器的精确度级别。
-public enum TimePrecision: Int {
-    case seconds      = 1
-    case milliseconds = 1_000
-    case microseconds = 1_000_000
-    case nanoseconds  = 1_000_000_000
-}
-
-public typealias TimeLeeway = DispatchTimeInterval
-
 /// 定义了计时器。
 public protocol Timekeeping: AnyObject {
     
     /// 计时间隔，单位秒。在达到最大计时期前，每隔一段时间计时一次，并发送代理事件。默认 0 不发送。
-    var timeInterval: TimeInterval { get set }
-    
-    /// 精确度，属性 timeInterval 小数点后的有效位，默认毫秒。
-    var timePrecision: TimePrecision { get set }
+    var timeInterval: DispatchTimeInterval { get set }
     
     /// 计时器允许的误差，默认 0 毫秒。计时器尽可能的保证每个计时间隔的时长，在误差范围内。
-    var timeLeeway: TimeLeeway { get set }
+    var timeLeeway: DispatchTimeInterval { get set }
     
     /// 是否暂停计时，设置 false 启动计时器。
     var isPaused: Bool { get set }
     
     /// 计时器默认的最大计时时长，默认 0。
-    var duration: TimeInterval { get set }
+    var duration: Foundation.TimeInterval { get set }
     
     /// 当前时间，即已计时时长。
-    var currentTime: TimeInterval { get set }
+    var currentTime: Foundation.TimeInterval { get set }
     
 }
 
 extension Timekeepable {
     
-    public var timeInterval: TimeInterval {
+    public var timeInterval: DispatchTimeInterval {
         get {
             return timekeeper.timeInterval
         }
@@ -162,16 +146,7 @@ extension Timekeepable {
         }
     }
     
-    public var timePrecision: TimePrecision {
-        get {
-            return timekeeper.timePrecision
-        }
-        set {
-            timekeeper.timePrecision = newValue
-        }
-    }
-    
-    public var timeLeeway: TimeLeeway  {
+    public var timeLeeway: DispatchTimeInterval  {
         get {
             return timekeeper.timeLeeway
         }
@@ -189,7 +164,7 @@ extension Timekeepable {
         }
     }
     
-    public var duration: TimeInterval {
+    public var duration: Foundation.TimeInterval {
         get {
             return timekeeper.duration
         }
@@ -198,7 +173,7 @@ extension Timekeepable {
         }
     }
     
-    public var currentTime: TimeInterval {
+    public var currentTime: Foundation.TimeInterval {
         get {
             return timekeeper.currentTime
         }
@@ -229,44 +204,98 @@ private struct AssociationKey {
     static var timekeeper = 0
 }
 
-extension DispatchTimeInterval {
+extension DispatchTimeInterval: ExpressibleByFloatLiteral {
     
-    public init(timeInterval: TimeInterval, timePrecision: TimePrecision) {
-        let value = timeInterval * timePrecision
-        switch timePrecision {
+    public typealias FloatLiteralType = TimeInterval
+    
+    public var accuracy: TimeInterval {
+        switch self {
+        case .never:
+            return 0
         case .seconds:
-            self = .seconds(value)
+            return 1.0
         case .milliseconds:
-            self = .milliseconds(value)
+            return 1.0e-3
         case .microseconds:
-            self = .microseconds(value)
+            return 1.0e-6
         case .nanoseconds:
-            self = .nanoseconds(value)
+            return 1.0e-9
+        default:
+            return 0
         }
     }
     
+    /// 自动根据当前 timeInterval （秒）小数点后面的位数选择合适的精度。
+    /// - Parameter timeInterval: 以秒为单位的时间值。
+    public init(floatLiteral timeInterval: TimeInterval) {
+        if timeInterval <= 0 {
+            self = .never
+            return
+        }
+        
+        var t0 = timeInterval
+        var t1 = floor(t0)
+        var t2 = t0 - t1
+
+        var tn = 0
+        var tx = 1.0e-9 // 最小精度 1 纳秒。
+        while t2 >= tx {
+            t0 = t0 * 1000
+            t1 = floor(t0)
+            t2 = t0 - t1
+            tn = tn + 1
+            tx = tx * 1000 // 保持最小精度不变
+        }
+
+        let value = Int(round(t0))
+        
+        switch tn {
+        case 0:
+            self = .seconds(value)
+        case 1:
+            self = .milliseconds(value)
+        case 2:
+            self = .microseconds(value)
+        default:
+            self = .nanoseconds(value)
+        }
+    }
+ 
+    public static func - (lhs: DispatchTimeInterval, rhs: TimeInterval) -> TimeInterval {
+        switch lhs {
+        case .never:
+            return 0
+        case .seconds(let value):
+            return Foundation.TimeInterval(value) - rhs
+        case .milliseconds(let value):
+            return Foundation.TimeInterval(value) * 1.0e-3 - rhs
+        case .microseconds(let value):
+            return Foundation.TimeInterval(value) * 1.0e-6 - rhs
+        case .nanoseconds(let value):
+            return Foundation.TimeInterval(value) * 1.0e-6 - rhs
+        @unknown default:
+            return 0
+        }
+    }
 }
 
 extension TimeInterval {
     
-    public static func * (lhs: TimeInterval, rhs: TimePrecision) -> Int {
-        return Int(lhs * TimeInterval(rhs.rawValue))
-    }
-    
-    public static func / (lhs: TimeInterval, rhs: TimePrecision) -> TimeInterval {
-        switch rhs {
-        case .seconds:
-            return lhs
-        case .milliseconds:
-            return lhs * 1e-3
-        case .microseconds:
-            return lhs * 1.0e-6
-        case .nanoseconds:
-            return lhs * 1.0e-9
+    public init(_ timeInterval: DispatchTimeInterval) {
+        switch timeInterval {
+        case .never:
+            self = 0
+        case .seconds(let value):
+            self = TimeInterval(value)
+        case .milliseconds(let value):
+            self = TimeInterval(value) * 1.0e-3
+        case .microseconds(let value):
+            self = TimeInterval(value) * 1.0e-6
+        case .nanoseconds(let value):
+            self = TimeInterval(value) * 1.0e-9
+        default:
+            self = 0
         }
     }
     
 }
-
-
-
