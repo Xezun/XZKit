@@ -41,8 +41,8 @@ open class LaunchViewController: UIViewController {
     open override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
         
-        advertisementView.timerButton.duration = 10
-        advertisementView.timerButton.isPaused = false
+        advertisementView.timerButton.timekeeper.duration = 10
+        advertisementView.timerButton.timekeeper.resume()
     }
     
     @objc private func timerButtonWasTimeout(_ timerButton: TimerButton) {

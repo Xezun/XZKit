@@ -20,6 +20,20 @@
                ReferencedContainer = "container:XZKitExample.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
+         <BuildActionEntry
+            buildForTesting = "YES"
+            buildForRunning = "YES"
+            buildForProfiling = "YES"
+            buildForArchiving = "YES"
+            buildForAnalyzing = "YES">
+            <BuildableReference
+               BuildableIdentifier = "primary"
+               BlueprintIdentifier = "09A7F7A4AF6BCD349FA41BC95444A19C"
+               BuildableName = "XZKit.framework"
+               BlueprintName = "XZKit"
+               ReferencedContainer = "container:../Pods/Pods/Pods.xcodeproj">
+            </BuildableReference>
+         </BuildActionEntry>
       </BuildActionEntries>
    </BuildAction>
    <TestAction

@@ -20,16 +20,37 @@ extension UIControl.Event {
 open class TimerButton: UIButton, Timekeepable {
     
     public func timekeeper(_ timekeeper: Timekeeper, didTime timeInterval: TimeInterval) {
-        self.progressView.setProgress(CGFloat(currentTime / duration), animated: false)
-        
-        if currentTime >= duration {
-            sendActions(for: .valueChanged)
+        if timekeeper.isPaused {
+            progress = 1.0
+            sendActions(for: .timeout)
+        } else {
+            self.progressView.setProgress(CGFloat(timekeeper.currentTime / timekeeper.duration), animated: false)
         }
         
-        XZLog("%.3f: %.3f / %.3f", timeInterval, currentTime, duration)
+        XZLog("%.3f: %.3f / %.3f", timeInterval, timekeeper.currentTime, timekeeper.duration)
     }
     
-    let progressView = ProgressView.init()
+    var progress: CGFloat {
+        get { return progressView.progress }
+        set { progressView.progress = newValue }
+    }
+    
+    var minimumTrackTintColor: UIColor? {
+        get { return progressView.minimumTrackTintColor }
+        set { progressView.minimumTrackTintColor = newValue }
+    }
+    
+    var maximumTrackTintColor: UIColor? {
+        get { return progressView.maximumTrackTintColor }
+        set { progressView.maximumTrackTintColor = newValue }
+    }
+    
+    var trackWidth: CGFloat {
+        get { return progressView.trackWidth }
+        set { progressView.trackWidth = newValue }
+    }
+    
+    private let progressView = ProgressView.init()
 
     public override init(frame: CGRect) {
         super.init(frame: frame)

@@ -41,10 +41,10 @@ open class AdvertisementView: UIView {
         addSubview(advertisementImageView)
         
         timerButton.frame = CGRect(x: 0, y: 0, width: 38, height: 38)
-        timerButton.progressView.minimumTrackTintColor = UIColor.clear
-        timerButton.progressView.maximumTrackTintColor = UIColor(0xf80809ff)
-        timerButton.progressView.tintColor = UIColor.init(0x2b2b2bb2)
-        timerButton.progressView.trackWidth = 2.5
+        timerButton.minimumTrackTintColor = UIColor.clear
+        timerButton.maximumTrackTintColor = UIColor(0xf80809ff)
+        timerButton.tintColor = UIColor.init(0x2b2b2bb2)
+        timerButton.trackWidth = 2.5
         
         let shawdow = NSShadow()
         shawdow.shadowOffset = CGSize(width: 0, height: 2)

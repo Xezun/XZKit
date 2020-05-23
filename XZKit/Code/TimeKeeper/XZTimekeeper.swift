@@ -8,11 +8,12 @@
 
 import UIKit
 
-/// 实现 Timekeepable 协议即可获得计时能力（主线程）。
+/// 遵循 Timekeepable 协议可获得计时器 timekeeper 属性，该计时器以自身作为代理。
 public protocol Timekeepable: Timekeeping, TimekeeperDelegate {
     
 }
-/// Timekeeper 代理。
+
+/// Timekeeper 代理协议。
 public protocol TimekeeperDelegate: AnyObject {
     
     /// 计时器每执行一次嘀嗒计时，都会触发此方法。
@@ -23,53 +24,90 @@ public protocol TimekeeperDelegate: AnyObject {
     
 }
 
+public protocol Timekeeping: AnyObject {
+    
+    /// 计时器最大计时时长，默认 0 ，超过该时长，计时器自动暂停。
+    var duration: TimeInterval { get set }
+    
+    /// 当前时间：计时器当前已计时时长。
+    var currentTime: TimeInterval { get set }
+    
+    /// 计时器是否暂停，默认 true 。
+    /// 请通过 resume() 和 pause 方法来启动或暂停计时器。
+    var isPaused: Bool { get }
+    
+    /// 计时频率（周期）。通过设置此属性，可以控制计时器向 delegate 汇报计时进度的频率。
+    /// 默认值 .never 表示计时完成前，不发送代理事件。
+    /// - Note: 计时器执行过程中，设置此属性无效。
+    var timeInterval: DispatchTimeInterval { get set }
+    
+    /// 误差允许值。计时器尽量保证满足此误差，并不绝对。
+    /// - Note: 计时器执行过程中，设置此属性无效。
+    var timeLeeway: DispatchTimeInterval { get set }
+    
+    /// 暂停计时器。
+    /// - Note: 暂停中的计时器调用此方法不执行任何操作。
+    /// - Note: 暂停时，当前的计时状态会保存
+    func pause()
+    
+    /// 未开始或暂停中的计时器开始或恢复执行。
+    /// - Note: 执行中的计时器，调用此方法不执行任何操作。
+    func resume()
+}
+
 /// 基于 DispatchSourceTimer 实现的计时器。
+/// - Note: 与定时器不同，计时器主要提供计时（累计时长）的能力。
 open class Timekeeper: Timekeeping {
     
     /// 代理。
     open weak var delegate: TimekeeperDelegate?
     
-    open var timeInterval: DispatchTimeInterval = 0.0
+    open var duration: TimeInterval             = 0
     
-    open var timeLeeway: DispatchTimeInterval = 0.0
+    open var currentTime: TimeInterval          = 0
     
-    open var duration: TimeInterval = 0
+    open private(set) var isPaused: Bool        = true
+    
+    open var timeInterval: DispatchTimeInterval = .never
+    
+    open var timeLeeway: DispatchTimeInterval   = .seconds(0)
     
     /// 记录了上次的计时的绝对时间点，或者暂停前已执行的周期时长。
-    private var timestamp: TimeInterval = 0
+    private var timestamp: TimeInterval         = 0
     
-    open var currentTime: TimeInterval = 0
-    
-    open var isPaused: Bool = true {
-        didSet {
-            if oldValue == isPaused {
-                return
-            }
-            
-            if isPaused {
-                dispatchTimer.suspend()
-                if timestamp > 0 { // 计时器尚未结束，记录并发送当前状态
-                    let delta = (CACurrentMediaTime() - timestamp)
-                    currentTime += delta
-                    timestamp = delta
-                    delegate?.timekeeper(self, didTime: delta)
-                }
-                return
-            }
-            
-            if currentTime >= duration {
-                currentTime = 0 // 重置已完成的计时器
-            }
-            
-            let delta = timeInterval - timestamp
-            
-            timestamp = CACurrentMediaTime()
-            
-            dispatchTimer.schedule(wallDeadline: .now() + delta, repeating: timeInterval, leeway: timeLeeway)
-            dispatchTimer.resume()
+    open func pause() {
+        if isPaused {
+            return
         }
+        isPaused = true
+        // 暂停时，记录时长。
+        timestamp = (CACurrentMediaTime() - timestamp)
+        currentTime += timestamp
+        dispatchTimer.suspend()
     }
     
+    open func resume() {
+        guard isPaused else {
+            return
+        }
+        isPaused = false
+        
+        // 重置已完成的计时器
+        if currentTime >= duration {
+            currentTime = 0
+        }
+        
+        // 计算到下个重复周期
+        let next = min(duration, TimeInterval(timeInterval)) - timestamp
+        timestamp = CACurrentMediaTime()
+        
+        dispatchTimer.schedule(wallDeadline: .now() + next, repeating: timeInterval, leeway: timeLeeway)
+        dispatchTimer.resume()
+    }
+    
+    /// 创建一个计时器。
+    /// - Note: 计时器默认处于暂停状态，需调用 resume() 方法启动。
+    /// - Parameter queue: 计时器使用的队列（如发送代理事件）。
     public init(queue: DispatchQueue = .main) {
         dispatchTimer = DispatchSource.makeTimerSource(queue: queue)
         dispatchTimer.setEventHandler(handler: { [weak self] in
@@ -78,111 +116,80 @@ open class Timekeeper: Timekeeping {
     }
 
     deinit {
+        // DispatchSourceTimer 在初始化、暂停的情况下，不能执行 cancel 方法。
+        if isPaused {
+            dispatchTimer.setEventHandler(handler: nil)
+            dispatchTimer.resume()
+        }
         dispatchTimer.cancel()
     }
     
+    /// 定时器。
     private let dispatchTimer: DispatchSourceTimer
-    
-
     
     private func dispatchTimerAction() {
         // 计算时长。
-        let now = CACurrentMediaTime()   // 当前时间
-        let delta = (now - timestamp) // 与上次的时间差
+        let now   = CACurrentMediaTime()  // 当前时间
+        let delta = (now - timestamp)     // 与上次的时间差
         
         let newTime = currentTime + delta // 新的时间点
         let remain  = duration - newTime  // 剩余时长
         
-        // 如果没有剩余时长，那么倒计时结束；如果不够一个间隔，则重新设置倒计时。
-        if remain <= 0 {
+        // 如果没有剩余时长，那么定时器暂停；如果不够一个间隔，则重新设置倒计时。
+        if remain < 1.0e-9 {
             currentTime = duration
-            timestamp = 0
-            isPaused = true
+            timestamp   = 0
+            isPaused    = true
+            dispatchTimer.suspend()
         } else {
             if remain < TimeInterval(timeInterval) {
-                dispatchTimer.schedule(deadline: .now() + remain, repeating: .never, leeway: timeLeeway)
+                dispatchTimer.schedule(deadline: .now() + remain, repeating: timeInterval, leeway: timeLeeway)
             }
-            timestamp = now
+            timestamp   = now
             currentTime = newTime
         }
 
         delegate?.timekeeper(self, didTime: delta)
     }
     
-    private func didTimeout() {
-        
-    }
-    
-}
-
-/// 定义了计时器。
-public protocol Timekeeping: AnyObject {
-    
-    /// 计时间隔，单位秒。在达到最大计时期前，每隔一段时间计时一次，并发送代理事件。默认 0 不发送。
-    var timeInterval: DispatchTimeInterval { get set }
-    
-    /// 计时器允许的误差，默认 0 毫秒。计时器尽可能的保证每个计时间隔的时长，在误差范围内。
-    var timeLeeway: DispatchTimeInterval { get set }
-    
-    /// 是否暂停计时，设置 false 启动计时器。
-    var isPaused: Bool { get set }
-    
-    /// 计时器默认的最大计时时长，默认 0。
-    var duration: Foundation.TimeInterval { get set }
-    
-    /// 当前时间，即已计时时长。
-    var currentTime: Foundation.TimeInterval { get set }
-    
 }
 
 extension Timekeepable {
     
-    public var timeInterval: DispatchTimeInterval {
-        get {
-            return timekeeper.timeInterval
-        }
-        set {
-            timekeeper.timeInterval = newValue
-        }
+    public var duration: TimeInterval {
+        get { return timekeeper.duration }
+        set { timekeeper.duration = newValue }
     }
     
-    public var timeLeeway: DispatchTimeInterval  {
-        get {
-            return timekeeper.timeLeeway
-        }
-        set {
-            timekeeper.timeLeeway = newValue
-        }
+    public var timeInterval: DispatchTimeInterval {
+        get { return timekeeper.timeInterval }
+        set { timekeeper.timeInterval = newValue }
+    }
+    
+    public var timeLeeway: DispatchTimeInterval {
+        get { return timekeeper.timeLeeway }
+        set { timekeeper.timeLeeway = newValue}
+    }
+    
+    public var currentTime: TimeInterval {
+        get { return timekeeper.currentTime }
+        set { timekeeper.currentTime = currentTime }
     }
     
     public var isPaused: Bool {
-        get {
-            return timekeeper.isPaused
-        }
-        set {
-            timekeeper.isPaused = newValue
-        }
+        return timekeeper.isPaused
     }
     
-    public var duration: Foundation.TimeInterval {
-        get {
-            return timekeeper.duration
-        }
-        set {
-            timekeeper.duration = newValue
-        }
+    public func pause() {
+        timekeeper.pause()
     }
     
-    public var currentTime: Foundation.TimeInterval {
-        get {
-            return timekeeper.currentTime
-        }
-        set {
-            timekeeper.currentTime = newValue
-        }
+    public func resume() {
+        timekeeper.resume()
     }
     
     /// 用于处理计时的 DisplayTimer 对象，默认主线程。
+    /// - Note: 该属性可写，可自定义（比如使用其它队列）所使用的 Timekeeper 对象。
     public var timekeeper: Timekeeper {
         get {
             if let timekeeper = objc_getAssociatedObject(self, &AssociationKey.timekeeper) as? Timekeeper {
@@ -200,40 +207,25 @@ extension Timekeepable {
     
 }
 
-private struct AssociationKey {
-    static var timekeeper = 0
-}
-
 extension DispatchTimeInterval: ExpressibleByFloatLiteral {
     
     public typealias FloatLiteralType = TimeInterval
     
-    public var accuracy: TimeInterval {
-        switch self {
-        case .never:
-            return 0
-        case .seconds:
-            return 1.0
-        case .milliseconds:
-            return 1.0e-3
-        case .microseconds:
-            return 1.0e-6
-        case .nanoseconds:
-            return 1.0e-9
-        default:
-            return 0
-        }
+    public init(_ timeInterval: TimeInterval) {
+        self.init(floatLiteral: timeInterval)
     }
     
-    /// 自动根据当前 timeInterval （秒）小数点后面的位数选择合适的精度。
+    /// 根据当前 timeInterval （秒）小数点后面的位数选择合适的精度。
+    /// - Note: Double占8个字节（64位）内存空间，最多可提供16位有效数字，小数点后默认保留6位。如全是整数，zd最多提供15位有效数字。
+    /// - Note: 负数和大于 999_999_999_999_999 的值将构造为 .never 。
     /// - Parameter timeInterval: 以秒为单位的时间值。
     public init(floatLiteral timeInterval: TimeInterval) {
-        if timeInterval <= 0 {
+        if timeInterval < 0 || timeInterval > 999_999_999_999_999 {
             self = .never
             return
         }
-        
-        var t0 = timeInterval
+
+        var t0 = timeInterval + 5.0e-10 // 四舍五入
         var t1 = floor(t0)
         var t2 = t0 - t1
 
@@ -247,8 +239,8 @@ extension DispatchTimeInterval: ExpressibleByFloatLiteral {
             tx = tx * 1000 // 保持最小精度不变
         }
 
-        let value = Int(round(t0))
-        
+        let value = Int(floor(t0))
+
         switch tn {
         case 0:
             self = .seconds(value)
@@ -260,23 +252,24 @@ extension DispatchTimeInterval: ExpressibleByFloatLiteral {
             self = .nanoseconds(value)
         }
     }
- 
+    
     public static func - (lhs: DispatchTimeInterval, rhs: TimeInterval) -> TimeInterval {
         switch lhs {
         case .never:
-            return 0
+            return TimeInterval(Int.max) - rhs
         case .seconds(let value):
-            return Foundation.TimeInterval(value) - rhs
+            return TimeInterval(value) - rhs
         case .milliseconds(let value):
-            return Foundation.TimeInterval(value) * 1.0e-3 - rhs
+            return TimeInterval(value) * 1.0e-3 - rhs
         case .microseconds(let value):
-            return Foundation.TimeInterval(value) * 1.0e-6 - rhs
+            return TimeInterval(value) * 1.0e-6 - rhs
         case .nanoseconds(let value):
-            return Foundation.TimeInterval(value) * 1.0e-6 - rhs
+            return TimeInterval(value) * 1.0e-6 - rhs
         @unknown default:
             return 0
         }
     }
+    
 }
 
 extension TimeInterval {
@@ -284,7 +277,7 @@ extension TimeInterval {
     public init(_ timeInterval: DispatchTimeInterval) {
         switch timeInterval {
         case .never:
-            self = 0
+            self = TimeInterval(UInt.max)
         case .seconds(let value):
             self = TimeInterval(value)
         case .milliseconds(let value):
@@ -299,3 +292,8 @@ extension TimeInterval {
     }
     
 }
+
+private struct AssociationKey {
+    static var timekeeper = 0
+}
+

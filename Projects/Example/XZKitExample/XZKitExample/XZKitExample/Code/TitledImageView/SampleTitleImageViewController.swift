@@ -46,8 +46,8 @@ class SampleTitleImageViewController: UIViewController {
         button.setTitleColor(.red, for: .selected)
         view.addSubview(button)
         
-        button.duration = 1.0
-        button.timeInterval = 0.3
+        button.duration = 3.0
+        button.timeInterval = 0.02
         
         button.addTarget(self, action: #selector(timerButtonWasTimeout(_:)), for: .timeout)
         button.addTarget(self, action: #selector(timerButtonWasClicked(_:)), for: .touchUpInside)
@@ -66,9 +66,14 @@ class SampleTitleImageViewController: UIViewController {
     }
     
     @objc func timerButtonWasClicked(_ button: TimerButton) {
-        button.isPaused = !button.isPaused
-        button.isSelected = !button.isPaused
-        button.progressView.progress = CGFloat(button.currentTime / button.duration)
+        if button.isPaused {
+            button.resume()
+            button.isSelected = false
+        } else {
+            button.isSelected = true
+            button.pause()
+        }
+        button.progress = CGFloat(button.currentTime / button.duration)
     }
     
 }
