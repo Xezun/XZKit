@@ -7,7 +7,7 @@
 
 ## 环境需求
 
-iOS 8.0, Swift 5.0, Xcode 10.0.
+iOS 8.0, Swift 5.0, Xcode 11.0.
 
 ## 安装集成
 
@@ -65,9 +65,9 @@ pod "XZKit/CarouselView"
 
 支持任意弧度的圆形进度条和任意角度的直线形进度条。
 
-### [计时器：DisplayTimer](./Documentation/DisplayTimer)
+### [计时器：Timekeeper](./Documentation/DisplayTimer)
 
-使用 CADisplayLink 实现的计时器。
+基于 DispatchSourceTimer 实现的计时器，可以更方便的处理关于累积计时方面的功能。
 
 ### [控制重定向：AppRedirection](./Documentation/AppRedirection)
 
@@ -107,6 +107,10 @@ pod "XZKit/CarouselView"
 所有组件都有单独的[示例代码](./Projects/Example)，下载到本地后，代码运行前需在 Pod 目录执行 `pod update` 安装相关依赖。
 
 ## 更新日志
+
+- 2020.05.23
+
+基于 DispatchSourceTimer 重构了 DisplayTimer 为 Timekeeper 并设计了新的 API 。
 
 - 2020.05.10
 
