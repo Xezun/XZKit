@@ -2,13 +2,13 @@
 //  APIManager.swift
 //  XZKit
 //
-//  Created by mlibai on 2018/7/3.
-//  Copyright © 2018年 mlibai. All rights reserved.
+//  Created by Xezun on 2018/7/3.
+//  Copyright © 2018年 XEZUN INC. All rights reserved.
 //
 
 import Foundation
 
-public let NetworkingQueue = DispatchQueue(label: "com.mlibai.XZKit.Networking")
+public let NetworkingQueue = DispatchQueue(label: "com.xezun.XZKit.Networking")
 
 public protocol APINetworking: AnyObject {
     

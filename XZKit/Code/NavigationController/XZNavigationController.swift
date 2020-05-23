@@ -2,8 +2,8 @@
 //  TTNavigationController.swift
 //  XZKit
 //
-//  Created by mlibai on 2017/2/17.
-//  Copyright © 2017年 mlibai. All rights reserved.
+//  Created by Xezun on 2017/2/17.
+//  Copyright © 2017年 XEZUN INC. All rights reserved.
 //
 
 import UIKit

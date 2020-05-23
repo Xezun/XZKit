@@ -2,7 +2,7 @@
 //  TextImageLayout.swift
 //  XZKit
 //
-//  Created by mlibai on 2018/10/8.
+//  Created by Xezun on 2018/10/8.
 //
 
 import Foundation

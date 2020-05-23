@@ -2,8 +2,8 @@
 //  CollectionViewFlowLayout.swift
 //  XZKit
 //
-//  Created by mlibai on 2018/7/10.
-//  Copyright © 2018年 mlibai.com All rights reserved.
+//  Created by Xezun on 2018/7/10.
+//  Copyright © 2018年 XEZUN INC.com All rights reserved.
 //
 
 import UIKit

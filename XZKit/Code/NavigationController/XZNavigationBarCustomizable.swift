@@ -2,8 +2,8 @@
 //  NavigationBarCustomizable.swift
 //  XZKit
 //
-//  Created by mlibai on 2018/1/4.
-//  Copyright © 2018年 mlibai. All rights reserved.
+//  Created by Xezun on 2018/1/4.
+//  Copyright © 2018年 XEZUN INC. All rights reserved.
 //
 
 import UIKit

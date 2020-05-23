@@ -2,7 +2,7 @@
 //  TextImageControl.swift
 //  XZKit
 //
-//  Created by mlibai on 2018/9/29.
+//  Created by Xezun on 2018/9/29.
 //
 
 import Foundation

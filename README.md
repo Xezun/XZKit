@@ -36,22 +36,22 @@ pod "XZKit/CarouselView"
 使用三图轮播机制设计的 `XZCarouselView` 控件，并且默认提供了无限轮播、自动轮播、手势缩放等功能；提供了获取轮播图滚动进度的接口，更方便做关联的渐变动画。
 并且默认实现了图片轮播的控件 `XZImageCarouselView` 和类似微信朋友圈的大图查看的控件 `XZImageViewer` ，方便开发者直接使用。
 
-<img src="https://github.com/mlibai/static-resources/blob/master/XZKit/Documentation/CarouselView/1.gif" alt="XZKit.CarouselView" width="240"></img>
-<img src="https://github.com/mlibai/static-resources/blob/master/XZKit/Documentation/CarouselView/2.gif" alt="XZKit.CarouselView" width="240"></img>
-<img src="https://github.com/mlibai/static-resources/blob/master/XZKit/Documentation/CarouselView/3.gif" alt="XZKit.CarouselView" width="240"></img>
+<img src="https://github.com/xezun/static-resources/blob/master/XZKit/Documentation/CarouselView/1.gif" alt="XZKit.CarouselView" width="240"></img>
+<img src="https://github.com/xezun/static-resources/blob/master/XZKit/Documentation/CarouselView/2.gif" alt="XZKit.CarouselView" width="240"></img>
+<img src="https://github.com/xezun/static-resources/blob/master/XZKit/Documentation/CarouselView/3.gif" alt="XZKit.CarouselView" width="240"></img>
 
 ### [自定义流布局：XZKit.UICollectionViewFlowLayout](./Documentation/UICollectionViewFlowLayout)
 
 支持功能：水平滚动、垂直滚动、行对齐方式、垂直对齐方式、自适语言的应布局方向。
 
-<img src="https://github.com/mlibai/static-resources/blob/master/XZKit/Documentation/UICollectionViewFlowLayout/UICollectionViewFlowLayout.gif" alt="XZKit.UICollectionViewFlowLayout" width="240"></img>
+<img src="https://github.com/xezun/static-resources/blob/master/XZKit/Documentation/UICollectionViewFlowLayout/UICollectionViewFlowLayout.gif" alt="XZKit.UICollectionViewFlowLayout" width="240"></img>
   
 
 ### [App 语言：AppLanguage](./Documentation/AppLanguage)
 
 提供了更直观的设置 App 语言的接口，且支持应用内语言切换。
 
-<img src="https://github.com/mlibai/static-resources/blob/master/XZKit/Documentation/AppLanguage/1.gif" alt="XZKit.AppLanguage" width="240"></img>
+<img src="https://github.com/xezun/static-resources/blob/master/XZKit/Documentation/AppLanguage/1.gif" alt="XZKit.AppLanguage" width="240"></img>
 
 ### [网络层协议：Networking](./Documentation/Networking)
 

@@ -2,7 +2,7 @@
 //  URL.swift
 //  XZKit
 //
-//  Created by mlibai on 2017/5/3.
+//  Created by Xezun on 2017/5/3.
 //
 //
 

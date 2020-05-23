@@ -210,6 +210,7 @@
 		28C06796224FA6B60011F052 /* Code */ = {
 			isa = PBXGroup;
 			children = (
+				28C067F8224FA6B60011F052 /* AppDelegate.swift */,
 				28C06797224FA6B60011F052 /* TimerButton.swift */,
 				28C06798224FA6B60011F052 /* AlertController */,
 				28C0679A224FA6B60011F052 /* ImageColorLevelsViewController.xib */,
@@ -233,7 +234,6 @@
 				28C067C5224FA6B60011F052 /* SegmentedBarController.swift */,
 				28C067C6224FA6B60011F052 /* DataCryptor */,
 				28C067CA224FA6B60011F052 /* XZKit */,
-				28C067F8224FA6B60011F052 /* AppDelegate.swift */,
 				28C067F9224FA6B60011F052 /* LaunchViewController.swift */,
 				28C067FA224FA6B60011F052 /* Main */,
 				28C06803224FA6B60011F052 /* UIColor+XZKit */,

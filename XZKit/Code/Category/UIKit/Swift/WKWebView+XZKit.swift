@@ -2,8 +2,8 @@
 //  WKWebView.swift
 //  XZKit
 //
-//  Created by mlibai on 2017/5/17.
-//  Copyright © 2017年 mlibai. All rights reserved.
+//  Created by Xezun on 2017/5/17.
+//  Copyright © 2017年 XEZUN INC. All rights reserved.
 //
 
 import UIKit
@@ -12,10 +12,10 @@ import WebKit
 extension WKWebView {
     
     /// 在 UserDefaults 中记录原始 UserAgent 所用的键。
-    public static let defaultUserAgentUserDefaultsKey = "com.mlibai.XZKit.userAgent.default"
+    public static let defaultUserAgentUserDefaultsKey = "com.xezun.XZKit.userAgent.default"
     
     /// 在 UserDefaults 中记录已设置的 UserAgent 所用的键。
-    public static let currentUserAgentUserDefaultsKey = "com.mlibai.XZKit.userAgent.current"
+    public static let currentUserAgentUserDefaultsKey = "com.xezun.XZKit.userAgent.current"
     
     /// 默认的 UserAgent 。
     /// - Note: WKWebView 在 iOS 9.0 以后，默认设置属性 customUserAgent 或 configuration.applicationNameForUserAgent 所覆盖。

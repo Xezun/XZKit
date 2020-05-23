@@ -2,7 +2,7 @@
 //  NSBundle.m
 //  XZKit
 //
-//  Created by mlibai on 2017/10/31.
+//  Created by Xezun on 2017/10/31.
 //
 
 #import "NSBundle+XZKit.h"

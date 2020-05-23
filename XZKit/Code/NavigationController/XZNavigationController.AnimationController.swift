@@ -2,7 +2,7 @@
 //  NavigationControllerGestureDrivenTransitionController.swift
 //  XZKit
 //
-//  Created by mlibai on 2017/7/11.
+//  Created by Xezun on 2017/7/11.
 //
 //
 

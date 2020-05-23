@@ -2,7 +2,7 @@
 //  UIImage.m
 //  XZKit
 //
-//  Created by mlibai on 2017/10/30.
+//  Created by Xezun on 2017/10/30.
 //
 
 #import "UIImage+XZKit.h"

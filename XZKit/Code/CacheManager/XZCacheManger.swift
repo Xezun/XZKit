@@ -2,8 +2,8 @@
 //  XZCacheManger.swift
 //  XZKit
 //
-//  Created by mlibai on 2018/6/11.
-//  Copyright © 2018年 mlibai. All rights reserved.
+//  Created by Xezun on 2018/6/11.
+//  Copyright © 2018年 XEZUN INC. All rights reserved.
 //
 
 import Foundation
@@ -15,7 +15,7 @@ import Foundation
 @objc(XZCacheManager)
 open class CacheManager: NSObject {
     
-    /// 缓存域，如 com.mlibai.XZKit 等。
+    /// 缓存域，如 com.xezun.XZKit 等。
     public struct Domain: RawRepresentable, CustomStringConvertible {
         public typealias RawValue = String
         public let rawValue: String

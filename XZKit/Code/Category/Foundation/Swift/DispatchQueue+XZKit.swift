@@ -2,8 +2,8 @@
 //  DispatchQueue.swift
 //  XZKit
 //
-//  Created by mlibai on 2018/7/6.
-//  Copyright © 2018年 mlibai. All rights reserved.
+//  Created by Xezun on 2018/7/6.
+//  Copyright © 2018年 XEZUN INC. All rights reserved.
 //
 
 import Foundation

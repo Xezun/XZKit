@@ -3,7 +3,7 @@
 //  XZKit
 //
 //  Created by 徐臻 on 2019/3/30.
-//  Copyright © 2019 mlibai. All rights reserved.
+//  Copyright © 2019 XEZUN INC. All rights reserved.
 //
 
 #import <Foundation/Foundation.h>

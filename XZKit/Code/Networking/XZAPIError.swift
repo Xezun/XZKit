@@ -2,32 +2,41 @@
 //  APIError.swift
 //  HTTP
 //
-//  Created by mlibai on 2018/7/3.
-//  Copyright © 2018年 mlibai. All rights reserved.
+//  Created by Xezun on 2018/7/3.
+//  Copyright © 2018年 XEZUN INC. All rights reserved.
 //
 
 import Foundation
 
 extension APIError {
+    
     /// 接口请求没有发生错，如果没有错误，请不要抛出异常，包括 noError 。
     public static let noError = APIError(code: -0, message: "No error.")
+    
     /// 错误码 -1 ，未定义的错误。
     public static let undefined = APIError(code: -1, message: "An undefined error occurred.")
+    
     /// 错误码 -2 ，请求被取消了。
     public static let cancelled = APIError(code: -2, message: "The request was cancelled.")
+    
     /// 错误码 -3 ，请求被忽略了。
     public static let ignored = APIError(code: -3, message: "The request was ignored.")
+    
     /// 错误码 -4 ，请求超截止时间，非网络响应的超时。
     public static let overtime = APIError(code: -4, message: "The request is out of the limited time.")
+    
     /// 错误码 -100 ，因为无网络而发生的错误。
     /// - Note: 建议网络错误 -100 ~ -199 。
     public static let unreachable = APIError(code: -100, message: "The network was unreachable.")
+    
     /// 错误码 - 200 ，无效的接口请求。
     /// - Note: 建议 request 错误 -200 ~ -299 。
     public static let invalidRequest = APIError(code: -200, message: "The api request is invalid.")
+    
     /// 错误码 -300 ，请求结果无法解析。
     /// - Note: 建议 response 错误 -300 ~ -399 。
     public static let unexpectedResponse = APIError(code: -300, message: "The response data can not be parsed.")
+    
 }
 
 
@@ -98,7 +107,7 @@ extension APIError: _ObjectiveCBridgeable {
     public typealias _ObjectiveCType = NSError
     
     /// APIError 的错误域，在桥接到 Objective-C NSError 时使用。
-    public static let Domain = "com.mlibai.XZKit.Networking"
+    public static let Domain = "com.xezun.XZKit.Networking"
     
     public func _bridgeToObjectiveC() -> NSError {
         return NSError.init(domain: APIError.Domain, code: code, userInfo: [NSLocalizedDescriptionKey: message])

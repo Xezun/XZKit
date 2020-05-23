@@ -16,7 +16,8 @@ extension UIControl.Event {
     
 }
 
-/// 显示一个倒计时的 Button，当倒计时完成时，会触发 UIControlEvents.timeout（或 valueChanged）事件。
+/// 具备展示进度的倒计时视图。
+/// 当倒计时完成时，会触发 UIControlEvents.timeout（valueChanged）事件。
 open class TimerButton: UIButton, Timekeepable {
     
     public func timekeeper(_ timekeeper: Timekeeper, didTime timeInterval: TimeInterval) {

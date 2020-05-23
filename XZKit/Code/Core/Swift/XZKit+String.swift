@@ -2,8 +2,8 @@
 //  String.swift
 //  XZKit
 //
-//  Created by mlibai on 2017/4/24.
-//  Copyright © 2017年 mlibai. All rights reserved.
+//  Created by Xezun on 2017/4/24.
+//  Copyright © 2017年 XEZUN INC. All rights reserved.
 //
 
 import Foundation

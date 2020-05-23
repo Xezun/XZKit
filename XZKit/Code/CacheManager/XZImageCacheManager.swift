@@ -2,8 +2,8 @@
 //  XZImageCacheManager.swift
 //  XZKit
 //
-//  Created by mlibai on 2018/6/11.
-//  Copyright © 2018年 mlibai. All rights reserved.
+//  Created by Xezun on 2018/6/11.
+//  Copyright © 2018年 XEZUN INC. All rights reserved.
 //
 
 import UIKit
@@ -12,7 +12,7 @@ public let ImageCacheStorage = "image"
 
 extension CacheManager.Domain {
     
-    public static let XZKit = CacheManager.Domain.init(rawValue: "com.mlibai.XZKit.CacheManager")
+    public static let XZKit = CacheManager.Domain.init(rawValue: "com.xezun.XZKit.CacheManager")
 }
 
 extension CacheManager.Storage {

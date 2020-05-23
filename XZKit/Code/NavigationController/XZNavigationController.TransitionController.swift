@@ -2,7 +2,7 @@
 //  NavigationController.TransitionController.swift
 //  XZKit
 //
-//  Created by mlibai on 2018/12/31.
+//  Created by Xezun on 2018/12/31.
 //
 
 import Foundation

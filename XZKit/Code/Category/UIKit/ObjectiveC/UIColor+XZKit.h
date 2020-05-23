@@ -2,7 +2,7 @@
 //  UIColor.h
 //  XZKit
 //
-//  Created by mlibai on 2017/10/24.
+//  Created by Xezun on 2017/10/24.
 //
 
 #import <UIKit/UIKit.h>

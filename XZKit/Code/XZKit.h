@@ -2,15 +2,15 @@
 //  XZKit.h
 //  XZKit
 //
-//  Created by mlibai on 2017/12/8.
-//  Copyright © 2017年 mlibai. All rights reserved.
+//  Created by Xezun on 2017/12/8.
+//  Copyright © 2017年 XEZUN INC. All rights reserved.
 //
 
 #import <UIKit/UIKit.h>
 
 
 // 规范相关：
-// 域、标识符前缀：com.mlibai.XZKit.<Moudle> 。
+// 域、标识符前缀：com.xezun.XZKit.<Moudle> 。
 //
 // EdgeInsets 命名规范：
 // 1. 表示具体的边距，省略edge：contentInsets、sectionInsets

@@ -2,7 +2,8 @@
 //  APIResponse.swift
 //  XZKit
 //
-//  Created by mlibai on 2018/7/27.
+//  Created by Xezun on 2018/7/27.
+//  Copyright © 2018年 XEZUN INC.com All rights reserved.
 //
 
 import Foundation

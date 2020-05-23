@@ -28,7 +28,7 @@ Pod::Spec.new do |s|
     s.homepage = 'https://xzkit.xezun.com'
     # s.screenshots     = 'www.example.com/screenshots_1', 'www.example.com/screenshots_2'
     s.license  = { :type => 'MIT', :file => 'LICENSE' }
-    s.author   = { 'mlibai' => 'developer@xezun.com' }
+    s.author   = { 'xezun' => 'developer@xezun.com' }
     s.source   = { :git => 'https://github.com/xezun/XZKit.git', :tag => s.version.to_s }
     s.social_media_url = 'https://xzkit.xezun.com/'
     
