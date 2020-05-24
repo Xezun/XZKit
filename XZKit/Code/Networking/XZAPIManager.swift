@@ -8,7 +8,7 @@
 
 import Foundation
 
-public let NetworkingQueue = DispatchQueue(label: "com.xezun.XZKit.Networking")
+public let NetworkingQueue = DispatchQueue(label: "com.xezun.XZKit.Networking", attributes: .concurrent)
 
 public protocol APINetworking: AnyObject {
     
@@ -16,17 +16,17 @@ public protocol APINetworking: AnyObject {
     /// - Note: 返回值为已经启动的 URLSessionDataTask 对象。
     /// - Note: 默认情况下，APIManager 不在主线程执行此方法。
     /// - Note: 回调需要在异步执行。
-    ///
     /// - Parameters:
     ///   - request: 接口请求。
-    ///   - progress: 请求进度。
-    ///     - progress: Progress 对象。
+    ///   - progress: 请求进度回调。
+    ///   - bytes: 已传送的数据量（字节）。
+    ///   - totalBytes: 总共需传送的数据量（自己）。
     ///   - completion: 请求完成回调。
-    ///     - data: 参数1，请求响应的数据。
-    ///     - error: 参数2，网络请求错误，请使用 nil 表示没有错误。
+    ///   - data: 请求成功所获得的应答数据。
+    ///   - error: 请求失败所产生的错误信息。
     /// - Returns: 执行网络请求的 Task 。
     /// - Throws: 创建网络请求时可能发生的错误。
-    func dataTask(for request: APIRequest, progress: @escaping (Foundation.Progress) -> Void, completion: @escaping (Any?, Error?) -> Void) throws -> URLSessionDataTask?
+    func dataTask(for request: APIRequest, progress: @escaping (_ bytes: Int64, _ totalBytes: Int64) -> Void, completion: @escaping (_ data: Any?, _ error: Error?) -> Void) throws -> URLSessionDataTask?
     
 }
 
@@ -36,27 +36,24 @@ public protocol APIManager: APINetworking {
     
     /// 接口请求。
     associatedtype Request: APIRequest
+    
     /// 接口响应。
     associatedtype Response: APIResponse where Response.Request == Request
     
-    /// 发送一个接口请求。该操作是一个异步操作。
-    ///
+    /// 发送接口请求。该操作是一个异步操作。
     /// - Parameter request: 接口请求对象。
     /// - Returns: 本次请求的标识符。
-    @discardableResult
-    func send(_ request: Request) -> APITask
+    @discardableResult func send(_ request: Request) -> APITask
     
     /// 当接口请求进度更新时，此方法会被调用，一般才此方法中转发代理事件。
     /// - Note: 默认情况下，该方法在子线程上执行。
-    ///
     /// - Parameters:
     ///   - request: 接口请求对象。
     ///   - progress: 接口请求当前进度。
-    func request(_ request: Request, didUpdateProgress progress: Foundation.Progress)
+    func request(_ request: Request, didProcess progress: (bytes: Int64, totalBytes: Int64))
     
     /// 当接口请求收到服务器返回数据时，此方法会被调用，此方法一般用于验证数据基本结构，生成 APIResponse 对象。
     /// - Note: 默认情况下，该方法在子线程上执行。
-    ///
     /// - Parameters:
     ///   - request: 接口请求对象。
     ///   - responseObject: 接口请求的原始数据。
@@ -67,7 +64,6 @@ public protocol APIManager: APINetworking {
     /// 当前接口已获得响应对象时，此方法会被调用。
     /// - Note: 该方法在主线程上执行。
     /// - Note: 只有当本方法执行完毕，等待的任务才会进入调度列队，所以，如果在此方法中执行一个新的请求，等待执行的任务可能继续处于等待中。
-    ///
     /// - Parameters:
     ///   - request: 接口请求对象。
     ///   - response: 接口响应对象。
@@ -76,7 +72,6 @@ public protocol APIManager: APINetworking {
     /// 当接口请求发生错误时，此方法会被调用。
     /// - Note: 自动重试的任务，可能不会触发此方法（除非主动停止）。
     /// - Note: 该方法在主线程上执行。
-    ///
     /// - Parameters:
     ///   - request: 接口请求对象。
     ///   - error: 接口请求过程中的错误对象。
@@ -85,7 +80,6 @@ public protocol APIManager: APINetworking {
     /// 当请求的 retryIfFailed 属性为 true 时，如果请求失败（包括被取消、因策略被忽略、网络错误、数据解析错误），APIManager 将通过此方法
     /// 来获取下次重试的时间间隔。如果此方法返回了 nil ，那么自动重试将停止，并触发错误回调。因此方法用于控制失败重试的频率，从而提高性能。
     /// - Note: 默认情况下，该方法在子线程上执行。
-    ///
     /// - Parameters:
     ///   - request: APIRequest 对象。
     ///   - retriedTimes: 已重试的次数。
@@ -125,8 +119,9 @@ extension APIManager {
         if let wrapper = objc_getAssociatedObject(self, &AssociationKey.apiTaskManager) as? _APITaskManager<Self> {
             return wrapper
         }
-        // 如果当前操作是在主线程中执行，那么同步操作会导致主线程进入等待状态；如果使用串行队列或者栅栏并发队列Q，那么如果这个时候队列中正在执行的任务
-        // 正好要在主线程中同步执行，那么就会导致队列Q进入等待状态；从而导致主线程与线程Q互相等待，即死锁。
+        // 如果当前操作是在主线程中执行，那么同步操作会导致主线程进入等待状态；
+        // 如果使用串行队列或者栅栏并发队列，那么如果这个时候，队列中正在执行的任务正好要在主线程中同步执行，
+        // 那么就会导致并发队列进入等待状态；从而导致主线程与线程互相等待，即死锁。
         // 所以下面的操作要使用线程锁，而非串行队列。
         objc_sync_enter(self)
         if let wrapper = objc_getAssociatedObject(self, &AssociationKey.apiTaskManager) as? _APITaskManager<Self> {
@@ -171,7 +166,6 @@ fileprivate class _APITaskManager<Manager: APIManager> {
     /// 调度新的任务（自动重试的任务也被认为是新任务）：根据请求的并发规则，进行调度。非线程安全函数，需要在串行队列中执行。
     /// - Note: 在处理完并发规则后，如果接口任务需要立即执行，会立即执行。
     /// - Note: 如果接口请求需要被延迟发送，则接口任务会被保存到相应的队列中。
-    ///
     /// - Parameters:
     ///   - newTask: 待调度的新任务，如果为 nil ，则表示调度等待列队中的任务。
     private func dispatchUnsafe(_ apiTask: _APITask<Manager>) {
@@ -214,7 +208,6 @@ fileprivate class _APITaskManager<Manager: APIManager> {
     /// - Note: 本方法直接由调度任务的方法调用，其它方法不应该被调用。
     /// - Note: 只有此方法会将任务加入到正在执行的任务队列。
     /// - Note: 待执行的任务必须是独立的任务。
-    ///
     /// - Parameter apiTask: 待执行的接口请求任务。
     private func performUnsafe(_ apiTask: _APITask<Manager>) {
         guard let manager = self.manager else { return }
@@ -223,8 +216,8 @@ fileprivate class _APITaskManager<Manager: APIManager> {
             let identifier = apiTask.identifier
             
             // 创建网络请求
-            apiTask.dataTask = try manager.dataTask(for: apiTask.request, progress: { [weak self] (progress) in
-                self?.manager?.request(request, didUpdateProgress: progress)
+            apiTask.dataTask = try manager.dataTask(for: apiTask.request, progress: { [weak self] (bytes, totalBytes) in
+                self?.manager?.request(request, didProcess: (bytes, totalBytes))
             }, completion: { [weak self] (data, error) in
                 // 同步：在网络请求回调执行完，那么 APIManger 的整个业务逻辑也结束了。
                 // 异步：网络请求的回调执行，可以提前结束，不必等待数据解析完成，可提前释放资源。
