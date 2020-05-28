@@ -87,6 +87,8 @@ public protocol APIManager: APINetworking {
     /// - Returns: 当前时间到下次重试的时间间隔，具体的重试时间同时受并发策略影响。
     func request(_ request: Request, timeIntervalForRetrying retriedTimes: Int, forFailingError error: Error) -> TimeInterval?
     
+    
+    var queue: DispatchQueue { get }
 }
 
 
@@ -120,17 +122,18 @@ extension APIManager {
             return wrapper
         }
         // 如果当前操作是在主线程中执行，那么同步操作会导致主线程进入等待状态；
-        // 如果使用串行队列或者栅栏并发队列，那么如果这个时候，队列中正在执行的任务正好要在主线程中同步执行，
+        // 如果使用串行或者栅栏并发队列，那么如果这个时候，队列中正在执行的任务正好要在主线程中同步执行，
         // 那么就会导致并发队列进入等待状态；从而导致主线程与线程互相等待，即死锁。
         // 所以下面的操作要使用线程锁，而非串行队列。
         objc_sync_enter(self)
-        if let wrapper = objc_getAssociatedObject(self, &AssociationKey.apiTaskManager) as? _APITaskManager<Self> {
+        defer {
             objc_sync_exit(self)
+        }
+        if let wrapper = objc_getAssociatedObject(self, &AssociationKey.apiTaskManager) as? _APITaskManager<Self> {
             return wrapper
         }
         let wrapper = _APITaskManager.init(for: self)
         objc_setAssociatedObject(self, &AssociationKey.apiTaskManager, wrapper, .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
-        objc_sync_exit(self)
         return wrapper
     }
     
@@ -156,10 +159,12 @@ fileprivate class _APITaskManager<Manager: APIManager> {
 
     func send(_ request: Request) -> APITask {
         let apiTask = _APITask.init(request: request, delegate: self)
+        tasksLock.lock()
         // 并发列队不能保证执行顺序，所以使用串行列队。
         NetworkingQueue.async(execute: { [weak self] in
             self?.dispatchUnsafe(apiTask)
         })
+        tasksLock.unlock()
         return apiTask
     }
     
@@ -175,7 +180,7 @@ fileprivate class _APITaskManager<Manager: APIManager> {
         }
         switch apiTask.request.concurrencyPolicy {
         case .ignoreCurrent:
-            if runningTasksIfLoaded == nil || runningTasksIfLoaded!.isEmpty {
+            if runningTasks.isEmpty {
                 return performUnsafe(apiTask)
             }
             return apiTaskUnsafe(apiTask, didCollect: nil, error: APIError.ignored)
@@ -188,7 +193,7 @@ fileprivate class _APITaskManager<Manager: APIManager> {
             return performUnsafe(apiTask)
             
         case .wait(let priority):
-            if runningTasksIfLoaded == nil || runningTasksIfLoaded!.isEmpty {
+            if runningTasks.isEmpty {
                 return performUnsafe(apiTask)
             }
             // 优先级列队优先出列最后面的，所以将 apiTask 插入到相同优先级的前面。
@@ -224,16 +229,16 @@ fileprivate class _APITaskManager<Manager: APIManager> {
                 NetworkingQueue.async(execute: { () -> Void in
                     guard let this = self else { return }
                     // 取消超时。
-                    apiTask.deadlineInterval = nil
+                    apiTask.setDeadlineInterval(nil)
                     // 检查接口任务是否有效，cancelAll或已超时的任务已提前清除了。
-                    guard let apiTask = this.runningTasksIfLoaded?.removeValue(forKey: identifier) else {
+                    guard let apiTask = this.runningTasks.removeValue(forKey: identifier) else {
                         return
                     }
                     return this.apiTaskUnsafe(apiTask, didCollect: data, error: error)
                 })
             })
             // 设置超时。
-            apiTask.deadlineInterval = request.deadlineInterval
+            apiTask.setDeadlineInterval(request.deadlineInterval)
             
             runningTasks[identifier] = apiTask
         } catch {
@@ -260,7 +265,7 @@ fileprivate class _APITaskManager<Manager: APIManager> {
                 NetworkingQueue.asyncAfter(deadline: .now() + delay, execute: { [weak self] in
                     guard let this = self else { return }
                     // 延时指定时间后取出并重新调度该接口任务。
-                    guard let delayedTask = this.delayedTasksIfLoaded?.removeValue(forKey: identifier) else { return }
+                    guard let delayedTask = this.delayedTasks.removeValue(forKey: identifier) else { return }
                     this.dispatchUnsafe(delayedTask)
                 })
             } else {
@@ -286,21 +291,21 @@ fileprivate class _APITaskManager<Manager: APIManager> {
         
         // 等待的任务出列执行。
         // 如果当前没有正在执行任务，才从等待列队中取出任务。
-        guard runningTasksIfLoaded == nil || runningTasksIfLoaded!.isEmpty else {
+        guard runningTasks.isEmpty else {
             return
         }
         // 等待执行的列队不为空。
-        guard waitingTasksIfLoaded?.isEmpty == false else {
+        guard waitingTasks.isEmpty == false else {
             return
         }
         // 任务出列并调度。
-        dispatchUnsafe(waitingTasksIfLoaded!.removeLast())
+        dispatchUnsafe(waitingTasks.removeLast())
     }
     
     /// APITask 代理事件。删除已超时的任务，并转发事件。
     func apiTaskWasOvertimeUnsafe(_ apiTask: _APITask<Manager>) {
         // 先移除已经超时的网络请求。
-        guard let removedTask = runningTasksIfLoaded?.removeValue(forKey: apiTask.identifier) else { return }
+        guard let removedTask = runningTasks.removeValue(forKey: apiTask.identifier) else { return }
         // 取消网络请求。
         removedTask.dataTask?.cancel()
         // 超时的任务，可以进行重试。
@@ -308,15 +313,15 @@ fileprivate class _APITaskManager<Manager: APIManager> {
     }
     
     var isRunning: Bool {
-        return (runningTasksIfLoaded?.isEmpty == false) || (waitingTasksIfLoaded?.isEmpty == false) || (delayedTasksIfLoaded?.isEmpty == false)
+        return (runningTasks.isEmpty == false) || (waitingTasks.isEmpty == false) || (delayedTasks.isEmpty == false)
     }
     
     /// 取消所有任务：先从列队中删除，然后发送事件。
     /// 因为是在串行列队中执行，可以保证取消时不会与其他事件重叠。
     func cancelAllUnsafe() -> Void {
         // 取消正在执行的任务。
-        if let runningTasks = runningTasksIfLoaded, !runningTasks.isEmpty {
-            runningTasksIfLoaded!.removeAll()
+        if !runningTasks.isEmpty {
+            runningTasks.removeAll()
             for item in runningTasks {
                 item.value.dataTask?.cancel()
                 apiTaskMainThreadSync(item.value, didFailWithError: APIError.cancelled)
@@ -324,8 +329,8 @@ fileprivate class _APITaskManager<Manager: APIManager> {
         }
         
         // 取消等待中的任务。
-        if let waitingTasks = waitingTasksIfLoaded, !waitingTasks.isEmpty {
-            waitingTasksIfLoaded!.removeAll()
+        if !waitingTasks.isEmpty {
+            waitingTasks.removeAll()
             for apiTask in waitingTasks {
                 apiTask.dataTask?.cancel()
                 apiTaskMainThreadSync(apiTask, didFailWithError: APIError.cancelled)
@@ -333,8 +338,8 @@ fileprivate class _APITaskManager<Manager: APIManager> {
         }
         
         // 取消延迟执行的任务。
-        if let delayedTasks = delayedTasksIfLoaded, !delayedTasks.isEmpty {
-            delayedTasksIfLoaded!.removeAll()
+        if !delayedTasks.isEmpty {
+            delayedTasks.removeAll()
             for item in delayedTasks {
                 item.value.dataTask?.cancel()
                 apiTaskMainThreadSync(item.value, didFailWithError: APIError.cancelled)
@@ -347,47 +352,13 @@ fileprivate class _APITaskManager<Manager: APIManager> {
     /// 所以这里使用 weak 。
     private weak var manager: Manager?
     /// 正在执行的任务。
-    private var runningTasksIfLoaded: [String: _APITask<Manager>]?
-    private var runningTasks: [String: _APITask<Manager>] {
-        get {
-            if runningTasksIfLoaded != nil {
-                return runningTasksIfLoaded!
-            }
-            runningTasksIfLoaded = [:]
-            return runningTasksIfLoaded!
-        }
-        set {
-            runningTasksIfLoaded = newValue
-        }
-    }
+    private var runningTasks = [String: _APITask<Manager>]()
     /// 排队等待执行的任务，按任务按并发优先级从低到高在数组中排列。
-    private var waitingTasksIfLoaded: [_APITask<Manager>]?
-    private var waitingTasks: [_APITask<Manager>] {
-        get {
-            if waitingTasksIfLoaded != nil {
-                return waitingTasksIfLoaded!
-            }
-            waitingTasksIfLoaded = []
-            return waitingTasksIfLoaded!
-        }
-        set {
-            waitingTasksIfLoaded = newValue
-        }
-    }
+    private var waitingTasks = [_APITask<Manager>]()
     /// 延时自动重试的任务。
-    private var delayedTasksIfLoaded: [String: _APITask<Manager>]?
-    private var delayedTasks: [String: _APITask<Manager>] {
-        get {
-            if delayedTasksIfLoaded != nil {
-                return delayedTasksIfLoaded!
-            }
-            delayedTasksIfLoaded = [:]
-            return delayedTasksIfLoaded!
-        }
-        set {
-            delayedTasksIfLoaded = newValue
-        }
-    }
+    private var delayedTasks = [String: _APITask<Manager>]()
+    /// 读写 ~Tasks 的锁。
+    private let tasksLock = NSLock()
     
     fileprivate init(for manager: Manager) {
         self.manager = manager
@@ -451,55 +422,66 @@ private final class _APITask<Manager: APIManager>: APITask {
     public fileprivate(set) weak var dataTask: URLSessionDataTask?
     /// 是否已取消。
     public private(set) var isCancelled: Bool = false
+    /// 任务限时时长。
+    public private(set) var deadlineInterval: TimeInterval?
     /// 取消当前任务。
     public func cancel() {
+        if isCancelled {
+            return
+        }
         isCancelled = true
+        isDeadlineTimerSuspended = true
         // 等待中的任务被取消，那么任务在调度的时候，触发错误回调。
         // 正在发送中的任务，取消会收到错误回调。
         // 已完成的任务取消无效。
         dataTask?.cancel()
     }
     
-    /// 执行时间倒计时。
-    private var deadlineTimer: DispatchSourceTimer?
-    /// 任务限时时长。
-    public fileprivate(set) var deadlineInterval: TimeInterval? {
-        didSet {
-            guard let deadlineInterval = deadlineInterval else {
-                // 取消已有的 timer 事件。这里只是取消事件，而非暂停（.suspend()），不知对性能是否有影响。
-                deadlineTimer?.schedule(deadline: .distantFuture, repeating: .infinity)
-                deadlineTimer?.setEventHandler(handler: nil)
-                return
-            }
-            
-            // 创建 timer
-            if deadlineTimer == nil {
-                deadlineTimer = DispatchSource.makeTimerSource(
-                    flags: .init(rawValue: 0),
-                    queue: DispatchQueue.global()
-                )
-                deadlineTimer!.resume()
-            }
-            
-            // 倒计时
-            deadlineTimer!.schedule(deadline: .now() + deadlineInterval, repeating: .infinity)
-            deadlineTimer!.setEventHandler(handler: { [weak self] in
-                NetworkingQueue.async(execute: {
-                    guard let this = self else { return }
-                    this.delegate?.apiTaskWasOvertimeUnsafe(this)
-                })
-            })
+    /// 设置并启动任务的终止的倒计时。
+    public func setDeadlineInterval(_ deadlineInterval: TimeInterval?) {
+        self.deadlineInterval = deadlineInterval
+        guard let deadlineInterval = deadlineInterval, deadlineInterval > 0 else {
+            isDeadlineTimerSuspended = true
+            deadlineTimer?.schedule(deadline: .distantFuture, repeating: .never)
+            deadlineTimer?.setEventHandler(handler: nil)
+            deadlineTimer?.suspend()
+            return
         }
+        // 启动倒计时。
+        isDeadlineTimerSuspended = false
+        if deadlineTimer == nil {
+            deadlineTimer = DispatchSource.makeTimerSource(queue: .global())
+        }
+        deadlineTimer!.schedule(deadline: .now() + deadlineInterval, repeating: .never)
+        deadlineTimer!.setEventHandler(handler: { [weak self] in
+            NetworkingQueue.async(execute: {
+                guard let this = self else { return }
+                this.delegate?.apiTaskWasOvertimeUnsafe(this)
+            })
+        })
+        deadlineTimer!.resume()
     }
-    
-    /// APITask 自身没有会延长生命周期的异步操作，可以用 unowned 修饰。
-    /// 但是 APITask 可能会被第三方持有，所以用 weak 。
-    private weak var delegate: _APITaskManager<Manager>?
     
     fileprivate init(request: Request, delegate: _APITaskManager<Manager>) {
         self.request  = request
         self.delegate = delegate
     }
+    
+    deinit {
+        if isDeadlineTimerSuspended {
+            deadlineTimer?.setEventHandler(handler: nil)
+            deadlineTimer?.resume()
+        }
+        deadlineTimer?.cancel()
+    }
+    
+    /// APITask 自身没有会延长生命周期的异步操作，可以用 unowned 修饰。
+    /// 但是 APITask 可能会被第三方持有，所以用 weak 。
+    private weak var delegate: _APITaskManager<Manager>?
+    /// 任务时长的倒计时是否已暂停。
+    private var isDeadlineTimerSuspended = true
+    /// 执行时间的倒计时，请使用 isDeadlineTimerSuspended 控制。
+    private var deadlineTimer: DispatchSourceTimer?
     
 }
 
