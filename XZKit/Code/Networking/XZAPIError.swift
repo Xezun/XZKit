@@ -10,9 +10,6 @@ import Foundation
 
 extension APIError {
     
-    /// 接口请求没有发生错，如果没有错误，请不要抛出异常，包括 noError 。
-    public static let noError = APIError(code: -0, message: "No error.")
-    
     /// 错误码 -1 ，未定义的错误。
     public static let undefined = APIError(code: -1, message: "An undefined error occurred.")
     
@@ -53,14 +50,26 @@ public struct APIError: Error, CustomStringConvertible {
     /// APIError 错误信息描述。
     public let message: String
     
+    /// 自定义错误信息。
+    public private(set) var userInfo: [UserInfoKey: Any]
+    
     /// APIError 初始化。
     ///
     /// - Parameters:
     ///   - code: 错误码
     ///   - message: 描述
-    public init(code: Int, message: String) {
+    public init(code: Int, message: String, userInfo: [UserInfoKey: Any] = [:]) {
         self.code = code
         self.message = message
+        self.userInfo = userInfo
+    }
+    
+    public init(code: Int, message: String, userInfo: [String: Any]) {
+        self.code = code
+        self.message = message
+        self.userInfo = userInfo.reduce([UserInfoKey: Any](), { (result, item) -> [UserInfoKey: Any] in
+            return [UserInfoKey(rawValue: item.key): item.value]
+        })
     }
     
     /// 错误描述信息。
@@ -68,6 +77,39 @@ public struct APIError: Error, CustomStringConvertible {
         return "XZKit.APIError(code: \(code), message: \(message))"
     }
     
+    public struct UserInfoKey: RawRepresentable, ExpressibleByStringLiteral, Hashable {
+        
+        public static let numberOfRetries = UserInfoKey(rawValue: "com.xezun.XZKit.Networking.numberOfRetries")
+        
+        public typealias RawValue = String
+        public typealias StringLiteralType = String
+        
+        public let rawValue: String
+        
+        public init(rawValue: String) {
+            self.rawValue = rawValue
+        }
+        
+        public init(stringLiteral value: String) {
+            self.rawValue = value
+        }
+        
+        public var hashValue: Int {
+            return rawValue.hashValue
+        }
+    }
+    
+    public var numberOfRetries: Int {
+        get {
+            if let number = userInfo[.numberOfRetries] as? Int {
+                return number
+            }
+            return 0
+        }
+        set {
+            userInfo[.numberOfRetries] = newValue
+        }
+    }
 }
 
 extension APIError: Equatable {
@@ -91,30 +133,38 @@ extension APIError: Equatable {
 
 extension APIError: _ObjectiveCBridgeable {
     
-    /// 将任意 Error 转换为 APIError 。
-    /// - 如果待转换的 Error 不是 APIError ，则将其转换为 NSError 然后使用 code、description 属性创建 APIError 。
-    ///
-    /// - Parameter error: 任意的 Error 对象。
-    public init(_ error: Error) {
-        if let apiError = error as? APIError {
-            self = apiError
-        } else {
-            let nsError = error as NSError
-            self = APIError.init(code: nsError.code, message: nsError.localizedDescription)
-        }
-    }
-    
     public typealias _ObjectiveCType = NSError
     
     /// APIError 的错误域，在桥接到 Objective-C NSError 时使用。
     public static let Domain = "com.xezun.XZKit.Networking"
     
+    public init(_ error: Error) {
+        if let apiError = error as? APIError {
+            self = apiError
+        } else {
+            let nsError = error as NSError
+            let code = nsError.code
+            let message = nsError.localizedDescription
+            let userInfo = nsError.userInfo
+            self = APIError.init(code: code, message: message, userInfo: userInfo)
+        }
+    }
+    
     public func _bridgeToObjectiveC() -> NSError {
-        return NSError.init(domain: APIError.Domain, code: code, userInfo: [NSLocalizedDescriptionKey: message])
+        var userInfo = self.userInfo.reduce([String: Any](), { (result, item) -> [String: Any] in
+            return [item.key.rawValue: item.value]
+        })
+        if userInfo[NSLocalizedDescriptionKey] == nil {
+            userInfo[NSLocalizedDescriptionKey] = message
+        }
+        return NSError.init(domain: APIError.Domain, code: code, userInfo: userInfo)
     }
     
     public static func _forceBridgeFromObjectiveC(_ source: NSError, result: inout APIError?) {
-        result = APIError.init(code: source.code, message: source.localizedDescription)
+        let code = source.code
+        let message = source.localizedDescription
+        let userInfo = source.userInfo
+        result = APIError.init(code: code, message: message, userInfo: userInfo)
     }
     
     public static func _conditionallyBridgeFromObjectiveC(_ source: NSError, result: inout APIError?) -> Bool {
@@ -124,10 +174,11 @@ extension APIError: _ObjectiveCBridgeable {
     
     public static func _unconditionallyBridgeFromObjectiveC(_ source: NSError?) -> APIError {
         if let nsError = source {
-            return APIError.init(code: nsError.code, message: nsError.localizedDescription)
+            let code = nsError.code
+            let message = nsError.localizedDescription
+            let userInfo = nsError.userInfo
+            return APIError.init(code: code, message: message, userInfo: userInfo)
         }
         return APIError.noError
     }
 }
-
-

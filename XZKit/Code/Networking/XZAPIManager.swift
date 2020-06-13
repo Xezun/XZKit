@@ -8,7 +8,9 @@
 
 import Foundation
 
-public let NetworkingQueue = DispatchQueue(label: "com.xezun.XZKit.Networking", attributes: .concurrent)
+public enum Networking {
+    public static let queue = DispatchQueue(label: "com.xezun.XZKit.Networking", attributes: .concurrent)
+}
 
 public protocol APINetworking: AnyObject {
     
@@ -42,8 +44,9 @@ public protocol APIManager: APINetworking {
     
     /// 发送接口请求。该操作是一个异步操作。
     /// - Parameter request: 接口请求对象。
-    /// - Returns: 本次请求的标识符。
-    @discardableResult func send(_ request: Request) -> APITask
+    /// - Returns: 接口请求任务。
+    @discardableResult
+    func send(_ request: Request) -> APITask
     
     /// 当接口请求进度更新时，此方法会被调用，一般才此方法中转发代理事件。
     /// - Note: 默认情况下，该方法在子线程上执行。
@@ -52,17 +55,7 @@ public protocol APIManager: APINetworking {
     ///   - progress: 接口请求当前进度。
     func request(_ request: Request, didProcess progress: (bytes: Int64, totalBytes: Int64))
     
-    /// 当接口请求收到服务器返回数据时，此方法会被调用，此方法一般用于验证数据基本结构，生成 APIResponse 对象。
-    /// - Note: 默认情况下，该方法在子线程上执行。
-    /// - Parameters:
-    ///   - request: 接口请求对象。
-    ///   - responseObject: 接口请求的原始数据。
-    /// - Returns: 处理后的接口响应对象。
-    /// - Throws: 处理接口数据的过程中可能产生的错误，此处产生的错误不会触发自动重试。
-    func request(_ request: Request, didCollect responseObject: Any?) throws -> Response
-    
     /// 当前接口已获得响应对象时，此方法会被调用。
-    /// - Note: 该方法在主线程上执行。
     /// - Note: 只有当本方法执行完毕，等待的任务才会进入调度列队，所以，如果在此方法中执行一个新的请求，等待执行的任务可能继续处于等待中。
     /// - Parameters:
     ///   - request: 接口请求对象。
@@ -70,25 +63,16 @@ public protocol APIManager: APINetworking {
     func request(_ request: Request, didReceive response: Response)
     
     /// 当接口请求发生错误时，此方法会被调用。
+    /// 当请求的 retryIfFailed 属性为 true 时，如果请求失败（包括被取消、因策略被忽略、网络错误、数据解析错误），APIManager 将通过此方法
+    /// 来获取下次重试的时间间隔。如果此方法返回了 nil ，那么自动重试将停止，并触发错误回调。因此方法用于控制失败重试的频率，从而提高性能。
     /// - Note: 自动重试的任务，可能不会触发此方法（除非主动停止）。
-    /// - Note: 该方法在主线程上执行。
     /// - Parameters:
     ///   - request: 接口请求对象。
     ///   - error: 接口请求过程中的错误对象。
-    func request(_ request: Request, didFailWithError error: Error)
+    ///   - numberOfRetries: 已重试的次数。
+    @discardableResult
+    func request(_ request: Request, didFailWith error: APIError) -> TimeInterval?
     
-    /// 当请求的 retryIfFailed 属性为 true 时，如果请求失败（包括被取消、因策略被忽略、网络错误、数据解析错误），APIManager 将通过此方法
-    /// 来获取下次重试的时间间隔。如果此方法返回了 nil ，那么自动重试将停止，并触发错误回调。因此方法用于控制失败重试的频率，从而提高性能。
-    /// - Note: 默认情况下，该方法在子线程上执行。
-    /// - Parameters:
-    ///   - request: APIRequest 对象。
-    ///   - retriedTimes: 已重试的次数。
-    ///   - error: 当前请求失败的 Error 对象。
-    /// - Returns: 当前时间到下次重试的时间间隔，具体的重试时间同时受并发策略影响。
-    func request(_ request: Request, timeIntervalForRetrying retriedTimes: Int, forFailingError error: Error) -> TimeInterval?
-    
-    
-    var queue: DispatchQueue { get }
 }
 
 
@@ -98,42 +82,33 @@ extension APIManager {
     
     /// 是否有正在进行、或等待中、或延迟执行的任务。
     public var isRunning: Bool {
-        return self.apiTaskManager.isRunning
+        return apiTaskManager.isRunning
     }
     
     @discardableResult
     public func send(_ request: Request) -> APITask {
-        return self.apiTaskManager.send(request)
+        return apiTaskManager.send(request)
     }
     
     /// 取消所有正在执行的接口请求，异步操作。
     /// - Note: 取消任务，将会收到 APIError.canceled 错误。
     /// - Note: 在 APIManager 销毁后，会自动取消所有正在进行的请求。
     public func cancelAllTasks() {
-        NetworkingQueue.async(execute: {
-            self.apiTaskManager.cancelAllUnsafe()
-        })
+        apiTaskManager.cancelAllTasks()
     }
     
-    /// APITaskManager 通过 APITask 管理了所有请求。因为是值绑定的关系，APITaskManager 生命周期比 APIManager 略长。
-    /// 但是当 APIManager 销毁后，APITaskManager 也一定会销毁，并自动取消正在执行的任务。
-    fileprivate var apiTaskManager: _APITaskManager<Self> {
+    private var apiTaskManager: _APITaskManager<Self> {
         if let wrapper = objc_getAssociatedObject(self, &AssociationKey.apiTaskManager) as? _APITaskManager<Self> {
             return wrapper
         }
-        // 如果当前操作是在主线程中执行，那么同步操作会导致主线程进入等待状态；
-        // 如果使用串行或者栅栏并发队列，那么如果这个时候，队列中正在执行的任务正好要在主线程中同步执行，
-        // 那么就会导致并发队列进入等待状态；从而导致主线程与线程互相等待，即死锁。
-        // 所以下面的操作要使用线程锁，而非串行队列。
         objc_sync_enter(self)
-        defer {
-            objc_sync_exit(self)
-        }
         if let wrapper = objc_getAssociatedObject(self, &AssociationKey.apiTaskManager) as? _APITaskManager<Self> {
+            objc_sync_exit(self)
             return wrapper
         }
         let wrapper = _APITaskManager.init(for: self)
         objc_setAssociatedObject(self, &AssociationKey.apiTaskManager, wrapper, .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
+        objc_sync_exit(self)
         return wrapper
     }
     
@@ -141,7 +116,7 @@ extension APIManager {
 
 
 
-// MARK: - 支持
+// MARK: - APITaskManager
 
 /// 管理了 APIManger 的请求任务和多线程处理。
 /// - Note: APITaskManager 实际上就是 APIManager ，管理了 APITask 。
@@ -149,202 +124,246 @@ extension APIManager {
 /// - Note: 所有异步操作都使用 weak 以避免 APITaskManager 生命周期的延长。
 fileprivate class _APITaskManager<Manager: APIManager> {
     
-    typealias Request = Manager.Response.Request
+    typealias Request = Manager.Request
+    typealias Response = Manager.Response
+    typealias Task = _APITask<Manager>
 
-    deinit {
-        // 当 APITaskManager 释放时，说明 APIManager 已经释放了。
-        // 这里取消事件，不会触发 APIManager 的回调。
-        cancelAllUnsafe()
-    }
-
-    func send(_ request: Request) -> APITask {
-        let apiTask = _APITask.init(request: request, delegate: self)
-        tasksLock.lock()
-        // 并发列队不能保证执行顺序，所以使用串行列队。
-        NetworkingQueue.async(execute: { [weak self] in
-            self?.dispatchUnsafe(apiTask)
+    public func send(_ request: Request) -> APITask {
+        let apiTask = _APITask(request: request, delegate: self)
+        
+        pthread_mutex_lock(&tasksLock)
+        let identifier = apiTask.identifier
+        pendingTasks[identifier] = apiTask
+        pthread_mutex_unlock(&tasksLock)
+        
+        Networking.queue.async(execute: { [weak self] in
+            guard let self = self else { return }
+            
+            pthread_mutex_lock(&self.tasksLock)
+            let pendingTask = self.pendingTasks.removeValue(forKey: identifier)
+            pthread_mutex_unlock(&self.tasksLock)
+            
+            guard let apiTask = pendingTask else { return }
+            self.dispatch(apiTask)
         })
-        tasksLock.unlock()
+        
         return apiTask
     }
     
-    /// 调度新的任务（自动重试的任务也被认为是新任务）：根据请求的并发规则，进行调度。非线程安全函数，需要在串行队列中执行。
-    /// - Note: 在处理完并发规则后，如果接口任务需要立即执行，会立即执行。
-    /// - Note: 如果接口请求需要被延迟发送，则接口任务会被保存到相应的队列中。
-    /// - Parameters:
-    ///   - newTask: 待调度的新任务，如果为 nil ，则表示调度等待列队中的任务。
-    private func dispatchUnsafe(_ apiTask: _APITask<Manager>) {
-        if apiTask.isCancelled {
-            // 如果任务已取消，则结束网络请求。
-            return apiTaskUnsafe(apiTask, didCollect: nil, error: APIError.cancelled)
+    public func cancelAllTasks() {
+        pthread_mutex_lock(&tasksLock)
+        cancelAllTasksUnsafe()
+        pthread_mutex_unlock(&tasksLock)
+    }
+    
+    private func cancelAllTasksUnsafe() -> Void {
+        let pendingTasks = self.pendingTasks
+        let runningTasks = self.runningTasks
+        let waitingTasks = self.waitingTasks
+        let delayedTasks = self.delayedTasks
+        
+        self.pendingTasks.removeAll()
+        self.runningTasks.removeAll()
+        self.waitingTasks.removeAll()
+        self.delayedTasks.removeAll()
+        
+        for (_, apiTask) in pendingTasks {
+            apiTask.cancel()
+        }
+        
+        for (_, apiTask) in runningTasks {
+            apiTask.cancel()
+        }
+        
+        for apiTask in waitingTasks {
+            apiTask.cancel()
+        }
+        
+        for (_, apiTask) in delayedTasks {
+            apiTask.cancel()
+        }
+        
+        Networking.queue.async(execute: { [weak self] in
+            guard let manager = self?.manager else { return }
+            for (_, apiTask) in pendingTasks {
+                manager.request(apiTask.request, didFailWith: APIError.cancelled)
+            }
+            
+            for (_, apiTask) in runningTasks {
+                manager.request(apiTask.request, didFailWith: APIError.cancelled)
+            }
+            
+            for apiTask in waitingTasks {
+                manager.request(apiTask.request, didFailWith: APIError.cancelled)
+            }
+            
+            for (_, apiTask) in delayedTasks {
+                manager.request(apiTask.request, didFailWith: APIError.cancelled)
+            }
+        })
+    }
+    
+    /// 将任务按并发策略进行调度：放入执行列队或等待列队。
+    private func dispatch(_ apiTask: _APITask<Manager>) {
+        do {
+            if apiTask.isCancelled {
+                throw APIError.cancelled
+            }
+            if let apiTask = try enqueue(apiTask) {
+                perform(apiTask)
+            }
+        } catch {
+            complete(apiTask, data: nil, error: error)
+        }
+    }
+    
+    // 将任务按并发策略加入对应的列队，如果任务需立即执行，则返回该任务。
+    private func enqueue(_ apiTask: Task) throws -> Task? {
+        pthread_mutex_lock(&self.tasksLock)
+        defer {
+            pthread_mutex_unlock(&self.tasksLock)
         }
         switch apiTask.request.concurrencyPolicy {
         case .ignoreCurrent:
-            if runningTasks.isEmpty {
-                return performUnsafe(apiTask)
+            guard runningTasks.isEmpty else {
+                throw APIError.ignored
             }
-            return apiTaskUnsafe(apiTask, didCollect: nil, error: APIError.ignored)
+            runningTasks[apiTask.identifier] = apiTask
             
         case .default:
-            return performUnsafe(apiTask)
+            runningTasks[apiTask.identifier] = apiTask
             
         case .cancelOthers:
-            cancelAllUnsafe()
-            return performUnsafe(apiTask)
+            cancelAllTasksUnsafe()
+            runningTasks[apiTask.identifier] = apiTask
             
         case .wait(let priority):
-            if runningTasks.isEmpty {
-                return performUnsafe(apiTask)
-            }
-            // 优先级列队优先出列最后面的，所以将 apiTask 插入到相同优先级的前面。
-            for index in 0 ..< waitingTasks.count {
-                // 数组越到后面优先级越高，所以找到第一个优先级相同的或者优先级比当前高的。
-                guard priority <= waitingTasks[index].request.concurrencyPolicy.priority else {
-                    continue
+            guard runningTasks.isEmpty else {
+                if let index = waitingTasks.firstIndex(where: {
+                    priority <= $0.request.concurrencyPolicy.priority
+                }) {
+                    waitingTasks.insert(apiTask, at: index)
+                } else {
+                    waitingTasks.append(apiTask)
                 }
-                return waitingTasks.insert(apiTask, at: index)
+                return nil
             }
-            // 优先级大于已有的所有正在等待任务或目前没有等待的任务。
-            return waitingTasks.append(apiTask)
+            runningTasks[apiTask.identifier] = apiTask
         }
+        
+        return apiTask
     }
     
-    /// 执行任务。非线程安全，待执行的接口任务必须不在队列中。
-    /// - Note: 本方法直接由调度任务的方法调用，其它方法不应该被调用。
-    /// - Note: 只有此方法会将任务加入到正在执行的任务队列。
-    /// - Note: 待执行的任务必须是独立的任务。
-    /// - Parameter apiTask: 待执行的接口请求任务。
-    private func performUnsafe(_ apiTask: _APITask<Manager>) {
+    /// 执行接口请求任务。
+    /// - Note: 本方法直接发送请求，任何验证操作，请在调用此方法之前执行。
+    private func perform(_ apiTask: _APITask<Manager>) {
         guard let manager = self.manager else { return }
+        let identifier = apiTask.identifier
         do {
             let request = apiTask.request
-            let identifier = apiTask.identifier
-            
-            // 创建网络请求
-            apiTask.dataTask = try manager.dataTask(for: apiTask.request, progress: { [weak self] (bytes, totalBytes) in
-                self?.manager?.request(request, didProcess: (bytes, totalBytes))
+            apiTask.setDeadlineInterval(request.deadlineInterval)
+            apiTask.dataTask = try manager.dataTask(for: request, progress: { [weak self] in
+                self?.manager?.request(request, didProcess: ($0, $1))
             }, completion: { [weak self] (data, error) in
-                // 同步：在网络请求回调执行完，那么 APIManger 的整个业务逻辑也结束了。
-                // 异步：网络请求的回调执行，可以提前结束，不必等待数据解析完成，可提前释放资源。
-                NetworkingQueue.async(execute: { () -> Void in
-                    guard let this = self else { return }
-                    // 取消超时。
-                    apiTask.setDeadlineInterval(nil)
-                    // 检查接口任务是否有效，cancelAll或已超时的任务已提前清除了。
-                    guard let apiTask = this.runningTasks.removeValue(forKey: identifier) else {
-                        return
+                Networking.queue.async(execute: {
+                    guard let self = self else { return }
+                    if let apiTask = self.dequeueRunningTask(with: identifier) {
+                        apiTask.setDeadlineInterval(nil)
+                        self.complete(apiTask, data: data, error: error)
                     }
-                    return this.apiTaskUnsafe(apiTask, didCollect: data, error: error)
                 })
             })
-            // 设置超时。
-            apiTask.setDeadlineInterval(request.deadlineInterval)
-            
-            runningTasks[identifier] = apiTask
         } catch {
-            // 只有在 apiTaskUnsafe 方法中，等待或延时的中的任务才能自动执行。
-            apiTaskUnsafe(apiTask, didCollect: nil, error: error)
+            if let apiTask = dequeueRunningTask(with: identifier) {
+                complete(apiTask, data: nil, error: error)
+            }
         }
     }
     
-    /// 所有接口请求完成事件都在此方法中调用。非线程安全的方法。apiTask 的状态应该在调用此方法前判定，并生成相应的 error 。
-    private func apiTaskUnsafe(_ apiTask: _APITask<Manager>, didCollect data: Any?, error networkError: Error?) {
-        /// 接口请求失败或者解析数据失败，尝试自动重试。
-        func retryIfNeeded(for manager: Manager, apiTask: _APITask<Manager>, error: Error) {
-            // 判断是否需要自动重试。
-            if apiTask.request.retryIfFailed, let delay = manager.request(apiTask.request, timeIntervalForRetrying: apiTask.retriedTimes, forFailingError: error) {
-                // 重置任务状态。
-                apiTask.dataTask     = nil
-                apiTask.retriedTimes += 1
-                
+    /// 任务完成，在调用此方法前 apiTask 已从列队移除。
+    private func complete(_ apiTask: _APITask<Manager>, data: Any?, error: Error?) {
+        guard let manager = self.manager else { return }
+        
+        do {
+            if let error = error {
+                throw error
+            }
+            let response = try Response.init(request: apiTask.request, data: data)
+            manager.request(apiTask.request, didReceive: response)
+        } catch { // 发生错误，检查自动重试
+            var apiError = APIError(error)
+            apiError.numberOfRetries = apiTask.retriedTimes
+            let delay = manager.request(apiTask.request, didFailWith: apiError)
+            if apiTask.request.retryIfFailed, let delay = delay {
                 let identifier = apiTask.identifier
                 
-                delayedTasks[identifier] = apiTask
+                apiTask.dataTask = nil
+                apiTask.retriedTimes += 1
                 
-                // 由于引用的关系，自动重试的任务，在完成前，不会从内存中销毁。
-                NetworkingQueue.asyncAfter(deadline: .now() + delay, execute: { [weak self] in
-                    guard let this = self else { return }
-                    // 延时指定时间后取出并重新调度该接口任务。
-                    guard let delayedTask = this.delayedTasks.removeValue(forKey: identifier) else { return }
-                    this.dispatchUnsafe(delayedTask)
+                pthread_mutex_lock(&tasksLock)
+                delayedTasks[identifier] = apiTask
+                pthread_mutex_unlock(&tasksLock)
+                
+                Networking.queue.asyncAfter(deadline: .now() + delay, execute: { [weak self] in
+                    guard let self = self else { return }
+                    if let delayedTask = self.dequeueDelayedTask(with: identifier) {
+                        self.dispatch(delayedTask)
+                    }
                 })
-            } else {
-                // 发送错误事件。
-                apiTaskMainThreadSync(apiTask, didFailWithError: error)
             }
         }
         
-        guard let manager = self.manager else { return }
-        if let error = networkError {
-            // 如果网络请求发生错误，判断是否需要自动重试。
-            retryIfNeeded(for: manager, apiTask: apiTask, error: error)
-        } else {
-            do {
-                // 没有错误，解析数据，生成 Response ，并回调。
-                let response = try manager.request(apiTask.request, didCollect: data)
-                apiTaskMainThreadSync(apiTask, didReceive: response)
-            } catch {
-                // 与 4.0 版本之前不同，解析数据失败，也会触发自动重试。
-                retryIfNeeded(for: manager, apiTask: apiTask, error: error)
-            }
+        if let apiTask = dequeueWaitingTask() {
+            dispatch(apiTask)
         }
-        
-        // 等待的任务出列执行。
-        // 如果当前没有正在执行任务，才从等待列队中取出任务。
-        guard runningTasks.isEmpty else {
-            return
+    }
+    
+    /// 从等待列队取出任务。
+    private func dequeueWaitingTask() -> Task? {
+        pthread_mutex_lock(&tasksLock)
+        defer {
+            pthread_mutex_unlock(&tasksLock)
         }
-        // 等待执行的列队不为空。
-        guard waitingTasks.isEmpty == false else {
-            return
+        if runningTasks.isEmpty {
+            return nil
         }
-        // 任务出列并调度。
-        dispatchUnsafe(waitingTasks.removeLast())
+        if waitingTasks.isEmpty {
+            return nil
+        }
+        return waitingTasks.removeLast()
+    }
+    
+    private func dequeueRunningTask(with identifier: String) -> Task? {
+        pthread_mutex_lock(&tasksLock)
+        defer {
+            pthread_mutex_unlock(&tasksLock)
+        }
+        return runningTasks.removeValue(forKey: identifier)
+    }
+    
+    private func dequeueDelayedTask(with identifier: String) -> Task? {
+        pthread_mutex_lock(&tasksLock)
+        defer {
+            pthread_mutex_unlock(&tasksLock)
+        }
+        return delayedTasks.removeValue(forKey: identifier)
     }
     
     /// APITask 代理事件。删除已超时的任务，并转发事件。
-    func apiTaskWasOvertimeUnsafe(_ apiTask: _APITask<Manager>) {
+    fileprivate func apiTaskWasOvertimeUnsafe(_ apiTask: _APITask<Manager>) {
         // 先移除已经超时的网络请求。
-        guard let removedTask = runningTasks.removeValue(forKey: apiTask.identifier) else { return }
+        guard let removedTask = dequeueRunningTask(with: apiTask.identifier) else { return }
         // 取消网络请求。
         removedTask.dataTask?.cancel()
         // 超时的任务，可以进行重试。
-        apiTaskUnsafe(removedTask, didCollect: nil, error: APIError.overtime)
+        complete(removedTask, data: nil, error: APIError.overtime)
     }
     
     var isRunning: Bool {
-        return (runningTasks.isEmpty == false) || (waitingTasks.isEmpty == false) || (delayedTasks.isEmpty == false)
-    }
-    
-    /// 取消所有任务：先从列队中删除，然后发送事件。
-    /// 因为是在串行列队中执行，可以保证取消时不会与其他事件重叠。
-    func cancelAllUnsafe() -> Void {
-        // 取消正在执行的任务。
-        if !runningTasks.isEmpty {
-            runningTasks.removeAll()
-            for item in runningTasks {
-                item.value.dataTask?.cancel()
-                apiTaskMainThreadSync(item.value, didFailWithError: APIError.cancelled)
-            }
-        }
-        
-        // 取消等待中的任务。
-        if !waitingTasks.isEmpty {
-            waitingTasks.removeAll()
-            for apiTask in waitingTasks {
-                apiTask.dataTask?.cancel()
-                apiTaskMainThreadSync(apiTask, didFailWithError: APIError.cancelled)
-            }
-        }
-        
-        // 取消延迟执行的任务。
-        if !delayedTasks.isEmpty {
-            delayedTasks.removeAll()
-            for item in delayedTasks {
-                item.value.dataTask?.cancel()
-                apiTaskMainThreadSync(item.value, didFailWithError: APIError.cancelled)
-            }
-        }
+        pthread_mutex_lock(&tasksLock)
+        let isRunning = !pendingTasks.isEmpty || !runningTasks.isEmpty || !waitingTasks.isEmpty || !delayedTasks.isEmpty
+        pthread_mutex_unlock(&tasksLock)
+        return isRunning
     }
     
     /// 因为 APIManager 与 APITaskManager 是值绑定的关系，所以生命周期也较长。
@@ -357,35 +376,31 @@ fileprivate class _APITaskManager<Manager: APIManager> {
     private var waitingTasks = [_APITask<Manager>]()
     /// 延时自动重试的任务。
     private var delayedTasks = [String: _APITask<Manager>]()
+    private var pendingTasks = [String: _APITask<Manager>]()
     /// 读写 ~Tasks 的锁。
-    private let tasksLock = NSLock()
+    private var tasksLock: pthread_mutex_t
+    
+    
     
     fileprivate init(for manager: Manager) {
         self.manager = manager
+        
+        var lockAttr = pthread_mutexattr_t.init()
+        pthread_mutexattr_init(&lockAttr)
+        pthread_mutexattr_settype(&lockAttr, PTHREAD_MUTEX_RECURSIVE)
+        
+        var tasksLock = pthread_mutex_t.init()
+        pthread_mutex_init(&tasksLock, &lockAttr)
+        
+        self.tasksLock = tasksLock
     }
     
-    /// 在主线程中同步回调结果事件。
-    private func apiTaskMainThreadSync(_ apiTask: _APITask<Manager>, didReceive response: Manager.Response) {
-        guard let manager = self.manager else { return }
-        if Thread.isMainThread {
-            manager.request(apiTask.request, didReceive: response)
-        } else {
-            DispatchQueue.main.sync(execute: {
-                manager.request(apiTask.request, didReceive: response)
-            })
-        }
-    }
-    
-    /// 在主线程同步回调错误事件。
-    private func apiTaskMainThreadSync(_ apiTask: _APITask<Manager>, didFailWithError error: Error) {
-        guard let manager = self.manager else { return }
-        if Thread.isMainThread {
-            manager.request(apiTask.request, didFailWithError: error)
-        } else {
-            DispatchQueue.main.sync(execute: {
-                manager.request(apiTask.request, didFailWithError: error)
-            })
-        }
+    deinit {
+        // 当 APITaskManager 释放时，说明 APIManager 已经释放了。
+        // 这里取消事件，不会触发 APIManager 的回调。
+        cancelAllTasksUnsafe()
+        
+        pthread_mutex_destroy(&tasksLock)
     }
     
 }
@@ -454,7 +469,7 @@ private final class _APITask<Manager: APIManager>: APITask {
         }
         deadlineTimer!.schedule(deadline: .now() + deadlineInterval, repeating: .never)
         deadlineTimer!.setEventHandler(handler: { [weak self] in
-            NetworkingQueue.async(execute: {
+            Networking.queue.async(execute: {
                 guard let this = self else { return }
                 this.delegate?.apiTaskWasOvertimeUnsafe(this)
             })
@@ -484,7 +499,6 @@ private final class _APITask<Manager: APIManager>: APITask {
     private var deadlineTimer: DispatchSourceTimer?
     
 }
-
 
 
 private struct AssociationKey {

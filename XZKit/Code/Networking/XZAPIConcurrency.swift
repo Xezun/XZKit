@@ -17,11 +17,11 @@ public enum APIConcurrency {
         case `default`
         
         /// 当发送新的请求时，先取消目前所有的请求。
-        /// - Note: 被取消的请求会收到 APIError.canceled 错误。
+        /// - Note: 请求被取消会产生 APIError.canceled 错误。
         case cancelOthers
         
         /// 发送请求时，如果当前已有请求，那么忽略本次请求。
-        /// - Note: 如果请求因为策略被忽略，将产生 .ignored 错误，以解决发送了请求却没有着陆点的问题。
+        /// - Note: 请求被忽略会产生 APIError.ignored 错误。
         case ignoreCurrent
         
         /// 当发送新请求时，如果当前有正在进行的请求，则按并发优先级等待执行。
