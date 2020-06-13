@@ -12,6 +12,7 @@ public enum Networking {
     public static let queue = DispatchQueue(label: "com.xezun.XZKit.Networking", attributes: .concurrent)
 }
 
+/// 网络协议。
 public protocol APINetworking: AnyObject {
     
     /// 根据接口请求对象，创建并执行网络请求。
@@ -32,44 +33,49 @@ public protocol APINetworking: AnyObject {
     
 }
 
-/// APIManager 是用于管理 APIRequest 的发送和收据接收。
-/// - Note: 默认情况下，大部分操作都是在子线程上执行，将根据需要是否提供自定义队列的功能。
+/// 接口管理协议，网络请求的接口设计规范。
+/// - Note: 默认情况下，所有方法在子线程上执行。
 public protocol APIManager: APINetworking {
     
     /// 接口请求。
     associatedtype Request: APIRequest
-    
     /// 接口响应。
     associatedtype Response: APIResponse where Response.Request == Request
+    /// 分数表示的进度，value / scale 得到百分比。
+    typealias Progress = (value: Int64, scale: Int64)
     
-    /// 发送接口请求。该操作是一个异步操作。
+    /// 发送接口请求。每次调用此方法，都会创建一个与接口请求相关联的APITask对象，用于跟踪管理本次请求。
     /// - Parameter request: 接口请求对象。
-    /// - Returns: 接口请求任务。
+    /// - Returns: 描述表示本次请求的接口的对象。
     @discardableResult
     func send(_ request: Request) -> APITask
     
-    /// 当接口请求进度更新时，此方法会被调用，一般才此方法中转发代理事件。
-    /// - Note: 默认情况下，该方法在子线程上执行。
+    /// 当请求进度更新时，此方法会被调用。
     /// - Parameters:
     ///   - request: 接口请求对象。
     ///   - progress: 接口请求当前进度。
-    func request(_ request: Request, didProcess progress: (bytes: Int64, totalBytes: Int64))
+    func request(_ request: Request, didProcess progress: Progress)
     
-    /// 当前接口已获得响应对象时，此方法会被调用。
+    /// 当请求完成数据传输时，此方法会被调用。
+    /// - Note: 此方法一般用于校验数据的基本信息，比如类型、格式等。数据的业务合法性在，可在Response中由具体业务实现。
+    /// - Parameters:
+    ///   - request: 接口请求对象。
+    ///   - data: 接口返回到数据。
+    func request(_ request: Request, didCollect data: Any?) throws -> Response
+    
+    /// 当请求获得返回结果，成功生成结果时，此方法会被调用。
     /// - Note: 只有当本方法执行完毕，等待的任务才会进入调度列队，所以，如果在此方法中执行一个新的请求，等待执行的任务可能继续处于等待中。
     /// - Parameters:
     ///   - request: 接口请求对象。
     ///   - response: 接口响应对象。
     func request(_ request: Request, didReceive response: Response)
     
-    /// 当接口请求发生错误时，此方法会被调用。
-    /// 当请求的 retryIfFailed 属性为 true 时，如果请求失败（包括被取消、因策略被忽略、网络错误、数据解析错误），APIManager 将通过此方法
-    /// 来获取下次重试的时间间隔。如果此方法返回了 nil ，那么自动重试将停止，并触发错误回调。因此方法用于控制失败重试的频率，从而提高性能。
-    /// - Note: 自动重试的任务，可能不会触发此方法（除非主动停止）。
+    /// 当接口请求发生错误时，此方法会被调用。如果请求的retryIfFailed属性为true，那么当请求失败时，
+    /// 将通过此方法获取再次重试的时间（当前时间到再次重试之间的时间间隔）；如果此方法返回nil，则终止重试。
+    /// 可根据error.numberOfRetries已重试的次数，来控制再次重试的时间，提高程序性能。
     /// - Parameters:
     ///   - request: 接口请求对象。
     ///   - error: 接口请求过程中的错误对象。
-    ///   - numberOfRetries: 已重试的次数。
     @discardableResult
     func request(_ request: Request, didFailWith error: APIError) -> TimeInterval?
     
@@ -288,7 +294,7 @@ fileprivate class _APITaskManager<Manager: APIManager> {
             if let error = error {
                 throw error
             }
-            let response = try Response.init(request: apiTask.request, data: data)
+            let response = try manager.request(apiTask.request, didCollect: data)
             manager.request(apiTask.request, didReceive: response)
         } catch { // 发生错误，检查自动重试
             var apiError = APIError(error)
@@ -505,3 +511,13 @@ private struct AssociationKey {
     static var apiTaskManager: Int = 0
 }
 
+
+extension Double {
+    
+    /// 将元组 (分子, 分母) 表示的分数转换成小数。
+    /// - Parameter value: 元组形式的分数。
+    public init<T: BinaryInteger>(fraction value: (T, T)) {
+        self = Double(value.0) / Double(value.1)
+    }
+    
+}

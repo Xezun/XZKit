@@ -10,6 +10,10 @@ import Foundation
 
 extension APIError {
     
+    /// 错误码 0 ，表示没有错误发生。
+    /// - Note: 除非希望提前结束正常流程，否则请不要抛出 noError 错误。
+    public static let noError = APIError(code: 0, message: "No error.")
+    
     /// 错误码 -1 ，未定义的错误。
     public static let undefined = APIError(code: -1, message: "An undefined error occurred.")
     
@@ -79,7 +83,7 @@ public struct APIError: Error, CustomStringConvertible {
     
     public struct UserInfoKey: RawRepresentable, ExpressibleByStringLiteral, Hashable {
         
-        public static let numberOfRetries = UserInfoKey(rawValue: "com.xezun.XZKit.Networking.numberOfRetries")
+        public static let numberOfRetries = UserInfoKey(rawValue: APIError.Domain + ".numberOfRetries")
         
         public typealias RawValue = String
         public typealias StringLiteralType = String
@@ -131,7 +135,7 @@ extension APIError: Equatable {
 }
 
 
-extension APIError: _ObjectiveCBridgeable {
+extension APIError {
     
     public typealias _ObjectiveCType = NSError
     
@@ -141,44 +145,13 @@ extension APIError: _ObjectiveCBridgeable {
     public init(_ error: Error) {
         if let apiError = error as? APIError {
             self = apiError
-        } else {
-            let nsError = error as NSError
-            let code = nsError.code
-            let message = nsError.localizedDescription
-            let userInfo = nsError.userInfo
-            self = APIError.init(code: code, message: message, userInfo: userInfo)
+            return
         }
+        let nsError  = error as NSError
+        let code     = nsError.code
+        let message  = nsError.localizedDescription
+        let userInfo = nsError.userInfo
+        self = APIError.init(code: code, message: message, userInfo: userInfo)
     }
     
-    public func _bridgeToObjectiveC() -> NSError {
-        var userInfo = self.userInfo.reduce([String: Any](), { (result, item) -> [String: Any] in
-            return [item.key.rawValue: item.value]
-        })
-        if userInfo[NSLocalizedDescriptionKey] == nil {
-            userInfo[NSLocalizedDescriptionKey] = message
-        }
-        return NSError.init(domain: APIError.Domain, code: code, userInfo: userInfo)
-    }
-    
-    public static func _forceBridgeFromObjectiveC(_ source: NSError, result: inout APIError?) {
-        let code = source.code
-        let message = source.localizedDescription
-        let userInfo = source.userInfo
-        result = APIError.init(code: code, message: message, userInfo: userInfo)
-    }
-    
-    public static func _conditionallyBridgeFromObjectiveC(_ source: NSError, result: inout APIError?) -> Bool {
-        _forceBridgeFromObjectiveC(source, result: &result)
-        return true
-    }
-    
-    public static func _unconditionallyBridgeFromObjectiveC(_ source: NSError?) -> APIError {
-        if let nsError = source {
-            let code = nsError.code
-            let message = nsError.localizedDescription
-            let userInfo = nsError.userInfo
-            return APIError.init(code: code, message: message, userInfo: userInfo)
-        }
-        return APIError.noError
-    }
 }
