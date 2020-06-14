@@ -2,7 +2,7 @@
 //  XZKit+NSString.m
 //  XZKit
 //
-//  Created by 徐臻 on 2019/3/30.
+//  Created by Xezun on 2019/3/30.
 //  Copyright © 2019 XEZUN INC. All rights reserved.
 //
 

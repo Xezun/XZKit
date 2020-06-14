@@ -23,6 +23,9 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         window.rootViewController = tabBarVC
         window.makeKeyAndVisible()
         self.window = window
+        
+        XZLog("%@", XZKit.Networking.queue)
+        
         return true
     }
     

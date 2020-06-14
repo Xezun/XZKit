@@ -1,0 +1,58 @@
+framework module XZKit {
+    header "XZKit.h"
+    export *
+    
+    module Core {
+        header "XZKitDefines.h"
+        header "XZKit+Geometry.h"
+        header "XZKit+Runtime.h"
+        header "XZKit+Encoding.h"
+        header "NSData+XZKit.h"
+        export *
+    }
+    
+    module Category {
+        header "NSBundle+XZKit.h"
+        header "UIImage+XZKit.h"
+        header "UIColor+XZKit.h"
+        header "UIView+XZKit.h"
+        header "NSString+XZKit.h"
+        export *
+    }
+    
+    module AppLanguage {
+        header "XZAppLanguage.h"
+        export *
+    }
+    
+    module AppRedirection {
+        header "XZAppRedirection.h"
+        export *
+    }
+    
+    module DataDigester {
+        header "XZDataDigester.h"
+        export *
+    }
+    
+    module DataCryptor {
+        header "XZDataCryptor.h"
+        export *
+    }
+    
+    module CarouselView {
+        header "XZCarouselView.h"
+        header "XZCarouselViewController.h"
+        header "XZImageViewer.h"
+        header "XZImageCarouselView.h"
+        export *
+    }
+    
+    export Networking
+}
+
+
+framework module Networking {
+    header "XZNetworking.h"
+    export *
+}

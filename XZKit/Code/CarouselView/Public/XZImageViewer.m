@@ -2,7 +2,7 @@
 //  XZImageViewer.m
 //  XZKit
 //
-//  Created by 徐臻 on 2019/3/6.
+//  Created by Xezun on 2019/3/6.
 //
 
 #import "XZImageViewer.h"

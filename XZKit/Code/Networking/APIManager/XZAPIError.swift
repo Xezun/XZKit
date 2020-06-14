@@ -68,6 +68,29 @@ public struct APIError: Error, CustomStringConvertible {
         self.userInfo = userInfo
     }
     
+    public init(code: Int) {
+        switch code {
+        case 0:
+            self = .noError
+        case -1:
+            self = .undefined
+        case -2:
+            self = .cancelled
+        case -3:
+            self = .ignored
+        case -4:
+            self = .overtime
+        case -100 ... -199:
+            self.init(code: code, message: APIError.unreachable.message)
+        case -200 ... -299:
+            self.init(code: code, message: APIError.invalidRequest.message)
+        case -300 ... -399:
+            self.init(code: code, message: APIError.unexpectedResponse.message)
+        default:
+            self.init(code: code, message: "An unknown error with code \(code).")
+        }
+    }
+    
     public init(code: Int, message: String, userInfo: [String: Any]) {
         self.code = code
         self.message = message
@@ -140,6 +163,7 @@ extension APIError {
     public typealias _ObjectiveCType = NSError
     
     /// APIError 的错误域，在桥接到 Objective-C NSError 时使用。
+    /// - Note: 实际值为 com.xezun.XZKit.Networking 字符串。
     public static let Domain = "com.xezun.XZKit.Networking"
     
     public init(_ error: Error) {

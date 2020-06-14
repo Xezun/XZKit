@@ -100,7 +100,7 @@ extension APINetworking {
 extension APIManager {
     
     public func request(_ request: Request, didProcess progress: Progress) {
-        XZLog("链接: %@\n进度: %.2f", request.url, Double.init(fractional: progress))
+        XZLog("链接: %@\n进度: %.2f", request.url, Double(fraction: progress))
     }
     
     public func request(_ request: Request, didCollect responseObject: Any?) throws -> Response {

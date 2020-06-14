@@ -90,10 +90,12 @@ NS_ASSUME_NONNULL_BEGIN
 
 #pragma mark - 类型定义及常量
 
+#ifndef XZKIT_CONSTANTS_DEBUG_SUPPORTED
+#define XZKIT_CONSTANTS_DEBUG_SUPPORTED
 /// 当前是否为 DEBUG 模式，程序启动参数添加了 -XZKitDEBUG 参数。
-#ifndef XZKIT_CONSTANTS_DEBUG_SUPPORTING
-#define XZKIT_CONSTANTS_DEBUG_SUPPORTING
 FOUNDATION_EXTERN bool const XZKitDebugMode NS_SWIFT_NAME(isDebugMode);
+#else
+FOUNDATION_EXTERN bool XZKitDebugMode NS_SWIFT_NAME(isDebugMode);
 #endif
 
 /// 字符串字符大小写样式。

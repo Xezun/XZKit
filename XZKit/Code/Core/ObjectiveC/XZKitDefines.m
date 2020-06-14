@@ -6,12 +6,16 @@
 //  Copyright © 2018年 XEZUN INC. All rights reserved.
 //
 
-#define XZKIT_CONSTANTS_DEBUG_SUPPORTING
+#define XZKIT_CONSTANTS_DEBUG_SUPPORTED
 #import "XZKitDefines.h"
 #import <sys/time.h>
 #import <XZKit/XZKit-Swift.h>
 
 bool XZKitDebugMode = NO;
+
+void __xz_defer_obsv__(void (^ _Nonnull * _Nonnull operation)(void)) {
+    (*operation)();
+}
 
 @implementation NSObject (XZKitDefines)
 
@@ -20,10 +24,6 @@ bool XZKitDebugMode = NO;
 }
 
 @end
-
-void __xz_defer_obsv__(void (^ _Nonnull * _Nonnull operation)(void)) {
-    (*operation)();
-}
 
 NSTimeInterval xz_timestamp() {
     struct timeval aTime;

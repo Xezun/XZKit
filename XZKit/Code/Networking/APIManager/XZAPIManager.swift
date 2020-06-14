@@ -8,8 +8,10 @@
 
 import Foundation
 
+/// Networking 模块。
 public enum Networking {
-    public static let queue = DispatchQueue(label: "com.xezun.XZKit.Networking", attributes: .concurrent)
+    /// 共用的列队。
+    public static let queue = DispatchQueue(label: APIError.Domain, attributes: .concurrent)
 }
 
 /// 网络协议。
@@ -54,7 +56,7 @@ public protocol APIManager: APINetworking {
     /// - Parameters:
     ///   - request: 接口请求对象。
     ///   - progress: 接口请求当前进度。
-    func request(_ request: Request, didProcess progress: Progress)
+    func request(_ request: Request, didProcess progress: APIManager.Progress)
     
     /// 当请求完成数据传输时，此方法会被调用。
     /// - Note: 此方法一般用于校验数据的基本信息，比如类型、格式等。数据的业务合法性在，可在Response中由具体业务实现。
@@ -86,14 +88,14 @@ public protocol APIManager: APINetworking {
 
 extension APIManager {
     
-    /// 是否有正在进行、或等待中、或延迟执行的任务。
-    public var isRunning: Bool {
-        return apiTaskManager.isRunning
-    }
-    
     @discardableResult
     public func send(_ request: Request) -> APITask {
         return apiTaskManager.send(request)
+    }
+    
+    /// 是否有正在进行、或等待中、或延迟执行的任务。
+    public var isRunning: Bool {
+        return apiTaskManager.isRunning
     }
     
     /// 取消所有正在执行的接口请求，异步操作。
@@ -137,17 +139,17 @@ fileprivate class _APITaskManager<Manager: APIManager> {
     public func send(_ request: Request) -> APITask {
         let apiTask = _APITask(request: request, delegate: self)
         
-        pthread_mutex_lock(&tasksLock)
+        pthread_mutex_lock(&lock)
         let identifier = apiTask.identifier
         pendingTasks[identifier] = apiTask
-        pthread_mutex_unlock(&tasksLock)
+        pthread_mutex_unlock(&lock)
         
         Networking.queue.async(execute: { [weak self] in
             guard let self = self else { return }
             
-            pthread_mutex_lock(&self.tasksLock)
+            pthread_mutex_lock(&self.lock)
             let pendingTask = self.pendingTasks.removeValue(forKey: identifier)
-            pthread_mutex_unlock(&self.tasksLock)
+            pthread_mutex_unlock(&self.lock)
             
             guard let apiTask = pendingTask else { return }
             self.dispatch(apiTask)
@@ -157,56 +159,43 @@ fileprivate class _APITaskManager<Manager: APIManager> {
     }
     
     public func cancelAllTasks() {
-        pthread_mutex_lock(&tasksLock)
-        cancelAllTasksUnsafe()
-        pthread_mutex_unlock(&tasksLock)
-    }
-    
-    private func cancelAllTasksUnsafe() -> Void {
-        let pendingTasks = self.pendingTasks
-        let runningTasks = self.runningTasks
-        let waitingTasks = self.waitingTasks
-        let delayedTasks = self.delayedTasks
-        
-        self.pendingTasks.removeAll()
-        self.runningTasks.removeAll()
-        self.waitingTasks.removeAll()
-        self.delayedTasks.removeAll()
-        
-        for (_, apiTask) in pendingTasks {
-            apiTask.cancel()
-        }
-        
-        for (_, apiTask) in runningTasks {
-            apiTask.cancel()
-        }
-        
-        for apiTask in waitingTasks {
-            apiTask.cancel()
-        }
-        
-        for (_, apiTask) in delayedTasks {
-            apiTask.cancel()
-        }
+        pthread_mutex_lock(&lock)
+        let apiTasks = cancelAllTasksUnsafe()
+        pthread_mutex_unlock(&lock)
         
         Networking.queue.async(execute: { [weak self] in
             guard let manager = self?.manager else { return }
-            for (_, apiTask) in pendingTasks {
-                manager.request(apiTask.request, didFailWith: APIError.cancelled)
-            }
-            
-            for (_, apiTask) in runningTasks {
-                manager.request(apiTask.request, didFailWith: APIError.cancelled)
-            }
-            
-            for apiTask in waitingTasks {
-                manager.request(apiTask.request, didFailWith: APIError.cancelled)
-            }
-            
-            for (_, apiTask) in delayedTasks {
+            for apiTask in apiTasks {
                 manager.request(apiTask.request, didFailWith: APIError.cancelled)
             }
         })
+    }
+    
+    private func cancelAllTasksUnsafe() -> [Task] {
+        var apiTasks = [Task]()
+        
+        for (_, apiTask) in pendingTasks {
+            apiTasks.append(apiTask)
+        }
+        
+        for (_, apiTask) in runningTasks {
+            apiTasks.append(apiTask)
+        }
+        
+        for apiTask in waitingTasks {
+            apiTasks.append(apiTask)
+        }
+        
+        for apiTask in delayedTasks {
+            apiTasks.append(apiTask)
+        }
+        
+        pendingTasks.removeAll()
+        runningTasks.removeAll()
+        waitingTasks.removeAll()
+        delayedTasks.removeAll()
+        
+        return apiTasks
     }
     
     /// 将任务按并发策略进行调度：放入执行列队或等待列队。
@@ -225,9 +214,9 @@ fileprivate class _APITaskManager<Manager: APIManager> {
     
     // 将任务按并发策略加入对应的列队，如果任务需立即执行，则返回该任务。
     private func enqueue(_ apiTask: Task) throws -> Task? {
-        pthread_mutex_lock(&self.tasksLock)
+        pthread_mutex_lock(&self.lock)
         defer {
-            pthread_mutex_unlock(&self.tasksLock)
+            pthread_mutex_unlock(&self.lock)
         }
         switch apiTask.request.concurrencyPolicy {
         case .ignoreCurrent:
@@ -240,8 +229,14 @@ fileprivate class _APITaskManager<Manager: APIManager> {
             runningTasks[apiTask.identifier] = apiTask
             
         case .cancelOthers:
-            cancelAllTasksUnsafe()
+            let apiTasks = cancelAllTasksUnsafe()
             runningTasks[apiTask.identifier] = apiTask
+            Networking.queue.async(execute: { [weak self] in
+                guard let self = self else { return }
+                for apiTask in apiTasks {
+                    self.complete(apiTask, data: nil, error: APIError.cancelled)
+                }
+            })
             
         case .wait(let priority):
             guard runningTasks.isEmpty else {
@@ -297,25 +292,12 @@ fileprivate class _APITaskManager<Manager: APIManager> {
             let response = try manager.request(apiTask.request, didCollect: data)
             manager.request(apiTask.request, didReceive: response)
         } catch { // 发生错误，检查自动重试
+            apiTask.retriedTimes += 1
             var apiError = APIError(error)
             apiError.numberOfRetries = apiTask.retriedTimes
             let delay = manager.request(apiTask.request, didFailWith: apiError)
             if apiTask.request.retryIfFailed, let delay = delay {
-                let identifier = apiTask.identifier
-                
-                apiTask.dataTask = nil
-                apiTask.retriedTimes += 1
-                
-                pthread_mutex_lock(&tasksLock)
-                delayedTasks[identifier] = apiTask
-                pthread_mutex_unlock(&tasksLock)
-                
-                Networking.queue.asyncAfter(deadline: .now() + delay, execute: { [weak self] in
-                    guard let self = self else { return }
-                    if let delayedTask = self.dequeueDelayedTask(with: identifier) {
-                        self.dispatch(delayedTask)
-                    }
-                })
+                scheduleDelayedTasks(apiTask, delay: delay)
             }
         }
         
@@ -326,11 +308,11 @@ fileprivate class _APITaskManager<Manager: APIManager> {
     
     /// 从等待列队取出任务。
     private func dequeueWaitingTask() -> Task? {
-        pthread_mutex_lock(&tasksLock)
+        pthread_mutex_lock(&lock)
         defer {
-            pthread_mutex_unlock(&tasksLock)
+            pthread_mutex_unlock(&lock)
         }
-        if runningTasks.isEmpty {
+        guard runningTasks.isEmpty else {
             return nil
         }
         if waitingTasks.isEmpty {
@@ -340,19 +322,67 @@ fileprivate class _APITaskManager<Manager: APIManager> {
     }
     
     private func dequeueRunningTask(with identifier: String) -> Task? {
-        pthread_mutex_lock(&tasksLock)
+        pthread_mutex_lock(&lock)
         defer {
-            pthread_mutex_unlock(&tasksLock)
+            pthread_mutex_unlock(&lock)
         }
         return runningTasks.removeValue(forKey: identifier)
     }
     
-    private func dequeueDelayedTask(with identifier: String) -> Task? {
-        pthread_mutex_lock(&tasksLock)
-        defer {
-            pthread_mutex_unlock(&tasksLock)
+    private func scheduleDelayedTasks(_ delayedTask: Task?, delay: TimeInterval) {
+        pthread_mutex_lock(&lock)
+        
+        let now = DispatchTime.now()
+        
+        if let apiTask = delayedTask {
+            apiTask.isCancelled  = false
+            apiTask.dataTask     = nil
+            apiTask.fireDate     = now + delay
+            if let index = delayedTasks.firstIndex(where: { $0.fireDate > apiTask.fireDate }) {
+                delayedTasks.insert(apiTask, at: index)
+            } else {
+                delayedTasks.append(apiTask)
+            }
         }
-        return delayedTasks.removeValue(forKey: identifier)
+        
+        var apiTasks = [Task]() // 延时到期的任务
+        
+        while !delayedTasks.isEmpty {
+            let time1 = delayedTasks[0].fireDate.uptimeNanoseconds
+            let time2 = now.uptimeNanoseconds
+            if Int64(bitPattern: time1 &- time2) < 1_000_000 {
+                apiTasks.append(delayedTasks.removeFirst())
+            } else {
+                break
+            }
+        }
+        
+        if let new = delayedTasks.first?.fireDate {
+            if scheduleTime != new {
+                if delayedTimer == nil {
+                    delayedTimer = DispatchSource.makeTimerSource(queue: Networking.queue)
+                    delayedTimer?.schedule(deadline: .distantFuture)
+                    delayedTimer!.setEventHandler(handler: { [weak self] in
+                        self?.scheduleDelayedTasks(nil, delay: 0)
+                    })
+                }
+                delayedTimer!.schedule(deadline: new)
+                if scheduleTime == nil {
+                    delayedTimer!.resume()
+                }
+                scheduleTime = new
+            }
+        } else if scheduleTime != nil {
+            scheduleTime = nil
+            delayedTimer?.schedule(deadline: .distantFuture)
+            delayedTimer?.suspend()
+        }
+        
+        pthread_mutex_unlock(&lock)
+        
+        for apiTask in apiTasks {
+            dispatch(apiTask)
+        }
     }
     
     /// APITask 代理事件。删除已超时的任务，并转发事件。
@@ -366,9 +396,9 @@ fileprivate class _APITaskManager<Manager: APIManager> {
     }
     
     var isRunning: Bool {
-        pthread_mutex_lock(&tasksLock)
+        pthread_mutex_lock(&lock)
         let isRunning = !pendingTasks.isEmpty || !runningTasks.isEmpty || !waitingTasks.isEmpty || !delayedTasks.isEmpty
-        pthread_mutex_unlock(&tasksLock)
+        pthread_mutex_unlock(&lock)
         return isRunning
     }
     
@@ -377,36 +407,35 @@ fileprivate class _APITaskManager<Manager: APIManager> {
     /// 所以这里使用 weak 。
     private weak var manager: Manager?
     /// 正在执行的任务。
-    private var runningTasks = [String: _APITask<Manager>]()
+    private lazy var runningTasks = [String: _APITask<Manager>]()
     /// 排队等待执行的任务，按任务按并发优先级从低到高在数组中排列。
-    private var waitingTasks = [_APITask<Manager>]()
+    private lazy var waitingTasks = [_APITask<Manager>]()
     /// 延时自动重试的任务。
-    private var delayedTasks = [String: _APITask<Manager>]()
-    private var pendingTasks = [String: _APITask<Manager>]()
+    private lazy var delayedTasks = [_APITask<Manager>]()
+    /// 即将执行的列队。
+    private lazy var pendingTasks = [String: _APITask<Manager>]()
     /// 读写 ~Tasks 的锁。
-    private var tasksLock: pthread_mutex_t
+    private var lock: pthread_mutex_t
     
-    
+    private var scheduleTime: DispatchTime?
+    private var delayedTimer: DispatchSourceTimer?
     
     fileprivate init(for manager: Manager) {
         self.manager = manager
         
-        var lockAttr = pthread_mutexattr_t.init()
-        pthread_mutexattr_init(&lockAttr)
-        pthread_mutexattr_settype(&lockAttr, PTHREAD_MUTEX_RECURSIVE)
-        
         var tasksLock = pthread_mutex_t.init()
-        pthread_mutex_init(&tasksLock, &lockAttr)
+        pthread_mutex_init(&tasksLock, nil)
         
-        self.tasksLock = tasksLock
+        self.lock = tasksLock
     }
     
     deinit {
-        // 当 APITaskManager 释放时，说明 APIManager 已经释放了。
-        // 这里取消事件，不会触发 APIManager 的回调。
-        cancelAllTasksUnsafe()
-        
-        pthread_mutex_destroy(&tasksLock)
+        if scheduleTime != nil {
+            delayedTimer?.resume()
+            delayedTimer?.cancel()
+        }
+        _ = cancelAllTasksUnsafe()
+        pthread_mutex_destroy(&lock)
     }
     
 }
@@ -439,10 +468,12 @@ private final class _APITask<Manager: APIManager>: APITask {
     public let request: Request
     /// 已重试的次数。
     public fileprivate(set) var retriedTimes: Int = 0
+    /// 延迟执行的时间点。
+    public fileprivate(set) lazy var fireDate = DispatchTime.distantFuture
     /// 执行任务的 URLSessionDataTask 对象。
     public fileprivate(set) weak var dataTask: URLSessionDataTask?
     /// 是否已取消。
-    public private(set) var isCancelled: Bool = false
+    public fileprivate(set) var isCancelled: Bool = false
     /// 任务限时时长。
     public private(set) var deadlineInterval: TimeInterval?
     /// 取消当前任务。
@@ -471,7 +502,7 @@ private final class _APITask<Manager: APIManager>: APITask {
         // 启动倒计时。
         isDeadlineTimerSuspended = false
         if deadlineTimer == nil {
-            deadlineTimer = DispatchSource.makeTimerSource(queue: .global())
+            deadlineTimer = DispatchSource.makeTimerSource(queue: Networking.queue)
         }
         deadlineTimer!.schedule(deadline: .now() + deadlineInterval, repeating: .never)
         deadlineTimer!.setEventHandler(handler: { [weak self] in
@@ -516,7 +547,7 @@ extension Double {
     
     /// 将元组 (分子, 分母) 表示的分数转换成小数。
     /// - Parameter value: 元组形式的分数。
-    public init<T: BinaryInteger>(fraction value: (T, T)) {
+    public init<T: BinaryInteger, K: BinaryInteger>(fraction value: (T, K)) {
         self = Double(value.0) / Double(value.1)
     }
     

@@ -20,6 +20,6 @@ public protocol APIResponse {
     ///   - request: 接口请求。
     ///   - data: 接口请求的原始数据。
     /// - Throws: 构造接口数据模型过程中的异常。
-    init(request: Request, data: Any?) throws
+    init(_ request: Request, data: Any?) throws
     
 }

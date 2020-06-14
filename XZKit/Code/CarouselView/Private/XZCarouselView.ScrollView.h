@@ -2,7 +2,7 @@
 //  XZCarouselView.ScrollView.h
 //  XZKit
 //
-//  Created by 徐臻 on 2019/4/25.
+//  Created by Xezun on 2019/4/25.
 //  Copyright © 2019 XEZUN INC. All rights reserved.
 //
 
