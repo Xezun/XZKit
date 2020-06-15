@@ -8,7 +8,6 @@
 
 import Foundation
 
-
 extension APIMethod {
     
     /// HTTP GET 请求。

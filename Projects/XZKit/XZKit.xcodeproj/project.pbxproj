@@ -206,7 +206,6 @@
 		29380602249612AE00FDE6AD /* XZAPIResponse.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = XZAPIResponse.swift; sourceTree = "<group>"; };
 		29380603249612AE00FDE6AD /* XZAPIRequest.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = XZAPIRequest.swift; sourceTree = "<group>"; };
 		29380604249612AE00FDE6AD /* XZAPIError.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = XZAPIError.swift; sourceTree = "<group>"; };
-		2938060E249612E500FDE6AD /* XZKit.modulemap */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = "sourcecode.module-map"; name = XZKit.modulemap; path = ../../../XZKit/XZKit.modulemap; sourceTree = "<group>"; };
 		2938060F249630D100FDE6AD /* XZNetworkingTestCase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = XZNetworkingTestCase.swift; sourceTree = "<group>"; };
 		2976826D2470227D00A2C2E7 /* XZURLTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = XZURLTests.swift; sourceTree = "<group>"; };
 		297682702472E63000A2C2E7 /* XZTimekeeper.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = XZTimekeeper.swift; sourceTree = "<group>"; };
@@ -543,14 +542,6 @@
 			path = APIManager;
 			sourceTree = "<group>";
 		};
-		2938060D249612C600FDE6AD /* Module */ = {
-			isa = PBXGroup;
-			children = (
-				2938060E249612E500FDE6AD /* XZKit.modulemap */,
-			);
-			path = Module;
-			sourceTree = "<group>";
-		};
 		2976826F2472E63000A2C2E7 /* Timekeeper */ = {
 			isa = PBXGroup;
 			children = (
@@ -562,7 +553,6 @@
 		DD30EF3721A4330000C4C73C = {
 			isa = PBXGroup;
 			children = (
-				2938060D249612C600FDE6AD /* Module */,
 				DD30EF4321A4330000C4C73C /* XZKit */,
 				28F608D823E0353500C394B9 /* XZKitTests */,
 				DD30EF4221A4330000C4C73C /* Products */,

@@ -9,8 +9,6 @@
 import XCTest
 import XZKit
 
-
-
 class XZNetworkingTestCase: XCTestCase, TestAPIManagerDelegate {
     
     var logs = [Int: [String]]()

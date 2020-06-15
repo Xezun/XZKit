@@ -44,7 +44,7 @@ public protocol APIManager: APINetworking {
     /// 接口响应。
     associatedtype Response: APIResponse where Response.Request == Request
     /// 分数表示的进度，value / scale 得到百分比。
-    typealias Progress = (value: Int64, scale: Int64)
+    typealias Progress = (completed: Int64, total: Int64)
     
     /// 发送接口请求。每次调用此方法，都会创建一个与接口请求相关联的APITask对象，用于跟踪管理本次请求。
     /// - Parameter request: 接口请求对象。
@@ -175,18 +175,22 @@ fileprivate class _APITaskManager<Manager: APIManager> {
         var apiTasks = [Task]()
         
         for (_, apiTask) in pendingTasks {
+            apiTask.cancel()
             apiTasks.append(apiTask)
         }
         
         for (_, apiTask) in runningTasks {
+            apiTask.cancel()
             apiTasks.append(apiTask)
         }
         
         for apiTask in waitingTasks {
+            apiTask.cancel()
             apiTasks.append(apiTask)
         }
         
         for apiTask in delayedTasks {
+            apiTask.cancel()
             apiTasks.append(apiTask)
         }
         
@@ -292,9 +296,8 @@ fileprivate class _APITaskManager<Manager: APIManager> {
             let response = try manager.request(apiTask.request, didCollect: data)
             manager.request(apiTask.request, didReceive: response)
         } catch { // 发生错误，检查自动重试
-            apiTask.retriedTimes += 1
             var apiError = APIError(error)
-            apiError.numberOfRetries = apiTask.retriedTimes
+            apiError.numberOfRetries = apiTask.numberOfRetries
             let delay = manager.request(apiTask.request, didFailWith: apiError)
             if apiTask.request.retryIfFailed, let delay = delay {
                 scheduleDelayedTasks(apiTask, delay: delay)
@@ -335,6 +338,7 @@ fileprivate class _APITaskManager<Manager: APIManager> {
         let now = DispatchTime.now()
         
         if let apiTask = delayedTask {
+            apiTask.numberOfRetries += 1
             apiTask.isCancelled  = false
             apiTask.dataTask     = nil
             apiTask.fireDate     = now + delay
@@ -445,7 +449,7 @@ public protocol APITask: AnyObject {
     /// 任务的唯一标识符。
     var identifier: String  { get }
     /// 已重试的次数。
-    var retriedTimes: Int { get }
+    var numberOfRetries: Int { get }
     /// 执行任务的 URLSessionDataTask 对象。
     var dataTask: URLSessionDataTask? { get }
     /// 是否已取消。
@@ -467,7 +471,7 @@ private final class _APITask<Manager: APIManager>: APITask {
     /// 请求。
     public let request: Request
     /// 已重试的次数。
-    public fileprivate(set) var retriedTimes: Int = 0
+    public fileprivate(set) var numberOfRetries: Int = 0
     /// 延迟执行的时间点。
     public fileprivate(set) lazy var fireDate = DispatchTime.distantFuture
     /// 执行任务的 URLSessionDataTask 对象。
