@@ -2,7 +2,7 @@
 //  AppDelegate.swift
 //  ContentStatusExample
 //
-//  Created by 徐臻 on 2019/3/29.
+//  Created by Xezun on 2019/3/29.
 //  Copyright © 2019 mlibai. All rights reserved.
 //
 

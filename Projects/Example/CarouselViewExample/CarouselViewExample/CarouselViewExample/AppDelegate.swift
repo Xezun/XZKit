@@ -2,7 +2,7 @@
 //  AppDelegate.swift
 //  XZCarouselViewExample
 //
-//  Created by 徐臻 on 2019/1/17.
+//  Created by Xezun on 2019/1/17.
 //  Copyright © 2019 mlibai. All rights reserved.
 //
 

@@ -41,6 +41,7 @@ FOUNDATION_EXPORT const unsigned char XZKitVersionString[];
 #import <XZKit/XZCarouselViewController.h>
 #import <XZKit/XZImageViewer.h>
 #import <XZKit/XZImageCarouselView.h>
+// Networking
 #endif
 
 // MARK: - CocoaPods Headers
@@ -91,6 +92,8 @@ FOUNDATION_EXPORT const unsigned char XZKitVersionString[];
 #import <XZKit/XZImageViewer.h>
 #import <XZKit/XZImageCarouselView.h>
 #endif
+// Networking
+// -
 #endif // not __has_include(<XZKit/XZKit-umbrella.h>) end.
 #endif // COCOAPODS
 

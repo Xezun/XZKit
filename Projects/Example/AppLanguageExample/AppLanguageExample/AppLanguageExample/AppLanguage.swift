@@ -2,7 +2,7 @@
 //  AppLanguage.swift
 //  Example
 //
-//  Created by 徐臻 on 2019/3/13.
+//  Created by Xezun on 2019/3/13.
 //  Copyright © 2019 mlibai. All rights reserved.
 //
 

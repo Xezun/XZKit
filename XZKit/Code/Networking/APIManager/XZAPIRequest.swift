@@ -1,5 +1,5 @@
 //
-//  APIRequest.swift
+//  XZAPIRequest.swift
 //  XZKit
 //
 //  Created by Xezun on 2017/7/31.
@@ -35,11 +35,11 @@ public protocol APIRequest {
     var cachePolicy: NSURLRequest.CachePolicy { get }
     
     /// 超时时间，默认 60 秒。
-    var timeoutInterval: TimeInterval { get }
+    var timeout: TimeInterval { get }
     
     /// 网络请求从开始到终止的时间间隔。如果请求开始后，在指定时间内没有完成，则请求终止并抛出 APIError.overtime 异常。
     /// - Note: 如果已设置自动重试，超时的任务会进入自动重试状态，每次重试的请求，重新计算截止时间。
-    var deadlineInterval: TimeInterval? { get }
+    var deadline: TimeInterval? { get }
     
     /// 网络请求失败时是否重试，默认 false 。自动重拾的任务，除一下子情况外，在任务失败时，将不断重试直至成功，且期间不会触发错误回调。
     /// - Note: 任务被取消或者因并发策略忽略而被忽略，自动重试将终止，并触发错误回调。
@@ -75,11 +75,11 @@ extension APIRequest {
         return .useProtocolCachePolicy
     }
     
-    public var timeoutInterval: TimeInterval {
+    public var timeout: TimeInterval {
         return 60.0
     }
     
-    public var deadlineInterval: TimeInterval? {
+    public var deadline: TimeInterval? {
         return nil
     }
 

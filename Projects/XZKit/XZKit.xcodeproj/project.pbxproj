@@ -99,12 +99,14 @@
 		28F608DA23E0353500C394B9 /* XZKitTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 28F608D923E0353500C394B9 /* XZKitTests.m */; };
 		28F608DC23E0353500C394B9 /* XZKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DD30EF4121A4330000C4C73C /* XZKit.framework */; };
 		28F608E323E04F5800C394B9 /* XZKitConstantsTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 28F608E223E04F5800C394B9 /* XZKitConstantsTests.m */; };
-		29380607249612AE00FDE6AD /* XZAPIManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 293805FF249612AE00FDE6AD /* XZAPIManager.swift */; };
-		29380608249612AE00FDE6AD /* XZAPIConcurrency.swift in Sources */ = {isa = PBXBuildFile; fileRef = 29380600249612AE00FDE6AD /* XZAPIConcurrency.swift */; };
-		29380609249612AE00FDE6AD /* XZAPIMethod.swift in Sources */ = {isa = PBXBuildFile; fileRef = 29380601249612AE00FDE6AD /* XZAPIMethod.swift */; };
-		2938060A249612AE00FDE6AD /* XZAPIResponse.swift in Sources */ = {isa = PBXBuildFile; fileRef = 29380602249612AE00FDE6AD /* XZAPIResponse.swift */; };
-		2938060B249612AE00FDE6AD /* XZAPIRequest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 29380603249612AE00FDE6AD /* XZAPIRequest.swift */; };
-		2938060C249612AE00FDE6AD /* XZAPIError.swift in Sources */ = {isa = PBXBuildFile; fileRef = 29380604249612AE00FDE6AD /* XZAPIError.swift */; };
+		29106AD8249E50E7005B9954 /* XZAPIManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 29106AD0249E50E7005B9954 /* XZAPIManager.swift */; };
+		29106AD9249E50E7005B9954 /* XZAPIConcurrency.swift in Sources */ = {isa = PBXBuildFile; fileRef = 29106AD1249E50E7005B9954 /* XZAPIConcurrency.swift */; };
+		29106ADA249E50E7005B9954 /* XZAPITask.swift in Sources */ = {isa = PBXBuildFile; fileRef = 29106AD2249E50E7005B9954 /* XZAPITask.swift */; };
+		29106ADC249E50E7005B9954 /* XZAPIMethod.swift in Sources */ = {isa = PBXBuildFile; fileRef = 29106AD4249E50E7005B9954 /* XZAPIMethod.swift */; };
+		29106ADD249E50E7005B9954 /* XZAPIResponse.swift in Sources */ = {isa = PBXBuildFile; fileRef = 29106AD5249E50E7005B9954 /* XZAPIResponse.swift */; };
+		29106ADE249E50E7005B9954 /* XZAPIRequest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 29106AD6249E50E7005B9954 /* XZAPIRequest.swift */; };
+		29106ADF249E50E7005B9954 /* XZAPIError.swift in Sources */ = {isa = PBXBuildFile; fileRef = 29106AD7249E50E7005B9954 /* XZAPIError.swift */; };
+		29106AE1249E5882005B9954 /* XZAPINetworking.swift in Sources */ = {isa = PBXBuildFile; fileRef = 29106AE0249E5882005B9954 /* XZAPINetworking.swift */; };
 		29380610249630D100FDE6AD /* XZNetworkingTestCase.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2938060F249630D100FDE6AD /* XZNetworkingTestCase.swift */; };
 		2976826E2470227D00A2C2E7 /* XZURLTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2976826D2470227D00A2C2E7 /* XZURLTests.swift */; };
 		297682712472E63000A2C2E7 /* XZTimekeeper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 297682702472E63000A2C2E7 /* XZTimekeeper.swift */; };
@@ -119,6 +121,19 @@
 			remoteInfo = XZKit;
 		};
 /* End PBXContainerItemProxy section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		29380628249E31F300FDE6AD /* Embed Frameworks */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 10;
+			files = (
+			);
+			name = "Embed Frameworks";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
 		2828CDBB229AF0B80025D736 /* WKWebView+XZKit.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "WKWebView+XZKit.swift"; sourceTree = "<group>"; };
@@ -200,12 +215,14 @@
 		28F608D923E0353500C394B9 /* XZKitTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = XZKitTests.m; sourceTree = "<group>"; };
 		28F608DB23E0353500C394B9 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		28F608E223E04F5800C394B9 /* XZKitConstantsTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = XZKitConstantsTests.m; sourceTree = "<group>"; };
-		293805FF249612AE00FDE6AD /* XZAPIManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = XZAPIManager.swift; sourceTree = "<group>"; };
-		29380600249612AE00FDE6AD /* XZAPIConcurrency.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = XZAPIConcurrency.swift; sourceTree = "<group>"; };
-		29380601249612AE00FDE6AD /* XZAPIMethod.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = XZAPIMethod.swift; sourceTree = "<group>"; };
-		29380602249612AE00FDE6AD /* XZAPIResponse.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = XZAPIResponse.swift; sourceTree = "<group>"; };
-		29380603249612AE00FDE6AD /* XZAPIRequest.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = XZAPIRequest.swift; sourceTree = "<group>"; };
-		29380604249612AE00FDE6AD /* XZAPIError.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = XZAPIError.swift; sourceTree = "<group>"; };
+		29106AD0249E50E7005B9954 /* XZAPIManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = XZAPIManager.swift; sourceTree = "<group>"; };
+		29106AD1249E50E7005B9954 /* XZAPIConcurrency.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = XZAPIConcurrency.swift; sourceTree = "<group>"; };
+		29106AD2249E50E7005B9954 /* XZAPITask.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = XZAPITask.swift; sourceTree = "<group>"; };
+		29106AD4249E50E7005B9954 /* XZAPIMethod.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = XZAPIMethod.swift; sourceTree = "<group>"; };
+		29106AD5249E50E7005B9954 /* XZAPIResponse.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = XZAPIResponse.swift; sourceTree = "<group>"; };
+		29106AD6249E50E7005B9954 /* XZAPIRequest.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = XZAPIRequest.swift; sourceTree = "<group>"; };
+		29106AD7249E50E7005B9954 /* XZAPIError.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = XZAPIError.swift; sourceTree = "<group>"; };
+		29106AE0249E5882005B9954 /* XZAPINetworking.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = XZAPINetworking.swift; sourceTree = "<group>"; };
 		2938060F249630D100FDE6AD /* XZNetworkingTestCase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = XZNetworkingTestCase.swift; sourceTree = "<group>"; };
 		2976826D2470227D00A2C2E7 /* XZURLTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = XZURLTests.swift; sourceTree = "<group>"; };
 		297682702472E63000A2C2E7 /* XZTimekeeper.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = XZTimekeeper.swift; sourceTree = "<group>"; };
@@ -521,25 +538,34 @@
 			path = ObjectiveC;
 			sourceTree = "<group>";
 		};
+		29106ACF249E50E7005B9954 /* APIManager */ = {
+			isa = PBXGroup;
+			children = (
+				29106AD0249E50E7005B9954 /* XZAPIManager.swift */,
+				29106AD1249E50E7005B9954 /* XZAPIConcurrency.swift */,
+				29106AD2249E50E7005B9954 /* XZAPITask.swift */,
+				29106AD4249E50E7005B9954 /* XZAPIMethod.swift */,
+				29106AD5249E50E7005B9954 /* XZAPIResponse.swift */,
+				29106AD6249E50E7005B9954 /* XZAPIRequest.swift */,
+				29106AD7249E50E7005B9954 /* XZAPIError.swift */,
+				29106AE0249E5882005B9954 /* XZAPINetworking.swift */,
+			);
+			path = APIManager;
+			sourceTree = "<group>";
+		};
 		293805EA2496121F00FDE6AD /* Networking */ = {
 			isa = PBXGroup;
 			children = (
-				293805FE249612AE00FDE6AD /* APIManager */,
+				29106ACF249E50E7005B9954 /* APIManager */,
 			);
 			path = Networking;
 			sourceTree = "<group>";
 		};
-		293805FE249612AE00FDE6AD /* APIManager */ = {
+		29380623249E31F300FDE6AD /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
-				293805FF249612AE00FDE6AD /* XZAPIManager.swift */,
-				29380600249612AE00FDE6AD /* XZAPIConcurrency.swift */,
-				29380601249612AE00FDE6AD /* XZAPIMethod.swift */,
-				29380602249612AE00FDE6AD /* XZAPIResponse.swift */,
-				29380603249612AE00FDE6AD /* XZAPIRequest.swift */,
-				29380604249612AE00FDE6AD /* XZAPIError.swift */,
 			);
-			path = APIManager;
+			name = Frameworks;
 			sourceTree = "<group>";
 		};
 		2976826F2472E63000A2C2E7 /* Timekeeper */ = {
@@ -556,6 +582,7 @@
 				DD30EF4321A4330000C4C73C /* XZKit */,
 				28F608D823E0353500C394B9 /* XZKitTests */,
 				DD30EF4221A4330000C4C73C /* Products */,
+				29380623249E31F300FDE6AD /* Frameworks */,
 			);
 			sourceTree = "<group>";
 		};
@@ -639,6 +666,7 @@
 				DD30EF3E21A4330000C4C73C /* Frameworks */,
 				DD30EF3F21A4330000C4C73C /* Resources */,
 				28DDB9282275A843005E7B65 /* ShellScript */,
+				29380628249E31F300FDE6AD /* Embed Frameworks */,
 			);
 			buildRules = (
 			);
@@ -763,25 +791,26 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				29380608249612AE00FDE6AD /* XZAPIConcurrency.swift in Sources */,
 				28C066A5224F65D20011F052 /* XZKit+Encoding.m in Sources */,
 				28CA189522478E8300F16621 /* XZContentStatus.swift in Sources */,
+				29106ADC249E50E7005B9954 /* XZAPIMethod.swift in Sources */,
 				28CA187322478E8300F16621 /* UIApplication+XZKit.swift in Sources */,
 				28CA188B22478E8300F16621 /* JSON+XZKit.swift in Sources */,
-				29380607249612AE00FDE6AD /* XZAPIManager.swift in Sources */,
+				29106AE1249E5882005B9954 /* XZAPINetworking.swift in Sources */,
 				28CA189C22478E8300F16621 /* XZDataCryptor.m in Sources */,
 				28CA185C22478E8300F16621 /* XZNavigationBar.swift in Sources */,
 				28CA18A922478E8300F16621 /* XZKitDefines.swift in Sources */,
 				28CA188C22478E8300F16621 /* XZKit+String.swift in Sources */,
 				28E3B73922716E4C005ECB02 /* XZCarouselViewController.m in Sources */,
+				29106ADF249E50E7005B9954 /* XZAPIError.swift in Sources */,
 				28CA186022478E8300F16621 /* XZAppRedirection.m in Sources */,
 				28E3B73D22716E4C005ECB02 /* XZCarouselView.m in Sources */,
 				28CA189722478E8300F16621 /* XZContentStatusView.swift in Sources */,
-				2938060C249612AE00FDE6AD /* XZAPIError.swift in Sources */,
 				28E3B72D22716E31005ECB02 /* XZCarouselView.ItemView.m in Sources */,
 				28CA189922478E8300F16621 /* XZTextImageControl.swift in Sources */,
 				28CA185D22478E8300F16621 /* XZNavigationController.swift in Sources */,
 				28CA18A722478E8300F16621 /* XZKitDefines.m in Sources */,
+				29106AD8249E50E7005B9954 /* XZAPIManager.swift in Sources */,
 				28CA18A122478E8300F16621 /* XZAppLanguage.m in Sources */,
 				28CA185822478E8300F16621 /* XZNavigationController.AnimationController.swift in Sources */,
 				28CA186922478E8300F16621 /* XZImageCacheManager.swift in Sources */,
@@ -796,6 +825,7 @@
 				28CA188D22478E8300F16621 /* NSData+XZKit.m in Sources */,
 				28CA187A22478E8300F16621 /* UIImage+XZKit.m in Sources */,
 				28CA188822478E8300F16621 /* DispatchQueue+XZKit.swift in Sources */,
+				29106ADD249E50E7005B9954 /* XZAPIResponse.swift in Sources */,
 				28CA187822478E8300F16621 /* UIColor+XZKit.m in Sources */,
 				28F4F2BC224A89C600E7B23C /* XZKit+Date.swift in Sources */,
 				28E3B73822716E4C005ECB02 /* XZImageViewer.m in Sources */,
@@ -805,22 +835,22 @@
 				28CA185B22478E8300F16621 /* XZNavigationGestureDrivable.swift in Sources */,
 				297682712472E63000A2C2E7 /* XZTimekeeper.swift in Sources */,
 				28CA187422478E8300F16621 /* UIView+XZKit.m in Sources */,
+				29106ADE249E50E7005B9954 /* XZAPIRequest.swift in Sources */,
+				29106AD9249E50E7005B9954 /* XZAPIConcurrency.swift in Sources */,
 				28CA189022478E8300F16621 /* NSBundle+XZKit.m in Sources */,
 				28CA188722478E8300F16621 /* Data+XZKit.swift in Sources */,
-				29380609249612AE00FDE6AD /* XZAPIMethod.swift in Sources */,
 				28CA189622478E8300F16621 /* XZContentStatusRepresentable.swift in Sources */,
 				28CA185922478E8300F16621 /* XZNavigationBarCustomizable.swift in Sources */,
 				28CA185E22478E8300F16621 /* UITabBar+XZNavigationController.swift in Sources */,
 				28F4F2B4224A867E00E7B23C /* XZKit+Geometry.m in Sources */,
+				29106ADA249E50E7005B9954 /* XZAPITask.swift in Sources */,
 				28CA186F22478E8300F16621 /* UIImageView+XZKit.swift in Sources */,
 				28CA18A622478E8300F16621 /* XZProgressView.swift in Sources */,
 				28F4F2BA224A886200E7B23C /* XZKit+Runtime.m in Sources */,
 				28CA185F22478E8300F16621 /* XZNavigationController.TransitionController.swift in Sources */,
 				28CA189B22478E8300F16621 /* XZTextImageLayout.swift in Sources */,
-				2938060B249612AE00FDE6AD /* XZAPIRequest.swift in Sources */,
 				28F4F2B6224A86C400E7B23C /* XZKit+Geometry.swift in Sources */,
 				28CA18A322478E8300F16621 /* XZAppLanguage.swift in Sources */,
-				2938060A249612AE00FDE6AD /* XZAPIResponse.swift in Sources */,
 				28CA186E22478E8300F16621 /* UIDevice+XZKit.swift in Sources */,
 				28CA186822478E8300F16621 /* XZCacheManger.swift in Sources */,
 			);
@@ -1050,6 +1080,7 @@
 				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SKIP_INSTALL = YES;
+				SUPPORTS_MACCATALYST = NO;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Debug;
@@ -1077,6 +1108,7 @@
 				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SKIP_INSTALL = YES;
+				SUPPORTS_MACCATALYST = NO;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Release;

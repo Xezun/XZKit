@@ -2,7 +2,7 @@
 //  Example1SettingsContentModeOptionsViewController.swift
 //  CarouselViewExample
 //
-//  Created by 徐臻 on 2019/4/28.
+//  Created by Xezun on 2019/4/28.
 //  Copyright © 2019 mlibai. All rights reserved.
 //
 

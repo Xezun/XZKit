@@ -1,6 +1,6 @@
 //
-//  APIError.swift
-//  HTTP
+//  XZAPIError.swift
+//  XZKit
 //
 //  Created by Xezun on 2018/7/3.
 //  Copyright © 2018年 XEZUN INC. All rights reserved.
@@ -126,17 +126,6 @@ public struct APIError: Error, CustomStringConvertible {
         }
     }
     
-    public var numberOfRetries: Int {
-        get {
-            if let number = userInfo[.numberOfRetries] as? Int {
-                return number
-            }
-            return 0
-        }
-        set {
-            userInfo[.numberOfRetries] = newValue
-        }
-    }
 }
 
 extension APIError: Equatable {
@@ -176,6 +165,16 @@ extension APIError {
         let message  = nsError.localizedDescription
         let userInfo = nsError.userInfo
         self = APIError.init(code: code, message: message, userInfo: userInfo)
+    }
+    
+    /// 已重试的次数。
+    public var numberOfRetries: Int? {
+        get {
+            return userInfo[.numberOfRetries] as? Int
+        }
+        set {
+            userInfo[.numberOfRetries] = newValue
+        }
     }
     
 }

@@ -1,5 +1,5 @@
 //
-//  APIResponse.swift
+//  XZAPIResponse.swift
 //  XZKit
 //
 //  Created by Xezun on 2018/7/27.

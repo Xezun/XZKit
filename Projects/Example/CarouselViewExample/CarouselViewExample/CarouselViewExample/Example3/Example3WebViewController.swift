@@ -2,7 +2,7 @@
 //  Example3WebViewController.swift
 //  CarouselViewExample
 //
-//  Created by 徐臻 on 2019/6/6.
+//  Created by Xezun on 2019/6/6.
 //  Copyright © 2019 mlibai. All rights reserved.
 //
 

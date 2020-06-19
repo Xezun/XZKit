@@ -2,7 +2,7 @@
 //  XZURLTests.swift
 //  XZKitTests
 //
-//  Created by 徐臻 on 2020/5/16.
+//  Created by Xezun on 2020/5/16.
 //  Copyright © 2020 Xezun Inc. All rights reserved.
 //
 
