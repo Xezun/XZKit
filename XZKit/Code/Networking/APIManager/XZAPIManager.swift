@@ -28,7 +28,7 @@ public protocol APIManager: APINetworking {
     /// - Parameter request: 接口请求对象。
     /// - Returns: 描述表示本次请求的接口的对象。
     @discardableResult
-    func send(_ request: Request) -> APITask
+    func send(_ request: Request) -> APITask<Request>
     
     /// 当请求进度更新时，此方法会被调用。
     /// - Parameters:
@@ -75,7 +75,7 @@ extension APIManager {
     }
     
     @discardableResult
-    public func send(_ request: Request) -> APITask {
+    public func send(_ request: Request) -> APITask<Request> {
         return taskManager.send(request)
     }
     
@@ -111,6 +111,10 @@ extension APIManager {
 
 // MARK: - APITaskManager
 
+fileprivate enum APITaskStatus {
+    
+}
+
 /// 管理了 APIManger 的请求任务和多线程处理。
 /// - Note: APITaskManager 实际上就是 APIManager ，管理了 APITask 。
 /// - Note: APIManger 默认功能都是由 APITaskManager 处理的，一般情况下，你不需要用到它，除非默认提供的功能不能满足你的需求。
@@ -119,7 +123,9 @@ fileprivate class APITaskManager<Manager: APIManager>: APIGroup, APITimerDelegat
     
     typealias Request  = Manager.Request
     typealias Response = Manager.Response
-    typealias Task     = _APITask<Manager>
+    typealias Task     = APIManagerTask<Manager>
+    
+    fileprivate var apiTasks = [UUID: Task]()
     
     deinit {
         cancelAllTasksUnsafe(sendsEvents: false, retrievable: false)
@@ -156,8 +162,8 @@ fileprivate class APITaskManager<Manager: APIManager>: APIGroup, APITimerDelegat
         return !(pendingTasks.isEmpty && runningTasks.isEmpty && waitingTasks.isEmpty && delayedTasks.isEmpty)
     }
     
-    public func send(_ request: Request) -> APITask {
-        let apiTask = _APITask(request, delegate: self)
+    public func send(_ request: Request) -> APITask<Request> {
+        let apiTask = APIManagerTask(request, delegate: self)
         
         let identifier = apiTask.identifier
         group.lock(execute: {
@@ -244,7 +250,7 @@ fileprivate class APITaskManager<Manager: APIManager>: APIGroup, APITimerDelegat
     }
     
     /// 将任务按并发策略进行调度：放入执行列队或等待列队。
-    private func dispatchUnsafe(_ apiTask: _APITask<Manager>) {
+    private func dispatchUnsafe(_ apiTask: APIManagerTask<Manager>) {
         do {
             if apiTask.isCancelled {
                 throw APIError.cancelled
@@ -299,7 +305,7 @@ fileprivate class APITaskManager<Manager: APIManager>: APIGroup, APITimerDelegat
     
     /// 执行接口请求任务。
     /// - Note: 本方法直接发送请求，任何验证操作，请在调用此方法之前执行。
-    private func perform(_ apiTask: _APITask<Manager>) {
+    private func perform(_ apiTask: APIManagerTask<Manager>) {
         guard let manager = self.manager else { return }
         let identifier = apiTask.identifier
         do {
@@ -329,7 +335,7 @@ fileprivate class APITaskManager<Manager: APIManager>: APIGroup, APITimerDelegat
     }
     
     /// 任务完成，在调用此方法前 apiTask 已从列队移除。
-    private func complete(_ apiTask: _APITask<Manager>, data: Any?, error: Error?) {
+    fileprivate func complete(_ apiTask: APIManagerTask<Manager>, data: Any?, error: Error?) {
         guard let manager = self.manager else { return }
         
         do {
@@ -433,34 +439,32 @@ fileprivate class APITaskManager<Manager: APIManager>: APIGroup, APITimerDelegat
     
     private weak var manager: Manager?
     /// 正在执行的任务。
-    private var runningTasks = [UUID: _APITask<Manager>]()
+    private var runningTasks = [UUID: Task]()
     /// 排队等待执行的任务，按任务按并发优先级从低到高在数组中排列。
-    private var waitingTasks = [_APITask<Manager>]()
+    private var waitingTasks = [Task]()
     /// 延时自动重试的任务。
-    private var delayedTasks = [_APITask<Manager>]()
+    private var delayedTasks = [Task]()
     /// 即将执行的列队。
-    private var pendingTasks = [UUID: _APITask<Manager>]()
+    private var pendingTasks = [UUID: Task]()
     /// 延时倒计时。
     private var delayedTimer: APITimer?
     
 }
 
+protocol APITaskDelegate: class {
+    
+}
+
 /// 接口请求任务。
-fileprivate final class _APITask<Manager: APIManager>: APITask, APITimerDelegate {
+fileprivate final class APIManagerTask<Manager: APIManager>: APITask<Manager.Request>, APITimerDelegate {
     
-    public typealias Request = Manager.Request
-    public typealias TaskManager = APITaskManager<Manager>
-    
-    public init(_ request: Request, delegate: TaskManager) {
-        self.request  = request
+    fileprivate init(_ request: Manager.Request, delegate: APITaskManager<Manager>) {
+        super.init(request)
         self.delegate = delegate
     }
+    /// 执行任务的 URLSessionDataTask 对象。
+    public fileprivate(set) var dataTask: URLSessionDataTask?
     
-    public let request: Request
-    public let identifier      = UUID()
-    public var numberOfRetries = 0
-    public var isCancelled     = false
-    public weak var dataTask: URLSessionDataTask?
     public var deadline: DispatchTime? {
         didSet {
             if let deadline = self.deadline {
@@ -475,20 +479,20 @@ fileprivate final class _APITask<Manager: APIManager>: APITask, APITimerDelegate
     }
     
     /// 取消当前任务。
-    public func cancel() {
+    public override func cancel() {
         delegate?.cancelMethodWasCalled(self)
     }
     
-    public func timerWasTimeout(_ timer: APITimer) {
+    fileprivate func timerWasTimeout(_ timer: APITimer) {
         delegate?.deadlineTimerWasTimeout(self)
     }
     
     /// 延时。
-    public var delaying: DispatchTime = .distantFuture
+    fileprivate var delaying: DispatchTime = .distantFuture
     /// 是否可重试。
-    public var retrievable = true
+    fileprivate var retrievable = true
     
-    private weak var delegate: TaskManager?
+    private weak var delegate: APITaskManager<Manager>?
     private var deadlineTimer: APITimer?
 }
 
@@ -720,14 +724,8 @@ fileprivate struct AssociationKey {
 
 public class APIGroup1 {
     
-    fileprivate enum Queue {
-        case pending
-        case running
-        case waiting(priority: NSInteger)
-        case delayed(deadline: DispatchTime)
-    }
-    
     private var mutex: pthread_mutex_t
+    
     private var pendings = Set<UUID>()
     private var runnings = Set<UUID>()
     private var waitings = [(priority: Int, identifier: UUID)]()
@@ -737,61 +735,6 @@ public class APIGroup1 {
         var mutex = pthread_mutex_t.init()
         pthread_mutex_init(&mutex, nil)
         self.mutex = mutex
-    }
-    
-    fileprivate var isEmpty: Bool {
-        return pendings.isEmpty && runnings.isEmpty && waitings.isEmpty && pendings.isEmpty
-    }
-    
-    fileprivate func contains(identifier: UUID, in storage: Queue) -> Bool {
-        switch storage {
-        case .pending:
-            return pendings.contains(identifier)
-        case .running:
-            return runnings.contains(identifier)
-        case .waiting:
-            return waitings.contains(where: { $0.identifier == identifier })
-        case .delayed:
-            return delayeds.contains(where: { $0.identifier == identifier })
-        }
-    }
-    
-    fileprivate func insert(identifier: UUID, in storage: Queue) {
-        switch storage {
-        case .pending:
-            pendings.insert(identifier)
-        case .running:
-            runnings.insert(identifier)
-        case .waiting(let priority):
-            assert(!waitings.contains(where: { $0.identifier == identifier }), "无法将 \(identifier) 添加到延迟列队中，该标识符已存在。")
-            if let index = waitings.firstIndex(where: { priority <= $0.priority }) {
-                waitings.insert((priority, identifier), at: index)
-            } else {
-                waitings.append((priority, identifier))
-            }
-        case .delayed(let deadline):
-            assert(!delayeds.contains(where: { $0.identifier == identifier }), "无法将 \(identifier) 添加到延迟列队中，该标识符已存在。")
-            if let index = delayeds.firstIndex(where: { $0.deadline <= deadline }) {
-                delayeds.insert((deadline, identifier), at: index)
-            } else {
-                delayeds.append((deadline, identifier))
-            }
-        }
-    }
-    
-    fileprivate func remove(identifier: UUID, in storage: Queue) -> UUID? {
-        switch storage {
-        case .pending:
-            return pendings.remove(identifier)
-        case .running:
-            return runnings.remove(identifier)
-        case .waiting:
-            guard let index = waitings.firstIndex(where: { $0.identifier == identifier }) else { return nil }
-            return waitings.remove(at: index).identifier
-        case .delayed:
-            guard let index = delayeds.firstIndex(where: { $0.identifier == identifier }) else { return nil }
-            return delayeds.remove(at: index).identifier
-        }
     }
     
     fileprivate func lock() {
@@ -804,10 +747,97 @@ public class APIGroup1 {
     
     fileprivate func lock<T>(execute operation: () throws -> T) rethrows -> T {
         pthread_mutex_lock(&mutex)
-        defer {
-            pthread_mutex_unlock(&mutex)
-        }
+        defer { pthread_mutex_unlock(&mutex) }
         return try operation()
+    }
+    
+    private func manager<T: APIManager>(_ manager: APITaskManager<T>, enqueue apiTask: APIManagerTask<T>) throws -> Bool {
+        let identifier = apiTask.identifier
+        switch apiTask.request.concurrencyPolicy {
+        case .ignoreCurrent:
+            guard runnings.isEmpty else {
+                throw APIError.ignored
+            }
+            runnings.insert(identifier)
+            manager.apiTasks[identifier] = apiTask
+            return true
+            
+        case .default:
+            runnings.insert(identifier)
+            return true
+            
+        case .cancelOthers:
+            cancelAllTasks()
+            // group.cancelAllTasksUnsafe(sendsEvents: true, retrievable: true)
+            runnings.insert(identifier)
+            manager.apiTasks[identifier] = apiTask
+            return true
+            
+        case .wait(let priority):
+            if runnings.isEmpty {
+                runnings.insert(identifier)
+                manager.apiTasks[identifier] = apiTask
+                return true
+            }
+            if let index = waitings.firstIndex(where: { priority.rawValue <= $0.priority }) {
+                waitings.insert((priority.rawValue, identifier), at: index)
+            } else {
+                waitings.append((priority.rawValue, identifier))
+            }
+            return false
+        }
+    }
+    
+    fileprivate func manager<T: APIManager>(_ manager: APITaskManager<T>, dispatch apiTask: APIManagerTask<T>) {
+        
+        do {
+            if try self.manager(manager, enqueue: apiTask) {
+                
+            }
+        } catch {
+            manager.complete(apiTask, data: nil, error: error)
+        }
+    }
+    
+    func cancelAllTasks() {
+        
+    }
+    
+}
+
+
+public class APITask<Request: APIRequest>: Hashable {
+    
+    fileprivate init(_ request: Request) {
+        self.request = request
+        self.identifier = UUID()
+        self.numberOfRetries = 0
+        self.isCancelled = false
+    }
+    
+    public let request: Request
+    
+    /// 任务的唯一标识符。
+    public let identifier: UUID
+    
+    /// 已重试的次数。
+    public var numberOfRetries: Int
+    
+    /// 是否已取消。
+    public fileprivate(set) var isCancelled: Bool
+    
+    /// 取消当前任务。
+    public func cancel() -> Void {
+        
+    }
+    
+    
+    public static func == (lhs: APITask<Request>, rhs: APITask<Request>) -> Bool {
+        return lhs.identifier == rhs.identifier
+    }
+    
+    public func hash(into hasher: inout Hasher) {
+        hasher.combine(identifier)
     }
     
 }
