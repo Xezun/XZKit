@@ -11,37 +11,26 @@ import XZKit
 
 class XZNetworkingTestCase: XCTestCase, TestAPIManagerDelegate {
     
-    var logs = [Int: [String]]()
+    var finished = [Int]()
     
-    func manager(_ manager: TestAPIManager, request: Int, didReceive message: String, finished: Bool) {
-        if var array = logs[request] {
-            array.append(message)
-            logs[request] = array
-        } else {
-            logs[request] = [message]
-        }
-        
-        if finished {
-            count += 1
-            
-            if count == 100 {
-                exp.fulfill()
-            }
-        }
-        
+    func manager(_ manager: TestAPIManager, request: TestAPIRequest, didFailWith error: APIError) {
+        exp.fulfill()
+    }
+    
+    func manager(_ manager: TestAPIManager, request: TestAPIRequest, didReceive response: TestAPIResponse) {
+        exp.fulfill()
+        finished.append(request.index)
     }
     
     var manager1: TestAPIManager! = TestAPIManager.init()
     var manager2: TestAPIManager! = TestAPIManager.init()
     
     lazy var group: APIGroup! = APIGroup.init()
-    var count = 0
     
     override func setUp() {
         manager1.delegate = self
-        
         manager2.delegate = self
-        
+
         manager1.group = group
         manager2.group = group
     }
@@ -58,102 +47,54 @@ class XZNetworkingTestCase: XCTestCase, TestAPIManagerDelegate {
         
         exp = self.expectation(description: "")
         
-        count = 0
-        for id in 0 ..< 50 {
-            DispatchQueue.global().async {
-                switch Int.random(in: 0...3) {
-                case 0:
-                    self.manager1.send(.a(id: id))
-                case 1:
-                    self.manager1.send(.b(id: id))
-                case 2:
-                    self.manager1.send(.c(id: id))
-                case 3:
-                    self.manager1.send(.d(id: id))
-                default:
-                    break
-                }
-            }
+        exp.expectedFulfillmentCount = 20
+        
+        for id in 0 ..< 10 {
+            self.manager1.send(.init(index: id))
         }
         
-        for id in 50 ..< 100 {
-            DispatchQueue.global().async {
-                switch Int.random(in: 0...3) {
-                case 0:
-                    self.manager2.send(.a(id: id))
-                case 1:
-                    self.manager2.send(.b(id: id))
-                case 2:
-                    self.manager2.send(.c(id: id))
-                case 3:
-                    self.manager2.send(.d(id: id))
-                default:
-                    break
-                }
-            }
+        for id in 10 ..< 20 {
+            self.manager2.send(.init(index: id))
         }
         
-        self.waitForExpectations(timeout: 30) { (error) in
-            XZLog("%@", String.init(json: self.logs, options: [.prettyPrinted, .sortedKeys]))
+        self.waitForExpectations(timeout: 60) { (error) in
+            XZLog("%@", String.init(json: self.finished, options: [.prettyPrinted, .sortedKeys]))
         }
         
     }
-    
-    
     
 }
 
 
-enum TestAPIRequest: CustomStringConvertible, APIRequest {
+struct TestAPIRequest: APIRequest {
     
-    case a(id: Int)
-    case b(id: Int)
-    case c(id: Int)
-    case d(id: Int)
-    
-    var url: URL {
-        return URL(string: "https://api.xezun.com/app/\(self)")!
+    init(index: Int) {
+        self.index = index
     }
     
-    var description: String {
-        switch self {
-        case .a(let id):
-            return "a\(id)"
-        case .b(let id):
-            return "b\(id)"
-        case .c(let id):
-            return "c\(id)"
-        case .d(let id):
-            return "d\(id)"
-        }
+    let index: Int
+    
+    var url: URL {
+        return URL(string: "https://api.xezun.com/app/\(index)")!
     }
     
     var concurrencyPolicy: APIConcurrency.Policy {
-        switch self {
-        case .a:
-            return .default
-        case .b:
-            return .cancelOthers
-        case .c:
-            return .ignoreCurrent
-        case .d(let v):
-            return .wait(priority: APIConcurrency.Priority(rawValue: v))
-        }
+        return .wait(priority: APIConcurrency.Priority.init(rawValue: index))
     }
     
     var retryIfFailed: Bool {
-        return true
+        return false
     }
     
 }
 
 struct TestAPIResponse: APIResponse {
     
-    let result: String
+    let result: URL
     
     init(_ request: TestAPIRequest, data: Any?) throws {
-        guard let result = data as? String else { throw APIError.unexpectedResponse }
-        self.result = String(formats: "%@, %@", request, result)
+        guard let result = data as? URL else { throw APIError.unexpectedResponse }
+        self.result = result
     }
     
     typealias Request = TestAPIRequest
@@ -162,7 +103,8 @@ struct TestAPIResponse: APIResponse {
 
 protocol TestAPIManagerDelegate: class {
     
-    func manager(_ manager: TestAPIManager, request: Int, didReceive message: String, finished: Bool)
+    func manager(_ manager: TestAPIManager, request: TestAPIRequest, didFailWith error: APIError)
+    func manager(_ manager: TestAPIManager, request: TestAPIRequest, didReceive response: TestAPIResponse)
 }
 
 class TestAPIManager: APIManager {
@@ -185,15 +127,7 @@ class TestAPIManager: APIManager {
     }
     
     func request(_ request: TestAPIRequest, didReceive response: TestAPIResponse) {
-        DispatchQueue.main.async {
-            let message = String(formats: "%.3f：成功！", TimeInterval.since1970)
-            switch request {
-            case .a(let id): self.delegate?.manager(self, request: id, didReceive: message, finished: true)
-            case .b(let id): self.delegate?.manager(self, request: id, didReceive: message, finished: true)
-            case .c(let id): self.delegate?.manager(self, request: id, didReceive: message, finished: true)
-            case .d(let id): self.delegate?.manager(self, request: id, didReceive: message, finished: true)
-            }
-        }
+        delegate?.manager(self, request: request, didReceive: response)
     }
     
     func request(_ request: TestAPIRequest, didFailWith error: APIError) -> TimeInterval? {
@@ -201,27 +135,12 @@ class TestAPIManager: APIManager {
             let d = Int.random(in: 1 ... 5)
             if numberOfRetries < d {
                 let delay = TimeInterval.random(in: 1.0 ... 2.0);
-                DispatchQueue.main.async {
-                    let message = String(formats: "%.3f：%.3f秒后重试！", TimeInterval.since1970, delay)
-                    switch request {
-                    case .a(let id): self.delegate?.manager(self, request: id, didReceive: message, finished: false)
-                    case .b(let id): self.delegate?.manager(self, request: id, didReceive: message, finished: false)
-                    case .c(let id): self.delegate?.manager(self, request: id, didReceive: message, finished: false)
-                    case .d(let id): self.delegate?.manager(self, request: id, didReceive: message, finished: false)
-                    }
-                }
                 return delay
             }
         }
         
         DispatchQueue.main.async {
-            let message = String(formats: "%.3f：失败，共重试%ld次！", TimeInterval.since1970, error.numberOfRetries)
-            switch request {
-            case .a(let id): self.delegate?.manager(self, request: id, didReceive: message, finished: true)
-            case .b(let id): self.delegate?.manager(self, request: id, didReceive: message, finished: true)
-            case .c(let id): self.delegate?.manager(self, request: id, didReceive: message, finished: true)
-            case .d(let id): self.delegate?.manager(self, request: id, didReceive: message, finished: true)
-            }
+            self.delegate?.manager(self, request: request, didFailWith: error)
         }
         
         return nil
@@ -231,16 +150,42 @@ class TestAPIManager: APIManager {
     
     typealias Response = TestAPIResponse
     
-    func dataTask(for request: APIRequest, progress: @escaping (Int64, Int64) -> Void, completion: @escaping (Any?, Error?) -> Void) throws -> URLSessionDataTask? {
-        NetworkingQueue.asyncAfter(TimeInterval.random(in: 1.0 ... 2.0)) {
-            completion([
-                "code": 0,
-                "message": "OK",
-                "result": ""
-            ], nil)
+}
+
+
+// MARK: - APIManager
+
+extension APINetworking {
+    
+    public func dataTask(for request: APIRequest, progress: @escaping (Int64, Int64) -> Void, completion: @escaping (Any?, Error?) -> Void) throws -> URLSessionDataTask? {
+        
+        self.doProgress(from: 0) { (value) -> Bool in
+            if value < 100 {
+                progress(value, 100)
+                return true
+            }
+            progress(100, 100)
+            DispatchQueue.global().async(execute: {
+                completion([
+                    "code": 0,
+                    "message": "OK",
+                    "result": request.url
+                ], nil)
+            })
+            return false
         }
+        
+        
         return nil
     }
     
-    
+    private func doProgress(from value: Int64, handler: @escaping (Int64) -> Bool) {
+        let increment = min(Int64.random(in: 10 ... 20), 100 - value)
+        DispatchQueue.global().asyncAfter(TimeInterval(increment) * 0.01, execute: {
+            let next = increment + value
+            if handler(next) {
+                self.doProgress(from: next, handler: handler)
+            }
+        })
+    }
 }

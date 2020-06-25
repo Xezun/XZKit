@@ -69,9 +69,9 @@ public protocol APIManager: APINetworking {
 extension APIManager {
     
     /// 组。必须在没有请求任务时才能 APIManager 发送任何请求前设置组
-    public var group: APIGroup {
-        get { return taskManager.group     }
-        set { taskManager.group = newValue }
+    public var group: APIGroup? {
+        get { return taskManager.group       }
+        set { taskManager.setGroup(newValue) }
     }
     
     @discardableResult
@@ -92,16 +92,16 @@ extension APIManager {
     }
     
     fileprivate var taskManager: APITaskManager<Self> {
-        if let manager = objc_getAssociatedObject(self, &AssociationKey.apiTaskManager) as? APITaskManager<Self> {
+        if let manager = objc_getAssociatedObject(self, &AssociationKey.manager) as? APITaskManager<Self> {
             return manager
         }
         objc_sync_enter(self)
         defer { objc_sync_exit(self) }
-        if let manager = objc_getAssociatedObject(self, &AssociationKey.apiTaskManager) as? APITaskManager<Self> {
+        if let manager = objc_getAssociatedObject(self, &AssociationKey.manager) as? APITaskManager<Self> {
             return manager
         }
         let manager = APITaskManager(for: self)
-        objc_setAssociatedObject(self, &AssociationKey.apiTaskManager, manager, .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
+        objc_setAssociatedObject(self, &AssociationKey.manager, manager, .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
         return manager
     }
     
@@ -122,30 +122,33 @@ fileprivate class APITaskManager<Manager: APIManager>: APIGroup, APITimerDelegat
     typealias Task     = _APITask<Manager>
     
     deinit {
-        _ = cancelAllTasksUnsafe(sendsEvents: false, retrievable: false)
-        if group != self {
-            group.remove(self)
-        }
+        cancelAllTasksUnsafe(sendsEvents: false, retrievable: false)
+        group.remove(self)
     }
     
     public init(for manager: Manager) {
-        super.init()
+        let group = APISingleManagerGroup.init()
+        self.bakup = group
+        self.group = group
         self.manager = manager
-        self.group   = self
+        super.init(mutex: group.mutex)
+        group.delegate = self
     }
     
-    override public var group: APIGroup! {
-        get {
-            return super.group
+    private var bakup: APIGroup
+    public private(set) var group: APIGroup
+    
+    public func setGroup(_ newValue: APIGroup?) {
+        if newValue == group {
+            return
         }
-        set {
-            if let oldGroup = super.group, oldGroup != self {
-                oldGroup.remove(self)
-            }
-            super.group = newValue
-            if let newGroup = newValue, newGroup != self {
-                newGroup.add(self)
-            }
+        if let newValue = newValue {
+            group.remove(self)
+            newValue.add(self)
+            group = newValue
+        } else {
+            group.remove(self)
+            group = bakup
         }
     }
     
@@ -183,7 +186,7 @@ fileprivate class APITaskManager<Manager: APIManager>: APIGroup, APITimerDelegat
     }
     
     override func remove(_ item: APIGroup) {
-        assert(false, "The APIManager's default APIGroup should only be used by itself!")
+        
     }
     
     override var hasRunningTasksUnsafe: Bool {
@@ -430,13 +433,13 @@ fileprivate class APITaskManager<Manager: APIManager>: APIGroup, APITimerDelegat
     
     private weak var manager: Manager?
     /// 正在执行的任务。
-    private lazy var runningTasks = [UUID: _APITask<Manager>]()
+    private var runningTasks = [UUID: _APITask<Manager>]()
     /// 排队等待执行的任务，按任务按并发优先级从低到高在数组中排列。
-    private lazy var waitingTasks = [_APITask<Manager>]()
+    private var waitingTasks = [_APITask<Manager>]()
     /// 延时自动重试的任务。
-    private lazy var delayedTasks = [_APITask<Manager>]()
+    private var delayedTasks = [_APITask<Manager>]()
     /// 即将执行的列队。
-    private lazy var pendingTasks = [UUID: _APITask<Manager>]()
+    private var pendingTasks = [UUID: _APITask<Manager>]()
     /// 延时倒计时。
     private var delayedTimer: APITimer?
     
@@ -490,22 +493,6 @@ fileprivate final class _APITask<Manager: APIManager>: APITask, APITimerDelegate
 }
 
 
-private struct AssociationKey {
-    static var apiTaskManager: Int = 0
-}
-
-
-extension Double {
-    
-    /// 将元组 (分子, 分母) 表示的分数转换成小数。
-    /// - Parameter value: 元组形式的分数。
-    public init<T: BinaryInteger, K: BinaryInteger>(fraction value: (T, K)) {
-        self = Double(value.0) / Double(value.1)
-    }
-    
-}
-
-
 fileprivate protocol APITimerDelegate: class {
     func timerWasTimeout(_ timer: APITimer)
 }
@@ -554,35 +541,38 @@ fileprivate final class APITimer {
 }
 
 /// 组。
-public class APIGroup: Hashable {
-    
-    private var mutex: pthread_mutex_t
+public class APIGroup {
     
     deinit {
         pthread_mutex_destroy(&mutex)
     }
     
-    public init() {
+    public convenience init() {
         var mutex = pthread_mutex_t.init()
         pthread_mutex_init(&mutex, nil)
-        self.mutex = mutex
+        self.init(mutex: mutex)
     }
     
-    fileprivate weak var group: APIGroup!
+    fileprivate init(mutex: pthread_mutex_t) {
+        self.mutex = mutex
+        self.bakex = mutex
+    }
     
-    fileprivate func add(_ item: APIGroup) {
+    fileprivate func add(_ group: APIGroup) {
         pthread_mutex_lock(&mutex)
-        item.mutex = mutex
-        items.insert(Item(item))
+        let item = Item.init(group)
+        if !items.contains(item) {
+            group.bakex = group.mutex // backup the mutext
+            group.mutex = mutex
+            items.insert(item)
+        }
         pthread_mutex_unlock(&mutex)
     }
     
-    fileprivate func remove(_ item: APIGroup) {
+    fileprivate func remove(_ group: APIGroup) {
         pthread_mutex_lock(&mutex)
-        if let item = items.remove(Item(item)) {
-            var mutex = pthread_mutex_t.init()
-            pthread_mutex_init(&mutex, nil)
-            item.value?.mutex = mutex
+        if let group = items.remove(Item(group))?.value {
+            group.mutex = group.bakex // restore the mutex
         }
         pthread_mutex_unlock(&mutex)
     }
@@ -628,29 +618,60 @@ public class APIGroup: Hashable {
     
     fileprivate func lock<T>(execute operation: () throws -> T) rethrows -> T {
         pthread_mutex_lock(&mutex)
-        let result = try operation()
-        pthread_mutex_unlock(&mutex)
-        return result
+        defer {
+            pthread_mutex_unlock(&mutex)
+        }
+        return try operation()
     }
     
-    private class Item: Hashable {
-        static func == (lhs: APIGroup.Item, rhs: APIGroup.Item) -> Bool {
-            return lhs.hashValue == rhs.hashValue
-        }
+    /// The items managed by current group.
+    private var items = Set<Item>()
+    /// The thread safe lock.
+    fileprivate var mutex: pthread_mutex_t
+    /// The backoup of mutex.
+    private var bakex: pthread_mutex_t
+    
+    /// For wrap a group with weak ref.
+    fileprivate class Item {
         weak var value: APIGroup?
         init(_ value: APIGroup) {
             self.value = value
         }
-        func hash(into hasher: inout Hasher) {
-            if let value = self.value {
-                hasher.combine(value)
-            } else {
-                hasher.combine(0)
-            }
-        }
     }
     
-    private lazy var items = Set<Item>()
+}
+
+fileprivate class APISingleManagerGroup: APIGroup {
+    
+    weak var delegate: APIGroup!
+    
+    override func add(_ item: APIGroup) {
+        assert(item == delegate, "The \(self) is designed for \(String(describing: delegate)) only!")
+    }
+    
+    override func remove(_ item: APIGroup) {
+        
+    }
+    
+    override var hasRunningTasksUnsafe: Bool {
+        return delegate.hasRunningTasksUnsafe
+    }
+    
+    override func cancelAllTasksUnsafe(sendsEvents: Bool, retrievable: Bool) {
+        delegate.cancelAllTasksUnsafe(sendsEvents: sendsEvents, retrievable: retrievable)
+    }
+    
+    override var maximumPriorityInWaitingTasksUnsafe: Int? {
+        return delegate.maximumPriorityInWaitingTasksUnsafe
+    }
+    
+    override func scheduleWaitingTaskUnsafe() {
+        delegate.scheduleWaitingTaskUnsafe()
+    }
+    
+}
+
+extension APIGroup: Hashable {
     
     public static func == (lhs: APIGroup, rhs: APIGroup) -> Bool {
         return lhs.hashValue == rhs.hashValue
@@ -658,6 +679,135 @@ public class APIGroup: Hashable {
     
     public func hash(into hasher: inout Hasher) {
         hasher.combine(unsafeBitCast(self, to: Int.self));
+    }
+    
+}
+
+extension APIGroup.Item: Hashable {
+    
+    func hash(into hasher: inout Hasher) {
+        if let value = self.value {
+            hasher.combine(value)
+        } else {
+            hasher.combine(0)
+        }
+    }
+    
+    static func == (lhs: APIGroup.Item, rhs: APIGroup.Item) -> Bool {
+        return lhs.hashValue == rhs.hashValue
+    }
+    
+}
+
+
+extension Double {
+    
+    /// 将元组 (分子, 分母) 表示的分数转换成小数。
+    /// - Parameter value: 元组形式的分数。
+    public init<T: BinaryInteger, K: BinaryInteger>(fraction value: (T, K)) {
+        self = Double(value.0) / Double(value.1)
+    }
+    
+}
+
+
+
+
+fileprivate struct AssociationKey {
+    static var manager: Int = 0
+}
+
+
+public class APIGroup1 {
+    
+    fileprivate enum Queue {
+        case pending
+        case running
+        case waiting(priority: NSInteger)
+        case delayed(deadline: DispatchTime)
+    }
+    
+    private var mutex: pthread_mutex_t
+    private var pendings = Set<UUID>()
+    private var runnings = Set<UUID>()
+    private var waitings = [(priority: Int, identifier: UUID)]()
+    private var delayeds = [(deadline: DispatchTime, identifier: UUID)]()
+    
+    public init() {
+        var mutex = pthread_mutex_t.init()
+        pthread_mutex_init(&mutex, nil)
+        self.mutex = mutex
+    }
+    
+    fileprivate var isEmpty: Bool {
+        return pendings.isEmpty && runnings.isEmpty && waitings.isEmpty && pendings.isEmpty
+    }
+    
+    fileprivate func contains(identifier: UUID, in storage: Queue) -> Bool {
+        switch storage {
+        case .pending:
+            return pendings.contains(identifier)
+        case .running:
+            return runnings.contains(identifier)
+        case .waiting:
+            return waitings.contains(where: { $0.identifier == identifier })
+        case .delayed:
+            return delayeds.contains(where: { $0.identifier == identifier })
+        }
+    }
+    
+    fileprivate func insert(identifier: UUID, in storage: Queue) {
+        switch storage {
+        case .pending:
+            pendings.insert(identifier)
+        case .running:
+            runnings.insert(identifier)
+        case .waiting(let priority):
+            assert(!waitings.contains(where: { $0.identifier == identifier }), "无法将 \(identifier) 添加到延迟列队中，该标识符已存在。")
+            if let index = waitings.firstIndex(where: { priority <= $0.priority }) {
+                waitings.insert((priority, identifier), at: index)
+            } else {
+                waitings.append((priority, identifier))
+            }
+        case .delayed(let deadline):
+            assert(!delayeds.contains(where: { $0.identifier == identifier }), "无法将 \(identifier) 添加到延迟列队中，该标识符已存在。")
+            if let index = delayeds.firstIndex(where: { $0.deadline <= deadline }) {
+                delayeds.insert((deadline, identifier), at: index)
+            } else {
+                delayeds.append((deadline, identifier))
+            }
+        }
+    }
+    
+    fileprivate func remove(identifier: UUID, in storage: Queue) -> UUID? {
+        switch storage {
+        case .pending:
+            return pendings.remove(identifier)
+        case .running:
+            return runnings.remove(identifier)
+        case .waiting:
+            guard let index = waitings.firstIndex(where: { $0.identifier == identifier }) else { return nil }
+            return waitings.remove(at: index).identifier
+        case .delayed:
+            guard let index = delayeds.firstIndex(where: { $0.identifier == identifier }) else { return nil }
+            return delayeds.remove(at: index).identifier
+        }
+    }
+    
+    fileprivate func lock() {
+        pthread_mutex_lock(&mutex)
+    }
+    
+    fileprivate func unlock() {
+        pthread_mutex_unlock(&mutex)
+    }
+    
+    fileprivate func lock<T>(execute operation: () throws -> T) rethrows -> T {
+        pthread_mutex_lock(&mutex)
+        defer {
+            pthread_mutex_unlock(&mutex)
+        }
+        return try operation()
     }
     
 }
