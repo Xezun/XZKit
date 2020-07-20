@@ -26,8 +26,6 @@ extension RAPIMethod {
     
 }
 
-
-/// RAPI 请求方式。
 public struct RAPIMethod: RawRepresentable, Hashable, CustomStringConvertible, ExpressibleByStringLiteral {
     
     public typealias RawValue = String

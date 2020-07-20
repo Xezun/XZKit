@@ -14,7 +14,6 @@ public protocol RAPIManager: RAPINetworking {
     
     typealias Request = Response.Request
     
-    /// 分数表示的进度，completed / total 得到百分比。
     typealias Progress = (completed: Int64, total: Int64)
     
     @discardableResult
@@ -37,3 +36,39 @@ public protocol RAPINetworking: AnyObject {
     
 }
 
+
+open class RometeAPI<Response: RAPIResponse> {
+    
+    public typealias Request  = Response.Request
+    public typealias Progress = (completed: Int64, total: Int64)
+    
+    @discardableResult
+    open func send(_ request: Request) -> RAPITask<Request> {
+        return RAPITask.init(request)
+    }
+    
+    open func apiTask(_ apiTask: RAPITask<Request>, didProcess progress: Progress) {
+        
+    }
+    
+    open func apiTask(_ apiTask: RAPITask<Request>, didCollect data: Any?) throws -> Response {
+        throw APIError.undefined
+    }
+    
+    open func apiTask(_ apiTask: RAPITask<Request>, didReceive response: Response) {
+        
+    }
+    
+    @discardableResult
+    open func apiTask(_ apiTask: RAPITask<Request>, didFailWith error: RAPIError) -> TimeInterval? {
+        if apiTask.request.retryIfFailed {
+            switch apiTask.retriedCount {
+            case 0 ..< 100:
+                return TimeInterval(apiTask.retriedCount)
+            default:
+                return nil
+            }
+        }
+        return nil
+    }
+}

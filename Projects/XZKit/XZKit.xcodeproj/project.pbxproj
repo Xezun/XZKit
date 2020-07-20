@@ -117,6 +117,8 @@
 		29C9271E24A900520045F2E3 /* RAPIResponse.swift in Sources */ = {isa = PBXBuildFile; fileRef = 29C9271D24A900520045F2E3 /* RAPIResponse.swift */; };
 		29C9272024A9009A0045F2E3 /* RAPIError.swift in Sources */ = {isa = PBXBuildFile; fileRef = 29C9271F24A9009A0045F2E3 /* RAPIError.swift */; };
 		29C9272224A902830045F2E3 /* RAPITask.swift in Sources */ = {isa = PBXBuildFile; fileRef = 29C9272124A902830045F2E3 /* RAPITask.swift */; };
+		29C9272424AA45E90045F2E3 /* RAPIGroup.swift in Sources */ = {isa = PBXBuildFile; fileRef = 29C9272324AA45E90045F2E3 /* RAPIGroup.swift */; };
+		29C9272624AA50B10045F2E3 /* RAPITaskManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 29C9272524AA50B10045F2E3 /* RAPITaskManager.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -240,6 +242,8 @@
 		29C9271D24A900520045F2E3 /* RAPIResponse.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RAPIResponse.swift; sourceTree = "<group>"; };
 		29C9271F24A9009A0045F2E3 /* RAPIError.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RAPIError.swift; sourceTree = "<group>"; };
 		29C9272124A902830045F2E3 /* RAPITask.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RAPITask.swift; sourceTree = "<group>"; };
+		29C9272324AA45E90045F2E3 /* RAPIGroup.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RAPIGroup.swift; sourceTree = "<group>"; };
+		29C9272524AA50B10045F2E3 /* RAPITaskManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RAPITaskManager.swift; sourceTree = "<group>"; };
 		DD30EF4121A4330000C4C73C /* XZKit.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = XZKit.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		DD30EF4521A4330000C4C73C /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -595,6 +599,8 @@
 			isa = PBXGroup;
 			children = (
 				29C9271524A8F0540045F2E3 /* RAPIManager.swift */,
+				29C9272324AA45E90045F2E3 /* RAPIGroup.swift */,
+				29C9272524AA50B10045F2E3 /* RAPITaskManager.swift */,
 				29C9271724A8FD7B0045F2E3 /* RAPIRequest.swift */,
 				29C9271924A8FDBB0045F2E3 /* RAPIConcurrency.swift */,
 				29C9271B24A8FF850045F2E3 /* RAPIMethod.swift */,
@@ -855,6 +861,7 @@
 				28CA186A22478E8300F16621 /* XZDataDigester.m in Sources */,
 				28E3B72A22716E31005ECB02 /* XZCarouselView.ScrollView.m in Sources */,
 				28CA188422478E8300F16621 /* URL+XZKit.swift in Sources */,
+				29C9272624AA50B10045F2E3 /* RAPITaskManager.swift in Sources */,
 				28CA185A22478E8300F16621 /* UINavigationBar+XZNavigationController.swift in Sources */,
 				28CA188D22478E8300F16621 /* NSData+XZKit.m in Sources */,
 				28CA187A22478E8300F16621 /* UIImage+XZKit.m in Sources */,
@@ -887,6 +894,7 @@
 				28F4F2B6224A86C400E7B23C /* XZKit+Geometry.swift in Sources */,
 				28CA18A322478E8300F16621 /* XZAppLanguage.swift in Sources */,
 				29C9271A24A8FDBB0045F2E3 /* RAPIConcurrency.swift in Sources */,
+				29C9272424AA45E90045F2E3 /* RAPIGroup.swift in Sources */,
 				28CA186E22478E8300F16621 /* UIDevice+XZKit.swift in Sources */,
 				28CA186822478E8300F16621 /* XZCacheManger.swift in Sources */,
 			);

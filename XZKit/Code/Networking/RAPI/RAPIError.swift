@@ -55,14 +55,14 @@ public struct RAPIError: Error, CustomStringConvertible {
     public let message: String
     
     /// 自定义错误信息。
-    public private(set) var userInfo: [UserInfoKey: Any]
+    public private(set) var userInfo: [String: Any]
     
     /// RAPIError 初始化。
     ///
     /// - Parameters:
     ///   - code: 错误码
     ///   - message: 描述
-    public init(code: Int, message: String, userInfo: [UserInfoKey: Any] = [:]) {
+    public init(code: Int, message: String, userInfo: [String: Any] = [:]) {
         self.code = code
         self.message = message
         self.userInfo = userInfo
@@ -128,7 +128,11 @@ public struct RAPIError: Error, CustomStringConvertible {
     
 }
 
-extension RAPIError: Equatable {
+extension RAPIError: Comparable {
+    
+    public static func < (lhs: RAPIError, rhs: RAPIError) -> Bool {
+        return lhs.code < rhs.code
+    }
     
     public static func ==(lhs: RAPIError, rhs: RAPIError) -> Bool {
         return lhs.code == rhs.code
@@ -179,7 +183,37 @@ extension RAPIError {
     
 }
 
-
-fileprivate enum RAPICode {
+fileprivate enum RAPIError1 {
+    
+    /// 表示没有错误发生。
+    /// - Note: 除非希望提前结束正常流程，否则请不要抛出 noError 错误。
+    case noError
+    
+    /// 未定义的错误。
+    case undefined
+    
+    /// 请求被取消了。
+    case cancelled
+    
+    /// 请求被忽略了。
+    case ignored
+    
+    /// 请求超截止时间，非网络响应的超时。
+    case timeout
+    
+    case retry(Int)
+    
+    /// 无网络而发生的错误。
+    case unreachable(Int)
+    
+    /// 无效的接口请求。
+    case invalidRequest(Int)
+    
+    /// 请求结果无法解析。
+    case unexpectedResponse(Int)
+    
+    /// 其它错误
+    case other(Error?)
     
 }
+
