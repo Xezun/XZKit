@@ -29,6 +29,9 @@ class XZKitConstantsSwiftTests: XCTestCase {
     }
     
     func testString() {
+        XZLog("XZML 变星: %@", XZMLParser("<f00^6$变星<FF0^星星>>", nil, .middle, true))
+        XZLog("XZML 不变: %@", XZMLParser("<f00^6$变星<FF0^星星>>", nil, .middle, false))
+        
         let string1 = String.init(formats: "%@ %02ld %.2f", "对象", 2, CGFloat.pi);
         let string2 = String.init(formats: "%@ %@ %@", "对象", 2, CGFloat.pi);
         XZLog("string1: \(string1), \nstring2: \(string2)")

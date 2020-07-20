@@ -99,26 +99,13 @@
 		28F608DA23E0353500C394B9 /* XZKitTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 28F608D923E0353500C394B9 /* XZKitTests.m */; };
 		28F608DC23E0353500C394B9 /* XZKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DD30EF4121A4330000C4C73C /* XZKit.framework */; };
 		28F608E323E04F5800C394B9 /* XZKitConstantsTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 28F608E223E04F5800C394B9 /* XZKitConstantsTests.m */; };
-		29106AD8249E50E7005B9954 /* XZAPIManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 29106AD0249E50E7005B9954 /* XZAPIManager.swift */; };
-		29106AD9249E50E7005B9954 /* XZAPIConcurrency.swift in Sources */ = {isa = PBXBuildFile; fileRef = 29106AD1249E50E7005B9954 /* XZAPIConcurrency.swift */; };
-		29106ADA249E50E7005B9954 /* XZAPITask.swift in Sources */ = {isa = PBXBuildFile; fileRef = 29106AD2249E50E7005B9954 /* XZAPITask.swift */; };
-		29106ADC249E50E7005B9954 /* XZAPIMethod.swift in Sources */ = {isa = PBXBuildFile; fileRef = 29106AD4249E50E7005B9954 /* XZAPIMethod.swift */; };
-		29106ADD249E50E7005B9954 /* XZAPIResponse.swift in Sources */ = {isa = PBXBuildFile; fileRef = 29106AD5249E50E7005B9954 /* XZAPIResponse.swift */; };
-		29106ADE249E50E7005B9954 /* XZAPIRequest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 29106AD6249E50E7005B9954 /* XZAPIRequest.swift */; };
-		29106ADF249E50E7005B9954 /* XZAPIError.swift in Sources */ = {isa = PBXBuildFile; fileRef = 29106AD7249E50E7005B9954 /* XZAPIError.swift */; };
-		29106AE1249E5882005B9954 /* XZAPINetworking.swift in Sources */ = {isa = PBXBuildFile; fileRef = 29106AE0249E5882005B9954 /* XZAPINetworking.swift */; };
 		29380610249630D100FDE6AD /* XZNetworkingTestCase.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2938060F249630D100FDE6AD /* XZNetworkingTestCase.swift */; };
 		2976826E2470227D00A2C2E7 /* XZURLTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2976826D2470227D00A2C2E7 /* XZURLTests.swift */; };
 		297682712472E63000A2C2E7 /* XZTimekeeper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 297682702472E63000A2C2E7 /* XZTimekeeper.swift */; };
-		29C9271624A8F0540045F2E3 /* RAPIManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 29C9271524A8F0540045F2E3 /* RAPIManager.swift */; };
-		29C9271824A8FD7B0045F2E3 /* RAPIRequest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 29C9271724A8FD7B0045F2E3 /* RAPIRequest.swift */; };
-		29C9271A24A8FDBB0045F2E3 /* RAPIConcurrency.swift in Sources */ = {isa = PBXBuildFile; fileRef = 29C9271924A8FDBB0045F2E3 /* RAPIConcurrency.swift */; };
-		29C9271C24A8FF850045F2E3 /* RAPIMethod.swift in Sources */ = {isa = PBXBuildFile; fileRef = 29C9271B24A8FF850045F2E3 /* RAPIMethod.swift */; };
-		29C9271E24A900520045F2E3 /* RAPIResponse.swift in Sources */ = {isa = PBXBuildFile; fileRef = 29C9271D24A900520045F2E3 /* RAPIResponse.swift */; };
-		29C9272024A9009A0045F2E3 /* RAPIError.swift in Sources */ = {isa = PBXBuildFile; fileRef = 29C9271F24A9009A0045F2E3 /* RAPIError.swift */; };
-		29C9272224A902830045F2E3 /* RAPITask.swift in Sources */ = {isa = PBXBuildFile; fileRef = 29C9272124A902830045F2E3 /* RAPITask.swift */; };
-		29C9272424AA45E90045F2E3 /* RAPIGroup.swift in Sources */ = {isa = PBXBuildFile; fileRef = 29C9272324AA45E90045F2E3 /* RAPIGroup.swift */; };
-		29C9272624AA50B10045F2E3 /* RAPITaskManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 29C9272524AA50B10045F2E3 /* RAPITaskManager.swift */; };
+		29E5EC3124C6049B002E9759 /* XZML.Private.h in Headers */ = {isa = PBXBuildFile; fileRef = 29E5EC2D24C6049B002E9759 /* XZML.Private.h */; };
+		29E5EC3224C6049B002E9759 /* XZML.h in Headers */ = {isa = PBXBuildFile; fileRef = 29E5EC2E24C6049B002E9759 /* XZML.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		29E5EC3324C6049B002E9759 /* XZML.Private.m in Sources */ = {isa = PBXBuildFile; fileRef = 29E5EC2F24C6049B002E9759 /* XZML.Private.m */; };
+		29E5EC3424C6049B002E9759 /* XZML.m in Sources */ = {isa = PBXBuildFile; fileRef = 29E5EC3024C6049B002E9759 /* XZML.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -244,6 +231,10 @@
 		29C9272124A902830045F2E3 /* RAPITask.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RAPITask.swift; sourceTree = "<group>"; };
 		29C9272324AA45E90045F2E3 /* RAPIGroup.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RAPIGroup.swift; sourceTree = "<group>"; };
 		29C9272524AA50B10045F2E3 /* RAPITaskManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RAPITaskManager.swift; sourceTree = "<group>"; };
+		29E5EC2D24C6049B002E9759 /* XZML.Private.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XZML.Private.h; sourceTree = "<group>"; };
+		29E5EC2E24C6049B002E9759 /* XZML.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XZML.h; sourceTree = "<group>"; };
+		29E5EC2F24C6049B002E9759 /* XZML.Private.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = XZML.Private.m; sourceTree = "<group>"; };
+		29E5EC3024C6049B002E9759 /* XZML.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = XZML.m; sourceTree = "<group>"; };
 		DD30EF4121A4330000C4C73C /* XZKit.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = XZKit.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		DD30EF4521A4330000C4C73C /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -279,6 +270,7 @@
 			isa = PBXGroup;
 			children = (
 				28CA17F022478E8300F16621 /* XZKit.h */,
+				29E5EC2C24C6049B002E9759 /* XZML */,
 				293805EA2496121F00FDE6AD /* Networking */,
 				2976826F2472E63000A2C2E7 /* Timekeeper */,
 				28CA185322478E8300F16621 /* Core */,
@@ -611,6 +603,17 @@
 			path = RAPI;
 			sourceTree = "<group>";
 		};
+		29E5EC2C24C6049B002E9759 /* XZML */ = {
+			isa = PBXGroup;
+			children = (
+				29E5EC2E24C6049B002E9759 /* XZML.h */,
+				29E5EC3024C6049B002E9759 /* XZML.m */,
+				29E5EC2D24C6049B002E9759 /* XZML.Private.h */,
+				29E5EC2F24C6049B002E9759 /* XZML.Private.m */,
+			);
+			path = XZML;
+			sourceTree = "<group>";
+		};
 		DD30EF3721A4330000C4C73C = {
 			isa = PBXGroup;
 			children = (
@@ -648,6 +651,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				28CA189F22478E8300F16621 /* XZDataCryptor.h in Headers */,
+				29E5EC3224C6049B002E9759 /* XZML.h in Headers */,
 				28CA187C22478E8300F16621 /* UIColor+XZKit.h in Headers */,
 				28E3B72C22716E31005ECB02 /* XZCarouselView.ScrollView.h in Headers */,
 				28F4F2B9224A886200E7B23C /* XZKit+Runtime.h in Headers */,
@@ -655,6 +659,7 @@
 				28E3B72B22716E31005ECB02 /* XZCarouselView.ItemView.h in Headers */,
 				28CA187622478E8300F16621 /* UIImage+XZKit.h in Headers */,
 				28CA188F22478E8300F16621 /* NSString+XZKit.h in Headers */,
+				29E5EC3124C6049B002E9759 /* XZML.Private.h in Headers */,
 				28CA189322478E8300F16621 /* NSBundle+XZKit.h in Headers */,
 				28E3B73C22716E4C005ECB02 /* XZImageCarouselView.h in Headers */,
 				28E3B73622716E4C005ECB02 /* XZCarouselView.h in Headers */,
@@ -827,32 +832,24 @@
 			buildActionMask = 2147483647;
 			files = (
 				28C066A5224F65D20011F052 /* XZKit+Encoding.m in Sources */,
-				29C9271824A8FD7B0045F2E3 /* RAPIRequest.swift in Sources */,
 				28CA189522478E8300F16621 /* XZContentStatus.swift in Sources */,
-				29106ADC249E50E7005B9954 /* XZAPIMethod.swift in Sources */,
-				29C9271C24A8FF850045F2E3 /* RAPIMethod.swift in Sources */,
+				29E5EC3324C6049B002E9759 /* XZML.Private.m in Sources */,
 				28CA187322478E8300F16621 /* UIApplication+XZKit.swift in Sources */,
 				28CA188B22478E8300F16621 /* JSON+XZKit.swift in Sources */,
-				29106AE1249E5882005B9954 /* XZAPINetworking.swift in Sources */,
 				28CA189C22478E8300F16621 /* XZDataCryptor.m in Sources */,
 				28CA185C22478E8300F16621 /* XZNavigationBar.swift in Sources */,
 				28CA18A922478E8300F16621 /* XZKitDefines.swift in Sources */,
 				28CA188C22478E8300F16621 /* XZKit+String.swift in Sources */,
 				28E3B73922716E4C005ECB02 /* XZCarouselViewController.m in Sources */,
-				29106ADF249E50E7005B9954 /* XZAPIError.swift in Sources */,
 				28CA186022478E8300F16621 /* XZAppRedirection.m in Sources */,
 				28E3B73D22716E4C005ECB02 /* XZCarouselView.m in Sources */,
 				28CA189722478E8300F16621 /* XZContentStatusView.swift in Sources */,
 				28E3B72D22716E31005ECB02 /* XZCarouselView.ItemView.m in Sources */,
 				28CA189922478E8300F16621 /* XZTextImageControl.swift in Sources */,
-				29C9272224A902830045F2E3 /* RAPITask.swift in Sources */,
 				28CA185D22478E8300F16621 /* XZNavigationController.swift in Sources */,
 				28CA18A722478E8300F16621 /* XZKitDefines.m in Sources */,
-				29106AD8249E50E7005B9954 /* XZAPIManager.swift in Sources */,
-				29C9271624A8F0540045F2E3 /* RAPIManager.swift in Sources */,
 				28CA18A122478E8300F16621 /* XZAppLanguage.m in Sources */,
 				28CA185822478E8300F16621 /* XZNavigationController.AnimationController.swift in Sources */,
-				29C9271E24A900520045F2E3 /* RAPIResponse.swift in Sources */,
 				28CA186922478E8300F16621 /* XZImageCacheManager.swift in Sources */,
 				28CA189822478E8300F16621 /* XZCollectionViewFlowLayout.swift in Sources */,
 				28CA189A22478E8300F16621 /* XZTextImageView.swift in Sources */,
@@ -861,31 +858,26 @@
 				28CA186A22478E8300F16621 /* XZDataDigester.m in Sources */,
 				28E3B72A22716E31005ECB02 /* XZCarouselView.ScrollView.m in Sources */,
 				28CA188422478E8300F16621 /* URL+XZKit.swift in Sources */,
-				29C9272624AA50B10045F2E3 /* RAPITaskManager.swift in Sources */,
 				28CA185A22478E8300F16621 /* UINavigationBar+XZNavigationController.swift in Sources */,
 				28CA188D22478E8300F16621 /* NSData+XZKit.m in Sources */,
 				28CA187A22478E8300F16621 /* UIImage+XZKit.m in Sources */,
 				28CA188822478E8300F16621 /* DispatchQueue+XZKit.swift in Sources */,
-				29106ADD249E50E7005B9954 /* XZAPIResponse.swift in Sources */,
 				28CA187822478E8300F16621 /* UIColor+XZKit.m in Sources */,
 				28F4F2BC224A89C600E7B23C /* XZKit+Date.swift in Sources */,
 				28E3B73822716E4C005ECB02 /* XZImageViewer.m in Sources */,
 				28CA189422478E8300F16621 /* NSString+XZKit.m in Sources */,
 				2828CDBC229AF0B80025D736 /* WKWebView+XZKit.swift in Sources */,
-				29C9272024A9009A0045F2E3 /* RAPIError.swift in Sources */,
 				28E3B73B22716E4C005ECB02 /* XZImageCarouselView.m in Sources */,
 				28CA185B22478E8300F16621 /* XZNavigationGestureDrivable.swift in Sources */,
 				297682712472E63000A2C2E7 /* XZTimekeeper.swift in Sources */,
 				28CA187422478E8300F16621 /* UIView+XZKit.m in Sources */,
-				29106ADE249E50E7005B9954 /* XZAPIRequest.swift in Sources */,
-				29106AD9249E50E7005B9954 /* XZAPIConcurrency.swift in Sources */,
+				29E5EC3424C6049B002E9759 /* XZML.m in Sources */,
 				28CA189022478E8300F16621 /* NSBundle+XZKit.m in Sources */,
 				28CA188722478E8300F16621 /* Data+XZKit.swift in Sources */,
 				28CA189622478E8300F16621 /* XZContentStatusRepresentable.swift in Sources */,
 				28CA185922478E8300F16621 /* XZNavigationBarCustomizable.swift in Sources */,
 				28CA185E22478E8300F16621 /* UITabBar+XZNavigationController.swift in Sources */,
 				28F4F2B4224A867E00E7B23C /* XZKit+Geometry.m in Sources */,
-				29106ADA249E50E7005B9954 /* XZAPITask.swift in Sources */,
 				28CA186F22478E8300F16621 /* UIImageView+XZKit.swift in Sources */,
 				28CA18A622478E8300F16621 /* XZProgressView.swift in Sources */,
 				28F4F2BA224A886200E7B23C /* XZKit+Runtime.m in Sources */,
@@ -893,8 +885,6 @@
 				28CA189B22478E8300F16621 /* XZTextImageLayout.swift in Sources */,
 				28F4F2B6224A86C400E7B23C /* XZKit+Geometry.swift in Sources */,
 				28CA18A322478E8300F16621 /* XZAppLanguage.swift in Sources */,
-				29C9271A24A8FDBB0045F2E3 /* RAPIConcurrency.swift in Sources */,
-				29C9272424AA45E90045F2E3 /* RAPIGroup.swift in Sources */,
 				28CA186E22478E8300F16621 /* UIDevice+XZKit.swift in Sources */,
 				28CA186822478E8300F16621 /* XZCacheManger.swift in Sources */,
 			);
