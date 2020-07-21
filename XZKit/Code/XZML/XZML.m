@@ -123,6 +123,8 @@ static NSMutableAttributedString *XZMLNodeParser(XZMLContext *context, NSDiction
 }
 
 NSAttributedString *XZMLParser(NSString *xzmlString, NSDictionary<NSAttributedStringKey, id> *attributes, XZMLAlignments alignments, BOOL securityMode) {
+    xzmlString = xzmlString.copy;
+    
     NSMutableAttributedString *attributedStringM = [[NSMutableAttributedString alloc] init];
     
     NSInteger const length = [xzmlString lengthOfBytesUsingEncoding:(NSUTF8StringEncoding)];
