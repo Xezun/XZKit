@@ -151,7 +151,7 @@ NSAttributedString *XZMLParser(NSString *xzmlString, NSDictionary<NSAttributedSt
     
     XZMLParserMergeString(&context, attributedStringM, attributes);
     
-    if (alignments & XZMLAlignmentMiddle) {
+    if (alignments & XZMLAlignmentVerticalMiddle) {
         CGFloat __block max = 0;
         [attributedStringM enumerateAttributesInRange:NSMakeRange(0, attributedStringM.length) options:(0) usingBlock:^(NSDictionary<NSAttributedStringKey,id> * _Nonnull attrs, NSRange range, BOOL * _Nonnull stop) {
             UIFont *font = attrs[NSFontAttributeName];
