@@ -28,7 +28,6 @@ class Example1SettingsContentModeOptionsViewController: UITableViewController {
         } else {
             cell.accessoryType = .disclosureIndicator
         }
-        
         return cell
     }
     

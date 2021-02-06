@@ -39,9 +39,12 @@ class Example1Style3ViewController: UIViewController, CarouselViewDelegate, Caro
         super.viewDidLoad()
         
         carouselView.backgroundColor = .white
-        carouselView.pagingOrientation = .vertical
+        carouselView.orientation = .vertical
         carouselView.timeInterval = 3.0
         carouselView.contentMode = .scaleToFill
+        
+        ///////////////
+        carouselView.backgroundColor = .red
         
         carouselView.delegate = self
         carouselView.dataSource = self
@@ -78,7 +81,7 @@ class Example1Style3ViewController: UIViewController, CarouselViewDelegate, Caro
         let anchorPointAnimation = CAKeyframeAnimation(keyPath: #keyPath(CALayer.anchorPoint))
         
         var perspectiveTransform3D = CATransform3DIdentity
-        perspectiveTransform3D.m34 = 1.0 / 500;
+        perspectiveTransform3D.m34 = 1.0 / 500
         
         transformAnimation.values = [
             CATransform3DRotate(CATransform3DTranslate(perspectiveTransform3D, 0, +height, 0), -CGFloat.pi * 0.5, 1, 0, 0),

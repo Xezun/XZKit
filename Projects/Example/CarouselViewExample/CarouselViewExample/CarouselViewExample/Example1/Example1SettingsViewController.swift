@@ -36,7 +36,6 @@ protocol Example1SettingsViewControllerDelegate: AnyObject {
     func example1SettingsViewController(_ viewController: Example1SettingsViewController, didChangeTransitionEffectOption isOn: Bool)
 }
 
-
 class Example1SettingsViewController: UITableViewController, Example1SettingsContentModeOptionsViewControllerDelegate {
     
     weak var delegate: Example1SettingsViewControllerDelegate?
@@ -60,7 +59,7 @@ class Example1SettingsViewController: UITableViewController, Example1SettingsCon
         self.zoomingStateSwitch.isOn = carouselView.remembersZoomingState
         self.zoomingLockSwitch.isOn  = carouselView.isZoomingLockEnabled
         self.zoomableSwitch.isOn     = carouselView.minimumZoomScale < carouselView.maximumZoomScale
-        self.orientationSwitch.isOn  = carouselView.pagingOrientation == .horizontal
+        self.orientationSwitch.isOn  = carouselView.orientation == .horizontal
         self.transitionSwitch.isOn   = carouselView.transitioningDelegate != nil
     }
     
@@ -95,9 +94,9 @@ class Example1SettingsViewController: UITableViewController, Example1SettingsCon
     
     @IBAction func orientationSwitchAction(_ sender: UISwitch) {
         if sender.isOn {
-            carouselView.pagingOrientation = .horizontal
+            carouselView.orientation = .horizontal
         } else {
-            carouselView.pagingOrientation = .vertical
+            carouselView.orientation = .vertical
         }
     }
     

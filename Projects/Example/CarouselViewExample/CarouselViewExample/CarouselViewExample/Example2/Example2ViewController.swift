@@ -15,7 +15,7 @@ private let reuseIdentifier = "Cell"
 class Example2ViewController: UICollectionViewController, ImageViewerDelegate, ImageViewerDataSource {
     
     let imageURLs = [
-        URL(string: "http://fengxinju.bj01.bdysite.com/upfiles/201803/30/1962_n2.jpg")!,
+        URL(string: "http://img3.imgtn.bdimg.com/it/u=3204637472,3606476471&fm=26&gp=0.jpg")!,
         URL(string: "http://img0.imgtn.bdimg.com/it/u=1026786338,3550838642&fm=26&gp=0.jpg")!,
         URL(string: "http://img3.imgtn.bdimg.com/it/u=3204637472,3606476471&fm=26&gp=0.jpg")!,
         URL(string: "http://img1.imgtn.bdimg.com/it/u=843829727,2884188284&fm=26&gp=0.jpg")!,
@@ -23,8 +23,8 @@ class Example2ViewController: UICollectionViewController, ImageViewerDelegate, I
         URL(string: "http://img4.imgtn.bdimg.com/it/u=260532076,3589298916&fm=26&gp=0.jpg")!,
         URL(string: "http://img5.imgtn.bdimg.com/it/u=2149013970,2898954339&fm=26&gp=0.jpg")!,
         URL(string: "http://img2.imgtn.bdimg.com/it/u=2978796586,3163974224&fm=26&gp=0.jpg")!,
-        URL(string: "http://img5.imgtn.bdimg.com/it/u=1649871572,1090852527&fm=26&gp=0.jpg")!,
-        URL(string: "https://ss2.bdstatic.com/70cFvnSh_Q1YnxGkpoWK1HF6hhy/it/u=1706227310,1982342322&fm=26&gp=0.jpg")!
+        URL(string: "http://img4.imgtn.bdimg.com/it/u=260532076,3589298916&fm=26&gp=0.jpg")!,
+        URL(string: "http://img1.imgtn.bdimg.com/it/u=843829727,2884188284&fm=26&gp=0.jpg")!
     ]
 
     override func viewDidLoad() {
