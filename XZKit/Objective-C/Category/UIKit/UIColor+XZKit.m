@@ -119,3 +119,12 @@ UIColor *XZUIColorFromNSString(NSString *string, CGFloat alpha) {
     }
     return [UIColor clearColor];
 }
+
+
+XZRGBA XZRGBAFromNSInteger(NSInteger rgbaValue) {
+    return XZRGBAMake(rgbaValue>>24, rgbaValue>>16, rgbaValue>>8, rgbaValue);
+}
+
+NSInteger NSIntegerFromXZRGBA(XZRGBA rgba) {
+    return rgba.alpha + (rgba.blue << 8) + (rgba.green << 16) + (rgba.red << 24);
+}

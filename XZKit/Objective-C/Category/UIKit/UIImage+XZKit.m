@@ -38,7 +38,7 @@
 
 @implementation UIImage (XZKitDrawing)
 
-+ (UIImage *)xz_imageDescribed:(XZImageDescriptor)descriptor {
++ (UIImage *)xz_imageWithDescriptor:(XZImageDescriptor)descriptor {
     if (descriptor.size.width == 0 || descriptor.size.height == 0) {
         return nil;
     }
@@ -176,8 +176,8 @@
 
 @end
 
-
-XZImageLevels const XZImageLevelsIdentity = {0.0, 1.0, 1.0};
+XZImageLevelsInput  const XZImageLevelsInputIdentity  = {0.0, 1.0, 1.0};
+XZImageLevelsOutput const XZImageLevelsOutputIdentity = {0.0, 1.0};
 
 @implementation UIImage (XZKitFiltering)
 
@@ -217,9 +217,16 @@ XZImageLevels const XZImageLevelsIdentity = {0.0, 1.0, 1.0};
 #pragma mark - 色阶
 
 - (UIImage *)xz_imageByFilteringImageLevels:(XZImageLevels)levels {
-    NSParameterAssert(levels.input.highlights > levels.input.shadows);
-    NSParameterAssert(levels.output.highlights > levels.output.shadows);
-    
+    // 检查参数
+    if (levels.input.highlights <= levels.input.shadows) {
+        NSAssert(NO, @"输入色阶 shadows 必须小于 highlights");
+        return nil;
+    }
+    if (levels.output.highlights <= levels.output.shadows) {
+        NSAssert(NO, @"输出色阶 shadows 必须小于 highlights");
+        return nil;
+    }
+    // 没有要处理的通道，返回自身
     if (levels.channels == 0) {
         return self;
     }
@@ -235,10 +242,10 @@ XZImageLevels const XZImageLevelsIdentity = {0.0, 1.0, 1.0};
     }
     
     // 通道
-    CGFloat const RED   = (levels.channels & XZColorChannelRed)   ? 1.0 : 0;
-    CGFloat const GREEN = (levels.channels & XZColorChannelGreen) ? 1.0 : 0;
-    CGFloat const BLUE  = (levels.channels & XZColorChannelBlue)  ? 1.0 : 0;
-    CGFloat const ALPHA = (levels.channels & XZColorChannelAlpha) ? 1.0 : 0;
+    CGFloat const RED   = (levels.channels & XZRGBAChannelRed)   ? 1.0 : 0;
+    CGFloat const GREEN = (levels.channels & XZRGBAChannelGreen) ? 1.0 : 0;
+    CGFloat const BLUE  = (levels.channels & XZRGBAChannelBlue)  ? 1.0 : 0;
+    CGFloat const ALPHA = (levels.channels & XZRGBAChannelAlpha) ? 1.0 : 0;
     
     XZImageLevelsInput const  input  = levels.input;
     XZImageLevelsOutput const output = levels.output;

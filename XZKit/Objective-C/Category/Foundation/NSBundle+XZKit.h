@@ -14,10 +14,10 @@
 @property (class, nonatomic, readonly, nonnull) NSBundle *XZKitBundle NS_SWIFT_NAME(XZKit);
 
 /// 构建版本。CFBundleVersion，默认 0。
-@property (nonatomic, readonly, nonnull) NSString *xz_buildVersionString NS_SWIFT_NAME(buildVersionString);
+@property (nonatomic, readonly, nonnull) NSString *xz_buildVersionString NS_SWIFT_NAME(buildVersion);
 
 /// 发行版本。CFBundleShortVersionString，默认 0。
-@property (nonatomic, readonly, nonnull) NSString *xz_shortVersionString NS_SWIFT_NAME(shortVersionString);
+@property (nonatomic, readonly, nonnull) NSString *xz_shortVersionString NS_SWIFT_NAME(shortVersion);
 
 /// App 名称。CFBundleDisplayName，默认空字符串。
 @property (nonatomic, readonly, nonnull) NSString *xz_displayName NS_SWIFT_NAME(displayName);

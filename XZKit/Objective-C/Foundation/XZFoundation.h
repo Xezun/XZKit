@@ -16,3 +16,4 @@
 #import <XZKit/XZKit+Geometry.h>
 #import <XZKit/XZKit+Timestamp.h>
 #import <XZKit/XZKit+HexEncoding.h>
+#import <XZKit/XZKit+JSON.h>

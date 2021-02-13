@@ -14,29 +14,45 @@ extension UIImageView {
     /// 占位图。
     @objc(xz_placeholder)
     open var placeholder: UIImage? {
-        get { return placeholderImageViewIfLoaded?.image }
-        set { placeholderImageView.image = newValue      }
+        get {
+            return placeholderImageViewIfLoaded?.image
+        }
+        set {
+            placeholderImageView.image = newValue
+        }
     }
     
     /// 高亮状态下的占位图。
     @objc(highlightedPlaceholder)
     open var xz_highlightedPlaceholder: UIImage? {
-        get { return placeholderImageViewIfLoaded?.highlightedImage }
-        set { placeholderImageView.highlightedImage = newValue      }
+        get {
+            return placeholderImageViewIfLoaded?.highlightedImage
+        }
+        set {
+            placeholderImageView.highlightedImage = newValue
+        }
     }
     
     /// 动态占位图。
     @objc(xz_animationPlaceholder)
     open var animationPlaceholder: [UIImage]? {
-        get { return placeholderImageViewIfLoaded?.animationImages }
-        set { placeholderImageView.animationImages = newValue }
+        get {
+            return placeholderImageViewIfLoaded?.animationImages
+        }
+        set {
+            placeholderImageView.animationImages = newValue
+        }
     }
     
     /// 高亮状态下的动态占位图。
     @objc(xz_highlightedAnimationPlaceholder)
     open var highlightedAnimationPlaceholder: [UIImage]? {
-        get { return placeholderImageViewIfLoaded?.highlightedAnimationImages }
-        set { placeholderImageView.highlightedAnimationImages = newValue      }
+        get {
+            return placeholderImageViewIfLoaded?.highlightedAnimationImages
+        }
+        set {
+            placeholderImageView.highlightedAnimationImages = newValue
+        }
     }
     
     /// 显示占位图的视图。
@@ -54,7 +70,8 @@ extension UIImageView {
     }
     
     /// 获取已创建的占位图视图。
-    @objc(xz_placeholderImageViewIfLoaded) open var placeholderImageViewIfLoaded: UIImageView? {
+    @objc(xz_placeholderImageViewIfLoaded)
+    open var placeholderImageViewIfLoaded: UIImageView? {
         return objc_getAssociatedObject(self, &AssociationKey.placeholderImageView) as? UIImageViewPlaceholderImageView
     }
 
@@ -65,8 +82,6 @@ extension UIImageView {
 private struct AssociationKey {
     static var placeholderImageView = 0
 }
-
-
 
 public class UIImageViewPlaceholderImageView: UIImageView {
     
@@ -139,10 +154,14 @@ public class UIImageViewPlaceholderImageView: UIImageView {
     
     override public func observeValue(forKeyPath keyPath: String?, of object: Any?, change: [NSKeyValueChangeKey : Any]?, context: UnsafeMutableRawPointer?) {
         switch context {
-        case &ObserverContext.image: fallthrough
-        case &ObserverContext.isHighlighted: fallthrough
-        case &ObserverContext.animationImages: fallthrough
-        case &ObserverContext.highlightedImage: fallthrough
+        case &ObserverContext.image:
+            fallthrough
+        case &ObserverContext.isHighlighted:
+            fallthrough
+        case &ObserverContext.animationImages:
+            fallthrough
+        case &ObserverContext.highlightedImage:
+            fallthrough
         case &ObserverContext.highlightedAnimationImages:
             guard let imageView = object as? UIImageView else { return }
             guard superview === imageView else { return }

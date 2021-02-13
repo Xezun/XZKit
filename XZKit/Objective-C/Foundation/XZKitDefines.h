@@ -13,6 +13,7 @@
 #ifndef XZKIT_DEFINES
 #define XZKIT_DEFINES
 
+
 #pragma mark - 宏定义
 
 #ifndef XZKIT_PROTECTED
@@ -20,8 +21,8 @@
 #define XZKIT_PROTECTED const
 #endif
 
-#pragma mark 编译器属性
 
+#pragma mark 编译器属性
 
 /// XZ_ATTR 重命名了部分常用编译器 __attribute__ 属性定义（见下面的枚举）以方便使用。
 /// @code

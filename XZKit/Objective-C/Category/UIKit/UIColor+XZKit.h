@@ -12,26 +12,36 @@ NS_ASSUME_NONNULL_BEGIN
 
 /// 按 RGBA 顺序排列的 256 位颜色值。
 typedef struct XZRGBA {
-    NSInteger red   : 8;
-    NSInteger green : 8;
-    NSInteger blue  : 8;
-    NSInteger alpha : 8;
-} XZRGBA NS_SWIFT_NAME(RGBA);
+    /// 红色 [0, 255]
+    NSInteger red  : 8;
+    /// 绿色 [0, 255]
+    NSInteger green: 8;
+    /// 蓝色 [0, 255]
+    NSInteger blue : 8;
+    /// 透明 [0, 255]
+    NSInteger alpha: 8;
+} NS_SWIFT_NAME(Color) XZRGBA;
 
 /// 颜色通道。
-typedef NS_OPTIONS(NSUInteger, XZColorChannel) {
-    XZColorChannelRed   NS_SWIFT_NAME(red)   = 1 << 0,
-    XZColorChannelGreen NS_SWIFT_NAME(green) = 1 << 1,
-    XZColorChannelBlue  NS_SWIFT_NAME(blue)  = 1 << 2,
-    XZColorChannelAlpha NS_SWIFT_NAME(alpha) = 1 << 3,
-    XZColorChannelsRGB  NS_SWIFT_NAME(rgb)   = XZColorChannelRed | XZColorChannelGreen | XZColorChannelBlue,
-    XZColorChannelsAll  NS_SWIFT_NAME(all)   = ~0l,
-};
+typedef NS_OPTIONS(NSUInteger, XZRGBAChannel) {
+    /// 红色通道。
+    XZRGBAChannelRed   = 1 << 0,
+    /// 绿色通道。
+    XZRGBAChannelGreen = 1 << 1,
+    /// 蓝色通道。
+    XZRGBAChannelBlue  = 1 << 2,
+    /// 透明通道。
+    XZRGBAChannelAlpha = 1 << 3,
+    /// RGB三通道。
+    XZRGBAChannelRGB   = XZRGBAChannelRed | XZRGBAChannelGreen | XZRGBAChannelBlue,
+    /// 所有通道。
+    XZRGBAChannelAll   = ~0l,
+} NS_SWIFT_NAME(Color.Channel);
 
 @interface UIColor (XZKit)
 
 /// 颜色的 RGBA 值。
-@property (nonatomic, readonly) XZRGBA xz_rgbaValue NS_SWIFT_NAME(rgba);
+@property (nonatomic, readonly) XZRGBA xz_rgbaValue NS_SWIFT_NAME(color);
 
 /// 通过一个用十六进制数表示的 RGBA 颜色值创建 UIColor 对象。
 /// @note 数字必须是 RGBA 值。
@@ -46,17 +56,17 @@ typedef NS_OPTIONS(NSUInteger, XZColorChannel) {
 
 @end
 
-FOUNDATION_STATIC_INLINE XZRGBA XZRGBAMake(NSInteger red, NSInteger green, NSInteger blue, NSInteger alpha) {
+FOUNDATION_STATIC_INLINE XZRGBA XZRGBAMake(NSInteger red, NSInteger green, NSInteger blue, NSInteger alpha) NS_SWIFT_UNAVAILABLE("Use Color.init instead") {
     return (XZRGBA){red&0xFF, green&0xFF, blue&0xFF, alpha&0xFF};
 }
 
-FOUNDATION_STATIC_INLINE XZRGBA XZRGBAFromNSInteger(NSInteger value) {
-    return XZRGBAMake(value>>24, value>>16, value>>8, value);
-}
+/// 通过 RGBA 的整数形式构造 RGBA 颜色。
+/// @param rgbaValue RGBA 的整数形式
+UIKIT_EXTERN XZRGBA XZRGBAFromNSInteger(NSInteger rgbaValue) NS_SWIFT_NAME(Color.init(_:));
 
-FOUNDATION_STATIC_INLINE NSInteger NSIntegerFromXZRGBA(XZRGBA rgba) {
-    return rgba.alpha + (rgba.blue << 8) + (rgba.green << 16) + (rgba.red << 24);
-}
+/// 将 RGBA 转换成整数形式。
+/// @param rgba rgba 颜色
+UIKIT_EXTERN NSInteger NSIntegerFromXZRGBA(XZRGBA rgba) NS_REFINED_FOR_SWIFT;
 
 /// 通过 XZRGBA 构造 UIColor 对象。
 /// @param rgba RGBA 颜色值
@@ -78,15 +88,17 @@ FOUNDATION_STATIC_INLINE UIColor *rgba(NSInteger value) XZ_OVERLOAD {
     return [UIColor colorWithRed:red green:green blue:blue alpha:alpha];
 }
 
+/// 通过 RGBA[0, 255] 通道值构建 UIColor 对象。
 FOUNDATION_STATIC_INLINE UIColor *rgba(NSInteger red, NSInteger green, NSInteger blue, NSInteger alpha) XZ_OVERLOAD {
     return [UIColor colorWithRed:red/255.0 green:green/255.0 blue:blue/255.0 alpha:alpha/255.0];
 }
 
+/// 通过 RGBA[0, 1.0] 通道值构建 UIColor 对象。
 FOUNDATION_STATIC_INLINE UIColor *rgba(CGFloat red, CGFloat green, CGFloat blue, CGFloat alpha) XZ_OVERLOAD {
     return [UIColor colorWithRed:red green:green blue:blue alpha:alpha];
 }
 
-/// 通过 RGB 值构造 UIColor 对象。
+/// 通过整数形式的 RGB 值构造 UIColor 对象。
 /// @param value RGB 颜色值
 FOUNDATION_STATIC_INLINE UIColor *rgb(NSInteger value) XZ_OVERLOAD {
     CGFloat const red   = (value>>16&0xFF) / 255.0;
@@ -95,10 +107,12 @@ FOUNDATION_STATIC_INLINE UIColor *rgb(NSInteger value) XZ_OVERLOAD {
     return [UIColor colorWithRed:red green:green blue:blue alpha:1.0];
 }
 
+/// 通过 RGB[0, 255] 通道值构建 UIColor 对象。
 FOUNDATION_STATIC_INLINE UIColor *rgb(NSInteger red, NSInteger green, NSInteger blue) XZ_OVERLOAD {
     return [UIColor colorWithRed:red/255.0 green:green/255.0 blue:blue/255.0 alpha:1.0];
 }
 
+/// 通过 RGB[0, 1.0] 通道值构建 UIColor 对象。
 FOUNDATION_STATIC_INLINE UIColor *rgb(CGFloat red, CGFloat green, CGFloat blue) XZ_OVERLOAD {
     return [UIColor colorWithRed:red green:green blue:blue alpha:1.0];
 }
@@ -106,12 +120,14 @@ FOUNDATION_STATIC_INLINE UIColor *rgb(CGFloat red, CGFloat green, CGFloat blue) 
 /// 通过形如“#1A2B3C”十六进制的字符串构造 UIColor 对象。
 /// @param colorString 颜色值字符串
 /// @param alpha 指定 alpha 通道，如果小于 0 则表示不指定，默认 1.0
-FOUNDATION_EXPORT UIColor *XZUIColorFromNSString(NSString *colorString, CGFloat alpha);
+FOUNDATION_EXPORT UIColor *XZUIColorFromNSString(NSString *colorString, CGFloat alpha) NS_SWIFT_UNAVAILABLE("User UIColor.init(_:) instead");
 
+/// 通过颜色值字符串创建 UIColor 对象，忽略 alpha 通道。
 FOUNDATION_STATIC_INLINE UIColor *rgb(NSString *colorString) XZ_OVERLOAD {
     return XZUIColorFromNSString(colorString, +1.0);
 }
 
+/// 通过颜色值字符串创建 UIColor 对象，默认 alpha 通道为 1.0 。
 FOUNDATION_STATIC_INLINE UIColor *rgba(NSString *colorString) XZ_OVERLOAD {
     return XZUIColorFromNSString(colorString, -1.0);
 }

@@ -12,14 +12,14 @@ extension Data {
     
     /// 返回数据的十六进制字符串形式，默认大写字母。
     public var hexEncodedString: String {
-        return hexEncodedString(using: .uppercase)
+        return hexEncodedString(with: .uppercase)
     }
     
     /// 按指定大小写，返回数据的十六进制字符串形式。
     ///
     /// - Parameter characterCase: 字符大小写方式。
     /// - Returns: 十六进制的字符串。
-    public func hexEncodedString(using characterCase: CharacterCase) -> String {
+    public func hexEncodedString(with characterCase: CharacterCase) -> String {
         switch characterCase {
         case .lowercase:
             let Table: [Character] = ["0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "a", "b", "c", "d", "e", "f"]
@@ -49,11 +49,11 @@ extension Data {
         let maxIndex = string.index(string.endIndex, offsetBy: -2);
         var index = string.startIndex;
         while index <= maxIndex {
-            guard let bit1 = UInt8.init(hex: string[index]) else {
+            guard let bit1 = UInt8(hexEncoded: string[index]) else {
                 break
             }
             index = string.index(after: index);
-            guard let bit2 = UInt8.init(hex: string[index]) else {
+            guard let bit2 = UInt8(hexEncoded: string[index]) else {
                 break
             }
             bytes.append(bit1 * 16 + bit2);
@@ -104,7 +104,7 @@ extension UInt8 {
     /// - Note: 非十六进制字符返回 nil 。
     ///
     /// - Parameter character: 十六进制字符。
-    public init?(hex character: Character) {
+    public init?(hexEncoded character: Character) {
         switch character {
         case "0": self = 0
         case "1": self = 1

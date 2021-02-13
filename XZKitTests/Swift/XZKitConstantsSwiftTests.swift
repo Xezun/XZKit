@@ -70,8 +70,8 @@ class XZKitConstantsSwiftTests: XCTestCase {
             while i < 10000 {
                 i += 1
             }
+            
         }
-        
         
     }
     

@@ -12,7 +12,7 @@
 NS_ASSUME_NONNULL_BEGIN
 
 /// 与 UIEdgeInsets 相同，只不过方便适配 LTR/RTL 布局。
-typedef struct XZ_BOXABLE {
+typedef struct XZ_BOXABLE XZEdgeInsets {
     /// 上边距。
     CGFloat top;
     /// 前边距。
@@ -21,7 +21,7 @@ typedef struct XZ_BOXABLE {
     CGFloat bottom;
     /// 后边距。
     CGFloat trailing;
-} XZEdgeInsets NS_SWIFT_NAME(EdgeInsets);
+} NS_SWIFT_NAME(EdgeInsets) XZEdgeInsets;
 
 /// 与 UIRectEdge 相同，只不过方便适配 LTR/RTL 布局。
 typedef NS_OPTIONS(NSUInteger, XZRectEdge) {
