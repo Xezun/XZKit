@@ -22,6 +22,7 @@
 
 #pragma mark 编译器属性
 
+
 /// XZ_ATTR 重命名了部分常用编译器 __attribute__ 属性定义（见下面的枚举）以方便使用。
 /// @code
 /// // 单个属性使用。
@@ -29,6 +30,7 @@
 /// // 多属性使用。
 /// XZ_ATTR(XZ_ATTR_OBSERVER(func_obsv), XZ_ATTR_UNUSED)
 /// @endcode
+/// @see [Attributes in Clang](https://clang.llvm.org/docs/AttributeReference.html)
 #define XZ_ATTR(attr, ...) __attribute__((attr, ##__VA_ARGS__))
 
 /// XZ_ATTR 属性枚举，用法见 XZ_FINAL_CLASS 宏。

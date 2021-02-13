@@ -421,15 +421,15 @@
 			isa = PBXGroup;
 			children = (
 				2916366125D67F51001BFE25 /* UIApplication+XZKit.swift */,
+				2916366325D67F51001BFE25 /* UIDevice+XZKit.swift */,
+				2916365C25D67F51001BFE25 /* UIImageView+XZKit.swift */,
+				2916366025D67F51001BFE25 /* WKWebView+XZKit.swift */,
 				2916365E25D67F51001BFE25 /* UIColor+XZKit.h */,
 				2916365F25D67F51001BFE25 /* UIColor+XZKit.m */,
-				2916366325D67F51001BFE25 /* UIDevice+XZKit.swift */,
 				2916365A25D67F51001BFE25 /* UIImage+XZKit.h */,
 				2916366225D67F51001BFE25 /* UIImage+XZKit.m */,
-				2916365C25D67F51001BFE25 /* UIImageView+XZKit.swift */,
 				2916366425D67F51001BFE25 /* UIView+XZKit.h */,
 				2916365D25D67F51001BFE25 /* UIView+XZKit.m */,
-				2916366025D67F51001BFE25 /* WKWebView+XZKit.swift */,
 			);
 			path = UIKit;
 			sourceTree = "<group>";
