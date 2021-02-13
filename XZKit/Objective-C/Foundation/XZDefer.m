@@ -8,6 +8,6 @@
 
 #import "XZDefer.h"
 
-void __xz_defer_obsv__(void (^ _Nonnull * _Nonnull operation)(void)) {
+void __XZ_DEFER_OBSV__(void (^ _Nonnull * _Nonnull operation)(void)) {
     (*operation)();
 }

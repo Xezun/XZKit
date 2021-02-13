@@ -57,6 +57,13 @@ typedef NS_ENUM(NSUInteger, XZObjCType) {
     /// C 共用体
     XZObjCTypeUnion            = '(',
     /// A bit field of num bits
+    /// @code
+    /// // 位域结构体的成员的类型即为 bit field
+    /// struct Bitfield {
+    ///     int a:1;
+    ///     char b:2;
+    /// }
+    /// @endcode
     XZObjCTypeBitField         = 'b',
     /// A pointer to type
     XZObjCTypePointer          = '^',
@@ -85,7 +92,7 @@ XZ_FINAL_CLASS
 /// 字节对齐，度量单位“字节byte”。
 /// @note 由于使用 `#pragma pack (value)` 或 `__attribute__((packed))` 可以自定义字节对齐,
 ///       所以对于自定义类型，特别是非默认字节对齐的类型，需要先通过方法
-///       `+[XZObjCTypeDescriptor setSize:alignment:forType]`
+///       `+[XZObjCTypeDescriptor setSize:alignment:forType:]`
 ///       注册对齐方式，否则此属性值可能并不一定准确。
 @property (nonatomic, readonly) size_t alignment;
 
@@ -98,12 +105,14 @@ XZ_FINAL_CLASS
 - (instancetype)init NS_UNAVAILABLE;
 
 /// 构造类型描述。
+/// @note 因为类型不能直接作为参数，而枚举 XZObjCType 并不包含完整的类型信息，因此需要使用类型编码来构造。
 /// @param encoding 类型编码
 + (XZObjCTypeDescriptor *)descriptorForType:(const char *)encoding;
 
-/// 设置自定义结构体类型的大小和字节对齐值。
-///
+/// 设置结构体类型的大小和字节对齐值。
 /// @code
+/// // 第一个 Example 为结构体的真实名字，是 TypeEncoding 捕获的名字；
+/// // 第二个 Example 为结构体的别名，不能用在类型编码中。
 /// typedef struct Example {
 ///     int a;
 ///     float b;
@@ -112,11 +121,12 @@ XZ_FINAL_CLASS
 /// [XZObjCTypeDescriptor setSize:sizeof(Example) alignment:_Alignof(Example) forType:@"Example"];
 /// @endcode
 ///
-/// @note 类型的名字必须是原始名字，非 typedef 定义的名字。
+/// @note 类型的名字必须是原始名字，非 typedef 定义的别名。
+/// @note 只有别名的结构体，类型编码变成一个匿名的结构体，如 {?=if} 。
 ///
 /// @param size 大小
 /// @param alignment 对齐方式
-/// @param name 自定义类型的名字
+/// @param name 自定义类型的名字，只有结构体
 + (void)setSize:(size_t)size alignment:(size_t)alignment forType:(NSString *)name;
 
 @end

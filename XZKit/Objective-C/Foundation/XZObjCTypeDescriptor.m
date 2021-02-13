@@ -23,7 +23,7 @@ typedef struct XZObjCTypeProvider {
 
 
 @interface XZObjCTypeDescriptor ()
-+ (XZObjCTypeProvider)providerForType:(NSString *)type;
++ (XZObjCTypeProvider)providerForType:(NSString *)name;
 @end
 
 @implementation XZObjCTypeDescriptor
@@ -243,12 +243,19 @@ typedef struct XZObjCTypeProvider {
                 _subtypes  = @[subtype];
                 break;
             }
-            case '{': {
+            case '{': { // {name=type...}
                 _type = XZObjCTypeStruct;
                 
+                // 找到第一个等号
                 NSInteger i = 2;
-                while (encoding[i++] != '=');
-                _name = [[NSString alloc] initWithBytes:&encoding[1] length:i - 2 encoding:(NSASCIIStringEncoding)];
+                while (encoding[i++] != '='); // 执行完毕 i 定位在等号后面
+                
+                // 如果名字为 ? 则表示是匿名的结构体
+                if (i == 3 && encoding[1] == '?') {
+                    _name = @"unknown";
+                } else {
+                    _name = [[NSString alloc] initWithBytes:&encoding[1] length:i - 2 encoding:(NSASCIIStringEncoding)];
+                }
                 
                 NSMutableArray *subtypes = [NSMutableArray array];
                 
@@ -303,12 +310,17 @@ typedef struct XZObjCTypeProvider {
                 _subtypes = subtypes.copy;
                 break;
             }
-            case '(': {
+            case '(': { // (name=type...)
                 _type = XZObjCTypeUnion;
                 
                 NSInteger i = 2;
-                while (encoding[i++] != '=');
-                _name = [[NSString alloc] initWithBytes:&encoding[1] length:i - 2 encoding:(NSASCIIStringEncoding)];
+                while (encoding[i++] != '='); // 执行完毕 i 定位在等号后面
+                
+                if (i == 3 && encoding[1] == '?') {
+                    _name = @"unknown";
+                } else {
+                    _name = [[NSString alloc] initWithBytes:&encoding[1] length:i - 2 encoding:(NSASCIIStringEncoding)];
+                }
                 
                 NSMutableArray *subtypes = [NSMutableArray array];
                 

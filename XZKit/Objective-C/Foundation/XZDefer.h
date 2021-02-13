@@ -14,17 +14,16 @@ NS_ASSUME_NONNULL_BEGIN
 /// defer 闭包的执行函数，请不要直接调用此函数。
 ///
 /// @param operation 待执行的清理操作。
-FOUNDATION_EXPORT void __xz_defer_obsv__(void (^ _Nonnull * _Nonnull operation)(void)) NS_SWIFT_UNAVAILABLE("Use Swift.defer instead.");
-#define __xz_defer_attr__        XZ_ATTR(XZ_ATTR_OBSERVER(__xz_defer_obsv__), XZ_ATTR_UNUSED)
-// __attribute__((cleanup(__xz_defer_obsv__), unused))
-#define __xz_defer_impl__(L, S)  void (^__NSX_PASTE__(__xz_defer_stmt_, L))(void) __xz_defer_attr__ = S
+FOUNDATION_EXPORT void __XZ_DEFER_OBSV__(void (^ _Nonnull * _Nonnull operation)(void)) NS_SWIFT_UNAVAILABLE("Use Swift.defer instead.");
+#define __XZ_DEFER_ATTR__        XZ_ATTR(XZ_ATTR_OBSERVER(__XZ_DEFER_OBSV__), XZ_ATTR_UNUSED)
+#define __XZ_DEFER_IMPL__(L, S)  void (^__NSX_PASTE__(__XZ_DEFER_STMT_, L))(void) __XZ_DEFER_ATTR__ = S
 
 
 /// 添加到 xz_defer 的代码块 operation 将被延迟到作用域结束时执行。
 /// @note 如果可能，请尝试使用 defer 函数。
-FOUNDATION_EXPORT void xz_defer(void (^operation)(void)) NS_SWIFT_UNAVAILABLE("Use Swift.defer instead.");
-#undef  xz_defer
-#define xz_defer(statements) __xz_defer_impl__(__COUNTER__, statements)
+FOUNDATION_EXPORT void XZDefer(void (^operation)(void)) NS_SWIFT_UNAVAILABLE("Use Swift.defer instead.");
+#undef  XZDefer
+#define XZDefer(statements) __XZ_DEFER_IMPL__(__COUNTER__, statements)
 
 
 #ifndef defer
@@ -45,7 +44,7 @@ FOUNDATION_EXPORT void xz_defer(void (^operation)(void)) NS_SWIFT_UNAVAILABLE("U
 /// @endcode
 FOUNDATION_EXPORT void defer(void (^operation)(void)) NS_SWIFT_UNAVAILABLE("Use Swift.defer instead.");
 #undef defer
-#define defer(statements) xz_defer(statements)
+#define defer(statements) XZDefer(statements)
 #endif
 
 NS_ASSUME_NONNULL_END

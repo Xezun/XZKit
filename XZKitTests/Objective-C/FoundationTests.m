@@ -22,6 +22,11 @@ typedef struct TestObjCTypePackedStruct {
     char c;
 } TestObjCTypePackedStruct;
 
+typedef struct {
+    NSInteger i;
+    char c;
+} TestObjCTypeNonameStruct;
+
 typedef union TestObjCTypeUnion {
     int a;
     NSInteger b;
@@ -128,6 +133,7 @@ typedef struct TestObjCTypeBitField {
     ObjCTypeDescriptorTests(CGRect);
     ObjCTypeDescriptorTests(TestObjCTypeStruct);
     ObjCTypeDescriptorTests(TestObjCTypePackedStruct);
+    ObjCTypeDescriptorTests(TestObjCTypeNonameStruct);
     
     ObjCTypeDescriptorTests(TestObjCTypeUnion);
     ObjCTypeDescriptorTests(TestObjCTypeBitField);

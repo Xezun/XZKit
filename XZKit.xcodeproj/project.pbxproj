@@ -8,7 +8,6 @@
 
 /* Begin PBXBuildFile section */
 		2916366525D67F51001BFE25 /* UIImage+XZKit.h in Headers */ = {isa = PBXBuildFile; fileRef = 2916365A25D67F51001BFE25 /* UIImage+XZKit.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		2916366625D67F51001BFE25 /* UIAlertController+XZKit.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2916365B25D67F51001BFE25 /* UIAlertController+XZKit.swift */; };
 		2916366725D67F51001BFE25 /* UIImageView+XZKit.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2916365C25D67F51001BFE25 /* UIImageView+XZKit.swift */; };
 		2916366825D67F51001BFE25 /* UIView+XZKit.m in Sources */ = {isa = PBXBuildFile; fileRef = 2916365D25D67F51001BFE25 /* UIView+XZKit.m */; };
 		2916366925D67F51001BFE25 /* UIColor+XZKit.h in Headers */ = {isa = PBXBuildFile; fileRef = 2916365E25D67F51001BFE25 /* UIColor+XZKit.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -126,7 +125,6 @@
 
 /* Begin PBXFileReference section */
 		2916365A25D67F51001BFE25 /* UIImage+XZKit.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIImage+XZKit.h"; sourceTree = "<group>"; };
-		2916365B25D67F51001BFE25 /* UIAlertController+XZKit.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "UIAlertController+XZKit.swift"; sourceTree = "<group>"; };
 		2916365C25D67F51001BFE25 /* UIImageView+XZKit.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "UIImageView+XZKit.swift"; sourceTree = "<group>"; };
 		2916365D25D67F51001BFE25 /* UIView+XZKit.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIView+XZKit.m"; sourceTree = "<group>"; };
 		2916365E25D67F51001BFE25 /* UIColor+XZKit.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIColor+XZKit.h"; sourceTree = "<group>"; };
@@ -422,7 +420,6 @@
 		2963303B25D1000E00BB1BEF /* UIKit */ = {
 			isa = PBXGroup;
 			children = (
-				2916365B25D67F51001BFE25 /* UIAlertController+XZKit.swift */,
 				2916366125D67F51001BFE25 /* UIApplication+XZKit.swift */,
 				2916365E25D67F51001BFE25 /* UIColor+XZKit.h */,
 				2916365F25D67F51001BFE25 /* UIColor+XZKit.m */,
@@ -787,7 +784,6 @@
 				296330BD25D1000E00BB1BEF /* XZImageViewer.m in Sources */,
 				2963311A25D108DC00BB1BEF /* XZKit+Runtime.m in Sources */,
 				2963310C25D108DC00BB1BEF /* XZLog.m in Sources */,
-				2916366625D67F51001BFE25 /* UIAlertController+XZKit.swift in Sources */,
 				2963312225D108DC00BB1BEF /* XZDefer.m in Sources */,
 				2963308925D1000E00BB1BEF /* XZNavigationController.swift in Sources */,
 				2963308825D1000E00BB1BEF /* XZNavigationBar.swift in Sources */,
