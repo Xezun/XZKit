@@ -45,6 +45,7 @@ NS_SWIFT_NAME(DataDigester)
 
 /// 当前 XZDataDigester 的算法。
 @property (nonatomic, readonly) XZDataDigesterAlgorithm algorithm;
+
 /// 摘要的长度。
 @property (nonatomic, readonly) NSUInteger length;
 

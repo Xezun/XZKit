@@ -9,7 +9,6 @@
 #import <XZKit/XZKit.h>
 @import CoreGraphics;
 
-
 typedef struct TestObjCTypeStruct {
     int a;
     NSInteger b;

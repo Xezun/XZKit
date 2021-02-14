@@ -147,7 +147,6 @@ FOUNDATION_EXPORT const unsigned char XZKitVersionString[];
 
 // MARK: - DataCryptor
 #import <XZKit/XZDataCryptor.h>
-#import <XZKit/NSData+XZDataCryptor.h>
 
 // MARK: - CarouselView
 #import <XZKit/XZCarouselView.h>

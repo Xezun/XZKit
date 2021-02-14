@@ -11,19 +11,19 @@
 @implementation NSData (XZDataDigester)
 
 - (NSString *)xz_md5 {
-    return [XZDataDigester digest:self algorithm:(XZDataDigesterAlgorithmMD5) hexEncoding:NO];
+    return [XZDataDigester digest:self algorithm:(XZDataDigesterAlgorithmMD5) hexEncoding:XZCharacterLowercase];
 }
 
 - (NSString *)xz_MD5 {
-    return [XZDataDigester digest:self algorithm:(XZDataDigesterAlgorithmMD5) hexEncoding:YES];
+    return [XZDataDigester digest:self algorithm:(XZDataDigesterAlgorithmMD5) hexEncoding:XZCharacterUppercase];
 }
 
 - (NSString *)xz_sha1 {
-    return [XZDataDigester digest:self algorithm:(XZDataDigesterAlgorithmSHA1) hexEncoding:NO];
+    return [XZDataDigester digest:self algorithm:(XZDataDigesterAlgorithmSHA1) hexEncoding:XZCharacterLowercase];
 }
 
 - (NSString *)xz_SHA1 {
-    return [XZDataDigester digest:self algorithm:(XZDataDigesterAlgorithmSHA1) hexEncoding:YES];
+    return [XZDataDigester digest:self algorithm:(XZDataDigesterAlgorithmSHA1) hexEncoding:XZCharacterLowercase];
 }
 
 @end

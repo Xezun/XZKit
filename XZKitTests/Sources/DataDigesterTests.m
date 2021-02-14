@@ -32,6 +32,46 @@
     
     NSString *SHA1 = strRaw.xz_SHA1;
     XCTAssert([SHA1 isEqual:strSHA1]);
+    
+    
+}
+
+- (void)testAES {
+    NSString *str = @"123";
+    NSData *data = [str dataUsingEncoding:NSUTF8StringEncoding];
+    
+    NSString *key = @"123";
+    NSString *vector = @"1234567890123456";
+    
+    {
+        NSError *error = nil;
+        NSData *ento = [XZDataCryptor AESEncrypt:data key:key vector:vector error:&error];
+        
+        if (error.code == noErr) {
+            XZLog(@"%@", [ento xz_hexEncodedString]);
+        }
+        
+        NSData *deto = [XZDataCryptor AESDecrypt:ento key:key vector:vector error:nil];
+        XZLog(@"%@", [[NSString alloc] initWithData:deto encoding:NSUTF8StringEncoding]);
+    }
+    
+    {
+        XZDataCryptor *encryptor = [XZDataCryptor AESEncryptor:key vector:vector];
+        
+        NSMutableData *dataM = [NSMutableData data];
+        NSData *tmp = [encryptor update:data error:nil];
+        [dataM appendData:tmp];
+        [dataM appendData:[encryptor finish:nil]];
+        
+        XZLog(@"%@", [dataM xz_hexEncodedString]);
+        
+        XZDataCryptor *decryptor = [XZDataCryptor AESDecryptor:key vector:vector];
+
+        NSMutableData *dataM2 = [NSMutableData data];
+        [dataM2 appendData:[decryptor update:dataM error:nil]];
+        [dataM2 appendData:[decryptor finish:nil]];
+        XZLog(@"%@", [[NSString alloc] initWithData:dataM2 encoding:NSUTF8StringEncoding]);
+    }
 }
 
 - (void)testPerformanceExample {

@@ -32,7 +32,7 @@ typedef struct {
     XZDataDigesterOperationFinal final;
     CC_LONG length; // 摘要长度
     XZDataDigesterAlgorithm algorithm; // 算法
-    BOOL isDigesting; // 默认YES 如果为 NO 需要调用 init 方法。
+    BOOL isReady; // 默认 YES 如果为 NO 需要调用 init 方法。
     void *buffer; // 存放结果
 } XZDataDigesterContext;
 
@@ -88,10 +88,14 @@ NS_ASSUME_NONNULL_END
     return _context.algorithm;
 }
 
+- (NSUInteger)length {
+    return _context.length;
+}
+
 - (void)update:(const void *)bytes length:(NSUInteger)length {
-    if (!_context.isDigesting) {
+    if (!_context.isReady) {
         _context.init(_context.context);
-        _context.isDigesting = YES;
+        _context.isReady = YES;
     }
     _context.update(_context.context, bytes, (CC_LONG)length);
 }
@@ -103,9 +107,9 @@ NS_ASSUME_NONNULL_END
 }
 
 - (void *)digest {
-    if (_context.isDigesting) {
+    if (_context.isReady) {
         _context.final(_context.buffer, _context.context);
-        _context.isDigesting = NO;
+        _context.isReady = NO;
     }
     return _context.buffer;
 }
@@ -198,7 +202,7 @@ XZDataDigesterContext XZDataDigesterContextCreate(XZDataDigesterAlgorithm algori
 #endif
     }
     context.init(context.context);
-    context.isDigesting = YES;
+    context.isReady     = YES;
     context.algorithm   = algorithm;
     context.buffer      = calloc(context.length, sizeof(unsigned char));
     return context;

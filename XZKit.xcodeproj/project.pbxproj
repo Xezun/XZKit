@@ -23,6 +23,9 @@
 		2918817A25D6553B00C89059 /* XZObjCTypeDescriptor.h in Headers */ = {isa = PBXBuildFile; fileRef = 2918817825D6553B00C89059 /* XZObjCTypeDescriptor.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		2918817B25D6553B00C89059 /* XZObjCTypeDescriptor.m in Sources */ = {isa = PBXBuildFile; fileRef = 2918817925D6553B00C89059 /* XZObjCTypeDescriptor.m */; };
 		295D51CC25D9236800283581 /* XZKit+HexEncoding.swift in Sources */ = {isa = PBXBuildFile; fileRef = 295D51CB25D9236800283581 /* XZKit+HexEncoding.swift */; };
+		295D51E225D941B800283581 /* XZDataDigester.swift in Sources */ = {isa = PBXBuildFile; fileRef = 295D51E125D941B800283581 /* XZDataDigester.swift */; };
+		295D51F325D98E7100283581 /* XZDataCryptorAlgorithm.h in Headers */ = {isa = PBXBuildFile; fileRef = 295D51F125D98E7100283581 /* XZDataCryptorAlgorithm.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		295D51F425D98E7100283581 /* XZDataCryptorAlgorithm.m in Sources */ = {isa = PBXBuildFile; fileRef = 295D51F225D98E7100283581 /* XZDataCryptorAlgorithm.m */; };
 		29632F2225D058E000BB1BEF /* XZKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 29632F1825D058E000BB1BEF /* XZKit.framework */; };
 		29632F2725D058E000BB1BEF /* FoundationTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 29632F2625D058E000BB1BEF /* FoundationTests.m */; };
 		29632F2925D058E000BB1BEF /* XZKit.h in Headers */ = {isa = PBXBuildFile; fileRef = 29632F1B25D058E000BB1BEF /* XZKit.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -36,13 +39,11 @@
 		2963308B25D1000E00BB1BEF /* XZNavigationController.TransitionController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2963301C25D1000E00BB1BEF /* XZNavigationController.TransitionController.swift */; };
 		2963308C25D1000E00BB1BEF /* XZAppRedirection.m in Sources */ = {isa = PBXBuildFile; fileRef = 2963301E25D1000E00BB1BEF /* XZAppRedirection.m */; };
 		2963308D25D1000E00BB1BEF /* XZAppRedirection.h in Headers */ = {isa = PBXBuildFile; fileRef = 2963301F25D1000E00BB1BEF /* XZAppRedirection.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		296330B225D1000E00BB1BEF /* NSData+XZDataCryptor.m in Sources */ = {isa = PBXBuildFile; fileRef = 2963304825D1000E00BB1BEF /* NSData+XZDataCryptor.m */; };
 		296330B325D1000E00BB1BEF /* URL+XZKit.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2963304925D1000E00BB1BEF /* URL+XZKit.swift */; };
 		296330B425D1000E00BB1BEF /* NSString+XZDataDigester.h in Headers */ = {isa = PBXBuildFile; fileRef = 2963304A25D1000E00BB1BEF /* NSString+XZDataDigester.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		296330B525D1000E00BB1BEF /* NSBundle+XZKit.m in Sources */ = {isa = PBXBuildFile; fileRef = 2963304B25D1000E00BB1BEF /* NSBundle+XZKit.m */; };
 		296330B625D1000E00BB1BEF /* Data+XZKit.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2963304C25D1000E00BB1BEF /* Data+XZKit.swift */; };
 		296330B725D1000E00BB1BEF /* DispatchQueue+XZKit.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2963304D25D1000E00BB1BEF /* DispatchQueue+XZKit.swift */; };
-		296330B825D1000E00BB1BEF /* NSData+XZDataCryptor.h in Headers */ = {isa = PBXBuildFile; fileRef = 2963304E25D1000E00BB1BEF /* NSData+XZDataCryptor.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		296330B925D1000E00BB1BEF /* NSBundle+XZKit.h in Headers */ = {isa = PBXBuildFile; fileRef = 2963304F25D1000E00BB1BEF /* NSBundle+XZKit.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		296330BA25D1000E00BB1BEF /* NSString+XZDataDigester.m in Sources */ = {isa = PBXBuildFile; fileRef = 2963305025D1000E00BB1BEF /* NSString+XZDataDigester.m */; };
 		296330BB25D1000E00BB1BEF /* XZKit+JSON.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2963305125D1000E00BB1BEF /* XZKit+JSON.swift */; };
@@ -142,6 +143,9 @@
 		2918817825D6553B00C89059 /* XZObjCTypeDescriptor.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = XZObjCTypeDescriptor.h; sourceTree = "<group>"; };
 		2918817925D6553B00C89059 /* XZObjCTypeDescriptor.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = XZObjCTypeDescriptor.m; sourceTree = "<group>"; };
 		295D51CB25D9236800283581 /* XZKit+HexEncoding.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "XZKit+HexEncoding.swift"; sourceTree = "<group>"; };
+		295D51E125D941B800283581 /* XZDataDigester.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = XZDataDigester.swift; sourceTree = "<group>"; };
+		295D51F125D98E7100283581 /* XZDataCryptorAlgorithm.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = XZDataCryptorAlgorithm.h; sourceTree = "<group>"; };
+		295D51F225D98E7100283581 /* XZDataCryptorAlgorithm.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = XZDataCryptorAlgorithm.m; sourceTree = "<group>"; };
 		29632F1825D058E000BB1BEF /* XZKit.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = XZKit.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		29632F1B25D058E000BB1BEF /* XZKit.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = XZKit.h; sourceTree = "<group>"; };
 		29632F1C25D058E000BB1BEF /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
@@ -158,13 +162,11 @@
 		2963301C25D1000E00BB1BEF /* XZNavigationController.TransitionController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = XZNavigationController.TransitionController.swift; sourceTree = "<group>"; };
 		2963301E25D1000E00BB1BEF /* XZAppRedirection.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = XZAppRedirection.m; sourceTree = "<group>"; };
 		2963301F25D1000E00BB1BEF /* XZAppRedirection.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XZAppRedirection.h; sourceTree = "<group>"; };
-		2963304825D1000E00BB1BEF /* NSData+XZDataCryptor.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSData+XZDataCryptor.m"; sourceTree = "<group>"; };
 		2963304925D1000E00BB1BEF /* URL+XZKit.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "URL+XZKit.swift"; sourceTree = "<group>"; };
 		2963304A25D1000E00BB1BEF /* NSString+XZDataDigester.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSString+XZDataDigester.h"; sourceTree = "<group>"; };
 		2963304B25D1000E00BB1BEF /* NSBundle+XZKit.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSBundle+XZKit.m"; sourceTree = "<group>"; };
 		2963304C25D1000E00BB1BEF /* Data+XZKit.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "Data+XZKit.swift"; sourceTree = "<group>"; };
 		2963304D25D1000E00BB1BEF /* DispatchQueue+XZKit.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "DispatchQueue+XZKit.swift"; sourceTree = "<group>"; };
-		2963304E25D1000E00BB1BEF /* NSData+XZDataCryptor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSData+XZDataCryptor.h"; sourceTree = "<group>"; };
 		2963304F25D1000E00BB1BEF /* NSBundle+XZKit.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSBundle+XZKit.h"; sourceTree = "<group>"; };
 		2963305025D1000E00BB1BEF /* NSString+XZDataDigester.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSString+XZDataDigester.m"; sourceTree = "<group>"; };
 		2963305125D1000E00BB1BEF /* XZKit+JSON.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "XZKit+JSON.swift"; sourceTree = "<group>"; };
@@ -275,6 +277,7 @@
 			children = (
 				2963306525D1000E00BB1BEF /* XZDataDigester.h */,
 				2963306425D1000E00BB1BEF /* XZDataDigester.m */,
+				295D51E125D941B800283581 /* XZDataDigester.swift */,
 				2918814E25D3060000C89059 /* NSData+XZDataDigester.h */,
 				2918814F25D3060000C89059 /* NSData+XZDataDigester.m */,
 				2963304A25D1000E00BB1BEF /* NSString+XZDataDigester.h */,
@@ -529,8 +532,8 @@
 			children = (
 				2963307725D1000E00BB1BEF /* XZDataCryptor.h */,
 				2963307625D1000E00BB1BEF /* XZDataCryptor.m */,
-				2963304E25D1000E00BB1BEF /* NSData+XZDataCryptor.h */,
-				2963304825D1000E00BB1BEF /* NSData+XZDataCryptor.m */,
+				295D51F125D98E7100283581 /* XZDataCryptorAlgorithm.h */,
+				295D51F225D98E7100283581 /* XZDataCryptorAlgorithm.m */,
 			);
 			path = DataCryptor;
 			sourceTree = "<group>";
@@ -574,12 +577,12 @@
 			files = (
 				296330CB25D1000E00BB1BEF /* XZDataDigester.h in Headers */,
 				296330DA25D1000E00BB1BEF /* XZAppLanguage.h in Headers */,
+				295D51F325D98E7100283581 /* XZDataCryptorAlgorithm.h in Headers */,
 				2916366F25D67F51001BFE25 /* UIView+XZKit.h in Headers */,
 				296330B425D1000E00BB1BEF /* NSString+XZDataDigester.h in Headers */,
 				296330D725D1000E00BB1BEF /* XZDataCryptor.h in Headers */,
 				2963310F25D108DC00BB1BEF /* XZKit+Timestamp.h in Headers */,
 				296330BE25D1000E00BB1BEF /* XZImageCarouselView.h in Headers */,
-				296330B825D1000E00BB1BEF /* NSData+XZDataCryptor.h in Headers */,
 				2918813E25D2978D00C89059 /* XZFoundation.h in Headers */,
 				2963311025D108DC00BB1BEF /* XZCharacterCase.h in Headers */,
 				29632F2925D058E000BB1BEF /* XZKit.h in Headers */,
@@ -717,7 +720,6 @@
 				299D574425D8E58A0097C27A /* UIColor+XZKit.swift in Sources */,
 				2963311C25D108DC00BB1BEF /* XZLog.swift in Sources */,
 				2963311525D108DC00BB1BEF /* XZKit+Date.swift in Sources */,
-				296330B225D1000E00BB1BEF /* NSData+XZDataCryptor.m in Sources */,
 				2963308525D1000E00BB1BEF /* XZNavigationBarCustomizable.swift in Sources */,
 				296330BB25D1000E00BB1BEF /* XZKit+JSON.swift in Sources */,
 				296330C925D1000E00BB1BEF /* XZImageCacheManager.swift in Sources */,
@@ -751,6 +753,7 @@
 				295D51CC25D9236800283581 /* XZKit+HexEncoding.swift in Sources */,
 				296330CD25D1000E00BB1BEF /* XZAnimatedImage.m in Sources */,
 				2963310D25D108DC00BB1BEF /* XZKit+HexEncoding.m in Sources */,
+				295D51F425D98E7100283581 /* XZDataCryptorAlgorithm.m in Sources */,
 				2963311E25D108DC00BB1BEF /* XZKitDefines.m in Sources */,
 				2963312325D108DC00BB1BEF /* XZKit+String.swift in Sources */,
 				296330B625D1000E00BB1BEF /* Data+XZKit.swift in Sources */,
@@ -768,6 +771,7 @@
 				2963311A25D108DC00BB1BEF /* XZKit+Runtime.m in Sources */,
 				2963310C25D108DC00BB1BEF /* XZLog.m in Sources */,
 				2963312225D108DC00BB1BEF /* XZDefer.m in Sources */,
+				295D51E225D941B800283581 /* XZDataDigester.swift in Sources */,
 				299D574825D8EC6D0097C27A /* UIImage+XZKit.swift in Sources */,
 				2963308925D1000E00BB1BEF /* XZNavigationController.swift in Sources */,
 				2963308825D1000E00BB1BEF /* XZNavigationBar.swift in Sources */,
