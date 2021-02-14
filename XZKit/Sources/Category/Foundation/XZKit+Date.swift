@@ -13,7 +13,7 @@ import Foundation
 /// ```swift
 /// // G： 纪念符号，公元 AD
 /// // yyyy：年 2019
-/// // Y： Week year
+/// // Y：Week year
 /// // MM：月
 /// // dd：日
 /// // hh：1~12小时制(1-12)

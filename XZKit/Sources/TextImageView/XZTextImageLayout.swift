@@ -83,7 +83,7 @@ extension TextImageLayout {
         
         if let imageView = imageViewIfLoaded {
             // 优先布局图片。
-            let imageViewSize = imageView.sizeThatFits(layoutRect.size).scalingAspect(toFit: layoutRect.size)
+            let imageViewSize = imageView.sizeThatFits(layoutRect.size).scalingAspect(within: layoutRect.size)
             
             if let titleLabel = textLabelIfLoaded {
                 // 图片和文字都有。

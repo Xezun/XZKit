@@ -42,12 +42,12 @@ void __XZLog__(const char * const filePath, int const line, const char * const f
     NSString * const content = [[NSString alloc] initWithFormat:format arguments:va_list_pointer];
     va_end(va_list_pointer);
     
+    NSString * const dateString     = [_dateFormatter stringFromDate:date];
+    NSString * const fileName       = [[NSString stringWithUTF8String:filePath] lastPathComponent];
+    NSString * const commentMessage = [NSString stringWithFormat:@"§ %@(%d) § %s § %@ §", fileName, line, function, dateString];
+    NSString * const dividerLine    = [@"----" stringByPaddingToLength:commentMessage.length withString:@"-" startingAtIndex:0];
+    
     dispatch_sync(_queue, ^{
-        NSString * const dateString     = [_dateFormatter stringFromDate:date];
-        NSString * const fileName       = [[NSString stringWithUTF8String:filePath] lastPathComponent];
-        NSString * const commentMessage = [NSString stringWithFormat:@"§ %@(%d) § %s § %@ §", fileName, line, function, dateString];
-        NSString * const dividerLine    = [@"----" stringByPaddingToLength:commentMessage.length withString:@"-" startingAtIndex:0];
-        
         XZPrint(@"%@\n%@\n%@\n%@\n", dividerLine, commentMessage, dividerLine, content);
     });
 }

@@ -22,10 +22,10 @@
 		2918815925D30E4D00C89059 /* DataDigesterTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 2918815825D30E4D00C89059 /* DataDigesterTests.m */; };
 		2918817A25D6553B00C89059 /* XZObjCTypeDescriptor.h in Headers */ = {isa = PBXBuildFile; fileRef = 2918817825D6553B00C89059 /* XZObjCTypeDescriptor.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		2918817B25D6553B00C89059 /* XZObjCTypeDescriptor.m in Sources */ = {isa = PBXBuildFile; fileRef = 2918817925D6553B00C89059 /* XZObjCTypeDescriptor.m */; };
+		295D51CC25D9236800283581 /* XZKit+HexEncoding.swift in Sources */ = {isa = PBXBuildFile; fileRef = 295D51CB25D9236800283581 /* XZKit+HexEncoding.swift */; };
 		29632F2225D058E000BB1BEF /* XZKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 29632F1825D058E000BB1BEF /* XZKit.framework */; };
 		29632F2725D058E000BB1BEF /* FoundationTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 29632F2625D058E000BB1BEF /* FoundationTests.m */; };
 		29632F2925D058E000BB1BEF /* XZKit.h in Headers */ = {isa = PBXBuildFile; fileRef = 29632F1B25D058E000BB1BEF /* XZKit.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		2963308325D1000E00BB1BEF /* XZKit.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2963301225D1000E00BB1BEF /* XZKit.swift */; };
 		2963308425D1000E00BB1BEF /* XZNavigationController.AnimationController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2963301525D1000E00BB1BEF /* XZNavigationController.AnimationController.swift */; };
 		2963308525D1000E00BB1BEF /* XZNavigationBarCustomizable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2963301625D1000E00BB1BEF /* XZNavigationBarCustomizable.swift */; };
 		2963308625D1000E00BB1BEF /* UINavigationBar+XZNavigationController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2963301725D1000E00BB1BEF /* UINavigationBar+XZNavigationController.swift */; };
@@ -96,7 +96,6 @@
 		2963311625D108DC00BB1BEF /* XZKitDEBUG.h in Headers */ = {isa = PBXBuildFile; fileRef = 296330FD25D108DB00BB1BEF /* XZKitDEBUG.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		2963311725D108DC00BB1BEF /* XZKitDefines.h in Headers */ = {isa = PBXBuildFile; fileRef = 296330FE25D108DB00BB1BEF /* XZKitDefines.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		2963311825D108DC00BB1BEF /* XZKit+HexEncoding.h in Headers */ = {isa = PBXBuildFile; fileRef = 296330FF25D108DB00BB1BEF /* XZKit+HexEncoding.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		2963311925D108DC00BB1BEF /* XZKitDefines.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2963310025D108DB00BB1BEF /* XZKitDefines.swift */; };
 		2963311A25D108DC00BB1BEF /* XZKit+Runtime.m in Sources */ = {isa = PBXBuildFile; fileRef = 2963310125D108DB00BB1BEF /* XZKit+Runtime.m */; };
 		2963311B25D108DC00BB1BEF /* XZCharacterCase.m in Sources */ = {isa = PBXBuildFile; fileRef = 2963310225D108DB00BB1BEF /* XZCharacterCase.m */; };
 		2963311C25D108DC00BB1BEF /* XZLog.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2963310325D108DB00BB1BEF /* XZLog.swift */; };
@@ -104,7 +103,7 @@
 		2963311E25D108DC00BB1BEF /* XZKitDefines.m in Sources */ = {isa = PBXBuildFile; fileRef = 2963310525D108DC00BB1BEF /* XZKitDefines.m */; };
 		2963311F25D108DC00BB1BEF /* XZKitDEBUG.m in Sources */ = {isa = PBXBuildFile; fileRef = 2963310625D108DC00BB1BEF /* XZKitDEBUG.m */; };
 		2963312025D108DC00BB1BEF /* XZKit+Geometry.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2963310725D108DC00BB1BEF /* XZKit+Geometry.swift */; };
-		2963312125D108DC00BB1BEF /* XZKit+TimeInterval.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2963310825D108DC00BB1BEF /* XZKit+TimeInterval.swift */; };
+		2963312125D108DC00BB1BEF /* XZKit+Timestamp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2963310825D108DC00BB1BEF /* XZKit+Timestamp.swift */; };
 		2963312225D108DC00BB1BEF /* XZDefer.m in Sources */ = {isa = PBXBuildFile; fileRef = 2963310925D108DC00BB1BEF /* XZDefer.m */; };
 		2963312325D108DC00BB1BEF /* XZKit+String.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2963310A25D108DC00BB1BEF /* XZKit+String.swift */; };
 		2963313F25D10BAD00BB1BEF /* XZTimeTickerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2963313B25D10BAC00BB1BEF /* XZTimeTickerTests.swift */; };
@@ -142,13 +141,13 @@
 		2918815825D30E4D00C89059 /* DataDigesterTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = DataDigesterTests.m; sourceTree = "<group>"; };
 		2918817825D6553B00C89059 /* XZObjCTypeDescriptor.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = XZObjCTypeDescriptor.h; sourceTree = "<group>"; };
 		2918817925D6553B00C89059 /* XZObjCTypeDescriptor.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = XZObjCTypeDescriptor.m; sourceTree = "<group>"; };
+		295D51CB25D9236800283581 /* XZKit+HexEncoding.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "XZKit+HexEncoding.swift"; sourceTree = "<group>"; };
 		29632F1825D058E000BB1BEF /* XZKit.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = XZKit.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		29632F1B25D058E000BB1BEF /* XZKit.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = XZKit.h; sourceTree = "<group>"; };
 		29632F1C25D058E000BB1BEF /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		29632F2125D058E000BB1BEF /* XZKitTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = XZKitTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		29632F2625D058E000BB1BEF /* FoundationTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = FoundationTests.m; sourceTree = "<group>"; };
 		29632F2825D058E000BB1BEF /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		2963301225D1000E00BB1BEF /* XZKit.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = XZKit.swift; sourceTree = "<group>"; };
 		2963301525D1000E00BB1BEF /* XZNavigationController.AnimationController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = XZNavigationController.AnimationController.swift; sourceTree = "<group>"; };
 		2963301625D1000E00BB1BEF /* XZNavigationBarCustomizable.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = XZNavigationBarCustomizable.swift; sourceTree = "<group>"; };
 		2963301725D1000E00BB1BEF /* UINavigationBar+XZNavigationController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "UINavigationBar+XZNavigationController.swift"; sourceTree = "<group>"; };
@@ -219,7 +218,6 @@
 		296330FD25D108DB00BB1BEF /* XZKitDEBUG.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XZKitDEBUG.h; sourceTree = "<group>"; };
 		296330FE25D108DB00BB1BEF /* XZKitDefines.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XZKitDefines.h; sourceTree = "<group>"; };
 		296330FF25D108DB00BB1BEF /* XZKit+HexEncoding.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "XZKit+HexEncoding.h"; sourceTree = "<group>"; };
-		2963310025D108DB00BB1BEF /* XZKitDefines.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = XZKitDefines.swift; sourceTree = "<group>"; };
 		2963310125D108DB00BB1BEF /* XZKit+Runtime.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "XZKit+Runtime.m"; sourceTree = "<group>"; };
 		2963310225D108DB00BB1BEF /* XZCharacterCase.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = XZCharacterCase.m; sourceTree = "<group>"; };
 		2963310325D108DB00BB1BEF /* XZLog.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = XZLog.swift; sourceTree = "<group>"; };
@@ -227,13 +225,13 @@
 		2963310525D108DC00BB1BEF /* XZKitDefines.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = XZKitDefines.m; sourceTree = "<group>"; };
 		2963310625D108DC00BB1BEF /* XZKitDEBUG.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = XZKitDEBUG.m; sourceTree = "<group>"; };
 		2963310725D108DC00BB1BEF /* XZKit+Geometry.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "XZKit+Geometry.swift"; sourceTree = "<group>"; };
-		2963310825D108DC00BB1BEF /* XZKit+TimeInterval.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "XZKit+TimeInterval.swift"; sourceTree = "<group>"; };
+		2963310825D108DC00BB1BEF /* XZKit+Timestamp.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "XZKit+Timestamp.swift"; sourceTree = "<group>"; };
 		2963310925D108DC00BB1BEF /* XZDefer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = XZDefer.m; sourceTree = "<group>"; };
 		2963310A25D108DC00BB1BEF /* XZKit+String.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "XZKit+String.swift"; sourceTree = "<group>"; };
-		2963313B25D10BAC00BB1BEF /* XZTimeTickerTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = XZTimeTickerTests.swift; path = XZKitTests/Swift/XZTimeTickerTests.swift; sourceTree = SOURCE_ROOT; };
-		2963313C25D10BAC00BB1BEF /* XZURLTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = XZURLTests.swift; path = XZKitTests/Swift/XZURLTests.swift; sourceTree = SOURCE_ROOT; };
-		2963313D25D10BAC00BB1BEF /* XZKitConstantsTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = XZKitConstantsTests.m; path = "XZKitTests/Objective-C/XZKitConstantsTests.m"; sourceTree = SOURCE_ROOT; };
-		2963313E25D10BAC00BB1BEF /* XZKitConstantsSwiftTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = XZKitConstantsSwiftTests.swift; path = XZKitTests/Swift/XZKitConstantsSwiftTests.swift; sourceTree = SOURCE_ROOT; };
+		2963313B25D10BAC00BB1BEF /* XZTimeTickerTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = XZTimeTickerTests.swift; path = XZKitTests/Sources/XZTimeTickerTests.swift; sourceTree = SOURCE_ROOT; };
+		2963313C25D10BAC00BB1BEF /* XZURLTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = XZURLTests.swift; path = XZKitTests/Sources/XZURLTests.swift; sourceTree = SOURCE_ROOT; };
+		2963313D25D10BAC00BB1BEF /* XZKitConstantsTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = XZKitConstantsTests.m; path = XZKitTests/Sources/XZKitConstantsTests.m; sourceTree = SOURCE_ROOT; };
+		2963313E25D10BAC00BB1BEF /* XZKitConstantsSwiftTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = XZKitConstantsSwiftTests.swift; path = XZKitTests/Sources/XZKitConstantsSwiftTests.swift; sourceTree = SOURCE_ROOT; };
 		299D574325D8E58A0097C27A /* UIColor+XZKit.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIColor+XZKit.swift"; sourceTree = "<group>"; };
 		299D574725D8EC6D0097C27A /* UIImage+XZKit.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIImage+XZKit.swift"; sourceTree = "<group>"; };
 		299D574D25D906FA0097C27A /* XZKit+JSON.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "XZKit+JSON.h"; sourceTree = "<group>"; };
@@ -259,24 +257,17 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
-		2918813525D1130700C89059 /* Swift */ = {
-			isa = PBXGroup;
-			children = (
-				2963313E25D10BAC00BB1BEF /* XZKitConstantsSwiftTests.swift */,
-				2963313B25D10BAC00BB1BEF /* XZTimeTickerTests.swift */,
-				2963313C25D10BAC00BB1BEF /* XZURLTests.swift */,
-			);
-			path = Swift;
-			sourceTree = "<group>";
-		};
-		2918813625D1131300C89059 /* Objective-C */ = {
+		2918813625D1131300C89059 /* Sources */ = {
 			isa = PBXGroup;
 			children = (
 				29632F2625D058E000BB1BEF /* FoundationTests.m */,
 				2918815825D30E4D00C89059 /* DataDigesterTests.m */,
 				2963313D25D10BAC00BB1BEF /* XZKitConstantsTests.m */,
+				2963313E25D10BAC00BB1BEF /* XZKitConstantsSwiftTests.swift */,
+				2963313B25D10BAC00BB1BEF /* XZTimeTickerTests.swift */,
+				2963313C25D10BAC00BB1BEF /* XZURLTests.swift */,
 			);
-			path = "Objective-C";
+			path = Sources;
 			sourceTree = "<group>";
 		};
 		2918814B25D3053300C89059 /* DataDigester */ = {
@@ -314,8 +305,7 @@
 			isa = PBXGroup;
 			children = (
 				29632F1B25D058E000BB1BEF /* XZKit.h */,
-				2963301325D1000E00BB1BEF /* Objective-C */,
-				2963301125D1000E00BB1BEF /* Swift */,
+				2963301325D1000E00BB1BEF /* Sources */,
 				29632F1C25D058E000BB1BEF /* Info.plist */,
 			);
 			path = XZKit;
@@ -324,24 +314,13 @@
 		29632F2525D058E000BB1BEF /* XZKitTests */ = {
 			isa = PBXGroup;
 			children = (
-				2918813625D1131300C89059 /* Objective-C */,
-				2918813525D1130700C89059 /* Swift */,
+				2918813625D1131300C89059 /* Sources */,
 				29632F2825D058E000BB1BEF /* Info.plist */,
 			);
 			path = XZKitTests;
 			sourceTree = "<group>";
 		};
-		2963301125D1000E00BB1BEF /* Swift */ = {
-			isa = PBXGroup;
-			children = (
-				2963313425D10A7C00BB1BEF /* Foundation */,
-				2963308125D1000E00BB1BEF /* ProgressView */,
-				2963301225D1000E00BB1BEF /* XZKit.swift */,
-			);
-			path = Swift;
-			sourceTree = "<group>";
-		};
-		2963301325D1000E00BB1BEF /* Objective-C */ = {
+		2963301325D1000E00BB1BEF /* Sources */ = {
 			isa = PBXGroup;
 			children = (
 				2963302025D1000E00BB1BEF /* Foundation */,
@@ -358,8 +337,9 @@
 				2963306F25D1000E00BB1BEF /* UICollectionViewFlowLayout */,
 				2963307125D1000E00BB1BEF /* TextImageView */,
 				2963307825D1000E00BB1BEF /* AppLanguage */,
+				2963308125D1000E00BB1BEF /* ProgressView */,
 			);
-			path = "Objective-C";
+			path = Sources;
 			sourceTree = "<group>";
 		};
 		2963301425D1000E00BB1BEF /* NavigationController */ = {
@@ -396,6 +376,7 @@
 				2963310625D108DC00BB1BEF /* XZKitDEBUG.m */,
 				296330F525D108DB00BB1BEF /* XZLog.h */,
 				296330F325D108DB00BB1BEF /* XZLog.m */,
+				2963310325D108DB00BB1BEF /* XZLog.swift */,
 				296330F825D108DB00BB1BEF /* XZDefer.h */,
 				2963310925D108DC00BB1BEF /* XZDefer.m */,
 				296330F725D108DB00BB1BEF /* XZCharacterCase.h */,
@@ -406,10 +387,13 @@
 				2963310125D108DB00BB1BEF /* XZKit+Runtime.m */,
 				296330F225D108DB00BB1BEF /* XZKit+Geometry.h */,
 				296330FB25D108DB00BB1BEF /* XZKit+Geometry.m */,
+				2963310725D108DC00BB1BEF /* XZKit+Geometry.swift */,
 				296330F625D108DB00BB1BEF /* XZKit+Timestamp.h */,
 				2963310425D108DB00BB1BEF /* XZKit+Timestamp.m */,
+				2963310825D108DC00BB1BEF /* XZKit+Timestamp.swift */,
 				296330FF25D108DB00BB1BEF /* XZKit+HexEncoding.h */,
 				296330F425D108DB00BB1BEF /* XZKit+HexEncoding.m */,
+				295D51CB25D9236800283581 /* XZKit+HexEncoding.swift */,
 				299D574D25D906FA0097C27A /* XZKit+JSON.h */,
 				299D574E25D906FA0097C27A /* XZKit+JSON.m */,
 				2963305125D1000E00BB1BEF /* XZKit+JSON.swift */,
@@ -440,6 +424,7 @@
 				299D574725D8EC6D0097C27A /* UIImage+XZKit.swift */,
 				2916366425D67F51001BFE25 /* UIView+XZKit.h */,
 				2916365D25D67F51001BFE25 /* UIView+XZKit.m */,
+				296330F925D108DB00BB1BEF /* XZKit+UIView.swift */,
 			);
 			path = UIKit;
 			sourceTree = "<group>";
@@ -448,7 +433,9 @@
 			isa = PBXGroup;
 			children = (
 				2963304C25D1000E00BB1BEF /* Data+XZKit.swift */,
+				2963310A25D108DC00BB1BEF /* XZKit+String.swift */,
 				2963304925D1000E00BB1BEF /* URL+XZKit.swift */,
+				296330FC25D108DB00BB1BEF /* XZKit+Date.swift */,
 				2963304F25D1000E00BB1BEF /* NSBundle+XZKit.h */,
 				2963304B25D1000E00BB1BEF /* NSBundle+XZKit.m */,
 				2963304D25D1000E00BB1BEF /* DispatchQueue+XZKit.swift */,
@@ -576,20 +563,6 @@
 				2963308225D1000E00BB1BEF /* XZProgressView.swift */,
 			);
 			path = ProgressView;
-			sourceTree = "<group>";
-		};
-		2963313425D10A7C00BB1BEF /* Foundation */ = {
-			isa = PBXGroup;
-			children = (
-				2963310325D108DB00BB1BEF /* XZLog.swift */,
-				296330FC25D108DB00BB1BEF /* XZKit+Date.swift */,
-				2963310725D108DC00BB1BEF /* XZKit+Geometry.swift */,
-				2963310A25D108DC00BB1BEF /* XZKit+String.swift */,
-				2963310825D108DC00BB1BEF /* XZKit+TimeInterval.swift */,
-				296330F925D108DB00BB1BEF /* XZKit+UIView.swift */,
-				2963310025D108DB00BB1BEF /* XZKitDefines.swift */,
-			);
-			path = Foundation;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -745,9 +718,7 @@
 				2963311C25D108DC00BB1BEF /* XZLog.swift in Sources */,
 				2963311525D108DC00BB1BEF /* XZKit+Date.swift in Sources */,
 				296330B225D1000E00BB1BEF /* NSData+XZDataCryptor.m in Sources */,
-				2963311925D108DC00BB1BEF /* XZKitDefines.swift in Sources */,
 				2963308525D1000E00BB1BEF /* XZNavigationBarCustomizable.swift in Sources */,
-				2963308325D1000E00BB1BEF /* XZKit.swift in Sources */,
 				296330BB25D1000E00BB1BEF /* XZKit+JSON.swift in Sources */,
 				296330C925D1000E00BB1BEF /* XZImageCacheManager.swift in Sources */,
 				296330C725D1000E00BB1BEF /* XZImageCarouselView.m in Sources */,
@@ -761,7 +732,7 @@
 				296330D425D1000E00BB1BEF /* XZTextImageView.swift in Sources */,
 				2963308C25D1000E00BB1BEF /* XZAppRedirection.m in Sources */,
 				2963308425D1000E00BB1BEF /* XZNavigationController.AnimationController.swift in Sources */,
-				2963312125D108DC00BB1BEF /* XZKit+TimeInterval.swift in Sources */,
+				2963312125D108DC00BB1BEF /* XZKit+Timestamp.swift in Sources */,
 				296330BF25D1000E00BB1BEF /* XZCarouselView.m in Sources */,
 				2963311F25D108DC00BB1BEF /* XZKitDEBUG.m in Sources */,
 				296330D625D1000E00BB1BEF /* XZDataCryptor.m in Sources */,
@@ -777,6 +748,7 @@
 				296330C825D1000E00BB1BEF /* XZCacheManger.swift in Sources */,
 				296330C425D1000E00BB1BEF /* XZCarouselView.ItemView.m in Sources */,
 				296330CF25D1000E00BB1BEF /* XZContentStatus.swift in Sources */,
+				295D51CC25D9236800283581 /* XZKit+HexEncoding.swift in Sources */,
 				296330CD25D1000E00BB1BEF /* XZAnimatedImage.m in Sources */,
 				2963310D25D108DC00BB1BEF /* XZKit+HexEncoding.m in Sources */,
 				2963311E25D108DC00BB1BEF /* XZKitDefines.m in Sources */,
@@ -871,7 +843,6 @@
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					"$(inherited)",
 					"DEBUG=1",
-					"XZ_SWIFT_OC_MIXED=1",
 				);
 				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
@@ -930,10 +901,7 @@
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu11;
 				GCC_NO_COMMON_BLOCKS = YES;
-				GCC_PREPROCESSOR_DEFINITIONS = (
-					"$(inherited)",
-					"XZ_SWIFT_OC_MIXED=1",
-				);
+				GCC_PREPROCESSOR_DEFINITIONS = "$(inherited)";
 				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
 				GCC_WARN_UNDECLARED_SELECTOR = YES;

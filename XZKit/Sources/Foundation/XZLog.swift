@@ -9,12 +9,6 @@
 
 import Foundation
 
-#if !XZ_SWIFT_OC_MIXED
-public let isDebugMode = { () -> Bool in
-    return ProcessInfo.processInfo.arguments.contains("-XZKitDEBUG")
-}()
-#endif
-
 /// 仅在 **XZKitDEBUG** 模式下，才在控制台输出指定信息。
 /// - Note: 该方法只是控制控制台文本输出，并不会减少构建 message 参数的运算。
 /// - Note: 在输出比较消耗资源的内容时，最好还是使用 DEBUG 宏来控制，保证在正式环境中输出内容不被编译。

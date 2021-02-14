@@ -28,7 +28,7 @@ extension String {
     /// - Note: 使用 `JSONSerialization` 处理 `Array<Any>`、`Dictionary<String, Any>` 类型的数据。
     /// - Note: 其它对象使用 `String.init(describing:)` 方法。
     /// - Parameter value: JSON 对象，比如 Array、Dictionary 。
-    public init?(json value: Any?, encoding: Encoding, options: JSONSerialization.WritingOptions = .fragmentsAllowed) {
+    public init?(json value: Any?, encoding: Encoding = .utf8, options: JSONSerialization.WritingOptions = .fragmentsAllowed) {
         guard let data = Data.init(json: value, options: options) else { return nil }
         self.init(data: data, encoding: encoding)
     }

@@ -60,24 +60,30 @@ NS_SWIFT_NAME(DataDigester)
 /// 将二进制数据进行摘要计算。
 /// @param bytes 二进制数据
 /// @param length 数据的长度
-- (void)digest:(const void *)bytes length:(NSUInteger)length;
+- (void)update:(const void *)bytes length:(NSUInteger)length;
 
 /// 对 NSData 二进制数据进行摘要计算。
 /// @note 此方法被调用多次。
 /// @param data NSData
-- (void)digest:(NSData *)data;
+- (void)update:(NSData *)data;
 
-/// 结束摘要计算，并返回结果。
-/// @note 在再次开始摘要计算前，本方法可多次调用。
+/// 摘要结果。
+/// @note 获取摘要数据，即表示当前摘要计算结束；再次开始摘要计算前，此属性可获取多次。
 /// @return 数据摘要的二进制形式
-- (void *)finish NS_RETURNS_INNER_POINTER;
+@property (nonatomic, readonly) void *digest NS_RETURNS_INNER_POINTER;
 
 /// 获取已进行摘要计算的数据的摘要。
-- (NSData *)digestedData;
+/// @note 获取摘要数据，即表示当前摘要计算结束；再次开始摘要计算前，此属性可获取多次。
+@property (nonatomic, readonly) NSData *digestData;
 
 /// 获取已进行摘要计算的数据的摘要，十六进制编码形式。
+/// @note 获取摘要数据，即表示当前摘要计算结束；再次开始摘要计算前，此属性可获取多次。
 /// @param characterCase 十六进制编码的大小写
-- (NSString *)digestedString:(XZCharacterCase)characterCase;
+- (NSString *)digestStringWithCharacterCase:(XZCharacterCase)characterCase;
+
+/// 获取已进行摘要计算的数据的摘要，小写字母形式。
+/// @note 获取摘要数据，即表示当前摘要计算结束；再次开始摘要计算前，此属性可获取多次。
+@property (nonatomic, readonly) NSString *digestString;
 
 @end
 

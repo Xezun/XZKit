@@ -10,7 +10,7 @@ import Foundation
 
 extension TimeInterval {
     
-    /// 格林尼治起始时间到现在的时间间隔。
+    /// 当前时间戳，格林尼治时间。
     public static var since1970: TimeInterval {
         return __XZTimestamp();
     }

@@ -25,8 +25,6 @@ class XZURLTests: XCTestCase {
         
         XZLog("验证 keyedValues 属性：\n%@", String(json: url.queryComponent?.keyedValues, options: .prettyPrinted))
         
-        
-        
         url.queryComponent?.addValue("addValue", forKey: "d")
         XZLog("%@", url)
     }

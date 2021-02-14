@@ -109,7 +109,7 @@ NS_SWIFT_NAME(DataCryptor)
 /// @param block 执行加解密流程的 block 函数；如果 block 返回了 YES ，那么该 block 会再次被调用，且其 index 参数自增。
 /// @param error 如果执行过程发生错误，方法会退出，并通过此参数输出错误。
 /// @return 返回 YES 表示执行过程没有错误产生。
-- (BOOL)cryptoByUsingBlock:(BOOL (^)(NSInteger index, size_t (^XZCryptorLength)(size_t dataInLength), BOOL (^XZCryptorUpdate)(void *dataIn, size_t dataInLength, void *buffer, size_t bufferLength, size_t *dataOutLength), BOOL (^XZCryptorFinish)(void *buffer, size_t bufferLength, size_t *dataOutLength)))block error:(NSError * _Nullable __autoreleasing * _Nullable)error NS_SWIFT_NAME(crypto(using:));
+- (BOOL)cryptoWithBlock:(BOOL (^)(NSInteger index, size_t (^XZCryptorLength)(size_t dataInLength), BOOL (^XZCryptorUpdate)(void *dataIn, size_t dataInLength, void *buffer, size_t bufferLength, size_t *dataOutLength), BOOL (^XZCryptorFinish)(void *buffer, size_t bufferLength, size_t *dataOutLength)))block error:(NSError * _Nullable __autoreleasing * _Nullable)error NS_SWIFT_NAME(crypto(with:));
 
 @end
 
@@ -302,11 +302,6 @@ NS_SWIFT_NAME(DataCryptor.Algorithm) @interface XZDataCryptorAlgorithm : NSObjec
 - (NSString *)description;
 
 @end
-
-
-
-
-
 
 NS_ASSUME_NONNULL_END
 
