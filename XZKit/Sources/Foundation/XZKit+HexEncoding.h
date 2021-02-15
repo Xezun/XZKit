@@ -41,36 +41,36 @@ NS_ASSUME_NONNULL_BEGIN
 /// @param bytes 二进制数据
 /// @param numberOfBytes 数据长度
 /// @param characterCase 十六进制编码的大小写
-- (instancetype)xz_initWithBytes:(const void *)bytes length:(NSUInteger)numberOfBytes hexEncoding:(XZCharacterCase)characterCase NS_SWIFT_NAME(init(_:length:hexEncoding:));
+- (instancetype)xz_initWithBytes:(const void *)bytes length:(NSUInteger)numberOfBytes hexEncoding:(XZCharacterCase)characterCase;
 
 /// 使用十六进制编码将二进制数据转换成字符串。
 /// @note 对于不连续的 NSData 二进制数据，本方法比用 `-xz_initWithBytes:length:hexEncoding:` 更高效。
 /// @param data 二进制数据 NSData 对象
 /// @param characterCase 十六进制编码的大小写
-- (instancetype)xz_initWithData:(NSData *)data hexEncoding:(XZCharacterCase)characterCase NS_SWIFT_NAME(init(_:hexEncoding:));
+- (instancetype)xz_initWithData:(NSData *)data hexEncoding:(XZCharacterCase)characterCase;
 
 /// 对当前字符串的二进制数据，进行十六进制编码。
 /// @param stringEncoding 字符串二进制形式的编码
 /// @param characterCase 十六进制字符的大小写
-- (NSString *)xz_stringByAddingHexEncoding:(XZCharacterCase)characterCase usingEncoding:(NSStringEncoding)stringEncoding NS_SWIFT_NAME(addingHexEncoding(_:using:));
+- (NSString *)xz_stringByAddingHexEncoding:(XZCharacterCase)characterCase usingEncoding:(NSStringEncoding)stringEncoding;
 
 /// 对当前字符串的二进制数据，使用小写字母，进行十六进制编码。
 /// @param stringEncoding 字符串二进制形式的编码
-- (NSString *)xz_stringByAddingHexEncodingUsingEncoding:(NSStringEncoding)stringEncoding NS_SWIFT_NAME(addingHexEncoding(using:));
+- (NSString *)xz_stringByAddingHexEncodingUsingEncoding:(NSStringEncoding)stringEncoding;
 
 /// 对当前字符串 UTF-8 编码形式的二进制数据，进行十六进制编码。
 /// @param characterCase 十六进制字符的大小写
-- (NSString *)xz_stringByAddingHexEncoding:(XZCharacterCase)characterCase NS_SWIFT_NAME(addingHexEncoding(_:));
+- (NSString *)xz_stringByAddingHexEncoding:(XZCharacterCase)characterCase;
 
 /// 对当前字符串 UTF-8 编码形式的二进制数据，使用小写字母，进行十六进制编码。
-@property (nonatomic, readonly) NSString *xz_stringByAddingHexEncoding NS_SWIFT_NAME(addingHexEncoding);
+@property (nonatomic, readonly) NSString *xz_stringByAddingHexEncoding;
 
 /// 对原始字符串的十六进制编码字符串进行解码。
 /// @param dataEncoding 原始字符串的二进制编码
-- (NSString *)xz_stringByRemovingHexEncodingUsingEncoding:(NSStringEncoding)dataEncoding NS_SWIFT_NAME(removingHexEncoding(using:));
+- (NSString *)xz_stringByRemovingHexEncodingUsingEncoding:(NSStringEncoding)dataEncoding;
 
 /// 对使用 UTF-8 编码的原始字符串的十六进制编码字符串进行解码。
-@property (nonatomic, readonly) NSString *xz_stringByRemovingHexEncoding NS_SWIFT_NAME(removingHexEncoding);
+@property (nonatomic, readonly) NSString *xz_stringByRemovingHexEncoding;
 
 @end
 

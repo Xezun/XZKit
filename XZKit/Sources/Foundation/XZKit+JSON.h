@@ -13,29 +13,29 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface NSData (XZJSON)
 /// 将对象 object 转换为 JSON 数据。
-+ (NSData *)xz_dataWithJSONObject:(id)object options:(NSJSONWritingOptions)options NS_SWIFT_NAME(init(json:options:));
++ (NSData *)xz_dataWithJSONObject:(id)object options:(NSJSONWritingOptions)options;
 /// 将对象 object 转换为 JSON 数据。
-+ (NSData *)xz_dataWithJSONObject:(id)object NS_SWIFT_NAME(init(json:));
++ (NSData *)xz_dataWithJSONObject:(id)object;
 @end
 
 
 @interface NSString (XZJSON)
 /// 将对象 object 转换为 JSON 字符串。
-+ (nullable NSString *)xz_stringWithJSONObject:(id)object encoding:(NSStringEncoding)encoding options:(NSJSONWritingOptions)options NS_SWIFT_NAME(init(json:encoding:options:));
++ (nullable NSString *)xz_stringWithJSONObject:(id)object encoding:(NSStringEncoding)encoding options:(NSJSONWritingOptions)options;
 /// 将对象 object 转换为 JSON 字符串。
-+ (nullable NSString *)xz_stringWithJSONObject:(id)object encoding:(NSStringEncoding)encoding NS_SWIFT_NAME(init(json:encoding:));
++ (nullable NSString *)xz_stringWithJSONObject:(id)object encoding:(NSStringEncoding)encoding;
 /// 将对象 object 转换为 JSON 字符串。
-+ (nullable NSString *)xz_stringWithJSONObject:(id)object options:(NSJSONWritingOptions)options NS_SWIFT_NAME(init(json:options:));
++ (nullable NSString *)xz_stringWithJSONObject:(id)object options:(NSJSONWritingOptions)options;
 /// 将对象 object 转换为 JSON 字符串。
-+ (nullable NSString *)xz_stringWithJSONObject:(id)object NS_SWIFT_NAME(init(json:));
++ (nullable NSString *)xz_stringWithJSONObject:(id)object;
 @end
 
 
 @interface NSArray (XZJSON)
 /// 将 JSON 数据（NSData或NSArray）解析为 NSArray 对象。
-+ (NSArray *)xz_arrayWithJSON:(id)json options:(NSJSONReadingOptions)options NS_SWIFT_NAME(init(json:options:));
++ (NSArray *)xz_arrayWithJSON:(id)json options:(NSJSONReadingOptions)options;
 /// 将 JSON 数据（NSData或NSArray）解析为 NSArray 对象。
-+ (NSArray *)xz_arrayWithJSON:(id)json NS_SWIFT_NAME(init(json:));
++ (NSArray *)xz_arrayWithJSON:(id)json;
 @end
 
 

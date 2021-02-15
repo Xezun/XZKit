@@ -9,9 +9,9 @@ import Foundation
 
 extension Data {
     
-    /// 返回数据的十六进制字符串形式，默认大写字母。
+    /// 返回数据的十六进制字符串形式，默认小写字母。
     public var hexEncodedString: String {
-        return hexEncodedString(with: .uppercase)
+        return hexEncodedString(with: .lowercase)
     }
     
     /// 按指定大小写，返回数据的十六进制字符串形式。
@@ -59,6 +59,45 @@ extension Data {
             index = string.index(after: index)
         }
         self.init(bytes)
+    }
+    
+}
+
+extension String {
+    
+    /// 将二进制数据，以十六进制编码的形式转换为字符串。
+    /// - Parameters:
+    ///   - data: 二进制数据
+    ///   - characterCase: 十六进制字符的大小写
+    public init(_ data: Data, hexEncoding characterCase: CharacterCase) {
+        self = data.hexEncodedString(with: characterCase);
+    }
+    
+    /// 将当前字符串进行十六进制编码。
+    /// - Parameters:
+    ///   - characterCase: 十六进制字符的大小写，默认小写
+    ///   - encoding: 当前字符串的二进制形式的编码，默认 utf8
+    /// - Returns: 十六进制编码的字符串
+    public func addingHexEncoding(_ characterCase: CharacterCase = .lowercase, using encoding: Encoding = .utf8) -> String? {
+        return self.data(using: encoding)?.hexEncodedString(with: characterCase)
+    }
+    
+    /// 当前字符串的十六进制编码，小写字母。
+    public var addingHexEncoding: String? {
+        return self.addingHexEncoding()
+    }
+    
+    /// 对当前（十六进制编码的）字符串执行解码，并使用指定编码格式还原字符串。
+    /// - Parameter encoding: 原始字符串使用的字符编码
+    /// - Returns: 原始字符串
+    public func removingHexEncoding(using encoding: Encoding) -> String? {
+        guard let data = Data.init(hexEncoded: self) else { return nil }
+        return String.init(data: data, encoding: .utf8)
+    }
+    
+    /// 将当前（十六进制编码的）字符串执行解码，并用 .utf8 编码还原字符串。
+    public var removingHexEncoding: String? {
+        return self.removingHexEncoding(using: .utf8)
     }
     
 }
