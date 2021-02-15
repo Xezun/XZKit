@@ -12,15 +12,16 @@ NS_ASSUME_NONNULL_BEGIN
 
 @class XZDataCryptor, XZDataCryptorAlgorithm;
 
-/// 加密/解密算法。因为算法与密钥相关，虽然 XZDataCryptorAlgorithm 并没有显示的要求密钥的长度，
-/// 但是不同算法的构造方法将自动对密钥进行对齐（不满足长度补二进制0，超过截断）。
+/// 加/解密算法。
 NS_SWIFT_NAME(XZDataCryptor.Algorithm)
 @interface XZDataCryptorAlgorithm : NSObject
 
 @property (nonatomic, readonly) CCAlgorithm rawValue;
 
-/// 加密/解密的密钥，密钥自动修正，可能与实际输入的不同。
+/// 加/解密的密钥。
+/// @note 密钥会在末尾补齐`\\0`以与块对齐。
 @property (nonatomic, copy) NSString *key;
+/// 初始化向量。
 @property (nonatomic, copy, nullable) NSString *vector;
 
 /// 算法加密/解密块的大小。

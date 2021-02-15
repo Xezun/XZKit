@@ -44,14 +44,14 @@ static NSString *setVector(NSString *vector, size_t blockSize);
     if ([_key isEqual:key]) {
         return;
     }
-    _key = setKey(key, self.rawValue);
+    _key = setKey(key, self.rawValue).copy;
 }
 
 - (void)setVector:(NSString *)vector {
     if ([_vector isEqual:vector]) {
         return;
     }
-    _vector = setVector(vector, self.blockSize);
+    _vector = setVector(vector, self.blockSize).copy;
 }
 
 + (XZDataCryptorAlgorithm *)algorithm:(CCAlgorithm)algorithm key:(NSString *)key vector:(NSString *)vector  blockSize:(size_t)blockSize contextSize:(size_t)contextSize {
@@ -155,7 +155,6 @@ static NSString *setKey(NSString *key, CCAlgorithm algorithm) {
             }
             return key;
         }
-            
         case kCCAlgorithmBlowfish: {
             if (key.length < kCCKeySizeMinBlowfish) {
                 return [key stringByPaddingToLength:8 withString:@"\0" startingAtIndex:0];

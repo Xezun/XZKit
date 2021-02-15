@@ -18,6 +18,10 @@ static CCCryptorRef _Nullable XZDataCryptorContextMake(XZDataCryptorAlgorithm *a
     CCCryptorRef _context;
 }
 
++ (BOOL)accessInstanceVariablesDirectly {
+    return NO;
+}
+
 - (void)dealloc {
     CCCryptorRelease(_context);
 }

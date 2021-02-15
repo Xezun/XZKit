@@ -55,9 +55,9 @@ NS_SWIFT_NAME(DataCryptor)
 /// @note 虽然可以分块计算，但是不一定能使用多线程技术，具体要看加密解密的算法和计算模式是否支持。
 /// @note 对于分组密码及块加密算法，需要调用 -finish: 方法补齐块数据才能最终完成加密计算。
 ///
-/// @param bytes 待加密/解密的数据，nil 表示加解密结束，获取最终的数据（必须调用 reset 方法才能开始新的加解密）。
-/// @param error 执行加密或解密时发生发生的错误输出。
-/// @return （已成功执行）已加密/解密后的数据。
+/// @param bytes 待加密/解密的数据
+/// @param error 执行加密或解密时发生发生的错误输出
+/// @return （已成功执行）已加密/解密后的数据
 - (nullable NSData *)update:(void *)bytes length:(NSUInteger)length error:(NSError * _Nullable __autoreleasing * _Nullable)error;
 
 /// 对数据执行加密/解密操作。
@@ -69,10 +69,10 @@ NS_SWIFT_NAME(DataCryptor)
 /// @param error 错误输出。
 - (nullable NSData *)finish:(NSError *__autoreleasing  _Nullable *)error;
 
-/// 如果当前为 CBC 模式，在密码没有改变的情况下，通过此方法重置 XZDataCryptor 并设置新的初始化向量。
-/// @note 如果当前不为 CBC 模式，本方将调用 -reset 方法，vector 参数将被忽略。
-/// @param vector 初始化向量，如果为 nil 表示不修改初始化向量。
-/// @param error 错误信息。
+/// 以新的初始化向量重置当前对象，以开始新的加解密。
+/// @note CCCryptor 只有 CBC 模式支持重置，对于非 CBC 模式，本方法会重新构造上下文以实现重置。
+/// @param vector 初始化向量
+/// @param error 错误信息
 - (void)resetWithVector:(nullable NSString *)vector error:(NSError * _Nullable __autoreleasing *)error;
 
 @end
@@ -84,7 +84,7 @@ NS_SWIFT_NAME(DataCryptor)
 /// @note 此方法只支持使用 ECB 、CBC（noPadding/PKCS7Padding）模式。
 + (nullable NSData *)encrypt:(NSData *)data algorithm:(XZDataCryptorAlgorithm *)algorithm mode:(XZDataCryptorMode)mode padding:(XZDataCryptorPadding)padding error:(NSError **)error;
 
-/// 解密数据的便利方法。
+/// 解密的便利方法。
 /// @note 当数据较小，且可以单独处理时，使用此方法要比使用实例化 XZDataCryptor 对象效率更高。
 /// @note 此方法只支持使用 ECB 、CBC（noPadding/PKCS7Padding）模式。
 + (nullable NSData *)decrypt:(NSData *)data algorithm:(XZDataCryptorAlgorithm *)algorithm mode:(XZDataCryptorMode)mode padding:(XZDataCryptorPadding)padding error:(NSError **)error;
