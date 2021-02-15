@@ -135,3 +135,18 @@ XZRectEdge XZRectEdgeFromString(NSString * _Nullable aString) {
 }
 
 @end
+
+
+@implementation NSCoder (XZKitGeometry)
+
+- (void)encodeXZEdgeInsets:(XZEdgeInsets)insets forKey:(NSString *)key {
+    NSValue *value = [NSValue valueWithXZEdgeInsets:insets];
+    [self encodeObject:value forKey:key];
+}
+
+- (XZEdgeInsets)decodeXZEdgeInsetsForKey:(NSString *)key {
+    NSValue *value = [self decodeObjectForKey:key];
+    return [value XZEdgeInsetsValue];
+}
+
+@end

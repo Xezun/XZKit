@@ -76,15 +76,22 @@ extension String {
     /// 将当前字符串进行十六进制编码。
     /// - Parameters:
     ///   - characterCase: 十六进制字符的大小写，默认小写
-    ///   - encoding: 当前字符串的二进制形式的编码，默认 utf8
+    ///   - encoding: 当前字符串的编码格式，默认 utf8
     /// - Returns: 十六进制编码的字符串
-    public func addingHexEncoding(_ characterCase: CharacterCase = .lowercase, using encoding: Encoding = .utf8) -> String? {
+    public func addingHexEncoding(with characterCase: CharacterCase, using encoding: Encoding = .utf8) -> String? {
         return self.data(using: encoding)?.hexEncodedString(with: characterCase)
+    }
+    
+    /// 将当前字符串进行十六进制编码，小写字母。
+    /// - Parameter encoding: 当前字符串的编码格式，默认 utf8
+    /// - Returns: 十六进制编码的字符串
+    public func addingHexEncoding(using encoding: Encoding) -> String? {
+        return self.addingHexEncoding(with: .lowercase, using: encoding)
     }
     
     /// 当前字符串的十六进制编码，小写字母。
     public var addingHexEncoding: String? {
-        return self.addingHexEncoding()
+        return self.addingHexEncoding(with: .lowercase)
     }
     
     /// 对当前（十六进制编码的）字符串执行解码，并使用指定编码格式还原字符串。

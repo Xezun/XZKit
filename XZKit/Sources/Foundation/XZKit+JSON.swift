@@ -8,73 +8,56 @@
 
 import Foundation
 
-extension Data {
-    
-    /// 将对象转换成 JSON 数据。
-    /// - Parameters:
-    ///   - json: 对象
-    ///   - options: 选项
-    public init?(json: Any?, options: JSONSerialization.WritingOptions = .fragmentsAllowed) {
-        guard let json = json else { return nil }
-        guard let data = try? JSONSerialization.data(withJSONObject: json, options: options) else { return nil }
-        self = data;
-    }
+
+extension Dictionary: XZJSONable {
     
 }
 
-extension String {
-    
-    /// 将对象转换成 JSON 字符串。
-    /// - Note: 使用 `JSONSerialization` 处理 `Array<Any>`、`Dictionary<String, Any>` 类型的数据。
-    /// - Note: 其它对象使用 `String.init(describing:)` 方法。
-    /// - Parameter value: JSON 对象，比如 Array、Dictionary 。
-    public init?(json value: Any?, encoding: Encoding = .utf8, options: JSONSerialization.WritingOptions = .fragmentsAllowed) {
-        guard let data = Data.init(json: value, options: options) else { return nil }
-        self.init(data: data, encoding: encoding)
-    }
+extension Array: XZJSONable {
     
 }
 
-extension Dictionary {
+/// 让对象支持与 JSON 之间互相转换。
+public protocol XZJSONable  {
     
-    /// 解析 JSON 字符串，转换成字典。
+    /// 将 JSON 反序列化为对象。
     /// - Parameters:
-    ///   - json: 字典格式的 JSON 字符串。
-    ///   - encoding: 字符串的编码格式，默认 .utf8 。
-    public init?(json: String?) {
-        self.init(json: json?.data(using: .utf8))
-    }
+    ///   - value: JSON Data or String
+    ///   - options: 反序列化选项
+    init?(JSON value: Any?, options: JSONSerialization.ReadingOptions)
     
-    /// 解析 JSON 数据，转换成字典。
-    /// - Parameter json: 字典格式的 JSON 二进制数据。
-    public init?(json: Data?, options: JSONSerialization.ReadingOptions = .allowFragments) {
-        guard let json = json else { return nil }
-        guard let dict = (try? JSONSerialization.jsonObject(with: json, options: options)) as? [Key: Value] else {
+    /// 对象序列化成 JSON 数据。
+    /// - Parameter options: 序列化选项
+    func JSON(with options: JSONSerialization.WritingOptions) -> Data?
+    
+}
+
+extension XZJSONable {
+    
+    public init?(JSON value: Any?, options: JSONSerialization.ReadingOptions = .allowFragments) {
+        var json: Data! = nil
+        
+        if let data = value as? Data {
+            json = data
+        } else if let string = value as? String {
+            guard let data = string.data(using: .utf8) else { return nil }
+            json = data
+        } else {
             return nil
         }
-        self = dict
+        
+        guard let value = try? JSONSerialization.jsonObject(with: json, options: options) as? Self else { return nil }
+        
+        self = value
     }
     
-}
-
-extension Array {
-    
-    /// 将 JSON 字符串，转换成数组。
-    /// - Parameters:
-    ///   - json: 数组格式的 JSON 字符串。
-    ///   - encoding: 字符串编码，默认 .utf8 。
-    public init?(json: String?) {
-        self.init(json: json?.data(using: .utf8))
+    public func JSON(with options: JSONSerialization.WritingOptions = .fragmentsAllowed) -> Data? {
+        return try? JSONSerialization.data(withJSONObject: self, options: options)
     }
     
-    /// 解析 JSON 数据，转换成数组。
-    /// - Parameter json: 数组格式的 JSON 数据。
-    public init?(json: Data?, options: JSONSerialization.ReadingOptions = .allowFragments) {
-        guard let json = json else { return nil }
-        guard let array = (try? JSONSerialization.jsonObject(with: json, options: options)) as? [Element] else {
-            return nil
-        }
-        self = array
+    public func JSON(with options: JSONSerialization.WritingOptions = .fragmentsAllowed, encoding: String.Encoding) -> String? {
+        guard let data = JSON(with: options) else { return nil }
+        return String.init(data: data, encoding: encoding)
     }
     
 }

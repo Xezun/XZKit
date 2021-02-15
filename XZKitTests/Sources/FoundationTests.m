@@ -39,9 +39,9 @@ typedef struct TestObjCTypeBitField {
 } TestObjCTypeBitField;
 
 
-@interface FoundationTests : XCTestCase {
-    NSString *_name;
-}
+@interface FoundationTests : XCTestCase
+
+@property (nonatomic, copy) NSString *runtimeTest;
 
 @end
 
@@ -56,30 +56,32 @@ typedef struct TestObjCTypeBitField {
 }
 
 - (void)testXZLog {
-    XZPrint(@"XZPrint: %@", self);
-    XZLog(@"XZLog: %@", self);
+    XZPrint(@"\n查看控制台输出，不带额外字符：%@\n", self);
+    XZLog(@"查看控制台输出，带额外字符文件、方法、时间信息：%@", self);
+    DLOG(@"仅在 DEBUG 模式下才输出：%@", self);
 }
 
 - (void)testXZDefer {
+    XZLog(@"请观察控制台输出顺序是否从小到大顺序递增");
     XZLog(@"[0] Order 0");
     
     defer(^{
-        XZLog(@"[7] Order 1: defer 1");
+        XZLog(@"[7] Order 1, defer 1");
     });
     
     defer(^{
-        XZLog(@"[6] Order 2: defer 2");
+        XZLog(@"[6] Order 2, defer 2");
     });
     
     {
         XZLog(@"[1] Order 3.1");
         
         defer(^{
-            XZLog(@"[4] Order 3.2: defer 3.1");
+            XZLog(@"[4] Order 3.2, defer 3.1");
         });
         
         defer(^{
-            XZLog(@"[3] Order 3.3: defer 3.2");
+            XZLog(@"[3] Order 3.3, defer 3.2");
         });
         
         XZLog(@"[2] Order 3.4");
@@ -156,26 +158,23 @@ typedef struct TestObjCTypeBitField {
     
     typeof(self) obj = [[newClass alloc] init];
     
-    obj->_name = @"John Joe";
-    XZLog(@"%@", obj->_name);
-    
-    [obj sayHello];
-}
-
-- (void)sayHello {
-    XZLog(@"%@: Hello!", _name);
+    obj.runtimeTest = @"John Joe";
+    XCTAssert([obj.runtimeTest isEqual:@"John Joe"]);
 }
 
 - (void)testXZGeometry {
+    // 测试构造方法
     XZEdgeInsets insets1 = XZEdgeInsetsMake(10, 20, 30, 40);
     XCTAssert(insets1.top      == 10);
     XCTAssert(insets1.leading  == 20);
     XCTAssert(insets1.bottom   == 30);
     XCTAssert(insets1.trailing == 40);
     
+    // 测试比较方法
     XCTAssert(!XZEdgeInsetsEqualToEdgeInsets(insets1, XZEdgeInsetsZero));
     XCTAssert(XZEdgeInsetsEqualToEdgeInsets(insets1, insets1));
     
+    // 测试转换函数
     UIEdgeInsets insets2 = UIEdgeInsetsMake(10, 20, 30, 40);
     
     XZEdgeInsets insets2_1 = XZEdgeInsetsFromUIEdgeInsets(insets2, UIUserInterfaceLayoutDirectionLeftToRight);
@@ -191,38 +190,55 @@ typedef struct TestObjCTypeBitField {
     XCTAssert(CGRectContainsPointInEdgeInsets(rect, insets2, CGPointMake(5, 5)));
     XCTAssert(!CGRectContainsPointInEdgeInsets(rect, insets2, CGPointMake(20, 50)));
     
+    // 测试序列化函数
     NSString *string = NSStringFromXZEdgeInsets(insets1);
     XZLog(@"%@", string);
     XZLog(@"%@", NSStringFromXZRectEdge(XZRectEdgeTop|XZRectEdgeBottom|XZRectEdgeLeading|XZRectEdgeTrailing));
     
+    // 测试反序列化函数
     XZEdgeInsets insets1_1 = XZEdgeInsetsFromString(string);
     XCTAssert(XZEdgeInsetsEqualToEdgeInsets(insets1, insets1_1));
+    
+    NSValue *value = [NSValue valueWithXZEdgeInsets:insets1];
+    XCTAssert(XZEdgeInsetsEqualToEdgeInsets(insets1, [value XZEdgeInsetsValue]));
 }
 
 - (void)testHexEncoding {
-    NSString *contentUTF = @"XZKit - iOS框架";
-    NSString *contentLowerHex = @"585a4b6974202d20694f53e6a186e69eb6";
-    NSString *contentUpperHex = @"585A4B6974202D20694F53E6A186E69EB6";
+    NSString *contentRAW = @"XZKit - iOS框架";
+    NSString *contentHexLower = @"585a4b6974202d20694f53e6a186e69eb6";
+    NSString *contentHexUpper = @"585A4B6974202D20694F53E6A186E69EB6";
     
-    NSString *encodedStr = [contentUTF xz_stringByAddingHexEncoding];
-    if (![encodedStr isEqual:contentLowerHex]) {
+    NSString *encodedStr = [contentRAW xz_stringByAddingHexEncoding];
+    if (![encodedStr isEqual:contentHexLower]) {
         XCTFail("编码 16 进制失败");
     }
     
-    NSString *decodedStr = [contentLowerHex xz_stringByRemovingHexEncoding];
-    if (![decodedStr isEqual:contentUTF]) {
+    NSString *decodedStr = [contentHexLower xz_stringByRemovingHexEncoding];
+    if (![decodedStr isEqual:contentRAW]) {
         XCTFail("解码 16 进制失败");
     }
     
-    encodedStr = [contentUTF xz_stringByAddingHexEncoding:(XZCharacterUppercase)];
-    if (![encodedStr isEqual:contentUpperHex]) {
+    encodedStr = [contentRAW xz_stringByAddingHexEncodingWithCharacterCase:(XZCharacterUppercase)];
+    if (![encodedStr isEqual:contentHexUpper]) {
         XCTFail("编码 16 进制失败");
     }
     
-    decodedStr = [contentLowerHex xz_stringByRemovingHexEncoding];
-    if (![decodedStr isEqual:contentUTF]) {
+    decodedStr = [contentHexLower xz_stringByRemovingHexEncoding];
+    if (![decodedStr isEqual:contentRAW]) {
         XCTFail("解码 16 进制失败");
     }
+}
+
+- (void)testJSON {
+    NSDictionary *dict = @{@"name": @"John"};
+    XZLog(@"%@", [NSString xz_JSONWithObject:dict]);
+    XZLog(@"%@", [NSString xz_JSONWithObject:dict options:(NSJSONWritingPrettyPrinted)]);
+    XZLog(@"%@", [NSString xz_JSONWithObject:@"String to JSON."]);
+    
+    NSString *JSON = @"{\"name\":\"John\"}";
+    XZLog(@"%@", [NSString xz_stringWithJSON:JSON]);
+    XZLog(@"%@", [NSArray xz_arrayWithJSON:JSON]);
+    XZLog(@"%@", [NSDictionary xz_dictionaryWithJSON:JSON]);
 }
 
 - (void)testPerformanceNSTimestamp {

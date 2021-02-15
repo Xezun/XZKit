@@ -41,18 +41,18 @@ NS_ASSUME_NONNULL_BEGIN
 /// @param bytes 二进制数据
 /// @param numberOfBytes 数据长度
 /// @param characterCase 十六进制编码的大小写
-- (instancetype)xz_initWithBytes:(const void *)bytes length:(NSUInteger)numberOfBytes hexEncoding:(XZCharacterCase)characterCase;
+- (instancetype)xz_initWithBytes:(const void *)bytes length:(NSUInteger)numberOfBytes hexEncodingWithCharacterCase:(XZCharacterCase)characterCase;
 
 /// 使用十六进制编码将二进制数据转换成字符串。
 /// @note 对于不连续的 NSData 二进制数据，本方法比用 `-xz_initWithBytes:length:hexEncoding:` 更高效。
 /// @param data 二进制数据 NSData 对象
 /// @param characterCase 十六进制编码的大小写
-- (instancetype)xz_initWithData:(NSData *)data hexEncoding:(XZCharacterCase)characterCase;
+- (instancetype)xz_initWithData:(NSData *)data hexEncodingWithCharacterCase:(XZCharacterCase)characterCase;
 
 /// 对当前字符串的二进制数据，进行十六进制编码。
 /// @param stringEncoding 字符串二进制形式的编码
 /// @param characterCase 十六进制字符的大小写
-- (NSString *)xz_stringByAddingHexEncoding:(XZCharacterCase)characterCase usingEncoding:(NSStringEncoding)stringEncoding;
+- (NSString *)xz_stringByAddingHexEncodingWithCharacterCase:(XZCharacterCase)characterCase usingEncoding:(NSStringEncoding)stringEncoding;
 
 /// 对当前字符串的二进制数据，使用小写字母，进行十六进制编码。
 /// @param stringEncoding 字符串二进制形式的编码
@@ -60,7 +60,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 /// 对当前字符串 UTF-8 编码形式的二进制数据，进行十六进制编码。
 /// @param characterCase 十六进制字符的大小写
-- (NSString *)xz_stringByAddingHexEncoding:(XZCharacterCase)characterCase;
+- (NSString *)xz_stringByAddingHexEncodingWithCharacterCase:(XZCharacterCase)characterCase;
 
 /// 对当前字符串 UTF-8 编码形式的二进制数据，使用小写字母，进行十六进制编码。
 @property (nonatomic, readonly) NSString *xz_stringByAddingHexEncoding;

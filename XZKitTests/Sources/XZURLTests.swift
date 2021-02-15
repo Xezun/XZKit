@@ -23,7 +23,7 @@ class XZURLTests: XCTestCase {
         guard var url = URL(string: "https://www.xezun.com/s?a=1&b=2&c=3&e=&f&=g&a=11") else { return }
         XZLog("queryComponent: %@", url.queryComponent)
         
-        XZLog("验证 keyedValues 属性：\n%@", String(json: url.queryComponent?.keyedValues, options: .prettyPrinted))
+//        XZLog("验证 keyedValues 属性：\n%@", String(json: url.queryComponent?.keyedValues, options: .prettyPrinted))
         
         url.queryComponent?.addValue("addValue", forKey: "d")
         XZLog("%@", url)

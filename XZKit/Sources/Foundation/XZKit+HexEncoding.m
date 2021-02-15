@@ -41,7 +41,7 @@ static unichar const XZHexEncodingTable[2][16] = {
 }
 
 - (NSString *)xz_hexEncodedStringWithCharacterCase:(XZCharacterCase)characterCase {
-    return [[NSString alloc] xz_initWithData:self hexEncoding:characterCase];
+    return [[NSString alloc] xz_initWithData:self hexEncodingWithCharacterCase:characterCase];
 }
 
 @end
@@ -49,7 +49,7 @@ static unichar const XZHexEncodingTable[2][16] = {
 
 @implementation NSString (XZHexEncoding)
 
-- (instancetype)xz_initWithBytes:(const void *)bytes length:(NSUInteger)numberOfBytes hexEncoding:(XZCharacterCase)characterCase {
+- (instancetype)xz_initWithBytes:(const void *)bytes length:(NSUInteger)numberOfBytes hexEncodingWithCharacterCase:(XZCharacterCase)characterCase {
     NSUInteger const count  = numberOfBytes * 2; // unichar 为 unsigned short 在 64 位平台占两个字符。
     unichar *  const buffer = malloc(count * sizeof(unichar));
     
@@ -61,7 +61,7 @@ static unichar const XZHexEncodingTable[2][16] = {
     return [self initWithCharactersNoCopy:buffer length:count freeWhenDone:YES];
 }
 
-- (instancetype)xz_initWithData:(NSData *)data hexEncoding:(XZCharacterCase)characterCase {
+- (instancetype)xz_initWithData:(NSData *)data hexEncodingWithCharacterCase:(XZCharacterCase)characterCase {
     NSUInteger const count  = data.length * 2;
     unichar *  const buffer = malloc(count * sizeof(unichar));
     
@@ -76,21 +76,21 @@ static unichar const XZHexEncodingTable[2][16] = {
 }
 
 
-- (NSString *)xz_stringByAddingHexEncoding:(XZCharacterCase)characterCase usingEncoding:(NSStringEncoding)stringEncoding {
+- (NSString *)xz_stringByAddingHexEncodingWithCharacterCase:(XZCharacterCase)characterCase usingEncoding:(NSStringEncoding)stringEncoding {
     NSData * const data = [self dataUsingEncoding:stringEncoding];
     return [data xz_hexEncodedStringWithCharacterCase:characterCase];
 }
 
 - (NSString *)xz_stringByAddingHexEncodingUsingEncoding:(NSStringEncoding)stringEncoding {
-    return [self xz_stringByAddingHexEncoding:(XZCharacterLowercase) usingEncoding:stringEncoding];
+    return [self xz_stringByAddingHexEncodingWithCharacterCase:(XZCharacterLowercase) usingEncoding:stringEncoding];
 }
 
-- (NSString *)xz_stringByAddingHexEncoding:(XZCharacterCase)characterCase {
-    return [self xz_stringByAddingHexEncoding:characterCase usingEncoding:NSUTF8StringEncoding];
+- (NSString *)xz_stringByAddingHexEncodingWithCharacterCase:(XZCharacterCase)characterCase {
+    return [self xz_stringByAddingHexEncodingWithCharacterCase:characterCase usingEncoding:NSUTF8StringEncoding];
 }
 
 - (NSString *)xz_stringByAddingHexEncoding {
-    return [self xz_stringByAddingHexEncoding:(XZCharacterLowercase)];
+    return [self xz_stringByAddingHexEncodingWithCharacterCase:(XZCharacterLowercase)];
 }
 
 - (NSString *)xz_stringByRemovingHexEncodingUsingEncoding:(NSStringEncoding)dataEncoding {

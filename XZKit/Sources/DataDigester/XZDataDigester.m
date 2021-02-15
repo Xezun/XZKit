@@ -60,7 +60,7 @@ NS_ASSUME_NONNULL_END
 
 + (NSString *)digest:(NSData *)data algorithm:(XZDataDigesterAlgorithm)algorithm hexEncoding:(XZCharacterCase)characterCase {
     return (__bridge_transfer NSString *)XZDataDigesterExecuteWithBlock(data, algorithm, ^(const unsigned char *buffer, CC_LONG length) {
-        return (__bridge_retained void *)[[NSString alloc] xz_initWithBytes:buffer length:length hexEncoding:characterCase];
+        return (__bridge_retained void *)[[NSString alloc] xz_initWithBytes:buffer length:length hexEncodingWithCharacterCase:characterCase];
     });
 }
 
@@ -121,7 +121,7 @@ NS_ASSUME_NONNULL_END
 
 - (NSString *)digestStringWithCharacterCase:(XZCharacterCase)characterCase {
     void * const buffer = [self digest];
-    return [[NSString alloc] xz_initWithBytes:buffer length:_context.length hexEncoding:characterCase];
+    return [[NSString alloc] xz_initWithBytes:buffer length:_context.length hexEncodingWithCharacterCase:characterCase];
 }
 
 - (NSString *)digestString {

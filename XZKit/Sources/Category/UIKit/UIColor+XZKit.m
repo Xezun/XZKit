@@ -18,24 +18,110 @@
 }
 
 + (UIColor *)xz_colorWithRGBA:(XZRGBA)rgbaValue {
-    return rgba(rgbaValue);
+    return __XZ_RGBA_COLOR__(rgbaValue);
 }
 
 + (instancetype)xz_colorWithString:(NSString *)string {
-    return XZUIColorFromNSString(string, -1.0);
+    XZRGBA const value = XZRGBAFromString(string);
+    return __XZ_RGBA_COLOR__(value);
+}
+
++ (UIColor *)xz_colorWithString:(NSString *)string alpha:(CGFloat)alpha {
+    XZRGBA value = XZRGBAFromString(string);
+    value.alpha = alpha;
+    return __XZ_RGBA_COLOR__(value);
 }
 
 @end
 
 
-#define XZParseUIColorAlpha(value) (alpha < 0 ? (value / 255.0) : (alpha > 1 ? alpha / 255.0 : alpha))
+#pragma mark - RGBA
 
-UIColor *XZUIColorFromNSString(NSString *string, CGFloat alpha) {
+UIColor *__XZ_RGBA_COLOR__(NSInteger value) XZ_OVERLOAD {
+    CGFloat const red   = (value>>24&0xFF) / 255.0;
+    CGFloat const green = (value>>16&0xFF) / 255.0;
+    CGFloat const blue  = (value>> 8&0xFF) / 255.0;
+    CGFloat const alpha = (value>> 0&0xFF) / 255.0;
+    return [UIColor colorWithRed:red green:green blue:blue alpha:alpha];
+}
+
+UIColor *__XZ_RGBA_COLOR__(long red, long green, long blue, long alpha) XZ_OVERLOAD {
+    return [UIColor colorWithRed:red/255.0 green:green/255.0 blue:blue/255.0 alpha:alpha/255.0];
+}
+
+UIColor *__XZ_RGBA_COLOR__(int red, int green, int blue, int alpha) XZ_OVERLOAD {
+    return [UIColor colorWithRed:red/255.0 green:green/255.0 blue:blue/255.0 alpha:alpha/255.0];
+}
+
+UIColor *__XZ_RGBA_COLOR__(CGFloat red, CGFloat green, CGFloat blue, CGFloat alpha) XZ_OVERLOAD {
+    return [UIColor colorWithRed:red green:green blue:blue alpha:alpha];
+}
+
+
+#pragma mark - RGB
+
+UIColor *__XZ_RGB_COLOR__(NSInteger value) XZ_OVERLOAD {
+    CGFloat const red   = (value>>16&0xFF) / 255.0;
+    CGFloat const green = (value>> 8&0xFF) / 255.0;
+    CGFloat const blue  = (value>> 0&0xFF) / 255.0;
+    return [UIColor colorWithRed:red green:green blue:blue alpha:1.0];
+}
+
+UIColor *__XZ_RGB_COLOR__(long red, long green, long blue) XZ_OVERLOAD {
+    return [UIColor colorWithRed:red/255.0 green:green/255.0 blue:blue/255.0 alpha:1.0];
+}
+
+UIColor *__XZ_RGB_COLOR__(int red, int green, int blue) XZ_OVERLOAD {
+    return [UIColor colorWithRed:red/255.0 green:green/255.0 blue:blue/255.0 alpha:1.0];
+}
+
+UIColor *__XZ_RGB_COLOR__(CGFloat red, CGFloat green, CGFloat blue) XZ_OVERLOAD {
+    return [UIColor colorWithRed:red green:green blue:blue alpha:1.0];
+}
+
+
+#pragma mark - String RGB(A)
+
+UIColor *__XZ_RGBA_COLOR__(NSString *string) XZ_OVERLOAD {
+    XZRGBA const value = XZRGBAFromString(string);
+    return __XZ_RGBA_COLOR__(value.red, value.green, value.blue, value.alpha);
+}
+
+UIColor *__XZ_RGB_COLOR__(NSString *string) XZ_OVERLOAD {
+    XZRGBA const value = XZRGBAFromString(string);
+    return __XZ_RGB_COLOR__(value.red, value.green, value.blue);
+}
+
+
+#pragma mark - XZRGBA
+
+UIColor *__XZ_RGBA_COLOR__(XZRGBA rgba) XZ_OVERLOAD {
+    CGFloat const red   = rgba.red   / 255.0;
+    CGFloat const green = rgba.green / 255.0;
+    CGFloat const blue  = rgba.blue  / 255.0;
+    CGFloat const alpha = rgba.alpha / 255.0;
+    return [UIColor colorWithRed:red green:green blue:blue alpha:alpha];
+}
+
+XZRGBA XZRGBAFromInteger(NSInteger rgbaValue) {
+    return XZRGBAMake(rgbaValue>>24, rgbaValue>>16, rgbaValue>>8, rgbaValue);
+}
+
+NSInteger XZIntegerFromRGBA(XZRGBA rgba) {
+    return rgba.alpha + (rgba.blue << 8) + (rgba.green << 16) + (rgba.red << 24);
+}
+
+XZRGBA XZRGBAFromString(NSString *string) {
+    if (string.length < 3) {
+        return XZRGBAMake(0, 0, 0, 0);
+    }
+    
     const char * const characters = [string cStringUsingEncoding:(NSASCIIStringEncoding)];
     char numbers[9] = {0};  // 存储数字。
     NSInteger count = 0;    // numbers 的长度。
     
-    for (NSInteger i = 1; count < 9; i++) {
+    // 满 8 位就不用继续查找了
+    for (NSInteger i = 0; count < 8; i++) {
         char const character = characters[i];
         
         // 到了末尾
@@ -69,62 +155,49 @@ UIColor *XZUIColorFromNSString(NSString *string, CGFloat alpha) {
     }
     
     switch (count) {
-        case 0: break;
-        case 1: break;
-        case 2: break;
         case 3: { // #ABC => #AABBCCFF
             CGFloat const r = numbers[0] * 16 + numbers[0];
             CGFloat const g = numbers[1] * 16 + numbers[1];
             CGFloat const b = numbers[2] * 16 + numbers[2];
-            CGFloat const a = XZParseUIColorAlpha(1.0);
-            return [UIColor colorWithRed:r / 255.0 green:g / 255.0 blue:b / 255.0 alpha:a];
+            return XZRGBAMake(r, g, b, 255);
         }
         case 4: { // #ABCD => #AABBCCDD
             CGFloat const r = numbers[0] * 16 + numbers[0];
             CGFloat const g = numbers[1] * 16 + numbers[1];
             CGFloat const b = numbers[2] * 16 + numbers[2];
-            CGFloat const a = XZParseUIColorAlpha(numbers[3] * 16 + numbers[3]);
-            return [UIColor colorWithRed:r / 255.0 green:g / 255.0 blue:b / 255.0 alpha:a];
+            CGFloat const a = numbers[3] * 16 + numbers[3];
+            return XZRGBAMake(r, g, b, a);
         }
         case 5: { // #ABCDE => #AABBCCDE
             CGFloat const r = numbers[0] * 16 + numbers[0];
             CGFloat const g = numbers[1] * 16 + numbers[1];
             CGFloat const b = numbers[2] * 16 + numbers[2];
-            CGFloat const a = XZParseUIColorAlpha(numbers[3] * 16 + numbers[4]);
-            return [UIColor colorWithRed:r / 255.0 green:g / 255.0 blue:b / 255.0 alpha:a];
+            CGFloat const a = numbers[3] * 16 + numbers[4];
+            return XZRGBAMake(r, g, b, a);
         }
         case 6:{ // #123456 => #123456FF
             CGFloat const r = numbers[0] * 16 + numbers[1];
             CGFloat const g = numbers[2] * 16 + numbers[3];
             CGFloat const b = numbers[4] * 16 + numbers[5];
-            CGFloat const a = XZParseUIColorAlpha(1.0);
-            return [UIColor colorWithRed:r / 255.0 green:g / 255.0 blue:b / 255.0 alpha:a];
+            return XZRGBAMake(r, g, b, 255);
         }
         case 7: { // #123456A => #123456AA
             CGFloat const r = numbers[0] * 16 + numbers[1];
             CGFloat const g = numbers[2] * 16 + numbers[3];
             CGFloat const b = numbers[4] * 16 + numbers[5];
-            CGFloat const a = XZParseUIColorAlpha(numbers[6] * 16 + numbers[6]);
-            return [UIColor colorWithRed:r / 255.0 green:g / 255.0 blue:b / 255.0 alpha:a];
+            CGFloat const a = numbers[6] * 16 + numbers[6];
+            return XZRGBAMake(r, g, b, a);
         }
-        case 8:
-        default: { // #123456AA => #123456AA
+        case 8: { // #123456AA => #123456AA
             CGFloat const r = numbers[0] * 16 + numbers[1];
             CGFloat const g = numbers[2] * 16 + numbers[3];
             CGFloat const b = numbers[4] * 16 + numbers[5];
-            CGFloat const a = XZParseUIColorAlpha((numbers[6] * 16 + numbers[7]));
-            return [UIColor colorWithRed:r / 255.0 green:g / 255.0 blue:b / 255.0 alpha:a];
+            CGFloat const a = numbers[6] * 16 + numbers[7];
+            return XZRGBAMake(r, g, b, a);
         }
-            
+        default: {
+            return XZRGBAMake(0, 0, 0, 0);
+        }
     }
-    return [UIColor clearColor];
 }
 
-
-XZRGBA XZRGBAFromNSInteger(NSInteger rgbaValue) {
-    return XZRGBAMake(rgbaValue>>24, rgbaValue>>16, rgbaValue>>8, rgbaValue);
-}
-
-NSInteger NSIntegerFromXZRGBA(XZRGBA rgba) {
-    return rgba.alpha + (rgba.blue << 8) + (rgba.green << 16) + (rgba.red << 24);
-}

@@ -21,6 +21,9 @@
 #define XZKIT_PROTECTED const
 #endif
 
+/// 标记属性或方法只提供给 ObjC
+#define XZ_OBJC NS_SWIFT_UNAVAILABLE("Objective-C")
+
 
 #pragma mark 编译器属性
 

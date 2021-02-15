@@ -76,10 +76,14 @@ FOUNDATION_EXPORT XZRectEdge XZRectEdgeFromString(NSString * _Nullable aString);
 @interface NSValue (XZKitGeometry)
 
 + (NSValue *)valueWithXZEdgeInsets:(XZEdgeInsets)edgeInsets NS_SWIFT_NAME(init(_:));
-+ (NSValue *)valueWithXZRectEdge:(XZRectEdge)rectEdge NS_SWIFT_NAME(init(_:));
-
 @property (nonatomic, readonly) XZEdgeInsets XZEdgeInsetsValue;
-@property (nonatomic, readonly) XZRectEdge XZRectEdgeValue;
+
+@end
+
+@interface NSCoder (XZKitGeometry)
+
+- (void)encodeXZEdgeInsets:(XZEdgeInsets)insets forKey:(NSString *)key;
+- (XZEdgeInsets)decodeXZEdgeInsetsForKey:(NSString *)key;
 
 @end
 
