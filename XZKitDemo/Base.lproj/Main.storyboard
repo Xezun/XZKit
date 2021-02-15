@@ -329,9 +329,29 @@
                             </view>
                             <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="CuL-xs-7tu">
                                 <rect key="frame" x="50" y="188" width="314" height="167.5"/>
+                                <subviews>
+                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="#AABBCC" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="OYV-zH-dXS">
+                                        <rect key="frame" x="5" y="5" width="304" height="14.5"/>
+                                        <fontDescription key="fontDescription" type="system" pointSize="12"/>
+                                        <nil key="textColor"/>
+                                        <nil key="highlightedColor"/>
+                                    </label>
+                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="code" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Iyc-fQ-amh">
+                                        <rect key="frame" x="5" y="147.5" width="304" height="15"/>
+                                        <fontDescription key="fontDescription" type="system" pointSize="12"/>
+                                        <nil key="textColor"/>
+                                        <nil key="highlightedColor"/>
+                                    </label>
+                                </subviews>
                                 <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                                 <constraints>
                                     <constraint firstAttribute="width" secondItem="CuL-xs-7tu" secondAttribute="height" multiplier="15:8" id="1nC-Mw-CLB"/>
+                                    <constraint firstItem="OYV-zH-dXS" firstAttribute="leading" secondItem="CuL-xs-7tu" secondAttribute="leading" constant="5" id="Bg0-JE-WO2"/>
+                                    <constraint firstItem="OYV-zH-dXS" firstAttribute="top" secondItem="CuL-xs-7tu" secondAttribute="top" constant="5" id="I0o-Rq-QF2"/>
+                                    <constraint firstItem="Iyc-fQ-amh" firstAttribute="leading" secondItem="CuL-xs-7tu" secondAttribute="leading" constant="5" id="dg7-fD-X72"/>
+                                    <constraint firstAttribute="bottom" secondItem="Iyc-fQ-amh" secondAttribute="bottom" constant="5" id="k7Z-Mk-aMi"/>
+                                    <constraint firstAttribute="trailing" secondItem="Iyc-fQ-amh" secondAttribute="trailing" constant="5" id="rpl-iH-fzi"/>
+                                    <constraint firstAttribute="trailing" secondItem="OYV-zH-dXS" secondAttribute="trailing" constant="5" id="sZ7-xN-etU"/>
                                 </constraints>
                             </view>
                             <segmentedControl opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="top" apportionsSegmentWidthsByContent="YES" segmentControlStyle="plain" selectedSegmentIndex="0" translatesAutoresizingMaskIntoConstraints="NO" id="mmb-by-QTJ">
@@ -339,8 +359,8 @@
                                 <segments>
                                     <segment title="数字"/>
                                     <segment title="字符串"/>
-                                    <segment title="通道255"/>
-                                    <segment title="通道1.0"/>
+                                    <segment title="[0, 255]"/>
+                                    <segment title="[0, 1.0]"/>
                                 </segments>
                                 <connections>
                                     <action selector="modeSegmentControlChanged:" destination="iaH-cz-3Oc" eventType="valueChanged" id="q58-4g-i2m"/>
@@ -352,8 +372,8 @@
                                     <action selector="alphaSwitchChanged:" destination="iaH-cz-3Oc" eventType="valueChanged" id="4lk-nQ-PMd"/>
                                 </connections>
                             </switch>
-                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="模式" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="9Vf-Wa-Btg">
-                                <rect key="frame" x="20" y="98" width="25" height="15"/>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="构造方式" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="9Vf-Wa-Btg">
+                                <rect key="frame" x="20" y="98" width="49.5" height="15"/>
                                 <fontDescription key="fontDescription" type="system" pointSize="12"/>
                                 <nil key="textColor"/>
                                 <nil key="highlightedColor"/>
@@ -397,8 +417,10 @@
                     <navigationItem key="navigationItem" title="UIColor" id="Pec-S6-bO5"/>
                     <connections>
                         <outlet property="alphaSwitch" destination="mNj-P1-DO9" id="3uP-kU-dJ8"/>
+                        <outlet property="codeLabel" destination="Iyc-fQ-amh" id="wlD-Py-bjG"/>
                         <outlet property="displayView" destination="CuL-xs-7tu" id="bqZ-v5-GXF"/>
                         <outlet property="modeSegmentedControl" destination="mmb-by-QTJ" id="ltk-2n-X6m"/>
+                        <outlet property="valueLabel" destination="OYV-zH-dXS" id="lKp-i7-xEt"/>
                         <outletCollection property="testsViews" destination="IKR-UE-UCn" id="n3U-RZ-K12"/>
                         <outletCollection property="testsViews" destination="3EZ-jd-Tlw" id="D2E-7e-vAR"/>
                         <outletCollection property="testsViews" destination="iMb-Qf-hot" id="u3D-f2-Wyo"/>

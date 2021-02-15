@@ -22,6 +22,8 @@
 @property (weak, nonatomic) IBOutlet UIView *displayView;
 @property (weak, nonatomic) IBOutlet UISegmentedControl *modeSegmentedControl;
 @property (weak, nonatomic) IBOutlet UISwitch *alphaSwitch;
+@property (weak, nonatomic) IBOutlet UILabel *valueLabel;
+@property (weak, nonatomic) IBOutlet UILabel *codeLabel;
 
 @property (strong, nonatomic) IBOutletCollection(UIColorTestsView) NSArray<UIColorTestsView *> *testsViews;
 @end
@@ -55,36 +57,50 @@
     NSInteger b = self.testsViews[2].value;
     NSInteger a = self.testsViews[3].value;
     
+    self.valueLabel.text = [NSString stringWithFormat:@"#%02lX%02lX%02lX%02lX", r, g, b, a];
+    
     UIColor *color = nil;
     switch (self.modeSegmentedControl.selectedSegmentIndex) {
         case 0: //
             if (self.alphaSwitch.isOn) {
-                color = rgba((r<<24) + (g<<16) + (b<<8) + a);
+                NSInteger value = (r<<24) + (g<<16) + (b<<8) + a;
+                color = rgba(value);
+                self.codeLabel.text = [NSString stringWithFormat:@"rgba(0x%08lX)", value];
             } else {
-                color = rgb((r<<16) + (g<<8) + b);
+                NSInteger value = (r<<16) + (g<<8) + b;
+                color = rgb(value);
+                self.codeLabel.text = [NSString stringWithFormat:@"rgba(0x%06lX)", value];
             }
             break;
         case 1: {
             if (self.alphaSwitch.isOn) {
-                color = rgba([NSString stringWithFormat:@"color: #%02lx%02lx%02lx%02lx00000", r, g, b, a]);
+                NSString *value = [NSString stringWithFormat:@"color: #%02lX%02lX%02lX%02lX;", r, g, b, a];
+                color = rgba(value);
+                self.codeLabel.text = [NSString stringWithFormat:@"rgba(@\"%@\")", value];
             } else {
-                color = rgb([NSString stringWithFormat:@"color: #%02lx%02lx%02lx000", r, g, b]);
+                NSString *value = [NSString stringWithFormat:@"color: #%02lX%02lX%02lX;", r, g, b];
+                color = rgb(value);
+                self.codeLabel.text = [NSString stringWithFormat:@"rgb(@\"%@\")", value];
             }
             break;
         }
         case 2: {
             if (self.alphaSwitch.isOn) {
                 color = rgba(r, g, b, a);
+                self.codeLabel.text = [NSString stringWithFormat:@"rgba(0x%02lX, 0x%02lX, 0x%02lX, 0x%02lX)", r, g, b, a];
             } else {
                 color = rgb(r, g, b);
+                self.codeLabel.text = [NSString stringWithFormat:@"rgb(0x%02lX, 0x%02lX,  0x%02lX)", r, g, b];
             }
             break;
         }
         case 3: {
             if (self.alphaSwitch.isOn) {
                 color = rgba(r/255.0, g/255.0, b/255.0, a/255.0);
+                self.codeLabel.text = [NSString stringWithFormat:@"rgba(%.2f, %.2f,  %.2f,  %.2f)", r/255.0, g/255.0, b/255.0, a/255.0];
             } else {
                 color = rgb(r/255.0, g/255.0, b/255.0);
+                self.codeLabel.text = [NSString stringWithFormat:@"rgb(%.2f, %.2f,  %.2f)", r/255.0, g/255.0, b/255.0];
             }
             break;
         }
