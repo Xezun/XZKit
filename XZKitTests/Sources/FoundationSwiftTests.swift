@@ -46,9 +46,6 @@ class FoundationSwiftTests: XCTestCase {
         let json = "{\"name\":\"John\"}"
         
         XZLog("%@", Dictionary<NSString, Any>.init(JSON: json))
-        
-        let color = UIColor.init();
-        color.xzColor.red
     }
     
 }

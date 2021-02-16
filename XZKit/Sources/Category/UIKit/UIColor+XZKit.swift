@@ -7,22 +7,26 @@
 
 import Foundation
 
-extension Color: ExpressibleByIntegerLiteral, RawRepresentable {
+extension XZColor: ExpressibleByIntegerLiteral, RawRepresentable {
     
     public typealias IntegerLiteralType = Int
     
     public init(integerLiteral value: Int) {
-        self.init(value);
+        self.init(rawValue: value)
     }
     
     public typealias RawValue = Int
     
     public var rawValue: Int {
-        return __XZIntegerFromRGBA(self)
+        return alpha + (blue << 8) + (green << 16) + (red << 24);
     }
     
     public init(rawValue: Int) {
-        self.init(rawValue)
+        let r = (rawValue >> 24) & 0xFF;
+        let g = (rawValue >> 16) & 0xFF;
+        let b = (rawValue >>  8) & 0xFF;
+        let a = (rawValue >>  0) & 0xFF;
+        self.init(red: r, green: g, blue: b, alpha: a);
     }
     
     public var uiColor: UIColor {
@@ -34,8 +38,8 @@ extension Color: ExpressibleByIntegerLiteral, RawRepresentable {
 
 extension Int {
     
-    public init(_ color: Color) {
-        self = __XZIntegerFromRGBA(color)
+    public init(_ color: XZColor) {
+        self = color.rawValue
     }
     
 }
@@ -44,7 +48,7 @@ extension Int {
 /// - Parameter string: 十六进制颜色字符串，如 #A1B2C3FF
 /// - Returns: UIColr
 public func rgba(_ string: String) -> UIColor {
-    let color = Color.init(string)
+    let color = XZColor.init(string)
     return rgba(color.red, color.green, color.blue, color.alpha)
 }
 
@@ -77,7 +81,7 @@ public func rgba(_ red: CGFloat, _ green: CGFloat, _ blue: CGFloat, _ alpha: CGF
 /// - Parameter string: 十六进制颜色字符串，如 #A1B2C3FF
 /// - Returns: UIColr
 public func rgb(_ string: String) -> UIColor {
-    let color = Color.init(string)
+    let color = XZColor.init(string)
     return rgb(color.red, color.green, color.blue)
 }
 

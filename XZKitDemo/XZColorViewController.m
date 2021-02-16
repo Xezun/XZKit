@@ -1,11 +1,11 @@
 //
-//  UIColorTestsViewController.m
+//  XZColorViewController.m
 //  XZKitDemo
 //
 //  Created by Xezun on 2021/2/15.
 //
 
-#import "UIColorTestsViewController.h"
+#import "XZColorViewController.h"
 #import <XZKit/XZKit.h>
 
 @class UIColorTestsView;
@@ -18,7 +18,8 @@
 @property (nonatomic, weak) id<UIColorTestsViewDelegate> delegate;
 @end
 
-@interface UIColorTestsViewController () <UIColorTestsViewDelegate>
+@interface XZColorViewController () <UIColorTestsViewDelegate>
+
 @property (weak, nonatomic) IBOutlet UIView *displayView;
 @property (weak, nonatomic) IBOutlet UISegmentedControl *modeSegmentedControl;
 @property (weak, nonatomic) IBOutlet UISwitch *alphaSwitch;
@@ -28,7 +29,7 @@
 @property (strong, nonatomic) IBOutletCollection(UIColorTestsView) NSArray<UIColorTestsView *> *testsViews;
 @end
 
-@implementation UIColorTestsViewController
+@implementation XZColorViewController
 
 - (void)viewDidLoad {
     [super viewDidLoad];
@@ -36,6 +37,8 @@
     [self.testsViews enumerateObjectsUsingBlock:^(UIColorTestsView * _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
         obj.delegate = self;
     }];
+    
+    [self showColor];
 }
 
 - (void)valueDidChange:(UIColorTestsView *)testsView {
@@ -110,7 +113,7 @@
     
     self.displayView.backgroundColor = color;
     
-    XZRGBA rgba = color.xz_rgbaValue;
+    XZColor rgba = color.XZColor;
     XZLog(@"%ld, %ld, %ld, %ld => %ld, %ld, %ld, %ld", r, g, b, a, rgba.red, rgba.green, rgba.blue, rgba.alpha);
 }
 
@@ -153,7 +156,6 @@
 - (IBAction)plusButtonAction:(id)sender {
     self.slider.value += 1;
     [self.delegate valueDidChange:self];
-    
 }
 
 @end

@@ -7,7 +7,7 @@
 
 import Foundation
 
-extension Image.Levels {
+extension XZImage.Levels {
     
     public init(shadows: CGFloat, midtones: CGFloat, highlights: CGFloat) {
         let input = Input(shadows, midtones, highlights);
@@ -22,7 +22,7 @@ extension Image.Levels {
 }
 
 
-extension Image.Levels.Input {
+extension XZImage.Levels.Input {
     
     public init(_ shadows: CGFloat, _ highlights: CGFloat) {
         self.init(shadows: shadows, midtones: 1.0, highlights: highlights);
@@ -35,7 +35,7 @@ extension Image.Levels.Input {
 }
 
 
-extension Image.Levels.Output {
+extension XZImage.Levels.Output {
     
     public init(_ shadows: CGFloat, _ highlights: CGFloat) {
         self.init(shadows: shadows, highlights: highlights);
