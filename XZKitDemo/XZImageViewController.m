@@ -8,7 +8,19 @@
 #import "XZImageViewController.h"
 #import <XZKit/XZKit.h>
 
+@interface XZImageSliderView : UIView
+@property (weak, nonatomic) IBOutlet UILabel *titleLabel;
+@property (weak, nonatomic) IBOutlet UISlider *slider;
+@property (weak, nonatomic) IBOutlet UILabel *valueLabel;
+@end
+
 @interface XZImageViewController ()
+
+@property (nonatomic, strong) UIImage *image;
+
+@property (weak, nonatomic) IBOutlet XZImageSliderView *shadowsLevelsView;
+@property (weak, nonatomic) IBOutlet XZImageSliderView *midtonesLevelsView;
+@property (weak, nonatomic) IBOutlet XZImageSliderView *highlightsLevelsView;
 
 @property (weak, nonatomic) IBOutlet UIImageView *imageView;
 
@@ -19,45 +31,60 @@
 - (void)viewDidLoad {
     [super viewDidLoad];
     
-    XZImage image = XZImageMake(CGSizeMake(150, 150), XZColorMake(0xEEEEEEFF), XZColorMake(0xCCCCCCFF), 1, 6);
+    XZImage *image = [[XZImage alloc] init];
     
-//    image.borders.top.color    = UIColor.blackColor.XZColor;
-//    image.borders.right.color  = UIColor.greenColor.XZColor;
-//    image.borders.bottom.color = UIColor.blueColor.XZColor;
-//    image.borders.left.color   = UIColor.blackColor.XZColor;
+    image.size            = CGSizeMake(300, 200);
+    image.backgroundColor = rgba(0xFF0000, 1.0);
+    image.borderColor     = rgba(0x00FF00, 1.0);
+    image.borderWidth     = 2.0;
+    image.cornerRadius    = 10.0;
+    //image.borderDash      = XZImageLineDashMake(1, 1);
     
-//    image.borders.top.dash.width = 4;
-//    image.borders.top.dash.space = 4;
-//    
-//    image.borders.left.dash.width = 4;
-//    image.borders.left.dash.space = 4;
-//    
-//    image.borders.bottom.dash.width = 4;
-//    image.borders.bottom.dash.space = 4;
-//    
-//    image.borders.right.dash.width = 4;
-//    image.borders.right.dash.space = 4;
+//    image.borders.arrow.anchor = 0;
+//    image.borders.arrow.vector = 0;
+//    image.borders.arrow.width  = 40;
+//    image.borders.arrow.height = 20;
     
-    image.borders.top.arrow = (XZImageBorderArrow){0, 0, 10, 4};
-    image.borders.left.arrow = (XZImageBorderArrow){0, 0, 10, 4};
-    image.borders.bottom.arrow = (XZImageBorderArrow){0, 0, 10, 4};
-    image.borders.right.arrow = (XZImageBorderArrow){0, 0, 10, 4};
-//    image.borders.bottom.arrow = CGRectZero;
-//    image.borders.left.arrow  = CGRectZero;
-//    image.borders.right.arrow = CGRectZero;
+//    image.borders.top.arrow.anchor = 0;
+//    image.borders.top.arrow.vector = 0;
+//    image.borders.top.arrow.width  = 40;
+//    image.borders.top.arrow.height = 20;
+
+    image.borders.bottom.arrow.anchor = 0;
+    image.borders.bottom.arrow.vector = 0;
+    image.borders.bottom.arrow.width  = 20;
+    image.borders.bottom.arrow.height = 10;
     
-    self.imageView.image = [UIImage xz_imageWithXZImage:image];
+    image.backgroundImage = [UIImage imageNamed:@"icon_image"];
+    image.contentMode = UIViewContentModeScaleAspectFill;
+    image.contentInsets = UIEdgeInsetsMake(0, 0, 0, 0);
     
+    self.image = image.image;
+    
+    self.imageView.image = self.image;
+    
+//    self.imageView.image = [[UIImage imageNamed:@"icon_star"] xz_imageByBlendingColor:rgb(0xff9900)];
 }
 
-/*
-#pragma mark - Navigation
+- (IBAction)imageLevelsChangeAction:(id)sender {
+    CGFloat shadows = self.shadowsLevelsView.slider.value;
+    CGFloat midtones = self.midtonesLevelsView.slider.value;
+    CGFloat highlights = self.highlightsLevelsView.slider.value;
+    XZImageLevels levels = XZImageLevelsMake(shadows, midtones, highlights);
+    self.imageView.image = [self.image xz_imageByFilteringImageLevels:levels];
 
-// In a storyboard-based application, you will often want to do a little preparation before navigation
-- (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {
-    // Get the new view controller using [segue destinationViewController].
-    // Pass the selected object to the new view controller.
+    self.shadowsLevelsView.valueLabel.text = [NSString stringWithFormat:@"%.2f", shadows];
+    self.midtonesLevelsView.valueLabel.text = [NSString stringWithFormat:@"%.2f", midtones];
+    self.highlightsLevelsView.valueLabel.text = [NSString stringWithFormat:@"%.2f", highlights];
+    
+//    self.imageView.image = [self.image xz_imageByFilteringBrightness:shadows];
 }
-*/
+
+@end
+
+
+@implementation XZImageSliderView
+
+
 
 @end

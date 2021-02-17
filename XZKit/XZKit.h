@@ -156,6 +156,8 @@ FOUNDATION_EXPORT const unsigned char XZKitVersionString[];
 
 #import <XZKit/XZAnimatedImage.h>
 
+#import <XZKit/XZImage.h>
+
 
 #endif // not with COCOAPODS end.
 

@@ -150,3 +150,84 @@ XZRectEdge XZRectEdgeFromString(NSString * _Nullable aString) {
 }
 
 @end
+
+
+CGRect CGSizeFitingInRectWithContentMode(CGSize const size, CGRect const rect, UIViewContentMode const contentMode) {
+    switch (contentMode) {
+        case UIViewContentModeScaleAspectFit: {
+            if (size.width == 0) {
+                return CGRectMake(CGRectGetMidX(rect), 0, 0, rect.size.height);
+            }
+            if (size.height == 0) {
+                return CGRectMake(0, CGRectGetMidY(rect), rect.size.width, 0);
+            }
+            // 先尝试把当前宽度缩放到与容器同宽，判断高度是否大于容器的高度。
+            CGFloat scaledHeight = rect.size.width * (size.height / size.width);
+            if (scaledHeight > rect.size.height) {
+                // 高度比容器高，那么以容器的高为最大值，计算宽度。
+                CGFloat scaledWidth = rect.size.height * size.width / size.height;
+                CGFloat x = (rect.size.width - scaledWidth) * 0.5 + CGRectGetMinX(rect);
+                return CGRectMake(x, CGRectGetMinY(rect), scaledWidth, rect.size.height);
+            }
+            // 高度没有容器高，计算其在垂直方向居中的坐标。
+            CGFloat y = (rect.size.height - scaledHeight) * 0.5 + CGRectGetMinY(rect);
+            return CGRectMake(CGRectGetMinX(rect), y, rect.size.width, scaledHeight);
+        }
+        case UIViewContentModeScaleAspectFill: {
+            if (size.width == 0 || size.height == 0) {
+                return rect;
+            }
+            // 高度比容器低，则以容器的高度为最大值，计算宽度，并计算其在水平方向居中的坐标。
+            CGFloat scaledHeight = rect.size.width * (size.height / size.width);
+            if (scaledHeight < rect.size.height) {
+                CGFloat scaledWidth = rect.size.height * size.width / size.height;
+                CGFloat x = (rect.size.width - scaledWidth) * 0.5 + CGRectGetMinX(rect);
+                return CGRectMake(x, CGRectGetMinY(rect), scaledWidth, rect.size.height);
+            }
+            CGFloat y = (rect.size.height - scaledHeight) * 0.5 + CGRectGetMinY(rect);
+            return CGRectMake(CGRectGetMinX(rect), y, rect.size.width, scaledHeight);
+        }
+        case UIViewContentModeCenter: {
+            CGFloat x = (rect.size.width - size.width) * 0.5 + CGRectGetMinX(rect);
+            CGFloat y = (rect.size.height - size.height) * 0.5 + CGRectGetMinY(rect);
+            return CGRectMake(x, y, size.width, size.height);
+        }
+        case UIViewContentModeTop: {
+            CGFloat x = (rect.size.width - size.width) * 0.5 + CGRectGetMinX(rect);
+            return CGRectMake(x, CGRectGetMinY(rect), size.width, size.height);
+        }
+        case UIViewContentModeBottom: {
+            CGFloat x = (rect.size.width - size.width) * 0.5 + CGRectGetMinX(rect);
+            CGFloat y = CGRectGetMaxY(rect) - size.height;
+            return CGRectMake(x, y, size.width, size.height);
+        }
+        case UIViewContentModeLeft: {
+            CGFloat y = (rect.size.height - size.height) * 0.5 + CGRectGetMinY(rect);
+            return CGRectMake(CGRectGetMinX(rect), y, size.width, size.height);
+        }
+        case UIViewContentModeRight: {
+            CGFloat x = CGRectGetMaxX(rect) - size.height;
+            CGFloat y = (rect.size.height - size.height) * 0.5 + CGRectGetMinY(rect);
+            return CGRectMake(x, y, size.width, size.height);
+        }
+        case UIViewContentModeTopLeft: {
+            return CGRectMake(CGRectGetMinX(rect), CGRectGetMinY(rect), size.width, size.height);
+        }
+        case UIViewContentModeTopRight: {
+            CGFloat x = CGRectGetMaxX(rect) - size.width;
+            return CGRectMake(x, CGRectGetMinY(rect), size.width, size.height);
+        }
+        case UIViewContentModeBottomLeft: {
+            CGFloat y = CGRectGetMaxY(rect) - size.height;
+            return CGRectMake(CGRectGetMinX(rect), y, size.width, size.height);
+        }
+        case UIViewContentModeBottomRight: {
+            CGFloat x = CGRectGetMaxX(rect) - size.width;
+            CGFloat y = CGRectGetMaxY(rect) - size.height;
+            return CGRectMake(x, y, size.width, size.height);
+            
+        default:
+            return rect;
+        }
+    }
+}

@@ -87,4 +87,7 @@ FOUNDATION_EXPORT XZRectEdge XZRectEdgeFromString(NSString * _Nullable aString);
 
 @end
 
+
+FOUNDATION_EXPORT CGRect CGSizeFitingInRectWithContentMode(CGSize size, CGRect rect, UIViewContentMode contentMode);
+
 NS_ASSUME_NONNULL_END
