@@ -134,6 +134,13 @@ FOUNDATION_STATIC_INLINE UIColor *rgba(NSInteger value) XZ_OVERLOAD XZ_OBJC {
     return [UIColor colorWithRed:red green:green blue:blue alpha:alpha];
 }
 
+FOUNDATION_STATIC_INLINE UIColor *rgba(NSInteger value, CGFloat alpha) XZ_OVERLOAD XZ_OBJC {
+    CGFloat const red   = (value>>16&0xFF) / 255.0;
+    CGFloat const green = (value>> 8&0xFF) / 255.0;
+    CGFloat const blue  = (value>> 0&0xFF) / 255.0;
+    return [UIColor colorWithRed:red green:green blue:blue alpha:alpha];
+}
+
 /// 通过 RGBA 值 [0, 255] 构造 UIColor 对象。
 FOUNDATION_STATIC_INLINE UIColor *rgba(long red, long green, long blue, long alpha) XZ_OVERLOAD XZ_OBJC {
     return [UIColor colorWithRed:red/255.0 green:green/255.0 blue:blue/255.0 alpha:alpha/255.0];
