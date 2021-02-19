@@ -124,6 +124,12 @@
 		2963313F25D10BAD00BB1BEF /* XZTimeTickerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2963313B25D10BAC00BB1BEF /* XZTimeTickerTests.swift */; };
 		2963314025D10BAD00BB1BEF /* XZURLTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2963313C25D10BAC00BB1BEF /* XZURLTests.swift */; };
 		2963314225D10BAD00BB1BEF /* XZKitConstantsSwiftTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2963313E25D10BAC00BB1BEF /* XZKitConstantsSwiftTests.swift */; };
+		296DED3D25DFE8F500343A6A /* XZImagePath.h in Headers */ = {isa = PBXBuildFile; fileRef = 296DED3B25DFE8F500343A6A /* XZImagePath.h */; };
+		296DED3E25DFE8F500343A6A /* XZImagePath.m in Sources */ = {isa = PBXBuildFile; fileRef = 296DED3C25DFE8F500343A6A /* XZImagePath.m */; };
+		296DED4425DFEA1E00343A6A /* XZImagePathArcItem.h in Headers */ = {isa = PBXBuildFile; fileRef = 296DED4225DFEA1E00343A6A /* XZImagePathArcItem.h */; };
+		296DED4525DFEA1E00343A6A /* XZImagePathArcItem.m in Sources */ = {isa = PBXBuildFile; fileRef = 296DED4325DFEA1E00343A6A /* XZImagePathArcItem.m */; };
+		296DED4B25DFEA2B00343A6A /* XZImagePathLineItem.h in Headers */ = {isa = PBXBuildFile; fileRef = 296DED4925DFEA2B00343A6A /* XZImagePathLineItem.h */; };
+		296DED4C25DFEA2B00343A6A /* XZImagePathLineItem.m in Sources */ = {isa = PBXBuildFile; fileRef = 296DED4A25DFEA2B00343A6A /* XZImagePathLineItem.m */; };
 		299D574425D8E58A0097C27A /* UIColor+XZKit.swift in Sources */ = {isa = PBXBuildFile; fileRef = 299D574325D8E58A0097C27A /* UIColor+XZKit.swift */; };
 		299D574825D8EC6D0097C27A /* UIImage+XZKit.swift in Sources */ = {isa = PBXBuildFile; fileRef = 299D574725D8EC6D0097C27A /* UIImage+XZKit.swift */; };
 		299D574F25D906FA0097C27A /* XZKit+JSON.h in Headers */ = {isa = PBXBuildFile; fileRef = 299D574D25D906FA0097C27A /* XZKit+JSON.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -315,6 +321,12 @@
 		2963313E25D10BAC00BB1BEF /* XZKitConstantsSwiftTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = XZKitConstantsSwiftTests.swift; path = XZKitTests/Sources/XZKitConstantsSwiftTests.swift; sourceTree = SOURCE_ROOT; };
 		296DED2A25DFD09F00343A6A /* zh-Hans */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = "zh-Hans"; path = "zh-Hans.lproj/LaunchScreen.storyboard"; sourceTree = "<group>"; };
 		296DED2B25DFD09F00343A6A /* zh-Hans */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = "zh-Hans"; path = "zh-Hans.lproj/Main.storyboard"; sourceTree = "<group>"; };
+		296DED3B25DFE8F500343A6A /* XZImagePath.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = XZImagePath.h; sourceTree = "<group>"; };
+		296DED3C25DFE8F500343A6A /* XZImagePath.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = XZImagePath.m; sourceTree = "<group>"; };
+		296DED4225DFEA1E00343A6A /* XZImagePathArcItem.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = XZImagePathArcItem.h; sourceTree = "<group>"; };
+		296DED4325DFEA1E00343A6A /* XZImagePathArcItem.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = XZImagePathArcItem.m; sourceTree = "<group>"; };
+		296DED4925DFEA2B00343A6A /* XZImagePathLineItem.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = XZImagePathLineItem.h; sourceTree = "<group>"; };
+		296DED4A25DFEA2B00343A6A /* XZImagePathLineItem.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = XZImagePathLineItem.m; sourceTree = "<group>"; };
 		299D574325D8E58A0097C27A /* UIColor+XZKit.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIColor+XZKit.swift"; sourceTree = "<group>"; };
 		299D574725D8EC6D0097C27A /* UIImage+XZKit.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIImage+XZKit.swift"; sourceTree = "<group>"; };
 		299D574D25D906FA0097C27A /* XZKit+JSON.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "XZKit+JSON.h"; sourceTree = "<group>"; };
@@ -757,6 +769,12 @@
 				29B5388925DE46E8009A07D3 /* XZImageBorderArrow+XZImageDrawing.m */,
 				29B5388F25DE48EC009A07D3 /* XZImageBorder+XZImageDrawing.h */,
 				29B5389025DE48EC009A07D3 /* XZImageBorder+XZImageDrawing.m */,
+				296DED3B25DFE8F500343A6A /* XZImagePath.h */,
+				296DED3C25DFE8F500343A6A /* XZImagePath.m */,
+				296DED4925DFEA2B00343A6A /* XZImagePathLineItem.h */,
+				296DED4A25DFEA2B00343A6A /* XZImagePathLineItem.m */,
+				296DED4225DFEA1E00343A6A /* XZImagePathArcItem.h */,
+				296DED4325DFEA1E00343A6A /* XZImagePathArcItem.m */,
 			);
 			path = Private;
 			sourceTree = "<group>";
@@ -781,11 +799,13 @@
 				2918813E25D2978D00C89059 /* XZFoundation.h in Headers */,
 				29B5389825DE5E67009A07D3 /* XZImageLevels.h in Headers */,
 				2963311025D108DC00BB1BEF /* XZCharacterCase.h in Headers */,
+				296DED4B25DFEA2B00343A6A /* XZImagePathLineItem.h in Headers */,
 				29632F2925D058E000BB1BEF /* XZKit.h in Headers */,
 				29B5388A25DE46E8009A07D3 /* XZImageBorderArrow+XZImageDrawing.h in Headers */,
 				296330B925D1000E00BB1BEF /* NSBundle+XZKit.h in Headers */,
 				2963310E25D108DC00BB1BEF /* XZLog.h in Headers */,
 				296330C525D1000E00BB1BEF /* XZImageViewer.h in Headers */,
+				296DED3D25DFE8F500343A6A /* XZImagePath.h in Headers */,
 				2963311125D108DC00BB1BEF /* XZDefer.h in Headers */,
 				2963310B25D108DC00BB1BEF /* XZKit+Geometry.h in Headers */,
 				296330C625D1000E00BB1BEF /* XZCarouselView.h in Headers */,
@@ -808,6 +828,7 @@
 				29B5387625DD1681009A07D3 /* XZImageLine.h in Headers */,
 				296330C325D1000E00BB1BEF /* XZCarouselView.ScrollView.h in Headers */,
 				2918817A25D6553B00C89059 /* XZObjCTypeDescriptor.h in Headers */,
+				296DED4425DFEA1E00343A6A /* XZImagePathArcItem.h in Headers */,
 				296330C225D1000E00BB1BEF /* XZCarouselView.ItemView.h in Headers */,
 				296330DD25D1000E00BB1BEF /* XZAppLanguageBundle.h in Headers */,
 			);
@@ -1000,10 +1021,12 @@
 				2963311225D108DC00BB1BEF /* UIView+XZKit.swift in Sources */,
 				2918817B25D6553B00C89059 /* XZObjCTypeDescriptor.m in Sources */,
 				2916366725D67F51001BFE25 /* UIImageView+XZKit.swift in Sources */,
+				296DED4C25DFEA2B00343A6A /* XZImagePathLineItem.m in Sources */,
 				29B5385225DD026C009A07D3 /* XZImageCorners.m in Sources */,
 				296330BC25D1000E00BB1BEF /* XZCarouselViewController.m in Sources */,
 				2963312025D108DC00BB1BEF /* XZKit+Geometry.swift in Sources */,
 				29B5384425DD0254009A07D3 /* XZImageBorders.m in Sources */,
+				296DED3E25DFE8F500343A6A /* XZImagePath.m in Sources */,
 				299D574425D8E58A0097C27A /* UIColor+XZKit.swift in Sources */,
 				29B5387725DD1681009A07D3 /* XZImageLine.m in Sources */,
 				2963311C25D108DC00BB1BEF /* XZLog.swift in Sources */,
@@ -1038,6 +1061,7 @@
 				296330B725D1000E00BB1BEF /* DispatchQueue+XZKit.swift in Sources */,
 				29B5383725DD0127009A07D3 /* XZImage.m in Sources */,
 				296330C825D1000E00BB1BEF /* XZCacheManger.swift in Sources */,
+				296DED4525DFEA1E00343A6A /* XZImagePathArcItem.m in Sources */,
 				296330C425D1000E00BB1BEF /* XZCarouselView.ItemView.m in Sources */,
 				296330CF25D1000E00BB1BEF /* XZContentStatus.swift in Sources */,
 				295D51CC25D9236800283581 /* XZKit+HexEncoding.swift in Sources */,

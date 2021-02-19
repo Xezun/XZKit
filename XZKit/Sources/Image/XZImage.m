@@ -6,51 +6,9 @@
 //
 
 #import "XZImage.h"
+#import "XZImagePath.h"
 #import "XZImageBorderArrow+XZImageDrawing.h"
 #import "XZImageBorder+XZImageDrawing.h"
-
-/// 连接另一条边时，如果连接的是圆角，则使用圆角半径，否则使用边的一半。
-static inline CGFloat DRS(CGFloat radius, CGFloat d) {
-    return radius > 0 ? radius : d;
-}
-
-/// 避免画的圆角异常：
-/// radius < borderWidth / 2 不能画出圆角；
-/// radius < borderWidth 会以中心点画出两个半圆。
-static inline CGFloat BRS(CGFloat radius, CGFloat b) {
-    return radius > 0 ? (radius > b ? radius : b) : 0;
-}
-/// 给纵横坐标分别增加 dx 和 dy
-static inline void CGPointMove(CGPoint *point, CGFloat dx, CGFloat dy) {
-    point->x += (dx); point->y += (dy);
-}
-/// 设置横坐标为 x 并给纵坐标增加 dy
-static inline void CGPointMoveY(CGPoint *point, CGFloat x, CGFloat dy) {
-    point->x = x; point->y += (dy);
-}
-/// 给横坐标增加 dx 并设置纵坐标为 y
-static inline void CGPointMoveX(CGPoint *point, CGFloat dx, CGFloat y) {
-    point->x += dx; point->y = y;
-}
-
-
-@protocol XZImageContext <NSObject>
-- (void)drawInContext:(CGContextRef)context;
-@end
-@interface XZImageContext : NSObject <XZImageContext>
-/// 构造
-+ (instancetype)contextWithLine:(XZImageLine *)line startPoint:(CGPoint)startPoint;
-/// 处于线型交接的线条需要起点。
-@property (nonatomic, readonly) CGPoint startPoint;
-/// 线型
-@property (nonatomic, strong, readonly) XZImageLine *line;
-/// 添加一条直线
-- (void)addLineToPoint:(CGPoint)endPoint;
-/// 添加一个圆角
-- (void)addArcWithCenter:(CGPoint)center radius:(CGFloat)radiusTR startAngle:(CGFloat)startAngle endAngle:(CGFloat)endAngle;
-@end
-
-
 
 @implementation XZImage
 
@@ -106,7 +64,21 @@ static inline void CGPointMoveX(CGPoint *point, CGFloat dx, CGFloat y) {
     self.corners.radius = cornerRadius;
 }
 
-/// 默认绘制区域大小。
+- (CGSize)preferredSize {
+    CGRect rect = CGRectZero;
+    CGRect frame = CGRectZero;
+    
+    [self prepareRect:&rect frame:&frame withPoint:CGPointZero size:[self defaultSize]];
+    
+    CGFloat const w = frame.size.width + frame.origin.x * 2;
+    CGFloat const h = frame.size.height + frame.origin.y * 2;
+    
+    return CGSizeMake(w, h);
+}
+
+/// 如果当前设置了大小，则返回该大小；
+/// 如果设置了背景图，则根据背景图自动确定一个大小；
+/// 否则返回 CGSizeZero 。
 - (CGSize)defaultSize {
     CGSize size = self.size;
     if (size.width > 0 && size.height > 0) {
@@ -123,9 +95,9 @@ static inline void CGPointMoveX(CGPoint *point, CGFloat dx, CGFloat y) {
     if (self.backgroundImage.scale == UIScreen.mainScreen.scale) {
         return size;
     }
-    CGFloat as = UIScreen.mainScreen.scale / self.backgroundImage.scale;
-    size.width /= as;
-    size.height /= as;
+    CGFloat const as = UIScreen.mainScreen.scale / self.backgroundImage.scale;
+    size.width  = size.width / as + _contentInsets.left + _contentInsets.right;
+    size.height = size.height / as + _contentInsets.top + _contentInsets.bottom;
     return size;
 }
 
@@ -203,7 +175,7 @@ static inline void CGPointMoveX(CGPoint *point, CGFloat dx, CGFloat y) {
 /// @param rect 边框的绘制区域
 /// @param frame 包括箭头在内的整体绘制区域
 - (void)drawWithRect:(CGRect const)rect frame:(CGRect const)frame {
-    NSMutableArray<XZImageContext *> * const contexts = [NSMutableArray arrayWithCapacity:8];
+    NSMutableArray<XZImagePath *> * const contexts = [NSMutableArray arrayWithCapacity:8];
     UIBezierPath *path = [[UIBezierPath alloc] init];
     [self createContexts:contexts path:path withRect:rect];
 
@@ -239,7 +211,7 @@ static inline void CGPointMoveX(CGPoint *point, CGFloat dx, CGFloat y) {
     CGContextRestoreGState(context);
     
     // 绘制边框
-    for (XZImageContext *imageContext in contexts) {
+    for (XZImagePath *imageContext in contexts) {
         CGContextSaveGState(context);
         
         [imageContext drawInContext:context];
@@ -253,7 +225,7 @@ static inline void CGPointMoveX(CGPoint *point, CGFloat dx, CGFloat y) {
 /// @param contexts 输出，边框的绘制内容将添加到此数组
 /// @param backgroundPath 输出，背景色填充路径
 /// @param rect 绘制区域（矩形所在的区域，不包括箭头，箭头绘制在此区域外）
-- (void)createContexts:(NSMutableArray<XZImageContext *> * const)contexts path:(UIBezierPath * const)backgroundPath withRect:(CGRect const)rect {
+- (void)createContexts:(nullable NSMutableArray<XZImagePath *> * const)contexts path:(nullable UIBezierPath * const)backgroundPath withRect:(CGRect const)rect {
     
     CGFloat const minX = CGRectGetMinX(rect);
     CGFloat const minY = CGRectGetMinY(rect);
@@ -309,9 +281,7 @@ static inline void CGPointMoveX(CGPoint *point, CGFloat dx, CGFloat y) {
         [backgroundPath moveToPoint:start];
         
         CGPointMove(&start, 0, dT_2);
-        XZImageContext * const context = [XZImageContext contextWithLine:top startPoint:start];
-        
-        CGPoint end = CGPointMake(maxX - radiusTR, minY);
+        XZImagePath * const context = contexts ? [XZImagePath imagePathWithLine:top startPoint:start] : nil;
         
         XZImageBorderArrow const *arrow = top.arrowIfLoaded;
         if (arrow.width > 0 && arrow.height > 0) {
@@ -324,23 +294,29 @@ static inline void CGPointMoveX(CGPoint *point, CGFloat dx, CGFloat y) {
             [backgroundPath addLineToPoint:point2];
             [backgroundPath addLineToPoint:point3];
             
-            CGPoint const offset1 = [arrow offsetForVectorAtIndex:2 lineOffset:dT_2];
-            CGPoint const offset2 = [arrow offsetForVectorAtIndex:0 lineOffset:dT_2];
-            CGPoint const offset3 = [arrow offsetForVectorAtIndex:1 lineOffset:dT_2];
-            CGPointMove(&point1, offset1.x, offset1.y);
-            CGPointMove(&point2, offset2.x, offset2.y);
-            CGPointMove(&point3, offset3.x, offset3.y);
-            
-            [context addLineToPoint:point1];
-            [context addLineToPoint:point2];
-            [context addLineToPoint:point3];
+            if (context) {
+                CGPoint const offset1 = [arrow offsetForVectorAtIndex:2 lineOffset:dT_2];
+                CGPoint const offset2 = [arrow offsetForVectorAtIndex:0 lineOffset:dT_2];
+                CGPoint const offset3 = [arrow offsetForVectorAtIndex:1 lineOffset:dT_2];
+                CGPointMove(&point1, offset1.x, offset1.y);
+                CGPointMove(&point2, offset2.x, offset2.y);
+                CGPointMove(&point3, offset3.x, offset3.y);
+                
+                [context addLineToPoint:point1];
+                [context addLineToPoint:point2];
+                [context addLineToPoint:point3];
+            }
         }
+        
+        CGPoint end = CGPointMake(maxX - radiusTR, minY);
         [backgroundPath addLineToPoint:end];
         
-        CGPointMoveY(&end, maxX - DRS(radiusTR, dR), dT_2);
-        [context addLineToPoint:end];
-        
-        [contexts addObject:context];
+        if (context) {
+            CGPointMoveY(&end, maxX - DRS(radiusTR, dR), dT_2);
+            [context addLineToPoint:end];
+            
+            [contexts addObject:context];
+        }
     }
     
     if (radiusTR > 0) { // MARK: - Top Right
@@ -349,15 +325,17 @@ static inline void CGPointMoveX(CGPoint *point, CGFloat dx, CGFloat y) {
         CGFloat const endAngle   = 0;
         [backgroundPath addArcWithCenter:center radius:radiusTR startAngle:startAngle endAngle:endAngle clockwise:YES];
         
-        CGFloat const dTR_2 = topRight.width * 0.5;
-        
-        CGPoint const start = CGPointMake(maxX - radiusTR, minY + dTR_2);
-        XZImageContext *context = [XZImageContext contextWithLine:topRight startPoint:start];
-        [context addArcWithCenter:center
-                           radius:(radiusTR - dTR_2)
-                       startAngle:(startAngle)
-                         endAngle:endAngle];
-        [contexts addObject:context];
+        if (contexts) {
+            CGFloat const dTR_2 = topRight.width * 0.5;
+            CGPoint const start = CGPointMake(maxX - radiusTR, minY + dTR_2);
+            
+            XZImagePath *context = [XZImagePath imagePathWithLine:topRight startPoint:start];
+            [context addArcWithCenter:center
+                               radius:(radiusTR - dTR_2)
+                           startAngle:(startAngle)
+                             endAngle:endAngle];
+            [contexts addObject:context];
+        }
     }
     
     { // MARK: - Right
@@ -365,9 +343,7 @@ static inline void CGPointMoveX(CGPoint *point, CGFloat dx, CGFloat y) {
         [backgroundPath addLineToPoint:start];
         
         CGPointMove(&start, -dR_2, 0);
-        XZImageContext *context = [XZImageContext contextWithLine:right startPoint:start];
-        
-        CGPoint end = CGPointMake(maxX, maxY - radiusBR);
+        XZImagePath *context = contexts ? [XZImagePath imagePathWithLine:right startPoint:start] : nil;
         
         XZImageBorderArrow const *arrow = right.arrowIfLoaded;
         if (arrow.width > 0 && arrow.height > 0) {
@@ -380,22 +356,28 @@ static inline void CGPointMoveX(CGPoint *point, CGFloat dx, CGFloat y) {
             [backgroundPath addLineToPoint:point2];
             [backgroundPath addLineToPoint:point3];
             
-            CGPoint const offset1 = [arrow offsetForVectorAtIndex:2 lineOffset:dR_2];
-            CGPoint const offset2 = [arrow offsetForVectorAtIndex:0 lineOffset:dR_2];
-            CGPoint const offset3 = [arrow offsetForVectorAtIndex:1 lineOffset:dR_2];
-            CGPointMove(&point1, -offset1.y, offset1.x);
-            CGPointMove(&point2, -offset2.y, offset2.x);
-            CGPointMove(&point3, -offset3.y, offset3.x);
-            
-            [context addLineToPoint:point1];
-            [context addLineToPoint:point2];
-            [context addLineToPoint:point3];
+            if (context) {
+                CGPoint const offset1 = [arrow offsetForVectorAtIndex:2 lineOffset:dR_2];
+                CGPoint const offset2 = [arrow offsetForVectorAtIndex:0 lineOffset:dR_2];
+                CGPoint const offset3 = [arrow offsetForVectorAtIndex:1 lineOffset:dR_2];
+                CGPointMove(&point1, -offset1.y, offset1.x);
+                CGPointMove(&point2, -offset2.y, offset2.x);
+                CGPointMove(&point3, -offset3.y, offset3.x);
+                
+                [context addLineToPoint:point1];
+                [context addLineToPoint:point2];
+                [context addLineToPoint:point3];
+            }
         }
+        
+        CGPoint end = CGPointMake(maxX, maxY - radiusBR);
         [backgroundPath addLineToPoint:end];
         
-        CGPointMoveX(&end, -dR_2, maxY - DRS(radiusBR, dB));
-        [context addLineToPoint:end];
-        [contexts addObject:context];
+        if (context) {
+            CGPointMoveX(&end, -dR_2, maxY - DRS(radiusBR, dB));
+            [context addLineToPoint:end];
+            [contexts addObject:context];
+        }
     }
     
     if (radiusBR > 0) { // MARK: - BottomRight
@@ -404,15 +386,17 @@ static inline void CGPointMoveX(CGPoint *point, CGFloat dx, CGFloat y) {
         CGFloat const endAngle   = M_PI_2;
         [backgroundPath addArcWithCenter:center radius:radiusBR startAngle:startAngle endAngle:endAngle clockwise:YES];
         
-        CGFloat const dBR_2 = bottomRight.width * 0.5;
-        
-        CGPoint const start = CGPointMake(maxX - dBR_2, maxY - radiusBR);
-        XZImageContext *context = [XZImageContext contextWithLine:topRight startPoint:start];
-        [context addArcWithCenter:center
-                           radius:(radiusBR - dBR_2)
-                       startAngle:(startAngle)
-                         endAngle:endAngle];
-        [contexts addObject:context];
+        if (contexts) {
+            CGFloat const dBR_2 = bottomRight.width * 0.5;
+            CGPoint const start = CGPointMake(maxX - dBR_2, maxY - radiusBR);
+            
+            XZImagePath *context = [XZImagePath imagePathWithLine:bottomRight startPoint:start];
+            [context addArcWithCenter:center
+                               radius:(radiusBR - dBR_2)
+                           startAngle:(startAngle)
+                             endAngle:endAngle];
+            [contexts addObject:context];
+        }
     }
     
     { // MARK: - Bottom
@@ -420,37 +404,41 @@ static inline void CGPointMoveX(CGPoint *point, CGFloat dx, CGFloat y) {
         [backgroundPath addLineToPoint:start];
         
         CGPointMove(&start, 0, -dB_2);
-        XZImageContext *context = [XZImageContext contextWithLine:right startPoint:start];
-        
-        CGPoint end = CGPointMake(minX + radiusBL, maxY);
+        XZImagePath *context = contexts ? [XZImagePath imagePathWithLine:bottom startPoint:start] : nil;
         
         XZImageBorderArrow const *arrow = bottom.arrowIfLoaded;
         if (arrow.width > 0 && arrow.height > 0) {
             CGFloat const w = arrow.width * 0.5;
             
             CGPoint point1 = CGPointMake(midX - arrow.anchor + w, maxY);
-            CGPoint point2 = CGPointMake(midX + arrow.vector, maxY + arrow.height);
+            CGPoint point2 = CGPointMake(midX - arrow.vector, maxY + arrow.height);
             CGPoint point3 = CGPointMake(midX - arrow.anchor - w, maxY);
             [backgroundPath addLineToPoint:point1];
             [backgroundPath addLineToPoint:point2];
             [backgroundPath addLineToPoint:point3];
             
-            CGPoint const offset1 = [arrow offsetForVectorAtIndex:2 lineOffset:dB_2];
-            CGPoint const offset2 = [arrow offsetForVectorAtIndex:0 lineOffset:dB_2];
-            CGPoint const offset3 = [arrow offsetForVectorAtIndex:1 lineOffset:dB_2];
-            CGPointMove(&point1, -offset1.x, -offset1.y);
-            CGPointMove(&point2, -offset2.x, -offset2.y);
-            CGPointMove(&point3, -offset3.x, -offset3.y);
-            
-            [context addLineToPoint:point1];
-            [context addLineToPoint:point2];
-            [context addLineToPoint:point3];
+            if (context) {
+                CGPoint const offset1 = [arrow offsetForVectorAtIndex:2 lineOffset:dB_2];
+                CGPoint const offset2 = [arrow offsetForVectorAtIndex:0 lineOffset:dB_2];
+                CGPoint const offset3 = [arrow offsetForVectorAtIndex:1 lineOffset:dB_2];
+                CGPointMove(&point1, -offset1.x, -offset1.y);
+                CGPointMove(&point2, -offset2.x, -offset2.y);
+                CGPointMove(&point3, -offset3.x, -offset3.y);
+                
+                [context addLineToPoint:point1];
+                [context addLineToPoint:point2];
+                [context addLineToPoint:point3];
+            }
         }
+        
+        CGPoint end = CGPointMake(minX + radiusBL, maxY);
         [backgroundPath addLineToPoint:end];
         
-        CGPointMoveY(&end, minX + DRS(radiusBL, dL), -dB_2);
-        [context addLineToPoint:end];
-        [contexts addObject:context];
+        if (context) {
+            CGPointMoveY(&end, minX + DRS(radiusBL, dL), -dB_2);
+            [context addLineToPoint:end];
+            [contexts addObject:context];
+        }
     }
     
     if (radiusBL > 0) { // MARK: - BottomLeft
@@ -459,15 +447,17 @@ static inline void CGPointMoveX(CGPoint *point, CGFloat dx, CGFloat y) {
         CGFloat const endAngle   = M_PI;
         [backgroundPath addArcWithCenter:center radius:radiusBL startAngle:startAngle endAngle:endAngle clockwise:YES];
         
-        CGFloat const dBL_2 = bottomLeft.width * 0.5;
-        CGPoint const start = CGPointMake(minX + radiusBL, maxY - dBL_2);
-        
-        XZImageContext *context = [XZImageContext contextWithLine:topRight startPoint:start];
-        [context addArcWithCenter:center
-                           radius:(radiusBL - dBL_2)
-                       startAngle:(startAngle)
-                         endAngle:endAngle];
-        [contexts addObject:context];
+        if (contexts) {
+            CGFloat const dBL_2 = bottomLeft.width * 0.5;
+            CGPoint const start = CGPointMake(minX + radiusBL, maxY - dBL_2);
+            
+            XZImagePath *context = [XZImagePath imagePathWithLine:bottomLeft startPoint:start];
+            [context addArcWithCenter:center
+                               radius:(radiusBL - dBL_2)
+                           startAngle:(startAngle)
+                             endAngle:endAngle];
+            [contexts addObject:context];
+        }
     }
     
     { // MARK: - Left
@@ -475,37 +465,41 @@ static inline void CGPointMoveX(CGPoint *point, CGFloat dx, CGFloat y) {
         [backgroundPath addLineToPoint:start];
         
         CGPointMove(&start, dL_2, 0);
-        XZImageContext *context = [XZImageContext contextWithLine:left startPoint:start];
-        
-        CGPoint end = CGPointMake(minX, minY + radiusTL);
+        XZImagePath *context = contexts ? [XZImagePath imagePathWithLine:left startPoint:start] : nil;
         
         XZImageBorderArrow const *arrow = left.arrowIfLoaded;
         if (arrow.width > 0 && arrow.height > 0) {
             CGFloat const w = arrow.width * 0.5;
             
             CGPoint point1 = CGPointMake(minX, midY - arrow.anchor + w);
-            CGPoint point2 = CGPointMake(minX - arrow.height, midY + arrow.vector);
+            CGPoint point2 = CGPointMake(minX - arrow.height, midY - arrow.vector);
             CGPoint point3 = CGPointMake(minX, midY - arrow.anchor - w);
             [backgroundPath addLineToPoint:point1];
             [backgroundPath addLineToPoint:point2];
             [backgroundPath addLineToPoint:point3];
             
-            CGPoint const offset1 = [arrow offsetForVectorAtIndex:2 lineOffset:dL_2];
-            CGPoint const offset2 = [arrow offsetForVectorAtIndex:0 lineOffset:dL_2];
-            CGPoint const offset3 = [arrow offsetForVectorAtIndex:1 lineOffset:dL_2];
-            CGPointMove(&point1, offset1.y, -offset1.x);
-            CGPointMove(&point2, offset2.y, -offset2.x);
-            CGPointMove(&point3, offset3.y, -offset3.x);
-            
-            [context addLineToPoint:point1];
-            [context addLineToPoint:point2];
-            [context addLineToPoint:point3];
+            if (context) {
+                CGPoint const offset1 = [arrow offsetForVectorAtIndex:2 lineOffset:dL_2];
+                CGPoint const offset2 = [arrow offsetForVectorAtIndex:0 lineOffset:dL_2];
+                CGPoint const offset3 = [arrow offsetForVectorAtIndex:1 lineOffset:dL_2];
+                CGPointMove(&point1, offset1.y, -offset1.x);
+                CGPointMove(&point2, offset2.y, -offset2.x);
+                CGPointMove(&point3, offset3.y, -offset3.x);
+                
+                [context addLineToPoint:point1];
+                [context addLineToPoint:point2];
+                [context addLineToPoint:point3];
+            }
         }
+        
+        CGPoint end = CGPointMake(minX, minY + radiusTL);
         [backgroundPath addLineToPoint:end];
         
-        CGPointMoveX(&end, dL_2, minY + DRS(radiusTL, dT));
-        [context addLineToPoint:end];
-        [contexts addObject:context];
+        if (context) {
+            CGPointMoveX(&end, dL_2, minY + DRS(radiusTL, dT));
+            [context addLineToPoint:end];
+            [contexts addObject:context];
+        }
     }
     
     if (radiusTL > 0) { // MARK: - TopLeft
@@ -514,101 +508,49 @@ static inline void CGPointMoveX(CGPoint *point, CGFloat dx, CGFloat y) {
         CGFloat const endAngle   = -M_PI_2;
         [backgroundPath addArcWithCenter:center radius:radiusTL startAngle:startAngle endAngle:endAngle clockwise:YES];
         
-        CGFloat const dTL_2 = topLeft.width * 0.5;
-        CGPoint const start = CGPointMake(minX + dTL_2, minY + radiusTL);
-        
-        XZImageContext *context = [XZImageContext contextWithLine:topRight startPoint:start];
-        [context addArcWithCenter:center
-                           radius:(radiusTL - dTL_2)
-                       startAngle:(startAngle)
-                         endAngle:endAngle];
-        [contexts addObject:context];
+        if (contexts) {
+            CGFloat const dTL_2 = topLeft.width * 0.5;
+            CGPoint const start = CGPointMake(minX + dTL_2, minY + radiusTL);
+            
+            XZImagePath *context = [XZImagePath imagePathWithLine:topLeft startPoint:start];
+            [context addArcWithCenter:center
+                               radius:(radiusTL - dTL_2)
+                           startAngle:(startAngle)
+                             endAngle:endAngle];
+            [contexts addObject:context];
+        }
     }
     
     [backgroundPath closePath];
 }
 
-@end
-
-
-
-
-@interface XZImageLineContext : NSObject <XZImageContext>
-@property (nonatomic) CGPoint endPoint;
-@end
-
-@interface XZImageArcContext : NSObject <XZImageContext>
-@property (nonatomic) CGPoint center;
-@property (nonatomic) CGFloat radius;
-@property (nonatomic) CGFloat startAngle;
-@property (nonatomic) CGFloat endAngle;
-@end
-
-@implementation XZImageContext {
-    NSMutableArray<id<XZImageContext>> *_images;
-}
-
-+ (instancetype)contextWithLine:(XZImageLine *)line startPoint:(CGPoint)startPoint {
-    return [[self alloc] initWithLine:line startPoint:startPoint];
-}
-
-- (instancetype)initWithLine:(XZImageLine *)line startPoint:(CGPoint)startPoint {
-    self = [super init];
-    if (self) {
-        _line = line;
-        _startPoint = startPoint;
-        _images = [NSMutableArray arrayWithCapacity:4];
-    }
-    return self;
-}
-
-- (void)addLineToPoint:(CGPoint)endPoint {
-    XZImageLineContext *border = [[XZImageLineContext alloc] init];
-    border.endPoint = endPoint;
-    [_images addObject:border];
-}
-
-- (void)addArcWithCenter:(CGPoint)center radius:(CGFloat)radius startAngle:(CGFloat)startAngle endAngle:(CGFloat)endAngle {
-    XZImageArcContext *corner = [[XZImageArcContext alloc] init];
-    corner.radius = radius;
-    corner.center = center;
-    corner.startAngle = startAngle;
-    corner.endAngle   = endAngle;
-    [_images addObject:corner];
-}
-
-- (void)drawInContext:(CGContextRef)context {
-    CGContextMoveToPoint(context, _startPoint.x, _startPoint.y);
+- (UIBezierPath *)path {
+    CGRect rect = CGRectZero;
+    CGRect frame = CGRectZero;
     
-    CGContextSetStrokeColorWithColor(context, _line.color.CGColor);
-    CGContextSetLineWidth(context, _line.width);
-    if (_line.dash.width > 0 && _line.dash.space > 0) {
-        CGFloat const dashes[2] = {_line.dash.width, _line.dash.space};
-        CGContextSetLineDash(context, 0, dashes, 2);
-    }
+    CGSize const size = [self defaultSize];
+    [self prepareRect:&rect frame:&frame withPoint:CGPointZero size:size];
     
-    for (id<XZImageContext> image in _images) {
-        [image drawInContext:context];
-    }
-}
-
-@end
-
-@implementation XZImageArcContext
-
-- (void)drawInContext:(CGContextRef)context {
-    // CG 的坐标系 顺时针方向 跟 UI 是反的
-    CGContextAddArc(context, _center.x, _center.y, _radius, _startAngle, _endAngle, NO);
-}
-
-@end
-
-@implementation XZImageLineContext
-
-- (void)drawInContext:(CGContextRef)context {
-    CGContextAddLineToPoint(context, _endPoint.x, _endPoint.y);
+    UIBezierPath *backgroundPath = [[UIBezierPath alloc] init];
+    [self createContexts:nil path:backgroundPath withRect:rect];
     
-    // NSLog(@"addLine: (%.2f, %.2f)", _endPoint.x, _endPoint.y);
+    return backgroundPath;
+}
+
+- (NSArray<id<XZImagePath>> *)imagePaths {
+    CGRect rect = CGRectZero;
+    CGRect frame = CGRectZero;
+    
+    CGSize const size = [self defaultSize];
+    [self prepareRect:&rect frame:&frame withPoint:CGPointZero size:size];
+    
+    NSMutableArray<XZImagePath *> * const contexts = [NSMutableArray arrayWithCapacity:8];
+    [self createContexts:contexts path:nil withRect:rect];
+    
+    return contexts;
 }
 
 @end
+
+
+
