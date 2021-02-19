@@ -32,15 +32,28 @@
     [super viewDidLoad];
     
     XZImage *image = [[XZImage alloc] init];
-    
     image.size            = CGSizeMake(300, 200);
-    image.backgroundColor = rgba(0xFF0000, 1.0);
-    image.borderColor     = rgba(0x00FF00, 1.0);
-    image.borderWidth     = 2.0;
-    image.cornerRadius    = 10.0;
-    //image.borderDash      = XZImageLineDashMake(1, 1);
+    image.backgroundImage = [UIImage imageNamed:@"icon_image"];
+    image.contentMode     = UIViewContentModeScaleAspectFill;
+    image.contentInsets   = UIEdgeInsetsMake(10, 10, 10, 10);
+    image.backgroundColor = rgba(0x000000, 1.0);
     
-//    image.borders.arrow.anchor = 0;
+    // 设置所有边框和圆角
+    image.borderColor     = rgba(0x55FF55, 1.0);
+    image.borderWidth     = 1.0;
+    image.cornerRadius    = 10.0;
+    image.borderDash      = XZImageLineDashMake(10, 10);
+    
+    // 设置所有边框
+//    image.borders.width = 10.0;
+//    image.borders.color = [UIColor.redColor colorWithAlphaComponent:0.5];
+    
+    // 设置所有圆角
+//    image.corners.width = 10.0;
+//    image.corners.color = UIColor.greenColor;
+//    image.corners.radius = 10;
+    
+//    image.borders.arrow.anchor = 20;
 //    image.borders.arrow.vector = 0;
 //    image.borders.arrow.width  = 40;
 //    image.borders.arrow.height = 20;
@@ -55,9 +68,15 @@
     image.borders.bottom.arrow.width  = 20;
     image.borders.bottom.arrow.height = 10;
     
-    image.backgroundImage = [UIImage imageNamed:@"icon_image"];
-    image.contentMode = UIViewContentModeScaleAspectFill;
-    image.contentInsets = UIEdgeInsetsMake(0, 0, 0, 0);
+//    image.borders.left.arrow.anchor = 0;
+//    image.borders.left.arrow.vector = 0;
+//    image.borders.left.arrow.width  = 20;
+//    image.borders.left.arrow.height = 10;
+    
+//    image.borders.right.arrow.anchor = 0;
+//    image.borders.right.arrow.vector = 0;
+//    image.borders.right.arrow.width  = 20;
+//    image.borders.right.arrow.height = 10;
     
     self.image = image.image;
     

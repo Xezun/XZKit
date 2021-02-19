@@ -70,6 +70,6 @@ UIKIT_STATIC_INLINE XZImageLevels XZImageLevelsMake(CGFloat shadows, CGFloat mid
     return (XZImageLevels){{shadows, midtones, highlights}, XZImageLevelsOutputIdentity, XZColorChannelRGB};
 }
 
-UIKIT_EXTERN UIImage *XZImageFilterImageWithLevels(UIImage *image, XZImageLevels const levels);
+UIKIT_EXTERN UIImage *XZImageFilterImageWithLevels(UIImage *image, XZImageLevels levels);
 
 NS_ASSUME_NONNULL_END

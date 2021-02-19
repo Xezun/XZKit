@@ -49,14 +49,14 @@
                 
                 _vectorOffsets[0] = CGPointMake(0, lineOffset / sin(a));
                 _vectorOffsets[1] = CGPointMake(0, lineOffset);
-                _vectorOffsets[2] = CGPointMake(lineOffset / sin(c) - lineOffset * cos(c), lineOffset);
+                _vectorOffsets[2] = CGPointMake(lineOffset / sin(c) - lineOffset / tan(c), lineOffset);
             } else if (fabs(_vector - (_anchor - width2)) < onePix) {
                 CGFloat const a = atan(_width / _height);
-                // CGFloat const b = M_PI_2 - a;
-                CGFloat const c = M_PI_2;
+                CGFloat const b = M_PI_2 - a;
+                // CGFloat const c = M_PI_2;
                 
                 _vectorOffsets[0] = CGPointMake(0, lineOffset / sin(a));
-                _vectorOffsets[1] = CGPointMake(-lineOffset / sin(c) + lineOffset * cos(c), lineOffset);
+                _vectorOffsets[1] = CGPointMake(-lineOffset / sin(b) + lineOffset / tan(b), lineOffset);
                 _vectorOffsets[2] = CGPointMake(0, lineOffset);
             } else {
                 CGFloat const b = atan(_height / (_anchor + width2 - _vector));

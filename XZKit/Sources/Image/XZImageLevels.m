@@ -11,20 +11,18 @@
 XZImageLevelsInput  const XZImageLevelsInputIdentity  = {0.0, 1.0, 1.0};
 XZImageLevelsOutput const XZImageLevelsOutputIdentity = {0.0, 1.0};
 
-UIImage *XZImageFilterImageWithLevels(UIImage *image, XZImageLevels const levels) {
-    // 检查参数
-    if (levels.input.highlights <= levels.input.shadows) {
-        XZLog(@"输入色阶 shadows 必须小于 highlights");
-        return nil;
-    }
-    if (levels.output.highlights <= levels.output.shadows) {
-        XZLog(@"输出色阶 shadows 必须小于 highlights");
-        return nil;
-    }
+UIImage *XZImageFilterImageWithLevels(UIImage *image, XZImageLevels levels) {
     // 没有要处理的通道，返回自身
     if (levels.channels == 0) {
         return image;
     }
+    
+    // 检查参数 限定 highlights 的最小值
+    levels.input.shadows    = MIN(1.0, MAX(0, levels.input.shadows));
+    levels.input.midtones   = MIN(10.0, MAX(0.0, levels.input.midtones));
+    levels.input.highlights = MIN(1.0, MAX(MAX(1e-20, levels.input.shadows), levels.input.highlights));
+    levels.output.shadows   = MIN(1.0, MAX(0, levels.output.shadows));
+    levels.output.highlights = MIN(1.0, MAX(MAX(1e-20, levels.output.shadows), levels.output.highlights));
     
     // 获得当前图片的 CIImage 对象
     CIImage *ciImage = [image CIImage];
@@ -81,16 +79,20 @@ UIImage *XZImageFilterImageWithLevels(UIImage *image, XZImageLevels const levels
         CGFloat const shadows = input.shadows;
         CGFloat const highlights = input.highlights;
         
-        CIVector *minComponents = [CIVector vectorWithX:(hasR ? shadows : 0)
-                                                      Y:(hasG ? shadows : 0)
-                                                      Z:(hasB ? shadows : 0)
-                                                      W:(hasA ? shadows : 0)];
-        CIVector *maxComponents = [CIVector vectorWithX:(hasR ? highlights : 1.0)
-                                                      Y:(hasG ? highlights : 1.0)
-                                                      Z:(hasB ? highlights : 1.0)
-                                                      W:(hasA ? highlights : 1.0)];
-        [filter1 setValue:minComponents forKey:@"inputMinComponents"];
-        [filter1 setValue:maxComponents forKey:@"inputMaxComponents"];
+        if (shadows > 0) {
+            CIVector *minComponents = [CIVector vectorWithX:(hasR ? shadows : 0)
+                                                          Y:(hasG ? shadows : 0)
+                                                          Z:(hasB ? shadows : 0)
+                                                          W:(hasA ? shadows : 0)];
+            [filter1 setValue:minComponents forKey:@"inputMinComponents"];
+        }
+        if (highlights < 1.0) {
+            CIVector *maxComponents = [CIVector vectorWithX:(hasR ? highlights : 1.0)
+                                                          Y:(hasG ? highlights : 1.0)
+                                                          Z:(hasB ? highlights : 1.0)
+                                                          W:(hasA ? highlights : 1.0)];
+            [filter1 setValue:maxComponents forKey:@"inputMaxComponents"];
+        }
         
         ciImage = filter1.outputImage;
         
