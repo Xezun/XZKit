@@ -216,9 +216,7 @@
 		295D522D25DA6DBE00283581 /* SceneDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = SceneDelegate.m; sourceTree = "<group>"; };
 		295D522F25DA6DBE00283581 /* TableViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = TableViewController.h; sourceTree = "<group>"; };
 		295D523025DA6DBE00283581 /* TableViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = TableViewController.m; sourceTree = "<group>"; };
-		295D523325DA6DBE00283581 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
 		295D523525DA6DC100283581 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
-		295D523825DA6DC100283581 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		295D523A25DA6DC100283581 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		295D523B25DA6DC100283581 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
 		295D525625DA782D00283581 /* XZColorViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = XZColorViewController.h; sourceTree = "<group>"; };
@@ -315,6 +313,8 @@
 		2963313C25D10BAC00BB1BEF /* XZURLTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = XZURLTests.swift; path = XZKitTests/Sources/XZURLTests.swift; sourceTree = SOURCE_ROOT; };
 		2963313D25D10BAC00BB1BEF /* XZKitConstantsTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = XZKitConstantsTests.m; path = XZKitTests/Sources/XZKitConstantsTests.m; sourceTree = SOURCE_ROOT; };
 		2963313E25D10BAC00BB1BEF /* XZKitConstantsSwiftTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = XZKitConstantsSwiftTests.swift; path = XZKitTests/Sources/XZKitConstantsSwiftTests.swift; sourceTree = SOURCE_ROOT; };
+		296DED2A25DFD09F00343A6A /* zh-Hans */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = "zh-Hans"; path = "zh-Hans.lproj/LaunchScreen.storyboard"; sourceTree = "<group>"; };
+		296DED2B25DFD09F00343A6A /* zh-Hans */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = "zh-Hans"; path = "zh-Hans.lproj/Main.storyboard"; sourceTree = "<group>"; };
 		299D574325D8E58A0097C27A /* UIColor+XZKit.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIColor+XZKit.swift"; sourceTree = "<group>"; };
 		299D574725D8EC6D0097C27A /* UIImage+XZKit.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIImage+XZKit.swift"; sourceTree = "<group>"; };
 		299D574D25D906FA0097C27A /* XZKit+JSON.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "XZKit+JSON.h"; sourceTree = "<group>"; };
@@ -915,11 +915,10 @@
 			};
 			buildConfigurationList = 29632F1225D058E000BB1BEF /* Build configuration list for PBXProject "XZKit" */;
 			compatibilityVersion = "Xcode 9.3";
-			developmentRegion = en;
+			developmentRegion = "zh-Hans";
 			hasScannedForEncodings = 0;
 			knownRegions = (
-				en,
-				Base,
+				"zh-Hans",
 			);
 			mainGroup = 29632F0E25D058E000BB1BEF;
 			productRefGroup = 29632F1925D058E000BB1BEF /* Products */;
@@ -1112,7 +1111,7 @@
 		295D523225DA6DBE00283581 /* Main.storyboard */ = {
 			isa = PBXVariantGroup;
 			children = (
-				295D523325DA6DBE00283581 /* Base */,
+				296DED2B25DFD09F00343A6A /* zh-Hans */,
 			);
 			name = Main.storyboard;
 			sourceTree = "<group>";
@@ -1120,7 +1119,7 @@
 		295D523725DA6DC100283581 /* LaunchScreen.storyboard */ = {
 			isa = PBXVariantGroup;
 			children = (
-				295D523825DA6DC100283581 /* Base */,
+				296DED2A25DFD09F00343A6A /* zh-Hans */,
 			);
 			name = LaunchScreen.storyboard;
 			sourceTree = "<group>";

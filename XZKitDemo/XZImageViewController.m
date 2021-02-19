@@ -14,13 +14,17 @@
 @property (weak, nonatomic) IBOutlet UILabel *valueLabel;
 @end
 
-@interface XZImageViewController ()
+@interface XZImageViewController () {
+    BOOL _isProcessing;
+}
 
 @property (nonatomic, strong) UIImage *image;
 
 @property (weak, nonatomic) IBOutlet XZImageSliderView *shadowsLevelsView;
 @property (weak, nonatomic) IBOutlet XZImageSliderView *midtonesLevelsView;
 @property (weak, nonatomic) IBOutlet XZImageSliderView *highlightsLevelsView;
+@property (weak, nonatomic) IBOutlet XZImageSliderView *brightnessView;
+@property (weak, nonatomic) IBOutlet XZImageSliderView *alphaView;
 
 @property (weak, nonatomic) IBOutlet UIImageView *imageView;
 
@@ -39,10 +43,10 @@
     image.backgroundColor = rgba(0x000000, 1.0);
     
     // 设置所有边框和圆角
-    image.borderColor     = rgba(0x55FF55, 1.0);
-    image.borderWidth     = 1.0;
+    image.borderColor     = rgba(0xFF9F8B, 1.0);
+    image.borderWidth     = 2.0;
     image.cornerRadius    = 10.0;
-    image.borderDash      = XZImageLineDashMake(10, 10);
+    //image.borderDash      = XZImageLineDashMake(10, 10);
     
     // 设置所有边框
 //    image.borders.width = 10.0;
@@ -80,7 +84,7 @@
     
     self.image = image.image;
     
-    self.imageView.image = self.image;
+    [self recoverImageLevelsButtonAction:nil];
     
 //    self.imageView.image = [[UIImage imageNamed:@"icon_star"] xz_imageByBlendingColor:rgb(0xff9900)];
 }
@@ -89,15 +93,103 @@
     CGFloat shadows = self.shadowsLevelsView.slider.value;
     CGFloat midtones = self.midtonesLevelsView.slider.value;
     CGFloat highlights = self.highlightsLevelsView.slider.value;
+    
+    self.shadowsLevelsView.valueLabel.text = [NSString stringWithFormat:@"%.2f", shadows];
+    
+    if (midtones < 500) {
+        midtones /= 500;
+    } else {
+        midtones = 9.0 * (midtones - 500) / 500 + 1.0;
+    }
+    self.midtonesLevelsView.valueLabel.text = [NSString stringWithFormat:@"%.2f", midtones];
+    
+    self.highlightsLevelsView.valueLabel.text = [NSString stringWithFormat:@"%.2f", highlights];
+    
+    if (_isProcessing) {
+        return;
+    }
+    
+    _isProcessing = YES;
+    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.05 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+        self->_isProcessing = NO;
+    });
+    
     XZImageLevels levels = XZImageLevelsMake(shadows, midtones, highlights);
     self.imageView.image = [self.image xz_imageByFilteringImageLevels:levels];
-
-    self.shadowsLevelsView.valueLabel.text = [NSString stringWithFormat:@"%.2f", shadows];
-    self.midtonesLevelsView.valueLabel.text = [NSString stringWithFormat:@"%.2f", midtones];
-    self.highlightsLevelsView.valueLabel.text = [NSString stringWithFormat:@"%.2f", highlights];
     
 //    self.imageView.image = [self.image xz_imageByFilteringBrightness:shadows];
 }
+
+- (IBAction)recoverImageLevelsButtonAction:(id)sender {
+    self.shadowsLevelsView.slider.value = 0;
+    self.midtonesLevelsView.slider.value = 500;
+    self.highlightsLevelsView.slider.value = 1.0;
+    [self imageLevelsChangeAction:nil];
+}
+
+- (IBAction)brightnessValueChangedAction:(UISlider *)sender {
+    CGFloat value = self.brightnessView.slider.value;
+    self.brightnessView.valueLabel.text = [NSString stringWithFormat:@"%.2f", value];
+    
+    if (_isProcessing) {
+        return;
+    }
+    _isProcessing = YES;
+    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.05 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+        self->_isProcessing = NO;
+    });
+    
+    self.imageView.image = [self.image xz_imageByFilteringBrightness:value];
+}
+
+- (IBAction)recoverBrightnessButtonAction:(id)sender {
+    if (self.brightnessView.slider.value == 0.5) {
+        return;
+    }
+    self.brightnessView.slider.value = 0.5;
+    [self brightnessValueChangedAction:nil];
+}
+
+- (IBAction)imageAlphaValueChangedAction:(id)sender {
+    CGFloat value = self.alphaView.slider.value;
+    self.alphaView.valueLabel.text = [NSString stringWithFormat:@"%.2f", value];
+    
+    if (_isProcessing) {
+        return;
+    }
+    _isProcessing = YES;
+    
+    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.05 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+        self->_isProcessing = NO;
+    });
+    
+    self.imageView.image = [self.image xz_imageByBlendingAlpha:value];
+}
+
+- (IBAction)recoverImageAlphaButtonAction:(id)sender {
+    if (self.alphaView.slider.value == 1.0) {
+        return;
+    }
+    self.alphaView.slider.value = 1.0;
+    [self imageAlphaValueChangedAction:nil];
+}
+
+- (IBAction)imageTintColorButtonAction:(UINavigationItem *)sender {
+    if (_isProcessing) {
+        return;
+    }
+    _isProcessing = YES;
+    
+    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.05 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+        self->_isProcessing = NO;
+    });
+    
+    UIColor *color = rgb(arc4random());
+    self.navigationController.navigationBar.tintColor = color;
+    self.imageView.image = [[UIImage imageNamed:@"icon_star"] xz_imageByBlendingColor:color];
+}
+
+
 
 @end
 

@@ -76,8 +76,8 @@
 }
 
 - (UIImage *)xz_imageByBlendingColor:(UIColor *)tintColor {
-    CGImageRef image = self.CGImage;
-    if (image == nil) {
+    CGImageRef cgImage = self.CGImage;
+    if (cgImage == nil) {
         return nil;
     }
     
@@ -93,7 +93,7 @@
     CGContextScaleCTM(context, 1.0, -1.0);
     CGContextSetBlendMode(context, kCGBlendModeNormal);
     CGRect rect = CGRectMake(0, 0, imageSize.width, imageSize.height);
-    CGContextClipToMask(context, rect, image);
+    CGContextClipToMask(context, rect, cgImage);
     [tintColor setFill];
     CGContextFillRect(context, rect);
     
@@ -110,31 +110,38 @@
     if (brightness == 0.5) {
         return self;
     }
-    CGImageRef image = [self CGImage];
-    if (image == nil) {
-        return nil;
+    
+    CIImage *ciImage = [self CIImage];
+    if (ciImage == nil) {
+        CGImageRef cgImage = self.CGImage;
+        if (cgImage == nil) {
+            return nil;
+        }
+        ciImage = [CIImage imageWithCGImage:cgImage];
     }
     
     // 转换值 [-1, +1]
     brightness *= 2.0;
     brightness -= 1.0;
     
-    CIImage *inputImage = [CIImage imageWithCGImage:image];
     CIFilter *filter = [CIFilter filterWithName:@"CIColorControls"];
-    [filter setValue:inputImage forKey:kCIInputImageKey];
+    [filter setValue:ciImage forKey:kCIInputImageKey];
     [filter setValue:@(brightness) forKey:kCIInputBrightnessKey];
     
-    CIImage *outputImage = [filter outputImage];
-    if (outputImage == nil) {
+    ciImage = [filter outputImage];
+    if (ciImage == nil) {
         return nil;
     }
     
     CIContext *context = [CIContext contextWithOptions:nil];
-    image = [context createCGImage:outputImage fromRect:outputImage.extent];
+    
+    CGImageRef cgImage = [context createCGImage:ciImage fromRect:ciImage.extent];
     defer(^{
-        CGImageRelease(image);
+        CGImageRelease(cgImage);
     });
-    return [UIImage imageWithCGImage:image];
+    
+    // 必须保持 Scale 一致，否则可能只会渲染出部分图片
+    return [UIImage imageWithCGImage:cgImage scale:self.scale orientation:self.imageOrientation];
 }
 
 #pragma mark - 色阶
