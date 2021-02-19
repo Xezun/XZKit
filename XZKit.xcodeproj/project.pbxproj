@@ -21,6 +21,8 @@
 		2918815925D30E4D00C89059 /* DataDigesterTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 2918815825D30E4D00C89059 /* DataDigesterTests.m */; };
 		2918817A25D6553B00C89059 /* XZObjCTypeDescriptor.h in Headers */ = {isa = PBXBuildFile; fileRef = 2918817825D6553B00C89059 /* XZObjCTypeDescriptor.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		2918817B25D6553B00C89059 /* XZObjCTypeDescriptor.m in Sources */ = {isa = PBXBuildFile; fileRef = 2918817925D6553B00C89059 /* XZObjCTypeDescriptor.m */; };
+		291F577425E036FA00862D31 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 291F577225E036FA00862D31 /* Main.storyboard */; };
+		291F577525E036FA00862D31 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 291F577325E036FA00862D31 /* LaunchScreen.storyboard */; };
 		295D51CC25D9236800283581 /* XZKit+HexEncoding.swift in Sources */ = {isa = PBXBuildFile; fileRef = 295D51CB25D9236800283581 /* XZKit+HexEncoding.swift */; };
 		295D51E225D941B800283581 /* XZDataDigester.swift in Sources */ = {isa = PBXBuildFile; fileRef = 295D51E125D941B800283581 /* XZDataDigester.swift */; };
 		295D51F325D98E7100283581 /* XZDataCryptorAlgorithm.h in Headers */ = {isa = PBXBuildFile; fileRef = 295D51F125D98E7100283581 /* XZDataCryptorAlgorithm.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -30,9 +32,7 @@
 		295D522B25DA6DBE00283581 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 295D522A25DA6DBE00283581 /* AppDelegate.m */; };
 		295D522E25DA6DBE00283581 /* SceneDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 295D522D25DA6DBE00283581 /* SceneDelegate.m */; };
 		295D523125DA6DBE00283581 /* TableViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 295D523025DA6DBE00283581 /* TableViewController.m */; };
-		295D523425DA6DBE00283581 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 295D523225DA6DBE00283581 /* Main.storyboard */; };
 		295D523625DA6DC100283581 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 295D523525DA6DC100283581 /* Assets.xcassets */; };
-		295D523925DA6DC100283581 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 295D523725DA6DC100283581 /* LaunchScreen.storyboard */; };
 		295D523C25DA6DC100283581 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 295D523B25DA6DC100283581 /* main.m */; };
 		295D525825DA782D00283581 /* XZColorViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 295D525725DA782D00283581 /* XZColorViewController.m */; };
 		295D525E25DA81A300283581 /* XZKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 29632F1825D058E000BB1BEF /* XZKit.framework */; };
@@ -207,6 +207,8 @@
 		2918815825D30E4D00C89059 /* DataDigesterTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = DataDigesterTests.m; sourceTree = "<group>"; };
 		2918817825D6553B00C89059 /* XZObjCTypeDescriptor.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = XZObjCTypeDescriptor.h; sourceTree = "<group>"; };
 		2918817925D6553B00C89059 /* XZObjCTypeDescriptor.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = XZObjCTypeDescriptor.m; sourceTree = "<group>"; };
+		291F577225E036FA00862D31 /* Main.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = Main.storyboard; sourceTree = "<group>"; };
+		291F577325E036FA00862D31 /* LaunchScreen.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = LaunchScreen.storyboard; sourceTree = "<group>"; };
 		295D51CB25D9236800283581 /* XZKit+HexEncoding.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "XZKit+HexEncoding.swift"; sourceTree = "<group>"; };
 		295D51E125D941B800283581 /* XZDataDigester.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = XZDataDigester.swift; sourceTree = "<group>"; };
 		295D51F125D98E7100283581 /* XZDataCryptorAlgorithm.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = XZDataCryptorAlgorithm.h; sourceTree = "<group>"; };
@@ -319,8 +321,6 @@
 		2963313C25D10BAC00BB1BEF /* XZURLTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = XZURLTests.swift; path = XZKitTests/Sources/XZURLTests.swift; sourceTree = SOURCE_ROOT; };
 		2963313D25D10BAC00BB1BEF /* XZKitConstantsTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = XZKitConstantsTests.m; path = XZKitTests/Sources/XZKitConstantsTests.m; sourceTree = SOURCE_ROOT; };
 		2963313E25D10BAC00BB1BEF /* XZKitConstantsSwiftTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = XZKitConstantsSwiftTests.swift; path = XZKitTests/Sources/XZKitConstantsSwiftTests.swift; sourceTree = SOURCE_ROOT; };
-		296DED2A25DFD09F00343A6A /* zh-Hans */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = "zh-Hans"; path = "zh-Hans.lproj/LaunchScreen.storyboard"; sourceTree = "<group>"; };
-		296DED2B25DFD09F00343A6A /* zh-Hans */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = "zh-Hans"; path = "zh-Hans.lproj/Main.storyboard"; sourceTree = "<group>"; };
 		296DED3B25DFE8F500343A6A /* XZImagePath.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = XZImagePath.h; sourceTree = "<group>"; };
 		296DED3C25DFE8F500343A6A /* XZImagePath.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = XZImagePath.m; sourceTree = "<group>"; };
 		296DED4225DFEA1E00343A6A /* XZImagePathArcItem.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = XZImagePathArcItem.h; sourceTree = "<group>"; };
@@ -437,9 +437,9 @@
 				295D525725DA782D00283581 /* XZColorViewController.m */,
 				295D529725DB5CD300283581 /* XZImageViewController.h */,
 				295D529825DB5CD300283581 /* XZImageViewController.m */,
-				295D523225DA6DBE00283581 /* Main.storyboard */,
+				291F577325E036FA00862D31 /* LaunchScreen.storyboard */,
+				291F577225E036FA00862D31 /* Main.storyboard */,
 				295D523525DA6DC100283581 /* Assets.xcassets */,
-				295D523725DA6DC100283581 /* LaunchScreen.storyboard */,
 				295D523A25DA6DC100283581 /* Info.plist */,
 				295D523B25DA6DC100283581 /* main.m */,
 			);
@@ -966,9 +966,9 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				295D523925DA6DC100283581 /* LaunchScreen.storyboard in Resources */,
+				291F577525E036FA00862D31 /* LaunchScreen.storyboard in Resources */,
 				295D523625DA6DC100283581 /* Assets.xcassets in Resources */,
-				295D523425DA6DBE00283581 /* Main.storyboard in Resources */,
+				291F577425E036FA00862D31 /* Main.storyboard in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1130,25 +1130,6 @@
 			targetProxy = 29632F2325D058E000BB1BEF /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
-
-/* Begin PBXVariantGroup section */
-		295D523225DA6DBE00283581 /* Main.storyboard */ = {
-			isa = PBXVariantGroup;
-			children = (
-				296DED2B25DFD09F00343A6A /* zh-Hans */,
-			);
-			name = Main.storyboard;
-			sourceTree = "<group>";
-		};
-		295D523725DA6DC100283581 /* LaunchScreen.storyboard */ = {
-			isa = PBXVariantGroup;
-			children = (
-				296DED2A25DFD09F00343A6A /* zh-Hans */,
-			);
-			name = LaunchScreen.storyboard;
-			sourceTree = "<group>";
-		};
-/* End PBXVariantGroup section */
 
 /* Begin XCBuildConfiguration section */
 		295D521E25DA6D5100283581 /* Debug */ = {

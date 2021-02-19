@@ -154,12 +154,9 @@
                                                 <nil key="highlightedColor"/>
                                             </label>
                                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="9TD-n2-e4j">
-                                                <rect key="frame" x="354" y="235" width="50" height="30"/>
-                                                <constraints>
-                                                    <constraint firstAttribute="width" constant="50" id="NkM-FV-p08"/>
-                                                    <constraint firstAttribute="height" constant="30" id="fd2-W8-tp7"/>
-                                                </constraints>
-                                                <state key="normal" image="gearshape" catalog="system"/>
+                                                <rect key="frame" x="364" y="235" width="30" height="30"/>
+                                                <color key="tintColor" white="0.66666666666666663" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                                <state key="normal" image="icon_clean"/>
                                                 <connections>
                                                     <action selector="recoverImageLevelsButtonAction:" destination="s81-ol-ILM" eventType="touchUpInside" id="cC9-mo-EFB"/>
                                                 </connections>
@@ -318,12 +315,9 @@
                                                 <nil key="highlightedColor"/>
                                             </label>
                                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="pkF-KX-c3e">
-                                                <rect key="frame" x="354" y="410" width="50" height="30"/>
-                                                <constraints>
-                                                    <constraint firstAttribute="height" constant="30" id="WiP-yW-XVW"/>
-                                                    <constraint firstAttribute="width" constant="50" id="llB-fe-vxY"/>
-                                                </constraints>
-                                                <state key="normal" image="gearshape" catalog="system"/>
+                                                <rect key="frame" x="364" y="410" width="30" height="30"/>
+                                                <color key="tintColor" white="0.66666666666666663" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                                <state key="normal" image="icon_clean"/>
                                                 <connections>
                                                     <action selector="recoverBrightnessButtonAction:" destination="s81-ol-ILM" eventType="touchUpInside" id="HX8-wH-rxF"/>
                                                 </connections>
@@ -386,12 +380,9 @@
                                                 <nil key="highlightedColor"/>
                                             </label>
                                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="cGJ-Av-EYk">
-                                                <rect key="frame" x="354" y="495" width="50" height="30"/>
-                                                <constraints>
-                                                    <constraint firstAttribute="height" constant="30" id="3ak-LZ-Ffj"/>
-                                                    <constraint firstAttribute="width" constant="50" id="NyG-nX-cNP"/>
-                                                </constraints>
-                                                <state key="normal" image="gearshape" catalog="system"/>
+                                                <rect key="frame" x="364" y="495" width="30" height="30"/>
+                                                <color key="tintColor" white="0.66666666666666663" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                                <state key="normal" image="icon_clean"/>
                                                 <connections>
                                                     <action selector="recoverImageAlphaButtonAction:" destination="s81-ol-ILM" eventType="touchUpInside" id="D3U-Af-sj6"/>
                                                 </connections>
@@ -458,9 +449,9 @@
                                             <constraint firstItem="Myg-ak-dQa" firstAttribute="top" secondItem="E8y-LK-s9e" secondAttribute="bottom" constant="5" id="FYn-Kl-OhR"/>
                                             <constraint firstItem="8Hy-ba-ECO" firstAttribute="top" secondItem="SR2-QB-mfv" secondAttribute="bottom" constant="10" id="HRO-zI-2Pz"/>
                                             <constraint firstItem="ZRM-Yw-kOK" firstAttribute="top" secondItem="cGJ-Av-EYk" secondAttribute="bottom" constant="5" id="KZ6-it-qIZ"/>
-                                            <constraint firstAttribute="trailing" secondItem="9TD-n2-e4j" secondAttribute="trailing" constant="10" id="MkY-xO-7HD"/>
+                                            <constraint firstAttribute="trailing" secondItem="9TD-n2-e4j" secondAttribute="trailing" constant="20" id="MkY-xO-7HD"/>
                                             <constraint firstItem="SR2-QB-mfv" firstAttribute="leading" secondItem="7DL-Om-DOL" secondAttribute="leading" constant="10" id="Q26-Jy-Zec"/>
-                                            <constraint firstAttribute="trailing" secondItem="cGJ-Av-EYk" secondAttribute="trailing" constant="10" id="Rd6-qb-9yk"/>
+                                            <constraint firstAttribute="trailing" secondItem="cGJ-Av-EYk" secondAttribute="trailing" constant="20" id="Rd6-qb-9yk"/>
                                             <constraint firstItem="SR2-QB-mfv" firstAttribute="top" secondItem="pkF-KX-c3e" secondAttribute="bottom" constant="5" id="TbK-lr-Xgk"/>
                                             <constraint firstItem="Myg-ak-dQa" firstAttribute="leading" secondItem="7DL-Om-DOL" secondAttribute="leading" constant="10" id="Vf9-MK-mJ6"/>
                                             <constraint firstAttribute="trailing" secondItem="air-Da-pX3" secondAttribute="trailing" constant="10" id="W9h-Re-Oxn"/>
@@ -476,9 +467,8 @@
                                             <constraint firstItem="Myg-ak-dQa" firstAttribute="top" secondItem="E8y-LK-s9e" secondAttribute="bottom" constant="5" id="o7j-ya-nuF"/>
                                             <constraint firstItem="eQf-S3-2zI" firstAttribute="leading" secondItem="7DL-Om-DOL" secondAttribute="leading" constant="20" id="pYs-66-QqJ"/>
                                             <constraint firstItem="air-Da-pX3" firstAttribute="leading" secondItem="7DL-Om-DOL" secondAttribute="leading" constant="10" id="pfY-Sv-f6V"/>
-                                            <constraint firstAttribute="trailing" secondItem="pkF-KX-c3e" secondAttribute="trailing" constant="10" id="ppd-io-9UJ"/>
+                                            <constraint firstAttribute="trailing" secondItem="pkF-KX-c3e" secondAttribute="trailing" constant="20" id="ppd-io-9UJ"/>
                                             <constraint firstItem="ZRM-Yw-kOK" firstAttribute="top" secondItem="8Hy-ba-ECO" secondAttribute="bottom" constant="5" id="r5p-69-i2k"/>
-                                            <constraint firstAttribute="width" constant="414" id="s9f-8D-yQh"/>
                                             <constraint firstItem="eQf-S3-2zI" firstAttribute="top" secondItem="air-Da-pX3" secondAttribute="bottom" constant="10" id="sQV-ha-qiT"/>
                                             <constraint firstAttribute="trailing" secondItem="ZRM-Yw-kOK" secondAttribute="trailing" constant="10" id="sa5-QI-l8x"/>
                                             <constraint firstItem="SR2-QB-mfv" firstAttribute="top" secondItem="eQf-S3-2zI" secondAttribute="bottom" constant="5" id="t81-Dp-w6G"/>
@@ -847,7 +837,7 @@
         </scene>
     </scenes>
     <resources>
-        <image name="gearshape" catalog="system" width="128" height="121"/>
+        <image name="icon_clean" width="30" height="30"/>
         <image name="minus" catalog="system" width="128" height="24"/>
         <image name="pencil" catalog="system" width="128" height="113"/>
         <image name="plus" catalog="system" width="128" height="113"/>
