@@ -7,6 +7,12 @@
 
 #import "XZImageBorders.h"
 #import "XZImageBorder.h"
+#import "XZImageLine+XZImage.h"
+#import "XZImageLineDash+XZImage.h"
+
+@interface XZImageBorders () <XZImageLineDashDelegate>
+
+@end
 
 @implementation XZImageBorders
 
@@ -111,28 +117,31 @@
     return [super width] ?: _top.width ?: _left.width ?: _bottom.width ?: _right.width;
 }
 
-- (void)setDash:(XZImageLineDash)dash {
-    [super setDash:dash];
-    self.top.dash = dash;
-    self.left.dash = dash;
-    self.bottom.dash = dash;
-    self.right.dash = dash;
+- (void)setDash:(XZImageLineDash *)dash {
+    if (_dash != dash) {
+        _dash.delegate = nil;
+        [super setDash:dash];
+        _dash.delegate = self;
+        
+        [self lineDashDidChange:_dash];
+    }
 }
 
-- (XZImageLineDash)dash {
-    if ([super dash].width && [super dash].space) {
-        return [super dash];
+- (XZImageLineDash *)dash {
+    if (_dash != nil) {
+        return _dash;
     }
-    if ([_top dash].width && [_top dash].space) {
-        return [_top dash];
-    }
-    if ([_left dash].width && [_left dash].space) {
-        return [_left dash];
-    }
-    if ([_bottom dash].width && [_bottom dash].space) {
-        return [_bottom dash];
-    }
-    return [_right dash];
+    XZImageLineDash *dash = [super dash];
+    dash.delegate = self;
+    [self lineDashDidChange:dash];
+    return dash;
+}
+
+- (void)lineDashDidChange:(XZImageLineDash *)dash {
+    [self.top.dash    setPhase:dash.phase segments:dash.segments length:dash.numberOfSegments];
+    [self.left.dash   setPhase:dash.phase segments:dash.segments length:dash.numberOfSegments];
+    [self.bottom.dash setPhase:dash.phase segments:dash.segments length:dash.numberOfSegments];
+    [self.right.dash  setPhase:dash.phase segments:dash.segments length:dash.numberOfSegments];
 }
 
 @end

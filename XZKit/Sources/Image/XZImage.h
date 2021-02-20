@@ -15,16 +15,19 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-@protocol XZImagePath;
+@protocol XZImageLinePath;
 
 @interface XZImage : NSObject
+
+/// 绘制并生成 UIImage 对象。
+@property (nonatomic, readonly) UIImage *image;
 
 /// 图片大小。
 @property (nonatomic) CGSize size;
 /// 背景色。
-@property (nonatomic, strong) UIColor *backgroundColor;
-/// 背景图
-@property (nonatomic, strong) UIImage *backgroundImage;
+@property (nonatomic, strong, nullable) UIColor *backgroundColor;
+/// 背景图，将会绘制在背景色上。
+@property (nonatomic, strong, nullable) UIImage *backgroundImage;
 /// 背景图的显示方式
 @property (nonatomic) UIViewContentMode contentMode;
 /// 四边。
@@ -34,37 +37,40 @@ NS_ASSUME_NONNULL_BEGIN
 /// 内边距。
 @property (nonatomic) UIEdgeInsets contentInsets;
 
-/// 边框粗细
-@property (nonatomic) CGFloat borderWidth;
-/// 边框颜色
-@property (nonatomic) UIColor *borderColor;
-/// 虚线
-@property (nonatomic) XZImageLineDash borderDash;
-/// 圆角大小
-@property (nonatomic) CGFloat cornerRadius;
-
 - (void)drawAtPoint:(CGPoint)point;
 - (void)drawInRect:(CGRect)rect;
 
-/// 绘制并生成 UIImage 对象。
-@property (nonatomic, readonly) UIImage *image;
+@end
+
+
+@interface XZImage (XZExtendedImage)
+
+/// 边框粗细
+@property (nonatomic) CGFloat lineWidth;
+/// 边框颜色
+@property (nonatomic) UIColor *lineColor;
+/// 虚线。
+/// @note 设置属性会拷贝副本。
+@property (nonatomic, strong) XZImageLineDash *lineDash;
+/// 圆角大小
+@property (nonatomic) CGFloat cornerRadius;
 
 /// 根据当前当前设置信息，输出图片的大小。
 /// @note 除非属性 size 的大小不够显示，否则此属性与 size 的值相同。
-@property (nonatomic) CGSize preferredSize;
+@property (nonatomic, readonly) CGSize preferredSize;
 
 /// 返回整个边框的路径。
 /// @note 仅包含 XZImage 当前所描述外形，没有粗细、颜色信息。
-@property (nonatomic, readonly) UIBezierPath *path;
+@property (nonatomic, copy, readonly) UIBezierPath *path;
 
 /// 绘制 XZImage 所有边、圆角、箭头的路径。
-@property (nonatomic, readonly) NSArray<id<XZImagePath>> *imagePaths;
+@property (nonatomic, copy, readonly) NSArray<id<XZImageLinePath>> *linePaths;
 
 @end
 
 
 /// 用于直接绘制 XZImage 边、圆角、箭头的路径。
-@protocol XZImagePath <NSObject>
+@protocol XZImageLinePath <NSObject>
 /// 执行绘制。
 /// @note 此方法会设置画笔 context 的样式。
 - (void)drawInContext:(CGContextRef)context;

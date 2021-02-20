@@ -1,13 +1,13 @@
 //
-//  XZImagePathArcItem.m
+//  XZImageLinePathArc.m
 //  XZKit
 //
 //  Created by Xezun on 2021/2/19.
 //
 
-#import "XZImagePathArcItem.h"
+#import "XZImageLinePathArc.h"
 
-@implementation XZImagePathArcItem
+@implementation XZImageLinePathArc
 
 - (void)drawInContext:(CGContextRef)context {
     // CG 的坐标系 顺时针方向 跟 UI 是反的

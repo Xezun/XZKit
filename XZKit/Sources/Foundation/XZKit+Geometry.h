@@ -88,6 +88,10 @@ FOUNDATION_EXPORT XZRectEdge XZRectEdgeFromString(NSString * _Nullable aString);
 @end
 
 
+/// 计算 size 在 rect 区域，以 contentMode 模式适配时的大小和位置。
+/// @param size 待适配的大小
+/// @param rect 适配的区域
+/// @param contentMode 适配模式
 FOUNDATION_EXPORT CGRect CGSizeFitingInRectWithContentMode(CGSize size, CGRect rect, UIViewContentMode contentMode);
 
 NS_ASSUME_NONNULL_END

@@ -6,11 +6,40 @@
 //
 
 #import "XZImage.h"
-#import "XZImagePath.h"
+#import "XZImageLinePath.h"
 #import "XZImageBorderArrow+XZImageDrawing.h"
 #import "XZImageBorder+XZImageDrawing.h"
+#import "XZImageLineDash+XZImage.h"
+
+@interface XZImage () <XZImageLineDashDelegate> {
+    XZImageLineDash *_lineDash;
+}
+
+@end
 
 @implementation XZImage
+
+#pragma mark - 公开方法
+
+- (UIImage *)image {
+    CGRect rect = CGRectZero;
+    CGRect frame = CGRectZero;
+    
+    CGSize const size = [self defaultSize];
+    [self prepareRect:&rect frame:&frame withPoint:CGPointZero size:size];
+    
+    CGFloat const w = frame.size.width + frame.origin.x * 2;
+    CGFloat const h = frame.size.height + frame.origin.y * 2;
+    
+    UIGraphicsBeginImageContextWithOptions(CGSizeMake(w, h), NO, 0);
+    [self drawWithRect:rect frame:frame];
+    UIImage *image = UIGraphicsGetImageFromCurrentImageContext();
+    UIGraphicsEndImageContext();
+    
+    return image;
+}
+
+#pragma mark - 懒加载
 
 @synthesize corners = _corners;
 @synthesize borders = _borders;
@@ -27,53 +56,6 @@
         _borders = [[XZImageBorders alloc] init];
     }
     return _borders;
-}
-
-- (CGFloat)borderWidth {
-    return _borders.width;
-}
-
-- (void)setBorderWidth:(CGFloat)borderWidth {
-    self.borders.width = borderWidth;
-    self.corners.width = borderWidth;
-}
-
-- (UIColor *)borderColor {
-    return _borders.color;
-}
-
-- (void)setBorderColor:(UIColor *)borderColor {
-    self.borders.color = borderColor;
-    self.corners.color = borderColor;
-}
-
-- (XZImageLineDash)borderDash {
-    return _borders.dash;
-}
-
-- (void)setBorderDash:(XZImageLineDash)borderDash {
-    self.borders.dash = borderDash;
-    self.corners.dash = borderDash;
-}
-
-- (CGFloat)cornerRadius {
-    return _corners.radius;
-}
-
-- (void)setCornerRadius:(CGFloat)cornerRadius {
-    self.corners.radius = cornerRadius;
-}
-
-- (CGSize)preferredSize {
-    CGRect rect = CGRectZero;
-    CGRect frame = CGRectZero;
-    
-    [self prepareRect:&rect frame:&frame withPoint:CGPointZero size:[self defaultSize]];
-    
-    CGFloat const w = frame.size.width + frame.origin.x * 2;
-    CGFloat const h = frame.size.height + frame.origin.y * 2;
-    
-    return CGSizeMake(w, h);
 }
 
 /// 如果当前设置了大小，则返回该大小；
@@ -101,23 +83,8 @@
     return size;
 }
 
-- (UIImage *)image {
-    CGRect rect = CGRectZero;
-    CGRect frame = CGRectZero;
-    
-    CGSize const size = [self defaultSize];
-    [self prepareRect:&rect frame:&frame withPoint:CGPointZero size:size];
-    
-    CGFloat const w = frame.size.width + frame.origin.x * 2;
-    CGFloat const h = frame.size.height + frame.origin.y * 2;
-    
-    UIGraphicsBeginImageContextWithOptions(CGSizeMake(w, h), NO, 0);
-    [self drawWithRect:rect frame:frame];
-    UIImage *image = UIGraphicsGetImageFromCurrentImageContext();
-    UIGraphicsEndImageContext();
-    
-    return image;
-}
+
+#pragma mark - 绘图
 
 - (void)drawAtPoint:(CGPoint)point {
     CGRect rect = CGRectZero;
@@ -135,6 +102,8 @@
     [self prepareRect:&rect frame:&frame withPoint:rect1.origin size:rect1.size];
     [self drawWithRect:rect frame:frame];
 }
+
+#pragma mark - 构造绘图元素
 
 /// 计算绘制的背景区域、边框区域。
 - (void)prepareRect:(CGRect *)rect frame:(CGRect *)frame withPoint:(CGPoint)point size:(CGSize)size {
@@ -175,7 +144,7 @@
 /// @param rect 边框的绘制区域
 /// @param frame 包括箭头在内的整体绘制区域
 - (void)drawWithRect:(CGRect const)rect frame:(CGRect const)frame {
-    NSMutableArray<XZImagePath *> * const contexts = [NSMutableArray arrayWithCapacity:8];
+    NSMutableArray<XZImageLinePath *> * const contexts = [NSMutableArray arrayWithCapacity:8];
     UIBezierPath *path = [[UIBezierPath alloc] init];
     [self createContexts:contexts path:path withRect:rect];
 
@@ -186,12 +155,16 @@
     CGContextSetLineCap(context, kCGLineCapButt);
     CGContextSetFillColorWithColor(context, UIColor.clearColor.CGColor);
     
-    // 绘制背景
-    CGContextSaveGState(context);
-    CGContextSetFillColorWithColor(context, self.backgroundColor.CGColor);
-    CGContextAddPath(context, path.CGPath);
-    CGContextFillPath(context);
-    CGContextRestoreGState(context);
+    // 绘制背景色
+    if (self.backgroundColor) {
+        CGContextSaveGState(context);
+        CGContextSetFillColorWithColor(context, self.backgroundColor.CGColor);
+        CGContextAddPath(context, path.CGPath);
+        CGContextFillPath(context);
+        CGContextRestoreGState(context);
+    }
+    
+    // 绘制背景图
     if (self.backgroundImage) {
         CGContextSaveGState(context);
         CGContextAddPath(context, path.CGPath);
@@ -202,6 +175,8 @@
         CGContextRestoreGState(context);
     }
     // 切去最外层的一像素，避免border因为抗锯齿或误差盖不住底色。
+    // 因为透明色会被其它颜色覆盖，也没办法覆盖其它颜色，所以只能在绘制完底色后
+    // 用 kCGBlendModeCopy 覆盖。
     CGContextSaveGState(context);
     CGContextSetBlendMode(context, kCGBlendModeCopy);
     CGContextSetStrokeColorWithColor(context, UIColor.clearColor.CGColor);
@@ -211,7 +186,7 @@
     CGContextRestoreGState(context);
     
     // 绘制边框
-    for (XZImagePath *imageContext in contexts) {
+    for (XZImageLinePath *imageContext in contexts) {
         CGContextSaveGState(context);
         
         [imageContext drawInContext:context];
@@ -225,7 +200,7 @@
 /// @param contexts 输出，边框的绘制内容将添加到此数组
 /// @param backgroundPath 输出，背景色填充路径
 /// @param rect 绘制区域（矩形所在的区域，不包括箭头，箭头绘制在此区域外）
-- (void)createContexts:(nullable NSMutableArray<XZImagePath *> * const)contexts path:(nullable UIBezierPath * const)backgroundPath withRect:(CGRect const)rect {
+- (void)createContexts:(nullable NSMutableArray<XZImageLinePath *> * const)contexts path:(nullable UIBezierPath * const)backgroundPath withRect:(CGRect const)rect {
     
     CGFloat const minX = CGRectGetMinX(rect);
     CGFloat const minY = CGRectGetMinY(rect);
@@ -281,7 +256,7 @@
         [backgroundPath moveToPoint:start];
         
         CGPointMove(&start, 0, dT_2);
-        XZImagePath * const context = contexts ? [XZImagePath imagePathWithLine:top startPoint:start] : nil;
+        XZImageLinePath * const context = contexts ? [XZImageLinePath imagePathWithLine:top startPoint:start] : nil;
         
         XZImageBorderArrow const *arrow = top.arrowIfLoaded;
         if (arrow.width > 0 && arrow.height > 0) {
@@ -329,7 +304,7 @@
             CGFloat const dTR_2 = topRight.width * 0.5;
             CGPoint const start = CGPointMake(maxX - radiusTR, minY + dTR_2);
             
-            XZImagePath *context = [XZImagePath imagePathWithLine:topRight startPoint:start];
+            XZImageLinePath *context = [XZImageLinePath imagePathWithLine:topRight startPoint:start];
             [context addArcWithCenter:center
                                radius:(radiusTR - dTR_2)
                            startAngle:(startAngle)
@@ -343,7 +318,7 @@
         [backgroundPath addLineToPoint:start];
         
         CGPointMove(&start, -dR_2, 0);
-        XZImagePath *context = contexts ? [XZImagePath imagePathWithLine:right startPoint:start] : nil;
+        XZImageLinePath *context = contexts ? [XZImageLinePath imagePathWithLine:right startPoint:start] : nil;
         
         XZImageBorderArrow const *arrow = right.arrowIfLoaded;
         if (arrow.width > 0 && arrow.height > 0) {
@@ -390,7 +365,7 @@
             CGFloat const dBR_2 = bottomRight.width * 0.5;
             CGPoint const start = CGPointMake(maxX - dBR_2, maxY - radiusBR);
             
-            XZImagePath *context = [XZImagePath imagePathWithLine:bottomRight startPoint:start];
+            XZImageLinePath *context = [XZImageLinePath imagePathWithLine:bottomRight startPoint:start];
             [context addArcWithCenter:center
                                radius:(radiusBR - dBR_2)
                            startAngle:(startAngle)
@@ -404,7 +379,7 @@
         [backgroundPath addLineToPoint:start];
         
         CGPointMove(&start, 0, -dB_2);
-        XZImagePath *context = contexts ? [XZImagePath imagePathWithLine:bottom startPoint:start] : nil;
+        XZImageLinePath *context = contexts ? [XZImageLinePath imagePathWithLine:bottom startPoint:start] : nil;
         
         XZImageBorderArrow const *arrow = bottom.arrowIfLoaded;
         if (arrow.width > 0 && arrow.height > 0) {
@@ -451,7 +426,7 @@
             CGFloat const dBL_2 = bottomLeft.width * 0.5;
             CGPoint const start = CGPointMake(minX + radiusBL, maxY - dBL_2);
             
-            XZImagePath *context = [XZImagePath imagePathWithLine:bottomLeft startPoint:start];
+            XZImageLinePath *context = [XZImageLinePath imagePathWithLine:bottomLeft startPoint:start];
             [context addArcWithCenter:center
                                radius:(radiusBL - dBL_2)
                            startAngle:(startAngle)
@@ -465,7 +440,7 @@
         [backgroundPath addLineToPoint:start];
         
         CGPointMove(&start, dL_2, 0);
-        XZImagePath *context = contexts ? [XZImagePath imagePathWithLine:left startPoint:start] : nil;
+        XZImageLinePath *context = contexts ? [XZImageLinePath imagePathWithLine:left startPoint:start] : nil;
         
         XZImageBorderArrow const *arrow = left.arrowIfLoaded;
         if (arrow.width > 0 && arrow.height > 0) {
@@ -512,7 +487,7 @@
             CGFloat const dTL_2 = topLeft.width * 0.5;
             CGPoint const start = CGPointMake(minX + dTL_2, minY + radiusTL);
             
-            XZImagePath *context = [XZImagePath imagePathWithLine:topLeft startPoint:start];
+            XZImageLinePath *context = [XZImageLinePath imagePathWithLine:topLeft startPoint:start];
             [context addArcWithCenter:center
                                radius:(radiusTL - dTL_2)
                            startAngle:(startAngle)
@@ -523,6 +498,75 @@
     
     [backgroundPath closePath];
 }
+
+- (void)lineDashDidChange:(XZImageLineDash *)dash {
+    [self.borders.dash setPhase:dash.phase segments:dash.segments length:dash.numberOfSegments];
+    [self.corners.dash setPhase:dash.phase segments:dash.segments length:dash.numberOfSegments];
+}
+
+@end
+
+
+@implementation XZImage (XZExtendedImage)
+
+- (CGFloat)lineWidth {
+    return _borders.width;
+}
+
+- (void)setLineWidth:(CGFloat)lineWidth {
+    self.borders.width = lineWidth;
+    self.corners.width = lineWidth;
+}
+
+- (UIColor *)lineColor {
+    return _borders.color;
+}
+
+- (void)setLineColor:(UIColor *)lineColor {
+    self.borders.color = lineColor;
+    self.corners.color = lineColor;
+}
+
+- (XZImageLineDash *)lineDash {
+    if (_lineDash == nil) {
+        _lineDash = [XZImageLineDash lineDashWithSegments:nil];
+        _lineDash.delegate = self;
+        
+        [self lineDashDidChange:_lineDash];
+    }
+    return _lineDash;
+}
+
+- (void)setLineDash:(XZImageLineDash *)lineDash {
+    if (_lineDash != lineDash) {
+        _lineDash.delegate = nil;
+        _lineDash = lineDash.copy;
+        _lineDash.delegate = self;
+        
+        [self lineDashDidChange:_lineDash];
+    }
+}
+
+- (CGFloat)cornerRadius {
+    return _corners.radius;
+}
+
+- (void)setCornerRadius:(CGFloat)cornerRadius {
+    self.corners.radius = cornerRadius;
+}
+
+- (CGSize)preferredSize {
+    CGRect rect = CGRectZero;
+    CGRect frame = CGRectZero;
+    
+    [self prepareRect:&rect frame:&frame withPoint:CGPointZero size:[self defaultSize]];
+    
+    CGFloat const w = frame.size.width + frame.origin.x * 2;
+    CGFloat const h = frame.size.height + frame.origin.y * 2;
+    
+    return CGSizeMake(w, h);
+}
+
 
 - (UIBezierPath *)path {
     CGRect rect = CGRectZero;
@@ -537,20 +581,17 @@
     return backgroundPath;
 }
 
-- (NSArray<id<XZImagePath>> *)imagePaths {
+- (NSArray<id<XZImageLinePath>> *)linePaths {
     CGRect rect = CGRectZero;
     CGRect frame = CGRectZero;
     
     CGSize const size = [self defaultSize];
     [self prepareRect:&rect frame:&frame withPoint:CGPointZero size:size];
     
-    NSMutableArray<XZImagePath *> * const contexts = [NSMutableArray arrayWithCapacity:8];
+    NSMutableArray<XZImageLinePath *> * const contexts = [NSMutableArray arrayWithCapacity:8];
     [self createContexts:contexts path:nil withRect:rect];
     
     return contexts;
 }
 
 @end
-
-
-

@@ -34,6 +34,9 @@ static NSString *setVector(NSString *vector, size_t blockSize);
 }
 
 - (BOOL)isEqual:(id)object {
+    if (self == object) {
+        return YES;
+    }
     if ([object isKindOfClass:[XZDataCryptorAlgorithm class]]) {
         return (_rawValue == [(XZDataCryptorAlgorithm *)object rawValue]);
     }

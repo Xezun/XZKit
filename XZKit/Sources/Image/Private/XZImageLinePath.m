@@ -1,15 +1,15 @@
 //
-//  XZImagePath.m
+//  XZImageLinePath.m
 //  XZKit
 //
 //  Created by Xezun on 2021/2/19.
 //
 
-#import "XZImagePath.h"
-#import "XZImagePathLineItem.h"
-#import "XZImagePathArcItem.h"
+#import "XZImageLinePath.h"
+#import "XZImageLinePathPoint.h"
+#import "XZImageLinePathArc.h"
 
-@implementation XZImagePath {
+@implementation XZImageLinePath {
     NSMutableArray<id<XZImagePathItem>> *_items;
 }
 
@@ -28,13 +28,13 @@
 }
 
 - (void)addLineToPoint:(CGPoint)endPoint {
-    XZImagePathLineItem *border = [[XZImagePathLineItem alloc] init];
+    XZImageLinePathPoint *border = [[XZImageLinePathPoint alloc] init];
     border.endPoint = endPoint;
     [_items addObject:border];
 }
 
 - (void)addArcWithCenter:(CGPoint)center radius:(CGFloat)radius startAngle:(CGFloat)startAngle endAngle:(CGFloat)endAngle {
-    XZImagePathArcItem *corner = [[XZImagePathArcItem alloc] init];
+    XZImageLinePathArc *corner = [[XZImageLinePathArc alloc] init];
     corner.radius = radius;
     corner.center = center;
     corner.startAngle = startAngle;
@@ -45,9 +45,10 @@
 - (void)drawInContext:(CGContextRef)context {
     CGContextSetStrokeColorWithColor(context, _line.color.CGColor);
     CGContextSetLineWidth(context, _line.width);
-    if (_line.dash.width > 0 && _line.dash.space > 0) {
-        CGFloat const dashes[2] = {_line.dash.width, _line.dash.space};
-        CGContextSetLineDash(context, 0, dashes, 2);
+    
+    XZImageLineDash * const dash = _line.dash;
+    if (!dash.isEmpty) {
+        CGContextSetLineDash(context, dash.phase, dash.segments, dash.numberOfSegments);
     }
     
     CGContextMoveToPoint(context, _startPoint.x, _startPoint.y);
@@ -60,9 +61,10 @@
 - (UIBezierPath *)path {
     UIBezierPath *path = [[UIBezierPath alloc] init];
     path.lineWidth = _line.width;
-    if (_line.dash.width > 0 && _line.dash.space > 0) {
-        CGFloat const dashes[2] = {_line.dash.width, _line.dash.space};
-        [path setLineDash:dashes count:2 phase:0];
+    
+    XZImageLineDash * const dash = _line.dash;
+    if (!dash.isEmpty) {
+        [path setLineDash:dash.segments count:dash.numberOfSegments phase:dash.phase];
     }
     
     [path moveToPoint:_startPoint];

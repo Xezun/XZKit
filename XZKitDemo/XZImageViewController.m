@@ -37,16 +37,27 @@
     
     XZImage *image = [[XZImage alloc] init];
     image.size            = CGSizeMake(300, 200);
-    image.backgroundImage = [UIImage imageNamed:@"icon_image"];
+//    image.backgroundImage = [UIImage imageNamed:@"icon_image"];
     image.contentMode     = UIViewContentModeScaleAspectFill;
     image.contentInsets   = UIEdgeInsetsMake(10, 10, 10, 10);
-    image.backgroundColor = rgba(0x000000, 1.0);
+//    image.backgroundColor = rgba(0xFF0000, 1.0);
     
     // 设置所有边框和圆角
-    image.borderColor     = rgba(0xEF7B4F, 1.0);
-    image.borderWidth     = 2.0;
-    image.cornerRadius    = 10.0;
-    //image.borderDash      = XZImageLineDashMake(10, 10);
+    image.lineColor     = rgba(0x00FF00, 1.0); // 0xEF7B4F
+    image.lineWidth     = 5.0;
+    // image.lineDash      = [XZImageLineDash lineDashWithSegments:@[@(5)]];
+    image.cornerRadius  = 20.0;
+    
+    // image.borders.dash.width = 5;
+    
+    image.lineDash.width = 5;
+    image.borders.dash.phase = 5;
+    
+//    image
+//    image.borders.top.dash.segments = @[@(5.0)];
+//    image.borders.top.dash.phase = 0;
+    
+//    image.borders.bottom.dash = image.borders.top.dash;
     
     // 设置所有边框
 //    image.borders.width = 10.0;
@@ -73,8 +84,8 @@
 
     image.borders.bottom.arrow.anchor = 0;
     image.borders.bottom.arrow.vector = 0;
-    image.borders.bottom.arrow.width  = 20;
-    image.borders.bottom.arrow.height = 10;
+    image.borders.bottom.arrow.width  = 30;
+    image.borders.bottom.arrow.height = 20;
     
 //    image.borders.left.arrow.anchor = 0;
 //    image.borders.left.arrow.vector = 0;

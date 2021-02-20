@@ -1,5 +1,5 @@
 //
-//  XZImagePath.h
+//  XZImageLinePath.h
 //  XZKit
 //
 //  Created by Xezun on 2021/2/19.
@@ -36,7 +36,7 @@ FOUNDATION_STATIC_INLINE void CGPointMoveX(CGPoint *point, CGFloat dx, CGFloat y
 
 @class UIBezierPath;
 
-@interface XZImagePath : NSObject <XZImagePath>
+@interface XZImageLinePath : NSObject <XZImageLinePath>
 
 /// 构造
 + (instancetype)imagePathWithLine:(XZImageLine *)line startPoint:(CGPoint)startPoint;

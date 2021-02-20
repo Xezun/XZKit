@@ -72,8 +72,7 @@ NS_SWIFT_NAME(DataCryptor)
 /// 以新的初始化向量重置当前对象，以开始新的加解密。
 /// @note CCCryptor 只有 CBC 模式支持重置，对于非 CBC 模式，本方法会重新构造上下文以实现重置。
 /// @param vector 初始化向量
-/// @param error 错误信息
-- (void)resetWithVector:(nullable NSString *)vector error:(NSError * _Nullable __autoreleasing *)error;
+- (void)resetWithVector:(nullable NSString *)vector;
 
 @end
 

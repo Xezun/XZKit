@@ -7,6 +7,12 @@
 
 #import "XZImageCorners.h"
 #import "XZImageCorner.h"
+#import "XZImageLine+XZImage.h"
+#import "XZImageLineDash+XZImage.h"
+
+@interface XZImageCorners () <XZImageLineDashDelegate>
+
+@end
 
 @implementation XZImageCorners
 
@@ -66,36 +72,39 @@
     return _topLeft.width ?: _bottomLeft.width ?: _bottomRight.width ?: _topRight.width;
 }
 
-- (void)setDash:(XZImageLineDash)dash {
-    [super setDash:dash];
-    self.topLeft.dash = dash;
-    self.bottomLeft.dash = dash;
-    self.bottomRight.dash = dash;
-    self.topRight.dash = dash;
+- (void)setDash:(XZImageLineDash *)dash {
+    if (_dash != dash) {
+        _dash.delegate = nil;
+        [super setDash:dash];
+        _dash.delegate = self;
+        
+        [self lineDashDidChange:_dash];
+    }
 }
 
-- (XZImageLineDash)dash {
-    if ([super dash].width && [super dash].space) {
-        return [super dash];
+- (XZImageLineDash *)dash {
+    if (_dash != nil) {
+        return _dash;
     }
-    if ([_topLeft dash].width && [_topLeft dash].space) {
-        return [_topLeft dash];
-    }
-    if ([_bottomLeft dash].width && [_bottomLeft dash].space) {
-        return [_bottomLeft dash];
-    }
-    if ([_bottomRight dash].width && [_bottomRight dash].space) {
-        return [_bottomRight dash];
-    }
-    return [_topRight dash];
+    XZImageLineDash *dash = [super dash];
+    dash.delegate = self;
+    [self lineDashDidChange:dash];
+    return dash;
+}
+
+- (void)lineDashDidChange:(XZImageLineDash *)dash {
+    [self.topLeft.dash     setPhase:dash.phase segments:dash.segments length:dash.numberOfSegments];
+    [self.bottomLeft.dash  setPhase:dash.phase segments:dash.segments length:dash.numberOfSegments];
+    [self.bottomRight.dash setPhase:dash.phase segments:dash.segments length:dash.numberOfSegments];
+    [self.topRight.dash    setPhase:dash.phase segments:dash.segments length:dash.numberOfSegments];
 }
 
 - (void)setRadius:(CGFloat)radius {
     [super setRadius:radius];
-    self.topLeft.radius = radius;
-    self.bottomLeft.radius = radius;
+    self.topLeft.radius     = radius;
+    self.bottomLeft.radius  = radius;
     self.bottomRight.radius = radius;
-    self.topRight.radius = radius;
+    self.topRight.radius    = radius;
 }
 
 - (CGFloat)radius {

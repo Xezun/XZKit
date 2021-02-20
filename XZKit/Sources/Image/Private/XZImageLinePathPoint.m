@@ -1,13 +1,13 @@
 //
-//  XZImagePathLineItem.m
+//  XZImageLinePathPoint.m
 //  XZKit
 //
 //  Created by Xezun on 2021/2/19.
 //
 
-#import "XZImagePathLineItem.h"
+#import "XZImageLinePathPoint.h"
 
-@implementation XZImagePathLineItem
+@implementation XZImageLinePathPoint
 
 - (void)drawInContext:(CGContextRef)context {
     CGContextAddLineToPoint(context, _endPoint.x, _endPoint.y);

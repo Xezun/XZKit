@@ -52,7 +52,7 @@ static CCCryptorRef _Nullable XZDataCryptorContextMake(XZDataCryptorAlgorithm *a
     return [self cryptorWithOperation:XZDataCryptorOperationDecrypt algorithm:algorithm mode:mode padding:padding];
 }
 
-- (void)update:(const void * const)bytes length:(NSUInteger)length receiver:(BOOL (^NS_NOESCAPE)(void *buffer, size_t length))receiver error:(NSError * _Nullable __autoreleasing *)error {
+- (BOOL)update:(const void * const)bytes length:(NSUInteger)length receiver:(BOOL (^NS_NOESCAPE)(void *buffer, size_t length))receiver error:(NSError * _Nullable __autoreleasing *)error {
     NSParameterAssert(bytes != NULL);
     // 获取需要的内存
     size_t bufferSize = CCCryptorGetOutputLength(_context, length, false);
@@ -65,14 +65,14 @@ static CCCryptorRef _Nullable XZDataCryptorContextMake(XZDataCryptorAlgorithm *a
     // 检查状态，是否发生错误
     if (XZDataCryptorThrowsError(status, error)) {
         free(buffer);
-        return;
+        return NO;
     }
     // 接收了 buffer
-    if (receiver(buffer, outputLength)) {
-        return;
+    if (!receiver(buffer, outputLength)) {
+        // 释放内存
+        free(buffer);
     }
-    // 释放内存
-    free(buffer);
+    return YES;
 }
 
 - (NSData *)update:(void *)bytes length:(NSUInteger)length error:(NSError * _Nullable __autoreleasing *)error {
@@ -119,19 +119,23 @@ static CCCryptorRef _Nullable XZDataCryptorContextMake(XZDataCryptorAlgorithm *a
     return [NSData dataWithBytesNoCopy:buffer length:outputLength freeWhenDone:YES];
 }
 
-- (void)resetWithVector:(NSString *)vector error:(NSError * _Nullable __autoreleasing *)error {
+- (void)resetWithVector:(NSString *)vector {
     // 初始向量
     _algorithm.vector = vector;
+    
     // CCCryptorReset 只支持 CBC 模式只调用
     if (_mode == kCCModeCBC) {
-        CCCryptorStatus status = CCCryptorReset(_context, self.algorithm.vector.UTF8String);
-        if (!XZDataCryptorThrowsError(status, error)) {
+        CCCryptorStatus status = CCCryptorReset(_context, _algorithm.vector.UTF8String);
+        if (XZDataCryptorThrowsError(status, NULL)) {
+            // 如果重制失败，则尝试重建
+        } else {
             return;
         }
     }
+    
     // 重建 _context
     CCCryptorRelease(_context);
-    _context = XZDataCryptorContextMake(_algorithm, _operation, _mode, _padding, error);
+    _context = XZDataCryptorContextMake(_algorithm, _operation, _mode, _padding, NULL);
 }
 
 @end

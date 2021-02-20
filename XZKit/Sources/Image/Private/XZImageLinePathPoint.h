@@ -1,16 +1,16 @@
 //
-//  XZImagePathLineItem.h
+//  XZImageLinePathPoint.h
 //  XZKit
 //
 //  Created by Xezun on 2021/2/19.
 //
 
 #import <Foundation/Foundation.h>
-#import <XZKit/XZImagePath.h>
+#import <XZKit/XZImageLinePath.h>
 
 NS_ASSUME_NONNULL_BEGIN
 
-@interface XZImagePathLineItem : NSObject <XZImagePathItem>
+@interface XZImageLinePathPoint : NSObject <XZImagePathItem>
 @property (nonatomic) CGPoint endPoint;
 @end
 

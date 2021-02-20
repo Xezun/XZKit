@@ -259,7 +259,7 @@ typedef struct XZObjCTypeProvider {
                 
                 NSMutableArray *subtypes = [NSMutableArray array];
                 
-                _alignment = 0;
+                _alignment = 1;
                 while (encoding[i] != '}') { // 用 while 而不 do-while 因为可能会有"空"结构体
                     XZObjCTypeDescriptor *subtype = [XZObjCTypeDescriptor descriptorForType:&encoding[i]];
                     [subtypes addObject:subtype];
