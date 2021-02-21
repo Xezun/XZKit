@@ -5,13 +5,13 @@
 //  Created by Xezun on 2021/2/17.
 //
 
-#import <UIKit/UIKit.h>
+#import <XZKit/XZImageAttribute.h>
 #import <XZKit/XZImageLineDash.h>
 
 NS_ASSUME_NONNULL_BEGIN
 
 NS_SWIFT_NAME(XZImage.Line)
-@interface XZImageLine : NSObject
+@interface XZImageLine : XZImageAttribute
 
 /// 线条颜色
 @property (nonatomic, strong, nullable) UIColor *color;
@@ -19,7 +19,6 @@ NS_SWIFT_NAME(XZImage.Line)
 @property (nonatomic) CGFloat width;
 /// 虚线。
 @property (nonatomic, strong, readonly) XZImageLineDash *dash;
-- (void)dashDidLoad;
 
 - (instancetype)init NS_UNAVAILABLE;
 + (instancetype)new NS_UNAVAILABLE;

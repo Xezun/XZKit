@@ -27,31 +27,63 @@
 }
 
 - (void)setWidth:(CGFloat)width {
-    if (_width != width) {
-        _width = width;
-        [self updateOffsetsWithLineOffset:0];
+    if ([self xz_setWidth:width]) {
+        [self didUpdateAttribute:@"width"];
     }
 }
 
 - (void)setHeight:(CGFloat)height {
-    if (_height != height) {
-        _height = height;
-        [self updateOffsetsWithLineOffset:0];
+    if ([self xz_setHeight:height]) {
+        [self didUpdateAttribute:@"height"];
     }
 }
 
 - (void)setAnchor:(CGFloat)anchor {
-    if (_anchor != anchor) {
-        _anchor = anchor;
-        [self updateOffsetsWithLineOffset:0];
+    if ([self xz_setAnchor:anchor]) {
+        [self didUpdateAttribute:@"anchor"];
     }
 }
 
 - (void)setVector:(CGFloat)vector {
-    if (_vector != vector) {
-        _vector = vector;
-        [self updateOffsetsWithLineOffset:0];
+    if ([self xz_setVector:vector]) {
+        [self didUpdateAttribute:@"vector"];
     }
+}
+
+- (BOOL)xz_setWidth:(CGFloat)width {
+    if (_width == width) {
+        return NO;
+    }
+    _width = width;
+    [self updateOffsetsWithLineOffset:0];
+    return YES;
+}
+
+- (BOOL)xz_setHeight:(CGFloat)height {
+    if (_height == height) {
+        return NO;
+    }
+    _height = height;
+    [self updateOffsetsWithLineOffset:0];
+    return YES;
+}
+
+- (BOOL)xz_setAnchor:(CGFloat)anchor {
+    if (_anchor == anchor) {
+        return NO;
+    }
+    _anchor = anchor;
+    [self updateOffsetsWithLineOffset:0];
+    return YES;
+}
+
+- (BOOL)xz_setVector:(CGFloat)vector {
+    if (_vector == vector) {
+        return NO;
+    }
+    _vector = vector;
+    [self updateOffsetsWithLineOffset:0];
+    return YES;
 }
 
 - (void)adjustAnchorWithMinValue:(CGFloat)minValue maxValue:(CGFloat)maxValue {

@@ -6,49 +6,56 @@
 //
 
 #import "XZImage.h"
-#import "XZImageLinePath.h"
-#import "XZImageBorderArrow+Extension.h"
-#import "XZImageBorder+Extension.h"
-#import "XZImageBorders+Extension.h"
-#import "XZImageCorners+Extension.h"
-#import "XZImageLine+Extension.h"
-#import "XZImageLineDash+Extension.h"
-
-@interface XZImage () <XZImageLineDashDelegate> {
-    XZImageLineDash *_lineDash;
-}
-
-@end
+#import "XZImage+Extension.h"
 
 @implementation XZImage
+
+- (void)dealloc {
+    [NSNotificationCenter.defaultCenter removeObserver:self
+                                                  name:UIApplicationDidReceiveMemoryWarningNotification
+                                                object:nil];;
+}
 
 - (instancetype)init {
     self = [super init];
     if (self) {
         _corners = [[XZImageCorners alloc] initWithCorner:nil];
+        _corners.superAttribute = self;
+        
         _borders = [[XZImageBorders alloc] initWithBorder:nil];
+        _borders.superAttribute = self;
+        
+        [NSNotificationCenter.defaultCenter addObserver:self
+                                               selector:@selector(didReceiveMemoryWarningNotification:)
+                                                   name:UIApplicationDidReceiveMemoryWarningNotification
+                                                 object:nil];
     }
     return self;
 }
 
 #pragma mark - 公开方法
 
+@synthesize image = _image;
+
 - (UIImage *)image {
+    if (_image != nil) {
+        return _image;
+    }
+    // 绘制图片
     CGRect rect = CGRectZero;
     CGRect frame = CGRectZero;
-    
-    CGSize const size = [self defaultSize];
-    [self prepareRect:&rect frame:&frame withPoint:CGPointZero size:size];
+    [self prepareRect:&rect frame:&frame withPoint:CGPointZero size:self.defaultSize];
     
     CGFloat const w = frame.size.width + frame.origin.x * 2;
     CGFloat const h = frame.size.height + frame.origin.y * 2;
     
-    UIGraphicsBeginImageContextWithOptions(CGSizeMake(w, h), NO, 0);
+    CGSize const size = CGSizeMake(w, h);
+    UIGraphicsBeginImageContextWithOptions(size, NO, 0);
     [self drawWithRect:rect frame:frame];
-    UIImage *image = UIGraphicsGetImageFromCurrentImageContext();
+    _image = UIGraphicsGetImageFromCurrentImageContext();
     UIGraphicsEndImageContext();
     
-    return image;
+    return _image;
 }
 
 /// 如果当前设置了大小，则返回该大小；
@@ -224,10 +231,10 @@
     XZImageCorner * const bottomRight = self.corners.bottomRightIfLoaded ?: self.corners;
     XZImageCorner * const topRight    = self.corners.topRightIfLoaded    ?: self.corners;
     
-    CGFloat const radiusTR = BRS(MIN(maxR, topRight.radius), topRight.width);
-    CGFloat const radiusBR = BRS(MIN(maxR, bottomRight.radius), bottomRight.width);
-    CGFloat const radiusBL = BRS(MIN(maxR, bottomLeft.radius), bottomLeft.width);
-    CGFloat const radiusTL = BRS(MIN(maxR, topLeft.radius), topLeft.width);
+    CGFloat const radiusTR = RBS(MIN(maxR, topRight.radius), topRight.width);
+    CGFloat const radiusBR = RBS(MIN(maxR, bottomRight.radius), bottomRight.width);
+    CGFloat const radiusBL = RBS(MIN(maxR, bottomLeft.radius), bottomLeft.width);
+    CGFloat const radiusTL = RBS(MIN(maxR, topLeft.radius), topLeft.width);
     
     { // 调整箭头位置
         CGFloat const w_2 = midX - minX;
@@ -290,7 +297,7 @@
         [backgroundPath addLineToPoint:end];
         
         if (context) {
-            CGPointMoveY(&end, maxX - DRS(radiusTR, dR), dT_2);
+            CGPointMoveY(&end, maxX - RDS(radiusTR, dR), dT_2);
             [context addLineToPoint:end];
             
             [contexts addObject:context];
@@ -352,7 +359,7 @@
         [backgroundPath addLineToPoint:end];
         
         if (context) {
-            CGPointMoveX(&end, -dR_2, maxY - DRS(radiusBR, dB));
+            CGPointMoveX(&end, -dR_2, maxY - RDS(radiusBR, dB));
             [context addLineToPoint:end];
             [contexts addObject:context];
         }
@@ -413,7 +420,7 @@
         [backgroundPath addLineToPoint:end];
         
         if (context) {
-            CGPointMoveY(&end, minX + DRS(radiusBL, dL), -dB_2);
+            CGPointMoveY(&end, minX + RDS(radiusBL, dL), -dB_2);
             [context addLineToPoint:end];
             [contexts addObject:context];
         }
@@ -474,7 +481,7 @@
         [backgroundPath addLineToPoint:end];
         
         if (context) {
-            CGPointMoveX(&end, dL_2, minY + DRS(radiusTL, dT));
+            CGPointMoveX(&end, dL_2, minY + RDS(radiusTL, dT));
             [context addLineToPoint:end];
             [contexts addObject:context];
         }
@@ -502,9 +509,20 @@
     [backgroundPath closePath];
 }
 
-- (void)lineDashDidUpdate:(XZImageLineDash *)lineDash {
-    [self.borders.dash updateWithLineDash:lineDash];
-    [self.corners.dash updateWithLineDash:lineDash];
+- (void)subAttribute:(__kindof XZImageAttribute *)subAttribute didUpdateAttribute:(id)attribute {
+    if (subAttribute == _lineDash) {
+        [self.borders.dash updateWithLineDash:_lineDash];
+        [self.corners.dash updateWithLineDash:_lineDash];
+    }
+    [self didReceiveMemoryWarning];
+}
+
+- (void)didReceiveMemoryWarningNotification:(NSNotification *)notification {
+    [self didReceiveMemoryWarning];
+}
+
+- (void)didReceiveMemoryWarning {
+    _image = nil;
 }
 
 @end
@@ -533,7 +551,7 @@
 - (XZImageLineDash *)lineDash {
     if (_lineDash == nil) {
         _lineDash = [XZImageLineDash lineDashWithLineDash:nil];
-        _lineDash.delegate = self; // 更改属性，同步到下级
+        _lineDash.superAttribute = self;
     }
     return _lineDash;
 }

@@ -17,12 +17,17 @@ NS_ASSUME_NONNULL_BEGIN
 
 @protocol XZImageLinePath;
 
+//NS_SWIFT_NAME(Image)
 @interface XZImage : NSObject
 
 /// 绘制并生成 UIImage 对象。
-@property (nonatomic, readonly) UIImage *image;
+/// @note XZImage 将持生成的图片，且在属性发生改动，或收到内存警告时，释放该图片，并在调用本属性再次生成。
+@property (nonatomic, strong, readonly) UIImage *image;
 
 /// 图片大小。
+/// @note 如果设置，属性 image 生成的大小不会超过此大小；
+///       如果设置的不够大，生成的图片可能会有裁剪。
+/// @note 如果不设置，XZImage 将根据背景图、圆角、箭头、边距等信息计算出最小 size 用于生成图片。
 @property (nonatomic) CGSize size;
 /// 背景色。
 @property (nonatomic, strong, nullable) UIColor *backgroundColor;
@@ -39,6 +44,8 @@ NS_ASSUME_NONNULL_BEGIN
 
 - (void)drawAtPoint:(CGPoint)point;
 - (void)drawInRect:(CGRect)rect;
+
+- (void)didReceiveMemoryWarning;
 
 @end
 

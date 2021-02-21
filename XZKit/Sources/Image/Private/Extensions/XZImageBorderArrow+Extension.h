@@ -7,6 +7,7 @@
 
 #import <UIKit/UIKit.h>
 #import <XZKit/XZImageBorder.h>
+#import <XZKit/XZImageAttribute+Extension.h>
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -14,6 +15,11 @@ NS_ASSUME_NONNULL_BEGIN
     CGFloat _lineOffset;
     CGPoint _vectorOffsets[3];
 }
+
+- (BOOL)xz_setWidth:(CGFloat)width;
+- (BOOL)xz_setHeight:(CGFloat)height;
+- (BOOL)xz_setAnchor:(CGFloat)anchor;
+- (BOOL)xz_setVector:(CGFloat)vector;
 
 - (void)adjustAnchorWithMinValue:(CGFloat)minValue maxValue:(CGFloat)maxValue;
 - (void)adjustVectorWithMinValue:(CGFloat)minValue maxValue:(CGFloat)maxValue;

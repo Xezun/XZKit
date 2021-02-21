@@ -6,6 +6,8 @@
 //
 
 #import <XZKit/XZImageBorder.h>
+#import <XZKit/XZImageLine+Extension.h>
+#import <XZKit/XZImageBorderArrow+Extension.h>
 
 NS_ASSUME_NONNULL_BEGIN
 

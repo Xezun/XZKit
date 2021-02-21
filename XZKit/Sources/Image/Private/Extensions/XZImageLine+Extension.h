@@ -6,6 +6,7 @@
 //
 
 #import <XZKit/XZImageLine.h>
+#import <XZKit/XZImageAttribute+Extension.h>
 #import <XZKit/XZImageLineDash+Extension.h>
 
 NS_ASSUME_NONNULL_BEGIN
@@ -13,6 +14,9 @@ NS_ASSUME_NONNULL_BEGIN
 @interface XZImageLine ()
 
 @property (nonatomic, strong, readonly) XZImageLineDash *dashIfLoaded;
+
+- (BOOL)xz_setColor:(UIColor *)color;
+- (BOOL)xz_setWidth:(CGFloat)width;
 
 @end
 

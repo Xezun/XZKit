@@ -73,6 +73,6 @@ UIKIT_STATIC_INLINE XZImageLevels XZImageLevelsMake(CGFloat shadows, CGFloat mid
 /// 对图片 image 应用色阶滤镜。
 /// @param image 被应用色阶的图片对象
 /// @param levels 色阶值
-UIKIT_EXTERN UIImage * _Nullable XZImageFilterImageWithLevels(UIImage *image, XZImageLevels levels);
+UIKIT_EXTERN UIImage * _Nullable XZImageLevelsFilteringImage(XZImageLevels levels, UIImage *image);
 
 NS_ASSUME_NONNULL_END

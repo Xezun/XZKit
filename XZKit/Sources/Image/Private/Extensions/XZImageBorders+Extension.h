@@ -6,11 +6,11 @@
 //
 
 #import <XZKit/XZImageBorders.h>
-#import <XZKit/XZImageLineDash+Extension.h>
+#import <XZKit/XZImageBorder+Extension.h>
 
 NS_ASSUME_NONNULL_BEGIN
 
-@interface XZImageBorders () <XZImageLineDashDelegate>
+@interface XZImageBorders ()
 
 @property (nonatomic, strong, readonly, nullable) XZImageBorder *topIfLoaded;
 @property (nonatomic, strong, readonly, nullable) XZImageBorder *leftIfLoaded;

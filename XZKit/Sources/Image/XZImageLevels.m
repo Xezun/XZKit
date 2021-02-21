@@ -6,12 +6,11 @@
 //
 
 #import "XZImageLevels.h"
-#import "XZLog.h"
 
 XZImageLevelsInput  const XZImageLevelsInputIdentity  = {0.0, 1.0, 1.0};
 XZImageLevelsOutput const XZImageLevelsOutputIdentity = {0.0, 1.0};
 
-UIImage *XZImageFilterImageWithLevels(UIImage *image, XZImageLevels levels) {
+UIImage *XZImageLevelsFilteringImage(XZImageLevels levels, UIImage *image) {
     // 没有要处理的通道，返回自身
     if (levels.channels == 0) {
         return image;

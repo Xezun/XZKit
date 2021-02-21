@@ -42,34 +42,44 @@
     return (_numberOfSegments == 0);
 }
 
+- (void)xz_setPhase:(CGFloat)phase {
+    _phase = phase;
+}
+
 - (void)setPhase:(CGFloat)phase {
-    if (_phase != phase) {
-        _phase = phase;
-        
-        [self.delegate lineDashDidUpdate:self];
-    }
+    [self xz_setPhase:phase];
+    
+    [self didUpdateAttribute:@"phase"];
 }
 
 - (void)setSegments:(NSArray<NSNumber *> *)segments {
+    [self xz_setSegments:segments];
+    
+    [self didUpdateAttribute:@"segments"];
+}
+
+- (void)setSegments:(const CGFloat *)segments length:(NSInteger)length {
+    [self xz_setSegments:segments length:length];
+    
+    [self didUpdateAttribute:@"segments"];
+}
+
+- (void)xz_setSegments:(NSArray<NSNumber *> * _Nullable)segments {
     _numberOfSegments = segments.count;
     [self adjustsCapacityToFitSegments];
     
     for (NSInteger i = 0; i < _numberOfSegments; i++) {
         _segments[i] = segments[i].doubleValue;
     }
-    
-    [self.delegate lineDashDidUpdate:self];
 }
 
-- (void)setSegments:(const CGFloat *)segments length:(NSInteger)length {
+- (void)xz_setSegments:(const CGFloat *)segments length:(NSInteger)length {
     _numberOfSegments = length;
     [self adjustsCapacityToFitSegments];
     
     if (segments != NULL) {
         memcpy(_segments, segments, length * sizeof(CGFloat));
     }
-    
-    [self.delegate lineDashDidUpdate:self];
 }
 
 - (BOOL)isEqual:(id)object {
@@ -160,8 +170,8 @@
     if (lineDash == self) {
         return;
     }
-    _phase = lineDash.phase; // 用实例变量，避免代理调用两次
-    [self setSegments:lineDash.segments length:lineDash.numberOfSegments];
+    [self xz_setPhase:lineDash.phase];
+    [self xz_setSegments:lineDash.segments length:lineDash.numberOfSegments];
 }
 
 - (void)adjustsCapacityToFitSegments {

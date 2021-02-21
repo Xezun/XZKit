@@ -24,10 +24,38 @@
         XZImageLineDash *dash = line.dashIfLoaded;
         if (dash) {
             _dash = [XZImageLineDash lineDashWithLineDash:dash];
-            [self dashDidLoad];
+            _dash.superAttribute = self;
         }
     }
     return self;
+}
+
+- (void)setColor:(UIColor *)color {
+    if ([self xz_setColor:color]) {
+        [self didUpdateAttribute:@"color"];
+    }
+}
+
+- (BOOL)xz_setColor:(UIColor *)color {
+    if ([_color isEqual:color]) {
+        return NO;
+    }
+    _color = color;
+    return YES;
+}
+
+- (void)setWidth:(CGFloat)width {
+    if ([self xz_setWidth:width]) {
+        [self didUpdateAttribute:@"width"];
+    }
+}
+
+- (BOOL)xz_setWidth:(CGFloat)width {
+    if (_width == width) {
+        return NO;
+    }
+    _width = width;
+    return YES;
 }
 
 @synthesize dash = _dash;
@@ -35,17 +63,13 @@
 - (XZImageLineDash *)dash {
     if (_dash == nil) {
         _dash = [XZImageLineDash lineDashWithLineDash:nil];
-        [self dashDidLoad];
+        _dash.superAttribute = self;
     }
     return _dash;
 }
 
 - (XZImageLineDash *)dashIfLoaded {
     return _dash;
-}
-
-- (void)dashDidLoad {
-    
 }
 
 - (BOOL)isEqual:(XZImageLine *)object {

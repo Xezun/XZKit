@@ -6,11 +6,11 @@
 //
 
 #import <XZKit/XZImageCorners.h>
-#import <XZKit/XZImageLineDash+Extension.h>
+#import <XZKit/XZImageCorner+Extension.h>
 
 NS_ASSUME_NONNULL_BEGIN
 
-@interface XZImageCorners () <XZImageLineDashDelegate>
+@interface XZImageCorners ()
 
 @property (nonatomic, strong, readonly) XZImageCorner *topLeftIfLoaded;
 @property (nonatomic, strong, readonly) XZImageCorner *bottomLeftIfLoaded;

@@ -16,7 +16,7 @@
         XZImageBorderArrow *arrow = border.arrowIfLoaded;
         if (arrow != nil) {
             _arrow = [[XZImageBorderArrow alloc] initWithArrow:arrow];
-            [self arrowDidLoad];
+            _arrow.superAttribute = self;
         }
     }
     return self;
@@ -27,17 +27,13 @@
 - (XZImageBorderArrow *)arrow {
     if (_arrow == nil) {
         _arrow = [[XZImageBorderArrow alloc] initWithArrow:nil];
-        [self arrowDidLoad];
+        _arrow.superAttribute = self;
     }
     return _arrow;
 }
 
 - (XZImageBorderArrow *)arrowIfLoaded {
     return _arrow;
-}
-
-- (void)arrowDidLoad {
-    
 }
 
 @end

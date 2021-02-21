@@ -15,7 +15,6 @@ NS_SWIFT_NAME(XZImage.Border)
 
 /// 箭头
 @property (nonatomic, strong, readonly) XZImageBorderArrow *arrow;
-- (void)arrowDidLoad;
 
 - (instancetype)initWithLine:(nullable XZImageLine *)line NS_UNAVAILABLE;
 - (instancetype)initWithBorder:(nullable XZImageBorder *)border NS_DESIGNATED_INITIALIZER;

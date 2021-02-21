@@ -147,7 +147,7 @@
 #pragma mark - 色阶
 
 - (UIImage *)xz_imageByFilteringImageLevels:(XZImageLevels)levels {
-    return XZImageFilterImageWithLevels(self, levels);
+    return XZImageLevelsFilteringImage(levels, self);
 }
 
 @end

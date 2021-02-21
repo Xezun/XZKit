@@ -6,6 +6,7 @@
 //
 
 #import "XZImageViewController.h"
+#import "XZImageBorderEditor.h"
 #import <XZKit/XZKit.h>
 
 @interface XZImageSliderView : UIView
@@ -18,7 +19,7 @@
     BOOL _isProcessing;
 }
 
-@property (nonatomic, strong) UIImage *image;
+@property (nonatomic, strong) XZImage *image;
 
 @property (weak, nonatomic) IBOutlet XZImageSliderView *shadowsLevelsView;
 @property (weak, nonatomic) IBOutlet XZImageSliderView *midtonesLevelsView;
@@ -50,7 +51,7 @@
     
     // 设置所有边框
     image.borders.width = 2.0;
-    image.borders.color = rgba(0xEF7B4F, 1.0);
+    image.borders.color = rgba(0xD0D0D0, 1.0);
     
     // 设置所有圆角
     image.corners.width  = 2.0;
@@ -83,7 +84,7 @@
 //    image.borders.right.arrow.width  = 20;
 //    image.borders.right.arrow.height = 10;
     
-    self.image = image.image;
+    self.image = image;
     
     [self recoverImageLevelsButtonAction:nil];
     
@@ -116,9 +117,27 @@
     });
     
     XZImageLevels levels = XZImageLevelsMake(shadows, midtones, highlights);
-    self.imageView.image = [self.image xz_imageByFilteringImageLevels:levels];
+    self.imageView.image = [self.image.image xz_imageByFilteringImageLevels:levels];
     
 //    self.imageView.image = [self.image xz_imageByFilteringBrightness:shadows];
+}
+
+- (void)viewDidAppear:(BOOL)animated {
+    [super viewDidAppear:animated];
+    
+    self.imageView.image = self.image.image;
+}
+
+- (void)unwindForSegue:(UIStoryboardSegue *)unwindSegue towardsViewController:(UIViewController *)subsequentVC {
+    [super unwindForSegue:unwindSegue towardsViewController:subsequentVC];
+}
+
+- (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {
+    XZImageBorderEditor *editVC = segue.destinationViewController;
+    editVC.title = segue.identifier;
+    if ([editVC isKindOfClass:[XZImageBorderEditor class]]) {
+        editVC.line = [self.image.borders valueForKey:segue.identifier];
+    } 
 }
 
 - (IBAction)recoverImageLevelsButtonAction:(id)sender {
@@ -140,7 +159,7 @@
         self->_isProcessing = NO;
     });
     
-    self.imageView.image = [self.image xz_imageByFilteringBrightness:value];
+    self.imageView.image = [self.image.image xz_imageByFilteringBrightness:value];
 }
 
 - (IBAction)recoverBrightnessButtonAction:(id)sender {
@@ -164,7 +183,7 @@
         self->_isProcessing = NO;
     });
     
-    self.imageView.image = [self.image xz_imageByBlendingAlpha:value];
+    self.imageView.image = [self.image.image xz_imageByBlendingAlpha:value];
 }
 
 - (IBAction)recoverImageAlphaButtonAction:(id)sender {

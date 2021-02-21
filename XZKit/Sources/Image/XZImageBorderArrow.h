@@ -5,12 +5,12 @@
 //  Created by Xezun on 2021/2/21.
 //
 
-#import <UIKit/UIKit.h>
+#import <XZKit/XZImageAttribute.h>
 
 NS_ASSUME_NONNULL_BEGIN
 
 NS_SWIFT_NAME(XZImageBorder.Arrow)
-@interface XZImageBorderArrow : NSObject 
+@interface XZImageBorderArrow : XZImageAttribute
 
 /// 底边中点，距离其所在边的中点的距离
 @property (nonatomic) CGFloat anchor;
