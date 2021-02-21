@@ -58,10 +58,10 @@ NS_SWIFT_NAME(DataCryptor)
 /// @param bytes 待加密/解密的数据
 /// @param error 执行加密或解密时发生发生的错误输出
 /// @return （已成功执行）已加密/解密后的数据
-- (nullable NSData *)update:(void *)bytes length:(NSUInteger)length error:(NSError * _Nullable __autoreleasing * _Nullable)error;
+- (nullable NSData *)crypto:(void *)bytes length:(NSUInteger)length error:(NSError * _Nullable __autoreleasing * _Nullable)error;
 
 /// 对数据执行加密/解密操作。
-- (nullable NSData *)update:(NSData *)data error:(NSError * _Nullable __autoreleasing * _Nullable)error;
+- (nullable NSData *)crypto:(NSData *)data error:(NSError * _Nullable __autoreleasing * _Nullable)error;
 
 /// 结束加解密计算，并获取最终的补齐数据。
 /// @note 对于流密码、无补齐模式的加解密来说，不需要调用此方法。

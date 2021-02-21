@@ -28,11 +28,11 @@ class FoundationSwiftTests: XCTestCase {
             XCTFail("解码 16 进制失败");
         }
         
-        if contentRAW.addingHexEncoding(with: .uppercase) == contentHexUpper {
+        if contentRAW.addingHexEncoding(with: .uppercase) != contentHexUpper {
             XCTFail("编码 16 进制大写失败");
         }
         
-        if contentHexUpper.removingHexEncoding == contentRAW {
+        if contentHexUpper.removingHexEncoding != contentRAW {
             XCTFail("解码 16 进制失败");
         }
     }

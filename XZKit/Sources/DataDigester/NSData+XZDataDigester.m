@@ -23,7 +23,7 @@
 }
 
 - (NSString *)xz_SHA1 {
-    return [XZDataDigester digest:self algorithm:(XZDataDigesterAlgorithmSHA1) hexEncoding:XZCharacterLowercase];
+    return [XZDataDigester digest:self algorithm:(XZDataDigesterAlgorithmSHA1) hexEncoding:XZCharacterUppercase];
 }
 
 @end

@@ -59,7 +59,7 @@
         XZDataCryptor *encryptor = [XZDataCryptor AESEncryptor:key vector:vector];
         
         NSMutableData *dataM = [NSMutableData data];
-        NSData *tmp = [encryptor update:data error:nil];
+        NSData *tmp = [encryptor crypto:data error:nil];
         [dataM appendData:tmp];
         [dataM appendData:[encryptor finish:nil]];
         
@@ -68,7 +68,7 @@
         XZDataCryptor *decryptor = [XZDataCryptor AESDecryptor:key vector:vector];
 
         NSMutableData *dataM2 = [NSMutableData data];
-        [dataM2 appendData:[decryptor update:dataM error:nil]];
+        [dataM2 appendData:[decryptor crypto:dataM error:nil]];
         [dataM2 appendData:[decryptor finish:nil]];
         XZLog(@"%@", [[NSString alloc] initWithData:dataM2 encoding:NSUTF8StringEncoding]);
     }

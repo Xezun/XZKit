@@ -78,73 +78,88 @@ Pod::Spec.new do |s|
   # 拓展子库的方法
   def s.defineSubspec (name)
     ss = self.subspec("#{name}") do |ss|
-      ss.public_header_files = "XZKit/Code/XZKit.h", "XZKit/Code/#{name}/**/*.h"
-      ss.source_files  = "XZKit/Code/XZKit.h", "XZKit/Code/#{name}/**/*.{h,m,swift}"
-      ss.exclude_files = "XZKit/Code/#{name}/Private/**/*.{h,m,swift}"
+      ss.public_header_files = "XZKit/XZKit.h", 
+      						   "XZKit/Sources/#{name}/**/*.h"
+      ss.source_files  = "XZKit/XZKit.h", 
+      					 "XZKit/Sources/#{name}/**/*.{h,m,swift}"
+      ss.exclude_files = "XZKit/Sources/#{name}/Private/**/*.{h,m,swift}"
 
       ss.subspec "Private" do |sss|
-        sss.public_header_files = "XZKit/Code/XZKit.h", "XZKit/Code/#{name}/**/*.h"
-        sss.source_files = "XZKit/Code/XZKit.h", "XZKit/Code/#{name}/**/*.{h,m,swift}"
+        sss.public_header_files = "XZKit/XZKit.h", 
+        						  "XZKit/Sources/#{name}/**/*.h"
+        sss.source_files = "XZKit/XZKit.h", 
+        				   "XZKit/Sources/#{name}/**/*.{h,m,swift}"
       end
     end
     return ss
   end
 
-  s.defineSubspec "Core" do |ss|
+  s.defineSubspec "Foundation" do |ss|
   end
 
-  s.defineSubspec "AppLanguage" do |ss|
+  s.defineSubspec 'Category' do |ss|
   end
 
-  s.defineSubspec "AppRedirection" do |ss|
-    ss.dependency "XZKit/Core"
-  end
-
-  s.defineSubspec "CacheManager" do |ss|
-    ss.dependency 'XZKit/Category/Foundation'
-  end
-  
-  s.defineSubspec "CarouselView" do |ss|
-    ss.dependency "XZKit/Core"
-  end
-  
-  s.defineSubspec 'ContentStatus' do |ss|
-    ss.dependency "XZKit/TextImageView"
-  end
-  
   s.defineSubspec 'DataCryptor' do |ss|
   end
   
   s.defineSubspec 'DataDigester' do |ss|
-    ss.dependency "XZKit/Core"
+    ss.dependency "XZKit/Foundation"
   end
+
+  s.defineSubspec 'Image' do |ss|
+  	ss.dependency "XZKit/Foundation"
+  end
+
+
+
+  # s.defineSubspec "AppLanguage" do |ss|
+  # end
+
+  # s.defineSubspec "AppRedirection" do |ss|
+  #   ss.dependency "XZKit/Core"
+  # end
+
+  # s.defineSubspec "CacheManager" do |ss|
+  #   ss.dependency 'XZKit/Category/Foundation'
+  # end
   
-  s.defineSubspec 'NavigationController' do |ss|
-    ss.dependency "XZKit/Core"
-  end
+  # s.defineSubspec "CarouselView" do |ss|
+  #   ss.dependency "XZKit/Core"
+  # end
   
-  s.defineSubspec 'Networking' do |ss|
-  end
+  # s.defineSubspec 'ContentStatus' do |ss|
+  #   ss.dependency "XZKit/TextImageView"
+  # end
   
-  s.defineSubspec 'ProgressView' do |ss|
-  end
   
-  s.defineSubspec 'TimeTicker' do |ss|
-  end
   
-  s.defineSubspec 'TextImageView' do |ss|
-    ss.dependency "XZKit/Core"
-  end
+  # s.defineSubspec 'NavigationController' do |ss|
+  #   ss.dependency "XZKit/Core"
+  # end
   
-  s.defineSubspec 'UICollectionViewFlowLayout' do |ss|
-    ss.dependency "XZKit/Core"
-  end
+  # s.defineSubspec 'Networking' do |ss|
+  # end
   
-  s.defineSubspec 'Category' do |ss|
-    ss.dependency "XZKit/Core"
-    ss.dependency "XZKit/DataDigester"
-    ss.dependency "XZKit/DataCryptor"
-    ss.dependency "XZKit/CacheManager"
-  end
+  # s.defineSubspec 'ProgressView' do |ss|
+  # end
+  
+  # s.defineSubspec 'TimeTicker' do |ss|
+  # end
+  
+  # s.defineSubspec 'TextImageView' do |ss|
+  #   ss.dependency "XZKit/Core"
+  # end
+  
+  # s.defineSubspec 'UICollectionViewFlowLayout' do |ss|
+  #   ss.dependency "XZKit/Core"
+  # end
+  
+  # s.defineSubspec 'Category' do |ss|
+  #   ss.dependency "XZKit/Core"
+  #   ss.dependency "XZKit/DataDigester"
+  #   ss.dependency "XZKit/DataCryptor"
+  #   ss.dependency "XZKit/CacheManager"
+  # end
   
 end

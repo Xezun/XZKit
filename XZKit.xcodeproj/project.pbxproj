@@ -523,10 +523,10 @@
 			isa = PBXGroup;
 			children = (
 				2963302025D1000E00BB1BEF /* Foundation */,
-				29B5383325DD0108009A07D3 /* Image */,
 				2963303A25D1000E00BB1BEF /* Category */,
 				2918814B25D3053300C89059 /* DataDigester */,
 				2963307525D1000E00BB1BEF /* DataCryptor */,
+				29B5383325DD0108009A07D3 /* Image */,
 				2963301425D1000E00BB1BEF /* NavigationController */,
 				2963301D25D1000E00BB1BEF /* AppRedirection */,
 				2963305225D1000E00BB1BEF /* CarouselView */,
