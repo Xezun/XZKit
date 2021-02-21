@@ -50,7 +50,6 @@ NS_ASSUME_NONNULL_BEGIN
 /// 边框颜色
 @property (nonatomic) UIColor *lineColor;
 /// 虚线。
-/// @note 设置属性会拷贝副本。
 @property (nonatomic, strong, readonly) XZImageLineDash *lineDash;
 /// 圆角大小
 @property (nonatomic) CGFloat cornerRadius;
