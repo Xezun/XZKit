@@ -37,45 +37,31 @@
     
     XZImage *image = [[XZImage alloc] init];
     image.size            = CGSizeMake(300, 200);
-//    image.backgroundImage = [UIImage imageNamed:@"icon_image"];
+    image.backgroundImage = [UIImage imageNamed:@"icon_image"];
     image.contentMode     = UIViewContentModeScaleAspectFill;
     image.contentInsets   = UIEdgeInsetsMake(10, 10, 10, 10);
-//    image.backgroundColor = rgba(0xFF0000, 1.0);
+    image.backgroundColor = rgba(0xFF0000, 1.0);
     
     // 设置所有边框和圆角
-    image.lineColor     = rgba(0x00FF00, 1.0); // 0xEF7B4F
-    image.lineWidth     = 5.0;
-    // image.lineDash      = [XZImageLineDash lineDashWithSegments:@[@(5)]];
-    image.cornerRadius  = 20.0;
-    
-    // image.borders.dash.width = 5;
-    
-    image.lineDash.width = 5;
-    image.borders.dash.phase = 5;
-    
-//    image
-//    image.borders.top.dash.segments = @[@(5.0)];
-//    image.borders.top.dash.phase = 0;
-    
-//    image.borders.bottom.dash = image.borders.top.dash;
+//    image.lineColor      = rgba(0xEF7B4F, 1.0);
+//    image.lineWidth      = 1.0;
+//    image.cornerRadius   = 20.0;
+//    image.lineDash.width = 5;
     
     // 设置所有边框
-//    image.borders.width = 10.0;
-//    image.borders.color = [UIColor.redColor colorWithAlphaComponent:0.5];
+    image.borders.width = 2.0;
+    image.borders.color = rgba(0xEF7B4F, 1.0);
     
     // 设置所有圆角
-//    image.corners.width = 10.0;
-//    image.corners.color = UIColor.greenColor;
-//    image.corners.radius = 10;
+    image.corners.width  = 2.0;
+    image.corners.color  = UIColor.greenColor;
+    image.corners.radius = 10.0;
     
-//    image.borders.width = 12;
-//    image.corners.width = 12;
-//    image.corners.radius = 20;
-    
+    // 设置所有箭头
 //    image.borders.arrow.anchor = 0;
-//    image.borders.arrow.vector = 20;
-//    image.borders.arrow.width  = 40;
-//    image.borders.arrow.height = 20;
+//    image.borders.arrow.vector = -10;
+//    image.borders.arrow.width  = 20;
+//    image.borders.arrow.height = 10;
     
 //    image.borders.top.arrow.anchor = 0;
 //    image.borders.top.arrow.vector = 0;
@@ -84,8 +70,8 @@
 
     image.borders.bottom.arrow.anchor = 0;
     image.borders.bottom.arrow.vector = 0;
-    image.borders.bottom.arrow.width  = 30;
-    image.borders.bottom.arrow.height = 20;
+    image.borders.bottom.arrow.width  = 20;
+    image.borders.bottom.arrow.height = 10;
     
 //    image.borders.left.arrow.anchor = 0;
 //    image.borders.left.arrow.vector = 0;

@@ -39,11 +39,11 @@ FOUNDATION_STATIC_INLINE void CGPointMoveX(CGPoint *point, CGFloat dx, CGFloat y
 @interface XZImageLinePath : NSObject <XZImageLinePath>
 
 /// 构造
-+ (instancetype)imagePathWithLine:(XZImageLine *)line startPoint:(CGPoint)startPoint;
++ (instancetype)imagePathWithLine:(nullable XZImageLine *)line startPoint:(CGPoint)startPoint;
 /// 起点
 @property (nonatomic, readonly) CGPoint startPoint;
 /// 线型
-@property (nonatomic, strong, readonly) XZImageLine *line;
+@property (nonatomic, strong, readonly, nullable) XZImageLine *line;
 /// 添加一条直线
 - (void)addLineToPoint:(CGPoint)endPoint;
 /// 添加一个圆角

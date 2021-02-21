@@ -7,9 +7,12 @@
 
 #import "XZImage.h"
 #import "XZImageLinePath.h"
-#import "XZImageBorderArrow+XZImageDrawing.h"
-#import "XZImageBorder+XZImageDrawing.h"
-#import "XZImageLineDash+XZImage.h"
+#import "XZImageBorderArrow+Extension.h"
+#import "XZImageBorder+Extension.h"
+#import "XZImageBorders+Extension.h"
+#import "XZImageCorners+Extension.h"
+#import "XZImageLine+Extension.h"
+#import "XZImageLineDash+Extension.h"
 
 @interface XZImage () <XZImageLineDashDelegate> {
     XZImageLineDash *_lineDash;
@@ -18,6 +21,15 @@
 @end
 
 @implementation XZImage
+
+- (instancetype)init {
+    self = [super init];
+    if (self) {
+        _corners = [[XZImageCorners alloc] initWithCorner:nil];
+        _borders = [[XZImageBorders alloc] initWithBorder:nil];
+    }
+    return self;
+}
 
 #pragma mark - 公开方法
 
@@ -37,25 +49,6 @@
     UIGraphicsEndImageContext();
     
     return image;
-}
-
-#pragma mark - 懒加载
-
-@synthesize corners = _corners;
-@synthesize borders = _borders;
-
-- (XZImageCorners *)corners {
-    if (_corners == nil) {
-        _corners = [[XZImageCorners alloc] init];
-    }
-    return _corners;
-}
-
-- (XZImageBorders *)borders {
-    if (_borders == nil) {
-        _borders = [[XZImageBorders alloc] init];
-    }
-    return _borders;
 }
 
 /// 如果当前设置了大小，则返回该大小；
@@ -83,7 +76,6 @@
     return size;
 }
 
-
 #pragma mark - 绘图
 
 - (void)drawAtPoint:(CGPoint)point {
@@ -108,23 +100,32 @@
 /// 计算绘制的背景区域、边框区域。
 - (void)prepareRect:(CGRect *)rect frame:(CGRect *)frame withPoint:(CGPoint)point size:(CGSize)size {
     UIEdgeInsets const contentInsets = self.contentInsets;
-    XZImageBorders *const borders = self.borders;
-    XZImageCorners *const corners = self.corners;
+    
+    XZImageBorder * const topBorder         = self.borders.topIfLoaded      ?: self.borders;
+    XZImageBorder * const leftBorder        = self.borders.leftIfLoaded     ?: self.borders;
+    XZImageBorder * const bottomBorder      = self.borders.bottomIfLoaded   ?: self.borders;
+    XZImageBorder * const rightBorder       = self.borders.rightIfLoaded    ?: self.borders;
+    
+    XZImageCorner * const topLeftCorner     = self.corners.topLeftIfLoaded     ?: self.corners;
+    XZImageCorner * const bottomLeftCorner  = self.corners.bottomLeftIfLoaded  ?: self.corners;
+    XZImageCorner * const bottomRightCorner = self.corners.bottomRightIfLoaded ?: self.corners;
+    XZImageCorner * const topRightCorner    = self.corners.topRightIfLoaded    ?: self.corners;
+    
     // 内容边距
-    CGFloat const top    = (borders.top.arrowIfLoaded.height    + contentInsets.top);
-    CGFloat const left   = (borders.left.arrowIfLoaded.height   + contentInsets.left);
-    CGFloat const bottom = (borders.bottom.arrowIfLoaded.height + contentInsets.bottom);
-    CGFloat const right  = (borders.right.arrowIfLoaded.height  + contentInsets.right);
+    CGFloat const top    = (topBorder.arrowIfLoaded.height    + contentInsets.top);
+    CGFloat const left   = (leftBorder.arrowIfLoaded.height   + contentInsets.left);
+    CGFloat const bottom = (bottomBorder.arrowIfLoaded.height + contentInsets.bottom);
+    CGFloat const right  = (rightBorder.arrowIfLoaded.height  + contentInsets.right);
     
     // 所需的最小宽度、高度
     CGFloat width = left + right;
-    width += MAX(corners.topLeft.radius, corners.bottomLeft.radius);
-    width += MAX(borders.top.arrowIfLoaded.width, borders.bottom.arrowIfLoaded.width);
-    width += MAX(corners.topRight.radius, corners.bottomRight.radius);
+    width += MAX(topLeftCorner.radius,          bottomLeftCorner.radius);
+    width += MAX(topBorder.arrowIfLoaded.width, bottomBorder.arrowIfLoaded.width);
+    width += MAX(topRightCorner.radius,         bottomRightCorner.radius);
     CGFloat height = top + bottom;
-    height += MAX(corners.topLeft.radius, corners.topRight.radius);
-    height += MAX(borders.left.arrowIfLoaded.width, borders.right.arrowIfLoaded.width);
-    height += MAX(corners.bottomLeft.radius, corners.bottomRight.radius);
+    height += MAX(topLeftCorner.radius,           topRightCorner.radius);
+    height += MAX(leftBorder.arrowIfLoaded.width, rightBorder.arrowIfLoaded.width);
+    height += MAX(bottomLeftCorner.radius,        bottomRightCorner.radius);
     
     CGFloat const deltaW = MAX(0, size.width - point.x - width);
     CGFloat const deltaH = MAX(0, size.height - point.y - height);
@@ -174,6 +175,7 @@
         [self.backgroundImage drawInRect:rect];
         CGContextRestoreGState(context);
     }
+    
     // 切去最外层的一像素，避免border因为抗锯齿或误差盖不住底色。
     // 因为透明色会被其它颜色覆盖，也没办法覆盖其它颜色，所以只能在绘制完底色后
     // 用 kCGBlendModeCopy 覆盖。
@@ -212,14 +214,15 @@
     // 最大圆角半径
     CGFloat const maxR = MIN(rect.size.width, rect.size.height) * 0.5;
     
-    XZImageCorner * const topLeft     = self.corners.topLeft;
-    XZImageBorder * const top         = self.borders.top;
-    XZImageCorner * const topRight    = self.corners.topRight;
-    XZImageBorder * const right       = self.borders.right;
-    XZImageCorner * const bottomRight = self.corners.bottomRight;
-    XZImageBorder * const bottom      = self.borders.bottom;
-    XZImageCorner * const bottomLeft  = self.corners.bottomLeft;
-    XZImageBorder * const left        = self.borders.left;
+    XZImageBorder * const top         = self.borders.topIfLoaded      ?: self.borders;
+    XZImageBorder * const left        = self.borders.leftIfLoaded     ?: self.borders;
+    XZImageBorder * const bottom      = self.borders.bottomIfLoaded   ?: self.borders;
+    XZImageBorder * const right       = self.borders.rightIfLoaded    ?: self.borders;
+    
+    XZImageCorner * const topLeft     = self.corners.topLeftIfLoaded     ?: self.corners;
+    XZImageCorner * const bottomLeft  = self.corners.bottomLeftIfLoaded  ?: self.corners;
+    XZImageCorner * const bottomRight = self.corners.bottomRightIfLoaded ?: self.corners;
+    XZImageCorner * const topRight    = self.corners.topRightIfLoaded    ?: self.corners;
     
     CGFloat const radiusTR = BRS(MIN(maxR, topRight.radius), topRight.width);
     CGFloat const radiusBR = BRS(MIN(maxR, bottomRight.radius), bottomRight.width);
@@ -499,9 +502,9 @@
     [backgroundPath closePath];
 }
 
-- (void)lineDashDidChange:(XZImageLineDash *)dash {
-    [self.borders.dash setPhase:dash.phase segments:dash.segments length:dash.numberOfSegments];
-    [self.corners.dash setPhase:dash.phase segments:dash.segments length:dash.numberOfSegments];
+- (void)lineDashDidUpdate:(XZImageLineDash *)lineDash {
+    [self.borders.dash updateWithLineDash:lineDash];
+    [self.corners.dash updateWithLineDash:lineDash];
 }
 
 @end
@@ -510,7 +513,7 @@
 @implementation XZImage (XZExtendedImage)
 
 - (CGFloat)lineWidth {
-    return _borders.width;
+    return self.borders.width;
 }
 
 - (void)setLineWidth:(CGFloat)lineWidth {
@@ -519,7 +522,7 @@
 }
 
 - (UIColor *)lineColor {
-    return _borders.color;
+    return self.borders.color;
 }
 
 - (void)setLineColor:(UIColor *)lineColor {
@@ -529,26 +532,14 @@
 
 - (XZImageLineDash *)lineDash {
     if (_lineDash == nil) {
-        _lineDash = [XZImageLineDash lineDashWithSegments:nil];
-        _lineDash.delegate = self;
-        
-        [self lineDashDidChange:_lineDash];
+        _lineDash = [XZImageLineDash lineDashWithLineDash:nil];
+        _lineDash.delegate = self; // 更改属性，同步到下级
     }
     return _lineDash;
 }
 
-- (void)setLineDash:(XZImageLineDash *)lineDash {
-    if (_lineDash != lineDash) {
-        _lineDash.delegate = nil;
-        _lineDash = lineDash.copy;
-        _lineDash.delegate = self;
-        
-        [self lineDashDidChange:_lineDash];
-    }
-}
-
 - (CGFloat)cornerRadius {
-    return _corners.radius;
+    return self.corners.radius;
 }
 
 - (void)setCornerRadius:(CGFloat)cornerRadius {
@@ -566,7 +557,6 @@
     
     return CGSizeMake(w, h);
 }
-
 
 - (UIBezierPath *)path {
     CGRect rect = CGRectZero;

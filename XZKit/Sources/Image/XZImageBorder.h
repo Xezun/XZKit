@@ -6,35 +6,19 @@
 //
 
 #import <XZKit/XZImageLine.h>
+#import <XZKit/XZImageBorderArrow.h>
 
 NS_ASSUME_NONNULL_BEGIN
 
-NS_SWIFT_NAME(XZImageBorder.Arrow)
-@interface XZImageBorderArrow : NSObject  {
-    @protected
-    CGFloat _lineOffset;
-    CGPoint _vectorOffsets[3];
-}
-
-/// 底边中点，距离其所在边的中点的距离
-@property (nonatomic) CGFloat anchor;
-/// 顶点，距离其所在边的中点的距离
-@property (nonatomic) CGFloat vector;
-/// 底宽
-@property (nonatomic) CGFloat width;
-/// 高
-@property (nonatomic) CGFloat height;
-
-@end
-
 NS_SWIFT_NAME(XZImage.Border)
-@interface XZImageBorder : XZImageLine {
-    @protected
-    XZImageBorderArrow *_arrow;
-}
+@interface XZImageBorder : XZImageLine
 
 /// 箭头
 @property (nonatomic, strong, readonly) XZImageBorderArrow *arrow;
+- (void)arrowDidLoad;
+
+- (instancetype)initWithLine:(nullable XZImageLine *)line NS_UNAVAILABLE;
+- (instancetype)initWithBorder:(nullable XZImageBorder *)border NS_DESIGNATED_INITIALIZER;
 
 @end
 

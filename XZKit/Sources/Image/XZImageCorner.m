@@ -9,10 +9,10 @@
 
 @implementation XZImageCorner
 
-- (instancetype)init {
-    self = [super init];
-    if (self) {
-        _radius = 0;
+- (instancetype)initWithCorner:(XZImageCorner *)corner {
+    self = [super initWithLine:corner];
+    if (self && corner) {
+        _radius = corner.radius;
     }
     return self;
 }

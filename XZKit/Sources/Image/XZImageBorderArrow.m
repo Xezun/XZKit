@@ -1,13 +1,58 @@
 //
-//  XZImageBorderArrowDescriptor+XZImageDrawing.m
+//  XZImageBorderArrow.m
 //  XZKit
 //
-//  Created by Xezun on 2021/2/18.
+//  Created by Xezun on 2021/2/21.
 //
 
-#import "XZImageBorderArrow+XZImageDrawing.h"
+#import "XZImageBorderArrow.h"
+#import "XZImageBorderArrow+Extension.h"
 
-@implementation XZImageBorderArrow (XZImageDrawing)
+@implementation XZImageBorderArrow
+
+- (instancetype)initWithArrow:(XZImageBorderArrow *)arrow {
+    self = [super init];
+    if (self && arrow) {
+        _width  = arrow.width;
+        _height = arrow.height;
+        _vector = arrow.vector;
+        _anchor = arrow.anchor;
+        
+        _lineOffset = arrow->_lineOffset;
+        _vectorOffsets[0] = arrow->_vectorOffsets[0];
+        _vectorOffsets[1] = arrow->_vectorOffsets[1];
+        _vectorOffsets[2] = arrow->_vectorOffsets[2];
+    }
+    return self;
+}
+
+- (void)setWidth:(CGFloat)width {
+    if (_width != width) {
+        _width = width;
+        [self updateOffsetsWithLineOffset:0];
+    }
+}
+
+- (void)setHeight:(CGFloat)height {
+    if (_height != height) {
+        _height = height;
+        [self updateOffsetsWithLineOffset:0];
+    }
+}
+
+- (void)setAnchor:(CGFloat)anchor {
+    if (_anchor != anchor) {
+        _anchor = anchor;
+        [self updateOffsetsWithLineOffset:0];
+    }
+}
+
+- (void)setVector:(CGFloat)vector {
+    if (_vector != vector) {
+        _vector = vector;
+        [self updateOffsetsWithLineOffset:0];
+    }
+}
 
 - (void)adjustAnchorWithMinValue:(CGFloat)minValue maxValue:(CGFloat)maxValue {
     CGFloat const _width  = MAX(0.0, MIN(maxValue - minValue, self.width));

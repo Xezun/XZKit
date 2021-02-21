@@ -43,12 +43,14 @@
 }
 
 - (void)drawInContext:(CGContextRef)context {
-    CGContextSetStrokeColorWithColor(context, _line.color.CGColor);
-    CGContextSetLineWidth(context, _line.width);
-    
-    XZImageLineDash * const dash = _line.dash;
-    if (!dash.isEmpty) {
-        CGContextSetLineDash(context, dash.phase, dash.segments, dash.numberOfSegments);
+    if (_line) {
+        CGContextSetStrokeColorWithColor(context, _line.color.CGColor);
+        CGContextSetLineWidth(context, _line.width);
+        
+        XZImageLineDash * const dash = _line.dash;
+        if (!dash.isEmpty) {
+            CGContextSetLineDash(context, dash.phase, dash.segments, dash.numberOfSegments);
+        }
     }
     
     CGContextMoveToPoint(context, _startPoint.x, _startPoint.y);
@@ -60,11 +62,14 @@
 
 - (UIBezierPath *)path {
     UIBezierPath *path = [[UIBezierPath alloc] init];
-    path.lineWidth = _line.width;
     
-    XZImageLineDash * const dash = _line.dash;
-    if (!dash.isEmpty) {
-        [path setLineDash:dash.segments count:dash.numberOfSegments phase:dash.phase];
+    if (_line) {
+        path.lineWidth = _line.width;
+        
+        XZImageLineDash * const dash = _line.dash;
+        if (!dash.isEmpty) {
+            [path setLineDash:dash.segments count:dash.numberOfSegments phase:dash.phase];
+        }
     }
     
     [path moveToPoint:_startPoint];

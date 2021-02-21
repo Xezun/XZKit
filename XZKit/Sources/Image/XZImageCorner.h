@@ -16,6 +16,8 @@ NS_SWIFT_NAME(XZImage.Corner)
 /// @note 如果设置了半径，那么半径最小值为线条宽度（粗细）。
 @property (nonatomic) CGFloat radius;
 
+- (instancetype)initWithLine:(nullable XZImageLine *)line NS_UNAVAILABLE;
+- (instancetype)initWithCorner:(nullable XZImageCorner *)corner NS_DESIGNATED_INITIALIZER;
 
 @end
 

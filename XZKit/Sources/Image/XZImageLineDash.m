@@ -6,7 +6,7 @@
 //
 
 #import "XZImageLineDash.h"
-#import "XZImageLineDash+XZImage.h"
+#import "XZImageLineDash+Extension.h"
 
 @implementation XZImageLineDash {
     NSInteger _capacity;
@@ -32,24 +32,10 @@
     return self;
 }
 
-+ (instancetype)lineDashWithSegments:(NSArray<NSNumber *> *)segments {
-    return [self lineDashWithPhase:0 segments:segments];
-}
-
-+ (instancetype)lineDashWithPhase:(CGFloat)phase segments:(NSArray<NSNumber *> *)segments {
-    XZImageLineDash *lineDash = [[XZImageLineDash alloc] initWithPhase:phase];
-    [lineDash setSegments:segments];
-    return lineDash;
-}
-
-+ (instancetype)lineDashWithSegments:(const CGFloat *)segments length:(NSInteger)length {
-    return [self lineDashWithPhase:0 segments:segments length:length];
-}
-
-+ (instancetype)lineDashWithPhase:(CGFloat)phase segments:(const CGFloat *)segments length:(NSInteger)length {
-    XZImageLineDash *lineDash = [[XZImageLineDash alloc] initWithPhase:phase];
-    [lineDash setSegments:segments length:length];
-    return lineDash;
++ (instancetype)lineDashWithLineDash:(XZImageLineDash *)lineDash {
+    XZImageLineDash *dash = [[XZImageLineDash alloc] initWithPhase:0];
+    [dash updateWithLineDash:lineDash];
+    return dash;
 }
 
 - (BOOL)isEmpty {
@@ -60,26 +46,7 @@
     if (_phase != phase) {
         _phase = phase;
         
-        [self.delegate lineDashDidChange:self];
-    }
-}
-
-- (void)adjustsCapacityToFitSegments {
-    // 数目比容量少，缩容到8，避免频繁扩容和浪费
-    if (_numberOfSegments < _capacity) {
-        NSInteger newCapacity = MAX(8, _numberOfSegments);
-        if (newCapacity == _capacity) {
-            return;
-        }
-        _capacity = newCapacity;
-        _segments = realloc(_segments, sizeof(CGFloat) * _capacity);
-        return;
-    }
-    
-    // 当前容量不够，扩容
-    if (_numberOfSegments > _capacity) {
-        _capacity = _numberOfSegments;
-        _segments = realloc(_segments, sizeof(CGFloat) * _capacity);
+        [self.delegate lineDashDidUpdate:self];
     }
 }
 
@@ -91,7 +58,7 @@
         _segments[i] = segments[i].doubleValue;
     }
     
-    [self.delegate lineDashDidChange:self];
+    [self.delegate lineDashDidUpdate:self];
 }
 
 - (void)setSegments:(const CGFloat *)segments length:(NSInteger)length {
@@ -102,7 +69,7 @@
         memcpy(_segments, segments, length * sizeof(CGFloat));
     }
     
-    [self.delegate lineDashDidChange:self];
+    [self.delegate lineDashDidUpdate:self];
 }
 
 - (BOOL)isEqual:(id)object {
@@ -187,15 +154,33 @@
     return _segments[1];
 }
 
-- (id)copyWithZone:(NSZone *)zone {
-    XZImageLineDash *dash = [[XZImageLineDash alloc] initWithPhase:self.phase];
-    [dash setSegments:_segments length:0];
-    return dash;
+#pragma mark - 私有方法
+
+- (void)updateWithLineDash:(XZImageLineDash *)lineDash {
+    if (lineDash == self) {
+        return;
+    }
+    _phase = lineDash.phase; // 用实例变量，避免代理调用两次
+    [self setSegments:lineDash.segments length:lineDash.numberOfSegments];
 }
 
-- (void)setPhase:(CGFloat)phase segments:(nonnull CGFloat *)segments length:(NSInteger)length {
-    _phase = phase; // 用实例变量，避免代理调用两次
-    [self setSegments:segments length:length];
+- (void)adjustsCapacityToFitSegments {
+    // 数目比容量少，缩容到8，避免频繁扩容和浪费
+    if (_numberOfSegments < _capacity) {
+        NSInteger newCapacity = MAX(8, _numberOfSegments);
+        if (newCapacity == _capacity) {
+            return;
+        }
+        _capacity = newCapacity;
+        _segments = realloc(_segments, sizeof(CGFloat) * _capacity);
+        return;
+    }
+    
+    // 当前容量不够，扩容
+    if (_numberOfSegments > _capacity) {
+        _capacity = _numberOfSegments;
+        _segments = realloc(_segments, sizeof(CGFloat) * _capacity);
+    }
 }
 
 @end

@@ -17,8 +17,13 @@ NS_SWIFT_NAME(XZImage.Line)
 @property (nonatomic, strong, nullable) UIColor *color;
 /// 线条粗细
 @property (nonatomic) CGFloat width;
-/// 虚线。设置属性会拷贝副本，读取属性则不会。
-@property (nonatomic, null_resettable) XZImageLineDash *dash;
+/// 虚线。
+@property (nonatomic, strong, readonly) XZImageLineDash *dash;
+- (void)dashDidLoad;
+
+- (instancetype)init NS_UNAVAILABLE;
++ (instancetype)new NS_UNAVAILABLE;
+- (instancetype)initWithLine:(nullable XZImageLine *)line NS_DESIGNATED_INITIALIZER;
 
 @end
 

@@ -6,15 +6,26 @@
 //
 
 #import "XZImageLine.h"
-#import "XZImageLine+XZImage.h"
+#import "XZImageLine+Extension.h"
+
 
 @implementation XZImageLine
 
 - (instancetype)init {
+    return [self initWithLine:nil];
+}
+
+- (instancetype)initWithLine:(XZImageLine *)line {
     self = [super init];
     if (self) {
-        _color = nil;
-        _width = 0;
+        _color = line.color;
+        _width = line.width;
+        
+        XZImageLineDash *dash = line.dashIfLoaded;
+        if (dash) {
+            _dash = [XZImageLineDash lineDashWithLineDash:dash];
+            [self dashDidLoad];
+        }
     }
     return self;
 }
@@ -23,15 +34,18 @@
 
 - (XZImageLineDash *)dash {
     if (_dash == nil) {
-        _dash = [XZImageLineDash lineDashWithSegments:NULL length:0];
+        _dash = [XZImageLineDash lineDashWithLineDash:nil];
+        [self dashDidLoad];
     }
     return _dash;
 }
 
-- (void)setDash:(XZImageLineDash *)dash {
-    if (_dash != dash) {
-        _dash = dash.copy;
-    }
+- (XZImageLineDash *)dashIfLoaded {
+    return _dash;
+}
+
+- (void)dashDidLoad {
+    
 }
 
 - (BOOL)isEqual:(XZImageLine *)object {

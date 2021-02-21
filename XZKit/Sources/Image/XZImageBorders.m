@@ -6,13 +6,11 @@
 //
 
 #import "XZImageBorders.h"
+#import "XZImageBorders+Extension.h"
 #import "XZImageBorder.h"
-#import "XZImageLine+XZImage.h"
-#import "XZImageLineDash+XZImage.h"
-
-@interface XZImageBorders () <XZImageLineDashDelegate>
-
-@end
+#import "XZImageLine+Extension.h"
+#import "XZImageLineDash+Extension.h"
+#import "XZImageBorder+Extension.h"
 
 @implementation XZImageBorders
 
@@ -22,126 +20,117 @@
 @synthesize right = _right;
 
 - (void)dealloc {
-    [self.arrow removeObserver:self forKeyPath:@"width"];
-    [self.arrow removeObserver:self forKeyPath:@"height"];
-    [self.arrow removeObserver:self forKeyPath:@"vector"];
-    [self.arrow removeObserver:self forKeyPath:@"anchor"];
+    XZImageBorderArrow * const arrowIfLoaded = self.arrowIfLoaded;
+    [arrowIfLoaded removeObserver:self forKeyPath:@"width"];
+    [arrowIfLoaded removeObserver:self forKeyPath:@"height"];
+    [arrowIfLoaded removeObserver:self forKeyPath:@"vector"];
+    [arrowIfLoaded removeObserver:self forKeyPath:@"anchor"];
 }
 
-- (instancetype)init {
-    self = [super init];
-    if (self) {
-        [self.arrow addObserver:self forKeyPath:@"width" options:(NSKeyValueObservingOptionNew) context:nil];
-        [self.arrow addObserver:self forKeyPath:@"height" options:(NSKeyValueObservingOptionNew) context:nil];
-        [self.arrow addObserver:self forKeyPath:@"vector" options:(NSKeyValueObservingOptionNew) context:nil];
-        [self.arrow addObserver:self forKeyPath:@"anchor" options:(NSKeyValueObservingOptionNew) context:nil];
-    }
-    return self;
+- (void)arrowDidLoad {
+    [self.arrow addObserver:self forKeyPath:@"width" options:(NSKeyValueObservingOptionNew) context:nil];
+    [self.arrow addObserver:self forKeyPath:@"height" options:(NSKeyValueObservingOptionNew) context:nil];
+    [self.arrow addObserver:self forKeyPath:@"vector" options:(NSKeyValueObservingOptionNew) context:nil];
+    [self.arrow addObserver:self forKeyPath:@"anchor" options:(NSKeyValueObservingOptionNew) context:nil];
 }
 
-- (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary<NSKeyValueChangeKey,id> *)change context:(void *)context {
-    if (object == self.arrow) {
-        if ([keyPath isEqual:@"width"]) {
-            self.top.arrow.width = self.arrow.width;
-            self.left.arrow.width = self.arrow.width;
-            self.bottom.arrow.width = self.arrow.width;
-            self.right.arrow.width = self.arrow.width;
-        } else if ([keyPath isEqual:@"height"]) {
-            self.top.arrow.height = self.arrow.height;
-            self.left.arrow.height = self.arrow.height;
-            self.bottom.arrow.height = self.arrow.height;
-            self.right.arrow.height = self.arrow.height;
-        } else if ([keyPath isEqual:@"vector"]) {
-            self.top.arrow.vector = self.arrow.vector;
-            self.left.arrow.vector = self.arrow.vector;
-            self.bottom.arrow.vector = self.arrow.vector;
-            self.right.arrow.vector = self.arrow.vector;
-        } else if ([keyPath isEqual:@"anchor"]) {
-            self.top.arrow.anchor = self.arrow.anchor;
-            self.left.arrow.anchor = self.arrow.anchor;
-            self.bottom.arrow.anchor = self.arrow.anchor;
-            self.right.arrow.anchor = self.arrow.anchor;
-        }
-    }
+- (void)dashDidLoad {
+    self.dash.delegate = self;
 }
 
 - (XZImageBorder *)top {
     if (_top == nil) {
-        _top = [[XZImageBorder alloc] init];
+        _top = [[XZImageBorder alloc] initWithBorder:self];
     }
+    return _top;
+}
+
+- (XZImageBorder *)topIfLoaded {
     return _top;
 }
 
 - (XZImageBorder *)left {
     if (_left == nil) {
-        _left = [[XZImageBorder alloc] init];
+        _left = [[XZImageBorder alloc] initWithBorder:self];
     }
+    return _left;
+}
+
+- (XZImageBorder *)leftIfLoaded {
     return _left;
 }
 
 - (XZImageBorder *)bottom {
     if (_bottom == nil) {
-        _bottom = [[XZImageBorder alloc] init];
+        _bottom = [[XZImageBorder alloc] initWithBorder:self];
     }
+    return _bottom;
+}
+
+- (XZImageBorder *)bottomIfLoaded {
     return _bottom;
 }
 
 - (XZImageBorder *)right {
     if (_right == nil) {
-        _right = [[XZImageBorder alloc] init];
+        _right = [[XZImageBorder alloc] initWithBorder:self];
     }
     return _right;
 }
 
-- (void)setColor:(UIColor *)color {
-    [super setColor:color];
-    self.top.color = color;
-    self.left.color = color;
-    self.bottom.color = color;
-    self.right.color = color;
+- (XZImageBorder *)rightIfLoaded {
+    return _right;
 }
 
-- (UIColor *)color {
-    return [super color] ?: _top.color ?: _left.color ?: _bottom.color ?: _right.color;
+#pragma mark - 同步属性到下级
+
+- (void)setColor:(UIColor *)color {
+    [super setColor:color];
+    self.topIfLoaded.color    = color;
+    self.leftIfLoaded.color   = color;
+    self.bottomIfLoaded.color = color;
+    self.rightIfLoaded.color  = color;
 }
 
 - (void)setWidth:(CGFloat)width {
     [super setWidth:width];
-    self.top.width = width;
-    self.left.width = width;
-    self.bottom.width = width;
-    self.right.width = width;
+    self.topIfLoaded.width    = width;
+    self.leftIfLoaded.width   = width;
+    self.bottomIfLoaded.width = width;
+    self.rightIfLoaded.width  = width;
 }
 
-- (CGFloat)width {
-    return [super width] ?: _top.width ?: _left.width ?: _bottom.width ?: _right.width;
+- (void)lineDashDidUpdate:(XZImageLineDash *)lineDash {
+    [self.topIfLoaded.dash    updateWithLineDash:self.dashIfLoaded];
+    [self.leftIfLoaded.dash   updateWithLineDash:self.dashIfLoaded];
+    [self.bottomIfLoaded.dash updateWithLineDash:self.dashIfLoaded];
+    [self.rightIfLoaded.dash  updateWithLineDash:self.dashIfLoaded];
 }
 
-- (void)setDash:(XZImageLineDash *)dash {
-    if (_dash != dash) {
-        _dash.delegate = nil;
-        [super setDash:dash];
-        _dash.delegate = self;
-        
-        [self lineDashDidChange:_dash];
+- (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary<NSKeyValueChangeKey,id> *)change context:(void *)context {
+    if (object == self.arrow) {
+        if ([keyPath isEqual:@"width"]) {
+            self.topIfLoaded.arrow.width    = self.arrow.width;
+            self.leftIfLoaded.arrow.width   = self.arrow.width;
+            self.bottomIfLoaded.arrow.width = self.arrow.width;
+            self.rightIfLoaded.arrow.width  = self.arrow.width;
+        } else if ([keyPath isEqual:@"height"]) {
+            self.topIfLoaded.arrow.height    = self.arrow.height;
+            self.leftIfLoaded.arrow.height   = self.arrow.height;
+            self.bottomIfLoaded.arrow.height = self.arrow.height;
+            self.rightIfLoaded.arrow.height  = self.arrow.height;
+        } else if ([keyPath isEqual:@"vector"]) {
+            self.topIfLoaded.arrow.vector    = self.arrow.vector;
+            self.leftIfLoaded.arrow.vector   = self.arrow.vector;
+            self.bottomIfLoaded.arrow.vector = self.arrow.vector;
+            self.rightIfLoaded.arrow.vector  = self.arrow.vector;
+        } else if ([keyPath isEqual:@"anchor"]) {
+            self.topIfLoaded.arrow.anchor    = self.arrow.anchor;
+            self.leftIfLoaded.arrow.anchor   = self.arrow.anchor;
+            self.bottomIfLoaded.arrow.anchor = self.arrow.anchor;
+            self.rightIfLoaded.arrow.anchor  = self.arrow.anchor;
+        }
     }
-}
-
-- (XZImageLineDash *)dash {
-    if (_dash != nil) {
-        return _dash;
-    }
-    XZImageLineDash *dash = [super dash];
-    dash.delegate = self;
-    [self lineDashDidChange:dash];
-    return dash;
-}
-
-- (void)lineDashDidChange:(XZImageLineDash *)dash {
-    [self.top.dash    setPhase:dash.phase segments:dash.segments length:dash.numberOfSegments];
-    [self.left.dash   setPhase:dash.phase segments:dash.segments length:dash.numberOfSegments];
-    [self.bottom.dash setPhase:dash.phase segments:dash.segments length:dash.numberOfSegments];
-    [self.right.dash  setPhase:dash.phase segments:dash.segments length:dash.numberOfSegments];
 }
 
 @end

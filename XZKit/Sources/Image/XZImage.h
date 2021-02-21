@@ -51,7 +51,7 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic) UIColor *lineColor;
 /// 虚线。
 /// @note 设置属性会拷贝副本。
-@property (nonatomic, strong) XZImageLineDash *lineDash;
+@property (nonatomic, strong, readonly) XZImageLineDash *lineDash;
 /// 圆角大小
 @property (nonatomic) CGFloat cornerRadius;
 
@@ -78,7 +78,7 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic, readonly) UIBezierPath *path;
 /// 当前路径所绘制的边或圆角。
 /// @note 使用 `-drawInContext:` 方法不需要额外设置边的粗细颜色。
-@property (nonatomic, readonly) XZImageLine *line;
+@property (nonatomic, readonly, nullable) XZImageLine *line;
 @end
 
 NS_ASSUME_NONNULL_END

@@ -6,9 +6,10 @@
 //
 
 #import "XZImageCorners.h"
+#import "XZImageCorners+Extension.h"
 #import "XZImageCorner.h"
-#import "XZImageLine+XZImage.h"
-#import "XZImageLineDash+XZImage.h"
+#import "XZImageLine+Extension.h"
+#import "XZImageLineDash+Extension.h"
 
 @interface XZImageCorners () <XZImageLineDashDelegate>
 
@@ -16,99 +17,90 @@
 
 @implementation XZImageCorners
 
-@synthesize topLeft = _topLeft;
-@synthesize bottomLeft = _bottomLeft;
+@synthesize topLeft     = _topLeft;
+@synthesize bottomLeft  = _bottomLeft;
 @synthesize bottomRight = _bottomRight;
-@synthesize topRight = _topRight;
+@synthesize topRight    = _topRight;
 
 - (XZImageCorner *)topLeft {
     if (_topLeft == nil) {
-        _topLeft = [[XZImageCorner alloc] init];
+        _topLeft = [[XZImageCorner alloc] initWithCorner:self];
     }
+    return _topLeft;
+}
+
+- (XZImageCorner *)topLeftIfLoaded {
     return _topLeft;
 }
 
 - (XZImageCorner *)bottomLeft {
     if (_bottomLeft == nil) {
-        _bottomLeft = [[XZImageCorner alloc] init];
+        _bottomLeft = [[XZImageCorner alloc] initWithCorner:self];
     }
+    return _bottomLeft;
+}
+
+- (XZImageCorner *)bottomLeftIfLoaded {
     return _bottomLeft;
 }
 
 - (XZImageCorner *)bottomRight {
     if (_bottomRight == nil) {
-        _bottomRight = [[XZImageCorner alloc] init];
+        _bottomRight = [[XZImageCorner alloc] initWithCorner:self];
     }
+    return _bottomRight;
+}
+
+- (XZImageCorner *)bottomRightIfLoaded {
     return _bottomRight;
 }
 
 - (XZImageCorner *)topRight {
     if (_topRight == nil) {
-        _topRight = [[XZImageCorner alloc] init];
+        _topRight = [[XZImageCorner alloc] initWithCorner:self];
     }
     return _topRight;
 }
 
-- (void)setColor:(UIColor *)color {
-    [super setColor:color];
-    self.topLeft.color = color;
-    self.bottomLeft.color = color;
-    self.bottomRight.color = color;
-    self.topRight.color = color;
+- (XZImageCorner *)topRightIfLoaded {
+    return _topRight;
 }
 
-- (UIColor *)color {
-    return _topLeft.color ?: _bottomLeft.color ?: _bottomRight.color ?: _topRight.color;
+- (void)dashDidLoad {
+    self.dash.delegate = self;
+}
+
+#pragma mark - 同步属性到下级
+
+- (void)setColor:(UIColor *)color {
+    [super setColor:color];
+    self.topLeftIfLoaded.color = color;
+    self.bottomLeftIfLoaded.color = color;
+    self.bottomRightIfLoaded.color = color;
+    self.topRightIfLoaded.color = color;
 }
 
 - (void)setWidth:(CGFloat)width {
-    self.topLeft.width = width;
-    self.bottomLeft.width = width;
-    self.bottomRight.width = width;
-    self.topRight.width = width;
-}
-
-- (CGFloat)width {
-    return _topLeft.width ?: _bottomLeft.width ?: _bottomRight.width ?: _topRight.width;
-}
-
-- (void)setDash:(XZImageLineDash *)dash {
-    if (_dash != dash) {
-        _dash.delegate = nil;
-        [super setDash:dash];
-        _dash.delegate = self;
-        
-        [self lineDashDidChange:_dash];
-    }
-}
-
-- (XZImageLineDash *)dash {
-    if (_dash != nil) {
-        return _dash;
-    }
-    XZImageLineDash *dash = [super dash];
-    dash.delegate = self;
-    [self lineDashDidChange:dash];
-    return dash;
-}
-
-- (void)lineDashDidChange:(XZImageLineDash *)dash {
-    [self.topLeft.dash     setPhase:dash.phase segments:dash.segments length:dash.numberOfSegments];
-    [self.bottomLeft.dash  setPhase:dash.phase segments:dash.segments length:dash.numberOfSegments];
-    [self.bottomRight.dash setPhase:dash.phase segments:dash.segments length:dash.numberOfSegments];
-    [self.topRight.dash    setPhase:dash.phase segments:dash.segments length:dash.numberOfSegments];
+    [super setWidth:width];
+    self.topLeftIfLoaded.width = width;
+    self.bottomLeftIfLoaded.width = width;
+    self.bottomRightIfLoaded.width = width;
+    self.topRightIfLoaded.width = width;
 }
 
 - (void)setRadius:(CGFloat)radius {
     [super setRadius:radius];
-    self.topLeft.radius     = radius;
-    self.bottomLeft.radius  = radius;
-    self.bottomRight.radius = radius;
-    self.topRight.radius    = radius;
+    self.topLeftIfLoaded.radius     = radius;
+    self.bottomLeftIfLoaded.radius  = radius;
+    self.bottomRightIfLoaded.radius = radius;
+    self.topRightIfLoaded.radius    = radius;
 }
 
-- (CGFloat)radius {
-    return [super radius] ?: _topLeft.radius ?: _bottomLeft.radius ?: _bottomRight.radius ?: _topRight.radius;
+- (void)lineDashDidUpdate:(XZImageLineDash *)lineDash {
+    [self.topLeftIfLoaded.dash     updateWithLineDash:self.dashIfLoaded];
+    [self.bottomLeftIfLoaded.dash  updateWithLineDash:self.dashIfLoaded];
+    [self.bottomRightIfLoaded.dash updateWithLineDash:self.dashIfLoaded];
+    [self.topRightIfLoaded.dash    updateWithLineDash:self.dashIfLoaded];
 }
 
 @end

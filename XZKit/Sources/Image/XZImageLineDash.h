@@ -11,7 +11,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 /// 虚线：实线、空白的按指定规律重复线段。
 NS_SWIFT_NAME(XZImageLine.Dash)
-@interface XZImageLineDash : NSObject <NSCopying>
+@interface XZImageLineDash : NSObject
 
 /// 位移。绘制第一个 segments 虚线段时，从 phase 的位置开始绘制。
 @property (nonatomic) CGFloat phase;
@@ -24,20 +24,22 @@ NS_SWIFT_NAME(XZImageLine.Dash)
 
 @property (nonatomic, readonly) BOOL isEmpty;
 
-/// 便利构造方法。
-/// @note 第一个宽度为 0 的参数表示结束。
-/// @param segments 虚、实、虚...线的宽度，必须用小数形式
-+ (XZImageLineDash *)lineDashWithSegments:(nullable NSArray<NSNumber *> *)segments;
-+ (XZImageLineDash *)lineDashWithSegments:(const CGFloat * _Nullable)segments length:(NSInteger)length;
-
-/// 便利构造方法。
-/// @param phase 偏移
-/// @param segments 虚实段长度
-+ (XZImageLineDash *)lineDashWithPhase:(CGFloat)phase segments:(nullable NSArray<NSNumber *> *)segments;
-+ (XZImageLineDash *)lineDashWithPhase:(CGFloat)phase segments:(const CGFloat * _Nullable)segments length:(NSInteger)length;
+///// 便利构造方法。
+///// @note 第一个宽度为 0 的参数表示结束。
+///// @param segments 虚、实、虚...线的宽度，必须用小数形式
+//+ (XZImageLineDash *)lineDashWithSegments:(nullable NSArray<NSNumber *> *)segments;
+//+ (XZImageLineDash *)lineDashWithSegments:(const CGFloat * _Nullable)segments length:(NSInteger)length;
+//
+///// 便利构造方法。
+///// @param phase 偏移
+///// @param segments 虚实段长度
+//+ (XZImageLineDash *)lineDashWithPhase:(CGFloat)phase segments:(nullable NSArray<NSNumber *> *)segments;
+//+ (XZImageLineDash *)lineDashWithPhase:(CGFloat)phase segments:(const CGFloat * _Nullable)segments length:(NSInteger)length;
 
 - (instancetype)init NS_UNAVAILABLE;
 + (instancetype)new NS_UNAVAILABLE;
+
++ (instancetype)lineDashWithLineDash:(nullable XZImageLineDash *)lineDash;
 
 - (BOOL)isEqualToDash:(XZImageLineDash *)dash;
 

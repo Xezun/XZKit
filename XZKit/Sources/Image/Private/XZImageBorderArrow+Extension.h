@@ -1,5 +1,5 @@
 //
-//  XZImageBorderArrowDescriptor+XZImageDrawing.h
+//  XZImageBorderArrow+Extension.h
 //  XZKit
 //
 //  Created by Xezun on 2021/2/18.
@@ -10,7 +10,10 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-@interface XZImageBorderArrow (XZImageDrawing)
+@interface XZImageBorderArrow () {
+    CGFloat _lineOffset;
+    CGPoint _vectorOffsets[3];
+}
 
 - (void)adjustAnchorWithMinValue:(CGFloat)minValue maxValue:(CGFloat)maxValue;
 - (void)adjustVectorWithMinValue:(CGFloat)minValue maxValue:(CGFloat)maxValue;

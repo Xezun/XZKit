@@ -1,5 +1,5 @@
 //
-//  XZImageBorder+XZImageDrawing.h
+//  XZImageBorder+Extension.h
 //  XZKit
 //
 //  Created by Xezun on 2021/2/18.
@@ -9,7 +9,7 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-@interface XZImageBorder (XZImageDrawing)
+@interface XZImageBorder ()
 @property (nonatomic, strong, readonly, nullable) XZImageBorderArrow *arrowIfLoaded;
 @end
 
