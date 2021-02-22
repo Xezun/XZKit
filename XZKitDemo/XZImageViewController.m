@@ -7,6 +7,7 @@
 
 #import "XZImageViewController.h"
 #import "XZImageBorderEditor.h"
+#import "XZImageCornerEditor.h"
 #import <XZKit/XZKit.h>
 
 @interface XZImageSliderView : UIView
@@ -50,13 +51,13 @@
 //    image.lineDash.width = 5;
     
     // 设置所有边框
-    image.borders.width = 2.0;
-    image.borders.color = rgba(0xD0D0D0, 1.0);
+    image.borders.width = 4.0;
+    image.borders.color = rgba(0xFF0000, 1.0);
     
     // 设置所有圆角
-    image.corners.width  = 2.0;
+    image.corners.width  = 4.0;
     image.corners.color  = UIColor.greenColor;
-    image.corners.radius = 10.0;
+    image.corners.radius = 20.0;
     
     // 设置所有箭头
 //    image.borders.arrow.anchor = 0;
@@ -91,6 +92,27 @@
 //    self.imageView.image = [[UIImage imageNamed:@"icon_star"] xz_imageByBlendingColor:rgb(0xff9900)];
 }
 
+- (void)viewDidAppear:(BOOL)animated {
+    [super viewDidAppear:animated];
+    
+    self.imageView.image = self.image.image;
+}
+
+- (IBAction)unwindFromEditor:(UIStoryboardSegue *)unwindSegue {
+    self.imageView.image = self.image.image;
+}
+
+- (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {
+    UINavigationController *nav = segue.destinationViewController;
+    XZImageBorderEditor *editVC = (id)nav.topViewController;
+    editVC.title = segue.identifier;
+    if ([editVC isKindOfClass:[XZImageBorderEditor class]]) {
+        editVC.line = [self.image.borders valueForKey:segue.identifier];
+    } else if ([editVC isKindOfClass:[XZImageCornerEditor class]]) {
+        editVC.line = [self.image.corners valueForKey:segue.identifier];
+    }
+}
+
 - (IBAction)imageLevelsChangeAction:(id)sender {
     CGFloat shadows = self.shadowsLevelsView.slider.value;
     CGFloat midtones = self.midtonesLevelsView.slider.value;
@@ -120,25 +142,6 @@
     self.imageView.image = [self.image.image xz_imageByFilteringImageLevels:levels];
     
 //    self.imageView.image = [self.image xz_imageByFilteringBrightness:shadows];
-}
-
-- (void)viewDidAppear:(BOOL)animated {
-    [super viewDidAppear:animated];
-    
-    self.imageView.image = self.image.image;
-}
-
-- (IBAction)unwindFromEditor:(UIStoryboardSegue *)unwindSegue {
-    self.imageView.image = self.image.image;
-}
-
-- (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {
-    UINavigationController *nav = segue.destinationViewController;
-    XZImageBorderEditor *editVC = nav.topViewController;
-    editVC.title = segue.identifier;
-    if ([editVC isKindOfClass:[XZImageBorderEditor class]]) {
-        editVC.line = [self.image.borders valueForKey:segue.identifier];
-    } 
 }
 
 - (IBAction)recoverImageLevelsButtonAction:(id)sender {

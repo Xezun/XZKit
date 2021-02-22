@@ -10,8 +10,6 @@
 		2916366525D67F51001BFE25 /* UIImage+XZKit.h in Headers */ = {isa = PBXBuildFile; fileRef = 2916365A25D67F51001BFE25 /* UIImage+XZKit.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		2916366725D67F51001BFE25 /* UIImageView+XZKit.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2916365C25D67F51001BFE25 /* UIImageView+XZKit.swift */; };
 		2916366825D67F51001BFE25 /* UIView+XZKit.m in Sources */ = {isa = PBXBuildFile; fileRef = 2916365D25D67F51001BFE25 /* UIView+XZKit.m */; };
-		2916366925D67F51001BFE25 /* UIColor+XZKit.h in Headers */ = {isa = PBXBuildFile; fileRef = 2916365E25D67F51001BFE25 /* UIColor+XZKit.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		2916366A25D67F51001BFE25 /* UIColor+XZKit.m in Sources */ = {isa = PBXBuildFile; fileRef = 2916365F25D67F51001BFE25 /* UIColor+XZKit.m */; };
 		2916366C25D67F51001BFE25 /* UIApplication+XZKit.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2916366125D67F51001BFE25 /* UIApplication+XZKit.swift */; };
 		2916366D25D67F51001BFE25 /* UIImage+XZKit.m in Sources */ = {isa = PBXBuildFile; fileRef = 2916366225D67F51001BFE25 /* UIImage+XZKit.m */; };
 		2916366F25D67F51001BFE25 /* UIView+XZKit.h in Headers */ = {isa = PBXBuildFile; fileRef = 2916366425D67F51001BFE25 /* UIView+XZKit.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -143,7 +141,7 @@
 		2970B19B25E2965A00D905EA /* XZImageAttribute+Extension.h in Headers */ = {isa = PBXBuildFile; fileRef = 2970B19A25E2965A00D905EA /* XZImageAttribute+Extension.h */; };
 		2970B1A325E2AAA400D905EA /* XZImageCorner+Extension.h in Headers */ = {isa = PBXBuildFile; fileRef = 2970B1A225E2AAA400D905EA /* XZImageCorner+Extension.h */; };
 		299D574425D8E58A0097C27A /* UIColor+XZKit.swift in Sources */ = {isa = PBXBuildFile; fileRef = 299D574325D8E58A0097C27A /* UIColor+XZKit.swift */; };
-		299D574825D8EC6D0097C27A /* UIImage+XZKit.swift in Sources */ = {isa = PBXBuildFile; fileRef = 299D574725D8EC6D0097C27A /* UIImage+XZKit.swift */; };
+		299D574825D8EC6D0097C27A /* XZImageLevels.swift in Sources */ = {isa = PBXBuildFile; fileRef = 299D574725D8EC6D0097C27A /* XZImageLevels.swift */; };
 		299D574F25D906FA0097C27A /* XZKit+JSON.h in Headers */ = {isa = PBXBuildFile; fileRef = 299D574D25D906FA0097C27A /* XZKit+JSON.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		299D575025D906FA0097C27A /* XZKit+JSON.m in Sources */ = {isa = PBXBuildFile; fileRef = 299D574E25D906FA0097C27A /* XZKit+JSON.m */; };
 		29B5383625DD0127009A07D3 /* XZImage.h in Headers */ = {isa = PBXBuildFile; fileRef = 29B5383425DD0127009A07D3 /* XZImage.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -166,6 +164,12 @@
 		29EAF1D025E2C9F300358B65 /* XZImageBorderEditor.m in Sources */ = {isa = PBXBuildFile; fileRef = 29EAF1CF25E2C9F300358B65 /* XZImageBorderEditor.m */; };
 		29EAF1D625E2CA1000358B65 /* XZNumberInputViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 29EAF1D525E2CA1000358B65 /* XZNumberInputViewController.m */; };
 		29EAF1E325E2DAF700358B65 /* XZImageCornerEditor.m in Sources */ = {isa = PBXBuildFile; fileRef = 29EAF1E225E2DAF700358B65 /* XZImageCornerEditor.m */; };
+		29EAF1F025E4081400358B65 /* XZColor.h in Headers */ = {isa = PBXBuildFile; fileRef = 29EAF1EE25E4081400358B65 /* XZColor.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		29EAF1F125E4081400358B65 /* XZColor.m in Sources */ = {isa = PBXBuildFile; fileRef = 29EAF1EF25E4081400358B65 /* XZColor.m */; };
+		29EAF20225E408E900358B65 /* UIColor+XZColor.h in Headers */ = {isa = PBXBuildFile; fileRef = 29EAF20025E408E900358B65 /* UIColor+XZColor.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		29EAF20325E408E900358B65 /* UIColor+XZColor.m in Sources */ = {isa = PBXBuildFile; fileRef = 29EAF20125E408E900358B65 /* UIColor+XZColor.m */; };
+		29EAF21525E4157900358B65 /* UIImage+XZImage.h in Headers */ = {isa = PBXBuildFile; fileRef = 29EAF21325E4157900358B65 /* UIImage+XZImage.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		29EAF21625E4157900358B65 /* UIImage+XZImage.m in Sources */ = {isa = PBXBuildFile; fileRef = 29EAF21425E4157900358B65 /* UIImage+XZImage.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -210,8 +214,6 @@
 		2916365A25D67F51001BFE25 /* UIImage+XZKit.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIImage+XZKit.h"; sourceTree = "<group>"; };
 		2916365C25D67F51001BFE25 /* UIImageView+XZKit.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "UIImageView+XZKit.swift"; sourceTree = "<group>"; };
 		2916365D25D67F51001BFE25 /* UIView+XZKit.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIView+XZKit.m"; sourceTree = "<group>"; };
-		2916365E25D67F51001BFE25 /* UIColor+XZKit.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIColor+XZKit.h"; sourceTree = "<group>"; };
-		2916365F25D67F51001BFE25 /* UIColor+XZKit.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIColor+XZKit.m"; sourceTree = "<group>"; };
 		2916366125D67F51001BFE25 /* UIApplication+XZKit.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "UIApplication+XZKit.swift"; sourceTree = "<group>"; };
 		2916366225D67F51001BFE25 /* UIImage+XZKit.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIImage+XZKit.m"; sourceTree = "<group>"; };
 		2916366425D67F51001BFE25 /* UIView+XZKit.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIView+XZKit.h"; sourceTree = "<group>"; };
@@ -354,7 +356,7 @@
 		2970B19A25E2965A00D905EA /* XZImageAttribute+Extension.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "XZImageAttribute+Extension.h"; sourceTree = "<group>"; };
 		2970B1A225E2AAA400D905EA /* XZImageCorner+Extension.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "XZImageCorner+Extension.h"; sourceTree = "<group>"; };
 		299D574325D8E58A0097C27A /* UIColor+XZKit.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIColor+XZKit.swift"; sourceTree = "<group>"; };
-		299D574725D8EC6D0097C27A /* UIImage+XZKit.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIImage+XZKit.swift"; sourceTree = "<group>"; };
+		299D574725D8EC6D0097C27A /* XZImageLevels.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = XZImageLevels.swift; sourceTree = "<group>"; };
 		299D574D25D906FA0097C27A /* XZKit+JSON.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "XZKit+JSON.h"; sourceTree = "<group>"; };
 		299D574E25D906FA0097C27A /* XZKit+JSON.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "XZKit+JSON.m"; sourceTree = "<group>"; };
 		29B5383425DD0127009A07D3 /* XZImage.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = XZImage.h; sourceTree = "<group>"; };
@@ -380,6 +382,12 @@
 		29EAF1D525E2CA1000358B65 /* XZNumberInputViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = XZNumberInputViewController.m; sourceTree = "<group>"; };
 		29EAF1E125E2DAF700358B65 /* XZImageCornerEditor.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = XZImageCornerEditor.h; sourceTree = "<group>"; };
 		29EAF1E225E2DAF700358B65 /* XZImageCornerEditor.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = XZImageCornerEditor.m; sourceTree = "<group>"; };
+		29EAF1EE25E4081400358B65 /* XZColor.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = XZColor.h; sourceTree = "<group>"; };
+		29EAF1EF25E4081400358B65 /* XZColor.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = XZColor.m; sourceTree = "<group>"; };
+		29EAF20025E408E900358B65 /* UIColor+XZColor.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "UIColor+XZColor.h"; sourceTree = "<group>"; };
+		29EAF20125E408E900358B65 /* UIColor+XZColor.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "UIColor+XZColor.m"; sourceTree = "<group>"; };
+		29EAF21325E4157900358B65 /* UIImage+XZImage.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "UIImage+XZImage.h"; sourceTree = "<group>"; };
+		29EAF21425E4157900358B65 /* UIImage+XZImage.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "UIImage+XZImage.m"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -539,6 +547,7 @@
 				2963303A25D1000E00BB1BEF /* Category */,
 				2918814B25D3053300C89059 /* DataDigester */,
 				2963307525D1000E00BB1BEF /* DataCryptor */,
+				29EAF1ED25E4080500358B65 /* Color */,
 				29B5383325DD0108009A07D3 /* Image */,
 				2963301425D1000E00BB1BEF /* NavigationController */,
 				2963301D25D1000E00BB1BEF /* AppRedirection */,
@@ -628,12 +637,8 @@
 			children = (
 				2916366125D67F51001BFE25 /* UIApplication+XZKit.swift */,
 				2916365C25D67F51001BFE25 /* UIImageView+XZKit.swift */,
-				2916365E25D67F51001BFE25 /* UIColor+XZKit.h */,
-				2916365F25D67F51001BFE25 /* UIColor+XZKit.m */,
-				299D574325D8E58A0097C27A /* UIColor+XZKit.swift */,
 				2916365A25D67F51001BFE25 /* UIImage+XZKit.h */,
 				2916366225D67F51001BFE25 /* UIImage+XZKit.m */,
-				299D574725D8EC6D0097C27A /* UIImage+XZKit.swift */,
 				2916366425D67F51001BFE25 /* UIView+XZKit.h */,
 				2916365D25D67F51001BFE25 /* UIView+XZKit.m */,
 				296330F925D108DB00BB1BEF /* UIView+XZKit.swift */,
@@ -800,6 +805,9 @@
 				2970B16825E21EA700D905EA /* XZImageBorderArrow.m */,
 				29B5389625DE5E67009A07D3 /* XZImageLevels.h */,
 				29B5389725DE5E67009A07D3 /* XZImageLevels.m */,
+				299D574725D8EC6D0097C27A /* XZImageLevels.swift */,
+				29EAF21325E4157900358B65 /* UIImage+XZImage.h */,
+				29EAF21425E4157900358B65 /* UIImage+XZImage.m */,
 				29B5388725DE46B7009A07D3 /* Private */,
 			);
 			path = Image;
@@ -835,6 +843,18 @@
 			path = Extensions;
 			sourceTree = "<group>";
 		};
+		29EAF1ED25E4080500358B65 /* Color */ = {
+			isa = PBXGroup;
+			children = (
+				29EAF1EE25E4081400358B65 /* XZColor.h */,
+				29EAF1EF25E4081400358B65 /* XZColor.m */,
+				29EAF20025E408E900358B65 /* UIColor+XZColor.h */,
+				29EAF20125E408E900358B65 /* UIColor+XZColor.m */,
+				299D574325D8E58A0097C27A /* UIColor+XZKit.swift */,
+			);
+			path = Color;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXHeadersBuildPhase section */
@@ -845,6 +865,7 @@
 				29B5385825DD0275009A07D3 /* XZImageCorner.h in Headers */,
 				296330CB25D1000E00BB1BEF /* XZDataDigester.h in Headers */,
 				296330DA25D1000E00BB1BEF /* XZAppLanguage.h in Headers */,
+				29EAF20225E408E900358B65 /* UIColor+XZColor.h in Headers */,
 				295D51F325D98E7100283581 /* XZDataCryptorAlgorithm.h in Headers */,
 				29EAF1AD25E2B9D200358B65 /* XZImage+Extension.h in Headers */,
 				2916366F25D67F51001BFE25 /* UIView+XZKit.h in Headers */,
@@ -859,6 +880,7 @@
 				2963311025D108DC00BB1BEF /* XZCharacterCase.h in Headers */,
 				296DED4B25DFEA2B00343A6A /* XZImageLinePathPoint.h in Headers */,
 				291F577E25E10E5800862D31 /* XZImageLineDash.h in Headers */,
+				29EAF21525E4157900358B65 /* UIImage+XZImage.h in Headers */,
 				29632F2925D058E000BB1BEF /* XZKit.h in Headers */,
 				29B5388A25DE46E8009A07D3 /* XZImageBorderArrow+Extension.h in Headers */,
 				296330B925D1000E00BB1BEF /* NSBundle+XZKit.h in Headers */,
@@ -866,6 +888,7 @@
 				296330C525D1000E00BB1BEF /* XZImageViewer.h in Headers */,
 				296DED3D25DFE8F500343A6A /* XZImageLinePath.h in Headers */,
 				2970B18225E2323E00D905EA /* XZImageCorners+Extension.h in Headers */,
+				29EAF1F025E4081400358B65 /* XZColor.h in Headers */,
 				2970B16925E21EA700D905EA /* XZImageBorderArrow.h in Headers */,
 				2970B15C25E219C600D905EA /* XZImageBorders+Extension.h in Headers */,
 				2963311125D108DC00BB1BEF /* XZDefer.h in Headers */,
@@ -876,7 +899,6 @@
 				299D574F25D906FA0097C27A /* XZKit+JSON.h in Headers */,
 				29B5384325DD0254009A07D3 /* XZImageBorders.h in Headers */,
 				296330C025D1000E00BB1BEF /* XZCarouselViewController.h in Headers */,
-				2916366925D67F51001BFE25 /* UIColor+XZKit.h in Headers */,
 				2963308D25D1000E00BB1BEF /* XZAppRedirection.h in Headers */,
 				296330CE25D1000E00BB1BEF /* XZAnimatedImage.h in Headers */,
 				296330DB25D1000E00BB1BEF /* NSBundle+XZAppLanguage.h in Headers */,
@@ -1100,6 +1122,7 @@
 				29B5387725DD1681009A07D3 /* XZImageLine.m in Sources */,
 				2963311C25D108DC00BB1BEF /* XZLog.swift in Sources */,
 				2963311525D108DC00BB1BEF /* XZKit+Date.swift in Sources */,
+				29EAF20325E408E900358B65 /* UIColor+XZColor.m in Sources */,
 				2963308525D1000E00BB1BEF /* XZNavigationBarCustomizable.swift in Sources */,
 				296330BB25D1000E00BB1BEF /* XZKit+JSON.swift in Sources */,
 				296330C925D1000E00BB1BEF /* XZImageCacheManager.swift in Sources */,
@@ -1125,11 +1148,11 @@
 				296330DC25D1000E00BB1BEF /* XZAppLanguageBundle.m in Sources */,
 				299D575025D906FA0097C27A /* XZKit+JSON.m in Sources */,
 				296330DE25D1000E00BB1BEF /* XZAppLanguage.swift in Sources */,
-				2916366A25D67F51001BFE25 /* UIColor+XZKit.m in Sources */,
 				296330B725D1000E00BB1BEF /* DispatchQueue+XZKit.swift in Sources */,
 				29B5383725DD0127009A07D3 /* XZImage.m in Sources */,
 				296330C825D1000E00BB1BEF /* XZCacheManger.swift in Sources */,
 				296DED4525DFEA1E00343A6A /* XZImageLinePathArc.m in Sources */,
+				29EAF21625E4157900358B65 /* UIImage+XZImage.m in Sources */,
 				296330C425D1000E00BB1BEF /* XZCarouselView.ItemView.m in Sources */,
 				296330CF25D1000E00BB1BEF /* XZContentStatus.swift in Sources */,
 				295D51CC25D9236800283581 /* XZKit+HexEncoding.swift in Sources */,
@@ -1144,6 +1167,7 @@
 				2916366C25D67F51001BFE25 /* UIApplication+XZKit.swift in Sources */,
 				2963308625D1000E00BB1BEF /* UINavigationBar+XZNavigationController.swift in Sources */,
 				296330BA25D1000E00BB1BEF /* NSString+XZDataDigester.m in Sources */,
+				29EAF1F125E4081400358B65 /* XZColor.m in Sources */,
 				296330D525D1000E00BB1BEF /* XZTextImageLayout.swift in Sources */,
 				296330D125D1000E00BB1BEF /* XZContentStatusView.swift in Sources */,
 				296330D925D1000E00BB1BEF /* XZAppLanguage.m in Sources */,
@@ -1159,7 +1183,7 @@
 				2963310C25D108DC00BB1BEF /* XZLog.m in Sources */,
 				2963312225D108DC00BB1BEF /* XZDefer.m in Sources */,
 				295D51E225D941B800283581 /* XZDataDigester.swift in Sources */,
-				299D574825D8EC6D0097C27A /* UIImage+XZKit.swift in Sources */,
+				299D574825D8EC6D0097C27A /* XZImageLevels.swift in Sources */,
 				2963308925D1000E00BB1BEF /* XZNavigationController.swift in Sources */,
 				2963308825D1000E00BB1BEF /* XZNavigationBar.swift in Sources */,
 				296330D325D1000E00BB1BEF /* XZTextImageControl.swift in Sources */,

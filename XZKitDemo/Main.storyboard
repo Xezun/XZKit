@@ -740,6 +740,9 @@
                                                 </label>
                                             </subviews>
                                         </tableViewCellContentView>
+                                        <connections>
+                                            <segue destination="iaH-cz-3Oc" kind="show" identifier="color" id="K0p-Fu-6M8"/>
+                                        </connections>
                                     </tableViewCell>
                                 </cells>
                             </tableViewSection>
@@ -959,7 +962,7 @@
                                 </connections>
                             </view>
                             <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="3EZ-jd-Tlw" customClass="UIColorTestsView">
-                                <rect key="frame" x="10" y="477.5" width="394" height="42"/>
+                                <rect key="frame" x="10" y="457.5" width="394" height="42"/>
                                 <subviews>
                                     <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="fill" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="jk7-Xg-TrI">
                                         <rect key="frame" x="0.0" y="0.0" width="42" height="42"/>
@@ -1005,7 +1008,7 @@
                                 </connections>
                             </view>
                             <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="iMb-Qf-hot" customClass="UIColorTestsView">
-                                <rect key="frame" x="10" y="549.5" width="394" height="42"/>
+                                <rect key="frame" x="10" y="509.5" width="394" height="42"/>
                                 <subviews>
                                     <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="fill" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="cfc-Sb-2gi">
                                         <rect key="frame" x="0.0" y="0.0" width="42" height="42"/>
@@ -1051,7 +1054,7 @@
                                 </connections>
                             </view>
                             <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="15z-Ht-bnG" customClass="UIColorTestsView">
-                                <rect key="frame" x="10" y="621.5" width="394" height="42"/>
+                                <rect key="frame" x="10" y="561.5" width="394" height="42"/>
                                 <subviews>
                                     <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="fill" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="bse-bZ-6MD">
                                         <rect key="frame" x="0.0" y="0.0" width="42" height="42"/>
@@ -1159,7 +1162,7 @@
                             <constraint firstItem="mNj-P1-DO9" firstAttribute="leading" secondItem="mmb-by-QTJ" secondAttribute="trailing" constant="10" id="CAJ-7Y-gAL"/>
                             <constraint firstItem="mNj-P1-DO9" firstAttribute="top" secondItem="Un9-VX-ZR1" secondAttribute="bottom" constant="5" id="Jik-41-diG"/>
                             <constraint firstItem="CuL-xs-7tu" firstAttribute="top" secondItem="Vb8-dq-nX4" secondAttribute="top" constant="100" id="Kyw-VT-i3J"/>
-                            <constraint firstItem="15z-Ht-bnG" firstAttribute="top" secondItem="iMb-Qf-hot" secondAttribute="bottom" constant="30" id="LTa-RQ-tC5"/>
+                            <constraint firstItem="15z-Ht-bnG" firstAttribute="top" secondItem="iMb-Qf-hot" secondAttribute="bottom" constant="10" id="LTa-RQ-tC5"/>
                             <constraint firstItem="CuL-xs-7tu" firstAttribute="top" secondItem="OYV-zH-dXS" secondAttribute="bottom" constant="5" id="MdA-AJ-q0m"/>
                             <constraint firstAttribute="trailing" relation="greaterThanOrEqual" secondItem="OYV-zH-dXS" secondAttribute="trailing" constant="50" id="QhH-iU-Ff5"/>
                             <constraint firstItem="Vb8-dq-nX4" firstAttribute="trailing" secondItem="IKR-UE-UCn" secondAttribute="trailing" constant="10" id="Uvr-u9-BA6"/>
@@ -1167,13 +1170,13 @@
                             <constraint firstItem="mNj-P1-DO9" firstAttribute="centerY" secondItem="mmb-by-QTJ" secondAttribute="centerY" id="VYL-UP-Twf"/>
                             <constraint firstItem="mmb-by-QTJ" firstAttribute="leading" secondItem="9Vf-Wa-Btg" secondAttribute="leading" id="X6b-8Z-tza"/>
                             <constraint firstItem="15z-Ht-bnG" firstAttribute="leading" secondItem="7dj-MN-Frh" secondAttribute="leading" constant="10" id="Xth-Ar-1aV"/>
-                            <constraint firstItem="3EZ-jd-Tlw" firstAttribute="top" secondItem="IKR-UE-UCn" secondAttribute="bottom" constant="30" id="YyK-D7-ulH"/>
+                            <constraint firstItem="3EZ-jd-Tlw" firstAttribute="top" secondItem="IKR-UE-UCn" secondAttribute="bottom" constant="10" id="YyK-D7-ulH"/>
                             <constraint firstItem="Vb8-dq-nX4" firstAttribute="trailing" secondItem="3EZ-jd-Tlw" secondAttribute="trailing" constant="10" id="bUt-EC-OI2"/>
                             <constraint firstItem="Vb8-dq-nX4" firstAttribute="trailing" secondItem="CuL-xs-7tu" secondAttribute="trailing" constant="50" id="cKw-IS-SQ1"/>
                             <constraint firstAttribute="trailing" secondItem="iMb-Qf-hot" secondAttribute="trailing" constant="10" id="cXi-vm-SBe"/>
                             <constraint firstItem="Vb8-dq-nX4" firstAttribute="trailing" secondItem="mNj-P1-DO9" secondAttribute="trailing" constant="20" id="cch-fd-vJ7"/>
                             <constraint firstItem="mmb-by-QTJ" firstAttribute="trailing" secondItem="9Vf-Wa-Btg" secondAttribute="trailing" id="dpQ-51-p45"/>
-                            <constraint firstItem="iMb-Qf-hot" firstAttribute="top" secondItem="3EZ-jd-Tlw" secondAttribute="bottom" constant="30" id="gDp-YV-rEt"/>
+                            <constraint firstItem="iMb-Qf-hot" firstAttribute="top" secondItem="3EZ-jd-Tlw" secondAttribute="bottom" constant="10" id="gDp-YV-rEt"/>
                             <constraint firstItem="mmb-by-QTJ" firstAttribute="top" secondItem="9Vf-Wa-Btg" secondAttribute="bottom" constant="5" id="gzW-ca-1ch"/>
                             <constraint firstItem="IKR-UE-UCn" firstAttribute="leading" secondItem="Vb8-dq-nX4" secondAttribute="leading" constant="10" id="kFn-IC-iaA"/>
                             <constraint firstItem="Iyc-fQ-amh" firstAttribute="leading" secondItem="7dj-MN-Frh" secondAttribute="leading" constant="50" id="oZJ-mt-RnO"/>
@@ -1182,7 +1185,13 @@
                             <constraint firstItem="CuL-xs-7tu" firstAttribute="leading" secondItem="Vb8-dq-nX4" secondAttribute="leading" constant="50" id="zNw-gy-2Ax"/>
                         </constraints>
                     </view>
-                    <navigationItem key="navigationItem" title="UIColor" id="Pec-S6-bO5"/>
+                    <navigationItem key="navigationItem" title="UIColor" id="Pec-S6-bO5">
+                        <barButtonItem key="rightBarButtonItem" title="确定" style="done" id="700-8Q-sWN">
+                            <connections>
+                                <segue destination="NJM-yE-bys" kind="unwind" unwindAction="unwindFromColorVC:" id="Nix-WB-jst"/>
+                            </connections>
+                        </barButtonItem>
+                    </navigationItem>
                     <connections>
                         <outlet property="alphaSwitch" destination="mNj-P1-DO9" id="3uP-kU-dJ8"/>
                         <outlet property="codeLabel" destination="Iyc-fQ-amh" id="wlD-Py-bjG"/>
@@ -1226,12 +1235,13 @@
                         <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
-                            <textField opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="line" placeholder="请输入……" textAlignment="natural" minimumFontSize="17" clearButtonMode="whileEditing" translatesAutoresizingMaskIntoConstraints="NO" id="IGh-cI-gsc">
+                            <textField opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" placeholder="请输入……" textAlignment="natural" minimumFontSize="17" clearButtonMode="whileEditing" translatesAutoresizingMaskIntoConstraints="NO" id="IGh-cI-gsc">
                                 <rect key="frame" x="20" y="118" width="374" height="50"/>
                                 <constraints>
                                     <constraint firstAttribute="height" constant="50" id="W44-tb-pmm"/>
                                 </constraints>
-                                <fontDescription key="fontDescription" type="system" pointSize="24"/>
+                                <color key="textColor" white="0.33333333333333331" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                 <textInputTraits key="textInputTraits" autocorrectionType="no" keyboardType="decimalPad"/>
                                 <connections>
                                     <outlet property="delegate" destination="MXC-rQ-09E" id="bOn-9Y-o9V"/>
@@ -1323,6 +1333,9 @@
                                                 </label>
                                             </subviews>
                                         </tableViewCellContentView>
+                                        <connections>
+                                            <segue destination="iaH-cz-3Oc" kind="show" identifier="color" id="bOV-VI-1Nb"/>
+                                        </connections>
                                     </tableViewCell>
                                 </cells>
                             </tableViewSection>
@@ -1449,7 +1462,8 @@
     <inferredMetricsTieBreakers>
         <segue reference="WHf-j1-V5E"/>
         <segue reference="XF2-4O-VHY"/>
-        <segue reference="rae-bi-UTa"/>
+        <segue reference="wtW-M1-GnA"/>
+        <segue reference="bOV-VI-1Nb"/>
     </inferredMetricsTieBreakers>
     <resources>
         <image name="icon_clean" width="30" height="30"/>

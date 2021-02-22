@@ -38,6 +38,13 @@
         obj.delegate = self;
     }];
     
+    XZColor color = self.color.XZColor;
+    
+    self.testsViews[0].value = color.red;
+    self.testsViews[1].value = color.green;
+    self.testsViews[2].value = color.blue;
+    self.testsViews[3].value = color.alpha;
+    
     [self showColor];
 }
 
@@ -112,6 +119,8 @@
     }
     
     self.displayView.backgroundColor = color;
+    
+    self.color = color;
     
     XZColor rgba = color.XZColor;
     XZLog(@"%ld, %ld, %ld, %ld => %ld, %ld, %ld, %ld", r, g, b, a, rgba.red, rgba.green, rgba.blue, rgba.alpha);

@@ -7,8 +7,11 @@
 
 #import "XZImageBorderEditor.h"
 #import "XZNumberInputViewController.h"
+#import "XZColorViewController.h"
 
 @interface XZImageBorderEditor ()
+
+@property (nonatomic, strong) NSMutableArray *dataArray;
 
 @end
 
@@ -24,11 +27,22 @@
     [self.tableView reloadData];
 }
 
+- (IBAction)unwindFromColorVC:(UIStoryboardSegue *)unwindSegue {
+    XZColorViewController *vc = unwindSegue.sourceViewController;
+    self.line.color = vc.color;
+    [self.tableView reloadData];
+}
+
 - (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {
-    XZNumberInputViewController *vc = segue.destinationViewController;
+    __kindof UIViewController *vc = segue.destinationViewController;
     if ([vc isKindOfClass:[XZNumberInputViewController class]]) {
-        vc.title = segue.identifier;
-        vc.value = [[self.line valueForKeyPath:segue.identifier] doubleValue];
+        XZNumberInputViewController *input = vc;
+        input.title = segue.identifier;
+        input.value = [[self.line valueForKeyPath:segue.identifier] doubleValue];
+    } else if ([vc isKindOfClass:[XZColorViewController class]]) {
+        XZColorViewController *colorVC = vc;
+        colorVC.title = segue.identifier;
+        colorVC.color = self.line.color;
     }
 }
 
@@ -45,7 +59,7 @@
                     break;
                 case 1: {
                     XZColor color = self.line.color.XZColor;
-                    cell.detailTextLabel.text = [NSString stringWithFormat:@"#%02lX%02lX%02lX%02lX", color.red, color.green, color.blue, color.alpha];
+                    cell.detailTextLabel.text = NSStringFromXZColor(color);
                     break;
                 }
                 default:
@@ -75,7 +89,7 @@
             break;
         }
         case 2: {
-            cell.detailTextLabel.text = @"";
+            cell.detailTextLabel.text = self.line.dash.description;
             break;
         }
             
@@ -85,49 +99,5 @@
     
     return cell;
 }
-
-/*
-// Override to support conditional editing of the table view.
-- (BOOL)tableView:(UITableView *)tableView canEditRowAtIndexPath:(NSIndexPath *)indexPath {
-    // Return NO if you do not want the specified item to be editable.
-    return YES;
-}
-*/
-
-/*
-// Override to support editing the table view.
-- (void)tableView:(UITableView *)tableView commitEditingStyle:(UITableViewCellEditingStyle)editingStyle forRowAtIndexPath:(NSIndexPath *)indexPath {
-    if (editingStyle == UITableViewCellEditingStyleDelete) {
-        // Delete the row from the data source
-        [tableView deleteRowsAtIndexPaths:@[indexPath] withRowAnimation:UITableViewRowAnimationFade];
-    } else if (editingStyle == UITableViewCellEditingStyleInsert) {
-        // Create a new instance of the appropriate class, insert it into the array, and add a new row to the table view
-    }   
-}
-*/
-
-/*
-// Override to support rearranging the table view.
-- (void)tableView:(UITableView *)tableView moveRowAtIndexPath:(NSIndexPath *)fromIndexPath toIndexPath:(NSIndexPath *)toIndexPath {
-}
-*/
-
-/*
-// Override to support conditional rearranging of the table view.
-- (BOOL)tableView:(UITableView *)tableView canMoveRowAtIndexPath:(NSIndexPath *)indexPath {
-    // Return NO if you do not want the item to be re-orderable.
-    return YES;
-}
-*/
-
-/*
-#pragma mark - Navigation
-
-// In a storyboard-based application, you will often want to do a little preparation before navigation
-- (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {
-    // Get the new view controller using [segue destinationViewController].
-    // Pass the selected object to the new view controller.
-}
-*/
 
 @end

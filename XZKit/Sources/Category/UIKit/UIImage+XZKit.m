@@ -33,17 +33,6 @@
 @end
 
 
-#pragma mark - 绘制纯色图片
-
-@implementation UIImage (XZKitDrawing)
-
-+ (UIImage *)xz_imageWithXZImage:(XZImage *)image {
-    return image.image;
-}
-
-@end
-
-
 @implementation UIImage (XZKitBlending)
 
 #pragma mark - 更改图片的透明度
@@ -142,12 +131,6 @@
     
     // 必须保持 Scale 一致，否则可能只会渲染出部分图片
     return [UIImage imageWithCGImage:cgImage scale:self.scale orientation:self.imageOrientation];
-}
-
-#pragma mark - 色阶
-
-- (UIImage *)xz_imageByFilteringImageLevels:(XZImageLevels)levels {
-    return XZImageLevelsFilteringImage(levels, self);
 }
 
 @end

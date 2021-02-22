@@ -7,6 +7,7 @@
 
 #import "XZImageCornerEditor.h"
 #import "XZNumberInputViewController.h"
+#import "XZColorViewController.h"
 
 @interface XZImageCornerEditor ()
 
@@ -30,11 +31,22 @@
     [self.tableView reloadData];
 }
 
+- (IBAction)unwindFromColorVC:(UIStoryboardSegue *)unwindSegue {
+    XZColorViewController *vc = unwindSegue.sourceViewController;
+    self.line.color = vc.color;
+    [self.tableView reloadData];
+}
+
 - (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {
-    XZNumberInputViewController *vc = segue.destinationViewController;
+    __kindof UIViewController *vc = segue.destinationViewController;
     if ([vc isKindOfClass:[XZNumberInputViewController class]]) {
-        vc.title = segue.identifier;
-        vc.value = [[self.line valueForKeyPath:segue.identifier] doubleValue];
+        XZNumberInputViewController *input = vc;
+        input.title = segue.identifier;
+        input.value = [[self.line valueForKeyPath:segue.identifier] doubleValue];
+    } else if ([vc isKindOfClass:[XZColorViewController class]]) {
+        XZColorViewController *colorVC = vc;
+        colorVC.title = segue.identifier;
+        colorVC.color = self.line.color;
     }
 }
 
@@ -50,7 +62,7 @@
                     break;
                 case 1: {
                     XZColor color = self.line.color.XZColor;
-                    cell.detailTextLabel.text = [NSString stringWithFormat:@"#%02lX%02lX%02lX%02lX", color.red, color.green, color.blue, color.alpha];
+                    cell.detailTextLabel.text = NSStringFromXZColor(color);
                     break;
                 }
                 default:
@@ -60,7 +72,7 @@
         }
         case 1: {
             XZImageLineDash *dash = self.line.dash;
-            cell.detailTextLabel.text = [NSString stringWithFormat:@"%.2f - %.2f", dash.width, dash.space];
+            cell.detailTextLabel.text = dash.description;
             break;
         }
         case 2: {

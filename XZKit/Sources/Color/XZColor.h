@@ -1,8 +1,8 @@
 //
-//  UIColor.h
+//  XZColor.h
 //  XZKit
 //
-//  Created by Xezun on 2017/10/24.
+//  Created by Xezun on 2021/2/22.
 //
 
 #import <UIKit/UIKit.h>
@@ -20,7 +20,7 @@ typedef struct XZColor {
     NSInteger blue;
     /// 透明 [0, 255]
     NSInteger alpha;
-} XZColor;
+} NS_SWIFT_NAME(Color) XZColor;
 
 /// 颜色通道。
 typedef NS_OPTIONS(NSUInteger, XZColorChannel) {
@@ -38,82 +38,35 @@ typedef NS_OPTIONS(NSUInteger, XZColorChannel) {
     XZColorChannelAll   = ~0l,
 } NS_SWIFT_NAME(XZColor.Channel);
 
-@interface UIColor (XZKit)
 
-/// 颜色的 RGBA 值。
-@property (nonatomic, readonly) XZColor XZColor NS_SWIFT_NAME(xzColor);
-
-/// 通过一个用十六进制数表示的 RGBA 颜色值创建 UIColor 对象。
-/// @note 数字必须是 RGBA 值。
-/// @param color An XZColor value
-/// @return UIColor
-+ (UIColor *)xz_colorWithXZColor:(XZColor)color NS_SWIFT_NAME(init(_:));
-
-/// 通过一个用十六进制数表示的 RGBA 颜色值创建 UIColor 对象。
-/// @note 数字必须是 RGBA 值。
-/// @param rgb An RGBA value like 0xAABBCC
-/// @return UIColor
-+ (UIColor *)xz_colorWithRGB:(NSInteger)rgb NS_SWIFT_NAME(init(rgb:));
-
-/// 通过一个用十六进制数表示的 RGBA 颜色值创建 UIColor 对象。
-/// @note 数字必须是 RGBA 值。
-/// @param rgba An RGBA value like 0xAABBCCFF
-/// @return UIColor
-+ (UIColor *)xz_colorWithRGBA:(NSInteger)rgba NS_SWIFT_NAME(init(rgba:));
-
-/// 使用 [0, 255] 颜色通道值创建 UIColor 对象。
-/// @param red [0, 255]
-/// @param green [0, 255]
-/// @param blue [0, 255]
-/// @param alpha [0, 255]
-+ (UIColor *)xz_colorWithRed:(NSInteger)red Green:(NSInteger)green Blue:(NSInteger)blue Alpha:(NSInteger)alpha NS_SWIFT_NAME(init(Red:Green:Blue:Alpha:));
-
-/// 通过十六进制数表示的颜色值字符串，创建 UIColor 。
-/// @param string A string like #F00 or #1A2B3C or #1A2B3CFF.
-/// @return UIColor
-+ (UIColor *)xz_colorWithString:(NSString *)string NS_SWIFT_NAME(init(_:));
-
-/// 通过十六进制数表示的颜色值字符串，创建 UIColor 。
-/// @note 从字符串中读取的 alpha 值将被忽略。
-/// @param string A string like #F00 or #1A2B3C or #1A2B3CFF
-/// @param alpha The alpha
-+ (UIColor *)xz_colorWithString:(NSString *)string alpha:(CGFloat)alpha NS_SWIFT_NAME(init(_:alpha:));
-
-@end
-
-
-#pragma mark - XZColor
-
-FOUNDATION_STATIC_INLINE XZColor XZColorMake(NSInteger red, NSInteger green, NSInteger blue, NSInteger alpha) XZ_OVERLOAD XZ_OBJC {
+FOUNDATION_STATIC_INLINE XZColor XZColorMake(NSInteger red, NSInteger green, NSInteger blue, NSInteger alpha) XZ_OVERLOAD {
     return (XZColor){red, green, blue, alpha};
 }
 
 /// 通过 RGBA 的整数形式构造 RGBA 颜色。
 /// @param rgbaValue RGBA 的整数形式
-FOUNDATION_STATIC_INLINE XZColor XZColorMake(NSInteger rgbaValue) XZ_OVERLOAD XZ_OBJC {
+FOUNDATION_STATIC_INLINE XZColor XZColorMake(NSInteger rgbaValue) XZ_OVERLOAD {
     return XZColorMake((rgbaValue>>24)&0xFF, (rgbaValue>>16)&0xFF, (rgbaValue>>8)&0xFF, rgbaValue&0xFF);
 }
 
 /// 将 RGBA 转换成整数形式。
-/// @param rgba rgba 颜色
-FOUNDATION_STATIC_INLINE NSInteger XZIntegerFromColor(XZColor rgba) XZ_OBJC {
-    return rgba.alpha + (rgba.blue << 8) + (rgba.green << 16) + (rgba.red << 24);
+/// @param color rgba 颜色
+FOUNDATION_STATIC_INLINE NSInteger XZIntegerFromColor(XZColor color) {
+    return color.alpha + (color.blue << 8) + (color.green << 16) + (color.red << 24);
 }
 
 /// 解析字符串中符合颜色值（连续3位以上的十六进制字符）的部分。
 /// @param string 包含颜色值的字符串
 UIKIT_EXTERN XZColor XZColorFromString(NSString *string) NS_SWIFT_NAME(XZColor.init(_:));
 
+FOUNDATION_STATIC_INLINE NSString *NSStringFromXZColor(XZColor color) {
+    return [NSString stringWithFormat:@"#%02lX%02lX%02lX%02lX", (long)color.red, (long)color.green, (long)color.blue, (long)color.alpha];
+}
 
-
-#pragma mark - 便利函数
-
-/// 解决命名冲突：
-/// 在引用本头文件前，提前定义宏 XZ_RGBA_COLOR 可屏蔽下面的静态内联函数，避免命名冲突。
-#ifndef XZ_RGBA_COLOR
-#define XZ_RGBA_COLOR
-
-#pragma mark - RGBA
+/// 解决命名冲突的办法：
+/// 在引用本头文件前，提前定义宏 XZ_COLOR_RGBA_FUNCS 可屏蔽下面的静态内联函数，即避免命名冲突。
+#ifndef XZ_COLOR_RGBA_FUNCS
+#define XZ_COLOR_RGBA_FUNCS
 
 /// 通过 XZRGBA 构造 UIColor 对象。
 /// @param rgba RGBA 颜色值
@@ -124,6 +77,8 @@ FOUNDATION_STATIC_INLINE UIColor *rgba(XZColor rgba) XZ_OVERLOAD XZ_OBJC {
     CGFloat const alpha = rgba.alpha / 255.0;
     return [UIColor colorWithRed:red green:green blue:blue alpha:alpha];
 }
+
+#pragma mark - RGBA
 
 /// 通过整数形式的 RGBA 颜色值构造 UIColor 对象。
 FOUNDATION_STATIC_INLINE UIColor *rgba(NSInteger value) XZ_OVERLOAD XZ_OBJC {
@@ -189,11 +144,21 @@ FOUNDATION_STATIC_INLINE UIColor *rgba(NSString *string) XZ_OVERLOAD XZ_OBJC {
     return rgba(value.red, value.green, value.blue, value.alpha);
 }
 
+/// 通过字符串形式的 RGBA 颜色值构造 UIColor 对象。
+FOUNDATION_STATIC_INLINE UIColor *rgba(NSString *string, CGFloat alpha) XZ_OVERLOAD XZ_OBJC {
+    XZColor const value = XZColorFromString(string);
+    CGFloat const red   = value.red / 255.0;
+    CGFloat const green = value.green / 255.0;
+    CGFloat const blue  = value.blue / 255.0;
+    return rgba(red, green, blue, alpha);
+}
+
 /// 通过字符串形式的 RGB 颜色值构造 UIColor 对象。
 FOUNDATION_STATIC_INLINE UIColor *rgb(NSString *string) XZ_OVERLOAD XZ_OBJC {
     XZColor const value = XZColorFromString(string);
     return rgb(value.red, value.green, value.blue);
 }
+
 
 #endif
 

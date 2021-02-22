@@ -17,12 +17,14 @@ NS_ASSUME_NONNULL_BEGIN
 
 @protocol XZImageLinePath;
 
-//NS_SWIFT_NAME(Image)
+NS_SWIFT_NAME(Image)
 @interface XZImage : NSObject
 
 /// 绘制并生成 UIImage 对象。
 /// @note XZImage 将持生成的图片，且在属性发生改动，或收到内存警告时，释放该图片，并在调用本属性再次生成。
 @property (nonatomic, strong, readonly) UIImage *image;
+/// 如果图片已绘制，则返回。
+@property (nonatomic, strong, readonly) UIImage *imageIfLoaded;
 
 /// 图片大小。
 /// @note 如果设置，属性 image 生成的大小不会超过此大小；

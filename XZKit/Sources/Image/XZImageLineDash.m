@@ -193,4 +193,16 @@
     }
 }
 
+- (NSString *)description {
+    NSMutableString *stringM = [NSMutableString stringWithCapacity:_numberOfSegments * 7];
+    for (NSInteger i = 0; i < _numberOfSegments; i++) {
+        if (i == 0) {
+            [stringM appendFormat:@"%.2f", _segments[i]];
+        } else {
+            [stringM appendFormat:@", %.2f", _segments[i]];
+        }
+    }
+    return [NSString stringWithFormat:@"[%@]", stringM];
+}
+
 @end

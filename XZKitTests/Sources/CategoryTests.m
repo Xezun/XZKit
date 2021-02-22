@@ -81,6 +81,14 @@
         UIColor *color = rgba(@"1234567890");
         XZColor value = color.XZColor;
         XCTAssert(value.red == 0x12 && value.green == 0x34 && value.blue == 0x56 && value.alpha == 0x78);
+    } {
+        UIColor *color = rgba(@"中国12345678人90");
+        XZColor value = color.XZColor;
+        XCTAssert(value.red == 0x12 && value.green == 0x34 && value.blue == 0x56 && value.alpha == 0x78);
+    } {
+        UIColor *color = rgba(@"好12对34🈚️567890");
+        XZColor value = color.XZColor;
+        XCTAssert(value.red == 0x56 && value.green == 0x78 && value.blue == 0x90 && value.alpha == 0xff);
     }
 }
 

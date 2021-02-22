@@ -7,7 +7,7 @@
 
 #import <UIKit/UIKit.h>
 #import <XZKit/XZKitDefines.h>
-#import <XZKit/UIColor+XZKit.h>
+#import <XZKit/UIColor+XZColor.h>
 
 NS_ASSUME_NONNULL_BEGIN
 

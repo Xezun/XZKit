@@ -58,6 +58,10 @@
     return _image;
 }
 
+- (UIImage *)imageIfLoaded {
+    return _image;
+}
+
 /// 如果当前设置了大小，则返回该大小；
 /// 如果设置了背景图，则根据背景图自动确定一个大小；
 /// 否则返回 CGSizeZero 。
