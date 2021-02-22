@@ -463,7 +463,7 @@
                                                     </userDefinedRuntimeAttribute>
                                                 </userDefinedRuntimeAttributes>
                                                 <connections>
-                                                    <segue destination="tDK-c1-NNy" kind="show" identifier="topRight" id="7hw-2d-u0j"/>
+                                                    <segue destination="dTv-n6-hiM" kind="show" identifier="topRight" id="7hw-2d-u0j"/>
                                                 </connections>
                                             </button>
                                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="GD5-OR-7IT">
@@ -479,7 +479,7 @@
                                                     </userDefinedRuntimeAttribute>
                                                 </userDefinedRuntimeAttributes>
                                                 <connections>
-                                                    <segue destination="tDK-c1-NNy" kind="show" identifier="bottomRight" id="WHf-j1-V5E"/>
+                                                    <segue destination="dTv-n6-hiM" kind="show" identifier="bottomRight" id="WHf-j1-V5E"/>
                                                 </connections>
                                             </button>
                                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="0aS-mz-PLe">
@@ -495,7 +495,7 @@
                                                     </userDefinedRuntimeAttribute>
                                                 </userDefinedRuntimeAttributes>
                                                 <connections>
-                                                    <segue destination="tDK-c1-NNy" kind="show" identifier="topLeft" id="N5a-Dj-iej"/>
+                                                    <segue destination="dTv-n6-hiM" kind="show" identifier="topLeft" id="N5a-Dj-iej"/>
                                                 </connections>
                                             </button>
                                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="rBJ-Oo-9a8">
@@ -511,7 +511,7 @@
                                                     </userDefinedRuntimeAttribute>
                                                 </userDefinedRuntimeAttributes>
                                                 <connections>
-                                                    <segue destination="tDK-c1-NNy" kind="show" identifier="bottomLeft" id="8Sz-Yv-hP0"/>
+                                                    <segue destination="dTv-n6-hiM" kind="show" identifier="bottomLeft" id="8Sz-Yv-hP0"/>
                                                 </connections>
                                             </button>
                                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="F2x-iC-hcx">
@@ -526,7 +526,7 @@
                                                     </userDefinedRuntimeAttribute>
                                                 </userDefinedRuntimeAttributes>
                                                 <connections>
-                                                    <segue destination="baz-rF-ujp" kind="show" identifier="left" id="4bO-bh-bXs"/>
+                                                    <segue destination="Qpt-KK-PcV" kind="show" identifier="left" id="4bO-bh-bXs"/>
                                                 </connections>
                                             </button>
                                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="OQj-u4-0mn">
@@ -541,7 +541,7 @@
                                                     </userDefinedRuntimeAttribute>
                                                 </userDefinedRuntimeAttributes>
                                                 <connections>
-                                                    <segue destination="baz-rF-ujp" kind="show" identifier="right" id="dZx-Ep-oQs"/>
+                                                    <segue destination="Qpt-KK-PcV" kind="show" identifier="right" id="dZx-Ep-oQs"/>
                                                 </connections>
                                             </button>
                                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="qRN-va-GB4">
@@ -556,7 +556,7 @@
                                                     </userDefinedRuntimeAttribute>
                                                 </userDefinedRuntimeAttributes>
                                                 <connections>
-                                                    <segue destination="baz-rF-ujp" kind="show" identifier="top" id="XF2-4O-VHY"/>
+                                                    <segue destination="Qpt-KK-PcV" kind="show" identifier="top" id="XF2-4O-VHY"/>
                                                 </connections>
                                             </button>
                                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="5HQ-5a-aUF">
@@ -571,7 +571,7 @@
                                                     </userDefinedRuntimeAttribute>
                                                 </userDefinedRuntimeAttributes>
                                                 <connections>
-                                                    <segue destination="baz-rF-ujp" kind="show" identifier="bottom" id="Qc2-mo-Row"/>
+                                                    <segue destination="Qpt-KK-PcV" kind="show" identifier="bottom" id="Qc2-mo-Row"/>
                                                 </connections>
                                             </button>
                                         </subviews>
@@ -714,7 +714,7 @@
                                             </subviews>
                                         </tableViewCellContentView>
                                         <connections>
-                                            <segue destination="FLr-H2-qYg" kind="presentation" id="dNN-8o-zal"/>
+                                            <segue destination="MXC-rQ-09E" kind="show" identifier="width" id="0Ac-LX-JqB"/>
                                         </connections>
                                     </tableViewCell>
                                     <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="none" accessoryType="disclosureIndicator" indentationWidth="10" textLabel="2HU-gn-x7c" detailTextLabel="ap6-Bj-cEg" style="IBUITableViewCellStyleValue1" id="epA-Ih-MoN">
@@ -768,6 +768,9 @@
                                                 </label>
                                             </subviews>
                                         </tableViewCellContentView>
+                                        <connections>
+                                            <segue destination="MXC-rQ-09E" kind="show" identifier="arrow.height" id="SbE-YZ-Len"/>
+                                        </connections>
                                     </tableViewCell>
                                     <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="none" accessoryType="disclosureIndicator" indentationWidth="10" textLabel="iYI-6d-oUO" detailTextLabel="hXl-WA-2GI" style="IBUITableViewCellStyleValue1" id="kbC-EM-59p">
                                         <rect key="frame" x="0.0" y="242" width="414" height="43.5"/>
@@ -792,6 +795,9 @@
                                                 </label>
                                             </subviews>
                                         </tableViewCellContentView>
+                                        <connections>
+                                            <segue destination="MXC-rQ-09E" kind="show" identifier="arrow.width" id="rUB-5N-13Q"/>
+                                        </connections>
                                     </tableViewCell>
                                     <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="none" accessoryType="disclosureIndicator" indentationWidth="10" textLabel="mFf-vM-c2J" detailTextLabel="5WG-wY-NZt" style="IBUITableViewCellStyleValue1" id="4OF-rY-LR9">
                                         <rect key="frame" x="0.0" y="285.5" width="414" height="43.5"/>
@@ -816,6 +822,9 @@
                                                 </label>
                                             </subviews>
                                         </tableViewCellContentView>
+                                        <connections>
+                                            <segue destination="MXC-rQ-09E" kind="show" identifier="arrow.anchor" id="QLh-xm-WKr"/>
+                                        </connections>
                                     </tableViewCell>
                                     <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="none" accessoryType="disclosureIndicator" indentationWidth="10" textLabel="uSZ-jB-b94" detailTextLabel="Baj-IU-jCF" style="IBUITableViewCellStyleValue1" id="GkM-Ld-Ti2">
                                         <rect key="frame" x="0.0" y="329" width="414" height="43.5"/>
@@ -840,6 +849,9 @@
                                                 </label>
                                             </subviews>
                                         </tableViewCellContentView>
+                                        <connections>
+                                            <segue destination="MXC-rQ-09E" kind="show" identifier="arrow.vector" id="rae-bi-UTa"/>
+                                        </connections>
                                     </tableViewCell>
                                 </cells>
                             </tableViewSection>
@@ -878,12 +890,18 @@
                         </connections>
                     </tableView>
                     <navigationItem key="navigationItem" id="j4s-xN-kWi">
-                        <barButtonItem key="backBarButtonItem" title="返回" id="Rb2-cO-Zad"/>
+                        <barButtonItem key="backBarButtonItem" title="取消" id="Rb2-cO-Zad"/>
+                        <barButtonItem key="rightBarButtonItem" title="确定" style="done" id="CmW-sG-kXS">
+                            <connections>
+                                <segue destination="5Ui-u7-beR" kind="unwind" unwindAction="unwindFromEditor:" id="z7K-U5-Iru"/>
+                            </connections>
+                        </barButtonItem>
                     </navigationItem>
                 </tableViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="vrK-m1-5Ki" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
+                <exit id="5Ui-u7-beR" userLabel="Exit" sceneMemberID="exit"/>
             </objects>
-            <point key="canvasLocation" x="3578" y="113"/>
+            <point key="canvasLocation" x="4486.9565217391309" y="112.5"/>
         </scene>
         <!--UIColor-->
         <scene sceneID="Erc-dc-add">
@@ -1205,11 +1223,11 @@
             <objects>
                 <viewController id="MXC-rQ-09E" customClass="XZNumberInputViewController" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="EMk-yj-aB2">
-                        <rect key="frame" x="0.0" y="0.0" width="414" height="842"/>
+                        <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <textField opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="line" placeholder="请输入……" textAlignment="natural" minimumFontSize="17" clearButtonMode="whileEditing" translatesAutoresizingMaskIntoConstraints="NO" id="IGh-cI-gsc">
-                                <rect key="frame" x="20" y="86" width="374" height="50"/>
+                                <rect key="frame" x="20" y="118" width="374" height="50"/>
                                 <constraints>
                                     <constraint firstAttribute="height" constant="50" id="W44-tb-pmm"/>
                                 </constraints>
@@ -1229,14 +1247,9 @@
                         </constraints>
                     </view>
                     <navigationItem key="navigationItem" id="gKq-2Q-t06">
-                        <barButtonItem key="leftBarButtonItem" title="取消" style="plain" id="4Q1-Cv-BTh">
-                            <connections>
-                                <segue destination="dDt-Mx-iyJ" kind="unwind" identifier="cancel" unwindAction="unwindFromNumberInput:" id="WCW-vd-x3T"/>
-                            </connections>
-                        </barButtonItem>
                         <barButtonItem key="rightBarButtonItem" title="确定" style="done" id="9aj-xa-Trh">
                             <connections>
-                                <segue destination="dDt-Mx-iyJ" kind="unwind" identifier="confirm" unwindAction="unwindFromNumberInput:" id="sLe-Xz-r0F"/>
+                                <segue destination="bds-U2-rFX" kind="unwind" unwindAction="unwindFromNumberInput:" id="Pp5-Bp-vJv"/>
                             </connections>
                         </barButtonItem>
                     </navigationItem>
@@ -1245,26 +1258,9 @@
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="wbk-va-RWf" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
+                <exit id="bds-U2-rFX" userLabel="Exit" sceneMemberID="exit"/>
             </objects>
-            <point key="canvasLocation" x="5591" y="450"/>
-        </scene>
-        <!--Navigation Controller-->
-        <scene sceneID="CP9-K9-jyS">
-            <objects>
-                <navigationController id="FLr-H2-qYg" sceneMemberID="viewController">
-                    <navigationItem key="navigationItem" id="X40-cg-3wj"/>
-                    <navigationBar key="navigationBar" contentMode="scaleToFill" id="LyZ-rC-uW4">
-                        <rect key="frame" x="0.0" y="0.0" width="414" height="56"/>
-                        <autoresizingMask key="autoresizingMask"/>
-                    </navigationBar>
-                    <connections>
-                        <segue destination="MXC-rQ-09E" kind="relationship" relationship="rootViewController" id="L0F-iH-nbo"/>
-                    </connections>
-                </navigationController>
-                <placeholder placeholderIdentifier="IBFirstResponder" id="2hW-ne-dRx" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
-                <exit id="dDt-Mx-iyJ" userLabel="Exit" sceneMemberID="exit"/>
-            </objects>
-            <point key="canvasLocation" x="4643" y="450"/>
+            <point key="canvasLocation" x="6019" y="450"/>
         </scene>
         <!--Image Corner Editor-->
         <scene sceneID="JZA-Uh-BHw">
@@ -1301,7 +1297,7 @@
                                             </subviews>
                                         </tableViewCellContentView>
                                         <connections>
-                                            <segue destination="FLr-H2-qYg" kind="show" id="zAJ-p6-sse"/>
+                                            <segue destination="MXC-rQ-09E" kind="show" identifier="width" id="wtW-M1-GnA"/>
                                         </connections>
                                     </tableViewCell>
                                     <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="none" accessoryType="disclosureIndicator" indentationWidth="10" textLabel="g1f-Vo-d48" detailTextLabel="jLS-PT-zv1" style="IBUITableViewCellStyleValue1" id="vsf-PU-VVG">
@@ -1383,6 +1379,9 @@
                                                 </label>
                                             </subviews>
                                         </tableViewCellContentView>
+                                        <connections>
+                                            <segue destination="MXC-rQ-09E" kind="show" identifier="radius" id="TL1-d9-L0f"/>
+                                        </connections>
                                     </tableViewCell>
                                 </cells>
                             </tableViewSection>
@@ -1392,19 +1391,65 @@
                             <outlet property="delegate" destination="tDK-c1-NNy" id="w2A-cN-1fn"/>
                         </connections>
                     </tableView>
+                    <toolbarItems/>
                     <navigationItem key="navigationItem" id="qfx-oi-CC5">
-                        <barButtonItem key="backBarButtonItem" title="返回" id="h0f-cA-uLP"/>
+                        <barButtonItem key="backBarButtonItem" title="取消" id="h0f-cA-uLP"/>
+                        <barButtonItem key="rightBarButtonItem" title="确定" style="done" id="r58-rx-5h1">
+                            <connections>
+                                <segue destination="NJM-yE-bys" kind="unwind" unwindAction="unwindFromEditor:" id="cKV-fh-X9J"/>
+                            </connections>
+                        </barButtonItem>
                     </navigationItem>
+                    <simulatedToolbarMetrics key="simulatedBottomBarMetrics"/>
                 </tableViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="MZJ-Kn-6Va" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
+                <exit id="NJM-yE-bys" userLabel="Exit" sceneMemberID="exit"/>
             </objects>
-            <point key="canvasLocation" x="3577" y="790"/>
+            <point key="canvasLocation" x="4486.9565217391309" y="789.50892857142856"/>
+        </scene>
+        <!--Navigation Controller-->
+        <scene sceneID="rr7-jl-3ch">
+            <objects>
+                <navigationController automaticallyAdjustsScrollViewInsets="NO" id="Qpt-KK-PcV" sceneMemberID="viewController">
+                    <toolbarItems/>
+                    <navigationItem key="navigationItem" id="c8K-BI-s7M"/>
+                    <navigationBar key="navigationBar" contentMode="scaleToFill" id="dMp-m7-B3W">
+                        <rect key="frame" x="0.0" y="44" width="414" height="44"/>
+                        <autoresizingMask key="autoresizingMask"/>
+                    </navigationBar>
+                    <nil name="viewControllers"/>
+                    <connections>
+                        <segue destination="baz-rF-ujp" kind="relationship" relationship="rootViewController" id="oAS-To-Sm9"/>
+                    </connections>
+                </navigationController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="7p9-H9-eAo" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="3576.811594202899" y="112.5"/>
+        </scene>
+        <!--Navigation Controller-->
+        <scene sceneID="SrM-vp-Imz">
+            <objects>
+                <navigationController automaticallyAdjustsScrollViewInsets="NO" id="dTv-n6-hiM" sceneMemberID="viewController">
+                    <toolbarItems/>
+                    <navigationItem key="navigationItem" id="5HJ-Wt-qEQ"/>
+                    <navigationBar key="navigationBar" contentMode="scaleToFill" id="Ofj-Vv-EHp">
+                        <rect key="frame" x="0.0" y="44" width="414" height="44"/>
+                        <autoresizingMask key="autoresizingMask"/>
+                    </navigationBar>
+                    <nil name="viewControllers"/>
+                    <connections>
+                        <segue destination="tDK-c1-NNy" kind="relationship" relationship="rootViewController" id="0bE-z2-P2x"/>
+                    </connections>
+                </navigationController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="phv-fe-cnT" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="3576.811594202899" y="789.50892857142856"/>
         </scene>
     </scenes>
     <inferredMetricsTieBreakers>
-        <segue reference="8Sz-Yv-hP0"/>
-        <segue reference="dNN-8o-zal"/>
-        <segue reference="Qc2-mo-Row"/>
+        <segue reference="WHf-j1-V5E"/>
+        <segue reference="XF2-4O-VHY"/>
+        <segue reference="rae-bi-UTa"/>
     </inferredMetricsTieBreakers>
     <resources>
         <image name="icon_clean" width="30" height="30"/>

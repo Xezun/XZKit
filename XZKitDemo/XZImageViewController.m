@@ -128,12 +128,13 @@
     self.imageView.image = self.image.image;
 }
 
-- (void)unwindForSegue:(UIStoryboardSegue *)unwindSegue towardsViewController:(UIViewController *)subsequentVC {
-    [super unwindForSegue:unwindSegue towardsViewController:subsequentVC];
+- (IBAction)unwindFromEditor:(UIStoryboardSegue *)unwindSegue {
+    self.imageView.image = self.image.image;
 }
 
 - (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {
-    XZImageBorderEditor *editVC = segue.destinationViewController;
+    UINavigationController *nav = segue.destinationViewController;
+    XZImageBorderEditor *editVC = nav.topViewController;
     editVC.title = segue.identifier;
     if ([editVC isKindOfClass:[XZImageBorderEditor class]]) {
         editVC.line = [self.image.borders valueForKey:segue.identifier];

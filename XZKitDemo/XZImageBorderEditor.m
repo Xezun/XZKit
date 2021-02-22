@@ -20,14 +20,16 @@
 
 - (IBAction)unwindFromNumberInput:(UIStoryboardSegue *)unwindSegue {
     XZNumberInputViewController *vc = unwindSegue.sourceViewController;
-    self.line.width = vc.value;
+    [self.line setValue:[NSNumber numberWithDouble:vc.value] forKeyPath:vc.title];
     [self.tableView reloadData];
 }
 
 - (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {
-    UINavigationController *nav = segue.destinationViewController;
-    XZNumberInputViewController *vc = nav.viewControllers.firstObject;
-    vc.value = self.line.width;
+    XZNumberInputViewController *vc = segue.destinationViewController;
+    if ([vc isKindOfClass:[XZNumberInputViewController class]]) {
+        vc.title = segue.identifier;
+        vc.value = [[self.line valueForKeyPath:segue.identifier] doubleValue];
+    }
 }
 
 #pragma mark - Table view data source

@@ -6,6 +6,7 @@
 //
 
 #import "XZImageCornerEditor.h"
+#import "XZNumberInputViewController.h"
 
 @interface XZImageCornerEditor ()
 
@@ -23,28 +24,56 @@
     // self.navigationItem.rightBarButtonItem = self.editButtonItem;
 }
 
+- (IBAction)unwindFromNumberInput:(UIStoryboardSegue *)unwindSegue {
+    XZNumberInputViewController *vc = unwindSegue.sourceViewController;
+    [self.line setValue:[NSNumber numberWithDouble:vc.value] forKeyPath:vc.title];
+    [self.tableView reloadData];
+}
+
+- (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {
+    XZNumberInputViewController *vc = segue.destinationViewController;
+    if ([vc isKindOfClass:[XZNumberInputViewController class]]) {
+        vc.title = segue.identifier;
+        vc.value = [[self.line valueForKeyPath:segue.identifier] doubleValue];
+    }
+}
+
 #pragma mark - Table view data source
-
-//- (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView {
-//#warning Incomplete implementation, return the number of sections
-//    return 0;
-//}
-//
-//- (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
-//#warning Incomplete implementation, return the number of rows
-//    return 0;
-//}
-
-/*
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
-    UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:<#@"reuseIdentifier"#> forIndexPath:indexPath];
+    UITableViewCell *cell = [super tableView:tableView cellForRowAtIndexPath:indexPath];
     
-    // Configure the cell...
+    switch (indexPath.section) {
+        case 0: {
+            switch (indexPath.row) {
+                case 0:
+                    cell.detailTextLabel.text = [NSString stringWithFormat:@"%.2f", self.line.width];
+                    break;
+                case 1: {
+                    XZColor color = self.line.color.XZColor;
+                    cell.detailTextLabel.text = [NSString stringWithFormat:@"#%02lX%02lX%02lX%02lX", color.red, color.green, color.blue, color.alpha];
+                    break;
+                }
+                default:
+                    break;
+            }
+            break;
+        }
+        case 1: {
+            XZImageLineDash *dash = self.line.dash;
+            cell.detailTextLabel.text = [NSString stringWithFormat:@"%.2f - %.2f", dash.width, dash.space];
+            break;
+        }
+        case 2: {
+            cell.detailTextLabel.text = [NSString stringWithFormat:@"%.2f", self.line.radius];
+            break;
+        }
+            
+        default:
+            break;
+    }
     
     return cell;
 }
-*/
-
 /*
 // Override to support conditional editing of the table view.
 - (BOOL)tableView:(UITableView *)tableView canEditRowAtIndexPath:(NSIndexPath *)indexPath {
