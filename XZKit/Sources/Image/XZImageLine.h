@@ -15,7 +15,7 @@ NS_SWIFT_NAME(XZImage.Line)
 
 /// 线条颜色
 @property (nonatomic, strong, nullable) UIColor *color;
-/// 线条粗细
+/// 线条粗细，最小值 0
 @property (nonatomic) CGFloat width;
 /// 虚线。
 @property (nonatomic, strong, readonly) XZImageLineDash *dash;

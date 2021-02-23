@@ -51,7 +51,7 @@
 }
 
 - (BOOL)xz_setWidth:(CGFloat)width {
-    if (_width == width) {
+    if (_width == width || width < 0) {
         return NO;
     }
     _width = width;

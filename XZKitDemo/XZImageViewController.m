@@ -51,11 +51,11 @@
 //    image.lineDash.width = 5;
     
     // 设置所有边框
-    image.borders.width = 4.0;
-    image.borders.color = rgba(0xFF0000, 1.0);
+    image.borders.width = 1.0;
+    image.borders.color = rgba(0xFF93FF, 1.0);
     
     // 设置所有圆角
-    image.corners.width  = 4.0;
+    image.corners.width  = 1.0;
     image.corners.color  = UIColor.greenColor;
     image.corners.radius = 20.0;
     
@@ -65,10 +65,10 @@
 //    image.borders.arrow.width  = 20;
 //    image.borders.arrow.height = 10;
     
-//    image.borders.top.arrow.anchor = 0;
-//    image.borders.top.arrow.vector = 0;
-//    image.borders.top.arrow.width  = 40;
-//    image.borders.top.arrow.height = 20;
+    image.borders.top.arrow.anchor = 0;
+    image.borders.top.arrow.vector = 10;
+    image.borders.top.arrow.width  = 20;
+    image.borders.top.arrow.height = 8;
 
     image.borders.bottom.arrow.anchor = 0;
     image.borders.bottom.arrow.vector = 0;

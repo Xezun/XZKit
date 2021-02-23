@@ -123,20 +123,24 @@
     XZImageCorner * const topRightCorner    = self.corners.topRightIfLoaded    ?: self.corners;
     
     // 内容边距
-    CGFloat const top    = (topBorder.arrowIfLoaded.height    + contentInsets.top);
-    CGFloat const left   = (leftBorder.arrowIfLoaded.height   + contentInsets.left);
-    CGFloat const bottom = (bottomBorder.arrowIfLoaded.height + contentInsets.bottom);
-    CGFloat const right  = (rightBorder.arrowIfLoaded.height  + contentInsets.right);
+    CGFloat const top    = (topBorder.arrowIfLoaded.effectiveHeight    + contentInsets.top);
+    CGFloat const left   = (leftBorder.arrowIfLoaded.effectiveHeight   + contentInsets.left);
+    CGFloat const bottom = (bottomBorder.arrowIfLoaded.effectiveHeight + contentInsets.bottom);
+    CGFloat const right  = (rightBorder.arrowIfLoaded.effectiveHeight  + contentInsets.right);
     
     // 所需的最小宽度、高度
     CGFloat width = left + right;
-    width += MAX(topLeftCorner.radius,          bottomLeftCorner.radius);
-    width += MAX(topBorder.arrowIfLoaded.width, bottomBorder.arrowIfLoaded.width);
-    width += MAX(topRightCorner.radius,         bottomRightCorner.radius);
+    width += MAX(topLeftCorner.radius,                   bottomLeftCorner.radius);
+    width += leftBorder.width;
+    width += MAX(topBorder.arrowIfLoaded.effectiveWidth, bottomBorder.arrowIfLoaded.effectiveWidth);
+    width += rightBorder.width;
+    width += MAX(topRightCorner.radius,                  bottomRightCorner.radius);
     CGFloat height = top + bottom;
-    height += MAX(topLeftCorner.radius,           topRightCorner.radius);
-    height += MAX(leftBorder.arrowIfLoaded.width, rightBorder.arrowIfLoaded.width);
-    height += MAX(bottomLeftCorner.radius,        bottomRightCorner.radius);
+    height += MAX(topLeftCorner.radius,                    topRightCorner.radius);
+    height += topBorder.width;
+    height += MAX(leftBorder.arrowIfLoaded.effectiveWidth, rightBorder.arrowIfLoaded.effectiveWidth);
+    height += bottomBorder.width;
+    height += MAX(bottomLeftCorner.radius,                 bottomRightCorner.radius);
     
     CGFloat const deltaW = MAX(0, size.width - point.x - width);
     CGFloat const deltaH = MAX(0, size.height - point.y - height);
@@ -243,16 +247,16 @@
     { // 调整箭头位置
         CGFloat const w_2 = midX - minX;
         CGFloat const h_2 = midY - minY;
-        [top.arrowIfLoaded adjustAnchorWithMinValue:-(w_2 - radiusTL - top.width) maxValue:(w_2 - radiusTR - top.width)];
+        [top.arrowIfLoaded adjustAnchorWithMinValue:-(w_2 - radiusTL) maxValue:(w_2 - radiusTR)];
         [top.arrowIfLoaded adjustVectorWithMinValue:-w_2 maxValue:w_2];
         
-        [left.arrowIfLoaded adjustAnchorWithMinValue:-(h_2 - radiusBL - left.width) maxValue:(h_2 - radiusTL - left.width)];
+        [left.arrowIfLoaded adjustAnchorWithMinValue:-(h_2 - radiusBL) maxValue:(h_2 - radiusTL)];
         [left.arrowIfLoaded adjustVectorWithMinValue:-h_2 maxValue:h_2];
         
-        [bottom.arrowIfLoaded adjustAnchorWithMinValue:-(w_2 - radiusBR - bottom.width) maxValue:(w_2 - radiusBL - bottom.width)];
+        [bottom.arrowIfLoaded adjustAnchorWithMinValue:-(w_2 - radiusBR) maxValue:(w_2 - radiusBL)];
         [bottom.arrowIfLoaded adjustVectorWithMinValue:-w_2 maxValue:w_2];
         
-        [right.arrowIfLoaded adjustAnchorWithMinValue:-(h_2 - radiusTR - right.width) maxValue:(h_2 - radiusBR - right.width)];
+        [right.arrowIfLoaded adjustAnchorWithMinValue:-(h_2 - radiusTR) maxValue:(h_2 - radiusBR)];
         [right.arrowIfLoaded adjustVectorWithMinValue:-h_2 maxValue:h_2];
     }
 
@@ -273,12 +277,12 @@
         XZImageLinePath * const context = contexts ? [XZImageLinePath imagePathWithLine:top startPoint:start] : nil;
         
         XZImageBorderArrow const *arrow = top.arrowIfLoaded;
-        if (arrow.width > 0 && arrow.height > 0) {
+        if (arrow.isEffective) {
             CGFloat const w = arrow.width * 0.5;
             
-            CGPoint point1 = CGPointMake(midX + arrow.anchor - w, minY);
-            CGPoint point2 = CGPointMake(midX + arrow.vector, minY - arrow.height);
-            CGPoint point3 = CGPointMake(midX + arrow.anchor + w, minY);
+            CGPoint point1 = CGPointMake(midX + arrow.effectiveAnchor - w, minY);
+            CGPoint point2 = CGPointMake(midX + arrow.effectiveVector, minY - arrow.height);
+            CGPoint point3 = CGPointMake(midX + arrow.effectiveAnchor + w, minY);
             [backgroundPath addLineToPoint:point1];
             [backgroundPath addLineToPoint:point2];
             [backgroundPath addLineToPoint:point3];
@@ -335,12 +339,12 @@
         XZImageLinePath *context = contexts ? [XZImageLinePath imagePathWithLine:right startPoint:start] : nil;
         
         XZImageBorderArrow const *arrow = right.arrowIfLoaded;
-        if (arrow.width > 0 && arrow.height > 0) {
+        if (arrow.isEffective) {
             CGFloat const w = arrow.width * 0.5;
             
-            CGPoint point1 = CGPointMake(maxX, midY + arrow.anchor - w);
-            CGPoint point2 = CGPointMake(maxX + arrow.height, midY + arrow.vector);
-            CGPoint point3 = CGPointMake(maxX, midY + arrow.anchor + w);
+            CGPoint point1 = CGPointMake(maxX, midY + arrow.effectiveAnchor - w);
+            CGPoint point2 = CGPointMake(maxX + arrow.height, midY + arrow.effectiveVector);
+            CGPoint point3 = CGPointMake(maxX, midY + arrow.effectiveAnchor + w);
             [backgroundPath addLineToPoint:point1];
             [backgroundPath addLineToPoint:point2];
             [backgroundPath addLineToPoint:point3];
@@ -396,12 +400,12 @@
         XZImageLinePath *context = contexts ? [XZImageLinePath imagePathWithLine:bottom startPoint:start] : nil;
         
         XZImageBorderArrow const *arrow = bottom.arrowIfLoaded;
-        if (arrow.width > 0 && arrow.height > 0) {
+        if (arrow.isEffective) {
             CGFloat const w = arrow.width * 0.5;
             
-            CGPoint point1 = CGPointMake(midX - arrow.anchor + w, maxY);
-            CGPoint point2 = CGPointMake(midX - arrow.vector, maxY + arrow.height);
-            CGPoint point3 = CGPointMake(midX - arrow.anchor - w, maxY);
+            CGPoint point1 = CGPointMake(midX - arrow.effectiveAnchor + w, maxY);
+            CGPoint point2 = CGPointMake(midX - arrow.effectiveVector, maxY + arrow.height);
+            CGPoint point3 = CGPointMake(midX - arrow.effectiveAnchor - w, maxY);
             [backgroundPath addLineToPoint:point1];
             [backgroundPath addLineToPoint:point2];
             [backgroundPath addLineToPoint:point3];
@@ -457,12 +461,12 @@
         XZImageLinePath *context = contexts ? [XZImageLinePath imagePathWithLine:left startPoint:start] : nil;
         
         XZImageBorderArrow const *arrow = left.arrowIfLoaded;
-        if (arrow.width > 0 && arrow.height > 0) {
+        if (arrow.isEffective) {
             CGFloat const w = arrow.width * 0.5;
             
-            CGPoint point1 = CGPointMake(minX, midY - arrow.anchor + w);
-            CGPoint point2 = CGPointMake(minX - arrow.height, midY - arrow.vector);
-            CGPoint point3 = CGPointMake(minX, midY - arrow.anchor - w);
+            CGPoint point1 = CGPointMake(minX, midY - arrow.effectiveAnchor + w);
+            CGPoint point2 = CGPointMake(minX - arrow.height, midY - arrow.effectiveVector);
+            CGPoint point3 = CGPointMake(minX, midY - arrow.effectiveAnchor - w);
             [backgroundPath addLineToPoint:point1];
             [backgroundPath addLineToPoint:point2];
             [backgroundPath addLineToPoint:point3];

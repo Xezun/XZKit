@@ -16,6 +16,7 @@
         XZImageBorderArrow *arrow = border.arrowIfLoaded;
         if (arrow != nil) {
             _arrow = [[XZImageBorderArrow alloc] initWithArrow:arrow];
+            _arrow.minWidth = self.width * 2.0;
             _arrow.superAttribute = self;
         }
     }
@@ -27,6 +28,7 @@
 - (XZImageBorderArrow *)arrow {
     if (_arrow == nil) {
         _arrow = [[XZImageBorderArrow alloc] initWithArrow:nil];
+        _arrow.minWidth = self.width * 2.0;
         _arrow.superAttribute = self;
     }
     return _arrow;
@@ -34,6 +36,12 @@
 
 - (XZImageBorderArrow *)arrowIfLoaded {
     return _arrow;
+}
+
+- (void)setWidth:(CGFloat)width {
+    [super setWidth:width];
+    
+    self.arrowIfLoaded.minWidth = self.width * 2.0;
 }
 
 @end

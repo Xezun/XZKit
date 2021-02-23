@@ -46,6 +46,7 @@
     if (_line) {
         CGContextSetStrokeColorWithColor(context, _line.color.CGColor);
         CGContextSetLineWidth(context, _line.width);
+        // CGContextSetMiterLimit(context, 100);
         
         XZImageLineDash * const dash = _line.dash;
         if (!dash.isEmpty) {
