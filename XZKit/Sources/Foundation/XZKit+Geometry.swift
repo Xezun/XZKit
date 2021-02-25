@@ -12,7 +12,7 @@ import Foundation
 // AVFoundation.AVMakeRectWithAspectRatioInsideRect
 //
 
-extension XZKit.EdgeInsets {
+extension XZEdgeInsets {
     
     public init(_ edgeInsets: UIEdgeInsets, layoutDirection: UIUserInterfaceLayoutDirection) {
         switch (layoutDirection) {
@@ -27,7 +27,7 @@ extension XZKit.EdgeInsets {
 
 extension UIEdgeInsets {
     
-    public init(_ edgeInsets: XZKit.EdgeInsets, layoutDirection: UIUserInterfaceLayoutDirection) {
+    public init(_ edgeInsets: XZEdgeInsets, layoutDirection: UIUserInterfaceLayoutDirection) {
         switch layoutDirection {
         case .rightToLeft:
             self.init(top: edgeInsets.top, left: edgeInsets.trailing, bottom: edgeInsets.bottom, right: edgeInsets.leading)

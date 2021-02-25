@@ -16,6 +16,6 @@ typedef NS_ENUM(NSInteger, XZCharacterCase) {
     XZCharacterLowercase = 0,
     /// 大写字符。
     XZCharacterUppercase = 1
-} NS_SWIFT_NAME(CharacterCase);
+};
 
 NS_ASSUME_NONNULL_END

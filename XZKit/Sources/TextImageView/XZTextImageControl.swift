@@ -47,19 +47,19 @@ open class TextImageControl: UIControl, TextImageLayout {
     
     open private(set) var imageViewIfLoaded: UIImageView?
     
-    open var contentInsets: EdgeInsets = .zero {
+    open var contentInsets: XZEdgeInsets = .zero {
         didSet { setNeedsLayout() }
     }
     
-    open var textInsets: EdgeInsets = .zero {
+    open var textInsets: XZEdgeInsets = .zero {
         didSet { setNeedsLayout() }
     }
     
-    open var imageInsets: EdgeInsets = .zero {
+    open var imageInsets: XZEdgeInsets = .zero {
         didSet { setNeedsLayout() }
     }
     
-    open var textLayoutEdge: RectEdge = .bottom {
+    open var textLayoutEdge: XZRectEdge = .bottom {
         didSet { setNeedsLayout() }
     }
     

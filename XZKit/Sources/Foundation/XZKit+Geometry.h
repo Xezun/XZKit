@@ -21,7 +21,7 @@ typedef struct XZ_BOXABLE XZEdgeInsets {
     CGFloat bottom;
     /// 后边距。
     CGFloat trailing;
-} NS_SWIFT_NAME(EdgeInsets) XZEdgeInsets;
+} XZEdgeInsets;
 
 /// 与 UIRectEdge 相同，只不过方便适配 LTR/RTL 布局。
 typedef NS_OPTIONS(NSUInteger, XZRectEdge) {
@@ -29,10 +29,10 @@ typedef NS_OPTIONS(NSUInteger, XZRectEdge) {
     XZRectEdgeLeading  = 1 << 1,
     XZRectEdgeBottom   = 1 << 2,
     XZRectEdgeTrailing = 1 << 3
-} NS_SWIFT_NAME(RectEdge);
+};
 
 /// 边距全部为零的常量。
-UIKIT_EXTERN XZEdgeInsets const XZEdgeInsetsZero NS_SWIFT_NAME(EdgeInsets.zero);
+UIKIT_EXTERN XZEdgeInsets const XZEdgeInsetsZero NS_SWIFT_NAME(XZEdgeInsets.zero);
 
 /// 判断两个 XZEdgeInsets 是否相等。
 /// @param edgeInsets1 XZEdgeInsets
@@ -82,8 +82,8 @@ FOUNDATION_EXPORT XZRectEdge XZRectEdgeFromString(NSString * _Nullable aString);
 
 @interface NSCoder (XZKitGeometry)
 
-- (void)encodeXZEdgeInsets:(XZEdgeInsets)insets forKey:(NSString *)key;
-- (XZEdgeInsets)decodeXZEdgeInsetsForKey:(NSString *)key;
+- (void)encodeXZEdgeInsets:(XZEdgeInsets)insets forKey:(NSString *)key NS_SWIFT_NAME(encode(_:forKey:));
+- (XZEdgeInsets)decodeXZEdgeInsetsForKey:(NSString *)key NS_SWIFT_NAME(decode(forKey:));
 
 @end
 

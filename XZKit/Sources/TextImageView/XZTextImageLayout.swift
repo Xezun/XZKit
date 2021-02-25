@@ -17,30 +17,30 @@ public protocol TextImageLayout: UIView {
     /// 图片控件。
     var imageViewIfLoaded: UIImageView? { get }
     /// 视图内边距，默认 .zero 。
-    var contentInsets: EdgeInsets { get }
+    var contentInsets: XZEdgeInsets { get }
     /// 文本边距，默认 .zero 。
-    var textInsets: EdgeInsets { get }
+    var textInsets: XZEdgeInsets { get }
     /// 图片边距，默认 .zero 。
-    var imageInsets: EdgeInsets { get }
+    var imageInsets: XZEdgeInsets { get }
     /// 文本控件在图片控件的哪一条边上，默认 .bottom ，优先级 .bottom > .top > .trailing > .leading 。
-    var textLayoutEdge: RectEdge { get }
+    var textLayoutEdge: XZRectEdge { get }
 }
 
 extension TextImageLayout {
     
-    public var contentInsets: EdgeInsets {
+    public var contentInsets: XZEdgeInsets {
         return .zero
     }
 
-    public var textInsets: EdgeInsets {
+    public var textInsets: XZEdgeInsets {
         return .zero
     }
 
-    public var imageInsets: EdgeInsets {
+    public var imageInsets: XZEdgeInsets {
         return .zero
     }
 
-    public var textLayoutEdge: RectEdge {
+    public var textLayoutEdge: XZRectEdge {
         return .bottom
     }
 

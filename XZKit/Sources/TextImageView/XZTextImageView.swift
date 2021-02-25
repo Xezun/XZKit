@@ -12,26 +12,26 @@ import UIKit
 @objc(XZTextImageView)
 open class TextImageView: UIView, TextImageLayout {
 
-    open var textLayoutEdge: RectEdge = .bottom {
+    open var textLayoutEdge: XZRectEdge = .bottom {
         didSet { setNeedsLayout() }
     }
     
     /// 视图内边距，文字将不会显示在边距内。默认 .zero 。
     /// - Note: 内容大小 + contentInsets = 视图大小。
     /// - Note: 该属性会影响图片大小和文字排版。
-    open var contentInsets: EdgeInsets = .zero {
+    open var contentInsets: XZEdgeInsets = .zero {
         didSet { setNeedsLayout() }
     }
     
     /// 标题文本视图的外边距，根据其默认位置和大小来计算。默认 .zero 。
     /// - 影响文字区域的大小和位置。
-    open var textInsets: EdgeInsets = .zero {
+    open var textInsets: XZEdgeInsets = .zero {
         didSet { setNeedsLayout() }
     }
     
     /// 图片视图的外边距，根据其默认位置和大小来计算。默认 .zero 。
     /// - 影响图片的大小和位置。
-    open var imageInsets: EdgeInsets = .zero {
+    open var imageInsets: XZEdgeInsets = .zero {
         didSet { setNeedsLayout() }
     }
     

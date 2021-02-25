@@ -18,7 +18,7 @@ extension Data {
     ///
     /// - Parameter characterCase: 字符大小写方式。
     /// - Returns: 十六进制的字符串。
-    public func hexEncodedString(with characterCase: CharacterCase) -> String {
+    public func hexEncodedString(with characterCase: XZCharacterCase) -> String {
         switch characterCase {
         case .lowercase:
             let Table: [Character] = ["0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "a", "b", "c", "d", "e", "f"]
@@ -69,7 +69,7 @@ extension String {
     /// - Parameters:
     ///   - data: 二进制数据
     ///   - characterCase: 十六进制字符的大小写
-    public init(_ data: Data, hexEncoding characterCase: CharacterCase) {
+    public init(_ data: Data, hexEncoding characterCase: XZCharacterCase) {
         self = data.hexEncodedString(with: characterCase);
     }
     
@@ -78,7 +78,7 @@ extension String {
     ///   - characterCase: 十六进制字符的大小写，默认小写
     ///   - encoding: 当前字符串的编码格式，默认 utf8
     /// - Returns: 十六进制编码的字符串
-    public func addingHexEncoding(with characterCase: CharacterCase, using encoding: Encoding = .utf8) -> String? {
+    public func addingHexEncoding(with characterCase: XZCharacterCase, using encoding: Encoding = .utf8) -> String? {
         return self.data(using: encoding)?.hexEncodedString(with: characterCase)
     }
     

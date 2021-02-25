@@ -43,7 +43,7 @@ public protocol UICollectionViewDelegateFlowLayout: UIKit.UICollectionViewDelega
     ///   - collectionViewLayout: UICollectionViewLayout 视图布局对象。
     ///   - section: 指定的 section 序数。
     /// - Returns: 内边距。
-    @objc optional func collectionView(_ collectionView: UIKit.UICollectionView, layout collectionViewLayout: UIKit.UICollectionViewLayout, edgeInsetsForSectionAt section: Int) -> EdgeInsets
+    @objc optional func collectionView(_ collectionView: UIKit.UICollectionView, layout collectionViewLayout: UIKit.UICollectionViewLayout, edgeInsetsForSectionAt section: Int) -> XZEdgeInsets
 }
 
 extension UICollectionViewFlowLayout {
@@ -171,7 +171,7 @@ open class UICollectionViewFlowLayout: UIKit.UICollectionViewLayout {
     }
     
     /// SectionItem 外边距。不包括 SectionHeader/SectionFooter 。默认 .zero ，代理方法的返回值优先。
-    @objc open var sectionInsets: EdgeInsets = .zero {
+    @objc open var sectionInsets: XZEdgeInsets = .zero {
         didSet { invalidateLayout() }
     }
     
@@ -394,14 +394,14 @@ extension UICollectionViewFlowLayout {
         return interitemAlignment
     }
     
-    @objc open func collectionView(_ collectionView: UIKit.UICollectionView, edgeInsetsForSectionAt section: Int, delegate: UIKit.UICollectionViewDelegateFlowLayout?) -> EdgeInsets {
+    @objc open func collectionView(_ collectionView: UIKit.UICollectionView, edgeInsetsForSectionAt section: Int, delegate: UIKit.UICollectionViewDelegateFlowLayout?) -> XZEdgeInsets {
         if let delegate = delegate as? UICollectionViewDelegateFlowLayout {
             if let edgeInsets = delegate.collectionView?(collectionView, layout: self, edgeInsetsForSectionAt: section) {
                 return edgeInsets
             }
         }
         if let edgeInsets = delegate?.collectionView?(collectionView, layout: self, insetForSectionAt: section) {
-            return EdgeInsets.init(edgeInsets, layoutDirection: collectionView.userInterfaceLayoutDirection)
+            return XZEdgeInsets.init(edgeInsets, layoutDirection: collectionView.userInterfaceLayoutDirection)
         }
         return self.sectionInsets
     }

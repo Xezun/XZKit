@@ -317,7 +317,7 @@ extension ContentStatusRepresentable where Self: UIView {
     /// - Parameters:
     ///   - contentInsets: 要指定的内边距。
     ///   - contentStatus: 指定的内容状态。
-    public func setContentInsets(_ contentInsets: EdgeInsets, for contentStatus: ContentStatus) {
+    public func setContentInsets(_ contentInsets: XZEdgeInsets, for contentStatus: ContentStatus) {
         contentStatusView(for: contentStatus).contentInsets = contentInsets
     }
     
@@ -326,7 +326,7 @@ extension ContentStatusRepresentable where Self: UIView {
     ///
     /// - Parameter contentStatus: 指定的内容状态。
     /// - Returns: 状态视图的内边距。
-    public func contentInsets(for contentStatus: ContentStatus) -> EdgeInsets {
+    public func contentInsets(for contentStatus: ContentStatus) -> XZEdgeInsets {
         return contentStatusView(for: contentStatus).contentInsets
     }
     
@@ -335,7 +335,7 @@ extension ContentStatusRepresentable where Self: UIView {
     /// - Parameters:
     ///   - titleEdgeInsets: 标题文本的外边距。
     ///   - contentStatus: 指定的内容状态。
-    public func setTitleInsets(_ titleEdgeInsets: EdgeInsets, for contentStatus: ContentStatus) {
+    public func setTitleInsets(_ titleEdgeInsets: XZEdgeInsets, for contentStatus: ContentStatus) {
         contentStatusView(for: contentStatus).textInsets = titleEdgeInsets
     }
     
@@ -343,7 +343,7 @@ extension ContentStatusRepresentable where Self: UIView {
     ///
     /// - Parameter contentStatus: 指定的内容状态。
     /// - Returns: 标题文本的外边距。
-    public func titleInsets(for contentStatus: ContentStatus) -> EdgeInsets {
+    public func titleInsets(for contentStatus: ContentStatus) -> XZEdgeInsets {
         return contentStatusView(for: contentStatus).textInsets
     }
     
@@ -352,7 +352,7 @@ extension ContentStatusRepresentable where Self: UIView {
     /// - Parameters:
     ///   - imageEdgeInsets: 图片外边距。
     ///   - contentStatus: 指定的内容状态。
-    public func setImageInsets(_ imageEdgeInsets: EdgeInsets, for contentStatus: ContentStatus) {
+    public func setImageInsets(_ imageEdgeInsets: XZEdgeInsets, for contentStatus: ContentStatus) {
         contentStatusView(for: contentStatus).imageInsets = imageEdgeInsets
     }
     
@@ -360,7 +360,7 @@ extension ContentStatusRepresentable where Self: UIView {
     ///
     /// - Parameter contentStatus: 指定的内容状态。
     /// - Returns: 图片的外边距。
-    public func imageInsets(for contentStatus: ContentStatus) -> EdgeInsets {
+    public func imageInsets(for contentStatus: ContentStatus) -> XZEdgeInsets {
         return contentStatusView(for: contentStatus).imageInsets
     }
     
