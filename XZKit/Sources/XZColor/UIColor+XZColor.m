@@ -29,7 +29,7 @@
     return rgba(value);
 }
 
-+ (UIColor *)xz_colorWithRed:(NSInteger)red Green:(NSInteger)green Blue:(NSInteger)blue Alpha:(NSInteger)alpha {
++ (UIColor *)xz_colorWithHexRed:(NSInteger)red green:(NSInteger)green blue:(NSInteger)blue alpha:(NSInteger)alpha {
     return rgba(red, green, blue, alpha);
 }
 

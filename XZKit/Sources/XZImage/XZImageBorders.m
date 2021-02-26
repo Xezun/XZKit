@@ -87,6 +87,15 @@
     [super setWidth:width];
 }
 
+- (void)setMiterLimit:(CGFloat)miterLimit {
+    [self.topIfLoaded setMiterLimit:miterLimit];
+    [self.leftIfLoaded setMiterLimit:miterLimit];
+    [self.bottomIfLoaded setMiterLimit:miterLimit];
+    [self.rightIfLoaded setMiterLimit:miterLimit];
+    
+    [super setMiterLimit:miterLimit];
+}
+
 - (void)subAttribute:(__kindof XZImageAttribute *)subAttribute didUpdateAttribute:(id)attribute {
     if (subAttribute == self.dashIfLoaded) {
         XZImageLineDash *dash = (id)subAttribute;

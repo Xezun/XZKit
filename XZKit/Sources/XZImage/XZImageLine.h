@@ -18,6 +18,9 @@ NS_SWIFT_NAME(XZImage.Line)
 @property (nonatomic, strong, nullable) UIColor *color;
 /// 线条粗细，最小值 0
 @property (nonatomic) CGFloat width;
+/// 尖角长度限制。
+/// @note 只会影响箭头，默认值 10 。
+@property (nonatomic) CGFloat miterLimit;
 /// 虚线。
 @property (nonatomic, strong, readonly) XZImageLineDash *dash;
 

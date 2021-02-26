@@ -60,30 +60,30 @@ typedef NS_ENUM(NSInteger, XZDataDigesterAlgorithm) {
 /// 将二进制数据进行摘要计算。
 /// @param bytes 二进制数据
 /// @param length 数据的长度
-- (void)update:(const void *)bytes length:(NSUInteger)length;
+- (void)digest:(const void *)bytes length:(NSUInteger)length;
 
 /// 对 NSData 二进制数据进行摘要计算。
 /// @note 此方法被调用多次。
 /// @param data NSData
-- (void)update:(NSData *)data;
+- (void)digest:(NSData *)data;
 
 /// 摘要结果。
 /// @note 获取摘要数据，即表示当前摘要计算结束；再次开始摘要计算前，此属性可获取多次。
 /// @return 数据摘要的二进制形式
-@property (nonatomic, readonly) void *digest NS_RETURNS_INNER_POINTER;
+@property (nonatomic, readonly) void *bytes NS_RETURNS_INNER_POINTER;
 
 /// 获取已进行摘要计算的数据的摘要。
 /// @note 获取摘要数据，即表示当前摘要计算结束；再次开始摘要计算前，此属性可获取多次。
-@property (nonatomic, readonly) NSData *digestData;
+@property (nonatomic, readonly) NSData *data;
 
 /// 获取已进行摘要计算的数据的摘要，十六进制编码形式。
 /// @note 获取摘要数据，即表示当前摘要计算结束；再次开始摘要计算前，此属性可获取多次。
 /// @param characterCase 十六进制编码的大小写
-- (NSString *)digestStringWithCharacterCase:(XZCharacterCase)characterCase;
+- (NSString *)stringWithCharacterCase:(XZCharacterCase)characterCase;
 
 /// 获取已进行摘要计算的数据的摘要，小写字母形式。
 /// @note 获取摘要数据，即表示当前摘要计算结束；再次开始摘要计算前，此属性可获取多次。
-@property (nonatomic, readonly) NSString *digestString;
+@property (nonatomic, readonly) NSString *string;
 
 @end
 

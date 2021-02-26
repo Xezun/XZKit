@@ -19,6 +19,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 - (BOOL)setColorSilently:(UIColor *)color;
 - (BOOL)setWidthSilently:(CGFloat)width;
+- (BOOL)setMiterLimitSilently:(CGFloat)miterLimit;
 
 - (void)updateWithLineSilently:(nullable XZImageLine *)line;
 

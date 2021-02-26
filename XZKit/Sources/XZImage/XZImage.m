@@ -312,9 +312,9 @@
                 CGPointMove(&point2, offset2.x, offset2.y);
                 CGPointMove(&point3, offset3.x, offset3.y);
                 
-                [context addLineToPoint:point1];
-                [context addLineToPoint:point2];
-                [context addLineToPoint:point3];
+                [context appendLineToPoint:point1];
+                [context appendLineToPoint:point2];
+                [context appendLineToPoint:point3];
             }
         }
         
@@ -323,7 +323,7 @@
         
         if (context) {
             CGPointMoveY(&end, maxX - XZImageGetBorderEndOffset(radiusTR, borderWidthR), borderWidthT_2);
-            [context addLineToPoint:end];
+            [context appendLineToPoint:end];
             
             [linePaths addObject:context];
         }
@@ -340,7 +340,7 @@
             CGPoint const start = CGPointMake(maxX - radiusTR, minY + dTR_2);
             
             XZImageLinePath *context = [XZImageLinePath imagePathWithLine:topRight startPoint:start];
-            [context addArcWithCenter:center
+            [context appendArcWithCenter:center
                                radius:(radiusTR - dTR_2)
                            startAngle:(startAngle)
                              endAngle:endAngle];
@@ -374,9 +374,9 @@
                 CGPointMove(&point2, -offset2.y, offset2.x);
                 CGPointMove(&point3, -offset3.y, offset3.x);
                 
-                [context addLineToPoint:point1];
-                [context addLineToPoint:point2];
-                [context addLineToPoint:point3];
+                [context appendLineToPoint:point1];
+                [context appendLineToPoint:point2];
+                [context appendLineToPoint:point3];
             }
         }
         
@@ -385,7 +385,7 @@
         
         if (context) {
             CGPointMoveX(&end, -borderWidthR_2, maxY - XZImageGetBorderEndOffset(radiusBR, borderWidthB));
-            [context addLineToPoint:end];
+            [context appendLineToPoint:end];
             [linePaths addObject:context];
         }
     }
@@ -401,7 +401,7 @@
             CGPoint const start = CGPointMake(maxX - dBR_2, maxY - radiusBR);
             
             XZImageLinePath *context = [XZImageLinePath imagePathWithLine:bottomRight startPoint:start];
-            [context addArcWithCenter:center
+            [context appendArcWithCenter:center
                                radius:(radiusBR - dBR_2)
                            startAngle:(startAngle)
                              endAngle:endAngle];
@@ -435,9 +435,9 @@
                 CGPointMove(&point2, -offset2.x, -offset2.y);
                 CGPointMove(&point3, -offset3.x, -offset3.y);
                 
-                [context addLineToPoint:point1];
-                [context addLineToPoint:point2];
-                [context addLineToPoint:point3];
+                [context appendLineToPoint:point1];
+                [context appendLineToPoint:point2];
+                [context appendLineToPoint:point3];
             }
         }
         
@@ -446,7 +446,7 @@
         
         if (context) {
             CGPointMoveY(&end, minX + XZImageGetBorderEndOffset(radiusBL, borderWidthL), -borderWidthB_2);
-            [context addLineToPoint:end];
+            [context appendLineToPoint:end];
             [linePaths addObject:context];
         }
     }
@@ -462,7 +462,7 @@
             CGPoint const start = CGPointMake(minX + radiusBL, maxY - dBL_2);
             
             XZImageLinePath *context = [XZImageLinePath imagePathWithLine:bottomLeft startPoint:start];
-            [context addArcWithCenter:center
+            [context appendArcWithCenter:center
                                radius:(radiusBL - dBL_2)
                            startAngle:(startAngle)
                              endAngle:endAngle];
@@ -496,9 +496,9 @@
                 CGPointMove(&point2, offset2.y, -offset2.x);
                 CGPointMove(&point3, offset3.y, -offset3.x);
                 
-                [context addLineToPoint:point1];
-                [context addLineToPoint:point2];
-                [context addLineToPoint:point3];
+                [context appendLineToPoint:point1];
+                [context appendLineToPoint:point2];
+                [context appendLineToPoint:point3];
             }
         }
         
@@ -507,7 +507,7 @@
         
         if (context) {
             CGPointMoveX(&end, borderWidthL_2, minY + XZImageGetBorderEndOffset(radiusTL, borderWidthT));
-            [context addLineToPoint:end];
+            [context appendLineToPoint:end];
             [linePaths addObject:context];
         }
     }
@@ -523,7 +523,7 @@
             CGPoint const start = CGPointMake(minX + dTL_2, minY + radiusTL);
             
             XZImageLinePath *context = [XZImageLinePath imagePathWithLine:topLeft startPoint:start];
-            [context addArcWithCenter:center
+            [context appendArcWithCenter:center
                                radius:(radiusTL - dTL_2)
                            startAngle:(startAngle)
                              endAngle:endAngle];

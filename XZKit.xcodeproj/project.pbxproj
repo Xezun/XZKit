@@ -7,23 +7,53 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		2916366525D67F51001BFE25 /* UIImage+XZKit.h in Headers */ = {isa = PBXBuildFile; fileRef = 2916365A25D67F51001BFE25 /* UIImage+XZKit.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		2916366725D67F51001BFE25 /* UIImageView+XZKit.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2916365C25D67F51001BFE25 /* UIImageView+XZKit.swift */; };
-		2916366825D67F51001BFE25 /* UIView+XZKit.m in Sources */ = {isa = PBXBuildFile; fileRef = 2916365D25D67F51001BFE25 /* UIView+XZKit.m */; };
-		2916366C25D67F51001BFE25 /* UIApplication+XZKit.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2916366125D67F51001BFE25 /* UIApplication+XZKit.swift */; };
-		2916366D25D67F51001BFE25 /* UIImage+XZKit.m in Sources */ = {isa = PBXBuildFile; fileRef = 2916366225D67F51001BFE25 /* UIImage+XZKit.m */; };
-		2916366F25D67F51001BFE25 /* UIView+XZKit.h in Headers */ = {isa = PBXBuildFile; fileRef = 2916366425D67F51001BFE25 /* UIView+XZKit.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		2918813E25D2978D00C89059 /* XZFoundation.h in Headers */ = {isa = PBXBuildFile; fileRef = 2918813D25D2972A00C89059 /* XZFoundation.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		290DAA2A25E94FDA002514AB /* UIView+XZKit.m in Sources */ = {isa = PBXBuildFile; fileRef = 290DAA1B25E94FDA002514AB /* UIView+XZKit.m */; };
+		290DAA2B25E94FDA002514AB /* UIView+XZKit.swift in Sources */ = {isa = PBXBuildFile; fileRef = 290DAA1C25E94FDA002514AB /* UIView+XZKit.swift */; };
+		290DAA2C25E94FDA002514AB /* UIImage+XZKit.h in Headers */ = {isa = PBXBuildFile; fileRef = 290DAA1D25E94FDA002514AB /* UIImage+XZKit.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		290DAA2D25E94FDA002514AB /* UIImageView+XZKit.swift in Sources */ = {isa = PBXBuildFile; fileRef = 290DAA1E25E94FDA002514AB /* UIImageView+XZKit.swift */; };
+		290DAA2E25E94FDA002514AB /* UIView+XZKit.h in Headers */ = {isa = PBXBuildFile; fileRef = 290DAA1F25E94FDA002514AB /* UIView+XZKit.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		290DAA2F25E94FDA002514AB /* UIImage+XZKit.m in Sources */ = {isa = PBXBuildFile; fileRef = 290DAA2025E94FDA002514AB /* UIImage+XZKit.m */; };
+		290DAA3025E94FDA002514AB /* UIApplication+XZKit.swift in Sources */ = {isa = PBXBuildFile; fileRef = 290DAA2125E94FDA002514AB /* UIApplication+XZKit.swift */; };
+		290DAA3125E94FDA002514AB /* URL+XZKit.swift in Sources */ = {isa = PBXBuildFile; fileRef = 290DAA2325E94FDA002514AB /* URL+XZKit.swift */; };
+		290DAA3225E94FDA002514AB /* Date+XZKit.swift in Sources */ = {isa = PBXBuildFile; fileRef = 290DAA2425E94FDA002514AB /* Date+XZKit.swift */; };
+		290DAA3325E94FDA002514AB /* NSBundle+XZKit.m in Sources */ = {isa = PBXBuildFile; fileRef = 290DAA2525E94FDA002514AB /* NSBundle+XZKit.m */; };
+		290DAA3425E94FDA002514AB /* String+XZKit.swift in Sources */ = {isa = PBXBuildFile; fileRef = 290DAA2625E94FDA002514AB /* String+XZKit.swift */; };
+		290DAA3525E94FDA002514AB /* Data+XZKit.swift in Sources */ = {isa = PBXBuildFile; fileRef = 290DAA2725E94FDA002514AB /* Data+XZKit.swift */; };
+		290DAA3625E94FDA002514AB /* DispatchQueue+XZKit.swift in Sources */ = {isa = PBXBuildFile; fileRef = 290DAA2825E94FDA002514AB /* DispatchQueue+XZKit.swift */; };
+		290DAA3725E94FDA002514AB /* NSBundle+XZKit.h in Headers */ = {isa = PBXBuildFile; fileRef = 290DAA2925E94FDA002514AB /* NSBundle+XZKit.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		290DAA5B25E94FF5002514AB /* XZKit+JSON.swift in Sources */ = {isa = PBXBuildFile; fileRef = 290DAA4125E94FF4002514AB /* XZKit+JSON.swift */; };
+		290DAA5C25E94FF5002514AB /* XZDefer.m in Sources */ = {isa = PBXBuildFile; fileRef = 290DAA4225E94FF4002514AB /* XZDefer.m */; };
+		290DAA5D25E94FF5002514AB /* XZKit+HexEncoding.swift in Sources */ = {isa = PBXBuildFile; fileRef = 290DAA4325E94FF4002514AB /* XZKit+HexEncoding.swift */; };
+		290DAA5E25E94FF5002514AB /* XZLog.m in Sources */ = {isa = PBXBuildFile; fileRef = 290DAA4425E94FF4002514AB /* XZLog.m */; };
+		290DAA5F25E94FF5002514AB /* XZKit+HexEncoding.m in Sources */ = {isa = PBXBuildFile; fileRef = 290DAA4525E94FF4002514AB /* XZKit+HexEncoding.m */; };
+		290DAA6025E94FF5002514AB /* XZObjCTypeDescriptor.h in Headers */ = {isa = PBXBuildFile; fileRef = 290DAA4625E94FF5002514AB /* XZObjCTypeDescriptor.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		290DAA6125E94FF5002514AB /* XZKitDEBUG.h in Headers */ = {isa = PBXBuildFile; fileRef = 290DAA4725E94FF5002514AB /* XZKitDEBUG.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		290DAA6225E94FF5002514AB /* XZLog.h in Headers */ = {isa = PBXBuildFile; fileRef = 290DAA4825E94FF5002514AB /* XZLog.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		290DAA6325E94FF5002514AB /* XZKit+Geometry.swift in Sources */ = {isa = PBXBuildFile; fileRef = 290DAA4925E94FF5002514AB /* XZKit+Geometry.swift */; };
+		290DAA6425E94FF5002514AB /* XZCharacterCase.h in Headers */ = {isa = PBXBuildFile; fileRef = 290DAA4A25E94FF5002514AB /* XZCharacterCase.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		290DAA6525E94FF5002514AB /* XZFoundation.h in Headers */ = {isa = PBXBuildFile; fileRef = 290DAA4B25E94FF5002514AB /* XZFoundation.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		290DAA6625E94FF5002514AB /* XZKit+Geometry.h in Headers */ = {isa = PBXBuildFile; fileRef = 290DAA4C25E94FF5002514AB /* XZKit+Geometry.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		290DAA6725E94FF5002514AB /* XZKit+Runtime.m in Sources */ = {isa = PBXBuildFile; fileRef = 290DAA4D25E94FF5002514AB /* XZKit+Runtime.m */; };
+		290DAA6825E94FF5002514AB /* XZKit+HexEncoding.h in Headers */ = {isa = PBXBuildFile; fileRef = 290DAA4E25E94FF5002514AB /* XZKit+HexEncoding.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		290DAA6925E94FF5002514AB /* XZKit+JSON.m in Sources */ = {isa = PBXBuildFile; fileRef = 290DAA4F25E94FF5002514AB /* XZKit+JSON.m */; };
+		290DAA6A25E94FF5002514AB /* XZKitDefines.h in Headers */ = {isa = PBXBuildFile; fileRef = 290DAA5025E94FF5002514AB /* XZKitDefines.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		290DAA6B25E94FF5002514AB /* XZKitDEBUG.m in Sources */ = {isa = PBXBuildFile; fileRef = 290DAA5125E94FF5002514AB /* XZKitDEBUG.m */; };
+		290DAA6C25E94FF5002514AB /* XZKit+Timestamp.h in Headers */ = {isa = PBXBuildFile; fileRef = 290DAA5225E94FF5002514AB /* XZKit+Timestamp.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		290DAA6D25E94FF5002514AB /* XZKit+Timestamp.m in Sources */ = {isa = PBXBuildFile; fileRef = 290DAA5325E94FF5002514AB /* XZKit+Timestamp.m */; };
+		290DAA6E25E94FF5002514AB /* XZKit+Geometry.m in Sources */ = {isa = PBXBuildFile; fileRef = 290DAA5425E94FF5002514AB /* XZKit+Geometry.m */; };
+		290DAA6F25E94FF5002514AB /* XZLog.swift in Sources */ = {isa = PBXBuildFile; fileRef = 290DAA5525E94FF5002514AB /* XZLog.swift */; };
+		290DAA7025E94FF5002514AB /* XZKit+Timestamp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 290DAA5625E94FF5002514AB /* XZKit+Timestamp.swift */; };
+		290DAA7125E94FF5002514AB /* XZKit+JSON.h in Headers */ = {isa = PBXBuildFile; fileRef = 290DAA5725E94FF5002514AB /* XZKit+JSON.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		290DAA7225E94FF5002514AB /* XZDefer.h in Headers */ = {isa = PBXBuildFile; fileRef = 290DAA5825E94FF5002514AB /* XZDefer.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		290DAA7325E94FF5002514AB /* XZKit+Runtime.h in Headers */ = {isa = PBXBuildFile; fileRef = 290DAA5925E94FF5002514AB /* XZKit+Runtime.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		290DAA7425E94FF5002514AB /* XZObjCTypeDescriptor.m in Sources */ = {isa = PBXBuildFile; fileRef = 290DAA5A25E94FF5002514AB /* XZObjCTypeDescriptor.m */; };
 		2918815025D3060000C89059 /* NSData+XZDataDigester.h in Headers */ = {isa = PBXBuildFile; fileRef = 2918814E25D3060000C89059 /* NSData+XZDataDigester.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		2918815125D3060000C89059 /* NSData+XZDataDigester.m in Sources */ = {isa = PBXBuildFile; fileRef = 2918814F25D3060000C89059 /* NSData+XZDataDigester.m */; };
 		2918815925D30E4D00C89059 /* DataDigesterTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 2918815825D30E4D00C89059 /* DataDigesterTests.m */; };
-		2918817A25D6553B00C89059 /* XZObjCTypeDescriptor.h in Headers */ = {isa = PBXBuildFile; fileRef = 2918817825D6553B00C89059 /* XZObjCTypeDescriptor.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		2918817B25D6553B00C89059 /* XZObjCTypeDescriptor.m in Sources */ = {isa = PBXBuildFile; fileRef = 2918817925D6553B00C89059 /* XZObjCTypeDescriptor.m */; };
 		291F577425E036FA00862D31 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 291F577225E036FA00862D31 /* Main.storyboard */; };
 		291F577525E036FA00862D31 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 291F577325E036FA00862D31 /* LaunchScreen.storyboard */; };
 		291F577E25E10E5800862D31 /* XZImageLineDash.h in Headers */ = {isa = PBXBuildFile; fileRef = 291F577C25E10E5800862D31 /* XZImageLineDash.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		291F577F25E10E5800862D31 /* XZImageLineDash.m in Sources */ = {isa = PBXBuildFile; fileRef = 291F577D25E10E5800862D31 /* XZImageLineDash.m */; };
-		295D51CC25D9236800283581 /* XZKit+HexEncoding.swift in Sources */ = {isa = PBXBuildFile; fileRef = 295D51CB25D9236800283581 /* XZKit+HexEncoding.swift */; };
 		295D51E225D941B800283581 /* XZDataDigester.swift in Sources */ = {isa = PBXBuildFile; fileRef = 295D51E125D941B800283581 /* XZDataDigester.swift */; };
 		295D51F325D98E7100283581 /* XZDataCryptorAlgorithm.h in Headers */ = {isa = PBXBuildFile; fileRef = 295D51F125D98E7100283581 /* XZDataCryptorAlgorithm.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		295D51F425D98E7100283581 /* XZDataCryptorAlgorithm.m in Sources */ = {isa = PBXBuildFile; fileRef = 295D51F225D98E7100283581 /* XZDataCryptorAlgorithm.m */; };
@@ -53,14 +83,8 @@
 		2963308B25D1000E00BB1BEF /* XZNavigationController.TransitionController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2963301C25D1000E00BB1BEF /* XZNavigationController.TransitionController.swift */; };
 		2963308C25D1000E00BB1BEF /* XZAppRedirection.m in Sources */ = {isa = PBXBuildFile; fileRef = 2963301E25D1000E00BB1BEF /* XZAppRedirection.m */; };
 		2963308D25D1000E00BB1BEF /* XZAppRedirection.h in Headers */ = {isa = PBXBuildFile; fileRef = 2963301F25D1000E00BB1BEF /* XZAppRedirection.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		296330B325D1000E00BB1BEF /* URL+XZKit.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2963304925D1000E00BB1BEF /* URL+XZKit.swift */; };
 		296330B425D1000E00BB1BEF /* NSString+XZDataDigester.h in Headers */ = {isa = PBXBuildFile; fileRef = 2963304A25D1000E00BB1BEF /* NSString+XZDataDigester.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		296330B525D1000E00BB1BEF /* NSBundle+XZKit.m in Sources */ = {isa = PBXBuildFile; fileRef = 2963304B25D1000E00BB1BEF /* NSBundle+XZKit.m */; };
-		296330B625D1000E00BB1BEF /* Data+XZKit.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2963304C25D1000E00BB1BEF /* Data+XZKit.swift */; };
-		296330B725D1000E00BB1BEF /* DispatchQueue+XZKit.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2963304D25D1000E00BB1BEF /* DispatchQueue+XZKit.swift */; };
-		296330B925D1000E00BB1BEF /* NSBundle+XZKit.h in Headers */ = {isa = PBXBuildFile; fileRef = 2963304F25D1000E00BB1BEF /* NSBundle+XZKit.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		296330BA25D1000E00BB1BEF /* NSString+XZDataDigester.m in Sources */ = {isa = PBXBuildFile; fileRef = 2963305025D1000E00BB1BEF /* NSString+XZDataDigester.m */; };
-		296330BB25D1000E00BB1BEF /* XZKit+JSON.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2963305125D1000E00BB1BEF /* XZKit+JSON.swift */; };
 		296330BC25D1000E00BB1BEF /* XZCarouselViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 2963305325D1000E00BB1BEF /* XZCarouselViewController.m */; };
 		296330BD25D1000E00BB1BEF /* XZImageViewer.m in Sources */ = {isa = PBXBuildFile; fileRef = 2963305425D1000E00BB1BEF /* XZImageViewer.m */; };
 		296330BE25D1000E00BB1BEF /* XZImageCarouselView.h in Headers */ = {isa = PBXBuildFile; fileRef = 2963305525D1000E00BB1BEF /* XZImageCarouselView.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -97,30 +121,6 @@
 		296330DD25D1000E00BB1BEF /* XZAppLanguageBundle.h in Headers */ = {isa = PBXBuildFile; fileRef = 2963307F25D1000E00BB1BEF /* XZAppLanguageBundle.h */; };
 		296330DE25D1000E00BB1BEF /* XZAppLanguage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2963308025D1000E00BB1BEF /* XZAppLanguage.swift */; };
 		296330DF25D1000E00BB1BEF /* XZProgressView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2963308225D1000E00BB1BEF /* XZProgressView.swift */; };
-		2963310B25D108DC00BB1BEF /* XZKit+Geometry.h in Headers */ = {isa = PBXBuildFile; fileRef = 296330F225D108DB00BB1BEF /* XZKit+Geometry.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		2963310C25D108DC00BB1BEF /* XZLog.m in Sources */ = {isa = PBXBuildFile; fileRef = 296330F325D108DB00BB1BEF /* XZLog.m */; };
-		2963310D25D108DC00BB1BEF /* XZKit+HexEncoding.m in Sources */ = {isa = PBXBuildFile; fileRef = 296330F425D108DB00BB1BEF /* XZKit+HexEncoding.m */; };
-		2963310E25D108DC00BB1BEF /* XZLog.h in Headers */ = {isa = PBXBuildFile; fileRef = 296330F525D108DB00BB1BEF /* XZLog.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		2963310F25D108DC00BB1BEF /* XZKit+Timestamp.h in Headers */ = {isa = PBXBuildFile; fileRef = 296330F625D108DB00BB1BEF /* XZKit+Timestamp.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		2963311025D108DC00BB1BEF /* XZCharacterCase.h in Headers */ = {isa = PBXBuildFile; fileRef = 296330F725D108DB00BB1BEF /* XZCharacterCase.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		2963311125D108DC00BB1BEF /* XZDefer.h in Headers */ = {isa = PBXBuildFile; fileRef = 296330F825D108DB00BB1BEF /* XZDefer.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		2963311225D108DC00BB1BEF /* UIView+XZKit.swift in Sources */ = {isa = PBXBuildFile; fileRef = 296330F925D108DB00BB1BEF /* UIView+XZKit.swift */; };
-		2963311325D108DC00BB1BEF /* XZKit+Runtime.h in Headers */ = {isa = PBXBuildFile; fileRef = 296330FA25D108DB00BB1BEF /* XZKit+Runtime.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		2963311425D108DC00BB1BEF /* XZKit+Geometry.m in Sources */ = {isa = PBXBuildFile; fileRef = 296330FB25D108DB00BB1BEF /* XZKit+Geometry.m */; };
-		2963311525D108DC00BB1BEF /* XZKit+Date.swift in Sources */ = {isa = PBXBuildFile; fileRef = 296330FC25D108DB00BB1BEF /* XZKit+Date.swift */; };
-		2963311625D108DC00BB1BEF /* XZKitDEBUG.h in Headers */ = {isa = PBXBuildFile; fileRef = 296330FD25D108DB00BB1BEF /* XZKitDEBUG.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		2963311725D108DC00BB1BEF /* XZKitDefines.h in Headers */ = {isa = PBXBuildFile; fileRef = 296330FE25D108DB00BB1BEF /* XZKitDefines.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		2963311825D108DC00BB1BEF /* XZKit+HexEncoding.h in Headers */ = {isa = PBXBuildFile; fileRef = 296330FF25D108DB00BB1BEF /* XZKit+HexEncoding.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		2963311A25D108DC00BB1BEF /* XZKit+Runtime.m in Sources */ = {isa = PBXBuildFile; fileRef = 2963310125D108DB00BB1BEF /* XZKit+Runtime.m */; };
-		2963311B25D108DC00BB1BEF /* XZCharacterCase.m in Sources */ = {isa = PBXBuildFile; fileRef = 2963310225D108DB00BB1BEF /* XZCharacterCase.m */; };
-		2963311C25D108DC00BB1BEF /* XZLog.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2963310325D108DB00BB1BEF /* XZLog.swift */; };
-		2963311D25D108DC00BB1BEF /* XZKit+Timestamp.m in Sources */ = {isa = PBXBuildFile; fileRef = 2963310425D108DB00BB1BEF /* XZKit+Timestamp.m */; };
-		2963311E25D108DC00BB1BEF /* XZKitDefines.m in Sources */ = {isa = PBXBuildFile; fileRef = 2963310525D108DC00BB1BEF /* XZKitDefines.m */; };
-		2963311F25D108DC00BB1BEF /* XZKitDEBUG.m in Sources */ = {isa = PBXBuildFile; fileRef = 2963310625D108DC00BB1BEF /* XZKitDEBUG.m */; };
-		2963312025D108DC00BB1BEF /* XZKit+Geometry.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2963310725D108DC00BB1BEF /* XZKit+Geometry.swift */; };
-		2963312125D108DC00BB1BEF /* XZKit+Timestamp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2963310825D108DC00BB1BEF /* XZKit+Timestamp.swift */; };
-		2963312225D108DC00BB1BEF /* XZDefer.m in Sources */ = {isa = PBXBuildFile; fileRef = 2963310925D108DC00BB1BEF /* XZDefer.m */; };
-		2963312325D108DC00BB1BEF /* XZKit+String.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2963310A25D108DC00BB1BEF /* XZKit+String.swift */; };
 		2963313F25D10BAD00BB1BEF /* XZTimeTickerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2963313B25D10BAC00BB1BEF /* XZTimeTickerTests.swift */; };
 		2963314025D10BAD00BB1BEF /* XZURLTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2963313C25D10BAC00BB1BEF /* XZURLTests.swift */; };
 		2963314225D10BAD00BB1BEF /* XZKitConstantsSwiftTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2963313E25D10BAC00BB1BEF /* XZKitConstantsSwiftTests.swift */; };
@@ -142,8 +142,6 @@
 		2970B1A325E2AAA400D905EA /* XZImageCorner+Extension.h in Headers */ = {isa = PBXBuildFile; fileRef = 2970B1A225E2AAA400D905EA /* XZImageCorner+Extension.h */; };
 		299D574425D8E58A0097C27A /* UIColor+XZKit.swift in Sources */ = {isa = PBXBuildFile; fileRef = 299D574325D8E58A0097C27A /* UIColor+XZKit.swift */; };
 		299D574825D8EC6D0097C27A /* XZImageLevels.swift in Sources */ = {isa = PBXBuildFile; fileRef = 299D574725D8EC6D0097C27A /* XZImageLevels.swift */; };
-		299D574F25D906FA0097C27A /* XZKit+JSON.h in Headers */ = {isa = PBXBuildFile; fileRef = 299D574D25D906FA0097C27A /* XZKit+JSON.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		299D575025D906FA0097C27A /* XZKit+JSON.m in Sources */ = {isa = PBXBuildFile; fileRef = 299D574E25D906FA0097C27A /* XZKit+JSON.m */; };
 		29B5383625DD0127009A07D3 /* XZImage.h in Headers */ = {isa = PBXBuildFile; fileRef = 29B5383425DD0127009A07D3 /* XZImage.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		29B5383725DD0127009A07D3 /* XZImage.m in Sources */ = {isa = PBXBuildFile; fileRef = 29B5383525DD0127009A07D3 /* XZImage.m */; };
 		29B5384325DD0254009A07D3 /* XZImageBorders.h in Headers */ = {isa = PBXBuildFile; fileRef = 29B5384125DD0254009A07D3 /* XZImageBorders.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -211,23 +209,53 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
-		2916365A25D67F51001BFE25 /* UIImage+XZKit.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIImage+XZKit.h"; sourceTree = "<group>"; };
-		2916365C25D67F51001BFE25 /* UIImageView+XZKit.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "UIImageView+XZKit.swift"; sourceTree = "<group>"; };
-		2916365D25D67F51001BFE25 /* UIView+XZKit.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIView+XZKit.m"; sourceTree = "<group>"; };
-		2916366125D67F51001BFE25 /* UIApplication+XZKit.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "UIApplication+XZKit.swift"; sourceTree = "<group>"; };
-		2916366225D67F51001BFE25 /* UIImage+XZKit.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIImage+XZKit.m"; sourceTree = "<group>"; };
-		2916366425D67F51001BFE25 /* UIView+XZKit.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIView+XZKit.h"; sourceTree = "<group>"; };
-		2918813D25D2972A00C89059 /* XZFoundation.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = XZFoundation.h; sourceTree = "<group>"; };
+		290DAA1B25E94FDA002514AB /* UIView+XZKit.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIView+XZKit.m"; sourceTree = "<group>"; };
+		290DAA1C25E94FDA002514AB /* UIView+XZKit.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "UIView+XZKit.swift"; sourceTree = "<group>"; };
+		290DAA1D25E94FDA002514AB /* UIImage+XZKit.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIImage+XZKit.h"; sourceTree = "<group>"; };
+		290DAA1E25E94FDA002514AB /* UIImageView+XZKit.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "UIImageView+XZKit.swift"; sourceTree = "<group>"; };
+		290DAA1F25E94FDA002514AB /* UIView+XZKit.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIView+XZKit.h"; sourceTree = "<group>"; };
+		290DAA2025E94FDA002514AB /* UIImage+XZKit.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIImage+XZKit.m"; sourceTree = "<group>"; };
+		290DAA2125E94FDA002514AB /* UIApplication+XZKit.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "UIApplication+XZKit.swift"; sourceTree = "<group>"; };
+		290DAA2325E94FDA002514AB /* URL+XZKit.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "URL+XZKit.swift"; sourceTree = "<group>"; };
+		290DAA2425E94FDA002514AB /* Date+XZKit.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "Date+XZKit.swift"; sourceTree = "<group>"; };
+		290DAA2525E94FDA002514AB /* NSBundle+XZKit.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSBundle+XZKit.m"; sourceTree = "<group>"; };
+		290DAA2625E94FDA002514AB /* String+XZKit.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "String+XZKit.swift"; sourceTree = "<group>"; };
+		290DAA2725E94FDA002514AB /* Data+XZKit.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "Data+XZKit.swift"; sourceTree = "<group>"; };
+		290DAA2825E94FDA002514AB /* DispatchQueue+XZKit.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "DispatchQueue+XZKit.swift"; sourceTree = "<group>"; };
+		290DAA2925E94FDA002514AB /* NSBundle+XZKit.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSBundle+XZKit.h"; sourceTree = "<group>"; };
+		290DAA4125E94FF4002514AB /* XZKit+JSON.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "XZKit+JSON.swift"; sourceTree = "<group>"; };
+		290DAA4225E94FF4002514AB /* XZDefer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = XZDefer.m; sourceTree = "<group>"; };
+		290DAA4325E94FF4002514AB /* XZKit+HexEncoding.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "XZKit+HexEncoding.swift"; sourceTree = "<group>"; };
+		290DAA4425E94FF4002514AB /* XZLog.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = XZLog.m; sourceTree = "<group>"; };
+		290DAA4525E94FF4002514AB /* XZKit+HexEncoding.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "XZKit+HexEncoding.m"; sourceTree = "<group>"; };
+		290DAA4625E94FF5002514AB /* XZObjCTypeDescriptor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XZObjCTypeDescriptor.h; sourceTree = "<group>"; };
+		290DAA4725E94FF5002514AB /* XZKitDEBUG.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XZKitDEBUG.h; sourceTree = "<group>"; };
+		290DAA4825E94FF5002514AB /* XZLog.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XZLog.h; sourceTree = "<group>"; };
+		290DAA4925E94FF5002514AB /* XZKit+Geometry.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "XZKit+Geometry.swift"; sourceTree = "<group>"; };
+		290DAA4A25E94FF5002514AB /* XZCharacterCase.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XZCharacterCase.h; sourceTree = "<group>"; };
+		290DAA4B25E94FF5002514AB /* XZFoundation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XZFoundation.h; sourceTree = "<group>"; };
+		290DAA4C25E94FF5002514AB /* XZKit+Geometry.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "XZKit+Geometry.h"; sourceTree = "<group>"; };
+		290DAA4D25E94FF5002514AB /* XZKit+Runtime.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "XZKit+Runtime.m"; sourceTree = "<group>"; };
+		290DAA4E25E94FF5002514AB /* XZKit+HexEncoding.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "XZKit+HexEncoding.h"; sourceTree = "<group>"; };
+		290DAA4F25E94FF5002514AB /* XZKit+JSON.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "XZKit+JSON.m"; sourceTree = "<group>"; };
+		290DAA5025E94FF5002514AB /* XZKitDefines.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XZKitDefines.h; sourceTree = "<group>"; };
+		290DAA5125E94FF5002514AB /* XZKitDEBUG.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = XZKitDEBUG.m; sourceTree = "<group>"; };
+		290DAA5225E94FF5002514AB /* XZKit+Timestamp.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "XZKit+Timestamp.h"; sourceTree = "<group>"; };
+		290DAA5325E94FF5002514AB /* XZKit+Timestamp.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "XZKit+Timestamp.m"; sourceTree = "<group>"; };
+		290DAA5425E94FF5002514AB /* XZKit+Geometry.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "XZKit+Geometry.m"; sourceTree = "<group>"; };
+		290DAA5525E94FF5002514AB /* XZLog.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = XZLog.swift; sourceTree = "<group>"; };
+		290DAA5625E94FF5002514AB /* XZKit+Timestamp.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "XZKit+Timestamp.swift"; sourceTree = "<group>"; };
+		290DAA5725E94FF5002514AB /* XZKit+JSON.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "XZKit+JSON.h"; sourceTree = "<group>"; };
+		290DAA5825E94FF5002514AB /* XZDefer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XZDefer.h; sourceTree = "<group>"; };
+		290DAA5925E94FF5002514AB /* XZKit+Runtime.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "XZKit+Runtime.h"; sourceTree = "<group>"; };
+		290DAA5A25E94FF5002514AB /* XZObjCTypeDescriptor.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = XZObjCTypeDescriptor.m; sourceTree = "<group>"; };
 		2918814E25D3060000C89059 /* NSData+XZDataDigester.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "NSData+XZDataDigester.h"; sourceTree = "<group>"; };
 		2918814F25D3060000C89059 /* NSData+XZDataDigester.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "NSData+XZDataDigester.m"; sourceTree = "<group>"; };
 		2918815825D30E4D00C89059 /* DataDigesterTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = DataDigesterTests.m; sourceTree = "<group>"; };
-		2918817825D6553B00C89059 /* XZObjCTypeDescriptor.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = XZObjCTypeDescriptor.h; sourceTree = "<group>"; };
-		2918817925D6553B00C89059 /* XZObjCTypeDescriptor.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = XZObjCTypeDescriptor.m; sourceTree = "<group>"; };
 		291F577225E036FA00862D31 /* Main.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = Main.storyboard; sourceTree = "<group>"; };
 		291F577325E036FA00862D31 /* LaunchScreen.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = LaunchScreen.storyboard; sourceTree = "<group>"; };
 		291F577C25E10E5800862D31 /* XZImageLineDash.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = XZImageLineDash.h; sourceTree = "<group>"; };
 		291F577D25E10E5800862D31 /* XZImageLineDash.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = XZImageLineDash.m; sourceTree = "<group>"; };
-		295D51CB25D9236800283581 /* XZKit+HexEncoding.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "XZKit+HexEncoding.swift"; sourceTree = "<group>"; };
 		295D51E125D941B800283581 /* XZDataDigester.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = XZDataDigester.swift; sourceTree = "<group>"; };
 		295D51F125D98E7100283581 /* XZDataCryptorAlgorithm.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = XZDataCryptorAlgorithm.h; sourceTree = "<group>"; };
 		295D51F225D98E7100283581 /* XZDataCryptorAlgorithm.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = XZDataCryptorAlgorithm.m; sourceTree = "<group>"; };
@@ -267,14 +295,8 @@
 		2963301C25D1000E00BB1BEF /* XZNavigationController.TransitionController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = XZNavigationController.TransitionController.swift; sourceTree = "<group>"; };
 		2963301E25D1000E00BB1BEF /* XZAppRedirection.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = XZAppRedirection.m; sourceTree = "<group>"; };
 		2963301F25D1000E00BB1BEF /* XZAppRedirection.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XZAppRedirection.h; sourceTree = "<group>"; };
-		2963304925D1000E00BB1BEF /* URL+XZKit.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "URL+XZKit.swift"; sourceTree = "<group>"; };
 		2963304A25D1000E00BB1BEF /* NSString+XZDataDigester.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSString+XZDataDigester.h"; sourceTree = "<group>"; };
-		2963304B25D1000E00BB1BEF /* NSBundle+XZKit.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSBundle+XZKit.m"; sourceTree = "<group>"; };
-		2963304C25D1000E00BB1BEF /* Data+XZKit.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "Data+XZKit.swift"; sourceTree = "<group>"; };
-		2963304D25D1000E00BB1BEF /* DispatchQueue+XZKit.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "DispatchQueue+XZKit.swift"; sourceTree = "<group>"; };
-		2963304F25D1000E00BB1BEF /* NSBundle+XZKit.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSBundle+XZKit.h"; sourceTree = "<group>"; };
 		2963305025D1000E00BB1BEF /* NSString+XZDataDigester.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSString+XZDataDigester.m"; sourceTree = "<group>"; };
-		2963305125D1000E00BB1BEF /* XZKit+JSON.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "XZKit+JSON.swift"; sourceTree = "<group>"; };
 		2963305325D1000E00BB1BEF /* XZCarouselViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = XZCarouselViewController.m; sourceTree = "<group>"; };
 		2963305425D1000E00BB1BEF /* XZImageViewer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = XZImageViewer.m; sourceTree = "<group>"; };
 		2963305525D1000E00BB1BEF /* XZImageCarouselView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XZImageCarouselView.h; sourceTree = "<group>"; };
@@ -311,30 +333,6 @@
 		2963307F25D1000E00BB1BEF /* XZAppLanguageBundle.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XZAppLanguageBundle.h; sourceTree = "<group>"; };
 		2963308025D1000E00BB1BEF /* XZAppLanguage.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = XZAppLanguage.swift; sourceTree = "<group>"; };
 		2963308225D1000E00BB1BEF /* XZProgressView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = XZProgressView.swift; sourceTree = "<group>"; };
-		296330F225D108DB00BB1BEF /* XZKit+Geometry.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "XZKit+Geometry.h"; sourceTree = "<group>"; };
-		296330F325D108DB00BB1BEF /* XZLog.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = XZLog.m; sourceTree = "<group>"; };
-		296330F425D108DB00BB1BEF /* XZKit+HexEncoding.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "XZKit+HexEncoding.m"; sourceTree = "<group>"; };
-		296330F525D108DB00BB1BEF /* XZLog.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XZLog.h; sourceTree = "<group>"; };
-		296330F625D108DB00BB1BEF /* XZKit+Timestamp.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "XZKit+Timestamp.h"; sourceTree = "<group>"; };
-		296330F725D108DB00BB1BEF /* XZCharacterCase.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XZCharacterCase.h; sourceTree = "<group>"; };
-		296330F825D108DB00BB1BEF /* XZDefer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XZDefer.h; sourceTree = "<group>"; };
-		296330F925D108DB00BB1BEF /* UIView+XZKit.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "UIView+XZKit.swift"; sourceTree = "<group>"; };
-		296330FA25D108DB00BB1BEF /* XZKit+Runtime.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "XZKit+Runtime.h"; sourceTree = "<group>"; };
-		296330FB25D108DB00BB1BEF /* XZKit+Geometry.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "XZKit+Geometry.m"; sourceTree = "<group>"; };
-		296330FC25D108DB00BB1BEF /* XZKit+Date.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "XZKit+Date.swift"; sourceTree = "<group>"; };
-		296330FD25D108DB00BB1BEF /* XZKitDEBUG.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XZKitDEBUG.h; sourceTree = "<group>"; };
-		296330FE25D108DB00BB1BEF /* XZKitDefines.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XZKitDefines.h; sourceTree = "<group>"; };
-		296330FF25D108DB00BB1BEF /* XZKit+HexEncoding.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "XZKit+HexEncoding.h"; sourceTree = "<group>"; };
-		2963310125D108DB00BB1BEF /* XZKit+Runtime.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "XZKit+Runtime.m"; sourceTree = "<group>"; };
-		2963310225D108DB00BB1BEF /* XZCharacterCase.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = XZCharacterCase.m; sourceTree = "<group>"; };
-		2963310325D108DB00BB1BEF /* XZLog.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = XZLog.swift; sourceTree = "<group>"; };
-		2963310425D108DB00BB1BEF /* XZKit+Timestamp.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "XZKit+Timestamp.m"; sourceTree = "<group>"; };
-		2963310525D108DC00BB1BEF /* XZKitDefines.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = XZKitDefines.m; sourceTree = "<group>"; };
-		2963310625D108DC00BB1BEF /* XZKitDEBUG.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = XZKitDEBUG.m; sourceTree = "<group>"; };
-		2963310725D108DC00BB1BEF /* XZKit+Geometry.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "XZKit+Geometry.swift"; sourceTree = "<group>"; };
-		2963310825D108DC00BB1BEF /* XZKit+Timestamp.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "XZKit+Timestamp.swift"; sourceTree = "<group>"; };
-		2963310925D108DC00BB1BEF /* XZDefer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = XZDefer.m; sourceTree = "<group>"; };
-		2963310A25D108DC00BB1BEF /* XZKit+String.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "XZKit+String.swift"; sourceTree = "<group>"; };
 		2963313B25D10BAC00BB1BEF /* XZTimeTickerTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = XZTimeTickerTests.swift; path = XZKitTests/Sources/XZTimeTickerTests.swift; sourceTree = SOURCE_ROOT; };
 		2963313C25D10BAC00BB1BEF /* XZURLTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = XZURLTests.swift; path = XZKitTests/Sources/XZURLTests.swift; sourceTree = SOURCE_ROOT; };
 		2963313D25D10BAC00BB1BEF /* XZKitConstantsTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = XZKitConstantsTests.m; path = XZKitTests/Sources/XZKitConstantsTests.m; sourceTree = SOURCE_ROOT; };
@@ -357,8 +355,6 @@
 		2970B1A225E2AAA400D905EA /* XZImageCorner+Extension.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "XZImageCorner+Extension.h"; sourceTree = "<group>"; };
 		299D574325D8E58A0097C27A /* UIColor+XZKit.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIColor+XZKit.swift"; sourceTree = "<group>"; };
 		299D574725D8EC6D0097C27A /* XZImageLevels.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = XZImageLevels.swift; sourceTree = "<group>"; };
-		299D574D25D906FA0097C27A /* XZKit+JSON.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "XZKit+JSON.h"; sourceTree = "<group>"; };
-		299D574E25D906FA0097C27A /* XZKit+JSON.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "XZKit+JSON.m"; sourceTree = "<group>"; };
 		29B5383425DD0127009A07D3 /* XZImage.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = XZImage.h; sourceTree = "<group>"; };
 		29B5383525DD0127009A07D3 /* XZImage.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = XZImage.m; sourceTree = "<group>"; };
 		29B5384125DD0254009A07D3 /* XZImageBorders.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = XZImageBorders.h; sourceTree = "<group>"; };
@@ -424,6 +420,76 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		290DA9E125E94FCD002514AB /* XZFoundation */ = {
+			isa = PBXGroup;
+			children = (
+				290DAA4B25E94FF5002514AB /* XZFoundation.h */,
+				290DAA5025E94FF5002514AB /* XZKitDefines.h */,
+				290DAA4725E94FF5002514AB /* XZKitDEBUG.h */,
+				290DAA5125E94FF5002514AB /* XZKitDEBUG.m */,
+				290DAA5825E94FF5002514AB /* XZDefer.h */,
+				290DAA4225E94FF4002514AB /* XZDefer.m */,
+				290DAA4825E94FF5002514AB /* XZLog.h */,
+				290DAA4425E94FF4002514AB /* XZLog.m */,
+				290DAA5525E94FF5002514AB /* XZLog.swift */,
+				290DAA4A25E94FF5002514AB /* XZCharacterCase.h */,
+				290DAA4C25E94FF5002514AB /* XZKit+Geometry.h */,
+				290DAA5425E94FF5002514AB /* XZKit+Geometry.m */,
+				290DAA4925E94FF5002514AB /* XZKit+Geometry.swift */,
+				290DAA4E25E94FF5002514AB /* XZKit+HexEncoding.h */,
+				290DAA4525E94FF4002514AB /* XZKit+HexEncoding.m */,
+				290DAA4325E94FF4002514AB /* XZKit+HexEncoding.swift */,
+				290DAA5725E94FF5002514AB /* XZKit+JSON.h */,
+				290DAA4F25E94FF5002514AB /* XZKit+JSON.m */,
+				290DAA4125E94FF4002514AB /* XZKit+JSON.swift */,
+				290DAA5925E94FF5002514AB /* XZKit+Runtime.h */,
+				290DAA4D25E94FF5002514AB /* XZKit+Runtime.m */,
+				290DAA5225E94FF5002514AB /* XZKit+Timestamp.h */,
+				290DAA5325E94FF5002514AB /* XZKit+Timestamp.m */,
+				290DAA5625E94FF5002514AB /* XZKit+Timestamp.swift */,
+				290DAA4625E94FF5002514AB /* XZObjCTypeDescriptor.h */,
+				290DAA5A25E94FF5002514AB /* XZObjCTypeDescriptor.m */,
+			);
+			path = XZFoundation;
+			sourceTree = "<group>";
+		};
+		290DAA1925E94FDA002514AB /* XZCategory */ = {
+			isa = PBXGroup;
+			children = (
+				290DAA1A25E94FDA002514AB /* UIKit */,
+				290DAA2225E94FDA002514AB /* Foundation */,
+			);
+			path = XZCategory;
+			sourceTree = "<group>";
+		};
+		290DAA1A25E94FDA002514AB /* UIKit */ = {
+			isa = PBXGroup;
+			children = (
+				290DAA1F25E94FDA002514AB /* UIView+XZKit.h */,
+				290DAA1B25E94FDA002514AB /* UIView+XZKit.m */,
+				290DAA1C25E94FDA002514AB /* UIView+XZKit.swift */,
+				290DAA1D25E94FDA002514AB /* UIImage+XZKit.h */,
+				290DAA2025E94FDA002514AB /* UIImage+XZKit.m */,
+				290DAA1E25E94FDA002514AB /* UIImageView+XZKit.swift */,
+				290DAA2125E94FDA002514AB /* UIApplication+XZKit.swift */,
+			);
+			path = UIKit;
+			sourceTree = "<group>";
+		};
+		290DAA2225E94FDA002514AB /* Foundation */ = {
+			isa = PBXGroup;
+			children = (
+				290DAA2925E94FDA002514AB /* NSBundle+XZKit.h */,
+				290DAA2525E94FDA002514AB /* NSBundle+XZKit.m */,
+				290DAA2325E94FDA002514AB /* URL+XZKit.swift */,
+				290DAA2425E94FDA002514AB /* Date+XZKit.swift */,
+				290DAA2625E94FDA002514AB /* String+XZKit.swift */,
+				290DAA2725E94FDA002514AB /* Data+XZKit.swift */,
+				290DAA2825E94FDA002514AB /* DispatchQueue+XZKit.swift */,
+			);
+			path = Foundation;
+			sourceTree = "<group>";
+		};
 		2918813625D1131300C89059 /* Sources */ = {
 			isa = PBXGroup;
 			children = (
@@ -543,8 +609,8 @@
 		2963301325D1000E00BB1BEF /* Sources */ = {
 			isa = PBXGroup;
 			children = (
-				2963302025D1000E00BB1BEF /* Foundation */,
-				2963303A25D1000E00BB1BEF /* Category */,
+				290DA9E125E94FCD002514AB /* XZFoundation */,
+				290DAA1925E94FDA002514AB /* XZCategory */,
 				2918814B25D3053300C89059 /* XZDataDigester */,
 				2963307525D1000E00BB1BEF /* XZDataCryptor */,
 				29EAF1ED25E4080500358B65 /* XZColor */,
@@ -586,78 +652,6 @@
 				2963301F25D1000E00BB1BEF /* XZAppRedirection.h */,
 			);
 			path = AppRedirection;
-			sourceTree = "<group>";
-		};
-		2963302025D1000E00BB1BEF /* Foundation */ = {
-			isa = PBXGroup;
-			children = (
-				2918813D25D2972A00C89059 /* XZFoundation.h */,
-				296330FE25D108DB00BB1BEF /* XZKitDefines.h */,
-				2963310525D108DC00BB1BEF /* XZKitDefines.m */,
-				296330FD25D108DB00BB1BEF /* XZKitDEBUG.h */,
-				2963310625D108DC00BB1BEF /* XZKitDEBUG.m */,
-				296330F525D108DB00BB1BEF /* XZLog.h */,
-				296330F325D108DB00BB1BEF /* XZLog.m */,
-				2963310325D108DB00BB1BEF /* XZLog.swift */,
-				296330F825D108DB00BB1BEF /* XZDefer.h */,
-				2963310925D108DC00BB1BEF /* XZDefer.m */,
-				296330F725D108DB00BB1BEF /* XZCharacterCase.h */,
-				2963310225D108DB00BB1BEF /* XZCharacterCase.m */,
-				2918817825D6553B00C89059 /* XZObjCTypeDescriptor.h */,
-				2918817925D6553B00C89059 /* XZObjCTypeDescriptor.m */,
-				296330FA25D108DB00BB1BEF /* XZKit+Runtime.h */,
-				2963310125D108DB00BB1BEF /* XZKit+Runtime.m */,
-				296330F225D108DB00BB1BEF /* XZKit+Geometry.h */,
-				296330FB25D108DB00BB1BEF /* XZKit+Geometry.m */,
-				2963310725D108DC00BB1BEF /* XZKit+Geometry.swift */,
-				296330F625D108DB00BB1BEF /* XZKit+Timestamp.h */,
-				2963310425D108DB00BB1BEF /* XZKit+Timestamp.m */,
-				2963310825D108DC00BB1BEF /* XZKit+Timestamp.swift */,
-				296330FF25D108DB00BB1BEF /* XZKit+HexEncoding.h */,
-				296330F425D108DB00BB1BEF /* XZKit+HexEncoding.m */,
-				295D51CB25D9236800283581 /* XZKit+HexEncoding.swift */,
-				299D574D25D906FA0097C27A /* XZKit+JSON.h */,
-				299D574E25D906FA0097C27A /* XZKit+JSON.m */,
-				2963305125D1000E00BB1BEF /* XZKit+JSON.swift */,
-			);
-			path = Foundation;
-			sourceTree = "<group>";
-		};
-		2963303A25D1000E00BB1BEF /* Category */ = {
-			isa = PBXGroup;
-			children = (
-				2963303B25D1000E00BB1BEF /* UIKit */,
-				2963304725D1000E00BB1BEF /* Foundation */,
-			);
-			path = Category;
-			sourceTree = "<group>";
-		};
-		2963303B25D1000E00BB1BEF /* UIKit */ = {
-			isa = PBXGroup;
-			children = (
-				2916366125D67F51001BFE25 /* UIApplication+XZKit.swift */,
-				2916365C25D67F51001BFE25 /* UIImageView+XZKit.swift */,
-				2916365A25D67F51001BFE25 /* UIImage+XZKit.h */,
-				2916366225D67F51001BFE25 /* UIImage+XZKit.m */,
-				2916366425D67F51001BFE25 /* UIView+XZKit.h */,
-				2916365D25D67F51001BFE25 /* UIView+XZKit.m */,
-				296330F925D108DB00BB1BEF /* UIView+XZKit.swift */,
-			);
-			path = UIKit;
-			sourceTree = "<group>";
-		};
-		2963304725D1000E00BB1BEF /* Foundation */ = {
-			isa = PBXGroup;
-			children = (
-				2963304C25D1000E00BB1BEF /* Data+XZKit.swift */,
-				2963310A25D108DC00BB1BEF /* XZKit+String.swift */,
-				2963304925D1000E00BB1BEF /* URL+XZKit.swift */,
-				296330FC25D108DB00BB1BEF /* XZKit+Date.swift */,
-				2963304F25D1000E00BB1BEF /* NSBundle+XZKit.h */,
-				2963304B25D1000E00BB1BEF /* NSBundle+XZKit.m */,
-				2963304D25D1000E00BB1BEF /* DispatchQueue+XZKit.swift */,
-			);
-			path = Foundation;
 			sourceTree = "<group>";
 		};
 		2963305225D1000E00BB1BEF /* CarouselView */ = {
@@ -868,56 +862,56 @@
 				29EAF20225E408E900358B65 /* UIColor+XZColor.h in Headers */,
 				295D51F325D98E7100283581 /* XZDataCryptorAlgorithm.h in Headers */,
 				29EAF1AD25E2B9D200358B65 /* XZImage+Extension.h in Headers */,
-				2916366F25D67F51001BFE25 /* UIView+XZKit.h in Headers */,
 				296330B425D1000E00BB1BEF /* NSString+XZDataDigester.h in Headers */,
 				296330D725D1000E00BB1BEF /* XZDataCryptor.h in Headers */,
-				2963310F25D108DC00BB1BEF /* XZKit+Timestamp.h in Headers */,
 				29B5389125DE48EC009A07D3 /* XZImageBorder+Extension.h in Headers */,
+				290DAA2C25E94FDA002514AB /* UIImage+XZKit.h in Headers */,
 				296330BE25D1000E00BB1BEF /* XZImageCarouselView.h in Headers */,
-				2918813E25D2978D00C89059 /* XZFoundation.h in Headers */,
 				2970B14C25E1805C00D905EA /* XZImageLineDash+Extension.h in Headers */,
 				29B5389825DE5E67009A07D3 /* XZImageLevels.h in Headers */,
-				2963311025D108DC00BB1BEF /* XZCharacterCase.h in Headers */,
 				296DED4B25DFEA2B00343A6A /* XZImageLinePathPoint.h in Headers */,
 				291F577E25E10E5800862D31 /* XZImageLineDash.h in Headers */,
+				290DAA7225E94FF5002514AB /* XZDefer.h in Headers */,
 				29EAF21525E4157900358B65 /* UIImage+XZImage.h in Headers */,
 				29632F2925D058E000BB1BEF /* XZKit.h in Headers */,
+				290DAA7125E94FF5002514AB /* XZKit+JSON.h in Headers */,
+				290DAA6A25E94FF5002514AB /* XZKitDefines.h in Headers */,
 				29B5388A25DE46E8009A07D3 /* XZImageBorderArrow+Extension.h in Headers */,
-				296330B925D1000E00BB1BEF /* NSBundle+XZKit.h in Headers */,
-				2963310E25D108DC00BB1BEF /* XZLog.h in Headers */,
 				296330C525D1000E00BB1BEF /* XZImageViewer.h in Headers */,
 				296DED3D25DFE8F500343A6A /* XZImageLinePath.h in Headers */,
+				290DAA6425E94FF5002514AB /* XZCharacterCase.h in Headers */,
 				2970B18225E2323E00D905EA /* XZImageCorners+Extension.h in Headers */,
 				29EAF1F025E4081400358B65 /* XZColor.h in Headers */,
 				2970B16925E21EA700D905EA /* XZImageBorderArrow.h in Headers */,
 				2970B15C25E219C600D905EA /* XZImageBorders+Extension.h in Headers */,
-				2963311125D108DC00BB1BEF /* XZDefer.h in Headers */,
-				2963310B25D108DC00BB1BEF /* XZKit+Geometry.h in Headers */,
+				290DAA2E25E94FDA002514AB /* UIView+XZKit.h in Headers */,
+				290DAA6825E94FF5002514AB /* XZKit+HexEncoding.h in Headers */,
 				2970B15225E180ED00D905EA /* XZImageLine+Extension.h in Headers */,
 				296330C625D1000E00BB1BEF /* XZCarouselView.h in Headers */,
 				29B5384A25DD0260009A07D3 /* XZImageBorder.h in Headers */,
-				299D574F25D906FA0097C27A /* XZKit+JSON.h in Headers */,
 				29B5384325DD0254009A07D3 /* XZImageBorders.h in Headers */,
+				290DAA7325E94FF5002514AB /* XZKit+Runtime.h in Headers */,
 				296330C025D1000E00BB1BEF /* XZCarouselViewController.h in Headers */,
+				290DAA3725E94FDA002514AB /* NSBundle+XZKit.h in Headers */,
+				290DAA6025E94FF5002514AB /* XZObjCTypeDescriptor.h in Headers */,
 				2963308D25D1000E00BB1BEF /* XZAppRedirection.h in Headers */,
+				290DAA6225E94FF5002514AB /* XZLog.h in Headers */,
 				296330CE25D1000E00BB1BEF /* XZAnimatedImage.h in Headers */,
+				290DAA6625E94FF5002514AB /* XZKit+Geometry.h in Headers */,
 				296330DB25D1000E00BB1BEF /* NSBundle+XZAppLanguage.h in Headers */,
 				2970B19225E2961300D905EA /* XZImageAttribute.h in Headers */,
-				2963311725D108DC00BB1BEF /* XZKitDefines.h in Headers */,
-				2963311825D108DC00BB1BEF /* XZKit+HexEncoding.h in Headers */,
 				29B5385125DD026C009A07D3 /* XZImageCorners.h in Headers */,
-				2963311325D108DC00BB1BEF /* XZKit+Runtime.h in Headers */,
-				2916366525D67F51001BFE25 /* UIImage+XZKit.h in Headers */,
 				2970B1A325E2AAA400D905EA /* XZImageCorner+Extension.h in Headers */,
 				29B5383625DD0127009A07D3 /* XZImage.h in Headers */,
 				2970B19B25E2965A00D905EA /* XZImageAttribute+Extension.h in Headers */,
-				2963311625D108DC00BB1BEF /* XZKitDEBUG.h in Headers */,
 				2918815025D3060000C89059 /* NSData+XZDataDigester.h in Headers */,
 				29B5387625DD1681009A07D3 /* XZImageLine.h in Headers */,
 				296330C325D1000E00BB1BEF /* XZCarouselView.ScrollView.h in Headers */,
-				2918817A25D6553B00C89059 /* XZObjCTypeDescriptor.h in Headers */,
 				296DED4425DFEA1E00343A6A /* XZImageLinePathArc.h in Headers */,
 				296330C225D1000E00BB1BEF /* XZCarouselView.ItemView.h in Headers */,
+				290DAA6C25E94FF5002514AB /* XZKit+Timestamp.h in Headers */,
+				290DAA6525E94FF5002514AB /* XZFoundation.h in Headers */,
+				290DAA6125E94FF5002514AB /* XZKitDEBUG.h in Headers */,
 				296330DD25D1000E00BB1BEF /* XZAppLanguageBundle.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -1107,25 +1101,22 @@
 			buildActionMask = 2147483647;
 			files = (
 				296330D025D1000E00BB1BEF /* XZContentStatusRepresentable.swift in Sources */,
+				290DAA6D25E94FF5002514AB /* XZKit+Timestamp.m in Sources */,
+				290DAA7425E94FF5002514AB /* XZObjCTypeDescriptor.m in Sources */,
+				290DAA3025E94FDA002514AB /* UIApplication+XZKit.swift in Sources */,
 				2963308725D1000E00BB1BEF /* XZNavigationGestureDrivable.swift in Sources */,
-				2916366D25D67F51001BFE25 /* UIImage+XZKit.m in Sources */,
-				296330B325D1000E00BB1BEF /* URL+XZKit.swift in Sources */,
-				2963311225D108DC00BB1BEF /* UIView+XZKit.swift in Sources */,
-				2918817B25D6553B00C89059 /* XZObjCTypeDescriptor.m in Sources */,
-				2916366725D67F51001BFE25 /* UIImageView+XZKit.swift in Sources */,
+				290DAA2F25E94FDA002514AB /* UIImage+XZKit.m in Sources */,
 				296DED4C25DFEA2B00343A6A /* XZImageLinePathPoint.m in Sources */,
+				290DAA2A25E94FDA002514AB /* UIView+XZKit.m in Sources */,
+				290DAA5E25E94FF5002514AB /* XZLog.m in Sources */,
 				29B5385225DD026C009A07D3 /* XZImageCorners.m in Sources */,
 				296330BC25D1000E00BB1BEF /* XZCarouselViewController.m in Sources */,
-				2963312025D108DC00BB1BEF /* XZKit+Geometry.swift in Sources */,
 				29B5384425DD0254009A07D3 /* XZImageBorders.m in Sources */,
 				296DED3E25DFE8F500343A6A /* XZImageLinePath.m in Sources */,
 				299D574425D8E58A0097C27A /* UIColor+XZKit.swift in Sources */,
 				29B5387725DD1681009A07D3 /* XZImageLine.m in Sources */,
-				2963311C25D108DC00BB1BEF /* XZLog.swift in Sources */,
-				2963311525D108DC00BB1BEF /* XZKit+Date.swift in Sources */,
 				29EAF20325E408E900358B65 /* UIColor+XZColor.m in Sources */,
 				2963308525D1000E00BB1BEF /* XZNavigationBarCustomizable.swift in Sources */,
-				296330BB25D1000E00BB1BEF /* XZKit+JSON.swift in Sources */,
 				296330C925D1000E00BB1BEF /* XZImageCacheManager.swift in Sources */,
 				29B5385925DD0275009A07D3 /* XZImageCorner.m in Sources */,
 				296330C725D1000E00BB1BEF /* XZImageCarouselView.m in Sources */,
@@ -1133,39 +1124,41 @@
 				296330CA25D1000E00BB1BEF /* XZDataDigester.m in Sources */,
 				296330C125D1000E00BB1BEF /* XZCarouselView.ScrollView.m in Sources */,
 				296330DF25D1000E00BB1BEF /* XZProgressView.swift in Sources */,
-				2916366825D67F51001BFE25 /* UIView+XZKit.m in Sources */,
-				2963311425D108DC00BB1BEF /* XZKit+Geometry.m in Sources */,
 				296330D425D1000E00BB1BEF /* XZTextImageView.swift in Sources */,
 				2963308C25D1000E00BB1BEF /* XZAppRedirection.m in Sources */,
+				290DAA2B25E94FDA002514AB /* UIView+XZKit.swift in Sources */,
+				290DAA2D25E94FDA002514AB /* UIImageView+XZKit.swift in Sources */,
 				2963308425D1000E00BB1BEF /* XZNavigationController.AnimationController.swift in Sources */,
-				2963312125D108DC00BB1BEF /* XZKit+Timestamp.swift in Sources */,
 				296330BF25D1000E00BB1BEF /* XZCarouselView.m in Sources */,
-				2963311F25D108DC00BB1BEF /* XZKitDEBUG.m in Sources */,
 				296330D625D1000E00BB1BEF /* XZDataCryptor.m in Sources */,
 				2963308B25D1000E00BB1BEF /* XZNavigationController.TransitionController.swift in Sources */,
-				2963311B25D108DC00BB1BEF /* XZCharacterCase.m in Sources */,
 				296330D825D1000E00BB1BEF /* NSBundle+XZAppLanguage.m in Sources */,
 				296330CC25D1000E00BB1BEF /* XZTimeTicker.swift in Sources */,
 				296330DC25D1000E00BB1BEF /* XZAppLanguageBundle.m in Sources */,
-				299D575025D906FA0097C27A /* XZKit+JSON.m in Sources */,
+				290DAA6E25E94FF5002514AB /* XZKit+Geometry.m in Sources */,
 				296330DE25D1000E00BB1BEF /* XZAppLanguage.swift in Sources */,
-				296330B725D1000E00BB1BEF /* DispatchQueue+XZKit.swift in Sources */,
 				29B5383725DD0127009A07D3 /* XZImage.m in Sources */,
 				296330C825D1000E00BB1BEF /* XZCacheManger.swift in Sources */,
+				290DAA3125E94FDA002514AB /* URL+XZKit.swift in Sources */,
+				290DAA5C25E94FF5002514AB /* XZDefer.m in Sources */,
 				296DED4525DFEA1E00343A6A /* XZImageLinePathArc.m in Sources */,
 				29EAF21625E4157900358B65 /* UIImage+XZImage.m in Sources */,
+				290DAA6925E94FF5002514AB /* XZKit+JSON.m in Sources */,
+				290DAA6325E94FF5002514AB /* XZKit+Geometry.swift in Sources */,
 				296330C425D1000E00BB1BEF /* XZCarouselView.ItemView.m in Sources */,
+				290DAA3625E94FDA002514AB /* DispatchQueue+XZKit.swift in Sources */,
 				296330CF25D1000E00BB1BEF /* XZContentStatus.swift in Sources */,
-				295D51CC25D9236800283581 /* XZKit+HexEncoding.swift in Sources */,
+				290DAA3425E94FDA002514AB /* String+XZKit.swift in Sources */,
 				2970B19325E2961300D905EA /* XZImageAttribute.m in Sources */,
 				296330CD25D1000E00BB1BEF /* XZAnimatedImage.m in Sources */,
-				2963310D25D108DC00BB1BEF /* XZKit+HexEncoding.m in Sources */,
+				290DAA5D25E94FF5002514AB /* XZKit+HexEncoding.swift in Sources */,
 				295D51F425D98E7100283581 /* XZDataCryptorAlgorithm.m in Sources */,
-				2963311E25D108DC00BB1BEF /* XZKitDefines.m in Sources */,
-				2963312325D108DC00BB1BEF /* XZKit+String.swift in Sources */,
-				296330B625D1000E00BB1BEF /* Data+XZKit.swift in Sources */,
+				290DAA7025E94FF5002514AB /* XZKit+Timestamp.swift in Sources */,
+				290DAA6F25E94FF5002514AB /* XZLog.swift in Sources */,
 				291F577F25E10E5800862D31 /* XZImageLineDash.m in Sources */,
-				2916366C25D67F51001BFE25 /* UIApplication+XZKit.swift in Sources */,
+				290DAA6725E94FF5002514AB /* XZKit+Runtime.m in Sources */,
+				290DAA6B25E94FF5002514AB /* XZKitDEBUG.m in Sources */,
+				290DAA3325E94FDA002514AB /* NSBundle+XZKit.m in Sources */,
 				2963308625D1000E00BB1BEF /* UINavigationBar+XZNavigationController.swift in Sources */,
 				296330BA25D1000E00BB1BEF /* NSString+XZDataDigester.m in Sources */,
 				29EAF1F125E4081400358B65 /* XZColor.m in Sources */,
@@ -1174,19 +1167,18 @@
 				296330D925D1000E00BB1BEF /* XZAppLanguage.m in Sources */,
 				29B5384B25DD0260009A07D3 /* XZImageBorder.m in Sources */,
 				2918815125D3060000C89059 /* NSData+XZDataDigester.m in Sources */,
+				290DAA5F25E94FF5002514AB /* XZKit+HexEncoding.m in Sources */,
 				2970B16A25E21EA700D905EA /* XZImageBorderArrow.m in Sources */,
 				29B5389925DE5E67009A07D3 /* XZImageLevels.m in Sources */,
-				296330B525D1000E00BB1BEF /* NSBundle+XZKit.m in Sources */,
 				296330D225D1000E00BB1BEF /* XZCollectionViewFlowLayout.swift in Sources */,
-				2963311D25D108DC00BB1BEF /* XZKit+Timestamp.m in Sources */,
 				296330BD25D1000E00BB1BEF /* XZImageViewer.m in Sources */,
-				2963311A25D108DC00BB1BEF /* XZKit+Runtime.m in Sources */,
-				2963310C25D108DC00BB1BEF /* XZLog.m in Sources */,
-				2963312225D108DC00BB1BEF /* XZDefer.m in Sources */,
+				290DAA3525E94FDA002514AB /* Data+XZKit.swift in Sources */,
 				295D51E225D941B800283581 /* XZDataDigester.swift in Sources */,
 				299D574825D8EC6D0097C27A /* XZImageLevels.swift in Sources */,
+				290DAA5B25E94FF5002514AB /* XZKit+JSON.swift in Sources */,
 				2963308925D1000E00BB1BEF /* XZNavigationController.swift in Sources */,
 				2963308825D1000E00BB1BEF /* XZNavigationBarCustomizing.swift in Sources */,
+				290DAA3225E94FDA002514AB /* Date+XZKit.swift in Sources */,
 				296330D325D1000E00BB1BEF /* XZTextImageControl.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -1271,8 +1263,9 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CLANG_ENABLE_MODULES = YES;
+				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
-				DEVELOPMENT_TEAM = LWKDD4DJ6H;
+				DEVELOPMENT_TEAM = DRRPBNFZ6Z;
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					"DEBUG=1",
 					"$(inherited)",
@@ -1283,8 +1276,9 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = com.xezun.icloud.demo;
+				PRODUCT_BUNDLE_IDENTIFIER = com.xezun.demo;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE_SPECIFIER = "";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
@@ -1297,16 +1291,18 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CLANG_ENABLE_MODULES = YES;
+				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
-				DEVELOPMENT_TEAM = LWKDD4DJ6H;
+				DEVELOPMENT_TEAM = DRRPBNFZ6Z;
 				INFOPLIST_FILE = XZKitDemo/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = com.xezun.icloud.demo;
+				PRODUCT_BUNDLE_IDENTIFIER = com.xezun.demo;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE_SPECIFIER = "";
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};

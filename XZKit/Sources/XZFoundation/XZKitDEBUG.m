@@ -6,7 +6,7 @@
 //  Copyright © 2021 Xezun Inc. All rights reserved.
 //
 
-#define XZKIT_PROTECTED
+#define XZ_CONST
 #import "XZKitDEBUG.h"
 
 bool XZKitDebugMode = NO;

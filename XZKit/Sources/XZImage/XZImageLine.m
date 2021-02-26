@@ -10,6 +10,17 @@
 
 @implementation XZImageLine
 
+- (instancetype)initWithSuperAttribute:(id<XZImageAttribute>)superAttribute {
+    self = [super initWithSuperAttribute:superAttribute];
+    if (self) {
+        _width = 0;
+        _color = nil;
+        _miterLimit = 10;
+        _dash = nil;
+    }
+    return self;
+}
+
 - (BOOL)isEffective {
     return self.width > 0 || self.color != nil || self.dashIfLoaded.isEffective;
 }
@@ -39,6 +50,20 @@
         return NO;
     }
     _width = width;
+    return YES;
+}
+
+- (void)setMiterLimit:(CGFloat)miterLimit {
+    if ([self setMiterLimitSilently:miterLimit]) {
+        [self didUpdateAttribute:@"miterLimit"];
+    }
+}
+
+- (BOOL)setMiterLimitSilently:(CGFloat)miterLimit {
+    if (_miterLimit == miterLimit || miterLimit < 0) {
+        return NO;
+    }
+    _miterLimit = miterLimit;
     return YES;
 }
 

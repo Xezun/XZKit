@@ -66,46 +66,36 @@ XZEdgeInsets XZEdgeInsetsFromString(NSString * _Nullable aString) {
 
 NSString *NSStringFromXZRectEdge(XZRectEdge rectEdge) {
     NSMutableArray<NSString *> *edgesM = [NSMutableArray arrayWithCapacity:4];
-    XZRectEdge edge = 1;
-    while (edge <= XZRectEdgeTrailing) {
-        if (edge & rectEdge) {
-            switch (edge) {
-                case XZRectEdgeTop:
-                    [edgesM addObject:@".top"];
-                    break;
-                case XZRectEdgeLeading:
-                    [edgesM addObject:@".leading"];
-                    break;
-                case XZRectEdgeBottom:
-                    [edgesM addObject:@".bottom"];
-                    break;
-                case XZRectEdgeTrailing:
-                    [edgesM addObject:@".trailing"];
-                    break;
-                default:
-                    break;
-            }
-        }
-        edge <<= 1;
+    if (rectEdge & XZRectEdgeTop) {
+        [edgesM addObject:@".top"];
     }
-    
-    if (edgesM.count > 1) {
-        return [NSString stringWithFormat:@"[%@]", [edgesM componentsJoinedByString:@", "]];
+    if (rectEdge & XZRectEdgeLeading) {
+        [edgesM addObject:@".leading"];
     }
-    return edgesM.firstObject;
+    if (rectEdge & XZRectEdgeBottom) {
+        [edgesM addObject:@".bottom"];
+    }
+    if (rectEdge & XZRectEdgeTrailing) {
+        [edgesM addObject:@".trailing"];
+    }
+    NSString *string = [edgesM componentsJoinedByString:@", "];
+    return [NSString stringWithFormat:@"[%@]", string];
 }
 
 XZRectEdge XZRectEdgeFromString(NSString * _Nullable aString) {
     XZRectEdge edges = 0;
-    if ([aString isKindOfClass:NSString.class] && aString.length > 0) {
-        NSArray * const edgeStrings = @[
-            @".top", @".leading",
-            @".bottom", @".trailing"
-        ];
-        for (NSInteger i = 0; i < 4; i++) {
-            if ([aString containsString:edgeStrings[i]]) {
-                edges |= (1 << i);
-            }
+    if (aString.length >= 4) {
+        if ([aString containsString:@".top"]) {
+            edges |= XZRectEdgeTop;
+        }
+        if ([aString containsString:@".leading"]) {
+            edges |= XZRectEdgeLeading;
+        }
+        if ([aString containsString:@".bottom"]) {
+            edges |= XZRectEdgeBottom;
+        }
+        if ([aString containsString:@".trailing"]) {
+            edges |= XZRectEdgeTrailing;
         }
     }
     return edges;
@@ -124,13 +114,21 @@ XZRectEdge XZRectEdgeFromString(NSString * _Nullable aString) {
 
 - (XZEdgeInsets)XZEdgeInsetsValue {
     XZEdgeInsets insets = XZEdgeInsetsZero;
-    [self getValue:&insets];
+    if (@available(iOS 11.0, *)) {
+        [self getValue:&insets size:sizeof(XZEdgeInsets)];
+    } else {
+        [self getValue:&insets];
+    }
     return insets;
 }
 
 - (XZRectEdge)XZRectEdgeValue {
     XZRectEdge edge = 0;
-    [self getValue:&edge];
+    if (@available(iOS 11.0, *)) {
+        [self getValue:&edge size:sizeof(XZRectEdge)];
+    } else {
+        [self getValue:&edge];
+    }
     return edge;
 }
 

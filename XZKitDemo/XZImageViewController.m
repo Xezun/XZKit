@@ -41,7 +41,7 @@
     image.size            = CGSizeMake(300, 200);
     image.backgroundImage = [UIImage imageNamed:@"icon_image"];
     image.contentMode     = UIViewContentModeScaleAspectFill;
-    image.contentInsets   = UIEdgeInsetsMake(10, 10, 10, 10);
+    image.contentInsets   = UIEdgeInsetsZero;
     image.backgroundColor = rgba(0xFF0000, 1.0);
     
     // 设置所有边框和圆角
@@ -51,11 +51,11 @@
 //    image.lineDash.width = 5;
     
     // 设置所有边框
-    image.borders.width = 1.0;
+    image.borders.width = 4.0;
     image.borders.color = rgba(0xFF93FF, 1.0);
     
     // 设置所有圆角
-    image.corners.width  = 1.0;
+    image.corners.width  = 4.0;
     image.corners.color  = UIColor.greenColor;
     image.corners.radius = 20.0;
     

@@ -9,7 +9,6 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-// Swift String/Array/Dictionary 不能自动提示自定义拓展 OC 类目的方法了。
 // JSON：字符串或二进制数据。
 // JSONObject：可化为 JSON 的对象。
 

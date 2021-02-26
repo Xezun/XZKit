@@ -12,7 +12,7 @@
 NS_ASSUME_NONNULL_BEGIN
 
 /// 当前是否为 DEBUG 模式，程序启动参数添加了 -XZKitDEBUG 参数。
-FOUNDATION_EXTERN bool XZKIT_PROTECTED XZKitDebugMode NS_SWIFT_NAME(isDebugMode);
+FOUNDATION_EXTERN bool XZ_CONST XZKitDebugMode NS_SWIFT_NAME(isDebugMode);
 
 @interface NSObject (XZKitDEBUG)
 @end

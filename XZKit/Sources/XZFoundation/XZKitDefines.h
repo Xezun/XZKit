@@ -7,8 +7,6 @@
 //
 
 #import <Foundation/Foundation.h>
-#import <UIKit/UIKit.h>
-#import <objc/runtime.h>
 
 #ifndef XZKIT_DEFINES
 #define XZKIT_DEFINES
@@ -16,13 +14,12 @@
 
 #pragma mark - 宏定义
 
-#ifndef XZKIT_PROTECTED
-/// 输出全局变量用，外部不可写。
-#define XZKIT_PROTECTED const
+#ifndef XZ_CONST
+#define XZ_CONST const
 #endif
 
 /// 标记属性或方法只提供给 ObjC
-#define XZ_OBJC NS_SWIFT_UNAVAILABLE("Objective-C")
+#define XZ_OBJC_ONLY NS_SWIFT_UNAVAILABLE("designed for Objective-C only")
 
 
 #pragma mark 编译器属性
@@ -80,7 +77,7 @@
 
 /// 用于结构体声明，使其可以用语法糖 @(value) 包裹成 NSValue 对象。
 /// @code
-/// typedef struct XZ_BOXABLE {
+/// typedef struct XZ_BOXABLE Foo {
 ///     CGFloat bar;
 /// } Foo;
 /// @endcode
@@ -152,5 +149,7 @@
 // __IPHONE_OS_VERSION_MAX_ALLOWED
 // __IPHONE_11_0
 
+#define enweak(var) typeof(var) __weak __NSX_PASTE__(__xz_weak_, var) = (var)
+#define deweak(var) typeof(var) __strong var = __NSX_PASTE__(__xz_weak_, var)
 
 #endif

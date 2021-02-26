@@ -287,8 +287,8 @@ typedef struct XZObjCTypeProvider {
                             // 可用位够，则放在可用位上，可用位减少
                             bits -= subtype.sizeInBit;
                         } else {
-                            // 可用位不够，新起可用位。
-                            if (bits < BITS) { // 可用位还没使用，不需要新起
+                            // 可用位不够，新起可用位，但是如果可用位还没使用，则不需要新起。
+                            if (bits < BITS) {
                                 _sizeInBit += bits;
                             }
                             // 可能占多个可用位

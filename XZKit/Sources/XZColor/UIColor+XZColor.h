@@ -38,7 +38,7 @@ NS_ASSUME_NONNULL_BEGIN
 /// @param green [0, 255]
 /// @param blue [0, 255]
 /// @param alpha [0, 255]
-+ (UIColor *)xz_colorWithRed:(NSInteger)red Green:(NSInteger)green Blue:(NSInteger)blue Alpha:(NSInteger)alpha NS_SWIFT_NAME(init(Red:Green:Blue:Alpha:));
++ (UIColor *)xz_colorWithHexRed:(NSInteger)red green:(NSInteger)green blue:(NSInteger)blue alpha:(NSInteger)alpha NS_SWIFT_NAME(init(HexRed:green:blue:alpha:));
 
 /// 通过十六进制数表示的颜色值字符串，创建 UIColor 。
 /// @param string A string like #F00 or #1A2B3C or #1A2B3CFF.

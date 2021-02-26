@@ -169,6 +169,16 @@ extension Date {
         return Calendar.current.date(from: componets)!;
     }
     
+    
+    /// 比较两个 Date 在指定计时单位上是否相同。
+    /// - Parameters:
+    ///   - date: 被比较的日期
+    ///   - component: 单位
+    /// - Returns: 是否相同
+    public func isEqual(to date: Date, toGranularity component: Calendar.Component) -> Bool {
+        return Calendar.current.isDate(self, equalTo: date, toGranularity: component)
+    }
+    
     /// 在用户当前日历下，判断与另一日期是否是同一天。
     ///
     /// - Parameter date: 待比较的日期

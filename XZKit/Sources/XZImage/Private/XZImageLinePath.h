@@ -21,9 +21,9 @@ NS_ASSUME_NONNULL_BEGIN
 /// 线型
 @property (nonatomic, strong, readonly, nullable) XZImageLine *line;
 /// 添加一条直线
-- (void)addLineToPoint:(CGPoint)endPoint;
+- (void)appendLineToPoint:(CGPoint)endPoint;
 /// 添加一个圆角
-- (void)addArcWithCenter:(CGPoint)center radius:(CGFloat)radiusTR startAngle:(CGFloat)startAngle endAngle:(CGFloat)endAngle;
+- (void)appendArcWithCenter:(CGPoint)center radius:(CGFloat)radiusTR startAngle:(CGFloat)startAngle endAngle:(CGFloat)endAngle;
 
 @end
 

@@ -28,13 +28,13 @@
     return self;
 }
 
-- (void)addLineToPoint:(CGPoint)endPoint {
+- (void)appendLineToPoint:(CGPoint)endPoint {
     XZImageLinePathPoint *border = [[XZImageLinePathPoint alloc] init];
     border.endPoint = endPoint;
     [_items addObject:border];
 }
 
-- (void)addArcWithCenter:(CGPoint)center radius:(CGFloat)radius startAngle:(CGFloat)startAngle endAngle:(CGFloat)endAngle {
+- (void)appendArcWithCenter:(CGPoint)center radius:(CGFloat)radius startAngle:(CGFloat)startAngle endAngle:(CGFloat)endAngle {
     XZImageLinePathArc *corner = [[XZImageLinePathArc alloc] init];
     corner.radius = radius;
     corner.center = center;
@@ -45,9 +45,11 @@
 
 - (void)drawInContext:(CGContextRef)context {
     if (_line) {
-        CGContextSetStrokeColorWithColor(context, _line.color.CGColor);
+        if (_line.color) {
+            CGContextSetStrokeColorWithColor(context, _line.color.CGColor);
+        }
         CGContextSetLineWidth(context, _line.width);
-        // CGContextSetMiterLimit(context, 100);
+        CGContextSetMiterLimit(context, _line.miterLimit);
         
         XZImageLineDash * const dash = _line.dashIfLoaded;
         if (dash.isEffective) {

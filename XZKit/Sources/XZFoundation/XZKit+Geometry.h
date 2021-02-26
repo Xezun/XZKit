@@ -11,7 +11,7 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-/// 与 UIEdgeInsets 相同，只不过方便适配 LTR/RTL 布局。
+/// 边距。与 UIEdgeInsets 相同，只不过方便适配 LTR/RTL 布局。
 typedef struct XZ_BOXABLE XZEdgeInsets {
     /// 上边距。
     CGFloat top;
@@ -68,21 +68,42 @@ UIKIT_EXTERN UIEdgeInsets UIEdgeInsetsFromXZEdgeInsets(XZEdgeInsets edgeInsets, 
 UIKIT_EXTERN BOOL CGRectContainsPointInEdgeInsets(CGRect bounds, UIEdgeInsets edgeInsets, CGPoint point) NS_SWIFT_UNAVAILABLE("Use CGRect.contains(_:in:) instead.");
 
 
+/// 将 XZEdgeInsets 序列化为字符串。
+/// @param edgeInsets XZEdgeInsets
 FOUNDATION_EXPORT NSString *NSStringFromXZEdgeInsets(XZEdgeInsets edgeInsets);
+
+/// 从字符串中反解出 XZEdgeInsets 结构体。
+/// @param aString 字符串
 FOUNDATION_EXPORT XZEdgeInsets XZEdgeInsetsFromString(NSString * _Nullable aString);
+
+/// 将 XZEdgeInsets 序列化为字符串。
+/// @param rectEdge XZRectEdge
 FOUNDATION_EXPORT NSString *NSStringFromXZRectEdge(XZRectEdge rectEdge);
+
+/// 从字符串反解出 XZRectEdge 结构体。
+/// @param aString XZRectEdge
 FOUNDATION_EXPORT XZRectEdge XZRectEdgeFromString(NSString * _Nullable aString);
 
 @interface NSValue (XZKitGeometry)
 
+/// 以 XZEdgeInsets 构造 NSValue 对象。
+/// @param edgeInsets XZEdgeInsets
 + (NSValue *)valueWithXZEdgeInsets:(XZEdgeInsets)edgeInsets NS_SWIFT_NAME(init(_:));
+
+/// 取出 XZEdgeInsets 值
 @property (nonatomic, readonly) XZEdgeInsets XZEdgeInsetsValue;
 
 @end
 
 @interface NSCoder (XZKitGeometry)
 
+/// 归档编码 XZEdgeInsets 值。
+/// @param insets XZEdgeInsets 值
+/// @param key 键名
 - (void)encodeXZEdgeInsets:(XZEdgeInsets)insets forKey:(NSString *)key NS_SWIFT_NAME(encode(_:forKey:));
+
+/// 解档 XZEdgeInsets 值。
+/// @param key 键名。
 - (XZEdgeInsets)decodeXZEdgeInsetsForKey:(NSString *)key NS_SWIFT_NAME(decode(forKey:));
 
 @end

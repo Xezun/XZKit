@@ -87,6 +87,15 @@
     [super setWidth:width];
 }
 
+- (void)setMiterLimit:(CGFloat)miterLimit {
+    [self.topLeftIfLoaded setMiterLimitSilently:miterLimit];
+    [self.bottomLeftIfLoaded setMiterLimitSilently:miterLimit];
+    [self.bottomRightIfLoaded setMiterLimitSilently:miterLimit];
+    [self.topRightIfLoaded setMiterLimitSilently:miterLimit];
+    
+    [super setMiterLimit:miterLimit];
+}
+
 - (void)setRadius:(CGFloat)radius {
     [self.topLeftIfLoaded setRadiusSilently:radius];
     [self.bottomLeftIfLoaded setRadiusSilently:radius];

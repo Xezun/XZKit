@@ -7,13 +7,13 @@
 
 #import "NSBundle+XZKit.h"
 
-@interface _XZKitBundleClass : NSBundle
+@interface XZKitBundleClass : NSBundle
 @end
 
 @implementation NSBundle (XZKit)
 
 + (NSBundle *)XZKitBundle {
-    return [NSBundle bundleForClass:[_XZKitBundleClass class]];
+    return [NSBundle bundleForClass:[XZKitBundleClass class]];
 }
 
 - (NSString *)xz_buildVersionString {
@@ -30,6 +30,5 @@
 
 @end
 
-@implementation _XZKitBundleClass
-
+@implementation XZKitBundleClass
 @end

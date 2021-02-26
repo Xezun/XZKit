@@ -70,7 +70,7 @@ FOUNDATION_STATIC_INLINE NSString *NSStringFromXZColor(XZColor color) {
 
 /// 通过 XZRGBA 构造 UIColor 对象。
 /// @param rgba RGBA 颜色值
-FOUNDATION_STATIC_INLINE UIColor *rgba(XZColor rgba) XZ_OVERLOAD XZ_OBJC {
+FOUNDATION_STATIC_INLINE UIColor *rgba(XZColor rgba) XZ_OVERLOAD {
     CGFloat const red   = rgba.red   / 255.0;
     CGFloat const green = rgba.green / 255.0;
     CGFloat const blue  = rgba.blue  / 255.0;
@@ -81,7 +81,7 @@ FOUNDATION_STATIC_INLINE UIColor *rgba(XZColor rgba) XZ_OVERLOAD XZ_OBJC {
 #pragma mark - RGBA
 
 /// 通过整数形式的 RGBA 颜色值构造 UIColor 对象。
-FOUNDATION_STATIC_INLINE UIColor *rgba(NSInteger value) XZ_OVERLOAD XZ_OBJC {
+FOUNDATION_STATIC_INLINE UIColor *rgba(NSInteger value) XZ_OVERLOAD {
     CGFloat const red   = (value>>24&0xFF) / 255.0;
     CGFloat const green = (value>>16&0xFF) / 255.0;
     CGFloat const blue  = (value>> 8&0xFF) / 255.0;
@@ -89,7 +89,7 @@ FOUNDATION_STATIC_INLINE UIColor *rgba(NSInteger value) XZ_OVERLOAD XZ_OBJC {
     return [UIColor colorWithRed:red green:green blue:blue alpha:alpha];
 }
 
-FOUNDATION_STATIC_INLINE UIColor *rgba(NSInteger value, CGFloat alpha) XZ_OVERLOAD XZ_OBJC {
+FOUNDATION_STATIC_INLINE UIColor *rgba(NSInteger value, CGFloat alpha) XZ_OVERLOAD {
     CGFloat const red   = (value>>16&0xFF) / 255.0;
     CGFloat const green = (value>> 8&0xFF) / 255.0;
     CGFloat const blue  = (value>> 0&0xFF) / 255.0;
@@ -97,24 +97,24 @@ FOUNDATION_STATIC_INLINE UIColor *rgba(NSInteger value, CGFloat alpha) XZ_OVERLO
 }
 
 /// 通过 RGBA 值 [0, 255] 构造 UIColor 对象。
-FOUNDATION_STATIC_INLINE UIColor *rgba(long red, long green, long blue, long alpha) XZ_OVERLOAD XZ_OBJC {
+FOUNDATION_STATIC_INLINE UIColor *rgba(long red, long green, long blue, long alpha) XZ_OVERLOAD {
     return [UIColor colorWithRed:red/255.0 green:green/255.0 blue:blue/255.0 alpha:alpha/255.0];
 }
 
 /// 通过 RGBA 值 [0, 255] 构造 UIColor 对象。
-FOUNDATION_STATIC_INLINE UIColor *rgba(int red, int green, int blue, int alpha) XZ_OVERLOAD XZ_OBJC {
+FOUNDATION_STATIC_INLINE UIColor *rgba(int red, int green, int blue, int alpha) XZ_OVERLOAD {
     return [UIColor colorWithRed:red/255.0 green:green/255.0 blue:blue/255.0 alpha:alpha/255.0];
 }
 
 /// 通过 RGBA 值 [0, 1.0] 构造 UIColor 对象。
-FOUNDATION_STATIC_INLINE UIColor *rgba(CGFloat red, CGFloat green, CGFloat blue, CGFloat alpha) XZ_OVERLOAD XZ_OBJC {
+FOUNDATION_STATIC_INLINE UIColor *rgba(CGFloat red, CGFloat green, CGFloat blue, CGFloat alpha) XZ_OVERLOAD {
     return [UIColor colorWithRed:red green:green blue:blue alpha:alpha];
 }
 
 #pragma mark - RGB
 
 /// 通过整数形式的 RGB 颜色值构造 UIColor 对象。
-FOUNDATION_STATIC_INLINE UIColor *rgb(NSInteger value) XZ_OVERLOAD XZ_OBJC {
+FOUNDATION_STATIC_INLINE UIColor *rgb(NSInteger value) XZ_OVERLOAD {
     CGFloat const red   = (value>>16&0xFF) / 255.0;
     CGFloat const green = (value>> 8&0xFF) / 255.0;
     CGFloat const blue  = (value>> 0&0xFF) / 255.0;
@@ -122,30 +122,30 @@ FOUNDATION_STATIC_INLINE UIColor *rgb(NSInteger value) XZ_OVERLOAD XZ_OBJC {
 }
 
 /// 通过 RGB 值 [0, 255] 构造 UIColor 对象。
-FOUNDATION_STATIC_INLINE UIColor *rgb(long red, long green, long blue) XZ_OVERLOAD XZ_OBJC {
+FOUNDATION_STATIC_INLINE UIColor *rgb(long red, long green, long blue) XZ_OVERLOAD {
     return [UIColor colorWithRed:red/255.0 green:green/255.0 blue:blue/255.0 alpha:1.0];
 }
 
 /// 通过 RGB 值 [0, 255] 构造 UIColor 对象。
-FOUNDATION_STATIC_INLINE UIColor *rgb(int red, int green, int blue) XZ_OVERLOAD XZ_OBJC {
+FOUNDATION_STATIC_INLINE UIColor *rgb(int red, int green, int blue) XZ_OVERLOAD {
     return [UIColor colorWithRed:red/255.0 green:green/255.0 blue:blue/255.0 alpha:1.0];
 }
 
 /// 通过 RGB 值 [0, 1.0] 构造 UIColor 对象。
-FOUNDATION_STATIC_INLINE UIColor *rgb(CGFloat red, CGFloat green, CGFloat blue) XZ_OVERLOAD XZ_OBJC {
+FOUNDATION_STATIC_INLINE UIColor *rgb(CGFloat red, CGFloat green, CGFloat blue) XZ_OVERLOAD {
     return [UIColor colorWithRed:red green:green blue:blue alpha:1.0];
 }
 
 #pragma mark - String RGB(A)
 
 /// 通过字符串形式的 RGBA 颜色值构造 UIColor 对象。
-FOUNDATION_STATIC_INLINE UIColor *rgba(NSString *string) XZ_OVERLOAD XZ_OBJC {
+FOUNDATION_STATIC_INLINE UIColor *rgba(NSString *string) XZ_OVERLOAD {
     XZColor const value = XZColorFromString(string);
     return rgba(value.red, value.green, value.blue, value.alpha);
 }
 
 /// 通过字符串形式的 RGBA 颜色值构造 UIColor 对象。
-FOUNDATION_STATIC_INLINE UIColor *rgba(NSString *string, CGFloat alpha) XZ_OVERLOAD XZ_OBJC {
+FOUNDATION_STATIC_INLINE UIColor *rgba(NSString *string, CGFloat alpha) XZ_OVERLOAD {
     XZColor const value = XZColorFromString(string);
     CGFloat const red   = value.red / 255.0;
     CGFloat const green = value.green / 255.0;
@@ -154,7 +154,7 @@ FOUNDATION_STATIC_INLINE UIColor *rgba(NSString *string, CGFloat alpha) XZ_OVERL
 }
 
 /// 通过字符串形式的 RGB 颜色值构造 UIColor 对象。
-FOUNDATION_STATIC_INLINE UIColor *rgb(NSString *string) XZ_OVERLOAD XZ_OBJC {
+FOUNDATION_STATIC_INLINE UIColor *rgb(NSString *string) XZ_OVERLOAD {
     XZColor const value = XZColorFromString(string);
     return rgb(value.red, value.green, value.blue);
 }

@@ -92,7 +92,7 @@ NS_ASSUME_NONNULL_END
     return _context.length;
 }
 
-- (void)update:(const void *)bytes length:(NSUInteger)length {
+- (void)digest:(const void *)bytes length:(NSUInteger)length {
     if (!_context.isReady) {
         _context.init(_context.context);
         _context.isReady = YES;
@@ -100,13 +100,13 @@ NS_ASSUME_NONNULL_END
     _context.update(_context.context, bytes, (CC_LONG)length);
 }
 
-- (void)update:(NSData *)data {
+- (void)digest:(NSData *)data {
     [data enumerateByteRangesUsingBlock:^(const void * _Nonnull bytes, NSRange byteRange, BOOL * _Nonnull stop) {
-        [self update:bytes length:byteRange.length];
+        [self digest:bytes length:byteRange.length];
     }];
 }
 
-- (void *)digest {
+- (void *)bytes {
     if (_context.isReady) {
         _context.final(_context.buffer, _context.context);
         _context.isReady = NO;
@@ -114,18 +114,18 @@ NS_ASSUME_NONNULL_END
     return _context.buffer;
 }
 
-- (NSData *)digestData {
-    void * const buffer = [self digest];
+- (NSData *)data {
+    void * const buffer = [self bytes];
     return [NSData dataWithBytes:buffer length:_context.length];
 }
 
-- (NSString *)digestStringWithCharacterCase:(XZCharacterCase)characterCase {
-    void * const buffer = [self digest];
+- (NSString *)stringWithCharacterCase:(XZCharacterCase)characterCase {
+    void * const buffer = [self bytes];
     return [[NSString alloc] xz_initWithBytes:buffer length:_context.length hexEncodingWithCharacterCase:characterCase];
 }
 
-- (NSString *)digestString {
-    return [self digestStringWithCharacterCase:(XZCharacterLowercase)];
+- (NSString *)string {
+    return [self stringWithCharacterCase:(XZCharacterLowercase)];
 }
 
 @end
