@@ -37,27 +37,44 @@ FOUNDATION_EXPORT const unsigned char XZKitVersionString[];
 // Cocoapods 会自动生成 XZKit-umbrella.h 文件，但是不会生成 XZKit.h 文件，
 // 但是 Xcode 在编译 framework 后会生成 XZKit-Swift.h 文件，其中自动引用了默认的 XZKit.h 文件，
 // 所以所有子框架都需要引用 XZKit.h 文件，否则无法通过编译。
-//
-// Cocoapods 会根据 Podfile 中 target 的层级关系生成 umbrella 文件，因此多项目时，生成的 umbrella 文件可能不同。
+// 但是在多 Target 的项目中，如果每个 Target 分别引用了不同的子库，
+// 则 CocoaPods 会基于 Target 生成的不同的 umbrella 文件。
+
 #if __has_include(<XZKit/XZKit-umbrella.h>)
-
 #import <XZKit/XZKit-umbrella.h>
+#else
 
-#else // not __has_include(<XZKit/XZKit-umbrella.h>) start.
-
-// MARK: - Constants
 #if __has_include(<XZKit/XZKitDefines.h>)
 #import <XZKit/XZKitDefines.h>
+#endif
+#if __has_include(<XZKit/XZKitDEBUG.h>)
+#import <XZKit/XZKitDEBUG.h>
+#endif
+#if __has_include(<XZKit/XZDefer.h>)
+#import <XZKit/XZDefer.h>
+#endif
+#if __has_include(<XZKit/XZLog.h>)
+#import <XZKit/XZLog.h>
+#endif
+#if __has_include(<XZKit/XZCharacterCase.h>)
+#import <XZKit/XZCharacterCase.h>
 #endif
 #if __has_include(<XZKit/XZGeometry.h>)
 #import <XZKit/XZGeometry.h>
 #endif
-#if __has_include(<XZKit/XZKit+Runtime.h>)
-#import <XZKit/XZKit+Runtime.h>
+#if __has_include(<XZKit/XZHexEncoding.h>)
+#import <XZKit/XZHexEncoding.h>
 #endif
-#if __has_include(<XZKit/XZKit+Encoding.h>)
-#import <XZKit/XZKit+Encoding.h>
+#if __has_include(<XZKit/XZJSON.h>)
+#import <XZKit/XZJSON.h>
 #endif
+#if __has_include(<XZKit/XZRuntime.h>)
+#import <XZKit/XZRuntime.h>
+#endif
+#if __has_include(<XZKit/XZTimestamp.h>)
+#import <XZKit/XZTimestamp.h>
+#endif
+
 
 // MARK: - Category
 #if __has_include(<XZKit/NSData+XZKit.h>)

@@ -77,26 +77,18 @@ Pod::Spec.new do |s|
   
   # 拓展子库的方法
   def s.defineSubspec (name, hasPrivate)
-    return self.subspec name do |ss|
-      ss.public_header_files = "XZKit/XZKit.h", 
-      						   					 "XZKit/Sources/#{name}/**/*.h"
-      ss.source_files  			 = "XZKit/XZKit.h", 
-      					 			   			 "XZKit/Sources/#{name}/**/*.{h,m,swift}"
+    return self.subspec "#{name}" do |ss|
+      ss.public_header_files = "XZKit/XZKit.h", "XZKit/Sources/#{name}/**/*.h"
+      ss.source_files  			 = "XZKit/XZKit.h", "XZKit/Sources/#{name}/**/*.{h,m,swift}"
       ss.exclude_files 			 = "XZKit/Sources/#{name}/Private/**/*.{h,m,swift}"
 
       if hasPrivate then
       	ss.subspec "Private" do |sss|
-      		sss.public_header_files = "XZKit/XZKit.h", 
-      		"XZKit/Sources/#{name}/**/*.h"
-      		sss.source_files = "XZKit/XZKit.h", 
-      		"XZKit/Sources/#{name}/**/*.{h,m,swift}"
+      		sss.public_header_files = "XZKit/XZKit.h", "XZKit/Sources/#{name}/**/*.h"
+      		sss.source_files        = "XZKit/XZKit.h", "XZKit/Sources/#{name}/**/*.{h,m,swift}"
       	end
       end
     end
-  end
-
-  s.defineSubspec "Objective-C", false do |ss| 
-
   end
 
   s.defineSubspec "XZKitDefines", false do |ss|
