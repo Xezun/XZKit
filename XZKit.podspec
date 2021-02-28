@@ -32,7 +32,7 @@ Pod::Spec.new do |s|
   s.module_name    = 'XZKit'
   s.swift_versions = "5.0"
   s.requires_arc   = true
-  s.ios.deployment_target = '8.0'
+  s.ios.deployment_target = '9.0'
   
   # s.xcconfig = {
   #   "GCC_PREPROCESSOR_DEFINITIONS" => '$(inherited) XZKIT_FRAMEWORK=1'
@@ -47,8 +47,8 @@ Pod::Spec.new do |s|
   
   # 框架文件和公共头文件。
   # XZKit.h 没有这个头文件会导致无法编译，Xcode 编译 framework 时自动生成的桥接头文件 XZKit-Swift.h 文件包含该文件。
-  s.public_header_files = "XZKit/Code/XZKit.h"
-  s.source_files = "XZKit/Code/XZKit.h"
+  s.public_header_files = "XZKit/XZKit.h"
+  s.source_files = "XZKit/XZKit.h"
   # 因为分成了多个子模块，指定单一 modulemap 无法适应所有情况，所以需要 Pods 自动生成 modulemap ，而不能指定。
   # s.module_map = 'XZKit/XZKit/module.modulemap'
   # s.frameworks = 'UIKit'
@@ -77,12 +77,12 @@ Pod::Spec.new do |s|
   
   # 拓展子库的方法
   def s.defineSubspec (name, hasPrivate)
-    return self.subspec "#{name}" do |ss|
+    return self.subspec("#{name}") do |ss|
       ss.public_header_files = "XZKit/XZKit.h", "XZKit/Sources/#{name}/**/*.h"
       ss.source_files  			 = "XZKit/XZKit.h", "XZKit/Sources/#{name}/**/*.{h,m,swift}"
-      ss.exclude_files 			 = "XZKit/Sources/#{name}/Private/**/*.{h,m,swift}"
 
       if hasPrivate then
+      	ss.exclude_files 			 = "XZKit/Sources/#{name}/Private/**/*.{h,m,swift}"
       	ss.subspec "Private" do |sss|
       		sss.public_header_files = "XZKit/XZKit.h", "XZKit/Sources/#{name}/**/*.h"
       		sss.source_files        = "XZKit/XZKit.h", "XZKit/Sources/#{name}/**/*.{h,m,swift}"
@@ -91,8 +91,34 @@ Pod::Spec.new do |s|
     end
   end
 
-  s.defineSubspec "XZKitDefines", false do |ss|
+  s.defineSubspec("XZKitDefines", false) do |ss|
   end
+	s.defineSubspec("XZKitDEBUG", false) do |ss|
+		ss.dependency "XZKit/XZKitDefines"
+  end
+  # s.defineSubspec "XZDefer", false do |ss|
+  # 	ss.dependency "XZKit/XZKitDefines"
+  # end
+  # s.defineSubspec "XZLog", false do |ss|
+  # 	ss.dependency "XZKit/XZKitDefines"
+  # 	ss.dependency "XZKit/XZKitDEBUG"
+  # end
+  # s.defineSubspec "XZCharacterCase", false do |ss|
+  # end
+  # s.defineSubspec "XZGeometry", false do |ss|
+  # 	ss.dependency "XZKit/XZKitDefines"
+  # end
+  # s.defineSubspec "XZHexEncoding", false do |ss|
+  # 	ss.dependency "XZKit/XZKitDefines"
+  # 	ss.dependency "XZKit/XZCharacterCase"
+  # end
+  # s.defineSubspec "XZJSON", false do |ss|
+  # end
+  # s.defineSubspec "XZRuntime", false do |ss|
+  # 	ss.dependency "XZKit/XZKitDefines"
+  # end
+  # s.defineSubspec "XZTimestamp", false do |ss|
+  # end
 
   # s.defineSubspec 'Category' do |ss|
   # end
