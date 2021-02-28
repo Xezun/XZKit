@@ -49,8 +49,8 @@ FOUNDATION_EXPORT const unsigned char XZKitVersionString[];
 #if __has_include(<XZKit/XZKitDefines.h>)
 #import <XZKit/XZKitDefines.h>
 #endif
-#if __has_include(<XZKit/XZKit+Geometry.h>)
-#import <XZKit/XZKit+Geometry.h>
+#if __has_include(<XZKit/XZGeometry.h>)
+#import <XZKit/XZGeometry.h>
 #endif
 #if __has_include(<XZKit/XZKit+Runtime.h>)
 #import <XZKit/XZKit+Runtime.h>
@@ -121,8 +121,21 @@ FOUNDATION_EXPORT const unsigned char XZKitVersionString[];
 #else // not with COCOAPODS start.
 
 
-// MARK: Foundation
-#import <XZKit/XZFoundation.h>
+#import <XZKit/XZKitDefines.h>
+#import <XZKit/XZKitDEBUG.h>
+#import <XZKit/XZDefer.h>
+#import <XZKit/XZLog.h>
+#import <XZKit/XZCharacterCase.h>
+#import <XZKit/XZHexEncoding.h>
+#import <XZKit/XZRuntime.h>
+#import <XZKit/XZObjCTypeDescriptor.h>
+#import <XZKit/XZTimestamp.h>
+#import <XZKit/XZJSON.h>
+
+// MARK: - XZGeometry
+#import <XZKit/XZGeometry.h>
+#import <XZKit/NSValue+XZGeometry.h>
+#import <XZKit/NSCoder+XZGeometry.h>
 
 // MARK: - Category
 #import <XZKit/NSBundle+XZKit.h>
