@@ -11,8 +11,8 @@ Pod::Spec.new do |s|
   s.cocoapods_version = ">= 1.7.2"
 
   s.name    = "XZKit"
-  s.version = "4.4.1"
-  s.summary = "An iOS framework"
+  s.version = "5.0.0"
+  s.summary = "An iOS developing framework"
 
   # This description is used to generate tags and improve search results.
   #   * Think: What does it do? Why did you write it? What is the focus?
@@ -34,9 +34,9 @@ Pod::Spec.new do |s|
   s.requires_arc   = true
   s.ios.deployment_target = '8.0'
   
-  s.xcconfig = {
-    "GCC_PREPROCESSOR_DEFINITIONS" => '$(inherited) XZKIT_FRAMEWORK=1'
-  }
+  # s.xcconfig = {
+  #   "GCC_PREPROCESSOR_DEFINITIONS" => '$(inherited) XZKIT_FRAMEWORK=1'
+  # }
   # s.pod_target_xcconfig = {
   #     'OTHER_CFLAGS' => '-fembed-bitcode'
   #     'DEFINES_MODULE' => 'YES'
@@ -76,40 +76,45 @@ Pod::Spec.new do |s|
   # end
   
   # 拓展子库的方法
-  def s.defineSubspec (name)
-    ss = self.subspec("#{name}") do |ss|
+  def s.defineSubspec (name, hasPrivate)
+    return self.subspec name do |ss|
       ss.public_header_files = "XZKit/XZKit.h", 
-      						   "XZKit/Sources/#{name}/**/*.h"
-      ss.source_files  = "XZKit/XZKit.h", 
-      					 "XZKit/Sources/#{name}/**/*.{h,m,swift}"
-      ss.exclude_files = "XZKit/Sources/#{name}/Private/**/*.{h,m,swift}"
+      						   					 "XZKit/Sources/#{name}/**/*.h"
+      ss.source_files  			 = "XZKit/XZKit.h", 
+      					 			   			 "XZKit/Sources/#{name}/**/*.{h,m,swift}"
+      ss.exclude_files 			 = "XZKit/Sources/#{name}/Private/**/*.{h,m,swift}"
 
-      ss.subspec "Private" do |sss|
-        sss.public_header_files = "XZKit/XZKit.h", 
-        						  "XZKit/Sources/#{name}/**/*.h"
-        sss.source_files = "XZKit/XZKit.h", 
-        				   "XZKit/Sources/#{name}/**/*.{h,m,swift}"
+      if hasPrivate then
+      	ss.subspec "Private" do |sss|
+      		sss.public_header_files = "XZKit/XZKit.h", 
+      		"XZKit/Sources/#{name}/**/*.h"
+      		sss.source_files = "XZKit/XZKit.h", 
+      		"XZKit/Sources/#{name}/**/*.{h,m,swift}"
+      	end
       end
     end
-    return ss
   end
 
-  s.defineSubspec "Foundation" do |ss|
+  s.defineSubspec "Objective-C", false do |ss| 
+
   end
 
-  s.defineSubspec 'Category' do |ss|
+  s.defineSubspec "XZKitDefines", false do |ss|
   end
 
-  s.defineSubspec 'DataCryptor' do |ss|
-  end
+  # s.defineSubspec 'Category' do |ss|
+  # end
+
+  # s.defineSubspec 'DataCryptor' do |ss|
+  # end
   
-  s.defineSubspec 'DataDigester' do |ss|
-    ss.dependency "XZKit/Foundation"
-  end
+  # s.defineSubspec 'DataDigester' do |ss|
+  #   ss.dependency "XZKit/Foundation"
+  # end
 
-  s.defineSubspec 'Image' do |ss|
-  	ss.dependency "XZKit/Foundation"
-  end
+  # s.defineSubspec 'Image' do |ss|
+  # 	ss.dependency "XZKit/Foundation"
+  # end
 
 
 
