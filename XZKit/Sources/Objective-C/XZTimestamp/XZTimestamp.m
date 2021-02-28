@@ -6,7 +6,7 @@
 //  Copyright © 2021 Xezun Inc. All rights reserved.
 //
 
-#import "XZKit+Timestamp.h"
+#import "XZTimestamp.h"
 #import <sys/time.h>
 
 NSTimeInterval XZTimestamp() {

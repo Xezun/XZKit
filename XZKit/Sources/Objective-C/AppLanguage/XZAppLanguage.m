@@ -9,7 +9,7 @@
 #import "XZAppLanguage.h"
 #import "XZAppLanguageBundle.h"
 #import "NSBundle+XZAppLanguage.h"
-#import <XZKit/XZKit+Runtime.h>
+#import <XZKit/XZRuntime.h>
 
 static const void * const _preferredLanguage = &_preferredLanguage;
 static const void * const _customBundleClass = &_customBundleClass;

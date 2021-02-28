@@ -2,7 +2,7 @@
 //  XZKitConstantsTests.m
 //  XZKitTests
 //
-//  Created by 徐臻 on 2020/1/28.
+//  Created by Xezun on 2020/1/28.
 //  Copyright © 2020 Xezun Inc. All rights reserved.
 //
 
