@@ -32,15 +32,15 @@ typedef struct XZObjCTypeProvider {
     return NO;
 }
 
-+ (XZObjCTypeDescriptor *)descriptorForType:(const char *)type {
-    NSParameterAssert(type);
-    return [[self alloc] initWithType:type];
++ (XZObjCTypeDescriptor *)descriptorWithTypeEncoding:(const char *)typeEncoding {
+    NSParameterAssert(typeEncoding);
+    return [[self alloc] initWithTypeEncoding:typeEncoding];
 }
 
-- (instancetype)initWithType:(const char *)encoding {
+- (instancetype)initWithTypeEncoding:(const char * const)typeEncoding {
     self = [super init];
     if (self) {
-        char const type = encoding[0];
+        char const type = typeEncoding[0];
         switch (type) {
             case 'c': {
                 _type = XZObjCTypeChar;
@@ -228,17 +228,17 @@ typedef struct XZObjCTypeProvider {
                 // 数组元素的个数
                 size_t count = 0;
                 NSInteger i = 1;
-                while (encoding[i] >= '0' && encoding[i] <= '9') {
-                    count = count * 10 + (encoding[i] - '0');
+                while (typeEncoding[i] >= '0' && typeEncoding[i] <= '9') {
+                    count = count * 10 + (typeEncoding[i] - '0');
                     i += 1;
                 }
                 
-                XZObjCTypeDescriptor *subtype = [XZObjCTypeDescriptor descriptorForType:&encoding[i]];
+                XZObjCTypeDescriptor *subtype = [XZObjCTypeDescriptor descriptorWithTypeEncoding:&typeEncoding[i]];
                 
                 _name = [NSString stringWithFormat:@"%@[%ld]", subtype.name, (long)count];
                 _size = subtype.size * count;
                 _sizeInBit = _size * 8;
-                _encoding  = [[NSString alloc] initWithBytes:encoding length:i + subtype.encoding.length + 1 encoding:(NSASCIIStringEncoding)];
+                _encoding  = [[NSString alloc] initWithBytes:typeEncoding length:i + subtype.encoding.length + 1 encoding:(NSASCIIStringEncoding)];
                 _alignment = subtype.alignment;
                 _subtypes  = @[subtype];
                 break;
@@ -248,20 +248,20 @@ typedef struct XZObjCTypeProvider {
                 
                 // 找到第一个等号
                 NSInteger i = 2;
-                while (encoding[i++] != '='); // 执行完毕 i 定位在等号后面
+                while (typeEncoding[i++] != '='); // 执行完毕 i 定位在等号后面
                 
                 // 如果名字为 ? 则表示是匿名的结构体
-                if (i == 3 && encoding[1] == '?') {
+                if (i == 3 && typeEncoding[1] == '?') {
                     _name = @"unknown";
                 } else {
-                    _name = [[NSString alloc] initWithBytes:&encoding[1] length:i - 2 encoding:(NSASCIIStringEncoding)];
+                    _name = [[NSString alloc] initWithBytes:&typeEncoding[1] length:i - 2 encoding:(NSASCIIStringEncoding)];
                 }
                 
                 NSMutableArray *subtypes = [NSMutableArray array];
                 
                 _alignment = 1;
-                while (encoding[i] != '}') { // 用 while 而不 do-while 因为可能会有"空"结构体
-                    XZObjCTypeDescriptor *subtype = [XZObjCTypeDescriptor descriptorForType:&encoding[i]];
+                while (typeEncoding[i] != '}') { // 用 while 而不 do-while 因为可能会有"空"结构体
+                    XZObjCTypeDescriptor *subtype = [XZObjCTypeDescriptor descriptorWithTypeEncoding:&typeEncoding[i]];
                     [subtypes addObject:subtype];
                     
                     // 对于结构体，默认字节对齐方式为成员中最大的那个。非默认情况需要由 provider 提供。
@@ -270,7 +270,7 @@ typedef struct XZObjCTypeProvider {
                     i += subtype.encoding.length;
                 };
                 
-                _encoding = [[NSString alloc] initWithBytes:encoding length:i + 1 encoding:(NSASCIIStringEncoding)];
+                _encoding = [[NSString alloc] initWithBytes:typeEncoding length:i + 1 encoding:(NSASCIIStringEncoding)];
                 
                 // 如果提供了自定义的 size 和 alignment 则使用自定的，否则根据默认规则计算。
                 XZObjCTypeProvider const provider = [XZObjCTypeDescriptor providerForType:_name];
@@ -314,12 +314,12 @@ typedef struct XZObjCTypeProvider {
                 _type = XZObjCTypeUnion;
                 
                 NSInteger i = 2;
-                while (encoding[i++] != '='); // 执行完毕 i 定位在等号后面
+                while (typeEncoding[i++] != '='); // 执行完毕 i 定位在等号后面
                 
-                if (i == 3 && encoding[1] == '?') {
+                if (i == 3 && typeEncoding[1] == '?') {
                     _name = @"unknown";
                 } else {
-                    _name = [[NSString alloc] initWithBytes:&encoding[1] length:i - 2 encoding:(NSASCIIStringEncoding)];
+                    _name = [[NSString alloc] initWithBytes:&typeEncoding[1] length:i - 2 encoding:(NSASCIIStringEncoding)];
                 }
                 
                 NSMutableArray *subtypes = [NSMutableArray array];
@@ -327,8 +327,8 @@ typedef struct XZObjCTypeProvider {
                 _size = 0;
                 _sizeInBit = 0;
                 _alignment = 0;
-                while (encoding[i] != ')') {
-                    XZObjCTypeDescriptor *subtype = [XZObjCTypeDescriptor descriptorForType:&encoding[i]];
+                while (typeEncoding[i] != ')') {
+                    XZObjCTypeDescriptor *subtype = [XZObjCTypeDescriptor descriptorWithTypeEncoding:&typeEncoding[i]];
                     [subtypes addObject:subtype];
                     
                     _size = MAX(_size, subtype.size);
@@ -344,7 +344,7 @@ typedef struct XZObjCTypeProvider {
                     _alignment = _Alignof(XZObjCTypeEmptyUnion);
                 }
                 
-                _encoding = [[NSString alloc] initWithBytes:encoding length:i + 1 encoding:(NSASCIIStringEncoding)];
+                _encoding = [[NSString alloc] initWithBytes:typeEncoding length:i + 1 encoding:(NSASCIIStringEncoding)];
                 _subtypes = subtypes.copy;
                 break;
             }
@@ -354,24 +354,24 @@ typedef struct XZObjCTypeProvider {
                 
                 _sizeInBit = 0;
                 NSInteger i = 1;
-                while (encoding[i] >= '0' && encoding[i] <= '9') {
-                    _sizeInBit = _sizeInBit * 10 + (encoding[i] - '0');
+                while (typeEncoding[i] >= '0' && typeEncoding[i] <= '9') {
+                    _sizeInBit = _sizeInBit * 10 + (typeEncoding[i] - '0');
                     i += 1;
                 }
                 
                 _size = (_sizeInBit - 1) / 8 + 1;
-                _encoding  = [[NSString alloc] initWithBytes:encoding length:i encoding:(NSASCIIStringEncoding)];
+                _encoding  = [[NSString alloc] initWithBytes:typeEncoding length:i encoding:(NSASCIIStringEncoding)];
                 _alignment = 1;
                 _subtypes  = @[];
                 break;
             }
             case '^': {
-                XZObjCTypeDescriptor *subtype = [XZObjCTypeDescriptor descriptorForType:&encoding[1]];
+                XZObjCTypeDescriptor *subtype = [XZObjCTypeDescriptor descriptorWithTypeEncoding:&typeEncoding[1]];
                 _type = XZObjCTypePointer;
                 _name = [NSString stringWithFormat:@"%@ *", subtype.name];
                 _size = sizeof(void *);
                 _sizeInBit = _size * 8;
-                _encoding  = [[NSString alloc] initWithBytes:encoding length:subtype.encoding.length + 1 encoding:(NSASCIIStringEncoding)];
+                _encoding  = [[NSString alloc] initWithBytes:typeEncoding length:subtype.encoding.length + 1 encoding:(NSASCIIStringEncoding)];
                 _alignment = _Alignof(void *);
                 _subtypes  = @[subtype];
                 break;
@@ -429,8 +429,6 @@ static NSMutableDictionary<NSString *, NSValue *> *_typeProviders = nil;
 @end
 
 
-#import <UIKit/UIKit.h>
-#import "XZGeometry.h"
 
 @implementation XZObjCTypeDescriptor (XZObjCTypeProvider)
 

@@ -64,9 +64,10 @@ FOUNDATION_STATIC_INLINE NSString *NSStringFromXZColor(XZColor color) {
 }
 
 /// 解决命名冲突的办法：
-/// 在引用本头文件前，提前定义宏 XZ_COLOR_RGBA_FUNCS 可屏蔽下面的静态内联函数，即避免命名冲突。
-#ifndef XZ_COLOR_RGBA_FUNCS
-#define XZ_COLOR_RGBA_FUNCS
+/// 因为是静态内联函数，在 XZKit 中并不存在标识符，所以
+/// 在引用本头文件前，提前定义宏 XZ_RGBA_COLOR_SUPPORTED 即可避免命名冲突。
+#ifndef XZ_RGBA_COLOR_SUPPORTED
+#define XZ_RGBA_COLOR_SUPPORTED 1
 
 /// 通过 XZRGBA 构造 UIColor 对象。
 /// @param rgba RGBA 颜色值

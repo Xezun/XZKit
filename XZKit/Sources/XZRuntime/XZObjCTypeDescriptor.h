@@ -7,6 +7,8 @@
 
 #import <Foundation/Foundation.h>
 #import <XZKit/XZKitDefines.h>
+#import <UIKit/UIKit.h>
+#import <XZKit/XZGeometry.h>
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -103,11 +105,12 @@ XZ_FINAL_CLASS
 @property (nonatomic, copy, readonly) NSArray<XZObjCTypeDescriptor *> *subtypes;
 
 - (instancetype)init NS_UNAVAILABLE;
++ (instancetype)new NS_UNAVAILABLE;
 
 /// 构造类型描述。
 /// @note 因为类型不能直接作为参数，而枚举 XZObjCType 并不包含完整的类型信息，因此需要使用类型编码来构造。
-/// @param encoding 类型编码
-+ (XZObjCTypeDescriptor *)descriptorForType:(const char *)encoding;
+/// @param typeEncoding 类型编码
++ (XZObjCTypeDescriptor *)descriptorWithTypeEncoding:(const char *)typeEncoding;
 
 /// 设置结构体类型的大小和字节对齐值。
 /// @code

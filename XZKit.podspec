@@ -27,7 +27,7 @@ Pod::Spec.new do |s|
   s.license  = { :type => 'MIT', :file => 'LICENSE' };
   s.author   = { 'xezun' => 'developer@xezun.com' };
   s.source   = { :git => 'https://github.com/xezun/XZKit.git', :tag => s.version.to_s };
-  s.social_media_url = 'https://www.xezun.com/';
+  s.social_media_url = 'https://www.xezun.com';
   
   s.module_name    = 'XZKit';
   s.swift_versions = "5.0";
@@ -86,10 +86,14 @@ Pod::Spec.new do |s|
 
       if hasPrivate then
       	ss.exclude_files = "XZKit/Sources/#{specName}/Private/**/*.{h,m,swift}";
+        # 二级子库，默认包含它的三级子库
+        # Private 库包含所有文件，是一个完整独立库，因为 CocoaPods 的任何子库都必须能单独使用才能通过验证。
+        # private_header_files 文件可以被手动引用，但是这里因为在子库，如果不设置为 private 父库会引用不到。
       	ss.subspec "Private" do |sss|
-      		sss.public_header_files = "XZKit/XZKit.h", "XZKit/Sources/#{specName}/**/*.h";
-      		sss.source_files        = "XZKit/XZKit.h", "XZKit/Sources/#{specName}/**/*.{h,m,swift}";
-          
+      		sss.public_header_files  = "XZKit/XZKit.h", "XZKit/Sources/#{specName}/**/*.h";
+          sss.private_header_files = "XZKit/Sources/#{specName}/Private/**/*.{h,m,swift}";
+      		sss.source_files         = "XZKit/XZKit.h", "XZKit/Sources/#{specName}/**/*.{h,m,swift}";
+
           dependencies.each do |dependency|
             sss.dependency dependency;
           end
@@ -102,80 +106,21 @@ Pod::Spec.new do |s|
     end
   end
   
-  s.defineSubspec "XZKitDefines",     false, [];
-  s.defineSubspec "XZKitDEBUG",       false, ["XZKit/XZKitDefines"];
-  s.defineSubspec "XZDefer",          false, ["XZKit/XZKitDefines"]
-  s.defineSubspec "XZLog",            false, ["XZKit/XZKitDefines", "XZKit/XZKitDEBUG"];
-  s.defineSubspec "XZCharacterCase",  false, [];
-  s.defineSubspec "XZGeometry",       false, ["XZKit/XZKitDefines"];
-  s.defineSubspec "XZHexEncoding",    false, ["XZKit/XZKitDefines", "XZKit/XZCharacterCase"];
-  s.defineSubspec "XZJSON",           false, [];
-  s.defineSubspec "XZRuntime",        false, ["XZKit/XZKitDefines", "XZKit/XZLog", "XZKit/XZGeometry"];
-  s.defineSubspec "XZTimestamp",      false, [];
-
-  # s.defineSubspec 'Category' do |ss|
-  # end
-
-  # s.defineSubspec 'DataCryptor' do |ss|
-  # end
-  
-  # s.defineSubspec 'DataDigester' do |ss|
-  #   ss.dependency "XZKit/Foundation"
-  # end
-
-  # s.defineSubspec 'Image' do |ss|
-  # 	ss.dependency "XZKit/Foundation"
-  # end
-
-
-
-  # s.defineSubspec "AppLanguage" do |ss|
-  # end
-
-  # s.defineSubspec "AppRedirection" do |ss|
-  #   ss.dependency "XZKit/Core"
-  # end
-
-  # s.defineSubspec "CacheManager" do |ss|
-  #   ss.dependency 'XZKit/Category/Foundation'
-  # end
-  
-  # s.defineSubspec "CarouselView" do |ss|
-  #   ss.dependency "XZKit/Core"
-  # end
-  
-  # s.defineSubspec 'ContentStatus' do |ss|
-  #   ss.dependency "XZKit/TextImageView"
-  # end
-  
-  
-  
-  # s.defineSubspec 'NavigationController' do |ss|
-  #   ss.dependency "XZKit/Core"
-  # end
-  
-  # s.defineSubspec 'Networking' do |ss|
-  # end
-  
-  # s.defineSubspec 'ProgressView' do |ss|
-  # end
-  
-  # s.defineSubspec 'TimeTicker' do |ss|
-  # end
-  
-  # s.defineSubspec 'TextImageView' do |ss|
-  #   ss.dependency "XZKit/Core"
-  # end
-  
-  # s.defineSubspec 'UICollectionViewFlowLayout' do |ss|
-  #   ss.dependency "XZKit/Core"
-  # end
-  
-  # s.defineSubspec 'Category' do |ss|
-  #   ss.dependency "XZKit/Core"
-  #   ss.dependency "XZKit/DataDigester"
-  #   ss.dependency "XZKit/DataCryptor"
-  #   ss.dependency "XZKit/CacheManager"
-  # end
+  s.defineSubspec "XZKitDefines",     	        false, [];
+  s.defineSubspec "XZKitDEBUG",                 false, ["XZKit/XZKitDefines"];
+  s.defineSubspec "XZDefer",                    false, ["XZKit/XZKitDefines"]
+  s.defineSubspec "XZLog",                      false, ["XZKit/XZKitDefines", "XZKit/XZKitDEBUG"];
+  s.defineSubspec "XZCharacterCase",            false, [];
+  s.defineSubspec "XZGeometry",                 false, ["XZKit/XZKitDefines"];
+  s.defineSubspec "XZHexEncoding",              false, ["XZKit/XZKitDefines", "XZKit/XZCharacterCase"];
+  s.defineSubspec "XZJSON",                     false, [];
+  s.defineSubspec "XZRuntime",                  false, ["XZKit/XZKitDefines", "XZKit/XZLog", "XZKit/XZGeometry"];
+  s.defineSubspec "XZTimestamp",                false, [];
+  s.defineSubspec "XZCategory",                 false, [];
+  s.defineSubspec "XZDataDigester",             false, ["XZKit/XZCharacterCase", "XZKit/XZHexEncoding", "XZKit/XZDefer"];
+  s.defineSubspec "XZDataCryptor",              false, [];
+  s.defineSubspec "XZColor",                    false, [];
+  s.defineSubspec "XZImage",                    true,  [];
+  s.defineSubspec "XZNavigationController",     false, [];
   
 end

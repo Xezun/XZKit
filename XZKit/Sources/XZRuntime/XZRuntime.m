@@ -7,8 +7,6 @@
 //
 
 #import "XZRuntime.h"
-#import "XZDefer.h"
-#import "XZLog.h"
 
 #pragma mark - Create
 
@@ -83,7 +81,7 @@ BOOL xz_objc_class_addVariable(Class target, Ivar ivar, size_t size, uint8_t ali
 }
 
 BOOL xz_objc_class_addVariable(Class target, Ivar ivar) XZ_OVERLOAD {
-    XZObjCTypeDescriptor *descriptor = [XZObjCTypeDescriptor descriptorForType:ivar_getTypeEncoding(ivar)];
+    XZObjCTypeDescriptor *descriptor = [XZObjCTypeDescriptor descriptorWithTypeEncoding:ivar_getTypeEncoding(ivar)];
     return xz_objc_class_addVariable(target, ivar, descriptor.size, descriptor.alignment);
 }
 

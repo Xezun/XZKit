@@ -10,7 +10,7 @@ import Foundation
 
 extension Data {
     
-    /// 加密当前数据。
+//    /// 加密当前数据。
 //    public func encrypting(using algorithm: DataCryptor.Algorithm, mode: DataCryptor.Mode, padding: DataCryptor.Padding) throws -> Data {
 //        return try DataCryptor.crypto(self, algorithm: algorithm, operation: .encrypt, mode: mode, padding: padding)
 //    }
