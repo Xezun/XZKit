@@ -8,11 +8,11 @@
 
 Pod::Spec.new do |s|
 
-  s.cocoapods_version = ">= 1.7.2"
+  s.cocoapods_version = ">= 1.7.2";
 
-  s.name    = "XZKit"
-  s.version = "5.0.0"
-  s.summary = "An iOS developing framework"
+  s.name    = "XZKit";
+  s.version = "5.0.0";
+  s.summary = "An iOS developing framework";
 
   # This description is used to generate tags and improve search results.
   #   * Think: What does it do? Why did you write it? What is the focus?
@@ -20,19 +20,19 @@ Pod::Spec.new do |s|
   #   * Write the description between the DESC delimiters below.
   #   * Finally, don't worry about the indent, CocoaPods strips it!
   
-  s.description = "XZKit is a delightful developing library for iOS!"
+  s.description = "XZKit is a delightful developing library for iOS!";
   
-  s.homepage = 'https://xzkit.xezun.com'
+  s.homepage = 'https://www.xezun.com';
   # s.screenshots     = 'www.example.com/screenshots_1', 'www.example.com/screenshots_2'
-  s.license  = { :type => 'MIT', :file => 'LICENSE' }
-  s.author   = { 'xezun' => 'developer@xezun.com' }
-  s.source   = { :git => 'https://github.com/xezun/XZKit.git', :tag => s.version.to_s }
-  s.social_media_url = 'https://xzkit.xezun.com/'
+  s.license  = { :type => 'MIT', :file => 'LICENSE' };
+  s.author   = { 'xezun' => 'developer@xezun.com' };
+  s.source   = { :git => 'https://github.com/xezun/XZKit.git', :tag => s.version.to_s };
+  s.social_media_url = 'https://www.xezun.com/';
   
-  s.module_name    = 'XZKit'
-  s.swift_versions = "5.0"
-  s.requires_arc   = true
-  s.ios.deployment_target = '9.0'
+  s.module_name    = 'XZKit';
+  s.swift_versions = "5.0";
+  s.requires_arc   = true;
+  s.ios.deployment_target = '9.0';
   
   # s.xcconfig = {
   #   "GCC_PREPROCESSOR_DEFINITIONS" => '$(inherited) XZKIT_FRAMEWORK=1'
@@ -47,8 +47,8 @@ Pod::Spec.new do |s|
   
   # 框架文件和公共头文件。
   # XZKit.h 没有这个头文件会导致无法编译，Xcode 编译 framework 时自动生成的桥接头文件 XZKit-Swift.h 文件包含该文件。
-  s.public_header_files = "XZKit/XZKit.h"
-  s.source_files = "XZKit/XZKit.h"
+  s.public_header_files = "XZKit/XZKit.h";
+  s.source_files = "XZKit/XZKit.h";
   # 因为分成了多个子模块，指定单一 modulemap 无法适应所有情况，所以需要 Pods 自动生成 modulemap ，而不能指定。
   # s.module_map = 'XZKit/XZKit/module.modulemap'
   # s.frameworks = 'UIKit'
@@ -75,50 +75,43 @@ Pod::Spec.new do |s|
   #     ss.vendored_frameworks = 'Products/XZKit.framework'
   # end
   
-  # 拓展子库的方法
-  def s.defineSubspec (name, hasPrivate)
-    return self.subspec("#{name}") do |ss|
-      ss.public_header_files = "XZKit/XZKit.h", "XZKit/Sources/#{name}/**/*.h"
-      ss.source_files  			 = "XZKit/XZKit.h", "XZKit/Sources/#{name}/**/*.{h,m,swift}"
+  # 定义子库的拓展方法
+  # @param specName 字符串，子库的名字
+  # @param hasPrivate 布尔，是否有私有目录
+  # @param dependencies 数组，依赖的库，没有填空数组[]
+  def s.defineSubspec (specName, hasPrivate, dependencies)
+    return self.subspec specName do |ss|
+      ss.public_header_files = "XZKit/XZKit.h", "XZKit/Sources/#{specName}/**/*.h";
+      ss.source_files  			 = "XZKit/XZKit.h", "XZKit/Sources/#{specName}/**/*.{h,m,swift}";
 
       if hasPrivate then
-      	ss.exclude_files 			 = "XZKit/Sources/#{name}/Private/**/*.{h,m,swift}"
+      	ss.exclude_files = "XZKit/Sources/#{specName}/Private/**/*.{h,m,swift}";
       	ss.subspec "Private" do |sss|
-      		sss.public_header_files = "XZKit/XZKit.h", "XZKit/Sources/#{name}/**/*.h"
-      		sss.source_files        = "XZKit/XZKit.h", "XZKit/Sources/#{name}/**/*.{h,m,swift}"
+      		sss.public_header_files = "XZKit/XZKit.h", "XZKit/Sources/#{specName}/**/*.h";
+      		sss.source_files        = "XZKit/XZKit.h", "XZKit/Sources/#{specName}/**/*.{h,m,swift}";
+          
+          dependencies.each do |dependency|
+            sss.dependency dependency;
+          end
       	end
+      else
+        dependencies.each do |dependency|
+          ss.dependency dependency;
+        end
       end
     end
   end
-
-  s.defineSubspec("XZKitDefines", false) do |ss|
-  end
-	s.defineSubspec("XZKitDEBUG", false) do |ss|
-		ss.dependency "XZKit/XZKitDefines"
-  end
-  # s.defineSubspec "XZDefer", false do |ss|
-  # 	ss.dependency "XZKit/XZKitDefines"
-  # end
-  # s.defineSubspec "XZLog", false do |ss|
-  # 	ss.dependency "XZKit/XZKitDefines"
-  # 	ss.dependency "XZKit/XZKitDEBUG"
-  # end
-  # s.defineSubspec "XZCharacterCase", false do |ss|
-  # end
-  # s.defineSubspec "XZGeometry", false do |ss|
-  # 	ss.dependency "XZKit/XZKitDefines"
-  # end
-  # s.defineSubspec "XZHexEncoding", false do |ss|
-  # 	ss.dependency "XZKit/XZKitDefines"
-  # 	ss.dependency "XZKit/XZCharacterCase"
-  # end
-  # s.defineSubspec "XZJSON", false do |ss|
-  # end
-  # s.defineSubspec "XZRuntime", false do |ss|
-  # 	ss.dependency "XZKit/XZKitDefines"
-  # end
-  # s.defineSubspec "XZTimestamp", false do |ss|
-  # end
+  
+  s.defineSubspec "XZKitDefines",     false, [];
+  s.defineSubspec "XZKitDEBUG",       false, ["XZKit/XZKitDefines"];
+  s.defineSubspec "XZDefer",          false, ["XZKit/XZKitDefines"]
+  s.defineSubspec "XZLog",            false, ["XZKit/XZKitDefines", "XZKit/XZKitDEBUG"];
+  s.defineSubspec "XZCharacterCase",  false, [];
+  s.defineSubspec "XZGeometry",       false, ["XZKit/XZKitDefines"];
+  s.defineSubspec "XZHexEncoding",    false, ["XZKit/XZKitDefines", "XZKit/XZCharacterCase"];
+  s.defineSubspec "XZJSON",           false, [];
+  s.defineSubspec "XZRuntime",        false, ["XZKit/XZKitDefines", "XZKit/XZLog", "XZKit/XZGeometry"];
+  s.defineSubspec "XZTimestamp",      false, [];
 
   # s.defineSubspec 'Category' do |ss|
   # end
