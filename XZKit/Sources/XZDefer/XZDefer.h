@@ -14,9 +14,9 @@ NS_ASSUME_NONNULL_BEGIN
 /// defer 闭包的执行函数，请不要直接调用此函数。
 /// @param operation 待执行的清理操作。
 FOUNDATION_EXPORT void __XZ_DEFER_OBSV__(void (^ _Nonnull * _Nonnull operation)(void)) XZ_OBJC_ONLY;
+
 #define __XZ_DEFER_ATTR__        XZ_ATTR(XZ_ATTR_OBSERVER(__XZ_DEFER_OBSV__), XZ_ATTR_UNUSED)
 #define __XZ_DEFER_IMPL__(L, S)  void (^__NSX_PASTE__(__XZ_DEFER_STMT_, L))(void) __XZ_DEFER_ATTR__ = S
-
 
 /// 添加到 XZDefer 的代码块 operation 将被延迟到作用域结束时执行。
 /// @note 如果可能，请尝试使用 defer 函数。
