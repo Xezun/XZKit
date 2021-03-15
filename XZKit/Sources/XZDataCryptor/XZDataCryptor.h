@@ -16,7 +16,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 /// XZDataCryptor 提供了数据的对称加密功能，封装了 CommonCrypto 框架。
 /// @note XZDataCryptor 对象设计为大型数据加密，小数据（可单次处理）推荐使用静态方法。
-@interface XZDataCryptor: NSObject
+NS_SWIFT_NAME(DataCryptor) @interface XZDataCryptor: NSObject
 
 /// 加密或解密。
 @property (nonatomic, readonly) XZDataCryptorOperation operation;

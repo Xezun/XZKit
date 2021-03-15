@@ -25,7 +25,7 @@ typedef NS_ENUM(NSInteger, XZDataDigesterAlgorithm) {
 } NS_SWIFT_NAME(XZDataDigester.Algorithm);
 
 /// XZDataDigester 提供了计算数据摘要的功能。
-@interface XZDataDigester : NSObject
+NS_SWIFT_NAME(DataDigester) @interface XZDataDigester : NSObject
 
 /// 便利方法，对一个数据直接进行信息摘要，适合对单数据进行信息摘要。
 ///
@@ -79,11 +79,11 @@ typedef NS_ENUM(NSInteger, XZDataDigesterAlgorithm) {
 /// 获取已进行摘要计算的数据的摘要，十六进制编码形式。
 /// @note 获取摘要数据，即表示当前摘要计算结束；再次开始摘要计算前，此属性可获取多次。
 /// @param characterCase 十六进制编码的大小写
-- (NSString *)stringWithCharacterCase:(XZCharacterCase)characterCase;
+- (NSString *)hexEncodedStringWithCharacterCase:(XZCharacterCase)characterCase;
 
 /// 获取已进行摘要计算的数据的摘要，小写字母形式。
 /// @note 获取摘要数据，即表示当前摘要计算结束；再次开始摘要计算前，此属性可获取多次。
-@property (nonatomic, readonly) NSString *string;
+@property (nonatomic, readonly) NSString *hexEncodedString;
 
 @end
 

@@ -149,7 +149,7 @@
 // __IPHONE_OS_VERSION_MAX_ALLOWED
 // __IPHONE_11_0
 
-#define enweak(var) typeof(var) __weak __NSX_PASTE__(__xz_weak_, var) = (var)
-#define deweak(var) typeof(var) __strong var = __NSX_PASTE__(__xz_weak_, var)
+#define enweak(VAR) typeof(VAR) __weak const __NSX_PASTE__(__xz_weak_, VAR) = (VAR)
+#define deweak(VAR) typeof(VAR) __strong const VAR = __NSX_PASTE__(__xz_weak_, VAR)
 
 #endif

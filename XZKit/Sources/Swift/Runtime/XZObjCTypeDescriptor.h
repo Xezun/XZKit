@@ -72,7 +72,7 @@ typedef NS_ENUM(NSUInteger, XZObjCType) {
     /// An unknown type (among other things, this code is used for function pointers)
     /// @note 匿名的结构体、共用体也会被编码为此名字，如 {?=ics}。
     XZObjCTypeUnknown          = '?',
-};
+} NS_SWIFT_NAME(ObjCType);
 
 /// 描述通过 `\@encoding(type)` 所表述的 Type Encoding 详细信息。
 XZ_FINAL_CLASS

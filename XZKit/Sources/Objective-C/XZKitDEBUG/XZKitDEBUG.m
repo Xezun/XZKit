@@ -9,7 +9,7 @@
 #define XZ_CONST
 #import "XZKitDEBUG.h"
 
-bool XZKitDebugMode = NO;
+BOOL XZKitDebugMode = NO;
 
 @implementation NSObject (XZKitDEBUG)
 

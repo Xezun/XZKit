@@ -119,13 +119,13 @@ NS_ASSUME_NONNULL_END
     return [NSData dataWithBytes:buffer length:_context.length];
 }
 
-- (NSString *)stringWithCharacterCase:(XZCharacterCase)characterCase {
+- (NSString *)hexEncodedStringWithCharacterCase:(XZCharacterCase)characterCase {
     void * const buffer = [self bytes];
     return [[NSString alloc] xz_initWithBytes:buffer length:_context.length hexEncodingWithCharacterCase:characterCase];
 }
 
-- (NSString *)string {
-    return [self stringWithCharacterCase:(XZCharacterLowercase)];
+- (NSString *)hexEncodedString {
+    return [self hexEncodedStringWithCharacterCase:(XZCharacterLowercase)];
 }
 
 @end

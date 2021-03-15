@@ -1,5 +1,5 @@
 //
-//  XZKit+HexEncoding.swift
+//  HexEncoding.swift
 //  XZKit
 //
 //  Created by Xezun on 2021/2/14.
@@ -15,10 +15,9 @@ extension Data {
     }
     
     /// 按指定大小写，返回数据的十六进制字符串形式。
-    ///
     /// - Parameter characterCase: 字符大小写方式。
     /// - Returns: 十六进制的字符串。
-    public func hexEncodedString(with characterCase: XZCharacterCase) -> String {
+    public func hexEncodedString(with characterCase: CharacterCase) -> String {
         switch characterCase {
         case .lowercase: 
             let Table: [Character] = ["0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "a", "b", "c", "d", "e", "f"]
@@ -39,15 +38,12 @@ extension Data {
     /// - Note: 使用 NSData 的构造方法。
     ///
     /// - Parameter string: 十六进制字符串表示的二进制数据。
-    public init?(hexEncoded string: String) {
-        guard string.count > 2 else {
-            return nil
-        }
-        var bytes = [UInt8]()
-        // 遍历的过程中必须能步进两次。
-        let maxIndex = string.index(string.endIndex, offsetBy: -2);
+    public init(hexEncoded string: String) {
+        var data = Data()
+        
+        let max = string.index(string.endIndex, offsetBy: -2);
         var index = string.startIndex;
-        while index <= maxIndex {
+        while index <= max {
             guard let bit1 = UInt8(hexEncoded: string[index]) else {
                 break
             }
@@ -55,10 +51,11 @@ extension Data {
             guard let bit2 = UInt8(hexEncoded: string[index]) else {
                 break
             }
-            bytes.append(bit1 * 16 + bit2);
+            data.append(bit1 * 16 + bit2);
             index = string.index(after: index)
         }
-        self.init(bytes)
+        
+        self = data
     }
     
 }
@@ -69,7 +66,7 @@ extension String {
     /// - Parameters:
     ///   - data: 二进制数据
     ///   - characterCase: 十六进制字符的大小写
-    public init(_ data: Data, hexEncoding characterCase: XZCharacterCase) {
+    public init(_ data: Data, hexEncoding characterCase: CharacterCase) {
         self = data.hexEncodedString(with: characterCase);
     }
     
@@ -78,7 +75,7 @@ extension String {
     ///   - characterCase: 十六进制字符的大小写，默认小写
     ///   - encoding: 当前字符串的编码格式，默认 utf8
     /// - Returns: 十六进制编码的字符串
-    public func addingHexEncoding(with characterCase: XZCharacterCase, using encoding: Encoding = .utf8) -> String? {
+    public func addingHexEncoding(with characterCase: CharacterCase, using encoding: Encoding = .utf8) -> String? {
         return self.data(using: encoding)?.hexEncodedString(with: characterCase)
     }
     
@@ -98,7 +95,7 @@ extension String {
     /// - Parameter encoding: 原始字符串使用的字符编码
     /// - Returns: 原始字符串
     public func removingHexEncoding(using encoding: Encoding) -> String? {
-        guard let data = Data.init(hexEncoded: self) else { return nil }
+        let data = Data.init(hexEncoded: self)
         return String.init(data: data, encoding: .utf8)
     }
     

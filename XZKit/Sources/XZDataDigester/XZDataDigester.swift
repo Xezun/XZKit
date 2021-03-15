@@ -7,23 +7,22 @@
 
 import Foundation
 
-
 extension Data {
     
     public var md5: String {
-        return XZDataDigester.digest(self, algorithm: .MD5, hexEncoding: .lowercase)
+        return DataDigester.digest(self, algorithm: .MD5, hexEncoding: .lowercase)
     }
     
     public var MD5: String {
-        return XZDataDigester.digest(self, algorithm: .MD5, hexEncoding: .uppercase)
+        return DataDigester.digest(self, algorithm: .MD5, hexEncoding: .uppercase)
     }
     
     public var sha1: String {
-        return XZDataDigester.digest(self, algorithm: .SHA1, hexEncoding: .lowercase)
+        return DataDigester.digest(self, algorithm: .SHA1, hexEncoding: .lowercase)
     }
     
     public var SHA1: String {
-        return XZDataDigester.digest(self, algorithm: .SHA1, hexEncoding: .uppercase)
+        return DataDigester.digest(self, algorithm: .SHA1, hexEncoding: .uppercase)
     }
     
 }
