@@ -69,6 +69,7 @@
 		295D526725DAC9FC00283581 /* CategoryTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 295D526625DAC9FC00283581 /* CategoryTests.m */; };
 		295D528D25DADB0900283581 /* CategorySwiftTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 295D528C25DADB0900283581 /* CategorySwiftTests.swift */; };
 		295D529925DB5CD300283581 /* XZImageViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 295D529825DB5CD300283581 /* XZImageViewController.m */; };
+		2960562D2620ADED00BDC411 /* XZKitOC.h in Headers */ = {isa = PBXBuildFile; fileRef = 2960562B2620ADED00BDC411 /* XZKitOC.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		29632F2225D058E000BB1BEF /* XZKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 29632F1825D058E000BB1BEF /* XZKit.framework */; };
 		29632F2725D058E000BB1BEF /* FoundationTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 29632F2625D058E000BB1BEF /* FoundationTests.m */; };
 		29632F2925D058E000BB1BEF /* XZKit.h in Headers */ = {isa = PBXBuildFile; fileRef = 29632F1B25D058E000BB1BEF /* XZKit.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -284,6 +285,9 @@
 		295D528C25DADB0900283581 /* CategorySwiftTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CategorySwiftTests.swift; sourceTree = "<group>"; };
 		295D529725DB5CD300283581 /* XZImageViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = XZImageViewController.h; sourceTree = "<group>"; };
 		295D529825DB5CD300283581 /* XZImageViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = XZImageViewController.m; sourceTree = "<group>"; };
+		296056292620ADED00BDC411 /* XZKitOC.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = XZKitOC.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		2960562B2620ADED00BDC411 /* XZKitOC.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = XZKitOC.h; sourceTree = "<group>"; };
+		2960562C2620ADED00BDC411 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		29632F1825D058E000BB1BEF /* XZKit.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = XZKit.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		29632F1B25D058E000BB1BEF /* XZKit.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = XZKit.h; sourceTree = "<group>"; };
 		29632F1C25D058E000BB1BEF /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
@@ -411,6 +415,13 @@
 			buildActionMask = 2147483647;
 			files = (
 				295D525E25DA81A300283581 /* XZKit.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		296056262620ADED00BDC411 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -543,13 +554,23 @@
 			name = Frameworks;
 			sourceTree = "<group>";
 		};
+		2960562A2620ADED00BDC411 /* XZKitOC */ = {
+			isa = PBXGroup;
+			children = (
+				2960562B2620ADED00BDC411 /* XZKitOC.h */,
+				2960562C2620ADED00BDC411 /* Info.plist */,
+			);
+			path = XZKitOC;
+			sourceTree = "<group>";
+		};
 		29632F0E25D058E000BB1BEF = {
 			isa = PBXGroup;
 			children = (
 				29632F1A25D058E000BB1BEF /* XZKit */,
+				2960562A2620ADED00BDC411 /* XZKitOC */,
 				29632F2525D058E000BB1BEF /* XZKitTests */,
-				295D522825DA6DBE00283581 /* XZKitDemo */,
 				295D521925DA6D5100283581 /* XZKitUITests */,
+				295D522825DA6DBE00283581 /* XZKitDemo */,
 				29632F1925D058E000BB1BEF /* Products */,
 				295D525D25DA81A300283581 /* Frameworks */,
 			);
@@ -562,6 +583,7 @@
 				29632F2125D058E000BB1BEF /* XZKitTests.xctest */,
 				295D521825DA6D5000283581 /* XZKitUITests.xctest */,
 				295D522725DA6DBE00283581 /* XZKitDemo.app */,
+				296056292620ADED00BDC411 /* XZKitOC.framework */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -1006,6 +1028,14 @@
 /* End PBXGroup section */
 
 /* Begin PBXHeadersBuildPhase section */
+		296056242620ADED00BDC411 /* Headers */ = {
+			isa = PBXHeadersBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				2960562D2620ADED00BDC411 /* XZKitOC.h in Headers */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		29632F1325D058E000BB1BEF /* Headers */ = {
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
@@ -1111,6 +1141,24 @@
 			productReference = 295D522725DA6DBE00283581 /* XZKitDemo.app */;
 			productType = "com.apple.product-type.application";
 		};
+		296056282620ADED00BDC411 /* XZKitOC */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 296056302620ADED00BDC411 /* Build configuration list for PBXNativeTarget "XZKitOC" */;
+			buildPhases = (
+				296056242620ADED00BDC411 /* Headers */,
+				296056252620ADED00BDC411 /* Sources */,
+				296056262620ADED00BDC411 /* Frameworks */,
+				296056272620ADED00BDC411 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = XZKitOC;
+			productName = XZKitOC;
+			productReference = 296056292620ADED00BDC411 /* XZKitOC.framework */;
+			productType = "com.apple.product-type.framework";
+		};
 		29632F1725D058E000BB1BEF /* XZKit */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = 29632F2C25D058E000BB1BEF /* Build configuration list for PBXNativeTarget "XZKit" */;
@@ -1164,6 +1212,9 @@
 						CreatedOnToolsVersion = 12.4;
 						LastSwiftMigration = 1240;
 					};
+					296056282620ADED00BDC411 = {
+						CreatedOnToolsVersion = 12.4;
+					};
 					29632F1725D058E000BB1BEF = {
 						CreatedOnToolsVersion = 12.4;
 					};
@@ -1187,8 +1238,9 @@
 			targets = (
 				29632F1725D058E000BB1BEF /* XZKit */,
 				29632F2025D058E000BB1BEF /* XZKitTests */,
-				295D522625DA6DBE00283581 /* XZKitDemo */,
 				295D521725DA6D5000283581 /* XZKitUITests */,
+				296056282620ADED00BDC411 /* XZKitOC */,
+				295D522625DA6DBE00283581 /* XZKitDemo */,
 			);
 		};
 /* End PBXProject section */
@@ -1208,6 +1260,13 @@
 				291F577525E036FA00862D31 /* LaunchScreen.storyboard in Resources */,
 				295D523625DA6DC100283581 /* Assets.xcassets in Resources */,
 				291F577425E036FA00862D31 /* Main.storyboard in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		296056272620ADED00BDC411 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1249,6 +1308,13 @@
 				29EAF1E325E2DAF700358B65 /* XZImageCornerEditor.m in Sources */,
 				295D523C25DA6DC100283581 /* main.m in Sources */,
 				295D522E25DA6DBE00283581 /* SceneDelegate.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		296056252620ADED00BDC411 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1463,6 +1529,56 @@
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
+		2960562E2620ADED00BDC411 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				DEFINES_MODULE = YES;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				INFOPLIST_FILE = XZKitOC/Info.plist;
+				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				IPHONEOS_DEPLOYMENT_TARGET = 14.4;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.xezun.XZKitOC;
+				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
+				SKIP_INSTALL = YES;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		2960562F2620ADED00BDC411 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				DEFINES_MODULE = YES;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				INFOPLIST_FILE = XZKitOC/Info.plist;
+				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				IPHONEOS_DEPLOYMENT_TARGET = 14.4;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.xezun.XZKitOC;
+				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
+				SKIP_INSTALL = YES;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Release;
@@ -1690,6 +1806,15 @@
 			buildConfigurations = (
 				295D523E25DA6DC100283581 /* Debug */,
 				295D523F25DA6DC100283581 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		296056302620ADED00BDC411 /* Build configuration list for PBXNativeTarget "XZKitOC" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				2960562E2620ADED00BDC411 /* Debug */,
+				2960562F2620ADED00BDC411 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
