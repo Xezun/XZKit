@@ -19,7 +19,7 @@
 #endif
 
 /// 标记属性或方法只提供给 ObjC
-#define XZ_OBJC_ONLY NS_SWIFT_UNAVAILABLE("designed for Objective-C only")
+#define XZ_OBJC_ONLY NS_SWIFT_UNAVAILABLE("this API is designed for Objective-C only")
 
 
 #pragma mark 编译器属性

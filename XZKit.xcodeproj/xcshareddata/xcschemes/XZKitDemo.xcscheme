@@ -38,6 +38,16 @@
                ReferencedContainer = "container:XZKit.xcodeproj">
             </BuildableReference>
          </TestableReference>
+         <TestableReference
+            skipped = "NO">
+            <BuildableReference
+               BuildableIdentifier = "primary"
+               BlueprintIdentifier = "296055FC2620ACAD00BDC411"
+               BuildableName = "XZKitSwiftTests.xctest"
+               BlueprintName = "XZKitSwiftTests"
+               ReferencedContainer = "container:XZKit.xcodeproj">
+            </BuildableReference>
+         </TestableReference>
       </Testables>
    </TestAction>
    <LaunchAction
