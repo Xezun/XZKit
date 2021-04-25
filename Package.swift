@@ -25,11 +25,13 @@ let package = Package(
         .target(
             name: "XZKit",
             dependencies: [],
-            path: "./XZKit/Swift"
+            path: "Sources/Swift/XZKit",
+            exclude: ["Sources/OBJC"]
         ),
         .testTarget(
             name: "XZKitTests",
-            dependencies: ["XZKit"]
+            dependencies: ["XZKit"],
+            path: "Sources/Tests/XZKitTests"
         ),
     ]
 )

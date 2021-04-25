@@ -2,7 +2,7 @@
 //  XZKitUITests.m
 //  XZKitUITests
 //
-//  Created by Xezun on 2021/2/15.
+//  Created by Xezun on 2021/4/26.
 //
 
 #import <XCTest/XCTest.h>
@@ -31,7 +31,6 @@
     XCUIApplication *app = [[XCUIApplication alloc] init];
     [app launch];
 
-    
     // Use recording to get started writing UI tests.
     // Use XCTAssert and related functions to verify your tests produce the correct results.
 }

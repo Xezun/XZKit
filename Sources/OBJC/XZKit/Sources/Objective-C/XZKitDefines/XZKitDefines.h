@@ -7,6 +7,7 @@
 //
 
 #import <Foundation/Foundation.h>
+#import <XZKit/macro.h>
 
 #ifndef XZKIT_DEFINES
 #define XZKIT_DEFINES
@@ -149,7 +150,43 @@
 // __IPHONE_OS_VERSION_MAX_ALLOWED
 // __IPHONE_11_0
 
-#define enweak(VAR) typeof(VAR) __weak const __NSX_PASTE__(__xz_weak_, VAR) = (VAR)
-#define deweak(VAR) typeof(VAR) __strong const VAR = __NSX_PASTE__(__xz_weak_, VAR)
+#endif
+
+
+#ifndef enweak
+
+/// @code
+/// enweak(self);           // 将变量进行 weak 编码
+/// dispatch_async(dispatch_get_main_queue(), ^{
+///     deweak(self);       // 将变量进行 weak 解码
+///     [self description]; // 此处的 self 为 strong，为 block 内局部变量，非捕获外部的变量
+/// });
+/// @endcode
+/// 将变量进行 weak 编码，并且在之后的 block 中，可以通过 deweak(VAR) 解码出 VAR 变量以供使用，以避免循环引用。
+/// @note 该方法不改变 VAR 自身的强、弱引用属性。
+/// @note 该方法不改变 VAR 的引用计数。
+/// @define enweak
+/// @param VAR 变量
+#define enweak(...) \
+autoreleasepool { } \
+macro_args_map(__enweak_imp__,, __VA_ARGS__)
+
+/// 将变量进行 weak 解码，以便之后可以将变量 VAR 将作为强引用变量使用。
+/// @note 该方法必须搭配 enweak 使用。
+/// @note 在 block 中，该方法捕获的是 enweak 编码后的弱引用变量，即不捕获外部的 VAR 变量，不会造成循环引用。
+/// @note 该方法必须在使用 VAR 变量之前使用。
+/// @seealso enweak()
+/// @define deweak
+/// @param VAR 变量
+#define deweak(...) \
+autoreleasepool { } \
+_Pragma("clang diagnostic push") \
+_Pragma("clang diagnostic ignored \"-Wshadow\"") \
+macro_args_map(__deweak_imp__,, __VA_ARGS__) \
+_Pragma("clang diagnostic pop")
+
+
+#define __enweak_imp__(INDEX, VAR) __typeof__(VAR) __weak const macro_concat(__xz_weak_, VAR) = (VAR);
+#define __deweak_imp__(INDEX, VAR) __typeof__(VAR) __strong const VAR = macro_concat(__xz_weak_, VAR);
 
 #endif

@@ -1,12 +1,12 @@
 import XCTest
-@testable import XZKit
+@testable import MyLibrary
 
-final class XZKitTests: XCTestCase {
+final class MyLibraryTests: XCTestCase {
     func testExample() {
         // This is an example of a functional test case.
         // Use XCTAssert and related functions to verify your tests produce the correct
         // results.
-        XCTAssertEqual(XZKit().text, "Hello, World!")
+        XCTAssertEqual(MyLibrary().text, "Hello, World!")
     }
 
     static var allTests = [
