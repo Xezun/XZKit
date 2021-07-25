@@ -38,7 +38,7 @@ FOUNDATION_EXPORT const unsigned char XZKitVersionString[];
 
 #import <XZKit/XZMacro.h>
 #import <XZKit/XZDefines.h>
-#import <XZKit/XZKitDEBUG.h>
+#import <XZKit/XZDebugMode.h>
 #import <XZKit/XZDefer.h>
 #import <XZKit/XZLog.h>
 #import <XZKit/XZCharacterCase.h>

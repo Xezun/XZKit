@@ -17,39 +17,38 @@ static unsigned char const XZHexEncodingTable[2][16] = {
 @implementation NSData (XZHexEncoding)
 
 + (NSData *)xz_dataWithHexEncodedString:(NSString *)hexEncodedString {
-    NSUInteger const stringLength = hexEncodedString.length;
-    NSMutableData *data = [NSMutableData dataWithCapacity:stringLength * 0.5];
+    NSUInteger const length = hexEncodedString.length * 0.5;
+    UInt8 *    const buffer = calloc(length, sizeof(UInt8));
     
     NSRange range;
-    UInt8 bit = 0, bit1 = 0, bit2 = 0;
-    for (NSInteger i = 0; i < stringLength - 1;) {
+    UInt8 bit1 = 0, bit2 = 0;
+    for (NSInteger i = 0, index = 0; index < length; i += 2, index += 1) {
         range = [hexEncodedString rangeOfComposedCharacterSequenceAtIndex:i];
         if (range.length > 1) {
             break; // 单个字符超过2字节，肯定不是十六进制字符
         }
-        if (!XZHexDecoder([hexEncodedString characterAtIndex:i++], &bit1)) {
+        if (!XZHexDecoder([hexEncodedString characterAtIndex:i], &bit1)) {
             break;
         }
-        range = [hexEncodedString rangeOfComposedCharacterSequenceAtIndex:i];
+        range = [hexEncodedString rangeOfComposedCharacterSequenceAtIndex:i + 1];
         if (range.length > 1) {
             break;
         }
-        if (!XZHexDecoder([hexEncodedString characterAtIndex:i++], &bit2)) {
+        if (!XZHexDecoder([hexEncodedString characterAtIndex:i + 1], &bit2)) {
             break;
         }
-        bit = bit1 * 16 + bit2;
-        [data appendBytes:&bit length:1];
+        buffer[index] = (bit1 << 4) + bit2;
     }
     
-    return data;
+    return [[self alloc] initWithBytesNoCopy:buffer length:length];
 }
 
 - (NSString *)xz_hexEncodedString {
-    return [self xz_hexEncodedStringWithCharacterCase:XZCharacterLowercase];
+    return [self xz_hexEncodedString:XZCharacterLowercase];
 }
 
-- (NSString *)xz_hexEncodedStringWithCharacterCase:(XZCharacterCase)characterCase {
-    return [[NSString alloc] xz_initWithData:self hexEncodingWithCharacterCase:characterCase];
+- (NSString *)xz_hexEncodedString:(XZCharacterCase)characterCase {
+    return [NSString xz_stringWithData:self hexEncoding:characterCase];
 }
 
 @end
@@ -57,50 +56,50 @@ static unsigned char const XZHexEncodingTable[2][16] = {
 
 @implementation NSString (XZHexEncoding)
 
-- (instancetype)xz_initWithBytes:(const void *)bytes length:(NSUInteger)length hexEncodingWithCharacterCase:(XZCharacterCase)characterCase {
-    NSUInteger const count  = length * 2;
-    UInt8 *    const buffer = malloc(length * sizeof(UInt8));
-    
-    for (NSUInteger i = 0, index = 0; i < length; i++, index += 2) {
-        UInt8 const byte = ((UInt8 *)bytes)[i];
-        buffer[index]     = XZHexEncodingTable[characterCase][byte >> 4];
-        buffer[index + 1] = XZHexEncodingTable[characterCase][byte & 0x0f];
-    }
-    
-    return [self initWithBytesNoCopy:buffer length:count encoding:NSASCIIStringEncoding freeWhenDone:YES];
-}
-
-- (instancetype)xz_initWithData:(NSData *)data hexEncodingWithCharacterCase:(XZCharacterCase)characterCase {
-    NSUInteger const count  = data.length * 2;
++ (instancetype)xz_stringWithBytes:(const void *)bytes length:(NSUInteger)length hexEncoding:(XZCharacterCase)characterCase {
+    NSUInteger const count = length * 2;
     UInt8 *    const buffer = malloc(count * sizeof(UInt8));
     
-    [data enumerateByteRangesUsingBlock:^(const void * _Nonnull bytes, NSRange byteRange, BOOL * _Nonnull stop) {
-        for (NSUInteger i = 0, index = byteRange.location * 2; i < byteRange.length; i++, index += 2) {
+    for (NSUInteger i = 0; i < length; i++) {
+        UInt8 const byte = ((UInt8 *)bytes)[i];
+        buffer[i * 2]     = XZHexEncodingTable[characterCase][byte >> 4];
+        buffer[i * 2 + 1] = XZHexEncodingTable[characterCase][byte & 0x0f];
+    }
+    
+    return [[self alloc] initWithBytesNoCopy:buffer length:count encoding:NSASCIIStringEncoding freeWhenDone:YES];
+}
+
++ (instancetype)xz_stringWithData:(NSData *)data hexEncoding:(XZCharacterCase)characterCase {
+    NSUInteger const length = data.length * 2;
+    UInt8 *    const buffer = malloc(length * sizeof(UInt8));
+    
+    [data enumerateByteRangesUsingBlock:^(const void * _Nonnull bytes, NSRange range, BOOL * _Nonnull stop) {
+        for (NSUInteger i = 0, index = range.location * 2; i < range.length; i++, index += 2) {
             UInt8 const byte = ((UInt8 *)bytes)[i];
             buffer[index]     = XZHexEncodingTable[characterCase][byte >> 4];
             buffer[index + 1] = XZHexEncodingTable[characterCase][byte & 0x0f];
         }
     }];
     
-    return [self initWithBytesNoCopy:buffer length:count encoding:NSASCIIStringEncoding freeWhenDone:YES];
+    return [[self alloc] initWithBytesNoCopy:buffer length:length encoding:NSASCIIStringEncoding freeWhenDone:YES];
 }
 
 
-- (NSString *)xz_stringByAddingHexEncodingWithCharacterCase:(XZCharacterCase)characterCase usingEncoding:(NSStringEncoding)stringEncoding {
+- (NSString *)xz_stringByAddingHexEncoding:(XZCharacterCase)characterCase usingEncoding:(NSStringEncoding)stringEncoding {
     NSData * const data = [self dataUsingEncoding:stringEncoding];
-    return [data xz_hexEncodedStringWithCharacterCase:characterCase];
+    return [data xz_hexEncodedString:characterCase];
 }
 
 - (NSString *)xz_stringByAddingHexEncodingUsingEncoding:(NSStringEncoding)stringEncoding {
-    return [self xz_stringByAddingHexEncodingWithCharacterCase:(XZCharacterLowercase) usingEncoding:stringEncoding];
+    return [self xz_stringByAddingHexEncoding:(XZCharacterLowercase) usingEncoding:stringEncoding];
 }
 
-- (NSString *)xz_stringByAddingHexEncodingWithCharacterCase:(XZCharacterCase)characterCase {
-    return [self xz_stringByAddingHexEncodingWithCharacterCase:characterCase usingEncoding:NSUTF8StringEncoding];
+- (NSString *)xz_stringByAddingHexEncoding:(XZCharacterCase)characterCase {
+    return [self xz_stringByAddingHexEncoding:characterCase usingEncoding:NSUTF8StringEncoding];
 }
 
 - (NSString *)xz_stringByAddingHexEncoding {
-    return [self xz_stringByAddingHexEncodingWithCharacterCase:(XZCharacterLowercase)];
+    return [self xz_stringByAddingHexEncoding:(XZCharacterLowercase)];
 }
 
 - (NSString *)xz_stringByRemovingHexEncodingUsingEncoding:(NSStringEncoding)dataEncoding {

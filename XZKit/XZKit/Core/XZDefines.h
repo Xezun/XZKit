@@ -9,5 +9,11 @@
 #import <Foundation/Foundation.h>
 #import <XZKit/XZMacro.h>
 
+#ifndef XZ_PROTECTED
+#define XZ_READONLY const
+#else
+#define XZ_READONLY
+#endif
+
 
 

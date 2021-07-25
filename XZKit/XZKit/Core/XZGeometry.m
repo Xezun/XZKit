@@ -101,12 +101,12 @@ XZRectEdge XZRectEdgeFromString(NSString * _Nullable aString) {
     return edges;
 }
 
-CGRect CGSizeAdjust(CGSize size, CGRect rect, UIViewContentMode contentMode) {
-    switch (contentMode) {
-        case UIViewContentModeScaleToFill: {
+static CGRect _CGRectAdjustSize(CGRect const rect, CGSize const size, XZAdjustMode const mode) {
+    switch (mode) {
+        case XZAdjustModeScaleToFill: {
             return rect;
         }
-        case UIViewContentModeScaleAspectFit: {
+        case XZAdjustModeScaleAspectFit: {
             if (size.width == 0) {
                 return CGRectMake(CGRectGetMidX(rect), 0, 0, rect.size.height);
             }
@@ -125,7 +125,7 @@ CGRect CGSizeAdjust(CGSize size, CGRect rect, UIViewContentMode contentMode) {
             CGFloat y = (rect.size.height - scaledHeight) * 0.5 + CGRectGetMinY(rect);
             return CGRectMake(CGRectGetMinX(rect), y, rect.size.width, scaledHeight);
         }
-        case UIViewContentModeScaleAspectFill: {
+        case XZAdjustModeScaleAspectFill: {
             if (size.width == 0 || size.height == 0) {
                 return rect;
             }
@@ -139,49 +139,58 @@ CGRect CGSizeAdjust(CGSize size, CGRect rect, UIViewContentMode contentMode) {
             CGFloat y = (rect.size.height - scaledHeight) * 0.5 + CGRectGetMinY(rect);
             return CGRectMake(CGRectGetMinX(rect), y, rect.size.width, scaledHeight);
         }
-        case UIViewContentModeCenter: {
+        case XZAdjustModeCenter: {
             CGFloat const x = (rect.size.width - size.width) * 0.5 + CGRectGetMinX(rect);
             CGFloat const y = (rect.size.height - size.height) * 0.5 + CGRectGetMinY(rect);
             return CGRectMake(x, y, size.width, size.height);
         }
-        case UIViewContentModeTop: {
+        case XZAdjustModeTop: {
             CGFloat const x = (rect.size.width - size.width) * 0.5 + CGRectGetMinX(rect);
             return CGRectMake(x, CGRectGetMinY(rect), size.width, size.height);
         }
-        case UIViewContentModeBottom: {
+        case XZAdjustModeBottom: {
             CGFloat const x = (rect.size.width - size.width) * 0.5 + CGRectGetMinX(rect);
             CGFloat const y = CGRectGetMaxY(rect) - size.height;
             return CGRectMake(x, y, size.width, size.height);
         }
-        case UIViewContentModeLeft: {
+        case XZAdjustModeLeft: {
             CGFloat const y = (rect.size.height - size.height) * 0.5 + CGRectGetMinY(rect);
             return CGRectMake(CGRectGetMinX(rect), y, size.width, size.height);
         }
-        case UIViewContentModeRight: {
+        case XZAdjustModeRight: {
             CGFloat const x = CGRectGetMaxX(rect) - size.height;
             CGFloat const y = (rect.size.height - size.height) * 0.5 + CGRectGetMinY(rect);
             return CGRectMake(x, y, size.width, size.height);
         }
-        case UIViewContentModeTopLeft: {
+        case XZAdjustModeTopLeft: {
             return CGRectMake(CGRectGetMinX(rect), CGRectGetMinY(rect), size.width, size.height);
         }
-        case UIViewContentModeTopRight: {
+        case XZAdjustModeTopRight: {
             CGFloat const x = CGRectGetMaxX(rect) - size.width;
             return CGRectMake(x, CGRectGetMinY(rect), size.width, size.height);
         }
-        case UIViewContentModeBottomLeft: {
+        case XZAdjustModeBottomLeft: {
             CGFloat const y = CGRectGetMaxY(rect) - size.height;
             return CGRectMake(CGRectGetMinX(rect), y, size.width, size.height);
         }
-        case UIViewContentModeBottomRight: {
+        case XZAdjustModeBottomRight: {
             CGFloat const x = CGRectGetMaxX(rect) - size.width;
             CGFloat const y = CGRectGetMaxY(rect) - size.height;
             return CGRectMake(x, y, size.width, size.height);
         }
-        default: {
-            return rect;
+    }
+}
+
+CGRect CGRectAdjustSize(CGRect const rect, CGSize const size, XZAdjustMode mode) {
+    CGRect frame = CGRectMake(0, 0, size.width, size.height);
+    for (NSInteger i = 0; mode > 0 && i < sizeof(XZAdjustMode); i++) {
+        XZAdjustMode const flag = 1 << i;
+        if (mode & flag) {
+            mode &= (~flag);
+            frame = _CGRectAdjustSize(rect, frame.size, flag);
         }
     }
+    return frame;
 }
 
 

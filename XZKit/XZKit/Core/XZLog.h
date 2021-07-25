@@ -8,7 +8,7 @@
 
 #import <Foundation/Foundation.h>
 #import <XZKit/XZDefines.h>
-#import <XZKit/XZKitDEBUG.h>
+#import <XZKit/XZDebugMode.h>
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -26,25 +26,23 @@ FOUNDATION_EXTERN void XZPrintv(NSString *format, va_list args) NS_FORMAT_FUNCTI
 /// @note 仅在 XZKitDebugMode == YES 时输出。
 FOUNDATION_EXTERN void XZLogv(const char *file, int line, const char *func, NSString *format, ...) NS_FORMAT_FUNCTION(4, 5) XZ_OBJC_ONLY;
 
-/// 控制台输出。
-/// @note 仅在程序添加了启动参数 -XZKitDEBUG 才执行控制台输出。
-/// @note 仅在 DEBUG 模式输出请用 DZLOG 宏。
-FOUNDATION_EXTERN void XZLog(NSString *format, ...) XZ_OBJC_ONLY;
-#undef XZLog
-
 #if DEBUG
 #define XZLog(format, ...) XZLogv(__FILE__, (int)__LINE__, __func__, format, ##__VA_ARGS__)
 #else
 #define XZLog(...)
 #endif
 
+// 通过宏将 NSLog 替换为 XZLogv 函数。
+// 可通过预定义此宏，关闭对 NSLog 的替换。
 #ifndef XZ_REWRITES_NSLOG
-#define XZ_REWRITES_NSLOG
+#define XZ_REWRITES_NSLOG 1
+
 #if DEBUG
 #define NSLog(format, ...) XZLogv(__FILE__, (int)__LINE__, __func__, format, ##__VA_ARGS__)
 #else
 #define NSLog(...)
 #endif
+
 #endif
 
 NS_ASSUME_NONNULL_END

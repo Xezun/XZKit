@@ -84,11 +84,27 @@ FOUNDATION_EXPORT NSString *NSStringFromXZRectEdge(XZRectEdge rectEdge);
 /// @param aString XZRectEdge
 FOUNDATION_EXPORT XZRectEdge XZRectEdgeFromString(NSString * _Nullable aString);
 
-/// 计算将 size 大小的内容，在 rect 区域按 contentMode 模式进行适配时的范围。
-/// @param size 内容的大小
-/// @param rect 适配的区域
-/// @param contentMode 适配模式
-UIKIT_EXTERN CGRect CGSizeAdjust(CGSize size, CGRect rect, UIViewContentMode contentMode);
+/// 适配模式。
+typedef NS_OPTIONS(NSUInteger, XZAdjustMode) {
+    XZAdjustModeScaleToFill      = 1 << 0,
+    XZAdjustModeScaleAspectFit   = 1 << 1,
+    XZAdjustModeScaleAspectFill  = 1 << 2,
+    XZAdjustModeCenter           = 1 << 3,
+    XZAdjustModeTop              = 1 << 4,
+    XZAdjustModeBottom           = 1 << 5,
+    XZAdjustModeLeft             = 1 << 6,
+    XZAdjustModeRight            = 1 << 7,
+    XZAdjustModeTopLeft          = 1 << 8,
+    XZAdjustModeTopRight         = 1 << 9,
+    XZAdjustModeBottomLeft       = 1 << 10,
+    XZAdjustModeBottomRight      = 1 << 11
+};
+
+/// 在 rect 区域内，对 size 大小的内容，按 mode 模式进行适配。
+/// @param rect 适配区域
+/// @param size 内容大小
+/// @param mode 适配模式，按照 mode 单个模式从小大大依此进行适配
+UIKIT_EXTERN CGRect CGRectAdjustSize(CGRect rect, CGSize size, XZAdjustMode mode);
 
 @interface NSValue (XZGeometry)
 

@@ -106,13 +106,6 @@ CONTEXT(MACRO, _9, 9)
 #define XZ_OBJC_KEYWORD try {} @catch (...) {}
 #endif
 
-
-#ifndef XZ_PROTECTED
-/// @define
-/// 被 XZ_PROTECTED 标记的全局变量，只有在框架内部可写。
-#define XZ_PROTECTED const
-#endif
-
 /// 标记属性或方法仅在 Objective-C 中可用（Swift中不可用）。
 #define XZ_OBJC_ONLY NS_SWIFT_UNAVAILABLE("")
 

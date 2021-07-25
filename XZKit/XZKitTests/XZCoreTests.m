@@ -1,18 +1,23 @@
 //
-//  XZMacroTests.m
+//  XZCoreTests.m
 //  XZKitTests
 //
-//  Created by Xezun on 2021/7/24.
+//  Created by Xezun on 2021/7/25.
 //
 
 #import <XCTest/XCTest.h>
-#import <XZKit/XZMacro.h>
+#import <XZKit/XZKit.h>
 
-@interface XZMacroTests : XCTestCase
-
+@interface XZCoreDataBase : NSObject
+- (void)open;
+- (void)update;
+- (void)close;
 @end
 
-@implementation XZMacroTests
+@interface XZCoreTests : XCTestCase
+@end
+
+@implementation XZCoreTests
 
 - (void)setUp {
     // Put setup code here. This method is called before the invocation of each test method in the class.
@@ -22,7 +27,11 @@
     // Put teardown code here. This method is called after the invocation of each test method in the class.
 }
 
-- (void)testMeta {
+- (void)testDebugMode {
+    NSLog(@"XZKitDebugMode: %@", XZKitDebugMode ? @"true" : @"false");
+}
+
+- (void)testMetaMacro {
     NSInteger a = XZ_META_PASTE(1, 2);
     XCTAssert(a == 12);
     
@@ -72,11 +81,74 @@
     NSLog(@"Xcode 版本：%d", XZ_XCODE_VERSION);
 }
 
-- (void)testPerformanceExample {
-    // This is an example of a performance test case.
+- (void)testDefer {
+    XZCoreDataBase *db = [XZCoreDataBase new];
+    [db open];
+    defer(^{
+        [db close];
+    });
+    
+    [db update];
+}
+
+- (void)testLog {
+    NSLog(@"%@", self);
+    XZLog(@"%@", self);
+    
+    XZLog(@"静夜思 - 李白");
+    XZPrint(@"窗前明月光，");
+    XZPrint(@"疑是地上霜。");
+    XZPrint(@"举头望明月，");
+    XZPrint(@"低头思故乡。");
+}
+
+- (void)testPerformanceXZLog {
+    // 平均耗时 0.057
     [self measureBlock:^{
-        // Put the code you want to measure the time of here.
+        for (NSInteger i = 0; i < 1000; i++) {
+            XZLog(@"%@", self);
+        }
     }];
+}
+
+- (void)testPerformanceNSLog {
+    // 平均耗时 0.242
+    [self measureBlock:^{
+        for (NSInteger i = 0; i < 1000; i++) {
+            NSLog(@"%@", self);
+        }
+    }];
+}
+
+@end
+
+@implementation XZCoreDataBase {
+    BOOL _isOpen;
+}
+
+- (void)dealloc {
+    XCTAssert(!_isOpen);
+}
+
+- (instancetype)init {
+    self = [super init];
+    if (self) {
+        _isOpen = NO;
+    }
+    return self;
+}
+
+- (void)open {
+    _isOpen = YES;
+}
+
+- (void)update {
+    // 必须在 _isOpen 时才能执行。
+    XCTAssert(_isOpen);
+}
+
+- (void)close {
+    _isOpen = NO;
 }
 
 @end

@@ -6,15 +6,10 @@
 //  Copyright © 2021 Xezun Inc. All rights reserved.
 //
 
-#define XZ_PROTECTED
-#import "XZKitDEBUG.h"
+#import "XZDebugMode.h"
 
 BOOL XZKitDebugMode = NO;
 
-@implementation NSObject (XZKitDEBUG)
-
-+ (void)load {
+void __XZKIT_DEBUG_LOADER__(void) XZ_INIT {
     XZKitDebugMode = (bool)[NSProcessInfo.processInfo.arguments containsObject:@"-XZKitDEBUG"];
 }
-
-@end

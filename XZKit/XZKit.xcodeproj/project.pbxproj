@@ -11,9 +11,9 @@
 		2905401B26A09F4F00793581 /* XZObjCTypeDescriptor.m in Sources */ = {isa = PBXBuildFile; fileRef = 2905401726A09F4F00793581 /* XZObjCTypeDescriptor.m */; };
 		2905401C26A09F4F00793581 /* XZRuntime.m in Sources */ = {isa = PBXBuildFile; fileRef = 2905401826A09F4F00793581 /* XZRuntime.m */; };
 		2905401D26A09F4F00793581 /* XZObjCTypeDescriptor.h in Headers */ = {isa = PBXBuildFile; fileRef = 2905401926A09F4F00793581 /* XZObjCTypeDescriptor.h */; };
-		29440A4926AC66B3009D9031 /* XZMacroTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 29440A4826AC66B3009D9031 /* XZMacroTests.m */; };
-		29440A4B26AC6B9B009D9031 /* XZDeferTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 29440A4A26AC6B9B009D9031 /* XZDeferTests.m */; };
-		29440A4D26AC6D23009D9031 /* XZLogTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 29440A4C26AC6D23009D9031 /* XZLogTests.m */; };
+		29440A4F26AD3317009D9031 /* XZGeometryTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 29440A4E26AD3317009D9031 /* XZGeometryTests.m */; };
+		29440A5326AD384B009D9031 /* XZCoreTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 29440A5226AD384B009D9031 /* XZCoreTests.m */; };
+		29440A5526ADB2C2009D9031 /* XZHexEncodingTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 29440A5426ADB2C2009D9031 /* XZHexEncodingTests.m */; };
 		29ABE06B2635DD8E00CE2D77 /* XZKitTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 29ABE06A2635DD8E00CE2D77 /* XZKitTests.m */; };
 		29ABE06D2635DD8E00CE2D77 /* XZKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 29ABE0572635DA2400CE2D77 /* XZKit.framework */; };
 		29ABE07C2635DDC600CE2D77 /* XZKitUITests.m in Sources */ = {isa = PBXBuildFile; fileRef = 29ABE07B2635DDC600CE2D77 /* XZKitUITests.m */; };
@@ -52,9 +52,9 @@
 		29ABE3B82647942200CE2D77 /* XZJSON.h in Headers */ = {isa = PBXBuildFile; fileRef = 29ABE3A72647942200CE2D77 /* XZJSON.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		29ABE3B92647942200CE2D77 /* XZHexEncoding.h in Headers */ = {isa = PBXBuildFile; fileRef = 29ABE3A82647942200CE2D77 /* XZHexEncoding.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		29ABE3BA2647942200CE2D77 /* XZHexEncoding.m in Sources */ = {isa = PBXBuildFile; fileRef = 29ABE3A92647942200CE2D77 /* XZHexEncoding.m */; };
-		29ABE3BB2647942200CE2D77 /* XZKitDEBUG.h in Headers */ = {isa = PBXBuildFile; fileRef = 29ABE3AA2647942200CE2D77 /* XZKitDEBUG.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		29ABE3BB2647942200CE2D77 /* XZDebugMode.h in Headers */ = {isa = PBXBuildFile; fileRef = 29ABE3AA2647942200CE2D77 /* XZDebugMode.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		29ABE3BC2647942200CE2D77 /* XZJSON.m in Sources */ = {isa = PBXBuildFile; fileRef = 29ABE3AB2647942200CE2D77 /* XZJSON.m */; };
-		29ABE3BD2647942200CE2D77 /* XZKitDEBUG.m in Sources */ = {isa = PBXBuildFile; fileRef = 29ABE3AC2647942200CE2D77 /* XZKitDEBUG.m */; };
+		29ABE3BD2647942200CE2D77 /* XZDebugMode.m in Sources */ = {isa = PBXBuildFile; fileRef = 29ABE3AC2647942200CE2D77 /* XZDebugMode.m */; };
 		29ABE3BE2647942200CE2D77 /* XZDefines.h in Headers */ = {isa = PBXBuildFile; fileRef = 29ABE3AD2647942200CE2D77 /* XZDefines.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		29ABE3BF2647942200CE2D77 /* XZLog.m in Sources */ = {isa = PBXBuildFile; fileRef = 29ABE3AE2647942200CE2D77 /* XZLog.m */; };
 		29ABE3C02647942200CE2D77 /* XZTimestamp.m in Sources */ = {isa = PBXBuildFile; fileRef = 29ABE3AF2647942200CE2D77 /* XZTimestamp.m */; };
@@ -94,9 +94,9 @@
 		2905401726A09F4F00793581 /* XZObjCTypeDescriptor.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = XZObjCTypeDescriptor.m; sourceTree = "<group>"; };
 		2905401826A09F4F00793581 /* XZRuntime.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = XZRuntime.m; sourceTree = "<group>"; };
 		2905401926A09F4F00793581 /* XZObjCTypeDescriptor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XZObjCTypeDescriptor.h; sourceTree = "<group>"; };
-		29440A4826AC66B3009D9031 /* XZMacroTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = XZMacroTests.m; sourceTree = "<group>"; };
-		29440A4A26AC6B9B009D9031 /* XZDeferTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = XZDeferTests.m; sourceTree = "<group>"; };
-		29440A4C26AC6D23009D9031 /* XZLogTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = XZLogTests.m; sourceTree = "<group>"; };
+		29440A4E26AD3317009D9031 /* XZGeometryTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = XZGeometryTests.m; sourceTree = "<group>"; };
+		29440A5226AD384B009D9031 /* XZCoreTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = XZCoreTests.m; sourceTree = "<group>"; };
+		29440A5426ADB2C2009D9031 /* XZHexEncodingTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = XZHexEncodingTests.m; sourceTree = "<group>"; };
 		29ABE0572635DA2400CE2D77 /* XZKit.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = XZKit.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		29ABE05B2635DA2400CE2D77 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		29ABE0682635DD8E00CE2D77 /* XZKitTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = XZKitTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -152,9 +152,9 @@
 		29ABE3A72647942200CE2D77 /* XZJSON.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XZJSON.h; sourceTree = "<group>"; };
 		29ABE3A82647942200CE2D77 /* XZHexEncoding.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XZHexEncoding.h; sourceTree = "<group>"; };
 		29ABE3A92647942200CE2D77 /* XZHexEncoding.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = XZHexEncoding.m; sourceTree = "<group>"; };
-		29ABE3AA2647942200CE2D77 /* XZKitDEBUG.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XZKitDEBUG.h; sourceTree = "<group>"; };
+		29ABE3AA2647942200CE2D77 /* XZDebugMode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XZDebugMode.h; sourceTree = "<group>"; };
 		29ABE3AB2647942200CE2D77 /* XZJSON.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = XZJSON.m; sourceTree = "<group>"; };
-		29ABE3AC2647942200CE2D77 /* XZKitDEBUG.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = XZKitDEBUG.m; sourceTree = "<group>"; };
+		29ABE3AC2647942200CE2D77 /* XZDebugMode.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = XZDebugMode.m; sourceTree = "<group>"; };
 		29ABE3AD2647942200CE2D77 /* XZDefines.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XZDefines.h; sourceTree = "<group>"; };
 		29ABE3AE2647942200CE2D77 /* XZLog.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = XZLog.m; sourceTree = "<group>"; };
 		29ABE3AF2647942200CE2D77 /* XZTimestamp.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = XZTimestamp.m; sourceTree = "<group>"; };
@@ -250,9 +250,9 @@
 			isa = PBXGroup;
 			children = (
 				29ABE06A2635DD8E00CE2D77 /* XZKitTests.m */,
-				29440A4826AC66B3009D9031 /* XZMacroTests.m */,
-				29440A4A26AC6B9B009D9031 /* XZDeferTests.m */,
-				29440A4C26AC6D23009D9031 /* XZLogTests.m */,
+				29440A5226AD384B009D9031 /* XZCoreTests.m */,
+				29440A4E26AD3317009D9031 /* XZGeometryTests.m */,
+				29440A5426ADB2C2009D9031 /* XZHexEncodingTests.m */,
 				29ABE06C2635DD8E00CE2D77 /* Info.plist */,
 			);
 			path = XZKitTests;
@@ -340,6 +340,8 @@
 			children = (
 				29ABE3B52647942200CE2D77 /* XZMacro.h */,
 				29ABE3AD2647942200CE2D77 /* XZDefines.h */,
+				29ABE3AA2647942200CE2D77 /* XZDebugMode.h */,
+				29ABE3AC2647942200CE2D77 /* XZDebugMode.m */,
 				29ABE3A52647942100CE2D77 /* XZDefer.h */,
 				29ABE3B32647942200CE2D77 /* XZDefer.m */,
 				29ABE3B22647942200CE2D77 /* XZLog.h */,
@@ -351,8 +353,6 @@
 				29ABE3A92647942200CE2D77 /* XZHexEncoding.m */,
 				29ABE3A72647942200CE2D77 /* XZJSON.h */,
 				29ABE3AB2647942200CE2D77 /* XZJSON.m */,
-				29ABE3AA2647942200CE2D77 /* XZKitDEBUG.h */,
-				29ABE3AC2647942200CE2D77 /* XZKitDEBUG.m */,
 				29ABE3A62647942100CE2D77 /* XZTimestamp.h */,
 				29ABE3AF2647942200CE2D77 /* XZTimestamp.m */,
 			);
@@ -377,7 +377,7 @@
 				2905401A26A09F4F00793581 /* XZRuntime.h in Headers */,
 				29ABE3C62647942200CE2D77 /* XZMacro.h in Headers */,
 				29ABE3C32647942200CE2D77 /* XZLog.h in Headers */,
-				29ABE3BB2647942200CE2D77 /* XZKitDEBUG.h in Headers */,
+				29ABE3BB2647942200CE2D77 /* XZDebugMode.h in Headers */,
 				29ABE34C264790FE00CE2D77 /* UIView+XZKit.h in Headers */,
 				29ABE34A264790FE00CE2D77 /* UIImage+XZKit.h in Headers */,
 				29ABE3B72647942200CE2D77 /* XZTimestamp.h in Headers */,
@@ -552,7 +552,7 @@
 				2905401C26A09F4F00793581 /* XZRuntime.m in Sources */,
 				29ABE3BF2647942200CE2D77 /* XZLog.m in Sources */,
 				29ABE3BA2647942200CE2D77 /* XZHexEncoding.m in Sources */,
-				29ABE3BD2647942200CE2D77 /* XZKitDEBUG.m in Sources */,
+				29ABE3BD2647942200CE2D77 /* XZDebugMode.m in Sources */,
 				29ABE3C12647942200CE2D77 /* XZGeometry.m in Sources */,
 				29ABE3C02647942200CE2D77 /* XZTimestamp.m in Sources */,
 				29ABE34E264790FE00CE2D77 /* UIApplication+XZKit.swift in Sources */,
@@ -570,10 +570,10 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				29440A4926AC66B3009D9031 /* XZMacroTests.m in Sources */,
+				29440A5526ADB2C2009D9031 /* XZHexEncodingTests.m in Sources */,
 				29ABE06B2635DD8E00CE2D77 /* XZKitTests.m in Sources */,
-				29440A4D26AC6D23009D9031 /* XZLogTests.m in Sources */,
-				29440A4B26AC6B9B009D9031 /* XZDeferTests.m in Sources */,
+				29440A5326AD384B009D9031 /* XZCoreTests.m in Sources */,
+				29440A4F26AD3317009D9031 /* XZGeometryTests.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -741,6 +741,10 @@
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"$(inherited)",
+					"XZ_PROTECTED=1",
+				);
 				INFOPLIST_FILE = XZKit/Info.plist;
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
 				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
@@ -765,6 +769,10 @@
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"$(inherited)",
+					"XZ_PROTECTED=1",
+				);
 				INFOPLIST_FILE = XZKit/Info.plist;
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
 				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
@@ -786,6 +794,10 @@
 			buildSettings = {
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				CODE_SIGN_STYLE = Automatic;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"$(inherited)",
+					"XZ_REWRITES_NSLOG=0",
+				);
 				INFOPLIST_FILE = XZKitTests/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",

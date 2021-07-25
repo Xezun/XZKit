@@ -10,7 +10,7 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-/// 字符串字符大小写样式。
+/// 字符大小写枚举。
 typedef NS_ENUM(NSInteger, XZCharacterCase) {
     /// 小写字符，默认。
     XZCharacterLowercase = 0,
