@@ -9,15 +9,21 @@
 
 @implementation NSData (XZJSON)
 
-+ (NSData *)xz_JSONWithObject:(id)object options:(NSJSONWritingOptions)options {
++ (instancetype)xz_dataWithJSONObject:(id)object options:(NSJSONWritingOptions)options {
     if (object == nil) {
         return nil;
     }
-    return [NSJSONSerialization dataWithJSONObject:object options:options error:nil];
+    NSError *error = nil;
+    NSData *data = [NSJSONSerialization dataWithJSONObject:object options:options error:&error];
+    if (error.code != noErr) {
+        XZLog(@"对象转 JSON 发生错误：%@", error);
+        return nil;
+    }
+    return [self dataWithData:data];
 }
 
-+ (NSData *)xz_JSONWithObject:(id)object {
-    return [self xz_JSONWithObject:object options:(NSJSONWritingFragmentsAllowed)];
++ (instancetype)xz_dataWithJSONObject:(id)object {
+    return [self xz_dataWithJSONObject:object options:(NSJSONWritingFragmentsAllowed)];
 }
 
 @end
@@ -25,43 +31,24 @@
 
 @implementation NSString (XZJSON)
 
-+ (NSString *)xz_JSONWithObject:(id)object encoding:(NSStringEncoding)encoding options:(NSJSONWritingOptions)options {
-    NSData *data = [NSData xz_JSONWithObject:object options:options];
++ (instancetype)xz_stringWithJSONObject:(id)object options:(NSJSONWritingOptions)options {
+    NSData *data = [NSData xz_dataWithJSONObject:object options:options];
     if (data == nil) {
         return nil;
     }
-    return [[NSString alloc] initWithData:data encoding:encoding];
+    return [[self alloc] initWithData:data encoding:NSUTF8StringEncoding];
 }
 
-+ (NSString *)xz_JSONWithObject:(id)object encoding:(NSStringEncoding)encoding {
-    return [self xz_JSONWithObject:object encoding:encoding options:(NSJSONWritingFragmentsAllowed)];
++ (instancetype)xz_stringWithJSONObject:(id)object {
+    return [self xz_stringWithJSONObject:object options:(NSJSONWritingFragmentsAllowed)];
 }
 
-+ (NSString *)xz_JSONWithObject:(id)object options:(NSJSONWritingOptions)options {
-    return [self xz_JSONWithObject:object encoding:NSUTF8StringEncoding options:options];
-}
-
-+ (NSString *)xz_JSONWithObject:(id)object {
-    return [self xz_JSONWithObject:object encoding:NSUTF8StringEncoding options:(NSJSONWritingFragmentsAllowed)];
-}
-
-+ (NSString *)xz_stringWithJSON:(id)json options:(NSJSONReadingOptions)options {
-    NSData *data = json;
-    if ([data isKindOfClass:NSString.class]) {
-        data = [(NSString *)data dataUsingEncoding:NSUTF8StringEncoding];
-    } else if (![data isKindOfClass:NSData.class]) {
++ (instancetype)xz_stringWithJSON:(NSData *)json {
+    if (json == nil) {
         return nil;
     }
-    NSError *error = nil;
-    id object = [NSJSONSerialization JSONObjectWithData:data options:options error:&error];
-    if ([object isKindOfClass:NSString.class]) {
-        return object;
-    }
-    return nil;
-}
-
-+ (NSString *)xz_stringWithJSON:(id)json {
-    return [self xz_stringWithJSON:json options:(NSJSONReadingAllowFragments)];
+    NSParameterAssert([json isKindOfClass:NSData.class]);
+    return [[self alloc] initWithData:json encoding:NSUTF8StringEncoding];
 }
 
 @end
@@ -69,23 +56,33 @@
 
 @implementation NSArray (XZJSON)
 
-+ (NSArray *)xz_arrayWithJSON:(id)json options:(NSJSONReadingOptions)options {
++ (NSArray *)xz_arrayWithJSON:(id const)json options:(NSJSONReadingOptions const)options {
+    if (json == nil) {
+        return nil;
+    }
+    NSParameterAssert([json isKindOfClass:NSString.class] || [json isKindOfClass:NSData.class]);
     NSData *data = json;
-    if ([data isKindOfClass:NSString.class]) {
-        data = [(NSString *)data dataUsingEncoding:NSUTF8StringEncoding];
-    } else if (![data isKindOfClass:NSData.class]) {
+    if ([json isKindOfClass:NSString.class]) {
+        data = [(NSString *)json dataUsingEncoding:NSUTF8StringEncoding];
+    }
+    if (![data isKindOfClass:NSData.class]) {
         return nil;
     }
     NSError *error = nil;
-    id object = [NSJSONSerialization JSONObjectWithData:data options:options error:&error];
-    if ([object isKindOfClass:NSArray.class]) {
-        return object;
+    NSArray *array = [NSJSONSerialization JSONObjectWithData:data options:options error:&error];
+    if (error.code != noErr) {
+        XZLog(@"JSON 数据转数组发生错误：%@", error);
+        return nil;
     }
-    return nil;
+    if (![array isKindOfClass:NSArray.class]) {
+        XZLog(@"JSON 数据并非数组：%@", array);
+        return nil;
+    }
+    return [[self alloc] initWithArray:array];
 }
 
 
-+ (NSArray *)xz_arrayWithJSON:(id)json {
++ (instancetype)xz_arrayWithJSON:(id)json {
     return [self xz_arrayWithJSON:json options:(NSJSONReadingAllowFragments)];
 }
 
@@ -94,22 +91,32 @@
 
 @implementation NSDictionary (XZJSON)
 
-+ (NSDictionary *)xz_dictionaryWithJSON:(id)json options:(NSJSONReadingOptions)options {
++ (instancetype)xz_dictionaryWithJSON:(id)json options:(NSJSONReadingOptions)options {
+    if (json == nil) {
+        return nil;
+    }
+    NSParameterAssert([json isKindOfClass:NSString.class] || [json isKindOfClass:NSData.class]);
     NSData *data = json;
-    if ([data isKindOfClass:NSString.class]) {
-        data = [(NSString *)data dataUsingEncoding:NSUTF8StringEncoding];
-    } else if (![data isKindOfClass:NSData.class]) {
+    if ([json isKindOfClass:NSString.class]) {
+        data = [(NSString *)json dataUsingEncoding:NSUTF8StringEncoding];
+    }
+    if (![data isKindOfClass:NSData.class]) {
         return nil;
     }
     NSError *error = nil;
-    id object = [NSJSONSerialization JSONObjectWithData:data options:options error:&error];
-    if ([object isKindOfClass:NSDictionary.class]) {
-        return object;
+    NSDictionary *dict = [NSJSONSerialization JSONObjectWithData:data options:options error:&error];
+    if (error.code != noErr) {
+        XZLog(@"JSON 数据转数组发生错误：%@", error);
+        return nil;
     }
-    return nil;
+    if (![dict isKindOfClass:NSDictionary.class]) {
+        XZLog(@"JSON 数据并非字典：%@", dict);
+        return nil;
+    }
+    return [[self alloc] initWithDictionary:dict];
 }
 
-+ (NSDictionary *)xz_dictionaryWithJSON:(id)json {
++ (instancetype)xz_dictionaryWithJSON:(id)json {
     return [self xz_dictionaryWithJSON:json options:(NSJSONReadingAllowFragments)];
 }
 

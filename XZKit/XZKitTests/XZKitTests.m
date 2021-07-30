@@ -24,7 +24,12 @@
     // Put teardown code here. This method is called after the invocation of each test method in the class.
 }
 
-
+- (void)testExample {
+    NSArray *array1 = @[@"1", @"2"];
+    NSArray *array2 = [[NSArray alloc] initWithArray:array1];
+    
+    NSLog(@"%p: %@, %p: %@", array1, array1, array2, array2);
+}
 
 - (void)testPerformanceExample {
     // This is an example of a performance test case.
