@@ -31,7 +31,7 @@
     
     const char *buffer = [rawStr cStringUsingEncoding:NSUTF8StringEncoding];
     const NSUInteger length = [rawStr lengthOfBytesUsingEncoding:NSUTF8StringEncoding];
-    NSString *decStr = [NSString xz_stringWithBytes:buffer length:length hexEncoding:(XZCharacterLowercase)];
+    NSString *decStr = [NSString xz_stringWithBytes:buffer length:length hexEncoding:(XZHexEncodingLowercase)];
     XCTAssert([decStr isEqual:hexStr]);
 }
 

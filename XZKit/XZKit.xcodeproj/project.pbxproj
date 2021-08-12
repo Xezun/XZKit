@@ -14,6 +14,7 @@
 		29440A4F26AD3317009D9031 /* XZGeometryTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 29440A4E26AD3317009D9031 /* XZGeometryTests.m */; };
 		29440A5326AD384B009D9031 /* XZCoreTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 29440A5226AD384B009D9031 /* XZCoreTests.m */; };
 		29440A5526ADB2C2009D9031 /* XZHexEncodingTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 29440A5426ADB2C2009D9031 /* XZHexEncodingTests.m */; };
+		29440A7C26C585D5009D9031 /* CoreFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 29440A7B26C585D5009D9031 /* CoreFoundation.framework */; };
 		29ABE06B2635DD8E00CE2D77 /* XZKitTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 29ABE06A2635DD8E00CE2D77 /* XZKitTests.m */; };
 		29ABE06D2635DD8E00CE2D77 /* XZKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 29ABE0572635DA2400CE2D77 /* XZKit.framework */; };
 		29ABE07C2635DDC600CE2D77 /* XZKitUITests.m in Sources */ = {isa = PBXBuildFile; fileRef = 29ABE07B2635DDC600CE2D77 /* XZKitUITests.m */; };
@@ -97,6 +98,7 @@
 		29440A4E26AD3317009D9031 /* XZGeometryTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = XZGeometryTests.m; sourceTree = "<group>"; };
 		29440A5226AD384B009D9031 /* XZCoreTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = XZCoreTests.m; sourceTree = "<group>"; };
 		29440A5426ADB2C2009D9031 /* XZHexEncodingTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = XZHexEncodingTests.m; sourceTree = "<group>"; };
+		29440A7B26C585D5009D9031 /* CoreFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreFoundation.framework; path = System/Library/Frameworks/CoreFoundation.framework; sourceTree = SDKROOT; };
 		29ABE0572635DA2400CE2D77 /* XZKit.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = XZKit.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		29ABE05B2635DA2400CE2D77 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		29ABE0682635DD8E00CE2D77 /* XZKitTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = XZKitTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -171,6 +173,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				29440A7C26C585D5009D9031 /* CoreFoundation.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -301,6 +304,7 @@
 		29ABE3242647021F00CE2D77 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				29440A7B26C585D5009D9031 /* CoreFoundation.framework */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";

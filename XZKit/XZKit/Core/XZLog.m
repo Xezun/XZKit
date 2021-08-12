@@ -8,34 +8,46 @@
 
 #import "XZLog.h"
 
-static void XZPrintf(NSString *format, va_list args) {
-    // 函数 fprintf 在输出到同一个文件时是线程安全的，所以这里与 NSLog 保持一致，
-    // 用 fprintf 函数及 stderr 标准错误文件，以避免与 NSLog 的输出的内容出现互相穿插的情况。
+static void XZDebugPrintf(NSString *format, va_list args) {
+    // stderr: 标准错误输出，立即输出到屏幕。
+    // stdout: 标准输出，当遇到刷新标志（比如换行）或缓冲满时，才把缓冲的数据输出到设备中。
+    // STDERR_FILENO: 与 stderr 相同
     //
-    // printf 使用 stdout 标准输出，当遇到刷新标志（比如换行）或缓冲满时，才把缓冲的数据输出到设备中。
-    //
-    // 在 CoreFoundation 的 CFUtilities.c 文件中可以找到 CFLog 函数的源码：
-    // 1、NSLog => CFLog => _CFLogvEx => __CFLogCString => fprintf
-    // 2、在 __CFLogCString 中，日志在输出到控制台前，还通过 writev 函数写入到了 STDERR_FILENO 文件中。
+    // 在 CF-1153.18 的源文件 CFUtilities.c 中可以找到 CFLog 函数的源码：
+    //     NSLog => CFLog => _CFLogvEx => __CFLogCString =>
+    //     #if DEPLOYMENT_TARGET_MACOSX || DEPLOYMENT_TARGET_EMBEDDED || DEPLOYMENT_TARGET_EMBEDDED_MINI
+    //         => writev(STDERR_FILENO)
+    //     #elif DEPLOYMENT_TARGET_WINDOWS
+    //         => fprintf_s(stderr)
+    //     #else
+    //         => fprintf(stderr)
+    //     #endif
+    // 而在 CFBundle_Resources.c 文件的 320-321 行
+    //     #elif DEPLOYMENT_TARGET_EMBEDDED || DEPLOYMENT_TARGET_EMBEDDED_MINI
+    //         return CFSTR("iPhoneOS");
+    // 所以，我们可以得出在 iOS 平台，NSLog 最终使用的是 writev 函数输出日志。
+    // 由于在 __CFLogCString 函数中，使用了 CFLock_t 锁保证线程安全，但是遗憾的是，它是一个 static 局部函数，在外部无法调用。
+    // 因此，这里自行实现的控制台输出，无法与 NSLog 保持线程安全，即，无法避免与 NSLog 输出内容可能发生互相嵌入的情况。
+    // 另 fprintf 本身是线程安全的，所以 XZDebugPrintf 自身的输出是线程安全的。
     fprintf(stderr, "%s\n", [[[NSString alloc] initWithFormat:format arguments:args] UTF8String]);
 }
 
-void XZPrint(NSString *format, ...) {
+void XZDebugPrint(NSString *format, ...) {
     va_list va_list_pointer;
     va_start(va_list_pointer, format);
-    XZPrintv(format, va_list_pointer);
+    XZDebugPrintv(format, va_list_pointer);
     va_end(va_list_pointer);
 }
 
-void XZPrintv(NSString *format, va_list args) {
+void XZDebugPrintv(NSString *format, va_list args) {
     if (!XZKitDebugMode) {
         return;
     }
     // 与 NSLog 一样，使用 stderr 错误输出，立即输出内容。（printf 使用 stdout 标准输出，遇到 \n 才输出）。
-    XZPrintf(format, args);
+    XZDebugPrintf(format, args);
 }
 
-void XZLogv(const char *file, int line, const char *func, NSString *format, ...) {
+void XZDebugLog(const char *file, int line, const char *func, NSString *format, ...) {
     if (!XZKitDebugMode) {
         return;
     }
@@ -58,7 +70,7 @@ void XZLogv(const char *file, int line, const char *func, NSString *format, ...)
     
     va_list args;
     va_start(args, format);
-    XZPrintf(format, args);
+    XZDebugPrintf(format, args);
     va_end(args);
 }
 

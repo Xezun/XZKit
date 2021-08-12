@@ -10,6 +10,6 @@
 
 BOOL XZKitDebugMode = NO;
 
-void __XZKIT_DEBUG_LOADER__(void) XZ_INIT {
+void __XZKIT_MODE_INIT__(void) {
     XZKitDebugMode = (bool)[NSProcessInfo.processInfo.arguments containsObject:@"-XZKitDEBUG"];
 }

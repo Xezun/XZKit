@@ -26,7 +26,7 @@
 // - 对于存在 Swift 版本的类的自定义类目，不再设置 NS_SWIFT_NAME ，因为它们已经不再通用。
 //
 // 术语翻译：
-// frame: 范围
+// frame: 区（origin）域（size）
 // block: 块函数
 
 

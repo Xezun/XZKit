@@ -45,62 +45,6 @@ BOOL CGRectContainsPointInEdgeInsets(CGRect bounds, UIEdgeInsets edgeInsets, CGP
     return (point.x < CGRectGetMinX(bounds) + edgeInsets.left) || (point.x > CGRectGetMaxX(bounds) - edgeInsets.right) || (point.y < CGRectGetMinY(bounds) + edgeInsets.top) || (point.y > CGRectGetMaxY(bounds) - edgeInsets.bottom);
 }
 
-
-NSString *NSStringFromXZEdgeInsets(XZEdgeInsets edgeInsets) {
-    return [NSString stringWithFormat:@"{%g, %g, %g, %g}", edgeInsets.top, edgeInsets.leading, edgeInsets.bottom, edgeInsets.trailing];
-}
-
-XZEdgeInsets XZEdgeInsetsFromString(NSString * _Nullable aString) {
-    assert([aString isKindOfClass:NSString.class]);
-    aString = [aString stringByTrimmingCharactersInSet:[NSCharacterSet characterSetWithCharactersInString:@"{} \n\t"]];
-    NSArray<NSString *> *insets = [aString componentsSeparatedByString:@","];
-    if (insets.count != 4) {
-        return XZEdgeInsetsZero;
-    }
-#if CGFLOAT_IS_DOUBLE
-    return XZEdgeInsetsMake(insets[0].doubleValue, insets[1].doubleValue, insets[2].doubleValue, insets[3].doubleValue);
-#else
-    return XZEdgeInsetsMake(insets[0].floatValue, insets[1].floatValue, insets[2].floatValue, insets[3].floatValue);
-#endif
-}
-
-NSString *NSStringFromXZRectEdge(XZRectEdge rectEdge) {
-    NSMutableArray<NSString *> *edgesM = [NSMutableArray arrayWithCapacity:4];
-    if (rectEdge & XZRectEdgeTop) {
-        [edgesM addObject:@".top"];
-    }
-    if (rectEdge & XZRectEdgeLeading) {
-        [edgesM addObject:@".leading"];
-    }
-    if (rectEdge & XZRectEdgeBottom) {
-        [edgesM addObject:@".bottom"];
-    }
-    if (rectEdge & XZRectEdgeTrailing) {
-        [edgesM addObject:@".trailing"];
-    }
-    NSString *string = [edgesM componentsJoinedByString:@", "];
-    return [NSString stringWithFormat:@"[%@]", string];
-}
-
-XZRectEdge XZRectEdgeFromString(NSString * _Nullable aString) {
-    XZRectEdge edges = 0;
-    if (aString.length >= 4) {
-        if ([aString containsString:@".top"]) {
-            edges |= XZRectEdgeTop;
-        }
-        if ([aString containsString:@".leading"]) {
-            edges |= XZRectEdgeLeading;
-        }
-        if ([aString containsString:@".bottom"]) {
-            edges |= XZRectEdgeBottom;
-        }
-        if ([aString containsString:@".trailing"]) {
-            edges |= XZRectEdgeTrailing;
-        }
-    }
-    return edges;
-}
-
 static CGRect _CGRectAdjustSize(CGRect const rect, CGSize const size, XZAdjustMode const mode) {
     switch (mode) {
         case XZAdjustModeScaleToFill: {

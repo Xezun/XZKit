@@ -260,7 +260,7 @@ typedef struct XZObjCTypeProvider {
                 NSMutableArray *subtypes = [NSMutableArray array];
                 
                 _alignment = 1;
-                while (typeEncoding[i] != '}') { // 用 while 而不 do-while 因为可能会有"空"结构体
+                while (typeEncoding[i] != '}') { // 用 while 而不 do-while 是因为可能会有"空"结构体
                     XZObjCTypeDescriptor *subtype = [XZObjCTypeDescriptor descriptorWithTypeEncoding:&typeEncoding[i]];
                     [subtypes addObject:subtype];
                     
@@ -280,24 +280,24 @@ typedef struct XZObjCTypeProvider {
                     _alignment = provider.alignment;
                 } else if (subtypes.count > 0) {
                     _sizeInBit = 0;
-                    size_t const BITS = _alignment * 8;
-                    size_t bits = BITS; // 每个 alignment 中的可用位（字节）
+                    size_t const alignmentInBit = _alignment * 8;
+                    size_t availableBit = alignmentInBit; // 每个 alignment 中的可用位（字节）
                     for (XZObjCTypeDescriptor *subtype in subtypes) {
-                        if (subtype.sizeInBit <= bits) {
+                        if (subtype.sizeInBit <= availableBit) {
                             // 可用位够，则放在可用位上，可用位减少
-                            bits -= subtype.sizeInBit;
+                            availableBit -= subtype.sizeInBit;
                         } else {
                             // 可用位不够，新起可用位，但是如果可用位还没使用，则不需要新起。
-                            if (bits < BITS) {
-                                _sizeInBit += bits;
+                            if (availableBit < alignmentInBit) {
+                                _sizeInBit += availableBit;
                             }
                             // 可能占多个可用位
-                            bits = BITS - subtype.sizeInBit % BITS;
+                            availableBit = alignmentInBit - subtype.sizeInBit % alignmentInBit;
                         }
                         _sizeInBit += subtype.sizeInBit;
                     }
-                    if (bits < BITS) {
-                        _sizeInBit += bits; // 最后一个对齐
+                    if (availableBit < alignmentInBit) {
+                        _sizeInBit += availableBit; // 最后一个对齐
                     }
                     _size = (_sizeInBit - 1) / 8 + 1;
                     XZLog(@"没有获取到类型 %@（%@） 的注册信息，请核对是否与默认值一致： size=%lu, alignment=%lu", _name, _encoding, _size, _alignment);

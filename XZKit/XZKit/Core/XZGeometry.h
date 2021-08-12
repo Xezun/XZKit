@@ -68,22 +68,6 @@ UIKIT_EXTERN UIEdgeInsets UIEdgeInsetsFromXZEdgeInsets(XZEdgeInsets edgeInsets, 
 /// @return YES or NO
 UIKIT_EXTERN BOOL CGRectContainsPointInEdgeInsets(CGRect bounds, UIEdgeInsets edgeInsets, CGPoint point);
 
-/// 将 XZEdgeInsets 序列化为字符串。
-/// @param edgeInsets XZEdgeInsets
-FOUNDATION_EXPORT NSString *NSStringFromXZEdgeInsets(XZEdgeInsets edgeInsets);
-
-/// 从字符串中反解出 XZEdgeInsets 结构体。
-/// @param aString 字符串
-FOUNDATION_EXPORT XZEdgeInsets XZEdgeInsetsFromString(NSString * _Nullable aString);
-
-/// 将 XZEdgeInsets 序列化为字符串。
-/// @param rectEdge XZRectEdge
-FOUNDATION_EXPORT NSString *NSStringFromXZRectEdge(XZRectEdge rectEdge);
-
-/// 从字符串反解出 XZRectEdge 结构体。
-/// @param aString XZRectEdge
-FOUNDATION_EXPORT XZRectEdge XZRectEdgeFromString(NSString * _Nullable aString);
-
 /// 适配模式。
 typedef NS_OPTIONS(NSUInteger, XZAdjustMode) {
     XZAdjustModeScaleToFill      = 1 << 0,
@@ -100,10 +84,10 @@ typedef NS_OPTIONS(NSUInteger, XZAdjustMode) {
     XZAdjustModeBottomRight      = 1 << 11
 };
 
-/// 在 rect 区域内，对 size 大小的内容，按 mode 模式进行适配。
+/// 计算 size 在 rect 区域内按 mode 模式适配时的区域。
 /// @param rect 适配区域
 /// @param size 内容大小
-/// @param mode 适配模式，按照 mode 单个模式从小大大依此进行适配
+/// @param mode 适配模式，按照 mode 值大小依此应用
 UIKIT_EXTERN CGRect CGRectAdjustSize(CGRect rect, CGSize size, XZAdjustMode mode);
 
 @interface NSValue (XZGeometry)
@@ -130,4 +114,5 @@ UIKIT_EXTERN CGRect CGRectAdjustSize(CGRect rect, CGSize size, XZAdjustMode mode
 - (XZEdgeInsets)decodeXZEdgeInsetsForKey:(NSString *)key;
 
 @end
+
 NS_ASSUME_NONNULL_END
