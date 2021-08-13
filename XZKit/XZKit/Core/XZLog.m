@@ -25,10 +25,12 @@ static void XZDebugPrintf(NSString *format, va_list args) {
     // 而在 CFBundle_Resources.c 文件的 320-321 行
     //     #elif DEPLOYMENT_TARGET_EMBEDDED || DEPLOYMENT_TARGET_EMBEDDED_MINI
     //         return CFSTR("iPhoneOS");
-    // 所以，我们可以得出在 iOS 平台，NSLog 最终使用的是 writev 函数输出日志。
-    // 由于在 __CFLogCString 函数中，使用了 CFLock_t 锁保证线程安全，但是遗憾的是，它是一个 static 局部函数，在外部无法调用。
-    // 因此，这里自行实现的控制台输出，无法与 NSLog 保持线程安全，即，无法避免与 NSLog 输出内容可能发生互相嵌入的情况。
-    // 另 fprintf 本身是线程安全的，所以 XZDebugPrintf 自身的输出是线程安全的。
+    // 所以在 iOS 平台，NSLog 最终使用的是 writev 函数输出日志到控制台，但是由于
+    //     1、函数 writev 不是线程安全的。
+    //     2、函数 __CFLogCString 是一个 static 局部函数，且其内部使用 CFLock_t 锁也无法获取。
+    // 所以当前函数与`NSLog`不是线程安全的，即有可能会发生与`NSLog`输出内容互相嵌入的情况。
+    //
+    // 不过对于同已文件来说 fprintf 本身是线程安全的，所以应尽量使用同一种日志输出函数，以避免线程安全问题。
     fprintf(stderr, "%s\n", [[[NSString alloc] initWithFormat:format arguments:args] UTF8String]);
 }
 
