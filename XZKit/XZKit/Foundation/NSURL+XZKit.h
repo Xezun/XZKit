@@ -16,7 +16,7 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic, copy, readonly, nullable) XZURLQuery *xz_query;
 @end
 
-/// @discussion 通过 XZURLQuery 对象，可以更方便的处理 URL 中的查询字段。
+/// 通过 XZURLQuery 对象，可以更方便的处理 URL 中的查询字段。
 /// @code
 /// XZURLQuery *query = [XZURLQuery URLQueryWithString:@"https://xzkit.xezun.com/?name=XX&role=YY"];
 /// [query setValuesForFieldsWithObject:@{
@@ -80,23 +80,31 @@ XZ_FINAL_CLASS @interface XZURLQuery : NSObject <NSCopying>
 /// @param field 查询字段名
 - (BOOL)containsField:(NSString *)field;
 
-/// @discussion 添加查询字段。
+/// 添加查询字段。
 /// @discussion 字典：键值将分别作为查询字段的名和值。
 /// @discussion 数组：数组元素将作为查询字段的名，没有值。
 /// @note 不会删除已有同名字段。
 /// @param object 字典或数组对象
 - (void)addValuesForFieldsFromObject:(nullable id)object;
 
-/// @discussion 设置查询字段。
+/// 设置查询字段。
 /// @discussion 字典：键值分别为查询字段名和值。
 /// @discussion 数组：元素为查询字段名。
 /// @param object 字典或数组对象
 - (void)setValuesForFieldsWithObject:(nullable id)object;
 
 /// 获取查询字段值，返回值为 NSString 或 NSString 数组，可能包含 NSNull 对象。
+/// @code
+/// XZURLQuery *query = [XZURLQuery URLQueryWithString:@"https://xzkit.xezun.com/?name=XZKit"];
+/// NSLog(@"%@", query[@"name"]); // prints XZKit
+/// @endcode
 /// @param field 查询字段名
 - (nullable id)objectForKeyedSubscript:(NSString *)field;
 /// 设置查询字段，将覆盖已有值。
+/// @code
+/// XZURLQuery *query = [XZURLQuery URLQueryWithString:@"https://xzkit.xezun.com/"];
+/// query[@"name"] = @"XZKit"; // set a query field name=XZKit
+/// @endcode
 /// @param obj 查询字段值
 /// @param field 查询字段名
 - (void)setObject:(nullable id)obj forKeyedSubscript:(NSString *)field;
