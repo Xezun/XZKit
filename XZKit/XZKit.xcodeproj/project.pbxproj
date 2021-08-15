@@ -7,14 +7,15 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		2905401A26A09F4F00793581 /* XZRuntime.h in Headers */ = {isa = PBXBuildFile; fileRef = 2905401626A09F4F00793581 /* XZRuntime.h */; };
+		2905401A26A09F4F00793581 /* XZRuntime.h in Headers */ = {isa = PBXBuildFile; fileRef = 2905401626A09F4F00793581 /* XZRuntime.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		2905401B26A09F4F00793581 /* XZObjCTypeDescriptor.m in Sources */ = {isa = PBXBuildFile; fileRef = 2905401726A09F4F00793581 /* XZObjCTypeDescriptor.m */; };
 		2905401C26A09F4F00793581 /* XZRuntime.m in Sources */ = {isa = PBXBuildFile; fileRef = 2905401826A09F4F00793581 /* XZRuntime.m */; };
-		2905401D26A09F4F00793581 /* XZObjCTypeDescriptor.h in Headers */ = {isa = PBXBuildFile; fileRef = 2905401926A09F4F00793581 /* XZObjCTypeDescriptor.h */; };
-		29440A4F26AD3317009D9031 /* XZGeometryTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 29440A4E26AD3317009D9031 /* XZGeometryTests.m */; };
+		2905401D26A09F4F00793581 /* XZObjCTypeDescriptor.h in Headers */ = {isa = PBXBuildFile; fileRef = 2905401926A09F4F00793581 /* XZObjCTypeDescriptor.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		29440A4F26AD3317009D9031 /* XZCoreGeometryTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 29440A4E26AD3317009D9031 /* XZCoreGeometryTests.m */; };
 		29440A5326AD384B009D9031 /* XZCoreTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 29440A5226AD384B009D9031 /* XZCoreTests.m */; };
-		29440A5526ADB2C2009D9031 /* XZHexEncodingTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 29440A5426ADB2C2009D9031 /* XZHexEncodingTests.m */; };
+		29440A5526ADB2C2009D9031 /* XZCoreHexEncodingTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 29440A5426ADB2C2009D9031 /* XZCoreHexEncodingTests.m */; };
 		29440A7C26C585D5009D9031 /* CoreFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 29440A7B26C585D5009D9031 /* CoreFoundation.framework */; };
+		29440A7E26C8E8EF009D9031 /* XZFoundationURLTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 29440A7D26C8E8EF009D9031 /* XZFoundationURLTests.m */; };
 		29ABE06B2635DD8E00CE2D77 /* XZKitTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 29ABE06A2635DD8E00CE2D77 /* XZKitTests.m */; };
 		29ABE06D2635DD8E00CE2D77 /* XZKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 29ABE0572635DA2400CE2D77 /* XZKit.framework */; };
 		29ABE07C2635DDC600CE2D77 /* XZKitUITests.m in Sources */ = {isa = PBXBuildFile; fileRef = 29ABE07B2635DDC600CE2D77 /* XZKitUITests.m */; };
@@ -31,20 +32,12 @@
 		29ABE0C12635DEBF00CE2D77 /* XZImageViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 29ABE0B72635DEBE00CE2D77 /* XZImageViewController.m */; };
 		29ABE0C22635DEBF00CE2D77 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 29ABE0B92635DEBF00CE2D77 /* Main.storyboard */; };
 		29ABE0C32635DEBF00CE2D77 /* TableViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 29ABE0BB2635DEBF00CE2D77 /* TableViewController.m */; };
-		29ABE341264790FE00CE2D77 /* URL+XZKit.swift in Sources */ = {isa = PBXBuildFile; fileRef = 29ABE332264790FE00CE2D77 /* URL+XZKit.swift */; };
 		29ABE342264790FE00CE2D77 /* NSBundle+XZKit.m in Sources */ = {isa = PBXBuildFile; fileRef = 29ABE333264790FE00CE2D77 /* NSBundle+XZKit.m */; };
-		29ABE343264790FE00CE2D77 /* Data+XZKit.swift in Sources */ = {isa = PBXBuildFile; fileRef = 29ABE334264790FE00CE2D77 /* Data+XZKit.swift */; };
-		29ABE344264790FE00CE2D77 /* DispatchQueue+XZKit.swift in Sources */ = {isa = PBXBuildFile; fileRef = 29ABE335264790FE00CE2D77 /* DispatchQueue+XZKit.swift */; };
 		29ABE345264790FE00CE2D77 /* NSBundle+XZKit.h in Headers */ = {isa = PBXBuildFile; fileRef = 29ABE336264790FE00CE2D77 /* NSBundle+XZKit.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		29ABE346264790FE00CE2D77 /* Date+XZKit.swift in Sources */ = {isa = PBXBuildFile; fileRef = 29ABE337264790FE00CE2D77 /* Date+XZKit.swift */; };
-		29ABE347264790FE00CE2D77 /* String+XZKit.swift in Sources */ = {isa = PBXBuildFile; fileRef = 29ABE338264790FE00CE2D77 /* String+XZKit.swift */; };
 		29ABE348264790FE00CE2D77 /* UIView+XZKit.m in Sources */ = {isa = PBXBuildFile; fileRef = 29ABE33A264790FE00CE2D77 /* UIView+XZKit.m */; };
-		29ABE349264790FE00CE2D77 /* UIView+XZKit.swift in Sources */ = {isa = PBXBuildFile; fileRef = 29ABE33B264790FE00CE2D77 /* UIView+XZKit.swift */; };
 		29ABE34A264790FE00CE2D77 /* UIImage+XZKit.h in Headers */ = {isa = PBXBuildFile; fileRef = 29ABE33C264790FE00CE2D77 /* UIImage+XZKit.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		29ABE34B264790FE00CE2D77 /* UIImageView+XZKit.swift in Sources */ = {isa = PBXBuildFile; fileRef = 29ABE33D264790FE00CE2D77 /* UIImageView+XZKit.swift */; };
 		29ABE34C264790FE00CE2D77 /* UIView+XZKit.h in Headers */ = {isa = PBXBuildFile; fileRef = 29ABE33E264790FE00CE2D77 /* UIView+XZKit.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		29ABE34D264790FE00CE2D77 /* UIImage+XZKit.m in Sources */ = {isa = PBXBuildFile; fileRef = 29ABE33F264790FE00CE2D77 /* UIImage+XZKit.m */; };
-		29ABE34E264790FE00CE2D77 /* UIApplication+XZKit.swift in Sources */ = {isa = PBXBuildFile; fileRef = 29ABE340264790FE00CE2D77 /* UIApplication+XZKit.swift */; };
 		29ABE3622647935100CE2D77 /* XZKit.h in Headers */ = {isa = PBXBuildFile; fileRef = 29ABE3612647935100CE2D77 /* XZKit.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		29ABE3682647939000CE2D77 /* NSURL+XZKit.h in Headers */ = {isa = PBXBuildFile; fileRef = 29ABE3662647939000CE2D77 /* NSURL+XZKit.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		29ABE3692647939000CE2D77 /* NSURL+XZKit.m in Sources */ = {isa = PBXBuildFile; fileRef = 29ABE3672647939000CE2D77 /* NSURL+XZKit.m */; };
@@ -95,10 +88,11 @@
 		2905401726A09F4F00793581 /* XZObjCTypeDescriptor.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = XZObjCTypeDescriptor.m; sourceTree = "<group>"; };
 		2905401826A09F4F00793581 /* XZRuntime.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = XZRuntime.m; sourceTree = "<group>"; };
 		2905401926A09F4F00793581 /* XZObjCTypeDescriptor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XZObjCTypeDescriptor.h; sourceTree = "<group>"; };
-		29440A4E26AD3317009D9031 /* XZGeometryTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = XZGeometryTests.m; sourceTree = "<group>"; };
+		29440A4E26AD3317009D9031 /* XZCoreGeometryTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = XZCoreGeometryTests.m; sourceTree = "<group>"; };
 		29440A5226AD384B009D9031 /* XZCoreTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = XZCoreTests.m; sourceTree = "<group>"; };
-		29440A5426ADB2C2009D9031 /* XZHexEncodingTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = XZHexEncodingTests.m; sourceTree = "<group>"; };
+		29440A5426ADB2C2009D9031 /* XZCoreHexEncodingTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = XZCoreHexEncodingTests.m; sourceTree = "<group>"; };
 		29440A7B26C585D5009D9031 /* CoreFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreFoundation.framework; path = System/Library/Frameworks/CoreFoundation.framework; sourceTree = SDKROOT; };
+		29440A7D26C8E8EF009D9031 /* XZFoundationURLTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = XZFoundationURLTests.m; sourceTree = "<group>"; };
 		29ABE0572635DA2400CE2D77 /* XZKit.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = XZKit.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		29ABE05B2635DA2400CE2D77 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		29ABE0682635DD8E00CE2D77 /* XZKitTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = XZKitTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -132,20 +126,12 @@
 		29ABE0B92635DEBF00CE2D77 /* Main.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = Main.storyboard; sourceTree = "<group>"; };
 		29ABE0BA2635DEBF00CE2D77 /* UIColorTestsViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UIColorTestsViewController.h; sourceTree = "<group>"; };
 		29ABE0BB2635DEBF00CE2D77 /* TableViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TableViewController.m; sourceTree = "<group>"; };
-		29ABE332264790FE00CE2D77 /* URL+XZKit.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "URL+XZKit.swift"; sourceTree = "<group>"; };
 		29ABE333264790FE00CE2D77 /* NSBundle+XZKit.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSBundle+XZKit.m"; sourceTree = "<group>"; };
-		29ABE334264790FE00CE2D77 /* Data+XZKit.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "Data+XZKit.swift"; sourceTree = "<group>"; };
-		29ABE335264790FE00CE2D77 /* DispatchQueue+XZKit.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "DispatchQueue+XZKit.swift"; sourceTree = "<group>"; };
 		29ABE336264790FE00CE2D77 /* NSBundle+XZKit.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSBundle+XZKit.h"; sourceTree = "<group>"; };
-		29ABE337264790FE00CE2D77 /* Date+XZKit.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "Date+XZKit.swift"; sourceTree = "<group>"; };
-		29ABE338264790FE00CE2D77 /* String+XZKit.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "String+XZKit.swift"; sourceTree = "<group>"; };
 		29ABE33A264790FE00CE2D77 /* UIView+XZKit.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIView+XZKit.m"; sourceTree = "<group>"; };
-		29ABE33B264790FE00CE2D77 /* UIView+XZKit.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "UIView+XZKit.swift"; sourceTree = "<group>"; };
 		29ABE33C264790FE00CE2D77 /* UIImage+XZKit.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIImage+XZKit.h"; sourceTree = "<group>"; };
-		29ABE33D264790FE00CE2D77 /* UIImageView+XZKit.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "UIImageView+XZKit.swift"; sourceTree = "<group>"; };
 		29ABE33E264790FE00CE2D77 /* UIView+XZKit.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIView+XZKit.h"; sourceTree = "<group>"; };
 		29ABE33F264790FE00CE2D77 /* UIImage+XZKit.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIImage+XZKit.m"; sourceTree = "<group>"; };
-		29ABE340264790FE00CE2D77 /* UIApplication+XZKit.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "UIApplication+XZKit.swift"; sourceTree = "<group>"; };
 		29ABE3612647935100CE2D77 /* XZKit.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XZKit.h; sourceTree = "<group>"; };
 		29ABE3662647939000CE2D77 /* NSURL+XZKit.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "NSURL+XZKit.h"; sourceTree = "<group>"; };
 		29ABE3672647939000CE2D77 /* NSURL+XZKit.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "NSURL+XZKit.m"; sourceTree = "<group>"; };
@@ -254,8 +240,9 @@
 			children = (
 				29ABE06A2635DD8E00CE2D77 /* XZKitTests.m */,
 				29440A5226AD384B009D9031 /* XZCoreTests.m */,
-				29440A4E26AD3317009D9031 /* XZGeometryTests.m */,
-				29440A5426ADB2C2009D9031 /* XZHexEncodingTests.m */,
+				29440A4E26AD3317009D9031 /* XZCoreGeometryTests.m */,
+				29440A5426ADB2C2009D9031 /* XZCoreHexEncodingTests.m */,
+				29440A7D26C8E8EF009D9031 /* XZFoundationURLTests.m */,
 				29ABE06C2635DD8E00CE2D77 /* Info.plist */,
 			);
 			path = XZKitTests;
@@ -314,13 +301,8 @@
 			children = (
 				29ABE3662647939000CE2D77 /* NSURL+XZKit.h */,
 				29ABE3672647939000CE2D77 /* NSURL+XZKit.m */,
-				29ABE332264790FE00CE2D77 /* URL+XZKit.swift */,
-				29ABE333264790FE00CE2D77 /* NSBundle+XZKit.m */,
-				29ABE334264790FE00CE2D77 /* Data+XZKit.swift */,
-				29ABE335264790FE00CE2D77 /* DispatchQueue+XZKit.swift */,
 				29ABE336264790FE00CE2D77 /* NSBundle+XZKit.h */,
-				29ABE337264790FE00CE2D77 /* Date+XZKit.swift */,
-				29ABE338264790FE00CE2D77 /* String+XZKit.swift */,
+				29ABE333264790FE00CE2D77 /* NSBundle+XZKit.m */,
 			);
 			path = Foundation;
 			sourceTree = "<group>";
@@ -328,13 +310,10 @@
 		29ABE339264790FE00CE2D77 /* UIKit */ = {
 			isa = PBXGroup;
 			children = (
-				29ABE33A264790FE00CE2D77 /* UIView+XZKit.m */,
-				29ABE33B264790FE00CE2D77 /* UIView+XZKit.swift */,
-				29ABE33C264790FE00CE2D77 /* UIImage+XZKit.h */,
-				29ABE33D264790FE00CE2D77 /* UIImageView+XZKit.swift */,
 				29ABE33E264790FE00CE2D77 /* UIView+XZKit.h */,
+				29ABE33A264790FE00CE2D77 /* UIView+XZKit.m */,
+				29ABE33C264790FE00CE2D77 /* UIImage+XZKit.h */,
 				29ABE33F264790FE00CE2D77 /* UIImage+XZKit.m */,
-				29ABE340264790FE00CE2D77 /* UIApplication+XZKit.swift */,
 			);
 			path = UIKit;
 			sourceTree = "<group>";
@@ -470,7 +449,7 @@
 		29ABE04E2635DA2400CE2D77 /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
-				LastUpgradeCheck = 1240;
+				LastUpgradeCheck = 1250;
 				TargetAttributes = {
 					29ABE0562635DA2400CE2D77 = {
 						CreatedOnToolsVersion = 12.4;
@@ -546,24 +525,16 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				29ABE343264790FE00CE2D77 /* Data+XZKit.swift in Sources */,
 				29ABE3692647939000CE2D77 /* NSURL+XZKit.m in Sources */,
 				2905401B26A09F4F00793581 /* XZObjCTypeDescriptor.m in Sources */,
-				29ABE349264790FE00CE2D77 /* UIView+XZKit.swift in Sources */,
 				29ABE3BC2647942200CE2D77 /* XZJSON.m in Sources */,
-				29ABE34B264790FE00CE2D77 /* UIImageView+XZKit.swift in Sources */,
-				29ABE346264790FE00CE2D77 /* Date+XZKit.swift in Sources */,
 				2905401C26A09F4F00793581 /* XZRuntime.m in Sources */,
 				29ABE3BF2647942200CE2D77 /* XZLog.m in Sources */,
 				29ABE3BA2647942200CE2D77 /* XZHexEncoding.m in Sources */,
 				29ABE3BD2647942200CE2D77 /* XZDebugMode.m in Sources */,
 				29ABE3C12647942200CE2D77 /* XZGeometry.m in Sources */,
 				29ABE3C02647942200CE2D77 /* XZTimestamp.m in Sources */,
-				29ABE34E264790FE00CE2D77 /* UIApplication+XZKit.swift in Sources */,
 				29ABE348264790FE00CE2D77 /* UIView+XZKit.m in Sources */,
-				29ABE341264790FE00CE2D77 /* URL+XZKit.swift in Sources */,
-				29ABE347264790FE00CE2D77 /* String+XZKit.swift in Sources */,
-				29ABE344264790FE00CE2D77 /* DispatchQueue+XZKit.swift in Sources */,
 				29ABE34D264790FE00CE2D77 /* UIImage+XZKit.m in Sources */,
 				29ABE342264790FE00CE2D77 /* NSBundle+XZKit.m in Sources */,
 				29ABE3C42647942200CE2D77 /* XZDefer.m in Sources */,
@@ -574,10 +545,11 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				29440A5526ADB2C2009D9031 /* XZHexEncodingTests.m in Sources */,
+				29440A5526ADB2C2009D9031 /* XZCoreHexEncodingTests.m in Sources */,
 				29ABE06B2635DD8E00CE2D77 /* XZKitTests.m in Sources */,
+				29440A7E26C8E8EF009D9031 /* XZFoundationURLTests.m in Sources */,
 				29440A5326AD384B009D9031 /* XZCoreTests.m in Sources */,
-				29440A4F26AD3317009D9031 /* XZGeometryTests.m in Sources */,
+				29440A4F26AD3317009D9031 /* XZCoreGeometryTests.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -751,7 +723,7 @@
 				);
 				INFOPLIST_FILE = XZKit/Info.plist;
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
-				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 12.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -779,7 +751,7 @@
 				);
 				INFOPLIST_FILE = XZKit/Info.plist;
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
-				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 12.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -796,12 +768,7 @@
 		29ABE0702635DD8E00CE2D77 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				CODE_SIGN_STYLE = Automatic;
-				GCC_PREPROCESSOR_DEFINITIONS = (
-					"$(inherited)",
-					"XZ_REWRITES_NSLOG=0",
-				);
 				INFOPLIST_FILE = XZKitTests/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -817,7 +784,6 @@
 		29ABE0712635DD8E00CE2D77 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				CODE_SIGN_STYLE = Automatic;
 				INFOPLIST_FILE = XZKitTests/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -870,7 +836,7 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_STYLE = Automatic;
 				INFOPLIST_FILE = XZKitDemo/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 12.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -888,7 +854,7 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_STYLE = Automatic;
 				INFOPLIST_FILE = XZKitDemo/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 12.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",

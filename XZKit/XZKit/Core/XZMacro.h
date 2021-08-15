@@ -138,8 +138,8 @@ CONTEXT(MACRO, _9, 9)
 #define XZ_ATTR_DEINIT_AT(order)            destructor(order)
 /// XZ_ATTR 属性枚举，用法见 XZ_GUARD 宏。
 #define XZ_ATTR_GUARD(condition, message)   enable_if(condition, message)
-/// XZ_ATTR 属性枚举，用法见 XZ_OVERLOAD 宏。
-#define XZ_ATTR_OVERLOAD                    overloadable
+/// XZ_ATTR 属性枚举，用法见 XZ_OVERLOADABLE宏。
+#define XZ_ATTR_OVERLOADABLE                overloadable
 /// XZ_ATTR 属性枚举，用法见 XZ_OBSERVER 宏。
 #define XZ_ATTR_OBSERVER(observer)          cleanup(observer)
 /// XZ_ATTR 属性枚举，用法见 XZ_UNUSED 宏。
@@ -206,7 +206,7 @@ CONTEXT(MACRO, _9, 9)
 #define XZ_GUARD(condition, message) XZ_ATTR(XZ_ATTR_GUARD(condition, message))
 
 /// 函数重载，放在函数末尾。
-#define XZ_OVERLOAD  XZ_ATTR(XZ_ATTR_OVERLOAD)
+#define XZ_OVERLOADABLE XZ_ATTR(XZ_ATTR_OVERLOADABLE)
 
 /// 变量观察者。当变量结束生命周期时，将自动执行指定的函数，该函数参数为指向被观察变量的指针。
 /// @code

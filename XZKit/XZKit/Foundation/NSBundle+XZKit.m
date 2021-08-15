@@ -16,16 +16,16 @@
     return [NSBundle bundleForClass:[XZKitBundleClass class]];
 }
 
+- (NSString *)xz_displayName {
+    return [[self infoDictionary] objectForKeyedSubscript:@"CFBundleDisplayName"] ?: @"";
+}
+
 - (NSString *)xz_buildVersionString {
     return [[self infoDictionary] objectForKeyedSubscript:@"CFBundleVersion"] ?: @"0";
 }
 
 - (NSString *)xz_shortVersionString {
     return [[self infoDictionary] objectForKeyedSubscript:@"CFBundleShortVersionString"] ?: @"0";
-}
-
-- (NSString *)xz_displayName {
-    return [[self infoDictionary] objectForKeyedSubscript:@"CFBundleDisplayName"] ?: @"";
 }
 
 @end

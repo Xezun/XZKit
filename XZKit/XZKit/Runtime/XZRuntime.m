@@ -10,38 +10,50 @@
 
 #pragma mark - Create
 
-Class xz_objc_class_create(Class superClass, NSString *name, BOOL rename, void (^NS_NOESCAPE _Nullable implementation)(Class newClass)) XZ_OVERLOAD {
-    NSString *className = name;
-    Class newClass = objc_getClass(className.UTF8String);
+Class xz_objc_class_create(Class superClass, NSString *name, NS_NOESCAPE XZRuntimeClassing _Nullable classing) XZ_OVERLOADABLE {
+    NSCParameterAssert([name isKindOfClass:NSString.class] && name.length > 0);
+    const char * const className = name.UTF8String;
     
-    if (newClass && rename) {
-        NSInteger i = 0;
-        do {
-            className = [NSString stringWithFormat:@"%@.%ld", name, (long)i];
-        } while (objc_getClass(className.UTF8String));
-        newClass = Nil;
+    Class newClass = objc_getClass(className);
+    if (newClass != Nil) {
+        return Nil;
     }
     
     if (newClass == Nil) {
-        newClass = objc_allocateClassPair(superClass, className.UTF8String, 0);
-        if (implementation) {
-            implementation(newClass);
+        newClass = objc_allocateClassPair(superClass, className, 0);
+        if (newClass != Nil) {
+            if (classing != nil) {
+                classing(newClass);
+            }
+            objc_registerClassPair(newClass);
         }
-        objc_registerClassPair(newClass);
     }
     
     return newClass;
 }
 
-Class xz_objc_class_create(Class superClass, void (^NS_NOESCAPE _Nullable implementation)(Class newClass)) XZ_OVERLOAD {
-    NSString * const name = [NSString stringWithFormat:@"XZKit.%@", NSStringFromClass(superClass)];
-    return xz_objc_class_create(superClass, name, YES, implementation);
+Class xz_objc_class_create(Class superClass, NS_NOESCAPE XZRuntimeClassing _Nullable classing) XZ_OVERLOADABLE {
+    NSCParameterAssert(superClass != Nil);
+    NSString *name = NSStringFromClass(superClass);
+    if (![name hasPrefix:@"XZKit."]) {
+        name = [NSString stringWithFormat:@"XZKit.%@", name];
+    }
+   
+    Class newClass = xz_objc_class_create(superClass, name, classing);
+    
+    NSInteger i = 0;
+    while (newClass == Nil && i < 1024) {
+        name = [NSString stringWithFormat:@"%@.%ld", name, (long)(i++)];
+        newClass = xz_objc_class_create(superClass, name, classing);
+    }
+    
+    return newClass;
 }
 
 
 #pragma mark - Add Method
 
-BOOL xz_objc_class_addMethod(Class target, Method method, id _Nullable implementation) XZ_OVERLOAD {
+BOOL xz_objc_class_addMethod(Class target, Method method, id _Nullable implementation) XZ_OVERLOADABLE {
     if (target == Nil || method == nil) {
         return NO;
     }
@@ -51,7 +63,7 @@ BOOL xz_objc_class_addMethod(Class target, Method method, id _Nullable implement
     return class_addMethod(target, sel, imp, encoding);
 }
 
-BOOL xz_objc_class_addMethod(Class target, Class source, SEL selector, id _Nullable implementation) XZ_OVERLOAD {
+BOOL xz_objc_class_copyMethod(Class target, Class source, SEL selector, id _Nullable implementation) XZ_OVERLOADABLE {
     if (source == Nil || selector == nil) {
         return NO;
     }
@@ -71,7 +83,7 @@ NSInteger xz_objc_class_addMethods(Class target, Class source) {
 
 #pragma mark - 给类添加实例变量
 
-BOOL xz_objc_class_addVariable(Class target, Ivar ivar, size_t size, uint8_t alignment) XZ_OVERLOAD {
+BOOL xz_objc_class_addVariable(Class target, Ivar ivar, size_t size, uint8_t alignment) XZ_OVERLOADABLE {
     if (target == Nil || ivar == nil) {
         return NO;
     }
@@ -80,17 +92,17 @@ BOOL xz_objc_class_addVariable(Class target, Ivar ivar, size_t size, uint8_t ali
     return class_addIvar(target, name, size, alignment, type);
 }
 
-BOOL xz_objc_class_addVariable(Class target, Ivar ivar) XZ_OVERLOAD {
+BOOL xz_objc_class_addVariable(Class target, Ivar ivar) XZ_OVERLOADABLE {
     XZObjCTypeDescriptor *descriptor = [XZObjCTypeDescriptor descriptorWithTypeEncoding:ivar_getTypeEncoding(ivar)];
     return xz_objc_class_addVariable(target, ivar, descriptor.size, descriptor.alignment);
 }
 
-BOOL xz_objc_class_addVariable(Class target, NSString *name, Class source) XZ_OVERLOAD {
+BOOL xz_objc_class_copyVariable(Class target, NSString *name, Class source) XZ_OVERLOADABLE {
     Ivar ivar = class_getInstanceVariable(source, name.UTF8String);
     return xz_objc_class_addVariable(target, ivar);
 }
 
-NSInteger xz_objc_class_addVariables(Class target, Class source) {
+NSInteger xz_objc_class_copyVariables(Class target, Class source) {
     NSInteger __block count = 0;
     xz_objc_class_enumerateVariables(source, ^(Ivar ivar) {
         if (xz_objc_class_addVariable(target, ivar)) {

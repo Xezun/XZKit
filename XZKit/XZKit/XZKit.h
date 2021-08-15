@@ -36,27 +36,29 @@ FOUNDATION_EXPORT double XZKitVersionNumber;
 //! Project version string for XZKit.
 FOUNDATION_EXPORT const unsigned char XZKitVersionString[];
 
+// MARK: - Core
 #import <XZKit/XZMacro.h>
 #import <XZKit/XZDefines.h>
 #import <XZKit/XZDebugMode.h>
 #import <XZKit/XZDefer.h>
 #import <XZKit/XZLog.h>
 #import <XZKit/XZCharacterCase.h>
-#import <XZKit/XZHexEncoding.h>
-//#import <XZKit/XZRuntime.h>
-//#import <XZKit/XZObjCTypeDescriptor.h>
-#import <XZKit/XZTimestamp.h>
-#import <XZKit/XZJSON.h>
 #import <XZKit/XZGeometry.h>
+#import <XZKit/XZHexEncoding.h>
+#import <XZKit/XZJSON.h>
+#import <XZKit/XZTimestamp.h>
 
-// MARK: - XZGeometry
-//#import <XZKit/NSValue+XZGeometry.h>
-//#import <XZKit/NSCoder+XZGeometry.h>
-//
-//// MARK: - Category
-//#import <XZKit/NSBundle+XZKit.h>
-//#import <XZKit/UIImage+XZKit.h>
-//#import <XZKit/UIView+XZKit.h>
+// MARK: - Runtime
+#import <XZKit/XZRuntime.h>
+#import <XZKit/XZObjCTypeDescriptor.h>
+
+// MARK: - Foundation
+#import <XZKit/NSURL+XZKit.h>
+#import <XZKit/NSBundle+XZKit.h>
+
+// MARK: - UIKit
+#import <XZKit/UIView+XZKit.h>
+#import <XZKit/UIImage+XZKit.h>
 //
 //// MARK: - DataDigester
 //#import <XZKit/XZDataDigester.h>

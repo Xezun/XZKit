@@ -96,10 +96,10 @@
     XZLog(@"%@", self);
     
     XZLog(@"静夜思 - 李白");
-    XZDebugPrint(@"窗前明月光，");
-    XZDebugPrint(@"疑是地上霜。");
-    XZDebugPrint(@"举头望明月，");
-    XZDebugPrint(@"低头思故乡。");
+    XZPrint(@"窗前明月光，");
+    XZPrint(@"疑是地上霜。");
+    XZPrint(@"举头望明月，");
+    XZPrint(@"低头思故乡。");
 }
 
 - (void)testPerformanceXZLog {

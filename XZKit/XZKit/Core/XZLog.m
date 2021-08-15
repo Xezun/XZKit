@@ -54,25 +54,30 @@ void XZDebugLog(const char *file, int line, const char *func, NSString *format, 
         return;
     }
     
-    static NSDateFormatter *formatter = nil;
+    NSString * const source = [[NSString stringWithUTF8String:file] lastPathComponent];
     
+    // 组成新的输出格式
+#if XZ_REWRITES_NSLOG
+    static NSDateFormatter *formatter = nil;
     static dispatch_once_t onceToken;
     dispatch_once(&onceToken, ^{
         formatter = [[NSDateFormatter alloc] init];
         formatter.dateFormat = @"yyyy-MM-dd HH:mm:ss.SSS";
     });
-    
-    // 标题格式，备用分隔符：┇、•、❚、§、⌘、◼︎
     NSString * const datime = [formatter stringFromDate:NSDate.date];
-    NSString * const source = [[NSString stringWithUTF8String:file] lastPathComponent];
-    NSString * const header = [NSString stringWithFormat:@"⌘ %@ ⌘ %@(%d) ⌘ %s ⌘", datime, source, line, func];
     
-    // 组成新的输出格式
-    format = [NSString stringWithFormat:@"%@\n%@", header, format];
+    format = [NSString stringWithFormat:@"⌘ %@ ⌘ %@(%d) ⌘ %s ⌘\n%@", datime, source, line, func, format];
+#else
+    format = [NSString stringWithFormat:@"%@(%d) %s\n%@", source, line, func, format];
+#endif
     
     va_list args;
     va_start(args, format);
+#if XZ_REWRITES_NSLOG
     XZDebugPrintf(format, args);
+#else
+    NSLogv(format, args);
+#endif
     va_end(args);
 }
 

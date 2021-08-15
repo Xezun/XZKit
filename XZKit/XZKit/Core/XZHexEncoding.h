@@ -82,12 +82,11 @@ typedef NS_ENUM(NSUInteger, XZHexEncoding) {
 @end
 
 
-/// 将二进制数据进行十六进制编码。
-/// @note 十六进制编码：
-///       - 与其他编码不同，如 UTF-8 将可读字符编码成二进制数据，而十六进制编码则是将二进制数据编码成可读的十六进制字符形式；
-///       - 字符串的二进制形式与采用的编码有关，因此对字符串进行十六进制编码，需先将其用如 UTF-8 等编码成二进制数据。
-/// @param byte 二进制数据
-/// @param hexEncoding 输出字符的大小写
+/// 返回二进制字节数据对应的十六进制编码。
+/// @discussion 编码，一般指的是将“可读的字符”编码为“二进制数据”的过程，而十六进制编码，则是将数据二进制形式通过可读的十六进制字符形式呈现出来。
+/// @discussion 因此对字符串进行十六进制编码，需先将其用其它编码转换成二进制数据，然后将每四位转换为一个对应的十六进制字符。
+/// @param byte 四位二进制数据
+/// @param hexEncoding 十六进制编码的大小写形式
 /// @return 十六进制编码的字符
 FOUNDATION_EXPORT unsigned char XZHexEncoder(UInt8 byte, XZHexEncoding hexEncoding);
 
