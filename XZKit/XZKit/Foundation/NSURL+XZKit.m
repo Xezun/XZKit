@@ -34,6 +34,9 @@
 }
 
 + (instancetype)URLQueryForURL:(NSURL *)url resolvingAgainstBaseURL:(BOOL)resolve {
+    if (![url isKindOfClass:NSURL.class]) {
+        return nil;
+    }
     NSURLComponents *urlComponents = [[NSURLComponents alloc] initWithURL:url resolvingAgainstBaseURL:resolve];
     if (urlComponents == nil) {
         return nil;
@@ -43,6 +46,17 @@
 
 + (instancetype)URLQueryForURL:(NSURL *)url {
     return [self URLQueryForURL:url resolvingAgainstBaseURL:NO];
+}
+
++ (instancetype)URLQueryWithString:(NSString *)urlString {
+    if (![urlString isKindOfClass:NSString.class]) {
+        return nil;
+    }
+    NSURLComponents *urlComponents = [NSURLComponents componentsWithString:urlString];
+    if (urlComponents == nil) {
+        return nil;
+    }
+    return [[self alloc] initWithURLComponents:urlComponents];
 }
 
 /// 将任意对象解析为可做为查询字段的名或值。
@@ -66,9 +80,19 @@
 
 + (void)parseValueForField:(id)value byUsingBlock:(void (^NS_NOESCAPE)(NSString * _Nullable))block {
     NSParameterAssert(block != nil);
-    if ([value isKindOfClass:NSArray.class] || [value isKindOfClass:NSSet.class]) {
-        if ([(NSSet *)value count] > 0) {
-            for (id object in value) {
+    if ([value isKindOfClass:NSArray.class]) {
+        NSArray * const array = value;
+        if (array.count > 0) {
+            for (id object in array) {
+                block([self parseValueForField:object]);
+            }
+        } else {
+            block(nil);
+        }
+    } else if ([value isKindOfClass:NSSet.class]) {
+        NSSet * const set = value;
+        if (set.count > 0) {
+            for (id object in set) {
                 block([self parseValueForField:object]);
             }
         } else {

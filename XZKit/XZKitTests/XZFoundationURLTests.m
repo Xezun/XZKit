@@ -8,16 +8,14 @@
 #import <XCTest/XCTest.h>
 #import <XZKit/XZKit.h>
 
-@interface XZFoundationURLTests : XCTestCase {
-    NSURL *_url;
-}
+@interface XZFoundationURLTests : XCTestCase
 
 @end
 
 @implementation XZFoundationURLTests
 
 - (void)setUp {
-    _url = [NSURL URLWithString:@"https://www.xezun.com/?key1=value1&key2=&key3"];
+    
 }
 
 - (void)tearDown {
@@ -25,7 +23,7 @@
 }
 
 - (void)testExample {
-    XZURLQuery *query = _url.xz_query;
+    XZURLQuery *query = [XZURLQuery URLQueryWithString:@"https://www.xezun.com/?key1=value1&key2=&key3"];;
     NSLog(@"原始：%@", query.url);
     
     XCTAssert([[query valueForField:@"key1"] isEqual:@"value1"]);

@@ -12,12 +12,20 @@ NS_ASSUME_NONNULL_BEGIN
 @class XZURLQuery;
 
 @interface NSURL (XZKit)
-/// 获取 URL 的查询字段。
+/// 获取 URL 的查询字段对象。
 @property (nonatomic, copy, readonly, nullable) XZURLQuery *xz_query;
 @end
 
-XZ_FINAL_CLASS
-@interface XZURLQuery : NSObject <NSCopying>
+/// @discussion 通过 XZURLQuery 对象，可以更方便的处理 URL 中的查询字段。
+/// @code
+/// XZURLQuery *query = [XZURLQuery URLQueryWithString:@"https://xzkit.xezun.com/?name=XX&role=YY"];
+/// [query setValuesForFieldsWithObject:@{
+///     @"name": @"Xezun",
+///     @"role": @"Developer"
+/// }];
+/// NSLog(@"%@", query.url); // prints https://xzkit.xezun.com/?name=Xezun&role=Developer
+/// @endcode
+XZ_FINAL_CLASS @interface XZURLQuery : NSObject <NSCopying>
 
 @property (nonatomic, copy, readonly) NSURL *url;
 
@@ -27,11 +35,14 @@ XZ_FINAL_CLASS
 - (instancetype)initWithURLComponents:(NSURLComponents *)urlComponents NS_DESIGNATED_INITIALIZER;
 /// 构造 URL 查询对象。
 /// @param url `NSURL`对象，相对地址可能返回`nil`
-+ (nullable instancetype)URLQueryForURL:(NSURL *)url;
++ (nullable instancetype)URLQueryForURL:(nullable NSURL *)url;
 /// 构造 URL 查询对象。
 /// @param url `NSURL`对象
 /// @param resolve 第一个参数的`NSURL`对象是否为相对地址
-+ (nullable instancetype)URLQueryForURL:(NSURL *)url resolvingAgainstBaseURL:(BOOL)resolve;
++ (nullable instancetype)URLQueryForURL:(nullable NSURL *)url resolvingAgainstBaseURL:(BOOL)resolve;
+/// 通过 URL 字符串构造查询对象。
+/// @param urlString URL 字符串
++ (nullable instancetype)URLQueryWithString:(nullable NSString *)urlString;
 
 + (void)parseValueForField:(id)value byUsingBlock:(void (^NS_NOESCAPE)(NSString * _Nullable value))block;
 
