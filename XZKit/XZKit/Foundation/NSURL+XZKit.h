@@ -25,12 +25,17 @@ NS_ASSUME_NONNULL_BEGIN
 /// }];
 /// NSLog(@"%@", query.url); // prints https://xzkit.xezun.com/?name=Xezun&role=Developer
 /// @endcode
-XZ_FINAL_CLASS @interface XZURLQuery : NSObject <NSCopying>
+@interface XZURLQuery : NSObject <NSCopying>
 
+/// 原有的 URL 不会改变，必须调用此方法获取最新的 URL 对象。
 @property (nonatomic, copy, readonly) NSURL *url;
 
 - (instancetype)init NS_UNAVAILABLE;
 /// 构造 URL 查询对象。
+/// @discussion 请避免使用`XZURLQuery`处理查询字段的同时操作`NSURLComponents`的`queryItems`属性，否则结果将不可预料。
+/// @discussion 按实际功能来说`XZURLQuery`更像是`NSURLComponents`的拓展，而非`NSURL`的拓展，因为它实际上管理的只是`NSURLComponents.queryItems`属性。
+/// @discussion 按照`NSURLComponents`的API说明，每次设置`queryItems`属性都会生成`query`字符串，所以
+///             为了避免额外消耗，除非调用`url`属性，否则`XZURLQuery`不会主动设置`queryItems`属性。
 /// @param urlComponents `NSURLComponents`对象
 - (instancetype)initWithURLComponents:(NSURLComponents *)urlComponents NS_DESIGNATED_INITIALIZER;
 /// 构造 URL 查询对象。
@@ -44,6 +49,10 @@ XZ_FINAL_CLASS @interface XZURLQuery : NSObject <NSCopying>
 /// @param urlString URL 字符串
 + (nullable instancetype)URLQueryWithString:(nullable NSString *)urlString;
 
+/// 将任意值解析为查询字段的值。
+/// @note 块函数至少会被调用一次，如果`value`为数组则会被调用多次。
+/// @param value 任意值
+/// @param block 接收值的块函数
 + (void)parseValueForField:(id)value byUsingBlock:(void (^NS_NOESCAPE)(NSString * _Nullable value))block;
 
 /// 返回查询字段的字典形式，键为查询字段名，值为查询字段值。
