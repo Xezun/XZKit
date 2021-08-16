@@ -6,7 +6,7 @@
 //
 
 #import <UIKit/UIKit.h>
-#import <XZKit/XZKitDefines.h>
+#import <XZKit/XZMacro.h>
 #import <XZKit/UIColor+XZColor.h>
 
 NS_ASSUME_NONNULL_BEGIN
@@ -52,21 +52,21 @@ FOUNDATION_STATIC_INLINE XZImageLevelsOutput XZImageLevelsOutputMake(CGFloat sha
     return (XZImageLevelsOutput){shadows, highlights};
 }
 
-UIKIT_STATIC_INLINE XZImageLevels XZImageLevelsMake(XZImageLevelsInput input, XZImageLevelsOutput output, XZColorChannel channels) XZ_OVERLOAD NS_SWIFT_UNAVAILABLE("Use init instead") {
+UIKIT_STATIC_INLINE XZImageLevels XZImageLevelsMake(XZImageLevelsInput input, XZImageLevelsOutput output, XZColorChannel channels) XZ_OVERLOADABLE NS_SWIFT_UNAVAILABLE("Use init instead") {
     return (XZImageLevels){input, output, channels};
 }
 
-UIKIT_STATIC_INLINE XZImageLevels XZImageLevelsMake(XZImageLevelsInput input, XZImageLevelsOutput output) XZ_OVERLOAD NS_SWIFT_UNAVAILABLE("Use init instead") {
+UIKIT_STATIC_INLINE XZImageLevels XZImageLevelsMake(XZImageLevelsInput input, XZImageLevelsOutput output) XZ_OVERLOADABLE NS_SWIFT_UNAVAILABLE("Use init instead") {
     return (XZImageLevels){input, output, XZColorChannelRGB};
 }
 
 /// 构造色阶。
-UIKIT_STATIC_INLINE XZImageLevels XZImageLevelsMake(CGFloat shadows, CGFloat midtones, CGFloat highlights, CGFloat outputShadows, CGFloat outputHighlights, XZColorChannel channels) XZ_OVERLOAD NS_SWIFT_UNAVAILABLE("Use init instead") {
+UIKIT_STATIC_INLINE XZImageLevels XZImageLevelsMake(CGFloat shadows, CGFloat midtones, CGFloat highlights, CGFloat outputShadows, CGFloat outputHighlights, XZColorChannel channels) XZ_OVERLOADABLE NS_SWIFT_UNAVAILABLE("Use init instead") {
     return (XZImageLevels){{shadows, midtones, highlights}, {outputShadows, outputHighlights}, channels};
 }
 
 /// 构造色阶：默认输出，RGB通道。
-UIKIT_STATIC_INLINE XZImageLevels XZImageLevelsMake(CGFloat shadows, CGFloat midtones, CGFloat highlights) XZ_OVERLOAD NS_SWIFT_UNAVAILABLE("Use init instead") {
+UIKIT_STATIC_INLINE XZImageLevels XZImageLevelsMake(CGFloat shadows, CGFloat midtones, CGFloat highlights) XZ_OVERLOADABLE NS_SWIFT_UNAVAILABLE("Use init instead") {
     return (XZImageLevels){{shadows, midtones, highlights}, XZImageLevelsOutputIdentity, XZColorChannelRGB};
 }
 

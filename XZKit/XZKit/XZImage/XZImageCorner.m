@@ -7,6 +7,7 @@
 
 #import "XZImageCorner.h"
 #import "XZImageCorner+Extension.h"
+#import "XZImageCorners+Extension.h"
 
 @implementation XZImageCorner
 

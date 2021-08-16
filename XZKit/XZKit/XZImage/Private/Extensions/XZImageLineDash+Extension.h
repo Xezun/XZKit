@@ -7,6 +7,7 @@
 
 #import <XZKit/XZImageLineDash.h>
 #import <XZKit/XZImageAttribute+Extension.h>
+#import <XZKit/XZImageLine+Extension.h>
 
 NS_ASSUME_NONNULL_BEGIN
 

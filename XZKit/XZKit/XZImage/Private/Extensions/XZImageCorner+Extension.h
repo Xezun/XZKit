@@ -7,6 +7,7 @@
 
 #import <XZKit/XZImageCorner.h>
 #import <XZKit/XZImageLine+Extension.h>
+#import <XZKit/XZImageCorners+Extension.h>
 
 NS_ASSUME_NONNULL_BEGIN
 

@@ -145,7 +145,7 @@
         CGContextClip(context);
         CGSize size = self.backgroundImage.size;
         
-        CGRect rect = CGRectAdjustingSizeByUsingContentMode(frame, size, self.contentMode);
+        CGRect rect = CGRectAdjustSize(frame, size, self.contentMode);
         [self.backgroundImage drawInRect:rect];
         CGContextRestoreGState(context);
     }
