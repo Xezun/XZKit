@@ -16,7 +16,7 @@ static inline CGFloat triangleArc(CGFloat tanValue) {
 
 @implementation XZImageBorderArrow
 
-- (instancetype)initWithSuperAttribute:(id<XZImageAttribute>)superAttribute {
+- (instancetype)initWithSuperAttribute:(id<XZImageSuperAttribute>)superAttribute {
     NSParameterAssert([superAttribute isKindOfClass:[XZImageBorder class]]);
     return [self initWithBorder:(id)superAttribute];
 }

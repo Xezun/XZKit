@@ -10,7 +10,7 @@
 
 @implementation XZImageLine
 
-- (instancetype)initWithSuperAttribute:(id<XZImageAttribute>)superAttribute {
+- (instancetype)initWithSuperAttribute:(id<XZImageSuperAttribute>)superAttribute {
     self = [super initWithSuperAttribute:superAttribute];
     if (self) {
         _width = 0;

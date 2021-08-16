@@ -14,7 +14,7 @@
     @throw [NSException exceptionWithName:NSGenericException reason:@"必须使用指定初始化方法" userInfo:nil];
 }
 
-- (instancetype)initWithSuperAttribute:(id<XZImageAttribute>)superAttribute {
+- (instancetype)initWithSuperAttribute:(id<XZImageSuperAttribute>)superAttribute {
     self = [super init];
     if (self) {
         _superAttribute = superAttribute;

@@ -35,7 +35,7 @@ typedef NS_OPTIONS(NSUInteger, XZColorChannel) {
     /// RGB三通道。
     XZColorChannelRGB   = XZColorChannelRed | XZColorChannelGreen | XZColorChannelBlue,
     /// 所有通道。
-    XZColorChannelAll   = ~0l,
+    XZColorChannelRGBA   = XZColorChannelRGB | XZColorChannelAlpha,
 } NS_SWIFT_NAME(XZColor.Channel);
 
 

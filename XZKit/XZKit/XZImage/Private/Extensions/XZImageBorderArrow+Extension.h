@@ -16,7 +16,7 @@ NS_ASSUME_NONNULL_BEGIN
     CGPoint _vectorOffsets[3];
 }
 
-- (instancetype)initWithSuperAttribute:(id<XZImageAttribute>)superAttribute NS_UNAVAILABLE;
+- (instancetype)initWithSuperAttribute:(id<XZImageSuperAttribute>)superAttribute NS_UNAVAILABLE;
 - (instancetype)initWithBorder:(nullable XZImageBorder *)border NS_DESIGNATED_INITIALIZER;
 
 /// 宽高都大于0
