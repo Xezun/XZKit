@@ -78,7 +78,7 @@
     return [value description];
 }
 
-+ (void)parseValueForField:(id)value byUsingBlock:(void (^NS_NOESCAPE)(NSString * _Nullable))block {
++ (void)parseFieldValue:(id)value byUsingBlock:(void (^NS_NOESCAPE)(NSString * _Nullable))block {
     NSParameterAssert(block != nil);
     if ([value isKindOfClass:NSArray.class]) {
         NSArray * const array = value;
@@ -180,7 +180,7 @@
 
 - (void)addValue:(id<NSObject>)value forField:(NSString *)field {
     NSMutableArray * const queryItems = [self queryItemsLazyLoad];
-    [XZURLQuery parseValueForField:value byUsingBlock:^(NSString * _Nullable value) {
+    [XZURLQuery parseFieldValue:value byUsingBlock:^(NSString * _Nullable value) {
         NSURLQueryItem *item = [NSURLQueryItem queryItemWithName:field value:value];
         [queryItems addObject:item];
     }];

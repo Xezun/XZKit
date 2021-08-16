@@ -50,10 +50,15 @@ NS_ASSUME_NONNULL_BEGIN
 + (nullable instancetype)URLQueryWithString:(nullable NSString *)urlString;
 
 /// 将任意值解析为查询字段的值。
-/// @note 块函数至少会被调用一次，如果`value`为数组则会被调用多次。
+/// @discussion `nil`或`NSNull`会触发一次`nil`回调。
+/// @discussion `NSString`对象，直接触发一次回调。
+/// @discussion `NSNumber`对象，获取`stringValue`的结果触发一次回调。
+/// @discussion `NSDate`对象，转换为时间戳（秒）字符串并触发一次回调。
+/// @discussion `NSArray`对象，按照上述规则对每一个值触发一次回调。
+/// @discussion 其它类型的值不支持，触发`NSAssert`异常。
 /// @param value 任意值
 /// @param block 接收值的块函数
-+ (void)parseValueForField:(id)value byUsingBlock:(void (^NS_NOESCAPE)(NSString * _Nullable value))block;
++ (void)parseFieldValue:(id)value byUsingBlock:(void (^NS_NOESCAPE)(NSString * _Nullable value))block;
 
 /// 返回查询字段的字典形式，键为查询字段名，值为查询字段值。
 /// @note 无值的查询字段返回 NSNull 对象，多值的查询字段返回数组对象，即值可能为 NSString 或 NSNull 或二者组成的数组。
