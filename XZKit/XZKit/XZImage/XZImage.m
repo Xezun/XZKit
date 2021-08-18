@@ -205,18 +205,18 @@
     
     // 最小宽度
     CGFloat width = left + right; // 左右箭头、边距
-    width += XZImageMax(cornerTL.radius, cornerBL.radius); // 左边最大圆角
-    width += XZImageMax(arrowT.effectiveWidth, arrowB.effectiveWidth); // 箭头宽度
-    width += XZImageMax(cornerTR.radius, cornerBR.radius); // 右边最大圆角
+    width += XZImageMAX(cornerTL.radius, cornerBL.radius); // 左边最大圆角
+    width += XZImageMAX(arrowT.effectiveWidth, arrowB.effectiveWidth); // 箭头宽度
+    width += XZImageMAX(cornerTR.radius, cornerBR.radius); // 右边最大圆角
     
     // 最小高度
     CGFloat height = top + bottom;
-    height += XZImageMax(cornerTL.radius, cornerTR.radius);
-    height += XZImageMax(borderL.arrowIfLoaded.effectiveWidth, borderR.arrowIfLoaded.effectiveWidth);
-    height += XZImageMax(cornerBL.radius, cornerBR.radius);
+    height += XZImageMAX(cornerTL.radius, cornerTR.radius);
+    height += XZImageMAX(borderL.arrowIfLoaded.effectiveWidth, borderR.arrowIfLoaded.effectiveWidth);
+    height += XZImageMAX(cornerBL.radius, cornerBR.radius);
     
-    CGFloat const deltaW = XZImageMax(0, size.width - point.x - width);
-    CGFloat const deltaH = XZImageMax(0, size.height - point.y - height);
+    CGFloat const deltaW = XZImageMAX(0, size.width - point.x - width);
+    CGFloat const deltaH = XZImageMAX(0, size.height - point.y - height);
     
     frame->origin.x = point.x + contentInsets.left;
     frame->origin.y = point.y + contentInsets.top;
@@ -245,7 +245,7 @@
     CGFloat const midY = CGRectGetMidY(rect);
     
     // 最大圆角半径
-    CGFloat const maxRadius = XZImageMin(rect.size.width, rect.size.height) * 0.5;
+    CGFloat const maxRadius = XZImageMIN(rect.size.width, rect.size.height) * 0.5;
     
     XZImageBorder * const top         = self.borders.topIfLoaded      ?: self.borders;
     XZImageBorder * const left        = self.borders.leftIfLoaded     ?: self.borders;
@@ -257,10 +257,10 @@
     XZImageCorner * const bottomRight = self.corners.bottomRightIfLoaded ?: self.corners;
     XZImageCorner * const topRight    = self.corners.topRightIfLoaded    ?: self.corners;
     
-    CGFloat const radiusTR = XZImageGetEffectiveRadius(XZImageMin(maxRadius, topRight.radius), topRight.width);
-    CGFloat const radiusBR = XZImageGetEffectiveRadius(XZImageMin(maxRadius, bottomRight.radius), bottomRight.width);
-    CGFloat const radiusBL = XZImageGetEffectiveRadius(XZImageMin(maxRadius, bottomLeft.radius), bottomLeft.width);
-    CGFloat const radiusTL = XZImageGetEffectiveRadius(XZImageMin(maxRadius, topLeft.radius), topLeft.width);
+    CGFloat const radiusTR = XZImageGetEffectiveRadius(XZImageMIN(maxRadius, topRight.radius), topRight.width);
+    CGFloat const radiusBR = XZImageGetEffectiveRadius(XZImageMIN(maxRadius, bottomRight.radius), bottomRight.width);
+    CGFloat const radiusBL = XZImageGetEffectiveRadius(XZImageMIN(maxRadius, bottomLeft.radius), bottomLeft.width);
+    CGFloat const radiusTL = XZImageGetEffectiveRadius(XZImageMIN(maxRadius, topLeft.radius), topLeft.width);
     
     { // 调整箭头位置
         CGFloat const w_2 = midX - minX;
