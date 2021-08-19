@@ -6,7 +6,7 @@
 //
 
 #import <XZKit/XZImageLine.h>
-#import <XZKit/XZImageBorderArrow.h>
+#import <XZKit/XZImageArrow.h>
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -17,7 +17,7 @@ NS_SWIFT_NAME(XZImage.Border)
 @interface XZImageBorder : XZImageLine
 
 /// 箭头
-@property (nonatomic, strong, readonly) XZImageBorderArrow *arrow;
+@property (nonatomic, strong, readonly) XZImageArrow *arrow;
 
 @end
 

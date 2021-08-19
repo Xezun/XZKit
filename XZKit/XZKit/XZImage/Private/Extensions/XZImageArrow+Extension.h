@@ -1,5 +1,5 @@
 //
-//  XZImageBorderArrow+Extension.h
+//  XZImageArrow+Extension.h
 //  XZKit
 //
 //  Created by Xezun on 2021/2/18.
@@ -11,7 +11,7 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-@interface XZImageBorderArrow () {
+@interface XZImageArrow () {
     CGFloat _lineOffset;
     CGPoint _vectorOffsets[3];
 }
@@ -35,7 +35,7 @@ NS_ASSUME_NONNULL_BEGIN
 - (BOOL)setHeightSilently:(CGFloat)height;
 - (BOOL)setAnchorSilently:(CGFloat)anchor;
 - (BOOL)setVectorSilently:(CGFloat)vector;
-- (void)updateWithBorderArrowSilently:(nullable XZImageBorderArrow *)borderArrow;
+- (void)updateWithBorderArrowSilently:(nullable XZImageArrow *)borderArrow;
 
 /// 根据边距的移动距离，更新三个点的偏移值。
 /// @note 顶点位置发生改变时，重置 offsets

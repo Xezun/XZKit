@@ -13,10 +13,10 @@
 - (instancetype)initWithSuperAttribute:(id<XZImageSuperAttribute>)superAttribute {
     self = [super initWithSuperAttribute:superAttribute];
     if (self) {
-        _width = 0;
-        _color = nil;
+        _width      = 0;
+        _color      = nil;
         _miterLimit = 10;
-        _dash = nil;
+        _dash       = nil;
     }
     return self;
 }

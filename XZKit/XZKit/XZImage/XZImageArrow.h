@@ -1,5 +1,5 @@
 //
-//  XZImageBorderArrow.h
+//  XZImageArrow.h
 //  XZKit
 //
 //  Created by Xezun on 2021/2/21.
@@ -13,8 +13,8 @@ NS_ASSUME_NONNULL_BEGIN
 
 /// 描述了线条的箭头的特征和属性。
 /// @note 箭头与边使用相同的线型，因此箭头的实际绘制效果，除以下属性外，还受线条粗细的影响。
-NS_SWIFT_NAME(XZImageBorder.Arrow)
-@interface XZImageBorderArrow : XZImageAttribute
+NS_SWIFT_NAME(XZImage.Arrow)
+@interface XZImageArrow : XZImageAttribute
 
 /// 箭头顶点到底边的垂直距离。
 @property (nonatomic) CGFloat height;

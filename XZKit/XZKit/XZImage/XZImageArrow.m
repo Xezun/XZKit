@@ -1,12 +1,12 @@
 //
-//  XZImageBorderArrow.m
+//  XZImageArrow.m
 //  XZKit
 //
 //  Created by Xezun on 2021/2/21.
 //
 
-#import "XZImageBorderArrow.h"
-#import "XZImageBorderArrow+Extension.h"
+#import "XZImageArrow.h"
+#import "XZImageArrow+Extension.h"
 #import "XZImageBorder.h"
 
 /// 从反正切值得到三角形角度。
@@ -14,7 +14,7 @@ static inline CGFloat triangleArc(CGFloat tanValue) {
     return tanValue > 0 ? tanValue : (M_PI + tanValue);
 }
 
-@implementation XZImageBorderArrow
+@implementation XZImageArrow
 
 - (instancetype)initWithSuperAttribute:(id<XZImageSuperAttribute>)superAttribute {
     NSParameterAssert([superAttribute isKindOfClass:[XZImageBorder class]]);
@@ -100,7 +100,7 @@ static inline CGFloat triangleArc(CGFloat tanValue) {
     return YES;
 }
 
-- (void)updateWithBorderArrowSilently:(XZImageBorderArrow *)borderArrow {
+- (void)updateWithBorderArrowSilently:(XZImageArrow *)borderArrow {
     if (borderArrow == self) {
         return;
     }

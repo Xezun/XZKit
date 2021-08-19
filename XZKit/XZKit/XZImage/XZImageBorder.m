@@ -20,9 +20,9 @@
     if (self) {
         [self updateWithLineSilently:imageBorders];
         
-        XZImageBorderArrow *arrow = imageBorders.arrowIfLoaded;
+        XZImageArrow *arrow = imageBorders.arrowIfLoaded;
         if (arrow != nil) {
-            _arrow = [[XZImageBorderArrow alloc] initWithBorder:self];
+            _arrow = [[XZImageArrow alloc] initWithBorder:self];
             [_arrow updateWithBorderArrowSilently:arrow];
         }
     }
@@ -31,14 +31,14 @@
 
 @synthesize arrow = _arrow;
 
-- (XZImageBorderArrow *)arrow {
+- (XZImageArrow *)arrow {
     if (_arrow == nil) {
-        _arrow = [[XZImageBorderArrow alloc] initWithBorder:self];
+        _arrow = [[XZImageArrow alloc] initWithBorder:self];
     }
     return _arrow;
 }
 
-- (XZImageBorderArrow *)arrowIfLoaded {
+- (XZImageArrow *)arrowIfLoaded {
     return _arrow;
 }
 

@@ -7,7 +7,7 @@
 
 #import <XZKit/XZImageBorder.h>
 #import <XZKit/XZImageLine+Extension.h>
-#import <XZKit/XZImageBorderArrow+Extension.h>
+#import <XZKit/XZImageArrow+Extension.h>
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -15,7 +15,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 - (instancetype)initWithImageBorders:(nullable XZImageBorders *)imageBorders;
 
-@property (nonatomic, strong, readonly, nullable) XZImageBorderArrow *arrowIfLoaded;
+@property (nonatomic, strong, readonly, nullable) XZImageArrow *arrowIfLoaded;
 
 @end
 

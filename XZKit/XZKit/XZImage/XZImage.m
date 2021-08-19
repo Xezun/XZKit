@@ -192,10 +192,10 @@
     XZImageCorner * const cornerBR = self.corners.bottomRightIfLoaded ?: self.corners;
     XZImageCorner * const cornerTR = self.corners.topRightIfLoaded    ?: self.corners;
     
-    XZImageBorderArrow * const arrowT = borderT.arrowIfLoaded;
-    XZImageBorderArrow * const arrowL = borderL.arrowIfLoaded;
-    XZImageBorderArrow * const arrowB = borderB.arrowIfLoaded;
-    XZImageBorderArrow * const arrowR = borderR.arrowIfLoaded;
+    XZImageArrow * const arrowT = borderT.arrowIfLoaded;
+    XZImageArrow * const arrowL = borderL.arrowIfLoaded;
+    XZImageArrow * const arrowB = borderB.arrowIfLoaded;
+    XZImageArrow * const arrowR = borderR.arrowIfLoaded;
     
     // 内容边距
     CGFloat const top    = (arrowT.effectiveHeight + contentInsets.top);
@@ -294,7 +294,7 @@
         CGPointMove(&start, 0, borderWidthT_2);
         XZImageLinePath * const context = linePaths ? [XZImageLinePath imagePathWithLine:top startPoint:start] : nil;
         
-        XZImageBorderArrow const *arrow = top.arrowIfLoaded;
+        XZImageArrow const *arrow = top.arrowIfLoaded;
         if (arrow.isEffective) {
             CGFloat const w = arrow.effectiveWidth * 0.5;
             
@@ -356,7 +356,7 @@
         CGPointMove(&start, -borderWidthR_2, 0);
         XZImageLinePath *context = linePaths ? [XZImageLinePath imagePathWithLine:right startPoint:start] : nil;
         
-        XZImageBorderArrow const *arrow = right.arrowIfLoaded;
+        XZImageArrow const *arrow = right.arrowIfLoaded;
         if (arrow.isEffective) {
             CGFloat const w = arrow.effectiveWidth * 0.5;
             
@@ -417,7 +417,7 @@
         CGPointMove(&start, 0, -borderWidthB_2);
         XZImageLinePath *context = linePaths ? [XZImageLinePath imagePathWithLine:bottom startPoint:start] : nil;
         
-        XZImageBorderArrow const *arrow = bottom.arrowIfLoaded;
+        XZImageArrow const *arrow = bottom.arrowIfLoaded;
         if (arrow.isEffective) {
             CGFloat const w = arrow.effectiveWidth * 0.5;
             
@@ -478,7 +478,7 @@
         CGPointMove(&start, borderWidthL_2, 0);
         XZImageLinePath *context = linePaths ? [XZImageLinePath imagePathWithLine:left startPoint:start] : nil;
         
-        XZImageBorderArrow const *arrow = left.arrowIfLoaded;
+        XZImageArrow const *arrow = left.arrowIfLoaded;
         if (arrow.isEffective) {
             CGFloat const w = arrow.effectiveWidth * 0.5;
             

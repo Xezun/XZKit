@@ -104,7 +104,7 @@
         [self.bottomIfLoaded.dash updateWithLineDashSilently:dash];
         [self.rightIfLoaded.dash updateWithLineDashSilently:dash];
     } else if (subAttribute == self.arrowIfLoaded) {
-        XZImageBorderArrow * const arrow = (id)subAttribute;
+        XZImageArrow * const arrow = (id)subAttribute;
         if ([attribute isEqual:@"width"]) {
             [self.topIfLoaded.arrow setWidthSilently:arrow.width];
             [self.leftIfLoaded.arrow setWidthSilently:arrow.width];

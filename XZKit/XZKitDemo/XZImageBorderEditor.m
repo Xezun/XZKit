@@ -68,7 +68,7 @@
             break;
         }
         case 1: {
-            XZImageBorderArrow *arrow = self.line.arrow;
+            XZImageArrow *arrow = self.line.arrow;
             switch (indexPath.row) {
                 case 0:
                     cell.detailTextLabel.text = [NSString stringWithFormat:@"%.2f", arrow.height];
