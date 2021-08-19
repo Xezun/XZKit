@@ -70,37 +70,37 @@
 #pragma mark - 同步属性到下级
 
 - (void)setColor:(UIColor *)color {
-    [self.topLeftIfLoaded setColorSilently:color];
-    [self.bottomLeftIfLoaded setColorSilently:color];
-    [self.bottomRightIfLoaded setColorSilently:color];
-    [self.topRightIfLoaded setColorSilently:color];
+    [self.topLeftIfLoaded setColorValue:color];
+    [self.bottomLeftIfLoaded setColorValue:color];
+    [self.bottomRightIfLoaded setColorValue:color];
+    [self.topRightIfLoaded setColorValue:color];
     
     [super setColor:color];
 }
 
 - (void)setWidth:(CGFloat)width {
-    [self.topLeftIfLoaded setWidthSilently:width];
-    [self.bottomLeftIfLoaded setWidthSilently:width];
-    [self.bottomRightIfLoaded setWidthSilently:width];
-    [self.topRightIfLoaded setWidthSilently:width];
+    [self.topLeftIfLoaded setWidthValue:width];
+    [self.bottomLeftIfLoaded setWidthValue:width];
+    [self.bottomRightIfLoaded setWidthValue:width];
+    [self.topRightIfLoaded setWidthValue:width];
     
     [super setWidth:width];
 }
 
 - (void)setMiterLimit:(CGFloat)miterLimit {
-    [self.topLeftIfLoaded setMiterLimitSilently:miterLimit];
-    [self.bottomLeftIfLoaded setMiterLimitSilently:miterLimit];
-    [self.bottomRightIfLoaded setMiterLimitSilently:miterLimit];
-    [self.topRightIfLoaded setMiterLimitSilently:miterLimit];
+    [self.topLeftIfLoaded setMiterLimitValue:miterLimit];
+    [self.bottomLeftIfLoaded setMiterLimitValue:miterLimit];
+    [self.bottomRightIfLoaded setMiterLimitValue:miterLimit];
+    [self.topRightIfLoaded setMiterLimitValue:miterLimit];
     
     [super setMiterLimit:miterLimit];
 }
 
 - (void)setRadius:(CGFloat)radius {
-    [self.topLeftIfLoaded setRadiusSilently:radius];
-    [self.bottomLeftIfLoaded setRadiusSilently:radius];
-    [self.bottomRightIfLoaded setRadiusSilently:radius];
-    [self.topRightIfLoaded setRadiusSilently:radius];
+    [self.topLeftIfLoaded setRadiusValue:radius];
+    [self.bottomLeftIfLoaded setRadiusValue:radius];
+    [self.bottomRightIfLoaded setRadiusValue:radius];
+    [self.topRightIfLoaded setRadiusValue:radius];
     
     [super setRadius:radius];
 }
@@ -108,10 +108,10 @@
 - (void)subAttribute:(__kindof XZImageAttribute *)subAttribute didUpdateAttribute:(id)attribute {
     if (subAttribute == self.dashIfLoaded) {
         XZImageLineDash *dash = (id)subAttribute;
-        [self.topLeftIfLoaded.dash     updateWithLineDashSilently:dash];
-        [self.bottomLeftIfLoaded.dash  updateWithLineDashSilently:dash];
-        [self.bottomRightIfLoaded.dash updateWithLineDashSilently:dash];
-        [self.topRightIfLoaded.dash    updateWithLineDashSilently:dash];
+        [self.topLeftIfLoaded.dash     updateWithLineDashValue:dash];
+        [self.bottomLeftIfLoaded.dash  updateWithLineDashValue:dash];
+        [self.bottomRightIfLoaded.dash updateWithLineDashValue:dash];
+        [self.topRightIfLoaded.dash    updateWithLineDashValue:dash];
     }
     
     [super subAttribute:subAttribute didUpdateAttribute:attribute];

@@ -31,11 +31,11 @@ NS_ASSUME_NONNULL_BEGIN
 /// 根据最大值、最小值，调整 vector 到合适的位置
 - (void)updateEffectiveVectorWithMinValue:(CGFloat)minValue maxValue:(CGFloat)maxValue;
 
-- (BOOL)setWidthSilently:(CGFloat)width;
-- (BOOL)setHeightSilently:(CGFloat)height;
-- (BOOL)setAnchorSilently:(CGFloat)anchor;
-- (BOOL)setVectorSilently:(CGFloat)vector;
-- (void)updateWithBorderArrowSilently:(nullable XZImageArrow *)borderArrow;
+- (BOOL)setWidthValue:(CGFloat)width;
+- (BOOL)setHeightValue:(CGFloat)height;
+- (BOOL)setAnchorValue:(CGFloat)anchor;
+- (BOOL)setVectorValue:(CGFloat)vector;
+- (void)updateWithBorderArrowValue:(nullable XZImageArrow *)borderArrow;
 
 /// 根据边距的移动距离，更新三个点的偏移值。
 /// @note 顶点位置发生改变时，重置 offsets

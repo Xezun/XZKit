@@ -41,30 +41,30 @@ static inline CGFloat triangleArc(CGFloat tanValue) {
 }
 
 - (void)setWidth:(CGFloat)width {
-    if ([self setWidthSilently:width]) {
+    if ([self setWidthValue:width]) {
         [self didUpdateAttribute:@"width"];
     }
 }
 
 - (void)setHeight:(CGFloat)height {
-    if ([self setHeightSilently:height]) {
+    if ([self setHeightValue:height]) {
         [self didUpdateAttribute:@"height"];
     }
 }
 
 - (void)setAnchor:(CGFloat)anchor {
-    if ([self setAnchorSilently:anchor]) {
+    if ([self setAnchorValue:anchor]) {
         [self didUpdateAttribute:@"anchor"];
     }
 }
 
 - (void)setVector:(CGFloat)vector {
-    if ([self setVectorSilently:vector]) {
+    if ([self setVectorValue:vector]) {
         [self didUpdateAttribute:@"vector"];
     }
 }
 
-- (BOOL)setWidthSilently:(CGFloat)width {
+- (BOOL)setWidthValue:(CGFloat)width {
     if (_width == width || width < 0) {
         return NO;
     }
@@ -73,7 +73,7 @@ static inline CGFloat triangleArc(CGFloat tanValue) {
     return YES;
 }
 
-- (BOOL)setHeightSilently:(CGFloat)height {
+- (BOOL)setHeightValue:(CGFloat)height {
     if (_height == height || height < 0) {
         return NO;
     }
@@ -82,7 +82,7 @@ static inline CGFloat triangleArc(CGFloat tanValue) {
     return YES;
 }
 
-- (BOOL)setAnchorSilently:(CGFloat)anchor {
+- (BOOL)setAnchorValue:(CGFloat)anchor {
     if (_anchor == anchor || anchor < 0) {
         return NO;
     }
@@ -91,7 +91,7 @@ static inline CGFloat triangleArc(CGFloat tanValue) {
     return YES;
 }
 
-- (BOOL)setVectorSilently:(CGFloat)vector {
+- (BOOL)setVectorValue:(CGFloat)vector {
     if (_vector == vector || vector < 0) {
         return NO;
     }
@@ -100,7 +100,7 @@ static inline CGFloat triangleArc(CGFloat tanValue) {
     return YES;
 }
 
-- (void)updateWithBorderArrowSilently:(XZImageArrow *)borderArrow {
+- (void)updateWithBorderArrowValue:(XZImageArrow *)borderArrow {
     if (borderArrow == self) {
         return;
     }

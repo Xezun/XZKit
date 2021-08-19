@@ -36,7 +36,7 @@
     return (_numberOfSegments > 0);
 }
 
-- (BOOL)setPhaseSilently:(CGFloat)phase {
+- (BOOL)setPhaseValue:(CGFloat)phase {
     if (_phase == phase || phase < 0) {
         return NO;
     }
@@ -45,24 +45,24 @@
 }
 
 - (void)setPhase:(CGFloat)phase {
-    if ([self setPhaseSilently:phase]) {
+    if ([self setPhaseValue:phase]) {
         [self didUpdateAttribute:@"phase"];
     }
 }
 
 - (void)setSegments:(NSArray<NSNumber *> *)segments {
-    [self setSegmentsSilently:segments];
+    [self setSegmentsValue:segments];
     
     [self didUpdateAttribute:@"segments"];
 }
 
 - (void)setSegments:(const CGFloat *)segments length:(NSInteger)length {
-    [self setSegmentsSilently:segments length:length];
+    [self setSegmentsValue:segments length:length];
     
     [self didUpdateAttribute:@"segments"];
 }
 
-- (void)setSegmentsSilently:(NSArray<NSNumber *> * _Nullable)segments {
+- (void)setSegmentsValue:(NSArray<NSNumber *> * _Nullable)segments {
     _numberOfSegments = segments.count;
     [self adjustsCapacityToFitSegments];
     
@@ -71,7 +71,7 @@
     }
 }
 
-- (void)setSegmentsSilently:(const CGFloat *)segments length:(NSInteger)length {
+- (void)setSegmentsValue:(const CGFloat *)segments length:(NSInteger)length {
     _numberOfSegments = length;
     [self adjustsCapacityToFitSegments];
     
@@ -164,12 +164,12 @@
 
 #pragma mark - 私有方法
 
-- (void)updateWithLineDashSilently:(XZImageLineDash *)lineDash {
+- (void)updateWithLineDashValue:(XZImageLineDash *)lineDash {
     if (lineDash == self) {
         return;
     }
-    [self setPhaseSilently:lineDash.phase];
-    [self setSegmentsSilently:lineDash.segments length:lineDash.numberOfSegments];
+    [self setPhaseValue:lineDash.phase];
+    [self setSegmentsValue:lineDash.segments length:lineDash.numberOfSegments];
 }
 
 - (void)adjustsCapacityToFitSegments {

@@ -17,11 +17,11 @@ NS_ASSUME_NONNULL_BEGIN
 
 @property (nonatomic, strong, readonly) XZImageLineDash *dashIfLoaded;
 
-- (BOOL)setColorSilently:(UIColor *)color;
-- (BOOL)setWidthSilently:(CGFloat)width;
-- (BOOL)setMiterLimitSilently:(CGFloat)miterLimit;
+- (BOOL)setColorValue:(UIColor *)color;
+- (BOOL)setWidthValue:(CGFloat)width;
+- (BOOL)setMiterLimitValue:(CGFloat)miterLimit;
 
-- (void)updateWithLineSilently:(nullable XZImageLine *)line;
+- (void)updateWithLineValue:(nullable XZImageLine *)line;
 
 @end
 

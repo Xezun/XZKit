@@ -15,7 +15,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 - (instancetype)initWithImageCorners:(nullable XZImageCorners *)imageCorners;
 
-- (BOOL)setRadiusSilently:(CGFloat)radius;
+- (BOOL)setRadiusValue:(CGFloat)radius;
 
 @end
 

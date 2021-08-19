@@ -14,7 +14,7 @@
 - (instancetype)initWithImageCorners:(XZImageCorners *)imageCorners {
     self = [super initWithSuperAttribute:imageCorners];
     if (self) {
-        [self updateWithLineSilently:imageCorners];
+        [self updateWithLineValue:imageCorners];
         
         _radius = imageCorners.radius;
     }
@@ -26,12 +26,12 @@
 }
 
 - (void)setRadius:(CGFloat)radius {
-    if ([self setRadiusSilently:radius]) {
+    if ([self setRadiusValue:radius]) {
         [self didUpdateAttribute:@"radius"];
     }
 }
 
-- (BOOL)setRadiusSilently:(CGFloat)radius {
+- (BOOL)setRadiusValue:(CGFloat)radius {
     if (_radius == radius) {
         return NO;
     }

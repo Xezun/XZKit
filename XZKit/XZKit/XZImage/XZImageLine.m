@@ -26,12 +26,12 @@
 }
 
 - (void)setColor:(UIColor *)color {
-    if ([self setColorSilently:color]) {
+    if ([self setColorValue:color]) {
         [self didUpdateAttribute:@"color"];
     }
 }
 
-- (BOOL)setColorSilently:(UIColor *)color {
+- (BOOL)setColorValue:(UIColor *)color {
     if ([_color isEqual:color]) {
         return NO;
     }
@@ -40,12 +40,12 @@
 }
 
 - (void)setWidth:(CGFloat)width {
-    if ([self setWidthSilently:width]) {
+    if ([self setWidthValue:width]) {
         [self didUpdateAttribute:@"width"];
     }
 }
 
-- (BOOL)setWidthSilently:(CGFloat)width {
+- (BOOL)setWidthValue:(CGFloat)width {
     if (_width == width || width < 0) {
         return NO;
     }
@@ -54,12 +54,12 @@
 }
 
 - (void)setMiterLimit:(CGFloat)miterLimit {
-    if ([self setMiterLimitSilently:miterLimit]) {
+    if ([self setMiterLimitValue:miterLimit]) {
         [self didUpdateAttribute:@"miterLimit"];
     }
 }
 
-- (BOOL)setMiterLimitSilently:(CGFloat)miterLimit {
+- (BOOL)setMiterLimitValue:(CGFloat)miterLimit {
     if (_miterLimit == miterLimit || miterLimit < 0) {
         return NO;
     }
@@ -99,18 +99,18 @@
     return NO;
 }
 
-- (void)updateWithLineSilently:(XZImageLine *)line {
+- (void)updateWithLineValue:(XZImageLine *)line {
     if (self == line) {
         return;
     }
-    [self setColorSilently:line.color];
-    [self setWidthSilently:line.width];
+    [self setColorValue:line.color];
+    [self setWidthValue:line.width];
     
     XZImageLineDash *dash = line.dashIfLoaded;
     if (dash == nil) {
-        [self.dashIfLoaded updateWithLineDashSilently:nil];
+        [self.dashIfLoaded updateWithLineDashValue:nil];
     } else {
-        [self.dash updateWithLineDashSilently:dash];
+        [self.dash updateWithLineDashValue:dash];
     }
 }
 

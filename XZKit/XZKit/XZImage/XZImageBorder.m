@@ -18,12 +18,12 @@
 - (instancetype)initWithImageBorders:(XZImageBorders *)imageBorders {
     self = [super initWithSuperAttribute:imageBorders];
     if (self) {
-        [self updateWithLineSilently:imageBorders];
+        [self updateWithLineValue:imageBorders];
         
         XZImageArrow *arrow = imageBorders.arrowIfLoaded;
         if (arrow != nil) {
             _arrow = [[XZImageArrow alloc] initWithBorder:self];
-            [_arrow updateWithBorderArrowSilently:arrow];
+            [_arrow updateWithBorderArrowValue:arrow];
         }
     }
     return self;

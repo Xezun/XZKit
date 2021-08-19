@@ -70,19 +70,19 @@
 #pragma mark - 同步属性到下级
 
 - (void)setColor:(UIColor *)color {
-    [self.topIfLoaded setColorSilently:color];
-    [self.leftIfLoaded setColorSilently:color];
-    [self.bottomIfLoaded setColorSilently:color];
-    [self.rightIfLoaded setColorSilently:color];
+    [self.topIfLoaded setColorValue:color];
+    [self.leftIfLoaded setColorValue:color];
+    [self.bottomIfLoaded setColorValue:color];
+    [self.rightIfLoaded setColorValue:color];
     
     [super setColor:color];
 }
 
 - (void)setWidth:(CGFloat)width {
-    [self.topIfLoaded setWidthSilently:width];
-    [self.leftIfLoaded setWidthSilently:width];
-    [self.bottomIfLoaded setWidthSilently:width];
-    [self.rightIfLoaded setWidthSilently:width];
+    [self.topIfLoaded setWidthValue:width];
+    [self.leftIfLoaded setWidthValue:width];
+    [self.bottomIfLoaded setWidthValue:width];
+    [self.rightIfLoaded setWidthValue:width];
     
     [super setWidth:width];
 }
@@ -99,32 +99,32 @@
 - (void)subAttribute:(__kindof XZImageAttribute *)subAttribute didUpdateAttribute:(id)attribute {
     if (subAttribute == self.dashIfLoaded) {
         XZImageLineDash *dash = (id)subAttribute;
-        [self.topIfLoaded.dash updateWithLineDashSilently:dash];
-        [self.leftIfLoaded.dash updateWithLineDashSilently:dash];
-        [self.bottomIfLoaded.dash updateWithLineDashSilently:dash];
-        [self.rightIfLoaded.dash updateWithLineDashSilently:dash];
+        [self.topIfLoaded.dash updateWithLineDashValue:dash];
+        [self.leftIfLoaded.dash updateWithLineDashValue:dash];
+        [self.bottomIfLoaded.dash updateWithLineDashValue:dash];
+        [self.rightIfLoaded.dash updateWithLineDashValue:dash];
     } else if (subAttribute == self.arrowIfLoaded) {
         XZImageArrow * const arrow = (id)subAttribute;
         if ([attribute isEqual:@"width"]) {
-            [self.topIfLoaded.arrow setWidthSilently:arrow.width];
-            [self.leftIfLoaded.arrow setWidthSilently:arrow.width];
-            [self.bottomIfLoaded.arrow setWidthSilently:arrow.width];
-            [self.rightIfLoaded.arrow setWidthSilently:arrow.width];
+            [self.topIfLoaded.arrow setWidthValue:arrow.width];
+            [self.leftIfLoaded.arrow setWidthValue:arrow.width];
+            [self.bottomIfLoaded.arrow setWidthValue:arrow.width];
+            [self.rightIfLoaded.arrow setWidthValue:arrow.width];
         } else if ([attribute isEqual:@"height"]) {
-            [self.topIfLoaded.arrow setHeightSilently:arrow.height];
-            [self.leftIfLoaded.arrow setHeightSilently:arrow.height];
-            [self.bottomIfLoaded.arrow setHeightSilently:arrow.height];
-            [self.rightIfLoaded.arrow setHeightSilently:arrow.height];
+            [self.topIfLoaded.arrow setHeightValue:arrow.height];
+            [self.leftIfLoaded.arrow setHeightValue:arrow.height];
+            [self.bottomIfLoaded.arrow setHeightValue:arrow.height];
+            [self.rightIfLoaded.arrow setHeightValue:arrow.height];
         } else if ([attribute isEqual:@"vector"]) {
-            [self.topIfLoaded.arrow setVectorSilently:arrow.vector];
-            [self.leftIfLoaded.arrow setVectorSilently:arrow.vector];
-            [self.bottomIfLoaded.arrow setVectorSilently:arrow.vector];
-            [self.rightIfLoaded.arrow setVectorSilently:arrow.vector];
+            [self.topIfLoaded.arrow setVectorValue:arrow.vector];
+            [self.leftIfLoaded.arrow setVectorValue:arrow.vector];
+            [self.bottomIfLoaded.arrow setVectorValue:arrow.vector];
+            [self.rightIfLoaded.arrow setVectorValue:arrow.vector];
         } else if ([attribute isEqual:@"anchor"]) {
-            [self.topIfLoaded.arrow setAnchorSilently:arrow.anchor];
-            [self.leftIfLoaded.arrow setAnchorSilently:arrow.anchor];
-            [self.bottomIfLoaded.arrow setAnchorSilently:arrow.anchor];
-            [self.rightIfLoaded.arrow setAnchorSilently:arrow.anchor];
+            [self.topIfLoaded.arrow setAnchorValue:arrow.anchor];
+            [self.leftIfLoaded.arrow setAnchorValue:arrow.anchor];
+            [self.bottomIfLoaded.arrow setAnchorValue:arrow.anchor];
+            [self.rightIfLoaded.arrow setAnchorValue:arrow.anchor];
         }
     }
     [super subAttribute:subAttribute didUpdateAttribute:attribute];
