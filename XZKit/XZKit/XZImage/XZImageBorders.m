@@ -99,10 +99,10 @@
 - (void)subAttribute:(__kindof XZImageAttribute *)subAttribute didUpdateAttribute:(id)attribute {
     if (subAttribute == self.dashIfLoaded) {
         XZImageLineDash *dash = (id)subAttribute;
-        [self.topIfLoaded.dash updateWithLineDashValue:dash];
-        [self.leftIfLoaded.dash updateWithLineDashValue:dash];
-        [self.bottomIfLoaded.dash updateWithLineDashValue:dash];
-        [self.rightIfLoaded.dash updateWithLineDashValue:dash];
+        [self.topIfLoaded.dash updateLineDashValue:dash];
+        [self.leftIfLoaded.dash updateLineDashValue:dash];
+        [self.bottomIfLoaded.dash updateLineDashValue:dash];
+        [self.rightIfLoaded.dash updateLineDashValue:dash];
     } else if (subAttribute == self.arrowIfLoaded) {
         XZImageArrow * const arrow = (id)subAttribute;
         if ([attribute isEqual:@"width"]) {

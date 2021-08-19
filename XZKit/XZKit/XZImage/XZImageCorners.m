@@ -108,10 +108,10 @@
 - (void)subAttribute:(__kindof XZImageAttribute *)subAttribute didUpdateAttribute:(id)attribute {
     if (subAttribute == self.dashIfLoaded) {
         XZImageLineDash *dash = (id)subAttribute;
-        [self.topLeftIfLoaded.dash     updateWithLineDashValue:dash];
-        [self.bottomLeftIfLoaded.dash  updateWithLineDashValue:dash];
-        [self.bottomRightIfLoaded.dash updateWithLineDashValue:dash];
-        [self.topRightIfLoaded.dash    updateWithLineDashValue:dash];
+        [self.topLeftIfLoaded.dash     updateLineDashValue:dash];
+        [self.bottomLeftIfLoaded.dash  updateLineDashValue:dash];
+        [self.bottomRightIfLoaded.dash updateLineDashValue:dash];
+        [self.topRightIfLoaded.dash    updateLineDashValue:dash];
     }
     
     [super subAttribute:subAttribute didUpdateAttribute:attribute];

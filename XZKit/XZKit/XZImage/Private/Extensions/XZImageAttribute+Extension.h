@@ -16,7 +16,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface XZImageAttribute () <XZImageSuperAttribute>
 
-// 是否生效（是否使用该属性绘图），默认`NO`。
+/// 是否生效（是否使用该属性绘图），默认`NO`。
 @property (nonatomic, readonly) BOOL isEffective;
 
 /// 上级属性。

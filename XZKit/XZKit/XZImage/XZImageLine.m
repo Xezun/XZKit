@@ -108,9 +108,9 @@
     
     XZImageLineDash *dash = line.dashIfLoaded;
     if (dash == nil) {
-        [self.dashIfLoaded updateWithLineDashValue:nil];
+        [self.dashIfLoaded updateLineDashValue:nil];
     } else {
-        [self.dash updateWithLineDashValue:dash];
+        [self.dash updateLineDashValue:dash];
     }
 }
 

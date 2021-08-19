@@ -537,8 +537,8 @@
 
 - (void)subAttribute:(__kindof XZImageAttribute *)subAttribute didUpdateAttribute:(id)attribute {
     if (subAttribute == _lineDash) {
-        [self.borders.dash updateWithLineDashValue:_lineDash];
-        [self.corners.dash updateWithLineDashValue:_lineDash];
+        [self.borders.dash updateLineDashValue:_lineDash];
+        [self.corners.dash updateLineDashValue:_lineDash];
     }
     [self didReceiveMemoryWarning];
 }

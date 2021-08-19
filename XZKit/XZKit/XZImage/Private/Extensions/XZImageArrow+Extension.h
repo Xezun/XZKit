@@ -27,6 +27,7 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic, readonly) CGFloat effectiveAnchor;
 /// 根据最大值、最小值，调整 anchor 到合适的位置
 - (void)updateEffectiveAnchorWithMinValue:(CGFloat)minValue maxValue:(CGFloat)maxValue;
+
 @property (nonatomic, readonly) CGFloat effectiveVector;
 /// 根据最大值、最小值，调整 vector 到合适的位置
 - (void)updateEffectiveVectorWithMinValue:(CGFloat)minValue maxValue:(CGFloat)maxValue;

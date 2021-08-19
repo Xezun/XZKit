@@ -330,12 +330,12 @@
 			children = (
 				291F65FC26CACB7C00FB07ED /* XZImage+Extension.h */,
 				291F65FD26CACB7C00FB07ED /* XZImageAttribute+Extension.h */,
-				291F65FB26CACB7C00FB07ED /* XZImageBorder+Extension.h */,
+				291F65F926CACB7C00FB07ED /* XZImageLine+Extension.h */,
 				291F65FF26CACB7C00FB07ED /* XZImageArrow+Extension.h */,
+				291F65FB26CACB7C00FB07ED /* XZImageBorder+Extension.h */,
 				291F65FE26CACB7C00FB07ED /* XZImageBorders+Extension.h */,
 				291F660026CACB7C00FB07ED /* XZImageCorner+Extension.h */,
 				291F65F826CACB7C00FB07ED /* XZImageCorners+Extension.h */,
-				291F65F926CACB7C00FB07ED /* XZImageLine+Extension.h */,
 				291F65FA26CACB7C00FB07ED /* XZImageLineDash+Extension.h */,
 			);
 			path = Extensions;

@@ -164,7 +164,7 @@
 
 #pragma mark - 私有方法
 
-- (void)updateWithLineDashValue:(XZImageLineDash *)lineDash {
+- (void)updateLineDashValue:(XZImageLineDash *)lineDash {
     if (lineDash == self) {
         return;
     }
