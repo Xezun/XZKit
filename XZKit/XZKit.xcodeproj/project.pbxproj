@@ -13,18 +13,14 @@
 		2905401D26A09F4F00793581 /* XZObjCTypeDescriptor.h in Headers */ = {isa = PBXBuildFile; fileRef = 2905401926A09F4F00793581 /* XZObjCTypeDescriptor.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		291F65B326CACB3F00FB07ED /* XZImageBorders.m in Sources */ = {isa = PBXBuildFile; fileRef = 291F658B26CACB3F00FB07ED /* XZImageBorders.m */; };
 		291F65B426CACB3F00FB07ED /* XZImageLineDash.m in Sources */ = {isa = PBXBuildFile; fileRef = 291F658C26CACB3F00FB07ED /* XZImageLineDash.m */; };
-		291F65B526CACB3F00FB07ED /* XZImageLevels.m in Sources */ = {isa = PBXBuildFile; fileRef = 291F658D26CACB3F00FB07ED /* XZImageLevels.m */; };
 		291F65B626CACB3F00FB07ED /* XZImageArrow.m in Sources */ = {isa = PBXBuildFile; fileRef = 291F658E26CACB3F00FB07ED /* XZImageArrow.m */; };
 		291F65B726CACB3F00FB07ED /* XZImageCorner.m in Sources */ = {isa = PBXBuildFile; fileRef = 291F658F26CACB3F00FB07ED /* XZImageCorner.m */; };
 		291F65B826CACB3F00FB07ED /* XZImageArrow.h in Headers */ = {isa = PBXBuildFile; fileRef = 291F659026CACB3F00FB07ED /* XZImageArrow.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		291F65B926CACB3F00FB07ED /* XZImageBorders.h in Headers */ = {isa = PBXBuildFile; fileRef = 291F659126CACB3F00FB07ED /* XZImageBorders.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		291F65BA26CACB3F00FB07ED /* UIImage+XZImage.m in Sources */ = {isa = PBXBuildFile; fileRef = 291F659226CACB3F00FB07ED /* UIImage+XZImage.m */; };
 		291F65BB26CACB3F00FB07ED /* XZImageAttribute.h in Headers */ = {isa = PBXBuildFile; fileRef = 291F659326CACB3F00FB07ED /* XZImageAttribute.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		291F65BC26CACB3F00FB07ED /* XZImage.h in Headers */ = {isa = PBXBuildFile; fileRef = 291F659426CACB3F00FB07ED /* XZImage.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		291F65BD26CACB3F00FB07ED /* XZImageAttribute.m in Sources */ = {isa = PBXBuildFile; fileRef = 291F659526CACB3F00FB07ED /* XZImageAttribute.m */; };
-		291F65CD26CACB3F00FB07ED /* XZImageLevels.h in Headers */ = {isa = PBXBuildFile; fileRef = 291F65A726CACB3F00FB07ED /* XZImageLevels.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		291F65CE26CACB3F00FB07ED /* XZImageLineDash.h in Headers */ = {isa = PBXBuildFile; fileRef = 291F65A826CACB3F00FB07ED /* XZImageLineDash.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		291F65CF26CACB3F00FB07ED /* UIImage+XZImage.h in Headers */ = {isa = PBXBuildFile; fileRef = 291F65A926CACB3F00FB07ED /* UIImage+XZImage.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		291F65D026CACB3F00FB07ED /* XZImage.m in Sources */ = {isa = PBXBuildFile; fileRef = 291F65AA26CACB3F00FB07ED /* XZImage.m */; };
 		291F65D126CACB3F00FB07ED /* XZImageCorners.h in Headers */ = {isa = PBXBuildFile; fileRef = 291F65AB26CACB3F00FB07ED /* XZImageCorners.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		291F65D326CACB3F00FB07ED /* XZImageLine.h in Headers */ = {isa = PBXBuildFile; fileRef = 291F65AD26CACB3F00FB07ED /* XZImageLine.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -131,18 +127,14 @@
 		2905401926A09F4F00793581 /* XZObjCTypeDescriptor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XZObjCTypeDescriptor.h; sourceTree = "<group>"; };
 		291F658B26CACB3F00FB07ED /* XZImageBorders.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = XZImageBorders.m; sourceTree = "<group>"; };
 		291F658C26CACB3F00FB07ED /* XZImageLineDash.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = XZImageLineDash.m; sourceTree = "<group>"; };
-		291F658D26CACB3F00FB07ED /* XZImageLevels.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = XZImageLevels.m; sourceTree = "<group>"; };
 		291F658E26CACB3F00FB07ED /* XZImageArrow.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = XZImageArrow.m; sourceTree = "<group>"; };
 		291F658F26CACB3F00FB07ED /* XZImageCorner.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = XZImageCorner.m; sourceTree = "<group>"; };
 		291F659026CACB3F00FB07ED /* XZImageArrow.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XZImageArrow.h; sourceTree = "<group>"; };
 		291F659126CACB3F00FB07ED /* XZImageBorders.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XZImageBorders.h; sourceTree = "<group>"; };
-		291F659226CACB3F00FB07ED /* UIImage+XZImage.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIImage+XZImage.m"; sourceTree = "<group>"; };
 		291F659326CACB3F00FB07ED /* XZImageAttribute.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XZImageAttribute.h; sourceTree = "<group>"; };
 		291F659426CACB3F00FB07ED /* XZImage.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XZImage.h; sourceTree = "<group>"; };
 		291F659526CACB3F00FB07ED /* XZImageAttribute.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = XZImageAttribute.m; sourceTree = "<group>"; };
-		291F65A726CACB3F00FB07ED /* XZImageLevels.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XZImageLevels.h; sourceTree = "<group>"; };
 		291F65A826CACB3F00FB07ED /* XZImageLineDash.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XZImageLineDash.h; sourceTree = "<group>"; };
-		291F65A926CACB3F00FB07ED /* UIImage+XZImage.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIImage+XZImage.h"; sourceTree = "<group>"; };
 		291F65AA26CACB3F00FB07ED /* XZImage.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = XZImage.m; sourceTree = "<group>"; };
 		291F65AB26CACB3F00FB07ED /* XZImageCorners.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XZImageCorners.h; sourceTree = "<group>"; };
 		291F65AD26CACB3F00FB07ED /* XZImageLine.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XZImageLine.h; sourceTree = "<group>"; };
@@ -285,8 +277,6 @@
 			isa = PBXGroup;
 			children = (
 				291F659626CACB3F00FB07ED /* Private */,
-				291F65A926CACB3F00FB07ED /* UIImage+XZImage.h */,
-				291F659226CACB3F00FB07ED /* UIImage+XZImage.m */,
 				291F659426CACB3F00FB07ED /* XZImage.h */,
 				291F65AA26CACB3F00FB07ED /* XZImage.m */,
 				291F659326CACB3F00FB07ED /* XZImageAttribute.h */,
@@ -303,8 +293,6 @@
 				291F658F26CACB3F00FB07ED /* XZImageCorner.m */,
 				291F65AB26CACB3F00FB07ED /* XZImageCorners.h */,
 				291F65B026CACB3F00FB07ED /* XZImageCorners.m */,
-				291F65A726CACB3F00FB07ED /* XZImageLevels.h */,
-				291F658D26CACB3F00FB07ED /* XZImageLevels.m */,
 				291F65A826CACB3F00FB07ED /* XZImageLineDash.h */,
 				291F658C26CACB3F00FB07ED /* XZImageLineDash.m */,
 			);
@@ -504,7 +492,6 @@
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				291F65CF26CACB3F00FB07ED /* UIImage+XZImage.h in Headers */,
 				29ABE3B92647942200CE2D77 /* XZHexEncoding.h in Headers */,
 				291F65D326CACB3F00FB07ED /* XZImageLine.h in Headers */,
 				29ABE3BE2647942200CE2D77 /* XZDefines.h in Headers */,
@@ -533,7 +520,6 @@
 				291F65CE26CACB3F00FB07ED /* XZImageLineDash.h in Headers */,
 				29ABE3BB2647942200CE2D77 /* XZDebugMode.h in Headers */,
 				29ABE34C264790FE00CE2D77 /* UIView+XZKit.h in Headers */,
-				291F65CD26CACB3F00FB07ED /* XZImageLevels.h in Headers */,
 				291F660526CACB7C00FB07ED /* XZImage+Extension.h in Headers */,
 				291F660426CACB7C00FB07ED /* XZImageBorder+Extension.h in Headers */,
 				291F65DF26CACB5E00FB07ED /* XZImageLinePathPoint.h in Headers */,
@@ -727,11 +713,9 @@
 				291F661126CAD06A00FB07ED /* UIColor+XZColor.m in Sources */,
 				291F65E426CACB5E00FB07ED /* XZImageLinePath.m in Sources */,
 				29ABE3C12647942200CE2D77 /* XZGeometry.m in Sources */,
-				291F65B526CACB3F00FB07ED /* XZImageLevels.m in Sources */,
 				29ABE3C02647942200CE2D77 /* XZTimestamp.m in Sources */,
 				29ABE348264790FE00CE2D77 /* UIView+XZKit.m in Sources */,
 				29ABE34D264790FE00CE2D77 /* UIImage+XZKit.m in Sources */,
-				291F65BA26CACB3F00FB07ED /* UIImage+XZImage.m in Sources */,
 				291F65D426CACB3F00FB07ED /* XZImageBorder.m in Sources */,
 				29ABE342264790FE00CE2D77 /* NSBundle+XZKit.m in Sources */,
 				29ABE3C42647942200CE2D77 /* XZDefer.m in Sources */,

@@ -23,20 +23,20 @@ typedef struct XZColor {
 } XZColor;
 
 /// 颜色通道。
-typedef NS_OPTIONS(NSUInteger, XZColorChannel) {
+typedef NS_OPTIONS(NSUInteger, XZColorChannels) {
     /// 红色通道。
-    XZColorChannelRed   = 1 << 0,
+    XZColorChannelsRed   = 1 << 0,
     /// 绿色通道。
-    XZColorChannelGreen = 1 << 1,
+    XZColorChannelsGreen = 1 << 1,
     /// 蓝色通道。
-    XZColorChannelBlue  = 1 << 2,
+    XZColorChannelsBlue  = 1 << 2,
     /// 透明通道。
-    XZColorChannelAlpha = 1 << 3,
+    XZColorChannelsAlpha = 1 << 3,
     /// RGB三通道。
-    XZColorChannelRGB   = XZColorChannelRed | XZColorChannelGreen | XZColorChannelBlue,
+    XZColorChannelsRGB   = XZColorChannelsRed | XZColorChannelsGreen | XZColorChannelsBlue,
     /// 所有通道。
-    XZColorChannelRGBA   = XZColorChannelRGB | XZColorChannelAlpha,
-} NS_SWIFT_NAME(XZColor.Channel);
+    XZColorChannelsRGBA   = XZColorChannelsRGB | XZColorChannelsAlpha,
+} NS_SWIFT_NAME(XZColor.Channels);
 
 
 FOUNDATION_STATIC_INLINE XZColor XZColorMake(NSInteger red, NSInteger green, NSInteger blue, NSInteger alpha) XZ_OVERLOADABLE {

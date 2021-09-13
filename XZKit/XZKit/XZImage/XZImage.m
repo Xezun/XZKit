@@ -10,22 +10,11 @@
 
 @implementation XZImage
 
-- (void)dealloc {
-    [NSNotificationCenter.defaultCenter removeObserver:self
-                                                  name:UIApplicationDidReceiveMemoryWarningNotification
-                                                object:nil];;
-}
-
 - (instancetype)init {
     self = [super init];
     if (self) {
         _corners = [[XZImageCorners alloc] initWithSuperAttribute:self];
         _borders = [[XZImageBorders alloc] initWithSuperAttribute:self];
-        
-        [NSNotificationCenter.defaultCenter addObserver:self
-                                               selector:@selector(didReceiveMemoryWarningNotification:)
-                                                   name:UIApplicationDidReceiveMemoryWarningNotification
-                                                 object:nil];
     }
     return self;
 }
@@ -540,14 +529,6 @@
         [self.borders.dash updateLineDashValue:_lineDash];
         [self.corners.dash updateLineDashValue:_lineDash];
     }
-    [self didReceiveMemoryWarning];
-}
-
-- (void)didReceiveMemoryWarningNotification:(NSNotification *)notification {
-    [self didReceiveMemoryWarning];
-}
-
-- (void)didReceiveMemoryWarning {
     _image = nil;
 }
 
@@ -629,6 +610,15 @@
     [self linePaths:linePaths backgroundPath:nil forDrawingWithRect:rect];
     
     return linePaths;
+}
+
+@end
+
+
+@implementation UIImage (XZImage)
+
++ (UIImage *)xz_imageWithXZImage:(XZImage *)image {
+    return image.image;
 }
 
 @end

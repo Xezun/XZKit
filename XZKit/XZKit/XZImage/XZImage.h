@@ -6,7 +6,6 @@
 //
 
 #import <UIKit/UIKit.h>
-#import <XZKit/XZImageLevels.h>
 #import <XZKit/XZImageBorders.h>
 #import <XZKit/XZImageBorder.h>
 #import <XZKit/XZImageCorners.h>
@@ -47,9 +46,6 @@ NS_ASSUME_NONNULL_BEGIN
 - (void)drawAtPoint:(CGPoint)point;
 - (void)drawInRect:(CGRect)rect;
 
-/// 如果发生内存警告，则会清理已生成的图片对象。
-- (void)didReceiveMemoryWarning;
-
 @end
 
 
@@ -89,6 +85,16 @@ NS_ASSUME_NONNULL_BEGIN
 /// 当前路径所绘制的边或圆角。
 /// @note 使用 `-drawInContext:` 方法不需要额外设置边的粗细颜色。
 @property (nonatomic, readonly, nullable) XZImageLine *line;
+@end
+
+
+@interface UIImage (XZImage)
+
+/// 根据指定条件绘制图片。
+/// @param image XZImage
+/// @return 绘制的图片。
++ (nullable UIImage *)xz_imageWithXZImage:(XZImage *)image NS_SWIFT_NAME(init(_:));
+
 @end
 
 NS_ASSUME_NONNULL_END
