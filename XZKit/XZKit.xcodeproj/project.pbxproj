@@ -53,6 +53,8 @@
 		29440A5526ADB2C2009D9031 /* XZCoreHexEncodingTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 29440A5426ADB2C2009D9031 /* XZCoreHexEncodingTests.m */; };
 		29440A7C26C585D5009D9031 /* CoreFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 29440A7B26C585D5009D9031 /* CoreFoundation.framework */; };
 		29440A7E26C8E8EF009D9031 /* XZFoundationURLTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 29440A7D26C8E8EF009D9031 /* XZFoundationURLTests.m */; };
+		2944431126EFA737009C1D27 /* XZKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 29ABE0572635DA2400CE2D77 /* XZKit.framework */; };
+		2944431226EFA737009C1D27 /* XZKit.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 29ABE0572635DA2400CE2D77 /* XZKit.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		29ABE06B2635DD8E00CE2D77 /* XZKitTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 29ABE06A2635DD8E00CE2D77 /* XZKitTests.m */; };
 		29ABE06D2635DD8E00CE2D77 /* XZKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 29ABE0572635DA2400CE2D77 /* XZKit.framework */; };
 		29ABE07C2635DDC600CE2D77 /* XZKitUITests.m in Sources */ = {isa = PBXBuildFile; fileRef = 29ABE07B2635DDC600CE2D77 /* XZKitUITests.m */; };
@@ -98,6 +100,13 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
+		2944431326EFA737009C1D27 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 29ABE04E2635DA2400CE2D77 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 29ABE0562635DA2400CE2D77;
+			remoteInfo = XZKit;
+		};
 		29ABE06E2635DD8E00CE2D77 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 29ABE04E2635DA2400CE2D77 /* Project object */;
@@ -114,6 +123,7 @@
 			dstPath = "";
 			dstSubfolderSpec = 10;
 			files = (
+				2944431226EFA737009C1D27 /* XZKit.framework in Embed Frameworks */,
 			);
 			name = "Embed Frameworks";
 			runOnlyForDeploymentPostprocessing = 0;
@@ -256,6 +266,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				2944431126EFA737009C1D27 /* XZKit.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -603,6 +614,7 @@
 			buildRules = (
 			);
 			dependencies = (
+				2944431426EFA737009C1D27 /* PBXTargetDependency */,
 			);
 			name = XZKitDemo;
 			productName = XZKitDemo;
@@ -762,6 +774,11 @@
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
+		2944431426EFA737009C1D27 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 29ABE0562635DA2400CE2D77 /* XZKit */;
+			targetProxy = 2944431326EFA737009C1D27 /* PBXContainerItemProxy */;
+		};
 		29ABE06F2635DD8E00CE2D77 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			target = 29ABE0562635DA2400CE2D77 /* XZKit */;

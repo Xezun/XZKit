@@ -68,14 +68,13 @@ FOUNDATION_EXPORT const unsigned char XZKitVersionString[];
 //// MARK: - DataCryptor
 //#import <XZKit/XZDataCryptor.h>
 //
-//// MARK: - Image
-//#import <XZKit/XZImage.h>
-//#import <XZKit/UIImage+XZImage.h>
-//
-//// MARK: - Color
-//#import <XZKit/XZColor.h>
-//#import <XZKit/UIColor+XZColor.h>
-//
+// MARK: - Image
+#import <XZKit/XZImage.h>
+
+// MARK: - Color
+#import <XZKit/XZColor.h>
+#import <XZKit/UIColor+XZColor.h>
+
 //// MARK: - AppLanguage
 //#import <XZKit/XZAppLanguage.h>
 //#import <XZKit/NSBundle+XZAppLanguage.h>

@@ -138,10 +138,8 @@
         self->_isProcessing = NO;
     });
     
-    XZImageLevels levels = XZImageLevelsMake(shadows, midtones, highlights);
-    self.imageView.image = [self.image.image xz_imageByFilteringImageLevels:levels];
-    
-//    self.imageView.image = [self.image xz_imageByFilteringBrightness:shadows];
+    XZImageLevelsInput input = XZImageLevelsInputMake(shadows, midtones, highlights);
+    self.imageView.image = [self.image.image xz_imageByFilteringLevelsInput:input output:(XZImageLevelsOutputIdentity) inChannels:(XZColorChannelsRGBA)];
 }
 
 - (IBAction)recoverImageLevelsButtonAction:(id)sender {
@@ -210,7 +208,7 @@
     
     UIColor *color = rgb(arc4random());
     self.navigationController.navigationBar.tintColor = color;
-    self.imageView.image = [[UIImage imageNamed:@"icon_star"] xz_imageByBlendingColor:color];
+    self.imageView.image = [[UIImage imageNamed:@"icon_star"] xz_imageByBlendingTintColor:color];
 }
 
 
