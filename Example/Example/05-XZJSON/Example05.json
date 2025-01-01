@@ -1,0 +1,21 @@
+{
+    "id": "0",
+    "name": "Smith",
+    "age": 50,
+    "school.name": "No. 1 Middle School",
+    "students": [
+        {
+            "id": "1",
+            "name": "Peter",
+            "age": 20
+        }, {
+            "identifier": "2",
+            "name": "Jim",
+            "age": 21
+        }, {
+            "_id": "3",
+            "name": "Lily",
+            "age": 19
+        }
+    ]
+}

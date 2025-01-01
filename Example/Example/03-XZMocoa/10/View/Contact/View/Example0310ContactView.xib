@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="21507" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
+    <device id="retina6_12" orientation="portrait" appearance="light"/>
+    <dependencies>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="21505"/>
+        <capability name="Safe area layout guides" minToolsVersion="9.0"/>
+        <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
+    </dependencies>
+    <objects>
+        <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner"/>
+        <placeholder placeholderIdentifier="IBFirstResponder" id="-2" customClass="UIResponder"/>
+        <view contentMode="scaleToFill" id="iN0-l3-epB" customClass="Example0310ContactView">
+            <rect key="frame" x="0.0" y="0.0" width="393" height="205"/>
+            <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+            <subviews>
+                <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="FG1-mE-Qun">
+                    <rect key="frame" x="0.0" y="0.0" width="393" height="205"/>
+                    <subviews>
+                        <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="person.circle" catalog="system" translatesAutoresizingMaskIntoConstraints="NO" id="lzH-fn-cZq">
+                            <rect key="frame" x="20" y="21" width="80" height="78.666666666666671"/>
+                            <constraints>
+                                <constraint firstAttribute="width" constant="80" id="6Dl-jm-brn"/>
+                                <constraint firstAttribute="height" constant="80" id="bu8-bh-dHD"/>
+                            </constraints>
+                        </imageView>
+                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="姓名" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="8kr-DU-OdS">
+                            <rect key="frame" x="110" y="30" width="273" height="21"/>
+                            <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                            <nil key="textColor"/>
+                            <nil key="highlightedColor"/>
+                        </label>
+                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="13888888888" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Myh-vn-eLF">
+                            <rect key="frame" x="110" y="71" width="273" height="18"/>
+                            <fontDescription key="fontDescription" type="system" pointSize="15"/>
+                            <nil key="textColor"/>
+                            <nil key="highlightedColor"/>
+                        </label>
+                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="地址" textAlignment="natural" lineBreakMode="tailTruncation" numberOfLines="9" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="33o-cG-vU7">
+                            <rect key="frame" x="20" y="110" width="353" height="75"/>
+                            <fontDescription key="fontDescription" type="system" pointSize="15"/>
+                            <color key="textColor" white="0.33333333329999998" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                            <nil key="highlightedColor"/>
+                        </label>
+                    </subviews>
+                    <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                    <constraints>
+                        <constraint firstItem="33o-cG-vU7" firstAttribute="leading" secondItem="FG1-mE-Qun" secondAttribute="leading" constant="20" id="BCe-lY-iph"/>
+                        <constraint firstItem="Myh-vn-eLF" firstAttribute="top" secondItem="8kr-DU-OdS" secondAttribute="bottom" constant="20" id="ECW-GO-sP6"/>
+                        <constraint firstAttribute="bottom" secondItem="33o-cG-vU7" secondAttribute="bottom" constant="20" id="EEi-5V-gZB"/>
+                        <constraint firstAttribute="trailing" secondItem="33o-cG-vU7" secondAttribute="trailing" constant="20" id="FkK-aW-lnr"/>
+                        <constraint firstItem="lzH-fn-cZq" firstAttribute="leading" secondItem="FG1-mE-Qun" secondAttribute="leading" constant="20" id="Gtu-o0-5qZ"/>
+                        <constraint firstItem="lzH-fn-cZq" firstAttribute="top" secondItem="FG1-mE-Qun" secondAttribute="top" constant="20" id="LBc-Ct-rYN"/>
+                        <constraint firstAttribute="trailing" secondItem="Myh-vn-eLF" secondAttribute="trailing" constant="10" id="R61-G8-n6D"/>
+                        <constraint firstItem="Myh-vn-eLF" firstAttribute="leading" secondItem="lzH-fn-cZq" secondAttribute="trailing" constant="10" id="Vye-yO-Ldk"/>
+                        <constraint firstItem="8kr-DU-OdS" firstAttribute="top" secondItem="FG1-mE-Qun" secondAttribute="top" constant="30" id="Y3c-VE-PAY"/>
+                        <constraint firstItem="33o-cG-vU7" firstAttribute="top" secondItem="lzH-fn-cZq" secondAttribute="bottom" constant="10" id="dgW-BC-s1X"/>
+                        <constraint firstItem="8kr-DU-OdS" firstAttribute="leading" secondItem="lzH-fn-cZq" secondAttribute="trailing" constant="10" id="prV-Zs-nGc"/>
+                        <constraint firstAttribute="trailing" secondItem="8kr-DU-OdS" secondAttribute="trailing" constant="10" id="sgr-zM-qmq"/>
+                    </constraints>
+                </view>
+            </subviews>
+            <viewLayoutGuide key="safeArea" id="HlG-0z-fm8"/>
+            <constraints>
+                <constraint firstItem="FG1-mE-Qun" firstAttribute="top" secondItem="iN0-l3-epB" secondAttribute="top" id="2ia-f0-Koz"/>
+                <constraint firstItem="FG1-mE-Qun" firstAttribute="leading" secondItem="HlG-0z-fm8" secondAttribute="leading" id="ZXf-ow-jda"/>
+                <constraint firstItem="FG1-mE-Qun" firstAttribute="trailing" secondItem="HlG-0z-fm8" secondAttribute="trailing" id="kx1-bt-UNK"/>
+                <constraint firstItem="HlG-0z-fm8" firstAttribute="bottom" secondItem="FG1-mE-Qun" secondAttribute="bottom" id="ob4-8l-gCN"/>
+            </constraints>
+            <freeformSimulatedSizeMetrics key="simulatedDestinationMetrics"/>
+            <connections>
+                <outlet property="addressLabel" destination="33o-cG-vU7" id="H5O-3l-msC"/>
+                <outlet property="nameLabel" destination="8kr-DU-OdS" id="gsG-3L-NDX"/>
+                <outlet property="phoneLabel" destination="Myh-vn-eLF" id="NM1-Cf-K57"/>
+                <outlet property="photoImageView" destination="lzH-fn-cZq" id="gjw-Z1-L4m"/>
+                <outlet property="wrapperView" destination="FG1-mE-Qun" id="d3z-kZ-iNU"/>
+            </connections>
+            <point key="canvasLocation" x="109.16030534351144" y="150.35211267605635"/>
+        </view>
+    </objects>
+    <resources>
+        <image name="person.circle" catalog="system" width="128" height="123"/>
+    </resources>
+</document>
