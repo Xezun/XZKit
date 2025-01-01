@@ -24,7 +24,16 @@ let package = Package(
             targets: ["XZML"]),
         .library(
             name: "XZJSON",
-            targets: ["XZJSON"])
+            targets: ["XZJSON"]),
+        .library(
+            name: "XZRefresh",
+            targets: ["XZRefresh"]),
+        .library(
+            name: "XZPageView",
+            targets: ["XZPageView"]),
+        .library(
+            name: "XZPageControl",
+            targets: ["XZPageControl"])
     ],
     dependencies: [
         // Dependencies declare other packages that this package depends on.
@@ -93,6 +102,45 @@ let package = Package(
             publicHeadersPath: "Headers/XZJSON/Public",
             cSettings: [
                 .headerSearchPath("Headers/XZJSON/Private")
+            ],
+            cxxSettings: [
+                .define("XZ_FRAMEWORK")
+            ]
+        ),
+        .target(
+            name: "XZRefresh",
+            dependencies: ["XZDefines"],
+            path: "XZKit",
+            sources: ["Code/XZRefresh"],
+            publicHeadersPath: "Headers/XZRefresh/Public",
+            cSettings: [
+                .headerSearchPath("Headers/XZRefresh/Private")
+            ],
+            cxxSettings: [
+                .define("XZ_FRAMEWORK")
+            ]
+        ),
+        .target(
+            name: "XZPageView",
+            dependencies: ["XZDefines"],
+            path: "XZKit",
+            sources: ["Code/XZPageView"],
+            publicHeadersPath: "Headers/XZPageView/Public",
+            cSettings: [
+                .headerSearchPath("Headers/XZPageView/Private")
+            ],
+            cxxSettings: [
+                .define("XZ_FRAMEWORK")
+            ]
+        ),
+        .target(
+            name: "XZPageControl",
+            dependencies: [],
+            path: "XZKit",
+            sources: ["Code/XZPageControl"],
+            publicHeadersPath: "Headers/XZPageControl/Public",
+            cSettings: [
+                .headerSearchPath("Headers/XZPageControl/Private")
             ],
             cxxSettings: [
                 .define("XZ_FRAMEWORK")
