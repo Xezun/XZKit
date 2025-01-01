@@ -81,6 +81,29 @@ Pod::Spec.new do |s|
     'XZUtils' => []
   }, []
 
+  s.defineSubspec 'XZExtensions', {
+    'CAAnimation'         => [],
+    'CALayer'             => [],
+    'NSArray'             => [],
+    'NSAttributedString'  => ["XZKit/XZExtensions/NSString"],
+    'NSBundle'            => [],
+    'NSCharacterSet'      => [],
+    'NSData'              => [],
+    'NSDictionary'        => ["XZKit/XZExtensions/NSString", "XZKit/XZExtensions/NSArray"],
+    'NSIndexSet'          => [],
+    'NSObject'            => ["XZKit/XZExtensions/NSArray"],
+    'NSString'            => ["XZKit/XZExtensions/NSCharacterSet", "XZKit/XZExtensions/NSData"],
+    'UIApplication'       => [],
+    'UIBezierPath'        => [],
+    'UIColor'             => ["XZKit/XZDefines/XZMacro"],
+    'UIDevice'            => ["XZKit/XZDefines/XZDefer"],
+    'UIFont'              => ["XZKit/XZDefines/XZDefer"],
+    'UIView'              => [],
+    'UIImage'             => ["XZKit/XZDefines/XZDefer"],
+    'UIViewController'    => ["XZKit/XZExtensions/UIApplication", "XZKit/XZDefines/XZRuntime"],
+    'XZShapeView'         => [],
+  }, ["XZKit/XZDefines"]
+
 
 end
 
