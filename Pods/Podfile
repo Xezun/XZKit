@@ -1,0 +1,32 @@
+use_frameworks!
+
+platform :ios, '12.0'
+#inhibit_all_warnings!
+
+workspace '../XZKit.xcworkspace'
+project '../Example/Example.xcodeproj'
+
+target 'Example' do
+
+  pod 'XZDefines', :path => '../'
+  pod 'XZExtensions', :path => '../'
+  pod 'XZMocoa', :path => '../'
+  pod 'XZML', :path => '../'
+  pod 'XZJSON', :path => '../'
+  pod 'XZPageView', :path => '../'
+  pod 'XZPageControl', :path => '../'
+  pod 'XZRefresh', :path => '../'
+  pod 'XZSegmentedControl', :path => '../'
+  
+  pod 'SDWebImage'
+#  pod 'AFNetworking'
+  
+  target 'ExampleTests' do
+    inherit! :search_paths
+  end
+
+  target 'ExampleUITests' do
+    inherit! :search_paths
+  end
+  
+end

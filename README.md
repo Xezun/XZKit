@@ -1,13 +1,13 @@
 # XZKit
 
-[![Build](https://img.shields.io/badge/build-pass-brightgreen.svg)](https://cocoapods.org/pods/XZKit)
-[![Version](https://img.shields.io/badge/Version-4.2.7-blue.svg?style=flat)](http://cocoapods.org/pods/XZKit)
-[![License](https://img.shields.io/badge/License-MIT-green.svg)](http://cocoapods.org/pods/XZKit)
-[![Platform](https://img.shields.io/badge/Platform-iOS-yellow.svg)](http://cocoapods.org/pods/XZKit)
+[![CI Status](https://img.shields.io/badge/Build-pass-brightgreen.svg)](https://cocoapods.org/pods/XZKit)
+[![Version](https://img.shields.io/cocoapods/v/XZKit.svg?style=flat)](https://cocoapods.org/pods/XZKit)
+[![License](https://img.shields.io/cocoapods/l/XZKit.svg?style=flat)](https://cocoapods.org/pods/XZKit)
+[![Platform](https://img.shields.io/cocoapods/p/XZKit.svg?style=flat)](https://cocoapods.org/pods/XZKit)
 
 ## 环境需求
 
-iOS 8.0, Swift 4.2, Xcode 10.0.
+iOS 12.0, Swift 5.0, Xcode 16.0.
 
 ## 安装集成
 
@@ -17,51 +17,13 @@ iOS 8.0, Swift 4.2, Xcode 10.0.
 pod "XZKit"
 ```
 
-只使用其中某一个子模块，如只使用轮播视图子模块。
-
-```ruby
-pod "XZKit/CarouselView"
-```
-
 ## 组件
-
-### [轮播视图：CarouselView](./Documentation/CarouselView)
-
-使用三图轮播机制设计的 `XZCarouselView` 控件，并且默认提供了无限轮播、自动轮播、手势缩放等功能；提供了获取轮播图滚动进度的接口，更方便做关联的渐变动画。
-并且默认实现了图片轮播的控件 `XZImageCarouselView` 和类似微信朋友圈的大图查看的控件 `XZImageViewer` ，方便开发者直接使用。
-
-<img src="https://github.com/mlibai/static-resources/blob/master/XZKit/Documentation/CarouselView/1.gif" alt="XZKit.CarouselView" width="240"></img>
-<img src="https://github.com/mlibai/static-resources/blob/master/XZKit/Documentation/CarouselView/2.gif" alt="XZKit.CarouselView" width="240"></img>
-<img src="https://github.com/mlibai/static-resources/blob/master/XZKit/Documentation/CarouselView/3.gif" alt="XZKit.CarouselView" width="240"></img>
-
-### [自定义流布局：XZKit.UICollectionViewFlowLayout](./Documentation/UICollectionViewFlowLayout)
-
-支持功能：水平滚动、垂直滚动、行对齐方式、垂直对齐方式、自适语言的应布局方向。
-
-<img src="https://github.com/mlibai/static-resources/blob/master/XZKit/Documentation/UICollectionViewFlowLayout/UICollectionViewFlowLayout.gif" alt="XZKit.UICollectionViewFlowLayout" width="240"></img>
-  
 
 ### [App 语言：AppLanguage](./Documentation/AppLanguage)
 
 提供了更直观的设置 App 语言的接口，且支持应用内语言切换。
 
-<img src="https://github.com/mlibai/static-resources/blob/master/XZKit/Documentation/AppLanguage/1.gif" alt="XZKit.AppLanguage" width="240"></img>
-
-### [网络层协议：Networking](./Documentation/Networking)
-
-  框架  `XZKit/Networking` 是一个轻量级网络框架，通过一套协议实现了多种常见的网络请求需求：
-  - 请求的并发策略、优先级的控制，可以轻松控制请求的顺序，请求与其它请求之间的关系。
-  - 请求失败时自动重试，且支持重试前延时。
-  - 请求时间限制，与 HTTP 超时不相同，可以控制请求的总时长。
-  - 当控制器销毁时，自动取消仍在进行的请求（控制器为请求的所有者时）。
-
-### [进度条：ProgressView](./Documentation/ProgressView)
-
-支持任意弧度的圆形进度条和任意角度的直线形进度条。
-
-### [计时器：DisplayTimer](./Documentation/DisplayTimer)
-
-使用 CADisplayLink 实现的计时器。
+<img src="./Documentation/AppLanguage/1.gif" alt="XZKit.AppLanguage" width="240"></img>
 
 ### [控制重定向：AppRedirection](./Documentation/AppRedirection)
 
@@ -70,6 +32,15 @@ pod "XZKit/CarouselView"
 ### [缓存管理：CacheManager](./Documentation/CacheManager)
 
 目前该模块只是提供将数据缓存到沙盒 Caches 目录的功能，更多的缓存机制有待开发。
+
+### [轮播视图：CarouselView](./Documentation/CarouselView)
+
+使用三图轮播机制设计的 `XZCarouselView` 控件，并且默认提供了无限轮播、自动轮播、手势缩放等功能；提供了获取轮播图滚动进度的接口，更方便做关联的渐变动画。
+并且默认实现了图片轮播的控件 `XZImageCarouselView` 和类似微信朋友圈的大图查看的控件 `XZImageViewer` ，方便开发者直接使用。
+
+<img src="./Documentation/CarouselView/1.gif" alt="XZKit.CarouselView" width="240"></img>
+<img src="./Documentation/CarouselView/2.gif" alt="XZKit.CarouselView" width="240"></img>
+<img src="./Documentation/CarouselView/3.gif" alt="XZKit.CarouselView" width="240"></img>
 
 ### [内容状态：ContentStatus](./Documentation/ContentStatus)
 
@@ -89,8 +60,31 @@ pod "XZKit/CarouselView"
 
 ### [自定义导航条、全屏手势导航控制器：NavigationController](./Documentation/NavigationController)
 
+### [网络层协议：Networking](./Documentation/Networking)
+
+  框架  `XZKit/Networking` 是一个轻量级网络框架，通过一套协议实现了多种常见的网络请求需求：
+  - 请求的并发策略、优先级的控制，可以轻松控制请求的顺序，请求与其它请求之间的关系。
+  - 请求失败时自动重试，且支持重试前延时。
+  - 请求时间限制，与 HTTP 超时不相同，可以控制请求的总时长。
+  - 当控制器销毁时，自动取消仍在进行的请求（控制器为请求的所有者时）。
+
+### [进度条：ProgressView](./Documentation/ProgressView)
+
+支持任意弧度的圆形进度条和任意角度的直线形进度条。
+
+### [计时器：DisplayTimer](./Documentation/DisplayTimer)
+
+使用 CADisplayLink 实现的计时器。
+
 ### [文本图片视图：TextImageView](./Documentation/TextImageView)
 
+
+### [自定义流布局：XZKit.UICollectionViewFlowLayout](./Documentation/UICollectionViewFlowLayout)
+
+支持功能：水平滚动、垂直滚动、行对齐方式、垂直对齐方式、自适语言的应布局方向。
+
+<img src="./Documentation/UICollectionViewFlowLayout/UICollectionViewFlowLayout.gif" alt="XZKit.UICollectionViewFlowLayout" width="240"></img>
+  
 
 ### [公共部分：UIKit](./Documentation/UIKit)
 
@@ -101,10 +95,6 @@ pod "XZKit/CarouselView"
 所有组件都有单独的[示例代码](./Projects/Example)，下载到本地后，代码运行前需在 Pod 目录执行 `pod update` 安装相关依赖。
 
 ## 更新日志
-
-- 2019.04.28
-
-  优化 Git 仓库体积，删除了所有历史提交记录及旧版本，删除体积较大的资源图片，效果图片分离到单独的 static-resources 仓库，尽量保持本仓库较小，减少 Cocoapods 拉取本库的用时。
 
 - 2019.04.16
 
