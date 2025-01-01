@@ -12,7 +12,7 @@
 - (instancetype)initWithModel:(id)model {
     self = [super initWithModel:model];
     if (self) {
-        [super setFrame:(CGRect){CGPointZero, XZMocoaViewMinimumSize}];
+        [super setFrame:(CGRect){CGPointZero, XZMocoaMinimumViewSize}];
     }
     return self;
 }

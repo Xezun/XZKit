@@ -182,7 +182,7 @@
     XZMocoaTableViewSectionViewModel * const sectionViewModel = [self.viewModel sectionViewModelAtIndex:section];
     XZMocoaTableViewHeaderFooterViewModel * const viewModel = sectionViewModel.headerViewModel;
     if (viewModel == nil) {
-        return XZMocoaViewMinimumDimension;
+        return XZMocoaMinimumViewDimension;
     }
     return viewModel.height;
 }
@@ -202,7 +202,7 @@
     XZMocoaTableViewSectionViewModel * const sectionViewModel = [self.viewModel sectionViewModelAtIndex:section];
     XZMocoaTableViewHeaderFooterViewModel * const viewModel = sectionViewModel.footerViewModel;
     if (viewModel == nil) {
-        return XZMocoaViewMinimumDimension;
+        return XZMocoaMinimumViewDimension;
     }
     return viewModel.height;
 }
