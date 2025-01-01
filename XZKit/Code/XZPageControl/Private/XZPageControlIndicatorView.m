@@ -6,7 +6,7 @@
 //
 
 #import "XZPageControlIndicatorView.h"
-@import XZShapeView;
+@import XZExtensions;
 
 #define XZPageControlAnimationDuration 0.35
 

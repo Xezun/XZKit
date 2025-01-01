@@ -28,6 +28,7 @@ typedef NS_ENUM(NSUInteger, XZRefreshAdjustment) {
 
 /// 在使用 XZRefresh 时，除 target-action 方式外，还可通过此协议接收刷新事件。
 /// @note 本协议与 UIScrollViewDelegate 协议使用同一事件接收者，即为 UIScrollView 的属性 delegate 对象。
+NS_SWIFT_UI_ACTOR
 @protocol XZRefreshDelegate <UIScrollViewDelegate>
 @optional
 /// 当头部视图开始动画时，此方法会被调用。

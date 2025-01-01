@@ -15,7 +15,7 @@ NS_ASSUME_NONNULL_BEGIN
 @class XZMocoaTableViewModel;
 
 /// 视图模型发送的事件。
-@protocol XZMocoaTableViewModelDelegate <XZMocoaListViewModelDelegate>
+NS_SWIFT_UI_ACTOR @protocol XZMocoaTableViewModelDelegate <XZMocoaListViewModelDelegate>
 
 @required
 - (void)tableViewModel:(XZMocoaTableViewModel *)tableViewModel didReloadData:(void * _Nullable)null;

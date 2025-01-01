@@ -33,7 +33,10 @@ let package = Package(
             targets: ["XZPageView"]),
         .library(
             name: "XZPageControl",
-            targets: ["XZPageControl"])
+            targets: ["XZPageControl"]),
+        .library(
+            name: "XZSegmentedControl",
+            targets: ["XZSegmentedControl"])
     ],
     dependencies: [
         // Dependencies declare other packages that this package depends on.
@@ -135,12 +138,25 @@ let package = Package(
         ),
         .target(
             name: "XZPageControl",
-            dependencies: [],
+            dependencies: ["XZExtensions"],
             path: "XZKit",
             sources: ["Code/XZPageControl"],
             publicHeadersPath: "Headers/XZPageControl/Public",
             cSettings: [
                 .headerSearchPath("Headers/XZPageControl/Private")
+            ],
+            cxxSettings: [
+                .define("XZ_FRAMEWORK")
+            ]
+        ),
+        .target(
+            name: "XZSegmentedControl",
+            dependencies: [],
+            path: "XZKit",
+            sources: ["Code/XZSegmentedControl"],
+            publicHeadersPath: "Headers/XZSegmentedControl/Public",
+            cSettings: [
+                .headerSearchPath("Headers/XZSegmentedControl/Private")
             ],
             cxxSettings: [
                 .define("XZ_FRAMEWORK")

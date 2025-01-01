@@ -24,5 +24,6 @@
 #import "UIImage+XZKit.h"
 #import "UIView+XZKit.h"
 #import "UIViewController+XZKit.h"
+#import "XZShapeView.h"
 
 

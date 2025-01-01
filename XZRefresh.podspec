@@ -8,7 +8,7 @@
 
 Pod::Spec.new do |s|
   s.name             = 'XZRefresh'
-  s.version          = '1.2.0'
+  s.version          = '10.0.0'
   s.summary          = '迄今为止 iOS 最流畅的下拉刷新、上拉加载组件'
 
 # This description is used to generate tags and improve search results.
@@ -21,11 +21,11 @@ Pod::Spec.new do |s|
   XZRefresh 采用了更科学的设计方式，不仅比其它下拉刷新组件更流畅，而且还支持支持拓展，方便开发者完全自定义下拉刷新的样式。
                        DESC
 
-  s.homepage         = 'https://github.com/Xezun/XZRefresh'
+  s.homepage         = 'https://github.com/Xezun/XZKit'
   # s.screenshots     = 'www.example.com/screenshots_1', 'www.example.com/screenshots_2'
   s.license          = { :type => 'MIT', :file => 'LICENSE' }
-  s.author           = { 'Xezun' => 'developer@xezun.com' }
-  s.source           = { :git => 'https://github.com/Xezun/XZRefresh.git', :tag => s.version.to_s }
+  s.author           = { 'Xezun' => 'xezun@icloud.com' }
+  s.source           = { :git => 'https://github.com/Xezun/XZKit.git', :tag => s.version.to_s }
   # s.social_media_url = 'https://twitter.com/<TWITTER_USERNAME>'
 
   s.ios.deployment_target = '12.0'
@@ -34,8 +34,8 @@ Pod::Spec.new do |s|
   s.default_subspec = 'Code'
   
   s.subspec 'Code' do |ss|
-    ss.source_files = 'XZRefresh/Code/**/*.{h,m}'
-    ss.project_header_files = 'XZRefresh/Code/**/Private/*.h'
+    ss.source_files = 'XZKit/Code/XZRefresh/**/*.{h,m}'
+    ss.project_header_files = 'XZKit/Code/XZRefresh/**/Private/*.h'
     ss.dependency 'XZDefines/XZRuntime'
   end
   

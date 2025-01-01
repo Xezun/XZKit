@@ -14,7 +14,7 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-@protocol XZMocoaListViewModelDelegate <NSObject>
+NS_SWIFT_UI_ACTOR @protocol XZMocoaListViewModelDelegate <NSObject>
 @end
 
 /// 具有列表形式视图的一般视图模型。

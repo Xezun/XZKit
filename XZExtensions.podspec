@@ -79,6 +79,7 @@ Pod::Spec.new do |s|
   s.defineSubspec 'UIView',             [];
   s.defineSubspec 'UIImage',            ["XZDefines/XZDefer"];
   s.defineSubspec 'UIViewController',   ["XZExtensions/UIApplication", "XZDefines/XZRuntime"];
+  s.defineSubspec 'XZShapeView',        [];
 
 end
 

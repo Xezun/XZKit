@@ -35,8 +35,8 @@ Pod::Spec.new do |s|
   s.dependency 'XZExtensions/UIColor'
   
   s.subspec 'Code' do |ss|
-    ss.source_files = 'XZKit/Code/XZDefines/**/*.{h,m}'
-    ss.private_header_files = 'XZKit/Code/XZDefines/**/Core/*.h'
+    ss.source_files = 'XZKit/Code/XZML/**/*.{h,m}'
+    ss.private_header_files = 'XZKit/Code/XZML/**/Core/*.h'
   end
   
   # s.resource_bundles = {

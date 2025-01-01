@@ -13,9 +13,12 @@ target 'Example' do
   pod 'XZMocoa', :path => '../'
   pod 'XZML', :path => '../'
   pod 'XZJSON', :path => '../'
+  pod 'XZPageView', :path => '../'
+  pod 'XZPageControl', :path => '../'
+  pod 'XZRefresh', :path => '../'
+  pod 'XZSegmentedControl', :path => '../'
   
-#  pod 'SDWebImage'
-#  pod 'YYModel'
+  pod 'SDWebImage'
 #  pod 'AFNetworking'
   
   target 'ExampleTests' do

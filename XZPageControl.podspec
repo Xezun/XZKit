@@ -8,7 +8,7 @@
 
 Pod::Spec.new do |s|
   s.name             = 'XZPageControl'
-  s.version          = '2.1.0'
+  s.version          = '10.0.0'
   s.summary          = '一款支持自由定制外观的、类似于 UIPageControl 的视图控件。'
 
 # This description is used to generate tags and improve search results.
@@ -23,20 +23,20 @@ Pod::Spec.new do |s|
   并且每一个指示器还支持单独设置样式。
   DESC
 
-  s.homepage         = 'https://github.com/Xezun/XZPageControl'
+  s.homepage         = 'https://github.com/Xezun/XZKit'
   # s.screenshots     = 'www.example.com/screenshots_1', 'www.example.com/screenshots_2'
   s.license          = { :type => 'MIT', :file => 'LICENSE' }
-  s.author           = { 'Xezun' => 'developer@xezun.com' }
-  s.source           = { :git => 'https://github.com/Xezun/XZPageControl.git', :tag => s.version.to_s }
+  s.author           = { 'Xezun' => 'xezun@icloud.com' }
+  s.source           = { :git => 'https://github.com/Xezun/XZKit.git', :tag => s.version.to_s }
   # s.social_media_url = 'https://twitter.com/<TWITTER_USERNAME>'
 
   s.ios.deployment_target = '12.0'
   s.pod_target_xcconfig = { 'GCC_PREPROCESSOR_DEFINITIONS' => 'XZ_FRAMEWORK=1' }
   
   s.subspec 'Code' do |ss|
-    ss.dependency 'XZShapeView'
-    ss.source_files = 'XZPageControl/Code/**/*.{h,m}'
-    ss.project_header_files = 'XZPageControl/Code/**/Private/*.h'
+    ss.dependency 'XZExtensions/XZShapeView'
+    ss.source_files = 'XZKit/Code/XZPageControl/**/*.{h,m}'
+    ss.project_header_files = 'XZKit/Code/XZPageControl/**/Private/*.h'
   end
   
   # s.resource_bundles = {

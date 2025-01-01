@@ -8,6 +8,28 @@
 
 /* Begin PBXBuildFile section */
 		01C91114C6D30DAA909EB169 /* Pods_Example.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 055F0304DE9A092BAF52FF06 /* Pods_Example.framework */; };
+		292A5A472D254D010037579D /* Example04ViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 292A5A462D254D010037579D /* Example04ViewController.m */; };
+		292A5A482D254D010037579D /* Example04FontSizeViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 292A5A402D254D010037579D /* Example04FontSizeViewController.m */; };
+		292A5A492D254D010037579D /* Example04SettingsViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 292A5A422D254D010037579D /* Example04SettingsViewController.m */; };
+		292A5A4A2D254D010037579D /* Example04FontNameViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 292A5A3E2D254D010037579D /* Example04FontNameViewController.m */; };
+		292A5A4B2D254D010037579D /* Example04TestViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 292A5A442D254D010037579D /* Example04TestViewController.m */; };
+		292A5A512D254F6A0037579D /* Example05TestModels.m in Sources */ = {isa = PBXBuildFile; fileRef = 292A5A4E2D254F6A0037579D /* Example05TestModels.m */; };
+		292A5A522D254F6A0037579D /* Example05TestViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 292A5A502D254F6A0037579D /* Example05TestViewController.m */; };
+		292A5A542D255DC50037579D /* Example05.json in Resources */ = {isa = PBXBuildFile; fileRef = 292A5A532D255DC50037579D /* Example05.json */; };
+		292A5A5E2D25616D0037579D /* Example06ViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 292A5A5D2D25616D0037579D /* Example06ViewController.m */; };
+		292A5A5F2D25616D0037579D /* Example06RefreshSettingsViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 292A5A592D25616D0037579D /* Example06RefreshSettingsViewController.m */; };
+		292A5A602D25616D0037579D /* Example06SettingsViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 292A5A5B2D25616D0037579D /* Example06SettingsViewController.m */; };
+		292A5A652D2563E20037579D /* Example07Test01ViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 292A5A622D2563E20037579D /* Example07Test01ViewController.m */; };
+		292A5A662D2563E20037579D /* Example07Test02ViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 292A5A642D2563E20037579D /* Example07Test02ViewController.m */; };
+		292A5A6A2D25685C0037579D /* Example08TestViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 292A5A692D25685C0037579D /* Example08TestViewController.m */; };
+		292A5A732D256A240037579D /* Example09Test02ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 292A5A722D256A240037579D /* Example09Test02ViewController.swift */; };
+		292A5A742D256A240037579D /* Example09SettingsImageSelectViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 292A5A6D2D256A240037579D /* Example09SettingsImageSelectViewController.swift */; };
+		292A5A752D256A240037579D /* Example09SegmentedControlIndicator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 292A5A6B2D256A240037579D /* Example09SegmentedControlIndicator.swift */; };
+		292A5A762D256A240037579D /* Example09SettingsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 292A5A702D256A240037579D /* Example09SettingsViewController.swift */; };
+		292A5A772D256A240037579D /* Example09SettingsSizeViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 292A5A6F2D256A240037579D /* Example09SettingsSizeViewController.swift */; };
+		292A5A782D256A240037579D /* Example09SettingsColorSelectViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 292A5A6C2D256A240037579D /* Example09SettingsColorSelectViewController.swift */; };
+		292A5A792D256A240037579D /* Example09Test01ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 292A5A712D256A240037579D /* Example09Test01ViewController.swift */; };
+		292A5A7A2D256A240037579D /* Example09SettingsSelectViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 292A5A6E2D256A240037579D /* Example09SettingsSelectViewController.swift */; };
 		292C15412D25163700E465BF /* Example0202ViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 292C15402D25163700E465BF /* Example0202ViewController.m */; };
 		292C15422D25163700E465BF /* Example0201ViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 292C153E2D25163700E465BF /* Example0201ViewController.m */; };
 		292C15472D25182000E465BF /* ExampleNavigationController.m in Sources */ = {isa = PBXBuildFile; fileRef = 292C15442D25182000E465BF /* ExampleNavigationController.m */; };
@@ -212,6 +234,42 @@
 /* Begin PBXFileReference section */
 		055F0304DE9A092BAF52FF06 /* Pods_Example.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Example.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		2921DE5FDDA8FC1A0BE46778 /* Pods_ExampleUITests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_ExampleUITests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		292A5A3D2D254D010037579D /* Example04FontNameViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Example04FontNameViewController.h; sourceTree = "<group>"; };
+		292A5A3E2D254D010037579D /* Example04FontNameViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = Example04FontNameViewController.m; sourceTree = "<group>"; };
+		292A5A3F2D254D010037579D /* Example04FontSizeViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Example04FontSizeViewController.h; sourceTree = "<group>"; };
+		292A5A402D254D010037579D /* Example04FontSizeViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = Example04FontSizeViewController.m; sourceTree = "<group>"; };
+		292A5A412D254D010037579D /* Example04SettingsViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Example04SettingsViewController.h; sourceTree = "<group>"; };
+		292A5A422D254D010037579D /* Example04SettingsViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = Example04SettingsViewController.m; sourceTree = "<group>"; };
+		292A5A432D254D010037579D /* Example04TestViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Example04TestViewController.h; sourceTree = "<group>"; };
+		292A5A442D254D010037579D /* Example04TestViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = Example04TestViewController.m; sourceTree = "<group>"; };
+		292A5A452D254D010037579D /* Example04ViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Example04ViewController.h; sourceTree = "<group>"; };
+		292A5A462D254D010037579D /* Example04ViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = Example04ViewController.m; sourceTree = "<group>"; };
+		292A5A4D2D254F6A0037579D /* Example05TestModels.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Example05TestModels.h; sourceTree = "<group>"; };
+		292A5A4E2D254F6A0037579D /* Example05TestModels.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = Example05TestModels.m; sourceTree = "<group>"; };
+		292A5A4F2D254F6A0037579D /* Example05TestViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Example05TestViewController.h; sourceTree = "<group>"; };
+		292A5A502D254F6A0037579D /* Example05TestViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = Example05TestViewController.m; sourceTree = "<group>"; };
+		292A5A532D255DC50037579D /* Example05.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = Example05.json; sourceTree = "<group>"; };
+		292A5A582D25616D0037579D /* Example06RefreshSettingsViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Example06RefreshSettingsViewController.h; sourceTree = "<group>"; };
+		292A5A592D25616D0037579D /* Example06RefreshSettingsViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = Example06RefreshSettingsViewController.m; sourceTree = "<group>"; };
+		292A5A5A2D25616D0037579D /* Example06SettingsViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Example06SettingsViewController.h; sourceTree = "<group>"; };
+		292A5A5B2D25616D0037579D /* Example06SettingsViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = Example06SettingsViewController.m; sourceTree = "<group>"; };
+		292A5A5C2D25616D0037579D /* Example06ViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Example06ViewController.h; sourceTree = "<group>"; };
+		292A5A5D2D25616D0037579D /* Example06ViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = Example06ViewController.m; sourceTree = "<group>"; };
+		292A5A612D2563E20037579D /* Example07Test01ViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Example07Test01ViewController.h; sourceTree = "<group>"; };
+		292A5A622D2563E20037579D /* Example07Test01ViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = Example07Test01ViewController.m; sourceTree = "<group>"; };
+		292A5A632D2563E20037579D /* Example07Test02ViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Example07Test02ViewController.h; sourceTree = "<group>"; };
+		292A5A642D2563E20037579D /* Example07Test02ViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = Example07Test02ViewController.m; sourceTree = "<group>"; };
+		292A5A682D25685C0037579D /* Example08TestViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Example08TestViewController.h; sourceTree = "<group>"; };
+		292A5A692D25685C0037579D /* Example08TestViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = Example08TestViewController.m; sourceTree = "<group>"; };
+		292A5A6B2D256A240037579D /* Example09SegmentedControlIndicator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Example09SegmentedControlIndicator.swift; sourceTree = "<group>"; };
+		292A5A6C2D256A240037579D /* Example09SettingsColorSelectViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Example09SettingsColorSelectViewController.swift; sourceTree = "<group>"; };
+		292A5A6D2D256A240037579D /* Example09SettingsImageSelectViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Example09SettingsImageSelectViewController.swift; sourceTree = "<group>"; };
+		292A5A6E2D256A240037579D /* Example09SettingsSelectViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Example09SettingsSelectViewController.swift; sourceTree = "<group>"; };
+		292A5A6F2D256A240037579D /* Example09SettingsSizeViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Example09SettingsSizeViewController.swift; sourceTree = "<group>"; };
+		292A5A702D256A240037579D /* Example09SettingsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Example09SettingsViewController.swift; sourceTree = "<group>"; };
+		292A5A712D256A240037579D /* Example09Test01ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Example09Test01ViewController.swift; sourceTree = "<group>"; };
+		292A5A722D256A240037579D /* Example09Test02ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Example09Test02ViewController.swift; sourceTree = "<group>"; };
+		292A5A7B2D256A2C0037579D /* Example-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "Example-Bridging-Header.h"; sourceTree = "<group>"; };
 		292C153D2D25163700E465BF /* Example0201ViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Example0201ViewController.h; sourceTree = "<group>"; };
 		292C153E2D25163700E465BF /* Example0201ViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = Example0201ViewController.m; sourceTree = "<group>"; };
 		292C153F2D25163700E465BF /* Example0202ViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Example0202ViewController.h; sourceTree = "<group>"; };
@@ -593,16 +651,94 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
-		292C153B2D25145900E465BF /* 01-Defines */ = {
+		292A5A3C2D254B060037579D /* 04-XZML */ = {
+			isa = PBXGroup;
+			children = (
+				292A5A452D254D010037579D /* Example04ViewController.h */,
+				292A5A462D254D010037579D /* Example04ViewController.m */,
+				292A5A432D254D010037579D /* Example04TestViewController.h */,
+				292A5A442D254D010037579D /* Example04TestViewController.m */,
+				292A5A412D254D010037579D /* Example04SettingsViewController.h */,
+				292A5A422D254D010037579D /* Example04SettingsViewController.m */,
+				292A5A3D2D254D010037579D /* Example04FontNameViewController.h */,
+				292A5A3E2D254D010037579D /* Example04FontNameViewController.m */,
+				292A5A3F2D254D010037579D /* Example04FontSizeViewController.h */,
+				292A5A402D254D010037579D /* Example04FontSizeViewController.m */,
+			);
+			path = "04-XZML";
+			sourceTree = "<group>";
+		};
+		292A5A4C2D254F3F0037579D /* 05-XZJSON */ = {
+			isa = PBXGroup;
+			children = (
+				292A5A532D255DC50037579D /* Example05.json */,
+				292A5A4D2D254F6A0037579D /* Example05TestModels.h */,
+				292A5A4E2D254F6A0037579D /* Example05TestModels.m */,
+				292A5A4F2D254F6A0037579D /* Example05TestViewController.h */,
+				292A5A502D254F6A0037579D /* Example05TestViewController.m */,
+			);
+			path = "05-XZJSON";
+			sourceTree = "<group>";
+		};
+		292A5A552D255E530037579D /* 06-XZRefresh */ = {
+			isa = PBXGroup;
+			children = (
+				292A5A582D25616D0037579D /* Example06RefreshSettingsViewController.h */,
+				292A5A592D25616D0037579D /* Example06RefreshSettingsViewController.m */,
+				292A5A5A2D25616D0037579D /* Example06SettingsViewController.h */,
+				292A5A5B2D25616D0037579D /* Example06SettingsViewController.m */,
+				292A5A5C2D25616D0037579D /* Example06ViewController.h */,
+				292A5A5D2D25616D0037579D /* Example06ViewController.m */,
+			);
+			path = "06-XZRefresh";
+			sourceTree = "<group>";
+		};
+		292A5A562D255E660037579D /* 07-XZPageView */ = {
+			isa = PBXGroup;
+			children = (
+				292A5A612D2563E20037579D /* Example07Test01ViewController.h */,
+				292A5A622D2563E20037579D /* Example07Test01ViewController.m */,
+				292A5A632D2563E20037579D /* Example07Test02ViewController.h */,
+				292A5A642D2563E20037579D /* Example07Test02ViewController.m */,
+			);
+			path = "07-XZPageView";
+			sourceTree = "<group>";
+		};
+		292A5A572D255E740037579D /* 08-XZPageControl */ = {
+			isa = PBXGroup;
+			children = (
+				292A5A682D25685C0037579D /* Example08TestViewController.h */,
+				292A5A692D25685C0037579D /* Example08TestViewController.m */,
+			);
+			path = "08-XZPageControl";
+			sourceTree = "<group>";
+		};
+		292A5A672D25653E0037579D /* 09-XZSegmentedControl */ = {
+			isa = PBXGroup;
+			children = (
+				292A5A712D256A240037579D /* Example09Test01ViewController.swift */,
+				292A5A722D256A240037579D /* Example09Test02ViewController.swift */,
+				292A5A6B2D256A240037579D /* Example09SegmentedControlIndicator.swift */,
+				292A5A6C2D256A240037579D /* Example09SettingsColorSelectViewController.swift */,
+				292A5A6D2D256A240037579D /* Example09SettingsImageSelectViewController.swift */,
+				292A5A6E2D256A240037579D /* Example09SettingsSelectViewController.swift */,
+				292A5A6F2D256A240037579D /* Example09SettingsSizeViewController.swift */,
+				292A5A702D256A240037579D /* Example09SettingsViewController.swift */,
+				292A5A7B2D256A2C0037579D /* Example-Bridging-Header.h */,
+			);
+			path = "09-XZSegmentedControl";
+			sourceTree = "<group>";
+		};
+		292C153B2D25145900E465BF /* 01-XZDefines */ = {
 			isa = PBXGroup;
 			children = (
 				29648BE92A72556C0090F445 /* Example0101ViewController.h */,
 				29648BEA2A72556C0090F445 /* Example0101ViewController.m */,
 			);
-			path = "01-Defines";
+			path = "01-XZDefines";
 			sourceTree = "<group>";
 		};
-		292C153C2D25148B00E465BF /* 02-Extensions */ = {
+		292C153C2D25148B00E465BF /* 02-XZExtensions */ = {
 			isa = PBXGroup;
 			children = (
 				292C153D2D25163700E465BF /* Example0201ViewController.h */,
@@ -610,10 +746,10 @@
 				292C153F2D25163700E465BF /* Example0202ViewController.h */,
 				292C15402D25163700E465BF /* Example0202ViewController.m */,
 			);
-			path = "02-Extensions";
+			path = "02-XZExtensions";
 			sourceTree = "<group>";
 		};
-		292C15492D25190B00E465BF /* 03-Mocoa */ = {
+		292C15492D25190B00E465BF /* 03-XZMocoa */ = {
 			isa = PBXGroup;
 			children = (
 				292C17CD2D251FF400E465BF /* Example03ViewController.h */,
@@ -627,7 +763,7 @@
 				292C168B2D251F6D00E465BF /* 30 */,
 				292C17272D251F6D00E465BF /* 31 */,
 			);
-			path = "03-Mocoa";
+			path = "03-XZMocoa";
 			sourceTree = "<group>";
 		};
 		292C154C2D251F6D00E465BF /* Controller */ = {
@@ -2260,9 +2396,15 @@
 				292C15442D25182000E465BF /* ExampleNavigationController.m */,
 				292C15452D25182000E465BF /* ExampleTableViewController.h */,
 				292C15462D25182000E465BF /* ExampleTableViewController.m */,
-				292C153B2D25145900E465BF /* 01-Defines */,
-				292C153C2D25148B00E465BF /* 02-Extensions */,
-				292C15492D25190B00E465BF /* 03-Mocoa */,
+				292C153B2D25145900E465BF /* 01-XZDefines */,
+				292C153C2D25148B00E465BF /* 02-XZExtensions */,
+				292C15492D25190B00E465BF /* 03-XZMocoa */,
+				292A5A3C2D254B060037579D /* 04-XZML */,
+				292A5A4C2D254F3F0037579D /* 05-XZJSON */,
+				292A5A552D255E530037579D /* 06-XZRefresh */,
+				292A5A562D255E660037579D /* 07-XZPageView */,
+				292A5A572D255E740037579D /* 08-XZPageControl */,
+				292A5A672D25653E0037579D /* 09-XZSegmentedControl */,
 				29648BEC2A72556C0090F445 /* Main.storyboard */,
 				29648BEF2A72556E0090F445 /* Assets.xcassets */,
 				29648BF12A72556E0090F445 /* LaunchScreen.storyboard */,
@@ -2384,6 +2526,7 @@
 				TargetAttributes = {
 					29648BDF2A72556C0090F445 = {
 						CreatedOnToolsVersion = 14.2;
+						LastSwiftMigration = 1620;
 					};
 					29648BFA2A72556E0090F445 = {
 						CreatedOnToolsVersion = 14.2;
@@ -2430,6 +2573,7 @@
 				292C17C52D251F6D00E465BF /* Example0312Cell.xib in Resources */,
 				292C17C62D251F6D00E465BF /* Example0310ContactView.xib in Resources */,
 				292C17C72D251F6D00E465BF /* Example0320Group101Cell.xib in Resources */,
+				292A5A542D255DC50037579D /* Example05.json in Resources */,
 				292C17C82D251F6D00E465BF /* Example0322TextCell.xib in Resources */,
 				292C17C92D251F6D00E465BF /* Example0320Group102Cell.xib in Resources */,
 				292C17CA2D251F6D00E465BF /* Example0320Group100Cell.xib in Resources */,
@@ -2546,6 +2690,9 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				292A5A5E2D25616D0037579D /* Example06ViewController.m in Sources */,
+				292A5A5F2D25616D0037579D /* Example06RefreshSettingsViewController.m in Sources */,
+				292A5A602D25616D0037579D /* Example06SettingsViewController.m in Sources */,
 				29648BEB2A72556C0090F445 /* Example0101ViewController.m in Sources */,
 				29648BE52A72556C0090F445 /* ExampleAppDelegate.m in Sources */,
 				29648BF62A72556E0090F445 /* main.m in Sources */,
@@ -2560,6 +2707,11 @@
 				292C172E2D251F6D00E465BF /* Example0330Group106SectionModel.m in Sources */,
 				292C172F2D251F6D00E465BF /* Example0331Group106Cell.m in Sources */,
 				292C17302D251F6D00E465BF /* Example0331Group105CellViewModel.m in Sources */,
+				292A5A472D254D010037579D /* Example04ViewController.m in Sources */,
+				292A5A482D254D010037579D /* Example04FontSizeViewController.m in Sources */,
+				292A5A492D254D010037579D /* Example04SettingsViewController.m in Sources */,
+				292A5A4A2D254D010037579D /* Example04FontNameViewController.m in Sources */,
+				292A5A4B2D254D010037579D /* Example04TestViewController.m in Sources */,
 				292C17312D251F6D00E465BF /* Example0320Group102CellViewModel.m in Sources */,
 				292C17322D251F6D00E465BF /* Example0322TextModel.m in Sources */,
 				292C17332D251F6D00E465BF /* Example0330Group108CellViewModel.m in Sources */,
@@ -2574,7 +2726,19 @@
 				292C173C2D251F6D00E465BF /* Example0330Group100SectionModel.m in Sources */,
 				292C173D2D251F6D00E465BF /* Example0330Group109SectionModel.m in Sources */,
 				292C173E2D251F6D00E465BF /* Example0330Group105SectionModel.m in Sources */,
+				292A5A512D254F6A0037579D /* Example05TestModels.m in Sources */,
+				292A5A522D254F6A0037579D /* Example05TestViewController.m in Sources */,
+				292A5A732D256A240037579D /* Example09Test02ViewController.swift in Sources */,
+				292A5A742D256A240037579D /* Example09SettingsImageSelectViewController.swift in Sources */,
+				292A5A752D256A240037579D /* Example09SegmentedControlIndicator.swift in Sources */,
+				292A5A762D256A240037579D /* Example09SettingsViewController.swift in Sources */,
+				292A5A772D256A240037579D /* Example09SettingsSizeViewController.swift in Sources */,
+				292A5A782D256A240037579D /* Example09SettingsColorSelectViewController.swift in Sources */,
+				292A5A792D256A240037579D /* Example09Test01ViewController.swift in Sources */,
+				292A5A7A2D256A240037579D /* Example09SettingsSelectViewController.swift in Sources */,
 				292C173F2D251F6D00E465BF /* Example0310Model.m in Sources */,
+				292A5A652D2563E20037579D /* Example07Test01ViewController.m in Sources */,
+				292A5A662D2563E20037579D /* Example07Test02ViewController.m in Sources */,
 				292C17402D251F6D00E465BF /* Example0331Group101CellViewModel.m in Sources */,
 				292C17412D251F6D00E465BF /* Example0331Group102CellViewModel.m in Sources */,
 				292C17422D251F6D00E465BF /* Example0330Group103Cell.m in Sources */,
@@ -2707,6 +2871,7 @@
 				292C15412D25163700E465BF /* Example0202ViewController.m in Sources */,
 				292C15422D25163700E465BF /* Example0201ViewController.m in Sources */,
 				29648BE82A72556C0090F445 /* ExampleSceneDelegate.m in Sources */,
+				292A5A6A2D25685C0037579D /* Example08TestViewController.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -2813,7 +2978,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 12.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 15.6;
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
 				MTL_FAST_MATH = YES;
 				ONLY_ACTIVE_ARCH = YES;
@@ -2865,7 +3030,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 12.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 15.6;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				MTL_FAST_MATH = YES;
 				SDKROOT = iphoneos;
@@ -2879,6 +3044,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Manual;
 				CURRENT_PROJECT_VERSION = 1;
@@ -2896,10 +3062,13 @@
 					"@executable_path/Frameworks",
 				);
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = com.xezun.example;
+				PRODUCT_BUNDLE_IDENTIFIER = com.xezun.example.XZKit;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_OBJC_BRIDGING_HEADER = "Example/09-XZSegmentedControl/Example-Bridging-Header.h";
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 6.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Debug;
@@ -2910,6 +3079,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Manual;
 				CURRENT_PROJECT_VERSION = 1;
@@ -2927,10 +3097,12 @@
 					"@executable_path/Frameworks",
 				);
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = com.xezun.example;
+				PRODUCT_BUNDLE_IDENTIFIER = com.xezun.example.XZKit;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_OBJC_BRIDGING_HEADER = "Example/09-XZSegmentedControl/Example-Bridging-Header.h";
+				SWIFT_VERSION = 6.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Release;
@@ -2945,7 +3117,7 @@
 				DEVELOPMENT_TEAM = LWKDD4DJ6H;
 				GENERATE_INFOPLIST_FILE = YES;
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = com.xezun.example.Tests;
+				PRODUCT_BUNDLE_IDENTIFIER = com.xezun.example.XZKit.Tests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = NO;
 				TARGETED_DEVICE_FAMILY = "1,2";
@@ -2963,7 +3135,7 @@
 				DEVELOPMENT_TEAM = LWKDD4DJ6H;
 				GENERATE_INFOPLIST_FILE = YES;
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = com.xezun.example.Tests;
+				PRODUCT_BUNDLE_IDENTIFIER = com.xezun.example.XZKit.Tests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = NO;
 				TARGETED_DEVICE_FAMILY = "1,2";
@@ -2980,7 +3152,7 @@
 				DEVELOPMENT_TEAM = LWKDD4DJ6H;
 				GENERATE_INFOPLIST_FILE = YES;
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = com.xezun.example.UITests;
+				PRODUCT_BUNDLE_IDENTIFIER = com.xezun.example.XZKit.UITests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = NO;
 				TARGETED_DEVICE_FAMILY = "1,2";
@@ -2997,7 +3169,7 @@
 				DEVELOPMENT_TEAM = LWKDD4DJ6H;
 				GENERATE_INFOPLIST_FILE = YES;
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = com.xezun.example.UITests;
+				PRODUCT_BUNDLE_IDENTIFIER = com.xezun.example.XZKit.UITests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = NO;
 				TARGETED_DEVICE_FAMILY = "1,2";

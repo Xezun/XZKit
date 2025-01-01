@@ -8,7 +8,7 @@
 #import <UIKit/UIKit.h>
 
 /// 自定义指示器需要实现的协议。
-@protocol XZPageControlIndicator <NSObject>
+NS_SWIFT_UI_ACTOR @protocol XZPageControlIndicator <NSObject>
 
 /// 指示器是否为当前页的指示器。
 @property (nonatomic, readonly) BOOL isCurrent;

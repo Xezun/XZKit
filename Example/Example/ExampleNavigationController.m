@@ -17,11 +17,11 @@
 - (void)viewDidLoad {
     [super viewDidLoad];
     
-    UIImage *image = [UIImage xz_imageWithColor:UIColor.orangeColor];
+    UIImage *image = [UIImage xz_imageWithColor:UIColor.whiteColor];
     if (@available(iOS 13.0, *)) {
         UINavigationBarAppearance *appearance = [[UINavigationBarAppearance alloc] init];
         appearance.backgroundImage = image;
-        appearance.titleTextAttributes = @{ NSForegroundColorAttributeName: UIColor.whiteColor };
+        appearance.titleTextAttributes = @{ NSForegroundColorAttributeName: UIColor.blackColor };
         self.navigationBar.standardAppearance = appearance;
         self.navigationBar.scrollEdgeAppearance = appearance;
     } else {

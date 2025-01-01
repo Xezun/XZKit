@@ -23,7 +23,7 @@ typedef NS_ENUM(NSUInteger, XZPageViewOrientation) {
 };
 
 /// XZPageView 数据源。
-@protocol XZPageViewDataSource <NSObject>
+NS_SWIFT_UI_ACTOR @protocol XZPageViewDataSource <NSObject>
 
 @required
 /// 在此方法中返回元素的个数。
@@ -48,7 +48,7 @@ typedef NS_ENUM(NSUInteger, XZPageViewOrientation) {
 @end
 
 /// XZPageView 事件方法列表。
-@protocol XZPageViewDelegate <UIScrollViewDelegate>
+NS_SWIFT_UI_ACTOR @protocol XZPageViewDelegate <UIScrollViewDelegate>
 
 @optional
 /// 翻页到某页时，此方法会被调用。
