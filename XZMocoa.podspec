@@ -8,7 +8,7 @@
 
 Pod::Spec.new do |s|
   s.name             = 'XZMocoa'
-  s.version          = '7.0.0'
+  s.version          = '10.0.0'
   s.summary          = 'An iOS MVVM library.'
 
 # This description is used to generate tags and improve search results.

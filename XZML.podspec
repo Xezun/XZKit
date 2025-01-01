@@ -8,7 +8,7 @@
 
 Pod::Spec.new do |s|
   s.name             = 'XZML'
-  s.version          = '7.0.0'
+  s.version          = '10.0.0'
   s.summary          = 'XZML 富文本标记语言'
 
 # This description is used to generate tags and improve search results.

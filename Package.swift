@@ -21,7 +21,10 @@ let package = Package(
             targets: ["XZMocoa"]),
         .library(
             name: "XZML",
-            targets: ["XZML"])
+            targets: ["XZML"]),
+        .library(
+            name: "XZJSON",
+            targets: ["XZJSON"])
     ],
     dependencies: [
         // Dependencies declare other packages that this package depends on.
@@ -77,6 +80,19 @@ let package = Package(
             publicHeadersPath: "Headers/XZML/Public",
             cSettings: [
                 .headerSearchPath("Headers/XZML/Private")
+            ],
+            cxxSettings: [
+                .define("XZ_FRAMEWORK")
+            ]
+        ),
+        .target(
+            name: "XZJSON",
+            dependencies: [],
+            path: "XZKit",
+            sources: ["Code/XZJSON"],
+            publicHeadersPath: "Headers/XZJSON/Public",
+            cSettings: [
+                .headerSearchPath("Headers/XZJSON/Private")
             ],
             cxxSettings: [
                 .define("XZ_FRAMEWORK")

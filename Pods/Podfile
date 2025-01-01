@@ -12,6 +12,7 @@ target 'Example' do
   pod 'XZExtensions', :path => '../'
   pod 'XZMocoa', :path => '../'
   pod 'XZML', :path => '../'
+  pod 'XZJSON', :path => '../'
   
 #  pod 'SDWebImage'
 #  pod 'YYModel'

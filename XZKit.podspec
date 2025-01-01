@@ -10,7 +10,7 @@
 
 Pod::Spec.new do |s|
   s.name             = 'XZKit'
-  s.version          = '2.0.0'
+  s.version          = '10.0.0'
   s.summary          = 'XZKit'
 
 # This description is used to generate tags and improve search results.
