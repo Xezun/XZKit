@@ -1,16 +1,16 @@
 //
-//  XZMocoaDomain.m
+//  XZMocoaModuleDomain.m
 //  XZMocoa
 //
 //  Created by Xezun on 2023/7/29.
 //
 
-#import "XZMocoaDomain.h"
+#import "XZMocoaModuleDomain.h"
 #import "XZMocoaDefines.h"
 
-static NSMutableDictionary<NSString *, XZMocoaDomain *> *_domainTable = nil;
+static NSMutableDictionary<NSString *, XZMocoaModuleDomain *> *_domainTable = nil;
 
-@implementation XZMocoaDomain {
+@implementation XZMocoaModuleDomain {
     // TODO: 缓存过期功能
     NSMutableDictionary<NSString *, id> *_keyedModules;
 }
@@ -23,11 +23,11 @@ static NSMutableDictionary<NSString *, XZMocoaDomain *> *_domainTable = nil;
     return [[self doaminNamed:url.host] moduleForPath:path];
 }
 
-+ (XZMocoaDomain *)doaminForName:(NSString *)name {
++ (XZMocoaModuleDomain *)doaminForName:(NSString *)name {
     return [self doaminNamed:name];
 }
 
-+ (XZMocoaDomain *)doaminNamed:(NSString *)name {
++ (XZMocoaModuleDomain *)doaminNamed:(NSString *)name {
     NSParameterAssert(name && name.length > 0);
     
     static dispatch_once_t onceToken;
@@ -35,9 +35,9 @@ static NSMutableDictionary<NSString *, XZMocoaDomain *> *_domainTable = nil;
         _domainTable = [NSMutableDictionary dictionary];
     });
     
-    XZMocoaDomain *domain = _domainTable[name];
+    XZMocoaModuleDomain *domain = _domainTable[name];
     if (domain == nil) {
-        domain = [[XZMocoaDomain alloc] initWithName:name];
+        domain = [[XZMocoaModuleDomain alloc] initWithName:name];
         _domainTable[name] = domain;
     }
     return domain;
@@ -53,7 +53,7 @@ static NSMutableDictionary<NSString *, XZMocoaDomain *> *_domainTable = nil;
 }
 
 - (id)moduleForPath:(NSString *)path {
-    NSAssert([XZMocoaDomain isValidPath:path], @"参数 path 不合法或不规范：%@", path);
+    NSAssert([XZMocoaModuleDomain isValidPath:path], @"参数 path 不合法或不规范：%@", path);
     
     id module = _keyedModules[path];
     if (module != nil) {
@@ -71,7 +71,7 @@ static NSMutableDictionary<NSString *, XZMocoaDomain *> *_domainTable = nil;
 }
 
 - (void)setModule:(id)module forPath:(NSString *)path {
-    NSAssert([XZMocoaDomain isValidPath:path], @"参数 path 不合法或不规范：%@", path);
+    NSAssert([XZMocoaModuleDomain isValidPath:path], @"参数 path 不合法或不规范：%@", path);
     _keyedModules[path] = module;
 }
 
