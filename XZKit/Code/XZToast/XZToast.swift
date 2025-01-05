@@ -152,72 +152,124 @@ fileprivate class XZToastView : UIView {
             if let toast = self.toast {
                 switch toast {
                 case let .message(text):
-                    textLabel.text = text
-                    if indicator != nil {
-                        indicator!.removeFromSuperview()
-                        indicator = nil
+                    contentView.textLabel.text = text
+                    if contentView.indicator != nil {
+                        contentView.indicator!.removeFromSuperview()
+                        contentView.indicator = nil
                     }
                 case let .loading(text):
-                    if indicator == nil {
-                        indicator = UIActivityIndicatorView.init(style: .medium)
-                        indicator!.frame = CGRect(x: 0, y: 0, width: 50, height: 50)
-                        indicator!.color = .white
-                        self.addSubview(indicator!)
+                    if contentView.indicator == nil {
+                        let indicator = UIActivityIndicatorView.init(style: .medium)
+                        indicator.frame = CGRect(x: 0, y: 0, width: 50.0, height: 50.0)
+                        indicator.color = .white
+                        contentView.indicator = indicator
                     }
-                    indicator!.startAnimating()
-                    textLabel.text = text
+                    contentView.indicator!.startAnimating()
+                    contentView.textLabel.text = text
                 }
             } else {
-                textLabel.text = nil
+                contentView.textLabel.text = nil
             }
         }
     }
     
     var identifier: Int = 0
-    private let textLabel = UILabel.init()
-    private var indicator: UIActivityIndicatorView?
+    
+    private let contentView = ContentView.init()
     
     override init(frame: CGRect) {
         super.init(frame: frame)
         
-        self.backgroundColor = UIColor(white: 0, alpha: 0.8)
-        self.clipsToBounds = true
-        self.layer.cornerRadius = 3.0
+        layer.shadowColor = UIColor.black.cgColor
+        layer.shadowRadius = 3.0
+        layer.shadowOpacity = 0.8
+        layer.shadowOffset = .zero
         
+        contentView.autoresizingMask = [.flexibleWidth, .flexibleHeight]
+        contentView.backgroundColor = UIColor(white: 0, alpha: 0.7)
+        contentView.clipsToBounds = true
+        contentView.layer.cornerRadius = 6.0
+        addSubview(contentView)
+        
+        let textLabel = contentView.textLabel;
         textLabel.textColor = .white
         textLabel.numberOfLines = 5
         textLabel.font = UIFont.systemFont(ofSize: 15.0)
         textLabel.adjustsFontSizeToFitWidth = true
         textLabel.minimumScaleFactor = 0.8
         textLabel.textAlignment = .center
-        addSubview(textLabel)
     }
     
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
     
+    private let edgeInsets = UIEdgeInsets(top: 5, left: 5, bottom: 5, right: 5);
+    
     override func layoutSubviews() {
         super.layoutSubviews()
-        let bounds = self.bounds
-        
-        if let indicator = self.indicator {
-            indicator.frame = CGRect(x: bounds.midX - 25.0, y: 10, width: 50.0, height: 50.0)
-            textLabel.frame = CGRect(x: 15.0, y: 70.0, width: bounds.width - 30.0, height: bounds.height - 10 - 50 - 10 - 10.0)
-        } else {
-            textLabel.frame = CGRect(x: 15.0, y: 10.0, width: bounds.width - 30.0, height: bounds.height - 20.0)
-        }
+        contentView.frame = bounds.inset(by: edgeInsets)
     }
     
     override func sizeThatFits(_ size: CGSize) -> CGSize {
-        let maxWidth = UIScreen.main.bounds.width - 100.0
-        let textSize = textLabel.sizeThatFits(CGSize(width: maxWidth, height: 0))
-        if indicator == nil {
-            return CGSize(width: min(maxWidth, textSize.width) + 30.0, height: textSize.height + 20.0)
-        }
-        return CGSize(width: max(min(maxWidth, textSize.width), 50.0) + 30.0, height: 10.0 + 50.0 + 10.0 + textSize.height + 10.0)
+        let size = contentView.sizeThatFits(size)
+        return CGSize(width: edgeInsets.left + size.width + edgeInsets.right, height: edgeInsets.top + size.height + edgeInsets.bottom)
     }
     
+    class ContentView: UIView {
+        let textLabel = UILabel.init()
+        var indicator: UIActivityIndicatorView? {
+            didSet {
+                oldValue?.removeFromSuperview()
+                if let indicator = indicator {
+                    addSubview(indicator)
+                }
+            }
+        }
+        
+        override init(frame: CGRect) {
+            super.init(frame: frame)
+            addSubview(textLabel)
+        }
+        
+        required init?(coder: NSCoder) {
+            fatalError("init(coder:) has not been implemented")
+        }
+        
+        private let indicatorSize = CGSize(width: 50.0, height: 50.0)
+        private let edgeInsets    = UIEdgeInsets(top: 10, left: 15, bottom: 10, right: 15);
+        private let spacing: CGFloat = 10
+        
+        override func layoutSubviews() {
+            super.layoutSubviews()
+            
+            let bounds = self.bounds
+            if let indicator = self.indicator {
+                indicator.frame = CGRect(x: (bounds.width - indicatorSize.width) * 0.5, y: edgeInsets.top, width: indicatorSize.width, height: indicatorSize.height)
+                textLabel.frame = CGRect(x: edgeInsets.left, y: indicator.frame.maxY + spacing, width: bounds.width - edgeInsets.left - edgeInsets.right, height: bounds.height - edgeInsets.top - indicatorSize.height - spacing - edgeInsets.bottom)
+            } else {
+                textLabel.frame = CGRect(x: edgeInsets.left, y: edgeInsets.top, width: bounds.width - edgeInsets.left - edgeInsets.right, height: bounds.height - edgeInsets.top - edgeInsets.bottom)
+            }
+        }
+        
+        override func sizeThatFits(_ size: CGSize) -> CGSize {
+            let maxWidth = UIScreen.main.bounds.width - 100.0
+            let textSize = textLabel.sizeThatFits(CGSize(width: maxWidth, height: 0))
+            if indicator == nil {
+                return CGSize(width: min(maxWidth, textSize.width) + 30.0, height: textSize.height + 20.0)
+            }
+            return CGSize(width: max(min(maxWidth, textSize.width), 50.0) + 30.0, height: 10.0 + 50.0 + 10.0 + textSize.height + 10.0)
+        }
+    }
+    
+}
+
+
+extension XZToast: ExpressibleByStringLiteral {
+    public typealias StringLiteralType = String
+    public init(stringLiteral value: String) {
+        self = .message(value)
+    }
 }
 
 extension XZToast: ReferenceConvertible {
@@ -294,3 +346,4 @@ extension XZToast: ReferenceConvertible {
     public typealias _ObjectiveCType = ObjC.XZToast
     
 }
+
