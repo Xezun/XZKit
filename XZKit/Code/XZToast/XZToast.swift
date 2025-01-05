@@ -7,13 +7,17 @@
 
 import UIKit
 
+/// 提示内容
 public enum XZToast {
+    /// 消息提示
     case message(_ text: String)
+    /// 加载提示
     case loading(_ text: String)
     
     /// Toast 回调闭包
     /// - Parameter finished: 是否完成整个展示过程，被中断或切换到其它 toast 时，此参数为 false
     public typealias Completion = (_ finished: Bool) -> Void
+    
 }
 
 extension UIResponder {
@@ -272,36 +276,34 @@ extension XZToast: ExpressibleByStringLiteral {
     }
 }
 
+@objc(XZToastType) public enum __XZOBJCToastType: Int {
+    case message
+    case loading
+}
+
+/// 支持 ObjC 类型的定义。理论上用内嵌类型最好，但是内嵌类型无法导出到 -Swift.h 头文件中。
+@objc(XZToast) public class __XZOBJCToast: NSObject {
+    @objc public var type: __XZOBJCToastType
+    @objc public var text: String
+    @objc public init(type: __XZOBJCToastType, text: String) {
+        self.type = type
+        self.text = text
+        super.init()
+    }
+}
+
 extension XZToast: ReferenceConvertible {
     
-    /// 支持 ObjC 类型的定义域。
-    public struct ObjC {
-        @objc public enum XZToastType: Int {
-            case message
-            case loading
-        }
-
-        @objc public class XZToast: NSObject {
-            var type: XZToastType
-            var text: String
-            public init(type: XZToastType, text: String) {
-                self.type = type
-                self.text = text
-                super.init()
-            }
-        }
-    }
-    
-    public func _bridgeToObjectiveC() -> ObjC.XZToast {
+    public func _bridgeToObjectiveC() -> __XZOBJCToast {
         switch self {
         case let .message(text):
-            return ObjC.XZToast.init(type: .message, text: text)
+            return __XZOBJCToast.init(type: .message, text: text)
         case let .loading(text):
-            return ObjC.XZToast.init(type: .loading, text: text)
+            return __XZOBJCToast.init(type: .loading, text: text)
         }
     }
     
-    public static func _forceBridgeFromObjectiveC(_ source: ObjC.XZToast, result: inout XZToast?) {
+    public static func _forceBridgeFromObjectiveC(_ source: __XZOBJCToast, result: inout XZToast?) {
         switch source.type {
         case .message:
             result = .loading(source.text)
@@ -312,12 +314,12 @@ extension XZToast: ReferenceConvertible {
         }
     }
     
-    public static func _conditionallyBridgeFromObjectiveC(_ source: ObjC.XZToast, result: inout XZToast?) -> Bool {
+    public static func _conditionallyBridgeFromObjectiveC(_ source: __XZOBJCToast, result: inout XZToast?) -> Bool {
         _forceBridgeFromObjectiveC(source, result: &result)
         return true
     }
     
-    public static func _unconditionallyBridgeFromObjectiveC(_ source: ObjC.XZToast?) -> XZToast {
+    public static func _unconditionallyBridgeFromObjectiveC(_ source: __XZOBJCToast?) -> XZToast {
         if let source = source {
             switch source.type {
             case .loading:
@@ -343,7 +345,7 @@ extension XZToast: ReferenceConvertible {
         return ""
     }
     
-    public typealias _ObjectiveCType = ObjC.XZToast
+    public typealias _ObjectiveCType = __XZOBJCToast
     
 }
 

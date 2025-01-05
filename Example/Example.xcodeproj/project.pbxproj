@@ -213,6 +213,7 @@
 		299B56CE2D2A67ED00CC2F69 /* Example10ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 299B56CD2D2A67ED00CC2F69 /* Example10ViewController.swift */; };
 		299B56D02D2A680300CC2F69 /* Example11ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 299B56CF2D2A680300CC2F69 /* Example11ViewController.swift */; };
 		299B56D32D2A683900CC2F69 /* Example12ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 299B56D22D2A683900CC2F69 /* Example12ViewController.swift */; };
+		299B56E42D2AD87800CC2F69 /* Example13ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 299B56E32D2AD87800CC2F69 /* Example13ViewController.swift */; };
 		C556594B20BE3573AE3127B1 /* Pods_ExampleUITests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2921DE5FDDA8FC1A0BE46778 /* Pods_ExampleUITests.framework */; };
 		E1C58D6269A64FE5F22C16D7 /* Pods_ExampleTests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D09F7711B7EC5E200D1D4920 /* Pods_ExampleTests.framework */; };
 /* End PBXBuildFile section */
@@ -620,6 +621,7 @@
 		299B56CD2D2A67ED00CC2F69 /* Example10ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Example10ViewController.swift; sourceTree = "<group>"; };
 		299B56CF2D2A680300CC2F69 /* Example11ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Example11ViewController.swift; sourceTree = "<group>"; };
 		299B56D22D2A683900CC2F69 /* Example12ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Example12ViewController.swift; sourceTree = "<group>"; };
+		299B56E32D2AD87800CC2F69 /* Example13ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Example13ViewController.swift; sourceTree = "<group>"; };
 		369E27212BC7DC1424D69BB0 /* Pods-Example.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Example.release.xcconfig"; path = "Target Support Files/Pods-Example/Pods-Example.release.xcconfig"; sourceTree = "<group>"; };
 		5E63F9B7AB013AABEE95EC05 /* Pods-ExampleTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ExampleTests.release.xcconfig"; path = "Target Support Files/Pods-ExampleTests/Pods-ExampleTests.release.xcconfig"; sourceTree = "<group>"; };
 		973629BBA2CF064ED1925071 /* Pods-ExampleTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ExampleTests.debug.xcconfig"; path = "Target Support Files/Pods-ExampleTests/Pods-ExampleTests.debug.xcconfig"; sourceTree = "<group>"; };
@@ -2430,6 +2432,7 @@
 				29018EB32D2A2E1000E89010 /* 10-XZGeometry */,
 				29018EB42D2A2E2400E89010 /* 11-XZTextImageView */,
 				299B56D12D2A682500CC2F69 /* 12-XZContentStatusView */,
+				299B56E22D2AD84700CC2F69 /* 13-XZToast */,
 				29648BEC2A72556C0090F445 /* Main.storyboard */,
 				29648BEF2A72556E0090F445 /* Assets.xcassets */,
 				29648BF12A72556E0090F445 /* LaunchScreen.storyboard */,
@@ -2462,6 +2465,14 @@
 				299B56D22D2A683900CC2F69 /* Example12ViewController.swift */,
 			);
 			path = "12-XZContentStatusView";
+			sourceTree = "<group>";
+		};
+		299B56E22D2AD84700CC2F69 /* 13-XZToast */ = {
+			isa = PBXGroup;
+			children = (
+				299B56E32D2AD87800CC2F69 /* Example13ViewController.swift */,
+			);
+			path = "13-XZToast";
 			sourceTree = "<group>";
 		};
 		D9D72A073C93F0164C49E30A /* Frameworks */ = {
@@ -2766,6 +2777,7 @@
 				292A5A752D256A240037579D /* Example09SegmentedControlIndicator.swift in Sources */,
 				292A5A762D256A240037579D /* Example09SettingsViewController.swift in Sources */,
 				292A5A772D256A240037579D /* Example09SettingsSizeViewController.swift in Sources */,
+				299B56E42D2AD87800CC2F69 /* Example13ViewController.swift in Sources */,
 				292A5A782D256A240037579D /* Example09SettingsColorSelectViewController.swift in Sources */,
 				292A5A792D256A240037579D /* Example09Test01ViewController.swift in Sources */,
 				292A5A7A2D256A240037579D /* Example09SettingsSelectViewController.swift in Sources */,
