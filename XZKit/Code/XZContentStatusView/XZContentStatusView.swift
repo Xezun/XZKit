@@ -1,15 +1,15 @@
 //
-//  ContentStatusView.swift
+//  XZContentStatusView.swift
 //  AFNetworking
 //
 //  Created by Xezun on 2017/12/2.
 //
 
 import UIKit
+import XZTextImageView
 
 /// 呈现视图内容状态的视图。
-@objc(XZContentStatusView)
-open class ContentStatusView: TextImageControl {
+@MainActor @objc open class XZContentStatusView: XZTextImageControl {
     
     /// 状态视图所属的视图。
     public unowned let view: UIView

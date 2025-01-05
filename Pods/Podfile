@@ -1,9 +1,9 @@
 use_frameworks!
 
-platform :ios, '12.0'
+platform :ios, '13.0'
 #inhibit_all_warnings!
 
-workspace '../XZKit.xcworkspace'
+workspace '../Example.xcworkspace'
 project '../Example/Example.xcodeproj'
 
 target 'Example' do
@@ -17,6 +17,9 @@ target 'Example' do
   pod 'XZPageControl', :path => '../'
   pod 'XZRefresh', :path => '../'
   pod 'XZSegmentedControl', :path => '../'
+  pod 'XZGeometry', :path => '../'
+  pod 'XZTextImageView', :path => '../'
+  pod 'XZContentStatusView', :path => '../'
   
   pod 'SDWebImage'
 #  pod 'AFNetworking'

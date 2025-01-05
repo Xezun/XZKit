@@ -1,5 +1,5 @@
 //
-//  TextImageView.swift
+//  XZTextImageView.swift
 //  XZKit
 //
 //  Created by Xezun on 2017/7/24.
@@ -9,29 +9,28 @@
 import UIKit
 
 /// 一个图片、文字上下布局的视图，可以自定义图片文字边距。
-@objc(XZTextImageView)
-open class TextImageView: UIView, TextImageLayout {
+@objc open class XZTextImageView: UIView, XZTextImageLayout {
 
-    open var textLayoutEdge: XZRectEdge = .bottom {
+    open var textLayoutPosition: NSDirectionalRectEdge = .bottom {
         didSet { setNeedsLayout() }
     }
     
     /// 视图内边距，文字将不会显示在边距内。默认 .zero 。
     /// - Note: 内容大小 + contentInsets = 视图大小。
     /// - Note: 该属性会影响图片大小和文字排版。
-    open var contentInsets: XZEdgeInsets = .zero {
+    open var contentInsets: NSDirectionalEdgeInsets = .zero {
         didSet { setNeedsLayout() }
     }
     
     /// 标题文本视图的外边距，根据其默认位置和大小来计算。默认 .zero 。
     /// - 影响文字区域的大小和位置。
-    open var textInsets: XZEdgeInsets = .zero {
+    open var textInsets: NSDirectionalEdgeInsets = .zero {
         didSet { setNeedsLayout() }
     }
     
     /// 图片视图的外边距，根据其默认位置和大小来计算。默认 .zero 。
     /// - 影响图片的大小和位置。
-    open var imageInsets: XZEdgeInsets = .zero {
+    open var imageInsets: NSDirectionalEdgeInsets = .zero {
         didSet { setNeedsLayout() }
     }
     

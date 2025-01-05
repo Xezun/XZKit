@@ -1,4 +1,4 @@
-// swift-tools-version:5.3
+// swift-tools-version: 5.9
 // The swift-tools-version declares the minimum version of Swift required to build this package.
 
 import PackageDescription
@@ -6,7 +6,7 @@ import PackageDescription
 let package = Package(
     name: "XZKit",
     platforms: [
-        .iOS(.v12)
+        .iOS(.v13)
     ],
     products: [
         // Products define the executables and libraries produced by a package, and make them visible to other packages.
@@ -36,7 +36,16 @@ let package = Package(
             targets: ["XZPageControl"]),
         .library(
             name: "XZSegmentedControl",
-            targets: ["XZSegmentedControl"])
+            targets: ["XZSegmentedControl"]),
+        .library(
+            name: "XZGeometry",
+            targets: ["XZGeometry"]),
+        .library(
+            name: "XZContentStatusView",
+            targets: ["XZContentStatusView"]),
+        .library(
+            name: "XZTextImageView",
+            targets: ["XZTextImageView"])
     ],
     dependencies: [
         // Dependencies declare other packages that this package depends on.
@@ -158,6 +167,37 @@ let package = Package(
             cSettings: [
                 .headerSearchPath("Headers/XZSegmentedControl/Private")
             ],
+            cxxSettings: [
+                .define("XZ_FRAMEWORK")
+            ]
+        ),
+        .target(
+            name: "XZGeometry",
+            dependencies: [],
+            path: "XZKit",
+            sources: ["Code/XZGeometry"],
+            publicHeadersPath: "Headers/XZGeometry/Public",
+            cSettings: [
+                .headerSearchPath("Headers/XZGeometry/Private")
+            ],
+            cxxSettings: [
+                .define("XZ_FRAMEWORK")
+            ]
+        ),
+        .target(
+            name: "XZContentStatusView",
+            dependencies: [],
+            path: "XZKit",
+            sources: ["Code/XZContentStatusView"],
+            cxxSettings: [
+                .define("XZ_FRAMEWORK")
+            ]
+        ),
+        .target(
+            name: "XZTextImageView",
+            dependencies: ["XZGeometry"],
+            path: "XZKit",
+            sources: ["Code/XZTextImageView"],
             cxxSettings: [
                 .define("XZ_FRAMEWORK")
             ]

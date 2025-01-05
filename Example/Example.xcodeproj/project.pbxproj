@@ -210,6 +210,9 @@
 		29648C002A72556E0090F445 /* ExampleTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 29648BFF2A72556E0090F445 /* ExampleTests.m */; };
 		29648C0A2A72556E0090F445 /* ExampleUITests.m in Sources */ = {isa = PBXBuildFile; fileRef = 29648C092A72556E0090F445 /* ExampleUITests.m */; };
 		29648C0C2A72556E0090F445 /* ExampleUITestsLaunchTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 29648C0B2A72556E0090F445 /* ExampleUITestsLaunchTests.m */; };
+		299B56CE2D2A67ED00CC2F69 /* Example10ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 299B56CD2D2A67ED00CC2F69 /* Example10ViewController.swift */; };
+		299B56D02D2A680300CC2F69 /* Example11ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 299B56CF2D2A680300CC2F69 /* Example11ViewController.swift */; };
+		299B56D32D2A683900CC2F69 /* Example12ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 299B56D22D2A683900CC2F69 /* Example12ViewController.swift */; };
 		C556594B20BE3573AE3127B1 /* Pods_ExampleUITests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2921DE5FDDA8FC1A0BE46778 /* Pods_ExampleUITests.framework */; };
 		E1C58D6269A64FE5F22C16D7 /* Pods_ExampleTests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D09F7711B7EC5E200D1D4920 /* Pods_ExampleTests.framework */; };
 /* End PBXBuildFile section */
@@ -614,6 +617,9 @@
 		29648C052A72556E0090F445 /* ExampleUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = ExampleUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		29648C092A72556E0090F445 /* ExampleUITests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ExampleUITests.m; sourceTree = "<group>"; };
 		29648C0B2A72556E0090F445 /* ExampleUITestsLaunchTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ExampleUITestsLaunchTests.m; sourceTree = "<group>"; };
+		299B56CD2D2A67ED00CC2F69 /* Example10ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Example10ViewController.swift; sourceTree = "<group>"; };
+		299B56CF2D2A680300CC2F69 /* Example11ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Example11ViewController.swift; sourceTree = "<group>"; };
+		299B56D22D2A683900CC2F69 /* Example12ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Example12ViewController.swift; sourceTree = "<group>"; };
 		369E27212BC7DC1424D69BB0 /* Pods-Example.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Example.release.xcconfig"; path = "Target Support Files/Pods-Example/Pods-Example.release.xcconfig"; sourceTree = "<group>"; };
 		5E63F9B7AB013AABEE95EC05 /* Pods-ExampleTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ExampleTests.release.xcconfig"; path = "Target Support Files/Pods-ExampleTests/Pods-ExampleTests.release.xcconfig"; sourceTree = "<group>"; };
 		973629BBA2CF064ED1925071 /* Pods-ExampleTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ExampleTests.debug.xcconfig"; path = "Target Support Files/Pods-ExampleTests/Pods-ExampleTests.debug.xcconfig"; sourceTree = "<group>"; };
@@ -651,6 +657,22 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		29018EB32D2A2E1000E89010 /* 10-XZGeometry */ = {
+			isa = PBXGroup;
+			children = (
+				299B56CD2D2A67ED00CC2F69 /* Example10ViewController.swift */,
+			);
+			path = "10-XZGeometry";
+			sourceTree = "<group>";
+		};
+		29018EB42D2A2E2400E89010 /* 11-XZTextImageView */ = {
+			isa = PBXGroup;
+			children = (
+				299B56CF2D2A680300CC2F69 /* Example11ViewController.swift */,
+			);
+			path = "11-XZTextImageView";
+			sourceTree = "<group>";
+		};
 		292A5A3C2D254B060037579D /* 04-XZML */ = {
 			isa = PBXGroup;
 			children = (
@@ -2405,6 +2427,9 @@
 				292A5A562D255E660037579D /* 07-XZPageView */,
 				292A5A572D255E740037579D /* 08-XZPageControl */,
 				292A5A672D25653E0037579D /* 09-XZSegmentedControl */,
+				29018EB32D2A2E1000E89010 /* 10-XZGeometry */,
+				29018EB42D2A2E2400E89010 /* 11-XZTextImageView */,
+				299B56D12D2A682500CC2F69 /* 12-XZContentStatusView */,
 				29648BEC2A72556C0090F445 /* Main.storyboard */,
 				29648BEF2A72556E0090F445 /* Assets.xcassets */,
 				29648BF12A72556E0090F445 /* LaunchScreen.storyboard */,
@@ -2429,6 +2454,14 @@
 				29648C0B2A72556E0090F445 /* ExampleUITestsLaunchTests.m */,
 			);
 			path = ExampleUITests;
+			sourceTree = "<group>";
+		};
+		299B56D12D2A682500CC2F69 /* 12-XZContentStatusView */ = {
+			isa = PBXGroup;
+			children = (
+				299B56D22D2A683900CC2F69 /* Example12ViewController.swift */,
+			);
+			path = "12-XZContentStatusView";
 			sourceTree = "<group>";
 		};
 		D9D72A073C93F0164C49E30A /* Frameworks */ = {
@@ -2749,6 +2782,7 @@
 				292C17462D251F6D00E465BF /* Example0331Group110SectionModel.m in Sources */,
 				292C17472D251F6D00E465BF /* Example0330Group102Cell.m in Sources */,
 				292C17482D251F6D00E465BF /* Example0330Group101Cell.m in Sources */,
+				299B56CE2D2A67ED00CC2F69 /* Example10ViewController.swift in Sources */,
 				292C17492D251F6D00E465BF /* Example0320Group100CellViewModel.m in Sources */,
 				292C174A2D251F6D00E465BF /* Example0331Group105SectionModel.m in Sources */,
 				292C174B2D251F6D00E465BF /* Example0330Group105CellViewModel.m in Sources */,
@@ -2776,6 +2810,7 @@
 				292C17612D251F6D00E465BF /* Example0331Group110HeaderViewModel.m in Sources */,
 				292C17622D251F6D00E465BF /* Example0320Group101CellModel.m in Sources */,
 				292C17632D251F6D00E465BF /* Example0331Group101Cell.m in Sources */,
+				299B56D32D2A683900CC2F69 /* Example12ViewController.swift in Sources */,
 				292C17642D251F6D00E465BF /* Example0320Model.m in Sources */,
 				292C17652D251F6D00E465BF /* Example0320Group100SectionModel.m in Sources */,
 				292C17662D251F6D00E465BF /* Example0331Model.m in Sources */,
@@ -2822,6 +2857,7 @@
 				292C178F2D251F6D00E465BF /* Example0331Group108CellModel.m in Sources */,
 				292C17902D251F6D00E465BF /* Example0331Group107Cell.m in Sources */,
 				292C17912D251F6D00E465BF /* Example0331Group110CellModel.m in Sources */,
+				299B56D02D2A680300CC2F69 /* Example11ViewController.swift in Sources */,
 				292C17922D251F6D00E465BF /* Example0310ContactViewModel.m in Sources */,
 				292C17932D251F6D00E465BF /* Example0321ContactCell.m in Sources */,
 				292C17942D251F6D00E465BF /* Example0331Group107CellModel.m in Sources */,
@@ -2959,6 +2995,7 @@
 				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COMPILER_INDEX_STORE_ENABLE = NO;
 				COPY_PHASE_STRIP = NO;
 				DEBUG_INFORMATION_FORMAT = dwarf;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
@@ -3018,6 +3055,7 @@
 				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COMPILER_INDEX_STORE_ENABLE = NO;
 				COPY_PHASE_STRIP = NO;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				ENABLE_NS_ASSERTIONS = NO;

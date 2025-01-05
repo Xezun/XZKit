@@ -7,36 +7,18 @@
 //
 
 import Foundation
+import UIKit
 
 // MARK: CGGeometry
 // AVFoundation.AVMakeRectWithAspectRatioInsideRect
 
-/// 边距。
-public struct EdgeInsets {
-    
-    /// 上边距。
-    var top: CGFloat
-    /// 前边距。
-    var leading: CGFloat
-    /// 下边距。
-    var bottom: CGFloat
-    /// 后边距。
-    var trailing: CGFloat
-    
-    /// 〇边距。
-    public static var zero: EdgeInsets {
-        return EdgeInsets(top: 0, leading: 0, bottom: 0, trailing: 0)
-    }
-    
-}
-
-extension EdgeInsets {
+extension NSDirectionalEdgeInsets {
     
     /// 通过 UIEdgeInsets 构造。
     /// - Parameters:
     ///   - edgeInsets: 边距
     ///   - layoutDirection: 布局方向
-    public init(_ edgeInsets: UIEdgeInsets, layoutDirection: UIUserInterfaceLayoutDirection) {
+    public init(_ edgeInsets: UIEdgeInsets, _ layoutDirection: UIUserInterfaceLayoutDirection) {
         switch (layoutDirection) {
         case .rightToLeft:
             self.init(top: edgeInsets.top, leading: edgeInsets.right, bottom: edgeInsets.bottom, trailing: edgeInsets.left)
@@ -47,22 +29,13 @@ extension EdgeInsets {
     
 }
 
-
-extension EdgeInsets: Equatable {
-    
-    static public func == (lhs: EdgeInsets, rhs: EdgeInsets) -> Bool {
-        return lhs.top == rhs.top && lhs.leading == rhs.leading && lhs.bottom == rhs.bottom && lhs.trailing == rhs.trailing
-    }
-    
-}
-
 extension UIEdgeInsets {
     
-    /// 通过 EdgeInsets 构造。
+    /// 通过 XZEdgeInsets 构造。
     /// - Parameters:
-    ///   - edgeInsets: EdgeInsets 边距
+    ///   - edgeInsets: XZEdgeInsets 边距
     ///   - layoutDirection: 布局方向
-    public init(_ edgeInsets: EdgeInsets, layoutDirection: UIUserInterfaceLayoutDirection) {
+    public init(_ edgeInsets: NSDirectionalEdgeInsets, _ layoutDirection: UIUserInterfaceLayoutDirection) {
         switch layoutDirection {
         case .rightToLeft:
             self.init(top: edgeInsets.top, left: edgeInsets.trailing, bottom: edgeInsets.bottom, right: edgeInsets.leading)
@@ -92,7 +65,7 @@ extension CGSize {
     /// 等比缩小到指定范围以内，如果已经在范围内则不缩小。
     /// - Parameter size: 范围
     /// - Returns: CGSize
-    public func scalingAspect(within size: CGSize) -> CGSize {
+    public func scalingAspect(toFit size: CGSize) -> CGSize {
         if size.width == 0 || size.height == 0 {
             return .zero
         }
@@ -116,14 +89,14 @@ extension CGSize {
     /// - Parameter size: 范围
     /// - Returns: CGSize
     public mutating func scaleAspect(within size: CGSize) {
-        self = scalingAspect(within: size)
+        self = scalingAspect(toFit: size)
     }
     
     /// 创建一个指定宽高比，以及指定大小以内的 CGSize 。
     /// - Parameters:
     ///   - aspectRatio: 宽高比。
     ///   - maxSize: 宽高最大值。
-    public init(ratio: CGSize, in size: CGSize) {
+    public init(_ size: CGSize, ratio: CGSize) {
         if ratio.width == 0 || ratio.height == 0 {
             self = size;
         } else if size.width == 0 || size.height == 0 {

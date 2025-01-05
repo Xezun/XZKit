@@ -1,14 +1,14 @@
 //
-//  TextImageControl.swift
+//  XZTextImageControl.swift
 //  XZKit
 //
 //  Created by Xezun on 2018/9/29.
 //
 
 import Foundation
+import UIKit
 
-@objc(XZTextImageControl)
-open class TextImageControl: UIControl, TextImageLayout {
+@objc open class XZTextImageControl: UIControl, XZTextImageLayout {
     
     open var textLabel: UILabel {
         if let textLabel = textLabelIfLoaded {
@@ -47,19 +47,19 @@ open class TextImageControl: UIControl, TextImageLayout {
     
     open private(set) var imageViewIfLoaded: UIImageView?
     
-    open var contentInsets: XZEdgeInsets = .zero {
+    open var contentInsets: NSDirectionalEdgeInsets = .zero {
         didSet { setNeedsLayout() }
     }
     
-    open var textInsets: XZEdgeInsets = .zero {
+    open var textInsets: NSDirectionalEdgeInsets = .zero {
         didSet { setNeedsLayout() }
     }
     
-    open var imageInsets: XZEdgeInsets = .zero {
+    open var imageInsets: NSDirectionalEdgeInsets = .zero {
         didSet { setNeedsLayout() }
     }
     
-    open var textLayoutEdge: XZRectEdge = .bottom {
+    open var textLayoutPosition: NSDirectionalRectEdge = .bottom {
         didSet { setNeedsLayout() }
     }
     
