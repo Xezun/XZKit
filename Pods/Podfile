@@ -20,6 +20,7 @@ target 'Example' do
   pod 'XZGeometry', :path => '../'
   pod 'XZTextImageView', :path => '../'
   pod 'XZContentStatusView', :path => '../'
+  pod 'XZToast', :path => '../'
   
   pod 'SDWebImage'
 #  pod 'AFNetworking'

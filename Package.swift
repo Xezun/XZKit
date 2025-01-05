@@ -45,7 +45,10 @@ let package = Package(
             targets: ["XZContentStatusView"]),
         .library(
             name: "XZTextImageView",
-            targets: ["XZTextImageView"])
+            targets: ["XZTextImageView"]),
+        .library(
+            name: "XZToast",
+            targets: ["XZToast"])
     ],
     dependencies: [
         // Dependencies declare other packages that this package depends on.
@@ -198,6 +201,15 @@ let package = Package(
             dependencies: ["XZGeometry"],
             path: "XZKit",
             sources: ["Code/XZTextImageView"],
+            cxxSettings: [
+                .define("XZ_FRAMEWORK")
+            ]
+        ),
+        .target(
+            name: "XZToast",
+            dependencies: [],
+            path: "XZKit",
+            sources: ["Code/XZToast"],
             cxxSettings: [
                 .define("XZ_FRAMEWORK")
             ]
