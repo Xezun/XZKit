@@ -19,17 +19,30 @@ NS_ASSUME_NONNULL_BEGIN
 - (instancetype)initWithModel:(nullable id)model;
 @end
 
-/// 视图模型 ViewModel 基类。
-/// @discussion 本基类为简化开发而提供，并非 module 必须，可选。
-/// @discussion 为视图模型提供了`ready`机制、层级关系等基础功能。
+/// 视图模型 ViewModel 基类。为视图模型提供了`ready`机制、层级关系等基础功能。
+/// - Note: 本基类为简化开发而提供，并非 module 必须，可选。
 @interface XZMocoaViewModel : NSObject <XZMocoaViewModel>
 
-/// 当前 MVVM 模块对象。
-/// @note 一般情况下，此属性并非必须，但对于某些用于管理子视图的视图，比如拿 UITableView 或 UICollectionView 来说，可能需要设置此属性才能正常工作。
+/// 当前视图模型所属的模块。一般情况下，此属性并非必须。
+///
+/// 对于像 UITableView 或 UICollectionView 等管理子视图的视图来说，管理下级元素需要通过设置此属性获取所属的模块。
 @property (nonatomic, strong, nullable) XZMocoaModule *module;
 
 /// 数据。
-@property (nonatomic, strong, readonly, nullable) id model;
+///
+/// - Note: 属性可写是为兼容 Swift 结构体数据类型，设置属性除修改数据外，不执行任何操作。
+///
+/// 默认情况下 XZMocoa 认为数据始终不变，视图模型 ViewModel 也不会监听数据 Model 的变更，
+/// 因为实际上在开发中，大部分都是单向的数据展示，双向的数据流动的业务场景并不多，视图模型只需要处理数据一次即可。
+///
+/// 对于需要更新数据的场景，建议视图模型提供精细化的方法，来接收触发数据的变更。
+/// 比如在 XZMocoaTableView 中，如果 seciton 数据发生更新，就可以通过如下方法来通知视图模型处理。
+/// ```objc
+/// [self reloadSectionAtIndex:2];
+/// [[self sectionViewModelAtIndex:5] reloadCellAtIndex:7];
+/// ```
+/// 虽然方法略显笨拙，但是效率高，且相比引入一套负载的监听机制，在成本上更低廉。
+@property (nonatomic, strong, nullable) id model;
 
 /// 视图在列表中的排序。
 @property (nonatomic) NSInteger index;

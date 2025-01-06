@@ -16,7 +16,7 @@
 @implementation Example0331Group110FooterView
 
 + (void)load {
-    XZModule(@"https://mocoa.xezun.com/examples/31/collection/110/footer:/").viewClass = self;
+    XZMocoa(@"https://mocoa.xezun.com/examples/31/collection/110/footer:/").viewClass = self;
 }
 
 - (instancetype)initWithFrame:(CGRect)frame {

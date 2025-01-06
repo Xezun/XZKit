@@ -14,7 +14,7 @@
 - (void)prepare {
     [super prepare];
 
-    XZMocoaModule *module = XZModule(@"https://mocoa.xezun.com/examples/31/collection/");
+    XZMocoaModule *module = XZMocoa(@"https://mocoa.xezun.com/examples/31/collection/");
     
     NSArray *data = @[@{
         @"group": @"100",

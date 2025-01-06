@@ -33,7 +33,7 @@ FOUNDATION_STATIC_INLINE NSString *XZMocoaPathCreate(XZMocoaKind kind, XZMocoaNa
 }
 
 @interface XZMocoaSubmoduleCollection ()
-- (instancetype)initForModule:(XZMocoaModule *)module forKind:(XZMocoaKind)kind NS_DESIGNATED_INITIALIZER;
+- (instancetype)initWithKind:(XZMocoaKind)kind module:(XZMocoaModule *)module NS_DESIGNATED_INITIALIZER;
 @end
 
 @interface XZMocoaModule () {
@@ -132,7 +132,7 @@ FOUNDATION_STATIC_INLINE NSString *XZMocoaPathCreate(XZMocoaKind kind, XZMocoaNa
     
     XZMocoaSubmoduleCollection *namedModules = _submodules[kind];
     if (namedModules == nil) {
-        namedModules = [[XZMocoaSubmoduleCollection alloc] initForModule:self forKind:kind];
+        namedModules = [[XZMocoaSubmoduleCollection alloc] initWithKind:kind module:self];
         _submodules[kind] = namedModules;
     }
     return [namedModules submoduleForName:name];
@@ -147,13 +147,13 @@ FOUNDATION_STATIC_INLINE NSString *XZMocoaPathCreate(XZMocoaKind kind, XZMocoaNa
         [_submodules[kind] setSubmodule:newSubmodule forName:name];
     } else if (_submodules == nil) {
         _submodules = [NSMutableDictionary dictionary];
-        XZMocoaSubmoduleCollection *namedModules = [[XZMocoaSubmoduleCollection alloc] initForModule:self forKind:kind];
+        XZMocoaSubmoduleCollection *namedModules = [[XZMocoaSubmoduleCollection alloc] initWithKind:kind module:self];
         _submodules[kind] = namedModules;
         [namedModules setSubmodule:newSubmodule forName:name];
     } else {
         XZMocoaSubmoduleCollection *namedModules = _submodules[kind];
         if (namedModules == nil) {
-            namedModules = [[XZMocoaSubmoduleCollection alloc] initForModule:self forKind:kind];
+            namedModules = [[XZMocoaSubmoduleCollection alloc] initWithKind:kind module:self];
             _submodules[kind] = namedModules;
         }
         [namedModules setSubmodule:newSubmodule forName:name];
@@ -183,7 +183,7 @@ FOUNDATION_STATIC_INLINE NSString *XZMocoaPathCreate(XZMocoaKind kind, XZMocoaNa
     }
     XZMocoaSubmoduleCollection *namedModules = _submodules[kind];
     if (namedModules == nil) {
-        namedModules = [[XZMocoaSubmoduleCollection alloc] initForModule:self forKind:kind];
+        namedModules = [[XZMocoaSubmoduleCollection alloc] initWithKind:kind module:self];
         _submodules[kind] = namedModules;
     }
     return namedModules;
@@ -373,11 +373,11 @@ FOUNDATION_STATIC_INLINE NSString *XZMocoaPathCreate(XZMocoaKind kind, XZMocoaNa
     XZMocoaKind _kind;
 }
 
-- (instancetype)initForModule:(XZMocoaModule *)superModule forKind:(XZMocoaKind)kind {
+- (instancetype)initWithKind:(XZMocoaKind)kind module:(XZMocoaModule *)module {
     self = [super init];
     if (self) {
-        _module = superModule;
         _kind = kind.copy;
+        _module = module;
         _namedModules = [NSMutableDictionary dictionary];
     }
     return self;

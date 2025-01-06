@@ -10,7 +10,7 @@
 @implementation Example0322TextModel
 
 + (void)load {
-    XZModule(@"https://mocoa.xezun.com/examples/22/").section.cell.viewModelClass = self;
+    XZMocoa(@"https://mocoa.xezun.com/examples/22/").section.cell.viewModelClass = self;
 }
 
 + (Example0322TextModel *)contactWithFirstName:(NSString *)firstName lastName:(NSString *)lastName phone:(NSString *)phone {

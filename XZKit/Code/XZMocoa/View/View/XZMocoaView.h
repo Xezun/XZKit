@@ -20,6 +20,8 @@ NS_ASSUME_NONNULL_BEGIN
 
 @optional
 /// 视图模型。
+/// 一般情况下，视图的 ViewModel 不应该改变。
+/// 但是与 B 端不同，在 C 端利用“视图重用机制”可以有效提升性能，此属性被设计为可写的。
 @property (nonatomic, strong, nullable) __kindof XZMocoaViewModel *viewModel;
 
 /// 视图模型 KVO 事件，默认不执行任何操作。

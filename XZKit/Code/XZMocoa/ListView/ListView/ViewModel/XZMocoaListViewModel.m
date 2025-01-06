@@ -47,6 +47,12 @@ typedef void(^XZMocoaListDelayedUpdates)(__kindof XZMocoaViewModel *self);
     [self _loadDataWithoutEvents];
 }
 
+- (void)modelDidChange {
+    if (self.isReady) {
+        [self reloadData];
+    }
+}
+
 - (void)didRemoveSubViewModel:(__kindof XZMocoaViewModel *)viewModel {
     [_sectionViewModels removeObject:viewModel];
 }

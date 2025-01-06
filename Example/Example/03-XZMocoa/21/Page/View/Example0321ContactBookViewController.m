@@ -23,7 +23,7 @@
 @dynamic view;
 
 + (void)load {
-    XZModule(@"https://mocoa.xezun.com/examples/21/").viewClass = self;
+    XZMocoa(@"https://mocoa.xezun.com/examples/21/").viewClass = self;
 }
 
 - (instancetype)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil {

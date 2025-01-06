@@ -18,7 +18,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface XZMocoaListViewSectionViewModel : XZMocoaViewModel <XZMocoaListViewModel>
 
-@property (nonatomic, strong, readonly, nullable) id<XZMocoaListSectionModel> model;
+@property (nonatomic, strong, nullable) id<XZMocoaListSectionModel> model;
 @property (nonatomic, readonly, nullable) __kindof XZMocoaListViewModel *superViewModel;
 
 /// 接收来自下级的 XZMocoaEmitionNameUpdate 事件，并刷新视图，如果在批量更新的过程中，视图刷新可能会延迟。

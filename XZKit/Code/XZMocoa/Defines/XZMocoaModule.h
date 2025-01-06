@@ -284,13 +284,13 @@ NS_SWIFT_NAME(XZMocoaModule.SubmoduleCollection)
 
 /// 通过 URL 字符串获取 Mocoa MVVM 模块。
 /// @param moduleURLString 模块地址
-FOUNDATION_STATIC_INLINE XZMocoaModule * _Nullable XZModule(NSString *moduleURLString) XZ_ATTR_OVERLOAD {
+FOUNDATION_STATIC_INLINE XZMocoaModule * _Nullable XZMocoa(NSString *moduleURLString) XZ_ATTR_OVERLOAD NS_SWIFT_NAME(mocoa(_:)) {
     return [XZMocoaModule moduleForURLString:moduleURLString];
 }
 
 /// 通过 URL 获取 Mocoa MVVM 模块。
 /// @param moduleURL 模块地址
-FOUNDATION_STATIC_INLINE XZMocoaModule * _Nullable XZModule(NSURL *moduleURL) XZ_ATTR_OVERLOAD {
+FOUNDATION_STATIC_INLINE XZMocoaModule * _Nullable XZMocoa(NSURL *moduleURL) XZ_ATTR_OVERLOAD NS_SWIFT_NAME(mocoa(_:)) {
     return [XZMocoaModule moduleForURL:moduleURL];
 }
 

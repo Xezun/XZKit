@@ -9,7 +9,7 @@
 
 @implementation Example0322GroupTextSectionViewModel
 + (void)load {
-    XZModule(@"https://mocoa.xezun.com/examples/22/").section.viewModelClass = self;
+    XZMocoa(@"https://mocoa.xezun.com/examples/22/").section.viewModelClass = self;
 }
 - (void)prepare {
     [super prepare];

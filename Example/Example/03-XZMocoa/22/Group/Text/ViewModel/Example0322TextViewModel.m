@@ -15,7 +15,7 @@
 @synthesize phone = _phone;
 
 + (void)load {
-    XZModule(@"https://mocoa.xezun.com/examples/22/").section.cell.viewModelClass = self;
+    XZMocoa(@"https://mocoa.xezun.com/examples/22/").section.cell.viewModelClass = self;
 }
 
 - (void)prepare {

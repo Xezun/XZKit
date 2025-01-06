@@ -10,7 +10,7 @@
 @implementation Example0320Group100CellModel
 
 + (void)load {
-    XZModule(@"https://mocoa.xezun.com/examples/20/table/100/:/").modelClass = self;
+    XZMocoa(@"https://mocoa.xezun.com/examples/20/table/100/:/").modelClass = self;
 }
 
 - (BOOL)isEqual:(Example0320Group100CellModel *)object {

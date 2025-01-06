@@ -7,6 +7,7 @@
 
 import UIKit
 import XZToast
+import XZMocoa
 
 class Example13ViewController: UITableViewController {
 
