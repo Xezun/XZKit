@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		01C91114C6D30DAA909EB169 /* Pods_Example.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 055F0304DE9A092BAF52FF06 /* Pods_Example.framework */; };
+		040F133B2D2B77CD00C4D6CD /* Example14ViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 040F133A2D2B77CD00C4D6CD /* Example14ViewController.m */; };
 		292A5A472D254D010037579D /* Example04ViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 292A5A462D254D010037579D /* Example04ViewController.m */; };
 		292A5A482D254D010037579D /* Example04FontSizeViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 292A5A402D254D010037579D /* Example04FontSizeViewController.m */; };
 		292A5A492D254D010037579D /* Example04SettingsViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 292A5A422D254D010037579D /* Example04SettingsViewController.m */; };
@@ -236,6 +237,8 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		040F13392D2B77CD00C4D6CD /* Example14ViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Example14ViewController.h; sourceTree = "<group>"; };
+		040F133A2D2B77CD00C4D6CD /* Example14ViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = Example14ViewController.m; sourceTree = "<group>"; };
 		055F0304DE9A092BAF52FF06 /* Pods_Example.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Example.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		2921DE5FDDA8FC1A0BE46778 /* Pods_ExampleUITests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_ExampleUITests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		292A5A3D2D254D010037579D /* Example04FontNameViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Example04FontNameViewController.h; sourceTree = "<group>"; };
@@ -659,6 +662,15 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		040F13382D2B77B200C4D6CD /* 14-XZURLQuery */ = {
+			isa = PBXGroup;
+			children = (
+				040F13392D2B77CD00C4D6CD /* Example14ViewController.h */,
+				040F133A2D2B77CD00C4D6CD /* Example14ViewController.m */,
+			);
+			path = "14-XZURLQuery";
+			sourceTree = "<group>";
+		};
 		29018EB32D2A2E1000E89010 /* 10-XZGeometry */ = {
 			isa = PBXGroup;
 			children = (
@@ -2433,6 +2445,7 @@
 				29018EB42D2A2E2400E89010 /* 11-XZTextImageView */,
 				299B56D12D2A682500CC2F69 /* 12-XZContentStatusView */,
 				299B56E22D2AD84700CC2F69 /* 13-XZToast */,
+				040F13382D2B77B200C4D6CD /* 14-XZURLQuery */,
 				29648BEC2A72556C0090F445 /* Main.storyboard */,
 				29648BEF2A72556E0090F445 /* Assets.xcassets */,
 				29648BF12A72556E0090F445 /* LaunchScreen.storyboard */,
@@ -2854,6 +2867,7 @@
 				292C17802D251F6D00E465BF /* Example0330Group103CellViewModel.m in Sources */,
 				292C17812D251F6D00E465BF /* Example0331Group109CellModel.m in Sources */,
 				292C17822D251F6D00E465BF /* Example0331Group106SectionModel.m in Sources */,
+				040F133B2D2B77CD00C4D6CD /* Example14ViewController.m in Sources */,
 				292C17832D251F6D00E465BF /* Example0331Group105Cell.m in Sources */,
 				292C17842D251F6D00E465BF /* Example0330Group106Cell.m in Sources */,
 				292C17852D251F6D00E465BF /* Example0330Group110FooterViewModel.m in Sources */,

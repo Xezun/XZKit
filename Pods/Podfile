@@ -21,6 +21,7 @@ target 'Example' do
   pod 'XZTextImageView', :path => '../'
   pod 'XZContentStatusView', :path => '../'
   pod 'XZToast', :path => '../'
+  pod 'XZURLQuery', :path => '../'
   
   pod 'SDWebImage'
 #  pod 'AFNetworking'
