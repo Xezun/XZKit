@@ -989,7 +989,10 @@ static void const * const _context = &_context;
     
     id<XZRefreshDelegate> const delegate = _header.view.delegate ?: (id)_scrollView.delegate;
     if ([delegate respondsToSelector:@selector(scrollView:headerDidBeginRefreshing:)]) {
-        [delegate scrollView:_scrollView headerDidBeginRefreshing:_header.view];
+        // 直接同步发送事件，在代理方法中立即结束刷新，退场动画无法生效，可能是因为当前处于回弹的过程中。
+        dispatch_async(dispatch_get_main_queue(), ^{
+            [delegate scrollView:_scrollView headerDidBeginRefreshing:_header.view];
+        });
     }
 }
 
@@ -1023,7 +1026,9 @@ static void const * const _context = &_context;
     
     id<XZRefreshDelegate> const delegate = _footer.view.delegate ?: (id)_scrollView.delegate;
     if ([delegate respondsToSelector:@selector(scrollView:footerDidBeginRefreshing:)]) {
-        [delegate scrollView:_scrollView footerDidBeginRefreshing:_footer.view];
+        dispatch_async(dispatch_get_main_queue(), ^{
+            [delegate scrollView:_scrollView footerDidBeginRefreshing:_footer.view];
+        });
     }
 }
 
