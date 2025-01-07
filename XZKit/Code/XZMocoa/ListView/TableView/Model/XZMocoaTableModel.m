@@ -7,5 +7,7 @@
 
 #import "XZMocoaTableModel.h"
 
+#if !SWIFT_PACKAGE
 @implementation XZMocoaTableModel
 @end
+#endif

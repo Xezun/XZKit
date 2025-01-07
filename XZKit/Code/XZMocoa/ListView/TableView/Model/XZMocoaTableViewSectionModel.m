@@ -7,8 +7,9 @@
 
 #import "XZMocoaTableViewSectionModel.h"
 
+#if !SWIFT_PACKAGE
 @implementation XZMocoaTableViewSectionModel
 
 @end
-
+#endif
 

@@ -16,7 +16,7 @@ NS_ASSUME_NONNULL_BEGIN
 /// @discussion 任何 UIResponder 及子类，默认都是 Mocoa MVVM 中的 View 元素，声明遵循此协议，即可获得协议中定义的属性和方法。
 /// @discussion 用此协议标记类，用来表明该类为 Mocoa MVVM 的 View 元素，与其它设计模式的类进行简单区分。
 /// @discussion 由于运行时特性，协议的默认实现可能会被类目或子类覆盖，需要开发者自行注意。
-@protocol XZMocoaView <NSObject>
+NS_SWIFT_UI_ACTOR @protocol XZMocoaView <NSObject>
 
 @optional
 /// 视图模型。

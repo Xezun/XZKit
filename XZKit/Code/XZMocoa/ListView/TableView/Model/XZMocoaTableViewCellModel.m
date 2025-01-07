@@ -7,6 +7,8 @@
 
 #import "XZMocoaTableViewCellModel.h"
 
+#if !SWIFT_PACKAGE
 @implementation XZMocoaTableViewCellModel
 
 @end
+#endif

@@ -14,7 +14,7 @@
 NS_ASSUME_NONNULL_BEGIN
 
 /// 作为 Mocoa MVVM 中的 ViewModel 元素，需要实现的协议。
-@protocol XZMocoaViewModel <NSObject>
+NS_SWIFT_UI_ACTOR @protocol XZMocoaViewModel <NSObject>
 @required
 - (instancetype)initWithModel:(nullable id)model;
 @end
