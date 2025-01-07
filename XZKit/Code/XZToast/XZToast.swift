@@ -7,11 +7,14 @@
 
 import UIKit
 
-/// 提示内容
+/// 提示信息。
 public enum XZToast {
-    /// 消息提示
+    
+    /// 消息提示。
     case message(_ text: String)
-    /// 加载提示
+    
+    /// 加载提示。
+    /// - Note: 此类型的提示信息，不自动隐藏，需要调用 `hideToast()` 方法。
     case loading(_ text: String)
     
     /// Toast 回调闭包
@@ -22,16 +25,28 @@ public enum XZToast {
 
 extension UIResponder {
     
+    /// 展示提示信息。
+    /// - Note: 提示信息基于控制，子视图调用此方法，等同于视图所在的控制器调用此方法，因此没有添加到控制器的视图调用此方法无效。
+    /// - Parameters:
+    ///   - toast: 提示内容
+    ///   - duration: 展示时常
+    ///   - offset: 位置偏移
+    ///   - completion: 展示完成后的回调
     @objc public func showToast(_ toast: XZToast, duration: TimeInterval = 3.0, offset: CGPoint = .zero, completion: XZToast.Completion? = nil) {
         guard let window = UIApplication.shared.delegate?.window as? UIWindow else { return }
         window.rootViewController?.showToast(toast, duration: duration, offset: offset, completion: completion)
     }
     
+    /// 隐藏提示信息。
+    /// - Parameter completion: 提示信息隐藏后的回调
     @objc public func hideToast(_ completion: XZToast.Completion? = nil) {
         guard let window = UIApplication.shared.delegate?.window as? UIWindow else { return }
         window.rootViewController?.hideToast(completion)
     }
     
+    /// 布局提示信息视图控件。
+    ///
+    /// 默认情况下，提示信息展示在页面安全区中心位置。当页面大小或者安全区大小发生改变时，可调用此方法调整位置。
     @objc public func layoutToastView() {
         guard let window = UIApplication.shared.delegate?.window as? UIWindow else { return }
         window.rootViewController?.layoutToastView()
