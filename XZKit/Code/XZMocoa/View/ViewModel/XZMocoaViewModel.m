@@ -87,7 +87,7 @@
 }
 
 - (void)setModel:(id)model {
-    if (_model != model && [_model isEqual:model]) {
+    if (_model != model) {
         [self modelWillChange];
         _model = model;
         [self modelDidChange];
