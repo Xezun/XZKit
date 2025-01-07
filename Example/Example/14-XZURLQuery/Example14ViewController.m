@@ -7,6 +7,7 @@
 
 #import "Example14ViewController.h"
 @import XZURLQuery;
+@import XZLocale;
 
 @interface Example14ViewController ()
 

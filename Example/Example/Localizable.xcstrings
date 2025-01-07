@@ -1,0 +1,61 @@
+{
+  "sourceLanguage" : "zh-Hans",
+  "strings" : {
+    "{0}在{1}去过{2}。" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "{0} went to {2} on {1}."
+          }
+        }
+      }
+    },
+    "效果：{0}" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Result: {0}"
+          }
+        }
+      }
+    },
+    "数据：{0}, {1}, {2}" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Data: {0}, {1}, {2}"
+          }
+        }
+      }
+    },
+    "模版：{0}" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sample: {0}"
+          }
+        }
+      }
+    },
+    "语言：{0}" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Language: {0}"
+          }
+        }
+      }
+    }
+  },
+  "version" : "1.0"
+}

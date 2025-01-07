@@ -6,7 +6,7 @@
 //
 
 import UIKit
-import XZContentStatusView
+import XZContentStatus
 
 class Example12ViewController: UIViewController, XZContentStatusRepresentable {
 

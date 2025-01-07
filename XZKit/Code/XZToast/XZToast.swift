@@ -22,15 +22,19 @@ public enum XZToast {
 
 extension UIResponder {
     
-    @objc public func showToast(_ toast: XZToast, duration: TimeInterval = 3.0, completion: XZToast.Completion? = nil) {
+    @objc public func showToast(_ toast: XZToast, duration: TimeInterval = 3.0, offset: CGPoint = .zero, completion: XZToast.Completion? = nil) {
         guard let window = UIApplication.shared.delegate?.window as? UIWindow else { return }
-        
-        window.rootViewController?.showToast(toast, duration: duration, completion: completion)
+        window.rootViewController?.showToast(toast, duration: duration, offset: offset, completion: completion)
     }
     
     @objc public func hideToast(_ completion: XZToast.Completion? = nil) {
         guard let window = UIApplication.shared.delegate?.window as? UIWindow else { return }
         window.rootViewController?.hideToast(completion)
+    }
+    
+    @objc public func layoutToastView() {
+        guard let window = UIApplication.shared.delegate?.window as? UIWindow else { return }
+        window.rootViewController?.layoutToastView()
     }
     
     private static var _key = 0
@@ -55,7 +59,7 @@ fileprivate func XZToastDidComplete(_ completion: XZToast.Completion?, _ finishe
 
 extension UIViewController {
     
-    @objc public override func showToast(_ toast: XZToast, duration: TimeInterval = 3.0, completion: XZToast.Completion? = nil) {
+    public override func showToast(_ toast: XZToast, duration: TimeInterval = 3.0, offset: CGPoint = .zero, completion: XZToast.Completion? = nil) {
         guard let view = self.view else { return XZToastDidComplete(completion, false) }
         
         var toastView : XZToastView! = self.toastView
@@ -70,20 +74,17 @@ extension UIViewController {
             XZToastDidComplete(toastView.completion, false)
             view.bringSubviewToFront(toastView)
         }
+        toastView.offset = offset
         toastView.toast = toast
         toastView.completion = completion
         
-        let identifier = toastView.identifier
-        let bounds = view.bounds.inset(by: view.safeAreaInsets)
-        
-        toastView.sizeToFit()
-        toastView.center = CGPoint(x: bounds.midX, y: bounds.midY)
-        toastView.layoutIfNeeded()
+        layoutToastView()
         
         UIView.animate(withDuration: 0.3) {
             toastView.alpha = 1.0
         }
         
+        let identifier = toastView.identifier
         switch (toast) {
         case .message:
             // 延时自动隐藏
@@ -122,11 +123,25 @@ extension UIViewController {
         }
     }
     
+    public override func layoutToastView() {
+        guard let toastView = self.toastView else { return }
+        let offset = toastView.offset
+        
+        toastView.sizeToFit()
+        if let scrollView = view as? UIScrollView {
+            let bounds = scrollView.bounds.inset(by: scrollView.adjustedContentInset)
+            toastView.center = CGPoint(x: bounds.midX + offset.x, y: bounds.midY + offset.y)
+        } else {
+            let bounds = view.bounds.inset(by: view.safeAreaInsets)
+            toastView.center = CGPoint(x: bounds.midX + offset.x, y: bounds.midY + offset.y)
+        }
+        toastView.layoutIfNeeded()
+    }
 }
 
 extension UIView {
     
-    public override func showToast(_ toast: XZToast, duration: TimeInterval = 3.0, completion: XZToast.Completion? = nil) {
+    public override func showToast(_ toast: XZToast, duration: TimeInterval = 3.0, offset: CGPoint = .zero, completion: XZToast.Completion? = nil) {
         self.next?.showToast(toast, duration: duration, completion: completion)
     }
     
@@ -134,11 +149,15 @@ extension UIView {
         self.next?.hideToast(completion)
     }
     
+    public override func layoutToastView() {
+        self.next?.layoutToastView()
+    }
+    
 }
 
 extension UIWindow {
       
-    public override func showToast(_ toast: XZToast, duration: TimeInterval = 3.0, completion: XZToast.Completion? = nil) {
+    public override func showToast(_ toast: XZToast, duration: TimeInterval = 3.0, offset: CGPoint = .zero, completion: XZToast.Completion? = nil) {
         self.rootViewController?.showToast(toast, duration: duration, completion: completion)
     }
     
@@ -178,6 +197,7 @@ fileprivate class XZToastView : UIView {
     }
     
     var identifier: Int = 0
+    var offset = CGPoint.zero
     
     private let contentView = ContentView.init()
     

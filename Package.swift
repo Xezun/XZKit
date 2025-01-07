@@ -41,8 +41,8 @@ let package = Package(
             name: "XZGeometry",
             targets: ["XZGeometry"]),
         .library(
-            name: "XZContentStatusView",
-            targets: ["XZContentStatusView"]),
+            name: "XZContentStatus",
+            targets: ["XZContentStatus"]),
         .library(
             name: "XZTextImageView",
             targets: ["XZTextImageView"]),
@@ -51,7 +51,10 @@ let package = Package(
             targets: ["XZToast"]),
         .library(
             name: "XZURLQuery",
-            targets: ["XZURLQuery"])
+            targets: ["XZURLQuery"]),
+        .library(
+            name: "XZLocale",
+            targets: ["XZLocale"])
     ],
     dependencies: [
         // Dependencies declare other packages that this package depends on.
@@ -191,10 +194,10 @@ let package = Package(
             ]
         ),
         .target(
-            name: "XZContentStatusView",
+            name: "XZContentStatus",
             dependencies: ["XZTextImageView"],
             path: "XZKit",
-            sources: ["Code/XZContentStatusView"],
+            sources: ["Code/XZContentStatus"],
             cxxSettings: [
                 .define("XZ_FRAMEWORK")
             ]
@@ -223,6 +226,16 @@ let package = Package(
             path: "XZKit",
             sources: ["Code/XZURLQuery"],
             publicHeadersPath: "Headers/XZURLQuery/Public",
+            cxxSettings: [
+                .define("XZ_FRAMEWORK")
+            ]
+        ),
+        .target(
+            name: "XZLocale",
+            dependencies: ["XZDefines"],
+            path: "XZKit",
+            sources: ["Code/XZLocale"],
+            publicHeadersPath: "Headers/XZLocale/Public",
             cxxSettings: [
                 .define("XZ_FRAMEWORK")
             ]

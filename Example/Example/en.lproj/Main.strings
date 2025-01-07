@@ -1,0 +1,675 @@
+
+/* Class = "UINavigationItem"; title = "XZMocoa"; ObjectID = "0d5-b4-imP"; */
+"0d5-b4-imP.title" = "XZMocoa";
+
+/* Class = "UINavigationItem"; title = "设置（未实现）"; ObjectID = "0r1-xn-3V4"; */
+"0r1-xn-3V4.title" = "设置（未实现）";
+
+/* Class = "UITableViewSection"; headerTitle = "默认值"; ObjectID = "0rH-pP-GUj"; */
+"0rH-pP-GUj.headerTitle" = "默认值";
+
+/* Class = "UINavigationItem"; title = "测试"; ObjectID = "0vN-ip-yYJ"; */
+"0vN-ip-yYJ.title" = "测试";
+
+/* Class = "UILabel"; text = "否"; ObjectID = "13t-xB-7P5"; */
+"13t-xB-7P5.text" = "否";
+
+/* Class = "UILabel"; text = "+20"; ObjectID = "1f2-iN-Wht"; */
+"1f2-iN-Wht.text" = "+20";
+
+/* Class = "UILabel"; text = "08. XZPageControl"; ObjectID = "1qM-lX-NCv"; */
+"1qM-lX-NCv.text" = "08. XZPageControl";
+
+/* Class = "UILabel"; text = "Detail"; ObjectID = "1rD-Jj-I9a"; */
+"1rD-Jj-I9a.text" = "Detail";
+
+/* Class = "UILabel"; text = "Automatic"; ObjectID = "2Yj-S3-WjB"; */
+"2Yj-S3-WjB.text" = "Automatic";
+
+/* Class = "UITableViewSection"; headerTitle = "其它"; ObjectID = "2ax-Ih-ZRu"; */
+"2ax-Ih-ZRu.headerTitle" = "其它";
+
+/* Class = "UISegmentedControl"; 2kD-74-qyZ.segmentTitles[0] = "0.1"; ObjectID = "2kD-74-qyZ"; */
+"2kD-74-qyZ.segmentTitles[0]" = "0.1";
+
+/* Class = "UISegmentedControl"; 2kD-74-qyZ.segmentTitles[1] = "0.2"; ObjectID = "2kD-74-qyZ"; */
+"2kD-74-qyZ.segmentTitles[1]" = "0.2";
+
+/* Class = "UISegmentedControl"; 2kD-74-qyZ.segmentTitles[2] = "0.3"; ObjectID = "2kD-74-qyZ"; */
+"2kD-74-qyZ.segmentTitles[2]" = "0.3";
+
+/* Class = "UISegmentedControl"; 2kD-74-qyZ.segmentTitles[3] = "0.4"; ObjectID = "2kD-74-qyZ"; */
+"2kD-74-qyZ.segmentTitles[3]" = "0.4";
+
+/* Class = "UISegmentedControl"; 2kD-74-qyZ.segmentTitles[4] = "0.5"; ObjectID = "2kD-74-qyZ"; */
+"2kD-74-qyZ.segmentTitles[4]" = "0.5";
+
+/* Class = "UISegmentedControl"; 2kD-74-qyZ.segmentTitles[5] = "0.6"; ObjectID = "2kD-74-qyZ"; */
+"2kD-74-qyZ.segmentTitles[5]" = "0.6";
+
+/* Class = "UISegmentedControl"; 2kD-74-qyZ.segmentTitles[6] = "0.7"; ObjectID = "2kD-74-qyZ"; */
+"2kD-74-qyZ.segmentTitles[6]" = "0.7";
+
+/* Class = "UISegmentedControl"; 2kD-74-qyZ.segmentTitles[7] = "0.8"; ObjectID = "2kD-74-qyZ"; */
+"2kD-74-qyZ.segmentTitles[7]" = "0.8";
+
+/* Class = "UISegmentedControl"; 2kD-74-qyZ.segmentTitles[8] = "0.9"; ObjectID = "2kD-74-qyZ"; */
+"2kD-74-qyZ.segmentTitles[8]" = "0.9";
+
+/* Class = "UISegmentedControl"; 2kD-74-qyZ.segmentTitles[9] = "1.0"; ObjectID = "2kD-74-qyZ"; */
+"2kD-74-qyZ.segmentTitles[9]" = "1.0";
+
+/* Class = "UILabel"; text = " "; ObjectID = "2ms-rN-Leg"; */
+"2ms-rN-Leg.text" = " ";
+
+/* Class = "UINavigationItem"; title = "Refresh Settings"; ObjectID = "31n-x4-ueH"; */
+"31n-x4-ueH.title" = "Refresh Settings";
+
+/* Class = "UILabel"; text = "04. XZML"; ObjectID = "3A8-UB-Z8B"; */
+"3A8-UB-Z8B.text" = "04. XZML";
+
+/* Class = "UILabel"; text = "这是一个加载提示"; ObjectID = "3Cv-Jj-bcB"; */
+"3Cv-Jj-bcB.text" = "这是一个加载提示";
+
+/* Class = "UIBarButtonItem"; title = "Item"; ObjectID = "3Np-Zq-Cnl"; */
+"3Np-Zq-Cnl.title" = "Item";
+
+/* Class = "UILabel"; text = "indicatorSize"; ObjectID = "3WV-Fs-dXO"; */
+"3WV-Fs-dXO.text" = "indicatorSize";
+
+/* Class = "UILabel"; text = "设置翻页停在中间"; ObjectID = "3fj-Zu-N1p"; */
+"3fj-Zu-N1p.text" = "设置翻页停在中间";
+
+/* Class = "UILabel"; text = "未设置"; ObjectID = "46Y-Av-5MO"; */
+"46Y-Av-5MO.text" = "未设置";
+
+/* Class = "UINavigationItem"; title = "indicatorSize"; ObjectID = "4ao-JK-pX7"; */
+"4ao-JK-pX7.title" = "indicatorSize";
+
+/* Class = "UINavigationItem"; title = "indicatorImage"; ObjectID = "4lc-qq-rji"; */
+"4lc-qq-rji.title" = "indicatorImage";
+
+/* Class = "UILabel"; text = "行高"; ObjectID = "51y-vc-uAQ"; */
+"51y-vc-uAQ.text" = "行高";
+
+/* Class = "UILabel"; text = "markLine"; ObjectID = "54f-nT-vWe"; */
+"54f-nT-vWe.text" = "markLine";
+
+/* Class = "UILabel"; text = "custom"; ObjectID = "5b8-zW-FPD"; */
+"5b8-zW-FPD.text" = "custom";
+
+/* Class = "UIBarButtonItem"; title = "返回"; ObjectID = "5nf-K6-5oo"; */
+"5nf-K6-5oo.title" = "Back";
+
+/* Class = "UINavigationItem"; title = "Weak"; ObjectID = "5qD-vY-EuY"; */
+"5qD-vY-EuY.title" = "Weak";
+
+/* Class = "UILabel"; text = "自动刷新"; ObjectID = "5qx-QI-ezp"; */
+"5qx-QI-ezp.text" = "自动刷新";
+
+/* Class = "UILabel"; text = "◼︎"; ObjectID = "62L-B5-tPf"; */
+"62L-B5-tPf.text" = "◼︎";
+
+/* Class = "UILabel"; text = "◼︎"; ObjectID = "689-IX-nJw"; */
+"689-IX-nJw.text" = "◼︎";
+
+/* Class = "UILabel"; text = "height"; ObjectID = "6Mk-wc-0mi"; */
+"6Mk-wc-0mi.text" = "height";
+
+/* Class = "UILabel"; text = "English"; ObjectID = "6Xj-e3-Yim"; */
+"6Xj-e3-Yim.text" = "English";
+
+/* Class = "UIBarButtonItem"; title = "确定"; ObjectID = "6iV-of-BZ1"; */
+"6iV-of-BZ1.title" = "确定";
+
+/* Class = "UILabel"; text = "Detail"; ObjectID = "7R6-6g-iTq"; */
+"7R6-6g-iTq.text" = "Detail";
+
+/* Class = "UINavigationItem"; title = "itemSize"; ObjectID = "7Ya-gI-XuO"; */
+"7Ya-gI-XuO.title" = "itemSize";
+
+/* Class = "UILabel"; text = "安全模式"; ObjectID = "7cA-cF-z86"; */
+"7cA-cF-z86.text" = "安全模式";
+
+/* Class = "UILabel"; text = " 无样式文本："; ObjectID = "8N2-Bx-fx2"; */
+"8N2-Bx-fx2.text" = " 无样式文本：";
+
+/* Class = "UINavigationItem"; title = "XZToast"; ObjectID = "8k5-Ab-7WE"; */
+"8k5-Ab-7WE.title" = "XZToast";
+
+/* Class = "UILabel"; text = "06. XZRefresh"; ObjectID = "8rq-5S-eqA"; */
+"8rq-5S-eqA.text" = "06. XZRefresh";
+
+/* Class = "UIBarButtonItem"; title = "返回"; ObjectID = "90K-AV-SUf"; */
+"90K-AV-SUf.title" = "Back";
+
+/* Class = "UINavigationItem"; title = "垂直"; ObjectID = "90O-2T-s2x"; */
+"90O-2T-s2x.title" = "垂直";
+
+/* Class = "UILabel"; text = "添加一行"; ObjectID = "9I2-8o-JwX"; */
+"9I2-8o-JwX.text" = "添加一行";
+
+/* Class = "UILabel"; text = "XZML"; ObjectID = "9Jb-Er-Hjh"; */
+"9Jb-Er-Hjh.text" = "XZML";
+
+/* Class = "UILabel"; text = "nil"; ObjectID = "9XF-MM-b19"; */
+"9XF-MM-b19.text" = "nil";
+
+/* Class = "UILabel"; text = "指示器"; ObjectID = "9cc-QK-KOQ"; */
+"9cc-QK-KOQ.text" = "指示器";
+
+/* Class = "UILabel"; text = "文本修饰"; ObjectID = "9fh-32-gzz"; */
+"9fh-32-gzz.text" = "文本修饰";
+
+/* Class = "UILabel"; text = "前景色"; ObjectID = "9gh-d4-rSd"; */
+"9gh-d4-rSd.text" = "前景色";
+
+/* Class = "UILabel"; text = "设置翻页宽度"; ObjectID = "9pg-in-Eeh"; */
+"9pg-in-Eeh.text" = "设置翻页宽度";
+
+/* Class = "UILabel"; text = " "; ObjectID = "9yc-kM-8IQ"; */
+"9yc-kM-8IQ.text" = " ";
+
+/* Class = "UILabel"; text = "09. XZSegmentedControl"; ObjectID = "ASl-ib-DVd"; */
+"ASl-ib-DVd.text" = "09. XZSegmentedControl";
+
+/* Class = "UILabel"; text = "nil"; ObjectID = "AfC-Ch-8Ug"; */
+"AfC-Ch-8Ug.text" = "nil";
+
+/* Class = "UILabel"; text = "请退出页面，并查看控制台，是否有“测试成功”字样输出！"; ObjectID = "Ajr-RF-8Hp"; */
+"Ajr-RF-8Hp.text" = "请退出页面，并查看控制台，是否有“测试成功”字样输出！";
+
+/* Class = "UILabel"; text = "02、本地化测试"; ObjectID = "AsZ-lP-Hf4"; */
+"AsZ-lP-Hf4.text" = "02. Localization Tests";
+
+/* Class = "UILabel"; text = "前景色"; ObjectID = "BTw-C9-SXI"; */
+"BTw-C9-SXI.text" = "前景色";
+
+/* Class = "UINavigationItem"; title = "演示"; ObjectID = "Baa-YF-dVK"; */
+"Baa-YF-dVK.title" = "演示";
+
+/* Class = "UINavigationItem"; title = "XZML"; ObjectID = "Brj-sV-MXX"; */
+"Brj-sV-MXX.title" = "XZML";
+
+/* Class = "UINavigationItem"; title = "XZSegmentedControl"; ObjectID = "CDW-Gb-sse"; */
+"CDW-Gb-sse.title" = "XZSegmentedControl";
+
+/* Class = "UILabel"; text = "14"; ObjectID = "COJ-eF-OeB"; */
+"COJ-eF-OeB.text" = "14";
+
+/* Class = "UITableViewSection"; headerTitle = "预设值"; ObjectID = "CSv-wi-QH5"; */
+"CSv-wi-QH5.headerTitle" = "预设值";
+
+/* Class = "UILabel"; text = "Light"; ObjectID = "Cbt-yO-fIP"; */
+"Cbt-yO-fIP.text" = "Light";
+
+/* Class = "UILabel"; text = " "; ObjectID = "D6o-zd-AFI"; */
+"D6o-zd-AFI.text" = " ";
+
+/* Class = "UILabel"; text = "Title"; ObjectID = "DAB-Lr-ZLd"; */
+"DAB-Lr-ZLd.text" = "Title";
+
+/* Class = "UIBarButtonItem"; title = "返回"; ObjectID = "DEl-ZD-lyO"; */
+"DEl-ZD-lyO.title" = "Back";
+
+/* Class = "UILabel"; text = "字体"; ObjectID = "DJj-Ca-Sv5"; */
+"DJj-Ca-Sv5.text" = "字体";
+
+/* Class = "UILabel"; text = "隐藏"; ObjectID = "DUl-9q-0tH"; */
+"DUl-9q-0tH.text" = "隐藏";
+
+/* Class = "UIBarButtonItem"; title = "返回"; ObjectID = "DkT-XS-GRY"; */
+"DkT-XS-GRY.title" = "Back";
+
+/* Class = "UILabel"; text = " 调试信息："; ObjectID = "Dmc-RG-6cl"; */
+"Dmc-RG-6cl.text" = " 调试信息：";
+
+/* Class = "UIBarButtonItem"; title = "返回"; ObjectID = "DvO-pJ-g7v"; */
+"DvO-pJ-g7v.title" = "Back";
+
+/* Class = "UIBarButtonItem"; title = "返回"; ObjectID = "EOW-NS-QG0"; */
+"EOW-NS-QG0.title" = "Back";
+
+/* Class = "UISegmentedControl"; EQr-cO-qJp.segmentTitles[0] = "-1.0"; ObjectID = "EQr-cO-qJp"; */
+"EQr-cO-qJp.segmentTitles[0]" = "-1.0";
+
+/* Class = "UISegmentedControl"; EQr-cO-qJp.segmentTitles[1] = "-0.7"; ObjectID = "EQr-cO-qJp"; */
+"EQr-cO-qJp.segmentTitles[1]" = "-0.7";
+
+/* Class = "UISegmentedControl"; EQr-cO-qJp.segmentTitles[2] = "-0.5"; ObjectID = "EQr-cO-qJp"; */
+"EQr-cO-qJp.segmentTitles[2]" = "-0.5";
+
+/* Class = "UISegmentedControl"; EQr-cO-qJp.segmentTitles[3] = "-0.2"; ObjectID = "EQr-cO-qJp"; */
+"EQr-cO-qJp.segmentTitles[3]" = "-0.2";
+
+/* Class = "UISegmentedControl"; EQr-cO-qJp.segmentTitles[4] = "+0.2"; ObjectID = "EQr-cO-qJp"; */
+"EQr-cO-qJp.segmentTitles[4]" = "+0.2";
+
+/* Class = "UISegmentedControl"; EQr-cO-qJp.segmentTitles[5] = "+0.5"; ObjectID = "EQr-cO-qJp"; */
+"EQr-cO-qJp.segmentTitles[5]" = "+0.5";
+
+/* Class = "UISegmentedControl"; EQr-cO-qJp.segmentTitles[6] = "+0.7"; ObjectID = "EQr-cO-qJp"; */
+"EQr-cO-qJp.segmentTitles[6]" = "+0.7";
+
+/* Class = "UISegmentedControl"; EQr-cO-qJp.segmentTitles[7] = "+1.0"; ObjectID = "EQr-cO-qJp"; */
+"EQr-cO-qJp.segmentTitles[7]" = "+1.0";
+
+/* Class = "UILabel"; text = "简体中文"; ObjectID = "FH0-OU-sb2"; */
+"FH0-OU-sb2.text" = "简体中文";
+
+/* Class = "UIBarButtonItem"; title = "返回"; ObjectID = "GJ6-QM-HhV"; */
+"GJ6-QM-HhV.title" = "Back";
+
+/* Class = "UISegmentedControl"; Gbp-5l-6JU.segmentTitles[0] = "0"; ObjectID = "Gbp-5l-6JU"; */
+"Gbp-5l-6JU.segmentTitles[0]" = "0";
+
+/* Class = "UISegmentedControl"; Gbp-5l-6JU.segmentTitles[1] = "1"; ObjectID = "Gbp-5l-6JU"; */
+"Gbp-5l-6JU.segmentTitles[1]" = "1";
+
+/* Class = "UISegmentedControl"; Gbp-5l-6JU.segmentTitles[2] = "2"; ObjectID = "Gbp-5l-6JU"; */
+"Gbp-5l-6JU.segmentTitles[2]" = "2";
+
+/* Class = "UISegmentedControl"; Gbp-5l-6JU.segmentTitles[3] = "3"; ObjectID = "Gbp-5l-6JU"; */
+"Gbp-5l-6JU.segmentTitles[3]" = "3";
+
+/* Class = "UISegmentedControl"; Gbp-5l-6JU.segmentTitles[4] = "4"; ObjectID = "Gbp-5l-6JU"; */
+"Gbp-5l-6JU.segmentTitles[4]" = "4";
+
+/* Class = "UISegmentedControl"; Gbp-5l-6JU.segmentTitles[5] = "5"; ObjectID = "Gbp-5l-6JU"; */
+"Gbp-5l-6JU.segmentTitles[5]" = "5";
+
+/* Class = "UILabel"; text = "11. XZTextImageView"; ObjectID = "GrJ-Xw-ggS"; */
+"GrJ-Xw-ggS.text" = "11. XZTextImageView";
+
+/* Class = "UILabel"; text = "1、状态栏"; ObjectID = "HZG-gB-TP8"; */
+"HZG-gB-TP8.text" = "1、状态栏";
+
+/* Class = "UILabel"; text = "上拉加载"; ObjectID = "I1g-GV-5eU"; */
+"I1g-GV-5eU.text" = "上拉加载";
+
+/* Class = "UILabel"; text = " "; ObjectID = "I4Y-Wn-yyX"; */
+"I4Y-Wn-yyX.text" = " ";
+
+/* Class = "UILabel"; text = "显示"; ObjectID = "IFd-V9-WHy"; */
+"IFd-V9-WHy.text" = "显示";
+
+/* Class = "UILabel"; text = "连续性交互"; ObjectID = "J02-Q8-me9"; */
+"J02-Q8-me9.text" = "连续性交互";
+
+/* Class = "UISegmentedControl"; JDE-cO-Dt3.segmentTitles[1] = "10"; ObjectID = "JDE-cO-Dt3"; */
+"JDE-cO-Dt3.segmentTitles[1]" = "10";
+
+/* Class = "UILabel"; text = "#d3a239"; ObjectID = "Kkd-ZA-3cU"; */
+"Kkd-ZA-3cU.text" = "#d3a239";
+
+/* Class = "UILabel"; text = "字体"; ObjectID = "KqN-Xm-8er"; */
+"KqN-Xm-8er.text" = "字体";
+
+/* Class = "UINavigationItem"; title = "选择字号"; ObjectID = "LGr-q3-yCf"; */
+"LGr-q3-yCf.title" = "选择字号";
+
+/* Class = "UILabel"; text = "图片数量"; ObjectID = "M2e-fJ-RR6"; */
+"M2e-fJ-RR6.text" = "图片数量";
+
+/* Class = "UILabel"; text = "示例二"; ObjectID = "McA-NG-3qu"; */
+"McA-NG-3qu.text" = "示例二";
+
+/* Class = "UILabel"; text = "示例一：水平"; ObjectID = "NZo-0A-6UT"; */
+"NZo-0A-6UT.text" = "示例一：水平";
+
+/* Class = "UILabel"; text = "<XZML>"; ObjectID = "Ow8-fx-oeD"; */
+"Ow8-fx-oeD.text" = "<XZML>";
+
+/* Class = "UILabel"; text = "Dark"; ObjectID = "P0s-3Z-AlM"; */
+"P0s-3Z-AlM.text" = "Dark";
+
+/* Class = "UILabel"; text = "indicatorColor"; ObjectID = "PJ4-vB-sEO"; */
+"PJ4-vB-sEO.text" = "indicatorColor";
+
+/* Class = "UINavigationItem"; title = "选择字体"; ObjectID = "PxD-gp-Efz"; */
+"PxD-gp-Efz.title" = "选择字体";
+
+/* Class = "UIBarButtonItem"; title = "返回"; ObjectID = "Qzx-dz-9pj"; */
+"Qzx-dz-9pj.title" = "Back";
+
+/* Class = "UITableViewController"; title = "Settings"; ObjectID = "RGm-R0-dnA"; */
+"RGm-R0-dnA.title" = "Settings";
+
+/* Class = "UILabel"; text = "10. XZGeometry"; ObjectID = "RHN-Na-mhS"; */
+"RHN-Na-mhS.text" = "10. XZGeometry";
+
+/* Class = "UIBarButtonItem"; title = "返回"; ObjectID = "RI1-49-qLM"; */
+"RI1-49-qLM.title" = "Back";
+
+/* Class = "UINavigationItem"; title = "应用语言设置"; ObjectID = "RYC-X2-ao4"; */
+"RYC-X2-ao4.title" = "App Language Settings";
+
+/* Class = "UILabel"; text = "间距"; ObjectID = "Rn4-hN-FEJ"; */
+"Rn4-hN-FEJ.text" = "间距";
+
+/* Class = "UILabel"; text = "18"; ObjectID = "SML-AC-auj"; */
+"SML-AC-auj.text" = "18";
+
+/* Class = "UILabel"; text = "首尾循环"; ObjectID = "SQ5-J9-s8B"; */
+"SQ5-J9-s8B.text" = "首尾循环";
+
+/* Class = "UILabel"; text = " 原始XZML："; ObjectID = "TKT-FS-lM8"; */
+"TKT-FS-lM8.text" = " 原始XZML：";
+
+/* Class = "UILabel"; text = "Detail"; ObjectID = "Td8-Kc-TJc"; */
+"Td8-Kc-TJc.text" = "Detail";
+
+/* Class = "UILabel"; text = "是否循环"; ObjectID = "Tud-Uc-y1f"; */
+"Tud-Uc-y1f.text" = "是否循环";
+
+/* Class = "UILabel"; text = "Normal"; ObjectID = "UJF-d4-3pA"; */
+"UJF-d4-3pA.text" = "Normal";
+
+/* Class = "UISegmentedControl"; UeS-kP-GbJ.segmentTitles[1] = "10"; ObjectID = "UeS-kP-GbJ"; */
+"UeS-kP-GbJ.segmentTitles[1]" = "10";
+
+/* Class = "UILabel"; text = "布局"; ObjectID = "Umu-T0-uS7"; */
+"Umu-T0-uS7.text" = "布局";
+
+/* Class = "UILabel"; text = "应用内语言设置"; ObjectID = "VI5-64-sTq"; */
+"VI5-64-sTq.text" = "InApp Language Preferences";
+
+/* Class = "UILabel"; text = "width"; ObjectID = "Vgt-XK-SNA"; */
+"Vgt-XK-SNA.text" = "width";
+
+/* Class = "UILabel"; text = "示例二：垂直"; ObjectID = "W6u-sC-Y6E"; */
+"W6u-sC-Y6E.text" = "示例二：垂直";
+
+/* Class = "UILabel"; text = "26"; ObjectID = "Wub-4G-5Jd"; */
+"Wub-4G-5Jd.text" = "26";
+
+/* Class = "UILabel"; text = "纵向滚动"; ObjectID = "XGF-tX-nzo"; */
+"XGF-tX-nzo.text" = "纵向滚动";
+
+/* Class = "UILabel"; text = "链接"; ObjectID = "XZY-dB-3sJ"; */
+"XZY-dB-3sJ.text" = "链接";
+
+/* Class = "UIBarButtonItem"; title = "返回"; ObjectID = "Y72-fT-QWy"; */
+"Y72-fT-QWy.title" = "Back";
+
+/* Class = "UILabel"; text = "375.0"; ObjectID = "ZAd-wW-X0c"; */
+"ZAd-wW-X0c.text" = "375.0";
+
+/* Class = "UIBarButtonItem"; title = "返回"; ObjectID = "ZKT-Ug-R9n"; */
+"ZKT-Ug-R9n.title" = "Back";
+
+/* Class = "UIBarButtonItem"; title = "返回"; ObjectID = "ZoT-jn-1gb"; */
+"ZoT-jn-1gb.title" = "Back";
+
+/* Class = "UILabel"; text = "下拉刷新"; ObjectID = "a0b-KR-ToI"; */
+"a0b-KR-ToI.text" = "下拉刷新";
+
+/* Class = "UILabel"; text = " 安全模式"; ObjectID = "aIJ-eW-c9H"; */
+"aIJ-eW-c9H.text" = " 安全模式";
+
+/* Class = "UILabel"; text = "对齐"; ObjectID = "ayZ-Ce-oX7"; */
+"ayZ-Ce-oX7.text" = "对齐";
+
+/* Class = "UILabel"; text = " 富文本效果："; ObjectID = "azq-yf-ngw"; */
+"azq-yf-ngw.text" = " 富文本效果：";
+
+/* Class = "UILabel"; text = "13. XZToast"; ObjectID = "bBT-nW-ia0"; */
+"bBT-nW-ia0.text" = "13. XZToast";
+
+/* Class = "UILabel"; text = "这是一个文本提示"; ObjectID = "bSY-DL-VKI"; */
+"bSY-DL-VKI.text" = "这是一个文本提示";
+
+/* Class = "UILabel"; text = "ChalkboardSE-Regular, 14"; ObjectID = "bZT-y7-28N"; */
+"bZT-y7-28N.text" = "ChalkboardSE-Regular, 14";
+
+/* Class = "UILabel"; text = "14. XZURLQuery"; ObjectID = "bvX-7a-O0g"; */
+"bvX-7a-O0g.text" = "14. XZURLQuery";
+
+/* Class = "UIBarButtonItem"; title = "返回"; ObjectID = "bzn-s3-P9y"; */
+"bzn-s3-P9y.title" = "Back";
+
+/* Class = "UILabel"; text = "10"; ObjectID = "cEB-ZB-1Fv"; */
+"cEB-ZB-1Fv.text" = "10";
+
+/* Class = "UILabel"; text = "切换上拉状态"; ObjectID = "cIU-wz-GAy"; */
+"cIU-wz-GAy.text" = "切换上拉状态";
+
+/* Class = "UILabel"; text = "width"; ObjectID = "ccA-8y-63V"; */
+"ccA-8y-63V.text" = "width";
+
+/* Class = "UILabel"; text = "22"; ObjectID = "cok-US-Zyg"; */
+"cok-US-Zyg.text" = "22";
+
+/* Class = "UINavigationItem"; title = "示例一"; ObjectID = "d8q-N7-ywx"; */
+"d8q-N7-ywx.title" = "示例一";
+
+/* Class = "UINavigationItem"; title = "状态栏设置"; ObjectID = "dGp-2z-iGn"; */
+"dGp-2z-iGn.title" = "状态栏设置";
+
+/* Class = "UINavigationItem"; title = "XZExtensions"; ObjectID = "dLy-gs-kCF"; */
+"dLy-gs-kCF.title" = "XZExtensions";
+
+/* Class = "UINavigationItem"; title = "效果展示"; ObjectID = "dOE-Mm-V8O"; */
+"dOE-Mm-V8O.title" = "效果展示";
+
+/* Class = "UITableViewSection"; headerTitle = "操作"; ObjectID = "drL-L4-c3h"; */
+"drL-L4-c3h.headerTitle" = "操作";
+
+/* Class = "UILabel"; text = "01、应用语言设置"; ObjectID = "dtd-dq-Ka0"; */
+"dtd-dq-Ka0.text" = "01. App Language Settings";
+
+/* Class = "UILabel"; text = "interitemSpacing"; ObjectID = "eMD-iW-cVw"; */
+"eMD-iW-cVw.text" = "interitemSpacing";
+
+/* Class = "UINavigationItem"; title = "XZContentStatus"; ObjectID = "egs-WH-lj8"; */
+"egs-WH-lj8.title" = "XZContentStatus";
+
+/* Class = "UILabel"; text = "enweak、deweak"; ObjectID = "f2x-br-oMd"; */
+"f2x-br-oMd.text" = "enweak、deweak";
+
+/* Class = "UILabel"; text = "noteLine"; ObjectID = "fam-07-aOI"; */
+"fam-07-aOI.text" = "noteLine";
+
+/* Class = "UILabel"; text = "删除线"; ObjectID = "fd9-oU-YL0"; */
+"fd9-oU-YL0.text" = "删除线";
+
+/* Class = "UITableViewSection"; headerTitle = "状态栏样式"; ObjectID = "ff3-EB-6zU"; */
+"ff3-EB-6zU.headerTitle" = "状态栏样式";
+
+/* Class = "UILabel"; text = "05. XZJSON"; ObjectID = "fpu-Gy-PEd"; */
+"fpu-Gy-PEd.text" = "05. XZJSON";
+
+/* Class = "UINavigationItem"; title = "水平"; ObjectID = "g4C-q3-oe9"; */
+"g4C-q3-oe9.title" = "水平";
+
+/* Class = "UILabel"; text = "Title"; ObjectID = "gGw-8R-Uqi"; */
+"gGw-8R-Uqi.text" = "Title";
+
+/* Class = "UILabel"; text = "02. XZExtensions"; ObjectID = "h51-vb-rlz"; */
+"h51-vb-rlz.text" = "02. XZExtensions";
+
+/* Class = "UITableViewSection"; headerTitle = "状态栏状态"; ObjectID = "hXm-ch-SL1"; */
+"hXm-ch-SL1.headerTitle" = "状态栏状态";
+
+/* Class = "UITableViewController"; title = "XZKit"; ObjectID = "hkn-K6-7lv"; */
+"hkn-K6-7lv.title" = "XZKit";
+
+/* Class = "UILabel"; text = "示例一"; ObjectID = "iMV-fw-AnT"; */
+"iMV-fw-AnT.text" = "示例一";
+
+/* Class = "UILabel"; text = "itemSize"; ObjectID = "ipi-Yt-4MR"; */
+"ipi-Yt-4MR.text" = "itemSize";
+
+/* Class = "UITableViewSection"; headerTitle = "适配方式"; ObjectID = "jcP-MG-bU5"; */
+"jcP-MG-bU5.headerTitle" = "适配方式";
+
+/* Class = "UIBarButtonItem"; title = "Item"; ObjectID = "juF-PL-5s5"; */
+"juF-PL-5s5.title" = "Item";
+
+/* Class = "UIBarButtonItem"; title = "返回"; ObjectID = "kFV-XT-cyH"; */
+"kFV-XT-cyH.title" = "Back";
+
+/* Class = "UIBarButtonItem"; title = "Item"; ObjectID = "kz4-np-yWN"; */
+"kz4-np-yWN.title" = "Item";
+
+/* Class = "UILabel"; text = "None"; ObjectID = "l2Q-iP-Ukj"; */
+"l2Q-iP-Ukj.text" = "None";
+
+/* Class = "UISegmentedControl"; lEQ-kZ-dpD.segmentTitles[1] = "10"; ObjectID = "lEQ-kZ-dpD"; */
+"lEQ-kZ-dpD.segmentTitles[1]" = "10";
+
+/* Class = "UINavigationItem"; title = "示例"; ObjectID = "lHe-hA-7y8"; */
+"lHe-hA-7y8.title" = "示例";
+
+/* Class = "UIBarButtonItem"; title = "返回"; ObjectID = "lT0-hR-IFl"; */
+"lT0-hR-IFl.title" = "Back";
+
+/* Class = "UIBarButtonItem"; title = "返回"; ObjectID = "lVC-nm-Ino"; */
+"lVC-nm-Ino.title" = "Back";
+
+/* Class = "UINavigationItem"; title = "XZPageView"; ObjectID = "lWW-ey-QNo"; */
+"lWW-ey-QNo.title" = "XZPageView";
+
+/* Class = "UILabel"; text = "footerView"; ObjectID = "la6-X6-cus"; */
+"la6-X6-cus.text" = "footerView";
+
+/* Class = "UILabel"; text = "◼︎"; ObjectID = "mFm-bd-eU4"; */
+"mFm-bd-eU4.text" = "◼︎";
+
+/* Class = "UIBarButtonItem"; title = "确定"; ObjectID = "mGi-jU-xjG"; */
+"mGi-jU-xjG.title" = "确定";
+
+/* Class = "UINavigationItem"; title = "设置"; ObjectID = "mWu-7n-bHn"; */
+"mWu-7n-bHn.title" = "设置";
+
+/* Class = "UINavigationItem"; title = "XZKit"; ObjectID = "mYn-eB-Xxn"; */
+"mYn-eB-Xxn.title" = "XZKit";
+
+/* Class = "UIBarButtonItem"; title = "返回"; ObjectID = "mlj-1X-ybD"; */
+"mlj-1X-ybD.title" = "Back";
+
+/* Class = "UILabel"; text = "-20"; ObjectID = "n1R-5s-rB6"; */
+"n1R-5s-rB6.text" = "-20";
+
+/* Class = "UILabel"; text = "Title"; ObjectID = "nge-gp-KtN"; */
+"nge-gp-KtN.text" = "Title";
+
+/* Class = "UINavigationItem"; title = "indicatorStyle"; ObjectID = "nmU-Ne-gc6"; */
+"nmU-Ne-gc6.title" = "indicatorStyle";
+
+/* Class = "UILabel"; text = "30"; ObjectID = "oEd-22-KGV"; */
+"oEd-22-KGV.text" = "30";
+
+/* Class = "UINavigationItem"; title = "本地化测试"; ObjectID = "pAe-zX-Z0l"; */
+"pAe-zX-Z0l.title" = "Localization Tests";
+
+/* Class = "UIBarButtonItem"; title = "确定"; ObjectID = "pFV-1X-di0"; */
+"pFV-1X-di0.title" = "确定";
+
+/* Class = "UITableViewSection"; headerTitle = "参数配置"; ObjectID = "pRL-3L-Ti8"; */
+"pRL-3L-Ti8.headerTitle" = "参数配置";
+
+/* Class = "UILabel"; text = "indicatorStyle"; ObjectID = "pdN-pX-bqn"; */
+"pdN-pX-bqn.text" = "indicatorStyle";
+
+/* Class = "UINavigationItem"; title = "XZDefines"; ObjectID = "pjt-vK-Nqq"; */
+"pjt-vK-Nqq.title" = "XZDefines";
+
+/* Class = "UINavigationItem"; title = "示例二"; ObjectID = "qH8-ND-8qK"; */
+"qH8-ND-8qK.title" = "示例二";
+
+/* Class = "UILabel"; text = "height"; ObjectID = "rel-pN-WRQ"; */
+"rel-pN-WRQ.text" = "height";
+
+/* Class = "UIBarButtonItem"; title = "Item"; ObjectID = "rhz-MJ-nxF"; */
+"rhz-MJ-nxF.title" = "Item";
+
+/* Class = "UITableViewSection"; headerTitle = "位置偏移"; ObjectID = "s2x-gk-VYi"; */
+"s2x-gk-VYi.headerTitle" = "位置偏移";
+
+/* Class = "UILabel"; text = "03. XZMocoa"; ObjectID = "ski-vT-rI4"; */
+"ski-vT-rI4.text" = "03. XZMocoa";
+
+/* Class = "UILabel"; text = "减少一行"; ObjectID = "srx-pa-vWa"; */
+"srx-pa-vWa.text" = "减少一行";
+
+/* Class = "UILabel"; text = "切换下拉状态"; ObjectID = "suc-mN-TJs"; */
+"suc-mN-TJs.text" = "切换下拉状态";
+
+/* Class = "UILabel"; text = "07. XZPageView"; ObjectID = "sux-R4-Dyp"; */
+"sux-R4-Dyp.text" = "07. XZPageView";
+
+/* Class = "UILabel"; text = "Detail"; ObjectID = "trv-cD-Bwg"; */
+"trv-cD-Bwg.text" = "Detail";
+
+/* Class = "UITableViewSection"; headerTitle = "数据"; ObjectID = "tt4-s2-znB"; */
+"tt4-s2-znB.headerTitle" = "数据";
+
+/* Class = "UILabel"; text = "永和九年 ABC 123"; ObjectID = "u07-hb-J4K"; */
+"u07-hb-J4K.text" = "永和九年 ABC 123";
+
+/* Class = "UILabel"; text = "headerView"; ObjectID = "u0G-cm-QwL"; */
+"u0G-cm-QwL.text" = "headerView";
+
+/* Class = "UILabel"; text = "PingFangSC-Regular, 20"; ObjectID = "uEi-9t-I42"; */
+"uEi-9t-I42.text" = "PingFangSC-Regular, 20";
+
+/* Class = "UIBarButtonItem"; title = "返回"; ObjectID = "ul0-Xj-Mqu"; */
+"ul0-Xj-Mqu.title" = "Back";
+
+/* Class = "UILabel"; text = "#112233"; ObjectID = "v8H-uT-pQj"; */
+"v8H-uT-pQj.text" = "#112233";
+
+/* Class = "UILabel"; text = "XZML"; ObjectID = "vcG-xM-VOh"; */
+"vcG-xM-VOh.text" = "XZML";
+
+/* Class = "UISegmentedControl"; vfq-e1-O3T.segmentTitles[1] = "10"; ObjectID = "vfq-e1-O3T"; */
+"vfq-e1-O3T.segmentTitles[1]" = "10";
+
+/* Class = "UINavigationItem"; title = "indicatorColor"; ObjectID = "vlD-bR-5hd"; */
+"vlD-bR-5hd.title" = "indicatorColor";
+
+/* Class = "UINavigationItem"; title = "XZLocalization"; ObjectID = "vvh-QQ-zNL"; */
+"vvh-QQ-zNL.title" = "XZLocalization";
+
+/* Class = "UILabel"; text = "01. XZDefines"; ObjectID = "wC6-Gf-nL1"; */
+"wC6-Gf-nL1.text" = "01. XZDefines";
+
+/* Class = "UIBarButtonItem"; title = "确定"; ObjectID = "wCl-M7-IC1"; */
+"wCl-M7-IC1.title" = "确定";
+
+/* Class = "UILabel"; text = "0"; ObjectID = "wxV-KA-7LY"; */
+"wxV-KA-7LY.text" = "0";
+
+/* Class = "UILabel"; text = "Detail"; ObjectID = "x0y-8v-gOa"; */
+"x0y-8v-gOa.text" = "Detail";
+
+/* Class = "UIBarButtonItem"; title = "确定"; ObjectID = "x3Q-bp-jep"; */
+"x3Q-bp-jep.title" = "确定";
+
+/* Class = "UIBarButtonItem"; title = "确定"; ObjectID = "xa5-ck-Br0"; */
+"xa5-ck-Br0.title" = "确定";
+
+/* Class = "UILabel"; text = "12. XZContentStatusView"; ObjectID = "xu6-jf-p7K"; */
+"xu6-jf-p7K.text" = "12. XZContentStatusView";
+
+/* Class = "UILabel"; text = "indicatorImage"; ObjectID = "xwt-sw-R9X"; */
+"xwt-sw-R9X.text" = "indicatorImage";
+
+/* Class = "UISegmentedControl"; y54-oZ-Xlg.segmentTitles[1] = "10"; ObjectID = "y54-oZ-Xlg"; */
+"y54-oZ-Xlg.segmentTitles[1]" = "10";
+
+/* Class = "UILabel"; text = "15. XZLocale"; ObjectID = "ydf-eG-ejA"; */
+"ydf-eG-ejA.text" = "15. XZLocale";
+
+/* Class = "UINavigationItem"; title = "设置"; ObjectID = "z26-rc-gqu"; */
+"z26-rc-gqu.title" = "设置";
+
+/* Class = "UILabel"; text = "自动播放"; ObjectID = "zKI-vn-WMP"; */
+"zKI-vn-WMP.text" = "自动播放";
+
+/* Class = "UILabel"; text = "未设置"; ObjectID = "zOZ-dR-k5v"; */
+"zOZ-dR-k5v.text" = "未设置";
+
+/* Class = "UILabel"; text = "Title"; ObjectID = "zgr-yp-CE5"; */
+"zgr-yp-CE5.text" = "Title";
