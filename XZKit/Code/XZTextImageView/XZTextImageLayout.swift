@@ -30,7 +30,7 @@ import XZGeometry
     var imageInsets: NSDirectionalEdgeInsets { get }
     
     /// 文本相对图片的位置。默认 .bottom 底边。仅单值有效，否则按优先级 .bottom > .top > .trailing > .leading 生效。
-    var textLayoutDirection: NSDirectionalRectEdge { get }
+    var textLayoutOrientation: NSDirectionalRectEdge { get }
     
 }
 
@@ -48,7 +48,7 @@ extension XZTextImageLayout {
         return .zero
     }
     
-    public var textLayoutDirection: NSDirectionalRectEdge {
+    public var textLayoutOrientation: NSDirectionalRectEdge {
         return .bottom
     }
     
@@ -56,7 +56,7 @@ extension XZTextImageLayout {
     public var textImageIntrinsicSize: CGSize {
         let imageSize = imageViewIfLoaded != nil ? imageViewIfLoaded!.intrinsicContentSize : .zero
         let titleSize = textLabelIfLoaded != nil ? textLabelIfLoaded!.intrinsicContentSize : .zero
-        if textLayoutDirection.contains(.bottom) || textLayoutDirection.contains(.top) {
+        if textLayoutOrientation.contains(.bottom) || textLayoutOrientation.contains(.top) {
             let width = max(imageSize.width, titleSize.width) + contentInsets.leading + contentInsets.trailing
             let height = imageSize.height + titleSize.height + contentInsets.top + contentInsets.bottom
             return CGSize.init(width: width, height: height)
@@ -71,7 +71,7 @@ extension XZTextImageLayout {
         let imageSize = imageViewIfLoaded != nil ? imageViewIfLoaded!.sizeThatFits(.zero) : .zero
         // 设置 sizeThatFits 的大小，可能会影响结果。
         let titleSize = textLabelIfLoaded != nil ? textLabelIfLoaded!.sizeThatFits(.zero) : .zero
-        if textLayoutDirection.contains(.bottom) || textLayoutDirection.contains(.top) {
+        if textLayoutOrientation.contains(.bottom) || textLayoutOrientation.contains(.top) {
             let width = max(imageSize.width, titleSize.width) + contentInsets.leading + contentInsets.trailing
             let height = imageSize.height + titleSize.height + contentInsets.top + contentInsets.bottom
             return CGSize.init(width: width, height: height)
@@ -99,7 +99,7 @@ extension XZTextImageLayout {
                 // 如果多行显示，那么返回的大小，宽度与给定的大小相同，高度则根据文字有多少行（不超过限定的行数）确定。
                 let titleLabelSize = titleLabel.sizeThatFits(layoutRect.size)
                 
-                if textLayoutDirection.contains(.bottom) {
+                if textLayoutOrientation.contains(.bottom) {
                     // 垂直布局，标题在下。
                     let titleLabelWidth = min(titleLabelSize.width, layoutRect.width)
                     let titleLabelHeight = min(layoutRect.height - imageViewSize.height, titleLabelSize.height)
@@ -120,7 +120,7 @@ extension XZTextImageLayout {
                         height: titleLabelHeight - textInsets.top - textInsets.bottom
                     )
                     
-                } else if textLayoutDirection.contains(.top) {
+                } else if textLayoutOrientation.contains(.top) {
                     // 垂直布局，标题在上。
                     let titleLabelWidth = min(titleLabelSize.width, layoutRect.width)
                     let titleLabelHeight = min(layoutRect.height - imageViewSize.height, titleLabelSize.height)
@@ -148,7 +148,7 @@ extension XZTextImageLayout {
                     
                     let contentSize = CGSize(width: imageViewSize.width + titleLabelWidth, height: max(imageViewSize.height, titleLabelHeight))
                     
-                    if (textLayoutDirection.contains(.trailing) && layoutDirection == .leftToRight) || (textLayoutDirection.contains(.leading) && layoutDirection == .rightToLeft) {
+                    if (textLayoutOrientation.contains(.trailing) && layoutDirection == .leftToRight) || (textLayoutOrientation.contains(.leading) && layoutDirection == .rightToLeft) {
                         // 标题在右
                         let minX = layoutRect.minX + (layoutRect.width - contentSize.width) * 0.5
                         imageView.frame = CGRect(
