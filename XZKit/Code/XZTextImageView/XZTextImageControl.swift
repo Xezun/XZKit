@@ -59,7 +59,7 @@ import UIKit
         didSet { setNeedsLayout() }
     }
     
-    open var textLayoutPosition: NSDirectionalRectEdge = .bottom {
+    open var textLayoutDirection: NSDirectionalRectEdge = .bottom {
         didSet { setNeedsLayout() }
     }
     
@@ -82,7 +82,7 @@ import UIKit
     }
     
     open override var intrinsicContentSize: CGSize {
-        return self.intrinsicTextImageSize
+        return self.textImageIntrinsicSize
     }
     
     open override func sizeThatFits(_ size: CGSize) -> CGSize {
@@ -102,77 +102,98 @@ import UIKit
     }
 
     open func setText(_ text: String?, for state: UIControl.State) {
-        storage.statedTexts[state.rawValue] = text
+        styles.texts[state.rawValue] = text
         textDidChange()
     }
 
     open func text(for state: UIControl.State) -> String? {
-        return storage.statedTexts[state.rawValue]
+        return styles.texts[state.rawValue]
     }
 
     open func setAttributedText(_ attributedText: NSAttributedString?, for state: UIControl.State) {
-        storage.statedAttributedTitles[state.rawValue] = attributedText
+        styles.attributedTitles[state.rawValue] = attributedText
         textDidChange()
     }
 
     open func attributedText(for state: UIControl.State) -> NSAttributedString? {
-        return storage.statedAttributedTitles[state.rawValue]
+        return styles.attributedTitles[state.rawValue]
+    }
+    
+    open func setFont(_ font: UIFont?, for state: UIControl.State) {
+        styles.fonts[state.rawValue] = font
+        fontDidChange()
+    }
+
+    open func font(for state: UIControl.State) -> UIFont? {
+        return styles.fonts[state.rawValue]
     }
 
     open func setTextColor(_ textColor: UIColor?, for state: UIControl.State) {
-        storage.statedTextColors[state.rawValue] = textColor
+        styles.textColors[state.rawValue] = textColor
         textColorDidChange()
     }
 
     open func textColor(for state: UIControl.State) -> UIColor? {
-        return storage.statedTextColors[state.rawValue]
+        return styles.textColors[state.rawValue]
     }
 
     open func setTextShadowColor(_ textShadowColor: UIColor?, for state: UIControl.State) {
-        storage.statedTextShadowColors[state.rawValue] = textShadowColor
+        styles.textShadowColors[state.rawValue] = textShadowColor
         textShadowColorDidChange()
     }
 
     open func textShadowColor(for state: UIControl.State) -> UIColor? {
-        return storage.statedTextShadowColors[state.rawValue]
+        return styles.textShadowColors[state.rawValue]
     }
 
     open func setImage(_ image: UIImage?, for state: UIControl.State) {
-        storage.statedImages[state.rawValue] = image
+        styles.images[state.rawValue] = image
         imageDidChange()
     }
 
     open func image(for state: UIControl.State) -> UIImage? {
-        return storage.statedImages[state.rawValue]
+        return styles.images[state.rawValue]
     }
 
     open func setBackgroundImage(_ backgroundImage: UIImage?, for state: UIControl.State) {
-        storage.statedBackgroundImages[state.rawValue] = backgroundImage
+        styles.backgroundImages[state.rawValue] = backgroundImage
         backgroundImageDidChange()
     }
 
     open func backgroundImage(for state: UIControl.State) -> UIImage? {
-        return storage.statedBackgroundImages[state.rawValue]
+        return styles.backgroundImages[state.rawValue]
     }
 
     open func stateDidChange() {
         textDidChange()
+        fontDidChange()
         textColorDidChange()
         textShadowColorDidChange()
         imageDidChange()
         backgroundImageDidChange()
     }
     
+    open func fontDidChange() {
+        if let font = styles.fonts[self.state.rawValue] {
+            textLabel.font = font
+        } else if state != .normal {
+            textLabel.font = styles.fonts[UIControl.State.normal.rawValue]
+        } else {
+            textLabel.font = .systemFont(ofSize: 17.0)
+        }
+        setNeedsLayout()
+    }
+    
     open func textDidChange() {
-        if let attributedText = storage.statedAttributedTitles[state.rawValue] {
+        if let attributedText = styles.attributedTitles[state.rawValue] {
             textLabel.attributedText = attributedText
-        } else if let text = storage.statedTexts[state.rawValue] {
+        } else if let text = styles.texts[state.rawValue] {
             textLabel.text = text
         } else if state != .normal {
-            if let attributedText = storage.statedAttributedTitles[UIControl.State.normal.rawValue] {
+            if let attributedText = styles.attributedTitles[UIControl.State.normal.rawValue] {
                 textLabel.attributedText = attributedText
             } else {
-                textLabel.text = storage.statedTexts[UIControl.State.normal.rawValue]
+                textLabel.text = styles.texts[UIControl.State.normal.rawValue]
             }
         } else {
             textLabel.text = nil
@@ -181,30 +202,30 @@ import UIKit
     }
     
     open func textColorDidChange() {
-        if let textColor = storage.statedTextColors[self.state.rawValue] {
+        if let textColor = styles.textColors[self.state.rawValue] {
             textLabel.textColor = textColor
         } else if state != .normal {
-            textLabel.textColor =  storage.statedTextColors[UIControl.State.normal.rawValue]
+            textLabel.textColor =  styles.textColors[UIControl.State.normal.rawValue]
         } else {
             textLabel.textColor = nil
         }
     }
     
     open func textShadowColorDidChange() {
-        if let shadowColor = storage.statedTextShadowColors[self.state.rawValue] {
+        if let shadowColor = styles.textShadowColors[self.state.rawValue] {
             textLabel.shadowColor = shadowColor
         } else if state != .normal {
-            textLabel.shadowColor =  storage.statedTextShadowColors[UIControl.State.normal.rawValue]
+            textLabel.shadowColor =  styles.textShadowColors[UIControl.State.normal.rawValue]
         } else {
             textLabel.shadowColor = nil
         }
     }
     
     open func imageDidChange() {
-        if let image = storage.statedImages[self.state.rawValue] {
+        if let image = styles.images[self.state.rawValue] {
             imageView.image = image
         } else if state != .normal {
-            imageView.image = storage.statedImages[UIControl.State.normal.rawValue]
+            imageView.image = styles.images[UIControl.State.normal.rawValue]
         } else {
             imageView.image = nil
         }
@@ -212,24 +233,25 @@ import UIKit
     }
     
     open func backgroundImageDidChange() {
-        if let backgroundImage = storage.statedBackgroundImages[self.state.rawValue] {
+        if let backgroundImage = styles.backgroundImages[self.state.rawValue] {
             backgroundImageView.image = backgroundImage
         } else if state != .normal {
-            backgroundImageView.image = storage.statedBackgroundImages[UIControl.State.normal.rawValue]
+            backgroundImageView.image = styles.backgroundImages[UIControl.State.normal.rawValue]
         } else {
             backgroundImageView.image = nil
         }
     }
     
     /// 存储各个状态的样式。
-    private lazy var storage: Storage = Storage.init()
+    private lazy var styles: StatedStyles = StatedStyles.init()
     
-    private class Storage {
-        lazy var statedTexts            = [UInt: String]()
-        lazy var statedAttributedTitles = [UInt: NSAttributedString]()
-        lazy var statedTextColors       = [UInt: UIColor]()
-        lazy var statedTextShadowColors = [UInt: UIColor]()
-        lazy var statedImages           = [UInt: UIImage]()
-        lazy var statedBackgroundImages = [UInt: UIImage]()
+    private class StatedStyles {
+        lazy var fonts            = [UInt: UIFont]()
+        lazy var texts            = [UInt: String]()
+        lazy var attributedTitles = [UInt: NSAttributedString]()
+        lazy var textColors       = [UInt: UIColor]()
+        lazy var textShadowColors = [UInt: UIColor]()
+        lazy var images           = [UInt: UIImage]()
+        lazy var backgroundImages = [UInt: UIImage]()
     }
 }

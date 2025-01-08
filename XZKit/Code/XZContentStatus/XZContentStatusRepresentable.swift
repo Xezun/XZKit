@@ -9,11 +9,7 @@
 import UIKit
 
 /// 本协议用于视图或视图控制器。
-@MainActor public protocol XZContentStatusRepresentable: AnyObject {
-    
-    /// 状态视图的类型。
-    /// - Note: 尝试过使用 associatedtype 来自定义状态视图的类型，但是在框架引用到实际项目中时，产生找不到自定义的状态类型的编译错误。
-    static var contentStatusViewClass: XZContentStatusView.Type { get }
+@MainActor public protocol XZContentStatusRepresentable: UIResponder {
     
     /// 设置/获取当前视图的内容状态。
     /// - Note: 每个状态都对应不同的状态视图。
@@ -23,55 +19,33 @@ import UIKit
     /// - Note: 默认情况下，状态视图的大小与当前视图保持一致。
     var contentStatus: XZContentStatus { get set }
     
-    /// 构造指定状态下的状态视图的方法，懒加载。
-    ///
-    /// - Parameter contentStatus: 指定的状态。
-    /// - Returns: 呈现指定状态的视图。
-    func contentStatusView(for contentStatus: XZContentStatus) -> XZContentStatusView
-    
-    /// 获取指定内容状态下的已经创建状态视图。
-    ///
-    /// - Parameter contentStatus: 指定的内容状态。
-    /// - Returns: 呈现指定状态的视图。
-    func contentStatusViewIfLoaded(for contentStatus: XZContentStatus) -> XZContentStatusView?
-    
 }
 
 extension XZContentStatusRepresentable {
     
-    public static var contentStatusViewClass: XZContentStatusView.Type {
-        return XZContentStatusView.self
-    }
-    
     public var contentStatus: XZContentStatus {
         get {
-            if let contentStatus = objc_getAssociatedObject(self, &AssociationKey.contentStatus) as? XZContentStatus {
-                return contentStatus
-            }
-            return XZContentStatus.default
+            return contentStatusViewIfLoaded?.contentStatus ?? .default
         }
         set {
-            self.contentStatusViewIfLoaded(for: self.contentStatus)?.isHidden = true
-            objc_setAssociatedObject(self, &AssociationKey.contentStatus, newValue, .OBJC_ASSOCIATION_COPY_NONATOMIC)
-            // 如果配置有指定状态下的状态视图，才显示。
-            self.contentStatusViewIfLoaded(for: self.contentStatus)?.isHidden = false
+            contentStatusView.contentStatus = newValue
         }
     }
     
-    public func contentStatusViewIfLoaded(for contentStatus: XZContentStatus) -> XZContentStatusView? {
-        return self.contentStatusViews[contentStatus]
+    fileprivate var contentStatusViewIfLoaded: XZContentStatusView1? {
+        return objc_getAssociatedObject(self, &AssociationKey.storage) as? XZContentStatusView1
     }
     
     /// 所有已创建的状态视图。
     /// - Note: 该属性可写，方便开发者自定义。
-    public var contentStatusViews: [XZContentStatus: XZContentStatusView] {
+    fileprivate var contentStatusView: XZContentStatusView1 {
         get {
-            if let contentStatusViews = objc_getAssociatedObject(self, &AssociationKey.contentStatusViews) as? [XZContentStatus: XZContentStatusView] {
-                return contentStatusViews
+            if let view = objc_getAssociatedObject(self, &AssociationKey.storage) as? XZContentStatusView1 {
+                return view
             }
-            let contentStatusViews = [XZContentStatus: XZContentStatusView]()
-            objc_setAssociatedObject(self, &AssociationKey.contentStatusViews, contentStatusViews, .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
-            return contentStatusViews
+            let view = XZContentStatusView.init(for: self as! UIView)
+            objc_setAssociatedObject(self, &AssociationKey.storage, view, .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
+            return view
         }
         set {
             objc_setAssociatedObject(self, &AssociationKey.contentStatusViews, newValue, .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
@@ -89,8 +63,8 @@ extension XZContentStatusRepresentable {
     ///   - title: 标题文本。
     ///   - contentStatus: 指定的内容状态。
     ///   - state: 触控状态，默认 normal 。
-    public func setTitle(_ title: String?, for contentStatus: XZContentStatus, for state: UIControl.State = .normal) {
-        contentStatusView(for: contentStatus).setText(title, for: state)
+    public func setTitle(_ title: String?, for contentStatus: XZContentStatus) {
+        contentStatusView.setTitle(title, for: contentStatus)
     }
     
     /// 获取指定内容状态下，已设置的标题文本。
@@ -99,8 +73,8 @@ extension XZContentStatusRepresentable {
     ///   - contentStatus: 指定的内容状态。
     ///   - state: 触控状态，默认 normal 。
     /// - Returns: 标题文字。
-    public func title(for contentStatus: XZContentStatus, for state: UIControl.State = .normal) -> String? {
-        return contentStatusViewIfLoaded(for: contentStatus)?.text(for: state);
+    public func title(for contentStatus: XZContentStatus) -> String? {
+        return contentStatusViewIfLoaded?.title(for: contentStatus);
     }
     
     /// 设置指定内容状态下，状态视图的标题文本颜色。
@@ -109,8 +83,8 @@ extension XZContentStatusRepresentable {
     ///   - titleColor: 标题文本颜色。
     ///   - contentStatus: 指定的内容状态。
     ///   - state: 触控状态，默认 normal 。
-    public func setTitleColor(_ titleColor: UIColor?, for contentStatus: XZContentStatus, for state: UIControl.State = .normal) {
-        contentStatusView(for: contentStatus).setTextColor(titleColor, for: state)
+    public func setTitleColor(_ titleColor: UIColor?, for contentStatus: XZContentStatus) {
+        contentStatusView.setTitleColor(titleColor, for: contentStatus)
     }
     
     /// 获取指定状态下已设置的标题文字颜色。
@@ -119,8 +93,8 @@ extension XZContentStatusRepresentable {
     ///   - contentStatus: 指定的内容状态。
     ///   - state: 触控状态，默认 normal 。
     /// - Returns: 标题文本颜色。
-    public func titleColor(for contentStatus: XZContentStatus, for state: UIControl.State = .normal) -> UIColor? {
-        return contentStatusViewIfLoaded(for: contentStatus)?.textColor(for: state)
+    public func titleColor(for contentStatus: XZContentStatus) -> UIColor? {
+        return contentStatusViewIfLoaded?.titleColor(for: contentStatus)
     }
     
     /// 设置指定状态下的标题文本阴影颜色。
@@ -129,8 +103,8 @@ extension XZContentStatusRepresentable {
     ///   - titleShadowColor: 标题文本阴影颜色。
     ///   - contentStatus: 指定的内容状态。
     ///   - state: 触控状态，默认 normal 。
-    public func setTitleShadowColor(_ titleShadowColor: UIColor?, for contentStatus: XZContentStatus, for state: UIControl.State) {
-        contentStatusView(for: contentStatus).setTextShadowColor(titleShadowColor, for: state)
+    public func setTitleShadowColor(_ titleShadowColor: UIColor?, for contentStatus: XZContentStatus) {
+        contentStatusView.setTitleShadowColor(titleShadowColor, for: contentStatus)
     }
     
     /// 获取指定状态下已设置的标题文本阴影颜色。
@@ -139,8 +113,8 @@ extension XZContentStatusRepresentable {
     ///   - contentStatus: 指定的内容状态。
     ///   - state: 触控状态，默认 normal 。
     /// - Returns: 标题文本阴影颜色。
-    public func titleShadowColor(for contentStatus: XZContentStatus, for state: UIControl.State) -> UIColor? {
-        return contentStatusViewIfLoaded(for: contentStatus)?.textShadowColor(for: state)
+    public func titleShadowColor(for contentStatus: XZContentStatus) -> UIColor? {
+        return contentStatusViewIfLoaded?.titleShadowColor(for: contentStatus)
     }
     
     /// 设置指定状态下的标题富文本。
@@ -149,8 +123,8 @@ extension XZContentStatusRepresentable {
     ///   - attributedTitle: 标题富文本。
     ///   - contentStatus: 指定的内容状态。
     ///   - state: 触控状态，默认 normal 。
-    public func setAttributedTitle(_ attributedTitle: NSAttributedString?, for contentStatus: XZContentStatus, for state: UIControl.State) {
-        contentStatusView(for: contentStatus).setAttributedText(attributedTitle, for: state)
+    public func setAttributedTitle(_ attributedTitle: NSAttributedString?, for contentStatus: XZContentStatus) {
+        contentStatusView.setAttributedTitle(attributedTitle, for: contentStatus)
     }
     
     /// 获取指定状态下已设置的标题富文本。
@@ -159,8 +133,8 @@ extension XZContentStatusRepresentable {
     ///   - contentStatus: 指定的内容状态。
     ///   - state: 触控状态，默认 normal 。
     /// - Returns: 标题富文本。
-    public func attributedTitle(for contentStatus: XZContentStatus, for state: UIControl.State) -> NSAttributedString? {
-        return contentStatusViewIfLoaded(for: contentStatus)?.attributedText(for: state)
+    public func attributedTitle(for contentStatus: XZContentStatus) -> NSAttributedString? {
+        return contentStatusViewIfLoaded?.attributedTitle(for: contentStatus)
     }
     
     
@@ -170,8 +144,8 @@ extension XZContentStatusRepresentable {
     ///   - image: 待显示的图片。
     ///   - contentStatus: 指定的内容状态。
     ///   - state: 触控状态，默认 normal 。
-    public func setImage(_ image: UIImage?, for contentStatus: XZContentStatus, for state: UIControl.State = .normal) {
-        contentStatusView(for: contentStatus).setImage(image, for: state)
+    public func setImage(_ image: UIImage?, for contentStatus: XZContentStatus) {
+        contentStatusView.setImage(image, for: contentStatus)
     }
     
     /// 获取已设置的状态图像。
@@ -180,8 +154,8 @@ extension XZContentStatusRepresentable {
     ///   - contentStatus: 指定的内容状态。
     ///   - state: 触控状态，默认 normal 。
     /// - Returns: 已设置的图片。
-    public func image(for contentStatus: XZContentStatus, for state: UIControl.State = .normal) -> UIImage? {
-        return contentStatusViewIfLoaded(for: contentStatus)?.image(for: state)
+    public func image(for contentStatus: XZContentStatus) -> UIImage? {
+        return contentStatusViewIfLoaded?.image(for: contentStatus)
     }
     
     
@@ -191,8 +165,8 @@ extension XZContentStatusRepresentable {
     ///   - backgroundImage: 背景图片。
     ///   - contentStatus: 指定的内容状态。
     ///   - state: 触控状态，默认 normal 。
-    public func setBackgroundImage(_ backgroundImage: UIImage?, for contentStatus: XZContentStatus, for state: UIControl.State = .normal) {
-        contentStatusView(for: contentStatus).setBackgroundImage(backgroundImage, for: state)
+    public func setBackgroundImage(_ backgroundImage: UIImage?, for contentStatus: XZContentStatus) {
+        contentStatusView.setBackgroundImage(backgroundImage, for: contentStatus)
     }
     
     /// 获取已设置的状态背景图片。
@@ -201,8 +175,8 @@ extension XZContentStatusRepresentable {
     ///   - contentStatus: 指定的内容状态。
     ///   - state: 触控状态，默认 normal 。
     /// - Returns: 已设置的背景图片。
-    public func backgroundImage(for contentStatus: XZContentStatus, for state: UIControl.State = .normal) -> UIImage? {
-        return contentStatusViewIfLoaded(for: contentStatus)?.backgroundImage(for: state)
+    public func backgroundImage(for contentStatus: XZContentStatus) -> UIImage? {
+        return contentStatusViewIfLoaded?.backgroundImage(for: contentStatus)
     }
     
     
@@ -215,8 +189,8 @@ extension XZContentStatusRepresentable {
     ///   - action: 事件对应的方法。
     ///   - contentStatus: 指定的内容状态。
     ///   - controlEvents: 指定的触控事件。
-    public func addTarget(_ target: Any?, action: Selector, for contentStatus: XZContentStatus, for controlEvents: UIControl.Event = .touchUpInside) {
-        contentStatusView(for: contentStatus).addTarget(target, action: action, for: controlEvents)
+    public func addTarget(_ target: Any?, action: Selector, for state: UIControl.State) {
+        contentStatusView.addTarget(target, action: action, for: state)
     }
     
     /// 移除指定状态下的内容视图的触控事件。
@@ -226,10 +200,9 @@ extension XZContentStatusRepresentable {
     ///   - action: 事件方法。
     ///   - contentStatus: 指定的内容状态。
     ///   - controlEvents: 指定的触控事件。
-    public func removeTarget(_ target: Any?, action: Selector?, for contentStatus: XZContentStatus, for controlEvents: UIControl.Event = .touchUpInside) {
-        contentStatusViewIfLoaded(for: contentStatus)?.removeTarget(target, action: action, for: controlEvents)
+    public func removeTarget(_ target: Any?, action: Selector?, for state: UIControl.State) {
+        contentStatusViewIfLoaded?.removeTarget(target, action: action, for: state)
     }
-    
     
     // MARK: - 无触控状态的样式。
     
@@ -240,7 +213,7 @@ extension XZContentStatusRepresentable {
     ///   - backgroundColor: 状态视图的背景色。
     ///   - contentStatus: 指定的内容状态。
     public func setBackgroundColor(_ backgroundColor: UIColor?, for contentStatus: XZContentStatus) {
-        contentStatusView(for: contentStatus).backgroundColor = backgroundColor
+        contentStatusView.setBackgroundColor(backgroundColor, for: contentStatus)
     }
     
     /// 获取指定状态下已设置的状态视图的背景色。
@@ -249,7 +222,7 @@ extension XZContentStatusRepresentable {
     ///   - contentStatus: 指定的内容状态。
     /// - Returns: 状态视图的背景色。
     public func backgroundColor(for contentStatus: XZContentStatus) -> UIColor? {
-        return contentStatusViewIfLoaded(for: contentStatus)?.backgroundColor
+        return contentStatusViewIfLoaded?.backgroundColor(for: contentStatus)
     }
     
     /// 设置指定内容状态下，状态视图的标题文本字体。
@@ -258,7 +231,7 @@ extension XZContentStatusRepresentable {
     ///   - titleFont: 标题文本字体。
     ///   - contentStatus: 指定的内容状态。
     public func setTitleFont(_ titleFont: UIFont?, for contentStatus: XZContentStatus) {
-        contentStatusView(for: contentStatus).textLabel.font = titleFont
+        contentStatusView.setTitleFont(titleFont, for: contentStatus)
     }
     
     /// 获取指定状态下已设置的标题文字字体。
@@ -267,7 +240,7 @@ extension XZContentStatusRepresentable {
     ///   - contentStatus: 指定的内容状态。
     /// - Returns: 标题文本字体。
     public func titleFont(for contentStatus: XZContentStatus) -> UIFont? {
-        return contentStatusViewIfLoaded(for: contentStatus)?.textLabel.font
+        return contentStatusViewIfLoaded?.titleFont(for: contentStatus)
     }
     
     /// 设置指定状态下的状态视图的内边距。
@@ -276,16 +249,15 @@ extension XZContentStatusRepresentable {
     ///   - contentInsets: 要指定的内边距。
     ///   - contentStatus: 指定的内容状态。
     public func setContentInsets(_ contentInsets: NSDirectionalEdgeInsets, for contentStatus: XZContentStatus) {
-        contentStatusView(for: contentStatus).contentInsets = contentInsets
+        contentStatusView.setContentInsets(contentInsets, for: contentStatus)
     }
-    
     
     /// 获取指定状态下，状态视图的内边距。
     ///
     /// - Parameter contentStatus: 指定的内容状态。
     /// - Returns: 状态视图的内边距。
     public func contentInsets(for contentStatus: XZContentStatus) -> NSDirectionalEdgeInsets {
-        return contentStatusView(for: contentStatus).contentInsets
+        return contentStatusView.contentInsets(for: contentStatus)
     }
     
     /// 设置指定内容状态下，标题文本的外边距。
@@ -294,7 +266,7 @@ extension XZContentStatusRepresentable {
     ///   - titleEdgeInsets: 标题文本的外边距。
     ///   - contentStatus: 指定的内容状态。
     public func setTitleInsets(_ titleEdgeInsets: NSDirectionalEdgeInsets, for contentStatus: XZContentStatus) {
-        contentStatusView(for: contentStatus).textInsets = titleEdgeInsets
+        contentStatusView.setTitleInsets(titleEdgeInsets, for: contentStatus)
     }
     
     /// 获取已设置的指定内容状态下的标题文本外边距。
@@ -302,7 +274,7 @@ extension XZContentStatusRepresentable {
     /// - Parameter contentStatus: 指定的内容状态。
     /// - Returns: 标题文本的外边距。
     public func titleInsets(for contentStatus: XZContentStatus) -> NSDirectionalEdgeInsets {
-        return contentStatusView(for: contentStatus).textInsets
+        return contentStatusView.titleInsets(for: contentStatus)
     }
     
     /// 设置指定内容状态下，图片的外边距。
@@ -311,7 +283,7 @@ extension XZContentStatusRepresentable {
     ///   - imageEdgeInsets: 图片外边距。
     ///   - contentStatus: 指定的内容状态。
     public func setImageInsets(_ imageEdgeInsets: NSDirectionalEdgeInsets, for contentStatus: XZContentStatus) {
-        contentStatusView(for: contentStatus).imageInsets = imageEdgeInsets
+        contentStatusView.setImageInsets(imageEdgeInsets, for: contentStatus)
     }
     
     /// 获取指定内容状态下，图片的外边距。
@@ -319,7 +291,7 @@ extension XZContentStatusRepresentable {
     /// - Parameter contentStatus: 指定的内容状态。
     /// - Returns: 图片的外边距。
     public func imageInsets(for contentStatus: XZContentStatus) -> NSDirectionalEdgeInsets {
-        return contentStatusView(for: contentStatus).imageInsets
+        return contentStatusView.imageInsets(for: contentStatus)
     }
     
 }
@@ -332,14 +304,9 @@ extension XZContentStatusRepresentable where Self: UIView {
         if let contentStatusView = contentStatusViews[contentStatus] {
             return contentStatusView
         }
-        let contentStatusView = Self.contentStatusViewClass.init(for: self)
+        let contentStatusView = XZContentStatusView.init(for: self)
         self.setContentStatusView(contentStatusView, for: contentStatus)
         return contentStatusView
-    }
-    
-    /// 当前正在展示的状态视图。
-    public var currentContentStatusView: XZContentStatusView? {
-        return self.contentStatusViewIfLoaded(for: self.contentStatus)
     }
     
     /// 设置指定状态下的状态视图。
@@ -369,14 +336,9 @@ extension XZContentStatusRepresentable where Self: UIViewController {
         if let contentStatusView = contentStatusViews[contentStatus] {
             return contentStatusView
         }
-        let contentStatusView = Self.contentStatusViewClass.init(for: self.view)
+        let contentStatusView = XZContentStatusView.init(for: self.view)
         self.setContentStatusView(contentStatusView, for: contentStatus)
         return contentStatusView
-    }
-    
-    /// 当前正在展示的状态视图。
-    public var currentContentStatusView: XZContentStatusView? {
-        return self.contentStatusViewIfLoaded(for: self.contentStatus)
     }
     
     /// 设置指定状态下的状态视图。
@@ -402,6 +364,7 @@ extension XZContentStatusRepresentable where Self: UIViewController {
 @MainActor private struct AssociationKey {
     static var contentStatus: Int       = 0
     static var contentStatusViews: Int  = 1
+    static var storage = 2
 }
 
 
