@@ -7,11 +7,14 @@
 
 import UIKit
 import XZContentStatus
+import XZExtensions
 
 class Example12ViewController: UIViewController, XZContentStatusRepresentable {
 
     override func viewDidLoad() {
         super.viewDidLoad()
+        
+        setBackgroundColor(rgb(0xfffafa), for: .default)
 
         setTitle("暂无内容，请稍后查看", for: .empty)
         setTitleColor(.blue, for: .empty)

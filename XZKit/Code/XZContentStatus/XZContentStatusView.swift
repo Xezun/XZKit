@@ -9,18 +9,16 @@ import UIKit
 import XZTextImageView
 
 /// 呈现视图内容状态的视图。
-@MainActor @objc open class XZContentStatusView: UIControl, XZTextImageLayout, XZContentStatusRepresentable {
+@MainActor @objc open class XZContentStatusView: UIControl, XZTextImageLayout, XZContentStatusConfigurable {
     
-    private class StyleCollection {
+    private class Style {
         var title: String?
         var attributedTitle: NSAttributedString?
+        var image: UIImage?
 
         var titleFont: UIFont?
         var titleColor: UIColor?
         var titleShadowColor: UIColor?
-        
-        var image: UIImage?
-        
         var backgroundImage: UIImage?
         var backgroundColor: UIColor?
         
@@ -29,7 +27,7 @@ import XZTextImageView
         var contentInsets = NSDirectionalEdgeInsets.zero
     }
     
-    private var styles = [XZContentStatus: StyleCollection]()
+    private var styles = [XZContentStatus: Style]()
     
     public var textLabel: UILabel {
         get {
@@ -78,8 +76,8 @@ import XZTextImageView
             oldValue?.removeFromSuperview()
             if let textLabel = textLabelIfLoaded {
                 let status = contentStatus
-                textLabel.textColor = titleColor(for: status)
                 textLabel.font = titleFont(for: status)
+                textLabel.textColor = titleColor(for: status)
                 textLabel.shadowColor = titleShadowColor(for: status)
                 if let attributedTitle = attributedTitle(for: status) {
                     textLabel.attributedText = attributedTitle
@@ -114,35 +112,38 @@ import XZTextImageView
         }
     }
     
+    /// 当前呈现的内容状态。
     public var contentStatus: XZContentStatus = .default {
         didSet {
             if contentStatus == .default {
                 self.isHidden = true
             } else {
                 self.isHidden = false
-                if let style = styles[contentStatus] {
-                    if let attributedTitle = style.attributedTitle {
-                        textLabel.attributedText = attributedTitle
-                    } else if let title = style.title {
-                        textLabel.text = title
-                    }
-                    if let textLabel = textLabelIfLoaded {
-                        textLabel.font = style.titleFont
-                        textLabel.textColor = style.titleColor
-                        textLabel.shadowColor = style.titleShadowColor
-                    }
-                    
-                    if let image = style.image {
-                        imageView.image = image
-                    }
-                    
-                    if let backgroundImage = style.backgroundImage {
-                        backgroundImageView.image = backgroundImage
-                    }
-                    self.backgroundColor = style.backgroundColor
-                    
-                    setNeedsLayout()
+                
+                let contentStatus = self.contentStatus
+                
+                // 如果 textLabel 没有内容，就不需要加载
+                if let attributedTitle = attributedTitle(for: contentStatus) {
+                    textLabel.attributedText = attributedTitle
+                } else if let title = title(for: contentStatus) {
+                    textLabel.text = title
                 }
+                if let textLabel = textLabelIfLoaded {
+                    textLabel.font = titleFont(for: contentStatus)
+                    textLabel.textColor = titleColor(for: contentStatus)
+                    textLabel.shadowColor = titleShadowColor(for: contentStatus)
+                }
+                
+                if let image = image(for: contentStatus) {
+                    imageView.image = image
+                }
+                
+                if let backgroundImage = backgroundImage(for: contentStatus) {
+                    backgroundImageView.image = backgroundImage
+                }
+                self.backgroundColor = backgroundColor(for: contentStatus)
+                
+                setNeedsLayout()
             }
         }
     }
@@ -177,77 +178,125 @@ import XZTextImageView
         self.layoutTextImageViews()
     }
     
-    private func styleCollection(for contentStatus: XZContentStatus) -> StyleCollection {
-        if let styleCollection = styles[contentStatus] {
-            return styleCollection
+    private func style(for contentStatus: XZContentStatus) -> Style {
+        if let style = styles[contentStatus] {
+            return style
         }
-        let styleCollection = StyleCollection.init()
-        styles[contentStatus] = styleCollection
-        return styleCollection
+        let style = Style.init()
+        styles[contentStatus] = style
+        return style
     }
     
     public func setTitle(_ title: String?, for contentStatus: XZContentStatus) {
-        let styleCollection = styleCollection(for: contentStatus)
-        styleCollection.title = title
-        styleCollection.attributedTitle = nil
-        if self.contentStatus == contentStatus {
+        let style = self.style(for: contentStatus)
+        style.title = title
+        style.attributedTitle = nil
+        switch self.contentStatus {
+        case .default:
+            break
+        case contentStatus:
             textLabel.text = title
+            break
+        default:
+            break
         }
     }
     public func title(for contentStatus: XZContentStatus) -> String? {
         return styles[contentStatus]?.title
     }
     
-    public func setTitleInsets(_ titleEdgeInsets: NSDirectionalEdgeInsets, for contentStatus: XZContentStatus) {
-        let styleCollection = styleCollection(for: contentStatus)
-        styleCollection.titleInsets = titleEdgeInsets
-        if self.contentStatus == contentStatus {
-            
+    public func setTitleInsets(_ titleInsets: NSDirectionalEdgeInsets, for contentStatus: XZContentStatus) {
+        let style = self.style(for: contentStatus)
+        style.titleInsets = titleInsets
+        switch self.contentStatus {
+        case .default:
+            break
+        case contentStatus:
+            setNeedsLayout()
+            break
+        default:
+            break
         }
     }
     public func titleInsets(for contentStatus: XZContentStatus) -> NSDirectionalEdgeInsets {
-        return styles[contentStatus]?.titleInsets ?? .zero
+        if contentStatus == .default {
+            return styles[contentStatus]?.titleInsets ?? .zero
+        }
+        return styles[contentStatus]?.titleInsets ?? titleInsets(for: .default)
     }
     
     public func setTitleColor(_ titleColor: UIColor?, for contentStatus: XZContentStatus) {
-        let styleCollection = styleCollection(for: contentStatus)
-        styleCollection.titleColor = titleColor;
-        if self.contentStatus == contentStatus {
-            textLabel.textColor = titleColor
+        let style = self.style(for: contentStatus)
+        style.titleColor = titleColor;
+        switch self.contentStatus {
+        case .default:
+            break
+        case contentStatus:
+            textLabel.textColor = self.titleColor(for: contentStatus)
+            break
+        default:
+            break
         }
     }
     public func titleColor(for contentStatus: XZContentStatus) -> UIColor? {
-        return styles[contentStatus]?.titleColor
+        if contentStatus == .default {
+            return styles[contentStatus]?.titleColor
+        }
+        return styles[contentStatus]?.titleColor ?? titleColor(for: .default)
     }
     
     public func setTitleFont(_ titleFont: UIFont?, for contentStatus: XZContentStatus) {
-        let styleCollection = styleCollection(for: contentStatus)
-        styleCollection.titleFont = titleFont
-        if self.contentStatus == contentStatus {
-            textLabel.font = titleFont
+        let style = self.style(for: contentStatus)
+        style.titleFont = titleFont
+        switch self.contentStatus {
+        case .default:
+            break
+        case contentStatus:
+            textLabel.font = self.titleFont(for: contentStatus)
+            break
+        default:
+            break
         }
     }
     public func titleFont(for contentStatus: XZContentStatus) -> UIFont? {
-        return styles[contentStatus]?.titleFont
+        if contentStatus == .default {
+            return styles[contentStatus]?.titleFont
+        }
+        return styles[contentStatus]?.titleFont ?? titleFont(for: .default)
     }
     
     public func setTitleShadowColor(_ titleShadowColor: UIColor?, for contentStatus: XZContentStatus) {
-        let styleCollection = styleCollection(for: contentStatus)
-        styleCollection.titleShadowColor = titleShadowColor
-        if self.contentStatus == contentStatus {
-            textLabel.shadowColor = titleShadowColor
+        let style = self.style(for: contentStatus)
+        style.titleShadowColor = titleShadowColor
+        switch self.contentStatus {
+        case .default:
+            break
+        case contentStatus:
+            textLabel.shadowColor = self.titleShadowColor(for: contentStatus)
+            break
+        default:
+            break
         }
     }
     public func titleShadowColor(for contentStatus: XZContentStatus) -> UIColor? {
-        return styles[contentStatus]?.titleShadowColor
+        if contentStatus == .default {
+            return styles[contentStatus]?.titleShadowColor
+        }
+        return styles[contentStatus]?.titleShadowColor ?? titleShadowColor(for: .default)
     }
     
     public func setAttributedTitle(_ attributedTitle: NSAttributedString?, for contentStatus: XZContentStatus) {
-        let styleCollection = styleCollection(for: contentStatus)
-        styleCollection.attributedTitle = attributedTitle
-        styleCollection.title = nil
-        if self.contentStatus == contentStatus {
+        let style = self.style(for: contentStatus)
+        style.attributedTitle = attributedTitle
+        style.title = nil
+        switch self.contentStatus {
+        case .default:
+            break
+        case contentStatus:
             textLabel.attributedText = attributedTitle
+            break
+        default:
+            break
         }
     }
     public func attributedTitle(for contentStatus: XZContentStatus) -> NSAttributedString? {
@@ -255,58 +304,134 @@ import XZTextImageView
     }
     
     public func setImage(_ image: UIImage?, for contentStatus: XZContentStatus) {
-        let styleCollection = styleCollection(for: contentStatus)
-        styleCollection.image = image
-        if self.contentStatus == contentStatus {
+        let style = self.style(for: contentStatus)
+        style.image = image
+        switch self.contentStatus {
+        case .default:
+            break
+        case contentStatus:
             imageView.image = image
+            break
+        default:
+            break
         }
     }
     public func image(for contentStatus: XZContentStatus) -> UIImage? {
         return styles[contentStatus]?.image
     }
     
-    public func setImageInsets(_ imageEdgeInsets: NSDirectionalEdgeInsets, for contentStatus: XZContentStatus) {
-        let styleCollection = styleCollection(for: contentStatus)
-        styleCollection.imageInsets = imageEdgeInsets
-        if self.contentStatus == contentStatus {
+    public func setImageInsets(_ imageInsets: NSDirectionalEdgeInsets, for contentStatus: XZContentStatus) {
+        let style = self.style(for: contentStatus)
+        style.imageInsets = imageInsets
+        switch self.contentStatus {
+        case .default:
+            break
+        case contentStatus:
             self.setNeedsLayout()
+            break
+        default:
+            break
         }
     }
     public func imageInsets(for contentStatus: XZContentStatus) -> NSDirectionalEdgeInsets {
-        return styles[contentStatus]?.imageInsets ?? .zero
+        if contentStatus == .default {
+            return styles[contentStatus]?.imageInsets ?? .zero
+        }
+        return styles[contentStatus]?.imageInsets ?? imageInsets(for: .default)
     }
     
     public func setBackgroundImage(_ backgroundImage: UIImage?, for contentStatus: XZContentStatus) {
-        let styleCollection = styleCollection(for: contentStatus)
-        styleCollection.backgroundImage = backgroundImage
-        if self.contentStatus == contentStatus {
-            backgroundImageView.image = backgroundImage
+        let style = self.style(for: contentStatus)
+        style.backgroundImage = backgroundImage
+        switch self.contentStatus {
+        case .default:
+            break
+        case contentStatus:
+            backgroundImageView.image = self.backgroundImage(for: contentStatus)
+            break
+        default:
+            break
         }
     }
     public func backgroundImage(for contentStatus: XZContentStatus) -> UIImage? {
-        return styles[contentStatus]?.backgroundImage
+        if contentStatus == .default {
+            return styles[contentStatus]?.backgroundImage
+        }
+        return styles[contentStatus]?.backgroundImage ?? backgroundImage(for: .default)
     }
     
     public func setBackgroundColor(_ backgroundColor: UIColor?, for contentStatus: XZContentStatus) {
-        let styleCollection = styleCollection(for: contentStatus)
-        styleCollection.backgroundColor = backgroundColor
-        if self.contentStatus == contentStatus {
-            self.backgroundColor = backgroundColor
+        let style = self.style(for: contentStatus)
+        style.backgroundColor = backgroundColor
+        switch self.contentStatus {
+        case .default:
+            break
+        case contentStatus:
+            self.backgroundColor = self.backgroundColor(for: contentStatus)
+            break
+        default:
+            break
         }
     }
     public func backgroundColor(for contentStatus: XZContentStatus) -> UIColor? {
-        return styles[contentStatus]?.backgroundColor
+        if contentStatus == .default {
+            return styles[contentStatus]?.backgroundColor
+        }
+        return styles[contentStatus]?.backgroundColor ?? backgroundColor(for: .default)
     }
     
     public func setContentInsets(_ contentInsets: NSDirectionalEdgeInsets, for contentStatus: XZContentStatus) {
-        let styleCollection = styleCollection(for: contentStatus)
-        styleCollection.contentInsets = contentInsets
-        if self.contentStatus == contentStatus {
+        let style = self.style(for: contentStatus)
+        style.contentInsets = contentInsets
+        switch self.contentStatus {
+        case .default:
+            break
+        case contentStatus:
             setNeedsLayout()
+            break
+        default:
+            break
         }
     }
     public func contentInsets(for contentStatus: XZContentStatus) -> NSDirectionalEdgeInsets {
-        return styles[contentStatus]?.contentInsets ?? .zero
+        if contentStatus == .default {
+            return styles[contentStatus]?.contentInsets ?? .zero
+        }
+        return styles[contentStatus]?.contentInsets ?? contentInsets(for: .default)
     }
 }
 
+@MainActor public protocol XZContentStatusConfigurable: AnyObject {
+    func setTitle(_ title: String?, for contentStatus: XZContentStatus)
+    func title(for contentStatus: XZContentStatus) -> String?
+    
+    func setTitleInsets(_ titleInsets: NSDirectionalEdgeInsets, for contentStatus: XZContentStatus)
+    func titleInsets(for contentStatus: XZContentStatus) -> NSDirectionalEdgeInsets
+    
+    func setTitleColor(_ titleColor: UIColor?, for contentStatus: XZContentStatus)
+    func titleColor(for contentStatus: XZContentStatus) -> UIColor?
+    
+    func setTitleFont(_ titleFont: UIFont?, for contentStatus: XZContentStatus)
+    func titleFont(for contentStatus: XZContentStatus) -> UIFont?
+    
+    func setTitleShadowColor(_ titleShadowColor: UIColor?, for contentStatus: XZContentStatus)
+    func titleShadowColor(for contentStatus: XZContentStatus) -> UIColor?
+    
+    func setAttributedTitle(_ attributedTitle: NSAttributedString?, for contentStatus: XZContentStatus)
+    func attributedTitle(for contentStatus: XZContentStatus) -> NSAttributedString?
+    
+    func setImage(_ image: UIImage?, for contentStatus: XZContentStatus)
+    func image(for contentStatus: XZContentStatus) -> UIImage?
+    
+    func setImageInsets(_ imageInsets: NSDirectionalEdgeInsets, for contentStatus: XZContentStatus)
+    func imageInsets(for contentStatus: XZContentStatus) -> NSDirectionalEdgeInsets
+    
+    func setBackgroundImage(_ backgroundImage: UIImage?, for contentStatus: XZContentStatus)
+    func backgroundImage(for contentStatus: XZContentStatus) -> UIImage?
+    
+    func setBackgroundColor(_ backgroundColor: UIColor?, for contentStatus: XZContentStatus)
+    func backgroundColor(for contentStatus: XZContentStatus) -> UIColor?
+    
+    func setContentInsets(_ contentInsets: NSDirectionalEdgeInsets, for contentStatus: XZContentStatus)
+    func contentInsets(for contentStatus: XZContentStatus) -> NSDirectionalEdgeInsets
+}
