@@ -643,9 +643,9 @@ static void const * const _context = &_context;
         // 但是此时处于 refreshing 状态，-scrollViewDidScroll: 不执行任何操作。
         _scrollView.contentInset = XZRefreshAddTop(_scrollView.contentInset, -_header.height);
         _scrollView.verticalScrollIndicatorInsets = XZRefreshAddTop(_scrollView.verticalScrollIndicatorInsets, -_header.height);
-        _scrollView.contentOffset = contentOffset;
         
         if (contentOffset.y >= _header.contentOffsetY + _header.height) {
+            _scrollView.contentOffset = contentOffset;
             // 头部刷新视图不在展示区域内，不需要展示结束动画
             _header.state = XZRefreshStateRecovering;
             [_header.view scrollView:_scrollView willEndRefreshing:NO];
@@ -657,6 +657,8 @@ static void const * const _context = &_context;
             [_header.view scrollView:_scrollView didEndRefreshing:NO];
             XZRefreshAsync(completion, NO);
         } else {
+            // 因为下面的设置 contentOffset 可能会提前结束减速过程，结束当前可能的减速动画，避免减速结束的清理操作，提前移除了退场动画。
+            [_scrollView setContentOffset:contentOffset animated:NO];
             _header.state = XZRefreshStateRecovering;
             [_header.view scrollView:_scrollView willEndRefreshing:animated];
             
@@ -698,9 +700,9 @@ static void const * const _context = &_context;
         // 恢复边距
         _scrollView.contentInset = XZRefreshAddBottom(_scrollView.contentInset, -_footer.height);
         _scrollView.verticalScrollIndicatorInsets = XZRefreshAddBottom(_scrollView.verticalScrollIndicatorInsets, -_footer.height);
-        _scrollView.contentOffset = contentOffset;
         
         if (contentOffset.y <= _footer.contentOffsetY - _footer.height) {
+            _scrollView.contentOffset = contentOffset;
             // 尾部刷新视图没有在展示区域内，页面不需要动
             // 下拉加载更多后，footer 已经不展示在可见范围，footer 的动画在 kvo 时处理了
             _footer.state = XZRefreshStateRecovering;
@@ -713,6 +715,7 @@ static void const * const _context = &_context;
             [_footer.view scrollView:_scrollView didEndRefreshing:NO];
             XZRefreshAsync(completion, NO);
         } else {
+            [_scrollView setContentOffset:contentOffset animated:NO];
             _footer.state = XZRefreshStateRecovering;
             [_footer.view scrollView:_scrollView willEndRefreshing:animated];
             
@@ -989,7 +992,11 @@ static void const * const _context = &_context;
     
     id<XZRefreshDelegate> const delegate = _header.view.delegate ?: (id)_scrollView.delegate;
     if ([delegate respondsToSelector:@selector(scrollView:headerDidBeginRefreshing:)]) {
-        // 直接同步发送事件，在代理方法中立即结束刷新，退场动画无法生效，可能是因为当前处于回弹的过程中。
+        // 由于结束刷新的动画是 UIView 动画，会立即设置 contentOffset 到目标位置，
+        // 而当前方法可能处于手势结束，进入减速前的准备状态中，如果直接同步发送代理事件，
+        // 那么在代理方法中立即结束刷新，会导致减速状态在此方法返回后立即完成，
+        // 即 -scrollViewDidEndDecelerating: 方法在结束刷新的 UIView 动画结束前执行，
+        // 从而导致退场动画被提前清理，丢失动画效果。
         dispatch_async(dispatch_get_main_queue(), ^{
             [delegate scrollView:_scrollView headerDidBeginRefreshing:_header.view];
         });
