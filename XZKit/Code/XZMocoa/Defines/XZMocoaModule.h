@@ -78,6 +78,7 @@ NS_SWIFT_NAME(XZMocoaModule.SubmoduleCollection)
 /// MVVM 中 View 的 class 对象。
 @property (nonatomic, strong, nullable) Class viewClass;
 /// MVVM 中 View 的 class 对象，但是应该使用 nib 初始化。
+/// - Note: 通过 Storyboard 定义的视图，不需要在模块中注册。
 @property (nonatomic, strong, getter=viewClass, setter=setViewNibWithClass:, nullable) Class viewNibClass;
 /// MVVM 中 View 的 nib 的名称，优先级比属性 viewClass 高。
 /// @attention Storyboard 中的 Cell 不需要注册。
