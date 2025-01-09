@@ -135,9 +135,11 @@ NS_SWIFT_UI_ACTOR @protocol XZMocoaViewModel <NSObject>
 // Mocoa Hierarchy Emit 机制，只为解决层级模块间的交互问题，对于不同模块间的交互，或者比较复杂的
 // 交互，Mocoa 也是建议采用常规代理或通知机制，对于代码而言，保持可维护性是优先级最高的。
 
-@interface XZMocoaEmition : NSObject
+typedef NSString *XZMocoaUpdateName NS_EXTENSIBLE_STRING_ENUM;
+
+@interface XZMocoaUpdate : NSObject
 /// 事件名。
-@property (nonatomic, copy, readonly) NSString *name;
+@property (nonatomic, copy, readonly) XZMocoaUpdateName name;
 /// 事件值。
 @property (nonatomic, strong, readonly, nullable) id value;
 /// 发生当前事件的源对象。
@@ -149,9 +151,9 @@ NS_SWIFT_UI_ACTOR @protocol XZMocoaViewModel <NSObject>
 @end
 
 /// 没有名称的事件，一般作为默认事件的事件名。
-FOUNDATION_EXPORT NSString * const XZMocoaEmitionNameDefault;
+FOUNDATION_EXPORT XZMocoaUpdateName const XZMocoaUpdateNameDefault;
 /// 更新事件。
-FOUNDATION_EXPORT NSString * const XZMocoaEmitionNameUpdate;
+FOUNDATION_EXPORT XZMocoaUpdateName const XZMocoaUpdateNameUpdate;
 
 @interface XZMocoaViewModel (XZMocoaViewModelHierarchyEmition)
 /// 收到下级模块的事件，或监听到下级模块的数据变化。
@@ -159,14 +161,14 @@ FOUNDATION_EXPORT NSString * const XZMocoaEmitionNameUpdate;
 /// 只有在 isReady 状态下，才会传递事件。
 /// @discussion
 /// 默认情况下，该方法直接将事件继续向上级模块传递，开发者可重写此方法，根据业务需要，控制事件是否向上传递。
-/// @param emition 事件信息
-- (void)didReceiveEmition:(XZMocoaEmition *)emition;
+/// @param update 事件信息
+- (void)didReceiveUpdate:(XZMocoaUpdate *)update;
 
 /// 向上级模块发送事件或数据的便利方法，当前对象将作为事件源。
 /// @discussion 只有在 isReady 状态下，才会发送事件。
-/// @param name 事件名，如为 nil 则为默认名称 XZMocoaEmitionNameDefault
+/// @param name 事件名，如为 nil 则为默认名称 XZMocoaUpdateNameDefault
 /// @param value 事件值
-- (void)emit:(nullable NSString *)name value:(nullable id)value;
+- (void)sendUpdate:(XZMocoaUpdateName)name value:(nullable id)value;
 @end
 
 
@@ -185,20 +187,20 @@ FOUNDATION_EXPORT NSString * const XZMocoaEmitionNameUpdate;
 
 
 /// Mocoa Keyed Actions 事件名。
-typedef NSString *XZMocoaKeyEvents;
+typedef NSString *XZMocoaKey;
 
 /// 没有 key 也可作为一种事件，或者称为默认事件，值为空字符串。
-FOUNDATION_EXPORT XZMocoaKeyEvents const XZMocoaKeyEventsNone;
+FOUNDATION_EXPORT XZMocoaKey const XZMocoaKeyNone;
 
 /// 用于标记属性可以被添加 target-action 的属性或方法，仅起标记作用。
 /// @code
-/// @property (nonatomic) BOOL isLoading XZ_MOCOA_KEY();          // The keyEvents is 'isLoading'
-/// @property (nonatomic) BOOL isLoading XZ_MOCOA_KEY("loading"); // The keyEvents is 'loading'
-/// - (void)startLoading XZ_MOCOA_KEY("isLoading");               // The keyEvents is 'isLoading'
+/// @property (nonatomic) BOOL isLoading XZ_MOCOA_KEY();          // The key is 'isLoading'
+/// @property (nonatomic) BOOL isLoading XZ_MOCOA_KEY("loading"); // The key is 'loading'
+/// - (void)startLoading XZ_MOCOA_KEY("isLoading");               // The key is 'isLoading'
 /// @endcode
 /// @todo
-/// 编译器插件，在属性中添加 mocoa=keyEvents 标记，生成的 setter 中添加发送 keyEvents 事件的代码。
-#define XZ_MOCOA_KEY(keyEvents)
+/// 编译器插件，在属性中添加 mocoa=key 标记，生成的 setter 中添加发送 key 事件的代码。
+#define XZ_MOCOA_KEY(key)
 
 @interface XZMocoaViewModel (XZMocoaViewModelKeyEvents)
 
@@ -208,26 +210,28 @@ FOUNDATION_EXPORT XZMocoaKeyEvents const XZMocoaKeyEventsNone;
 /// @code
 /// - (void)doSomething;
 /// - (void)doSomething:(XZMocoaViewModel *)sender;
-/// - (void)doSomething:(XZMocoaViewModel *)sender forKeyEvents:(XZMocoaKeyEvents)keyEvents;
+/// - (void)doSomething:(XZMocoaViewModel *)sender forKey:(XZMocoaKey)key;
 /// @endcode
 /// @note
 /// 调用此方法时，target-action 会立即触发一次。
 /// @param target 接收事件的对象
 /// @param action 执行事件的方法
-/// @param keyEvents 事件，nil 表示添加默认事件
-- (void)addTarget:(id)target action:(SEL)action forKeyEvents:(nullable XZMocoaKeyEvents)keyEvents;
+/// @param key 事件，nil 表示添加默认事件
+- (void)addTarget:(id)target action:(SEL)action forKey:(XZMocoaKey)key;
 /// 移除 target-action 事件。
 /// @discussion
-/// 移除所有匹配 target、action、keyEvents 的事件，值 nil 表示匹配所有，例如都为 nil 会移除所有事件。
+/// 移除所有匹配 target、action、key 的事件，值 nil 表示匹配所有，例如都为 nil 会移除所有事件。
 /// @param target 接收事件的对象
 /// @param action 执行事件的方法
-/// @param keyEvents 绑定的事件
-- (void)removeTarget:(nullable id)target action:(nullable SEL)action forKeyEvents:(nullable XZMocoaKeyEvents)keyEvents;
+/// @param key 绑定的事件
+- (void)removeTarget:(nullable id)target action:(nullable SEL)action forKey:(nullable XZMocoaKey)key;
 /// 发送 target-action 事件。
-/// @param keyEvents 事件，nil 表示发送默认事件
-- (void)sendActionsForKeyEvents:(nullable XZMocoaKeyEvents)keyEvents;
+/// @param key 事件，nil 表示发送默认事件
+- (void)sendActionsForKey:(XZMocoaKey)key;
 
 @end
+
+@class UIControl;
 
 
 //FOUNDATION_EXPORT void __mocoa_bind_3(XZMocoaViewModel *vm, SEL keySel, UILabel *target) XZ_ATTR_OVERLOAD;

@@ -16,7 +16,7 @@ NS_SWIFT_UI_ACTOR @protocol XZMocoaModel <NSObject>
 
 @optional
 /// 在`Mocoa`中的名称。
-@property (nonatomic, copy, nullable) XZMocoaName mocoaName;
+@property (nonatomic, copy, readonly, nullable) XZMocoaName mocoaName;
 
 @end
 

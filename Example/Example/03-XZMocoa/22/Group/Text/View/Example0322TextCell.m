@@ -15,12 +15,12 @@
 }
 
 - (void)viewModelWillChange {
-    [self.viewModel removeTarget:self action:nil forKeyEvents:nil];
+    [self.viewModel removeTarget:self action:nil forKey:nil];
 }
 
 - (void)viewModelDidChange {
-    [self.viewModel addTarget:self action:@selector(nameDidChange:) forKeyEvents:@"name"];
-    [self.viewModel addTarget:self action:@selector(phoneDidChange:) forKeyEvents:@"phone"];
+    [self.viewModel addTarget:self action:@selector(nameDidChange:) forKey:@"name"];
+    [self.viewModel addTarget:self action:@selector(phoneDidChange:) forKey:@"phone"];
 }
 
 - (void)nameDidChange:(Example0322TextViewModel *)viewModel {

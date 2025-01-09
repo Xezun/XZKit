@@ -81,8 +81,8 @@ typedef void(^XZMocoaListDelayedUpdates)(__kindof XZMocoaViewModel *self);
 
 #pragma mark - 处理 SectionViewModel 的事件
 
-- (void)didReceiveEmition:(XZMocoaEmition *)emition {
-    if ([emition.name isEqualToString:XZMocoaEmitionNameUpdate]) {
+- (void)didReceiveUpdate:(XZMocoaUpdate *)emition {
+    if ([emition.name isEqualToString:XZMocoaUpdateNameUpdate]) {
         __kindof XZMocoaViewModel * const subViewModel = emition.target;
         if (self.isPerformingBatchUpdates) {
             // 正在进行批量更新，刷新操作将被延迟到批量更新之后。
@@ -91,7 +91,7 @@ typedef void(^XZMocoaListDelayedUpdates)(__kindof XZMocoaViewModel *self);
             // 2、即使当前是操作与批量更新没有重复，可能依然会存在崩溃的可能。
             // 3、批量更新之后，当前操作的对象，可能已经不存在了。
             [_delayedBatchUpdates addObject:^void(XZMocoaListViewModel *self) {
-                [self didReceiveEmition:emition];
+                [self didReceiveUpdate:emition];
             }];
             return;
         }
@@ -112,7 +112,7 @@ typedef void(^XZMocoaListDelayedUpdates)(__kindof XZMocoaViewModel *self);
             }
         }
     }
-    [super didReceiveEmition:emition];
+    [super didReceiveUpdate:emition];
 }
 
 #pragma mark - 局部更新

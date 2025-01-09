@@ -15,62 +15,62 @@ typedef void (^const XZMocoaRemoveBlock)(NSString *key, NSMutableArray<XZMocoaTa
     NSMutableDictionary<NSString *, NSMutableArray<XZMocoaTargetAction *> *> *_table;
 }
 
-- (instancetype)initWithOwner:(XZMocoaViewModel *)owner {
+- (instancetype)initWithSender:(XZMocoaViewModel *)sender {
     self = [super init];
     if (self) {
-        _owner = owner;
+        _sender = sender;
         _table = [NSMutableDictionary dictionary];
     }
     return self;
 }
 
-- (void)addTarget:(id)target action:(SEL)action forKeyEvents:(NSString *)keyEvents {
-    NSMutableArray<XZMocoaTargetAction *> *targetActions = _table[keyEvents];
+- (void)addTarget:(id)target action:(SEL)action forKey:(NSString *)key {
+    NSMutableArray<XZMocoaTargetAction *> *targetActions = _table[key];
     if (targetActions == nil) {
         targetActions = [NSMutableArray array];
-        _table[keyEvents] = targetActions;
+        _table[key] = targetActions;
     }
     XZMocoaTargetAction *targetAction = [[XZMocoaTargetAction alloc] initWithTarget:target action:action];
     [targetActions addObject:targetAction];
     // 绑定时，立即发送事件
-    [targetAction sendActionWithObject:self.owner forKeyEvents:keyEvents];
+    [targetAction sendActionForSender:self.sender forKey:key];
 }
 
-- (void)removeTarget:(nullable id)target action:(nullable SEL)action forKeyEvents:(nullable NSString *)keyEvents {
+- (void)removeTarget:(nullable id)target action:(nullable SEL)action forKey:(nullable NSString *)key {
     if (target == nil) {
         if (action == nil) {
-            if (keyEvents == nil) {
+            if (key == nil) {
                 [self _removeAll];
             } else {
-                [self _removeForKeyEvents:keyEvents];
+                [self _removeForKeyEvents:key];
             }
         } else {
-            if (keyEvents == nil) {
+            if (key == nil) {
                 [self _removeAction:action];
             } else {
-                [self _removeAction:action forKeyEvents:keyEvents];
+                [self _removeAction:action forKey:key];
             }
         }
     } else {
         if (action == NULL) {
-            if (keyEvents == nil) {
+            if (key == nil) {
                 [self _removeTarget:target];
             } else {
-                [self _removeTarget:target forKeyEvents:keyEvents];
+                [self _removeTarget:target forKey:key];
             }
         } else {
-            if (keyEvents == nil) {
+            if (key == nil) {
                 [self _removeTarget:target action:action];
             } else {
-                [self _removeTarget:target action:action forKeyEvents:keyEvents];
+                [self _removeTarget:target action:action forKey:key];
             }
         }
     }
 }
 
-/// 移除 keyEvents 事件的所有行为
-- (void)_removeForKeyEvents:(NSString *)keyEvents {
-    [_table[keyEvents] removeAllObjects];
+/// 移除 key 事件的所有行为
+- (void)_removeForKeyEvents:(NSString *)key {
+    [_table[key] removeAllObjects];
 }
 
 /// 移除所有事件和行为
@@ -78,9 +78,9 @@ typedef void (^const XZMocoaRemoveBlock)(NSString *key, NSMutableArray<XZMocoaTa
     [_table removeAllObjects];
 }
 
-/// 移除 keyEvents 事件的 action 行为
-- (void)_removeAction:(SEL)action forKeyEvents:(NSString *)keyEvents {
-    NSMutableArray<XZMocoaTargetAction *> * const targetActions = _table[keyEvents];
+/// 移除 key 事件的 action 行为
+- (void)_removeAction:(SEL)action forKey:(NSString *)key {
+    NSMutableArray<XZMocoaTargetAction *> * const targetActions = _table[key];
     [targetActions enumerateObjectsWithOptions:NSEnumerationReverse usingBlock:^(XZMocoaTargetAction *obj, NSUInteger idx, BOOL *stop) {
         id const target1 = obj.target;
         if (target1 == nil || obj.action == action) {
@@ -91,14 +91,14 @@ typedef void (^const XZMocoaRemoveBlock)(NSString *key, NSMutableArray<XZMocoaTa
 
 /// 移除所有事件的 action 行为
 - (void)_removeAction:(SEL)action {
-    for (NSString *keyEvents in _table) {
-        [self _removeAction:action forKeyEvents:keyEvents];
+    for (NSString *key in _table) {
+        [self _removeAction:action forKey:key];
     }
 }
 
-/// 移除 keyEvents 事件的 target 目标
-- (void)_removeTarget:(id)target forKeyEvents:(NSString *)keyEvents {
-    NSMutableArray<XZMocoaTargetAction *> * const targetActions = _table[keyEvents];
+/// 移除 key 事件的 target 目标
+- (void)_removeTarget:(id)target forKey:(NSString *)key {
+    NSMutableArray<XZMocoaTargetAction *> * const targetActions = _table[key];
     [targetActions enumerateObjectsWithOptions:NSEnumerationReverse usingBlock:^(XZMocoaTargetAction *obj, NSUInteger idx, BOOL *stop) {
         id const target1 = obj.target;
         if (target1 == nil || target1 == target) {
@@ -109,14 +109,14 @@ typedef void (^const XZMocoaRemoveBlock)(NSString *key, NSMutableArray<XZMocoaTa
 
 /// 移除所有事件的 target 目标
 - (void)_removeTarget:(id)target {
-    for (NSString *keyEvents in _table) {
-        [self _removeTarget:target forKeyEvents:keyEvents];
+    for (NSString *key in _table) {
+        [self _removeTarget:target forKey:key];
     }
 }
 
-/// 移除 keyEvents 事件的 target 目标的 action 行为
-- (void)_removeTarget:(id)target action:(SEL)action forKeyEvents:(NSString *)keyEvents {
-    NSMutableArray<XZMocoaTargetAction *> * const targetActions = _table[keyEvents];
+/// 移除 key 事件的 target 目标的 action 行为
+- (void)_removeTarget:(id)target action:(SEL)action forKey:(NSString *)key {
+    NSMutableArray<XZMocoaTargetAction *> * const targetActions = _table[key];
     [targetActions enumerateObjectsWithOptions:NSEnumerationReverse usingBlock:^(XZMocoaTargetAction *obj, NSUInteger idx, BOOL *stop) {
         id const target1 = obj.target;
         if (target1 == nil || (target1 == target && obj.action == action)) {
@@ -127,19 +127,20 @@ typedef void (^const XZMocoaRemoveBlock)(NSString *key, NSMutableArray<XZMocoaTa
 
 /// 移除所有事件的 target 目标的 action 行为
 - (void)_removeTarget:(id)target action:(SEL)action {
-    for (NSString *keyEvents in _table) {
-        [self _removeTarget:target action:action forKeyEvents:keyEvents];
+    for (NSString *key in _table) {
+        [self _removeTarget:target action:action forKey:key];
     }
 }
 
-- (void)sendActionsForKeyEvents:(NSString *)keyEvents {
-    NSMutableArray<XZMocoaTargetAction *> *targetActions = _table[keyEvents];
+- (void)sendActionsForKey:(NSString *)key {
+    NSMutableArray<XZMocoaTargetAction *> *targetActions = _table[key];
+    id const sender = self.sender;
     [targetActions enumerateObjectsWithOptions:NSEnumerationReverse usingBlock:^(XZMocoaTargetAction *targetAction, NSUInteger idx, BOOL *stop) {
         id  const target = targetAction.target;
         if (target == nil) {
             [targetActions removeObjectAtIndex:idx]; // 删除 target 已销毁的监听
         } else {
-            [targetAction sendActionWithObject:self.owner forKeyEvents:keyEvents];
+            [targetAction sendActionForSender:sender forKey:key];
         }
     }];
 }

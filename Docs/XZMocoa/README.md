@@ -376,10 +376,10 @@ Mocoa 与其说是框架，不如说是规范，通过协议规范 MVVM 的实�
 
 ```objc
 // send the emition
-- (void)emit:(NSString *)name value:(id)value;
+- (void)sendUpdate:(NSString *)name value:(id)value;
 
 // handle the emition
-- (void)didReceiveEmition:(XZMocoaEmition *)emition;
+- (void)didReceiveUpdate:(XZMocoaUpdate *)emition;
 ```
 
 比如在`UITableView`列表中，`cell`模块改变了内容时，希望`UITableView`模块刷新页面时，可以像下面这样处理。
@@ -389,18 +389,18 @@ Mocoa 与其说是框架，不如说是规范，通过协议规范 MVVM 的实�
 - (void)handleUserAction {
     // change the data then
     self.height = 100; // a new height
-    [self emit:XZMocoaEmitionNameUpdate value:nil];
+    [self sendUpdate:XZMocoaUpdateNameUpdate value:nil];
 }
 
 // 在 UITableView 模块中
-- (void)didReceiveEmition:(XZMocoaEmition *)emition {
-    if ([emition.name isEqualToString:XZMocoaEmitionNameUpdate]) {
+- (void)didReceiveUpdate:(XZMocoaUpdate *)emition {
+    if ([emition.name isEqualToString:XZMocoaUpdateNameUpdate]) {
         [self reloadData];
     }
 }
 ```
 
-当前这么做，需要一些默认的约定，比如将`XZMocoaEmitionNameUpdate`作为刷新视图的事件。
+当前这么做，需要一些默认的约定，比如将`XZMocoaUpdateNameUpdate`作为刷新视图的事件。
 在 MVC 中，解决上面的问题，一般是通过`delegate`实现，这明显或破坏模块的整体性，上层模块与下层模块的`delegate`形成了耦合，但是利用层级关系处理，就能很好的避免这一点。
 
 同时，层级关系事件的局限性也很明显，仅适合处理比较明确的事件，不过在模块封装完整的情况下，下层模块也不应该有其它事件需要传递给上级处理。
@@ -470,11 +470,11 @@ Mocoa 为独立的顶层模块，提供了进入的便利方法。
 在剩下的小部分情况中，我们可以通过`delegate`的方式来实现，这比监听更直观，且易维护。
 不过，使用`delegate`由于需要定义协议，使用起来比较麻烦，所以了简化这些在少量事件的处理，Mocoa 设计了`target-action`机制。
 
-这是一种半自动的机制，使用`NSString`作为`keyEvents`，`View`在绑定的`keyEvents`之后，`ViewModel`在调用`-sendActionsForKeyEvents:`方法时，`View`绑定的方法就会被触发。
+这是一种半自动的机制，使用`NSString`作为`key`，`View`在绑定的`key`之后，`ViewModel`在调用`-sendActionsForKey:`方法时，`View`绑定的方法就会被触发。
 
 ```objc
 // view 监听了 viewModel 的 isHeaderRefreshing 属性
-[viewModel addTarget:self action:@selector(headerRefreshingChanged:) forKeyEvents:@"isHeaderRefreshing"];
+[viewModel addTarget:self action:@selector(headerRefreshingChanged:) forKey:@"isHeaderRefreshing"];
 
 - (void)headerRefreshingChanged:(Example20ViewModel *)viewModel {
     if (viewModel.isHeaderRefreshing) {
@@ -485,7 +485,7 @@ Mocoa 为独立的顶层模块，提供了进入的便利方法。
 }
 
 // viewModel 发送事件
-[self sendActionsForKeyEvents:@"isHeaderRefreshing"];
+[self sendActionsForKey:@"isHeaderRefreshing"];
 ```
 
 `target-action`机制，相当于使用`keysEvents`代替了`delegate`协议，处理一些简单的事件。

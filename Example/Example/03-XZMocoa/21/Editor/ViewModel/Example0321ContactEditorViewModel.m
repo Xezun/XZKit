@@ -44,12 +44,12 @@
     if (![firstName isEqualToString:model.firstName] || ![lastName isEqualToString:model.lastName]) {
         model.firstName = firstName;
         model.lastName  = lastName;
-        [self emit:@"name" value:nil];
+        [self sendUpdate:@"name" value:nil];
     }
 
     if (![phone isEqualToString:model.phone]) {
         model.phone = phone;
-        [self emit:@"phone" value:nil];
+        [self sendUpdate:@"phone" value:nil];
     }
 }
 
