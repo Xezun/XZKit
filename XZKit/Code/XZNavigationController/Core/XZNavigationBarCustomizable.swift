@@ -97,6 +97,21 @@ extension XZNavigationBarProtocol {
         guard let navigationBar = self.navigationBar else { return }
         xz_objc_msgSendSuper(navigationBar, v: #selector(setter: UINavigationBar.isTranslucent), b: self.isTranslucent)
     }
+    
+    public var navigationController: UINavigationController? {
+        var next: UIResponder? = self.next
+        while next != nil {
+            if let nav = next as? UINavigationController {
+                return nav
+            }
+            if let vc = next as? UIViewController {
+                return vc.navigationController
+            }
+            next = next?.next
+        }
+        return nil
+    }
+    
 }
 
 

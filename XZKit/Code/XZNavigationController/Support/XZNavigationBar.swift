@@ -52,12 +52,12 @@ import UIKit
     }
     
     public required init?(coder aDecoder: NSCoder) {
-        guard let backgroundImageView = aDecoder.decodeObject(forKey: XZCodingKey.backgroundImageView) as? UIImageView else { return nil }
-        guard let shadowImageView     = aDecoder.decodeObject(forKey: XZCodingKey.shadowImageView) as? UIImageView else { return nil }
-        self.backgroundImageView = backgroundImageView
-        self.shadowImageView     = shadowImageView
-        self.isTranslucent       = aDecoder.decodeBool(forKey: XZCodingKey.isTranslucent)
-        self.prefersLargeTitles  = aDecoder.decodeBool(forKey: XZCodingKey.prefersLargeTitles)
+        guard let backgroundImageView = aDecoder.decodeObject(forKey: CodingKey.backgroundImageView.rawValue) as? UIImageView else { return nil }
+        guard let shadowImageView     = aDecoder.decodeObject(forKey: CodingKey.shadowImageView.rawValue) as? UIImageView else { return nil }
+        self.backgroundImageView      = backgroundImageView
+        self.shadowImageView          = shadowImageView
+        self.isTranslucent            = aDecoder.decodeBool(forKey: CodingKey.isTranslucent.rawValue)
+        self.prefersLargeTitles       = aDecoder.decodeBool(forKey: CodingKey.prefersLargeTitles.rawValue)
         super.init(coder: aDecoder)
         self.addSubview(backgroundImageView)
         self.addSubview(shadowImageView)
@@ -65,10 +65,10 @@ import UIKit
     
     open override func encode(with aCoder: NSCoder) {
         super.encode(with: aCoder)
-        aCoder.encode(isTranslucent, forKey: XZCodingKey.isTranslucent)
-        aCoder.encode(backgroundImageView, forKey: XZCodingKey.backgroundImageView)
-        aCoder.encode(shadowImageView, forKey: XZCodingKey.shadowImageView)
-        aCoder.encode(prefersLargeTitles, forKey: XZCodingKey.prefersLargeTitles)
+        aCoder.encode(isTranslucent,       forKey: CodingKey.isTranslucent.rawValue)
+        aCoder.encode(backgroundImageView, forKey: CodingKey.backgroundImageView.rawValue)
+        aCoder.encode(shadowImageView,     forKey: CodingKey.shadowImageView.rawValue)
+        aCoder.encode(prefersLargeTitles,  forKey: CodingKey.prefersLargeTitles.rawValue)
     }
 
     /// 此属性直接修改的是导航条背景视图的背景色。
@@ -261,13 +261,12 @@ import UIKit
         }
     }
     private var _infoView: UIView?
-
+    
+    private enum CodingKey: String {
+        case isTranslucent       = "XZNavigationBar.isTranslucent"
+        case backgroundImageView = "XZNavigationBar.backgroundImageView"
+        case shadowImageView     = "XZNavigationBar.shadowImageView"
+        case prefersLargeTitles  = "XZNavigationBar.prefersLargeTitles"
+    }
 }
 
-
-private let XZCodingKey = (
-    isTranslucent       : "XZNavigationBar.isTranslucent",
-    backgroundImageView : "XZNavigationBar.backgroundImageView",
-    shadowImageView     : "XZNavigationBar.shadowImageView",
-    prefersLargeTitles  : "XZNavigationBar.prefersLargeTitles"
-)

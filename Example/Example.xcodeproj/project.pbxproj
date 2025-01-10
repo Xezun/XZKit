@@ -22,6 +22,13 @@
 		04D06B002D2D45300056A53A /* Example15Test02ViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 04D06AFF2D2D45300056A53A /* Example15Test02ViewController.m */; };
 		04D06B012D2D45300056A53A /* Example15Test01ViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 04D06AFD2D2D45300056A53A /* Example15Test01ViewController.m */; };
 		04D06B092D2D47DF0056A53A /* Localizable.xcstrings in Resources */ = {isa = PBXBuildFile; fileRef = 04D06B082D2D47DF0056A53A /* Localizable.xcstrings */; };
+		04D34E652D314ABB0013D4A3 /* Example17GestureViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 04D34E602D314ABB0013D4A3 /* Example17GestureViewController.swift */; };
+		04D34E662D314ABB0013D4A3 /* Example17LastViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 04D34E622D314ABB0013D4A3 /* Example17LastViewController.swift */; };
+		04D34E672D314ABB0013D4A3 /* Example17HomeViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 04D34E612D314ABB0013D4A3 /* Example17HomeViewController.swift */; };
+		04D34E682D314ABB0013D4A3 /* Example17AppleViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 04D34E5F2D314ABB0013D4A3 /* Example17AppleViewController.swift */; };
+		04D34E692D314ABB0013D4A3 /* Example17NavigationController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 04D34E632D314ABB0013D4A3 /* Example17NavigationController.swift */; };
+		04D34E6A2D314ABB0013D4A3 /* Example17NextViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 04D34E642D314ABB0013D4A3 /* Example17NextViewController.swift */; };
+		04D34E6C2D314B0A0013D4A3 /* Example17NavigationBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = 04D34E6B2D314B0A0013D4A3 /* Example17NavigationBar.swift */; };
 		292A5A472D254D010037579D /* Example04ViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 292A5A462D254D010037579D /* Example04ViewController.m */; };
 		292A5A482D254D010037579D /* Example04FontSizeViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 292A5A402D254D010037579D /* Example04FontSizeViewController.m */; };
 		292A5A492D254D010037579D /* Example04SettingsViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 292A5A422D254D010037579D /* Example04SettingsViewController.m */; };
@@ -280,6 +287,13 @@
 		04D06B052D2D46F40056A53A /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/Main.strings; sourceTree = "<group>"; };
 		04D06B072D2D46F90056A53A /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/LaunchScreen.strings; sourceTree = "<group>"; };
 		04D06B082D2D47DF0056A53A /* Localizable.xcstrings */ = {isa = PBXFileReference; lastKnownFileType = text.json.xcstrings; path = Localizable.xcstrings; sourceTree = "<group>"; };
+		04D34E5F2D314ABB0013D4A3 /* Example17AppleViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Example17AppleViewController.swift; sourceTree = "<group>"; };
+		04D34E602D314ABB0013D4A3 /* Example17GestureViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Example17GestureViewController.swift; sourceTree = "<group>"; };
+		04D34E612D314ABB0013D4A3 /* Example17HomeViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Example17HomeViewController.swift; sourceTree = "<group>"; };
+		04D34E622D314ABB0013D4A3 /* Example17LastViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Example17LastViewController.swift; sourceTree = "<group>"; };
+		04D34E632D314ABB0013D4A3 /* Example17NavigationController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Example17NavigationController.swift; sourceTree = "<group>"; };
+		04D34E642D314ABB0013D4A3 /* Example17NextViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Example17NextViewController.swift; sourceTree = "<group>"; };
+		04D34E6B2D314B0A0013D4A3 /* Example17NavigationBar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Example17NavigationBar.swift; sourceTree = "<group>"; };
 		055F0304DE9A092BAF52FF06 /* Pods_Example.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Example.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		2921DE5FDDA8FC1A0BE46778 /* Pods_ExampleUITests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_ExampleUITests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		292A5A3D2D254D010037579D /* Example04FontNameViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Example04FontNameViewController.h; sourceTree = "<group>"; };
@@ -759,6 +773,13 @@
 		04D34E5D2D310BD90013D4A3 /* 17-XZNavigationController */ = {
 			isa = PBXGroup;
 			children = (
+				04D34E6B2D314B0A0013D4A3 /* Example17NavigationBar.swift */,
+				04D34E5F2D314ABB0013D4A3 /* Example17AppleViewController.swift */,
+				04D34E602D314ABB0013D4A3 /* Example17GestureViewController.swift */,
+				04D34E612D314ABB0013D4A3 /* Example17HomeViewController.swift */,
+				04D34E622D314ABB0013D4A3 /* Example17LastViewController.swift */,
+				04D34E632D314ABB0013D4A3 /* Example17NavigationController.swift */,
+				04D34E642D314ABB0013D4A3 /* Example17NextViewController.swift */,
 			);
 			path = "17-XZNavigationController";
 			sourceTree = "<group>";
@@ -2869,6 +2890,12 @@
 				292C17322D251F6D00E465BF /* Example0322TextModel.m in Sources */,
 				292C17332D251F6D00E465BF /* Example0330Group108CellViewModel.m in Sources */,
 				292C17342D251F6D00E465BF /* Example0331Group104SectionModel.m in Sources */,
+				04D34E652D314ABB0013D4A3 /* Example17GestureViewController.swift in Sources */,
+				04D34E662D314ABB0013D4A3 /* Example17LastViewController.swift in Sources */,
+				04D34E672D314ABB0013D4A3 /* Example17HomeViewController.swift in Sources */,
+				04D34E682D314ABB0013D4A3 /* Example17AppleViewController.swift in Sources */,
+				04D34E692D314ABB0013D4A3 /* Example17NavigationController.swift in Sources */,
+				04D34E6A2D314ABB0013D4A3 /* Example17NextViewController.swift in Sources */,
 				292C17352D251F6D00E465BF /* Example0331Group100Cell.m in Sources */,
 				292C17362D251F6D00E465BF /* Example0330Group109CellViewModel.m in Sources */,
 				292C17372D251F6D00E465BF /* Example0321ContactBook.m in Sources */,
@@ -2954,6 +2981,7 @@
 				292C17772D251F6D00E465BF /* Example0330Group104CellViewModel.m in Sources */,
 				292C17782D251F6D00E465BF /* Example0312CellModel.m in Sources */,
 				292C17792D251F6D00E465BF /* Example0330Group100CellModel.m in Sources */,
+				04D34E6C2D314B0A0013D4A3 /* Example17NavigationBar.swift in Sources */,
 				042D23CC2D30BB3200E0F7BD /* Example16ViewController.m in Sources */,
 				042D23CD2D30BB3200E0F7BD /* Example16SettingsEditCellViewController.m in Sources */,
 				042D23CE2D30BB3200E0F7BD /* Example16CollectonViewSectionModel.m in Sources */,
