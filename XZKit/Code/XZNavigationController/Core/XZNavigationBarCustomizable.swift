@@ -8,6 +8,7 @@
 
 import UIKit
 import ObjectiveC
+import XZDefines
 
 /// 视图控制器遵循协议，表明该控制器使用自定义的导航条。
 public protocol XZNavigationBarCustomizable: UIViewController {
@@ -50,7 +51,7 @@ public protocol XZNavigationBarCustomizable: UIViewController {
 /// ```
 ///
 /// - Attention: 由于转场需要，自定义导航条并不总是在原生导航条之上，所以自定义导航条需要单独设置 tintColor 的值，以避免转场过程中，导航条颜色不一致的问题。
-public protocol XZNavigationBarProtocol: UIView {
+@MainActor public protocol XZNavigationBarProtocol: UIView {
     /// 导航条是否半透明。
     var isTranslucent: Bool { get set }
     /// 导航条是否显示大标题模式。
@@ -80,32 +81,32 @@ extension XZNavigationBarProtocol {
     /// - Attention: 在 `isHidden` 属性的 willSet/set/didSet 方法中，直接设置原生导航条的属性，会导致循环调用。
     public func isHiddenDidChange() {
         guard let navigationBar = self.navigationBar else { return }
-        xz_navc_msgSendSuper(navigationBar, setHidden: self.isHidden)
+        xz_objc_msgSendSuper(navigationBar, v: #selector(setter: UINavigationBar.isHidden), b: self.isHidden)
     }
     
     /// 当前导航条 prefersLargeTitles 属性发生改变时，通过此方法将状态同步给原生导航条。
     /// - Attention: 在 `prefersLargeTitles` 属性的 willSet/set/didSet 方法中，直接设置原生导航条的属性，会导致循环调用。
     public func prefersLargeTitlesDidChange() {
         guard let navigationBar = self.navigationBar else { return }
-        xz_navc_msgSendSuper(navigationBar, setPrefersLargeTitles: self.prefersLargeTitles)
+        xz_objc_msgSendSuper(navigationBar, v: #selector(setter: UINavigationBar.prefersLargeTitles), b: self.prefersLargeTitles)
     }
     
     /// 当前导航条 isTranslucent 属性发生改变时，通过此方法将状态同步给原生导航条。
     /// - Attention: 在 `isTranslucent` 属性的 willSet/set/didSet 方法中，直接设置原生导航条的属性，会导致循环调用。
     public func isTranslucentDidChange() {
         guard let navigationBar = self.navigationBar else { return }
-        xz_navc_msgSendSuper(navigationBar, setTranslucent: self.isTranslucent)
+        xz_objc_msgSendSuper(navigationBar, v: #selector(setter: UINavigationBar.isTranslucent), b: self.isTranslucent)
     }
 }
 
 
 
-private class XZNavigationBarWeakWrapper {
+@MainActor private class XZNavigationBarWeakWrapper {
     weak var value: UINavigationBar?
     init(value: UINavigationBar? = nil) {
         self.value = value
     }
 }
 
-private var _navigationBar = 0
+@MainActor private var _navigationBar = 0
 

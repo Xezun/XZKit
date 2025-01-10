@@ -56,41 +56,41 @@ private class XZNavigationControllerFreezableTabBar: UITabBar {
     /// 自定义类的 frame 属性，在修改值时，先判断当前是否允许修改。
     open override var frame: CGRect {
         get {
-            return xz_navc_msgSendSuper(frame: self)
+            return xz_objc_msgSendSuper(self, rect: #selector(getter: self.frame))
         }
         set {
             if isFrozen {
                 return
             }
-            xz_navc_msgSendSuper(self, setFrame: newValue)
+            xz_objc_msgSendSuper(self, v: #selector(setter: self.frame), rect: newValue)
         }
     }
 
     open override var bounds: CGRect {
         get {
-            return xz_navc_msgSendSuper(bounds: self)
+            return xz_objc_msgSendSuper(self, rect: #selector(getter: self.bounds))
         }
         set {
             if isFrozen {
                 return
             }
-            xz_navc_msgSendSuper(self, setBounds: newValue)
+            xz_objc_msgSendSuper(self, v: #selector(setter: self.bounds), rect: newValue)
         }
     }
 
     open override var isHidden: Bool {
         get {
-            return xz_navc_msgSendSuper(isHidden: self)
+            return xz_objc_msgSendSuper(self, b: #selector(getter: self.isHidden))
         }
         set {
             if isFrozen {
                 return
             }
-            xz_navc_msgSendSuper(self, setHidden: newValue)
+            xz_objc_msgSendSuper(self, v: #selector(setter: self.isHidden), b: newValue)
         }
     }
 }
 
-private var _isFrozen = 0
-private var _FreezableTabBarClass = 0
-private var _isFreezable = 0
+@MainActor private var _isFrozen = 0
+@MainActor private var _FreezableTabBarClass = 0
+@MainActor private var _isFreezable = 0

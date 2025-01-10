@@ -78,26 +78,26 @@ private class XZNavigationControllerCustomizableNavigationBar: UINavigationBar {
     
     open override var isHidden: Bool {
         get {
-            return xz_navc_msgSendSuper(isHidden: self)
+            return xz_objc_msgSendSuper(self, b: #selector(getter: self.isHidden))
         }
         set {
             if let navigationBar = navigationBar {
                 navigationBar.isHidden = newValue
             } else {
-                xz_navc_msgSendSuper(self, setHidden:newValue)
+                xz_objc_msgSendSuper(self, v: #selector(setter: self.isHidden), b: newValue)
             }
         }
     }
     
     open override var isTranslucent: Bool {
         get {
-            return xz_navc_msgSendSuper(isTranslucent: self)
+            return xz_objc_msgSendSuper(self, b: #selector(getter: self.isTranslucent))
         }
         set {
             if let navigationBar = navigationBar {
                 navigationBar.isTranslucent = newValue
             } else {
-                xz_navc_msgSendSuper(self, setTranslucent: newValue)
+                xz_objc_msgSendSuper(self, v: #selector(setter: self.isTranslucent), b: newValue)
             }
         }
     }
@@ -105,19 +105,19 @@ private class XZNavigationControllerCustomizableNavigationBar: UINavigationBar {
     @available(iOS 11.0, *)
     open override var prefersLargeTitles: Bool {
         get {
-            return xz_navc_msgSendSuper(prefersLargeTitles: self)
+            return xz_objc_msgSendSuper(self, b: #selector(getter: self.prefersLargeTitles))
         }
         set {
             if let navigationBar = navigationBar {
                 navigationBar.prefersLargeTitles = newValue
             } else {
-                xz_navc_msgSendSuper(self, setPrefersLargeTitles: newValue)
+                xz_objc_msgSendSuper(self, v: #selector(setter: self.prefersLargeTitles), b: newValue)
             }
         }
     }
     
     open override func layoutSubviews() {
-        xz_navc_msgSendSuper(layoutSubviews: self)
+        xz_objc_msgSendSuper(self, v: #selector(layoutSubviews))
 
         if let navigationBar = navigationBar {
             let bounds = self.bounds
@@ -134,48 +134,48 @@ private class XZNavigationControllerCustomizableNavigationBar: UINavigationBar {
     // 当原生导航条添加子视图时，保证自定义导航条始终显示在最上面。
 
     open override func addSubview(_ view: UIView) {
-        xz_navc_msgSendSuper(self, addSubview: view)
+        xz_objc_msgSendSuper(self, v: #selector(addSubview(_:)), o: view)
 
         if let navigationBar = navigationBar, navigationBar != view {
-            xz_navc_msgSendSuper(self, bringSubviewToFront: navigationBar)
+            xz_objc_msgSendSuper(self, v: #selector(bringSubviewToFront(_:)), o: navigationBar)
         }
     }
 
     open override func bringSubviewToFront(_ view: UIView) {
-        xz_navc_msgSendSuper(self, bringSubviewToFront: view)
+        xz_objc_msgSendSuper(self, v: #selector(bringSubviewToFront(_:)), o: view)
         
 
         if let navigationBar = navigationBar, navigationBar != view {
-            xz_navc_msgSendSuper(self, bringSubviewToFront: navigationBar)
+            xz_objc_msgSendSuper(self, v: #selector(bringSubviewToFront(_:)), o: navigationBar)
         }
     }
 
     open override func insertSubview(_ view: UIView, aboveSubview siblingSubview: UIView) {
-        xz_navc_msgSendSuper(self, insertSubview: view, aboveSubview: siblingSubview)
+        xz_objc_msgSendSuper(self, v: #selector(insertSubview(_:aboveSubview:)), o: view, o: siblingSubview)
         
         if siblingSubview == navigationBar {
-            xz_navc_msgSendSuper(self, bringSubviewToFront: siblingSubview)
+            xz_objc_msgSendSuper(self, v: #selector(bringSubviewToFront(_:)), o: siblingSubview)
         }
     }
 
     open override func insertSubview(_ view: UIView, at index: Int) {
-        xz_navc_msgSendSuper(self, insertSubview: view, atIndex: index)
+        xz_objc_msgSendSuper(self, v: #selector(insertSubview(_:at:)), o: view, i: index)
 
         if let navigationBar = navigationBar {
-            xz_navc_msgSendSuper(self, bringSubviewToFront: navigationBar)
+            xz_objc_msgSendSuper(self, v: #selector(bringSubviewToFront(_:)), o: navigationBar)
         }
     }
 
     open override func insertSubview(_ view: UIView, belowSubview siblingSubview: UIView) {
-        xz_navc_msgSendSuper(self, insertSubview: view, belowSubview: siblingSubview)
+        xz_objc_msgSendSuper(self, v: #selector(insertSubview(_:belowSubview:)), o: view, o: siblingSubview)
         
         if navigationBar == view {
-            xz_navc_msgSendSuper(self, bringSubviewToFront: view)
+            xz_objc_msgSendSuper(self, v: #selector(bringSubviewToFront(_:)), o: view)
         }
     }
     
 }
 
-private var _navigationBar = 0
-private var _customizableClass = 0;
-private var _isCustomizable = 0;
+@MainActor private var _navigationBar = 0
+@MainActor private var _customizableClass = 0;
+@MainActor private var _isCustomizable = 0;

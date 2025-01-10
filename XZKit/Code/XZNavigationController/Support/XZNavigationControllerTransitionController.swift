@@ -10,7 +10,7 @@ import ObjectiveC
 import XZDefines
 
 /// 转场控制器，接管了导航控制的代理。
-public final class XZNavigationControllerTransitionController: NSObject {
+@MainActor public final class XZNavigationControllerTransitionController: NSObject {
     
     /// 导航手势对象。
     public let interactiveNavigationGestureRecognizer: UIPanGestureRecognizer
@@ -43,14 +43,14 @@ public final class XZNavigationControllerTransitionController: NSObject {
             typealias MethodType = @convention(block) (UINavigationController, UINavigationControllerDelegate?) -> Void
             let selector = #selector(setter: UINavigationController.delegate)
             let override: MethodType = { `self`, delegate in
-                xz_navc_msgSendSuper(self, setDelegate: delegate)
+                xz_objc_msgSendSuper(self, v: selector, o: delegate)
                 if let transitionController = (self as? XZNavigationController)?.transitionController {
                     transitionController.customizeNavigationControllerDelegate(delegate)
                 }
             }
             let exchange = { (_ selector: Selector) in
                 let exchange: MethodType = { `self`, delegate in
-                    xz_navc_msgSend(self, exchange: selector, setDelegate: delegate)
+                    xz_objc_msgSend(self, v: selector, o: delegate)
                     if let transitionController = (self as? XZNavigationController)?.transitionController {
                         transitionController.customizeNavigationControllerDelegate(delegate)
                     }
@@ -91,16 +91,16 @@ public final class XZNavigationControllerTransitionController: NSObject {
                 return transitionController.navigationController(navigationController, animationControllerFor: operation, from: fromVC, to: toVC)
             }
             let override: MethodType = { `self`, navigationController, operation, fromVC, toVC in
-                if let controller = xz_navc_msgSendSuper(self, navigationController: navigationController, animationControllerFor: operation, from: fromVC, to: toVC) {
-                    return controller;
+                if let controller = xz_objc_msgSendSuper(self, o: selector, o: navigationController, i: operation.rawValue, o: fromVC, o: toVC) {
+                    return controller as? UIViewControllerAnimatedTransitioning;
                 }
                 guard let transitionController = (navigationController as? XZNavigationController)?.transitionController else { return nil }
                 return transitionController.navigationController(navigationController, animationControllerFor: operation, from: fromVC, to: toVC)
             }
             let exchange = { (_ selector: Selector) in
                 let exchange: MethodType = { `self`, navigationController, operation, fromVC, toVC in
-                    if let controller = xz_navc_msgSend(self, exchange: selector, navigationController: navigationController, animationControllerFor: operation, from: fromVC, to: toVC) {
-                        return controller
+                    if let controller = xz_objc_msgSend(self, o: selector, o: navigationController, i: operation.rawValue, o: fromVC, o: toVC) {
+                        return controller as? UIViewControllerAnimatedTransitioning
                     }
                     guard let transitionController = (navigationController as? XZNavigationController)?.transitionController else { return nil }
                     return transitionController.navigationController(navigationController, animationControllerFor: operation, from: fromVC, to: toVC)
@@ -119,16 +119,16 @@ public final class XZNavigationControllerTransitionController: NSObject {
                 return transitionController.navigationController(navigationController, interactionControllerFor: animationController)
             }
             let override: MethodType = { `self`, navigationController, animationController in
-                if let controller = xz_navc_msgSendSuper(self, navigationController: navigationController, interactionControllerFor: animationController) {
-                    return controller;
+                if let controller = xz_objc_msgSendSuper(self, o: selector, o: navigationController, o: animationController) {
+                    return controller as? UIViewControllerInteractiveTransitioning;
                 }
                 guard let transitionController = (navigationController as? XZNavigationController)?.transitionController else { return nil }
                 return transitionController.navigationController(navigationController, interactionControllerFor: animationController)
             }
             let exchange = { (_ selector: Selector) in
                 let exchange: MethodType = { `self`, navigationController, animationController in
-                    if let controller = xz_navc_msgSend(self, exchange: selector, navigationController: navigationController, interactionControllerFor: animationController) {
-                        return controller
+                    if let controller = xz_objc_msgSend(self, o: selector, o: navigationController, o: animationController) {
+                        return controller as? UIViewControllerInteractiveTransitioning
                     }
                     guard let transitionController = (navigationController as? XZNavigationController)?.transitionController else { return nil }
                     return transitionController.navigationController(navigationController, interactionControllerFor: animationController)
@@ -395,10 +395,10 @@ extension XZNavigationControllerTransitionController: UIGestureRecognizerDelegat
 }
 
 /// 导航控制器 delegate 的 KVO 标记。
-private var _context = 0
+@MainActor private var _context = 0
 /// 记录导航控制器的 delegate 是否已经进行了自定义化。
-private var _isCustomized = 0
-private var _isObserved = 0
+@MainActor private var _isCustomized = 0
+@MainActor private var _isObserved = 0
 // 转场方法调用顺序
 //
 // Push 成功时：

@@ -10,7 +10,7 @@ import UIKit
 
 
 /// 动画控制器，处理了导航控制器的转场过程中的动画效果。
-open class XZNavigationControllerAnimationController: NSObject {
+@MainActor open class XZNavigationControllerAnimationController: NSObject {
     
     /// 导航控制器。
     public unowned let navigationController: XZNavigationController

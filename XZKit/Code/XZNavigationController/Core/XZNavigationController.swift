@@ -61,13 +61,13 @@ extension XZNavigationController {
                         let selector = #selector(UINavigationController.pushViewController(_:animated:));
                         let override: MethodType = { `self`, viewController, animated in
                             xz_navc_navigationController(self, customizeViewController: viewController)
-                            xz_navc_msgSendSuper(self, pushViewController: viewController, animated: animated)
+                            xz_objc_msgSendSuper(self, v: selector, o: viewController, b: animated)
                             xz_navc_navigationController(self, prepareForTransitioning: animated)
                         }
                         let exchange = { (selector: Selector) in
                             let exchange: MethodType = { `self`, viewController, animated in
                                 xz_navc_navigationController(self, customizeViewController: viewController)
-                                xz_navc_msgSend(self, exchange: selector, pushViewController: viewController, animated: animated)
+                                xz_objc_msgSend(self, v: selector, o: viewController, b: animated)
                                 xz_navc_navigationController(self, prepareForTransitioning: animated)
                             }
                             return exchange
@@ -85,7 +85,7 @@ extension XZNavigationController {
                                 xz_navc_navigationController(self, customizeViewController: viewController)
                             }
                             let topViewController = self.topViewController
-                            xz_navc_msgSendSuper(self, setViewControllers: viewControllers, animated: animated)
+                            xz_objc_msgSendSuper(self, v: selector, o: viewControllers, b: animated)
                             if topViewController != viewControllers.last { // 说明发生了转场
                                 xz_navc_navigationController(self, prepareForTransitioning: animated)
                             }
@@ -96,7 +96,7 @@ extension XZNavigationController {
                                     xz_navc_navigationController(self, customizeViewController: viewController)
                                 }
                                 let topViewController = self.topViewController
-                                xz_navc_msgSend(self, exchange: selector, setViewControllers: viewControllers, animated: animated)
+                                xz_objc_msgSend(self, v: selector, o: viewControllers, b: animated)
                                 if topViewController != viewControllers.last {
                                     xz_navc_navigationController(self, prepareForTransitioning: animated)
                                 }
@@ -112,7 +112,7 @@ extension XZNavigationController {
                         
                         let selector = #selector(UINavigationController.popViewController(animated:));
                         let override: MethodType = { `self`, animated in
-                            let viewController = xz_navc_msgSendSuper(self, popViewControllerAnimated: animated);
+                            let viewController = xz_objc_msgSendSuper(self, o: selector, b: animated) as? UIViewController;
                             if viewController != nil {
                                 xz_navc_navigationController(self, prepareForTransitioning: animated)
                             }
@@ -120,7 +120,7 @@ extension XZNavigationController {
                         }
                         let exchange = { (selector: Selector) in
                             let exchange: MethodType = { `self`, animated in
-                                let viewController = xz_navc_msgSend(self, exchange: selector, popViewControllerAnimated: animated)
+                                let viewController = xz_objc_msgSend(self, o: selector, b: animated) as? UIViewController
                                 if viewController != nil {
                                     xz_navc_navigationController(self, prepareForTransitioning: animated)
                                 }
@@ -137,7 +137,7 @@ extension XZNavigationController {
                         
                         let selector = #selector(UINavigationController.popToViewController(_:animated:));
                         let override: MethodType = { `self`, viewController, animated in
-                            let viewControllers = xz_navc_msgSendSuper(self, popToViewController: viewController, animated: animated)
+                            let viewControllers = xz_objc_msgSendSuper(self, o: selector, o: viewController, b: animated) as? [UIViewController]
                             if let viewControllers = viewControllers, viewControllers.count > 0 {
                                 xz_navc_navigationController(self, prepareForTransitioning: animated)
                             }
@@ -145,7 +145,7 @@ extension XZNavigationController {
                         }
                         let exchange = { (selector: Selector) in
                             let exchange: MethodType = { `self`, viewController, animated in
-                                let viewControllers = xz_navc_msgSend(self, exchange: selector, popToViewController: viewController, animated: animated)
+                                let viewControllers = xz_objc_msgSend(self, o: selector, o: viewController, b: animated) as? [UIViewController]
                                 if let viewControllers = viewControllers, viewControllers.count > 0 {
                                     xz_navc_navigationController(self, prepareForTransitioning: animated)
                                 }
@@ -162,7 +162,7 @@ extension XZNavigationController {
                         
                         let selector = #selector(UINavigationController.popToRootViewController(animated:));
                         let override: MethodType = { `self`, animated in
-                            let viewControllers = xz_navc_msgSendSuper(self, popToRootViewControllerAnimated: animated)
+                            let viewControllers = xz_objc_msgSendSuper(self, o: selector, b: animated) as? [UIViewController]
                             if let viewControllers = viewControllers, viewControllers.count > 0 {
                                 xz_navc_navigationController(self, prepareForTransitioning: animated)
                             }
@@ -170,7 +170,7 @@ extension XZNavigationController {
                         }
                         let exchange = { (selector: Selector) in
                             let exchange: MethodType = { `self`, animated in
-                                let viewControllers = xz_navc_msgSend(self, exchange: selector, popToRootViewControllerAnimated: animated)
+                                let viewControllers = xz_objc_msgSend(self, o: selector, b: animated) as? [UIViewController]
                                 if let viewControllers = viewControllers, viewControllers.count > 0 {
                                     xz_navc_navigationController(self, prepareForTransitioning: animated)
                                 }
@@ -215,7 +215,7 @@ extension XZNavigationController {
 // 以下方法，不写成 category 的原因，是因为这些方法并不属于一般特性，仅适合在当前环境下使用。
 
 /// 向控制器的 viewWillAppear/viewDidAppear 中注入代码。
-fileprivate func xz_navc_navigationController(_ navigationController: UINavigationController, customizeViewController viewController: UIViewController) {
+@MainActor fileprivate func xz_navc_navigationController(_ navigationController: UINavigationController, customizeViewController viewController: UIViewController) {
     guard navigationController is XZNavigationController else {
         return
     }
@@ -230,12 +230,12 @@ fileprivate func xz_navc_navigationController(_ navigationController: UINavigati
         
         let selector = #selector(UIViewController.viewWillAppear(_:))
         let override: MethodType = { `self`, animated in
-            xz_navc_msgSendSuper(self, viewWillAppear: animated)
+            xz_objc_msgSendSuper(self, v: selector, b: animated)
             xz_navc_viewController(self, viewWillAppear: animated)
         }
         let exchange = { (selector: Selector) in
             let exchange: MethodType = { `self`, animated in
-                xz_navc_msgSend(self, exchange: selector, viewWillAppear: animated)
+                xz_objc_msgSend(self, v: selector, b: animated)
                 xz_navc_viewController(self, viewWillAppear: animated)
             }
             return exchange
@@ -248,12 +248,12 @@ fileprivate func xz_navc_navigationController(_ navigationController: UINavigati
         
         let selector = #selector(UIViewController.viewDidAppear(_:))
         let override: MethodType = { `self`, animated in
-            xz_navc_msgSendSuper(self, viewDidAppear: animated)
+            xz_objc_msgSendSuper(self, v: selector, b: animated)
             xz_navc_viewController(self, viewDidAppear: animated)
         }
         let exchange = { (selector: Selector) in
             let exchange: MethodType = { `self`, animated in
-                xz_navc_msgSend(self, exchange: selector, viewDidAppear: animated)
+                xz_objc_msgSend(self, v: selector, b: animated)
                 xz_navc_viewController(self, viewDidAppear: animated)
             }
             return exchange
@@ -263,14 +263,14 @@ fileprivate func xz_navc_navigationController(_ navigationController: UINavigati
 }
 
 /// 转场开始，自定义导航条与原生导航条解除绑定。转场过程中的导航条操作，最终会在 viewWillAppear 的注入逻辑覆盖。
-fileprivate func xz_navc_navigationController(_ navigationController: UINavigationController, prepareForTransitioning animated: Bool) {
+@MainActor fileprivate func xz_navc_navigationController(_ navigationController: UINavigationController, prepareForTransitioning animated: Bool) {
     navigationController.navigationBar.navigationBar = nil
 }
 
 
 /// 转场已开始，转场动画即将开始：更新导航条样式。
 /// - Attention: This method is private, do not use it directly.
-fileprivate func xz_navc_viewController(_ viewController: UIViewController, viewWillAppear animated: Bool) {
+@MainActor fileprivate func xz_navc_viewController(_ viewController: UIViewController, viewWillAppear animated: Bool) {
     //print("\(type(of: viewController)).\(#function) \(animated)")
     guard let navigationController = viewController.navigationController as? XZNavigationController else {
         return
@@ -298,7 +298,7 @@ fileprivate func xz_navc_viewController(_ viewController: UIViewController, view
 }
 
 /// 转场完成，自定义导航条与原生导航条绑定。任何对原生导航条的操作，都会保存到自定义导航条上，并用于下一次转场。
-fileprivate func xz_navc_viewController(_ viewController: UIViewController, viewDidAppear animated: Bool) {
+@MainActor fileprivate func xz_navc_viewController(_ viewController: UIViewController, viewDidAppear animated: Bool) {
     guard let navigationController = viewController.navigationController as? XZNavigationController else {
         return
     }
@@ -309,11 +309,11 @@ fileprivate func xz_navc_viewController(_ viewController: UIViewController, view
 }
 
 /// 记录控制器是否进行了自定义化
-private var _viewController = 0
+@MainActor private var _viewController = 0
 /// 记录导航控制器是否进行了自定义化
-private var _naviagtionController = 0
+@MainActor private var _naviagtionController = 0
 /// 保存自定义转场控制。
-private var _transitionController = 0
+@MainActor private var _transitionController = 0
 
 // 【开发备忘】
 // 为了将更新导航条的操作放在 viewWillAppear 中：
