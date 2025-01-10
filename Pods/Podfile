@@ -23,6 +23,8 @@ target 'Example' do
   pod 'XZToast', :path => '../'
   pod 'XZURLQuery', :path => '../'
   pod 'XZLocale', :path => '../'
+  pod 'XZCollectionViewFlowLayout', :path => '../'
+  pod 'XZNavigationController', :path => '../'
   
   pod 'SDWebImage'
 #  pod 'AFNetworking'

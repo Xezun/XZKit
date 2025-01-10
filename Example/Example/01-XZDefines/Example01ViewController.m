@@ -1,25 +1,24 @@
 //
-//  Example0101ViewController.m
+//  Example01ViewController.m
 //  Example
 //
 //  Created by Xezun on 2023/7/27.
 //
 
-#import "Example0101ViewController.h"
+#import "Example01ViewController.h"
 @import XZDefines;
 @import ObjectiveC;
 
-@interface TestView : UIView
+@interface Example01TestView : UIView
 @end
 
-
-@interface Example0101ViewController ()
+@interface Example01ViewController ()
 
 @property (nonatomic, copy) void (^block)(const char *methodName);
 
 @end
 
-@implementation Example0101ViewController
+@implementation Example01ViewController
 
 - (void)dealloc {
     self.block(__PRETTY_FUNCTION__);
@@ -41,7 +40,7 @@
     self.block(__PRETTY_FUNCTION__);
     
     XZLog(@"测试 setFrame/setBounds 是否会互相调用");
-    TestView *view = [[TestView alloc] initWithFrame:CGRectMake(0, 0, 100, 100)];
+    Example01TestView *view = [[Example01TestView alloc] initWithFrame:CGRectMake(0, 0, 100, 100)];
     XZLog(@"setFrame");
     view.frame = CGRectMake(0, 0, 200, 200);
     XZLog(@"setBounds");
@@ -51,7 +50,7 @@
 
 @end
 
-@implementation TestView
+@implementation Example01TestView
 - (void)setFrame:(CGRect)frame {
     XZLog(@"%@", NSStringFromCGRect(frame));
     [super setFrame:frame];

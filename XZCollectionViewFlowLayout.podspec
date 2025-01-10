@@ -1,17 +1,15 @@
 #
-# Be sure to run `pod lib lint XZDefines.podspec' to ensure this is a
+# Be sure to run `pod lib lint XZCollectionViewFlowLayout.podspec' to ensure this is a
 # valid spec before submitting.
 #
 # Any lines starting with a # are optional, but their use is encouraged
 # To learn more about a Podspec see https://guides.cocoapods.org/syntax/podspec.html
 #
 
-
-
 Pod::Spec.new do |s|
-  s.name             = 'XZDefines'
+  s.name             = 'XZCollectionViewFlowLayout'
   s.version          = '10.1.0'
-  s.summary          = 'XZKit 的基础部分'
+  s.summary          = '支持多种对齐方式的 UICollectionView 流布局。'
 
 # This description is used to generate tags and improve search results.
 #   * Think: What does it do? Why did you write it? What is the focus?
@@ -20,7 +18,7 @@ Pod::Spec.new do |s|
 #   * Finally, don't worry about the indent, CocoaPods strips it!
 
   s.description      = <<-DESC
-                       XZDefines 包含 XZKit 中常用的一些基础定义。
+                      为 UICollectionView 添加支持 leading、trailing、center、justified 等多种对齐方式的布局方案。 
                        DESC
 
   s.homepage         = 'https://github.com/Xezun/XZKit'
@@ -36,39 +34,21 @@ Pod::Spec.new do |s|
   s.default_subspec = 'Code'
   
   s.subspec 'Code' do |ss|
-    ss.public_header_files = 'XZKit/Code/XZDefines/**/*.h'
-    ss.source_files        = 'XZKit/Code/XZDefines/**/*.{h,m}'
+    ss.source_files = 'XZKit/Code/XZCollectionViewFlowLayout/**/*.swift'
+    # ss.project_header_files = 'XZCollectionViewFlowLayout/Code/**/Private/*.h'
   end
   
-  s.subspec 'DEBUG' do |ss|
-    ss.dependency 'XZDefines/Code'
+  s.subspec 'Debug' do |ss|
+    ss.dependency 'XZCollectionViewFlowLayout/Code'
     ss.pod_target_xcconfig = { 'GCC_PREPROCESSOR_DEFINITIONS' => 'XZ_DEBUG=1' }
   end
   
   # s.resource_bundles = {
-  #   'XZDefines' => ['XZDefines/Assets/*.png']
+  #   'XZCollectionViewFlowLayout' => ['XZCollectionViewFlowLayout/Assets/*.png']
   # }
 
   # s.public_header_files = 'Pod/Classes/**/*.h'
   # s.frameworks = 'UIKit', 'MapKit'
   # s.dependency 'AFNetworking', '~> 2.3'
-  
-  def s.defineSubspec(name, dependencies)
-    self.subspec name do |ss|
-      ss.public_header_files = "XZKit/Code/XZDefines/#{name}/**/*.h";
-      ss.source_files        = "XZKit/Code/XZDefines/#{name}/**/*.{h,m}";
-      # 三级模块依赖
-      for dependency in dependencies
-        ss.dependency dependency;
-      end
-    end
-  end
-  
-  s.defineSubspec 'XZEmpty', ['XZDefines/XZMacro']
-  s.defineSubspec 'XZDefer', ['XZDefines/XZMacro']
-  s.defineSubspec 'XZMacro', []
-  s.defineSubspec 'XZRuntime', []
-  s.defineSubspec 'XZUtils', []
-
 end
 

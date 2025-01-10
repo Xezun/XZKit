@@ -6,7 +6,7 @@
 //
 
 #import <Foundation/Foundation.h>
-#import <objc/runtime.h>
+@import ObjectiveC;
 
 // 命名规则：
 // 所有函数默认作用于实例方法、属性、变量。
@@ -248,6 +248,52 @@ FOUNDATION_EXPORT BOOL xz_objc_class_copyMethod(Class source, SEL sourceSelector
 /// - Returns: 被成功复制的方法的数量
 FOUNDATION_EXPORT NSInteger xz_objc_class_copyMethods(Class source, Class target);
 
+#pragma mark - 通用消息发送
 
+// v => void
+// o => id
+// b => BOOL
+// i => NSInteger
+// rect => CGRect
+
+
+FOUNDATION_EXPORT void xz_objc_msgSendSuper_void_id(id receiver, SEL selector, id param1) NS_SWIFT_NAME(xz_objc_msgSendSuper(_:v:o:));
+FOUNDATION_EXPORT void xz_objc_msgSend_void_id(id receiver, SEL selector, id param1) NS_SWIFT_NAME(xz_objc_msgSend(_:v:o:));
+
+FOUNDATION_EXPORT void xz_objc_msgSendSuper_void_id_BOOL(id receiver, SEL selector, id param1, BOOL param2) NS_SWIFT_NAME(xz_objc_msgSendSuper(_:v:o:b:));
+FOUNDATION_EXPORT void xz_objc_msgSend_void_id_BOOL(id receiver, SEL selector, id param1, BOOL param2) NS_SWIFT_NAME(xz_objc_msgSend(_:v:_:_:));
+
+FOUNDATION_EXPORT id xz_objc_msgSendSuper_id_BOOL(id receiver, SEL selector, BOOL param1) NS_SWIFT_NAME(xz_objc_msgSendSuper(_:o:b:));
+FOUNDATION_EXPORT id xz_objc_msgSend_id_BOOL(id receiver, SEL selector, BOOL param1) NS_SWIFT_NAME(xz_objc_msgSend(_:o:b:));
+
+FOUNDATION_EXPORT id xz_objc_msgSendSuper_id_id_BOOL(id receiver, SEL selector, id param1, BOOL param2) NS_SWIFT_NAME(xz_objc_msgSendSuper(_:o:o:b:));
+FOUNDATION_EXPORT id xz_objc_msgSend_id_id_BOOL(id receiver, SEL selector, id param1, BOOL param2) NS_SWIFT_NAME(xz_objc_msgSend(_:o:o:b:));
+
+FOUNDATION_EXPORT void xz_objc_msgSendSuper_void_BOOL(id receiver, SEL selector, BOOL param1) NS_SWIFT_NAME(xz_objc_msgSendSuper(_:v:b:));
+FOUNDATION_EXPORT void xz_objc_msgSend_void_BOOL(id receiver, SEL selector, BOOL param1) NS_SWIFT_NAME(xz_objc_msgSend(_:v:b:));
+
+FOUNDATION_EXPORT id xz_objc_msgSendSuper_id_id_NSInteger_id_id(id receiver, SEL selector, id param1, NSInteger param2, id param3, id param4) NS_SWIFT_NAME(xz_objc_msgSendSuper(_:o:o:b:o:o:));
+FOUNDATION_EXPORT id xz_objc_msgSend_id_id_NSInteger_id_id(id receiver, SEL selector, id param1, NSInteger param2, id param3, id param4) NS_SWIFT_NAME(xz_objc_msgSend(_:o:o:b:o:o:));
+
+FOUNDATION_EXPORT id xz_objc_msgSendSuper_id_id_id(id receiver, SEL selector, id param1, id param2) NS_SWIFT_NAME(xz_objc_msgSendSuper(_:o:o:o:));
+FOUNDATION_EXPORT id xz_objc_msgSend_id_id_id(id receiver, SEL selector, id param1, id param2) NS_SWIFT_NAME(xz_objc_msgSend(_:o:o:o:));
+
+FOUNDATION_EXPORT CGRect xz_objc_msgSendSuper_CGRect(id receiver, SEL selector) NS_SWIFT_NAME(xz_objc_msgSendSuper(_:rect:));
+FOUNDATION_EXPORT CGRect xz_objc_msgSend_CGRect(id receiver, SEL selector) NS_SWIFT_NAME(xz_objc_msgSend(_:rect:));
+
+FOUNDATION_EXPORT void xz_objc_msgSendSuper_void_CGRect(id receiver, SEL selector, CGRect param1) NS_SWIFT_NAME(xz_objc_msgSendSuper(_:v:rect:));
+FOUNDATION_EXPORT void xz_objc_msgSend_void_CGRect(id receiver, SEL selector, CGRect param1) NS_SWIFT_NAME(xz_objc_msgSend(_:v:rect:));
+
+FOUNDATION_EXPORT BOOL xz_objc_msgSendSuper_BOOL(id receiver, SEL selector) NS_SWIFT_NAME(xz_objc_msgSendSuper(_:b:));
+FOUNDATION_EXPORT BOOL xz_objc_msgSend_BOOL(id receiver, SEL selector) NS_SWIFT_NAME(xz_objc_msgSend(_:b:));
+
+FOUNDATION_EXPORT void xz_objc_msgSendSuper_void(id receiver, SEL selector) NS_SWIFT_NAME(xz_objc_msgSendSuper(_:v:));
+FOUNDATION_EXPORT void xz_objc_msgSend_void(id receiver, SEL selector) NS_SWIFT_NAME(xz_objc_msgSend(_:v:));
+
+FOUNDATION_EXPORT void xz_objc_msgSendSuper_void_id_NSInteger(id receiver, SEL selector, id param1, NSInteger param2) NS_SWIFT_NAME(xz_objc_msgSendSuper(_:v:o:i:));
+FOUNDATION_EXPORT void xz_objc_msgSend_void_id_NSInteger(id receiver, SEL selector, id param1, NSInteger param2) NS_SWIFT_NAME(xz_objc_msgSend(_:v:o:i:));
+
+FOUNDATION_EXPORT void xz_objc_msgSendSuper_void_id_id(id receiver, SEL selector, id param1, id param2) NS_SWIFT_NAME(xz_objc_msgSendSuper(_:v:o:o:));
+FOUNDATION_EXPORT void xz_objc_msgSend_void_id_id(id receiver, SEL selector, id param1, id param2) NS_SWIFT_NAME(xz_objc_msgSend(_:v:o:o:));
 
 NS_ASSUME_NONNULL_END

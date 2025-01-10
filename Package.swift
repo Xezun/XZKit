@@ -54,7 +54,10 @@ let package = Package(
             targets: ["XZURLQuery"]),
         .library(
             name: "XZLocale",
-            targets: ["XZLocale"])
+            targets: ["XZLocale"]),
+        .library(
+            name: "XZCollectionViewFlowLayout",
+            targets: ["XZCollectionViewFlowLayout"])
     ],
     dependencies: [
         // Dependencies declare other packages that this package depends on.
@@ -236,6 +239,15 @@ let package = Package(
             path: "XZKit",
             sources: ["Code/XZLocale"],
             publicHeadersPath: "Headers/XZLocale/Public",
+            cxxSettings: [
+                .define("XZ_FRAMEWORK")
+            ]
+        ),
+        .target(
+            name: "XZCollectionViewFlowLayout",
+            dependencies: [],
+            path: "XZKit",
+            sources: ["Code/XZCollectionViewFlowLayout"],
             cxxSettings: [
                 .define("XZ_FRAMEWORK")
             ]

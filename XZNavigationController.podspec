@@ -1,5 +1,5 @@
 #
-# Be sure to run `pod lib lint XZDefines.podspec' to ensure this is a
+# Be sure to run `pod lib lint XZNavigationController.podspec' to ensure this is a
 # valid spec before submitting.
 #
 # Any lines starting with a # are optional, but their use is encouraged
@@ -9,9 +9,9 @@
 
 
 Pod::Spec.new do |s|
-  s.name             = 'XZDefines'
+  s.name             = 'XZNavigationController'
   s.version          = '10.1.0'
-  s.summary          = 'XZKit 的基础部分'
+  s.summary          = '一个支持全屏手势导航、自定义导航栏的组件'
 
 # This description is used to generate tags and improve search results.
 #   * Think: What does it do? Why did you write it? What is the focus?
@@ -20,8 +20,8 @@ Pod::Spec.new do |s|
 #   * Finally, don't worry about the indent, CocoaPods strips it!
 
   s.description      = <<-DESC
-                       XZDefines 包含 XZKit 中常用的一些基础定义。
-                       DESC
+  本组件拓展了原生 UINavigationController 的功能，使其支持自定义导航条、全屏手势导航，使用简单、接入成本为零。
+  DESC
 
   s.homepage         = 'https://github.com/Xezun/XZKit'
   # s.screenshots     = 'www.example.com/screenshots_1', 'www.example.com/screenshots_2'
@@ -31,44 +31,37 @@ Pod::Spec.new do |s|
   # s.social_media_url = 'https://twitter.com/<TWITTER_USERNAME>'
 
   s.ios.deployment_target = '12.0'
-  s.pod_target_xcconfig = { 'GCC_PREPROCESSOR_DEFINITIONS' => 'XZ_FRAMEWORK=1' }
+  s.pod_target_xcconfig   = { 'GCC_PREPROCESSOR_DEFINITIONS' => 'XZ_FRAMEWORK=1' }
   
   s.default_subspec = 'Code'
   
   s.subspec 'Code' do |ss|
-    ss.public_header_files = 'XZKit/Code/XZDefines/**/*.h'
-    ss.source_files        = 'XZKit/Code/XZDefines/**/*.{h,m}'
+    ss.source_files        = 'XZKit/Code/XZNavigationController/**/*.{h,m,swift}'
+    # ss.public_header_files = 'XZKit/Code/XZNavigationController/**/*.h'
+    ss.dependency 'XZDefines'
   end
   
-  s.subspec 'DEBUG' do |ss|
-    ss.dependency 'XZDefines/Code'
-    ss.pod_target_xcconfig = { 'GCC_PREPROCESSOR_DEFINITIONS' => 'XZ_DEBUG=1' }
-  end
-  
+ 
   # s.resource_bundles = {
-  #   'XZDefines' => ['XZDefines/Assets/*.png']
+  #   'XZNavigationController' => ['XZNavigationController/Assets/*.png']
   # }
 
   # s.public_header_files = 'Pod/Classes/**/*.h'
   # s.frameworks = 'UIKit', 'MapKit'
   # s.dependency 'AFNetworking', '~> 2.3'
   
-  def s.defineSubspec(name, dependencies)
-    self.subspec name do |ss|
-      ss.public_header_files = "XZKit/Code/XZDefines/#{name}/**/*.h";
-      ss.source_files        = "XZKit/Code/XZDefines/#{name}/**/*.{h,m}";
-      # 三级模块依赖
-      for dependency in dependencies
-        ss.dependency dependency;
-      end
-    end
-  end
   
-  s.defineSubspec 'XZEmpty', ['XZDefines/XZMacro']
-  s.defineSubspec 'XZDefer', ['XZDefines/XZMacro']
-  s.defineSubspec 'XZMacro', []
-  s.defineSubspec 'XZRuntime', []
-  s.defineSubspec 'XZUtils', []
+  # def s.defineSubspec(name, dependencies)
+  #   self.subspec name do |ss|
+  #     ss.public_header_files = "XZNavigationController/Code/#{name}/**/*.h";
+  #     ss.source_files        = "XZNavigationController/Code/#{name}/**/*.{h,m}";
+  #     for dependency in dependencies
+  #       ss.dependency dependency;
+  #     end
+  #   end
+  # end
+  
+  # s.defineSubspec 'CAAnimation',        [];
 
 end
 

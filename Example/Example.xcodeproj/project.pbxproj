@@ -9,6 +9,16 @@
 /* Begin PBXBuildFile section */
 		01C91114C6D30DAA909EB169 /* Pods_Example.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 055F0304DE9A092BAF52FF06 /* Pods_Example.framework */; };
 		040F133B2D2B77CD00C4D6CD /* Example14ViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 040F133A2D2B77CD00C4D6CD /* Example14ViewController.m */; };
+		042D23CC2D30BB3200E0F7BD /* Example16ViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 042D23BE2D30BB3200E0F7BD /* Example16ViewController.m */; };
+		042D23CD2D30BB3200E0F7BD /* Example16SettingsEditCellViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 042D23C02D30BB3200E0F7BD /* Example16SettingsEditCellViewController.m */; };
+		042D23CE2D30BB3200E0F7BD /* Example16CollectonViewSectionModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 042D23BC2D30BB3200E0F7BD /* Example16CollectonViewSectionModel.m */; };
+		042D23CF2D30BB3200E0F7BD /* Example16SettingsEditEdgeInsetsViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 042D23C22D30BB3200E0F7BD /* Example16SettingsEditEdgeInsetsViewController.m */; };
+		042D23D02D30BB3200E0F7BD /* Example16CollectonViewCellModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 042D23B82D30BB3200E0F7BD /* Example16CollectonViewCellModel.m */; };
+		042D23D12D30BB3200E0F7BD /* Example16SettingsSelectSectionViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 042D23C82D30BB3200E0F7BD /* Example16SettingsSelectSectionViewController.m */; };
+		042D23D22D30BB3200E0F7BD /* Example16CollectonViewSectionHeaderFooterView.m in Sources */ = {isa = PBXBuildFile; fileRef = 042D23BA2D30BB3200E0F7BD /* Example16CollectonViewSectionHeaderFooterView.m */; };
+		042D23D32D30BB3200E0F7BD /* Example16SettingsSelectNumberViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 042D23C62D30BB3200E0F7BD /* Example16SettingsSelectNumberViewController.m */; };
+		042D23D42D30BB3200E0F7BD /* Example16SettingsEditSectionViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 042D23C42D30BB3200E0F7BD /* Example16SettingsEditSectionViewController.m */; };
+		042D23D52D30BB3200E0F7BD /* Example16SettingsViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 042D23CA2D30BB3200E0F7BD /* Example16SettingsViewController.m */; };
 		04D06B002D2D45300056A53A /* Example15Test02ViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 04D06AFF2D2D45300056A53A /* Example15Test02ViewController.m */; };
 		04D06B012D2D45300056A53A /* Example15Test01ViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 04D06AFD2D2D45300056A53A /* Example15Test01ViewController.m */; };
 		04D06B092D2D47DF0056A53A /* Localizable.xcstrings in Resources */ = {isa = PBXBuildFile; fileRef = 04D06B082D2D47DF0056A53A /* Localizable.xcstrings */; };
@@ -205,7 +215,7 @@
 		292C17CC2D251F6D00E465BF /* Example0311ViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 292C15672D251F6D00E465BF /* Example0311ViewController.xib */; };
 		292C17CF2D251FF400E465BF /* Example03ViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 292C17CE2D251FF400E465BF /* Example03ViewController.m */; };
 		29648BE52A72556C0090F445 /* ExampleAppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 29648BE42A72556C0090F445 /* ExampleAppDelegate.m */; };
-		29648BEB2A72556C0090F445 /* Example0101ViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 29648BEA2A72556C0090F445 /* Example0101ViewController.m */; };
+		29648BEB2A72556C0090F445 /* Example01ViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 29648BEA2A72556C0090F445 /* Example01ViewController.m */; };
 		29648BEE2A72556C0090F445 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 29648BEC2A72556C0090F445 /* Main.storyboard */; };
 		29648BF02A72556E0090F445 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 29648BEF2A72556E0090F445 /* Assets.xcassets */; };
 		29648BF32A72556E0090F445 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 29648BF12A72556E0090F445 /* LaunchScreen.storyboard */; };
@@ -241,6 +251,26 @@
 /* Begin PBXFileReference section */
 		040F13392D2B77CD00C4D6CD /* Example14ViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Example14ViewController.h; sourceTree = "<group>"; };
 		040F133A2D2B77CD00C4D6CD /* Example14ViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = Example14ViewController.m; sourceTree = "<group>"; };
+		042D23B72D30BB3200E0F7BD /* Example16CollectonViewCellModel.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Example16CollectonViewCellModel.h; sourceTree = "<group>"; };
+		042D23B82D30BB3200E0F7BD /* Example16CollectonViewCellModel.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = Example16CollectonViewCellModel.m; sourceTree = "<group>"; };
+		042D23B92D30BB3200E0F7BD /* Example16CollectonViewSectionHeaderFooterView.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Example16CollectonViewSectionHeaderFooterView.h; sourceTree = "<group>"; };
+		042D23BA2D30BB3200E0F7BD /* Example16CollectonViewSectionHeaderFooterView.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = Example16CollectonViewSectionHeaderFooterView.m; sourceTree = "<group>"; };
+		042D23BB2D30BB3200E0F7BD /* Example16CollectonViewSectionModel.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Example16CollectonViewSectionModel.h; sourceTree = "<group>"; };
+		042D23BC2D30BB3200E0F7BD /* Example16CollectonViewSectionModel.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = Example16CollectonViewSectionModel.m; sourceTree = "<group>"; };
+		042D23BD2D30BB3200E0F7BD /* Example16ViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Example16ViewController.h; sourceTree = "<group>"; };
+		042D23BE2D30BB3200E0F7BD /* Example16ViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = Example16ViewController.m; sourceTree = "<group>"; };
+		042D23BF2D30BB3200E0F7BD /* Example16SettingsEditCellViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Example16SettingsEditCellViewController.h; sourceTree = "<group>"; };
+		042D23C02D30BB3200E0F7BD /* Example16SettingsEditCellViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = Example16SettingsEditCellViewController.m; sourceTree = "<group>"; };
+		042D23C12D30BB3200E0F7BD /* Example16SettingsEditEdgeInsetsViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Example16SettingsEditEdgeInsetsViewController.h; sourceTree = "<group>"; };
+		042D23C22D30BB3200E0F7BD /* Example16SettingsEditEdgeInsetsViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = Example16SettingsEditEdgeInsetsViewController.m; sourceTree = "<group>"; };
+		042D23C32D30BB3200E0F7BD /* Example16SettingsEditSectionViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Example16SettingsEditSectionViewController.h; sourceTree = "<group>"; };
+		042D23C42D30BB3200E0F7BD /* Example16SettingsEditSectionViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = Example16SettingsEditSectionViewController.m; sourceTree = "<group>"; };
+		042D23C52D30BB3200E0F7BD /* Example16SettingsSelectNumberViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Example16SettingsSelectNumberViewController.h; sourceTree = "<group>"; };
+		042D23C62D30BB3200E0F7BD /* Example16SettingsSelectNumberViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = Example16SettingsSelectNumberViewController.m; sourceTree = "<group>"; };
+		042D23C72D30BB3200E0F7BD /* Example16SettingsSelectSectionViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Example16SettingsSelectSectionViewController.h; sourceTree = "<group>"; };
+		042D23C82D30BB3200E0F7BD /* Example16SettingsSelectSectionViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = Example16SettingsSelectSectionViewController.m; sourceTree = "<group>"; };
+		042D23C92D30BB3200E0F7BD /* Example16SettingsViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Example16SettingsViewController.h; sourceTree = "<group>"; };
+		042D23CA2D30BB3200E0F7BD /* Example16SettingsViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = Example16SettingsViewController.m; sourceTree = "<group>"; };
 		04D06AFC2D2D45300056A53A /* Example15Test01ViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Example15Test01ViewController.h; sourceTree = "<group>"; };
 		04D06AFD2D2D45300056A53A /* Example15Test01ViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = Example15Test01ViewController.m; sourceTree = "<group>"; };
 		04D06AFE2D2D45300056A53A /* Example15Test02ViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Example15Test02ViewController.h; sourceTree = "<group>"; };
@@ -618,8 +648,8 @@
 		29648BE02A72556C0090F445 /* Example.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Example.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		29648BE32A72556C0090F445 /* ExampleAppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ExampleAppDelegate.h; sourceTree = "<group>"; };
 		29648BE42A72556C0090F445 /* ExampleAppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ExampleAppDelegate.m; sourceTree = "<group>"; };
-		29648BE92A72556C0090F445 /* Example0101ViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Example0101ViewController.h; sourceTree = "<group>"; };
-		29648BEA2A72556C0090F445 /* Example0101ViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = Example0101ViewController.m; sourceTree = "<group>"; };
+		29648BE92A72556C0090F445 /* Example01ViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Example01ViewController.h; sourceTree = "<group>"; };
+		29648BEA2A72556C0090F445 /* Example01ViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = Example01ViewController.m; sourceTree = "<group>"; };
 		29648BED2A72556C0090F445 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
 		29648BEF2A72556E0090F445 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		29648BF22A72556E0090F445 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
@@ -680,6 +710,41 @@
 			path = "14-XZURLQuery";
 			sourceTree = "<group>";
 		};
+		042D23B62D30BACE00E0F7BD /* 16-XZCollectionViewFlowLayout */ = {
+			isa = PBXGroup;
+			children = (
+				042D23BD2D30BB3200E0F7BD /* Example16ViewController.h */,
+				042D23BE2D30BB3200E0F7BD /* Example16ViewController.m */,
+				042D23B72D30BB3200E0F7BD /* Example16CollectonViewCellModel.h */,
+				042D23B82D30BB3200E0F7BD /* Example16CollectonViewCellModel.m */,
+				042D23B92D30BB3200E0F7BD /* Example16CollectonViewSectionHeaderFooterView.h */,
+				042D23BA2D30BB3200E0F7BD /* Example16CollectonViewSectionHeaderFooterView.m */,
+				042D23BB2D30BB3200E0F7BD /* Example16CollectonViewSectionModel.h */,
+				042D23BC2D30BB3200E0F7BD /* Example16CollectonViewSectionModel.m */,
+				042D23CB2D30BB3200E0F7BD /* Settings */,
+			);
+			path = "16-XZCollectionViewFlowLayout";
+			sourceTree = "<group>";
+		};
+		042D23CB2D30BB3200E0F7BD /* Settings */ = {
+			isa = PBXGroup;
+			children = (
+				042D23BF2D30BB3200E0F7BD /* Example16SettingsEditCellViewController.h */,
+				042D23C02D30BB3200E0F7BD /* Example16SettingsEditCellViewController.m */,
+				042D23C12D30BB3200E0F7BD /* Example16SettingsEditEdgeInsetsViewController.h */,
+				042D23C22D30BB3200E0F7BD /* Example16SettingsEditEdgeInsetsViewController.m */,
+				042D23C32D30BB3200E0F7BD /* Example16SettingsEditSectionViewController.h */,
+				042D23C42D30BB3200E0F7BD /* Example16SettingsEditSectionViewController.m */,
+				042D23C52D30BB3200E0F7BD /* Example16SettingsSelectNumberViewController.h */,
+				042D23C62D30BB3200E0F7BD /* Example16SettingsSelectNumberViewController.m */,
+				042D23C72D30BB3200E0F7BD /* Example16SettingsSelectSectionViewController.h */,
+				042D23C82D30BB3200E0F7BD /* Example16SettingsSelectSectionViewController.m */,
+				042D23C92D30BB3200E0F7BD /* Example16SettingsViewController.h */,
+				042D23CA2D30BB3200E0F7BD /* Example16SettingsViewController.m */,
+			);
+			path = Settings;
+			sourceTree = "<group>";
+		};
 		04D06AFB2D2D43560056A53A /* 15-XZLocale */ = {
 			isa = PBXGroup;
 			children = (
@@ -689,6 +754,13 @@
 				04D06AFF2D2D45300056A53A /* Example15Test02ViewController.m */,
 			);
 			path = "15-XZLocale";
+			sourceTree = "<group>";
+		};
+		04D34E5D2D310BD90013D4A3 /* 17-XZNavigationController */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = "17-XZNavigationController";
 			sourceTree = "<group>";
 		};
 		29018EB32D2A2E1000E89010 /* 10-XZGeometry */ = {
@@ -788,8 +860,8 @@
 		292C153B2D25145900E465BF /* 01-XZDefines */ = {
 			isa = PBXGroup;
 			children = (
-				29648BE92A72556C0090F445 /* Example0101ViewController.h */,
-				29648BEA2A72556C0090F445 /* Example0101ViewController.m */,
+				29648BE92A72556C0090F445 /* Example01ViewController.h */,
+				29648BEA2A72556C0090F445 /* Example01ViewController.m */,
 			);
 			path = "01-XZDefines";
 			sourceTree = "<group>";
@@ -2465,6 +2537,8 @@
 				299B56E22D2AD84700CC2F69 /* 13-XZToast */,
 				040F13382D2B77B200C4D6CD /* 14-XZURLQuery */,
 				04D06AFB2D2D43560056A53A /* 15-XZLocale */,
+				042D23B62D30BACE00E0F7BD /* 16-XZCollectionViewFlowLayout */,
+				04D34E5D2D310BD90013D4A3 /* 17-XZNavigationController */,
 				29648BEC2A72556C0090F445 /* Main.storyboard */,
 				29648BEF2A72556E0090F445 /* Assets.xcassets */,
 				29648BF12A72556E0090F445 /* LaunchScreen.storyboard */,
@@ -2772,7 +2846,7 @@
 				292A5A5E2D25616D0037579D /* Example06ViewController.m in Sources */,
 				292A5A5F2D25616D0037579D /* Example06RefreshSettingsViewController.m in Sources */,
 				292A5A602D25616D0037579D /* Example06SettingsViewController.m in Sources */,
-				29648BEB2A72556C0090F445 /* Example0101ViewController.m in Sources */,
+				29648BEB2A72556C0090F445 /* Example01ViewController.m in Sources */,
 				29648BE52A72556C0090F445 /* ExampleAppDelegate.m in Sources */,
 				29648BF62A72556E0090F445 /* main.m in Sources */,
 				292C15472D25182000E465BF /* ExampleNavigationController.m in Sources */,
@@ -2880,6 +2954,16 @@
 				292C17772D251F6D00E465BF /* Example0330Group104CellViewModel.m in Sources */,
 				292C17782D251F6D00E465BF /* Example0312CellModel.m in Sources */,
 				292C17792D251F6D00E465BF /* Example0330Group100CellModel.m in Sources */,
+				042D23CC2D30BB3200E0F7BD /* Example16ViewController.m in Sources */,
+				042D23CD2D30BB3200E0F7BD /* Example16SettingsEditCellViewController.m in Sources */,
+				042D23CE2D30BB3200E0F7BD /* Example16CollectonViewSectionModel.m in Sources */,
+				042D23CF2D30BB3200E0F7BD /* Example16SettingsEditEdgeInsetsViewController.m in Sources */,
+				042D23D02D30BB3200E0F7BD /* Example16CollectonViewCellModel.m in Sources */,
+				042D23D12D30BB3200E0F7BD /* Example16SettingsSelectSectionViewController.m in Sources */,
+				042D23D22D30BB3200E0F7BD /* Example16CollectonViewSectionHeaderFooterView.m in Sources */,
+				042D23D32D30BB3200E0F7BD /* Example16SettingsSelectNumberViewController.m in Sources */,
+				042D23D42D30BB3200E0F7BD /* Example16SettingsEditSectionViewController.m in Sources */,
+				042D23D52D30BB3200E0F7BD /* Example16SettingsViewController.m in Sources */,
 				292C177A2D251F6D00E465BF /* Example0311ViewController.m in Sources */,
 				292C177B2D251F6D00E465BF /* Example0330Group102SectionModel.m in Sources */,
 				292C177C2D251F6D00E465BF /* Example0330Group102CellModel.m in Sources */,

@@ -83,10 +83,12 @@
 #define XZ_CONST
 #define XZ_READONLY
 #define XZ_UNAVAILABLE
+#define XZ_PRIVATE_UNAVAILABLE
 #else
 #define XZ_CONST            const
 #define XZ_READONLY         readonly
 #define XZ_UNAVAILABLE      NS_UNAVAILABLE
+#define XZ_PRIVATE_UNAVAILABLE NS_UNAVAILABLE
 #endif
 
 #pragma mark - enweak & deweak
