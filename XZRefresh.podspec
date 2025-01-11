@@ -8,7 +8,7 @@
 
 Pod::Spec.new do |s|
   s.name             = 'XZRefresh'
-  s.version          = '10.0.0'
+  s.version          = '10.1.0'
   s.summary          = '迄今为止 iOS 最流畅的下拉刷新、上拉加载组件'
 
 # This description is used to generate tags and improve search results.

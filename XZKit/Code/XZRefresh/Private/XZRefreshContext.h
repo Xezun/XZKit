@@ -41,8 +41,9 @@ typedef NS_ENUM(NSUInteger, XZRefreshState) {
 
 @property (nonatomic) XZRefreshState state;
 
-/// 是否需要布局的标记。
+/// 是否需要调整布局的标记。
 @property (nonatomic) BOOL needsLayout;
+
 /// 当次下拉/上拉，能否自动进入刷新状态。
 /// 每次下拉/上拉开始时设置此值，以保证当次只会进入一次刷新状态。
 @property (nonatomic, setter=setAutomatic:) BOOL isAutomatic;
