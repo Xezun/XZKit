@@ -9,9 +9,6 @@
 @import XZExtensions;
 @import XZMocoa;
 
-
-
-
 @interface ExampleViewController () {
     NSArray<NSString *> *_dataArray;
 }
@@ -49,10 +46,6 @@
     
     XZMocoaTableView *tableView = (id)self.view;
     tableView.viewModel = viewModel;
-}
-
-- (UIStatusBarStyle)preferredStatusBarStyle {
-    return UIStatusBarStyleLightContent;
 }
 
 - (IBAction)unwindToMainPage:(UIStoryboardSegue *)unwindSegue {
