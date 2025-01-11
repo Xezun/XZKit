@@ -17,7 +17,7 @@ NS_ASSUME_NONNULL_BEGIN
 - (instancetype)initWithSender:(XZMocoaViewModel *)sender;
 - (void)addTarget:(id)target action:(SEL)action forKey:(NSString *)key;
 - (void)removeTarget:(nullable id)target action:(nullable SEL)action forKey:(nullable NSString *)key;
-- (void)sendActionsForKey:(NSString *)key;
+- (void)sendActionsForKey:(NSString *)key value:(nullable)value;
 @end
 
 NS_ASSUME_NONNULL_END

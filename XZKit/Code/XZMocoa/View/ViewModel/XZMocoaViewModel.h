@@ -152,8 +152,14 @@ typedef NSString *XZMocoaUpdateName NS_EXTENSIBLE_STRING_ENUM;
 
 /// 没有名称的事件，一般作为默认事件的事件名。
 FOUNDATION_EXPORT XZMocoaUpdateName const XZMocoaUpdateNameDefault;
-/// 更新事件。
+/// 重载事件。适用情形：下级已完成数据更新，需要上级执行重载模块的操作。
+FOUNDATION_EXPORT XZMocoaUpdateName const XZMocoaUpdateNameReload;
+/// 更新操作。适用情形：通知上级，执行数据编辑的操作。
 FOUNDATION_EXPORT XZMocoaUpdateName const XZMocoaUpdateNameUpdate;
+/// 插入操作。适用情形：通知上级，执行数据插入的操作。
+FOUNDATION_EXPORT XZMocoaUpdateName const XZMocoaUpdateNameInsert;
+/// 删除操作。适用情形：通知上级，执行删除数据的操作。
+FOUNDATION_EXPORT XZMocoaUpdateName const XZMocoaUpdateNameRemove;
 
 @interface XZMocoaViewModel (XZMocoaViewModelHierarchyEmition)
 /// 收到下级模块的事件，或监听到下级模块的数据变化。
@@ -208,12 +214,11 @@ FOUNDATION_EXPORT XZMocoaKey const XZMocoaKeyNone;
 /// @attention
 /// 绑定的 action 方法，必须无返回值，因为没有针对返回值的内存管理，可能会引起泄漏。可使用如下形式：
 /// @code
-/// - (void)doSomething;
-/// - (void)doSomething:(XZMocoaViewModel *)sender;
-/// - (void)doSomething:(XZMocoaViewModel *)sender forKey:(XZMocoaKey)key;
+/// - (void)method;
+/// - (void)method:(XZMocoaViewModel *)sender;
+/// - (void)method:(XZMocoaViewModel *)sender value:(nullable id)value;
+/// - (void)method:(XZMocoaViewModel *)sender value:(nullable id)value key:(XZMocoaKey)key;
 /// @endcode
-/// @note
-/// 调用此方法时，target-action 会立即触发一次。
 /// @param target 接收事件的对象
 /// @param action 执行事件的方法
 /// @param key 事件，nil 表示添加默认事件
@@ -227,7 +232,8 @@ FOUNDATION_EXPORT XZMocoaKey const XZMocoaKeyNone;
 - (void)removeTarget:(nullable id)target action:(nullable SEL)action forKey:(nullable XZMocoaKey)key;
 /// 发送 target-action 事件。
 /// @param key 事件，nil 表示发送默认事件
-- (void)sendActionsForKey:(XZMocoaKey)key;
+/// @param value 事件值
+- (void)sendActionsForKey:(XZMocoaKey)key value:(nullable id)value;
 
 @end
 

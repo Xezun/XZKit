@@ -214,7 +214,10 @@
 
 
 XZMocoaUpdateName const XZMocoaUpdateNameDefault = @"";
+XZMocoaUpdateName const XZMocoaUpdateNameReload = @"XZMocoaUpdateNameReload";
 XZMocoaUpdateName const XZMocoaUpdateNameUpdate = @"XZMocoaUpdateNameUpdate";
+XZMocoaUpdateName const XZMocoaUpdateNameInsert = @"XZMocoaUpdateNameInsert";
+XZMocoaUpdateName const XZMocoaUpdateNameRemove = @"XZMocoaUpdateNameRemove";
 
 @implementation XZMocoaViewModel (XZMocoaViewModelHierarchyEmition)
 
@@ -254,8 +257,8 @@ XZMocoaKey const XZMocoaKeyNone = @"";
     [_keyedTargetActions removeTarget:target action:action forKey:key];
 }
 
-- (void)sendActionsForKey:(NSString *)key {
-    [_keyedTargetActions sendActionsForKey:key ?: XZMocoaKeyNone];
+- (void)sendActionsForKey:(NSString *)key value:(id)value {
+    [_keyedTargetActions sendActionsForKey:key ?: XZMocoaKeyNone value:value];
 }
 
 @end

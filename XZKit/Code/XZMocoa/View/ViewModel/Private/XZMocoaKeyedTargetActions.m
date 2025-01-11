@@ -32,8 +32,6 @@ typedef void (^const XZMocoaRemoveBlock)(NSString *key, NSMutableArray<XZMocoaTa
     }
     XZMocoaTargetAction *targetAction = [[XZMocoaTargetAction alloc] initWithTarget:target action:action];
     [targetActions addObject:targetAction];
-    // 绑定时，立即发送事件
-    [targetAction sendActionForSender:self.sender forKey:key];
 }
 
 - (void)removeTarget:(nullable id)target action:(nullable SEL)action forKey:(nullable NSString *)key {
@@ -132,7 +130,7 @@ typedef void (^const XZMocoaRemoveBlock)(NSString *key, NSMutableArray<XZMocoaTa
     }
 }
 
-- (void)sendActionsForKey:(NSString *)key {
+- (void)sendActionsForKey:(NSString *)key value:(nullable)value {
     NSMutableArray<XZMocoaTargetAction *> *targetActions = _table[key];
     id const sender = self.sender;
     [targetActions enumerateObjectsWithOptions:NSEnumerationReverse usingBlock:^(XZMocoaTargetAction *targetAction, NSUInteger idx, BOOL *stop) {
@@ -140,7 +138,7 @@ typedef void (^const XZMocoaRemoveBlock)(NSString *key, NSMutableArray<XZMocoaTa
         if (target == nil) {
             [targetActions removeObjectAtIndex:idx]; // 删除 target 已销毁的监听
         } else {
-            [targetAction sendActionForSender:sender forKey:key];
+            [targetAction sendActionWithValue:value sender:sender key:key];
         }
     }];
 }

@@ -82,7 +82,7 @@ typedef void(^XZMocoaListDelayedUpdates)(__kindof XZMocoaViewModel *self);
 #pragma mark - 处理 SectionViewModel 的事件
 
 - (void)didReceiveUpdate:(XZMocoaUpdate *)emition {
-    if ([emition.name isEqualToString:XZMocoaUpdateNameUpdate]) {
+    if ([emition.name isEqualToString:XZMocoaUpdateNameReload]) {
         __kindof XZMocoaViewModel * const subViewModel = emition.target;
         if (self.isPerformingBatchUpdates) {
             // 正在进行批量更新，刷新操作将被延迟到批量更新之后。

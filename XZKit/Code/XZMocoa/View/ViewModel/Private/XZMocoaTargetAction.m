@@ -31,21 +31,22 @@
     return self;
 }
 
-- (void)sendActionForSender:(id)object forKey:(XZMocoaKey)key {
+- (void)sendActionWithValue:(id)value sender:(id)sender key:(XZMocoaKey)key {
     switch (_args) {
         case 0:
             ((void (*)(id, SEL))objc_msgSend)(_target, _action);
             break;
         case 1:
-            ((void (*)(id, SEL, id))objc_msgSend)(_target, _action, object);
+            ((void (*)(id, SEL, id))objc_msgSend)(_target, _action, sender);
             break;
         case 2:
-            ((void (*)(id, SEL, id, XZMocoaKey))objc_msgSend)(_target, _action, object, key);
+            ((void (*)(id, SEL, id, id))objc_msgSend)(_target, _action, sender, value);
             break;
+        case 3:
+            ((void (*)(id, SEL, id, id, XZMocoaKey))objc_msgSend)(_target, _action, sender, value, key);
         default:
             break;
     }
 }
-
 
 @end
