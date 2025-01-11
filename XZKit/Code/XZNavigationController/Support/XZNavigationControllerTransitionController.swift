@@ -5,7 +5,7 @@
 //  Created by Xezun on 2018/12/31.
 //
 
-import Foundation
+import UIKit
 import ObjectiveC
 import XZDefines
 
@@ -13,7 +13,7 @@ import XZDefines
 @MainActor public final class XZNavigationControllerTransitionController: NSObject {
     
     /// 导航手势对象。
-    public let interactiveNavigationGestureRecognizer: UIPanGestureRecognizer
+    public let interactiveNavigationGestureRecognizer: UIKit.UIPanGestureRecognizer
     /// 导航控制器。
     public unowned let navigationController: XZNavigationController
     

@@ -251,6 +251,15 @@ let package = Package(
             cxxSettings: [
                 .define("XZ_FRAMEWORK")
             ]
+        ),
+        .target(
+            name: "XZNavigationController",
+            dependencies: ["XZDefines"],
+            path: "XZKit",
+            sources: ["Code/XZNavigationController"],
+            cxxSettings: [
+                .define("XZ_FRAMEWORK")
+            ]
         )
     ]
 )

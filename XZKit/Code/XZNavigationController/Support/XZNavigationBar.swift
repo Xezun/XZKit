@@ -8,7 +8,7 @@
 import UIKit
 
 /// 自定义导航条可选基类。
-@objc open class XZNavigationBar: UIView, XZNavigationBarProtocol {
+@objc open class XZNavigationBar: UIView, UINavigationBar {
     
     open override var isHidden: Bool {
         didSet {
@@ -105,6 +105,7 @@ import UIKit
         super.layoutSubviews()
         
         let bounds = self.bounds
+        let safeBounds = bounds.inset(by: self.safeAreaInsets)
 
         // titleView\backView\infoView 只在初次赋值时，检测是否有大小并尝试自动调整。
         // 切在导航条整个生命周期中，不主动调整它们的大小，只是按照规则将它们放在左中右。
@@ -139,14 +140,14 @@ import UIKit
 
         if let infoView = self.infoView {
             let oFrame = infoView.frame
-            let x = (isLeftToRight ? bounds.maxX - oFrame.width : 0)
+            let x = (isLeftToRight ? safeBounds.maxX - oFrame.width : safeBounds.minX)
             let y = (navHeight - oFrame.height) * 0.5
             infoView.frame = CGRect.init(x: x, y: y, width: oFrame.width, height: oFrame.height)
         }
 
         if let backView = self.backView {
             let oFrame = backView.frame
-            let x = (isLeftToRight ? 0 : bounds.maxX - oFrame.width)
+            let x = (isLeftToRight ? safeBounds.minX : safeBounds.maxX - oFrame.width)
             let y = (navHeight - oFrame.height) * 0.5
             backView.frame = CGRect.init(x: x, y: y, width: oFrame.width, height: oFrame.height)
         }

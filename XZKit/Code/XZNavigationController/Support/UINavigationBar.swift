@@ -1,5 +1,5 @@
 //
-//  UINavigationBar.swift
+//  UIKit.UINavigationBar.swift
 //  XZKit
 //
 //  Created by Xezun on 2017/7/11.
@@ -10,12 +10,12 @@ import UIKit
 import XZDefines
 import ObjectiveC
 
-extension UINavigationBar {
+extension UIKit.UINavigationBar {
     
     /// 记录了当前正在显示的自定义的导航条。在控制器转场过程中，此属性为 nil 。
-    public internal(set) var navigationBar: XZNavigationBarProtocol? {
+    public internal(set) var navigationBar: UINavigationBar? {
         get {
-            return objc_getAssociatedObject(self, &_navigationBar) as? XZNavigationBarProtocol
+            return objc_getAssociatedObject(self, &_navigationBar) as? UINavigationBar
         }
         set {
             // 移除旧的
@@ -53,11 +53,11 @@ extension UINavigationBar {
                 
                 let OldClass = type(of: self)
                 
-                if let CustomizableClass = objc_getAssociatedObject(OldClass, &_customizableClass) as? UINavigationBar.Type {
+                if let CustomizableClass = objc_getAssociatedObject(OldClass, &_customizableClass) as? UIKit.UINavigationBar.Type {
                     _ = object_setClass(self, CustomizableClass)
                 } else if let CustomizableClass = xz_objc_createClass(OldClass, { (CustomizableClass) in
-                    xz_objc_class_copyMethods(XZNavigationControllerCustomizableNavigationBar.self, CustomizableClass);
-                }) as? UINavigationBar.Type {
+                    xz_objc_class_copyMethods(XZNavigationControllerNavigationBar.self, CustomizableClass);
+                }) as? UIKit.UINavigationBar.Type {
                     objc_setAssociatedObject(OldClass, &_customizableClass, CustomizableClass, .OBJC_ASSOCIATION_ASSIGN)
                     _ = object_setClass(self, CustomizableClass)
                 } else {
@@ -74,7 +74,7 @@ extension UINavigationBar {
     
 }
 
-private class XZNavigationControllerCustomizableNavigationBar: UINavigationBar {
+private class XZNavigationControllerNavigationBar: UIKit.UINavigationBar {
     
     open override var isHidden: Bool {
         get {
@@ -121,14 +121,20 @@ private class XZNavigationControllerCustomizableNavigationBar: UINavigationBar {
 
         if let navigationBar = navigationBar {
             let bounds = self.bounds
-            
             navigationBar.frame = bounds
-            // 横屏时，状态栏不显示
-            // 从横屏恢复竖屏，原生导航条初始位置，可能还没有适配 safeArea 边距，
-            // 而后续原生导航条再调整位置，可能不会触发自定义导航条的 layoutSubviews 方法，
-            // 因为自定义导航条相对原生导航条，没有任何改变。
-            navigationBar.setNeedsLayout()
         }
+    }
+    
+    override func safeAreaInsetsDidChange() {
+        xz_objc_msgSendSuper(self, v: #selector(safeAreaInsetsDidChange))
+        guard let navigationBar = navigationBar else {
+            return
+        }
+        // 横屏时，状态栏不显示
+        // 从横屏恢复竖屏，原生导航条初始位置，可能还没有适配 safeArea 边距，
+        // 而后续原生导航条再调整位置，可能不会触发自定义导航条的 layoutSubviews 方法，
+        // 因为自定义导航条相对原生导航条，没有任何改变。
+        navigationBar.setNeedsLayout()
     }
 
     // 当原生导航条添加子视图时，保证自定义导航条始终显示在最上面。
