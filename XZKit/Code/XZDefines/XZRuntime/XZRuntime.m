@@ -381,7 +381,7 @@ void xz_objc_msgSendSuper_void_bool(id receiver, SEL selector, BOOL param1) {
     ((void (*)(struct objc_super *, SEL, BOOL))objc_msgSendSuper)(&_super, selector, param1);
 }
 void xz_objc_msgSend_void_bool(id receiver, SEL selector, BOOL param1) {
-    ((void (*)(UIViewController *, SEL, BOOL))objc_msgSend)(receiver, selector, param1);
+    ((void (*)(id, SEL, BOOL))objc_msgSend)(receiver, selector, param1);
 }
 
 
