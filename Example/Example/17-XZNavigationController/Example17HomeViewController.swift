@@ -44,7 +44,7 @@ class Example17HomeViewController: UITableViewController, XZNavigationBarCustomi
     }
     
     @objc func backButtonAction(_ sender: UIButton) {
-        self.dismiss(animated: true)
+        performSegue(withIdentifier: "dismiss", sender: sender)
     }
     
     @IBAction func isCustomizableValueChanged(_ sender: UISwitch) {

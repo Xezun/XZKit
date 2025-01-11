@@ -36,10 +36,10 @@
                 cell.detailTextLabel.text = nil;
             } else if (XZLocalization.isInAppLanguagePreferencesEnabled) {
                 cell.accessoryType = UITableViewCellAccessoryNone;
-                cell.detailTextLabel.text = @"新页面生效";
+                cell.detailTextLabel.text = XZLocalizedString(@"新页面生效");
             } else {
                 cell.accessoryType = UITableViewCellAccessoryNone;
-                cell.detailTextLabel.text = @"重启后生效";
+                cell.detailTextLabel.text = XZLocalizedString(@"重启后生效");
             }
         } else {
             cell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;

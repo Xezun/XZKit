@@ -1,0 +1,186 @@
+{
+  "sourceLanguage" : "zh-Hans",
+  "strings" : {
+    "5kM-Sp-qHj.title" : {
+      "comment" : "Class = \"UINavigationItem\"; title = \"本地化测试\"; ObjectID = \"5kM-Sp-qHj\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Localization Tests"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "本地化测试"
+          }
+        }
+      }
+    },
+    "52F-WN-mpf.text" : {
+      "comment" : "Class = \"UILabel\"; text = \"简体中文\"; ObjectID = \"52F-WN-mpf\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "简体中文"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "简体中文"
+          }
+        }
+      }
+    },
+    "Enm-2Z-eYb.title" : {
+      "comment" : "Class = \"UINavigationItem\"; title = \"应用语言设置\"; ObjectID = \"Enm-2Z-eYb\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "App Language Settings"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "应用语言设置"
+          }
+        }
+      }
+    },
+    "jkU-JO-IuF.text" : {
+      "comment" : "Class = \"UILabel\"; text = \"02、本地化测试\"; ObjectID = \"jkU-JO-IuF\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "02. Localization Tests"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "02、本地化测试"
+          }
+        }
+      }
+    },
+    "MtX-3e-TTA.title" : {
+      "comment" : "Class = \"UINavigationItem\"; title = \"XZLocale\"; ObjectID = \"MtX-3e-TTA\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "XZLocale"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "XZLocale"
+          }
+        }
+      }
+    },
+    "QYr-oh-Hi9.text" : {
+      "comment" : "Class = \"UILabel\"; text = \"English\"; ObjectID = \"QYr-oh-Hi9\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "English"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "English"
+          }
+        }
+      }
+    },
+    "RFN-fg-nAr.title" : {
+      "comment" : "Class = \"UIBarButtonItem\"; title = \"返回\"; ObjectID = \"RFN-fg-nAr\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Back"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "返回"
+          }
+        }
+      }
+    },
+    "smF-1i-FCh.text" : {
+      "comment" : "Class = \"UILabel\"; text = \"01、应用语言设置\"; ObjectID = \"smF-1i-FCh\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "01. App Language Settings"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "01、应用语言设置"
+          }
+        }
+      }
+    },
+    "Tjc-sf-zcp.text" : {
+      "comment" : "Class = \"UILabel\"; text = \"应用内语言设置\"; ObjectID = \"Tjc-sf-zcp\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "InApp Language Preferences"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "应用内语言设置"
+          }
+        }
+      }
+    },
+    "wMu-ZY-wXf.title" : {
+      "comment" : "Class = \"UIBarButtonItem\"; title = \"关闭\"; ObjectID = \"wMu-ZY-wXf\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Close"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "关闭"
+          }
+        }
+      }
+    }
+  },
+  "version" : "1.0"
+}

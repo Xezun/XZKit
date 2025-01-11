@@ -3,7 +3,7 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 56;
+	objectVersion = 60;
 	objects = {
 
 /* Begin PBXBuildFile section */
@@ -35,14 +35,14 @@
 		292A5A4A2D254D010037579D /* Example04FontNameViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 292A5A3E2D254D010037579D /* Example04FontNameViewController.m */; };
 		292A5A4B2D254D010037579D /* Example04TestViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 292A5A442D254D010037579D /* Example04TestViewController.m */; };
 		292A5A512D254F6A0037579D /* Example05TestModels.m in Sources */ = {isa = PBXBuildFile; fileRef = 292A5A4E2D254F6A0037579D /* Example05TestModels.m */; };
-		292A5A522D254F6A0037579D /* Example05TestViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 292A5A502D254F6A0037579D /* Example05TestViewController.m */; };
+		292A5A522D254F6A0037579D /* Example05ViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 292A5A502D254F6A0037579D /* Example05ViewController.m */; };
 		292A5A542D255DC50037579D /* Example05.json in Resources */ = {isa = PBXBuildFile; fileRef = 292A5A532D255DC50037579D /* Example05.json */; };
 		292A5A5E2D25616D0037579D /* Example06ViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 292A5A5D2D25616D0037579D /* Example06ViewController.m */; };
 		292A5A5F2D25616D0037579D /* Example06RefreshSettingsViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 292A5A592D25616D0037579D /* Example06RefreshSettingsViewController.m */; };
 		292A5A602D25616D0037579D /* Example06SettingsViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 292A5A5B2D25616D0037579D /* Example06SettingsViewController.m */; };
 		292A5A652D2563E20037579D /* Example07Test01ViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 292A5A622D2563E20037579D /* Example07Test01ViewController.m */; };
 		292A5A662D2563E20037579D /* Example07Test02ViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 292A5A642D2563E20037579D /* Example07Test02ViewController.m */; };
-		292A5A6A2D25685C0037579D /* Example08TestViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 292A5A692D25685C0037579D /* Example08TestViewController.m */; };
+		292A5A6A2D25685C0037579D /* Example08ViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 292A5A692D25685C0037579D /* Example08ViewController.m */; };
 		292A5A732D256A240037579D /* Example09Test02ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 292A5A722D256A240037579D /* Example09Test02ViewController.swift */; };
 		292A5A742D256A240037579D /* Example09SettingsImageSelectViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 292A5A6D2D256A240037579D /* Example09SettingsImageSelectViewController.swift */; };
 		292A5A752D256A240037579D /* Example09SegmentedControlIndicator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 292A5A6B2D256A240037579D /* Example09SegmentedControlIndicator.swift */; };
@@ -51,10 +51,10 @@
 		292A5A782D256A240037579D /* Example09SettingsColorSelectViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 292A5A6C2D256A240037579D /* Example09SettingsColorSelectViewController.swift */; };
 		292A5A792D256A240037579D /* Example09Test01ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 292A5A712D256A240037579D /* Example09Test01ViewController.swift */; };
 		292A5A7A2D256A240037579D /* Example09SettingsSelectViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 292A5A6E2D256A240037579D /* Example09SettingsSelectViewController.swift */; };
-		292C15412D25163700E465BF /* Example0202ViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 292C15402D25163700E465BF /* Example0202ViewController.m */; };
-		292C15422D25163700E465BF /* Example0201ViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 292C153E2D25163700E465BF /* Example0201ViewController.m */; };
+		292C15412D25163700E465BF /* Example02ViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 292C15402D25163700E465BF /* Example02ViewController.m */; };
+		292C15422D25163700E465BF /* Example02Test01ViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 292C153E2D25163700E465BF /* Example02Test01ViewController.m */; };
 		292C15472D25182000E465BF /* ExampleNavigationController.m in Sources */ = {isa = PBXBuildFile; fileRef = 292C15442D25182000E465BF /* ExampleNavigationController.m */; };
-		292C15482D25182000E465BF /* ExampleTableViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 292C15462D25182000E465BF /* ExampleTableViewController.m */; };
+		292C15482D25182000E465BF /* ExampleViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 292C15462D25182000E465BF /* ExampleViewController.m */; };
 		292C17282D251F6D00E465BF /* Example0331Group104Cell.m in Sources */ = {isa = PBXBuildFile; fileRef = 292C16C22D251F6D00E465BF /* Example0331Group104Cell.m */; };
 		292C17292D251F6D00E465BF /* Example0330Group101CellViewModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 292C16052D251F6D00E465BF /* Example0330Group101CellViewModel.m */; };
 		292C172A2D251F6D00E465BF /* Example0320Group101Cell.m in Sources */ = {isa = PBXBuildFile; fileRef = 292C15942D251F6D00E465BF /* Example0320Group101Cell.m */; };
@@ -221,19 +221,39 @@
 		292C17CB2D251F6D00E465BF /* Example0320Model.json in Resources */ = {isa = PBXBuildFile; fileRef = 292C15AA2D251F6D00E465BF /* Example0320Model.json */; };
 		292C17CC2D251F6D00E465BF /* Example0311ViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 292C15672D251F6D00E465BF /* Example0311ViewController.xib */; };
 		292C17CF2D251FF400E465BF /* Example03ViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 292C17CE2D251FF400E465BF /* Example03ViewController.m */; };
+		29448F702D3194580055A183 /* Example07ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 29448F6F2D3194580055A183 /* Example07ViewController.swift */; };
+		29448F722D31956A0055A183 /* Example09ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 29448F712D31956A0055A183 /* Example09ViewController.swift */; };
 		29648BE52A72556C0090F445 /* ExampleAppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 29648BE42A72556C0090F445 /* ExampleAppDelegate.m */; };
-		29648BEB2A72556C0090F445 /* Example01ViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 29648BEA2A72556C0090F445 /* Example01ViewController.m */; };
-		29648BEE2A72556C0090F445 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 29648BEC2A72556C0090F445 /* Main.storyboard */; };
+		29648BEB2A72556C0090F445 /* Example01Test01ViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 29648BEA2A72556C0090F445 /* Example01Test01ViewController.m */; };
 		29648BF02A72556E0090F445 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 29648BEF2A72556E0090F445 /* Assets.xcassets */; };
 		29648BF32A72556E0090F445 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 29648BF12A72556E0090F445 /* LaunchScreen.storyboard */; };
 		29648BF62A72556E0090F445 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 29648BF52A72556E0090F445 /* main.m */; };
 		29648C002A72556E0090F445 /* ExampleTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 29648BFF2A72556E0090F445 /* ExampleTests.m */; };
 		29648C0A2A72556E0090F445 /* ExampleUITests.m in Sources */ = {isa = PBXBuildFile; fileRef = 29648C092A72556E0090F445 /* ExampleUITests.m */; };
 		29648C0C2A72556E0090F445 /* ExampleUITestsLaunchTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 29648C0B2A72556E0090F445 /* ExampleUITestsLaunchTests.m */; };
+		29776A112D3240AC0033AAF9 /* Example15ViewController.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 29776A102D3240AC0033AAF9 /* Example15ViewController.storyboard */; };
+		29776A142D3240E70033AAF9 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 29776A132D3240E70033AAF9 /* Main.storyboard */; };
 		299B56CE2D2A67ED00CC2F69 /* Example10ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 299B56CD2D2A67ED00CC2F69 /* Example10ViewController.swift */; };
 		299B56D02D2A680300CC2F69 /* Example11ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 299B56CF2D2A680300CC2F69 /* Example11ViewController.swift */; };
 		299B56D32D2A683900CC2F69 /* Example12ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 299B56D22D2A683900CC2F69 /* Example12ViewController.swift */; };
 		299B56E42D2AD87800CC2F69 /* Example13ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 299B56E32D2AD87800CC2F69 /* Example13ViewController.swift */; };
+		29B3340B2D3174EB006A574A /* Example01ViewController.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 29B3340A2D3174EB006A574A /* Example01ViewController.storyboard */; };
+		29B3340D2D3176EA006A574A /* Example01ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 29B3340C2D3176EA006A574A /* Example01ViewController.swift */; };
+		29B3340F2D317749006A574A /* Example02ViewController.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 29B3340E2D317749006A574A /* Example02ViewController.storyboard */; };
+		29B334112D317759006A574A /* Example03ViewController.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 29B334102D317759006A574A /* Example03ViewController.storyboard */; };
+		29B334132D317767006A574A /* Example04ViewController.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 29B334122D317767006A574A /* Example04ViewController.storyboard */; };
+		29B334152D31777E006A574A /* Example05ViewController.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 29B334142D31777E006A574A /* Example05ViewController.storyboard */; };
+		29B334172D3177B4006A574A /* Example06ViewController.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 29B334162D3177B4006A574A /* Example06ViewController.storyboard */; };
+		29B334192D3177C5006A574A /* Example07ViewController.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 29B334182D3177C5006A574A /* Example07ViewController.storyboard */; };
+		29B3341B2D3177F1006A574A /* Example08ViewController.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 29B3341A2D3177F1006A574A /* Example08ViewController.storyboard */; };
+		29B3341D2D317803006A574A /* Example09ViewController.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 29B3341C2D317803006A574A /* Example09ViewController.storyboard */; };
+		29B3341F2D317814006A574A /* Example10ViewController.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 29B3341E2D317814006A574A /* Example10ViewController.storyboard */; };
+		29B334212D317820006A574A /* Example11ViewController.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 29B334202D317820006A574A /* Example11ViewController.storyboard */; };
+		29B334232D31782B006A574A /* Example12ViewController.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 29B334222D31782B006A574A /* Example12ViewController.storyboard */; };
+		29B334252D317835006A574A /* Example13ViewController.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 29B334242D317835006A574A /* Example13ViewController.storyboard */; };
+		29B334272D317840006A574A /* Example14ViewController.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 29B334262D317840006A574A /* Example14ViewController.storyboard */; };
+		29B3342B2D31785B006A574A /* Example16ViewController.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 29B3342A2D31785B006A574A /* Example16ViewController.storyboard */; };
+		29B3342D2D31786D006A574A /* Example17ViewController.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 29B3342C2D31786D006A574A /* Example17ViewController.storyboard */; };
 		C556594B20BE3573AE3127B1 /* Pods_ExampleUITests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2921DE5FDDA8FC1A0BE46778 /* Pods_ExampleUITests.framework */; };
 		E1C58D6269A64FE5F22C16D7 /* Pods_ExampleTests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D09F7711B7EC5E200D1D4920 /* Pods_ExampleTests.framework */; };
 /* End PBXBuildFile section */
@@ -282,9 +302,7 @@
 		04D06AFD2D2D45300056A53A /* Example15Test01ViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = Example15Test01ViewController.m; sourceTree = "<group>"; };
 		04D06AFE2D2D45300056A53A /* Example15Test02ViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Example15Test02ViewController.h; sourceTree = "<group>"; };
 		04D06AFF2D2D45300056A53A /* Example15Test02ViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = Example15Test02ViewController.m; sourceTree = "<group>"; };
-		04D06B022D2D46890056A53A /* zh-Hans */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "zh-Hans"; path = "zh-Hans.lproj/Main.strings"; sourceTree = "<group>"; };
 		04D06B032D2D46890056A53A /* zh-Hans */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "zh-Hans"; path = "zh-Hans.lproj/LaunchScreen.strings"; sourceTree = "<group>"; };
-		04D06B052D2D46F40056A53A /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/Main.strings; sourceTree = "<group>"; };
 		04D06B072D2D46F90056A53A /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/LaunchScreen.strings; sourceTree = "<group>"; };
 		04D06B082D2D47DF0056A53A /* Localizable.xcstrings */ = {isa = PBXFileReference; lastKnownFileType = text.json.xcstrings; path = Localizable.xcstrings; sourceTree = "<group>"; };
 		04D34E5F2D314ABB0013D4A3 /* Example17AppleViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Example17AppleViewController.swift; sourceTree = "<group>"; };
@@ -308,8 +326,8 @@
 		292A5A462D254D010037579D /* Example04ViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = Example04ViewController.m; sourceTree = "<group>"; };
 		292A5A4D2D254F6A0037579D /* Example05TestModels.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Example05TestModels.h; sourceTree = "<group>"; };
 		292A5A4E2D254F6A0037579D /* Example05TestModels.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = Example05TestModels.m; sourceTree = "<group>"; };
-		292A5A4F2D254F6A0037579D /* Example05TestViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Example05TestViewController.h; sourceTree = "<group>"; };
-		292A5A502D254F6A0037579D /* Example05TestViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = Example05TestViewController.m; sourceTree = "<group>"; };
+		292A5A4F2D254F6A0037579D /* Example05ViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Example05ViewController.h; sourceTree = "<group>"; };
+		292A5A502D254F6A0037579D /* Example05ViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = Example05ViewController.m; sourceTree = "<group>"; };
 		292A5A532D255DC50037579D /* Example05.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = Example05.json; sourceTree = "<group>"; };
 		292A5A582D25616D0037579D /* Example06RefreshSettingsViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Example06RefreshSettingsViewController.h; sourceTree = "<group>"; };
 		292A5A592D25616D0037579D /* Example06RefreshSettingsViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = Example06RefreshSettingsViewController.m; sourceTree = "<group>"; };
@@ -321,8 +339,8 @@
 		292A5A622D2563E20037579D /* Example07Test01ViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = Example07Test01ViewController.m; sourceTree = "<group>"; };
 		292A5A632D2563E20037579D /* Example07Test02ViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Example07Test02ViewController.h; sourceTree = "<group>"; };
 		292A5A642D2563E20037579D /* Example07Test02ViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = Example07Test02ViewController.m; sourceTree = "<group>"; };
-		292A5A682D25685C0037579D /* Example08TestViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Example08TestViewController.h; sourceTree = "<group>"; };
-		292A5A692D25685C0037579D /* Example08TestViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = Example08TestViewController.m; sourceTree = "<group>"; };
+		292A5A682D25685C0037579D /* Example08ViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Example08ViewController.h; sourceTree = "<group>"; };
+		292A5A692D25685C0037579D /* Example08ViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = Example08ViewController.m; sourceTree = "<group>"; };
 		292A5A6B2D256A240037579D /* Example09SegmentedControlIndicator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Example09SegmentedControlIndicator.swift; sourceTree = "<group>"; };
 		292A5A6C2D256A240037579D /* Example09SettingsColorSelectViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Example09SettingsColorSelectViewController.swift; sourceTree = "<group>"; };
 		292A5A6D2D256A240037579D /* Example09SettingsImageSelectViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Example09SettingsImageSelectViewController.swift; sourceTree = "<group>"; };
@@ -331,15 +349,14 @@
 		292A5A702D256A240037579D /* Example09SettingsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Example09SettingsViewController.swift; sourceTree = "<group>"; };
 		292A5A712D256A240037579D /* Example09Test01ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Example09Test01ViewController.swift; sourceTree = "<group>"; };
 		292A5A722D256A240037579D /* Example09Test02ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Example09Test02ViewController.swift; sourceTree = "<group>"; };
-		292A5A7B2D256A2C0037579D /* Example-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "Example-Bridging-Header.h"; sourceTree = "<group>"; };
-		292C153D2D25163700E465BF /* Example0201ViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Example0201ViewController.h; sourceTree = "<group>"; };
-		292C153E2D25163700E465BF /* Example0201ViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = Example0201ViewController.m; sourceTree = "<group>"; };
-		292C153F2D25163700E465BF /* Example0202ViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Example0202ViewController.h; sourceTree = "<group>"; };
-		292C15402D25163700E465BF /* Example0202ViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = Example0202ViewController.m; sourceTree = "<group>"; };
+		292C153D2D25163700E465BF /* Example02Test01ViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Example02Test01ViewController.h; sourceTree = "<group>"; };
+		292C153E2D25163700E465BF /* Example02Test01ViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = Example02Test01ViewController.m; sourceTree = "<group>"; };
+		292C153F2D25163700E465BF /* Example02ViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Example02ViewController.h; sourceTree = "<group>"; };
+		292C15402D25163700E465BF /* Example02ViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = Example02ViewController.m; sourceTree = "<group>"; };
 		292C15432D25182000E465BF /* ExampleNavigationController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ExampleNavigationController.h; sourceTree = "<group>"; };
 		292C15442D25182000E465BF /* ExampleNavigationController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ExampleNavigationController.m; sourceTree = "<group>"; };
-		292C15452D25182000E465BF /* ExampleTableViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ExampleTableViewController.h; sourceTree = "<group>"; };
-		292C15462D25182000E465BF /* ExampleTableViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ExampleTableViewController.m; sourceTree = "<group>"; };
+		292C15452D25182000E465BF /* ExampleViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ExampleViewController.h; sourceTree = "<group>"; };
+		292C15462D25182000E465BF /* ExampleViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ExampleViewController.m; sourceTree = "<group>"; };
 		292C154A2D251F6D00E465BF /* Example0310ViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Example0310ViewController.h; sourceTree = "<group>"; };
 		292C154B2D251F6D00E465BF /* Example0310ViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = Example0310ViewController.m; sourceTree = "<group>"; };
 		292C154D2D251F6D00E465BF /* Example0310Model.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Example0310Model.h; sourceTree = "<group>"; };
@@ -659,12 +676,13 @@
 		292C17242D251F6D00E465BF /* Example0331ViewModel.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = Example0331ViewModel.m; sourceTree = "<group>"; };
 		292C17CD2D251FF400E465BF /* Example03ViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Example03ViewController.h; sourceTree = "<group>"; };
 		292C17CE2D251FF400E465BF /* Example03ViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = Example03ViewController.m; sourceTree = "<group>"; };
+		29448F6F2D3194580055A183 /* Example07ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Example07ViewController.swift; sourceTree = "<group>"; };
+		29448F712D31956A0055A183 /* Example09ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Example09ViewController.swift; sourceTree = "<group>"; };
 		29648BE02A72556C0090F445 /* Example.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Example.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		29648BE32A72556C0090F445 /* ExampleAppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ExampleAppDelegate.h; sourceTree = "<group>"; };
 		29648BE42A72556C0090F445 /* ExampleAppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ExampleAppDelegate.m; sourceTree = "<group>"; };
-		29648BE92A72556C0090F445 /* Example01ViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Example01ViewController.h; sourceTree = "<group>"; };
-		29648BEA2A72556C0090F445 /* Example01ViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = Example01ViewController.m; sourceTree = "<group>"; };
-		29648BED2A72556C0090F445 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
+		29648BE92A72556C0090F445 /* Example01Test01ViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Example01Test01ViewController.h; sourceTree = "<group>"; };
+		29648BEA2A72556C0090F445 /* Example01Test01ViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = Example01Test01ViewController.m; sourceTree = "<group>"; };
 		29648BEF2A72556E0090F445 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		29648BF22A72556E0090F445 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		29648BF42A72556E0090F445 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
@@ -674,10 +692,31 @@
 		29648C052A72556E0090F445 /* ExampleUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = ExampleUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		29648C092A72556E0090F445 /* ExampleUITests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ExampleUITests.m; sourceTree = "<group>"; };
 		29648C0B2A72556E0090F445 /* ExampleUITestsLaunchTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ExampleUITestsLaunchTests.m; sourceTree = "<group>"; };
+		29776A0E2D3199DE0033AAF9 /* ExampleBridgingHeader.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ExampleBridgingHeader.h; sourceTree = "<group>"; };
+		29776A0F2D3240AC0033AAF9 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Example15ViewController.storyboard; sourceTree = "<group>"; };
+		29776A122D3240AC0033AAF9 /* mul */ = {isa = PBXFileReference; lastKnownFileType = text.json.xcstrings; name = mul; path = mul.lproj/Example15ViewController.xcstrings; sourceTree = "<group>"; };
+		29776A132D3240E70033AAF9 /* Main.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = Main.storyboard; sourceTree = "<group>"; };
 		299B56CD2D2A67ED00CC2F69 /* Example10ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Example10ViewController.swift; sourceTree = "<group>"; };
 		299B56CF2D2A680300CC2F69 /* Example11ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Example11ViewController.swift; sourceTree = "<group>"; };
 		299B56D22D2A683900CC2F69 /* Example12ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Example12ViewController.swift; sourceTree = "<group>"; };
 		299B56E32D2AD87800CC2F69 /* Example13ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Example13ViewController.swift; sourceTree = "<group>"; };
+		29B3340A2D3174EB006A574A /* Example01ViewController.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = Example01ViewController.storyboard; sourceTree = "<group>"; };
+		29B3340C2D3176EA006A574A /* Example01ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Example01ViewController.swift; sourceTree = "<group>"; };
+		29B3340E2D317749006A574A /* Example02ViewController.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = Example02ViewController.storyboard; sourceTree = "<group>"; };
+		29B334102D317759006A574A /* Example03ViewController.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = Example03ViewController.storyboard; sourceTree = "<group>"; };
+		29B334122D317767006A574A /* Example04ViewController.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = Example04ViewController.storyboard; sourceTree = "<group>"; };
+		29B334142D31777E006A574A /* Example05ViewController.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = Example05ViewController.storyboard; sourceTree = "<group>"; };
+		29B334162D3177B4006A574A /* Example06ViewController.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = Example06ViewController.storyboard; sourceTree = "<group>"; };
+		29B334182D3177C5006A574A /* Example07ViewController.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = Example07ViewController.storyboard; sourceTree = "<group>"; };
+		29B3341A2D3177F1006A574A /* Example08ViewController.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = Example08ViewController.storyboard; sourceTree = "<group>"; };
+		29B3341C2D317803006A574A /* Example09ViewController.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = Example09ViewController.storyboard; sourceTree = "<group>"; };
+		29B3341E2D317814006A574A /* Example10ViewController.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = Example10ViewController.storyboard; sourceTree = "<group>"; };
+		29B334202D317820006A574A /* Example11ViewController.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = Example11ViewController.storyboard; sourceTree = "<group>"; };
+		29B334222D31782B006A574A /* Example12ViewController.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = Example12ViewController.storyboard; sourceTree = "<group>"; };
+		29B334242D317835006A574A /* Example13ViewController.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = Example13ViewController.storyboard; sourceTree = "<group>"; };
+		29B334262D317840006A574A /* Example14ViewController.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = Example14ViewController.storyboard; sourceTree = "<group>"; };
+		29B3342A2D31785B006A574A /* Example16ViewController.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = Example16ViewController.storyboard; sourceTree = "<group>"; };
+		29B3342C2D31786D006A574A /* Example17ViewController.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = Example17ViewController.storyboard; sourceTree = "<group>"; };
 		369E27212BC7DC1424D69BB0 /* Pods-Example.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Example.release.xcconfig"; path = "Target Support Files/Pods-Example/Pods-Example.release.xcconfig"; sourceTree = "<group>"; };
 		5E63F9B7AB013AABEE95EC05 /* Pods-ExampleTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ExampleTests.release.xcconfig"; path = "Target Support Files/Pods-ExampleTests/Pods-ExampleTests.release.xcconfig"; sourceTree = "<group>"; };
 		973629BBA2CF064ED1925071 /* Pods-ExampleTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ExampleTests.debug.xcconfig"; path = "Target Support Files/Pods-ExampleTests/Pods-ExampleTests.debug.xcconfig"; sourceTree = "<group>"; };
@@ -720,6 +759,7 @@
 			children = (
 				040F13392D2B77CD00C4D6CD /* Example14ViewController.h */,
 				040F133A2D2B77CD00C4D6CD /* Example14ViewController.m */,
+				29B334262D317840006A574A /* Example14ViewController.storyboard */,
 			);
 			path = "14-XZURLQuery";
 			sourceTree = "<group>";
@@ -727,6 +767,7 @@
 		042D23B62D30BACE00E0F7BD /* 16-XZCollectionViewFlowLayout */ = {
 			isa = PBXGroup;
 			children = (
+				29B3342A2D31785B006A574A /* Example16ViewController.storyboard */,
 				042D23BD2D30BB3200E0F7BD /* Example16ViewController.h */,
 				042D23BE2D30BB3200E0F7BD /* Example16ViewController.m */,
 				042D23B72D30BB3200E0F7BD /* Example16CollectonViewCellModel.h */,
@@ -762,6 +803,7 @@
 		04D06AFB2D2D43560056A53A /* 15-XZLocale */ = {
 			isa = PBXGroup;
 			children = (
+				29776A102D3240AC0033AAF9 /* Example15ViewController.storyboard */,
 				04D06AFC2D2D45300056A53A /* Example15Test01ViewController.h */,
 				04D06AFD2D2D45300056A53A /* Example15Test01ViewController.m */,
 				04D06AFE2D2D45300056A53A /* Example15Test02ViewController.h */,
@@ -773,6 +815,7 @@
 		04D34E5D2D310BD90013D4A3 /* 17-XZNavigationController */ = {
 			isa = PBXGroup;
 			children = (
+				29B3342C2D31786D006A574A /* Example17ViewController.storyboard */,
 				04D34E6B2D314B0A0013D4A3 /* Example17NavigationBar.swift */,
 				04D34E5F2D314ABB0013D4A3 /* Example17AppleViewController.swift */,
 				04D34E602D314ABB0013D4A3 /* Example17GestureViewController.swift */,
@@ -788,6 +831,7 @@
 			isa = PBXGroup;
 			children = (
 				299B56CD2D2A67ED00CC2F69 /* Example10ViewController.swift */,
+				29B3341E2D317814006A574A /* Example10ViewController.storyboard */,
 			);
 			path = "10-XZGeometry";
 			sourceTree = "<group>";
@@ -796,6 +840,7 @@
 			isa = PBXGroup;
 			children = (
 				299B56CF2D2A680300CC2F69 /* Example11ViewController.swift */,
+				29B334202D317820006A574A /* Example11ViewController.storyboard */,
 			);
 			path = "11-XZTextImageView";
 			sourceTree = "<group>";
@@ -805,6 +850,7 @@
 			children = (
 				292A5A452D254D010037579D /* Example04ViewController.h */,
 				292A5A462D254D010037579D /* Example04ViewController.m */,
+				29B334122D317767006A574A /* Example04ViewController.storyboard */,
 				292A5A432D254D010037579D /* Example04TestViewController.h */,
 				292A5A442D254D010037579D /* Example04TestViewController.m */,
 				292A5A412D254D010037579D /* Example04SettingsViewController.h */,
@@ -820,11 +866,12 @@
 		292A5A4C2D254F3F0037579D /* 05-XZJSON */ = {
 			isa = PBXGroup;
 			children = (
+				292A5A4F2D254F6A0037579D /* Example05ViewController.h */,
+				292A5A502D254F6A0037579D /* Example05ViewController.m */,
+				29B334142D31777E006A574A /* Example05ViewController.storyboard */,
 				292A5A532D255DC50037579D /* Example05.json */,
 				292A5A4D2D254F6A0037579D /* Example05TestModels.h */,
 				292A5A4E2D254F6A0037579D /* Example05TestModels.m */,
-				292A5A4F2D254F6A0037579D /* Example05TestViewController.h */,
-				292A5A502D254F6A0037579D /* Example05TestViewController.m */,
 			);
 			path = "05-XZJSON";
 			sourceTree = "<group>";
@@ -832,12 +879,13 @@
 		292A5A552D255E530037579D /* 06-XZRefresh */ = {
 			isa = PBXGroup;
 			children = (
+				292A5A5C2D25616D0037579D /* Example06ViewController.h */,
+				292A5A5D2D25616D0037579D /* Example06ViewController.m */,
+				29B334162D3177B4006A574A /* Example06ViewController.storyboard */,
 				292A5A582D25616D0037579D /* Example06RefreshSettingsViewController.h */,
 				292A5A592D25616D0037579D /* Example06RefreshSettingsViewController.m */,
 				292A5A5A2D25616D0037579D /* Example06SettingsViewController.h */,
 				292A5A5B2D25616D0037579D /* Example06SettingsViewController.m */,
-				292A5A5C2D25616D0037579D /* Example06ViewController.h */,
-				292A5A5D2D25616D0037579D /* Example06ViewController.m */,
 			);
 			path = "06-XZRefresh";
 			sourceTree = "<group>";
@@ -845,6 +893,8 @@
 		292A5A562D255E660037579D /* 07-XZPageView */ = {
 			isa = PBXGroup;
 			children = (
+				29448F6F2D3194580055A183 /* Example07ViewController.swift */,
+				29B334182D3177C5006A574A /* Example07ViewController.storyboard */,
 				292A5A612D2563E20037579D /* Example07Test01ViewController.h */,
 				292A5A622D2563E20037579D /* Example07Test01ViewController.m */,
 				292A5A632D2563E20037579D /* Example07Test02ViewController.h */,
@@ -856,8 +906,9 @@
 		292A5A572D255E740037579D /* 08-XZPageControl */ = {
 			isa = PBXGroup;
 			children = (
-				292A5A682D25685C0037579D /* Example08TestViewController.h */,
-				292A5A692D25685C0037579D /* Example08TestViewController.m */,
+				292A5A682D25685C0037579D /* Example08ViewController.h */,
+				292A5A692D25685C0037579D /* Example08ViewController.m */,
+				29B3341A2D3177F1006A574A /* Example08ViewController.storyboard */,
 			);
 			path = "08-XZPageControl";
 			sourceTree = "<group>";
@@ -865,6 +916,8 @@
 		292A5A672D25653E0037579D /* 09-XZSegmentedControl */ = {
 			isa = PBXGroup;
 			children = (
+				29B3341C2D317803006A574A /* Example09ViewController.storyboard */,
+				29448F712D31956A0055A183 /* Example09ViewController.swift */,
 				292A5A712D256A240037579D /* Example09Test01ViewController.swift */,
 				292A5A722D256A240037579D /* Example09Test02ViewController.swift */,
 				292A5A6B2D256A240037579D /* Example09SegmentedControlIndicator.swift */,
@@ -873,7 +926,6 @@
 				292A5A6E2D256A240037579D /* Example09SettingsSelectViewController.swift */,
 				292A5A6F2D256A240037579D /* Example09SettingsSizeViewController.swift */,
 				292A5A702D256A240037579D /* Example09SettingsViewController.swift */,
-				292A5A7B2D256A2C0037579D /* Example-Bridging-Header.h */,
 			);
 			path = "09-XZSegmentedControl";
 			sourceTree = "<group>";
@@ -881,8 +933,10 @@
 		292C153B2D25145900E465BF /* 01-XZDefines */ = {
 			isa = PBXGroup;
 			children = (
-				29648BE92A72556C0090F445 /* Example01ViewController.h */,
-				29648BEA2A72556C0090F445 /* Example01ViewController.m */,
+				29B3340C2D3176EA006A574A /* Example01ViewController.swift */,
+				29B3340A2D3174EB006A574A /* Example01ViewController.storyboard */,
+				29648BE92A72556C0090F445 /* Example01Test01ViewController.h */,
+				29648BEA2A72556C0090F445 /* Example01Test01ViewController.m */,
 			);
 			path = "01-XZDefines";
 			sourceTree = "<group>";
@@ -890,10 +944,11 @@
 		292C153C2D25148B00E465BF /* 02-XZExtensions */ = {
 			isa = PBXGroup;
 			children = (
-				292C153D2D25163700E465BF /* Example0201ViewController.h */,
-				292C153E2D25163700E465BF /* Example0201ViewController.m */,
-				292C153F2D25163700E465BF /* Example0202ViewController.h */,
-				292C15402D25163700E465BF /* Example0202ViewController.m */,
+				292C153F2D25163700E465BF /* Example02ViewController.h */,
+				292C15402D25163700E465BF /* Example02ViewController.m */,
+				29B3340E2D317749006A574A /* Example02ViewController.storyboard */,
+				292C153D2D25163700E465BF /* Example02Test01ViewController.h */,
+				292C153E2D25163700E465BF /* Example02Test01ViewController.m */,
 			);
 			path = "02-XZExtensions";
 			sourceTree = "<group>";
@@ -903,6 +958,7 @@
 			children = (
 				292C17CD2D251FF400E465BF /* Example03ViewController.h */,
 				292C17CE2D251FF400E465BF /* Example03ViewController.m */,
+				29B334102D317759006A574A /* Example03ViewController.storyboard */,
 				292C15612D251F6D00E465BF /* 10 */,
 				292C156C2D251F6D00E465BF /* 11 */,
 				292C157B2D251F6D00E465BF /* 12 */,
@@ -2539,10 +2595,11 @@
 			children = (
 				29648BE32A72556C0090F445 /* ExampleAppDelegate.h */,
 				29648BE42A72556C0090F445 /* ExampleAppDelegate.m */,
+				29776A0E2D3199DE0033AAF9 /* ExampleBridgingHeader.h */,
 				292C15432D25182000E465BF /* ExampleNavigationController.h */,
 				292C15442D25182000E465BF /* ExampleNavigationController.m */,
-				292C15452D25182000E465BF /* ExampleTableViewController.h */,
-				292C15462D25182000E465BF /* ExampleTableViewController.m */,
+				292C15452D25182000E465BF /* ExampleViewController.h */,
+				292C15462D25182000E465BF /* ExampleViewController.m */,
 				292C153B2D25145900E465BF /* 01-XZDefines */,
 				292C153C2D25148B00E465BF /* 02-XZExtensions */,
 				292C15492D25190B00E465BF /* 03-XZMocoa */,
@@ -2554,13 +2611,13 @@
 				292A5A672D25653E0037579D /* 09-XZSegmentedControl */,
 				29018EB32D2A2E1000E89010 /* 10-XZGeometry */,
 				29018EB42D2A2E2400E89010 /* 11-XZTextImageView */,
-				299B56D12D2A682500CC2F69 /* 12-XZContentStatusView */,
+				299B56D12D2A682500CC2F69 /* 12-XZContentStatus */,
 				299B56E22D2AD84700CC2F69 /* 13-XZToast */,
 				040F13382D2B77B200C4D6CD /* 14-XZURLQuery */,
 				04D06AFB2D2D43560056A53A /* 15-XZLocale */,
 				042D23B62D30BACE00E0F7BD /* 16-XZCollectionViewFlowLayout */,
 				04D34E5D2D310BD90013D4A3 /* 17-XZNavigationController */,
-				29648BEC2A72556C0090F445 /* Main.storyboard */,
+				29776A132D3240E70033AAF9 /* Main.storyboard */,
 				29648BEF2A72556E0090F445 /* Assets.xcassets */,
 				29648BF12A72556E0090F445 /* LaunchScreen.storyboard */,
 				29648BF42A72556E0090F445 /* Info.plist */,
@@ -2587,18 +2644,20 @@
 			path = ExampleUITests;
 			sourceTree = "<group>";
 		};
-		299B56D12D2A682500CC2F69 /* 12-XZContentStatusView */ = {
+		299B56D12D2A682500CC2F69 /* 12-XZContentStatus */ = {
 			isa = PBXGroup;
 			children = (
 				299B56D22D2A683900CC2F69 /* Example12ViewController.swift */,
+				29B334222D31782B006A574A /* Example12ViewController.storyboard */,
 			);
-			path = "12-XZContentStatusView";
+			path = "12-XZContentStatus";
 			sourceTree = "<group>";
 		};
 		299B56E22D2AD84700CC2F69 /* 13-XZToast */ = {
 			isa = PBXGroup;
 			children = (
 				299B56E32D2AD87800CC2F69 /* Example13ViewController.swift */,
+				29B334242D317835006A574A /* Example13ViewController.storyboard */,
 			);
 			path = "13-XZToast";
 			sourceTree = "<group>";
@@ -2738,22 +2797,39 @@
 			files = (
 				29648BF32A72556E0090F445 /* LaunchScreen.storyboard in Resources */,
 				29648BF02A72556E0090F445 /* Assets.xcassets in Resources */,
+				29B3341B2D3177F1006A574A /* Example08ViewController.storyboard in Resources */,
 				292C17C02D251F6D00E465BF /* Example0322ViewController.xib in Resources */,
 				292C17C12D251F6D00E465BF /* Example0320ContentViewController.xib in Resources */,
+				29B334152D31777E006A574A /* Example05ViewController.storyboard in Resources */,
+				29776A112D3240AC0033AAF9 /* Example15ViewController.storyboard in Resources */,
+				29B3340B2D3174EB006A574A /* Example01ViewController.storyboard in Resources */,
 				292C17C22D251F6D00E465BF /* Example0321ContactEditor.xib in Resources */,
+				29B3342B2D31785B006A574A /* Example16ViewController.storyboard in Resources */,
 				292C17C32D251F6D00E465BF /* Example0320ViewController.xib in Resources */,
 				292C17C42D251F6D00E465BF /* Example0321ContactCell.xib in Resources */,
 				292C17C52D251F6D00E465BF /* Example0312Cell.xib in Resources */,
 				04D06B092D2D47DF0056A53A /* Localizable.xcstrings in Resources */,
+				29B3340F2D317749006A574A /* Example02ViewController.storyboard in Resources */,
+				29B334272D317840006A574A /* Example14ViewController.storyboard in Resources */,
 				292C17C62D251F6D00E465BF /* Example0310ContactView.xib in Resources */,
 				292C17C72D251F6D00E465BF /* Example0320Group101Cell.xib in Resources */,
+				29B334232D31782B006A574A /* Example12ViewController.storyboard in Resources */,
 				292A5A542D255DC50037579D /* Example05.json in Resources */,
 				292C17C82D251F6D00E465BF /* Example0322TextCell.xib in Resources */,
 				292C17C92D251F6D00E465BF /* Example0320Group102Cell.xib in Resources */,
+				29B334252D317835006A574A /* Example13ViewController.storyboard in Resources */,
 				292C17CA2D251F6D00E465BF /* Example0320Group100Cell.xib in Resources */,
+				29B3342D2D31786D006A574A /* Example17ViewController.storyboard in Resources */,
+				29B334172D3177B4006A574A /* Example06ViewController.storyboard in Resources */,
+				29B3341D2D317803006A574A /* Example09ViewController.storyboard in Resources */,
+				29B3341F2D317814006A574A /* Example10ViewController.storyboard in Resources */,
 				292C17CB2D251F6D00E465BF /* Example0320Model.json in Resources */,
+				29B334132D317767006A574A /* Example04ViewController.storyboard in Resources */,
 				292C17CC2D251F6D00E465BF /* Example0311ViewController.xib in Resources */,
-				29648BEE2A72556C0090F445 /* Main.storyboard in Resources */,
+				29B334112D317759006A574A /* Example03ViewController.storyboard in Resources */,
+				29776A142D3240E70033AAF9 /* Main.storyboard in Resources */,
+				29B334192D3177C5006A574A /* Example07ViewController.storyboard in Resources */,
+				29B334212D317820006A574A /* Example11ViewController.storyboard in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -2867,11 +2943,11 @@
 				292A5A5E2D25616D0037579D /* Example06ViewController.m in Sources */,
 				292A5A5F2D25616D0037579D /* Example06RefreshSettingsViewController.m in Sources */,
 				292A5A602D25616D0037579D /* Example06SettingsViewController.m in Sources */,
-				29648BEB2A72556C0090F445 /* Example01ViewController.m in Sources */,
+				29648BEB2A72556C0090F445 /* Example01Test01ViewController.m in Sources */,
 				29648BE52A72556C0090F445 /* ExampleAppDelegate.m in Sources */,
 				29648BF62A72556E0090F445 /* main.m in Sources */,
 				292C15472D25182000E465BF /* ExampleNavigationController.m in Sources */,
-				292C15482D25182000E465BF /* ExampleTableViewController.m in Sources */,
+				292C15482D25182000E465BF /* ExampleViewController.m in Sources */,
 				292C17282D251F6D00E465BF /* Example0331Group104Cell.m in Sources */,
 				292C17292D251F6D00E465BF /* Example0330Group101CellViewModel.m in Sources */,
 				292C172A2D251F6D00E465BF /* Example0320Group101Cell.m in Sources */,
@@ -2907,7 +2983,7 @@
 				292C173D2D251F6D00E465BF /* Example0330Group109SectionModel.m in Sources */,
 				292C173E2D251F6D00E465BF /* Example0330Group105SectionModel.m in Sources */,
 				292A5A512D254F6A0037579D /* Example05TestModels.m in Sources */,
-				292A5A522D254F6A0037579D /* Example05TestViewController.m in Sources */,
+				292A5A522D254F6A0037579D /* Example05ViewController.m in Sources */,
 				292A5A732D256A240037579D /* Example09Test02ViewController.swift in Sources */,
 				292A5A742D256A240037579D /* Example09SettingsImageSelectViewController.swift in Sources */,
 				292A5A752D256A240037579D /* Example09SegmentedControlIndicator.swift in Sources */,
@@ -2960,6 +3036,7 @@
 				292C17632D251F6D00E465BF /* Example0331Group101Cell.m in Sources */,
 				299B56D32D2A683900CC2F69 /* Example12ViewController.swift in Sources */,
 				292C17642D251F6D00E465BF /* Example0320Model.m in Sources */,
+				29B3340D2D3176EA006A574A /* Example01ViewController.swift in Sources */,
 				292C17652D251F6D00E465BF /* Example0320Group100SectionModel.m in Sources */,
 				292C17662D251F6D00E465BF /* Example0331Model.m in Sources */,
 				292C17672D251F6D00E465BF /* Example0331Group102SectionModel.m in Sources */,
@@ -3003,6 +3080,7 @@
 				292C17822D251F6D00E465BF /* Example0331Group106SectionModel.m in Sources */,
 				040F133B2D2B77CD00C4D6CD /* Example14ViewController.m in Sources */,
 				292C17832D251F6D00E465BF /* Example0331Group105Cell.m in Sources */,
+				29448F722D31956A0055A183 /* Example09ViewController.swift in Sources */,
 				292C17842D251F6D00E465BF /* Example0330Group106Cell.m in Sources */,
 				292C17852D251F6D00E465BF /* Example0330Group110FooterViewModel.m in Sources */,
 				292C17862D251F6D00E465BF /* Example0321ContactCellViewModel.m in Sources */,
@@ -3046,6 +3124,7 @@
 				292C17A92D251F6D00E465BF /* Example0331Group109FooterViewModel.m in Sources */,
 				292C17AA2D251F6D00E465BF /* Example0330Group110CellViewModel.m in Sources */,
 				292C17AB2D251F6D00E465BF /* Example0331Group107SectionModel.m in Sources */,
+				29448F702D3194580055A183 /* Example07ViewController.swift in Sources */,
 				292C17AC2D251F6D00E465BF /* Example0310ContentView.m in Sources */,
 				292C17AD2D251F6D00E465BF /* Example0330Group102CellViewModel.m in Sources */,
 				292C17AE2D251F6D00E465BF /* Example0331Group109Cell.m in Sources */,
@@ -3066,9 +3145,9 @@
 				292C17BD2D251F6D00E465BF /* Example0330Group107SectionModel.m in Sources */,
 				292C17BE2D251F6D00E465BF /* Example0322ViewController.m in Sources */,
 				292C17BF2D251F6D00E465BF /* Example0330Group109FooterViewModel.m in Sources */,
-				292C15412D25163700E465BF /* Example0202ViewController.m in Sources */,
-				292C15422D25163700E465BF /* Example0201ViewController.m in Sources */,
-				292A5A6A2D25685C0037579D /* Example08TestViewController.m in Sources */,
+				292C15412D25163700E465BF /* Example02ViewController.m in Sources */,
+				292C15422D25163700E465BF /* Example02Test01ViewController.m in Sources */,
+				292A5A6A2D25685C0037579D /* Example08ViewController.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -3105,16 +3184,6 @@
 /* End PBXTargetDependency section */
 
 /* Begin PBXVariantGroup section */
-		29648BEC2A72556C0090F445 /* Main.storyboard */ = {
-			isa = PBXVariantGroup;
-			children = (
-				29648BED2A72556C0090F445 /* Base */,
-				04D06B022D2D46890056A53A /* zh-Hans */,
-				04D06B052D2D46F40056A53A /* en */,
-			);
-			name = Main.storyboard;
-			sourceTree = "<group>";
-		};
 		29648BF12A72556E0090F445 /* LaunchScreen.storyboard */ = {
 			isa = PBXVariantGroup;
 			children = (
@@ -3123,6 +3192,15 @@
 				04D06B072D2D46F90056A53A /* en */,
 			);
 			name = LaunchScreen.storyboard;
+			sourceTree = "<group>";
+		};
+		29776A102D3240AC0033AAF9 /* Example15ViewController.storyboard */ = {
+			isa = PBXVariantGroup;
+			children = (
+				29776A0F2D3240AC0033AAF9 /* Base */,
+				29776A122D3240AC0033AAF9 /* mul */,
+			);
+			name = Example15ViewController.storyboard;
 			sourceTree = "<group>";
 		};
 /* End PBXVariantGroup section */
@@ -3271,7 +3349,7 @@
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SWIFT_EMIT_LOC_STRINGS = YES;
-				SWIFT_OBJC_BRIDGING_HEADER = "Example/09-XZSegmentedControl/Example-Bridging-Header.h";
+				SWIFT_OBJC_BRIDGING_HEADER = Example/ExampleBridgingHeader.h;
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 6.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
@@ -3306,7 +3384,7 @@
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SWIFT_EMIT_LOC_STRINGS = YES;
-				SWIFT_OBJC_BRIDGING_HEADER = "Example/09-XZSegmentedControl/Example-Bridging-Header.h";
+				SWIFT_OBJC_BRIDGING_HEADER = Example/ExampleBridgingHeader.h;
 				SWIFT_VERSION = 6.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};

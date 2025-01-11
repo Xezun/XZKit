@@ -1,16 +1,16 @@
 //
-//  Example08TestViewController.m
+//  Example08ViewController.m
 //  Example
 //
 //  Created by Xezun on 2023/7/27.
 //
 
-#import "Example08TestViewController.h"
+#import "Example08ViewController.h"
 @import XZPageControl;
 @import XZPageView;
 @import SDWebImage;
 
-@interface Example08TestViewController () <XZPageViewDelegate, XZPageViewDataSource>
+@interface Example08ViewController () <XZPageViewDelegate, XZPageViewDataSource>
 
 @property (weak, nonatomic) IBOutlet XZPageView *pageView;
 @property (weak, nonatomic) IBOutlet XZPageControl *pageControl;
@@ -18,7 +18,7 @@
 
 @end
 
-@implementation Example08TestViewController
+@implementation Example08ViewController
 
 - (void)viewDidLoad {
     [super viewDidLoad];

@@ -1,21 +1,21 @@
 //
-//  Example0201ViewController.m
+//  Example02Test01ViewController.m
 //  Example
 //
 //  Created by Xezun on 2023/7/27.
 //
 
-#import "Example0201ViewController.h"
+#import "Example02Test01ViewController.h"
 @import XZExtensions;
 
-@interface Example0201ViewController ()
+@interface Example02Test01ViewController ()
 
 @property (weak, nonatomic) IBOutlet UISegmentedControl *styleControl;
 @property (weak, nonatomic) IBOutlet UISwitch *hiddenControl;
 
 @end
 
-@implementation Example0201ViewController
+@implementation Example02Test01ViewController
 
 - (void)dealloc {
     

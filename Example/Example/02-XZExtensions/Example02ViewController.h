@@ -1,5 +1,5 @@
 //
-//  Example0202ViewController.h
+//  Example02ViewController.h
 //  Example
 //
 //  Created by 徐臻 on 2024/9/14.
@@ -9,7 +9,7 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-@interface Example0202ViewController : UITableViewController
+@interface Example02ViewController : UITableViewController
 
 @end
 

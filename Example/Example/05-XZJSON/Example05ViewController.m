@@ -1,17 +1,17 @@
 //
-//  Example05TestViewController.m
+//  Example05ViewController.m
 //  Example
 //
 //  Created by Xezun on 2023/7/27.
 //
 
-#import "Example05TestViewController.h"
+#import "Example05ViewController.h"
 #import "Example05TestModels.h"
 
-@interface Example05TestViewController ()
+@interface Example05ViewController ()
 @end
 
-@implementation Example05TestViewController
+@implementation Example05ViewController
 
 - (void)viewDidLoad {
     [super viewDidLoad];

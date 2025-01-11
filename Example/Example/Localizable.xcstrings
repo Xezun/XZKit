@@ -34,6 +34,17 @@
         }
       }
     },
+    "新页面生效" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "New Page Only"
+          }
+        }
+      }
+    },
     "模版：{0}" : {
       "extractionState" : "manual",
       "localizations" : {
@@ -52,6 +63,17 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Language: {0}"
+          }
+        }
+      }
+    },
+    "重启后生效" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Needs Restart App"
           }
         }
       }
