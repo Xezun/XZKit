@@ -149,7 +149,7 @@ typedef NSString *XZMocoaUpdatesKey NS_EXTENSIBLE_STRING_ENUM;
 /// 传递当前事件的对象。
 @property (nonatomic, unsafe_unretained, XZ_READONLY) __kindof XZMocoaViewModel *target;
 - (instancetype)init NS_UNAVAILABLE;
-+ (instancetype)updatesWithName:(nullable NSString *)name value:(nullable id)value source:(XZMocoaViewModel *)source;
++ (instancetype)updatesWithKey:(XZMocoaUpdatesKey)key value:(nullable id)value source:(XZMocoaViewModel *)source;
 @end
 
 /// 通用事件。如果视图模型只有一个事件，或者没必要细分事件时，可以使用此名称。

@@ -196,14 +196,14 @@
 
 @implementation XZMocoaUpdates
 
-+ (instancetype)updatesWithName:(NSString *)name value:(id)value source:(XZMocoaViewModel *)source {
-    return [[self alloc] initWithName:name value:value source:source];
++ (instancetype)updatesWithKey:(NSString *)key value:(id)value source:(XZMocoaViewModel *)source {
+    return [[self alloc] initWithKey:key value:value source:source];
 }
 
-- (instancetype)initWithName:(NSString *)name value:(id)value source:(XZMocoaViewModel *)source {
+- (instancetype)initWithKey:(NSString *)key value:(id)value source:(XZMocoaViewModel *)source {
     self = [super init];
     if (self) {
-        _key = name.copy ?: XZMocoaUpdatesKeyNone;
+        _key = key.copy ?: XZMocoaUpdatesKeyNone;
         _value = value;
         _source = source;
         _target = source;
@@ -222,9 +222,9 @@ XZMocoaUpdatesKey const XZMocoaUpdatesKeyDelete = @"XZMocoaUpdatesKeyDelete";
 
 @implementation XZMocoaViewModel (XZMocoaViewModelHierarchyEvents)
 
-- (void)sendUpdatesForKey:(NSString *)name value:(id)value {
+- (void)sendUpdatesForKey:(NSString *)key value:(id)value {
     if (!self.isReady) return;
-    XZMocoaUpdates * const updates = [XZMocoaUpdates updatesWithName:name value:value source:self];
+    XZMocoaUpdates * const updates = [XZMocoaUpdates updatesWithKey:key value:value source:self];
     [self.superViewModel didReceiveUpdates:updates];
 }
 
