@@ -81,9 +81,9 @@ typedef void(^XZMocoaListDelayedUpdates)(__kindof XZMocoaViewModel *self);
 
 #pragma mark - 处理 SectionViewModel 的事件
 
-- (void)didReceiveUpdate:(XZMocoaUpdate *)emition {
-    if ([emition.name isEqualToString:XZMocoaUpdateNameReload]) {
-        __kindof XZMocoaViewModel * const subViewModel = emition.target;
+- (void)didReceiveUpdates:(XZMocoaUpdates *)updates {
+    if ([updates.name isEqualToString:XZMocoaUpdatesNameReload]) {
+        __kindof XZMocoaViewModel * const subViewModel = updates.target;
         if (self.isPerformingBatchUpdates) {
             // 正在进行批量更新，刷新操作将被延迟到批量更新之后。
             // 主要原因是：
@@ -91,7 +91,7 @@ typedef void(^XZMocoaListDelayedUpdates)(__kindof XZMocoaViewModel *self);
             // 2、即使当前是操作与批量更新没有重复，可能依然会存在崩溃的可能。
             // 3、批量更新之后，当前操作的对象，可能已经不存在了。
             [_delayedBatchUpdates addObject:^void(XZMocoaListViewModel *self) {
-                [self didReceiveUpdate:emition];
+                [self didReceiveUpdates:updates];
             }];
             return;
         }
@@ -99,8 +99,8 @@ typedef void(^XZMocoaListDelayedUpdates)(__kindof XZMocoaViewModel *self);
             XZMocoaListViewSectionViewModel * const sectionVM = subViewModel;
             NSInteger const section = [self indexOfSectionViewModel:sectionVM];
             if (section != NSNotFound) {
-                if ([emition.source isKindOfClass:[XZMocoaListViewCellViewModel class]]) {
-                    NSInteger const row = [sectionVM indexOfCellViewModel:emition.source];
+                if ([updates.source isKindOfClass:[XZMocoaListViewCellViewModel class]]) {
+                    NSInteger const row = [sectionVM indexOfCellViewModel:updates.source];
                     if (row != NSNotFound) {
                         NSIndexPath *indexPath = [NSIndexPath indexPathForRow:row inSection:section];
                         [self didReloadCellsAtIndexPaths:@[indexPath]];
@@ -112,7 +112,7 @@ typedef void(^XZMocoaListDelayedUpdates)(__kindof XZMocoaViewModel *self);
             }
         }
     }
-    [super didReceiveUpdate:emition];
+    [super didReceiveUpdates:updates];
 }
 
 #pragma mark - 局部更新

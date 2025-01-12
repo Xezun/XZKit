@@ -69,13 +69,13 @@ typedef void(^XZMocoaListDelayedUpdates)(XZMocoaListViewSectionViewModel *self);
     [_cellViewModels removeObject:viewModel];
 }
 
-- (void)didReceiveUpdate:(XZMocoaUpdate *)emition {
-    if ([emition.name isEqualToString:XZMocoaUpdateNameReload]) {
-        XZMocoaViewModel * const subViewModel = emition.target;
+- (void)didReceiveUpdates:(XZMocoaUpdates *)updates {
+    if ([updates.name isEqualToString:XZMocoaUpdatesNameReload]) {
+        XZMocoaViewModel * const subViewModel = updates.target;
         // 正在批量更新，延迟事件（如果对象被销毁，事件则不会执行）
         if (self.isPerformingBatchUpdates) {
             [_delayedBatchUpdates addObject:^void(XZMocoaListViewSectionViewModel *self) {
-                [self didReceiveUpdate:emition];
+                [self didReceiveUpdates:updates];
             }];
             return;
         }
@@ -97,7 +97,7 @@ typedef void(^XZMocoaListDelayedUpdates)(XZMocoaListViewSectionViewModel *self);
             }
         }
     }
-    [super didReceiveUpdate:emition];
+    [super didReceiveUpdates:updates];
 }
 
 #pragma mark - 公开方法

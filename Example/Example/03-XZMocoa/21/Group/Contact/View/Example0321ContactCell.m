@@ -23,6 +23,8 @@
 - (void)viewModelDidChange {
     [self.viewModel addTarget:self action:@selector(nameDidChange:) forKey:@"name"];
     [self.viewModel addTarget:self action:@selector(phoneDidChange:) forKey:@"phone"];
+    [self nameDidChange:self.viewModel];
+    [self phoneDidChange:self.viewModel];
 }
 
 - (void)nameDidChange:(Example0321ContactCellViewModel *)viewModel {

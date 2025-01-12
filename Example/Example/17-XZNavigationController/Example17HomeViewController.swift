@@ -60,7 +60,7 @@ class Example17HomeViewController: UITableViewController, XZNavigationBarCustomi
     // 自定义手势前进的页面。
     func navigationController(_ navigationController: UINavigationController, viewControllerForGestureNavigation operation: UINavigationController.Operation) -> UIViewController? {
         if operation == .push {
-            let sb = UIStoryboard.init(name: "Main", bundle: nil)
+            let sb = UIStoryboard.init(name: "Example17ViewController", bundle: nil)
             let vc = sb.instantiateViewController(withIdentifier: "next")
             if let navigationBar = (vc as? XZNavigationBarCustomizable)?.navigationBarIfLoaded {
                 navigationBar.isHidden = nextHiddenSwitch.isOn

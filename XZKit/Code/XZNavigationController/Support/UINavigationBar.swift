@@ -56,7 +56,7 @@ extension UIKit.UINavigationBar {
                 if let CustomizableClass = objc_getAssociatedObject(OldClass, &_customizableClass) as? UIKit.UINavigationBar.Type {
                     _ = object_setClass(self, CustomizableClass)
                 } else if let CustomizableClass = xz_objc_createClass(OldClass, { (CustomizableClass) in
-                    xz_objc_class_copyMethods(XZNavigationControllerNavigationBar.self, CustomizableClass);
+                    xz_objc_class_copyMethods(XZCustomizableNavigationBar.self, CustomizableClass);
                 }) as? UIKit.UINavigationBar.Type {
                     objc_setAssociatedObject(OldClass, &_customizableClass, CustomizableClass, .OBJC_ASSOCIATION_ASSIGN)
                     _ = object_setClass(self, CustomizableClass)
@@ -70,11 +70,9 @@ extension UIKit.UINavigationBar {
         }
     }
     
-    
-    
 }
 
-private class XZNavigationControllerNavigationBar: UIKit.UINavigationBar {
+private class XZCustomizableNavigationBar: UIKit.UINavigationBar {
     
     open override var isHidden: Bool {
         get {
@@ -150,7 +148,6 @@ private class XZNavigationControllerNavigationBar: UIKit.UINavigationBar {
     open override func bringSubviewToFront(_ view: UIView) {
         xz_objc_msgSendSuper(self, v: #selector(bringSubviewToFront(_:)), o: view)
         
-
         if let navigationBar = navigationBar, navigationBar != view {
             xz_objc_msgSendSuper(self, v: #selector(bringSubviewToFront(_:)), o: navigationBar)
         }

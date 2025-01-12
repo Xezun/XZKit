@@ -53,7 +53,7 @@
     self.address = data.address;
     self.title   = data.title;
     self.content = data.content;
-    [self sendActionsForKey:XZMocoaKeyNone];
+    [self sendActionsForKey:XZMocoaKeyNone value:nil];
 }
 
 - (NSString *)formatPhoneNumber:(NSString *)phone {

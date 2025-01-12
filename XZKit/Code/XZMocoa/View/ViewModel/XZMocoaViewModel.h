@@ -123,58 +123,60 @@ NS_SWIFT_UI_ACTOR @protocol XZMocoaViewModel <NSObject>
 @end
 
 
-// - Mocoa Hierarchy Emition -
-// 在具有层级关系的业务模块中，下级模块向上级模块传递数据或事件，或者上级模块监听下级模块的数据或事件，
+// - Mocoa Hierarchy Updates -
+// 层级更新机制：在具有层级关系的业务模块中，下级模块向上级模块传递数据或事件，或者上级模块监听下级模块的数据或事件，
 // 在 iOS 开发中一般使用代理模式，因为代理协议可以让上下级的逻辑关系看起来更清晰。
 // 但是在使用 MVVM 设计模式开发时，因为模块的划分，原本在 MVC 模式下，可以直接交互的逻辑，变得不再
 // 直接，这将间接导致我们在开发时，需要额外的工作量来设计模块交互的代码，开发效率和开发体验将会受影响。
 // 而如果不进行模块分层，或减少划分模块，那么很可能导致模块太大，代码也就不可避免的出现臃肿，这又与我
 // 们采用 MVVM 设计模式开发的初衷不符，所以划分模块是必须也是必要的。幸运的是，在实际开发中，大部分情
 // 况下，模块与模块之间的交互，都是一些简单的交互，在框架层提供一种简单的交互机制，即可解决大部分层级模
-// 块间的交互需求，所以 Mocoa 设计了基于层级关系的 Mocoa Hierarchy Emit 机制。
-// Mocoa Hierarchy Emit 机制，只为解决层级模块间的交互问题，对于不同模块间的交互，或者比较复杂的
+// 块间的交互需求，所以 Mocoa 设计了基于层级关系的 Mocoa Hierarchy Updates 机制。
+// 该机制，只为解决层级模块间的交互问题，对于不同模块间的交互，或者比较复杂的
 // 交互，Mocoa 也是建议采用常规代理或通知机制，对于代码而言，保持可维护性是优先级最高的。
 
-typedef NSString *XZMocoaUpdateName NS_EXTENSIBLE_STRING_ENUM;
+/// 更新方式。
+typedef NSString *XZMocoaUpdatesName NS_EXTENSIBLE_STRING_ENUM;
 
-@interface XZMocoaUpdate : NSObject
-/// 事件名。
-@property (nonatomic, copy, readonly) XZMocoaUpdateName name;
+/// 更新信息模型。
+@interface XZMocoaUpdates : NSObject
+/// 更细方式。
+@property (nonatomic, copy, readonly) XZMocoaUpdatesName name;
 /// 事件值。
 @property (nonatomic, strong, readonly, nullable) id value;
 /// 发生当前事件的源对象。
-@property (nonatomic, strong, readonly) __kindof XZMocoaViewModel *source;
+@property (nonatomic, unsafe_unretained, readonly) __kindof XZMocoaViewModel *source;
 /// 传递当前事件的对象。
-@property (nonatomic, strong, XZ_READONLY) __kindof XZMocoaViewModel *target;
+@property (nonatomic, unsafe_unretained, XZ_READONLY) __kindof XZMocoaViewModel *target;
 - (instancetype)init NS_UNAVAILABLE;
-+ (instancetype)emitionWithName:(nullable NSString *)name value:(nullable id)value source:(XZMocoaViewModel *)source;
++ (instancetype)updatesWithName:(nullable NSString *)name value:(nullable id)value source:(XZMocoaViewModel *)source;
 @end
 
-/// 没有名称的事件，一般作为默认事件的事件名。
-FOUNDATION_EXPORT XZMocoaUpdateName const XZMocoaUpdateNameDefault;
+/// 通用事件，一般作为默认事件的事件名。
+FOUNDATION_EXPORT XZMocoaUpdatesName const XZMocoaUpdatesNameDefault;
 /// 重载事件。适用情形：下级已完成数据更新，需要上级执行重载模块的操作。
-FOUNDATION_EXPORT XZMocoaUpdateName const XZMocoaUpdateNameReload;
+FOUNDATION_EXPORT XZMocoaUpdatesName const XZMocoaUpdatesNameReload;
 /// 更新操作。适用情形：通知上级，执行数据编辑的操作。
-FOUNDATION_EXPORT XZMocoaUpdateName const XZMocoaUpdateNameUpdate;
+FOUNDATION_EXPORT XZMocoaUpdatesName const XZMocoaUpdatesNameModify;
 /// 插入操作。适用情形：通知上级，执行数据插入的操作。
-FOUNDATION_EXPORT XZMocoaUpdateName const XZMocoaUpdateNameInsert;
+FOUNDATION_EXPORT XZMocoaUpdatesName const XZMocoaUpdatesNameInsert;
 /// 删除操作。适用情形：通知上级，执行删除数据的操作。
-FOUNDATION_EXPORT XZMocoaUpdateName const XZMocoaUpdateNameRemove;
+FOUNDATION_EXPORT XZMocoaUpdatesName const XZMocoaUpdatesNameDelete;
 
-@interface XZMocoaViewModel (XZMocoaViewModelHierarchyEmition)
+@interface XZMocoaViewModel (XZMocoaViewModelHierarchyUpdates)
 /// 收到下级模块的事件，或监听到下级模块的数据变化。
 /// @discussion
 /// 只有在 isReady 状态下，才会传递事件。
 /// @discussion
 /// 默认情况下，该方法直接将事件继续向上级模块传递，开发者可重写此方法，根据业务需要，控制事件是否向上传递。
-/// @param update 事件信息
-- (void)didReceiveUpdate:(XZMocoaUpdate *)update;
+/// @param updates 事件信息
+- (void)didReceiveUpdates:(XZMocoaUpdates *)updates;
 
 /// 向上级模块发送事件或数据的便利方法，当前对象将作为事件源。
 /// @discussion 只有在 isReady 状态下，才会发送事件。
-/// @param name 事件名，如为 nil 则为默认名称 XZMocoaUpdateNameDefault
+/// @param name 事件名，如为 nil 则为默认名称 XZMocoaUpdatesNameDefault
 /// @param value 事件值
-- (void)sendUpdate:(XZMocoaUpdateName)name value:(nullable id)value;
+- (void)sendUpdatesForName:(XZMocoaUpdatesName)name value:(nullable id)value;
 @end
 
 
@@ -208,7 +210,7 @@ FOUNDATION_EXPORT XZMocoaKey const XZMocoaKeyNone;
 /// 编译器插件，在属性中添加 mocoa=key 标记，生成的 setter 中添加发送 key 事件的代码。
 #define XZ_MOCOA_KEY(key)
 
-@interface XZMocoaViewModel (XZMocoaViewModelKeyEvents)
+@interface XZMocoaViewModel (XZMocoaViewModelTargetAction)
 
 /// 添加 target-action 事件。
 /// @attention

@@ -51,6 +51,7 @@
     // 刷新状态，通过监听 isHeaderRefreshing/isFooterRefreshing 来更新。
     [viewModel addTarget:self action:@selector(headerRefreshingChanged:) forKey:@"isHeaderRefreshing"];
     [viewModel addTarget:self action:@selector(footerRefreshingChanged:) forKey:@"isFooterRefreshing"];
+    [self headerRefreshingChanged:viewModel];
 }
 
 - (void)headerRefreshingChanged:(Example0320ViewModel *)viewModel {

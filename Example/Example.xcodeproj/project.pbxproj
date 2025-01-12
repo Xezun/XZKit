@@ -848,9 +848,9 @@
 		292A5A3C2D254B060037579D /* 04-XZML */ = {
 			isa = PBXGroup;
 			children = (
+				29B334122D317767006A574A /* Example04ViewController.storyboard */,
 				292A5A452D254D010037579D /* Example04ViewController.h */,
 				292A5A462D254D010037579D /* Example04ViewController.m */,
-				29B334122D317767006A574A /* Example04ViewController.storyboard */,
 				292A5A432D254D010037579D /* Example04TestViewController.h */,
 				292A5A442D254D010037579D /* Example04TestViewController.m */,
 				292A5A412D254D010037579D /* Example04SettingsViewController.h */,

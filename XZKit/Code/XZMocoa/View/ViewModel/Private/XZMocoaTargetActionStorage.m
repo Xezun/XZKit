@@ -1,24 +1,24 @@
 //
-//  XZMocoaKeyedTargetActions.m
+//  XZMocoaTargetActionStorage.m
 //  XZMocoa
 //
 //  Created by Xezun on 2023/8/8.
 //
 
-#import "XZMocoaKeyedTargetActions.h"
-#import "XZMocoaTargetAction.h"
+#import "XZMocoaTargetActionStorage.h"
+@import ObjectiveC;
 
 /// stop 可能为 NULL
 typedef void (^const XZMocoaRemoveBlock)(NSString *key, NSMutableArray<XZMocoaTargetAction *> *targetActions, BOOL *stop);
 
-@implementation XZMocoaKeyedTargetActions {
+@implementation XZMocoaTargetActionStorage {
     NSMutableDictionary<NSString *, NSMutableArray<XZMocoaTargetAction *> *> *_table;
 }
 
-- (instancetype)initWithSender:(XZMocoaViewModel *)sender {
+- (instancetype)initWithViewModel:(XZMocoaViewModel *)viewModel {
     self = [super init];
     if (self) {
-        _sender = sender;
+        _viewModel = viewModel;
         _table = [NSMutableDictionary dictionary];
     }
     return self;
@@ -32,6 +32,17 @@ typedef void (^const XZMocoaRemoveBlock)(NSString *key, NSMutableArray<XZMocoaTa
     }
     XZMocoaTargetAction *targetAction = [[XZMocoaTargetAction alloc] initWithTarget:target action:action];
     [targetActions addObject:targetAction];
+}
+
+- (void)addTarget:(id)target handler:(XZMocoaTargetHandler)handler forKey:(NSString *)key {
+    NSMutableArray<XZMocoaTargetAction *> *targetActions = _table[key];
+    if (targetActions == nil) {
+        targetActions = [NSMutableArray array];
+        _table[key] = targetActions;
+    }
+    XZMocoaTargetAction *targetAction = [[XZMocoaTargetAction alloc] initWithTarget:target handler:handler];
+    [targetActions addObject:targetAction];
+    [targetAction sendActionForKey:key value:nil sender:_viewModel];
 }
 
 - (void)removeTarget:(nullable id)target action:(nullable SEL)action forKey:(nullable NSString *)key {
@@ -132,13 +143,13 @@ typedef void (^const XZMocoaRemoveBlock)(NSString *key, NSMutableArray<XZMocoaTa
 
 - (void)sendActionsForKey:(NSString *)key value:(nullable)value {
     NSMutableArray<XZMocoaTargetAction *> *targetActions = _table[key];
-    id const sender = self.sender;
+    id const sender = self.viewModel;
     [targetActions enumerateObjectsWithOptions:NSEnumerationReverse usingBlock:^(XZMocoaTargetAction *targetAction, NSUInteger idx, BOOL *stop) {
         id  const target = targetAction.target;
         if (target == nil) {
             [targetActions removeObjectAtIndex:idx]; // 删除 target 已销毁的监听
         } else {
-            [targetAction sendActionWithValue:value sender:sender key:key];
+            [targetAction sendActionForKey:key value:value sender:sender];
         }
     }];
 }

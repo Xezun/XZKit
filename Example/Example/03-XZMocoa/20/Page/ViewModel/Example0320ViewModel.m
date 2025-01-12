@@ -32,12 +32,12 @@
 
 - (void)setHeaderRefreshing:(BOOL)isHeaderRefreshing {
     _isHeaderRefreshing = isHeaderRefreshing;
-    [self sendActionsForKey:@"isHeaderRefreshing"];
+    [self sendActionsForKey:@"isHeaderRefreshing" value:nil];
 }
 
 - (void)setFooterRefreshing:(BOOL)isFooterRefreshing {
     _isFooterRefreshing = isFooterRefreshing;
-    [self sendActionsForKey:@"isFooterRefreshing"];
+    [self sendActionsForKey:@"isFooterRefreshing" value:nil];
 }
 
 - (void)refreshingHeaderDidBeginAnimating {
