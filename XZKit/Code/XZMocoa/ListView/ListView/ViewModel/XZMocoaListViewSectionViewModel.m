@@ -70,7 +70,7 @@ typedef void(^XZMocoaListDelayedUpdates)(XZMocoaListViewSectionViewModel *self);
 }
 
 - (void)didReceiveUpdates:(XZMocoaUpdates *)updates {
-    if ([updates.name isEqualToString:XZMocoaUpdatesNameReload]) {
+    if ([updates.key isEqualToString:XZMocoaUpdatesKeyReload]) {
         XZMocoaViewModel * const subViewModel = updates.target;
         // 正在批量更新，延迟事件（如果对象被销毁，事件则不会执行）
         if (self.isPerformingBatchUpdates) {

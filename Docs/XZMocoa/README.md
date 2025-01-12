@@ -389,18 +389,18 @@ Mocoa 与其说是框架，不如说是规范，通过协议规范 MVVM 的实�
 - (void)handleUserAction {
     // change the data then
     self.height = 100; // a new height
-    [self sendUpdate:XZMocoaUpdatesNameReload value:nil];
+    [self sendUpdate:XZMocoaUpdatesKeyReload value:nil];
 }
 
 // 在 UITableView 模块中
 - (void)didReceiveUpdate:(XZMocoaUpdate *)updates {
-    if ([emition.name isEqualToString:XZMocoaUpdatesNameReload]) {
+    if ([emition.name isEqualToString:XZMocoaUpdatesKeyReload]) {
         [self reloadData];
     }
 }
 ```
 
-当前这么做，需要一些默认的约定，比如将`XZMocoaUpdatesNameReload`作为刷新视图的事件。
+当前这么做，需要一些默认的约定，比如将`XZMocoaUpdatesKeyReload`作为刷新视图的事件。
 在 MVC 中，解决上面的问题，一般是通过`delegate`实现，这明显或破坏模块的整体性，上层模块与下层模块的`delegate`形成了耦合，但是利用层级关系处理，就能很好的避免这一点。
 
 同时，层级关系事件的局限性也很明显，仅适合处理比较明确的事件，不过在模块封装完整的情况下，下层模块也不应该有其它事件需要传递给上级处理。

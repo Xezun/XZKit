@@ -25,7 +25,7 @@ NS_SWIFT_UI_ACTOR @protocol XZMocoaListViewModelDelegate <NSObject>
 /// @discussion 请在使用 viewModel 前设置此属性。
 @property (nonatomic, copy) NSArray<XZMocoaKind> *supportedSupplementaryKinds;
 
-/// 接收来自下级的 XZMocoaUpdatesNameReload 事件，并刷新视图，如果在批量更新的过程中，视图刷新可能会延迟。
+/// 接收来自下级的 XZMocoaUpdatesKeyReload 事件，并刷新视图，如果在批量更新的过程中，视图刷新可能会延迟。
 - (void)didReceiveUpdates:(XZMocoaUpdates *)updates;
 
 /// 一般而言 TableViewModel 只会有一个事件接收者，这里直接用了代理。

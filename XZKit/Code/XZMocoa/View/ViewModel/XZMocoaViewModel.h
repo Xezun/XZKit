@@ -136,12 +136,12 @@ NS_SWIFT_UI_ACTOR @protocol XZMocoaViewModel <NSObject>
 // 交互，Mocoa 也是建议采用常规代理或通知机制，对于代码而言，保持可维护性是优先级最高的。
 
 /// 更新方式。
-typedef NSString *XZMocoaUpdatesName NS_EXTENSIBLE_STRING_ENUM;
+typedef NSString *XZMocoaUpdatesKey NS_EXTENSIBLE_STRING_ENUM;
 
 /// 更新信息模型。
 @interface XZMocoaUpdates : NSObject
-/// 更细方式。
-@property (nonatomic, copy, readonly) XZMocoaUpdatesName name;
+/// 更新方式，或者用来区分更新的标记。
+@property (nonatomic, copy, readonly) XZMocoaUpdatesKey key;
 /// 事件值。
 @property (nonatomic, strong, readonly, nullable) id value;
 /// 发生当前事件的源对象。
@@ -152,19 +152,19 @@ typedef NSString *XZMocoaUpdatesName NS_EXTENSIBLE_STRING_ENUM;
 + (instancetype)updatesWithName:(nullable NSString *)name value:(nullable id)value source:(XZMocoaViewModel *)source;
 @end
 
-/// 通用事件，一般作为默认事件的事件名。
-FOUNDATION_EXPORT XZMocoaUpdatesName const XZMocoaUpdatesNameDefault;
+/// 通用事件。如果视图模型只有一个事件，或者没必要细分事件时，可以使用此名称。
+FOUNDATION_EXPORT XZMocoaUpdatesKey const XZMocoaUpdatesKeyNone;
 /// 重载事件。适用情形：下级已完成数据更新，需要上级执行重载模块的操作。
-FOUNDATION_EXPORT XZMocoaUpdatesName const XZMocoaUpdatesNameReload;
+FOUNDATION_EXPORT XZMocoaUpdatesKey const XZMocoaUpdatesKeyReload;
 /// 更新操作。适用情形：通知上级，执行数据编辑的操作。
-FOUNDATION_EXPORT XZMocoaUpdatesName const XZMocoaUpdatesNameModify;
+FOUNDATION_EXPORT XZMocoaUpdatesKey const XZMocoaUpdatesKeyModify;
 /// 插入操作。适用情形：通知上级，执行数据插入的操作。
-FOUNDATION_EXPORT XZMocoaUpdatesName const XZMocoaUpdatesNameInsert;
+FOUNDATION_EXPORT XZMocoaUpdatesKey const XZMocoaUpdatesKeyInsert;
 /// 删除操作。适用情形：通知上级，执行删除数据的操作。
-FOUNDATION_EXPORT XZMocoaUpdatesName const XZMocoaUpdatesNameDelete;
+FOUNDATION_EXPORT XZMocoaUpdatesKey const XZMocoaUpdatesKeyDelete;
 
 @interface XZMocoaViewModel (XZMocoaViewModelHierarchyUpdates)
-/// 收到下级模块的事件，或监听到下级模块的数据变化。
+/// 接收下级模块的更新，或监听到下级模块的数据变化。
 /// @discussion
 /// 只有在 isReady 状态下，才会传递事件。
 /// @discussion
@@ -172,11 +172,11 @@ FOUNDATION_EXPORT XZMocoaUpdatesName const XZMocoaUpdatesNameDelete;
 /// @param updates 事件信息
 - (void)didReceiveUpdates:(XZMocoaUpdates *)updates;
 
-/// 向上级模块发送事件或数据的便利方法，当前对象将作为事件源。
+/// 向上级模块发送更新，当前对象将作为事件源。
 /// @discussion 只有在 isReady 状态下，才会发送事件。
-/// @param name 事件名，如为 nil 则为默认名称 XZMocoaUpdatesNameDefault
+/// @param key 事件名，如为 nil 则为默认名称 XZMocoaUpdatesKeyNone
 /// @param value 事件值
-- (void)sendUpdatesForName:(XZMocoaUpdatesName)name value:(nullable id)value;
+- (void)sendUpdatesForKey:(XZMocoaUpdatesKey)key value:(nullable id)value;
 @end
 
 
@@ -225,6 +225,7 @@ FOUNDATION_EXPORT XZMocoaKey const XZMocoaKeyNone;
 /// @param action 执行事件的方法
 /// @param key 事件，nil 表示添加默认事件
 - (void)addTarget:(id)target action:(SEL)action forKey:(XZMocoaKey)key;
+
 /// 移除 target-action 事件。
 /// @discussion
 /// 移除所有匹配 target、action、key 的事件，值 nil 表示匹配所有，例如都为 nil 会移除所有事件。
@@ -232,6 +233,7 @@ FOUNDATION_EXPORT XZMocoaKey const XZMocoaKeyNone;
 /// @param action 执行事件的方法
 /// @param key 绑定的事件
 - (void)removeTarget:(nullable id)target action:(nullable SEL)action forKey:(nullable XZMocoaKey)key;
+
 /// 发送 target-action 事件。
 /// @param key 事件，nil 表示发送默认事件
 /// @param value 事件值

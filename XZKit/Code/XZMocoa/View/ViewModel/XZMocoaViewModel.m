@@ -203,7 +203,7 @@
 - (instancetype)initWithName:(NSString *)name value:(id)value source:(XZMocoaViewModel *)source {
     self = [super init];
     if (self) {
-        _name = name.copy ?: XZMocoaUpdatesNameDefault;
+        _key = name.copy ?: XZMocoaUpdatesKeyNone;
         _value = value;
         _source = source;
         _target = source;
@@ -214,15 +214,15 @@
 @end
 
 
-XZMocoaUpdatesName const XZMocoaUpdatesNameDefault = @"";
-XZMocoaUpdatesName const XZMocoaUpdatesNameReload = @"XZMocoaUpdatesNameReload";
-XZMocoaUpdatesName const XZMocoaUpdatesNameModify = @"XZMocoaUpdatesNameModify";
-XZMocoaUpdatesName const XZMocoaUpdatesNameInsert = @"XZMocoaUpdatesNameInsert";
-XZMocoaUpdatesName const XZMocoaUpdatesNameDelete = @"XZMocoaUpdatesNameDelete";
+XZMocoaUpdatesKey const XZMocoaUpdatesKeyNone = @"";
+XZMocoaUpdatesKey const XZMocoaUpdatesKeyReload = @"XZMocoaUpdatesKeyReload";
+XZMocoaUpdatesKey const XZMocoaUpdatesKeyModify = @"XZMocoaUpdatesKeyModify";
+XZMocoaUpdatesKey const XZMocoaUpdatesKeyInsert = @"XZMocoaUpdatesKeyInsert";
+XZMocoaUpdatesKey const XZMocoaUpdatesKeyDelete = @"XZMocoaUpdatesKeyDelete";
 
 @implementation XZMocoaViewModel (XZMocoaViewModelHierarchyEvents)
 
-- (void)sendUpdatesForName:(NSString *)name value:(id)value {
+- (void)sendUpdatesForKey:(NSString *)name value:(id)value {
     if (!self.isReady) return;
     XZMocoaUpdates * const updates = [XZMocoaUpdates updatesWithName:name value:value source:self];
     [self.superViewModel didReceiveUpdates:updates];
