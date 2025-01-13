@@ -1,0 +1,30 @@
+
+/* Class = "UILabel"; text = "简体中文"; ObjectID = "52F-WN-mpf"; */
+"52F-WN-mpf.text" = "简体中文";
+
+/* Class = "UINavigationItem"; title = "本地化测试"; ObjectID = "5kM-Sp-qHj"; */
+"5kM-Sp-qHj.title" = "Localization Tests";
+
+/* Class = "UINavigationItem"; title = "应用语言设置"; ObjectID = "Enm-2Z-eYb"; */
+"Enm-2Z-eYb.title" = "App Language Settings";
+
+/* Class = "UINavigationItem"; title = "XZLocale"; ObjectID = "MtX-3e-TTA"; */
+"MtX-3e-TTA.title" = "XZLocale";
+
+/* Class = "UILabel"; text = "English"; ObjectID = "QYr-oh-Hi9"; */
+"QYr-oh-Hi9.text" = "English";
+
+/* Class = "UIBarButtonItem"; title = "返回"; ObjectID = "RFN-fg-nAr"; */
+"RFN-fg-nAr.title" = "Back";
+
+/* Class = "UILabel"; text = "应用内语言设置"; ObjectID = "Tjc-sf-zcp"; */
+"Tjc-sf-zcp.text" = "App Language Settings";
+
+/* Class = "UILabel"; text = "02、本地化测试"; ObjectID = "jkU-JO-IuF"; */
+"jkU-JO-IuF.text" = "02. Localization Tests";
+
+/* Class = "UILabel"; text = "01、应用语言设置"; ObjectID = "smF-1i-FCh"; */
+"smF-1i-FCh.text" = "01. App Language Settings";
+
+/* Class = "UIBarButtonItem"; title = "关闭"; ObjectID = "wMu-ZY-wXf"; */
+"wMu-ZY-wXf.title" = "Close";

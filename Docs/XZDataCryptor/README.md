@@ -1,45 +1,91 @@
-# XZKit/DataCryptor
+# XZDataCryptor
 
-针对 iOS 系统库 CommonCrypto/CommonCryptor 的二次封装，使其面向对象，更易使用。
+[![CI Status](https://img.shields.io/badge/Build-pass-brightgreen.svg)](https://cocoapods.org/pods/XZDataCryptor)
+[![Version](https://img.shields.io/cocoapods/v/XZDataCryptor.svg?style=flat)](https://cocoapods.org/pods/XZDataCryptor)
+[![License](https://img.shields.io/cocoapods/l/XZDataCryptor.svg?style=flat)](https://cocoapods.org/pods/XZDataCryptor)
+[![Platform](https://img.shields.io/cocoapods/p/XZDataCryptor.svg?style=flat)](https://cocoapods.org/pods/XZDataCryptor)
 
-## 特性
+基于原生 CommonCrypto 框架进行的二次封装，将 AES、DES、CAST 等对称加密函数，封装成易于使用的面向对象的版本。
 
-- 面向对象的接口，更易使用。
-- 针对 Swift 优化的命名方式，在 Swift 中更自然。
-- 同时提供快速便利方法和示例方法，轻松应对大、小数据的加密。
+## Example
 
-## 示例
+在示例项目中，提供了完整的使用示例，也可用来体验 XZDataCryptor 提供的对称加密功能。
 
-1. 小型数据使用便利方法进行加密／解密。
+To run the example project, clone the repo, and run `pod install` from the Pods directory first.
+
+## Requirements
+
+iOS 11.0, Xcode 14.0
+
+## Installation
+
+XZDataCryptor is available through [CocoaPods](https://cocoapods.org). To install it, simply add the following line to your Podfile:
+
+```ruby
+pod 'XZDataCryptor'
+```
+
+## 功能特性
+
+XZDataCryptor 使用 OC 编写，但是也为 Swift 进行了 API 命名优化，更易方便使用。
+
+1、支持的加密算法
+
+- AES 根据密钥长度自动使用 AES128/AES192/AES256
+- DES
+- 3DES
+- CAST
+- RC2
+- RC4
+- Blowfish
 
 ```swift
-// AES 加密
-let data1 = "XZKit".data(using: .utf8)!
-if let enData = try? DataCryptor.AES(data1, operation: .encrypt, key: "XZKit", vector: "XZKit") {
-    print(enData.base64EncodedString())
-    // 输出：rUYzP3YxACtDFWR0XrP1xQ==
+let algorithm = XZDataCryptor.Algorithm.AES(key: "key", vector: "vector")
+```
+
+2. AES/DES 加密
+
+```swift
+// 默认使用 CBC 模式、PKCS7 填充
+let result = try? XZDataCryptor.AES(data, operation: .encrypt, key: "key", vector: "vector")
+let result = try? XZDataCryptor.DES(data, operation: .decrypt, key: "key", vector: "vector")
+// 使用 ECB 模式
+let result = try? XZDataCryptor.AES(data, operation: .encrypt, key: "key", vector: nil, mode: .ECB, padding: .PKCS7)
+let result = try? XZDataCryptor.DES(data, operation: .decrypt, key: "key", vector: nil, mode: .ECB, padding: .PKCS7)
+```
+
+3. 其它加密算法
+
+```swift
+let result = try? XZDataCryptor.encrypt(data, algorithm: .CAST(key: "key", vector: "vector"), mode: .CBC, padding: .PKCS7)
+let result = try? XZDataCryptor.decrypt(data, algorithm: .CAST(key: "key", vector: "vector"), mode: .CBC, padding: .PKCS7)
+```
+
+4. 分段加密
+
+```swift
+let datas: [Data] // 分段的数据
+
+let algorithm = XZDataCryptor.Algorithm.AES(key: "key", vector: "vector") // 这里可以是其他算法
+let cryptor = XZDataCryptor.init(operation: .encrypt, algorithm: algorithm, mode: .CBC, padding: .PKCS7)
+
+var result = Data()
+do {
+    for data in datas {
+        let tmp = try cryptor.crypt(data) 
+        result += tmp
+    }
+    result += try cryptor.final()
+} catch {
+    print("Error: \(error)")
 }
-
-// AES 解密
-let data2 = Data.init(base64Encoded: "rUYzP3YxACtDFWR0XrP1xQ==")!
-if let deData = try? DataCryptor.AES(data2, operation: .decrypt, key: "XZKit", vector: "XZKit") {
-    print(String.init(data: deData, encoding: .utf8)!)
-    // 输出：XZKit
-}
-
-// 不常用加密算法可使用此方法。
-let result = try? DataCryptor.crypt(someData, algorithm: .CAST("aKey"), operation: .decrypt, mode: .CBC("aVector"), padding: .PKCS7)
+print("\(result.base64EncodedString())")
 ```
 
-2. 大型数据使用实例化对象进行加密／解密。
+## Author
 
-```
-// 创建对象
-let dataCryptor = DataCryptor.init(...)
-// 创建接收数据的对象
-var dataResult = Data()
-// 分段读取大数据并计算，并将结果数据添加到 dataResult 中
-dataCryptor.crypt(data, final: false)
-// 所有数据读取完成后，改变最后一个参数，并再次调用上面的方法获取最后的数据。
-```
+Xezun, developer@xezun.com
 
+## License
+
+XZDataCryptor is available under the MIT license. See the LICENSE file for more info.

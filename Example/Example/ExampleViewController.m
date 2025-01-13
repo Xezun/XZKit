@@ -39,7 +39,9 @@
         @"14. XZURLQuery",
         @"15. XZLocale",
         @"16. XZCollectionViewFlowLayout",
-        @"17. XZNavigationController"
+        @"17. XZNavigationController",
+        @"18. XZDataDigester",
+        @"19. XZDataCryptor"
     ];
     XZMocoaTableViewModel *viewModel = [[XZMocoaTableViewModel alloc] initWithModel:@[data]];
     viewModel.module = XZMocoa(@"https://xzkit.xezun.com/example");
@@ -74,7 +76,7 @@
     self.textLabel.text = name;
 }
 - (void)tableView:(XZMocoaTableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
-    NSString *name = [NSString stringWithFormat:@"Example%02ldViewController", (long)(indexPath.row + 1)];
+    NSString *name = [NSString stringWithFormat:@"Example%02ld", (long)(indexPath.row + 1)];
     UIViewController *viewController = [UIStoryboard storyboardWithName:name bundle:nil].instantiateInitialViewController;
     viewController.modalPresentationStyle = UIModalPresentationFullScreen;
     viewController.modalTransitionStyle = 0;

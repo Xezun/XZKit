@@ -25,6 +25,8 @@ target 'Example' do
   pod 'XZLocale', :path => '../'
   pod 'XZCollectionViewFlowLayout', :path => '../'
   pod 'XZNavigationController', :path => '../'
+  pod 'XZDataDigester', :path => '../'
+  pod 'XZDataCryptor', :path => '../'
   
   pod 'SDWebImage'
 #  pod 'AFNetworking'

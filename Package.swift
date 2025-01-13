@@ -57,7 +57,13 @@ let package = Package(
             targets: ["XZLocale"]),
         .library(
             name: "XZCollectionViewFlowLayout",
-            targets: ["XZCollectionViewFlowLayout"])
+            targets: ["XZCollectionViewFlowLayout"]),
+        .library(
+            name: "XZDataCryptor",
+            targets: ["XZDataCryptor"]),
+        .library(
+            name: "XZDataDigester",
+            targets: ["XZDataDigester"])
     ],
     dependencies: [
         // Dependencies declare other packages that this package depends on.
@@ -257,6 +263,26 @@ let package = Package(
             dependencies: ["XZDefines"],
             path: "XZKit",
             sources: ["Code/XZNavigationController"],
+            cxxSettings: [
+                .define("XZ_FRAMEWORK")
+            ]
+        ),
+        .target(
+            name: "XZDataCryptor",
+            dependencies: [],
+            path: "XZKit",
+            sources: ["Code/XZDataCryptor"],
+            publicHeadersPath: "Headers/XZDataCryptor/Public",
+            cxxSettings: [
+                .define("XZ_FRAMEWORK")
+            ]
+        ),
+        .target(
+            name: "XZDataDigester",
+            dependencies: ["XZDefines", "XZExtensions"],
+            path: "XZKit",
+            sources: ["Code/XZDataDigester"],
+            publicHeadersPath: "Headers/XZDataDigester/Public",
             cxxSettings: [
                 .define("XZ_FRAMEWORK")
             ]

@@ -3,7 +3,7 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 60;
+	objectVersion = 56;
 	objects = {
 
 /* Begin PBXBuildFile section */
@@ -19,6 +19,13 @@
 		042D23D32D30BB3200E0F7BD /* Example16SettingsSelectNumberViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 042D23C62D30BB3200E0F7BD /* Example16SettingsSelectNumberViewController.m */; };
 		042D23D42D30BB3200E0F7BD /* Example16SettingsEditSectionViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 042D23C42D30BB3200E0F7BD /* Example16SettingsEditSectionViewController.m */; };
 		042D23D52D30BB3200E0F7BD /* Example16SettingsViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 042D23CA2D30BB3200E0F7BD /* Example16SettingsViewController.m */; };
+		046CE63C2D34C38C00B9389F /* Example19ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 046CE63B2D34C38C00B9389F /* Example19ViewController.swift */; };
+		046CE63D2D34C38C00B9389F /* Example19CryptorViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 046CE6382D34C38C00B9389F /* Example19CryptorViewController.swift */; };
+		046CE63E2D34C38C00B9389F /* Example19TextViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 046CE63A2D34C38C00B9389F /* Example19TextViewController.swift */; };
+		046CE63F2D34C38C00B9389F /* Example19SelectViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 046CE6392D34C38C00B9389F /* Example19SelectViewController.swift */; };
+		046CE6422D34C3A800B9389F /* Example19.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 046CE6402D34C3A800B9389F /* Example19.storyboard */; };
+		046CE6472D34C4A700B9389F /* Example18.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 046CE6462D34C4A700B9389F /* Example18.storyboard */; };
+		04C4C58B2D34C66F0087BBCF /* Example18ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 04C4C58A2D34C66F0087BBCF /* Example18ViewController.swift */; };
 		04D06B002D2D45300056A53A /* Example15Test02ViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 04D06AFF2D2D45300056A53A /* Example15Test02ViewController.m */; };
 		04D06B012D2D45300056A53A /* Example15Test01ViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 04D06AFD2D2D45300056A53A /* Example15Test01ViewController.m */; };
 		04D06B092D2D47DF0056A53A /* Localizable.xcstrings in Resources */ = {isa = PBXBuildFile; fileRef = 04D06B082D2D47DF0056A53A /* Localizable.xcstrings */; };
@@ -29,6 +36,7 @@
 		04D34E692D314ABB0013D4A3 /* Example17NavigationController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 04D34E632D314ABB0013D4A3 /* Example17NavigationController.swift */; };
 		04D34E6A2D314ABB0013D4A3 /* Example17NextViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 04D34E642D314ABB0013D4A3 /* Example17NextViewController.swift */; };
 		04D34E6C2D314B0A0013D4A3 /* Example17NavigationBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = 04D34E6B2D314B0A0013D4A3 /* Example17NavigationBar.swift */; };
+		04FE1C8F2D34CC0D001CC274 /* Example15.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 04FE1C8D2D34CC0D001CC274 /* Example15.storyboard */; };
 		292A5A472D254D010037579D /* Example04ViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 292A5A462D254D010037579D /* Example04ViewController.m */; };
 		292A5A482D254D010037579D /* Example04FontSizeViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 292A5A402D254D010037579D /* Example04FontSizeViewController.m */; };
 		292A5A492D254D010037579D /* Example04SettingsViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 292A5A422D254D010037579D /* Example04SettingsViewController.m */; };
@@ -231,29 +239,28 @@
 		29648C002A72556E0090F445 /* ExampleTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 29648BFF2A72556E0090F445 /* ExampleTests.m */; };
 		29648C0A2A72556E0090F445 /* ExampleUITests.m in Sources */ = {isa = PBXBuildFile; fileRef = 29648C092A72556E0090F445 /* ExampleUITests.m */; };
 		29648C0C2A72556E0090F445 /* ExampleUITestsLaunchTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 29648C0B2A72556E0090F445 /* ExampleUITestsLaunchTests.m */; };
-		29776A112D3240AC0033AAF9 /* Example15ViewController.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 29776A102D3240AC0033AAF9 /* Example15ViewController.storyboard */; };
 		29776A142D3240E70033AAF9 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 29776A132D3240E70033AAF9 /* Main.storyboard */; };
 		299B56CE2D2A67ED00CC2F69 /* Example10ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 299B56CD2D2A67ED00CC2F69 /* Example10ViewController.swift */; };
 		299B56D02D2A680300CC2F69 /* Example11ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 299B56CF2D2A680300CC2F69 /* Example11ViewController.swift */; };
 		299B56D32D2A683900CC2F69 /* Example12ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 299B56D22D2A683900CC2F69 /* Example12ViewController.swift */; };
 		299B56E42D2AD87800CC2F69 /* Example13ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 299B56E32D2AD87800CC2F69 /* Example13ViewController.swift */; };
-		29B3340B2D3174EB006A574A /* Example01ViewController.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 29B3340A2D3174EB006A574A /* Example01ViewController.storyboard */; };
+		29B3340B2D3174EB006A574A /* Example01.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 29B3340A2D3174EB006A574A /* Example01.storyboard */; };
 		29B3340D2D3176EA006A574A /* Example01ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 29B3340C2D3176EA006A574A /* Example01ViewController.swift */; };
-		29B3340F2D317749006A574A /* Example02ViewController.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 29B3340E2D317749006A574A /* Example02ViewController.storyboard */; };
-		29B334112D317759006A574A /* Example03ViewController.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 29B334102D317759006A574A /* Example03ViewController.storyboard */; };
-		29B334132D317767006A574A /* Example04ViewController.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 29B334122D317767006A574A /* Example04ViewController.storyboard */; };
-		29B334152D31777E006A574A /* Example05ViewController.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 29B334142D31777E006A574A /* Example05ViewController.storyboard */; };
-		29B334172D3177B4006A574A /* Example06ViewController.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 29B334162D3177B4006A574A /* Example06ViewController.storyboard */; };
-		29B334192D3177C5006A574A /* Example07ViewController.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 29B334182D3177C5006A574A /* Example07ViewController.storyboard */; };
-		29B3341B2D3177F1006A574A /* Example08ViewController.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 29B3341A2D3177F1006A574A /* Example08ViewController.storyboard */; };
-		29B3341D2D317803006A574A /* Example09ViewController.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 29B3341C2D317803006A574A /* Example09ViewController.storyboard */; };
-		29B3341F2D317814006A574A /* Example10ViewController.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 29B3341E2D317814006A574A /* Example10ViewController.storyboard */; };
-		29B334212D317820006A574A /* Example11ViewController.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 29B334202D317820006A574A /* Example11ViewController.storyboard */; };
-		29B334232D31782B006A574A /* Example12ViewController.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 29B334222D31782B006A574A /* Example12ViewController.storyboard */; };
-		29B334252D317835006A574A /* Example13ViewController.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 29B334242D317835006A574A /* Example13ViewController.storyboard */; };
-		29B334272D317840006A574A /* Example14ViewController.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 29B334262D317840006A574A /* Example14ViewController.storyboard */; };
-		29B3342B2D31785B006A574A /* Example16ViewController.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 29B3342A2D31785B006A574A /* Example16ViewController.storyboard */; };
-		29B3342D2D31786D006A574A /* Example17ViewController.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 29B3342C2D31786D006A574A /* Example17ViewController.storyboard */; };
+		29B3340F2D317749006A574A /* Example02.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 29B3340E2D317749006A574A /* Example02.storyboard */; };
+		29B334112D317759006A574A /* Example03.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 29B334102D317759006A574A /* Example03.storyboard */; };
+		29B334132D317767006A574A /* Example04.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 29B334122D317767006A574A /* Example04.storyboard */; };
+		29B334152D31777E006A574A /* Example05.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 29B334142D31777E006A574A /* Example05.storyboard */; };
+		29B334172D3177B4006A574A /* Example06.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 29B334162D3177B4006A574A /* Example06.storyboard */; };
+		29B334192D3177C5006A574A /* Example07.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 29B334182D3177C5006A574A /* Example07.storyboard */; };
+		29B3341B2D3177F1006A574A /* Example08.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 29B3341A2D3177F1006A574A /* Example08.storyboard */; };
+		29B3341D2D317803006A574A /* Example09.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 29B3341C2D317803006A574A /* Example09.storyboard */; };
+		29B3341F2D317814006A574A /* Example10.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 29B3341E2D317814006A574A /* Example10.storyboard */; };
+		29B334212D317820006A574A /* Example11.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 29B334202D317820006A574A /* Example11.storyboard */; };
+		29B334232D31782B006A574A /* Example12.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 29B334222D31782B006A574A /* Example12.storyboard */; };
+		29B334252D317835006A574A /* Example13.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 29B334242D317835006A574A /* Example13.storyboard */; };
+		29B334272D317840006A574A /* Example14.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 29B334262D317840006A574A /* Example14.storyboard */; };
+		29B3342B2D31785B006A574A /* Example16.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 29B3342A2D31785B006A574A /* Example16.storyboard */; };
+		29B3342D2D31786D006A574A /* Example17.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 29B3342C2D31786D006A574A /* Example17.storyboard */; };
 		C556594B20BE3573AE3127B1 /* Pods_ExampleUITests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2921DE5FDDA8FC1A0BE46778 /* Pods_ExampleUITests.framework */; };
 		E1C58D6269A64FE5F22C16D7 /* Pods_ExampleTests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D09F7711B7EC5E200D1D4920 /* Pods_ExampleTests.framework */; };
 /* End PBXBuildFile section */
@@ -298,6 +305,13 @@
 		042D23C82D30BB3200E0F7BD /* Example16SettingsSelectSectionViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = Example16SettingsSelectSectionViewController.m; sourceTree = "<group>"; };
 		042D23C92D30BB3200E0F7BD /* Example16SettingsViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Example16SettingsViewController.h; sourceTree = "<group>"; };
 		042D23CA2D30BB3200E0F7BD /* Example16SettingsViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = Example16SettingsViewController.m; sourceTree = "<group>"; };
+		046CE6382D34C38C00B9389F /* Example19CryptorViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Example19CryptorViewController.swift; sourceTree = "<group>"; };
+		046CE6392D34C38C00B9389F /* Example19SelectViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Example19SelectViewController.swift; sourceTree = "<group>"; };
+		046CE63A2D34C38C00B9389F /* Example19TextViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Example19TextViewController.swift; sourceTree = "<group>"; };
+		046CE63B2D34C38C00B9389F /* Example19ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Example19ViewController.swift; sourceTree = "<group>"; };
+		046CE6412D34C3A800B9389F /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Example19.storyboard; sourceTree = "<group>"; };
+		046CE6462D34C4A700B9389F /* Example18.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = Example18.storyboard; sourceTree = "<group>"; };
+		04C4C58A2D34C66F0087BBCF /* Example18ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Example18ViewController.swift; sourceTree = "<group>"; };
 		04D06AFC2D2D45300056A53A /* Example15Test01ViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Example15Test01ViewController.h; sourceTree = "<group>"; };
 		04D06AFD2D2D45300056A53A /* Example15Test01ViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = Example15Test01ViewController.m; sourceTree = "<group>"; };
 		04D06AFE2D2D45300056A53A /* Example15Test02ViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Example15Test02ViewController.h; sourceTree = "<group>"; };
@@ -312,6 +326,9 @@
 		04D34E632D314ABB0013D4A3 /* Example17NavigationController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Example17NavigationController.swift; sourceTree = "<group>"; };
 		04D34E642D314ABB0013D4A3 /* Example17NextViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Example17NextViewController.swift; sourceTree = "<group>"; };
 		04D34E6B2D314B0A0013D4A3 /* Example17NavigationBar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Example17NavigationBar.swift; sourceTree = "<group>"; };
+		04FE1C8E2D34CC0D001CC274 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Example15.storyboard; sourceTree = "<group>"; };
+		04FE1C912D34CC4B001CC274 /* zh-Hans */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "zh-Hans"; path = "zh-Hans.lproj/Example15.strings"; sourceTree = "<group>"; };
+		04FE1C932D34CC4C001CC274 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/Example15.strings; sourceTree = "<group>"; };
 		055F0304DE9A092BAF52FF06 /* Pods_Example.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Example.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		2921DE5FDDA8FC1A0BE46778 /* Pods_ExampleUITests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_ExampleUITests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		292A5A3D2D254D010037579D /* Example04FontNameViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Example04FontNameViewController.h; sourceTree = "<group>"; };
@@ -693,30 +710,28 @@
 		29648C092A72556E0090F445 /* ExampleUITests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ExampleUITests.m; sourceTree = "<group>"; };
 		29648C0B2A72556E0090F445 /* ExampleUITestsLaunchTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ExampleUITestsLaunchTests.m; sourceTree = "<group>"; };
 		29776A0E2D3199DE0033AAF9 /* ExampleBridgingHeader.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ExampleBridgingHeader.h; sourceTree = "<group>"; };
-		29776A0F2D3240AC0033AAF9 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Example15ViewController.storyboard; sourceTree = "<group>"; };
-		29776A122D3240AC0033AAF9 /* mul */ = {isa = PBXFileReference; lastKnownFileType = text.json.xcstrings; name = mul; path = mul.lproj/Example15ViewController.xcstrings; sourceTree = "<group>"; };
 		29776A132D3240E70033AAF9 /* Main.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = Main.storyboard; sourceTree = "<group>"; };
 		299B56CD2D2A67ED00CC2F69 /* Example10ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Example10ViewController.swift; sourceTree = "<group>"; };
 		299B56CF2D2A680300CC2F69 /* Example11ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Example11ViewController.swift; sourceTree = "<group>"; };
 		299B56D22D2A683900CC2F69 /* Example12ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Example12ViewController.swift; sourceTree = "<group>"; };
 		299B56E32D2AD87800CC2F69 /* Example13ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Example13ViewController.swift; sourceTree = "<group>"; };
-		29B3340A2D3174EB006A574A /* Example01ViewController.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = Example01ViewController.storyboard; sourceTree = "<group>"; };
+		29B3340A2D3174EB006A574A /* Example01.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = Example01.storyboard; sourceTree = "<group>"; };
 		29B3340C2D3176EA006A574A /* Example01ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Example01ViewController.swift; sourceTree = "<group>"; };
-		29B3340E2D317749006A574A /* Example02ViewController.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = Example02ViewController.storyboard; sourceTree = "<group>"; };
-		29B334102D317759006A574A /* Example03ViewController.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = Example03ViewController.storyboard; sourceTree = "<group>"; };
-		29B334122D317767006A574A /* Example04ViewController.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = Example04ViewController.storyboard; sourceTree = "<group>"; };
-		29B334142D31777E006A574A /* Example05ViewController.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = Example05ViewController.storyboard; sourceTree = "<group>"; };
-		29B334162D3177B4006A574A /* Example06ViewController.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = Example06ViewController.storyboard; sourceTree = "<group>"; };
-		29B334182D3177C5006A574A /* Example07ViewController.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = Example07ViewController.storyboard; sourceTree = "<group>"; };
-		29B3341A2D3177F1006A574A /* Example08ViewController.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = Example08ViewController.storyboard; sourceTree = "<group>"; };
-		29B3341C2D317803006A574A /* Example09ViewController.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = Example09ViewController.storyboard; sourceTree = "<group>"; };
-		29B3341E2D317814006A574A /* Example10ViewController.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = Example10ViewController.storyboard; sourceTree = "<group>"; };
-		29B334202D317820006A574A /* Example11ViewController.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = Example11ViewController.storyboard; sourceTree = "<group>"; };
-		29B334222D31782B006A574A /* Example12ViewController.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = Example12ViewController.storyboard; sourceTree = "<group>"; };
-		29B334242D317835006A574A /* Example13ViewController.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = Example13ViewController.storyboard; sourceTree = "<group>"; };
-		29B334262D317840006A574A /* Example14ViewController.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = Example14ViewController.storyboard; sourceTree = "<group>"; };
-		29B3342A2D31785B006A574A /* Example16ViewController.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = Example16ViewController.storyboard; sourceTree = "<group>"; };
-		29B3342C2D31786D006A574A /* Example17ViewController.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = Example17ViewController.storyboard; sourceTree = "<group>"; };
+		29B3340E2D317749006A574A /* Example02.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = Example02.storyboard; sourceTree = "<group>"; };
+		29B334102D317759006A574A /* Example03.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = Example03.storyboard; sourceTree = "<group>"; };
+		29B334122D317767006A574A /* Example04.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = Example04.storyboard; sourceTree = "<group>"; };
+		29B334142D31777E006A574A /* Example05.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = Example05.storyboard; sourceTree = "<group>"; };
+		29B334162D3177B4006A574A /* Example06.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = Example06.storyboard; sourceTree = "<group>"; };
+		29B334182D3177C5006A574A /* Example07.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = Example07.storyboard; sourceTree = "<group>"; };
+		29B3341A2D3177F1006A574A /* Example08.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = Example08.storyboard; sourceTree = "<group>"; };
+		29B3341C2D317803006A574A /* Example09.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = Example09.storyboard; sourceTree = "<group>"; };
+		29B3341E2D317814006A574A /* Example10.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = Example10.storyboard; sourceTree = "<group>"; };
+		29B334202D317820006A574A /* Example11.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = Example11.storyboard; sourceTree = "<group>"; };
+		29B334222D31782B006A574A /* Example12.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = Example12.storyboard; sourceTree = "<group>"; };
+		29B334242D317835006A574A /* Example13.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = Example13.storyboard; sourceTree = "<group>"; };
+		29B334262D317840006A574A /* Example14.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = Example14.storyboard; sourceTree = "<group>"; };
+		29B3342A2D31785B006A574A /* Example16.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = Example16.storyboard; sourceTree = "<group>"; };
+		29B3342C2D31786D006A574A /* Example17.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = Example17.storyboard; sourceTree = "<group>"; };
 		369E27212BC7DC1424D69BB0 /* Pods-Example.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Example.release.xcconfig"; path = "Target Support Files/Pods-Example/Pods-Example.release.xcconfig"; sourceTree = "<group>"; };
 		5E63F9B7AB013AABEE95EC05 /* Pods-ExampleTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ExampleTests.release.xcconfig"; path = "Target Support Files/Pods-ExampleTests/Pods-ExampleTests.release.xcconfig"; sourceTree = "<group>"; };
 		973629BBA2CF064ED1925071 /* Pods-ExampleTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ExampleTests.debug.xcconfig"; path = "Target Support Files/Pods-ExampleTests/Pods-ExampleTests.debug.xcconfig"; sourceTree = "<group>"; };
@@ -757,9 +772,9 @@
 		040F13382D2B77B200C4D6CD /* 14-XZURLQuery */ = {
 			isa = PBXGroup;
 			children = (
+				29B334262D317840006A574A /* Example14.storyboard */,
 				040F13392D2B77CD00C4D6CD /* Example14ViewController.h */,
 				040F133A2D2B77CD00C4D6CD /* Example14ViewController.m */,
-				29B334262D317840006A574A /* Example14ViewController.storyboard */,
 			);
 			path = "14-XZURLQuery";
 			sourceTree = "<group>";
@@ -767,7 +782,7 @@
 		042D23B62D30BACE00E0F7BD /* 16-XZCollectionViewFlowLayout */ = {
 			isa = PBXGroup;
 			children = (
-				29B3342A2D31785B006A574A /* Example16ViewController.storyboard */,
+				29B3342A2D31785B006A574A /* Example16.storyboard */,
 				042D23BD2D30BB3200E0F7BD /* Example16ViewController.h */,
 				042D23BE2D30BB3200E0F7BD /* Example16ViewController.m */,
 				042D23B72D30BB3200E0F7BD /* Example16CollectonViewCellModel.h */,
@@ -800,10 +815,31 @@
 			path = Settings;
 			sourceTree = "<group>";
 		};
+		046CE6362D34C2A100B9389F /* 18-XZDataDigester */ = {
+			isa = PBXGroup;
+			children = (
+				046CE6462D34C4A700B9389F /* Example18.storyboard */,
+				04C4C58A2D34C66F0087BBCF /* Example18ViewController.swift */,
+			);
+			path = "18-XZDataDigester";
+			sourceTree = "<group>";
+		};
+		046CE6372D34C2BE00B9389F /* 19-XZDataCryptor */ = {
+			isa = PBXGroup;
+			children = (
+				046CE6402D34C3A800B9389F /* Example19.storyboard */,
+				046CE63B2D34C38C00B9389F /* Example19ViewController.swift */,
+				046CE6382D34C38C00B9389F /* Example19CryptorViewController.swift */,
+				046CE6392D34C38C00B9389F /* Example19SelectViewController.swift */,
+				046CE63A2D34C38C00B9389F /* Example19TextViewController.swift */,
+			);
+			path = "19-XZDataCryptor";
+			sourceTree = "<group>";
+		};
 		04D06AFB2D2D43560056A53A /* 15-XZLocale */ = {
 			isa = PBXGroup;
 			children = (
-				29776A102D3240AC0033AAF9 /* Example15ViewController.storyboard */,
+				04FE1C8D2D34CC0D001CC274 /* Example15.storyboard */,
 				04D06AFC2D2D45300056A53A /* Example15Test01ViewController.h */,
 				04D06AFD2D2D45300056A53A /* Example15Test01ViewController.m */,
 				04D06AFE2D2D45300056A53A /* Example15Test02ViewController.h */,
@@ -815,7 +851,7 @@
 		04D34E5D2D310BD90013D4A3 /* 17-XZNavigationController */ = {
 			isa = PBXGroup;
 			children = (
-				29B3342C2D31786D006A574A /* Example17ViewController.storyboard */,
+				29B3342C2D31786D006A574A /* Example17.storyboard */,
 				04D34E6B2D314B0A0013D4A3 /* Example17NavigationBar.swift */,
 				04D34E5F2D314ABB0013D4A3 /* Example17AppleViewController.swift */,
 				04D34E602D314ABB0013D4A3 /* Example17GestureViewController.swift */,
@@ -830,8 +866,8 @@
 		29018EB32D2A2E1000E89010 /* 10-XZGeometry */ = {
 			isa = PBXGroup;
 			children = (
+				29B3341E2D317814006A574A /* Example10.storyboard */,
 				299B56CD2D2A67ED00CC2F69 /* Example10ViewController.swift */,
-				29B3341E2D317814006A574A /* Example10ViewController.storyboard */,
 			);
 			path = "10-XZGeometry";
 			sourceTree = "<group>";
@@ -839,8 +875,8 @@
 		29018EB42D2A2E2400E89010 /* 11-XZTextImageView */ = {
 			isa = PBXGroup;
 			children = (
+				29B334202D317820006A574A /* Example11.storyboard */,
 				299B56CF2D2A680300CC2F69 /* Example11ViewController.swift */,
-				29B334202D317820006A574A /* Example11ViewController.storyboard */,
 			);
 			path = "11-XZTextImageView";
 			sourceTree = "<group>";
@@ -848,7 +884,7 @@
 		292A5A3C2D254B060037579D /* 04-XZML */ = {
 			isa = PBXGroup;
 			children = (
-				29B334122D317767006A574A /* Example04ViewController.storyboard */,
+				29B334122D317767006A574A /* Example04.storyboard */,
 				292A5A452D254D010037579D /* Example04ViewController.h */,
 				292A5A462D254D010037579D /* Example04ViewController.m */,
 				292A5A432D254D010037579D /* Example04TestViewController.h */,
@@ -866,9 +902,9 @@
 		292A5A4C2D254F3F0037579D /* 05-XZJSON */ = {
 			isa = PBXGroup;
 			children = (
+				29B334142D31777E006A574A /* Example05.storyboard */,
 				292A5A4F2D254F6A0037579D /* Example05ViewController.h */,
 				292A5A502D254F6A0037579D /* Example05ViewController.m */,
-				29B334142D31777E006A574A /* Example05ViewController.storyboard */,
 				292A5A532D255DC50037579D /* Example05.json */,
 				292A5A4D2D254F6A0037579D /* Example05TestModels.h */,
 				292A5A4E2D254F6A0037579D /* Example05TestModels.m */,
@@ -879,9 +915,9 @@
 		292A5A552D255E530037579D /* 06-XZRefresh */ = {
 			isa = PBXGroup;
 			children = (
+				29B334162D3177B4006A574A /* Example06.storyboard */,
 				292A5A5C2D25616D0037579D /* Example06ViewController.h */,
 				292A5A5D2D25616D0037579D /* Example06ViewController.m */,
-				29B334162D3177B4006A574A /* Example06ViewController.storyboard */,
 				292A5A582D25616D0037579D /* Example06RefreshSettingsViewController.h */,
 				292A5A592D25616D0037579D /* Example06RefreshSettingsViewController.m */,
 				292A5A5A2D25616D0037579D /* Example06SettingsViewController.h */,
@@ -893,8 +929,8 @@
 		292A5A562D255E660037579D /* 07-XZPageView */ = {
 			isa = PBXGroup;
 			children = (
+				29B334182D3177C5006A574A /* Example07.storyboard */,
 				29448F6F2D3194580055A183 /* Example07ViewController.swift */,
-				29B334182D3177C5006A574A /* Example07ViewController.storyboard */,
 				292A5A612D2563E20037579D /* Example07Test01ViewController.h */,
 				292A5A622D2563E20037579D /* Example07Test01ViewController.m */,
 				292A5A632D2563E20037579D /* Example07Test02ViewController.h */,
@@ -906,9 +942,9 @@
 		292A5A572D255E740037579D /* 08-XZPageControl */ = {
 			isa = PBXGroup;
 			children = (
+				29B3341A2D3177F1006A574A /* Example08.storyboard */,
 				292A5A682D25685C0037579D /* Example08ViewController.h */,
 				292A5A692D25685C0037579D /* Example08ViewController.m */,
-				29B3341A2D3177F1006A574A /* Example08ViewController.storyboard */,
 			);
 			path = "08-XZPageControl";
 			sourceTree = "<group>";
@@ -916,7 +952,7 @@
 		292A5A672D25653E0037579D /* 09-XZSegmentedControl */ = {
 			isa = PBXGroup;
 			children = (
-				29B3341C2D317803006A574A /* Example09ViewController.storyboard */,
+				29B3341C2D317803006A574A /* Example09.storyboard */,
 				29448F712D31956A0055A183 /* Example09ViewController.swift */,
 				292A5A712D256A240037579D /* Example09Test01ViewController.swift */,
 				292A5A722D256A240037579D /* Example09Test02ViewController.swift */,
@@ -933,8 +969,8 @@
 		292C153B2D25145900E465BF /* 01-XZDefines */ = {
 			isa = PBXGroup;
 			children = (
+				29B3340A2D3174EB006A574A /* Example01.storyboard */,
 				29B3340C2D3176EA006A574A /* Example01ViewController.swift */,
-				29B3340A2D3174EB006A574A /* Example01ViewController.storyboard */,
 				29648BE92A72556C0090F445 /* Example01Test01ViewController.h */,
 				29648BEA2A72556C0090F445 /* Example01Test01ViewController.m */,
 			);
@@ -944,9 +980,9 @@
 		292C153C2D25148B00E465BF /* 02-XZExtensions */ = {
 			isa = PBXGroup;
 			children = (
+				29B3340E2D317749006A574A /* Example02.storyboard */,
 				292C153F2D25163700E465BF /* Example02ViewController.h */,
 				292C15402D25163700E465BF /* Example02ViewController.m */,
-				29B3340E2D317749006A574A /* Example02ViewController.storyboard */,
 				292C153D2D25163700E465BF /* Example02Test01ViewController.h */,
 				292C153E2D25163700E465BF /* Example02Test01ViewController.m */,
 			);
@@ -956,9 +992,9 @@
 		292C15492D25190B00E465BF /* 03-XZMocoa */ = {
 			isa = PBXGroup;
 			children = (
+				29B334102D317759006A574A /* Example03.storyboard */,
 				292C17CD2D251FF400E465BF /* Example03ViewController.h */,
 				292C17CE2D251FF400E465BF /* Example03ViewController.m */,
-				29B334102D317759006A574A /* Example03ViewController.storyboard */,
 				292C15612D251F6D00E465BF /* 10 */,
 				292C156C2D251F6D00E465BF /* 11 */,
 				292C157B2D251F6D00E465BF /* 12 */,
@@ -2617,6 +2653,8 @@
 				04D06AFB2D2D43560056A53A /* 15-XZLocale */,
 				042D23B62D30BACE00E0F7BD /* 16-XZCollectionViewFlowLayout */,
 				04D34E5D2D310BD90013D4A3 /* 17-XZNavigationController */,
+				046CE6362D34C2A100B9389F /* 18-XZDataDigester */,
+				046CE6372D34C2BE00B9389F /* 19-XZDataCryptor */,
 				29776A132D3240E70033AAF9 /* Main.storyboard */,
 				29648BEF2A72556E0090F445 /* Assets.xcassets */,
 				29648BF12A72556E0090F445 /* LaunchScreen.storyboard */,
@@ -2647,8 +2685,8 @@
 		299B56D12D2A682500CC2F69 /* 12-XZContentStatus */ = {
 			isa = PBXGroup;
 			children = (
+				29B334222D31782B006A574A /* Example12.storyboard */,
 				299B56D22D2A683900CC2F69 /* Example12ViewController.swift */,
-				29B334222D31782B006A574A /* Example12ViewController.storyboard */,
 			);
 			path = "12-XZContentStatus";
 			sourceTree = "<group>";
@@ -2656,8 +2694,8 @@
 		299B56E22D2AD84700CC2F69 /* 13-XZToast */ = {
 			isa = PBXGroup;
 			children = (
+				29B334242D317835006A574A /* Example13.storyboard */,
 				299B56E32D2AD87800CC2F69 /* Example13ViewController.swift */,
-				29B334242D317835006A574A /* Example13ViewController.storyboard */,
 			);
 			path = "13-XZToast";
 			sourceTree = "<group>";
@@ -2797,39 +2835,41 @@
 			files = (
 				29648BF32A72556E0090F445 /* LaunchScreen.storyboard in Resources */,
 				29648BF02A72556E0090F445 /* Assets.xcassets in Resources */,
-				29B3341B2D3177F1006A574A /* Example08ViewController.storyboard in Resources */,
+				046CE6422D34C3A800B9389F /* Example19.storyboard in Resources */,
+				29B3341B2D3177F1006A574A /* Example08.storyboard in Resources */,
 				292C17C02D251F6D00E465BF /* Example0322ViewController.xib in Resources */,
 				292C17C12D251F6D00E465BF /* Example0320ContentViewController.xib in Resources */,
-				29B334152D31777E006A574A /* Example05ViewController.storyboard in Resources */,
-				29776A112D3240AC0033AAF9 /* Example15ViewController.storyboard in Resources */,
-				29B3340B2D3174EB006A574A /* Example01ViewController.storyboard in Resources */,
+				046CE6472D34C4A700B9389F /* Example18.storyboard in Resources */,
+				29B334152D31777E006A574A /* Example05.storyboard in Resources */,
+				29B3340B2D3174EB006A574A /* Example01.storyboard in Resources */,
 				292C17C22D251F6D00E465BF /* Example0321ContactEditor.xib in Resources */,
-				29B3342B2D31785B006A574A /* Example16ViewController.storyboard in Resources */,
+				29B3342B2D31785B006A574A /* Example16.storyboard in Resources */,
 				292C17C32D251F6D00E465BF /* Example0320ViewController.xib in Resources */,
 				292C17C42D251F6D00E465BF /* Example0321ContactCell.xib in Resources */,
 				292C17C52D251F6D00E465BF /* Example0312Cell.xib in Resources */,
 				04D06B092D2D47DF0056A53A /* Localizable.xcstrings in Resources */,
-				29B3340F2D317749006A574A /* Example02ViewController.storyboard in Resources */,
-				29B334272D317840006A574A /* Example14ViewController.storyboard in Resources */,
+				04FE1C8F2D34CC0D001CC274 /* Example15.storyboard in Resources */,
+				29B3340F2D317749006A574A /* Example02.storyboard in Resources */,
+				29B334272D317840006A574A /* Example14.storyboard in Resources */,
 				292C17C62D251F6D00E465BF /* Example0310ContactView.xib in Resources */,
 				292C17C72D251F6D00E465BF /* Example0320Group101Cell.xib in Resources */,
-				29B334232D31782B006A574A /* Example12ViewController.storyboard in Resources */,
+				29B334232D31782B006A574A /* Example12.storyboard in Resources */,
 				292A5A542D255DC50037579D /* Example05.json in Resources */,
 				292C17C82D251F6D00E465BF /* Example0322TextCell.xib in Resources */,
 				292C17C92D251F6D00E465BF /* Example0320Group102Cell.xib in Resources */,
-				29B334252D317835006A574A /* Example13ViewController.storyboard in Resources */,
+				29B334252D317835006A574A /* Example13.storyboard in Resources */,
 				292C17CA2D251F6D00E465BF /* Example0320Group100Cell.xib in Resources */,
-				29B3342D2D31786D006A574A /* Example17ViewController.storyboard in Resources */,
-				29B334172D3177B4006A574A /* Example06ViewController.storyboard in Resources */,
-				29B3341D2D317803006A574A /* Example09ViewController.storyboard in Resources */,
-				29B3341F2D317814006A574A /* Example10ViewController.storyboard in Resources */,
+				29B3342D2D31786D006A574A /* Example17.storyboard in Resources */,
+				29B334172D3177B4006A574A /* Example06.storyboard in Resources */,
+				29B3341D2D317803006A574A /* Example09.storyboard in Resources */,
+				29B3341F2D317814006A574A /* Example10.storyboard in Resources */,
 				292C17CB2D251F6D00E465BF /* Example0320Model.json in Resources */,
-				29B334132D317767006A574A /* Example04ViewController.storyboard in Resources */,
+				29B334132D317767006A574A /* Example04.storyboard in Resources */,
 				292C17CC2D251F6D00E465BF /* Example0311ViewController.xib in Resources */,
-				29B334112D317759006A574A /* Example03ViewController.storyboard in Resources */,
+				29B334112D317759006A574A /* Example03.storyboard in Resources */,
 				29776A142D3240E70033AAF9 /* Main.storyboard in Resources */,
-				29B334192D3177C5006A574A /* Example07ViewController.storyboard in Resources */,
-				29B334212D317820006A574A /* Example11ViewController.storyboard in Resources */,
+				29B334192D3177C5006A574A /* Example07.storyboard in Resources */,
+				29B334212D317820006A574A /* Example11.storyboard in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -2969,6 +3009,7 @@
 				04D34E652D314ABB0013D4A3 /* Example17GestureViewController.swift in Sources */,
 				04D34E662D314ABB0013D4A3 /* Example17LastViewController.swift in Sources */,
 				04D34E672D314ABB0013D4A3 /* Example17HomeViewController.swift in Sources */,
+				04C4C58B2D34C66F0087BBCF /* Example18ViewController.swift in Sources */,
 				04D34E682D314ABB0013D4A3 /* Example17AppleViewController.swift in Sources */,
 				04D34E692D314ABB0013D4A3 /* Example17NavigationController.swift in Sources */,
 				04D34E6A2D314ABB0013D4A3 /* Example17NextViewController.swift in Sources */,
@@ -3037,6 +3078,10 @@
 				299B56D32D2A683900CC2F69 /* Example12ViewController.swift in Sources */,
 				292C17642D251F6D00E465BF /* Example0320Model.m in Sources */,
 				29B3340D2D3176EA006A574A /* Example01ViewController.swift in Sources */,
+				046CE63C2D34C38C00B9389F /* Example19ViewController.swift in Sources */,
+				046CE63D2D34C38C00B9389F /* Example19CryptorViewController.swift in Sources */,
+				046CE63E2D34C38C00B9389F /* Example19TextViewController.swift in Sources */,
+				046CE63F2D34C38C00B9389F /* Example19SelectViewController.swift in Sources */,
 				292C17652D251F6D00E465BF /* Example0320Group100SectionModel.m in Sources */,
 				292C17662D251F6D00E465BF /* Example0331Model.m in Sources */,
 				292C17672D251F6D00E465BF /* Example0331Group102SectionModel.m in Sources */,
@@ -3184,6 +3229,24 @@
 /* End PBXTargetDependency section */
 
 /* Begin PBXVariantGroup section */
+		046CE6402D34C3A800B9389F /* Example19.storyboard */ = {
+			isa = PBXVariantGroup;
+			children = (
+				046CE6412D34C3A800B9389F /* Base */,
+			);
+			name = Example19.storyboard;
+			sourceTree = "<group>";
+		};
+		04FE1C8D2D34CC0D001CC274 /* Example15.storyboard */ = {
+			isa = PBXVariantGroup;
+			children = (
+				04FE1C8E2D34CC0D001CC274 /* Base */,
+				04FE1C912D34CC4B001CC274 /* zh-Hans */,
+				04FE1C932D34CC4C001CC274 /* en */,
+			);
+			name = Example15.storyboard;
+			sourceTree = "<group>";
+		};
 		29648BF12A72556E0090F445 /* LaunchScreen.storyboard */ = {
 			isa = PBXVariantGroup;
 			children = (
@@ -3192,15 +3255,6 @@
 				04D06B072D2D46F90056A53A /* en */,
 			);
 			name = LaunchScreen.storyboard;
-			sourceTree = "<group>";
-		};
-		29776A102D3240AC0033AAF9 /* Example15ViewController.storyboard */ = {
-			isa = PBXVariantGroup;
-			children = (
-				29776A0F2D3240AC0033AAF9 /* Base */,
-				29776A122D3240AC0033AAF9 /* mul */,
-			);
-			name = Example15ViewController.storyboard;
 			sourceTree = "<group>";
 		};
 /* End PBXVariantGroup section */
