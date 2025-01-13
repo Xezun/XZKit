@@ -13,9 +13,9 @@ import ObjectiveC
 extension UIKit.UINavigationBar {
     
     /// 记录了当前正在显示的自定义的导航条。在控制器转场过程中，此属性为 nil 。
-    public internal(set) var navigationBar: UINavigationBar? {
+    public internal(set) var navigationBar: AnyNavigationBar? {
         get {
-            return objc_getAssociatedObject(self, &_navigationBar) as? UINavigationBar
+            return objc_getAssociatedObject(self, &_navigationBar) as? AnyNavigationBar
         }
         set {
             // 移除旧的
@@ -56,7 +56,7 @@ extension UIKit.UINavigationBar {
                 if let CustomizableClass = objc_getAssociatedObject(OldClass, &_customizableClass) as? UIKit.UINavigationBar.Type {
                     _ = object_setClass(self, CustomizableClass)
                 } else if let CustomizableClass = xz_objc_createClass(OldClass, { (CustomizableClass) in
-                    xz_objc_class_copyMethods(XZCustomizableNavigationBar.self, CustomizableClass);
+                    xz_objc_class_copyMethods(XZUINavigationBar.self, CustomizableClass);
                 }) as? UIKit.UINavigationBar.Type {
                     objc_setAssociatedObject(OldClass, &_customizableClass, CustomizableClass, .OBJC_ASSOCIATION_ASSIGN)
                     _ = object_setClass(self, CustomizableClass)
@@ -72,7 +72,7 @@ extension UIKit.UINavigationBar {
     
 }
 
-private class XZCustomizableNavigationBar: UIKit.UINavigationBar {
+private class XZUINavigationBar: UIKit.UINavigationBar {
     
     open override var isHidden: Bool {
         get {

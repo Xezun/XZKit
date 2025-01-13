@@ -11,7 +11,7 @@ import UIKit
 /// 本协议用于控制器，用于自定义手势导航行为。
 /// - Note: 控制器所在的导航控制器遵循 XZNavigationController 协议。
 /// - Note: 未遵循本协议，默认支持侧滑返回。
-public protocol XZNavigationGestureDrivable: UIViewController {
+@MainActor public protocol XZNavigationGestureDrivable: UIViewController {
     
     /// 通过此方法，可限制手势导航触发的范围。
     /// 1. 返回 nil，表示全屏可手势触发导航行为，默认。

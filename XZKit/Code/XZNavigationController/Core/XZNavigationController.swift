@@ -16,7 +16,7 @@ import ObjectiveC
 /// 1. 栈内控制器可通过协议 `XZNavigationBarCustomizable` 自定义导航条。
 /// 2. 边缘返回手势默认开启，但可通过协议 `XZNavigationGestureDrivable` 控制手势导航行为，或开启全屏手势。
 /// 3. 导航控制器原生的自定义转场效果功能，虽然与原生开起来一样，但是如果开发者需自定义转场效果的话，需考虑自定义导航条的转场效果。
-public protocol XZNavigationController: UINavigationController {
+@MainActor public protocol XZNavigationController: UINavigationController {
 
 }
 

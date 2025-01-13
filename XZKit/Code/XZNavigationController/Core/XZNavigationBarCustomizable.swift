@@ -11,16 +11,18 @@ import ObjectiveC
 import XZDefines
 
 /// 视图控制器遵循协议，表明该控制器使用自定义的导航条。
-public protocol XZNavigationBarCustomizable: UIViewController {
+@MainActor public protocol XZNavigationBarCustomizable: UIViewController {
     /// 控制器自定义导航条。
     ///
     /// - Attention: 框架获取自定义导航条的获取时机会比 `viewDidLoad` 更早，因此，请避免在创建自定义导航条的过程中访问控制器的 `view` 属性，以免控制器生命周期提前。
-    var navigationBarIfLoaded: UINavigationBar? { get }
+    var navigationBarIfLoaded: AnyNavigationBar? { get }
 }
 
-/// 自定义导航条 XZNavigationBar 并非完全替代 UINavigationBar 因此需实现 UINavigationBar 的一些属性，以保证外观一致。
+/// 原生导航条基本特征的协议，也是自定义导航条必须实现的协议。
 ///
-/// 自定义导航条可以继承 XZNavigationBar 也可以继承其它视图控件，实现 UINavigationBar 协议即可。
+/// 因为本组件并非原生组件的完全替代品，而是原生组件的功能增强，因此必须实现一些方法或属性，以与原生保持的一致性。
+///
+/// 组件提供了 XZNavigationBar 基类，我们可以继承它，也可以使用其它遵循了 AnyNavigationBar 协议的视图控件。
 ///
 /// **关于系统导航条**
 ///
@@ -51,14 +53,14 @@ public protocol XZNavigationBarCustomizable: UIViewController {
 /// ```
 ///
 /// - Attention: 由于转场需要，自定义导航条并不总是在原生导航条之上，所以自定义导航条需要单独设置 tintColor 的值，以避免转场过程中，导航条颜色不一致的问题。
-@MainActor public protocol UINavigationBar: UIView {
+@MainActor public protocol AnyNavigationBar: UIView {
     /// 导航条是否半透明。
     var isTranslucent: Bool { get set }
     /// 导航条是否显示大标题模式。
     var prefersLargeTitles: Bool { get set }
 }
 
-extension UINavigationBar {
+extension AnyNavigationBar {
     
     /// 原生导航条。
     ///

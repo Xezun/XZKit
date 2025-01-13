@@ -8,7 +8,6 @@
 
 import UIKit
 
-
 /// 动画控制器，处理了导航控制器的转场过程中的动画效果。
 @MainActor open class XZNavigationControllerAnimationController: NSObject {
     
@@ -386,15 +385,15 @@ public class XZNavigationControllerAnimationContext {
     public let from: View<UIView>
     public let to: View<UIView>
     
-    public let fromNavigationBar: View<UINavigationBar>?
-    public let toNavigationBar: View<UINavigationBar>?
+    public let fromNavigationBar: View<AnyNavigationBar>?
+    public let toNavigationBar: View<AnyNavigationBar>?
     
     public let navigationBar: View<UIKit.UINavigationBar>?
     public let tabBar: View<UITabBar>?
     
     public let shadow: View<UIView>
     
-    init(transitionContext: UIViewControllerContextTransitioning, fromView: UIView, fromViewFrame: CGRect, toView: UIView, toViewFrame: CGRect, fromNavigationBar: UINavigationBar?, fromNavigationBarFrame: CGRect?, toNavigationBar: UINavigationBar?, toNavigationBarFrame: CGRect?, navigationBar: UIKit.UINavigationBar?, navigationBarFrame: CGRect?, tabBar: UITabBar?, tabBarFrame: CGRect?, shadowView: UIView, shadowViewFrame: CGRect) {
+    init(transitionContext: UIViewControllerContextTransitioning, fromView: UIView, fromViewFrame: CGRect, toView: UIView, toViewFrame: CGRect, fromNavigationBar: AnyNavigationBar?, fromNavigationBarFrame: CGRect?, toNavigationBar: AnyNavigationBar?, toNavigationBarFrame: CGRect?, navigationBar: UIKit.UINavigationBar?, navigationBarFrame: CGRect?, tabBar: UITabBar?, tabBarFrame: CGRect?, shadowView: UIView, shadowViewFrame: CGRect) {
         
         self.transitionContext = transitionContext
         self.from              = View.init(view: fromView, frame: fromViewFrame)
