@@ -131,6 +131,8 @@ NS_ASSUME_NONNULL_END
 XZDataDigesterContext XZDataDigesterContextCreate(XZDataDigesterAlgorithm algorithm) {
     XZDataDigesterContext context;
     switch (algorithm) {
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
         case XZDataDigesterAlgorithmMD2:
             context.init    = (XZDataDigesterOperationInit)CC_MD2_Init;
             context.update  = (XZDataDigesterOperationUpdate)CC_MD2_Update;
@@ -152,6 +154,7 @@ XZDataDigesterContext XZDataDigesterContextCreate(XZDataDigesterAlgorithm algori
             context.context = calloc(1, sizeof(CC_MD5_CTX));
             context.length  = CC_MD5_DIGEST_LENGTH;
             break;
+#pragma clang diagnostic pop
         case XZDataDigesterAlgorithmSHA1:
             context.init    = (XZDataDigesterOperationInit)CC_SHA1_Init;
             context.update  = (XZDataDigesterOperationUpdate)CC_SHA1_Update;
@@ -214,6 +217,8 @@ void *XZDataDigesterExecuteWithBlock(NSData *data, XZDataDigesterAlgorithm algor
     XZDataDigesterOperator operator = NULL;
     CC_LONG length = 0;
     switch (algorithm) {
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
         case XZDataDigesterAlgorithmMD2:
             operator = (XZDataDigesterOperator)CC_MD2;
             length  = CC_MD2_DIGEST_LENGTH;
@@ -226,6 +231,7 @@ void *XZDataDigesterExecuteWithBlock(NSData *data, XZDataDigesterAlgorithm algor
             operator = (XZDataDigesterOperator)CC_MD5;
             length  = CC_MD5_DIGEST_LENGTH;
             break;
+#pragma clang diagnostic pop
         case XZDataDigesterAlgorithmSHA1:
             operator = (XZDataDigesterOperator)CC_SHA1;
             length  = CC_SHA1_DIGEST_LENGTH;
