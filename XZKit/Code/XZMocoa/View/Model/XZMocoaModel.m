@@ -29,8 +29,7 @@ static const void * const _mocoaName = &_mocoaName;
 @end
 
 
-#if !SWIFT_PACKAGE
 @implementation XZMocoaModel
 @synthesize mocoaName = _mocoaName;
 @end
-#endif
+

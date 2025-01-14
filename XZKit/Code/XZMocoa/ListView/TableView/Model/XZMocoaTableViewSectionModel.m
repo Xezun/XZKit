@@ -7,9 +7,8 @@
 
 #import "XZMocoaTableViewSectionModel.h"
 
-#if !SWIFT_PACKAGE
 @implementation XZMocoaTableViewSectionModel
-
+@synthesize mocoaName = _mocoaName;
 @end
-#endif
+
 

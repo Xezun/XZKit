@@ -20,11 +20,10 @@ NS_SWIFT_UI_ACTOR @protocol XZMocoaModel <NSObject>
 
 @end
 
-#if !SWIFT_PACKAGE
 /// 因一致性而提供，非必须基类。
 /// @note 任何遵循 XZMocoaModel 协议的对象都可以作为数据模型，而非必须基于此类。
-@interface XZMocoaModel : NSObject <XZMocoaModel>
+NS_SWIFT_UI_ACTOR @interface XZMocoaModel : NSObject <XZMocoaModel>
 @end
-#endif
+
 
 NS_ASSUME_NONNULL_END

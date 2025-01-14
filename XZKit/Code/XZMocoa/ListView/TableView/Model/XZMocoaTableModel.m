@@ -7,7 +7,6 @@
 
 #import "XZMocoaTableModel.h"
 
-#if !SWIFT_PACKAGE
 @implementation XZMocoaTableModel
+@synthesize mocoaName = _mocoaName;
 @end
-#endif

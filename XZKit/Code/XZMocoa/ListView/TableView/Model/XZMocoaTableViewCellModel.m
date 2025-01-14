@@ -7,8 +7,8 @@
 
 #import "XZMocoaTableViewCellModel.h"
 
-#if !SWIFT_PACKAGE
 @implementation XZMocoaTableViewCellModel
 
+@synthesize mocoaName = _mocoaName;
+
 @end
-#endif
