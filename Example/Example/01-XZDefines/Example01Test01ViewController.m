@@ -41,22 +41,22 @@
     
     XZLog(@"测试 setFrame/setBounds 是否会互相调用");
     Example01TestView *view = [[Example01TestView alloc] initWithFrame:CGRectMake(0, 0, 100, 100)];
-    XZLog(@"setFrame");
+    XZLog(@"执行 setFrame");
     view.frame = CGRectMake(0, 0, 200, 200);
-    XZLog(@"setBounds");
+    XZLog(@"执行 setBounds");
     view.bounds = CGRectMake(0, 0, 300, 300);
-    XZLog(@"view: %@", view);
+    XZLog(@"完毕 view: %@", view);
 }
 
 @end
 
 @implementation Example01TestView
 - (void)setFrame:(CGRect)frame {
-    XZLog(@"%@", NSStringFromCGRect(frame));
+    XZLog(@"监听 setFrame：%@", NSStringFromCGRect(frame));
     [super setFrame:frame];
 }
 - (void)setBounds:(CGRect)bounds {
-    XZLog(@"%@", NSStringFromCGRect(bounds));
+    XZLog(@"监听 setFrame：%@", NSStringFromCGRect(bounds));
     [super setBounds:bounds];
 }
 @end

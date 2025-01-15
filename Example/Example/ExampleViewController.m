@@ -13,9 +13,15 @@
     NSArray<NSString *> *_dataArray;
 }
 
+@property (nonatomic, readonly) XZMocoaTableView *tableView;
+
 @end
 
 @implementation ExampleViewController
+
+- (XZMocoaTableView *)tableView {
+    return (id)self.view;
+}
 
 - (void)viewDidLoad {
     [super viewDidLoad];
@@ -45,9 +51,7 @@
     ];
     XZMocoaTableViewModel *viewModel = [[XZMocoaTableViewModel alloc] initWithModel:@[data]];
     viewModel.module = XZMocoa(@"https://xzkit.xezun.com/example");
-    
-    XZMocoaTableView *tableView = (id)self.view;
-    tableView.viewModel = viewModel;
+    self.tableView.viewModel = viewModel;
 }
 
 - (void)viewDidAppear:(BOOL)animated {

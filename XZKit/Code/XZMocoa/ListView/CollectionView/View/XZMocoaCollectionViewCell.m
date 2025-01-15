@@ -15,6 +15,7 @@
 - (void)setViewModel:(__kindof XZMocoaCollectionViewCellViewModel *)viewModel {
     if (_viewModel != viewModel) {
         [self viewModelWillChange];
+        [viewModel ready];
         _viewModel = viewModel;
         [self viewModelDidChange];
     }

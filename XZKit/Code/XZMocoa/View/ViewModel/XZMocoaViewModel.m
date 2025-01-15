@@ -86,22 +86,6 @@
     return [NSString stringWithFormat:@"<%@: %p, isReady = %@; subViewModels = (%ld objects)>", self.class, self, @(self.isReady), self.subViewModels.count];
 }
 
-- (void)setModel:(id)model {
-    if (_model != model) {
-        [self modelWillChange];
-        _model = model;
-        [self modelDidChange];
-    }
-}
-
-- (void)modelWillChange {
-    
-}
-
-- (void)modelDidChange {
-    
-}
-
 @end
 
 

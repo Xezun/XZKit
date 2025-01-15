@@ -283,13 +283,23 @@ NS_SWIFT_NAME(XZMocoaModule.SubmoduleCollection)
 
 @end
 
-/// 通过 URL 字符串获取 Mocoa MVVM 模块。
+/// 通过 URL 获取模块。
+///
+/// 推荐的 URL 格式：
+/// - mocoa://xzkit.xezun.com/
+/// - mocoa://xzkit.xezun.com/example
+///
 /// @param moduleURLString 模块地址
 FOUNDATION_STATIC_INLINE XZMocoaModule * _Nullable XZMocoa(NSString *moduleURLString) XZ_ATTR_OVERLOAD NS_SWIFT_NAME(mocoa(_:)) {
     return [XZMocoaModule moduleForURLString:moduleURLString];
 }
 
-/// 通过 URL 获取 Mocoa MVVM 模块。
+/// 通过 URL 获取模块。
+///
+/// 推荐的 URL 格式：
+/// - mocoa://xzkit.xezun.com/
+/// - mocoa://xzkit.xezun.com/example
+///
 /// @param moduleURL 模块地址
 FOUNDATION_STATIC_INLINE XZMocoaModule * _Nullable XZMocoa(NSURL *moduleURL) XZ_ATTR_OVERLOAD NS_SWIFT_NAME(mocoa(_:)) {
     return [XZMocoaModule moduleForURL:moduleURL];

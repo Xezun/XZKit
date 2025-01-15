@@ -557,7 +557,7 @@ typedef void(^XZMocoaListDelayedUpdates)(XZMocoaListViewSectionViewModel *self);
 }
 
 - (XZMocoaListViewCellViewModel *)_loadViewModelForCellAtIndex:(NSInteger)index {
-    XZMocoaName     const section = self.model.mocoaName;
+    XZMocoaName     const section = ((id<XZMocoaListSectionModel>)self.model).mocoaName;
     id<XZMocoaModel> const model  = [self.model modelForCellAtIndex:index];
     XZMocoaName      const name   = model.mocoaName;
     XZMocoaModule *  const module = [self.module submoduleIfLoadedForKind:XZMocoaKindCell forName:name];
@@ -611,7 +611,7 @@ typedef void(^XZMocoaListDelayedUpdates)(XZMocoaListViewSectionViewModel *self);
         return nil; // 没有数据，就没有 header/footer
     }
     
-    XZMocoaName     const section = self.model.mocoaName;
+    XZMocoaName     const section = ((id<XZMocoaListSectionModel>)self.model).mocoaName;
     XZMocoaName     const name    = model.mocoaName;
     XZMocoaModule * const module  = [self.module submoduleIfLoadedForKind:kind forName:name];
 

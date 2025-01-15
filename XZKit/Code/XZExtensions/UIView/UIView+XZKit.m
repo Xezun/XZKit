@@ -58,11 +58,11 @@
     NSMutableArray  * const descriptionsM = [NSMutableArray array];
     [self xz_enumerateHierarchy:^BOOL(NSInteger const hierarchy, UIView *subview, NSRange indexPath, BOOL *stop) {
         BOOL const isFirst = indexPath.location == 0;
-        BOOL const isLast  = indexPath.location == indexPath.length - 1;
+        //BOOL const isLast  = indexPath.location == indexPath.length - 1;
         
         NSString * const clsName = NSStringFromClass(subview.class);
         NSString * const content = [subview xz_contentForDescription];
-        NSString * const mark = (isFirst ? @"┏" : @"┣"); // • ┏ ┗ ┣
+        NSString * const mark = (isFirst ? @"┏" : @"┣"); // • ┏ ━┗ ┣
         
         NSString * const padding = [@"" stringByPaddingToLength:(hierarchy * 4) withString:@"┃   " startingAtIndex:0];
         

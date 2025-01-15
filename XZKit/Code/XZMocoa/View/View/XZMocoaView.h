@@ -47,6 +47,9 @@ NS_SWIFT_UI_ACTOR @protocol XZMocoaView <NSObject>
 
 @end
 
+@interface XZMocoaView : UIView <XZMocoaView>
+@end
+
 /// 模块初始化参数。可像字典一样取值。
 /// @code
 /// XZMocoaOptions options;

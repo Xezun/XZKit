@@ -13,6 +13,7 @@
 - (void)setViewModel:(__kindof XZMocoaCollectionViewSupplementaryViewModel *)viewModel {
     if (_viewModel != viewModel) {
         [self viewModelWillChange];
+        [viewModel ready];
         _viewModel = viewModel;
         [self viewModelDidChange];
     }
