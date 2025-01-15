@@ -203,6 +203,7 @@ XZMocoaUpdatesKey const XZMocoaUpdatesKeyReload = @"XZMocoaUpdatesKeyReload";
 XZMocoaUpdatesKey const XZMocoaUpdatesKeyModify = @"XZMocoaUpdatesKeyModify";
 XZMocoaUpdatesKey const XZMocoaUpdatesKeyInsert = @"XZMocoaUpdatesKeyInsert";
 XZMocoaUpdatesKey const XZMocoaUpdatesKeyDelete = @"XZMocoaUpdatesKeyDelete";
+XZMocoaUpdatesKey const XZMocoaUpdatesKeySelect = @"XZMocoaUpdatesKeySelect";
 
 @implementation XZMocoaViewModel (XZMocoaViewModelHierarchyEvents)
 

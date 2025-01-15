@@ -209,6 +209,8 @@ FOUNDATION_EXPORT XZMocoaUpdatesKey const XZMocoaUpdatesKeyModify;
 FOUNDATION_EXPORT XZMocoaUpdatesKey const XZMocoaUpdatesKeyInsert;
 /// 删除操作。适用情形：通知上级，执行删除数据的操作（数据还未删除）。
 FOUNDATION_EXPORT XZMocoaUpdatesKey const XZMocoaUpdatesKeyDelete;
+/// 选择操作。比如单选 cell 时，只能由上层控制单选。
+FOUNDATION_EXPORT XZMocoaUpdatesKey const XZMocoaUpdatesKeySelect;
 
 @interface XZMocoaViewModel (XZMocoaViewModelHierarchyUpdates)
 /// 接收下级模块的更新，或监听到下级模块的数据变化。
