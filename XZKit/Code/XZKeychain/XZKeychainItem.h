@@ -7,20 +7,23 @@
 //
 
 #import <Foundation/Foundation.h>
+@import Security;
 
 NS_ASSUME_NONNULL_BEGIN
 
 typedef NS_ENUM(NSUInteger, XZKeychainAccessibility) {
+    XZKeychainAccessibilityNone,
     XZKeychainAccessibilityWhenPasscodeSetThisDeviceOnly,
+    XZKeychainAccessibilityWhenUnlockedThisDeviceOnly,
     XZKeychainAccessibilityWhenUnlocked,
     XZKeychainAccessibilityAfterFirstUnlockThisDeviceOnly,
     XZKeychainAccessibilityAfterFirstUnlock,
-    XZKeychainAccessibilityAlwaysThisDeviceOnly,
-    XZKeychainAccessibilityAlways
 };
 
 /// SecAccessControl
+/// TODO: 模型化
 @interface XZKeychainAccessControl : NSObject
+@property (nonatomic) SecAccessControlRef control;
 @end
 
 typedef NS_ENUM(NSUInteger, XZKeychainSynchronizability) {
@@ -48,7 +51,7 @@ typedef NS_ENUM(NSUInteger, XZKeychainSynchronizability) {
 @property (nonatomic, copy) NSString *label;
 /// kSecAttrSynchronizable
 @property (nonatomic) XZKeychainSynchronizability synchronizable;
-- (instancetype)init NS_UNAVAILABLE;
+- (instancetype)init;
 @end
 
 

@@ -10,7 +10,7 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-@interface XZKeychainPasswordItem : XZKeychainItem
+@interface XZKeychainGenericPasswordItem : XZKeychainItem
 /// kSecAttrCreationDate: CFDateRef
 @property (nonatomic) NSDate *creationDate;
 /// kSecAttrModificationDate: CFDateRef
@@ -24,15 +24,12 @@ NS_ASSUME_NONNULL_BEGIN
 /// kSecAttrType: CFNumberRef
 @property (nonatomic) UInt32 type;
 /// kSecAttrIsInvisible: CFBooleanRef
-@property (nonatomic) BOOL isInvisible;
+@property (nonatomic, setter=setInvisible:) BOOL isInvisible;
 /// kSecAttrIsNegative: CFBooleanRef
-@property (nonatomic) BOOL isNegative;
+@property (nonatomic, setter=setNegative:) BOOL isNegative;
 /// kSecAttrAccount: CFStringRef
 @property (nonatomic) NSString *account;
-- (instancetype)init NS_UNAVAILABLE;
-@end
 
-@interface XZKeychainGenericPasswordItem : XZKeychainPasswordItem
 /// kSecAttrService: CFStringRef
 @property (nonatomic) NSString *service;
 /// 通用属性，XZKeychain 把它作为管理 XZKeychainTypeGenericPassword 类型钥匙串的唯一标识符。
@@ -40,7 +37,13 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic) NSData *userInfo;
 @end
 
-@interface XZKeychainInternetPasswordItem : XZKeychainPasswordItem
+@interface XZKeychainInternetPasswordItem : XZKeychainGenericPasswordItem
+/// kSecAttrService: CFStringRef
+@property (nonatomic) NSString *service NS_UNAVAILABLE;
+/// 通用属性，XZKeychain 把它作为管理 XZKeychainTypeGenericPassword 类型钥匙串的唯一标识符。
+/// kSecAttrGeneric: CFStringRef
+@property (nonatomic) NSData *userInfo NS_UNAVAILABLE;
+
 /// kSecAttrSecurityDomain: CFStringRef
 @property (nonatomic) NSString *securityDomain;
 /// kSecAttrServer: CFStringRef

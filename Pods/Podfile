@@ -27,6 +27,7 @@ target 'Example' do
   pod 'XZNavigationController', :path => '../'
   pod 'XZDataDigester', :path => '../'
   pod 'XZDataCryptor', :path => '../'
+  pod 'XZKeychain', :path => '../'
   
   pod 'SDWebImage'
 #  pod 'AFNetworking'
