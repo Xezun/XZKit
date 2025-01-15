@@ -180,10 +180,8 @@ typedef NS_ENUM(NSUInteger, XZKeychainStatus) {
 /// @param account     帐号
 /// @param accessGroup 分组
 /// @param identifier  唯一标识
-///
-/// @return YES 保存成功，NO 保存失败
-+ (BOOL)setPassword:(NSString * _Nullable)password forAccount:(NSString * _Nullable)account identifier:(NSString * _Nullable)identifier inGroup:(NSString * _Nullable)accessGroup;
-+ (BOOL)setPassword:(NSString * _Nullable)password forAccount:(NSString * _Nullable)account identifier:(NSString * _Nullable)identifier;
++ (BOOL)insertAccount:(nullable NSString *)account password:(nullable NSString *)password identifier:(nullable NSString *)identifier inGroup:(nullable NSString *)accessGroup error:(NSError ** _Nullable)error;
++ (BOOL)insertAccount:(nullable NSString *)account password:(nullable NSString *)password identifier:(nullable NSString *)identifier error:(NSError ** _Nullable)error;
 
 /// 获取密码的便利方法。
 ///
@@ -192,13 +190,13 @@ typedef NS_ENUM(NSUInteger, XZKeychainStatus) {
 /// @param identifier  唯一标识
 ///
 /// @return 已保存的密码。如果没有找到则返回 nil 。
-+ (NSString * _Nullable)passwordForAccount:(NSString * _Nullable)account identifier:(NSString * _Nullable)identifier inGroup:(NSString * _Nullable)accessGroup;
-+ (NSString * _Nullable)passwordForAccount:(NSString * _Nullable)account identifier:(NSString * _Nullable)identifier;
++ (nullable NSString *)searchPasswordForAccount:(nullable NSString *)account identifier:(nullable NSString *)identifier inGroup:(nullable NSString *)accessGroup error:(NSError ** _Nullable)error;
++ (nullable NSString *)searchPasswordForAccount:(nullable NSString *)account identifier:(nullable NSString *)identifier error:(NSError ** _Nullable)error;
 
 /// 以 kXZGenericPasswordKeychainDeviceIdentifier 作为唯一标识符，以 UUID 作为设备 ID 的钥匙串。
 /// 因为存储在钥匙串里的内容，不会因为删除 App 而清空，故可以用已储存的 UUID 作设备的唯一标识。
-+ (NSString * _Nullable)UDID;
-+ (NSString * _Nullable)UDIDForGroup:(NSString * _Nullable)accessGroup NS_SWIFT_NAME(UDID(for:));
++ (nullable NSString *)UDID;
++ (nullable NSString *)UDIDForGroup:(nullable NSString *)accessGroup NS_SWIFT_NAME(UDID(for:));
 
 @end
 

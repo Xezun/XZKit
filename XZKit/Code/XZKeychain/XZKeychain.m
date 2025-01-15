@@ -429,7 +429,7 @@ static BOOL XZKeychainHandleOSStatus(OSStatus statusCode, NSError *__autoreleasi
 
 @implementation XZKeychain (XZGenericPasswordKeychain)
 
-+ (BOOL)setPassword:(NSString *)password forAccount:(NSString *)account identifier:(NSString *)identifier inGroup:(NSString *)accessGroup {
++ (BOOL)insertAccount:(NSString *)account password:(NSString *)password identifier:(NSString *)identifier inGroup:(NSString *)accessGroup error:(NSError *__autoreleasing  _Nullable *)error {
     XZKeychainGenericPasswordItem *item = [[XZKeychainGenericPasswordItem alloc] init];
     item.account = account;
     item.accessGroup = accessGroup;
@@ -437,17 +437,17 @@ static BOOL XZKeychainHandleOSStatus(OSStatus statusCode, NSError *__autoreleasi
     
     XZKeychain *keychain = [XZKeychain keychainForItem:item];
     keychain.data = password ? [password dataUsingEncoding:NSUTF8StringEncoding] : (id)kCFNull;
-    if (![keychain update:NULL]) {
-        return [keychain insert:NULL];
+    if (![keychain update:error]) {
+        return [keychain insert:error];
     }
     return NO;
 }
 
-+ (BOOL)setPassword:(NSString *)password forAccount:(NSString *)account identifier:(NSString *)identifier {
-    return [self setPassword:password forAccount:account identifier:identifier inGroup:nil];
++ (BOOL)insertAccount:(NSString *)account password:(NSString *)password identifier:(NSString *)identifier error:(NSError *__autoreleasing  _Nullable *)error {
+    return [self insertAccount:account password:password identifier:identifier inGroup:nil error:error];
 }
 
-+ (NSString *)passwordForAccount:(NSString *)account identifier:(NSString *)identifier inGroup:(NSString *)accessGroup {
++ (NSString *)searchPasswordForAccount:(NSString *)account identifier:(NSString *)identifier inGroup:(NSString *)accessGroup error:(NSError *__autoreleasing  _Nullable *)error {
     XZKeychainGenericPasswordItem *item = [[XZKeychainGenericPasswordItem alloc] init];
     item.account = account;
     item.accessGroup = accessGroup;
@@ -457,8 +457,8 @@ static BOOL XZKeychainHandleOSStatus(OSStatus statusCode, NSError *__autoreleasi
     return [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding];
 }
 
-+ (NSString *)passwordForAccount:(NSString *)account identifier:(NSString *)identifier {
-    return [self passwordForAccount:account identifier:identifier inGroup:nil];
++ (NSString *)searchPasswordForAccount:(NSString *)account identifier:(NSString *)identifier error:(NSError *__autoreleasing  _Nullable *)error {
+    return [self searchPasswordForAccount:account identifier:identifier inGroup:nil error:error];
 }
 
 + (NSString *)UDID {

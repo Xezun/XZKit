@@ -25,18 +25,18 @@
     NSString *identifier = self.identifierLabel.text;
     
     // 保存密码
-    if ([XZKeychain setPassword:@"XZKeychain" forAccount:@"XZKit" identifier:identifier]) {
+    if ([XZKeychain insertAccount:@"XZKit" password:@"XZKeychain" identifier:identifier error:NULL]) {
         NSLog(@"密码保存成功");
     }
     
     // 读取密码
-    NSString *password = [XZKeychain passwordForAccount:@"XZKit" identifier:identifier];
+    NSString *password = [XZKeychain searchPasswordForAccount:@"XZKit" identifier:identifier error:NULL];
     if (password != nil) {
         NSLog(@"获取成功，密码为：%@", password);
     }
     
     // 删除密码
-    if ([XZKeychain setPassword:nil forAccount:@"XZKit" identifier:identifier]) {
+    if ([XZKeychain insertAccount:@"XZKit" password:nil identifier:identifier error:NULL]) {
         NSLog(@"删除成功");
     }
     
