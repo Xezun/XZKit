@@ -2,7 +2,7 @@
 //  UIImage+XZKit.h
 //  XZExtensions
 //
-//  Created by 徐臻 on 2024/6/12.
+//  Created by Xezun on 2024/6/12.
 //
 
 #import <UIKit/UIKit.h>

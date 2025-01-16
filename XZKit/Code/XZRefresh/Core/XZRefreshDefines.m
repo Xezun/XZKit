@@ -2,7 +2,7 @@
 //  XZRefreshDefines.m
 //  XZRefresh
 //
-//  Created by 徐臻 on 2024/1/27.
+//  Created by Xezun on 2024/1/27.
 //
 
 #import "XZRefreshDefines.h"

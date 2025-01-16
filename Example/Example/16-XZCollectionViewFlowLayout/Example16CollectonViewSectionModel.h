@@ -2,7 +2,7 @@
 //  Example16CollectonViewSectionModel.h
 //  Example
 //
-//  Created by 徐臻 on 2024/6/1.
+//  Created by Xezun on 2024/6/1.
 //
 
 #import <Foundation/Foundation.h>

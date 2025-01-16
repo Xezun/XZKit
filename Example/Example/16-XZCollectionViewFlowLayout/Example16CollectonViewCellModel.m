@@ -2,7 +2,7 @@
 //  Example16CollectonViewCellModel.m
 //  Example
 //
-//  Created by 徐臻 on 2024/6/1.
+//  Created by Xezun on 2024/6/1.
 //
 
 #import "Example16CollectonViewCellModel.h"

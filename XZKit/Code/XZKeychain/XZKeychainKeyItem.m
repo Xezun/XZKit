@@ -1,15 +1,49 @@
 //
-//  XZKeychainIdentityItem.m
+//  XZKeychainKeyItem.m
 //  KeyChain
 //
-//  Created by 徐臻 on 2025/1/13.
-//  Copyright © 2025 人民网. All rights reserved.
+//  Created by Xezun on 2025/1/13.
+//  Copyright © 2025 Xezun Individual. All rights reserved.
 //
 
-#import "XZKeychainIdentityItem.h"
+#import "XZKeychainKeyItem.h"
+
+@interface XZKeychainItem (XZKeychainCertificateItem) <XZKeychainCertificateItem>
+@end
+@interface XZKeychainItem (XZKeychainKeyItem) <XZKeychainKeyItem>
+@end
+
+@implementation XZKeychainCertificateItem
+
+- (instancetype)init {
+    self = [super init];
+    if (self) {
+        _attributes[(NSString *)kSecClass] = (NSString *)kSecClassCertificate;
+    }
+    return self;
+}
+@dynamic certificateEncoding, certificateType;
+@dynamic subject, issuer, serialNumber, subjectKeyID, publicKeyHash;
+@end
+
+
+@implementation XZKeychainKeyItem
+
+- (instancetype)init {
+    self = [super init];
+    if (self) {
+        _attributes[(NSString *)kSecClass] = (NSString *)kSecClassKey;
+    }
+    return self;
+}
+
+@dynamic keyClass, applicationLabel, isPermanent, applicationTag, keyType;
+@dynamic keySizeInBits, effectiveKeySize;
+@dynamic canEncrypt, canDecrypt, canDerive, canSign, canVerify, canWrap, canUnwrap;
+
+@end
 
 @implementation XZKeychainIdentityItem
-
 - (instancetype)init {
     self = [super init];
     if (self) {
@@ -17,6 +51,16 @@
     }
     return self;
 }
+@dynamic keyClass, applicationLabel, isPermanent, applicationTag, keyType;
+@dynamic keySizeInBits, effectiveKeySize;
+@dynamic canEncrypt, canDecrypt, canDerive, canSign, canVerify, canWrap, canUnwrap;
+
+@dynamic certificateEncoding, certificateType;
+@dynamic subject, issuer, serialNumber, subjectKeyID, publicKeyHash;
+@end
+
+
+@implementation XZKeychainItem (XZKeychainCertificateItem)
 
 - (UInt32)certificateType {
     return [_attributes[(id)kSecAttrCertificateType] unsignedIntValue];
@@ -74,8 +118,9 @@
     _attributes[(id)kSecAttrPublicKeyHash] = publicKeyHash;
 }
 
-// -----------------
+@end
 
+@implementation XZKeychainItem (XZKeychainKeyItem)
 - (XZKeychainKeyClass)keyClass {
     NSString *value = _attributes[(id)kSecAttrKeyClass];
     if ([value isEqualToString:(id)kSecAttrKeyClassPublic]) {
@@ -234,7 +279,7 @@
     return [_attributes[(id)kSecAttrCanEncrypt] boolValue];
 }
 
-- (void)setEncrypt:(BOOL)canEncrypt {
+- (void)setCanEncrypt:(BOOL)canEncrypt {
     _attributes[(id)kSecAttrCanEncrypt] = @(canEncrypt);
 }
 
@@ -285,38 +330,4 @@
 - (void)setCanUnwrap:(BOOL)canUnwrap {
     _attributes[(id)kSecAttrCanUnwrap] = @(canUnwrap);
 }
-
-@end
-
-
-@implementation XZKeychainCertificateItem
-
-- (instancetype)init {
-    self = [super init];
-    if (self) {
-        _attributes[(NSString *)kSecClass] = (NSString *)kSecClassCertificate;
-    }
-    return self;
-}
-
-@dynamic keyClass, applicationLabel, isPermanent, applicationTag, keyType;
-@dynamic keySizeInBits, effectiveKeySize, canEncrypt, canDecrypt, canDerive;
-@dynamic canSign, canVerify, canWrap, canUnwrap;
-
-@end
-
-
-@implementation XZKeychainKeyItem
-
-- (instancetype)init {
-    self = [super init];
-    if (self) {
-        _attributes[(NSString *)kSecClass] = (NSString *)kSecClassKey;
-    }
-    return self;
-}
-
-@dynamic certificateType, certificateEncoding;
-@dynamic subject, issuer, serialNumber, subjectKeyID, publicKeyHash;
-
 @end

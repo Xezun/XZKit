@@ -2,22 +2,14 @@
 //  XZKeychainPasswordItem.m
 //  KeyChain
 //
-//  Created by 徐臻 on 2025/1/13.
-//  Copyright © 2025 人民网. All rights reserved.
+//  Created by Xezun on 2025/1/13.
+//  Copyright © 2025 Xezun Individual. All rights reserved.
 //
 
 #import "XZKeychainPasswordItem.h"
 @import Security;
 
-@implementation XZKeychainGenericPasswordItem
-
-- (instancetype)init {
-    self = [super init];
-    if (self) {
-        _attributes[(NSString *)kSecClass] = (NSString *)kSecClassGenericPassword;
-    }
-    return self;
-}
+@implementation XZKeychainPasswordItem
 
 - (NSDate *)creationDate {
     return _attributes[(id)kSecAttrCreationDate];
@@ -91,6 +83,19 @@
     _attributes[(id)kSecAttrAccount] = account;
 }
 
+
+@end
+
+@implementation XZKeychainGenericPasswordItem
+
+- (instancetype)init {
+    self = [super init];
+    if (self) {
+        _attributes[(NSString *)kSecClass] = (NSString *)kSecClassGenericPassword;
+    }
+    return self;
+}
+
 - (NSString *)service {
     return _attributes[(id)kSecAttrService];
 }
@@ -110,8 +115,6 @@
 @end
 
 @implementation XZKeychainInternetPasswordItem
-
-@dynamic service, userInfo;
 
 - (instancetype)init {
     self = [super init];

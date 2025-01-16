@@ -2,7 +2,7 @@
 //  XZLocale.h
 //  XZLocale
 //
-//  Created by 徐臻 on 2024/9/15.
+//  Created by Xezun on 2024/9/15.
 //
 
 #import <UIKit/UIKit.h>
@@ -13,6 +13,10 @@ NS_ASSUME_NONNULL_BEGIN
 typedef NSString *XZLanguage NS_EXTENSIBLE_STRING_ENUM;
 
 /// 简体中文，符号为 zh-Hans 字符串。
+///
+/// - `>= iOS 7.0`: zh-HK（香港繁体）
+/// - `< iOS 9.0`: zh-Hans（简体）、zh-Hant（繁体）
+/// - `>= iOS 9.0`: zh-Hans-CN（简体）、zh-Hant-CN（繁体）、zh-TW（台湾繁体）
 FOUNDATION_EXPORT XZLanguage const XZLanguageChinese NS_SWIFT_NAME(XZLanguage.Chinese);
 /// 繁体中文，符号为 zh-Hant 字符串。
 FOUNDATION_EXPORT XZLanguage const XZLanguageChineseTraditional NS_SWIFT_NAME(XZLanguage.ChineseTraditional);

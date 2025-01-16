@@ -2,7 +2,7 @@
 //  XZSegmentedControlIndicator.h
 //  XZSegmentedControl
 //
-//  Created by 徐臻 on 2024/7/9.
+//  Created by Xezun on 2024/7/9.
 //
 
 #import <UIKit/UIKit.h>

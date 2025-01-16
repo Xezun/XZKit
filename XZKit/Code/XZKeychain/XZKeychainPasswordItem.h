@@ -2,15 +2,15 @@
 //  XZKeychainPasswordItem.h
 //  KeyChain
 //
-//  Created by 徐臻 on 2025/1/13.
-//  Copyright © 2025 人民网. All rights reserved.
+//  Created by Xezun on 2025/1/13.
+//  Copyright © 2025 Xezun Individual. All rights reserved.
 //
 
 #import "XZKeychainItem.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
-@interface XZKeychainGenericPasswordItem : XZKeychainItem
+@interface XZKeychainPasswordItem : XZKeychainItem
 /// kSecAttrCreationDate: CFDateRef
 @property (nonatomic) NSDate *creationDate;
 /// kSecAttrModificationDate: CFDateRef
@@ -29,21 +29,18 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic, setter=setNegative:) BOOL isNegative;
 /// kSecAttrAccount: CFStringRef
 @property (nonatomic) NSString *account;
+@end
 
+@interface XZKeychainGenericPasswordItem : XZKeychainPasswordItem
 /// kSecAttrService: CFStringRef
 @property (nonatomic) NSString *service;
 /// 通用属性，XZKeychain 把它作为管理 XZKeychainTypeGenericPassword 类型钥匙串的唯一标识符。
 /// kSecAttrGeneric: CFStringRef
 @property (nonatomic) NSData *userInfo;
+- (instancetype)init NS_DESIGNATED_INITIALIZER;
 @end
 
-@interface XZKeychainInternetPasswordItem : XZKeychainGenericPasswordItem
-/// kSecAttrService: CFStringRef
-@property (nonatomic) NSString *service NS_UNAVAILABLE;
-/// 通用属性，XZKeychain 把它作为管理 XZKeychainTypeGenericPassword 类型钥匙串的唯一标识符。
-/// kSecAttrGeneric: CFStringRef
-@property (nonatomic) NSData *userInfo NS_UNAVAILABLE;
-
+@interface XZKeychainInternetPasswordItem : XZKeychainPasswordItem
 /// kSecAttrSecurityDomain: CFStringRef
 @property (nonatomic) NSString *securityDomain;
 /// kSecAttrServer: CFStringRef
@@ -56,6 +53,7 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic) NSUInteger port;
 /// kSecAttrPath: CFStringRef
 @property (nonatomic) NSString *path;
+- (instancetype)init NS_DESIGNATED_INITIALIZER;
 @end
 
 NS_ASSUME_NONNULL_END

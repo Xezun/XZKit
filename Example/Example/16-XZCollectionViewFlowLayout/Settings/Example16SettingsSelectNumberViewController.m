@@ -2,7 +2,7 @@
 //  Example16SettingsSelectNumberViewController.m
 //  Example
 //
-//  Created by 徐臻 on 2024/6/3.
+//  Created by Xezun on 2024/6/3.
 //
 
 #import "Example16SettingsSelectNumberViewController.h"

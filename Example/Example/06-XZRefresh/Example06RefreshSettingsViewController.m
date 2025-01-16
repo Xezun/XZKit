@@ -2,7 +2,7 @@
 //  Example06RefreshSettingsViewController.m
 //  Example
 //
-//  Created by 徐臻 on 2024/5/21.
+//  Created by Xezun on 2024/5/21.
 //
 
 #import "Example06RefreshSettingsViewController.h"

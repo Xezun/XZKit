@@ -3,7 +3,7 @@
 //  XZKit
 //
 //  Created by Xezun on 2018/7/10.
-//  Copyright © 2018年 XEZUN INC.com All rights reserved.
+//  Copyright © 2018年 Xezun Individual. All rights reserved.
 //
 
 import UIKit

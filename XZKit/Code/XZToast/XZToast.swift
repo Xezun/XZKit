@@ -2,7 +2,7 @@
 //  XZToast.swift
 //  ChatGPT
 //
-//  Created by 徐臻 on 2023/12/11.
+//  Created by Xezun on 2023/12/11.
 //
 
 import UIKit

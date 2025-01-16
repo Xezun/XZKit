@@ -3,7 +3,7 @@
 //  XZKit
 //
 //  Created by Xezun on 2019/3/27.
-//  Copyright © 2019 XEZUN INC. All rights reserved.
+//  Copyright © 2019 Xezun Individual. All rights reserved.
 //
 
 import Foundation

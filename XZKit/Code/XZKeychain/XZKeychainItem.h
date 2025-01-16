@@ -2,14 +2,20 @@
 //  XZKeychainItem.h
 //  KeyChain
 //
-//  Created by 徐臻 on 2025/1/13.
-//  Copyright © 2025 人民网. All rights reserved.
+//  Created by Xezun on 2025/1/13.
+//  Copyright © 2025 Xezun Individual. All rights reserved.
 //
 
 #import <Foundation/Foundation.h>
 @import Security;
 
 NS_ASSUME_NONNULL_BEGIN
+
+#ifdef XZ_FRAMEWORK
+#define XZ_KEYCHAIN_PRIVATE_METHOD
+#else
+#define XZ_KEYCHAIN_PRIVATE_METHOD NS_UNAVAILABLE
+#endif
 
 typedef NS_ENUM(NSUInteger, XZKeychainAccessibility) {
     XZKeychainAccessibilityNone,
@@ -51,7 +57,7 @@ typedef NS_ENUM(NSUInteger, XZKeychainSynchronizability) {
 @property (nonatomic, copy) NSString *label;
 /// kSecAttrSynchronizable
 @property (nonatomic) XZKeychainSynchronizability synchronizable;
-- (instancetype)init;
+- (instancetype)init XZ_KEYCHAIN_PRIVATE_METHOD;
 @end
 
 

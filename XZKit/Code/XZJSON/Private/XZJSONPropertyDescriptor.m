@@ -2,7 +2,7 @@
 //  XZJSONPropertyDescriptor.m
 //  XZJSON
 //
-//  Created by 徐臻 on 2024/9/29.
+//  Created by Xezun on 2024/9/29.
 //
 
 #import "XZJSONPropertyDescriptor.h"

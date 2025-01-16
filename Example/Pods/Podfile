@@ -1,0 +1,43 @@
+use_frameworks!
+
+platform :ios, '13.0'
+#inhibit_all_warnings!
+
+workspace '../Example.xcworkspace'
+project '../Example.xcodeproj'
+
+target 'Example' do
+
+  pod 'XZDefines', :path => '../../'
+  pod 'XZExtensions', :path => '../../'
+  pod 'XZMocoa', :path => '../../'
+  pod 'XZML', :path => '../../'
+  pod 'XZJSON', :path => '../../'
+  pod 'XZPageView', :path => '../../'
+  pod 'XZPageControl', :path => '../../'
+  pod 'XZRefresh', :path => '../../'
+  pod 'XZSegmentedControl', :path => '../../'
+  pod 'XZGeometry', :path => '../../'
+  pod 'XZTextImageView', :path => '../../'
+  pod 'XZContentStatus', :path => '../../'
+  pod 'XZToast', :path => '../../'
+  pod 'XZURLQuery', :path => '../../'
+  pod 'XZLocale', :path => '../../'
+  pod 'XZCollectionViewFlowLayout', :path => '../../'
+  pod 'XZNavigationController', :path => '../../'
+  pod 'XZDataDigester', :path => '../../'
+  pod 'XZDataCryptor', :path => '../../'
+  pod 'XZKeychain', :path => '../../'
+  
+  pod 'SDWebImage'
+#  pod 'AFNetworking'
+  
+  target 'ExampleTests' do
+    inherit! :search_paths
+  end
+
+  target 'ExampleUITests' do
+    inherit! :search_paths
+  end
+  
+end
