@@ -63,7 +63,10 @@ let package = Package(
             targets: ["XZDataCryptor"]),
         .library(
             name: "XZDataDigester",
-            targets: ["XZDataDigester"])
+            targets: ["XZDataDigester"]),
+        .library(
+            name: "XZKeychain",
+            targets: ["XZKeychain"])
     ],
     dependencies: [
         // Dependencies declare other packages that this package depends on.
@@ -283,6 +286,16 @@ let package = Package(
             path: "XZKit",
             sources: ["Code/XZDataDigester"],
             publicHeadersPath: "Headers/XZDataDigester/Public",
+            cxxSettings: [
+                .define("XZ_FRAMEWORK")
+            ]
+        ),
+        .target(
+            name: "XZKeychain",
+            dependencies: [],
+            path: "XZKit",
+            sources: ["Code/XZKeychain"],
+            publicHeadersPath: "Headers/XZKeychain/Public",
             cxxSettings: [
                 .define("XZ_FRAMEWORK")
             ]

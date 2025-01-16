@@ -15,12 +15,12 @@
     if (self) {
         // 容器
         _attributes = [NSMutableDictionary dictionaryWithCapacity:64];
-        // 默认匹配一个
-        _attributes[(id)kSecMatchLimit] = (id)kSecMatchLimitOne;
-        // 返回属性
-        _attributes[(NSString *)kSecReturnAttributes] = (id)kCFBooleanTrue;
     }
     return self;
+}
+
+- (NSString *)securityClass {
+    @throw [NSException exceptionWithName:NSGenericException reason:@"必须使用子类" userInfo:nil];
 }
 
 - (XZKeychainAccessibility)accessible {
@@ -113,6 +113,15 @@
             _attributes[(id)kSecAttrSynchronizable] = (id)kSecAttrSynchronizableAny;
             break;
     }
+}
+
+- (NSData *)data {
+    id data = _attributes[(id)kSecValueData];
+    return data == (id)kCFNull ? nil : data;
+}
+
+- (void)setData:(NSData *)data {
+    _attributes[(id)kSecValueData] = data ?: (id)kCFNull;
 }
 
 @end

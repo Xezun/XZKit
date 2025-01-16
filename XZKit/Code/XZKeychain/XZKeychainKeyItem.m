@@ -14,13 +14,11 @@
 @end
 
 @implementation XZKeychainCertificateItem
-
 - (instancetype)init {
-    self = [super init];
-    if (self) {
-        _attributes[(NSString *)kSecClass] = (NSString *)kSecClassCertificate;
-    }
-    return self;
+    return [super init];
+}
+- (NSString *)securityClass {
+    return (id)kSecClassCertificate;
 }
 @dynamic certificateEncoding, certificateType;
 @dynamic subject, issuer, serialNumber, subjectKeyID, publicKeyHash;
@@ -28,13 +26,11 @@
 
 
 @implementation XZKeychainKeyItem
-
 - (instancetype)init {
-    self = [super init];
-    if (self) {
-        _attributes[(NSString *)kSecClass] = (NSString *)kSecClassKey;
-    }
-    return self;
+    return [super init];
+}
+- (NSString *)securityClass {
+    return (id)kSecClassKey;
 }
 
 @dynamic keyClass, applicationLabel, isPermanent, applicationTag, keyType;
@@ -45,11 +41,10 @@
 
 @implementation XZKeychainIdentityItem
 - (instancetype)init {
-    self = [super init];
-    if (self) {
-        _attributes[(NSString *)kSecClass] = (NSString *)kSecClassIdentity;
-    }
-    return self;
+    return [super init];
+}
+- (NSString *)securityClass {
+    return (id)kSecClassIdentity;
 }
 @dynamic keyClass, applicationLabel, isPermanent, applicationTag, keyType;
 @dynamic keySizeInBits, effectiveKeySize;

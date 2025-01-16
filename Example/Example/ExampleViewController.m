@@ -8,6 +8,7 @@
 #import "ExampleViewController.h"
 @import XZExtensions;
 @import XZMocoa;
+@import XZToast;
 
 @interface ExampleViewController () {
     NSArray<NSString *> *_dataArray;
@@ -48,7 +49,7 @@
         @"17. XZNavigationController",
         @"18. XZDataDigester",
         @"19. XZDataCryptor",
-        @"20. XZKeychain"
+        @"20. XZKeychain",
     ];
     XZMocoaTableViewModel *viewModel = [[XZMocoaTableViewModel alloc] initWithModel:@[data]];
     viewModel.module = XZMocoa(@"https://xzkit.xezun.com/example");

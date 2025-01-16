@@ -51,25 +51,25 @@ typedef NS_ENUM(NSUInteger, XZKeychainKeyType) {
 /// kSecAttrCertificateEncoding
 @property (nonatomic) UInt32 certificateEncoding;
 /// kSecAttrSubject: CFDataRef the X.500 subject name of a certificate
-@property (nonatomic) NSData *subject;
+@property (nonatomic, nullable) NSData *subject;
 /// kSecAttrIssuer: CFDataRef the X.500 issuer name of a certificate
-@property (nonatomic) NSData *issuer;
+@property (nonatomic, nullable) NSData *issuer;
 /// kSecAttrSerialNumber: CFDataRef the serial number data of a certificate
-@property (nonatomic) NSData *serialNumber;
+@property (nonatomic, nullable) NSData *serialNumber;
 /// kSecAttrSubjectKeyID: CFDataRef the subject key ID of a certificate
-@property (nonatomic) NSData *subjectKeyID;
+@property (nonatomic, nullable) NSData *subjectKeyID;
 /// kSecAttrPublicKeyHash: CFDataRef the hash of a certificate’s public key
-@property (nonatomic) NSData *publicKeyHash;
+@property (nonatomic, nullable) NSData *publicKeyHash;
 @end
 
 @protocol XZKeychainKeyItem <NSObject>
 @property (nonatomic) XZKeychainKeyClass keyClass;
 /// kSecAttrApplicationLabel: CFDataRef
-@property (nonatomic) NSData *applicationLabel;
+@property (nonatomic, nullable) NSData *applicationLabel;
 /// kSecAttrIsPermanent
 @property (nonatomic, setter=setPermanent:) BOOL isPermanent;
 /// kSecAttrApplicationTag
-@property (nonatomic) NSData *applicationTag;
+@property (nonatomic, nullable) NSData *applicationTag;
 /// kSecAttrKeyType
 @property (nonatomic) XZKeychainKeyType keyType;
 /// kSecAttrKeySizeInBits

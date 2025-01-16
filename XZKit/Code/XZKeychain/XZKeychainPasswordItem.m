@@ -11,6 +11,15 @@
 
 @implementation XZKeychainPasswordItem
 
+- (NSString *)password {
+    NSData *data = self.data;
+    return [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding];
+}
+
+- (void)setPassword:(NSString *)password {
+    self.data = [password dataUsingEncoding:NSUTF8StringEncoding];
+}
+
 - (NSDate *)creationDate {
     return _attributes[(id)kSecAttrCreationDate];
 }
@@ -89,11 +98,11 @@
 @implementation XZKeychainGenericPasswordItem
 
 - (instancetype)init {
-    self = [super init];
-    if (self) {
-        _attributes[(NSString *)kSecClass] = (NSString *)kSecClassGenericPassword;
-    }
-    return self;
+    return [super init];
+}
+
+- (NSString *)securityClass {
+    return (NSString *)kSecClassGenericPassword;
 }
 
 - (NSString *)service {
@@ -117,11 +126,11 @@
 @implementation XZKeychainInternetPasswordItem
 
 - (instancetype)init {
-    self = [super init];
-    if (self) {
-        _attributes[(NSString *)kSecClass] = (NSString *)kSecClassInternetPassword;
-    }
-    return self;
+    return [super init];
+}
+
+- (NSString *)securityClass {
+    return (NSString *)kSecClassInternetPassword;
 }
 
 - (NSString *)securityDomain {

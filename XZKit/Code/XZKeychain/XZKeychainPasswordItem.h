@@ -11,14 +11,17 @@
 NS_ASSUME_NONNULL_BEGIN
 
 @interface XZKeychainPasswordItem : XZKeychainItem
+/// 存储密码的便利方法，与访问 data 相同。
+@property (nonatomic, copy, nullable) NSString *password;
+
 /// kSecAttrCreationDate: CFDateRef
-@property (nonatomic) NSDate *creationDate;
+@property (nonatomic, nullable) NSDate *creationDate;
 /// kSecAttrModificationDate: CFDateRef
-@property (nonatomic) NSDate *modificationDate;
+@property (nonatomic, nullable) NSDate *modificationDate;
 /// kSecAttrDescription: CFStringRef
-@property (nonatomic) NSString *description;
+@property (nonatomic, nullable) NSString *description;
 /// kSecAttrComment: CFStringRef
-@property (nonatomic) NSString *comment;
+@property (nonatomic, nullable) NSString *comment;
 /// kSecAttrCreator: CFNumberRef
 @property (nonatomic) UInt32 creator;
 /// kSecAttrType: CFNumberRef
@@ -28,31 +31,31 @@ NS_ASSUME_NONNULL_BEGIN
 /// kSecAttrIsNegative: CFBooleanRef
 @property (nonatomic, setter=setNegative:) BOOL isNegative;
 /// kSecAttrAccount: CFStringRef
-@property (nonatomic) NSString *account;
+@property (nonatomic, nullable) NSString *account;
 @end
 
 @interface XZKeychainGenericPasswordItem : XZKeychainPasswordItem
 /// kSecAttrService: CFStringRef
-@property (nonatomic) NSString *service;
+@property (nonatomic, nullable) NSString *service;
 /// 通用属性，XZKeychain 把它作为管理 XZKeychainTypeGenericPassword 类型钥匙串的唯一标识符。
 /// kSecAttrGeneric: CFStringRef
-@property (nonatomic) NSData *userInfo;
+@property (nonatomic, nullable) NSData *userInfo;
 - (instancetype)init NS_DESIGNATED_INITIALIZER;
 @end
 
 @interface XZKeychainInternetPasswordItem : XZKeychainPasswordItem
 /// kSecAttrSecurityDomain: CFStringRef
-@property (nonatomic) NSString *securityDomain;
+@property (nonatomic, nullable) NSString *securityDomain;
 /// kSecAttrServer: CFStringRef
-@property (nonatomic) NSString *server;
+@property (nonatomic, nullable) NSString *server;
 /// kSecAttrProtocol: CFStringRef
-@property (nonatomic) NSString *protocol;
+@property (nonatomic, nullable) NSString *protocol;
 /// kSecAttrAuthenticationType: CFStringRef
-@property (nonatomic) NSString *authenticationType;
+@property (nonatomic, nullable) NSString *authenticationType;
 /// kSecAttrPort: CFStringRef
 @property (nonatomic) NSUInteger port;
 /// kSecAttrPath: CFStringRef
-@property (nonatomic) NSString *path;
+@property (nonatomic, nullable) NSString *path;
 - (instancetype)init NS_DESIGNATED_INITIALIZER;
 @end
 

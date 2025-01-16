@@ -325,6 +325,18 @@ extension XZToast: ExpressibleByStringLiteral {
         self.text = text
         super.init()
     }
+    /// 构造文本类型提示信息。
+    /// - Parameter text: 文本内容
+    /// - Returns: 提示信息对象
+    @objc public static func messageToast(_ text: String) -> __XZOBJCToast {
+        return .init(type: .message, text: text)
+    }
+    /// 构造加载类型提示信息。
+    /// - Parameter text: 文本内容
+    /// - Returns: 提示信息对象
+    @objc public static func loadingToast(_ text: String) -> __XZOBJCToast {
+        return .init(type: .loading, text: text)
+    }
 }
 
 extension XZToast: ReferenceConvertible {

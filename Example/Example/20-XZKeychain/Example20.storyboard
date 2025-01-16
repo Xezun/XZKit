@@ -82,8 +82,8 @@
                                         <fontDescription key="fontDescription" type="system" pointSize="14"/>
                                         <textInputTraits key="textInputTraits"/>
                                     </textField>
-                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="com.xezun.XZKeychain.example" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="2g8-AV-haJ">
-                                        <rect key="frame" x="69.333333333333329" y="100" width="182.33333333333337" height="14.666666666666671"/>
+                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="XZKeychain.xezun.com" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="2g8-AV-haJ">
+                                        <rect key="frame" x="94.666666666666671" y="100" width="131.66666666666663" height="14.666666666666671"/>
                                         <fontDescription key="fontDescription" type="system" pointSize="12"/>
                                         <color key="textColor" red="0.66666668650000005" green="0.66666668650000005" blue="0.66666668650000005" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                         <nil key="highlightedColor"/>
@@ -98,7 +98,7 @@
                                             <color key="titleColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                         </state>
                                         <connections>
-                                            <action selector="update:" destination="uRw-8X-YF8" eventType="touchUpInside" id="mbt-pW-odS"/>
+                                            <action selector="updateButtonAction:" destination="uRw-8X-YF8" eventType="touchUpInside" id="mbt-pW-odS"/>
                                         </connections>
                                     </button>
                                     <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="XZKeychain" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="cVx-Hp-3Ca">
@@ -117,7 +117,7 @@
                                             <color key="titleColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                         </state>
                                         <connections>
-                                            <action selector="read:" destination="uRw-8X-YF8" eventType="touchUpInside" id="bjD-6N-G90"/>
+                                            <action selector="searchButtonAction:" destination="uRw-8X-YF8" eventType="touchUpInside" id="bjD-6N-G90"/>
                                         </connections>
                                     </button>
                                     <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="xAA-1O-JYO">
@@ -130,7 +130,7 @@
                                             <color key="titleColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                         </state>
                                         <connections>
-                                            <action selector="remove:" destination="uRw-8X-YF8" eventType="touchUpInside" id="Y86-o6-3c1"/>
+                                            <action selector="deleteButtonAction:" destination="uRw-8X-YF8" eventType="touchUpInside" id="Y86-o6-3c1"/>
                                         </connections>
                                     </button>
                                     <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="cUg-iJ-hJ9">
@@ -143,7 +143,7 @@
                                             <color key="titleColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                         </state>
                                         <connections>
-                                            <action selector="write:" destination="uRw-8X-YF8" eventType="touchUpInside" id="LS4-2z-eHB"/>
+                                            <action selector="insertButtonAction:" destination="uRw-8X-YF8" eventType="touchUpInside" id="LS4-2z-eHB"/>
                                         </connections>
                                     </button>
                                 </subviews>
@@ -185,11 +185,15 @@
                         <constraints>
                             <constraint firstItem="iut-fX-mhn" firstAttribute="leading" secondItem="aHY-o2-qh9" secondAttribute="leadingMargin" constant="20" id="AaH-MG-BHG"/>
                             <constraint firstAttribute="trailingMargin" secondItem="iut-fX-mhn" secondAttribute="trailing" constant="20" id="JXT-9N-SXg"/>
-                            <constraint firstItem="iut-fX-mhn" firstAttribute="top" secondItem="SzA-ss-YIc" secondAttribute="bottom" constant="70" id="fj1-SC-9DU"/>
+                            <constraint firstItem="iut-fX-mhn" firstAttribute="top" secondItem="PaR-eD-a9C" secondAttribute="top" constant="70" id="fj1-SC-9DU"/>
                         </constraints>
                     </view>
                     <navigationItem key="navigationItem" title="XZKeychain" id="Adk-3H-xLX">
-                        <barButtonItem key="leftBarButtonItem" image="xmark" catalog="system" id="pHJ-gM-8BM"/>
+                        <barButtonItem key="leftBarButtonItem" image="xmark" catalog="system" id="pHJ-gM-8BM">
+                            <connections>
+                                <segue destination="PHl-OB-X1p" kind="unwind" unwindAction="unwindToMainPage:" id="yfL-y7-ZUv"/>
+                            </connections>
+                        </barButtonItem>
                     </navigationItem>
                     <connections>
                         <outlet property="accountTextField" destination="q57-jC-RbR" id="Pht-Nj-Hq2"/>
@@ -199,6 +203,7 @@
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="5ag-yH-x8o" sceneMemberID="firstResponder"/>
+                <exit id="PHl-OB-X1p" userLabel="Exit" sceneMemberID="exit"/>
             </objects>
             <point key="canvasLocation" x="1312" y="18"/>
         </scene>
