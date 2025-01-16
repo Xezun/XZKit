@@ -197,7 +197,12 @@ fileprivate class XZToastView : UIView {
                     }
                 case let .loading(text):
                     if contentView.indicator == nil {
-                        let indicator = UIActivityIndicatorView.init(style: .medium)
+                        let indicator = {
+                            if #available(iOS 13.0, *) {
+                                return UIActivityIndicatorView.init(style: .medium)
+                            }
+                            return UIActivityIndicatorView.init(style: .white)
+                        }()
                         indicator.frame = CGRect(x: 0, y: 0, width: 50.0, height: 50.0)
                         indicator.color = .white
                         contentView.indicator = indicator

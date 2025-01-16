@@ -7,6 +7,7 @@
 
 import Foundation
 import UIKit
+import XZGeometry
 
 @objc open class XZTextImageControl: UIControl, XZTextImageLayout {
     
@@ -59,7 +60,7 @@ import UIKit
         didSet { setNeedsLayout() }
     }
     
-    open var textLayoutDirection: NSDirectionalRectEdge = .bottom {
+    open var textLayoutDirection: XZRectEdge = .bottom {
         didSet { setNeedsLayout() }
     }
     

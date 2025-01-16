@@ -217,3 +217,63 @@ extension CGRect {
         })
     }
 }
+
+public struct XZRectEdge: OptionSet, @unchecked Sendable {
+    
+    public var rawValue: UInt
+    
+    public init(rawValue: UInt) {
+        self.rawValue = rawValue
+    }
+    
+    @available(iOS 13.0, *)
+    public init(_ edge: NSDirectionalRectEdge) {
+        self.init(rawValue: edge.rawValue)
+    }
+    
+    public static var top: XZRectEdge {
+        if #available(iOS 13.0, *) {
+            return XZRectEdge.init(rawValue: NSDirectionalRectEdge.top.rawValue)
+        }
+        return XZRectEdge.init(rawValue: 1 << 0)
+    }
+    
+    public static var leading: XZRectEdge {
+        if #available(iOS 13.0, *) {
+            return XZRectEdge.init(rawValue: NSDirectionalRectEdge.leading.rawValue)
+        }
+        return XZRectEdge.init(rawValue: 1 << 1)
+    }
+    
+    public static var bottom: XZRectEdge {
+        if #available(iOS 13.0, *) {
+            return XZRectEdge.init(rawValue: NSDirectionalRectEdge.bottom.rawValue)
+        }
+        return XZRectEdge.init(rawValue: 1 << 2)
+    }
+    
+    public static var trailing: XZRectEdge {
+        if #available(iOS 13.0, *) {
+            return XZRectEdge.init(rawValue: NSDirectionalRectEdge.trailing.rawValue)
+        }
+        return XZRectEdge.init(rawValue: 1 << 3)
+    }
+    
+    public static var all: XZRectEdge {
+        if #available(iOS 13.0, *) {
+            return XZRectEdge.init(rawValue: NSDirectionalRectEdge.all.rawValue)
+        }
+        return XZRectEdge.init(rawValue: (1 << 0) + (1 << 1) + (1 << 2) + (1 << 3))
+    }
+    
+}
+
+
+@available(iOS 13.0, *)
+extension NSDirectionalRectEdge {
+    
+    public init(_ edge: XZRectEdge) {
+        self.init(rawValue: edge.rawValue)
+    }
+    
+}

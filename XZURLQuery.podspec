@@ -8,7 +8,7 @@
 
 Pod::Spec.new do |s|
   s.name             = 'XZURLQuery'
-  s.version          = '10.2.0'
+  s.version          = '10.1.0'
   s.summary          = '专门处理 url 的 query 的库'
 
 # This description is used to generate tags and improve search results.

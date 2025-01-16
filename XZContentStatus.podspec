@@ -28,13 +28,14 @@ Pod::Spec.new do |s|
   s.source           = { :git => 'https://github.com/Xezun/XZKit.git', :tag => s.version.to_s }
   # s.social_media_url = 'https://twitter.com/<TWITTER_USERNAME>'
 
-  s.ios.deployment_target = '13.0'
+  s.swift_version = '6.0'
+  s.ios.deployment_target = '12.0'
   s.pod_target_xcconfig = { 'GCC_PREPROCESSOR_DEFINITIONS' => 'XZ_FRAMEWORK=1' }
   
   s.subspec 'Code' do |ss|
     ss.dependency 'XZTextImageView'
     ss.source_files = 'XZKit/Code/XZContentStatus/**/*.{h,m,swift}'
-    ss.project_header_files = 'XZKit/Code/XZContentStatus/**/Private/*.h'
+    # ss.project_header_files = 'XZKit/Code/XZContentStatus/**/Private/*.h'
   end
   
   # s.resource_bundles = {
