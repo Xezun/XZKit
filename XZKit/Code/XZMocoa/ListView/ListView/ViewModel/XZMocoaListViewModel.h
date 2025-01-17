@@ -52,26 +52,32 @@ NS_SWIFT_UI_ACTOR @protocol XZMocoaListViewModelDelegate <NSObject>
 /// 指定 section 的数据发生更新后，调用此方法以重载该 section 的视图模型。
 /// @param section 数据发生更新的行
 - (void)reloadSectionAtIndex:(NSInteger)section;
+- (void)reloadCellAtIndexPath:(NSIndexPath *)indexPath;
 
 /// 新增指定 section 的数据后，调用此方法以构造该 section 的视图模型。
 /// @param section 新增的行
 - (void)insertSectionAtIndex:(NSInteger)section;
+- (void)insertCellAtIndexPath:(NSIndexPath *)indexPath;
 
 /// 指定 section 的数据更新后，调用此方法以重载该 section 的视图模型。
 /// @param section 数据发生更新的行
 - (void)deleteSectionAtIndex:(NSInteger)section;
+- (void)deleteCellAtIndexPath:(NSIndexPath *)indexPath;
 
 /// 指定 sections 的数据更新后，调用此方法以重载该 sections 的视图模型。
 /// @param sections 数据发生更新的行
 - (void)reloadSectionsAtIndexes:(nullable NSIndexSet *)sections;
+- (void)reloadCellsAtIndexPaths:(nullable NSArray<NSIndexPath *> *)indexPaths;
 
 /// 新增指定 sections 的数据后，调用此方法以构造该 sections 的视图模型。
 /// @param sections 新增的行
 - (void)insertSectionsAtIndexes:(nullable NSIndexSet *)sections;
+- (void)insertCellsAtIndexPaths:(nullable NSArray<NSIndexPath *> *)indexPaths;
 
 /// 指定 sections 的数据更新后，调用此方法以重载该 sections 的视图模型。
 /// @param sections 数据发生更新的行
 - (void)deleteSectionsAtIndexes:(nullable NSIndexSet *)sections;
+- (void)deleteCellsAtIndexPaths:(nullable NSArray<NSIndexPath *> *)indexPaths;
 
 /// 移动行 section 到新行 newSection 处。
 /// @param section 移动前的位置

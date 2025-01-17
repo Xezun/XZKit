@@ -260,6 +260,36 @@ typedef void(^XZMocoaListDelayedUpdates)(__kindof XZMocoaViewModel *self);
     }
 }
 
+- (void)reloadCellAtIndexPath:(NSIndexPath *)indexPath {
+    [[self sectionViewModelAtIndex:indexPath.section] reloadCellAtIndex:indexPath.row];
+}
+
+- (void)insertCellAtIndexPath:(NSIndexPath *)indexPath {
+    [[self sectionViewModelAtIndex:indexPath.section] insertCellAtIndex:indexPath.row];
+}
+
+- (void)deleteCellAtIndexPath:(NSIndexPath *)indexPath {
+    [[self sectionViewModelAtIndex:indexPath.section] deleteCellAtIndex:indexPath.row];
+}
+
+- (void)reloadCellsAtIndexPaths:(NSArray<NSIndexPath *> *)indexPaths {
+    for (NSIndexPath *indexPath in indexPaths) {
+        [self reloadCellAtIndexPath:indexPath];
+    }
+}
+
+- (void)insertCellsAtIndexPaths:(NSArray<NSIndexPath *> *)indexPaths {
+    for (NSIndexPath *indexPath in indexPaths) {
+        [self insertCellAtIndexPath:indexPath];
+    }
+}
+
+- (void)deleteCellsAtIndexPaths:(NSArray<NSIndexPath *> *)indexPaths {
+    for (NSIndexPath *indexPath in indexPaths) {
+        [self deleteCellAtIndexPath:indexPath];
+    }
+}
+
 #pragma mark - 批量更新
 
 - (BOOL)isPerformingBatchUpdates {
