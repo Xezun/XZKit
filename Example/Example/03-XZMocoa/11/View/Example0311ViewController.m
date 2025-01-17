@@ -26,7 +26,7 @@
 @implementation Example0311ViewController
 
 + (void)load {
-    XZModule(@"https://mocoa.xezun.com/examples/11/").viewNibClass = self;
+    XZMocoa(@"https://mocoa.xezun.com/examples/11/").viewNibClass = self;
 }
 
 - (instancetype)initWithMocoaOptions:(XZMocoaOptions *)options nibName:(nullable NSString *)nibName bundle:(nullable NSBundle *)bundle {
@@ -49,12 +49,12 @@
     // 2、控制器作为独立入口，方便与外部引用、交互。
     Example0311ViewModel *viewModel = [[Example0311ViewModel alloc] init];
     [viewModel ready];
+    [viewModel addTarget:self action:@selector(viewModelDidChange) forKey:XZMocoaKeyNone];
     self.viewModel = viewModel;
-    
-    [viewModel addTarget:self action:@selector(viewModelDidUpdate:) forKeyEvents:nil];
 }
 
-- (void)viewModelDidUpdate:(Example0311ViewModel *)viewModel {
+- (void)viewModelDidChange {
+    Example0311ViewModel *viewModel = self.viewModel;
     self.nameLabel.text = viewModel.name;
     [self.photoImageView sd_setImageWithURL:viewModel.photo];
     self.phoneLabel.text = viewModel.phone;

@@ -17,7 +17,7 @@
 @implementation Example0312ViewController
 
 + (void)load {
-    XZModule(@"https://mocoa.xezun.com/examples/12/").viewClass = self;
+    XZMocoa(@"https://mocoa.xezun.com/examples/12/").viewClass = self;
 }
 
 - (instancetype)initWithMocoaOptions:(XZMocoaOptions *)options nibName:(nullable NSString *)nibName bundle:(nullable NSBundle *)bundle {
@@ -43,7 +43,7 @@
     // 即它是一个普通视图模块，不属于任何模块，所以我们需要通过 URL 获取这个模块的 XZMocoaModule 对象，即下面的 module 对象，
     // 然后将这个一般模块，设置为 module 模块。
     
-    XZMocoaModule *module = XZModule(@"https://mocoa.xezun.com/examples/12/table/");
+    XZMocoaModule *module = XZMocoa(@"https://mocoa.xezun.com/examples/12/table/");
     
     // Model
     NSArray *dataArray = [data xz_map:^id _Nonnull(id  _Nonnull obj, NSInteger idx, BOOL * _Nonnull stop) {

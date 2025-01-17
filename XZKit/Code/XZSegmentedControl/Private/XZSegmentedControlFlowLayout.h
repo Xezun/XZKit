@@ -2,7 +2,7 @@
 //  XZSegmentedControlFlowLayout.h
 //  XZSegmentedControl
 //
-//  Created by 徐臻 on 2024/6/25.
+//  Created by Xezun on 2024/6/25.
 //
 
 #import <UIKit/UIKit.h>

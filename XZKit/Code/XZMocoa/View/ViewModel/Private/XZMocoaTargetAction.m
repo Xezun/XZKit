@@ -6,48 +6,66 @@
 //
 
 #import "XZMocoaTargetAction.h"
+#import "XZMocoaViewModel.h"
 @import ObjectiveC;
 
 @implementation XZMocoaTargetAction {
-    NSInteger _args;
+    NSInteger _type;
 }
 
 - (instancetype)initWithTarget:(id)target action:(SEL)action {
-    
-    NSInteger __block count = 0;
-    NSString *string = NSStringFromSelector(action);
-    [string enumerateSubstringsInRange:NSMakeRange(0, string.length) options:NSStringEnumerationByComposedCharacterSequences usingBlock:^(NSString *substring, NSRange substringRange, NSRange enclosingRange, BOOL *stop) {
-        if ([substring isEqualToString:@":"]) {
-            count += 1;
-        }
-    }];
-    NSAssert(count <= 2, @"方法 %@ 不合法，通过 %@ 绑定的方法参数不能超过 2 个，当前为 %ld 个", string, NSStringFromSelector(@selector(addTarget:action:forKeyEvents:)), count);
-    
     self = [super init];
     if (self) {
-        _target = target;
-        _action = action;
-        _args = count;
+        _type = 0;
+        const char * const str = sel_getName(action);
+        const size_t       len = strlen(str);
+        
+        for (size_t i = 0; i < len; i++) {
+            switch (str[i]) {
+                case ':':
+                    _type += 1;
+                    break;
+                default:
+                    break;
+            }
+        }
+        _target  = target;
+        _action  = action;
+        _handler = nil;
     }
     return self;
 }
 
-- (void)sendActionWithObject:(id)object forKeyEvents:(XZMocoaKeyEvents)keyEvents {
-    switch (_args) {
+- (instancetype)initWithTarget:(id)target handler:(XZMocoaTargetHandler)handler {
+    self = [super init];
+    if (self) {
+        _type    = -1;
+        _target  = target;
+        _action  = nil;
+        _handler = [handler copy];
+    }
+    return self;
+}
+
+- (void)sendActionForKey:(XZMocoaKey)key value:(id)value sender:(id)sender {
+    switch (_type) {
+        case -1:
+            _handler(sender, _target, value, key);
+            break;
         case 0:
             ((void (*)(id, SEL))objc_msgSend)(_target, _action);
             break;
         case 1:
-            ((void (*)(id, SEL, id))objc_msgSend)(_target, _action, object);
+            ((void (*)(id, SEL, id))objc_msgSend)(_target, _action, sender);
             break;
         case 2:
-            ((void (*)(id, SEL, id, XZMocoaKeyEvents))objc_msgSend)(_target, _action, object, keyEvents);
+            ((void (*)(id, SEL, id, id))objc_msgSend)(_target, _action, sender, value);
             break;
+        case 3:
+            ((void (*)(id, SEL, id, id, XZMocoaKey))objc_msgSend)(_target, _action, sender, value, key);
         default:
             break;
     }
-    
 }
-
 
 @end

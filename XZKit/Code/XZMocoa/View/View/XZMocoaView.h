@@ -16,10 +16,12 @@ NS_ASSUME_NONNULL_BEGIN
 /// @discussion 任何 UIResponder 及子类，默认都是 Mocoa MVVM 中的 View 元素，声明遵循此协议，即可获得协议中定义的属性和方法。
 /// @discussion 用此协议标记类，用来表明该类为 Mocoa MVVM 的 View 元素，与其它设计模式的类进行简单区分。
 /// @discussion 由于运行时特性，协议的默认实现可能会被类目或子类覆盖，需要开发者自行注意。
-@protocol XZMocoaView <NSObject>
+NS_SWIFT_UI_ACTOR @protocol XZMocoaView <NSObject>
 
 @optional
 /// 视图模型。
+/// 一般情况下，视图的 ViewModel 不应该改变。
+/// 但是与 B 端不同，在 C 端利用“视图重用机制”可以有效提升性能，此属性被设计为可写的。
 @property (nonatomic, strong, nullable) __kindof XZMocoaViewModel *viewModel;
 
 /// 视图模型 KVO 事件，默认不执行任何操作。
@@ -43,6 +45,9 @@ NS_ASSUME_NONNULL_BEGIN
 /// 控制器分发过来的 IB 转场事件。
 - (void)prepareForSegue:(UIStoryboardSegue *)segue;
 
+@end
+
+@interface XZMocoaView : UIView <XZMocoaView>
 @end
 
 /// 模块初始化参数。可像字典一样取值。

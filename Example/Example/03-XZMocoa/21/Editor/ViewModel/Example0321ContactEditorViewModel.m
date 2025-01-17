@@ -12,7 +12,7 @@
 @implementation Example0321ContactEditorViewModel
 
 + (void)load {
-    XZModule(@"https://mocoa.xezun.com/examples/21/editor").viewModelClass = self;
+    XZMocoa(@"https://mocoa.xezun.com/examples/21/editor").viewModelClass = self;
 }
 
 - (void)dealloc {
@@ -44,12 +44,12 @@
     if (![firstName isEqualToString:model.firstName] || ![lastName isEqualToString:model.lastName]) {
         model.firstName = firstName;
         model.lastName  = lastName;
-        [self emit:@"name" value:nil];
+        [self sendUpdatesForKey:@"name" value:nil];
     }
 
     if (![phone isEqualToString:model.phone]) {
         model.phone = phone;
-        [self emit:@"phone" value:nil];
+        [self sendUpdatesForKey:@"phone" value:nil];
     }
 }
 

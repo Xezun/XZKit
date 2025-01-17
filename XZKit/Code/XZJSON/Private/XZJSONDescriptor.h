@@ -2,7 +2,7 @@
 //  XZJSONDescriptor.h
 //  Pods
 //
-//  Created by 徐臻 on 2024/9/29.
+//  Created by Xezun on 2024/9/29.
 //
 
 #import <Foundation/Foundation.h>

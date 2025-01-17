@@ -11,7 +11,7 @@
 @implementation Example0320Group100SectionModel
 
 + (void)load {
-    XZModule(@"https://mocoa.xezun.com/examples/20/table/100/").modelClass = self;
+    XZMocoa(@"https://mocoa.xezun.com/examples/20/table/100/").modelClass = self;
 }
 
 + (NSDictionary<NSString *,id> *)mappingJSONCodingClasses {

@@ -8,7 +8,7 @@
 #import "XZMocoaTableViewSectionModel.h"
 
 @implementation XZMocoaTableViewSectionModel
-
+@synthesize mocoaName = _mocoaName;
 @end
 
 

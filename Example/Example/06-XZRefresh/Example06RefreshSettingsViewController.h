@@ -2,7 +2,7 @@
 //  Example06RefreshSettingsViewController.h
 //  Example
 //
-//  Created by 徐臻 on 2024/5/21.
+//  Created by Xezun on 2024/5/21.
 //
 
 #import <UIKit/UIKit.h>

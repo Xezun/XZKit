@@ -2,7 +2,7 @@
 //  XZJSON.h
 //  XZJSON
 //
-//  Created by 徐臻 on 2024/9/28.
+//  Created by Xezun on 2024/9/28.
 //
 
 #import <Foundation/Foundation.h>

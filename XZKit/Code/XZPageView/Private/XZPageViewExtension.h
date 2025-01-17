@@ -2,7 +2,7 @@
 //  XZPageViewExtension.h
 //  XZPageView
 //
-//  Created by 徐臻 on 2024/9/25.
+//  Created by Xezun on 2024/9/25.
 //
 
 #import "XZPageView.h"

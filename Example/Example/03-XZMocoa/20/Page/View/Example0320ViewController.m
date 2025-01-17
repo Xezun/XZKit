@@ -25,7 +25,7 @@
 @dynamic viewModel;
 
 + (void)load {
-    XZModule(@"https://mocoa.xezun.com/examples/20").viewNibClass = self;
+    XZMocoa(@"https://mocoa.xezun.com/examples/20").viewNibClass = self;
 }
 
 - (instancetype)initWithMocoaOptions:(XZMocoaOptions *)options nibName:(NSString *)nibName bundle:(NSBundle *)bundle {
@@ -49,8 +49,9 @@
     self.tableView.viewModel = viewModel.tableViewModel;
     
     // 刷新状态，通过监听 isHeaderRefreshing/isFooterRefreshing 来更新。
-    [viewModel addTarget:self action:@selector(headerRefreshingChanged:) forKeyEvents:@"isHeaderRefreshing"];
-    [viewModel addTarget:self action:@selector(footerRefreshingChanged:) forKeyEvents:@"isFooterRefreshing"];
+    [viewModel addTarget:self action:@selector(headerRefreshingChanged:) forKey:@"isHeaderRefreshing"];
+    [viewModel addTarget:self action:@selector(footerRefreshingChanged:) forKey:@"isFooterRefreshing"];
+    [self headerRefreshingChanged:viewModel];
 }
 
 - (void)headerRefreshingChanged:(Example0320ViewModel *)viewModel {

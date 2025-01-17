@@ -32,9 +32,10 @@ enum {
 /// 遍历视图层级的块函数。
 /// @param subview 当前被遍历的视图
 /// @param hierarchy 当前被遍历的视图的层级
+/// @param indexPath 子视图在同级中的位置，location=排序，length=同级视图的总数量
 /// @param stop 控制是否终止遍历
 /// @returns 返回值“YES/NO”表示“是/否”继续遍历当前被遍历视图的子视图
-typedef BOOL (^XZViewHierarchyEnumerator)(__kindof UIView *subview, NSInteger hierarchy, BOOL *stop);
+typedef BOOL (^XZViewHierarchyEnumerator)(NSInteger hierarchy, __kindof UIView *subview, NSRange indexPath, BOOL *stop);
 
 @interface UIView (XZKit)
 

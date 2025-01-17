@@ -11,7 +11,13 @@
 #import "XZMocoaDefines.h"
 
 @implementation XZMocoaTableViewCell
-@dynamic viewModel;
+@synthesize viewModel = _viewModel;
+- (void)setViewModel:(__kindof XZMocoaTableViewCellViewModel *)viewModel {
+    [self viewModelWillChange];
+    [viewModel ready];
+    _viewModel = viewModel;
+    [self viewModelDidChange];
+}
 @end
 
 
@@ -30,11 +36,10 @@ static void xz_mocoa_copyMethod(Class const cls, SEL const target, SEL const sou
 @dynamic viewModel;
 
 + (void)load {
-    Class const aClass = UITableViewCell.class;
-    if (self == aClass) {
-        xz_mocoa_copyMethod(aClass, @selector(tableView:didSelectRowAtIndexPath:), @selector(xz_mocoa_tableView:didSelectRowAtIndexPath:));
-        xz_mocoa_copyMethod(aClass, @selector(tableView:willDisplayRowAtIndexPath:), @selector(xz_mocoa_tableView:willDisplayRowAtIndexPath:));
-        xz_mocoa_copyMethod(aClass, @selector(tableView:didEndDisplayingRowAtIndexPath:), @selector(xz_mocoa_tableView:didEndDisplayingRowAtIndexPath:));
+    if (self == [UITableViewCell class]) {
+        xz_mocoa_copyMethod(self, @selector(tableView:didSelectRowAtIndexPath:), @selector(xz_mocoa_tableView:didSelectRowAtIndexPath:));
+        xz_mocoa_copyMethod(self, @selector(tableView:willDisplayRowAtIndexPath:), @selector(xz_mocoa_tableView:willDisplayRowAtIndexPath:));
+        xz_mocoa_copyMethod(self, @selector(tableView:didEndDisplayingRowAtIndexPath:), @selector(xz_mocoa_tableView:didEndDisplayingRowAtIndexPath:));
     }
 }
 

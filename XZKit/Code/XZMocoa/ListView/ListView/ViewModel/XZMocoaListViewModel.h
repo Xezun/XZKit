@@ -25,8 +25,8 @@ NS_SWIFT_UI_ACTOR @protocol XZMocoaListViewModelDelegate <NSObject>
 /// @discussion 请在使用 viewModel 前设置此属性。
 @property (nonatomic, copy) NSArray<XZMocoaKind> *supportedSupplementaryKinds;
 
-/// 接收来自下级的 XZMocoaEmitionNameUpdate 事件，并刷新视图，如果在批量更新的过程中，视图刷新可能会延迟。
-- (void)didReceiveEmition:(XZMocoaEmition *)emition;
+/// 接收来自下级的 XZMocoaUpdatesKeyReload 事件，并刷新视图，如果在批量更新的过程中，视图刷新可能会延迟。
+- (void)didReceiveUpdates:(XZMocoaUpdates *)updates;
 
 /// 一般而言 TableViewModel 只会有一个事件接收者，这里直接用了代理。
 @property (nonatomic, weak) id<XZMocoaListViewModelDelegate> delegate;
@@ -44,12 +44,12 @@ NS_SWIFT_UI_ACTOR @protocol XZMocoaListViewModelDelegate <NSObject>
 - (NSInteger)numberOfCellsInSection:(NSInteger)section;
 - (__kindof XZMocoaListViewCellViewModel *)cellViewModelAtIndexPath:(NSIndexPath *)indexPath;
 
-// MARK: - 局部更新
+// MARK: - 视图模型接收“数据更新”事件
 
 /// 数据更新后，调用此方法以重载所有受管理的子视图模型。
 - (void)reloadData;
 
-/// 指定 section 的数据更新后，调用此方法以重载该 section 的视图模型。
+/// 指定 section 的数据发生更新后，调用此方法以重载该 section 的视图模型。
 /// @param section 数据发生更新的行
 - (void)reloadSectionAtIndex:(NSInteger)section;
 
@@ -78,7 +78,7 @@ NS_SWIFT_UI_ACTOR @protocol XZMocoaListViewModelDelegate <NSObject>
 /// @param newSection 移动后的位置
 - (void)moveSectionAtIndex:(NSInteger)section toIndex:(NSInteger)newSection;
 
-// MARK: - 子类重写
+// MARK: - 视图模型的事件派发，子类必须重写并根据实际去实现
 
 // 如下 -did 方法，表示对应的事件已经发生，需要更新视图对应的视图了。
 // 子类应该重新下面的方法，并更新视图。
@@ -94,10 +94,14 @@ NS_SWIFT_UI_ACTOR @protocol XZMocoaListViewModelDelegate <NSObject>
 - (void)didMoveSectionAtIndex:(NSInteger)section toIndex:(NSInteger)newSection;
 - (void)didPerformBatchUpdates:(void (^NS_NOESCAPE)(void))batchUpdates completion:(void (^ _Nullable)(BOOL finished))completion;
 
+// MARK: - 防崩溃设计的占位视图
+
 /// 子类应该重写此方法，并返回所需的 SectionViewModel 对象。
 - (Class)placeholderViewModelClassForSectionAtIndex:(NSInteger)index;
 
 @end
+
+// MARK: - 下级 section 不能独自完成的事件，需要上级处理的事件
 
 @interface XZMocoaListViewModel (XZMocoaListViewSectionViewModelDelegate)
 /// section 发送的 Section 重载事件，以刷新视图。

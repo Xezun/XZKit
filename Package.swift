@@ -1,4 +1,4 @@
-// swift-tools-version:5.3
+// swift-tools-version: 5.9
 // The swift-tools-version declares the minimum version of Swift required to build this package.
 
 import PackageDescription
@@ -36,7 +36,37 @@ let package = Package(
             targets: ["XZPageControl"]),
         .library(
             name: "XZSegmentedControl",
-            targets: ["XZSegmentedControl"])
+            targets: ["XZSegmentedControl"]),
+        .library(
+            name: "XZGeometry",
+            targets: ["XZGeometry"]),
+        .library(
+            name: "XZContentStatus",
+            targets: ["XZContentStatus"]),
+        .library(
+            name: "XZTextImageView",
+            targets: ["XZTextImageView"]),
+        .library(
+            name: "XZToast",
+            targets: ["XZToast"]),
+        .library(
+            name: "XZURLQuery",
+            targets: ["XZURLQuery"]),
+        .library(
+            name: "XZLocale",
+            targets: ["XZLocale"]),
+        .library(
+            name: "XZCollectionViewFlowLayout",
+            targets: ["XZCollectionViewFlowLayout"]),
+        .library(
+            name: "XZDataCryptor",
+            targets: ["XZDataCryptor"]),
+        .library(
+            name: "XZDataDigester",
+            targets: ["XZDataDigester"]),
+        .library(
+            name: "XZKeychain",
+            targets: ["XZKeychain"])
     ],
     dependencies: [
         // Dependencies declare other packages that this package depends on.
@@ -158,6 +188,114 @@ let package = Package(
             cSettings: [
                 .headerSearchPath("Headers/XZSegmentedControl/Private")
             ],
+            cxxSettings: [
+                .define("XZ_FRAMEWORK")
+            ]
+        ),
+        .target(
+            name: "XZGeometry",
+            dependencies: [],
+            path: "XZKit",
+            sources: ["Code/XZGeometry"],
+            publicHeadersPath: "Headers/XZGeometry/Public",
+            cSettings: [
+                .headerSearchPath("Headers/XZGeometry/Private")
+            ],
+            cxxSettings: [
+                .define("XZ_FRAMEWORK")
+            ]
+        ),
+        .target(
+            name: "XZContentStatus",
+            dependencies: ["XZTextImageView"],
+            path: "XZKit",
+            sources: ["Code/XZContentStatus"],
+            cxxSettings: [
+                .define("XZ_FRAMEWORK")
+            ]
+        ),
+        .target(
+            name: "XZTextImageView",
+            dependencies: ["XZGeometry"],
+            path: "XZKit",
+            sources: ["Code/XZTextImageView"],
+            cxxSettings: [
+                .define("XZ_FRAMEWORK")
+            ]
+        ),
+        .target(
+            name: "XZToast",
+            dependencies: [],
+            path: "XZKit",
+            sources: ["Code/XZToast"],
+            cxxSettings: [
+                .define("XZ_FRAMEWORK")
+            ]
+        ),
+        .target(
+            name: "XZURLQuery",
+            dependencies: [],
+            path: "XZKit",
+            sources: ["Code/XZURLQuery"],
+            publicHeadersPath: "Headers/XZURLQuery/Public",
+            cxxSettings: [
+                .define("XZ_FRAMEWORK")
+            ]
+        ),
+        .target(
+            name: "XZLocale",
+            dependencies: ["XZDefines"],
+            path: "XZKit",
+            sources: ["Code/XZLocale"],
+            publicHeadersPath: "Headers/XZLocale/Public",
+            cxxSettings: [
+                .define("XZ_FRAMEWORK")
+            ]
+        ),
+        .target(
+            name: "XZCollectionViewFlowLayout",
+            dependencies: [],
+            path: "XZKit",
+            sources: ["Code/XZCollectionViewFlowLayout"],
+            cxxSettings: [
+                .define("XZ_FRAMEWORK")
+            ]
+        ),
+        .target(
+            name: "XZNavigationController",
+            dependencies: ["XZDefines"],
+            path: "XZKit",
+            sources: ["Code/XZNavigationController"],
+            cxxSettings: [
+                .define("XZ_FRAMEWORK")
+            ]
+        ),
+        .target(
+            name: "XZDataCryptor",
+            dependencies: [],
+            path: "XZKit",
+            sources: ["Code/XZDataCryptor"],
+            publicHeadersPath: "Headers/XZDataCryptor/Public",
+            cxxSettings: [
+                .define("XZ_FRAMEWORK")
+            ]
+        ),
+        .target(
+            name: "XZDataDigester",
+            dependencies: ["XZDefines", "XZExtensions"],
+            path: "XZKit",
+            sources: ["Code/XZDataDigester"],
+            publicHeadersPath: "Headers/XZDataDigester/Public",
+            cxxSettings: [
+                .define("XZ_FRAMEWORK")
+            ]
+        ),
+        .target(
+            name: "XZKeychain",
+            dependencies: [],
+            path: "XZKit",
+            sources: ["Code/XZKeychain"],
+            publicHeadersPath: "Headers/XZKeychain/Public",
             cxxSettings: [
                 .define("XZ_FRAMEWORK")
             ]

@@ -69,13 +69,13 @@ typedef void(^XZMocoaListDelayedUpdates)(XZMocoaListViewSectionViewModel *self);
     [_cellViewModels removeObject:viewModel];
 }
 
-- (void)didReceiveEmition:(XZMocoaEmition *)emition {
-    if ([emition.name isEqualToString:XZMocoaEmitionNameUpdate]) {
-        XZMocoaViewModel * const subViewModel = emition.target;
+- (void)didReceiveUpdates:(XZMocoaUpdates *)updates {
+    if ([updates.key isEqualToString:XZMocoaUpdatesKeyReload]) {
+        XZMocoaViewModel * const subViewModel = updates.target;
         // 正在批量更新，延迟事件（如果对象被销毁，事件则不会执行）
         if (self.isPerformingBatchUpdates) {
             [_delayedBatchUpdates addObject:^void(XZMocoaListViewSectionViewModel *self) {
-                [self didReceiveEmition:emition];
+                [self didReceiveUpdates:updates];
             }];
             return;
         }
@@ -97,7 +97,7 @@ typedef void(^XZMocoaListDelayedUpdates)(XZMocoaListViewSectionViewModel *self);
             }
         }
     }
-    [super didReceiveEmition:emition];
+    [super didReceiveUpdates:updates];
 }
 
 #pragma mark - 公开方法
@@ -557,7 +557,7 @@ typedef void(^XZMocoaListDelayedUpdates)(XZMocoaListViewSectionViewModel *self);
 }
 
 - (XZMocoaListViewCellViewModel *)_loadViewModelForCellAtIndex:(NSInteger)index {
-    XZMocoaName     const section = self.model.mocoaName;
+    XZMocoaName     const section = ((id<XZMocoaListSectionModel>)self.model).mocoaName;
     id<XZMocoaModel> const model  = [self.model modelForCellAtIndex:index];
     XZMocoaName      const name   = model.mocoaName;
     XZMocoaModule *  const module = [self.module submoduleIfLoadedForKind:XZMocoaKindCell forName:name];
@@ -611,7 +611,7 @@ typedef void(^XZMocoaListDelayedUpdates)(XZMocoaListViewSectionViewModel *self);
         return nil; // 没有数据，就没有 header/footer
     }
     
-    XZMocoaName     const section = self.model.mocoaName;
+    XZMocoaName     const section = ((id<XZMocoaListSectionModel>)self.model).mocoaName;
     XZMocoaName     const name    = model.mocoaName;
     XZMocoaModule * const module  = [self.module submoduleIfLoadedForKind:kind forName:name];
 

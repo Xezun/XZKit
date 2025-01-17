@@ -2,7 +2,7 @@
 //  ExampleNavigationController.m
 //  Example
 //
-//  Created by 徐臻 on 2024/9/10.
+//  Created by Xezun on 2024/9/10.
 //
 
 #import "ExampleNavigationController.h"

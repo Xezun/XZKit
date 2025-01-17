@@ -23,7 +23,7 @@
 @implementation Example0321ContactEditor
 
 + (void)load {
-    XZModule(@"https://mocoa.xezun.com/examples/21/editor").viewNibClass = self;
+    XZMocoa(@"https://mocoa.xezun.com/examples/21/editor").viewNibClass = self;
 }
 
 @dynamic viewModel;

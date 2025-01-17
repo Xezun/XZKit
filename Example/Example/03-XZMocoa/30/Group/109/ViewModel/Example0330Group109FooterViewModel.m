@@ -10,7 +10,7 @@
 @implementation Example0330Group109FooterViewModel
 
 + (void)load {
-    XZModule(@"https://mocoa.xezun.com/examples/30/table/109/footer:/").viewModelClass = self;
+    XZMocoa(@"https://mocoa.xezun.com/examples/30/table/109/footer:/").viewModelClass = self;
 }
 
 - (void)prepare {

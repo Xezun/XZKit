@@ -6,6 +6,7 @@
 //
 
 #import "ExampleAppDelegate.h"
+@import XZLocale;
 
 @interface ExampleAppDelegate ()
 
@@ -13,28 +14,36 @@
 
 @implementation ExampleAppDelegate
 
+@synthesize window = _window;
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
-    // Override point for customization after application launch.
+    [NSNotificationCenter.defaultCenter addObserver:self selector:@selector(didChangeAppLanguage) name:XZLanguagePreferencesDidChangeNotification object:nil];
     return YES;
 }
 
-
-#pragma mark - UISceneSession lifecycle
-
-
-- (UISceneConfiguration *)application:(UIApplication *)application configurationForConnectingSceneSession:(UISceneSession *)connectingSceneSession options:(UISceneConnectionOptions *)options API_AVAILABLE(ios(13.0)) {
-    // Called when a new scene session is being created.
-    // Use this method to select a configuration to create the new scene with.
-    return [[UISceneConfiguration alloc] initWithName:@"Default Configuration" sessionRole:connectingSceneSession.role];
+- (void)didChangeAppLanguage {
+    UIWindow *window = _window;
+    
+    CGRect const bounds = UIScreen.mainScreen.bounds;
+    
+    _window = [[UIWindow alloc] initWithFrame:bounds];
+    _window.backgroundColor = UIColor.whiteColor;
+    UIViewController *rootVC = [UIStoryboard storyboardWithName:@"Main" bundle:nil].instantiateInitialViewController;
+    _window.rootViewController = rootVC;
+    [_window makeKeyAndVisible];
+    
+    _window.layer.shadowColor = UIColor.blackColor.CGColor;
+    _window.layer.shadowOpacity = 0.5;
+    _window.layer.shadowRadius = 5.0;
+    _window.windowLevel = window.windowLevel + 1;
+    _window.frame = CGRectOffset(bounds, bounds.size.height, 0);
+    
+    [UIView animateWithDuration:0.5 animations:^{
+        self->_window.frame = bounds;
+    } completion:^(BOOL finished) {
+        window.hidden = YES;
+        self->_window.layer.shadowColor = nil;
+    }];
 }
-
-
-- (void)application:(UIApplication *)application didDiscardSceneSessions:(NSSet<UISceneSession *> *)sceneSessions API_AVAILABLE(ios(13.0)) {
-    // Called when the user discards a scene session.
-    // If any sessions were discarded while the application was not running, this will be called shortly after application:didFinishLaunchingWithOptions.
-    // Use this method to release any resources that were specific to the discarded scenes, as they will not return.
-}
-
 
 @end

@@ -20,7 +20,7 @@
 @dynamic view, viewModel;
 
 + (void)load {
-    XZModule(@"https://mocoa.xezun.com/examples/22/").viewNibClass = self;
+    XZMocoa(@"https://mocoa.xezun.com/examples/22/").viewNibClass = self;
 }
 
 

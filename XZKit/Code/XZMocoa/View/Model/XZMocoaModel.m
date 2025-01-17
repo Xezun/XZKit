@@ -32,3 +32,4 @@ static const void * const _mocoaName = &_mocoaName;
 @implementation XZMocoaModel
 @synthesize mocoaName = _mocoaName;
 @end
+

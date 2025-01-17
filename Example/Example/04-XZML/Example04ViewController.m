@@ -2,7 +2,7 @@
 //  Example04ViewController.m
 //  Example
 //
-//  Created by 徐臻 on 2024/10/16.
+//  Created by Xezun on 2024/10/16.
 //
 
 #import "Example04ViewController.h"
@@ -20,6 +20,16 @@
 
 - (void)viewDidLoad {
     [super viewDidLoad];
+    
+    self.tableView.sectionHeaderHeight = 0;
+    self.tableView.rowHeight = 44.0;
+    self.tableView.sectionFooterHeight = 10;
+    self.tableView.estimatedSectionHeaderHeight = 0;
+    self.tableView.estimatedRowHeight = 44.0;
+    self.tableView.estimatedSectionFooterHeight = 10.0;
+    self.tableView.sectionHeaderTopPadding = 0;
+    self.tableView.tableHeaderView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, 100, 0.00001)];
+    self.tableView.tableFooterView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, 100, 0.00001)];
     
     self.XZMLStrings = @[
         @[

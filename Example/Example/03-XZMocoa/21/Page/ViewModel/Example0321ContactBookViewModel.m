@@ -36,7 +36,7 @@ typedef NS_ENUM(NSUInteger, Example0321ContactBookTestAction) {
     _contactBook = [[Example0321ContactBook alloc] init];
     
     _tableViewModel = [[XZMocoaTableViewModel alloc] initWithModel:_contactBook];
-    _tableViewModel.module = XZModule(@"https://mocoa.xezun.com/examples/21/");
+    _tableViewModel.module = XZMocoa(@"https://mocoa.xezun.com/examples/21/");
     _tableViewModel.rowAnimation = UITableViewRowAnimationFade;
     [self addSubViewModel:_tableViewModel];
 }

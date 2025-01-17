@@ -19,82 +19,35 @@ pod "XZKit"
 
 ## 组件
 
-### [App 语言：AppLanguage](./Documentation/AppLanguage)
-
-提供了更直观的设置 App 语言的接口，且支持应用内语言切换。
-
-<img src="./Documentation/AppLanguage/1.gif" alt="XZKit.AppLanguage" width="240"></img>
-
-### [控制重定向：AppRedirection](./Documentation/AppRedirection)
-
-提供了一套控制器消息传播机制，通过消息控制页面跳转。
-
-### [缓存管理：CacheManager](./Documentation/CacheManager)
-
-目前该模块只是提供将数据缓存到沙盒 Caches 目录的功能，更多的缓存机制有待开发。
-
-### [轮播视图：CarouselView](./Documentation/CarouselView)
-
-使用三图轮播机制设计的 `XZCarouselView` 控件，并且默认提供了无限轮播、自动轮播、手势缩放等功能；提供了获取轮播图滚动进度的接口，更方便做关联的渐变动画。
-并且默认实现了图片轮播的控件 `XZImageCarouselView` 和类似微信朋友圈的大图查看的控件 `XZImageViewer` ，方便开发者直接使用。
-
-<img src="./Documentation/CarouselView/1.gif" alt="XZKit.CarouselView" width="240"></img>
-<img src="./Documentation/CarouselView/2.gif" alt="XZKit.CarouselView" width="240"></img>
-<img src="./Documentation/CarouselView/3.gif" alt="XZKit.CarouselView" width="240"></img>
-
-### [内容状态：ContentStatus](./Documentation/ContentStatus)
-
-方便的设置视图在内容为空，内容错误等状态时的提示视图。
-
-### [数据加密：DataCryptor](./Documentation/DataCryptor)
-
-对原生框架 <CommonCrypto/CommonCryptor.h> 的二次封装，支持 AES、DES、3DES、CAST、RC4、RC2、Blowfish 等算法的对称加密解密。
-
-### [数据摘要：DataDigester](./Documentation/DataDigester)
-
-对原生框架 <CommonCrypto/CommonDigest.h> 的二次封装，支持 MD2、MD4、MD5、SHA1、SHA224、SHA256、SHA384、SHA512 等数据摘要算法。
-
-### [公共部分：Foundation](./Documentation/Foundation)
-
-原生框架 Foundation 的拓展。
-
-### [自定义导航条、全屏手势导航控制器：NavigationController](./Documentation/NavigationController)
-
-### [网络层协议：Networking](./Documentation/Networking)
-
-  框架  `XZKit/Networking` 是一个轻量级网络框架，通过一套协议实现了多种常见的网络请求需求：
-  - 请求的并发策略、优先级的控制，可以轻松控制请求的顺序，请求与其它请求之间的关系。
-  - 请求失败时自动重试，且支持重试前延时。
-  - 请求时间限制，与 HTTP 超时不相同，可以控制请求的总时长。
-  - 当控制器销毁时，自动取消仍在进行的请求（控制器为请求的所有者时）。
-
-### [进度条：ProgressView](./Documentation/ProgressView)
-
-支持任意弧度的圆形进度条和任意角度的直线形进度条。
-
-### [计时器：DisplayTimer](./Documentation/DisplayTimer)
-
-使用 CADisplayLink 实现的计时器。
-
-### [文本图片视图：TextImageView](./Documentation/TextImageView)
-
-
-### [自定义流布局：XZKit.UICollectionViewFlowLayout](./Documentation/UICollectionViewFlowLayout)
-
-支持功能：水平滚动、垂直滚动、行对齐方式、垂直对齐方式、自适语言的应布局方向。
-
-<img src="./Documentation/UICollectionViewFlowLayout/UICollectionViewFlowLayout.gif" alt="XZKit.UICollectionViewFlowLayout" width="240"></img>
-  
-
-### [公共部分：UIKit](./Documentation/UIKit)
-
-### [公共部分：XZKitConstants](./Documentation/XZKitConstants)
+1. [XZDefines - 开发中常用的宏、定义、函数](./Docs/XZDefines) 
+1. [XZExtensions - 原生框架UIKit、Foundation的拓展与增强](./Docs/XZExtensions) 
+1. [XZMocoa - 基于原生风格的轻量级 MVVM 开发框架](./Docs/XZMocoa) 
+1. [XZML - 富文本标记语言](./Docs/XZML) 
+1. [XZJSON - 基于 YYModel 的模型转换工具类](./Docs/XZJSON) 
+1. [XZRefresh - 最流畅的下拉刷新组件](./Docs/XZRefresh)
+1. [XZPageView - 多页管理组件](./Docs/XZPageView)
+1. [XZPageControl - 翻页控制组件](./Docs/XZPageControl)
+1. [XZSegmentedControl - 分段控制组件](./Docs/XZSegmentedControl)
+1. [XZGeometry - 拓展的几何定义](./Docs/XZGeometry)
+1. [XZContentStatus - 内容状态呈现组件](./Docs/XZContentStatus)
+1. [XZTextImageView - 展示图片和文字的组件](./Docs/XZTextImageView)
+1. [XZToast - 即时消息提示组件](./Docs/XZToast)
+1. [XZURLQuery - 链接参数处理](./Docs/XZURLQuery)
+1. [XZLocale - 应用本地化支持](./Docs/XZLocale)
+1. [XZCollectionViewFlowLayout - 支持多种对齐方式的 UICollectionView 流布局](./Docs/XZCollectionViewFlowLayout)
+1. [XZDataCryptor - 对称加密](./Docs/XZDataCryptor)
+1. [XZDataDigester - 数据摘要](./Docs/XZDataDigester)
+1. [XZKeychain - 钥匙串访问](./Docs/XZKeychain)
 
 ## 示例代码
 
-所有组件都有单独的[示例代码](./Projects/Example)，下载到本地后，代码运行前需在 Pod 目录执行 `pod update` 安装相关依赖。
+所有组件都有单独的[示例代码](./Example)，下载到本地后，代码运行前需在 Pod 目录执行 `pod update` 安装相关依赖。
 
 ## 更新日志
+
+- 2025.01.16
+
+  重构及 Swift Package Manager 支持。
 
 - 2019.04.16
 
@@ -123,7 +76,7 @@ pod "XZKit"
 
 ## 联系作者
 
-[mlibai@163.com](mailto://mlibai@163.com)
+[xezun@icloud.com](mailto://xezun@icloud.com)
 
 ## License
 

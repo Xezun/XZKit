@@ -11,16 +11,18 @@
 @dynamic viewModel;
 
 + (void)load {
-    XZModule(@"https://mocoa.xezun.com/examples/22/").section.cell.viewNibClass = self;
+    XZMocoa(@"https://mocoa.xezun.com/examples/22/").section.cell.viewNibClass = self;
 }
 
 - (void)viewModelWillChange {
-    [self.viewModel removeTarget:self action:nil forKeyEvents:nil];
+    [self.viewModel removeTarget:self action:nil forKey:nil];
 }
 
 - (void)viewModelDidChange {
-    [self.viewModel addTarget:self action:@selector(nameDidChange:) forKeyEvents:@"name"];
-    [self.viewModel addTarget:self action:@selector(phoneDidChange:) forKeyEvents:@"phone"];
+    [self.viewModel addTarget:self action:@selector(nameDidChange:) forKey:@"name"];
+    [self.viewModel addTarget:self action:@selector(phoneDidChange:) forKey:@"phone"];
+    [self nameDidChange:self.viewModel];
+    [self phoneDidChange:self.viewModel];
 }
 
 - (void)nameDidChange:(Example0322TextViewModel *)viewModel {

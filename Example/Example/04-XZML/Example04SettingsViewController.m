@@ -2,7 +2,7 @@
 //  Example04SettingsViewController.m
 //  Example
 //
-//  Created by 徐臻 on 2024/10/17.
+//  Created by Xezun on 2024/10/17.
 //
 
 #import "Example04SettingsViewController.h"

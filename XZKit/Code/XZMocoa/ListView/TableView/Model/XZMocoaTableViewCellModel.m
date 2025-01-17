@@ -9,4 +9,6 @@
 
 @implementation XZMocoaTableViewCellModel
 
+@synthesize mocoaName = _mocoaName;
+
 @end

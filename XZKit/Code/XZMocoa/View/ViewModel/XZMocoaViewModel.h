@@ -14,22 +14,82 @@
 NS_ASSUME_NONNULL_BEGIN
 
 /// 作为 Mocoa MVVM 中的 ViewModel 元素，需要实现的协议。
-@protocol XZMocoaViewModel <NSObject>
+NS_SWIFT_UI_ACTOR @protocol XZMocoaViewModel <NSObject>
 @required
 - (instancetype)initWithModel:(nullable id)model;
 @end
 
-/// 视图模型 ViewModel 基类。
-/// @discussion 本基类为简化开发而提供，并非 module 必须，可选。
-/// @discussion 为视图模型提供了`ready`机制、层级关系等基础功能。
+/// 视图模型 ViewModel 基类。为视图模型提供了`ready`机制、层级关系等基础功能。
+/// - Note: 本基类为简化开发而提供，并非 module 必须，可选。
 @interface XZMocoaViewModel : NSObject <XZMocoaViewModel>
 
-/// 当前 MVVM 模块对象。
-/// @note 一般情况下，此属性并非必须，但对于某些用于管理子视图的视图，比如拿 UITableView 或 UICollectionView 来说，可能需要设置此属性才能正常工作。
+/// 当前视图模型所属的模块。一般情况下，此属性并非必须。
+///
+/// 对于像 UITableView 或 UICollectionView 等管理子视图的视图来说，管理下级元素需要通过设置此属性获取所属的模块。
 @property (nonatomic, strong, nullable) XZMocoaModule *module;
 
 /// 数据。
-@property (nonatomic, strong, readonly, nullable) id model;
+///
+/// - Note: 属性可写是为兼容 Swift 结构体数据类型，默认情况下，修改属性除修改数据外，不执行任何操作。
+///
+/// 在实际开发中，数据在大部分情形下，都是单向流动，比如从网络/缓存到页面展示，双向的数据流动的业务场景并不多，视图模型只需要处理数据一次即可。
+///
+/// 基于此，默认情况下 XZMocoa 认为数据始终不变，视图模型不会监听数据 Model 的变更。而对于要监听数据的变化的少量情形，我们可以传统的通过 KVO 或通知方式来处理。
+///
+/// - 数据在视图模型外更新，视图模型监听。
+///
+/// ```objc
+/// - (void)prepare {
+///     [super prepare];
+///     [self.model addObserver:self forKeyPath:@"aKey" options:NSKeyValueObservingOptionNew context:nil];
+/// }
+/// - (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary<NSKeyValueChangeKey,id> *)change context:(void *)context {
+///     if ([keyPath isEqualToString:@"aKey"]) {
+///         // do sth
+///     } else {
+///         [super observeValueForKeyPath:keyPath ofObject:object change:change context:context];
+///     }
+/// }
+/// ```
+///
+/// - 视图模型更新数据，建议提供精细化的方法，来触发数据的变更。
+///
+/// > 比如在 XZMocoaTableView 中，如果 section 数据发生更新，就可以通过如下方法来通知视图模型处理。
+///
+/// ```objc
+/// @implementation TableViewSectionViewModel
+///
+/// // 视图的删除按钮事件的绑定方法
+/// - (void)deleteDataAtIndex:(NSInteger)index sender:(id)sender {
+///     NSMutableArray *array = (id)self.model;
+///     [array removeObjectAtIndex:index]; // 更新数据
+///     [self deleteCellAtIndex:index];    // 更新视图
+/// }
+///
+/// @end
+/// ```
+/// 虽然方法略显笨拙，但是学习成本更低，且效率更高，且相比引入一套高负载的监听机制，在成本上更低廉。
+///
+/// - 具有从属关系的视图模型，可以通过 Updates 机制，将事件传递给上级视图模型处理。
+///
+/// ```swift
+/// class TableViewCellViewModel: XZMocoaTableViewCellViewModel {
+///
+///     func deleteButtonAction() {
+///         // cell 受 table 管理，自身是没办法删除的（使用 CoreData 除外，因为 fetchedController 具有监听数据的作用），所以需要将事件传递给上层处理。
+///         sendUpdates(forKey: .delete, value: nil)
+///     }
+///
+///     func showAllButtonAction() {
+///         // cell 自行更新数据
+///         self.model.showAll = true;
+///         // 如果高度变化，重载 cell 需要上层 table 处理
+///         sendUpdates(forKey: .reload, value: nil)
+///     }
+///
+/// }
+/// ```
+@property (nonatomic, strong, nullable) id model;
 
 /// 视图在列表中的排序。
 @property (nonatomic) NSInteger index;
@@ -110,50 +170,62 @@ NS_ASSUME_NONNULL_BEGIN
 @end
 
 
-// - Mocoa Hierarchy Emition -
-// 在具有层级关系的业务模块中，下级模块向上级模块传递数据或事件，或者上级模块监听下级模块的数据或事件，
+// - Mocoa Hierarchy Updates -
+// 层级更新机制：在具有层级关系的业务模块中，下级模块向上级模块传递数据或事件，或者上级模块监听下级模块的数据或事件，
 // 在 iOS 开发中一般使用代理模式，因为代理协议可以让上下级的逻辑关系看起来更清晰。
 // 但是在使用 MVVM 设计模式开发时，因为模块的划分，原本在 MVC 模式下，可以直接交互的逻辑，变得不再
 // 直接，这将间接导致我们在开发时，需要额外的工作量来设计模块交互的代码，开发效率和开发体验将会受影响。
 // 而如果不进行模块分层，或减少划分模块，那么很可能导致模块太大，代码也就不可避免的出现臃肿，这又与我
 // 们采用 MVVM 设计模式开发的初衷不符，所以划分模块是必须也是必要的。幸运的是，在实际开发中，大部分情
 // 况下，模块与模块之间的交互，都是一些简单的交互，在框架层提供一种简单的交互机制，即可解决大部分层级模
-// 块间的交互需求，所以 Mocoa 设计了基于层级关系的 Mocoa Hierarchy Emit 机制。
-// Mocoa Hierarchy Emit 机制，只为解决层级模块间的交互问题，对于不同模块间的交互，或者比较复杂的
+// 块间的交互需求，所以 Mocoa 设计了基于层级关系的 Mocoa Hierarchy Updates 机制。
+// 该机制，只为解决层级模块间的交互问题，对于不同模块间的交互，或者比较复杂的
 // 交互，Mocoa 也是建议采用常规代理或通知机制，对于代码而言，保持可维护性是优先级最高的。
 
-@interface XZMocoaEmition : NSObject
-/// 事件名。
-@property (nonatomic, copy, readonly) NSString *name;
+/// 更新方式。
+typedef NSString *XZMocoaUpdatesKey NS_EXTENSIBLE_STRING_ENUM;
+
+/// 更新信息模型。
+@interface XZMocoaUpdates : NSObject
+/// 更新方式，或者用来区分更新的标记。
+@property (nonatomic, copy, readonly) XZMocoaUpdatesKey key;
 /// 事件值。
 @property (nonatomic, strong, readonly, nullable) id value;
 /// 发生当前事件的源对象。
-@property (nonatomic, strong, readonly) __kindof XZMocoaViewModel *source;
+@property (nonatomic, unsafe_unretained, readonly) __kindof XZMocoaViewModel *source;
 /// 传递当前事件的对象。
-@property (nonatomic, strong, XZ_READONLY) __kindof XZMocoaViewModel *target;
+@property (nonatomic, unsafe_unretained, XZ_READONLY) __kindof XZMocoaViewModel *target;
 - (instancetype)init NS_UNAVAILABLE;
-+ (instancetype)emitionWithName:(nullable NSString *)name value:(nullable id)value source:(XZMocoaViewModel *)source;
++ (instancetype)updatesWithKey:(XZMocoaUpdatesKey)key value:(nullable id)value source:(XZMocoaViewModel *)source;
 @end
 
-/// 没有名称的事件，一般作为默认事件的事件名。
-FOUNDATION_EXPORT NSString * const XZMocoaEmitionNameDefault;
-/// 更新事件。
-FOUNDATION_EXPORT NSString * const XZMocoaEmitionNameUpdate;
+/// 通用事件。如果视图模型只有一个事件，或者没必要细分事件时，可以使用此名称。
+FOUNDATION_EXPORT XZMocoaUpdatesKey const XZMocoaUpdatesKeyNone;
+/// 重载事件。适用情形：通知上级，执行重载模块的操作（数据已经更新）。
+FOUNDATION_EXPORT XZMocoaUpdatesKey const XZMocoaUpdatesKeyReload;
+/// 更新操作。适用情形：通知上级，执行数据编辑的操作（数据还未编辑）。
+FOUNDATION_EXPORT XZMocoaUpdatesKey const XZMocoaUpdatesKeyModify;
+/// 插入操作。适用情形：通知上级，执行数据插入的操作（新数据未插入）。
+FOUNDATION_EXPORT XZMocoaUpdatesKey const XZMocoaUpdatesKeyInsert;
+/// 删除操作。适用情形：通知上级，执行删除数据的操作（数据还未删除）。
+FOUNDATION_EXPORT XZMocoaUpdatesKey const XZMocoaUpdatesKeyDelete;
+/// 选择操作。比如单选 cell 时，只能由上层控制单选。
+FOUNDATION_EXPORT XZMocoaUpdatesKey const XZMocoaUpdatesKeySelect;
 
-@interface XZMocoaViewModel (XZMocoaViewModelHierarchyEmition)
-/// 收到下级模块的事件，或监听到下级模块的数据变化。
+@interface XZMocoaViewModel (XZMocoaViewModelHierarchyUpdates)
+/// 接收下级模块的更新，或监听到下级模块的数据变化。
 /// @discussion
 /// 只有在 isReady 状态下，才会传递事件。
 /// @discussion
 /// 默认情况下，该方法直接将事件继续向上级模块传递，开发者可重写此方法，根据业务需要，控制事件是否向上传递。
-/// @param emition 事件信息
-- (void)didReceiveEmition:(XZMocoaEmition *)emition;
+/// @param updates 事件信息
+- (void)didReceiveUpdates:(XZMocoaUpdates *)updates;
 
-/// 向上级模块发送事件或数据的便利方法，当前对象将作为事件源。
+/// 向上级模块发送更新，当前对象将作为事件源。
 /// @discussion 只有在 isReady 状态下，才会发送事件。
-/// @param name 事件名，如为 nil 则为默认名称 XZMocoaEmitionNameDefault
+/// @param key 事件名，如为 nil 则为默认名称 XZMocoaUpdatesKeyNone
 /// @param value 事件值
-- (void)emit:(nullable NSString *)name value:(nullable id)value;
+- (void)sendUpdatesForKey:(XZMocoaUpdatesKey)key value:(nullable id)value;
 @end
 
 
@@ -172,49 +244,53 @@ FOUNDATION_EXPORT NSString * const XZMocoaEmitionNameUpdate;
 
 
 /// Mocoa Keyed Actions 事件名。
-typedef NSString *XZMocoaKeyEvents;
+typedef NSString *XZMocoaKey;
 
 /// 没有 key 也可作为一种事件，或者称为默认事件，值为空字符串。
-FOUNDATION_EXPORT XZMocoaKeyEvents const XZMocoaKeyEventsNone;
+FOUNDATION_EXPORT XZMocoaKey const XZMocoaKeyNone;
 
 /// 用于标记属性可以被添加 target-action 的属性或方法，仅起标记作用。
 /// @code
-/// @property (nonatomic) BOOL isLoading XZ_MOCOA_KEY();          // The keyEvents is 'isLoading'
-/// @property (nonatomic) BOOL isLoading XZ_MOCOA_KEY("loading"); // The keyEvents is 'loading'
-/// - (void)startLoading XZ_MOCOA_KEY("isLoading");               // The keyEvents is 'isLoading'
+/// @property (nonatomic) BOOL isLoading XZ_MOCOA_KEY();          // The key is 'isLoading'
+/// @property (nonatomic) BOOL isLoading XZ_MOCOA_KEY("loading"); // The key is 'loading'
+/// - (void)startLoading XZ_MOCOA_KEY("isLoading");               // The key is 'isLoading'
 /// @endcode
 /// @todo
-/// 编译器插件，在属性中添加 mocoa=keyEvents 标记，生成的 setter 中添加发送 keyEvents 事件的代码。
-#define XZ_MOCOA_KEY(keyEvents)
+/// 编译器插件，在属性中添加 mocoa=key 标记，生成的 setter 中添加发送 key 事件的代码。
+#define XZ_MOCOA_KEY(key)
 
-@interface XZMocoaViewModel (XZMocoaViewModelKeyEvents)
+@interface XZMocoaViewModel (XZMocoaViewModelTargetAction)
 
 /// 添加 target-action 事件。
 /// @attention
 /// 绑定的 action 方法，必须无返回值，因为没有针对返回值的内存管理，可能会引起泄漏。可使用如下形式：
 /// @code
-/// - (void)doSomething;
-/// - (void)doSomething:(XZMocoaViewModel *)sender;
-/// - (void)doSomething:(XZMocoaViewModel *)sender forKeyEvents:(XZMocoaKeyEvents)keyEvents;
+/// - (void)method;
+/// - (void)method:(XZMocoaViewModel *)sender;
+/// - (void)method:(XZMocoaViewModel *)sender value:(nullable id)value;
+/// - (void)method:(XZMocoaViewModel *)sender value:(nullable id)value key:(XZMocoaKey)key;
 /// @endcode
-/// @note
-/// 调用此方法时，target-action 会立即触发一次。
 /// @param target 接收事件的对象
 /// @param action 执行事件的方法
-/// @param keyEvents 事件，nil 表示添加默认事件
-- (void)addTarget:(id)target action:(SEL)action forKeyEvents:(nullable XZMocoaKeyEvents)keyEvents;
+/// @param key 事件，nil 表示添加默认事件
+- (void)addTarget:(id)target action:(SEL)action forKey:(XZMocoaKey)key;
+
 /// 移除 target-action 事件。
 /// @discussion
-/// 移除所有匹配 target、action、keyEvents 的事件，值 nil 表示匹配所有，例如都为 nil 会移除所有事件。
+/// 移除所有匹配 target、action、key 的事件，值 nil 表示匹配所有，例如都为 nil 会移除所有事件。
 /// @param target 接收事件的对象
 /// @param action 执行事件的方法
-/// @param keyEvents 绑定的事件
-- (void)removeTarget:(nullable id)target action:(nullable SEL)action forKeyEvents:(nullable XZMocoaKeyEvents)keyEvents;
+/// @param key 绑定的事件
+- (void)removeTarget:(nullable id)target action:(nullable SEL)action forKey:(nullable XZMocoaKey)key;
+
 /// 发送 target-action 事件。
-/// @param keyEvents 事件，nil 表示发送默认事件
-- (void)sendActionsForKeyEvents:(nullable XZMocoaKeyEvents)keyEvents;
+/// @param key 事件，nil 表示发送默认事件
+/// @param value 事件值
+- (void)sendActionsForKey:(XZMocoaKey)key value:(nullable id)value;
 
 @end
+
+@class UIControl;
 
 
 //FOUNDATION_EXPORT void __mocoa_bind_3(XZMocoaViewModel *vm, SEL keySel, UILabel *target) XZ_ATTR_OVERLOAD;

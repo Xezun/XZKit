@@ -12,7 +12,7 @@
 NS_ASSUME_NONNULL_BEGIN
 
 // 在 IB 中，IBInspectable 值在 -initWithCoder: 中并没有被赋值，一般需要在 -awakeFromNib 方法中才能获取。
-// 命名规则：
+// 命名规则：tableView/tableViewCell/tableViewHeaderFooterView
 // XZMocoaTableModel
 // XZMocoaTableView
 // XZMocoaTableViewModel

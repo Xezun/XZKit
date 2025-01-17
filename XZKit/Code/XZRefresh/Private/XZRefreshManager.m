@@ -43,6 +43,10 @@ UIKIT_STATIC_INLINE UIEdgeInsets XZRefreshAddTop(UIEdgeInsets insets, CGFloat to
 static void const * const _context = &_context;
 
 @implementation XZRefreshManager {
+    // 记录布局 header/footer 时 scrollView 的状态。
+    CGSize _contentSize;
+    CGSize _size;
+    UIEdgeInsets _adjustedContentInsets;
     /// 记录了 Header 或 Footer 的可见高度：负数为 Header 正数为 Footer 。
     CGFloat _distance;
     XZRefreshContext *_header;
@@ -305,7 +309,7 @@ static void const * const _context = &_context;
     _header.needsLayout = YES;
     __weak typeof(self) wself = self;
     [NSRunLoop.mainRunLoop performInModes:@[NSRunLoopCommonModes] block:^{
-        [wself layoutHeaderRefreshViewIfNeeded];
+        [wself layoutHeaderRefreshViewIfNeeded:NO];
     }];
 }
 
@@ -317,7 +321,7 @@ static void const * const _context = &_context;
     __weak typeof(self) wself = self;
     // 在 ScrollView 滚动时，模式 NSDefaultRunLoopMode 下的 runloop 会被阻塞，可能会导致 UI 长时间得不到更新。
     [NSRunLoop.mainRunLoop performInModes:@[NSRunLoopCommonModes] block:^{
-        [wself layoutFooterRefreshViewIfNeeded];
+        [wself layoutFooterRefreshViewIfNeeded:NO];
     }];
 }
 
@@ -334,8 +338,8 @@ static void const * const _context = &_context;
 }
 
 - (void)layoutRefreshViewsIfNeeded {
-    [self layoutHeaderRefreshViewIfNeeded];
-    [self layoutFooterRefreshViewIfNeeded];
+    [self layoutHeaderRefreshViewIfNeeded:NO];
+    [self layoutFooterRefreshViewIfNeeded:NO];
 }
 
 // 头部刷新视图默认布局在可视区域之上，即，刷新视图的底部与可视区域的顶部对齐，
@@ -343,12 +347,14 @@ static void const * const _context = &_context;
 // 偏移值为默认默认布局基础之上，按 offset 向上偏移 -offset 。
 // 在动画时，contentInsets.top 相比原始值多一个 animationHeight，因此先计算出原始的 top 值，
 // 即 contentInsets.top - animationHeight 。
-- (void)layoutHeaderRefreshViewIfNeeded {
+- (void)layoutHeaderRefreshViewIfNeeded:(BOOL)force {
     XZRefreshContext *_header = self->_header;
-    if (!_header.needsLayout) {
+    if (!force && !_header.needsLayout) {
         return;
     }
-    _header.needsLayout = NO;
+    defer(^{
+        _header.needsLayout = NO;
+    });
 
     XZRefreshView * const _refreshView = _header.view;
     if (_refreshView == nil) {
@@ -382,6 +388,7 @@ static void const * const _context = &_context;
             CGFloat const y = -(layoutInsets.top - _header.height) - h;
             CGRect  const frame = CGRectMake(x, y - _header.offset, w, h);
             
+            _adjustedContentInsets = contentInsets;
             _header.frame = frame;
             _header.contentOffsetY = -contentInsets.top;
             _refreshView.frame = frame;
@@ -393,6 +400,7 @@ static void const * const _context = &_context;
             _header.offset     = _refreshView.offset;
             
             UIEdgeInsets const layoutInsets = _header.layoutInsets;
+            UIEdgeInsets const contentInset = _scrollView.adjustedContentInset;
             
             CGFloat const w = CGRectGetWidth(bounds);
             CGFloat const h = CGRectGetHeight(_refreshView.frame);
@@ -400,8 +408,9 @@ static void const * const _context = &_context;
             CGFloat const y = -layoutInsets.top - h;
             CGRect  const frame = CGRectMake(x, y - _header.offset, w, h);
             
+            _adjustedContentInsets = contentInset;
             _header.frame = frame;
-            _header.contentOffsetY = -_scrollView.adjustedContentInset.top;
+            _header.contentOffsetY = -contentInset.top;
             _refreshView.frame = frame;
             break;
         }
@@ -416,12 +425,14 @@ static void const * const _context = &_context;
 /// 二、正刷新时。
 /// 在附加了底部刷新高度边距后，如果页面高度仍不满足一屏，刷新视图刷新放在底部，
 /// 满足一屏，正常布局，放在页面尾部即可。
-- (void)layoutFooterRefreshViewIfNeeded {
+- (void)layoutFooterRefreshViewIfNeeded:(BOOL)force {
     XZRefreshContext * const _footer = self->_footer;
-    if (!_footer.needsLayout) {
+    if (!force && !_footer.needsLayout) {
         return;
     }
-    _footer.needsLayout = NO;
+    defer(^{
+        _footer.needsLayout = NO;
+    });
     
     XZRefreshView * const _refreshView = _footer.view;
     if (!_refreshView) {
@@ -457,6 +468,9 @@ static void const * const _context = &_context;
             CGFloat const contentOffsetY = (mode ? -contentInsets.top : contentSize.height + contentInsets.bottom - bounds.size.height);
             CGRect  const frame = CGRectMake(x, y + _footer.offset, w, h);
             
+            _size = bounds.size;
+            _contentSize = contentSize;
+            _adjustedContentInsets = contentInsets;
             _footer.frame = frame;
             _footer.contentOffsetY = contentOffsetY;
             _footer.needsAnimatedTransitioning = (contentInsets.top + contentSize.height < bounds.size.height);
@@ -469,29 +483,32 @@ static void const * const _context = &_context;
             _footer.offset     = _refreshView.offset;
             
             UIEdgeInsets const layoutInsets  = _footer.layoutInsets;
-            UIEdgeInsets contentInsets = _scrollView.adjustedContentInset;
+            UIEdgeInsets const contentInsets = _scrollView.adjustedContentInset;
             
             // 顶部在刷新时，顶部的边距需要减去刷新高度
-            switch (_header.state) {
-                case XZRefreshStateRefreshing:
-                case XZRefreshStateWillRecovering: {
-                    contentInsets.top -= _header.height;
-                    break;
+            CGFloat const top = (^CGFloat(CGFloat top, XZRefreshContext *_header) {
+                switch (_header.state) {
+                    case XZRefreshStateRefreshing:
+                    case XZRefreshStateWillRecovering: {
+                        return  top - _header.height;
+                    }
+                    default: {
+                        return top;
+                    }
                 }
-                default: {
-                    break;
-                }
-            }
+            })(contentInsets.top, _header);
             
-            //
-            BOOL const mode = (contentInsets.top + contentSize.height + layoutInsets.bottom < bounds.size.height);
+            BOOL const mode = (top + contentSize.height + layoutInsets.bottom < bounds.size.height);
             CGFloat const w = CGRectGetWidth(bounds);
             CGFloat const h = CGRectGetHeight(_refreshView.frame);
             CGFloat const x = CGRectGetMinX(bounds);
-            CGFloat const y = (mode ? (bounds.size.height - contentInsets.top) : (contentSize.height + layoutInsets.bottom));
-            CGFloat const contentOffsetY = (mode ? -contentInsets.top : contentSize.height + contentInsets.bottom - bounds.size.height);
+            CGFloat const y = (mode ? (bounds.size.height - top) : (contentSize.height + layoutInsets.bottom));
+            CGFloat const contentOffsetY = (mode ? -top : contentSize.height + contentInsets.bottom - bounds.size.height);
             CGRect  const frame = CGRectMake(x, y + _footer.offset, w, h);
             
+            _size = bounds.size;
+            _contentSize = contentSize;
+            _adjustedContentInsets = contentInsets;
             _footer.frame = frame;
             _footer.contentOffsetY = contentOffsetY;
             _footer.needsAnimatedTransitioning = NO;
@@ -540,7 +557,7 @@ static void const * const _context = &_context;
         return;
     }
     // 避免初次调用时，可能还没有同步 context 值
-    [self layoutHeaderRefreshViewIfNeeded];
+    [self layoutHeaderRefreshViewIfNeeded:NO];
     
     UIScrollView * const _scrollView = self->_scrollView;
     
@@ -567,8 +584,7 @@ static void const * const _context = &_context;
         // 因为动画的高度不一定是下拉刷新所需的距离，所以使用 -setContentOffset:animated: 方法未必能触发刷新。
         // 因此这里使用 UIViewAnimation 的方法，直接进入下拉刷新状态。
         XZRefreshAnimate(animated, ^{
-            [self setNeedsLayoutHeaderRefreshView];
-            [self layoutHeaderRefreshViewIfNeeded];
+            [self layoutHeaderRefreshViewIfNeeded:YES];
             _scrollView.contentOffset = CGPointMake(0, self->_header.contentOffsetY);
         }, completion);
     }
@@ -582,7 +598,7 @@ static void const * const _context = &_context;
         XZRefreshAsync(completion, NO);
         return;
     }
-    [self layoutFooterRefreshViewIfNeeded];
+    [self layoutFooterRefreshViewIfNeeded:NO];
     
     UIScrollView * const _scrollView = self->_scrollView;
     
@@ -600,8 +616,7 @@ static void const * const _context = &_context;
         
         // 滚动到 footer
         XZRefreshAnimate(animated, ^{
-            [self setNeedsLayoutFooterRefreshView];
-            [self layoutFooterRefreshViewIfNeeded];
+            [self layoutFooterRefreshViewIfNeeded:YES];
             _scrollView.contentOffset = CGPointMake(0, self->_footer.contentOffsetY);
         }, completion);
     }
@@ -634,7 +649,7 @@ static void const * const _context = &_context;
         // 使用 YES 标记，以通知刷新视图执行结束动画
         [_header.view scrollView:_scrollView willEndRefreshing:YES];
         // 理论上来说，此步骤并无必要。
-        [self layoutHeaderRefreshViewIfNeeded];
+        [self layoutHeaderRefreshViewIfNeeded:NO];
         // NO 表示结束的动画在回调执行时没有完成
         XZRefreshAsync(completion, NO);
     } else {
@@ -643,26 +658,26 @@ static void const * const _context = &_context;
         // 但是此时处于 refreshing 状态，-scrollViewDidScroll: 不执行任何操作。
         _scrollView.contentInset = XZRefreshAddTop(_scrollView.contentInset, -_header.height);
         _scrollView.verticalScrollIndicatorInsets = XZRefreshAddTop(_scrollView.verticalScrollIndicatorInsets, -_header.height);
-        _scrollView.contentOffset = contentOffset;
         
         if (contentOffset.y >= _header.contentOffsetY + _header.height) {
+            _scrollView.contentOffset = contentOffset;
             // 头部刷新视图不在展示区域内，不需要展示结束动画
             _header.state = XZRefreshStateRecovering;
             [_header.view scrollView:_scrollView willEndRefreshing:NO];
             
-            [self setNeedsLayoutHeaderRefreshView];
-            [self layoutHeaderRefreshViewIfNeeded];
+            [self layoutHeaderRefreshViewIfNeeded:YES];
             
             _header.state = XZRefreshStatePendinging;
             [_header.view scrollView:_scrollView didEndRefreshing:NO];
             XZRefreshAsync(completion, NO);
         } else {
+            // 因为下面的设置 contentOffset 可能会提前结束减速过程，结束当前可能的减速动画，避免减速结束的清理操作，提前移除了退场动画。
+            [_scrollView setContentOffset:contentOffset animated:NO];
             _header.state = XZRefreshStateRecovering;
             [_header.view scrollView:_scrollView willEndRefreshing:animated];
             
             XZRefreshAnimate(animated, ^{
-                [self setNeedsLayoutHeaderRefreshView];
-                [self layoutHeaderRefreshViewIfNeeded];
+                [self layoutHeaderRefreshViewIfNeeded:YES];
                 _scrollView.contentOffset = CGPointMake(contentOffset.x, self->_header.contentOffsetY);
             }, ^(BOOL finished) {
                 self->_header.state = XZRefreshStatePendinging;
@@ -688,7 +703,7 @@ static void const * const _context = &_context;
         // 底部刷新往往发生在列表数据改变之后，即 contentSize 可能发生了改变。
         // 因此使用动画来调整刷新视图。
         XZRefreshAnimate(animated, ^{
-            [self layoutFooterRefreshViewIfNeeded];
+            [self layoutFooterRefreshViewIfNeeded:NO];
         }, ^(BOOL finished) {
             XZRefreshAsync(completion, NO);
         });
@@ -698,27 +713,26 @@ static void const * const _context = &_context;
         // 恢复边距
         _scrollView.contentInset = XZRefreshAddBottom(_scrollView.contentInset, -_footer.height);
         _scrollView.verticalScrollIndicatorInsets = XZRefreshAddBottom(_scrollView.verticalScrollIndicatorInsets, -_footer.height);
-        _scrollView.contentOffset = contentOffset;
         
         if (contentOffset.y <= _footer.contentOffsetY - _footer.height) {
+            _scrollView.contentOffset = contentOffset;
             // 尾部刷新视图没有在展示区域内，页面不需要动
             // 下拉加载更多后，footer 已经不展示在可见范围，footer 的动画在 kvo 时处理了
             _footer.state = XZRefreshStateRecovering;
             [_footer.view scrollView:_scrollView willEndRefreshing:NO];
             
-            [self setNeedsLayoutFooterRefreshView];
-            [self layoutFooterRefreshViewIfNeeded];
+            [self layoutFooterRefreshViewIfNeeded:YES];
             
             _footer.state = XZRefreshStatePendinging;
             [_footer.view scrollView:_scrollView didEndRefreshing:NO];
             XZRefreshAsync(completion, NO);
         } else {
+            [_scrollView setContentOffset:contentOffset animated:NO];
             _footer.state = XZRefreshStateRecovering;
             [_footer.view scrollView:_scrollView willEndRefreshing:animated];
             
             XZRefreshAnimate(animated, ^{
-                [self setNeedsLayoutFooterRefreshView];
-                [self layoutFooterRefreshViewIfNeeded];
+                [self layoutFooterRefreshViewIfNeeded:YES];
                 
                 if (_footer.contentOffsetY < contentOffset.y) {
                     _scrollView.contentOffset = CGPointMake(contentOffset.x, _footer.contentOffsetY);
@@ -734,7 +748,7 @@ static void const * const _context = &_context;
 
 #pragma mark - <UIScrollViewDelegate>
 
-- (void)scrollViewDidScroll:(UIScrollView *)scrollView {
+- (void)scrollViewDidScroll:(UIScrollView * const)scrollView {
     if (scrollView != _scrollView) {
         return;
     }
@@ -745,8 +759,8 @@ static void const * const _context = &_context;
 
     if (_footer.state != XZRefreshStatePendinging) {
         if (_footer.needsAnimatedTransitioning) {
-            CGRect  const bounds = _scrollView.bounds;
-            CGFloat const newY   = _scrollView.contentOffset.y + bounds.size.height - _footer.height + _footer.offset;
+            CGRect  const bounds = scrollView.bounds;
+            CGFloat const newY   = scrollView.contentOffset.y + bounds.size.height - _footer.height + _footer.offset;
             CGRect newFrame = _footer.view.frame;
             if (newY <= _footer.frame.origin.y) {
                 _footer.view.frame = _footer.frame;
@@ -759,7 +773,21 @@ static void const * const _context = &_context;
         return;
     }
     
-    CGPoint const contentOffset = _scrollView.contentOffset;
+    CGPoint const contentOffset = scrollView.contentOffset;
+    
+    // iOS 18：当 adjustedContentInset 发生改变后，方法 -scrollViewDidScroll: 先于 -adjustedContentInsetDidChange: 调用。
+    // 导致 XZRefreshManager 在 -scrollViewDidScroll: 方法中，因 header/footer 的 context 不正确而不能正确地判断下拉/上拉状态。
+    // 现象：进入页面后 headerRefreshView 的初始状态不正确。
+    // 因为初始化时，adjustedContentInset 为 zero，页面展示后，adjustedContentInset 更新先调用 -scrollViewDidScroll: 方法时，
+    // 错误的将 .top 判断为下拉距离，从而展示了异常状态。
+    if (!UIEdgeInsetsEqualToEdgeInsets(scrollView.adjustedContentInset, _adjustedContentInsets)) {
+        [self layoutFooterRefreshViewIfNeeded:YES];
+        [self layoutHeaderRefreshViewIfNeeded:YES];
+    } else if (!CGSizeEqualToSize(scrollView.contentSize, _contentSize)) {
+        [self layoutFooterRefreshViewIfNeeded:YES];
+    } else if (!CGSizeEqualToSize(scrollView.bounds.size, _size)) {
+        [self layoutFooterRefreshViewIfNeeded:YES];
+    }
     
     if (contentOffset.y < _header.contentOffsetY) {
         // 进入了下拉刷新的区域
@@ -850,8 +878,7 @@ static void const * const _context = &_context;
             _scrollView.verticalScrollIndicatorInsets = XZRefreshAddTop(_scrollView.verticalScrollIndicatorInsets, _header.height);
             _scrollView.contentOffset = contentOffset;
             
-            [self setNeedsLayoutHeaderRefreshView];
-            [self layoutHeaderRefreshViewIfNeeded];
+            [self layoutHeaderRefreshViewIfNeeded:YES];
             
             targetContentOffset->y = _header.contentOffsetY;
             return;
@@ -866,8 +893,7 @@ static void const * const _context = &_context;
             _scrollView.contentOffset = contentOffset;
             
             _header.state = XZRefreshStateRecovering;
-            [self setNeedsLayoutHeaderRefreshView];
-            [self layoutHeaderRefreshViewIfNeeded];
+            [self layoutHeaderRefreshViewIfNeeded:YES];
             
             if (contentOffset.y < _header.contentOffsetY) {
                 targetContentOffset->y = _header.contentOffsetY;
@@ -898,8 +924,7 @@ static void const * const _context = &_context;
             _scrollView.verticalScrollIndicatorInsets = XZRefreshAddBottom(_scrollView.verticalScrollIndicatorInsets, _footer.height);
             _scrollView.contentOffset = contentOffset;
             
-            [self setNeedsLayoutFooterRefreshView];
-            [self layoutFooterRefreshViewIfNeeded];
+            [self layoutFooterRefreshViewIfNeeded:YES];
             
             targetContentOffset->y = _footer.contentOffsetY;
             return;
@@ -915,8 +940,7 @@ static void const * const _context = &_context;
             _scrollView.contentOffset = contentOffset;
             
             _footer.state = XZRefreshStateRecovering;
-            [self setNeedsLayoutFooterRefreshView];
-            [self layoutFooterRefreshViewIfNeeded];
+            [self layoutFooterRefreshViewIfNeeded:YES];
             
             if (contentOffset.y > _footer.contentOffsetY) {
                 targetContentOffset->y = _footer.contentOffsetY;
@@ -977,8 +1001,7 @@ static void const * const _context = &_context;
     _scrollView.verticalScrollIndicatorInsets = XZRefreshAddTop(_scrollView.verticalScrollIndicatorInsets, _header.height);
     _scrollView.contentOffset = contentOffset;
     
-    [self setNeedsLayoutHeaderRefreshView];
-    [self layoutHeaderRefreshViewIfNeeded];
+    [self layoutHeaderRefreshViewIfNeeded:YES];
     
     if (targetContentOffset) {
         targetContentOffset->y = _header.contentOffsetY;
@@ -989,7 +1012,14 @@ static void const * const _context = &_context;
     
     id<XZRefreshDelegate> const delegate = _header.view.delegate ?: (id)_scrollView.delegate;
     if ([delegate respondsToSelector:@selector(scrollView:headerDidBeginRefreshing:)]) {
-        [delegate scrollView:_scrollView headerDidBeginRefreshing:_header.view];
+        // 由于结束刷新的动画是 UIView 动画，会立即设置 contentOffset 到目标位置，
+        // 而当前方法可能处于手势结束，进入减速前的准备状态中，如果直接同步发送代理事件，
+        // 那么在代理方法中立即结束刷新，会导致减速状态在此方法返回后立即完成，
+        // 即 -scrollViewDidEndDecelerating: 方法在结束刷新的 UIView 动画结束前执行，
+        // 从而导致退场动画被提前清理，丢失动画效果。
+        dispatch_async(dispatch_get_main_queue(), ^{
+            [delegate scrollView:_scrollView headerDidBeginRefreshing:_header.view];
+        });
     }
 }
 
@@ -1006,8 +1036,7 @@ static void const * const _context = &_context;
     _scrollView.contentOffset = contentOffset;
 
     CGRect const oldFrame = _footer.view.frame;
-    [self setNeedsLayoutFooterRefreshView];
-    [self layoutFooterRefreshViewIfNeeded];
+    [self layoutFooterRefreshViewIfNeeded:YES];
     
     // 回弹的目标位置
     if (targetContentOffset) {
@@ -1023,7 +1052,9 @@ static void const * const _context = &_context;
     
     id<XZRefreshDelegate> const delegate = _footer.view.delegate ?: (id)_scrollView.delegate;
     if ([delegate respondsToSelector:@selector(scrollView:footerDidBeginRefreshing:)]) {
-        [delegate scrollView:_scrollView footerDidBeginRefreshing:_footer.view];
+        dispatch_async(dispatch_get_main_queue(), ^{
+            [delegate scrollView:_scrollView footerDidBeginRefreshing:_footer.view];
+        });
     }
 }
 
@@ -1035,15 +1066,6 @@ static void const * const _context = &_context;
 static const void * const _manager = &_manager;
 
 @implementation UIScrollView (XZRefreshManager)
-
-+ (void)load {
-    Class const aCls = UIScrollView.class;
-    if (self == aCls && [self instancesRespondToSelector:@selector(adjustedContentInsetDidChange)]) {
-        Method const oldMethod = class_getInstanceMethod(aCls, @selector(adjustedContentInsetDidChange));
-        Method const newMethod = class_getInstanceMethod(aCls, @selector(__xz_refresh_exchange_adjustedContentInsetDidChange));
-        method_exchangeImplementations(oldMethod, newMethod);
-    }
-}
 
 - (XZRefreshManager *)xz_refreshManager {
     XZRefreshManager *refreshingManager = objc_getAssociatedObject(self, _manager);
@@ -1057,12 +1079,6 @@ static const void * const _manager = &_manager;
 
 - (XZRefreshManager *)xz_refreshManagerIfLoaded {
     return objc_getAssociatedObject(self, _manager);
-}
-
-- (void)__xz_refresh_exchange_adjustedContentInsetDidChange {
-    [self __xz_refresh_exchange_adjustedContentInsetDidChange];
-    
-    [self.xz_refreshManagerIfLoaded setNeedsLayoutRefreshViews];
 }
 
 @end

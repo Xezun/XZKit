@@ -7,8 +7,8 @@
 
 // Core
 #import "XZMocoaDefines.h"
-#import "XZMocoaDomain.h"
 #import "XZMocoaModule.h"
+#import "XZMocoaModuleDomain.h"
 
 // View
 #import "XZMocoaModel.h"

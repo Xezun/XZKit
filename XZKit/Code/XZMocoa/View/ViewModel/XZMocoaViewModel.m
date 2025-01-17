@@ -8,13 +8,13 @@
 
 #import "XZMocoaViewModel.h"
 #import "XZMocoaView.h"
-#import "XZMocoaKeyedTargetActions.h"
+#import "XZMocoaTargetActionStorage.h"
 
 @implementation XZMocoaViewModel {
     @private
     NSMutableOrderedSet<XZMocoaViewModel *> *_subViewModels;
     XZMocoaViewModel * __unsafe_unretained _superViewModel;
-    XZMocoaKeyedTargetActions  *_keyedTargetActions;
+    XZMocoaTargetActionStorage  *_targetActions;
 }
 
 - (void)dealloc {
@@ -178,18 +178,19 @@
 @end
 
 
-@implementation XZMocoaEmition
+@implementation XZMocoaUpdates
 
-+ (instancetype)emitionWithName:(NSString *)name value:(id)value source:(XZMocoaViewModel *)source {
-    return [[self alloc] initWithName:name value:value source:source];
++ (instancetype)updatesWithKey:(NSString *)key value:(id)value source:(XZMocoaViewModel *)source {
+    return [[self alloc] initWithKey:key value:value source:source];
 }
 
-- (instancetype)initWithName:(NSString *)name value:(id)value source:(XZMocoaViewModel *)source {
+- (instancetype)initWithKey:(NSString *)key value:(id)value source:(XZMocoaViewModel *)source {
     self = [super init];
     if (self) {
-        _name = name.copy ?: XZMocoaEmitionNameDefault;
+        _key = key.copy ?: XZMocoaUpdatesKeyNone;
         _value = value;
         _source = source;
+        _target = source;
     }
     return self;
 }
@@ -197,49 +198,51 @@
 @end
 
 
-NSString * const XZMocoaEmitionNameDefault = @"";
-NSString * const XZMocoaEmitionNameUpdate = @"XZMocoaEmitionNameUpdate";
+XZMocoaUpdatesKey const XZMocoaUpdatesKeyNone = @"";
+XZMocoaUpdatesKey const XZMocoaUpdatesKeyReload = @"XZMocoaUpdatesKeyReload";
+XZMocoaUpdatesKey const XZMocoaUpdatesKeyModify = @"XZMocoaUpdatesKeyModify";
+XZMocoaUpdatesKey const XZMocoaUpdatesKeyInsert = @"XZMocoaUpdatesKeyInsert";
+XZMocoaUpdatesKey const XZMocoaUpdatesKeyDelete = @"XZMocoaUpdatesKeyDelete";
+XZMocoaUpdatesKey const XZMocoaUpdatesKeySelect = @"XZMocoaUpdatesKeySelect";
 
-@implementation XZMocoaViewModel (XZMocoaViewModelHierarchyEmition)
+@implementation XZMocoaViewModel (XZMocoaViewModelHierarchyEvents)
 
-- (void)emit:(NSString *)name value:(id)value {
+- (void)sendUpdatesForKey:(NSString *)key value:(id)value {
     if (!self.isReady) return;
-    XZMocoaEmition * const emition = [XZMocoaEmition emitionWithName:name value:value source:self];
-    emition.target = self;
-    [self.superViewModel didReceiveEmition:emition];
+    XZMocoaUpdates * const updates = [XZMocoaUpdates updatesWithKey:key value:value source:self];
+    [self.superViewModel didReceiveUpdates:updates];
 }
 
-- (void)didReceiveEmition:(XZMocoaEmition *)emition {
+- (void)didReceiveUpdates:(XZMocoaUpdates *)updates {
     if (!self.isReady) return;
-    emition.target = self;
-    [self.superViewModel didReceiveEmition:emition];
+    updates.target = self;
+    [self.superViewModel didReceiveUpdates:updates];
 }
 
 @end
 
 
+XZMocoaKey const XZMocoaKeyNone = @"";
 
-XZMocoaKeyEvents const XZMocoaKeyEventsNone = @"";
+@implementation XZMocoaViewModel (XZMocoaViewModelTargetAction)
 
-@implementation XZMocoaViewModel (XZMocoaViewModelKeyEvents)
-
-- (void)addTarget:(id)target action:(SEL)action forKeyEvents:(NSString *)keyEvents {
+- (void)addTarget:(id)target action:(SEL)action forKey:(NSString *)key {
     if (target == nil || action == nil) {
         XZLog(@"为 target=%@ action=%@ 添加事件失败，参数不能为 nil", target, NSStringFromSelector(action));
         return;
     }
-    if (_keyedTargetActions == nil) {
-        _keyedTargetActions = [[XZMocoaKeyedTargetActions alloc] initWithOwner:self];
+    if (_targetActions == nil) {
+        _targetActions = [[XZMocoaTargetActionStorage alloc] initWithViewModel:self];
     }
-    [_keyedTargetActions addTarget:target action:action forKeyEvents:keyEvents ?: XZMocoaKeyEventsNone];
+    [_targetActions addTarget:target action:action forKey:(key ?: XZMocoaKeyNone)];
 }
 
-- (void)removeTarget:(id)target action:(SEL)action forKeyEvents:(nullable NSString *)keyEvents {
-    [_keyedTargetActions removeTarget:target action:action forKeyEvents:keyEvents];
+- (void)removeTarget:(id)target action:(SEL)action forKey:(nullable NSString *)key {
+    [_targetActions removeTarget:target action:action forKey:key];
 }
 
-- (void)sendActionsForKeyEvents:(nullable NSString *)keyEvents {
-    [_keyedTargetActions sendActionsForKeyEvents:keyEvents ?: XZMocoaKeyEventsNone];
+- (void)sendActionsForKey:(NSString *)key value:(id)value {
+    [_targetActions sendActionsForKey:(key ?: XZMocoaKeyNone) value:value];
 }
 
 @end
