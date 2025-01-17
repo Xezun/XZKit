@@ -218,6 +218,7 @@ extension CGRect {
     }
 }
 
+/// 兼容 iOS 12.0 版本的 NSDirectionalRectEdge 自定义类型。
 public struct XZRectEdge: OptionSet, @unchecked Sendable {
     
     public var rawValue: UInt
@@ -228,43 +229,31 @@ public struct XZRectEdge: OptionSet, @unchecked Sendable {
     
     @available(iOS 13.0, *)
     public init(_ edge: NSDirectionalRectEdge) {
-        self.init(rawValue: edge.rawValue)
+        switch edge {
+        case .top:
+            self = .top;
+        case .leading:
+            self = .leading;
+        case .bottom:
+            self = .bottom;
+        case .trailing:
+            self = .trailing;
+        default:
+            var rawValue: UInt = 0
+            for item in [NSDirectionalRectEdge.top, NSDirectionalRectEdge.leading, NSDirectionalRectEdge.bottom, NSDirectionalRectEdge.trailing] {
+                if edge.contains(item) {
+                    rawValue += XZRectEdge(item).rawValue
+                }
+            }
+            self.init(rawValue: rawValue)
+        }
     }
     
-    public static var top: XZRectEdge {
-        if #available(iOS 13.0, *) {
-            return XZRectEdge.init(rawValue: NSDirectionalRectEdge.top.rawValue)
-        }
-        return XZRectEdge.init(rawValue: 1 << 0)
-    }
-    
-    public static var leading: XZRectEdge {
-        if #available(iOS 13.0, *) {
-            return XZRectEdge.init(rawValue: NSDirectionalRectEdge.leading.rawValue)
-        }
-        return XZRectEdge.init(rawValue: 1 << 1)
-    }
-    
-    public static var bottom: XZRectEdge {
-        if #available(iOS 13.0, *) {
-            return XZRectEdge.init(rawValue: NSDirectionalRectEdge.bottom.rawValue)
-        }
-        return XZRectEdge.init(rawValue: 1 << 2)
-    }
-    
-    public static var trailing: XZRectEdge {
-        if #available(iOS 13.0, *) {
-            return XZRectEdge.init(rawValue: NSDirectionalRectEdge.trailing.rawValue)
-        }
-        return XZRectEdge.init(rawValue: 1 << 3)
-    }
-    
-    public static var all: XZRectEdge {
-        if #available(iOS 13.0, *) {
-            return XZRectEdge.init(rawValue: NSDirectionalRectEdge.all.rawValue)
-        }
-        return XZRectEdge.init(rawValue: (1 << 0) + (1 << 1) + (1 << 2) + (1 << 3))
-    }
+    public static let top      : XZRectEdge = .init(rawValue: 1 << 0)
+    public static let leading  : XZRectEdge = .init(rawValue: 1 << 1)
+    public static let bottom   : XZRectEdge = .init(rawValue: 1 << 2)
+    public static let trailing : XZRectEdge = .init(rawValue: 1 << 3)
+    public static let all      : XZRectEdge = [.top, .leading, .bottom, .trailing]
     
 }
 
@@ -273,7 +262,24 @@ public struct XZRectEdge: OptionSet, @unchecked Sendable {
 extension NSDirectionalRectEdge {
     
     public init(_ edge: XZRectEdge) {
-        self.init(rawValue: edge.rawValue)
+        switch edge {
+        case .top:
+            self = .top;
+        case .leading:
+            self = .leading;
+        case .bottom:
+            self = .bottom;
+        case .trailing:
+            self = .trailing;
+        default:
+            var rawValue: UInt = 0
+            for item in [XZRectEdge.top, XZRectEdge.leading, XZRectEdge.bottom, XZRectEdge.trailing] {
+                if edge.contains(item) {
+                    rawValue += NSDirectionalRectEdge(item).rawValue
+                }
+            }
+            self.init(rawValue: rawValue)
+        }
     }
     
 }
