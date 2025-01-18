@@ -106,32 +106,26 @@ NS_SWIFT_UI_ACTOR @protocol XZMocoaViewModel <NSObject>
 - (instancetype)initWithModel:(nullable id)model ready:(BOOL)synchronously;
 
 /// 是否已完成初始化。
-/// @discussion
+///
 /// 关于 ready 机制
-/// @discussion
-/// 1、延迟初始化时机。
-/// 2、使用 ready/prepare 方法组合，可以避免初始化逻辑反复执行。
-/// 3、视图模型在使用前，必须处于`isReady == YES`状态。
+/// 1. 延迟初始化时机。
+/// 2. 使用 ready/prepare 方法组合，可以避免初始化逻辑反复执行。
+/// 3. 视图模型在使用前，必须处于`isReady == YES`状态。
 @property (nonatomic, readonly) BOOL isReady;
 
 /// 视图模型在使用前，应调用此方法，以初始化视图模型。
-/// @discussion
-/// 在层级关系中，上层视图模型会自动向下层视图模型发送`-ready`消息，所以一般只需要顶层视图模式调用此方法。
-/// @discussion
-/// 重复调用此方法，不会重复初始化。
-/// @note
-/// 一般情况下，不需要重写此方法。
+///
+/// - 一般情况下，请勿重写此方法。
+/// - 上层视图模型会自动向下层视图模型发送`-ready`消息，在层级关系中，仅需顶层视图模型调用此方法即可。
+/// - 此方法可重复调用，且不会重复`-prepare`初始化。
 - (void)ready;
 
-/// 开发者应在此方法中，处理视图模型的初始化逻辑。
-/// @discussion
-/// 默认该方法不执行任何操作，建议子类调用`super`以向后兼容。
-/// @discussion
-/// 开发者不应该直接调用此方法，而是调用`-ready`方法。
-/// @discussion
-/// 在此方法中，视图模型处于 isReady = NO 的状态。
-/// @discussion
-/// 在此方法中创建添加下级模块，不需要发送`-ready`消息。
+/// 视图模型的初始化方法。
+///
+/// - 一般情况下，请勿直接调用此方法，而是调用`-ready`方法，否则可能会重复初始化。
+/// - 默认该方法不执行任何操作，建议子类调用`super`以向后兼容。
+/// - 在此方法中，视图模型 isReady 始终为 NO 的状态。
+/// - 在此方法中创建添加下层视图模型，不需要发送`-ready`消息。
 - (void)prepare;
 
 @end
