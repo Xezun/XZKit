@@ -226,7 +226,7 @@ XZMocoaKey const XZMocoaKeyNone = @"";
 
 @implementation XZMocoaViewModel (XZMocoaViewModelTargetAction)
 
-- (void)addTarget:(id)target action:(SEL)action forKey:(NSString *)key {
+- (void)addTarget:(id)target action:(SEL)action forKey:(XZMocoaKey)key {
     if (target == nil || action == nil) {
         XZLog(@"为 target=%@ action=%@ 添加事件失败，参数不能为 nil", target, NSStringFromSelector(action));
         return;
@@ -237,11 +237,11 @@ XZMocoaKey const XZMocoaKeyNone = @"";
     [_targetActions addTarget:target action:action forKey:(key ?: XZMocoaKeyNone)];
 }
 
-- (void)removeTarget:(id)target action:(SEL)action forKey:(nullable NSString *)key {
+- (void)removeTarget:(id)target action:(SEL)action forKey:(XZMocoaKey)key {
     [_targetActions removeTarget:target action:action forKey:key];
 }
 
-- (void)sendActionsForKey:(NSString *)key value:(id)value {
+- (void)sendActionsForKey:(XZMocoaKey)key value:(id)value {
     [_targetActions sendActionsForKey:(key ?: XZMocoaKeyNone) value:value];
 }
 

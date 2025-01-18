@@ -244,7 +244,7 @@ FOUNDATION_EXPORT XZMocoaUpdatesKey const XZMocoaUpdatesKeySelect;
 
 
 /// Mocoa Keyed Actions 事件名。
-typedef NSString *XZMocoaKey;
+typedef NSString *XZMocoaKey NS_EXTENSIBLE_STRING_ENUM;
 
 /// 没有 key 也可作为一种事件，或者称为默认事件，值为空字符串。
 FOUNDATION_EXPORT XZMocoaKey const XZMocoaKeyNone;
