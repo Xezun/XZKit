@@ -23,7 +23,7 @@ NS_ASSUME_NONNULL_BEGIN
 + (XZKeychain<Item> *)keychainForItem:(Item)item NS_SWIFT_NAME(init(for:));
 - (instancetype)init NS_UNAVAILABLE;
 
-/// 将 item 保存到钥匙串中，如果 item 已经存在，则更新 item 的属性信息。
+/// 读取钥匙串，并钥匙串信息同步到 item 的属性中。
 /// @param data 是否同时读取二进制数据
 /// @param error 错误输出
 - (BOOL)search:(BOOL)data error:(NSError * _Nullable * _Nullable)error;

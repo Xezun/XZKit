@@ -60,17 +60,17 @@ static NSString *UIElementKindFromMocoaKind(XZMocoaKind kind) {
 - (void)contentViewWillChange {
     [super contentViewWillChange];
     
-    UICollectionView *contentView = self.contentView;
-    contentView.delegate = nil;
-    contentView.dataSource = nil;
+    UICollectionView * const collectionView = self.contentView;
+    collectionView.delegate = nil;
+    collectionView.dataSource = nil;
 }
 
 - (void)contentViewDidChange {
     [super contentViewDidChange];
     
-    UICollectionView *contentView = self.contentView;
-    contentView.delegate   = self;
-    contentView.dataSource = self;
+    UICollectionView * const collectionView = self.contentView;
+    collectionView.delegate   = self.proxy;
+    collectionView.dataSource = self.proxy;
 }
 
 - (void)viewModelDidChange {
@@ -87,7 +87,37 @@ static NSString *UIElementKindFromMocoaKind(XZMocoaKind kind) {
     }
 }
 
-- (void)registerModule:(XZMocoaModule *)module {
+- (void)registerCellWithModule:(XZMocoaModule *)module {
+    [self.proxy registerCellWithModule:module];
+}
+
+@end
+
+@implementation XZMocoaCollectionViewProxy
+- (instancetype)initWithCollectionView:(id<XZMocoaCollectionView>)collectionView {
+    if (self) {
+        _collectionView = collectionView;
+    }
+    return self;
+}
+
+- (XZMocoaCollectionViewModel *)viewModel {
+    return _collectionView.viewModel;
+}
+
+- (void)setViewModel:(XZMocoaCollectionViewModel *)viewModel {
+    _collectionView.viewModel = viewModel;
+}
+
+- (UICollectionView *)contentView {
+    return _collectionView.contentView;
+}
+
+- (void)setContentView:(UICollectionView *)contentView {
+    _collectionView.contentView = contentView;
+}
+
+- (void)registerCellWithModule:(XZMocoaModule *)module {
     UICollectionView * const collectionView = self.contentView;
     
     { // 注册一个默认的视图
@@ -136,42 +166,55 @@ static NSString *UIElementKindFromMocoaKind(XZMocoaKind kind) {
     }];
 }
 
-- (void)unregisterModule:(XZMocoaModule *)module {
+- (void)forwardInvocation:(NSInvocation *)invocation {
+    id const delegte = self.delegate;
+    if (delegte != nil) {
+        struct objc_method_description method = protocol_getMethodDescription(@protocol(UICollectionViewDelegate), invocation.selector, NO, YES);
+        if (method.name != NULL && method.types != NULL) {
+            [invocation invokeWithTarget:_delegate];
+            return;
+        }
+    }
     
+    id const dataSource = self.dataSource;
+    if (dataSource != nil) {
+        struct objc_method_description method = protocol_getMethodDescription(@protocol(UICollectionViewDataSource), invocation.selector, NO, YES);
+        if (method.name != NULL && method.types != NULL) {
+            [invocation invokeWithTarget:_dataSource];
+            return;
+        }
+    }
 }
 
 @end
 
-@implementation XZMocoaCollectionView (UIScrollViewDelegate)
-@end
-
-@implementation XZMocoaCollectionView (UICollectionViewDelegate)
+@implementation XZMocoaCollectionViewProxy (UICollectionViewDelegate)
 
 - (void)collectionView:(UICollectionView *)collectionView didSelectItemAtIndexPath:(NSIndexPath *)indexPath {
     UICollectionViewCell<XZMocoaCollectionViewCell> *cell = (id)[collectionView cellForItemAtIndexPath:indexPath];
-    [cell collectionView:self didSelectItemAtIndexPath:indexPath];
+    [cell collectionView:_collectionView didSelectItemAtIndexPath:indexPath];
 }
 
 - (void)collectionView:(UICollectionView *)collectionView willDisplayCell:(UICollectionViewCell<XZMocoaCollectionViewCell> *)cell forItemAtIndexPath:(NSIndexPath *)indexPath {
-    [cell collectionView:self willDisplayItemAtIndexPath:indexPath];
+    [cell collectionView:_collectionView willDisplayItemAtIndexPath:indexPath];
 }
 
 - (void)collectionView:(UICollectionView *)collectionView didEndDisplayingCell:(UICollectionViewCell<XZMocoaCollectionViewCell> *)cell forItemAtIndexPath:(NSIndexPath *)indexPath {
-    [cell collectionView:self didEndDisplayingItemAtIndexPath:indexPath];
+    [cell collectionView:_collectionView didEndDisplayingItemAtIndexPath:indexPath];
 }
 
 - (void)collectionView:(UICollectionView *)collectionView willDisplaySupplementaryView:(UICollectionReusableView<XZMocoaCollectionViewSupplementaryView> *)view forElementKind:(NSString *)elementKind atIndexPath:(NSIndexPath *)indexPath {
-    [view collectionView:self willDisplaySupplementaryViewAtIndexPath:indexPath];
+    [view collectionView:_collectionView willDisplaySupplementaryViewAtIndexPath:indexPath];
 }
 
 - (void)collectionView:(UICollectionView *)collectionView didEndDisplayingSupplementaryView:(UICollectionReusableView<XZMocoaCollectionViewSupplementaryView> *)view forElementOfKind:(NSString *)elementKind atIndexPath:(NSIndexPath *)indexPath {
-    [view collectionView:self didEndDisplayingSupplementaryViewAtIndexPath:indexPath];
+    [view collectionView:_collectionView didEndDisplayingSupplementaryViewAtIndexPath:indexPath];
 }
 
 @end
 
 
-@implementation XZMocoaCollectionView (UICollectionViewDataSource)
+@implementation XZMocoaCollectionViewProxy (UICollectionViewDataSource)
 
 - (NSInteger)numberOfSectionsInCollectionView:(UICollectionView *)collectionView {
     return [self.viewModel numberOfSections];
@@ -202,7 +245,7 @@ static NSString *UIElementKindFromMocoaKind(XZMocoaKind kind) {
 
 @end
 
-@implementation XZMocoaCollectionView (UICollectionViewDelegateFlowLayout)
+@implementation XZMocoaCollectionViewProxy (UICollectionViewDelegateFlowLayout)
 
 - (CGSize)collectionView:(UICollectionView *)collectionView layout:(UICollectionViewLayout*)collectionViewLayout sizeForItemAtIndexPath:(NSIndexPath *)indexPath {
     XZMocoaCollectionViewCellViewModel *viewModel = [self.viewModel cellViewModelAtIndexPath:indexPath];
@@ -237,7 +280,7 @@ static NSString *UIElementKindFromMocoaKind(XZMocoaKind kind) {
 @end
 
 
-@implementation XZMocoaCollectionView (XZMocoaCollectionViewModelDelegate)
+@implementation XZMocoaCollectionViewProxy (XZMocoaCollectionViewModelDelegate)
 
 - (void)collectionViewModel:(XZMocoaCollectionViewModel *)collectionViewModel didReloadData:(void *)null {
     [self.contentView reloadData];

@@ -6,6 +6,7 @@
 //
 
 #import "XZMocoaTableViewCellViewModel.h"
+#import "XZMocoaTableView.h"
 
 @implementation XZMocoaTableViewCellViewModel
 
@@ -22,15 +23,15 @@
     self.frame = frame;
 }
 
-- (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
+- (void)tableView:(id<XZMocoaTableView>)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
 
 }
 
-- (void)tableView:(UITableView *)tableView willDisplayRowAtIndexPath:(NSIndexPath *)indexPath {
+- (void)tableView:(id<XZMocoaTableView>)tableView willDisplayRowAtIndexPath:(NSIndexPath *)indexPath {
 
 }
 
-- (void)tableView:(UITableView *)tableView didEndDisplayingRowAtIndexPath:(NSIndexPath *)indexPath {
+- (void)tableView:(id<XZMocoaTableView>)tableView didEndDisplayingRowAtIndexPath:(NSIndexPath *)indexPath {
 
 }
 

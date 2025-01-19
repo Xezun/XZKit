@@ -11,13 +11,13 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-@class XZMocoaCollectionView;
+@protocol XZMocoaCollectionView;
 
 @protocol XZMocoaCollectionViewSupplementaryView <XZMocoaView>
 @optional
 @property (nonatomic, strong, nullable) __kindof XZMocoaCollectionViewSupplementaryViewModel *viewModel;
-- (void)collectionView:(XZMocoaCollectionView *)collectionView willDisplaySupplementaryViewAtIndexPath:(NSIndexPath *)indexPath;
-- (void)collectionView:(XZMocoaCollectionView *)collectionView didEndDisplayingSupplementaryViewAtIndexPath:(NSIndexPath*)indexPath;
+- (void)collectionView:(id<XZMocoaCollectionView>)collectionView willDisplaySupplementaryViewAtIndexPath:(NSIndexPath *)indexPath;
+- (void)collectionView:(id<XZMocoaCollectionView>)collectionView didEndDisplayingSupplementaryViewAtIndexPath:(NSIndexPath*)indexPath;
 @end
 
 /// 因一致性而提供，非必须基类。

@@ -21,19 +21,15 @@ NS_ASSUME_NONNULL_BEGIN
 // XZMocoaTableViewCellModel
 // XZMocoaTableViewCellViewModel
 
+@protocol XZMocoaTableView <XZMocoaListView>
+@property (nonatomic, strong, nullable) __kindof XZMocoaTableViewModel *viewModel;
+@property (nonatomic, strong) IBOutlet UITableView *contentView;
+@end
+
+@class XZMocoaTableViewProxy;
 
 /// 对 UITableView 进行了封装，以支持 MVVM 设计模式。
-@interface XZMocoaTableView : XZMocoaListView
-
-/// 视图模型。
-@property (nonatomic, strong, nullable) __kindof XZMocoaTableViewModel *viewModel;
-
-/// 视图 UITableView 将作为 contentView 呈现。
-/// @note
-/// 当前视图接管了 delegate 和 dataSource 代理，请避免更改这两属性。
-/// @discussion
-/// 在 IB 中使用 XZMocoaTableView 时，将 UITableView 关联到此属性上即可。
-@property (nonatomic, strong) IBOutlet UITableView *contentView;
+@interface XZMocoaTableView : XZMocoaListView <XZMocoaTableView>
 
 /// 指定初始化方法，可以在初始化时，指定内部使用的`tableView`的类型及样式。
 /// @param tableViewClass 该参数决定属性`tableView`的实际类型
@@ -53,46 +49,42 @@ NS_ASSUME_NONNULL_BEGIN
 /// @param style 属性`tableView`的样式
 - (instancetype)initWithStyle:(UITableViewStyle)style;
 
+@property (nonatomic, strong) XZMocoaTableViewProxy *proxy;
+
 @end
 
 @class UICollectionView;
 
-// MARK: - 下面的方法，子类在重写时，根据实际情况判断是否需要调用父类方法。
+@interface XZMocoaTableViewProxy : NSProxy <XZMocoaTableView>
+@property (nonatomic, unsafe_unretained, readonly) id<XZMocoaTableView> tableView;
+@property (nonatomic, strong, nullable) XZMocoaTableViewModel *viewModel;
+@property (nonatomic, weak) id<UITableViewDelegate> delegate;
+@property (nonatomic, weak) id<UITableViewDataSource> dataSource;
+- (instancetype)init NS_UNAVAILABLE;
+- (instancetype)initWithTableView:(id<XZMocoaTableView>)tableView;
+@end
 
-/// XZMocoaTableView 实现了协议 UITableViewDataSource 中的方法列表。
-@interface XZMocoaTableView (UITableViewDataSource) <UITableViewDataSource>
+/// 协议 UITableViewDataSource 中已实现方法列表。
+@interface XZMocoaTableViewProxy (UITableViewDataSource) <UITableViewDataSource>
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView;
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section;
 - (__kindof UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath;
 @end
 
-/// XZMocoaTableView 没有实现任何 UIScrollViewDelegate 中的方法。
-/// @note 由于父类并没有实现这些方法，子类重写不需要调用父类方法。
-/// @note 出于性能考虑，协议 UIScrollViewDelegate 中的方法请按需实现，避免实现空方法。
-@interface XZMocoaTableView (UIScrollViewDelegate) <UIScrollViewDelegate>
-@end
-
-/// XZMocoaTableView 已实现的协议 UITableViewDelegate 中的方法。
-/// @note 子类可以重写自己的实现，或者调用父类的实现。
-@interface XZMocoaTableView (UITableViewDelegate) <UITableViewDelegate>
-
+/// 协议 UITableViewDelegate 中已实现方法列表。
+@interface XZMocoaTableViewProxy (UITableViewDelegate) <UITableViewDelegate>
 - (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath;
-
 - (UIView *)tableView:(UITableView *)tableView viewForHeaderInSection:(NSInteger)section;
 - (CGFloat)tableView:(UITableView *)tableView heightForHeaderInSection:(NSInteger)section;
-
 - (UIView *)tableView:(UITableView *)tableView viewForFooterInSection:(NSInteger)section;
 - (CGFloat)tableView:(UITableView *)tableView heightForFooterInSection:(NSInteger)section;
-
 - (void)tableView:(UITableView *)tableView willDisplayCell:(UITableViewCell *)cell forRowAtIndexPath:(NSIndexPath *)indexPath;
 - (void)tableView:(UITableView *)tableView didEndDisplayingCell:(UITableViewCell *)cell forRowAtIndexPath:(NSIndexPath*)indexPath;
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath;
-
 @end
 
-/// XZMocoaTableView 实现了协议 XZMocoaTableViewModelDelegate 中的全部方法。
-/// @note 子类可以重写自己的实现，或者调用父类的实现。
-@interface XZMocoaTableView (XZMocoaTableViewModelDelegate) <XZMocoaTableViewModelDelegate>
+/// 已实现了 XZMocoaTableViewModelDelegate 的全部方法
+@interface XZMocoaTableViewProxy (XZMocoaTableViewModelDelegate) <XZMocoaTableViewModelDelegate>
 @end
 
 NS_ASSUME_NONNULL_END

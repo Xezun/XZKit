@@ -10,21 +10,34 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-@interface XZMocoaCollectionView : XZMocoaListView
+@protocol XZMocoaCollectionView <XZMocoaListView>
 @property (nonatomic, strong, nullable) __kindof XZMocoaCollectionViewModel *viewModel;
 @property (nonatomic, strong) IBOutlet UICollectionView *contentView;
+@end
+
+@class XZMocoaCollectionViewProxy;
+
+@interface XZMocoaCollectionView : XZMocoaListView <XZMocoaCollectionView>
 - (instancetype)initWithCoder:(NSCoder *)coder NS_DESIGNATED_INITIALIZER;
 - (instancetype)initWithCollectionViewClass:(Class)collectionViewClass layout:(UICollectionViewLayout *)layout NS_DESIGNATED_INITIALIZER;
 - (instancetype)initWithLayout:(UICollectionViewLayout *)layout;
 - (instancetype)initWithFrame:(CGRect)frame layout:(UICollectionViewLayout *)layout;
 - (instancetype)initWithFrame:(CGRect)frame;
+
+@property (nonatomic, strong) XZMocoaCollectionViewProxy *proxy;
 @end
 
 
-@interface XZMocoaCollectionView (UIScrollViewDelegate) <UIScrollViewDelegate>
+@interface XZMocoaCollectionViewProxy : NSProxy <XZMocoaCollectionView>
+@property (nonatomic, unsafe_unretained, readonly) id<XZMocoaCollectionView> collectionView;
+@property (nonatomic, strong, nullable) XZMocoaCollectionViewModel *viewModel;
+@property (nonatomic, weak) id<UICollectionViewDelegate> delegate;
+@property (nonatomic, weak) id<UICollectionViewDataSource> dataSource;
+- (instancetype)init NS_UNAVAILABLE;
+- (instancetype)initWithCollectionView:(id<XZMocoaCollectionView>)collectionView;
 @end
 
-@interface XZMocoaCollectionView (UICollectionViewDelegate) <UICollectionViewDelegate>
+@interface XZMocoaCollectionViewProxy (UICollectionViewDelegate) <UICollectionViewDelegate>
 - (void)collectionView:(UICollectionView *)collectionView didSelectItemAtIndexPath:(NSIndexPath *)indexPath;
 - (void)collectionView:(UICollectionView *)collectionView willDisplayCell:(UICollectionViewCell *)cell forItemAtIndexPath:(NSIndexPath *)indexPath;
 - (void)collectionView:(UICollectionView *)collectionView didEndDisplayingCell:(UICollectionViewCell *)cell forItemAtIndexPath:(NSIndexPath *)indexPath;
@@ -32,14 +45,14 @@ NS_ASSUME_NONNULL_BEGIN
 - (void)collectionView:(UICollectionView *)collectionView didEndDisplayingSupplementaryView:(UICollectionReusableView *)view forElementOfKind:(NSString *)elementKind atIndexPath:(NSIndexPath *)indexPath;
 @end
 
-@interface XZMocoaCollectionView (UICollectionViewDataSource) <UICollectionViewDataSource>
+@interface XZMocoaCollectionViewProxy (UICollectionViewDataSource) <UICollectionViewDataSource>
 - (NSInteger)numberOfSectionsInCollectionView:(UICollectionView *)collectionView;
 - (NSInteger)collectionView:(UICollectionView *)collectionView numberOfItemsInSection:(NSInteger)section;
 - (__kindof UICollectionViewCell *)collectionView:(UICollectionView *)collectionView cellForItemAtIndexPath:(NSIndexPath *)indexPath;
 - (UICollectionReusableView *)collectionView:(UICollectionView *)collectionView viewForSupplementaryElementOfKind:(NSString *)kind atIndexPath:(NSIndexPath *)indexPath;
 @end
 
-@interface XZMocoaCollectionView (UICollectionViewDelegateFlowLayout) <UICollectionViewDelegateFlowLayout>
+@interface XZMocoaCollectionViewProxy (UICollectionViewDelegateFlowLayout) <UICollectionViewDelegateFlowLayout>
 - (CGSize)collectionView:(UICollectionView *)collectionView layout:(UICollectionViewLayout*)collectionViewLayout sizeForItemAtIndexPath:(NSIndexPath *)indexPath;
 - (UIEdgeInsets)collectionView:(UICollectionView *)collectionView layout:(UICollectionViewLayout*)collectionViewLayout insetForSectionAtIndex:(NSInteger)section;
 - (CGFloat)collectionView:(UICollectionView *)collectionView layout:(UICollectionViewLayout*)collectionViewLayout minimumLineSpacingForSectionAtIndex:(NSInteger)section;
@@ -48,7 +61,7 @@ NS_ASSUME_NONNULL_BEGIN
 - (CGSize)collectionView:(UICollectionView *)collectionView layout:(UICollectionViewLayout*)collectionViewLayout referenceSizeForFooterInSection:(NSInteger)section;
 @end
 
-@interface XZMocoaCollectionView (XZMocoaCollectionViewModelDelegate) <XZMocoaCollectionViewModelDelegate>
+@interface XZMocoaCollectionViewProxy (XZMocoaCollectionViewModelDelegate) <XZMocoaCollectionViewModelDelegate>
 @end
 
 NS_ASSUME_NONNULL_END

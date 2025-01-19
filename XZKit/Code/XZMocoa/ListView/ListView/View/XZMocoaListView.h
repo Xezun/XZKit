@@ -11,28 +11,35 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-/// XZMocoaListView 是 UITableView、UICollectionView 的抽象封装，不可直接使用。
-@interface XZMocoaListView : UIView <XZMocoaView, XZMocoaListViewModelDelegate>
+@class UITableView, UICollectionView;
 
-/// 承载内容的视图，为 UICollectionView 或 UITableView 视图，由子类提供。
-/// @note 在 IB 中使用时，直接将视图关联到此属性即可。
+/// 列表视图协议。
+@protocol XZMocoaListView <XZMocoaView, XZMocoaListViewModelDelegate>
+/// 用以承载列表视图。
+@property (nonatomic, strong, nullable) __kindof XZMocoaListViewModel *viewModel;
+/// 承载列表视图的可滚动的容器视图，一般为 UICollectionView 或 UITableView 视图。
+/// - 一般情况下，容器视图 contentView 的 delegate 和 dataSource 会被接管，请避免更改。
+/// - 由于标注了 IBOutlet 所以在 IB 中使用时，直接将视图关联到此属性即可。
 @property (nonatomic, strong) IBOutlet __kindof UIScrollView *contentView;
+/// 通过模块注册列表 Cell 视图。
+- (void)registerCellWithModule:(nullable XZMocoaModule *)module;
+@end
+
+/// XZMocoaListView 是 UITableView、UICollectionView 的抽象封装，不可直接使用。
+@interface XZMocoaListView : UIView <XZMocoaListView>
 
 /// 提供子类用于监听 contentView 发生改变的方法。
-/// @note 默认该方法什么也不做。
+/// > 默认该方法什么也不做。
 - (void)contentViewWillChange;
 
 /// 提供子类用于监听 contentView 发生改变的方法。
-/// @note 默认该方法什么也不做。
+/// > 默认该方法什么也不做。
 - (void)contentViewDidChange;
 
-@property (nonatomic, strong, nullable) __kindof XZMocoaListViewModel *viewModel;
 - (void)viewModelWillChange;
 - (void)viewModelDidChange;
 
-- (void)unregisterModule:(nullable XZMocoaModule *)module;
-- (void)registerModule:(nullable XZMocoaModule *)module;
-
 @end
+
 
 NS_ASSUME_NONNULL_END

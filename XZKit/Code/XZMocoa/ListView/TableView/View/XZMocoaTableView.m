@@ -21,7 +21,11 @@
 @dynamic viewModel, contentView;
 
 - (instancetype)initWithCoder:(NSCoder *)coder {
-    return [super initWithCoder:coder];
+    self = [super initWithCoder:coder];
+    if (self) {
+        _proxy = [[XZMocoaTableViewProxy alloc] initWithTableView:self];
+    }
+    return self;
 }
 
 - (instancetype)initWithStyle:(UITableViewStyle)style {
@@ -45,24 +49,10 @@
     if (self) {
         UITableView *contentView = [[tableViewClass alloc] initWithFrame:self.bounds style:style];
         [super setContentView:contentView];
+        
+        _proxy = [[XZMocoaTableViewProxy alloc] initWithTableView:self];
     }
     return self;
-}
-
-- (void)contentViewWillChange {
-    [super contentViewWillChange];
-    
-    UITableView *contentView = self.contentView;
-    contentView.delegate = nil;
-    contentView.dataSource = nil;
-}
-
-- (void)contentViewDidChange {
-    [super contentViewDidChange];
-    
-    UITableView *contentView = self.contentView;
-    contentView.delegate   = self;
-    contentView.dataSource = self;
 }
 
 - (void)viewModelDidChange {
@@ -79,7 +69,54 @@
     }
 }
 
-- (void)registerModule:(XZMocoaModule *)module {
+- (void)contentViewWillChange {
+    [super contentViewWillChange];
+    
+    UITableView * const tableView = self.contentView;
+    tableView.delegate = nil;
+    tableView.dataSource = nil;
+}
+
+- (void)contentViewDidChange {
+    [super contentViewDidChange];
+    
+    UITableView * const tableView = self.contentView;
+    tableView.delegate   = self.proxy;
+    tableView.dataSource = self.proxy;
+}
+
+- (void)registerCellWithModule:(XZMocoaModule *)module {
+    [_proxy registerCellWithModule:module];
+}
+
+@end
+
+@implementation XZMocoaTableViewProxy
+
+- (instancetype)initWithTableView:(id<XZMocoaTableView>)tableView {
+    if (self) {
+        _tableView = tableView;
+    }
+    return self;
+}
+
+- (XZMocoaTableViewModel *)viewModel {
+    return _tableView.viewModel;
+}
+
+- (void)setViewModel:(XZMocoaTableViewModel *)viewModel {
+    _tableView.viewModel = viewModel;
+}
+
+- (UITableView *)contentView {
+    return _tableView.contentView;
+}
+
+- (void)setContentView:(UITableView *)contentView {
+    _tableView.contentView = contentView;
+}
+
+- (void)registerCellWithModule:(XZMocoaModule *)module {
     UITableView * const tableView = self.contentView;
     
     { // 注册默认视图
@@ -126,15 +163,29 @@
     }];
 }
 
-- (void)unregisterModule:(XZMocoaModule *)module {
-    // 由于标识符一样的会被覆盖，理论上即使不解除注册，也不会有什么影响。
+- (void)forwardInvocation:(NSInvocation *)invocation {
+    id const delegte = self.delegate;
+    if (delegte != nil) {
+        struct objc_method_description method = protocol_getMethodDescription(@protocol(UITableViewDelegate), invocation.selector, NO, YES);
+        if (method.name != NULL && method.types != NULL) {
+            [invocation invokeWithTarget:_delegate];
+            return;
+        }
+    }
+    
+    id const dataSource = self.dataSource;
+    if (dataSource != nil) {
+        struct objc_method_description method = protocol_getMethodDescription(@protocol(UITableViewDataSource), invocation.selector, NO, YES);
+        if (method.name != NULL && method.types != NULL) {
+            [invocation invokeWithTarget:_dataSource];
+            return;
+        }
+    }
 }
 
 @end
 
-
-
-@implementation XZMocoaTableView (UITableViewDataSource)
+@implementation XZMocoaTableViewProxy (UITableViewDataSource)
 
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView {
     return self.viewModel.numberOfSections;
@@ -156,11 +207,7 @@
 @end
 
 
-@implementation XZMocoaTableView (UIScrollViewDelegate)
-@end
-
-
-@implementation XZMocoaTableView (UITableViewDelegate)
+@implementation XZMocoaTableViewProxy (UITableViewDelegate)
 
 - (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath {
     XZMocoaTableViewCellViewModel * const viewModel = [self.viewModel cellViewModelAtIndexPath:indexPath];
@@ -208,72 +255,72 @@
 }
 
 - (void)tableView:(UITableView *)tableView willDisplayCell:(UITableView<XZMocoaTableViewCell> *)cell forRowAtIndexPath:(NSIndexPath *)indexPath {
-    [cell tableView:self willDisplayRowAtIndexPath:indexPath];
+    [cell tableView:_tableView willDisplayRowAtIndexPath:indexPath];
 }
 
 - (void)tableView:(UITableView *)tableView didEndDisplayingCell:(UITableView<XZMocoaTableViewCell> *)cell forRowAtIndexPath:(NSIndexPath*)indexPath {
-    [cell tableView:self didEndDisplayingRowAtIndexPath:indexPath];
+    [cell tableView:_tableView didEndDisplayingRowAtIndexPath:indexPath];
 }
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
     UITableView<XZMocoaTableViewCell> *cell = (id)[tableView cellForRowAtIndexPath:indexPath];
-    [cell tableView:self didSelectRowAtIndexPath:indexPath];
+    [cell tableView:_tableView didSelectRowAtIndexPath:indexPath];
 }
 
 @end
 
 
-@implementation XZMocoaTableView (XZMocoaTableViewModelDelegate)
+@implementation XZMocoaTableViewProxy (XZMocoaTableViewModelDelegate)
 
 - (void)tableViewModel:(XZMocoaTableViewModel *)tableViewModel didReloadData:(void *)foo {
-    [self.contentView reloadData];
+    [_tableView.contentView reloadData];
 }
 
 - (void)tableViewModel:(XZMocoaTableViewModel *)tableViewModel didReloadCellsAtIndexPaths:(NSArray<NSIndexPath *> *)indexPaths {
     UITableViewRowAnimation const rowAnimation = tableViewModel.rowAnimation;
-    [self.contentView reloadRowsAtIndexPaths:indexPaths withRowAnimation:rowAnimation];
+    [_tableView.contentView reloadRowsAtIndexPaths:indexPaths withRowAnimation:rowAnimation];
 }
 
 - (void)tableViewModel:(XZMocoaTableViewModel *)tableViewModel didInsertCellsAtIndexPaths:(NSArray<NSIndexPath *> *)indexPaths {
     UITableViewRowAnimation const rowAnimation = tableViewModel.rowAnimation;
-    [self.contentView insertRowsAtIndexPaths:indexPaths withRowAnimation:rowAnimation];
+    [_tableView.contentView insertRowsAtIndexPaths:indexPaths withRowAnimation:rowAnimation];
 }
 
 - (void)tableViewModel:(XZMocoaTableViewModel *)tableViewModel didDeleteCellsAtIndexPaths:(NSArray<NSIndexPath *> *)indexPaths {
     UITableViewRowAnimation const rowAnimation = tableViewModel.rowAnimation;
-    [self.contentView deleteRowsAtIndexPaths:indexPaths withRowAnimation:rowAnimation];
+    [_tableView.contentView deleteRowsAtIndexPaths:indexPaths withRowAnimation:rowAnimation];
 }
 
 - (void)tableViewModel:(XZMocoaTableViewModel *)tableViewModel didMoveCellAtIndexPath:(NSIndexPath *)indexPath toIndexPath:(NSIndexPath *)newIndexPath {
-    [self.contentView moveRowAtIndexPath:indexPath toIndexPath:newIndexPath];
+    [_tableView.contentView moveRowAtIndexPath:indexPath toIndexPath:newIndexPath];
 }
 
 - (void)tableViewModel:(XZMocoaTableViewModel *)tableViewModel didReloadSectionsAtIndexes:(NSIndexSet *)sections {
     UITableViewRowAnimation const rowAnimation = tableViewModel.rowAnimation;
-    [self.contentView reloadSections:sections withRowAnimation:rowAnimation];
+    [_tableView.contentView reloadSections:sections withRowAnimation:rowAnimation];
 }
 
 - (void)tableViewModel:(XZMocoaTableViewModel *)tableViewModel didDeleteSectionsAtIndexes:(NSIndexSet *)sections {
     UITableViewRowAnimation const rowAnimation = tableViewModel.rowAnimation;
-    [self.contentView deleteSections:sections withRowAnimation:rowAnimation];
+    [_tableView.contentView deleteSections:sections withRowAnimation:rowAnimation];
 }
 
 - (void)tableViewModel:(XZMocoaTableViewModel *)tableViewModel didInsertSectionsAtIndexes:(NSIndexSet *)sections {
     UITableViewRowAnimation const rowAnimation = tableViewModel.rowAnimation;
-    [self.contentView insertSections:sections withRowAnimation:rowAnimation];
+    [_tableView.contentView insertSections:sections withRowAnimation:rowAnimation];
 }
 
 - (void)tableViewModel:(XZMocoaTableViewModel *)tableViewModel didMoveSectionAtIndex:(NSInteger)section toIndex:(NSInteger)newSection {
-    [self.contentView moveSection:section toSection:newSection];
+    [_tableView.contentView moveSection:section toSection:newSection];
 }
 
 - (void)tableViewModel:(XZMocoaTableViewModel *)tableViewModel didPerformBatchUpdates:(void (^NS_NOESCAPE)(void))batchUpdates completion:(void (^ _Nullable)(BOOL))completion {
     if (@available(iOS 11.0, *)) {
-        [self.contentView performBatchUpdates:batchUpdates completion:completion];
+        [_tableView.contentView performBatchUpdates:batchUpdates completion:completion];
     } else {
-        [self.contentView beginUpdates];
+        [_tableView.contentView beginUpdates];
         batchUpdates();
-        [self.contentView endUpdates];
+        [_tableView.contentView endUpdates];
         if (completion) dispatch_async(dispatch_get_main_queue(), ^{ completion(YES); });
     }
 }

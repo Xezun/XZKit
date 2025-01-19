@@ -43,15 +43,15 @@ static void xz_mocoa_copyMethod(Class const cls, SEL const target, SEL const sou
     }
 }
 
-- (void)xz_mocoa_tableView:(XZMocoaTableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
+- (void)xz_mocoa_tableView:(id<XZMocoaTableView>)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
     [self.viewModel tableView:tableView didSelectRowAtIndexPath:indexPath];
 }
 
-- (void)xz_mocoa_tableView:(XZMocoaTableView *)tableView willDisplayRowAtIndexPath:(NSIndexPath *)indexPath {
+- (void)xz_mocoa_tableView:(id<XZMocoaTableView>)tableView willDisplayRowAtIndexPath:(NSIndexPath *)indexPath {
     [self.viewModel tableView:tableView willDisplayRowAtIndexPath:indexPath];
 }
 
-- (void)xz_mocoa_tableView:(XZMocoaTableView *)tableView didEndDisplayingRowAtIndexPath:(NSIndexPath *)indexPath {
+- (void)xz_mocoa_tableView:(id<XZMocoaTableView>)tableView didEndDisplayingRowAtIndexPath:(NSIndexPath *)indexPath {
     [self.viewModel tableView:tableView didEndDisplayingRowAtIndexPath:indexPath];
 }
 

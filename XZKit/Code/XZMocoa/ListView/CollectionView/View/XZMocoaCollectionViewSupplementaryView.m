@@ -39,11 +39,11 @@ static void xz_mocoa_copyMethod(Class const cls, SEL const target, SEL const sou
     }
 }
 
-- (void)xz_mocoa_collectionView:(XZMocoaCollectionView *)collectionView willDisplaySupplementaryViewAtIndexPath:(NSIndexPath *)indexPath {
+- (void)xz_mocoa_collectionView:(id<XZMocoaCollectionView>)collectionView willDisplaySupplementaryViewAtIndexPath:(NSIndexPath *)indexPath {
     [self.viewModel collectionView:collectionView willDisplaySupplementaryViewAtIndexPath:indexPath];
 }
 
-- (void)xz_mocoa_collectionView:(XZMocoaCollectionView *)collectionView didEndDisplayingSupplementaryViewAtIndexPath:(NSIndexPath *)indexPath {
+- (void)xz_mocoa_collectionView:(id<XZMocoaCollectionView>)collectionView didEndDisplayingSupplementaryViewAtIndexPath:(NSIndexPath *)indexPath {
     [self.viewModel collectionView:collectionView didEndDisplayingSupplementaryViewAtIndexPath:indexPath];
 }
 

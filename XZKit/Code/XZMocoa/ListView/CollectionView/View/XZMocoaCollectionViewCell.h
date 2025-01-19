@@ -10,7 +10,7 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-@class XZMocoaCollectionView;
+@protocol XZMocoaCollectionView;
 
 /// 使用 Mocoa 时，UICollectionViewCell 应遵循本协议。
 /// @note
@@ -28,17 +28,17 @@ NS_ASSUME_NONNULL_BEGIN
 /// 当前 Cell 的点击事件。
 /// @param collectionView 当前 Cell 所属的 XZMocoaCollectionView 对象
 /// @param indexPath 当前 Cell 的当前所在的位置
-- (void)collectionView:(XZMocoaCollectionView *)collectionView didSelectItemAtIndexPath:(NSIndexPath *)indexPath;
+- (void)collectionView:(id<XZMocoaCollectionView>)collectionView didSelectItemAtIndexPath:(NSIndexPath *)indexPath;
 
 /// 当前 Cell 将要被展示在指定位置。
 /// @param collectionView 当前 Cell 所属的 UICollectionView 对象
 /// @param indexPath 当前 Cell 的将要展示的位置
-- (void)collectionView:(XZMocoaCollectionView *)collectionView willDisplayItemAtIndexPath:(NSIndexPath *)indexPath;
+- (void)collectionView:(id<XZMocoaCollectionView>)collectionView willDisplayItemAtIndexPath:(NSIndexPath *)indexPath;
 
 /// 当前 Cell 已结束在指定位置的展示。
 /// @param collectionView 当前 Cell 所属的 XZMocoaCollectionView 对象
 /// @param indexPath 当前 Cell 的当前所在的位置
-- (void)collectionView:(XZMocoaCollectionView *)collectionView didEndDisplayingItemAtIndexPath:(NSIndexPath*)indexPath;
+- (void)collectionView:(id<XZMocoaCollectionView>)collectionView didEndDisplayingItemAtIndexPath:(NSIndexPath*)indexPath;
 
 @end
 

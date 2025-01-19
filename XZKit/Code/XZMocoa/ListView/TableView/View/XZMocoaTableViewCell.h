@@ -7,7 +7,7 @@
 //
 
 #import <UIKit/UIKit.h>
-#import "XZMocoaView.h"
+#import "XZMocoaTableView.h"
 #import "XZMocoaTableViewCellViewModel.h"
 
 NS_ASSUME_NONNULL_BEGIN
@@ -30,17 +30,17 @@ NS_ASSUME_NONNULL_BEGIN
 /// 当前 Cell 的点击事件。
 /// @param tableView 当前 Cell 所属的 UITableView 对象
 /// @param indexPath 当前 Cell 的当前所在的位置
-- (void)tableView:(XZMocoaTableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath;
+- (void)tableView:(id<XZMocoaTableView>)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath;
 
 /// 当前 Cell 将要被展示在指定位置。
 /// @param tableView 当前 Cell 所属的 UITableView 对象
 /// @param indexPath 当前 Cell 的将要展示的位置
-- (void)tableView:(XZMocoaTableView *)tableView willDisplayRowAtIndexPath:(NSIndexPath *)indexPath;
+- (void)tableView:(id<XZMocoaTableView>)tableView willDisplayRowAtIndexPath:(NSIndexPath *)indexPath;
 
 /// 当前 Cell 已结束在指定位置的展示。
 /// @param tableView 当前 Cell 所属的 UITableView 对象
 /// @param indexPath 当前 Cell 的当前所在的位置
-- (void)tableView:(XZMocoaTableView *)tableView didEndDisplayingRowAtIndexPath:(NSIndexPath*)indexPath;
+- (void)tableView:(id<XZMocoaTableView>)tableView didEndDisplayingRowAtIndexPath:(NSIndexPath*)indexPath;
 
 @end
 

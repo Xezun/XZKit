@@ -42,15 +42,15 @@ static void xz_mocoa_copyMethod(Class const cls, SEL const target, SEL const sou
     }
 }
 
-- (void)xz_mocoa_collectionView:(XZMocoaCollectionView *)collectionView didSelectItemAtIndexPath:(NSIndexPath *)indexPath {
+- (void)xz_mocoa_collectionView:(id<XZMocoaCollectionView>)collectionView didSelectItemAtIndexPath:(NSIndexPath *)indexPath {
     [self.viewModel collectionView:collectionView didSelectItemAtIndexPath:indexPath];
 }
 
-- (void)xz_mocoa_collectionView:(XZMocoaCollectionView *)collectionView willDisplayItemAtIndexPath:(NSIndexPath *)indexPath {
+- (void)xz_mocoa_collectionView:(id<XZMocoaCollectionView>)collectionView willDisplayItemAtIndexPath:(NSIndexPath *)indexPath {
     [self.viewModel collectionView:collectionView willDisplayItemAtIndexPath:indexPath];
 }
 
-- (void)xz_mocoa_collectionView:(XZMocoaCollectionView *)collectionView didEndDisplayingItemAtIndexPath:(NSIndexPath *)indexPath {
+- (void)xz_mocoa_collectionView:(id<XZMocoaCollectionView>)collectionView didEndDisplayingItemAtIndexPath:(NSIndexPath *)indexPath {
     [self.viewModel collectionView:collectionView didEndDisplayingItemAtIndexPath:indexPath];
 }
 

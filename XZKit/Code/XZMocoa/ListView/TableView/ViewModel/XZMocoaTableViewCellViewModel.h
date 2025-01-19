@@ -7,7 +7,7 @@
 
 #import "XZMocoaListViewCellViewModel.h"
 
-@class XZMocoaTableView;
+@protocol XZMocoaTableView;
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -19,13 +19,13 @@ NS_ASSUME_NONNULL_BEGIN
 
 /// 当前 ViewModel 对应的 Cell 将要被选中时，会触发此方法。
 /// @param indexPath Cell 所在的位置
-- (void)tableView:(XZMocoaTableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath;
+- (void)tableView:(id<XZMocoaTableView>)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath;
 /// 当前 ViewModel 对应的 Cell 将要被展示时，会触发此方法。
 /// @param indexPath Cell 所在的位置
-- (void)tableView:(XZMocoaTableView *)tableView willDisplayRowAtIndexPath:(NSIndexPath *)indexPath;
+- (void)tableView:(id<XZMocoaTableView>)tableView willDisplayRowAtIndexPath:(NSIndexPath *)indexPath;
 /// 当前 ViewModel 对应的 Cell 将要被移除屏幕时，会触发此方法。
 /// @param indexPath Cell 所在的位置
-- (void)tableView:(XZMocoaTableView *)tableView didEndDisplayingRowAtIndexPath:(NSIndexPath*)indexPath;
+- (void)tableView:(id<XZMocoaTableView>)tableView didEndDisplayingRowAtIndexPath:(NSIndexPath*)indexPath;
 @end
 
 NS_ASSUME_NONNULL_END
