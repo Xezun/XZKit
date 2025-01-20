@@ -328,6 +328,59 @@ NSInteger xz_objc_class_copyMethods(Class source, Class target) {
     return result;
 }
 
+NSHashTable *xz_objc_protocol_getInstanceMethods(Protocol *aProtocol) {
+    NSHashTable * const table = [NSHashTable hashTableWithOptions:(NSPointerFunctionsOpaquePersonality)];
+    
+    Protocol * const root = @protocol(NSObject);
+    
+    unsigned int count = 0;
+    Protocol * __unsafe_unretained _Nonnull * const list = protocol_copyProtocolList(aProtocol, &count);
+    
+    unsigned int i = -1;
+    while (YES) {
+        if (aProtocol != root) {
+            unsigned int count = 0;
+            struct objc_method_description *list = protocol_copyMethodDescriptionList(aProtocol, YES, YES, &count);
+            for (unsigned int i = 0; i < count; i++) {
+                NSHashInsert(table, list[i].name);
+            }
+            
+            count = 0;
+            list = protocol_copyMethodDescriptionList(aProtocol, NO, YES, &count);
+            for (unsigned int i = 0; i < count; i++) {
+                NSLog(@"%@", NSStringFromSelector(list[i].name));
+                NSHashInsert(table, list[i].name);
+            }
+        }
+        i += 1;
+        if (i >= count) {
+            break;
+        }
+        aProtocol = list[i];
+    }
+    
+    return table;
+}
+
+NSHashTable *xz_objc_class_getImplementedProtocolMethods(Class aClass, NSHashTable *protocolMethods) {
+    NSHashTable * const table = [NSHashTable hashTableWithOptions:(NSPointerFunctionsOpaquePersonality)];
+    unsigned int count = 0;
+    Method *list = class_copyMethodList(aClass, &count);
+    for (unsigned int i = 0; i < count; i++) {
+        SEL const name = method_getName(list[i]);
+        if (NSHashGet(protocolMethods, name)) {
+            NSHashInsert(table, method_getName(list[i]));
+        }
+    }
+    
+    aClass = [aClass superclass];
+    if (aClass && aClass != [NSObject class]) {
+        [table unionHashTable:xz_objc_class_getImplementedProtocolMethods(aClass, protocolMethods)];
+    }
+    
+    return table;
+}
+
 #if XZ_FRAMEWORK
 void xz_objc_msgSendSuper_void_id(id receiver, SEL selector, id param1) {
     struct objc_super _super = {

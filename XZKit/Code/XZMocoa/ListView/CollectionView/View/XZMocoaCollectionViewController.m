@@ -6,8 +6,11 @@
 //
 
 #import "XZMocoaCollectionViewController.h"
+#import "XZMocoaCollectionViewProxy.h"
 
-@interface XZMocoaCollectionViewController ()
+@interface XZMocoaCollectionViewController () {
+    XZMocoaCollectionViewProxy *_proxy;
+}
 
 @end
 
@@ -37,31 +40,19 @@
     return self;
 }
 
-- (void)viewDidLoad {
-    [super viewDidLoad];
-    
-    self.collectionView.delegate = self.proxy;
-    self.collectionView.dataSource = self.proxy;
-}
+@dynamic viewModel;
 
-@synthesize viewModel = _viewModel;
-
-- (void)setViewModel:(__kindof XZMocoaCollectionViewModel *)viewModel {
-    if (_viewModel != viewModel) {
-        [self viewModelWillChange];
-        
-        _viewModel.delegate = nil;
-        
-        _viewModel = viewModel;
-        
-        [self registerCellWithModule:_viewModel.module];
-        _viewModel.delegate = self.proxy;
-        
-        [self viewModelDidChange];
-    }
+- (void)viewModelWillChange {
+    XZMocoaCollectionViewModel * const _viewModel = self.viewModel;
+    _viewModel.delegate = nil;
 }
 
 - (void)viewModelDidChange {
+    XZMocoaCollectionViewModel * const _viewModel = self.viewModel;
+    
+    [self registerCellWithModule:_viewModel.module];
+    _viewModel.delegate = _proxy;
+
     UICollectionView * const collectionView = self.collectionView;
     if (@available(iOS 11.0, *)) {
         if (collectionView && !collectionView.hasUncommittedUpdates) {
@@ -81,7 +72,30 @@
 }
 
 - (void)registerCellWithModule:(XZMocoaModule *)module {
-    [self.proxy registerCellWithModule:module];
+    [_proxy registerCellWithModule:module];
+}
+
+- (id<UICollectionViewDelegate>)delegate {
+    return _proxy.delegate;
+}
+
+- (void)setDelegate:(id<UICollectionViewDelegate>)delegate {
+    _proxy.delegate = delegate;
+}
+
+- (id<UICollectionViewDataSource>)dataSource {
+    return _proxy.dataSource;
+}
+
+- (void)setDataSource:(id<UICollectionViewDataSource>)dataSource {
+    _proxy.dataSource = dataSource;
+}
+
+- (void)viewDidLoad {
+    [super viewDidLoad];
+    
+    self.collectionView.delegate   = _proxy;
+    self.collectionView.dataSource = _proxy;
 }
 
 @end

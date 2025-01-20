@@ -8,11 +8,5 @@
 #import "XZMocoaTableViewHeaderFooterView.h"
 
 @implementation XZMocoaTableViewHeaderFooterView
-@synthesize viewModel = _viewModel;
-- (void)setViewModel:(__kindof XZMocoaTableViewHeaderFooterViewModel *)viewModel {
-    [self viewModelWillChange];
-    [viewModel ready];
-    _viewModel = viewModel;
-    [self viewModelDidChange];
-}
+@dynamic viewModel;
 @end

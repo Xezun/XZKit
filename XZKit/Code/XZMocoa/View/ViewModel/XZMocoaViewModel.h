@@ -98,13 +98,6 @@ NS_SWIFT_UI_ACTOR @protocol XZMocoaViewModel <NSObject>
 /// @param model 数据
 - (instancetype)initWithModel:(nullable id)model NS_DESIGNATED_INITIALIZER;
 
-/// 便利初始化方法：先调用 -initWithModel: 初始化，然后执行 -ready 方法。
-/// @note
-/// 一般用于根模块的 ViewModel 初始化。在层级关系中，子模块初始化，由上级模块管理。
-/// @param model 数据
-/// @param synchronously YES，立即同步执行 ready 方法；NO，在 -[NSRunLoop performBlock:] 中异步执行 ready 方法。
-- (instancetype)initWithModel:(nullable id)model ready:(BOOL)synchronously;
-
 /// 是否已完成初始化。
 ///
 /// 关于 ready 机制

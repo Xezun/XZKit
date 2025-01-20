@@ -7,12 +7,12 @@
 
 #import "XZMocoaTableViewPlaceholderCell.h"
 #import "XZMocoaTableView.h"
-#import "XZMocoaPlaceholderView.h"
+#import "XZMocoaListViewPlaceholderView.h"
 #import "XZMocoaTableViewPlaceholderCellViewModel.h"
 
 #if DEBUG
 @implementation XZMocoaTableViewPlaceholderCell {
-    XZMocoaPlaceholderView *_view;
+    XZMocoaListViewPlaceholderView *_view;
 }
 
 - (instancetype)initWithStyle:(UITableViewCellStyle)style reuseIdentifier:(NSString *)reuseIdentifier {
@@ -20,7 +20,7 @@
     if (self) {
         self.selectionStyle = UITableViewCellSelectionStyleNone;
         
-        _view = [[XZMocoaPlaceholderView alloc] initWithFrame:self.bounds];
+        _view = [[XZMocoaListViewPlaceholderView alloc] initWithFrame:self.bounds];
         _view.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
         [self.contentView addSubview:_view];
     }
@@ -28,7 +28,7 @@
 }
 
 - (void)viewModelDidChange {
-    XZMocoaPlaceholderViewModel *viewModel = [[XZMocoaPlaceholderViewModel alloc] initWithModel:self.viewModel];
+    XZMocoaListViewPlaceholderViewModel *viewModel = [[XZMocoaListViewPlaceholderViewModel alloc] initWithModel:self.viewModel];
     [viewModel ready];
     _view.viewModel = viewModel;
 }

@@ -41,10 +41,13 @@
 - (void)viewDidLoad {
     [super viewDidLoad];
     
+    self.tableView.delegate = self;
+    
     self.tableView.contentView.xz_headerRefreshView.delegate = self;
     self.tableView.contentView.xz_footerRefreshView.delegate = self;
     
-    Example0320ViewModel *viewModel = [[Example0320ViewModel alloc] initWithModel:nil ready:YES];
+    Example0320ViewModel *viewModel = [[Example0320ViewModel alloc] initWithModel:nil];
+    [viewModel ready];
     self.viewModel = viewModel;
     self.tableView.viewModel = viewModel.tableViewModel;
     
@@ -52,6 +55,10 @@
     [viewModel addTarget:self action:@selector(headerRefreshingChanged:) forKey:@"isHeaderRefreshing"];
     [viewModel addTarget:self action:@selector(footerRefreshingChanged:) forKey:@"isFooterRefreshing"];
     [self headerRefreshingChanged:viewModel];
+}
+
+- (void)scrollViewDidScroll:(UIScrollView *)scrollView {
+    NSLog(@"%@ => %@", scrollView, NSStringFromCGPoint(scrollView.contentOffset));
 }
 
 - (void)headerRefreshingChanged:(Example0320ViewModel *)viewModel {

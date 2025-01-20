@@ -17,8 +17,8 @@ NS_ASSUME_NONNULL_BEGIN
 NS_SWIFT_UI_ACTOR @protocol XZMocoaListViewModelDelegate <NSObject>
 @end
 
-/// 具有列表形式视图的一般视图模型。
-/// @attention 由于需要管理子视图，因此需要设置 module 属性才能正常工作。
+/// 列表容器视图的视图模型。
+/// @attention 由于需要管理列表 Cell 子视图，因此需要设置 `module` 属性才能正常工作。
 @interface XZMocoaListViewModel : XZMocoaViewModel <XZMocoaListViewModel>
 
 /// 所支持的附加视图的类型，默认为 @[XZMocoaKindHeader, XZMocoaKindFooter] 两种。
@@ -28,13 +28,15 @@ NS_SWIFT_UI_ACTOR @protocol XZMocoaListViewModelDelegate <NSObject>
 /// 接收来自下级的 XZMocoaUpdatesKeyReload 事件，并刷新视图，如果在批量更新的过程中，视图刷新可能会延迟。
 - (void)didReceiveUpdates:(XZMocoaUpdates *)updates;
 
-/// 一般而言 TableViewModel 只会有一个事件接收者，这里直接用了代理。
+/// 视图模型需要视图处理的事件，比如更新视图等。
 @property (nonatomic, weak) id<XZMocoaListViewModelDelegate> delegate;
 
-/// 判断是否为空。
+/// 判断列表是否为空。
 @property (nonatomic, readonly) BOOL isEmpty;
 
-/// 下级视图模型。
+/// 列表子视图模型。
+///
+/// 在 UITableView 或 UICollectionView 中，Section 是逻辑上的子视图，而视图模型就是处理逻辑的。
 @property (nonatomic, readonly) NSArray<__kindof XZMocoaListViewSectionViewModel *> *sectionViewModels;
 
 - (__kindof XZMocoaListViewSectionViewModel *)sectionViewModelAtIndex:(NSInteger)index;

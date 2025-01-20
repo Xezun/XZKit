@@ -8,12 +8,17 @@
 #import "XZMocoaTableViewController.h"
 #import "XZMocoaTableViewCell.h"
 #import "XZMocoaTableViewHeaderFooterView.h"
+#import "XZMocoaTableViewProxy.h"
 
-@interface XZMocoaTableViewController ()
+@interface XZMocoaTableViewController () {
+    XZMocoaTableViewProxy *_proxy;
+}
 
 @end
 
 @implementation XZMocoaTableViewController
+
+@dynamic viewModel;
 
 - (instancetype)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil {
     self = [super initWithNibName:nibNameOrNil bundle:nibBundleOrNil];
@@ -39,31 +44,16 @@
     return self;
 }
 
-- (void)viewDidLoad {
-    [super viewDidLoad];
-    
-    self.tableView.delegate = self.proxy;
-    self.tableView.dataSource = self.proxy;
-}
-
-@synthesize viewModel = _viewModel;
-
-- (void)setViewModel:(__kindof XZMocoaTableViewModel *)viewModel {
-    if (_viewModel != viewModel) {
-        [self viewModelWillChange];
-        
-        _viewModel.delegate = nil;
-        
-        _viewModel = viewModel;
-        
-        [self registerCellWithModule:_viewModel.module];
-        _viewModel.delegate = self.proxy;
-        
-        [self viewModelDidChange];
-    }
+- (void)viewModelWillChange {
+    XZMocoaTableViewModel * const _viewModel = self.viewModel;
+    _viewModel.delegate = nil;
 }
 
 - (void)viewModelDidChange {
+    XZMocoaTableViewModel * const _viewModel = self.viewModel;
+    [self registerCellWithModule:_viewModel.module];
+    _viewModel.delegate = _proxy;
+    
     UITableView * const tableView = self.tableView;
     if (@available(iOS 11.0, *)) {
         if (tableView && !tableView.hasUncommittedUpdates) {
@@ -83,7 +73,30 @@
 }
 
 - (void)registerCellWithModule:(XZMocoaModule *)module {
-    [self.proxy registerCellWithModule:module];
+    [_proxy registerCellWithModule:module];
+}
+
+- (id<UITableViewDelegate>)delegate {
+    return _proxy.delegate;
+}
+
+- (void)setDelegate:(id<UITableViewDelegate>)delegate {
+    [_proxy setDelegate:delegate];
+}
+
+- (id<UITableViewDataSource>)dataSource {
+    return _proxy.dataSource;
+}
+
+- (void)setDataSource:(id<UITableViewDataSource>)dataSource {
+    [_proxy setDataSource:dataSource];
+}
+
+- (void)viewDidLoad {
+    [super viewDidLoad];
+    
+    self.tableView.delegate   = _proxy;
+    self.tableView.dataSource = _proxy;
 }
 
 

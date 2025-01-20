@@ -11,32 +11,21 @@
 
 #pragma mark - 属性
 
-@synthesize viewModel = _viewModel;
-
-- (void)setViewModel:(__kindof XZMocoaListViewModel *)viewModel {
-    if (_viewModel != viewModel) {
-        [self viewModelWillChange];
-        
-        // 目前来说，没有解除注册的必要
-        // [self registerCellWithModule:viewModel.module];
-        _viewModel.delegate = nil;
-        
-        [viewModel ready];
-        _viewModel = viewModel;
-        
-        [self registerCellWithModule:_viewModel.module];
-        _viewModel.delegate = self;
-        
-        [self viewModelDidChange];
-    }
-}
+@dynamic viewModel;
 
 - (void)viewModelWillChange {
+    [super viewModelDidChange];
     
+    XZMocoaListViewModel * const _viewModel = self.viewModel;
+    _viewModel.delegate = nil;
 }
 
 - (void)viewModelDidChange {
+    [super viewModelDidChange];
     
+    XZMocoaListViewModel * const _viewModel = self.viewModel;
+    [self registerCellWithModule:_viewModel.module];
+    _viewModel.delegate = self;
 }
 
 @synthesize contentView = _contentView;
@@ -46,7 +35,9 @@
         [self contentViewWillChange];
         
         [_contentView removeFromSuperview];
+        
         _contentView = contentView;
+        
         _contentView.frame = self.bounds;
         _contentView.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
         [self addSubview:_contentView];

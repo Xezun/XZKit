@@ -10,18 +10,7 @@
 @import XZExtensions;
 
 @implementation XZMocoaView
-
-@synthesize viewModel = _viewModel;
-
-- (void)setViewModel:(__kindof XZMocoaViewModel *)viewModel {
-    if (_viewModel != viewModel) {
-        [self viewModelWillChange];
-        [viewModel ready];
-        _viewModel = viewModel;
-        [self viewModelDidChange];
-    }
-}
-
+@dynamic viewModel;
 @end
 
 static const void * const _viewModel = &_viewModel;
@@ -38,7 +27,7 @@ static void xz_mocoa_copyMethod(Class const cls, SEL const target, SEL const sou
 
 #pragma mark - XZMocoaView 协议默认实现
 
-@interface UIResponder (XZMocoaView) <XZMocoaView>
+@interface UIResponder (XZMocoaView)
 @end
 
 @implementation UIResponder (XZMocoaView)
@@ -96,7 +85,7 @@ static void xz_mocoa_copyMethod(Class const cls, SEL const target, SEL const sou
     }
     [(id<XZMocoaView>)self viewModelWillChange];
     // 在 viewModel 使用前（与 view 关联前），使其进入 isReady 状态
-    // [viewModel ready];
+    [viewModel ready];
     objc_setAssociatedObject(self, _viewModel, viewModel, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
     [(id<XZMocoaView>)self viewModelDidChange];
 }

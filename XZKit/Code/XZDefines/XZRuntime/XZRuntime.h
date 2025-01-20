@@ -248,6 +248,17 @@ FOUNDATION_EXPORT BOOL xz_objc_class_copyMethod(Class source, SEL sourceSelector
 /// - Returns: 被成功复制的方法的数量
 FOUNDATION_EXPORT NSInteger xz_objc_class_copyMethods(Class source, Class target);
 
+
+/// 获取协议中的所有实例方法 SEL 列表，包括协议继承的协议，但不包括 NSObject 协议。
+/// - Parameter aProtocol: 协议
+FOUNDATION_EXPORT NSHashTable *xz_objc_protocol_getInstanceMethods(Protocol *aProtocol);
+
+/// 获取 aClass 已实现的协议方法的列表，包括父类实现的。
+/// - Parameters:
+///   - aClass: 类
+///   - protocolMethods: 协议方法 SEL 列表
+FOUNDATION_EXPORT NSHashTable *xz_objc_class_getImplementedProtocolMethods(Class aClass, NSHashTable *protocolMethods);
+
 #pragma mark - 通用消息发送
 
 // v => void

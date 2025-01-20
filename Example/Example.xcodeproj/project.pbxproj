@@ -19,6 +19,7 @@
 		042D23D32D30BB3200E0F7BD /* Example16SettingsSelectNumberViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 042D23C62D30BB3200E0F7BD /* Example16SettingsSelectNumberViewController.m */; };
 		042D23D42D30BB3200E0F7BD /* Example16SettingsEditSectionViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 042D23C42D30BB3200E0F7BD /* Example16SettingsEditSectionViewController.m */; };
 		042D23D52D30BB3200E0F7BD /* Example16SettingsViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 042D23CA2D30BB3200E0F7BD /* Example16SettingsViewController.m */; };
+		0465D9182D3E3D340064DE0C /* WebKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0465D9172D3E3D340064DE0C /* WebKit.framework */; };
 		046C96712D37828C0060EEBE /* Example20.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 046C96702D37828C0060EEBE /* Example20.storyboard */; };
 		046CE63C2D34C38C00B9389F /* Example19ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 046CE63B2D34C38C00B9389F /* Example19ViewController.swift */; };
 		046CE63D2D34C38C00B9389F /* Example19CryptorViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 046CE6382D34C38C00B9389F /* Example19CryptorViewController.swift */; };
@@ -307,6 +308,7 @@
 		042D23C82D30BB3200E0F7BD /* Example16SettingsSelectSectionViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = Example16SettingsSelectSectionViewController.m; sourceTree = "<group>"; };
 		042D23C92D30BB3200E0F7BD /* Example16SettingsViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Example16SettingsViewController.h; sourceTree = "<group>"; };
 		042D23CA2D30BB3200E0F7BD /* Example16SettingsViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = Example16SettingsViewController.m; sourceTree = "<group>"; };
+		0465D9172D3E3D340064DE0C /* WebKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = WebKit.framework; path = System/Library/Frameworks/WebKit.framework; sourceTree = SDKROOT; };
 		046C96702D37828C0060EEBE /* Example20.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = Example20.storyboard; sourceTree = "<group>"; };
 		046CE6382D34C38C00B9389F /* Example19CryptorViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Example19CryptorViewController.swift; sourceTree = "<group>"; };
 		046CE6392D34C38C00B9389F /* Example19SelectViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Example19SelectViewController.swift; sourceTree = "<group>"; };
@@ -751,6 +753,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				0465D9182D3E3D340064DE0C /* WebKit.framework in Frameworks */,
 				01C91114C6D30DAA909EB169 /* Pods_Example.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -2733,6 +2736,7 @@
 		D9D72A073C93F0164C49E30A /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				0465D9172D3E3D340064DE0C /* WebKit.framework */,
 				055F0304DE9A092BAF52FF06 /* Pods_Example.framework */,
 				D09F7711B7EC5E200D1D4920 /* Pods_ExampleTests.framework */,
 				2921DE5FDDA8FC1A0BE46778 /* Pods_ExampleUITests.framework */,

@@ -11,7 +11,8 @@
 NS_ASSUME_NONNULL_BEGIN
 
 @interface XZMocoaCollectionViewController : UICollectionViewController <XZMocoaCollectionView>
-@property (nonatomic, strong) XZMocoaCollectionViewProxy *proxy;
+@property (nonatomic, weak) id<UICollectionViewDelegate> delegate;
+@property (nonatomic, weak) id<UICollectionViewDataSource> dataSource;
 @end
 
 NS_ASSUME_NONNULL_END

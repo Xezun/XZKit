@@ -53,20 +53,6 @@
     return self;
 }
 
-- (instancetype)initWithModel:(id)model ready:(BOOL)synchronously {
-    self = [self initWithModel:model];
-    if (self) {
-        if (synchronously) {
-            [self ready];
-        } else {
-            [NSRunLoop.mainRunLoop performBlock:^{
-                [self ready];
-            }];
-        }
-    }
-    return self;
-}
-
 - (void)ready {
     if (_isReady) {
         return;

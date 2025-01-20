@@ -11,13 +11,7 @@
 #import "XZMocoaDefines.h"
 
 @implementation XZMocoaTableViewCell
-@synthesize viewModel = _viewModel;
-- (void)setViewModel:(__kindof XZMocoaTableViewCellViewModel *)viewModel {
-    [self viewModelWillChange];
-    [viewModel ready];
-    _viewModel = viewModel;
-    [self viewModelDidChange];
-}
+@dynamic viewModel;
 @end
 
 

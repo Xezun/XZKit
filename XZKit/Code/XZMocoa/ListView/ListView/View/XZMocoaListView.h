@@ -13,9 +13,9 @@ NS_ASSUME_NONNULL_BEGIN
 
 @class UITableView, UICollectionView;
 
-/// 列表视图协议。
+/// 用以承载列表视图的容器视图的接口协议。
 @protocol XZMocoaListView <XZMocoaView, XZMocoaListViewModelDelegate>
-/// 用以承载列表视图。
+/// 视图模型。
 @property (nonatomic, strong, nullable) __kindof XZMocoaListViewModel *viewModel;
 /// 承载列表视图的可滚动的容器视图，一般为 UICollectionView 或 UITableView 视图。
 /// - 一般情况下，容器视图 contentView 的 delegate 和 dataSource 会被接管，请避免更改。
@@ -26,7 +26,7 @@ NS_ASSUME_NONNULL_BEGIN
 @end
 
 /// XZMocoaListView 是 UITableView、UICollectionView 的抽象封装，不可直接使用。
-@interface XZMocoaListView : UIView <XZMocoaListView>
+@interface XZMocoaListView : XZMocoaView <XZMocoaListView>
 
 /// 提供子类用于监听 contentView 发生改变的方法。
 /// > 默认该方法什么也不做。
