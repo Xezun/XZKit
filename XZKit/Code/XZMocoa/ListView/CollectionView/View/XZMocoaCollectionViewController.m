@@ -40,5 +40,16 @@
     self.collectionView = contentView;
 }
 
+- (void)viewModelDidChange {
+    // 刷新视图。
+    UICollectionView * const collectionView = self.contentView;
+    if (@available(iOS 11.0, *)) {
+        if (collectionView && !collectionView.hasUncommittedUpdates) {
+            [collectionView reloadData];
+        }
+    } else {
+        [collectionView reloadData];
+    }
+}
 
 @end

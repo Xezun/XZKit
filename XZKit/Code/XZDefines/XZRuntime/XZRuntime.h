@@ -267,44 +267,46 @@ FOUNDATION_EXPORT NSHashTable *xz_objc_class_getImplementedProtocolMethods(Class
 // i => NSInteger
 // rect => CGRect
 
+// 在如下 xz_objc_msgSendSuper 方法中，除非没有子类，否则参数 receiverClass 不可以通过 receiver.class 动态获取，而应该是确定类型，否则会造成死循环。
+
 #if XZ_FRAMEWORK
-FOUNDATION_EXPORT void xz_objc_msgSendSuper_void_id(id receiver, SEL selector, id _Nullable param1) NS_SWIFT_NAME(xz_objc_msgSendSuper(_:v:o:));
+FOUNDATION_EXPORT void xz_objc_msgSendSuper_void_id(id receiver, Class receiverClass, SEL selector, id _Nullable param1) NS_SWIFT_NAME(xz_objc_msgSendSuper(_:_:v:o:));
 FOUNDATION_EXPORT void xz_objc_msgSend_void_id(id receiver, SEL selector, id _Nullable param1) NS_SWIFT_NAME(xz_objc_msgSend(_:v:o:));
 
-FOUNDATION_EXPORT void xz_objc_msgSendSuper_void_id_bool(id receiver, SEL selector, id _Nullable param1, BOOL param2) NS_SWIFT_NAME(xz_objc_msgSendSuper(_:v:o:b:));
+FOUNDATION_EXPORT void xz_objc_msgSendSuper_void_id_bool(id receiver, Class receiverClass, SEL selector, id _Nullable param1, BOOL param2) NS_SWIFT_NAME(xz_objc_msgSendSuper(_:_:v:o:b:));
 FOUNDATION_EXPORT void xz_objc_msgSend_void_id_bool(id receiver, SEL selector, id _Nullable param1, BOOL param2) NS_SWIFT_NAME(xz_objc_msgSend(_:v:o:b:));
 
-FOUNDATION_EXPORT id _Nullable xz_objc_msgSendSuper_id_bool(id receiver, SEL selector, BOOL param1) NS_SWIFT_NAME(xz_objc_msgSendSuper(_:o:b:));
+FOUNDATION_EXPORT id _Nullable xz_objc_msgSendSuper_id_bool(id receiver, Class receiverClass, SEL selector, BOOL param1) NS_SWIFT_NAME(xz_objc_msgSendSuper(_:_:o:b:));
 FOUNDATION_EXPORT id _Nullable xz_objc_msgSend_id_bool(id receiver, SEL selector, BOOL param1) NS_SWIFT_NAME(xz_objc_msgSend(_:o:b:));
 
-FOUNDATION_EXPORT id _Nullable xz_objc_msgSendSuper_id_id_bool(id receiver, SEL selector, id _Nullable param1, BOOL param2) NS_SWIFT_NAME(xz_objc_msgSendSuper(_:o:o:b:));
+FOUNDATION_EXPORT id _Nullable xz_objc_msgSendSuper_id_id_bool(id receiver, Class receiverClass, SEL selector, id _Nullable param1, BOOL param2) NS_SWIFT_NAME(xz_objc_msgSendSuper(_:_:o:o:b:));
 FOUNDATION_EXPORT id _Nullable xz_objc_msgSend_id_id_bool(id receiver, SEL selector, id _Nullable param1, BOOL param2) NS_SWIFT_NAME(xz_objc_msgSend(_:o:o:b:));
 
-FOUNDATION_EXPORT void xz_objc_msgSendSuper_void_bool(id receiver, SEL selector, BOOL param1) NS_SWIFT_NAME(xz_objc_msgSendSuper(_:v:b:));
+FOUNDATION_EXPORT void xz_objc_msgSendSuper_void_bool(id receiver, Class receiverClass, SEL selector, BOOL param1) NS_SWIFT_NAME(xz_objc_msgSendSuper(_:_:v:b:));
 FOUNDATION_EXPORT void xz_objc_msgSend_void_bool(id receiver, SEL selector, BOOL param1) NS_SWIFT_NAME(xz_objc_msgSend(_:v:b:));
 
-FOUNDATION_EXPORT id _Nullable xz_objc_msgSendSuper_id_id_integer_id_id(id receiver, SEL selector, id _Nullable param1, NSInteger param2, id _Nullable param3, id _Nullable param4) NS_SWIFT_NAME(xz_objc_msgSendSuper(_:o:o:i:o:o:));
+FOUNDATION_EXPORT id _Nullable xz_objc_msgSendSuper_id_id_integer_id_id(id receiver, Class receiverClass, SEL selector, id _Nullable param1, NSInteger param2, id _Nullable param3, id _Nullable param4) NS_SWIFT_NAME(xz_objc_msgSendSuper(_:_:o:o:i:o:o:));
 FOUNDATION_EXPORT id _Nullable xz_objc_msgSend_id_id_integer_id_id(id receiver, SEL selector, id _Nullable param1, NSInteger param2, id _Nullable param3, id _Nullable param4) NS_SWIFT_NAME(xz_objc_msgSend(_:o:o:i:o:o:));
 
-FOUNDATION_EXPORT id _Nullable xz_objc_msgSendSuper_id_id_id(id receiver, SEL selector, id _Nullable param1, id _Nullable param2) NS_SWIFT_NAME(xz_objc_msgSendSuper(_:o:o:o:));
+FOUNDATION_EXPORT id _Nullable xz_objc_msgSendSuper_id_id_id(id receiver, Class receiverClass, SEL selector, id _Nullable param1, id _Nullable param2) NS_SWIFT_NAME(xz_objc_msgSendSuper(_:_:o:o:o:));
 FOUNDATION_EXPORT id _Nullable xz_objc_msgSend_id_id_id(id receiver, SEL selector, id _Nullable param1, id _Nullable param2) NS_SWIFT_NAME(xz_objc_msgSend(_:o:o:o:));
 
-FOUNDATION_EXPORT CGRect xz_objc_msgSendSuper_rect(id receiver, SEL selector) NS_SWIFT_NAME(xz_objc_msgSendSuper(_:rect:));
+FOUNDATION_EXPORT CGRect xz_objc_msgSendSuper_rect(id receiver, Class receiverClass, SEL selector) NS_SWIFT_NAME(xz_objc_msgSendSuper(_:_:rect:));
 FOUNDATION_EXPORT CGRect xz_objc_msgSend_rect(id receiver, SEL selector) NS_SWIFT_NAME(xz_objc_msgSend(_:rect:));
 
-FOUNDATION_EXPORT void xz_objc_msgSendSuper_void_rect(id receiver, SEL selector, CGRect param1) NS_SWIFT_NAME(xz_objc_msgSendSuper(_:v:rect:));
+FOUNDATION_EXPORT void xz_objc_msgSendSuper_void_rect(id receiver, Class receiverClass, SEL selector, CGRect param1) NS_SWIFT_NAME(xz_objc_msgSendSuper(_:_:v:rect:));
 FOUNDATION_EXPORT void xz_objc_msgSend_void_rect(id receiver, SEL selector, CGRect param1) NS_SWIFT_NAME(xz_objc_msgSend(_:v:rect:));
 
-FOUNDATION_EXPORT BOOL xz_objc_msgSendSuper_bool(id receiver, SEL selector) NS_SWIFT_NAME(xz_objc_msgSendSuper(_:b:));
+FOUNDATION_EXPORT BOOL xz_objc_msgSendSuper_bool(id receiver, Class receiverClass, SEL selector) NS_SWIFT_NAME(xz_objc_msgSendSuper(_:_:b:));
 FOUNDATION_EXPORT BOOL xz_objc_msgSend_bool(id receiver, SEL selector) NS_SWIFT_NAME(xz_objc_msgSend(_:b:));
 
-FOUNDATION_EXPORT void xz_objc_msgSendSuper_void(id receiver, SEL selector) NS_SWIFT_NAME(xz_objc_msgSendSuper(_:v:));
+FOUNDATION_EXPORT void xz_objc_msgSendSuper_void(id receiver, Class receiverClass, SEL selector) NS_SWIFT_NAME(xz_objc_msgSendSuper(_:_:v:));
 FOUNDATION_EXPORT void xz_objc_msgSend_void(id receiver, SEL selector) NS_SWIFT_NAME(xz_objc_msgSend(_:v:));
 
-FOUNDATION_EXPORT void xz_objc_msgSendSuper_void_id_integer(id receiver, SEL selector, id _Nullable param1, NSInteger param2) NS_SWIFT_NAME(xz_objc_msgSendSuper(_:v:o:i:));
+FOUNDATION_EXPORT void xz_objc_msgSendSuper_void_id_integer(id receiver, Class receiverClass, SEL selector, id _Nullable param1, NSInteger param2) NS_SWIFT_NAME(xz_objc_msgSendSuper(_:_:v:o:i:));
 FOUNDATION_EXPORT void xz_objc_msgSend_void_id_integer(id receiver, SEL selector, id _Nullable param1, NSInteger param2) NS_SWIFT_NAME(xz_objc_msgSend(_:v:o:i:));
 
-FOUNDATION_EXPORT void xz_objc_msgSendSuper_void_id_id(id receiver, SEL selector, id _Nullable param1, id _Nullable param2) NS_SWIFT_NAME(xz_objc_msgSendSuper(_:v:o:o:));
+FOUNDATION_EXPORT void xz_objc_msgSendSuper_void_id_id(id receiver, Class receiverClass, SEL selector, id _Nullable param1, id _Nullable param2) NS_SWIFT_NAME(xz_objc_msgSendSuper(_:_:v:o:o:));
 FOUNDATION_EXPORT void xz_objc_msgSend_void_id_id(id receiver, SEL selector, id _Nullable param1, id _Nullable param2) NS_SWIFT_NAME(xz_objc_msgSend(_:v:o:o:));
 #endif
 

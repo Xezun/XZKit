@@ -59,6 +59,9 @@ let package = Package(
             name: "XZCollectionViewFlowLayout",
             targets: ["XZCollectionViewFlowLayout"]),
         .library(
+            name: "XZNavigationController",
+            targets: ["XZNavigationController"]),
+        .library(
             name: "XZDataCryptor",
             targets: ["XZDataCryptor"]),
         .library(

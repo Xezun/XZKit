@@ -62,5 +62,35 @@
     return [self initWithCollectionViewClass:UICollectionView.class layout:layout];
 }
 
+- (void)contentViewWillChange {
+    [super contentViewWillChange];
+    
+    UICollectionView * const collectionView = self.contentView;
+    collectionView.delegate = nil;
+    collectionView.dataSource = nil;
+}
+
+- (void)contentViewDidChange {
+    [super contentViewDidChange];
+    
+    UICollectionView * const collectionView = self.contentView;
+    collectionView.delegate   = self;
+    collectionView.dataSource = self;
+}
+
+- (void)viewModelDidChange {
+    [super viewModelDidChange];
+    
+    // 刷新视图。
+    UICollectionView * const collectionView = self.contentView;
+    if (@available(iOS 11.0, *)) {
+        if (collectionView && !collectionView.hasUncommittedUpdates) {
+            [collectionView reloadData];
+        }
+    } else {
+        [collectionView reloadData];
+    }
+}
+
 @end
 

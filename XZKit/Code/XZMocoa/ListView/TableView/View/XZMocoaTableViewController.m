@@ -45,5 +45,20 @@
     [self setTableView:contentView];
 }
 
+- (void)viewModelDidChange {
+    XZMocoaTableViewModel * const _viewModel = self.viewModel;
+    _viewModel.delegate = self;
+    
+    // 刷新视图。
+    UITableView * const tableView = self.contentView;
+    if (@available(iOS 11.0, *)) {
+        if (tableView && !tableView.hasUncommittedUpdates) {
+            [tableView reloadData];
+        }
+    } else {
+        [tableView reloadData];
+    }
+}
+
 @end
 

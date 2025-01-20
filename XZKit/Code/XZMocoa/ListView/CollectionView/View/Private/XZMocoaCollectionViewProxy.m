@@ -26,36 +26,6 @@ static NSString *UIElementKindFromMocoaKind(XZMocoaKind kind) {
 
 @dynamic viewModel, contentView;
 
-- (void)contentViewWillChange {
-    xz_objc_msgSendSuper_void(self, @selector(contentViewWillChange));
-    
-    UICollectionView * const collectionView = self.contentView;
-    collectionView.delegate = nil;
-    collectionView.dataSource = nil;
-}
-
-- (void)contentViewDidChange {
-    xz_objc_msgSendSuper_void(self, @selector(contentViewDidChange));
-    
-    UICollectionView * const collectionView = self.contentView;
-    collectionView.delegate   = self;
-    collectionView.dataSource = self;
-}
-
-- (void)viewModelDidChange {
-    xz_objc_msgSendSuper_void(self, @selector(viewModelDidChange));
-    
-    // 刷新视图。
-    UICollectionView * const collectionView = self.contentView;
-    if (@available(iOS 11.0, *)) {
-        if (collectionView && !collectionView.hasUncommittedUpdates) {
-            [collectionView reloadData];
-        }
-    } else {
-        [collectionView reloadData];
-    }
-}
-
 - (void)registerCellWithModule:(XZMocoaModule *)module {
     UICollectionView * const collectionView = self.contentView;
     

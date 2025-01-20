@@ -43,7 +43,7 @@ import XZDefines
             typealias MethodType = @convention(block) (UINavigationController, UINavigationControllerDelegate?) -> Void
             let selector = #selector(setter: UINavigationController.delegate)
             let override: MethodType = { `self`, delegate in
-                xz_objc_msgSendSuper(self, v: selector, o: delegate)
+                xz_objc_msgSendSuper(self, aClass, v: selector, o: delegate)
                 if let transitionController = (self as? XZNavigationController)?.transitionController {
                     transitionController.customizeNavigationControllerDelegate(delegate)
                 }
@@ -91,7 +91,7 @@ import XZDefines
                 return transitionController.navigationController(navigationController, animationControllerFor: operation, from: fromVC, to: toVC)
             }
             let override: MethodType = { `self`, navigationController, operation, fromVC, toVC in
-                if let controller = xz_objc_msgSendSuper(self, o: selector, o: navigationController, i: operation.rawValue, o: fromVC, o: toVC) {
+                if let controller = xz_objc_msgSendSuper(self, aClass, o: selector, o: navigationController, i: operation.rawValue, o: fromVC, o: toVC) {
                     return controller as? UIViewControllerAnimatedTransitioning;
                 }
                 guard let transitionController = (navigationController as? XZNavigationController)?.transitionController else { return nil }
@@ -119,7 +119,7 @@ import XZDefines
                 return transitionController.navigationController(navigationController, interactionControllerFor: animationController)
             }
             let override: MethodType = { `self`, navigationController, animationController in
-                if let controller = xz_objc_msgSendSuper(self, o: selector, o: navigationController, o: animationController) {
+                if let controller = xz_objc_msgSendSuper(self, aClass, o: selector, o: navigationController, o: animationController) {
                     return controller as? UIViewControllerInteractiveTransitioning;
                 }
                 guard let transitionController = (navigationController as? XZNavigationController)?.transitionController else { return nil }

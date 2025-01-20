@@ -15,39 +15,6 @@
 
 @dynamic viewModel, contentView;
 
-- (void)viewModelDidChange {
-    xz_objc_msgSendSuper_void(self, @selector(viewModelDidChange));
-    
-    XZMocoaTableViewModel * const _viewModel = self.viewModel;
-    _viewModel.delegate = self;
-    
-    // 刷新视图。
-    UITableView * const tableView = self.contentView;
-    if (@available(iOS 11.0, *)) {
-        if (tableView && !tableView.hasUncommittedUpdates) {
-            [tableView reloadData];
-        }
-    } else {
-        [tableView reloadData];
-    }
-}
-
-- (void)contentViewWillChange {
-    xz_objc_msgSendSuper_void(self, @selector(contentViewWillChange));
-    
-    UITableView * const tableView = self.contentView;
-    tableView.delegate = nil;
-    tableView.dataSource = nil;
-}
-
-- (void)contentViewDidChange {
-    xz_objc_msgSendSuper_void(self, @selector(contentViewDidChange));
-    
-    UITableView * const tableView = self.contentView;
-    tableView.delegate   = self;
-    tableView.dataSource = self;
-}
-
 - (void)registerCellWithModule:(XZMocoaModule *)module {
     UITableView * const tableView = self.contentView;
     

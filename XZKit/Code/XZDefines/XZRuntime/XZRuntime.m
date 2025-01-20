@@ -382,10 +382,10 @@ NSHashTable *xz_objc_class_getImplementedProtocolMethods(Class aClass, NSHashTab
 }
 
 #if XZ_FRAMEWORK
-void xz_objc_msgSendSuper_void_id(id receiver, SEL selector, id param1) {
+void xz_objc_msgSendSuper_void_id(id receiver, Class receiverClass, SEL selector, id param1) {
     struct objc_super _super = {
         .receiver = receiver,
-        .super_class = class_getSuperclass(object_getClass(receiver))
+        .super_class = class_getSuperclass(receiverClass)
     };
     ((void (*)(struct objc_super *, SEL, id))objc_msgSendSuper)(&_super, selector, param1);
 }
@@ -393,10 +393,10 @@ void xz_objc_msgSend_void_id(id receiver, SEL selector, id param1) {
     ((void (*)(id, SEL, id))objc_msgSend)(receiver, selector, param1);
 }
 
-void xz_objc_msgSendSuper_void_id_bool(id receiver, SEL selector, id param1, BOOL param2) {
+void xz_objc_msgSendSuper_void_id_bool(id receiver, Class receiverClass, SEL selector, id param1, BOOL param2) {
     struct objc_super _super = {
         .receiver = receiver,
-        .super_class = class_getSuperclass(object_getClass(receiver))
+        .super_class = class_getSuperclass(receiverClass)
     };
     ((void (*)(struct objc_super *, SEL, id, BOOL))objc_msgSendSuper)(&_super, selector, param1, param2);
 }
@@ -404,10 +404,10 @@ void xz_objc_msgSend_void_id_bool(id receiver, SEL selector, id param1, BOOL par
     ((void (*)(id, SEL, id, BOOL))objc_msgSend)(receiver, selector, param1, param2);
 }
 
-id xz_objc_msgSendSuper_id_bool(id receiver, SEL selector, BOOL param1) {
+id xz_objc_msgSendSuper_id_bool(id receiver, Class receiverClass, SEL selector, BOOL param1) {
     struct objc_super _super = {
         .receiver = receiver,
-        .super_class = class_getSuperclass(object_getClass(receiver))
+        .super_class = class_getSuperclass(receiverClass)
     };
     return ((id (*)(struct objc_super *, SEL, BOOL))objc_msgSendSuper)(&_super, selector, param1);
 }
@@ -415,10 +415,10 @@ id xz_objc_msgSend_id_bool(id receiver, SEL selector, BOOL param1) {
     return ((id (*)(id, SEL, BOOL))objc_msgSend)(receiver, selector, param1);
 }
 
-id xz_objc_msgSendSuper_id_id_bool(id receiver, SEL selector, id param1, BOOL param2) {
+id xz_objc_msgSendSuper_id_id_bool(id receiver, Class receiverClass, SEL selector, id param1, BOOL param2) {
     struct objc_super _super = {
         .receiver = receiver,
-        .super_class = class_getSuperclass(object_getClass(receiver))
+        .super_class = class_getSuperclass(receiverClass)
     };
     return ((id (*)(struct objc_super *, SEL, id, BOOL))objc_msgSendSuper)(&_super, selector, param1, param2);
 }
@@ -426,10 +426,10 @@ id xz_objc_msgSend_id_id_bool(id receiver, SEL selector, id param1, BOOL param2)
     return ((id (*)(id, SEL, id, BOOL))objc_msgSend)(receiver, selector, param1, param2);
 }
 
-void xz_objc_msgSendSuper_void_bool(id receiver, SEL selector, BOOL param1) {
+void xz_objc_msgSendSuper_void_bool(id receiver, Class receiverClass, SEL selector, BOOL param1) {
     struct objc_super _super = {
         .receiver = receiver,
-        .super_class = class_getSuperclass(object_getClass(receiver))
+        .super_class = class_getSuperclass(receiverClass)
     };
     ((void (*)(struct objc_super *, SEL, BOOL))objc_msgSendSuper)(&_super, selector, param1);
 }
@@ -438,10 +438,10 @@ void xz_objc_msgSend_void_bool(id receiver, SEL selector, BOOL param1) {
 }
 
 
-id xz_objc_msgSendSuper_id_id_integer_id_id(id receiver, SEL selector, id param1, NSInteger param2, id param3, id param4) {
+id xz_objc_msgSendSuper_id_id_integer_id_id(id receiver, Class receiverClass, SEL selector, id param1, NSInteger param2, id param3, id param4) {
     struct objc_super _super = {
         .receiver = receiver,
-        .super_class = class_getSuperclass(object_getClass(receiver))
+        .super_class = class_getSuperclass(receiverClass)
     };
     return ((id(*)(struct objc_super *, SEL, id, NSInteger, id, id))objc_msgSendSuper)(&_super, selector, param1, param2, param3, param4);
 }
@@ -449,10 +449,10 @@ id xz_objc_msgSend_id_id_integer_id_id(id receiver, SEL selector, id param1, NSI
     return ((id(*)(id, SEL, id, NSInteger, id, id))objc_msgSend)(receiver, selector, param1, param2, param3, param4);
 }
 
-id xz_objc_msgSendSuper_id_id_id(id receiver, SEL selector, id param1, id param2) {
+id xz_objc_msgSendSuper_id_id_id(id receiver, Class receiverClass, SEL selector, id param1, id param2) {
     struct objc_super _super = {
         .receiver = receiver,
-        .super_class = class_getSuperclass(object_getClass(receiver))
+        .super_class = class_getSuperclass(receiverClass)
     };
     return ((id(*)(struct objc_super *,SEL,id,id))objc_msgSendSuper)(&_super, selector, param1, param2);
 }
@@ -460,10 +460,10 @@ id xz_objc_msgSend_id_id_id(id receiver, SEL selector, id param1, id param2) {
     return ((id(*)(id,SEL,id,id))objc_msgSend)(receiver, selector, param1, param2);
 }
 
-CGRect xz_objc_msgSendSuper_rect(id receiver, SEL selector) {
+CGRect xz_objc_msgSendSuper_rect(id receiver, Class receiverClass, SEL selector) {
     struct objc_super _super = {
         .receiver = receiver,
-        .super_class = class_getSuperclass(object_getClass(receiver))
+        .super_class = class_getSuperclass(receiverClass)
     };
     return ((CGRect(*)(struct objc_super *, SEL))objc_msgSendSuper)(&_super, selector);
 }
@@ -473,10 +473,10 @@ CGRect xz_objc_msgSend_rect(id receiver, SEL selector) {
 }
 
 
-void xz_objc_msgSendSuper_void_rect(id receiver, SEL selector, CGRect param1) {
+void xz_objc_msgSendSuper_void_rect(id receiver, Class receiverClass, SEL selector, CGRect param1) {
     struct objc_super _super = {
         .receiver = receiver,
-        .super_class = class_getSuperclass(object_getClass(receiver))
+        .super_class = class_getSuperclass(receiverClass)
     };
     ((void (*)(struct objc_super *, SEL, CGRect))objc_msgSendSuper)(&_super, selector, param1);
 }
@@ -484,10 +484,10 @@ void xz_objc_msgSend_void_rect(id receiver, SEL selector, CGRect param1) {
     ((void (*)(id, SEL, CGRect))objc_msgSend)(receiver, selector, param1);
 }
 
-BOOL xz_objc_msgSendSuper_bool(id receiver, SEL selector) {
+BOOL xz_objc_msgSendSuper_bool(id receiver, Class receiverClass, SEL selector) {
     struct objc_super _super = {
         .receiver = receiver,
-        .super_class = class_getSuperclass(object_getClass(receiver))
+        .super_class = class_getSuperclass(receiverClass)
     };
     return ((BOOL (*)(struct objc_super *, SEL))objc_msgSendSuper)(&_super, selector);
 }
@@ -496,10 +496,10 @@ BOOL xz_objc_msgSend_bool(id receiver, SEL selector) {
 }
 
 
-void xz_objc_msgSendSuper_void(id receiver, SEL selector) {
+void xz_objc_msgSendSuper_void(id receiver, Class receiverClass, SEL selector) {
      struct objc_super _super = {
         .receiver = receiver,
-        .super_class = class_getSuperclass(object_getClass(receiver))
+        .super_class = class_getSuperclass(receiverClass)
     };
     ((void (*)(struct objc_super *, SEL))objc_msgSendSuper)(&_super, selector);
 }
@@ -508,10 +508,10 @@ void xz_objc_msgSend_void(id receiver, SEL selector) {
 }
 
 
-void xz_objc_msgSendSuper_void_id_integer(id receiver, SEL selector, id param1, NSInteger param2) {
+void xz_objc_msgSendSuper_void_id_integer(id receiver, Class receiverClass, SEL selector, id param1, NSInteger param2) {
     struct objc_super _super = {
         .receiver = receiver,
-        .super_class = class_getSuperclass(object_getClass(receiver))
+        .super_class = class_getSuperclass(receiverClass)
     };
     ((void (*)(struct objc_super *, SEL, id, NSInteger))objc_msgSendSuper)(&_super, selector, param1, param2);
 }
@@ -519,10 +519,10 @@ void xz_objc_msgSend_void_id_integer(id receiver, SEL selector, id param1, NSInt
     ((void(*)(id, SEL, id, NSInteger))objc_msgSend)(receiver, selector, param1, param2);
 }
 
-void xz_objc_msgSendSuper_void_id_id(id receiver, SEL selector, id param1, id param2) {
+void xz_objc_msgSendSuper_void_id_id(id receiver, Class receiverClass, SEL selector, id param1, id param2) {
     struct objc_super _super = {
         .receiver = receiver,
-        .super_class = class_getSuperclass(object_getClass(receiver))
+        .super_class = class_getSuperclass(receiverClass)
     };
     ((void (*)(struct objc_super *, SEL, id, id))objc_msgSendSuper)(&_super, selector, param1, param2);
 }

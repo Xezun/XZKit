@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="23504" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="5RO-f9-0zr">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="23504" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="A2W-jB-VZz">
     <device id="retina6_12" orientation="portrait" appearance="light"/>
     <dependencies>
         <deployment identifier="iOS"/>
@@ -323,13 +323,13 @@
                 <placeholder placeholderIdentifier="IBFirstResponder" id="MGR-Pb-aXj" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
                 <exit id="lrP-Bo-kUm" userLabel="Exit" sceneMemberID="exit"/>
             </objects>
-            <point key="canvasLocation" x="2964" y="-1612"/>
+            <point key="canvasLocation" x="3889.3129770992364" y="-1612.6760563380283"/>
         </scene>
         <!--首页-->
         <scene sceneID="4Ng-eJ-EW9">
             <objects>
                 <navigationController title="首页" automaticallyAdjustsScrollViewInsets="NO" modalPresentationStyle="fullScreen" id="5RO-f9-0zr" customClass="Example17NavigationController" customModule="Example" customModuleProvider="target" sceneMemberID="viewController">
-                    <tabBarItem key="tabBarItem" title="XZKit" image="icon-tab-home" id="bji-4u-4Xq"/>
+                    <tabBarItem key="tabBarItem" title="XZKit" image="arkit" catalog="system" badgeValue="1" id="bji-4u-4Xq"/>
                     <toolbarItems/>
                     <navigationItem key="navigationItem" id="UC9-HP-rkp"/>
                     <navigationBar key="navigationBar" contentMode="scaleToFill" id="1DV-yf-Ffx">
@@ -344,7 +344,7 @@
                 </navigationController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="usZ-Ef-222" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="1981" y="-1612"/>
+            <point key="canvasLocation" x="2907.6335877862593" y="-1612.6760563380283"/>
         </scene>
         <!--原生页-->
         <scene sceneID="Onk-VN-3HD">
@@ -867,7 +867,7 @@
                 <placeholder placeholderIdentifier="IBFirstResponder" id="Pja-OJ-Pik" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
                 <exit id="sLU-r7-RkV" userLabel="Exit" sceneMemberID="exit"/>
             </objects>
-            <point key="canvasLocation" x="5790" y="-1613"/>
+            <point key="canvasLocation" x="6715.2671755725187" y="-1613.3802816901409"/>
         </scene>
         <!--三页-->
         <scene sceneID="jUJ-Cb-l38">
@@ -1180,7 +1180,7 @@
                 <placeholder placeholderIdentifier="IBFirstResponder" id="oOj-WS-aWh" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
                 <exit id="wSj-gn-9BO" userLabel="Exit" sceneMemberID="exit"/>
             </objects>
-            <point key="canvasLocation" x="6853" y="-1613"/>
+            <point key="canvasLocation" x="7779.3893129770986" y="-1613.3802816901409"/>
         </scene>
         <!--手势页-->
         <scene sceneID="Abo-rl-6iC">
@@ -1372,6 +1372,23 @@
             </objects>
             <point key="canvasLocation" x="4460" y="-568"/>
         </scene>
+        <!--Tab Bar Controller-->
+        <scene sceneID="cqB-59-3Wm">
+            <objects>
+                <tabBarController automaticallyAdjustsScrollViewInsets="NO" id="A2W-jB-VZz" sceneMemberID="viewController">
+                    <toolbarItems/>
+                    <tabBar key="tabBar" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" id="pzo-CX-mr3">
+                        <autoresizingMask key="autoresizingMask"/>
+                        <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                    </tabBar>
+                    <connections>
+                        <segue destination="5RO-f9-0zr" kind="relationship" relationship="viewControllers" id="GnX-2t-hym"/>
+                    </connections>
+                </tabBarController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="wrp-qM-76H" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="1980.916030534351" y="-1612.6760563380283"/>
+        </scene>
     </scenes>
     <inferredMetricsTieBreakers>
         <segue reference="dli-Dy-hCo"/>
@@ -1379,7 +1396,7 @@
         <segue reference="Yfm-0L-x2M"/>
     </inferredMetricsTieBreakers>
     <resources>
-        <image name="icon-tab-home" width="25" height="25"/>
+        <image name="arkit" catalog="system" width="128" height="125"/>
         <image name="xmark" catalog="system" width="128" height="113"/>
         <systemColor name="systemBackgroundColor">
             <color white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>

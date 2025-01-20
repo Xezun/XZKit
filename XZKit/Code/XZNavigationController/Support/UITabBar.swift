@@ -35,62 +35,65 @@ extension UITabBar {
             }
             objc_setAssociatedObject(self, &_isFreezable, true, .OBJC_ASSOCIATION_COPY_NONATOMIC)
             
-            let TabBarClass = type(of: self)
-            if let FreezableTabBarClass = objc_getAssociatedObject(TabBarClass, &_FreezableTabBarClass) as? AnyClass {
-                _ = object_setClass(self, FreezableTabBarClass)
-            } else if let FreezableTabBarClass = xz_objc_createClass(TabBarClass, { (FreezableTabBarClass) in
-                xz_objc_class_copyMethods(XZNavigationControllerFreezableTabBar.self, FreezableTabBarClass)
+            let OldClass = type(of: self)
+            if let NewClass = objc_getAssociatedObject(OldClass, &_freezableTabBarClass) as? AnyClass {
+                _ = object_setClass(self, NewClass)
+            } else if let NewClass = xz_objc_createClass(OldClass, { (NewClass) in
+                xz_objc_class_copyMethods(XZUITabBar.self, NewClass)
             }) as? UITabBar.Type {
-                _ = object_setClass(self, FreezableTabBarClass)
-                objc_setAssociatedObject(TabBarClass, &_FreezableTabBarClass, FreezableTabBarClass, .OBJC_ASSOCIATION_ASSIGN)
+                _ = object_setClass(self, NewClass)
+                objc_setAssociatedObject(OldClass, &_freezableTabBarClass, NewClass, .OBJC_ASSOCIATION_ASSIGN)
             } else {
-                print("无法自定义\(TabBarClass)，转场动画时 tabBar 的动画可能异常")
+                print("无法自定义\(OldClass)，转场动画时 tabBar 的动画可能异常")
             }
         }
     }
-    
+
 }
 
-private class XZNavigationControllerFreezableTabBar: UITabBar {
+// 在 objc_msgSendSuper 中使用 self.class 获取当前对象的 Class 那么子类在调用这个方法时就会产生死循环。
+// 但是在这里，通过实际使用的是动态派生的类，没有子类，可以不用考虑这个问题。
+
+private class XZUITabBar: UITabBar {
 
     /// 自定义类的 frame 属性，在修改值时，先判断当前是否允许修改。
     open override var frame: CGRect {
         get {
-            return xz_objc_msgSendSuper(self, rect: #selector(getter: self.frame))
+            return xz_objc_msgSendSuper(self, type(of: self), rect: #selector(getter: self.frame))
         }
         set {
             if isFrozen {
                 return
             }
-            xz_objc_msgSendSuper(self, v: #selector(setter: self.frame), rect: newValue)
+            xz_objc_msgSendSuper(self, type(of: self), v: #selector(setter: self.frame), rect: newValue)
         }
     }
 
     open override var bounds: CGRect {
         get {
-            return xz_objc_msgSendSuper(self, rect: #selector(getter: self.bounds))
+            return xz_objc_msgSendSuper(self, type(of: self), rect: #selector(getter: self.bounds))
         }
         set {
             if isFrozen {
                 return
             }
-            xz_objc_msgSendSuper(self, v: #selector(setter: self.bounds), rect: newValue)
+            xz_objc_msgSendSuper(self, type(of: self), v: #selector(setter: self.bounds), rect: newValue)
         }
     }
 
     open override var isHidden: Bool {
         get {
-            return xz_objc_msgSendSuper(self, b: #selector(getter: self.isHidden))
+            return xz_objc_msgSendSuper(self, type(of: self), b: #selector(getter: self.isHidden))
         }
         set {
             if isFrozen {
                 return
             }
-            xz_objc_msgSendSuper(self, v: #selector(setter: self.isHidden), b: newValue)
+            xz_objc_msgSendSuper(self, type(of: self), v: #selector(setter: self.isHidden), b: newValue)
         }
     }
 }
 
 @MainActor private var _isFrozen = 0
-@MainActor private var _FreezableTabBarClass = 0
+@MainActor private var _freezableTabBarClass = 0
 @MainActor private var _isFreezable = 0

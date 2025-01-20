@@ -77,7 +77,7 @@ extension Example17NextViewController: XZNavigationGestureDrivable {
     
     func navigationController(_ navigationController: UINavigationController, viewControllerForGestureNavigation operation: UINavigationController.Operation) -> UIViewController? {
         if operation == .push {
-            let sb = UIStoryboard.init(name: "Example17ViewController", bundle: nil)
+            let sb = UIStoryboard.init(name: "Example17", bundle: nil)
             let vc = sb.instantiateViewController(withIdentifier: "last")
             if let navigationBar = (vc as? XZNavigationBarCustomizable)?.navigationBarIfLoaded {
                 navigationBar.isHidden = nextHiddenSwitch.isOn
