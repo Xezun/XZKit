@@ -11,12 +11,7 @@
 NS_ASSUME_NONNULL_BEGIN
 
 @interface XZMocoaCollectionViewProxy : NSProxy <XZMocoaCollectionView>
-@property (nonatomic, unsafe_unretained, readonly) id<XZMocoaCollectionView> collectionView;
-@property (nonatomic, strong, nullable) XZMocoaCollectionViewModel *viewModel;
-@property (nonatomic, weak) id<UICollectionViewDelegate> delegate;
-@property (nonatomic, weak) id<UICollectionViewDataSource> dataSource;
-- (instancetype)init NS_UNAVAILABLE;
-- (instancetype)initWithCollectionView:(id<XZMocoaCollectionView>)collectionView;
++ (id)alloc NS_UNAVAILABLE;
 @end
 
 @interface XZMocoaCollectionViewProxy (UICollectionViewDelegate) <UICollectionViewDelegate>

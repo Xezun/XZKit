@@ -22,6 +22,7 @@ NS_ASSUME_NONNULL_BEGIN
 // XZMocoaTableViewCellViewModel
 
 @protocol XZMocoaTableView <XZMocoaListView>
+@optional
 @property (nonatomic, strong, nullable) __kindof XZMocoaTableViewModel *viewModel;
 @property (nonatomic, strong) IBOutlet UITableView *contentView;
 @end

@@ -21,9 +21,6 @@ NS_ASSUME_NONNULL_BEGIN
 - (instancetype)initWithLayout:(UICollectionViewLayout *)layout;
 - (instancetype)initWithFrame:(CGRect)frame layout:(UICollectionViewLayout *)layout;
 - (instancetype)initWithFrame:(CGRect)frame;
-
-@property (nonatomic, weak) id<UICollectionViewDelegate> delegate;
-@property (nonatomic, weak) id<UICollectionViewDataSource> dataSource;
 @end
 
 NS_ASSUME_NONNULL_END

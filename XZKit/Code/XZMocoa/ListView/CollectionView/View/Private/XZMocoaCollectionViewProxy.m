@@ -24,102 +24,36 @@ static NSString *UIElementKindFromMocoaKind(XZMocoaKind kind) {
 
 @implementation XZMocoaCollectionViewProxy
 
-- (NSMethodSignature *)methodSignatureForSelector:(SEL)aSelector {
-    id const delegte = self.delegate;
-    if (delegte != nil) {
-        struct objc_method_description method = protocol_getMethodDescription(@protocol(UICollectionViewDelegate), aSelector, NO, YES);
-        if (method.name != NULL && method.types != NULL) {
-            return [delegte methodSignatureForSelector:aSelector];
-        }
-        method = protocol_getMethodDescription(@protocol(UICollectionViewDelegateFlowLayout), aSelector, NO, YES);
-        if (method.name != NULL && method.types != NULL) {
-            return [delegte methodSignatureForSelector:aSelector];
-        }
-    }
+@dynamic viewModel, contentView;
+
+- (void)contentViewWillChange {
+    xz_objc_msgSendSuper_void(self, @selector(contentViewWillChange));
     
-    id const dataSource = self.dataSource;
-    if (dataSource != nil) {
-        struct objc_method_description method = protocol_getMethodDescription(@protocol(UICollectionViewDataSource), aSelector, NO, YES);
-        if (method.name != NULL && method.types != NULL) {
-            return [dataSource methodSignatureForSelector:aSelector];
-        }
-    }
+    UICollectionView * const collectionView = self.contentView;
+    collectionView.delegate = nil;
+    collectionView.dataSource = nil;
+}
+
+- (void)contentViewDidChange {
+    xz_objc_msgSendSuper_void(self, @selector(contentViewDidChange));
     
-    return [super methodSignatureForSelector:aSelector];
+    UICollectionView * const collectionView = self.contentView;
+    collectionView.delegate   = self;
+    collectionView.dataSource = self;
 }
 
-- (void)forwardInvocation:(NSInvocation *)invocation {
-    id const delegte = self.delegate;
-    if (delegte != nil) {
-        struct objc_method_description method = protocol_getMethodDescription(@protocol(UICollectionViewDelegate), invocation.selector, NO, YES);
-        if (method.name != NULL && method.types != NULL) {
-            [invocation invokeWithTarget:delegte];
-            return;
-        }
-        method = protocol_getMethodDescription(@protocol(UICollectionViewDelegateFlowLayout), invocation.selector, NO, YES);
-        if (method.name != NULL && method.types != NULL) {
-            [invocation invokeWithTarget:delegte];
-            return;
-        }
-    }
+- (void)viewModelDidChange {
+    xz_objc_msgSendSuper_void(self, @selector(viewModelDidChange));
     
-    id const dataSource = self.dataSource;
-    if (dataSource != nil) {
-        struct objc_method_description method = protocol_getMethodDescription(@protocol(UICollectionViewDataSource), invocation.selector, NO, YES);
-        if (method.name != NULL && method.types != NULL) {
-            [invocation invokeWithTarget:_dataSource];
-            return;
+    // 刷新视图。
+    UICollectionView * const collectionView = self.contentView;
+    if (@available(iOS 11.0, *)) {
+        if (collectionView && !collectionView.hasUncommittedUpdates) {
+            [collectionView reloadData];
         }
+    } else {
+        [collectionView reloadData];
     }
-}
-
-- (BOOL)respondsToSelector:(SEL)aSelector {
-    if ([super respondsToSelector:aSelector]) {
-        return YES;
-    }
-    id const delegte = self.delegate;
-    if (delegte != nil) {
-        struct objc_method_description method = protocol_getMethodDescription(@protocol(UICollectionViewDelegate), aSelector, NO, YES);
-        if (method.name != NULL && method.types != NULL) {
-            return [delegte respondsToSelector:aSelector];
-        }
-        method = protocol_getMethodDescription(@protocol(UICollectionViewDelegateFlowLayout), aSelector, NO, YES);
-        if (method.name != NULL && method.types != NULL) {
-            return [delegte respondsToSelector:aSelector];
-        }
-    }
-    
-    id const dataSource = self.dataSource;
-    if (dataSource != nil) {
-        struct objc_method_description method = protocol_getMethodDescription(@protocol(UICollectionViewDataSource), aSelector, NO, YES);
-        if (method.name != NULL && method.types != NULL) {
-            return [dataSource respondsToSelector:aSelector];
-        }
-    }
-    return NO;
-}
-
-- (instancetype)initWithCollectionView:(id<XZMocoaCollectionView>)collectionView {
-    if (self) {
-        _collectionView = collectionView;
-    }
-    return self;
-}
-
-- (XZMocoaCollectionViewModel *)viewModel {
-    return _collectionView.viewModel;
-}
-
-- (void)setViewModel:(XZMocoaCollectionViewModel *)viewModel {
-    _collectionView.viewModel = viewModel;
-}
-
-- (UICollectionView *)contentView {
-    return _collectionView.contentView;
-}
-
-- (void)setContentView:(UICollectionView *)contentView {
-    _collectionView.contentView = contentView;
 }
 
 - (void)registerCellWithModule:(XZMocoaModule *)module {
@@ -177,23 +111,23 @@ static NSString *UIElementKindFromMocoaKind(XZMocoaKind kind) {
 
 - (void)collectionView:(UICollectionView *)collectionView didSelectItemAtIndexPath:(NSIndexPath *)indexPath {
     UICollectionViewCell<XZMocoaCollectionViewCell> *cell = (id)[collectionView cellForItemAtIndexPath:indexPath];
-    [cell collectionView:_collectionView didSelectItemAtIndexPath:indexPath];
+    [cell collectionView:self didSelectItemAtIndexPath:indexPath];
 }
 
 - (void)collectionView:(UICollectionView *)collectionView willDisplayCell:(UICollectionViewCell<XZMocoaCollectionViewCell> *)cell forItemAtIndexPath:(NSIndexPath *)indexPath {
-    [cell collectionView:_collectionView willDisplayItemAtIndexPath:indexPath];
+    [cell collectionView:self willDisplayItemAtIndexPath:indexPath];
 }
 
 - (void)collectionView:(UICollectionView *)collectionView didEndDisplayingCell:(UICollectionViewCell<XZMocoaCollectionViewCell> *)cell forItemAtIndexPath:(NSIndexPath *)indexPath {
-    [cell collectionView:_collectionView didEndDisplayingItemAtIndexPath:indexPath];
+    [cell collectionView:self didEndDisplayingItemAtIndexPath:indexPath];
 }
 
 - (void)collectionView:(UICollectionView *)collectionView willDisplaySupplementaryView:(UICollectionReusableView<XZMocoaCollectionViewSupplementaryView> *)view forElementKind:(NSString *)elementKind atIndexPath:(NSIndexPath *)indexPath {
-    [view collectionView:_collectionView willDisplaySupplementaryViewAtIndexPath:indexPath];
+    [view collectionView:self willDisplaySupplementaryViewAtIndexPath:indexPath];
 }
 
 - (void)collectionView:(UICollectionView *)collectionView didEndDisplayingSupplementaryView:(UICollectionReusableView<XZMocoaCollectionViewSupplementaryView> *)view forElementOfKind:(NSString *)elementKind atIndexPath:(NSIndexPath *)indexPath {
-    [view collectionView:_collectionView didEndDisplayingSupplementaryViewAtIndexPath:indexPath];
+    [view collectionView:self didEndDisplayingSupplementaryViewAtIndexPath:indexPath];
 }
 
 @end

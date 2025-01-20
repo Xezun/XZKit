@@ -11,150 +11,41 @@
 @import XZDefines;
 @import ObjectiveC;
 
-/// UITableViewDelegate 中的所有方法，包括 UIScrollViewDelegate 协议。
-static NSHashTable *_UITableViewDelegateMethods;
-/// UITableViewDataSource 中的所有方法。
-static NSHashTable *_UITableViewDataSourceMethods;
+@implementation XZMocoaTableViewProxy
 
-/// XZMocoaTableView 已实现的 UITableViewDelegate 协议中的方法。
-static NSHashTable *_XZMocoaTableViewDelegateMethods;
-/// XZMocoaTableView 已实现的 UITableViewDataSource 协议中的方法。
-static NSHashTable *_XZMocoaTableViewDataSourceMethods;
+@dynamic viewModel, contentView;
 
-
-@implementation XZMocoaTableViewProxy {
-    /// delegate 对象所有已实现的 UITableViewDelegate 方法。
-    NSHashTable *_delegateMethods;
-    /// dataSouce 对象所有已实现的 UITableViewDataSource 方法。
-    NSHashTable *_dataSourceMethods;
-}
-
-- (NSMethodSignature *)methodSignatureForSelector:(SEL)aSelector {
-    if (NSHashGet(_UITableViewDelegateMethods, aSelector)) {
-        if (_delegateMethods && NSHashGet(_delegateMethods, aSelector) != NULL) {
-            id const _delegate = self.delegate;
-            return [_delegate methodSignatureForSelector:aSelector];
-        }
-        if (NSHashGet(_XZMocoaTableViewDelegateMethods, aSelector) != NULL) {
-            return [super methodSignatureForSelector:aSelector];
-        }
-        return nil;
-    }
+- (void)viewModelDidChange {
+    xz_objc_msgSendSuper_void(self, @selector(viewModelDidChange));
     
-    if (NSHashGet(_UITableViewDataSourceMethods, aSelector)) {
-        if (_dataSourceMethods && NSHashGet(_dataSourceMethods, aSelector) != NULL) {
-            id const _dataSource = self.dataSource;
-            return [_dataSource methodSignatureForSelector:aSelector];
-        }
-        if (NSHashGet(_XZMocoaTableViewDataSourceMethods, aSelector) != NULL) {
-            return [super methodSignatureForSelector:aSelector];
-        }
-        return nil;
-    }
+    XZMocoaTableViewModel * const _viewModel = self.viewModel;
+    _viewModel.delegate = self;
     
-    return nil;
+    // 刷新视图。
+    UITableView * const tableView = self.contentView;
+    if (@available(iOS 11.0, *)) {
+        if (tableView && !tableView.hasUncommittedUpdates) {
+            [tableView reloadData];
+        }
+    } else {
+        [tableView reloadData];
+    }
 }
 
-- (void)forwardInvocation:(NSInvocation *)invocation {
-    SEL const aSelector = invocation.selector;
+- (void)contentViewWillChange {
+    xz_objc_msgSendSuper_void(self, @selector(contentViewWillChange));
     
-    if (NSHashGet(_UITableViewDelegateMethods, aSelector)) {
-        id const _delegate = self.delegate;
-        if (_delegateMethods && NSHashGet(_delegateMethods, aSelector) != NULL) {
-            if (_delegate) {
-                [invocation invokeWithTarget:_delegate];
-            }
-            return;
-        }
-        if (NSHashGet(_XZMocoaTableViewDelegateMethods, aSelector) != NULL) {
-            return [invocation invokeWithTarget:self];
-        }
-        return;
-    }
+    UITableView * const tableView = self.contentView;
+    tableView.delegate = nil;
+    tableView.dataSource = nil;
+}
+
+- (void)contentViewDidChange {
+    xz_objc_msgSendSuper_void(self, @selector(contentViewDidChange));
     
-    if (NSHashGet(_UITableViewDataSourceMethods, aSelector)) {
-        id const _dataSource = self.dataSource;
-        if (_dataSourceMethods && NSHashGet(_dataSourceMethods, aSelector) != NULL) {
-            if (_delegate) {
-                [invocation invokeWithTarget:_dataSource];
-            }
-            return;
-        }
-        if (NSHashGet(_XZMocoaTableViewDataSourceMethods, aSelector) != NULL) {
-            return [invocation invokeWithTarget:self];
-        }
-        return;
-    }
-}
-
-- (BOOL)respondsToSelector:(SEL)aSelector {
-    if (NSHashGet(_UITableViewDelegateMethods, aSelector) != NULL) {
-        if (_delegateMethods && NSHashGet(_delegateMethods, aSelector) != NULL) {
-            return YES;
-        }
-        if (NSHashGet(_XZMocoaTableViewDelegateMethods, aSelector) != NULL) {
-            return YES;
-        }
-        return NO;
-    }
-    
-    if (NSHashGet(_UITableViewDataSourceMethods, aSelector) != NULL) {
-        if (_dataSourceMethods && NSHashGet(_dataSourceMethods, aSelector) != NULL) {
-            return YES;
-        }
-        if (NSHashGet(_XZMocoaTableViewDataSourceMethods, aSelector) != NULL) {
-            return YES;
-        }
-        return NO;
-    }
-    
-    return NO;
-}
-
-- (instancetype)initWithTableView:(id<XZMocoaTableView>)tableView {
-    if (self) {
-        _tableView = tableView;
-        
-        static dispatch_once_t onceToken;
-        dispatch_once(&onceToken, ^{
-            _UITableViewDelegateMethods = xz_objc_protocol_getInstanceMethods(@protocol(UITableViewDelegate));
-            _UITableViewDataSourceMethods = xz_objc_protocol_getInstanceMethods(@protocol(UITableViewDataSource));
-            
-            _XZMocoaTableViewDelegateMethods = xz_objc_class_getImplementedProtocolMethods([XZMocoaTableViewProxy class], _UITableViewDelegateMethods);
-            _XZMocoaTableViewDataSourceMethods = xz_objc_class_getImplementedProtocolMethods([XZMocoaTableViewProxy class], _UITableViewDataSourceMethods);
-        });
-    }
-    return self;
-}
-
-- (void)setDelegate:(id<UITableViewDelegate>)delegate {
-    if (_delegate != delegate) {
-        _delegate = delegate;
-        _delegateMethods = xz_objc_class_getImplementedProtocolMethods([delegate class], _UITableViewDelegateMethods);
-    }
-}
-
-- (void)setDataSource:(id<UITableViewDataSource>)dataSource {
-    if (_dataSource != dataSource) {
-        _dataSource = dataSource;
-        _dataSourceMethods = xz_objc_class_getImplementedProtocolMethods([dataSource class], _UITableViewDataSourceMethods);
-    }
-}
-
-- (XZMocoaTableViewModel *)viewModel {
-    return _tableView.viewModel;
-}
-
-- (void)setViewModel:(XZMocoaTableViewModel *)viewModel {
-    _tableView.viewModel = viewModel;
-}
-
-- (UITableView *)contentView {
-    return _tableView.contentView;
-}
-
-- (void)setContentView:(UITableView *)contentView {
-    _tableView.contentView = contentView;
+    UITableView * const tableView = self.contentView;
+    tableView.delegate   = self;
+    tableView.dataSource = self;
 }
 
 - (void)registerCellWithModule:(XZMocoaModule *)module {
@@ -276,16 +167,16 @@ static NSHashTable *_XZMocoaTableViewDataSourceMethods;
 }
 
 - (void)tableView:(UITableView *)tableView willDisplayCell:(UITableView<XZMocoaTableViewCell> *)cell forRowAtIndexPath:(NSIndexPath *)indexPath {
-    [cell tableView:_tableView willDisplayRowAtIndexPath:indexPath];
+    [cell tableView:self willDisplayRowAtIndexPath:indexPath];
 }
 
 - (void)tableView:(UITableView *)tableView didEndDisplayingCell:(UITableView<XZMocoaTableViewCell> *)cell forRowAtIndexPath:(NSIndexPath*)indexPath {
-    [cell tableView:_tableView didEndDisplayingRowAtIndexPath:indexPath];
+    [cell tableView:self didEndDisplayingRowAtIndexPath:indexPath];
 }
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
     UITableView<XZMocoaTableViewCell> *cell = (id)[tableView cellForRowAtIndexPath:indexPath];
-    [cell tableView:_tableView didSelectRowAtIndexPath:indexPath];
+    [cell tableView:self didSelectRowAtIndexPath:indexPath];
 }
 
 @end
@@ -294,54 +185,54 @@ static NSHashTable *_XZMocoaTableViewDataSourceMethods;
 @implementation XZMocoaTableViewProxy (XZMocoaTableViewModelDelegate)
 
 - (void)tableViewModel:(XZMocoaTableViewModel *)tableViewModel didReloadData:(void *)foo {
-    [_tableView.contentView reloadData];
+    [self.contentView reloadData];
 }
 
 - (void)tableViewModel:(XZMocoaTableViewModel *)tableViewModel didReloadCellsAtIndexPaths:(NSArray<NSIndexPath *> *)indexPaths {
     UITableViewRowAnimation const rowAnimation = tableViewModel.rowAnimation;
-    [_tableView.contentView reloadRowsAtIndexPaths:indexPaths withRowAnimation:rowAnimation];
+    [self.contentView reloadRowsAtIndexPaths:indexPaths withRowAnimation:rowAnimation];
 }
 
 - (void)tableViewModel:(XZMocoaTableViewModel *)tableViewModel didInsertCellsAtIndexPaths:(NSArray<NSIndexPath *> *)indexPaths {
     UITableViewRowAnimation const rowAnimation = tableViewModel.rowAnimation;
-    [_tableView.contentView insertRowsAtIndexPaths:indexPaths withRowAnimation:rowAnimation];
+    [self.contentView insertRowsAtIndexPaths:indexPaths withRowAnimation:rowAnimation];
 }
 
 - (void)tableViewModel:(XZMocoaTableViewModel *)tableViewModel didDeleteCellsAtIndexPaths:(NSArray<NSIndexPath *> *)indexPaths {
     UITableViewRowAnimation const rowAnimation = tableViewModel.rowAnimation;
-    [_tableView.contentView deleteRowsAtIndexPaths:indexPaths withRowAnimation:rowAnimation];
+    [self.contentView deleteRowsAtIndexPaths:indexPaths withRowAnimation:rowAnimation];
 }
 
 - (void)tableViewModel:(XZMocoaTableViewModel *)tableViewModel didMoveCellAtIndexPath:(NSIndexPath *)indexPath toIndexPath:(NSIndexPath *)newIndexPath {
-    [_tableView.contentView moveRowAtIndexPath:indexPath toIndexPath:newIndexPath];
+    [self.contentView moveRowAtIndexPath:indexPath toIndexPath:newIndexPath];
 }
 
 - (void)tableViewModel:(XZMocoaTableViewModel *)tableViewModel didReloadSectionsAtIndexes:(NSIndexSet *)sections {
     UITableViewRowAnimation const rowAnimation = tableViewModel.rowAnimation;
-    [_tableView.contentView reloadSections:sections withRowAnimation:rowAnimation];
+    [self.contentView reloadSections:sections withRowAnimation:rowAnimation];
 }
 
 - (void)tableViewModel:(XZMocoaTableViewModel *)tableViewModel didDeleteSectionsAtIndexes:(NSIndexSet *)sections {
     UITableViewRowAnimation const rowAnimation = tableViewModel.rowAnimation;
-    [_tableView.contentView deleteSections:sections withRowAnimation:rowAnimation];
+    [self.contentView deleteSections:sections withRowAnimation:rowAnimation];
 }
 
 - (void)tableViewModel:(XZMocoaTableViewModel *)tableViewModel didInsertSectionsAtIndexes:(NSIndexSet *)sections {
     UITableViewRowAnimation const rowAnimation = tableViewModel.rowAnimation;
-    [_tableView.contentView insertSections:sections withRowAnimation:rowAnimation];
+    [self.contentView insertSections:sections withRowAnimation:rowAnimation];
 }
 
 - (void)tableViewModel:(XZMocoaTableViewModel *)tableViewModel didMoveSectionAtIndex:(NSInteger)section toIndex:(NSInteger)newSection {
-    [_tableView.contentView moveSection:section toSection:newSection];
+    [self.contentView moveSection:section toSection:newSection];
 }
 
 - (void)tableViewModel:(XZMocoaTableViewModel *)tableViewModel didPerformBatchUpdates:(void (^NS_NOESCAPE)(void))batchUpdates completion:(void (^ _Nullable)(BOOL))completion {
     if (@available(iOS 11.0, *)) {
-        [_tableView.contentView performBatchUpdates:batchUpdates completion:completion];
+        [self.contentView performBatchUpdates:batchUpdates completion:completion];
     } else {
-        [_tableView.contentView beginUpdates];
+        [self.contentView beginUpdates];
         batchUpdates();
-        [_tableView.contentView endUpdates];
+        [self.contentView endUpdates];
         if (completion) dispatch_async(dispatch_get_main_queue(), ^{ completion(YES); });
     }
 }

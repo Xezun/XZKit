@@ -10,13 +10,10 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
+/// UITableView 在调用 delegate 和 dataSource 方法时，使用的是方法 imp 缓存，不会方法转发流程。
+/// 因此 delegate 和 dataSource 必须有方法的实现，否则无法接收事件。
 @interface XZMocoaTableViewProxy : NSProxy <XZMocoaTableView>
-@property (nonatomic, unsafe_unretained, readonly) id<XZMocoaTableView> tableView;
-@property (nonatomic, strong, nullable) XZMocoaTableViewModel *viewModel;
-@property (nonatomic, weak) id<UITableViewDelegate> delegate;
-@property (nonatomic, weak) id<UITableViewDataSource> dataSource;
-- (instancetype)init NS_UNAVAILABLE;
-- (instancetype)initWithTableView:(id<XZMocoaTableView>)tableView;
++ (id)alloc NS_UNAVAILABLE;
 @end
 
 /// 协议 UITableViewDataSource 中已实现方法列表。

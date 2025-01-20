@@ -41,8 +41,6 @@
 - (void)viewDidLoad {
     [super viewDidLoad];
     
-    self.tableView.delegate = self;
-    
     self.tableView.contentView.xz_headerRefreshView.delegate = self;
     self.tableView.contentView.xz_footerRefreshView.delegate = self;
     

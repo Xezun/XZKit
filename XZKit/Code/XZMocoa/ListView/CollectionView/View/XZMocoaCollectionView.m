@@ -12,8 +12,27 @@
 #import "XZMocoaCollectionViewPlaceholderSupplementaryView.h"
 #import "XZMocoaCollectionViewProxy.h"
 
-@implementation XZMocoaCollectionView {
-    XZMocoaCollectionViewProxy *_proxy;
+@implementation XZMocoaCollectionView
+
++ (void)initialize {
+    if (self == [XZMocoaCollectionView class]) {
+        class_addProtocol(self, @protocol(UICollectionViewDelegate));
+        class_addProtocol(self, @protocol(UICollectionViewDelegateFlowLayout));
+        class_addProtocol(self, @protocol(UICollectionViewDataSource));
+        class_addProtocol(self, @protocol(XZMocoaCollectionViewModelDelegate));
+        
+        unsigned int count = 0;
+        Method *list = class_copyMethodList([XZMocoaCollectionViewProxy class], &count);
+        for (unsigned int i = 0; i < count; i++) {
+            Method const method = list[i];
+            SEL const selector = method_getName(method);
+            IMP const implemnt = method_getImplementation(method);
+            const char * const types = method_getTypeEncoding(method);
+            if (!class_addMethod(self, selector, implemnt, types)) {
+                NSLog(@"为 %@ 添加方法 %@ 失败", self, NSStringFromSelector(selector));
+            }
+        }
+    }
 }
 
 @dynamic viewModel, contentView;
@@ -46,56 +65,6 @@
 - (instancetype)initWithFrame:(CGRect)frame {
     UICollectionViewFlowLayout *layout = [[UICollectionViewFlowLayout alloc] init];
     return [self initWithCollectionViewClass:UICollectionView.class layout:layout];
-}
-
-- (void)contentViewWillChange {
-    [super contentViewWillChange];
-    
-    UICollectionView * const collectionView = self.contentView;
-    collectionView.delegate = nil;
-    collectionView.dataSource = nil;
-}
-
-- (void)contentViewDidChange {
-    [super contentViewDidChange];
-    
-    UICollectionView * const collectionView = self.contentView;
-    collectionView.delegate   = _proxy;
-    collectionView.dataSource = _proxy;
-}
-
-- (void)viewModelDidChange {
-    [super viewModelDidChange];
-    
-    // 刷新视图。
-    UICollectionView * const collectionView = self.contentView;
-    if (@available(iOS 11.0, *)) {
-        if (collectionView && !collectionView.hasUncommittedUpdates) {
-            [collectionView reloadData];
-        }
-    } else {
-        [collectionView reloadData];
-    }
-}
-
-- (void)registerCellWithModule:(XZMocoaModule *)module {
-    [_proxy registerCellWithModule:module];
-}
-
-- (id<UICollectionViewDelegate>)delegate {
-    return _proxy.delegate;
-}
-
-- (void)setDelegate:(id<UICollectionViewDelegate>)delegate {
-    _proxy.delegate = delegate;
-}
-
-- (id<UICollectionViewDataSource>)dataSource {
-    return _proxy.dataSource;
-}
-
-- (void)setDataSource:(id<UICollectionViewDataSource>)dataSource {
-    _proxy.dataSource = dataSource;
 }
 
 @end
