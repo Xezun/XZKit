@@ -50,4 +50,13 @@ NS_ASSUME_NONNULL_BEGIN
 
 @end
 
+@interface XZMocoaTableView (UITableViewDataSource) <UITableViewDataSource>
+@end
+
+@interface XZMocoaTableView (UITableViewDelegate) <UITableViewDelegate>
+@end
+
+@interface XZMocoaTableView (XZMocoaTableViewModelDelegate) <XZMocoaTableViewModelDelegate>
+@end
+
 NS_ASSUME_NONNULL_END

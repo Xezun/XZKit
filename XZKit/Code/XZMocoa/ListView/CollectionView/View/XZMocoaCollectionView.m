@@ -16,11 +16,6 @@
 
 + (void)initialize {
     if (self == [XZMocoaCollectionView class]) {
-        class_addProtocol(self, @protocol(UICollectionViewDelegate));
-        class_addProtocol(self, @protocol(UICollectionViewDelegateFlowLayout));
-        class_addProtocol(self, @protocol(UICollectionViewDataSource));
-        class_addProtocol(self, @protocol(XZMocoaCollectionViewModelDelegate));
-        
         unsigned int count = 0;
         Method *list = class_copyMethodList([XZMocoaCollectionViewProxy class], &count);
         for (unsigned int i = 0; i < count; i++) {

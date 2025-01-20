@@ -13,4 +13,7 @@ NS_ASSUME_NONNULL_BEGIN
 @interface XZMocoaTableViewController : UITableViewController <XZMocoaTableView>
 @end
 
+@interface XZMocoaTableViewController (XZMocoaTableViewModelDelegate) <XZMocoaTableViewModelDelegate>
+@end
+
 NS_ASSUME_NONNULL_END

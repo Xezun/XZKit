@@ -19,10 +19,6 @@
 
 + (void)initialize {
     if (self == [XZMocoaTableView class]) {
-        class_addProtocol(self, @protocol(UITableViewDelegate));
-        class_addProtocol(self, @protocol(UITableViewDataSource));
-        class_addProtocol(self, @protocol(XZMocoaTableViewModelDelegate));
-        
         unsigned int count = 0;
         Method *list = class_copyMethodList([XZMocoaTableViewProxy class], &count);
         for (unsigned int i = 0; i < count; i++) {

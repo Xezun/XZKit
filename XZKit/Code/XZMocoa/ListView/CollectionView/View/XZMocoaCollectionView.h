@@ -23,4 +23,16 @@ NS_ASSUME_NONNULL_BEGIN
 - (instancetype)initWithFrame:(CGRect)frame;
 @end
 
+@interface XZMocoaCollectionView (XZMocoaCollectionViewModelDelegate) <XZMocoaCollectionViewModelDelegate>
+@end
+
+@interface XZMocoaCollectionView (UICollectionViewDelegate) <UICollectionViewDelegate>
+@end
+
+@interface XZMocoaCollectionView (UICollectionViewDataSource) <UICollectionViewDataSource>
+@end
+
+@interface XZMocoaCollectionView (UICollectionViewDelegateFlowLayout) <UICollectionViewDelegateFlowLayout>
+@end
+
 NS_ASSUME_NONNULL_END
