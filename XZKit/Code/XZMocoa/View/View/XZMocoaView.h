@@ -72,7 +72,7 @@ NS_SWIFT_UI_ACTOR @protocol XZMocoaView <NSObject>
 + (nullable __kindof UIView *)viewWithMocoaURL:(NSURL *)url frame:(CGRect)frame;
 + (nullable __kindof UIView *)viewWithMocoaURL:(NSURL *)url;
 - (instancetype)initWithMocoaOptions:(XZMocoaOptions *)options frame:(CGRect)frame;
-- (void)awakeWithMocoaOptions:(XZMocoaOptions *)options frame:(CGRect)frame;
+- (void)awakeFromNibWithMocoaOptions:(XZMocoaOptions *)options frame:(CGRect)frame;
 @end
 
 

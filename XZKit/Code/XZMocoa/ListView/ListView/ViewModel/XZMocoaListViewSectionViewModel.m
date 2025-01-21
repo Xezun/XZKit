@@ -562,39 +562,44 @@ typedef void(^XZMocoaListDelayedUpdates)(XZMocoaListViewSectionViewModel *self);
     XZMocoaName      const name   = model.mocoaName;
     XZMocoaModule *  const module = [self.module submoduleIfLoadedForKind:XZMocoaKindCell forName:name];
     
-    NSString *identifier = nil;
-    Class     VMClass    = module.viewModelClass;
-    if (VMClass) {
-        // 1、使用当前 section 的具名 cell
-        identifier = XZMocoaReuseIdentifier(section, XZMocoaKindCell, name);
-    } else if (name.length > 0) {
-        // 2、使用当前 section 的默认 cell
-        XZMocoaModule *defaultModule = [self.module submoduleIfLoadedForKind:XZMocoaKindCell forName:XZMocoaNameDefault];
-        VMClass = defaultModule.viewModelClass;
-        if (VMClass) {
-            identifier = XZMocoaReuseIdentifier(section, XZMocoaKindCell, XZMocoaNameDefault);
-        }
-    }
-    if (VMClass == Nil && section.length > 0) {
-        XZMocoaModule *sectionModule = [self.superViewModel.module submoduleIfLoadedForKind:XZMocoaKindSection forName:XZMocoaNameDefault];
-        XZMocoaModule *cellModule = [sectionModule submoduleIfLoadedForKind:XZMocoaKindCell forName:name];
-        VMClass = cellModule.viewModelClass;
-        if (VMClass) {
-            // 3、使用默认 section 的具名 cell
-            identifier = XZMocoaReuseIdentifier(XZMocoaNameDefault, XZMocoaKindCell, name);
-        } else if (name.length > 0) {
-            // 4、使用默认 section 的默认 cell
-            cellModule = [sectionModule submoduleIfLoadedForKind:XZMocoaKindCell forName:XZMocoaNameDefault];
-            VMClass = cellModule.viewModelClass;
-            if (VMClass) {
-                identifier = XZMocoaReuseIdentifier(XZMocoaNameDefault, XZMocoaKindCell, XZMocoaNameDefault);
+    NSString *identifier = nil; // reuseIdentifier(nil, module, section, name);
+    Class     VMClass    = Nil; // module.viewModelClass;
+    
+    switch (module.viewCategory) {
+        case XZMocoaModuleViewCategoryNib:
+        case XZMocoaModuleViewCategoryClass:
+        case XZMocoaModuleViewCategoryStoryboardCell: {
+            // 已注册视图，视图的重用标记符已确定
+            identifier = module.viewReuseIdentifier ?: XZMocoaReuseIdentifier(section, XZMocoaKindCell, name);
+            // 已注册 cell 视图，则查找视图模型
+            // 按照 currentSection_currentCell -> currentSection_defaultCell -> defaultSection_currentCell -> defaultSection_defaultCell -> placeholder 的顺序查找视图模型
+            VMClass = module.viewModelClass; // currentSection_currentCell
+            if (VMClass == Nil) {
+                // 查询 currentSection_defaultCell
+                VMClass = [self.module submoduleIfLoadedForKind:XZMocoaKindCell forName:XZMocoaNameDefault].viewModelClass;
+                if (VMClass == Nil) {
+                    XZMocoaModule * const defaultSectionModule = [self.superViewModel.module submoduleIfLoadedForKind:XZMocoaKindSection forName:XZMocoaNameDefault];
+                    // 查询 defaultSection_currentCell
+                    VMClass = [defaultSectionModule submoduleIfLoadedForKind:XZMocoaKindCell forName:name].viewModelClass;
+                    if (VMClass == Nil) {
+                        // 查询 defaultSection_defaultCell
+                        VMClass = [defaultSectionModule submoduleIfLoadedForKind:XZMocoaKindCell forName:XZMocoaNameDefault].viewModelClass;
+                        if (VMClass == Nil) {
+                            // 找不到，使用占位视图（虽然已注册视图，但是没有视图模型，直接展示视图会有风险）
+                            VMClass = [self placeholderViewModelClassForCellAtIndex:index];
+                            identifier = XZMocoaReuseIdentifier(XZMocoaNamePlaceholder, XZMocoaKindCell, XZMocoaNamePlaceholder);
+                        }
+                    }
+                }
             }
+            break;
         }
-    }
-    if (VMClass == Nil) {
-        // 5、使用占位视图
-        VMClass = [self placeholderViewModelClassForCellAtIndex:index];
-        identifier = XZMocoaReuseIdentifier(XZMocoaNamePlaceholder, XZMocoaKindCell, XZMocoaNamePlaceholder);
+        default: {
+            // 未注册模块，或者未注册 cell 视图，使用占位视图
+            VMClass = [self placeholderViewModelClassForCellAtIndex:index];
+            identifier = XZMocoaReuseIdentifier(XZMocoaNamePlaceholder, XZMocoaKindCell, XZMocoaNamePlaceholder);
+            break;
+        }
     }
     
     XZMocoaListViewCellViewModel *viewModel = [[VMClass alloc] initWithModel:model];

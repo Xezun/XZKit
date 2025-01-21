@@ -180,18 +180,26 @@ static void xz_mocoa_copyMethod(Class const cls, SEL const target, SEL const sou
     if (module == nil) {
         return nil;
     }
-    if (module.viewNibName) {
-        UINib *nib = [UINib nibWithNibName:module.viewNibName bundle:module.viewNibBundle];
-        for (UIView *object in [nib instantiateWithOwner:nil options:nil]) {
-            if ([object isKindOfClass:module.viewNibClass]) {
-                XZMocoaOptions * const mocoaOptions = [[XZMocoaOptions alloc] initWithURL:url options:options];
-                [object awakeWithMocoaOptions:mocoaOptions frame:frame];
-                return object;
-            }
+    switch (module.viewCategory) {
+        case XZMocoaModuleViewCategoryClass: {
+            XZMocoaOptions * const mocoaOptions = [[XZMocoaOptions alloc] initWithURL:url options:options];
+            return [[module.viewClass alloc] initWithMocoaOptions:mocoaOptions frame:frame];
         }
+        case XZMocoaModuleViewCategoryNib: {
+            UINib *nib = [UINib nibWithNibName:module.viewNibName bundle:module.viewNibBundle];
+            Class const ViewClass = module.viewNibClass ?: self.class;
+            for (UIView *object in [nib instantiateWithOwner:nil options:nil]) {
+                if ([object isKindOfClass:ViewClass]) {
+                    XZMocoaOptions * const mocoaOptions = [[XZMocoaOptions alloc] initWithURL:url options:options];
+                    [object awakeFromNibWithMocoaOptions:mocoaOptions frame:frame];
+                    return object;
+                }
+            }
+            return nil;
+        }
+        default:
+            return nil;
     }
-    XZMocoaOptions * const mocoaOptions = [[XZMocoaOptions alloc] initWithURL:url options:options];
-    return [[module.viewClass alloc] initWithMocoaOptions:mocoaOptions frame:frame];
 }
 
 + (nullable __kindof UIView *)viewWithMocoaURL:(NSURL *)url options:(nullable NSDictionary *)options {
@@ -210,7 +218,7 @@ static void xz_mocoa_copyMethod(Class const cls, SEL const target, SEL const sou
     return [self initWithFrame:frame];
 }
 
-- (void)awakeWithMocoaOptions:(XZMocoaOptions *)options frame:(CGRect)frame {
+- (void)awakeFromNibWithMocoaOptions:(XZMocoaOptions *)options frame:(CGRect)frame {
     self.frame = frame;
 }
 
@@ -224,15 +232,43 @@ static void xz_mocoa_copyMethod(Class const cls, SEL const target, SEL const sou
         return nil;
     }
     
-    Class const ViewController = module.viewClass;
-    if (![ViewController isSubclassOfClass:UIViewController.class]) {
-        XZLog(@"模块 %@ 不是 UIViewController 模块，无法构造视图控制器", module);
-        return nil;
+    switch (module.viewCategory) {
+        case XZMocoaModuleViewCategoryClass: {
+            Class const ViewController = module.viewClass;
+            if (![ViewController isSubclassOfClass:UIViewController.class]) {
+                XZLog(@"模块 %@ 不是 UIViewController 模块，无法构造视图控制器", module);
+                return nil;
+            }
+            XZMocoaOptions * const mocoaOptions = [[XZMocoaOptions alloc] initWithURL:url options:options];
+            UIViewController * const viewController = [[ViewController alloc] initWithMocoaOptions:mocoaOptions nibName:nil bundle:nil];
+            return viewController;
+        }
+        case XZMocoaModuleViewCategoryNib: {
+            Class const ViewController = module.viewNibClass;
+            if (![ViewController isSubclassOfClass:UIViewController.class]) {
+                XZLog(@"模块 %@ 不是 UIViewController 模块，无法构造视图控制器", module);
+                return nil;
+            }
+            NSString *nibName = module.viewNibName;
+            NSBundle *bundle  = module.viewNibBundle;
+            XZMocoaOptions * const mocoaOptions = [[XZMocoaOptions alloc] initWithURL:url options:options];
+            UIViewController * const viewController = [[ViewController alloc] initWithMocoaOptions:mocoaOptions nibName:nibName bundle:bundle];
+            return viewController;
+        }
+        case XZMocoaModuleViewCategoryStoryboard: {
+            UIStoryboard *storyboard = [UIStoryboard storyboardWithName:module.viewStoryboardName bundle:module.viewStoryboardBundle];
+            UIViewController *vc = nil;
+            if (module.viewStoryboardIdentifier) {
+                vc = [storyboard instantiateViewControllerWithIdentifier:module.viewStoryboardIdentifier];
+            } else {
+                vc = [storyboard instantiateInitialViewController];
+            }
+            return [vc isKindOfClass:self.class] ? vc : nil;
+        }
+        default:
+            XZLog(@"模块 %@ 不是 UIViewController 模块，无法构造视图控制器", module);
+            return nil;
     }
-    NSString *nibName = module.viewNibName;
-    NSBundle *bundle  = module.viewNibBundle;
-    XZMocoaOptions * const mocoaOptions = [[XZMocoaOptions alloc] initWithURL:url options:options];
-    return [[ViewController alloc] initWithMocoaOptions:mocoaOptions nibName:nibName bundle:bundle];
 }
 
 + (__kindof UIViewController *)viewControllerWithMocoaURL:(NSURL *)url {

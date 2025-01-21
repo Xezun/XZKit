@@ -13,6 +13,14 @@ NS_ASSUME_NONNULL_BEGIN
 
 @class XZMocoaModule, NSDictionary;
 
+typedef NS_ENUM(NSUInteger, XZMocoaModuleViewCategory) {
+    XZMocoaModuleViewCategoryUnknown = 0,
+    XZMocoaModuleViewCategoryClass,
+    XZMocoaModuleViewCategoryNib,
+    XZMocoaModuleViewCategoryStoryboard,
+    XZMocoaModuleViewCategoryStoryboardCell,
+} NS_SWIFT_NAME(XZMocoaModule.ViewCategory);
+
 /// 为 XZMocoaModule 提供下标式访问的协议。
 NS_SWIFT_NAME(XZMocoaModule.SubmoduleCollection)
 @interface XZMocoaSubmoduleCollection : NSObject
@@ -75,25 +83,47 @@ NS_SWIFT_NAME(XZMocoaModule.SubmoduleCollection)
 /// MVVM 中 Model 的 class 对象。
 @property (nonatomic, strong, nullable) Class modelClass;
 
-/// MVVM 中 View 的 class 对象。
+
+@property (nonatomic, readonly) XZMocoaModuleViewCategory viewCategory;
+// View by Class MVVM 中 View 的 class 对象。
 @property (nonatomic, strong, nullable) Class viewClass;
-/// MVVM 中 View 的 class 对象，但是应该使用 nib 初始化。
-/// - Note: 通过 Storyboard 定义的视图，不需要在模块中注册。
-@property (nonatomic, strong, getter=viewClass, setter=setViewNibWithClass:, nullable) Class viewNibClass;
-/// MVVM 中 View 的 nib 的名称，优先级比属性 viewClass 高。
-/// @attention Storyboard 中的 Cell 不需要注册。
-@property (nonatomic, strong, readonly, nullable) NSString *viewNibName;
-/// MVVM 中 View 的 nib 所在的包。
-@property (nonatomic, strong, readonly, nullable) NSBundle *viewNibBundle;
-/// 设置 View 的 nib 信息。
-/// @param viewClass 视图的 class 对象
-/// @param nibName 视图 nib 名称
-/// @param bundle 视图 nib 所在的包
-- (void)setViewNibWithClass:(Class)viewClass name:(nullable NSString *)nibName bundle:(nullable NSBundle *)bundle;
-/// nib 所在的 bundle 通过 +\[NSBundle bundleForClass:\] 方法获取。
-- (void)setViewNibWithClass:(Class)viewClass name:(nullable NSString *)nibName;
-/// nib 的名称通过 NSStringFromClass(aClass) 函数获取。
+// View by Nib
+@property (nonatomic, setter=setViewNibWithClass:, nullable) Class viewNibClass;
+@property (nonatomic, copy, setter=setViewNibWithName:) NSString *viewNibName;
+@property (nonatomic, strong, readonly) NSBundle *viewNibBundle;
+/// 仅可用来注册普通视图。
+- (void)setViewNibWithName:(NSString *)nibName bundle:(NSBundle *)bundle;
+/// 仅可用来注册普通视图。
+- (void)setViewNibWithName:(NSString *)nibName;
+/// 注册视图控制器。类名与 nib 文件名相同时可使用此方法。
 - (void)setViewNibWithClass:(Class)viewClass;
+/// 注册视图控制器需提供 viewClass 参数。
+- (void)setViewNibWithClass:(nullable Class)viewClass name:(NSString *)nibName bundle:(NSBundle *)bundle;
+// View by Storyboard
+/// 控制器标记符，值 nil 表示入口控制器。
+@property (nonatomic, copy, setter=setViewStoryboardWithIdentifier:, nullable) NSString *viewStoryboardIdentifier;
+/// Storyboard 文件名。
+@property (nonatomic, copy, setter=setViewStoryboardWithName:) NSString *viewStoryboardName;
+/// Storyboard 文件所在包名。
+@property (nonatomic, strong, setter=setViewStoryboardWithBundle:) NSBundle *viewStoryboardBundle;
+/// 在 mainBundle 的 Main.storyboard 中定义的指定控制器，可通过此方法注册。
+- (void)setViewStoryboardWithIdentifier:(NSString *)identifier;
+/// 在 mainBundle 的 Name.storyboard 中定义的入口控制器，可通过此方法注册。
+- (void)setViewStoryboardWithName:(NSString *)storyboardName;
+/// 在 mainBundle 的 Name.storyboard 中定义的指定控制器，可通过此方法注册。
+- (void)setViewStoryboardWithIdentifier:(NSString *)identifier name:(NSString *)storyboardName;
+/// 在 bundle 的 Main.storyboard 中定义的指定控制器，可通过此方法注册。
+- (void)setViewStoryboardWithIdentifier:(NSString *)identifier bundle:(NSBundle *)bundle;
+/// 在 bundle 的 Name.storyboard 中定义的入口控制器，可通过此方法注册。
+- (void)setViewStoryboardWithName:(NSString *)storyboardName bundle:(NSBundle *)bundle;
+/// 在 bundle 的 Main.storyboard 中定义的入口控制器，可通过此方法注册。
+- (void)setViewStoryboardWithBundle:(NSBundle *)bundle;
+/// 在 bundle 的 Name.storyboard 中定义的指定控制器，可通过此方法注册。
+- (void)setViewStoryboardWithIdentifier:(nullable NSString *)identifier name:(NSString *)storyboardName bundle:(NSBundle *)bundle;
+/// 通过重用标识符，注册模块的视图。
+///
+/// 在 storyboard 中，可以将 UITableViewCell、UICollectionViewCell 已经注册到了 UITableView、UICollectionView 中，可以通过此属性将视图与模块关联起来。
+@property (nonatomic, copy, nullable) NSString *viewReuseIdentifier;
 
 /// MVVM 中 ViewModel 的 class 对象。
 @property (nonatomic, strong, nullable) Class viewModelClass;

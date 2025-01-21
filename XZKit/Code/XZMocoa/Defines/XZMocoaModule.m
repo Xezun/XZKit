@@ -37,14 +37,16 @@ FOUNDATION_STATIC_INLINE NSString *XZMocoaPathCreate(XZMocoaKind kind, XZMocoaNa
 @end
 
 @interface XZMocoaModule () {
+    Class _viewClass;
+    NSString *_viewName;
+    NSString *_viewIdentifier;
+    NSBundle *_viewBundle;
     NSMutableDictionary<XZMocoaKind, XZMocoaSubmoduleCollection *> *_submodules;
 }
 @end
 
 
 @implementation XZMocoaModule
-
-@dynamic viewNibClass;
 
 + (XZMocoaModule *)moduleForURL:(NSURL *)url {
     NSString *host = url.host;
@@ -92,24 +94,113 @@ FOUNDATION_STATIC_INLINE NSString *XZMocoaPathCreate(XZMocoaKind kind, XZMocoaNa
     return self;
 }
 
+// view class
+
+- (Class)viewClass {
+    return _viewCategory == XZMocoaModuleViewCategoryClass ? _viewClass : Nil;
+}
+
 - (void)setViewClass:(Class)viewClass {
+    _viewCategory = XZMocoaModuleViewCategoryClass;
     _viewClass = viewClass;
-    _viewNibName = nil;
-    _viewNibBundle = nil;
+    _viewName = nil;
+    _viewBundle = nil;
+    _viewIdentifier = nil;
+}
+
+// view nib
+
+- (Class)viewNibClass {
+    return _viewCategory == XZMocoaModuleViewCategoryNib ? _viewClass : Nil;
+}
+
+- (NSString *)viewNibName {
+    return _viewCategory == XZMocoaModuleViewCategoryNib ? _viewName : nil;
+}
+
+- (NSBundle *)viewNibBundle {
+    return _viewCategory == XZMocoaModuleViewCategoryNib ? _viewBundle : nil;
 }
 
 - (void)setViewNibWithClass:(Class)viewClass name:(NSString *)nibName bundle:(NSBundle *)bundle {
-    _viewClass = viewClass;
-    _viewNibName = nibName.copy;
-    _viewNibBundle = bundle;
+    NSAssert(nibName && bundle, @"必须提供 nibName 和 bundle 参数");
+    _viewCategory = XZMocoaModuleViewCategoryNib;
+    _viewClass  = viewClass;
+    _viewName   = nibName.copy;
+    _viewBundle = bundle ?: NSBundle.mainBundle;
+    _viewIdentifier = nil;
 }
 
-- (void)setViewNibWithClass:(Class)viewClass name:(NSString *)nibName {
-    [self setViewNibWithClass:viewClass name:nibName bundle:[NSBundle bundleForClass:viewClass]];
+- (void)setViewNibWithName:(NSString *)nibName bundle:(NSBundle *)bundle {
+    [self setViewNibWithClass:Nil name:nibName bundle:bundle ?: NSBundle.mainBundle];
+}
+
+- (void)setViewNibWithName:(NSString *)nibName {
+    [self setViewNibWithClass:Nil name:nibName bundle:NSBundle.mainBundle];
 }
 
 - (void)setViewNibWithClass:(Class)viewClass {
-    [self setViewNibWithClass:viewClass name:NSStringFromClass(viewClass)];
+    NSAssert(viewClass, @"必须提供 viewClass 参数");
+    [self setViewNibWithClass:viewClass name:NSStringFromClass(viewClass) bundle:[NSBundle bundleForClass:viewClass]];
+}
+
+// view storyboard
+
+- (NSString *)viewStoryboardIdentifier {
+    return _viewCategory == XZMocoaModuleViewCategoryStoryboard ? _viewIdentifier : nil;
+}
+
+- (NSString *)viewStoryboardName {
+    return _viewCategory == XZMocoaModuleViewCategoryStoryboard ? _viewName : nil;
+}
+
+- (NSBundle *)viewStoryboardBundle {
+    return _viewCategory == XZMocoaModuleViewCategoryStoryboard ? _viewBundle : nil;
+}
+
+- (void)setViewStoryboardWithIdentifier:(NSString *)identifier {
+    [self setViewStoryboardWithIdentifier:identifier name:@"Main" bundle:NSBundle.mainBundle];
+}
+
+- (void)setViewStoryboardWithName:(NSString *)storyboardName {
+    [self setViewStoryboardWithIdentifier:nil name:storyboardName bundle:NSBundle.mainBundle];
+}
+
+- (void)setViewStoryboardWithIdentifier:(NSString *)identifier name:(NSString *)storyboardName {
+    [self setViewStoryboardWithIdentifier:identifier name:storyboardName bundle:NSBundle.mainBundle];
+}
+
+- (void)setViewStoryboardWithIdentifier:(NSString *)identifier bundle:(NSBundle *)bundle {
+    [self setViewStoryboardWithIdentifier:identifier name:@"Main" bundle:bundle];
+}
+
+- (void)setViewStoryboardWithName:(NSString *)storyboardName bundle:(NSBundle *)bundle {
+    [self setViewStoryboardWithIdentifier:nil name:storyboardName bundle:bundle];
+}
+
+- (void)setViewStoryboardWithBundle:(NSBundle *)bundle {
+    [self setViewStoryboardWithIdentifier:nil name:@"Main" bundle:bundle];
+}
+
+- (void)setViewStoryboardWithIdentifier:(NSString *)identifier name:(NSString *)storyboardName bundle:(NSBundle *)bundle {
+    NSAssert(storyboardName && bundle, @"参数 name 和 bundle 必须提供");
+    _viewCategory   = XZMocoaModuleViewCategoryStoryboard;
+    _viewClass      = Nil;
+    _viewIdentifier = identifier.copy;
+    _viewName       = storyboardName.copy;
+    _viewBundle     = bundle;
+}
+
+- (void)setViewReuseIdentifier:(NSString *)viewReuseIdentifier {
+    _viewCategory = XZMocoaModuleViewCategoryStoryboardCell;
+    _viewClass      = Nil;
+    _viewIdentifier = viewReuseIdentifier.copy;
+    _viewName       = nil;
+    _viewBundle     = nil;
+}
+
+- (NSString *)viewReuseIdentifier {
+    return _viewCategory == XZMocoaModuleViewCategoryStoryboardCell ? _viewIdentifier : nil;
 }
 
 - (void)enumerateSubmodulesUsingBlock:(void (^NS_NOESCAPE)(XZMocoaModule *submodule, XZMocoaKind kind, XZMocoaName name, BOOL *stop))block {
