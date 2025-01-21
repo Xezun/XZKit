@@ -267,7 +267,20 @@ FOUNDATION_EXPORT NSHashTable *xz_objc_class_getImplementedProtocolMethods(Class
 // i => NSInteger
 // rect => CGRect
 
-// 在如下 xz_objc_msgSendSuper 方法中，除非没有子类，否则参数 receiverClass 不可以通过 receiver.class 动态获取，而应该是确定类型，否则会造成死循环。
+// 在 xz_objc_msgSendSuper 方法中，除非没有子类，否则参数 receiverClass 不可以通过 receiver.class 动态获取，而应该是确定类型，否则会造成死循环。
+// 比如假如像下面这样实现的话
+// @implementation Animal
+// - (void)foobar {
+//     xz_objc_msgSendSuper_void(self, self.class, @selector(foobar)); // 应该使用 [Human class] 而不是 self.class
+// }
+// @end
+// @interface Human : Animal
+// @end
+// 那么子类在调用 -foobar 方法时，就会造成死循环。
+// Human *human = [[Human alloc] init];
+// [human foobar];
+// 原因是 self.class 返回值始终是 Human 类，因此获取的 superclass 始终是 Animal 类。
+// 即在调用方法 [human foobar] 中，调用 xz_objc_msgSendSuper 函数时，传入的 self.class 实际造成 Animal 调用自身。
 
 #if XZ_FRAMEWORK
 FOUNDATION_EXPORT void xz_objc_msgSendSuper_void_id(id receiver, Class receiverClass, SEL selector, id _Nullable param1) NS_SWIFT_NAME(xz_objc_msgSendSuper(_:_:v:o:));
