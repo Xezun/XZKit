@@ -73,15 +73,7 @@
 @end
 @implementation ExampleTableViewCell
 + (void)load {
-    XZMocoa(@"https://xzkit.xezun.com/example").section.cell.viewClass = self;
-}
-- (instancetype)initWithStyle:(UITableViewCellStyle)style reuseIdentifier:(NSString *)reuseIdentifier {
-    self = [super initWithStyle:UITableViewCellStyleDefault reuseIdentifier:reuseIdentifier];
-    if (self) {
-        self.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
-        self.selectionStyle = UITableViewCellSelectionStyleNone;
-    }
-    return self;
+    XZMocoa(@"https://xzkit.xezun.com/example").section.cell.viewReuseIdentifier = @"cell";
 }
 - (void)viewModelDidChange {
     NSString *name = self.viewModel.model;
