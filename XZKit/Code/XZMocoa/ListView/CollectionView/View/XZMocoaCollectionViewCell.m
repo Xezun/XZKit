@@ -27,12 +27,10 @@ static void xz_mocoa_copyMethod(Class const cls, SEL const target, SEL const sou
     XZLog(@"为协议 XZMocoaCollectionViewCell 的方法 %@ 提供默认实现失败", NSStringFromSelector(target));
 }
 
-@interface UICollectionViewCell (XZMocoaCollectionViewCell) <XZMocoaCollectionViewCell>
+@interface UICollectionViewCell (XZMocoaCollectionViewCell)
 @end
 
 @implementation UICollectionViewCell (XZMocoaCollectionViewCell)
-
-@dynamic viewModel;
 
 + (void)load {
     if (self == [UICollectionViewCell class]) {
@@ -43,15 +41,21 @@ static void xz_mocoa_copyMethod(Class const cls, SEL const target, SEL const sou
 }
 
 - (void)xz_mocoa_collectionView:(id<XZMocoaCollectionView>)collectionView didSelectItemAtIndexPath:(NSIndexPath *)indexPath {
-    [self.viewModel collectionView:collectionView didSelectItemAtIndexPath:indexPath];
+    if ([self conformsToProtocol:@protocol(XZMocoaCollectionViewCell) ]) {
+        [((id<XZMocoaCollectionViewCell>)self).viewModel collectionView:collectionView didSelectItemAtIndexPath:indexPath];
+    }
 }
 
 - (void)xz_mocoa_collectionView:(id<XZMocoaCollectionView>)collectionView willDisplayItemAtIndexPath:(NSIndexPath *)indexPath {
-    [self.viewModel collectionView:collectionView willDisplayItemAtIndexPath:indexPath];
+    if ([self conformsToProtocol:@protocol(XZMocoaCollectionViewCell) ]) {
+        [((id<XZMocoaCollectionViewCell>)self).viewModel collectionView:collectionView willDisplayItemAtIndexPath:indexPath];
+    }
 }
 
 - (void)xz_mocoa_collectionView:(id<XZMocoaCollectionView>)collectionView didEndDisplayingItemAtIndexPath:(NSIndexPath *)indexPath {
-    [self.viewModel collectionView:collectionView didEndDisplayingItemAtIndexPath:indexPath];
+    if ([self conformsToProtocol:@protocol(XZMocoaCollectionViewCell) ]) {
+        [((id<XZMocoaCollectionViewCell>)self).viewModel collectionView:collectionView didEndDisplayingItemAtIndexPath:indexPath];
+    }
 }
 
 @end

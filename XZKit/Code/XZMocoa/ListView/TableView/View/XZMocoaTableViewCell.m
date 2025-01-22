@@ -22,12 +22,10 @@ static void xz_mocoa_copyMethod(Class const cls, SEL const target, SEL const sou
     XZLog(@"为协议 XZMocoaTableCell 的方法 %@ 提供默认实现失败", NSStringFromSelector(target));
 }
 
-@interface UITableViewCell (XZMocoaTableCell) <XZMocoaTableViewCell>
+@interface UITableViewCell (XZMocoaTableCell)
 @end
 
 @implementation UITableViewCell (XZMocoaTableCell)
-
-@dynamic viewModel;
 
 + (void)load {
     if (self == [UITableViewCell class]) {
@@ -38,15 +36,21 @@ static void xz_mocoa_copyMethod(Class const cls, SEL const target, SEL const sou
 }
 
 - (void)xz_mocoa_tableView:(id<XZMocoaTableView>)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
-    [self.viewModel tableView:tableView didSelectRowAtIndexPath:indexPath];
+    if ([self conformsToProtocol:@protocol(XZMocoaTableViewCell) ]) {
+        [((id<XZMocoaTableViewCell>)self).viewModel tableView:tableView didSelectRowAtIndexPath:indexPath];
+    }
 }
 
 - (void)xz_mocoa_tableView:(id<XZMocoaTableView>)tableView willDisplayRowAtIndexPath:(NSIndexPath *)indexPath {
-    [self.viewModel tableView:tableView willDisplayRowAtIndexPath:indexPath];
+    if ([self conformsToProtocol:@protocol(XZMocoaTableViewCell) ]) {
+        [((id<XZMocoaTableViewCell>)self).viewModel tableView:tableView willDisplayRowAtIndexPath:indexPath];
+    }
 }
 
 - (void)xz_mocoa_tableView:(id<XZMocoaTableView>)tableView didEndDisplayingRowAtIndexPath:(NSIndexPath *)indexPath {
-    [self.viewModel tableView:tableView didEndDisplayingRowAtIndexPath:indexPath];
+    if ([self conformsToProtocol:@protocol(XZMocoaTableViewCell) ]) {
+        [((id<XZMocoaTableViewCell>)self).viewModel tableView:tableView didEndDisplayingRowAtIndexPath:indexPath];
+    }
 }
 
 @end
