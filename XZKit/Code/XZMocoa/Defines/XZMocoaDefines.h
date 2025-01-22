@@ -54,7 +54,7 @@ FOUNDATION_EXPORT XZMocoaName const XZMocoaNamePlaceholder;
 ///   - section: 要构造标识符对象的上级
 ///   - kind: 要构造标识符对象的分类
 ///   - name: 要构造标识符对象的名字
-FOUNDATION_STATIC_INLINE NSString *XZMocoaReuseIdentifier(XZMocoaName _Nullable section, XZMocoaKind _Nullable kind, XZMocoaName _Nullable name) NS_SWIFT_NAME(reuseIdentifier(for:_:_:)) {
+FOUNDATION_STATIC_INLINE NSString *XZMocoaReuseIdentifier(XZMocoaName _Nullable section, XZMocoaKind _Nullable kind, XZMocoaName _Nullable name) {
     return [NSString stringWithFormat:@"%@:%@:%@", (section ?: XZMocoaNameDefault), (kind ?: XZMocoaKindDefault), (name ?: XZMocoaNameDefault)];
 }
 

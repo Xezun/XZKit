@@ -233,7 +233,17 @@ XZMocoaKey const XZMocoaKeyNone = @"";
 
 @end
 
+@implementation XZMocoaViewModel (XZStoryboardSupporting)
 
+- (BOOL)shouldPerformSegueWithIdentifier:(NSString *)identifier {
+    return YES;
+}
+
+- (void)prepareForSegue:(UIStoryboardSegue *)segue {
+    
+}
+
+@end
 
 //#import "XZMocoaImageView.h"
 //

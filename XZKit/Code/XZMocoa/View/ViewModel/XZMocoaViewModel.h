@@ -279,6 +279,16 @@ FOUNDATION_EXPORT XZMocoaKey const XZMocoaKeyNone;
 
 @class UIControl;
 
+@interface XZMocoaViewModel (XZStoryboardSupporting)
+
+/// 控制器分发过来的 IB 转场事件，默认返回 YES 值。
+- (BOOL)shouldPerformSegueWithIdentifier:(NSString *)identifier;
+
+/// 控制器分发过来的 IB 转场事件。
+- (void)prepareForSegue:(UIStoryboardSegue *)segue;
+
+@end
+
 
 //FOUNDATION_EXPORT void __mocoa_bind_3(XZMocoaViewModel *vm, SEL keySel, UILabel *target) XZ_ATTR_OVERLOAD;
 //FOUNDATION_EXPORT void __mocoa_bind_3(XZMocoaViewModel *vm, SEL keySel, UIImageView *target) XZ_ATTR_OVERLOAD;

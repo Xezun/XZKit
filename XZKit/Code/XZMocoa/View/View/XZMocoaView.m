@@ -99,11 +99,13 @@ static void xz_mocoa_copyMethod(Class const cls, SEL const target, SEL const sou
 }
 
 - (BOOL)xz_mocoa_shouldPerformSegueWithIdentifier:(NSString *)identifier {
-    return YES;
+    XZMocoaViewModel * const viewModel =  objc_getAssociatedObject(self, _viewModel);
+    return [viewModel shouldPerformSegueWithIdentifier:identifier];
 }
 
 - (void)xz_mocoa_prepareForSegue:(UIStoryboardSegue *)segue {
-    
+    XZMocoaViewModel * const viewModel =  objc_getAssociatedObject(self, _viewModel);
+    [viewModel prepareForSegue:segue];
 }
 
 @end
