@@ -134,7 +134,7 @@ static void const * const _context = &_context;
             [scrollView.xz_refreshManager scrollViewDidScroll:scrollView];
             struct objc_super super = {
                 .receiver = self,
-                .super_class = class_getSuperclass(object_getClass(self))
+                .super_class = class_getSuperclass(aClass)
             };
             ((void (*)(struct objc_super *, SEL, id))objc_msgSendSuper)(&super, selector, scrollView);
         }, ^id _Nonnull(SEL  _Nonnull selector) {
@@ -152,7 +152,7 @@ static void const * const _context = &_context;
             [scrollView.xz_refreshManager scrollViewWillEndDragging:scrollView withVelocity:velocity targetContentOffset:targetContentOffset];
             struct objc_super super = {
                 .receiver = self,
-                .super_class = class_getSuperclass(object_getClass(self))
+                .super_class = class_getSuperclass(aClass)
             };
             ((void (*)(struct objc_super *, SEL, id, CGPoint, CGPoint *))objc_msgSendSuper)(&super, selector, scrollView, velocity, targetContentOffset);
         }, ^id _Nonnull(SEL  _Nonnull selector) {
@@ -170,7 +170,7 @@ static void const * const _context = &_context;
             [scrollView.xz_refreshManager scrollViewDidEndDecelerating:scrollView];
             struct objc_super super = {
                 .receiver = self,
-                .super_class = class_getSuperclass(object_getClass(self))
+                .super_class = class_getSuperclass(aClass)
             };
             ((void (*)(struct objc_super *, SEL, id))objc_msgSendSuper)(&super, selector, scrollView);
         }, ^id _Nonnull(SEL  _Nonnull selector) {
@@ -188,7 +188,7 @@ static void const * const _context = &_context;
             [scrollView.xz_refreshManager scrollViewWillBeginDragging:scrollView];
             struct objc_super super = {
                 .receiver = self,
-                .super_class = class_getSuperclass(object_getClass(self))
+                .super_class = class_getSuperclass(aClass)
             };
             ((void (*)(struct objc_super *, SEL, id))objc_msgSendSuper)(&super, selector, scrollView);
         }, ^id _Nonnull(SEL  _Nonnull selector) {
@@ -206,7 +206,7 @@ static void const * const _context = &_context;
             [scrollView.xz_refreshManager scrollViewDidEndDragging:scrollView willDecelerate:decelerate];
             struct objc_super super = {
                 .receiver = self,
-                .super_class = class_getSuperclass(object_getClass(self))
+                .super_class = class_getSuperclass(aClass)
             };
             ((void (*)(struct objc_super *, SEL, id, BOOL))objc_msgSendSuper)(&super, selector, scrollView, decelerate);
         }, ^id _Nonnull(SEL  _Nonnull selector) {

@@ -154,7 +154,7 @@
                 }
                 struct objc_super super = {
                     .receiver = self,
-                    .super_class = class_getSuperclass(object_getClass(self))
+                    .super_class = class_getSuperclass(aClass)
                 };
                 ((void(*)(struct objc_super *, SEL, UIScrollView *))objc_msgSendSuper)(&super, sel, scrollView);
             }, ^id _Nonnull(SEL  _Nonnull selector) {
@@ -182,7 +182,7 @@
                 }
                 struct objc_super super = {
                     .receiver = self,
-                    .super_class = class_getSuperclass(object_getClass(self))
+                    .super_class = class_getSuperclass(aClass)
                 };
                 ((void(*)(struct objc_super *, SEL, UIScrollView *))objc_msgSendSuper)(&super, sel, scrollView);
             }, ^id _Nonnull(SEL  _Nonnull selector) {
@@ -210,7 +210,7 @@
                 }
                 struct objc_super super = {
                     .receiver = self,
-                    .super_class = class_getSuperclass(object_getClass(self))
+                    .super_class = class_getSuperclass(aClass)
                 };
                 ((void(*)(struct objc_super *, SEL, UIScrollView *, BOOL))objc_msgSendSuper)(&super, sel, scrollView, decelerate);
             }, ^id _Nonnull(SEL  _Nonnull selector) {
@@ -238,7 +238,7 @@
                 }
                 struct objc_super super = {
                     .receiver = self,
-                    .super_class = class_getSuperclass(object_getClass(self))
+                    .super_class = class_getSuperclass(aClass)
                 };
                 ((void(*)(struct objc_super *, SEL, UIScrollView *))objc_msgSendSuper)(&super, sel, scrollView);
             }, ^id _Nonnull(SEL  _Nonnull selector) {
@@ -266,7 +266,7 @@
                 }
                 struct objc_super super = {
                     .receiver = self,
-                    .super_class = class_getSuperclass(object_getClass(self))
+                    .super_class = class_getSuperclass(aClass)
                 };
                 ((void(*)(struct objc_super *, SEL, UIScrollView *))objc_msgSendSuper)(&super, sel, scrollView);
             }, ^id _Nonnull(SEL  _Nonnull selector) {

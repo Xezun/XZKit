@@ -71,7 +71,7 @@ FOUNDATION_EXPORT void xz_objc_class_exchangeMethods(Class aClass, SEL selector1
 /// ```objc
 /// struct objc_super _super = {
 ///     .receiver = self,
-///     .super_class = class_getSuperclass(object_getClass(self))
+///     .super_class = class_getSuperclass([Foobar class])
 /// };
 /// ((void (*)(struct objc_super *, SEL, BOOL))objc_msgSendSuper)(&_super, @selector(viewWillAppear:), animated);
 /// ```
