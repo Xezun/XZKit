@@ -99,7 +99,7 @@ FOUNDATION_EXPORT const char * _Nullable xz_objc_class_getMethodTypeEncoding(Cla
 /// 添加方法的示例代码。
 ///
 /// ```objc
-/// // 以给 FooBar 添加此方法为例。
+/// // 以给 FooBar 添加 -sayHello: 方法为例。
 /// - (NSString *)sayHello:(NSString *)name {
 ///     return [NSString stringWithFormat:@"Hello %@!", name];
 /// }
@@ -108,12 +108,13 @@ FOUNDATION_EXPORT const char * _Nullable xz_objc_class_getMethodTypeEncoding(Cla
 /// const char * const encoding = xz_objc_class_getMethodTypeEncoding([AnyClass class], @selector(sayHello:));
 ///
 /// // 2、调用当前函数。
-/// xz_objc_class_addMethodWithBlock([Foobar class], @selector(sayHello:), encoding, ^NSString *(Foobar *self, NSString *name) {
+/// Class const aClass = [Foobar class];
+/// xz_objc_class_addMethodWithBlock(aClass, @selector(sayHello:), encoding, ^NSString *(Foobar *self, NSString *name) {
 ///     return [NSString stringWithFormat:@"Hello %@!", name];
 /// }, ^NSString *(Foobar *self, NSString *name) {
 ///     struct objc_super super = {
 ///         .receiver = self,
-///         .super_class = class_getSuperclass(object_getClass(self))
+///         .super_class = class_getSuperclass(aClass)
 ///     };
 ///     // 调用父类方法，相当于 [super sayHello:name]
 ///     NSString *word = ((NSString *(*)(struct objc_super *, SEL, NSString *))objc_msgSendSuper)(&super, @selector(sayHello:), name);
@@ -126,6 +127,8 @@ FOUNDATION_EXPORT const char * _Nullable xz_objc_class_getMethodTypeEncoding(Cla
 ///     };
 /// });
 /// ```
+///
+/// > 结构体`struct objc_super`的`super_class`成员，必须使用确定的 Class 对象，比如`[Foobar Class]`，而不能是`self.class`这样只有在运行时才能确定的 Class 对象。
 ///
 /// 本函数使用 `imp_implementationWithBlock(block)` 函数将块函数转化为方法实现。
 ///
@@ -149,12 +152,12 @@ FOUNDATION_EXPORT const char * _Nullable xz_objc_class_getMethodTypeEncoding(Cla
 /// NSString *xz_msgSendSuper_sayHello(Foo *receiver, NSString *name) NS_SWIFT_NAME(xz_msgSendSuper(_:sayHello:)) {
 ///     struct objc_super super = {
 ///         .receiver = receiver,
-///         .super_class = class_getSuperclass(object_getClass(receiver))
+///         .super_class = class_getSuperclass([Foo class])
 ///     };
 ///     return ((NSString *(*)(struct objc_super *, SEL, NSString *))objc_msgSendSuper)(&super, @selector(sayHello:), name);
 /// }
 ///
-/// NSString *xz_msgSendExchange_sayHello(Foo *receiver, SEL selector, NSString *name) NS_SWIFT_NAME(xz_msgSend(_:exchange:sayHello:))  {
+/// NSString *xz_msgSend_sayHello(Foo *receiver, SEL selector, NSString *name) NS_SWIFT_NAME(xz_msgSend(_:_:sayHello:))  {
 ///     return ((NSString *(*)(Foo *, SEL, NSString *))objc_msgSend)(receiver, @selector(sayHello:), name);
 /// }
 /// ```
@@ -177,7 +180,7 @@ FOUNDATION_EXPORT const char * _Nullable xz_objc_class_getMethodTypeEncoding(Cla
 /// // 交换方法：参数 selector 为动态添加的方法的方法名
 /// let exchange = { (_ selector: Selector) in
 ///     let exchange: MethodBlock = { `self`, name in
-///         let word = xz_msgSend(self, exchange: selector, sayHello: name)
+///         let word = xz_msgSend(self, selector, sayHello: name)
 ///         return "exchange \(word)"
 ///     }
 ///     return exchange;
