@@ -55,12 +55,12 @@ NS_SWIFT_UI_ACTOR @protocol XZPageViewDelegate <UIScrollViewDelegate>
 /// @discussion 只有用户操作或者自动翻页会触发此代理方法。
 /// @param pageView 调用此方法的 XZPageView 对象
 /// @param index 被展示元素的索引，不会是 NSNotFound
-- (void)pageView:(XZPageView *)pageView didShowPageAtIndex:(NSInteger)index;
+- (void)pageView:(XZPageView *)pageView didShowPageAtIndex:(NSInteger)index NS_SWIFT_NAME(pageView(_:didShowPageAt:));
 
 /// 当用户翻动页面时，此方法会被调用。
 /// @param pageView 调用此方法的 XZPageView 对象。
 /// @param transition 翻动的进度，值范围为 (0, 1.0) 之间，不包括边界值。
-- (void)pageView:(XZPageView *)pageView didTurnPageWithTransition:(CGFloat)transition;
+- (void)pageView:(XZPageView *)pageView didTurnPageInTransition:(CGFloat)transition NS_SWIFT_NAME(pageView(_:didTurnPageIn:));
 
 @end
 

@@ -72,8 +72,8 @@
     self.pageControl.currentPage = index;
 }
 
-- (void)pageView:(XZPageView *)pageView didTurnPageWithTransition:(CGFloat)transition {
-    NSLog(@"didTransitionPage: %f", transition);
+- (void)pageView:(XZPageView *)pageView didTurnPageInTransition:(CGFloat)transition {
+    NSLog(@"didTurnPageInTransition: %f", transition);
 }
 
 - (void)pageControlDidChangeValue:(XZPageControl *)pageControl {

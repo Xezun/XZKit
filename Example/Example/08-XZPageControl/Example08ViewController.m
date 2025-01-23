@@ -184,7 +184,7 @@
     [self.pageControl setCurrentPage:index animated:YES];
 }
 
-- (void)pageView:(XZPageView *)pageView didTurnPageWithTransition:(CGFloat)transition {
+- (void)pageView:(XZPageView *)pageView didTurnPageInTransition:(CGFloat)transition {
     NSLog(@"didTurnPage: %lf", transition);
     [self.pageControl setTransition:transition isLooped:pageView.isLooped];
 }

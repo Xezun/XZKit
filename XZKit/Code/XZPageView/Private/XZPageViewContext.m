@@ -313,7 +313,7 @@
     typedef void (*MethodType)(id<XZPageViewDelegate>, SEL, XZPageView *, CGFloat);
     _pageView->_didTurnPage = nil;
     
-    SEL const selector = @selector(pageView:didTurnPageWithTransition:);
+    SEL const selector = @selector(pageView:didTurnPageInTransition:);
     if (![aClass instancesRespondToSelector:selector]) {
         return;
     }
@@ -327,7 +327,7 @@
         CGFloat const transition = x / width;
         // 一次翻多页的情况，在当前设计模式下不存在。
         // 如果有，可以根据 transition 的正负判断翻页方向，再根据 fromPage 和 toPage 以及它们之差，计算出翻页进度。
-        didTurnPage(delegate, @selector(pageView:didTurnPageWithTransition:), self, transition);
+        didTurnPage(delegate, @selector(pageView:didTurnPageInTransition:), self, transition);
     };
 }
 
