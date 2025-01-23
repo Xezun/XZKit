@@ -158,10 +158,10 @@
             </objects>
             <point key="canvasLocation" x="2970.2290076335876" y="64.788732394366207"/>
         </scene>
-        <!--Navigation Controller-->
+        <!--Example02 Navigation Controller-->
         <scene sceneID="qVX-H7-vUZ">
             <objects>
-                <navigationController automaticallyAdjustsScrollViewInsets="NO" id="Jca-Wr-aJS" sceneMemberID="viewController">
+                <navigationController automaticallyAdjustsScrollViewInsets="NO" id="Jca-Wr-aJS" customClass="Example02NavigationController" customModule="Example" customModuleProvider="target" sceneMemberID="viewController">
                     <toolbarItems/>
                     <navigationBar key="navigationBar" contentMode="scaleToFill" id="fsP-lF-G7f">
                         <rect key="frame" x="0.0" y="59" width="393" height="44"/>

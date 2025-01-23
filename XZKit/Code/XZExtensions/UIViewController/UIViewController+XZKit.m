@@ -31,9 +31,6 @@ static const void * const _prefersStatusBarHidden = &_prefersStatusBarHidden;
     // 重写超类不调用超类实现，因为超类一般是 UIViewController 没有必要调用。
     // 交换自身则调用自身实现，以避免自身实现中的业务逻辑丢失。
     
-    if (self.class == UIViewController.class) {
-        
-    }
     xz_objc_class_addMethodWithBlock(aClass, @selector(preferredStatusBarStyle), nil, nil, ^UIStatusBarStyle(UIViewController *self) {
         return self.xz_preferredStatusBarStyle;
     }, ^id (SEL selector) {

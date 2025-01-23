@@ -21,17 +21,25 @@ NS_ASSUME_NONNULL_BEGIN
 /// 因此调用此方法，XZKit 会重写 `preferredStatusBarStyle` 和 `prefersStatusBarHidden` 属性。
 /// 且重写的属性，不会调用超类的实现，但是如果控制器自身也重写了它们，那么 XZKit 会调用它们，但它们的值不会生效。
 ///
-/// @note 此方法会在设置 `xz_preferredStatusBarStyle`、`xz_prefersStatusBarHidden` 属性时自动调用。
+/// > 此方法会在设置 `xz_preferredStatusBarStyle`、`xz_prefersStatusBarHidden` 属性时自动调用。
 ///
-/// @note 此方法为开启能力的方法，不能关闭能力。
+/// > 此方法为开启能力的方法，不能关闭能力。
 ///
-/// @returns 返回 YES 表示执行了开启能力的操作，返回 NO 表示已开启能力，本次调用未执行任何操作。
+/// - Returns: 返回 YES 表示执行了开启能力的操作，返回 NO 表示已开启能力，本次调用未执行任何操作。
 - (BOOL)xz_setPrefersStatusBarAppearance NS_SWIFT_NAME(setPrefersStatusBarAppearance());
 
 /// 当前控制器是否已开启状态栏样式配置能力。
 @property (nonatomic, readonly) BOOL xz_prefersStatusBarAppearance NS_SWIFT_NAME(prefersStatusBarAppearance);
 
 /// 当前控制器的状态栏样式配置。默认为 `UIStatusBarStyleDefault` 样式，即自动跟随系统设置。
+///
+/// 在导航或页签控制器中，需要重写下述方法才能生效。
+///
+/// ```swift
+/// override var childForStatusBarStyle: UIViewController? {
+///     return self.presentedViewController ?? self.topViewController
+/// }
+/// ```
 @property (nonatomic, setter=xz_setPreferredStatusBarStyle:) UIStatusBarStyle xz_preferredStatusBarStyle NS_SWIFT_NAME(statusBarStyle);
 
 /// 配置当前控制器的状态栏样式。
@@ -40,6 +48,13 @@ NS_ASSUME_NONNULL_BEGIN
 - (void)xz_setPreferredStatusBarStyle:(UIStatusBarStyle)preferredStatusBarStyle animated:(BOOL)animated NS_SWIFT_NAME(setStatusBarStyle(_:animated:));
 
 /// 当前控制器的状态栏隐藏状态配置。默认为 NO 状态，即不隐藏。
+///
+/// 在导航或页签控制器中，需要重写下述方法才能生效。
+/// ```swift
+/// override var childForStatusBarHidden: UIViewController? {
+///     return self.presentedViewController ?? self.topViewController
+/// }
+/// ```
 @property (nonatomic, setter=xz_setPrefersStatusBarHidden:) BOOL xz_prefersStatusBarHidden NS_SWIFT_NAME(statusBarHidden);
 
 /// 配置当前控制器的状态栏隐藏状态。

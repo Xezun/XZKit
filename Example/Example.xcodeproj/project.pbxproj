@@ -28,6 +28,7 @@
 		046CE6422D34C3A800B9389F /* Example19.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 046CE6402D34C3A800B9389F /* Example19.storyboard */; };
 		046CE6472D34C4A700B9389F /* Example18.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 046CE6462D34C4A700B9389F /* Example18.storyboard */; };
 		04B12AC92D37D6F200FADC8B /* Example20ViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 04B12AC82D37D6F200FADC8B /* Example20ViewController.m */; };
+		04B1EA432D41E31D004F5DF0 /* Example02NavigationController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 04B1EA422D41E31D004F5DF0 /* Example02NavigationController.swift */; };
 		04C4C58B2D34C66F0087BBCF /* Example18ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 04C4C58A2D34C66F0087BBCF /* Example18ViewController.swift */; };
 		04D06B002D2D45300056A53A /* Example15Test02ViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 04D06AFF2D2D45300056A53A /* Example15Test02ViewController.m */; };
 		04D06B012D2D45300056A53A /* Example15Test01ViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 04D06AFD2D2D45300056A53A /* Example15Test01ViewController.m */; };
@@ -318,6 +319,7 @@
 		046CE6462D34C4A700B9389F /* Example18.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = Example18.storyboard; sourceTree = "<group>"; };
 		04B12AC72D37D6F200FADC8B /* Example20ViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Example20ViewController.h; sourceTree = "<group>"; };
 		04B12AC82D37D6F200FADC8B /* Example20ViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = Example20ViewController.m; sourceTree = "<group>"; };
+		04B1EA422D41E31D004F5DF0 /* Example02NavigationController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Example02NavigationController.swift; sourceTree = "<group>"; };
 		04C4C58A2D34C66F0087BBCF /* Example18ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Example18ViewController.swift; sourceTree = "<group>"; };
 		04D06AFC2D2D45300056A53A /* Example15Test01ViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Example15Test01ViewController.h; sourceTree = "<group>"; };
 		04D06AFD2D2D45300056A53A /* Example15Test01ViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = Example15Test01ViewController.m; sourceTree = "<group>"; };
@@ -999,6 +1001,7 @@
 			isa = PBXGroup;
 			children = (
 				29B3340E2D317749006A574A /* Example02.storyboard */,
+				04B1EA422D41E31D004F5DF0 /* Example02NavigationController.swift */,
 				292C153F2D25163700E465BF /* Example02ViewController.h */,
 				292C15402D25163700E465BF /* Example02ViewController.m */,
 				292C153D2D25163700E465BF /* Example02Test01ViewController.h */,
@@ -3156,6 +3159,7 @@
 				292C178A2D251F6D00E465BF /* Example0331Group100CellViewModel.m in Sources */,
 				292C178B2D251F6D00E465BF /* Example0312CellViewModel.m in Sources */,
 				292C178C2D251F6D00E465BF /* Example0330Group106CellViewModel.m in Sources */,
+				04B1EA432D41E31D004F5DF0 /* Example02NavigationController.swift in Sources */,
 				292C178D2D251F6D00E465BF /* Example0330Model.m in Sources */,
 				292C178E2D251F6D00E465BF /* Example0330Group110CellModel.m in Sources */,
 				292C178F2D251F6D00E465BF /* Example0331Group108CellModel.m in Sources */,

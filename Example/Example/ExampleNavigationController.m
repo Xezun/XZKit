@@ -30,11 +30,11 @@
 }
 
 - (UIViewController *)childViewControllerForStatusBarStyle {
-    return self.topViewController;
+    return self.presentedViewController ?: self.topViewController;
 }
 
 - (UIViewController *)childViewControllerForStatusBarHidden {
-    return self.topViewController;
+    return self.presentedViewController ?: self.topViewController;
 }
 
 @end
