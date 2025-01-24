@@ -61,6 +61,22 @@ static unsigned char const XZHexEncodingTable[2][16] = {
     return [[NSString alloc] initWithBytesNoCopy:buffer length:length encoding:NSASCIIStringEncoding freeWhenDone:YES];
 }
 
++ (instancetype)xz_dataWithJSONObject:(id)object options:(NSJSONWritingOptions)options {
+    if (object == nil) {
+        return nil;
+    }
+    NSError *error = nil;
+    NSData *data = [NSJSONSerialization dataWithJSONObject:object options:options error:&error];
+    if (error.code != noErr) {
+        return nil;
+    }
+    return [self dataWithData:data];
+}
+
++ (instancetype)xz_dataWithJSONObject:(id)object {
+    return [self xz_dataWithJSONObject:object options:(NSJSONWritingFragmentsAllowed)];
+}
+
 @end
 
 unsigned char XZHexEncoder(UInt8 byte, XZHexEncoding hexEncoding) {
@@ -103,22 +119,3 @@ BOOL XZHexDecoder(unichar character, UInt8 * const byte) {
 }
 
 
-@implementation NSData (XZJSON)
-
-+ (instancetype)xz_dataWithJSONObject:(id)object options:(NSJSONWritingOptions)options {
-    if (object == nil) {
-        return nil;
-    }
-    NSError *error = nil;
-    NSData *data = [NSJSONSerialization dataWithJSONObject:object options:options error:&error];
-    if (error.code != noErr) {
-        return nil;
-    }
-    return [self dataWithData:data];
-}
-
-+ (instancetype)xz_dataWithJSONObject:(id)object {
-    return [self xz_dataWithJSONObject:object options:(NSJSONWritingFragmentsAllowed)];
-}
-
-@end

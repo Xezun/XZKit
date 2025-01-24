@@ -44,27 +44,6 @@
     return XZMakeFloat([self objectForKey:aKey], 0);
 }
 
-@end
-
-@implementation NSMutableDictionary (XZKit)
-
-- (id)xz_removeObjectForKey:(id)aKey {
-    id const object = [self objectForKey:aKey];
-    [self removeObjectForKey:aKey];
-    return object;
-}
-
-- (NSArray *)xz_removeObjectsForKeys:(NSArray *)keyArray {
-    return [keyArray xz_compactMap:^id _Nullable(id  _Nonnull obj, NSInteger idx, BOOL * _Nonnull stop) {
-        return [self xz_removeObjectForKey:obj];
-    }];
-}
-
-@end
-
-
-@implementation NSDictionary (XZJSON)
-
 + (instancetype)xz_dictionaryWithJSON:(id)json options:(NSJSONReadingOptions)options {
     if (json == nil) {
         return nil;
@@ -94,7 +73,19 @@
 
 @end
 
-@implementation NSMutableDictionary (XZJSON)
+@implementation NSMutableDictionary (XZKit)
+
+- (id)xz_removeObjectForKey:(id)aKey {
+    id const object = [self objectForKey:aKey];
+    [self removeObjectForKey:aKey];
+    return object;
+}
+
+- (NSArray *)xz_removeObjectsForKeys:(NSArray *)keyArray {
+    return [keyArray xz_compactMap:^id _Nullable(id  _Nonnull obj, NSInteger idx, BOOL * _Nonnull stop) {
+        return [self xz_removeObjectForKey:obj];
+    }];
+}
 
 + (instancetype)xz_dictionaryWithJSON:(id)json options:(NSJSONReadingOptions)options {
     return [super xz_dictionaryWithJSON:json options:(options | NSJSONReadingMutableContainers)];

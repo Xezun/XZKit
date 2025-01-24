@@ -35,6 +35,16 @@ typedef NS_ENUM(NSUInteger, XZHexEncoding) {
 /// 以十六进制编码小写格式，对当前数据进行编码。
 @property (nonatomic, readonly) NSString *xz_hexEncodedString NS_SWIFT_NAME(hexEncodedString);
 
+/// 将对象 object 转换为 JSON 二进制数据。
+/// @param object 可转换为 JSON 的对象
+/// @param options 序列化选项
++ (nullable instancetype)xz_dataWithJSONObject:(nullable id)object options:(NSJSONWritingOptions)options NS_SWIFT_NAME(init(JSONObject:options:));
+
+/// 将对象 object 转换为 JSON 数据。
+/// @note 使用 NSJSONWritingFragmentsAllowed 选项。
+/// @param object 可转换为 JSON 的对象
++ (nullable instancetype)xz_dataWithJSONObject:(nullable id)object NS_SWIFT_NAME(init(JSONObject:));
+
 @end
 
 /// 返回二进制字节数据对应的十六进制编码。
@@ -50,20 +60,5 @@ FOUNDATION_EXPORT unsigned char XZHexEncoder(UInt8 byte, XZHexEncoding hexEncodi
 /// @param byte 如果读取成功，二进制数据通过此参数输出，此参数不可为 NULL
 /// @return 返回 NO 表示读入的字符不是十六进制编码字符
 FOUNDATION_EXPORT BOOL XZHexDecoder(unichar character, UInt8 * const byte) __attribute__((enable_if(byte, "byte can not be NULL")));
-
-
-@interface NSData (XZJSON)
-
-/// 将对象 object 转换为 JSON 二进制数据。
-/// @param object 可转换为 JSON 的对象
-/// @param options 序列化选项
-+ (nullable instancetype)xz_dataWithJSONObject:(nullable id)object options:(NSJSONWritingOptions)options NS_SWIFT_NAME(init(JSONObject:options:));
-
-/// 将对象 object 转换为 JSON 数据。
-/// @note 使用 NSJSONWritingFragmentsAllowed 选项。
-/// @param object 可转换为 JSON 的对象
-+ (nullable instancetype)xz_dataWithJSONObject:(nullable id)object NS_SWIFT_NAME(init(JSONObject:));
-
-@end
 
 NS_ASSUME_NONNULL_END

@@ -64,16 +64,16 @@ FOUNDATION_EXPORT void xz_objc_class_exchangeMethods(Class aClass, SEL selector1
 
 /// 给 aClass 添加 selector 方法。
 ///
-/// 重写方法，调用父类的方法，不能直接使用 super 调用，因为编译器编译 super 的规则发生了改变：编译器不再使用`self`来获取父类，而是直接使用所定义类的名字来获取，`super`不再有动态性。
+/// > `super` 是编译器指令，编译器直接使用“方法所在类”的类名来获取超类，不具动态性，把带 `super` 的方法复制给其它类，方法`super`仍然指向编译时的类。
 ///
-/// 可以使用下面的方法手动向父类发送消息。
+/// 在运行时，给类`aClass`动态添加方法时，如果需要向超类发送消息，可以向下面这样。
 ///
 /// ```objc
-/// struct objc_super _super = {
+/// struct objc_super super = {
 ///     .receiver = self,
-///     .super_class = class_getSuperclass([Foobar class])
+///     .super_class = class_getSuperclass(aClass)
 /// };
-/// ((void (*)(struct objc_super *, SEL, BOOL))objc_msgSendSuper)(&_super, @selector(viewWillAppear:), animated);
+/// ((void (*)(struct objc_super *, SEL, BOOL))objc_msgSendSuper)(&super, @selector(viewWillAppear:), animated);
 /// ```
 ///
 /// - Parameters:
@@ -105,7 +105,7 @@ FOUNDATION_EXPORT const char * _Nullable xz_objc_class_getMethodTypeEncoding(Cla
 /// }
 ///
 /// // 1、获取方法签名。可以先在任意类上定义一个待添加的方法，用于获取 type-encoding ，当然如果熟悉编码规则，也可以手写。
-/// const char * const encoding = xz_objc_class_getMethodTypeEncoding([AnyClass class], @selector(sayHello:));
+/// const char * const encoding = xz_objc_class_getMethodTypeEncoding([Foobar class], @selector(sayHello:));
 ///
 /// // 2、调用当前函数。
 /// Class const aClass = [Foobar class];
@@ -114,7 +114,7 @@ FOUNDATION_EXPORT const char * _Nullable xz_objc_class_getMethodTypeEncoding(Cla
 /// }, ^NSString *(Foobar *self, NSString *name) {
 ///     struct objc_super super = {
 ///         .receiver = self,
-///         .super_class = class_getSuperclass(aClass)
+///         .super_class = class_getSuperclass(aClass) // 使用 aClass 而不能是 self.class
 ///     };
 ///     // 调用父类方法，相当于 [super sayHello:name]
 ///     NSString *word = ((NSString *(*)(struct objc_super *, SEL, NSString *))objc_msgSendSuper)(&super, @selector(sayHello:), name);
@@ -127,8 +127,6 @@ FOUNDATION_EXPORT const char * _Nullable xz_objc_class_getMethodTypeEncoding(Cla
 ///     };
 /// });
 /// ```
-///
-/// > 结构体`struct objc_super`的`super_class`成员，必须使用确定的 Class 对象，比如`[Foobar Class]`，而不能是`self.class`这样只有在运行时才能确定的 Class 对象。
 ///
 /// 本函数使用 `imp_implementationWithBlock(block)` 函数将块函数转化为方法实现。
 ///
@@ -152,7 +150,7 @@ FOUNDATION_EXPORT const char * _Nullable xz_objc_class_getMethodTypeEncoding(Cla
 /// NSString *xz_msgSendSuper_sayHello(Foo *receiver, NSString *name) NS_SWIFT_NAME(xz_msgSendSuper(_:sayHello:)) {
 ///     struct objc_super super = {
 ///         .receiver = receiver,
-///         .super_class = class_getSuperclass([Foo class])
+///         .super_class = class_getSuperclass([Foobar class])
 ///     };
 ///     return ((NSString *(*)(struct objc_super *, SEL, NSString *))objc_msgSendSuper)(&super, @selector(sayHello:), name);
 /// }
@@ -285,7 +283,6 @@ FOUNDATION_EXPORT NSHashTable *xz_objc_class_getImplementedProtocolMethods(Class
 // 原因是 self.class 返回值始终是 Human 类，因此获取的 superclass 始终是 Animal 类。
 // 即在调用方法 [human foobar] 中，调用 xz_objc_msgSendSuper 函数时，传入的 self.class 实际造成 Animal 调用自身。
 
-#if XZ_FRAMEWORK
 FOUNDATION_EXPORT void xz_objc_msgSendSuper_void_id(id receiver, Class receiverClass, SEL selector, id _Nullable param1) NS_SWIFT_NAME(xz_objc_msgSendSuper(_:_:v:o:));
 FOUNDATION_EXPORT void xz_objc_msgSend_void_id(id receiver, SEL selector, id _Nullable param1) NS_SWIFT_NAME(xz_objc_msgSend(_:v:o:));
 
@@ -324,6 +321,5 @@ FOUNDATION_EXPORT void xz_objc_msgSend_void_id_integer(id receiver, SEL selector
 
 FOUNDATION_EXPORT void xz_objc_msgSendSuper_void_id_id(id receiver, Class receiverClass, SEL selector, id _Nullable param1, id _Nullable param2) NS_SWIFT_NAME(xz_objc_msgSendSuper(_:_:v:o:o:));
 FOUNDATION_EXPORT void xz_objc_msgSend_void_id_id(id receiver, SEL selector, id _Nullable param1, id _Nullable param2) NS_SWIFT_NAME(xz_objc_msgSend(_:v:o:o:));
-#endif
 
 NS_ASSUME_NONNULL_END

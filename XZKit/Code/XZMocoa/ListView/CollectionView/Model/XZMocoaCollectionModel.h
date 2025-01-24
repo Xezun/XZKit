@@ -7,6 +7,8 @@
 
 #import "XZMocoaListModel.h"
 
+NS_ASSUME_NONNULL_BEGIN
+
 /// UICollectionView 的数据模型。
 @protocol XZMocoaCollectionModel <XZMocoaListModel>
 @end
@@ -15,3 +17,5 @@
 /// @note 任何遵循 XZMocoaCollectionModel 协议的对象都可以作为数据模型，而非必须基于此类。
 @interface XZMocoaCollectionModel : NSObject <XZMocoaCollectionModel>
 @end
+
+NS_ASSUME_NONNULL_END

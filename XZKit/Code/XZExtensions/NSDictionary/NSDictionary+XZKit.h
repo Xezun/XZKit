@@ -19,18 +19,6 @@ NS_ASSUME_NONNULL_BEGIN
 - (CGFloat)xz_floatValueForKey:(KeyType)aKey defaultValue:(NSInteger)defaultValue OBJC_SWIFT_UNAVAILABLE("请直接使用 Swift 版本");
 - (CGFloat)xz_floatValueForKey:(KeyType)aKey OBJC_SWIFT_UNAVAILABLE("请直接使用 Swift 版本");
 
-@end
-
-@interface NSMutableDictionary<KeyType, ObjectType> (XZKit)
-
-- (nullable ObjectType)xz_removeObjectForKey:(KeyType)aKey OBJC_SWIFT_UNAVAILABLE("请直接使用 Swift 版本");
-- (NSArray<ObjectType> *)xz_removeObjectsForKeys:(NSArray<KeyType> *)keyArray OBJC_SWIFT_UNAVAILABLE("请直接使用 Swift 版本");
-
-@end
-
-
-@interface NSDictionary (XZJSON)
-
 /// 将 JSON 数据，`NSData`或`NSString`对象，解析为`NSDictionary`对象。
 /// @note JSON 数据顶层必须为字典。
 /// @note 使用可变容器始构造，则 JSON 数据内的值，也为可变容器。
@@ -43,8 +31,10 @@ NS_ASSUME_NONNULL_BEGIN
 
 @end
 
+@interface NSMutableDictionary<KeyType, ObjectType> (XZKit)
 
-@interface NSMutableDictionary (XZJSON)
+- (nullable ObjectType)xz_removeObjectForKey:(KeyType)aKey OBJC_SWIFT_UNAVAILABLE("请直接使用 Swift 版本");
+- (NSArray<ObjectType> *)xz_removeObjectsForKeys:(NSArray<KeyType> *)keyArray OBJC_SWIFT_UNAVAILABLE("请直接使用 Swift 版本");
 
 @end
 
