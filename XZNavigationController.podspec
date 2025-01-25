@@ -37,7 +37,7 @@ Pod::Spec.new do |s|
   s.default_subspec = 'Code'
   
   s.subspec 'Code' do |ss|
-    ss.source_files        = 'XZKit/Code/XZNavigationController/**/*.{h,m,swift}'
+    ss.source_files        = 'XZKit/Code/Swift/XZNavigationController/**/*.{h,m,swift}'
     # ss.public_header_files = 'XZKit/Code/XZNavigationController/**/*.h'
     ss.dependency 'XZDefines'
   end

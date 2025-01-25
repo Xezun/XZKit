@@ -36,7 +36,7 @@ Pod::Spec.new do |s|
   s.default_subspec = 'Code'
   
   s.subspec 'Code' do |ss|
-    ss.source_files = 'XZKit/Code/XZExtensions/**/*.{h,m}'
+    ss.source_files = 'XZKit/Code/ObjC/XZExtensions/**/*.{h,m}'
     ss.dependency 'XZDefines'
   end
   

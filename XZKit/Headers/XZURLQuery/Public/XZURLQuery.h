@@ -1,1 +1,0 @@
-../../../Code/XZURLQuery/XZURLQuery.h

@@ -6,9 +6,8 @@
 //
 
 import UIKit
+import XZNavigationController
 import XZDataCryptor
-import XZExtensions
-import XZToast
 
 class Example19CryptorViewController: UITableViewController {
     

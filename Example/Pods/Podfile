@@ -8,6 +8,8 @@ project '../Example.xcodeproj'
 
 target 'Example' do
 
+  # pod 'XZKit', :path => '../../'
+
   pod 'XZDefines', :path => '../../'
   pod 'XZExtensions', :path => '../../'
   pod 'XZMocoa', :path => '../../'

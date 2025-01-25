@@ -9,6 +9,7 @@ import UIKit
 import XZContentStatus
 import XZExtensions
 
+
 class Example12ViewController: UIViewController, XZContentStatusRepresentable {
 
     override func viewDidLoad() {

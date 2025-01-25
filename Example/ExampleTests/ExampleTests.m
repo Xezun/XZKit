@@ -6,8 +6,8 @@
 //
 
 #import <XCTest/XCTest.h>
-@import XZDefines;
 @import ObjectiveC;
+@import XZDefines;
 
 @interface Foo : NSObject
 - (void)foo;

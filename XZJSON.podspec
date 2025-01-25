@@ -32,11 +32,11 @@ Pod::Spec.new do |s|
   s.pod_target_xcconfig = { 'GCC_PREPROCESSOR_DEFINITIONS' => 'XZ_FRAMEWORK=1' }
   
   s.subspec 'Code' do |ss|
-    ss.source_files = 'XZKit/Code/XZJSON/**/*.{h,m}'
+    ss.source_files = 'XZKit/Code/ObjC/XZJSON/**/*.{h,m}'
     # 不在头文件中，但是可以单独被引用
-    ss.private_header_files = 'XZKit/Code/XZJSON/**/Objc/*.h'
+    ss.private_header_files = 'XZKit/Code/ObjC/XZJSON/**/Objc/*.h'
     # 不可以被引用
-    ss.project_header_files = 'XZKit/Code/XZJSON/**/Private/*.h'
+    ss.project_header_files = 'XZKit/Code/ObjC/XZJSON/**/Private/*.h'
   end
   
   # s.resource_bundles = {

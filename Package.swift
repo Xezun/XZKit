@@ -11,6 +11,9 @@ let package = Package(
     products: [
         // Products define the executables and libraries produced by a package, and make them visible to other packages.
         .library(
+            name: "XZKit",
+            targets: ["XZKit"]),
+        .library(
             name: "XZDefines",
             targets: ["XZDefines"]),
         .library(
@@ -78,14 +81,61 @@ let package = Package(
     targets: [
         // Targets are the basic building blocks of a package. A target can define a module or a test suite.
         // Targets can depend on other targets in this package, and on products in packages which this package depends on.
+//        .target(
+//            name: "XZKitObjC",
+//            dependencies: [],
+//            path: "XZKit",
+//            sources: ["Code/ObjC"],
+//            publicHeadersPath: "Headers/Public",
+//            cSettings: [
+//                .headerSearchPath("Headers/Private")
+//            ],
+//            cxxSettings: [
+//                .define("XZ_FRAMEWORK"),
+//                .define("XZKIT_FRAMEWORK")
+//            ]
+//        ),
+        .target(
+            name: "XZKit",
+            dependencies: [
+                "XZDefines", 
+                "XZExtensions",
+                "XZCollectionViewFlowLayout",
+                "XZContentStatus",
+                "XZDataCryptor",
+                "XZDataDigester",
+                "XZGeometry",
+                "XZJSON",
+                "XZKeychain",
+                "XZLocale",
+                "XZML",
+                "XZMocoa",
+                "XZNavigationController",
+                "XZPageControl",
+                "XZPageView",
+                "XZRefresh",
+                "XZSegmentedControl",
+                "XZTextImageView",
+                "XZToast",
+                "XZURLQuery",
+            ],
+            path: "XZKit",
+            sources: ["Code/Swift/XZKit"],
+            cxxSettings: [
+                .define("XZ_FRAMEWORK")
+            ],
+            swiftSettings: [
+                .define("XZKIT_FRAMEWORK")
+            ]
+        ),
         .target(
             name: "XZDefines",
             dependencies: [],
             path: "XZKit",
-            sources: ["Code/XZDefines"],
-            publicHeadersPath: "Headers/XZDefines/Public",
+            sources: ["Code/ObjC/XZDefines"],
+            publicHeadersPath: "Headers/Public/XZDefines",
             cSettings: [
-                .headerSearchPath("Headers/XZDefines/Private")
+                .headerSearchPath("Headers/Private/XZDefines")
             ],
             cxxSettings: [
                 .define("XZ_FRAMEWORK")
@@ -95,10 +145,23 @@ let package = Package(
             name: "XZExtensions",
             dependencies: ["XZDefines"],
             path: "XZKit",
-            sources: ["Code/XZExtensions"],
-            publicHeadersPath: "Headers/XZExtensions/Public",
+            sources: ["Code/ObjC/XZExtensions"],
+            publicHeadersPath: "Headers/Public/XZExtensions",
             cSettings: [
-                .headerSearchPath("Headers/XZExtensions/Private")
+                .headerSearchPath("Headers/Private/XZExtensions")
+            ],
+            cxxSettings: [
+                .define("XZ_FRAMEWORK")
+            ]
+        ),
+        .target(
+            name: "XZMocoaObjC",
+            dependencies: ["XZDefines", "XZExtensions"],
+            path: "XZKit",
+            sources: ["Code/ObjC/XZMocoa"],
+            publicHeadersPath: "Headers/Public/XZMocoa",
+            cSettings: [
+                .headerSearchPath("Headers/Private/XZMocoa")
             ],
             cxxSettings: [
                 .define("XZ_FRAMEWORK")
@@ -106,13 +169,9 @@ let package = Package(
         ),
         .target(
             name: "XZMocoa",
-            dependencies: ["XZDefines", "XZExtensions"],
+            dependencies: ["XZMocoaObjC"],
             path: "XZKit",
-            sources: ["Code/XZMocoa"],
-            publicHeadersPath: "Headers/XZMocoa/Public",
-            cSettings: [
-                .headerSearchPath("Headers/XZMocoa/Private")
-            ],
+            sources: ["Code/Swift/XZMocoa"],
             cxxSettings: [
                 .define("XZ_FRAMEWORK")
             ]
@@ -121,10 +180,10 @@ let package = Package(
             name: "XZML",
             dependencies: ["XZDefines", "XZExtensions"],
             path: "XZKit",
-            sources: ["Code/XZML"],
-            publicHeadersPath: "Headers/XZML/Public",
+            sources: ["Code/ObjC/XZML"],
+            publicHeadersPath: "Headers/Public/XZML",
             cSettings: [
-                .headerSearchPath("Headers/XZML/Private")
+                .headerSearchPath("Headers/Private/XZML")
             ],
             cxxSettings: [
                 .define("XZ_FRAMEWORK")
@@ -134,10 +193,10 @@ let package = Package(
             name: "XZJSON",
             dependencies: [],
             path: "XZKit",
-            sources: ["Code/XZJSON"],
-            publicHeadersPath: "Headers/XZJSON/Public",
+            sources: ["Code/ObjC/XZJSON"],
+            publicHeadersPath: "Headers/Public/XZJSON",
             cSettings: [
-                .headerSearchPath("Headers/XZJSON/Private")
+                .headerSearchPath("Headers/Private/XZJSON")
             ],
             cxxSettings: [
                 .define("XZ_FRAMEWORK")
@@ -147,10 +206,10 @@ let package = Package(
             name: "XZRefresh",
             dependencies: ["XZDefines"],
             path: "XZKit",
-            sources: ["Code/XZRefresh"],
-            publicHeadersPath: "Headers/XZRefresh/Public",
+            sources: ["Code/ObjC/XZRefresh"],
+            publicHeadersPath: "Headers/Public/XZRefresh",
             cSettings: [
-                .headerSearchPath("Headers/XZRefresh/Private")
+                .headerSearchPath("Headers/Private/XZRefresh")
             ],
             cxxSettings: [
                 .define("XZ_FRAMEWORK")
@@ -160,10 +219,10 @@ let package = Package(
             name: "XZPageView",
             dependencies: ["XZDefines"],
             path: "XZKit",
-            sources: ["Code/XZPageView"],
-            publicHeadersPath: "Headers/XZPageView/Public",
+            sources: ["Code/ObjC/XZPageView"],
+            publicHeadersPath: "Headers/Public/XZPageView",
             cSettings: [
-                .headerSearchPath("Headers/XZPageView/Private")
+                .headerSearchPath("Headers/Private/XZPageView")
             ],
             cxxSettings: [
                 .define("XZ_FRAMEWORK")
@@ -173,10 +232,10 @@ let package = Package(
             name: "XZPageControl",
             dependencies: ["XZExtensions"],
             path: "XZKit",
-            sources: ["Code/XZPageControl"],
-            publicHeadersPath: "Headers/XZPageControl/Public",
+            sources: ["Code/ObjC/XZPageControl"],
+            publicHeadersPath: "Headers/Public/XZPageControl",
             cSettings: [
-                .headerSearchPath("Headers/XZPageControl/Private")
+                .headerSearchPath("Headers/Private/XZPageControl")
             ],
             cxxSettings: [
                 .define("XZ_FRAMEWORK")
@@ -184,12 +243,12 @@ let package = Package(
         ),
         .target(
             name: "XZSegmentedControl",
-            dependencies: [],
+            dependencies: ["XZDefines"],
             path: "XZKit",
-            sources: ["Code/XZSegmentedControl"],
-            publicHeadersPath: "Headers/XZSegmentedControl/Public",
+            sources: ["Code/ObjC/XZSegmentedControl"],
+            publicHeadersPath: "Headers/Public/XZSegmentedControl",
             cSettings: [
-                .headerSearchPath("Headers/XZSegmentedControl/Private")
+                .headerSearchPath("Headers/Private/XZSegmentedControl")
             ],
             cxxSettings: [
                 .define("XZ_FRAMEWORK")
@@ -199,11 +258,7 @@ let package = Package(
             name: "XZGeometry",
             dependencies: [],
             path: "XZKit",
-            sources: ["Code/XZGeometry"],
-            publicHeadersPath: "Headers/XZGeometry/Public",
-            cSettings: [
-                .headerSearchPath("Headers/XZGeometry/Private")
-            ],
+            sources: ["Code/Swift/XZGeometry"],
             cxxSettings: [
                 .define("XZ_FRAMEWORK")
             ]
@@ -212,7 +267,7 @@ let package = Package(
             name: "XZContentStatus",
             dependencies: ["XZTextImageView"],
             path: "XZKit",
-            sources: ["Code/XZContentStatus"],
+            sources: ["Code/Swift/XZContentStatus"],
             cxxSettings: [
                 .define("XZ_FRAMEWORK")
             ]
@@ -221,7 +276,7 @@ let package = Package(
             name: "XZTextImageView",
             dependencies: ["XZGeometry"],
             path: "XZKit",
-            sources: ["Code/XZTextImageView"],
+            sources: ["Code/Swift/XZTextImageView"],
             cxxSettings: [
                 .define("XZ_FRAMEWORK")
             ]
@@ -230,7 +285,7 @@ let package = Package(
             name: "XZToast",
             dependencies: [],
             path: "XZKit",
-            sources: ["Code/XZToast"],
+            sources: ["Code/Swift/XZToast"],
             cxxSettings: [
                 .define("XZ_FRAMEWORK")
             ]
@@ -239,8 +294,8 @@ let package = Package(
             name: "XZURLQuery",
             dependencies: [],
             path: "XZKit",
-            sources: ["Code/XZURLQuery"],
-            publicHeadersPath: "Headers/XZURLQuery/Public",
+            sources: ["Code/ObjC/XZURLQuery"],
+            publicHeadersPath: "Headers/Public/XZURLQuery",
             cxxSettings: [
                 .define("XZ_FRAMEWORK")
             ]
@@ -249,8 +304,8 @@ let package = Package(
             name: "XZLocale",
             dependencies: ["XZDefines"],
             path: "XZKit",
-            sources: ["Code/XZLocale"],
-            publicHeadersPath: "Headers/XZLocale/Public",
+            sources: ["Code/ObjC/XZLocale"],
+            publicHeadersPath: "Headers/Public/XZLocale",
             cxxSettings: [
                 .define("XZ_FRAMEWORK")
             ]
@@ -259,7 +314,7 @@ let package = Package(
             name: "XZCollectionViewFlowLayout",
             dependencies: [],
             path: "XZKit",
-            sources: ["Code/XZCollectionViewFlowLayout"],
+            sources: ["Code/Swift/XZCollectionViewFlowLayout"],
             cxxSettings: [
                 .define("XZ_FRAMEWORK")
             ]
@@ -268,7 +323,7 @@ let package = Package(
             name: "XZNavigationController",
             dependencies: ["XZDefines"],
             path: "XZKit",
-            sources: ["Code/XZNavigationController"],
+            sources: ["Code/Swift/XZNavigationController"],
             cxxSettings: [
                 .define("XZ_FRAMEWORK")
             ]
@@ -277,8 +332,8 @@ let package = Package(
             name: "XZDataCryptor",
             dependencies: [],
             path: "XZKit",
-            sources: ["Code/XZDataCryptor"],
-            publicHeadersPath: "Headers/XZDataCryptor/Public",
+            sources: ["Code/ObjC/XZDataCryptor"],
+            publicHeadersPath: "Headers/Public/XZDataCryptor",
             cxxSettings: [
                 .define("XZ_FRAMEWORK")
             ]
@@ -287,8 +342,8 @@ let package = Package(
             name: "XZDataDigester",
             dependencies: ["XZDefines", "XZExtensions"],
             path: "XZKit",
-            sources: ["Code/XZDataDigester"],
-            publicHeadersPath: "Headers/XZDataDigester/Public",
+            sources: ["Code/ObjC/XZDataDigester"],
+            publicHeadersPath: "Headers/Public/XZDataDigester",
             cxxSettings: [
                 .define("XZ_FRAMEWORK")
             ]
@@ -297,8 +352,8 @@ let package = Package(
             name: "XZKeychain",
             dependencies: [],
             path: "XZKit",
-            sources: ["Code/XZKeychain"],
-            publicHeadersPath: "Headers/XZKeychain/Public",
+            sources: ["Code/ObjC/XZKeychain"],
+            publicHeadersPath: "Headers/Public/XZKeychain",
             cxxSettings: [
                 .define("XZ_FRAMEWORK")
             ]

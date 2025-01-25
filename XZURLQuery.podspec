@@ -8,7 +8,7 @@
 
 Pod::Spec.new do |s|
   s.name             = 'XZURLQuery'
-  s.version          = '10.1.0'
+  s.version          = '10.2.0'
   s.summary          = '专门处理 url 的 query 的库'
 
 # This description is used to generate tags and improve search results.
@@ -32,7 +32,7 @@ Pod::Spec.new do |s|
   s.pod_target_xcconfig = { 'GCC_PREPROCESSOR_DEFINITIONS' => 'XZ_FRAMEWORK=1' }
   
   s.subspec 'Code' do |ss|
-    ss.source_files = 'XZKit/Code/XZURLQuery/**/*.{h,m}'
+    ss.source_files = 'XZKit/Code/ObjC/XZURLQuery/**/*.{h,m}'
     # ss.project_header_files = 'XZURLQuery/Code/**/Private/*.{h,m}'
   end
   

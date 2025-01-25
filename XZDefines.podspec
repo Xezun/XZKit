@@ -36,8 +36,8 @@ Pod::Spec.new do |s|
   s.default_subspec = 'Code'
   
   s.subspec 'Code' do |ss|
-    ss.public_header_files = 'XZKit/Code/XZDefines/**/*.h'
-    ss.source_files        = 'XZKit/Code/XZDefines/**/*.{h,m}'
+    ss.public_header_files = 'XZKit/Code/ObjC/XZDefines/**/*.h'
+    ss.source_files        = 'XZKit/Code/ObjC/XZDefines/**/*.{h,m}'
   end
   
   s.subspec 'DEBUG' do |ss|

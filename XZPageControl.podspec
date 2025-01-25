@@ -34,9 +34,9 @@ Pod::Spec.new do |s|
   s.pod_target_xcconfig = { 'GCC_PREPROCESSOR_DEFINITIONS' => 'XZ_FRAMEWORK=1' }
   
   s.subspec 'Code' do |ss|
+    ss.source_files = 'XZKit/Code/ObjC/XZPageControl/**/*.{h,m}'
+    ss.project_header_files = 'XZKit/Code/ObjC/XZPageControl/**/Private/*.h'
     ss.dependency 'XZExtensions/XZShapeView'
-    ss.source_files = 'XZKit/Code/XZPageControl/**/*.{h,m}'
-    ss.project_header_files = 'XZKit/Code/XZPageControl/**/Private/*.h'
   end
   
   # s.resource_bundles = {

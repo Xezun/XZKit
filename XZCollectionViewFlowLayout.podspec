@@ -35,7 +35,7 @@ Pod::Spec.new do |s|
   s.default_subspec = 'Code'
   
   s.subspec 'Code' do |ss|
-    ss.source_files = 'XZKit/Code/XZCollectionViewFlowLayout/**/*.swift'
+    ss.source_files = 'XZKit/Code/Swift/XZCollectionViewFlowLayout/**/*.swift'
     # ss.project_header_files = 'XZCollectionViewFlowLayout/Code/**/Private/*.h'
   end
   

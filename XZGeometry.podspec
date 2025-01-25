@@ -34,7 +34,7 @@ Pod::Spec.new do |s|
   
   s.subspec 'Code' do |ss|
     # ss.dependency 'XZExtensions/XZShapeView'
-    ss.source_files = 'XZKit/Code/XZGeometry/**/*.{h,m,swift}'
+    ss.source_files = 'XZKit/Code/Swift/XZGeometry/**/*.{h,m,swift}'
     # ss.project_header_files = 'XZKit/Code/XZGeometry/**/Private/*.h'
   end
   

@@ -34,8 +34,8 @@ Pod::Spec.new do |s|
   s.default_subspec = 'Code'
   
   s.subspec 'Code' do |ss|
-    ss.source_files = 'XZKit/Code/XZRefresh/**/*.{h,m}'
-    ss.project_header_files = 'XZKit/Code/XZRefresh/**/Private/*.h'
+    ss.source_files = 'XZKit/Code/ObjC/XZRefresh/**/*.{h,m}'
+    ss.project_header_files = 'XZKit/Code/ObjC/XZRefresh/**/Private/*.h'
     ss.dependency 'XZDefines/XZRuntime'
     ss.dependency 'XZDefines/XZDefer'
   end

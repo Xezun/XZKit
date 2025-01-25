@@ -7,8 +7,8 @@
 
 #import "Example0311ViewController.h"
 #import "Example0311ViewModel.h"
-@import XZMocoa;
 @import SDWebImage;
+@import XZMocoa;
 
 @interface Example0311ViewController () <XZMocoaView>
 

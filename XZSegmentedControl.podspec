@@ -34,8 +34,9 @@ Pod::Spec.new do |s|
   s.default_subspec = 'Code'
   
   s.subspec 'Code' do |ss|
-    ss.source_files = 'XZKit/Code/XZSegmentedControl/**/*.{h,m}'
-    ss.project_header_files = 'XZKit/Code/XZSegmentedControl/**/Private/*.h'
+    ss.source_files = 'XZKit/Code/ObjC/XZSegmentedControl/**/*.{h,m}'
+    ss.project_header_files = 'XZKit/Code/ObjC/XZSegmentedControl/**/Private/*.h'
+    ss.dependency 'XZDefines/XZMacro'
   end
   
   s.subspec 'DEBUG' do |ss|

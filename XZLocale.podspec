@@ -32,7 +32,7 @@ Pod::Spec.new do |s|
   s.pod_target_xcconfig = { 'GCC_PREPROCESSOR_DEFINITIONS' => 'XZ_FRAMEWORK=1' }
   
   s.subspec 'Code' do |ss|
-    ss.source_files = 'XZKit/Code/XZLocale/**/*.{h,m}'
+    ss.source_files = 'XZKit/Code/ObjC/XZLocale/**/*.{h,m}'
     ss.dependency 'XZDefines/XZRuntime'
     # ss.project_header_files = 'XZLocale/Code/**/Private/*.{h,m}'
   end

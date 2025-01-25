@@ -36,8 +36,8 @@ Pod::Spec.new do |s|
   s.dependency 'XZDefines/XZRuntime'
   
   s.subspec 'Code' do |ss|
-    ss.source_files = 'XZKit/Code/XZPageView/**/*.{h,m}'
-    ss.project_header_files = 'XZKit/Code/XZPageView/**/Private/*.h'
+    ss.source_files = 'XZKit/Code/ObjC/XZPageView/**/*.{h,m}'
+    ss.project_header_files = 'XZKit/Code/ObjC/XZPageView/**/Private/*.h'
   end
   
   s.subspec 'DEBUG' do |ss|
