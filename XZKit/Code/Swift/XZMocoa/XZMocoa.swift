@@ -7,8 +7,34 @@
 
 #if SWIFT_PACKAGE
 @_exported import XZMocoaObjC
-#endif
+extension XZMocoaKind: @retroactive ExpressibleByStringLiteral {
+    public typealias StringLiteralType = String
+    public init(stringLiteral value: String) {
+        self.init(rawValue: value)
+    }
+}
 
+extension XZMocoaName: @retroactive ExpressibleByStringLiteral {
+    public typealias StringLiteralType = String
+    public init(stringLiteral value: String) {
+        self.init(rawValue: value)
+    }
+}
+
+extension XZMocoaUpdatesKey: @retroactive ExpressibleByStringLiteral {
+    public typealias StringLiteralType = String
+    public init(stringLiteral value: String) {
+        self.init(rawValue: value)
+    }
+}
+
+extension XZMocoaKey: @retroactive ExpressibleByStringLiteral {
+    public typealias StringLiteralType = String
+    public init(stringLiteral value: String) {
+        self.init(rawValue: value)
+    }
+}
+#else
 extension XZMocoaKind: ExpressibleByStringLiteral {
     public typealias StringLiteralType = String
     public init(stringLiteral value: String) {
@@ -36,3 +62,8 @@ extension XZMocoaKey: ExpressibleByStringLiteral {
         self.init(rawValue: value)
     }
 }
+#endif
+
+
+
+
