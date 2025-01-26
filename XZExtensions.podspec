@@ -10,7 +10,7 @@
 
 Pod::Spec.new do |s|
   s.name             = 'XZExtensions'
-  s.version          = '10.1.0'
+  s.version          = '10.2.0'
   s.summary          = '对原生框架的拓展，提高开发效率'
 
 # This description is used to generate tags and improve search results.

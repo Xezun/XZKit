@@ -8,7 +8,7 @@
 
 Pod::Spec.new do |s|
   s.name             = 'XZCollectionViewFlowLayout'
-  s.version          = '10.1.0'
+  s.version          = '10.2.0'
   s.summary          = '支持多种对齐方式的 UICollectionView 流布局。'
 
 # This description is used to generate tags and improve search results.

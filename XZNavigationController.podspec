@@ -10,7 +10,7 @@
 
 Pod::Spec.new do |s|
   s.name             = 'XZNavigationController'
-  s.version          = '10.1.0'
+  s.version          = '10.2.0'
   s.summary          = '一个支持全屏手势导航、自定义导航栏的组件'
 
 # This description is used to generate tags and improve search results.

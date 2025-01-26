@@ -8,7 +8,7 @@
 
 Pod::Spec.new do |s|
   s.name             = 'XZToast'
-  s.version          = '10.1.0'
+  s.version          = '10.2.0'
   s.summary          = '有图片和文字组成的视图控件'
 
 # This description is used to generate tags and improve search results.

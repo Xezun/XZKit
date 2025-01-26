@@ -8,7 +8,7 @@
 
 Pod::Spec.new do |s|
   s.name             = 'XZContentStatus'
-  s.version          = '10.1.0'
+  s.version          = '10.2.0'
   s.summary          = '页面状态提示控件'
 
 # This description is used to generate tags and improve search results.

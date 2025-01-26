@@ -8,7 +8,7 @@
 
 Pod::Spec.new do |s|
   s.name             = 'XZGeometry'
-  s.version          = '10.1.0'
+  s.version          = '10.2.0'
   s.summary          = '几何结构体拓展'
 
 # This description is used to generate tags and improve search results.

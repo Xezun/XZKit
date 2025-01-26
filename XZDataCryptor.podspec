@@ -10,7 +10,7 @@
 
 Pod::Spec.new do |s|
   s.name             = 'XZDataCryptor'
-  s.version          = '10.1.0'
+  s.version          = '10.2.0'
   s.summary          = '基于 CommonCrypto 封装的面向对象的 AES/DES 等对称加密工具。'
 
 # This description is used to generate tags and improve search results.

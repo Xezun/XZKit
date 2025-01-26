@@ -8,7 +8,7 @@
 
 Pod::Spec.new do |s|
   s.name             = 'XZLocale'
-  s.version          = '10.1.0'
+  s.version          = '10.2.0'
   s.summary          = 'XZLocale 本地化支持组件'
 
 # This description is used to generate tags and improve search results.
