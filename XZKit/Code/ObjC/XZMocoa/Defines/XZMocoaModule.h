@@ -18,13 +18,19 @@ NS_ASSUME_NONNULL_BEGIN
 
 @class XZMocoaModule, NSDictionary;
 
-typedef NS_ENUM(NSUInteger, XZMocoaModuleViewCategory) {
-    XZMocoaModuleViewCategoryUnknown = 0,
-    XZMocoaModuleViewCategoryClass,
-    XZMocoaModuleViewCategoryNib,
-    XZMocoaModuleViewCategoryStoryboard,
-    XZMocoaModuleViewCategoryStoryboardCell,
-} NS_SWIFT_NAME(XZMocoaModule.ViewCategory);
+/// 实现视图的形式。
+typedef NS_ENUM(NSUInteger, XZMocoaModuleViewForm) {
+    /// 未提供视图，或不支持的视图形式
+    XZMocoaModuleViewFormUnknown = 0,
+    /// 纯代码视图
+    XZMocoaModuleViewFormClass,
+    /// xib 视图
+    XZMocoaModuleViewFormNib,
+    /// xib 视图控制器，可通过 mocoa url 加载。
+    XZMocoaModuleViewFormStoryboard,
+    /// xib 可重用视图，可通过 viewReuseIdentifier 注册。
+    XZMocoaModuleViewFormStoryboardReusableView,
+} NS_SWIFT_NAME(XZMocoaModule.ViewForm);
 
 /// 为 XZMocoaModule 提供下标式访问的协议。
 NS_SWIFT_NAME(XZMocoaModule.SubmoduleCollection)
@@ -89,7 +95,7 @@ NS_SWIFT_NAME(XZMocoaModule.SubmoduleCollection)
 @property (nonatomic, strong, nullable) Class modelClass;
 
 
-@property (nonatomic, readonly) XZMocoaModuleViewCategory viewCategory;
+@property (nonatomic, readonly) XZMocoaModuleViewForm viewForm;
 // View by Class MVVM 中 View 的 class 对象。
 @property (nonatomic, strong, nullable) Class viewClass;
 // View by Nib

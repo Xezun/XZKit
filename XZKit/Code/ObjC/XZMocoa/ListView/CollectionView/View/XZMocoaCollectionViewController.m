@@ -41,7 +41,16 @@
     self.collectionView = contentView;
 }
 
+- (void)viewModelWillChange {
+    XZMocoaCollectionViewModel *_viewModel = self.viewModel;
+    _viewModel.delegate = nil;
+}
+
 - (void)viewModelDidChange {
+    XZMocoaCollectionViewModel *_viewModel = self.viewModel;
+    [self registerCellWithModule:_viewModel.module];
+    _viewModel.delegate = self;
+    
     // 刷新视图。
     UICollectionView * const collectionView = self.contentView;
     if (@available(iOS 11.0, *)) {

@@ -5,9 +5,13 @@
 //  Created by Xezun on 2024/10/12.
 //
 
-#import "Example05TestModels.h"
+#import "Example05Model.h"
 
-@implementation Example05TestHuman
+@implementation Example05Model
+
+@end
+
+@implementation Example05Human
 
 + (NSDictionary<NSString *,id> *)mappingJSONCodingKeys {
     return @{
@@ -17,11 +21,11 @@
 
 @end
 
-@implementation Example05TestTeacher
+@implementation Example05Teacher
 
 + (NSDictionary<NSString *,id> *)mappingJSONCodingClasses {
     return @{
-        @"students": [Example05TestStudent class]
+        @"students": [Example05Student class]
     };
 }
 
@@ -37,26 +41,34 @@
     self = [self init];
     if (self != nil) {
         // 使用 XZJSON 进行初始化。
-        [XZJSON model:self decodeWithDictionary:JSON];
+        [XZJSON model:self decodeFromDictionary:JSON];
         
         // 处理自定义逻辑：关联学生和老师
-        [self.students enumerateObjectsUsingBlock:^(Example05TestStudent * _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
+        [self.students enumerateObjectsUsingBlock:^(Example05Student * _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
             obj.teacher = self;
         }];
     }
     return self;
 }
 
+- (NSString *)description {
+    return [XZJSON modelDescription:self];
+}
+
 @end
 
-@implementation Example05TestStudent
+@implementation Example05Student
 
-+ (NSArray<NSString *> *)blockedJSONCodingKeys {
-    return @[@"teacher"];
-}
+//+ (NSArray<NSString *> *)blockedJSONCodingKeys {
+//    return @[@"teacher"];
+//}
 
 + (NSArray<NSString *> *)allowedJSONCodingKeys {
     return nil;
+}
+
+- (NSString *)description {
+    return [XZJSON modelDescription:self];
 }
 
 @end

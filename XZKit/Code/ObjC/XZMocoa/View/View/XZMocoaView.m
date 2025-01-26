@@ -188,12 +188,12 @@ static void xz_mocoa_copyMethod(Class const cls, SEL const target, SEL const sou
     if (module == nil) {
         return nil;
     }
-    switch (module.viewCategory) {
-        case XZMocoaModuleViewCategoryClass: {
+    switch (module.viewForm) {
+        case XZMocoaModuleViewFormClass: {
             XZMocoaOptions * const mocoaOptions = [[XZMocoaOptions alloc] initWithURL:url options:options];
             return [[module.viewClass alloc] initWithMocoaOptions:mocoaOptions frame:frame];
         }
-        case XZMocoaModuleViewCategoryNib: {
+        case XZMocoaModuleViewFormNib: {
             UINib *nib = [UINib nibWithNibName:module.viewNibName bundle:module.viewNibBundle];
             Class const ViewClass = module.viewNibClass ?: self.class;
             for (UIView *object in [nib instantiateWithOwner:nil options:nil]) {
@@ -240,8 +240,8 @@ static void xz_mocoa_copyMethod(Class const cls, SEL const target, SEL const sou
         return nil;
     }
     
-    switch (module.viewCategory) {
-        case XZMocoaModuleViewCategoryClass: {
+    switch (module.viewForm) {
+        case XZMocoaModuleViewFormClass: {
             Class const ViewController = module.viewClass;
             if (![ViewController isSubclassOfClass:UIViewController.class]) {
                 XZLog(@"模块 %@ 不是 UIViewController 模块，无法构造视图控制器", module);
@@ -251,7 +251,7 @@ static void xz_mocoa_copyMethod(Class const cls, SEL const target, SEL const sou
             UIViewController * const viewController = [[ViewController alloc] initWithMocoaOptions:mocoaOptions nibName:nil bundle:nil];
             return viewController;
         }
-        case XZMocoaModuleViewCategoryNib: {
+        case XZMocoaModuleViewFormNib: {
             Class const ViewController = module.viewNibClass;
             if (![ViewController isSubclassOfClass:UIViewController.class]) {
                 XZLog(@"模块 %@ 不是 UIViewController 模块，无法构造视图控制器", module);
@@ -263,7 +263,7 @@ static void xz_mocoa_copyMethod(Class const cls, SEL const target, SEL const sou
             UIViewController * const viewController = [[ViewController alloc] initWithMocoaOptions:mocoaOptions nibName:nibName bundle:bundle];
             return viewController;
         }
-        case XZMocoaModuleViewCategoryStoryboard: {
+        case XZMocoaModuleViewFormStoryboard: {
             UIStoryboard *storyboard = [UIStoryboard storyboardWithName:module.viewStoryboardName bundle:module.viewStoryboardBundle];
             UIViewController *vc = nil;
             if (module.viewStoryboardIdentifier) {

@@ -35,19 +35,19 @@
 
         [submodule enumerateSubmodulesUsingBlock:^(XZMocoaModule *submodule, XZMocoaKind kind, XZMocoaName name, BOOL *stop) {
             if ([kind isEqualToString:XZMocoaKindCell]) {
-                switch (submodule.viewCategory) {
-                    case XZMocoaModuleViewCategoryClass: {
+                switch (submodule.viewForm) {
+                    case XZMocoaModuleViewFormClass: {
                         NSString * const identifier = XZMocoaReuseIdentifier(section, XZMocoaKindCell, name);
                         [tableView registerClass:submodule.viewClass forCellReuseIdentifier:identifier];
                         break;
                     }
-                    case XZMocoaModuleViewCategoryNib: {
+                    case XZMocoaModuleViewFormNib: {
                         NSString * const identifier = XZMocoaReuseIdentifier(section, XZMocoaKindCell, name);
                         UINib *viewNib = [UINib nibWithNibName:submodule.viewNibName bundle:submodule.viewNibBundle];
                         [tableView registerNib:viewNib forCellReuseIdentifier:identifier];
                         break;
                     }
-                    case XZMocoaModuleViewCategoryStoryboardCell: {
+                    case XZMocoaModuleViewFormStoryboardReusableView: {
                         // 在 Storyboard 中 cell 已经注册
                         break;
                     }
@@ -60,19 +60,19 @@
                     }
                 }
             } else if ([kind isEqualToString:XZMocoaKindHeader] || [kind isEqualToString:XZMocoaKindFooter]) {
-                switch (submodule.viewCategory) {
-                    case XZMocoaModuleViewCategoryClass: {
+                switch (submodule.viewForm) {
+                    case XZMocoaModuleViewFormClass: {
                         NSString * const identifier = XZMocoaReuseIdentifier(section, kind, name);
                         [tableView registerClass:submodule.viewClass forHeaderFooterViewReuseIdentifier:identifier];
                         break;
                     }
-                    case XZMocoaModuleViewCategoryNib: {
+                    case XZMocoaModuleViewFormNib: {
                         NSString * const identifier = XZMocoaReuseIdentifier(section, kind, name);
                         UINib *viewNib = [UINib nibWithNibName:submodule.viewNibName bundle:submodule.viewNibBundle];
                         [tableView registerNib:viewNib forHeaderFooterViewReuseIdentifier:identifier];
                         break;
                     }
-                    case XZMocoaModuleViewCategoryStoryboardCell: {
+                    case XZMocoaModuleViewFormStoryboardReusableView: {
                         break;
                     }
                     default: {

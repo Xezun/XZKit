@@ -16,38 +16,35 @@ NS_ASSUME_NONNULL_BEGIN
 
 /// 模型属性与 JSON 数据键之间的映射。
 ///
-/// If the key in JSON/Dictionary does not match to the model's property name, implements this method and returns the additional mapper.
+/// If the key in JSON or Dictionary does not match to the model's property name, implements this method and returns the additional mapper.
 ///
-/// @code
+/// 例如，对于下述数据结构。
+///
+/// ```json
 /// {
 ///     "n": "Harry Pottery",
 ///     "p": 256,
 ///     "ext": { "desc": "A book written by J.K.Rowling." },
 ///     "ID": 100010
 /// }
-/// @endcode
-///
-/// @code
-/// @interface XZBook : NSObject <XZJSONCoding>
-/// @property NSString *name;
-/// @property NSInteger page;
-/// @property NSString *desc;
-/// @property NSString *bookID;
-/// @end
-///
-/// @implementation XZBook
-/// + (NSDictionary *)mappingJSONCodingKeys {
-///     return @{
-///         @"name"  : @"n",
-///         @"page"  : @"p",
-///         @"desc"  : @"ext.desc", // 符号 . 会认为是 keyPath 如果不是，可以使用反斜杠转义，比如 @"ext\\.desc"。
-///         @"bookID": @[@"id", @"ID", @"book_id"]
-///     };
+/// ```
+/// 可以像下面这样定义数据模型。
+/// ```swift
+/// class Foobar: NSObject, XZJSONCoding {
+///     var name: String
+///     var page: Int
+///     var desc: String
+///     var bookID: String
+///     static var mappingJSONCodingKeys: [String: Any]? {
+///         return [
+///             "name": "n",
+///             "page": "p",
+///             "desc": "ext.desc", // 点号 . 会认为是 keyPath 如果不是，可以使用反斜杠转义，比如 "ext\\.desc"。
+///             "bookID": ["id", "ID", "book_id"]
+///         ]
+///     }
 /// }
-/// @end
-/// @endcode
-///
-/// @todo 如果属性对应的键不合法，那么该属性会在 JSON 处理中被忽略。
+/// ```
 @property (class, readonly, nullable) NSDictionary<NSString *, id> *mappingJSONCodingKeys;
 
 /// 模型属性的类型不明确时，可通过此属性提供映射关系，比如属性是集合或者 id 类型。
@@ -58,43 +55,36 @@ NS_ASSUME_NONNULL_BEGIN
 /// implements this method and returns a property->class mapper, tells which kind of
 /// object will be add to the array/set/dictionary.
 ///
-/// @code
-/// @class XZShadow, XZBorder, XZAttachment;
+/// ```swift
+/// import XZShadow, XZBorder;
 ///
-/// @interface XZAttributes: NSObject <XZJSONCoding>
-/// @property NSString *name;
-/// @property NSArray *shadows;
-/// @property NSSet *borders;
-/// @property NSDictionary *attachments;
-/// @end
+/// class XZAttributes: NSObject, XZJSONCoding {
+///     var name: String
+///     var shadows: [XZShadow]
+///     var borders: [XZBorder]
+///     var attachments: [XZAttachment]
 ///
-/// @implementation XZAttributes
-/// + (NSDictionary *)mappingJSONCodingClasses {
-///     return @{
-///         @"shadows" : [XZShadow class],
-///         @"borders" : XZBorder.class,
-///         @"attachments" : @"XZAttachment"
-///     };
+///     var mappingJSONCodingClasses: [String: Any]? {
+///         return [
+///             "shadows" : XZShadow.self,
+///             "borders" : XZBorder.self,
+///             "attachments" : "XZAttachment" // Use the model class name
+///         ];
+///     }
 /// }
-/// @end
-/// @endcode
-/// @return A class mapper.
+/// ```
 @property (class, readonly, nullable) NSDictionary<NSString *, id> *mappingJSONCodingClasses;
 
 /// 不可模型化与序列化的模型属性名的集合。
 ///
 /// All the properties in blocked list will be ignored in model transform process.
 /// Returns nil to ignore this feature.
-///
-/// @return An array of property's name.
 @property (class, readonly, nullable) NSArray<NSString *> *blockedJSONCodingKeys;
 
 /// 只可模型化或序列化的模型属性名的集合。
 ///
 /// If a property is not in the allowed list, it will be ignored in model transform process.
 /// Returns nil to ignore this feature.
-///
-/// @return An array of property's name.
 @property (class, readonly, nullable) NSArray<NSString *> *allowedJSONCodingKeys;
 
 @end
@@ -110,8 +100,9 @@ NS_ASSUME_NONNULL_BEGIN
 /// - Returns: 返回 nil 表示无效数据，不进行模型化。
 + (nullable NSDictionary *)canDecodeFromJSONDictionary:(NSDictionary *)JSON;
 
-/// JSON 数据模型初始化方法。如果需要自定义模型化过程，或者模型校验，可实现此方法。
-/// @code
+/// 自定义 JSON 数据模型化方法。如果需要自定义模型化过程，或者模型校验，可实现此方法。
+///
+/// ```objc
 /// - (instancetype)initWithJSONDictionary:(NSDictionary *)JSON {
 ///     // 验证 JSON 数据是否合法
 ///     if (![JSON[@"type"] isKindOfClass:NSNumber.class]) {
@@ -135,15 +126,28 @@ NS_ASSUME_NONNULL_BEGIN
 /// 
 ///     return self;
 /// }
-/// @endcode
-/// @note 如果不实现此方法，则使用 `init` 方法初始化模型对象，因此自定义了指定初始化方法的模型对象，需要实现此方法，否则指定初始化方法不会被调用。
-/// @param JSON 字符串或二进制形式的原始 JSON 数据，或已序列化的字典或数组数据
+/// ```
+///
+/// > 如果不实现此方法，则使用 `init` 方法初始化模型对象，因此自定义了指定初始化方法的模型对象，需要实现此方法，否则指定初始化方法不会被调用。
+/// - Parameter JSON: JSON 字符串或二进制形式的原始 JSON 数据，或已序列化的字典或数组数据
 - (nullable instancetype)initWithJSONDictionary:(NSDictionary *)JSON;
+
+/// 自定义日期解析。
+///
+/// 默认支持的日期格式（以情形，可以不用实现此方法）：
+/// - 以秒为单位的时间戳，整数或浮点型数值。
+/// - 以 yyyy-MM-dd HH:mm:ss 为格式的日期字符串。
+///
+/// - Parameters:
+///   - value: JSON 数据中的值
+///   - key: 属性名
+- (void)decodeDateFromJSONValue:(id)value forKey:(NSString *)key;
+
 @end
 
 @protocol XZJSONEncoding <XZJSONCoding>
 @optional
-/// 自定义或校验模型实例序列化为数据字典。
+/// 自定义模型 JSON 序列化方法。自定义模型校验、实例序列化为数据字典的过程，可实现此方法。
 /// ```objc
 /// - (nullable NSDictionary *)encodeIntoJSONDictionary:(NSMutableDictionary *)dictionary {
 ///     [XZJSON object:self encodeIntoDictionary:dictionary];
@@ -154,6 +158,27 @@ NS_ASSUME_NONNULL_BEGIN
 /// - Note: 如果需要校验 XZJSON 序列化的结果，也可以通过此方法实现。
 /// - Parameter JSON: 数据字典
 - (nullable NSMutableDictionary *)encodeIntoJSONDictionary:(NSMutableDictionary *)JSON;
+
+/// 将 NSDate 格式化为 JSON 数据。
+///
+/// 如果不实现此方法，默认转换 NSDate 为以秒为单位的时间戳，双精度浮点型数值。
+///
+/// - Parameters:
+///   - date: 日期对象
+///   - key: 属性名
+- (nullable id)encodeDateIntoJSONValue:(NSDate *)date forKey:(NSString *)key;
+
+- (id)encodeProperty:(NSDate *)date withCoder:(NSCoder *)aCoder;
+
+@end
+
+@class XZObjcIvarDescriptor;
+@protocol XZJSONCopying <NSObject>
+/// 复制实例变量值。
+///
+/// 由于无法确定 C 指针的内存管理方式，需要模型自行实现 C 指针实例变量的值复制。
+/// - Parameter ivar: 变量
+- (void *)copyIvar:(XZObjcIvarDescriptor *)ivar;
 @end
 
 NS_ASSUME_NONNULL_END

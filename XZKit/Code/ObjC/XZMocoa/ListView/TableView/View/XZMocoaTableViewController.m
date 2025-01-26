@@ -42,8 +42,14 @@
     [self setTableView:contentView];
 }
 
+- (void)viewModelWillChange {
+    XZMocoaTableViewModel * const _viewModel = self.viewModel;
+    _viewModel.delegate = nil;
+}
+
 - (void)viewModelDidChange {
     XZMocoaTableViewModel * const _viewModel = self.viewModel;
+    [self registerCellWithModule:_viewModel.module];
     _viewModel.delegate = self;
     
     // 刷新视图。

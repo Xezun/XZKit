@@ -97,11 +97,11 @@ FOUNDATION_STATIC_INLINE NSString *XZMocoaPathCreate(XZMocoaKind kind, XZMocoaNa
 // view class
 
 - (Class)viewClass {
-    return _viewCategory == XZMocoaModuleViewCategoryClass ? _viewClass : Nil;
+    return _viewForm == XZMocoaModuleViewFormClass ? _viewClass : Nil;
 }
 
 - (void)setViewClass:(Class)viewClass {
-    _viewCategory = XZMocoaModuleViewCategoryClass;
+    _viewForm = XZMocoaModuleViewFormClass;
     _viewClass = viewClass;
     _viewName = nil;
     _viewBundle = nil;
@@ -111,20 +111,20 @@ FOUNDATION_STATIC_INLINE NSString *XZMocoaPathCreate(XZMocoaKind kind, XZMocoaNa
 // view nib
 
 - (Class)viewNibClass {
-    return _viewCategory == XZMocoaModuleViewCategoryNib ? _viewClass : Nil;
+    return _viewForm == XZMocoaModuleViewFormNib ? _viewClass : Nil;
 }
 
 - (NSString *)viewNibName {
-    return _viewCategory == XZMocoaModuleViewCategoryNib ? _viewName : nil;
+    return _viewForm == XZMocoaModuleViewFormNib ? _viewName : nil;
 }
 
 - (NSBundle *)viewNibBundle {
-    return _viewCategory == XZMocoaModuleViewCategoryNib ? _viewBundle : nil;
+    return _viewForm == XZMocoaModuleViewFormNib ? _viewBundle : nil;
 }
 
 - (void)setViewNibWithClass:(Class)viewClass name:(NSString *)nibName bundle:(NSBundle *)bundle {
     NSAssert(nibName && bundle, @"必须提供 nibName 和 bundle 参数");
-    _viewCategory = XZMocoaModuleViewCategoryNib;
+    _viewForm   = XZMocoaModuleViewFormNib;
     _viewClass  = viewClass;
     _viewName   = nibName.copy;
     _viewBundle = bundle ?: NSBundle.mainBundle;
@@ -147,15 +147,15 @@ FOUNDATION_STATIC_INLINE NSString *XZMocoaPathCreate(XZMocoaKind kind, XZMocoaNa
 // view storyboard
 
 - (NSString *)viewStoryboardIdentifier {
-    return _viewCategory == XZMocoaModuleViewCategoryStoryboard ? _viewIdentifier : nil;
+    return _viewForm == XZMocoaModuleViewFormStoryboard ? _viewIdentifier : nil;
 }
 
 - (NSString *)viewStoryboardName {
-    return _viewCategory == XZMocoaModuleViewCategoryStoryboard ? _viewName : nil;
+    return _viewForm == XZMocoaModuleViewFormStoryboard ? _viewName : nil;
 }
 
 - (NSBundle *)viewStoryboardBundle {
-    return _viewCategory == XZMocoaModuleViewCategoryStoryboard ? _viewBundle : nil;
+    return _viewForm == XZMocoaModuleViewFormStoryboard ? _viewBundle : nil;
 }
 
 - (void)setViewStoryboardWithIdentifier:(NSString *)identifier {
@@ -184,7 +184,7 @@ FOUNDATION_STATIC_INLINE NSString *XZMocoaPathCreate(XZMocoaKind kind, XZMocoaNa
 
 - (void)setViewStoryboardWithIdentifier:(NSString *)identifier name:(NSString *)storyboardName bundle:(NSBundle *)bundle {
     NSAssert(storyboardName && bundle, @"参数 name 和 bundle 必须提供");
-    _viewCategory   = XZMocoaModuleViewCategoryStoryboard;
+    _viewForm       = XZMocoaModuleViewFormStoryboard;
     _viewClass      = Nil;
     _viewIdentifier = identifier.copy;
     _viewName       = storyboardName.copy;
@@ -192,7 +192,7 @@ FOUNDATION_STATIC_INLINE NSString *XZMocoaPathCreate(XZMocoaKind kind, XZMocoaNa
 }
 
 - (void)setViewReuseIdentifier:(NSString *)viewReuseIdentifier {
-    _viewCategory = XZMocoaModuleViewCategoryStoryboardCell;
+    _viewForm       = XZMocoaModuleViewFormStoryboardReusableView;
     _viewClass      = Nil;
     _viewIdentifier = viewReuseIdentifier.copy;
     _viewName       = nil;
@@ -200,7 +200,7 @@ FOUNDATION_STATIC_INLINE NSString *XZMocoaPathCreate(XZMocoaKind kind, XZMocoaNa
 }
 
 - (NSString *)viewReuseIdentifier {
-    return _viewCategory == XZMocoaModuleViewCategoryStoryboardCell ? _viewIdentifier : nil;
+    return _viewForm == XZMocoaModuleViewFormStoryboardReusableView ? _viewIdentifier : nil;
 }
 
 - (void)enumerateSubmodulesUsingBlock:(void (^NS_NOESCAPE)(XZMocoaModule *submodule, XZMocoaKind kind, XZMocoaName name, BOOL *stop))block {

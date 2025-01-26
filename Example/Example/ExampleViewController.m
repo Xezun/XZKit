@@ -50,9 +50,10 @@
         @"18. XZDataDigester",
         @"19. XZDataCryptor",
         @"20. XZKeychain",
+        @"21. XZObjcDescriptor",
     ];
     XZMocoaTableViewModel *viewModel = [[XZMocoaTableViewModel alloc] initWithModel:@[data]];
-    viewModel.module = XZMocoa(@"https://xzkit.xezun.com/example");
+    viewModel.module = XZMocoa(@"https://xzkit.xezun.com/examples");
     self.tableView.viewModel = viewModel;
 }
 
@@ -73,7 +74,7 @@
 @end
 @implementation ExampleTableViewCell
 + (void)load {
-    XZMocoa(@"https://xzkit.xezun.com/example").section.cell.viewReuseIdentifier = @"cell";
+    XZMocoa(@"https://xzkit.xezun.com/examples").section.cell.viewReuseIdentifier = @"cell";
 }
 - (void)viewModelDidChange {
     NSString *name = self.viewModel.model;
@@ -94,7 +95,7 @@
 @end
 @implementation ExampleTableViewCellViewModel
 + (void)load {
-    XZMocoa(@"https://xzkit.xezun.com/example").section.cell.viewModelClass = self;
+    XZMocoa(@"https://xzkit.xezun.com/examples").section.cell.viewModelClass = self;
 }
 - (CGFloat)height {
     return 44.0;

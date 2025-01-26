@@ -30,6 +30,7 @@ target 'Example' do
   pod 'XZDataDigester', :path => '../../'
   pod 'XZDataCryptor', :path => '../../'
   pod 'XZKeychain', :path => '../../'
+  pod 'XZObjcDescriptor', :path => '../../'
   
   pod 'SDWebImage'
   # pod 'AFNetworking'

@@ -381,7 +381,6 @@ NSHashTable *xz_objc_class_getImplementedProtocolMethods(Class aClass, NSHashTab
     return table;
 }
 
-#if XZ_FRAMEWORK
 void xz_objc_msgSendSuper_void_id(id receiver, Class receiverClass, SEL selector, id param1) {
     struct objc_super _super = {
         .receiver = receiver,
@@ -529,4 +528,3 @@ void xz_objc_msgSendSuper_void_id_id(id receiver, Class receiverClass, SEL selec
 void xz_objc_msgSend_void_id_id(id receiver, SEL selector, id param1, id param2) {
     ((void (*)(id, SEL, id, id))objc_msgSend)(receiver, selector, param1, param2);
 }
-#endif

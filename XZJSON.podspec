@@ -37,6 +37,8 @@ Pod::Spec.new do |s|
     ss.private_header_files = 'XZKit/Code/ObjC/XZJSON/**/Objc/*.h'
     # 不可以被引用
     ss.project_header_files = 'XZKit/Code/ObjC/XZJSON/**/Private/*.h'
+    
+    ss.dependency 'XZObjcDescriptor'
   end
   
   # s.resource_bundles = {

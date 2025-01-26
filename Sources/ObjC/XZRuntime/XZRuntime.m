@@ -93,7 +93,7 @@ BOOL xz_objc_class_addVariable(Class target, Ivar ivar, size_t size, uint8_t ali
 }
 
 BOOL xz_objc_class_addVariable(Class target, Ivar ivar) XZ_OVERLOADABLE {
-    XZObjCTypeDescriptor *descriptor = [XZObjCTypeDescriptor descriptorWithTypeEncoding:ivar_getTypeEncoding(ivar)];
+    XZObjcTypeDescriptor *descriptor = [XZObjcTypeDescriptor descriptorWithTypeEncoding:ivar_getTypeEncoding(ivar)];
     return xz_objc_class_addVariable(target, ivar, descriptor.size, descriptor.alignment);
 }
 

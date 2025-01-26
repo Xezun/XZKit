@@ -11,12 +11,16 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
+@class XZJSONClassDescriptor;
+
 /// A property info in object model.
 @interface XZJSONPropertyDescriptor : NSObject {
     @package
-    /// 描述属性的对象。 property's info
+    /// 当前属性所在的 class 描述对象
+    XZJSONClassDescriptor * __unsafe_unretained _class;
+    /// 属性。 property's info
     XZObjcPropertyDescriptor *_property;
-    /// 属性对应的。 next meta if there are multiple properties mapped to the same key.
+    /// 属性映射链表。 next meta if there are multiple properties mapped to the same key.
     XZJSONPropertyDescriptor *_next;
     
     /// 属性名。property's name
@@ -24,34 +28,32 @@ NS_ASSUME_NONNULL_BEGIN
     /// 属性值类型。property's type
     XZObjcType _type;
     /// 如果是，属性值原生类型。property's Foundation type
-    XZJSONEncodingNSType _nsType;
+    XZJSONClassType _classType;
     /// 属性是否为 c 数值。is c number type
-    BOOL _isCNumber;
+    BOOL _isScalarNumber;
     /// 属性值为对象时，对象的类。 property's class, or nil
-    Class _Nullable _class;
+    Class _Nullable _subtype;
     /// 属性为集合对象时，元素的类。 container's generic class, or nil if threr's no generic class
-    Class _Nullable _elementClass;
-    /// 属性的取值方法。 getter, or nil if the instances cannot respond
-    SEL _Nullable _getter;
-    /// 属性的设值方法。 setter, or nil if the instances cannot respond
-    SEL _Nullable _setter;
-    /// 是否支持 kvc 键值编码。 YES if it can access with key-value coding
-    BOOL _isKVCCompatible;
-    /// 属性是否为可存档的结构体类型。 YES if the struct can encoded with keyed archiver/unarchiver
-    BOOL _isNSCodingStruct;
+    Class _Nullable _elementType;
+    /// 取值方法。必不为空。
+    SEL _getter;
+    /// 存值方法。必不为空。
+    SEL _setter;
+    /// 是否支持 kvc 键值编码。
+    /// 根据 Key-Value Coding Programming Guide 属性的 setter 方法必须以 `set` 或 `_set` 开头。
+    /// 值为调用 setter 方法可使用的 key 名（调用 getter 方法使用 `_name` 属性)。
+    NSString *_isKeyValueCodable;
     
-    /// 映射到属性的 JSON 键名。一定非空值，但可能并非有效值，有可能是 keyPath 或 keyArray[0]。
+    /// 映射到当前属性的 JSON 键名。可能是 keyPath 或 keyArray 的第一个元素。
     NSString            * _Nonnull _JSONKey;
-    /// 映射到属性的 JSON 键路径。如存在，则优先使用，不会与 _JSONKeyArray 同时存在。
+    /// 映射到当前属性的 JSON 键路径。
     NSArray<NSString *> * _Nullable _JSONKeyPath;
-    /// 映射到属性的 JSON 键集合。如存在，则优先使用。
+    /// 映射到当前属性的 JSON 键数组。值为 `NSString *` 类型或者 `NSArray<NSString *> *` 类型。
     NSArray             * _Nullable _JSONKeyArray;
 }
 
-+ (XZJSONPropertyDescriptor *)descriptorWithClass:(XZObjcClassDescriptor *)aClass property:(XZObjcPropertyDescriptor *)property elementClass:(nullable Class)elementClass;
++ (XZJSONPropertyDescriptor *)descriptorWithClass:(XZJSONClassDescriptor *)aClass property:(XZObjcPropertyDescriptor *)property elementType:(nullable Class)elementType;
 
 @end
-
-
 
 NS_ASSUME_NONNULL_END

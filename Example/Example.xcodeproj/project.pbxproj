@@ -46,9 +46,9 @@
 		292A5A492D254D010037579D /* Example04SettingsViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 292A5A422D254D010037579D /* Example04SettingsViewController.m */; };
 		292A5A4A2D254D010037579D /* Example04FontNameViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 292A5A3E2D254D010037579D /* Example04FontNameViewController.m */; };
 		292A5A4B2D254D010037579D /* Example04TestViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 292A5A442D254D010037579D /* Example04TestViewController.m */; };
-		292A5A512D254F6A0037579D /* Example05TestModels.m in Sources */ = {isa = PBXBuildFile; fileRef = 292A5A4E2D254F6A0037579D /* Example05TestModels.m */; };
+		292A5A512D254F6A0037579D /* Example05Model.m in Sources */ = {isa = PBXBuildFile; fileRef = 292A5A4E2D254F6A0037579D /* Example05Model.m */; };
 		292A5A522D254F6A0037579D /* Example05ViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 292A5A502D254F6A0037579D /* Example05ViewController.m */; };
-		292A5A542D255DC50037579D /* Example05.json in Resources */ = {isa = PBXBuildFile; fileRef = 292A5A532D255DC50037579D /* Example05.json */; };
+		292A5A542D255DC50037579D /* Example05Model.json in Resources */ = {isa = PBXBuildFile; fileRef = 292A5A532D255DC50037579D /* Example05Model.json */; };
 		292A5A5E2D25616D0037579D /* Example06ViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 292A5A5D2D25616D0037579D /* Example06ViewController.m */; };
 		292A5A5F2D25616D0037579D /* Example06RefreshSettingsViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 292A5A592D25616D0037579D /* Example06RefreshSettingsViewController.m */; };
 		292A5A602D25616D0037579D /* Example06SettingsViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 292A5A5B2D25616D0037579D /* Example06SettingsViewController.m */; };
@@ -248,6 +248,15 @@
 		299B56D02D2A680300CC2F69 /* Example11ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 299B56CF2D2A680300CC2F69 /* Example11ViewController.swift */; };
 		299B56D32D2A683900CC2F69 /* Example12ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 299B56D22D2A683900CC2F69 /* Example12ViewController.swift */; };
 		299B56E42D2AD87800CC2F69 /* Example13ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 299B56E32D2AD87800CC2F69 /* Example13ViewController.swift */; };
+		299FD3862D4B58B800427660 /* Example21.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 299FD3852D4B58B800427660 /* Example21.storyboard */; };
+		299FD3892D4B593100427660 /* Example21ViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 299FD3882D4B593100427660 /* Example21ViewController.m */; };
+		299FD38E2D4B975200427660 /* Example21Model.m in Sources */ = {isa = PBXBuildFile; fileRef = 299FD38D2D4B975200427660 /* Example21Model.m */; };
+		299FD3912D4B97BB00427660 /* Example21TableViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 299FD3902D4B97BA00427660 /* Example21TableViewCell.m */; };
+		299FD3942D4BD8A000427660 /* Example21TableViewCellViewModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 299FD3932D4BD8A000427660 /* Example21TableViewCellViewModel.m */; };
+		299FD3972D4BE06A00427660 /* Example21TableViewSectionViewModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 299FD3962D4BE06A00427660 /* Example21TableViewSectionViewModel.m */; };
+		299FD39A2D4BE2C000427660 /* Example21TableViewHeaderViewModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 299FD3992D4BE2C000427660 /* Example21TableViewHeaderViewModel.m */; };
+		299FD39D2D4BE31400427660 /* Example21TableViewHeaderView.m in Sources */ = {isa = PBXBuildFile; fileRef = 299FD39C2D4BE31400427660 /* Example21TableViewHeaderView.m */; };
+		299FD3A02D4BE35200427660 /* Example21TableViewSectionModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 299FD39F2D4BE35200427660 /* Example21TableViewSectionModel.m */; };
 		29B3340B2D3174EB006A574A /* Example01.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 29B3340A2D3174EB006A574A /* Example01.storyboard */; };
 		29B3340D2D3176EA006A574A /* Example01ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 29B3340C2D3176EA006A574A /* Example01ViewController.swift */; };
 		29B3340F2D317749006A574A /* Example02.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 29B3340E2D317749006A574A /* Example02.storyboard */; };
@@ -350,11 +359,11 @@
 		292A5A442D254D010037579D /* Example04TestViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = Example04TestViewController.m; sourceTree = "<group>"; };
 		292A5A452D254D010037579D /* Example04ViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Example04ViewController.h; sourceTree = "<group>"; };
 		292A5A462D254D010037579D /* Example04ViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = Example04ViewController.m; sourceTree = "<group>"; };
-		292A5A4D2D254F6A0037579D /* Example05TestModels.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Example05TestModels.h; sourceTree = "<group>"; };
-		292A5A4E2D254F6A0037579D /* Example05TestModels.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = Example05TestModels.m; sourceTree = "<group>"; };
+		292A5A4D2D254F6A0037579D /* Example05Model.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Example05Model.h; sourceTree = "<group>"; };
+		292A5A4E2D254F6A0037579D /* Example05Model.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = Example05Model.m; sourceTree = "<group>"; };
 		292A5A4F2D254F6A0037579D /* Example05ViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Example05ViewController.h; sourceTree = "<group>"; };
 		292A5A502D254F6A0037579D /* Example05ViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = Example05ViewController.m; sourceTree = "<group>"; };
-		292A5A532D255DC50037579D /* Example05.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = Example05.json; sourceTree = "<group>"; };
+		292A5A532D255DC50037579D /* Example05Model.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = Example05Model.json; sourceTree = "<group>"; };
 		292A5A582D25616D0037579D /* Example06RefreshSettingsViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Example06RefreshSettingsViewController.h; sourceTree = "<group>"; };
 		292A5A592D25616D0037579D /* Example06RefreshSettingsViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = Example06RefreshSettingsViewController.m; sourceTree = "<group>"; };
 		292A5A5A2D25616D0037579D /* Example06SettingsViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Example06SettingsViewController.h; sourceTree = "<group>"; };
@@ -724,6 +733,23 @@
 		299B56CF2D2A680300CC2F69 /* Example11ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Example11ViewController.swift; sourceTree = "<group>"; };
 		299B56D22D2A683900CC2F69 /* Example12ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Example12ViewController.swift; sourceTree = "<group>"; };
 		299B56E32D2AD87800CC2F69 /* Example13ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Example13ViewController.swift; sourceTree = "<group>"; };
+		299FD3852D4B58B800427660 /* Example21.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = Example21.storyboard; sourceTree = "<group>"; };
+		299FD3872D4B593100427660 /* Example21ViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Example21ViewController.h; sourceTree = "<group>"; };
+		299FD3882D4B593100427660 /* Example21ViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = Example21ViewController.m; sourceTree = "<group>"; };
+		299FD38C2D4B975200427660 /* Example21Model.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Example21Model.h; sourceTree = "<group>"; };
+		299FD38D2D4B975200427660 /* Example21Model.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = Example21Model.m; sourceTree = "<group>"; };
+		299FD38F2D4B97BA00427660 /* Example21TableViewCell.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Example21TableViewCell.h; sourceTree = "<group>"; };
+		299FD3902D4B97BA00427660 /* Example21TableViewCell.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = Example21TableViewCell.m; sourceTree = "<group>"; };
+		299FD3922D4BD8A000427660 /* Example21TableViewCellViewModel.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Example21TableViewCellViewModel.h; sourceTree = "<group>"; };
+		299FD3932D4BD8A000427660 /* Example21TableViewCellViewModel.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = Example21TableViewCellViewModel.m; sourceTree = "<group>"; };
+		299FD3952D4BE06A00427660 /* Example21TableViewSectionViewModel.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Example21TableViewSectionViewModel.h; sourceTree = "<group>"; };
+		299FD3962D4BE06A00427660 /* Example21TableViewSectionViewModel.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = Example21TableViewSectionViewModel.m; sourceTree = "<group>"; };
+		299FD3982D4BE2C000427660 /* Example21TableViewHeaderViewModel.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Example21TableViewHeaderViewModel.h; sourceTree = "<group>"; };
+		299FD3992D4BE2C000427660 /* Example21TableViewHeaderViewModel.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = Example21TableViewHeaderViewModel.m; sourceTree = "<group>"; };
+		299FD39B2D4BE31400427660 /* Example21TableViewHeaderView.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Example21TableViewHeaderView.h; sourceTree = "<group>"; };
+		299FD39C2D4BE31400427660 /* Example21TableViewHeaderView.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = Example21TableViewHeaderView.m; sourceTree = "<group>"; };
+		299FD39E2D4BE35200427660 /* Example21TableViewSectionModel.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Example21TableViewSectionModel.h; sourceTree = "<group>"; };
+		299FD39F2D4BE35200427660 /* Example21TableViewSectionModel.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = Example21TableViewSectionModel.m; sourceTree = "<group>"; };
 		29B3340A2D3174EB006A574A /* Example01.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = Example01.storyboard; sourceTree = "<group>"; };
 		29B3340C2D3176EA006A574A /* Example01ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Example01ViewController.swift; sourceTree = "<group>"; };
 		29B3340E2D317749006A574A /* Example02.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = Example02.storyboard; sourceTree = "<group>"; };
@@ -925,9 +951,9 @@
 				29B334142D31777E006A574A /* Example05.storyboard */,
 				292A5A4F2D254F6A0037579D /* Example05ViewController.h */,
 				292A5A502D254F6A0037579D /* Example05ViewController.m */,
-				292A5A532D255DC50037579D /* Example05.json */,
-				292A5A4D2D254F6A0037579D /* Example05TestModels.h */,
-				292A5A4E2D254F6A0037579D /* Example05TestModels.m */,
+				292A5A532D255DC50037579D /* Example05Model.json */,
+				292A5A4D2D254F6A0037579D /* Example05Model.h */,
+				292A5A4E2D254F6A0037579D /* Example05Model.m */,
 			);
 			path = "05-XZJSON";
 			sourceTree = "<group>";
@@ -2677,6 +2703,7 @@
 				046CE6362D34C2A100B9389F /* 18-XZDataDigester */,
 				046CE6372D34C2BE00B9389F /* 19-XZDataCryptor */,
 				046C966F2D3782690060EEBE /* 20-XZKeychain */,
+				299FD3842D4B588F00427660 /* 21-XZObjcDescriptor */,
 				29776A132D3240E70033AAF9 /* Main.storyboard */,
 				29648BEF2A72556E0090F445 /* Assets.xcassets */,
 				29648BF12A72556E0090F445 /* LaunchScreen.storyboard */,
@@ -2720,6 +2747,30 @@
 				299B56E32D2AD87800CC2F69 /* Example13ViewController.swift */,
 			);
 			path = "13-XZToast";
+			sourceTree = "<group>";
+		};
+		299FD3842D4B588F00427660 /* 21-XZObjcDescriptor */ = {
+			isa = PBXGroup;
+			children = (
+				299FD3852D4B58B800427660 /* Example21.storyboard */,
+				299FD38C2D4B975200427660 /* Example21Model.h */,
+				299FD38D2D4B975200427660 /* Example21Model.m */,
+				299FD3872D4B593100427660 /* Example21ViewController.h */,
+				299FD3882D4B593100427660 /* Example21ViewController.m */,
+				299FD39E2D4BE35200427660 /* Example21TableViewSectionModel.h */,
+				299FD39F2D4BE35200427660 /* Example21TableViewSectionModel.m */,
+				299FD3952D4BE06A00427660 /* Example21TableViewSectionViewModel.h */,
+				299FD3962D4BE06A00427660 /* Example21TableViewSectionViewModel.m */,
+				299FD3982D4BE2C000427660 /* Example21TableViewHeaderViewModel.h */,
+				299FD3992D4BE2C000427660 /* Example21TableViewHeaderViewModel.m */,
+				299FD39B2D4BE31400427660 /* Example21TableViewHeaderView.h */,
+				299FD39C2D4BE31400427660 /* Example21TableViewHeaderView.m */,
+				299FD3922D4BD8A000427660 /* Example21TableViewCellViewModel.h */,
+				299FD3932D4BD8A000427660 /* Example21TableViewCellViewModel.m */,
+				299FD38F2D4B97BA00427660 /* Example21TableViewCell.h */,
+				299FD3902D4B97BA00427660 /* Example21TableViewCell.m */,
+			);
+			path = "21-XZObjcDescriptor";
 			sourceTree = "<group>";
 		};
 		A06A40D7D2638A54C9B5421B /* Pods */ = {
@@ -2876,8 +2927,9 @@
 				29B334272D317840006A574A /* Example14.storyboard in Resources */,
 				292C17C62D251F6D00E465BF /* Example0310ContactView.xib in Resources */,
 				292C17C72D251F6D00E465BF /* Example0320Group101Cell.xib in Resources */,
+				299FD3862D4B58B800427660 /* Example21.storyboard in Resources */,
 				29B334232D31782B006A574A /* Example12.storyboard in Resources */,
-				292A5A542D255DC50037579D /* Example05.json in Resources */,
+				292A5A542D255DC50037579D /* Example05Model.json in Resources */,
 				292C17C82D251F6D00E465BF /* Example0322TextCell.xib in Resources */,
 				292C17C92D251F6D00E465BF /* Example0320Group102Cell.xib in Resources */,
 				29B334252D317835006A574A /* Example13.storyboard in Resources */,
@@ -3007,6 +3059,7 @@
 				292A5A5E2D25616D0037579D /* Example06ViewController.m in Sources */,
 				292A5A5F2D25616D0037579D /* Example06RefreshSettingsViewController.m in Sources */,
 				292A5A602D25616D0037579D /* Example06SettingsViewController.m in Sources */,
+				299FD39D2D4BE31400427660 /* Example21TableViewHeaderView.m in Sources */,
 				29648BEB2A72556C0090F445 /* Example01Test01ViewController.m in Sources */,
 				29648BE52A72556C0090F445 /* ExampleAppDelegate.m in Sources */,
 				29648BF62A72556E0090F445 /* main.m in Sources */,
@@ -3024,6 +3077,7 @@
 				292A5A472D254D010037579D /* Example04ViewController.m in Sources */,
 				292A5A482D254D010037579D /* Example04FontSizeViewController.m in Sources */,
 				292A5A492D254D010037579D /* Example04SettingsViewController.m in Sources */,
+				299FD3A02D4BE35200427660 /* Example21TableViewSectionModel.m in Sources */,
 				292A5A4A2D254D010037579D /* Example04FontNameViewController.m in Sources */,
 				292A5A4B2D254D010037579D /* Example04TestViewController.m in Sources */,
 				292C17312D251F6D00E465BF /* Example0320Group102CellViewModel.m in Sources */,
@@ -3047,7 +3101,7 @@
 				292C173C2D251F6D00E465BF /* Example0330Group100SectionModel.m in Sources */,
 				292C173D2D251F6D00E465BF /* Example0330Group109SectionModel.m in Sources */,
 				292C173E2D251F6D00E465BF /* Example0330Group105SectionModel.m in Sources */,
-				292A5A512D254F6A0037579D /* Example05TestModels.m in Sources */,
+				292A5A512D254F6A0037579D /* Example05Model.m in Sources */,
 				292A5A522D254F6A0037579D /* Example05ViewController.m in Sources */,
 				292A5A732D256A240037579D /* Example09Test02ViewController.swift in Sources */,
 				292A5A742D256A240037579D /* Example09SettingsImageSelectViewController.swift in Sources */,
@@ -3057,8 +3111,10 @@
 				299B56E42D2AD87800CC2F69 /* Example13ViewController.swift in Sources */,
 				292A5A782D256A240037579D /* Example09SettingsColorSelectViewController.swift in Sources */,
 				292A5A792D256A240037579D /* Example09Test01ViewController.swift in Sources */,
+				299FD3912D4B97BB00427660 /* Example21TableViewCell.m in Sources */,
 				292A5A7A2D256A240037579D /* Example09SettingsSelectViewController.swift in Sources */,
 				292C173F2D251F6D00E465BF /* Example0310Model.m in Sources */,
+				299FD38E2D4B975200427660 /* Example21Model.m in Sources */,
 				292A5A652D2563E20037579D /* Example07Test01ViewController.m in Sources */,
 				292A5A662D2563E20037579D /* Example07Test02ViewController.m in Sources */,
 				292C17402D251F6D00E465BF /* Example0331Group101CellViewModel.m in Sources */,
@@ -3076,6 +3132,7 @@
 				292C174A2D251F6D00E465BF /* Example0331Group105SectionModel.m in Sources */,
 				292C174B2D251F6D00E465BF /* Example0330Group105CellViewModel.m in Sources */,
 				292C174C2D251F6D00E465BF /* Example0321ContactBookTestViewController.m in Sources */,
+				299FD39A2D4BE2C000427660 /* Example21TableViewHeaderViewModel.m in Sources */,
 				292C174D2D251F6D00E465BF /* Example0312Cell.m in Sources */,
 				292C174E2D251F6D00E465BF /* Example0320Group101CellViewModel.m in Sources */,
 				292C174F2D251F6D00E465BF /* Example0330Group105Cell.m in Sources */,
@@ -3083,6 +3140,7 @@
 				292C17512D251F6D00E465BF /* Example0330Group104CellModel.m in Sources */,
 				292C17522D251F6D00E465BF /* Example0330Group107Cell.m in Sources */,
 				292C17532D251F6D00E465BF /* Example0330Group110HeaderView.m in Sources */,
+				299FD3942D4BD8A000427660 /* Example21TableViewCellViewModel.m in Sources */,
 				292C17542D251F6D00E465BF /* Example0330Group104SectionModel.m in Sources */,
 				292C17552D251F6D00E465BF /* Example0310ContactView.m in Sources */,
 				292C17562D251F6D00E465BF /* Example0330Group100Cell.m in Sources */,
@@ -3142,6 +3200,7 @@
 				292C177B2D251F6D00E465BF /* Example0330Group102SectionModel.m in Sources */,
 				292C177C2D251F6D00E465BF /* Example0330Group102CellModel.m in Sources */,
 				292C177D2D251F6D00E465BF /* Example0331Group108Cell.m in Sources */,
+				299FD3892D4B593100427660 /* Example21ViewController.m in Sources */,
 				292C177E2D251F6D00E465BF /* Example0330Group109CellModel.m in Sources */,
 				292C177F2D251F6D00E465BF /* Example0322ViewModel.m in Sources */,
 				292C17802D251F6D00E465BF /* Example0330Group103CellViewModel.m in Sources */,
@@ -3158,6 +3217,7 @@
 				292C17892D251F6D00E465BF /* Example0330Group108CellModel.m in Sources */,
 				292C178A2D251F6D00E465BF /* Example0331Group100CellViewModel.m in Sources */,
 				292C178B2D251F6D00E465BF /* Example0312CellViewModel.m in Sources */,
+				299FD3972D4BE06A00427660 /* Example21TableViewSectionViewModel.m in Sources */,
 				292C178C2D251F6D00E465BF /* Example0330Group106CellViewModel.m in Sources */,
 				04B1EA432D41E31D004F5DF0 /* Example02NavigationController.swift in Sources */,
 				292C178D2D251F6D00E465BF /* Example0330Model.m in Sources */,

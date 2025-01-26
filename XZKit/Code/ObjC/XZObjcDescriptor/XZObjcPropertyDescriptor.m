@@ -1,0 +1,157 @@
+//
+//  XZObjcPropertyDescriptor.m
+//  XZKit
+//
+//  Created by 徐臻 on 2025/1/26.
+//
+
+#import "XZObjcPropertyDescriptor.h"
+#import "XZObjcIvarDescriptor.h"
+
+@implementation XZObjcPropertyDescriptor
+
++ (instancetype)descriptorForProperty:(objc_property_t)property forClass:(Class)aClass {
+    if (!property) {
+        return nil;
+    }
+
+    const char * const name = property_getName(property);
+
+    if (name == nil || strlen(name) == 0) {
+        return nil;
+    }
+
+    XZObjcQualifiers qualifiers = kNilOptions;
+    XZObjcIvarDescriptor *_ivar = nil;
+    SEL _getter = nil;
+    SEL _setter = nil;
+    const char *typeEncoding = NULL;
+    
+    unsigned int attrCount;
+    objc_property_attribute_t *attrs = property_copyAttributeList(property, &attrCount);
+
+    for (unsigned int i = 0; i < attrCount; i++) {
+        const char * const attrValue = attrs[i].value;
+        if (attrValue == NULL) {
+            continue;
+        }
+        const char * const attrName  = attrs[i].name;
+        if (attrName == NULL) {
+            continue;
+        }
+        switch (attrName[0]) {
+            case 'T': { // Type encoding
+                typeEncoding = attrValue;
+                break;
+            }
+
+            case 'V': { // Instance variable
+                if (attrValue) {
+                    Ivar ivar = class_getInstanceVariable(aClass, attrValue);
+                    if (ivar) {
+                        _ivar = [XZObjcIvarDescriptor descriptorForIvar:ivar];
+                    }
+                }
+                break;
+            }
+
+            case 'R': {
+                qualifiers |= XZObjcQualifierReadonly;
+                break;
+            }
+
+            case 'C': {
+                qualifiers |= XZObjcQualifierCopy;
+                break;
+            }
+
+            case '&': {
+                qualifiers |= XZObjcQualifierRetain;
+                break;
+            }
+
+            case 'N': {
+                qualifiers |= XZObjcQualifierNonatomic;
+                break;
+            }
+
+            case 'D': {
+                qualifiers |= XZObjcQualifierDynamic;
+                break;
+            }
+
+            case 'W': {
+                qualifiers |= XZObjcQualifierWeak;
+                break;
+            }
+
+            case 'G': {
+                qualifiers |= XZObjcQualifierGetter;
+
+                if (attrValue) {
+                    _getter = sel_getUid(attrValue);
+                }
+                break;
+            }
+
+            case 'S': {
+                qualifiers |= XZObjcQualifierSetter;
+
+                if (attrValue) {
+                    _setter = sel_getUid(attrValue);
+                }
+                break;
+            }
+
+            default:
+                break;
+        }
+    }
+    
+    XZObjcTypeDescriptor *_type = [XZObjcTypeDescriptor descriptorForTypeEncoding:typeEncoding qualifiers:qualifiers];
+    if (_type == nil) {
+        return nil;
+    }
+    
+    if (attrs) {
+        free(attrs);
+        attrs = NULL;
+    }
+
+    if (!_getter) {
+        _getter = sel_getUid(name);
+
+        if (_getter == nil) {
+            return nil;
+        }
+    }
+
+    if (!_setter && !(qualifiers & XZObjcQualifierReadonly)) {
+        NSString *setterName = [NSString stringWithFormat:@"set%c%s:", toupper(name[0]), name + 1];
+        _setter = NSSelectorFromString(setterName);
+    }
+    
+    NSString *_name = [NSString stringWithCString:name encoding:(NSASCIIStringEncoding)];
+    return [[self alloc] initWithProperty:property name:_name type:_type ivar:_ivar getter:_getter setter:_setter];
+}
+
+- (instancetype)initWithProperty:(objc_property_t)property name:(NSString *)name type:(XZObjcTypeDescriptor *)type ivar:(XZObjcIvarDescriptor *)ivar getter:(SEL)getter setter:(SEL)setter {
+    self = [super init];
+
+    if (self != nil) {
+        _raw = property;
+        _name = name;
+        _type = type;
+        _ivar = ivar;
+        _getter = getter;
+        _setter = setter;
+    }
+
+    return self;
+}
+
+- (NSString *)description {
+    return [NSString stringWithFormat:@"<%@: %p, name: %@, type: %@, ivar: %@, getter: %@, setter: %@>", NSStringFromClass(self.class), self, self.name, self.type, self.ivar, NSStringFromSelector(self.getter), (self.setter ? NSStringFromSelector(self.setter) : nil)];
+}
+
+@end

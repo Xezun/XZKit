@@ -9,7 +9,7 @@ CreatePath() {
         if [[ -d "$1" ]]; then
             echo "\033[32m🎉 目录 $1 创建成功\033[0m"
         else
-            echo "\033[31m⚠️ 目录 $1 创建失败，无法链接头文件\033[0m"
+            echo "\033[31m🚫 目录 $1 创建失败，无法链接头文件\033[0m"
             exit 10;
         fi
     fi
@@ -31,7 +31,7 @@ LinkHeaders() {
                     ln -s "../../../../$path" "XZKit/Headers/$headerType/$moduleName/$name"
                     echo "🔗 [$headerType] $path"
                 else
-                    echo "⚠️ \033[31m目录 $headerType/$moduleName 不存在，且无法创建\033[0m"
+                    echo "🚫 \033[31m目录 $headerType/$moduleName 不存在，且无法创建\033[0m"
                 fi
             fi
         elif [[ -d $path ]]; then
@@ -67,13 +67,13 @@ echo "☕️ \033[32m清理操作开始\033[0m"
 if [[ -d "XZKit/Headers/Public/${MODULE_NAME}" ]]; then
     for path in "XZKit/Headers/Public/${MODULE_NAME}"/*; do
         rm -rf "$path"
-        echo "⛓️‍💥 $path "
+        echo "⛓️‍💥  $path "
     done
 fi
 if [[ -d "XZKit/Headers/Private/${MODULE_NAME}" ]]; then
     for path in "XZKit/Headers/Private/${MODULE_NAME}"/*; do
         rm -rf "$path"
-        echo "⛓️‍💥 $path "
+        echo "⛓️‍💥  $path "
     done
 fi
 echo "🎉 \033[32m清理操作结束\033[0m"

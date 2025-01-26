@@ -48,19 +48,19 @@ static NSString *UIElementKindFromMocoaKind(XZMocoaKind kind) {
         
         [submodule enumerateSubmodulesUsingBlock:^(XZMocoaModule *submodule, XZMocoaKind kind, XZMocoaName name, BOOL *stop) {
             if ([kind isEqualToString:XZMocoaKindCell]) {
-                switch (submodule.viewCategory) {
-                    case XZMocoaModuleViewCategoryClass: {
+                switch (submodule.viewForm) {
+                    case XZMocoaModuleViewFormClass: {
                         NSString * const identifier = XZMocoaReuseIdentifier(section, kind, name);
                         [collectionView registerClass:submodule.viewClass forCellWithReuseIdentifier:identifier];
                         break;
                     }
-                    case XZMocoaModuleViewCategoryNib: {
+                    case XZMocoaModuleViewFormNib: {
                         NSString * const identifier = XZMocoaReuseIdentifier(section, kind, name);
                         UINib *viewNib = [UINib nibWithNibName:submodule.viewNibName bundle:submodule.viewNibBundle];
                         [collectionView registerNib:viewNib forCellWithReuseIdentifier:identifier];
                         break;
                     }
-                    case XZMocoaModuleViewCategoryStoryboardCell: {
+                    case XZMocoaModuleViewFormStoryboardReusableView: {
                         // 已通过 Storyboard 注册
                         break;
                     }
@@ -72,21 +72,21 @@ static NSString *UIElementKindFromMocoaKind(XZMocoaKind kind) {
                     }
                 }
             } else {
-                switch (submodule.viewCategory) {
-                    case XZMocoaModuleViewCategoryClass: {
+                switch (submodule.viewForm) {
+                    case XZMocoaModuleViewFormClass: {
                         NSString * const identifier = XZMocoaReuseIdentifier(section, kind, name);
                         NSString * const elementKind = UIElementKindFromMocoaKind(kind);
                         [collectionView registerClass:submodule.viewClass forSupplementaryViewOfKind:elementKind withReuseIdentifier:identifier];
                         break;
                     }
-                    case XZMocoaModuleViewCategoryNib: {
+                    case XZMocoaModuleViewFormNib: {
                         NSString * const identifier = XZMocoaReuseIdentifier(section, kind, name);
                         NSString * const elementKind = UIElementKindFromMocoaKind(kind);
                         UINib *viewNib = [UINib nibWithNibName:submodule.viewNibName bundle:submodule.viewNibBundle];
                         [collectionView registerNib:viewNib forSupplementaryViewOfKind:elementKind withReuseIdentifier:identifier];
                         break;
                     }
-                    case XZMocoaModuleViewCategoryStoryboardCell: {
+                    case XZMocoaModuleViewFormStoryboardReusableView: {
                         // 已通过 Storyboard 注册
                         break;
                     }

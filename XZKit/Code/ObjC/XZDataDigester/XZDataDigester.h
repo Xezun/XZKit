@@ -8,6 +8,8 @@
 //  Requires XZKitDefines
 
 #import <Foundation/Foundation.h>
+#import "NSData+XZDataDigester.h"
+#import "NSString+XZDataDigester.h"
 #if __has_include(<XZExtensions/NSData+XZKit.h>)
 #import <XZExtensions/NSData+XZKit.h>
 #else

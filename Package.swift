@@ -13,7 +13,7 @@ private var _modules: [(type: ModuleType, name: String, dependencies: [PackageDe
     (.ObjC, "XZDefines", []),
     (.ObjC, "XZExtensions", ["XZDefines"]),
     (.ObjC, "XZML", ["XZDefines", "XZExtensions"]),
-    (.ObjC, "XZJSON", []),
+    (.ObjC, "XZJSON", ["XZObjcDescriptor"]),
     (.ObjC, "XZRefresh", ["XZDefines"]),
     (.ObjC, "XZPageView", ["XZDefines"]),
     (.ObjC, "XZPageControl", ["XZExtensions"]),
@@ -29,7 +29,8 @@ private var _modules: [(type: ModuleType, name: String, dependencies: [PackageDe
     (.Swift, "XZToast", []),
     (.Swift, "XZCollectionViewFlowLayout", []),
     (.Swift, "XZNavigationController", ["XZDefines"]),
-    (.Mixed, "XZMocoa", ["XZDefines", "XZExtensions"])
+    (.Mixed, "XZMocoa", ["XZDefines", "XZExtensions"]),
+    (.Mixed, "XZObjcDescriptor", []),
 ]
 _modules.append((.Swift, "XZKit", _modules.map({ .byName(name: $0.name) })))
 
