@@ -42,10 +42,10 @@ NS_ASSUME_NONNULL_BEGIN
     /// 是否使用自定义序列化方法，即 -encodeIntoJSONDictionary: 方法。
     BOOL _usesJSONEncodingMethod;
     
-    /// 是否使用自定义日期模型化方法，即 -decodeDateFromJSONValue:forKey: 方法。
-    BOOL _usesDateDecodingMethod;
-    /// 是否使用自定义日期序列化方法，即 -encodeDateIntoJSONValue:forKey: 方法。
-    BOOL _usesDateEncodingMethod;
+    /// 是否使用自定义属性模型化方法，即 -decodeDateFromJSONValue:forKey: 方法。
+    BOOL _usesPropertyDecodingMethod;
+    /// 是否使用自定义属性序列化方法，即 -encodeDateIntoJSONValue:forKey: 方法。
+    BOOL _usesPropertyEncodingMethod;
     
     /// 是否定义了自定义复制方法。即 -copyIvar: 方法。
     BOOL _usesIvarCopyingMethod;

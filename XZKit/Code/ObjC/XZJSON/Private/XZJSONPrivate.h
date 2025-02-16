@@ -26,28 +26,33 @@ NS_ASSUME_NONNULL_BEGIN
 @end
 
 @interface XZJSON (XZJSONEncodingPrivate)
-/// 将实例对象 object 编码为 JSON 数据。如果提供了 dictionary 参数，将数据编码到该字典中。
-/// - Parameters:
-///   - object: 非空，实例对象，可能为模型，也可能为原生类型
-///   - property: 当实例对象为属性值时，提供此参数
-///   - dictionary: 如果提供此参数，那么表示需要将模型的属性序列化到此 JSON 字典中，比如一个 JSONKey 对应多个属性时
-+ (id)_encodeObject:(nonnull id)object forProperty:(nullable XZJSONPropertyDescriptor *)property dictionary:(nullable NSMutableDictionary *)dictionary;
-/// 将数组中的元素，全编码为 JSON 数据。不能编码的元素将被丢弃。
-+ (NSArray *)_encodeArray:(nonnull NSArray *)array;
 /// 将 模型实例对象 编码进 JSON 字典中。
-+ (void)_model:(id)model encodeIntoDictionary:(NSMutableDictionary *)dictionary descriptor:(XZJSONClassDescriptor *)descriptor;
++ (nullable id)_model:(id)model encodeIntoDictionary:(nullable NSMutableDictionary *)dictionary descriptor:(XZJSONClassDescriptor *)descriptor;
 @end
 
-FOUNDATION_EXPORT void XZJSONModelDecodeScalarNumberForProperty(__unsafe_unretained id _Nonnull model, __unsafe_unretained XZJSONPropertyDescriptor *_Nonnull descriptor, __unsafe_unretained id _Nonnull value);
-FOUNDATION_EXPORT void XZJSONModelDecodeValueForProperty(__unsafe_unretained id _Nonnull model, __unsafe_unretained XZJSONPropertyDescriptor *_Nonnull property, __unsafe_unretained id _Nonnull value);
+/// 将 JSON 值解析为标量属性的值。
+/// - Parameters:
+///   - model: 模型
+///   - property: 属性
+///   - JSONValue: JSON 值
+FOUNDATION_EXPORT void XZJSONModelDecodeScalarNumberPropertyFromValue(id model, XZJSONPropertyDescriptor *property, id _Nonnull JSONValue);
+
+/// 将 JSON 值解析为模型属性值。
+/// - Parameters:
+///   - model: 模型
+///   - property: 属性
+///   - value: JSON 值
+FOUNDATION_EXPORT void XZJSONModelDecodePropertyFromValue(id model, XZJSONPropertyDescriptor *property, id _Nonnull JSONValue);
 
 /// 将模型的数值属性值转换为 JSON 数据中
-/// @param model 模型对象
-/// @param property 属性
-FOUNDATION_EXPORT NSNumber * _Nullable XZJSONModelEncodeScalarNumberForProperty(__unsafe_unretained id _Nonnull model, __unsafe_unretained XZJSONPropertyDescriptor * _Nonnull property);
+/// - Parameters:
+///   - model: 模型对象
+///   - property: 属性
+FOUNDATION_EXPORT NSNumber * _Nullable XZJSONModelEncodeScalarNumberProperty(id _Nonnull model, XZJSONPropertyDescriptor * _Nonnull property);
 /// 模型转字符串。
-/// @param model 模型对象
-/// @param hierarchies 模型对象在集合中的层级
+/// - Parameters:
+///   - model: 模型对象
+///   - hierarchies: 模型对象在集合中的层级
 FOUNDATION_EXPORT NSString * _Nonnull XZJSONModelDescription(NSObject *_Nonnull model, NSUInteger hierarchies, NSArray *chain);
 
 NS_ASSUME_NONNULL_END

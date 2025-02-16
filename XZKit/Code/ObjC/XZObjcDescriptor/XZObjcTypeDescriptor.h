@@ -17,25 +17,28 @@ NS_ASSUME_NONNULL_BEGIN
 ///
 /// 2. [Objective-C Runtime Programming Guide - Declared Properties](https://developer.apple.com/library/mac/documentation/Cocoa/Conceptual/ObjCRuntimeGuide/Articles/ocrtPropertyIntrospection.html)
 typedef NS_ENUM(NSUInteger, XZObjcType) {
+    /// unknown type (among other things, this code is used for function pointers)
+    /// > 匿名的结构体、共用体也会被编码为此名字，如 {?=ics}。
+    XZObjcTypeUnknown          = '?',
     /// char
     XZObjcTypeChar             = 'c',
+    /// unsigned char
+    XZObjcTypeUnsignedChar     = 'C',
     /// int
     XZObjcTypeInt              = 'i',
+    /// unsigned int
+    XZObjcTypeUnsignedInt      = 'I',
     /// short
     XZObjcTypeShort            = 's',
+    /// unsigned short
+    XZObjcTypeUnsignedShort    = 'S',
     /// long
     /// @note l is treated as a 32-bit quantity on 64-bit programs.
     XZObjcTypeLong             = 'l',
-    /// long long
-    XZObjcTypeLongLong         = 'q',
-    /// unsigned char
-    XZObjcTypeUnsignedChar     = 'C',
-    /// unsigned int
-    XZObjcTypeUnsignedInt      = 'I',
-    /// unsigned short
-    XZObjcTypeUnsignedShort    = 'S',
     /// unsigned long
     XZObjcTypeUnsignedLong     = 'L',
+    /// long long
+    XZObjcTypeLongLong         = 'q',
     /// unsigned long long
     XZObjcTypeUnsignedLongLong = 'Q',
     /// float
@@ -50,18 +53,8 @@ typedef NS_ENUM(NSUInteger, XZObjcType) {
     XZObjcTypeVoid             = 'v',
     /// C 字符串 char *
     XZObjcTypeString           = '*',
-    /// id. An object (whether statically typed or typed id)
-    XZObjcTypeObject           = '@',
-    /// 类对象的类型
-    XZObjcTypeClass            = '#',
-    /// SEL
-    XZObjcTypeSEL              = ':',
     /// C 数组
     XZObjcTypeArray            = '[',
-    /// C 结构体；类结构体，如 NSObject 为 {NSObject=#}
-    XZObjcTypeStruct           = '{',
-    /// C 共用体
-    XZObjcTypeUnion            = '(',
     /// bit field of num bits
     /// @code
     /// // 位域结构体的成员的类型即为 bit field
@@ -73,9 +66,16 @@ typedef NS_ENUM(NSUInteger, XZObjcType) {
     XZObjcTypeBitField         = 'b',
     /// pointer to type
     XZObjcTypePointer          = '^',
-    /// unknown type (among other things, this code is used for function pointers)
-    /// @note 匿名的结构体、共用体也会被编码为此名字，如 {?=ics}。
-    XZObjcTypeUnknown          = '?',
+    /// C 共用体
+    XZObjcTypeUnion            = '(',
+    /// C 结构体；类结构体，如 NSObject 为 {NSObject=#}
+    XZObjcTypeStruct           = '{',
+    /// 类对象的类型
+    XZObjcTypeClass            = '#',
+    /// SEL
+    XZObjcTypeSEL              = ':',
+    /// id. An object (whether statically typed or typed id)
+    XZObjcTypeObject           = '@',
 };
 
 /// 类型修饰符。
@@ -102,7 +102,9 @@ typedef NS_OPTIONS(NSUInteger, XZObjcQualifiers) {
     XZObjcQualifierDynamic   = 1 << 23,   /// @dynamic
 };
 
-/// 描述通过 `@encoding(type)` 所表述的 Type Encoding 详细信息。
+/// 描述数据（变量）类型的对象。
+///
+/// 数据类型：包括 int、float 等基础数据类型，也包括 NSObject 等对象类型，通过 `@encoding(type)` 可将类型编码为 Type Encoding 字符串。
 @interface XZObjcTypeDescriptor : NSObject
 
 /// 类型。
@@ -127,19 +129,22 @@ typedef NS_OPTIONS(NSUInteger, XZObjcQualifiers) {
 /// 所以对于自定义类型，特别是非默认字节对齐的类型，需要先注册对齐方式，否则此属性值可能并不一定准确。
 /// ```objc
 /// +[XZObjcTypeDescriptor setSize:alignment:forType:]
+/// // 或
+/// XZObjcTypeRegister(struct Foobar);
 /// ```
 @property (nonatomic, readonly) size_t alignment;
 
 /// 当前对象所描述的类型的编码。
 @property (nonatomic, copy, readonly) NSString *encoding;
 
-/// 当前类型的成员类型，仅对于结构体、共用体等。
+/// 当前类型的成员类型，比如结构体、共用体的组成成员，或者指针类型（一般被认为是数组）的值的类型等。
 @property (nonatomic, copy, readonly, nullable) NSArray<XZObjcTypeDescriptor *> *members;
 
-/// 对象类型的子类型。
+/// 对象类型的类对象。
+/// > 对象类型虽然也是指针类型，但是通常不能被认为是数组，即是认为是数组，数组的值类型也是对象，而不是对象的类，所以我们使用“子类型”表示对象的类。
 @property (nonatomic, readonly, nullable) Class subtype;
 
-/// 类型为对象时，对象已实现的协议。
+/// 对象类型遵循的协议。
 @property (nonatomic, copy, readonly, nullable) NSArray<Protocol *> *protocols;
 
 - (instancetype)init NS_UNAVAILABLE;
@@ -152,7 +157,7 @@ typedef NS_OPTIONS(NSUInteger, XZObjcQualifiers) {
 
 /// 构造类型描述符。
 /// @param typeEncoding 类型编码
-/// @param qualifiers 一般为属性修饰符，因为属性修饰符不包含在类型编码中，可通过此参数提供
+/// @param qualifiers 修饰符，因为属性修饰符不包含在类型编码中，可通过此参数提供
 + (nullable XZObjcTypeDescriptor *)descriptorForTypeEncoding:(const char *)typeEncoding qualifiers:(XZObjcQualifiers)qualifiers;
 
 /// 设置结构体类型的大小和字节对齐值。

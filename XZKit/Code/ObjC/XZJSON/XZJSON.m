@@ -79,7 +79,8 @@
         return nil;
     }
     
-    id const JSONObject = [self _encodeObject:object forProperty:nil dictionary:nil];
+    XZJSONClassDescriptor *descriptor = [XZJSONClassDescriptor descriptorForClass:[object class]];
+    id const JSONObject = [self _model:object encodeIntoDictionary:nil descriptor:descriptor];
     
     if (JSONObject == nil) {
         return nil;
@@ -118,7 +119,7 @@
     for (XZJSONPropertyDescriptor *property in modelClass->_properties) {    
         // 标量数字
         if (property->_isScalarNumber) {
-            NSNumber *value = XZJSONModelEncodeScalarNumberForProperty(model, property);
+            NSNumber *value = XZJSONModelEncodeScalarNumberProperty(model, property);
             if (value) {
                 [aCoder encodeObject:value forKey:property->_name];
             }
@@ -198,9 +199,7 @@
         
         if (property->_isScalarNumber) {
             NSNumber *value = [aCoder decodeObjectForKey:property->_name];
-            if ([value isKindOfClass:[NSNumber class]]) {
-                XZJSONModelDecodeScalarNumberForProperty(model, property, value);
-            }
+            XZJSONModelDecodeScalarNumberPropertyFromValue(model, property, value);
             continue;
         }
         

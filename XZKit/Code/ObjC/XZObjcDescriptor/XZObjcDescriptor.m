@@ -30,7 +30,17 @@ BOOL XZObjcIsScalarNumber(XZObjcType type) {
         case XZObjcTypeLongDouble:
         case XZObjcTypeBool:
             return YES;
-        default:
+        case XZObjcTypeVoid:
+        case XZObjcTypeString:
+        case XZObjcTypeObject:
+        case XZObjcTypeClass:
+        case XZObjcTypeSEL:
+        case XZObjcTypeArray:
+        case XZObjcTypeStruct:
+        case XZObjcTypeUnion:
+        case XZObjcTypeBitField:
+        case XZObjcTypePointer:
+        case XZObjcTypeUnknown:
             return NO;
     }
 }

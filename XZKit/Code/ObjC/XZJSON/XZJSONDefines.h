@@ -132,16 +132,14 @@ NS_ASSUME_NONNULL_BEGIN
 /// - Parameter JSON: JSON 字符串或二进制形式的原始 JSON 数据，或已序列化的字典或数组数据
 - (nullable instancetype)initWithJSONDictionary:(NSDictionary *)JSON;
 
-/// 自定义日期解析。
+/// 自定义属性值解析。
 ///
-/// 默认支持的日期格式（以情形，可以不用实现此方法）：
-/// - 以秒为单位的时间戳，整数或浮点型数值。
-/// - 以 yyyy-MM-dd HH:mm:ss 为格式的日期字符串。
+/// 当 JSON 值无法解析为属性值时，此方法会被调用。
 ///
 /// - Parameters:
-///   - value: JSON 数据中的值
+///   - value: JSON 值
 ///   - key: 属性名
-- (void)decodeDateFromJSONValue:(id)value forKey:(NSString *)key;
+- (void)JSONDecodeValue:(id)aJSONValue forKey:(NSString *)key;
 
 @end
 
@@ -159,16 +157,12 @@ NS_ASSUME_NONNULL_BEGIN
 /// - Parameter JSON: 数据字典
 - (nullable NSMutableDictionary *)encodeIntoJSONDictionary:(NSMutableDictionary *)JSON;
 
-/// 将 NSDate 格式化为 JSON 数据。
+/// 自定义属性序列化。
 ///
-/// 如果不实现此方法，默认转换 NSDate 为以秒为单位的时间戳，双精度浮点型数值。
+/// 当 XZJSON 无法处理属性值时，此方法会被调用。
 ///
-/// - Parameters:
-///   - date: 日期对象
-///   - key: 属性名
-- (nullable id)encodeDateIntoJSONValue:(NSDate *)date forKey:(NSString *)key;
-
-- (id)encodeProperty:(NSDate *)date withCoder:(NSCoder *)aCoder;
+/// - Parameter key: 属性名
+- (nullable id)JSONEncodeValueForKey:(NSString *)key;
 
 @end
 

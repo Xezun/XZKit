@@ -203,8 +203,8 @@ static id XZJSONKeyFromString(NSString *aString);
         _usesJSONDecodingMethod = conformsToXZJSONDecoding && [rawClass instancesRespondToSelector:@selector(initWithJSONDictionary:)];
         _usesJSONEncodingMethod = conformsToXZJSONEncoding && [rawClass instancesRespondToSelector:@selector(encodeIntoJSONDictionary:)];
         
-        _usesDateDecodingMethod = conformsToXZJSONDecoding && [rawClass instancesRespondToSelector:@selector(decodeDateFromJSONValue:forKey:)];
-        _usesDateEncodingMethod = conformsToXZJSONEncoding && [rawClass instancesRespondToSelector:@selector(encodeDateIntoJSONValue:forKey:)];
+        _usesPropertyDecodingMethod = conformsToXZJSONDecoding && [rawClass instancesRespondToSelector:@selector(JSONDecodeValue:forKey:)];
+        _usesPropertyEncodingMethod = conformsToXZJSONEncoding && [rawClass instancesRespondToSelector:@selector(JSONEncodeValueForKey:)];
         
         _usesIvarCopyingMethod = [rawClass conformsToProtocol:@protocol(XZJSONCopying)] && [rawClass instancesRespondToSelector:@selector(copyIvar:)];
     }
@@ -230,7 +230,7 @@ static id XZJSONKeyFromString(NSString *aString);
         descriptor = [[XZJSONClassDescriptor alloc] initWithClass:aClass];
         objc_setAssociatedObject(aClass, _descriptor, descriptor, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
     } else {
-        [descriptor->_class updateIfNeeded];
+        [descriptor->_class properties];
     }
     dispatch_semaphore_signal(_lock);
     

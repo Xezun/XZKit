@@ -13,6 +13,8 @@ NS_ASSUME_NONNULL_BEGIN
 
 /// 描述类的对象。
 ///
+/// > 这不是一个线程安全的类。
+///
 /// Class information for a class.
 @interface XZObjcClassDescriptor : NSObject <XZObjcDescriptor>
 
@@ -23,36 +25,23 @@ NS_ASSUME_NONNULL_BEGIN
 
 /// 类名。class name
 @property (nonatomic, readonly) NSString *name;
+/// 类的类型描述。
 @property (nonatomic, readonly) XZObjcTypeDescriptor *type;
 
-/// 类实例变量。 ivars
-@property (nonatomic, strong, readonly) NSDictionary<NSString *, XZObjcIvarDescriptor *>     *ivars;
+/// 类实例变量。ivars
+/// > 懒加载，可通过设置 nil 然后获取重新生成。
+@property (nonatomic, copy, readonly) NSDictionary<NSString *, XZObjcIvarDescriptor *>     *ivars;
+- (void)setNeedsUpdateIvars;
 /// 类方法。 methods
-@property (nonatomic, strong, readonly) NSDictionary<NSString *, XZObjcMethodDescriptor *>   *methods;
+/// > 懒加载，可通过设置 nil 然后获取重新生成。
+@property (nonatomic, copy, readonly) NSDictionary<NSString *, XZObjcMethodDescriptor *>   *methods;
+- (void)setNeedsUpdateMethods;
 /// 类属性。 properties
-@property (nonatomic, strong, readonly) NSDictionary<NSString *, XZObjcPropertyDescriptor *> *properties;
+/// > 懒加载，可通过设置 nil 然后获取重新生成。
+@property (nonatomic, copy, readonly) NSDictionary<NSString *, XZObjcPropertyDescriptor *> *properties;
+- (void)setNeedsUpdateProperties;
 
 - (instancetype)init NS_UNAVAILABLE;
-
-/// 当前描述是否有效。
-///
-/// > 为了提高效率，不会为基类和元类创建描述对象。
-///
-/// If this method returns `YES`, you should stop using this instance and call
-/// `classInfoWithClass` or `classInfoWithClassName` to get the updated class info.
-@property (nonatomic, readonly) BOOL needsUpdate;
-
-/// 如果在运行时修改了类的信息，应该调用此方法，标记描述对象已失效。
-///
-/// If the class is changed (for example: you add a method to this class with
-/// `class_addMethod()`), you should call this method to refresh the class info cache.
-///
-/// After called this method, `needsUpdate` will returns `YES`, and you should call
-/// `classInfoWithClass` or `classInfoWithClassName` to get the updated class info.
-- (void)setNeedsUpdate;
-
-/// 更新类信息，重新生成 `ivars`、`methods`、`properties` 信息。
-- (void)updateIfNeeded;
 
 /// 获取类 aClass 的描述信息。
 /// - Parameter aClass: 类

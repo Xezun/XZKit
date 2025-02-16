@@ -23,88 +23,116 @@
         _super = [XZObjcClassDescriptor descriptorForClass:[aClass superclass]];
         _name = NSStringFromClass(aClass);
         _type = [XZObjcTypeDescriptor descriptorForTypeEncoding:@encode(Class)];
-        _ivars = @{};
-        _methods = @{};
-        _properties = @{};
-        
-        _needsUpdate = (_super != Nil);
-        [self updateIfNeeded];
+        _ivars = _super ? nil : @{};
+        _methods = _super ? nil : @{};
+        _properties = _super ? nil : @{};
     }
     return self;
 }
 
-- (void)updateIfNeeded {
-    if (!_needsUpdate) {
-        return;
-    }
-    _needsUpdate = NO;
-    
-    Class const aClass = self.raw;
-    
-    unsigned int methodCount = 0;
-    Method *methods = class_copyMethodList(aClass, &methodCount);
-    if (methods && methodCount > 0) {
-        NSMutableDictionary *descriptors = [NSMutableDictionary dictionaryWithCapacity:methodCount];
-        for (unsigned int i = 0; i < methodCount; i++) {
-            XZObjcMethodDescriptor *descriptor = [XZObjcMethodDescriptor descriptorForMethod:methods[i]];
-            if (descriptor && descriptor.name) {
-                descriptors[descriptor.name] = descriptor;
-            }
-        }
-        free(methods);
-        methods = NULL;
-        
-        _methods = descriptors;
-    } else if (_methods.count > 0) {
-        _methods = @{};
-    }
+@synthesize ivars = _ivars;
+@synthesize methods = _methods;
+@synthesize properties = _properties;
 
-    unsigned int propertyCount = 0;
-    objc_property_t *properties = class_copyPropertyList(aClass, &propertyCount);
-    if (properties && propertyCount > 0) {
-        NSMutableDictionary *descriptors = [NSMutableDictionary dictionaryWithCapacity:propertyCount];
-        for (unsigned int i = 0; i < propertyCount; i++) {
-            XZObjcPropertyDescriptor *descriptor = [XZObjcPropertyDescriptor descriptorForProperty:properties[i] forClass:aClass];
+- (NSDictionary<NSString *,XZObjcIvarDescriptor *> *)ivars {
+    if (_ivars) {
+        return _ivars;
+    }
+    
+    unsigned int ivarCount = 0;
+    Ivar *list = class_copyIvarList(self.raw, &ivarCount);
+    if (list && ivarCount > 0) {
+        NSMutableDictionary * const descriptors = [NSMutableDictionary dictionaryWithCapacity:ivarCount];
+        for (unsigned int i = 0; i < ivarCount; i++) {
+            XZObjcIvarDescriptor *descriptor = [XZObjcIvarDescriptor descriptorForIvar:list[i]];
             if (descriptor) {
                 descriptors[descriptor.name] = descriptor;
             }
         }
-        free(properties);
-        properties = NULL;
-        
-        _properties = descriptors;
-    } else if (_properties.count > 0) {
-        _properties = @{};
-    }
-
-    unsigned int ivarCount = 0;
-    Ivar *ivars = class_copyIvarList(aClass, &ivarCount);
-    if (ivars && ivarCount > 0) {
-        NSMutableDictionary * const descriptors = [NSMutableDictionary dictionaryWithCapacity:ivarCount];
-        for (unsigned int i = 0; i < ivarCount; i++) {
-            XZObjcIvarDescriptor *descriptor = [XZObjcIvarDescriptor descriptorForIvar:ivars[i]];
-            if (descriptor && descriptor.name) {
-                descriptors[descriptor.name] = descriptor;
-            }
-        }
-        free(ivars);
-        ivars = NULL;
+        free(list);
+        list = NULL;
         
         _ivars = descriptors;
-    } else if (_ivars.count > 0) {
+    } else {
         _ivars = @{};
+    }
+    return _ivars;
+}
+
+- (void)setNeedsUpdateIvars {
+    if (_super) {
+        _ivars = nil;
     }
 }
 
-- (void)setNeedsUpdate {
-    _needsUpdate = (_super != nil);
+- (NSDictionary<NSString *,XZObjcMethodDescriptor *> *)methods {
+    if (_methods) {
+        return _methods;
+    }
+    unsigned int methodCount = 0;
+    Method *list = class_copyMethodList(self.raw, &methodCount);
+    if (list && methodCount > 0) {
+        NSMutableDictionary *descriptors = [NSMutableDictionary dictionaryWithCapacity:methodCount];
+        for (unsigned int i = 0; i < methodCount; i++) {
+            XZObjcMethodDescriptor *descriptor = [XZObjcMethodDescriptor descriptorForMethod:list[i]];
+            if (descriptor) {
+                descriptors[descriptor.name] = descriptor;
+            }
+        }
+        free(list);
+        list = NULL;
+        
+        _methods = descriptors;
+    } else {
+        _methods = @{};
+    }
+    return _methods;
+}
+
+- (void)setNeedsUpdateMethods {
+    if (_super) {
+        _methods = nil;
+    }
+}
+
+- (NSDictionary<NSString *,XZObjcPropertyDescriptor *> *)properties {
+    if (_properties) {
+        return _properties;
+    }
+    
+    Class const raw = self.raw;
+    
+    unsigned int propertyCount = 0;
+    objc_property_t *list = class_copyPropertyList(raw, &propertyCount);
+    if (list && propertyCount > 0) {
+        NSMutableDictionary *descriptors = [NSMutableDictionary dictionaryWithCapacity:propertyCount];
+        for (unsigned int i = 0; i < propertyCount; i++) {
+            XZObjcPropertyDescriptor *descriptor = [XZObjcPropertyDescriptor descriptorForProperty:list[i] forClass:raw];
+            if (descriptor) {
+                descriptors[descriptor.name] = descriptor;
+            }
+        }
+        free(list);
+        list = NULL;
+        
+        _properties = descriptors;
+    } else {
+        _properties = @{};
+    }
+    
+    return _properties;
+}
+
+- (void)setNeedsUpdateProperties {
+    if (_super) {
+        _properties = nil;
+    }
 }
 
 + (instancetype)descriptorForClass:(Class)aClass {
     if (!object_isClass(aClass)) {
         return nil;
     }
-    NSAssert(object_isClass(aClass), @"参数必须为 Class 对象");
     
     static const void * const _descriptor = &_descriptor;
     XZObjcClassDescriptor *descriptor = objc_getAssociatedObject(aClass, _descriptor);
