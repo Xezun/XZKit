@@ -50,16 +50,17 @@
         @"18. XZDataDigester",
         @"19. XZDataCryptor",
         @"20. XZKeychain",
+        @"21. XZObjcDescriptor",
     ];
     XZMocoaTableViewModel *viewModel = [[XZMocoaTableViewModel alloc] initWithModel:@[data]];
-    viewModel.module = XZMocoa(@"https://xzkit.xezun.com/example");
+    viewModel.module = XZMocoa(@"https://xzkit.xezun.com/examples");
     self.tableView.viewModel = viewModel;
 }
 
 - (void)viewDidAppear:(BOOL)animated {
     [super viewDidAppear:animated];
     
-    NSLog(@"%@", self.view.xz_description);
+    // NSLog(@"%@", self.view.xz_description);
 }
 
 - (IBAction)unwindToMainPage:(UIStoryboardSegue *)unwindSegue {
@@ -73,15 +74,7 @@
 @end
 @implementation ExampleTableViewCell
 + (void)load {
-    XZMocoa(@"https://xzkit.xezun.com/example").section.cell.viewClass = self;
-}
-- (instancetype)initWithStyle:(UITableViewCellStyle)style reuseIdentifier:(NSString *)reuseIdentifier {
-    self = [super initWithStyle:UITableViewCellStyleDefault reuseIdentifier:reuseIdentifier];
-    if (self) {
-        self.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
-        self.selectionStyle = UITableViewCellSelectionStyleNone;
-    }
-    return self;
+    XZMocoa(@"https://xzkit.xezun.com/examples").section.cell.viewReuseIdentifier = @"cell";
 }
 - (void)viewModelDidChange {
     NSString *name = self.viewModel.model;
@@ -102,7 +95,7 @@
 @end
 @implementation ExampleTableViewCellViewModel
 + (void)load {
-    XZMocoa(@"https://xzkit.xezun.com/example").section.cell.viewModelClass = self;
+    XZMocoa(@"https://xzkit.xezun.com/examples").section.cell.viewModelClass = self;
 }
 - (CGFloat)height {
     return 44.0;

@@ -6,7 +6,7 @@
 //
 
 #import <UIKit/UIKit.h>
-#import <XZMocoa/XZMocoaView.h>
+#import <XZMocoa/XZMocoa.h>
 
 NS_ASSUME_NONNULL_BEGIN
 

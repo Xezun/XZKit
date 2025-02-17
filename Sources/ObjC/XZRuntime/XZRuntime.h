@@ -9,7 +9,6 @@
 #import <Foundation/Foundation.h>
 #import <objc/runtime.h>
 #import <XZKit/XZDefines.h>
-#import <XZKit/XZObjCTypeDescriptor.h>
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -84,7 +83,7 @@ NS_SWIFT_NAME(objc_class_addVariable(_:ivar:size:alignment:));
 
 /// 通过 Ivar 给类添加实例变量，自动确定变量名、TypeEncoding、大小、字节对齐。
 /// @note 仅处于构造中的类可添加实例变量。
-/// @note 根据默认规则，确定字节对齐和计算实例变量的大小，自定义类型需要在 XZObjCTypeDescriptor 中注册。
+/// @note 根据默认规则，确定字节对齐和计算实例变量的大小，自定义类型需要在 XZObjcTypeDescriptor 中注册。
 /// @param target 待添加实例变量的类
 /// @param ivar 实例变量
 FOUNDATION_EXPORT BOOL xz_objc_class_addVariable(Class target, Ivar ivar)

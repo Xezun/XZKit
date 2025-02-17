@@ -64,7 +64,8 @@
         // mvvm 模块可以注册为 Mocoa 模块，可以通过 url 来获取
         // 因此使用 mvvm 设计模式，可以通过下发 url 很方便的展示任意 mvvm 模块视图。
         // 当然，这里只是展示固定的视图，相当于特例。
-        Example0310ContactViewModel *viewModel = [[Example0310ContactViewModel alloc] initWithModel:data.contact ready:YES];
+        Example0310ContactViewModel *viewModel = [[Example0310ContactViewModel alloc] initWithModel:data.contact];
+        [viewModel ready];
         self.rootView.contactView.viewModel = viewModel;
     }
     

@@ -93,7 +93,7 @@ typedef struct TestObjCTypeBitField {
 - (void)testObjCTypeDescriptor {
 #define ObjCTypeDescriptorTests(type) \
         {                                                                                       \
-            XZObjCTypeDescriptor *d = [XZObjCTypeDescriptor descriptorForType:@encode(type)];   \
+            XZObjcTypeDescriptor *d = [XZObjcTypeDescriptor descriptorForType:@encode(type)];   \
             XCTAssert(d.size == sizeof(type));                                                  \
             XCTAssert(d.alignment == _Alignof(type));                                           \
             XCTAssert(strcmp(@encode(type), d.encoding.UTF8String) == 0);                       \
@@ -142,7 +142,7 @@ typedef struct TestObjCTypeBitField {
     
     ObjCTypeDescriptorTests(void (*)(int));
     
-//    XZObjCTypeDescriptor *d = [XZObjCTypeDescriptor descriptorForType:@encode(TestBitField)];
+//    XZObjcTypeDescriptor *d = [XZObjcTypeDescriptor descriptorForType:@encode(TestBitField)];
 //    XZLog(@"%s", @encode(TestBitField));
 //    XZLog(@"%lu - %lu", d.size, sizeof(TestBitField));
 //    XZLog(@"%hhu - %lu", d.alignment, _Alignof(TestBitField));

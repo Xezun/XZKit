@@ -18,6 +18,8 @@
 
 @implementation Example03ViewController
 
+@dynamic viewModel;
+
 - (void)viewDidLoad {
     [super viewDidLoad];
     

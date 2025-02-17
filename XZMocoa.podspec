@@ -8,18 +8,12 @@
 
 Pod::Spec.new do |s|
   s.name             = 'XZMocoa'
-  s.version          = '10.1.0'
-  s.summary          = 'An iOS MVVM library.'
-
-# This description is used to generate tags and improve search results.
-#   * Think: What does it do? Why did you write it? What is the focus?
-#   * Try to keep it short, snappy and to the point.
-#   * Write the description between the DESC delimiters below.
-#   * Finally, don't worry about the indent, CocoaPods strips it!
+  s.version          = '10.2.0'
+  s.summary          = '一款用于 MVVM 设计模式进行 iOS 开发的基础库'
 
   s.description      = <<-DESC
-                      一款 Apple 原生风格的、轻量级的 MVVM 开源框架，上手简单好用。
-                       DESC
+  基于 Apple 原生 API 风格设计，简洁易学零成本上手；零监听、轻量级设计，可与 MVC 混合使用，高性能零成本接入。
+  DESC
 
   s.homepage         = 'https://github.com/Xezun/XZKit'
   # s.screenshots     = 'www.example.com/screenshots_1', 'www.example.com/screenshots_2'
@@ -28,14 +22,15 @@ Pod::Spec.new do |s|
   s.source           = { :git => 'https://github.com/Xezun/XZKit.git', :tag => s.version.to_s }
   # s.social_media_url = 'https://twitter.com/<TWITTER_USERNAME>'
 
+  s.swift_version = '6.0'
   s.ios.deployment_target = '12.0'
   s.pod_target_xcconfig = { 'GCC_PREPROCESSOR_DEFINITIONS' => 'XZ_FRAMEWORK=1' }
   
   s.default_subspec = 'Code'
   
   s.subspec 'Code' do |ss|
-    ss.source_files = 'XZKit/Code/XZMocoa/**/*.{h,m}'
-    ss.project_header_files = 'XZKit/Code/XZMocoa/**/Private/*.h'
+    ss.source_files = 'XZKit/Code/{ObjC,Swift}/XZMocoa/**/*.{h,m,swift}'
+    ss.project_header_files = 'XZKit/Code/ObjC/XZMocoa/**/Private/*.h'
     
     ss.dependency 'XZDefines/XZMacro'
     ss.dependency 'XZDefines/XZRuntime'
@@ -48,12 +43,5 @@ Pod::Spec.new do |s|
     ss.pod_target_xcconfig = { 'GCC_PREPROCESSOR_DEFINITIONS' => 'XZ_DEBUG=1' }
   end
   
-  # s.resource_bundles = {
-  #   'XZMocoa' => ['XZMocoa/Assets/*.png']
-  # }
-
-  # s.public_header_files = 'Pod/Classes/**/*.h'
-  # s.frameworks = 'UIKit', 'MapKit'
-  # s.dependency 'AFNetworking', '~> 2.3'
 end
 

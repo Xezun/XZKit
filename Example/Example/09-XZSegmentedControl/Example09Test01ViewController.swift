@@ -6,8 +6,11 @@
 //
 
 import UIKit
+import XZJSON
+import XZMocoa
 import XZSegmentedControl
 import XZPageView
+
 
 class Example09Test01ViewController: UIViewController, UIScrollViewDelegate {
 
@@ -72,7 +75,7 @@ extension Example09Test01ViewController: XZPageViewDelegate {
         segmentedControl.setSelectedIndex(index, animated: true)
     }
     
-    func pageView(_ pageView: XZPageView, didTransitionPage transition: CGFloat) {
+    func pageView(_ pageView: XZPageView, didTurnPageIn transition: CGFloat) {
         segmentedControl.updateInteractiveTransition(transition)
     }
 }

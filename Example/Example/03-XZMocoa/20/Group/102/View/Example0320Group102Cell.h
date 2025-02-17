@@ -6,7 +6,8 @@
 //
 
 #import <UIKit/UIKit.h>
-#import <XZMocoa/XZMocoa.h>
+@import XZJSON;
+@import XZMocoa;
 @import XZPageView;
 @import XZPageControl;
 

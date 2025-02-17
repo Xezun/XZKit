@@ -8,18 +8,12 @@
 
 Pod::Spec.new do |s|
   s.name             = 'XZJSON'
-  s.version          = '10.1.0'
-  s.summary          = 'XZJSON 是一款高效的 JSON 数据模型化工具'
-
-# This description is used to generate tags and improve search results.
-#   * Think: What does it do? Why did you write it? What is the focus?
-#   * Try to keep it short, snappy and to the point.
-#   * Write the description between the DESC delimiters below.
-#   * Finally, don't worry about the indent, CocoaPods strips it!
+  s.version          = '10.2.0'
+  s.summary          = '一款高效的 JSON 数据模型化工具'
 
   s.description      = <<-DESC
-                       XZJSON 基于 YYModel 打造，支持任意数据的模型化；采用了工具类+协议的方式实现，接入更方便。
-                       DESC
+  基于 YYModel 打造，进行了大量优化，支持任意数据的模型化；采用了“工具类+协议”的方式实现，降低对原生代码的侵入，更符合 Apple 接口设计风格。
+  DESC
 
   s.homepage         = 'https://github.com/Xezun/XZKit'
   # s.screenshots     = 'www.example.com/screenshots_1', 'www.example.com/screenshots_2'
@@ -28,23 +22,15 @@ Pod::Spec.new do |s|
   s.source           = { :git => 'https://github.com/Xezun/XZKit.git', :tag => s.version.to_s }
   # s.social_media_url = 'https://twitter.com/<TWITTER_USERNAME>'
 
+  s.swift_version = '6.0'
   s.ios.deployment_target = '12.0'
   s.pod_target_xcconfig = { 'GCC_PREPROCESSOR_DEFINITIONS' => 'XZ_FRAMEWORK=1' }
   
   s.subspec 'Code' do |ss|
-    ss.source_files = 'XZKit/Code/XZJSON/**/*.{h,m}'
-    # 不在头文件中，但是可以单独被引用
-    ss.private_header_files = 'XZKit/Code/XZJSON/**/Objc/*.h'
-    # 不可以被引用
-    ss.project_header_files = 'XZKit/Code/XZJSON/**/Private/*.h'
+    ss.source_files = 'XZKit/Code/ObjC/XZJSON/**/*.{h,m}'
+    ss.project_header_files = 'XZKit/Code/ObjC/XZJSON/**/Private/*.h'
+    ss.dependency 'XZObjcDescriptor'
   end
   
-  # s.resource_bundles = {
-  #   'XZJSON' => ['XZJSON/Assets/*.png']
-  # }
-
-  # s.public_header_files = 'Pod/Classes/**/*.h'
-  # s.frameworks = 'UIKit', 'MapKit'
-  # s.dependency 'AFNetworking', '~> 2.3'
 end
 

@@ -1,66 +1,83 @@
 #!/bin/bash
 # 参数1：模块名
 
-module="$1"
-
-root_path="XZKit/Headers/$module"
-
-if [[ -d "$root_path" ]]; then
-    echo "\033[32m🎉 目录 $root_path 检查通过\033[0m"
-else
-    mkdir -p "$root_path"
-    if [[ -d "$root_path" ]]; then
-    	echo "\033[32m🎉 目录 $root_path 创建成功\033[0m"
+CreatePath() {
+    if [[ -d "$1" ]]; then
+        echo "\033[32m🎉 目录 $1 检查通过\033[0m"
     else
-    	echo "\033[31m⚠️ 目录 $root_path 创建失败，无法链接头文件\033[0m"
-    	exit 0;
+        mkdir -p "$1"
+        if [[ -d "$1" ]]; then
+            echo "\033[32m🎉 目录 $1 创建成功\033[0m"
+        else
+            echo "\033[31m🚫 目录 $1 创建失败，无法链接头文件\033[0m"
+            exit 10;
+        fi
     fi
-fi
+}
 
 LinkHeaders() {
-    for path in "$1"/*; do
+    local moduleName="$1";
+    local modulePath="$2";
+    local headerType="$3";
+    for path in "$modulePath"/*; do
+        # echo "path => $path"
         name=$(basename "$path")
         if [[ -f $path ]]; then
             if [[ "$name" =~ ".h"$ ]]; then
-                if [[ ! -d "$2" ]]; then
-                    mkdir "$2"
+                if [[ ! -d "XZKit/Headers/$headerType/$moduleName" ]]; then
+                    CreatePath "XZKit/Headers/$headerType/$moduleName"
                 fi
-                if [[ -d "$2" ]]; then
-                    ln -s "../$1/$name" "$2/$name"
-                    echo "🔗 [$2] ../$1/$name"
+                if [[ -d "XZKit/Headers/$headerType/$moduleName" ]]; then
+                    ln -s "../../../../$path" "XZKit/Headers/$headerType/$moduleName/$name"
+                    echo "🔗 [$headerType] $path"
                 else
-                    echo "⚠️ \033[31m目录 $2 不存在，且无法创建\033[0m"
+                    echo "🚫 \033[31m目录 $headerType/$moduleName 不存在，且无法创建\033[0m"
                 fi
             fi
         elif [[ -d $path ]]; then
             if [[ "$name" == "Private" ]]; then
-                LinkHeaders "$1/$name" "Private"
+                LinkHeaders "$moduleName" "$path" "Private"
             else
-                LinkHeaders "$1/$name" "$2"
+                LinkHeaders "$moduleName" "$path" "$headerType"
             fi
         fi
     done
     return 0
 }
 
-# 进入目录
-cd "$(pwd)/$root_path"
+MODULE_NAME="$1"
 
-echo "☕️ \033[32m开始清理旧的头文件\033[0m"
-if [[ -d "Public" ]]; then
-    for path in "./Public"/*; do
+# 检查脚本参数
+if [[ -z "$MODULE_NAME" || "$MODULE_NAME" == "XZKit" ]]; then
+    echo "🚫 \033[31m请在第一个参数指定子模块名！\033[0m"
+    exit 1;
+fi
+
+# 检查 MODULE_PATH
+if [[ ! -d "XZKit/Code/ObjC/${MODULE_NAME}" ]]; then
+    echo "🚫 \033[31m模块 ${MODULE_NAME} 不存在！\033[0m"
+    exit 2;
+fi
+
+# 进入目录
+CreatePath "XZKit/Headers/Public"
+CreatePath "XZKit/Headers/Private"
+
+echo "☕️ \033[32m清理操作开始\033[0m"
+if [[ -d "XZKit/Headers/Public/${MODULE_NAME}" ]]; then
+    for path in "XZKit/Headers/Public/${MODULE_NAME}"/*; do
         rm -rf "$path"
-        echo "🗑️ $path "
+        echo "⛓️‍💥  $path "
     done
 fi
-if [[ -d "Private" ]]; then
-    for path in "./Private"/*; do
+if [[ -d "XZKit/Headers/Private/${MODULE_NAME}" ]]; then
+    for path in "XZKit/Headers/Private/${MODULE_NAME}"/*; do
         rm -rf "$path"
-        echo "🗑️ $path "
+        echo "⛓️‍💥  $path "
     done
 fi
-echo "🎉 \033[32m清理结束\033[0m"
+echo "🎉 \033[32m清理操作结束\033[0m"
 
 echo "\033[32m☕️ 开始链接头文件\033[0m"
-LinkHeaders "../../Code/$module" "Public"
+LinkHeaders "$MODULE_NAME" "XZKit/Code/ObjC/${MODULE_NAME}" "Public"
 echo "\033[32m🎉 链接头文件完成\033[0m"

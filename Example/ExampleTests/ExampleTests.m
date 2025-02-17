@@ -6,8 +6,8 @@
 //
 
 #import <XCTest/XCTest.h>
-@import XZDefines;
 @import ObjectiveC;
+@import XZDefines;
 
 @interface Foo : NSObject
 - (void)foo;
@@ -379,7 +379,7 @@
     xz_objc_class_addMethodWithBlock([Bar class], @selector(speakFoo:), NULL, nil, ^NSString *(Bar *self, NSString *name) {
         struct objc_super super = {
                  .receiver = self,
-                 .super_class = class_getSuperclass(object_getClass(self))
+                 .super_class = class_getSuperclass([Bar class])
              };
         NSString *word = ((NSString *(*)(struct objc_super *, SEL, NSString *))objc_msgSendSuper)(&super, @selector(speakFoo:), name);
         NSLog(@"block override foo super: %@", word);

@@ -6,8 +6,8 @@
 //
 
 #import <Foundation/Foundation.h>
-#import <XZMocoa/XZMocoa.h>
 @import XZJSON;
+@import XZMocoa;
 
 NS_ASSUME_NONNULL_BEGIN
 

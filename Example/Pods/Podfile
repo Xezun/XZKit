@@ -8,6 +8,8 @@ project '../Example.xcodeproj'
 
 target 'Example' do
 
+  # pod 'XZKit', :path => '../../'
+
   pod 'XZDefines', :path => '../../'
   pod 'XZExtensions', :path => '../../'
   pod 'XZMocoa', :path => '../../'
@@ -28,9 +30,10 @@ target 'Example' do
   pod 'XZDataDigester', :path => '../../'
   pod 'XZDataCryptor', :path => '../../'
   pod 'XZKeychain', :path => '../../'
+  pod 'XZObjcDescriptor', :path => '../../'
   
   pod 'SDWebImage'
-#  pod 'AFNetworking'
+  # pod 'AFNetworking'
   
   target 'ExampleTests' do
     inherit! :search_paths

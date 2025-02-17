@@ -13,6 +13,7 @@
     self = [super initWithFrame:frame];
     if (self) {
         self.alwaysBounceVertical = YES;
+        
         _contactView = [Example0310ContactView contactView];
         [self addSubview:_contactView];
         _contentView = [[Example0310ContentView alloc] init];

@@ -5,8 +5,8 @@
 //  Created by Xezun on 2023/7/27.
 //
 
-#import <XZMocoa/XZMocoa.h>
 @import XZJSON;
+@import XZMocoa;
 
 NS_ASSUME_NONNULL_BEGIN
 

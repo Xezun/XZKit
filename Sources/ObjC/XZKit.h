@@ -50,7 +50,7 @@ FOUNDATION_EXPORT const unsigned char XZKitVersionString[];
 
 // MARK: - Runtime
 #import <XZKit/XZRuntime.h>
-#import <XZKit/XZObjCTypeDescriptor.h>
+#import <XZKit/XZObjcTypeDescriptor.h>
 
 // MARK: - Foundation
 #import <XZKit/NSURL+XZKit.h>

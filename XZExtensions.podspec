@@ -10,18 +10,12 @@
 
 Pod::Spec.new do |s|
   s.name             = 'XZExtensions'
-  s.version          = '10.1.0'
+  s.version          = '10.2.0'
   s.summary          = '对原生框架的拓展，提高开发效率'
 
-# This description is used to generate tags and improve search results.
-#   * Think: What does it do? Why did you write it? What is the focus?
-#   * Try to keep it short, snappy and to the point.
-#   * Write the description between the DESC delimiters below.
-#   * Finally, don't worry about the indent, CocoaPods strips it!
-
   s.description      = <<-DESC
-                       XZExtensions 包含了对原生框架的拓展，丰富了原生框架的功能，提高了开发效率。
-                       DESC
+  XZExtensions 包含了对原生框架的拓展，丰富了原生框架的功能，提高了开发效率。
+  DESC
 
   s.homepage         = 'https://github.com/Xezun/XZKit'
   # s.screenshots     = 'www.example.com/screenshots_1', 'www.example.com/screenshots_2'
@@ -30,30 +24,21 @@ Pod::Spec.new do |s|
   s.source           = { :git => 'https://github.com/Xezun/XZKit.git', :tag => s.version.to_s }
   # s.social_media_url = 'https://twitter.com/<TWITTER_USERNAME>'
 
+  s.swift_version = '6.0'
   s.ios.deployment_target = '12.0'
   s.pod_target_xcconfig = { 'GCC_PREPROCESSOR_DEFINITIONS' => 'XZ_FRAMEWORK=1' }
   
   s.default_subspec = 'Code'
   
   s.subspec 'Code' do |ss|
-    ss.source_files = 'XZKit/Code/XZExtensions/**/*.{h,m}'
+    ss.source_files = 'XZKit/Code/ObjC/XZExtensions/**/*.{h,m}'
     ss.dependency 'XZDefines'
   end
   
- 
-  # s.resource_bundles = {
-  #   'XZExtensions' => ['XZExtensions/Assets/*.png']
-  # }
-
-  # s.public_header_files = 'Pod/Classes/**/*.h'
-  # s.frameworks = 'UIKit', 'MapKit'
-  # s.dependency 'AFNetworking', '~> 2.3'
-  
-  
   def s.defineSubspec(name, dependencies)
     self.subspec name do |ss|
-      ss.public_header_files = "XZKit/Code/XZExtensions/#{name}/**/*.h";
-      ss.source_files        = "XZKit/Code/XZExtensions/#{name}/**/*.{h,m}";
+      ss.public_header_files = "XZKit/Code/ObjC/XZExtensions/#{name}/**/*.h";
+      ss.source_files        = "XZKit/Code/ObjC/XZExtensions/#{name}/**/*.{h,m}";
       for dependency in dependencies
         ss.dependency dependency;
       end
