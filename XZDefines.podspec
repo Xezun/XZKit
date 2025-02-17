@@ -42,8 +42,8 @@ Pod::Spec.new do |s|
   
   def s.defineSubspec(name, dependencies)
     self.subspec name do |ss|
-      ss.public_header_files = "XZKit/Code/XZDefines/ObjC/#{name}/**/*.h";
-      ss.source_files        = "XZKit/Code/XZDefines/ObjC/#{name}/**/*.{h,m}";
+      ss.public_header_files = "XZKit/Code/ObjC/XZDefines/#{name}/**/*.h";
+      ss.source_files        = "XZKit/Code/ObjC/XZDefines/#{name}/**/*.{h,m}";
       for dependency in dependencies
         ss.dependency dependency;
       end
