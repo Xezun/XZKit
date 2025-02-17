@@ -13,8 +13,6 @@
 
 @interface Example05ViewController ()
 
-@property (nonatomic, unsafe_unretained) NSObject *someObject;
-
 @end
 
 @implementation Example05ViewController
@@ -47,15 +45,20 @@
                 NSURL *url = [NSBundle.mainBundle URLForResource:@"Example05Model" withExtension:@"json"];
                 NSData *data = [NSData dataWithContentsOfURL:url];
                 teacher = [XZJSON decode:data options:(NSJSONReadingAllowFragments) class:[Example05Teacher class]];
-                NSLog(@"%@", [XZJSON modelDescription:teacher]);
             }
             
             switch (indexPath.row) {
                 case 0: {
+                    NSLog(@"%@", [XZJSON modelDescription:teacher]);
                     NSAssert([teacher isKindOfClass:[Example05Teacher class]], @"");
                     break;
                 }
                 case 1: {
+                    NSData *json = [XZJSON encode:teacher options:NSJSONWritingPrettyPrinted error:nil];
+                    NSLog(@"%@", [[NSString alloc] initWithData:json encoding:NSUTF8StringEncoding]);
+                    break;
+                }
+                case 2: {
                     NSAssert([teacher.name isEqualToString:@"Smith"], @"");
                     NSAssert(teacher.age == 50, @"");
                     NSAssert(teacher.students.count == 3, @"");
@@ -78,16 +81,10 @@
                     [self showToast:toast duration:3.0 offset:CGPointZero completion:nil];
                     break;
                 }
-                case 2: {
-                    NSData *json = [XZJSON encode:teacher options:NSJSONWritingPrettyPrinted error:nil];
-                    NSLog(@"%@", [[NSString alloc] initWithData:json encoding:NSUTF8StringEncoding]);
-                    break;
-                }
                 default: {
                     break;
                 }
             }
-            
             break;
         }
         default: {

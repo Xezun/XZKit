@@ -11,15 +11,9 @@ Pod::Spec.new do |s|
   s.version          = '10.2.0'
   s.summary          = 'XZPageView 是一款高效的分页视图管理组件'
 
-# This description is used to generate tags and improve search results.
-#   * Think: What does it do? Why did you write it? What is the focus?
-#   * Try to keep it short, snappy and to the point.
-#   * Write the description between the DESC delimiters below.
-#   * Finally, don't worry about the indent, CocoaPods strips it!
-
   s.description      = <<-DESC
-                       组件 XZPageView 支持使用自定义视图，支持自动轮播、循环轮播、垂直和水平翻页。
-                       DESC
+  组件 XZPageView 支持使用自定义视图，支持自动轮播、循环轮播、垂直和水平翻页。
+  DESC
 
   s.homepage         = 'https://github.com/Xezun/XZKit'
   # s.screenshots     = 'www.example.com/screenshots_1', 'www.example.com/screenshots_2'
@@ -45,12 +39,5 @@ Pod::Spec.new do |s|
     ss.pod_target_xcconfig = { 'GCC_PREPROCESSOR_DEFINITIONS' => 'XZ_DEBUG=1' }
   end
   
-  # s.resource_bundles = {
-  #   'XZPageView' => ['XZPageView/Assets/*.png']
-  # }
-
-  # s.public_header_files = 'Pod/Classes/**/*.h'
-  # s.frameworks = 'UIKit', 'MapKit'
-  # s.dependency 'AFNetworking', '~> 2.3'
 end
 

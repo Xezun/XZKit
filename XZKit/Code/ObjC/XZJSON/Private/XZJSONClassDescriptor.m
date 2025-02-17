@@ -75,13 +75,6 @@ static id XZJSONKeyFromString(NSString *aString);
                 if (!property.getter || !property.setter) {
                     return; // 必须同时有 getter 和 setter
                 }
-                XZObjcQualifiers const qualifiers = property.type.qualifiers;
-                if (qualifiers & XZObjcQualifierWeak) {
-                    return; // weak 属性不处理
-                }
-                if (property.type.type == XZObjcTypeObject && !(qualifiers & XZObjcQualifierCopy) && !(qualifiers & XZObjcQualifierRetain)) {
-                    return; // unsafe_unretained 属性不处理
-                }
                 XZJSONPropertyDescriptor *descriptor = [XZJSONPropertyDescriptor descriptorWithClass:self property:property elementType:mappingClasses[property.name]];
                 allProperties[name] = descriptor;
             }];
@@ -200,13 +193,11 @@ static id XZJSONKeyFromString(NSString *aString);
         BOOL const conformsToXZJSONDecoding = [rawClass conformsToProtocol:@protocol(XZJSONDecoding)];
         BOOL const conformsToXZJSONEncoding = [rawClass conformsToProtocol:@protocol(XZJSONEncoding)];
         
-        _usesJSONDecodingMethod = conformsToXZJSONDecoding && [rawClass instancesRespondToSelector:@selector(initWithJSONDictionary:)];
-        _usesJSONEncodingMethod = conformsToXZJSONEncoding && [rawClass instancesRespondToSelector:@selector(encodeIntoJSONDictionary:)];
+        _usesJSONDecodingInitializer = conformsToXZJSONDecoding && [rawClass instancesRespondToSelector:@selector(initWithJSONDictionary:)];
+        _usesJSONEncodingInitializer = conformsToXZJSONEncoding && [rawClass instancesRespondToSelector:@selector(encodeIntoJSONDictionary:)];
         
-        _usesPropertyDecodingMethod = conformsToXZJSONDecoding && [rawClass instancesRespondToSelector:@selector(JSONDecodeValue:forKey:)];
-        _usesPropertyEncodingMethod = conformsToXZJSONEncoding && [rawClass instancesRespondToSelector:@selector(JSONEncodeValueForKey:)];
-        
-        _usesIvarCopyingMethod = [rawClass conformsToProtocol:@protocol(XZJSONCopying)] && [rawClass instancesRespondToSelector:@selector(copyIvar:)];
+        _usesPropertyJSONDecodingMethod = conformsToXZJSONDecoding && [rawClass instancesRespondToSelector:@selector(JSONDecodeValue:forKey:)];
+        _usesPropertyJSONEncodingMethod = conformsToXZJSONEncoding && [rawClass instancesRespondToSelector:@selector(JSONEncodeValueForKey:)];
     }
     return self;
 }

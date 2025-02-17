@@ -77,7 +77,17 @@
 }
 
 - (NSString *)description {
-    return [NSString stringWithFormat:@"<%@: %p, name: %@, implementation: %p, typeEncoding: %@, returnType: %@, argumentsTypes: %@>", NSStringFromClass(self.class), self, self.name, self.implementation, self.encoding, self.type, self.argumentsTypes];
+    NSString *argumentsTypes = nil;
+    if (self.argumentsTypes.count > 0) {
+        NSMutableString *stringM = [[NSMutableString alloc] initWithString:@"[\n"];
+        [self.argumentsTypes enumerateObjectsUsingBlock:^(XZObjcTypeDescriptor * _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
+            [stringM appendFormat:@"    %@,\n", [obj.description stringByReplacingOccurrencesOfString:@"\n" withString:@"\n    "]];
+        }];
+        [stringM deleteCharactersInRange:NSMakeRange(stringM.length - 2, 1)];
+        [stringM appendString:@"]"];
+        argumentsTypes = stringM;
+    }
+    return [NSString stringWithFormat:@"<%@: %p, name: %@, type: <%p: %@, %@>, implementation: %p, typeEncoding: %@, argumentsTypes: %@>", NSStringFromClass(self.class), self, self.name, self.type, self.type.name, self.type.subtype, self.implementation, self.encoding, argumentsTypes];
 }
 
 @end

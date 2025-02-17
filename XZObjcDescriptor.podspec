@@ -13,12 +13,6 @@ Pod::Spec.new do |s|
   s.version          = '10.2.0'
   s.summary          = 'ObjC 运行时面向对象'
 
-# This description is used to generate tags and improve search results.
-#   * Think: What does it do? Why did you write it? What is the focus?
-#   * Try to keep it short, snappy and to the point.
-#   * Write the description between the DESC delimiters below.
-#   * Finally, don't worry about the indent, CocoaPods strips it!
-
   s.description      = <<-DESC
   运行时底层元素的面向对象描述。
   DESC
@@ -45,14 +39,6 @@ Pod::Spec.new do |s|
     ss.dependency 'XZObjcDescriptor/Code'
     ss.pod_target_xcconfig = { 'GCC_PREPROCESSOR_DEFINITIONS' => 'XZ_DEBUG=1' }
   end
-  
-  # s.resource_bundles = {
-  #   'XZObjcDescriptor' => ['XZObjcDescriptor/Assets/*.png']
-  # }
-
-  # s.public_header_files = 'Pod/Classes/**/*.h'
-  # s.frameworks = 'UIKit', 'MapKit'
-  # s.dependency 'AFNetworking', '~> 2.3'
   
 end
 

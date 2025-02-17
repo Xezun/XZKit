@@ -11,17 +11,11 @@
 Pod::Spec.new do |s|
   s.name             = 'XZKeychain'
   s.version          = '10.2.0'
-  s.summary          = '对原生框架 Keychain 的封装，提高开发效率。'
-
-# This description is used to generate tags and improve search results.
-#   * Think: What does it do? Why did you write it? What is the focus?
-#   * Try to keep it short, snappy and to the point.
-#   * Write the description between the DESC delimiters below.
-#   * Finally, don't worry about the indent, CocoaPods strips it!
+  s.summary          = '一款访问钥匙串的工具类'
 
   s.description      = <<-DESC
-  XZKeychain 对 KeychainAccess 进行了封装，提供了面向对象的接口，使用更顺手，提高开发效率。
-                       DESC
+  XZKeychain 对原生 KeychainAccess 进行了封装，提供了面向对象的接口，使用更顺手，提高开发效率。
+  DESC
 
   s.homepage         = 'https://github.com/Xezun/XZKit'
   # s.screenshots     = 'www.example.com/screenshots_1', 'www.example.com/screenshots_2'
@@ -37,31 +31,7 @@ Pod::Spec.new do |s|
   
   s.subspec 'Code' do |ss|
     ss.source_files = 'XZKit/Code/ObjC/XZKeychain/**/*.{h,m}'
-    # ss.dependency 'XZExtensions/NSData'
-    # ss.dependency 'XZDefines/XZDefer'
   end
-  
- 
-  # s.resource_bundles = {
-  #   'XZKeychain' => ['XZKeychain/Assets/*.png']
-  # }
-
-  # s.public_header_files = 'Pod/Classes/**/*.h'
-  # s.frameworks = 'UIKit', 'MapKit'
-  # s.dependency 'AFNetworking', '~> 2.3'
-  
-  
-  # def s.defineSubspec(name, dependencies)
-  #   self.subspec name do |ss|
-  #     ss.public_header_files = "XZKeychain/Code/#{name}/**/*.h";
-  #     ss.source_files        = "XZKeychain/Code/#{name}/**/*.{h,m}";
-  #     for dependency in dependencies
-  #       ss.dependency dependency;
-  #     end
-  #   end
-  # end
-  
-  # s.defineSubspec 'CAAnimation',        [];
 
 end
 

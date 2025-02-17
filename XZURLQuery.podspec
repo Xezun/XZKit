@@ -11,12 +11,6 @@ Pod::Spec.new do |s|
   s.version          = '10.2.0'
   s.summary          = '专门处理 url 的 query 的库'
 
-# This description is used to generate tags and improve search results.
-#   * Think: What does it do? Why did you write it? What is the focus?
-#   * Try to keep it short, snappy and to the point.
-#   * Write the description between the DESC delimiters below.
-#   * Finally, don't worry about the indent, CocoaPods strips it!
-
   s.description      = <<-DESC
   XZURLQuery 让 url 的 query 处理像字典一样简单。
   DESC
@@ -33,15 +27,7 @@ Pod::Spec.new do |s|
   
   s.subspec 'Code' do |ss|
     ss.source_files = 'XZKit/Code/ObjC/XZURLQuery/**/*.{h,m}'
-    # ss.project_header_files = 'XZURLQuery/Code/**/Private/*.{h,m}'
   end
   
-  # s.resource_bundles = {
-  #   'XZURLQuery' => ['XZURLQuery/Assets/*.png']
-  # }
-
-  # s.public_header_files = 'Pod/Classes/**/*.h'
-  # s.frameworks = 'UIKit', 'MapKit'
-  # s.dependency 'AFNetworking', '~> 2.3'
 end
 

@@ -13,15 +13,9 @@ Pod::Spec.new do |s|
   s.version          = '10.2.0'
   s.summary          = 'XZKit 的基础部分'
 
-# This description is used to generate tags and improve search results.
-#   * Think: What does it do? Why did you write it? What is the focus?
-#   * Try to keep it short, snappy and to the point.
-#   * Write the description between the DESC delimiters below.
-#   * Finally, don't worry about the indent, CocoaPods strips it!
-
   s.description      = <<-DESC
-                       XZDefines 包含 XZKit 中常用的一些基础定义。
-                       DESC
+  XZDefines 包含 XZKit 中常用的一些基础定义。
+  DESC
 
   s.homepage         = 'https://github.com/Xezun/XZKit'
   # s.screenshots     = 'www.example.com/screenshots_1', 'www.example.com/screenshots_2'
@@ -45,19 +39,10 @@ Pod::Spec.new do |s|
     ss.pod_target_xcconfig = { 'GCC_PREPROCESSOR_DEFINITIONS' => 'XZ_DEBUG=1' }
   end
   
-  # s.resource_bundles = {
-  #   'XZDefines' => ['XZDefines/Assets/*.png']
-  # }
-
-  # s.public_header_files = 'Pod/Classes/**/*.h'
-  # s.frameworks = 'UIKit', 'MapKit'
-  # s.dependency 'AFNetworking', '~> 2.3'
-  
   def s.defineSubspec(name, dependencies)
     self.subspec name do |ss|
-      ss.public_header_files = "XZKit/Code/XZDefines/#{name}/**/*.h";
-      ss.source_files        = "XZKit/Code/XZDefines/#{name}/**/*.{h,m}";
-      # 三级模块依赖
+      ss.public_header_files = "XZKit/Code/XZDefines/ObjC/#{name}/**/*.h";
+      ss.source_files        = "XZKit/Code/XZDefines/ObjC/#{name}/**/*.{h,m}";
       for dependency in dependencies
         ss.dependency dependency;
       end

@@ -48,7 +48,7 @@
 }
 
 - (NSString *)description {
-    return [NSString stringWithFormat:@"<%@: %p, name: %@, type: %@, offset: %ld>", NSStringFromClass(self.class), self, self.name, self.type, self.offset];
+    return [NSString stringWithFormat:@"<%@: %p, name: %@, type: <%p: %@, %@>, offset: %ld>", NSStringFromClass(self.class), self, self.name, self.type, self.type.name, self.type.subtype, self.offset];
 }
 
 @end

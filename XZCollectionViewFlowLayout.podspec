@@ -11,15 +11,9 @@ Pod::Spec.new do |s|
   s.version          = '10.2.0'
   s.summary          = '支持多种对齐方式的 UICollectionView 流布局。'
 
-# This description is used to generate tags and improve search results.
-#   * Think: What does it do? Why did you write it? What is the focus?
-#   * Try to keep it short, snappy and to the point.
-#   * Write the description between the DESC delimiters below.
-#   * Finally, don't worry about the indent, CocoaPods strips it!
-
   s.description      = <<-DESC
-                      为 UICollectionView 添加支持 leading、trailing、center、justified 等多种对齐方式的布局方案。 
-                       DESC
+  为 UICollectionView 添加支持 leading、trailing、center、justified 等多种对齐方式的布局方案。
+  DESC
 
   s.homepage         = 'https://github.com/Xezun/XZKit'
   # s.screenshots     = 'www.example.com/screenshots_1', 'www.example.com/screenshots_2'
@@ -36,20 +30,7 @@ Pod::Spec.new do |s|
   
   s.subspec 'Code' do |ss|
     ss.source_files = 'XZKit/Code/Swift/XZCollectionViewFlowLayout/**/*.swift'
-    # ss.project_header_files = 'XZCollectionViewFlowLayout/Code/**/Private/*.h'
   end
   
-  s.subspec 'Debug' do |ss|
-    ss.dependency 'XZCollectionViewFlowLayout/Code'
-    ss.pod_target_xcconfig = { 'GCC_PREPROCESSOR_DEFINITIONS' => 'XZ_DEBUG=1' }
-  end
-  
-  # s.resource_bundles = {
-  #   'XZCollectionViewFlowLayout' => ['XZCollectionViewFlowLayout/Assets/*.png']
-  # }
-
-  # s.public_header_files = 'Pod/Classes/**/*.h'
-  # s.frameworks = 'UIKit', 'MapKit'
-  # s.dependency 'AFNetworking', '~> 2.3'
 end
 

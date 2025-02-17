@@ -30,29 +30,30 @@ NS_ASSUME_NONNULL_BEGIN
 + (nullable id)_model:(id)model encodeIntoDictionary:(nullable NSMutableDictionary *)dictionary descriptor:(XZJSONClassDescriptor *)descriptor;
 @end
 
-/// 将 JSON 值解析为标量属性的值。
-/// - Parameters:
-///   - model: 模型
-///   - property: 属性
-///   - JSONValue: JSON 值
-FOUNDATION_EXPORT void XZJSONModelDecodeScalarNumberPropertyFromValue(id model, XZJSONPropertyDescriptor *property, id _Nonnull JSONValue);
-
 /// 将 JSON 值解析为模型属性值。
 /// - Parameters:
 ///   - model: 模型
 ///   - property: 属性
 ///   - value: JSON 值
-FOUNDATION_EXPORT void XZJSONModelDecodePropertyFromValue(id model, XZJSONPropertyDescriptor *property, id _Nonnull JSONValue);
+FOUNDATION_EXPORT void XZJSONModelDecodeProperty(id model, XZJSONPropertyDescriptor *property, id _Nonnull JSONValue);
 
-/// 将模型的数值属性值转换为 JSON 数据中
+/// 将模型结构体属性编码为字符串，仅针对已知的原生结构体。
 /// - Parameters:
-///   - model: 模型对象
+///   - model: 模型
 ///   - property: 属性
-FOUNDATION_EXPORT NSNumber * _Nullable XZJSONModelEncodeScalarNumberProperty(id _Nonnull model, XZJSONPropertyDescriptor * _Nonnull property);
+FOUNDATION_EXPORT NSString * _Nullable XZJSONModelEncodeStructProperty(id model, XZJSONPropertyDescriptor *property);
+
+/// 当属性结构体为原生结构体时，可使用此函数将字符串解码为结构体。
+/// - Parameters:
+///   - model: 模型
+///   - property: 属性
+///   - JSONValue: 结构体编码后的字符串
+FOUNDATION_EXPORT BOOL XZJSONModelDecodeStructProperty(id model, XZJSONPropertyDescriptor *property, id _Nonnull JSONValue);
+
 /// 模型转字符串。
 /// - Parameters:
 ///   - model: 模型对象
 ///   - hierarchies: 模型对象在集合中的层级
-FOUNDATION_EXPORT NSString * _Nonnull XZJSONModelDescription(NSObject *_Nonnull model, NSUInteger hierarchies, NSArray *chain);
+FOUNDATION_EXPORT NSString * _Nonnull XZJSONModelDescription(id model, NSUInteger hierarchies, NSArray *chain);
 
 NS_ASSUME_NONNULL_END

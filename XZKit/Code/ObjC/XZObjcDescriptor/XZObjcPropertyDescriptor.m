@@ -151,7 +151,7 @@
 }
 
 - (NSString *)description {
-    return [NSString stringWithFormat:@"<%@: %p, name: %@, type: %@, ivar: %@, getter: %@, setter: %@>", NSStringFromClass(self.class), self, self.name, self.type, self.ivar, NSStringFromSelector(self.getter), (self.setter ? NSStringFromSelector(self.setter) : nil)];
+    return [NSString stringWithFormat:@"<%@: %p, name: %@, type: <%p: %@, %@>, ivar: %p, getter: %@, setter: %@>", NSStringFromClass(self.class), self, self.name, self.type, self.type.name, self.type.subtype, self.ivar, NSStringFromSelector(self.getter), (self.setter ? NSStringFromSelector(self.setter) : nil)];
 }
 
 @end

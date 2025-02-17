@@ -11,12 +11,6 @@ Pod::Spec.new do |s|
   s.version          = '10.2.0'
   s.summary          = '页面状态提示控件'
 
-# This description is used to generate tags and improve search results.
-#   * Think: What does it do? Why did you write it? What is the focus?
-#   * Try to keep it short, snappy and to the point.
-#   * Write the description between the DESC delimiters below.
-#   * Finally, don't worry about the indent, CocoaPods strips it!
-
   s.description      = <<-DESC
   更方便的处理页面状态的显示，提高开发效率
   DESC
@@ -35,15 +29,7 @@ Pod::Spec.new do |s|
   s.subspec 'Code' do |ss|
     ss.dependency 'XZTextImageView'
     ss.source_files = 'XZKit/Code/Swift/XZContentStatus/**/*.{h,m,swift}'
-    # ss.project_header_files = 'XZKit/Code/XZContentStatus/**/Private/*.h'
   end
   
-  # s.resource_bundles = {
-  #   'XZContentStatus' => ['XZContentStatus/Assets/*.png']
-  # }
-
-  # s.public_header_files = 'Pod/Classes/**/*.h'
-  # s.frameworks = 'UIKit', 'MapKit'
-  # s.dependency 'AFNetworking', '~> 2.3'
 end
 

@@ -11,15 +11,9 @@ Pod::Spec.new do |s|
   s.version          = '10.2.0'
   s.summary          = 'XZML 富文本标记语言'
 
-# This description is used to generate tags and improve search results.
-#   * Think: What does it do? Why did you write it? What is the focus?
-#   * Try to keep it short, snappy and to the point.
-#   * Write the description between the DESC delimiters below.
-#   * Finally, don't worry about the indent, CocoaPods strips it!
-
   s.description      = <<-DESC
   XZML 是一款轻量级的 iOS 富文本解决方案，可以快速方便的直接通过字符串构造富文本，用于解决 iOS 开发中，构造富文本繁琐，及不能直接下发富文本的问题。
-                       DESC
+  DESC
 
   s.homepage         = 'https://github.com/Xezun/XZKit'
   # s.screenshots     = 'www.example.com/screenshots_1', 'www.example.com/screenshots_2'
@@ -39,12 +33,5 @@ Pod::Spec.new do |s|
     ss.private_header_files = 'XZKit/ObjC/Code/XZML/**/Core/*.h'
   end
   
-  # s.resource_bundles = {
-  #   'XZML' => ['XZML/Assets/*.png']
-  # }
-
-  # s.public_header_files = 'Pod/Classes/**/*.h'
-  # s.frameworks = 'UIKit', 'MapKit'
-  # s.dependency 'AFNetworking', '~> 2.3'
 end
 

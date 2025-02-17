@@ -38,17 +38,15 @@ NS_ASSUME_NONNULL_BEGIN
     BOOL _verifiesValueForDecoding;
     
     /// 是否使用自定义模型化方法，即 -initWithJSONDictionary: 方法。
-    BOOL _usesJSONDecodingMethod;
+    BOOL _usesJSONDecodingInitializer;
     /// 是否使用自定义序列化方法，即 -encodeIntoJSONDictionary: 方法。
-    BOOL _usesJSONEncodingMethod;
+    BOOL _usesJSONEncodingInitializer;
     
     /// 是否使用自定义属性模型化方法，即 -decodeDateFromJSONValue:forKey: 方法。
-    BOOL _usesPropertyDecodingMethod;
+    BOOL _usesPropertyJSONDecodingMethod;
     /// 是否使用自定义属性序列化方法，即 -encodeDateIntoJSONValue:forKey: 方法。
-    BOOL _usesPropertyEncodingMethod;
+    BOOL _usesPropertyJSONEncodingMethod;
     
-    /// 是否定义了自定义复制方法。即 -copyIvar: 方法。
-    BOOL _usesIvarCopyingMethod;
 }
 
 - (instancetype)init NS_UNAVAILABLE;

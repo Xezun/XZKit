@@ -20,25 +20,32 @@ NS_ASSUME_NONNULL_BEGIN
 
 /// 当前类，当前对象所描述的类。
 @property (nonatomic, readonly) Class raw;
+
 /// 描述当前类的超类的对象。
 @property (nonatomic, readonly, nullable) XZObjcClassDescriptor *super;
 
 /// 类名。class name
 @property (nonatomic, readonly) NSString *name;
+
 /// 类的类型描述。
 @property (nonatomic, readonly) XZObjcTypeDescriptor *type;
 
 /// 类实例变量。ivars
-/// > 懒加载，可通过设置 nil 然后获取重新生成。
 @property (nonatomic, copy, readonly) NSDictionary<NSString *, XZObjcIvarDescriptor *>     *ivars;
+
+/// 在运行时更新了类的实例变量后，应调用此方法标记更新。
 - (void)setNeedsUpdateIvars;
+
 /// 类方法。 methods
-/// > 懒加载，可通过设置 nil 然后获取重新生成。
 @property (nonatomic, copy, readonly) NSDictionary<NSString *, XZObjcMethodDescriptor *>   *methods;
+
+/// 在运行时更新了类的实例方法后，应调用此方法标记更新。
 - (void)setNeedsUpdateMethods;
+
 /// 类属性。 properties
-/// > 懒加载，可通过设置 nil 然后获取重新生成。
 @property (nonatomic, copy, readonly) NSDictionary<NSString *, XZObjcPropertyDescriptor *> *properties;
+
+/// 在运行时更新了类的实例属性后，应调用此方法标记更新。
 - (void)setNeedsUpdateProperties;
 
 - (instancetype)init NS_UNAVAILABLE;

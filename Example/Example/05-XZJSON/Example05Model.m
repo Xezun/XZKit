@@ -59,10 +59,6 @@
 
 @implementation Example05Student
 
-//+ (NSArray<NSString *> *)blockedJSONCodingKeys {
-//    return @[@"teacher"];
-//}
-
 + (NSArray<NSString *> *)allowedJSONCodingKeys {
     return nil;
 }

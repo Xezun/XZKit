@@ -7,6 +7,22 @@
 
 #import "XZObjcTypeDescriptor.h"
 
+static NSMutableDictionary<NSString *, NSMutableDictionary<NSNumber *, XZObjcTypeDescriptor *> *> *_descriptors = nil;
+
+static void _descriptorsLock(BOOL onLock) {
+    static dispatch_semaphore_t _lock;
+    static dispatch_once_t onceToken;
+    dispatch_once(&onceToken, ^{
+        _lock = dispatch_semaphore_create(1);
+        _descriptors = [NSMutableDictionary dictionary];
+    });
+    
+    if (onLock) {
+        dispatch_semaphore_wait(_lock, DISPATCH_TIME_FOREVER);
+    } else {
+        dispatch_semaphore_signal(_lock);
+    }
+}
 struct XZObjcTypeEmptyStruct { };
 
 union XZObjcTypeEmptyUnion { };
@@ -54,6 +70,8 @@ typedef struct XZObjcTypeAlignment {
     if (encodingLength == 0) {
         return nil;
     }
+    
+    
     
     { // 变量修饰符：方法参数的类型编码可能会包含类型修饰符
         unsigned long i = 0;
@@ -107,6 +125,17 @@ typedef struct XZObjcTypeAlignment {
         // 重新定位字符编码的起点
         typeEncoding = typeEncoding + i;
         encodingLength -= i;
+    }
+    
+    {
+        XZObjcTypeDescriptor *descriptor = nil;
+        NSString *encoding = [NSString stringWithCString:typeEncoding encoding:NSASCIIStringEncoding];
+        _descriptorsLock(YES);
+        descriptor = _descriptors[encoding][@(qualifiers)];
+        _descriptorsLock(NO);
+        if (descriptor != nil) {
+            return descriptor;
+        }
     }
     
     XZObjcType _type      = XZObjcTypeUnknown;
@@ -677,7 +706,26 @@ typedef struct XZObjcTypeAlignment {
             break;
         }
     }
-    return [[self alloc] initWithType:_type name:_name qualifiers:qualifiers size:_size sizeInBit:_sizeInBit encoding:_encoding alignment:_alignment members:_members subtype:_subtype protocols:_protocols];
+    return [self descriptorWithType:_type name:_name qualifiers:qualifiers size:_size sizeInBit:_sizeInBit encoding:_encoding alignment:_alignment members:_members subtype:_subtype protocols:_protocols];
+}
+
++ (instancetype)descriptorWithType:(XZObjcType)type name:(NSString *)name qualifiers:(XZObjcQualifiers)qualifiers size:(size_t)size sizeInBit:(size_t)sizeInBit encoding:(NSString *)encoding alignment:(size_t)alignment members:(NSArray<XZObjcTypeDescriptor *> *)members subtype:(Class)subtype protocols:(NSArray<Protocol *> *)protocols {
+    XZObjcTypeDescriptor *descriptor = nil;
+    
+    _descriptorsLock(YES);
+    descriptor = _descriptors[encoding][@(qualifiers)];
+    if (descriptor == nil) {
+        descriptor = [[self alloc] initWithType:type name:name qualifiers:qualifiers size:size sizeInBit:sizeInBit encoding:encoding alignment:alignment members:members subtype:subtype protocols:protocols];
+        NSMutableDictionary *dictM = _descriptors[encoding];
+        if (dictM == nil) {
+            dictM = [NSMutableDictionary dictionary];
+            _descriptors[encoding] = dictM;
+        }
+        dictM[@(qualifiers)] = descriptor;
+    }
+    _descriptorsLock(NO);
+    
+    return descriptor;
 }
 
 - (instancetype)initWithType:(XZObjcType)type name:(NSString *)name qualifiers:(XZObjcQualifiers)qualifiers size:(size_t)size sizeInBit:(size_t)sizeInBit encoding:(NSString *)encoding alignment:(size_t)alignment members:(NSArray<XZObjcTypeDescriptor *> *)members subtype:(Class)subtype protocols:(NSArray<Protocol *> *)protocols {
@@ -698,7 +746,29 @@ typedef struct XZObjcTypeAlignment {
 }
 
 - (NSString *)description {
-    return [NSString stringWithFormat:@"<%@: %p, name: %@, type: %lu, encoding: %@, size: %lu, alignment: %lu, subtype: %@, protocols: %@, members: %@>", NSStringFromClass(self.class), self, self.name, (unsigned long)self.type, self.encoding, self.size, self.alignment, self.subtype, self.protocols, self.members];
+    NSString *protocols = nil;
+    if (self.protocols.count > 0) {
+        NSMutableString *stringM = [[NSMutableString alloc] initWithString:@"[\n"];
+        [self.protocols enumerateObjectsUsingBlock:^(Protocol * _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
+            [stringM appendFormat:@"    %@,\n", NSStringFromProtocol(obj)];
+        }];
+        [stringM deleteCharactersInRange:NSMakeRange(stringM.length - 2, 1)];
+        [stringM appendString:@"]"];
+        protocols = stringM;
+    }
+    
+    NSString *members = nil;
+    if (self.members.count > 0) {
+        NSMutableString *stringM = [[NSMutableString alloc] initWithString:@"[\n"];
+        [self.members enumerateObjectsUsingBlock:^(XZObjcTypeDescriptor * _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
+            [stringM appendFormat:@"    %@,\n", [obj.description stringByReplacingOccurrencesOfString:@"\n" withString:@"\n    "]];
+        }];
+        [stringM deleteCharactersInRange:NSMakeRange(stringM.length - 2, 1)];
+        [stringM appendString:@"]"];
+        members = stringM;
+    }
+    
+    return [NSString stringWithFormat:@"<%@: %p, name: %@, type: %lu, encoding: %@, size: %lu, alignment: %lu, subtype: %@, protocols: %@, members: %@>", NSStringFromClass(self.class), self, self.name, (unsigned long)self.type, self.encoding, self.size, self.alignment, self.subtype, protocols, members];
 }
 
 #pragma mark - Provider

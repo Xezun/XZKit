@@ -4,6 +4,7 @@
 [![Version](https://img.shields.io/cocoapods/v/XZKit.svg?style=flat)](https://cocoapods.org/pods/XZKit)
 [![License](https://img.shields.io/cocoapods/l/XZKit.svg?style=flat)](https://cocoapods.org/pods/XZKit)
 [![Platform](https://img.shields.io/cocoapods/p/XZKit.svg?style=flat)](https://cocoapods.org/pods/XZKit)
+[![SwiftPM](https://img.shields.io/badge/SwiftPM-compatible-brightgreen.svg)](https://www.swift.org/package-manager)
 
 ## 环境需求
 
@@ -11,7 +12,11 @@ iOS 12.0, Swift 5.0, Xcode 16.0.
 
 ## 安装集成
 
-推荐使用 [CocoaPods](http://cocoapods.org) 快速集成到项目中。
+- 使用 Swift Package Manager 集成
+
+`Xcode` -> `File` -> `Add Package Dependencies...` -> `Search or Enter Package URL`
+
+- 使用 [CocoaPods](http://cocoapods.org) 集成
 
 ```ruby
 pod "XZKit"
@@ -19,26 +24,131 @@ pod "XZKit"
 
 ## 组件
 
-1. [XZDefines - 开发中常用的宏、定义、函数](./Docs/XZDefines) 
-1. [XZExtensions - 原生框架UIKit、Foundation的拓展与增强](./Docs/XZExtensions) 
-1. [XZMocoa - 基于原生风格的轻量级 MVVM 开发框架](./Docs/XZMocoa) 
-1. [XZML - 富文本标记语言](./Docs/XZML) 
-1. [XZJSON - 基于 YYModel 的模型转换工具类](./Docs/XZJSON) 
-1. [XZRefresh - 最流畅的下拉刷新组件](./Docs/XZRefresh)
-1. [XZPageView - 多页管理组件](./Docs/XZPageView)
-1. [XZPageControl - 翻页控制组件](./Docs/XZPageControl)
-1. [XZSegmentedControl - 分段控制组件](./Docs/XZSegmentedControl)
-1. [XZGeometry - 拓展的几何定义](./Docs/XZGeometry)
-1. [XZTextImageView - 展示图片和文字的组件](./Docs/XZTextImageView)
-1. [XZContentStatus - 内容状态呈现组件](./Docs/XZContentStatus)
-1. [XZToast - 即时消息提示组件](./Docs/XZToast)
-1. [XZURLQuery - 链接参数处理](./Docs/XZURLQuery)
-1. [XZLocale - 应用本地化支持](./Docs/XZLocale)
-1. [XZCollectionViewFlowLayout - 支持多种对齐方式的 UICollectionView 流布局](./Docs/XZCollectionViewFlowLayout)
-1. [XZNavigationController - 全屏手势导航、手势返回、自定义导航条](./Docs/XZNavigationController)
-1. [XZDataCryptor - 对称加密](./Docs/XZDataCryptor)
-1. [XZDataDigester - 数据摘要](./Docs/XZDataDigester)
-1. [XZKeychain - 钥匙串访问](./Docs/XZKeychain)
+### [XZDefines](./Docs/XZDefines) 
+
+[![Version](https://img.shields.io/cocoapods/v/XZDefines.svg?style=flat)](https://cocoapods.org/pods/XZDefines)
+
+开发中常用的宏、定义、函数。
+
+### [XZExtensions](./Docs/XZExtensions) 
+
+[![Version](https://img.shields.io/cocoapods/v/XZExtensions.svg?style=flat)](https://cocoapods.org/pods/XZExtensions)
+
+原生框架UIKit、Foundation的拓展与增强
+
+### [XZMocoa](./Docs/XZMocoa) 
+
+[![Version](https://img.shields.io/cocoapods/v/XZKit.svg?style=flat)](https://cocoapods.org/pods/XZKit)
+
+基于原生风格的轻量级 MVVM 开发框架
+
+### [XZML](./Docs/XZML) 
+
+[![Version](https://img.shields.io/cocoapods/v/XZML.svg?style=flat)](https://cocoapods.org/pods/XZML)
+
+富文本标记语言
+
+### [XZObjcDescriptor](./Docs/XZObjcDescriptor) 
+
+[![Version](https://img.shields.io/cocoapods/v/XZObjcDescriptor.svg?style=flat)](https://cocoapods.org/pods/XZObjcDescriptor)
+
+方便直观的获取 ObjectiveC 的数据类型、类、方法、属性、实例变量等元数据的描述信息。
+
+### [XZJSON](./Docs/XZJSON) 
+
+[![Version](https://img.shields.io/cocoapods/v/XZJSON.svg?style=flat)](https://cocoapods.org/pods/XZJSON)
+
+基于 YYModel 的模型转换工具类
+
+### [XZRefresh](./Docs/XZRefresh) 
+
+[![Version](https://img.shields.io/cocoapods/v/XZRefresh.svg?style=flat)](https://cocoapods.org/pods/XZRefresh)
+
+最流畅的下拉刷新组件
+
+### [XZPageView](./Docs/XZPageView) 
+
+[![Version](https://img.shields.io/cocoapods/v/XZPageView.svg?style=flat)](https://cocoapods.org/pods/XZPageView)
+
+多页管理组件
+
+### [XZPageControl](./Docs/XZPageControl) 
+
+[![Version](https://img.shields.io/cocoapods/v/XZPageControl.svg?style=flat)](https://cocoapods.org/pods/XZPageControl)
+
+翻页控制组件
+
+### [XZSegmentedControl](./Docs/XZSegmentedControl) 
+
+[![Version](https://img.shields.io/cocoapods/v/XZSegmentedControl.svg?style=flat)](https://cocoapods.org/pods/XZSegmentedControl)
+
+分段控制组件
+
+### [XZGeometry](./Docs/XZGeometry) 
+
+[![Version](https://img.shields.io/cocoapods/v/XZGeometry.svg?style=flat)](https://cocoapods.org/pods/XZGeometry)
+
+拓展的几何定义
+
+### [XZTextImageView](./Docs/XZTextImageView)
+
+[![Version](https://img.shields.io/cocoapods/v/XZTextImageView.svg?style=flat)](https://cocoapods.org/pods/XZTextImageView)
+
+展示图片和文字的组件
+
+### [XZContentStatus](./Docs/XZContentStatus) 
+
+[![Version](https://img.shields.io/cocoapods/v/XZContentStatus.svg?style=flat)](https://cocoapods.org/pods/XZContentStatus)
+
+内容状态呈现组件
+
+### [XZToast](./Docs/XZToast) 
+
+[![Version](https://img.shields.io/cocoapods/v/XZToast.svg?style=flat)](https://cocoapods.org/pods/XZToast)
+
+即时消息提示组件
+
+### [XZURLQuery](./Docs/XZURLQuery) 
+
+[![Version](https://img.shields.io/cocoapods/v/XZURLQuery.svg?style=flat)](https://cocoapods.org/pods/XZURLQuery)
+
+链接参数处理
+
+### [XZLocale](./Docs/XZLocale) 
+
+[![Version](https://img.shields.io/cocoapods/v/XZLocale.svg?style=flat)](https://cocoapods.org/pods/XZLocale)
+
+应用本地化支持
+
+### [XZCollectionViewFlowLayout](./Docs/XZCollectionViewFlowLayout) 
+
+[![Version](https://img.shields.io/cocoapods/v/XZCollectionViewFlowLayout.svg?style=flat)](https://cocoapods.org/pods/XZCollectionViewFlowLayout)
+
+支持多种对齐方式的 UICollectionView 流布局
+
+### [XZNavigationController](./Docs/XZNavigationController) 
+
+[![Version](https://img.shields.io/cocoapods/v/XZNavigationController.svg?style=flat)](https://cocoapods.org/pods/XZNavigationController)
+
+全屏手势导航、手势返回、自定义导航条
+
+### [XZDataCryptor](./Docs/XZDataCryptor) 
+
+[![Version](https://img.shields.io/cocoapods/v/XZDataCryptor.svg?style=flat)](https://cocoapods.org/pods/XZDataCryptor)
+
+对称加密
+
+### [XZDataDigester](./Docs/XZDataDigester) 
+
+[![Version](https://img.shields.io/cocoapods/v/XZDataDigester.svg?style=flat)](https://cocoapods.org/pods/XZDataDigester)
+
+数据摘要
+
+### [XZKeychain](./Docs/XZKeychain) 
+
+[![Version](https://img.shields.io/cocoapods/v/XZKeychain.svg?style=flat)](https://cocoapods.org/pods/XZKeychain)
+
+钥匙串访问
 
 ## 示例代码
 

@@ -11,12 +11,6 @@ Pod::Spec.new do |s|
   s.version          = '10.2.0'
   s.summary          = '有图片和文字组成的视图控件'
 
-# This description is used to generate tags and improve search results.
-#   * Think: What does it do? Why did you write it? What is the focus?
-#   * Try to keep it short, snappy and to the point.
-#   * Write the description between the DESC delimiters below.
-#   * Finally, don't worry about the indent, CocoaPods strips it!
-
   s.description      = <<-DESC
   用来方便处理开发中常见的图片文字组合视图，提高开发效率。
   DESC
@@ -34,16 +28,8 @@ Pod::Spec.new do |s|
   
   s.subspec 'Code' do |ss|
     ss.source_files = 'XZKit/Code/Swift/XZTextImageView/**/*.{h,m,swift}'
-    # ss.project_header_files = 'XZKit/Code/XZTextImageView/**/Private/*.h'
     ss.dependency 'XZGeometry'
   end
   
-  # s.resource_bundles = {
-  #   'XZTextImageView' => ['XZTextImageView/Assets/*.png']
-  # }
-
-  # s.public_header_files = 'Pod/Classes/**/*.h'
-  # s.frameworks = 'UIKit', 'MapKit'
-  # s.dependency 'AFNetworking', '~> 2.3'
 end
 

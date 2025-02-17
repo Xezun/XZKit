@@ -23,10 +23,12 @@ NS_ASSUME_NONNULL_BEGIN
 @interface Example05Teacher : Example05Human <XZJSONCoding, XZJSONDecoding>
 @property (nonatomic, copy) NSArray<Example05Student *> *students;
 @property (nonatomic, copy) NSString *school;
+@property (nonatomic) char *foo;
 @end
 
 @interface Example05Student : Example05Human <XZJSONEncoding>
-@property (nonatomic, unsafe_unretained) Example05Teacher *teacher;
+@property (nonatomic, weak) Example05Teacher *teacher;
+@property (nonatomic) CGRect frame;
 @end
 
 NS_ASSUME_NONNULL_END

@@ -9,10 +9,10 @@
 Pod::Spec.new do |s|
   s.name             = 'XZKit'
   s.version          = '10.2.0'
-  s.summary          = 'XZKit'
+  s.summary          = '一款高效、轻量、强大的 iOS 开发库'
   s.description      = <<-DESC
-                       XZKit三方拓展组件
-                       DESC
+  一款包含 iOS 开发中常用开发组件、高频方法拓展、高性能工具类的开发库，采用了组件最小化设计原则，可以按需最小化引用。
+  DESC
 
   s.homepage         = 'https://github.com/Xezun/XZKit'
   # s.screenshots     = 'www.example.com/screenshots_1', 'www.example.com/screenshots_2'
@@ -33,7 +33,6 @@ Pod::Spec.new do |s|
   s.subspec 'Code' do |ss|
     ss.public_header_files = 'XZKit/Code/ObjC/XZKit/**/*.h'
     ss.source_files        = 'XZKit/Code/ObjC/XZKit/**/*.{h,m}'
-    # ss.project_header_files = 'XZKit/Code/**/Private/*.h'
     ss.dependency 'XZDefines'
     ss.dependency 'XZExtensions'
     ss.dependency 'XZCollectionViewFlowLayout'
@@ -54,20 +53,8 @@ Pod::Spec.new do |s|
     ss.dependency 'XZTextImageView'
     ss.dependency 'XZToast'
     ss.dependency 'XZURLQuery'
+    ss.dependency 'XZObjcDescriptor'
   end
   
-#  s.subspec 'DEBUG' do |ss|
-#    ss.dependency 'XZKit/Code'
-#    ss.pod_target_xcconfig = { 'GCC_PREPROCESSOR_DEFINITIONS' => 'XZ_DEBUG=1' }
-#  end
-  
-  # s.resource_bundles = {
-  #   'XZDefines' => ['XZDefines/Assets/*.png']
-  # }
-
-  # s.public_header_files = 'Pod/Classes/**/*.h'
-  # s.frameworks = 'UIKit', 'MapKit'
-  # s.dependency 'AFNetworking', '~> 2.3'
-
 end
 

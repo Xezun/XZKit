@@ -7,9 +7,7 @@
 
 #import <UIKit/UIKit.h>
 
-FOUNDATION_EXPORT double XZKitVersionNumber;
-FOUNDATION_EXPORT const unsigned char XZKitVersionString[];
-
+// 全模块引用
 @import XZDefines;
 @import XZExtensions;
 @import XZCollectionViewFlowLayout;
@@ -30,3 +28,8 @@ FOUNDATION_EXPORT const unsigned char XZKitVersionString[];
 @import XZTextImageView;
 @import XZToast;
 @import XZURLQuery;
+@import XZObjcDescriptor;
+
+
+FOUNDATION_EXPORT double XZKitVersionNumber;
+FOUNDATION_EXPORT const unsigned char XZKitVersionString[];
