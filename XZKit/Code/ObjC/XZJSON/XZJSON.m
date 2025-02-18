@@ -96,415 +96,15 @@
 
 @end
 
-@interface XZJSONCodableModel : NSObject <NSCoding, NSSecureCoding>
-@property (nonatomic, readonly) id model;
-+ (instancetype)modelWithModel:(id)model;
-@end
-
-@implementation XZJSONCodableModel
-
-+ (instancetype)modelWithModel:(id)model {
-    return [[self alloc] initWithModel:model];
-}
-
-- (instancetype)initWithModel:(id)model {
-    self = [super init];
-    if (self) {
-        _model = model;
-    }
-    return self;
-}
-
-- (void)encodeWithCoder:(NSCoder *)coder {
-    NSError *error = nil;
-    
-    Class    const _class = [_model class];
-    NSData * const _data  = [XZJSON encode:_model options:kNilOptions error:&error];
-    
-    [coder encodeObject:NSStringFromClass(_class) forKey:@"_class"];
-    if (_data == nil || error.code != noErr) {
-        return;
-    }
-    [coder encodeObject:_data forKey:@"_data"];
-}
-
-- (instancetype)initWithCoder:(NSCoder *)coder {
-    Class    const _class = NSClassFromString([coder decodeObjectForKey:@"_class"]);
-    NSData * const _data  = [coder decodeObjectForKey:@"_data"];
-    return [XZJSON decode:_data options:kNilOptions class:_class];
-}
-
-+ (BOOL)supportsSecureCoding {
-    return NO;
-}
-
-@end
 
 @implementation XZJSON (NSCoding)
 
 + (void)model:(id)model encodeWithCoder:(NSCoder *)aCoder {
-    if (!model || !aCoder) {
-        return;
-    }
-    
-    if (model == (id)kCFNull) {
-        [((id<NSCoding>)model) encodeWithCoder:aCoder];
-        return;
-    }
-    
-    XZJSONClassDescriptor * const modelClass = [XZJSONClassDescriptor descriptorForClass:[model class]];
-    
-    switch (modelClass->_classType) {
-        case XZJSONClassTypeNSString:
-        case XZJSONClassTypeNSMutableString:
-        case XZJSONClassTypeNSValue:
-        case XZJSONClassTypeNSNumber:
-        case XZJSONClassTypeNSDecimalNumber:
-        case XZJSONClassTypeNSData:
-        case XZJSONClassTypeNSMutableData:
-        case XZJSONClassTypeNSDate:
-        case XZJSONClassTypeNSURL:
-            [((id<NSCoding>)model) encodeWithCoder:aCoder];
-            break;
-        case XZJSONClassTypeNSArray: {
-            NSMutableArray *arrayM = [NSMutableArray arrayWithCapacity:((NSArray *)model).count];
-            for (id object in (NSArray *)model) {
-                if ([object conformsToProtocol:@protocol(NSCoding)]) {
-                    [arrayM addObject:object];
-                } else {
-                    id value = [XZJSONCodableModel modelWithModel:object];
-                    [arrayM addObject:value];
-                }
-            }
-            [arrayM.copy encodeWithCoder:aCoder];
-            break;
-        }
-        case XZJSONClassTypeNSMutableArray: {
-            NSMutableArray *arrayM = [NSMutableArray arrayWithCapacity:((NSMutableArray *)model).count];
-            for (id object in (NSArray *)model) {
-                if ([object conformsToProtocol:@protocol(NSCoding)]) {
-                    [arrayM addObject:object];
-                } else {
-                    id value = [XZJSONCodableModel modelWithModel:object];
-                    [arrayM addObject:value];
-                }
-            }
-            [arrayM encodeWithCoder:aCoder];
-            break;
-        }
-        case XZJSONClassTypeNSDictionary: {
-            NSMutableDictionary *dictM = [NSMutableDictionary dictionaryWithCapacity:((NSDictionary *)model).count];
-            [((NSDictionary *)model) enumerateKeysAndObjectsUsingBlock:^(id  _Nonnull key, id  _Nonnull object, BOOL * _Nonnull stop) {
-                if ([object conformsToProtocol:@protocol(NSCoding)]) {
-                    dictM[key] = object;
-                } else {
-                    dictM[key] = [XZJSONCodableModel modelWithModel:object];
-                }
-            }];
-            [dictM.copy encodeWithCoder:aCoder];
-            break;
-        }
-        case XZJSONClassTypeNSMutableDictionary: {
-            NSMutableDictionary *dictM = [NSMutableDictionary dictionaryWithCapacity:((NSDictionary *)model).count];
-            [((NSDictionary *)model) enumerateKeysAndObjectsUsingBlock:^(id  _Nonnull key, id  _Nonnull object, BOOL * _Nonnull stop) {
-                if ([object conformsToProtocol:@protocol(NSCoding)]) {
-                    dictM[key] = object;
-                } else {
-                    dictM[key] = [XZJSONCodableModel modelWithModel:object];
-                }
-            }];
-            [dictM encodeWithCoder:aCoder];
-            break;
-        }
-        case XZJSONClassTypeNSSet: {
-            NSMutableArray *arrayM = [NSMutableArray arrayWithCapacity:((NSSet *)model).count];
-            for (id object in (NSSet *)model) {
-                if ([object conformsToProtocol:@protocol(NSCoding)]) {
-                    [arrayM addObject:object];
-                } else {
-                    id value = [XZJSONCodableModel modelWithModel:object];
-                    [arrayM addObject:value];
-                }
-            }
-            [[NSSet setWithArray:arrayM] encodeWithCoder:aCoder];
-            break;
-        }
-        case XZJSONClassTypeNSMutableSet: {
-            NSMutableArray *arrayM = [NSMutableArray arrayWithCapacity:((NSSet *)model).count];
-            for (id object in (NSSet *)model) {
-                if ([object conformsToProtocol:@protocol(NSCoding)]) {
-                    [arrayM addObject:object];
-                } else {
-                    id value = [XZJSONCodableModel modelWithModel:object];
-                    [arrayM addObject:value];
-                }
-            }
-            [[NSMutableSet setWithArray:arrayM] encodeWithCoder:aCoder];
-            break;
-        }
-        case XZJSONClassTypeUnknown: {
-            for (XZJSONPropertyDescriptor *property in modelClass->_properties) {
-                SEL        const getter = property->_getter;
-                NSString * const name   = property->_name;
-                switch (property->_type) {
-                    case XZObjcTypeUnknown:
-                        break;
-                    case XZObjcTypeChar: {
-                        char const aValue = ((char (*)(id, SEL))objc_msgSend)(model, getter);
-                        [aCoder encodeInt:aValue forKey:name];
-                        continue;
-                    }
-                    case XZObjcTypeUnsignedChar: {
-                        unsigned char const aValue = ((unsigned char (*)(id, SEL))objc_msgSend)(model, getter);
-                        [aCoder encodeInt:aValue forKey:name];
-                        continue;
-                    }
-                    case XZObjcTypeInt: {
-                        int const aValue = ((int (*)(id, SEL))objc_msgSend)(model, getter);
-                        [aCoder encodeInt:aValue forKey:name];
-                        continue;
-                    }
-                    case XZObjcTypeUnsignedInt: {
-                        unsigned int const aValue = ((unsigned int (*)(id, SEL))objc_msgSend)(model, getter);
-                        [aCoder encodeInt:aValue forKey:name];
-                        continue;
-                    }
-                    case XZObjcTypeShort: {
-                        short const aValue = ((short (*)(id, SEL))objc_msgSend)(model, getter);
-                        [aCoder encodeInt:aValue forKey:name];
-                        continue;
-                    }
-                    case XZObjcTypeUnsignedShort: {
-                        unsigned short const aValue = ((unsigned short (*)(id, SEL))objc_msgSend)(model, getter);
-                        [aCoder encodeInt:aValue forKey:name];
-                        continue;
-                    }
-                    case XZObjcTypeLong: {
-                        long const aValue = ((long (*)(id, SEL))objc_msgSend)(model, getter);
-                        [aCoder encodeInt64:aValue forKey:name];
-                        continue;
-                    }
-                    case XZObjcTypeUnsignedLong: {
-                        unsigned long const aValue = ((unsigned long (*)(id, SEL))objc_msgSend)(model, getter);
-                        [aCoder encodeInt64:aValue forKey:name];
-                        continue;
-                    }
-                    case XZObjcTypeLongLong: {
-                        long long const aValue = ((long long (*)(id, SEL))objc_msgSend)(model, getter);
-                        [aCoder encodeInt64:aValue forKey:name];
-                        continue;
-                    }
-                    case XZObjcTypeUnsignedLongLong: {
-                        unsigned long long const aValue = ((unsigned long long (*)(id, SEL))objc_msgSend)(model, getter);
-                        [aCoder encodeInt64:aValue forKey:name];
-                        continue;
-                    }
-                    case XZObjcTypeFloat: {
-                        float const aValue = ((float (*)(id, SEL))objc_msgSend)(model, getter);
-                        [aCoder encodeFloat:aValue forKey:name];
-                        continue;
-                    }
-                    case XZObjcTypeDouble: {
-                        double const aValue = ((double (*)(id, SEL))objc_msgSend)(model, getter);
-                        [aCoder encodeDouble:aValue forKey:name];
-                        continue;
-                    }
-                    case XZObjcTypeLongDouble: {
-                        long double const aValue = ((long double (*)(id, SEL))objc_msgSend)(model, getter);
-                        [aCoder encodeBytes:(const uint8_t *)&aValue length:sizeof(long double) forKey:name];
-                        continue;
-                    }
-                    case XZObjcTypeBool: {
-                        BOOL const aValue = ((BOOL (*)(id, SEL))objc_msgSend)(model, getter);
-                        [aCoder encodeBool:aValue forKey:name];
-                        continue;
-                    }
-                    case XZObjcTypeVoid:
-                    case XZObjcTypeString:
-                    case XZObjcTypeArray:
-                    case XZObjcTypeBitField:
-                    case XZObjcTypePointer:
-                    case XZObjcTypeUnion:
-                        break;
-                    case XZObjcTypeStruct: {
-                        NSString * const aValue = XZJSONModelEncodeStructProperty(model, property);
-                        if (aValue) {
-                            [aCoder encodeObject:aValue forKey:name];
-                            continue;
-                        }
-                        break;
-                    }
-                    case XZObjcTypeClass: {
-                        Class const aValue = ((Class (*)(id, SEL))objc_msgSend)(model, getter);
-                        if (aValue) {
-                            [aCoder encodeObject:NSStringFromClass(aValue) forKey:name];
-                        }
-                        continue;
-                    }
-                    case XZObjcTypeSEL:{
-                        SEL const aValue = ((SEL (*)(id, SEL))objc_msgSend)(model, getter);
-                        if (aValue) {
-                            [aCoder encodeObject:NSStringFromSelector(aValue) forKey:name];
-                        }
-                        continue;
-                    }
-                    case XZObjcTypeObject: {
-                        id const aValue = ((id (*)(id, SEL))(void *)objc_msgSend)((id)model, property->_getter);
-                        if (aValue) {
-                            if ([aValue conformsToProtocol:@protocol(NSCoding)]) {
-                                [aCoder encodeObject:aValue forKey:name];
-                            } else {
-                                id model = [XZJSONCodableModel modelWithModel:aValue];
-                                [aCoder encodeObject:model forKey:name];
-                            }
-                            continue;
-                        }
-                        break;
-                    }
-                }
-                
-                NSLog(@"[XZJSON][NSCoding] Can not encode property `%@` for class `%@`.", property->_name, modelClass->_class.name);
-            }
-            break;
-        }
-    }
+    XZJSONModelEncodeWithCoder(model, aCoder);
 }
 
 + (id)model:(id)model decodeWithCoder:(NSCoder *)aCoder {
-    if (!model || !aCoder) {
-        return model;
-    }
-    
-    if (model == (id)kCFNull) {
-        return model;
-    }
-    
-    XZJSONClassDescriptor * const modelClass = [XZJSONClassDescriptor descriptorForClass:[model class]];
-    switch (modelClass->_classType) {
-        case XZJSONClassTypeNSString:
-        case XZJSONClassTypeNSMutableString:
-        case XZJSONClassTypeNSValue:
-        case XZJSONClassTypeNSNumber:
-        case XZJSONClassTypeNSDecimalNumber:
-        case XZJSONClassTypeNSData:
-        case XZJSONClassTypeNSMutableData:
-        case XZJSONClassTypeNSDate:
-        case XZJSONClassTypeNSURL:
-        case XZJSONClassTypeNSArray:
-        case XZJSONClassTypeNSMutableArray:
-        case XZJSONClassTypeNSDictionary:
-        case XZJSONClassTypeNSMutableDictionary:
-        case XZJSONClassTypeNSSet:
-        case XZJSONClassTypeNSMutableSet: {
-            return model;
-        }
-        case XZJSONClassTypeUnknown: {
-            for (XZJSONPropertyDescriptor *property in modelClass->_properties) {
-                SEL        const setter = property->_setter;
-                NSString * const name   = property->_name;
-                switch (property->_type) {
-                    case XZObjcTypeUnknown:
-                        break;
-                    case XZObjcTypeChar:
-                        ((void (*)(id, SEL, char))objc_msgSend)(model, setter, [aCoder decodeIntForKey:name]);
-                        continue;
-                    case XZObjcTypeUnsignedChar:
-                        ((void (*)(id, SEL, unsigned char))objc_msgSend)(model, setter, [aCoder decodeIntForKey:name]);
-                        continue;
-                    case XZObjcTypeInt:
-                        ((void (*)(id, SEL, int))objc_msgSend)(model, setter, [aCoder decodeIntForKey:name]);
-                        continue;
-                    case XZObjcTypeUnsignedInt:
-                        ((void (*)(id, SEL, unsigned int))objc_msgSend)(model, setter, [aCoder decodeIntForKey:name]);
-                        continue;
-                    case XZObjcTypeShort:
-                        ((void (*)(id, SEL, short))objc_msgSend)(model, setter, [aCoder decodeIntForKey:name]);
-                        continue;
-                    case XZObjcTypeUnsignedShort:
-                        ((void (*)(id, SEL, unsigned short))objc_msgSend)(model, setter, [aCoder decodeIntForKey:name]);
-                        continue;
-                    case XZObjcTypeLong:
-                        ((void (*)(id, SEL, long))objc_msgSend)(model, setter, [aCoder decodeInt32ForKey:name]);
-                        continue;
-                    case XZObjcTypeUnsignedLong:
-                        ((void (*)(id, SEL, unsigned long))objc_msgSend)(model, setter, [aCoder decodeInt32ForKey:name]);
-                        continue;
-                    case XZObjcTypeLongLong:
-                        ((void (*)(id, SEL, long long))objc_msgSend)(model, setter, [aCoder decodeInt64ForKey:name]);
-                        continue;
-                    case XZObjcTypeUnsignedLongLong:
-                        ((void (*)(id, SEL, unsigned long long))objc_msgSend)(model, setter, [aCoder decodeInt64ForKey:name]);
-                        continue;
-                    case XZObjcTypeFloat:
-                        ((void (*)(id, SEL, float))objc_msgSend)(model, setter, [aCoder decodeFloatForKey:name]);
-                        continue;
-                    case XZObjcTypeDouble:
-                        ((void (*)(id, SEL, double))objc_msgSend)(model, setter, [aCoder decodeDoubleForKey:name]);
-                        continue;
-                    case XZObjcTypeLongDouble: {
-                        NSUInteger length = 0;
-                        long double *aValue = (long double *)[aCoder decodeBytesForKey:name returnedLength:&length];
-                        if (aValue != NULL && length == sizeof(long double)) {
-                            ((void (*)(id, SEL, long double))objc_msgSend)(model, setter, *aValue);
-                            continue;
-                        }
-                        break;
-                    }
-                    case XZObjcTypeBool:
-                        ((void (*)(id, SEL, double))objc_msgSend)(model, setter, [aCoder decodeBoolForKey:name]);
-                        break;
-                    case XZObjcTypeVoid:
-                    case XZObjcTypeString:
-                    case XZObjcTypeArray:
-                    case XZObjcTypeBitField:
-                    case XZObjcTypePointer:
-                    case XZObjcTypeUnion:
-                        break;
-                    case XZObjcTypeStruct: {
-                        if (XZJSONModelDecodeStructProperty(model, property, [aCoder decodeObjectForKey:name])) {
-                            continue;
-                        }
-                        break;
-                    }
-                    case XZObjcTypeClass: {
-                        NSString *aString = [aCoder decodeObjectForKey:name];
-                        if ([aString isKindOfClass:NSString.class]) {
-                            Class const aClass = NSClassFromString(aString);
-                            if (aClass) {
-                                ((void (*)(id, SEL, Class))objc_msgSend)(model, setter, aClass);
-                                continue;
-                            }
-                        }
-                        break;
-                    }
-                    case XZObjcTypeSEL: {
-                        NSString *aString = [aCoder decodeObjectForKey:name];
-                        if ([aString isKindOfClass:NSString.class]) {
-                            SEL const aSelector = NSSelectorFromString(aString);
-                            if (aSelector) {
-                                ((void (*)(id, SEL, SEL))objc_msgSend)(model, setter, aSelector);
-                                continue;
-                            }
-                        }
-                        break;
-                    }
-                    case XZObjcTypeObject: {
-                        id const object = [aCoder decodeObjectForKey:property->_name];
-                        if ([object isKindOfClass:property->_subtype]) {
-                            ((void (*)(id, SEL, id))objc_msgSend)(model, setter, object);
-                            continue;
-                        }
-                        break;
-                    }
-                }
-                
-                NSLog(@"[XZJSON][NSCoding] Can not decode value for property `%@` for class `%@`.", property->_name, modelClass->_class.name);
-            }
-            break;
-        }
-    }
-    
-    return model;
+    return XZJSONModelDecodeWithCoder(model, aCoder);
 }
 
 @end
@@ -668,10 +268,80 @@
     
     NSMutableString *string = [NSMutableString stringWithString:@"|"];
     for (XZJSONPropertyDescriptor *property in modelClass->_properties) {
-        NSUInteger hash = [XZJSON modelHash:[model valueForKey:NSStringFromSelector(property->_getter)]];
-        [string appendFormat:@"%lu|", (unsigned long)hash];
+        SEL const getter = property->_getter;
+        switch (property->_type) {
+            case XZObjcTypeUnknown:
+                break;
+            case XZObjcTypeChar: // 使用值，而不是字符，以避免产生 | 字符
+                [string appendFormat:@"%d|", ((char (*)(id,SEL))objc_msgSend)(model, getter)];
+                break;
+            case XZObjcTypeUnsignedChar:
+                [string appendFormat:@"%u|", ((char (*)(id,SEL))objc_msgSend)(model, getter)];
+                break;
+            case XZObjcTypeInt:
+                [string appendFormat:@"%d|", ((int (*)(id,SEL))objc_msgSend)(model, getter)];
+                break;
+            case XZObjcTypeUnsignedInt:
+                [string appendFormat:@"%u|", ((unsigned int (*)(id,SEL))objc_msgSend)(model, getter)];
+                break;
+            case XZObjcTypeShort:
+                [string appendFormat:@"%d|", ((short (*)(id,SEL))objc_msgSend)(model, getter)];
+                break;
+            case XZObjcTypeUnsignedShort:
+                [string appendFormat:@"%u|", ((unsigned short (*)(id,SEL))objc_msgSend)(model, getter)];
+                break;
+            case XZObjcTypeLong:
+                [string appendFormat:@"%ld|", ((long (*)(id,SEL))objc_msgSend)(model, getter)];
+                break;
+            case XZObjcTypeUnsignedLong:
+                [string appendFormat:@"%lu|", ((unsigned long (*)(id,SEL))objc_msgSend)(model, getter)];
+                break;
+            case XZObjcTypeLongLong:
+                [string appendFormat:@"%lld|", ((long long (*)(id,SEL))objc_msgSend)(model, getter)];
+                break;
+            case XZObjcTypeUnsignedLongLong:
+                [string appendFormat:@"%llu|", ((unsigned long long (*)(id,SEL))objc_msgSend)(model, getter)];
+                break;
+            case XZObjcTypeFloat:
+                [string appendFormat:@"%G|", ((float (*)(id,SEL))objc_msgSend)(model, getter)];
+                break;
+            case XZObjcTypeDouble:
+                [string appendFormat:@"%G|", ((double (*)(id,SEL))objc_msgSend)(model, getter)];
+                break;
+            case XZObjcTypeLongDouble:
+                [string appendFormat:@"%LG|", ((long double (*)(id,SEL))objc_msgSend)(model, getter)];
+                break;
+            case XZObjcTypeBool:
+                [string appendFormat:@"%@|", ((BOOL (*)(id,SEL))objc_msgSend)(model, getter) ? @"true" : @"false"];
+                break;
+            case XZObjcTypeVoid:
+            case XZObjcTypeString:
+            case XZObjcTypeArray:
+            case XZObjcTypeBitField:
+            case XZObjcTypePointer:
+            case XZObjcTypeUnion:
+                break;
+            case XZObjcTypeStruct:
+                [string appendFormat:@"%@|", XZJSONModelEncodeStructProperty(model, property)];
+                break;
+            case XZObjcTypeClass: {
+                Class const aClass = ((Class (*)(id,SEL))objc_msgSend)(model, getter);
+                [string appendFormat:@"%@|", aClass ? NSStringFromClass(aClass) : nil];
+                break;
+            }
+            case XZObjcTypeSEL: {
+                SEL const aSelector = ((SEL (*)(id,SEL))objc_msgSend)(model, getter);
+                [string appendFormat:@"%@|", aSelector ? NSStringFromSelector(aSelector) : nil];
+                break;
+            }
+            case XZObjcTypeObject: {
+                id const value = ((id (*)(id,SEL))objc_msgSend)(model, getter);
+                NSInteger hash = [XZJSON modelHash:value];
+                [string appendFormat:@"%ld|", (long)hash];
+                break;
+            }
+        }
     }
-    
     if (string.length == 1) {
         return (long)((__bridge void *)model);
     }

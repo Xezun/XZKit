@@ -6,8 +6,8 @@
 //
 
 #import "XZJSONPropertyDescriptor.h"
-#import "XZJSONClassDescriptor.h"
 #import "XZJSONDefines.h"
+#import "XZJSONClassDescriptor.h"
 
 @implementation XZJSONPropertyDescriptor
 
@@ -56,6 +56,13 @@
         descriptor->_isKeyValueCodable = [setterName substringFromIndex:3];
     } else if ([setterName hasPrefix:@"_set"]) {
         descriptor->_isKeyValueCodable = [setterName substringFromIndex:4];
+    }
+    
+    if (descriptor->_type != XZObjcTypeObject) {
+        descriptor->_isUnownedReferenceProperty = NO;
+    } else {
+        XZObjcQualifiers const qualifiers = descriptor->_property.type.qualifiers;
+        descriptor->_isUnownedReferenceProperty = (qualifiers & XZObjcQualifierWeak) || (!(qualifiers & XZObjcQualifierCopy) && !(qualifiers & XZObjcQualifierRetain));
     }
     
     return descriptor;

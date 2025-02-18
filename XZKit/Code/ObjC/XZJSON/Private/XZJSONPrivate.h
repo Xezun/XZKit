@@ -7,8 +7,8 @@
 
 #import "XZJSON.h"
 #import <Foundation/Foundation.h>
-#import "XZJSONClassDescriptor.h"
 #import "XZJSONDefines.h"
+#import "XZJSONClassDescriptor.h"
 #import "XZJSONPropertyDescriptor.h"
 @import ObjectiveC;
 
@@ -55,5 +55,9 @@ FOUNDATION_EXPORT BOOL XZJSONModelDecodeStructProperty(id model, XZJSONPropertyD
 ///   - model: 模型对象
 ///   - hierarchies: 模型对象在集合中的层级
 FOUNDATION_EXPORT NSString * _Nonnull XZJSONModelDescription(id model, NSUInteger hierarchies, NSArray *chain);
+
+
+FOUNDATION_EXPORT void XZJSONModelEncodeWithCoder(id model, NSCoder *aCoder);
+FOUNDATION_EXPORT id _Nullable XZJSONModelDecodeWithCoder(id model, NSCoder *aCoder);
 
 NS_ASSUME_NONNULL_END
