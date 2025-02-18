@@ -253,7 +253,7 @@
 @implementation XZJSON (NSDescription)
 
 + (NSString *)modelDescription:(id)model {
-    return XZJSONModelDescription(model, 0, @[]);
+    return XZJSONModelDescription(model, 0);
 }
 
 @end

@@ -54,7 +54,7 @@ FOUNDATION_EXPORT BOOL XZJSONModelDecodeStructProperty(id model, XZJSONPropertyD
 /// - Parameters:
 ///   - model: 模型对象
 ///   - hierarchies: 模型对象在集合中的层级
-FOUNDATION_EXPORT NSString * _Nonnull XZJSONModelDescription(id model, NSUInteger hierarchies, NSArray *chain);
+FOUNDATION_EXPORT NSString * _Nonnull XZJSONModelDescription(id model, NSUInteger hierarchies);
 
 
 FOUNDATION_EXPORT void XZJSONModelEncodeWithCoder(id model, NSCoder *aCoder);

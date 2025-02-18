@@ -26,8 +26,6 @@
         case 0: {
             switch (indexPath.row) {
                 case 0:
-                    NSLog(@"%@", [XZObjcClassDescriptor descriptorForClass:[NSObject class]]);
-                    NSLog(@"%@", [XZObjcClassDescriptor descriptorForClass:[UIViewController class]]);
                     NSLog(@"%@", [XZObjcClassDescriptor descriptorForClass:[Example05Model class]]);
                     NSLog(@"%@", [XZObjcClassDescriptor descriptorForClass:[Example05Human class]]);
                     NSLog(@"%@", [XZObjcClassDescriptor descriptorForClass:[Example05Teacher class]]);
@@ -47,10 +45,13 @@
                 teacher = [XZJSON decode:data options:(NSJSONReadingAllowFragments) class:[Example05Teacher class]];
             }
             
+            NSLog(@"%@", NSStringFromCGRect(teacher.students.firstObject.frame));
+            
             switch (indexPath.row) {
                 case 0: {
                     NSLog(@"%@", [XZJSON modelDescription:teacher]);
                     NSAssert([teacher isKindOfClass:[Example05Teacher class]], @"");
+                    [teacher description];
                     break;
                 }
                 case 1: {

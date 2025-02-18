@@ -62,23 +62,64 @@ NS_ASSUME_NONNULL_BEGIN
 @end
 
 @interface XZJSON (NSCoding)
+
+/// 辅助模型归档的方法。
+/// ```objc
+/// class Foobar: NSObject, NSCoding {
+///
+///     func encode(with coder: NSCoder) {
+///         XZJSON.model(self, encodeWith: coder)
+///     }
+///
+/// }
+/// ```
+/// - Parameters:
+///   - model: 模型
+///   - aCoder: 归档工具
 + (void)model:(id)model encodeWithCoder:(NSCoder *)aCoder;
+
+/// 辅助模型解档的方法。
+/// ```objc
+/// class Foobar: NSObject, NSCoding {
+///
+///     required init?(coder: NSCoder) {
+///         super.init()
+///         XZJSON.model(self, decodeWith: coder)
+///     }
+///
+/// }
+/// ```
+/// - Parameters:
+///   - model: 模型
+///   - aCoder: 解档工具
+/// - Returns: 解档成功返回对象
 + (nullable id)model:(id)model decodeWithCoder:(NSCoder *)aCoder;
+
 @end
 
 @interface XZJSON (NSCopying)
+/// 模型复制。
+/// - Parameter model: 被模型的模型对象
 + (id)modelCopy:(id)model;
 @end
 
 @interface XZJSON (NSDescription)
+/// 模型描述。
+/// - Parameter model: 待描述的模型对象
 + (NSString *)modelDescription:(id)model;
 @end
 
 @interface XZJSON (NSHashable)
+/// 模型哈希。
+/// - Parameter model: 待哈希的模型对象
 + (NSUInteger)modelHash:(id)model;
 @end
 
 @interface XZJSON (NSEquatable)
+/// 模型比较。
+/// - Parameters:
+///   - model1: 待比较的模型
+///   - model2: 被比较的模型
 + (BOOL)model:(id)model1 isEqualToModel:(id)model2;
 @end
 
