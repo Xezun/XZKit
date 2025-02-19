@@ -93,7 +93,7 @@
                     if (error) {
                         NSLog(@"归档失败：%@", error);
                     }
-                    NSLog(@"归档数据：%@", data);
+                    NSLog(@"%@", data);
                     break;
                 }
                 case 1: {
@@ -102,7 +102,9 @@
                     if (error) {
                         NSLog(@"解档失败：%@", error);
                     }
-                    NSLog(@"%@", [model description]);
+                    NSLog(@"%@", model);
+                    data = [XZJSON encode:model options:NSJSONWritingPrettyPrinted error:nil];
+                    NSLog(@"%@", [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding]);
                     break;
                 }
                 default:

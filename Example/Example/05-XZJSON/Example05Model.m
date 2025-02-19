@@ -91,7 +91,7 @@
 
 - (id)JSONEncodeValueForKey:(NSString *)key {
     if ([key isEqualToString:@"foo"]) {
-        return [NSString stringWithCString:_foo encoding:NSASCIIStringEncoding];
+        return _foo ? [NSString stringWithCString:_foo encoding:NSASCIIStringEncoding] : nil;
     }
     return nil;
 }

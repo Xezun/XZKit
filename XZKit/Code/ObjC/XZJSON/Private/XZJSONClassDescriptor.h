@@ -46,9 +46,6 @@ NS_ASSUME_NONNULL_BEGIN
     BOOL _usesPropertyJSONDecodingMethod;
     /// 是否使用自定义属性序列化方法，即 -encodeDateIntoJSONValue:forKey: 方法。
     BOOL _usesPropertyJSONEncodingMethod;
-    
-    BOOL _conformsToNSCodingProtocol;
-    BOOL _supportsSecureCoding;
 }
 
 - (instancetype)init NS_UNAVAILABLE;

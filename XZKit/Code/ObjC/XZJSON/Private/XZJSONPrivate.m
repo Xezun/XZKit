@@ -1623,17 +1623,25 @@ void XZJSONModelEncodeWithCoder(id model, NSCoder *aCoder) {
                     case XZObjcTypeBitField:
                     case XZObjcTypePointer:
                     case XZObjcTypeUnion:
+                        NSLog(@"[XZJSON] Can not encode property `%@` of `%@`!", modelClass->_class.name, property->_name);
                         break;
                     case XZObjcTypeStruct: {
                         NSString * const aValue = XZJSONModelEncodeStructProperty(model, property);
                         if (aValue) {
                             [aCoder encodeObject:aValue forKey:name];
+                        } else if (property->_class->_usesPropertyJSONEncodingMethod) {
+                            id aValue = [((id<XZJSONEncoding>)model) JSONEncodeValueForKey:name];
+                            if ([aValue conformsToProtocol:@protocol(NSCoding)]) {
+                                [aCoder encodeObject:aValue forKey:name];
+                            }
+                        } else {
+                            NSLog(@"[XZJSON] Can not encode property `%@` of `%@`!", modelClass->_class.name, property->_name);
                         }
                         break;
                     }
                     case XZObjcTypeClass: {
                         Class const aValue = ((Class (*)(id, SEL))objc_msgSend)(model, getter);
-                        if (object_isClass(aValue)) {
+                        if (aValue) {
                             NSString *className = NSStringFromClass(aValue);
                             [aCoder encodeObject:className forKey:name];
                         }
@@ -1660,10 +1668,16 @@ void XZJSONModelEncodeWithCoder(id model, NSCoder *aCoder) {
                                     case XZJSONClassTypeNSSet:
                                     case XZJSONClassTypeNSMutableSet: {
                                         if (property->_elementType) {
+                                            if (![property->_elementType conformsToProtocol:@protocol(NSCoding)]) {
+                                                NSLog(@"[XZJSON] Can not encode property `%@` of `%@`!", modelClass->_class.name, property->_name);
+                                                break;
+                                            }
                                             if (NSCollectionContains(aValue, ^BOOL(id obj) { return ![obj isKindOfClass:property->_elementType]; })) {
+                                                NSLog(@"[XZJSON] Can not encode property `%@` of `%@`!", modelClass->_class.name, property->_name);
                                                 break;
                                             }
                                         } else if (NSCollectionContains(aValue, ^BOOL(id obj) { return ![obj conformsToProtocol:@protocol(NSCoding)]; })) {
+                                            NSLog(@"[XZJSON] Can not encode property `%@` of `%@`!", modelClass->_class.name, property->_name);
                                             break;
                                         }
                                         [aCoder encodeObject:aValue forKey:name];
@@ -1672,10 +1686,16 @@ void XZJSONModelEncodeWithCoder(id model, NSCoder *aCoder) {
                                     case XZJSONClassTypeNSDictionary:
                                     case XZJSONClassTypeNSMutableDictionary: {
                                         if (property->_elementType) {
+                                            if (![property->_elementType conformsToProtocol:@protocol(NSCoding)]) {
+                                                NSLog(@"[XZJSON] Can not encode property `%@` of `%@`!", modelClass->_class.name, property->_name);
+                                                break;
+                                            }
                                             if (NSDictionaryContains(aValue, ^BOOL(id key, id obj) { return ![key isKindOfClass:NSString.class] || ![obj isKindOfClass:property->_elementType]; })) {
+                                                NSLog(@"[XZJSON] Can not encode property `%@` of `%@`!", modelClass->_class.name, property->_name);
                                                 break;
                                             }
                                         } else if (NSDictionaryContains(aValue, ^BOOL(id key, id obj) { return ![key isKindOfClass:NSString.class] || ![obj conformsToProtocol:@protocol(NSCoding)]; })) {
+                                            NSLog(@"[XZJSON] Can not encode property `%@` of `%@`!", modelClass->_class.name, property->_name);
                                             break;
                                         }
                                         [aCoder encodeObject:aValue forKey:name];
@@ -1827,15 +1847,23 @@ id _Nullable XZJSONModelDecodeWithCoder(id model, NSCoder *aCoder) {
                     case XZObjcTypeStruct: {
                         if (aCoder.requiresSecureCoding) {
                             NSString * const aValue = [aCoder decodeObjectOfClass:NSString.class forKey:name];
-                            XZJSONModelDecodeStructProperty(model, property, aValue);
+                            if (aValue && !XZJSONModelDecodeStructProperty(model, property, aValue)) {
+                                if (property->_class->_usesPropertyJSONDecodingMethod) {
+                                    [((id<XZJSONDecoding>)model) JSONDecodeValue:aValue forKey:name];
+                                }
+                            }
                         } else {
                             NSString * const aValue = [aCoder decodeObjectForKey:name];
-                            XZJSONModelDecodeStructProperty(model, property, aValue);
+                            if (aValue && !XZJSONModelDecodeStructProperty(model, property, aValue)) {
+                                if (property->_class->_usesPropertyJSONDecodingMethod) {
+                                    [((id<XZJSONDecoding>)model) JSONDecodeValue:aValue forKey:name];
+                                }
+                            }
                         }
                         break;
                     }
                     case XZObjcTypeClass: {
-                        NSString  * const className = [aCoder decodeObjectOfClass:NSString.class forKey:name];
+                        NSString * const className = [aCoder decodeObjectOfClass:NSString.class forKey:name];
                         if (className) {
                             Class const aValue = NSClassFromString(className);
                             ((void (*)(id, SEL, Class))objc_msgSend)(model, setter, aValue);
@@ -1843,7 +1871,7 @@ id _Nullable XZJSONModelDecodeWithCoder(id model, NSCoder *aCoder) {
                         break;
                     }
                     case XZObjcTypeSEL: {
-                        NSString  * const selectorName = [aCoder decodeObjectOfClass:NSString.class forKey:name];
+                        NSString * const selectorName = [aCoder decodeObjectOfClass:NSString.class forKey:name];
                         if (selectorName) {
                             SEL const aValue = NSSelectorFromString(selectorName);
                             ((void (*)(id, SEL, SEL))objc_msgSend)(model, setter, aValue);
@@ -1852,6 +1880,7 @@ id _Nullable XZJSONModelDecodeWithCoder(id model, NSCoder *aCoder) {
                     }
                     case XZObjcTypeObject: {
                         if (!property->_conformsToNSCodingProtocol) {
+                            NSLog(@"[XZJSON] Can not decode property `%@` of `%@`!", modelClass->_class.name, property->_name);
                             break;
                         }
                         if (aCoder.requiresSecureCoding) {
