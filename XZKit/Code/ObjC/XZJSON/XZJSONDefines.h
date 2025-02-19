@@ -87,9 +87,8 @@ NS_ASSUME_NONNULL_BEGIN
 /// Returns nil to ignore this feature.
 @property (class, readonly, nullable) NSArray<NSString *> *allowedJSONCodingKeys;
 
-@end
+#pragma mark - XZJSONDecoding
 
-@protocol XZJSONDecoding <XZJSONCoding>
 @optional
 /// 转发数据到其它模型。
 /// - Parameter JSON: 字符串或二进制形式的原始 JSON 数据，或已序列化的字典或数组数据
@@ -141,9 +140,8 @@ NS_ASSUME_NONNULL_BEGIN
 ///   - key: 属性名
 - (void)JSONDecodeValue:(id)JSONValue forKey:(NSString *)key;
 
-@end
+#pragma mark - XZJSONEncoding
 
-@protocol XZJSONEncoding <XZJSONCoding>
 @optional
 /// 自定义模型 JSON 序列化方法。自定义模型校验、实例序列化为数据字典的过程，可实现此方法。
 /// ```objc
@@ -162,17 +160,8 @@ NS_ASSUME_NONNULL_BEGIN
 /// 当 XZJSON 无法处理属性值时，此方法会被调用。
 ///
 /// - Parameter key: 属性名
-- (nullable id)JSONEncodeValueForKey:(NSString *)key;
+- (nullable id<NSCoding>)JSONEncodeValueForKey:(NSString *)key;
 
-@end
-
-@class XZObjcIvarDescriptor;
-@protocol XZJSONCopying <NSObject>
-/// 复制实例变量值。
-///
-/// 由于无法确定 C 指针的内存管理方式，需要模型自行实现 C 指针实例变量的值复制。
-/// - Parameter ivar: 变量
-- (void *)copyIvar:(XZObjcIvarDescriptor *)ivar;
 @end
 
 NS_ASSUME_NONNULL_END

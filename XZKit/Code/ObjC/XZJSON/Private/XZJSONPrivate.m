@@ -279,7 +279,7 @@ static NSMutableDictionary *NSDictionaryForLastKeyInKeyPath(NSMutableDictionary 
             
             // 自定义序列化
             if (descriptor->_usesJSONEncodingInitializer) {
-                return [(id<XZJSONEncoding>)model encodeIntoJSONDictionary:dictionary];
+                return [(id<XZJSONCoding>)model encodeIntoJSONDictionary:dictionary];
             }
             
             // 通用序列化
@@ -1033,7 +1033,7 @@ void XZJSONModelDecodeProperty(id model, XZJSONPropertyDescriptor *property, id 
     
     // JSONValue 无法解析为目标属性值
     if (property->_class->_usesPropertyJSONDecodingMethod) {
-        [(id<XZJSONDecoding>)model JSONDecodeValue:JSONValue forKey:property->_name];
+        [(id<XZJSONCoding>)model JSONDecodeValue:JSONValue forKey:property->_name];
     } else {
         NSLog(@"[XZJSON] Can not decode value `%@` for property `%@` of `%@`", JSONValue, property->_name, property->_class->_class.name);
     }
@@ -1630,7 +1630,7 @@ void XZJSONModelEncodeWithCoder(id model, NSCoder *aCoder) {
                         if (aValue) {
                             [aCoder encodeObject:aValue forKey:name];
                         } else if (property->_class->_usesPropertyJSONEncodingMethod) {
-                            id aValue = [((id<XZJSONEncoding>)model) JSONEncodeValueForKey:name];
+                            id aValue = [((id<XZJSONCoding>)model) JSONEncodeValueForKey:name];
                             if ([aValue conformsToProtocol:@protocol(NSCoding)]) {
                                 [aCoder encodeObject:aValue forKey:name];
                             }
@@ -1849,14 +1849,14 @@ id _Nullable XZJSONModelDecodeWithCoder(id model, NSCoder *aCoder) {
                             NSString * const aValue = [aCoder decodeObjectOfClass:NSString.class forKey:name];
                             if (aValue && !XZJSONModelDecodeStructProperty(model, property, aValue)) {
                                 if (property->_class->_usesPropertyJSONDecodingMethod) {
-                                    [((id<XZJSONDecoding>)model) JSONDecodeValue:aValue forKey:name];
+                                    [((id<XZJSONCoding>)model) JSONDecodeValue:aValue forKey:name];
                                 }
                             }
                         } else {
                             NSString * const aValue = [aCoder decodeObjectForKey:name];
                             if (aValue && !XZJSONModelDecodeStructProperty(model, property, aValue)) {
                                 if (property->_class->_usesPropertyJSONDecodingMethod) {
-                                    [((id<XZJSONDecoding>)model) JSONDecodeValue:aValue forKey:name];
+                                    [((id<XZJSONCoding>)model) JSONDecodeValue:aValue forKey:name];
                                 }
                             }
                         }

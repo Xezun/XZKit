@@ -24,7 +24,7 @@ NS_ASSUME_NONNULL_BEGIN
 ///
 /// 一般情况下，数据模型化在子线程中处理，因此在业务中，仅应在程序初始化（模型转换开始前）时，调整默认的日期格式。
 ///
-/// 非默认日期格式的模型，可以通过`XZJSONDecoding`或`XZJSONEncoding`协议自定日期转换。
+/// 非默认日期格式的模型，可以通过`XZJSONCoding`协议自定日期转换。
 @property (class, nonatomic, readonly) NSDateFormatter *dateFormatter;
 @end
 

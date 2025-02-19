@@ -190,14 +190,11 @@ static id XZJSONKeyFromString(NSString *aString);
         _forwardsClassForDecoding = (conformsToXZJSONCoding && [rawClass respondsToSelector:@selector(forwardingClassForJSONDictionary:)]);
         _verifiesValueForDecoding = (conformsToXZJSONCoding && [rawClass respondsToSelector:@selector(canDecodeFromJSONDictionary:)]);
         
-        BOOL const conformsToXZJSONDecoding = [rawClass conformsToProtocol:@protocol(XZJSONDecoding)];
-        BOOL const conformsToXZJSONEncoding = [rawClass conformsToProtocol:@protocol(XZJSONEncoding)];
+        _usesJSONDecodingInitializer = conformsToXZJSONCoding && [rawClass instancesRespondToSelector:@selector(initWithJSONDictionary:)];
+        _usesJSONEncodingInitializer = conformsToXZJSONCoding && [rawClass instancesRespondToSelector:@selector(encodeIntoJSONDictionary:)];
         
-        _usesJSONDecodingInitializer = conformsToXZJSONDecoding && [rawClass instancesRespondToSelector:@selector(initWithJSONDictionary:)];
-        _usesJSONEncodingInitializer = conformsToXZJSONEncoding && [rawClass instancesRespondToSelector:@selector(encodeIntoJSONDictionary:)];
-        
-        _usesPropertyJSONDecodingMethod = conformsToXZJSONDecoding && [rawClass instancesRespondToSelector:@selector(JSONDecodeValue:forKey:)];
-        _usesPropertyJSONEncodingMethod = conformsToXZJSONEncoding && [rawClass instancesRespondToSelector:@selector(JSONEncodeValueForKey:)];
+        _usesPropertyJSONDecodingMethod = conformsToXZJSONCoding && [rawClass instancesRespondToSelector:@selector(JSONDecodeValue:forKey:)];
+        _usesPropertyJSONEncodingMethod = conformsToXZJSONCoding && [rawClass instancesRespondToSelector:@selector(JSONEncodeValueForKey:)];
     }
     return self;
 }

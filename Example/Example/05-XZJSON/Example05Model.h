@@ -20,7 +20,7 @@ NS_ASSUME_NONNULL_BEGIN
 @end
 
 @class Example05Student;
-@interface Example05Teacher : Example05Human <XZJSONCoding, XZJSONDecoding, XZJSONEncoding>
+@interface Example05Teacher : Example05Human <XZJSONCoding>
 @property (nonatomic, copy) NSArray<Example05Student *> *students;
 @property (nonatomic, copy) NSString *school;
 @property (nonatomic) char *foo;
@@ -32,7 +32,7 @@ typedef struct Example05Struct {
     double c;
 } Example05Struct;
 
-@interface Example05Student : Example05Human <XZJSONEncoding, XZJSONDecoding>
+@interface Example05Student : Example05Human <XZJSONCoding>
 @property (nonatomic, weak) Example05Teacher *teacher;
 @property (nonatomic) CGRect frame;
 @property (nonatomic) Example05Struct bar;
