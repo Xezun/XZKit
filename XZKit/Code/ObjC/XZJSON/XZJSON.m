@@ -116,15 +116,15 @@
         return model;
     }
     
-    XZJSONClassDescriptor *descriptor = [XZJSONClassDescriptor descriptorForClass:[model class]];
+    XZJSONClassDescriptor * const modelClass = [XZJSONClassDescriptor descriptorForClass:[model class]];
     
-    if (descriptor->_classType) {
+    if (modelClass->_classType) {
         return [model copy];
     }
     
     id const newModel = [[model class] alloc];
     
-    [descriptor->_properties enumerateObjectsUsingBlock:^(XZJSONPropertyDescriptor *property, NSUInteger idx, BOOL * _Nonnull stop) {
+    [modelClass->_properties enumerateObjectsUsingBlock:^(XZJSONPropertyDescriptor *property, NSUInteger idx, BOOL * _Nonnull stop) {
         switch (property->_type) {
             case XZObjcTypeChar: {
                 char const value = ((char (*)(id, SEL))objc_msgSend)(self, property->_getter);
@@ -223,7 +223,7 @@
                 if (property->_isKeyValueCodable) {
                     [newModel setValue:value forKey:property->_isKeyValueCodable];
                 } else {
-                    XZObjcClassDescriptor *class = descriptor->_class;
+                    XZObjcClassDescriptor *class = modelClass->_class;
                     XZObjcMethodDescriptor *method = class.methods[NSStringFromSelector(property->_setter)];
                     NSMethodSignature *signature = [NSMethodSignature signatureWithObjCTypes:[method.encoding cStringUsingEncoding:NSASCIIStringEncoding]];
                     NSInvocation *invocation = [NSInvocation invocationWithMethodSignature:signature];
@@ -262,90 +262,113 @@
 @implementation XZJSON (NSHashable)
 
 + (NSUInteger)modelHash:(id)model {
-    if (model == (id)kCFNull) return [model hash];
-    XZJSONClassDescriptor * const modelClass = [XZJSONClassDescriptor descriptorForClass:[model class]];
-    if (modelClass->_classType) return [model hash];
+    if (model == (id)kCFNull) {
+        return [model hash];
+    }
     
-    NSMutableString *string = [NSMutableString stringWithString:@"|"];
-    for (XZJSONPropertyDescriptor *property in modelClass->_properties) {
-        SEL const getter = property->_getter;
-        switch (property->_type) {
-            case XZObjcTypeUnknown:
-                break;
-            case XZObjcTypeChar: // 使用值，而不是字符，以避免产生 | 字符
-                [string appendFormat:@"%d|", ((char (*)(id,SEL))objc_msgSend)(model, getter)];
-                break;
-            case XZObjcTypeUnsignedChar:
-                [string appendFormat:@"%u|", ((char (*)(id,SEL))objc_msgSend)(model, getter)];
-                break;
-            case XZObjcTypeInt:
-                [string appendFormat:@"%d|", ((int (*)(id,SEL))objc_msgSend)(model, getter)];
-                break;
-            case XZObjcTypeUnsignedInt:
-                [string appendFormat:@"%u|", ((unsigned int (*)(id,SEL))objc_msgSend)(model, getter)];
-                break;
-            case XZObjcTypeShort:
-                [string appendFormat:@"%d|", ((short (*)(id,SEL))objc_msgSend)(model, getter)];
-                break;
-            case XZObjcTypeUnsignedShort:
-                [string appendFormat:@"%u|", ((unsigned short (*)(id,SEL))objc_msgSend)(model, getter)];
-                break;
-            case XZObjcTypeLong:
-                [string appendFormat:@"%ld|", ((long (*)(id,SEL))objc_msgSend)(model, getter)];
-                break;
-            case XZObjcTypeUnsignedLong:
-                [string appendFormat:@"%lu|", ((unsigned long (*)(id,SEL))objc_msgSend)(model, getter)];
-                break;
-            case XZObjcTypeLongLong:
-                [string appendFormat:@"%lld|", ((long long (*)(id,SEL))objc_msgSend)(model, getter)];
-                break;
-            case XZObjcTypeUnsignedLongLong:
-                [string appendFormat:@"%llu|", ((unsigned long long (*)(id,SEL))objc_msgSend)(model, getter)];
-                break;
-            case XZObjcTypeFloat:
-                [string appendFormat:@"%G|", ((float (*)(id,SEL))objc_msgSend)(model, getter)];
-                break;
-            case XZObjcTypeDouble:
-                [string appendFormat:@"%G|", ((double (*)(id,SEL))objc_msgSend)(model, getter)];
-                break;
-            case XZObjcTypeLongDouble:
-                [string appendFormat:@"%LG|", ((long double (*)(id,SEL))objc_msgSend)(model, getter)];
-                break;
-            case XZObjcTypeBool:
-                [string appendFormat:@"%@|", ((BOOL (*)(id,SEL))objc_msgSend)(model, getter) ? @"true" : @"false"];
-                break;
-            case XZObjcTypeVoid:
-            case XZObjcTypeString:
-            case XZObjcTypeArray:
-            case XZObjcTypeBitField:
-            case XZObjcTypePointer:
-            case XZObjcTypeUnion:
-                break;
-            case XZObjcTypeStruct:
-                [string appendFormat:@"%@|", XZJSONModelEncodeStructProperty(model, property)];
-                break;
-            case XZObjcTypeClass: {
-                Class const aClass = ((Class (*)(id,SEL))objc_msgSend)(model, getter);
-                [string appendFormat:@"%@|", aClass ? NSStringFromClass(aClass) : nil];
-                break;
+    XZJSONClassDescriptor * const modelClass = [XZJSONClassDescriptor descriptorForClass:[model class]];
+    
+    switch (modelClass->_classType) {
+        case XZJSONClassTypeNSString:
+        case XZJSONClassTypeNSMutableString:
+        case XZJSONClassTypeNSValue:
+        case XZJSONClassTypeNSNumber:
+        case XZJSONClassTypeNSDecimalNumber:
+        case XZJSONClassTypeNSData:
+        case XZJSONClassTypeNSMutableData:
+        case XZJSONClassTypeNSDate:
+        case XZJSONClassTypeNSURL:
+        case XZJSONClassTypeNSArray:
+        case XZJSONClassTypeNSMutableArray:
+        case XZJSONClassTypeNSDictionary:
+        case XZJSONClassTypeNSMutableDictionary:
+        case XZJSONClassTypeNSSet:
+        case XZJSONClassTypeNSMutableSet: {
+            return [model hash];
+        }
+        case XZJSONClassTypeUnknown: {
+            NSMutableString *string = [NSMutableString stringWithString:@"|"];
+            for (XZJSONPropertyDescriptor *property in modelClass->_properties) {
+                SEL const getter = property->_getter;
+                switch (property->_type) {
+                    case XZObjcTypeUnknown:
+                        break;
+                    case XZObjcTypeChar: // 使用值，而不是字符，以避免产生 | 字符
+                        [string appendFormat:@"%d|", ((char (*)(id,SEL))objc_msgSend)(model, getter)];
+                        break;
+                    case XZObjcTypeUnsignedChar:
+                        [string appendFormat:@"%u|", ((char (*)(id,SEL))objc_msgSend)(model, getter)];
+                        break;
+                    case XZObjcTypeInt:
+                        [string appendFormat:@"%d|", ((int (*)(id,SEL))objc_msgSend)(model, getter)];
+                        break;
+                    case XZObjcTypeUnsignedInt:
+                        [string appendFormat:@"%u|", ((unsigned int (*)(id,SEL))objc_msgSend)(model, getter)];
+                        break;
+                    case XZObjcTypeShort:
+                        [string appendFormat:@"%d|", ((short (*)(id,SEL))objc_msgSend)(model, getter)];
+                        break;
+                    case XZObjcTypeUnsignedShort:
+                        [string appendFormat:@"%u|", ((unsigned short (*)(id,SEL))objc_msgSend)(model, getter)];
+                        break;
+                    case XZObjcTypeLong:
+                        [string appendFormat:@"%ld|", ((long (*)(id,SEL))objc_msgSend)(model, getter)];
+                        break;
+                    case XZObjcTypeUnsignedLong:
+                        [string appendFormat:@"%lu|", ((unsigned long (*)(id,SEL))objc_msgSend)(model, getter)];
+                        break;
+                    case XZObjcTypeLongLong:
+                        [string appendFormat:@"%lld|", ((long long (*)(id,SEL))objc_msgSend)(model, getter)];
+                        break;
+                    case XZObjcTypeUnsignedLongLong:
+                        [string appendFormat:@"%llu|", ((unsigned long long (*)(id,SEL))objc_msgSend)(model, getter)];
+                        break;
+                    case XZObjcTypeFloat:
+                        [string appendFormat:@"%G|", ((float (*)(id,SEL))objc_msgSend)(model, getter)];
+                        break;
+                    case XZObjcTypeDouble:
+                        [string appendFormat:@"%G|", ((double (*)(id,SEL))objc_msgSend)(model, getter)];
+                        break;
+                    case XZObjcTypeLongDouble:
+                        [string appendFormat:@"%LG|", ((long double (*)(id,SEL))objc_msgSend)(model, getter)];
+                        break;
+                    case XZObjcTypeBool:
+                        [string appendFormat:@"%@|", ((BOOL (*)(id,SEL))objc_msgSend)(model, getter) ? @"true" : @"false"];
+                        break;
+                    case XZObjcTypeVoid:
+                    case XZObjcTypeString:
+                    case XZObjcTypeArray:
+                    case XZObjcTypeBitField:
+                    case XZObjcTypePointer:
+                    case XZObjcTypeUnion:
+                        break;
+                    case XZObjcTypeStruct:
+                        [string appendFormat:@"%@|", XZJSONModelEncodeStructProperty(model, property)];
+                        break;
+                    case XZObjcTypeClass: {
+                        Class const aClass = ((Class (*)(id,SEL))objc_msgSend)(model, getter);
+                        [string appendFormat:@"%@|", aClass ? NSStringFromClass(aClass) : nil];
+                        break;
+                    }
+                    case XZObjcTypeSEL: {
+                        SEL const aSelector = ((SEL (*)(id,SEL))objc_msgSend)(model, getter);
+                        [string appendFormat:@"%@|", aSelector ? NSStringFromSelector(aSelector) : nil];
+                        break;
+                    }
+                    case XZObjcTypeObject: {
+                        id const value = ((id (*)(id,SEL))objc_msgSend)(model, getter);
+                        NSInteger hash = [XZJSON modelHash:value];
+                        [string appendFormat:@"%ld|", (long)hash];
+                        break;
+                    }
+                }
             }
-            case XZObjcTypeSEL: {
-                SEL const aSelector = ((SEL (*)(id,SEL))objc_msgSend)(model, getter);
-                [string appendFormat:@"%@|", aSelector ? NSStringFromSelector(aSelector) : nil];
-                break;
+            if (string.length == 1) {
+                return (long)((__bridge void *)model);
             }
-            case XZObjcTypeObject: {
-                id const value = ((id (*)(id,SEL))objc_msgSend)(model, getter);
-                NSInteger hash = [XZJSON modelHash:value];
-                [string appendFormat:@"%ld|", (long)hash];
-                break;
-            }
+            return string.hash;
         }
     }
-    if (string.length == 1) {
-        return (long)((__bridge void *)model);
-    }
-    return string.hash;
 }
 
 @end

@@ -198,6 +198,10 @@ static id XZJSONKeyFromString(NSString *aString);
         
         _usesPropertyJSONDecodingMethod = conformsToXZJSONDecoding && [rawClass instancesRespondToSelector:@selector(JSONDecodeValue:forKey:)];
         _usesPropertyJSONEncodingMethod = conformsToXZJSONEncoding && [rawClass instancesRespondToSelector:@selector(JSONEncodeValueForKey:)];
+        
+        BOOL const conformsToNSCoding = [rawClass conformsToProtocol:@protocol(NSCoding)];
+        _conformsToNSCodingProtocol = conformsToNSCoding;
+        _supportsSecureCoding = [rawClass conformsToProtocol:@protocol(NSSecureCoding)] && [rawClass supportsSecureCoding];
     }
     return self;
 }

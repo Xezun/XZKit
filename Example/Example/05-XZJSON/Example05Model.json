@@ -3,23 +3,26 @@
     "name": "Smith",
     "age": 50,
     "school.name": "No. 1 Middle School",
-    "encoding": "abcdefg",
+    "foo": "Good",
     "students": [
         {
             "id": "1",
             "name": "Peter",
             "age": 20,
-            "frame": "{{1, 2}, {3, 4}}"
+            "frame": "{{1, 2}, {3, 4}}",
+            "bar": "{10, 20, 30}"
         }, {
             "identifier": "2",
             "name": "Jim",
             "age": 21,
-            "frame": "{{2, 2}, {3, 4}}"
+            "frame": "{{2, 2}, {3, 4}}",
+            "bar": "{20, 30, 40}"
         }, {
             "_id": "3",
             "name": "Lily",
             "age": 19,
-            "frame": "{{3, 2}, {3, 4}}"
+            "frame": "{{3, 2}, {3, 4}}",
+            "bar": "{30, 40, 50}"
         }
     ]
 }

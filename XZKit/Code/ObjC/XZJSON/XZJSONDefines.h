@@ -137,9 +137,9 @@ NS_ASSUME_NONNULL_BEGIN
 /// 当 JSON 值无法解析为属性值时，此方法会被调用。
 ///
 /// - Parameters:
-///   - value: JSON 值
+///   - JSONValue: JSON 值
 ///   - key: 属性名
-- (void)JSONDecodeValue:(id)aJSONValue forKey:(NSString *)key;
+- (void)JSONDecodeValue:(id)JSONValue forKey:(NSString *)key;
 
 @end
 

@@ -11,7 +11,10 @@
 @import XZObjcDescriptor;
 @import XZToast;
 
-@interface Example05ViewController ()
+@interface Example05ViewController () {
+    NSString *_data;
+    Example05Teacher *_model;
+}
 
 @end
 
@@ -19,6 +22,10 @@
 
 - (void)viewDidLoad {
     [super viewDidLoad];
+    
+    NSURL *url = [NSBundle.mainBundle URLForResource:@"Example05Model" withExtension:@"json"];
+    _data = [NSString stringWithContentsOfURL:url encoding:NSUTF8StringEncoding error:nil];
+    _model = [XZJSON decode:_data options:(NSJSONReadingAllowFragments) class:[Example05Teacher class]];
 }
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
@@ -38,33 +45,23 @@
             break;
         }
         case 1: {
-            Example05Teacher *teacher = nil;
-            {
-                NSURL *url = [NSBundle.mainBundle URLForResource:@"Example05Model" withExtension:@"json"];
-                NSData *data = [NSData dataWithContentsOfURL:url];
-                teacher = [XZJSON decode:data options:(NSJSONReadingAllowFragments) class:[Example05Teacher class]];
-            }
-            
-            NSLog(@"%@", NSStringFromCGRect(teacher.students.firstObject.frame));
-            
             switch (indexPath.row) {
                 case 0: {
-                    NSLog(@"%@", [XZJSON modelDescription:teacher]);
-                    NSAssert([teacher isKindOfClass:[Example05Teacher class]], @"");
-                    [teacher description];
+                    NSLog(@"%@", [XZJSON modelDescription:_model]);
+                    NSAssert([_model isKindOfClass:[Example05Teacher class]], @"");
                     break;
                 }
                 case 1: {
-                    NSData *json = [XZJSON encode:teacher options:NSJSONWritingPrettyPrinted error:nil];
+                    NSData *json = [XZJSON encode:_model options:NSJSONWritingPrettyPrinted error:nil];
                     NSLog(@"%@", [[NSString alloc] initWithData:json encoding:NSUTF8StringEncoding]);
                     break;
                 }
                 case 2: {
-                    NSAssert([teacher.name isEqualToString:@"Smith"], @"");
-                    NSAssert(teacher.age == 50, @"");
-                    NSAssert(teacher.students.count == 3, @"");
+                    NSAssert([_model.name isEqualToString:@"Smith"], @"");
+                    NSAssert(_model.age == 50, @"");
+                    NSAssert(_model.students.count == 3, @"");
                     
-                    [teacher.students enumerateObjectsUsingBlock:^(Example05Student * _Nonnull student, NSUInteger idx, BOOL * _Nonnull stop) {
+                    [_model.students enumerateObjectsUsingBlock:^(Example05Student * _Nonnull student, NSUInteger idx, BOOL * _Nonnull stop) {
                         NSAssert([student isKindOfClass:[Example05Student class]], @"");
                         NSAssert([student.teacher isKindOfClass:[Example05Teacher class]], @"");
                         if ([student.name isEqualToString:@"Peter"]) {
@@ -85,6 +82,31 @@
                 default: {
                     break;
                 }
+            }
+            break;
+        }
+        case 2: {
+            NSError *error = nil;
+            NSData *data = [NSKeyedArchiver archivedDataWithRootObject:_model requiringSecureCoding:[[_model class] supportsSecureCoding] error:&error];
+            switch (indexPath.row) {
+                case 0: {
+                    if (error) {
+                        NSLog(@"归档失败：%@", error);
+                    }
+                    NSLog(@"归档数据：%@", data);
+                    break;
+                }
+                case 1: {
+                    NSError *error = nil;
+                    Example05Teacher *model = [NSKeyedUnarchiver unarchivedObjectOfClass:[Example05Teacher class] fromData:data error:&error];
+                    if (error) {
+                        NSLog(@"解档失败：%@", error);
+                    }
+                    NSLog(@"%@", [model description]);
+                    break;
+                }
+                default:
+                    break;
             }
             break;
         }

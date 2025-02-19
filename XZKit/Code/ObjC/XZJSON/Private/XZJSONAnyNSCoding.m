@@ -19,6 +19,10 @@
 }
 
 - (void)encodeWithCoder:(NSCoder *)coder {
+    if (_base == nil) {
+        return;
+    }
+    
     NSError *error = nil;
     
     Class    const type = [_base class];
@@ -31,21 +35,18 @@
     [coder encodeObject:base forKey:@"base"];
 }
 
-- (instancetype)initWithCoder:(NSCoder *)coder {
-    self = [super init];
-    if (self) {
-        NSString * const name = [coder decodeObjectOfClass:NSString.class forKey:@"type"];
-        if (name) {
-            Class const type = NSClassFromString(name);
-            if (type) {
-                NSData * const base = [coder decodeObjectOfClass:NSData.class forKey:@"base"];
-                if (base) {
-                    _base = [XZJSON decode:base options:kNilOptions class:type];
-                }
+- (id)initWithCoder:(NSCoder *)coder {
+    NSString * const name = [coder decodeObjectOfClass:NSString.class forKey:@"type"];
+    if (name) {
+        Class const type = NSClassFromString(name);
+        if (type) {
+            NSData * const base = [coder decodeObjectOfClass:NSData.class forKey:@"base"];
+            if (base) {
+                return [XZJSON decode:base options:kNilOptions class:type];
             }
         }
     }
-    return self;
+    return nil;
 }
 
 - (NSUInteger)hash {
