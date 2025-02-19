@@ -34,7 +34,7 @@ typedef struct Example05Struct {
 
 @interface Example05Student : Example05Human <XZJSONCoding>
 @property (nonatomic, weak) Example05Teacher *teacher;
-@property (nonatomic) CGRect frame;
+@property (nonatomic) CGRect frame; // 使用 CGRect 属性，在 i386 模拟器中，无法通过 objc_msgSend 访问属性？
 @property (nonatomic) Example05Struct bar;
 @end
 
