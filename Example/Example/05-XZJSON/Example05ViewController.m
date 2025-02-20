@@ -61,7 +61,7 @@
                     NSAssert(_model.age == 50, @"");
                     NSAssert(_model.students.count == 3, @"");
                     
-                    [_model.students enumerateObjectsUsingBlock:^(Example05Student * _Nonnull student, NSUInteger idx, BOOL * _Nonnull stop) {
+                    for (Example05Student *student in _model.students) {
                         NSAssert([student isKindOfClass:[Example05Student class]], @"");
                         NSAssert([student.teacher isKindOfClass:[Example05Teacher class]], @"");
                         if ([student.name isEqualToString:@"Peter"]) {
@@ -73,7 +73,7 @@
                         } else {
                             NSAssert(NO, @"teacher.students 校验失败");
                         }
-                    }];
+                    }
                     
                     XZToast *toast = [XZToast messageToast:@"校验成功"];
                     [self showToast:toast duration:3.0 offset:CGPointZero completion:nil];

@@ -133,12 +133,13 @@ NS_ASSUME_NONNULL_BEGIN
 
 /// 自定义属性值解析。
 ///
-/// 当 JSON 值无法解析为属性值时，此方法会被调用。
+/// - 当 XZJSON 无法将 JSON 值无法解析为属性值时，此方法会被调用。
+/// - 当 XZJSON 在实现 NSCoding 遇到无法解档的属性值时，此方法会被调用，
 ///
 /// - Parameters:
-///   - JSONValue: JSON 值
+///   - valueOrCoder: 待处理的值，可能是 JSON 值，或归档的 NSCoder 对象
 ///   - key: 属性名
-- (void)JSONDecodeValue:(id)JSONValue forKey:(NSString *)key;
+- (void)JSONDecodeValue:(id)valueOrCoder forKey:(NSString *)key;
 
 #pragma mark - XZJSONEncoding
 
@@ -157,7 +158,9 @@ NS_ASSUME_NONNULL_BEGIN
 
 /// 自定义属性序列化。
 ///
-/// 当 XZJSON 无法处理属性值时，此方法会被调用。
+/// - 当 XZJSON 无法将属性值转换为 JSON 值时，此方法会被调用。
+/// - 当 XZJSON 在实现 NSCoding 遇到无法归档的属性值时，此方法会被调用。
+/// - 当 XZJSON 在实现 NSDescription 遇到无法描述的属性值时，此方法会被调用。
 ///
 /// - Parameter key: 属性名
 - (nullable id<NSCoding>)JSONEncodeValueForKey:(NSString *)key;

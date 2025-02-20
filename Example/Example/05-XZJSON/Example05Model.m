@@ -60,9 +60,9 @@
         [XZJSON model:self decodeFromDictionary:JSON];
         
         // 处理自定义逻辑：关联学生和老师
-        [self.students enumerateObjectsUsingBlock:^(Example05Student * _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
-            obj.teacher = self;
-        }];
+        for (Example05Student *student in self.students) {
+            student.teacher = self;
+        }
     }
     return self;
 }
@@ -114,9 +114,12 @@
     return [XZJSON modelDescription:self];
 }
 
-- (void)JSONDecodeValue:(id)JSONValue forKey:(NSString *)key {
+- (void)JSONDecodeValue:(id)valueOrCoder forKey:(NSString *)key {
     if ([key isEqualToString:@"bar"]) {
-        NSString *value = JSONValue;
+        if ([valueOrCoder isKindOfClass:NSCoder.class]) {
+            valueOrCoder = [(NSCoder *)valueOrCoder decodeObjectOfClass:NSString.class forKey:key];
+        }
+        NSString *value = valueOrCoder;
         if ([value isKindOfClass:NSString.class]) {
             value = [value stringByTrimmingCharactersInSet:[NSCharacterSet characterSetWithCharactersInString:@"{}"]];
             NSArray *parts = [value componentsSeparatedByString:@", "];

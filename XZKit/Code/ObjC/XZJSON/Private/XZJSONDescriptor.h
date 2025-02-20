@@ -21,10 +21,10 @@ typedef NS_ENUM (NSUInteger, XZJSONClassType) {
     XZJSONClassTypeNSURL,
     XZJSONClassTypeNSArray,
     XZJSONClassTypeNSMutableArray,
-    XZJSONClassTypeNSDictionary,
-    XZJSONClassTypeNSMutableDictionary,
     XZJSONClassTypeNSSet,
     XZJSONClassTypeNSMutableSet,
+    XZJSONClassTypeNSDictionary,
+    XZJSONClassTypeNSMutableDictionary,
 };
 
 /// Get the Foundation class type from property info.
