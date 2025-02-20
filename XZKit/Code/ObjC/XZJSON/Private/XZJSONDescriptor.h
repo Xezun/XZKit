@@ -21,10 +21,10 @@ typedef NS_ENUM (NSUInteger, XZJSONClassType) {
     XZJSONClassTypeNSURL,
     XZJSONClassTypeNSArray,
     XZJSONClassTypeNSMutableArray,
-    XZJSONClassTypeNSDictionary,
-    XZJSONClassTypeNSMutableDictionary,
     XZJSONClassTypeNSSet,
     XZJSONClassTypeNSMutableSet,
+    XZJSONClassTypeNSDictionary,
+    XZJSONClassTypeNSMutableDictionary,
 };
 
 /// Get the Foundation class type from property info.
@@ -44,6 +44,7 @@ FOUNDATION_STATIC_INLINE XZJSONClassType XZJSONClassTypeFromClass(Class aClass) 
     if ([aClass isSubclassOfClass:[NSMutableDictionary class]])    return XZJSONClassTypeNSMutableDictionary;
     if ([aClass isSubclassOfClass:[NSDictionary class]])           return XZJSONClassTypeNSDictionary;
     if ([aClass isSubclassOfClass:[NSMutableSet class]])           return XZJSONClassTypeNSMutableSet;
+    if ([aClass isSubclassOfClass:[NSCountedSet class]])           return XZJSONClassTypeNSMutableSet;
     if ([aClass isSubclassOfClass:[NSSet class]])                  return XZJSONClassTypeNSSet;
     return XZJSONClassTypeUnknown;
 }

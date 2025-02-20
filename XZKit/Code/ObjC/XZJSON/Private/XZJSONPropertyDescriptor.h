@@ -50,6 +50,9 @@ NS_ASSUME_NONNULL_BEGIN
     NSArray<NSString *> * _Nullable _JSONKeyPath;
     /// 映射到当前属性的 JSON 键数组。值为 `NSString *` 类型或者 `NSArray<NSString *> *` 类型。
     NSArray             * _Nullable _JSONKeyArray;
+    
+    /// 是否为无主引用或弱引用的属性。 
+    BOOL _isUnownedReferenceProperty;
 }
 
 + (XZJSONPropertyDescriptor *)descriptorWithClass:(XZJSONClassDescriptor *)aClass property:(XZObjcPropertyDescriptor *)property elementType:(nullable Class)elementType;

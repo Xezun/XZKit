@@ -6,8 +6,8 @@
 //
 
 #import "XZJSONPropertyDescriptor.h"
-#import "XZJSONClassDescriptor.h"
 #import "XZJSONDefines.h"
+#import "XZJSONClassDescriptor.h"
 
 @implementation XZJSONPropertyDescriptor
 
@@ -43,19 +43,24 @@
     descriptor->_setter      = setter;
     
     if (descriptor->_type == XZObjcTypeObject) {
-        descriptor->_classType = XZJSONClassTypeFromClass(property.type.subtype);
+        descriptor->_subtype = property.type.subtype;
+        descriptor->_classType = XZJSONClassTypeFromClass(descriptor->_subtype);
+        descriptor->_isScalarNumber = NO;
+        XZObjcQualifiers const qualifiers = property.type.qualifiers;
+        descriptor->_isUnownedReferenceProperty = (qualifiers & XZObjcQualifierWeak) || (!(qualifiers & XZObjcQualifierCopy) && !(qualifiers & XZObjcQualifierRetain));
     } else {
+        descriptor->_subtype = Nil;
+        descriptor->_classType = XZJSONClassTypeUnknown;
         descriptor->_isScalarNumber = XZObjcIsScalarNumber(descriptor->_type);
+        descriptor->_isUnownedReferenceProperty = NO;
     }
-    
-    descriptor->_subtype = property.type.subtype;
     
     // 不是以 set 开头的 setter 无法被 KVC 找到。
     NSString * const setterName = NSStringFromSelector(descriptor->_setter);
     if ([setterName hasPrefix:@"set"]) {
-        descriptor->_isKeyValueCodable = [setterName substringFromIndex:3];
+        descriptor->_isKeyValueCodable = [setterName substringWithRange:NSMakeRange(3, setterName.length - 4)];
     } else if ([setterName hasPrefix:@"_set"]) {
-        descriptor->_isKeyValueCodable = [setterName substringFromIndex:4];
+        descriptor->_isKeyValueCodable = [setterName substringWithRange:NSMakeRange(4, setterName.length - 5)];
     }
     
     return descriptor;

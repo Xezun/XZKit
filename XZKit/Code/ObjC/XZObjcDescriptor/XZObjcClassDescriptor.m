@@ -149,7 +149,7 @@
     if (self.ivars.count > 0) {
         NSMutableString *stringM = [[NSMutableString alloc] initWithString:@"[\n"];
         [self.ivars enumerateKeysAndObjectsUsingBlock:^(NSString * _Nonnull key, XZObjcIvarDescriptor * _Nonnull obj, BOOL * _Nonnull stop) {
-            [stringM appendFormat:@"    %@,\n", [obj.description stringByReplacingOccurrencesOfString:@"\n" withString:@"\n    "]];
+            [stringM appendFormat:@"    <%p, %@, %@>,\n", obj, obj.name, ((id)obj.type.subtype ?: obj.type.name)];
         }];
         [stringM deleteCharactersInRange:NSMakeRange(stringM.length - 2, 1)];
         [stringM appendString:@"]"];
@@ -160,7 +160,7 @@
     if (self.properties.count > 0) {
         NSMutableString *stringM = [[NSMutableString alloc] initWithString:@"[\n"];
         [self.properties enumerateKeysAndObjectsUsingBlock:^(NSString * _Nonnull key, XZObjcPropertyDescriptor * _Nonnull obj, BOOL * _Nonnull stop) {
-            [stringM appendFormat:@"    %@,\n", [obj.description stringByReplacingOccurrencesOfString:@"\n" withString:@"\n    "]];
+            [stringM appendFormat:@"    <%p, %@, %@>,\n", obj, obj.name, ((id)obj.type.subtype ?: obj.type.name)];
         }];
         [stringM deleteCharactersInRange:NSMakeRange(stringM.length - 2, 1)];
         [stringM appendString:@"]"];
@@ -171,14 +171,16 @@
     if (self.methods.count > 0) {
         NSMutableString *stringM = [[NSMutableString alloc] initWithString:@"[\n"];
         [self.methods enumerateKeysAndObjectsUsingBlock:^(NSString * _Nonnull key, XZObjcMethodDescriptor * _Nonnull obj, BOOL * _Nonnull stop) {
-            [stringM appendFormat:@"    %@,\n", [obj.description stringByReplacingOccurrencesOfString:@"\n" withString:@"\n    "]];
+            [stringM appendFormat:@"    <%p, %@, %@>,\n", obj, obj.name, ((id)obj.type.subtype ?: obj.type.name)];
         }];
         [stringM deleteCharactersInRange:NSMakeRange(stringM.length - 2, 1)];
         [stringM appendString:@"]"];
         methods = stringM;
     }
     
-    return [NSString stringWithFormat:@"<%@: %p, name: %@, type: %@, ivars: %@, properties: %@, methods: %@>", NSStringFromClass(self.class), self, self.name, self.type, ivars, properties, methods];
+    NSString *type = [NSString stringWithFormat:@"<%p, %@>", self.type, (id)self.type.subtype ?: self.type.name];
+    
+    return [NSString stringWithFormat:@"<%@: %p, name: %@, type: %@, ivars: %@, properties: %@, methods: %@>", NSStringFromClass(self.class), self, self.name, type, ivars, properties, methods];
 }
 
 @end

@@ -6,55 +6,74 @@
 //
 
 #import "XZJSONPrivate.h"
+@import ObjectiveC;
 
 /// 读取 JOSN 字典的 keyPath 对应的值。
 /// - Parameters:
 ///   - dict: JSON 字典
 ///   - keyPath: 已分隔为数组的键路径
-static id _Nullable XZJSONDictionaryValueForKeyPath(__unsafe_unretained NSDictionary *_Nonnull dict, __unsafe_unretained NSArray<NSString *> * _Nonnull keyPath);
+static id _Nullable NSDictionaryValueForKeyPath(NSDictionary *dict, NSArray *_Nonnull keyPaths) {
+    NSDictionary *__unsafe_unretained value = nil;
+
+    for (NSUInteger i = 0, max = keyPaths.count - 1; i <= max; i++) {
+        NSString *const key = keyPaths[i];
+        value = dict[key];
+
+        if (i == max) {
+            return value;
+        }
+
+        if ([value isKindOfClass:NSDictionary.class]) {
+            dict = value;
+            continue;
+        }
+
+        return nil;
+    }
+
+    return value;
+}
 
 /// 读取 JOSN 字典的 keyArray 第一个有效值。
 /// - Parameters:
 ///   - dict: JSON 字典
 ///   - keyArray: 由“键”、“已分隔为数组的键路径”组成的数组
-static id _Nullable XZJSONDictionaryValueForKeyArray(__unsafe_unretained NSDictionary *_Nonnull dict, __unsafe_unretained NSArray *_Nonnull keyArray);
+static id _Nullable NSDictionaryValueForKeyArray(NSDictionary *dict, NSArray *_Nonnull keyArray) {
+    id value = nil;
+
+    for (NSString *key in keyArray) {
+        if ([key isKindOfClass:[NSString class]]) {
+            value = dict[key];
+        } else {
+            value = NSDictionaryValueForKeyPath(dict, (NSArray *)key);
+        }
+
+        if (value) {
+            return value;
+        }
+    }
+
+    return value;
+}
 
 /// 读取 JSON 字典中 keyPath 中最后一个 key 所在的字典，如果中间值不存在，则创建。
 /// - Parameters:
 ///   - dictionary: JSON 字典
 ///   - keyPath: 键路径
-static NSMutableDictionary * _Nullable XZJSONDictionaryForLastKeyInKeyPath(NSMutableDictionary *dictionary, NSArray<NSString *> *keyPath);
-
-/// 将 JSON 值转换为 NSNumber 值。
-/// - Parameter JSONValue: JSON 值
-static NSNumber        * _Nullable NSNumberFromJSONValue(id _Nonnull JSONValue);
-
-/// 将 JSON 值转换为 NSDecimalNumber 值。
-/// - Parameter value: JSON 值
-static NSDecimalNumber * _Nullable NSDecimalNumberFromJSONValue(id _Nonnull JSONValue);
-
-/// 将 JSON 值 value 转换为 NSDate 对象。
-/// - Parameter JSONValue: JSON 值
-static NSDate          * _Nullable NSDateFromJSONValue(id _Nonnull JSONValue);
-
-/// 将 JSON 值转换为 NSString 值。
-/// - Parameter value: JSON 值
-static NSString        * _Nullable NSStringFromJSONValue(id _Nullable JSONValue);
-
-/// 将 JSON 值转换为 NSData 值。
-/// - Parameter JSONValue: JSON 值
-static NSData          * _Nullable NSDataFromJSONValue(id _Nullable JSONValue);
-
-static NSArray         * _Nullable NSArrayFromJSONValue(id _Nonnull const JSONValue, Class _Nullable const elementClass);
-static NSDictionary    * _Nullable NSDictionaryFromJSONValue(id _Nonnull const JSONValue, Class _Nullable const elementClass);
-static NSSet           * _Nullable NSSetFromJSONValue(id _Nonnull const JSONValue, Class _Nullable const elementClass);
-
-FOUNDATION_STATIC_INLINE BOOL isUnownedReferenceProperty(XZJSONPropertyDescriptor *property) {
-    if (property->_type != XZObjcTypeObject) {
-        return NO;
+static NSMutableDictionary *NSDictionaryForLastKeyInKeyPath(NSMutableDictionary *dictionary, NSArray<NSString *> *keyPath) {
+    for (NSUInteger i = 0, max = keyPath.count - 1; i < max; i++) {
+        NSString * const subKey = keyPath[i];
+        NSMutableDictionary *subDict = dictionary[subKey];
+        if (subDict == nil) {
+            subDict = [NSMutableDictionary dictionary];
+            dictionary[subKey] = subDict;
+        } else if (![subDict isKindOfClass:NSMutableDictionary.class]) {
+            // 对应的 key 已经有其它值，不支持设置 keyPath
+            return nil;
+        }
+        dictionary = subDict;
     }
-    XZObjcQualifiers const qualifiers = property->_property.type.qualifiers;
-    return  (qualifiers & XZObjcQualifierWeak) || (!(qualifiers & XZObjcQualifierCopy) && !(qualifiers & XZObjcQualifierRetain));
+    return dictionary;
 }
 
 @implementation XZJSON (XZJSONDecodingPrivate)
@@ -148,7 +167,7 @@ FOUNDATION_STATIC_INLINE BOOL isUnownedReferenceProperty(XZJSONPropertyDescripto
         
         [descriptor->_keyPathProperties enumerateObjectsUsingBlock:^(XZJSONPropertyDescriptor *property, NSUInteger idx, BOOL *stop) {
             NSArray<NSString *> *keyPath = property->_JSONKeyPath;
-            id JSONValue = XZJSONDictionaryValueForKeyPath(dictionary, keyPath);
+            id JSONValue = NSDictionaryValueForKeyPath(dictionary, keyPath);
             if (JSONValue) {
                 XZJSONModelDecodeProperty(model, property, JSONValue);
             }
@@ -156,7 +175,7 @@ FOUNDATION_STATIC_INLINE BOOL isUnownedReferenceProperty(XZJSONPropertyDescripto
         
         [descriptor->_keyArrayProperties enumerateObjectsUsingBlock:^(XZJSONPropertyDescriptor *property, NSUInteger idx, BOOL *stop) {
             NSArray *keyArray = property->_JSONKeyArray;
-            id JSONValue = XZJSONDictionaryValueForKeyArray(dictionary, keyArray);
+            id JSONValue = NSDictionaryValueForKeyArray(dictionary, keyArray);
             if (JSONValue) {
                 XZJSONModelDecodeProperty(model, property, JSONValue);
             }
@@ -165,9 +184,9 @@ FOUNDATION_STATIC_INLINE BOOL isUnownedReferenceProperty(XZJSONPropertyDescripto
         [descriptor->_properties enumerateObjectsUsingBlock:^(XZJSONPropertyDescriptor *property, NSUInteger idx, BOOL *stop) {
             id JSONValue = nil;
             if (property->_JSONKeyArray) {
-                JSONValue = XZJSONDictionaryValueForKeyArray(dictionary, property->_JSONKeyArray);
+                JSONValue = NSDictionaryValueForKeyArray(dictionary, property->_JSONKeyArray);
             } else if (property->_JSONKeyPath) {
-                JSONValue = XZJSONDictionaryValueForKeyPath(dictionary, property->_JSONKeyPath);
+                JSONValue = NSDictionaryValueForKeyPath(dictionary, property->_JSONKeyPath);
             } else {
                 JSONValue = dictionary[property->_JSONKey];
             }
@@ -261,7 +280,7 @@ FOUNDATION_STATIC_INLINE BOOL isUnownedReferenceProperty(XZJSONPropertyDescripto
             
             // 自定义序列化
             if (descriptor->_usesJSONEncodingInitializer) {
-                return [(id<XZJSONEncoding>)model encodeIntoJSONDictionary:dictionary];
+                return [(id<XZJSONCoding>)model encodeIntoJSONDictionary:dictionary];
             }
             
             // 通用序列化
@@ -271,7 +290,7 @@ FOUNDATION_STATIC_INLINE BOOL isUnownedReferenceProperty(XZJSONPropertyDescripto
                 
                 // 先判断是否映射到 keyPath 或 keyArray
                 if (property->_JSONKeyPath) {
-                    dict = XZJSONDictionaryForLastKeyInKeyPath(dict, property->_JSONKeyPath);
+                    dict = NSDictionaryForLastKeyInKeyPath(dict, property->_JSONKeyPath);
                     if (dict == nil) {
                         return;
                     }
@@ -288,7 +307,7 @@ FOUNDATION_STATIC_INLINE BOOL isUnownedReferenceProperty(XZJSONPropertyDescripto
                             break;
                         }
                         
-                        NSMutableDictionary *temp = XZJSONDictionaryForLastKeyInKeyPath(dict, aKey);
+                        NSMutableDictionary *temp = NSDictionaryForLastKeyInKeyPath(dict, aKey);
                         if (temp) {
                             dict = temp;
                             key = ((NSArray *)aKey).lastObject;
@@ -374,7 +393,7 @@ FOUNDATION_STATIC_INLINE BOOL isUnownedReferenceProperty(XZJSONPropertyDescripto
                         break;
                     }
                     case XZObjcTypeObject: {
-                        if (isUnownedReferenceProperty(property)) {
+                        if (property->_isUnownedReferenceProperty) {
                             break;
                         }
                         
@@ -382,8 +401,8 @@ FOUNDATION_STATIC_INLINE BOOL isUnownedReferenceProperty(XZJSONPropertyDescripto
                                                 
                         if (value == nil) {
                             JSONValue = (id)kCFNull;
-                        } else {
-                            XZJSONClassDescriptor *descriptor = [XZJSONClassDescriptor descriptorForClass:[value class]];
+                        } else if ([[value class] isSubclassOfClass:property->_subtype]) {
+                            XZJSONClassDescriptor *descriptor = [XZJSONClassDescriptor descriptorForClass:property->_subtype];
                             // 如果 key 已经有值，则进行合并，不能合并则覆盖
                             NSMutableDictionary *dictionay = dict[key];
                             if (![dictionay isKindOfClass:NSMutableDictionary.class]) {
@@ -418,63 +437,7 @@ FOUNDATION_STATIC_INLINE BOOL isUnownedReferenceProperty(XZJSONPropertyDescripto
 typedef id _Nullable (*XZJSONGetter)(id _Nonnull, SEL _Nonnull);
 typedef void         (*XZJSONSetter)(id _Nonnull, SEL _Nonnull, id _Nullable);
 
-static id _Nullable XZJSONDictionaryValueForKeyPath(__unsafe_unretained NSDictionary *_Nonnull dict, __unsafe_unretained NSArray *_Nonnull keyPaths) {
-    NSDictionary *__unsafe_unretained value = nil;
-
-    for (NSUInteger i = 0, max = keyPaths.count - 1; i <= max; i++) {
-        NSString *const key = keyPaths[i];
-        value = dict[key];
-
-        if (i == max) {
-            return value;
-        }
-
-        if ([value isKindOfClass:NSDictionary.class]) {
-            dict = value;
-            continue;
-        }
-
-        return nil;
-    }
-
-    return value;
-}
-
-static id _Nullable XZJSONDictionaryValueForKeyArray(__unsafe_unretained NSDictionary *_Nonnull dict, __unsafe_unretained NSArray *_Nonnull keyArray) {
-    id value = nil;
-
-    for (NSString *key in keyArray) {
-        if ([key isKindOfClass:[NSString class]]) {
-            value = dict[key];
-        } else {
-            value = XZJSONDictionaryValueForKeyPath(dict, (NSArray *)key);
-        }
-
-        if (value) {
-            return value;
-        }
-    }
-
-    return value;
-}
-
-static NSMutableDictionary *XZJSONDictionaryForLastKeyInKeyPath(NSMutableDictionary *dictionary, NSArray<NSString *> *keyPath) {
-    for (NSUInteger i = 0, max = keyPath.count - 1; i < max; i++) {
-        NSString * const subKey = keyPath[i];
-        NSMutableDictionary *subDict = dictionary[subKey];
-        if (subDict == nil) {
-            subDict = [NSMutableDictionary dictionary];
-            dictionary[subKey] = subDict;
-        } else if (![subDict isKindOfClass:NSMutableDictionary.class]) {
-            // 对应的 key 已经有其它值，不支持设置 keyPath
-            return nil;
-        }
-        dictionary = subDict;
-    }
-    return dictionary;
-}
-
-static NSNumber * _Nullable NSNumberFromJSONValue(id _Nonnull JSONValue) {
+static NSNumber * _Nullable NSNumberObjectFromJSONValue(id _Nonnull JSONValue) {
     if (JSONValue == (id)kCFNull) {
         return nil;
     }
@@ -483,26 +446,20 @@ static NSNumber * _Nullable NSNumberFromJSONValue(id _Nonnull JSONValue) {
         return JSONValue;
     }
 
-    static NSDictionary<NSString *, NSNumber *> *_numberStrings = nil;
+    static NSDictionary<NSString *, NSNumber *> *_boolStrings = nil;
     static dispatch_once_t onceToken;
     dispatch_once(&onceToken, ^{
-        _numberStrings = @{
-            @"TRUE": @(YES), @"FALSE": @(NO), @"NIL":  (id)kCFNull, @"(NULL)": (id)kCFNull,
-            @"True": @(YES), @"False": @(NO), @"Nil":  (id)kCFNull, @"(Null)": (id)kCFNull,
-            @"true": @(YES), @"false": @(NO), @"nil":  (id)kCFNull, @"(null)": (id)kCFNull,
-            @"YES":  @(YES), @"NO":    @(NO), @"NULL": (id)kCFNull, @"<NULL>": (id)kCFNull,
-            @"Yes":  @(YES), @"No":    @(NO), @"Null": (id)kCFNull, @"<Null>": (id)kCFNull,
-            @"yes":  @(YES), @"no":    @(NO), @"null": (id)kCFNull, @"<null>": (id)kCFNull
+        _boolStrings = @{
+            @"Y": @(YES), @"N": @(NO), @"T": @(YES), @"F": @(NO),
+            @"y": @(YES), @"n": @(NO), @"t": @(YES), @"f": @(NO),
+            @"TRUE": @(YES), @"FALSE": @(NO), @"YES": @(YES), @"NO": @(NO),
+            @"True": @(YES), @"False": @(NO), @"Yes": @(YES), @"No": @(NO),
+            @"true": @(YES), @"false": @(NO), @"yes": @(YES), @"no": @(NO),
         };
     });
 
     if ([JSONValue isKindOfClass:[NSString class]]) {
-        NSNumber *const number = _numberStrings[JSONValue];
-
-        if (number == (id)kCFNull) {
-            return nil;
-        }
-
+        NSNumber *const number = _boolStrings[JSONValue];
         if (number) {
             return number;
         }
@@ -528,6 +485,8 @@ static NSNumber * _Nullable NSNumberFromJSONValue(id _Nonnull JSONValue) {
     return nil;
 }
 
+/// 将 JSON 值转换为 NSDecimalNumber 值。
+/// - Parameter value: JSON 值
 static NSDecimalNumber * _Nullable NSDecimalNumberFromJSONValue(id _Nonnull JSONValue) {
     if ([JSONValue isKindOfClass:[NSNumber class]]) {
         NSNumber *number = JSONValue;
@@ -545,6 +504,8 @@ static NSDecimalNumber * _Nullable NSDecimalNumberFromJSONValue(id _Nonnull JSON
     return nil;
 }
 
+/// 将 JSON 值 value 转换为 NSDate 对象。
+/// - Parameter JSONValue: JSON 值
 static NSDate *NSDateFromJSONValue(__unsafe_unretained id _Nonnull JSONValue) {
     if (JSONValue == (id)kCFNull) {
         return nil;
@@ -569,6 +530,8 @@ static NSDate *NSDateFromJSONValue(__unsafe_unretained id _Nonnull JSONValue) {
     return nil;
 }
 
+/// 将 JSON 值转换为 NSString 值。
+/// - Parameter value: JSON 值
 static NSString * _Nullable NSStringFromJSONValue(id JSONValue) {
     if (JSONValue == (id)kCFNull) {
         return nil;
@@ -586,6 +549,8 @@ static NSString * _Nullable NSStringFromJSONValue(id JSONValue) {
     return nil;
 }
 
+/// 将 JSON 值转换为 NSData 值。
+/// - Parameter JSONValue: JSON 值
 static NSData * _Nullable NSDataFromJSONValue(id _Nullable const value) {
     if ([value isKindOfClass:NSData.class]) {
         return value;
@@ -946,7 +911,7 @@ void XZJSONModelDecodeProperty(id model, XZJSONPropertyDescriptor *property, id 
                 return;
             }
             
-            if (isUnownedReferenceProperty(property)) {
+            if (property->_isUnownedReferenceProperty) {
                 break;
             }
             
@@ -971,7 +936,7 @@ void XZJSONModelDecodeProperty(id model, XZJSONPropertyDescriptor *property, id 
                     break;
                 }
                 case XZJSONClassTypeNSNumber: {
-                    value = NSNumberFromJSONValue(JSONValue);
+                    value = NSNumberObjectFromJSONValue(JSONValue);
                     break;
                 }
                 case XZJSONClassTypeNSDecimalNumber: {
@@ -1069,7 +1034,7 @@ void XZJSONModelDecodeProperty(id model, XZJSONPropertyDescriptor *property, id 
     
     // JSONValue 无法解析为目标属性值
     if (property->_class->_usesPropertyJSONDecodingMethod) {
-        [(id<XZJSONDecoding>)model JSONDecodeValue:JSONValue forKey:property->_name];
+        [(id<XZJSONCoding>)model JSONDecodeValue:JSONValue forKey:property->_name];
     } else {
         NSLog(@"[XZJSON] Can not decode value `%@` for property `%@` of `%@`", JSONValue, property->_name, property->_class->_class.name);
     }
@@ -1080,42 +1045,42 @@ BOOL XZJSONModelDecodeStructProperty(id model, XZJSONPropertyDescriptor *propert
         NSString * const name = property->_property.type.name;
         if ([name isEqualToString:@"CGRect"]) {
             CGRect aValue = CGRectFromString(JSONValue);
-            ((void (*)(id, SEL, CGRect))(void *) objc_msgSend)((id)model, property->_setter, aValue);
+            ((void (*)(id, SEL, CGRect))objc_msgSend)(model, property->_setter, aValue);
             return YES;
         }
         if ([name isEqualToString:@"CGSize"]) {
             CGSize aValue = CGSizeFromString(JSONValue);
-            ((void (*)(id, SEL, CGSize))(void *) objc_msgSend)((id)model, property->_setter, aValue);
+            ((void (*)(id, SEL, CGSize))objc_msgSend)(model, property->_setter, aValue);
             return YES;
         }
         if ([name isEqualToString:@"CGPoint"]) {
             CGPoint aValue = CGPointFromString(JSONValue);
-            ((void (*)(id, SEL, CGPoint))(void *) objc_msgSend)((id)model, property->_setter, aValue);
+            ((void (*)(id, SEL, CGPoint))objc_msgSend)(model, property->_setter, aValue);
             return YES;
         }
         if ([name isEqualToString:@"UIEdgeInsets"]) {
             UIEdgeInsets aValue = UIEdgeInsetsFromString(JSONValue);
-            ((void (*)(id, SEL, UIEdgeInsets))(void *) objc_msgSend)((id)model, property->_setter, aValue);
+            ((void (*)(id, SEL, UIEdgeInsets))objc_msgSend)(model, property->_setter, aValue);
             return YES;
         }
         if ([name isEqualToString:@"CGVector"]) {
             CGVector aValue = CGVectorFromString(JSONValue);
-            ((void (*)(id, SEL, CGVector))(void *) objc_msgSend)((id)model, property->_setter, aValue);
+            ((void (*)(id, SEL, CGVector))objc_msgSend)(model, property->_setter, aValue);
             return YES;
         }
         if ([name isEqualToString:@"CGAffineTransform"]) {
             CGAffineTransform aValue = CGAffineTransformFromString(JSONValue);
-            ((void (*)(id, SEL, CGAffineTransform))(void *) objc_msgSend)((id)model, property->_setter, aValue);
+            ((void (*)(id, SEL, CGAffineTransform))objc_msgSend)(model, property->_setter, aValue);
             return YES;
         }
         if ([name isEqualToString:@"NSDirectionalEdgeInsets"]) {
             NSDirectionalEdgeInsets aValue = NSDirectionalEdgeInsetsFromString(JSONValue);
-            ((void (*)(id, SEL, NSDirectionalEdgeInsets))(void *) objc_msgSend)((id)model, property->_setter, aValue);
+            ((void (*)(id, SEL, NSDirectionalEdgeInsets))objc_msgSend)(model, property->_setter, aValue);
             return YES;
         }
         if ([name isEqualToString:@"UIOffset"]) {
             UIOffset aValue = UIOffsetFromString(JSONValue);
-            ((void (*)(id, SEL, UIOffset))(void *) objc_msgSend)((id)model, property->_setter, aValue);
+            ((void (*)(id, SEL, UIOffset))objc_msgSend)(model, property->_setter, aValue);
             return YES;
         }
     }
@@ -1125,52 +1090,54 @@ BOOL XZJSONModelDecodeStructProperty(id model, XZJSONPropertyDescriptor *propert
 NSString * _Nullable XZJSONModelEncodeStructProperty(id model, XZJSONPropertyDescriptor *property) {
     NSString *name = property->_property.type.name;
     if ([name isEqualToString:@"CGRect"]) {
-        CGRect structValue = ((CGRect (*)(id, SEL))(void *) objc_msgSend)((id)model, property->_getter);
-        return NSStringFromCGRect(structValue);
+        CGRect aValue = ((CGRect (*)(id, SEL))objc_msgSend)(model, property->_getter);
+        return NSStringFromCGRect(aValue);
     }
     if ([name isEqualToString:@"CGSize"]) {
-        CGSize structValue = ((CGSize (*)(id, SEL))(void *) objc_msgSend)((id)model, property->_getter);
-        return NSStringFromCGSize(structValue);
+        CGSize aValue = ((CGSize (*)(id, SEL))objc_msgSend)(model, property->_getter);
+        return NSStringFromCGSize(aValue);
     }
     if ([name isEqualToString:@"CGPoint"]) {
-        CGPoint structValue = ((CGPoint (*)(id, SEL))(void *) objc_msgSend)((id)model, property->_getter);
-        return NSStringFromCGPoint(structValue);
+        CGPoint aValue = ((CGPoint (*)(id, SEL))objc_msgSend)(model, property->_getter);
+        return NSStringFromCGPoint(aValue);
     }
     if ([name isEqualToString:@"UIEdgeInsets"]) {
-        UIEdgeInsets structValue = ((UIEdgeInsets (*)(id, SEL))(void *) objc_msgSend)((id)model, property->_getter);
-        return NSStringFromUIEdgeInsets(structValue);
+        UIEdgeInsets aValue = ((UIEdgeInsets (*)(id, SEL))objc_msgSend)(model, property->_getter);
+        return NSStringFromUIEdgeInsets(aValue);
     }
     if ([name isEqualToString:@"CGVector"]) {
-        CGVector structValue = ((CGVector (*)(id, SEL))(void *) objc_msgSend)((id)model, property->_getter);
-        return NSStringFromCGVector(structValue);
+        CGVector aValue = ((CGVector (*)(id, SEL))objc_msgSend)(model, property->_getter);
+        return NSStringFromCGVector(aValue);
     }
     if ([name isEqualToString:@"CGAffineTransform"]) {
-        CGAffineTransform structValue = ((CGAffineTransform (*)(id, SEL))(void *) objc_msgSend)((id)model, property->_getter);
-        return NSStringFromCGAffineTransform(structValue);
+        CGAffineTransform aValue = ((CGAffineTransform (*)(id, SEL))objc_msgSend)(model, property->_getter);
+        return NSStringFromCGAffineTransform(aValue);
     }
     if ([name isEqualToString:@"NSDirectionalEdgeInsets"]) {
-        NSDirectionalEdgeInsets structValue = ((NSDirectionalEdgeInsets (*)(id, SEL))(void *) objc_msgSend)((id)model, property->_getter);
-        return NSStringFromDirectionalEdgeInsets(structValue);
+        NSDirectionalEdgeInsets aValue = ((NSDirectionalEdgeInsets (*)(id, SEL))objc_msgSend)(model, property->_getter);
+        return NSStringFromDirectionalEdgeInsets(aValue);
     }
     if ([name isEqualToString:@"UIOffset"]) {
-        UIOffset structValue = ((UIOffset (*)(id, SEL))(void *) objc_msgSend)((id)model, property->_getter);
-        return NSStringFromUIOffset(structValue);
+        UIOffset aValue = ((UIOffset (*)(id, SEL))objc_msgSend)(model, property->_getter);
+        return NSStringFromUIOffset(aValue);
     }
     return nil;
 }
 
-NSString * _Nonnull XZJSONModelDescriptionForType(NSObject * _Nonnull model, XZJSONClassType const classType, NSUInteger hierarchies, NSArray *chain) {
+#pragma mark - NSDescription
+
+NSString * _Nonnull XZJSONModelDescriptionOfClassType(id model, XZJSONClassType const classType, NSUInteger hierarchies) {
     switch (classType) {
         case XZJSONClassTypeNSString:
         case XZJSONClassTypeNSMutableString: {
-            NSString *aString = (id)model;
+            NSString *aString = model;
             aString = [aString stringByReplacingOccurrencesOfString:@"\n" withString:@"\\n"];
             return [NSString stringWithFormat:@"\"%@\"", aString];
         }
         case XZJSONClassTypeNSValue:
         case XZJSONClassTypeNSData:
         case XZJSONClassTypeNSMutableData: {
-            NSString *tmp = model.description;
+            NSString *tmp = [model description];
             if (tmp.length > 50) {
                 tmp = [tmp substringToIndex:50];
                 tmp = [tmp stringByAppendingString:@"..."];
@@ -1199,7 +1166,7 @@ NSString * _Nonnull XZJSONModelDescriptionForType(NSObject * _Nonnull model, XZJ
             
             NSMutableString *desc = [NSMutableString stringWithString:@"[\n"];
             for (id obj in (NSArray *)array) {
-                [desc appendFormat:@"%@    %@,\n", padding, XZJSONModelDescription(obj, hierarchies, chain)];
+                [desc appendFormat:@"%@    %@,\n", padding, XZJSONModelDescription(obj, hierarchies)];
             }
             [desc deleteCharactersInRange:NSMakeRange(desc.length - 2, 1)];
             [desc appendFormat:@"%@]", padding];
@@ -1220,7 +1187,7 @@ NSString * _Nonnull XZJSONModelDescriptionForType(NSObject * _Nonnull model, XZJ
             NSMutableString *desc = [NSMutableString stringWithString:@"{\n"];
             [dict enumerateKeysAndObjectsUsingBlock:^(id  _Nonnull key, id  _Nonnull obj, BOOL * _Nonnull stop) {
                 key = [key description];
-                obj = XZJSONModelDescription(obj, hierarchies, chain);
+                obj = XZJSONModelDescription(obj, hierarchies);
                 [desc appendFormat:@"%@    %@: %@,\n", padding, key, obj];
             }];
             [desc deleteCharactersInRange:NSMakeRange(desc.length - 2, 1)];
@@ -1233,7 +1200,7 @@ NSString * _Nonnull XZJSONModelDescriptionForType(NSObject * _Nonnull model, XZJ
     }
 }
 
-NSString * _Nonnull XZJSONModelDescription(NSObject *_Nonnull model, NSUInteger hierarchies, NSArray *chain) {
+NSString * _Nonnull XZJSONModelDescription(NSObject *_Nonnull model, NSUInteger hierarchies) {
     if (!model) {
         return @"<nil>";
     }
@@ -1249,7 +1216,7 @@ NSString * _Nonnull XZJSONModelDescription(NSObject *_Nonnull model, NSUInteger 
     XZJSONClassDescriptor * const modelClass = [XZJSONClassDescriptor descriptorForClass:model.class];
 
     if (modelClass->_classType) {
-        return XZJSONModelDescriptionForType(model, modelClass->_classType, hierarchies, chain);
+        return XZJSONModelDescriptionOfClassType(model, modelClass->_classType, hierarchies);
     }
     
     if (modelClass->_properties.count == 0) {
@@ -1325,12 +1292,12 @@ NSString * _Nonnull XZJSONModelDescription(NSObject *_Nonnull model, NSUInteger 
             case XZObjcTypeObject: {
                 value = ((XZJSONGetter)objc_msgSend)((id)model, property->_getter);
                 
-                if (isUnownedReferenceProperty(property) || [chain containsObject:value]) {
+                if (property->_isUnownedReferenceProperty) {
                     value = [NSString stringWithFormat:@"<%@: %p>", value.class, value];
                 } else if (property->_classType) {
-                    value = XZJSONModelDescriptionForType(value, property->_classType, hierarchies, [chain arrayByAddingObject:model]);
+                    value = XZJSONModelDescriptionOfClassType(value, property->_classType, hierarchies);
                 } else {
-                    value = XZJSONModelDescription(value, hierarchies, [chain arrayByAddingObject:model]);
+                    value = XZJSONModelDescription(value, hierarchies);
                 }
                 break;
             }
@@ -1344,29 +1311,82 @@ NSString * _Nonnull XZJSONModelDescription(NSObject *_Nonnull model, NSUInteger 
                 value = [NSString stringWithFormat:@"<selector: %@>", sel ? NSStringFromSelector(sel) : @"nil"];
                 break;
             }
-            case XZObjcTypeArray:
-            case XZObjcTypeString:
+            case XZObjcTypeArray: {
+                NSString *desc = nil;
+                if (modelClass->_usesPropertyJSONEncodingMethod) {
+                    desc = [NSString stringWithFormat:@"%@", [(id<XZJSONCoding>)model JSONEncodeValueForKey:key]];
+                } else {
+                    void *pointer = ((void *(*)(id, SEL))(void *) objc_msgSend)((id)model, property->_getter);
+                    desc = [NSString stringWithFormat:@"%p", pointer];
+                }
+                value = [NSString stringWithFormat:@"<array: %@, value: %@>", property->_property.type.name, desc];
+                break;
+            }
+            case XZObjcTypeString: {
+                NSString *desc = nil;
+                if (modelClass->_usesPropertyJSONEncodingMethod) {
+                    desc = [NSString stringWithFormat:@"%@", [(id<XZJSONCoding>)model JSONEncodeValueForKey:key]];
+                } else {
+                    void *pointer = ((void *(*)(id, SEL))(void *) objc_msgSend)((id)model, property->_getter);
+                    desc = [NSString stringWithFormat:@"%p", pointer];
+                }
+                value = [NSString stringWithFormat:@"<string: %@, value: %@>", property->_property.type.name, desc];
+                break;
+            }
             case XZObjcTypePointer: {
-                void *pointer = ((void *(*)(id, SEL))(void *) objc_msgSend)((id)model, property->_getter);
-                value = [NSString stringWithFormat:@"<%@: %p>", property->_property.type.name, pointer];
+                NSString *desc = nil;
+                if (modelClass->_usesPropertyJSONEncodingMethod) {
+                    desc = [NSString stringWithFormat:@"%@", [(id<XZJSONCoding>)model JSONEncodeValueForKey:key]];
+                } else {
+                    void *pointer = ((void *(*)(id, SEL))(void *) objc_msgSend)((id)model, property->_getter);
+                    desc = [NSString stringWithFormat:@"%p", pointer];
+                }
+                value = [NSString stringWithFormat:@"<pointer: %@, value: %@>", property->_property.type.name, desc];
                 break;
             }
             case XZObjcTypeStruct: {
                 value = XZJSONModelEncodeStructProperty(model, property);
-                value = [NSString stringWithFormat:@"<%@: %@>", property->_property.type.name, value ?: @"unknown"];
+                if (value == nil && modelClass->_usesPropertyJSONEncodingMethod) {
+                    value = [NSString stringWithFormat:@"%@", [(id<XZJSONCoding>)model JSONEncodeValueForKey:key]];
+                }
+                if (value) {
+                    value = [NSString stringWithFormat:@"<struct: %@, value: %@>", property->_property.type.name, value];
+                } else {
+                    value = [NSString stringWithFormat:@"<struct: %@>", property->_property.type.name];
+                }
                 break;
             }
             case XZObjcTypeUnion: {
-                value = [NSString stringWithFormat:@"<union: %@>", property->_property.type.name];
+                if (modelClass->_usesPropertyJSONEncodingMethod) {
+                    NSString * const name = property->_property.type.name;
+                    value = [NSString stringWithFormat:@"<union: %@, value: %@>", name, [(id<XZJSONCoding>)model JSONEncodeValueForKey:key]];
+                } else {
+                    value = [NSString stringWithFormat:@"<union: %@>", property->_property.type.name];
+                }
                 break;
             }
-            case XZObjcTypeVoid:
+            case XZObjcTypeVoid: {
+                if (modelClass->_usesPropertyJSONEncodingMethod) {
+                    value = [NSString stringWithFormat:@"<void: %@>", [(id<XZJSONCoding>)model JSONEncodeValueForKey:key]];
+                } else {
+                    value = @"<void>";
+                }
+                break;
+            }
             case XZObjcTypeBitField: {
-                value = [NSString stringWithFormat:@"<bit field: %@>", property->_property.type.name];
+                if (modelClass->_usesPropertyJSONEncodingMethod) {
+                    value = [NSString stringWithFormat:@"<BitField: %@>", [(id<XZJSONCoding>)model JSONEncodeValueForKey:key]];
+                } else {
+                    value = [NSString stringWithFormat:@"<BitField: %ld bit>", (long)property->_property.type.sizeInBit];
+                }
                 break;
             }
             case XZObjcTypeUnknown: {
-                value = @"<unknown>";
+                if (modelClass->_usesPropertyJSONEncodingMethod) {
+                    value = [NSString stringWithFormat:@"<unknown: %@>", [(id<XZJSONCoding>)model JSONEncodeValueForKey:key]];
+                } else {
+                    value = @"<unknown>";
+                }
                 break;
             }
         }
@@ -1377,4 +1397,594 @@ NSString * _Nonnull XZJSONModelDescription(NSObject *_Nonnull model, NSUInteger 
     return desc;
 }
 
+#pragma mark - NSCoding
 
+static inline BOOL NSCollectionConformsNSCoding(id<NSFastEnumeration> sequence) {
+    for (id object in sequence) {
+        if (![object conformsToProtocol:@protocol(NSCoding)]) {
+            return NO;
+        }
+    }
+    return YES;
+}
+
+static inline BOOL NSCollectionTestElementClass(id<NSFastEnumeration> sequence, Class Element) {
+    for (id object in sequence) {
+        if (![object isKindOfClass:Element]) {
+            return NO;
+        }
+    }
+    return YES;
+}
+
+static inline BOOL NSDictionaryConformsNSCoding(NSDictionary *dictionary) {
+    BOOL __block conforms = YES;
+    [dictionary enumerateKeysAndObjectsUsingBlock:^(id  _Nonnull key, id  _Nonnull obj, BOOL * _Nonnull stop) {
+        if (![key conformsToProtocol:@protocol(NSCoding)] || ![obj conformsToProtocol:@protocol(NSCoding)]) {
+            conforms = NO;
+            *stop = YES;
+        }
+    }];
+    return conforms;
+}
+
+static inline BOOL NSDictionaryTestElementClass(NSDictionary *dictionary, Class Element) {
+    BOOL __block isKindOfClass = YES;
+    [dictionary enumerateKeysAndObjectsUsingBlock:^(id  _Nonnull key, id  _Nonnull obj, BOOL * _Nonnull stop) {
+        if ([key isKindOfClass:NSString.class] || [key isKindOfClass:NSNumber.class]) {
+            if ([obj isKindOfClass:Element]) {
+                return;
+            }
+        }
+        isKindOfClass = NO;
+        *stop = YES;
+    }];
+    return isKindOfClass;
+}
+
+void XZJSONModelEncodeWithCoder(id model, NSCoder *aCoder) {
+    if (!model || !aCoder) {
+        return;
+    }
+    
+    if (model == (id)kCFNull) {
+        [((id<NSCoding>)model) encodeWithCoder:aCoder];
+        return;
+    }
+    
+    XZJSONClassDescriptor * const modelClass = [XZJSONClassDescriptor descriptorForClass:[model class]];
+    
+    switch (modelClass->_classType) {
+        case XZJSONClassTypeNSString:
+        case XZJSONClassTypeNSMutableString:
+        case XZJSONClassTypeNSValue:
+        case XZJSONClassTypeNSNumber:
+        case XZJSONClassTypeNSDecimalNumber:
+        case XZJSONClassTypeNSData:
+        case XZJSONClassTypeNSMutableData:
+        case XZJSONClassTypeNSDate:
+        case XZJSONClassTypeNSURL: {
+            [(id<NSCoding>)model encodeWithCoder:aCoder];
+            break;
+        }
+        case XZJSONClassTypeNSArray:
+        case XZJSONClassTypeNSMutableArray:
+        case XZJSONClassTypeNSSet:
+        case XZJSONClassTypeNSMutableSet: {
+            if (NSCollectionConformsNSCoding(model)) {
+                [(id<NSCoding>)model encodeWithCoder:aCoder];
+            }
+            break;
+        }
+        case XZJSONClassTypeNSDictionary:
+        case XZJSONClassTypeNSMutableDictionary: {
+            if (NSDictionaryConformsNSCoding(model)) {
+                [(id<NSCoding>)model encodeWithCoder:aCoder];
+            }
+            break;
+        }
+        case XZJSONClassTypeUnknown: {
+            [modelClass->_properties enumerateObjectsUsingBlock:^(XZJSONPropertyDescriptor *property, NSUInteger idx, BOOL *stop) {
+                SEL        const getter = property->_getter;
+                NSString * const name   = property->_name;
+                switch (property->_type) {
+                    case XZObjcTypeUnknown:
+                    case XZObjcTypeVoid:
+                    case XZObjcTypeString:
+                    case XZObjcTypeArray:
+                    case XZObjcTypeBitField:
+                    case XZObjcTypePointer:
+                    case XZObjcTypeUnion: {
+                        // 无法编码
+                        break;
+                    }
+                    case XZObjcTypeChar: {
+                        char const aValue = ((char (*)(id, SEL))objc_msgSend)(model, getter);
+                        [aCoder encodeInt:aValue forKey:name];
+                        return;
+                    }
+                    case XZObjcTypeUnsignedChar: {
+                        unsigned char const aValue = ((unsigned char (*)(id, SEL))objc_msgSend)(model, getter);
+                        [aCoder encodeInt:aValue forKey:name];
+                        return;
+                    }
+                    case XZObjcTypeInt: {
+                        int const aValue = ((int (*)(id, SEL))objc_msgSend)(model, getter);
+                        [aCoder encodeInt:aValue forKey:name];
+                        return;
+                    }
+                    case XZObjcTypeUnsignedInt: {
+                        unsigned int const aValue = ((unsigned int (*)(id, SEL))objc_msgSend)(model, getter);
+                        [aCoder encodeInt:aValue forKey:name];
+                        return;
+                    }
+                    case XZObjcTypeShort: {
+                        short const aValue = ((short (*)(id, SEL))objc_msgSend)(model, getter);
+                        [aCoder encodeInt:aValue forKey:name];
+                        return;
+                    }
+                    case XZObjcTypeUnsignedShort: {
+                        unsigned short const aValue = ((unsigned short (*)(id, SEL))objc_msgSend)(model, getter);
+                        [aCoder encodeInt:aValue forKey:name];
+                        return;
+                    }
+                    case XZObjcTypeLong: {
+                        long const aValue = ((long (*)(id, SEL))objc_msgSend)(model, getter);
+                        [aCoder encodeInt64:aValue forKey:name];
+                        return;
+                    }
+                    case XZObjcTypeUnsignedLong: {
+                        unsigned long const aValue = ((unsigned long (*)(id, SEL))objc_msgSend)(model, getter);
+                        [aCoder encodeInt64:aValue forKey:name];
+                        return;
+                    }
+                    case XZObjcTypeLongLong: {
+                        long long const aValue = ((long long (*)(id, SEL))objc_msgSend)(model, getter);
+                        [aCoder encodeInt64:aValue forKey:name];
+                        return;
+                    }
+                    case XZObjcTypeUnsignedLongLong: {
+                        unsigned long long const aValue = ((unsigned long long (*)(id, SEL))objc_msgSend)(model, getter);
+                        [aCoder encodeInt64:aValue forKey:name];
+                        return;
+                    }
+                    case XZObjcTypeFloat: {
+                        float const aValue = ((float (*)(id, SEL))objc_msgSend)(model, getter);
+                        [aCoder encodeFloat:aValue forKey:name];
+                        break;
+                    }
+                    case XZObjcTypeDouble: {
+                        double const aValue = ((double (*)(id, SEL))objc_msgSend)(model, getter);
+                        [aCoder encodeDouble:aValue forKey:name];
+                        return;
+                    }
+                    case XZObjcTypeLongDouble: {
+                        long double const aValue = ((long double (*)(id, SEL))objc_msgSend)(model, getter);
+                        [aCoder encodeBytes:(const uint8_t *)&aValue length:sizeof(long double) forKey:name];
+                        return;
+                    }
+                    case XZObjcTypeBool: {
+                        BOOL const aValue = ((BOOL (*)(id, SEL))objc_msgSend)(model, getter);
+                        [aCoder encodeBool:aValue forKey:name];
+                        return;
+                    }
+                    case XZObjcTypeStruct: {
+                        NSString * const aValue = XZJSONModelEncodeStructProperty(model, property);
+                        if (aValue) {
+                            [aCoder encodeObject:aValue forKey:name];
+                            return;
+                        }
+                        break;
+                    }
+                    case XZObjcTypeClass: {
+                        Class const aValue = ((Class (*)(id, SEL))objc_msgSend)(model, getter);
+                        NSString *className = NSStringFromClass(aValue);
+                        [aCoder encodeObject:className forKey:name];
+                        return;
+                    }
+                    case XZObjcTypeSEL: {
+                        SEL const aValue = ((SEL (*)(id, SEL))objc_msgSend)(model, getter);
+                        NSString *selectorName = NSStringFromSelector(aValue);
+                        [aCoder encodeObject:selectorName forKey:name];
+                        return;
+                    }
+                    case XZObjcTypeObject: {
+                        id const aValue = ((id (*)(id, SEL))objc_msgSend)(model, getter);
+                        if (!aValue) {
+                            return;
+                        }
+                        
+                        // 安全归档
+                        if (aCoder.requiresSecureCoding) {
+                            // 无法确定类型，不能安全归档
+                            if (!property->_subtype) {
+                                break;
+                            }
+                            // 类型不支持安全归档
+                            if (![property->_subtype conformsToProtocol:@protocol(NSSecureCoding)]) {
+                                break;
+                            }
+                            // 如果是集合类型，需要进一步判断元素
+                            switch (property->_classType) {
+                                case XZJSONClassTypeNSArray:
+                                case XZJSONClassTypeNSMutableArray:
+                                case XZJSONClassTypeNSSet:
+                                case XZJSONClassTypeNSMutableSet: {
+                                    // 无法确定元素类型，无法进行安全归档
+                                    if (!property->_elementType) {
+                                        break;
+                                    }
+                                    // 元素类型不支持安全归档
+                                    if (![property->_elementType conformsToProtocol:@protocol(NSSecureCoding)]) {
+                                        break;
+                                    }
+                                    // 检查元素是否合法：元素必须是已知类型，否则无法解档
+                                    if (!NSCollectionTestElementClass(aValue, property->_elementType)) {
+                                        break;
+                                    }
+                                    // 执行归档
+                                    [aCoder encodeObject:aValue forKey:name];
+                                    return;
+                                }
+                                case XZJSONClassTypeNSDictionary:
+                                case XZJSONClassTypeNSMutableDictionary: {
+                                    // 没有元素类型，无法进行编码
+                                    if (!property->_elementType) {
+                                        break;
+                                    }
+                                    // 元素类型不支持安全归档
+                                    if (![property->_elementType conformsToProtocol:@protocol(NSSecureCoding)]) {
+                                        break;
+                                    }
+                                    // 检查元素是否合法：字典键值，都必须支持已知，且支持安全归档。目前仅支持以 NSString/NSNumber 作为 key 的字典。
+                                    if (!NSDictionaryTestElementClass(aValue, property->_elementType)) {
+                                        break;
+                                    }
+                                    // 执行归档
+                                    [aCoder encodeObject:aValue forKey:name];
+                                    return;
+                                }
+                                case XZJSONClassTypeNSString:
+                                case XZJSONClassTypeNSMutableString:
+                                case XZJSONClassTypeNSValue:
+                                case XZJSONClassTypeNSNumber:
+                                case XZJSONClassTypeNSDecimalNumber:
+                                case XZJSONClassTypeNSData:
+                                case XZJSONClassTypeNSMutableData:
+                                case XZJSONClassTypeNSDate:
+                                case XZJSONClassTypeNSURL:
+                                case XZJSONClassTypeUnknown: {
+                                    // 执行归档：支持安全归档的已知普通类型
+                                    [aCoder encodeObject:aValue forKey:name];
+                                    return;
+                                }
+                            }
+                            break;
+                        }
+                        
+                        // 普通归档，仅需要支持归档协议即可
+                        if (![property->_subtype conformsToProtocol:@protocol(NSCoding)]) {
+                            break;
+                        }
+                        switch (property->_classType) {
+                            case XZJSONClassTypeNSArray:
+                            case XZJSONClassTypeNSMutableArray:
+                            case XZJSONClassTypeNSSet:
+                            case XZJSONClassTypeNSMutableSet: {
+                                // 检查元素是否合法：元素只要支持归档即可。
+                                if (NSCollectionConformsNSCoding(model)) {
+                                    [aCoder encodeObject:model forKey:name];
+                                    return;
+                                }
+                                break;
+                            }
+                            case XZJSONClassTypeNSDictionary:
+                            case XZJSONClassTypeNSMutableDictionary: {
+                                // 检查元素是否合法：元素只需要支持归档即可
+                                if (NSDictionaryConformsNSCoding(model)) {
+                                    [aCoder encodeObject:model forKey:name];
+                                    return;
+                                }
+                                break;
+                            }
+                            case XZJSONClassTypeNSString:
+                            case XZJSONClassTypeNSMutableString:
+                            case XZJSONClassTypeNSValue:
+                            case XZJSONClassTypeNSNumber:
+                            case XZJSONClassTypeNSDecimalNumber:
+                            case XZJSONClassTypeNSData:
+                            case XZJSONClassTypeNSMutableData:
+                            case XZJSONClassTypeNSDate:
+                            case XZJSONClassTypeNSURL:
+                            case XZJSONClassTypeUnknown: {
+                                [aCoder encodeObject:model forKey:name];
+                                break;
+                            }
+                        }
+                        break;
+                    }
+                }
+                
+                // 不能处理的属性
+                if (property->_class->_usesPropertyJSONEncodingMethod) {
+                    id<NSCoding> aValue = [((id<XZJSONCoding>)model) JSONEncodeValueForKey:name];
+                    if (aValue) {
+                        [aCoder encodeObject:aValue forKey:name];
+                    }
+                } else {
+                    NSLog(@"[XZJSON] [NSCoding] Can not encode property `%@` of `%@`!", modelClass->_class.name, property->_name);
+                }
+            }];
+            break;
+        }
+    }
+}
+
+id _Nullable XZJSONModelDecodeWithCoder(id model, NSCoder *aCoder) {
+    if (!model || !aCoder) {
+        return model;
+    }
+    
+    if (model == (id)kCFNull) {
+        return model;
+    }
+    
+    XZJSONClassDescriptor * const modelClass = [XZJSONClassDescriptor descriptorForClass:[model class]];
+    switch (modelClass->_classType) {
+        case XZJSONClassTypeNSString:
+        case XZJSONClassTypeNSMutableString:
+        case XZJSONClassTypeNSValue:
+        case XZJSONClassTypeNSNumber:
+        case XZJSONClassTypeNSDecimalNumber:
+        case XZJSONClassTypeNSData:
+        case XZJSONClassTypeNSMutableData:
+        case XZJSONClassTypeNSDate:
+        case XZJSONClassTypeNSURL: {
+            return [(id<NSCoding>)model initWithCoder:aCoder];
+        }
+        case XZJSONClassTypeNSArray:
+        case XZJSONClassTypeNSMutableArray:
+        case XZJSONClassTypeNSSet:
+        case XZJSONClassTypeNSMutableSet: {
+            if (NSCollectionConformsNSCoding(model)) {
+                return [(id<NSCoding>)model initWithCoder:aCoder];
+            }
+            return nil;
+        }
+        case XZJSONClassTypeNSDictionary:
+        case XZJSONClassTypeNSMutableDictionary: {
+            if (NSDictionaryConformsNSCoding(model)) {
+                return [(id<NSCoding>)model initWithCoder:aCoder];
+            }
+            return nil;
+        }
+        case XZJSONClassTypeUnknown: {
+            [modelClass->_properties enumerateObjectsUsingBlock:^(XZJSONPropertyDescriptor *property, NSUInteger idx, BOOL *stop) {
+                NSString * const name   = property->_name;
+                SEL        const setter = property->_setter;
+                
+                // 无归档数据
+                if (![aCoder containsValueForKey:name]) {
+                    return;
+                }
+                
+                switch (property->_type) {
+                    case XZObjcTypeUnknown:
+                    case XZObjcTypeVoid:
+                    case XZObjcTypeString:
+                    case XZObjcTypeArray:
+                    case XZObjcTypeBitField:
+                    case XZObjcTypePointer:
+                    case XZObjcTypeUnion: {
+                        // 不支持的数据类型
+                        break;
+                    }
+                    case XZObjcTypeChar: {
+                        char const aValue = [aCoder decodeIntForKey:name];
+                        ((void (*)(id, SEL, char))objc_msgSend)(model, setter, aValue);
+                        return;
+                    }
+                    case XZObjcTypeUnsignedChar: {
+                        unsigned char const aValue = [aCoder decodeIntForKey:name];
+                        ((void (*)(id, SEL, unsigned char))objc_msgSend)(model, setter, aValue);
+                        return;
+                    }
+                    case XZObjcTypeInt: {
+                        int const aValue = [aCoder decodeIntForKey:name];
+                        ((void (*)(id, SEL, int))objc_msgSend)(model, setter, aValue);
+                        return;
+                    }
+                    case XZObjcTypeUnsignedInt: {
+                        unsigned int const aValue = [aCoder decodeIntForKey:name];
+                        ((void (*)(id, SEL, unsigned int))objc_msgSend)(model, setter, aValue);
+                        return;
+                    }
+                    case XZObjcTypeShort: {
+                        short const aValue = [aCoder decodeIntForKey:name];
+                        ((void (*)(id, SEL, short))objc_msgSend)(model, setter, aValue);
+                        return;
+                    }
+                    case XZObjcTypeUnsignedShort: {
+                        unsigned short const aValue = [aCoder decodeIntForKey:name];
+                        ((void (*)(id, SEL, unsigned short))objc_msgSend)(model, setter, aValue);
+                        return;
+                    }
+                    case XZObjcTypeLong: {
+                        long const aValue = [aCoder decodeInt64ForKey:name];
+                        ((void (*)(id, SEL, long))objc_msgSend)(model, setter, aValue);
+                        return;
+                    }
+                    case XZObjcTypeUnsignedLong: {
+                        unsigned long const aValue = [aCoder decodeInt64ForKey:name];
+                        ((void (*)(id, SEL, unsigned long))objc_msgSend)(model, setter, aValue);
+                        return;
+                    }
+                    case XZObjcTypeLongLong: {
+                        long long const aValue = [aCoder decodeInt64ForKey:name];
+                        ((void (*)(id, SEL, long long))objc_msgSend)(model, setter, aValue);
+                        return;
+                    }
+                    case XZObjcTypeUnsignedLongLong: {
+                        unsigned long long const aValue = [aCoder decodeInt64ForKey:name];
+                        ((void (*)(id, SEL, unsigned long long))objc_msgSend)(model, setter, aValue);
+                        return;
+                    }
+                    case XZObjcTypeFloat: {
+                        float const aValue = [aCoder decodeFloatForKey:name];
+                        ((void (*)(id, SEL, float))objc_msgSend)(model, setter, aValue);
+                        return;
+                    }
+                    case XZObjcTypeDouble: {
+                        double const aValue = [aCoder decodeDoubleForKey:name];
+                        ((void (*)(id, SEL, double))objc_msgSend)(model, setter, aValue);
+                        [aCoder encodeDouble:aValue forKey:name];
+                        return;
+                    }
+                    case XZObjcTypeLongDouble: {
+                        long double *aValue = (long double *)[aCoder decodeBytesForKey:name returnedLength:nil];
+                        ((void (*)(id, SEL, long double))objc_msgSend)(model, setter, *aValue);
+                        return;
+                    }
+                    case XZObjcTypeBool: {
+                        BOOL const aValue = [aCoder decodeBoolForKey:name];
+                        ((void (*)(id, SEL, BOOL))objc_msgSend)(model, setter, aValue);
+                        return;
+                    }
+                    case XZObjcTypeStruct: {
+                        id aValue = nil;
+                        if (aCoder.requiresSecureCoding) {
+                            aValue = [aCoder decodeObjectOfClass:NSString.class forKey:name];
+                        } else {
+                            aValue = [aCoder decodeObjectForKey:name];
+                        }
+                        if (!aValue) {
+                            break;
+                        }
+                        if (XZJSONModelDecodeStructProperty(model, property, aValue)) {
+                            return;
+                        }
+                        break;
+                    }
+                    case XZObjcTypeClass: {
+                        id aValue = nil;
+                        if (aCoder.requiresSecureCoding) {
+                            aValue = [aCoder decodeObjectOfClass:NSString.class forKey:name];
+                        } else {
+                            aValue = [aCoder decodeObjectForKey:name];
+                        }
+                        if (!aValue) {
+                            break;
+                        }
+                        if ([aValue isKindOfClass:NSString.class]) {
+                            Class const aClass = NSClassFromString((NSString *)aValue);
+                            if (aClass) {
+                                ((void (*)(id, SEL, Class))objc_msgSend)(model, setter, aClass);
+                                return;
+                            }
+                        }
+                        break;
+                    }
+                    case XZObjcTypeSEL: {
+                        id aValue = nil;
+                        if (aCoder.requiresSecureCoding) {
+                            aValue = [aCoder decodeObjectOfClass:NSString.class forKey:name];
+                        } else {
+                            aValue = [aCoder decodeObjectForKey:name];
+                        }
+                        if (!aValue) {
+                            break;
+                        }
+                        if ([aValue isKindOfClass:NSString.class]) {
+                            SEL const aSelector = NSSelectorFromString((NSString *)aValue);
+                            if (aSelector) {
+                                ((void (*)(id, SEL, SEL))objc_msgSend)(model, setter, aSelector);
+                                return;
+                            }
+                        }
+                        break;
+                    }
+                    case XZObjcTypeObject: {
+                        // 安全解档
+                        if (aCoder.requiresSecureCoding) {
+                            // 未知类型，无法安全解档
+                            if (!property->_subtype) {
+                                break;
+                            }
+                            // 类型不支持安全解档
+                            if (![property->_subtype conformsToProtocol:@protocol(NSSecureCoding)]) {
+                                break;
+                            }
+                            // 集合类型的元素也需要支持安全解档
+                            switch (property->_classType) {
+                                case XZJSONClassTypeNSArray:
+                                case XZJSONClassTypeNSMutableArray:
+                                case XZJSONClassTypeNSSet:
+                                case XZJSONClassTypeNSMutableSet: {
+                                    // 元素类型未知，无法安全解档
+                                    if (!property->_elementType) {
+                                        break;
+                                    }
+                                    // 元素类型不支持安全解档
+                                    if (![property->_elementType conformsToProtocol:@protocol(NSSecureCoding)]) {
+                                        break;
+                                    }
+                                    NSSet * const classes = [NSSet setWithObjects:property->_subtype, property->_elementType, nil];
+                                    id const aValue = [aCoder decodeObjectOfClasses:classes forKey:name];
+                                    if (aValue) {
+                                        ((void (*)(id, SEL, id))objc_msgSend)(model, setter, aValue);
+                                        return;
+                                    }
+                                    break;
+                                }
+                                case XZJSONClassTypeNSDictionary:
+                                case XZJSONClassTypeNSMutableDictionary: {
+                                    // 元素类型未知，无法安全解档
+                                    if (!property->_elementType) {
+                                        break;
+                                    }
+                                    // 元素类型不支持安全解档
+                                    if (![property->_elementType conformsToProtocol:@protocol(NSSecureCoding)]) {
+                                        break;
+                                    }
+                                    NSSet * const classes = [NSSet setWithObjects:[NSString class], [NSNumber class], property->_subtype, property->_elementType, nil];
+                                    id const aValue = [aCoder decodeObjectOfClasses:classes forKey:name];
+                                    if (aValue) {
+                                        ((void (*)(id, SEL, id))objc_msgSend)(model, setter, aValue);
+                                        return;
+                                    }
+                                    break;
+                                }
+                                default: {
+                                    id aValue = [aCoder decodeObjectOfClass:property->_subtype forKey:name];
+                                    if (aValue) {
+                                        ((void (*)(id, SEL, id))objc_msgSend)(model, setter, aValue);
+                                        return;
+                                    }
+                                    break;
+                                }
+                            }
+                            break;
+                        }
+                        
+                        // 普通解档
+                        id const aValue = [aCoder decodeObjectForKey:name];
+                        if (aValue) {
+                            ((void (*)(id, SEL, id))objc_msgSend)(model, setter, aValue);
+                            return;
+                        }
+                        break;
+                    }
+                }
+                
+                if ([aCoder containsValueForKey:name] && modelClass->_usesPropertyJSONDecodingMethod) {
+                    [((id<XZJSONCoding>)model) JSONDecodeValue:aCoder forKey:name];
+                } else {
+                    NSLog(@"[XZJSON] Can not decode property `%@` of `%@`!", modelClass->_class.name, property->_name);
+                }
+            }];
+            break;
+        }
+    }
+    
+    return model;
+}

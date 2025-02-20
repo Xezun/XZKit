@@ -19,6 +19,26 @@
     };
 }
 
+- (instancetype)initWithCoder:(NSCoder *)coder {
+    self = [super init];
+    if (self) {
+        [XZJSON model:self decodeWithCoder:coder];
+    }
+    return self;
+}
+
+- (void)encodeWithCoder:(NSCoder *)coder {
+    [XZJSON model:self encodeWithCoder:coder];
+}
+
++ (BOOL)supportsSecureCoding {
+    return YES;
+}
+
+- (NSString *)description {
+    return [XZJSON modelDescription:self];
+}
+
 @end
 
 @implementation Example05Teacher
@@ -44,27 +64,83 @@
         [XZJSON model:self decodeFromDictionary:JSON];
         
         // 处理自定义逻辑：关联学生和老师
-        [self.students enumerateObjectsUsingBlock:^(Example05Student * _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
-            obj.teacher = self;
-        }];
+        for (Example05Student *student in self.students) {
+            student.teacher = self;
+        }
     }
     return self;
 }
 
-- (NSString *)description {
-    return [XZJSON modelDescription:self];
+- (void)dealloc {
+    if (_foo) {
+        free(_foo);
+        _foo = NULL;
+    }
+}
+
+- (void)JSONDecodeValue:(id)valueOrCoder forKey:(NSString *)key {
+    if ([key isEqualToString:@"foo"]) {
+        if ([valueOrCoder isKindOfClass:NSCoder.class]) {
+            valueOrCoder = [(NSCoder *)valueOrCoder decodeObjectOfClass:NSString.class forKey:key];
+        }
+        NSString *value = valueOrCoder;
+        if ([value isKindOfClass:NSString.class]) {
+            NSUInteger length = [value lengthOfBytesUsingEncoding:NSASCIIStringEncoding];
+            if (_foo) {
+                _foo = realloc(_foo, length * sizeof(char));
+            } else {
+                _foo = calloc(length, sizeof(char));
+            }
+            memcpy(_foo, [value cStringUsingEncoding:NSASCIIStringEncoding], length);
+        }
+    }
+}
+
+- (id)JSONEncodeValueForKey:(NSString *)key {
+    if ([key isEqualToString:@"foo"]) {
+        return _foo ? [NSString stringWithCString:_foo encoding:NSASCIIStringEncoding] : nil;
+    }
+    return nil;
 }
 
 @end
 
+@import XZObjcDescriptor;
+
 @implementation Example05Student
+
++ (void)load {
+    XZObjcTypeRegister(Example05Struct);
+}
 
 + (NSArray<NSString *> *)allowedJSONCodingKeys {
     return nil;
 }
 
-- (NSString *)description {
-    return [XZJSON modelDescription:self];
+- (void)JSONDecodeValue:(id)valueOrCoder forKey:(NSString *)key {
+    if ([key isEqualToString:@"bar"]) {
+        if ([valueOrCoder isKindOfClass:NSCoder.class]) {
+            valueOrCoder = [(NSCoder *)valueOrCoder decodeObjectOfClass:NSString.class forKey:key];
+        }
+        NSString *value = valueOrCoder;
+        if ([value isKindOfClass:NSString.class]) {
+            value = [value stringByTrimmingCharactersInSet:[NSCharacterSet characterSetWithCharactersInString:@"{}"]];
+            NSArray *parts = [value componentsSeparatedByString:@", "];
+            if (parts.count == 3) {
+                int a = [parts[0] intValue];
+                float b = [parts[1] floatValue];
+                double c = [parts[2] doubleValue];
+                _bar = (Example05Struct){a, b, c};
+            }
+        }
+    }
+}
+
+- (id)JSONEncodeValueForKey:(NSString *)key {
+    if ([key isEqualToString:@"bar"]) {
+        return [NSString stringWithFormat:@"{%d, %G, %G}", _bar.a, _bar.b, _bar.c];
+    }
+    return nil;
 }
 
 @end

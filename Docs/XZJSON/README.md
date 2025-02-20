@@ -25,19 +25,20 @@ XZJSON is available through [CocoaPods](https://cocoapods.org). To install it, s
 pod 'XZJSON'
 ```
 
-## 如何使用
+## 特点
 
-> XZJSON 基于 [YYModel](https://github.com/ibireme/YYModel) 打造，主要解决 YYModel 不再维护的问题。
+1. 借鉴 [YYModel](https://github.com/ibireme/YYModel) 设计思路打造，与 YYModel 具有几乎相同的模型转换性能。
+2. 为方便接入，XZJSON 采用 “工具类” + “协议” 的方式实现，迁移到 XZJSON 可以仅替换实现，尽量保留 API 以避免接口改动过大。
 
-> XZJSON 采用 “工具类” + “协议” 的方式实现，这与 YYModel 设计思路不同。
+## 示例
 
-1、JSON 数据 Model 化
+1、数据转模型
 
 ```objc
 Model *model = [XZJSON decode:data options:(NSJSONReadingAllowFragments) class:[Model class]];
 ```
 
-2、Model 对象 JSON 序列化
+2、模型转数据
 
 ```objc
 NSData *json = [XZJSON encode:model options:NSJSONWritingPrettyPrinted error:nil];
@@ -45,7 +46,7 @@ NSData *json = [XZJSON encode:model options:NSJSONWritingPrettyPrinted error:nil
 
 3、其它功能
 
-- Model 属性与 JSON 键映射
+- 自定义模型属性与数据键值的映射关系
 
 ```objc
 + (NSDictionary<NSString *,id> *)mappingJSONCodingKeys {
@@ -58,7 +59,7 @@ NSData *json = [XZJSON encode:model options:NSJSONWritingPrettyPrinted error:nil
 }
 ```
 
-- 不透明对象类型映射
+- 不透明对象或集合元素类型映射
 
 ```objc
 + (NSDictionary<NSString *,id> *)mappingJSONCodingClasses {
@@ -123,6 +124,113 @@ NSData *json = [XZJSON encode:model options:NSJSONWritingPrettyPrinted error:nil
     [XZJSON object:self encodeIntoDictionary:dictionary];
     dictionary[@"date"] = @(NSDate.date.timeIntervalSince1970); // 自定义：向序列化数据中，加入一个时间戳
     return dictionary;
+}
+```
+
+- 模型描述
+
+```objc
+[XZJSON modelDescription:model];
+```
+
+- 归档与解档
+
+```objc
+- (instancetype)initWithCoder:(NSCoder *)coder {
+    self = [super init];
+    if (self) {
+        [XZJSON model:self decodeWithCoder:coder];
+    }
+    return self;
+}
+
+- (void)encodeWithCoder:(NSCoder *)coder {
+    [XZJSON model:self encodeWithCoder:coder];
+}
+
++ (BOOL)supportsSecureCoding {
+    return YES;
+}
+```
+
+- 特殊属性的 encoding/decoding
+
+示例1，C 指针的内存完全是由开发者管理，因此需要自定义 encoding/decoding 过程。
+
+```objc
+/// c 字符串。
+@property (nonatomic) char *foo;
+
+- (void)dealloc {
+    if (_foo) {
+        free(_foo);
+        _foo = NULL;
+    }
+}
+
+- (void)JSONDecodeValue:(id)valueOrCoder forKey:(NSString *)key {
+    if ([key isEqualToString:@"foo"]) {
+        if ([valueOrCoder isKindOfClass:NSCoder.class]) {
+            // 如果使用了 XZJSON 的存档方法，那么在这里也可以自定义存档的解档过程。
+            valueOrCoder = [(NSCoder *)valueOrCoder decodeObjectOfClass:NSString.class forKey:key];
+        }
+        NSString *value = valueOrCoder;
+        if ([value isKindOfClass:NSString.class]) {
+            NSUInteger length = [value lengthOfBytesUsingEncoding:NSASCIIStringEncoding];
+            if (_foo) {
+                _foo = realloc(_foo, length * sizeof(char));
+            } else {
+                _foo = calloc(length, sizeof(char));
+            }
+            memcpy(_foo, [value cStringUsingEncoding:NSASCIIStringEncoding], length);
+        }
+    }
+}
+
+- (id<NSCoding>)JSONEncodeValueForKey:(NSString *)key {
+    if ([key isEqualToString:@"foo"]) {
+        // c 字符串的自定义 encode 过程，返回值也会用于 存档 过程。
+        return _foo ? [NSString stringWithCString:_foo encoding:NSASCIIStringEncoding] : nil;
+    }
+    return nil;
+}
+``` 
+
+2. 自定义结构体的自定义 encoding/decoding 过程。
+
+```objc
+typedef struct Example05Struct {
+    int a;
+    float b;
+    double c;
+} Example05Struct;
+
+@property (nonatomic) Example05Struct bar;
+
+- (void)JSONDecodeValue:(id)valueOrCoder forKey:(NSString *)key {
+    if ([key isEqualToString:@"bar"]) {
+        if ([valueOrCoder isKindOfClass:NSCoder.class]) {
+            valueOrCoder = [(NSCoder *)valueOrCoder decodeObjectOfClass:NSString.class forKey:key];
+        }
+        NSString *value = valueOrCoder;
+        if ([value isKindOfClass:NSString.class]) {
+            value = [value stringByTrimmingCharactersInSet:[NSCharacterSet characterSetWithCharactersInString:@"{}"]];
+            NSArray *parts = [value componentsSeparatedByString:@", "];
+            if (parts.count == 3) {
+                int a = [parts[0] intValue];
+                float b = [parts[1] floatValue];
+                double c = [parts[2] doubleValue];
+                _bar = (Example05Struct){a, b, c};
+            }
+        }
+    }
+}
+
+- (id)JSONEncodeValueForKey:(NSString *)key {
+    if ([key isEqualToString:@"bar"]) {
+        return [NSString stringWithFormat:@"{%d, %G, %G}", _bar.a, _bar.b, _bar.c];
+    }
+    return nil;
 }
 ```
 

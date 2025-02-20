@@ -40,6 +40,7 @@
 		04D34E692D314ABB0013D4A3 /* Example17NavigationController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 04D34E632D314ABB0013D4A3 /* Example17NavigationController.swift */; };
 		04D34E6A2D314ABB0013D4A3 /* Example17NextViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 04D34E642D314ABB0013D4A3 /* Example17NextViewController.swift */; };
 		04D34E6C2D314B0A0013D4A3 /* Example17NavigationBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = 04D34E6B2D314B0A0013D4A3 /* Example17NavigationBar.swift */; };
+		04DD47012D674030003AD7D2 /* Example05TextViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 04DD47002D674030003AD7D2 /* Example05TextViewController.m */; };
 		04FE1C8F2D34CC0D001CC274 /* Example15.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 04FE1C8D2D34CC0D001CC274 /* Example15.storyboard */; };
 		292A5A472D254D010037579D /* Example04ViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 292A5A462D254D010037579D /* Example04ViewController.m */; };
 		292A5A482D254D010037579D /* Example04FontSizeViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 292A5A402D254D010037579D /* Example04FontSizeViewController.m */; };
@@ -344,6 +345,8 @@
 		04D34E632D314ABB0013D4A3 /* Example17NavigationController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Example17NavigationController.swift; sourceTree = "<group>"; };
 		04D34E642D314ABB0013D4A3 /* Example17NextViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Example17NextViewController.swift; sourceTree = "<group>"; };
 		04D34E6B2D314B0A0013D4A3 /* Example17NavigationBar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Example17NavigationBar.swift; sourceTree = "<group>"; };
+		04DD46FF2D674030003AD7D2 /* Example05TextViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Example05TextViewController.h; sourceTree = "<group>"; };
+		04DD47002D674030003AD7D2 /* Example05TextViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = Example05TextViewController.m; sourceTree = "<group>"; };
 		04FE1C8E2D34CC0D001CC274 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Example15.storyboard; sourceTree = "<group>"; };
 		04FE1C912D34CC4B001CC274 /* zh-Hans */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "zh-Hans"; path = "zh-Hans.lproj/Example15.strings"; sourceTree = "<group>"; };
 		04FE1C932D34CC4C001CC274 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/Example15.strings; sourceTree = "<group>"; };
@@ -951,6 +954,8 @@
 				29B334142D31777E006A574A /* Example05.storyboard */,
 				292A5A4F2D254F6A0037579D /* Example05ViewController.h */,
 				292A5A502D254F6A0037579D /* Example05ViewController.m */,
+				04DD46FF2D674030003AD7D2 /* Example05TextViewController.h */,
+				04DD47002D674030003AD7D2 /* Example05TextViewController.m */,
 				292A5A532D255DC50037579D /* Example05Model.json */,
 				292A5A4D2D254F6A0037579D /* Example05Model.h */,
 				292A5A4E2D254F6A0037579D /* Example05Model.m */,
@@ -3165,6 +3170,7 @@
 				046CE63E2D34C38C00B9389F /* Example19TextViewController.swift in Sources */,
 				046CE63F2D34C38C00B9389F /* Example19SelectViewController.swift in Sources */,
 				292C17652D251F6D00E465BF /* Example0320Group100SectionModel.m in Sources */,
+				04DD47012D674030003AD7D2 /* Example05TextViewController.m in Sources */,
 				292C17662D251F6D00E465BF /* Example0331Model.m in Sources */,
 				292C17672D251F6D00E465BF /* Example0331Group102SectionModel.m in Sources */,
 				292C17682D251F6D00E465BF /* Example0321ContactBookViewController.m in Sources */,
