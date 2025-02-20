@@ -49,6 +49,8 @@ NS_ASSUME_NONNULL_BEGIN
 
 /// 模型属性的类型不明确时，可通过此属性提供映射关系，比如属性是集合或者 id 类型。
 ///
+/// > 如果集合包含多种类型，建议使用“基类”，让集合中的元素具有相同的基类，然后在基类中 fowarding 子类。
+///
 /// The generic class mapper for container properties.
 ///
 /// If the property is a container object, such as NSArray/NSSet/NSDictionary,

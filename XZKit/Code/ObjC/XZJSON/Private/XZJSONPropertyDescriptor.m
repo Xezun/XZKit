@@ -48,13 +48,11 @@
         descriptor->_isScalarNumber = NO;
         XZObjcQualifiers const qualifiers = property.type.qualifiers;
         descriptor->_isUnownedReferenceProperty = (qualifiers & XZObjcQualifierWeak) || (!(qualifiers & XZObjcQualifierCopy) && !(qualifiers & XZObjcQualifierRetain));
-        descriptor->_conformsToNSCodingProtocol = [descriptor->_subtype conformsToProtocol:@protocol(NSCoding)];
     } else {
         descriptor->_subtype = Nil;
         descriptor->_classType = XZJSONClassTypeUnknown;
         descriptor->_isScalarNumber = XZObjcIsScalarNumber(descriptor->_type);
         descriptor->_isUnownedReferenceProperty = NO;
-        descriptor->_conformsToNSCodingProtocol = NO;
     }
     
     // 不是以 set 开头的 setter 无法被 KVC 找到。
@@ -64,7 +62,6 @@
     } else if ([setterName hasPrefix:@"_set"]) {
         descriptor->_isKeyValueCodable = [setterName substringWithRange:NSMakeRange(4, setterName.length - 5)];
     }
-    
     
     return descriptor;
 }

@@ -53,7 +53,6 @@ NS_ASSUME_NONNULL_BEGIN
     
     /// 是否为无主引用或弱引用的属性。 
     BOOL _isUnownedReferenceProperty;
-    BOOL _conformsToNSCodingProtocol;
 }
 
 + (XZJSONPropertyDescriptor *)descriptorWithClass:(XZJSONClassDescriptor *)aClass property:(XZObjcPropertyDescriptor *)property elementType:(nullable Class)elementType;

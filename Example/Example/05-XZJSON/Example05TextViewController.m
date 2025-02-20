@@ -15,15 +15,7 @@
 
 - (void)viewDidLoad {
     [super viewDidLoad];
-    
-}
-
-- (void)setText:(NSString *)text {
-    _textLabel.text = text;
-}
-
-- (NSString *)text {
-    return _textLabel.text;
+    _textLabel.text = _text;
 }
 
 @end
