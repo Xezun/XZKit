@@ -156,7 +156,7 @@ NS_ASSUME_NONNULL_BEGIN
 /// - Parameter JSON: 数据字典
 - (nullable NSMutableDictionary *)encodeIntoJSONDictionary:(NSMutableDictionary *)JSON;
 
-/// 自定义属性序列化。
+/// 需要自行实现序列化过程的属性。
 ///
 /// - 当 XZJSON 无法将属性值转换为 JSON 值时，此方法会被调用。
 /// - 当 XZJSON 在实现 NSCoding 遇到无法归档的属性值时，此方法会被调用。

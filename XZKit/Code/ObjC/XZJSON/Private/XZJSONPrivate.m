@@ -1311,15 +1311,37 @@ NSString * _Nonnull XZJSONModelDescription(NSObject *_Nonnull model, NSUInteger 
                 value = [NSString stringWithFormat:@"<selector: %@>", sel ? NSStringFromSelector(sel) : @"nil"];
                 break;
             }
-            case XZObjcTypeArray:
-            case XZObjcTypeString:
-            case XZObjcTypePointer: {
+            case XZObjcTypeArray: {
+                NSString *desc = nil;
                 if (modelClass->_usesPropertyJSONEncodingMethod) {
-                    value = [NSString stringWithFormat:@"%@", [(id<XZJSONCoding>)model JSONEncodeValueForKey:key]];
+                    desc = [NSString stringWithFormat:@"%@", [(id<XZJSONCoding>)model JSONEncodeValueForKey:key]];
                 } else {
                     void *pointer = ((void *(*)(id, SEL))(void *) objc_msgSend)((id)model, property->_getter);
-                    value = [NSString stringWithFormat:@"<%@: %p>", property->_property.type.name, pointer];
+                    desc = [NSString stringWithFormat:@"%p", pointer];
                 }
+                value = [NSString stringWithFormat:@"<array: %@, value: %@>", property->_property.type.name, desc];
+                break;
+            }
+            case XZObjcTypeString: {
+                NSString *desc = nil;
+                if (modelClass->_usesPropertyJSONEncodingMethod) {
+                    desc = [NSString stringWithFormat:@"%@", [(id<XZJSONCoding>)model JSONEncodeValueForKey:key]];
+                } else {
+                    void *pointer = ((void *(*)(id, SEL))(void *) objc_msgSend)((id)model, property->_getter);
+                    desc = [NSString stringWithFormat:@"%p", pointer];
+                }
+                value = [NSString stringWithFormat:@"<string: %@, value: %@>", property->_property.type.name, desc];
+                break;
+            }
+            case XZObjcTypePointer: {
+                NSString *desc = nil;
+                if (modelClass->_usesPropertyJSONEncodingMethod) {
+                    desc = [NSString stringWithFormat:@"%@", [(id<XZJSONCoding>)model JSONEncodeValueForKey:key]];
+                } else {
+                    void *pointer = ((void *(*)(id, SEL))(void *) objc_msgSend)((id)model, property->_getter);
+                    desc = [NSString stringWithFormat:@"%p", pointer];
+                }
+                value = [NSString stringWithFormat:@"<pointer: %@, value: %@>", property->_property.type.name, desc];
                 break;
             }
             case XZObjcTypeStruct: {
@@ -1327,12 +1349,17 @@ NSString * _Nonnull XZJSONModelDescription(NSObject *_Nonnull model, NSUInteger 
                 if (value == nil && modelClass->_usesPropertyJSONEncodingMethod) {
                     value = [NSString stringWithFormat:@"%@", [(id<XZJSONCoding>)model JSONEncodeValueForKey:key]];
                 }
-                value = [NSString stringWithFormat:@"<%@: %@>", property->_property.type.name, value ?: @"unknown"];
+                if (value) {
+                    value = [NSString stringWithFormat:@"<struct: %@, value: %@>", property->_property.type.name, value];
+                } else {
+                    value = [NSString stringWithFormat:@"<struct: %@>", property->_property.type.name];
+                }
                 break;
             }
             case XZObjcTypeUnion: {
                 if (modelClass->_usesPropertyJSONEncodingMethod) {
-                    value = [NSString stringWithFormat:@"%@", [(id<XZJSONCoding>)model JSONEncodeValueForKey:key]];
+                    NSString * const name = property->_property.type.name;
+                    value = [NSString stringWithFormat:@"<union: %@, value: %@>", name, [(id<XZJSONCoding>)model JSONEncodeValueForKey:key]];
                 } else {
                     value = [NSString stringWithFormat:@"<union: %@>", property->_property.type.name];
                 }
@@ -1340,7 +1367,7 @@ NSString * _Nonnull XZJSONModelDescription(NSObject *_Nonnull model, NSUInteger 
             }
             case XZObjcTypeVoid: {
                 if (modelClass->_usesPropertyJSONEncodingMethod) {
-                    value = [NSString stringWithFormat:@"%@", [(id<XZJSONCoding>)model JSONEncodeValueForKey:key]];
+                    value = [NSString stringWithFormat:@"<void: %@>", [(id<XZJSONCoding>)model JSONEncodeValueForKey:key]];
                 } else {
                     value = @"<void>";
                 }
@@ -1348,15 +1375,15 @@ NSString * _Nonnull XZJSONModelDescription(NSObject *_Nonnull model, NSUInteger 
             }
             case XZObjcTypeBitField: {
                 if (modelClass->_usesPropertyJSONEncodingMethod) {
-                    value = [NSString stringWithFormat:@"%@", [(id<XZJSONCoding>)model JSONEncodeValueForKey:key]];
+                    value = [NSString stringWithFormat:@"<BitField: %@>", [(id<XZJSONCoding>)model JSONEncodeValueForKey:key]];
                 } else {
-                    value = [NSString stringWithFormat:@"<BitField: %@>", property->_property.type.name];
+                    value = [NSString stringWithFormat:@"<BitField: %ld bit>", (long)property->_property.type.sizeInBit];
                 }
                 break;
             }
             case XZObjcTypeUnknown: {
                 if (modelClass->_usesPropertyJSONEncodingMethod) {
-                    value = [NSString stringWithFormat:@"%@", [(id<XZJSONCoding>)model JSONEncodeValueForKey:key]];
+                    value = [NSString stringWithFormat:@"<unknown: %@>", [(id<XZJSONCoding>)model JSONEncodeValueForKey:key]];
                 } else {
                     value = @"<unknown>";
                 }
@@ -1372,11 +1399,18 @@ NSString * _Nonnull XZJSONModelDescription(NSObject *_Nonnull model, NSUInteger 
 
 #pragma mark - NSCoding
 
-#import "XZJSONAnyNSCoding.h"
-
 static inline BOOL NSCollectionConformsNSCoding(id<NSFastEnumeration> sequence) {
     for (id object in sequence) {
         if (![object conformsToProtocol:@protocol(NSCoding)]) {
+            return NO;
+        }
+    }
+    return YES;
+}
+
+static inline BOOL NSCollectionTestElementClass(id<NSFastEnumeration> sequence, Class Element) {
+    for (id object in sequence) {
+        if (![object isKindOfClass:Element]) {
             return NO;
         }
     }
@@ -1394,127 +1428,18 @@ static inline BOOL NSDictionaryConformsNSCoding(NSDictionary *dictionary) {
     return conforms;
 }
 
-static inline id NSArrayApplyAnyNSCoding(NSArray *array) {
-    if (NSCollectionConformsNSCoding(array)) {
-        return array;
-    }
-    NSMutableArray *arrayM = [NSMutableArray arrayWithArray:array];
-    [array enumerateObjectsWithOptions:NSEnumerationReverse usingBlock:^(id  _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
-        if (![obj conformsToProtocol:@protocol(NSCoding)]) {
-            arrayM[idx] = [[XZJSONAnyNSCoding alloc] initWithBase:obj];
-        }
-    }];
-    return arrayM;
-}
-
-static inline id NSDictionaryApplyAnyNSCoding(NSDictionary *dictionary) {
-    if (NSDictionaryConformsNSCoding(dictionary)) {
-        return dictionary;
-    }
-    NSMutableDictionary *dictionaryM = [NSMutableDictionary dictionaryWithDictionary:dictionary];
-    [dictionary enumerateKeysAndObjectsUsingBlock:^(id  _Nonnull key, id  _Nonnull object, BOOL * _Nonnull stop) {
-        if (![object conformsToProtocol:@protocol(NSCoding)]) {
-            dictionaryM[key] = [[XZJSONAnyNSCoding alloc] initWithBase:object];
-        }
-    }];
-    return dictionaryM;
-}
-
-static inline id NSSetApplyAnyNSCoding(NSSet *set) {
-    if (NSCollectionConformsNSCoding(set)) {
-        return set;
-    }
-    NSMutableSet *setM = [NSMutableSet setWithSet:set];
-    for (id obj in set) {
-        if (![obj conformsToProtocol:@protocol(NSCoding)]) {
-            [setM removeObject:obj];
-            [setM addObject:[[XZJSONAnyNSCoding alloc] initWithBase:obj]];
-        }
-    }
-    return setM;
-}
-
-static inline BOOL NSCollectionContainsAnyNSCoding(id<NSFastEnumeration> sequence) {
-    for (id object in sequence) {
-        if ([object isKindOfClass:[XZJSONAnyNSCoding class]]) {
-            return YES;
-        }
-    }
-    return NO;
-}
-
-static inline BOOL NSDictionaryContainsAnyNSCoding(NSDictionary *dictionary) {
-    BOOL __block contains = NO;
+static inline BOOL NSDictionaryTestElementClass(NSDictionary *dictionary, Class Element) {
+    BOOL __block isKindOfClass = YES;
     [dictionary enumerateKeysAndObjectsUsingBlock:^(id  _Nonnull key, id  _Nonnull obj, BOOL * _Nonnull stop) {
-        if ([obj isKindOfClass:[XZJSONAnyNSCoding class]]) {
-            contains = YES;
-            *stop = YES;
+        if ([key isKindOfClass:NSString.class] || [key isKindOfClass:NSNumber.class]) {
+            if ([obj isKindOfClass:Element]) {
+                return;
+            }
         }
+        isKindOfClass = NO;
+        *stop = YES;
     }];
-    return contains;
-}
-
-static inline id NSArrayEscapeAnyNSCoding(NSArray *array) {
-    if (NSCollectionContainsAnyNSCoding(array)) {
-        NSMutableArray *arrayM = [NSMutableArray arrayWithArray:array];
-        [array enumerateObjectsWithOptions:NSEnumerationReverse usingBlock:^(id  _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
-            if ([obj isKindOfClass:[XZJSONAnyNSCoding class]]) {
-                arrayM[idx] = ((XZJSONAnyNSCoding *)obj).base;
-            }
-        }];
-        return arrayM;
-    }
-    return array;
-}
-
-static inline id NSDictionaryEscapeAnyNSCoding(NSDictionary *dictionary) {
-    if (NSDictionaryContainsAnyNSCoding(dictionary)) {
-        NSMutableDictionary *dictionaryM = [NSMutableDictionary dictionaryWithDictionary:dictionary];
-        [dictionary enumerateKeysAndObjectsUsingBlock:^(id  _Nonnull key, id  _Nonnull obj, BOOL * _Nonnull stop) {
-            if ([obj isKindOfClass:[XZJSONAnyNSCoding class]]) {
-                dictionaryM[key] = ((XZJSONAnyNSCoding *)obj).base;
-            }
-        }];
-        return dictionaryM;
-    }
-    return dictionary;
-}
-
-static inline id NSSetEscapeAnyNSCoding(NSSet *set) {
-    if (NSCollectionContainsAnyNSCoding(set)) {
-        NSMutableSet *setM = [NSMutableSet setWithSet:set];
-        for (id obj in set) {
-            if ([obj isKindOfClass:[XZJSONAnyNSCoding class]]) {
-                [setM removeObject:obj];
-                id const base = ((XZJSONAnyNSCoding *)obj).base;
-                if (base) {
-                    [setM addObject:base];
-                }
-            }
-        }
-        return setM;
-    }
-    return set;
-}
-
-static inline BOOL NSCollectionContains(id<NSFastEnumeration> collection, BOOL (^block)(id obj)) {
-    for (id obj in collection) {
-        if (block(obj)) {
-            return YES;
-        }
-    }
-    return NO;
-}
-
-static inline BOOL NSDictionaryContains(NSDictionary *dictionary, BOOL (^block)(id key, id obj)) {
-    BOOL __block contains = NO;
-    [dictionary enumerateKeysAndObjectsUsingBlock:^(id  _Nonnull key, id  _Nonnull obj, BOOL * _Nonnull stop) {
-        if (block(key, obj)) {
-            contains = YES;
-            *stop = YES;
-        }
-    }];
-    return contains;
+    return isKindOfClass;
 }
 
 void XZJSONModelEncodeWithCoder(id model, NSCoder *aCoder) {
@@ -1694,7 +1619,7 @@ void XZJSONModelEncodeWithCoder(id model, NSCoder *aCoder) {
                                         break;
                                     }
                                     // 检查元素是否合法：元素必须是已知类型，否则无法解档
-                                    if (NSCollectionContains(aValue, ^BOOL(id obj) { return ![obj isKindOfClass:property->_elementType]; })) {
+                                    if (!NSCollectionTestElementClass(aValue, property->_elementType)) {
                                         break;
                                     }
                                     // 执行归档
@@ -1712,9 +1637,7 @@ void XZJSONModelEncodeWithCoder(id model, NSCoder *aCoder) {
                                         break;
                                     }
                                     // 检查元素是否合法：字典键值，都必须支持已知，且支持安全归档。目前仅支持以 NSString/NSNumber 作为 key 的字典。
-                                    if (NSDictionaryContains(aValue, ^BOOL(id key, id obj) {
-                                        return (![key isKindOfClass:NSString.class] && ![key isKindOfClass:NSNumber.class]) || ![obj isKindOfClass:property->_elementType];
-                                    })) {
+                                    if (!NSDictionaryTestElementClass(aValue, property->_elementType)) {
                                         break;
                                     }
                                     // 执行归档

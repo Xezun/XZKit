@@ -25,7 +25,7 @@
     
     NSURL *url = [NSBundle.mainBundle URLForResource:@"Example05Model" withExtension:@"json"];
     _data = [NSString stringWithContentsOfURL:url encoding:NSUTF8StringEncoding error:nil];
-    _model = [XZJSON decode:_data options:(NSJSONReadingAllowFragments) class:[Example05Teacher class]];
+    NSLog(@"JSON 数据：%@", _data);
 }
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
@@ -34,11 +34,16 @@
             switch (indexPath.row) {
                 case 0:
                     NSLog(@"%@", [XZObjcClassDescriptor descriptorForClass:[Example05Model class]]);
+                    break;
+                case 1:
                     NSLog(@"%@", [XZObjcClassDescriptor descriptorForClass:[Example05Human class]]);
+                    break;
+                case 2:
                     NSLog(@"%@", [XZObjcClassDescriptor descriptorForClass:[Example05Teacher class]]);
+                    break;
+                case 3:
                     NSLog(@"%@", [XZObjcClassDescriptor descriptorForClass:[Example05Student class]]);
                     break;
-                    
                 default:
                     break;
             }
@@ -47,8 +52,8 @@
         case 1: {
             switch (indexPath.row) {
                 case 0: {
-                    NSLog(@"%@", [XZJSON modelDescription:_model]);
-                    NSAssert([_model isKindOfClass:[Example05Teacher class]], @"");
+                    _model = [XZJSON decode:_data options:(NSJSONReadingAllowFragments) class:[Example05Teacher class]];
+                    NSLog(@"%@", _model);
                     break;
                 }
                 case 1: {
@@ -57,6 +62,7 @@
                     break;
                 }
                 case 2: {
+                    NSAssert([_model isKindOfClass:[Example05Teacher class]], @"");
                     NSAssert([_model.name isEqualToString:@"Smith"], @"");
                     NSAssert(_model.age == 50, @"");
                     NSAssert(_model.students.count == 3, @"");
@@ -86,17 +92,30 @@
             break;
         }
         case 2: {
-            NSError *error = nil;
-            NSData *data = [NSKeyedArchiver archivedDataWithRootObject:_model requiringSecureCoding:[[_model class] supportsSecureCoding] error:&error];
             switch (indexPath.row) {
                 case 0: {
+                    NSError *error = nil;
+                    NSData *data = [NSKeyedArchiver archivedDataWithRootObject:_model requiringSecureCoding:[[_model class] supportsSecureCoding] error:&error];
                     if (error) {
                         NSLog(@"归档失败：%@", error);
                     }
                     NSLog(@"%@", data);
+                    NSString *path = [NSTemporaryDirectory() stringByAppendingPathComponent:@"model.plist"];
+                    if ([NSFileManager.defaultManager fileExistsAtPath:path]) {
+                        [NSFileManager.defaultManager removeItemAtPath:path error:nil];
+                    }
+                    [data writeToFile:path atomically:NO];
+                    NSLog(@"%@", path);
                     break;
                 }
                 case 1: {
+                    NSString *path = [NSString stringWithFormat:@"%@/model.plist", NSTemporaryDirectory()];
+                    if (![NSFileManager.defaultManager fileExistsAtPath:path]) {
+                        XZToast *toast = [XZToast messageToast:@"归档不存在"];
+                        [self showToast:toast duration:3.0 offset:CGPointZero completion:nil];
+                        return;
+                    }
+                    NSData *data = [NSData dataWithContentsOfFile:path];
                     NSError *error = nil;
                     Example05Teacher *model = [NSKeyedUnarchiver unarchivedObjectOfClass:[Example05Teacher class] fromData:data error:&error];
                     if (error) {
@@ -105,6 +124,9 @@
                     NSLog(@"%@", model);
                     data = [XZJSON encode:model options:NSJSONWritingPrettyPrinted error:nil];
                     NSLog(@"%@", [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding]);
+                    break;
+                }
+                case 2: {
                     break;
                 }
                 default:

@@ -35,6 +35,10 @@
     return YES;
 }
 
+- (NSString *)description {
+    return [XZJSON modelDescription:self];
+}
+
 @end
 
 @implementation Example05Teacher
@@ -74,16 +78,19 @@
     }
 }
 
-- (NSString *)description {
-    return [XZJSON modelDescription:self];
-}
-
-- (void)JSONDecodeValue:(id)JSONValue forKey:(NSString *)key {
+- (void)JSONDecodeValue:(id)valueOrCoder forKey:(NSString *)key {
     if ([key isEqualToString:@"foo"]) {
-        if ([JSONValue isKindOfClass:NSString.class]) {
-            NSString *value = JSONValue;
+        if ([valueOrCoder isKindOfClass:NSCoder.class]) {
+            valueOrCoder = [(NSCoder *)valueOrCoder decodeObjectOfClass:NSString.class forKey:key];
+        }
+        NSString *value = valueOrCoder;
+        if ([value isKindOfClass:NSString.class]) {
             NSUInteger length = [value lengthOfBytesUsingEncoding:NSASCIIStringEncoding];
-            _foo = calloc(length, sizeof(char));
+            if (_foo) {
+                _foo = realloc(_foo, length * sizeof(char));
+            } else {
+                _foo = calloc(length, sizeof(char));
+            }
             memcpy(_foo, [value cStringUsingEncoding:NSASCIIStringEncoding], length);
         }
     }
@@ -108,10 +115,6 @@
 
 + (NSArray<NSString *> *)allowedJSONCodingKeys {
     return nil;
-}
-
-- (NSString *)description {
-    return [XZJSON modelDescription:self];
 }
 
 - (void)JSONDecodeValue:(id)valueOrCoder forKey:(NSString *)key {
