@@ -20,7 +20,7 @@ NS_ASSUME_NONNULL_BEGIN
     XZJSONClassDescriptor * __unsafe_unretained _class;
     /// 属性。 property's info
     XZObjcPropertyDescriptor *_property;
-    /// 属性映射链表。 next meta if there are multiple properties mapped to the same key.
+    /// 属性映射链表，多属性映射单一数据的链表。 next meta if there are multiple properties mapped to the same key.
     XZJSONPropertyDescriptor *_next;
     
     /// 属性名。property's name

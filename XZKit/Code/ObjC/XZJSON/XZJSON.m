@@ -34,7 +34,7 @@
     }
     // 二进制流形式的 json 数据
     if ([json isKindOfClass:NSData.class]) {
-        return [self _decodeData:json options:options class:aClass];
+        return [self _decodeJSONData:json options:options class:aClass];
     }
     // 字符串形式的 json 数据
     if ([json isKindOfClass:NSString.class]) {
@@ -43,7 +43,7 @@
         if (data == nil) {
             return nil;
         }
-        return [self _decodeData:data options:options class:aClass];
+        return [self _decodeJSONData:data options:options class:aClass];
     }
     // 如果为数组，视为解析多个 json 数据
     if ([json isKindOfClass:NSArray.class]) {
@@ -61,7 +61,7 @@
         return models;
     }
     // 其它情况视为已解析好的 json
-    return [self _decodeObject:json class:aClass];
+    return [self _decodeJSONObject:json class:aClass];
 }
 
 + (void)model:(id)object decodeFromDictionary:(NSDictionary *)dictionary {
@@ -79,8 +79,7 @@
         return nil;
     }
     
-    XZJSONClassDescriptor *descriptor = [XZJSONClassDescriptor descriptorForClass:[object class]];
-    id const JSONObject = [self _model:object encodeIntoDictionary:nil descriptor:descriptor];
+    id const JSONObject = [self _encodeObject:object intoDictionary:nil];
     
     if (JSONObject == nil) {
         return nil;

@@ -24,6 +24,10 @@
 - (void)viewDidLoad {
     [super viewDidLoad];
     
+//    NSDictionary *obj = @"foobar";  @{@"id": (id)kCFNull};
+    NSData *data = [NSJSONSerialization dataWithJSONObject:NSNull.null options:NSJSONWritingFragmentsAllowed error:nil];
+    NSLog(@"%@",[[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding]);
+    
     NSURL *url = [NSBundle.mainBundle URLForResource:@"Example05Model" withExtension:@"json"];
     _data = [NSString stringWithContentsOfURL:url encoding:NSUTF8StringEncoding error:nil];
 }
