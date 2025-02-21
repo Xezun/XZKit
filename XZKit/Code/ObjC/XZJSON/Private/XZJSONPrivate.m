@@ -165,9 +165,9 @@ static NSMutableDictionary *NSDictionaryForLastKeyInKeyPath(NSMutableDictionary 
             }
         }];
         
-        [descriptor->_keyPathProperties enumerateObjectsUsingBlock:^(XZJSONPropertyDescriptor *property, NSUInteger idx, BOOL *stop) {
-            NSArray<NSString *> *keyPath = property->_JSONKeyPath;
-            id JSONValue = NSDictionaryValueForKeyPath(dictionary, keyPath);
+        [descriptor->_keyPathProperties enumerateKeysAndObjectsUsingBlock:^(NSString * _Nonnull keyPath, XZJSONPropertyDescriptor * _Nonnull property, BOOL * _Nonnull stop) {
+//            NSArray<NSString *> *keyPath = property->_JSONKeyPath;
+            id JSONValue = [dictionary valueForKeyPath:keyPath]; // NSDictionaryValueForKeyPath(dictionary, property->_JSONKeyPath);
             if (JSONValue) {
                 XZJSONModelDecodeProperty(model, property, JSONValue);
             }

@@ -26,7 +26,7 @@ NS_ASSUME_NONNULL_BEGIN
     /// JSON 键（包括键路径、键数组）与属性的映射关系字典。
     NSDictionary<NSString *, XZJSONPropertyDescriptor *> *_keyProperties;
     /// 使用 keyPath 映射的属性。
-    NSArray<XZJSONPropertyDescriptor *> *_keyPathProperties;
+    NSDictionary<NSString *, XZJSONPropertyDescriptor *> *_keyPathProperties;
     /// 使用 keyArray 映射的属性。
     NSArray<XZJSONPropertyDescriptor *> *_keyArrayProperties;
     /// 如果是，原生对象的类型。 Model class type.

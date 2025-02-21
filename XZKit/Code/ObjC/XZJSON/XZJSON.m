@@ -78,13 +78,7 @@
     if (object == nil) {
         return nil;
     }
-    
     id const JSONObject = [self _encodeObject:object intoDictionary:nil];
-    
-    if (JSONObject == nil) {
-        return nil;
-    }
-    
     return [NSJSONSerialization dataWithJSONObject:JSONObject options:options error:error];
 }
 

@@ -86,7 +86,7 @@ static id XZJSONKeyFromString(NSString *aString);
         
         // 创建 JSONKey - Property 映射关系
         NSMutableDictionary * const keyProperties      = [NSMutableDictionary new];
-        NSMutableArray      * const keyPathProperties  = [NSMutableArray new];
+        NSMutableDictionary * const keyPathProperties  = [NSMutableDictionary new];
         NSMutableArray      * const keyArrayProperties = [NSMutableArray new];
         
         if ([rawClass respondsToSelector:@selector(mappingJSONCodingKeys)]) {
@@ -109,7 +109,7 @@ static id XZJSONKeyFromString(NSString *aString);
                     } else if ([someKey isKindOfClass:NSString.class]) {
                         JSONKey = someKey;
                     } else {
-                        JSONKey = [someKey componentsJoinedByString:@"."];
+                        //JSONKey = [someKey componentsJoinedByString:@"."];
                         JSONKeyPath = someKey;
                     }
                 } else if ([value isKindOfClass:NSArray.class]) {
@@ -134,19 +134,19 @@ static id XZJSONKeyFromString(NSString *aString);
                             if ([someKey isKindOfClass:NSString.class]) {
                                 JSONKey = someKey;
                             } else {
-                                JSONKey = [someKey componentsJoinedByString:@"."];
+//                                JSONKey = [someKey componentsJoinedByString:@"."];
                                 JSONKeyPath = someKey;
                             }
                             break;
                         }
                         default: {
                             JSONKeyArray = arrayM;
-                            id const someKey = arrayM[0];
-                            if ([someKey isKindOfClass:NSString.class]) {
-                                JSONKey = someKey;
-                            } else {
-                                JSONKey = [(NSArray *)someKey componentsJoinedByString:@"."];
-                            }
+//                            id const someKey = arrayM[0];
+//                            if ([someKey isKindOfClass:NSString.class]) {
+//                                JSONKey = someKey;
+//                            } else {
+//                                JSONKey = [(NSArray *)someKey componentsJoinedByString:@"."];
+//                            }
                             break;
                         }
                     }
@@ -155,17 +155,28 @@ static id XZJSONKeyFromString(NSString *aString);
                     return;
                 }
                 
-                property->_JSONKey      = JSONKey;
-                property->_JSONKeyPath  = JSONKeyPath;
-                property->_JSONKeyArray = JSONKeyArray;
-                
-                // 建立属性映射链表：JSONKey 映射到多个属性
-                property->_next = keyProperties[JSONKey];
-                keyProperties[JSONKey]  = property;
-                
-                if (JSONKeyPath) {
-                    [keyPathProperties addObject:property];
+                // 因为映射为 属性 => JSONKey 所以 property 在遍历过程中不会重复。
+                if (JSONKey) {
+                    property->_JSONKey = JSONKey;
+                    // 如果 JSONKey 已有映射的属性，那么创建该 JSONKey 的映射链表
+                    property->_next = keyProperties[JSONKey];
+                    keyProperties[JSONKey] = property;
+                } else if (JSONKeyPath) {
+                    property->_JSONKeyPath = JSONKeyPath;
+                    // 如果 JSONKeyPath 已有映射的属性，那么创建该 JSONKeyPath 的映射链表
+                    NSString *keyPath = [JSONKeyPath componentsJoinedByString:@"."];
+                    property->_next = keyPathProperties[keyPath];
+                    keyPathProperties[keyPath] = property;
                 } else if (JSONKeyArray) {
+                    for (id someKey in JSONKeyArray) {
+                        if ([someKey isKindOfClass:[NSString class]]) {
+                            property->_JSONKey = someKey;
+                            property
+                        } else {
+                            
+                        }
+                    }
+                    property->_JSONKeyArray = JSONKeyArray;
                     [keyArrayProperties addObject:property];
                 }
                 
