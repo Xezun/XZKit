@@ -8,7 +8,7 @@
 
 Pod::Spec.new do |s|
   s.name             = 'XZJSON'
-  s.version          = '10.2.1'
+  s.version          = '10.3.0'
   s.summary          = '一款高效的 JSON 数据模型化工具'
 
   s.description      = <<-DESC
