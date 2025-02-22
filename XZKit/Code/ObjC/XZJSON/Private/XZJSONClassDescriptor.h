@@ -18,19 +18,20 @@ NS_ASSUME_NONNULL_BEGIN
     @package
     /// 描述类基本信息的对象。
     XZObjcClassDescriptor *_class;
+    /// 如果是，原生对象的类型。 Model class type.
+    XZJSONClassType _classType;
     
     /// 所有可模型化或序列化的属性的数量。
     NSUInteger _numberOfProperties;
     /// 所有可模型化或序列化的属性，包括从超类继承的。已按名称排序。
     NSArray<XZJSONPropertyDescriptor *> *_properties;
-    /// JSON 键（包括键路径、键数组）与属性的映射关系字典。
+    
+    /// 使用 key 映射的属性。
     NSDictionary<NSString *, XZJSONPropertyDescriptor *> *_keyProperties;
     /// 使用 keyPath 映射的属性。
     NSArray<XZJSONPropertyDescriptor *> *_keyPathProperties;
     /// 使用 keyArray 映射的属性。
     NSArray<XZJSONPropertyDescriptor *> *_keyArrayProperties;
-    /// 如果是，原生对象的类型。 Model class type.
-    XZJSONClassType _classType;
     
     /// 是否需要转发模型解析。
     BOOL _forwardsClassForDecoding;

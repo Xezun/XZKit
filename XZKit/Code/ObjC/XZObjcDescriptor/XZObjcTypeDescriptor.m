@@ -761,7 +761,7 @@ typedef struct XZObjcTypeAlignment {
     if (self.members.count > 0) {
         NSMutableString *stringM = [[NSMutableString alloc] initWithString:@"[\n"];
         [self.members enumerateObjectsUsingBlock:^(XZObjcTypeDescriptor * _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
-            [stringM appendFormat:@"    %@,\n", [obj.description stringByReplacingOccurrencesOfString:@"\n" withString:@"\n    "]];
+            [stringM appendFormat:@"    <%p, %@>,\n", obj, ((id)obj.subtype ?: obj.name)];
         }];
         [stringM deleteCharactersInRange:NSMakeRange(stringM.length - 2, 1)];
         [stringM appendString:@"]"];

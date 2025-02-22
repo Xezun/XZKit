@@ -31,7 +31,7 @@ NS_ASSUME_NONNULL_BEGIN
 @interface XZJSON (XZJSONDecoding)
 /// JSON 数据模型化。
 ///
-/// JSON 数据包括 JSON 字符串 NSString 数据，或 JSON 二进制 NSData 数据，或者二者组成的数组。
+/// 关于 JSON 数据：NSString 类型 JSON 字符串，或 NSData 类型 JSON 二进制流，或前二者组成的数组。
 ///
 /// - Parameters:
 ///   - json: JSON 数据
@@ -39,7 +39,8 @@ NS_ASSUME_NONNULL_BEGIN
 ///   - class: 模型的类对象
 + (nullable id)decode:(nullable id)json options:(NSJSONReadingOptions)options class:(Class)aClass;
 
-/// 使用指定模型实例 model 将 JSON 数据字典模型化。
+/// 使用模型实例对象 model 对 JSON 字典数据进行模型化。
+///
 /// - Parameters:
 ///   - model: 模型实例对象
 ///   - dictionary: JSON 数据字典
@@ -47,14 +48,17 @@ NS_ASSUME_NONNULL_BEGIN
 @end
 
 @interface XZJSON (XZJSONEncoding)
-/// 模型实例 JSON 数据化。
+/// 将任意实例对象进行 JSON 数据化。
 /// - Parameters:
-///   - object: 模型对象
+///   - object: 任意对象
 ///   - options: JSON 生成选项
 ///   - error: 错误输出
 + (nullable NSData *)encode:(nullable id)object options:(NSJSONWritingOptions)options error:(NSError **)error;
 
-/// 将模型实例 model 数据化为指定 JSON 数据字典。
+/// 将模型实例对象 model 序列化进 JSON 字典。
+///
+/// > 参数 model 必须为模型实例对象。
+///
 /// - Parameters:
 ///   - model: 模型实例对象
 ///   - dictionary: 数据字典
