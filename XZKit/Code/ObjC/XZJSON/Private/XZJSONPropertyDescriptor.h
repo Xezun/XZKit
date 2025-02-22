@@ -13,6 +13,8 @@ NS_ASSUME_NONNULL_BEGIN
 
 @class XZJSONClassDescriptor;
 
+typedef id _Nullable (^XZJSONKeyValueCoder)(id object);
+
 /// A property info in object model.
 @interface XZJSONPropertyDescriptor : NSObject {
     @package
@@ -50,6 +52,9 @@ NS_ASSUME_NONNULL_BEGIN
     NSArray<NSString *> * _Nullable _JSONKeyPath;
     /// 映射到当前属性的 JSON 键数组。值为 `NSString *` 类型或者 `NSArray<NSString *> *` 类型。
     NSArray             * _Nullable _JSONKeyArray;
+    
+    /// 通过 KVC 取值的方法。
+    XZJSONKeyValueCoder _keyValueCoder;
     
     /// 是否为无主引用或弱引用的属性。 
     BOOL _isUnownedReferenceProperty;

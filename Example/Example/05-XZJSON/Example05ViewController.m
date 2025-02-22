@@ -119,7 +119,7 @@
                     }
                     NSString *path = [NSTemporaryDirectory() stringByAppendingPathComponent:@"model.plist"];
                     if ([NSFileManager.defaultManager fileExistsAtPath:path]) {
-                        [NSFileManager.defaultManager removeItemAtPath:path error:nil];
+                        [NSFileManager.defaultManager removeItemAtPath:path error:&error];
                     }
                     [data writeToFile:path atomically:NO];
                     text = [[NSDictionary dictionaryWithContentsOfFile:path] description];

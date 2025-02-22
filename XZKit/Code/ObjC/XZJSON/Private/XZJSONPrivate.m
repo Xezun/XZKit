@@ -8,54 +8,6 @@
 #import "XZJSONPrivate.h"
 @import ObjectiveC;
 
-/// 读取 JOSN 字典的 keyPath 对应的值。
-/// - Parameters:
-///   - dict: JSON 字典
-///   - keyPath: 已分隔为数组的键路径
-static id _Nullable NSDictionaryValueForKeyPath(NSDictionary *dict, NSArray *_Nonnull keyPaths) {
-    NSDictionary *__unsafe_unretained value = nil;
-
-    for (NSUInteger i = 0, max = keyPaths.count - 1; i <= max; i++) {
-        NSString *const key = keyPaths[i];
-        value = dict[key];
-
-        if (i == max) {
-            return value;
-        }
-
-        if ([value isKindOfClass:NSDictionary.class]) {
-            dict = value;
-            continue;
-        }
-
-        return nil;
-    }
-
-    return value;
-}
-
-/// 读取 JOSN 字典的 keyArray 第一个有效值。
-/// - Parameters:
-///   - dict: JSON 字典
-///   - keyArray: 由“键”、“已分隔为数组的键路径”组成的数组
-static id _Nullable NSDictionaryValueForKeyArray(NSDictionary *dict, NSArray *_Nonnull keyArray) {
-    id value = nil;
-
-    for (NSString *key in keyArray) {
-        if ([key isKindOfClass:[NSString class]]) {
-            value = dict[key];
-        } else {
-            value = NSDictionaryValueForKeyPath(dict, (NSArray *)key);
-        }
-
-        if (value) {
-            return value;
-        }
-    }
-
-    return value;
-}
-
 /// 读取 JSON 字典中 keyPath 中最后一个 key 所在的字典，如果中间值不存在，则创建。
 /// - Parameters:
 ///   - dictionary: JSON 字典
@@ -67,11 +19,14 @@ static NSMutableDictionary *NSDictionaryForLastKeyInKeyPath(NSMutableDictionary 
         if (subDict == nil) {
             subDict = [NSMutableDictionary dictionary];
             dictionary[subKey] = subDict;
-        } else if (![subDict isKindOfClass:NSMutableDictionary.class]) {
-            // 对应的 key 已经有其它值，不支持设置 keyPath
-            return nil;
+            continue;
         }
-        dictionary = subDict;
+        if ([subDict isKindOfClass:NSMutableDictionary.class]) {
+            dictionary = subDict;
+            continue;
+        }
+        // 对应的 key 已经有其它值，不支持设置 keyPath
+        return nil;
     }
     return dictionary;
 }
@@ -165,31 +120,22 @@ static NSMutableDictionary *NSDictionaryForLastKeyInKeyPath(NSMutableDictionary 
             }
         }];
         
-        [descriptor->_keyPathProperties enumerateKeysAndObjectsUsingBlock:^(NSString * _Nonnull keyPath, XZJSONPropertyDescriptor * _Nonnull property, BOOL * _Nonnull stop) {
-//            NSArray<NSString *> *keyPath = property->_JSONKeyPath;
-            id JSONValue = [dictionary valueForKeyPath:keyPath]; // NSDictionaryValueForKeyPath(dictionary, property->_JSONKeyPath);
+        [descriptor->_keyPathProperties enumerateObjectsUsingBlock:^(XZJSONPropertyDescriptor * _Nonnull property, NSUInteger idx, BOOL * _Nonnull stop) {
+            id const JSONValue = (property->_keyValueCoder)(dictionary);
             if (JSONValue) {
                 XZJSONModelDecodeProperty(model, property, JSONValue);
             }
         }];
         
         [descriptor->_keyArrayProperties enumerateObjectsUsingBlock:^(XZJSONPropertyDescriptor *property, NSUInteger idx, BOOL *stop) {
-            NSArray *keyArray = property->_JSONKeyArray;
-            id JSONValue = NSDictionaryValueForKeyArray(dictionary, keyArray);
+            id const JSONValue = (property->_keyValueCoder)(dictionary);
             if (JSONValue) {
                 XZJSONModelDecodeProperty(model, property, JSONValue);
             }
         }];
     } else {
         [descriptor->_properties enumerateObjectsUsingBlock:^(XZJSONPropertyDescriptor *property, NSUInteger idx, BOOL *stop) {
-            id JSONValue = nil;
-            if (property->_JSONKeyArray) {
-                JSONValue = NSDictionaryValueForKeyArray(dictionary, property->_JSONKeyArray);
-            } else if (property->_JSONKeyPath) {
-                JSONValue = NSDictionaryValueForKeyPath(dictionary, property->_JSONKeyPath);
-            } else {
-                JSONValue = dictionary[property->_JSONKey];
-            }
+            id const JSONValue = (property->_keyValueCoder)(dictionary);
             if (JSONValue) {
                 XZJSONModelDecodeProperty(model, property, JSONValue);
             }
@@ -324,9 +270,10 @@ static NSMutableDictionary *NSDictionaryForLastKeyInKeyPath(NSMutableDictionary 
             if (key == nil) {
                 return;
             }
-        } else if (dictionary[property->_JSONKey]) {
-            return; // 值已存在，不覆盖。
         } else {
+            if (dictionary[property->_JSONKey]) {
+                return; // 值已存在，不覆盖。
+            }
             key = property->_JSONKey;
         }
         
