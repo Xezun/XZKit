@@ -82,7 +82,10 @@ static id XZJSONKeyFromString(NSString *aString);
             } while ((class = class.super));
         }
         
-        // 将属性按名称排序
+        // 所有属性字典
+        _namedProperties = [NSDictionary dictionaryWithDictionary:allProperties];
+        
+        // 所有属性集合，将属性按名称排序
         _properties = [allProperties.allValues sortedArrayUsingComparator:^NSComparisonResult(id obj1, id obj2) {
             return [((XZJSONPropertyDescriptor *)obj1)->_name compare:((XZJSONPropertyDescriptor *)obj2)->_name];
         }];

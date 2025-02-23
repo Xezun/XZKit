@@ -68,7 +68,7 @@ NS_ASSUME_NONNULL_BEGIN
 @interface XZJSON (NSCoding)
 
 /// 辅助模型归档的方法。
-/// ```objc
+/// ```swift
 /// class Foobar: NSObject, NSCoding {
 ///
 ///     func encode(with coder: NSCoder) {
@@ -83,7 +83,7 @@ NS_ASSUME_NONNULL_BEGIN
 + (void)model:(id)model encodeWithCoder:(NSCoder *)aCoder;
 
 /// 辅助模型解档的方法。
-/// ```objc
+/// ```swift
 /// class Foobar: NSObject, NSCoding {
 ///
 ///     required init?(coder: NSCoder) {
@@ -101,30 +101,72 @@ NS_ASSUME_NONNULL_BEGIN
 
 @end
 
-@interface XZJSON (NSCopying)
-/// 模型复制。
-/// - Parameter model: 被模型的模型对象
-+ (id)modelCopy:(id)model;
-@end
 
 @interface XZJSON (NSDescription)
-/// 模型描述。
+/// 生成模型的描述文本。
 /// - Parameter model: 待描述的模型对象
-+ (NSString *)modelDescription:(id)model;
+/// - Parameter indent: 输出模型时的缩进等级
++ (NSString *)model:(id)model description:(NSUInteger)indent;
 @end
 
-@interface XZJSON (NSHashable)
-/// 模型哈希。
-/// - Parameter model: 待哈希的模型对象
-+ (NSUInteger)modelHash:(id)model;
+
+@interface XZJSON (NSCopying)
+
+/// 模型复制，仅复制同名、且数据类型相同的属性。
+/// 
+/// > 模型使用 `+[Class new]` 方法创建新的模型对象，因此模型如果需要特殊的初始化方法，可重写此方法。
+///
+/// 结构体、共用体、C指针等类型的属性，由于存在无法确定内存管理方式，或无法确定数据大小等情况，所以需要在 block 中自行实现复制方式。
+///
+/// ```objc
+/// - (id)copyWithZone:(NSZone *)zone {
+///     return [XZJSON model:self copy:^BOOL(Foo *newModel, NSString * _Nonnull key) {
+///         if ([key isEqualToString:@"foo"]) {
+///             if (self->_foo) {
+///                 size_t const count = strlen(self->_foo);
+///                 newModel->_foo = calloc(count, sizeof(char));
+///                 strcpy(newModel->_foo, self->_foo);
+///             }
+///             return YES;
+///         }
+///         return NO;
+///     }];
+/// }
+/// ```
+///
+/// 如果超类已经调用此方法实现了 NSCopying 协议，那么子类不宜直接调用此方法，而是像下面这样处理，否则子类就需要在 block 中重新处理超类中“无法确定复制方式”的属性。
+///
+/// ```objc
+/// - (void)copyWithZone:(NSZone *)zone {
+///     Bar *newModel = [super copyWithZone:zone];
+///     newModel.bar = self.bar;
+/// }
+/// ```
+/// - Parameter model: 被复制的模型对象
+/// - Parameter block: 需要自行实现复制的属性，返回 NO 标识未处理，控制台将输出未处理的输出
+/// - Returns: 复制后的模型对象
++ (id)model:(id)model copy:(BOOL (^_Nullable)(id newModel, NSString *key))block;
+
 @end
+
+typedef NS_ENUM(NSUInteger, XZJSONEquation) {
+    /// 不相等
+    XZJSONEquationNo = -1,
+    /// 未知，未比较
+    XZJSONEquationUnknown = 0,
+    /// 相等
+    XZJSONEquationYes = 1,
+};
 
 @interface XZJSON (NSEquatable)
-/// 模型比较。
+
+/// 模型比较。如果模型的属性相同，则认为模型相等，即使模型的类型不同。
 /// - Parameters:
 ///   - model1: 待比较的模型
 ///   - model2: 被比较的模型
-+ (BOOL)model:(id)model1 isEqualToModel:(id)model2;
+///   - block: 如果属性值无法比较，将调用此块函数，如不提供，则认为属性不相等。
++ (BOOL)model:(id)model1 isEqualToModel:(id)model2 comparator:(XZJSONEquation (^_Nullable)(id model1, id model2, NSString *key))block;
+
 @end
 
 NS_ASSUME_NONNULL_END

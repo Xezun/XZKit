@@ -992,91 +992,98 @@ void XZJSONModelDecodeProperty(id model, XZJSONPropertyDescriptor *property, id 
 
 BOOL XZJSONModelDecodeStructProperty(id model, XZJSONPropertyDescriptor *property, id _Nonnull JSONValue) {
     if ([JSONValue isKindOfClass:NSString.class]) {
-        NSString * const name = property->_property.type.name;
-        if ([name isEqualToString:@"CGRect"]) {
-            CGRect aValue = CGRectFromString(JSONValue);
-            ((void (*)(id, SEL, CGRect))objc_msgSend)(model, property->_setter, aValue);
-            return YES;
-        }
-        if ([name isEqualToString:@"CGSize"]) {
-            CGSize aValue = CGSizeFromString(JSONValue);
-            ((void (*)(id, SEL, CGSize))objc_msgSend)(model, property->_setter, aValue);
-            return YES;
-        }
-        if ([name isEqualToString:@"CGPoint"]) {
-            CGPoint aValue = CGPointFromString(JSONValue);
-            ((void (*)(id, SEL, CGPoint))objc_msgSend)(model, property->_setter, aValue);
-            return YES;
-        }
-        if ([name isEqualToString:@"UIEdgeInsets"]) {
-            UIEdgeInsets aValue = UIEdgeInsetsFromString(JSONValue);
-            ((void (*)(id, SEL, UIEdgeInsets))objc_msgSend)(model, property->_setter, aValue);
-            return YES;
-        }
-        if ([name isEqualToString:@"CGVector"]) {
-            CGVector aValue = CGVectorFromString(JSONValue);
-            ((void (*)(id, SEL, CGVector))objc_msgSend)(model, property->_setter, aValue);
-            return YES;
-        }
-        if ([name isEqualToString:@"CGAffineTransform"]) {
-            CGAffineTransform aValue = CGAffineTransformFromString(JSONValue);
-            ((void (*)(id, SEL, CGAffineTransform))objc_msgSend)(model, property->_setter, aValue);
-            return YES;
-        }
-        if ([name isEqualToString:@"NSDirectionalEdgeInsets"]) {
-            NSDirectionalEdgeInsets aValue = NSDirectionalEdgeInsetsFromString(JSONValue);
-            ((void (*)(id, SEL, NSDirectionalEdgeInsets))objc_msgSend)(model, property->_setter, aValue);
-            return YES;
-        }
-        if ([name isEqualToString:@"UIOffset"]) {
-            UIOffset aValue = UIOffsetFromString(JSONValue);
-            ((void (*)(id, SEL, UIOffset))objc_msgSend)(model, property->_setter, aValue);
-            return YES;
+        switch (property->_structType) {
+            case XZJSONStructTypeUnknown: {
+                return NO;
+            }
+            case XZJSONStructTypeCGRect: {
+                CGRect aValue = CGRectFromString(JSONValue);
+                ((void (*)(id, SEL, CGRect))objc_msgSend)(model, property->_setter, aValue);
+                return YES;
+            }
+            case XZJSONStructTypeCGSize: {
+                CGSize aValue = CGSizeFromString(JSONValue);
+                ((void (*)(id, SEL, CGSize))objc_msgSend)(model, property->_setter, aValue);
+                return YES;
+            }
+            case XZJSONStructTypeCGPoint: {
+                CGPoint aValue = CGPointFromString(JSONValue);
+                ((void (*)(id, SEL, CGPoint))objc_msgSend)(model, property->_setter, aValue);
+                return YES;
+            }
+            case XZJSONStructTypeUIEdgeInsets: {
+                UIEdgeInsets aValue = UIEdgeInsetsFromString(JSONValue);
+                ((void (*)(id, SEL, UIEdgeInsets))objc_msgSend)(model, property->_setter, aValue);
+                return YES;
+            }
+            case XZJSONStructTypeCGVector: {
+                CGVector aValue = CGVectorFromString(JSONValue);
+                ((void (*)(id, SEL, CGVector))objc_msgSend)(model, property->_setter, aValue);
+                return YES;
+            }
+            case XZJSONStructTypeCGAffineTransform: {
+                CGAffineTransform aValue = CGAffineTransformFromString(JSONValue);
+                ((void (*)(id, SEL, CGAffineTransform))objc_msgSend)(model, property->_setter, aValue);
+                return YES;
+            }
+            case XZJSONStructTypeNSDirectionalEdgeInsets: {
+                NSDirectionalEdgeInsets aValue = NSDirectionalEdgeInsetsFromString(JSONValue);
+                ((void (*)(id, SEL, NSDirectionalEdgeInsets))objc_msgSend)(model, property->_setter, aValue);
+                return YES;
+            }
+            case XZJSONStructTypeUIOffset: {
+                UIOffset aValue = UIOffsetFromString(JSONValue);
+                ((void (*)(id, SEL, UIOffset))objc_msgSend)(model, property->_setter, aValue);
+                return YES;
+            }
         }
     }
     return NO;
 }
 
 NSString * _Nullable XZJSONModelEncodeStructProperty(id model, XZJSONPropertyDescriptor *property) {
-    NSString *name = property->_property.type.name;
-    if ([name isEqualToString:@"CGRect"]) {
-        CGRect aValue = ((CGRect (*)(id, SEL))objc_msgSend)(model, property->_getter);
-        return NSStringFromCGRect(aValue);
+    switch (property->_structType) {
+        case XZJSONStructTypeUnknown: {
+            return nil;
+        }
+        case XZJSONStructTypeCGRect: {
+            CGRect aValue = ((CGRect (*)(id, SEL))objc_msgSend)(model, property->_getter);
+            return NSStringFromCGRect(aValue);
+        }
+        case XZJSONStructTypeCGSize: {
+            CGSize aValue = ((CGSize (*)(id, SEL))objc_msgSend)(model, property->_getter);
+            return NSStringFromCGSize(aValue);
+        }
+        case XZJSONStructTypeCGPoint: {
+            CGPoint aValue = ((CGPoint (*)(id, SEL))objc_msgSend)(model, property->_getter);
+            return NSStringFromCGPoint(aValue);
+        }
+        case XZJSONStructTypeUIEdgeInsets: {
+            UIEdgeInsets aValue = ((UIEdgeInsets (*)(id, SEL))objc_msgSend)(model, property->_getter);
+            return NSStringFromUIEdgeInsets(aValue);
+        }
+        case XZJSONStructTypeCGVector: {
+            CGVector aValue = ((CGVector (*)(id, SEL))objc_msgSend)(model, property->_getter);
+            return NSStringFromCGVector(aValue);
+        }
+        case XZJSONStructTypeCGAffineTransform: {
+            CGAffineTransform aValue = ((CGAffineTransform (*)(id, SEL))objc_msgSend)(model, property->_getter);
+            return NSStringFromCGAffineTransform(aValue);
+        }
+        case XZJSONStructTypeNSDirectionalEdgeInsets: {
+            NSDirectionalEdgeInsets aValue = ((NSDirectionalEdgeInsets (*)(id, SEL))objc_msgSend)(model, property->_getter);
+            return NSStringFromDirectionalEdgeInsets(aValue);
+        }
+        case XZJSONStructTypeUIOffset: {
+            UIOffset aValue = ((UIOffset (*)(id, SEL))objc_msgSend)(model, property->_getter);
+            return NSStringFromUIOffset(aValue);
+        }
     }
-    if ([name isEqualToString:@"CGSize"]) {
-        CGSize aValue = ((CGSize (*)(id, SEL))objc_msgSend)(model, property->_getter);
-        return NSStringFromCGSize(aValue);
-    }
-    if ([name isEqualToString:@"CGPoint"]) {
-        CGPoint aValue = ((CGPoint (*)(id, SEL))objc_msgSend)(model, property->_getter);
-        return NSStringFromCGPoint(aValue);
-    }
-    if ([name isEqualToString:@"UIEdgeInsets"]) {
-        UIEdgeInsets aValue = ((UIEdgeInsets (*)(id, SEL))objc_msgSend)(model, property->_getter);
-        return NSStringFromUIEdgeInsets(aValue);
-    }
-    if ([name isEqualToString:@"CGVector"]) {
-        CGVector aValue = ((CGVector (*)(id, SEL))objc_msgSend)(model, property->_getter);
-        return NSStringFromCGVector(aValue);
-    }
-    if ([name isEqualToString:@"CGAffineTransform"]) {
-        CGAffineTransform aValue = ((CGAffineTransform (*)(id, SEL))objc_msgSend)(model, property->_getter);
-        return NSStringFromCGAffineTransform(aValue);
-    }
-    if ([name isEqualToString:@"NSDirectionalEdgeInsets"]) {
-        NSDirectionalEdgeInsets aValue = ((NSDirectionalEdgeInsets (*)(id, SEL))objc_msgSend)(model, property->_getter);
-        return NSStringFromDirectionalEdgeInsets(aValue);
-    }
-    if ([name isEqualToString:@"UIOffset"]) {
-        UIOffset aValue = ((UIOffset (*)(id, SEL))objc_msgSend)(model, property->_getter);
-        return NSStringFromUIOffset(aValue);
-    }
-    return nil;
 }
 
 #pragma mark - NSDescription
 
-NSString * _Nonnull XZJSONModelDescriptionOfClassType(id model, XZJSONClassType const classType, NSUInteger hierarchies) {
+NSString * _Nonnull XZJSONModelDescriptionForFoundationClassOfType(id model, XZJSONClassType const classType, NSUInteger indent) {
     switch (classType) {
         case XZJSONClassTypeNSString:
         case XZJSONClassTypeNSMutableString: {
@@ -1084,21 +1091,25 @@ NSString * _Nonnull XZJSONModelDescriptionOfClassType(id model, XZJSONClassType 
             aString = [aString stringByReplacingOccurrencesOfString:@"\n" withString:@"\\n"];
             return [NSString stringWithFormat:@"\"%@\"", aString];
         }
-        case XZJSONClassTypeNSValue:
+        case XZJSONClassTypeNSValue: {
+            return ((NSValue *)model).description;
+            break;
+        }
+        case XZJSONClassTypeNSNumber: {
+            return [(NSNumber *)model stringValue];
+        }
         case XZJSONClassTypeNSData:
         case XZJSONClassTypeNSMutableData: {
-            NSString *tmp = [model description];
-            if (tmp.length > 50) {
-                tmp = [tmp substringToIndex:50];
-                tmp = [tmp stringByAppendingString:@"..."];
-            }
-            return tmp;
+            return [(NSData *)model description];
         }
-        case XZJSONClassTypeNSNumber:
-        case XZJSONClassTypeNSDecimalNumber:
-        case XZJSONClassTypeNSDate:
+        case XZJSONClassTypeNSDecimalNumber: {
+            return [(NSDecimalNumber *)model stringValue];
+        }
+        case XZJSONClassTypeNSDate: {
+            return [XZJSON.dateFormatter stringFromDate:model];
+        }
         case XZJSONClassTypeNSURL: {
-            return [NSString stringWithFormat:@"%@", model];
+            return ((NSURL *)model).absoluteString;
         }
         case XZJSONClassTypeNSSet:
         case XZJSONClassTypeNSMutableSet: {
@@ -1111,12 +1122,14 @@ NSString * _Nonnull XZJSONModelDescriptionOfClassType(id model, XZJSONClassType 
             if (count == 0) {
                 return @"[]";
             }
-            NSString * const padding = [@"" stringByPaddingToLength:hierarchies * 4 withString:@" " startingAtIndex:0];
-            hierarchies += 1;
+            
+            NSString * const padding = [@"" stringByPaddingToLength:indent * 4 withString:@" " startingAtIndex:0];
+            indent += 1;
             
             NSMutableString *desc = [NSMutableString stringWithString:@"[\n"];
             for (id obj in (NSArray *)array) {
-                [desc appendFormat:@"%@    %@,\n", padding, XZJSONModelDescription(obj, hierarchies)];
+                NSString *description = XZJSONModelDescription(obj, indent);
+                [desc appendFormat:@"%@    %@,\n", padding, description];
             }
             [desc deleteCharactersInRange:NSMakeRange(desc.length - 2, 1)];
             [desc appendFormat:@"%@]", padding];
@@ -1131,13 +1144,14 @@ NSString * _Nonnull XZJSONModelDescriptionOfClassType(id model, XZJSONClassType 
             if (count == 0) {
                 return @"{}";
             }
-            NSString * const padding = [@"" stringByPaddingToLength:hierarchies * 4 withString:@" " startingAtIndex:0];
-            hierarchies += 1;
+            
+            NSString * const padding = [@"" stringByPaddingToLength:indent * 4 withString:@" " startingAtIndex:0];
+            indent += 1;
             
             NSMutableString *desc = [NSMutableString stringWithString:@"{\n"];
             [dict enumerateKeysAndObjectsUsingBlock:^(id  _Nonnull key, id  _Nonnull obj, BOOL * _Nonnull stop) {
                 key = [key description];
-                obj = XZJSONModelDescription(obj, hierarchies);
+                obj = XZJSONModelDescription(obj, indent);
                 [desc appendFormat:@"%@    %@: %@,\n", padding, key, obj];
             }];
             [desc deleteCharactersInRange:NSMakeRange(desc.length - 2, 1)];
@@ -1145,12 +1159,13 @@ NSString * _Nonnull XZJSONModelDescriptionOfClassType(id model, XZJSONClassType 
             
             return desc;
         }
-        case XZJSONClassTypeUnknown:
-            return @"<unknown>";
+        case XZJSONClassTypeUnknown: {
+            @throw [NSException exceptionWithName:NSGenericException reason:@"" userInfo:nil];
+        }
     }
 }
 
-NSString * _Nonnull XZJSONModelDescription(NSObject *_Nonnull model, NSUInteger hierarchies) {
+NSString * _Nonnull XZJSONModelDescription(NSObject *_Nonnull model, NSUInteger indent) {
     if (!model) {
         return @"<nil>";
     }
@@ -1160,20 +1175,20 @@ NSString * _Nonnull XZJSONModelDescription(NSObject *_Nonnull model, NSUInteger 
     }
 
     if (![model isKindOfClass:[NSObject class]]) {
-        return [NSString stringWithFormat:@"%@", model];
+        return [NSString stringWithFormat:@"<%@: %p>", object_getClass(model), model];
     }
 
     XZJSONClassDescriptor * const modelClass = [XZJSONClassDescriptor descriptorForClass:model.class];
 
     if (modelClass->_classType) {
-        return XZJSONModelDescriptionOfClassType(model, modelClass->_classType, hierarchies);
+        return XZJSONModelDescriptionForFoundationClassOfType(model, modelClass->_classType, indent);
     }
     
     if (modelClass->_properties.count == 0) {
         return [NSString stringWithFormat:@"<%@: %p>", model.class, model];
     }
-    NSString * const padding = [@"" stringByPaddingToLength:hierarchies * 4 withString:@" " startingAtIndex:0];
-    hierarchies += 1;
+    NSString * const padding = [@"" stringByPaddingToLength:indent * 4 withString:@" " startingAtIndex:0];
+    indent += 1;
     
     NSMutableString *desc = [NSMutableString stringWithFormat:@"<%@: %p, properties: {\n", model.class, model];
     [modelClass->_properties enumerateObjectsUsingBlock:^(XZJSONPropertyDescriptor * _Nonnull property, NSUInteger idx, BOOL * _Nonnull stop) {
@@ -1241,13 +1256,12 @@ NSString * _Nonnull XZJSONModelDescription(NSObject *_Nonnull model, NSUInteger 
             }
             case XZObjcTypeObject: {
                 value = ((XZJSONGetter)objc_msgSend)((id)model, property->_getter);
-                
                 if (property->_isUnownedReferenceProperty) {
                     value = [NSString stringWithFormat:@"<%@: %p>", value.class, value];
                 } else if (property->_classType) {
-                    value = XZJSONModelDescriptionOfClassType(value, property->_classType, hierarchies);
+                    value = XZJSONModelDescriptionForFoundationClassOfType(value, property->_classType, indent);
                 } else {
-                    value = XZJSONModelDescription(value, hierarchies);
+                    value = [XZJSON model:value description:indent];
                 }
                 break;
             }
@@ -1261,7 +1275,10 @@ NSString * _Nonnull XZJSONModelDescription(NSObject *_Nonnull model, NSUInteger 
                 value = [NSString stringWithFormat:@"<selector: %@>", sel ? NSStringFromSelector(sel) : @"nil"];
                 break;
             }
-            case XZObjcTypeArray: {
+            case XZObjcTypeArray:
+            case XZObjcTypeString:
+            case XZObjcTypePointer:
+            case XZObjcTypeUnknown: {
                 NSString *desc = nil;
                 if (modelClass->_usesPropertyJSONEncodingMethod) {
                     desc = [NSString stringWithFormat:@"%@", [(id<XZJSONCoding>)model JSONEncodeValueForKey:key]];
@@ -1269,35 +1286,34 @@ NSString * _Nonnull XZJSONModelDescription(NSObject *_Nonnull model, NSUInteger 
                     void *pointer = ((void *(*)(id, SEL))(void *) objc_msgSend)((id)model, property->_getter);
                     desc = [NSString stringWithFormat:@"%p", pointer];
                 }
-                value = [NSString stringWithFormat:@"<array: %@, value: %@>", property->_property.type.name, desc];
-                break;
-            }
-            case XZObjcTypeString: {
-                NSString *desc = nil;
-                if (modelClass->_usesPropertyJSONEncodingMethod) {
-                    desc = [NSString stringWithFormat:@"%@", [(id<XZJSONCoding>)model JSONEncodeValueForKey:key]];
-                } else {
-                    void *pointer = ((void *(*)(id, SEL))(void *) objc_msgSend)((id)model, property->_getter);
-                    desc = [NSString stringWithFormat:@"%p", pointer];
+                switch (property->_type) {
+                    case XZObjcTypeArray: {
+                        value = [NSString stringWithFormat:@"<array: %@, value: %@>", property->_property.type.name, desc];
+                        break;
+                    }
+                    case XZObjcTypeString: {
+                        value = [NSString stringWithFormat:@"<string: %@, value: %@>", property->_property.type.name, desc];
+                        break;
+                    }
+                    case XZObjcTypePointer: {
+                        value = [NSString stringWithFormat:@"<pointer: %@, value: %@>", property->_property.type.name, desc];
+                        break;
+                    }
+                    case XZObjcTypeUnknown: {
+                        value = [NSString stringWithFormat:@"<unknown: %@, value: %@>", property->_property.type.name, desc];
+                        break;
+                    }
+                    default:
+                        break;
                 }
-                value = [NSString stringWithFormat:@"<string: %@, value: %@>", property->_property.type.name, desc];
-                break;
-            }
-            case XZObjcTypePointer: {
-                NSString *desc = nil;
-                if (modelClass->_usesPropertyJSONEncodingMethod) {
-                    desc = [NSString stringWithFormat:@"%@", [(id<XZJSONCoding>)model JSONEncodeValueForKey:key]];
-                } else {
-                    void *pointer = ((void *(*)(id, SEL))(void *) objc_msgSend)((id)model, property->_getter);
-                    desc = [NSString stringWithFormat:@"%p", pointer];
-                }
-                value = [NSString stringWithFormat:@"<pointer: %@, value: %@>", property->_property.type.name, desc];
                 break;
             }
             case XZObjcTypeStruct: {
                 value = XZJSONModelEncodeStructProperty(model, property);
-                if (value == nil && modelClass->_usesPropertyJSONEncodingMethod) {
-                    value = [NSString stringWithFormat:@"%@", [(id<XZJSONCoding>)model JSONEncodeValueForKey:key]];
+                if (value == nil) {
+                    if (modelClass->_usesPropertyJSONEncodingMethod) {
+                        value = [NSString stringWithFormat:@"%@", [(id<XZJSONCoding>)model JSONEncodeValueForKey:key]];
+                    }
                 }
                 if (value) {
                     value = [NSString stringWithFormat:@"<struct: %@, value: %@>", property->_property.type.name, value];
@@ -1308,34 +1324,27 @@ NSString * _Nonnull XZJSONModelDescription(NSObject *_Nonnull model, NSUInteger 
             }
             case XZObjcTypeUnion: {
                 if (modelClass->_usesPropertyJSONEncodingMethod) {
-                    NSString * const name = property->_property.type.name;
-                    value = [NSString stringWithFormat:@"<union: %@, value: %@>", name, [(id<XZJSONCoding>)model JSONEncodeValueForKey:key]];
+                    value = [NSString stringWithFormat:@"%@", [(id<XZJSONCoding>)model JSONEncodeValueForKey:key]];
+                }
+                if (value) {
+                    value = [NSString stringWithFormat:@"<union: %@, value: %@>", key, value];
                 } else {
                     value = [NSString stringWithFormat:@"<union: %@>", property->_property.type.name];
                 }
                 break;
             }
             case XZObjcTypeVoid: {
-                if (modelClass->_usesPropertyJSONEncodingMethod) {
-                    value = [NSString stringWithFormat:@"<void: %@>", [(id<XZJSONCoding>)model JSONEncodeValueForKey:key]];
-                } else {
-                    value = @"<void>";
-                }
+                value = @"<void>";
                 break;
             }
             case XZObjcTypeBitField: {
                 if (modelClass->_usesPropertyJSONEncodingMethod) {
-                    value = [NSString stringWithFormat:@"<BitField: %@>", [(id<XZJSONCoding>)model JSONEncodeValueForKey:key]];
+                    value = [NSString stringWithFormat:@"%@", [(id<XZJSONCoding>)model JSONEncodeValueForKey:key]];
+                }
+                if (value) {
+                    value = [NSString stringWithFormat:@"<BitField: %@>", value];
                 } else {
                     value = [NSString stringWithFormat:@"<BitField: %ld bit>", (long)property->_property.type.sizeInBit];
-                }
-                break;
-            }
-            case XZObjcTypeUnknown: {
-                if (modelClass->_usesPropertyJSONEncodingMethod) {
-                    value = [NSString stringWithFormat:@"<unknown: %@>", [(id<XZJSONCoding>)model JSONEncodeValueForKey:key]];
-                } else {
-                    value = @"<unknown>";
                 }
                 break;
             }

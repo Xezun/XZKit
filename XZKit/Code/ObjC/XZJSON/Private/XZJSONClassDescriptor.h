@@ -23,8 +23,11 @@ NS_ASSUME_NONNULL_BEGIN
     
     /// 所有可模型化或序列化的属性的数量。
     NSUInteger _numberOfProperties;
+    
     /// 所有可模型化或序列化的属性，包括从超类继承的。已按名称排序。
     NSArray<XZJSONPropertyDescriptor *> *_properties;
+    /// 以“属性名”为键的所有可模型化属性组成的字典。
+    NSDictionary<NSString *, XZJSONPropertyDescriptor *> *_namedProperties;
     
     /// 使用 key 映射的属性。
     NSDictionary<NSString *, XZJSONPropertyDescriptor *> *_keyProperties;

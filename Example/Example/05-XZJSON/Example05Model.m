@@ -36,7 +36,7 @@
 }
 
 - (NSString *)description {
-    return [XZJSON modelDescription:self];
+    return [XZJSON model:self description:0];
 }
 
 @end
@@ -52,7 +52,7 @@
 + (NSDictionary<NSString *,id> *)mappingJSONCodingKeys {
     return @{
         @"identifier": @"id",
-        @"school": @"school\\.name"
+        @"school": @[@"school\\.name", @"school.name"]
     };
 }
 

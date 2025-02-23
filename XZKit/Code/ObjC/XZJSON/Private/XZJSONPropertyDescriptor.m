@@ -45,12 +45,14 @@
     if (descriptor->_type == XZObjcTypeObject) {
         descriptor->_subtype = property.type.subtype;
         descriptor->_classType = XZJSONClassTypeFromClass(descriptor->_subtype);
+        descriptor->_structType = XZJSONStructTypeUnknown;
         descriptor->_isScalarNumber = NO;
         XZObjcQualifiers const qualifiers = property.type.qualifiers;
         descriptor->_isUnownedReferenceProperty = (qualifiers & XZObjcQualifierWeak) || (!(qualifiers & XZObjcQualifierCopy) && !(qualifiers & XZObjcQualifierRetain));
     } else {
         descriptor->_subtype = Nil;
         descriptor->_classType = XZJSONClassTypeUnknown;
+        descriptor->_structType = XZJSONStructTypeFromType(property.type);
         descriptor->_isScalarNumber = XZObjcIsScalarNumber(descriptor->_type);
         descriptor->_isUnownedReferenceProperty = NO;
     }

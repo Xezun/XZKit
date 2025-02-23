@@ -50,3 +50,49 @@ FOUNDATION_STATIC_INLINE XZJSONClassType XZJSONClassTypeFromClass(Class aClass) 
 }
 
 
+typedef NS_ENUM(NSUInteger, XZJSONStructType) {
+    XZJSONStructTypeUnknown = 0,
+    XZJSONStructTypeCGRect,
+    XZJSONStructTypeCGSize,
+    XZJSONStructTypeCGPoint,
+    XZJSONStructTypeUIEdgeInsets,
+    XZJSONStructTypeCGVector,
+    XZJSONStructTypeCGAffineTransform,
+    XZJSONStructTypeNSDirectionalEdgeInsets,
+    XZJSONStructTypeUIOffset
+};
+
+FOUNDATION_STATIC_INLINE XZJSONStructType XZJSONStructTypeFromType(XZObjcTypeDescriptor *type) {
+    switch (type.type) {
+        case XZObjcTypeStruct: {
+            NSString * const name = type.name;
+            if ([name isEqualToString:@"CGRect"]) {
+                return XZJSONStructTypeCGRect;
+            }
+            if ([name isEqualToString:@"CGSize"]) {
+                return XZJSONStructTypeCGSize;
+            }
+            if ([name isEqualToString:@"CGPoint"]) {
+                return XZJSONStructTypeCGPoint;
+            }
+            if ([name isEqualToString:@"UIEdgeInsets"]) {
+                return XZJSONStructTypeUIEdgeInsets;
+            }
+            if ([name isEqualToString:@"CGVector"]) {
+                return XZJSONStructTypeCGVector;
+            }
+            if ([name isEqualToString:@"CGAffineTransform"]) {
+                return XZJSONStructTypeCGAffineTransform;
+            }
+            if ([name isEqualToString:@"NSDirectionalEdgeInsets"]) {
+                return XZJSONStructTypeNSDirectionalEdgeInsets;
+            }
+            if ([name isEqualToString:@"UIOffset"]) {
+                return XZJSONStructTypeUIOffset;
+            }
+            return XZJSONStructTypeUnknown;
+        }
+        default:
+            return XZJSONStructTypeUnknown;
+    }
+}
