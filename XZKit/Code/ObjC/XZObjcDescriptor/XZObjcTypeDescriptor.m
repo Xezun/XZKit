@@ -50,6 +50,8 @@ typedef struct XZObjcTypeAlignment {
         
         XZObjcTypeRegister(NSDirectionalEdgeInsets);
         XZObjcTypeRegister(NSRange);
+        
+        XZObjcTypeRegister(CGAffineTransform);
     }
 }
 
