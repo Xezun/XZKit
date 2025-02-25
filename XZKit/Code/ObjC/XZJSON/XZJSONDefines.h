@@ -16,6 +16,10 @@ NS_ASSUME_NONNULL_BEGIN
 
 /// 模型属性与 JSON 数据键之间的映射。
 ///
+/// > 使用 KVC 取值，这意味着，可使用 KVC 的相关规则。比如通过 `@count` 取字典的元素个数，或 `@avg.amount` 取平均值等。
+///
+/// - SeeAlso: [Key-Value Coding Programming Guide](https://developer.apple.com/library/archive/documentation/Cocoa/Conceptual/KeyValueCoding/)
+///
 /// If the key in JSON or Dictionary does not match to the model's property name, implements this method and returns the additional mapper.
 ///
 /// 例如，对于下述数据结构。
@@ -28,7 +32,9 @@ NS_ASSUME_NONNULL_BEGIN
 ///     "ID": 100010
 /// }
 /// ```
+///
 /// 可以像下面这样定义数据模型。
+///
 /// ```swift
 /// class Foobar: NSObject, XZJSONCoding {
 ///     var name: String

@@ -15,7 +15,7 @@
 static NSMutableDictionary *NSDictionaryForLastKeyInKeyPath(NSMutableDictionary *dictionary, NSArray<NSString *> *keyPath) {
     for (NSUInteger i = 0, max = keyPath.count - 1; i < max; i++) {
         NSString * const subKey = keyPath[i];
-        NSMutableDictionary *subDict = dictionary[subKey];
+        NSMutableDictionary *subDict = [dictionary valueForKey:subKey]; 
         if (subDict == nil) {
             subDict = [NSMutableDictionary dictionary];
             dictionary[subKey] = subDict;
