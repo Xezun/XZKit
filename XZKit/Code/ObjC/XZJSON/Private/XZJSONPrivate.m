@@ -509,41 +509,25 @@ static NSData * _Nullable NSDataFromJSONValue(id _Nullable const value) {
         return value;
     }
     
-    if (![value isKindOfClass:NSString.class]) {
-        return nil;
+    if ([value isKindOfClass:NSString.class]) {
+        NSData *data = [[NSData alloc] initWithBase64EncodedString:value options:(kNilOptions)];
+        if (data) {
+            return data;
+        }
+        return [(NSString *)value dataUsingEncoding:NSUTF8StringEncoding];
     }
-    NSString * const string = value;
     
-    NSString *type = nil;
-    NSString *data = nil;
-    
-    // RFC2397 URL Data
-    // data:[<mediatype>][;base64],<data>
-    // https://datatracker.ietf.org/doc/html/rfc2397
-    if ([string hasPrefix:@"data:"] && string.length > 5) {
-        NSUInteger const max = [string rangeOfString:@"," options:0 range:NSMakeRange(0, MIN(1024, string.length))].location;
-        if (max != NSNotFound) {
-            NSUInteger const min = [string rangeOfString:@";" options:(NSBackwardsSearch) range:NSMakeRange(5, max - 5)].location;
-            
-            if (min == NSNotFound) {
-                type = [string substringWithRange:NSMakeRange(5, max - 5)];
-            } else {
-                type = [string substringWithRange:NSMakeRange(min + 1, max - min - 1)];
+    if ([value isKindOfClass:NSDictionary.class]) {
+        NSString *type = ((NSDictionary *)value)[@"type"];
+        NSString *data = ((NSDictionary *)value)[@"data"];
+        if ([type isKindOfClass:NSString.class] && [data isKindOfClass:NSString.class]) {
+            if ([type isEqualToString:@"base64"]) {
+                return [[NSData alloc] initWithBase64EncodedString:value options:(NSDataBase64DecodingIgnoreUnknownCharacters)];
             }
-            type = [type lowercaseString];
-            
-            data = [string substringFromIndex:max + 1];
-        } else {
-            type = @"base64";
-            data = [string substringFromIndex:5];
         }
     }
     
-    if ([type isEqualToString:@"base64"]) {
-        return [[NSData alloc] initWithBase64EncodedString:value options:(NSDataBase64DecodingIgnoreUnknownCharacters)];
-    }
-    
-    return [data dataUsingEncoding:NSUTF8StringEncoding];
+    return nil;
 }
 
 static NSArray * _Nullable NSArrayFromJSONValue(id _Nonnull const JSONValue, Class _Nullable const elementClass) {
