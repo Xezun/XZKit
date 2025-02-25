@@ -1271,50 +1271,61 @@ NSString * _Nonnull XZJSONModelDescription(NSObject *_Nonnull model, NSUInteger 
             case XZObjcTypeBool: {
                 BOOL const aValue = ((BOOL (*)(id, SEL))(void *) objc_msgSend)(model, property->_getter);
                 value = aValue ? @"true" : @"false";
+                break;
             }
             case XZObjcTypeChar: {
                 char const aValue = ((char (*)(id, SEL))(void *) objc_msgSend)(model, property->_getter);
                 value = [NSString stringWithFormat:@"%c", aValue];
+                break;
             }
             case XZObjcTypeUnsignedChar: {
                 unsigned char const aValue = ((unsigned char (*)(id, SEL))(void *) objc_msgSend)(model, property->_getter);
                 value = [NSString stringWithFormat:@"%c", aValue];
+                break;
             }
             case XZObjcTypeShort: {
                 short const aValue = ((short (*)(id, SEL))(void *) objc_msgSend)(model, property->_getter);
                 value = [NSString stringWithFormat:@"%d", aValue];
+                break;
             }
             case XZObjcTypeUnsignedShort: {
                 unsigned short const aValue = ((unsigned short (*)(id, SEL))(void *) objc_msgSend)(model, property->_getter);
                 value = [NSString stringWithFormat:@"%u", aValue];
+                break;
             }
             case XZObjcTypeInt: {
                 int const aValue = ((int (*)(id, SEL))(void *) objc_msgSend)(model, property->_getter);
                 value = [NSString stringWithFormat:@"%d", aValue];
+                break;
             }
             case XZObjcTypeUnsignedInt: {
                 unsigned int const aValue = ((unsigned int (*)(id, SEL))(void *) objc_msgSend)(model, property->_getter);
                 value = [NSString stringWithFormat:@"%u", aValue];
+                break;
             }
             case XZObjcTypeLong: {
                 long const aValue = ((long (*)(id, SEL))(void *) objc_msgSend)(model, property->_getter);
                 value = [NSString stringWithFormat:@"%ld", aValue];
+                break;
             }
             case XZObjcTypeUnsignedLong: {
                 unsigned long const aValue = ((unsigned long (*)(id, SEL))(void *) objc_msgSend)(model, property->_getter);
                 value = [NSString stringWithFormat:@"%lu", aValue];
+                break;
             }
             case XZObjcTypeFloat: {
                 float const aValue = ((float (*)(id, SEL))(void *) objc_msgSend)(model, property->_getter);
-                value = [NSString stringWithFormat:@"%G", aValue];
+                value = [NSString stringWithFormat:@"%f", aValue];
+                break;
             }
             case XZObjcTypeDouble: {
                 double const aValue = ((double (*)(id, SEL))(void *) objc_msgSend)(model, property->_getter);
-                value = [NSString stringWithFormat:@"%G", aValue];
+                value = [NSString stringWithFormat:@"%lf", aValue];
+                break;
             }
             case XZObjcTypeLongDouble: {
                 long double const aValue = ((long double (*)(id, SEL))(void *) objc_msgSend)(model, property->_getter);
-                value = [NSString stringWithFormat:@"%LG", aValue];
+                value = [NSString stringWithFormat:@"%Lf", aValue];
                 break;
             }
             case XZObjcTypeLongLong: {
