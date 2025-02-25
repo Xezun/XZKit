@@ -50,6 +50,8 @@ typedef struct XZObjcTypeAlignment {
         
         XZObjcTypeRegister(NSDirectionalEdgeInsets);
         XZObjcTypeRegister(NSRange);
+        
+        XZObjcTypeRegister(CGAffineTransform);
     }
 }
 
@@ -70,8 +72,6 @@ typedef struct XZObjcTypeAlignment {
     if (encodingLength == 0) {
         return nil;
     }
-    
-    
     
     { // 变量修饰符：方法参数的类型编码可能会包含类型修饰符
         unsigned long i = 0;

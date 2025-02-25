@@ -1,28 +1,127 @@
 {
-    "id": "0",
-    "name": "Smith",
-    "age": 50,
-    "school.name": "No. 1 Middle School",
-    "foo": "Good",
-    "students": [
+    "model": {
+        "charValue": "A",
+        "unsignedCharValue": 65,
+        "intValue": 123,
+        "unsignedIntValue": 456,
+        "shortValue": 78,
+        "unsignedShortValue": 90,
+        "longValue": 123456,
+        "unsignedLongValue": 654321,
+        "longLongValue": 1234567890,
+        "unsignedLongLongValue": 9876543210,
+        "floatValue": 123.45,
+        "doubleValue": 678.90,
+        "longDoubleValue": 1234567890.123456,
+        "boolValue": true,
+        "cStringValue": "C String",
+        "cArrayValue": [1, 2, 3],
+        "pointerValue": "self",
+        "structValue": "{10, 0.12, 3.14159265}",
+        "rectStructValue": "{{10, 20}, {30, 40}}",
+        "sizeStructValue": "{10, 20}",
+        "pointStructValue": "{30, 40}",
+        "edgeInsetsStructValue": "{10, 20, 30, 40}",
+        "vectorStructValue": "{10, 20}",
+        "affineTransformStructValue": "[10, 20, 30, 40, 40, 60]",
+        "directionalEdgeInsetsStructValue": "{10, 20, 30, 40}",
+        "offsetStructValue": "{10, 20}",
+        "unionValue": {
+            "type": "intValue",
+            "value": 1234
+        },
+        "classValue": "NSObject",
+        "selectorValue": "viewDidLoad",
+        "stringValue": "NSString Value",
+        "mutableStringValue": "NSMutableString Value",
+        "numberValueValue": 1231122,
+        "structValueValue": {
+            "type": "{CGRect={CGPoint=dd}{CGSize=dd}}",
+            "data": "AAAAAAAAJEAAAAAAAAA0QAAAAAAAAD5AAAAAAAAAREA="
+        },
+        "numberValue": 123,
+        "decimalNumberValue": 123.45,
+        "dataValue": "SGVsbG8gV29ybGQ=",
+        "mutableDataValue": "SGVsbG8gV29ybGQ=",
+        "dateValue": "2023-10-01 12:34:56",
+        "urlValue": "https://example.com",
+        "arrayValue": ["a", "b", "c"],
+        "mutableArrayValue": ["x", "y", "z"],
+        "dictionaryValue": {
+            "key1": "value1",
+            "key2": "value2"
+        },
+        "mutableDictionaryValue": {
+            "keyA": "valueA",
+            "keyB": "valueB"
+        },
+        "setValue": ["set1", "set2"],
+        "mutableSetValue": ["mset1", "mset2"],
+        "countedSetValue": ["cset1", "cset2"],
+        "orderedSetValue": ["ord1", "ord2"],
+        "mutableOrderedSetValue": ["mord1", "mord2"],
+        "objectValue": {
+            "charValue": "B",
+            "intValue": 456
+        }
+    },
+    "teachers": [
         {
-            "id": "1",
-            "name": "Peter",
-            "age": 12,
-            "frame": "{{1, 2}, {3, 4}}",
-            "bar": "{10, 20, 30}"
+            "id": "t_0",
+            "name": "Smith",
+            "age": 50,
+            "school.name": "No. 1 Middle School",
+            "foo": "Good",
+            "students": [
+                {
+                    "id": "s_1",
+                    "name": "Peter",
+                    "age": 12,
+                    "frame": "{{1, 2}, {3, 4}}",
+                    "bar": "{10, 20, 30}"
+                }, {
+                    "identifier": "s_2",
+                    "name": "Jim",
+                    "age": 13,
+                    "frame": "{{2, 2}, {3, 4}}",
+                    "bar": "{20, 30, 40}"
+                }, {
+                    "_id": "s_3",
+                    "name": "Lily",
+                    "age": 11,
+                    "frame": "{{3, 2}, {3, 4}}",
+                    "bar": "{30, 40, 50}"
+                }
+            ]
         }, {
-            "identifier": "2",
-            "name": "Jim",
-            "age": 13,
-            "frame": "{{2, 2}, {3, 4}}",
-            "bar": "{20, 30, 40}"
-        }, {
-            "_id": "3",
-            "name": "Lily",
-            "age": 11,
-            "frame": "{{3, 2}, {3, 4}}",
-            "bar": "{30, 40, 50}"
+            "id": "t_1",
+            "name": "Green",
+            "age": 55,
+            "school": {
+                "name": "No. 1 Middle School"
+            },
+            "foo": "Good",
+            "students": [
+                {
+                    "id": "s_1",
+                    "name": "Peter",
+                    "age": 12,
+                    "frame": "{{1, 2}, {3, 4}}",
+                    "bar": "{10, 20, 30}"
+                }, {
+                    "identifier": "s_2",
+                    "name": "Jim",
+                    "age": 13,
+                    "frame": "{{2, 2}, {3, 4}}",
+                    "bar": "{20, 30, 40}"
+                }, {
+                    "_id": "s_3",
+                    "name": "Lily",
+                    "age": 11,
+                    "frame": "{{3, 2}, {3, 4}}",
+                    "bar": "{30, 40, 50}"
+                }
+            ]
         }
     ]
 }

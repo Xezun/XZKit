@@ -16,6 +16,10 @@ NS_ASSUME_NONNULL_BEGIN
 
 /// 模型属性与 JSON 数据键之间的映射。
 ///
+/// > 使用 KVC 取值，这意味着，可使用 KVC 的相关规则。比如通过 `@count` 取字典的元素个数，或 `@avg.amount` 取平均值等。
+///
+/// - SeeAlso: [Key-Value Coding Programming Guide](https://developer.apple.com/library/archive/documentation/Cocoa/Conceptual/KeyValueCoding/)
+///
 /// If the key in JSON or Dictionary does not match to the model's property name, implements this method and returns the additional mapper.
 ///
 /// 例如，对于下述数据结构。
@@ -28,7 +32,9 @@ NS_ASSUME_NONNULL_BEGIN
 ///     "ID": 100010
 /// }
 /// ```
+///
 /// 可以像下面这样定义数据模型。
+///
 /// ```swift
 /// class Foobar: NSObject, XZJSONCoding {
 ///     var name: String
@@ -139,9 +145,10 @@ NS_ASSUME_NONNULL_BEGIN
 /// - 当 XZJSON 在实现 NSCoding 遇到无法解档的属性值时，此方法会被调用，
 ///
 /// - Parameters:
-///   - valueOrCoder: 待处理的值，可能是 JSON 值，或归档的 NSCoder 对象
+///   - value: 待处理的值，可能是 JSON 值，或包含属性值的 NSCoder 归档对象
 ///   - key: 属性名
-- (void)JSONDecodeValue:(id)valueOrCoder forKey:(NSString *)key;
+/// - Returns: 返回 NO 表示未处理，返回 YES 表示已处理
+- (BOOL)JSONDecodeValue:(id)value forKey:(NSString *)key;
 
 #pragma mark - XZJSONEncoding
 
@@ -165,8 +172,19 @@ NS_ASSUME_NONNULL_BEGIN
 /// - 当 XZJSON 在实现 NSDescription 遇到无法描述的属性值时，此方法会被调用。
 ///
 /// - Parameter key: 属性名
+/// - Returns: 返回 nil 表示未处理，属性不出现在结果的 JSON 中
 - (nullable id<NSCoding>)JSONEncodeValueForKey:(NSString *)key;
 
 @end
+
+#if XZ_FRAMEWORK
+#if DEBUG
+#define XZJSONLog(...) NSLog(__VA_ARGS__)
+#else
+#define XZJSONLog(...)
+#endif
+#else
+#define XZJSONLog(...)
+#endif
 
 NS_ASSUME_NONNULL_END
