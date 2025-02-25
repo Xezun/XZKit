@@ -163,7 +163,7 @@ static NSMutableDictionary *NSDictionaryForLastKeyInKeyPath(NSMutableDictionary 
             }
             
             void *bytes = calloc(meta.size, sizeof(char));
-            [value getValue:&bytes size:meta.size];
+            [value getValue:bytes size:meta.size];
             NSData *data = [[NSData alloc] initWithBytesNoCopy:bytes length:meta.size freeWhenDone:YES];
             
             NSString *typeString = [NSString stringWithCString:encoding encoding:NSASCIIStringEncoding];
