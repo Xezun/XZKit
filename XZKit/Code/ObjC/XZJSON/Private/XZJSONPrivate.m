@@ -155,7 +155,24 @@ static NSMutableDictionary *NSDictionaryForLastKeyInKeyPath(NSMutableDictionary 
             return object;
         }
         case XZJSONClassTypeNSValue: {
-            return object;
+            NSValue *value = object;
+            const char * encoding = value.objCType;
+            XZObjcTypeDescriptor *meta = [XZObjcTypeDescriptor descriptorForTypeEncoding:encoding];
+            if (!meta) {
+                return object;
+            }
+            
+            void *bytes = calloc(meta.size, sizeof(char));
+            [value getValue:&bytes size:meta.size];
+            NSData *data = [[NSData alloc] initWithBytesNoCopy:bytes length:meta.size freeWhenDone:YES];
+            
+            NSString *typeString = [NSString stringWithCString:encoding encoding:NSASCIIStringEncoding];
+            NSString *dataString = [data base64EncodedStringWithOptions:kNilOptions];
+            
+            if (!typeString || !dataString) {
+                return object;
+            }
+            return @{ @"type": typeString, @"data": dataString };
         }
         case XZJSONClassTypeNSNumber: {
             return object;
@@ -904,6 +921,15 @@ void XZJSONModelDecodeProperty(id model, XZJSONPropertyDescriptor *property, id 
                 case XZJSONClassTypeNSValue: {
                     if ([JSONValue isKindOfClass:[NSValue class]]) {
                         value = JSONValue;
+                    } else if ([JSONValue isKindOfClass:NSDictionary.class]) {
+                        NSDictionary *dict = JSONValue;
+                        NSString *typeString = dict[@"type"];
+                        NSString *dataString = dict[@"data"];
+                        if ([typeString isKindOfClass:NSString.class] && [dataString isKindOfClass:NSString.class]) {
+                            NSData *data = [[NSData alloc] initWithBase64EncodedString:dataString options:kNilOptions];
+                            const char * const encoding = [typeString cStringUsingEncoding:NSASCIIStringEncoding];
+                            value = [NSValue valueWithBytes:data.bytes objCType:encoding];
+                        }
                     }
                     break;
                 }
