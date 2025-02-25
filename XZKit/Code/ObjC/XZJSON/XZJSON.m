@@ -277,9 +277,10 @@
             }
         }
         // 无法复制的属性
-        if (!block || !block(newModel, property->_name)) {
-            NSLog(@"[XZJSON] 无法复制 %@ 对象的属性 %@ 的值", modelClass->_class.raw, property->_name);
+        if (block && block(newModel, property->_name)) {
+            return;
         }
+        XZJSONLog(@"[XZJSON] 无法复制 %@ 对象的属性 %@ 的值", modelClass->_class.raw, property->_name);
     }];
     
     return newModel;
@@ -291,9 +292,12 @@
 @implementation XZJSON (NSEquatable)
 
 + (BOOL)model:(id)model1 isEqualToModel:(id)model2 comparator:(XZJSONEquation (^)(id _Nonnull, id _Nonnull, NSString * _Nonnull))block {
+    // 相等：同一对象
     if (model1 == model2) {
         return YES;
     }
+    
+    // 不相等：其中一个为 nil
     if (model1 == nil || model2 == nil) {
         return NO;
     }
@@ -301,6 +305,7 @@
     XZJSONClassDescriptor * const model1Class = [XZJSONClassDescriptor descriptorForClass:[model1 class]];
     XZJSONClassDescriptor * const model2Class = [XZJSONClassDescriptor descriptorForClass:[model2 class]];
     
+    // 不相等：属性数量不一样
     if (model1Class->_numberOfProperties != model2Class->_numberOfProperties) {
         return NO;
     }
@@ -316,16 +321,21 @@
     }
     
     // 都是模型，逐个比较属性。
-    for (XZJSONPropertyDescriptor *property1 in model1Class->_properties) {
-        NSString * const name = property1->_name;
-        XZJSONPropertyDescriptor *property2 = model2Class->_namedProperties[name];
+    for (XZJSONPropertyDescriptor * const property1 in model1Class->_properties) {
+        NSString                 * const name      = property1->_name;
+        XZJSONPropertyDescriptor * const property2 = model2Class->_namedProperties[name];
+        
+        // 不相等：模型没有同名属性
         if (property2 == nil) {
             return NO;
         }
+        
+        // 不相等：同名属性的值类型不相同
         if (property1->_type != property2->_type) {
             return NO;
         }
         
+        // 比较属性值
         switch (property1->_type) {
             case XZObjcTypeUnknown:
                 break;
@@ -570,6 +580,7 @@
             }
         }
         
+        // 无法比较的属性值
         if (block) {
             switch (block(model1, model2, name)) {
                 case XZJSONEquationNo:
@@ -580,7 +591,9 @@
                     continue;
             }
         }
-        NSLog(@"[XZJSON] 无法比较数据模型 %@ 与 %@ 的 属性 %@ 的值，默认当作非比较属性处理", model1Class->_class.raw, model2Class->_class.raw, name);
+        
+        // 默认不相等。
+        XZJSONLog(@"[XZJSON] 无法比较数据模型 %@ 与 %@ 的 属性 %@ 的值", model1Class->_class.raw, model2Class->_class.raw, name);
         return NO;
     }
     

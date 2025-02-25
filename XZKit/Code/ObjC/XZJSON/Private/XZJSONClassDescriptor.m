@@ -99,7 +99,7 @@ static id XZJSONKeyFromString(NSString *aString);
             [[rawClass mappingJSONCodingKeys] enumerateKeysAndObjectsUsingBlock:^(NSString * const propertyName, id const value, BOOL *stop) {
                 XZJSONPropertyDescriptor * const property = allProperties[propertyName];
                 if (property == nil) {
-                    NSLog(@"[%@ mappingJSONCodingKeys] 属性 %@ 不存在", rawClass, propertyName);
+                    XZJSONLog(@"[%@ mappingJSONCodingKeys] 属性 %@ 不存在", rawClass, propertyName);
                     return;
                 }
                 
@@ -110,7 +110,7 @@ static id XZJSONKeyFromString(NSString *aString);
                 if ([value isKindOfClass:NSString.class]) {
                     id const someKey = XZJSONKeyFromString(value);
                     if (someKey == nil) {
-                        NSLog(@"[%@ mappingJSONCodingKeys] 属性 %@ 映射 JSON 键 %@ 不合法", rawClass, propertyName, value);
+                        XZJSONLog(@"[%@ mappingJSONCodingKeys] 属性 %@ 映射 JSON 键 %@ 不合法", rawClass, propertyName, value);
                         return;
                     } else if ([someKey isKindOfClass:NSString.class]) {
                         JSONKey = someKey;
@@ -125,14 +125,14 @@ static id XZJSONKeyFromString(NSString *aString);
                         }
                         id const someKey = XZJSONKeyFromString(object);
                         if (someKey == nil) {
-                            NSLog(@"[%@ mappingJSONCodingKeys] 属性 %@ 映射 JSON 键 %@ 不合法", rawClass, propertyName, value);
+                            XZJSONLog(@"[%@ mappingJSONCodingKeys] 属性 %@ 映射 JSON 键 %@ 不合法", rawClass, propertyName, value);
                             continue;
                         }
                         [arrayM addObject:someKey];
                     }
                     switch (arrayM.count) {
                         case 0:
-                            NSLog(@"[%@ mappingJSONCodingKeys] 属性 %@ 映射 JSON 键 %@ 不合法", rawClass, propertyName, value);
+                            XZJSONLog(@"[%@ mappingJSONCodingKeys] 属性 %@ 映射 JSON 键 %@ 不合法", rawClass, propertyName, value);
                             return;
                         case 1: {
                             id const someKey = arrayM[0];
@@ -149,7 +149,7 @@ static id XZJSONKeyFromString(NSString *aString);
                         }
                     }
                 } else {
-                    NSLog(@"[%@ mappingJSONCodingKeys] 属性 %@ 映射 JSON 键 %@ 不合法", rawClass, propertyName, value);
+                    XZJSONLog(@"[%@ mappingJSONCodingKeys] 属性 %@ 映射 JSON 键 %@ 不合法", rawClass, propertyName, value);
                     return;
                 }
                 

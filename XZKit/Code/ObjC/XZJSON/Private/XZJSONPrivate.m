@@ -175,17 +175,7 @@ static NSMutableDictionary *NSDictionaryForLastKeyInKeyPath(NSMutableDictionary 
         }
         case XZJSONClassTypeNSArray:
         case XZJSONClassTypeNSMutableArray: {
-            if ([NSJSONSerialization isValidJSONObject:object]) {
-                return object;
-            }
-            NSMutableArray *newArray = [NSMutableArray arrayWithCapacity:((NSArray *)object).count];
-            for (id item in (NSArray *)object) {
-                id const JSONObject = [self _encodeObject:item intoDictionary:nil];
-                if (JSONObject != nil) {
-                    [newArray addObject:JSONObject];
-                }
-            }
-            return newArray;
+            return [self _encodeCollection:(id<NSFastEnumeration>)object count:[(NSArray *)object count]];
         }
         case XZJSONClassTypeNSDictionary:
         case XZJSONClassTypeNSMutableDictionary: {
@@ -204,15 +194,15 @@ static NSMutableDictionary *NSDictionaryForLastKeyInKeyPath(NSMutableDictionary 
             return dictM;
         }
         case XZJSONClassTypeNSSet:
-        case XZJSONClassTypeNSMutableSet: {
-            NSMutableArray *newArray = [NSMutableArray arrayWithCapacity:((NSSet *)object).count];
-            for (id item in (NSSet *)object) {
-                id const JSONObject = [self _encodeObject:item intoDictionary:nil];
-                if (JSONObject != nil) {
-                    [newArray addObject:JSONObject];
-                }
-            }
-            return newArray;
+        case XZJSONClassTypeNSMutableSet:
+        case XZJSONClassTypeNSCountedSet: {
+            NSSet *set = object;
+            return [self _encodeCollection:set.allObjects count:set.count];
+        }
+        case XZJSONClassTypeNSOrderedSet:
+        case XZJSONClassTypeNSMutableOrderedSet: {
+            NSOrderedSet *orderedSet = object;
+            return [self _encodeCollection:orderedSet.array.copy count:orderedSet.count];
         }
         case XZJSONClassTypeUnknown: {
             if (object == (id)kCFNull) {
@@ -234,6 +224,20 @@ static NSMutableDictionary *NSDictionaryForLastKeyInKeyPath(NSMutableDictionary 
             return dictionary;
         }
     }
+}
+
++ (id)_encodeCollection:(id<NSFastEnumeration>)collection count:(NSUInteger)count {
+    if ([NSJSONSerialization isValidJSONObject:collection]) {
+        return collection;
+    }
+    NSMutableArray *newArray = [NSMutableArray arrayWithCapacity:count];
+    for (id item in collection) {
+        id const JSONObject = [self _encodeObject:item intoDictionary:nil];
+        if (JSONObject != nil) {
+            [newArray addObject:JSONObject];
+        }
+    }
+    return newArray;
 }
 
 + (void)_model:(id)model encodeIntoDictionary:(NSMutableDictionary *)dictionary descriptor:(XZJSONClassDescriptor *)descriptor {
@@ -368,17 +372,16 @@ static NSMutableDictionary *NSDictionaryForLastKeyInKeyPath(NSMutableDictionary 
             }
         }
         
-        if (JSONValue == nil) {
-            if (property->_class->_usesPropertyJSONEncodingMethod) {
-                JSONValue = [model JSONEncodeValueForKey:property->_name];
-            } else {
-                NSLog(@"[XZJSON] Can not encode property `%@` of `%@`", property->_name, descriptor->_class.name);
-            }
+        if (JSONValue == nil && property->_class->_usesPropertyJSONEncodingMethod) {
+            JSONValue = [model JSONEncodeValueForKey:property->_name];
         }
         
         if (JSONValue) {
             dict[key] = JSONValue;
+            return;
         }
+        
+        XZJSONLog(@"[XZJSON] Can not encode property `%@` of `%@`", property->_name, descriptor->_class.name);
     }];
 }
 
@@ -639,6 +642,41 @@ static NSSet * _Nullable NSSetFromJSONValue(id _Nonnull const JSONValue, Class _
     }
     
     return [NSMutableSet setWithObject:JSONValue];
+}
+
+static NSOrderedSet * _Nullable NSOrderedSetFromJSONValue(id _Nonnull const JSONValue, Class _Nullable const elementClass) {
+    if (elementClass) {
+        if ([JSONValue isKindOfClass:NSDictionary.class]) {
+            id model = [XZJSON _decodeJSONObject:JSONValue class:elementClass];
+            if (model) {
+                return [NSMutableOrderedSet orderedSetWithObject:model];
+            }
+            return nil;
+        }
+        
+        if ([JSONValue isKindOfClass:[NSArray class]] || [JSONValue isKindOfClass:NSSet.class]) {
+            NSMutableOrderedSet *setM = [NSMutableOrderedSet new];
+            for (id data in JSONValue) {
+                id const model = [XZJSON _decodeJSONObject:data class:elementClass];
+                if (model) {
+                    [setM addObject:model];
+                }
+            }
+            return setM;
+        }
+        
+        return nil;
+    }
+    
+    if ([JSONValue isKindOfClass:NSArray.class]) {
+        return [NSMutableOrderedSet orderedSetWithArray:JSONValue];
+    }
+    
+    if ([JSONValue isKindOfClass:NSOrderedSet.class]) {
+        return JSONValue;
+    }
+    
+    return [NSMutableOrderedSet orderedSetWithObject:JSONValue];
 }
 
 static NSNumber * _Nullable NSNumberCharFromJSONValue(id _Nonnull JSONValue) {
@@ -930,6 +968,24 @@ void XZJSONModelDecodeProperty(id model, XZJSONPropertyDescriptor *property, id 
                     }
                     break;
                 }
+                case XZJSONClassTypeNSCountedSet: {
+                    value = NSSetFromJSONValue(JSONValue, property->_elementType);
+                    if (value && ![value isKindOfClass:NSCountedSet.class]) {
+                        value = [NSCountedSet setWithSet:value];
+                    }
+                    break;
+                }
+                case XZJSONClassTypeNSOrderedSet: {
+                    value = NSOrderedSetFromJSONValue(JSONValue, property->_elementType);
+                    break;
+                }
+                case XZJSONClassTypeNSMutableOrderedSet: {
+                    value = NSOrderedSetFromJSONValue(JSONValue, property->_elementType);
+                    if (value && ![value isKindOfClass:NSMutableOrderedSet.class]) {
+                        value = [NSMutableOrderedSet orderedSetWithOrderedSet:value];
+                    }
+                    break;
+                }
                 case XZJSONClassTypeNSDictionary: {
                     value = NSDictionaryFromJSONValue(JSONValue, property->_elementType);
                     break;
@@ -984,10 +1040,12 @@ void XZJSONModelDecodeProperty(id model, XZJSONPropertyDescriptor *property, id 
     
     // JSONValue 无法解析为目标属性值
     if (property->_class->_usesPropertyJSONDecodingMethod) {
-        [(id<XZJSONCoding>)model JSONDecodeValue:JSONValue forKey:property->_name];
-    } else {
-        NSLog(@"[XZJSON] Can not decode value `%@` for property `%@` of `%@`", JSONValue, property->_name, property->_class->_class.name);
+        if ([(id<XZJSONCoding>)model JSONDecodeValue:JSONValue forKey:property->_name]) {
+            return;
+        }
     }
+    
+    XZJSONLog(@"[XZJSON] Can not decode value `%@` for property `%@` of `%@`", JSONValue, property->_name, property->_class->_class.name);
 }
 
 BOOL XZJSONModelDecodeStructProperty(id model, XZJSONPropertyDescriptor *property, id _Nonnull JSONValue) {
@@ -1082,6 +1140,24 @@ NSString * _Nullable XZJSONModelEncodeStructProperty(id model, XZJSONPropertyDes
 }
 
 #pragma mark - NSDescription
+NSString * _Nonnull XZJSONModelDescriptionForNSCollection(id<NSFastEnumeration> const model, NSUInteger count, NSUInteger indent) {
+    if (count == 0) {
+        return @"[]";
+    }
+    
+    NSString * const padding = [@"" stringByPaddingToLength:indent * 4 withString:@" " startingAtIndex:0];
+    indent += 1;
+    
+    NSMutableString *desc = [NSMutableString stringWithString:@"[\n"];
+    for (id obj in (id<NSFastEnumeration>)model) {
+        NSString *description = XZJSONModelDescription(obj, indent);
+        [desc appendFormat:@"%@    %@,\n", padding, description];
+    }
+    [desc deleteCharactersInRange:NSMakeRange(desc.length - 2, 1)];
+    [desc appendFormat:@"%@]", padding];
+    
+    return desc;
+}
 
 NSString * _Nonnull XZJSONModelDescriptionForFoundationClassOfType(id model, XZJSONClassType const classType, NSUInteger indent) {
     switch (classType) {
@@ -1112,31 +1188,18 @@ NSString * _Nonnull XZJSONModelDescriptionForFoundationClassOfType(id model, XZJ
             return ((NSURL *)model).absoluteString;
         }
         case XZJSONClassTypeNSSet:
-        case XZJSONClassTypeNSMutableSet: {
-            model = ((NSSet *)model).allObjects;
+        case XZJSONClassTypeNSMutableSet:
+        case XZJSONClassTypeNSCountedSet: {
+            return XZJSONModelDescriptionForNSCollection(((NSSet *)model).allObjects, ((NSSet *)model).count, indent);
+        }
+        case XZJSONClassTypeNSOrderedSet:
+        case XZJSONClassTypeNSMutableOrderedSet: {
+            return XZJSONModelDescriptionForNSCollection((NSOrderedSet *)model, ((NSOrderedSet *)model).count, indent);
         }
         case XZJSONClassTypeNSArray:
         case XZJSONClassTypeNSMutableArray: {
-            NSArray *  const array = (id)model;
-            NSUInteger const count = array.count;
-            if (count == 0) {
-                return @"[]";
-            }
-            
-            NSString * const padding = [@"" stringByPaddingToLength:indent * 4 withString:@" " startingAtIndex:0];
-            indent += 1;
-            
-            NSMutableString *desc = [NSMutableString stringWithString:@"[\n"];
-            for (id obj in (NSArray *)array) {
-                NSString *description = XZJSONModelDescription(obj, indent);
-                [desc appendFormat:@"%@    %@,\n", padding, description];
-            }
-            [desc deleteCharactersInRange:NSMakeRange(desc.length - 2, 1)];
-            [desc appendFormat:@"%@]", padding];
-            
-            return desc;
+            return XZJSONModelDescriptionForNSCollection((NSArray *)model, ((NSArray *)model).count, indent);
         }
-            
         case XZJSONClassTypeNSDictionary:
         case XZJSONClassTypeNSMutableDictionary: {
             NSDictionary * const dict  = (id)model;
@@ -1429,7 +1492,10 @@ void XZJSONModelEncodeWithCoder(id model, NSCoder *aCoder) {
         case XZJSONClassTypeNSArray:
         case XZJSONClassTypeNSMutableArray:
         case XZJSONClassTypeNSSet:
-        case XZJSONClassTypeNSMutableSet: {
+        case XZJSONClassTypeNSMutableSet:
+        case XZJSONClassTypeNSCountedSet:
+        case XZJSONClassTypeNSOrderedSet:
+        case XZJSONClassTypeNSMutableOrderedSet: {
             if (NSCollectionConformsNSCoding(model)) {
                 [(id<NSCoding>)model encodeWithCoder:aCoder];
             }
@@ -1568,7 +1634,10 @@ void XZJSONModelEncodeWithCoder(id model, NSCoder *aCoder) {
                                 case XZJSONClassTypeNSArray:
                                 case XZJSONClassTypeNSMutableArray:
                                 case XZJSONClassTypeNSSet:
-                                case XZJSONClassTypeNSMutableSet: {
+                                case XZJSONClassTypeNSMutableSet:
+                                case XZJSONClassTypeNSCountedSet:
+                                case XZJSONClassTypeNSOrderedSet:
+                                case XZJSONClassTypeNSMutableOrderedSet: {
                                     // 无法确定元素类型，无法进行安全归档
                                     if (!property->_elementType) {
                                         break;
@@ -1629,7 +1698,10 @@ void XZJSONModelEncodeWithCoder(id model, NSCoder *aCoder) {
                             case XZJSONClassTypeNSArray:
                             case XZJSONClassTypeNSMutableArray:
                             case XZJSONClassTypeNSSet:
-                            case XZJSONClassTypeNSMutableSet: {
+                            case XZJSONClassTypeNSMutableSet:
+                            case XZJSONClassTypeNSCountedSet:
+                            case XZJSONClassTypeNSOrderedSet:
+                            case XZJSONClassTypeNSMutableOrderedSet: {
                                 // 检查元素是否合法：元素只要支持归档即可。
                                 if (NSCollectionConformsNSCoding(model)) {
                                     [aCoder encodeObject:model forKey:name];
@@ -1669,10 +1741,11 @@ void XZJSONModelEncodeWithCoder(id model, NSCoder *aCoder) {
                     id<NSCoding> aValue = [((id<XZJSONCoding>)model) JSONEncodeValueForKey:name];
                     if (aValue) {
                         [aCoder encodeObject:aValue forKey:name];
+                        return;
                     }
-                } else {
-                    NSLog(@"[XZJSON] [NSCoding] Can not encode property `%@` of `%@`!", modelClass->_class.name, property->_name);
                 }
+                
+                XZJSONLog(@"[XZJSON] [NSCoding] Can not encode property `%@` of `%@`!", modelClass->_class.name, property->_name);
             }];
             break;
         }
@@ -1704,7 +1777,10 @@ id _Nullable XZJSONModelDecodeWithCoder(id model, NSCoder *aCoder) {
         case XZJSONClassTypeNSArray:
         case XZJSONClassTypeNSMutableArray:
         case XZJSONClassTypeNSSet:
-        case XZJSONClassTypeNSMutableSet: {
+        case XZJSONClassTypeNSMutableSet:
+        case XZJSONClassTypeNSCountedSet:
+        case XZJSONClassTypeNSOrderedSet:
+        case XZJSONClassTypeNSMutableOrderedSet: {
             if (NSCollectionConformsNSCoding(model)) {
                 return [(id<NSCoding>)model initWithCoder:aCoder];
             }
@@ -1936,10 +2012,12 @@ id _Nullable XZJSONModelDecodeWithCoder(id model, NSCoder *aCoder) {
                 }
                 
                 if ([aCoder containsValueForKey:name] && modelClass->_usesPropertyJSONDecodingMethod) {
-                    [((id<XZJSONCoding>)model) JSONDecodeValue:aCoder forKey:name];
-                } else {
-                    NSLog(@"[XZJSON] Can not decode property `%@` of `%@`!", modelClass->_class.name, property->_name);
+                    if ([((id<XZJSONCoding>)model) JSONDecodeValue:aCoder forKey:name]) {
+                        return;
+                    }
                 }
+                
+                XZJSONLog(@"[XZJSON] Can not decode property `%@` of `%@`!", modelClass->_class.name, property->_name);
             }];
             break;
         }

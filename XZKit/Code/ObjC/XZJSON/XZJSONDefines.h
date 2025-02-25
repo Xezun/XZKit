@@ -139,9 +139,10 @@ NS_ASSUME_NONNULL_BEGIN
 /// - 当 XZJSON 在实现 NSCoding 遇到无法解档的属性值时，此方法会被调用，
 ///
 /// - Parameters:
-///   - valueOrCoder: 待处理的值，可能是 JSON 值，或归档的 NSCoder 对象
+///   - value: 待处理的值，可能是 JSON 值，或包含属性值的 NSCoder 归档对象
 ///   - key: 属性名
-- (void)JSONDecodeValue:(id)valueOrCoder forKey:(NSString *)key;
+/// - Returns: 返回 NO 表示未处理，返回 YES 表示已处理
+- (BOOL)JSONDecodeValue:(id)value forKey:(NSString *)key;
 
 #pragma mark - XZJSONEncoding
 
@@ -165,8 +166,19 @@ NS_ASSUME_NONNULL_BEGIN
 /// - 当 XZJSON 在实现 NSDescription 遇到无法描述的属性值时，此方法会被调用。
 ///
 /// - Parameter key: 属性名
+/// - Returns: 返回 nil 表示未处理，属性不出现在结果的 JSON 中
 - (nullable id<NSCoding>)JSONEncodeValueForKey:(NSString *)key;
 
 @end
+
+#if XZ_FRAMEWORK
+#if DEBUG
+#define XZJSONLog(...) NSLog(__VA_ARGS__)
+#else
+#define XZJSONLog(...)
+#endif
+#else
+#define XZJSONLog(...)
+#endif
 
 NS_ASSUME_NONNULL_END
