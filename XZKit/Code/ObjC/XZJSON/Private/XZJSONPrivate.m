@@ -687,7 +687,7 @@ static NSNumber * _Nullable NSNumberCharFromJSONValue(id _Nonnull JSONValue) {
     } else if ([JSONValue isKindOfClass:NSString.class]) {
         NSString *string = JSONValue;
         if (string.length > 0) {
-            number = @([(NSString *)number characterAtIndex:0]);
+            number = @([(NSString *)string characterAtIndex:0]);
         }
     }
     return number;
@@ -1150,7 +1150,7 @@ NSString * _Nullable XZJSONModelEncodeStructProperty(id model, XZJSONPropertyDes
 }
 
 #pragma mark - NSDescription
-NSString * _Nonnull XZJSONModelDescriptionForNSCollection(id<NSFastEnumeration> const model, NSUInteger count, NSUInteger indent) {
+static NSString * _Nonnull XZJSONModelDescriptionForNSCollection(id<NSFastEnumeration> const model, NSUInteger count, NSUInteger indent) {
     if (count == 0) {
         return @"[]";
     }
