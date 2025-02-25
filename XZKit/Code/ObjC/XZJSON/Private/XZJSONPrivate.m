@@ -257,34 +257,34 @@ static NSMutableDictionary *NSDictionaryForLastKeyInKeyPath(NSMutableDictionary 
     return newArray;
 }
 
-+ (void)_model:(id)model encodeIntoDictionary:(NSMutableDictionary *)dictionary descriptor:(XZJSONClassDescriptor *)descriptor {
++ (void)_model:(id)model encodeIntoDictionary:(NSMutableDictionary *)modelDictionary descriptor:(XZJSONClassDescriptor *)descriptor {
     [descriptor->_properties enumerateObjectsUsingBlock:^(XZJSONPropertyDescriptor * _Nonnull property, NSUInteger idx, BOOL * _Nonnull stop) {
         NSString            *key  = nil;
-        NSMutableDictionary *dict = dictionary;
+        NSMutableDictionary *keyInDictionary = nil;
         
         // 先判断是否映射到 keyPath 或 keyArray
         if (property->_JSONKeyPath) {
-            dict = NSDictionaryForLastKeyInKeyPath(dict, property->_JSONKeyPath);
-            if (dict == nil) {
+            keyInDictionary = NSDictionaryForLastKeyInKeyPath(modelDictionary, property->_JSONKeyPath);
+            if (keyInDictionary == nil) {
                 return;
             }
             key = property->_JSONKeyPath.lastObject;
         } else if (property->_JSONKeyArray) {
             for (NSUInteger i = 0, count = property->_JSONKeyArray.count; i < count; i++) {
-                id const aKey = property->_JSONKeyArray[i];
+                id const someKey = property->_JSONKeyArray[i];
                 
-                if ([aKey isKindOfClass:NSString.class]) {
-                    if (dictionary[(NSString *)aKey]) {
+                if ([someKey isKindOfClass:NSString.class]) {
+                    if (modelDictionary[(NSString *)someKey]) {
                         continue; // 对应的 key 已经有值，继续遍历，尝试其它 key
                     }
-                    key = aKey;
+                    key = someKey;
+                    keyInDictionary = modelDictionary;
                     break;
                 }
                 
-                NSMutableDictionary *temp = NSDictionaryForLastKeyInKeyPath(dict, aKey);
-                if (temp) {
-                    dict = temp;
-                    key = ((NSArray *)aKey).lastObject;
+                keyInDictionary = NSDictionaryForLastKeyInKeyPath(modelDictionary, someKey);
+                if (keyInDictionary) {
+                    key = ((NSArray *)someKey).lastObject;
                     break;
                 }
             }
@@ -292,10 +292,11 @@ static NSMutableDictionary *NSDictionaryForLastKeyInKeyPath(NSMutableDictionary 
                 return;
             }
         } else {
-            if (dictionary[property->_JSONKey]) {
+            if (modelDictionary[property->_JSONKey]) {
                 return; // 值已存在，不覆盖。
             }
             key = property->_JSONKey;
+            keyInDictionary = modelDictionary;
         }
         
         id JSONValue = nil;
@@ -372,18 +373,19 @@ static NSMutableDictionary *NSDictionaryForLastKeyInKeyPath(NSMutableDictionary 
                     break;
                 }
                 
-                id const value = ((id (*)(id, SEL))(void *) objc_msgSend)((id)model, property->_getter);
+                JSONValue = ((id (*)(id, SEL))(void *) objc_msgSend)((id)model, property->_getter);
                                         
-                if (value == nil) {
+                if (JSONValue == nil) {
                     // 所有参与转换的属性，都将输出到 JSON 中
                     JSONValue = (id)kCFNull;
                 } else {
                     // 如果 key 已经有值，则进行合并，不能合并则覆盖
-                    NSMutableDictionary *dictionay = dict[key];
-                    if (![dictionay isKindOfClass:NSMutableDictionary.class]) {
-                        dictionay = [NSMutableDictionary dictionary];
+                    NSMutableDictionary *value = keyInDictionary[key];
+                    if ([value isKindOfClass:NSMutableDictionary.class]) {
+                        JSONValue = [self _encodeObject:JSONValue intoDictionary:value];
+                    } else {
+                        JSONValue = [self _encodeObject:JSONValue intoDictionary:nil];
                     }
-                    JSONValue = [self _encodeObject:value intoDictionary:dictionary];
                 }
                 break;
             }
@@ -394,7 +396,7 @@ static NSMutableDictionary *NSDictionaryForLastKeyInKeyPath(NSMutableDictionary 
         }
         
         if (JSONValue) {
-            dict[key] = JSONValue;
+            keyInDictionary[key] = JSONValue;
             return;
         }
         
