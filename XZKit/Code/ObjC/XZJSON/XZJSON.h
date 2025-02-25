@@ -31,6 +31,13 @@ NS_ASSUME_NONNULL_BEGIN
 @interface XZJSON (XZJSONDecoding)
 /// JSON 数据模型化。
 ///
+/// - NSValue 支持 number 和 { "type": NSValue.objcType, "data": base64 } 两种数据格式
+/// - NSData 支持 base64 和 { "type": "base64", "data": base64 } 两种格式
+/// - NSDate 支持 timestamp （秒）和 "yyyy-MM-dd hh:mm:ss" 两种格式
+/// - 有 `NSStringFrom` 原生函数的结构体。
+/// - 属性为字典，但 JSON 数据为数组，自动将数组转为以 index 为键的字典。
+/// - 属性为数组，但 JSON 数据为字典，自动将字典转转为以字典为元素的数组。
+///
 /// 关于 JSON 数据：NSString 类型 JSON 字符串，或 NSData 类型 JSON 二进制流，或前二者组成的数组。
 ///
 /// - Parameters:
@@ -49,6 +56,11 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface XZJSON (XZJSONEncoding)
 /// 将任意实例对象进行 JSON 数据化。
+///
+/// - NSValue => { "type": NSValue.objcType, "data": base64 }
+/// - NSDate  => 时间戳
+/// - NSData  => base64
+///
 /// - Parameters:
 ///   - object: 任意对象
 ///   - options: JSON 生成选项
