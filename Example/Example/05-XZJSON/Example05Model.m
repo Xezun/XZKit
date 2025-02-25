@@ -7,7 +7,121 @@
 
 #import "Example05Model.h"
 
+@implementation Example05Response
+@end
+
 @implementation Example05Model
+
+- (void)dealloc {
+    if (_cStringValue) {
+        free((void *)_cStringValue);
+        _cStringValue = NULL;
+    }
+    if (_cArrayValue) {
+        free((void *)_cArrayValue);
+        _cArrayValue = NULL;
+    }
+}
+
+- (id<NSCoding>)JSONEncodeValueForKey:(NSString *)key {
+//    if ([key isEqualToString:@"cStringValue"]) {
+//        if (_cStringValue == NULL) {
+//            return NSNull.null;
+//        }
+//        return [NSString stringWithCString:_cStringValue encoding:NSASCIIStringEncoding];
+//    }
+    return nil;
+}
+
+- (BOOL)JSONDecodeValue:(id)value forKey:(NSString *)key {
+    if ([key isEqualToString:@"cStringValue"]) {
+        if ([value isKindOfClass:NSString.class]) {
+            [self setCStringValue:(const char *)[(NSString *)value cStringUsingEncoding:NSASCIIStringEncoding]];
+        }
+        return YES;
+    }
+    
+    if ([key isEqualToString:@"structValue"]) {
+        if ([value isKindOfClass:NSString.class]) {
+            NSString *string = value;
+            if ([string hasPrefix:@"{"] && [string hasSuffix:@"}"]) {
+                string = [string substringWithRange:NSMakeRange(1, string.length - 1)];
+                NSArray<NSString *> *components = [string componentsSeparatedByString:@","];
+                if (components.count == 3) {
+                    _structValue.a = components[0].intValue;
+                    _structValue.b = components[1].floatValue;
+                    _structValue.c = components[2].doubleValue;
+                }
+            }
+        }
+        return YES;
+    }
+    
+    if ([key isEqualToString:@"pointerValue"]) {
+        _pointerValue = (__bridge void *)self;
+        return YES;
+    }
+    
+    if ([key isEqualToString:@"unionValue"]) {
+        if ([value isKindOfClass:NSDictionary.class]) {
+            NSDictionary *dict = value;
+            NSString *type = dict[@"type"];
+            NSNumber *value = dict[@"value"];
+            if ([type isKindOfClass:NSString.class] && [value isKindOfClass:NSNumber.class]) {
+                if ([type isEqualToString:@"intValue"]) {
+                    _unionValue.intValue = value.intValue;
+                } else if ([type isEqualToString:@"floatValue"]) {
+                    _unionValue.floatValue = value.floatValue;
+                }
+            }
+        }
+        return YES;
+    }
+    
+    if ([key isEqualToString:@"cArrayValue"]) {
+        if ([value isKindOfClass:NSArray.class]) {
+            NSArray * array = value;
+            if (array.count != 3) {
+                return YES;
+            }
+            if (_cArrayValue == NULL) {
+                _cArrayValue = calloc(3, sizeof(int));
+            }
+            for (NSUInteger i = 0; i < 3; i++) {
+                NSNumber *number = array[i];
+                if (![number isKindOfClass:NSNumber.class]) {
+                    return YES;
+                }
+                _cArrayValue[i] = number.intValue;
+            }
+        }
+        return YES;
+    }
+    
+    return NO;
+}
+
+- (void)setCStringValue:(const char *)cStringValue {
+    if (_cStringValue != cStringValue) {
+        if (cStringValue == NULL) {
+            if (_cStringValue == NULL) {
+                return;
+            }
+            free((void *)_cStringValue);
+            _cStringValue = NULL;
+            return;
+        }
+        
+        size_t const length = strlen(cStringValue);
+        
+        if (_cStringValue) {
+            _cStringValue = realloc((void *)_cStringValue, length * sizeof(char));
+        } else {
+            _cStringValue = calloc(length, sizeof(char));
+        }
+        strcpy((void *)_cStringValue, cStringValue);
+    }
+}
 
 @end
 
@@ -78,7 +192,7 @@
     }
 }
 
-- (void)JSONDecodeValue:(id)valueOrCoder forKey:(NSString *)key {
+- (BOOL)JSONDecodeValue:(id)valueOrCoder forKey:(NSString *)key {
     if ([key isEqualToString:@"foo"]) {
         if ([valueOrCoder isKindOfClass:NSCoder.class]) {
             valueOrCoder = [(NSCoder *)valueOrCoder decodeObjectOfClass:NSString.class forKey:key];
@@ -93,12 +207,14 @@
             }
             memcpy(_foo, [value cStringUsingEncoding:NSASCIIStringEncoding], length);
         }
+        return YES;
     }
+    return NO;
 }
 
 - (id)JSONEncodeValueForKey:(NSString *)key {
     if ([key isEqualToString:@"foo"]) {
-        return _foo ? [NSString stringWithCString:_foo encoding:NSASCIIStringEncoding] : nil;
+        return _foo ? [NSString stringWithCString:_foo encoding:NSASCIIStringEncoding] : (id)kCFNull;
     }
     return nil;
 }
@@ -117,7 +233,7 @@
     return nil;
 }
 
-- (void)JSONDecodeValue:(id)valueOrCoder forKey:(NSString *)key {
+- (BOOL)JSONDecodeValue:(id)valueOrCoder forKey:(NSString *)key {
     if ([key isEqualToString:@"bar"]) {
         if ([valueOrCoder isKindOfClass:NSCoder.class]) {
             valueOrCoder = [(NSCoder *)valueOrCoder decodeObjectOfClass:NSString.class forKey:key];
@@ -133,12 +249,20 @@
                 _bar = (Example05Struct){a, b, c};
             }
         }
+        return YES;
     }
+    if ([key isEqualToString:@"teacher"]) {
+        return YES;
+    }
+    return NO;
 }
 
 - (id)JSONEncodeValueForKey:(NSString *)key {
     if ([key isEqualToString:@"bar"]) {
         return [NSString stringWithFormat:@"{%d, %G, %G}", _bar.a, _bar.b, _bar.c];
+    }
+    if ([key isEqualToString:@"teacher"]) {
+        return _teacher.identifier;
     }
     return nil;
 }
