@@ -341,8 +341,9 @@ static NSMutableDictionary *NSDictionaryForLastKeyInKeyPath(NSMutableDictionary 
                 JSONValue = @(((double (*)(id, SEL))(void *) objc_msgSend)(model, property->_getter));
                 break;
             case XZObjcTypeLongDouble: {
+                // 目前 long double 只能用字符串承接 宏 TYPE_LONGDOUBLE_IS_DOUBLE 没用
                 long double const aValue = ((long double (*)(id, SEL))(void *) objc_msgSend)(model, property->_getter);
-                JSONValue = [[NSNumber alloc] initWithBytes:&aValue objCType:@encode(long double)];
+                JSONValue = [NSString stringWithFormat:@"%Lf", aValue];
                 break;
             }
             case XZObjcTypeBool:
@@ -716,9 +717,26 @@ static NSNumber * _Nullable NSNumberDoubleFromJSONValue(id _Nonnull JSONValue) {
         NSString *string = JSONValue;
         if (string.length > 0) {
             char *error = NULL;
+            double const aValue = strtod([string cStringUsingEncoding:NSASCIIStringEncoding], &error);
+            if (!isnan(aValue) && !isinf(aValue)) {
+                number = @(aValue);
+            }
+        }
+    }
+    return number;
+}
+
+static NSValue * _Nullable NSValueLongDoubleFromJSONValue(id _Nonnull JSONValue) {
+    NSValue *number = nil;
+    if ([JSONValue isKindOfClass:NSNumber.class]) {
+        number = JSONValue;
+    } else if ([JSONValue isKindOfClass:NSString.class]) {
+        NSString *string = JSONValue;
+        if (string.length > 0) {
+            char *error = NULL;
             long double const aValue = strtold([string cStringUsingEncoding:NSASCIIStringEncoding], &error);
             if (!isnan(aValue) && !isinf(aValue)) {
-                number = [[NSNumber alloc] initWithBytes:&aValue objCType:@encode(long double)];
+                number = [[NSValue alloc] initWithBytes:&aValue objCType:@encode(long double)];
             }
         }
     }
@@ -848,11 +866,15 @@ void XZJSONModelDecodeProperty(id model, XZJSONPropertyDescriptor *property, id 
             break;
         }
         case XZObjcTypeLongDouble: {
-            NSNumber *number = NSNumberDoubleFromJSONValue(JSONValue);
+            NSValue *number = NSValueLongDoubleFromJSONValue(JSONValue);
+            if ([number isKindOfClass:NSNumber.class]) {
+                ((void (*)(id, SEL, long double))objc_msgSend)((id)model, property->_setter, ((NSNumber *)JSONValue).doubleValue);
+                return;
+            }
             if (number) {
                 long double aValue = 0;
                 [number getValue:&aValue size:sizeof(long double)];
-                ((void (*)(id, SEL, long long))objc_msgSend)((id)model, property->_setter, aValue);
+                ((void (*)(id, SEL, long double))objc_msgSend)((id)model, property->_setter, aValue);
                 return;
             }
             break;
