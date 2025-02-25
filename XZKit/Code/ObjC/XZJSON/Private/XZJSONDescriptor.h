@@ -46,11 +46,11 @@ FOUNDATION_STATIC_INLINE XZJSONClassType XZJSONClassTypeFromClass(Class aClass) 
     if ([aClass isSubclassOfClass:[NSArray class]])                return XZJSONClassTypeNSArray;
     if ([aClass isSubclassOfClass:[NSMutableDictionary class]])    return XZJSONClassTypeNSMutableDictionary;
     if ([aClass isSubclassOfClass:[NSDictionary class]])           return XZJSONClassTypeNSDictionary;
-    if ([aClass isSubclassOfClass:[NSMutableSet class]])           return XZJSONClassTypeNSMutableSet;
     if ([aClass isSubclassOfClass:[NSCountedSet class]])           return XZJSONClassTypeNSCountedSet;
-    if ([aClass isSubclassOfClass:[NSOrderedSet class]])           return XZJSONClassTypeNSOrderedSet;
-    if ([aClass isSubclassOfClass:[NSMutableOrderedSet class]])    return XZJSONClassTypeNSMutableOrderedSet;
+    if ([aClass isSubclassOfClass:[NSMutableSet class]])           return XZJSONClassTypeNSMutableSet;
     if ([aClass isSubclassOfClass:[NSSet class]])                  return XZJSONClassTypeNSSet;
+    if ([aClass isSubclassOfClass:[NSMutableOrderedSet class]])    return XZJSONClassTypeNSMutableOrderedSet;
+    if ([aClass isSubclassOfClass:[NSOrderedSet class]])           return XZJSONClassTypeNSOrderedSet;
     return XZJSONClassTypeUnknown;
 }
 
