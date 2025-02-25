@@ -24,12 +24,42 @@
 }
 
 - (id<NSCoding>)JSONEncodeValueForKey:(NSString *)key {
-//    if ([key isEqualToString:@"cStringValue"]) {
-//        if (_cStringValue == NULL) {
-//            return NSNull.null;
-//        }
-//        return [NSString stringWithCString:_cStringValue encoding:NSASCIIStringEncoding];
-//    }
+    if ([key isEqualToString:@"cArrayValue"]) {
+        if (!_cArrayValue) {
+            return (id)kCFNull;
+        }
+        NSMutableArray *arrayM = [NSMutableArray arrayWithCapacity:3];
+        for (NSUInteger i = 0; i < 3; i++) {
+            [arrayM addObject:@(_cArrayValue[i])];
+        }
+        return arrayM;
+    }
+    
+    if ([key isEqualToString:@"cStringValue"]) {
+        if (_cStringValue == NULL) {
+            return NSNull.null;
+        }
+        return [NSString stringWithCString:_cStringValue encoding:NSASCIIStringEncoding];
+    }
+    
+    if ([key isEqualToString:@"pointerValue"]) {
+        if (!_pointerValue) {
+            return (id)kCFNull;
+        }
+        return (_pointerValue == (__bridge void *)self) ? @"self" : @"";
+    }
+    
+    if ([key isEqualToString:@"structValue"]) {
+        return [NSString stringWithFormat:@"{%d, %f, %lf}", _structValue.a, _structValue.b, _structValue.c];
+    }
+    
+    if ([key isEqualToString:@"unionValue"]) {
+        if (_unionValue.intValue <= 0) {
+            return @{ @"type": @"floatValue", @"value": @(_unionValue.floatValue) };
+        }
+        return @{ @"type": @"intValue", @"value": @(_unionValue.intValue) };
+    }
+    
     return nil;
 }
 
@@ -121,6 +151,10 @@
         }
         strcpy((void *)_cStringValue, cStringValue);
     }
+}
+
+- (NSString *)description {
+    return [XZJSON model:self description:0];
 }
 
 @end
@@ -259,7 +293,7 @@
 
 - (id)JSONEncodeValueForKey:(NSString *)key {
     if ([key isEqualToString:@"bar"]) {
-        return [NSString stringWithFormat:@"{%d, %G, %G}", _bar.a, _bar.b, _bar.c];
+        return [NSString stringWithFormat:@"{%d, %f, %lf}", _bar.a, _bar.b, _bar.c];
     }
     if ([key isEqualToString:@"teacher"]) {
         return _teacher.identifier;

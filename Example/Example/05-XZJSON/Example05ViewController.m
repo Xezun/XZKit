@@ -162,6 +162,9 @@
                     
                     XZToast *toast = [XZToast messageToast:@"校验成功"];
                     [self showToast:toast duration:3.0 offset:CGPointZero completion:nil];
+                    
+                    NSData *data = [XZJSON encode:model options:NSJSONWritingPrettyPrinted error:nil];
+                    text = [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding];
                     break;
                 }
                 default:
