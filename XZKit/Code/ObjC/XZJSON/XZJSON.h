@@ -163,11 +163,11 @@ NS_ASSUME_NONNULL_BEGIN
 
 typedef NS_ENUM(NSUInteger, XZJSONEquation) {
     /// 不相等
-    XZJSONEquationNo = -1,
+    XZJSONEquationNo NS_SWIFT_NAME(False) = -1,
     /// 未知，未比较
-    XZJSONEquationUnknown = 0,
+    XZJSONEquationUnknown NS_SWIFT_NAME(Unknown) = 0,
     /// 相等
-    XZJSONEquationYes = 1,
+    XZJSONEquationYes NS_SWIFT_NAME(True) = 1,
 };
 
 @interface XZJSON (NSEquatable)
