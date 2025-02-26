@@ -38,7 +38,7 @@ pod "XZKit"
 
 ### [XZMocoa](./Docs/XZMocoa) 
 
-[![Version](https://img.shields.io/cocoapods/v/XZKit.svg?style=flat)](https://cocoapods.org/pods/XZKit)
+[![Version](https://img.shields.io/cocoapods/v/XZKit.svg?style=flat)](https://cocoapods.org/pods/XZMocoa)
 
 基于原生风格的轻量级 MVVM 开发框架
 
@@ -155,6 +155,10 @@ pod "XZKit"
 所有组件都有单独的[示例代码](./Example)，下载到本地后，代码运行前需在 Pod 目录执行 `pod update` 安装相关依赖。
 
 ## 更新日志
+
+- 2025.02.26
+
+  完善 XZJSON 组件；调整了 XZLog 宏
 
 - 2025.01.16
 
