@@ -138,18 +138,27 @@ _Pragma("clang diagnostic pop")
 
 #pragma mark - XZLog
 
-// XZLog 仅在 XZ_DEBUG 且 DEBUG 模式下才会输出日志到控制台。
+#if XZ_FRAMEWORK
+
+#if DEBUG
+#define XZLog(format, ...) __xz_log_imp__(__FILE_NAME__, __LINE__, __FUNCTION__, format, ##__VA_ARGS__)
+#else
+#define XZLog(...)
+#endif
+
+#else // XZ_FRAMEWORK
+
 #ifndef XZLog
 #ifdef XZ_DEBUG
-#if DEBUG
-#define XZLog(format, ...) NSLog(@"⌘ %s(%d) ⌘ %s ⌘ \n%@", __FILE_NAME__, __LINE__, __FUNCTION__, [NSString stringWithFormat:format, ##__VA_ARGS__])
-#else  // => #if DEBUG
-#define XZLog(...)  do {} while (0)
-#endif // => #if DEBUG
-#else  // => #ifdef XZ_DEBUG
-#define XZLog(...)  do {} while (0)
-#endif // => #ifdef XZ_DEBUG
-#endif // => #ifndef XZLog
+#define XZLog(format, ...) __xz_log_imp__(__FILE_NAME__, __LINE__, __FUNCTION__, format, ##__VA_ARGS__)
+#else
+#define XZLog(...)
+#endif
+#endif // => XZLog
+
+#endif // XZ_FRAMEWORK
+
+FOUNDATION_EXPORT void __xz_log_imp__(const char *file, const int line, const char *function, NSString *format, ...) NS_FORMAT_FUNCTION(4,5) NS_SWIFT_UNAVAILABLE("Use Swift.print instead");
 
 
 // 关于重写 NSLog 的一点笔记
