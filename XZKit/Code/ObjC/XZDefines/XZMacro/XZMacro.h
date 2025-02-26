@@ -182,3 +182,7 @@ FOUNDATION_EXPORT void __xz_log_imp__(const char *file, const int line, const ch
 // 而且函数 __CFLogCString() 是 static 局部函数，保证 writev 线程安全的 CFLock_t 锁也是局部的，
 // 并不能被访问，而如果使用其它函数在控制台输出，就会不可避免出现与 NSLog 的输出内容互相嵌入的情况。
 //
+// 关于 NSLog 长度限制
+// NSLog(@"The message is %@", message); // 有大概 1017 的长度限制 
+// NSLog(@"%@", [NSString stringWithFormat:@"The message is：%@", message]); // 没有长度限制
+//
