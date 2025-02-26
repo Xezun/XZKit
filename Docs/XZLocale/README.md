@@ -1,9 +1,9 @@
-# XZKit/AppLanguage
+# XZLocale
 
 ## 安装
 
 ```ruby
-pod "XZKit/AppLanguage"
+pod "XZLocale"
 ```
 
 ## 效果
@@ -18,13 +18,13 @@ pod "XZKit/AppLanguage"
 
 ObjectiveC 示例：
 ```ObjectiveC
-NSUserDefaults.standardUserDefaults.xz_preferredLanguage = XZAppLanguageEnglish;
+XZLocalization.preferredLanguage = XZLanguageEnglish;
 ```
 
 Swift 示例：
 ```Swift
 // 设置当前语言。
-AppLanguage.preferred = .English
+XZLocalization.preferredLanguage = .English
 // XZKit 优化的语言国际化函数。
-textLabel.text = LocalizedString("我的名字叫{0}。", names[indexPath.row], comment: "My Name is {0}.")
+textLabel.text = XZLocalizedString("我的名字叫{0}。", names[indexPath.row], comment: "My Name is {0}.")
 ```
