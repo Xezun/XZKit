@@ -11,6 +11,8 @@
 
 @import XZObjcDescriptor;
 @import XZToast;
+@import XZDefines;
+@import XZExtensions;
 
 @interface Example05ViewController () {
     NSString *_JSONString;
@@ -114,6 +116,22 @@
                     NSString *mutableDataValue = [model.mutableDataValue base64EncodedStringWithOptions:kNilOptions];
                     NSAssert([mutableDataValue isEqualToString:@"SGVsbG8gV29ybGQ="], @"");
                     
+                    NSAssert([model.hexDataValue isKindOfClass:NSData.class], @"");
+                    NSString *hexDataValue = [model.hexDataValue xz_hexEncodedString];
+                    NSAssert([hexDataValue isEqualToString:@"585a4b6974"], @"");
+                    
+                    NSAssert([model.hexMutableDataValue isKindOfClass:NSMutableData.class], @"");
+                    NSString *hexMutableDataValue = [model.hexMutableDataValue xz_hexEncodedString];
+                    NSAssert([hexMutableDataValue isEqualToString:@"585a4b6974"], @"");
+                    
+                    NSDateFormatter *formatter = [[NSDateFormatter alloc] init];
+                    formatter.dateFormat = @"yyyy-MM-dd";
+                    NSAssert([[formatter stringFromDate:model.date1Value] isEqualToString:@"2023-10-01"], @"");
+                    formatter.dateFormat = @"hh:mm:ss";
+                    NSAssert([[formatter stringFromDate:model.date2Value] isEqualToString:@"12:34:56"], @"");
+                    formatter.dateFormat = @"yyyy-MM-dd hh:mm:ss";
+                    NSAssert([[formatter stringFromDate:model.date3Value] isEqualToString:@"2023-10-01 12:34:56"], @"");
+                    
                     NSAssert([model.urlValue isKindOfClass:NSURL.class], @"");
                     NSAssert([model.urlValue.absoluteString isEqualToString:@"https://example.com"], @"");
                     
@@ -159,9 +177,6 @@
                     NSAssert([objectValue isKindOfClass:[Example05Model class]], @"");
                     NSAssert(objectValue.charValue == 'B', @"");
                     NSAssert(objectValue.intValue == 456, @"");
-                    
-                    XZToast *toast = [XZToast messageToast:@"校验成功"];
-                    [self showToast:toast duration:3.0 offset:CGPointZero completion:nil];
                     
                     NSData *data = [XZJSON encode:model options:NSJSONWritingPrettyPrinted error:nil];
                     text = [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding];
@@ -217,7 +232,7 @@
                     NSError *error = nil;
                     NSData *data = [NSKeyedArchiver archivedDataWithRootObject:_teachers requiringSecureCoding:[[_teachers class] supportsSecureCoding] error:&error];
                     if (error) {
-                        NSLog(@"归档失败：%@", error);
+                        XZLog(@"归档失败：%@", error);
                         return [self showToast:[XZToast messageToast:@"归档失败"] duration:3.0 offset:CGPointZero completion:nil];
                     }
                     NSString *path = [NSTemporaryDirectory() stringByAppendingPathComponent:@"model.plist"];
@@ -240,7 +255,7 @@
                     NSSet *set = [NSSet setWithObjects:[Example05Teacher class], [NSArray class], nil];
                     NSArray *teachers = [NSKeyedUnarchiver unarchivedObjectOfClasses:set fromData:data error:&error];
                     if (error) {
-                        NSLog(@"解档失败：%@", error);
+                        XZLog(@"解档失败：%@", error);
                         return [self showToast:[XZToast messageToast:@"解档失败"] duration:3.0 offset:CGPointZero completion:nil];
                     }
                     text = [XZJSON model:teachers description:0];
@@ -261,6 +276,7 @@
     }
     
     if (text) {
+        XZLog(@"%@", text);
         [self performSegueWithIdentifier:@"text" sender:text];
     }
 }

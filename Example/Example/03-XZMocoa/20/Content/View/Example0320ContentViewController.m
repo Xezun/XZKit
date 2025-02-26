@@ -26,7 +26,7 @@
     if (self) {
         self.title = @"WebView";
         _url = [NSURL URLWithString:options[@"url"]];
-        NSLog(@"url: %@", _url);
+        XZLog(@"url: %@", _url);
     }
     return self;
 }

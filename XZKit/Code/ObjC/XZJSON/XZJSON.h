@@ -13,18 +13,33 @@ NS_ASSUME_NONNULL_BEGIN
 /// 支持模型对象与 JSON 数据互相转换的工具类。
 ///
 /// 关于模型属性。
-/// - 模型转换依赖于 setter 方法，所以只读属性会被忽略。
-/// - 通用逻辑无法处理弱引用关系，所以值为对象的 `unsafe_unretained` 或 `assign` 修饰的属性会被忽略。
+/// - 模型转换依赖于 `setter` 方法，所以只读属性会被忽略。
+/// - 通用逻辑无法处理弱引用关系，所以 `unsafe_unretained` 或 `assign` 修饰的对象的属性会被忽略。
 ///
-/// 关于 NSData 类型的属性。
-/// - 字符串将会转化 UTF8 二进制流赋值给 NSData 类型的属性。
-/// - 符合 URL Data 的字符串，仅支持 base64 一种编码方式。
+/// 默认无法处理的属性，或支持多种形式的属性，比如 NSData、NSDate 等，可通过实现 `XZJSONCoding` 协议自定义转换过程。
+///
+/// - `-JSONDecodeValue:forKey:`
+/// - `-JSONEncodeValueForKey:`
+///
+/// 注：上述方法也会同时应用于 NSCoding 归档/解档。
+///
+/// XZJSON 为符合以下格式的 NSData、NSDate、NSValue 的类型，提供了默认转换方法，以简化模型的处理。
+///
+/// - NSValue: number 或 { "type": NSValue.objcType, "data": base64 } 字典。
+/// - NSDate: timestamp （秒）或 `yyyy-MM-dd HH:mm:ss` 格式。
+/// - NSData: base64 字符串。
+///
+/// 另外，大部分结构体、共用体、C 指针等类型，由于涉及内存大小或内存管理，转换过程是不可预知的，只能自定义转换过程，幸好的是开发中，并不常用这些类型。
 @interface XZJSON : NSObject
-/// 日期转换所使用的格式，默认 `yyyy-MM-dd HH:mm:ss` 格式。
+/// “字符串-日期”转换的默认格式化工具，默认 `yyyy-MM-dd HH:mm:ss` 格式。
 ///
-/// 一般情况下，数据模型化在子线程中处理，因此在业务中，仅应在程序初始化（模型转换开始前）时，调整默认的日期格式。
+/// 建议在业务中，使用统一的日期格式，这样在程序初始化时，模型转换开始前，通过此属性设置默认日期格式，即可避免在每个模型中重复处理。
 ///
-/// 非默认日期格式的模型，可以通过`XZJSONCoding`协议自定日期转换。
+/// > 由于数据处理一般在子线程，这意味着，在使用时，动态修改日期格式，可能会有意外风险。
+///
+/// 另外，非默认的日期格式的模型，可以通过`XZJSONCoding`协议自定日期转换过程。
+///
+/// > 数值数据，默认当作时间戳（秒）转换为日期，即 JSON 数据为 number 且目标属性为 NSDate 类型。
 @property (class, nonatomic, readonly) NSDateFormatter *dateFormatter;
 @end
 
@@ -56,10 +71,6 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface XZJSON (XZJSONEncoding)
 /// 将任意实例对象进行 JSON 数据化。
-///
-/// - NSValue => { "type": NSValue.objcType, "data": base64 }
-/// - NSDate  => 时间戳
-/// - NSData  => base64
 ///
 /// - Parameters:
 ///   - object: 任意对象

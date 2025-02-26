@@ -35,7 +35,7 @@ NS_ASSUME_NONNULL_BEGIN
 ///   - object: 任意对象，不为 nil
 ///   - dictionary: 如果是模型对象，提供此参数，模型的属性将合并到此字典中
 /// - Returns: 可使用 NSJSONSerialization 序列化的对象
-+ (nonnull id)_encodeObject:(nonnull id)object intoDictionary:(nullable NSMutableDictionary *)dictionary;
++ (nonnull id)_encodeObject:(nonnull id)object intoDictionary:(nullable NSMutableDictionary *)dictionary descriptor:(XZJSONClassDescriptor *)descriptor;
 /// 将模型实例对象进行 JSON 序列化。调用此方法，表明已经判断 model 属于一般模型对象，而不是基础数据对象，特别是原生对象。
 /// - Parameters:
 ///   - model: 模型实例对象，不为 nil 且不可为 NSNull 对象

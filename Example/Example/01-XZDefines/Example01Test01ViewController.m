@@ -22,7 +22,7 @@
 
 - (void)dealloc {
     self.block(__PRETTY_FUNCTION__);
-    NSLog(@"控制台看到此信息，表明 enweak、deweak 测试成功。");
+    XZLog(@"控制台看到此信息，表明 enweak、deweak 测试成功。");
 }
 
 - (void)viewDidLoad {
@@ -31,7 +31,7 @@
     enweak(self)
     self.block = ^(const char *methodName) {
         deweak(self);
-        NSLog(@"在方法 %s 中，捕获的变量 self 值的为：%@", methodName, self);
+        XZLog(@"在方法 %s 中，捕获的变量 self 值的为：%@", methodName, self);
     };
 }
 

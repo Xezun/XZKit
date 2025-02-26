@@ -85,7 +85,12 @@ typedef union Example05Union {
 @property (nonatomic) NSData *dataValue;
 @property (nonatomic) NSMutableData *mutableDataValue;
 
-@property (nonatomic) NSDate *dateValue;
+@property (nonatomic) NSData *hexDataValue;
+@property (nonatomic) NSData *hexMutableDataValue;
+
+@property (nonatomic) NSDate *date1Value;
+@property (nonatomic) NSDate *date2Value;
+@property (nonatomic) NSDate *date3Value;
 @property (nonatomic) NSURL *urlValue;
 // 数组类型
 @property (nonatomic, strong) NSArray *arrayValue;

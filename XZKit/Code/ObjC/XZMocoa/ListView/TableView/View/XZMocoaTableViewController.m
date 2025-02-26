@@ -26,7 +26,7 @@
             IMP const implemnt = method_getImplementation(method);
             const char * const types = method_getTypeEncoding(method);
             if (!class_addMethod(self, selector, implemnt, types)) {
-                NSLog(@"为 %@ 添加方法 %@ 失败", self, NSStringFromSelector(selector));
+                XZLog(@"为 %@ 添加方法 %@ 失败", self, NSStringFromSelector(selector));
             }
         }
     }

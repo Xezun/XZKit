@@ -25,7 +25,7 @@
 }
 
 - (void)dealloc {
-    NSLog(@"%s", __PRETTY_FUNCTION__);
+    XZLog(@"%s", __PRETTY_FUNCTION__);
 }
 
 - (instancetype)initWithMocoaOptions:(XZMocoaOptions *)options nibName:(nullable NSString *)nibName bundle:(nullable NSBundle *)bundle {

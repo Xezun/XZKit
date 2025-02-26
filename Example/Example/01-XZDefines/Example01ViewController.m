@@ -22,7 +22,6 @@
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
     switch (indexPath.row) {
         case 0:
-            [super tableView:tableView didSelectRowAtIndexPath:indexPath];
             break;
         case 1: {
             NSString *string1 = [@"" stringByPaddingToLength:500 withString:@"0123456789" startingAtIndex:0];

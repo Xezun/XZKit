@@ -167,6 +167,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 /// 需要自行实现序列化过程的属性。
 ///
+/// - 当 XZJSON 解析 NSDate/NSData/NSValue 类型的属性时，会优先调用此方法。
 /// - 当 XZJSON 无法将属性值转换为 JSON 值时，此方法会被调用。
 /// - 当 XZJSON 在实现 NSCoding 遇到无法归档的属性值时，此方法会被调用。
 /// - 当 XZJSON 在实现 NSDescription 遇到无法描述的属性值时，此方法会被调用。
@@ -176,15 +177,5 @@ NS_ASSUME_NONNULL_BEGIN
 - (nullable id<NSCoding>)JSONEncodeValueForKey:(NSString *)key;
 
 @end
-
-#if XZ_FRAMEWORK
-#if DEBUG
-#define XZJSONLog(...) NSLog(__VA_ARGS__)
-#else
-#define XZJSONLog(...)
-#endif
-#else
-#define XZJSONLog(...)
-#endif
 
 NS_ASSUME_NONNULL_END

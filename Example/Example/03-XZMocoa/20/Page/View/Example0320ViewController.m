@@ -56,7 +56,7 @@
 }
 
 - (void)scrollViewDidScroll:(UIScrollView *)scrollView {
-    NSLog(@"%@ => %@", scrollView, NSStringFromCGPoint(scrollView.contentOffset));
+    XZLog(@"%@ => %@", scrollView, NSStringFromCGPoint(scrollView.contentOffset));
 }
 
 - (void)headerRefreshingChanged:(Example0320ViewModel *)viewModel {
