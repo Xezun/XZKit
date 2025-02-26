@@ -9,6 +9,7 @@
 @import SDWebImage;
 @import XZPageControl;
 @import XZPageView;
+@import XZDefines;
 
 @interface Example08ViewController () <XZPageViewDelegate, XZPageViewDataSource>
 
@@ -180,12 +181,12 @@
 #pragma mark - XZPageViewDelegate
 
 - (void)pageView:(XZPageView *)pageView didShowPageAtIndex:(NSInteger)index {
-    NSLog(@"didShowPage: %ld", index);
+    XZLog(@"didShowPage: %ld", index);
     [self.pageControl setCurrentPage:index animated:YES];
 }
 
 - (void)pageView:(XZPageView *)pageView didTurnPageInTransition:(CGFloat)transition {
-    NSLog(@"didTurnPage: %lf", transition);
+    XZLog(@"didTurnPage: %lf", transition);
     [self.pageControl setTransition:transition isLooped:pageView.isLooped];
 }
 

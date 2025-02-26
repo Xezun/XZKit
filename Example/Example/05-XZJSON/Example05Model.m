@@ -6,6 +6,7 @@
 //
 
 #import "Example05Model.h"
+@import XZExtensions;
 
 @implementation Example05Response
 @end
@@ -58,6 +59,30 @@
             return @{ @"type": @"floatValue", @"value": @(_unionValue.floatValue) };
         }
         return @{ @"type": @"intValue", @"value": @(_unionValue.intValue) };
+    }
+    
+    if ([key isEqualToString:@"date1Value"]) {
+        NSDateFormatter *formatter = [[NSDateFormatter alloc] init];
+        formatter.dateFormat = @"yyyy-MM-dd";
+        return [formatter stringFromDate:_date1Value];
+    }
+    
+    if ([key isEqualToString:@"date2Value"]) {
+        NSDateFormatter *formatter = [[NSDateFormatter alloc] init];
+        formatter.dateFormat = @"hh:mm:ss";
+        return [formatter stringFromDate:_date2Value];
+    }
+    
+    if ([key isEqualToString:@"date3Value"]) {
+        return [XZJSON.dateFormatter stringFromDate:_date3Value];
+    }
+    
+    if ([key isEqualToString:@"hexDataValue"]) {
+        return self.hexDataValue.xz_hexEncodedString ?: (id)kCFNull;
+    }
+    
+    if ([key isEqualToString:@"hexMutableDataValue"]) {
+        return self.hexMutableDataValue.xz_hexEncodedString ?: (id)kCFNull;
     }
     
     return nil;
@@ -125,6 +150,42 @@
                 _cArrayValue[i] = number.intValue;
             }
         }
+        return YES;
+    }
+    
+    if ([key isEqualToString:@"date1Value"]) {
+        if (![value isKindOfClass:NSString.class]) {
+            return NO;
+        }
+        NSDateFormatter *formatter = [[NSDateFormatter alloc] init];
+        formatter.dateFormat = @"yyyy-MM-dd";
+        self.date1Value = [formatter dateFromString:value];
+        return YES;
+    }
+    
+    if ([key isEqualToString:@"date2Value"]) {
+        if (![value isKindOfClass:NSString.class]) {
+            return NO;
+        }
+        NSDateFormatter *formatter = [[NSDateFormatter alloc] init];
+        formatter.dateFormat = @"hh:mm:ss";
+        self.date2Value = [formatter dateFromString:value];
+        return YES;
+    }
+    
+    if ([key isEqualToString:@"hexDataValue"]) {
+        if (![value isKindOfClass:NSString.class]) {
+            return NO;
+        }
+        self.hexDataValue = [NSData xz_dataWithHexEncodedString:value];
+        return YES;
+    }
+    
+    if ([key isEqualToString:@"hexMutableDataValue"]) {
+        if (![value isKindOfClass:NSString.class]) {
+            return NO;
+        }
+        self.hexMutableDataValue = [NSMutableData xz_dataWithHexEncodedString:value];
         return YES;
     }
     

@@ -6,6 +6,7 @@
 //
 
 #import "XZObjcTypeDescriptor.h"
+#import "XZMacro.h"
 
 static NSMutableDictionary<NSString *, NSMutableDictionary<NSNumber *, XZObjcTypeDescriptor *> *> *_descriptors = nil;
 
@@ -549,7 +550,7 @@ typedef struct XZObjcTypeAlignment {
                     _sizeInBit += availableBit; // 最后一个对齐
                 }
                 _size = (_sizeInBit - 1) / 8 + 1;
-                NSLog(@"没有获取到类型 %@（%@） 的注册信息，请核对是否与默认值一致： size=%lu, alignment=%lu", _name, _encoding, _size, _alignment);
+                XZLog(@"没有获取到类型 %@（%@） 的注册信息，请核对是否与默认值一致： size=%lu, alignment=%lu", _name, _encoding, _size, _alignment);
             } else {
                 _size = sizeof(struct XZObjcTypeEmptyStruct);
                 _sizeInBit = _size * 8;

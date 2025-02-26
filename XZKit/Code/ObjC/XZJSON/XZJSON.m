@@ -8,6 +8,7 @@
 #import "XZJSON.h"
 #import "XZJSONPrivate.h"
 #import "XZJSONClassDescriptor.h"
+#import "XZMacro.h"
 
 @implementation XZJSON
 
@@ -78,7 +79,11 @@
     if (object == nil) {
         return nil;
     }
-    id const JSONObject = [self _encodeObject:object intoDictionary:nil];
+    XZJSONClassDescriptor *descriptor = [XZJSONClassDescriptor descriptorForClass:object_getClass(object)];
+    if (descriptor == nil) {
+        return nil;
+    }
+    id const JSONObject = [self _encodeObject:object intoDictionary:nil descriptor:descriptor];
     return [NSJSONSerialization dataWithJSONObject:JSONObject options:options error:error];
 }
 
@@ -280,7 +285,7 @@
         if (block && block(newModel, property->_name)) {
             return;
         }
-        XZJSONLog(@"[XZJSON] 无法复制 %@ 对象的属性 %@ 的值", modelClass->_class.raw, property->_name);
+        XZLog(@"[XZJSON] 无法复制 %@ 对象的属性 %@ 的值", modelClass->_class.raw, property->_name);
     }];
     
     return newModel;
@@ -593,7 +598,7 @@
         }
         
         // 默认不相等。
-        XZJSONLog(@"[XZJSON] 无法比较数据模型 %@ 与 %@ 的 属性 %@ 的值", model1Class->_class.raw, model2Class->_class.raw, name);
+        XZLog(@"[XZJSON] 无法比较数据模型 %@ 与 %@ 的 属性 %@ 的值", model1Class->_class.raw, model2Class->_class.raw, name);
         return NO;
     }
     

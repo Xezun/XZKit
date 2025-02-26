@@ -6,12 +6,9 @@
 //
 
 #import "XZLocale.h"
-@import ObjectiveC;
-#if __has_include(<XZDefines/XZRuntime.h>)
-#import <XZDefines/XZRuntime.h>
-#else
 #import "XZRuntime.h"
-#endif
+#import "XZMacro.h"
+@import ObjectiveC;
 
 XZLocalizationPredicate const XZLocalizationPredicateBraces   = { '{', '}' };
 XZLanguage              const XZLanguageChinese            = @"zh-Hans";
@@ -57,8 +54,7 @@ static BOOL _isInAppLanguagePreferencesSupported  = NO;
     
     // 判断是否支持目标语言
     if (![self.supportedLanguages containsObject:newValue]) {
-//        NSLog(@"%@", XZLocalizedString(@"语言设置失败，不支持 {0} 语言。", newValue));
-        NSLog(@"%@", [XZLocalization localizedString:@"" fromTable:@"" inBundle:nil defaultValue:@"", newValue, nil]);
+        XZLog(@"语言设置失败，不支持 %@ 语言。", newValue);
         return;
     }
     _preferredLanguage = newValue.copy;

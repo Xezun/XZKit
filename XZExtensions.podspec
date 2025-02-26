@@ -10,7 +10,7 @@
 
 Pod::Spec.new do |s|
   s.name             = 'XZExtensions'
-  s.version          = '10.2.0'
+  s.version          = '10.5.0'
   s.summary          = '对原生框架的拓展，提高开发效率'
 
   s.description      = <<-DESC
@@ -23,6 +23,7 @@ Pod::Spec.new do |s|
   s.author           = { 'Xezun' => 'xezun@icloud.com' }
   s.source           = { :git => 'https://github.com/Xezun/XZKit.git', :tag => s.version.to_s }
   # s.social_media_url = 'https://twitter.com/<TWITTER_USERNAME>'
+  s.readme           = 'https://github.com/Xezun/XZKit/blob/main/Docs/#{s.name}/README.md'
 
   s.swift_version = '6.0'
   s.ios.deployment_target = '12.0'
@@ -54,7 +55,7 @@ Pod::Spec.new do |s|
   s.defineSubspec 'NSData',             [];
   s.defineSubspec 'NSDictionary',       ["XZExtensions/NSString", "XZExtensions/NSArray"];
   s.defineSubspec 'NSIndexSet',         [];
-  s.defineSubspec 'NSObject',           ["XZExtensions/NSArray"];
+  s.defineSubspec 'NSObject',           ["XZExtensions/NSArray", "XZDefines/XZMacro"];
   s.defineSubspec 'NSString',           ["XZExtensions/NSCharacterSet", "XZExtensions/NSData"];
   s.defineSubspec 'UIApplication',      [];
   s.defineSubspec 'UIBezierPath',       [];

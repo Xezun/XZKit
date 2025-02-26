@@ -9,6 +9,7 @@
 @import SDWebImage;
 @import XZPageControl;
 @import XZPageView;
+@import XZDefines;
 
 @interface Example07Test01ViewController () <XZPageViewDelegate, XZPageViewDataSource>
 
@@ -68,12 +69,12 @@
 }
 
 - (void)pageView:(XZPageView *)pageView didShowPageAtIndex:(NSInteger)index {
-    NSLog(@"didPageToIndex: %ld", index);
+    XZLog(@"didPageToIndex: %ld", index);
     self.pageControl.currentPage = index;
 }
 
 - (void)pageView:(XZPageView *)pageView didTurnPageInTransition:(CGFloat)transition {
-    NSLog(@"didTurnPageInTransition: %f", transition);
+    XZLog(@"didTurnPageInTransition: %f", transition);
 }
 
 - (void)pageControlDidChangeValue:(XZPageControl *)pageControl {

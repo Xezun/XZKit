@@ -8,7 +8,7 @@
 
 Pod::Spec.new do |s|
   s.name             = 'XZToast'
-  s.version          = '10.2.0'
+  s.version          = '10.5.0'
   s.summary          = '有图片和文字组成的视图控件'
   
   s.description      = <<-DESC
@@ -21,6 +21,7 @@ Pod::Spec.new do |s|
   s.author           = { 'Xezun' => 'xezun@icloud.com' }
   s.source           = { :git => 'https://github.com/Xezun/XZKit.git', :tag => s.version.to_s }
   # s.social_media_url = 'https://twitter.com/<TWITTER_USERNAME>'
+  s.readme           = 'https://github.com/Xezun/XZKit/blob/main/Docs/#{s.name}/README.md'
 
   s.swift_version = '6.0'
   s.ios.deployment_target = '12.0'

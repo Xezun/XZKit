@@ -138,18 +138,27 @@ _Pragma("clang diagnostic pop")
 
 #pragma mark - XZLog
 
-// XZLog 仅在 XZ_DEBUG 且 DEBUG 模式下才会输出日志到控制台。
+#if XZ_FRAMEWORK
+
+#if DEBUG
+#define XZLog(format, ...) __xz_log_imp__(__FILE_NAME__, __LINE__, __FUNCTION__, format, ##__VA_ARGS__)
+#else
+#define XZLog(...)
+#endif
+
+#else // XZ_FRAMEWORK
+
 #ifndef XZLog
 #ifdef XZ_DEBUG
-#if DEBUG
-#define XZLog(format, ...) NSLog(@"⌘ %s(%d) ⌘ %s ⌘ \n%@", __FILE_NAME__, __LINE__, __FUNCTION__, [NSString stringWithFormat:format, ##__VA_ARGS__])
-#else  // => #if DEBUG
-#define XZLog(...)  do {} while (0)
-#endif // => #if DEBUG
-#else  // => #ifdef XZ_DEBUG
-#define XZLog(...)  do {} while (0)
-#endif // => #ifdef XZ_DEBUG
-#endif // => #ifndef XZLog
+#define XZLog(format, ...) __xz_log_imp__(__FILE_NAME__, __LINE__, __FUNCTION__, format, ##__VA_ARGS__)
+#else
+#define XZLog(...)
+#endif
+#endif // => XZLog
+
+#endif // XZ_FRAMEWORK
+
+FOUNDATION_EXPORT void __xz_log_imp__(const char *file, const int line, const char *function, NSString *format, ...) NS_FORMAT_FUNCTION(4,5) NS_SWIFT_UNAVAILABLE("Use Swift.print instead");
 
 
 // 关于重写 NSLog 的一点笔记
@@ -172,4 +181,8 @@ _Pragma("clang diagnostic pop")
 // 所以在 iOS 平台，NSLog 最终使用的是 writev 函数输出日志，并且使用了 CFLock_t 保证线程安全。
 // 而且函数 __CFLogCString() 是 static 局部函数，保证 writev 线程安全的 CFLock_t 锁也是局部的，
 // 并不能被访问，而如果使用其它函数在控制台输出，就会不可避免出现与 NSLog 的输出内容互相嵌入的情况。
+//
+// 关于 NSLog 长度限制
+// NSLog(@"The message is %@", message); // 有大概 1017 的长度限制 
+// NSLog(@"%@", [NSString stringWithFormat:@"The message is：%@", message]); // 没有长度限制
 //

@@ -96,7 +96,7 @@
     [alertVC addAction:[UIAlertAction actionWithTitle:@"确定" style:(UIAlertActionStyleDefault) handler:nil]];
     [self.viewController presentViewController:alertVC animated:YES completion:nil];
     
-    NSLog(@"[XZMocoa] [DEBUG] \n%@ \n%@", _reasonLabel.text, _detailLabel.text);
+    XZLog(@"[XZMocoa] [DEBUG] \n%@ \n%@", _reasonLabel.text, _detailLabel.text);
 }
 
 @end

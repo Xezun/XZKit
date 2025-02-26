@@ -135,14 +135,14 @@ static void xz_mocoa_copyMethod(Class const cls, SEL const target, SEL const sou
             SEL const selT = @selector(shouldPerformSegueWithIdentifier:sender:);
             SEL const selN = @selector(xz_mocoa_new_shouldPerformSegueWithIdentifier:sender:);
             SEL const selE = @selector(xz_mocoa_exchange_shouldPerformSegueWithIdentifier:sender:);
-            if (xz_objc_class_addMethod(self, selT, nil, selN, NULL, selE)) {
+            if (!xz_objc_class_addMethod(self, selT, nil, selN, NULL, selE)) {
                 XZLog(@"为 UIViewController 重载方法 %@ 失败，相关事件请手动处理", NSStringFromSelector(selT));
             }
         } {
             SEL const selT = @selector(prepareForSegue:sender:);
             SEL const selN = @selector(xz_mocoa_new_prepareForSegue:sender:);
             SEL const selE = @selector(xz_mocoa_exchange_prepareForSegue:sender:);
-            if (xz_objc_class_addMethod(self, selT, nil, selN, NULL, selE)) {
+            if (!xz_objc_class_addMethod(self, selT, nil, selN, NULL, selE)) {
                 XZLog(@"为 UIViewController 重载方法 %@ 失败，相关事件请手动处理", NSStringFromSelector(selT));
             }
         }

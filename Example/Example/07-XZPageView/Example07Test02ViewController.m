@@ -8,6 +8,7 @@
 #import "Example07Test02ViewController.h"
 @import XZSegmentedControl;
 @import XZPageView;
+@import XZDefines;
 
 @interface Example07Test02ViewController () <XZPageViewDelegate, XZPageViewDataSource>
 
@@ -59,12 +60,12 @@
 }
 
 - (void)pageView:(XZPageView *)pageView didShowPageAtIndex:(NSInteger)index {
-    NSLog(@"didPageToIndex: %ld", index);
+    XZLog(@"didPageToIndex: %ld", index);
     [self.segmentedControl setSelectedIndex:index animated:YES];
 }
 
 - (void)pageView:(XZPageView *)pageView didTurnPageInTransition:(CGFloat)transition {
-    NSLog(@"didTurnPageInTransition: %f", transition);
+    XZLog(@"didTurnPageInTransition: %f", transition);
     [self.segmentedControl updateInteractiveTransition:transition];
 }
 

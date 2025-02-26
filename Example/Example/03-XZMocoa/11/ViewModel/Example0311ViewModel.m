@@ -12,7 +12,7 @@
 @implementation Example0311ViewModel
 
 - (void)dealloc {
-    NSLog(@"%s", __PRETTY_FUNCTION__);
+    XZLog(@"%s", __PRETTY_FUNCTION__);
 }
 
 - (instancetype)initWithModel:(id)model {

@@ -31,7 +31,7 @@
 }
 
 - (void)scrollView:(__kindof UIScrollView *)scrollView headerDidBeginRefreshing:(XZRefreshView *)refreshView {
-    NSLog(@"%s", __PRETTY_FUNCTION__);
+    XZLog(@"%s", __PRETTY_FUNCTION__);
     NSTimeInterval time = arc4random_uniform(20) * 0.1 + 2.0;
     dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(time * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
         self->_numberOfCells = arc4random_uniform(10) + 5;
@@ -41,7 +41,7 @@
 }
 
 - (void)scrollView:(__kindof UIScrollView *)scrollView footerDidBeginRefreshing:(XZRefreshView *)refreshView {
-    NSLog(@"%s", __PRETTY_FUNCTION__);
+    XZLog(@"%s", __PRETTY_FUNCTION__);
     NSTimeInterval time = arc4random_uniform(20) * 0.1 + 2.0;
     dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(time * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
         NSInteger old = self->_numberOfCells;
@@ -65,7 +65,7 @@
 }
 
 - (void)scrollViewDidScroll:(UIScrollView *)scrollView {
-    NSLog(@"contentOffset => %@, adjustedContentInset => %@", NSStringFromCGPoint(scrollView.contentOffset), NSStringFromUIEdgeInsets(scrollView.adjustedContentInset));
+    XZLog(@"contentOffset => %@, adjustedContentInset => %@", NSStringFromCGPoint(scrollView.contentOffset), NSStringFromUIEdgeInsets(scrollView.adjustedContentInset));
 }
 
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView {

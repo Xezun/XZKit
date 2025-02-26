@@ -6,7 +6,6 @@
 //
 
 #import "XZObjcIvarDescriptor.h"
-#import "XZObjcTypeDescriptor.h"
 
 @implementation XZObjcIvarDescriptor
 

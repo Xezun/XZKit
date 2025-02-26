@@ -75,7 +75,7 @@ fileprivate func XZToastDidComplete(_ completion: XZToast.Completion?, _ finishe
 extension UIViewController {
     
     public override func showToast(_ toast: XZToast, duration: TimeInterval = 3.0, offset: CGPoint = .zero, completion: XZToast.Completion? = nil) {
-        guard let view = self.view else { return XZToastDidComplete(completion, false) }
+        guard let view = self.viewIfLoaded else { return XZToastDidComplete(completion, false) }
         
         var toastView : XZToastView! = self.toastView
         if toastView == nil {
@@ -93,10 +93,16 @@ extension UIViewController {
         toastView.toast = toast
         toastView.completion = completion
         
-        layoutToastView()
-        
-        UIView.animate(withDuration: 0.3) {
-            toastView.alpha = 1.0
+        if toastView.frame.isEmpty {
+            self.layoutToastView()
+            UIView.animate(withDuration: 0.3) {
+                toastView.alpha = 1.0
+            }
+        } else {
+            UIView.animate(withDuration: 0.3) {
+                self.layoutToastView()
+                toastView.alpha = 1.0
+            }
         }
         
         let identifier = toastView.identifier
@@ -143,14 +149,17 @@ extension UIViewController {
         let offset = toastView.offset
         
         toastView.sizeToFit()
+        toastView.center = self.toastCenter(in: view, offset: offset);
+        toastView.layoutIfNeeded()
+    }
+    
+    private func toastCenter(in view: UIView, offset: CGPoint) -> CGPoint {
         if let scrollView = view as? UIScrollView {
             let bounds = scrollView.bounds.inset(by: scrollView.adjustedContentInset)
-            toastView.center = CGPoint(x: bounds.midX + offset.x, y: bounds.midY + offset.y)
-        } else {
-            let bounds = view.bounds.inset(by: view.safeAreaInsets)
-            toastView.center = CGPoint(x: bounds.midX + offset.x, y: bounds.midY + offset.y)
+            return CGPoint(x: bounds.midX + offset.x, y: bounds.midY + offset.y)
         }
-        toastView.layoutIfNeeded()
+        let bounds = view.bounds.inset(by: view.safeAreaInsets)
+        return CGPoint(x: bounds.midX + offset.x, y: bounds.midY + offset.y)
     }
 }
 
@@ -199,9 +208,9 @@ fileprivate class XZToastView : UIView {
                     if contentView.indicator == nil {
                         let indicator = {
                             if #available(iOS 13.0, *) {
-                                return UIActivityIndicatorView.init(style: .medium)
+                                return UIActivityIndicatorView.init(style: .large)
                             }
-                            return UIActivityIndicatorView.init(style: .white)
+                            return UIActivityIndicatorView.init(style: .whiteLarge)
                         }()
                         indicator.frame = CGRect(x: 0, y: 0, width: 50.0, height: 50.0)
                         indicator.color = .white
@@ -238,10 +247,11 @@ fileprivate class XZToastView : UIView {
         let textLabel = contentView.textLabel;
         textLabel.textColor = .white
         textLabel.numberOfLines = 5
-        textLabel.font = UIFont.systemFont(ofSize: 15.0)
+        textLabel.font = UIFont.systemFont(ofSize: 16.0)
         textLabel.adjustsFontSizeToFitWidth = true
         textLabel.minimumScaleFactor = 0.8
         textLabel.textAlignment = .center
+        textLabel.lineBreakMode = .byTruncatingMiddle
     }
     
     required init?(coder: NSCoder) {
@@ -266,6 +276,7 @@ fileprivate class XZToastView : UIView {
             didSet {
                 oldValue?.removeFromSuperview()
                 if let indicator = indicator {
+                    indicator.center = CGPoint(x: bounds.midX, y: bounds.midY)
                     addSubview(indicator)
                 }
             }
@@ -273,6 +284,7 @@ fileprivate class XZToastView : UIView {
         
         override init(frame: CGRect) {
             super.init(frame: frame)
+            textLabel.center = CGPoint(x: bounds.midX, y: bounds.midY)
             addSubview(textLabel)
         }
         
@@ -302,7 +314,7 @@ fileprivate class XZToastView : UIView {
             if indicator == nil {
                 return CGSize(width: min(maxWidth, textSize.width) + 30.0, height: textSize.height + 20.0)
             }
-            return CGSize(width: max(min(maxWidth, textSize.width), 50.0) + 30.0, height: 10.0 + 50.0 + 10.0 + textSize.height + 10.0)
+            return CGSize(width: max(min(maxWidth, textSize.width), 80.0) + 30.0, height: 10.0 + 50.0 + 10.0 + textSize.height + 10.0)
         }
     }
     

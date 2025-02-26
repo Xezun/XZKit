@@ -22,7 +22,7 @@
 - (void)viewDidLoad {
     [super viewDidLoad];
     
-    NSLog(@"设备唯一标识符：%@", XZKeychain.UDID);
+    XZLog(@"设备唯一标识符：%@", XZKeychain.UDID);
 }
 
 - (void)viewDidAppear:(BOOL)animated {

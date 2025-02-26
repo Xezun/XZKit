@@ -348,7 +348,6 @@ NSHashTable *xz_objc_protocol_getInstanceMethods(Protocol *aProtocol) {
             count = 0;
             list = protocol_copyMethodDescriptionList(aProtocol, NO, YES, &count);
             for (unsigned int i = 0; i < count; i++) {
-                NSLog(@"%@", NSStringFromSelector(list[i].name));
                 NSHashInsert(table, list[i].name);
             }
         }
