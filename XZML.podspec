@@ -32,7 +32,7 @@ Pod::Spec.new do |s|
   
   s.subspec 'Code' do |ss|
     ss.source_files = 'XZKit/Code/ObjC/XZML/**/*.{h,m}'
-    ss.private_header_files = 'XZKit/Code/ObjC/XZML/**/Core/*.h'
+    ss.private_header_files = 'XZKit/Code/ObjC/XZML/**/Private/*.h'
   end
   
 end
