@@ -21,7 +21,7 @@ NS_ASSUME_NONNULL_BEGIN
 /// 动画进度条的背景色。
 @property (nonatomic, strong, null_resettable) UIColor *trackColor;
 
-/// 动画速度：旋转一圈的时间，默认 1.5 秒。
+/// 动画速度：旋转一圈的时间，默认 1.0 秒。
 @property (nonatomic) CGFloat animationDuration;
 
 @end

@@ -51,7 +51,7 @@
     CGFloat const y = CGRectGetMidY(bounds) - 15.0;
     CGRect  const frame = CGRectMake(x, y, 30.0, 30.0);
     
-    _animationDuration = 1.5;
+    _animationDuration = 1.0;
     
     _view = [[UIView alloc] initWithFrame:frame];
     _view.userInteractionEnabled = NO;
