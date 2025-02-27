@@ -33,6 +33,7 @@ target 'Example' do
   pod 'XZObjcDescriptor', :path => '../../'
   
   pod 'SDWebImage'
+  pod 'YYModel', :git => 'https://github.com/Xezun/YYModel.git'
   # pod 'AFNetworking'
   
   target 'ExampleTests' do

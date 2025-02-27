@@ -7,6 +7,7 @@
 
 #import <Foundation/Foundation.h>
 @import XZJSON;
+@import YYModel;
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -130,3 +131,8 @@ typedef union Example05Union {
 @end
 
 NS_ASSUME_NONNULL_END
+
+#import "Example05XZWeiboModel.h"
+#import "Example05YYWeiboModel.h"
+#import "Example05XZGHUser.h"
+#import "Example05YYGHUser.h"
