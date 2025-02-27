@@ -6,6 +6,7 @@
 //
 
 #import <Foundation/Foundation.h>
+#import "XZObjcTypeDescriptor.h"
 
 /// 原生对象类型枚举。Foundation Class Type
 typedef NS_ENUM (NSUInteger, XZJSONClassType) {

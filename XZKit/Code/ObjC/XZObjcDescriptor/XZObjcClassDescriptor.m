@@ -10,6 +10,12 @@
 #import "XZObjcPropertyDescriptor.h"
 #import "XZObjcMethodDescriptor.h"
 
+NSNotificationName const XZObjcClassNeedsUpdateNotification = @"XZObjcClassNeedsUpdateNotification";
+NSString *         const XZObjcClassUpdateTypeUserInfoKey   = @"XZObjcClassUpdateTypeUserInfoKey";
+NSString *         const XZObjcClassUpdateTypeIvars         = @"XZObjcClassUpdateTypeIvars";
+NSString *         const XZObjcClassUpdateTypeMethods       = @"XZObjcClassUpdateTypeMethods";
+NSString *         const XZObjcClassUpdateTypeProperties    = @"XZObjcClassUpdateTypeProperties";
+
 @interface XZObjcClassDescriptor ()
 
 @end
@@ -62,6 +68,9 @@
 - (void)setNeedsUpdateIvars {
     if (_super) {
         _ivars = nil;
+        [NSNotificationCenter.defaultCenter postNotificationName:XZObjcClassNeedsUpdateNotification object:self userInfo:@{
+            XZObjcClassUpdateTypeUserInfoKey: XZObjcClassUpdateTypeIvars
+        }];
     }
 }
 
@@ -92,6 +101,9 @@
 - (void)setNeedsUpdateMethods {
     if (_super) {
         _methods = nil;
+        [NSNotificationCenter.defaultCenter postNotificationName:XZObjcClassNeedsUpdateNotification object:self userInfo:@{
+            XZObjcClassUpdateTypeUserInfoKey: XZObjcClassUpdateTypeMethods
+        }];
     }
 }
 
@@ -126,6 +138,9 @@
 - (void)setNeedsUpdateProperties {
     if (_super) {
         _properties = nil;
+        [NSNotificationCenter.defaultCenter postNotificationName:XZObjcClassNeedsUpdateNotification object:self userInfo:@{
+            XZObjcClassUpdateTypeUserInfoKey: XZObjcClassUpdateTypeProperties
+        }];
     }
 }
 
@@ -134,13 +149,33 @@
         return nil;
     }
     
-    static const void * const _descriptor = &_descriptor;
-    XZObjcClassDescriptor *descriptor = objc_getAssociatedObject(aClass, _descriptor);
+    static CFMutableDictionaryRef _storage = nil;
+    
+    static dispatch_semaphore_t _lock;
+    static dispatch_once_t onceToken;
+    dispatch_once(&onceToken, ^{
+        _lock = dispatch_semaphore_create(1);
+        _storage = CFDictionaryCreateMutable(CFAllocatorGetDefault(), 0, &kCFTypeDictionaryKeyCallBacks, &kCFTypeDictionaryValueCallBacks);
+    });
+    
+    dispatch_semaphore_wait(_lock, DISPATCH_TIME_FOREVER);
+    XZObjcClassDescriptor *descriptor = CFDictionaryGetValue(_storage, (__bridge const void *)aClass);
+    dispatch_semaphore_signal(_lock);
+    
     if (descriptor) {
         return descriptor;
     }
     descriptor = [[XZObjcClassDescriptor alloc] initWithClass:aClass];
-    objc_setAssociatedObject(aClass, _descriptor, descriptor, OBJC_ASSOCIATION_RETAIN);
+    
+    dispatch_semaphore_wait(_lock, DISPATCH_TIME_FOREVER);
+    XZObjcClassDescriptor *descriptor2 = CFDictionaryGetValue(_storage, (__bridge const void *)aClass);
+    if (descriptor2 == nil) {
+        CFDictionarySetValue(_storage, (__bridge const void *)aClass, (__bridge const void *)descriptor);
+    } else {
+        descriptor = descriptor2;
+    }
+    dispatch_semaphore_signal(_lock);
+    
     return descriptor;
 }
 

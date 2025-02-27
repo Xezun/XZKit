@@ -87,7 +87,7 @@
     if (objectClass == nil) {
         return nil;
     }
-    id const JSONObject = XZJSONEncodeObjectIntoDictionary(object, objectClass, nil);
+    id const JSONObject = XZJSONEncodeObjectIntoDictionary(object, objectClass, objectClass->_classType, nil);
     return [NSJSONSerialization dataWithJSONObject:JSONObject options:options error:error];
 }
 

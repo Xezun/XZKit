@@ -8,14 +8,15 @@
 #import "XZObjcTypeDescriptor.h"
 #import "XZMacro.h"
 
-static NSMutableDictionary<NSString *, NSMutableDictionary<NSNumber *, XZObjcTypeDescriptor *> *> *_descriptors = nil;
+static NSMutableDictionary<NSString *, NSMutableDictionary<NSNumber *, XZObjcTypeDescriptor *> *> *_storage = nil;
 
-static void _descriptorsLock(BOOL onLock) {
+static void XZLockStorage(BOOL onLock) {
     static dispatch_semaphore_t _lock;
+    
     static dispatch_once_t onceToken;
     dispatch_once(&onceToken, ^{
         _lock = dispatch_semaphore_create(1);
-        _descriptors = [NSMutableDictionary dictionary];
+        _storage = [NSMutableDictionary dictionary];
     });
     
     if (onLock) {
@@ -24,6 +25,7 @@ static void _descriptorsLock(BOOL onLock) {
         dispatch_semaphore_signal(_lock);
     }
 }
+
 struct XZObjcTypeEmptyStruct { };
 
 union XZObjcTypeEmptyUnion { };
@@ -129,12 +131,13 @@ typedef struct XZObjcTypeAlignment {
     }
     
     {
-        XZObjcTypeDescriptor *descriptor = nil;
         NSString *encoding = [NSString stringWithCString:typeEncoding encoding:NSASCIIStringEncoding];
-        _descriptorsLock(YES);
-        descriptor = _descriptors[encoding][@(qualifiers)];
-        _descriptorsLock(NO);
-        if (descriptor != nil) {
+        
+        XZLockStorage(YES);
+        XZObjcTypeDescriptor *descriptor = _storage[encoding][@(qualifiers)];
+        XZLockStorage(NO);
+        
+        if (descriptor) {
             return descriptor;
         }
     }
@@ -711,20 +714,31 @@ typedef struct XZObjcTypeAlignment {
 }
 
 + (instancetype)descriptorWithType:(XZObjcType)type name:(NSString *)name qualifiers:(XZObjcQualifiers)qualifiers size:(size_t)size sizeInBit:(size_t)sizeInBit encoding:(NSString *)encoding alignment:(size_t)alignment members:(NSArray<XZObjcTypeDescriptor *> *)members subtype:(Class)subtype protocols:(NSArray<Protocol *> *)protocols {
-    XZObjcTypeDescriptor *descriptor = nil;
     
-    _descriptorsLock(YES);
-    descriptor = _descriptors[encoding][@(qualifiers)];
-    if (descriptor == nil) {
-        descriptor = [[self alloc] initWithType:type name:name qualifiers:qualifiers size:size sizeInBit:sizeInBit encoding:encoding alignment:alignment members:members subtype:subtype protocols:protocols];
-        NSMutableDictionary *dictM = _descriptors[encoding];
+    NSNumber * const key = @(qualifiers);
+    
+    XZLockStorage(YES);
+    XZObjcTypeDescriptor *descriptor = _storage[encoding][key];
+    XZLockStorage(NO);
+    
+    if (descriptor) {
+        return descriptor;
+    }
+    descriptor = [[self alloc] initWithType:type name:name qualifiers:qualifiers size:size sizeInBit:sizeInBit encoding:encoding alignment:alignment members:members subtype:subtype protocols:protocols];
+    
+    XZLockStorage(YES);
+    XZObjcTypeDescriptor *descriptor2 = _storage[encoding][key];
+    if (descriptor2 == nil) {
+        NSMutableDictionary *dictM = _storage[encoding];
         if (dictM == nil) {
             dictM = [NSMutableDictionary dictionary];
-            _descriptors[encoding] = dictM;
+            _storage[encoding] = dictM;
         }
-        dictM[@(qualifiers)] = descriptor;
+        dictM[key] = descriptor;
+    } else {
+        descriptor = descriptor2;
     }
-    _descriptorsLock(NO);
+    XZLockStorage(NO);
     
     return descriptor;
 }

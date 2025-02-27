@@ -171,7 +171,7 @@
     }
     
     if ([key isEqualToString:@"hexDataValue"]) {
-        if (![value isKindOfClass:NSString.class]) {
+        if ([value isKindOfClass:NSString.class]) {
             self.hexDataValue = [NSData xz_dataWithHexEncodedString:value];
         }
         return YES;
