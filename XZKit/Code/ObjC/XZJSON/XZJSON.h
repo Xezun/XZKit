@@ -25,7 +25,7 @@ NS_ASSUME_NONNULL_BEGIN
 ///
 /// XZJSON 为符合以下格式的 NSData、NSDate、NSValue 的类型，提供了默认转换方法，以简化模型的处理。
 ///
-/// - NSValue: number 或 { "type": NSValue.objcType, "data": base64 } 字典。
+/// - NSValue: number 或形如 { "type": "CGRect", "value": "NSStringFromCGRect(aRectValue)" } 的字典。
 /// - NSDate: timestamp （秒）或 `yyyy-MM-dd HH:mm:ss` 格式。
 /// - NSData: base64 字符串。
 ///

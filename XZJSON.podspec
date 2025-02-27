@@ -33,6 +33,7 @@ Pod::Spec.new do |s|
     ss.dependency 'XZObjcDescriptor'
     ss.dependency 'XZDefines/XZMacro'
     ss.dependency 'XZExtensions/NSCharacterSet'
+    ss.dependency 'XZExtensions/NSData'
   end
   
 end

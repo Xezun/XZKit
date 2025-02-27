@@ -48,11 +48,11 @@ typedef id _Nullable (^XZJSONKeyValueCoder)(id object);
     /// 值为调用 setter 方法可使用的 key 名（调用 getter 方法使用 `_name` 属性)。
     NSString *_isKeyValueCodable;
     
-    /// 映射到当前属性的 JSON 键名。可能是 keyPath 或 keyArray 的第一个元素。
+    /// 一对一映射：当前属性映射 JSON 键。
     NSString            * _Nonnull _JSONKey;
-    /// 映射到当前属性的 JSON 键路径。
+    /// 一对一映射：当前属性映射 JSON 键路径。
     NSArray<NSString *> * _Nullable _JSONKeyPath;
-    /// 映射到当前属性的 JSON 键数组。值为 `NSString *` 类型或者 `NSArray<NSString *> *` 类型。
+    /// 一对多映射：当前属性映射多 JSON 键或键路径，按数组顺序优先取值。
     NSArray             * _Nullable _JSONKeyArray;
     
     /// 通过 KVC 取值的方法。

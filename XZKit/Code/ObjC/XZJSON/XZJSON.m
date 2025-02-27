@@ -67,7 +67,7 @@
 
 + (void)model:(id)object decodeFromDictionary:(NSDictionary *)dictionary {
     XZJSONClassDescriptor * const descriptor = [XZJSONClassDescriptor descriptorForClass:[object class]];
-    [self _model:object decodeFromDictionary:dictionary descriptor:descriptor];
+    [self _model:object decodeFromDictionary:dictionary modelClass:descriptor];
 }
 
 @end
