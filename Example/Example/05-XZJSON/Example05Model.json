@@ -36,8 +36,8 @@
         "mutableStringValue": "NSMutableString Value",
         "numberValueValue": 1231122,
         "structValueValue": {
-            "type": "{CGRect={CGPoint=dd}{CGSize=dd}}",
-            "data": "AAAAAAAAJEAAAAAAAAA0QAAAAAAAAD5AAAAAAAAAREA="
+            "type": "CGRect",
+            "value": "{{10, 20}, {30, 40}}"
         },
         "numberValue": 123,
         "decimalNumberValue": 123.45,
