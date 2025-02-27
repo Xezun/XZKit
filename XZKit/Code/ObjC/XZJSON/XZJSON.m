@@ -39,21 +39,21 @@
     }
     // 字符串形式的 json 数据
     if ([json isKindOfClass:NSString.class]) {
-        NSString * const aString = json;
-        NSData   * const data = [aString dataUsingEncoding:NSUTF8StringEncoding];
-        if (data == nil) {
+        NSString * const JSONString = json;
+        NSData   * const JSONData = [JSONString dataUsingEncoding:NSUTF8StringEncoding];
+        if (JSONData == nil) {
             return nil;
         }
-        return [self _decodeJSONData:data options:options class:aClass];
+        return [self _decodeJSONData:JSONData options:options class:aClass];
     }
     // 如果为数组，视为解析多个 json 数据
     if ([json isKindOfClass:NSArray.class]) {
-        NSArray * const jsonArray = json;
-        if (jsonArray.count == 0) {
-            return jsonArray;
+        NSArray * const JSONArray = json;
+        if (JSONArray.count == 0) {
+            return JSONArray;
         }
-        NSMutableArray * const models = [NSMutableArray arrayWithCapacity:jsonArray.count];
-        for (id json in jsonArray) {
+        NSMutableArray * const models = [NSMutableArray arrayWithCapacity:JSONArray.count];
+        for (id json in JSONArray) {
             id const model = [self decode:json options:options class:aClass];
             if (model) {
                 [models addObject:model];
