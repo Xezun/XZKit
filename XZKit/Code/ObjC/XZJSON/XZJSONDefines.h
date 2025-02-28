@@ -95,7 +95,7 @@ NS_ASSUME_NONNULL_BEGIN
 /// Returns nil to ignore this feature.
 @property (class, readonly, nullable) NSArray<NSString *> *allowedJSONCodingKeys;
 
-#pragma mark - XZJSONDecoding
+#pragma mark - XZJSONDecoder
 
 @optional
 /// 转发数据到其它模型。
@@ -150,7 +150,7 @@ NS_ASSUME_NONNULL_BEGIN
 /// - Returns: 返回 NO 表示未处理，返回 YES 表示已处理
 - (BOOL)JSONDecodeValue:(id)value forKey:(NSString *)key;
 
-#pragma mark - XZJSONEncoding
+#pragma mark - XZJSONEncoder
 
 @optional
 /// 自定义模型 JSON 序列化方法。自定义模型校验、实例序列化为数据字典的过程，可实现此方法。

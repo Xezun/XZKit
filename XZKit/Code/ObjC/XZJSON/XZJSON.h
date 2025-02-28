@@ -56,7 +56,7 @@ NS_ASSUME_NONNULL_BEGIN
 @property (class, nonatomic, readonly) NSDateFormatter *dateFormatter;
 @end
 
-@interface XZJSON (XZJSONDecoding)
+@interface XZJSON (XZJSONDecoder)
 /// JSON 数据模型化。
 ///
 /// - NSValue 支持 number 和 { "type": NSValue.objcType, "data": base64 } 两种数据格式
@@ -82,7 +82,7 @@ NS_ASSUME_NONNULL_BEGIN
 + (void)model:(id)model decodeFromDictionary:(NSDictionary *)dictionary;
 @end
 
-@interface XZJSON (XZJSONEncoding)
+@interface XZJSON (XZJSONEncoder)
 /// 将任意实例对象进行 JSON 数据化。
 ///
 /// - Parameters:

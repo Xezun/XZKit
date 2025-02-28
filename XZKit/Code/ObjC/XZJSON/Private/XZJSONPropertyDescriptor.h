@@ -66,4 +66,106 @@ typedef id _Nullable (^XZJSONKeyValueCoder)(id object);
 
 @end
 
+
+/// 将 JSONValue 值写入模型的结构体属性。
+/// - Parameters:
+///   - model: 模型对象
+///   - property: 结构体属性
+///   - JSONValue: 字符串
+/// - Returns: 是否成功写入
+FOUNDATION_STATIC_INLINE BOOL NSStringIntoStructProperty(id model, XZJSONPropertyDescriptor *property, id _Nonnull JSONValue) {
+    if ([JSONValue isKindOfClass:NSString.class]) {
+        switch (property->_structType) {
+            case XZJSONStructTypeUnknown: {
+                return NO;
+            }
+            case XZJSONStructTypeCGRect: {
+                CGRect const aValue = CGRectFromString(JSONValue);
+                ((void (*)(id, SEL, CGRect))objc_msgSend)(model, property->_setter, aValue);
+                return YES;
+            }
+            case XZJSONStructTypeCGSize: {
+                CGSize const aValue = CGSizeFromString(JSONValue);
+                ((void (*)(id, SEL, CGSize))objc_msgSend)(model, property->_setter, aValue);
+                return YES;
+            }
+            case XZJSONStructTypeCGPoint: {
+                CGPoint const aValue = CGPointFromString(JSONValue);
+                ((void (*)(id, SEL, CGPoint))objc_msgSend)(model, property->_setter, aValue);
+                return YES;
+            }
+            case XZJSONStructTypeUIEdgeInsets: {
+                UIEdgeInsets const aValue = UIEdgeInsetsFromString(JSONValue);
+                ((void (*)(id, SEL, UIEdgeInsets))objc_msgSend)(model, property->_setter, aValue);
+                return YES;
+            }
+            case XZJSONStructTypeCGVector: {
+                CGVector const aValue = CGVectorFromString(JSONValue);
+                ((void (*)(id, SEL, CGVector))objc_msgSend)(model, property->_setter, aValue);
+                return YES;
+            }
+            case XZJSONStructTypeCGAffineTransform: {
+                CGAffineTransform const aValue = CGAffineTransformFromString(JSONValue);
+                ((void (*)(id, SEL, CGAffineTransform))objc_msgSend)(model, property->_setter, aValue);
+                return YES;
+            }
+            case XZJSONStructTypeNSDirectionalEdgeInsets: {
+                NSDirectionalEdgeInsets const aValue = NSDirectionalEdgeInsetsFromString(JSONValue);
+                ((void (*)(id, SEL, NSDirectionalEdgeInsets))objc_msgSend)(model, property->_setter, aValue);
+                return YES;
+            }
+            case XZJSONStructTypeUIOffset: {
+                UIOffset const aValue = UIOffsetFromString(JSONValue);
+                ((void (*)(id, SEL, UIOffset))objc_msgSend)(model, property->_setter, aValue);
+                return YES;
+            }
+        }
+    }
+    return NO;
+}
+
+/// 读取模型结构体属性为字符串。
+/// - Parameters:
+///   - model: 模型对象
+///   - property: 模型结构体属性
+FOUNDATION_STATIC_INLINE NSString * _Nullable NSStringFromStructProperty(id model, XZJSONPropertyDescriptor *property) {
+    switch (property->_structType) {
+        case XZJSONStructTypeUnknown: {
+            return nil;
+        }
+        case XZJSONStructTypeCGRect: {
+            CGRect aValue = ((CGRect (*)(id, SEL))objc_msgSend)(model, property->_getter);
+            return NSStringFromCGRect(aValue);
+        }
+        case XZJSONStructTypeCGSize: {
+            CGSize aValue = ((CGSize (*)(id, SEL))objc_msgSend)(model, property->_getter);
+            return NSStringFromCGSize(aValue);
+        }
+        case XZJSONStructTypeCGPoint: {
+            CGPoint aValue = ((CGPoint (*)(id, SEL))objc_msgSend)(model, property->_getter);
+            return NSStringFromCGPoint(aValue);
+        }
+        case XZJSONStructTypeUIEdgeInsets: {
+            UIEdgeInsets aValue = ((UIEdgeInsets (*)(id, SEL))objc_msgSend)(model, property->_getter);
+            return NSStringFromUIEdgeInsets(aValue);
+        }
+        case XZJSONStructTypeCGVector: {
+            CGVector aValue = ((CGVector (*)(id, SEL))objc_msgSend)(model, property->_getter);
+            return NSStringFromCGVector(aValue);
+        }
+        case XZJSONStructTypeCGAffineTransform: {
+            CGAffineTransform aValue = ((CGAffineTransform (*)(id, SEL))objc_msgSend)(model, property->_getter);
+            return NSStringFromCGAffineTransform(aValue);
+        }
+        case XZJSONStructTypeNSDirectionalEdgeInsets: {
+            NSDirectionalEdgeInsets aValue = ((NSDirectionalEdgeInsets (*)(id, SEL))objc_msgSend)(model, property->_getter);
+            return NSStringFromDirectionalEdgeInsets(aValue);
+        }
+        case XZJSONStructTypeUIOffset: {
+            UIOffset aValue = ((UIOffset (*)(id, SEL))objc_msgSend)(model, property->_getter);
+            return NSStringFromUIOffset(aValue);
+        }
+    }
+}
+
 NS_ASSUME_NONNULL_END

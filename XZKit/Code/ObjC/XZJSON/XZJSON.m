@@ -5,10 +5,12 @@
 //  Created by Xezun on 2024/9/28.
 //
 
-#import "XZJSON.h"
-#import "XZJSONPrivate.h"
-#import "XZJSONClassDescriptor.h"
 #import "XZMacro.h"
+#import "XZJSON.h"
+#import "XZJSONFoundation.h"
+#import "XZJSONClassDescriptor.h"
+#import "XZJSONDecoder.h"
+#import "XZJSONEncoder.h"
 
 @implementation XZJSON
 
@@ -26,7 +28,7 @@
 
 @end
 
-@implementation XZJSON (XZJSONDecoding)
+@implementation XZJSON (XZJSONDecoder)
 
 + (id)decode:(id)json options:(NSJSONReadingOptions)options class:(Class)aClass {
     // 判空
@@ -35,7 +37,7 @@
     }
     // 二进制流形式的 json 数据
     if ([json isKindOfClass:NSData.class]) {
-        return [self _decodeJSONData:json options:options class:aClass];
+        return XZJSONDecodeJSONData(json, options, aClass);
     }
     // 字符串形式的 json 数据
     if ([json isKindOfClass:NSString.class]) {
@@ -44,7 +46,7 @@
         if (JSONData == nil) {
             return nil;
         }
-        return [self _decodeJSONData:JSONData options:options class:aClass];
+        return XZJSONDecodeJSONData(JSONData, options, aClass);
     }
     // 如果为数组，视为解析多个 json 数据
     if ([json isKindOfClass:NSArray.class]) {
@@ -62,34 +64,38 @@
         return models;
     }
     // 其它情况视为已解析好的 json
-    return [self _decodeJSONObject:json class:aClass];
+    return XZJSONDecodeJSONObject(json, aClass);
 }
 
-+ (void)model:(id)object decodeFromDictionary:(NSDictionary *)dictionary {
-    XZJSONClassDescriptor * const descriptor = [XZJSONClassDescriptor descriptorForClass:[object class]];
-    [self _model:object decodeFromDictionary:dictionary modelClass:descriptor];
++ (void)model:(id)model decodeFromDictionary:(NSDictionary *)dictionary {
+    XZJSONClassDescriptor * const modelClass = [XZJSONClassDescriptor descriptorForClass:[model class]];
+    if (modelClass) {
+        XZJSONModelDecodeFromDictionary(model, modelClass, dictionary);
+    }
 }
 
 @end
 
 
-@implementation XZJSON (XZJSONEncoding)
+@implementation XZJSON (XZJSONEncoder)
 
 + (NSData *)encode:(id)object options:(NSJSONWritingOptions)options error:(NSError *__autoreleasing  _Nullable * _Nullable)error {
     if (object == nil) {
         return nil;
     }
-    XZJSONClassDescriptor *descriptor = [XZJSONClassDescriptor descriptorForClass:object_getClass(object)];
-    if (descriptor == nil) {
+    XZJSONClassDescriptor * const objectClass = [XZJSONClassDescriptor descriptorForClass:object_getClass(object)];
+    if (objectClass == nil) {
         return nil;
     }
-    id const JSONObject = [self _encodeObject:object intoDictionary:nil descriptor:descriptor];
+    id const JSONObject = XZJSONEncodeObjectIntoDictionary(object, objectClass, nil);
     return [NSJSONSerialization dataWithJSONObject:JSONObject options:options error:error];
 }
 
 + (void)model:(id)model encodeIntoDictionary:(NSMutableDictionary *)dictionary {
-    XZJSONClassDescriptor * const descriptor = [XZJSONClassDescriptor descriptorForClass:[model class]];
-    [self _model:model encodeIntoDictionary:dictionary descriptor:descriptor];
+    XZJSONClassDescriptor * const modelClass = [XZJSONClassDescriptor descriptorForClass:[model class]];
+    if (modelClass) {
+        XZJSONModelEncodeIntoDictionary(model, modelClass, dictionary);
+    }
 }
 
 @end
