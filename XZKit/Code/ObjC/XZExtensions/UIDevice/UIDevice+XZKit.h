@@ -15,6 +15,8 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic, readonly, nullable) NSString *xz_productModel NS_SWIFT_NAME(productModel);
 /// 主板型号，如 D20AP 等。
 @property (nonatomic, readonly, nullable) NSString *xz_boardModel NS_SWIFT_NAME(boardModel);
+/// 产品名称，如 iPhone SE 2 或 iPhone 等。
+@property (nonatomic, readonly) NSString *xz_productName NS_SWIFT_NAME(productName);
 
 @end
 
