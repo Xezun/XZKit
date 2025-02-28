@@ -36,6 +36,9 @@
     NSString *text = nil;
     switch (indexPath.section) {
         case 0: {
+            break;
+        }
+        case 1: {
             switch (indexPath.row) {
                 case 0: {
                     text = _JSONString;
@@ -77,7 +80,7 @@
                     NSAssert(CGPointEqualToPoint(model.pointStructValue, CGPointMake(30, 40)), @"");
                     NSAssert(UIEdgeInsetsEqualToEdgeInsets(model.edgeInsetsStructValue, UIEdgeInsetsMake(10, 20, 30, 40)), @"");
                     NSAssert(model.vectorStructValue.dx == 10 && model.vectorStructValue.dy == 20, @"");
-                    NSAssert(CGAffineTransformEqualToTransform(model.affineTransformStructValue, CGAffineTransformMake(10, 20, 30, 40, 40, 60)), @"");
+                    NSAssert(CGAffineTransformEqualToTransform(model.affineTransformStructValue, CGAffineTransformMake(10, 20, 30, 40, 50, 60)), @"");
                     NSAssert(NSDirectionalEdgeInsetsEqualToDirectionalEdgeInsets(model.directionalEdgeInsetsStructValue, NSDirectionalEdgeInsetsMake(10, 20, 30, 40)), @"");
                     NSAssert(UIOffsetEqualToOffset(model.offsetStructValue, UIOffsetMake(10, 20)), @"");
                     
@@ -173,10 +176,14 @@
                     NSAssert([model.mutableOrderedSetValue containsObject:@"mord1"], @"");
                     NSAssert([model.mutableOrderedSetValue containsObject:@"mord2"], @"");
                     
+                    NSAssert([model.keyPathValue isEqualToString:@"123"], @"");
+                    NSAssert([model.keyArrayValue isEqualToString:@"456"], @"");
+                    
                     Example05Model *objectValue = model.objectValue;
                     NSAssert([objectValue isKindOfClass:[Example05Model class]], @"");
                     NSAssert(objectValue.charValue == 'B', @"");
                     NSAssert(objectValue.intValue == 456, @"");
+                    NSAssert([objectValue.keyArrayValue isEqualToString:@"456"], @"");
                     
                     NSData *data = [XZJSON encode:model options:NSJSONWritingPrettyPrinted error:nil];
                     text = [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding];
@@ -187,7 +194,7 @@
             }
             break;
         }
-        case 1: {
+        case 2: {
             switch (indexPath.row) {
                 case 0: {
                     text = [[XZObjcClassDescriptor descriptorForClass:[Example05Human class]] description];
@@ -222,7 +229,7 @@
             }
             break;
         }
-        case 2: {
+        case 3: {
             switch (indexPath.row) {
                 case 0: {
                     if (!_teachers) {
@@ -270,7 +277,6 @@
             break;
         }
         default: {
-            
             break;
         }
     }

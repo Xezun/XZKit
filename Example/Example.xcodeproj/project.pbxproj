@@ -245,6 +245,13 @@
 		29648C002A72556E0090F445 /* ExampleTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 29648BFF2A72556E0090F445 /* ExampleTests.m */; };
 		29648C0A2A72556E0090F445 /* ExampleUITests.m in Sources */ = {isa = PBXBuildFile; fileRef = 29648C092A72556E0090F445 /* ExampleUITests.m */; };
 		29648C0C2A72556E0090F445 /* ExampleUITestsLaunchTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 29648C0B2A72556E0090F445 /* ExampleUITestsLaunchTests.m */; };
+		296537B12D70B8EE00559997 /* Example05BenchmarkViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 296537B02D70B8EE00559997 /* Example05BenchmarkViewController.m */; };
+		296537B32D70BFC600559997 /* Example05User.json in Resources */ = {isa = PBXBuildFile; fileRef = 296537B22D70BFC600559997 /* Example05User.json */; };
+		296537B52D70BFCC00559997 /* Example05Weibo.json in Resources */ = {isa = PBXBuildFile; fileRef = 296537B42D70BFCC00559997 /* Example05Weibo.json */; };
+		296537B82D70C90F00559997 /* Example05XZWeiboModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 296537B72D70C90F00559997 /* Example05XZWeiboModel.m */; };
+		296537BB2D70C95300559997 /* Example05YYWeiboModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 296537BA2D70C95300559997 /* Example05YYWeiboModel.m */; };
+		296537BE2D70CA0500559997 /* Example05XZGHUser.m in Sources */ = {isa = PBXBuildFile; fileRef = 296537BD2D70CA0500559997 /* Example05XZGHUser.m */; };
+		296537C12D70CA4100559997 /* Example05YYGHUser.m in Sources */ = {isa = PBXBuildFile; fileRef = 296537C02D70CA4100559997 /* Example05YYGHUser.m */; };
 		29776A142D3240E70033AAF9 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 29776A132D3240E70033AAF9 /* Main.storyboard */; };
 		299B56CE2D2A67ED00CC2F69 /* Example10ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 299B56CD2D2A67ED00CC2F69 /* Example10ViewController.swift */; };
 		299B56D02D2A680300CC2F69 /* Example11ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 299B56CF2D2A680300CC2F69 /* Example11ViewController.swift */; };
@@ -732,6 +739,18 @@
 		29648C052A72556E0090F445 /* ExampleUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = ExampleUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		29648C092A72556E0090F445 /* ExampleUITests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ExampleUITests.m; sourceTree = "<group>"; };
 		29648C0B2A72556E0090F445 /* ExampleUITestsLaunchTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ExampleUITestsLaunchTests.m; sourceTree = "<group>"; };
+		296537AF2D70B8EE00559997 /* Example05BenchmarkViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Example05BenchmarkViewController.h; sourceTree = "<group>"; };
+		296537B02D70B8EE00559997 /* Example05BenchmarkViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = Example05BenchmarkViewController.m; sourceTree = "<group>"; };
+		296537B22D70BFC600559997 /* Example05User.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = Example05User.json; sourceTree = "<group>"; };
+		296537B42D70BFCC00559997 /* Example05Weibo.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = Example05Weibo.json; sourceTree = "<group>"; };
+		296537B62D70C90F00559997 /* Example05XZWeiboModel.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Example05XZWeiboModel.h; sourceTree = "<group>"; };
+		296537B72D70C90F00559997 /* Example05XZWeiboModel.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = Example05XZWeiboModel.m; sourceTree = "<group>"; };
+		296537B92D70C95300559997 /* Example05YYWeiboModel.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Example05YYWeiboModel.h; sourceTree = "<group>"; };
+		296537BA2D70C95300559997 /* Example05YYWeiboModel.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = Example05YYWeiboModel.m; sourceTree = "<group>"; };
+		296537BC2D70CA0500559997 /* Example05XZGHUser.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Example05XZGHUser.h; sourceTree = "<group>"; };
+		296537BD2D70CA0500559997 /* Example05XZGHUser.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = Example05XZGHUser.m; sourceTree = "<group>"; };
+		296537BF2D70CA4100559997 /* Example05YYGHUser.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Example05YYGHUser.h; sourceTree = "<group>"; };
+		296537C02D70CA4100559997 /* Example05YYGHUser.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = Example05YYGHUser.m; sourceTree = "<group>"; };
 		29776A0E2D3199DE0033AAF9 /* ExampleBridgingHeader.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ExampleBridgingHeader.h; sourceTree = "<group>"; };
 		29776A132D3240E70033AAF9 /* Main.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = Main.storyboard; sourceTree = "<group>"; };
 		299B56CD2D2A67ED00CC2F69 /* Example10ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Example10ViewController.swift; sourceTree = "<group>"; };
@@ -957,9 +976,21 @@
 				292A5A502D254F6A0037579D /* Example05ViewController.m */,
 				04DD46FF2D674030003AD7D2 /* Example05TextViewController.h */,
 				04DD47002D674030003AD7D2 /* Example05TextViewController.m */,
+				296537AF2D70B8EE00559997 /* Example05BenchmarkViewController.h */,
+				296537B02D70B8EE00559997 /* Example05BenchmarkViewController.m */,
 				292A5A532D255DC50037579D /* Example05Model.json */,
 				292A5A4D2D254F6A0037579D /* Example05Model.h */,
 				292A5A4E2D254F6A0037579D /* Example05Model.m */,
+				296537B22D70BFC600559997 /* Example05User.json */,
+				296537BF2D70CA4100559997 /* Example05YYGHUser.h */,
+				296537C02D70CA4100559997 /* Example05YYGHUser.m */,
+				296537BC2D70CA0500559997 /* Example05XZGHUser.h */,
+				296537BD2D70CA0500559997 /* Example05XZGHUser.m */,
+				296537B42D70BFCC00559997 /* Example05Weibo.json */,
+				296537B92D70C95300559997 /* Example05YYWeiboModel.h */,
+				296537BA2D70C95300559997 /* Example05YYWeiboModel.m */,
+				296537B62D70C90F00559997 /* Example05XZWeiboModel.h */,
+				296537B72D70C90F00559997 /* Example05XZWeiboModel.m */,
 			);
 			path = "05-XZJSON";
 			sourceTree = "<group>";
@@ -2919,6 +2950,7 @@
 				046CE6422D34C3A800B9389F /* Example19.storyboard in Resources */,
 				29B3341B2D3177F1006A574A /* Example08.storyboard in Resources */,
 				292C17C02D251F6D00E465BF /* Example0322ViewController.xib in Resources */,
+				296537B52D70BFCC00559997 /* Example05Weibo.json in Resources */,
 				292C17C12D251F6D00E465BF /* Example0320ContentViewController.xib in Resources */,
 				046CE6472D34C4A700B9389F /* Example18.storyboard in Resources */,
 				29B334152D31777E006A574A /* Example05.storyboard in Resources */,
@@ -2938,6 +2970,7 @@
 				29B334232D31782B006A574A /* Example12.storyboard in Resources */,
 				292A5A542D255DC50037579D /* Example05Model.json in Resources */,
 				292C17C82D251F6D00E465BF /* Example0322TextCell.xib in Resources */,
+				296537B32D70BFC600559997 /* Example05User.json in Resources */,
 				292C17C92D251F6D00E465BF /* Example0320Group102Cell.xib in Resources */,
 				29B334252D317835006A574A /* Example13.storyboard in Resources */,
 				292C17CA2D251F6D00E465BF /* Example0320Group100Cell.xib in Resources */,
@@ -3076,6 +3109,7 @@
 				292C17292D251F6D00E465BF /* Example0330Group101CellViewModel.m in Sources */,
 				292C172A2D251F6D00E465BF /* Example0320Group101Cell.m in Sources */,
 				292C172B2D251F6D00E465BF /* Example0331Group104CellModel.m in Sources */,
+				296537C12D70CA4100559997 /* Example05YYGHUser.m in Sources */,
 				292C172C2D251F6D00E465BF /* Example0320Group102CellModel.m in Sources */,
 				292C172D2D251F6D00E465BF /* Example0320ViewModel.m in Sources */,
 				292C172E2D251F6D00E465BF /* Example0330Group106SectionModel.m in Sources */,
@@ -3089,6 +3123,7 @@
 				292A5A4B2D254D010037579D /* Example04TestViewController.m in Sources */,
 				292C17312D251F6D00E465BF /* Example0320Group102CellViewModel.m in Sources */,
 				292C17322D251F6D00E465BF /* Example0322TextModel.m in Sources */,
+				296537B12D70B8EE00559997 /* Example05BenchmarkViewController.m in Sources */,
 				292C17332D251F6D00E465BF /* Example0330Group108CellViewModel.m in Sources */,
 				292C17342D251F6D00E465BF /* Example0331Group104SectionModel.m in Sources */,
 				04D34E652D314ABB0013D4A3 /* Example17GestureViewController.swift in Sources */,
@@ -3124,6 +3159,7 @@
 				299FD38E2D4B975200427660 /* Example21Model.m in Sources */,
 				292A5A652D2563E20037579D /* Example07Test01ViewController.m in Sources */,
 				292A5A662D2563E20037579D /* Example07Test02ViewController.m in Sources */,
+				296537B82D70C90F00559997 /* Example05XZWeiboModel.m in Sources */,
 				292C17402D251F6D00E465BF /* Example0331Group101CellViewModel.m in Sources */,
 				292C17412D251F6D00E465BF /* Example0331Group102CellViewModel.m in Sources */,
 				292C17422D251F6D00E465BF /* Example0330Group103Cell.m in Sources */,
@@ -3227,6 +3263,7 @@
 				292C178B2D251F6D00E465BF /* Example0312CellViewModel.m in Sources */,
 				299FD3972D4BE06A00427660 /* Example21TableViewSectionViewModel.m in Sources */,
 				292C178C2D251F6D00E465BF /* Example0330Group106CellViewModel.m in Sources */,
+				296537BB2D70C95300559997 /* Example05YYWeiboModel.m in Sources */,
 				04B1EA432D41E31D004F5DF0 /* Example02NavigationController.swift in Sources */,
 				292C178D2D251F6D00E465BF /* Example0330Model.m in Sources */,
 				292C178E2D251F6D00E465BF /* Example0330Group110CellModel.m in Sources */,
@@ -3255,6 +3292,7 @@
 				292C17A22D251F6D00E465BF /* Example0330Group109HeaderViewModel.m in Sources */,
 				292C17A32D251F6D00E465BF /* Example0330Group107CellViewModel.m in Sources */,
 				292C17A42D251F6D00E465BF /* Example0321ContactEditor.m in Sources */,
+				296537BE2D70CA0500559997 /* Example05XZGHUser.m in Sources */,
 				292C17A52D251F6D00E465BF /* Example0310Contact.m in Sources */,
 				292C17A62D251F6D00E465BF /* Example0330Group108Cell.m in Sources */,
 				292C17A72D251F6D00E465BF /* Example0310ViewController.m in Sources */,

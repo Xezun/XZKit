@@ -6,6 +6,7 @@
 //
 
 #import <Foundation/Foundation.h>
+#import "XZObjcTypeDescriptor.h"
 
 /// 原生对象类型枚举。Foundation Class Type
 typedef NS_ENUM (NSUInteger, XZJSONClassType) {
@@ -67,37 +68,41 @@ typedef NS_ENUM(NSUInteger, XZJSONStructType) {
     XZJSONStructTypeUIOffset
 };
 
+FOUNDATION_STATIC_INLINE XZJSONStructType XZJSONStructTypeFromString(NSString *name) {
+    if ([name isEqualToString:@"CGRect"]) {
+        return XZJSONStructTypeCGRect;
+    }
+    if ([name isEqualToString:@"CGSize"]) {
+        return XZJSONStructTypeCGSize;
+    }
+    if ([name isEqualToString:@"CGPoint"]) {
+        return XZJSONStructTypeCGPoint;
+    }
+    if ([name isEqualToString:@"UIEdgeInsets"]) {
+        return XZJSONStructTypeUIEdgeInsets;
+    }
+    if ([name isEqualToString:@"CGVector"]) {
+        return XZJSONStructTypeCGVector;
+    }
+    if ([name isEqualToString:@"CGAffineTransform"]) {
+        return XZJSONStructTypeCGAffineTransform;
+    }
+    if ([name isEqualToString:@"NSDirectionalEdgeInsets"]) {
+        return XZJSONStructTypeNSDirectionalEdgeInsets;
+    }
+    if ([name isEqualToString:@"UIOffset"]) {
+        return XZJSONStructTypeUIOffset;
+    }
+    return XZJSONStructTypeUnknown;
+}
+
 FOUNDATION_STATIC_INLINE XZJSONStructType XZJSONStructTypeFromType(XZObjcTypeDescriptor *type) {
     switch (type.type) {
-        case XZObjcTypeStruct: {
-            NSString * const name = type.name;
-            if ([name isEqualToString:@"CGRect"]) {
-                return XZJSONStructTypeCGRect;
-            }
-            if ([name isEqualToString:@"CGSize"]) {
-                return XZJSONStructTypeCGSize;
-            }
-            if ([name isEqualToString:@"CGPoint"]) {
-                return XZJSONStructTypeCGPoint;
-            }
-            if ([name isEqualToString:@"UIEdgeInsets"]) {
-                return XZJSONStructTypeUIEdgeInsets;
-            }
-            if ([name isEqualToString:@"CGVector"]) {
-                return XZJSONStructTypeCGVector;
-            }
-            if ([name isEqualToString:@"CGAffineTransform"]) {
-                return XZJSONStructTypeCGAffineTransform;
-            }
-            if ([name isEqualToString:@"NSDirectionalEdgeInsets"]) {
-                return XZJSONStructTypeNSDirectionalEdgeInsets;
-            }
-            if ([name isEqualToString:@"UIOffset"]) {
-                return XZJSONStructTypeUIOffset;
-            }
-            return XZJSONStructTypeUnknown;
-        }
+        case XZObjcTypeStruct:
+            return XZJSONStructTypeFromString(type.name);
         default:
             return XZJSONStructTypeUnknown;
     }
 }
+
+

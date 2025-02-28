@@ -13,6 +13,13 @@
 
 @implementation Example05Model
 
++ (NSDictionary<NSString *,id> *)mappingJSONCodingKeys {
+    return @{
+        @"keyPathValue": @"key.path.value",
+        @"keyArrayValue": @[@"key.array.value", @"keyArrayValue"]
+    };
+}
+
 - (void)dealloc {
     if (_cStringValue) {
         free((void *)_cStringValue);
@@ -136,56 +143,51 @@
     if ([key isEqualToString:@"cArrayValue"]) {
         if ([value isKindOfClass:NSArray.class]) {
             NSArray * array = value;
-            if (array.count != 3) {
-                return YES;
-            }
-            if (_cArrayValue == NULL) {
-                _cArrayValue = calloc(3, sizeof(int));
-            }
-            for (NSUInteger i = 0; i < 3; i++) {
-                NSNumber *number = array[i];
-                if (![number isKindOfClass:NSNumber.class]) {
-                    return YES;
+            if (array.count == 3) {
+                if (_cArrayValue == NULL) {
+                    _cArrayValue = calloc(3, sizeof(int));
                 }
-                _cArrayValue[i] = number.intValue;
+                for (NSUInteger i = 0; i < 3; i++) {
+                    NSNumber *number = array[i];
+                    if (![number isKindOfClass:NSNumber.class]) {
+                        return YES;
+                    }
+                    _cArrayValue[i] = number.intValue;
+                }
             }
         }
         return YES;
     }
     
     if ([key isEqualToString:@"date1Value"]) {
-        if (![value isKindOfClass:NSString.class]) {
-            return NO;
+        if ([value isKindOfClass:NSString.class]) {
+            NSDateFormatter *formatter = [[NSDateFormatter alloc] init];
+            formatter.dateFormat = @"yyyy-MM-dd";
+            self.date1Value = [formatter dateFromString:value];
         }
-        NSDateFormatter *formatter = [[NSDateFormatter alloc] init];
-        formatter.dateFormat = @"yyyy-MM-dd";
-        self.date1Value = [formatter dateFromString:value];
         return YES;
     }
     
     if ([key isEqualToString:@"date2Value"]) {
-        if (![value isKindOfClass:NSString.class]) {
-            return NO;
+        if ([value isKindOfClass:NSString.class]) {
+            NSDateFormatter *formatter = [[NSDateFormatter alloc] init];
+            formatter.dateFormat = @"hh:mm:ss";
+            self.date2Value = [formatter dateFromString:value];
         }
-        NSDateFormatter *formatter = [[NSDateFormatter alloc] init];
-        formatter.dateFormat = @"hh:mm:ss";
-        self.date2Value = [formatter dateFromString:value];
         return YES;
     }
     
     if ([key isEqualToString:@"hexDataValue"]) {
-        if (![value isKindOfClass:NSString.class]) {
-            return NO;
+        if ([value isKindOfClass:NSString.class]) {
+            self.hexDataValue = [NSData xz_dataWithHexEncodedString:value];
         }
-        self.hexDataValue = [NSData xz_dataWithHexEncodedString:value];
         return YES;
     }
     
     if ([key isEqualToString:@"hexMutableDataValue"]) {
-        if (![value isKindOfClass:NSString.class]) {
-            return NO;
+        if ([value isKindOfClass:NSString.class]) {
+            self.hexMutableDataValue = [NSMutableData xz_dataWithHexEncodedString:value];
         }
-        self.hexMutableDataValue = [NSMutableData xz_dataWithHexEncodedString:value];
         return YES;
     }
     
@@ -363,4 +365,11 @@
 }
 
 @end
+
+
+
+
+
+
+
 

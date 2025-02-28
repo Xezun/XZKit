@@ -23,7 +23,7 @@
         "pointStructValue": "{30, 40}",
         "edgeInsetsStructValue": "{10, 20, 30, 40}",
         "vectorStructValue": "{10, 20}",
-        "affineTransformStructValue": "[10, 20, 30, 40, 40, 60]",
+        "affineTransformStructValue": "[10, 20, 30, 40, 50, 60]",
         "directionalEdgeInsetsStructValue": "{10, 20, 30, 40}",
         "offsetStructValue": "{10, 20}",
         "unionValue": {
@@ -36,13 +36,13 @@
         "mutableStringValue": "NSMutableString Value",
         "numberValueValue": 1231122,
         "structValueValue": {
-            "type": "{CGRect={CGPoint=dd}{CGSize=dd}}",
-            "data": "AAAAAAAAJEAAAAAAAAA0QAAAAAAAAD5AAAAAAAAAREA="
+            "type": "CGRect",
+            "value": "{{10, 20}, {30, 40}}"
         },
         "numberValue": 123,
         "decimalNumberValue": 123.45,
-        "dataValue": "SGVsbG8gV29ybGQ=",
-        "mutableDataValue": "SGVsbG8gV29ybGQ=",
+        "dataValue": "data:base64,SGVsbG8gV29ybGQ=",
+        "mutableDataValue": "data:base64,SGVsbG8gV29ybGQ=",
         "hexDataValue": "585a4b6974",
         "hexMutableDataValue": "585a4b6974",
         "date1Value": "2023-10-01",
@@ -66,7 +66,19 @@
         "mutableOrderedSetValue": ["mord1", "mord2"],
         "objectValue": {
             "charValue": "B",
-            "intValue": 456
+            "intValue": 456,
+            "keyArrayValue": "456"
+        },
+        "key": {
+            "path": {
+                "value": "123",
+                "path": {
+                    "value": "123"
+                }
+            },
+            "array": {
+                "value": "456"
+            }
         }
     },
     "teachers": [

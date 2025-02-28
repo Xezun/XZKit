@@ -16,20 +16,33 @@ NS_ASSUME_NONNULL_BEGIN
 /// - 模型转换依赖于 `setter` 方法，所以只读属性会被忽略。
 /// - 通用逻辑无法处理弱引用关系，所以 `unsafe_unretained` 或 `assign` 修饰的对象的属性会被忽略。
 ///
-/// 默认无法处理的属性，或支持多种形式的属性，比如 NSData、NSDate 等，可通过实现 `XZJSONCoding` 协议自定义转换过程。
+/// XZJSON 会自动处理以下基础数据类型。
+/// - 所有 C 基础数据类型，比如 int、float、double 等，包括 NSInteger、CGFloat、CGRect 等类型别名和结构体。
+/// - 基础类型 NSString、NSNumber 及它们的可变类型等。
+/// - 集合类型 NSArray、NSDictionary、NSSet、NSOrderedSet 及它们的可变类型。
+/// - 字面类型 NSURL、NSDecimalNumber、NSData、NSDate、NSValue 及 NSString 数字。
 ///
-/// - `-JSONDecodeValue:forKey:`
-/// - `-JSONEncodeValueForKey:`
+/// 其中，字面类型要求如下。
+/// - NSURL：符合 [RFC 2396](https://datatracker.ietf.org/doc/html/rfc2396) 规范的字符串
+/// - NSDecimalNumber：十进制数字
+/// - NSData：严格的 base64 字符串，或 [RFC 2397](https://datatracker.ietf.org/doc/html/rfc2397) 规范的 URI 字符串，或者格式如 `{ "type": "base64", "data": "base64" }` 字典，当前仅支持 hex 和 base64 编码。
+/// - NSDate：以“秒”为单位的时间戳，或者 `yyyy-MM-dd HH:mm:ss` 格式的字符串。
+/// - NSValue：数值或布尔值，或者格式 `{ "type": "CGRect", "value": "{{1,2},{3,4}}" }` 结构体的字典。
 ///
-/// 注：上述方法也会同时应用于 NSCoding 归档/解档。
+/// 自定义转换规则，模型可通过 `XZJSONCoding` 协议的如下两个方法实现，这两个方法也会同时用于 NSCoding 归档/解档过程。
+/// - `-JSONDecodeValue:forKey:` 自定义 数据 转 模型属性 的过程
+/// - `-JSONEncodeValueForKey:` 自定义 模型属性 转 数据 的过程
 ///
-/// XZJSON 为符合以下格式的 NSData、NSDate、NSValue 的类型，提供了默认转换方法，以简化模型的处理。
+/// 其它说明。
+/// - 字面类型数据 NSData、NSDate、NSValue 支持多种格式，但 XZJSON 只支持其中固定的两种格式，所以在处理它们时，会通过 `XZJSONCoding` 协议，优先让模型处理，模型不处理，才会执行内置解析过程。
+/// - 数值类型 long double 只能转换为 JSONString 类型，但是 JSONNumber 可以转为 double long 类型。
+/// - NSDate 类型，默认转换为 JSONNumber 时间戳，转特定格式，需要自定义。
+/// - 支持的结构体仅包括原生提供了 `NSStringFrom~` 和 `~FromString` 函数的结构体。
 ///
-/// - NSValue: number 或 { "type": NSValue.objcType, "data": base64 } 字典。
-/// - NSDate: timestamp （秒）或 `yyyy-MM-dd HH:mm:ss` 格式。
-/// - NSData: base64 字符串。
-///
-/// 另外，大部分结构体、共用体、C 指针等类型，由于涉及内存大小或内存管理，转换过程是不可预知的，只能自定义转换过程，幸好的是开发中，并不常用这些类型。
+/// 特色情况。
+/// - 数据不是数组，但是属性是数组类型，自动包装为 `@[data]` 形式的数组。
+/// - 数据是数组，但属性是字典，自动包装为 `@{ @"index": item }` 形式的字典。
+/// - 数据不是字典，但是属性是自定义模型，自动包装为 `@{ @"rawValue": data }` 形式的字典。
 @interface XZJSON : NSObject
 /// “字符串-日期”转换的默认格式化工具，默认 `yyyy-MM-dd HH:mm:ss` 格式。
 ///
@@ -43,7 +56,7 @@ NS_ASSUME_NONNULL_BEGIN
 @property (class, nonatomic, readonly) NSDateFormatter *dateFormatter;
 @end
 
-@interface XZJSON (XZJSONDecoding)
+@interface XZJSON (XZJSONDecoder)
 /// JSON 数据模型化。
 ///
 /// - NSValue 支持 number 和 { "type": NSValue.objcType, "data": base64 } 两种数据格式
@@ -69,7 +82,7 @@ NS_ASSUME_NONNULL_BEGIN
 + (void)model:(id)model decodeFromDictionary:(NSDictionary *)dictionary;
 @end
 
-@interface XZJSON (XZJSONEncoding)
+@interface XZJSON (XZJSONEncoder)
 /// 将任意实例对象进行 JSON 数据化。
 ///
 /// - Parameters:

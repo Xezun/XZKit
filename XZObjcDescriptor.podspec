@@ -10,7 +10,7 @@
 
 Pod::Spec.new do |s|
   s.name             = 'XZObjcDescriptor'
-  s.version          = '10.5.0'
+  s.version          = '10.6.0'
   s.summary          = 'ObjC 运行时面向对象'
 
   s.description      = <<-DESC

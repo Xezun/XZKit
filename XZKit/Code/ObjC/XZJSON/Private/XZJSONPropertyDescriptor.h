@@ -48,11 +48,11 @@ typedef id _Nullable (^XZJSONKeyValueCoder)(id object);
     /// 值为调用 setter 方法可使用的 key 名（调用 getter 方法使用 `_name` 属性)。
     NSString *_isKeyValueCodable;
     
-    /// 映射到当前属性的 JSON 键名。可能是 keyPath 或 keyArray 的第一个元素。
+    /// 一对一映射：当前属性映射 JSON 键。
     NSString            * _Nonnull _JSONKey;
-    /// 映射到当前属性的 JSON 键路径。
+    /// 一对一映射：当前属性映射 JSON 键路径。
     NSArray<NSString *> * _Nullable _JSONKeyPath;
-    /// 映射到当前属性的 JSON 键数组。值为 `NSString *` 类型或者 `NSArray<NSString *> *` 类型。
+    /// 一对多映射：当前属性映射多 JSON 键或键路径，按数组顺序优先取值。
     NSArray             * _Nullable _JSONKeyArray;
     
     /// 通过 KVC 取值的方法。
@@ -65,5 +65,107 @@ typedef id _Nullable (^XZJSONKeyValueCoder)(id object);
 + (XZJSONPropertyDescriptor *)descriptorWithClass:(XZJSONClassDescriptor *)aClass property:(XZObjcPropertyDescriptor *)property elementType:(nullable Class)elementType;
 
 @end
+
+
+/// 将 JSONValue 值写入模型的结构体属性。
+/// - Parameters:
+///   - model: 模型对象
+///   - property: 结构体属性
+///   - JSONValue: 字符串
+/// - Returns: 是否成功写入
+FOUNDATION_STATIC_INLINE BOOL NSStringIntoStructProperty(id model, XZJSONPropertyDescriptor *property, id _Nonnull JSONValue) {
+    if ([JSONValue isKindOfClass:NSString.class]) {
+        switch (property->_structType) {
+            case XZJSONStructTypeUnknown: {
+                return NO;
+            }
+            case XZJSONStructTypeCGRect: {
+                CGRect const aValue = CGRectFromString(JSONValue);
+                ((void (*)(id, SEL, CGRect))objc_msgSend)(model, property->_setter, aValue);
+                return YES;
+            }
+            case XZJSONStructTypeCGSize: {
+                CGSize const aValue = CGSizeFromString(JSONValue);
+                ((void (*)(id, SEL, CGSize))objc_msgSend)(model, property->_setter, aValue);
+                return YES;
+            }
+            case XZJSONStructTypeCGPoint: {
+                CGPoint const aValue = CGPointFromString(JSONValue);
+                ((void (*)(id, SEL, CGPoint))objc_msgSend)(model, property->_setter, aValue);
+                return YES;
+            }
+            case XZJSONStructTypeUIEdgeInsets: {
+                UIEdgeInsets const aValue = UIEdgeInsetsFromString(JSONValue);
+                ((void (*)(id, SEL, UIEdgeInsets))objc_msgSend)(model, property->_setter, aValue);
+                return YES;
+            }
+            case XZJSONStructTypeCGVector: {
+                CGVector const aValue = CGVectorFromString(JSONValue);
+                ((void (*)(id, SEL, CGVector))objc_msgSend)(model, property->_setter, aValue);
+                return YES;
+            }
+            case XZJSONStructTypeCGAffineTransform: {
+                CGAffineTransform const aValue = CGAffineTransformFromString(JSONValue);
+                ((void (*)(id, SEL, CGAffineTransform))objc_msgSend)(model, property->_setter, aValue);
+                return YES;
+            }
+            case XZJSONStructTypeNSDirectionalEdgeInsets: {
+                NSDirectionalEdgeInsets const aValue = NSDirectionalEdgeInsetsFromString(JSONValue);
+                ((void (*)(id, SEL, NSDirectionalEdgeInsets))objc_msgSend)(model, property->_setter, aValue);
+                return YES;
+            }
+            case XZJSONStructTypeUIOffset: {
+                UIOffset const aValue = UIOffsetFromString(JSONValue);
+                ((void (*)(id, SEL, UIOffset))objc_msgSend)(model, property->_setter, aValue);
+                return YES;
+            }
+        }
+    }
+    return NO;
+}
+
+/// 读取模型结构体属性为字符串。
+/// - Parameters:
+///   - model: 模型对象
+///   - property: 模型结构体属性
+FOUNDATION_STATIC_INLINE NSString * _Nullable NSStringFromStructProperty(id model, XZJSONPropertyDescriptor *property) {
+    switch (property->_structType) {
+        case XZJSONStructTypeUnknown: {
+            return nil;
+        }
+        case XZJSONStructTypeCGRect: {
+            CGRect aValue = ((CGRect (*)(id, SEL))objc_msgSend)(model, property->_getter);
+            return NSStringFromCGRect(aValue);
+        }
+        case XZJSONStructTypeCGSize: {
+            CGSize aValue = ((CGSize (*)(id, SEL))objc_msgSend)(model, property->_getter);
+            return NSStringFromCGSize(aValue);
+        }
+        case XZJSONStructTypeCGPoint: {
+            CGPoint aValue = ((CGPoint (*)(id, SEL))objc_msgSend)(model, property->_getter);
+            return NSStringFromCGPoint(aValue);
+        }
+        case XZJSONStructTypeUIEdgeInsets: {
+            UIEdgeInsets aValue = ((UIEdgeInsets (*)(id, SEL))objc_msgSend)(model, property->_getter);
+            return NSStringFromUIEdgeInsets(aValue);
+        }
+        case XZJSONStructTypeCGVector: {
+            CGVector aValue = ((CGVector (*)(id, SEL))objc_msgSend)(model, property->_getter);
+            return NSStringFromCGVector(aValue);
+        }
+        case XZJSONStructTypeCGAffineTransform: {
+            CGAffineTransform aValue = ((CGAffineTransform (*)(id, SEL))objc_msgSend)(model, property->_getter);
+            return NSStringFromCGAffineTransform(aValue);
+        }
+        case XZJSONStructTypeNSDirectionalEdgeInsets: {
+            NSDirectionalEdgeInsets aValue = ((NSDirectionalEdgeInsets (*)(id, SEL))objc_msgSend)(model, property->_getter);
+            return NSStringFromDirectionalEdgeInsets(aValue);
+        }
+        case XZJSONStructTypeUIOffset: {
+            UIOffset aValue = ((UIOffset (*)(id, SEL))objc_msgSend)(model, property->_getter);
+            return NSStringFromUIOffset(aValue);
+        }
+    }
+}
 
 NS_ASSUME_NONNULL_END

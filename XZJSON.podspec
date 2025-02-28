@@ -8,7 +8,7 @@
 
 Pod::Spec.new do |s|
   s.name             = 'XZJSON'
-  s.version          = '10.5.0'
+  s.version          = '10.6.0'
   s.summary          = '一款高效的 JSON 数据模型化工具'
 
   s.description      = <<-DESC
@@ -30,9 +30,10 @@ Pod::Spec.new do |s|
   s.subspec 'Code' do |ss|
     ss.source_files = 'XZKit/Code/ObjC/XZJSON/**/*.{h,m}'
     ss.project_header_files = 'XZKit/Code/ObjC/XZJSON/**/Private/*.h'
-    ss.dependency 'XZObjcDescriptor'
+    ss.dependency 'XZObjcDescriptor', '>= 10.6.0'
     ss.dependency 'XZDefines/XZMacro'
     ss.dependency 'XZExtensions/NSCharacterSet'
+    ss.dependency 'XZExtensions/NSData'
   end
   
 end
