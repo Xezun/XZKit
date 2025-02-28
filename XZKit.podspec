@@ -8,7 +8,7 @@
 
 Pod::Spec.new do |s|
   s.name             = 'XZKit'
-  s.version          = '10.5.0'
+  s.version          = '10.6.0'
   s.summary          = '一款高效、轻量、强大的 iOS 开发库'
   s.description      = <<-DESC
   一款包含 iOS 开发中常用开发组件、高频方法拓展、高性能工具类的开发库，采用了组件最小化设计原则，可以按需最小化引用。
