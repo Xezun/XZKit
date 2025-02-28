@@ -13,6 +13,13 @@
 
 @implementation Example05Model
 
++ (NSDictionary<NSString *,id> *)mappingJSONCodingKeys {
+    return @{
+        @"keyPathValue": @"key.path.value",
+        @"keyArrayValue": @[@"key.array.value", @"keyArrayValue"]
+    };
+}
+
 - (void)dealloc {
     if (_cStringValue) {
         free((void *)_cStringValue);

@@ -58,7 +58,7 @@ pod "XZKit"
 
 [![Version](https://img.shields.io/cocoapods/v/XZJSON.svg?style=flat)](https://cocoapods.org/pods/XZJSON)
 
-借鉴 YYModel 全新开发的的“数据-模型”转换工具，简洁、高效、拓展自定义性强。
+一款简洁、高效、拓展自定义性强的“数据-模型”转换工具类。
 
 ### [XZRefresh](./Docs/XZRefresh) 
 

@@ -27,15 +27,70 @@ pod 'XZJSON'
 
 ## 特点
 
-1. 借鉴 [YYModel](https://github.com/ibireme/YYModel) 设计思路打造，与 YYModel 具有几乎相同的模型转换性能。
-2. 为方便接入，XZJSON 采用 “工具类” + “协议” 的方式实现，迁移到 XZJSON 可以仅替换实现，尽量保留 API 以避免接口改动过大。
+1. 借鉴 [YYModel](https://github.com/ibireme/YYModel) 设计思路打造，性能与 YYModel 几乎相同。
+
+示例项目移植了 YYModel 提供的跑分代码，执行结果如下。
+
+```
+Device: iPhone SE 2
+----------------------
+Benchmark (10000 times):
+GHUser             from json    to json    archive
+JSON(*):              113.66      88.56   
+YYModel(#):            46.00      64.99     516.37
+XZJSON(#):             61.90      74.67     592.33
+----------------------
+----------------------
+Benchmark (1000 times):
+WeiboStatus     from json    to json    archive
+YYModel:           186.33     124.33     601.60
+XZJSON:            200.71     137.17     656.07
+----------------------
+----------------------
+The property is NSString, but the json value is number:
+YYModel:         ✅ property is NSTaggedPointerString
+XZJSON:          ✅ property is NSTaggedPointerString
+----------------------
+The property is int, but the json value is string:
+YYModel:         ✅ property is 100
+XZJSON:          ✅ property is 100
+----------------------
+The property is NSDate, and the json value is string:
+YYModel:         ✅ property is __NSTaggedDate
+XZJSON:          ✅ property is __NSTaggedDate
+----------------------
+The property is NSValue, and the json value is string:
+YYModel:         ✅ property is nil
+XZJSON:          ✅ property is nil
+```
+
+2. 为方便接入，XZJSON 采用 “工具类” + “协议” 的方式实现，迁移到 XZJSON 时，可以保持现有 API 不变，将方法实现替换即可。
+
+比如，在项目中，已经大量使用 YYModel 提供的 `+yy_modelWithJSON:` 方法生成模型。
+
+```objc
++ (instancetype)yy_modelWithJSON:(id)json {
+    NSDictionary *dic = [self _yy_dictionaryWithJSON:json];
+    return [self yy_modelWithDictionary:dic];
+}
+```
+
+那么仅需要将 YYModel 这个方法实现替换为如下即可。
+
+```objc
++ (instancetype)yy_modelWithJSON:(id)json {
+    return [XZJSON decode:json options:NSJSONReadingAllowFragments class:[self class]];
+}
+```
+
+当然，如果在业务中，项目对三方接口进行了屏蔽，那么修改屏蔽的中间层即可。
 
 ## 示例
 
 1、数据转模型
 
 ```objc
-Model *model = [XZJSON decode:data options:(NSJSONReadingAllowFragments) class:[Model class]];
+Model *model = [XZJSON decode:data options:NSJSONReadingAllowFragments class:[Model class]];
 ```
 
 2、模型转数据

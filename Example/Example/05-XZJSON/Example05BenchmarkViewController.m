@@ -10,35 +10,45 @@
 @import XZJSON;
 @import YYModel;
 @import XZToast;
+@import XZExtensions;
 
 @interface Example05BenchmarkViewController ()
 @property (nonatomic, weak) IBOutlet UILabel *textLabel;
+@property (nonatomic, weak) IBOutlet UIButton *markButton;
+@property (nonatomic, weak) IBOutlet UIButton *timeButton;
 @end
 
 @implementation Example05BenchmarkViewController
 
 - (void)viewDidLoad {
     [super viewDidLoad];
-    
-    _textLabel.text = @"请点击“开始”按钮\n\n";
 }
 
 - (IBAction)markButtonAction:(UIButton *)sender {
-    sender.enabled = NO;
+    self.markButton.enabled = NO;
+    self.timeButton.enabled = NO;
+    _textLabel.text = [NSString stringWithFormat:@"Device: %@\n\n", UIDevice.currentDevice.xz_productName];
+    
     XZToast *toast = [XZToast loadingToast:@"请稍后"];
     [self showToast:toast duration:0 offset:CGPointZero completion:nil];
+    
     dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(1.0 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
         [self benchmarkGithubUser];
         [self benchmarkWeiboStatus];
         
         [self testRobustness];
         
-        sender.enabled = YES;
+        dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(1.0 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+            self.markButton.enabled = YES;
+            self.timeButton.enabled = YES;
+        });
     });
 }
 
 - (IBAction)timeButtonAction:(UIButton *)sender {
-    sender.enabled = NO;
+    self.markButton.enabled = NO;
+    self.timeButton.enabled = NO;
+    _textLabel.text = @"请打开 Instruments Time Profiler 分析耗时操作！\n\n为避免干扰，本操作没有 Toast 提示。";
     
     NSString *path = [[NSBundle mainBundle] pathForResource:@"Example05User" ofType:@"json"];
     NSData *data = [NSData dataWithContentsOfFile:path];
@@ -76,6 +86,11 @@
             xzTest();
             
             sender.enabled = YES;
+            
+            dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(1.0 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+                self.markButton.enabled = YES;
+                self.timeButton.enabled = YES;
+            });
         });
     });
 }

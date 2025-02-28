@@ -107,6 +107,9 @@ typedef union Example05Union {
 @property (nonatomic, strong) NSMutableOrderedSet *mutableOrderedSetValue;
 @property (nonatomic, strong) NSOrderedSet *orderedSetValue;
 
+@property (nonatomic, copy) NSString *keyPathValue;
+@property (nonatomic, copy) NSString *keyArrayValue;
+
 @property (nonatomic, strong) Example05Model *objectValue;
 
 @end
