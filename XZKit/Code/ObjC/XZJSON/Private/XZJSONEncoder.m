@@ -92,7 +92,8 @@ id XZJSONEncodeObjectIntoDictionary(id const object, XZJSONClassDescriptor * con
         }
         case XZJSONClassTypeNSData:
         case XZJSONClassTypeNSMutableData: {
-            return [(NSData *)object base64EncodedStringWithOptions:kNilOptions];
+            NSString *base64 = [(NSData *)object base64EncodedStringWithOptions:kNilOptions];
+            return [NSString stringWithFormat:@"data:base64,%@", base64];
         }
         case XZJSONClassTypeNSDate: {
             return @([(NSDate *)object timeIntervalSince1970]);
@@ -157,10 +158,29 @@ id XZJSONEncodeObjectIntoDictionary(id const object, XZJSONClassDescriptor * con
     }
 }
 
+typedef struct XZJSONEncodeEnumeratorContext {
+    void *modelClass;
+    void *model;
+    void *dictionary;
+} XZJSONEncodeEnumeratorContext;
+
+/// 用于遍历模型属性数组的函数。
+static void XZJSONEncodePropertyArrayEnumerator(const void * const propertyRef, void * const contextRef) {
+    XZJSONEncodeEnumeratorContext * const                     context    = contextRef;
+    NSMutableDictionary           * const __unsafe_unretained dictionary = (__bridge NSMutableDictionary *)(context->dictionary);
+    XZJSONPropertyDescriptor      * const __unsafe_unretained property   = (__bridge XZJSONPropertyDescriptor *)(propertyRef);
+    id                              const __unsafe_unretained model      = (__bridge id)(context->model);
+    XZJSONModelEncodeProperty(model, property, dictionary);
+}
+
 void XZJSONModelEncodeIntoDictionary(id const model, XZJSONClassDescriptor * const modelClass, NSMutableDictionary * const dictionary) {
-    [modelClass->_properties enumerateObjectsUsingBlock:^(XZJSONPropertyDescriptor * _Nonnull property, NSUInteger idx, BOOL * _Nonnull stop) {
-        XZJSONModelEncodeProperty(model, property, dictionary);
-    }];
+    XZJSONEncodeEnumeratorContext context = (XZJSONEncodeEnumeratorContext){
+        (__bridge void *)modelClass,
+        (__bridge void *)model,
+        (__bridge void *)dictionary
+    };
+    CFRange const range = CFRangeMake(0, CFArrayGetCount((CFArrayRef)modelClass->_properties));
+    CFArrayApplyFunction((CFArrayRef)modelClass->_properties, range, XZJSONEncodePropertyArrayEnumerator, &context);
 }
 
 /// 读取 JSON 字典中 keyPath 中最后一个 key 所在的字典，如果中间值不存在，则创建。
@@ -174,13 +194,14 @@ FOUNDATION_STATIC_INLINE NSMutableDictionary *NSDictionaryForLastKeyInKeyPath(NS
         if (subDict == nil) {
             subDict = [NSMutableDictionary dictionary];
             dictionary[subKey] = subDict;
+            dictionary = subDict;
             continue;
         }
         if ([subDict isKindOfClass:NSMutableDictionary.class]) {
             dictionary = subDict;
             continue;
         }
-        // 对应的 key 已经有其它值，不支持设置 keyPath
+        // 中间 key 非字典值，不支持设置 keyPath
         return nil;
     }
     return dictionary;
@@ -202,96 +223,138 @@ FOUNDATION_STATIC_INLINE id _Nullable XZJSONModelEncodePropertyFallback(id model
     }
 }
 
-void XZJSONModelEncodeProperty(id model, XZJSONPropertyDescriptor *property, NSMutableDictionary *modelDictionary) {
-    NSString            *key  = nil;
-    NSMutableDictionary *keyInDictionary = nil;
-    
-    // 先判断是否映射到 keyPath 或 keyArray
-    if (property->_JSONKeyPath) {
-        keyInDictionary = NSDictionaryForLastKeyInKeyPath(modelDictionary, property->_JSONKeyPath);
-        if (keyInDictionary == nil) {
-            return;
+FOUNDATION_STATIC_INLINE BOOL XZJSONModelEncodePropertyPrepare(XZJSONPropertyDescriptor *property, NSString **key, NSMutableDictionary **keyInDictionary, BOOL merges) {
+    // 映射 key
+    if (property->_JSONKey) {
+        id const value = (*keyInDictionary)[property->_JSONKey];
+        
+        if (value == nil || (merges && [value isKindOfClass:NSMutableDictionary.class])) {
+            *key = property->_JSONKey;
+            return YES;
         }
-        key = property->_JSONKeyPath.lastObject;
-    } else if (property->_JSONKeyArray) {
-        for (NSUInteger i = 0, count = property->_JSONKeyArray.count; i < count; i++) {
-            id const someKey = property->_JSONKeyArray[i];
-            
-            if ([someKey isKindOfClass:NSString.class]) {
-                if (modelDictionary[(NSString *)someKey]) {
-                    continue; // 对应的 key 已经有值，继续遍历，尝试其它 key
-                }
-                key = someKey;
-                keyInDictionary = modelDictionary;
-                break;
-            }
-            
-            keyInDictionary = NSDictionaryForLastKeyInKeyPath(modelDictionary, someKey);
-            if (keyInDictionary) {
-                key = ((NSArray *)someKey).lastObject;
-                break;
-            }
-        }
-        if (key == nil) {
-            return;
-        }
-    } else {
-        if (modelDictionary[property->_JSONKey]) {
-            return; // 值已存在，不覆盖。
-        }
-        key = property->_JSONKey;
-        keyInDictionary = modelDictionary;
+        
+        return NO;
     }
     
+    // 映射 keyPath
+    if (property->_JSONKeyPath) {
+        // 映射 keyPath
+        NSMutableDictionary *dict = NSDictionaryForLastKeyInKeyPath(*keyInDictionary, property->_JSONKeyPath);
+        if (*keyInDictionary == nil) {
+            return NO;
+        }
+        NSString * const lastKey = property->_JSONKeyPath.lastObject;
+        id         const value = dict[lastKey];
+        if (value == nil || (merges && [value isKindOfClass:NSMutableDictionary.class])) {
+            *key = lastKey;
+            *keyInDictionary = dict;
+            return YES;
+        }
+        return NO;
+    }
+    
+    // 映射 keyArray
+    for (NSUInteger i = 0, count = property->_JSONKeyArray.count; i < count; i++) {
+        id const someKey = property->_JSONKeyArray[i];
+        
+        // key 映射
+        if ([someKey isKindOfClass:NSString.class]) {
+            id const value = (*keyInDictionary)[(NSString *)someKey];
+            
+            // 无值，可直接使用；有值，融合模式，仅字典可融合
+            if (value == nil || (merges && [value isKindOfClass:NSMutableDictionary.class])) {
+                *key = (NSString *)someKey;
+                return YES;
+            }
+            continue;
+        }
+        
+        // keyPath 映射
+        NSMutableDictionary *dict = NSDictionaryForLastKeyInKeyPath(*keyInDictionary, someKey);
+        if (dict) {
+            NSString * const lastKey = ((NSArray *)someKey).lastObject;
+            id         const value   = dict[lastKey];
+            // 无值，可直接使用；有值，融合模式，仅字典可融合
+            if (value == nil || (merges && [value isKindOfClass:NSMutableDictionary.class])) {
+                *key = lastKey;
+                *keyInDictionary = dict;
+                return YES;
+            }
+            continue;
+        }
+    }
+    
+    return NO;
+}
+
+void XZJSONModelEncodeProperty(id model, XZJSONPropertyDescriptor *property, NSMutableDictionary *modelDictionary) {
+    NSString            *key  = nil;
+    NSMutableDictionary *keyInDictionary = modelDictionary;
     id JSONValue = nil;
     
     switch (property->_type) {
         case XZObjcTypeUnknown:
             break;
         case XZObjcTypeChar:
-            JSONValue = @(((char (*)(id, SEL))(void *) objc_msgSend)(model, property->_getter));
+            if (XZJSONModelEncodePropertyPrepare(property, &key, &keyInDictionary, NO)) {
+                JSONValue = @(((char (*)(id, SEL))(void *) objc_msgSend)(model, property->_getter));
+            }
             break;
         case XZObjcTypeUnsignedChar:
-            JSONValue = @(((unsigned char (*)(id, SEL))(void *) objc_msgSend)(model, property->_getter));
+            if (XZJSONModelEncodePropertyPrepare(property, &key, &keyInDictionary, NO))
+                JSONValue = @(((unsigned char (*)(id, SEL))(void *) objc_msgSend)(model, property->_getter));
             break;
         case XZObjcTypeInt:
-            JSONValue = @(((int (*)(id, SEL))(void *) objc_msgSend)(model, property->_getter));
+            if (XZJSONModelEncodePropertyPrepare(property, &key, &keyInDictionary, NO))
+                JSONValue = @(((int (*)(id, SEL))(void *) objc_msgSend)(model, property->_getter));
             break;
         case XZObjcTypeUnsignedInt:
-            JSONValue = @(((unsigned int (*)(id, SEL))(void *) objc_msgSend)(model, property->_getter));
+            if (XZJSONModelEncodePropertyPrepare(property, &key, &keyInDictionary, NO))
+                JSONValue = @(((unsigned int (*)(id, SEL))(void *) objc_msgSend)(model, property->_getter));
             break;
         case XZObjcTypeShort:
-            JSONValue = @(((short (*)(id, SEL))(void *) objc_msgSend)(model, property->_getter));
+            if (XZJSONModelEncodePropertyPrepare(property, &key, &keyInDictionary, NO))
+                JSONValue = @(((short (*)(id, SEL))(void *) objc_msgSend)(model, property->_getter));
             break;
         case XZObjcTypeUnsignedShort:
-            JSONValue = @(((unsigned short (*)(id, SEL))(void *) objc_msgSend)(model, property->_getter));
+            if (XZJSONModelEncodePropertyPrepare(property, &key, &keyInDictionary, NO))
+                JSONValue = @(((unsigned short (*)(id, SEL))(void *) objc_msgSend)(model, property->_getter));
             break;
         case XZObjcTypeLong:
-            JSONValue = @(((long (*)(id, SEL))(void *) objc_msgSend)(model, property->_getter));
+            if (XZJSONModelEncodePropertyPrepare(property, &key, &keyInDictionary, NO))
+                JSONValue = @(((long (*)(id, SEL))(void *) objc_msgSend)(model, property->_getter));
             break;
         case XZObjcTypeUnsignedLong:
-            JSONValue = @(((unsigned long (*)(id, SEL))(void *) objc_msgSend)(model, property->_getter));
+            if (XZJSONModelEncodePropertyPrepare(property, &key, &keyInDictionary, NO))
+                JSONValue = @(((unsigned long (*)(id, SEL))(void *) objc_msgSend)(model, property->_getter));
             break;
         case XZObjcTypeLongLong:
-            JSONValue = @(((long long (*)(id, SEL))(void *) objc_msgSend)(model, property->_getter));
+            if (XZJSONModelEncodePropertyPrepare(property, &key, &keyInDictionary, NO))
+                JSONValue = @(((long long (*)(id, SEL))(void *) objc_msgSend)(model, property->_getter));
             break;
         case XZObjcTypeUnsignedLongLong:
-            JSONValue = @(((unsigned long long (*)(id, SEL))(void *) objc_msgSend)(model, property->_getter));
+            if (XZJSONModelEncodePropertyPrepare(property, &key, &keyInDictionary, NO))
+                JSONValue = @(((unsigned long long (*)(id, SEL))(void *) objc_msgSend)(model, property->_getter));
             break;
         case XZObjcTypeFloat:
-            JSONValue = @(((float (*)(id, SEL))(void *) objc_msgSend)(model, property->_getter));
+            if (XZJSONModelEncodePropertyPrepare(property, &key, &keyInDictionary, NO))
+                JSONValue = @(((float (*)(id, SEL))(void *) objc_msgSend)(model, property->_getter));
             break;
         case XZObjcTypeDouble:
-            JSONValue = @(((double (*)(id, SEL))(void *) objc_msgSend)(model, property->_getter));
+            if (XZJSONModelEncodePropertyPrepare(property, &key, &keyInDictionary, NO))
+                JSONValue = @(((double (*)(id, SEL))(void *) objc_msgSend)(model, property->_getter));
             break;
         case XZObjcTypeLongDouble: {
             // 目前 long double 只能用字符串承接 宏 TYPE_LONGDOUBLE_IS_DOUBLE 没用
-            long double const aValue = ((long double (*)(id, SEL))(void *) objc_msgSend)(model, property->_getter);
-            JSONValue = [NSString stringWithFormat:@"%Lf", aValue];
+            if (XZJSONModelEncodePropertyPrepare(property, &key, &keyInDictionary, NO)) {
+                long double const aValue = ((long double (*)(id, SEL))(void *) objc_msgSend)(model, property->_getter);
+                JSONValue = [NSString stringWithFormat:@"%Lf", aValue];
+            }
             break;
         }
         case XZObjcTypeBool:
-            JSONValue = @(((BOOL (*)(id, SEL))(void *) objc_msgSend)(model, property->_getter));
+            if (XZJSONModelEncodePropertyPrepare(property, &key, &keyInDictionary, NO))
+                JSONValue = @(((BOOL (*)(id, SEL))(void *) objc_msgSend)(model, property->_getter));
             break;
         case XZObjcTypeVoid:
         case XZObjcTypeString:
@@ -301,16 +364,22 @@ void XZJSONModelEncodeProperty(id model, XZJSONPropertyDescriptor *property, NSM
         case XZObjcTypeUnion:
             break;
         case XZObjcTypeStruct:
-            JSONValue = NSStringFromStructProperty(model, property);
+            if (XZJSONModelEncodePropertyPrepare(property, &key, &keyInDictionary, NO)) {
+                JSONValue = NSStringFromStructProperty(model, property);
+            }
             break;
         case XZObjcTypeClass: {
-            Class const aClass = ((Class (*)(id, SEL))(void *) objc_msgSend)((id)model, property->_getter);
-            JSONValue = aClass ? NSStringFromClass(aClass) : (id)kCFNull;
+            if (XZJSONModelEncodePropertyPrepare(property, &key, &keyInDictionary, NO)) {
+                Class const aClass = ((Class (*)(id, SEL))(void *) objc_msgSend)((id)model, property->_getter);
+                JSONValue = aClass ? NSStringFromClass(aClass) : (id)kCFNull;
+            }
             break;
         }
         case XZObjcTypeSEL: {
-            SEL const aSelector = ((SEL (*)(id, SEL))(void *) objc_msgSend)((id)model, property->_getter);
-            JSONValue = aSelector ? NSStringFromSelector(aSelector) : (id)kCFNull;
+            if (XZJSONModelEncodePropertyPrepare(property, &key, &keyInDictionary, NO)) {
+                SEL const aSelector = ((SEL (*)(id, SEL))(void *) objc_msgSend)((id)model, property->_getter);
+                JSONValue = aSelector ? NSStringFromSelector(aSelector) : (id)kCFNull;
+            }
             break;
         }
         case XZObjcTypeObject: {
@@ -359,13 +428,17 @@ void XZJSONModelEncodeProperty(id model, XZJSONPropertyDescriptor *property, NSM
                 case XZJSONClassTypeNSOrderedSet:
                 case XZJSONClassTypeNSMutableOrderedSet:
                 case XZJSONClassTypeNSDictionary:
-                case XZJSONClassTypeNSMutableDictionary:
+                case XZJSONClassTypeNSMutableDictionary: {
+                    XZJSONClassDescriptor *valueClass = [XZJSONClassDescriptor descriptorForClass:object_getClass(value)];
+                    if (XZJSONModelEncodePropertyPrepare(property, &key, &keyInDictionary, NO)) {
+                        JSONValue = XZJSONEncodeObjectIntoDictionary(value, valueClass, nil);
+                    }
+                    break;
+                }
                 case XZJSONClassTypeUnknown: {
                     XZJSONClassDescriptor *valueClass = [XZJSONClassDescriptor descriptorForClass:object_getClass(value)];
-                    id dict = keyInDictionary[key];
-                    // 如果 key 已经有值，则可能合并，不能合并则覆盖
-                    if ([dict isKindOfClass:NSMutableDictionary.class]) {
-                        JSONValue = XZJSONEncodeObjectIntoDictionary(value, valueClass, dict);
+                    if (XZJSONModelEncodePropertyPrepare(property, &key, &keyInDictionary, YES)) {
+                        JSONValue = XZJSONEncodeObjectIntoDictionary(value, valueClass, keyInDictionary[key]);
                     } else {
                         JSONValue = XZJSONEncodeObjectIntoDictionary(value, valueClass, nil);
                     }
@@ -374,6 +447,10 @@ void XZJSONModelEncodeProperty(id model, XZJSONPropertyDescriptor *property, NSM
             }
             break;
         }
+    }
+    
+    if (key == nil) {
+        return;
     }
     
     if (JSONValue == nil && property->_class->_usesPropertyJSONEncodingMethod) {
