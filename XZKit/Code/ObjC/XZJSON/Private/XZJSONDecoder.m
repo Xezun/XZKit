@@ -88,43 +88,70 @@ id _Nullable XZJSONDecodeJSONObject(id object, Class aClass) {
     return nil;
 }
 
+typedef struct XZJSONEnumeratorContext {
+    void *modelClass;
+    void *model;
+    void *dictionary;
+} XZJSONEnumeratorContext;
+
+static void XZJSONDictionaryEnumerator(const void *_key, const void *_value, void *_context) {
+    XZJSONEnumeratorContext  * const                     context    = _context;
+    id                         const __unsafe_unretained model      = (__bridge id)(context->model);
+    XZJSONClassDescriptor    * const __unsafe_unretained modelClass = (__bridge XZJSONClassDescriptor *)(context->modelClass);
+    
+    XZJSONPropertyDescriptor * __unsafe_unretained property = CFDictionaryGetValue((CFDictionaryRef)modelClass->_keyProperties, _key); //[modelClass->_keyProperties objectForKey:(__bridge id)(_key)];
+    while (property) {
+        if (property->_setter) {
+            XZJSONModelDecodeProperty(model, property, (__bridge __unsafe_unretained id)_value);
+        }
+        property = property->_next;
+    };
+}
+
+static void XZJSONPropertyArrayEnumerator(const void * const propertyRef, void * const contextRef) {
+    XZJSONEnumeratorContext  * const                     context    = contextRef;
+    NSDictionary             * const __unsafe_unretained dictionary = (__bridge NSDictionary *)(context->dictionary);
+    XZJSONPropertyDescriptor * const __unsafe_unretained property   = (__bridge XZJSONPropertyDescriptor *)(propertyRef);
+    
+    id const value = (property->_keyValueCoder)(dictionary);
+    if (value) {
+        __unsafe_unretained id const model = (__bridge id)(context->model);
+        XZJSONModelDecodeProperty(model, property, value);
+    }
+}
+
 void XZJSONModelDecodeFromDictionary(id model, XZJSONClassDescriptor *modelClass, NSDictionary *dictionary) {
     // 没有可用的属性
     if (modelClass->_numberOfProperties == 0) {
         return;
     }
+    
+    XZJSONEnumeratorContext context = (XZJSONEnumeratorContext){
+        (__bridge void *)modelClass,
+        (__bridge void *)model,
+        (__bridge void *)dictionary
+    };
    
     // 遍历数量少的集合，可以提高通用模型的解析效率。
-    if (modelClass->_numberOfProperties >= dictionary.count) {
-        // 遍历 JSON 数据，只能找到通过 key 映射的属性，所以需要单独遍历 keyPath 和 keyArray
-        [dictionary enumerateKeysAndObjectsUsingBlock:^(NSString *key, id value, BOOL * _Nonnull stop) {
-            XZJSONPropertyDescriptor *property = modelClass->_keyProperties[key];
-            while (property) {
-                XZJSONModelDecodeProperty(model, property, value);
-                property = property->_next;
-            }
-        }];
+    if (modelClass->_numberOfProperties >= CFDictionaryGetCount((CFDictionaryRef)dictionary)) {
+        // 遍历 key 映射的属性
+        CFDictionaryApplyFunction((CFDictionaryRef)dictionary, XZJSONDictionaryEnumerator, &context);
         
-        [modelClass->_keyPathProperties enumerateObjectsUsingBlock:^(XZJSONPropertyDescriptor * _Nonnull property, NSUInteger idx, BOOL * _Nonnull stop) {
-            id const JSONValue = (property->_keyValueCoder)(dictionary);
-            if (JSONValue) {
-                XZJSONModelDecodeProperty(model, property, JSONValue);
-            }
-        }];
+        // 遍历 keyPath 映射的属性
+        if (modelClass->_keyPathProperties) {
+            CFRange const range = CFRangeMake(0, CFArrayGetCount((CFArrayRef)modelClass->_keyPathProperties));
+            CFArrayApplyFunction((CFArrayRef)modelClass->_keyPathProperties, range, XZJSONPropertyArrayEnumerator, &context);
+        }
         
-        [modelClass->_keyArrayProperties enumerateObjectsUsingBlock:^(XZJSONPropertyDescriptor *property, NSUInteger idx, BOOL *stop) {
-            id const JSONValue = (property->_keyValueCoder)(dictionary);
-            if (JSONValue) {
-                XZJSONModelDecodeProperty(model, property, JSONValue);
-            }
-        }];
+        // 遍历 keyArray 映射的属性
+        if (modelClass->_keyArrayProperties) {
+            CFRange const range = CFRangeMake(0, CFArrayGetCount((CFArrayRef)modelClass->_keyArrayProperties));
+            CFArrayApplyFunction((CFArrayRef)modelClass->_keyArrayProperties, range, XZJSONPropertyArrayEnumerator, &context);
+        }
     } else {
-        [modelClass->_properties enumerateObjectsUsingBlock:^(XZJSONPropertyDescriptor *property, NSUInteger idx, BOOL *stop) {
-            id const JSONValue = (property->_keyValueCoder)(dictionary);
-            if (JSONValue) {
-                XZJSONModelDecodeProperty(model, property, JSONValue);
-            }
-        }];
+        // 遍历所有属性
+        CFRange const range = CFRangeMake(0, CFArrayGetCount((CFArrayRef)modelClass->_properties));
+        CFArrayApplyFunction((CFArrayRef)modelClass->_properties, range, XZJSONPropertyArrayEnumerator, &context);
     }
 }
 
