@@ -80,7 +80,7 @@
                     NSAssert(CGPointEqualToPoint(model.pointStructValue, CGPointMake(30, 40)), @"");
                     NSAssert(UIEdgeInsetsEqualToEdgeInsets(model.edgeInsetsStructValue, UIEdgeInsetsMake(10, 20, 30, 40)), @"");
                     NSAssert(model.vectorStructValue.dx == 10 && model.vectorStructValue.dy == 20, @"");
-                    NSAssert(CGAffineTransformEqualToTransform(model.affineTransformStructValue, CGAffineTransformMake(10, 20, 30, 40, 40, 60)), @"");
+                    NSAssert(CGAffineTransformEqualToTransform(model.affineTransformStructValue, CGAffineTransformMake(10, 20, 30, 40, 50, 60)), @"");
                     NSAssert(NSDirectionalEdgeInsetsEqualToDirectionalEdgeInsets(model.directionalEdgeInsetsStructValue, NSDirectionalEdgeInsetsMake(10, 20, 30, 40)), @"");
                     NSAssert(UIOffsetEqualToOffset(model.offsetStructValue, UIOffsetMake(10, 20)), @"");
                     

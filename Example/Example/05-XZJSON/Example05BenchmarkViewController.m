@@ -41,6 +41,8 @@
         dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(1.0 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
             self.markButton.enabled = YES;
             self.timeButton.enabled = YES;
+            
+            XZLog(@"%@", self.textLabel.text);
         });
     });
 }
@@ -56,10 +58,12 @@
     
     int count = 10000;
     void (^yyTest)(void) = ^{
-        Example05YYGHUser *user = [Example05YYGHUser yy_modelWithJSON:json];
-        NSMutableArray *holder = [NSMutableArray arrayWithCapacity:count];
+        NSMutableArray *holder = [NSMutableArray arrayWithCapacity:count * 2];
         @autoreleasepool {
             for (int i = 0; i < count; i++) {
+                Example05YYGHUser *user = [Example05YYGHUser yy_modelWithJSON:json];
+                [holder addObject:user];
+                
                 // YYModel
                 NSDictionary *json = [user yy_modelToJSONObject];
                 [holder addObject:json];
@@ -68,10 +72,12 @@
     };
     
     void (^xzTest)(void) = ^{
-        Example05XZGHUser *user = [XZJSON decode:json options:kNilOptions class:[Example05XZGHUser class]];
-        NSMutableArray *holder = [NSMutableArray arrayWithCapacity:count];
+        NSMutableArray *holder = [NSMutableArray arrayWithCapacity:count * 2];
         @autoreleasepool {
             for (int i = 0; i < count; i++) {
+                Example05XZGHUser *user = [XZJSON decode:json options:kNilOptions class:[Example05XZGHUser class]];
+                [holder addObject:user];
+                
                 NSMutableDictionary *json = [NSMutableDictionary dictionaryWithCapacity:64];
                 [XZJSON model:user encodeIntoDictionary:json];
                 [holder addObject:json];
@@ -84,8 +90,6 @@
         
         dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(1.0 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
             xzTest();
-            
-            sender.enabled = YES;
             
             dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(1.0 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
                 self.markButton.enabled = YES;

@@ -23,7 +23,7 @@
         "pointStructValue": "{30, 40}",
         "edgeInsetsStructValue": "{10, 20, 30, 40}",
         "vectorStructValue": "{10, 20}",
-        "affineTransformStructValue": "[10, 20, 30, 40, 40, 60]",
+        "affineTransformStructValue": "[10, 20, 30, 40, 50, 60]",
         "directionalEdgeInsetsStructValue": "{10, 20, 30, 40}",
         "offsetStructValue": "{10, 20}",
         "unionValue": {

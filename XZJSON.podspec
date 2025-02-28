@@ -30,7 +30,7 @@ Pod::Spec.new do |s|
   s.subspec 'Code' do |ss|
     ss.source_files = 'XZKit/Code/ObjC/XZJSON/**/*.{h,m}'
     ss.project_header_files = 'XZKit/Code/ObjC/XZJSON/**/Private/*.h'
-    ss.dependency 'XZObjcDescriptor'
+    ss.dependency 'XZObjcDescriptor', '>= 10.6.0'
     ss.dependency 'XZDefines/XZMacro'
     ss.dependency 'XZExtensions/NSCharacterSet'
     ss.dependency 'XZExtensions/NSData'

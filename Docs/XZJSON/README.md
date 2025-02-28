@@ -36,15 +36,15 @@ Device: iPhone SE 2
 ----------------------
 Benchmark (10000 times):
 GHUser             from json    to json    archive
-JSON(*):              113.66      88.56   
-YYModel(#):            46.00      64.99     516.37
-XZJSON(#):             61.90      74.67     592.33
+JSON(*):              114.61      85.78   
+YYModel(#):            46.07      64.26     503.90
+XZJSON(#):             52.39      58.62     583.01
 ----------------------
 ----------------------
 Benchmark (1000 times):
 WeiboStatus     from json    to json    archive
-YYModel:           186.33     124.33     601.60
-XZJSON:            200.71     137.17     656.07
+YYModel:           199.85     128.26     597.12
+XZJSON:            185.25     112.65     647.08
 ----------------------
 ----------------------
 The property is NSString, but the json value is number:
