@@ -26,43 +26,49 @@ id _Nullable XZJSONDecodeJSONData(NSData *data, NSJSONReadingOptions options, Cl
     return nil;
 }
 
+FOUNDATION_STATIC_INLINE id _Nullable XZJSONDecodeJSONDictionary(Class modelRawClass, XZJSONClassDescriptor * _Nullable modelClass, NSDictionary *JSONDictionary) {
+    // 获取模型描述
+    if (modelClass == nil) {
+        modelClass = [XZJSONClassDescriptor descriptorForClass:modelRawClass];
+    }
+    // 转发解析
+    if (modelClass->_forwardsClassForDecoding) {
+        Class const newRawClass = [modelRawClass forwardingClassForJSONDictionary:JSONDictionary];
+        if (newRawClass == Nil) {
+            return nil;
+        }
+        if (newRawClass != modelRawClass) {
+            modelRawClass = newRawClass;
+            modelClass = [XZJSONClassDescriptor descriptorForClass:modelRawClass];
+        }
+    }
+    // 数据校验
+    if (modelClass->_verifiesValueForDecoding) {
+        JSONDictionary = [modelRawClass canDecodeFromJSONDictionary:JSONDictionary];
+        if (JSONDictionary == nil) {
+            return nil;
+        }
+        NSCAssert([JSONDictionary isKindOfClass:NSDictionary.class], @"[XZJSON] 方法 +canDecodeFromJSONDictionary: 的返回值必须是 NSDictionary 对象");
+    }
+    // 自定义初始化过程
+    if (modelClass->_usesJSONDecodingInitializer) {
+        return [[modelRawClass alloc] initWithJSONDictionary:JSONDictionary];
+    }
+    // 通用初始化方法
+    id const model = [modelRawClass new];
+    if (model != nil) {
+        XZJSONModelDecodeFromDictionary(model, modelClass, JSONDictionary);
+    }
+    return model;
+}
+
 id _Nullable XZJSONDecodeJSONObject(id object, Class aClass) {
     if (object == NSNull.null) {
         return nil;
     }
     // 如果为字典，则认为是模型数据。
     if ([object isKindOfClass:NSDictionary.class]) {
-        NSDictionary *dictionary = object;
-        XZJSONClassDescriptor *descriptor = [XZJSONClassDescriptor descriptorForClass:aClass];
-        // 转发解析
-        if (descriptor->_forwardsClassForDecoding) {
-            Class const newClass = [aClass forwardingClassForJSONDictionary:dictionary];
-            if (newClass == Nil) {
-                return nil;
-            }
-            if (newClass != aClass) {
-                aClass = newClass;
-                descriptor = [XZJSONClassDescriptor descriptorForClass:aClass];
-            }
-        }
-        // 数据校验
-        if (descriptor->_verifiesValueForDecoding) {
-            dictionary = [aClass canDecodeFromJSONDictionary:dictionary];
-            if (dictionary == nil) {
-                return nil;
-            }
-            NSCAssert([dictionary isKindOfClass:NSDictionary.class], @"[XZJSON] 方法 +canDecodeFromJSONDictionary: 的返回值必须是 NSDictionary 对象");
-        }
-        // 自定义初始化过程
-        if (descriptor->_usesJSONDecodingInitializer) {
-            return [[aClass alloc] initWithJSONDictionary:dictionary];
-        }
-        // 通用初始化方法
-        id const model = [aClass new];
-        if (model != nil) {
-            XZJSONModelDecodeFromDictionary(model, descriptor, dictionary);
-        }
-        return model;
+        return XZJSONDecodeJSONDictionary(aClass, nil, object);
     }
     // 如果是数组，则对数组元素是模型数据（也可能是模型数据数组）。
     if ([object isKindOfClass:NSArray.class]) {
@@ -1005,19 +1011,20 @@ void XZJSONModelDecodeProperty(id model, XZJSONPropertyDescriptor *property, id 
                         // 未指定对象类型，或者已经是指定的自定义对象类型，直接赋值
                         value = JSONValue;
                     } else {
+                        XZJSONClassDescriptor * const valueClass = [XZJSONClassDescriptor descriptorForClass:property->_subtype];
+                        if (!valueClass) {
+                            break;
+                        }
                         // JSON 数据模型化为指定的自定义对象类型
                         if (![JSONValue isKindOfClass:[NSDictionary class]]) {
                             JSONValue = @{ @"rawValue": JSONValue }; // 非字典数据，包装为字典
                         }
-                        // 如果属性已有值，直接更新它。
+                        // 如果属性已有值，直接更新它，否则创建新的。
                         value = ((id (*)(id, SEL))(void *) objc_msgSend)((id)model, property->_getter);;
-                        if (value) {
-                            XZJSONClassDescriptor *valueClass = [XZJSONClassDescriptor descriptorForClass:object_getClass(value)];
-                            if (valueClass) {
-                                XZJSONModelDecodeFromDictionary(value, valueClass, JSONValue);
-                            }
+                        if ([value isKindOfClass:property->_subtype]) {
+                            XZJSONModelDecodeFromDictionary(value, valueClass, JSONValue);
                         } else {
-                            value = XZJSONDecodeJSONObject(JSONValue, property->_subtype);
+                            value = XZJSONDecodeJSONDictionary(property->_subtype, valueClass, JSONValue);
                         }
                     }
                     break;
