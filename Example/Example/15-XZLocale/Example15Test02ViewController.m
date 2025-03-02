@@ -33,8 +33,7 @@
         [self.tableView reloadData];
     }];
     
-    XZToast *toast = [[XZToast alloc] initWithType:XZToastTypeLoading text:@"加载中..."];
-    [self showToast:toast duration:0 offset:CGPointMake(0, -50.0) completion:nil];
+    [self showToast:XZToast.loading(@"加载中...") duration:0 offset:CGPointMake(0, -50.0) completion:nil];
 }
 
 - (void)viewDidLayoutSubviews {

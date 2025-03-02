@@ -28,7 +28,7 @@ Pod::Spec.new do |s|
   s.pod_target_xcconfig = { 'GCC_PREPROCESSOR_DEFINITIONS' => 'XZ_FRAMEWORK=1' }
   
   s.subspec 'Code' do |ss|
-    ss.source_files = 'XZKit/Code/Swift/XZToast/**/*.{h,m,swift}'
+    ss.source_files = 'XZKit/Code/{ObjC,Swift}/XZToast/**/*.{h,m,swift}'
   end
   
 end
