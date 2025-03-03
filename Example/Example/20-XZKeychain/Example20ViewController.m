@@ -40,15 +40,15 @@
     NSString *account = asNonEmpty(self.accountTextField.text, (NSString *)nil);
     NSString *server  = asNonEmpty(self.identifierLabel.text, (NSString *)nil);
     XZKeychain<XZKeychainInternetPasswordItem *> *keychain = [XZKeychain keychainWithAccount:account password:nil server:server];
-    [self showToast:XZToast.loading(@"处理中") duration:0 offset:CGPointZero completion:nil];
+    [self xz_showToast:XZToast.loading(@"处理中") duration:0 offset:CGPointZero completion:nil];
     
     NSError *error = nil;
     if ([keychain search:YES error:&error]) {
-        [self showToast:XZToast.message(@"读取成功") duration:3.0 offset:CGPointZero completion:nil];
+        [self xz_showToast:XZToast.message(@"读取成功") duration:3.0 offset:CGPointZero completion:nil];
         self.accountTextField.text = keychain.item.account;
         self.passwordTextField.text = keychain.item.password;
     } else {
-        [self showToast:XZToast.message(@"读取失败") duration:3.0 offset:CGPointZero completion:nil];
+        [self xz_showToast:XZToast.message(@"读取失败") duration:3.0 offset:CGPointZero completion:nil];
         self.messageLabel.text = error.localizedDescription;
     }
 }
@@ -58,18 +58,18 @@
     NSString *account = asNonEmpty(self.accountTextField.text, (NSString *)nil);
     NSString *server  = asNonEmpty(self.identifierLabel.text, (NSString *)nil);
     if (account == 0 || server == 0) {
-        [self showToast:XZToast.message(@"帐号或密码不能为空") duration:3.0 offset:CGPointZero completion:nil];
+        [self xz_showToast:XZToast.message(@"帐号或密码不能为空") duration:3.0 offset:CGPointZero completion:nil];
         return;
     }
     XZKeychain<XZKeychainInternetPasswordItem *> *keychain = [XZKeychain keychainWithAccount:account password:nil server:server];
     keychain.item.password = self.passwordTextField.text;
-    [self showToast:XZToast.loading(@"处理中") duration:0 offset:CGPointZero completion:nil];
+    [self xz_showToast:XZToast.loading(@"处理中") duration:0 offset:CGPointZero completion:nil];
     
     NSError *error = nil;
     if ([keychain insert:&error]) {
-        [self showToast:XZToast.message(@"保存成功") duration:3.0 offset:CGPointZero completion:nil];
+        [self xz_showToast:XZToast.message(@"保存成功") duration:3.0 offset:CGPointZero completion:nil];
     } else {
-        [self showToast:XZToast.message(@"保存失败") duration:3.0 offset:CGPointZero completion:nil];
+        [self xz_showToast:XZToast.message(@"保存失败") duration:3.0 offset:CGPointZero completion:nil];
         self.messageLabel.text = error.localizedDescription;
     }
 }
@@ -79,14 +79,14 @@
     NSString *account = asNonEmpty(self.accountTextField.text, (NSString *)nil);
     NSString *server  = asNonEmpty(self.identifierLabel.text, (NSString *)nil);
     XZKeychain<XZKeychainInternetPasswordItem *> *keychain = [XZKeychain keychainWithAccount:account password:nil server:server];
-    [self showToast:XZToast.loading(@"处理中") duration:0 offset:CGPointZero completion:nil];
+    [self xz_showToast:XZToast.loading(@"处理中") duration:0 offset:CGPointZero completion:nil];
     
     NSError *error = nil;
     if ([keychain delete:&error]) {
-        [self showToast:XZToast.message(@"删除成功") duration:3.0 offset:CGPointZero completion:nil];
+        [self xz_showToast:XZToast.message(@"删除成功") duration:3.0 offset:CGPointZero completion:nil];
         
     } else {
-        [self showToast:XZToast.message(@"删除失败") duration:3.0 offset:CGPointZero completion:nil];
+        [self xz_showToast:XZToast.message(@"删除失败") duration:3.0 offset:CGPointZero completion:nil];
         self.messageLabel.text = error.localizedDescription;
     }
 }
@@ -96,19 +96,19 @@
     NSString *account = asNonEmpty(self.accountTextField.text, (NSString *)nil);
     NSString *server  = asNonEmpty(self.identifierLabel.text, (NSString *)nil);
     XZKeychain<XZKeychainInternetPasswordItem *> *keychain = [XZKeychain keychainWithAccount:account password:nil server:server];
-    [self showToast:XZToast.loading(@"处理中") duration:0 offset:CGPointZero completion:nil];
+    [self xz_showToast:XZToast.loading(@"处理中") duration:0 offset:CGPointZero completion:nil];
     
     NSError *error = nil;
     if ([keychain search:NO error:&error]) {
         keychain.item.password = self.passwordTextField.text;
         if ([keychain update:&error]) {
-            [self showToast:XZToast.message(@"修改成功") duration:3.0 offset:CGPointZero completion:nil];
+            [self xz_showToast:XZToast.message(@"修改成功") duration:3.0 offset:CGPointZero completion:nil];
         } else {
-            [self showToast:XZToast.message(@"修改失败") duration:3.0 offset:CGPointZero completion:nil];
+            [self xz_showToast:XZToast.message(@"修改失败") duration:3.0 offset:CGPointZero completion:nil];
             self.messageLabel.text = error.localizedDescription;
         }
     } else {
-        [self showToast:XZToast.message(@"没有找到钥匙串") duration:3.0 offset:CGPointZero completion:nil];
+        [self xz_showToast:XZToast.message(@"没有找到钥匙串") duration:3.0 offset:CGPointZero completion:nil];
         self.messageLabel.text = error.localizedDescription;
     }
 }

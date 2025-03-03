@@ -7,8 +7,12 @@
 
 #import "XZToast.h"
 
-static XZToast *textToast(NSString *message) {
+static XZToast *_messageToast(NSString *message) {
     return [[XZToast alloc] initWithType:(XZToastTypeMessage) text:message];
+}
+
+static XZToast *_loadingToast(NSString *message) {
+    return [[XZToast alloc] initWithType:(XZToastTypeLoading) text:message];
 }
 
 @implementation XZToast
@@ -22,12 +26,12 @@ static XZToast *textToast(NSString *message) {
     return self;
 }
 
-+ (XZMessageToast)message {
-    return textToast;
++ (XZTextToast)message {
+    return _messageToast;
 }
 
-+ (XZLoadingToast)loading {
-    return textToast;
++ (XZTextToast)loading {
+    return _loadingToast;
 }
 
 @end

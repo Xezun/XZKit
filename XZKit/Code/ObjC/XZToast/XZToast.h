@@ -16,8 +16,7 @@ typedef NS_ENUM(NSUInteger, XZToastType) {
 
 @class XZToast;
 
-typedef XZToast * _Nonnull (*XZMessageToast)(NSString * _Nonnull message);
-typedef XZToast * _Nonnull (*XZLoadingToast)(NSString * _Nonnull message);
+typedef XZToast * _Nonnull (*XZTextToast)(NSString * _Nonnull message);
 
 NS_REFINED_FOR_SWIFT @interface XZToast : NSObject
 
@@ -27,8 +26,8 @@ NS_REFINED_FOR_SWIFT @interface XZToast : NSObject
 - (instancetype)init NS_UNAVAILABLE;
 - (instancetype)initWithType:(XZToastType)type text:(NSString *)text NS_DESIGNATED_INITIALIZER;
 
-@property (class, readonly) XZMessageToast message;
-@property (class, readonly) XZLoadingToast loading;
+@property (class, readonly) XZTextToast message;
+@property (class, readonly) XZTextToast loading;
 
 @end
 
