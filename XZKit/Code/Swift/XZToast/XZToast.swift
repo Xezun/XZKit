@@ -7,6 +7,35 @@
 
 import UIKit
 
+private let successImageData = "PD94bWwgdmVyc2lvbj0iMS4wIiBzdGFuZGFsb25lPSJubyI/PjwhRE9DVFlQRSBzdmcgUFVCTElDICItLy9XM0MvL0RURCBTVkcgMS4xLy9FTiIgImh0dHA6Ly93d3cudzMub3JnL0dyYXBoaWNzL1NWRy8xLjEvRFREL3N2ZzExLmR0ZCI+PHN2ZyB0PSIxNzQwOTgyNjI2MDcxIiBjbGFzcz0iaWNvbiIgdmlld0JveD0iMCAwIDEwMjQgMTAyNCIgdmVyc2lvbj0iMS4xIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHAtaWQ9IjEwMjA1IiB3aWR0aD0iMTUwIiBoZWlnaHQ9IjE1MCIgeG1sbnM6eGxpbms9Imh0dHA6Ly93d3cudzMub3JnLzE5OTkveGxpbmsiPjxwYXRoIGQ9Ik01MDguMzU2ODU1IDc0Ljk2NTg5MWMtMjU2LjMzMDAzMiAwLTQ2NC4xMzI1NTYgMjA3Ljc5MjI5MS00NjQuMTMyNTU2IDQ2NC4xMzI1NTYgMCAyNTYuMzMwMDMyIDIwNy44MDI1MjQgNDY0LjEzMjU1NiA0NjQuMTMyNTU2IDQ2NC4xMzI1NTYgMjU2LjM0MDI2NiAwIDQ2NC4xMzI1NTYtMjA3LjgwMjUyNCA0NjQuMTMyNTU2LTQ2NC4xMzI1NTZDOTcyLjQ4OTQxMiAyODIuNzU4MTgyIDc2NC42OTcxMjEgNzQuOTY1ODkxIDUwOC4zNTY4NTUgNzQuOTY1ODkxek04MDcuMzE5ODY4IDM2Ny41NzM4NjhjMCAwLTIyOS45OTkxMDEgMTM2LjY3OTMzMi0zNzkuNDgwNjA3IDM4NS45Mzc5NzktNzMuNDA1Mjc1LTEwOC4xMzc5NTMtMTc0LjIwNTc3LTIwMS4yMDE4ODMtMTc0LjIwNTc3LTIwMS4yMDE4ODNzLTMuNDU4OTQxLTc5Ljg1MjQxMyA0OC4xMDc5MzItNTQuOTEzMjQ1YzAgMCA0MS4yNDEyMTggMTcuMTMwOTY3IDExMi40NjY3NDYgODUuODM5MDQxIDIwOC43MzM3NzgtMTg2LjE4OTI2MSAzNzEuOTQ4NzEyLTI1NC43ODQ3NjYgMzcxLjk0ODcxMi0yNTQuNzg0NzY2QzgyNi4yMTEwMDcgMzA4LjMyMTU5NyA4MDcuMzE5ODY4IDM2Ny41NzM4NjggODA3LjMxOTg2OCAzNjcuNTczODY4eiIgZmlsbD0iI2ZmZmZmZiIgcC1pZD0iMTAyMDYiPjwvcGF0aD48L3N2Zz4=";
+
+private let failureImageData = "PD94bWwgdmVyc2lvbj0iMS4wIiBzdGFuZGFsb25lPSJubyI/PjwhRE9DVFlQRSBzdmcgUFVCTElDICItLy9XM0MvL0RURCBTVkcgMS4xLy9FTiIgImh0dHA6Ly93d3cudzMub3JnL0dyYXBoaWNzL1NWRy8xLjEvRFREL3N2ZzExLmR0ZCI+PHN2ZyB0PSIxNzQxMDA1NjY5NzI3IiBjbGFzcz0iaWNvbiIgdmlld0JveD0iMCAwIDEwMjQgMTAyNCIgdmVyc2lvbj0iMS4xIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHAtaWQ9IjIwMzAiIHhtbG5zOnhsaW5rPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5L3hsaW5rIiB3aWR0aD0iMTUwIiBoZWlnaHQ9IjE1MCI+PHBhdGggZD0iTTUxMS4wNzA4MzggNzAuMjA5MDM4Yy0yNDQuMTQzNDYzIDAtNDQyLjA3MDMyNCAxOTcuOTI2ODYyLTQ0Mi4wNzAzMjQgNDQyLjA3MDMyNHMxOTcuOTI2ODYyIDQ0Mi4wNzAzMjQgNDQyLjA3MDMyNCA0NDIuMDcwMzI0IDQ0Mi4wNzAzMjQtMTk3LjkyNjg2MiA0NDIuMDcwMzI0LTQ0Mi4wNzAzMjRTNzU1LjIxNTMyNCA3MC4yMDkwMzggNTExLjA3MDgzOCA3MC4yMDkwMzh6TTcwNi4xOTY5MSA1NzEuNzg2NjY1IDMxNS45NDU3ODkgNTcxLjc4NjY2NWMtMzIuODY5NjE4IDAtNTkuNTA2Mjc5LTI2LjY2NjMzNi01OS41MDYyNzktNTkuNTA2Mjc5IDAtMzIuODY4NTk1IDI2LjYzNzY4NC01OS41MzQ5MzEgNTkuNTA2Mjc5LTU5LjUzNDkzMWwzOTAuMjUyMTQ1IDBjMzIuODY5NjE4IDAgNTkuNTA2Mjc5IDI2LjY2NjMzNiA1OS41MDYyNzkgNTkuNTM0OTMxUzczOS4wOTUxODEgNTcxLjc4NjY2NSA3MDYuMTk2OTEgNTcxLjc4NjY2NXoiIHAtaWQ9IjIwMzEiIGZpbGw9IiNmZmZmZmYiPjwvcGF0aD48L3N2Zz4="
+
+
+@MainActor 
+public struct XZToastStatus : Sendable {
+    var image: UIImage?
+    var animatedImage: UIImage?
+    
+    var view: UIView?
+    
+    public static let plain = XZToastStatus.init()
+    public static let success = XZToastStatus.init(image: UIImage.init(data: .init(base64Encoded: successImageData)!, scale: 3.0))
+    public static let failure = XZToastStatus.init(image: UIImage.init(data: .init(base64Encoded: failureImageData)!, scale: 3.0))
+
+    public static let activity = XZToastStatus.init(view: UIActivityIndicatorView.init(style: .whiteLarge))
+    
+    public static let progress = XZToastStatus.init(view: UIProgressView(progressViewStyle: .bar))
+    
+    var percent: CGFloat = 0
+    
+}
+
+//public struct XZToast: Sendable {
+//    public static let activity = 1
+//    public static let progress = 2
+//}
+
 /// 提示信息。
 public enum XZToast {
     
@@ -47,7 +76,7 @@ extension UIResponder {
     /// 布局提示信息视图控件。
     ///
     /// 默认情况下，提示信息展示在页面安全区中心位置。当页面大小或者安全区大小发生改变时，可调用此方法调整位置。
-    @objc(xz_layoutToastView) public func layoutToastView() {
+    @objc public func layoutToastView() {
         guard let window = UIApplication.shared.delegate?.window as? UIWindow else { return }
         window.rootViewController?.layoutToastView()
     }
@@ -55,10 +84,10 @@ extension UIResponder {
     private static var _key = 0
     
     @objc(xz_toastView) fileprivate var toastView: XZToastView? {
-        @objc(xz_toastView) get {
+        get {
             return objc_getAssociatedObject(self, &UIResponder._key) as? XZToastView
         }
-        @objc(xz_setToastView:) set {
+        set {
             objc_setAssociatedObject(self, &UIResponder._key, newValue, .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
         }
     }
@@ -156,7 +185,7 @@ extension UIViewController {
             self.toastView = toastView
         } else {
             // 复用现有的视图。
-            toastView.sendCompletion(false)
+            toastView.didComplete(false)
             // 由于复用的视图，可能处于退场的过程中，因此获取当前的 alpha 作为动画的起始状态
             let alpha = toastView.layer.presentation()?.opacity ?? 1.0;
             toastView.layer.removeAllAnimations()
@@ -184,18 +213,17 @@ extension UIViewController {
         switch (toast) {
         case .message:
             // 延时自动隐藏
-            DispatchQueue.main.asyncAfter(deadline: .now() + .milliseconds(Int(duration) * 1000)) { [weak self, weak toastView] in
-                guard let view = toastView else { return }
-                guard view.identifier == identifier else {
+            DispatchQueue.main.asyncAfter(deadline: .now() + .milliseconds(Int(duration) * 1000)) { [weak self, toastView] in
+                guard let toastView = toastView else { return }
+                guard let responder = self else { return }
+                guard toastView.identifier == identifier else {
                     return
                 }
                 
                 UIView.animate(withDuration: 0.35) {
-                    view.alpha = 0
+                    toastView.alpha = 0
                 } completion: { finished in
-                    guard let view = toastView else { return }
-                    guard let responder = self else { return }
-                    responder.didHideToastView(view, identifier: identifier, finished: true)
+                    responder.didHideToastView(toastView, identifier: identifier, finished: true)
                 }
             }
         case .loading:
@@ -214,11 +242,9 @@ extension UIViewController {
         
         UIView.animate(withDuration: 0.35) {
             toastView.alpha = 0
-        } completion: { [weak self, weak toastView] finished in
-            guard let view = toastView else { return }
-            guard let responder = self else { return }
+        } completion: { finished in
             // showToast 的回调
-            responder.didHideToastView(view, identifier: identifier, finished: false)
+            self.didHideToastView(toastView, identifier: identifier, finished: false)
             // hideToast 的回调
             completion?(finished)
         }
@@ -230,7 +256,7 @@ extension UIViewController {
         }
         
         // 执行 showToast 回调
-        toastView.sendCompletion(finished)
+        toastView.didComplete(finished)
         
         // 由于可能在回调中，重新展示 toast 所以要重新判断
         guard toastView.identifier == identifier else {
@@ -294,11 +320,10 @@ fileprivate class XZToastView : UIView {
     var completion: XZToast.Completion?
     
     /// 同步清除并执行 completion 回调
-    func sendCompletion(_ finished: Bool) {
+    func didComplete(_ finished: Bool) {
         guard let completion = self.completion else {
             return
         }
-        // 先清除，再执行，因为由于复用视图，在 completion 中，可能会有赋值操作
         self.completion = nil;
         completion(finished);
     }
@@ -439,8 +464,6 @@ extension XZToast: ExpressibleByStringLiteral {
 
 extension XZToast: ReferenceConvertible {
     
-    public typealias _ObjectiveCType = __XZToast
-    
     public func _bridgeToObjectiveC() -> __XZToast {
         switch self {
         case let .message(text):
@@ -485,16 +508,20 @@ extension XZToast: ReferenceConvertible {
     public typealias ReferenceType = NSString
 
     public var debugDescription: String {
-        return self.description
-    }
-    
-    public var description: String {
         switch self {
         case .message(let text):
             return "<XZToast: .message, text: \(text)>"
         case .loading(let text):
             return "<XZToast: .loading, text: \(text)>"
         }
+        
     }
     
+    public var description: String {
+        return ""
+    }
+    
+    public typealias _ObjectiveCType = __XZToast
+    
 }
+
