@@ -6,45 +6,35 @@
 //
 
 import UIKit
+import XZTextImageView
 
-private let successImageData = "PD94bWwgdmVyc2lvbj0iMS4wIiBzdGFuZGFsb25lPSJubyI/PjwhRE9DVFlQRSBzdmcgUFVCTElDICItLy9XM0MvL0RURCBTVkcgMS4xLy9FTiIgImh0dHA6Ly93d3cudzMub3JnL0dyYXBoaWNzL1NWRy8xLjEvRFREL3N2ZzExLmR0ZCI+PHN2ZyB0PSIxNzQwOTgyNjI2MDcxIiBjbGFzcz0iaWNvbiIgdmlld0JveD0iMCAwIDEwMjQgMTAyNCIgdmVyc2lvbj0iMS4xIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHAtaWQ9IjEwMjA1IiB3aWR0aD0iMTUwIiBoZWlnaHQ9IjE1MCIgeG1sbnM6eGxpbms9Imh0dHA6Ly93d3cudzMub3JnLzE5OTkveGxpbmsiPjxwYXRoIGQ9Ik01MDguMzU2ODU1IDc0Ljk2NTg5MWMtMjU2LjMzMDAzMiAwLTQ2NC4xMzI1NTYgMjA3Ljc5MjI5MS00NjQuMTMyNTU2IDQ2NC4xMzI1NTYgMCAyNTYuMzMwMDMyIDIwNy44MDI1MjQgNDY0LjEzMjU1NiA0NjQuMTMyNTU2IDQ2NC4xMzI1NTYgMjU2LjM0MDI2NiAwIDQ2NC4xMzI1NTYtMjA3LjgwMjUyNCA0NjQuMTMyNTU2LTQ2NC4xMzI1NTZDOTcyLjQ4OTQxMiAyODIuNzU4MTgyIDc2NC42OTcxMjEgNzQuOTY1ODkxIDUwOC4zNTY4NTUgNzQuOTY1ODkxek04MDcuMzE5ODY4IDM2Ny41NzM4NjhjMCAwLTIyOS45OTkxMDEgMTM2LjY3OTMzMi0zNzkuNDgwNjA3IDM4NS45Mzc5NzktNzMuNDA1Mjc1LTEwOC4xMzc5NTMtMTc0LjIwNTc3LTIwMS4yMDE4ODMtMTc0LjIwNTc3LTIwMS4yMDE4ODNzLTMuNDU4OTQxLTc5Ljg1MjQxMyA0OC4xMDc5MzItNTQuOTEzMjQ1YzAgMCA0MS4yNDEyMTggMTcuMTMwOTY3IDExMi40NjY3NDYgODUuODM5MDQxIDIwOC43MzM3NzgtMTg2LjE4OTI2MSAzNzEuOTQ4NzEyLTI1NC43ODQ3NjYgMzcxLjk0ODcxMi0yNTQuNzg0NzY2QzgyNi4yMTEwMDcgMzA4LjMyMTU5NyA4MDcuMzE5ODY4IDM2Ny41NzM4NjggODA3LjMxOTg2OCAzNjcuNTczODY4eiIgZmlsbD0iI2ZmZmZmZiIgcC1pZD0iMTAyMDYiPjwvcGF0aD48L3N2Zz4=";
-
-private let failureImageData = "PD94bWwgdmVyc2lvbj0iMS4wIiBzdGFuZGFsb25lPSJubyI/PjwhRE9DVFlQRSBzdmcgUFVCTElDICItLy9XM0MvL0RURCBTVkcgMS4xLy9FTiIgImh0dHA6Ly93d3cudzMub3JnL0dyYXBoaWNzL1NWRy8xLjEvRFREL3N2ZzExLmR0ZCI+PHN2ZyB0PSIxNzQxMDA1NjY5NzI3IiBjbGFzcz0iaWNvbiIgdmlld0JveD0iMCAwIDEwMjQgMTAyNCIgdmVyc2lvbj0iMS4xIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHAtaWQ9IjIwMzAiIHhtbG5zOnhsaW5rPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5L3hsaW5rIiB3aWR0aD0iMTUwIiBoZWlnaHQ9IjE1MCI+PHBhdGggZD0iTTUxMS4wNzA4MzggNzAuMjA5MDM4Yy0yNDQuMTQzNDYzIDAtNDQyLjA3MDMyNCAxOTcuOTI2ODYyLTQ0Mi4wNzAzMjQgNDQyLjA3MDMyNHMxOTcuOTI2ODYyIDQ0Mi4wNzAzMjQgNDQyLjA3MDMyNCA0NDIuMDcwMzI0IDQ0Mi4wNzAzMjQtMTk3LjkyNjg2MiA0NDIuMDcwMzI0LTQ0Mi4wNzAzMjRTNzU1LjIxNTMyNCA3MC4yMDkwMzggNTExLjA3MDgzOCA3MC4yMDkwMzh6TTcwNi4xOTY5MSA1NzEuNzg2NjY1IDMxNS45NDU3ODkgNTcxLjc4NjY2NWMtMzIuODY5NjE4IDAtNTkuNTA2Mjc5LTI2LjY2NjMzNi01OS41MDYyNzktNTkuNTA2Mjc5IDAtMzIuODY4NTk1IDI2LjYzNzY4NC01OS41MzQ5MzEgNTkuNTA2Mjc5LTU5LjUzNDkzMWwzOTAuMjUyMTQ1IDBjMzIuODY5NjE4IDAgNTkuNTA2Mjc5IDI2LjY2NjMzNiA1OS41MDYyNzkgNTkuNTM0OTMxUzczOS4wOTUxODEgNTcxLjc4NjY2NSA3MDYuMTk2OTEgNTcxLjc4NjY2NXoiIHAtaWQ9IjIwMzEiIGZpbGw9IiNmZmZmZmYiPjwvcGF0aD48L3N2Zz4="
-
-
-@MainActor 
-public struct XZToastStatus : Sendable {
-    var image: UIImage?
-    var animatedImage: UIImage?
+public struct XZToastConfiguartion : ExpressibleByStringLiteral {
     
-    var view: UIView?
+    let text: String
     
-    public static let plain = XZToastStatus.init()
-    public static let success = XZToastStatus.init(image: UIImage.init(data: .init(base64Encoded: successImageData)!, scale: 3.0))
-    public static let failure = XZToastStatus.init(image: UIImage.init(data: .init(base64Encoded: failureImageData)!, scale: 3.0))
-
-    public static let activity = XZToastStatus.init(view: UIActivityIndicatorView.init(style: .whiteLarge))
+    let image: UIImage?
+    let isAnimatedImage: Bool
     
-    public static let progress = XZToastStatus.init(view: UIProgressView(progressViewStyle: .bar))
+    let view: UIView?
     
-    var percent: CGFloat = 0
+    let isExclusive: Bool
     
+    public typealias StringLiteralType = String
+    
+    public init(stringLiteral value: String) {
+        fatalError()
+    }
 }
-
-//public struct XZToast: Sendable {
-//    public static let activity = 1
-//    public static let progress = 2
-//}
 
 /// 提示信息。
 public enum XZToast {
     
     /// 消息提示。
-    case message(_ text: String)
+    case message(_ configuration: XZToastConfiguartion)
     
     /// 加载提示。
     /// - Note: 此类型的提示信息，不自动隐藏，需要调用 `hideToast()` 方法。
-    case loading(_ text: String)
+    case loading(_ configuration: XZToastConfiguartion)
     
     /// Toast 回调闭包
     /// - Parameter finished: 是否完成整个展示过程，被中断或切换到其它 toast 时，此参数为 false
@@ -76,7 +66,7 @@ extension UIResponder {
     /// 布局提示信息视图控件。
     ///
     /// 默认情况下，提示信息展示在页面安全区中心位置。当页面大小或者安全区大小发生改变时，可调用此方法调整位置。
-    @objc public func layoutToastView() {
+    @objc(xz_layoutToastView) public func layoutToastView() {
         guard let window = UIApplication.shared.delegate?.window as? UIWindow else { return }
         window.rootViewController?.layoutToastView()
     }
@@ -84,10 +74,10 @@ extension UIResponder {
     private static var _key = 0
     
     @objc(xz_toastView) fileprivate var toastView: XZToastView? {
-        get {
+        @objc(xz_toastView) get {
             return objc_getAssociatedObject(self, &UIResponder._key) as? XZToastView
         }
-        set {
+        @objc(xz_setToastView:) set {
             objc_setAssociatedObject(self, &UIResponder._key, newValue, .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
         }
     }
@@ -332,13 +322,13 @@ fileprivate class XZToastView : UIView {
         didSet {
             if let toast = self.toast {
                 switch toast {
-                case let .message(text):
-                    contentView.textLabel.text = text
+                case let .message(configuration):
+                    contentView.textLabel.text = configuration.text
                     if contentView.indicator != nil {
                         contentView.indicator!.removeFromSuperview()
                         contentView.indicator = nil
                     }
-                case let .loading(text):
+                case let .loading(configuration):
                     if contentView.indicator == nil {
                         let indicator = {
                             if #available(iOS 13.0, *) {
@@ -351,7 +341,7 @@ fileprivate class XZToastView : UIView {
                         contentView.indicator = indicator
                     }
                     contentView.indicator!.startAnimating()
-                    contentView.textLabel.text = text
+                    contentView.textLabel.text = configuration.text
                 }
             } else {
                 contentView.textLabel.text = nil
@@ -404,8 +394,18 @@ fileprivate class XZToastView : UIView {
         return CGSize(width: edgeInsets.left + size.width + edgeInsets.right, height: edgeInsets.top + size.height + edgeInsets.bottom)
     }
     
-    class ContentView: UIView {
+    class ContentView: UIView, XZTextImageLayout {
+        
+        var textLabelIfLoaded: UILabel? {
+            return textLabel
+        }
+        
+        var imageViewIfLoaded: UIImageView? {
+            return nil;
+        }
+        
         let textLabel = UILabel.init()
+        
         var indicator: UIActivityIndicatorView? {
             didSet {
                 oldValue?.removeFromSuperview()
@@ -458,30 +458,42 @@ fileprivate class XZToastView : UIView {
 extension XZToast: ExpressibleByStringLiteral {
     public typealias StringLiteralType = String
     public init(stringLiteral value: String) {
-        self = .message(value)
+        self = .message(.init(stringLiteral: value))
     }
 }
 
 extension XZToast: ReferenceConvertible {
     
+    public typealias _ObjectiveCType = __XZToast
+    
+    public func hash(into hasher: inout Hasher) {
+        
+    }
+    
+    public static func ==(lhs: XZToast, rhs: XZToast) -> Bool {
+        return false
+    }
+    
     public func _bridgeToObjectiveC() -> __XZToast {
-        switch self {
-        case let .message(text):
-            return __XZToast.init(type: .message, text: text)
-        case let .loading(text):
-            return __XZToast.init(type: .loading, text: text)
-        }
+        fatalError("");
+//        switch self {
+//        case let .message(text):
+//            return __XZToast.init(type: .message, text: text)
+//        case let .loading(text):
+//            return __XZToast.init(type: .loading, text: text)
+//        }
     }
     
     public static func _forceBridgeFromObjectiveC(_ source: __XZToast, result: inout XZToast?) {
-        switch source.type {
-        case .message:
-            result = .loading(source.text)
-        case .loading:
-            fallthrough
-        default:
-            result = .message(source.text)
-        }
+        fatalError("");
+//        switch source.type {
+//        case .message:
+//            result = .loading(source.text)
+//        case .loading:
+//            fallthrough
+//        default:
+//            result = .message(source.text)
+//        }
     }
     
     public static func _conditionallyBridgeFromObjectiveC(_ source: __XZToast, result: inout XZToast?) -> Bool {
@@ -490,19 +502,20 @@ extension XZToast: ReferenceConvertible {
     }
     
     public static func _unconditionallyBridgeFromObjectiveC(_ source: __XZToast?) -> XZToast {
-        if let source = source {
-            switch source.type {
-            case .loading:
-                return .loading(source.text)
-            default:
-                return .message(source.text)
-            }
-        }
-#if DEBUG
-        return .message("<XZToast> 参数错误")
-#else
-        return .message("")
-#endif
+        fatalError()
+//        if let source = source {
+//            switch source.type {
+//            case .loading:
+//                return .loading(source.text)
+//            default:
+//                return .message(source.text)
+//            }
+//        }
+//#if DEBUG
+//        return .message("<XZToast> 参数错误")
+//#else
+//        return .message("")
+//#endif
     }
     
     public typealias ReferenceType = NSString
@@ -521,7 +534,39 @@ extension XZToast: ReferenceConvertible {
         return ""
     }
     
-    public typealias _ObjectiveCType = __XZToast
+    
     
 }
+
+private let successImageData = """
+PD94bWwgdmVyc2lvbj0iMS4wIiBzdGFuZGFsb25lPSJubyI/PjwhRE9DVFlQRSBzdmcgUFVCTElDICItLy9XM0MvL0RURCBTV
+kcgMS4xLy9FTiIgImh0dHA6Ly93d3cudzMub3JnL0dyYXBoaWNzL1NWRy8xLjEvRFREL3N2ZzExLmR0ZCI+PHN2ZyB0PSIxNz
+QwOTgyNjI2MDcxIiBjbGFzcz0iaWNvbiIgdmlld0JveD0iMCAwIDEwMjQgMTAyNCIgdmVyc2lvbj0iMS4xIiB4bWxucz0iaHR
+0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHAtaWQ9IjEwMjA1IiB3aWR0aD0iMTUwIiBoZWlnaHQ9IjE1MCIgeG1sbnM6eGxp
+bms9Imh0dHA6Ly93d3cudzMub3JnLzE5OTkveGxpbmsiPjxwYXRoIGQ9Ik01MDguMzU2ODU1IDc0Ljk2NTg5MWMtMjU2LjMzM
+DAzMiAwLTQ2NC4xMzI1NTYgMjA3Ljc5MjI5MS00NjQuMTMyNTU2IDQ2NC4xMzI1NTYgMCAyNTYuMzMwMDMyIDIwNy44MDI1Mj
+QgNDY0LjEzMjU1NiA0NjQuMTMyNTU2IDQ2NC4xMzI1NTYgMjU2LjM0MDI2NiAwIDQ2NC4xMzI1NTYtMjA3LjgwMjUyNCA0NjQ
+uMTMyNTU2LTQ2NC4xMzI1NTZDOTcyLjQ4OTQxMiAyODIuNzU4MTgyIDc2NC42OTcxMjEgNzQuOTY1ODkxIDUwOC4zNTY4NTUg
+NzQuOTY1ODkxek04MDcuMzE5ODY4IDM2Ny41NzM4NjhjMCAwLTIyOS45OTkxMDEgMTM2LjY3OTMzMi0zNzkuNDgwNjA3IDM4N
+S45Mzc5NzktNzMuNDA1Mjc1LTEwOC4xMzc5NTMtMTc0LjIwNTc3LTIwMS4yMDE4ODMtMTc0LjIwNTc3LTIwMS4yMDE4ODNzLT
+MuNDU4OTQxLTc5Ljg1MjQxMyA0OC4xMDc5MzItNTQuOTEzMjQ1YzAgMCA0MS4yNDEyMTggMTcuMTMwOTY3IDExMi40NjY3NDY
+gODUuODM5MDQxIDIwOC43MzM3NzgtMTg2LjE4OTI2MSAzNzEuOTQ4NzEyLTI1NC43ODQ3NjYgMzcxLjk0ODcxMi0yNTQuNzg0
+NzY2QzgyNi4yMTEwMDcgMzA4LjMyMTU5NyA4MDcuMzE5ODY4IDM2Ny41NzM4NjggODA3LjMxOTg2OCAzNjcuNTczODY4eiIgZ
+mlsbD0iI2ZmZmZmZiIgcC1pZD0iMTAyMDYiPjwvcGF0aD48L3N2Zz4=
+""";
+
+private let failureImageData = """
+PD94bWwgdmVyc2lvbj0iMS4wIiBzdGFuZGFsb25lPSJubyI/PjwhRE9DVFlQRSBzdmcgUFVCTElDICItLy9XM0MvL0RURCBTV
+kcgMS4xLy9FTiIgImh0dHA6Ly93d3cudzMub3JnL0dyYXBoaWNzL1NWRy8xLjEvRFREL3N2ZzExLmR0ZCI+PHN2ZyB0PSIxNz
+QxMDA1NjY5NzI3IiBjbGFzcz0iaWNvbiIgdmlld0JveD0iMCAwIDEwMjQgMTAyNCIgdmVyc2lvbj0iMS4xIiB4bWxucz0iaHR
+0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHAtaWQ9IjIwMzAiIHhtbG5zOnhsaW5rPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5
+L3hsaW5rIiB3aWR0aD0iMTUwIiBoZWlnaHQ9IjE1MCI+PHBhdGggZD0iTTUxMS4wNzA4MzggNzAuMjA5MDM4Yy0yNDQuMTQzN
+DYzIDAtNDQyLjA3MDMyNCAxOTcuOTI2ODYyLTQ0Mi4wNzAzMjQgNDQyLjA3MDMyNHMxOTcuOTI2ODYyIDQ0Mi4wNzAzMjQgND
+QyLjA3MDMyNCA0NDIuMDcwMzI0IDQ0Mi4wNzAzMjQtMTk3LjkyNjg2MiA0NDIuMDcwMzI0LTQ0Mi4wNzAzMjRTNzU1LjIxNTM
+yNCA3MC4yMDkwMzggNTExLjA3MDgzOCA3MC4yMDkwMzh6TTcwNi4xOTY5MSA1NzEuNzg2NjY1IDMxNS45NDU3ODkgNTcxLjc4
+NjY2NWMtMzIuODY5NjE4IDAtNTkuNTA2Mjc5LTI2LjY2NjMzNi01OS41MDYyNzktNTkuNTA2Mjc5IDAtMzIuODY4NTk1IDI2L
+jYzNzY4NC01OS41MzQ5MzEgNTkuNTA2Mjc5LTU5LjUzNDkzMWwzOTAuMjUyMTQ1IDBjMzIuODY5NjE4IDAgNTkuNTA2Mjc5ID
+I2LjY2NjMzNiA1OS41MDYyNzkgNTkuNTM0OTMxUzczOS4wOTUxODEgNTcxLjc4NjY2NSA3MDYuMTk2OTEgNTcxLjc4NjY2NXo
+iIHAtaWQ9IjIwMzEiIGZpbGw9IiNmZmZmZmYiPjwvcGF0aD48L3N2Zz4=
+"""
 

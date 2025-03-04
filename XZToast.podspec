@@ -9,10 +9,10 @@
 Pod::Spec.new do |s|
   s.name             = 'XZToast'
   s.version          = '10.7.0'
-  s.summary          = '吐司提示控件'
+  s.summary          = '有图片和文字组成的视图控件'
   
   s.description      = <<-DESC
-  基于控制器管理的，吐司提示控件，支持文本消息和加载消息的提示样式
+  用来方便处理开发中常见的图片文字组合视图，提高开发效率。
   DESC
 
   s.homepage         = 'https://github.com/Xezun/XZKit'
@@ -29,6 +29,7 @@ Pod::Spec.new do |s|
   
   s.subspec 'Code' do |ss|
     ss.source_files = 'XZKit/Code/{ObjC,Swift}/XZToast/**/*.{h,m,swift}'
+    ss.dependency 'XZTextImageView'
   end
   
 end

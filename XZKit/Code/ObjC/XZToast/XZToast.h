@@ -22,7 +22,8 @@ NS_REFINED_FOR_SWIFT @interface XZToast : NSObject
 
 @property (nonatomic, readonly) XZToastType type;
 @property (nonatomic, readonly) NSString *text;
-
+@property (nonatomic, readonly, nullable) UIImage *image;
+@property (nonatomic, readonly, nullable) UIImage *animatedImage;
 - (instancetype)init NS_UNAVAILABLE;
 - (instancetype)initWithType:(XZToastType)type text:(NSString *)text NS_DESIGNATED_INITIALIZER;
 
