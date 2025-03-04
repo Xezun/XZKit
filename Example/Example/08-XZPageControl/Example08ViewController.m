@@ -140,8 +140,8 @@
             break;
         }
         case 2: {
-            _pageControl.indicatorImage        = [UIImage imageNamed:@"icon-star"];
-            _pageControl.currentIndicatorImage = [UIImage imageNamed:@"icon-star-selected"];
+            _pageControl.indicatorImage        = [UIImage imageNamed:@"icon-rocket"];
+            _pageControl.currentIndicatorImage = [UIImage imageNamed:@"icon-rocket-selected"];
             break;
         }
         default:

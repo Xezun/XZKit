@@ -21,7 +21,7 @@
     [super viewDidLoad];
     
     [self requestData:^(NSDictionary<NSString *,NSString *> *data) {
-        [self hideToast:nil];
+        [self xz_hideToast:nil];
         NSString *string = XZLocalizedString(@"{0}在{1}去过{2}。", data[@"name"], data[@"date"], data[@"place"]);
         XZLanguage language = XZLocalization.isInAppLanguagePreferencesEnabled ? XZLocalization.preferredLanguage  : XZLocalization.effectiveLanguage;
         self.strings = @[
@@ -33,13 +33,12 @@
         [self.tableView reloadData];
     }];
     
-    XZToast *toast = [[XZToast alloc] initWithType:XZToastTypeLoading text:@"加载中..."];
-    [self showToast:toast duration:0 offset:CGPointMake(0, -50.0) completion:nil];
+    [self xz_showToast:XZToast.loading(@"加载中...") duration:0 offset:CGPointMake(0, -50.0) completion:nil];
 }
 
 - (void)viewDidLayoutSubviews {
     [super viewDidLayoutSubviews];
-    [self layoutToastView];
+    [self xz_layoutToastView];
 }
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {

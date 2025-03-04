@@ -29,8 +29,7 @@
     self.timeButton.enabled = NO;
     _textLabel.text = [NSString stringWithFormat:@"Device: %@\n\n", UIDevice.currentDevice.xz_productName];
     
-    XZToast *toast = [XZToast loadingToast:@"请稍后"];
-    [self showToast:toast duration:0 offset:CGPointZero completion:nil];
+    [self xz_showToast:XZToast.loading(@"请稍后") duration:0 offset:CGPointZero completion:nil];
     
     dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(1.0 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
         [self benchmarkGithubUser];
@@ -134,7 +133,7 @@
     }
     [holder removeAllObjects];
     
-    [self hideToast:nil];
+    [self xz_hideToast:nil];
     
     /*------------------- JSON Serialization -------------------*/
     {

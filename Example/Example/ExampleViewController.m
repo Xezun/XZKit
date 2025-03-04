@@ -27,6 +27,15 @@
 - (void)viewDidLoad {
     [super viewDidLoad];
     
+//    NSDictionary *obj = @{
+//        @"items": @[
+//            @{ @"id": @"2" },
+//            @{ @"id": @"3" },
+//            @{ @"id": @"4" }
+//        ]
+//    };
+//    NSLog(@"%@", [obj valueForKeyPath:@"items.@firstObject.id"]);
+    
     XZLog(@"__IPHONE_OS_VERSION_MIN_REQUIRED => %d", __IPHONE_OS_VERSION_MIN_REQUIRED);
     
     NSArray *data = @[

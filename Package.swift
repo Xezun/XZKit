@@ -26,9 +26,9 @@ private var _modules: [(type: ModuleType, name: String, dependencies: [PackageDe
     (.Swift, "XZGeometry", []),
     (.Swift, "XZTextImageView", ["XZGeometry"]),
     (.Swift, "XZContentStatus", ["XZTextImageView"]),
-    (.Swift, "XZToast", []),
     (.Swift, "XZCollectionViewFlowLayout", []),
     (.Swift, "XZNavigationController", ["XZDefines"]),
+    (.Mixed, "XZToast", []),
     (.Mixed, "XZMocoa", ["XZDefines", "XZExtensions"]),
     (.Mixed, "XZObjcDescriptor", ["XZDefines"]),
 ]
