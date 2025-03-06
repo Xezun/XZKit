@@ -31,15 +31,15 @@ import XZTextImageView
     
     public var textLabel: UILabel {
         get {
-            if let textLabel = textLabelIfLoaded {
+            if let textLabel = textViewIfLoaded {
                 return textLabel
             }
             let textLabel = UILabel.init()
-            textLabelIfLoaded = textLabel
+            textViewIfLoaded = textLabel
             return textLabel
         }
         set {
-            textLabelIfLoaded = newValue
+            textViewIfLoaded = newValue
         }
     }
     
@@ -71,10 +71,10 @@ import XZTextImageView
         }
     }
     
-    public private(set) var textLabelIfLoaded: UILabel? {
+    public private(set) var textViewIfLoaded: UILabel? {
         didSet {
             oldValue?.removeFromSuperview()
-            if let textLabel = textLabelIfLoaded {
+            if let textLabel = textViewIfLoaded {
                 let status = contentStatus
                 textLabel.font = titleFont(for: status)
                 textLabel.textColor = titleColor(for: status)
@@ -128,7 +128,7 @@ import XZTextImageView
                 } else if let title = title(for: contentStatus) {
                     textLabel.text = title
                 }
-                if let textLabel = textLabelIfLoaded {
+                if let textLabel = textViewIfLoaded {
                     textLabel.font = titleFont(for: contentStatus)
                     textLabel.textColor = titleColor(for: contentStatus)
                     textLabel.shadowColor = titleShadowColor(for: contentStatus)

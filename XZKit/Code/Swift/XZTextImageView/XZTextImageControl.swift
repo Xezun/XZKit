@@ -12,25 +12,25 @@ import XZGeometry
 @objc open class XZTextImageControl: UIControl, XZTextImageLayout {
     
     open var textLabel: UILabel {
-        if let textLabel = textLabelIfLoaded {
+        if let textLabel = textViewIfLoaded {
             return textLabel
         }
-        textLabelIfLoaded = UILabel.init(frame: self.bounds)
-        textLabelIfLoaded!.textColor = UIColor.black
-        textLabelIfLoaded!.numberOfLines = 0
-        textLabelIfLoaded!.textAlignment = .center
+        textViewIfLoaded = UILabel.init(frame: self.bounds)
+        textViewIfLoaded!.textColor = UIColor.black
+        textViewIfLoaded!.numberOfLines = 0
+        textViewIfLoaded!.textAlignment = .center
         if let attributedTitle = attributedText(for: state) ?? attributedText(for: .normal) {
-            textLabelIfLoaded!.attributedText = attributedTitle
+            textViewIfLoaded!.attributedText = attributedTitle
         } else {
-            textLabelIfLoaded!.text = text(for: state) ?? text(for: .normal)
+            textViewIfLoaded!.text = text(for: state) ?? text(for: .normal)
         }
-        textLabelIfLoaded!.textColor = textColor(for: state) ?? textColor(for: .normal)
-        textLabelIfLoaded!.shadowColor = textShadowColor(for: state) ?? textShadowColor(for: .normal)
-        self.addSubview(textLabelIfLoaded!)
-        return textLabelIfLoaded!
+        textViewIfLoaded!.textColor = textColor(for: state) ?? textColor(for: .normal)
+        textViewIfLoaded!.shadowColor = textShadowColor(for: state) ?? textShadowColor(for: .normal)
+        self.addSubview(textViewIfLoaded!)
+        return textViewIfLoaded!
     }
     
-    open private(set) var textLabelIfLoaded: UILabel?
+    open private(set) var textViewIfLoaded: UILabel?
     
     open var imageView: UIImageView {
         if let imageView = imageViewIfLoaded {
@@ -38,7 +38,7 @@ import XZGeometry
         }
         imageViewIfLoaded = UIImageView.init(frame: CGRect.init(x: 0, y: 0, width: 10, height: 10))
         imageViewIfLoaded!.image = image(for: state) ?? image(for: .normal)
-        if let titleLabel = textLabelIfLoaded, titleLabel.superview == self {
+        if let titleLabel = textViewIfLoaded, titleLabel.superview == self {
             insertSubview(imageViewIfLoaded!, belowSubview: titleLabel)
         } else {
             addSubview(imageViewIfLoaded!)

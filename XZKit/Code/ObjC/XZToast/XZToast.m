@@ -7,31 +7,26 @@
 
 #import "XZToast.h"
 
-static XZToast *_messageToast(NSString *message) {
-    return [[XZToast alloc] initWithType:(XZToastTypeMessage) text:message];
-}
-
-static XZToast *_loadingToast(NSString *message) {
-    return [[XZToast alloc] initWithType:(XZToastTypeLoading) text:message];
-}
-
 @implementation XZToast
 
-- (instancetype)initWithType:(XZToastType)type text:(NSString *)text {
+- (instancetype)initWithType:(XZToastType)type text:(NSString *)text image:(UIImage *)image view:(UIView *)view isExclusive:(BOOL)isExclusive {
     self = [super init];
     if (self) {
         _type = type;
-        _text = text;
+        _text = text.copy;
+        _image = image;
+        _view = view;
+        _isExclusive = isExclusive;
     }
     return self;
 }
 
-+ (XZTextToast)message {
-    return _messageToast;
++ (XZToast *)messageToast:(NSString *)text {
+    return [[self alloc] initWithType:(XZToastTypeMessage) text:text image:nil view:nil isExclusive:NO];
 }
 
-+ (XZTextToast)loading {
-    return _loadingToast;
++ (XZToast *)loadingToast:(NSString *)text {
+    return [[self alloc] initWithType:(XZToastTypeLoading) text:text image:nil view:nil isExclusive:NO];
 }
 
 @end

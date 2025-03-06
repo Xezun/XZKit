@@ -37,13 +37,13 @@ import XZGeometry
     
     /// 标题文字。
     open var text: String? {
-        get { return textLabelIfLoaded?.text  }
+        get { return textViewIfLoaded?.text  }
         set { textLabel.text = newValue; setNeedsLayout(); }
     }
     
     /// 富文本标题。
     open var attributedText: NSAttributedString? {
-        get { return textLabelIfLoaded?.attributedText; }
+        get { return textViewIfLoaded?.attributedText; }
         set { textLabel.attributedText = newValue; setNeedsLayout(); }
     }
     
@@ -54,21 +54,21 @@ import XZGeometry
     }
 
     /// 如果 textLabel 已加载，将返回它，否则 nil 。
-    open private(set) var textLabelIfLoaded: UILabel?
+    open private(set) var textViewIfLoaded: UILabel?
     
     /// 文字控件，懒加载属性。
     /// - Note: 在限定的宽度下，文字可能会多行显示。
     /// - Note: 请不要通过此属性来设置标题。
     /// - Note: 默认情况下，文本视图在图片视图上方，也就是说，文字不会被图片遮挡。
     open var textLabel: UILabel {
-        if let textLabel = textLabelIfLoaded {
+        if let textLabel = textViewIfLoaded {
             return textLabel
         }
-        textLabelIfLoaded = UILabel.init(frame: self.bounds)
-        textLabelIfLoaded!.numberOfLines = 0
-        textLabelIfLoaded!.textAlignment = .center
-        self.addSubview(textLabelIfLoaded!)
-        return textLabelIfLoaded!
+        textViewIfLoaded = UILabel.init(frame: self.bounds)
+        textViewIfLoaded!.numberOfLines = 0
+        textViewIfLoaded!.textAlignment = .center
+        self.addSubview(textViewIfLoaded!)
+        return textViewIfLoaded!
     }
     
     /// 如果 imageView 已加载，将返回它，否则 nil 。

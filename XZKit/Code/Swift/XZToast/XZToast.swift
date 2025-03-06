@@ -6,45 +6,66 @@
 //
 
 import UIKit
+import XZGeometry
 import XZTextImageView
 
 #if SWIFT_PACKAGE
 import XZToastObjC
 #endif
 
-public struct XZToastConfiguartion : ExpressibleByStringLiteral {
+/// 提示信息。
+public struct XZToast : RawRepresentable, ExpressibleByStringLiteral {
     
-    let text: String
-    
-    let image: UIImage?
-    let isAnimatedImage: Bool
-    
-    let view: UIView?
-    
-    let isExclusive: Bool
-    
+    public typealias RawValue = String
     public typealias StringLiteralType = String
     
-    public init(stringLiteral value: String) {
-        fatalError()
+    public var rawValue: String {
+        return text
     }
-}
-
-/// 提示信息。
-public enum XZToast {
+    
+    let type: __XZToastType
+    
+    public let text: String
+    
+    public let image: UIImage?
+    
+    public let view: UIView?
+    
+    public let isExclusive: Bool
+    
+    public init(stringLiteral value: String) {
+        self.init(rawValue: value)
+    }
+    
+    public init(rawValue: String) {
+        self.init(type: .message, text: rawValue, image: nil, view: nil, isExclusive: false)
+    }
+    
+    private init(type: __XZToastType, text: String, image: UIImage?, view: UIView?, isExclusive: Bool) {
+        self.type = type;
+        self.text = text;
+        self.image = image;
+        self.view = view;
+        self.isExclusive = isExclusive;
+    }
     
     /// 消息提示。
-    case message(_ configuration: XZToastConfiguartion)
+    public static func message(_ text: String, image: UIImage? = nil) -> XZToast {
+        return self.init(type: .message, text: text, image: image, view: nil, isExclusive: false)
+    }
     
     /// 加载提示。
     /// - Note: 此类型的提示信息，不自动隐藏，需要调用 `hideToast()` 方法。
-    case loading(_ configuration: XZToastConfiguartion)
+    public static func loading(_ text: String, image: UIImage? = nil) -> XZToast {
+        return self.init(type: .loading, text: text, image: image, view: nil, isExclusive: true)
+    }
     
-    /// Toast 回调闭包
-    /// - Parameter finished: 是否完成整个展示过程，被中断或切换到其它 toast 时，此参数为 false
-    public typealias Completion = (_ finished: Bool) -> Void
     
 }
+
+/// Toast 回调闭包
+/// - Parameter finished: 是否完成整个展示过程，被中断或切换到其它 toast 时，此参数为 false
+public typealias XZToastCompletion = (_ finished: Bool) -> Void
 
 extension UIResponder {
     
@@ -55,14 +76,14 @@ extension UIResponder {
     ///   - duration: 展示时长
     ///   - offset: 位置偏移
     ///   - completion: 展示完成后的回调，如果控制器未加载，回调立即执行
-    @objc(xz_showToast:duration:offset:completion:) public func showToast(_ toast: XZToast, duration: TimeInterval, offset: CGPoint, completion: XZToast.Completion?) {
+    @objc(xz_showToast:duration:offset:completion:) public func showToast(_ toast: XZToast, duration: TimeInterval, offset: CGPoint, completion: XZToastCompletion?) {
         guard let window = UIApplication.shared.delegate?.window as? UIWindow else { return }
         window.rootViewController?.showToast(toast, duration: duration, offset: offset, completion: completion)
     }
     
     /// 隐藏 XZToast 提示信息。
     /// - Parameter completion: 提示信息隐藏后的回调，如果当前没有 toast 回调将立即执行
-    @objc(xz_hideToast:) public func hideToast(_ completion: XZToast.Completion?) {
+    @objc(xz_hideToast:) public func hideToast(_ completion: XZToastCompletion?) {
         guard let window = UIApplication.shared.delegate?.window as? UIWindow else { return }
         window.rootViewController?.hideToast(completion)
     }
@@ -106,7 +127,7 @@ extension UIResponder {
     ///   - toast: 提示内容
     ///   - duration: 展示时长
     ///   - completion: 展示完成后的回调，如果控制器未加载，回调立即执行
-    @objc(xz_showToast:duration:completion:) public func showToast(_ toast: XZToast, duration: TimeInterval, completion: XZToast.Completion?) {
+    @objc(xz_showToast:duration:completion:) public func showToast(_ toast: XZToast, duration: TimeInterval, completion: XZToastCompletion?) {
         self.showToast(toast, duration: duration, offset: .zero, completion: completion)
     }
     
@@ -116,7 +137,7 @@ extension UIResponder {
     ///   - toast: 提示内容
     ///   - offset: 位置偏移
     ///   - completion: 展示完成后的回调，如果控制器未加载，回调立即执行
-    @objc(xz_showToast:offset:completion:) public func showToast(_ toast: XZToast, offset: CGPoint, completion: XZToast.Completion?) {
+    @objc(xz_showToast:offset:completion:) public func showToast(_ toast: XZToast, offset: CGPoint, completion: XZToastCompletion?) {
         self.showToast(toast, duration: 3.0, offset: offset, completion: completion)
     }
     
@@ -143,7 +164,7 @@ extension UIResponder {
     /// - Parameters:
     ///   - toast: 提示内容
     ///   - completion: 展示完成后的回调，如果控制器未加载，回调立即执行
-    @objc(xz_showToast:completion:) public func showToast(_ toast: XZToast, completion: XZToast.Completion?) {
+    @objc(xz_showToast:completion:) public func showToast(_ toast: XZToast, completion: XZToastCompletion?) {
         self.showToast(toast, duration: 3.0, offset: .zero, completion: completion)
     }
     
@@ -164,7 +185,7 @@ extension UIResponder {
 
 extension UIViewController {
     
-    public override func showToast(_ toast: XZToast, duration: TimeInterval, offset: CGPoint, completion: XZToast.Completion?) {
+    public override func showToast(_ toast: XZToast, duration: TimeInterval, offset: CGPoint, completion: XZToastCompletion?) {
         guard let view = self.viewIfLoaded else {
             completion?(false)
             return
@@ -204,7 +225,8 @@ extension UIViewController {
         }
         
         let identifier = toastView.identifier
-        switch (toast) {
+        
+        switch toast.type {
         case .message:
             // 延时自动隐藏
             DispatchQueue.main.asyncAfter(deadline: .now() + .milliseconds(Int(duration) * 1000)) { [weak self, toastView] in
@@ -221,12 +243,14 @@ extension UIViewController {
                 }
             }
         case .loading:
-            // 不需要隐藏
             break
+        @unknown default:
+            fatalError()
         }
+        
     }
     
-    public override func hideToast(_ completion: XZToast.Completion?) {
+    public override func hideToast(_ completion: XZToastCompletion?) {
         guard let toastView = self.toastView else {
             completion?(false)
             return
@@ -283,11 +307,11 @@ extension UIViewController {
 
 extension UIView {
     
-    public override func showToast(_ toast: XZToast, duration: TimeInterval, offset: CGPoint, completion: XZToast.Completion?) {
+    public override func showToast(_ toast: XZToast, duration: TimeInterval, offset: CGPoint, completion: XZToastCompletion?) {
         self.next?.showToast(toast, duration: duration, completion: completion)
     }
     
-    public override func hideToast(_ completion: XZToast.Completion?) {
+    public override func hideToast(_ completion: XZToastCompletion?) {
         self.next?.hideToast(completion)
     }
     
@@ -299,19 +323,19 @@ extension UIView {
 
 extension UIWindow {
       
-    public override func showToast(_ toast: XZToast, duration: TimeInterval, offset: CGPoint, completion: XZToast.Completion?) {
+    public override func showToast(_ toast: XZToast, duration: TimeInterval, offset: CGPoint, completion: XZToastCompletion?) {
         self.rootViewController?.showToast(toast, duration: duration, completion: completion)
     }
     
-    public override func hideToast(_ completion: XZToast.Completion?) {
+    public override func hideToast(_ completion: XZToastCompletion?) {
         self.rootViewController?.hideToast(completion)
     }
     
 }
 
-fileprivate class XZToastView : UIView {
+private class XZToastView : UIView {
     
-    var completion: XZToast.Completion?
+    var completion: XZToastCompletion?
     
     /// 同步清除并执行 completion 回调
     func didComplete(_ finished: Bool) {
@@ -325,15 +349,50 @@ fileprivate class XZToastView : UIView {
     var toast: XZToast? {
         didSet {
             if let toast = self.toast {
-                switch toast {
-                case let .message(configuration):
-                    contentView.textLabel.text = configuration.text
-                    if contentView.indicator != nil {
-                        contentView.indicator!.removeFromSuperview()
-                        contentView.indicator = nil
+                contentView.textLabel.text = toast.text
+                
+                if let view = toast.view {
+                    contentView.imageView = view
+                } else if let image = toast.image {
+                    if let imageView = contentView.imageView as? UIImageView {
+                        imageView.image = image
+                    } else {
+                        let imageView = UIImageView.init(image: image)
+                        contentView.imageView = imageView
                     }
-                case let .loading(configuration):
-                    if contentView.indicator == nil {
+                } else if toast.isExclusive {
+                    
+                } else {
+                    contentView.imageView = nil;
+                }
+                
+                switch toast.type {
+                case .message:
+                    if let view = toast.view {
+                        contentView.imageView = view
+                    } else if let image = toast.image {
+                        if let imageView = contentView.imageView as? UIImageView {
+                            imageView.image = image
+                        } else {
+                            let imageView = UIImageView.init(image: image)
+                            contentView.imageView = imageView
+                        }
+                    } else {
+                        contentView.imageView = nil
+                    }
+                case .loading:
+                    if let view = toast.view {
+                        contentView.imageView = view
+                    } else if let image = toast.image {
+                        if let imageView = contentView.imageView as? UIImageView {
+                            imageView.image = image
+                        } else {
+                            let imageView = UIImageView.init(image: image)
+                            contentView.imageView = imageView
+                        }
+                    } else if let indicator = contentView.imageView as? UIActivityIndicatorView {
+                        indicator.startAnimating()
+                    } else {
                         let indicator = {
                             if #available(iOS 13.0, *) {
                                 return UIActivityIndicatorView.init(style: .large)
@@ -342,10 +401,12 @@ fileprivate class XZToastView : UIView {
                         }()
                         indicator.frame = CGRect(x: 0, y: 0, width: 50.0, height: 50.0)
                         indicator.color = .white
-                        contentView.indicator = indicator
+                        contentView.imageView = indicator
                     }
-                    contentView.indicator!.startAnimating()
-                    contentView.textLabel.text = configuration.text
+                    
+                    contentView.sizeToFit()
+                default:
+                    break
                 }
             } else {
                 contentView.textLabel.text = nil
@@ -356,23 +417,80 @@ fileprivate class XZToastView : UIView {
     var identifier: Int = 0
     var offset = CGPoint.zero
     
-    private let contentView = ContentView.init()
+    private let contentView = XZToastContentView.init()
     
     override init(frame: CGRect) {
         super.init(frame: frame)
         
-        layer.shadowColor = UIColor.black.cgColor
-        layer.shadowRadius = 3.0
+        layer.shadowColor   = UIColor.black.cgColor
+        layer.shadowRadius  = 3.0
         layer.shadowOpacity = 0.8
-        layer.shadowOffset = .zero
+        layer.shadowOffset  = .zero
         
-        contentView.autoresizingMask = [.flexibleWidth, .flexibleHeight]
+        contentView.contentInsets = .init(top: 10, leading: 10, bottom: 10, trailing: 10);
+        
+        contentView.autoresizingMask = [.flexibleTopMargin, .flexibleLeftMargin, .flexibleBottomMargin, .flexibleRightMargin]
         contentView.backgroundColor = UIColor(white: 0, alpha: 0.7)
         contentView.clipsToBounds = true
         contentView.layer.cornerRadius = 6.0
         addSubview(contentView)
+    }
+    
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+    
+    override func layoutSubviews() {
+        super.layoutSubviews()
         
-        let textLabel = contentView.textLabel;
+        let rect = bounds.inset(by: layoutMargins)
+        contentView.center = CGPoint(x: rect.midX, y: rect.midY);
+    }
+    
+    override func sizeThatFits(_ size: CGSize) -> CGSize {
+        let size = contentView.sizeThatFits(size)
+        let edgeInsets = UIEdgeInsets(top: 10, left: 10, bottom: 10, right: 10)
+        return CGSize(width: edgeInsets.left + size.width + edgeInsets.right, height: edgeInsets.top + size.height + edgeInsets.bottom)
+    }
+    
+}
+
+private class XZToastContentView: UIView, XZTextImageLayout {
+    
+    private(set) var textViewIfLoaded: UILabel?
+    private(set) var imageViewIfLoaded: UIView?
+    var contentInsets: NSDirectionalEdgeInsets = .zero {
+        didSet {
+            self.setNeedsLayout()
+        }
+    }
+    var textLayoutOrientation: XZRectEdge {
+        return .top
+    }
+    
+    let textLabel = UILabel.init()
+    
+    var imageView: UIView?  {
+        get {
+            return imageViewIfLoaded
+        }
+        set {
+            if let oldValue = imageViewIfLoaded {
+                oldValue.removeFromSuperview()
+                imageViewIfLoaded = nil
+            }
+            if let newValue = newValue {
+                imageViewIfLoaded = newValue;
+                let bounds = self.bounds
+                newValue.center = CGPoint(x: bounds.midX, y: bounds.midY)
+                addSubview(newValue)
+            }
+        }
+    }
+    
+    override init(frame: CGRect) {
+        super.init(frame: frame)
+        
         textLabel.textColor = .white
         textLabel.numberOfLines = 5
         textLabel.font = UIFont.systemFont(ofSize: 16.0)
@@ -380,89 +498,29 @@ fileprivate class XZToastView : UIView {
         textLabel.minimumScaleFactor = 0.8
         textLabel.textAlignment = .center
         textLabel.lineBreakMode = .byTruncatingMiddle
+        textLabel.center = CGPoint(x: bounds.midX, y: bounds.midY)
+        addSubview(textLabel)
     }
     
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
     
-    private let edgeInsets = UIEdgeInsets(top: 5, left: 5, bottom: 5, right: 5);
+    private let indicatorSize = CGSize(width: 50.0, height: 50.0)
+    private let edgeInsets    = UIEdgeInsets(top: 10, left: 15, bottom: 10, right: 15);
+    private let spacing: CGFloat = 10
     
     override func layoutSubviews() {
         super.layoutSubviews()
-        contentView.frame = bounds.inset(by: edgeInsets)
+        self.layoutTextImageViews()
     }
     
     override func sizeThatFits(_ size: CGSize) -> CGSize {
-        let size = contentView.sizeThatFits(size)
-        return CGSize(width: edgeInsets.left + size.width + edgeInsets.right, height: edgeInsets.top + size.height + edgeInsets.bottom)
+        return textImageSizeThatFits(size)
     }
     
-    class ContentView: UIView, XZTextImageLayout {
-        
-        var textLabelIfLoaded: UILabel? {
-            return textLabel
-        }
-        
-        var imageViewIfLoaded: UIImageView? {
-            return nil;
-        }
-        
-        let textLabel = UILabel.init()
-        
-        var indicator: UIActivityIndicatorView? {
-            didSet {
-                oldValue?.removeFromSuperview()
-                if let indicator = indicator {
-                    indicator.center = CGPoint(x: bounds.midX, y: bounds.midY)
-                    addSubview(indicator)
-                }
-            }
-        }
-        
-        override init(frame: CGRect) {
-            super.init(frame: frame)
-            textLabel.center = CGPoint(x: bounds.midX, y: bounds.midY)
-            addSubview(textLabel)
-        }
-        
-        required init?(coder: NSCoder) {
-            fatalError("init(coder:) has not been implemented")
-        }
-        
-        private let indicatorSize = CGSize(width: 50.0, height: 50.0)
-        private let edgeInsets    = UIEdgeInsets(top: 10, left: 15, bottom: 10, right: 15);
-        private let spacing: CGFloat = 10
-        
-        override func layoutSubviews() {
-            super.layoutSubviews()
-            
-            let bounds = self.bounds
-            if let indicator = self.indicator {
-                indicator.frame = CGRect(x: (bounds.width - indicatorSize.width) * 0.5, y: edgeInsets.top, width: indicatorSize.width, height: indicatorSize.height)
-                textLabel.frame = CGRect(x: edgeInsets.left, y: indicator.frame.maxY + spacing, width: bounds.width - edgeInsets.left - edgeInsets.right, height: bounds.height - edgeInsets.top - indicatorSize.height - spacing - edgeInsets.bottom)
-            } else {
-                textLabel.frame = CGRect(x: edgeInsets.left, y: edgeInsets.top, width: bounds.width - edgeInsets.left - edgeInsets.right, height: bounds.height - edgeInsets.top - edgeInsets.bottom)
-            }
-        }
-        
-        override func sizeThatFits(_ size: CGSize) -> CGSize {
-            let maxWidth = UIScreen.main.bounds.width - 100.0
-            let textSize = textLabel.sizeThatFits(CGSize(width: maxWidth, height: 0))
-            if indicator == nil {
-                return CGSize(width: min(maxWidth, textSize.width) + 30.0, height: textSize.height + 20.0)
-            }
-            return CGSize(width: max(min(maxWidth, textSize.width), 80.0) + 30.0, height: 10.0 + 50.0 + 10.0 + textSize.height + 10.0)
-        }
-    }
-    
-}
-
-
-extension XZToast: ExpressibleByStringLiteral {
-    public typealias StringLiteralType = String
-    public init(stringLiteral value: String) {
-        self = .message(.init(stringLiteral: value))
+    override var intrinsicContentSize: CGSize {
+        return textImageIntrinsicSize
     }
 }
 
@@ -471,7 +529,8 @@ extension XZToast: ReferenceConvertible {
     public typealias _ObjectiveCType = __XZToast
     
     public func hash(into hasher: inout Hasher) {
-        
+        hasher.combine(type)
+        hasher.combine(text)
     }
     
     public static func ==(lhs: XZToast, rhs: XZToast) -> Bool {
@@ -479,25 +538,11 @@ extension XZToast: ReferenceConvertible {
     }
     
     public func _bridgeToObjectiveC() -> __XZToast {
-        fatalError("");
-//        switch self {
-//        case let .message(text):
-//            return __XZToast.init(type: .message, text: text)
-//        case let .loading(text):
-//            return __XZToast.init(type: .loading, text: text)
-//        }
+        return .init(type: type, text: text, image: image, view: view, isExclusive: isExclusive)
     }
     
     public static func _forceBridgeFromObjectiveC(_ source: __XZToast, result: inout XZToast?) {
-        fatalError("");
-//        switch source.type {
-//        case .message:
-//            result = .loading(source.text)
-//        case .loading:
-//            fallthrough
-//        default:
-//            result = .message(source.text)
-//        }
+        result = .init(type: source.type, text: source.text, image: source.image, view: source.view, isExclusive: source.isExclusive)
     }
     
     public static func _conditionallyBridgeFromObjectiveC(_ source: __XZToast, result: inout XZToast?) -> Bool {
@@ -506,39 +551,28 @@ extension XZToast: ReferenceConvertible {
     }
     
     public static func _unconditionallyBridgeFromObjectiveC(_ source: __XZToast?) -> XZToast {
-        fatalError()
-//        if let source = source {
-//            switch source.type {
-//            case .loading:
-//                return .loading(source.text)
-//            default:
-//                return .message(source.text)
-//            }
-//        }
-//#if DEBUG
-//        return .message("<XZToast> 参数错误")
-//#else
-//        return .message("")
-//#endif
+        if let source = source {
+            return .init(type: source.type, text: source.text, image: source.image, view: source.view, isExclusive: source.isExclusive)
+        }
+#if DEBUG
+        return .message("<XZToast> 参数错误")
+#else
+        if #available(iOS 15, *) {
+            return .message(String(localized: "未知信息"))
+        }
+        return .message(NSLocalizedString("未知信息", comment: "未知信息"));
+#endif
     }
     
     public typealias ReferenceType = NSString
 
     public var debugDescription: String {
-        switch self {
-        case .message(let text):
-            return "<XZToast: .message, text: \(text)>"
-        case .loading(let text):
-            return "<XZToast: .loading, text: \(text)>"
-        }
-        
+        return "<XZToast: \(text)>"
     }
     
     public var description: String {
-        return ""
+        return text
     }
-    
-    
     
 }
 
