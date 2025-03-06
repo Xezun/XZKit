@@ -181,7 +181,7 @@
         // 直接进场时，动画的距离与下拉时的动画距离并不相同，因此动画效果为满圆进场。
         [CATransaction begin];
         [CATransaction setDisableActions:YES];
-        _shapeLayer.strokeStart = 0;
+        _shapeLayer.strokeStart = 1.0 / kAnimationAll;
         _shapeLayer.strokeEnd   = kAnimationOne / kAnimationAll;
         [CATransaction commit];
         
@@ -209,12 +209,14 @@
         [_shapeLayer addAnimation:animation forKey:@"entering.interactive"];
     }
     
-    // 自定义动画曲线，以实现运动速度平滑过渡。
-    // 1、动画曲线斜率 y/x 即表示速度。
-    // 2、根据运动距离，最快速度为 AnimationMax / t，最慢速度为 AnimationMin / t。
-    CGFloat const ratio = kAnimationMin / kAnimationMax; // 斜率
+    // 自定义动画速度曲线，以实现运动速度平滑过渡。
+    // 1、一个动画周期内：动画距离短的端，执行匀速动画 Vmin ；动画距离长的端，执行“缓入缓出”动画 Vmax 。
+    // 2、动画速度 = 动画曲线斜率 y/x * 平均速度
+    // 3、要使速度过渡平滑，就要 Vmax * k = Vmin 所以缓出换出时的斜率为 Vmin / Vmax
+    // 4、速度曲线是一个从 (0, 0) 到 (1.0, 1.0) 的二次曲线，控制点就是两端切线上的点。
+    CGFloat const ratio = kAnimationMin / kAnimationMax;
     CGFloat const eases = 0.2; // 缓动动的距离 0 ~ 1.0
-    CAMediaTimingFunction *easeio = [CAMediaTimingFunction functionWithControlPoints:(eases) :(eases * ratio) :1.0 :1.0];
+    CAMediaTimingFunction *easeio = [CAMediaTimingFunction functionWithControlPoints:(eases) :(eases * ratio) :(1.0 - eases) :(1.0 - eases * ratio)];
     CAMediaTimingFunction *linear = [CAMediaTimingFunction functionWithName:kCAMediaTimingFunctionLinear];
     
     // strokeStart 快速时，收缩进度
