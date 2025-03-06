@@ -8,6 +8,10 @@
 import UIKit
 import XZTextImageView
 
+#if SWIFT_PACKAGE
+import XZToastObjC
+#endif
+
 public struct XZToastConfiguartion : ExpressibleByStringLiteral {
     
     let text: String
