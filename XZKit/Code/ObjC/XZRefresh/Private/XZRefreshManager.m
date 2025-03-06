@@ -41,9 +41,6 @@ UIKIT_STATIC_INLINE UIEdgeInsets XZRefreshAddTop(UIEdgeInsets insets, CGFloat to
     return insets;
 }
 
-
-
-
 // 监听 UIScrollView 代理 delegate 的标记。
 static void const * const _context = &_context;
 
@@ -680,11 +677,19 @@ static void const * const _context = &_context;
             [_scrollView setContentOffset:contentOffset animated:NO];
             _header.state = XZRefreshStateRecovering;
             [_header.view scrollView:_scrollView willEndRefreshing:animated];
-            
+            // 避免延长 self 的生命周期：
+            // 虽然 block 强引用 self 和 _scrollView 对象，但是 block 如果先释放 _scrollView 后释放 self 对象，
+            // 那么释放 self 的时候，无主引用的 _scrollView 可能已经销毁，从而导致移除 KVO 发生问题。(
+            // 注：由于 KVO 不再需要在对象销毁前移除，当前 _scrollView 已改为 weak 不会发生上述问题。
+            enweak(self, _scrollView);
             XZRefreshAnimate(animated, ^{
                 [self layoutHeaderRefreshViewIfNeeded:YES];
                 _scrollView.contentOffset = CGPointMake(contentOffset.x, self->_header.contentOffsetY);
             }, ^(BOOL finished) {
+                deweak(self, _scrollView);
+                if (!self || !_scrollView) {
+                    return;
+                }
                 self->_header.state = XZRefreshStatePendinging;
                 [self->_header.view scrollView:_scrollView didEndRefreshing:YES];
                 XZRefreshAsync(completion, finished);
