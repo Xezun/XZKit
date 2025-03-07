@@ -8,8 +8,59 @@
 
 #import "UIScrollView+XZRefresh.h"
 #import "XZRefreshManager.h"
+#import "XZRuntime.h"
 
 @implementation UIScrollView (XZRefresh)
+
++ (void)load {
+    if (self == [UIScrollView class]) {
+        // 让 UIScrollView 支持 XZRefresh
+        // 会影响所有的 UIScrollView 及子类，但是由于在 UIScrollView 外，无法监听 adjustedContentInsetDidChange 事件，只能如此处理
+        xz_objc_class_addMethodWithBlock(self, @selector(adjustedContentInsetDidChange), NULL, ^(UIScrollView *self) {
+            [self xz_setNeedsLayoutRefreshViews];
+        }, ^(UIScrollView *self) {
+            struct objc_super super = {
+                .receiver = self,
+                .super_class = class_getSuperclass([UIScrollView class])
+            };
+            ((void (*)(struct objc_super *, SEL))objc_msgSendSuper)(&super, @selector(adjustedContentInsetDidChange));
+            [self xz_setNeedsLayoutRefreshViews];
+        }, ^id _Nonnull(SEL  _Nonnull const selector) {
+            return ^(UIScrollView *self) {
+                ((void (*)(id, SEL))objc_msgSend)(self, selector);
+                [self xz_setNeedsLayoutRefreshViews];
+            };
+        });
+        
+        xz_objc_class_addMethodWithBlock(self, @selector(setContentSize:), NULL, nil, ^(UIScrollView *self, CGSize contentSize) {
+            struct objc_super super = {
+                .receiver = self,
+                .super_class = class_getSuperclass([UIScrollView class])
+            };
+            ((void (*)(struct objc_super *, SEL, CGSize))objc_msgSendSuper)(&super, @selector(setContentSize:), contentSize);
+            [self xz_setNeedsLayoutRefreshViews];
+        }, ^id _Nonnull(SEL  _Nonnull const selector) {
+            return ^(UIScrollView *self, CGSize contentSize) {
+                ((void (*)(id, SEL, CGSize))objc_msgSend)(self, selector, contentSize);
+                [self xz_setNeedsLayoutRefreshViews];
+            };
+        });
+        
+        xz_objc_class_addMethodWithBlock(self, @selector(setDelegate:), NULL, nil, ^(UIScrollView *self, id<UIScrollViewDelegate> delegate) {
+            [self.xz_refreshManagerIfLoaded scrollView:self delegateWillChange:delegate];
+            struct objc_super super = {
+                .receiver = self,
+                .super_class = class_getSuperclass([UIScrollView class])
+            };
+            ((void (*)(struct objc_super *, SEL, id<UIScrollViewDelegate>))objc_msgSendSuper)(&super, @selector(setDelegate:), delegate);
+        }, ^id _Nonnull(SEL  _Nonnull const selector) {
+            return ^(UIScrollView *self, id<UIScrollViewDelegate> delegate) {
+                [self.xz_refreshManagerIfLoaded scrollView:self delegateWillChange:delegate];
+                ((void (*)(id, SEL, id<UIScrollViewDelegate>))objc_msgSend)(self, selector, delegate);
+            };
+        });
+    }
+}
 
 - (XZRefreshView *)xz_headerRefreshView {
     return self.xz_refreshManager.headerRefreshView;

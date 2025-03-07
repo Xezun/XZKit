@@ -31,6 +31,13 @@ NS_ASSUME_NONNULL_BEGIN
 - (instancetype)initWithScrollView:(UIScrollView *)scrollView NS_DESIGNATED_INITIALIZER;
 - (instancetype)init NS_UNAVAILABLE;
 
+/// 在对象被设置为 UIScrollViewDelegate 代理前处理它，使它支持 XZRefresh 功能。
+///
+/// UIScrollView 对代理进行了优化，在设置代理时，获取了代理 scrollViewDidScroll: 的方法实现，
+/// 发送事件时，直接执行 Method ，为了让动态添加的方法生效，需要重新设置一遍代理。
+/// 重复设置 delegate 无效，因为值未改变，UIScrollView 不会重新获取 Method 。
+- (void)scrollView:(UIScrollView *)scrollView delegateWillChange:(nullable id<UIScrollViewDelegate>)delegate;
+
 - (void)setNeedsLayoutRefreshViews;
 - (void)layoutRefreshViewsIfNeeded;
 
