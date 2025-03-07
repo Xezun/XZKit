@@ -37,7 +37,7 @@ typedef NS_ENUM(NSUInteger, XZRefreshState) {
 + (XZRefreshContext *)headerContextForScrollView:(UIScrollView *)scrollView;
 + (XZRefreshContext *)footerContextForScrollView:(UIScrollView *)scrollView;
 
-@property (nonatomic, strong, nullable) XZRefreshView *view;
+@property (nonatomic, strong, nullable) XZRefreshView *refreshView;
 
 @property (nonatomic) XZRefreshState state;
 
@@ -54,9 +54,9 @@ typedef NS_ENUM(NSUInteger, XZRefreshState) {
 @property (nonatomic) CGRect frame;
 /// 调整 frame 的过程是否需要动画状态。
 @property (nonatomic) BOOL needsAnimatedTransitioning;
-/// 在 scrollView 自然状态时的 contentOffsetY 值。
-/// @discussion 对于 header 表示在头部的自然位置。
-/// @discussion 对于 footer 表示在尾部的自然位置。
+/// 自然状态下 UIScrollView 在头部或尾部时的 contentOffsetY 值。
+/// - 对于 header 表示 UIScrollView 在头部的自然位置。
+/// - 对于 footer 表示 UIScrollView 在尾部的自然位置。
 @property (nonatomic) CGFloat contentOffsetY;
 
 

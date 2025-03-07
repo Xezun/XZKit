@@ -13,6 +13,11 @@ NS_ASSUME_NONNULL_BEGIN
 @class UIRefreshControl;
 
 /// 管理刷新状态的对象。
+///
+/// - Attention: 应避免延长 self 的生命周期。
+/// 虽然被 block 强引用 `self` 和 `_scrollView` 对象，但是 block 如果先释放 `_scrollView` 后释放 `self` 对象，
+/// 那么释放 `self` 的时候，移除无主引用的 `_scrollView` 可能已经销毁，从而导致移除 KVO 发生问题。
+/// 注：由于自 iOS 11.0 之后 KVO 不再需要在对象销毁前移除，当前 `_scrollView` 已改为 `weak` 不会发生上述问题。
 @interface XZRefreshManager : NSObject <UIScrollViewDelegate>
 
 /// 被当前对象所管理的 scrollView 对象。
@@ -37,6 +42,10 @@ NS_ASSUME_NONNULL_BEGIN
 /// 发送事件时，直接执行 Method ，为了让动态添加的方法生效，需要重新设置一遍代理。
 /// 重复设置 delegate 无效，因为值未改变，UIScrollView 不会重新获取 Method 。
 - (void)scrollView:(UIScrollView *)scrollView delegateWillChange:(nullable id<UIScrollViewDelegate>)delegate;
+
+- (void)contentSizeDidChange:(CGSize)contentSize;
+- (void)sizeDidChange:(CGSize)size;
+- (void)adjustedContentInsetsDidChange:(UIEdgeInsets)adjustedContentInsets;
 
 - (void)setNeedsLayoutRefreshViews;
 - (void)layoutRefreshViewsIfNeeded;

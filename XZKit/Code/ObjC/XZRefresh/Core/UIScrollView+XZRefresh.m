@@ -24,11 +24,11 @@
                 .super_class = class_getSuperclass([UIScrollView class])
             };
             ((void (*)(struct objc_super *, SEL))objc_msgSendSuper)(&super, @selector(adjustedContentInsetDidChange));
-            [self xz_setNeedsLayoutRefreshViews];
+            [self.xz_refreshManagerIfLoaded adjustedContentInsetsDidChange:self.adjustedContentInset];
         }, ^id _Nonnull(SEL  _Nonnull const selector) {
             return ^(UIScrollView *self) {
                 ((void (*)(id, SEL))objc_msgSend)(self, selector);
-                [self xz_setNeedsLayoutRefreshViews];
+                [self.xz_refreshManagerIfLoaded adjustedContentInsetsDidChange:self.adjustedContentInset];
             };
         });
         
@@ -38,11 +38,39 @@
                 .super_class = class_getSuperclass([UIScrollView class])
             };
             ((void (*)(struct objc_super *, SEL, CGSize))objc_msgSendSuper)(&super, @selector(setContentSize:), contentSize);
-            [self xz_setNeedsLayoutRefreshViews];
+            [self.xz_refreshManagerIfLoaded contentSizeDidChange:contentSize];
         }, ^id _Nonnull(SEL  _Nonnull const selector) {
             return ^(UIScrollView *self, CGSize contentSize) {
                 ((void (*)(id, SEL, CGSize))objc_msgSend)(self, selector, contentSize);
-                [self xz_setNeedsLayoutRefreshViews];
+                [self.xz_refreshManagerIfLoaded contentSizeDidChange:contentSize];
+            };
+        });
+        
+        xz_objc_class_addMethodWithBlock(self, @selector(setFrame:), NULL, nil, ^(UIScrollView *self, CGRect frame) {
+            struct objc_super super = {
+                .receiver = self,
+                .super_class = class_getSuperclass([UIScrollView class])
+            };
+            ((void (*)(struct objc_super *, SEL, CGRect))objc_msgSendSuper)(&super, @selector(setFrame:), frame);
+            [self.xz_refreshManagerIfLoaded sizeDidChange:frame.size];
+        }, ^id _Nonnull(SEL  _Nonnull const selector) {
+            return ^(UIScrollView *self, CGRect frame) {
+                ((void (*)(id, SEL, CGRect))objc_msgSend)(self, selector, frame);
+                [self.xz_refreshManagerIfLoaded sizeDidChange:frame.size];
+            };
+        });
+        
+        xz_objc_class_addMethodWithBlock(self, @selector(setBounds:), NULL, nil, ^(UIScrollView *self, CGRect bounds) {
+            struct objc_super super = {
+                .receiver = self,
+                .super_class = class_getSuperclass([UIScrollView class])
+            };
+            ((void (*)(struct objc_super *, SEL, CGRect))objc_msgSendSuper)(&super, @selector(setBounds:), bounds);
+            [self.xz_refreshManagerIfLoaded sizeDidChange:bounds.size];
+        }, ^id _Nonnull(SEL  _Nonnull const selector) {
+            return ^(UIScrollView *self, CGRect bounds) {
+                ((void (*)(id, SEL, CGRect))objc_msgSend)(self, selector, bounds);
+                [self.xz_refreshManagerIfLoaded sizeDidChange:bounds.size];
             };
         });
         
