@@ -8,11 +8,11 @@
 
 Pod::Spec.new do |s|
   s.name             = 'XZTextImageView'
-  s.version          = '10.5.0'
-  s.summary          = '有图片和文字组成的视图控件'
+  s.version          = '10.8.0'
+  s.summary          = '由图片和文字组成的视图控件'
 
   s.description      = <<-DESC
-  用来方便处理开发中常见的图片文字组合视图，提高开发效率。
+  为开发中常见的“文字与图片”组合的视图，提供快速便利的布局方式，提高开发效率。
   DESC
 
   s.homepage         = 'https://github.com/Xezun/XZKit'

@@ -14,11 +14,14 @@ import XZGeometry
 /// - Note: 如果需要支持 AutoLayout 自适应大小，需要重写 intrinsicContentSize 方法，并返回 intrinsicTextImageSize 。
 @MainActor public protocol XZTextImageLayout: UIView {
     
+    associatedtype TextView: UIView
+    associatedtype ImageView: UIView
+    
     /// 标题文本控件。
-    var textLabelIfLoaded: UILabel? { get }
+    var textViewIfLoaded: TextView? { get }
     
     /// 图片控件。
-    var imageViewIfLoaded: UIImageView? { get }
+    var imageViewIfLoaded: ImageView? { get }
     
     /// 视图内边距，默认 .zero 。
     var contentInsets: NSDirectionalEdgeInsets { get }
@@ -55,7 +58,7 @@ extension XZTextImageLayout {
     /// 为控件提供计算自然大小的能力，用于重写控件 intrinsicContentSize 属性。
     public var textImageIntrinsicSize: CGSize {
         let imageSize = imageViewIfLoaded != nil ? imageViewIfLoaded!.intrinsicContentSize : .zero
-        let titleSize = textLabelIfLoaded != nil ? textLabelIfLoaded!.intrinsicContentSize : .zero
+        let titleSize = textViewIfLoaded != nil ? textViewIfLoaded!.intrinsicContentSize : .zero
         if textLayoutOrientation.contains(.bottom) || textLayoutOrientation.contains(.top) {
             let width = max(imageSize.width, titleSize.width) + contentInsets.leading + contentInsets.trailing
             let height = imageSize.height + titleSize.height + contentInsets.top + contentInsets.bottom
@@ -70,7 +73,7 @@ extension XZTextImageLayout {
     public func textImageSizeThatFits(_ size: CGSize) -> CGSize {
         let imageSize = imageViewIfLoaded != nil ? imageViewIfLoaded!.sizeThatFits(.zero) : .zero
         // 设置 sizeThatFits 的大小，可能会影响结果。
-        let titleSize = textLabelIfLoaded != nil ? textLabelIfLoaded!.sizeThatFits(.zero) : .zero
+        let titleSize = textViewIfLoaded != nil ? textViewIfLoaded!.sizeThatFits(.zero) : .zero
         if textLayoutOrientation.contains(.bottom) || textLayoutOrientation.contains(.top) {
             let width = max(imageSize.width, titleSize.width) + contentInsets.leading + contentInsets.trailing
             let height = imageSize.height + titleSize.height + contentInsets.top + contentInsets.bottom
@@ -91,7 +94,7 @@ extension XZTextImageLayout {
             // 优先布局图片。
             let imageViewSize = imageView.sizeThatFits(layoutRect.size).scalingAspect(toFit: layoutRect.size)
             
-            if let titleLabel = textLabelIfLoaded {
+            if let titleLabel = textViewIfLoaded {
                 // 图片和文字都有。
                 
                 // 对于 UILabel 来说 sizeThatFits(_:) 方法：
@@ -190,7 +193,7 @@ extension XZTextImageLayout {
                 )
             }
             
-        } else if let titleLabel = textLabelIfLoaded {
+        } else if let titleLabel = textViewIfLoaded {
             // 只有文字。
             let titleLabelSize = titleLabel.sizeThatFits(layoutRect.size)
             
