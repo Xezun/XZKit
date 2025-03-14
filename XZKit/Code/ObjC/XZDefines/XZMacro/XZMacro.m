@@ -7,60 +7,50 @@
 
 #import "XZMacro.h"
 
-void __xz_log_imp__(const char *file, const int line, const char *function, NSString *format, ...) {
+void XZLogv(const char *file, const int line, const char *function, NSString *format, ...) {
     va_list arguments;
     va_start(arguments, format);
     NSString * const message = [[NSString alloc] initWithFormat:format arguments:arguments];
     va_end(arguments);
     NSString * const metrics = [NSString stringWithFormat:@"⌘ %s(%d) ⌘ %s ⌘", file, line, function];
     
-    // 总长度小于 1000 直接输出
+    // 总长度小于 1000 直接输出，超过 1000 则分批输出
     NSUInteger const messageLength = message.length;
     if (messageLength + metrics.length <= 1000) {
         NSLog(@"%@ \n%@", metrics, message);
         return;
     }
     
-    // 总长度超过 1000 分批输出
+    // 日志杂项
     NSLog(@"%@", metrics);
     
-    NSRange range = NSMakeRange(0, messageLength);
-    while (range.location < messageLength) {
-        // 待输出长度不超过 1000 直接输出
-        if (range.length <= 1000) {
-            NSLog(@"%@", [message substringWithRange:range]);
-            break;
+    // 日志内容，分批输出规则：
+    // 1、单次最多输出 1000 长度的字符，且避免切割自然字符。
+    // 2、尽量以换行符进行切割，除非没有换行符。
+    // 3、强制切割的位置后，不是换行符，避免出现连续的空行。
+    
+    NSUInteger location = 0;
+    do {
+        // 待输出长度不超过 1017 直接输出
+        if (messageLength - location <= 1017) {
+            NSLog(@"%@", [message substringFromIndex:location]);
+            return;
         }
         
-        // 长度超过 1000 强制换行，且强制换行的位置，前后不能是换行。
-        
-        // 判断前 1001 个长度的字符中，反向查找换行符。
-        NSRange lineRange = [message rangeOfString:@"\n" options:NSBackwardsSearch range:NSMakeRange(range.location, 1001)];
-        
-        if (lineRange.location == NSNotFound) {
-            // 没有换行符，判断第 1000 个位置的完整字符范围，避免截断。
-            NSUInteger const maxCharIndex = range.location + 999;
-            NSRange    const charRange    = [message rangeOfComposedCharacterSequenceAtIndex:maxCharIndex];
-            // 输出长度不超过 1000，如果输出第 1000 位置的字符，长度超标，则不输出它
-            if (charRange.length == 1 || charRange.location + charRange.length - 1 <= maxCharIndex) {
-                lineRange.location = range.location;
-                lineRange.length = charRange.location + charRange.length - range.location;
-            } else {
-                lineRange.location = range.location;
-                lineRange.length = charRange.location - range.location;
-            }
-            // 下次输出的范围
-            range.location = lineRange.location + lineRange.length;
-            range.length = range.length - lineRange.length;
-        } else {
-            // 找到换行符，则换行符之前的行内字符
-            lineRange.length = lineRange.location - range.location;
-            lineRange.location = range.location;
-            // 下次次输出的范围，跳过换行符
-            range.location = lineRange.location + lineRange.length + 1;
-            range.length = range.length - lineRange.length - 1;
+        // 在前 1001 个长度的字符中，反向查找换行符：
+        // 1、找到换行符，则输出换行符之前的内容，并跳过换行符输出剩下的部分。
+        // 2、没有找到换行符，则输出第 1001 个位置所在的自然字符之前的字符，因为第 1001 字符一定不是换行符，后续输出一定不是换行符。
+        NSRange range = [message rangeOfString:@"\n" options:NSBackwardsSearch range:NSMakeRange(location, 1001)];
+        if (range.location == NSNotFound) {
+            range = [message rangeOfComposedCharacterSequenceAtIndex:location + 1000];
+            // 下次输出的起点：因为第 1001 字符不是换行符，不跳过
+            range.length = 0;
         }
         
-        NSLog(@"%@", [message substringWithRange:lineRange]);
-    }
+        // 输出日志：
+        NSLog(@"%@", [message substringWithRange:NSMakeRange(location, range.location - location)]);
+        
+        // 下次输出的起点。如果是换行符，则会跳过换行符，因为 NSLog 已经包含一个换行符
+        location = range.location + range.length;
+    } while (location < messageLength);
 }

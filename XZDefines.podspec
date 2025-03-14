@@ -10,7 +10,7 @@
 
 Pod::Spec.new do |s|
   s.name             = 'XZDefines'
-  s.version          = '10.5.0'
+  s.version          = '10.8.0'
   s.summary          = 'XZKit 的基础部分'
 
   s.description      = <<-DESC

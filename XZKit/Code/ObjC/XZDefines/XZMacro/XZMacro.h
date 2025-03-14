@@ -141,7 +141,7 @@ _Pragma("clang diagnostic pop")
 #if XZ_FRAMEWORK
 
 #if DEBUG
-#define XZLog(format, ...) __xz_log_imp__(__FILE_NAME__, __LINE__, __FUNCTION__, format, ##__VA_ARGS__)
+#define XZLog(format, ...) XZLogv(__FILE_NAME__, __LINE__, __FUNCTION__, format, ##__VA_ARGS__)
 #else
 #define XZLog(...)
 #endif
@@ -150,7 +150,7 @@ _Pragma("clang diagnostic pop")
 
 #ifndef XZLog
 #ifdef XZ_DEBUG
-#define XZLog(format, ...) __xz_log_imp__(__FILE_NAME__, __LINE__, __FUNCTION__, format, ##__VA_ARGS__)
+#define XZLog(format, ...) XZLogv(__FILE_NAME__, __LINE__, __FUNCTION__, format, ##__VA_ARGS__)
 #else
 #define XZLog(...)
 #endif
@@ -158,7 +158,27 @@ _Pragma("clang diagnostic pop")
 
 #endif // XZ_FRAMEWORK
 
-FOUNDATION_EXPORT void __xz_log_imp__(const char *file, const int line, const char *function, NSString *format, ...) NS_FORMAT_FUNCTION(4,5) NS_SWIFT_UNAVAILABLE("Use Swift.print instead");
+/// **请使用 XZLog 宏，而不是直接使用此函数**。通过 NSLog 输出到控制台，如果待输出内容过大，则分批次输出，避免输出内容不完整。
+///
+/// **关于 NSLog 长度限制**
+///
+/// ```objc
+/// // 有大概 1017 的长度限制
+/// NSLog(@"The message is %@", message);
+/// // 似乎没有长度限制
+/// NSLog(@"%@", [NSString stringWithFormat:@"The message is %@", message]);
+/// ```
+///
+/// 统一使用 NSLog 进行输出，以避免控制台日志互相嵌套的问题。
+///
+/// 自 iOS 10 之后，有迹象表明 NSLog 底层已由 ASL 切换为 OSLog 框架，虽然官方没有明确说明。
+///
+/// - Parameters:
+///   - file: 输入语句所在的文件名
+///   - line: 输出语句所在的行数
+///   - function: 输出语句所在的函数名
+///   - format: 输出内容格式
+FOUNDATION_EXPORT void XZLogv(const char *file, const int line, const char *function, NSString *format, ...) NS_FORMAT_FUNCTION(4,5) NS_SWIFT_UNAVAILABLE("Use Swift.print instead");
 
 
 // 关于重写 NSLog 的一点笔记
@@ -181,8 +201,3 @@ FOUNDATION_EXPORT void __xz_log_imp__(const char *file, const int line, const ch
 // 所以在 iOS 平台，NSLog 最终使用的是 writev 函数输出日志，并且使用了 CFLock_t 保证线程安全。
 // 而且函数 __CFLogCString() 是 static 局部函数，保证 writev 线程安全的 CFLock_t 锁也是局部的，
 // 并不能被访问，而如果使用其它函数在控制台输出，就会不可避免出现与 NSLog 的输出内容互相嵌入的情况。
-//
-// 关于 NSLog 长度限制
-// NSLog(@"The message is %@", message); // 有大概 1017 的长度限制 
-// NSLog(@"%@", [NSString stringWithFormat:@"The message is：%@", message]); // 没有长度限制
-//
