@@ -8,7 +8,7 @@
 
 Pod::Spec.new do |s|
   s.name             = 'XZToast'
-  s.version          = '10.7.0'
+  s.version          = '10.8.0'
   s.summary          = '吐司提示控件'
   
   s.description      = <<-DESC
@@ -29,6 +29,8 @@ Pod::Spec.new do |s|
   
   s.subspec 'Code' do |ss|
     ss.source_files = 'XZKit/Code/{ObjC,Swift}/XZToast/**/*.{h,m,swift}'
+    ss.dependency 'XZGeometry'
+    ss.dependency 'XZTextImageView'
   end
   
 end

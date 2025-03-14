@@ -16,18 +16,19 @@ typedef NS_ENUM(NSUInteger, XZToastType) {
 
 @class XZToast;
 
-typedef XZToast * _Nonnull (*XZTextToast)(NSString * _Nonnull message);
-
 NS_REFINED_FOR_SWIFT @interface XZToast : NSObject
 
 @property (nonatomic, readonly) XZToastType type;
 @property (nonatomic, readonly) NSString *text;
+@property (nonatomic, readonly, nullable) UIImage *image;
+@property (nonatomic, readonly, nullable) UIView *view;
+@property (nonatomic, readonly) BOOL isExclusive;
 
 - (instancetype)init NS_UNAVAILABLE;
-- (instancetype)initWithType:(XZToastType)type text:(NSString *)text NS_DESIGNATED_INITIALIZER;
+- (instancetype)initWithType:(XZToastType)type text:(NSString *)text image:(nullable UIImage *)image view:(nullable UIView *)view isExclusive:(BOOL)isExclusive NS_DESIGNATED_INITIALIZER;
 
-@property (class, readonly) XZTextToast message;
-@property (class, readonly) XZTextToast loading;
++ (XZToast *)messageToast:(NSString *)text;
++ (XZToast *)loadingToast:(NSString *)text;
 
 @end
 
