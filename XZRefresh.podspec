@@ -8,7 +8,7 @@
 
 Pod::Spec.new do |s|
   s.name             = 'XZRefresh'
-  s.version          = '10.5.0'
+  s.version          = '10.8.0'
   s.summary          = '迄今为止 iOS 最流畅的下拉刷新、上拉加载组件'
 
   s.description      = <<-DESC

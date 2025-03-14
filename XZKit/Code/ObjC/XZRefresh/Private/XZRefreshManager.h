@@ -12,12 +12,20 @@ NS_ASSUME_NONNULL_BEGIN
 
 @class UIRefreshControl;
 
+/// 管理刷新状态的对象。
+///
+/// - Attention: 应避免延长 self 的生命周期。
+/// 虽然被 block 强引用 `self` 和 `_scrollView` 对象，但是 block 如果先释放 `_scrollView` 后释放 `self` 对象，
+/// 那么释放 `self` 的时候，移除无主引用的 `_scrollView` 可能已经销毁，从而导致移除 KVO 发生问题。
+/// 注：由于自 iOS 11.0 之后 KVO 不再需要在对象销毁前移除，当前 `_scrollView` 已改为 `weak` 不会发生上述问题。
 @interface XZRefreshManager : NSObject <UIScrollViewDelegate>
 
-/// 如果使用 weak 引用，那么在 UIScrollView 释放时，会释放其相关联的 XZRefreshManager 对象。
-/// 由于 weak 机制，在 UIScrollView 处于释放的过程中，任何指向它的 weak 指针已经被置空，导致
-/// 无法在 -[XZRefreshManager dealloc] 中移除 KVO 观察者，因此这里不能使用 weak 属性。
-@property (nonatomic, unsafe_unretained, readonly)  UIScrollView *scrollView;
+/// 被当前对象所管理的 scrollView 对象。
+///
+/// 当前对象被 scrollView 通过 objc association 强引用。
+///
+/// 当前对象是 scrollView 的观察者，但似乎自 iOS 9 之后，被观察的对象释放前，不再需要移除观察者，所以仅需要在观察者销毁时解除观察即可。
+@property (nonatomic, weak, readonly)  UIScrollView *scrollView;
 
 @property (nonatomic, strong, null_resettable)    XZRefreshView *headerRefreshView;
 @property (nonatomic, strong, nullable, readonly) XZRefreshView *headerRefreshViewIfLoaded;

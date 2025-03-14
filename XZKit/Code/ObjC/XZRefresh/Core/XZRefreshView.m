@@ -57,6 +57,16 @@ static Class _defaultFooterClass = Nil;
     return self;
 }
 
+- (instancetype)initWithCoder:(NSCoder *)coder {
+    self = [super initWithCoder:coder];
+    if (self) {
+        _height = XZRefreshHeight;
+        _adjustment = XZRefreshAdjustmentAutomatic;
+        _automaticRefreshDistance = 0;
+    }
+    return self;
+}
+
 - (UIScrollView *)scrollView {
     return _refreshManager.scrollView;
 }
