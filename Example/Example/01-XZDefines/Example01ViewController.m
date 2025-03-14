@@ -17,6 +17,8 @@
 - (void)viewDidLoad {
     [super viewDidLoad];
     // Do any additional setup after loading the view.
+    
+    [self keyValueCodingTest];
 }
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
@@ -24,25 +26,70 @@
         case 0:
             break;
         case 1: {
-            NSString *string1 = [@"" stringByPaddingToLength:500 withString:@"0123456789" startingAtIndex:0];
-            XZLog(@"单行字符数：%lu", string1.length);
-            XZLog(@"%@", string1);
+            NSString *string = nil;
             
-            NSString *string2 = [@"" stringByPaddingToLength:999 withString:@"0123456789" startingAtIndex:0];
-            XZLog(@"单行字符数：%lu", string2.length);
-            XZLog(@"%@", string2);
+            string = [@"" stringByPaddingToLength:500 withString:@"1234567890" startingAtIndex:0];
+            XZLog(@"单行字符数：%lu", string.length);
+            XZLog(@"%@", string);
             
-            NSString *string3 = [@"" stringByPaddingToLength:1000 withString:@"0123456789" startingAtIndex:0];
-            XZLog(@"单行字符数：%lu", string3.length);
-            XZLog(@"%@", string3);
+            string = [@"" stringByPaddingToLength:999 withString:@"1234567890" startingAtIndex:0];
+            XZLog(@"单行字符数：%lu", string.length);
+            XZLog(@"%@", string);
             
-            NSString *string4 = [@"" stringByPaddingToLength:3000 withString:@"0123456789" startingAtIndex:0];
-            XZLog(@"单行字符数：%lu", string4.length);
-            XZLog(@"%@", string4);
+            string = [@"" stringByPaddingToLength:1000 withString:@"1234567890" startingAtIndex:0];
+            XZLog(@"单行字符数：%lu", string.length);
+            XZLog(@"%@", string);
             
-            NSString *string5 = [NSString stringWithFormat:@"%@\n%@\n%@\n%@", string1, string2, string3, string4];
-            XZLog(@"多行字符数：%lu", string5.length);
-            XZLog(@"%@", string5);
+            string = [@"" stringByPaddingToLength:1001 withString:@"1234567890" startingAtIndex:0];
+            XZLog(@"单行字符数：%lu", string.length);
+            XZLog(@"%@", string);
+            
+            string = [@"" stringByPaddingToLength:1016 withString:@"1234567890" startingAtIndex:0];
+            XZLog(@"单行字符数：%lu", string.length);
+            XZLog(@"%@", string);
+            
+            string = [@"" stringByPaddingToLength:1017 withString:@"1234567890" startingAtIndex:0];
+            XZLog(@"单行字符数：%lu", string.length);
+            XZLog(@"%@", string);
+            
+            string = [@"" stringByPaddingToLength:1018 withString:@"1234567890" startingAtIndex:0];
+            XZLog(@"单行字符数：%lu", string.length);
+            XZLog(@"%@", string);
+            
+            string = [NSString stringWithFormat:@"%@\n%@",
+                      [@"" stringByPaddingToLength:998 withString:@"1234567890" startingAtIndex:0],
+                      [@"" stringByPaddingToLength:1000 withString:@"1234567890" startingAtIndex:0]
+            ];
+            XZLog(@"多行字符数：%lu", string.length);
+            XZLog(@"%@", string);
+            
+            string = [NSString stringWithFormat:@"%@\n%@",
+                      [@"" stringByPaddingToLength:999 withString:@"1234567890" startingAtIndex:0],
+                      [@"" stringByPaddingToLength:1000 withString:@"1234567890" startingAtIndex:0]
+            ];
+            XZLog(@"多行字符数：%lu", string.length);
+            XZLog(@"%@", string);
+            
+            string = [NSString stringWithFormat:@"%@\n%@",
+                      [@"" stringByPaddingToLength:1000 withString:@"1234567890" startingAtIndex:0],
+                      [@"" stringByPaddingToLength:1000 withString:@"1234567890" startingAtIndex:0]
+            ];
+            XZLog(@"多行字符数：%lu", string.length);
+            XZLog(@"%@", string);
+            
+            string = [NSString stringWithFormat:@"%@\n%@",
+                      [@"" stringByPaddingToLength:1001 withString:@"1234567890" startingAtIndex:0],
+                      [@"" stringByPaddingToLength:1000 withString:@"1234567890" startingAtIndex:0]
+            ];
+            XZLog(@"多行字符数：%lu", string.length);
+            XZLog(@"%@", string);
+            
+            string = [NSString stringWithFormat:@"%@\n%@",
+                      [@"" stringByPaddingToLength:1002 withString:@"1234567890" startingAtIndex:0],
+                      [@"" stringByPaddingToLength:1000 withString:@"1234567890" startingAtIndex:0]
+            ];
+            XZLog(@"多行字符数：%lu", string.length);
+            XZLog(@"%@", string);
             break;
         }
         case 2: {
@@ -51,6 +98,45 @@
         default:
             break;
     }
+}
+
+- (void)keyValueCodingTest {
+    XZLog(@"测试 Key Value Coding 的相关规则");
+    
+    NSDictionary *obj = @{
+        @"items": @[
+            @{ @"user": @{ @"id": @"2" } },
+            @{ @"user": @{ @"id": @"3" } },
+            @{ @"user": @{ @"id": @"4" } }
+        ],
+        @"nums": @[
+            @(5), @(1), @(2), @(3), @(4)
+        ]
+    };
+    
+    NSString *key = @"items.user";
+    XZLog(@"%@ = %@", key, [obj valueForKeyPath:key]);
+    
+    key = @"items.user.id";
+    XZLog(@"%@ = %@", key, [obj valueForKeyPath:key]);
+    
+    key = @"nums.@avg.self";
+    XZLog(@"%@ = %@", key, [obj valueForKeyPath:key]);
+    
+    key = @"nums.@min.self";
+    XZLog(@"%@ = %@", key, [obj valueForKeyPath:key]);
+    
+    key = @"nums.@sum.self";
+    XZLog(@"%@ = %@", key, [obj valueForKeyPath:key]);
+    
+    key = @"@count";
+    XZLog(@"%@ = %@", key, [obj valueForKeyPath:key]);
+    
+    XZLog(@"%@", [[[obj valueForKeyPath:@"items"] objectAtIndex:0] valueForKeyPath:@"user.id"]);
+}
+
+- (void)xcodeMacros {
+    XZLog(@"__IPHONE_OS_VERSION_MIN_REQUIRED => %d", __IPHONE_OS_VERSION_MIN_REQUIRED);
 }
 
 @end

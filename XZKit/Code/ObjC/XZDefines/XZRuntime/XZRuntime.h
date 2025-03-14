@@ -269,7 +269,7 @@ FOUNDATION_EXPORT NSHashTable *xz_objc_class_getImplementedProtocolMethods(Class
 // rect => CGRect
 
 // 在 xz_objc_msgSendSuper 方法中，除非没有子类，否则参数 receiverClass 不可以通过 receiver.class 动态获取，而应该是确定类型，否则会造成死循环。
-// 比如假如像下面这样实现的话
+// 比如像下面这样实现的话
 // @implementation Animal
 // - (void)foobar {
 //     xz_objc_msgSendSuper_void(self, self.class, @selector(foobar)); // 应该使用 [Human class] 而不是 self.class
