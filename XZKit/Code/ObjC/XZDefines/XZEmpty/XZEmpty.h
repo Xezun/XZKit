@@ -23,7 +23,7 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-#ifndef isNonEmpty
+#ifndef XZ_IS_NON_EMPTY
 
 /// 当 value 为非空字符串时，返回 YES 值。对于 id 类型的变量，需要使用强转符号，才能命中此函数。
 FOUNDATION_STATIC_INLINE BOOL isNonEmpty(NSString * _Nullable value) XZ_ATTR_OVERLOAD {
@@ -50,9 +50,9 @@ FOUNDATION_STATIC_INLINE BOOL isNonEmpty(id _Nullable value) XZ_ATTR_OVERLOAD {
     return (value != nil && value != NSNull.null);
 }
 
-#endif // #ifndef isNonEmpty
+#endif // #ifndef XZ_IS_NON_EMPTY
 
-#ifndef asNonEmpty
+#ifndef XZ_AS_NON_EMPTY
 
 // 备忘：参数 defultValue 不能为 NSObject 类型。
 
@@ -99,6 +99,6 @@ FOUNDATION_STATIC_INLINE id _Nullable asNonEmpty(id _Nullable value, id _Nullabl
     return isNonEmpty(value) ? value : defaultValue;
 }
 
-#endif // #ifndef asNonEmpty
+#endif // #ifndef XZ_AS_NON_EMPTY
 
 NS_ASSUME_NONNULL_END
