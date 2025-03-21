@@ -49,10 +49,11 @@ static void const * const _context = &_context;
 
 @implementation XZRefreshManager {
     // 记录布局 header/footer 时所依赖的 UIScrollView 属性值。
-    // 理论上在需要的地方，比如 frameSize/contentSize/adjustedContentInsets 发生改变后，触发布局方法是最经济效率的方案。
-    // 但是由于 Apple 原生逻辑的混乱，在上述这些状态改变后，更新布局的时机不固定。
-    // 比如当 adjustedContentInset 发生改变后，方法 -scrollViewDidScroll: 先于 -adjustedContentInsetDidChange: 调用。
-    // 这将导致在 -scrollViewDidScroll: 方法中，刷新视图 header/footer 的 context 未更新而不能判断其当前状态。
+    // 理论上在需要的地方，比如 frameSize/contentSize/adjustedContentInsets 发生改变后，触发布局方法是最经济、最效率的方案。
+    // 但是由于 Apple 原生逻辑的混乱，在上述这些状态改变后，相应的事件触发时机不固定：
+    // 1. 当 adjustedContentInset 发生改变后，方法 -scrollViewDidScroll: 先于 -adjustedContentInsetDidChange: 调用。
+    //    这将导致在 -scrollViewDidScroll: 方法中，刷新视图 header/footer 的 context 未更新而不能判断其当前状态。
+    // 2. 内部优化了 -layoutSubviews 方法，即使在 +load 中通过运行时方法添加或方法交换注入的代码不执行，猜测是原生提前获取了 -layoutSubviews 方法的实现。
     CGSize _frameSize;
     CGSize _contentSize;
     UIEdgeInsets _adjustedContentInsets;
@@ -73,7 +74,10 @@ static void const * const _context = &_context;
         
         [self scrollView:scrollView delegateDidChange:scrollView.delegate];
         
+        
         NSKeyValueObservingOptions const options = NSKeyValueObservingOptionNew | NSKeyValueObservingOptionOld;
+        [scrollView addObserver:self forKeyPath:@"frame" options:options context:(void *)_context];
+        [scrollView addObserver:self forKeyPath:@"bounds" options:options context:(void *)_context];
         [scrollView addObserver:self forKeyPath:@"delegate" options:options context:(void *)_context];
         [scrollView addObserver:self forKeyPath:@"contentSize" options:options context:(void *)_context];
     }
@@ -81,6 +85,8 @@ static void const * const _context = &_context;
 }
 
 - (void)dealloc {
+    [_scrollView removeObserver:self forKeyPath:@"frame" context:(void *)_context];
+    [_scrollView removeObserver:self forKeyPath:@"bounds" context:(void *)_context];
     [_scrollView removeObserver:self forKeyPath:@"delegate" context:(void *)_context];
     [_scrollView removeObserver:self forKeyPath:@"contentSize" context:(void *)_context];
     _scrollView = nil;
@@ -91,22 +97,31 @@ static void const * const _context = &_context;
         return [super observeValueForKeyPath:keyPath ofObject:object change:change context:context];
     }
     
+    // 视图大小发生改变，重新布局刷新视图
+    if ([keyPath isEqualToString:@"bounds"] || [keyPath isEqualToString:@"frame"]) {
+        CGRect const new = [change[NSKeyValueChangeNewKey] CGRectValue];
+        if (CGSizeEqualToSize(new.size, _frameSize)) {
+            return;
+        }
+        [self setNeedsLayoutRefreshViews];
+        return;
+    }
     
+    // 理论上来讲，contentSize 改变，不会影响 header
+    // 1、页面大小发生改变
+    // 2、下拉刷新，或上拉加载，导致页面内容变化
     if ([keyPath isEqualToString:@"contentSize"]) {
         CGSize const old = [change[NSKeyValueChangeOldKey] CGSizeValue];
         CGSize const new = [change[NSKeyValueChangeNewKey] CGSizeValue];
         if (CGSizeEqualToSize(new, old)) {
             return;
         }
-        // 理论上来讲，contentSize 改变，不会影响 header
-        // 1、页面大小发生改变
-        // 2、下拉刷新，或上拉加载，导致页面内容变化
         [self setNeedsLayoutFooterRefreshView];
         return;
     }
     
+    // 当 delegate 改变时，重新监听 UIScrollViewDelegate 事件
     if ([keyPath isEqualToString:@"delegate"]) {
-        // 当 delegate 改变时，重新监听 UIScrollViewDelegate 事件
         id<UIScrollViewDelegate> const old = change[NSKeyValueChangeOldKey];
         id<UIScrollViewDelegate> const new = change[NSKeyValueChangeNewKey];
         if (old == new) {
@@ -129,11 +144,11 @@ static void const * const _context = &_context;
     
     Class const aClass = delegate.class;
     
-    static void *_isModified = &_isModified;
-    if (objc_getAssociatedObject(aClass, &_isModified)) {
+    static const void * const _key = &_key;
+    if (objc_getAssociatedObject(aClass, _key)) {
         return;
     }
-    objc_setAssociatedObject(aClass, &_isModified, @(true), OBJC_ASSOCIATION_COPY_NONATOMIC);
+    objc_setAssociatedObject(aClass, _key, @(YES), OBJC_ASSOCIATION_COPY_NONATOMIC);
     
     {
         SEL          const selector = @selector(scrollViewDidScroll:);

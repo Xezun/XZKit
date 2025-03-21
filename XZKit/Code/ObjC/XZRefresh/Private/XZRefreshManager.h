@@ -24,7 +24,7 @@ NS_ASSUME_NONNULL_BEGIN
 ///
 /// 当前对象被 scrollView 通过 objc association 强引用。
 ///
-/// 当前对象是 scrollView 的观察者，但似乎自 iOS 9 之后，被观察的对象释放前，不再需要移除观察者，所以仅需要在观察者销毁时解除观察即可。
+/// 当前对象是 scrollView 的观察者，自 iOS 11.0 之后，被观察的对象释放前，不再需要移除观察者，所以仅需要在观察者销毁时解除观察即可。
 @property (nonatomic, weak, readonly)  UIScrollView *scrollView;
 
 @property (nonatomic, strong, null_resettable)    XZRefreshView *headerRefreshView;

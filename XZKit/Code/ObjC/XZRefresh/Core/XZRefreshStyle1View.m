@@ -88,7 +88,7 @@
     }
     _shapeLayer.path = path.CGPath;
     
-    // 初始状态：展示 1 / 4 进度的圆弧，无限小
+    // 初始状态：0 进度的圆弧，无限小
     _shapeLayer.strokeStart = 0;
     _shapeLayer.strokeEnd   = 0;
     _trackLayer.transform = CATransform3DMakeScale(0.0, 0.0, 1.0);
