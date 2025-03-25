@@ -10,7 +10,7 @@
 
 Pod::Spec.new do |s|
   s.name             = 'XZExtensions'
-  s.version          = '10.6.0'
+  s.version          = '10.8.0'
   s.summary          = '对原生框架的拓展，提高开发效率'
 
   s.description      = <<-DESC

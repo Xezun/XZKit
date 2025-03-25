@@ -56,6 +56,9 @@ typedef BOOL (^XZViewHierarchyEnumerator)(NSInteger hierarchy, __kindof UIView *
 /// @return 视图快照图片。
 - (nullable UIImage *)xz_snapshotImageAfterScreenUpdates:(BOOL)afterUpdates NS_SWIFT_NAME(snapshotImage(afterScreenUpdates:));
 
+/// 内容安全模式。设置为 YES 时，视图在截图、录屏中不可见。
+@property (nonatomic, setter=xz_setSecureContentMode:) BOOL xz_secureContentMode;
+
 @end
 
 @interface UIView (XZDescription)

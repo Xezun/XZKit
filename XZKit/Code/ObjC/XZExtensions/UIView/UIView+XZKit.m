@@ -6,6 +6,10 @@
 //
 
 #import "UIView+XZKit.h"
+@import ObjectiveC;
+
+static UITextField *_secureView = nil;
+static UIView      *_canvasView = nil;
 
 @implementation UIView (XZKit)
 
@@ -47,6 +51,58 @@
     UIImage *snapImage = UIGraphicsGetImageFromCurrentImageContext();
     UIGraphicsEndImageContext();
     return snapImage;
+}
+
+- (void)xz_setSecureContentMode:(BOOL)xz_secureContentMode {
+    if (xz_secureContentMode) {
+        if (_secureView == nil) {
+            _secureView = [[UITextField alloc] initWithFrame:CGRectMake(0, 0, 100, 40)];
+            _canvasView = _secureView.textInputView;
+            if (_canvasView == nil) {
+                for (UIView *view in _secureView.subviews) {
+                    // iOS 14.1 -> _UITextFieldCanvasView
+                    // iOS 15.0 -> _UITextLayoutCanvasView
+                    if ([NSStringFromClass(view.class) hasSuffix:@"CanvasView"]) {
+                        _canvasView = view;
+                        break;
+                    }
+                }
+            }
+        }
+        if (_canvasView == nil) {
+            return; // 没找到，则不支持
+        }
+        
+        // 通过逆向 -[UITextField setSecureTextEntry:] 方法所知，实现防录屏、截屏功能最终是通过
+        // 设置 [_textCanvasView.layer setDisableUpdateMask:0x12] 实现的。
+        // https://sidorov.tech/en/all/mastering-screen-recording-detection-in-ios-apps/
+        // 但是由于这是私有接口，所以我们通过 UITextField 来达到修改 CALayer.disableUpdateMask 属性的目的。
+        // 1、通过 KVC 替换 UITextField->_textCanvasView 的 layer 为当前视图的 layer
+        // 2、修改 UITextField.secureTextEntry 属性，就会实际修改的就是当前视图的 layer
+        // 3、恢复 UITextField->_textCanvasView 的 layer
+        // 由于 UIView.layer 是只读属性，通过 KVC 可以直接访问 layer 属性的实例变量。
+        
+        CALayer * const textLayer = _canvasView.layer;
+        _secureView.secureTextEntry = NO;
+        [_canvasView setValue:self.layer forKey:@"layer"];
+        _secureView.secureTextEntry = YES;
+        [_canvasView setValue:textLayer forKey:@"layer"];
+    } else if (_canvasView) {
+        CALayer * const textLayer = _canvasView.layer;
+        _secureView.secureTextEntry = YES;
+        [_canvasView setValue:self.layer forKey:@"layer"];
+        _secureView.secureTextEntry = NO;
+        [_canvasView setValue:textLayer forKey:@"layer"];
+    }
+    
+    objc_setAssociatedObject(self, &_secureView, @(xz_secureContentMode), OBJC_ASSOCIATION_COPY_NONATOMIC);
+}
+
+- (BOOL)xz_secureContentMode {
+    if (_canvasView == nil) {
+        return NO;
+    }
+    return [objc_getAssociatedObject(self, &_secureView) boolValue];
 }
 
 @end
