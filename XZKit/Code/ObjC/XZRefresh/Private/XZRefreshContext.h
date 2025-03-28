@@ -15,13 +15,14 @@ NS_ASSUME_NONNULL_BEGIN
 
 /// 刷新状态
 typedef NS_ENUM(NSUInteger, XZRefreshState) {
-    /// 正常状态
+    /// 普通状态，非刷新状态
     XZRefreshStatePendinging,
-    /// 正在刷新，但是仍在拖拽中，需要在 willEndDragging 时更新 contentInsets
+    /// 已经开始刷新，但是由于仍然处于手势拖拽状态，尚未调整 contentInset 值。
+    /// > 在拖拽的过程中，更新 contentInset 会造成页面抖动，所以需要在手势结束时（willEndDragging）才能更新 contentInset
     XZRefreshStateWillRefreshing,
-    /// 正在刷新
+    /// 正在刷新。
     XZRefreshStateRefreshing,
-    /// 正在复原，但是仍在拖拽中，需要在 willEndDragging 时更新 contentInsets
+    /// 正在恢复状态，但是仍在拖拽中，需要在 willEndDragging 时更新 contentInsets
     XZRefreshStateWillRecovering,
     /// 正在复原
     XZRefreshStateRecovering
@@ -60,12 +61,15 @@ typedef NS_ENUM(NSUInteger, XZRefreshState) {
 @property (nonatomic) CGFloat contentOffsetY;
 
 
-/// 记录布局刷新视图所使用的刷新高度。
-@property (nonatomic) CGFloat height;
+/// 刷新视图布局依赖的必须属性：刷新视图刷新时的高度。
+@property (nonatomic) CGFloat refreshHeight;
+/// 刷新视图布局依赖的必须属性：刷新视图适配边距的方式。
 @property (nonatomic) XZRefreshAdjustment adjustment;
+/// 刷新视图布局依赖的必须属性：刷新视图相对正常位置的偏移。
 @property (nonatomic) CGFloat offset;
 
-/// 根据当前状态计算后的边距，因此获取此属性时，需先更新上面三个属性。
+/// 根据 refreshHeight、adjustment、offset 的当前值，计算刷新视图布局所用的边距值。
+/// > 读取此属性，必须先更新上述所依赖的三个刷新，保证在读取属性时，上述三个属性的值是期望的值。
 @property (nonatomic, readonly) UIEdgeInsets layoutInsets;
 
 @end

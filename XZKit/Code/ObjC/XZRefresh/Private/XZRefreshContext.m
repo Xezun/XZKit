@@ -20,7 +20,7 @@
     @package
     XZRefreshAdjustment   _adjustment;
     XZRefreshState        _state;
-    CGFloat               _height;
+    CGFloat               _refreshHeight;
     CGFloat               _contentOffsetY;
     UIScrollView * __weak _scrollView;
 }
@@ -81,7 +81,7 @@
             switch (_state) {
                 case XZRefreshStateRefreshing:
                 case XZRefreshStateWillRecovering:
-                    return UIEdgeInsetsMake(_height, 0, 0, 0);
+                    return UIEdgeInsetsMake(_refreshHeight, 0, 0, 0);
                 default:
                     return UIEdgeInsetsZero;
             }
@@ -119,7 +119,7 @@
             switch (_state) {
                 case XZRefreshStateRefreshing:
                 case XZRefreshStateWillRecovering:
-                    return UIEdgeInsetsMake(0, 0, _height, 0);
+                    return UIEdgeInsetsMake(0, 0, _refreshHeight, 0);
                 default:
                     return UIEdgeInsetsZero;
             }

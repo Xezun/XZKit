@@ -51,7 +51,7 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic) CGFloat automaticRefreshDistance;
 
 /// 刷新区域的高度。不是当前视图的高度。
-@property (nonatomic) CGFloat height;
+@property (nonatomic) CGFloat refreshHeight;
 
 /// 进入下拉/上拉状态，并开始执行刷新动画。
 /// @param animated 是否动画过度到刷新状态。

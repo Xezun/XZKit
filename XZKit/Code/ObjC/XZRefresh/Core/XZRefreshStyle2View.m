@@ -91,7 +91,7 @@
 }
 
 - (void)scrollView:(UIScrollView *)scrollView didScrollRefreshing:(CGFloat)distance {
-    CGFloat const value = distance / self.height;
+    CGFloat const value = distance / self.refreshHeight;
     
     [CATransaction begin];
     [CATransaction setDisableActions:YES];
@@ -123,7 +123,7 @@
 }
 
 - (BOOL)scrollView:(UIScrollView *)scrollView shouldBeginRefreshing:(CGFloat)distance {
-    return (distance >= self.height * 1.5);
+    return (distance >= self.refreshHeight * 1.5);
 }
 
 - (void)scrollView:(UIScrollView *)scrollView didBeginRefreshing:(BOOL)animated {

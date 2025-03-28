@@ -8,7 +8,7 @@
 
 Pod::Spec.new do |s|
   s.name             = 'XZML'
-  s.version          = '10.5.0'
+  s.version          = '10.8.0'
   s.summary          = 'XZML 富文本标记语言'
 
   s.description      = <<-DESC

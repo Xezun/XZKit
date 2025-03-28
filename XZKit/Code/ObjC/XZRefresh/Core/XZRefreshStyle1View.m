@@ -123,7 +123,7 @@
 - (void)scrollView:(UIScrollView *)scrollView didScrollRefreshing:(CGFloat)distance {
     // NSLog(@"%s", __PRETTY_FUNCTION__);
     
-    CGFloat const RefreshHeight = self.height;
+    CGFloat const RefreshHeight = self.refreshHeight;
     CGFloat const PullHeight    = RefreshHeight * 1.5; // 进入下拉刷新的高度为刷新高度的 1.5 倍
     CGFloat const ViewHeight_2  = self.frame.size.height * 0.5;
     
@@ -163,7 +163,7 @@
 
 - (BOOL)scrollView:(UIScrollView *)scrollView shouldBeginRefreshing:(CGFloat)distance {
     // NSLog(@"%s", __PRETTY_FUNCTION__);
-    return (distance >= self.height * 1.5);
+    return (distance >= self.refreshHeight * 1.5);
 }
 
 - (void)scrollView:(UIScrollView *)scrollView didBeginRefreshing:(BOOL)animated {

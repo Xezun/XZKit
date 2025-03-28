@@ -41,7 +41,7 @@ static Class _defaultFooterClass = Nil;
     _defaultFooterClass = defaultFooterClass;
 }
 
-@synthesize height = _height;
+@synthesize refreshHeight = _refreshHeight;
 
 - (instancetype)init {
     return [self initWithFrame:CGRectMake(0, 0, 320.0, XZRefreshHeight)];
@@ -50,7 +50,7 @@ static Class _defaultFooterClass = Nil;
 - (instancetype)initWithFrame:(CGRect)frame {
     self = [super initWithFrame:frame];
     if (self) {
-        _height = XZRefreshHeight;
+        _refreshHeight = XZRefreshHeight;
         _adjustment = XZRefreshAdjustmentAutomatic;
         _automaticRefreshDistance = 0;
     }
@@ -60,7 +60,7 @@ static Class _defaultFooterClass = Nil;
 - (instancetype)initWithCoder:(NSCoder *)coder {
     self = [super initWithCoder:coder];
     if (self) {
-        _height = XZRefreshHeight;
+        _refreshHeight = XZRefreshHeight;
         _adjustment = XZRefreshAdjustmentAutomatic;
         _automaticRefreshDistance = 0;
     }
@@ -113,9 +113,9 @@ static Class _defaultFooterClass = Nil;
     [self endRefreshing:YES completion:nil];
 }
 
-- (void)setHeight:(CGFloat)height {
-    if (_height != height) {
-        _height = MAX(0, height);
+- (void)setRefreshHeight:(CGFloat)height {
+    if (_refreshHeight != height) {
+        _refreshHeight = MAX(0, height);
         [_refreshManager setNeedsLayoutRefreshViews];
     }
 }
@@ -125,7 +125,7 @@ static Class _defaultFooterClass = Nil;
 }
 
 - (BOOL)scrollView:(UIScrollView *)scrollView shouldBeginRefreshing:(CGFloat)distance {
-    return (distance >= self.height);
+    return (distance >= self.refreshHeight);
 }
 
 - (void)scrollView:(UIScrollView *)scrollView didBeginRefreshing:(BOOL)animated {

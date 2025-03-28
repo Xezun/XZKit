@@ -15,9 +15,9 @@ NS_ASSUME_NONNULL_BEGIN
 /// 通过 XZML 构造对象。
 ///
 /// 通过参数 `attributes` 可指定富文本的样式属性，其中。
-/// 1. 通过键 `NS~AttributeName` 指定的富文本属性，将作为所有文本的默认样式。
-/// 2. 通过键 `XZML~AttributeName` 指定的富文本属性，只为 XZML 元素解析提供预设值，不决定实际样式。
-/// 3. XZML 支持元素嵌套，且富文本样式也会继承，但只会继承上层元素标明了的样式，不会继承 `attributes` 参数中的默认样式。
+/// @li 1. 通过键 `NS~AttributeName` 指定的富文本属性，将作为所有文本的默认样式。
+/// @li 2. 通过键 `XZML~AttributeName` 指定的富文本属性，只为 XZML 元素解析提供预设值，不决定实际样式。
+/// @li 3. XZML 支持元素嵌套，且富文本样式也会继承，但只会继承上层元素标明了的样式，不会继承 `attributes` 参数中的默认样式。
 ///
 /// @param XZMLString XZML 字符串
 /// @param attributes 富文本属性
