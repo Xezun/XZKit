@@ -65,11 +65,11 @@ NS_ASSUME_NONNULL_BEGIN
 
 /// 进入下拉/上拉状态，并开始执行刷新动画。
 /// @note 方法 -beginRefreshing:completion: 的便利方法。
-- (void)beginRefreshing;
+- (void)beginRefreshing:(BOOL)animated;
 
 /// 结束下拉/上拉状态，并停止刷新动画。
 /// @note 方法 -endRefreshing:completion: 的便利方法。
-- (void)endRefreshing;
+- (void)endRefreshing:(BOOL)animated;
 
 #pragma mark - 自定义刷新视图可重写的方法
 

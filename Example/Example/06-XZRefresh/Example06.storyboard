@@ -8,7 +8,7 @@
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <scenes>
-        <!--演示-->
+        <!--XZRefresh-->
         <scene sceneID="1mm-k0-G9e">
             <objects>
                 <tableViewController id="YvK-SW-o4E" customClass="Example06ViewController" sceneMemberID="viewController">
@@ -41,7 +41,7 @@
                             <outlet property="delegate" destination="YvK-SW-o4E" id="NWR-PR-ZKP"/>
                         </connections>
                     </tableView>
-                    <navigationItem key="navigationItem" title="演示" id="Sy0-Nw-xAE">
+                    <navigationItem key="navigationItem" title="XZRefresh" id="Sy0-Nw-xAE">
                         <barButtonItem key="backBarButtonItem" title="返回" id="zfV-md-mff"/>
                         <barButtonItem key="leftBarButtonItem" title="Item" image="xmark" catalog="system" style="done" id="pga-Wu-gmC">
                             <connections>

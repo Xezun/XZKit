@@ -84,9 +84,9 @@ static Class _defaultFooterClass = Nil;
 
 - (void)setRefreshing:(BOOL)isRefreshing {
     if (isRefreshing) {
-        [self endRefreshing];
+        [self endRefreshing:NO];
     } else {
-        [self beginRefreshing];
+        [self beginRefreshing:NO];
     }
 }
 
@@ -101,16 +101,16 @@ static Class _defaultFooterClass = Nil;
     [_refreshManager refreshingView:self beginAnimating:animated completion:completion];
 }
 
-- (void)beginRefreshing {
-    [self beginRefreshing:YES completion:nil];
+- (void)beginRefreshing:(BOOL)animated {
+    [self beginRefreshing:animated completion:nil];
 }
 
 - (void)endRefreshing:(BOOL)animated completion:(nullable void (^)(BOOL))completion {
     [_refreshManager refreshingView:self endAnimating:animated completion:completion];
 }
 
-- (void)endRefreshing {
-    [self endRefreshing:YES completion:nil];
+- (void)endRefreshing:(BOOL)animated {
+    [self endRefreshing:animated completion:nil];
 }
 
 - (void)setRefreshHeight:(CGFloat)height {

@@ -27,7 +27,7 @@
     
     // 使用默认样式
     self.tableView.xz_headerRefreshView.adjustment = XZRefreshAdjustmentNone;
-    self.tableView.xz_footerRefreshView.adjustment = XZRefreshAdjustmentAutomatic;
+    self.tableView.xz_footerRefreshView.adjustment = XZRefreshAdjustmentNone;
 }
 
 - (void)scrollView:(__kindof UIScrollView *)scrollView headerDidBeginRefreshing:(XZRefreshView *)refreshView {
@@ -36,7 +36,7 @@
     dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(time * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
         self->_numberOfCells = arc4random_uniform(10) + 5;
         [self.tableView reloadData];
-        [refreshView endRefreshing];
+        [refreshView endRefreshing:YES];
     });
 }
 
@@ -55,7 +55,7 @@
             }
             [self.tableView insertRowsAtIndexPaths:rows withRowAnimation:(UITableViewRowAnimationTop)];
         }
-        [refreshView endRefreshing];
+        [refreshView endRefreshing:YES];
     });
 }
 
@@ -110,9 +110,9 @@
 - (IBAction)unwindFromHeaderRefreshAction:(UIStoryboardSegue *)unwindSegue {
     dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.5 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
         if (self.tableView.xz_headerRefreshView.isRefreshing) {
-            [self.tableView.xz_headerRefreshView endRefreshing];
+            [self.tableView.xz_headerRefreshView endRefreshing:YES];
         } else {
-            [self.tableView.xz_headerRefreshView beginRefreshing];
+            [self.tableView.xz_headerRefreshView beginRefreshing:YES];
         }
     });
 }
@@ -120,9 +120,9 @@
 - (IBAction)unwindFromFooterRefreshAction:(UIStoryboardSegue *)unwindSegue {
     dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.5 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
         if (self.tableView.xz_footerRefreshView.isRefreshing) {
-            [self.tableView.xz_footerRefreshView endRefreshing];
+            [self.tableView.xz_footerRefreshView endRefreshing:YES];
         } else {
-            [self.tableView.xz_footerRefreshView beginRefreshing];
+            [self.tableView.xz_footerRefreshView beginRefreshing:YES];
         }
     });
 }

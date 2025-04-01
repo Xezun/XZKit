@@ -134,7 +134,7 @@ static void const * const _context = &_context;
 
 /// 接管代理事件。
 - (void)scrollView:(UIScrollView *)scrollView delegateDidChange:(nullable id<UIScrollViewDelegate> const)delegate {
-    if (delegate == self) {
+    if (delegate == self || scrollView != _scrollView) {
         return;
     }
     if (delegate == nil) {
@@ -396,20 +396,25 @@ static void const * const _context = &_context;
             _header.adjustment = _refreshView.adjustment;
             _header.offset     = _refreshView.offset;
             
-            // 刷新高度已经合并，所以直接使用 adjustedContentInsets 进行计算。
-            UIEdgeInsets const adjustedContentInsets = _scrollView.adjustedContentInset;
+            UIEdgeInsets const contentInset = _scrollView.adjustedContentInset;
             UIEdgeInsets const layoutInsets = _header.layoutInsets;
             
             CGFloat const w = CGRectGetWidth(bounds);
             CGFloat const h = CGRectGetHeight(_refreshView.frame);
             CGFloat const x = CGRectGetMinX(bounds);
+            // 因为在刷新状态下，刷新高度 refreshHeight 会添加到 .contentInset 属性中，
+            // 而 layoutInsets 是适配后的值，所以直接使用 layoutInsets 来计算 y 坐标。
             CGFloat const y = -(layoutInsets.top - _header.refreshHeight) - h;
             CGRect  const frame = CGRectMake(x, y - _header.offset, w, h);
             
-            _adjustedContentInsets = adjustedContentInsets;
             _header.frame = frame;
-            _header.contentOffsetY = -adjustedContentInsets.top;
+            _header.contentOffsetY = -contentInset.top;
             _refreshView.frame = frame;
+            
+            // 保存布局刷新视图的状态值
+            _frameSize = bounds.size;
+            _contentSize = _scrollView.contentSize;
+            _adjustedContentInsets = contentInset;
             break;
         }
         case XZRefreshStatePendinging:
@@ -428,10 +433,13 @@ static void const * const _context = &_context;
             CGFloat const y = -layoutInsets.top - h;
             CGRect  const frame = CGRectMake(x, y - _header.offset, w, h);
             
-            _adjustedContentInsets = contentInset;
             _header.frame = frame;
             _header.contentOffsetY = -contentInset.top;
             _refreshView.frame = frame;
+            
+            _frameSize = bounds.size;
+            _contentSize = _scrollView.contentSize;
+            _adjustedContentInsets = contentInset;
             break;
         }
     }
@@ -475,66 +483,69 @@ static void const * const _context = &_context;
             _footer.adjustment = _refreshView.adjustment;
             _footer.offset     = _refreshView.offset;
             
+            // 如果页面滚动高度不满一屏，底部的偏移和边距都
             // 底部在刷新的过程中，刷新高度已经附加到了边距之中，
             // 因此可通过实际边距进行计算，判断可滚动区域是否满足一屏，并决定如何布局刷新视图。
-            UIEdgeInsets const contentInsets = _scrollView.adjustedContentInset;
-            UIEdgeInsets const layoutInsets  = _footer.layoutInsets;
-            BOOL         const mode = (contentInsets.top + contentSize.height + layoutInsets.bottom < bounds.size.height);
+            UIEdgeInsets const contentInset = _scrollView.adjustedContentInset;
+            UIEdgeInsets const layoutInsets = _footer.layoutInsets;
+            BOOL         const isPageFilled = ((contentInset.top + contentSize.height + layoutInsets.bottom) >= bounds.size.height);
             
             CGFloat const w = CGRectGetWidth(bounds);
             CGFloat const h = CGRectGetHeight(_refreshView.frame);
             CGFloat const x = CGRectGetMinX(bounds);
-            CGFloat const y = (mode ? (bounds.size.height - contentInsets.top - _footer.refreshHeight) : (contentSize.height + layoutInsets.bottom - _footer.refreshHeight));
-            CGFloat const contentOffsetY = (mode ? -contentInsets.top : contentSize.height + contentInsets.bottom - bounds.size.height);
+            CGFloat const y = (isPageFilled ? (contentSize.height + layoutInsets.bottom - _footer.refreshHeight) : (bounds.size.height - contentInset.top - _footer.refreshHeight));
+            CGFloat const contentOffsetY = (isPageFilled ? (contentSize.height + contentInset.bottom - bounds.size.height) : (-contentInset.top));
             CGRect  const frame = CGRectMake(x, y + _footer.offset, w, h);
+            
+            _footer.frame = frame;
+            _footer.contentOffsetY = contentOffsetY;
+            _footer.needsAnimatedTransitioning = (contentInset.top + contentSize.height < bounds.size.height);
+            _refreshView.frame = frame;
             
             _frameSize = bounds.size;
             _contentSize = contentSize;
-            _adjustedContentInsets = contentInsets;
-            _footer.frame = frame;
-            _footer.contentOffsetY = contentOffsetY;
-            _footer.needsAnimatedTransitioning = (contentInsets.top + contentSize.height < bounds.size.height);
-            _refreshView.frame = frame;
+            _adjustedContentInsets = contentInset;
             break;
         }
         case XZRefreshStatePendinging:
         case XZRefreshStateWillRefreshing:
         case XZRefreshStateRecovering: {
-            _footer.refreshHeight     = _refreshView.refreshHeight;
-            _footer.adjustment = _refreshView.adjustment;
-            _footer.offset     = _refreshView.offset;
+            _footer.refreshHeight = _refreshView.refreshHeight;
+            _footer.adjustment    = _refreshView.adjustment;
+            _footer.offset        = _refreshView.offset;
             
-            UIEdgeInsets const layoutInsets  = _footer.layoutInsets;
-            UIEdgeInsets const contentInsets = _scrollView.adjustedContentInset;
+            UIEdgeInsets const layoutInsets = _footer.layoutInsets;
+            UIEdgeInsets const contentInset = _scrollView.adjustedContentInset;
             
             // 顶部在刷新时，顶部的边距需要减去刷新高度
             CGFloat const top = (^CGFloat(CGFloat top, XZRefreshContext *_header) {
                 switch (_header.state) {
                     case XZRefreshStateRefreshing:
                     case XZRefreshStateWillRecovering: {
-                        return  top - _header.refreshHeight;
+                        return top - _header.refreshHeight;
                     }
                     default: {
                         return top;
                     }
                 }
-            })(contentInsets.top, _header);
+            })(contentInset.top, _header);
             
             BOOL const mode = (top + contentSize.height + layoutInsets.bottom < bounds.size.height);
             CGFloat const w = CGRectGetWidth(bounds);
             CGFloat const h = CGRectGetHeight(_refreshView.frame);
             CGFloat const x = CGRectGetMinX(bounds);
             CGFloat const y = (mode ? (bounds.size.height - top) : (contentSize.height + layoutInsets.bottom));
-            CGFloat const contentOffsetY = (mode ? -top : contentSize.height + contentInsets.bottom - bounds.size.height);
+            CGFloat const contentOffsetY = (mode ? -top : contentSize.height + contentInset.bottom - bounds.size.height);
             CGRect  const frame = CGRectMake(x, y + _footer.offset, w, h);
             
-            _frameSize = bounds.size;
-            _contentSize = contentSize;
-            _adjustedContentInsets = contentInsets;
             _footer.frame = frame;
             _footer.contentOffsetY = contentOffsetY;
             _footer.needsAnimatedTransitioning = NO;
             _refreshView.frame = frame;
+            
+            _frameSize = bounds.size;
+            _contentSize = contentSize;
+            _adjustedContentInsets = contentInset;
             break;
         }
     }
@@ -587,30 +598,26 @@ static void const * const _context = &_context;
     
     UIScrollView * const _scrollView = self->_scrollView;
     
-    /// 在拖拽的过程中，改变 contentInset 可能会导致页面抖动。
-    /// 因为 scrollView 在滚动区域内，手势平移的距离，就是页面滚动的距离，
-    /// 但是在弹性区域内，滚动的距离不等于平移的距离，当 contentInset 改变后
-    /// 手势平移的距离虽然没有变，但是由于可滚动区域发生了改变，
-    /// 根据可滚动区域计算得到的页面平移的距离改变了，从而导致页面发生抖动。
-    /// 但是由于这个变化不是立即触发的，无法在改变后立即修复页面位置，所以不能在
-    /// 用户触摸的过程中调整 contentInset 故有此状态。
     if (_scrollView.isDragging) {
         _header.state = XZRefreshStateWillRefreshing;
         mainAsync(completion, NO);
     } else {
+        // 先修改状态，避免后续操作引起的 -scrollViewDidScroll: 代理方法错误判断状态问题。
         _header.state = XZRefreshStateRefreshing;
         
-        CGPoint const contentOffset = _scrollView.contentOffset;
+        // 将刷新高度 refreshHeight 增加到 .contentInset 属性中：
         // 1、增加到 contentInset 的边距会叠加到 adjustedContentInset 中
-        // 2、改变 contentInset 会触发 didScroll 方法，可能改变 contentOffset，所以必须先改变 state
-        _scrollView.contentInset  = UIEdgeInsetsIncreaseTop(_scrollView.contentInset, _header.refreshHeight);
+        // 2、改变 contentInset 会触发 didScroll 事件，且可能会改变 contentOffset 因此需要记录原始值，然后恢复
+        // 3、设置 bounds 不会触发 didScroll 事件，但是子视图也不会更新，比如在 tableView 底部触发刷新，页面回到顶部时，没有加载cell
+        CGPoint const contentOffset = _scrollView.contentOffset;
+        _scrollView.contentInset = UIEdgeInsetsIncreaseTop(_scrollView.contentInset, _header.refreshHeight);
         _scrollView.verticalScrollIndicatorInsets = UIEdgeInsetsIncreaseTop(_scrollView.verticalScrollIndicatorInsets, _header.refreshHeight);
         _scrollView.contentOffset = contentOffset;
         
-        // 因为动画的高度不一定是下拉刷新所需的距离，所以使用 -setContentOffset:animated: 方法未必能触发刷新。
+        // 因为动画的高度不一定是下拉刷新所需的距离，所以使用 -setContentOffset:animated: 方法可能不会触发刷新状态。
         // 因此这里使用 UIViewAnimation 的方法，直接进入下拉刷新状态。
         UIViewAnimate(animated, ^{
-            [self layoutHeaderRefreshViewIfNeeded:NO];
+            [self layoutHeaderRefreshViewIfNeeded:YES];
             _scrollView.contentOffset = CGPointMake(0, self->_header.contentOffsetY);
         }, completion);
     }
@@ -676,20 +683,19 @@ static void const * const _context = &_context;
         _header.state = XZRefreshStateWillRecovering;
         // 使用 YES 标记，以通知刷新视图执行结束动画
         [_header.refreshView scrollView:_scrollView willEndRefreshing:YES];
-        // 理论上来说，此步骤并无必要。
-        [self layoutHeaderRefreshViewIfNeeded:NO];
         // NO 表示结束的动画在回调执行时没有完成
         mainAsync(completion, NO);
     } else {
+        // 理论上应该先改状态，然后再执行其它操作。
         // 恢复 contentInset
         // 设置 contentInset/contentOffset 会触发 -scrollViewDidScroll: 方法。
         // 但是此时处于 refreshing 状态，-scrollViewDidScroll: 不执行任何操作。
         _scrollView.contentInset = UIEdgeInsetsIncreaseTop(_scrollView.contentInset, -_header.refreshHeight);
         _scrollView.verticalScrollIndicatorInsets = UIEdgeInsetsIncreaseTop(_scrollView.verticalScrollIndicatorInsets, -_header.refreshHeight);
         
+        // 刷新视图不在展示区域内时，不需要展示结束刷新的动画
         if (contentOffset.y >= _header.contentOffsetY + _header.refreshHeight) {
             _scrollView.contentOffset = contentOffset;
-            // 头部刷新视图不在展示区域内，不需要展示结束动画
             _header.state = XZRefreshStateRecovering;
             [_header.refreshView scrollView:_scrollView willEndRefreshing:NO];
             

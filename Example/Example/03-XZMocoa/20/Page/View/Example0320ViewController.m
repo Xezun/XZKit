@@ -61,17 +61,17 @@
 
 - (void)headerRefreshingChanged:(Example0320ViewModel *)viewModel {
     if (viewModel.isHeaderRefreshing) {
-        [self.tableView.contentView.xz_headerRefreshView beginRefreshing];
+        [self.tableView.contentView.xz_headerRefreshView beginRefreshing:YES];
     } else {
-        [self.tableView.contentView.xz_headerRefreshView endRefreshing];
+        [self.tableView.contentView.xz_headerRefreshView endRefreshing:YES];
     }
 }
 
 - (void)footerRefreshingChanged:(Example0320ViewModel *)viewModel {
     if (viewModel.isFooterRefreshing) {
-        [self.tableView.contentView.xz_footerRefreshView beginRefreshing];
+        [self.tableView.contentView.xz_footerRefreshView beginRefreshing:YES];
     } else {
-        [self.tableView.contentView.xz_footerRefreshView endRefreshing];
+        [self.tableView.contentView.xz_footerRefreshView endRefreshing:YES];
     }
 }
 
