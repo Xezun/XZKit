@@ -13,11 +13,13 @@ NS_ASSUME_NONNULL_BEGIN
 @class XZRefreshView;
 @protocol XZRefreshDelegate;
 
+#define XZRefreshStateContentInsets (1 << 10)
+
 /// 刷新状态
 typedef NS_ENUM(NSUInteger, XZRefreshState) {
     /// 普通状态，非刷新状态。
     /// 此状态时，UIScrollView 未修改 contentInset 属性。
-    XZRefreshStatePendinging,
+    XZRefreshStatePendinging     = (1 << 1),
     /// 已经开始刷新，但是由于仍然处于手势拖拽状态，尚未调整 UIScrollView 的 contentInset 属性。
     ///
     /// **在拖拽的过程中，改变 contentInset 可能会导致页面抖动。**
@@ -25,16 +27,16 @@ typedef NS_ENUM(NSUInteger, XZRefreshState) {
     /// 所以当 contentInset 改变后，手势平移的距离虽然没有变，但是由滚动区域发生了改变，在弹性区域的滚动距离就发生改变，从而页面滚动距离改变，发生页面抖动。
     /// 但是由于这个变化不是立即触发的，无法在改变后立即修复页面位置，所以无法在用户触摸的过程中调整 contentInset 属性，
     /// 需要在手势结束后，即 `-scrollViewWillEndDragging:` 才能更新 contentInset 属性。
-    XZRefreshStateWillRefreshing,
+    XZRefreshStateWillRefreshing = (1 << 2),
     /// 正在刷新。
     /// 为展示刷新视图，调整了 UIScrollView 的 contentInset 属性。
-    XZRefreshStateRefreshing,
+    XZRefreshStateRefreshing     = (1 << 3) | XZRefreshStateContentInsets,
     /// 正在恢复状态，但是仍在拖拽中，尚未恢复 UIScrollView 的 contentInsets 属性，需要在 willEndDragging 再执行恢复操作。
-    XZRefreshStateWillRecovering,
+    XZRefreshStateWillRecovering = (1 << 4) | XZRefreshStateContentInsets,
     /// 正在复原。刷新已经结束，且恢复了 UIScrollView 的 contentInset 属性，但是页面仍然处于动画，或减速滚动的过程中。
     /// > 结束刷新状态时，如果 UIScrollView 处于拖拽状态，由于修改 contentInset 属性可能会造成页面抖动，所以恢复 contentInset 的操作将在手势结束后。
     /// > 结束刷新的动画过程中，也是此状态。
-    XZRefreshStateRecovering
+    XZRefreshStateRecovering     = (1 << 5)
 };
 
 /// 记录刷新过程中的环境值，这是一个值对象，不负责任何事件逻辑。

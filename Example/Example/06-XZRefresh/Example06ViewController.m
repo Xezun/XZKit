@@ -14,20 +14,57 @@
 @interface Example06ViewController () <XZRefreshDelegate> {
     NSInteger _numberOfCells;
     CGFloat _rowHeight;
+    
+    UIView *_top;
+    UIView *_bottom;
 }
 @end
 
 @implementation Example06ViewController
 
+- (void)dealloc {
+    [_top removeFromSuperview];
+    [_bottom removeFromSuperview];
+}
+
 - (void)viewDidLoad {
     [super viewDidLoad];
+    
+    UIWindow *window = ((UIWindowScene *)(UIApplication.sharedApplication.connectedScenes.anyObject)).keyWindow;
+//    _top = [[UIView alloc] init];
+//    _top.backgroundColor = rgba(0xffaaaa, 0.5);
+//    [window addSubview:_top];
+    
+    _bottom = [[UIView alloc] init];
+    _bottom.backgroundColor = rgba(0xffaaaa, 0.5);
+    [window addSubview:_bottom];
+    
     
     _rowHeight = 57.0;
     _numberOfCells = 10;
     
+    self.tableView.tableFooterView = [[UIView alloc] init];
+    
+    self.tableView.contentInset = UIEdgeInsetsMake(0, 0, 10, 0);
+    self.tableView.xz_footerRefreshView.backgroundColor = UIColor.orangeColor;
     // 使用默认样式
     self.tableView.xz_headerRefreshView.adjustment = XZRefreshAdjustmentNone;
     self.tableView.xz_footerRefreshView.adjustment = XZRefreshAdjustmentNone;
+}
+
+- (void)viewDidLayoutSubviews {
+    [super viewDidLayoutSubviews];
+    
+    CGRect const frame = self.view.frame;
+    UIEdgeInsets const insets = self.view.safeAreaInsets;
+    _top.frame = CGRectMake(0, 0, frame.size.width, insets.top);
+    [_top.superview bringSubviewToFront:_top];
+    _bottom.frame = CGRectMake(0, frame.size.height - insets.bottom, frame.size.width, insets.bottom);
+    [_bottom.superview bringSubviewToFront:_bottom];
+}
+
+- (void)viewSafeAreaInsetsDidChange {
+    [super viewSafeAreaInsetsDidChange];
 }
 
 - (void)scrollView:(__kindof UIScrollView *)scrollView headerDidBeginRefreshing:(XZRefreshView *)refreshView {

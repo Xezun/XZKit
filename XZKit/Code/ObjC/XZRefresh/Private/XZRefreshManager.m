@@ -474,37 +474,63 @@ static void const * const _context = &_context;
     switch (_footer.state) {
         case XZRefreshStateRefreshing:
         case XZRefreshStateWillRecovering: {
-            CGFloat const oldHeight = _footer.refreshHeight;
-            CGFloat const newHeight = _refreshView.refreshHeight;
-            if (newHeight != oldHeight) {
-                _scrollView.contentInset = UIEdgeInsetsIncreaseBottom(_scrollView.contentInset, newHeight - oldHeight);
-                _footer.refreshHeight = newHeight;
+            CGFloat const oldRefreshHeight = _footer.refreshHeight;
+            CGFloat const newRefreshHeight = _refreshView.refreshHeight;
+            if (newRefreshHeight != oldRefreshHeight) {
+                _scrollView.contentInset = UIEdgeInsetsIncreaseBottom(_scrollView.contentInset, newRefreshHeight - oldRefreshHeight);
+                _footer.refreshHeight = newRefreshHeight;
             }
             _footer.adjustment = _refreshView.adjustment;
             _footer.offset     = _refreshView.offset;
             
-            // 如果页面滚动高度不满一屏，底部的偏移和边距都
-            // 底部在刷新的过程中，刷新高度已经附加到了边距之中，
-            // 因此可通过实际边距进行计算，判断可滚动区域是否满足一屏，并决定如何布局刷新视图。
-            UIEdgeInsets const contentInset = _scrollView.adjustedContentInset;
+            // 在刷新过程中 .contentInset.bottom 的值为“原始值 + 刷新高度”
+            // 因此需要计算出原始值，然后再判断页面高度是否满足一屏。
+            UIEdgeInsets const adjustedContentInset = UIEdgeInsetsIncreaseBottom(_scrollView.adjustedContentInset, -_footer.refreshHeight);
+            UIEdgeInsets const contentInset = UIEdgeInsetsIncreaseBottom(_scrollView.contentInset, -_footer.refreshHeight);
+            CGFloat      const minPageHeight = bounds.size.height - adjustedContentInset.top - adjustedContentInset.bottom - _footer.refreshHeight;
+            
             UIEdgeInsets const layoutInsets = _footer.layoutInsets;
-            BOOL         const isPageFilled = ((contentInset.top + contentSize.height + layoutInsets.bottom) >= bounds.size.height);
+            BOOL         const isPageFilled = contentSize.height >= minPageHeight; // ((contentInset.top + contentSize.height + (layoutInsets.bottom - _footer.refreshHeight)) >= bounds.size.height);
+            
+//            CGFloat const layoutHeight = MAX(minPageSizeH, contentSize.height);
             
             CGFloat const w = CGRectGetWidth(bounds);
             CGFloat const h = CGRectGetHeight(_refreshView.frame);
             CGFloat const x = CGRectGetMinX(bounds);
-            CGFloat const y = (isPageFilled ? (contentSize.height + layoutInsets.bottom - _footer.refreshHeight) : (bounds.size.height - contentInset.top - _footer.refreshHeight));
-            CGFloat const contentOffsetY = (isPageFilled ? (contentSize.height + contentInset.bottom - bounds.size.height) : (-contentInset.top));
+            
+            CGFloat y = 0;
+            CGFloat contentOffsetY = 0;
+//            CGFloat const y = layoutHeight + layoutInsets.bottom - _footer.refreshHeight;
+            if (isPageFilled) {
+                y = contentSize.height + layoutInsets.bottom - _footer.refreshHeight;
+                contentOffsetY = contentSize.height + adjustedContentInset.bottom - bounds.size.height;
+            } else {
+                switch (_footer.adjustment) {
+                    case XZRefreshAdjustmentAutomatic:
+                        y = minPageHeight + adjustedContentInset.bottom;
+                        break;
+                    case XZRefreshAdjustmentNormal:
+                        y = minPageHeight + contentInset.bottom;
+                        break;
+                    case XZRefreshAdjustmentNone:
+                        y = minPageHeight;
+                        break;
+                }
+                contentOffsetY = -adjustedContentInset.top;
+            }
+//            CGFloat const y = (isPageFilled ? (contentSize.height + layoutInsets.bottom - _footer.refreshHeight) : (bounds.size.height - contentInset.top - _footer.refreshHeight));
+//            CGFloat const contentOffsetY = (isPageFilled ? (contentSize.height + contentInset.bottom - bounds.size.height) : (-contentInset.top));
+//            CGFloat const contentOffsetY = MAX(-contentInset.top, contentSize.height + contentInset.bottom - bounds.size.height);
             CGRect  const frame = CGRectMake(x, y + _footer.offset, w, h);
             
             _footer.frame = frame;
             _footer.contentOffsetY = contentOffsetY;
-            _footer.needsAnimatedTransitioning = (contentInset.top + contentSize.height < bounds.size.height);
+            _footer.needsAnimatedTransitioning = (adjustedContentInset.top + contentSize.height < bounds.size.height);
             _refreshView.frame = frame;
             
             _frameSize = bounds.size;
             _contentSize = contentSize;
-            _adjustedContentInsets = contentInset;
+            _adjustedContentInsets = adjustedContentInset;
             break;
         }
         case XZRefreshStatePendinging:
@@ -514,28 +540,39 @@ static void const * const _context = &_context;
             _footer.adjustment    = _refreshView.adjustment;
             _footer.offset        = _refreshView.offset;
             
-            UIEdgeInsets const layoutInsets = _footer.layoutInsets;
-            UIEdgeInsets const contentInset = _scrollView.adjustedContentInset;
-            
             // 顶部在刷新时，顶部的边距需要减去刷新高度
-            CGFloat const top = (^CGFloat(CGFloat top, XZRefreshContext *_header) {
-                switch (_header.state) {
-                    case XZRefreshStateRefreshing:
-                    case XZRefreshStateWillRecovering: {
-                        return top - _header.refreshHeight;
-                    }
-                    default: {
-                        return top;
-                    }
-                }
-            })(contentInset.top, _header);
+            BOOL const isHeaderRefreshing = (_header.state & XZRefreshStateContentInsets);
+            UIEdgeInsets const layoutInsets = _footer.layoutInsets;
+            UIEdgeInsets const adjustedContentInset = isHeaderRefreshing ? UIEdgeInsetsIncreaseTop(_scrollView.adjustedContentInset, -_header.refreshHeight) : _scrollView.adjustedContentInset;
+            UIEdgeInsets const contentInset = isHeaderRefreshing ? UIEdgeInsetsIncreaseTop(_scrollView.contentInset, -_header.refreshHeight) : _scrollView.contentInset;
             
-            BOOL const mode = (top + contentSize.height + layoutInsets.bottom < bounds.size.height);
+            CGFloat      const minPageHeight = bounds.size.height - adjustedContentInset.top - adjustedContentInset.bottom;
+            
+            BOOL const isPageFilled = contentSize.height >= minPageHeight; //(adjustedContentInset.top + contentSize.height + layoutInsets.bottom < bounds.size.height);
             CGFloat const w = CGRectGetWidth(bounds);
             CGFloat const h = CGRectGetHeight(_refreshView.frame);
             CGFloat const x = CGRectGetMinX(bounds);
-            CGFloat const y = (mode ? (bounds.size.height - top) : (contentSize.height + layoutInsets.bottom));
-            CGFloat const contentOffsetY = (mode ? -top : contentSize.height + contentInset.bottom - bounds.size.height);
+            //CGFloat const y = (isPageFilled ? (bounds.size.height - adjustedContentInset.top) : (contentSize.height + layoutInsets.bottom));
+            CGFloat y = 0;
+            CGFloat contentOffsetY = 0;
+            if (isPageFilled) {
+                y = contentSize.height + layoutInsets.bottom;
+                contentOffsetY = contentSize.height + adjustedContentInset.bottom - bounds.size.height;
+            } else {
+                switch (_footer.adjustment) {
+                    case XZRefreshAdjustmentAutomatic:
+                        y = minPageHeight + adjustedContentInset.bottom;
+                        break;
+                    case XZRefreshAdjustmentNormal:
+                        y = minPageHeight + contentInset.bottom;
+                        break;
+                    case XZRefreshAdjustmentNone:
+                        y = minPageHeight;
+                        break;
+                }
+                contentOffsetY = -adjustedContentInset.top;
+            }
+//            CGFloat const contentOffsetY = (isPageFilled ? -adjustedContentInset.top : contentSize.height + adjustedContentInset.bottom - bounds.size.height);
             CGRect  const frame = CGRectMake(x, y + _footer.offset, w, h);
             
             _footer.frame = frame;
@@ -545,7 +582,7 @@ static void const * const _context = &_context;
             
             _frameSize = bounds.size;
             _contentSize = contentSize;
-            _adjustedContentInsets = contentInset;
+            _adjustedContentInsets = adjustedContentInset;
             break;
         }
     }
