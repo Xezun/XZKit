@@ -46,7 +46,9 @@
     self.tableView.tableFooterView = [[UIView alloc] init];
     
     self.tableView.contentInset = UIEdgeInsetsMake(0, 0, 10, 0);
-    self.tableView.xz_footerRefreshView.backgroundColor = UIColor.orangeColor;
+    self.tableView.xz_footerRefreshView.layer.borderColor = UIColor.blackColor.CGColor;
+    self.tableView.xz_footerRefreshView.layer.borderWidth = 1.0;
+    
     // 使用默认样式
     self.tableView.xz_headerRefreshView.adjustment = XZRefreshAdjustmentNone;
     self.tableView.xz_footerRefreshView.adjustment = XZRefreshAdjustmentNone;
@@ -55,16 +57,18 @@
 - (void)viewDidLayoutSubviews {
     [super viewDidLayoutSubviews];
     
+
+}
+
+- (void)viewSafeAreaInsetsDidChange {
+    [super viewSafeAreaInsetsDidChange];
+    
     CGRect const frame = self.view.frame;
     UIEdgeInsets const insets = self.view.safeAreaInsets;
     _top.frame = CGRectMake(0, 0, frame.size.width, insets.top);
     [_top.superview bringSubviewToFront:_top];
     _bottom.frame = CGRectMake(0, frame.size.height - insets.bottom, frame.size.width, insets.bottom);
     [_bottom.superview bringSubviewToFront:_bottom];
-}
-
-- (void)viewSafeAreaInsetsDidChange {
-    [super viewSafeAreaInsetsDidChange];
 }
 
 - (void)scrollView:(__kindof UIScrollView *)scrollView headerDidBeginRefreshing:(XZRefreshView *)refreshView {
@@ -166,19 +170,25 @@
 
 - (IBAction)unwindFromInsertRowAction:(UIStoryboardSegue *)unwindSegue {
     dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.5 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
-        NSIndexPath *indexPath = [NSIndexPath indexPathForRow:self->_numberOfCells inSection:0];
-        self->_numberOfCells += 1;
-        [self.tableView insertRowsAtIndexPaths:@[indexPath] withRowAnimation:(UITableViewRowAnimationLeft)];
+        [UIView animateWithDuration:XZRefreshAnimationDuration animations:^{
+            NSIndexPath *indexPath = [NSIndexPath indexPathForRow:self->_numberOfCells inSection:0];
+            self->_numberOfCells += 1;
+            [self.tableView insertRowsAtIndexPaths:@[indexPath] withRowAnimation:(UITableViewRowAnimationLeft)];
+            [self.tableView xz_layoutRefreshViewsIfNeeded];
+        }];
     });
 }
 
 - (IBAction)unwindFromDeleteRowAction:(UIStoryboardSegue *)unwindSegue {
     dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.5 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
-        if (self->_numberOfCells > 0) {
-            self->_numberOfCells -= 1;
-            NSIndexPath *indexPath = [NSIndexPath indexPathForRow:self->_numberOfCells inSection:0];
-            [self.tableView deleteRowsAtIndexPaths:@[indexPath] withRowAnimation:(UITableViewRowAnimationRight)];
-        }
+        [UIView animateWithDuration:XZRefreshAnimationDuration animations:^{
+            if (self->_numberOfCells > 0) {
+                self->_numberOfCells -= 1;
+                NSIndexPath *indexPath = [NSIndexPath indexPathForRow:self->_numberOfCells inSection:0];
+                [self.tableView deleteRowsAtIndexPaths:@[indexPath] withRowAnimation:(UITableViewRowAnimationRight)];
+            }
+            [self.tableView xz_layoutRefreshViewsIfNeeded];
+        }];
     });
 }
 
