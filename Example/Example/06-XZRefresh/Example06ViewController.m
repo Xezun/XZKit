@@ -11,13 +11,16 @@
 @import XZRefresh;
 @import XZExtensions;
 
-@interface Example06ViewController () <XZRefreshDelegate> {
+@interface Example06ViewController () <XZRefreshDelegate, UITableViewDataSource> {
     NSInteger _numberOfCells;
     CGFloat _rowHeight;
     
     UIView *_top;
     UIView *_bottom;
 }
+
+@property (weak, nonatomic) IBOutlet UITableView *tableView;
+
 @end
 
 @implementation Example06ViewController
@@ -29,25 +32,14 @@
 
 - (void)viewDidLoad {
     [super viewDidLoad];
-    
-    UIWindow *window = ((UIWindowScene *)(UIApplication.sharedApplication.connectedScenes.anyObject)).keyWindow;
-//    _top = [[UIView alloc] init];
-//    _top.backgroundColor = rgba(0xffaaaa, 0.5);
-//    [window addSubview:_top];
-    
-    _bottom = [[UIView alloc] init];
-    _bottom.backgroundColor = rgba(0xffaaaa, 0.5);
-    [window addSubview:_bottom];
-    
-    
+
     _rowHeight = 57.0;
     _numberOfCells = 10;
     
     self.tableView.tableFooterView = [[UIView alloc] init];
     
     self.tableView.contentInset = UIEdgeInsetsMake(0, 0, 10, 0);
-    self.tableView.xz_footerRefreshView.layer.borderColor = UIColor.blackColor.CGColor;
-    self.tableView.xz_footerRefreshView.layer.borderWidth = 1.0;
+    self.tableView.xz_footerRefreshView.backgroundColor = rgb(0xaaaaaa);
     
     // 使用默认样式
     self.tableView.xz_headerRefreshView.adjustment = XZRefreshAdjustmentNone;
@@ -56,8 +48,6 @@
 
 - (void)viewDidLayoutSubviews {
     [super viewDidLayoutSubviews];
-    
-
 }
 
 - (void)viewSafeAreaInsetsDidChange {
@@ -65,10 +55,9 @@
     
     CGRect const frame = self.view.frame;
     UIEdgeInsets const insets = self.view.safeAreaInsets;
-    _top.frame = CGRectMake(0, 0, frame.size.width, insets.top);
-    [_top.superview bringSubviewToFront:_top];
-    _bottom.frame = CGRectMake(0, frame.size.height - insets.bottom, frame.size.width, insets.bottom);
-    [_bottom.superview bringSubviewToFront:_bottom];
+    
+    _rowHeight = (frame.size.height - insets.top - insets.bottom) / 10;
+    [self.tableView reloadData];
 }
 
 - (void)scrollView:(__kindof UIScrollView *)scrollView headerDidBeginRefreshing:(XZRefreshView *)refreshView {
@@ -170,10 +159,10 @@
 
 - (IBAction)unwindFromInsertRowAction:(UIStoryboardSegue *)unwindSegue {
     dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.5 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+        NSIndexPath *indexPath = [NSIndexPath indexPathForRow:self->_numberOfCells inSection:0];
+        self->_numberOfCells += 1;
+        [self.tableView insertRowsAtIndexPaths:@[indexPath] withRowAnimation:(UITableViewRowAnimationLeft)];
         [UIView animateWithDuration:XZRefreshAnimationDuration animations:^{
-            NSIndexPath *indexPath = [NSIndexPath indexPathForRow:self->_numberOfCells inSection:0];
-            self->_numberOfCells += 1;
-            [self.tableView insertRowsAtIndexPaths:@[indexPath] withRowAnimation:(UITableViewRowAnimationLeft)];
             [self.tableView xz_layoutRefreshViewsIfNeeded];
         }];
     });
@@ -181,14 +170,14 @@
 
 - (IBAction)unwindFromDeleteRowAction:(UIStoryboardSegue *)unwindSegue {
     dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.5 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
-        [UIView animateWithDuration:XZRefreshAnimationDuration animations:^{
-            if (self->_numberOfCells > 0) {
-                self->_numberOfCells -= 1;
-                NSIndexPath *indexPath = [NSIndexPath indexPathForRow:self->_numberOfCells inSection:0];
-                [self.tableView deleteRowsAtIndexPaths:@[indexPath] withRowAnimation:(UITableViewRowAnimationRight)];
-            }
-            [self.tableView xz_layoutRefreshViewsIfNeeded];
-        }];
+        if (self->_numberOfCells > 0) {
+            self->_numberOfCells -= 1;
+            NSIndexPath *indexPath = [NSIndexPath indexPathForRow:self->_numberOfCells inSection:0];
+            [self.tableView deleteRowsAtIndexPaths:@[indexPath] withRowAnimation:(UITableViewRowAnimationRight)];
+            [UIView animateWithDuration:XZRefreshAnimationDuration animations:^{
+                [self.tableView xz_layoutRefreshViewsIfNeeded];
+            }];
+        }
     });
 }
 
