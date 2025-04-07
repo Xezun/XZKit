@@ -44,7 +44,7 @@
     ];
     
     CGRect const bounds = self.bounds;
-    CGFloat const x = CGRectGetMidX(bounds) - XZRefreshViewDotWidth * 1.5;
+    CGFloat const x = CGRectGetMidX(bounds) - XZRefreshViewDotWidth * 3.0 * 0.5;
     CGFloat const y = CGRectGetMidY(bounds) - XZRefreshViewDotWidth * 0.5;
     
     _dotsView = [[UIView alloc] initWithFrame:CGRectMake(x, y, XZRefreshViewDotWidth * 3.0, XZRefreshViewDotWidth)];
@@ -101,13 +101,13 @@
         _dot1Layer.transform = CATransform3DMakeScale(0, 0, 1.0);
         _dot2Layer.transform = CATransform3DScale(CATransform3DMakeTranslation(-XZRefreshViewDotWidth, 0, 0), 0, 0, 1.0);
     } else if (value < 1.0) {
-        // 变大进场
+        // 变大进场，放大到 2 倍
         CGFloat const scale = 2.0 * ((value - 0.5) * 2.0);
         _dot0Layer.transform = CATransform3DScale(CATransform3DMakeTranslation(+XZRefreshViewDotWidth, 0, 0), scale, scale, 1.0);
         _dot1Layer.transform = CATransform3DMakeScale(scale, scale, 1.0);
         _dot2Layer.transform = CATransform3DScale(CATransform3DMakeTranslation(-XZRefreshViewDotWidth, 0, 0), scale, scale, 1.0);
     } else if (value < 1.5) {
-        // 蓄力刷新
+        // 蓄力刷新，缩小到 1 倍，并分散开
         CGFloat const trans = 1.0 - (value - 1.0) * 2.0;
         CGFloat const scale = 1.0 + 1.0 * MAX(0, (trans * 3.0 - 2.0));
         _dot0Layer.transform = CATransform3DScale(CATransform3DMakeTranslation(+XZRefreshViewDotWidth * trans, 0, 0), scale, scale, 1.0);

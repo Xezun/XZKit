@@ -12,7 +12,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface Example06RefreshSettingsViewController : UITableViewController
 
-@property (nonatomic, strong) XZRefreshView *refreshView;
+@property (nonatomic, weak) XZRefreshView *refreshView;
 
 @end
 

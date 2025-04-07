@@ -32,18 +32,26 @@
 
 - (void)viewDidLoad {
     [super viewDidLoad];
+    
+    UINavigationBar * const navigationBar = self.navigationController.navigationBar;
+    UIImage *image = [UIImage xz_imageWithColor:UIColor.whiteColor];
+    if (@available(iOS 13.0, *)) {
+        UINavigationBarAppearance *appearance = [[UINavigationBarAppearance alloc] init];
+        appearance.backgroundImage = image;
+        appearance.titleTextAttributes = @{ NSForegroundColorAttributeName: UIColor.blackColor };
+        navigationBar.standardAppearance = appearance;
+        navigationBar.scrollEdgeAppearance = appearance;
+    } else {
+        [navigationBar setBackgroundImage:image forBarMetrics:(UIBarMetricsDefault)];
+    }
 
     _rowHeight = 57.0;
     _numberOfCells = 10;
     
-    self.tableView.tableFooterView = [[UIView alloc] init];
+    self.tableView.xz_headerRefreshView.backgroundColor = rgb(0xCCCCCC);
+    self.tableView.xz_footerRefreshView.backgroundColor = rgb(0xCCCCCC);
     
-    self.tableView.contentInset = UIEdgeInsetsMake(0, 0, 10, 0);
-    self.tableView.xz_footerRefreshView.backgroundColor = rgb(0xaaaaaa);
-    
-    // 使用默认样式
     self.tableView.xz_headerRefreshView.adjustment = XZRefreshAdjustmentNone;
-    self.tableView.xz_footerRefreshView.adjustment = XZRefreshAdjustmentNone;
 }
 
 - (void)viewDidLayoutSubviews {
@@ -61,7 +69,7 @@
 }
 
 - (void)scrollView:(__kindof UIScrollView *)scrollView headerDidBeginRefreshing:(XZRefreshView *)refreshView {
-    XZLog(@"%s", __PRETTY_FUNCTION__);
+//    XZLog(@"%s", __PRETTY_FUNCTION__);
     NSTimeInterval time = arc4random_uniform(20) * 0.1 + 2.0;
     dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(time * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
         self->_numberOfCells = arc4random_uniform(10) + 5;
@@ -71,7 +79,7 @@
 }
 
 - (void)scrollView:(__kindof UIScrollView *)scrollView footerDidBeginRefreshing:(XZRefreshView *)refreshView {
-    XZLog(@"%s", __PRETTY_FUNCTION__);
+//    XZLog(@"%s", __PRETTY_FUNCTION__);
     NSTimeInterval time = arc4random_uniform(20) * 0.1 + 2.0;
     dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(time * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
         NSInteger old = self->_numberOfCells;
@@ -95,7 +103,7 @@
 }
 
 - (void)scrollViewDidScroll:(UIScrollView *)scrollView {
-    XZLog(@"contentOffset => %@, adjustedContentInset => %@", NSStringFromCGPoint(scrollView.contentOffset), NSStringFromUIEdgeInsets(scrollView.adjustedContentInset));
+//    XZLog(@"contentOffset => %@, adjustedContentInset => %@", NSStringFromCGPoint(scrollView.contentOffset), NSStringFromUIEdgeInsets(scrollView.adjustedContentInset));
 }
 
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView {
@@ -127,9 +135,7 @@
 - (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {
     if ([segue.identifier isEqualToString:@"settings"]) {
         Example06SettingsViewController *vc = segue.destinationViewController;
-        
-        vc.headerRefreshView = self.tableView.xz_headerRefreshView;
-        vc.footerRefreshView = self.tableView.xz_footerRefreshView;
+        vc.scrollView = self.tableView;
     }
 }
 

@@ -69,31 +69,6 @@
     return self;
 }
 
-- (UIEdgeInsets)layoutInsets {
-    switch (_adjustment) {
-        case XZRefreshAdjustmentAutomatic: {
-            return _scrollView.adjustedContentInset;
-        }
-        case XZRefreshAdjustmentNormal: {
-            return _scrollView.contentInset;
-        }
-        case XZRefreshAdjustmentNone: {
-            switch (_state) {
-                case XZRefreshStateRefreshing:
-                case XZRefreshStateWillRecovering:
-                    return UIEdgeInsetsMake(_refreshHeight, 0, 0, 0);
-                default:
-                    return UIEdgeInsetsZero;
-            }
-            break;
-        }
-        default: {
-            NSString *reason = [NSString stringWithFormat:@"属性 adjustment 的值错误：%ld", (long)_adjustment];
-            @throw [NSException exceptionWithName:NSGenericException reason:reason userInfo:nil];
-        }
-    }
-}
-
 @end
 
 @implementation XZRefreshFooterContext
@@ -105,31 +80,6 @@
         _contentOffsetY = +CGFLOAT_MAX;
     }
     return self;
-}
-
-- (UIEdgeInsets)layoutInsets {
-    switch (_adjustment) {
-        case XZRefreshAdjustmentAutomatic: {
-            return _scrollView.adjustedContentInset;
-        }
-        case XZRefreshAdjustmentNormal: {
-            return _scrollView.contentInset;
-        }
-        case XZRefreshAdjustmentNone: {
-            switch (_state) {
-                case XZRefreshStateRefreshing:
-                case XZRefreshStateWillRecovering:
-                    return UIEdgeInsetsMake(0, 0, _refreshHeight, 0);
-                default:
-                    return UIEdgeInsetsZero;
-            }
-            break;
-        }
-        default: {
-            NSString *reason = [NSString stringWithFormat:@"属性 adjustment 的值错误：%ld", (long)_adjustment];
-            @throw [NSException exceptionWithName:NSGenericException reason:reason userInfo:nil];
-        }
-    }
 }
 
 @end

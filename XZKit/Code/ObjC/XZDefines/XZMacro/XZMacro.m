@@ -12,19 +12,25 @@ void XZLogv(const char *file, const int line, const char *function, NSString *fo
     va_start(arguments, format);
     NSString * const message = [[NSString alloc] initWithFormat:format arguments:arguments];
     va_end(arguments);
+    
+    NSUInteger const messageLength = message.length;
     NSString * const metrics = [NSString stringWithFormat:@"⌘ %s(%d) ⌘ %s ⌘", file, line, function];
     
-    // 总长度小于 1000 直接输出，超过 1000 则分批输出
-    NSUInteger const messageLength = message.length;
-    if (messageLength + metrics.length <= 1000) {
+    if (messageLength == 0) {
+        NSLog(@"%@", metrics);
+        return;
+    }
+    
+    // 总长度小于 1015 直接输出，超过 1015 则分批输出
+    if (messageLength + metrics.length <= 1015) {
         NSLog(@"%@ \n%@", metrics, message);
         return;
     }
     
-    // 日志杂项
+    // 输出杂项
     NSLog(@"%@", metrics);
     
-    // 日志内容，分批输出规则：
+    // 输出日志内容，分批规则：
     // 1、单次最多输出 1000 长度的字符，且避免切割自然字符。
     // 2、尽量以换行符进行切割，除非没有换行符。
     // 3、强制切割的位置后，不是换行符，避免出现连续的空行。

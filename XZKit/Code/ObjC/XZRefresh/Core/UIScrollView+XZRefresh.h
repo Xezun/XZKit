@@ -14,11 +14,11 @@ NS_ASSUME_NONNULL_BEGIN
 @interface UIScrollView (XZRefresh)
 
 /// 头部刷新视图。
-/// @discussion 懒加载，默认为 Style1 刷新样式。
+/// > 懒加载，默认为 Style1 刷新样式。
 @property (nonatomic, strong, null_resettable, setter=xz_setHeaderRefreshView:) __kindof XZRefreshView *xz_headerRefreshView NS_SWIFT_NAME(headerRefreshView);
 
 /// 尾部刷新视图。
-/// @discussion 懒加载，默认为 Style2 刷新样式。
+/// > 懒加载，默认为 Style2 刷新样式。
 @property (nonatomic, strong, null_resettable, setter=xz_setFooterRefreshView:) __kindof XZRefreshView *xz_footerRefreshView NS_SWIFT_NAME(footerRefreshView);
 
 /// 头部刷新视图，非懒加载。

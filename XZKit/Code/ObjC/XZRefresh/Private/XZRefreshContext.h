@@ -80,10 +80,6 @@ typedef NS_ENUM(NSUInteger, XZRefreshState) {
 /// 刷新视图布局依赖的必须属性：刷新视图相对正常位置的偏移。
 @property (nonatomic) CGFloat offset;
 
-/// 根据 refreshHeight、adjustment、offset 的当前值，计算刷新视图布局所用的边距值。
-/// > 读取此属性，必须先更新上述所依赖的三个刷新，保证在读取属性时，上述三个属性的值是期望的值。
-//@property (nonatomic, readonly) UIEdgeInsets layoutInsets;
-
 @end
 
 NS_ASSUME_NONNULL_END
