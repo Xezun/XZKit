@@ -33,23 +33,23 @@
 - (void)viewDidLoad {
     [super viewDidLoad];
     
-    UINavigationBar * const navigationBar = self.navigationController.navigationBar;
-    UIImage *image = [UIImage xz_imageWithColor:UIColor.whiteColor];
-    if (@available(iOS 13.0, *)) {
-        UINavigationBarAppearance *appearance = [[UINavigationBarAppearance alloc] init];
-        appearance.backgroundImage = image;
-        appearance.titleTextAttributes = @{ NSForegroundColorAttributeName: UIColor.blackColor };
-        navigationBar.standardAppearance = appearance;
-        navigationBar.scrollEdgeAppearance = appearance;
-    } else {
-        [navigationBar setBackgroundImage:image forBarMetrics:(UIBarMetricsDefault)];
-    }
+//    UINavigationBar * const navigationBar = self.navigationController.navigationBar;
+//    UIImage *image = [UIImage xz_imageWithColor:UIColor.whiteColor];
+//    if (@available(iOS 13.0, *)) {
+//        UINavigationBarAppearance *appearance = [[UINavigationBarAppearance alloc] init];
+//        appearance.backgroundImage = image;
+//        appearance.titleTextAttributes = @{ NSForegroundColorAttributeName: UIColor.blackColor };
+//        navigationBar.standardAppearance = appearance;
+//        navigationBar.scrollEdgeAppearance = appearance;
+//    } else {
+//        [navigationBar setBackgroundImage:image forBarMetrics:(UIBarMetricsDefault)];
+//    }
 
     _rowHeight = 57.0;
     _numberOfCells = 10;
     
-    self.tableView.xz_headerRefreshView.backgroundColor = rgb(0xCCCCCC);
-    self.tableView.xz_footerRefreshView.backgroundColor = rgb(0xCCCCCC);
+    self.tableView.xz_headerRefreshView.backgroundColor = rgb(0xfeb5d7);
+    self.tableView.xz_footerRefreshView.backgroundColor = rgb(0xfeb5d7);
     
     self.tableView.xz_headerRefreshView.adjustment = XZRefreshAdjustmentNone;
 }
@@ -185,6 +185,28 @@
             }];
         }
     });
+}
+
+@end
+
+
+@interface Example06TableView : UITableView
+@end
+@implementation Example06TableView
+
+- (void)setFrame:(CGRect)frame {
+    XZLog(@"");
+    [super setFrame:frame];
+}
+
+- (void)setBounds:(CGRect)bounds {
+    XZLog(@"");
+    [super setBounds:bounds];
+}
+
+- (void)adjustedContentInsetDidChange {
+    XZLog(@"");
+    [super adjustedContentInsetDidChange];
 }
 
 @end

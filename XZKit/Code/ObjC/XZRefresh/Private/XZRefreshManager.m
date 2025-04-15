@@ -370,7 +370,7 @@ static void const * const _context = &_context;
     if (!force && !_header.needsLayout) {
         return;
     }
-    // 使用 defer 以忽略布局过程中可能触发的重新布局操作
+    // 在本次布局完成前，任何重新布局的操作都会被忽略
     defer(^{
         _header.needsLayout = NO;
     });
@@ -380,8 +380,8 @@ static void const * const _context = &_context;
         return;
     }
     
-    UIScrollView * const _scrollView  = self->_scrollView;
-    CGRect         const bounds       = _scrollView.bounds;
+    UIScrollView * const _scrollView = self->_scrollView;
+    CGRect         const bounds      = _scrollView.bounds;
     
     if (_header.state & XZRefreshStateContentInsetsMask) {
         // 更新刷新参数
@@ -859,14 +859,14 @@ static void const * const _context = &_context;
     // 现象：进入页面后 headerRefreshView 的初始状态不正确。
     // 因为初始化时，adjustedContentInset 为 zero，页面展示后，adjustedContentInset 更新先调用 -scrollViewDidScroll: 方法时，
     // 错误的将 .top 判断为下拉距离，从而展示了异常状态。
-    if (!UIEdgeInsetsEqualToEdgeInsets(scrollView.adjustedContentInset, _adjustedContentInsets)) {
-        [self layoutFooterRefreshViewIfNeeded:YES];
-        [self layoutHeaderRefreshViewIfNeeded:YES];
-    } else if (!CGSizeEqualToSize(scrollView.contentSize, _contentSize)) {
-        [self layoutFooterRefreshViewIfNeeded:YES];
-    } else if (!CGSizeEqualToSize(scrollView.bounds.size, _frameSize)) {
-        [self layoutFooterRefreshViewIfNeeded:YES];
-    }
+//    if (!UIEdgeInsetsEqualToEdgeInsets(scrollView.adjustedContentInset, _adjustedContentInsets)) {
+//        [self layoutFooterRefreshViewIfNeeded:YES];
+//        [self layoutHeaderRefreshViewIfNeeded:YES];
+//    } else if (!CGSizeEqualToSize(scrollView.contentSize, _contentSize)) {
+//        [self layoutFooterRefreshViewIfNeeded:YES];
+//    } else if (!CGSizeEqualToSize(scrollView.bounds.size, _frameSize)) {
+//        [self layoutFooterRefreshViewIfNeeded:YES];
+//    }
     
     // 进入了下拉刷新的区域
     if (contentOffset.y < _header.contentOffsetY) {
