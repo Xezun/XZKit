@@ -20,7 +20,7 @@
 // 否则，甚至即使 contentOffset 因此而发生改变，也不会触发 scrollViewDidScroll: 方法。
 // 直接修改 frame 或 bounds 属性，不会触发 setNeedsLayout 方法，而是直接触发 layoutSubviews 方法。
 
-#define mainAsync(completion, ...)  if(completion){dispatch_async(dispatch_get_main_queue(),^{completion(__VA_ARGS__);});}
+#define mainAsync(block, ...) {typeof(block) const handler=block;if(handler){dispatch_async(dispatch_get_main_queue(),^{handler(__VA_ARGS__);});}}
 
 UIKIT_STATIC_INLINE void UIViewAnimate(BOOL animated, void (^animations)(void), void (^completion)(BOOL finished)) {
     if (animated) {
@@ -1104,7 +1104,7 @@ static void const * const _context = &_context;
         // 那么在代理方法中立即结束刷新，会导致减速状态在此方法返回后立即完成，
         // 即 -scrollViewDidEndDecelerating: 方法在结束刷新的 UIView 动画结束前执行，
         // 从而导致退场动画被提前清理，丢失动画效果。
-        dispatch_async(dispatch_get_main_queue(), ^{
+        mainAsync(^{
             [delegate scrollView:_scrollView headerDidBeginRefreshing:_header.refreshView];
         });
     }
@@ -1138,7 +1138,7 @@ static void const * const _context = &_context;
     
     id<XZRefreshDelegate> const delegate = _footer.refreshView.delegate ?: (id)_scrollView.delegate;
     if ([delegate respondsToSelector:@selector(scrollView:footerDidBeginRefreshing:)]) {
-        dispatch_async(dispatch_get_main_queue(), ^{
+        mainAsync(^{
             [delegate scrollView:_scrollView footerDidBeginRefreshing:_footer.refreshView];
         });
     }
