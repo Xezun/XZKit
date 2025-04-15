@@ -13,17 +13,19 @@ NS_ASSUME_NONNULL_BEGIN
 @class XZRefreshView;
 @protocol XZRefreshDelegate;
 
-/// 已将 refreshHeight 合并到 contentInsets 中的状态掩码。
-#define XZRefreshStateContentInsets (1 << 8)
+/// 通过此掩码判断处于 XZRefreshState 的刷新状态时，UIScrollView 是否已将 refreshHeight 合并到 .contentInset 中。
+#define XZRefreshStateContentInsetsMask (1 << 8)
+/// 通过此掩码判断处于 XZRefreshState 的刷新状态时，UIScrollView 是否为“正在刷新中”的状态。
+#define XZRefreshStateRefreshingMask    (1 << 9)
 
 /// 刷新状态枚举，可通过掩码来区分状态。
 typedef NS_ENUM(NSUInteger, XZRefreshState) {
     /// 普通状态，非刷新状态。
+    ///
     /// 此状态时，UIScrollView 未修改 contentInset 属性。
+    ///
+    /// 此状态下，不处理 `scrollViewDidScroll:` 事件。
     XZRefreshStatePendinging     = (1 << 1),
-    /// 正在刷新。
-    /// 为展示刷新视图，调整了 UIScrollView 的 contentInset 属性。
-    XZRefreshStateRefreshing     = (1 << 2) | XZRefreshStateContentInsets,
     /// 已经开始刷新，但是由于仍然处于手势拖拽状态，尚未调整 UIScrollView 的 contentInset 属性。
     ///
     /// **在拖拽的过程中，改变 contentInset 可能会导致页面抖动。**
@@ -31,9 +33,12 @@ typedef NS_ENUM(NSUInteger, XZRefreshState) {
     /// 所以当 contentInset 改变后，手势平移的距离虽然没有变，但是由滚动区域发生了改变，在弹性区域的滚动距离就发生改变，从而页面滚动距离改变，发生页面抖动。
     /// 但是由于这个变化不是立即触发的，无法在改变后立即修复页面位置，所以无法在用户触摸的过程中调整 contentInset 属性，
     /// 需要在手势结束后，即 `-scrollViewWillEndDragging:` 才能更新 contentInset 属性。
-    XZRefreshStateWillRefreshing = (1 << 3) | XZRefreshStateRefreshing,
+    XZRefreshStateWillRefreshing = (1 << 2) | XZRefreshStateRefreshingMask,
+    /// 正在刷新。
+    /// 为展示刷新视图，调整了 UIScrollView 的 contentInset 属性。
+    XZRefreshStateRefreshing     = (1 << 3) | XZRefreshStateRefreshingMask | XZRefreshStateContentInsetsMask,
     /// 正在恢复状态，但是仍在拖拽中，尚未恢复 UIScrollView 的 contentInsets 属性，需要在 willEndDragging 再执行恢复操作。
-    XZRefreshStateWillRecovering = (1 << 4) | XZRefreshStateContentInsets,
+    XZRefreshStateWillRecovering = (1 << 4) | XZRefreshStateContentInsetsMask,
     /// 正在复原。刷新已经结束，且恢复了 UIScrollView 的 contentInset 属性，但是页面仍然处于动画，或减速滚动的过程中。
     /// > 结束刷新状态时，如果 UIScrollView 处于拖拽状态，由于修改 contentInset 属性可能会造成页面抖动，所以恢复 contentInset 的操作将在手势结束后。
     /// > 结束刷新的动画过程中，也是此状态。

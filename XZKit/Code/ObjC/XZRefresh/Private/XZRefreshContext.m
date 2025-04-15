@@ -51,11 +51,6 @@
     return self;
 }
 
-- (UIEdgeInsets)layoutInsets {
-    NSString *reason = @"应该使用 XZRefreshContext 的子类";
-    @throw [NSException exceptionWithName:NSGenericException reason:reason userInfo:nil];
-}
-
 @end
 
 @implementation XZRefreshHeaderContext
