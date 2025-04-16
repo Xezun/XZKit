@@ -7,7 +7,7 @@
 
 #import "XZMacro.h"
 
-void XZLogv(const char *file, const int line, const char *function, NSString *format, ...) {
+void __xz_log_imp__(const char *file, const int line, const char *function, NSString *format, ...) {
     va_list arguments;
     va_start(arguments, format);
     NSString * const message = [[NSString alloc] initWithFormat:format arguments:arguments];

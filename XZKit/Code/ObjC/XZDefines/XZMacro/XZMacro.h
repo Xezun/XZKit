@@ -141,7 +141,7 @@ _Pragma("clang diagnostic pop")
 #if XZ_FRAMEWORK
 
 #if DEBUG
-#define XZLog(format, ...) XZLogv(__FILE_NAME__, __LINE__, __FUNCTION__, format, ##__VA_ARGS__)
+#define XZLog(format, ...) __xz_log_imp__(__FILE_NAME__, __LINE__, __FUNCTION__, format, ##__VA_ARGS__)
 #else
 #define XZLog(...)
 #endif
@@ -150,7 +150,7 @@ _Pragma("clang diagnostic pop")
 
 #ifndef XZLog
 #ifdef XZ_DEBUG
-#define XZLog(format, ...) XZLogv(__FILE_NAME__, __LINE__, __FUNCTION__, format, ##__VA_ARGS__)
+#define XZLog(format, ...) __xz_log_imp__(__FILE_NAME__, __LINE__, __FUNCTION__, format, ##__VA_ARGS__)
 #else
 #define XZLog(...)
 #endif
@@ -158,9 +158,9 @@ _Pragma("clang diagnostic pop")
 
 #endif // XZ_FRAMEWORK
 
-/// **请使用 XZLog 宏，而不是直接使用此函数**。通过 NSLog 输出到控制台，如果待输出内容过大，则分批次输出，避免输出内容不完整。
+/// 宏函数 `XZLog` 的实际调用的函数。请使用 `XZLog` 宏，而不是直接使用此函数。
 ///
-/// **关于 NSLog 长度限制**
+/// 通过 NSLog 输出到控制台，如果待输出内容过大，则分批次输出，避免输出内容不完整。
 ///
 /// ```objc
 /// // 有大概 1017 的长度限制
@@ -169,16 +169,16 @@ _Pragma("clang diagnostic pop")
 /// NSLog(@"%@", [NSString stringWithFormat:@"The message is %@", message]);
 /// ```
 ///
-/// 统一使用 NSLog 进行输出，以避免控制台日志互相嵌套的问题。
+/// 实际使用 `NSLog` 进行输出，而不是 `printf` 等函数，以避免控制台日志互相嵌套的问题。
 ///
-/// 自 iOS 10 之后，有迹象表明 NSLog 底层已由 ASL 切换为 OSLog 框架，虽然官方没有明确说明。
+/// > 自 iOS 10 之后，有迹象表明 NSLog 底层已由 ASL 切换为 OSLog 框架，虽然官方没有明确说明。
 ///
 /// - Parameters:
 ///   - file: 输入语句所在的文件名
 ///   - line: 输出语句所在的行数
 ///   - function: 输出语句所在的函数名
 ///   - format: 输出内容格式
-FOUNDATION_EXPORT void XZLogv(const char *file, const int line, const char *function, NSString *format, ...) NS_FORMAT_FUNCTION(4,5) NS_SWIFT_UNAVAILABLE("Use Swift.print instead");
+FOUNDATION_EXPORT void __xz_log_imp__(const char *file, const int line, const char *function, NSString *format, ...) NS_FORMAT_FUNCTION(4,5) NS_SWIFT_UNAVAILABLE("Use Swift.print instead");
 
 
 // 关于重写 NSLog 的一点笔记

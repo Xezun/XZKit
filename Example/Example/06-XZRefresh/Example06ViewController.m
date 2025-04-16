@@ -195,17 +195,17 @@
 @implementation Example06TableView
 
 - (void)setFrame:(CGRect)frame {
-    XZLog(@"");
+//    XZLog(@"");
     [super setFrame:frame];
 }
 
 - (void)setBounds:(CGRect)bounds {
-    XZLog(@"");
+//    XZLog(@"isTracking: %d, isDragging: %d, isDecelerating: %d", self.isTracking, self.isDragging, self.isDecelerating);
     [super setBounds:bounds];
 }
 
 - (void)adjustedContentInsetDidChange {
-    XZLog(@"");
+//    XZLog(@"");
     [super adjustedContentInsetDidChange];
 }
 

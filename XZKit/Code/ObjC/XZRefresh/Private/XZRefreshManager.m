@@ -70,10 +70,10 @@ static void const * const _context = &_context;
         _footer = [XZRefreshContext footerContextForScrollView:scrollView];
         
         [self scrollView:scrollView delegateDidChange:scrollView.delegate];
-        
+        [scrollView setNeedsLayout];
         NSKeyValueObservingOptions const options = NSKeyValueObservingOptionNew | NSKeyValueObservingOptionOld;
-        [scrollView addObserver:self forKeyPath:@"frame" options:options context:(void *)_context];
-        [scrollView addObserver:self forKeyPath:@"bounds" options:options context:(void *)_context];
+//        [scrollView addObserver:self forKeyPath:@"frame" options:options context:(void *)_context];
+//        [scrollView addObserver:self forKeyPath:@"bounds" options:options context:(void *)_context];
         [scrollView addObserver:self forKeyPath:@"delegate" options:options context:(void *)_context];
         [scrollView addObserver:self forKeyPath:@"contentSize" options:options context:(void *)_context];
     }
@@ -327,7 +327,7 @@ static void const * const _context = &_context;
 }
 
 - (void)setNeedsLayoutHeaderRefreshView {
-    XZLog(@"%@", _header.needsLayout ? @"YES" : @"NO");
+    XZLog(@"是否已标记：%d", _header.needsLayout);
     if (_header.needsLayout) {
         return;
     }
@@ -339,7 +339,7 @@ static void const * const _context = &_context;
 }
 
 - (void)setNeedsLayoutFooterRefreshView {
-    XZLog(@"%@", _footer.needsLayout ? @"YES" : @"NO");
+    XZLog(@"是否已标记：%d", _footer.needsLayout);
     if (_footer.needsLayout) {
         return;
     }
@@ -352,7 +352,6 @@ static void const * const _context = &_context;
 }
 
 - (void)setNeedsLayoutRefreshViews {
-    XZLog(@"");
     [self setNeedsLayoutHeaderRefreshView];
     [self setNeedsLayoutFooterRefreshView];
 }
@@ -826,6 +825,7 @@ static void const * const _context = &_context;
 #pragma mark - <UIScrollViewDelegate>
 
 - (void)scrollViewDidScroll:(UIScrollView * const)scrollView {
+    XZLog(@"");
     if (scrollView != _scrollView) {
         return;
     }
@@ -926,6 +926,7 @@ static void const * const _context = &_context;
 }
 
 - (void)scrollViewWillBeginDragging:(UIScrollView *)_scrollView {
+    XZLog(@"");
     if (_scrollView != self->_scrollView) {
         return;
     }
@@ -946,6 +947,7 @@ static void const * const _context = &_context;
 }
 
 - (void)scrollViewWillEndDragging:(UIScrollView * const)_scrollView withVelocity:(CGPoint)velocity targetContentOffset:(inout CGPoint *)targetContentOffset {
+    XZLog(@"");
     if (_scrollView != self->_scrollView) {
         return;
     }
@@ -1043,6 +1045,7 @@ static void const * const _context = &_context;
 }
 
 - (void)scrollViewDidEndDragging:(UIScrollView *)scrollView willDecelerate:(BOOL)decelerate {
+    XZLog(@"是否减速：%d", decelerate);
     if (decelerate) {
         return;
     }
@@ -1050,6 +1053,7 @@ static void const * const _context = &_context;
 }
 
 - (void)scrollViewDidEndDecelerating:(UIScrollView *)scrollView {
+    XZLog(@"");
     if (scrollView != _scrollView) {
         return;
     }
