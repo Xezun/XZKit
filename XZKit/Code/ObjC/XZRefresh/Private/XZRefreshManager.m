@@ -20,14 +20,12 @@
 // 否则，甚至即使 contentOffset 因此而发生改变，也不会触发 scrollViewDidScroll: 方法。
 // 直接修改 frame 或 bounds 属性，不会触发 setNeedsLayout 方法，而是直接触发 layoutSubviews 方法。
 
-#define mainAsync(block, ...) {typeof(block) const handler=block;if(handler){dispatch_async(dispatch_get_main_queue(),^{handler(__VA_ARGS__);});}}
-
 UIKIT_STATIC_INLINE void UIViewAnimate(BOOL animated, void (^animations)(void), void (^completion)(BOOL finished)) {
     if (animated) {
         [UIView animateWithDuration:XZRefreshAnimationDuration animations:animations completion:completion];
     } else {
         animations();
-        mainAsync(completion, NO);
+        dispatch_main_async_s(completion, NO);
     }
 }
 
@@ -625,13 +623,13 @@ static void const * const _context = &_context;
     } else if (refreshingView == _footer.refreshView) {
         [self beginFooterRefreshing:animated completion:completion];
     } else {
-        mainAsync(completion, NO);
+        dispatch_main_async_s(completion, NO);
     }
 }
 
 - (void)beginHeaderRefreshing:(BOOL)animated completion:(void (^)(BOOL finished))completion {
     if (_header.state != XZRefreshStatePendinging || _footer.state != XZRefreshStatePendinging) {
-        mainAsync(completion, NO);
+        dispatch_main_async_s(completion, NO);
         return;
     }
     // 避免调用时，可能还没有同步 context 值
@@ -641,7 +639,7 @@ static void const * const _context = &_context;
     
     if (_scrollView.isDragging) {
         _header.state = XZRefreshStateWillRefreshing;
-        mainAsync(completion, NO);
+        dispatch_main_async_s(completion, NO);
     } else {
         // 先修改状态，避免后续操作引起的 -scrollViewDidScroll: 代理方法错误判断状态问题。
         _header.state = XZRefreshStateRefreshing;
@@ -668,7 +666,7 @@ static void const * const _context = &_context;
 
 - (void)beginFooterRefreshing:(BOOL)animated completion:(void (^)(BOOL finished))completion {
     if (_footer.state != XZRefreshStatePendinging || _header.state != XZRefreshStatePendinging) {
-        mainAsync(completion, NO);
+        dispatch_main_async_s(completion, NO);
         return;
     }
     [self layoutFooterRefreshViewIfNeeded:NO];
@@ -677,7 +675,7 @@ static void const * const _context = &_context;
     
     if (_scrollView.isDragging) {
         _footer.state = XZRefreshStateWillRefreshing;
-        mainAsync(completion, NO);
+        dispatch_main_async_s(completion, NO);
     } else {
         _footer.state = XZRefreshStateRefreshing;
         
@@ -702,14 +700,14 @@ static void const * const _context = &_context;
     } else if (refreshingView == _footer.refreshView) {
         [self endFooterRefreshing:animated completion:completion];
     } else {
-        mainAsync(completion, NO);
+        dispatch_main_async_s(completion, NO);
     }
 }
 
 - (void)endHeaderRefreshing:(BOOL)animated completion:(void (^)(BOOL finished))completion {
     XZRefreshContext * const _header = self->_header;
     if (!(_header.state & XZRefreshStateRefreshingMask)) {
-        mainAsync(completion, NO);
+        dispatch_main_async_s(completion, NO);
         return;
     }
     
@@ -722,7 +720,7 @@ static void const * const _context = &_context;
         // 使用 YES 标记，以通知刷新视图执行结束动画
         [_header.refreshView scrollView:_scrollView willEndRefreshing:YES];
         // NO 表示结束的动画在回调执行时没有完成
-        mainAsync(completion, NO);
+        dispatch_main_async_s(completion, NO);
     } else {
         // 恢复 contentInset
         // 理论上应该先改状态，然后再执行其它操作。
@@ -742,7 +740,7 @@ static void const * const _context = &_context;
             
             _header.state = XZRefreshStatePendinging;
             [_header.refreshView scrollView:_scrollView didEndRefreshing:NO];
-            mainAsync(completion, NO);
+            dispatch_main_async_s(completion, NO);
         } else {
             // 使用 -setContentOffset:animated: 前结束滚动减速过程。
             // 在 XZRefreshStateRecovering 状态下，减速动画结束时，会执行清理操作，可能会提前移除退场动画。
@@ -756,7 +754,7 @@ static void const * const _context = &_context;
             }, ^(BOOL finished) {
                 _header.state = XZRefreshStatePendinging;
                 [_header.refreshView scrollView:_scrollView didEndRefreshing:YES];
-                mainAsync(completion, finished);
+                dispatch_main_async_s(completion, finished);
             });
         }
     }
@@ -765,7 +763,7 @@ static void const * const _context = &_context;
 - (void)endFooterRefreshing:(BOOL)animated completion:(void (^)(BOOL finished))completion {
     XZRefreshContext * const _footer = self->_footer;
     if (!(_footer.state & XZRefreshStateRefreshingMask)) {
-        mainAsync(completion, NO);
+        dispatch_main_async_s(completion, NO);
         return;
     }
     
@@ -780,7 +778,7 @@ static void const * const _context = &_context;
         UIViewAnimate(animated, ^{
             [self layoutFooterRefreshViewIfNeeded:YES];
         }, ^(BOOL finished) {
-            mainAsync(completion, NO);
+            dispatch_main_async_s(completion, NO);
         });
     } else {
         CGPoint const contentOffset = _scrollView.contentOffset;
@@ -801,7 +799,7 @@ static void const * const _context = &_context;
             
             _footer.state = XZRefreshStatePendinging;
             [_footer.refreshView scrollView:_scrollView didEndRefreshing:NO];
-            mainAsync(completion, NO);
+            dispatch_main_async_s(completion, NO);
         } else {
             [_scrollView setContentOffset:contentOffset animated:NO];
             _footer.state = XZRefreshStateRecovering;
@@ -816,7 +814,7 @@ static void const * const _context = &_context;
             }, ^(BOOL finished) {
                 _footer.state = XZRefreshStatePendinging;
                 [_footer.refreshView scrollView:_scrollView didEndRefreshing:animated];
-                mainAsync(completion, finished);
+                dispatch_main_async_s(completion, finished);
             });
         }
     }
@@ -1108,7 +1106,7 @@ static void const * const _context = &_context;
         // 那么在代理方法中立即结束刷新，会导致减速状态在此方法返回后立即完成，
         // 即 -scrollViewDidEndDecelerating: 方法在结束刷新的 UIView 动画结束前执行，
         // 从而导致退场动画被提前清理，丢失动画效果。
-        mainAsync(^{
+        dispatch_main_async(^{
             [delegate scrollView:_scrollView headerDidBeginRefreshing:_header.refreshView];
         });
     }
@@ -1142,7 +1140,7 @@ static void const * const _context = &_context;
     
     id<XZRefreshDelegate> const delegate = _footer.refreshView.delegate ?: (id)_scrollView.delegate;
     if ([delegate respondsToSelector:@selector(scrollView:footerDidBeginRefreshing:)]) {
-        mainAsync(^{
+        dispatch_main_async(^{
             [delegate scrollView:_scrollView footerDidBeginRefreshing:_footer.refreshView];
         });
     }
