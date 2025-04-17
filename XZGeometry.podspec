@@ -31,5 +31,9 @@ Pod::Spec.new do |s|
     ss.source_files = 'XZKit/Code/Swift/XZGeometry/**/*.{h,m,swift}'
   end
   
+  s.subspec 'DEBUG' do |ss|
+    ss.pod_target_xcconfig = { 'GCC_PREPROCESSOR_DEFINITIONS' => 'XZ_DEBUG=1' }
+  end
+  
 end
 

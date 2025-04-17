@@ -37,7 +37,6 @@ Pod::Spec.new do |s|
   end
   
   s.subspec 'DEBUG' do |ss|
-    ss.dependency 'XZDefines/Code'
     ss.pod_target_xcconfig = { 'GCC_PREPROCESSOR_DEFINITIONS' => 'XZ_DEBUG=1' }
   end
   

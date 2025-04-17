@@ -39,6 +39,10 @@ Pod::Spec.new do |s|
     ss.dependency 'XZSegmentedControl/Code'
     ss.pod_target_xcconfig = { 'GCC_PREPROCESSOR_DEFINITIONS' => 'XZ_DEBUG=1' }
   end
+  
+  s.subspec 'DEBUG' do |ss|
+    ss.pod_target_xcconfig = { 'GCC_PREPROCESSOR_DEFINITIONS' => 'XZ_DEBUG=1' }
+  end
 
 end
 

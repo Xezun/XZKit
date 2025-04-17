@@ -138,25 +138,46 @@ _Pragma("clang diagnostic pop")
 
 #pragma mark - XZLog
 
+// 关于重写 NSLog 的一点笔记
+// stderr: 标准错误输出，立即输出到屏幕。
+// stdout: 标准输出，当遇到刷新标志（比如换行）或缓冲满时，才把缓冲的数据输出到设备中。
+// STDERR_FILENO: 与 stderr 相同
+//
+// 经过溯源原代码，在 CF-1153.18 源文件 CFUtilities.c 中可以找到 NSLog 函数的源码：
+//     NSLog() => CFLog() => _CFLogvEx() => __CFLogCString() =>
+//     #if DEPLOYMENT_TARGET_MACOSX || DEPLOYMENT_TARGET_EMBEDDED || DEPLOYMENT_TARGET_EMBEDDED_MINI
+//         => writev(STDERR_FILENO)
+//     #elif DEPLOYMENT_TARGET_WINDOWS
+//         => fprintf_s(stderr)
+//     #else
+//         => fprintf(stderr)
+//     #endif
+// 而在 CFBundle_Resources.c 文件的 320-321 行
+//     #elif DEPLOYMENT_TARGET_EMBEDDED || DEPLOYMENT_TARGET_EMBEDDED_MINI
+//         return CFSTR("iPhoneOS");
+// 所以在 iOS 平台，NSLog 最终使用的是 writev 函数输出日志，并且使用了 CFLock_t 保证线程安全。
+// 而且函数 __CFLogCString() 是 static 局部函数，保证 writev 线程安全的 CFLock_t 锁也是局部的，
+// 并不能被访问，而如果使用其它函数在控制台输出，就会不可避免出现与 NSLog 的输出内容互相嵌入的情况。
+
 #if XZ_FRAMEWORK
 
-#if DEBUG
+#if XZ_DEBUG
 #define XZLog(format, ...) __xz_log_imp__(__FILE_NAME__, __LINE__, __FUNCTION__, format, ##__VA_ARGS__)
 #else
 #define XZLog(...)
 #endif
 
-#else // XZ_FRAMEWORK
+#else
 
-#ifndef XZLog
-#ifdef XZ_DEBUG
+#ifndef XZ_LOG
+#if DEBUG && XZ_DEBUG
 #define XZLog(format, ...) __xz_log_imp__(__FILE_NAME__, __LINE__, __FUNCTION__, format, ##__VA_ARGS__)
 #else
 #define XZLog(...)
 #endif
-#endif // => XZLog
+#endif // XZ_LOG
 
-#endif // XZ_FRAMEWORK
+#endif
 
 /// 宏函数 `XZLog` 的实际调用的函数。请使用 `XZLog` 宏，而不是直接使用此函数。
 ///
@@ -179,28 +200,6 @@ _Pragma("clang diagnostic pop")
 ///   - function: 输出语句所在的函数名
 ///   - format: 输出内容格式
 FOUNDATION_EXPORT void __xz_log_imp__(const char *file, const int line, const char *function, NSString *format, ...) NS_FORMAT_FUNCTION(4,5) NS_SWIFT_UNAVAILABLE("Use Swift.print instead");
-
-
-// 关于重写 NSLog 的一点笔记
-// stderr: 标准错误输出，立即输出到屏幕。
-// stdout: 标准输出，当遇到刷新标志（比如换行）或缓冲满时，才把缓冲的数据输出到设备中。
-// STDERR_FILENO: 与 stderr 相同
-//
-// 经过溯源原代码，在 CF-1153.18 源文件 CFUtilities.c 中可以找到 NSLog 函数的源码：
-//     NSLog() => CFLog() => _CFLogvEx() => __CFLogCString() =>
-//     #if DEPLOYMENT_TARGET_MACOSX || DEPLOYMENT_TARGET_EMBEDDED || DEPLOYMENT_TARGET_EMBEDDED_MINI
-//         => writev(STDERR_FILENO)
-//     #elif DEPLOYMENT_TARGET_WINDOWS
-//         => fprintf_s(stderr)
-//     #else
-//         => fprintf(stderr)
-//     #endif
-// 而在 CFBundle_Resources.c 文件的 320-321 行
-//     #elif DEPLOYMENT_TARGET_EMBEDDED || DEPLOYMENT_TARGET_EMBEDDED_MINI
-//         return CFSTR("iPhoneOS");
-// 所以在 iOS 平台，NSLog 最终使用的是 writev 函数输出日志，并且使用了 CFLock_t 保证线程安全。
-// 而且函数 __CFLogCString() 是 static 局部函数，保证 writev 线程安全的 CFLock_t 锁也是局部的，
-// 并不能被访问，而如果使用其它函数在控制台输出，就会不可避免出现与 NSLog 的输出内容互相嵌入的情况。
 
 #ifndef XZ_DISPATCH_MACROS
 
