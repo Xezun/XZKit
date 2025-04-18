@@ -213,7 +213,7 @@ FOUNDATION_EXPORT void __xz_log_imp__(const char *file, const int line, const ch
 // 现在可以通过如下定义的宏函数简化这种写法。
 // dispatch_queue_async(queue, block, NO);
 //
-// 安全：名称带 _s 后缀的宏函数，会在调度队列前，对 block 进行判空，如果为 nil 则不会调度队列，也会不执行块函数。
+// 安全：名称带 _safe 后缀的宏函数，会在调度队列前，对 block 进行判空，如果为 nil 则不会调度队列，也会不执行块函数。
 // dispatch_queue_async_s(queue, block, NO);
 //
 // 便利：另外，为主队列和全局队列提供便利宏函数。
@@ -229,12 +229,12 @@ FOUNDATION_EXPORT void __xz_log_imp__(const char *file, const int line, const ch
 //     NSLog("do sth");
 // });
 
-#define __dispatch_queue_send__(_01, _02, _03, _04, _05, _06, _07, _08, _09, _10, ...) _10
+#define __dispatch_queue_forward__(_01, _02, _03, _04, _05, _06, _07, _08, _09, _10, ...) _10
 
 #define __dispatch_queue_imp_0__(concurrency, queue, block)      xz_macro_paste(dispatch_, concurrency)(queue, block)
 #define __dispatch_queue_imp_1__(concurrency, queue, block, ...) xz_macro_paste(dispatch_, concurrency)(queue, ^{ (block)(__VA_ARGS__); })
 
-#define __dispatch_queue_imp__(concurrency, queue, block, ...) __dispatch_queue_send__(10, ##__VA_ARGS__, \
+#define __dispatch_queue_imp__(concurrency, queue, block, ...) __dispatch_queue_forward__(10, ##__VA_ARGS__, \
 __dispatch_queue_imp_1__, __dispatch_queue_imp_1__, __dispatch_queue_imp_1__, \
 __dispatch_queue_imp_1__, __dispatch_queue_imp_1__, __dispatch_queue_imp_1__, \
 __dispatch_queue_imp_1__, __dispatch_queue_imp_1__, __dispatch_queue_imp_1__, \
@@ -247,20 +247,20 @@ __dispatch_queue_imp_0__)(concurrency, queue, block, ##__VA_ARGS__)
 #define dispatch_global_async(QOS_CLASS_, block, ...) __dispatch_queue_imp__(async, dispatch_get_global_queue(QOS_CLASS_, 0), block, ##__VA_ARGS__)
 #define dispatch_global_sync(QOS_CLASS_, block, ...)  __dispatch_queue_imp__(sync, dispatch_get_global_queue(QOS_CLASS_, 0), block, ##__VA_ARGS__)
 
-#define __dispatch_queue_s_imp_0__(concurrency, queue, block)      { void(^ const handler)(void) = block; if (handler) { xz_macro_paste(dispatch_, concurrency)(queue, handler); } }
-#define __dispatch_queue_s_imp_1__(concurrency, queue, block, ...) { typeof(block) const handler = block; if (handler) { xz_macro_paste(dispatch_, concurrency)(queue, ^{ (handler)(__VA_ARGS__); }); } }
+#define __dispatch_queue_safe_imp_0__(concurrency, queue, block)      { void(^ const handler)(void) = block; if (handler) { xz_macro_paste(dispatch_, concurrency)(queue, handler); } }
+#define __dispatch_queue_safe_imp_1__(concurrency, queue, block, ...) { typeof(block) const handler = block; if (handler) { xz_macro_paste(dispatch_, concurrency)(queue, ^{ (handler)(__VA_ARGS__); }); } }
 
-#define __dispatch_queue_s_imp__(concurrency, queue, block, ...) __dispatch_queue_send__(10, ##__VA_ARGS__, \
-__dispatch_queue_s_imp_1__, __dispatch_queue_s_imp_1__, __dispatch_queue_s_imp_1__, \
-__dispatch_queue_s_imp_1__, __dispatch_queue_s_imp_1__, __dispatch_queue_s_imp_1__, \
-__dispatch_queue_s_imp_1__, __dispatch_queue_s_imp_1__, __dispatch_queue_s_imp_1__, \
-__dispatch_queue_s_imp_0__)(concurrency, queue, block, ##__VA_ARGS__)
+#define __dispatch_queue_safe_imp__(concurrency, queue, block, ...) __dispatch_queue_forward__(10, ##__VA_ARGS__, \
+__dispatch_queue_safe_imp_1__, __dispatch_queue_safe_imp_1__, __dispatch_queue_safe_imp_1__, \
+__dispatch_queue_safe_imp_1__, __dispatch_queue_safe_imp_1__, __dispatch_queue_safe_imp_1__, \
+__dispatch_queue_safe_imp_1__, __dispatch_queue_safe_imp_1__, __dispatch_queue_safe_imp_1__, \
+__dispatch_queue_safe_imp_0__)(concurrency, queue, block, ##__VA_ARGS__)
 
-#define dispatch_queue_async_s(queue, block, ...)          __dispatch_queue_s_imp__(async, queue, block, ##__VA_ARGS__)
-#define dispatch_queue_sync_s(queue, block, ...)           __dispatch_queue_s_imp__(sync, queue, block, ##__VA_ARGS__)
-#define dispatch_main_async_s(block, ...)                  __dispatch_queue_s_imp__(async, dispatch_get_main_queue(), block, ##__VA_ARGS__)
-#define dispatch_main_sync_s(block, ...)                   __dispatch_queue_s_imp__(sync, dispatch_get_main_queue(), block, ##__VA_ARGS__)
-#define dispatch_global_async_s(QOS_CLASS_, block, ...)    __dispatch_queue_s_imp__(async, dispatch_get_global_queue(QOS_CLASS_, 0), block, ##__VA_ARGS__)
-#define dispatch_global_sync_s(QOS_CLASS_, block, ...)     __dispatch_queue_s_imp__(sync, dispatch_get_global_queue(QOS_CLASS_, 0), block, ##__VA_ARGS__)
+#define dispatch_queue_async_safe(queue, block, ...)          __dispatch_queue_safe_imp__(async, queue, block, ##__VA_ARGS__)
+#define dispatch_queue_sync_safe(queue, block, ...)           __dispatch_queue_safe_imp__(sync, queue, block, ##__VA_ARGS__)
+#define dispatch_main_async_safe(block, ...)                  __dispatch_queue_safe_imp__(async, dispatch_get_main_queue(), block, ##__VA_ARGS__)
+#define dispatch_main_sync_safe(block, ...)                   __dispatch_queue_safe_imp__(sync, dispatch_get_main_queue(), block, ##__VA_ARGS__)
+#define dispatch_global_async_safe(QOS_CLASS_, block, ...)    __dispatch_queue_safe_imp__(async, dispatch_get_global_queue(QOS_CLASS_, 0), block, ##__VA_ARGS__)
+#define dispatch_global_sync_safe(QOS_CLASS_, block, ...)     __dispatch_queue_safe_imp__(sync, dispatch_get_global_queue(QOS_CLASS_, 0), block, ##__VA_ARGS__)
 
 #endif

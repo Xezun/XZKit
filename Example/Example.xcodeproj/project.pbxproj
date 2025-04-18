@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		01C91114C6D30DAA909EB169 /* Pods_Example.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 055F0304DE9A092BAF52FF06 /* Pods_Example.framework */; };
+		040C8CA92DB22B9E0024BA72 /* XZDispatchMacrosTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 040C8CA82DB22B9E0024BA72 /* XZDispatchMacrosTests.m */; };
 		040F133B2D2B77CD00C4D6CD /* Example14ViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 040F133A2D2B77CD00C4D6CD /* Example14ViewController.m */; };
 		0414AD192D6EBD060085BEE3 /* Example01ViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 0414AD182D6EBD060085BEE3 /* Example01ViewController.m */; };
 		042D23CC2D30BB3200E0F7BD /* Example16ViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 042D23BE2D30BB3200E0F7BD /* Example16ViewController.m */; };
@@ -304,6 +305,7 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		040C8CA82DB22B9E0024BA72 /* XZDispatchMacrosTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = XZDispatchMacrosTests.m; sourceTree = "<group>"; };
 		040F13392D2B77CD00C4D6CD /* Example14ViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Example14ViewController.h; sourceTree = "<group>"; };
 		040F133A2D2B77CD00C4D6CD /* Example14ViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = Example14ViewController.m; sourceTree = "<group>"; };
 		0414AD172D6EBD060085BEE3 /* Example01ViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Example01ViewController.h; sourceTree = "<group>"; };
@@ -828,6 +830,14 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		040C8CA72DB22B720024BA72 /* XZDefines */ = {
+			isa = PBXGroup;
+			children = (
+				040C8CA82DB22B9E0024BA72 /* XZDispatchMacrosTests.m */,
+			);
+			path = XZDefines;
+			sourceTree = "<group>";
+		};
 		040F13382D2B77B200C4D6CD /* 14-XZURLQuery */ = {
 			isa = PBXGroup;
 			children = (
@@ -2756,6 +2766,7 @@
 			isa = PBXGroup;
 			children = (
 				29648BFF2A72556E0090F445 /* ExampleTests.m */,
+				040C8CA72DB22B720024BA72 /* XZDefines */,
 			);
 			path = ExampleTests;
 			sourceTree = "<group>";
@@ -3333,6 +3344,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				29648C002A72556E0090F445 /* ExampleTests.m in Sources */,
+				040C8CA92DB22B9E0024BA72 /* XZDispatchMacrosTests.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

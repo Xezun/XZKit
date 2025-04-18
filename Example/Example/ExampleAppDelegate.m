@@ -7,6 +7,7 @@
 
 #import "ExampleAppDelegate.h"
 @import XZLocale;
+@import XZDefines;
 
 @interface ExampleAppDelegate ()
 
@@ -18,6 +19,7 @@
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
     [NSNotificationCenter.defaultCenter addObserver:self selector:@selector(didChangeAppLanguage) name:XZLanguagePreferencesDidChangeNotification object:nil];
+    
     return YES;
 }
 
