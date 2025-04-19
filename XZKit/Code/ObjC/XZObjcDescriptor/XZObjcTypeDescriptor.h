@@ -107,14 +107,14 @@ typedef NS_OPTIONS(NSUInteger, XZObjcQualifiers) {
 /// 数据类型：包括 int、float 等基础数据类型，也包括 NSObject 等对象类型，通过 `@encoding(type)` 可将类型编码为 Type Encoding 字符串。
 @interface XZObjcTypeDescriptor : NSObject
 
+/// 名称
+@property (nonatomic, copy, readonly) NSString *name;
+
 /// 类型。
 @property (nonatomic, readonly) XZObjcType type;
 
 /// 修饰符。
 @property (nonatomic, readonly) XZObjcQualifiers qualifiers;
-
-/// 名称
-@property (nonatomic, copy, readonly) NSString *name;
 
 /// 大小，占用的空间大小，度量单位”字节byte“。
 @property (nonatomic, readonly) size_t size;
@@ -152,13 +152,13 @@ typedef NS_OPTIONS(NSUInteger, XZObjcQualifiers) {
 
 /// 构造类型描述。
 /// @note 因为类型不能直接作为参数，而枚举 XZObjcType 并不包含完整的类型信息，因此需要使用类型编码来构造。
-/// @param typeEncoding 类型编码，可以是类型编码中的子类型
-+ (nullable XZObjcTypeDescriptor *)descriptorForTypeEncoding:(const char *)typeEncoding;
+/// @param objcType 类型编码，可以是类型编码中的子类型
++ (nullable XZObjcTypeDescriptor *)descriptorWithObjcType:(const char *)objcType;
 
 /// 构造类型描述符。
-/// @param typeEncoding 类型编码
+/// @param objcType 类型编码
 /// @param qualifiers 修饰符，因为属性修饰符不包含在类型编码中，可通过此参数提供
-+ (nullable XZObjcTypeDescriptor *)descriptorForTypeEncoding:(const char *)typeEncoding qualifiers:(XZObjcQualifiers)qualifiers;
++ (nullable XZObjcTypeDescriptor *)descriptorWithObjcType:(const char *)objcType qualifiers:(XZObjcQualifiers)qualifiers;
 
 /// 设置结构体类型的大小和字节对齐值。
 /// @code
@@ -179,13 +179,13 @@ typedef NS_OPTIONS(NSUInteger, XZObjcQualifiers) {
 ///
 /// @param size 大小
 /// @param alignment 对齐方式
-/// @param typeEncoding 结构体类型编码
-+ (void)setSize:(size_t)size alignment:(size_t)alignment forType:(const char *)typeEncoding;
+/// @param objcType 结构体类型编码
++ (void)setSize:(size_t)size alignment:(size_t)alignment forObjcType:(const char *)objcType;
 
 @end
 
 /// 注册结构体字节大小和对齐的宏，比如 XZObjcTypeRegister(CGRect) 。
-#define XZObjcTypeRegister(aType) [XZObjcTypeDescriptor setSize:sizeof(aType) alignment:_Alignof(aType) forType:@encode(aType)]
+#define XZObjcTypeRegister(aType) [XZObjcTypeDescriptor setSize:sizeof(aType) alignment:_Alignof(aType) forObjcType:@encode(aType)]
 
 @protocol XZObjcDescriptor <NSObject>
 @property (nonatomic, readonly) NSString *name;

@@ -38,10 +38,10 @@
     
     char *returnType = method_copyReturnType(method);
     if (returnType != nil) {
-        _returnType = [XZObjcTypeDescriptor descriptorForTypeEncoding:returnType];
+        _returnType = [XZObjcTypeDescriptor descriptorWithObjcType:returnType];
         free(returnType);
     } else {
-        _returnType = [XZObjcTypeDescriptor descriptorForTypeEncoding:@encode(void)];
+        _returnType = [XZObjcTypeDescriptor descriptorWithObjcType:@encode(void)];
     }
 
     unsigned int const count = method_getNumberOfArguments(method);
@@ -50,7 +50,7 @@
         for (unsigned int i = 0; i < count; i++) {
             char *argumentType = method_copyArgumentType(method, i);
             if (argumentType) {
-                XZObjcTypeDescriptor *type = [XZObjcTypeDescriptor descriptorForTypeEncoding:argumentType];
+                XZObjcTypeDescriptor *type = [XZObjcTypeDescriptor descriptorWithObjcType:argumentType];
                 if (type) {
                     [_argumentsTypes addObject:type];
                 }

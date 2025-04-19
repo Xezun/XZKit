@@ -26,7 +26,7 @@
         return nil;
     }
     
-    XZObjcTypeDescriptor * _type = [XZObjcTypeDescriptor descriptorForTypeEncoding:typeEncoding];
+    XZObjcTypeDescriptor * _type = [XZObjcTypeDescriptor descriptorWithObjcType:typeEncoding];
     if (_type == nil) {
         return nil;
     }

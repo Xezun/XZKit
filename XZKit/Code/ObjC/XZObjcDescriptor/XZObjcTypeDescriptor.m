@@ -62,11 +62,11 @@ typedef struct XZObjcTypeAlignment {
     return NO;
 }
 
-+ (XZObjcTypeDescriptor *)descriptorForTypeEncoding:(const char *)typeEncoding {
-    return [self descriptorForTypeEncoding:typeEncoding qualifiers:kNilOptions];
++ (XZObjcTypeDescriptor *)descriptorWithObjcType:(const char *)typeEncoding {
+    return [self descriptorWithObjcType:typeEncoding qualifiers:kNilOptions];
 }
 
-+ (XZObjcTypeDescriptor *)descriptorForTypeEncoding:(const char *)typeEncoding qualifiers:(XZObjcQualifiers)qualifiers {
++ (XZObjcTypeDescriptor *)descriptorWithObjcType:(const char *)typeEncoding qualifiers:(XZObjcQualifiers)qualifiers {
     if (typeEncoding == NULL) {
         return nil;
     }
@@ -433,7 +433,7 @@ typedef struct XZObjcTypeAlignment {
             }
             
             // 成员类型
-            XZObjcTypeDescriptor *member = [XZObjcTypeDescriptor descriptorForTypeEncoding:typeEncoding + i];
+            XZObjcTypeDescriptor *member = [XZObjcTypeDescriptor descriptorWithObjcType:typeEncoding + i];
             if (member == nil) {
                 return nil;
             }
@@ -513,7 +513,7 @@ typedef struct XZObjcTypeAlignment {
             size_t const membersEnd = newLength - 2;
             // 用 while 而不 do-while 是因为可能会有"空"结构体
             while (i <= membersEnd) {
-                XZObjcTypeDescriptor *member = [XZObjcTypeDescriptor descriptorForTypeEncoding:typeEncoding + i];
+                XZObjcTypeDescriptor *member = [XZObjcTypeDescriptor descriptorWithObjcType:typeEncoding + i];
                 if (member == nil) {
                     return nil; // 遇到不合法的字符
                 }
@@ -633,7 +633,7 @@ typedef struct XZObjcTypeAlignment {
             // 最后一位是 ) 结束字符
             size_t const membersEnd = newLength - 2;
             while (i < membersEnd) { // 用 while 而不 do-while 是因为可能会有"空"结合体
-                XZObjcTypeDescriptor *member = [XZObjcTypeDescriptor descriptorForTypeEncoding:typeEncoding + i];
+                XZObjcTypeDescriptor *member = [XZObjcTypeDescriptor descriptorWithObjcType:typeEncoding + i];
                 if (member == nil) {
                     return nil;
                 }
@@ -686,7 +686,7 @@ typedef struct XZObjcTypeAlignment {
             break;
         }
         case '^': {
-            XZObjcTypeDescriptor *member = [XZObjcTypeDescriptor descriptorForTypeEncoding:typeEncoding + 1];
+            XZObjcTypeDescriptor *member = [XZObjcTypeDescriptor descriptorWithObjcType:typeEncoding + 1];
             _type = XZObjcTypePointer;
             _name = [NSString stringWithFormat:@"%@ *", member.name];
             _size = sizeof(void *);
@@ -790,7 +790,7 @@ typedef struct XZObjcTypeAlignment {
 
 static NSMutableDictionary<NSString *, NSValue *> *_typeProviders = nil;
 
-+ (void)setSize:(size_t)size alignment:(size_t)alignment forType:(nonnull const char *)typeEncoding {
++ (void)setSize:(size_t)size alignment:(size_t)alignment forObjcType:(nonnull const char *)typeEncoding {
     NSParameterAssert(typeEncoding != NULL);
     
     NSString *name = [NSString stringWithCString:typeEncoding encoding:NSASCIIStringEncoding];

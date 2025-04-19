@@ -108,7 +108,7 @@
         }
     }
     
-    XZObjcTypeDescriptor *_type = [XZObjcTypeDescriptor descriptorForTypeEncoding:typeEncoding qualifiers:qualifiers];
+    XZObjcTypeDescriptor *_type = [XZObjcTypeDescriptor descriptorWithObjcType:typeEncoding qualifiers:qualifiers];
     if (_type == nil) {
         return nil;
     }

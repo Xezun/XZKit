@@ -46,7 +46,7 @@ id XZJSONEncodeObjectIntoDictionary(id const __unsafe_unretained object, XZJSONC
             NSValue    * const nsValue  = object;
             const char * const encoding = nsValue.objCType;
             
-            XZObjcTypeDescriptor *type = [XZObjcTypeDescriptor descriptorForTypeEncoding:encoding];
+            XZObjcTypeDescriptor *type = [XZObjcTypeDescriptor descriptorWithObjcType:encoding];
             if (type == nil) {
                 return nil;
             }
