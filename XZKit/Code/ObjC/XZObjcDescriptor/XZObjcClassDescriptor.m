@@ -16,7 +16,11 @@ NSString *         const XZObjcClassUpdateTypeIvars         = @"XZObjcClassUpdat
 NSString *         const XZObjcClassUpdateTypeMethods       = @"XZObjcClassUpdateTypeMethods";
 NSString *         const XZObjcClassUpdateTypeProperties    = @"XZObjcClassUpdateTypeProperties";
 
-@interface XZObjcClassDescriptor ()
+@interface XZObjcClassDescriptor () {
+    NSDictionary<NSString *,XZObjcIvarDescriptor *> * _Nullable _ivars;
+    NSDictionary<NSString *,XZObjcMethodDescriptor *> * _Nullable _methods;
+    NSDictionary<NSString *,XZObjcPropertyDescriptor *> * _Nullable _properties;
+}
 
 @end
 
@@ -35,10 +39,6 @@ NSString *         const XZObjcClassUpdateTypeProperties    = @"XZObjcClassUpdat
     }
     return self;
 }
-
-@synthesize ivars = _ivars;
-@synthesize methods = _methods;
-@synthesize properties = _properties;
 
 - (NSDictionary<NSString *,XZObjcIvarDescriptor *> *)ivars {
     if (_ivars) {
