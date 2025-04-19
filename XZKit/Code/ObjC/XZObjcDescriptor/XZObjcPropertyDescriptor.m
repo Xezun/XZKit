@@ -108,7 +108,7 @@
         }
     }
     
-    XZObjcTypeDescriptor *_type = [XZObjcTypeDescriptor descriptorWithObjcType:typeEncoding qualifiers:qualifiers];
+    XZObjcType *_type = [XZObjcType typeWithTypeEncoding:typeEncoding qualifiers:qualifiers];
     if (_type == nil) {
         return nil;
     }
@@ -135,7 +135,7 @@
     return [[self alloc] initWithProperty:property name:_name type:_type ivar:_ivar getter:_getter setter:_setter];
 }
 
-- (instancetype)initWithProperty:(objc_property_t)property name:(NSString *)name type:(XZObjcTypeDescriptor *)type ivar:(XZObjcIvarDescriptor *)ivar getter:(SEL)getter setter:(SEL)setter {
+- (instancetype)initWithProperty:(objc_property_t)property name:(NSString *)name type:(XZObjcType *)type ivar:(XZObjcIvarDescriptor *)ivar getter:(SEL)getter setter:(SEL)setter {
     self = [super init];
 
     if (self != nil) {

@@ -6,7 +6,7 @@
 //
 
 #import <Foundation/Foundation.h>
-#import "XZObjcTypeDescriptor.h"
+#import "XZObjcType.h"
 
 /// 原生对象类型枚举。Foundation Class Type
 typedef NS_ENUM (NSUInteger, XZJSONClassType) {
@@ -96,9 +96,9 @@ FOUNDATION_STATIC_INLINE XZJSONStructType XZJSONStructTypeFromString(NSString *n
     return XZJSONStructTypeUnknown;
 }
 
-FOUNDATION_STATIC_INLINE XZJSONStructType XZJSONStructTypeFromType(XZObjcTypeDescriptor *type) {
-    switch (type.type) {
-        case XZObjcTypeStruct:
+FOUNDATION_STATIC_INLINE XZJSONStructType XZJSONStructTypeFromType(XZObjcType *type) {
+    switch (type.raw) {
+        case XZObjcRawStruct:
             return XZJSONStructTypeFromString(type.name);
         default:
             return XZJSONStructTypeUnknown;

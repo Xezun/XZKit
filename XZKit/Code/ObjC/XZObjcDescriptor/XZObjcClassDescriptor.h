@@ -5,7 +5,7 @@
 //  Created by 徐臻 on 2025/1/26.
 //
 
-#import "XZObjcTypeDescriptor.h"
+#import "XZObjcType.h"
 
 @class XZObjcIvarDescriptor, XZObjcMethodDescriptor, XZObjcPropertyDescriptor;
 
@@ -32,7 +32,7 @@ FOUNDATION_EXPORT NSString *         const XZObjcClassUpdateTypeProperties;
 @property (nonatomic, readonly) NSString *name;
 
 /// 类的类型描述。
-@property (nonatomic, readonly) XZObjcTypeDescriptor *type;
+@property (nonatomic, readonly) XZObjcType *type;
 
 /// 类实例变量。ivars
 @property (copy, readonly) NSDictionary<NSString *, XZObjcIvarDescriptor *>     *ivars;

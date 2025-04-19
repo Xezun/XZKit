@@ -749,17 +749,17 @@ FOUNDATION_STATIC_INLINE BOOL XZJSONModelDecodePropertyFallback(id const __unsaf
 
 void XZJSONModelDecodeProperty(id const __unsafe_unretained model, XZJSONPropertyDescriptor * const __unsafe_unretained property, id _Nonnull __strong JSONValue) {
     switch (property->_type) {
-        case XZObjcTypeUnknown:
-        case XZObjcTypeVoid:
-        case XZObjcTypeString:
-        case XZObjcTypeArray:
-        case XZObjcTypeBitField:
-        case XZObjcTypePointer:
-        case XZObjcTypeUnion: {
+        case XZObjcRawUnknown:
+        case XZObjcRawVoid:
+        case XZObjcRawString:
+        case XZObjcRawArray:
+        case XZObjcRawBitField:
+        case XZObjcRawPointer:
+        case XZObjcRawUnion: {
             // 无法处理的类型
             break;
         }
-        case XZObjcTypeChar: {
+        case XZObjcRawChar: {
             char value = 0;
             if (NSCharFromJSONValue(JSONValue, &value)) {
                 ((void (*)(id, SEL, char))objc_msgSend)((id)model, property->_setter, value);
@@ -767,7 +767,7 @@ void XZJSONModelDecodeProperty(id const __unsafe_unretained model, XZJSONPropert
             }
             break;
         }
-        case XZObjcTypeUnsignedChar: {
+        case XZObjcRawUnsignedChar: {
             char value = 0;
             if (NSCharFromJSONValue(JSONValue, &value)) {
                 ((void (*)(id, SEL, unsigned char))objc_msgSend)((id)model, property->_setter, (unsigned char)value);
@@ -775,7 +775,7 @@ void XZJSONModelDecodeProperty(id const __unsafe_unretained model, XZJSONPropert
             }
             break;
         }
-        case XZObjcTypeInt: {
+        case XZObjcRawInt: {
             int value = 0;
             if (NSIntegerFromJSONValue(JSONValue, &value)) {
                 ((void (*)(id, SEL, int))objc_msgSend)((id)model, property->_setter, (int)value);
@@ -783,7 +783,7 @@ void XZJSONModelDecodeProperty(id const __unsafe_unretained model, XZJSONPropert
             }
             break;
         }
-        case XZObjcTypeUnsignedInt: {
+        case XZObjcRawUnsignedInt: {
             int value = 0;
             if (NSIntegerFromJSONValue(JSONValue, &value)) {
                 ((void (*)(id, SEL, unsigned int))objc_msgSend)((id)model, property->_setter, (unsigned int)value);
@@ -791,7 +791,7 @@ void XZJSONModelDecodeProperty(id const __unsafe_unretained model, XZJSONPropert
             }
             return;
         }
-        case XZObjcTypeShort: {
+        case XZObjcRawShort: {
             int value = 0;
             if (NSIntegerFromJSONValue(JSONValue, &value)) {
                 ((void (*)(id, SEL, short))objc_msgSend)((id)model, property->_setter, (short)value);
@@ -799,7 +799,7 @@ void XZJSONModelDecodeProperty(id const __unsafe_unretained model, XZJSONPropert
             }
             break;
         }
-        case XZObjcTypeUnsignedShort: {
+        case XZObjcRawUnsignedShort: {
             int value = 0;
             if (NSIntegerFromJSONValue(JSONValue, &value)) {
                 ((void (*)(id, SEL, unsigned short))objc_msgSend)((id)model, property->_setter, (unsigned short)value);
@@ -807,7 +807,7 @@ void XZJSONModelDecodeProperty(id const __unsafe_unretained model, XZJSONPropert
             }
             break;
         }
-        case XZObjcTypeLong: {
+        case XZObjcRawLong: {
             long value = 0;
             if (NSLongIntegerFromJSONValue(JSONValue, &value)) {
                 ((void (*)(id, SEL, long))objc_msgSend)((id)model, property->_setter, (long)value);
@@ -815,7 +815,7 @@ void XZJSONModelDecodeProperty(id const __unsafe_unretained model, XZJSONPropert
             }
             break;
         }
-        case XZObjcTypeUnsignedLong: {
+        case XZObjcRawUnsignedLong: {
             long value = 0;
             if (NSLongIntegerFromJSONValue(JSONValue, &value)) {
                 ((void (*)(id, SEL, unsigned long))objc_msgSend)((id)model, property->_setter, (unsigned long)value);
@@ -823,7 +823,7 @@ void XZJSONModelDecodeProperty(id const __unsafe_unretained model, XZJSONPropert
             }
             break;;
         }
-        case XZObjcTypeLongLong: {
+        case XZObjcRawLongLong: {
             long long value = 0;
             if (NSLongLongIntegerFromJSONValue(JSONValue, &value)) {
                 ((void (*)(id, SEL, long long))objc_msgSend)((id)model, property->_setter, (long long)value);
@@ -831,7 +831,7 @@ void XZJSONModelDecodeProperty(id const __unsafe_unretained model, XZJSONPropert
             }
             break;
         }
-        case XZObjcTypeUnsignedLongLong: {
+        case XZObjcRawUnsignedLongLong: {
             long long value = 0;
             if (NSLongLongIntegerFromJSONValue(JSONValue, &value)) {
                 ((void (*)(id, SEL, unsigned long long))objc_msgSend)((id)model, property->_setter, (unsigned long long)value);
@@ -839,7 +839,7 @@ void XZJSONModelDecodeProperty(id const __unsafe_unretained model, XZJSONPropert
             }
             break;;
         }
-        case XZObjcTypeFloat: {
+        case XZObjcRawFloat: {
             float value = 0;
             if (NSFloatFromJSONValue(JSONValue, &value)) {
                 ((void (*)(id, SEL, float))objc_msgSend)((id)model, property->_setter, value);
@@ -847,7 +847,7 @@ void XZJSONModelDecodeProperty(id const __unsafe_unretained model, XZJSONPropert
             }
             break;
         }
-        case XZObjcTypeDouble: {
+        case XZObjcRawDouble: {
             double value = 0;
             if (NSDoubleFromJSONValue(JSONValue, &value)) {
                 ((void (*)(id, SEL, long long))objc_msgSend)((id)model, property->_setter, value);
@@ -855,7 +855,7 @@ void XZJSONModelDecodeProperty(id const __unsafe_unretained model, XZJSONPropert
             }
             break;
         }
-        case XZObjcTypeLongDouble: {
+        case XZObjcRawLongDouble: {
             long double value = 0;
             if (NSLongDoubleFromJSONValue(JSONValue, &value)) {
                 ((void (*)(id, SEL, long double))objc_msgSend)((id)model, property->_setter, value);
@@ -863,7 +863,7 @@ void XZJSONModelDecodeProperty(id const __unsafe_unretained model, XZJSONPropert
             }
             break;
         }
-        case XZObjcTypeBool: {
+        case XZObjcRawBool: {
             BOOL value = 0;
             if (NSBoolFromJSONValue(JSONValue, &value)) {
                 ((void (*)(id, SEL, BOOL))objc_msgSend)((id)model, property->_setter, value);
@@ -871,13 +871,13 @@ void XZJSONModelDecodeProperty(id const __unsafe_unretained model, XZJSONPropert
             }
             break;
         }
-        case XZObjcTypeStruct: {
+        case XZObjcRawStruct: {
             if (NSStringIntoStructProperty(model, property, JSONValue)) {
                 return;
             }
             break;
         }
-        case XZObjcTypeClass: {
+        case XZObjcRawClass: {
             if (JSONValue == (id)kCFNull) {
                 ((void (*)(id, SEL, Class))(void *) objc_msgSend)((id)model, property->_setter, Nil);
                 return;
@@ -895,7 +895,7 @@ void XZJSONModelDecodeProperty(id const __unsafe_unretained model, XZJSONPropert
             }
             break;
         }
-        case XZObjcTypeSEL: {
+        case XZObjcRawSEL: {
             if (JSONValue == (id)kCFNull) {
                 ((void (*)(id, SEL, SEL))(void *) objc_msgSend)((id)model, property->_setter, (SEL)NULL);
                 return;
@@ -909,7 +909,7 @@ void XZJSONModelDecodeProperty(id const __unsafe_unretained model, XZJSONPropert
             }
             break;
         }
-        case XZObjcTypeObject: {
+        case XZObjcRawObject: {
             // 空值
             if (JSONValue == (id)kCFNull) {
                 ((XZJSONSetter)objc_msgSend)((id)model, property->_setter, (id)nil);

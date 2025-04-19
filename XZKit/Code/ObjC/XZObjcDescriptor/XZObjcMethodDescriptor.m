@@ -33,15 +33,15 @@
     
     IMP const _implementation = method_getImplementation(method);
     NSString * const _typeEncoding = [NSString stringWithUTF8String:typeEncoding];
-    XZObjcTypeDescriptor *_returnType = nil;
+    XZObjcType *_returnType = nil;
     NSMutableArray *_argumentsTypes = nil;
     
     char *returnType = method_copyReturnType(method);
     if (returnType != nil) {
-        _returnType = [XZObjcTypeDescriptor descriptorWithObjcType:returnType];
+        _returnType = [XZObjcType typeWithTypeEncoding:returnType];
         free(returnType);
     } else {
-        _returnType = [XZObjcTypeDescriptor descriptorWithObjcType:@encode(void)];
+        _returnType = [XZObjcType typeWithTypeEncoding:@encode(void)];
     }
 
     unsigned int const count = method_getNumberOfArguments(method);
@@ -50,7 +50,7 @@
         for (unsigned int i = 0; i < count; i++) {
             char *argumentType = method_copyArgumentType(method, i);
             if (argumentType) {
-                XZObjcTypeDescriptor *type = [XZObjcTypeDescriptor descriptorWithObjcType:argumentType];
+                XZObjcType *type = [XZObjcType typeWithTypeEncoding:argumentType];
                 if (type) {
                     [_argumentsTypes addObject:type];
                 }
@@ -62,7 +62,7 @@
     return [[self alloc] initWithMethod:method name:_name selector:_selector implementation:_implementation typeEncoding:_typeEncoding returnType:_returnType argumentsTypes:_argumentsTypes];
 }
 
-- (instancetype)initWithMethod:(Method)method name:(NSString *)name selector:(SEL)selector implementation:(IMP)implementation typeEncoding:(NSString *)typeEncoding returnType:(XZObjcTypeDescriptor *)returnType argumentsTypes:(NSArray *)argumentsTypes {
+- (instancetype)initWithMethod:(Method)method name:(NSString *)name selector:(SEL)selector implementation:(IMP)implementation typeEncoding:(NSString *)typeEncoding returnType:(XZObjcType *)returnType argumentsTypes:(NSArray *)argumentsTypes {
     self = [super init];
     if (self) {
         _raw = method;
@@ -82,7 +82,7 @@
     NSString *argumentsTypes = nil;
     if (self.argumentsTypes.count > 0) {
         NSMutableString *stringM = [[NSMutableString alloc] initWithString:@"[\n"];
-        [self.argumentsTypes enumerateObjectsUsingBlock:^(XZObjcTypeDescriptor * _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
+        [self.argumentsTypes enumerateObjectsUsingBlock:^(XZObjcType * _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
             [stringM appendFormat:@"    <%p, %@>,\n", obj, ((id)obj.subtype ?: obj.name)];
         }];
         [stringM deleteCharactersInRange:NSMakeRange(stringM.length - 2, 1)];

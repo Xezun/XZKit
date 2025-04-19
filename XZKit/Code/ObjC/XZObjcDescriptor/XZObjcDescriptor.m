@@ -13,34 +13,34 @@
 #import "XZObjcDescriptor.h"
 
 /// Whether the type is c number.
-BOOL XZObjcIsScalarNumber(XZObjcType type) {
+BOOL XZObjcIsScalarNumber(XZObjcRaw type) {
     switch (type) {
-        case XZObjcTypeChar:
-        case XZObjcTypeInt:
-        case XZObjcTypeShort:
-        case XZObjcTypeLong:
-        case XZObjcTypeLongLong:
-        case XZObjcTypeUnsignedChar:
-        case XZObjcTypeUnsignedInt:
-        case XZObjcTypeUnsignedShort:
-        case XZObjcTypeUnsignedLong:
-        case XZObjcTypeUnsignedLongLong:
-        case XZObjcTypeFloat:
-        case XZObjcTypeDouble:
-        case XZObjcTypeLongDouble:
-        case XZObjcTypeBool:
+        case XZObjcRawChar:
+        case XZObjcRawInt:
+        case XZObjcRawShort:
+        case XZObjcRawLong:
+        case XZObjcRawLongLong:
+        case XZObjcRawUnsignedChar:
+        case XZObjcRawUnsignedInt:
+        case XZObjcRawUnsignedShort:
+        case XZObjcRawUnsignedLong:
+        case XZObjcRawUnsignedLongLong:
+        case XZObjcRawFloat:
+        case XZObjcRawDouble:
+        case XZObjcRawLongDouble:
+        case XZObjcRawBool:
             return YES;
-        case XZObjcTypeVoid:
-        case XZObjcTypeString:
-        case XZObjcTypeObject:
-        case XZObjcTypeClass:
-        case XZObjcTypeSEL:
-        case XZObjcTypeArray:
-        case XZObjcTypeStruct:
-        case XZObjcTypeUnion:
-        case XZObjcTypeBitField:
-        case XZObjcTypePointer:
-        case XZObjcTypeUnknown:
+        case XZObjcRawVoid:
+        case XZObjcRawString:
+        case XZObjcRawObject:
+        case XZObjcRawClass:
+        case XZObjcRawSEL:
+        case XZObjcRawArray:
+        case XZObjcRawStruct:
+        case XZObjcRawUnion:
+        case XZObjcRawBitField:
+        case XZObjcRawPointer:
+        case XZObjcRawUnknown:
             return NO;
     }
 }

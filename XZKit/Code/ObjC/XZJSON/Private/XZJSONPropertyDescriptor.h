@@ -28,7 +28,7 @@ typedef id _Nullable (^XZJSONKeyValueCoder)(id object);
     /// 属性名。property's name
     NSString *_name;
     /// 属性值类型。property's type
-    XZObjcType _type;
+    XZObjcRaw _type;
     /// 如果属性值是对象，判断对象的类型是否为已知类型（原生已定义的对象类型）。property's Foundation type
     XZJSONClassType _classType;
     /// 如果属性是结构体，判断结构体是否为已知的类型（原生已定义的类型）。

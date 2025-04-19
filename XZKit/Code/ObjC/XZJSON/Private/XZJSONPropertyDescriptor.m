@@ -37,12 +37,12 @@
     descriptor->_class       = aClass;
     descriptor->_property    = property;
     descriptor->_name        = property.name;
-    descriptor->_type        = property.type.type;
+    descriptor->_type        = property.type.raw;
     descriptor->_elementType = elementType;
     descriptor->_getter      = getter;
     descriptor->_setter      = setter;
     
-    if (descriptor->_type == XZObjcTypeObject) {
+    if (descriptor->_type == XZObjcRawObject) {
         descriptor->_subtype = property.type.subtype;
         descriptor->_classType = XZJSONClassTypeFromClass(descriptor->_subtype);
         descriptor->_structType = XZJSONStructTypeUnknown;

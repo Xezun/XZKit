@@ -11,7 +11,7 @@ import Foundation
 @_exported import XZObjcDescriptorObjC
 #endif
 
-extension XZObjcType {
+extension XZObjcRaw {
     
     public var isScalarNumber: Bool {
         return __XZObjcIsScalarNumber(self)

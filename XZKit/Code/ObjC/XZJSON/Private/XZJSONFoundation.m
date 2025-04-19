@@ -131,77 +131,77 @@ NSString * _Nonnull XZJSONModelDescription(NSObject *_Nonnull model, NSUInteger 
         NSString *key = property->_name;
         NSString *value = nil;
         switch (property->_type) {
-            case XZObjcTypeBool: {
+            case XZObjcRawBool: {
                 BOOL const aValue = ((BOOL (*)(id, SEL))(void *) objc_msgSend)(model, property->_getter);
                 value = aValue ? @"true" : @"false";
                 break;
             }
-            case XZObjcTypeChar: {
+            case XZObjcRawChar: {
                 char const aValue = ((char (*)(id, SEL))(void *) objc_msgSend)(model, property->_getter);
                 value = [NSString stringWithFormat:@"%c", aValue];
                 break;
             }
-            case XZObjcTypeUnsignedChar: {
+            case XZObjcRawUnsignedChar: {
                 unsigned char const aValue = ((unsigned char (*)(id, SEL))(void *) objc_msgSend)(model, property->_getter);
                 value = [NSString stringWithFormat:@"%c", aValue];
                 break;
             }
-            case XZObjcTypeShort: {
+            case XZObjcRawShort: {
                 short const aValue = ((short (*)(id, SEL))(void *) objc_msgSend)(model, property->_getter);
                 value = [NSString stringWithFormat:@"%d", aValue];
                 break;
             }
-            case XZObjcTypeUnsignedShort: {
+            case XZObjcRawUnsignedShort: {
                 unsigned short const aValue = ((unsigned short (*)(id, SEL))(void *) objc_msgSend)(model, property->_getter);
                 value = [NSString stringWithFormat:@"%u", aValue];
                 break;
             }
-            case XZObjcTypeInt: {
+            case XZObjcRawInt: {
                 int const aValue = ((int (*)(id, SEL))(void *) objc_msgSend)(model, property->_getter);
                 value = [NSString stringWithFormat:@"%d", aValue];
                 break;
             }
-            case XZObjcTypeUnsignedInt: {
+            case XZObjcRawUnsignedInt: {
                 unsigned int const aValue = ((unsigned int (*)(id, SEL))(void *) objc_msgSend)(model, property->_getter);
                 value = [NSString stringWithFormat:@"%u", aValue];
                 break;
             }
-            case XZObjcTypeLong: {
+            case XZObjcRawLong: {
                 long const aValue = ((long (*)(id, SEL))(void *) objc_msgSend)(model, property->_getter);
                 value = [NSString stringWithFormat:@"%ld", aValue];
                 break;
             }
-            case XZObjcTypeUnsignedLong: {
+            case XZObjcRawUnsignedLong: {
                 unsigned long const aValue = ((unsigned long (*)(id, SEL))(void *) objc_msgSend)(model, property->_getter);
                 value = [NSString stringWithFormat:@"%lu", aValue];
                 break;
             }
-            case XZObjcTypeFloat: {
+            case XZObjcRawFloat: {
                 float const aValue = ((float (*)(id, SEL))(void *) objc_msgSend)(model, property->_getter);
                 value = [NSString stringWithFormat:@"%f", aValue];
                 break;
             }
-            case XZObjcTypeDouble: {
+            case XZObjcRawDouble: {
                 double const aValue = ((double (*)(id, SEL))(void *) objc_msgSend)(model, property->_getter);
                 value = [NSString stringWithFormat:@"%lf", aValue];
                 break;
             }
-            case XZObjcTypeLongDouble: {
+            case XZObjcRawLongDouble: {
                 long double const aValue = ((long double (*)(id, SEL))(void *) objc_msgSend)(model, property->_getter);
                 value = [NSString stringWithFormat:@"%Lf", aValue];
                 break;
             }
-            case XZObjcTypeLongLong: {
+            case XZObjcRawLongLong: {
                 long long const aValue = ((long long (*)(id, SEL))(void *) objc_msgSend)(model, property->_getter);
                 value = [NSString stringWithFormat:@"%lld", aValue];
                 break;
             }
-            case XZObjcTypeUnsignedLongLong: {
+            case XZObjcRawUnsignedLongLong: {
                 unsigned long long const aValue = ((unsigned long long (*)(id, SEL))(void *) objc_msgSend)(model, property->_getter);
                 value = [NSString stringWithFormat:@"%lld", aValue];
                 break;
             }
-            case XZObjcTypeObject: {
+            case XZObjcRawObject: {
                 value = ((id (*)(id _Nonnull, SEL _Nonnull))objc_msgSend)((id)model, property->_getter);
                 if (property->_isUnownedReferenceProperty) {
                     value = [NSString stringWithFormat:@"<%@: %p>", value.class, value];
@@ -212,20 +212,20 @@ NSString * _Nonnull XZJSONModelDescription(NSObject *_Nonnull model, NSUInteger 
                 }
                 break;
             }
-            case XZObjcTypeClass: {
+            case XZObjcRawClass: {
                 value = ((id (*)(id _Nonnull, SEL _Nonnull))objc_msgSend)((id)model, property->_getter);
                 value = [NSString stringWithFormat:@"<class: %@>", value ?: @"Nil"];
                 break;
             }
-            case XZObjcTypeSEL: {
+            case XZObjcRawSEL: {
                 SEL sel = ((SEL (*)(id, SEL))(void *) objc_msgSend)((id)model, property->_getter);
                 value = [NSString stringWithFormat:@"<selector: %@>", sel ? NSStringFromSelector(sel) : @"nil"];
                 break;
             }
-            case XZObjcTypeArray:
-            case XZObjcTypeString:
-            case XZObjcTypePointer:
-            case XZObjcTypeUnknown: {
+            case XZObjcRawArray:
+            case XZObjcRawString:
+            case XZObjcRawPointer:
+            case XZObjcRawUnknown: {
                 NSString *desc = nil;
                 if (modelClass->_usesPropertyJSONEncodingMethod) {
                     desc = [NSString stringWithFormat:@"%@", [(id<XZJSONCoding>)model JSONEncodeValueForKey:key]];
@@ -234,19 +234,19 @@ NSString * _Nonnull XZJSONModelDescription(NSObject *_Nonnull model, NSUInteger 
                     desc = [NSString stringWithFormat:@"%p", pointer];
                 }
                 switch (property->_type) {
-                    case XZObjcTypeArray: {
+                    case XZObjcRawArray: {
                         value = [NSString stringWithFormat:@"<array: %@, value: %@>", property->_property.type.name, desc];
                         break;
                     }
-                    case XZObjcTypeString: {
+                    case XZObjcRawString: {
                         value = [NSString stringWithFormat:@"<string: %@, value: %@>", property->_property.type.name, desc];
                         break;
                     }
-                    case XZObjcTypePointer: {
+                    case XZObjcRawPointer: {
                         value = [NSString stringWithFormat:@"<pointer: %@, value: %@>", property->_property.type.name, desc];
                         break;
                     }
-                    case XZObjcTypeUnknown: {
+                    case XZObjcRawUnknown: {
                         value = [NSString stringWithFormat:@"<unknown: %@, value: %@>", property->_property.type.name, desc];
                         break;
                     }
@@ -255,7 +255,7 @@ NSString * _Nonnull XZJSONModelDescription(NSObject *_Nonnull model, NSUInteger 
                 }
                 break;
             }
-            case XZObjcTypeStruct: {
+            case XZObjcRawStruct: {
                 value = NSStringFromStructProperty(model, property);
                 if (value == nil) {
                     if (modelClass->_usesPropertyJSONEncodingMethod) {
@@ -269,7 +269,7 @@ NSString * _Nonnull XZJSONModelDescription(NSObject *_Nonnull model, NSUInteger 
                 }
                 break;
             }
-            case XZObjcTypeUnion: {
+            case XZObjcRawUnion: {
                 if (modelClass->_usesPropertyJSONEncodingMethod) {
                     value = [NSString stringWithFormat:@"%@", [(id<XZJSONCoding>)model JSONEncodeValueForKey:key]];
                 }
@@ -280,11 +280,11 @@ NSString * _Nonnull XZJSONModelDescription(NSObject *_Nonnull model, NSUInteger 
                 }
                 break;
             }
-            case XZObjcTypeVoid: {
+            case XZObjcRawVoid: {
                 value = @"<void>";
                 break;
             }
-            case XZObjcTypeBitField: {
+            case XZObjcRawBitField: {
                 if (modelClass->_usesPropertyJSONEncodingMethod) {
                     value = [NSString stringWithFormat:@"%@", [(id<XZJSONCoding>)model JSONEncodeValueForKey:key]];
                 }
@@ -397,87 +397,87 @@ void XZJSONModelEncodeWithCoder(id model, NSCoder *aCoder) {
                 SEL        const getter = property->_getter;
                 NSString * const name   = property->_name;
                 switch (property->_type) {
-                    case XZObjcTypeUnknown:
-                    case XZObjcTypeVoid:
-                    case XZObjcTypeString:
-                    case XZObjcTypeArray:
-                    case XZObjcTypeBitField:
-                    case XZObjcTypePointer:
-                    case XZObjcTypeUnion: {
+                    case XZObjcRawUnknown:
+                    case XZObjcRawVoid:
+                    case XZObjcRawString:
+                    case XZObjcRawArray:
+                    case XZObjcRawBitField:
+                    case XZObjcRawPointer:
+                    case XZObjcRawUnion: {
                         // 无法编码
                         break;
                     }
-                    case XZObjcTypeChar: {
+                    case XZObjcRawChar: {
                         char const aValue = ((char (*)(id, SEL))objc_msgSend)(model, getter);
                         [aCoder encodeInt:aValue forKey:name];
                         return;
                     }
-                    case XZObjcTypeUnsignedChar: {
+                    case XZObjcRawUnsignedChar: {
                         unsigned char const aValue = ((unsigned char (*)(id, SEL))objc_msgSend)(model, getter);
                         [aCoder encodeInt:aValue forKey:name];
                         return;
                     }
-                    case XZObjcTypeInt: {
+                    case XZObjcRawInt: {
                         int const aValue = ((int (*)(id, SEL))objc_msgSend)(model, getter);
                         [aCoder encodeInt:aValue forKey:name];
                         return;
                     }
-                    case XZObjcTypeUnsignedInt: {
+                    case XZObjcRawUnsignedInt: {
                         unsigned int const aValue = ((unsigned int (*)(id, SEL))objc_msgSend)(model, getter);
                         [aCoder encodeInt:aValue forKey:name];
                         return;
                     }
-                    case XZObjcTypeShort: {
+                    case XZObjcRawShort: {
                         short const aValue = ((short (*)(id, SEL))objc_msgSend)(model, getter);
                         [aCoder encodeInt:aValue forKey:name];
                         return;
                     }
-                    case XZObjcTypeUnsignedShort: {
+                    case XZObjcRawUnsignedShort: {
                         unsigned short const aValue = ((unsigned short (*)(id, SEL))objc_msgSend)(model, getter);
                         [aCoder encodeInt:aValue forKey:name];
                         return;
                     }
-                    case XZObjcTypeLong: {
+                    case XZObjcRawLong: {
                         long const aValue = ((long (*)(id, SEL))objc_msgSend)(model, getter);
                         [aCoder encodeInt64:aValue forKey:name];
                         return;
                     }
-                    case XZObjcTypeUnsignedLong: {
+                    case XZObjcRawUnsignedLong: {
                         unsigned long const aValue = ((unsigned long (*)(id, SEL))objc_msgSend)(model, getter);
                         [aCoder encodeInt64:aValue forKey:name];
                         return;
                     }
-                    case XZObjcTypeLongLong: {
+                    case XZObjcRawLongLong: {
                         long long const aValue = ((long long (*)(id, SEL))objc_msgSend)(model, getter);
                         [aCoder encodeInt64:aValue forKey:name];
                         return;
                     }
-                    case XZObjcTypeUnsignedLongLong: {
+                    case XZObjcRawUnsignedLongLong: {
                         unsigned long long const aValue = ((unsigned long long (*)(id, SEL))objc_msgSend)(model, getter);
                         [aCoder encodeInt64:aValue forKey:name];
                         return;
                     }
-                    case XZObjcTypeFloat: {
+                    case XZObjcRawFloat: {
                         float const aValue = ((float (*)(id, SEL))objc_msgSend)(model, getter);
                         [aCoder encodeFloat:aValue forKey:name];
                         break;
                     }
-                    case XZObjcTypeDouble: {
+                    case XZObjcRawDouble: {
                         double const aValue = ((double (*)(id, SEL))objc_msgSend)(model, getter);
                         [aCoder encodeDouble:aValue forKey:name];
                         return;
                     }
-                    case XZObjcTypeLongDouble: {
+                    case XZObjcRawLongDouble: {
                         long double const aValue = ((long double (*)(id, SEL))objc_msgSend)(model, getter);
                         [aCoder encodeBytes:(const uint8_t *)&aValue length:sizeof(long double) forKey:name];
                         return;
                     }
-                    case XZObjcTypeBool: {
+                    case XZObjcRawBool: {
                         BOOL const aValue = ((BOOL (*)(id, SEL))objc_msgSend)(model, getter);
                         [aCoder encodeBool:aValue forKey:name];
                         return;
                     }
-                    case XZObjcTypeStruct: {
+                    case XZObjcRawStruct: {
                         NSString * const aValue = NSStringFromStructProperty(model, property);
                         if (aValue) {
                             [aCoder encodeObject:aValue forKey:name];
@@ -485,19 +485,19 @@ void XZJSONModelEncodeWithCoder(id model, NSCoder *aCoder) {
                         }
                         break;
                     }
-                    case XZObjcTypeClass: {
+                    case XZObjcRawClass: {
                         Class const aValue = ((Class (*)(id, SEL))objc_msgSend)(model, getter);
                         NSString *className = NSStringFromClass(aValue);
                         [aCoder encodeObject:className forKey:name];
                         return;
                     }
-                    case XZObjcTypeSEL: {
+                    case XZObjcRawSEL: {
                         SEL const aValue = ((SEL (*)(id, SEL))objc_msgSend)(model, getter);
                         NSString *selectorName = NSStringFromSelector(aValue);
                         [aCoder encodeObject:selectorName forKey:name];
                         return;
                     }
-                    case XZObjcTypeObject: {
+                    case XZObjcRawObject: {
                         id const aValue = ((id (*)(id, SEL))objc_msgSend)(model, getter);
                         
                         // 没有值
@@ -695,88 +695,88 @@ id _Nullable XZJSONModelDecodeWithCoder(id model, NSCoder *aCoder) {
                 }
                 
                 switch (property->_type) {
-                    case XZObjcTypeUnknown:
-                    case XZObjcTypeVoid:
-                    case XZObjcTypeString:
-                    case XZObjcTypeArray:
-                    case XZObjcTypeBitField:
-                    case XZObjcTypePointer:
-                    case XZObjcTypeUnion: {
+                    case XZObjcRawUnknown:
+                    case XZObjcRawVoid:
+                    case XZObjcRawString:
+                    case XZObjcRawArray:
+                    case XZObjcRawBitField:
+                    case XZObjcRawPointer:
+                    case XZObjcRawUnion: {
                         // 不支持的数据类型
                         break;
                     }
-                    case XZObjcTypeChar: {
+                    case XZObjcRawChar: {
                         char const aValue = [aCoder decodeIntForKey:name];
                         ((void (*)(id, SEL, char))objc_msgSend)(model, setter, aValue);
                         return;
                     }
-                    case XZObjcTypeUnsignedChar: {
+                    case XZObjcRawUnsignedChar: {
                         unsigned char const aValue = [aCoder decodeIntForKey:name];
                         ((void (*)(id, SEL, unsigned char))objc_msgSend)(model, setter, aValue);
                         return;
                     }
-                    case XZObjcTypeInt: {
+                    case XZObjcRawInt: {
                         int const aValue = [aCoder decodeIntForKey:name];
                         ((void (*)(id, SEL, int))objc_msgSend)(model, setter, aValue);
                         return;
                     }
-                    case XZObjcTypeUnsignedInt: {
+                    case XZObjcRawUnsignedInt: {
                         unsigned int const aValue = [aCoder decodeIntForKey:name];
                         ((void (*)(id, SEL, unsigned int))objc_msgSend)(model, setter, aValue);
                         return;
                     }
-                    case XZObjcTypeShort: {
+                    case XZObjcRawShort: {
                         short const aValue = [aCoder decodeIntForKey:name];
                         ((void (*)(id, SEL, short))objc_msgSend)(model, setter, aValue);
                         return;
                     }
-                    case XZObjcTypeUnsignedShort: {
+                    case XZObjcRawUnsignedShort: {
                         unsigned short const aValue = [aCoder decodeIntForKey:name];
                         ((void (*)(id, SEL, unsigned short))objc_msgSend)(model, setter, aValue);
                         return;
                     }
-                    case XZObjcTypeLong: {
+                    case XZObjcRawLong: {
                         long const aValue = [aCoder decodeInt64ForKey:name];
                         ((void (*)(id, SEL, long))objc_msgSend)(model, setter, aValue);
                         return;
                     }
-                    case XZObjcTypeUnsignedLong: {
+                    case XZObjcRawUnsignedLong: {
                         unsigned long const aValue = [aCoder decodeInt64ForKey:name];
                         ((void (*)(id, SEL, unsigned long))objc_msgSend)(model, setter, aValue);
                         return;
                     }
-                    case XZObjcTypeLongLong: {
+                    case XZObjcRawLongLong: {
                         long long const aValue = [aCoder decodeInt64ForKey:name];
                         ((void (*)(id, SEL, long long))objc_msgSend)(model, setter, aValue);
                         return;
                     }
-                    case XZObjcTypeUnsignedLongLong: {
+                    case XZObjcRawUnsignedLongLong: {
                         unsigned long long const aValue = [aCoder decodeInt64ForKey:name];
                         ((void (*)(id, SEL, unsigned long long))objc_msgSend)(model, setter, aValue);
                         return;
                     }
-                    case XZObjcTypeFloat: {
+                    case XZObjcRawFloat: {
                         float const aValue = [aCoder decodeFloatForKey:name];
                         ((void (*)(id, SEL, float))objc_msgSend)(model, setter, aValue);
                         return;
                     }
-                    case XZObjcTypeDouble: {
+                    case XZObjcRawDouble: {
                         double const aValue = [aCoder decodeDoubleForKey:name];
                         ((void (*)(id, SEL, double))objc_msgSend)(model, setter, aValue);
                         [aCoder encodeDouble:aValue forKey:name];
                         return;
                     }
-                    case XZObjcTypeLongDouble: {
+                    case XZObjcRawLongDouble: {
                         long double *aValue = (long double *)[aCoder decodeBytesForKey:name returnedLength:nil];
                         ((void (*)(id, SEL, long double))objc_msgSend)(model, setter, *aValue);
                         return;
                     }
-                    case XZObjcTypeBool: {
+                    case XZObjcRawBool: {
                         BOOL const aValue = [aCoder decodeBoolForKey:name];
                         ((void (*)(id, SEL, BOOL))objc_msgSend)(model, setter, aValue);
                         return;
                     }
-                    case XZObjcTypeStruct: {
+                    case XZObjcRawStruct: {
                         id aValue = nil;
                         if (aCoder.requiresSecureCoding) {
                             aValue = [aCoder decodeObjectOfClass:NSString.class forKey:name];
@@ -791,7 +791,7 @@ id _Nullable XZJSONModelDecodeWithCoder(id model, NSCoder *aCoder) {
                         }
                         break;
                     }
-                    case XZObjcTypeClass: {
+                    case XZObjcRawClass: {
                         id aValue = nil;
                         if (aCoder.requiresSecureCoding) {
                             aValue = [aCoder decodeObjectOfClass:NSString.class forKey:name];
@@ -810,7 +810,7 @@ id _Nullable XZJSONModelDecodeWithCoder(id model, NSCoder *aCoder) {
                         }
                         break;
                     }
-                    case XZObjcTypeSEL: {
+                    case XZObjcRawSEL: {
                         id aValue = nil;
                         if (aCoder.requiresSecureCoding) {
                             aValue = [aCoder decodeObjectOfClass:NSString.class forKey:name];
@@ -829,7 +829,7 @@ id _Nullable XZJSONModelDecodeWithCoder(id model, NSCoder *aCoder) {
                         }
                         break;
                     }
-                    case XZObjcTypeObject: {
+                    case XZObjcRawObject: {
                         // 安全解档
                         if (aCoder.requiresSecureCoding) {
                             // 未知类型，无法安全解档

@@ -46,7 +46,7 @@ id XZJSONEncodeObjectIntoDictionary(id const __unsafe_unretained object, XZJSONC
             NSValue    * const nsValue  = object;
             const char * const encoding = nsValue.objCType;
             
-            XZObjcTypeDescriptor *type = [XZObjcTypeDescriptor descriptorWithObjcType:encoding];
+            XZObjcType *type = [XZObjcType typeWithTypeEncoding:encoding];
             if (type == nil) {
                 return nil;
             }
@@ -298,58 +298,58 @@ void XZJSONModelEncodeProperty(id const __unsafe_unretained model, XZJSONPropert
     id JSONValue = nil;
     
     switch (property->_type) {
-        case XZObjcTypeUnknown:
+        case XZObjcRawUnknown:
             break;
-        case XZObjcTypeChar:
+        case XZObjcRawChar:
             if (XZJSONModelEncodePropertyPrepare(property, &key, &keyInDictionary, NO)) {
                 JSONValue = @(((char (*)(id, SEL))(void *) objc_msgSend)(model, property->_getter));
             }
             break;
-        case XZObjcTypeUnsignedChar:
+        case XZObjcRawUnsignedChar:
             if (XZJSONModelEncodePropertyPrepare(property, &key, &keyInDictionary, NO))
                 JSONValue = @(((unsigned char (*)(id, SEL))(void *) objc_msgSend)(model, property->_getter));
             break;
-        case XZObjcTypeInt:
+        case XZObjcRawInt:
             if (XZJSONModelEncodePropertyPrepare(property, &key, &keyInDictionary, NO))
                 JSONValue = @(((int (*)(id, SEL))(void *) objc_msgSend)(model, property->_getter));
             break;
-        case XZObjcTypeUnsignedInt:
+        case XZObjcRawUnsignedInt:
             if (XZJSONModelEncodePropertyPrepare(property, &key, &keyInDictionary, NO))
                 JSONValue = @(((unsigned int (*)(id, SEL))(void *) objc_msgSend)(model, property->_getter));
             break;
-        case XZObjcTypeShort:
+        case XZObjcRawShort:
             if (XZJSONModelEncodePropertyPrepare(property, &key, &keyInDictionary, NO))
                 JSONValue = @(((short (*)(id, SEL))(void *) objc_msgSend)(model, property->_getter));
             break;
-        case XZObjcTypeUnsignedShort:
+        case XZObjcRawUnsignedShort:
             if (XZJSONModelEncodePropertyPrepare(property, &key, &keyInDictionary, NO))
                 JSONValue = @(((unsigned short (*)(id, SEL))(void *) objc_msgSend)(model, property->_getter));
             break;
-        case XZObjcTypeLong:
+        case XZObjcRawLong:
             if (XZJSONModelEncodePropertyPrepare(property, &key, &keyInDictionary, NO))
                 JSONValue = @(((long (*)(id, SEL))(void *) objc_msgSend)(model, property->_getter));
             break;
-        case XZObjcTypeUnsignedLong:
+        case XZObjcRawUnsignedLong:
             if (XZJSONModelEncodePropertyPrepare(property, &key, &keyInDictionary, NO))
                 JSONValue = @(((unsigned long (*)(id, SEL))(void *) objc_msgSend)(model, property->_getter));
             break;
-        case XZObjcTypeLongLong:
+        case XZObjcRawLongLong:
             if (XZJSONModelEncodePropertyPrepare(property, &key, &keyInDictionary, NO))
                 JSONValue = @(((long long (*)(id, SEL))(void *) objc_msgSend)(model, property->_getter));
             break;
-        case XZObjcTypeUnsignedLongLong:
+        case XZObjcRawUnsignedLongLong:
             if (XZJSONModelEncodePropertyPrepare(property, &key, &keyInDictionary, NO))
                 JSONValue = @(((unsigned long long (*)(id, SEL))(void *) objc_msgSend)(model, property->_getter));
             break;
-        case XZObjcTypeFloat:
+        case XZObjcRawFloat:
             if (XZJSONModelEncodePropertyPrepare(property, &key, &keyInDictionary, NO))
                 JSONValue = @(((float (*)(id, SEL))(void *) objc_msgSend)(model, property->_getter));
             break;
-        case XZObjcTypeDouble:
+        case XZObjcRawDouble:
             if (XZJSONModelEncodePropertyPrepare(property, &key, &keyInDictionary, NO))
                 JSONValue = @(((double (*)(id, SEL))(void *) objc_msgSend)(model, property->_getter));
             break;
-        case XZObjcTypeLongDouble: {
+        case XZObjcRawLongDouble: {
             // 目前 long double 只能用字符串承接 宏 TYPE_LONGDOUBLE_IS_DOUBLE 没用
             if (XZJSONModelEncodePropertyPrepare(property, &key, &keyInDictionary, NO)) {
                 long double const aValue = ((long double (*)(id, SEL))(void *) objc_msgSend)(model, property->_getter);
@@ -357,37 +357,37 @@ void XZJSONModelEncodeProperty(id const __unsafe_unretained model, XZJSONPropert
             }
             break;
         }
-        case XZObjcTypeBool:
+        case XZObjcRawBool:
             if (XZJSONModelEncodePropertyPrepare(property, &key, &keyInDictionary, NO))
                 JSONValue = @(((BOOL (*)(id, SEL))(void *) objc_msgSend)(model, property->_getter));
             break;
-        case XZObjcTypeVoid:
-        case XZObjcTypeString:
-        case XZObjcTypeArray:
-        case XZObjcTypeBitField:
-        case XZObjcTypePointer:
-        case XZObjcTypeUnion:
+        case XZObjcRawVoid:
+        case XZObjcRawString:
+        case XZObjcRawArray:
+        case XZObjcRawBitField:
+        case XZObjcRawPointer:
+        case XZObjcRawUnion:
             break;
-        case XZObjcTypeStruct:
+        case XZObjcRawStruct:
             if (XZJSONModelEncodePropertyPrepare(property, &key, &keyInDictionary, NO)) {
                 JSONValue = NSStringFromStructProperty(model, property);
             }
             break;
-        case XZObjcTypeClass: {
+        case XZObjcRawClass: {
             if (XZJSONModelEncodePropertyPrepare(property, &key, &keyInDictionary, NO)) {
                 Class const aClass = ((Class (*)(id, SEL))(void *) objc_msgSend)((id)model, property->_getter);
                 JSONValue = aClass ? NSStringFromClass(aClass) : (id)kCFNull;
             }
             break;
         }
-        case XZObjcTypeSEL: {
+        case XZObjcRawSEL: {
             if (XZJSONModelEncodePropertyPrepare(property, &key, &keyInDictionary, NO)) {
                 SEL const aSelector = ((SEL (*)(id, SEL))(void *) objc_msgSend)((id)model, property->_getter);
                 JSONValue = aSelector ? NSStringFromSelector(aSelector) : (id)kCFNull;
             }
             break;
         }
-        case XZObjcTypeObject: {
+        case XZObjcRawObject: {
             if (property->_isUnownedReferenceProperty) {
                 break;
             }

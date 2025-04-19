@@ -27,6 +27,8 @@ Pod::Spec.new do |s|
   s.ios.deployment_target = '12.0'
   s.pod_target_xcconfig = { 'GCC_PREPROCESSOR_DEFINITIONS' => 'XZ_FRAMEWORK=1' }
   
+  s.default_subspec = 'Code'
+  
   s.subspec 'Code' do |ss|
     ss.source_files = 'XZKit/Code/ObjC/XZJSON/**/*.{h,m}'
     ss.project_header_files = 'XZKit/Code/ObjC/XZJSON/**/Private/*.h'
@@ -37,6 +39,7 @@ Pod::Spec.new do |s|
   end
   
   s.subspec 'DEBUG' do |ss|
+    ss.dependency '#{s.name}/Code'
     ss.pod_target_xcconfig = { 'GCC_PREPROCESSOR_DEFINITIONS' => 'XZ_DEBUG=1' }
   end
   
