@@ -19,7 +19,7 @@ NS_ASSUME_NONNULL_BEGIN
     /// 描述类基本信息的对象。
     XZObjcClassDescriptor *_class;
     /// 如果是，原生对象的类型。 Model class type.
-    XZJSONClassType _classType;
+    XZJSONFoundationClass _foundationClass;
     
     /// 所有可模型化或序列化的属性的数量。
     NSUInteger _numberOfProperties;
@@ -53,7 +53,7 @@ NS_ASSUME_NONNULL_BEGIN
 }
 
 - (instancetype)init NS_UNAVAILABLE;
-+ (nullable XZJSONClassDescriptor *)descriptorForClass:(nullable Class)aClass;
++ (nullable XZJSONClassDescriptor *)descriptorWithClass:(nullable Class)aClass;
 
 @end
 

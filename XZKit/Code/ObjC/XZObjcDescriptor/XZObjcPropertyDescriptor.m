@@ -10,7 +10,7 @@
 
 @implementation XZObjcPropertyDescriptor
 
-+ (instancetype)descriptorForProperty:(objc_property_t)property forClass:(Class)aClass {
++ (instancetype)descriptorWithProperty:(objc_property_t)property ofClass:(Class)aClass {
     if (!property) {
         return nil;
     }
@@ -49,7 +49,7 @@
                 if (attrValue) {
                     Ivar ivar = class_getInstanceVariable(aClass, attrValue);
                     if (ivar) {
-                        _ivar = [XZObjcIvarDescriptor descriptorForIvar:ivar];
+                        _ivar = [XZObjcIvarDescriptor descriptorWithIvar:ivar];
                     }
                 }
                 break;
@@ -108,7 +108,7 @@
         }
     }
     
-    XZObjcType *_type = [XZObjcType typeWithTypeEncoding:typeEncoding qualifiers:qualifiers];
+    XZObjcType *_type = [XZObjcType typeWithEncoding:typeEncoding qualifiers:qualifiers];
     if (_type == nil) {
         return nil;
     }
@@ -151,8 +151,11 @@
 }
 
 - (NSString *)description {
-    NSString *type = [NSString stringWithFormat:@"<%p: %@>", self.type, ((id)self.type.subtype ?: self.type.name)];
-    return [NSString stringWithFormat:@"<%@: %p, name: %@, type: %@, ivar: %p, getter: %@, setter: %@>", NSStringFromClass(self.class), self, self.name, type, self.ivar, NSStringFromSelector(self.getter), (self.setter ? NSStringFromSelector(self.setter) : nil)];
+    NSString * const className = NSStringFromClass(self.class);
+    NSString * const type   = [NSString stringWithFormat:@"<%p: %@>", self.type, ((id)self.type.subtype ?: self.type.name)];
+    NSString * const getter = NSStringFromSelector(self.getter);
+    NSString * const setter = (self.setter ? NSStringFromSelector(self.setter) : nil);
+    return [NSString stringWithFormat:@"<%@: %p, name: %@, type: %@, ivar: %p, getter: %@, setter: %@>", className, self, self.name, type, self.ivar, getter, setter];
 }
 
 @end

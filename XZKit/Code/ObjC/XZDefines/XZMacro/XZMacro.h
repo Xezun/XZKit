@@ -72,7 +72,7 @@
 /// 函数重载
 #define XZ_ATTR_OVERLOAD                            __attribute__((overloadable))
 /// 函数外部不可见
-#define XZ_ATTR_INTERNAL                            __attribute__ ((visibility("hidden")))
+#define XZ_ATTR_INTERNAL                            __attribute__((visibility("hidden")))
 /// 废弃声明
 #define XZ_DEPRECATED(message, platforms, ...)      API_DEPRECATED(message, platforms, ##__VA_ARGS__)
 /// 废弃声明：重命名

@@ -16,6 +16,7 @@ NS_ASSUME_NONNULL_BEGIN
 ///
 /// Instance variable information.
 @interface XZObjcIvarDescriptor : NSObject <XZObjcDescriptor>
+
 /// 成员变量原始值。 ivar opaque struct
 @property (nonatomic, readonly) Ivar raw;
 /// 变量类型。Ivar's type
@@ -24,8 +25,10 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic, readonly) NSString *name;
 /// 成员变量偏移。Ivar's offset
 @property (nonatomic, readonly) ptrdiff_t offset;
-+ (nullable instancetype)descriptorForIvar:(Ivar)ivar;
+
++ (nullable instancetype)descriptorWithIvar:(Ivar)ivar NS_SWIFT_NAME(init(_:));
 - (instancetype)init NS_UNAVAILABLE;
+
 @end
 
 NS_ASSUME_NONNULL_END

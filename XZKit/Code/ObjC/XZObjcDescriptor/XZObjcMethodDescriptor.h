@@ -29,7 +29,7 @@ NS_ASSUME_NONNULL_BEGIN
 /// 参数类型编码。 array of arguments' type
 @property (nonatomic, readonly, nullable) NSArray<XZObjcType *> *argumentsTypes;
 
-+ (nullable instancetype)descriptorForMethod:(Method)method;
++ (nullable instancetype)descriptorWithMethod:(Method)method NS_SWIFT_NAME(init(_:));
 - (instancetype)init NS_UNAVAILABLE;
 
 @end

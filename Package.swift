@@ -23,14 +23,14 @@ private var _modules: [(type: ModuleType, name: String, dependencies: [PackageDe
     (.ObjC, "XZDataCryptor", ["XZDefines"]),
     (.ObjC, "XZDataDigester", ["XZDefines", "XZExtensions"]),
     (.ObjC, "XZKeychain", []),
+    (.ObjC, "XZObjcDescriptor", ["XZDefines"]),
     (.Swift, "XZGeometry", []),
     (.Swift, "XZTextImageView", ["XZGeometry"]),
     (.Swift, "XZContentStatus", ["XZTextImageView"]),
     (.Swift, "XZCollectionViewFlowLayout", []),
     (.Swift, "XZNavigationController", ["XZDefines"]),
-    (.Mixed, "XZToast", []),
+    (.Mixed, "XZToast", ["XZGeometry", "XZTextImageView"]),
     (.Mixed, "XZMocoa", ["XZDefines", "XZExtensions"]),
-    (.Mixed, "XZObjcDescriptor", ["XZDefines"]),
 ]
 _modules.append((.Swift, "XZKit", _modules.map({ .byName(name: $0.name) })))
 

@@ -11,10 +11,10 @@
 #import "XZObjcMethodDescriptor.h"
 
 NSNotificationName const XZObjcClassNeedsUpdateNotification = @"XZObjcClassNeedsUpdateNotification";
-NSString *         const XZObjcClassUpdateTypeUserInfoKey   = @"XZObjcClassUpdateTypeUserInfoKey";
-NSString *         const XZObjcClassUpdateTypeIvars         = @"XZObjcClassUpdateTypeIvars";
-NSString *         const XZObjcClassUpdateTypeMethods       = @"XZObjcClassUpdateTypeMethods";
-NSString *         const XZObjcClassUpdateTypeProperties    = @"XZObjcClassUpdateTypeProperties";
+NSString *         const XZObjcClassUpdateUserInfoKey   = @"XZObjcClassUpdateUserInfoKey";
+NSString *         const XZObjcClassUpdateIvars         = @"XZObjcClassUpdateIvars";
+NSString *         const XZObjcClassUpdateMethods       = @"XZObjcClassUpdateMethods";
+NSString *         const XZObjcClassUpdateProperties    = @"XZObjcClassUpdateProperties";
 
 @interface XZObjcClassDescriptor () {
     NSDictionary<NSString *,XZObjcIvarDescriptor *> * _Nullable _ivars;
@@ -30,9 +30,9 @@ NSString *         const XZObjcClassUpdateTypeProperties    = @"XZObjcClassUpdat
     self = [super init];
     if (self) {
         _raw = aClass;
-        _super = [XZObjcClassDescriptor descriptorForClass:[aClass superclass]];
+        _super = [XZObjcClassDescriptor descriptorWithClass:[aClass superclass]];
         _name = NSStringFromClass(aClass);
-        _type = [XZObjcType typeWithTypeEncoding:@encode(Class)];
+        _type = [XZObjcType typeWithEncoding:@encode(Class)];
         _ivars = _super ? nil : @{};
         _methods = _super ? nil : @{};
         _properties = _super ? nil : @{};
@@ -50,7 +50,7 @@ NSString *         const XZObjcClassUpdateTypeProperties    = @"XZObjcClassUpdat
     if (list && ivarCount > 0) {
         NSMutableDictionary * const descriptors = [NSMutableDictionary dictionaryWithCapacity:ivarCount];
         for (unsigned int i = 0; i < ivarCount; i++) {
-            XZObjcIvarDescriptor *descriptor = [XZObjcIvarDescriptor descriptorForIvar:list[i]];
+            XZObjcIvarDescriptor *descriptor = [XZObjcIvarDescriptor descriptorWithIvar:list[i]];
             if (descriptor) {
                 descriptors[descriptor.name] = descriptor;
             }
@@ -69,7 +69,7 @@ NSString *         const XZObjcClassUpdateTypeProperties    = @"XZObjcClassUpdat
     if (_super) {
         _ivars = nil;
         [NSNotificationCenter.defaultCenter postNotificationName:XZObjcClassNeedsUpdateNotification object:self userInfo:@{
-            XZObjcClassUpdateTypeUserInfoKey: XZObjcClassUpdateTypeIvars
+            XZObjcClassUpdateUserInfoKey: XZObjcClassUpdateIvars
         }];
     }
 }
@@ -83,7 +83,7 @@ NSString *         const XZObjcClassUpdateTypeProperties    = @"XZObjcClassUpdat
     if (list && methodCount > 0) {
         NSMutableDictionary *descriptors = [NSMutableDictionary dictionaryWithCapacity:methodCount];
         for (unsigned int i = 0; i < methodCount; i++) {
-            XZObjcMethodDescriptor *descriptor = [XZObjcMethodDescriptor descriptorForMethod:list[i]];
+            XZObjcMethodDescriptor *descriptor = [XZObjcMethodDescriptor descriptorWithMethod:list[i]];
             if (descriptor) {
                 descriptors[descriptor.name] = descriptor;
             }
@@ -102,7 +102,7 @@ NSString *         const XZObjcClassUpdateTypeProperties    = @"XZObjcClassUpdat
     if (_super) {
         _methods = nil;
         [NSNotificationCenter.defaultCenter postNotificationName:XZObjcClassNeedsUpdateNotification object:self userInfo:@{
-            XZObjcClassUpdateTypeUserInfoKey: XZObjcClassUpdateTypeMethods
+            XZObjcClassUpdateUserInfoKey: XZObjcClassUpdateMethods
         }];
     }
 }
@@ -119,7 +119,7 @@ NSString *         const XZObjcClassUpdateTypeProperties    = @"XZObjcClassUpdat
     if (list && propertyCount > 0) {
         NSMutableDictionary *descriptors = [NSMutableDictionary dictionaryWithCapacity:propertyCount];
         for (unsigned int i = 0; i < propertyCount; i++) {
-            XZObjcPropertyDescriptor *descriptor = [XZObjcPropertyDescriptor descriptorForProperty:list[i] forClass:raw];
+            XZObjcPropertyDescriptor *descriptor = [XZObjcPropertyDescriptor descriptorWithProperty:list[i] ofClass:raw];
             if (descriptor) {
                 descriptors[descriptor.name] = descriptor;
             }
@@ -139,12 +139,12 @@ NSString *         const XZObjcClassUpdateTypeProperties    = @"XZObjcClassUpdat
     if (_super) {
         _properties = nil;
         [NSNotificationCenter.defaultCenter postNotificationName:XZObjcClassNeedsUpdateNotification object:self userInfo:@{
-            XZObjcClassUpdateTypeUserInfoKey: XZObjcClassUpdateTypeProperties
+            XZObjcClassUpdateUserInfoKey: XZObjcClassUpdateProperties
         }];
     }
 }
 
-+ (instancetype)descriptorForClass:(Class)aClass {
++ (instancetype)descriptorWithClass:(Class)aClass {
     if (!object_isClass(aClass)) {
         return nil;
     }

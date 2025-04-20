@@ -153,12 +153,12 @@ typedef NS_OPTIONS(NSUInteger, XZObjcQualifiers) {
 /// 构造类型描述。
 /// @note 因为类型不能直接作为参数，而枚举 XZObjcRaw 并不包含完整的类型信息，因此需要使用类型编码来构造。
 /// @param typeEncoding 类型编码，可以是类型编码中的子类型
-+ (nullable XZObjcType *)typeWithTypeEncoding:(const char *)typeEncoding;
++ (nullable XZObjcType *)typeWithEncoding:(const char *)typeEncoding;
 
 /// 构造类型描述符。
 /// @param typeEncoding 类型编码
 /// @param qualifiers 修饰符，因为属性修饰符不包含在类型编码中，可通过此参数提供
-+ (nullable XZObjcType *)typeWithTypeEncoding:(const char *)typeEncoding qualifiers:(XZObjcQualifiers)qualifiers;
++ (nullable XZObjcType *)typeWithEncoding:(const char *)typeEncoding qualifiers:(XZObjcQualifiers)qualifiers;
 
 /// 设置结构体类型的大小和字节对齐值。
 /// @code
@@ -180,12 +180,12 @@ typedef NS_OPTIONS(NSUInteger, XZObjcQualifiers) {
 /// @param size 大小
 /// @param alignment 对齐方式
 /// @param typeEncoding 结构体类型编码
-+ (void)setSize:(size_t)size alignment:(size_t)alignment forTypeEncoding:(const char *)typeEncoding;
++ (void)setSize:(size_t)size alignment:(size_t)alignment forEncoding:(const char *)typeEncoding;
 
 @end
 
 /// 注册结构体字节大小和对齐的宏，比如 XZObjcTypeRegister(CGRect) 。
-#define XZObjcTypeRegister(typeEncoding) [XZObjcType setSize:sizeof(typeEncoding) alignment:_Alignof(typeEncoding) forTypeEncoding:@encode(typeEncoding)]
+#define XZObjcTypeRegister(typeEncoding) [XZObjcType setSize:sizeof(typeEncoding) alignment:_Alignof(typeEncoding) forEncoding:@encode(typeEncoding)]
 
 @protocol XZObjcDescriptor <NSObject>
 @property (nonatomic, readonly) NSString *name;

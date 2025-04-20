@@ -8,7 +8,7 @@
 #import "XZObjcType.h"
 #import "XZMacro.h"
 
-static id storageWithLock(id (^block)(NSMutableDictionary<NSString *, NSMutableDictionary<NSNumber *, XZObjcType *> *> *storage)) {
+static id withStorage(id (^block)(NSMutableDictionary<NSString *, NSMutableDictionary<NSNumber *, XZObjcType *> *> * const storage)) {
     static dispatch_semaphore_t _lock;
     static NSMutableDictionary<NSString *, NSMutableDictionary<NSNumber *, XZObjcType *> *> *_storage = nil;
     
@@ -33,7 +33,7 @@ typedef struct XZObjcRawAlignment {
 } XZObjcRawAlignment;
 
 @interface XZObjcType ()
-+ (XZObjcRawAlignment)alignmentForTypeEncoding:(const char *)encoding;
++ (XZObjcRawAlignment)alignmentForeEncoding:(const char *)encoding;
 @end
 
 @implementation XZObjcType
@@ -59,11 +59,11 @@ typedef struct XZObjcRawAlignment {
     return NO;
 }
 
-+ (XZObjcType *)typeWithTypeEncoding:(const char *)typeEncoding {
-    return [self typeWithTypeEncoding:typeEncoding qualifiers:kNilOptions];
++ (XZObjcType *)typeWithEncoding:(const char *)typeEncoding {
+    return [self typeWithEncoding:typeEncoding qualifiers:kNilOptions];
 }
 
-+ (XZObjcType *)typeWithTypeEncoding:(const char *)typeEncoding qualifiers:(XZObjcQualifiers)qualifiers {
++ (XZObjcType *)typeWithEncoding:(const char *)typeEncoding qualifiers:(XZObjcQualifiers)qualifiers {
     if (typeEncoding == NULL) {
         return nil;
     }
@@ -130,12 +130,12 @@ typedef struct XZObjcRawAlignment {
     {
         NSString *encoding = [NSString stringWithCString:typeEncoding encoding:NSASCIIStringEncoding];
         
-        XZObjcType *descriptor = storageWithLock(^id(NSMutableDictionary<NSString *,NSMutableDictionary<NSNumber *,XZObjcType *> *> *storage) {
+        XZObjcType *type = withStorage(^id(NSMutableDictionary<NSString *,NSMutableDictionary<NSNumber *,XZObjcType *> *> * const storage) {
             return storage[encoding][@(qualifiers)];;
         });
         
-        if (descriptor) {
-            return descriptor;
+        if (type) {
+            return type;
         }
     }
     
@@ -430,7 +430,7 @@ typedef struct XZObjcRawAlignment {
             }
             
             // 成员类型
-            XZObjcType *member = [XZObjcType typeWithTypeEncoding:typeEncoding + i];
+            XZObjcType *member = [XZObjcType typeWithEncoding:typeEncoding + i];
             if (member == nil) {
                 return nil;
             }
@@ -510,7 +510,7 @@ typedef struct XZObjcRawAlignment {
             size_t const membersEnd = newLength - 2;
             // 用 while 而不 do-while 是因为可能会有"空"结构体
             while (i <= membersEnd) {
-                XZObjcType *member = [XZObjcType typeWithTypeEncoding:typeEncoding + i];
+                XZObjcType *member = [XZObjcType typeWithEncoding:typeEncoding + i];
                 if (member == nil) {
                     return nil; // 遇到不合法的字符
                 }
@@ -523,7 +523,7 @@ typedef struct XZObjcRawAlignment {
             };
             
             // 如果提供了自定义的 size 和 alignment 则使用自定的，否则根据默认规则计算。
-            XZObjcRawAlignment const info = [XZObjcType alignmentForTypeEncoding:typeEncoding];
+            XZObjcRawAlignment const info = [XZObjcType alignmentForeEncoding:typeEncoding];
             if (info.size > 0) {
                 _size = info.size;
                 _sizeInBit = _size * 8;
@@ -630,7 +630,7 @@ typedef struct XZObjcRawAlignment {
             // 最后一位是 ) 结束字符
             size_t const membersEnd = newLength - 2;
             while (i < membersEnd) { // 用 while 而不 do-while 是因为可能会有"空"结合体
-                XZObjcType *member = [XZObjcType typeWithTypeEncoding:typeEncoding + i];
+                XZObjcType *member = [XZObjcType typeWithEncoding:typeEncoding + i];
                 if (member == nil) {
                     return nil;
                 }
@@ -683,7 +683,7 @@ typedef struct XZObjcRawAlignment {
             break;
         }
         case '^': {
-            XZObjcType *member = [XZObjcType typeWithTypeEncoding:typeEncoding + 1];
+            XZObjcType *member = [XZObjcType typeWithEncoding:typeEncoding + 1];
             _raw = XZObjcRawPointer;
             _name = [NSString stringWithFormat:@"%@ *", member.name];
             _size = sizeof(void *);
@@ -711,20 +711,20 @@ typedef struct XZObjcRawAlignment {
 }
 
 + (instancetype)typeWithRaw:(XZObjcRaw)raw name:(NSString *)name qualifiers:(XZObjcQualifiers)qualifiers size:(size_t)size sizeInBit:(size_t)sizeInBit encoding:(NSString *)encoding alignment:(size_t)alignment members:(NSArray<XZObjcType *> *)members subtype:(Class)subtype protocols:(NSArray<Protocol *> *)protocols {
-    return storageWithLock(^id(NSMutableDictionary<NSString *,NSMutableDictionary<NSNumber *,XZObjcType *> *> *storage) {
+    return withStorage(^id(NSMutableDictionary<NSString *,NSMutableDictionary<NSNumber *,XZObjcType *> *> * const storage) {
         NSNumber * const key = @(qualifiers);
-        XZObjcType *descriptor = storage[encoding][key];
-        if (descriptor) {
-            return descriptor;
+        XZObjcType *type = storage[encoding][key];
+        if (type) {
+            return type;
         }
-        descriptor = [[self alloc] initWithRaw:raw name:name qualifiers:qualifiers size:size sizeInBit:sizeInBit encoding:encoding alignment:alignment members:members subtype:subtype protocols:protocols];
+        type = [[self alloc] initWithRaw:raw name:name qualifiers:qualifiers size:size sizeInBit:sizeInBit encoding:encoding alignment:alignment members:members subtype:subtype protocols:protocols];
         NSMutableDictionary *dictM = storage[encoding];
         if (dictM == nil) {
             dictM = [NSMutableDictionary dictionary];
             storage[encoding] = dictM;
         }
-        dictM[key] = descriptor;
-        return descriptor;
+        dictM[key] = type;
+        return type;
     });
 }
 
@@ -775,7 +775,7 @@ typedef struct XZObjcRawAlignment {
 
 static NSMutableDictionary<NSString *, NSValue *> *_typeProviders = nil;
 
-+ (void)setSize:(size_t)size alignment:(size_t)alignment forTypeEncoding:(nonnull const char *)typeEncoding {
++ (void)setSize:(size_t)size alignment:(size_t)alignment forEncoding:(nonnull const char *)typeEncoding {
     NSParameterAssert(typeEncoding != NULL);
     
     NSString *name = [NSString stringWithCString:typeEncoding encoding:NSASCIIStringEncoding];
@@ -787,7 +787,7 @@ static NSMutableDictionary<NSString *, NSValue *> *_typeProviders = nil;
     _typeProviders[name] = [NSValue valueWithBytes:&info objCType:@encode(XZObjcRawAlignment)];
 }
 
-+ (XZObjcRawAlignment)alignmentForTypeEncoding:(const char *)typeEncoding {
++ (XZObjcRawAlignment)alignmentForeEncoding:(const char *)typeEncoding {
     XZObjcRawAlignment alignment = {0, 0};
     NSString * const key = [NSString stringWithCString:typeEncoding encoding:NSASCIIStringEncoding];
     [_typeProviders[key] getValue:&alignment];

@@ -68,7 +68,7 @@
 }
 
 + (void)model:(id)model decodeFromDictionary:(NSDictionary *)dictionary {
-    XZJSONClassDescriptor * const modelClass = [XZJSONClassDescriptor descriptorForClass:[model class]];
+    XZJSONClassDescriptor * const modelClass = [XZJSONClassDescriptor descriptorWithClass:[model class]];
     if (modelClass) {
         XZJSONModelDecodeFromDictionary(model, modelClass, dictionary);
     }
@@ -83,16 +83,16 @@
     if (object == nil) {
         return nil;
     }
-    XZJSONClassDescriptor * const objectClass = [XZJSONClassDescriptor descriptorForClass:object_getClass(object)];
+    XZJSONClassDescriptor * const objectClass = [XZJSONClassDescriptor descriptorWithClass:object_getClass(object)];
     if (objectClass == nil) {
         return nil;
     }
-    id const JSONObject = XZJSONEncodeObjectIntoDictionary(object, objectClass, objectClass->_classType, nil);
+    id const JSONObject = XZJSONEncodeObjectIntoDictionary(object, objectClass, objectClass->_foundationClass, nil);
     return [NSJSONSerialization dataWithJSONObject:JSONObject options:options error:error];
 }
 
 + (void)model:(id)model encodeIntoDictionary:(NSMutableDictionary *)dictionary {
-    XZJSONClassDescriptor * const modelClass = [XZJSONClassDescriptor descriptorForClass:[model class]];
+    XZJSONClassDescriptor * const modelClass = [XZJSONClassDescriptor descriptorWithClass:[model class]];
     if (modelClass) {
         XZJSONModelEncodeIntoDictionary(model, modelClass, dictionary);
     }
@@ -130,10 +130,10 @@
         return model;
     }
     
-    XZJSONClassDescriptor * const modelClass  = [XZJSONClassDescriptor descriptorForClass:[model class]];
+    XZJSONClassDescriptor * const modelClass  = [XZJSONClassDescriptor descriptorWithClass:[model class]];
     
     // 原生对象不支持复制
-    if (modelClass->_classType) {
+    if (modelClass->_foundationClass) {
         return [model copy];
     }
     
@@ -230,46 +230,46 @@
                 return;
             }
             case XZObjcRawStruct: {
-                switch (property->_structType) {
-                    case XZJSONStructTypeUnknown: {
+                switch (property->_foundationStruct) {
+                    case XZJSONFoundationStructUnknown: {
                         break;
                     }
-                    case XZJSONStructTypeCGRect: {
+                    case XZJSONFoundationStructCGRect: {
                         CGRect const value = ((CGRect (*)(id, SEL))objc_msgSend)(self, getter);
                         ((void (*)(id, SEL, CGRect))objc_msgSend)(newModel, setter, value);
                         return;
                     }
-                    case XZJSONStructTypeCGSize: {
+                    case XZJSONFoundationStructCGSize: {
                         CGSize const value = ((CGSize (*)(id, SEL))objc_msgSend)(self, getter);
                         ((void (*)(id, SEL, CGSize))objc_msgSend)(newModel, setter, value);
                         return;
                     }
-                    case XZJSONStructTypeCGPoint: {
+                    case XZJSONFoundationStructCGPoint: {
                         CGPoint const value = ((CGPoint (*)(id, SEL))objc_msgSend)(self, getter);
                         ((void (*)(id, SEL, CGPoint))objc_msgSend)(newModel, setter, value);
                         return;
                     }
-                    case XZJSONStructTypeUIEdgeInsets: {
+                    case XZJSONFoundationStructUIEdgeInsets: {
                         UIEdgeInsets const value = ((UIEdgeInsets (*)(id, SEL))objc_msgSend)(self, getter);
                         ((void (*)(id, SEL, UIEdgeInsets))objc_msgSend)(newModel, setter, value);
                         return;
                     }
-                    case XZJSONStructTypeCGVector: {
+                    case XZJSONFoundationStructCGVector: {
                         CGVector const value = ((CGVector (*)(id, SEL))objc_msgSend)(self, getter);
                         ((void (*)(id, SEL, CGVector))objc_msgSend)(newModel, setter, value);
                         return;
                     }
-                    case XZJSONStructTypeCGAffineTransform: {
+                    case XZJSONFoundationStructCGAffineTransform: {
                         CGAffineTransform const value = ((CGAffineTransform (*)(id, SEL))objc_msgSend)(self, getter);
                         ((void (*)(id, SEL, CGAffineTransform))objc_msgSend)(newModel, setter, value);
                         return;
                     }
-                    case XZJSONStructTypeNSDirectionalEdgeInsets: {
+                    case XZJSONFoundationStructNSDirectionalEdgeInsets: {
                         NSDirectionalEdgeInsets const value = ((NSDirectionalEdgeInsets (*)(id, SEL))objc_msgSend)(self, getter);
                         ((void (*)(id, SEL, NSDirectionalEdgeInsets))objc_msgSend)(newModel, setter, value);
                         return;
                     }
-                    case XZJSONStructTypeUIOffset: {
+                    case XZJSONFoundationStructUIOffset: {
                         UIOffset const value = ((UIOffset (*)(id, SEL))objc_msgSend)(self, getter);
                         ((void (*)(id, SEL, UIOffset))objc_msgSend)(newModel, setter, value);
                         return;
@@ -313,8 +313,8 @@
         return NO;
     }
     
-    XZJSONClassDescriptor * const model1Class = [XZJSONClassDescriptor descriptorForClass:[model1 class]];
-    XZJSONClassDescriptor * const model2Class = [XZJSONClassDescriptor descriptorForClass:[model2 class]];
+    XZJSONClassDescriptor * const model1Class = [XZJSONClassDescriptor descriptorWithClass:[model1 class]];
+    XZJSONClassDescriptor * const model2Class = [XZJSONClassDescriptor descriptorWithClass:[model2 class]];
     
     // 不相等：属性数量不一样
     if (model1Class->_numberOfProperties != model2Class->_numberOfProperties) {
@@ -322,12 +322,12 @@
     }
     
     // 原生类型之间的比较
-    if (model1Class->_classType && model2Class->_classType) {
+    if (model1Class->_foundationClass && model2Class->_foundationClass) {
         return [model1 isEqual:model2];
     }
     
     // 一个是模型，一个是原生类型
-    if (model1Class->_classType || model2Class->_classType) {
+    if (model1Class->_foundationClass || model2Class->_foundationClass) {
         return NO;
     }
     
@@ -471,14 +471,14 @@
                 break;
             }
             case XZObjcRawStruct:
-                if (property1->_structType != property2->_structType) {
+                if (property1->_foundationStruct != property2->_foundationStruct) {
                     return NO;
                 }
-                switch (property1->_structType) {
-                    case XZJSONStructTypeUnknown: {
+                switch (property1->_foundationStruct) {
+                    case XZJSONFoundationStructUnknown: {
                         break;
                     }
-                    case XZJSONStructTypeCGRect: {
+                    case XZJSONFoundationStructCGRect: {
                         CGRect value1 = ((CGRect(*)(id,SEL))objc_msgSend)(model1, property1->_getter);
                         CGRect value2 = ((CGRect(*)(id,SEL))objc_msgSend)(model1, property2->_getter);
                         if (!CGRectEqualToRect(value1, value2)) {
@@ -486,7 +486,7 @@
                         }
                         continue;
                     }
-                    case XZJSONStructTypeCGSize: {
+                    case XZJSONFoundationStructCGSize: {
                         CGSize value1 = ((CGSize(*)(id,SEL))objc_msgSend)(model1, property1->_getter);
                         CGSize value2 = ((CGSize(*)(id,SEL))objc_msgSend)(model1, property2->_getter);
                         if (!CGSizeEqualToSize(value1, value2)) {
@@ -494,7 +494,7 @@
                         }
                         continue;
                     }
-                    case XZJSONStructTypeCGPoint: {
+                    case XZJSONFoundationStructCGPoint: {
                         CGPoint value1 = ((CGPoint(*)(id,SEL))objc_msgSend)(model1, property1->_getter);
                         CGPoint value2 = ((CGPoint(*)(id,SEL))objc_msgSend)(model1, property2->_getter);
                         if (!CGPointEqualToPoint(value1, value2)) {
@@ -502,7 +502,7 @@
                         }
                         continue;
                     }
-                    case XZJSONStructTypeUIEdgeInsets: {
+                    case XZJSONFoundationStructUIEdgeInsets: {
                         UIEdgeInsets value1 = ((UIEdgeInsets(*)(id,SEL))objc_msgSend)(model1, property1->_getter);
                         UIEdgeInsets value2 = ((UIEdgeInsets(*)(id,SEL))objc_msgSend)(model1, property2->_getter);
                         if (!UIEdgeInsetsEqualToEdgeInsets(value1, value2)) {
@@ -510,7 +510,7 @@
                         }
                         continue;
                     }
-                    case XZJSONStructTypeCGVector: {
+                    case XZJSONFoundationStructCGVector: {
                         CGVector value1 = ((CGVector(*)(id,SEL))objc_msgSend)(model1, property1->_getter);
                         CGVector value2 = ((CGVector(*)(id,SEL))objc_msgSend)(model1, property2->_getter);
                         if (value1.dx != value2.dx || value1.dy != value2.dy) {
@@ -518,7 +518,7 @@
                         }
                         continue;
                     }
-                    case XZJSONStructTypeCGAffineTransform: {
+                    case XZJSONFoundationStructCGAffineTransform: {
                         CGAffineTransform value1 = ((CGAffineTransform(*)(id,SEL))objc_msgSend)(model1, property1->_getter);
                         CGAffineTransform value2 = ((CGAffineTransform(*)(id,SEL))objc_msgSend)(model1, property2->_getter);
                         if (!CGAffineTransformEqualToTransform(value1, value2)) {
@@ -526,7 +526,7 @@
                         }
                         continue;
                     }
-                    case XZJSONStructTypeNSDirectionalEdgeInsets: {
+                    case XZJSONFoundationStructNSDirectionalEdgeInsets: {
                         NSDirectionalEdgeInsets value1 = ((NSDirectionalEdgeInsets(*)(id,SEL))objc_msgSend)(model1, property1->_getter);
                         NSDirectionalEdgeInsets value2 = ((NSDirectionalEdgeInsets(*)(id,SEL))objc_msgSend)(model1, property2->_getter);
                         if (!NSDirectionalEdgeInsetsEqualToDirectionalEdgeInsets(value1, value2)) {
@@ -534,7 +534,7 @@
                         }
                         continue;
                     }
-                    case XZJSONStructTypeUIOffset: {
+                    case XZJSONFoundationStructUIOffset: {
                         UIOffset value1 = ((UIOffset(*)(id,SEL))objc_msgSend)(model1, property1->_getter);
                         UIOffset value2 = ((UIOffset(*)(id,SEL))objc_msgSend)(model1, property2->_getter);
                         if (!UIOffsetEqualToOffset(value1, value2)) {
