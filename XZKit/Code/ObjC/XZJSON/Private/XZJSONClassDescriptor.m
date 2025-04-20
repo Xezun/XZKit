@@ -198,7 +198,7 @@ static id XZJSONKeyFromString(NSString *aString);
             // 因为映射为 属性 => JSONKey 所以 property 在遍历过程中不会重复。
             if (JSONKey) {
                 property->_JSONKey = JSONKey;
-                property->_keyValueDecoder = ^id(NSDictionary *dictionary) {
+                property->_valueDecoder = ^id(NSDictionary *dictionary) {
                     return [dictionary valueForKey:JSONKey];
                 };
                 // 如果 JSONKey 已有映射的属性，那么创建该 JSONKey 的映射链表
@@ -209,29 +209,29 @@ static id XZJSONKeyFromString(NSString *aString);
                 // 不与 key 放同一个集合，因为有可能 key 与 keyPath 相同
                 // 如果 JSONKeyPath 已有映射的属性，那么创建该 JSONKeyPath 的映射链表
                 NSString * const keyPath = [JSONKeyPath componentsJoinedByString:@"."];
-                property->_keyValueDecoder = ^id(NSDictionary *dictionary) {
+                property->_valueDecoder = ^id(NSDictionary *dictionary) {
                     return [dictionary valueForKeyPath:keyPath];
                 };
                 [keyPathProperties addObject:property];
             } else if (JSONKeyArray) {
                 property->_JSONKeyArray = JSONKeyArray;
-                NSMutableArray * const keyValueCoders = [NSMutableArray arrayWithCapacity:JSONKeyArray.count];
+                NSMutableArray * const valueDecoders = [NSMutableArray arrayWithCapacity:JSONKeyArray.count];
                 for (id someKey in JSONKeyArray) {
                     if ([someKey isKindOfClass:[NSString class]]) {
                         NSString * const JSONKey = someKey;
-                        [keyValueCoders addObject:^id(id object) {
+                        [valueDecoders addObject:^id(id object) {
                             return [object valueForKey:JSONKey];
                         }];
                     } else {
                         NSString * const JSONKeyPath = [(NSArray *)someKey componentsJoinedByString:@"."];
-                        [keyValueCoders addObject:^id(id object) {
+                        [valueDecoders addObject:^id(id object) {
                             return [object valueForKeyPath:JSONKeyPath];
                         }];
                     }
                 }
-                property->_keyValueDecoder = ^id(NSDictionary *dictionary) {
-                    for (XZJSONKeyValueDecoder keyValueCoder in keyValueCoders) {
-                        id const JSONValue = keyValueCoder(dictionary);
+                property->_valueDecoder = ^id(NSDictionary *dictionary) {
+                    for (XZJSONValueDecoder valueDecoder in valueDecoders) {
+                        id const JSONValue = valueDecoder(dictionary);
                         if (JSONValue) {
                             return JSONValue;
                         }
@@ -249,7 +249,7 @@ static id XZJSONKeyFromString(NSString *aString);
     // 默认属性名直接映射 JSON 键
     [allProperties enumerateKeysAndObjectsUsingBlock:^(NSString *name, XZJSONPropertyDescriptor *property, BOOL *stop) {
         property->_JSONKey = name;
-        property->_keyValueDecoder = ^id(NSDictionary *dictionary) {
+        property->_valueDecoder = ^id(NSDictionary *dictionary) {
             return [dictionary valueForKey:name];
         };
         property->_next = keyProperties[name];

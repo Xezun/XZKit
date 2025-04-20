@@ -32,7 +32,7 @@ FOUNDATION_EXPORT XZObjcClassUpdate const XZObjcClassUpdateProperties;
 
 /// 当前类，当前对象所描述的类。
 @property (nonatomic, readonly) Class raw;
-
+ 
 /// 描述当前类的超类的对象。
 @property (nonatomic, readonly, nullable) XZObjcClassDescriptor *super;
 

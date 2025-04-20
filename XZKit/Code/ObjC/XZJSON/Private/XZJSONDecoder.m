@@ -121,7 +121,7 @@ static void XZJSONDecodePropertyArrayEnumerator(const void * const propertyRef, 
     NSDictionary                  * const __unsafe_unretained dictionary = (__bridge NSDictionary *)(context->dictionary);
     XZJSONPropertyDescriptor      * const __unsafe_unretained property   = (__bridge XZJSONPropertyDescriptor *)(propertyRef);
     
-    id const value = (property->_keyValueDecoder)(dictionary);
+    id const value = (property->_valueDecoder)(dictionary);
     if (value) {
         __unsafe_unretained id const model = (__bridge id)(context->model);
         XZJSONModelDecodeProperty(model, property, value);
@@ -872,7 +872,7 @@ void XZJSONModelDecodeProperty(id const __unsafe_unretained model, XZJSONPropert
             break;
         }
         case XZObjcRawStruct: {
-            if (NSStringIntoStructProperty(model, property, JSONValue)) {
+            if (XZJSONDecodeStructProperty(model, property, JSONValue)) {
                 return;
             }
             break;

@@ -14,20 +14,26 @@ NS_ASSUME_NONNULL_BEGIN
 @class XZJSONClassDescriptor;
 
 /// 从 JSON 数据中通过 KVC 取值的方法。
-typedef id _Nullable (^XZJSONKeyValueDecoder)(NSDictionary *dictionary);
+typedef id _Nullable (^XZJSONValueDecoder)(NSDictionary *dictionary);
 
 /// A property info in object model.
 @interface XZJSONPropertyDescriptor : NSObject {
     @package
-    /// 当前属性所在的 class 描述对象
-    XZJSONClassDescriptor * __unsafe_unretained _class;
     /// 属性。 property's info
-    XZObjcPropertyDescriptor *_property;
+    XZObjcPropertyDescriptor *_descriptor;
+    
+    /// 拥有当前属性的 class 对象。
+    XZJSONClassDescriptor * __unsafe_unretained _class;
     /// 属性映射链表，多属性映射单一数据的链表。 next meta if there are multiple properties mapped to the same key.
     XZJSONPropertyDescriptor *_next;
     
     /// 属性名。property's name
     NSString *_name;
+    /// 取值方法。必不为空。
+    SEL _getter;
+    /// 存值方法。必不为空。
+    SEL _setter;
+    
     /// 属性值类型。property's type
     XZObjcRaw _type;
     /// 如果属性值是对象，判断对象的类型是否为已知类型（原生已定义的对象类型）。property's Foundation type
@@ -38,10 +44,7 @@ typedef id _Nullable (^XZJSONKeyValueDecoder)(NSDictionary *dictionary);
     Class _Nullable _subtype;
     /// 属性为集合对象时，元素的类。 container's generic class, or nil if threr's no generic class
     Class _Nullable _elementType;
-    /// 取值方法。必不为空。
-    SEL _getter;
-    /// 存值方法。必不为空。
-    SEL _setter;
+
     /// 是否支持 kvc 键值编码。
     /// 根据 Key-Value Coding Programming Guide 属性的 setter 方法必须以 `set` 或 `_set` 开头。
     /// 值为调用 setter 方法可使用的 key 名（调用 getter 方法使用 `_name` 属性)。
@@ -55,7 +58,7 @@ typedef id _Nullable (^XZJSONKeyValueDecoder)(NSDictionary *dictionary);
     NSArray             * _Nullable _JSONKeyArray;
     
     /// 当前属性从 JSON 数据中为取值的方法。
-    XZJSONKeyValueDecoder _keyValueDecoder;
+    XZJSONValueDecoder _valueDecoder;
     
     /// 是否为无主引用或弱引用的属性。 
     BOOL _isUnownedReferenceProperty;
@@ -72,7 +75,7 @@ typedef id _Nullable (^XZJSONKeyValueDecoder)(NSDictionary *dictionary);
 ///   - property: 结构体属性
 ///   - JSONValue: 字符串
 /// - Returns: 是否成功写入
-FOUNDATION_STATIC_INLINE BOOL NSStringIntoStructProperty(id model, XZJSONPropertyDescriptor *property, id _Nonnull JSONValue) {
+FOUNDATION_STATIC_INLINE BOOL XZJSONDecodeStructProperty(id model, XZJSONPropertyDescriptor *property, id _Nonnull JSONValue) {
     if ([JSONValue isKindOfClass:NSString.class]) {
         switch (property->_foundationStruct) {
             case XZJSONFoundationStructUnknown: {
@@ -127,7 +130,7 @@ FOUNDATION_STATIC_INLINE BOOL NSStringIntoStructProperty(id model, XZJSONPropert
 /// - Parameters:
 ///   - model: 模型对象
 ///   - property: 模型结构体属性
-FOUNDATION_STATIC_INLINE NSString * _Nullable NSStringFromStructProperty(id model, XZJSONPropertyDescriptor *property) {
+FOUNDATION_STATIC_INLINE NSString * _Nullable XZJSONEncodeStructProperty(id model, XZJSONPropertyDescriptor *property) {
     switch (property->_foundationStruct) {
         case XZJSONFoundationStructUnknown: {
             return nil;

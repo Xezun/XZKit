@@ -370,7 +370,7 @@ void XZJSONModelEncodeProperty(id const __unsafe_unretained model, XZJSONPropert
             break;
         case XZObjcRawStruct:
             if (XZJSONModelEncodePropertyPrepare(property, &key, &keyInDictionary, NO)) {
-                JSONValue = NSStringFromStructProperty(model, property);
+                JSONValue = XZJSONEncodeStructProperty(model, property);
             }
             break;
         case XZObjcRawClass: {

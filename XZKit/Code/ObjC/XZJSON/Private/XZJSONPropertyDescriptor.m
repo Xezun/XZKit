@@ -36,7 +36,7 @@
     
     XZJSONPropertyDescriptor *descriptor = [self new];
     descriptor->_class       = aClass;
-    descriptor->_property    = property;
+    descriptor->_descriptor    = property;
     descriptor->_name        = property.name;
     descriptor->_type        = property.type.raw;
     descriptor->_elementType = elementType;

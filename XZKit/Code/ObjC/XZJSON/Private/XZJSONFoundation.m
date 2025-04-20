@@ -235,19 +235,19 @@ NSString * _Nonnull XZJSONModelDescription(NSObject *_Nonnull model, NSUInteger 
                 }
                 switch (property->_type) {
                     case XZObjcRawArray: {
-                        value = [NSString stringWithFormat:@"<array: %@, value: %@>", property->_property.type.name, desc];
+                        value = [NSString stringWithFormat:@"<array: %@, value: %@>", property->_descriptor.type.name, desc];
                         break;
                     }
                     case XZObjcRawString: {
-                        value = [NSString stringWithFormat:@"<string: %@, value: %@>", property->_property.type.name, desc];
+                        value = [NSString stringWithFormat:@"<string: %@, value: %@>", property->_descriptor.type.name, desc];
                         break;
                     }
                     case XZObjcRawPointer: {
-                        value = [NSString stringWithFormat:@"<pointer: %@, value: %@>", property->_property.type.name, desc];
+                        value = [NSString stringWithFormat:@"<pointer: %@, value: %@>", property->_descriptor.type.name, desc];
                         break;
                     }
                     case XZObjcRawUnknown: {
-                        value = [NSString stringWithFormat:@"<unknown: %@, value: %@>", property->_property.type.name, desc];
+                        value = [NSString stringWithFormat:@"<unknown: %@, value: %@>", property->_descriptor.type.name, desc];
                         break;
                     }
                     default:
@@ -256,16 +256,16 @@ NSString * _Nonnull XZJSONModelDescription(NSObject *_Nonnull model, NSUInteger 
                 break;
             }
             case XZObjcRawStruct: {
-                value = NSStringFromStructProperty(model, property);
+                value = XZJSONEncodeStructProperty(model, property);
                 if (value == nil) {
                     if (modelClass->_usesPropertyJSONEncodingMethod) {
                         value = [NSString stringWithFormat:@"%@", [(id<XZJSONCoding>)model JSONEncodeValueForKey:key]];
                     }
                 }
                 if (value) {
-                    value = [NSString stringWithFormat:@"<struct: %@, value: %@>", property->_property.type.name, value];
+                    value = [NSString stringWithFormat:@"<struct: %@, value: %@>", property->_descriptor.type.name, value];
                 } else {
-                    value = [NSString stringWithFormat:@"<struct: %@>", property->_property.type.name];
+                    value = [NSString stringWithFormat:@"<struct: %@>", property->_descriptor.type.name];
                 }
                 break;
             }
@@ -276,7 +276,7 @@ NSString * _Nonnull XZJSONModelDescription(NSObject *_Nonnull model, NSUInteger 
                 if (value) {
                     value = [NSString stringWithFormat:@"<union: %@, value: %@>", key, value];
                 } else {
-                    value = [NSString stringWithFormat:@"<union: %@>", property->_property.type.name];
+                    value = [NSString stringWithFormat:@"<union: %@>", property->_descriptor.type.name];
                 }
                 break;
             }
@@ -291,7 +291,7 @@ NSString * _Nonnull XZJSONModelDescription(NSObject *_Nonnull model, NSUInteger 
                 if (value) {
                     value = [NSString stringWithFormat:@"<BitField: %@>", value];
                 } else {
-                    value = [NSString stringWithFormat:@"<BitField: %ld bit>", (long)property->_property.type.sizeInBit];
+                    value = [NSString stringWithFormat:@"<BitField: %ld bit>", (long)property->_descriptor.type.sizeInBit];
                 }
                 break;
             }
@@ -478,7 +478,7 @@ void XZJSONModelEncodeWithCoder(id model, NSCoder *aCoder) {
                         return;
                     }
                     case XZObjcRawStruct: {
-                        NSString * const aValue = NSStringFromStructProperty(model, property);
+                        NSString * const aValue = XZJSONEncodeStructProperty(model, property);
                         if (aValue) {
                             [aCoder encodeObject:aValue forKey:name];
                             return;
@@ -786,7 +786,7 @@ id _Nullable XZJSONModelDecodeWithCoder(id model, NSCoder *aCoder) {
                         if (!aValue) {
                             break;
                         }
-                        if (NSStringIntoStructProperty(model, property, aValue)) {
+                        if (XZJSONDecodeStructProperty(model, property, aValue)) {
                             return;
                         }
                         break;
