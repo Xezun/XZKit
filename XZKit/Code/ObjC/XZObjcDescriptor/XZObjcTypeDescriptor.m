@@ -332,7 +332,8 @@ typedef struct XZObjcTypeAlignment {
                         _subtype = NSClassFromString(className);
                         _name = [NSString stringWithFormat:@"%@ %@", className, _name];
                     }
-                    NSString * const protocolString = [_raw substringWithRange:NSMakeRange(range.location + 1, objcTypeLength - (range.location + 1) - 1)];
+                    // 起点：第一个 < 符号的下一个字符。长度：总长度 - 第一个 < 左边的字符长度 - 末尾的双引号 - 末尾的 > 符号
+                    NSString * const protocolString = [_raw substringWithRange:NSMakeRange(range.location + 1, objcTypeLength - (range.location + 1) - 1 - 1)];
                     NSArray<NSString *> * const protocolNames = [protocolString componentsSeparatedByString:@"><"];
                     NSMutableArray * const protocols = [NSMutableArray arrayWithCapacity:protocolNames.count];
                     for (NSString * const name in protocolNames) {
