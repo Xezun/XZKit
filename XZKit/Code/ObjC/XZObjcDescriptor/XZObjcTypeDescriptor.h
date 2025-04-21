@@ -1,5 +1,5 @@
 //
-//  XZObjcType.h
+//  XZObjcTypeDescriptor.h
 //  XZKit
 //
 //  Created by Xezun on 2021/2/12.
@@ -11,50 +11,53 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-/// Get the type from a Type-Encoding string.
+/// 所有 ObjC 数据类型枚举。
 ///
 /// 1. 官方文档 [Objective-C Runtime Programming Guide - Type Encodings](https://developer.apple.com/library/archive/documentation/Cocoa/Conceptual/ObjCRuntimeGuide/Articles/ocrtTypeEncodings.html)
 ///
 /// 2. [Objective-C Runtime Programming Guide - Declared Properties](https://developer.apple.com/library/mac/documentation/Cocoa/Conceptual/ObjCRuntimeGuide/Articles/ocrtPropertyIntrospection.html)
-typedef NS_ENUM(NSUInteger, XZObjcRaw) {
+typedef NS_ENUM(NSUInteger, XZObjcType) {
     /// unknown type (among other things, this code is used for function pointers)
     /// > 匿名的结构体、共用体也会被编码为此名字，如 {?=ics}。
-    XZObjcRawUnknown          = '?',
+    XZObjcTypeUnknown          = '?',
     /// char
-    XZObjcRawChar             = 'c',
+    XZObjcTypeChar             = 'c',
     /// unsigned char
-    XZObjcRawUnsignedChar     = 'C',
+    XZObjcTypeUnsignedChar     = 'C',
     /// int
-    XZObjcRawInt              = 'i',
+    XZObjcTypeInt              = 'i',
     /// unsigned int
-    XZObjcRawUnsignedInt      = 'I',
+    XZObjcTypeUnsignedInt      = 'I',
     /// short
-    XZObjcRawShort            = 's',
+    XZObjcTypeShort            = 's',
     /// unsigned short
-    XZObjcRawUnsignedShort    = 'S',
-    /// long
-    /// @note l is treated as a 32-bit quantity on 64-bit programs.
-    XZObjcRawLong             = 'l',
+    XZObjcTypeUnsignedShort    = 'S',
+    /// long 长整型。
+    ///
+    /// > `l` is treated as a 32-bit quantity on 64-bit programs.
+    ///
+    /// 在不同的架构中，long 的实际类型可能不同。比如在 arm64 架构中，long 会被编译为 long long 类型，即会被编码为`q`而不是`l`。
+    XZObjcTypeLong             = 'l',
     /// unsigned long
-    XZObjcRawUnsignedLong     = 'L',
+    XZObjcTypeUnsignedLong     = 'L',
     /// long long
-    XZObjcRawLongLong         = 'q',
+    XZObjcTypeLongLong         = 'q',
     /// unsigned long long
-    XZObjcRawUnsignedLongLong = 'Q',
+    XZObjcTypeUnsignedLongLong = 'Q',
     /// float
-    XZObjcRawFloat            = 'f',
+    XZObjcTypeFloat            = 'f',
     /// double
-    XZObjcRawDouble           = 'd',
+    XZObjcTypeDouble           = 'd',
     /// long double
-    XZObjcRawLongDouble       = 'D',
+    XZObjcTypeLongDouble       = 'D',
     /// bool
-    XZObjcRawBool             = 'B',
+    XZObjcTypeBool             = 'B',
     /// void
-    XZObjcRawVoid             = 'v',
+    XZObjcTypeVoid             = 'v',
     /// C 字符串 char *
-    XZObjcRawString           = '*',
+    XZObjcTypeString           = '*',
     /// C 数组
-    XZObjcRawArray            = '[',
+    XZObjcTypeArray            = '[',
     /// bit field of num bits
     /// @code
     /// // 位域结构体的成员的类型即为 bit field
@@ -63,19 +66,19 @@ typedef NS_ENUM(NSUInteger, XZObjcRaw) {
     ///     char b:2;
     /// }
     /// @endcode
-    XZObjcRawBitField         = 'b',
+    XZObjcTypeBitField         = 'b',
     /// pointer to type
-    XZObjcRawPointer          = '^',
+    XZObjcTypePointer          = '^',
     /// C 共用体
-    XZObjcRawUnion            = '(',
+    XZObjcTypeUnion            = '(',
     /// C 结构体；类结构体，如 NSObject 为 {NSObject=#}
-    XZObjcRawStruct           = '{',
+    XZObjcTypeStruct           = '{',
     /// 类对象的类型
-    XZObjcRawClass            = '#',
+    XZObjcTypeClass            = '#',
     /// SEL
-    XZObjcRawSEL              = ':',
+    XZObjcTypeSEL              = ':',
     /// id. An object (whether statically typed or typed id)
-    XZObjcRawObject           = '@',
+    XZObjcTypeObject           = '@',
 };
 
 /// 类型修饰符。
@@ -102,18 +105,24 @@ typedef NS_OPTIONS(NSUInteger, XZObjcQualifiers) {
     XZObjcQualifierDynamic   = 1 << 23,   /// @dynamic
 };
 
-/// 描述数据（变量）类型的对象。
+/// 类型描述词，描述数据类型的对象。
 ///
-/// 数据类型：包括 int、float 等基础数据类型，也包括 NSObject 等对象类型，通过 `@encoding(type)` 可将类型编码为 Type Encoding 字符串。
-@interface XZObjcType : NSObject
+/// 数据类型，通常也称为变量类型。在 objc 中，数据类型包括 c 基础类型，比如 int、float 等，和 NSObject 等对象类型，可通过 `@encoding(type)` 可将类型编码为字符串。
+@interface XZObjcTypeDescriptor : NSObject
 
-/// 名称
+/// 类型名称。
 @property (nonatomic, copy, readonly) NSString *name;
 
-/// 类型。
-@property (nonatomic, readonly) XZObjcRaw raw;
+/// 类型的原始值，即类型的编码。
+@property (nonatomic, copy, readonly) NSString *raw;
 
-/// 修饰符。
+/// 类型枚举。
+@property (nonatomic, readonly) XZObjcType type;
+
+/// 子类型，对象类型的类。
+@property (nonatomic, readonly, nullable) Class subtype;
+
+/// 类型修饰符。
 @property (nonatomic, readonly) XZObjcQualifiers qualifiers;
 
 /// 大小，占用的空间大小，度量单位”字节byte“。
@@ -128,21 +137,14 @@ typedef NS_OPTIONS(NSUInteger, XZObjcQualifiers) {
 /// 使用 `#pragma pack (value)` 或 `__attribute__((packed))` 可以自定义字节对齐。
 /// 所以对于自定义类型，特别是非默认字节对齐的类型，需要先注册对齐方式，否则此属性值可能并不一定准确。
 /// ```objc
-/// +[XZObjcType setSize:alignment:forType:]
+/// +[XZObjcTypeDescriptor setSize:alignment:forType:]
 /// // 或
 /// XZObjcTypeRegister(struct Foobar);
 /// ```
 @property (nonatomic, readonly) size_t alignment;
 
-/// 当前对象所描述的类型的编码。
-@property (nonatomic, copy, readonly) NSString *encoding;
-
 /// 当前类型的成员类型，比如结构体、共用体的组成成员，或者指针类型（一般被认为是数组）的值的类型等。
-@property (nonatomic, copy, readonly, nullable) NSArray<XZObjcType *> *members;
-
-/// 对象类型的类对象。
-/// > 对象类型虽然也是指针类型，但是通常不能被认为是数组，即是认为是数组，数组的值类型也是对象，而不是对象的类，所以我们使用“子类型”表示对象的类。
-@property (nonatomic, readonly, nullable) Class subtype;
+@property (nonatomic, copy, readonly, nullable) NSArray<XZObjcTypeDescriptor *> *members;
 
 /// 对象类型遵循的协议。
 @property (nonatomic, copy, readonly, nullable) NSArray<Protocol *> *protocols;
@@ -151,14 +153,14 @@ typedef NS_OPTIONS(NSUInteger, XZObjcQualifiers) {
 + (instancetype)new NS_UNAVAILABLE;
 
 /// 构造类型描述。
-/// @note 因为类型不能直接作为参数，而枚举 XZObjcRaw 并不包含完整的类型信息，因此需要使用类型编码来构造。
-/// @param typeEncoding 类型编码，可以是类型编码中的子类型
-+ (nullable XZObjcType *)typeWithEncoding:(const char *)typeEncoding;
+/// @note 因为类型不能直接作为参数，而枚举 XZObjcType 并不包含完整的类型信息，因此需要使用类型编码来构造。
+/// @param objcType 类型编码，可以是类型编码中的子类型
++ (nullable XZObjcTypeDescriptor *)descriptorForObjcType:(const char *)objcType;
 
 /// 构造类型描述符。
-/// @param typeEncoding 类型编码
+/// @param objcType 类型编码
 /// @param qualifiers 修饰符，因为属性修饰符不包含在类型编码中，可通过此参数提供
-+ (nullable XZObjcType *)typeWithEncoding:(const char *)typeEncoding qualifiers:(XZObjcQualifiers)qualifiers;
++ (nullable XZObjcTypeDescriptor *)descriptorForObjcType:(const char *)objcType qualifiers:(XZObjcQualifiers)qualifiers;
 
 /// 设置结构体类型的大小和字节对齐值。
 /// @code
@@ -169,7 +171,7 @@ typedef NS_OPTIONS(NSUInteger, XZObjcQualifiers) {
 ///     float b;
 /// } Foobar;
 /// // 注册该自定义类型的 size 和 alignment
-/// [XZObjcType setSize:sizeof(Foobar) alignment:_Alignof(Foobar) forType:@encode(Foobar)];
+/// [XZObjcTypeDescriptor setSize:sizeof(Foobar) alignment:_Alignof(Foobar) forType:@encode(Foobar)];
 /// // 或者使用宏
 /// XZObjcTypeRegister(Foobar);
 /// @endcode
@@ -179,17 +181,17 @@ typedef NS_OPTIONS(NSUInteger, XZObjcQualifiers) {
 ///
 /// @param size 大小
 /// @param alignment 对齐方式
-/// @param typeEncoding 结构体类型编码
-+ (void)setSize:(size_t)size alignment:(size_t)alignment forEncoding:(const char *)typeEncoding;
+/// @param objcType 结构体类型编码
++ (void)setSize:(size_t)size alignment:(size_t)alignment forObjcType:(const char *)objcType;
 
 @end
 
 /// 注册结构体字节大小和对齐的宏，比如 XZObjcTypeRegister(CGRect) 。
-#define XZObjcTypeRegister(typeEncoding) [XZObjcType setSize:sizeof(typeEncoding) alignment:_Alignof(typeEncoding) forEncoding:@encode(typeEncoding)]
+#define XZObjcTypeRegister(objcType) [XZObjcTypeDescriptor setSize:sizeof(objcType) alignment:_Alignof(objcType) forObjcType:@encode(objcType)]
 
 @protocol XZObjcDescriptor <NSObject>
 @property (nonatomic, readonly) NSString *name;
-@property (nonatomic, readonly) XZObjcType *type;
+@property (nonatomic, readonly) XZObjcTypeDescriptor *type;
 @end
 
 NS_ASSUME_NONNULL_END

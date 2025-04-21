@@ -1,45 +1,35 @@
 //
-//  XZObjcType.m
+//  XZObjcTypeDescriptor.m
 //  XZKit
 //
 //  Created by Xezun on 2021/2/12.
 //
 
-#import "XZObjcType.h"
+#import "XZObjcTypeDescriptor.h"
 #import "XZMacro.h"
 
-static id withStorage(id (^block)(NSMutableDictionary<NSString *, NSMutableDictionary<NSNumber *, XZObjcType *> *> * const storage)) {
-    static dispatch_semaphore_t _lock;
-    static NSMutableDictionary<NSString *, NSMutableDictionary<NSNumber *, XZObjcType *> *> *_storage = nil;
-    
-    static dispatch_once_t onceToken;
-    dispatch_once(&onceToken, ^{
-        _lock = dispatch_semaphore_create(1);
-        _storage = [NSMutableDictionary dictionary];
-    });
-    dispatch_semaphore_wait(_lock, DISPATCH_TIME_FOREVER);
-    id value = block(_storage);
-    dispatch_semaphore_signal(_lock);
-    return value;
-}
+/// 类型描述词的存储对象类型。
+typedef NSMutableDictionary<NSString *, NSMutableDictionary<NSNumber *, XZObjcTypeDescriptor *> *> *XZObjcTypeStorage;
+/// 访问类型描述词存储的函数。
+static id _Nullable withStorage(id (^block)(XZObjcTypeStorage const _Nonnull storage));
 
 struct XZObjcTypeEmptyStruct { };
 
 union XZObjcTypeEmptyUnion { };
 
-typedef struct XZObjcRawAlignment {
+typedef struct XZObjcTypeAlignment {
     size_t size;
     size_t alignment;
-} XZObjcRawAlignment;
+} XZObjcTypeAlignment;
 
-@interface XZObjcType ()
-+ (XZObjcRawAlignment)alignmentForeEncoding:(const char *)encoding;
+@interface XZObjcTypeDescriptor ()
++ (XZObjcTypeAlignment)alignmentForeObjcType:(const char *)objcType;
 @end
 
-@implementation XZObjcType
+@implementation XZObjcTypeDescriptor
 
 + (void)initialize {
-    if (self == [XZObjcType class]) {
+    if (self == [XZObjcTypeDescriptor class]) {
         XZObjcTypeRegister(CGPoint);
         XZObjcTypeRegister(CGSize);
         XZObjcTypeRegister(CGRect);
@@ -59,24 +49,26 @@ typedef struct XZObjcRawAlignment {
     return NO;
 }
 
-+ (XZObjcType *)typeWithEncoding:(const char *)typeEncoding {
-    return [self typeWithEncoding:typeEncoding qualifiers:kNilOptions];
++ (XZObjcTypeDescriptor *)descriptorForObjcType:(const char *)objcType {
+    return [self descriptorForObjcType:objcType qualifiers:kNilOptions];
 }
 
-+ (XZObjcType *)typeWithEncoding:(const char *)typeEncoding qualifiers:(XZObjcQualifiers)qualifiers {
-    if (typeEncoding == NULL) {
++ (XZObjcTypeDescriptor *)descriptorForObjcType:(const char *)objcType qualifiers:(XZObjcQualifiers)qualifiers {
+    if (objcType == NULL) {
         return nil;
     }
     
-    size_t typeEncodingLength = strlen(typeEncoding);
-    if (typeEncodingLength == 0) {
+    size_t objcTypeLength = strlen(objcType);
+    
+    // 字符串非法
+    if (objcTypeLength == 0) {
         return nil;
     }
     
-    { // 变量修饰符：方法参数的类型编码可能会包含类型修饰符
-        unsigned long i = 0;
-        while (i < typeEncodingLength) {
-            switch (typeEncoding[i]) {
+    { // 处理修饰符，类型编码可能会包含修饰符，比如方法参数的类型编码。
+        size_t i = 0;
+        while (i < objcTypeLength) {
+            switch (objcType[i]) {
                 case 'r': {
                     qualifiers |= XZObjcQualifierConst;
                     i += 1;
@@ -119,18 +111,18 @@ typedef struct XZObjcRawAlignment {
             break;
         }
         // 只有修饰符，不是合法的编码
-        if (i >= typeEncodingLength) {
+        if (i >= objcTypeLength) {
             return nil;
         }
         // 重新定位字符编码的起点
-        typeEncoding = typeEncoding + i;
-        typeEncodingLength -= i;
+        objcType = objcType + i;
+        objcTypeLength -= i;
     }
     
-    {
-        NSString *encoding = [NSString stringWithCString:typeEncoding encoding:NSASCIIStringEncoding];
+    { // 查询是否已创建描述词。
+        NSString *encoding = [NSString stringWithCString:objcType encoding:NSASCIIStringEncoding];
         
-        XZObjcType *type = withStorage(^id(NSMutableDictionary<NSString *,NSMutableDictionary<NSNumber *,XZObjcType *> *> * const storage) {
+        XZObjcTypeDescriptor *type = withStorage(^id(XZObjcTypeStorage const storage) {
             return storage[encoding][@(qualifiers)];;
         });
         
@@ -139,204 +131,211 @@ typedef struct XZObjcRawAlignment {
         }
     }
     
-    XZObjcRaw  _raw       = XZObjcRawUnknown;
+    NSString * _raw       = nil;
+    XZObjcType _type      = XZObjcTypeUnknown;
     NSString * _name      = nil;
     size_t     _size      = 0;
     size_t     _sizeInBit = 0;
-    NSString * _encoding  = nil;
     size_t     _alignment = 0;
     NSArray  * _members   = nil;
     Class      _subtype   = Nil;
     NSArray  * _protocols = nil;
     
-    switch (typeEncoding[0]) {
+    switch (objcType[0]) {
         case 'c': {
-            _raw = XZObjcRawChar;
+            _raw  = @"c";
+            _type = XZObjcTypeChar;
             _name = @"char";
             _size = sizeof(char);
             _sizeInBit = _size * 8;
-            _encoding  = @"c";
             _alignment = _Alignof(char);
             break;
         }
         case 'i': {
-            _raw = XZObjcRawInt;
+            _raw  = @"i";
+            _type = XZObjcTypeInt;
             _name = @"int";
             _size = sizeof(int);
             _sizeInBit = _size * 8;
-            _encoding  = @"i";
             _alignment = _Alignof(int);
             break;
         }
         case 's': {
-            _raw = XZObjcRawShort;
+            _raw  = @"s";
+            _type = XZObjcTypeShort;
             _name = @"short";
             _size = sizeof(short);
             _sizeInBit = _size * 8;
-            _encoding  = @"s";
             _alignment = _Alignof(short);
             break;
         }
         case 'l': {
-            _raw = XZObjcRawLong;
+            _raw  = @"l";
+            _type = XZObjcTypeLong;
             _name = @"long";
             _size = sizeof(long);
             _sizeInBit = _size * 8;
-            _encoding  = @"l";
             _alignment = _Alignof(long);
             break;
         }
         case 'q': {
-            _raw = XZObjcRawLongLong;
+            _raw  = @"q";
+            _type = XZObjcTypeLongLong;
             _name = @"long long";
             _size = sizeof(long long);
             _sizeInBit = _size * 8;
-            _encoding  = @"q";
             _alignment = _Alignof(long long);
             break;
         }
         case 'C': {
-            _raw = XZObjcRawUnsignedChar;
+            _raw  = @"C";
+            _type = XZObjcTypeUnsignedChar;
             _name = @"unsigned char";
             _size = sizeof(unsigned char);
             _sizeInBit = _size * 8;
-            _encoding  = @"C";
             _alignment = _Alignof(unsigned char);
             break;
         }
         case 'I': {
-            _raw = XZObjcRawUnsignedInt;
+            _raw  = @"I";
+            _type = XZObjcTypeUnsignedInt;
             _name = @"unsigned int";
             _size = sizeof(unsigned int);
             _sizeInBit = _size * 8;
-            _encoding  = @"I";
             _alignment = _Alignof(unsigned int);
             break;
         }
         case 'S': {
-            _raw = XZObjcRawUnsignedShort;
+            _raw  = @"S";
+            _type = XZObjcTypeUnsignedShort;
             _name = @"unsigned short";
             _size = sizeof(unsigned short);
             _sizeInBit = _size * 8;
-            _encoding  = @"S";
             _alignment = _Alignof(unsigned short);
             break;
         }
         case 'L': {
-            _raw = XZObjcRawUnsignedLong;
+            _raw  = @"L";
+            _type = XZObjcTypeUnsignedLong;
             _name = @"unsigned long";
             _size = sizeof(unsigned long);
             _sizeInBit = _size * 8;
-            _encoding  = @"L";
             _alignment = _Alignof(unsigned long);
             break;
         }
         case 'Q': {
-            _raw = XZObjcRawUnsignedLongLong;
+            _raw  = @"Q";
+            _type = XZObjcTypeUnsignedLongLong;
             _name = @"unsigned long long";
             _size = sizeof(unsigned long long);
             _sizeInBit = _size * 8;
-            _encoding  = @"Q";
             _alignment = _Alignof(unsigned long long);
             break;
         }
         case 'f': {
-            _raw = XZObjcRawFloat;
+            _raw  = @"f";
+            _type = XZObjcTypeFloat;
             _name = @"float";
             _size = sizeof(float);
             _sizeInBit = _size * 8;
-            _encoding  = @"f";
             _alignment = _Alignof(float);
             break;
         }
         case 'd': {
-            _raw = XZObjcRawDouble;
+            _raw  = @"d";
+            _type = XZObjcTypeDouble;
             _name = @"double";
             _size = sizeof(double);
             _sizeInBit = _size * 8;
-            _encoding  = @"d";
             _alignment = _Alignof(double);
             break;
         }
         case 'D': {
-            _raw = XZObjcRawLongDouble;
+            _raw  = @"D";
+            _type = XZObjcTypeLongDouble;
             _name = @"long double";
             _size = sizeof(long double);
             _sizeInBit = _size * 8;
-            _encoding  = @"D";
             _alignment = _Alignof(long double);
             break;
         }
         case 'B': {
-            _raw = XZObjcRawBool;
+            _raw  = @"B";
+            _type = XZObjcTypeBool;
             _name = @"bool";
             _size = sizeof(bool);
             _sizeInBit = _size * 8;
-            _encoding  = @"B";
             _alignment = _Alignof(bool);
             break;
         }
         case 'v': {
-            _raw = XZObjcRawVoid;
+            _raw  = @"v";
+            _type = XZObjcTypeVoid;
             _name = @"void";
             _size = sizeof(void);
             _sizeInBit = _size * 8;
-            _encoding  = @"v";
             _alignment = _Alignof(void);
             break;
         }
         case '*': {
-            _raw = XZObjcRawString;
+            _raw  = @"*";
+            _type = XZObjcTypeString;
             _name = @"char *";
             _size = sizeof(char *);
             _sizeInBit = _size * 8;
-            _encoding  = @"*";
             _alignment = _Alignof(char *);
             break;
         }
         case '@': {
-            // id => @
-            // NSString * => @"NSString"
-            // id<UITableViewDelegate> => @"<UITableViewDelegate>"
-            // id<UITableViewDataSource, UITableViewDelegate> => @"<UITableViewDataSource><UITableViewDelegate>"
-            // UIView<UITableViewDataSource> * => @"UIView<UITableViewDataSource>"
+            // 对象类型的 type encoding 存在如下情形：
+            // id                                                   => @
+            // NSString *                                           => @"NSString"
+            // id<UITableViewDelegate>                              => @"<UITableViewDelegate>"
+            // UIView<UITableViewDataSource> *                      => @"UIView<UITableViewDataSource>"
+            // id<UITableViewDataSource, UITableViewDelegate>       => @"<UITableViewDataSource><UITableViewDelegate>"
             // UIView<UITableViewDataSource, UITableViewDelegate> * => @"UIView<UITableViewDataSource><UITableViewDelegate>"
-            _raw = XZObjcRawObject;
+            // 所以，如果长度超 1 则表示可能包含类名。
+            if (objcTypeLength > 1) {
+                if (objcType[1] != '"') { // 第2个字符必须时双引号
+                    objcTypeLength = 1;
+                } else if (objcTypeLength < 4) { // 包含类名时，长度不能小于4，比如 @"A"
+                    objcTypeLength = 1;
+                } else {
+                    size_t newLength = 1;
+                    for (size_t i = 2; i < objcTypeLength; i++) {
+                        if (objcType[i] == '"') {
+                            newLength = i + 1;
+                            break;
+                        }
+                    }
+                    objcTypeLength = newLength;
+                }
+            }
+            
+            _raw  = [[NSString alloc] initWithBytes:objcType length:objcTypeLength encoding:NSASCIIStringEncoding];
+            _type = XZObjcTypeObject;
             _name = @"object";
             _size = sizeof(id);
             _sizeInBit = _size * 8;
-            if (typeEncodingLength == 1 || typeEncoding[1] != '"') {
-                _encoding = @"@";
-            } else if (typeEncodingLength <= 3) {
-                return nil;
-            } else {
-                size_t i = 2;
-                while (typeEncoding[i] != '"') {
-                    i += 1;
-                    if (i >= typeEncodingLength) {
-                        return nil; // 没找到结束标记，错误的编码
-                    }
-                }
-                const size_t newLength = i + 1;
-                _encoding = [[NSString alloc] initWithBytes:typeEncoding length:newLength encoding:NSASCIIStringEncoding];
-                if (newLength != typeEncodingLength) {
-                    typeEncoding = [_encoding cStringUsingEncoding:NSASCIIStringEncoding];
-                }
-                
-                NSCharacterSet * const set = [NSCharacterSet characterSetWithCharactersInString:@"@\">"];
-                NSString       * string = [_encoding stringByTrimmingCharactersInSet:set];
-                
-                NSRange range = [string rangeOfString:@"<"];
+            _alignment = _Alignof(id);
+            
+            if (objcTypeLength > 1) {
+                NSRange range = [_raw rangeOfString:@"<"];
                 if (range.location == NSNotFound) {
-                    _subtype = NSClassFromString(string);
+                    NSString * const className = [_raw substringWithRange:NSMakeRange(2, objcTypeLength - 3)];
+                    _subtype = NSClassFromString(className);
+                    _name = [NSString stringWithFormat:@"%@ %@", className, _name];
+                    _protocols = nil;
                 } else {
-                    if (range.location > 0) {
-                        _subtype = NSClassFromString([string substringToIndex:range.location]);
+                    if (range.location > 2) { // @"Name<Protocol>"
+                        NSString * const className = [_raw substringWithRange:NSMakeRange(2, (range.location + 1) - 3)];
+                        _subtype = NSClassFromString(className);
+                        _name = [NSString stringWithFormat:@"%@ %@", className, _name];
                     }
-                    string = [string substringFromIndex:(range.location + 1)];
-                    NSArray<NSString *> * const names = [string componentsSeparatedByString:@"><"];
-                    NSMutableArray      * const protocols = [NSMutableArray arrayWithCapacity:names.count];
-                    for (NSString * const name in names) {
+                    NSString * const protocolString = [_raw substringWithRange:NSMakeRange(range.location + 1, objcTypeLength - (range.location + 1) - 1)];
+                    NSArray<NSString *> * const protocolNames = [protocolString componentsSeparatedByString:@"><"];
+                    NSMutableArray * const protocols = [NSMutableArray arrayWithCapacity:protocolNames.count];
+                    for (NSString * const name in protocolNames) {
                         Protocol *protocol = NSProtocolFromString(name);
                         if (protocol) {
                             [protocols addObject:protocol];
@@ -345,96 +344,58 @@ typedef struct XZObjcRawAlignment {
                     _protocols = protocols.copy;
                 }
             }
-            _alignment = _Alignof(id);
             break;
         }
         case '#': {
-            _raw = XZObjcRawClass;
+            _raw  = @"#";
+            _type = XZObjcTypeClass;
             _name = @"Class";
             _size = sizeof(Class);
             _sizeInBit = _size * 8;
-            _encoding  = @"#";
             _alignment = _Alignof(Class);
             break;
         }
         case ':': {
-            _raw = XZObjcRawSEL;
+            _raw = @":";
+            _type = XZObjcTypeSEL;
             _name = @"SEL";
             _size = sizeof(SEL);
             _sizeInBit = _size * 8;
-            _encoding = @":";
             _alignment = _Alignof(SEL);
             break;
         }
         case '[': {
-            // int[10] => [10i]
-            // int[10][2] => [10[2i]]
-            if (typeEncodingLength < 4) {
+            // int[10]      => [10i]
+            // int[10][2]   => [10[2i]]
+            if (objcTypeLength < 4) {
                 return nil;
             }
-            _raw = XZObjcRawArray;
+            _type = XZObjcTypeArray;
             
-            // 找到结尾位置
-            size_t i = 0;
-            size_t e = 0;
-            while (true) {
-                switch (typeEncoding[i]) {
-                    case '[':
-                        e += 1;
-                        break;
-                    case ']':
-                        e -= 1;
-                        break;
-                    default:
-                        break;
-                }
-                
-                if (e == 0) {
-                    break;
-                }
-                
-                i += 1;
-                
-                if (i >= typeEncodingLength) {
-                    return nil;
-                }
-            }
-            if (e > 0) {
-                return nil;
-            }
-            size_t const newLength = i + 1;
-            if (newLength < 4) {
-                return nil;
-            }
-            _encoding = [[NSString alloc] initWithBytes:typeEncoding length:newLength encoding:NSASCIIStringEncoding];
-            if (newLength != typeEncodingLength) {
-                typeEncoding = [_encoding cStringUsingEncoding:NSASCIIStringEncoding];
-            }
-            
-            // 数组元素数量
             size_t count = 0;
-            i = 1;
-            while (YES) {
-                const char number = typeEncoding[i];
-                if (number < '0' || number > '9') {
+            XZObjcTypeDescriptor *member = nil;
+            for (size_t i = 1; i < objcTypeLength; i++) {
+                char const number = objcType[i];
+                if (number >= '0' && number <= '9') {
+                    count = count * 10 + number - '0';
+                } else {
+                    member = [XZObjcTypeDescriptor descriptorForObjcType:objcType + i];
+                    if (member == nil) {
+                        return nil;
+                    }
+                    i += member.raw.length;
+                    if (i >= objcTypeLength) {
+                        return nil;
+                    }
+                    if (objcType[i] != ']') {
+                        return nil;
+                    }
+                    objcTypeLength = i + 1;
                     break;
                 }
-                count = count * 10 + (typeEncoding[i] - '0');
-                i += 1;
-                if (i >= newLength) {
-                    return nil; // typeEncoding 不合法
-                }
-            }
-            if (count == 0) {
-                return nil;
             }
             
-            // 成员类型
-            XZObjcType *member = [XZObjcType typeWithEncoding:typeEncoding + i];
-            if (member == nil) {
-                return nil;
-            }
-            
+            _raw = [NSString stringWithFormat:@"[%ld%@]", count, member.raw];
             _name = [NSString stringWithFormat:@"%@[%ld]", member.name, (long)count];
             _size = member.size * count;
             _sizeInBit = _size * 8;
@@ -443,8 +404,8 @@ typedef struct XZObjcRawAlignment {
             break;
         }
         case '{': { // {name=type...}
-            _raw = XZObjcRawStruct;
-            if (typeEncodingLength < 5) {
+            _type = XZObjcTypeStruct;
+            if (objcTypeLength < 5) {
                 return nil;
             }
             
@@ -452,7 +413,7 @@ typedef struct XZObjcRawAlignment {
             size_t i = 1;
             size_t e = 1;
             while (true) {
-                switch (typeEncoding[i]) {
+                switch (objcType[i]) {
                     case '{':
                         e += 1;
                         break;
@@ -469,7 +430,7 @@ typedef struct XZObjcRawAlignment {
                 
                 i += 1;
                 
-                if (i >= typeEncodingLength) {
+                if (i >= objcTypeLength) {
                     return nil;
                 }
             }
@@ -480,15 +441,15 @@ typedef struct XZObjcRawAlignment {
             if (newLength < 5) {
                 return nil;
             }
-            _encoding = [[NSString alloc] initWithBytes:typeEncoding length:newLength encoding:NSASCIIStringEncoding];
-            if (newLength != typeEncodingLength) {
-                typeEncoding = [_encoding cStringUsingEncoding:NSASCIIStringEncoding];
+            _raw = [[NSString alloc] initWithBytes:objcType length:newLength encoding:NSASCIIStringEncoding];
+            if (newLength != objcTypeLength) {
+                objcType = [_raw cStringUsingEncoding:NSASCIIStringEncoding];
             }
             
             // 结构体名字
             i = 1;
             while (YES) {
-                if (typeEncoding[i] == '=') {
+                if (objcType[i] == '=') {
                     break;
                 }
                 i += 1;
@@ -499,7 +460,7 @@ typedef struct XZObjcRawAlignment {
             if (i == 1) {
                 return nil;
             }
-            _name = [_encoding substringWithRange:NSMakeRange(1, i - 1)];
+            _name = [_raw substringWithRange:NSMakeRange(1, i - 1)];
             
             NSMutableArray *members = [NSMutableArray array];
             
@@ -510,7 +471,7 @@ typedef struct XZObjcRawAlignment {
             size_t const membersEnd = newLength - 2;
             // 用 while 而不 do-while 是因为可能会有"空"结构体
             while (i <= membersEnd) {
-                XZObjcType *member = [XZObjcType typeWithEncoding:typeEncoding + i];
+                XZObjcTypeDescriptor *member = [XZObjcTypeDescriptor descriptorForObjcType:objcType + i];
                 if (member == nil) {
                     return nil; // 遇到不合法的字符
                 }
@@ -519,11 +480,11 @@ typedef struct XZObjcRawAlignment {
                 // 对于结构体，默认字节对齐方式为成员中最大的那个。非默认情况需要由 provider 提供。
                 _alignment = MAX(_alignment, member.alignment);
                 
-                i += member.encoding.length;
+                i += member.raw.length;
             };
             
             // 如果提供了自定义的 size 和 alignment 则使用自定的，否则根据默认规则计算。
-            XZObjcRawAlignment const info = [XZObjcType alignmentForeEncoding:typeEncoding];
+            XZObjcTypeAlignment const info = [XZObjcTypeDescriptor alignmentForeObjcType:objcType];
             if (info.size > 0) {
                 _size = info.size;
                 _sizeInBit = _size * 8;
@@ -532,7 +493,7 @@ typedef struct XZObjcRawAlignment {
                 _sizeInBit = 0;
                 size_t const alignmentInBit = _alignment * 8;
                 size_t availableBit = alignmentInBit; // 每个 alignment 中的可用位（字节）
-                for (XZObjcType *subtype in members) {
+                for (XZObjcTypeDescriptor *subtype in members) {
                     if (subtype.sizeInBit <= availableBit) {
                         // 可用位够，则放在可用位上，可用位减少
                         availableBit -= subtype.sizeInBit;
@@ -561,15 +522,15 @@ typedef struct XZObjcRawAlignment {
             break;
         }
         case '(': { // (name=type...)
-            _raw = XZObjcRawUnion;
-            if (typeEncodingLength < 5) {
+            _type = XZObjcTypeUnion;
+            if (objcTypeLength < 5) {
                 return nil;
             }
             
             size_t i = 1;
             size_t e = 1;
             while (true) {
-                switch (typeEncoding[i]) {
+                switch (objcType[i]) {
                     case '(':
                         e += 1;
                         break;
@@ -586,7 +547,7 @@ typedef struct XZObjcRawAlignment {
                 
                 i += 1;
                 
-                if (i >= typeEncodingLength) {
+                if (i >= objcTypeLength) {
                     return nil;
                 }
             }
@@ -597,15 +558,15 @@ typedef struct XZObjcRawAlignment {
             if (newLength < 5) {
                 return nil;
             }
-            _encoding = [[NSString alloc] initWithBytes:typeEncoding length:newLength encoding:NSASCIIStringEncoding];
-            if (newLength != typeEncodingLength) {
-                typeEncoding = [_encoding cStringUsingEncoding:NSASCIIStringEncoding];
+            _raw = [[NSString alloc] initWithBytes:objcType length:newLength encoding:NSASCIIStringEncoding];
+            if (newLength != objcTypeLength) {
+                objcType = [_raw cStringUsingEncoding:NSASCIIStringEncoding];
             }
             
             // 结合体名字
             i = 1;
             while (YES) {
-                if (typeEncoding[i] == '=') {
+                if (objcType[i] == '=') {
                     break;
                 }
                 i += 1;
@@ -616,7 +577,7 @@ typedef struct XZObjcRawAlignment {
             if (i == 1) {
                 return nil;
             }
-            _name = [_encoding substringWithRange:NSMakeRange(1, i)];
+            _name = [_raw substringWithRange:NSMakeRange(1, i)];
             
             NSMutableArray *members = [NSMutableArray array];
             
@@ -630,7 +591,7 @@ typedef struct XZObjcRawAlignment {
             // 最后一位是 ) 结束字符
             size_t const membersEnd = newLength - 2;
             while (i < membersEnd) { // 用 while 而不 do-while 是因为可能会有"空"结合体
-                XZObjcType *member = [XZObjcType typeWithEncoding:typeEncoding + i];
+                XZObjcTypeDescriptor *member = [XZObjcTypeDescriptor descriptorForObjcType:objcType + i];
                 if (member == nil) {
                     return nil;
                 }
@@ -640,7 +601,7 @@ typedef struct XZObjcRawAlignment {
                 _sizeInBit = MAX(_sizeInBit, member.sizeInBit);
                 _alignment = MAX(_alignment, member.alignment);
                 
-                i += member.encoding.length;
+                i += member.raw.length;
             };
             
             if (members.count == 0) {
@@ -653,16 +614,16 @@ typedef struct XZObjcRawAlignment {
             break;
         }
         case 'b': {
-            if (typeEncodingLength < 2) {
+            if (objcTypeLength < 2) {
                 return nil;
             }
-            _raw = XZObjcRawBitField;
+            _type = XZObjcTypeBitField;
             _name = @"bit field";
             
             _sizeInBit = 0;
             size_t i = 1;
-            while (i < typeEncodingLength) {
-                const char number = typeEncoding[i];
+            while (i < objcTypeLength) {
+                const char number = objcType[i];
                 if (number < '0' || number > '9') {
                     break;
                 }
@@ -673,9 +634,9 @@ typedef struct XZObjcRawAlignment {
                 return nil; // typeEncoding 不合法
             }
             size_t const newLength = i;
-            _encoding = [[NSString alloc] initWithBytes:typeEncoding length:newLength encoding:NSASCIIStringEncoding];
-            if (newLength != typeEncodingLength) {
-                typeEncoding = [_encoding cStringUsingEncoding:NSASCIIStringEncoding];
+            _raw = [[NSString alloc] initWithBytes:objcType length:newLength encoding:NSASCIIStringEncoding];
+            if (newLength != objcTypeLength) {
+                objcType = [_raw cStringUsingEncoding:NSASCIIStringEncoding];
             }
                         
             _size = (_sizeInBit - 1) / 8 + 1;
@@ -683,22 +644,22 @@ typedef struct XZObjcRawAlignment {
             break;
         }
         case '^': {
-            XZObjcType *member = [XZObjcType typeWithEncoding:typeEncoding + 1];
-            _raw = XZObjcRawPointer;
+            XZObjcTypeDescriptor *member = [XZObjcTypeDescriptor descriptorForObjcType:objcType + 1];
+            _type = XZObjcTypePointer;
             _name = [NSString stringWithFormat:@"%@ *", member.name];
             _size = sizeof(void *);
             _sizeInBit = _size * 8;
-            _encoding  = [[NSString alloc] initWithBytes:typeEncoding length:member.encoding.length + 1 encoding:(NSASCIIStringEncoding)];
+            _raw  = [[NSString alloc] initWithBytes:objcType length:member.raw.length + 1 encoding:(NSASCIIStringEncoding)];
             _alignment = _Alignof(void *);
             _members  = @[member];
             break;
         }
         case '?': {
-            _raw = XZObjcRawUnknown;
+            _type = XZObjcTypeUnknown;
             _name = @"unknown";
             _size = sizeof(void *);
             _sizeInBit = _size * 8;
-            _encoding  = @"?";
+            _raw  = @"?";
             _alignment = _Alignof(void *);
             break;
         }
@@ -707,13 +668,13 @@ typedef struct XZObjcRawAlignment {
             break;
         }
     }
-    return [self typeWithRaw:_raw name:_name qualifiers:qualifiers size:_size sizeInBit:_sizeInBit encoding:_encoding alignment:_alignment members:_members subtype:_subtype protocols:_protocols];
+    return [self typeWithRaw:_type name:_name qualifiers:qualifiers size:_size sizeInBit:_sizeInBit encoding:_raw alignment:_alignment members:_members subtype:_subtype protocols:_protocols];
 }
 
-+ (instancetype)typeWithRaw:(XZObjcRaw)raw name:(NSString *)name qualifiers:(XZObjcQualifiers)qualifiers size:(size_t)size sizeInBit:(size_t)sizeInBit encoding:(NSString *)encoding alignment:(size_t)alignment members:(NSArray<XZObjcType *> *)members subtype:(Class)subtype protocols:(NSArray<Protocol *> *)protocols {
-    return withStorage(^id(NSMutableDictionary<NSString *,NSMutableDictionary<NSNumber *,XZObjcType *> *> * const storage) {
++ (instancetype)typeWithRaw:(XZObjcType)raw name:(NSString *)name qualifiers:(XZObjcQualifiers)qualifiers size:(size_t)size sizeInBit:(size_t)sizeInBit encoding:(NSString *)encoding alignment:(size_t)alignment members:(NSArray<XZObjcTypeDescriptor *> *)members subtype:(Class)subtype protocols:(NSArray<Protocol *> *)protocols {
+    return withStorage(^id(XZObjcTypeStorage const storage) {
         NSNumber * const key = @(qualifiers);
-        XZObjcType *type = storage[encoding][key];
+        XZObjcTypeDescriptor *type = storage[encoding][key];
         if (type) {
             return type;
         }
@@ -728,15 +689,15 @@ typedef struct XZObjcRawAlignment {
     });
 }
 
-- (instancetype)initWithRaw:(XZObjcRaw)raw name:(NSString *)name qualifiers:(XZObjcQualifiers)qualifiers size:(size_t)size sizeInBit:(size_t)sizeInBit encoding:(NSString *)encoding alignment:(size_t)alignment members:(NSArray<XZObjcType *> *)members subtype:(Class)subtype protocols:(NSArray<Protocol *> *)protocols {
+- (instancetype)initWithRaw:(XZObjcType)raw name:(NSString *)name qualifiers:(XZObjcQualifiers)qualifiers size:(size_t)size sizeInBit:(size_t)sizeInBit encoding:(NSString *)encoding alignment:(size_t)alignment members:(NSArray<XZObjcTypeDescriptor *> *)members subtype:(Class)subtype protocols:(NSArray<Protocol *> *)protocols {
     self = [super init];
     if (self) {
-        _raw = raw;
+        _type = raw;
         _name = name;
         _qualifiers = qualifiers;
         _size = size;
         _sizeInBit = sizeInBit;
-        _encoding = encoding;
+        _raw = encoding;
         _alignment = alignment;
         _members = members.copy;
         _subtype = subtype;
@@ -760,7 +721,7 @@ typedef struct XZObjcRawAlignment {
     NSString *members = nil;
     if (self.members.count > 0) {
         NSMutableString *stringM = [[NSMutableString alloc] initWithString:@"[\n"];
-        [self.members enumerateObjectsUsingBlock:^(XZObjcType * _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
+        [self.members enumerateObjectsUsingBlock:^(XZObjcTypeDescriptor * _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
             [stringM appendFormat:@"    <%p, %@>,\n", obj, ((id)obj.subtype ?: obj.name)];
         }];
         [stringM deleteCharactersInRange:NSMakeRange(stringM.length - 2, 1)];
@@ -768,30 +729,46 @@ typedef struct XZObjcRawAlignment {
         members = stringM;
     }
     
-    return [NSString stringWithFormat:@"<%@: %p, name: %@, type: %lu, encoding: %@, size: %lu, alignment: %lu, subtype: %@, protocols: %@, members: %@>", NSStringFromClass(self.class), self, self.name, (unsigned long)self.raw, self.encoding, self.size, self.alignment, self.subtype, protocols, members];
+    return [NSString stringWithFormat:@"<%@: %p, name: %@, type: %lu, encoding: %@, size: %lu, alignment: %lu, subtype: %@, protocols: %@, members: %@>", NSStringFromClass(self.class), self, self.name, (unsigned long)self.type, self.raw, self.size, self.alignment, self.subtype, protocols, members];
 }
 
 #pragma mark - Provider
 
 static NSMutableDictionary<NSString *, NSValue *> *_typeProviders = nil;
 
-+ (void)setSize:(size_t)size alignment:(size_t)alignment forEncoding:(nonnull const char *)typeEncoding {
++ (void)setSize:(size_t)size alignment:(size_t)alignment forObjcType:(nonnull const char *)typeEncoding {
     NSParameterAssert(typeEncoding != NULL);
     
     NSString *name = [NSString stringWithCString:typeEncoding encoding:NSASCIIStringEncoding];
     
-    XZObjcRawAlignment info = {size, alignment};
+    XZObjcTypeAlignment info = {size, alignment};
     if (_typeProviders == nil) {
         _typeProviders = [NSMutableDictionary dictionary];
     }
-    _typeProviders[name] = [NSValue valueWithBytes:&info objCType:@encode(XZObjcRawAlignment)];
+    _typeProviders[name] = [NSValue valueWithBytes:&info objCType:@encode(XZObjcTypeAlignment)];
 }
 
-+ (XZObjcRawAlignment)alignmentForeEncoding:(const char *)typeEncoding {
-    XZObjcRawAlignment alignment = {0, 0};
-    NSString * const key = [NSString stringWithCString:typeEncoding encoding:NSASCIIStringEncoding];
++ (XZObjcTypeAlignment)alignmentForeObjcType:(const char *)objcType {
+    XZObjcTypeAlignment alignment = {0, 0};
+    NSString * const key = [NSString stringWithCString:objcType encoding:NSASCIIStringEncoding];
     [_typeProviders[key] getValue:&alignment];
     return alignment;
 }
 
 @end
+
+
+static id withStorage(id (^block)(XZObjcTypeStorage const storage)) {
+    static dispatch_semaphore_t _lock;
+    static XZObjcTypeStorage _storage = nil;
+    
+    static dispatch_once_t onceToken;
+    dispatch_once(&onceToken, ^{
+        _lock = dispatch_semaphore_create(1);
+        _storage = [NSMutableDictionary dictionary];
+    });
+    dispatch_semaphore_wait(_lock, DISPATCH_TIME_FOREVER);
+    id value = block(_storage);
+    dispatch_semaphore_signal(_lock);
+    return value;
+}

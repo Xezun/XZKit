@@ -35,7 +35,7 @@ typedef id _Nullable (^XZJSONValueDecoder)(NSDictionary *dictionary);
     SEL _setter;
     
     /// 属性值类型。property's type
-    XZObjcRaw _type;
+    XZObjcType _type;
     /// 如果属性值是对象，判断对象的类型是否为已知类型（原生已定义的对象类型）。property's Foundation type
     XZJSONFoundationClass _foundationClass;
     /// 如果属性是结构体，判断结构体是否为已知的类型（原生已定义的类型）。

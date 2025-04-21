@@ -10,7 +10,7 @@
 #import "XZObjcPropertyDescriptor.h"
 #import "XZObjcMethodDescriptor.h"
 
-NSNotificationName const XZObjcClassNeedsUpdateNotification = @"XZObjcClassNeedsUpdateNotification";
+NSNotificationName const XZObjcClassDidUpdateNotification = @"XZObjcClassDidUpdateNotification";
 NSString *         const XZObjcClassUpdateUserInfoKey   = @"XZObjcClassUpdateUserInfoKey";
 NSString *         const XZObjcClassUpdateIvars         = @"XZObjcClassUpdateIvars";
 NSString *         const XZObjcClassUpdateMethods       = @"XZObjcClassUpdateMethods";
@@ -32,7 +32,7 @@ NSString *         const XZObjcClassUpdateProperties    = @"XZObjcClassUpdatePro
         _raw = aClass;
         _super = [XZObjcClassDescriptor descriptorWithClass:[aClass superclass]];
         _name = NSStringFromClass(aClass);
-        _type = [XZObjcType typeWithEncoding:@encode(Class)];
+        _type = [XZObjcTypeDescriptor descriptorForObjcType:@encode(Class)];
         _ivars = _super ? nil : @{};
         _methods = _super ? nil : @{};
         _properties = _super ? nil : @{};
@@ -68,7 +68,7 @@ NSString *         const XZObjcClassUpdateProperties    = @"XZObjcClassUpdatePro
 - (void)setNeedsUpdateIvars {
     if (_super) {
         _ivars = nil;
-        [NSNotificationCenter.defaultCenter postNotificationName:XZObjcClassNeedsUpdateNotification object:self userInfo:@{
+        [NSNotificationCenter.defaultCenter postNotificationName:XZObjcClassDidUpdateNotification object:self userInfo:@{
             XZObjcClassUpdateUserInfoKey: XZObjcClassUpdateIvars
         }];
     }
@@ -101,7 +101,7 @@ NSString *         const XZObjcClassUpdateProperties    = @"XZObjcClassUpdatePro
 - (void)setNeedsUpdateMethods {
     if (_super) {
         _methods = nil;
-        [NSNotificationCenter.defaultCenter postNotificationName:XZObjcClassNeedsUpdateNotification object:self userInfo:@{
+        [NSNotificationCenter.defaultCenter postNotificationName:XZObjcClassDidUpdateNotification object:self userInfo:@{
             XZObjcClassUpdateUserInfoKey: XZObjcClassUpdateMethods
         }];
     }
@@ -138,7 +138,7 @@ NSString *         const XZObjcClassUpdateProperties    = @"XZObjcClassUpdatePro
 - (void)setNeedsUpdateProperties {
     if (_super) {
         _properties = nil;
-        [NSNotificationCenter.defaultCenter postNotificationName:XZObjcClassNeedsUpdateNotification object:self userInfo:@{
+        [NSNotificationCenter.defaultCenter postNotificationName:XZObjcClassDidUpdateNotification object:self userInfo:@{
             XZObjcClassUpdateUserInfoKey: XZObjcClassUpdateProperties
         }];
     }

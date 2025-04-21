@@ -5,14 +5,14 @@
 //  Created by 徐臻 on 2025/1/26.
 //
 
-#import "XZObjcType.h"
+#import "XZObjcTypeDescriptor.h"
 
 @class XZObjcIvarDescriptor, XZObjcMethodDescriptor, XZObjcPropertyDescriptor;
 
 NS_ASSUME_NONNULL_BEGIN
 
 /// 当 XZObjcClassDescriptor 发生更新时，会发送此通知。
-FOUNDATION_EXPORT NSNotificationName const XZObjcClassNeedsUpdateNotification;
+FOUNDATION_EXPORT NSNotificationName const XZObjcClassDidUpdateNotification;
 /// 在 XZObjcClassDescriptor 的通知中，获取变更枚举 XZObjcClassUpdate 的键。
 FOUNDATION_EXPORT NSString * const XZObjcClassUpdateUserInfoKey;
 
@@ -40,7 +40,7 @@ FOUNDATION_EXPORT XZObjcClassUpdate const XZObjcClassUpdateProperties;
 @property (nonatomic, readonly) NSString *name;
 
 /// 类的类型描述。
-@property (nonatomic, readonly) XZObjcType *type;
+@property (nonatomic, readonly) XZObjcTypeDescriptor *type;
 
 /// 类实例变量。ivars
 @property (copy, readonly) NSDictionary<NSString *, XZObjcIvarDescriptor *>     *ivars;

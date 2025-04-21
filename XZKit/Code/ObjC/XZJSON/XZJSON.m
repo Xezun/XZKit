@@ -144,92 +144,92 @@
         SEL const getter = property->_getter;
         SEL const setter = property->_setter;
         switch (property->_type) {
-            case XZObjcRawChar: {
+            case XZObjcTypeChar: {
                 char const value = ((char (*)(id, SEL))objc_msgSend)(self, getter);
                 ((void (*)(id, SEL, char))objc_msgSend)(newModel, setter, value);
                 return;
             }
-            case XZObjcRawInt: {
+            case XZObjcTypeInt: {
                 int const value = ((int (*)(id, SEL))objc_msgSend)(self, getter);
                 ((void (*)(id, SEL, int))objc_msgSend)(newModel, setter, value);
                 return;
             }
-            case XZObjcRawShort: {
+            case XZObjcTypeShort: {
                 short const value = ((short (*)(id, SEL))objc_msgSend)(self, getter);
                 ((void (*)(id, SEL, short))objc_msgSend)(newModel, setter, value);
                 return;
             }
-            case XZObjcRawLong: {
+            case XZObjcTypeLong: {
                 long const value = ((long (*)(id, SEL))objc_msgSend)(self, getter);
                 ((void (*)(id, SEL, long))objc_msgSend)(newModel, setter, value);
                 return;
             }
-            case XZObjcRawLongLong: {
+            case XZObjcTypeLongLong: {
                 long long const value = ((long long (*)(id, SEL))objc_msgSend)(self, getter);
                 ((void (*)(id, SEL, long long))objc_msgSend)(newModel, setter, value);
                 return;
             }
-            case XZObjcRawUnsignedChar: {
+            case XZObjcTypeUnsignedChar: {
                 unsigned char const value = ((unsigned char (*)(id, SEL))objc_msgSend)(self, getter);
                 ((void (*)(id, SEL, unsigned char))objc_msgSend)(newModel, setter, value);
                 return;
             }
-            case XZObjcRawUnsignedInt: {
+            case XZObjcTypeUnsignedInt: {
                 unsigned int const value = ((unsigned int (*)(id, SEL))objc_msgSend)(self, getter);
                 ((void (*)(id, SEL, unsigned int))objc_msgSend)(newModel, setter, value);
                 return;
             }
-            case XZObjcRawUnsignedShort: {
+            case XZObjcTypeUnsignedShort: {
                 unsigned short const value = ((unsigned short (*)(id, SEL))objc_msgSend)(self, getter);
                 ((void (*)(id, SEL, unsigned short))objc_msgSend)(newModel, setter, value);
                 return;
             }
-            case XZObjcRawUnsignedLong: {
+            case XZObjcTypeUnsignedLong: {
                 unsigned long const value = ((unsigned long (*)(id, SEL))objc_msgSend)(self, getter);
                 ((void (*)(id, SEL, unsigned long))objc_msgSend)(newModel, setter, value);
                 return;
             }
-            case XZObjcRawUnsignedLongLong: {
+            case XZObjcTypeUnsignedLongLong: {
                 unsigned long long const value = ((unsigned long long (*)(id, SEL))objc_msgSend)(self, getter);
                 ((void (*)(id, SEL, unsigned long long))objc_msgSend)(newModel, setter, value);
                 return;
             }
-            case XZObjcRawFloat: {
+            case XZObjcTypeFloat: {
                 float const value = ((float (*)(id, SEL))objc_msgSend)(self, getter);
                 ((void (*)(id, SEL, float))objc_msgSend)(newModel, setter, value);
                 return;
             }
-            case XZObjcRawDouble: {
+            case XZObjcTypeDouble: {
                 double const value = ((double (*)(id, SEL))objc_msgSend)(self, getter);
                 ((void (*)(id, SEL, double))objc_msgSend)(newModel, setter, value);
                 return;
             }
-            case XZObjcRawLongDouble: {
+            case XZObjcTypeLongDouble: {
                 long double const value = ((long double (*)(id, SEL))objc_msgSend)(self, getter);
                 ((void (*)(id, SEL, long double))objc_msgSend)(newModel, setter, value);
                 return;
             }
-            case XZObjcRawBool: {
+            case XZObjcTypeBool: {
                 BOOL const value = ((BOOL (*)(id, SEL))objc_msgSend)(self, getter);
                 ((void (*)(id, SEL, BOOL))objc_msgSend)(newModel, setter, value);
                 return;
             }
-            case XZObjcRawClass: {
+            case XZObjcTypeClass: {
                 Class const value = ((Class (*)(id, SEL))objc_msgSend)(self, getter);
                 ((void (*)(id, SEL, Class))objc_msgSend)(newModel, setter, value);
                 return;
             }
-            case XZObjcRawSEL:  {
+            case XZObjcTypeSEL:  {
                 SEL const value = ((SEL (*)(id, SEL))objc_msgSend)(self, getter);
                 ((void (*)(id, SEL, SEL))objc_msgSend)(newModel, setter, value);
                 return;
             }
-            case XZObjcRawObject:  {
+            case XZObjcTypeObject:  {
                 id const value = ((id (*)(id, SEL))objc_msgSend)(self, getter);
                 ((void (*)(id, SEL, id))objc_msgSend)(newModel, setter, value);
                 return;
             }
-            case XZObjcRawStruct: {
+            case XZObjcTypeStruct: {
                 switch (property->_foundationStruct) {
                     case XZJSONFoundationStructUnknown: {
                         break;
@@ -277,13 +277,13 @@
                 }
                 break;
             }
-            case XZObjcRawUnion:
-            case XZObjcRawBitField:
-            case XZObjcRawVoid:
-            case XZObjcRawString:
-            case XZObjcRawArray:
-            case XZObjcRawPointer:
-            case XZObjcRawUnknown: {
+            case XZObjcTypeUnion:
+            case XZObjcTypeBitField:
+            case XZObjcTypeVoid:
+            case XZObjcTypeString:
+            case XZObjcTypeArray:
+            case XZObjcTypePointer:
+            case XZObjcTypeUnknown: {
                 break;
             }
         }
@@ -348,9 +348,9 @@
         
         // 比较属性值
         switch (property1->_type) {
-            case XZObjcRawUnknown:
+            case XZObjcTypeUnknown:
                 break;
-            case XZObjcRawChar: {
+            case XZObjcTypeChar: {
                 char value1 = ((char(*)(id,SEL))objc_msgSend)(model1, property1->_getter);
                 char value2 = ((char(*)(id,SEL))objc_msgSend)(model1, property2->_getter);
                 if (value1 != value2) {
@@ -358,7 +358,7 @@
                 }
                 continue;
             }
-            case XZObjcRawUnsignedChar: {
+            case XZObjcTypeUnsignedChar: {
                 unsigned char value1 = ((unsigned char(*)(id,SEL))objc_msgSend)(model1, property1->_getter);
                 unsigned char value2 = ((unsigned char(*)(id,SEL))objc_msgSend)(model1, property2->_getter);
                 if (value1 != value2) {
@@ -366,7 +366,7 @@
                 }
                 continue;
             }
-            case XZObjcRawInt: {
+            case XZObjcTypeInt: {
                 int value1 = ((int(*)(id,SEL))objc_msgSend)(model1, property1->_getter);
                 int value2 = ((int(*)(id,SEL))objc_msgSend)(model1, property2->_getter);
                 if (value1 != value2) {
@@ -374,7 +374,7 @@
                 }
                 continue;
             }
-            case XZObjcRawUnsignedInt: {
+            case XZObjcTypeUnsignedInt: {
                 unsigned int value1 = ((unsigned int(*)(id,SEL))objc_msgSend)(model1, property1->_getter);
                 unsigned int value2 = ((unsigned int(*)(id,SEL))objc_msgSend)(model1, property2->_getter);
                 if (value1 != value2) {
@@ -382,7 +382,7 @@
                 }
                 continue;
             }
-            case XZObjcRawShort: {
+            case XZObjcTypeShort: {
                 short value1 = ((short(*)(id,SEL))objc_msgSend)(model1, property1->_getter);
                 short value2 = ((short(*)(id,SEL))objc_msgSend)(model1, property2->_getter);
                 if (value1 != value2) {
@@ -390,7 +390,7 @@
                 }
                 continue;
             }
-            case XZObjcRawUnsignedShort: {
+            case XZObjcTypeUnsignedShort: {
                 unsigned short value1 = ((unsigned short(*)(id,SEL))objc_msgSend)(model1, property1->_getter);
                 unsigned short value2 = ((unsigned short(*)(id,SEL))objc_msgSend)(model1, property2->_getter);
                 if (value1 != value2) {
@@ -398,7 +398,7 @@
                 }
                 continue;
             }
-            case XZObjcRawLong: {
+            case XZObjcTypeLong: {
                 long value1 = ((long(*)(id,SEL))objc_msgSend)(model1, property1->_getter);
                 long value2 = ((long(*)(id,SEL))objc_msgSend)(model1, property2->_getter);
                 if (value1 != value2) {
@@ -406,7 +406,7 @@
                 }
                 continue;
             }
-            case XZObjcRawUnsignedLong: {
+            case XZObjcTypeUnsignedLong: {
                 unsigned long value1 = ((unsigned long(*)(id,SEL))objc_msgSend)(model1, property1->_getter);
                 unsigned long value2 = ((unsigned long(*)(id,SEL))objc_msgSend)(model1, property2->_getter);
                 if (value1 != value2) {
@@ -414,7 +414,7 @@
                 }
                 continue;
             }
-            case XZObjcRawLongLong: {
+            case XZObjcTypeLongLong: {
                 long long value1 = ((long long(*)(id,SEL))objc_msgSend)(model1, property1->_getter);
                 long long value2 = ((long long(*)(id,SEL))objc_msgSend)(model1, property2->_getter);
                 if (value1 != value2) {
@@ -422,7 +422,7 @@
                 }
                 continue;
             }
-            case XZObjcRawUnsignedLongLong: {
+            case XZObjcTypeUnsignedLongLong: {
                 unsigned long long value1 = ((unsigned long long(*)(id,SEL))objc_msgSend)(model1, property1->_getter);
                 unsigned long long value2 = ((unsigned long long(*)(id,SEL))objc_msgSend)(model1, property2->_getter);
                 if (value1 != value2) {
@@ -430,7 +430,7 @@
                 }
                 continue;
             }
-            case XZObjcRawFloat: {
+            case XZObjcTypeFloat: {
                 float value1 = ((float(*)(id,SEL))objc_msgSend)(model1, property1->_getter);
                 float value2 = ((float(*)(id,SEL))objc_msgSend)(model1, property2->_getter);
                 if (value1 != value2) {
@@ -438,7 +438,7 @@
                 }
                 continue;
             }
-            case XZObjcRawDouble: {
+            case XZObjcTypeDouble: {
                 double value1 = ((double(*)(id,SEL))objc_msgSend)(model1, property1->_getter);
                 double value2 = ((double(*)(id,SEL))objc_msgSend)(model1, property2->_getter);
                 if (value1 != value2) {
@@ -446,7 +446,7 @@
                 }
                 continue;
             }
-            case XZObjcRawLongDouble: {
+            case XZObjcTypeLongDouble: {
                 long double value1 = ((long double(*)(id,SEL))objc_msgSend)(model1, property1->_getter);
                 long double value2 = ((long double(*)(id,SEL))objc_msgSend)(model1, property2->_getter);
                 if (value1 != value2) {
@@ -454,7 +454,7 @@
                 }
                 continue;
             }
-            case XZObjcRawBool: {
+            case XZObjcTypeBool: {
                 BOOL value1 = ((BOOL(*)(id,SEL))objc_msgSend)(model1, property1->_getter);
                 BOOL value2 = ((BOOL(*)(id,SEL))objc_msgSend)(model1, property2->_getter);
                 if (value1 != value2) {
@@ -462,15 +462,15 @@
                 }
                 continue;
             }
-            case XZObjcRawVoid:
-            case XZObjcRawString:
-            case XZObjcRawArray:
-            case XZObjcRawBitField:
-            case XZObjcRawPointer:
-            case XZObjcRawUnion: {
+            case XZObjcTypeVoid:
+            case XZObjcTypeString:
+            case XZObjcTypeArray:
+            case XZObjcTypeBitField:
+            case XZObjcTypePointer:
+            case XZObjcTypeUnion: {
                 break;
             }
-            case XZObjcRawStruct:
+            case XZObjcTypeStruct:
                 if (property1->_foundationStruct != property2->_foundationStruct) {
                     return NO;
                 }
@@ -544,7 +544,7 @@
                     }
                 }
                 break;
-            case XZObjcRawClass: {
+            case XZObjcTypeClass: {
                 Class value1 = ((Class(*)(id,SEL))objc_msgSend)(model1, property1->_getter);
                 Class value2 = ((Class(*)(id,SEL))objc_msgSend)(model1, property2->_getter);
                 if (value1 != value2) {
@@ -552,7 +552,7 @@
                 }
                 continue;
             }
-            case XZObjcRawSEL: {
+            case XZObjcTypeSEL: {
                 SEL value1 = ((SEL(*)(id,SEL))objc_msgSend)(model1, property1->_getter);
                 SEL value2 = ((SEL(*)(id,SEL))objc_msgSend)(model1, property2->_getter);
                 if (value1 != value2) {
@@ -560,7 +560,7 @@
                 }
                 continue;
             }
-            case XZObjcRawObject: {
+            case XZObjcTypeObject: {
                 id value1 = ((id(*)(id,SEL))objc_msgSend)(model1, property1->_getter);
                 id value2 = ((id(*)(id,SEL))objc_msgSend)(model1, property2->_getter);
                 

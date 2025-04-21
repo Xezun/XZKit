@@ -41,7 +41,7 @@ static id XZJSONKeyFromString(NSString *aString);
             XZObjcClassDescriptor *descriptor = _class;
             
             while (descriptor.super) {
-                [NSNotificationCenter.defaultCenter addObserver:self selector:@selector(classNeedsUpdateNotification:) name:XZObjcClassNeedsUpdateNotification object:descriptor];
+                [NSNotificationCenter.defaultCenter addObserver:self selector:@selector(classNeedsUpdateNotification:) name:XZObjcClassDidUpdateNotification object:descriptor];
                 descriptor = descriptor.super;
             }
             

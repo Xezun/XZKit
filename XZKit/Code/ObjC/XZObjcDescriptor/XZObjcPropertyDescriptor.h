@@ -5,9 +5,9 @@
 //  Created by 徐臻 on 2025/1/26.
 //
 
-#import "XZObjcType.h"
+#import "XZObjcTypeDescriptor.h"
 
-@class XZObjcIvarDescriptor, XZObjcType;
+@class XZObjcIvarDescriptor, XZObjcTypeDescriptor;
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -21,7 +21,7 @@ NS_ASSUME_NONNULL_BEGIN
 /// 属性名。 property's name
 @property (nonatomic, readonly) NSString *name;
 /// 属性值的类型。
-@property (nonatomic, readonly) XZObjcType *type;
+@property (nonatomic, readonly) XZObjcTypeDescriptor *type;
 /// 属性的实例变量。
 @property (nonatomic, strong, readonly, nullable) XZObjcIvarDescriptor *ivar;
 /// 取值方法，非空。

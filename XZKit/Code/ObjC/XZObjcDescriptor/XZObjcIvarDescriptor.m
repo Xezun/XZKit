@@ -26,7 +26,7 @@
         return nil;
     }
     
-    XZObjcType * _type = [XZObjcType typeWithEncoding:typeEncoding];
+    XZObjcTypeDescriptor * _type = [XZObjcTypeDescriptor descriptorForObjcType:typeEncoding];
     if (_type == nil) {
         return nil;
     }
@@ -35,7 +35,7 @@
     return [[self alloc] initWithIvar:ivar name:_name type:_type];
 }
 
-- (instancetype)initWithIvar:(Ivar)ivar name:(NSString *)name type:(XZObjcType *)type {
+- (instancetype)initWithIvar:(Ivar)ivar name:(NSString *)name type:(XZObjcTypeDescriptor *)type {
     self = [super init];
     if (self) {
         _raw = ivar;

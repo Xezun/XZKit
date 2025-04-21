@@ -31,6 +31,7 @@
 		046CE6472D34C4A700B9389F /* Example18.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 046CE6462D34C4A700B9389F /* Example18.storyboard */; };
 		04B12AC92D37D6F200FADC8B /* Example20ViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 04B12AC82D37D6F200FADC8B /* Example20ViewController.m */; };
 		04B1EA432D41E31D004F5DF0 /* Example02NavigationController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 04B1EA422D41E31D004F5DF0 /* Example02NavigationController.swift */; };
+		04C46B002DB6367B005EA389 /* XZObjcDescriptorTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 04C46AFF2DB6367B005EA389 /* XZObjcDescriptorTests.m */; };
 		04C4C58B2D34C66F0087BBCF /* Example18ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 04C4C58A2D34C66F0087BBCF /* Example18ViewController.swift */; };
 		04D06B002D2D45300056A53A /* Example15Test02ViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 04D06AFF2D2D45300056A53A /* Example15Test02ViewController.m */; };
 		04D06B012D2D45300056A53A /* Example15Test01ViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 04D06AFD2D2D45300056A53A /* Example15Test01ViewController.m */; };
@@ -341,6 +342,7 @@
 		04B12AC72D37D6F200FADC8B /* Example20ViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Example20ViewController.h; sourceTree = "<group>"; };
 		04B12AC82D37D6F200FADC8B /* Example20ViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = Example20ViewController.m; sourceTree = "<group>"; };
 		04B1EA422D41E31D004F5DF0 /* Example02NavigationController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Example02NavigationController.swift; sourceTree = "<group>"; };
+		04C46AFF2DB6367B005EA389 /* XZObjcDescriptorTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = XZObjcDescriptorTests.m; sourceTree = "<group>"; };
 		04C4C58A2D34C66F0087BBCF /* Example18ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Example18ViewController.swift; sourceTree = "<group>"; };
 		04D06AFC2D2D45300056A53A /* Example15Test01ViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Example15Test01ViewController.h; sourceTree = "<group>"; };
 		04D06AFD2D2D45300056A53A /* Example15Test01ViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = Example15Test01ViewController.m; sourceTree = "<group>"; };
@@ -913,6 +915,14 @@
 				046CE63A2D34C38C00B9389F /* Example19TextViewController.swift */,
 			);
 			path = "19-XZDataCryptor";
+			sourceTree = "<group>";
+		};
+		04C46AFE2DB63658005EA389 /* XZObjcDescriptor */ = {
+			isa = PBXGroup;
+			children = (
+				04C46AFF2DB6367B005EA389 /* XZObjcDescriptorTests.m */,
+			);
+			path = XZObjcDescriptor;
 			sourceTree = "<group>";
 		};
 		04D06AFB2D2D43560056A53A /* 15-XZLocale */ = {
@@ -2766,6 +2776,7 @@
 			isa = PBXGroup;
 			children = (
 				29648BFF2A72556E0090F445 /* ExampleTests.m */,
+				04C46AFE2DB63658005EA389 /* XZObjcDescriptor */,
 				040C8CA72DB22B720024BA72 /* XZDefines */,
 			);
 			path = ExampleTests;
@@ -3344,6 +3355,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				29648C002A72556E0090F445 /* ExampleTests.m in Sources */,
+				04C46B002DB6367B005EA389 /* XZObjcDescriptorTests.m in Sources */,
 				040C8CA92DB22B9E0024BA72 /* XZDispatchMacrosTests.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

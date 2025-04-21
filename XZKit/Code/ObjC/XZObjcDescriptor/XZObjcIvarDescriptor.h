@@ -5,10 +5,10 @@
 //  Created by 徐臻 on 2025/1/26.
 //
 
-#import "XZObjcType.h"
+#import "XZObjcTypeDescriptor.h"
 @import ObjectiveC;
 
-@class XZObjcType;
+@class XZObjcTypeDescriptor;
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -20,7 +20,7 @@ NS_ASSUME_NONNULL_BEGIN
 /// 成员变量原始值。 ivar opaque struct
 @property (nonatomic, readonly) Ivar raw;
 /// 变量类型。Ivar's type
-@property (nonatomic, readonly) XZObjcType *type;
+@property (nonatomic, readonly) XZObjcTypeDescriptor *type;
 /// 变量名。Ivar's name
 @property (nonatomic, readonly) NSString *name;
 /// 成员变量偏移。Ivar's offset
