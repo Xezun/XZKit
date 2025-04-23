@@ -197,6 +197,7 @@ FOUNDATION_STATIC_INLINE BOOL NSIntegerFromJSONValue(id const _Nonnull __unsafe_
     return NO;
 }
 
+#if !XZ_LONG_IS_LLONG
 FOUNDATION_STATIC_INLINE BOOL NSLongIntegerFromJSONValue(id const _Nonnull __unsafe_unretained JSONValue, long *value) {
     if ([JSONValue isKindOfClass:NSNumber.class]) {
         *value = [(NSNumber *)JSONValue integerValue];
@@ -213,6 +214,7 @@ FOUNDATION_STATIC_INLINE BOOL NSLongIntegerFromJSONValue(id const _Nonnull __uns
     }
     return NO;
 }
+#endif
 
 FOUNDATION_STATIC_INLINE BOOL NSLongLongIntegerFromJSONValue(id const _Nonnull __unsafe_unretained JSONValue, long long *value) {
     if ([JSONValue isKindOfClass:NSNumber.class]) {
@@ -807,6 +809,7 @@ void XZJSONModelDecodeProperty(id const __unsafe_unretained model, XZJSONPropert
             }
             break;
         }
+#if !XZ_LONG_IS_LLONG
         case XZObjcTypeLong: {
             long value = 0;
             if (NSLongIntegerFromJSONValue(JSONValue, &value)) {
@@ -823,6 +826,7 @@ void XZJSONModelDecodeProperty(id const __unsafe_unretained model, XZJSONPropert
             }
             break;;
         }
+#endif
         case XZObjcTypeLongLong: {
             long long value = 0;
             if (NSLongLongIntegerFromJSONValue(JSONValue, &value)) {

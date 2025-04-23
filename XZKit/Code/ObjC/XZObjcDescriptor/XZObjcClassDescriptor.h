@@ -17,13 +17,13 @@ FOUNDATION_EXPORT NSNotificationName const XZObjcClassDidUpdateNotification;
 FOUNDATION_EXPORT NSString * const XZObjcClassUpdateUserInfoKey;
 
 /// 变更类型。
-typedef NSString *XZObjcClassUpdate NS_STRING_ENUM;
+typedef NSString *XZObjcClassUpdates NS_STRING_ENUM;
 /// XZObjcClassDescriptor 实例变量更新。
-FOUNDATION_EXPORT XZObjcClassUpdate const XZObjcClassUpdateIvars;
+FOUNDATION_EXPORT XZObjcClassUpdates const XZObjcClassUpdateIvars;
 /// XZObjcClassDescriptor 方法更新。
-FOUNDATION_EXPORT XZObjcClassUpdate const XZObjcClassUpdateMethods;
+FOUNDATION_EXPORT XZObjcClassUpdates const XZObjcClassUpdateMethods;
 /// XZObjcClassDescriptor 属性更新。
-FOUNDATION_EXPORT XZObjcClassUpdate const XZObjcClassUpdateProperties;
+FOUNDATION_EXPORT XZObjcClassUpdates const XZObjcClassUpdateProperties;
 
 /// 描述类的对象。
 ///

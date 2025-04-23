@@ -159,11 +159,13 @@
                 ((void (*)(id, SEL, short))objc_msgSend)(newModel, setter, value);
                 return;
             }
+#if !XZ_LONG_IS_LLONG
             case XZObjcTypeLong: {
                 long const value = ((long (*)(id, SEL))objc_msgSend)(self, getter);
                 ((void (*)(id, SEL, long))objc_msgSend)(newModel, setter, value);
                 return;
             }
+#endif
             case XZObjcTypeLongLong: {
                 long long const value = ((long long (*)(id, SEL))objc_msgSend)(self, getter);
                 ((void (*)(id, SEL, long long))objc_msgSend)(newModel, setter, value);
@@ -184,11 +186,13 @@
                 ((void (*)(id, SEL, unsigned short))objc_msgSend)(newModel, setter, value);
                 return;
             }
+#if !XZ_LONG_IS_LLONG
             case XZObjcTypeUnsignedLong: {
                 unsigned long const value = ((unsigned long (*)(id, SEL))objc_msgSend)(self, getter);
                 ((void (*)(id, SEL, unsigned long))objc_msgSend)(newModel, setter, value);
                 return;
             }
+#endif
             case XZObjcTypeUnsignedLongLong: {
                 unsigned long long const value = ((unsigned long long (*)(id, SEL))objc_msgSend)(self, getter);
                 ((void (*)(id, SEL, unsigned long long))objc_msgSend)(newModel, setter, value);
@@ -398,6 +402,7 @@
                 }
                 continue;
             }
+#if !XZ_LONG_IS_LLONG
             case XZObjcTypeLong: {
                 long value1 = ((long(*)(id,SEL))objc_msgSend)(model1, property1->_getter);
                 long value2 = ((long(*)(id,SEL))objc_msgSend)(model1, property2->_getter);
@@ -414,6 +419,7 @@
                 }
                 continue;
             }
+#endif
             case XZObjcTypeLongLong: {
                 long long value1 = ((long long(*)(id,SEL))objc_msgSend)(model1, property1->_getter);
                 long long value2 = ((long long(*)(id,SEL))objc_msgSend)(model1, property2->_getter);

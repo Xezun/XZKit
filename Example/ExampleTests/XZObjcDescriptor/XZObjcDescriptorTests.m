@@ -47,11 +47,7 @@
     } {
         const char * const objcType = @encode(long);
         XZObjcTypeDescriptor *descriptor = [XZObjcTypeDescriptor descriptorForObjcType:objcType];
-        if (LONG_BIT == __LLONG_WIDTH__) {
-            XCTAssert(descriptor.type == XZObjcTypeLongLong);
-        } else {
-            XCTAssert(descriptor.type == XZObjcTypeLong);
-        }
+        XCTAssert(descriptor.type == XZObjcTypeLong);
         XCTAssert(strcmp(objcType, [descriptor.raw cStringUsingEncoding:NSASCIIStringEncoding]) == 0);
         XCTAssert(descriptor.size == sizeof(long));
         XCTAssert(descriptor.alignment == _Alignof(long));
@@ -86,11 +82,7 @@
     } {
         const char * const objcType = @encode(unsigned long);
         XZObjcTypeDescriptor *descriptor = [XZObjcTypeDescriptor descriptorForObjcType:objcType];
-        if (LONG_BIT == __LLONG_WIDTH__) {
-            XCTAssert(descriptor.type == XZObjcTypeUnsignedLongLong);
-        } else {
-            XCTAssert(descriptor.type == XZObjcTypeUnsignedLong);
-        }
+        XCTAssert(descriptor.type == XZObjcTypeUnsignedLong);
         XCTAssert(strcmp(objcType, [descriptor.raw cStringUsingEncoding:NSASCIIStringEncoding]) == 0);
         XCTAssert(descriptor.size == sizeof(unsigned long));
         XCTAssert(descriptor.alignment == _Alignof(unsigned long));

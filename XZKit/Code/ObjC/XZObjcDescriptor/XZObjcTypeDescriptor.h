@@ -11,6 +11,15 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
+#if LONG_BIT == __LLONG_WIDTH__
+/// 在不同的架构中，long 的实际类型可能不同。
+/// - 在 arm64 架构中，long 会被编译为 long long 类型，即会被编码为`q`而不是`l`。
+/// > 官方文档相关说明：`l` is treated as a 32-bit quantity on 64-bit programs.
+#define XZ_LONG_IS_LLONG 1
+#else
+#define XZ_LONG_IS_LLONG 0
+#endif
+
 /// 所有 ObjC 数据类型枚举。
 ///
 /// 1. 官方文档 [Objective-C Runtime Programming Guide - Type Encodings](https://developer.apple.com/library/archive/documentation/Cocoa/Conceptual/ObjCRuntimeGuide/Articles/ocrtTypeEncodings.html)
@@ -32,18 +41,21 @@ typedef NS_ENUM(NSUInteger, XZObjcType) {
     XZObjcTypeShort            = 's',
     /// unsigned short
     XZObjcTypeUnsignedShort    = 'S',
-    /// long 长整型。
-    ///
-    /// > `l` is treated as a 32-bit quantity on 64-bit programs.
-    ///
-    /// 在不同的架构中，long 的实际类型可能不同。比如在 arm64 架构中，long 会被编译为 long long 类型，即会被编码为`q`而不是`l`。
-    XZObjcTypeLong             = 'l',
-    /// unsigned long
-    XZObjcTypeUnsignedLong     = 'L',
     /// long long
     XZObjcTypeLongLong         = 'q',
     /// unsigned long long
     XZObjcTypeUnsignedLongLong = 'Q',
+#if XZ_LONG_IS_LLONG
+    /// long
+    XZObjcTypeLong             = XZObjcTypeLongLong,
+    /// unsigned long
+    XZObjcTypeUnsignedLong     = XZObjcTypeUnsignedLongLong,
+#else
+    /// long 长整型。
+    XZObjcTypeLong             = 'l',
+    /// unsigned long
+    XZObjcTypeUnsignedLong     = 'L',
+#endif
     /// float
     XZObjcTypeFloat            = 'f',
     /// double
@@ -56,8 +68,12 @@ typedef NS_ENUM(NSUInteger, XZObjcType) {
     XZObjcTypeVoid             = 'v',
     /// C 字符串 char *
     XZObjcTypeString           = '*',
-    /// C 数组
-    XZObjcTypeArray            = '[',
+    /// 类对象的类型
+    XZObjcTypeClass            = '#',
+    /// SEL
+    XZObjcTypeSEL              = ':',
+    /// pointer to type
+    XZObjcTypePointer          = '^',
     /// bit field of num bits
     /// @code
     /// // 位域结构体的成员的类型即为 bit field
@@ -67,16 +83,12 @@ typedef NS_ENUM(NSUInteger, XZObjcType) {
     /// }
     /// @endcode
     XZObjcTypeBitField         = 'b',
-    /// pointer to type
-    XZObjcTypePointer          = '^',
+    /// C 数组
+    XZObjcTypeArray            = '[',
     /// C 共用体
     XZObjcTypeUnion            = '(',
     /// C 结构体；类结构体，如 NSObject 为 {NSObject=#}
     XZObjcTypeStruct           = '{',
-    /// 类对象的类型
-    XZObjcTypeClass            = '#',
-    /// SEL
-    XZObjcTypeSEL              = ':',
     /// id. An object (whether statically typed or typed id)
     XZObjcTypeObject           = '@',
 };

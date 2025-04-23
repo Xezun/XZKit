@@ -325,6 +325,7 @@ void XZJSONModelEncodeProperty(id const __unsafe_unretained model, XZJSONPropert
             if (XZJSONModelEncodePropertyPrepare(property, &key, &keyInDictionary, NO))
                 JSONValue = @(((unsigned short (*)(id, SEL))(void *) objc_msgSend)(model, property->_getter));
             break;
+#if !XZ_LONG_IS_LLONG
         case XZObjcTypeLong:
             if (XZJSONModelEncodePropertyPrepare(property, &key, &keyInDictionary, NO))
                 JSONValue = @(((long (*)(id, SEL))(void *) objc_msgSend)(model, property->_getter));
@@ -333,6 +334,7 @@ void XZJSONModelEncodeProperty(id const __unsafe_unretained model, XZJSONPropert
             if (XZJSONModelEncodePropertyPrepare(property, &key, &keyInDictionary, NO))
                 JSONValue = @(((unsigned long (*)(id, SEL))(void *) objc_msgSend)(model, property->_getter));
             break;
+#endif
         case XZObjcTypeLongLong:
             if (XZJSONModelEncodePropertyPrepare(property, &key, &keyInDictionary, NO))
                 JSONValue = @(((long long (*)(id, SEL))(void *) objc_msgSend)(model, property->_getter));

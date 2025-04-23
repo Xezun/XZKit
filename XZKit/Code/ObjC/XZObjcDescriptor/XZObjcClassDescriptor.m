@@ -11,10 +11,10 @@
 #import "XZObjcMethodDescriptor.h"
 
 NSNotificationName const XZObjcClassDidUpdateNotification = @"XZObjcClassDidUpdateNotification";
-NSString *         const XZObjcClassUpdateUserInfoKey   = @"XZObjcClassUpdateUserInfoKey";
-NSString *         const XZObjcClassUpdateIvars         = @"XZObjcClassUpdateIvars";
-NSString *         const XZObjcClassUpdateMethods       = @"XZObjcClassUpdateMethods";
-NSString *         const XZObjcClassUpdateProperties    = @"XZObjcClassUpdateProperties";
+NSString *         const XZObjcClassUpdateUserInfoKey     = @"XZObjcClassUpdateUserInfoKey";
+NSString *         const XZObjcClassUpdateIvars           = @"XZObjcClassUpdateIvars";
+NSString *         const XZObjcClassUpdateMethods         = @"XZObjcClassUpdateMethods";
+NSString *         const XZObjcClassUpdateProperties      = @"XZObjcClassUpdateProperties";
 
 @interface XZObjcClassDescriptor () {
     NSDictionary<NSString *,XZObjcIvarDescriptor *> * _Nullable _ivars;
