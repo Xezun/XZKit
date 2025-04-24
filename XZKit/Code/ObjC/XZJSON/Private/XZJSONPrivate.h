@@ -1,15 +1,16 @@
 //
-//  XZJSONFoundation.h
+//  XZJSONPrivate.h
 //  XZJSON
 //
 //  Created by Xezun on 2024/9/29.
 //
 
-#import "XZJSON.h"
 #import <Foundation/Foundation.h>
 #import "XZJSONDefines.h"
 #import "XZJSONClassDescriptor.h"
 #import "XZJSONPropertyDescriptor.h"
+#import "XZJSONEncoder.h"
+#import "XZJSONDecoder.h"
 @import ObjectiveC;
 
 // 从 JSON 解析数据时，如果无法转换为需要的类型，则认为该值不存在，不使用默认值或 nil 填充。

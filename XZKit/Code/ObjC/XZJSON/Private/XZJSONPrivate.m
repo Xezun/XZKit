@@ -1,11 +1,12 @@
 //
-//  XZJSONFoundation.m
+//  XZJSONPrivate.m
 //  XZJSON
 //
 //  Created by Xezun on 2024/12/3.
 //
 
-#import "XZJSONFoundation.h"
+#import "XZJSONPrivate.h"
+#import "XZJSON.h"
 #import "XZMacro.h"
 #import "NSCharacterSet+XZKit.h"
 #import "NSData+XZKit.h"

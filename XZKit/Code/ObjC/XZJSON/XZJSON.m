@@ -5,12 +5,9 @@
 //  Created by Xezun on 2024/9/28.
 //
 
-#import "XZMacro.h"
 #import "XZJSON.h"
-#import "XZJSONFoundation.h"
-#import "XZJSONClassDescriptor.h"
-#import "XZJSONDecoder.h"
-#import "XZJSONEncoder.h"
+#import "XZJSONPrivate.h"
+#import "XZMacro.h"
 
 @implementation XZJSON
 
@@ -235,7 +232,7 @@
                         break;
                     }
                     case XZJSONFoundationStructTypeCGRect: {
-                        CGRect const value = ((CGRect (*)(id, SEL))objc_msgSend)(self, getter);
+                        CGRect const value = ((CGRect (*)(id, SEL))xz_objc_msgSend_stret)(self, getter);
                         ((void (*)(id, SEL, CGRect))objc_msgSend)(newModel, setter, value);
                         return;
                     }
@@ -250,7 +247,7 @@
                         return;
                     }
                     case XZJSONFoundationStructTypeUIEdgeInsets: {
-                        UIEdgeInsets const value = ((UIEdgeInsets (*)(id, SEL))objc_msgSend)(self, getter);
+                        UIEdgeInsets const value = ((UIEdgeInsets (*)(id, SEL))xz_objc_msgSend_stret)(self, getter);
                         ((void (*)(id, SEL, UIEdgeInsets))objc_msgSend)(newModel, setter, value);
                         return;
                     }
@@ -260,12 +257,12 @@
                         return;
                     }
                     case XZJSONFoundationStructTypeCGAffineTransform: {
-                        CGAffineTransform const value = ((CGAffineTransform (*)(id, SEL))objc_msgSend)(self, getter);
+                        CGAffineTransform const value = ((CGAffineTransform (*)(id, SEL))xz_objc_msgSend_stret)(self, getter);
                         ((void (*)(id, SEL, CGAffineTransform))objc_msgSend)(newModel, setter, value);
                         return;
                     }
                     case XZJSONFoundationStructTypeNSDirectionalEdgeInsets: {
-                        NSDirectionalEdgeInsets const value = ((NSDirectionalEdgeInsets (*)(id, SEL))objc_msgSend)(self, getter);
+                        NSDirectionalEdgeInsets const value = ((NSDirectionalEdgeInsets (*)(id, SEL))xz_objc_msgSend_stret)(self, getter);
                         ((void (*)(id, SEL, NSDirectionalEdgeInsets))objc_msgSend)(newModel, setter, value);
                         return;
                     }
@@ -479,8 +476,8 @@
                         break;
                     }
                     case XZJSONFoundationStructTypeCGRect: {
-                        CGRect value1 = ((CGRect(*)(id,SEL))objc_msgSend)(model1, property1->_getter);
-                        CGRect value2 = ((CGRect(*)(id,SEL))objc_msgSend)(model1, property2->_getter);
+                        CGRect value1 = ((CGRect(*)(id,SEL))xz_objc_msgSend_stret)(model1, property1->_getter);
+                        CGRect value2 = ((CGRect(*)(id,SEL))xz_objc_msgSend_stret)(model1, property2->_getter);
                         if (!CGRectEqualToRect(value1, value2)) {
                             return NO;
                         }
@@ -503,8 +500,8 @@
                         continue;
                     }
                     case XZJSONFoundationStructTypeUIEdgeInsets: {
-                        UIEdgeInsets value1 = ((UIEdgeInsets(*)(id,SEL))objc_msgSend)(model1, property1->_getter);
-                        UIEdgeInsets value2 = ((UIEdgeInsets(*)(id,SEL))objc_msgSend)(model1, property2->_getter);
+                        UIEdgeInsets value1 = ((UIEdgeInsets(*)(id,SEL))xz_objc_msgSend_stret)(model1, property1->_getter);
+                        UIEdgeInsets value2 = ((UIEdgeInsets(*)(id,SEL))xz_objc_msgSend_stret)(model1, property2->_getter);
                         if (!UIEdgeInsetsEqualToEdgeInsets(value1, value2)) {
                             return NO;
                         }
@@ -519,16 +516,16 @@
                         continue;
                     }
                     case XZJSONFoundationStructTypeCGAffineTransform: {
-                        CGAffineTransform value1 = ((CGAffineTransform(*)(id,SEL))objc_msgSend)(model1, property1->_getter);
-                        CGAffineTransform value2 = ((CGAffineTransform(*)(id,SEL))objc_msgSend)(model1, property2->_getter);
+                        CGAffineTransform value1 = ((CGAffineTransform(*)(id,SEL))xz_objc_msgSend_stret)(model1, property1->_getter);
+                        CGAffineTransform value2 = ((CGAffineTransform(*)(id,SEL))xz_objc_msgSend_stret)(model1, property2->_getter);
                         if (!CGAffineTransformEqualToTransform(value1, value2)) {
                             return NO;
                         }
                         continue;
                     }
                     case XZJSONFoundationStructTypeNSDirectionalEdgeInsets: {
-                        NSDirectionalEdgeInsets value1 = ((NSDirectionalEdgeInsets(*)(id,SEL))objc_msgSend)(model1, property1->_getter);
-                        NSDirectionalEdgeInsets value2 = ((NSDirectionalEdgeInsets(*)(id,SEL))objc_msgSend)(model1, property2->_getter);
+                        NSDirectionalEdgeInsets value1 = ((NSDirectionalEdgeInsets(*)(id,SEL))xz_objc_msgSend_stret)(model1, property1->_getter);
+                        NSDirectionalEdgeInsets value2 = ((NSDirectionalEdgeInsets(*)(id,SEL))xz_objc_msgSend_stret)(model1, property2->_getter);
                         if (!NSDirectionalEdgeInsetsEqualToDirectionalEdgeInsets(value1, value2)) {
                             return NO;
                         }

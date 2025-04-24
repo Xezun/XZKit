@@ -8,6 +8,18 @@
 #import <Foundation/Foundation.h>
 #import "XZObjcTypeDescriptor.h"
 
+/// 在 x86 架构上，超过 16 字节的结构体必须使用 objc_msgSend_stret 函数来发送消息
+#if defined(__arm64__)
+#define xz_objc_msgSend_stret objc_msgSend
+#define xz_objc_msgSend_fpret objc_msgSend
+#elif defined(__x86_64__)
+#define xz_objc_msgSend_stret objc_msgSend_stret
+#define xz_objc_msgSend_fpret objc_msgSend_fpret // long double
+#elif defined(__i386__)
+#define xz_objc_msgSend_stret objc_msgSend_stret
+#define xz_objc_msgSend_fpret objc_msgSend_fpret // `float`, `double`, `long double`.
+#endif
+
 /// 原生对象类型枚举。Foundation Class Type
 typedef NS_ENUM (NSUInteger, XZJSONFoundationClassType) {
     XZJSONFoundationClassTypeUnknown = 0,
