@@ -20,13 +20,13 @@ static id XZJSONKeyFromString(NSString *aString);
 - (instancetype)initWithClass:(nonnull Class)rawClass {
     self = [super init];
     if (self) {
-        _class = [XZObjcClassDescriptor descriptorWithClass:rawClass];
-        _foundationClass = XZJSONFoundationClassFromClass(rawClass);
+        _raw = [XZObjcClassDescriptor descriptorWithClass:rawClass];
+        _foundationClassType = XZJSONFoundationClassTypeFromClass(rawClass);
         
         // 原生对象，不需要获取属性
-        if (_foundationClass) {
+        if (_foundationClassType) {
             _numberOfProperties = 0;
-            _properties = @[];
+            _sortedProperties = @[];
             _namedProperties = @{};
             _keyProperties = @{};
             _keyPathProperties = @[];
@@ -38,7 +38,7 @@ static id XZJSONKeyFromString(NSString *aString);
             _usesPropertyJSONDecodingMethod = NO;
             _usesPropertyJSONEncodingMethod = NO;
         } else {
-            XZObjcClassDescriptor *descriptor = _class;
+            XZObjcClassDescriptor *descriptor = _raw;
             
             while (descriptor.super) {
                 [NSNotificationCenter.defaultCenter addObserver:self selector:@selector(classNeedsUpdateNotification:) name:XZObjcClassDidUpdateNotification object:descriptor];
@@ -62,7 +62,7 @@ static id XZJSONKeyFromString(NSString *aString);
 }
 
 - (void)update {
-    Class const rawClass = _class.raw;
+    Class const rawClass = _raw.raw;
     
     // 黑名单
     NSSet *blockedKeys = nil;
@@ -103,7 +103,7 @@ static id XZJSONKeyFromString(NSString *aString);
     // 所有属性
     NSMutableDictionary * const allProperties = [NSMutableDictionary new];
     {
-        XZObjcClassDescriptor *class = _class;
+        XZObjcClassDescriptor *class = _raw;
         do {
             [class.properties enumerateKeysAndObjectsUsingBlock:^(NSString *name, XZObjcPropertyDescriptor *property, BOOL *stop) {
                 if (blockedKeys && [blockedKeys containsObject:name])     {
@@ -124,11 +124,9 @@ static id XZJSONKeyFromString(NSString *aString);
         } while ((class = class.super));
     }
     
-    // 所有属性字典
-    _namedProperties = [NSDictionary dictionaryWithDictionary:allProperties];
-    
-    // 所有属性集合，将属性按名称排序
-    _properties = [allProperties.allValues sortedArrayUsingComparator:^NSComparisonResult(id obj1, id obj2) {
+    _numberOfProperties = allProperties.count;
+    _namedProperties    = [NSDictionary dictionaryWithDictionary:allProperties];
+    _sortedProperties   = [allProperties.allValues sortedArrayUsingComparator:^NSComparisonResult(id obj1, id obj2) {
         return [((XZJSONPropertyDescriptor *)obj1)->_name compare:((XZJSONPropertyDescriptor *)obj2)->_name];
     }];
     
@@ -246,7 +244,7 @@ static id XZJSONKeyFromString(NSString *aString);
         }];
     }
     
-    // 默认属性名直接映射 JSON 键
+    // 属性名映射 JSON 键
     [allProperties enumerateKeysAndObjectsUsingBlock:^(NSString *name, XZJSONPropertyDescriptor *property, BOOL *stop) {
         property->_JSONKey = name;
         property->_valueDecoder = ^id(NSDictionary *dictionary) {
@@ -259,7 +257,6 @@ static id XZJSONKeyFromString(NSString *aString);
     _keyProperties      = keyProperties;
     _keyPathProperties  = keyPathProperties;
     _keyArrayProperties = keyArrayProperties;
-    _numberOfProperties = _properties.count;
     
     BOOL const conformsToXZJSONCoding = [rawClass conformsToProtocol:@protocol(XZJSONCoding)];
     _forwardsClassForDecoding = (conformsToXZJSONCoding && [rawClass respondsToSelector:@selector(forwardingClassForJSONDictionary:)]);

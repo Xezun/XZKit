@@ -17,16 +17,16 @@ NS_ASSUME_NONNULL_BEGIN
 @interface XZJSONClassDescriptor : NSObject {
     @package
     /// 描述类基本信息的对象。
-    XZObjcClassDescriptor *_class;
+    XZObjcClassDescriptor *_raw;
+    
     /// 如果是，原生对象的类型。 Model class type.
-    XZJSONFoundationClass _foundationClass;
+    XZJSONFoundationClassType _foundationClassType;
     
     /// 所有可模型化或序列化的属性的数量。
     NSUInteger _numberOfProperties;
-    
-    /// 所有可模型化或序列化的属性，包括从超类继承的。已按名称排序。
-    NSArray<XZJSONPropertyDescriptor *> *_properties;
-    /// 以“属性名”为键的所有可模型化属性组成的字典。
+    /// 按名称排序的，所有可模型化、序列化的属性的集合，包括从超类继承的。
+    NSArray<XZJSONPropertyDescriptor *> *_sortedProperties;
+    /// 以属性名为键的，所有可模型化、序列化属性组成的字典，包括从超类继承的。
     NSDictionary<NSString *, XZJSONPropertyDescriptor *> *_namedProperties;
     
     /// 使用 key 映射的属性。

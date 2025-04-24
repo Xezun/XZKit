@@ -32,49 +32,49 @@ static NSString * _Nonnull XZJSONModelDescriptionForNSCollection(id<NSFastEnumer
     return desc;
 }
 
-NSString * _Nonnull XZJSONModelDescriptionForFoundationClassOfType(id model, XZJSONFoundationClass const classType, NSUInteger indent) {
+NSString * _Nonnull XZJSONModelDescriptionForFoundationClassOfType(id model, XZJSONFoundationClassType const classType, NSUInteger indent) {
     switch (classType) {
-        case XZJSONFoundationClassNSString:
-        case XZJSONFoundationClassNSMutableString: {
+        case XZJSONFoundationClassTypeNSString:
+        case XZJSONFoundationClassTypeNSMutableString: {
             NSString *aString = model;
             aString = [aString stringByReplacingOccurrencesOfString:@"\n" withString:@"\\n"];
             return [NSString stringWithFormat:@"\"%@\"", aString];
         }
-        case XZJSONFoundationClassNSValue: {
+        case XZJSONFoundationClassTypeNSValue: {
             return ((NSValue *)model).description;
             break;
         }
-        case XZJSONFoundationClassNSNumber: {
+        case XZJSONFoundationClassTypeNSNumber: {
             return [(NSNumber *)model stringValue];
         }
-        case XZJSONFoundationClassNSData:
-        case XZJSONFoundationClassNSMutableData: {
+        case XZJSONFoundationClassTypeNSData:
+        case XZJSONFoundationClassTypeNSMutableData: {
             return [(NSData *)model description];
         }
-        case XZJSONFoundationClassNSDecimalNumber: {
+        case XZJSONFoundationClassTypeNSDecimalNumber: {
             return [(NSDecimalNumber *)model stringValue];
         }
-        case XZJSONFoundationClassNSDate: {
+        case XZJSONFoundationClassTypeNSDate: {
             return [XZJSON.dateFormatter stringFromDate:model];
         }
-        case XZJSONFoundationClassNSURL: {
+        case XZJSONFoundationClassTypeNSURL: {
             return ((NSURL *)model).absoluteString;
         }
-        case XZJSONFoundationClassNSSet:
-        case XZJSONFoundationClassNSMutableSet:
-        case XZJSONFoundationClassNSCountedSet: {
+        case XZJSONFoundationClassTypeNSSet:
+        case XZJSONFoundationClassTypeNSMutableSet:
+        case XZJSONFoundationClassTypeNSCountedSet: {
             return XZJSONModelDescriptionForNSCollection(((NSSet *)model).allObjects, ((NSSet *)model).count, indent);
         }
-        case XZJSONFoundationClassNSOrderedSet:
-        case XZJSONFoundationClassNSMutableOrderedSet: {
+        case XZJSONFoundationClassTypeNSOrderedSet:
+        case XZJSONFoundationClassTypeNSMutableOrderedSet: {
             return XZJSONModelDescriptionForNSCollection((NSOrderedSet *)model, ((NSOrderedSet *)model).count, indent);
         }
-        case XZJSONFoundationClassNSArray:
-        case XZJSONFoundationClassNSMutableArray: {
+        case XZJSONFoundationClassTypeNSArray:
+        case XZJSONFoundationClassTypeNSMutableArray: {
             return XZJSONModelDescriptionForNSCollection((NSArray *)model, ((NSArray *)model).count, indent);
         }
-        case XZJSONFoundationClassNSDictionary:
-        case XZJSONFoundationClassNSMutableDictionary: {
+        case XZJSONFoundationClassTypeNSDictionary:
+        case XZJSONFoundationClassTypeNSMutableDictionary: {
             NSDictionary * const dict  = (id)model;
             NSUInteger     const count = dict.count;
             if (count == 0) {
@@ -95,7 +95,7 @@ NSString * _Nonnull XZJSONModelDescriptionForFoundationClassOfType(id model, XZJ
             
             return desc;
         }
-        case XZJSONFoundationClassUnknown: {
+        case XZJSONFoundationClassTypeUnknown: {
             @throw [NSException exceptionWithName:NSGenericException reason:@"" userInfo:nil];
         }
     }
@@ -116,18 +116,18 @@ NSString * _Nonnull XZJSONModelDescription(NSObject *_Nonnull model, NSUInteger 
 
     XZJSONClassDescriptor * const modelClass = [XZJSONClassDescriptor descriptorWithClass:model.class];
 
-    if (modelClass->_foundationClass) {
-        return XZJSONModelDescriptionForFoundationClassOfType(model, modelClass->_foundationClass, indent);
+    if (modelClass->_foundationClassType) {
+        return XZJSONModelDescriptionForFoundationClassOfType(model, modelClass->_foundationClassType, indent);
     }
     
-    if (modelClass->_properties.count == 0) {
+    if (modelClass->_sortedProperties.count == 0) {
         return [NSString stringWithFormat:@"<%@: %p>", model.class, model];
     }
     NSString * const padding = [@"" stringByPaddingToLength:indent * 4 withString:@" " startingAtIndex:0];
     indent += 1;
     
     NSMutableString *desc = [NSMutableString stringWithFormat:@"<%@: %p, properties: {\n", model.class, model];
-    [modelClass->_properties enumerateObjectsUsingBlock:^(XZJSONPropertyDescriptor * _Nonnull property, NSUInteger idx, BOOL * _Nonnull stop) {
+    [modelClass->_sortedProperties enumerateObjectsUsingBlock:^(XZJSONPropertyDescriptor * _Nonnull property, NSUInteger idx, BOOL * _Nonnull stop) {
         NSString *key = property->_name;
         NSString *value = nil;
         switch (property->_type) {
@@ -205,8 +205,8 @@ NSString * _Nonnull XZJSONModelDescription(NSObject *_Nonnull model, NSUInteger 
                 value = ((id (*)(id _Nonnull, SEL _Nonnull))objc_msgSend)((id)model, property->_getter);
                 if (property->_isUnownedReferenceProperty) {
                     value = [NSString stringWithFormat:@"<%@: %p>", value.class, value];
-                } else if (property->_foundationClass) {
-                    value = XZJSONModelDescriptionForFoundationClassOfType(value, property->_foundationClass, indent);
+                } else if (property->_foundationClassType) {
+                    value = XZJSONModelDescriptionForFoundationClassOfType(value, property->_foundationClassType, indent);
                 } else {
                     value = [XZJSON model:value description:indent];
                 }
@@ -235,19 +235,19 @@ NSString * _Nonnull XZJSONModelDescription(NSObject *_Nonnull model, NSUInteger 
                 }
                 switch (property->_type) {
                     case XZObjcTypeArray: {
-                        value = [NSString stringWithFormat:@"<array: %@, value: %@>", property->_descriptor.type.name, desc];
+                        value = [NSString stringWithFormat:@"<array: %@, value: %@>", property->_raw.type.name, desc];
                         break;
                     }
                     case XZObjcTypeString: {
-                        value = [NSString stringWithFormat:@"<string: %@, value: %@>", property->_descriptor.type.name, desc];
+                        value = [NSString stringWithFormat:@"<string: %@, value: %@>", property->_raw.type.name, desc];
                         break;
                     }
                     case XZObjcTypePointer: {
-                        value = [NSString stringWithFormat:@"<pointer: %@, value: %@>", property->_descriptor.type.name, desc];
+                        value = [NSString stringWithFormat:@"<pointer: %@, value: %@>", property->_raw.type.name, desc];
                         break;
                     }
                     case XZObjcTypeUnknown: {
-                        value = [NSString stringWithFormat:@"<unknown: %@, value: %@>", property->_descriptor.type.name, desc];
+                        value = [NSString stringWithFormat:@"<unknown: %@, value: %@>", property->_raw.type.name, desc];
                         break;
                     }
                     default:
@@ -263,9 +263,9 @@ NSString * _Nonnull XZJSONModelDescription(NSObject *_Nonnull model, NSUInteger 
                     }
                 }
                 if (value) {
-                    value = [NSString stringWithFormat:@"<struct: %@, value: %@>", property->_descriptor.type.name, value];
+                    value = [NSString stringWithFormat:@"<struct: %@, value: %@>", property->_raw.type.name, value];
                 } else {
-                    value = [NSString stringWithFormat:@"<struct: %@>", property->_descriptor.type.name];
+                    value = [NSString stringWithFormat:@"<struct: %@>", property->_raw.type.name];
                 }
                 break;
             }
@@ -276,7 +276,7 @@ NSString * _Nonnull XZJSONModelDescription(NSObject *_Nonnull model, NSUInteger 
                 if (value) {
                     value = [NSString stringWithFormat:@"<union: %@, value: %@>", key, value];
                 } else {
-                    value = [NSString stringWithFormat:@"<union: %@>", property->_descriptor.type.name];
+                    value = [NSString stringWithFormat:@"<union: %@>", property->_raw.type.name];
                 }
                 break;
             }
@@ -291,7 +291,7 @@ NSString * _Nonnull XZJSONModelDescription(NSObject *_Nonnull model, NSUInteger 
                 if (value) {
                     value = [NSString stringWithFormat:@"<BitField: %@>", value];
                 } else {
-                    value = [NSString stringWithFormat:@"<BitField: %ld bit>", (long)property->_descriptor.type.sizeInBit];
+                    value = [NSString stringWithFormat:@"<BitField: %ld bit>", (long)property->_raw.type.sizeInBit];
                 }
                 break;
             }
@@ -360,40 +360,40 @@ void XZJSONModelEncodeWithCoder(id model, NSCoder *aCoder) {
     
     XZJSONClassDescriptor * const modelClass = [XZJSONClassDescriptor descriptorWithClass:[model class]];
     
-    switch (modelClass->_foundationClass) {
-        case XZJSONFoundationClassNSString:
-        case XZJSONFoundationClassNSMutableString:
-        case XZJSONFoundationClassNSValue:
-        case XZJSONFoundationClassNSNumber:
-        case XZJSONFoundationClassNSDecimalNumber:
-        case XZJSONFoundationClassNSData:
-        case XZJSONFoundationClassNSMutableData:
-        case XZJSONFoundationClassNSDate:
-        case XZJSONFoundationClassNSURL: {
+    switch (modelClass->_foundationClassType) {
+        case XZJSONFoundationClassTypeNSString:
+        case XZJSONFoundationClassTypeNSMutableString:
+        case XZJSONFoundationClassTypeNSValue:
+        case XZJSONFoundationClassTypeNSNumber:
+        case XZJSONFoundationClassTypeNSDecimalNumber:
+        case XZJSONFoundationClassTypeNSData:
+        case XZJSONFoundationClassTypeNSMutableData:
+        case XZJSONFoundationClassTypeNSDate:
+        case XZJSONFoundationClassTypeNSURL: {
             [(id<NSCoding>)model encodeWithCoder:aCoder];
             break;
         }
-        case XZJSONFoundationClassNSArray:
-        case XZJSONFoundationClassNSMutableArray:
-        case XZJSONFoundationClassNSSet:
-        case XZJSONFoundationClassNSMutableSet:
-        case XZJSONFoundationClassNSCountedSet:
-        case XZJSONFoundationClassNSOrderedSet:
-        case XZJSONFoundationClassNSMutableOrderedSet: {
+        case XZJSONFoundationClassTypeNSArray:
+        case XZJSONFoundationClassTypeNSMutableArray:
+        case XZJSONFoundationClassTypeNSSet:
+        case XZJSONFoundationClassTypeNSMutableSet:
+        case XZJSONFoundationClassTypeNSCountedSet:
+        case XZJSONFoundationClassTypeNSOrderedSet:
+        case XZJSONFoundationClassTypeNSMutableOrderedSet: {
             if (NSCollectionConformsNSCoding(model)) {
                 [(id<NSCoding>)model encodeWithCoder:aCoder];
             }
             break;
         }
-        case XZJSONFoundationClassNSDictionary:
-        case XZJSONFoundationClassNSMutableDictionary: {
+        case XZJSONFoundationClassTypeNSDictionary:
+        case XZJSONFoundationClassTypeNSMutableDictionary: {
             if (NSDictionaryConformsNSCoding(model)) {
                 [(id<NSCoding>)model encodeWithCoder:aCoder];
             }
             break;
         }
-        case XZJSONFoundationClassUnknown: {
-            [modelClass->_properties enumerateObjectsUsingBlock:^(XZJSONPropertyDescriptor *property, NSUInteger idx, BOOL *stop) {
+        case XZJSONFoundationClassTypeUnknown: {
+            [modelClass->_sortedProperties enumerateObjectsUsingBlock:^(XZJSONPropertyDescriptor *property, NSUInteger idx, BOOL *stop) {
                 SEL        const getter = property->_getter;
                 NSString * const name   = property->_name;
                 switch (property->_type) {
@@ -521,14 +521,14 @@ void XZJSONModelEncodeWithCoder(id model, NSCoder *aCoder) {
                                 break;
                             }
                             // 如果是集合类型，需要进一步判断元素
-                            switch (property->_foundationClass) {
-                                case XZJSONFoundationClassNSArray:
-                                case XZJSONFoundationClassNSMutableArray:
-                                case XZJSONFoundationClassNSSet:
-                                case XZJSONFoundationClassNSMutableSet:
-                                case XZJSONFoundationClassNSCountedSet:
-                                case XZJSONFoundationClassNSOrderedSet:
-                                case XZJSONFoundationClassNSMutableOrderedSet: {
+                            switch (property->_foundationClassType) {
+                                case XZJSONFoundationClassTypeNSArray:
+                                case XZJSONFoundationClassTypeNSMutableArray:
+                                case XZJSONFoundationClassTypeNSSet:
+                                case XZJSONFoundationClassTypeNSMutableSet:
+                                case XZJSONFoundationClassTypeNSCountedSet:
+                                case XZJSONFoundationClassTypeNSOrderedSet:
+                                case XZJSONFoundationClassTypeNSMutableOrderedSet: {
                                     // 无法确定元素类型，无法进行安全归档
                                     if (!property->_elementType) {
                                         break;
@@ -545,8 +545,8 @@ void XZJSONModelEncodeWithCoder(id model, NSCoder *aCoder) {
                                     [aCoder encodeObject:aValue forKey:name];
                                     return;
                                 }
-                                case XZJSONFoundationClassNSDictionary:
-                                case XZJSONFoundationClassNSMutableDictionary: {
+                                case XZJSONFoundationClassTypeNSDictionary:
+                                case XZJSONFoundationClassTypeNSMutableDictionary: {
                                     // 没有元素类型，无法进行编码
                                     if (!property->_elementType) {
                                         break;
@@ -563,16 +563,16 @@ void XZJSONModelEncodeWithCoder(id model, NSCoder *aCoder) {
                                     [aCoder encodeObject:aValue forKey:name];
                                     return;
                                 }
-                                case XZJSONFoundationClassNSString:
-                                case XZJSONFoundationClassNSMutableString:
-                                case XZJSONFoundationClassNSValue:
-                                case XZJSONFoundationClassNSNumber:
-                                case XZJSONFoundationClassNSDecimalNumber:
-                                case XZJSONFoundationClassNSData:
-                                case XZJSONFoundationClassNSMutableData:
-                                case XZJSONFoundationClassNSDate:
-                                case XZJSONFoundationClassNSURL:
-                                case XZJSONFoundationClassUnknown: {
+                                case XZJSONFoundationClassTypeNSString:
+                                case XZJSONFoundationClassTypeNSMutableString:
+                                case XZJSONFoundationClassTypeNSValue:
+                                case XZJSONFoundationClassTypeNSNumber:
+                                case XZJSONFoundationClassTypeNSDecimalNumber:
+                                case XZJSONFoundationClassTypeNSData:
+                                case XZJSONFoundationClassTypeNSMutableData:
+                                case XZJSONFoundationClassTypeNSDate:
+                                case XZJSONFoundationClassTypeNSURL:
+                                case XZJSONFoundationClassTypeUnknown: {
                                     // 执行归档：支持安全归档的已知普通类型
                                     [aCoder encodeObject:aValue forKey:name];
                                     return;
@@ -585,14 +585,14 @@ void XZJSONModelEncodeWithCoder(id model, NSCoder *aCoder) {
                         if (![property->_subtype conformsToProtocol:@protocol(NSCoding)]) {
                             break;
                         }
-                        switch (property->_foundationClass) {
-                            case XZJSONFoundationClassNSArray:
-                            case XZJSONFoundationClassNSMutableArray:
-                            case XZJSONFoundationClassNSSet:
-                            case XZJSONFoundationClassNSMutableSet:
-                            case XZJSONFoundationClassNSCountedSet:
-                            case XZJSONFoundationClassNSOrderedSet:
-                            case XZJSONFoundationClassNSMutableOrderedSet: {
+                        switch (property->_foundationClassType) {
+                            case XZJSONFoundationClassTypeNSArray:
+                            case XZJSONFoundationClassTypeNSMutableArray:
+                            case XZJSONFoundationClassTypeNSSet:
+                            case XZJSONFoundationClassTypeNSMutableSet:
+                            case XZJSONFoundationClassTypeNSCountedSet:
+                            case XZJSONFoundationClassTypeNSOrderedSet:
+                            case XZJSONFoundationClassTypeNSMutableOrderedSet: {
                                 // 检查元素是否合法：元素只要支持归档即可。
                                 if (NSCollectionConformsNSCoding(aValue)) {
                                     [aCoder encodeObject:aValue forKey:name];
@@ -600,8 +600,8 @@ void XZJSONModelEncodeWithCoder(id model, NSCoder *aCoder) {
                                 }
                                 break;
                             }
-                            case XZJSONFoundationClassNSDictionary:
-                            case XZJSONFoundationClassNSMutableDictionary: {
+                            case XZJSONFoundationClassTypeNSDictionary:
+                            case XZJSONFoundationClassTypeNSMutableDictionary: {
                                 // 检查元素是否合法：元素只需要支持归档即可
                                 if (NSDictionaryConformsNSCoding(aValue)) {
                                     [aCoder encodeObject:aValue forKey:name];
@@ -609,16 +609,16 @@ void XZJSONModelEncodeWithCoder(id model, NSCoder *aCoder) {
                                 }
                                 break;
                             }
-                            case XZJSONFoundationClassNSString:
-                            case XZJSONFoundationClassNSMutableString:
-                            case XZJSONFoundationClassNSValue:
-                            case XZJSONFoundationClassNSNumber:
-                            case XZJSONFoundationClassNSDecimalNumber:
-                            case XZJSONFoundationClassNSData:
-                            case XZJSONFoundationClassNSMutableData:
-                            case XZJSONFoundationClassNSDate:
-                            case XZJSONFoundationClassNSURL:
-                            case XZJSONFoundationClassUnknown: {
+                            case XZJSONFoundationClassTypeNSString:
+                            case XZJSONFoundationClassTypeNSMutableString:
+                            case XZJSONFoundationClassTypeNSValue:
+                            case XZJSONFoundationClassTypeNSNumber:
+                            case XZJSONFoundationClassTypeNSDecimalNumber:
+                            case XZJSONFoundationClassTypeNSData:
+                            case XZJSONFoundationClassTypeNSMutableData:
+                            case XZJSONFoundationClassTypeNSDate:
+                            case XZJSONFoundationClassTypeNSURL:
+                            case XZJSONFoundationClassTypeUnknown: {
                                 [aCoder encodeObject:aValue forKey:name];
                                 return;
                             }
@@ -653,39 +653,39 @@ id _Nullable XZJSONModelDecodeWithCoder(id model, NSCoder *aCoder) {
     }
     
     XZJSONClassDescriptor * const modelClass = [XZJSONClassDescriptor descriptorWithClass:[model class]];
-    switch (modelClass->_foundationClass) {
-        case XZJSONFoundationClassNSString:
-        case XZJSONFoundationClassNSMutableString:
-        case XZJSONFoundationClassNSValue:
-        case XZJSONFoundationClassNSNumber:
-        case XZJSONFoundationClassNSDecimalNumber:
-        case XZJSONFoundationClassNSData:
-        case XZJSONFoundationClassNSMutableData:
-        case XZJSONFoundationClassNSDate:
-        case XZJSONFoundationClassNSURL: {
+    switch (modelClass->_foundationClassType) {
+        case XZJSONFoundationClassTypeNSString:
+        case XZJSONFoundationClassTypeNSMutableString:
+        case XZJSONFoundationClassTypeNSValue:
+        case XZJSONFoundationClassTypeNSNumber:
+        case XZJSONFoundationClassTypeNSDecimalNumber:
+        case XZJSONFoundationClassTypeNSData:
+        case XZJSONFoundationClassTypeNSMutableData:
+        case XZJSONFoundationClassTypeNSDate:
+        case XZJSONFoundationClassTypeNSURL: {
             return [(id<NSCoding>)model initWithCoder:aCoder];
         }
-        case XZJSONFoundationClassNSArray:
-        case XZJSONFoundationClassNSMutableArray:
-        case XZJSONFoundationClassNSSet:
-        case XZJSONFoundationClassNSMutableSet:
-        case XZJSONFoundationClassNSCountedSet:
-        case XZJSONFoundationClassNSOrderedSet:
-        case XZJSONFoundationClassNSMutableOrderedSet: {
+        case XZJSONFoundationClassTypeNSArray:
+        case XZJSONFoundationClassTypeNSMutableArray:
+        case XZJSONFoundationClassTypeNSSet:
+        case XZJSONFoundationClassTypeNSMutableSet:
+        case XZJSONFoundationClassTypeNSCountedSet:
+        case XZJSONFoundationClassTypeNSOrderedSet:
+        case XZJSONFoundationClassTypeNSMutableOrderedSet: {
             if (NSCollectionConformsNSCoding(model)) {
                 return [(id<NSCoding>)model initWithCoder:aCoder];
             }
             return nil;
         }
-        case XZJSONFoundationClassNSDictionary:
-        case XZJSONFoundationClassNSMutableDictionary: {
+        case XZJSONFoundationClassTypeNSDictionary:
+        case XZJSONFoundationClassTypeNSMutableDictionary: {
             if (NSDictionaryConformsNSCoding(model)) {
                 return [(id<NSCoding>)model initWithCoder:aCoder];
             }
             return nil;
         }
-        case XZJSONFoundationClassUnknown: {
-            [modelClass->_properties enumerateObjectsUsingBlock:^(XZJSONPropertyDescriptor *property, NSUInteger idx, BOOL *stop) {
+        case XZJSONFoundationClassTypeUnknown: {
+            [modelClass->_sortedProperties enumerateObjectsUsingBlock:^(XZJSONPropertyDescriptor *property, NSUInteger idx, BOOL *stop) {
                 NSString * const name   = property->_name;
                 SEL        const setter = property->_setter;
                 
@@ -841,11 +841,11 @@ id _Nullable XZJSONModelDecodeWithCoder(id model, NSCoder *aCoder) {
                                 break;
                             }
                             // 集合类型的元素也需要支持安全解档
-                            switch (property->_foundationClass) {
-                                case XZJSONFoundationClassNSArray:
-                                case XZJSONFoundationClassNSMutableArray:
-                                case XZJSONFoundationClassNSSet:
-                                case XZJSONFoundationClassNSMutableSet: {
+                            switch (property->_foundationClassType) {
+                                case XZJSONFoundationClassTypeNSArray:
+                                case XZJSONFoundationClassTypeNSMutableArray:
+                                case XZJSONFoundationClassTypeNSSet:
+                                case XZJSONFoundationClassTypeNSMutableSet: {
                                     // 元素类型未知，无法安全解档
                                     if (!property->_elementType) {
                                         break;
@@ -862,8 +862,8 @@ id _Nullable XZJSONModelDecodeWithCoder(id model, NSCoder *aCoder) {
                                     }
                                     break;
                                 }
-                                case XZJSONFoundationClassNSDictionary:
-                                case XZJSONFoundationClassNSMutableDictionary: {
+                                case XZJSONFoundationClassTypeNSDictionary:
+                                case XZJSONFoundationClassTypeNSMutableDictionary: {
                                     // 元素类型未知，无法安全解档
                                     if (!property->_elementType) {
                                         break;

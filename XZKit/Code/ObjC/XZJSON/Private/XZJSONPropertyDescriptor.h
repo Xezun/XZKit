@@ -20,12 +20,13 @@ typedef id _Nullable (^XZJSONValueDecoder)(NSDictionary *dictionary);
 @interface XZJSONPropertyDescriptor : NSObject {
     @package
     /// 属性。 property's info
-    XZObjcPropertyDescriptor *_descriptor;
+    XZObjcPropertyDescriptor *_raw;
     
-    /// 拥有当前属性的 class 对象。
-    XZJSONClassDescriptor * __unsafe_unretained _class;
     /// 属性映射链表，多属性映射单一数据的链表。 next meta if there are multiple properties mapped to the same key.
     XZJSONPropertyDescriptor *_next;
+    
+    /// 当前属性所属的 class 对象。
+    XZJSONClassDescriptor * __unsafe_unretained _class;
     
     /// 属性名。property's name
     NSString *_name;
@@ -36,14 +37,14 @@ typedef id _Nullable (^XZJSONValueDecoder)(NSDictionary *dictionary);
     
     /// 属性值类型。property's type
     XZObjcType _type;
-    /// 如果属性值是对象，判断对象的类型是否为已知类型（原生已定义的对象类型）。property's Foundation type
-    XZJSONFoundationClass _foundationClass;
-    /// 如果属性是结构体，判断结构体是否为已知的类型（原生已定义的类型）。
-    XZJSONFoundationStruct _foundationStruct;
     /// 属性值为对象时，对象的类。 property's class, or nil
     Class _Nullable _subtype;
     /// 属性为集合对象时，元素的类。 container's generic class, or nil if threr's no generic class
     Class _Nullable _elementType;
+    /// 如果属性值是对象，判断对象的类型是否为已知类型（原生已定义的对象类型）。property's Foundation type
+    XZJSONFoundationClassType _foundationClassType;
+    /// 如果属性是结构体，判断结构体是否为已知的类型（原生已定义的类型）。
+    XZJSONFoundationStructType _foundationStructType;
 
     /// 是否支持 kvc 键值编码。
     /// 根据 Key-Value Coding Programming Guide 属性的 setter 方法必须以 `set` 或 `_set` 开头。
@@ -77,46 +78,46 @@ typedef id _Nullable (^XZJSONValueDecoder)(NSDictionary *dictionary);
 /// - Returns: 是否成功写入
 FOUNDATION_STATIC_INLINE BOOL XZJSONDecodeStructProperty(id model, XZJSONPropertyDescriptor *property, id _Nonnull JSONValue) {
     if ([JSONValue isKindOfClass:NSString.class]) {
-        switch (property->_foundationStruct) {
-            case XZJSONFoundationStructUnknown: {
+        switch (property->_foundationStructType) {
+            case XZJSONFoundationStructTypeUnknown: {
                 return NO;
             }
-            case XZJSONFoundationStructCGRect: {
+            case XZJSONFoundationStructTypeCGRect: {
                 CGRect const aValue = CGRectFromString(JSONValue);
                 ((void (*)(id, SEL, CGRect))objc_msgSend)(model, property->_setter, aValue);
                 return YES;
             }
-            case XZJSONFoundationStructCGSize: {
+            case XZJSONFoundationStructTypeCGSize: {
                 CGSize const aValue = CGSizeFromString(JSONValue);
                 ((void (*)(id, SEL, CGSize))objc_msgSend)(model, property->_setter, aValue);
                 return YES;
             }
-            case XZJSONFoundationStructCGPoint: {
+            case XZJSONFoundationStructTypeCGPoint: {
                 CGPoint const aValue = CGPointFromString(JSONValue);
                 ((void (*)(id, SEL, CGPoint))objc_msgSend)(model, property->_setter, aValue);
                 return YES;
             }
-            case XZJSONFoundationStructUIEdgeInsets: {
+            case XZJSONFoundationStructTypeUIEdgeInsets: {
                 UIEdgeInsets const aValue = UIEdgeInsetsFromString(JSONValue);
                 ((void (*)(id, SEL, UIEdgeInsets))objc_msgSend)(model, property->_setter, aValue);
                 return YES;
             }
-            case XZJSONFoundationStructCGVector: {
+            case XZJSONFoundationStructTypeCGVector: {
                 CGVector const aValue = CGVectorFromString(JSONValue);
                 ((void (*)(id, SEL, CGVector))objc_msgSend)(model, property->_setter, aValue);
                 return YES;
             }
-            case XZJSONFoundationStructCGAffineTransform: {
+            case XZJSONFoundationStructTypeCGAffineTransform: {
                 CGAffineTransform const aValue = CGAffineTransformFromString(JSONValue);
                 ((void (*)(id, SEL, CGAffineTransform))objc_msgSend)(model, property->_setter, aValue);
                 return YES;
             }
-            case XZJSONFoundationStructNSDirectionalEdgeInsets: {
+            case XZJSONFoundationStructTypeNSDirectionalEdgeInsets: {
                 NSDirectionalEdgeInsets const aValue = NSDirectionalEdgeInsetsFromString(JSONValue);
                 ((void (*)(id, SEL, NSDirectionalEdgeInsets))objc_msgSend)(model, property->_setter, aValue);
                 return YES;
             }
-            case XZJSONFoundationStructUIOffset: {
+            case XZJSONFoundationStructTypeUIOffset: {
                 UIOffset const aValue = UIOffsetFromString(JSONValue);
                 ((void (*)(id, SEL, UIOffset))objc_msgSend)(model, property->_setter, aValue);
                 return YES;
@@ -131,39 +132,39 @@ FOUNDATION_STATIC_INLINE BOOL XZJSONDecodeStructProperty(id model, XZJSONPropert
 ///   - model: 模型对象
 ///   - property: 模型结构体属性
 FOUNDATION_STATIC_INLINE NSString * _Nullable XZJSONEncodeStructProperty(id model, XZJSONPropertyDescriptor *property) {
-    switch (property->_foundationStruct) {
-        case XZJSONFoundationStructUnknown: {
+    switch (property->_foundationStructType) {
+        case XZJSONFoundationStructTypeUnknown: {
             return nil;
         }
-        case XZJSONFoundationStructCGRect: {
+        case XZJSONFoundationStructTypeCGRect: {
             CGRect aValue = ((CGRect (*)(id, SEL))objc_msgSend)(model, property->_getter);
             return NSStringFromCGRect(aValue);
         }
-        case XZJSONFoundationStructCGSize: {
+        case XZJSONFoundationStructTypeCGSize: {
             CGSize aValue = ((CGSize (*)(id, SEL))objc_msgSend)(model, property->_getter);
             return NSStringFromCGSize(aValue);
         }
-        case XZJSONFoundationStructCGPoint: {
+        case XZJSONFoundationStructTypeCGPoint: {
             CGPoint aValue = ((CGPoint (*)(id, SEL))objc_msgSend)(model, property->_getter);
             return NSStringFromCGPoint(aValue);
         }
-        case XZJSONFoundationStructUIEdgeInsets: {
+        case XZJSONFoundationStructTypeUIEdgeInsets: {
             UIEdgeInsets aValue = ((UIEdgeInsets (*)(id, SEL))objc_msgSend)(model, property->_getter);
             return NSStringFromUIEdgeInsets(aValue);
         }
-        case XZJSONFoundationStructCGVector: {
+        case XZJSONFoundationStructTypeCGVector: {
             CGVector aValue = ((CGVector (*)(id, SEL))objc_msgSend)(model, property->_getter);
             return NSStringFromCGVector(aValue);
         }
-        case XZJSONFoundationStructCGAffineTransform: {
+        case XZJSONFoundationStructTypeCGAffineTransform: {
             CGAffineTransform aValue = ((CGAffineTransform (*)(id, SEL))objc_msgSend)(model, property->_getter);
             return NSStringFromCGAffineTransform(aValue);
         }
-        case XZJSONFoundationStructNSDirectionalEdgeInsets: {
+        case XZJSONFoundationStructTypeNSDirectionalEdgeInsets: {
             NSDirectionalEdgeInsets aValue = ((NSDirectionalEdgeInsets (*)(id, SEL))objc_msgSend)(model, property->_getter);
             return NSStringFromDirectionalEdgeInsets(aValue);
         }
-        case XZJSONFoundationStructUIOffset: {
+        case XZJSONFoundationStructTypeUIOffset: {
             UIOffset aValue = ((UIOffset (*)(id, SEL))objc_msgSend)(model, property->_getter);
             return NSStringFromUIOffset(aValue);
         }
