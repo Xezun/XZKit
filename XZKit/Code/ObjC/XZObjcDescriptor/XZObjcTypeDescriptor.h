@@ -132,9 +132,6 @@ typedef NS_OPTIONS(NSUInteger, XZObjcQualifiers) {
 /// 数据类型，通常也称为变量类型。在 objc 中，数据类型包括 c 基础类型，比如 int、float 等，和 NSObject 等对象类型，可通过 `@encoding(type)` 可将类型编码为字符串。
 @interface XZObjcTypeDescriptor : NSObject
 
-/// 类型名称。
-@property (nonatomic, copy, readonly) NSString *name;
-
 /// 类型的原始值，即类型的编码。
 @property (nonatomic, copy, readonly) NSString *raw;
 
@@ -143,6 +140,9 @@ typedef NS_OPTIONS(NSUInteger, XZObjcQualifiers) {
 
 /// 类型修饰符。
 @property (nonatomic, readonly) XZObjcQualifiers qualifiers;
+
+/// 类型名称。
+@property (nonatomic, copy, readonly) NSString *name;
 
 /// 大小，占用的空间大小，度量单位”字节byte“。
 /// - 对于位域而言，此值并不一定准确。

@@ -11,7 +11,7 @@
 /// 类型描述词的存储对象类型。
 typedef NSMutableDictionary<NSString *, NSMutableDictionary<NSNumber *, XZObjcTypeDescriptor *> *> *XZObjcTypeStorage;
 /// 访问类型描述词存储的函数。
-static id _Nullable withStorage(id (^block)(XZObjcTypeStorage const _Nonnull storage));
+static id _Nullable withStorage(id (^ NS_NOESCAPE block)(XZObjcTypeStorage const _Nonnull storage));
 
 @interface XZObjcTypeDescriptor ()
 @property (class, readonly) NSMutableDictionary<NSString *, NSValue *> *typeLayouts;
@@ -103,11 +103,13 @@ static id _Nullable withStorage(id (^block)(XZObjcTypeStorage const _Nonnull sto
         break;
     }
     
+    NSNumber * const key = @(qualifiers);
+    
     { // 查询是否已创建。
         NSString *encoding = [NSString stringWithCString:objcType encoding:NSASCIIStringEncoding];
         
         XZObjcTypeDescriptor * const descriptor = withStorage(^id(XZObjcTypeStorage const storage) {
-            return storage[encoding][@(qualifiers)];;
+            return storage[encoding][key];
         });
         
         if (descriptor) {
@@ -427,13 +429,13 @@ static id _Nullable withStorage(id (^block)(XZObjcTypeStorage const _Nonnull sto
                 i += member.raw.length; // 移动到下一个字符
                 // 共用体对齐是成员中最大的
                 _size = MAX(_size, member.size);
-                _sizeInBit = MAX(_sizeInBit, member.sizeInBit);
                 _alignment = MAX(_alignment, member.alignment);
             }
             _members = members.copy;
             
             _raw = [[NSString alloc] initWithBytes:objcType length:(i + 1) encoding:NSASCIIStringEncoding];
             [self size:&_size alignment:&_alignment forObjcType:_raw];
+            _sizeInBit = _size * 8;
             
             _type = XZObjcTypeUnion;
             break;
@@ -473,11 +475,6 @@ static id _Nullable withStorage(id (^block)(XZObjcTypeStorage const _Nonnull sto
             if (![self size:&_size alignment:&_alignment forObjcType:_raw]) {
                 if (members.count > 0) {
                     for (XZObjcTypeDescriptor *member in _members) {
-                        if (member.type == XZObjcTypeBitField) {
-                            
-                        } else {
-                            
-                        }
                         if (_size % member.alignment == 0) {
                             _size += member.size;
                         } else {
@@ -493,10 +490,10 @@ static id _Nullable withStorage(id (^block)(XZObjcTypeStorage const _Nonnull sto
                 } else {
                     struct Foobar { };
                     _size = sizeof(struct Foobar);
-                    _sizeInBit = _size * 8;
                     _alignment = _Alignof(struct Foobar);
                 }
             }
+            _sizeInBit = _size * 8;
             
             _type = XZObjcTypeStruct;
             break;
@@ -567,28 +564,24 @@ static id _Nullable withStorage(id (^block)(XZObjcTypeStorage const _Nonnull sto
             break;
         }
     }
-    return [self descriptorWithType:_type name:_name qualifiers:qualifiers size:_size sizeInBit:_sizeInBit raw:_raw alignment:_alignment members:_members subtype:_subtype protocols:_protocols];
-}
-
-+ (instancetype)descriptorWithType:(XZObjcType)type name:(NSString *)name qualifiers:(XZObjcQualifiers)qualifiers size:(size_t)size sizeInBit:(size_t)sizeInBit raw:(NSString *)encoding alignment:(size_t)alignment members:(NSArray<XZObjcTypeDescriptor *> *)members subtype:(Class)subtype protocols:(NSArray<Protocol *> *)protocols {
+    
     return withStorage(^id(XZObjcTypeStorage const storage) {
-        NSNumber * const key = @(qualifiers);
-        XZObjcTypeDescriptor *descriptor = storage[encoding][key];
+        XZObjcTypeDescriptor *descriptor = storage[_raw][key];
         if (descriptor) {
             return descriptor;
         }
-        descriptor = [[self alloc] initWithRaw:type name:name qualifiers:qualifiers size:size sizeInBit:sizeInBit raw:encoding alignment:alignment members:members subtype:subtype protocols:protocols];
-        NSMutableDictionary *dictM = storage[encoding];
+        descriptor = [[self alloc] initWithRaw:_raw type:_type qualifiers:qualifiers name:_name size:_size sizeInBit:_sizeInBit alignment:_alignment members:_members subtype:_subtype protocols:_protocols];
+        NSMutableDictionary *dictM = storage[_raw];
         if (dictM == nil) {
             dictM = [NSMutableDictionary dictionary];
-            storage[encoding] = dictM;
+            storage[_raw] = dictM;
         }
         dictM[key] = descriptor;
         return descriptor;
     });
 }
 
-- (instancetype)initWithRaw:(XZObjcType)type name:(NSString *)name qualifiers:(XZObjcQualifiers)qualifiers size:(size_t)size sizeInBit:(size_t)sizeInBit raw:(NSString *)raw alignment:(size_t)alignment members:(NSArray<XZObjcTypeDescriptor *> *)members subtype:(Class)subtype protocols:(NSArray<Protocol *> *)protocols {
+- (instancetype)initWithRaw:(NSString *)raw type:(XZObjcType)type qualifiers:(XZObjcQualifiers)qualifiers name:(NSString *)name size:(size_t)size sizeInBit:(size_t)sizeInBit alignment:(size_t)alignment members:(NSArray<XZObjcTypeDescriptor *> *)members subtype:(Class)subtype protocols:(NSArray<Protocol *> *)protocols {
     self = [super init];
     if (self) {
         _raw = raw;
@@ -674,7 +667,7 @@ typedef struct XZObjcTypeLayout {
 @end
 
 
-static id withStorage(id (^block)(XZObjcTypeStorage const storage)) {
+static id withStorage(id (^NS_NOESCAPE block)(XZObjcTypeStorage const storage)) {
     static dispatch_semaphore_t _lock;
     static XZObjcTypeStorage _storage = nil;
     
