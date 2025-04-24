@@ -9,14 +9,6 @@
 @import XZLocale;
 @import XZDefines;
 
-union Foo {
-    
-};
-
-struct Bar {
-    
-};
-
 @interface ExampleAppDelegate ()
 
 @end
@@ -27,7 +19,6 @@ struct Bar {
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
     [NSNotificationCenter.defaultCenter addObserver:self selector:@selector(didChangeAppLanguage) name:XZLanguagePreferencesDidChangeNotification object:nil];
-    NSLog(@"%s %s %ld %ld %ld %ld", @encode(union Foo), @encode(struct Bar), sizeof(union Foo), sizeof(struct Bar), _Alignof(union Foo), _Alignof(struct Bar));
     return YES;
 }
 

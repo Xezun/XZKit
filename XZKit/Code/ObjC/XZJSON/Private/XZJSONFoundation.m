@@ -166,7 +166,6 @@ NSString * _Nonnull XZJSONModelDescription(NSObject *_Nonnull model, NSUInteger 
                 value = [NSString stringWithFormat:@"%u", aValue];
                 break;
             }
-#if !XZ_LONG_IS_LLONG
             case XZObjcTypeLong: {
                 long const aValue = ((long (*)(id, SEL))(void *) objc_msgSend)(model, property->_getter);
                 value = [NSString stringWithFormat:@"%ld", aValue];
@@ -177,7 +176,6 @@ NSString * _Nonnull XZJSONModelDescription(NSObject *_Nonnull model, NSUInteger 
                 value = [NSString stringWithFormat:@"%lu", aValue];
                 break;
             }
-#endif
             case XZObjcTypeFloat: {
                 float const aValue = ((float (*)(id, SEL))(void *) objc_msgSend)(model, property->_getter);
                 value = [NSString stringWithFormat:@"%f", aValue];
@@ -439,7 +437,6 @@ void XZJSONModelEncodeWithCoder(id model, NSCoder *aCoder) {
                         [aCoder encodeInt:aValue forKey:name];
                         return;
                     }
-#if !XZ_LONG_IS_LLONG
                     case XZObjcTypeLong: {
                         long const aValue = ((long (*)(id, SEL))objc_msgSend)(model, getter);
                         [aCoder encodeInt64:aValue forKey:name];
@@ -450,7 +447,6 @@ void XZJSONModelEncodeWithCoder(id model, NSCoder *aCoder) {
                         [aCoder encodeInt64:aValue forKey:name];
                         return;
                     }
-#endif
                     case XZObjcTypeLongLong: {
                         long long const aValue = ((long long (*)(id, SEL))objc_msgSend)(model, getter);
                         [aCoder encodeInt64:aValue forKey:name];
@@ -739,7 +735,6 @@ id _Nullable XZJSONModelDecodeWithCoder(id model, NSCoder *aCoder) {
                         ((void (*)(id, SEL, unsigned short))objc_msgSend)(model, setter, aValue);
                         return;
                     }
-#if !XZ_LONG_IS_LLONG
                     case XZObjcTypeLong: {
                         long const aValue = [aCoder decodeInt64ForKey:name];
                         ((void (*)(id, SEL, long))objc_msgSend)(model, setter, aValue);
@@ -750,7 +745,6 @@ id _Nullable XZJSONModelDecodeWithCoder(id model, NSCoder *aCoder) {
                         ((void (*)(id, SEL, unsigned long))objc_msgSend)(model, setter, aValue);
                         return;
                     }
-#endif
                     case XZObjcTypeLongLong: {
                         long long const aValue = [aCoder decodeInt64ForKey:name];
                         ((void (*)(id, SEL, long long))objc_msgSend)(model, setter, aValue);

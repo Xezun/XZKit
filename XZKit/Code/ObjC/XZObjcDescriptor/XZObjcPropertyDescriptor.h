@@ -30,6 +30,7 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic, assign, readonly, nullable) SEL setter;
 
 - (instancetype)init NS_UNAVAILABLE;
+
 + (nullable instancetype)descriptorWithProperty:(objc_property_t)property ofClass:(Class)aClass NS_SWIFT_NAME(init(_:of:));
 
 @end
