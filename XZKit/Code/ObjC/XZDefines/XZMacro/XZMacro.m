@@ -6,7 +6,7 @@
 //
 
 #import "XZMacro.h"
-
+@import ObjectiveC;
 void XZLogv(const char *file, const int line, const char *function, NSString *format, ...) {
     va_list arguments;
     va_start(arguments, format);

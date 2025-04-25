@@ -6,6 +6,7 @@
 //
 
 #import "XZRuntime.h"
+#import "XZMacro.h"
 
 Method xz_objc_class_getMethod(Class const cls, SEL const target) {
     Method __block result = NULL;
@@ -463,11 +464,11 @@ CGRect xz_objc_msgSendSuper_rect(id receiver, Class receiverClass, SEL selector)
         .receiver = receiver,
         .super_class = class_getSuperclass(receiverClass)
     };
-    return ((CGRect(*)(struct objc_super *, SEL))objc_msgSendSuper)(&_super, selector);
+    return ((CGRect(*)(struct objc_super *, SEL))xz_objc_msgSendSuper_stret)(&_super, selector);
 }
 
 CGRect xz_objc_msgSend_rect(id receiver, SEL selector) {
-     return ((CGRect(*)(id, SEL))objc_msgSend)(receiver, selector);
+    return ((CGRect(*)(id, SEL))xz_objc_msgSend_stret)(receiver, selector);
 }
 
 

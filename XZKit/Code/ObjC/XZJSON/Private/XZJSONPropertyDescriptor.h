@@ -8,6 +8,7 @@
 #import <Foundation/Foundation.h>
 #import "XZObjcDescriptor.h"
 #import "XZJSONDescriptor.h"
+#import "XZMacro.h"
 
 NS_ASSUME_NONNULL_BEGIN
 

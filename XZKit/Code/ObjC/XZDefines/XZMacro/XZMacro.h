@@ -289,3 +289,45 @@ __dispatch_queue_imp_0__)(concurrency, queue, block, ##__VA_ARGS__)
 #define dispatch_global_sync(QOS_CLASS_, block, ...)     { typeof(block) const handler = block; if (handler) { dispatch_global_sync_v(QOS_CLASS_, handler, ##__VA_ARGS__); } }
 
 #endif
+
+
+
+/// 在 x86 架构上，返回值若为超过16字节的结构体，则必须使用 objc_msgSend_stret 函数来发送消息。
+FOUNDATION_EXPORT void xz_objc_msgSend_stret(void);
+/// 返回值为 float 类型的方法，需要调用此函数发送消息。
+FOUNDATION_EXPORT void xz_objc_msgSend_ftret(void);
+/// 返回值为 double 类型的方法，需要调用此函数发送消息。
+FOUNDATION_EXPORT void xz_objc_msgSend_dbret(void);
+/// 返回值为 long double 类型的方法，需要调用此函数发送消息。
+FOUNDATION_EXPORT void xz_objc_msgSend_ldret(void);
+
+#undef xz_objc_msgSend_stret
+#undef xz_objc_msgSend_ftret
+#undef xz_objc_msgSend_dbret
+#undef xz_objc_msgSend_ldret
+
+#if defined(__arm64__)
+    #define xz_objc_msgSend_stret       objc_msgSend
+    #define xz_objc_msgSendSuper_stret  objc_msgSendSuper
+    #define xz_objc_msgSend_ftret       objc_msgSend
+    #define xz_objc_msgSend_dbret       objc_msgSend
+    #define xz_objc_msgSend_ldret       objc_msgSend
+#elif defined(__x86_64__)
+    #define xz_objc_msgSend_stret       objc_msgSend_stret
+    #define xz_objc_msgSendSuper_stret  objc_msgSendSuper_stret
+    #define xz_objc_msgSend_ftret       objc_msgSend
+    #define xz_objc_msgSend_dbret       objc_msgSend
+    #if TYPE_LONGDOUBLE_IS_DOUBLE
+        #define xz_objc_msgSend_ldret   objc_msgSend
+    #else
+        #define xz_objc_msgSend_ldret   objc_msgSend_fpret
+    #endif
+#elif defined(__i386__)
+    #define xz_objc_msgSend_stret       objc_msgSend_stret
+    #define xz_objc_msgSendSuper_stret  objc_msgSendSuper_stret
+    #define xz_objc_msgSend_ftret       objc_msgSend_fpret
+    #define xz_objc_msgSend_dbret       objc_msgSend_fpret
+    #define xz_objc_msgSend_ldret       objc_msgSend_fpret
+#endif
+
+

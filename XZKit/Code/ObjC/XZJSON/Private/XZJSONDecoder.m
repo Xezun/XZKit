@@ -14,8 +14,10 @@
 #import "XZJSONDefines.h"
 #import "XZJSONPropertyDescriptor.h"
 
-typedef void (*XZJSONSetter)(id _Nonnull, SEL _Nonnull, id _Nullable);
-static void XZJSONModelDecodeProperty(id _Nonnull __unsafe_unretained model, XZJSONPropertyDescriptor * _Nonnull __unsafe_unretained property, id _Nonnull __unsafe_unretained JSONValue);
+NS_ASSUME_NONNULL_BEGIN
+typedef void (*XZJSONSetter)(id, SEL, id _Nullable);
+static void XZJSONModelDecodeProperty(id const __unsafe_unretained model, XZJSONPropertyDescriptor * const __unsafe_unretained property, id const __unsafe_unretained JSONValue);
+NS_ASSUME_NONNULL_END
 
 id _Nullable XZJSONDecodeJSONData(NSData * const __unsafe_unretained data, NSJSONReadingOptions const options, Class const __unsafe_unretained aClass) {
     NSError *error = nil;
