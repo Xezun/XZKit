@@ -9,6 +9,10 @@
 import Foundation
 import UIKit
 
+#if SWIFT_PACKAGE
+import XZGeometryObjC
+#endif
+
 // MARK: CGGeometry
 // AVFoundation.AVMakeRectWithAspectRatioInsideRect
 
@@ -65,7 +69,7 @@ extension CGSize {
     /// 等比缩小到指定范围以内，如果已经在范围内则不缩小。
     /// - Parameter size: 范围
     /// - Returns: CGSize
-    public func scalingAspect(toFit size: CGSize) -> CGSize {
+    public func scalingAspect(inside size: CGSize) -> CGSize {
         if size.width == 0 || size.height == 0 {
             return .zero
         }
@@ -88,15 +92,15 @@ extension CGSize {
     /// 等比缩小到指定范围以内，如果已经在范围内则不缩小。
     /// - Parameter size: 范围
     /// - Returns: CGSize
-    public mutating func scaleAspect(within size: CGSize) {
-        self = scalingAspect(toFit: size)
+    public mutating func scaleAspect(inside size: CGSize) {
+        self = scalingAspect(inside: size)
     }
     
     /// 创建一个指定宽高比，以及指定大小以内的 CGSize 。
     /// - Parameters:
-    ///   - aspectRatio: 宽高比。
-    ///   - maxSize: 宽高最大值。
-    public init(_ size: CGSize, ratio: CGSize) {
+    ///   - size: 宽高最大值
+    ///   - ratio: 宽高比
+    public init(inside size: CGSize, ratio: CGSize) {
         if ratio.width == 0 || ratio.height == 0 {
             self = size;
         } else if size.width == 0 || size.height == 0 {
@@ -122,7 +126,7 @@ extension CGRect {
     /// - Parameters:
     ///   - size: 待适配内容的大小
     ///   - contentMode: 适配模式
-    public func adjusting(_ size: CGSize, using contentMode: UIView.ContentMode) -> CGRect {
+    public func scalingAspect(inside size: CGSize, in contentMode: UIView.ContentMode) -> CGRect {
         switch (contentMode) {
         case .scaleToFill:
             return self;
@@ -210,10 +214,10 @@ extension CGRect {
     /// - Parameters:
     ///   - size: 内容的大小
     ///   - contentModes: 适配模式，顺序会影响结果
-    public func adjusting(_ size: CGSize, using contentModes: [UIView.ContentMode]) -> CGRect {
+    public func scaleAspect(inside size: CGSize, in contentModes: [UIView.ContentMode]) -> CGRect {
         let rect = CGRect(x: 0, y: 0, width: size.width, height: size.height)
         return contentModes.reduce(rect, { (rect, contentMode) -> CGRect in
-            return rect.adjusting(rect.size, using: contentMode)
+            return rect.scalingAspect(inside: rect.size, in: contentMode)
         })
     }
 }

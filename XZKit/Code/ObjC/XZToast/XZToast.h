@@ -16,19 +16,33 @@ typedef NS_ENUM(NSUInteger, XZToastType) {
 
 @class XZToast;
 
-NS_REFINED_FOR_SWIFT @interface XZToast : NSObject
+@interface XZToast : NSObject
 
-@property (nonatomic, readonly) XZToastType type;
-@property (nonatomic, readonly) NSString *text;
-@property (nonatomic, readonly, nullable) UIImage *image;
-@property (nonatomic, readonly, nullable) UIView *view;
+@property (nonatomic, readonly) UIView *contentView;
+
+/// 独占的 toast 不会与其它 toast 同时显示：
+/// - 展示时，立即顶掉正在展示的所有 toast
+/// - 其它 toast 展示时，会被立即顶掉
 @property (nonatomic, readonly) BOOL isExclusive;
 
-- (instancetype)init NS_UNAVAILABLE;
-- (instancetype)initWithType:(XZToastType)type text:(NSString *)text image:(nullable UIImage *)image view:(nullable UIView *)view isExclusive:(BOOL)isExclusive NS_DESIGNATED_INITIALIZER;
+//@property (nonatomic, readonly) NSTimeInterval duration;
+//@property (nonatomic, readonly) NSDirectionalRectEdge edge;
+//@property (nonatomic, readonly) CGFloat offset;
 
-+ (XZToast *)messageToast:(NSString *)text;
-+ (XZToast *)loadingToast:(NSString *)text;
+- (instancetype)init NS_UNAVAILABLE;
+- (instancetype)initWithContentView:(UIView *)contentView NS_DESIGNATED_INITIALIZER;
+
+//@property (nonatomic, readonly) XZToastType type;
+//@property (nonatomic, readonly) NSString *text;
+//@property (nonatomic, readonly, nullable) UIImage *image;
+//@property (nonatomic, readonly, nullable) UIView *view;
+//@property (nonatomic, readonly) BOOL isExclusive;
+//
+//- (instancetype)init NS_UNAVAILABLE;
+//- (instancetype)initWithType:(XZToastType)type text:(NSString *)text image:(nullable UIImage *)image view:(nullable UIView *)view isExclusive:(BOOL)isExclusive NS_DESIGNATED_INITIALIZER;
+//
+//+ (XZToast *)messageToast:(NSString *)text;
+//+ (XZToast *)loadingToast:(NSString *)text;
 
 @end
 

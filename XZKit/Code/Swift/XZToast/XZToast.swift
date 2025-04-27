@@ -14,54 +14,54 @@ import XZToastObjC
 #endif
 
 /// 提示信息。
-public struct XZToast : RawRepresentable, ExpressibleByStringLiteral {
-    
-    public typealias RawValue = String
-    public typealias StringLiteralType = String
-    
-    public var rawValue: String {
-        return text
-    }
-    
-    let type: __XZToastType
-    
-    public let text: String
-    
-    public let image: UIImage?
-    
-    public let view: UIView?
-    
-    public let isExclusive: Bool
-    
-    public init(stringLiteral value: String) {
-        self.init(rawValue: value)
-    }
-    
-    public init(rawValue: String) {
-        self.init(type: .message, text: rawValue, image: nil, view: nil, isExclusive: false)
-    }
-    
-    private init(type: __XZToastType, text: String, image: UIImage?, view: UIView?, isExclusive: Bool) {
-        self.type = type;
-        self.text = text;
-        self.image = image;
-        self.view = view;
-        self.isExclusive = isExclusive;
-    }
-    
-    /// 消息提示。
-    public static func message(_ text: String, image: UIImage? = nil) -> XZToast {
-        return self.init(type: .message, text: text, image: image, view: nil, isExclusive: false)
-    }
-    
-    /// 加载提示。
-    /// - Note: 此类型的提示信息，不自动隐藏，需要调用 `hideToast()` 方法。
-    public static func loading(_ text: String, image: UIImage? = nil) -> XZToast {
-        return self.init(type: .loading, text: text, image: image, view: nil, isExclusive: true)
-    }
-    
-    
-}
+//public struct XZToast : RawRepresentable, ExpressibleByStringLiteral {
+//    
+//    public typealias RawValue = String
+//    public typealias StringLiteralType = String
+//    
+//    public var rawValue: String {
+//        return text
+//    }
+//    
+//    let type: __XZToastType
+//    
+//    public let text: String
+//    
+//    public let image: UIImage?
+//    
+//    public let view: UIView?
+//    
+//    public let isExclusive: Bool
+//    
+//    public init(stringLiteral value: String) {
+//        self.init(rawValue: value)
+//    }
+//    
+//    public init(rawValue: String) {
+//        self.init(type: .message, text: rawValue, image: nil, view: nil, isExclusive: false)
+//    }
+//    
+//    private init(type: __XZToastType, text: String, image: UIImage?, view: UIView?, isExclusive: Bool) {
+//        self.type = type;
+//        self.text = text;
+//        self.image = image;
+//        self.view = view;
+//        self.isExclusive = isExclusive;
+//    }
+//    
+//    /// 消息提示。
+//    public static func message(_ text: String, image: UIImage? = nil) -> XZToast {
+//        return self.init(type: .message, text: text, image: image, view: nil, isExclusive: false)
+//    }
+//    
+//    /// 加载提示。
+//    /// - Note: 此类型的提示信息，不自动隐藏，需要调用 `hideToast()` 方法。
+//    public static func loading(_ text: String, image: UIImage? = nil) -> XZToast {
+//        return self.init(type: .loading, text: text, image: image, view: nil, isExclusive: true)
+//    }
+//    
+//    
+//}
 
 /// Toast 回调闭包
 /// - Parameter finished: 是否完成整个展示过程，被中断或切换到其它 toast 时，此参数为 false
@@ -76,9 +76,10 @@ extension UIResponder {
     ///   - duration: 展示时长
     ///   - offset: 位置偏移
     ///   - completion: 展示完成后的回调，如果控制器未加载，回调立即执行
-    @objc(xz_showToast:duration:offset:completion:) public func showToast(_ toast: XZToast, duration: TimeInterval, offset: CGPoint, completion: XZToastCompletion?) {
+    @objc(xz_showToast:duration:position:offset:exclusive:completion:)
+    public func showToast(_ toast: XZToast, duration: TimeInterval, position: NSDirectionalRectEdge, offset: CGPoint, exclusive: Bool, completion: XZToastCompletion?) {
         guard let window = UIApplication.shared.delegate?.window as? UIWindow else { return }
-        window.rootViewController?.showToast(toast, duration: duration, offset: offset, completion: completion)
+        window.rootViewController?.showToast(toast, duration: duration, position: position, offset: offset, exclusive: exclusive, completion: completion)
     }
     
     /// 隐藏 XZToast 提示信息。
@@ -108,84 +109,9 @@ extension UIResponder {
     }
 }
 
-
-extension UIResponder {
-    
-    /// 便利方法。展示 XZToast 提示信息。无回调。
-    /// - Note: 提示信息基于控制，子视图调用此方法，等同于视图所在的控制器调用此方法，因此没有添加到控制器的视图调用此方法无效。
-    /// - Parameters:
-    ///   - toast: 提示内容
-    ///   - duration: 展示时长
-    ///   - offset: 位置偏移
-    @objc(xz_showToast:duration:offset:) public func showToast(_ toast: XZToast, duration: TimeInterval, offset: CGPoint) {
-        self.showToast(toast, duration: duration, offset: offset, completion: nil)
-    }
-    
-    /// 便利方法。展示 XZToast 提示信息。位置偏移无。
-    /// - Note: 提示信息基于控制，子视图调用此方法，等同于视图所在的控制器调用此方法，因此没有添加到控制器的视图调用此方法无效。
-    /// - Parameters:
-    ///   - toast: 提示内容
-    ///   - duration: 展示时长
-    ///   - completion: 展示完成后的回调，如果控制器未加载，回调立即执行
-    @objc(xz_showToast:duration:completion:) public func showToast(_ toast: XZToast, duration: TimeInterval, completion: XZToastCompletion?) {
-        self.showToast(toast, duration: duration, offset: .zero, completion: completion)
-    }
-    
-    /// 便利方法。展示 XZToast 提示信息。展示时长 3.0 秒。
-    /// - Note: 提示信息基于控制，子视图调用此方法，等同于视图所在的控制器调用此方法，因此没有添加到控制器的视图调用此方法无效。
-    /// - Parameters:
-    ///   - toast: 提示内容
-    ///   - offset: 位置偏移
-    ///   - completion: 展示完成后的回调，如果控制器未加载，回调立即执行
-    @objc(xz_showToast:offset:completion:) public func showToast(_ toast: XZToast, offset: CGPoint, completion: XZToastCompletion?) {
-        self.showToast(toast, duration: 3.0, offset: offset, completion: completion)
-    }
-    
-    /// 便利方法。展示 XZToast 提示信息。无位置偏移，无回调。
-    /// - Note: 提示信息基于控制，子视图调用此方法，等同于视图所在的控制器调用此方法，因此没有添加到控制器的视图调用此方法无效。
-    /// - Parameters:
-    ///   - toast: 提示内容
-    ///   - duration: 展示时长
-    @objc(xz_showToast:duration:) public func showToast(_ toast: XZToast, duration: TimeInterval) {
-        self.showToast(toast, duration: duration, offset: .zero, completion: nil)
-    }
-    
-    /// 便利方法。展示 XZToast 提示信息。展示时长 3.0 秒，无回调。
-    /// - Note: 提示信息基于控制，子视图调用此方法，等同于视图所在的控制器调用此方法，因此没有添加到控制器的视图调用此方法无效。
-    /// - Parameters:
-    ///   - toast: 提示内容
-    ///   - offset: 位置偏移
-    @objc(xz_showToast:offset:) public func showToast(_ toast: XZToast, offset: CGPoint) {
-        self.showToast(toast, duration: 3.0, offset: offset, completion: nil)
-    }
-    
-    /// 便利方法。展示 XZToast 提示信息。展示时长 3.0 秒，无偏移。
-    /// - Note: 提示信息基于控制，子视图调用此方法，等同于视图所在的控制器调用此方法，因此没有添加到控制器的视图调用此方法无效。
-    /// - Parameters:
-    ///   - toast: 提示内容
-    ///   - completion: 展示完成后的回调，如果控制器未加载，回调立即执行
-    @objc(xz_showToast:completion:) public func showToast(_ toast: XZToast, completion: XZToastCompletion?) {
-        self.showToast(toast, duration: 3.0, offset: .zero, completion: completion)
-    }
-    
-    /// 便利方法。展示 XZToast 提示信息。展示时长 3.0 秒，无偏移，无回调。
-    /// - Note: 提示信息基于控制，子视图调用此方法，等同于视图所在的控制器调用此方法，因此没有添加到控制器的视图调用此方法无效。
-    /// - Parameters:
-    ///   - toast: 提示内容
-    @objc(xz_showToast:) public func showToast(_ toast: XZToast) {
-        self.showToast(toast, duration: 3.0, offset: .zero, completion: nil)
-    }
-    
-    /// 便利方法。隐藏 XZToast 提示信息。
-    @objc(xz_hideToast) public func hideToast() {
-        self.hideToast(nil)
-    }
-    
-}
-
 extension UIViewController {
     
-    public override func showToast(_ toast: XZToast, duration: TimeInterval, offset: CGPoint, completion: XZToastCompletion?) {
+    public override func showToast(_ toast: XZToast, duration: TimeInterval, position: NSDirectionalRectEdge, offset: CGPoint, exclusive: Bool, completion: XZToastCompletion?) {
         guard let view = self.viewIfLoaded else {
             completion?(false)
             return
@@ -226,10 +152,11 @@ extension UIViewController {
         
         let identifier = toastView.identifier
         
-        switch toast.type {
-        case .message:
+        if duration.isInfinite {
+            // 不
+        } else {
             // 延时自动隐藏
-            DispatchQueue.main.asyncAfter(deadline: .now() + .milliseconds(Int(duration) * 1000)) { [weak self, toastView] in
+            DispatchQueue.main.asyncAfter(deadline: .now().advanced(by: .seconds(Int(duration)))) { [weak self, toastView] in
                 guard let toastView = toastView else { return }
                 guard let responder = self else { return }
                 guard toastView.identifier == identifier else {
@@ -242,12 +169,7 @@ extension UIViewController {
                     responder.didHideToastView(toastView, identifier: identifier, finished: true)
                 }
             }
-        case .loading:
-            break
-        @unknown default:
-            fatalError()
         }
-        
     }
     
     public override func hideToast(_ completion: XZToastCompletion?) {
