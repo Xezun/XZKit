@@ -109,6 +109,34 @@ extension UIResponder {
     }
 }
 
+extension UIView {
+    
+    public override func showToast(_ toast: XZToast, duration: TimeInterval, position: NSDirectionalRectEdge, offset: CGPoint, exclusive: Bool, completion: XZToastCompletion?) {
+        self.next?.showToast(toast, duration: duration, position: position, offset: offset, exclusive: exclusive, completion: completion)
+    }
+    
+    public override func hideToast(_ completion: XZToastCompletion?) {
+        self.next?.hideToast(completion)
+    }
+    
+    public override func layoutToastView() {
+        self.next?.layoutToastView()
+    }
+    
+}
+
+extension UIWindow {
+      
+    public override func showToast(_ toast: XZToast, duration: TimeInterval, position: NSDirectionalRectEdge, offset: CGPoint, exclusive: Bool, completion: XZToastCompletion?) {
+        self.rootViewController?.showToast(toast, duration: duration, position: position, offset: offset, exclusive: exclusive, completion: completion)
+    }
+    
+    public override func hideToast(_ completion: XZToastCompletion?) {
+        self.rootViewController?.hideToast(completion)
+    }
+    
+}
+
 extension UIViewController {
     
     public override func showToast(_ toast: XZToast, duration: TimeInterval, position: NSDirectionalRectEdge, offset: CGPoint, exclusive: Bool, completion: XZToastCompletion?) {
@@ -224,33 +252,6 @@ extension UIViewController {
         }
         let bounds = view.bounds.inset(by: view.safeAreaInsets)
         return CGPoint(x: bounds.midX + offset.x, y: bounds.midY + offset.y)
-    }
-}
-
-extension UIView {
-    
-    public override func showToast(_ toast: XZToast, duration: TimeInterval, offset: CGPoint, completion: XZToastCompletion?) {
-        self.next?.showToast(toast, duration: duration, completion: completion)
-    }
-    
-    public override func hideToast(_ completion: XZToastCompletion?) {
-        self.next?.hideToast(completion)
-    }
-    
-    public override func layoutToastView() {
-        self.next?.layoutToastView()
-    }
-    
-}
-
-extension UIWindow {
-      
-    public override func showToast(_ toast: XZToast, duration: TimeInterval, offset: CGPoint, completion: XZToastCompletion?) {
-        self.rootViewController?.showToast(toast, duration: duration, completion: completion)
-    }
-    
-    public override func hideToast(_ completion: XZToastCompletion?) {
-        self.rootViewController?.hideToast(completion)
     }
     
 }

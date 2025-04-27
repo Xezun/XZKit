@@ -38,3 +38,54 @@
 //}
 
 @end
+
+
+@implementation UIResponder (XZToast)
+
+- (void)xz_showToast:(XZToast *)toast duration:(NSTimeInterval)duration position:(NSDirectionalRectEdge)position offset:(CGFloat)offset exclusive:(BOOL)exclusive completion:(void (^)(BOOL))completion {
+    
+}
+
+- (void)xz_hideToast:(void (^)(BOOL))completion {
+    
+}
+
+@end
+
+@implementation UIView (XZToast)
+
+- (void)xz_showToast:(XZToast *)toast duration:(NSTimeInterval)duration position:(NSDirectionalRectEdge)position offset:(CGFloat)offset exclusive:(BOOL)exclusive completion:(void (^)(BOOL))completion {
+    [self.nextResponder xz_showToast:toast duration:duration position:position offset:offset exclusive:exclusive completion:completion];
+}
+
+- (void)xz_hideToast:(void (^)(BOOL))completion {
+    [self.nextResponder xz_hideToast:completion];
+}
+
+@end
+
+
+@implementation UIWindow (XZToast)
+
+- (void)xz_showToast:(XZToast *)toast duration:(NSTimeInterval)duration position:(NSDirectionalRectEdge)position offset:(CGFloat)offset exclusive:(BOOL)exclusive completion:(void (^)(BOOL))completion {
+    [self.rootViewController xz_showToast:toast duration:duration position:position offset:offset exclusive:exclusive completion:completion];
+}
+
+- (void)xz_hideToast:(void (^)(BOOL))completion {
+    [self.rootViewController xz_hideToast:completion];
+}
+
+@end
+
+
+@implementation UIViewController (XZToast)
+
+- (void)xz_showToast:(XZToast *)toast duration:(NSTimeInterval)duration position:(NSDirectionalRectEdge)position offset:(CGFloat)offset exclusive:(BOOL)exclusive completion:(void (^)(BOOL))completion {
+    
+}
+
+- (void)xz_hideToast:(void (^)(BOOL))completion {
+    
+}
+
+@end

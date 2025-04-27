@@ -46,4 +46,10 @@ typedef NS_ENUM(NSUInteger, XZToastType) {
 
 @end
 
+@interface UIResponder (XZToast)
+
+- (void)xz_showToast:(XZToast *)toast duration:(NSTimeInterval)duration position:(NSDirectionalRectEdge)position offset:(CGFloat)offset exclusive:(BOOL)exclusive completion:(void (^_Nullable)(BOOL finished))completion;
+- (void)xz_hideToast:(void (^_Nullable)(BOOL finished))completion;
+@end
+
 NS_ASSUME_NONNULL_END
