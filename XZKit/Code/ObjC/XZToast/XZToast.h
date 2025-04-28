@@ -21,7 +21,7 @@ typedef NS_ENUM(NSUInteger, XZToastType) {
 @property (nonatomic, readonly) UIView *contentView;
 
 /// 独占的 toast 不会与其它 toast 同时显示：
-/// - 展示时，立即顶掉正在展示的所有 toast
+/// - 展示时，带背景，且立即顶掉正在展示的所有 toast
 /// - 其它 toast 展示时，会被立即顶掉
 @property (nonatomic, readonly) BOOL isExclusive;
 
