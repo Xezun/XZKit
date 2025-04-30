@@ -92,7 +92,7 @@ extension XZTextImageLayout {
         
         if let imageView = imageViewIfLoaded {
             // 优先布局图片。
-            let imageViewSize = imageView.sizeThatFits(layoutRect.size).scalingAspect(toFit: layoutRect.size)
+            let imageViewSize = imageView.sizeThatFits(layoutRect.size).scalingAspect(inside: layoutRect.size)
             
             if let titleLabel = textViewIfLoaded {
                 // 图片和文字都有。
