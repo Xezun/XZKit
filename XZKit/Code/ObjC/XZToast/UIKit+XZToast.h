@@ -13,49 +13,11 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface UIResponder (XZToast)
 
-- (void)xz_showToast:(XZToast *)toast duration:(NSTimeInterval)duration position:(NSDirectionalRectEdge)position offset:(CGFloat)offset isExclusive:(BOOL)isExclusive completion:(void (^_Nullable)(BOOL finished))completion;
+- (void)xz_showToast:(XZToast *)toast duration:(NSTimeInterval)duration position:(NSDirectionalRectEdge)position offset:(CGFloat)offset isExclusive:(BOOL)isExclusive completion:(void (^_Nullable)(BOOL finished))completion NS_SWIFT_NAME(showToast(_:duration:position:offset:isExclusive:completion:));
+
+- (void)xz_showToast:(XZToast *)toast NS_SWIFT_NAME(showToast(_:));
 - (void)xz_hideToast:(void (^_Nullable)(BOOL finished))completion;
-@end
-
-
-@interface XZToastItem : NSObject {
-    @package
-    CGRect _frame;
-    dispatch_block_t _task;
-}
-@property (nonatomic, readonly) UIView *toastView;
-/// 独占的 toast 不会与其它 toast 同时显示：
-/// - 展示时，带背景，且立即顶掉正在展示的所有 toast
-/// - 其它 toast 展示时，会被立即顶掉
-@property (nonatomic, readonly) BOOL isExclusive;
-
-@property (nonatomic, readonly) NSTimeInterval duration;
-@property (nonatomic, readonly) NSDirectionalRectEdge position;
-@property (nonatomic, readonly) CGFloat offset;
-@property (nonatomic, copy) void (^completion)(BOOL finished);
-
-@property (nonatomic, strong, nullable) dispatch_block_t task;
-@property (nonatomic, setter=setDone:) BOOL isDone;
-
-- (instancetype)initWithToastView:(UIView *)toastView duration:(NSTimeInterval)duration position:(NSDirectionalRectEdge)position offset:(CGFloat)offset isExclusive:(BOOL)isExclusive completion:(void (^_Nullable)(BOOL finished))completion;
-@end
-
-@interface XZToastManager : NSObject
-
-@property (nonatomic, readonly) BOOL isExclusive;
-
-@property (nonatomic) NSArray<XZToastItem *> *items;
-
-- (void)showToast:(XZToast *)toast duration:(NSTimeInterval)duration position:(NSDirectionalRectEdge)position offset:(CGFloat)offset isExclusive:(BOOL)isExclusive completion:(void (^_Nullable)(BOOL finished))completion;
-
-@property (nonatomic) NSArray<UIView *> *subviews;
-
-+ (XZToastManager *)managerForViewController:(UIViewController *)viewController;
 
 @end
 
-
-@interface XZToastContainerView : UIView
-
-@end
 NS_ASSUME_NONNULL_END

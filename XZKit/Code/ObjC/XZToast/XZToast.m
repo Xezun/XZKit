@@ -37,13 +37,13 @@
 //    return [[self alloc] initWithType:(XZToastTypeLoading) text:text image:nil view:nil isExclusive:NO];
 //}
 
-+ (XZToast *)messageToast:(NSString *)text {
-    return [[self alloc] initWithContentView:[UIView new]];
-}
-
-+ (XZToast *)loadingToast:(NSString *)text {
-    return [[self alloc] initWithContentView:[UIView new]];
-}
+//+ (XZToast *)messageToast:(NSString *)text {
+//    return [[self alloc] initWithContentView:[UIView new]];
+//}
+//
+//+ (XZToast *)loadingToast:(NSString *)text {
+//    return [[self alloc] initWithContentView:[UIView new]];
+//}
 
 @end
 

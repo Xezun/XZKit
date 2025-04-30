@@ -25,8 +25,8 @@ NS_ASSUME_NONNULL_BEGIN
 //- (instancetype)init NS_UNAVAILABLE;
 //- (instancetype)initWithType:(XZToastType)type text:(NSString *)text image:(nullable UIImage *)image view:(nullable UIView *)view isExclusive:(BOOL)isExclusive NS_DESIGNATED_INITIALIZER;
 
-+ (XZToast *)messageToast:(NSString *)text NS_SWIFT_NAME(message(_:));
-+ (XZToast *)loadingToast:(NSString *)text NS_SWIFT_NAME(loading(_:));
+//+ (XZToast *)messageToast:(NSString *)text NS_SWIFT_NAME(message(_:));
+//+ (XZToast *)loadingToast:(NSString *)text NS_SWIFT_NAME(loading(_:));
 
 @end
 
