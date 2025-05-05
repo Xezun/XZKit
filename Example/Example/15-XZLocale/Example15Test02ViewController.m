@@ -33,12 +33,12 @@
         [self.tableView reloadData];
     }];
     
-    [self xz_showToast:[XZToast loadingToast:@"加载中..."] duration:0 offset:CGPointMake(0, -50.0) completion:nil];
+//    [self xz_showToast:[XZToast loadingToast:@"加载中..."] duration:0 offset:CGPointMake(0, -50.0) completion:nil];
 }
 
 - (void)viewDidLayoutSubviews {
     [super viewDidLayoutSubviews];
-    [self xz_layoutToastView];
+//    [self xz_layoutToastView];
 }
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {

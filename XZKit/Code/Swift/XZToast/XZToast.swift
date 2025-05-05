@@ -23,7 +23,7 @@ extension XZToast {
         button.layer.cornerRadius = 6.0
         button.clipsToBounds = true
         button.setTitleColor(.white, for: .normal)
-        return XZToast.init(contentView: button)
+        return XZToast.init(view: button)
     }
 }
 

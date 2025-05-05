@@ -73,7 +73,7 @@ static UIWindow *mainWindow(void) {
 @implementation UIViewController (XZToast)
 
 - (void)xz_showToast:(XZToast *)toast duration:(NSTimeInterval)duration position:(NSDirectionalRectEdge)position offset:(CGFloat)offset isExclusive:(BOOL)isExclusive completion:(void (^)(BOOL))completion {
-    XZToastItem *item = [[XZToastItem alloc] initWithToastView:toast.contentView duration:duration position:position offset:offset isExclusive:isExclusive completion:completion];
+    XZToastItem *item = [[XZToastItem alloc] initWithToastView:toast.view duration:duration position:position offset:offset isExclusive:isExclusive completion:completion];
     [[XZToastManager managerForViewController:self] showToast:item];
 }
 

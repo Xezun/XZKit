@@ -6,6 +6,7 @@
 //
 
 #import <Foundation/Foundation.h>
+#import "XZToast.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -23,12 +24,21 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic, readonly) NSTimeInterval duration;
 @property (nonatomic, readonly) NSDirectionalRectEdge position;
 @property (nonatomic, readonly) CGFloat offset;
-@property (nonatomic, copy) void (^completion)(BOOL finished);
 
+/// 展示 toast 时绑定的回调，在 toast 消失后执行，finished 表示 toast 是否按预期时长展示。
+@property (nonatomic, copy, readonly, nullable) XZToastShowCompletion showCompletion;
+
+/// 在 \_showingToasts 中的 toast 有值。
 @property (nonatomic, strong, nullable) dispatch_block_t task;
 @property (nonatomic, setter=setDone:) BOOL isDone;
+@property (nonatomic, readonly) BOOL isCancelled;
+- (void)cancel;
 
-- (instancetype)initWithToastView:(UIView *)toastView duration:(NSTimeInterval)duration position:(NSDirectionalRectEdge)position offset:(CGFloat)offset isExclusive:(BOOL)isExclusive completion:(void (^_Nullable)(BOOL finished))completion;
+- (instancetype)initWithToastView:(UIView *)toastView duration:(NSTimeInterval)duration position:(NSDirectionalRectEdge)position offset:(CGFloat)offset isExclusive:(BOOL)isExclusive completion:(XZToastShowCompletion)completion;
+@end
+
+@interface XZToastOperation : NSOperation
+
 @end
 
 NS_ASSUME_NONNULL_END

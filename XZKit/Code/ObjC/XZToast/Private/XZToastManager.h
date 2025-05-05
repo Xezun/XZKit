@@ -6,6 +6,7 @@
 //
 
 #import <Foundation/Foundation.h>
+#import "XZToast.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -18,10 +19,15 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic) NSArray<XZToastItem *> *items;
 
 - (void)showToast:(XZToastItem *)item;
+- (void)hideToast:(nullable XZToastItem *)item completion:(XZToastHideCompletion)completion;
 
 @property (nonatomic) NSArray<UIView *> *subviews;
 
 + (XZToastManager *)managerForViewController:(UIViewController *)viewController;
+
+@end
+
+@interface XZToastTask : NSOperation
 
 @end
 

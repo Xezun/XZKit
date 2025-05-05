@@ -6,17 +6,16 @@
 //
 
 #import <UIKit/UIKit.h>
+#import "XZToast.h"
 
 NS_ASSUME_NONNULL_BEGIN
-
-@class XZToast;
 
 @interface UIResponder (XZToast)
 
 - (void)xz_showToast:(XZToast *)toast duration:(NSTimeInterval)duration position:(NSDirectionalRectEdge)position offset:(CGFloat)offset isExclusive:(BOOL)isExclusive completion:(void (^_Nullable)(BOOL finished))completion NS_SWIFT_NAME(showToast(_:duration:position:offset:isExclusive:completion:));
 
 - (void)xz_showToast:(XZToast *)toast NS_SWIFT_NAME(showToast(_:));
-- (void)xz_hideToast:(void (^_Nullable)(BOOL finished))completion;
+- (void)xz_hideToast:(id)toast completion:(XZToastHideCompletion)completion;
 
 @end
 

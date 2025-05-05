@@ -25,9 +25,12 @@ class Example13ViewController: UITableViewController {
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         switch indexPath.row {
         case 0:
-            showToast("消息文本")
+            self.showToast(.message("这是消息1"), duration: 4.0, position: .bottom, offset: 0, isExclusive: false)
+            self.showToast(.message("这是消息2"), duration: 3.0, position: .bottom, offset: 0, isExclusive: false)
+            self.showToast(.message("这是消息3"), duration: 2.0, position: .bottom, offset: 0, isExclusive: false)
         case 1:
-            showToast(.loading("加载中..."))
+//            showToast(.loading("加载中..."))
+            break
         default:
             break
         }

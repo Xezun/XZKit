@@ -24,6 +24,8 @@
     
     BOOL _needsUpdateToasts;
     UIView *_containerView;
+    
+    XZToastHideCompletion _completion;
 }
 
 + (XZToastManager *)managerForViewController:(UIViewController *)viewController {
@@ -63,6 +65,103 @@
     [self setNeedsUpdateToasts];
 }
 
+- (void)addHideCompletion:(XZToastHideCompletion)hideCompletion {
+    if (hideCompletion) {
+        XZToastHideCompletion const oldValue = _completion;
+        if (oldValue) {
+            _completion = ^{
+                oldValue();
+                hideCompletion();
+            };
+        } else {
+            _completion = hideCompletion;
+        }
+    }
+}
+
+- (void)hideToast:(nullable XZToastItem *)item completion:(XZToastHideCompletion)completion {
+    if (item) {
+        // 查询取消中的 toast
+        NSUInteger index = [_hideingItems indexOfObject:item];
+        if (index != NSNotFound) {
+            [self addHideCompletion:completion];
+            return;
+        }
+        
+        // 查找显示中的 toast
+        index = [_showingItems indexOfObject:item];
+        if (index != NSNotFound) {
+            [_showingItems removeObjectAtIndex:index];
+            
+            [item cancel];
+            [self addHideCompletion:completion];
+            [_hideingItems addObject:item];
+            
+            [self setNeedsUpdateToasts];
+            return;
+        }
+        
+        // 查找列队中的 toast
+        index = [_waitingItems indexOfObject:item];
+        if (index != NSNotFound) {
+            [item cancel];
+            [_waitingItems removeObject:item];
+            dispatch_async(dispatch_get_main_queue(), ^{
+                if (item.showCompletion) {
+                    item.showCompletion(NO);
+                }
+                if (completion) {
+                    completion();
+                }
+            });
+            return;
+        }
+        
+        dispatch_async(dispatch_get_main_queue(), ^{
+            completion();
+        });
+    } else {
+        BOOL flags = NO;
+        
+        if (_hideingItems.count > 0) {
+            flags = YES;
+        }
+        
+        if (_showingItems.count > 0) {
+            flags = YES;
+            while (_showingItems.count > 0) {
+                XZToastItem *item = _showingItems.lastObject;
+                [_showingItems removeLastObject];
+                
+                [item cancel];
+                [_hideingItems addObject:item];
+            }
+        }
+        
+        if (_waitingItems.count > 0) {
+            NSArray *waitingItems = [_waitingItems copy];
+            [_waitingItems removeAllObjects];
+            dispatch_async(dispatch_get_main_queue(), ^{
+                for (XZToastItem *item in waitingItems) {
+                    [item cancel];
+                    if (item.showCompletion) {
+                        item.showCompletion(NO);
+                    }
+                }
+                
+                if (!flags && completion) {
+                    completion();
+                }
+            });
+        }
+        
+        if (flags) {
+            [self addHideCompletion:completion];
+            [self setNeedsUpdateToasts];
+        }
+    }
+}
+
 - (void)setNeedsUpdateToasts {
     if (_needsUpdateToasts) {
         return;
@@ -77,7 +176,9 @@
     }
     
     if (_waitingItems.count == 0 && _hideingItems.count == 0) {
-        [_containerView removeFromSuperview];
+        if (_showingItems.count == 0) {
+            [_containerView removeFromSuperview];
+        }
         _needsUpdateToasts = NO;
         return;
     }
@@ -86,7 +187,7 @@
     // V:|-padding-spacing-[toast]-spacing-[toast]-spacing-padding-|
     CGFloat const padding = 20.0; // 边距
     CGFloat const spacing = 10.0; // 间距
-    
+     
     // 初始化容器视图
     if (_containerView.superview == nil) {
         if (!_viewController.isViewLoaded) {
@@ -112,7 +213,7 @@
         [_waitingItems removeObjectAtIndex:0];
         
         newToastItem.task = dispatch_block_create(DISPATCH_BLOCK_NO_QOS_CLASS, ^{
-            [self hideToast:newToastItem];
+            [self _hideToast:newToastItem completion:nil];
         });
         dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(newToastItem.duration * NSEC_PER_SEC)), dispatch_get_main_queue(), newToastItem.task);
         [_showingItems addObject:newToastItem];
@@ -132,11 +233,6 @@
         newToastView.frame = newToastItem->_frame;
         newToastView.alpha = 0;
         [_containerView addSubview:newToastView];
-    }
-    
-    // 待移除的 toast 全部出列
-    for (XZToastItem *item in _hideingItems) {
-        [_showingItems removeObject:item];
     }
     
     // 最多展示三个，超出就强制移除最早的
@@ -170,8 +266,8 @@
         // 向移除的 toast 发送消息
         for (XZToastItem *item in self->_hideingItems) {
             [item.toastView removeFromSuperview];
-            if (item.completion) {
-                item.completion(item.isDone);
+            if (item.showCompletion) {
+                item.showCompletion(item.isDone);
             }
         }
         [self->_hideingItems removeAllObjects];
@@ -221,17 +317,39 @@
     
 }
 
-- (void)hideToast:(XZToastItem *)item {
-    if (item.task == nil) {
-        return;
-    }
-    NSUInteger const index = [_showingItems indexOfObject:item];
-    if (index == NSNotFound) {
-        return;
-    }
-    [_showingItems removeObjectAtIndex:index];
-    [_hideingItems addObject:item];
-    [self setNeedsUpdateToasts];
+@end
+
+
+@implementation XZToastTask {
+    BOOL _isExecuting;
+    BOOL _isFinished;
 }
 
+- (BOOL)isExecuting {
+    return _isExecuting;
+}
+
+- (BOOL)isFinished {
+    return _isFinished;
+}
+
+- (void)setFinished:(BOOL)isFinished {
+    [self willChangeValueForKey:@"isFinished"];
+    _isFinished = isFinished;
+    [self didChangeValueForKey:@"isFinished"];
+}
+
+- (void)main {
+    [super main];
+    [UIView animateWithDuration:0.3 animations:^{
+            
+    } completion:^(BOOL finished) {
+        [self setFinished:YES];
+    }];
+}
+
+
+
 @end
+
+
