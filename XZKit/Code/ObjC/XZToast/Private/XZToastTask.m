@@ -12,7 +12,7 @@
     XZToastCompletion _completion;
 }
 
-- (instancetype)initWithToastView:(UIView *)toastView duration:(NSTimeInterval)duration position:(NSDirectionalRectEdge)position offset:(CGFloat)offset exclusive:(BOOL)exclusive completion:(XZToastCompletion)completion {
+- (instancetype)initWithToastView:(UIView *)toastView duration:(NSTimeInterval)duration position:(XZToastPosition)position offset:(CGFloat)offset exclusive:(BOOL)exclusive completion:(XZToastCompletion)completion {
     self = [super init];
     if (self) {
         _toastView = toastView;

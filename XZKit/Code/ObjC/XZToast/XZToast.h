@@ -12,6 +12,12 @@ NS_ASSUME_NONNULL_BEGIN
 /// 显示或隐藏 toast 的动画时长，0.3 秒。
 FOUNDATION_EXPORT NSTimeInterval const XZToastAnimationDuration NS_SWIFT_NAME(XZToast.animationDuration);
 
+typedef NS_ENUM(NSUInteger, XZToastPosition) {
+    XZToastPositionTop,
+    XZToastPositionMiddle,
+    XZToastPositionBottom,
+};
+
 /// 显示或隐藏提示信息的回调块函数类型。
 /// @param finished 操作过程是否完成
 typedef void (^XZToastCompletion)(BOOL finished);

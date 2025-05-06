@@ -22,7 +22,7 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic, readonly) BOOL isExclusive;
 
 @property (nonatomic, readonly) NSTimeInterval duration;
-@property (nonatomic, readonly) NSDirectionalRectEdge position;
+@property (nonatomic, readonly) XZToastPosition position;
 @property (nonatomic, readonly) CGFloat offset;
 
 - (void)resume:(void (^)(XZToastTask *task))block;
@@ -34,7 +34,7 @@ NS_ASSUME_NONNULL_BEGIN
 /// 发送 task 结束，并清理内存。
 - (void)finish;
 
-- (instancetype)initWithToastView:(UIView *)toastView duration:(NSTimeInterval)duration position:(NSDirectionalRectEdge)position offset:(CGFloat)offset exclusive:(BOOL)exclusive completion:(XZToastCompletion)completion;
+- (instancetype)initWithToastView:(UIView *)toastView duration:(NSTimeInterval)duration position:(XZToastPosition)position offset:(CGFloat)offset exclusive:(BOOL)exclusive completion:(XZToastCompletion)completion;
 
 @end
 

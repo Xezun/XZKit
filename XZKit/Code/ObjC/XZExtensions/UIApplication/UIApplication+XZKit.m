@@ -6,6 +6,9 @@
 //
 
 #import "UIApplication+XZKit.h"
+@import ObjectiveC;
+
+static const void * const _mainWindow = &_mainWindow;
 
 @implementation UIApplication (XZKit)
 
@@ -22,25 +25,36 @@
 }
 
 - (UIWindow *)xz_mainWindow {
-    if ([self.delegate respondsToSelector:@selector(window)]) {
-        UIWindow * const window = self.delegate.window;
-        if (window) {
-            return window;
+    UIWindow *window = objc_getAssociatedObject(self, _mainWindow);
+    
+    if (window == nil) {
+        if ([self.delegate respondsToSelector:@selector(window)]) {
+            window = self.delegate.window;
         }
-    }
-    if (@available(iOS 13.0, *)) {
-        for (UIWindowScene *scene in self.connectedScenes) {
-            if ([scene isKindOfClass:[UIWindowScene class]]) {
-                if ([scene.delegate respondsToSelector:@selector(window)]) {
-                    UIWindow * const window = ((id<UIWindowSceneDelegate>)scene.delegate).window;
-                    if (window) {
-                        return window;
+        if (window == nil) {
+            if (@available(iOS 13.0, *)) {
+                for (UIWindowScene *scene in self.connectedScenes) {
+                    if ([scene isKindOfClass:[UIWindowScene class]]) {
+                        if ([scene.delegate respondsToSelector:@selector(window)]) {
+                            window = ((id<UIWindowSceneDelegate>)scene.delegate).window;
+                            if (window) {
+                                break;
+                            }
+                        }
                     }
                 }
             }
         }
+        if (window) {
+            self.xz_mainWindow = window;
+        }
     }
-    return nil;
+    
+    return window;
+}
+
+- (void)xz_setMainWindow:(UIWindow *)xz_mainWindow {
+    objc_setAssociatedObject(self, _mainWindow, xz_mainWindow, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
 }
 
 @end

@@ -14,6 +14,8 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface XZToastManager : NSObject
 
+@property (nonatomic) NSUInteger maximumNumberOfToasts;
+
 @property (nonatomic, readonly) BOOL isExclusive;
 
 @property (nonatomic) NSArray<XZToastTask *> *tasks;

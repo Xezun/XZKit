@@ -33,6 +33,9 @@
     /// 每个 toast 周期执行的回调。
     /// 不要直接使用此变量设置值，而是使用 `-addUpdateCompletion:` 和 `-runUpdateCompletion` 方法。
     void (^_updateCompletion)(void);
+    
+    CGRect _bounds;
+    XZToastPosition _position;
 }
 
 + (XZToastManager *)managerForViewController:(UIViewController *)viewController {
@@ -54,6 +57,8 @@
     if (self) {
         _viewController = viewController;
         
+        _maximumNumberOfToasts = 3;
+        
         _containerView = [[XZToastContainerView alloc] init];
         _containerView.layer.shadowColor = UIColor.blackColor.CGColor;
         _containerView.layer.shadowOffset = CGSizeZero;
@@ -65,6 +70,11 @@
         _hideingTasks = [NSMutableArray arrayWithCapacity:4];
     }
     return self;
+}
+
+- (void)setMaximumNumberOfToasts:(NSUInteger)maximumNumberOfToasts {
+    _maximumNumberOfToasts = MAX(1, maximumNumberOfToasts);
+    [self setNeedsUpdateToasts];
 }
 
 - (void)showToast:(XZToastTask *)item {
@@ -171,6 +181,15 @@
         [rootView addSubview:_containerView];
     }
     
+    {
+        CGRect bounds = _viewController.view.bounds;
+        bounds = UIEdgeInsetsInsetRect(bounds, _viewController.view.safeAreaInsets);
+        bounds = CGRectInset(bounds, padding, padding);
+        if (!CGRectEqualToRect(bounds, _bounds)) {
+            // TODO: - layout
+        }
+    }
+    
     CGRect __block containerViewFrame = _containerView.frame;
     CGFloat const kMaxItemWidth = (containerViewFrame.size.width - spacing * 2.0);
     
@@ -179,6 +198,12 @@
     XZToastTask * const newToastItem = _waitingTasks.firstObject;
     if (newToastItem) {
         [_waitingTasks removeObjectAtIndex:0];
+        
+        // TODO: 当前位置不同，则移除所有
+        if (newToastItem.position != _position) {
+            _position = newToastItem.position;
+            [_hideingTasks addObjectsFromArray:_showingTasks];
+        }
         
         [_showingTasks addObject:newToastItem];
         [newToastItem resume:^(XZToastTask * _Nonnull task) {
@@ -204,7 +229,7 @@
     }
     
     // 最多展示三个，超出就强制移除最早的
-    if (_showingTasks.count > 3) {
+    if (_showingTasks.count > self.maximumNumberOfToasts) {
         XZToastTask *firstItem = _showingTasks.firstObject;
         
         [firstItem cancel];

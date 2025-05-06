@@ -14,7 +14,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface UIResponder (XZToast)
 
-- (XZToastTask *)xz_showToast:(XZToast *)toast duration:(NSTimeInterval)duration position:(NSDirectionalRectEdge)position offset:(CGFloat)offset exclusive:(BOOL)exclusive completion:(void (^_Nullable)(BOOL finished))completion NS_SWIFT_NAME(showToast(_:duration:position:offset:exclusive:completion:));
+- (XZToastTask *)xz_showToast:(XZToast *)toast duration:(NSTimeInterval)duration position:(XZToastPosition)position offset:(CGFloat)offset exclusive:(BOOL)exclusive completion:(void (^_Nullable)(BOOL finished))completion NS_SWIFT_NAME(showToast(_:duration:position:offset:exclusive:completion:));
 
 - (XZToastTask *)xz_showToast:(XZToast *)toast NS_SWIFT_NAME(showToast(_:));
 
@@ -25,6 +25,8 @@ NS_ASSUME_NONNULL_BEGIN
 ///
 /// 如果在展示 toast 的期间，控制器的大小发生了改变，需要调用此方法来刷新布局。
 - (void)xz_setNeedsLayoutToastViews;
+
+@property (nonatomic, setter=xz_setMaximumNumberOfToasts:) NSUInteger xz_maximumNumberOfToasts;
 
 @end
 
