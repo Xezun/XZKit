@@ -10,12 +10,21 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
+@class XZToastTask;
+
 @interface UIResponder (XZToast)
 
-- (void)xz_showToast:(XZToast *)toast duration:(NSTimeInterval)duration position:(NSDirectionalRectEdge)position offset:(CGFloat)offset isExclusive:(BOOL)isExclusive completion:(void (^_Nullable)(BOOL finished))completion NS_SWIFT_NAME(showToast(_:duration:position:offset:isExclusive:completion:));
+- (XZToastTask *)xz_showToast:(XZToast *)toast duration:(NSTimeInterval)duration position:(NSDirectionalRectEdge)position offset:(CGFloat)offset exclusive:(BOOL)exclusive completion:(void (^_Nullable)(BOOL finished))completion NS_SWIFT_NAME(showToast(_:duration:position:offset:exclusive:completion:));
 
-- (void)xz_showToast:(XZToast *)toast NS_SWIFT_NAME(showToast(_:));
-- (void)xz_hideToast:(id)toast completion:(XZToastHideCompletion)completion;
+- (XZToastTask *)xz_showToast:(XZToast *)toast NS_SWIFT_NAME(showToast(_:));
+
+- (void)xz_hideToast:(nullable XZToastTask *)task completion:(nullable void (^)(void))completion;
+- (void)xz_hideToast:(nullable void (^)(void))completion;
+
+/// 刷新 toast 的布局。
+///
+/// 如果在展示 toast 的期间，控制器的大小发生了改变，需要调用此方法来刷新布局。
+- (void)xz_setNeedsLayoutToastViews;
 
 @end
 

@@ -7,6 +7,8 @@
 
 #import "XZToast.h"
 
+NSTimeInterval const XZToastAnimationDuration = 0.35;
+
 @implementation XZToast
 
 - (instancetype)initWithView:(UIView *)view {

@@ -10,24 +10,22 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-@class XZToastItem;
+@class XZToastTask;
 
 @interface XZToastManager : NSObject
 
 @property (nonatomic, readonly) BOOL isExclusive;
 
-@property (nonatomic) NSArray<XZToastItem *> *items;
+@property (nonatomic) NSArray<XZToastTask *> *tasks;
 
-- (void)showToast:(XZToastItem *)item;
-- (void)hideToast:(nullable XZToastItem *)item completion:(XZToastHideCompletion)completion;
+- (void)showToast:(XZToastTask *)task;
+- (void)hideToast:(nullable XZToastTask *)task completion:(nullable void (^)(void))completion;
 
 @property (nonatomic) NSArray<UIView *> *subviews;
 
 + (XZToastManager *)managerForViewController:(UIViewController *)viewController;
 
-@end
-
-@interface XZToastTask : NSOperation
+- (void)setNeedsLayoutToastViews;
 
 @end
 

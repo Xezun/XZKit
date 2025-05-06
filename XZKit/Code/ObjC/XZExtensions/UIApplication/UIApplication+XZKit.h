@@ -17,6 +17,8 @@ NS_ASSUME_NONNULL_BEGIN
 /// 状态栏样式是否是由控制器管理的。
 @property (nonatomic, readonly) BOOL xz_isViewControllerBasedStatusBarAppearance NS_SWIFT_NAME(isViewControllerBasedStatusBarAppearance);
 
+@property (nonatomic, readonly) UIWindow *xz_mainWindow NS_SWIFT_NAME(mainWindow);
+
 @end
 
 NS_ASSUME_NONNULL_END
