@@ -15,9 +15,8 @@
     /// 视图控制器。
     UIViewController * __weak _viewController;
     
-    /// toast 视图所在的容器。
-    UIView *_containerView;
-    
+    /// 展示位置。
+    XZToastPosition _position;
     /// 待展示的。
     NSMutableArray<XZToastTask *> *_waitingTasks;
     /// 展示中待。该集合仅在周期内才可以修改。
@@ -34,8 +33,11 @@
     /// 不要直接使用此变量设置值，而是使用 `-addUpdateCompletion:` 和 `-runUpdateCompletion` 方法。
     void (^_updateCompletion)(void);
     
+    /// 布局的范围。
     CGRect _bounds;
-    XZToastPosition _position;
+    
+    BOOL _needsLayoutToastViews;
+    
 }
 
 + (XZToastManager *)managerForViewController:(UIViewController *)viewController {
@@ -58,18 +60,18 @@
         _viewController = viewController;
         
         _maximumNumberOfToasts = 3;
+        _offsets = calloc(3, sizeof(XZToastPosition));
         
-        _containerView = [[XZToastContainerView alloc] init];
-        _containerView.layer.shadowColor = UIColor.blackColor.CGColor;
-        _containerView.layer.shadowOffset = CGSizeZero;
-        _containerView.layer.shadowOpacity = 0.6;
-        _containerView.layer.shadowRadius = 5;
-        
-        _waitingTasks = [NSMutableArray arrayWithCapacity:4];
-        _showingTasks = [NSMutableArray arrayWithCapacity:4];
-        _hideingTasks = [NSMutableArray arrayWithCapacity:4];
+        _waitingTasks = [NSMutableArray arrayWithCapacity:16];
+        _showingTasks = [NSMutableArray arrayWithCapacity:16];
+        _hideingTasks = [NSMutableArray arrayWithCapacity:16];
     }
     return self;
+}
+
+- (void)dealloc {
+    free(_offsets);
+    _offsets = NULL;
 }
 
 - (void)setMaximumNumberOfToasts:(NSUInteger)maximumNumberOfToasts {
@@ -77,28 +79,28 @@
     [self setNeedsUpdateToasts];
 }
 
-- (void)showToast:(XZToastTask *)item {
-    [_waitingTasks addObject:item];
+- (void)showToast:(XZToastTask *)task {
+    [_waitingTasks addObject:task];
     [self setNeedsUpdateToasts];
 }
 
-- (void)hideToast:(nullable XZToastTask *)item completion:(void (^const)(void))updateCompletion {
-    if (item) {
-        if ([_showingTasks containsObject:item]) {
+- (void)hideToast:(nullable XZToastTask * const)task completion:(void (^const)(void))updateCompletion {
+    if (task) {
+        if ([_showingTasks containsObject:task]) {
             // 正在显示中，添加到待隐藏列队中
-            [item cancel];
-            [_hideingTasks addObject:item];
-        } else if ([_waitingTasks containsObject:item]) {
+            [task cancel];
+            [_hideingTasks addObject:task];
+        } else if ([_waitingTasks containsObject:task]) {
             // 正在等待显示中，因为没有显示，直接取消
-            [_waitingTasks removeObject:item];
-            [item cancel];
-            [_hideingTasks addObject:item];
+            [_waitingTasks removeObject:task];
+            [task cancel];
+            [_hideingTasks addObject:task];
         }
     } else {
         if (_showingTasks.count > 0) {
             for (XZToastTask * const task in _showingTasks) {
                 [task cancel];
-                [_hideingTasks addObject:item];
+                [_hideingTasks addObject:task];
             }
         }
         if (_waitingTasks.count > 0) {
@@ -151,10 +153,6 @@
     
     // 只要 _waitingItems 或 _hideingItems 不为空，当前方法就会一直执行，直到处理完所有 toast
     if (_waitingTasks.count == 0 && _hideingTasks.count == 0) {
-        // 判断是否还有 toast 在展示
-        if (_showingTasks.count == 0) {
-            [_containerView removeFromSuperview];
-        }
         _needsUpdateToasts = NO;
         // 执行周期回调
         [self runUpdateCompletion];
@@ -163,35 +161,20 @@
     
     // H:|-padding-spacing-[toast]-spacing-padding-|
     // V:|-padding-spacing-[toast]-spacing-[toast]-spacing-padding-|
-    CGFloat const padding = 20.0; // 边距
-    CGFloat const spacing = 10.0; // 间距
      
-    // 初始化容器视图
-    if (_containerView.superview == nil) {
+    // 初始化
+    if (CGRectIsEmpty(_bounds)) {
         UIView * const rootView = _viewController.viewIfLoaded;
         if (rootView == nil) {
             return;
         }
-        CGRect const bounds = UIEdgeInsetsInsetRect(_viewController.view.bounds, _viewController.view.safeAreaInsets);
-        CGFloat const w = CGRectGetWidth(bounds) - padding * 2.0;
-        CGFloat const x = CGRectGetMinX(bounds) + padding;
-        CGFloat const h = spacing;
-        CGFloat const y = CGRectGetMaxY(bounds) - padding - h;
-        _containerView.frame = CGRectMake(x, y, w, h);
-        [rootView addSubview:_containerView];
+        UIEdgeInsets const safeAreaInsets = rootView.safeAreaInsets;
+        CGRect       const bounds         = rootView.bounds;
+        _bounds = CGRectInset(UIEdgeInsetsInsetRect(bounds, safeAreaInsets), XZToastMargin, XZToastMargin);
     }
     
-    {
-        CGRect bounds = _viewController.view.bounds;
-        bounds = UIEdgeInsetsInsetRect(bounds, _viewController.view.safeAreaInsets);
-        bounds = CGRectInset(bounds, padding, padding);
-        if (!CGRectEqualToRect(bounds, _bounds)) {
-            // TODO: - layout
-        }
-    }
-    
-    CGRect __block containerViewFrame = _containerView.frame;
-    CGFloat const kMaxItemWidth = (containerViewFrame.size.width - spacing * 2.0);
+//    CGRect __block containerViewFrame = _containerView.frame;
+//    CGFloat const kMaxItemWidth = (_bounds.size.width - spacing * 2.0);
     
     // 将等待中的 toast 出列一个显示。
     // 每次只展示一个，这样每个 toast 最少有 XZToastAnimationDuration * 3 的展示时间。
@@ -199,66 +182,124 @@
     if (newToastItem) {
         [_waitingTasks removeObjectAtIndex:0];
         
-        // TODO: 当前位置不同，则移除所有
-        if (newToastItem.position != _position) {
+        // 展示位置不同，移除当前所有 toast
+        if (_position != newToastItem.position) {
             _position = newToastItem.position;
             [_hideingTasks addObjectsFromArray:_showingTasks];
         }
-        
+        newToastItem.direction = !_showingTasks.lastObject.direction;// (self->_showingTasks.count % 2 == 0);
         [_showingTasks addObject:newToastItem];
-        [newToastItem resume:^(XZToastTask * _Nonnull task) {
-            [self->_hideingTasks addObject:task];
-            [self setNeedsUpdateToasts];
-        }];
+        
+        // 定时
+        if (newToastItem.duration > 0) {
+            [newToastItem resume:^(XZToastTask * _Nonnull task) {
+                [self->_hideingTasks addObject:task];
+                [self setNeedsUpdateToasts];
+            }];
+        }
         
         // toast 自适应大小
         UIView * const newToastView = newToastItem.toastView;
-        CGSize itemSize = [newToastView sizeThatFits:CGSizeMake(kMaxItemWidth, 0)];
-        if (itemSize.width <= 0 || itemSize.height <= 0) {
-            itemSize = newToastView.frame.size;
+        newToastItem->_frame.size = [newToastView sizeThatFits:CGSizeMake(_bounds.size.width, 0)];
+        newToastItem->_frame.origin.x = (_bounds.size.width - newToastItem->_frame.size.width) * 0.5 + _bounds.origin.x;
+        switch (_position) {
+            case XZToastPositionTop:
+                newToastItem->_frame.origin.y = CGRectGetMinY(_bounds) - newToastItem->_frame.size.height;
+                break;
+            case XZToastPositionMiddle:
+                newToastItem->_frame.origin.y = CGRectGetMidY(_bounds) - newToastItem->_frame.size.height * 0.5;
+                break;
+            case XZToastPositionBottom:
+                newToastItem->_frame.origin.y = CGRectGetMaxY(_bounds);
+                break;
         }
-        
-        // 新添加的 item 添加到末尾
-        newToastItem->_frame.size.width = MIN(itemSize.width, kMaxItemWidth);
-        newToastItem->_frame.size.height = itemSize.height;
-        newToastItem->_frame.origin.x = (containerViewFrame.size.width - newToastItem->_frame.size.width) * 0.5;
-        newToastItem->_frame.origin.y = containerViewFrame.size.height;
+        newToastItem->_frame.origin.y += _offsets[_position];
         newToastView.frame = newToastItem->_frame;
         newToastView.alpha = 0;
-        [_containerView addSubview:newToastView];
-    }
-    
-    // 最多展示三个，超出就强制移除最早的
-    if (_showingTasks.count > self.maximumNumberOfToasts) {
-        XZToastTask *firstItem = _showingTasks.firstObject;
-        
-        [firstItem cancel];
-        [_hideingTasks addObject:firstItem];
+        [_viewController.view addSubview:newToastView];
     }
     
     // 从正显示的集合中移除待隐藏的。
-    NSArray * const _hideingTasks = [self->_hideingTasks copy];
+    NSMutableArray * const _hideingTasks = [self->_hideingTasks mutableCopy];
     for (XZToastTask *task in _hideingTasks) {
         [_showingTasks removeObject:task];
     }
     [self->_hideingTasks removeAllObjects];
     
+    // 检查数量限制，超出就直接移除
+    while (_showingTasks.count > _maximumNumberOfToasts) {
+        XZToastTask *firstItem = _showingTasks.firstObject;
+        [_showingTasks removeObjectAtIndex:0];
+        
+        [firstItem cancel];
+        [_hideingTasks addObject:firstItem];
+    }
+    
     [UIView animateWithDuration:XZToastAnimationDuration animations:^{
-        // 重新调整
-        CGFloat newHeight = spacing;
-        for (XZToastTask *item in self->_showingTasks) {
-            item->_frame.origin.y = newHeight;
-            item.toastView.frame = item->_frame;
-            item.toastView.alpha = 1.0;
-            newHeight += (item->_frame.size.height + spacing);
+        switch (self->_position) {
+            case XZToastPositionTop: {
+                CGFloat __block y = CGRectGetMinY(self->_bounds) + self->_offsets[XZToastPositionTop];
+                [self->_showingTasks enumerateObjectsWithOptions:NSEnumerationReverse usingBlock:^(XZToastTask * _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
+                    obj.toastView.alpha = 1.0;
+                    obj->_frame.origin.y = y;
+                    obj.toastView.frame = obj->_frame;
+                    y = CGRectGetMaxY(obj->_frame);
+                }];
+                
+                // 隐藏动画
+                for (XZToastTask *item in _hideingTasks) {
+                    item.toastView.alpha = 0.0;
+                    item.toastView.frame = CGRectOffset(item->_frame, 0, -item->_frame.size.height);
+                }
+                break;
+            }
+            case XZToastPositionMiddle: {
+                // 最新的在中间，剩下的分居上下两侧
+                if (self->_showingTasks.count > 0) {
+                    XZToastTask *item = self->_showingTasks.lastObject;
+                    item.toastView.alpha = 1.0;
+                    item->_frame.origin.y = CGRectGetMidY(self->_bounds) - CGRectGetHeight(item->_frame) * 0.5 + self->_offsets[XZToastPositionMiddle];
+                    item.toastView.frame = item->_frame;
+                    CGFloat __block minY = CGRectGetMinY(item->_frame);
+                    CGFloat __block maxY = CGRectGetMaxY(item->_frame);
+                    for (NSInteger i = (NSInteger)(self->_showingTasks.count) - 2; i >= 0; i--) {
+                        XZToastTask *item = self->_showingTasks[i];
+                        if (item.direction) {
+                            item->_frame.origin.y = maxY;
+                            item.toastView.frame = item->_frame;
+                            maxY = CGRectGetMaxY(item->_frame);
+                        } else {
+                            item->_frame.origin.y = minY - CGRectGetHeight(item->_frame);
+                            item.toastView.frame = item->_frame;
+                            minY = CGRectGetMinY(item->_frame);
+                        }
+                    }
+                }
+                for (XZToastTask *item in _hideingTasks) {
+                    item.toastView.alpha = 0.0;
+                }
+                break;
+            }
+            case XZToastPositionBottom: {
+                // 最新的在底部，从底部开始布局
+                CGFloat __block y = CGRectGetMaxY(self->_bounds) + self->_offsets[XZToastPositionBottom];
+                [self->_showingTasks enumerateObjectsWithOptions:NSEnumerationReverse usingBlock:^(XZToastTask * _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
+                    obj.toastView.alpha = 1.0;
+                    obj->_frame.origin.y = y - CGRectGetHeight(obj->_frame);
+                    obj.toastView.frame = obj->_frame;
+                    y = obj->_frame.origin.y;
+                }];
+                
+                // 隐藏动画
+                for (XZToastTask *item in _hideingTasks) {
+                    item.toastView.alpha = 0.0;
+                    item.toastView.frame = CGRectOffset(item->_frame, 0, item->_frame.size.height);
+                }
+                break;
+            }
         }
-        containerViewFrame.origin.y = CGRectGetMaxY(containerViewFrame) - newHeight;
-        containerViewFrame.size.height = newHeight;
-        self->_containerView.frame = containerViewFrame;
-        // 隐藏待移除的
-        for (XZToastTask *item in _hideingTasks) {
-            item.toastView.alpha = 0.0;
-        }
+        
+        
     } completion:^(BOOL finished) {
         // 向移除的 toast 发送消息
         for (XZToastTask *item in _hideingTasks) {
@@ -316,6 +357,24 @@
 }
 
 - (void)setNeedsLayoutToastViews {
+    if (_needsLayoutToastViews) {
+        return;
+    }
+    _needsLayoutToastViews = YES;
+    [NSRunLoop.mainRunLoop performInModes:@[NSRunLoopCommonModes] block:^{
+        [self layoutToastViewsIfNeeded];
+    }];
+}
+
+- (void)layoutToastViewsIfNeeded {
+    if (!_needsLayoutToastViews) {
+        return;
+    }
+    [self layoutToastViews];
+    _needsLayoutToastViews = NO;
+}
+
+- (void)layoutToastViews {
     
 }
 

@@ -6,21 +6,21 @@
 //
 
 #import "XZToastTask.h"
+#import "XZToastContainerView.h"
 
 @implementation XZToastTask {
     dispatch_block_t _timer;
     XZToastCompletion _completion;
 }
 
-- (instancetype)initWithToastView:(UIView *)toastView duration:(NSTimeInterval)duration position:(XZToastPosition)position offset:(CGFloat)offset exclusive:(BOOL)exclusive completion:(XZToastCompletion)completion {
+- (instancetype)initWithToastView:(UIView *)toastView duration:(NSTimeInterval)duration position:(XZToastPosition)position exclusive:(BOOL)exclusive completion:(XZToastCompletion)completion {
     self = [super init];
     if (self) {
-        _toastView = toastView;
-        _duration = duration;
-        _position = position;
-        _offset = offset;
+        _toastView   = [[XZToastContainerView alloc] initWithToastView:toastView];
+        _duration    = duration;
+        _position    = position;
         _isExclusive = exclusive;
-        _completion = completion;
+        _completion  = completion;
         _isCancelled = NO;
     }
     return self;

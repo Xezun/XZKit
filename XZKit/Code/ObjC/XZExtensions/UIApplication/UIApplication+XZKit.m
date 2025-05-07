@@ -45,9 +45,7 @@ static const void * const _mainWindow = &_mainWindow;
                 }
             }
         }
-        if (window) {
-            self.xz_mainWindow = window;
-        }
+        self.xz_mainWindow = window;
     }
     
     return window;

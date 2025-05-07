@@ -17,6 +17,7 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic) NSUInteger maximumNumberOfToasts;
 
 @property (nonatomic, readonly) BOOL isExclusive;
+@property (nonatomic, readonly) CGFloat *offsets;
 
 @property (nonatomic) NSArray<XZToastTask *> *tasks;
 
@@ -25,7 +26,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 @property (nonatomic) NSArray<UIView *> *subviews;
 
-+ (XZToastManager *)managerForViewController:(UIViewController *)viewController;
++ (nullable XZToastManager *)managerForViewController:(UIViewController *)viewController;
 
 - (void)setNeedsLayoutToastViews;
 

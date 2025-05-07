@@ -21,8 +21,8 @@ NS_ASSUME_NONNULL_BEGIN
 ///
 /// 当组件依赖 window 处理逻辑时，通常情况下是获取 `keyWindow` 来处理，但是有时候 `keyWindow` 并不是业务主窗口。
 ///
-/// 当应用未设置主窗口时，此属性会按 UIApplicationDelegate、UIWindowSceneDelegate 的优先级取 window 属性。
-@property (nonatomic, setter=xz_setMainWindow:) UIWindow *xz_mainWindow NS_SWIFT_NAME(mainWindow);
+/// 此属性可写。默认情况，此属性会按优先级取 UIApplicationDelegate、UIWindowSceneDelegate 的 `window` 属性。
+@property (nonatomic, setter=xz_setMainWindow:, nullable) UIWindow *xz_mainWindow NS_SWIFT_NAME(mainWindow);
 
 @end
 

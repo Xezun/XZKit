@@ -13,7 +13,7 @@ NS_ASSUME_NONNULL_BEGIN
 FOUNDATION_EXPORT NSTimeInterval const XZToastAnimationDuration NS_SWIFT_NAME(XZToast.animationDuration);
 
 typedef NS_ENUM(NSUInteger, XZToastPosition) {
-    XZToastPositionTop,
+    XZToastPositionTop = 0, // 会被用作数组 index 必须从 0 开始
     XZToastPositionMiddle,
     XZToastPositionBottom,
 };

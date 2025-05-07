@@ -14,12 +14,12 @@
 
 @implementation UIResponder (XZToast)
 
-- (XZToastTask *)xz_showToast:(XZToast *)toast duration:(NSTimeInterval)duration position:(XZToastPosition)position offset:(CGFloat)offset exclusive:(BOOL)exclusive completion:(void (^)(BOOL))completion {
-    return [UIApplication.sharedApplication.xz_mainWindow xz_showToast:toast duration:duration position:position offset:offset exclusive:exclusive completion:completion];
+- (XZToastTask *)xz_showToast:(XZToast *)toast duration:(NSTimeInterval)duration position:(XZToastPosition)position exclusive:(BOOL)exclusive completion:(void (^)(BOOL))completion {
+    return [UIApplication.sharedApplication.xz_mainWindow xz_showToast:toast duration:duration position:position exclusive:exclusive completion:completion];
 }
 
 - (XZToastTask *)xz_showToast:(XZToast *)toast {
-    return [self xz_showToast:toast duration:3.0 position:(XZToastPositionBottom) offset:0 exclusive:false completion:nil];
+    return [self xz_showToast:toast duration:3.0 position:(XZToastPositionBottom) exclusive:false completion:nil];
 }
 
 - (void)xz_hideToast:(XZToastTask *)task completion:(void (^)(void))completion {
@@ -42,12 +42,20 @@
     [UIApplication.sharedApplication.xz_mainWindow xz_setMaximumNumberOfToasts:xz_maximumNumberOfToasts];
 }
 
+- (void)xz_setOffset:(CGFloat)offset forToastInPosition:(XZToastPosition)position {
+    [UIApplication.sharedApplication.xz_mainWindow xz_setOffset:offset forToastInPosition:position];
+}
+
+- (CGFloat)xz_offsetForToastInPosition:(XZToastPosition)position {
+    return [UIApplication.sharedApplication.xz_mainWindow xz_offsetForToastInPosition:position];
+}
+
 @end
 
 @implementation UIView (XZToast)
 
-- (void)xz_showToast:(XZToast *)toast duration:(NSTimeInterval)duration position:(XZToastPosition)position offset:(CGFloat)offset exclusive:(BOOL)exclusive completion:(void (^)(BOOL))completion {
-    [self.nextResponder xz_showToast:toast duration:duration position:position offset:offset exclusive:exclusive completion:completion];
+- (void)xz_showToast:(XZToast *)toast duration:(NSTimeInterval)duration position:(XZToastPosition)position exclusive:(BOOL)exclusive completion:(void (^)(BOOL))completion {
+    [self.nextResponder xz_showToast:toast duration:duration position:position exclusive:exclusive completion:completion];
 }
 
 - (void)xz_hideToast:(XZToastTask *)task completion:(void (^)(void))completion {
@@ -59,8 +67,8 @@
 
 @implementation UIWindow (XZToast)
 
-- (void)xz_showToast:(XZToast *)toast duration:(NSTimeInterval)duration position:(XZToastPosition)position offset:(CGFloat)offset exclusive:(BOOL)exclusive completion:(void (^)(BOOL))completion {
-    [self.rootViewController xz_showToast:toast duration:duration position:position offset:offset exclusive:exclusive completion:completion];
+- (void)xz_showToast:(XZToast *)toast duration:(NSTimeInterval)duration position:(XZToastPosition)position exclusive:(BOOL)exclusive completion:(void (^)(BOOL))completion {
+    [self.rootViewController xz_showToast:toast duration:duration position:position exclusive:exclusive completion:completion];
 }
 
 - (void)xz_hideToast:(XZToastTask *)task completion:(void (^)(void))completion {
@@ -72,8 +80,9 @@
 
 @implementation UIViewController (XZToast)
 
-- (void)xz_showToast:(XZToast *)toast duration:(NSTimeInterval)duration position:(XZToastPosition)position offset:(CGFloat)offset exclusive:(BOOL)exclusive completion:(void (^)(BOOL))completion {
-    XZToastTask *item = [[XZToastTask alloc] initWithToastView:toast.view duration:duration position:position offset:offset exclusive:exclusive completion:completion];
+- (void)xz_showToast:(XZToast *)toast duration:(NSTimeInterval)duration position:(XZToastPosition)position exclusive:(BOOL)exclusive completion:(void (^)(BOOL))completion {
+    NSParameterAssert(isnormal(duration));
+    XZToastTask *item = [[XZToastTask alloc] initWithToastView:toast.view duration:duration position:position exclusive:exclusive completion:completion];
     [[XZToastManager managerForViewController:self] showToast:item];
 }
 
@@ -91,6 +100,14 @@
 
 - (void)xz_setMaximumNumberOfToasts:(NSUInteger)xz_maximumNumberOfToasts {
     [XZToastManager managerForViewController:self].maximumNumberOfToasts = xz_maximumNumberOfToasts;
+}
+
+- (void)xz_setToastOffset:(CGFloat)offset forPosition:(XZToastPosition)position {
+    [XZToastManager managerForViewController:self].offsets[position] = offset;
+}
+
+- (CGFloat)xz_offsetForToastInPosition:(XZToastPosition)position {
+    return [XZToastManager managerForViewController:self].offsets[position];
 }
 
 @end

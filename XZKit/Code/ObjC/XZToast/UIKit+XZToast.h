@@ -14,9 +14,9 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface UIResponder (XZToast)
 
-- (XZToastTask *)xz_showToast:(XZToast *)toast duration:(NSTimeInterval)duration position:(XZToastPosition)position offset:(CGFloat)offset exclusive:(BOOL)exclusive completion:(void (^_Nullable)(BOOL finished))completion NS_SWIFT_NAME(showToast(_:duration:position:offset:exclusive:completion:));
+- (nullable XZToastTask *)xz_showToast:(XZToast *)toast duration:(NSTimeInterval)duration position:(XZToastPosition)position exclusive:(BOOL)exclusive completion:(void (^_Nullable)(BOOL finished))completion NS_SWIFT_NAME(showToast(_:duration:position:exclusive:completion:));
 
-- (XZToastTask *)xz_showToast:(XZToast *)toast NS_SWIFT_NAME(showToast(_:));
+- (nullable XZToastTask *)xz_showToast:(XZToast *)toast NS_SWIFT_NAME(showToast(_:));
 
 - (void)xz_hideToast:(nullable XZToastTask *)task completion:(nullable void (^)(void))completion;
 - (void)xz_hideToast:(nullable void (^)(void))completion;
@@ -27,6 +27,9 @@ NS_ASSUME_NONNULL_BEGIN
 - (void)xz_setNeedsLayoutToastViews;
 
 @property (nonatomic, setter=xz_setMaximumNumberOfToasts:) NSUInteger xz_maximumNumberOfToasts;
+
+- (void)xz_setOffset:(CGFloat)offset forToastInPosition:(XZToastPosition)position;
+- (CGFloat)xz_offsetForToastInPosition:(XZToastPosition)position;
 
 @end
 

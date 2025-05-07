@@ -14,6 +14,8 @@ import XZDefines
 class Example13ViewController: UITableViewController {
     
     var index = 0
+    
+    var position = XZToastPosition.middle;
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -24,8 +26,22 @@ class Example13ViewController: UITableViewController {
         // Uncomment the following line to display an Edit button in the navigation bar for this view controller.
         // self.navigationItem.rightBarButtonItem = self.editButtonItem
     }
+    
+    override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        let cell = super.tableView(tableView, cellForRowAt: indexPath);
+        if indexPath.section == 0 {
+            cell.accessoryType = indexPath.row == position.rawValue ? .checkmark : .disclosureIndicator;
+        }
+        return cell
+    }
 
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        if indexPath.section == 0 {
+            self.position = .init(rawValue: UInt(indexPath.row))!
+            tableView.reloadSections([0], with: .none)
+            return
+        }
+        
         switch indexPath.row {
         case 0:
             let duration = TimeInterval(arc4random_uniform(5)) + 0.5;
@@ -50,8 +66,8 @@ class Example13ViewController: UITableViewController {
             showMessage("消息3", duration: 3.0 - XZToast.animationDuration * 2.0);
             
         case 10:
-            self.showToast(.message("这是消息2"), duration: 3.0, position: .bottom, offset: 0, exclusive: false)
-            self.showToast(.message("这是消息3"), duration: 2.0, position: .bottom, offset: 0, exclusive: false)
+            self.showToast(.message("这是消息2"), duration: 3.0, position: .bottom, exclusive: false)
+            self.showToast(.message("这是消息3"), duration: 2.0, position: .bottom, exclusive: false)
 //            showToast(.loading("加载中..."))
             break
         default:
@@ -62,7 +78,7 @@ class Example13ViewController: UITableViewController {
     func showMessage(_ message: String, duration: TimeInterval) {
         let start = timestamp()
         let index = self.index
-        self.showToast(.message("\(index). \(message)"), duration: duration, position: .bottom, offset: 0, exclusive: false) { finished in
+        self.showToast(.message("\(index). \(message)"), duration: duration, position: self.position, exclusive: false) { finished in
             let end = timestamp()
             let delta = String.init(format: "%.2f", end - start);
             NSLog("消息：\(index). \(message) \n状态：\(finished) \n定时：\(duration) \n耗时：\(delta)")

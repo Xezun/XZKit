@@ -12,6 +12,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface XZToastTask : NSObject {
     @package
+    /// 为了方便计算 toastView 的 frame 而设置。
     CGRect _frame;
 }
 
@@ -23,8 +24,9 @@ NS_ASSUME_NONNULL_BEGIN
 
 @property (nonatomic, readonly) NSTimeInterval duration;
 @property (nonatomic, readonly) XZToastPosition position;
-@property (nonatomic, readonly) CGFloat offset;
+@property (nonatomic) BOOL direction;
 
+/// 开启任务定时器。
 - (void)resume:(void (^)(XZToastTask *task))block;
 
 @property (nonatomic, readonly) BOOL isCancelled;
@@ -34,7 +36,7 @@ NS_ASSUME_NONNULL_BEGIN
 /// 发送 task 结束，并清理内存。
 - (void)finish;
 
-- (instancetype)initWithToastView:(UIView *)toastView duration:(NSTimeInterval)duration position:(XZToastPosition)position offset:(CGFloat)offset exclusive:(BOOL)exclusive completion:(XZToastCompletion)completion;
+- (instancetype)initWithToastView:(UIView *)toastView duration:(NSTimeInterval)duration position:(XZToastPosition)position exclusive:(BOOL)exclusive completion:(XZToastCompletion)completion;
 
 @end
 
