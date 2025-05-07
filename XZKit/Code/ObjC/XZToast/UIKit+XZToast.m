@@ -14,16 +14,16 @@
 
 @implementation UIResponder (XZToast)
 
-- (XZToastTask *)xz_showToast:(XZToast *)toast duration:(NSTimeInterval)duration position:(XZToastPosition)position exclusive:(BOOL)exclusive completion:(void (^)(BOOL))completion {
+- (XZToast *)xz_showToast:(XZToast *)toast duration:(NSTimeInterval)duration position:(XZToastPosition)position exclusive:(BOOL)exclusive completion:(void (^)(BOOL))completion {
     return [UIApplication.sharedApplication.xz_mainWindow xz_showToast:toast duration:duration position:position exclusive:exclusive completion:completion];
 }
 
-- (XZToastTask *)xz_showToast:(XZToast *)toast {
+- (XZToast *)xz_showToast:(XZToast *)toast {
     return [self xz_showToast:toast duration:3.0 position:(XZToastPositionBottom) exclusive:false completion:nil];
 }
 
-- (void)xz_hideToast:(XZToastTask *)task completion:(void (^)(void))completion {
-    [UIApplication.sharedApplication.xz_mainWindow xz_hideToast:task completion:completion];
+- (void)xz_hideToast:(XZToast *)toast completion:(void (^)(void))completion {
+    [UIApplication.sharedApplication.xz_mainWindow xz_hideToast:toast completion:completion];
 }
 
 - (void)xz_hideToast:(void (^)(void))completion {
@@ -58,8 +58,8 @@
     [self.nextResponder xz_showToast:toast duration:duration position:position exclusive:exclusive completion:completion];
 }
 
-- (void)xz_hideToast:(XZToastTask *)task completion:(void (^)(void))completion {
-    [self.nextResponder xz_hideToast:task completion:completion];
+- (void)xz_hideToast:(XZToast *)toast completion:(void (^)(void))completion {
+    [self.nextResponder xz_hideToast:toast completion:completion];
 }
 
 @end
@@ -71,8 +71,8 @@
     [self.rootViewController xz_showToast:toast duration:duration position:position exclusive:exclusive completion:completion];
 }
 
-- (void)xz_hideToast:(XZToastTask *)task completion:(void (^)(void))completion {
-    [self.rootViewController xz_hideToast:task completion:completion];
+- (void)xz_hideToast:(XZToast *)toast completion:(void (^)(void))completion {
+    [self.rootViewController xz_hideToast:toast completion:completion];
 }
 
 @end
@@ -82,12 +82,12 @@
 
 - (void)xz_showToast:(XZToast *)toast duration:(NSTimeInterval)duration position:(XZToastPosition)position exclusive:(BOOL)exclusive completion:(void (^)(BOOL))completion {
     NSParameterAssert(isnormal(duration));
-    XZToastTask *item = [[XZToastTask alloc] initWithToastView:toast.view duration:duration position:position exclusive:exclusive completion:completion];
+    XZToastTask * const item = [[XZToastTask alloc] initWithView:toast.view duration:duration position:position exclusive:exclusive completion:completion];
     [[XZToastManager managerForViewController:self] showToast:item];
 }
 
-- (void)xz_hideToast:(XZToastTask *)task completion:(void (^)(void))completion {
-    [[XZToastManager managerForViewController:self] hideToast:task completion:completion];
+- (void)xz_hideToast:(XZToast *)toast completion:(void (^)(void))completion {
+    [[XZToastManager managerForViewController:self] hideToast:toast completion:completion];
 }
 
 - (void)xz_setNeedsLayoutToastViews {

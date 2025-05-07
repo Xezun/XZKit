@@ -10,13 +10,12 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-@interface XZToastTask : NSObject {
+@interface XZToastTask : XZToast {
     @package
     /// 为了方便计算 toastView 的 frame 而设置。
     CGRect _frame;
 }
 
-@property (nonatomic, readonly) UIView *toastView;
 /// 独占的 toast 不会与其它 toast 同时显示：
 /// - 展示时，带背景，且立即顶掉正在展示的所有 toast
 /// - 其它 toast 展示时，会被立即顶掉
@@ -36,7 +35,8 @@ NS_ASSUME_NONNULL_BEGIN
 /// 发送 task 结束，并清理内存。
 - (void)finish;
 
-- (instancetype)initWithToastView:(UIView *)toastView duration:(NSTimeInterval)duration position:(XZToastPosition)position exclusive:(BOOL)exclusive completion:(XZToastCompletion)completion;
+- (instancetype)initWithView:(UIView *)view NS_UNAVAILABLE;
+- (instancetype)initWithView:(UIView *)view duration:(NSTimeInterval)duration position:(XZToastPosition)position exclusive:(BOOL)exclusive completion:(XZToastCompletion)completion NS_DESIGNATED_INITIALIZER;
 
 @end
 

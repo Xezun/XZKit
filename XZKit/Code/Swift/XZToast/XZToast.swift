@@ -13,19 +13,6 @@ import XZTextImageView
 import XZToastObjC
 #endif
 
-extension XZToast {
-    
-    public static func message(_ text: String) -> XZToast {
-        let button = UIButton.init(type: .system)
-        button.setTitle(text, for: .normal)
-        button.contentEdgeInsets = .init(top: 10, left: 10, bottom: 10, right: 10)
-        button.backgroundColor = .init(white: 0, alpha: 0.7)
-        button.layer.cornerRadius = 6.0
-        button.clipsToBounds = true
-        button.setTitleColor(.white, for: .normal)
-        return XZToast.init(view: button)
-    }
-}
 
 /// 提示信息。
 //public struct XZToast : RawRepresentable, ExpressibleByStringLiteral {

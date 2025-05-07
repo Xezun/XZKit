@@ -13,10 +13,9 @@
     XZToastCompletion _completion;
 }
 
-- (instancetype)initWithToastView:(UIView *)toastView duration:(NSTimeInterval)duration position:(XZToastPosition)position exclusive:(BOOL)exclusive completion:(XZToastCompletion)completion {
-    self = [super init];
+- (instancetype)initWithView:(UIView *)view duration:(NSTimeInterval)duration position:(XZToastPosition)position exclusive:(BOOL)exclusive completion:(XZToastCompletion)completion {
+    self = [super initWithView:[[XZToastContainerView alloc] initWithView:view]];
     if (self) {
-        _toastView   = [[XZToastContainerView alloc] initWithToastView:toastView];
         _duration    = duration;
         _position    = position;
         _isExclusive = exclusive;
