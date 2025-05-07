@@ -239,7 +239,6 @@ static void * _context = NULL;
             }
         }
         newToastItem.direction = !_showingTasks.lastObject.direction;
-        [_showingTasks addObject:newToastItem];
         
         // 定时
         if (newToastItem.duration > 0) {
@@ -256,18 +255,32 @@ static void * _context = NULL;
         switch (_position) {
             case XZToastPositionTop:
                 newToastItem->_frame.origin.y = CGRectGetMinY(_bounds) - newToastItem->_frame.size.height;
+                newToastItem->_frame.origin.y += _offsets[_position];
+                newToastView.alpha = 0;
+                newToastView.frame = newToastItem->_frame;
                 break;
             case XZToastPositionMiddle:
                 newToastItem->_frame.origin.y = CGRectGetMidY(_bounds) - newToastItem->_frame.size.height * 0.5;
+                newToastItem->_frame.origin.y += _offsets[_position];
+                if (_showingTasks.count > 0) {
+                    newToastView.alpha = 1.0;
+                    newToastView.frame = newToastItem->_frame;
+                    newToastView.transform = CGAffineTransformMakeScale(1.0, 0);
+                } else {
+                    newToastView.alpha = 0.0;
+                    newToastView.frame = newToastItem->_frame;
+                }
                 break;
             case XZToastPositionBottom:
                 newToastItem->_frame.origin.y = CGRectGetMaxY(_bounds);
+                newToastItem->_frame.origin.y += _offsets[_position];
+                newToastView.alpha = 0;
+                newToastView.frame = newToastItem->_frame;
                 break;
         }
-        newToastItem->_frame.origin.y += _offsets[_position];
-        newToastView.frame = newToastItem->_frame;
-        newToastView.alpha = 0;
         [_containerView addSubview:newToastView];
+        
+        [_showingTasks addObject:newToastItem];
     }
     
     // 从正显示的集合中移除待隐藏的。
@@ -310,6 +323,7 @@ static void * _context = NULL;
                     XZToastTask *item = self->_showingTasks.lastObject;
                     item.view.alpha = 1.0;
                     item->_frame.origin.y = CGRectGetMidY(self->_bounds) - CGRectGetHeight(item->_frame) * 0.5 + self->_offsets[XZToastPositionMiddle];
+                    item.view.transform = CGAffineTransformIdentity;
                     item.view.frame = item->_frame;
                     CGFloat __block minY = CGRectGetMinY(item->_frame);
                     CGFloat __block maxY = CGRectGetMaxY(item->_frame);
