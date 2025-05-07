@@ -300,7 +300,7 @@ static void * _context = NULL;
                 // 隐藏动画
                 for (XZToastTask *item in _hideingTasks) {
                     item.view.alpha = 0.0;
-                    item.view.frame = CGRectOffset(item->_frame, 0, -item->_frame.size.height);
+                    item.view.frame = CGRectOffset(item->_frame, 0, +item->_frame.size.height);
                 }
                 break;
             }
@@ -327,6 +327,7 @@ static void * _context = NULL;
                     }
                 }
                 for (XZToastTask *item in _hideingTasks) {
+                    item.view.frame = CGRectOffset(item->_frame, 0, item->_frame.size.height * (item.direction ? +1.0 : -1.0));
                     item.view.alpha = 0.0;
                 }
                 break;
@@ -344,7 +345,7 @@ static void * _context = NULL;
                 // 隐藏动画
                 for (XZToastTask *item in _hideingTasks) {
                     item.view.alpha = 0.0;
-                    item.view.frame = CGRectOffset(item->_frame, 0, item->_frame.size.height);
+                    item.view.frame = CGRectOffset(item->_frame, 0, -item->_frame.size.height);
                 }
                 break;
             }

@@ -91,12 +91,12 @@ class Example13ViewController: UITableViewController {
             }
         case 1:
             self.position = .init(rawValue: UInt(indexPath.row))!
-            tableView.reloadSections([0], with: .none)
+            tableView.reloadSections([indexPath.section], with: .none)
         case 2:
             guard let text = tableView.cellForRow(at: indexPath)?.textLabel?.text else { return }
             guard let number = UInt(text) else { return }
             self.maximumNumberOfToasts = number
-            tableView.reloadSections([2], with: UITableView.RowAnimation.none);
+            tableView.reloadSections([indexPath.section], with: .none);
         case 3:
             switch indexPath.row {
             case 0:
