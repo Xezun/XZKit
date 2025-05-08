@@ -296,6 +296,8 @@ static void * _context = NULL;
         newToastItem->_frame.origin.x = (_bounds.size.width - newToastItem->_frame.size.width) * 0.5 + _bounds.origin.x;
         
         if (newToastItem.view.superview == _containerView) {
+            [newToastItem.view.view setNeedsLayout];
+            [newToastItem.view.view layoutIfNeeded];
             [_containerView bringSubviewToFront:newToastItem.view];
         } else {
             switch (_position) {
@@ -395,7 +397,7 @@ static void * _context = NULL;
             break;
         }
         case XZToastPositionMiddle: {
-            [UIView animateWithDuration:XZToastAnimationDuration delay:0 usingSpringWithDamping:0.8 initialSpringVelocity:0.5 options:kNilOptions animations:^{
+            [UIView animateWithDuration:XZToastAnimationDuration delay:0 usingSpringWithDamping:0.8 initialSpringVelocity:0.5 options:UIViewAnimationOptionLayoutSubviews animations:^{
                 // 最新的在中间，剩下的分居上下两侧
                 if (self->_showingTasks.count > 0) {
                     XZToastTask *item = self->_showingTasks.lastObject;

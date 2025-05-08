@@ -16,8 +16,9 @@
     CGSize const size = view.frame.size;
     self = [super initWithFrame:CGRectMake(0, 0, XZToastInsets + size.width + XZToastInsets, XZToastInsets + size.height + XZToastInsets)];
     if (self) {
-        self.backgroundColor = UIColor.redColor;
         self.clipsToBounds = YES;
+        // self.backgroundColor = UIColor.redColor;
+        
         CALayer * const layer = self.layer;
         layer.shadowColor   = UIColor.blackColor.CGColor;
         layer.shadowOffset  = CGSizeZero;
@@ -35,18 +36,19 @@
     [super layoutSubviews];
     
     CGRect const bounds = self.bounds;
-    CGFloat const w = MAX(bounds.size.width - XZToastInsets * 2.0, 0.0);
-    CGFloat const h = MAX(bounds.size.height - XZToastInsets * 2.0, 0.0);
-    _view.frame = CGRectMake(XZToastInsets, XZToastInsets, w, h);
+    CGFloat const x = XZToastInsets;
+    CGFloat const y = XZToastInsets;
+    CGFloat const w = bounds.size.width - XZToastInsets * 2.0;
+    CGFloat const h = bounds.size.height - XZToastInsets * 2.0;
+    _view.frame = CGRectMake(x, y, w, h);
 }
 
 - (CGSize)sizeThatFits:(CGSize)size {
     CGFloat const maxToastWidth = size.width - XZToastInsets * 2.0;
-    if (maxToastWidth <= 0) {
-        return self.frame.size;
-    }
     CGSize const toastSize = [_view sizeThatFits:CGSizeMake(maxToastWidth, 0)];
-    return CGSizeMake(MIN(size.width, toastSize.width + XZToastInsets * 2.0), toastSize.height + XZToastInsets * 2.0);
+    CGFloat const width = MIN(size.width, toastSize.width + XZToastInsets * 2.0);
+    CGFloat const height = toastSize.height + XZToastInsets * 2.0;
+    return CGSizeMake(width, height);
 }
 
 @end

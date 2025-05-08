@@ -61,10 +61,8 @@ class Example13ViewController: UITableViewController {
             switch indexPath.row {
             case 0:
                 let duration = TimeInterval(arc4random_uniform(3)) + 2.0;
-                let sample = "这是一个字数特别多所以长度很长的消息";
-                
-                let index = sample.index(sample.startIndex, offsetBy: Int(arc4random_uniform(UInt32(sample.count))))
-                let message = String(format: "[%.2f] %@", duration, String(sample[..<index]));
+                let length = Int(arc4random_uniform(18)) + 2;
+                let message = String(format: "[%.2f] %@", duration, "消息".padding(toLength: length, withPad: "消息", startingAt: 0));
                 showMessage(message, duration: duration)
             case 1:
                 showMessage("这个消息时长很短", duration: 0.1)
@@ -84,6 +82,11 @@ class Example13ViewController: UITableViewController {
                 showMessage("消息2", duration: 3.0 - XZToast.animationDuration * 1.5);
                 showMessage("消息3", duration: 3.0 - XZToast.animationDuration * 2.0);
                 
+            case 5:
+                showMessage("字数特别多、长度特别长的超级长消息", duration: 3.0)
+                
+            case 6:
+                showMessage("短消息", duration: 3.0)
             case 10:
                 self.showToast(.message("这是消息2"), duration: 3.0, position: .bottom, exclusive: false)
                 self.showToast(.message("这是消息3"), duration: 2.0, position: .bottom, exclusive: false)

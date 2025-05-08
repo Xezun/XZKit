@@ -7,10 +7,13 @@
 
 #import "XZToast.h"
 
-NSTimeInterval const XZToastAnimationDuration = 2.35;
+NSTimeInterval const XZToastAnimationDuration = 0.35;
 
-@interface XZToastLabel : UILabel
-
+/// UILabel 在从长变短时，如果在短的状态下，文字占不满宽度，则无法添加动画。
+/// 
+/// 因此定义了此视图。
+@interface XZToastTextView : UIView
+@property (nonatomic, readonly) UILabel *textLabel;
 @end
 
 @implementation XZToast
@@ -26,40 +29,55 @@ NSTimeInterval const XZToastAnimationDuration = 2.35;
 }
 
 + (XZToast *)messageToast:(NSString *)text {
-//    static UIButton *button = nil;
-//    if (button == nil) {
-//        button = [UIButton buttonWithType:(UIButtonTypeSystem)];
-//    }
-//    [button setTitle:text forState:(UIControlStateNormal)];
-//    button.contentEdgeInsets = UIEdgeInsetsMake(10, 10, 10, 10);
-//    button.backgroundColor = [UIColor colorWithWhite:0 alpha:0.7];
-//    button.layer.cornerRadius = 6.0;
-//    button.clipsToBounds = true;
-//    [button setTitleColor:UIColor.whiteColor forState:(UIControlStateNormal)];
-//    return [[self alloc] initWithView:button];
-    
-    static UILabel *label = nil;
-    if (label == nil) {
-        label = [[XZToastLabel alloc] init];
-        label.backgroundColor = [UIColor colorWithWhite:0 alpha:0.7];
-        label.layer.cornerRadius = 6.0;
-        label.clipsToBounds = true;
-        label.textColor = UIColor.whiteColor;
-        label.textAlignment = NSTextAlignmentCenter;
+    static XZToastTextView *_textView = nil;
+    if (_textView == nil) {
+        _textView = [[XZToastTextView alloc] init];
     }
-    
-    label.text = text;
-    
-    return [[self alloc] initWithView:label];
+    _textView.textLabel.text = text;
+    return [[self alloc] initWithView:_textView];
 }
 
 @end
 
-@implementation XZToastLabel
+@implementation XZToastTextView
+
+- (instancetype)initWithFrame:(CGRect)frame {
+    self = [super initWithFrame:frame];
+    if (self) {
+        self.backgroundColor = [UIColor colorWithWhite:0 alpha:0.7];
+        self.layer.cornerRadius = 6.0;
+        self.clipsToBounds = true;
+        
+        _textLabel = [[UILabel alloc] init];
+        // _textLabel.backgroundColor = UIColor.greenColor;
+        _textLabel.textColor = UIColor.whiteColor;
+        _textLabel.textAlignment = NSTextAlignmentCenter;
+        _textLabel.font = [UIFont systemFontOfSize:17.0];
+        [self addSubview:_textLabel];
+    }
+    return self;
+}
+
+- (void)layoutSubviews {
+    [super layoutSubviews];
+    
+    CGRect const bounds = self.bounds;
+    CGSize const textSize = [_textLabel sizeThatFits:CGSizeMake(bounds.size.width - 20.0, 0)];
+    
+    CGFloat const w = MIN(bounds.size.width - 20.0, textSize.width);
+    CGFloat const h = textSize.height;
+    CGFloat const x = bounds.origin.x + (bounds.size.width - w) * 0.5;
+    CGFloat const y = bounds.origin.y + (bounds.size.height - h) * 0.5;
+    _textLabel.frame = CGRectMake(x, y, w, h);
+}
 
 - (CGSize)sizeThatFits:(CGSize)size {
-    size = [super sizeThatFits:size];
-    return CGSizeMake(size.width + 20.0, size.height + 20.0);
+    if (size.width <= 20.0) {
+        return CGSizeMake(20.0, 20.0);
+    }
+    CGSize  const textSize = [_textLabel sizeThatFits:CGSizeMake(size.width - 20.0, 0)];
+    CGFloat const width = MIN(size.width, textSize.width + 20.0);
+    return CGSizeMake(width, textSize.height + 20.0);
 }
 
 @end
