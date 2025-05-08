@@ -60,7 +60,7 @@ class Example13ViewController: UITableViewController {
         case 0:
             switch indexPath.row {
             case 0:
-                let duration = TimeInterval(arc4random_uniform(5)) + 2.0;
+                let duration = TimeInterval(arc4random_uniform(3)) + 2.0;
                 let message = String(format: "这是一个 %.2f 秒的消息", duration);
                 showMessage(message, duration: duration)
             case 1:

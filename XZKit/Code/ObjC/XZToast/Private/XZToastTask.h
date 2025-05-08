@@ -23,7 +23,11 @@ NS_ASSUME_NONNULL_BEGIN
 
 @property (nonatomic, readonly) NSTimeInterval duration;
 @property (nonatomic, readonly) XZToastPosition position;
-@property (nonatomic) BOOL direction;
+/// 记录动画执行方向。
+/// 1. 显示时，仅对在中部展示的  toast 生效，决定旧 toast 被新 toast 挤出中间位置时，是挤向上方（YES），还是挤向下方（NO）。
+@property (nonatomic) BOOL showDirection;
+// 隐藏时，标记 toast 是否为因为数量超限而被移除，在顶部或底部展示的 toast 会以挤出的方向动画。
+@property (nonatomic) BOOL hideDirection;
 
 /// 开启任务定时器。
 - (void)resume:(void (^)(XZToastTask *task))block;
