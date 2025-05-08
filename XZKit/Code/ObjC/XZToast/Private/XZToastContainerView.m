@@ -16,11 +16,13 @@
     CGSize const size = view.frame.size;
     self = [super initWithFrame:CGRectMake(0, 0, XZToastInsets + size.width + XZToastInsets, XZToastInsets + size.height + XZToastInsets)];
     if (self) {
+        self.backgroundColor = UIColor.redColor;
+        self.clipsToBounds = YES;
         CALayer * const layer = self.layer;
         layer.shadowColor   = UIColor.blackColor.CGColor;
         layer.shadowOffset  = CGSizeZero;
         layer.shadowOpacity = 0.8;
-        layer.shadowRadius  = XZToastInsets;
+        layer.shadowRadius  = XZToastInsets * 0.5;
         
         _view = view;
         _view.frame = CGRectMake(XZToastInsets, XZToastInsets, size.width, size.height);

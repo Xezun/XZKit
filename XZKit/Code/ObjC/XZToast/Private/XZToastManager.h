@@ -21,8 +21,8 @@ NS_ASSUME_NONNULL_BEGIN
 
 @property (nonatomic) NSArray<XZToastTask *> *tasks;
 
-- (void)showToast:(XZToastTask *)task;
-- (void)hideToast:(nullable XZToast *)task completion:(nullable void (^)(void))completion;
+- (XZToastTask *)showToast:(XZToast *)toast duration:(NSTimeInterval)duration position:(XZToastPosition)position exclusive:(BOOL)exclusive completion:(void (^)(BOOL))completion;
+- (void)hideToast:(nullable XZToast *)toast completion:(nullable void (^)(void))completion;
 
 @property (nonatomic) NSArray<UIView *> *subviews;
 

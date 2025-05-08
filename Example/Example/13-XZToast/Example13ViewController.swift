@@ -61,7 +61,10 @@ class Example13ViewController: UITableViewController {
             switch indexPath.row {
             case 0:
                 let duration = TimeInterval(arc4random_uniform(3)) + 2.0;
-                let message = String(format: "这是一个 %.2f 秒的消息", duration);
+                let sample = "这是一个字数特别多所以长度很长的消息";
+                
+                let index = sample.index(sample.startIndex, offsetBy: Int(arc4random_uniform(UInt32(sample.count))))
+                let message = String(format: "[%.2f] %@", duration, String(sample[..<index]));
                 showMessage(message, duration: duration)
             case 1:
                 showMessage("这个消息时长很短", duration: 0.1)

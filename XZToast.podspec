@@ -33,6 +33,7 @@ Pod::Spec.new do |s|
     ss.source_files = 'XZKit/Code/{ObjC,Swift}/XZToast/**/*.{h,m,swift}'
     ss.dependency 'XZGeometry'
     ss.dependency 'XZExtensions/UIApplication'
+    ss.dependency 'XZExtensions/NSArray'
     ss.dependency 'XZTextImageView'
   end
   
