@@ -89,14 +89,15 @@ class Example13ViewController: UITableViewController {
                 showMessage("短消息", duration: 3.0)
             
             case 7:
-                self.showToast(.loading("加载中"), duration: 0, position: .middle, exclusive: true)
+                self.showToast(.loading("加载中"), duration: 0, position: position, exclusive: isExclusive)
                 
             case 10:
-                self.showToast(.message("这是消息2"), duration: 3.0, position: .bottom, exclusive: false)
-                self.showToast(.message("这是消息3"), duration: 2.0, position: .bottom, exclusive: false)
+                self.showToast(.message("这是消息2"), duration: 3.0, position: position, exclusive: isExclusive)
+                self.showToast(.message("这是消息3"), duration: 2.0, position: position, exclusive: isExclusive)
                 showToast(.loading("加载中..."))
                 break
             default:
+                xz_hideToast();
                 break
             }
         case 1:
