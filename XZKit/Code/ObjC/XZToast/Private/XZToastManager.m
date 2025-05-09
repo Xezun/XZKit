@@ -7,25 +7,26 @@
 
 #import "XZToastManager.h"
 #import <objc/runtime.h>
+#import "XZToastShadowView.h"
 #import "XZToastContainerView.h"
 #import "XZToastTask.h"
 #import "XZToast.h"
-#import "NSArray+XZKit.h"
 
 static void * _context = NULL;
 
 @implementation XZToastManager {
     /// 视图控制器。
     UIView *_containerView;
-    UIView *_blurView;
     
     /// 展示位置。
     XZToastPosition _position;
-    /// 待展示的。
+    /// 待展示。
     NSMutableArray<XZToastTask *> *_waitingTasks;
-    /// 展示中待。该集合仅在周期内才可以修改。
+    /// 展示中。仅在周期方法内才可以修改。
     NSMutableArray<XZToastTask *> *_showingTasks;
-    /// 待移除的。
+    /// 待隐藏。
+    NSMutableArray<XZToastTask *> *_planingTasks;
+    /// 隐藏中。仅在周期方法内才可以修改。
     NSMutableArray<XZToastTask *> *_hideingTasks;
     
     /// 此值为 YES 表明当前还有待展示或待隐藏的 toast 需要处理。
@@ -55,14 +56,6 @@ static void * _context = NULL;
         return manager;
     }
     
-    UIView *_containerView = viewController.view;
-    while ([_containerView isKindOfClass:UIScrollView.class]) {
-        _containerView = _containerView.superview;
-    }
-    if (_containerView == nil) {
-        _containerView = viewController.view;
-    }
-    
     // H:|-padding-spacing-[toast]-spacing-padding-|
     // V:|-padding-spacing-[toast]-spacing-[toast]-spacing-padding-|
     
@@ -76,16 +69,17 @@ static void * _context = NULL;
     if (self) {
         _containerView = viewController.view;
         
-        _maximumNumberOfToasts = 3;
-        _offsets = calloc(3, sizeof(XZToastPosition));
-        
         UIEdgeInsets const safeAreaInsets = _containerView.safeAreaInsets;
         CGRect       const bounds         = _containerView.bounds;
         _bounds = CGRectInset(UIEdgeInsetsInsetRect(bounds, safeAreaInsets), XZToastMargin, XZToastMargin);
         [_containerView addObserver:self forKeyPath:@"bounds" options:NSKeyValueObservingOptionNew context:&_context];
         
+        _maximumNumberOfToasts = 3;
+        _offsets = calloc(3, sizeof(XZToastPosition));
+        
         _waitingTasks = [NSMutableArray arrayWithCapacity:16];
         _showingTasks = [NSMutableArray arrayWithCapacity:16];
+        _planingTasks = [NSMutableArray arrayWithCapacity:16];
         _hideingTasks = [NSMutableArray arrayWithCapacity:16];
     }
     return self;
@@ -104,10 +98,9 @@ static void * _context = NULL;
         return;
     }
     
+    CGRect const bounds = _containerView.bounds;
     UIEdgeInsets const safeAreaInsets = _containerView.safeAreaInsets;
-    CGRect       const bounds         = _containerView.bounds;
     CGRect const newBounds = CGRectInset(UIEdgeInsetsInsetRect(bounds, safeAreaInsets), XZToastMargin, XZToastMargin);
-    _blurView.frame = bounds;
     if (CGRectEqualToRect(_bounds, newBounds)) {
         return;
     }
@@ -124,23 +117,78 @@ static void * _context = NULL;
 
 - (XZToastTask *)showToast:(XZToast *)toast duration:(NSTimeInterval)duration position:(XZToastPosition)position exclusive:(BOOL)exclusive completion:(nonnull void (^)(BOOL))completion {
     UIView * const toastView = toast.view;
+    [toastView layoutIfNeeded];
     
-    for (XZToastTask *task in _showingTasks) {
+    // 待展示
+    for (NSInteger i = _waitingTasks.count - 1; i >= 0; i--) {
+        XZToastTask * const task = _waitingTasks[i];
         if (task.view.view == toastView) {
+            [_waitingTasks removeObjectAtIndex:i];
             task.isViewReused = YES;
             [task cancel];
-            [_hideingTasks addObject:task];
+            [_planingTasks addObject:task];
             return [self _showToast:task.view duration:duration position:position exclusive:exclusive completion:completion];
         }
     }
     
-    XZToastContainerView * const view = [[XZToastContainerView alloc] initWithView:toastView];
+    // 展示中
+    for (NSInteger i = _showingTasks.count - 1; i >= 0; i--) {
+        XZToastTask * const task = _showingTasks[i];
+        if (task.view.view == toastView) {
+            task.isViewReused = YES;
+            [task cancel];
+            [_planingTasks addObject:task];
+            return [self _showToast:task.view duration:duration position:position exclusive:exclusive completion:completion];
+        }
+    }
+    
+    // 待隐藏
+    for (NSInteger i = _planingTasks.count - 1; i >= 0; i--) {
+        XZToastTask * const task = _planingTasks[i];
+        if (task.view.view == toastView) {
+            task.isViewReused = YES;
+            return [self _showToast:task.view duration:duration position:position exclusive:exclusive completion:completion];
+        }
+    }
+    
+    // 隐藏中
+    for (NSInteger i = _hideingTasks.count - 1; i >= 0; i--) {
+        XZToastTask * const task = _hideingTasks[i];
+        if (task.view.view == toastView) {
+            task.isViewReused = YES;
+            
+            // 反转隐藏动画
+            XZToastShadowView * const view = task.view;
+            CALayer * const layer = view.layer.presentationLayer;
+            if (layer) {
+                [view.layer removeAllAnimations];
+                view.alpha = layer.opacity;
+                view.transform = CATransform3DGetAffineTransform(layer.transform);
+                // 维持动画速度不变，计算动画到当前状态所花的时间。
+                // 因为 alpha 正好是 1.0 => 0.0 的动画，可以用作进度
+                // 到周期开始后，当前恢复动画可能未完成，那么在复用时再处理。
+                NSTimeInterval const duration = XZToastAnimationDuration * (1.0 - view.alpha);
+                [UIView animateWithDuration:duration animations:^{
+                    view.alpha = 1.0;
+                    view.transform = CGAffineTransformIdentity;
+                }];
+            }
+            return [self _showToast:view duration:duration position:position exclusive:exclusive completion:completion];
+        }
+    }
+    
+    XZToastShadowView * const view = [[XZToastShadowView alloc] initWithView:toastView];
     return [self _showToast:view duration:duration position:position exclusive:exclusive completion:completion];
 }
 
-- (XZToastTask *)_showToast:(XZToastContainerView *)view duration:(NSTimeInterval)duration position:(XZToastPosition)position exclusive:(BOOL)exclusive completion:(nonnull void (^)(BOOL))completion {
+- (XZToastTask *)_showToast:(XZToastShadowView *)view duration:(NSTimeInterval)duration position:(XZToastPosition)position exclusive:(BOOL)exclusive completion:(nonnull void (^)(BOOL))completion {
     XZToastTask * const task = [[XZToastTask alloc] initWithView:view duration:duration position:position exclusive:exclusive completion:completion];
-    [_waitingTasks addObject:task];
+    if (_isExclusive) {
+        [task cancel];
+        [_planingTasks addObject:task];
+    } else {
+        [_waitingTasks addObject:task];
+    }
     [self setNeedsUpdateToasts];
     return task;
 }
@@ -151,7 +199,7 @@ static void * _context = NULL;
         if (_showingTasks.count > 0) {
             for (XZToastTask * const task in _showingTasks) {
                 [task cancel];
-                [_hideingTasks addObject:task];
+                [_planingTasks addObject:task];
             }
         }
         if (_waitingTasks.count > 0) {
@@ -159,7 +207,7 @@ static void * _context = NULL;
                 XZToastTask * const task = _waitingTasks.lastObject;
                 [_waitingTasks removeLastObject];
                 [task cancel];
-                [_hideingTasks addObject:task];
+                [_planingTasks addObject:task];
             } while (_waitingTasks.count > 0);
         }
     } else {
@@ -168,11 +216,11 @@ static void * _context = NULL;
             XZToastTask * const task = (id)toast;
             if ([_showingTasks containsObject:(XZToastTask *)toast]) {
                 [task cancel];
-                [_hideingTasks addObject:task];
+                [_planingTasks addObject:task];
             } else if ([_waitingTasks containsObject:task]) {
                 [_waitingTasks removeObject:task];
                 [task cancel];
-                [_hideingTasks addObject:task];
+                [_planingTasks addObject:task];
             }
         } else {
             UIView * const toastView = toast.view;
@@ -182,7 +230,7 @@ static void * _context = NULL;
             for (XZToastTask * const task in _showingTasks) {
                 if (task.view.view == toastView) {
                     [task cancel];
-                    [_hideingTasks addObject:task];
+                    [_planingTasks addObject:task];
                     break;
                 }
             }
@@ -191,7 +239,7 @@ static void * _context = NULL;
                 if (task.view.view == toastView) {
                     [_waitingTasks removeObjectAtIndex:idx];
                     [task cancel];
-                    [_hideingTasks addObject:task];
+                    [_planingTasks addObject:task];
                 }
             }];
         }
@@ -236,11 +284,7 @@ static void * _context = NULL;
     }
     
     // 只要 _waitingItems 或 _hideingItems 不为空，当前方法就会一直执行，直到处理完所有 toast
-    if (_waitingTasks.count == 0 && _hideingTasks.count == 0) {
-        if (_showingTasks.count == 0) {
-            [_blurView removeFromSuperview];
-            _blurView = nil;
-        }
+    if (_waitingTasks.count == 0 && _planingTasks.count == 0) {
         _needsUpdateToasts = NO;
         // 执行周期回调
         [self runUpdateCompletion];
@@ -253,8 +297,17 @@ static void * _context = NULL;
     if (newToastItem) {
         [_waitingTasks removeObjectAtIndex:0];
         
-        // 独占清屏
+        // 定时
+        if (newToastItem.duration > 0) {
+            [newToastItem resume:^(XZToastTask * _Nonnull task) {
+                [self->_planingTasks addObject:task];
+                [self setNeedsUpdateToasts];
+            }];
+        }
+        
+        // 独占
         if (newToastItem.isExclusive) {
+            _isExclusive = YES;
             while (_showingTasks.count > 0) {
                 XZToastTask *item = _showingTasks.lastObject;
                 [_showingTasks removeLastObject];
@@ -262,16 +315,9 @@ static void * _context = NULL;
                 [item cancel];
                 [_hideingTasks addObject:item];
             }
-            if (_blurView == nil) {
-                _blurView = [[XZToastBlurView alloc] initWithFrame:_containerView.bounds];
-            }
-            [_containerView addSubview:_blurView];
-        } else {
-            [_blurView removeFromSuperview];
-            _blurView = nil;
         }
         
-        // 展示位置不同，移除当前所有 toast
+        // 位置：如果更换了展示位置，则移除当前所有 toast
         if (_position != newToastItem.position) {
             _position = newToastItem.position;
             while (_showingTasks.count > 0) {
@@ -283,22 +329,21 @@ static void * _context = NULL;
             }
         }
         
-        // 定时
-        if (newToastItem.duration > 0) {
-            [newToastItem resume:^(XZToastTask * _Nonnull task) {
-                [self->_hideingTasks addObject:task];
-                [self setNeedsUpdateToasts];
-            }];
-        }
-        
-        // 计算 toast 大小
+        // 大小：通过 sizeThatFits 计算大小
         newToastItem->_frame.size = [newToastItem.view sizeThatFits:CGSizeMake(_bounds.size.width, 0)];
         newToastItem->_frame.origin.x = (_bounds.size.width - newToastItem->_frame.size.width) * 0.5 + _bounds.origin.x;
         
-        if (newToastItem.view.superview == _containerView) {
-            [newToastItem.view.view setNeedsLayout];
-            [newToastItem.view.view layoutIfNeeded];
-            [_containerView bringSubviewToFront:newToastItem.view];
+        // 复用的视图不会从移除，因此用来判断复用状态
+        if (newToastItem.view.superview) {
+            XZToastShadowView * const view = newToastItem.view;
+            CALayer * const layer = view.layer.presentationLayer;
+            if (layer) {
+                // 保存动画状态
+                [view.layer removeAllAnimations];
+                view.alpha = layer.opacity;
+                view.transform = CATransform3DGetAffineTransform(layer.transform);
+            }
+            [_containerView bringSubviewToFront:view];
         } else {
             switch (_position) {
                 case XZToastPositionTop:
@@ -309,7 +354,7 @@ static void * _context = NULL;
                     newToastItem.view.frame = newToastItem->_frame;
                     break;
                 case XZToastPositionMiddle:
-                    // 中部 toast 入场动画：渐显下移
+                    // 中部 toast 入场动画：弹性放大
                     newToastItem->_frame.origin.y = CGRectGetMidY(_bounds) - newToastItem->_frame.size.height * 0.5;
                     newToastItem->_frame.origin.y += _offsets[_position];
                     newToastItem.view.alpha = 1.0;
@@ -343,11 +388,12 @@ static void * _context = NULL;
     }
     
     // 从正显示的集合中移除待隐藏的。
-    NSMutableArray * const _hideingTasks = [self->_hideingTasks mutableCopy];
-    for (XZToastTask *task in _hideingTasks) {
+    while (_planingTasks.count > 0) {
+        XZToastTask * const task = _planingTasks.lastObject;
+        [_planingTasks removeLastObject];
+        [_hideingTasks addObject:task];
         [_showingTasks removeObject:task];
     }
-    [self->_hideingTasks removeAllObjects];
     
     // 检查数量限制，超出就直接移除
     while (_showingTasks.count > _maximumNumberOfToasts) {
@@ -361,14 +407,21 @@ static void * _context = NULL;
     }
     
     void (^ const completion)(BOOL) = ^(BOOL finished) {
+        if (self->_showingTasks.count == 0) {
+            self->_isExclusive = NO;
+        }
+        
         // 向移除的 toast 发送消息
-        for (XZToastTask *item in _hideingTasks) {
+        while (self->_hideingTasks.count > 0) {
+            XZToastTask * const item = self->_hideingTasks.lastObject;
+            [self->_hideingTasks removeLastObject];
+            
             [item finish];
             if (item.isViewReused) {
                 continue;
             }
-            [item.view removeFromSuperview];
             item.view.transform = CGAffineTransformIdentity;
+            [item.view removeFromSuperview];
         }
         
         [self runUpdateCompletion];
@@ -381,17 +434,18 @@ static void * _context = NULL;
             [UIView animateWithDuration:XZToastAnimationDuration delay:0 options:UIViewAnimationOptionLayoutSubviews animations:^{
                 CGFloat __block y = CGRectGetMinY(self->_bounds) + self->_offsets[XZToastPositionTop];
                 [self->_showingTasks enumerateObjectsWithOptions:NSEnumerationReverse usingBlock:^(XZToastTask * _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
+                    obj.view.transform = CGAffineTransformIdentity;
                     obj.view.alpha = 1.0;
                     obj->_frame.origin.y = y;
                     obj.view.frame = obj->_frame;
                     y = CGRectGetMaxY(obj->_frame);
                 }];
-                for (XZToastTask *item in _hideingTasks) {
+                for (XZToastTask *item in self->_hideingTasks) {
                     if (item.isViewReused) {
                         continue;
                     }
                     item.view.alpha = 0.0;
-                    item.view.frame = CGRectOffset(item->_frame, 0, item->_frame.size.height * (item.hideDirection ? +1.0 : -1.0));
+                    item.view.transform = CGAffineTransformMakeTranslation(0, item->_frame.size.height * (item.hideDirection ? +1.0 : -1.0));
                 }
             } completion:completion];
             break;
@@ -405,8 +459,9 @@ static void * _context = NULL;
                     item->_frame.origin.y = CGRectGetMidY(self->_bounds) - CGRectGetHeight(item->_frame) * 0.5 + self->_offsets[XZToastPositionMiddle];
                     item.view.transform = CGAffineTransformIdentity;
                     item.view.frame = item->_frame;
-                    CGFloat __block minY = CGRectGetMinY(item->_frame);
-                    CGFloat __block maxY = CGRectGetMaxY(item->_frame);
+                    
+                    CGFloat minY = CGRectGetMinY(item->_frame);
+                    CGFloat maxY = CGRectGetMaxY(item->_frame);
                     for (NSInteger i = (NSInteger)(self->_showingTasks.count) - 2; i >= 0; i--) {
                         XZToastTask *item = self->_showingTasks[i];
                         if (item.showDirection) {
@@ -420,13 +475,14 @@ static void * _context = NULL;
                         }
                     }
                 }
-                for (XZToastTask *item in _hideingTasks) {
+                
+                for (XZToastTask *item in self->_hideingTasks) {
                     if (item.isViewReused) {
                         continue;
                     }
                     item.view.alpha = 0.0;
                     if (item.hideDirection) {
-                        item.view.frame = CGRectOffset(item->_frame, 0, item->_frame.size.height * (item.showDirection ? +1.0 : -1.0));
+                        item.view.transform = CGAffineTransformMakeTranslation(0, item->_frame.size.height * (item.showDirection ? +1.0 : -1.0));
                     } else {
                         item.view.transform = CGAffineTransformMakeScale(0.5, 0.5);
                     }
@@ -439,6 +495,7 @@ static void * _context = NULL;
                 // 最新的在底部，从底部开始布局
                 CGFloat __block y = CGRectGetMaxY(self->_bounds) + self->_offsets[XZToastPositionBottom];
                 [self->_showingTasks enumerateObjectsWithOptions:NSEnumerationReverse usingBlock:^(XZToastTask * _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
+                    obj.view.transform = CGAffineTransformIdentity;
                     obj.view.alpha = 1.0;
                     obj->_frame.origin.y = y - CGRectGetHeight(obj->_frame);
                     obj.view.frame = obj->_frame;
@@ -446,12 +503,12 @@ static void * _context = NULL;
                 }];
                 
                 // 隐藏动画
-                for (XZToastTask *item in _hideingTasks) {
+                for (XZToastTask *item in self->_hideingTasks) {
                     if (item.isViewReused) {
                         continue;
                     }
                     item.view.alpha = 0.0;
-                    item.view.frame = CGRectOffset(item->_frame, 0, +item->_frame.size.height * (item.hideDirection ? -1.0 : +1.0));
+                    item.view.transform = CGAffineTransformMakeTranslation(0, +item->_frame.size.height * (item.hideDirection ? -1.0 : +1.0));
                 }
             } completion:completion];
             break;

@@ -6,7 +6,7 @@
 //
 
 #import "XZToastTask.h"
-#import "XZToastContainerView.h"
+#import "XZToastShadowView.h"
 
 @implementation XZToastTask {
     dispatch_block_t _timer;
@@ -15,7 +15,7 @@
 
 @dynamic view;
 
-- (instancetype)initWithView:(XZToastContainerView *)view duration:(NSTimeInterval)duration position:(XZToastPosition)position exclusive:(BOOL)exclusive completion:(XZToastCompletion)completion {
+- (instancetype)initWithView:(XZToastShadowView *)view duration:(NSTimeInterval)duration position:(XZToastPosition)position exclusive:(BOOL)exclusive completion:(XZToastCompletion)completion {
     self = [super initWithView:view];
     if (self) {
         _duration    = duration;

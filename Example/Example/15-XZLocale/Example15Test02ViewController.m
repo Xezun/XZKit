@@ -33,7 +33,8 @@
         [self.tableView reloadData];
     }];
     
-//    [self xz_showToast:[XZToast loadingToast:@"加载中..."] duration:0 offset:CGPointMake(0, -50.0) completion:nil];
+    [self xz_setOffset:50 forToastInPosition:(XZToastPositionMiddle)];
+    [self xz_showToast:[XZToast loadingToast:@"加载中..."] duration:0 completion:nil];
 }
 
 - (void)viewDidLayoutSubviews {

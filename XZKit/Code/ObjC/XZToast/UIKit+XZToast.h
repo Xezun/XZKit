@@ -14,8 +14,21 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface UIResponder (XZToast)
 
-- (nullable XZToast *)xz_showToast:(XZToast *)toast duration:(NSTimeInterval)duration position:(XZToastPosition)position exclusive:(BOOL)exclusive completion:(void (^_Nullable)(BOOL finished))completion NS_SWIFT_NAME(showToast(_:duration:position:exclusive:completion:));
+/// 展示提示消息。
+/// - Parameters:
+///   - toast: 提示消息
+///   - duration: 展示时长，值为 0 表示不限制时长
+///   - position: 展示位置
+///   - exclusive: 是否独占，独占的消息展示时，不再展示其它消息
+///   - completion: 消息展示完成时的回调，如果消息被提前结束，则回调参数为 NO
+- (nullable XZToast *)xz_showToast:(XZToast *)toast duration:(NSTimeInterval)duration position:(XZToastPosition)position exclusive:(BOOL)exclusive completion:(nullable XZToastCompletion)completion NS_SWIFT_NAME(showToast(_:duration:position:exclusive:completion:));
 
+- (nullable XZToast *)xz_showToast:(XZToast *)toast duration:(NSTimeInterval)duration position:(XZToastPosition)position completion:(nullable XZToastCompletion)completion NS_SWIFT_NAME(showToast(_:duration:position:completion:));
+- (nullable XZToast *)xz_showToast:(XZToast *)toast duration:(NSTimeInterval)duration exclusive:(BOOL)exclusive completion:(nullable XZToastCompletion)completion NS_SWIFT_NAME(showToast(_:duration:exclusive:completion:));
+- (nullable XZToast *)xz_showToast:(XZToast *)toast duration:(NSTimeInterval)duration completion:(nullable XZToastCompletion)completion NS_SWIFT_NAME(showToast(_:duration:completion:));
+
+- (nullable XZToast *)xz_showToast:(XZToast *)toast duration:(NSTimeInterval)duration;
+- (nullable XZToast *)xz_showToast:(XZToast *)toast completion:(nullable XZToastCompletion)completion NS_SWIFT_NAME(showToast(_:completion:));
 - (nullable XZToast *)xz_showToast:(XZToast *)toast NS_SWIFT_NAME(showToast(_:));
 
 - (void)xz_hideToast:(nullable XZToast *)toast completion:(nullable void (^)(void))completion;

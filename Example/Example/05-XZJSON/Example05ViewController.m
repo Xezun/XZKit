@@ -215,7 +215,7 @@
                 }
                 case 4: {
                     if (!_teachers) {
-//                        [self xz_showToast:[XZToast messageToast:@"请先点击“数据 => 模型”"] duration:3.0 offset:CGPointZero completion:nil];
+                        [self xz_showToast:[XZToast messageToast:@"请先点击“数据 => 模型”"] duration:3.0 completion:nil];
                         return;
                     }
                     NSData *json = [XZJSON encode:_teachers options:NSJSONWritingPrettyPrinted error:nil];
@@ -233,14 +233,15 @@
             switch (indexPath.row) {
                 case 0: {
                     if (!_teachers) {
-//                        [self xz_showToast:[XZToast messageToast:@"请先点击“数据 => 模型”"] duration:3.0 offset:CGPointZero completion:nil];
+                        [self xz_showToast:[XZToast messageToast:@"请先点击“数据 => 模型”"] completion:nil];
                         return;
                     }
                     NSError *error = nil;
                     NSData *data = [NSKeyedArchiver archivedDataWithRootObject:_teachers requiringSecureCoding:[[_teachers class] supportsSecureCoding] error:&error];
                     if (error) {
                         XZLog(@"归档失败：%@", error);
-//                        return [self xz_showToast:[XZToast messageToast:@"归档失败"] duration:3.0 offset:CGPointZero completion:nil];
+                        [self xz_showToast:[XZToast messageToast:@"归档失败"] completion:nil];
+                        return;
                     }
                     NSString *path = [NSTemporaryDirectory() stringByAppendingPathComponent:@"model.plist"];
                     if ([NSFileManager.defaultManager fileExistsAtPath:path]) {
@@ -253,8 +254,8 @@
                 case 1: {
                     NSString *path = [NSTemporaryDirectory() stringByAppendingPathComponent:@"model.plist"];
                     if (![NSFileManager.defaultManager fileExistsAtPath:path]) {
-//                        XZToast *toast = [XZToast messageToast:@"归档不存在"];
-//                        [self xz_showToast:toast duration:3.0 offset:CGPointZero completion:nil];
+                        XZToast *toast = [XZToast messageToast:@"归档不存在"];
+                        [self xz_showToast:toast completion:nil];
                         return;
                     }
                     NSData *data = [NSData dataWithContentsOfFile:path];
@@ -263,7 +264,8 @@
                     NSArray *teachers = [NSKeyedUnarchiver unarchivedObjectOfClasses:set fromData:data error:&error];
                     if (error) {
                         XZLog(@"解档失败：%@", error);
-//                        return [self xz_showToast:[XZToast messageToast:@"解档失败"] duration:3.0 offset:CGPointZero completion:nil];
+                        [self xz_showToast:[XZToast messageToast:@"解档失败"] completion:nil];
+                        return;
                     }
                     text = [XZJSON model:teachers description:0];
                     break;

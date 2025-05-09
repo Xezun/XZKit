@@ -30,10 +30,19 @@ typedef void (^XZToastCompletion)(BOOL finished);
 
 @property (nonatomic, readonly) UIView *view;
 
+@property (nonatomic, copy, nullable) NSString *text;
+
+- (void)startAnimating;
+- (void)stopAnimating;
+
+@property (nonatomic, readonly) BOOL isAnimating;
+
 - (instancetype)init NS_UNAVAILABLE;
 - (instancetype)initWithView:(UIView *)view NS_DESIGNATED_INITIALIZER;
 
 + (XZToast *)messageToast:(NSString *)text NS_SWIFT_NAME(message(_:));
+
++ (XZToast *)loadingToast:(NSString *)text NS_SWIFT_NAME(loading(_:));
 
 @end
 

@@ -7,7 +7,7 @@
 
 #import <Foundation/Foundation.h>
 #import "XZToast.h"
-#import "XZToastContainerView.h"
+#import "XZToastShadowView.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -17,7 +17,7 @@ NS_ASSUME_NONNULL_BEGIN
     CGRect _frame;
 }
 
-@property (nonatomic, readonly) XZToastContainerView *view;
+@property (nonatomic, readonly) XZToastShadowView *view;
 
 /// 独占的 toast 不会与其它 toast 同时显示：
 /// - 展示时，带背景，且立即顶掉正在展示的所有 toast
@@ -32,6 +32,7 @@ NS_ASSUME_NONNULL_BEGIN
 // 隐藏时，标记 toast 是否为因为数量超限而被移除，在顶部或底部展示的 toast 会以挤出的方向动画。
 @property (nonatomic) BOOL hideDirection;
 
+/// 标记 view 是否为复用视图。
 @property (nonatomic, setter=setViewReused:) BOOL isViewReused;
 
 /// 开启任务定时器。
@@ -45,7 +46,7 @@ NS_ASSUME_NONNULL_BEGIN
 - (void)finish;
 
 - (instancetype)initWithView:(UIView *)view NS_UNAVAILABLE;
-- (instancetype)initWithView:(XZToastContainerView *)view duration:(NSTimeInterval)duration position:(XZToastPosition)position exclusive:(BOOL)exclusive completion:(XZToastCompletion)completion NS_DESIGNATED_INITIALIZER;
+- (instancetype)initWithView:(XZToastShadowView *)view duration:(NSTimeInterval)duration position:(XZToastPosition)position exclusive:(BOOL)exclusive completion:(XZToastCompletion)completion NS_DESIGNATED_INITIALIZER;
 
 @end
 
