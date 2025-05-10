@@ -255,6 +255,7 @@
 		296537BE2D70CA0500559997 /* Example05XZGHUser.m in Sources */ = {isa = PBXBuildFile; fileRef = 296537BD2D70CA0500559997 /* Example05XZGHUser.m */; };
 		296537C12D70CA4100559997 /* Example05YYGHUser.m in Sources */ = {isa = PBXBuildFile; fileRef = 296537C02D70CA4100559997 /* Example05YYGHUser.m */; };
 		29776A142D3240E70033AAF9 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 29776A132D3240E70033AAF9 /* Main.storyboard */; };
+		2989CE3C2DCFABF3003C9C9D /* Example13SelectViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2989CE3B2DCFABF3003C9C9D /* Example13SelectViewController.swift */; };
 		299B56CE2D2A67ED00CC2F69 /* Example10ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 299B56CD2D2A67ED00CC2F69 /* Example10ViewController.swift */; };
 		299B56D02D2A680300CC2F69 /* Example11ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 299B56CF2D2A680300CC2F69 /* Example11ViewController.swift */; };
 		299B56D32D2A683900CC2F69 /* Example12ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 299B56D22D2A683900CC2F69 /* Example12ViewController.swift */; };
@@ -757,6 +758,7 @@
 		296537C02D70CA4100559997 /* Example05YYGHUser.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = Example05YYGHUser.m; sourceTree = "<group>"; };
 		29776A0E2D3199DE0033AAF9 /* ExampleBridgingHeader.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ExampleBridgingHeader.h; sourceTree = "<group>"; };
 		29776A132D3240E70033AAF9 /* Main.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = Main.storyboard; sourceTree = "<group>"; };
+		2989CE3B2DCFABF3003C9C9D /* Example13SelectViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Example13SelectViewController.swift; sourceTree = "<group>"; };
 		299B56CD2D2A67ED00CC2F69 /* Example10ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Example10ViewController.swift; sourceTree = "<group>"; };
 		299B56CF2D2A680300CC2F69 /* Example11ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Example11ViewController.swift; sourceTree = "<group>"; };
 		299B56D22D2A683900CC2F69 /* Example12ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Example12ViewController.swift; sourceTree = "<group>"; };
@@ -2805,6 +2807,7 @@
 			children = (
 				29B334242D317835006A574A /* Example13.storyboard */,
 				299B56E32D2AD87800CC2F69 /* Example13ViewController.swift */,
+				2989CE3B2DCFABF3003C9C9D /* Example13SelectViewController.swift */,
 			);
 			path = "13-XZToast";
 			sourceTree = "<group>";
@@ -3277,6 +3280,7 @@
 				29448F722D31956A0055A183 /* Example09ViewController.swift in Sources */,
 				292C17842D251F6D00E465BF /* Example0330Group106Cell.m in Sources */,
 				292C17852D251F6D00E465BF /* Example0330Group110FooterViewModel.m in Sources */,
+				2989CE3C2DCFABF3003C9C9D /* Example13SelectViewController.swift in Sources */,
 				292C17862D251F6D00E465BF /* Example0321ContactCellViewModel.m in Sources */,
 				292C17872D251F6D00E465BF /* Example0331Group107CellViewModel.m in Sources */,
 				292C17882D251F6D00E465BF /* Example0320Group100Cell.m in Sources */,

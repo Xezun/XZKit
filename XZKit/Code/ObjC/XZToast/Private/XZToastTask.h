@@ -31,7 +31,7 @@ typedef NS_ENUM(NSInteger, XZToastMoveDirection) {
     BOOL _needsLayoutView;
 }
 
-@property (nonatomic, readonly) XZToastShadowView *view;
+@property (nonatomic, readonly) XZToastShadowView *containerView;
 
 /// 独占的 toast 不会与其它 toast 同时显示：
 /// - 展示时，带背景，且立即顶掉正在展示的所有 toast
@@ -50,6 +50,7 @@ typedef NS_ENUM(NSInteger, XZToastMoveDirection) {
 @property (nonatomic) XZToastHideReason hideReason;
 
 /// 标记 view 是否为复用视图。
+/// 如果 toast 未展示就直接丢弃，也会标记此属性为 YES 以避免处理视图。
 @property (nonatomic, setter=setViewReused:) BOOL isViewReused;
 
 /// 开启任务定时器。
@@ -63,7 +64,8 @@ typedef NS_ENUM(NSInteger, XZToastMoveDirection) {
 - (void)finish;
 
 - (instancetype)initWithView:(UIView *)view NS_UNAVAILABLE;
-- (instancetype)initWithView:(XZToastShadowView *)view duration:(NSTimeInterval)duration position:(XZToastPosition)position exclusive:(BOOL)exclusive completion:(XZToastCompletion)completion NS_DESIGNATED_INITIALIZER;
+- (instancetype)initWithView:(UIView *)view duration:(NSTimeInterval)duration position:(XZToastPosition)position exclusive:(BOOL)exclusive completion:(XZToastCompletion)completion NS_DESIGNATED_INITIALIZER;
+- (instancetype)initWithContainerView:(XZToastShadowView *)containerView duration:(NSTimeInterval)duration position:(XZToastPosition)position exclusive:(BOOL)exclusive completion:(XZToastCompletion)completion;
 
 @end
 

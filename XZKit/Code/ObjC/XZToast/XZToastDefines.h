@@ -11,7 +11,7 @@
 FOUNDATION_EXPORT NSTimeInterval const XZToastAnimationDuration NS_SWIFT_NAME(XZToast.animationDuration);
 
 /// XZToast 的显示位置。
-typedef NS_ENUM(NSUInteger, XZToastPosition) {
+typedef NS_ENUM(NSInteger, XZToastPosition) {
     /// XZToast 显示在顶部。
     XZToastPositionTop = 0, // 会被用作数组 index 必须从 0 开始
     /// XZToast 显示在中部。

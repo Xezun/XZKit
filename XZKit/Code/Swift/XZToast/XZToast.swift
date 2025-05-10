@@ -13,6 +13,20 @@ import XZTextImageView
 import XZToastObjC
 #endif
 
+extension XZToast.Position: CustomStringConvertible {
+    public var description: String {
+        switch self {
+        case .top:
+            return "top"
+        case .middle:
+            return "middle"
+        case .bottom:
+            return "bottom"
+        @unknown default:
+            return "@unknown"
+        }
+    }
+}
 
 /// 提示信息。
 //public struct XZToast : RawRepresentable, ExpressibleByStringLiteral {

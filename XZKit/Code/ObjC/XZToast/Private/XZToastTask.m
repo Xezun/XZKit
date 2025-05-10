@@ -15,18 +15,36 @@
 
 @dynamic view;
 
-- (instancetype)initWithView:(XZToastShadowView *)view duration:(NSTimeInterval)duration position:(XZToastPosition)position exclusive:(BOOL)exclusive completion:(XZToastCompletion)completion {
+- (instancetype)initWithView:(UIView *)view duration:(NSTimeInterval)duration position:(XZToastPosition)position exclusive:(BOOL)exclusive completion:(XZToastCompletion)completion {
     self = [super initWithView:view];
     if (self) {
-        _hideReason  = XZToastHideReasonNormal;
+        _containerView = nil;
+        _hideReason    = XZToastHideReasonNormal;
         _moveDirection = XZToastMoveDirectionNone;
-        _duration    = duration;
-        _position    = position;
-        _isExclusive = exclusive;
-        _completion  = completion;
-        _isCancelled = NO;
+        _duration      = duration;
+        _position      = position;
+        _isExclusive   = exclusive;
+        _completion    = completion;
+        _isCancelled   = NO;
     }
     return self;
+}
+
+- (instancetype)initWithContainerView:(XZToastShadowView *)containerView duration:(NSTimeInterval)duration position:(XZToastPosition)position exclusive:(BOOL)exclusive completion:(XZToastCompletion)completion {
+    self = [self initWithView:containerView.view duration:duration position:position exclusive:exclusive completion:completion];
+    if (self) {
+        _containerView = containerView;
+    }
+    return self;
+}
+
+@synthesize containerView = _containerView;
+
+- (XZToastShadowView *)containerView {
+    if (_containerView == nil) {
+        _containerView = [[XZToastShadowView alloc] initWithView:self.view];
+    }
+    return _containerView;
 }
 
 - (void)resume:(void (^)(XZToastTask * _Nonnull))block {

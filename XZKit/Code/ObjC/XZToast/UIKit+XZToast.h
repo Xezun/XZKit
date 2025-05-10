@@ -32,8 +32,8 @@ NS_ASSUME_NONNULL_BEGIN
 - (nullable XZToast *)xz_showToast:(XZToast *)toast completion:(nullable XZToastCompletion)completion NS_SWIFT_NAME(showToast(_:completion:));
 - (nullable XZToast *)xz_showToast:(XZToast *)toast NS_SWIFT_NAME(showToast(_:));
 
-- (void)xz_hideToast:(nullable XZToast *)toast completion:(nullable void (^)(void))completion;
-- (void)xz_hideToast:(nullable void (^)(void))completion;
+- (void)xz_hideToast:(nullable XZToast *)toast completion:(nullable void (^)(void))completion NS_SWIFT_NAME(hideToast(_:completion:));
+- (void)xz_hideToast:(nullable void (^)(void))completion NS_SWIFT_NAME(hideToast(_:));
 
 /// 刷新 toast 的布局。
 ///
@@ -42,7 +42,7 @@ NS_ASSUME_NONNULL_BEGIN
 - (void)xz_layoutToastsIfNeeded NS_SWIFT_NAME(layoutToastsIfNeeded());
 
 /// 可同时展示的 toast 的数量。
-@property (nonatomic, setter=xz_setMaximumNumberOfToasts:) NSUInteger xz_maximumNumberOfToasts NS_SWIFT_NAME(maximumNumberOfToasts);
+@property (nonatomic, setter=xz_setMaximumNumberOfToasts:) NSInteger xz_maximumNumberOfToasts NS_SWIFT_NAME(maximumNumberOfToasts);
 
 /// 设置指定位置的 toast 的偏移值。
 /// - Parameters:

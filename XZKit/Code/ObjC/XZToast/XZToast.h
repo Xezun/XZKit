@@ -15,7 +15,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface XZToast : NSObject
 
-@property (nonatomic, readonly) UIView *view;
+@property (nonatomic, readonly) __kindof UIView *view;
 
 - (instancetype)init NS_UNAVAILABLE;
 - (instancetype)initWithView:(UIView *)view NS_DESIGNATED_INITIALIZER;

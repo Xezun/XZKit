@@ -16,9 +16,10 @@ class Example13ViewController: UITableViewController {
     var index = 0
     
     var position = XZToast.Position.middle;
-    let toastCountNumbers: [UInt] = [0, 1, 2, 3, 5]
     
     var isExclusive = false
+    
+    lazy var loadingView = XZToastActivityIndicatorView.init()
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -30,15 +31,23 @@ class Example13ViewController: UITableViewController {
         case 0:
             break
         case 1:
-            cell.accessoryType = indexPath.row == position.rawValue ? .checkmark : .disclosureIndicator;
+//            cell.accessoryType = indexPath.row == position.rawValue ? .checkmark : .disclosureIndicator;
             break
         case 2:
-            let number = String(self.maximumNumberOfToasts);
-            if cell.textLabel?.text == number {
-                cell.accessoryType = .checkmark;
-            } else {
-                cell.accessoryType = .disclosureIndicator;
+            switch indexPath.row {
+            case 0:
+                cell.detailTextLabel?.text = "\(self.position)"
+            case 1:
+                cell.detailTextLabel?.text = "\(self.maximumNumberOfToasts)"
+            default:
+                break
             }
+//            let number = String(self.maximumNumberOfToasts);
+//            if cell.textLabel?.text == number {
+//                cell.accessoryType = .checkmark;
+//            } else {
+//                cell.accessoryType = .disclosureIndicator;
+//            }
             break
             
         case 3:
@@ -97,22 +106,23 @@ class Example13ViewController: UITableViewController {
                 showToast(.loading("加载中..."))
                 break
             default:
-                xz_hideToast();
+                hideToast();
                 break
             }
         case 1:
-            self.position = .init(rawValue: UInt(indexPath.row))!
-            tableView.reloadSections([indexPath.section], with: .none)
-        case 2:
-            guard let text = tableView.cellForRow(at: indexPath)?.textLabel?.text else { return }
-            guard let number = UInt(text) else { return }
-            self.maximumNumberOfToasts = number
-            tableView.reloadSections([indexPath.section], with: .none);
-        case 3:
             switch indexPath.row {
             case 0:
-                isExclusive = !isExclusive;
-                tableView.reloadRows(at: [indexPath], with: .none);
+                let toast = XZToast.init(view: loadingView)
+                loadingView.text = "加载中"
+                loadingView.startAnimating()
+                self.showToast(toast, duration: 0, position: .middle, exclusive: true) { finished in
+                    print("\(finished)");
+                }
+            case 1:
+                break
+            case 2:
+                self.hideToast()
+                break
             default:
                 break
             }
@@ -131,5 +141,40 @@ class Example13ViewController: UITableViewController {
         }
         self.index += 1;
     }
+    
+    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+        guard let select = segue.destination as? Example13SelectViewController else { return }
+        switch segue.identifier {
+        case "position":
+            select.value = position.rawValue
+        case "maximumNumberOfToasts":
+            select.value = self.maximumNumberOfToasts;
+        default:
+            break
+        }
+    }
+    
+    @IBAction func unwindToBack(_ unwindSegue: UIStoryboardSegue) {
+        guard let select = unwindSegue.source as? Example13SelectViewController else { return }
+        switch unwindSegue.identifier {
+        case "position":
+            self.position = XZToast.Position.init(rawValue: select.value)!
+            tableView.reloadRows(at: [.init(row: 0, section: 2)], with: .none)
+        case "maximumNumberOfToasts":
+            let numbers = [0, 1, 2, 3, 5];
+            self.maximumNumberOfToasts = numbers[select.value]
+            tableView.reloadRows(at: [.init(row: 1, section: 2)], with: .none)
+        default:
+            break
+        }
+    }
 
+    @IBAction func exclusiveSwitchValueChanged(_ sender: UISwitch) {
+        self.isExclusive = sender.isOn
+    }
+    
+    @IBAction func progressSliderValueChanged(_ sender: UISlider) {
+        loadingView.text = String.init(format: "加载中 %.2f%%", sender.value)
+        self.setNeedsLayoutToasts()
+    }
 }

@@ -13,6 +13,8 @@
 }
 
 - (instancetype)initWithFrame:(CGRect)frame {
+    frame.size.width = MAX(frame.size.width, 100.0);
+    frame.size.height = MAX(frame.size.height, 100.0);
     self = [super initWithFrame:frame];
     if (self) {
         self.backgroundColor = [UIColor colorWithWhite:0 alpha:0.7];
@@ -69,8 +71,6 @@
 - (void)setText:(NSString *)text {
     _textLabel.text = text;
     [self setNeedsLayout];
-    
-    [_indicatorView startAnimating];
 }
 
 - (void)startAnimating {

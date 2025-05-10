@@ -30,11 +30,11 @@
     [UIApplication.sharedApplication xz_layoutToastsIfNeeded];
 }
 
-- (NSUInteger)xz_maximumNumberOfToasts {
+- (NSInteger)xz_maximumNumberOfToasts {
     return [UIApplication.sharedApplication xz_maximumNumberOfToasts];
 }
 
-- (void)xz_setMaximumNumberOfToasts:(NSUInteger)xz_maximumNumberOfToasts {
+- (void)xz_setMaximumNumberOfToasts:(NSInteger)xz_maximumNumberOfToasts {
     [UIApplication.sharedApplication xz_setMaximumNumberOfToasts:xz_maximumNumberOfToasts];
 }
 
@@ -94,11 +94,11 @@
     [self.xz_mainWindow xz_layoutToastsIfNeeded];
 }
 
-- (NSUInteger)xz_maximumNumberOfToasts {
+- (NSInteger)xz_maximumNumberOfToasts {
     return [self.xz_mainWindow xz_maximumNumberOfToasts];
 }
 
-- (void)xz_setMaximumNumberOfToasts:(NSUInteger)xz_maximumNumberOfToasts {
+- (void)xz_setMaximumNumberOfToasts:(NSInteger)xz_maximumNumberOfToasts {
     [self.xz_mainWindow xz_setMaximumNumberOfToasts:xz_maximumNumberOfToasts];
 }
 
@@ -130,11 +130,11 @@
     [self.nextResponder xz_layoutToastsIfNeeded];
 }
 
-- (NSUInteger)xz_maximumNumberOfToasts {
+- (NSInteger)xz_maximumNumberOfToasts {
     return [self.nextResponder xz_maximumNumberOfToasts];
 }
 
-- (void)xz_setMaximumNumberOfToasts:(NSUInteger)xz_maximumNumberOfToasts {
+- (void)xz_setMaximumNumberOfToasts:(NSInteger)xz_maximumNumberOfToasts {
     [self.nextResponder xz_setMaximumNumberOfToasts:xz_maximumNumberOfToasts];
 }
 
@@ -167,11 +167,11 @@
     [self.rootViewController xz_layoutToastsIfNeeded];
 }
 
-- (NSUInteger)xz_maximumNumberOfToasts {
+- (NSInteger)xz_maximumNumberOfToasts {
     return [self.rootViewController xz_maximumNumberOfToasts];
 }
 
-- (void)xz_setMaximumNumberOfToasts:(NSUInteger)xz_maximumNumberOfToasts {
+- (void)xz_setMaximumNumberOfToasts:(NSInteger)xz_maximumNumberOfToasts {
     [self.rootViewController xz_setMaximumNumberOfToasts:xz_maximumNumberOfToasts];
 }
 
@@ -205,11 +205,11 @@
     [[XZToastManager managerForViewController:self] layoutToastsIfNeeded];
 }
 
-- (NSUInteger)xz_maximumNumberOfToasts {
+- (NSInteger)xz_maximumNumberOfToasts {
     return [XZToastManager managerForViewController:self].maximumNumberOfToasts;
 }
 
-- (void)xz_setMaximumNumberOfToasts:(NSUInteger)xz_maximumNumberOfToasts {
+- (void)xz_setMaximumNumberOfToasts:(NSInteger)xz_maximumNumberOfToasts {
     [XZToastManager managerForViewController:self].maximumNumberOfToasts = xz_maximumNumberOfToasts;
 }
 
