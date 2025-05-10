@@ -154,6 +154,10 @@ class Example13ViewController: UITableViewController {
         }
     }
     
+    @IBAction func hideButtonAction(_ sender: UIBarButtonItem) {
+        hideToast()
+    }
+    
     @IBAction func unwindToBack(_ unwindSegue: UIStoryboardSegue) {
         guard let select = unwindSegue.source as? Example13SelectViewController else { return }
         switch unwindSegue.identifier {
@@ -161,8 +165,7 @@ class Example13ViewController: UITableViewController {
             self.position = XZToast.Position.init(rawValue: select.value)!
             tableView.reloadRows(at: [.init(row: 0, section: 2)], with: .none)
         case "maximumNumberOfToasts":
-            let numbers = [0, 1, 2, 3, 5];
-            self.maximumNumberOfToasts = numbers[select.value]
+            self.maximumNumberOfToasts = select.value
             tableView.reloadRows(at: [.init(row: 1, section: 2)], with: .none)
         default:
             break
@@ -174,7 +177,13 @@ class Example13ViewController: UITableViewController {
     }
     
     @IBAction func progressSliderValueChanged(_ sender: UISlider) {
-        loadingView.text = String.init(format: "加载中 %.2f%%", sender.value)
+        if sender.value == 0 {
+            loadingView.text = "加载中"
+        } else if sender.value == 1.0 {
+            loadingView.text = "加载完成"
+        } else {
+            loadingView.text = String.init(format: "加载进度 %.2f%%", sender.value)
+        }
         self.setNeedsLayoutToasts()
     }
 }
