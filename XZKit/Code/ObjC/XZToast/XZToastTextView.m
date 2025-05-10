@@ -57,7 +57,6 @@
 - (void)setText:(NSString *)text {
     _textLabel.text = text;
     [self setNeedsLayout];
-//    [self layoutIfNeeded];
 }
 
 @end

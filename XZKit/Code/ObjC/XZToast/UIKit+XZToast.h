@@ -6,15 +6,16 @@
 //
 
 #import <UIKit/UIKit.h>
-#import "XZToast.h"
+#import "XZToastDefines.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
-@class XZToastTask;
+@class XZToast;
 
 @interface UIResponder (XZToast)
 
-/// 展示提示消息。
+/// 在当前控制器或当前视图所在的控制器上，弹出提示消息。
+///
 /// - Parameters:
 ///   - toast: 提示消息
 ///   - duration: 展示时长，值为 0 表示不限制时长
@@ -37,7 +38,8 @@ NS_ASSUME_NONNULL_BEGIN
 /// 刷新 toast 的布局。
 ///
 /// 如果在展示 toast 的期间，控制器的大小发生了改变，需要调用此方法来刷新布局。
-- (void)xz_setNeedsLayoutToastViews;
+- (void)xz_setNeedsLayoutToasts NS_SWIFT_NAME(setNeedsLayoutToasts());
+- (void)xz_layoutToastsIfNeeded NS_SWIFT_NAME(layoutToastsIfNeeded());
 
 /// 可同时展示的 toast 的数量。
 @property (nonatomic, setter=xz_setMaximumNumberOfToasts:) NSUInteger xz_maximumNumberOfToasts NS_SWIFT_NAME(maximumNumberOfToasts);

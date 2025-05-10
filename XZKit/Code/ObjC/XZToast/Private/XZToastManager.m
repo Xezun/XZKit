@@ -14,6 +14,12 @@
 
 static void * _context = NULL;
 
+typedef NS_ENUM(NSUInteger, XZToastLayoutType) {
+    XZToastLayoutTypeNone = 0,
+    XZToastLayoutTypeAuto,
+    XZToastLayoutTypeUser,
+};
+
 @implementation XZToastManager {
     /// 视图控制器。
     UIView *_containerView;
@@ -41,7 +47,7 @@ static void * _context = NULL;
     /// 布局的范围。
     CGRect _bounds;
     
-    BOOL _needsLayoutToastViews;
+    XZToastLayoutType _layoutType;
     
 }
 
@@ -106,8 +112,8 @@ static void * _context = NULL;
     }
     _bounds = newBounds;
     // 立即调整 toast 位置
-    _needsLayoutToastViews = YES;
-    [self layoutToastViewsIfNeeded];
+    _layoutType = XZToastLayoutTypeAuto;
+    [self layoutToastsIfNeeded];
 }
 
 - (void)setMaximumNumberOfToasts:(NSUInteger)maximumNumberOfToasts {
@@ -418,29 +424,6 @@ static void * _context = NULL;
         [_hideingTasks addObject:firstItem];
     }
     
-    void (^ const completion)(BOOL) = ^(BOOL finished) {
-        if (self->_showingTasks.count == 0) {
-            self->_isExclusive = NO;
-        }
-        
-        // 向移除的 toast 发送消息
-        while (self->_hideingTasks.count > 0) {
-            XZToastTask * const item = self->_hideingTasks.lastObject;
-            [self->_hideingTasks removeLastObject];
-            
-            [item finish];
-            if (item.isViewReused) {
-                continue;
-            }
-            item.view.transform = CGAffineTransformIdentity;
-            [item.view removeFromSuperview];
-        }
-        
-        [self runUpdateCompletion];
-        
-        [self updateToastsIfNeeded];
-    };
-    
     UIViewAnimationOptions const options = UIViewAnimationOptionLayoutSubviews;
     [UIView animateWithDuration:XZToastAnimationDuration delay:0 usingSpringWithDamping:0.8 initialSpringVelocity:0.6 options:options animations:^{
         switch (self->_position) {
@@ -504,25 +487,46 @@ static void * _context = NULL;
             item.view.alpha = 0.0;
             item.view.transform = CGAffineTransformTranslate(CGAffineTransformMakeScale(0.66, 0.66), 0, deltaY);
         }
-    } completion:completion];
-}
-
-- (void)setNeedsLayoutToastViews {
-    if (_needsLayoutToastViews) {
-        return;
-    }
-    _needsLayoutToastViews = YES;
-    [NSRunLoop.mainRunLoop performInModes:@[NSRunLoopCommonModes] block:^{
-        [self layoutToastViewsIfNeeded];
+    } completion:^(BOOL finished) {
+        if (self->_showingTasks.count == 0) {
+            self->_isExclusive = NO;
+        }
+        
+        // 向移除的 toast 发送消息
+        while (self->_hideingTasks.count > 0) {
+            XZToastTask * const item = self->_hideingTasks.lastObject;
+            [self->_hideingTasks removeLastObject];
+            
+            [item finish];
+            if (item.isViewReused) {
+                continue;
+            }
+            item.view.transform = CGAffineTransformIdentity;
+            [item.view removeFromSuperview];
+        }
+        
+        [self runUpdateCompletion];
+        
+        [self updateToastsIfNeeded];
     }];
 }
 
-- (void)layoutToastViewsIfNeeded {
-    if (!_needsLayoutToastViews) {
+- (void)setNeedsLayoutToasts {
+    if (_layoutType != XZToastLayoutTypeUser) {
+        return;
+    }
+    _layoutType = XZToastLayoutTypeUser;
+    [NSRunLoop.mainRunLoop performInModes:@[NSRunLoopCommonModes] block:^{
+        [self layoutToastsIfNeeded];
+    }];
+}
+
+- (void)layoutToastsIfNeeded {
+    if (_layoutType == XZToastLayoutTypeNone) {
         return;
     }
     [self layoutToastViews];
-    _needsLayoutToastViews = NO;
+    _layoutType = XZToastLayoutTypeNone;
 }
 
 - (void)layoutToastViews {
@@ -533,12 +537,12 @@ static void * _context = NULL;
     // 重新调整 toast 大小
     for (XZToastTask *item in _showingTasks) {
         UIView * const itemView = item.view;
-        if (item->_frame.size.width <= _bounds.size.width) {
-            continue;
+        if (_layoutType == XZToastLayoutTypeUser || item->_frame.size.width > _bounds.size.width) {
+            item->_needsLayoutView = NO;
+            item->_frame.size = [itemView sizeThatFits:CGSizeMake(_bounds.size.width, 0)];
+            item->_frame.origin.x = (_bounds.size.width - item->_frame.size.width) * 0.5 + _bounds.origin.x;
+            itemView.frame = item->_frame;
         }
-        item->_frame.size = [itemView sizeThatFits:CGSizeMake(_bounds.size.width, 0)];
-        item->_frame.origin.x = (_bounds.size.width - item->_frame.size.width) * 0.5 + _bounds.origin.x;
-        itemView.frame = item->_frame;
     }
     
     // 重新调整位置

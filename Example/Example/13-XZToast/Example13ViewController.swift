@@ -15,7 +15,7 @@ class Example13ViewController: UITableViewController {
     
     var index = 0
     
-    var position = XZToastPosition.middle;
+    var position = XZToast.Position.middle;
     let toastCountNumbers: [UInt] = [0, 1, 2, 3, 5]
     
     var isExclusive = false

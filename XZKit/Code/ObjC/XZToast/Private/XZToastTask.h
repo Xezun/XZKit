@@ -28,6 +28,7 @@ typedef NS_ENUM(NSInteger, XZToastMoveDirection) {
     @package
     /// 为了方便计算 toastView 的 frame 而设置。
     CGRect _frame;
+    BOOL _needsLayoutView;
 }
 
 @property (nonatomic, readonly) XZToastShadowView *view;
@@ -38,7 +39,9 @@ typedef NS_ENUM(NSInteger, XZToastMoveDirection) {
 @property (nonatomic, readonly) BOOL isExclusive;
 
 @property (nonatomic, readonly) NSTimeInterval duration;
+
 @property (nonatomic, readonly) XZToastPosition position;
+
 /// 运动方向。
 /// 1. 显示时，仅对在中部展示的  toast 生效，决定旧 toast 被新 toast 挤出中间位置时，是挤向上方（YES），还是挤向下方（NO）。
 @property (nonatomic) XZToastMoveDirection moveDirection;

@@ -28,7 +28,8 @@ NS_ASSUME_NONNULL_BEGIN
 
 + (nullable XZToastManager *)managerForViewController:(UIViewController *)viewController;
 
-- (void)setNeedsLayoutToastViews;
+- (void)setNeedsLayoutToasts;
+- (void)layoutToastsIfNeeded;
 
 @end
 
