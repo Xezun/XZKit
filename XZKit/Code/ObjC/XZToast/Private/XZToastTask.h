@@ -11,6 +11,19 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
+typedef NS_ENUM(NSInteger, XZToastHideReason) {
+    /// 展示完成，或被外部提前取消
+    XZToastHideReasonNormal = +1,
+    /// 数量超过限制被取消
+    XZToastHideReasonExceed = -1
+};
+
+typedef NS_ENUM(NSInteger, XZToastMoveDirection) {
+    XZToastMoveDirectionLand = +1,
+    XZToastMoveDirectionNone = +0,
+    XZToastMoveDirectionRise = -1
+};
+
 @interface XZToastTask : XZToast {
     @package
     /// 为了方便计算 toastView 的 frame 而设置。
@@ -26,11 +39,12 @@ NS_ASSUME_NONNULL_BEGIN
 
 @property (nonatomic, readonly) NSTimeInterval duration;
 @property (nonatomic, readonly) XZToastPosition position;
-/// 记录动画执行方向。
+/// 运动方向。
 /// 1. 显示时，仅对在中部展示的  toast 生效，决定旧 toast 被新 toast 挤出中间位置时，是挤向上方（YES），还是挤向下方（NO）。
-@property (nonatomic) BOOL showDirection;
-// 隐藏时，标记 toast 是否为因为数量超限而被移除，在顶部或底部展示的 toast 会以挤出的方向动画。
-@property (nonatomic) BOOL hideDirection;
+@property (nonatomic) XZToastMoveDirection moveDirection;
+
+// 如果 toast 是否为因为数量超限而被移除（值为-1），隐藏时，标记在顶部或底部展示的 toast 会以挤出的方向动画。
+@property (nonatomic) XZToastHideReason hideReason;
 
 /// 标记 view 是否为复用视图。
 @property (nonatomic, setter=setViewReused:) BOOL isViewReused;

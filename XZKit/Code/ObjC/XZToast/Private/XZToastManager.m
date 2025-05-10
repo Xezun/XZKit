@@ -157,7 +157,7 @@ static void * _context = NULL;
         if (task.view.view == toastView) {
             task.isViewReused = YES;
             
-            // 反转隐藏动画
+            // 隐藏效果反转
             XZToastShadowView * const view = task.view;
             CALayer * const layer = view.layer.presentationLayer;
             if (layer) {
@@ -374,13 +374,25 @@ static void * _context = NULL;
         
         switch (_position) {
             case XZToastPositionTop:
-                newToastItem.showDirection = NO;
+                newToastItem.moveDirection = XZToastMoveDirectionLand;
                 break;
-            case XZToastPositionMiddle:
-                newToastItem.showDirection = !_showingTasks.lastObject.showDirection;
+            case XZToastPositionMiddle: {
+                newToastItem.moveDirection = XZToastMoveDirectionNone;
+                NSUInteger const count = _showingTasks.count;
+                switch (count) {
+                    case 0:
+                        break;
+                    case 1:
+                        _showingTasks[0].moveDirection = XZToastMoveDirectionRise;
+                        break;
+                    default:
+                        _showingTasks[count - 1].moveDirection = _showingTasks[count - 2].moveDirection * (-1);
+                        break;
+                }
                 break;
+            }
             case XZToastPositionBottom:
-                newToastItem.showDirection = YES;
+                newToastItem.moveDirection = XZToastMoveDirectionRise;
                 break;
         }
         
@@ -401,7 +413,7 @@ static void * _context = NULL;
         [_showingTasks removeObjectAtIndex:0];
         
         // 标记是被顶掉的
-        firstItem.hideDirection = YES;
+        firstItem.hideReason = XZToastHideReasonExceed;
         [firstItem cancel];
         [_hideingTasks addObject:firstItem];
     }
@@ -429,9 +441,10 @@ static void * _context = NULL;
         [self updateToastsIfNeeded];
     };
     
-    switch (_position) {
-        case XZToastPositionTop: {
-            [UIView animateWithDuration:XZToastAnimationDuration delay:0 options:UIViewAnimationOptionLayoutSubviews animations:^{
+    UIViewAnimationOptions const options = UIViewAnimationOptionLayoutSubviews;
+    [UIView animateWithDuration:XZToastAnimationDuration delay:0 usingSpringWithDamping:0.8 initialSpringVelocity:0.6 options:options animations:^{
+        switch (self->_position) {
+            case XZToastPositionTop: {
                 CGFloat __block y = CGRectGetMinY(self->_bounds) + self->_offsets[XZToastPositionTop];
                 [self->_showingTasks enumerateObjectsWithOptions:NSEnumerationReverse usingBlock:^(XZToastTask * _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
                     obj.view.transform = CGAffineTransformIdentity;
@@ -440,18 +453,9 @@ static void * _context = NULL;
                     obj.view.frame = obj->_frame;
                     y = CGRectGetMaxY(obj->_frame);
                 }];
-                for (XZToastTask *item in self->_hideingTasks) {
-                    if (item.isViewReused) {
-                        continue;
-                    }
-                    item.view.alpha = 0.0;
-                    item.view.transform = CGAffineTransformMakeTranslation(0, item->_frame.size.height * (item.hideDirection ? +1.0 : -1.0));
-                }
-            } completion:completion];
-            break;
-        }
-        case XZToastPositionMiddle: {
-            [UIView animateWithDuration:XZToastAnimationDuration delay:0 usingSpringWithDamping:0.8 initialSpringVelocity:0.5 options:UIViewAnimationOptionLayoutSubviews animations:^{
+                break;
+            }
+            case XZToastPositionMiddle: {
                 // 最新的在中间，剩下的分居上下两侧
                 if (self->_showingTasks.count > 0) {
                     XZToastTask *item = self->_showingTasks.lastObject;
@@ -464,7 +468,7 @@ static void * _context = NULL;
                     CGFloat maxY = CGRectGetMaxY(item->_frame);
                     for (NSInteger i = (NSInteger)(self->_showingTasks.count) - 2; i >= 0; i--) {
                         XZToastTask *item = self->_showingTasks[i];
-                        if (item.showDirection) {
+                        if (item.moveDirection == XZToastMoveDirectionLand) {
                             item->_frame.origin.y = maxY;
                             item.view.frame = item->_frame;
                             maxY = CGRectGetMaxY(item->_frame);
@@ -475,23 +479,9 @@ static void * _context = NULL;
                         }
                     }
                 }
-                
-                for (XZToastTask *item in self->_hideingTasks) {
-                    if (item.isViewReused) {
-                        continue;
-                    }
-                    item.view.alpha = 0.0;
-                    if (item.hideDirection) {
-                        item.view.transform = CGAffineTransformMakeTranslation(0, item->_frame.size.height * (item.showDirection ? +1.0 : -1.0));
-                    } else {
-                        item.view.transform = CGAffineTransformMakeScale(0.5, 0.5);
-                    }
-                }
-            } completion:completion];
-            break;
-        }
-        case XZToastPositionBottom: {
-            [UIView animateWithDuration:XZToastAnimationDuration delay:0 options:UIViewAnimationOptionLayoutSubviews animations:^{
+                break;
+            }
+            case XZToastPositionBottom: {
                 // 最新的在底部，从底部开始布局
                 CGFloat __block y = CGRectGetMaxY(self->_bounds) + self->_offsets[XZToastPositionBottom];
                 [self->_showingTasks enumerateObjectsWithOptions:NSEnumerationReverse usingBlock:^(XZToastTask * _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
@@ -501,19 +491,20 @@ static void * _context = NULL;
                     obj.view.frame = obj->_frame;
                     y = obj->_frame.origin.y;
                 }];
-                
-                // 隐藏动画
-                for (XZToastTask *item in self->_hideingTasks) {
-                    if (item.isViewReused) {
-                        continue;
-                    }
-                    item.view.alpha = 0.0;
-                    item.view.transform = CGAffineTransformMakeTranslation(0, +item->_frame.size.height * (item.hideDirection ? -1.0 : +1.0));
-                }
-            } completion:completion];
-            break;
+                break;
+            }
         }
-    }
+        
+        for (XZToastTask *item in self->_hideingTasks) {
+            if (item.isViewReused) {
+                continue;
+            }
+            // 隐藏效果：渐隐，缩小，反向平移；在复用模式下，会有相反的动画处理。
+            CGFloat const deltaY = item->_frame.size.height * (-item.moveDirection) * item.hideReason;
+            item.view.alpha = 0.0;
+            item.view.transform = CGAffineTransformTranslate(CGAffineTransformMakeScale(0.66, 0.66), 0, deltaY);
+        }
+    } completion:completion];
 }
 
 - (void)setNeedsLayoutToastViews {
@@ -571,7 +562,7 @@ static void * _context = NULL;
             CGFloat __block maxY = CGRectGetMaxY(item->_frame);
             for (NSInteger i = (NSInteger)(self->_showingTasks.count) - 2; i >= 0; i--) {
                 XZToastTask *item = self->_showingTasks[i];
-                if (item.showDirection) {
+                if (item.moveDirection) {
                     item->_frame.origin.y = maxY;
                     item.view.frame = item->_frame;
                     maxY = CGRectGetMaxY(item->_frame);

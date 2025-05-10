@@ -18,6 +18,8 @@
 - (instancetype)initWithView:(XZToastShadowView *)view duration:(NSTimeInterval)duration position:(XZToastPosition)position exclusive:(BOOL)exclusive completion:(XZToastCompletion)completion {
     self = [super initWithView:view];
     if (self) {
+        _hideReason  = XZToastHideReasonNormal;
+        _moveDirection = XZToastMoveDirectionNone;
         _duration    = duration;
         _position    = position;
         _isExclusive = exclusive;
