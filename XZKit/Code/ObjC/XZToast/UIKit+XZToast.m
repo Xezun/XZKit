@@ -15,35 +15,35 @@
 @implementation UIResponder (XZToast)
 
 - (XZToast *)xz_showToast:(XZToast *)toast duration:(NSTimeInterval)duration position:(XZToastPosition)position exclusive:(BOOL)exclusive completion:(XZToastCompletion)completion {
-    return [UIApplication.sharedApplication xz_showToast:toast duration:duration position:position exclusive:exclusive completion:completion];
+    return [self.nextResponder xz_showToast:toast duration:duration position:position exclusive:exclusive completion:completion];
 }
 
 - (void)xz_hideToast:(XZToast *)toast completion:(void (^)(void))completion {
-    [UIApplication.sharedApplication xz_hideToast:toast completion:completion];
+    [self.nextResponder xz_hideToast:toast completion:completion];
 }
 
 - (void)xz_setNeedsLayoutToasts {
-    [UIApplication.sharedApplication xz_setNeedsLayoutToasts];
+    [self.nextResponder xz_setNeedsLayoutToasts];
 }
 
 - (void)xz_layoutToastsIfNeeded {
-    [UIApplication.sharedApplication xz_layoutToastsIfNeeded];
+    [self.nextResponder xz_layoutToastsIfNeeded];
 }
 
 - (NSInteger)xz_maximumNumberOfToasts {
-    return [UIApplication.sharedApplication xz_maximumNumberOfToasts];
+    return [self.nextResponder xz_maximumNumberOfToasts];
 }
 
 - (void)xz_setMaximumNumberOfToasts:(NSInteger)xz_maximumNumberOfToasts {
-    [UIApplication.sharedApplication xz_setMaximumNumberOfToasts:xz_maximumNumberOfToasts];
+    [self.nextResponder xz_setMaximumNumberOfToasts:xz_maximumNumberOfToasts];
 }
 
 - (void)xz_setOffset:(CGFloat)offset forToastInPosition:(XZToastPosition)position {
-    [UIApplication.sharedApplication xz_setOffset:offset forToastInPosition:position];
+    [self.nextResponder xz_setOffset:offset forToastInPosition:position];
 }
 
 - (CGFloat)xz_offsetForToastInPosition:(XZToastPosition)position {
-    return [UIApplication.sharedApplication xz_offsetForToastInPosition:position];
+    return [self.nextResponder xz_offsetForToastInPosition:position];
 }
 
 - (nullable XZToast *)xz_showToast:(XZToast *)toast duration:(NSTimeInterval)duration position:(XZToastPosition)position completion:(nullable XZToastCompletion)completion {
@@ -111,43 +111,6 @@
 }
 
 @end
-
-@implementation UIView (XZToast)
-
-- (XZToast *)xz_showToast:(XZToast *)toast duration:(NSTimeInterval)duration position:(XZToastPosition)position exclusive:(BOOL)exclusive completion:(XZToastCompletion)completion {
-    return [self.nextResponder xz_showToast:toast duration:duration position:position exclusive:exclusive completion:completion];
-}
-
-- (void)xz_hideToast:(XZToast *)toast completion:(void (^)(void))completion {
-    [self.nextResponder xz_hideToast:toast completion:completion];
-}
-
-- (void)xz_setNeedsLayoutToasts {
-    [self.nextResponder xz_setNeedsLayoutToasts];
-}
-
-- (void)xz_layoutToastsIfNeeded {
-    [self.nextResponder xz_layoutToastsIfNeeded];
-}
-
-- (NSInteger)xz_maximumNumberOfToasts {
-    return [self.nextResponder xz_maximumNumberOfToasts];
-}
-
-- (void)xz_setMaximumNumberOfToasts:(NSInteger)xz_maximumNumberOfToasts {
-    [self.nextResponder xz_setMaximumNumberOfToasts:xz_maximumNumberOfToasts];
-}
-
-- (void)xz_setOffset:(CGFloat)offset forToastInPosition:(XZToastPosition)position {
-    [self.nextResponder xz_setOffset:offset forToastInPosition:position];
-}
-
-- (CGFloat)xz_offsetForToastInPosition:(XZToastPosition)position {
-    return [self.nextResponder xz_offsetForToastInPosition:position];
-}
-
-@end
-
 
 @implementation UIWindow (XZToast)
 
@@ -222,6 +185,4 @@
 }
 
 @end
-
-
 

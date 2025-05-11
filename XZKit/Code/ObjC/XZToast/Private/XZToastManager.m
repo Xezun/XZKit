@@ -77,7 +77,6 @@ typedef NS_ENUM(NSUInteger, XZToastLayoutType) {
         UIEdgeInsets const safeAreaInsets = _rootView.safeAreaInsets;
         CGRect       const bounds         = _rootView.bounds;
         _bounds = CGRectInset(UIEdgeInsetsInsetRect(bounds, safeAreaInsets), XZToastMargin, XZToastMargin);
-        [_rootView addObserver:self forKeyPath:@"bounds" options:NSKeyValueObservingOptionNew context:&_context];
         
         _maximumNumberOfToasts = 3;
         _offsets = calloc(3, sizeof(XZToastPosition));
@@ -93,9 +92,6 @@ typedef NS_ENUM(NSUInteger, XZToastLayoutType) {
 - (void)dealloc {
     free(_offsets);
     _offsets = NULL;
-    
-    UIView * const _rootView = _viewController.view;
-    [_rootView removeObserver:self forKeyPath:@"bounds" context:&_context];
 }
 
 - (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary<NSKeyValueChangeKey,id> *)change context:(void *)context {

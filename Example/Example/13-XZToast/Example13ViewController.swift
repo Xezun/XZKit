@@ -158,4 +158,10 @@ class Example13ViewController: UITableViewController {
     @IBAction func progressSliderValueChanged(_ sender: UISlider) {
         showToast(.loading(String.init(format: "加载进度 %.2f%%", sender.value)))
     }
+    
+    /// 将 toast 转发到上层控制器处理
+    @discardableResult
+    override func showToast(_ toast: XZToast, duration: TimeInterval, position: XZToast.Position, exclusive: Bool, completion: XZToast.Completion? = nil) -> XZToast?  {
+        return next?.showToast(toast, duration: duration, position: position, exclusive: exclusive, completion: completion)
+    }
 }
