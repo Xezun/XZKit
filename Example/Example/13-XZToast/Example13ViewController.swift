@@ -18,8 +18,6 @@ class Example13ViewController: UITableViewController {
     var position = XZToast.Position.middle;
     
     var isExclusive = false
-    
-    lazy var loadingView = XZToastActivityIndicatorView.init()
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -31,7 +29,6 @@ class Example13ViewController: UITableViewController {
         case 0:
             break
         case 1:
-//            cell.accessoryType = indexPath.row == position.rawValue ? .checkmark : .disclosureIndicator;
             break
         case 2:
             switch indexPath.row {
@@ -42,22 +39,7 @@ class Example13ViewController: UITableViewController {
             default:
                 break
             }
-//            let number = String(self.maximumNumberOfToasts);
-//            if cell.textLabel?.text == number {
-//                cell.accessoryType = .checkmark;
-//            } else {
-//                cell.accessoryType = .disclosureIndicator;
-//            }
             break
-            
-        case 3:
-            switch indexPath.row {
-            case 0:
-                cell.accessoryType = isExclusive ? .checkmark : .disclosureIndicator;
-                break
-            default:
-                break
-            }
         default:
             break
         }
@@ -112,10 +94,7 @@ class Example13ViewController: UITableViewController {
         case 1:
             switch indexPath.row {
             case 0:
-                let toast = XZToast.init(view: loadingView)
-                loadingView.text = "加载中"
-                loadingView.startAnimating()
-                self.showToast(toast, duration: 0, position: .middle, exclusive: true) { finished in
+                self.showToast(.loading("加载中"), duration: 0, position: position, exclusive: true) { finished in
                     print("\(finished)");
                 }
             case 1:
@@ -177,13 +156,6 @@ class Example13ViewController: UITableViewController {
     }
     
     @IBAction func progressSliderValueChanged(_ sender: UISlider) {
-        if sender.value == 0 {
-            loadingView.text = "加载中"
-        } else if sender.value == 1.0 {
-            loadingView.text = "加载完成"
-        } else {
-            loadingView.text = String.init(format: "加载进度 %.2f%%", sender.value)
-        }
-        self.setNeedsLayoutToasts()
+        showToast(.loading(String.init(format: "加载进度 %.2f%%", sender.value)))
     }
 }

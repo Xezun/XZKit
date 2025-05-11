@@ -24,16 +24,24 @@ NSTimeInterval const XZToastAnimationDuration = 0.35;
 }
 
 + (XZToast *)messageToast:(NSString *)text {
-    XZToastTextView *_textView = [[XZToastTextView alloc] init];
-    _textView.text = text;
-    return [[XZToast alloc] initWithView:_textView];
+    XZToastTextView *toastView = [[XZToastTextView alloc] init];
+    toastView.text = text;
+    return [[XZToast alloc] initWithView:toastView];
 }
 
 + (XZToast *)loadingToast:(NSString *)text {
-    XZToastActivityIndicatorView *_toastView = [[XZToastActivityIndicatorView alloc] initWithFrame:CGRectMake(0, 0, 70.0, 100.0)];
-    _toastView.text = text;
-    [_toastView startAnimating];
-    return [[XZToast alloc] initWithView:_toastView];
+    static XZToastActivityIndicatorView * __weak _toastView = nil;
+    
+    XZToastActivityIndicatorView *toastView = _toastView;
+    if (toastView == nil) {
+        toastView =  [[XZToastActivityIndicatorView alloc] initWithFrame:CGRectMake(0, 0, 70.0, 100.0)];
+        [toastView startAnimating];
+        
+        _toastView = toastView;
+    }
+    toastView.text = text;
+    
+    return [[XZToast alloc] initWithView:toastView];
 }
 
 @end

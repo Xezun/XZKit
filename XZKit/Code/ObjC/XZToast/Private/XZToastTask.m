@@ -18,7 +18,7 @@
 - (instancetype)initWithView:(UIView *)view duration:(NSTimeInterval)duration position:(XZToastPosition)position exclusive:(BOOL)exclusive completion:(XZToastCompletion)completion {
     self = [super initWithView:view];
     if (self) {
-        _containerView = nil;
+        _wrapperView = nil;
         _hideReason    = XZToastHideReasonNormal;
         _moveDirection = XZToastMoveDirectionNone;
         _duration      = duration;
@@ -33,18 +33,18 @@
 - (instancetype)initWithContainerView:(XZToastShadowView *)containerView duration:(NSTimeInterval)duration position:(XZToastPosition)position exclusive:(BOOL)exclusive completion:(XZToastCompletion)completion {
     self = [self initWithView:containerView.view duration:duration position:position exclusive:exclusive completion:completion];
     if (self) {
-        _containerView = containerView;
+        _wrapperView = containerView;
     }
     return self;
 }
 
-@synthesize containerView = _containerView;
+@synthesize wrapperView = _wrapperView;
 
-- (XZToastShadowView *)containerView {
-    if (_containerView == nil) {
-        _containerView = [[XZToastShadowView alloc] initWithView:self.view];
+- (XZToastShadowView *)wrapperView {
+    if (_wrapperView == nil) {
+        _wrapperView = [[XZToastShadowView alloc] initWithView:self.view];
     }
-    return _containerView;
+    return _wrapperView;
 }
 
 - (void)resume:(void (^)(XZToastTask * _Nonnull))block {
