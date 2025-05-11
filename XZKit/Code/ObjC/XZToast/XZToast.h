@@ -20,9 +20,9 @@ NS_ASSUME_NONNULL_BEGIN
 - (instancetype)init NS_UNAVAILABLE;
 - (instancetype)initWithView:(UIView *)view NS_DESIGNATED_INITIALIZER;
 
-+ (XZToast *)messageToast:(NSString *)text NS_SWIFT_NAME(message(_:));
++ (instancetype)messageToast:(NSString *)text NS_SWIFT_NAME(init(message:));
 
-+ (XZToast *)loadingToast:(NSString *)text NS_SWIFT_NAME(loading(_:));
++ (instancetype)loadingToast:(NSString *)text NS_SWIFT_NAME(init(loading:));
 
 @end
 

@@ -28,6 +28,27 @@ extension XZToast.Position: CustomStringConvertible {
     }
 }
 
+extension XZToast {
+    
+    public static func message(_ text: String) -> XZToast {
+        return XZToast(message: text)
+    }
+    
+    public static func loading(_ text: String) -> XZToast {
+        return XZToast(loading: text)
+    }
+}
+
+extension XZToast: ExpressibleByStringLiteral {
+    
+    public typealias StringLiteralType = String
+    
+    public required convenience init(stringLiteral value: String) {
+        self.init(message: value)
+    }
+    
+}
+
 /// 提示信息。
 //public struct XZToast : RawRepresentable, ExpressibleByStringLiteral {
 //    

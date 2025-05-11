@@ -26,7 +26,7 @@ NSTimeInterval const XZToastAnimationDuration = 0.35;
 + (XZToast *)messageToast:(NSString *)text {
     XZToastTextView *toastView = [[XZToastTextView alloc] init];
     toastView.text = text;
-    return [[XZToast alloc] initWithView:toastView];
+    return [[self alloc] initWithView:toastView];
 }
 
 + (XZToast *)loadingToast:(NSString *)text {
@@ -41,7 +41,7 @@ NSTimeInterval const XZToastAnimationDuration = 0.35;
     }
     toastView.text = text;
     
-    return [[XZToast alloc] initWithView:toastView];
+    return [[self alloc] initWithView:toastView];
 }
 
 @end
