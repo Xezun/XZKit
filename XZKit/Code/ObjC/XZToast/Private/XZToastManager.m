@@ -13,12 +13,6 @@
 
 static void * _context = NULL;
 
-typedef NS_ENUM(NSUInteger, XZToastLayoutType) {
-    XZToastLayoutTypeNone = 0,
-    XZToastLayoutTypeAuto,
-    XZToastLayoutTypeUser,
-};
-
 @implementation XZToastManager {
     UIViewController * __weak _viewController;
     
@@ -45,8 +39,7 @@ typedef NS_ENUM(NSUInteger, XZToastLayoutType) {
     /// 布局的范围。
     CGRect _bounds;
     
-    XZToastLayoutType _layoutType;
-    
+    BOOL _needslayoutToasts;
 }
 
 + (XZToastManager *)managerForViewController:(UIViewController *)viewController {
@@ -59,9 +52,6 @@ typedef NS_ENUM(NSUInteger, XZToastLayoutType) {
     if (manager) {
         return manager;
     }
-    
-    // H:|-padding-spacing-[toast]-spacing-padding-|
-    // V:|-padding-spacing-[toast]-spacing-[toast]-spacing-padding-|
     
     manager = [[XZToastManager alloc] initWithViewController:viewController];
     objc_setAssociatedObject(viewController, _manager, manager, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
@@ -94,31 +84,13 @@ typedef NS_ENUM(NSUInteger, XZToastLayoutType) {
     _offsets = NULL;
 }
 
-- (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary<NSKeyValueChangeKey,id> *)change context:(void *)context {
-    if (&_context != context) {
-        [super observeValueForKeyPath:keyPath ofObject:object change:change context:context];
-        return;
-    }
-    
-    UIView * const _rootView = _viewController.view;
-    CGRect const bounds = _rootView.bounds;
-    UIEdgeInsets const safeAreaInsets = _rootView.safeAreaInsets;
-    CGRect const newBounds = CGRectInset(UIEdgeInsetsInsetRect(bounds, safeAreaInsets), XZToastMargin, XZToastMargin);
-    if (CGRectEqualToRect(_bounds, newBounds)) {
-        return;
-    }
-    _bounds = newBounds;
-    // 立即调整 toast 位置
-    _layoutType = XZToastLayoutTypeAuto;
-    [self layoutToastsIfNeeded];
-}
-
 - (void)setMaximumNumberOfToasts:(NSInteger)maximumNumberOfToasts {
     _maximumNumberOfToasts = MAX(1, maximumNumberOfToasts);
     [self setNeedsUpdateToasts];
 }
 
 - (XZToastTask *)showToast:(XZToast *)toast duration:(NSTimeInterval)duration position:(XZToastPosition)position exclusive:(BOOL)exclusive completion:(void (^)(BOOL))completion {
+    NSParameterAssert(duration >= 0 && duration < DISPATCH_TIME_FOREVER);
     UIView * const toastView = toast.view;
     [toastView layoutIfNeeded];
     
@@ -538,21 +510,21 @@ typedef NS_ENUM(NSUInteger, XZToastLayoutType) {
 }
 
 - (void)setNeedsLayoutToasts {
-    if (_layoutType == XZToastLayoutTypeUser) {
+    if (_needslayoutToasts) {
         return;
     }
-    _layoutType = XZToastLayoutTypeUser;
+    _needslayoutToasts = YES;
     [NSRunLoop.mainRunLoop performInModes:@[NSRunLoopCommonModes] block:^{
         [self layoutToastsIfNeeded];
     }];
 }
 
 - (void)layoutToastsIfNeeded {
-    if (_layoutType == XZToastLayoutTypeNone) {
+    if (!_needslayoutToasts) {
         return;
     }
     [self layoutToastViews];
-    _layoutType = XZToastLayoutTypeNone;
+    _needslayoutToasts = NO;
 }
 
 - (void)layoutToastViews {
@@ -563,12 +535,9 @@ typedef NS_ENUM(NSUInteger, XZToastLayoutType) {
     // 重新调整 toast 大小
     for (XZToastTask *item in _showingTasks) {
         UIView * const itemView = item.wrapperView;
-        if (_layoutType == XZToastLayoutTypeUser || item->_frame.size.width > _bounds.size.width) {
-            item->_needsLayoutView = NO;
-            item->_frame.size = [itemView sizeThatFits:CGSizeMake(_bounds.size.width, 0)];
-            item->_frame.origin.x = (_bounds.size.width - item->_frame.size.width) * 0.5 + _bounds.origin.x;
-            itemView.frame = item->_frame;
-        }
+        item->_frame.size = [itemView sizeThatFits:CGSizeMake(_bounds.size.width, 0)];
+        item->_frame.origin.x = (_bounds.size.width - item->_frame.size.width) * 0.5 + _bounds.origin.x;
+        itemView.frame = item->_frame;
     }
     
     // 重新调整位置

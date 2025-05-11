@@ -28,7 +28,6 @@ typedef NS_ENUM(NSInteger, XZToastMoveDirection) {
     @package
     /// 为了方便计算 toastView 的 frame 而设置。
     CGRect _frame;
-    BOOL _needsLayoutView;
 }
 
 @property (nonatomic, strong) XZToastShadowView *wrapperView;

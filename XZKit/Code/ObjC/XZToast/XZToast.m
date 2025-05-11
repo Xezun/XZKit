@@ -30,17 +30,9 @@ NSTimeInterval const XZToastAnimationDuration = 0.35;
 }
 
 + (XZToast *)loadingToast:(NSString *)text {
-    static XZToastActivityIndicatorView * __weak _toastView = nil;
-    
-    XZToastActivityIndicatorView *toastView = _toastView;
-    if (toastView == nil) {
-        toastView =  [[XZToastActivityIndicatorView alloc] initWithFrame:CGRectMake(0, 0, 70.0, 100.0)];
-        [toastView startAnimating];
-        
-        _toastView = toastView;
-    }
+    XZToastActivityIndicatorView *toastView = [[XZToastActivityIndicatorView alloc] initWithFrame:CGRectMake(0, 0, 100.0, 100.0)];
+    [toastView startAnimating];
     toastView.text = text;
-    
     return [[self alloc] initWithView:toastView];
 }
 

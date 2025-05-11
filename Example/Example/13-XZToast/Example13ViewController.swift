@@ -17,10 +17,16 @@ class Example13ViewController: UITableViewController {
     
     var position = XZToast.Position.middle;
     
+    unowned var toastController: UIViewController! = nil
+    
     var isExclusive = false
+    
+    lazy var loadingView = XZToastActivityIndicatorView.init()
 
     override func viewDidLoad() {
         super.viewDidLoad()
+        
+        toastController = self
     }
     
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
@@ -80,27 +86,29 @@ class Example13ViewController: UITableViewController {
                 showMessage("短消息", duration: 3.0)
             
             case 7:
-                self.showToast(.loading("加载中"), duration: 0, position: position, exclusive: isExclusive)
+                toastController.showToast(.loading("加载中"), duration: 0, position: position, exclusive: isExclusive)
                 
             case 10:
-                self.showToast(.message("这是消息2"), duration: 3.0, position: position, exclusive: isExclusive)
-                self.showToast(.message("这是消息3"), duration: 2.0, position: position, exclusive: isExclusive)
-                showToast(.loading("加载中..."))
+                toastController.showToast(.message("这是消息2"), duration: 3.0, position: position, exclusive: isExclusive)
+                toastController.showToast(.message("这是消息3"), duration: 2.0, position: position, exclusive: isExclusive)
+                toastController.showToast(.loading("加载中..."))
                 break
             default:
-                hideToast();
+                toastController.hideToast();
                 break
             }
         case 1:
             switch indexPath.row {
             case 0:
-                self.showToast(.loading("加载中"), duration: 0, position: position, exclusive: true) { finished in
-                    print("\(finished)");
+                loadingView.text = "加载中"
+                loadingView.startAnimating()
+                toastController.showToast(.init(view: loadingView), duration: 0, position: position, exclusive: true) { finished in
+                    NSLog("加载类型的 XZToast 展示结束：\(finished)")
                 }
             case 1:
                 break
             case 2:
-                self.hideToast()
+                toastController.hideToast()
                 break
             default:
                 break
@@ -113,7 +121,7 @@ class Example13ViewController: UITableViewController {
     func showMessage(_ message: String, duration: TimeInterval) {
         let start = timestamp()
         let index = self.index
-        self.showToast(.message("\(index). \(message)"), duration: duration, position: self.position, exclusive: self.isExclusive) { finished in
+        toastController.showToast(.message("\(index). \(message)"), duration: duration, position: self.position, exclusive: self.isExclusive) { finished in
             let end = timestamp()
             let delta = String.init(format: "%.2f", end - start);
             NSLog("消息：\(index). \(message) \n状态：\(finished) \n定时：\(duration) \n耗时：\(delta)")
@@ -134,7 +142,7 @@ class Example13ViewController: UITableViewController {
     }
     
     @IBAction func hideButtonAction(_ sender: UIBarButtonItem) {
-        hideToast()
+        toastController.hideToast()
     }
     
     @IBAction func unwindToBack(_ unwindSegue: UIStoryboardSegue) {
@@ -144,7 +152,7 @@ class Example13ViewController: UITableViewController {
             self.position = XZToast.Position.init(rawValue: select.value)!
             tableView.reloadRows(at: [.init(row: 0, section: 2)], with: .none)
         case "maximumNumberOfToasts":
-            self.maximumNumberOfToasts = select.value
+            toastController.maximumNumberOfToasts = select.value
             tableView.reloadRows(at: [.init(row: 1, section: 2)], with: .none)
         default:
             break
@@ -156,12 +164,11 @@ class Example13ViewController: UITableViewController {
     }
     
     @IBAction func progressSliderValueChanged(_ sender: UISlider) {
-        showToast(.loading(String.init(format: "加载进度 %.2f%%", sender.value)))
+        loadingView.text = String.init(format: "加载进度 %.2f%%", sender.value);
+        toastController.showToast(.init(view: loadingView))
     }
     
-    /// 将 toast 转发到上层控制器处理
-    @discardableResult
-    override func showToast(_ toast: XZToast, duration: TimeInterval, position: XZToast.Position, exclusive: Bool, completion: XZToast.Completion? = nil) -> XZToast?  {
-        return next?.showToast(toast, duration: duration, position: position, exclusive: exclusive, completion: completion)
+    @IBAction func toastControllerSwitchValueChanged(_ sender: UISwitch) {
+        toastController = sender.isOn ? navigationController! : self
     }
 }

@@ -20,8 +20,12 @@ NS_ASSUME_NONNULL_BEGIN
 - (instancetype)init NS_UNAVAILABLE;
 - (instancetype)initWithView:(UIView *)view NS_DESIGNATED_INITIALIZER;
 
+/// 消息类型的提示。
+/// - Parameter text: 文本内容
 + (instancetype)messageToast:(NSString *)text NS_SWIFT_NAME(init(message:));
 
+/// 加载类型的提示。
+/// - Parameter text: 文本内容
 + (instancetype)loadingToast:(NSString *)text NS_SWIFT_NAME(init(loading:));
 
 @end

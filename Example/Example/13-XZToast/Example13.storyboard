@@ -292,6 +292,36 @@
                                             </constraints>
                                         </tableViewCellContentView>
                                     </tableViewCell>
+                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="none" indentationWidth="10" rowHeight="44" id="jEW-wh-HcB">
+                                        <rect key="frame" x="0.0" y="678.33334732055664" width="393" height="44"/>
+                                        <autoresizingMask key="autoresizingMask"/>
+                                        <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" preservesSuperviewLayoutMargins="YES" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="jEW-wh-HcB" id="cRw-Br-ZOf">
+                                            <rect key="frame" x="0.0" y="0.0" width="393" height="44"/>
+                                            <autoresizingMask key="autoresizingMask"/>
+                                            <subviews>
+                                                <switch opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" contentHorizontalAlignment="center" contentVerticalAlignment="center" translatesAutoresizingMaskIntoConstraints="NO" id="glP-uX-8k5">
+                                                    <rect key="frame" x="324" y="6.6666666666666679" width="51" height="31.000000000000004"/>
+                                                    <connections>
+                                                        <action selector="exclusiveSwitchValueChanged:" destination="zaF-ml-enH" eventType="valueChanged" id="51b-6Q-aUc"/>
+                                                        <action selector="toastControllerSwitchValueChanged:" destination="zaF-ml-enH" eventType="valueChanged" id="7TW-Gy-fTw"/>
+                                                    </connections>
+                                                </switch>
+                                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="使用导航控制器" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="0A7-8m-88N">
+                                                    <rect key="frame" x="20" y="11.666666666666664" width="118" height="21"/>
+                                                    <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                                    <nil key="textColor"/>
+                                                    <nil key="highlightedColor"/>
+                                                </label>
+                                            </subviews>
+                                            <constraints>
+                                                <constraint firstItem="0A7-8m-88N" firstAttribute="leading" secondItem="cRw-Br-ZOf" secondAttribute="leadingMargin" id="5CA-wY-vDK"/>
+                                                <constraint firstItem="glP-uX-8k5" firstAttribute="leading" relation="greaterThanOrEqual" secondItem="0A7-8m-88N" secondAttribute="trailing" constant="20" id="QVb-ec-yew"/>
+                                                <constraint firstItem="glP-uX-8k5" firstAttribute="centerY" secondItem="cRw-Br-ZOf" secondAttribute="centerY" id="b1Y-M2-Ld9"/>
+                                                <constraint firstItem="0A7-8m-88N" firstAttribute="centerY" secondItem="cRw-Br-ZOf" secondAttribute="centerY" id="iFe-Gk-j0w"/>
+                                                <constraint firstAttribute="trailingMargin" secondItem="glP-uX-8k5" secondAttribute="trailing" id="shZ-FT-AfA"/>
+                                            </constraints>
+                                        </tableViewCellContentView>
+                                    </tableViewCell>
                                 </cells>
                             </tableViewSection>
                         </sections>
