@@ -36,7 +36,9 @@ NS_ASSUME_NONNULL_BEGIN
 /// - Parameter text: 文本内容
 + (instancetype)loadingToast:(nullable NSString *)text NS_SWIFT_NAME(init(loading:));
 
-+ (instancetype)statusToast:(NSString *)text NS_SWIFT_NAME(init(loading:));
++ (instancetype)successToast:(nullable NSString *)text NS_SWIFT_NAME(init(success:));
+
++ (instancetype)failureToast:(nullable NSString *)text NS_SWIFT_NAME(init(failure:));
 
 @end
 

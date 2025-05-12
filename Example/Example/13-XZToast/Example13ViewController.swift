@@ -84,12 +84,10 @@ class Example13ViewController: UITableViewController {
                 showMessage("短消息", duration: 3.0)
             
             case 7:
-                self.showToast(.loading("加载中"), duration: 0, position: position, exclusive: isExclusive)
+                showToast(.success("操作成功"));
                 
-            case 10:
-                self.showToast(.message("这是消息2"), duration: 3.0, position: position, exclusive: isExclusive)
-                self.showToast(.message("这是消息3"), duration: 2.0, position: position, exclusive: isExclusive)
-                self.showToast(.loading("加载中..."))
+            case 8:
+                showToast(.failure("操作失败"))
                 break
             default:
                 self.hideToast();

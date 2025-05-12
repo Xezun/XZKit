@@ -9,14 +9,33 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-@interface XZToastActivityIndicatorView : UIView
+@interface XZToastTextIconView : UIView {
+    @package
+    UILabel *_textLabel;
+    UIView *_iconView;
+}
 
 @property (nonatomic, copy, nullable) NSString *text;
+- (instancetype)initWithFrame:(CGRect)frame iconView:(UIView *)iconView;
+@end
+
+@interface XZToastActivityIndicatorView : XZToastTextIconView
+
+@property(nonatomic, readonly) BOOL isAnimating;
 
 - (void)startAnimating;
 - (void)stopAnimating;
 
-@property(nonatomic, readonly) BOOL isAnimating;
+- (instancetype)initWithFrame:(CGRect)frame NS_DESIGNATED_INITIALIZER;
+
+@end
+
+
+@interface XZToastSuccessView : UIView
+
+@end
+
+@interface XZToastFailureView : UIView
 
 @end
 

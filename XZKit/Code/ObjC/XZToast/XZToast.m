@@ -34,8 +34,22 @@ NSTimeInterval const XZToastAnimationDuration = 0.35;
 }
 
 + (instancetype)loadingToast:(NSString *)text {
-    XZToastActivityIndicatorView *toastView = [[XZToastActivityIndicatorView alloc] initWithFrame:CGRectMake(0, 0, 100.0, 100.0)];
+    XZToastActivityIndicatorView *toastView = [[XZToastActivityIndicatorView alloc] init];
     [toastView startAnimating];
+    toastView.text = text;
+    return [[self alloc] initWithView:toastView];
+}
+
++ (instancetype)successToast:(NSString *)text {
+    XZToastSuccessView *successView = [[XZToastSuccessView alloc] init];
+    XZToastTextIconView *toastView = [[XZToastTextIconView alloc] initWithFrame:CGRectMake(0, 0, 115, 115) iconView:successView];
+    toastView.text = text;
+    return [[self alloc] initWithView:toastView];
+}
+
++ (instancetype)failureToast:(NSString *)text {
+    XZToastFailureView *statusView = [[XZToastFailureView alloc] init];
+    XZToastTextIconView *toastView = [[XZToastTextIconView alloc] initWithFrame:CGRectMake(0, 0, 115, 115) iconView:statusView];
     toastView.text = text;
     return [[self alloc] initWithView:toastView];
 }
