@@ -70,6 +70,14 @@
     return [self xz_showToast:toast duration:3.0 position:(XZToastPositionMiddle) exclusive:false completion:nil];
 }
 
+- (nullable XZToast *)xz_showToast:(XZToast *)toast exclusive:(BOOL)exclusive completion:(nullable XZToastCompletion)completion {
+    return [self xz_showToast:toast duration:3.0 position:(XZToastPositionMiddle) exclusive:exclusive completion:completion];
+}
+
+- (nullable XZToast *)xz_showToast:(XZToast *)toast exclusive:(BOOL)exclusive {
+    return [self xz_showToast:toast duration:3.0 position:(XZToastPositionMiddle) exclusive:exclusive completion:nil];
+}
+
 - (void)xz_hideToast:(void (^)(void))completion {
     [self xz_hideToast:nil completion:completion];
 }

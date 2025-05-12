@@ -60,6 +60,14 @@ extension XZToast {
     @objc public static func failure(_ text: String?) -> Self {
         return Self.init(failure: text)
     }
+    
+    @objc public static func warning(_ text: String?) -> Self {
+        return Self.init(warning: text)
+    }
+    
+    @objc public static func waiting(_ text: String?) -> Self {
+        return Self.init(waiting: text)
+    }
 }
 
 extension XZToast: ExpressibleByStringLiteral {

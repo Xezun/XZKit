@@ -7,7 +7,7 @@
 
 #import "XZToast.h"
 #import "XZToastTextView.h"
-#import "XZToastActivityIndicatorView.h"
+#import "XZToastTextIconView.h"
 
 NSTimeInterval const XZToastAnimationDuration = 0.35;
 
@@ -41,15 +41,25 @@ NSTimeInterval const XZToastAnimationDuration = 0.35;
 }
 
 + (instancetype)successToast:(NSString *)text {
-    XZToastSuccessView *successView = [[XZToastSuccessView alloc] init];
-    XZToastTextIconView *toastView = [[XZToastTextIconView alloc] initWithFrame:CGRectMake(0, 0, 115, 115) iconView:successView];
+    XZToastTextImageView *toastView = [[XZToastTextImageView alloc] initWithImage:XZToastBase64ImageSuccess];
     toastView.text = text;
     return [[self alloc] initWithView:toastView];
 }
 
 + (instancetype)failureToast:(NSString *)text {
-    XZToastFailureView *statusView = [[XZToastFailureView alloc] init];
-    XZToastTextIconView *toastView = [[XZToastTextIconView alloc] initWithFrame:CGRectMake(0, 0, 115, 115) iconView:statusView];
+    XZToastTextImageView *toastView = [[XZToastTextImageView alloc] initWithImage:XZToastBase64ImageFailure];
+    toastView.text = text;
+    return [[self alloc] initWithView:toastView];
+}
+
++ (instancetype)warningToast:(NSString *)text {
+    XZToastTextImageView *toastView = [[XZToastTextImageView alloc] initWithImage:XZToastBase64ImageWarning];
+    toastView.text = text;
+    return [[self alloc] initWithView:toastView];
+}
+
++ (instancetype)waitingToast:(NSString *)text {
+    XZToastTextImageView *toastView = [[XZToastTextImageView alloc] initWithImage:XZToastBase64ImageWaiting];
     toastView.text = text;
     return [[self alloc] initWithView:toastView];
 }

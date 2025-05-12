@@ -7,8 +7,6 @@
 
 #import <UIKit/UIKit.h>
 #import "XZToastDefines.h"
-#import "XZToastActivityIndicatorView.h"
-#import "XZToastTextView.h"
 #import "UIKit+XZToast.h"
 
 NS_ASSUME_NONNULL_BEGIN
@@ -36,9 +34,21 @@ NS_ASSUME_NONNULL_BEGIN
 /// - Parameter text: 文本内容
 + (instancetype)loadingToast:(nullable NSString *)text NS_SWIFT_NAME(init(loading:));
 
+/// 操作状态提示类型：成功状态。
+/// - Parameter text: 文本内容
 + (instancetype)successToast:(nullable NSString *)text NS_SWIFT_NAME(init(success:));
 
+/// 操作状态提示类型：失败状态。
+/// - Parameter text: 文本内容
 + (instancetype)failureToast:(nullable NSString *)text NS_SWIFT_NAME(init(failure:));
+
+/// 操作状态提示类型：警告状态。
+/// - Parameter text: 文本内容
++ (instancetype)warningToast:(nullable NSString *)text NS_SWIFT_NAME(init(warning:));
+
+/// 操作状态提示类型：等待状态。
+/// - Parameter text: 文本内容
++ (instancetype)waitingToast:(nullable NSString *)text NS_SWIFT_NAME(init(waiting:));
 
 @end
 

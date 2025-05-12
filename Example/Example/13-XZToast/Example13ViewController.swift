@@ -84,11 +84,17 @@ class Example13ViewController: UITableViewController {
                 showMessage("短消息", duration: 3.0)
             
             case 7:
-                showToast(.success("操作成功"));
+                showToast(.success("操作成功"), exclusive: true);
                 
             case 8:
-                showToast(.failure("操作失败"))
-                break
+                showToast(.failure("操作失败"), exclusive: true)
+            
+            case 9:
+                showToast(.waiting("请耐心等待"), exclusive: true)
+                
+            case 10:
+                showToast(.warning("非法访问"), exclusive: true)
+                
             default:
                 self.hideToast();
                 break
