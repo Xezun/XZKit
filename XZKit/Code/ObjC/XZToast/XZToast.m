@@ -23,13 +23,17 @@ NSTimeInterval const XZToastAnimationDuration = 0.35;
     return self;
 }
 
-+ (XZToast *)messageToast:(NSString *)text {
++ (instancetype)viewToast:(UIView *)view {
+    return [[self alloc] initWithView:view];
+}
+
++ (instancetype)messageToast:(NSString *)text {
     XZToastTextView *toastView = [[XZToastTextView alloc] init];
     toastView.text = text;
     return [[self alloc] initWithView:toastView];
 }
 
-+ (XZToast *)loadingToast:(NSString *)text {
++ (instancetype)loadingToast:(NSString *)text {
     XZToastActivityIndicatorView *toastView = [[XZToastActivityIndicatorView alloc] initWithFrame:CGRectMake(0, 0, 100.0, 100.0)];
     [toastView startAnimating];
     toastView.text = text;
