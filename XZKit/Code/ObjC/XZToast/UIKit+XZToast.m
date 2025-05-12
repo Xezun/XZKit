@@ -151,8 +151,11 @@
 
 @implementation UIViewController (XZToast)
 
+- (UIViewController *)xz_toastController {
+    return self;
+}
+
 - (XZToast *)xz_showToast:(XZToast *)toast duration:(NSTimeInterval)duration position:(XZToastPosition)position exclusive:(BOOL)exclusive completion:(XZToastCompletion)completion {
-    NSParameterAssert(duration >= 0 && duration < DISPATCH_TIME_FOREVER);
     return [[XZToastManager managerForViewController:self] showToast:toast duration:duration position:position exclusive:exclusive completion:completion];
 }
 

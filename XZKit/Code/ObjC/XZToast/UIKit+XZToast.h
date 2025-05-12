@@ -41,6 +41,8 @@ NS_ASSUME_NONNULL_BEGIN
 /// 刷新 toast 的布局。
 ///
 /// 如果在展示 toast 的期间，控制器的大小发生了改变，需要调用此方法来刷新布局。
+///
+/// 比如在容器视图为滚动视图时，可通过调用此方法刷新位置，让 toast 跟随滚动。
 - (void)xz_setNeedsLayoutToasts NS_SWIFT_NAME(setNeedsLayoutToasts());
 - (void)xz_layoutToastsIfNeeded NS_SWIFT_NAME(layoutToastsIfNeeded());
 
@@ -56,6 +58,18 @@ NS_ASSUME_NONNULL_BEGIN
 /// 获取指定位置 toast 的偏移值。
 /// - Parameter position: toast 展示位置
 - (CGFloat)xz_offsetForToastInPosition:(XZToastPosition)position NS_SWIFT_NAME(offset(forToastIn:));
+
+@end
+
+@interface UIViewController (XZToast)
+
+/// 展示 toast 的控制器，默认值为自身。
+///
+/// 子类可以通过重写此属性来实现将 toast 转发到其它控制器展示。
+/// 1. 容器是滚动的控制器，比如 `UITableViewController` 等，避免 toast 会随页面滚动。
+/// 2. 希望 toast 可以跨页面显示.
+/// 3. 希望 toast 统一在根控制器管理。
+@property (nonatomic, readonly, nullable) UIViewController *xz_toastController NS_SWIFT_NAME(toastController);
 
 @end
 

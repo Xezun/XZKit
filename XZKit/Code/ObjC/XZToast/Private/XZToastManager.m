@@ -47,6 +47,14 @@ static void * _context = NULL;
         return nil;
     }
     
+    do {
+        UIViewController * const toastController = viewController.xz_toastController;
+        if (toastController == nil || toastController == viewController) {
+            break;
+        }
+        viewController = toastController;
+    } while (YES);
+    
     static const void * const _manager = &_manager;
     XZToastManager *manager = objc_getAssociatedObject(viewController, _manager);
     if (manager) {
