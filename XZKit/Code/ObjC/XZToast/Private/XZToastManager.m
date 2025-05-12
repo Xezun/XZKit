@@ -10,8 +10,7 @@
 #import "XZToastShadowView.h"
 #import "XZToastTask.h"
 #import "XZToast.h"
-
-static void * _context = NULL;
+#import "UIKit+XZToast.h"
 
 @implementation XZToastManager {
     UIViewController * __weak _viewController;
@@ -35,9 +34,6 @@ static void * _context = NULL;
     /// 每个 toast 周期执行的回调。
     /// 不要直接使用此变量设置值，而是使用 `-addUpdateCompletion:` 和 `-runUpdateCompletion` 方法。
     void (^_updateCompletion)(void);
-    
-    /// 布局的范围。
-    CGRect _bounds;
     
     BOOL _needslayoutToasts;
 }
@@ -70,11 +66,6 @@ static void * _context = NULL;
     self = [super init];
     if (self) {
         _viewController = viewController;
-        UIView * const _rootView = viewController.view;
-        
-        UIEdgeInsets const safeAreaInsets = _rootView.safeAreaInsets;
-        CGRect       const bounds         = _rootView.bounds;
-        _bounds = CGRectInset(UIEdgeInsetsInsetRect(bounds, safeAreaInsets), XZToastMargin, XZToastMargin);
         
         _maximumNumberOfToasts = 3;
         _offsets = calloc(3, sizeof(XZToastPosition));
@@ -95,6 +86,13 @@ static void * _context = NULL;
 - (void)setMaximumNumberOfToasts:(NSInteger)maximumNumberOfToasts {
     _maximumNumberOfToasts = MAX(1, maximumNumberOfToasts);
     [self setNeedsUpdateToasts];
+}
+
+- (CGRect)bounds {
+    UIView     * const _rootView      = _viewController.view;
+    UIEdgeInsets const safeAreaInsets = _rootView.safeAreaInsets;
+    CGRect       const bounds         = _rootView.bounds;
+    return CGRectInset(UIEdgeInsetsInsetRect(bounds, safeAreaInsets), XZToastMargin, XZToastMargin);
 }
 
 - (XZToastTask *)showToast:(XZToast *)toast duration:(NSTimeInterval)duration position:(XZToastPosition)position exclusive:(BOOL)exclusive completion:(void (^)(BOOL))completion {
@@ -297,6 +295,8 @@ static void * _context = NULL;
         return;
     }
     
+    CGRect const _bounds = [self bounds];
+    
     // 将等待中的 toast 出列一个显示。
     // 每次只展示一个，这样每个 toast 最少有 XZToastAnimationDuration * maxCount 的展示时间。
     XZToastTask * const newToastItem = _waitingToShowTasks.firstObject;
@@ -428,7 +428,7 @@ static void * _context = NULL;
     [UIView animateWithDuration:XZToastAnimationDuration delay:0 usingSpringWithDamping:0.8 initialSpringVelocity:0.6 options:options animations:^{
         switch (self->_position) {
             case XZToastPositionTop: {
-                CGFloat __block y = CGRectGetMinY(self->_bounds) + self->_offsets[XZToastPositionTop];
+                CGFloat __block y = CGRectGetMinY(_bounds) + self->_offsets[XZToastPositionTop];
                 [self->_showingTasks enumerateObjectsWithOptions:NSEnumerationReverse usingBlock:^(XZToastTask * _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
                     obj.wrapperView.transform = CGAffineTransformIdentity;
                     obj.wrapperView.alpha = 1.0;
@@ -443,7 +443,7 @@ static void * _context = NULL;
                 if (self->_showingTasks.count > 0) {
                     XZToastTask *item = self->_showingTasks.lastObject;
                     item.wrapperView.alpha = 1.0;
-                    item->_frame.origin.y = CGRectGetMidY(self->_bounds) - CGRectGetHeight(item->_frame) * 0.5 + self->_offsets[XZToastPositionMiddle];
+                    item->_frame.origin.y = CGRectGetMidY(_bounds) - CGRectGetHeight(item->_frame) * 0.5 + self->_offsets[XZToastPositionMiddle];
                     item.wrapperView.transform = CGAffineTransformIdentity;
                     item.wrapperView.frame = item->_frame;
                     
@@ -466,7 +466,7 @@ static void * _context = NULL;
             }
             case XZToastPositionBottom: {
                 // 最新的在底部，从底部开始布局
-                CGFloat __block y = CGRectGetMaxY(self->_bounds) + self->_offsets[XZToastPositionBottom];
+                CGFloat __block y = CGRectGetMaxY(_bounds) + self->_offsets[XZToastPositionBottom];
                 [self->_showingTasks enumerateObjectsWithOptions:NSEnumerationReverse usingBlock:^(XZToastTask * _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
                     obj.wrapperView.transform = CGAffineTransformIdentity;
                     obj.wrapperView.alpha = 1.0;
@@ -530,6 +530,8 @@ static void * _context = NULL;
         return;
     }
     
+    CGRect const _bounds = [self bounds];
+    
     // 重新调整 toast 大小
     for (XZToastTask *item in _showingTasks) {
         UIView * const itemView = item.wrapperView;
@@ -541,8 +543,8 @@ static void * _context = NULL;
     // 重新调整位置
     switch (_position) {
         case XZToastPositionTop: {
-            CGFloat __block y = CGRectGetMinY(self->_bounds) + self->_offsets[XZToastPositionTop];
-            [self->_showingTasks enumerateObjectsWithOptions:NSEnumerationReverse usingBlock:^(XZToastTask * _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
+            CGFloat __block y = CGRectGetMinY(_bounds) + _offsets[XZToastPositionTop];
+            [_showingTasks enumerateObjectsWithOptions:NSEnumerationReverse usingBlock:^(XZToastTask *obj, NSUInteger idx, BOOL *stop) {
                 obj.wrapperView.alpha = 1.0;
                 obj->_frame.origin.y = y;
                 obj.wrapperView.frame = obj->_frame;
@@ -551,14 +553,14 @@ static void * _context = NULL;
             break;
         }
         case XZToastPositionMiddle: {
-            XZToastTask *item = self->_showingTasks.lastObject;
+            XZToastTask *item = _showingTasks.lastObject;
             item.wrapperView.alpha = 1.0;
-            item->_frame.origin.y = CGRectGetMidY(self->_bounds) - CGRectGetHeight(item->_frame) * 0.5 + self->_offsets[XZToastPositionMiddle];
+            item->_frame.origin.y = CGRectGetMidY(_bounds) - CGRectGetHeight(item->_frame) * 0.5 + _offsets[XZToastPositionMiddle];
             item.wrapperView.frame = item->_frame;
-            CGFloat __block minY = CGRectGetMinY(item->_frame);
-            CGFloat __block maxY = CGRectGetMaxY(item->_frame);
-            for (NSInteger i = (NSInteger)(self->_showingTasks.count) - 2; i >= 0; i--) {
-                XZToastTask *item = self->_showingTasks[i];
+            CGFloat minY = CGRectGetMinY(item->_frame);
+            CGFloat maxY = CGRectGetMaxY(item->_frame);
+            for (NSInteger i = (NSInteger)(_showingTasks.count) - 2; i >= 0; i--) {
+                XZToastTask *item = _showingTasks[i];
                 if (item.moveDirection) {
                     item->_frame.origin.y = maxY;
                     item.wrapperView.frame = item->_frame;
@@ -572,7 +574,7 @@ static void * _context = NULL;
             break;
         }
         case XZToastPositionBottom: {
-            CGFloat __block y = CGRectGetMaxY(self->_bounds) + self->_offsets[XZToastPositionBottom];
+            CGFloat __block y = CGRectGetMaxY(_bounds) + _offsets[XZToastPositionBottom];
             [self->_showingTasks enumerateObjectsWithOptions:NSEnumerationReverse usingBlock:^(XZToastTask * _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
                 obj.wrapperView.alpha = 1.0;
                 obj->_frame.origin.y = y - CGRectGetHeight(obj->_frame);
