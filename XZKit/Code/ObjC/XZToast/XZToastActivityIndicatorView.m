@@ -7,13 +7,22 @@
 
 #import "XZToastActivityIndicatorView.h"
 
+#define kPaddingT 15.0
+#define kPaddingL 15.0
+#define kPaddingR 15.0
+#define kPaddingB 15.0
+#define kIconSize 50.0
+#define kTextLine 20.0
+#define kSpacing  10.0
+
 @implementation XZToastActivityIndicatorView {
     UIActivityIndicatorView *_indicatorView;
     UILabel *_textLabel;
 }
 
 - (instancetype)init {
-    return [self initWithFrame:CGRectMake(0, 0, 100, 100)];
+    CGFloat const width = kPaddingT + kIconSize + kSpacing + kTextLine + kPaddingB;
+    return [self initWithFrame:CGRectMake(0, 0, width, width)];
 }
 
 - (instancetype)initWithFrame:(CGRect)frame {
@@ -29,7 +38,7 @@
         
         _textLabel = [[UILabel alloc] init];
         _textLabel.textColor = UIColor.whiteColor;
-        _textLabel.font = [UIFont systemFontOfSize:17.0];
+        _textLabel.font = [UIFont monospacedDigitSystemFontOfSize:17.0 weight:(UIFontWeightRegular)];
         _textLabel.textAlignment = NSTextAlignmentCenter;
         [self addSubview:_textLabel];
     }
@@ -42,27 +51,27 @@
     CGRect const bounds = self.bounds;
     
     {
-        CGFloat const x = bounds.origin.x + (bounds.size.width - 50.0) * 0.5;
-        CGFloat const y = 10.0;
-        CGFloat const w = 50.0;
-        CGFloat const h = 50.0;
+        CGFloat const x = bounds.origin.x + (bounds.size.width - kIconSize) * 0.5;
+        CGFloat const y = kPaddingT;
+        CGFloat const w = kIconSize;
+        CGFloat const h = kIconSize;
         _indicatorView.frame = CGRectMake(x, y, w, h);
     }
     
     {
-        CGSize  const s = [_textLabel sizeThatFits:CGSizeMake(bounds.size.width - 20.0, 0)];
-        CGFloat const w = MIN(bounds.size.width - 20.0, s.width);
-        CGFloat const h = 20.0;
+        CGSize  const s = [_textLabel sizeThatFits:CGSizeMake(bounds.size.width - kPaddingL - kPaddingR, 0)];
+        CGFloat const w = MIN(bounds.size.width - kPaddingL - kPaddingR, s.width);
+        CGFloat const h = kTextLine;
         CGFloat const x = bounds.origin.x + (bounds.size.width - w) * 0.5;
-        CGFloat const y = 10.0 + 50.0 + 10.0;
+        CGFloat const y = kPaddingT + kIconSize + kSpacing;
         _textLabel.frame = CGRectMake(x, y, w, h);
     }
 }
 
 - (CGSize)sizeThatFits:(CGSize)size {
-    CGSize  const s = [_textLabel sizeThatFits:CGSizeMake(size.width - 20.0, 0)];
-    CGFloat const h = 10.0 + 50.0 + 10.0 + 20.0 + 10.0;
-    CGFloat const w = MAX(h, MIN(size.width, 10.0 + s.width + 10.0));
+    CGSize  const s = [_textLabel sizeThatFits:CGSizeMake(size.width - kPaddingL - kPaddingR, 0)];
+    CGFloat const h = kPaddingT + kIconSize + kSpacing + kTextLine + kPaddingB;
+    CGFloat const w = MAX(h, MIN(size.width, kPaddingB + s.width + kPaddingR));
     return CGSizeMake(w, h);
 }
 

@@ -7,6 +7,11 @@
 
 #import "XZToastTextView.h"
 
+#define kPaddingT 15.0
+#define kPaddingL 15.0
+#define kPaddingR 15.0
+#define kPaddingB 15.0
+
 @implementation XZToastTextView {
     UILabel *_textLabel;
 }
@@ -32,22 +37,22 @@
     [super layoutSubviews];
     
     CGRect const bounds = self.bounds;
-    CGSize const textSize = [_textLabel sizeThatFits:CGSizeMake(bounds.size.width - 20.0, 0)];
+    CGSize const textSize = [_textLabel sizeThatFits:CGSizeMake(bounds.size.width - kPaddingL - kPaddingR, 0)];
     
-    CGFloat const w = MIN(bounds.size.width - 20.0, textSize.width);
-    CGFloat const h = bounds.size.height - 20.0;
+    CGFloat const w = MIN(bounds.size.width - kPaddingL - kPaddingR, textSize.width);
+    CGFloat const h = bounds.size.height - kPaddingT - kPaddingB;
     CGFloat const x = bounds.origin.x + (bounds.size.width - w) * 0.5;
-    CGFloat const y = 10.0;
+    CGFloat const y = kPaddingT;
     _textLabel.frame = CGRectMake(x, y, w, h);
 }
 
 - (CGSize)sizeThatFits:(CGSize)size {
-    if (size.width <= 20.0) {
-        return CGSizeMake(20.0, 20.0);
+    if (size.width <= (kPaddingL + kPaddingR)) {
+        return CGSizeMake(kPaddingL + 0 + kPaddingR, kPaddingT + 0 + kPaddingB);
     }
-    CGSize  const textSize = [_textLabel sizeThatFits:CGSizeMake(size.width - 20.0, 0)];
-    CGFloat const width = MIN(size.width, textSize.width + 20.0);
-    return CGSizeMake(width, textSize.height + 20.0);
+    CGSize  const textSize = [_textLabel sizeThatFits:CGSizeMake(size.width - kPaddingL - kPaddingR, 0)];
+    CGFloat const width = MIN(size.width, kPaddingT + textSize.width + kPaddingB);
+    return CGSizeMake(width, kPaddingT + textSize.height + kPaddingB);
 }
 
 - (NSString *)text {
