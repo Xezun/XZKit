@@ -17,16 +17,14 @@ class Example13ViewController: UITableViewController {
     
     var position = XZToast.Position.middle;
     
-    unowned var toastController: UIViewController! = nil
-    
     var isExclusive = false
     
-    lazy var loadingView = XZToastActivityIndicatorView.init()
+    weak var loadingView: XZToastActivityIndicatorView?
+    
+    @IBOutlet weak var toastControllerSwitch: UISwitch!
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        
-        toastController = self
     }
     
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
@@ -86,29 +84,34 @@ class Example13ViewController: UITableViewController {
                 showMessage("短消息", duration: 3.0)
             
             case 7:
-                toastController.showToast(.loading("加载中"), duration: 0, position: position, exclusive: isExclusive)
+                self.showToast(.loading("加载中"), duration: 0, position: position, exclusive: isExclusive)
                 
             case 10:
-                toastController.showToast(.message("这是消息2"), duration: 3.0, position: position, exclusive: isExclusive)
-                toastController.showToast(.message("这是消息3"), duration: 2.0, position: position, exclusive: isExclusive)
-                toastController.showToast(.loading("加载中..."))
+                self.showToast(.message("这是消息2"), duration: 3.0, position: position, exclusive: isExclusive)
+                self.showToast(.message("这是消息3"), duration: 2.0, position: position, exclusive: isExclusive)
+                self.showToast(.loading("加载中..."))
                 break
             default:
-                toastController.hideToast();
+                self.hideToast();
                 break
             }
         case 1:
             switch indexPath.row {
             case 0:
+                var loadingView: XZToastActivityIndicatorView! = self.loadingView
+                if loadingView == nil {
+                    loadingView = XZToastActivityIndicatorView()
+                    self.loadingView = loadingView
+                }
                 loadingView.text = "加载中"
                 loadingView.startAnimating()
-                toastController.showToast(.init(view: loadingView), duration: 0, position: position, exclusive: true) { finished in
+                self.showToast(.view(loadingView), duration: 0, position: position, exclusive: true) { finished in
                     NSLog("加载类型的 XZToast 展示结束：\(finished)")
                 }
             case 1:
                 break
             case 2:
-                toastController.hideToast()
+                self.hideToast()
                 break
             default:
                 break
@@ -121,7 +124,7 @@ class Example13ViewController: UITableViewController {
     func showMessage(_ message: String, duration: TimeInterval) {
         let start = timestamp()
         let index = self.index
-        toastController.showToast(.message("\(index). \(message)"), duration: duration, position: self.position, exclusive: self.isExclusive) { finished in
+        self.showToast(.message("\(index). \(message)"), duration: duration, position: self.position, exclusive: self.isExclusive) { finished in
             let end = timestamp()
             let delta = String.init(format: "%.2f", end - start);
             NSLog("消息：\(index). \(message) \n状态：\(finished) \n定时：\(duration) \n耗时：\(delta)")
@@ -142,7 +145,7 @@ class Example13ViewController: UITableViewController {
     }
     
     @IBAction func hideButtonAction(_ sender: UIBarButtonItem) {
-        toastController.hideToast()
+        self.hideToast()
     }
     
     @IBAction func unwindToBack(_ unwindSegue: UIStoryboardSegue) {
@@ -150,10 +153,14 @@ class Example13ViewController: UITableViewController {
         switch unwindSegue.identifier {
         case "position":
             self.position = XZToast.Position.init(rawValue: select.value)!
-            tableView.reloadRows(at: [.init(row: 0, section: 2)], with: .none)
+            if let cell = tableView.cellForRow(at: .init(row: 0, section: 2)) {
+                cell.detailTextLabel?.text = position.description
+            }
         case "maximumNumberOfToasts":
-            toastController.maximumNumberOfToasts = select.value
-            tableView.reloadRows(at: [.init(row: 1, section: 2)], with: .none)
+            self.maximumNumberOfToasts = select.value
+            if let cell = tableView.cellForRow(at: .init(row: 1, section: 2)) {
+                cell.detailTextLabel?.text = select.value.description
+            }
         default:
             break
         }
@@ -164,11 +171,13 @@ class Example13ViewController: UITableViewController {
     }
     
     @IBAction func progressSliderValueChanged(_ sender: UISlider) {
+        guard let loadingView = self.loadingView else { return }
         loadingView.text = String.init(format: "加载进度 %.2f%%", sender.value);
-        toastController.showToast(.init(view: loadingView))
+        self.showToast(.view(loadingView))
     }
     
-    @IBAction func toastControllerSwitchValueChanged(_ sender: UISwitch) {
-        toastController = sender.isOn ? navigationController! : self
+    // 由于当前容器视图为 UITableView 所以在
+    override var toastController: UIViewController? {
+        return toastControllerSwitch.isOn ? navigationController : self
     }
 }
