@@ -11,7 +11,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface XZToastActivityIndicatorView : UIView
 
-@property (nonatomic, copy) NSString *text;
+@property (nonatomic, copy, nullable) NSString *text;
 
 - (void)startAnimating;
 - (void)stopAnimating;

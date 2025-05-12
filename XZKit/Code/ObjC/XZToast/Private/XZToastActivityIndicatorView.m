@@ -58,21 +58,28 @@
         _indicatorView.frame = CGRectMake(x, y, w, h);
     }
     
-    {
+    if (_textLabel.text.length > 0) {
         CGSize  const s = [_textLabel sizeThatFits:CGSizeMake(bounds.size.width - kPaddingL - kPaddingR, 0)];
         CGFloat const w = MIN(bounds.size.width - kPaddingL - kPaddingR, s.width);
         CGFloat const h = kTextLine;
         CGFloat const x = bounds.origin.x + (bounds.size.width - w) * 0.5;
         CGFloat const y = kPaddingT + kIconSize + kSpacing;
         _textLabel.frame = CGRectMake(x, y, w, h);
+    } else {
+        CGFloat const x = CGRectGetMidX(bounds);
+        CGFloat const y = kPaddingT + kIconSize + kSpacing;
+        _textLabel.frame = CGRectMake(x, y, 0, kTextLine);
     }
 }
 
 - (CGSize)sizeThatFits:(CGSize)size {
-    CGSize  const s = [_textLabel sizeThatFits:CGSizeMake(size.width - kPaddingL - kPaddingR, 0)];
-    CGFloat const h = kPaddingT + kIconSize + kSpacing + kTextLine + kPaddingB;
-    CGFloat const w = MAX(h, MIN(size.width, kPaddingB + s.width + kPaddingR));
-    return CGSizeMake(w, h);
+    if (_textLabel.text.length > 0) {
+        CGSize  const s = [_textLabel sizeThatFits:CGSizeMake(size.width - kPaddingL - kPaddingR, 0)];
+        CGFloat const h = kPaddingT + kIconSize + kSpacing + kTextLine + kPaddingB;
+        CGFloat const w = MAX(h, MIN(size.width, kPaddingB + s.width + kPaddingR));
+        return CGSizeMake(w, h);
+    }
+    return CGSizeMake(kPaddingL + kIconSize + kPaddingR, kPaddingT + kIconSize + kPaddingB);
 }
 
 - (NSString *)text {

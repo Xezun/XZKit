@@ -103,7 +103,6 @@ class Example13ViewController: UITableViewController {
                     loadingView = XZToastActivityIndicatorView()
                     self.loadingView = loadingView
                 }
-                loadingView.text = "加载中"
                 loadingView.startAnimating()
                 self.showToast(.view(loadingView), duration: 0, position: position, exclusive: true) { finished in
                     NSLog("加载类型的 XZToast 展示结束：\(finished)")
@@ -172,7 +171,13 @@ class Example13ViewController: UITableViewController {
     
     @IBAction func progressSliderValueChanged(_ sender: UISlider) {
         guard let loadingView = self.loadingView else { return }
-        loadingView.text = String.init(format: "加载进度 %.2f%%", sender.value);
+        if sender.value == 0 {
+            loadingView.text = nil;
+        } else if sender.value == 100.0 {
+            loadingView.text = "加载成功"
+        } else {
+            loadingView.text = String.init(format: "加载进度 %.2f%%", sender.value);
+        }
         self.showToast(.view(loadingView))
     }
     

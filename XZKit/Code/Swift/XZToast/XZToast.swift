@@ -49,7 +49,7 @@ extension XZToast {
     /// 构造表示加载过程的 XZToast 对象。
     /// - Parameter text: 加载过程的描述文案
     /// - Returns: XZToast 对象
-    @objc public static func loading(_ text: String) -> Self {
+    @objc public static func loading(_ text: String?) -> Self {
         return Self.init(loading: text)
     }
 }

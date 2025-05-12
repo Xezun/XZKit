@@ -34,7 +34,9 @@ NS_ASSUME_NONNULL_BEGIN
 
 /// 加载类型的提示。
 /// - Parameter text: 文本内容
-+ (instancetype)loadingToast:(NSString *)text NS_SWIFT_NAME(init(loading:));
++ (instancetype)loadingToast:(nullable NSString *)text NS_SWIFT_NAME(init(loading:));
+
++ (instancetype)statusToast:(NSString *)text NS_SWIFT_NAME(init(loading:));
 
 @end
 
