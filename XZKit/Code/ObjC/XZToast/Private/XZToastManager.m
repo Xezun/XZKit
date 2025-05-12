@@ -107,14 +107,15 @@ static void * _context = NULL;
     // 待展示
     for (NSInteger index = _waitingToShowTasks.count - 1; index >= 0; index--) {
         XZToastTask * const oldTask = _waitingToShowTasks[index];
+        // 独占式 toast 已经在列队中，后续的 toast 就不用展示了
+        if (oldTask.isExclusive) {
+            newTask.isViewReused = YES;
+            [newTask cancel];
+            [_waitingToHideTasks addObject:newTask];
+            return newTask;
+        }
+        // 视图复用
         if (oldTask.view == toastView) {
-            if (oldTask.isExclusive) {
-                newTask.isViewReused = YES;
-                [newTask cancel];
-                [_waitingToHideTasks addObject:newTask];
-                return newTask;
-            }
-            
             [_waitingToShowTasks removeObjectAtIndex:index];
             oldTask.isViewReused = YES;
             [oldTask cancel];
@@ -130,15 +131,15 @@ static void * _context = NULL;
     // 展示中
     for (NSInteger index = _showingTasks.count - 1; index >= 0; index--) {
         XZToastTask * const oldTask = _showingTasks[index];
+        // 独占式 toast 正在展示中，不可展示新的
+        if (oldTask.isExclusive) {
+            newTask.isViewReused = YES;
+            [newTask cancel];
+            [_waitingToHideTasks addObject:newTask];
+            [self setNeedsLayoutToasts]; // 更新布局
+            return newTask;
+        }
         if (oldTask.view == toastView) {
-            if (oldTask.isExclusive) {
-                newTask.isViewReused = YES;
-                [newTask cancel];
-                [_waitingToHideTasks addObject:newTask];
-                [self setNeedsLayoutToasts]; // 更新布局
-                return newTask;
-            }
-            
             oldTask.isViewReused = YES;
             [oldTask cancel];
             [_waitingToHideTasks addObject:oldTask];
@@ -193,13 +194,7 @@ static void * _context = NULL;
         }
     }
     
-    if (_isExclusive) {
-        newTask.isViewReused = YES;
-        [newTask cancel];
-        [_waitingToHideTasks addObject:newTask];
-    } else {
-        [_waitingToShowTasks addObject:newTask];
-    }
+    [_waitingToShowTasks addObject:newTask];
     [self setNeedsUpdateToasts];
     return newTask;
 }
@@ -318,7 +313,6 @@ static void * _context = NULL;
         
         // 独占
         if (newToastItem.isExclusive) {
-            _isExclusive = YES;
             while (_showingTasks.count > 0) {
                 XZToastTask *item = _showingTasks.lastObject;
                 [_showingTasks removeLastObject];
@@ -494,10 +488,6 @@ static void * _context = NULL;
             item.wrapperView.transform = CGAffineTransformTranslate(CGAffineTransformMakeScale(0.66, 0.66), 0, deltaY);
         }
     } completion:^(BOOL finished) {
-        if (self->_showingTasks.count == 0) {
-            self->_isExclusive = NO;
-        }
-        
         // 向移除的 toast 发送消息
         while (self->_hideingTasks.count > 0) {
             XZToastTask * const item = self->_hideingTasks.lastObject;

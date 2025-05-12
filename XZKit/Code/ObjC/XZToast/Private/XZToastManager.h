@@ -16,7 +16,6 @@ NS_ASSUME_NONNULL_BEGIN
 
 @property (nonatomic) NSInteger maximumNumberOfToasts;
 
-@property (nonatomic, readonly) BOOL isExclusive;
 @property (nonatomic, readonly) CGFloat *offsets;
 
 @property (nonatomic) NSArray<XZToastTask *> *tasks;
