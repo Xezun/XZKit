@@ -22,7 +22,9 @@ class Example13ViewController: UITableViewController {
     var position = XZToast.Position.middle;
     
     var isExclusive = false
+    var reuseMode = false
     
+    var messageToast: XZToast?
     weak var loadingToast: XZToast?
     
     @IBOutlet weak var toastControllerSwitch: UISwitch!
@@ -106,6 +108,7 @@ class Example13ViewController: UITableViewController {
         case 1:
             switch indexPath.row {
             case 0:
+                guard loadingToast == nil else { return }
                 loadingToast = showToast(.loading(nil), duration: 0, position: position, exclusive: true) { [weak self] finished in
                     NSLog("加载类型的 XZToast 展示结束：\(finished)")
                     self?.loadingToast = nil;
@@ -126,12 +129,21 @@ class Example13ViewController: UITableViewController {
     func showMessage(_ message: String, duration: TimeInterval) {
         let start = timestamp()
         let index = self.index
-        self.showToast(.message("\(index). \(message)"), duration: duration, position: self.position, exclusive: self.isExclusive) { finished in
+        let text  = "\(index). \(message)"
+        let completion: XZToast.Completion = { finished in
             let end = timestamp()
             let delta = String.init(format: "%.2f", end - start);
             NSLog("消息：\(index). \(message) \n状态：\(finished) \n定时：\(duration) \n耗时：\(delta)")
+        };
+        
+        if reuseMode, let toast = messageToast {
+            toast.text = text;
+            showToast(toast, duration: duration, position: self.position, exclusive: self.isExclusive, completion: completion)
+        } else {
+            messageToast = showToast(.message(text), duration: duration, position: self.position, exclusive: self.isExclusive, completion: completion)
         }
-        self.index += 1;
+        
+        self.index = index + 1;
     }
     
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
@@ -170,6 +182,10 @@ class Example13ViewController: UITableViewController {
 
     @IBAction func exclusiveSwitchValueChanged(_ sender: UISwitch) {
         self.isExclusive = sender.isOn
+    }
+    
+    @IBAction func reuseModeSwitchValueChanged(_ sender: UISwitch) {
+        self.reuseMode = sender.isOn
     }
     
     @IBAction func progressSliderValueChanged(_ sender: UISlider) {

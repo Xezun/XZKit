@@ -124,6 +124,9 @@
     [toastView layoutIfNeeded];
     
     XZToastTask * const newTask = [[XZToastTask alloc] initWithView:toastView duration:duration position:position exclusive:exclusive completion:completion];
+    if ([toast isKindOfClass:[XZToastTask class]]) {
+        newTask.wrapperView = ((XZToastTask *)toast).wrapperView;
+    }
     
     // 待展示
     for (NSInteger index = _waitingToShowTasks.count - 1; index >= 0; index--) {
@@ -401,30 +404,6 @@
             [_viewController.view addSubview:newToastItem.wrapperView];
         }
         
-        switch (_position) {
-            case XZToastPositionTop:
-                newToastItem.moveDirection = XZToastMoveDirectionLand;
-                break;
-            case XZToastPositionMiddle: {
-                newToastItem.moveDirection = XZToastMoveDirectionNone;
-                NSUInteger const count = _showingTasks.count;
-                switch (count) {
-                    case 0:
-                        break;
-                    case 1:
-                        _showingTasks[0].moveDirection = XZToastMoveDirectionRise;
-                        break;
-                    default:
-                        _showingTasks[count - 1].moveDirection = _showingTasks[count - 2].moveDirection * (-1);
-                        break;
-                }
-                break;
-            }
-            case XZToastPositionBottom:
-                newToastItem.moveDirection = XZToastMoveDirectionRise;
-                break;
-        }
-        
         [_showingTasks addObject:newToastItem];
     }
     
@@ -432,9 +411,9 @@
     while (_waitingToHideTasks.count > 0) {
         XZToastTask * const task = _waitingToHideTasks.lastObject;
         [_waitingToHideTasks removeLastObject];
-        [_hideingTasks addObject:task];
-          
+        
         [_showingTasks removeObject:task];
+        [_hideingTasks addObject:task];
     }
     
     // 检查数量限制，超出就直接移除
@@ -446,6 +425,41 @@
         firstItem.hideReason = XZToastHideReasonExceed;
         [firstItem cancel];
         [_hideingTasks addObject:firstItem];
+    }
+    
+    // 确定动画方向
+    switch (_position) {
+        case XZToastPositionTop:
+            _showingTasks.lastObject.moveDirection = XZToastMoveDirectionLand;
+            break;
+        case XZToastPositionMiddle: {
+            NSUInteger const count = _showingTasks.count;
+            switch (count) {
+                case 0:
+                    break;
+                case 1:
+                    _showingTasks[0].moveDirection = XZToastMoveDirectionNone;
+                    break;
+                case 2: {
+                    XZToastTask * const item = _showingTasks[0];
+                    if (item.moveDirection == XZToastMoveDirectionNone) {
+                        item.moveDirection = XZToastMoveDirectionRise;
+                    }
+                    break;
+                }
+                default: {
+                    XZToastTask * const item = _showingTasks[count - 2];
+                    if (item.moveDirection == XZToastMoveDirectionNone) {
+                        item.moveDirection = _showingTasks[count - 3].moveDirection * (-1);;
+                    }
+                    break;
+                }
+            }
+            break;
+        }
+        case XZToastPositionBottom:
+            _showingTasks.lastObject.moveDirection = XZToastMoveDirectionRise;
+            break;
     }
     
     UIViewAnimationOptions const options = UIViewAnimationOptionLayoutSubviews;
@@ -464,26 +478,28 @@
             }
             case XZToastPositionMiddle: {
                 // 最新的在中间，剩下的分居上下两侧
-                if (self->_showingTasks.count > 0) {
-                    XZToastTask *item = self->_showingTasks.lastObject;
-                    item.wrapperView.alpha = 1.0;
-                    item->_frame.origin.y = CGRectGetMidY(_bounds) - CGRectGetHeight(item->_frame) * 0.5 + self->_offsets[XZToastPositionMiddle];
-                    item.wrapperView.transform = CGAffineTransformIdentity;
-                    item.wrapperView.frame = item->_frame;
-                    
-                    CGFloat minY = CGRectGetMinY(item->_frame);
-                    CGFloat maxY = CGRectGetMaxY(item->_frame);
-                    for (NSInteger i = (NSInteger)(self->_showingTasks.count) - 2; i >= 0; i--) {
-                        XZToastTask *item = self->_showingTasks[i];
-                        if (item.moveDirection == XZToastMoveDirectionLand) {
-                            item->_frame.origin.y = maxY;
-                            item.wrapperView.frame = item->_frame;
-                            maxY = CGRectGetMaxY(item->_frame);
-                        } else {
-                            item->_frame.origin.y = minY - CGRectGetHeight(item->_frame);
-                            item.wrapperView.frame = item->_frame;
-                            minY = CGRectGetMinY(item->_frame);
-                        }
+                XZToastTask * const lastTaskItem = self->_showingTasks.lastObject;
+                if (lastTaskItem == nil) {
+                    break;
+                }
+                
+                lastTaskItem->_frame.origin.y = CGRectGetMidY(_bounds) - CGRectGetHeight(lastTaskItem->_frame) * 0.5 + self->_offsets[XZToastPositionMiddle];
+                lastTaskItem.wrapperView.alpha = 1.0;
+                lastTaskItem.wrapperView.transform = CGAffineTransformIdentity;
+                lastTaskItem.wrapperView.frame = lastTaskItem->_frame;
+                
+                CGFloat minY = CGRectGetMinY(lastTaskItem->_frame);
+                CGFloat maxY = CGRectGetMaxY(lastTaskItem->_frame);
+                for (NSInteger index = (NSInteger)(self->_showingTasks.count) - 2; index >= 0; index--) {
+                    XZToastTask *item = self->_showingTasks[index];
+                    if (item.moveDirection == XZToastMoveDirectionLand) {
+                        item->_frame.origin.y = maxY;
+                        item.wrapperView.frame = item->_frame;
+                        maxY = CGRectGetMaxY(item->_frame);
+                    } else {
+                        item->_frame.origin.y = minY - CGRectGetHeight(item->_frame);
+                        item.wrapperView.frame = item->_frame;
+                        minY = CGRectGetMinY(item->_frame);
                     }
                 }
                 break;
