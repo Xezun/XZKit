@@ -33,7 +33,7 @@ import XZGeometry
     var imageInsets: NSDirectionalEdgeInsets { get }
     
     /// 文本相对图片的位置。默认 .bottom 底边。仅单值有效，否则按优先级 .bottom > .top > .trailing > .leading 生效。
-    var textLayoutOrientation: XZRectEdge { get }
+    var textLayoutOrientation: NSDirectionalRectEdge { get }
     
 }
 
@@ -51,7 +51,7 @@ extension XZTextImageLayout {
         return .zero
     }
     
-    public var textLayoutOrientation: XZRectEdge {
+    public var textLayoutOrientation: NSDirectionalRectEdge {
         return .bottom
     }
     
@@ -92,7 +92,7 @@ extension XZTextImageLayout {
         
         if let imageView = imageViewIfLoaded {
             // 优先布局图片。
-            let imageViewSize = imageView.sizeThatFits(layoutRect.size).scalingAspect(inside: layoutRect.size)
+            let imageViewSize = imageView.sizeThatFits(layoutRect.size).scalingAspectRatio(inside: layoutRect.size)
             
             if let titleLabel = textViewIfLoaded {
                 // 图片和文字都有。

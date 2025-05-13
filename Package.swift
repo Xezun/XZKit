@@ -24,12 +24,12 @@ private var _modules: [(type: ModuleType, name: String, dependencies: [PackageDe
     (.ObjC, "XZDataDigester", ["XZDefines", "XZExtensions"]),
     (.ObjC, "XZKeychain", []),
     (.ObjC, "XZObjcDescriptor", ["XZDefines"]),
-    (.Swift, "XZGeometry", []),
     (.Swift, "XZTextImageView", ["XZGeometry"]),
     (.Swift, "XZContentStatus", ["XZTextImageView"]),
     (.Swift, "XZCollectionViewFlowLayout", []),
     (.Swift, "XZNavigationController", ["XZDefines"]),
-    (.Mixed, "XZToast", ["XZGeometry", "XZTextImageView"]),
+    (.Mixed, "XZGeometry", []),
+    (.Mixed, "XZToast", ["XZGeometry", "XZTextImageView", "XZExtensions"]),
     (.Mixed, "XZMocoa", ["XZDefines", "XZExtensions"]),
 ]
 _modules.append((.Swift, "XZKit", _modules.map({ .byName(name: $0.name) })))
@@ -78,4 +78,4 @@ for module in _modules {
     }
 }
 
-let package = Package(name: "XZKit", platforms: [.iOS(.v12)], products: _products, dependencies: [], targets: _targets)
+let package = Package(name: "XZKit", platforms: [.iOS(.v13)], products: _products, dependencies: [], targets: _targets)

@@ -7,121 +7,173 @@
 
 #import "XZGeometry.h"
 
-CGSize CGSizeMakeAspectRatioInside(CGSize size, CGSize aspect) {
-    if (aspect.width <= 0 || aspect.height <= 0) {
-        return CGSizeZero;
+NSDirectionalEdgeInsets NSDirectionalEdgeInsetsFromUIEdgeInsets(UIEdgeInsets const edgeInsets, UIUserInterfaceLayoutDirection const layoutDirection) {
+    switch (layoutDirection) {
+        case UIUserInterfaceLayoutDirectionLeftToRight:
+            return NSDirectionalEdgeInsetsMake(edgeInsets.top, edgeInsets.left, edgeInsets.bottom, edgeInsets.right);
+        case UIUserInterfaceLayoutDirectionRightToLeft:
+            return NSDirectionalEdgeInsetsMake(edgeInsets.top, edgeInsets.right, edgeInsets.bottom, edgeInsets.left);
+    }
+}
+
+UIEdgeInsets UIEdgeInsetsFromNSDirectionalEdgeInsets(NSDirectionalEdgeInsets const edgeInsets, UIUserInterfaceLayoutDirection const layoutDirection) {
+    switch (layoutDirection) {
+        case UIUserInterfaceLayoutDirectionLeftToRight:
+            return UIEdgeInsetsMake(edgeInsets.top, edgeInsets.leading, edgeInsets.bottom, edgeInsets.trailing);
+        case UIUserInterfaceLayoutDirectionRightToLeft:
+            return UIEdgeInsetsMake(edgeInsets.top, edgeInsets.trailing, edgeInsets.bottom, edgeInsets.leading);
+    }
+}
+
+BOOL CGRectContainsPointInEdgeInsets(CGRect const rect, UIEdgeInsets const edgeInsets, CGPoint const point) {
+    CGFloat const minX = CGRectGetMinX(rect);
+    if (point.x < minX + edgeInsets.left) {
+        return YES;
+    }
+    CGFloat const maxX = CGRectGetMaxX(rect);
+    if (point.x > maxX - edgeInsets.right) {
+        return YES;
+    }
+    CGFloat const minY = CGRectGetMinY(rect);
+    if (point.y < minY + edgeInsets.top) {
+        return YES;
+    }
+    return (point.y > CGRectGetMaxY(rect) - edgeInsets.bottom);
+}
+
+CGSize CGSizeMakeAspectRatioInside(CGSize const size, CGSize const ratio) {
+    if (ratio.width <= 0) {
+        return CGSizeMake(0, size.height);
+    }
+    if (ratio.height <= 0) {
+        return CGSizeMake(size.width, 0);
     }
     if (size.width <= 0 || size.height <= 0) {
         return CGSizeZero;
     }
-    CGFloat const width = aspect.width;
-    CGFloat const height = aspect.width * size.height / size.width;
-    if (height > aspect.height) {
+    CGFloat const width  = size.width;
+    CGFloat const height = width * ratio.height / ratio.width;
+    if (height <= size.height) {
         return CGSizeMake(width, height);
     }
-    return CGSizeMake(aspect.height * size.width / size.height, aspect.height);
+    return CGSizeMake(size.height * ratio.width / ratio.height, size.height);
 }
 
-CGSize CGSizeScaleAspectRatioInside(CGSize size, CGSize aspect) {
-    if (size.width <= aspect.width && size.height <= aspect.height) {
-        return size;
+CGSize CGSizeScaleAspectRatioInside(CGSize const size, CGSize const aspect) {
+    if (size.width >= aspect.width && size.height >= aspect.height) {
+        return aspect;
     }
-    return CGSizeMakeAspectRatioInside(aspect, size);
+    return CGSizeMakeAspectRatioInside(size, aspect);
 }
 
-CGRect CGRectMakeAspectRatioWithMode(CGSize size, CGRect aspect, UIViewContentMode contentMode) {
+CGRect CGRectMakeAspectRatioWithMode(CGRect const rect, CGSize const aspect, UIViewContentMode const contentMode) {
     switch (contentMode) {
         case UIViewContentModeScaleToFill: {
-            return aspect;
+            return rect;
         }
         case UIViewContentModeScaleAspectFit: {
-            if (aspect.size.width <= 0 || aspect.size.height <= 0) {
-                return CGRectMake(CGRectGetMidX(aspect), CGRectGetMidY(aspect), 0, 0);
+            if (rect.size.width <= 0 || rect.size.height <= 0) {
+                return CGRectMake(CGRectGetMidX(rect), CGRectGetMidY(rect), 0, 0);
             }
-            if (size.width <= 0 || size.height <= 0) {
-                return CGRectMake(CGRectGetMidX(aspect), CGRectGetMidY(aspect), 0, 0);
+            if (aspect.width <= 0) {
+                return CGRectMake(CGRectGetMidX(rect), CGRectGetMinY(rect), 0, CGRectGetHeight(rect));
             }
-            CGFloat const height = aspect.size.width * size.height / size.width;
-            if (height > aspect.size.height) {
-                // 高度比容器高，那么以容器的高为准，重新计算宽度。
-                CGFloat const width = aspect.size.height * size.width / size.height;
-                CGFloat const x = (aspect.size.width - width) * 0.5 + CGRectGetMinX(aspect);
-                return CGRectMake(x, CGRectGetMinY(aspect), width, aspect.size.height);
+            if (aspect.height <= 0) {
+                return CGRectMake(CGRectGetMinX(rect), CGRectGetMidY(rect), CGRectGetWidth(rect), 0);
             }
-            // 高度没有容器高，计算其在垂直方向居中的坐标。
-            CGFloat const y = (aspect.size.height - height) * 0.5 + CGRectGetMinY(aspect);
-            return CGRectMake(CGRectGetMinX(aspect), y, aspect.size.width, height);
+            // 先以容器 rect 宽度进行计算，如果高度超出容器，那么以容器的高为准，重新计算宽度。
+            CGFloat const height = rect.size.width * aspect.height / aspect.width;
+            if (height > rect.size.height) {
+                CGFloat const w = rect.size.height * aspect.width / aspect.height;
+                CGFloat const x = (rect.size.width - w) * 0.5 + CGRectGetMinX(rect);
+                return CGRectMake(x, CGRectGetMinY(rect), w, rect.size.height);
+            }
+            CGFloat const y = (rect.size.height - height) * 0.5 + CGRectGetMinY(rect);
+            return CGRectMake(CGRectGetMinX(rect), y, rect.size.width, height);
         }
         case UIViewContentModeScaleAspectFill: {
-            if (aspect.size.width <= 0) {
-                CGFloat const h = MAX(0, aspect.size.height);
-                return CGRectMake(CGRectGetMinX(aspect), CGRectGetMinY(aspect), 0, h);
+            // 理论上 aspect 宽度或高度为 0 时，当前适配模式下，另一边应该无穷大，这里取两边各 10 倍表示
+            if (aspect.width <= 0) {
+                CGFloat const y = CGRectGetMinY(rect) - rect.size.height * 10.0;
+                return CGRectMake(CGRectGetMinX(rect), y, rect.size.width, rect.size.height * 21.0);
             }
-            if (aspect.size.height <= 0) {
-                CGFloat const w = MAX(0, aspect.size.width);
-                return CGRectMake(CGRectGetMinX(aspect), CGRectGetMinY(aspect), w, 0);
+            if (aspect.height <= 0) {
+                CGFloat const x = CGRectGetMinX(rect) - rect.size.width * 10.0;
+                return CGRectMake(x, CGRectGetMinY(rect), rect.size.width * 21.0, rect.size.height);
             }
-            if (size.width <= 0) {
-                return CGRectMake(CGRectGetMidX(aspect), CGRectGetMinY(aspect), 0, aspect.size.height);
+            if (rect.size.width <= 0) {
+                CGFloat const h = rect.size.height;
+                CGFloat const w = h * aspect.width / aspect.height;
+                CGFloat const x = CGRectGetMinX(rect) - w * 0.5;
+                return CGRectMake(x, CGRectGetMinY(rect), 0, h);
             }
-            if (size.height <= 0) {
-                return CGRectMake(CGRectGetMinX(aspect), CGRectGetMidY(aspect), aspect.size.width, 0);
+            if (rect.size.height <= 0) {
+                CGFloat const w = rect.size.width;
+                CGFloat const h = w * aspect.height / aspect.width;
+                CGFloat const y = CGRectGetMinY(rect) - h * 0.5;
+                return CGRectMake(CGRectGetMinX(rect), y, w, 0);
             }
-            CGFloat const h = aspect.size.width * size.height / size.width;
-            if (h < aspect.size.height) {
-                CGFloat const w = aspect.size.height * size.width / size.height;
-                CGFloat const x = (aspect.size.width - w) * 0.5 + CGRectGetMinX(aspect);
-                return CGRectMake(x, CGRectGetMinY(aspect), w, aspect.size.height);
+            CGFloat const h = rect.size.width * aspect.height / aspect.width;
+            if (h < rect.size.height) {
+                CGFloat const w = rect.size.height * aspect.width / aspect.height;
+                CGFloat const x = (rect.size.width - w) * 0.5 + CGRectGetMinX(rect);
+                return CGRectMake(x, CGRectGetMinY(rect), w, rect.size.height);
             }
-            CGFloat const y = (aspect.size.height - h) * 0.5 + CGRectGetMinY(aspect);
-            return CGRectMake(CGRectGetMinX(aspect), y, aspect.size.width, h);
+            CGFloat const y = CGRectGetMinY(rect) + (rect.size.height - h) * 0.5;
+            return CGRectMake(CGRectGetMinX(rect), y, rect.size.width, h);
         }
         case UIViewContentModeRedraw: {
-            return aspect;
+            return rect;
         }
         case UIViewContentModeCenter: {
-            CGFloat const x = (aspect.size.width - size.width) * 0.5 + CGRectGetMinX(aspect);
-            CGFloat const y = (aspect.size.height - size.height) * 0.5 + CGRectGetMinY(aspect);
-            return CGRectMake(x, y, size.width, size.height);
+            CGFloat const x = CGRectGetMinX(rect) + (rect.size.width - aspect.width) * 0.5;
+            CGFloat const y = CGRectGetMinY(rect) + (rect.size.height - aspect.height) * 0.5;
+            return CGRectMake(x, y, aspect.width, aspect.height);
         }
         case UIViewContentModeTop: {
-            CGFloat const x = (aspect.size.width - size.width) * 0.5 + CGRectGetMinX(aspect);
-            return CGRectMake(x, CGRectGetMinY(aspect), size.width, size.height);
+            CGFloat const x = CGRectGetMinX(rect) + (rect.size.width - aspect.width) * 0.5;
+            return CGRectMake(x, CGRectGetMinY(rect), aspect.width, aspect.height);
         }
         case UIViewContentModeBottom: {
-            CGFloat const x = (aspect.size.width - size.width) * 0.5 + CGRectGetMinX(aspect);
-            CGFloat const y = CGRectGetMaxY(aspect) - size.height;
-            return CGRectMake(x, y, size.width, size.height);
+            CGFloat const x = CGRectGetMinX(rect) + (rect.size.width - aspect.width) * 0.5;
+            CGFloat const y = CGRectGetMaxY(rect) - aspect.height;
+            return CGRectMake(x, y, aspect.width, aspect.height);
         }
         case UIViewContentModeLeft: {
-            CGFloat const y = (aspect.size.height - size.height) * 0.5 + CGRectGetMinY(aspect);
-            return CGRectMake(CGRectGetMinX(aspect), y, size.width, size.height);
+            CGFloat const y = CGRectGetMinY(rect) + (rect.size.height - aspect.height) * 0.5;
+            return CGRectMake(CGRectGetMinX(rect), y, aspect.width, aspect.height);
         }
         case UIViewContentModeRight: {
-            CGFloat const x = CGRectGetMaxX(aspect) - size.width;
-            CGFloat const y = (aspect.size.height - size.height) * 0.5 + CGRectGetMinY(aspect);
-            return CGRectMake(x, y, size.width, size.height);
+            CGFloat const x = CGRectGetMaxX(rect) - aspect.width;
+            CGFloat const y = CGRectGetMinY(rect) + (rect.size.height - aspect.height) * 0.5;
+            return CGRectMake(x, y, aspect.width, aspect.height);
         }
         case UIViewContentModeTopLeft: {
-            return CGRectMake(CGRectGetMinX(aspect), CGRectGetMinY(aspect), size.width, size.height);
+            return CGRectMake(CGRectGetMinX(rect), CGRectGetMinY(rect), aspect.width, aspect.height);
         }
         case UIViewContentModeTopRight: {
-            CGFloat const x = CGRectGetMaxX(aspect) - size.width;
-            return CGRectMake(x, CGRectGetMinY(aspect), size.width, size.height);
+            CGFloat const x = CGRectGetMaxX(rect) - aspect.width;
+            return CGRectMake(x, CGRectGetMinY(rect), aspect.width, aspect.height);
         }
         case UIViewContentModeBottomLeft: {
-            CGFloat const y = CGRectGetMaxY(aspect) - size.height;
-            return CGRectMake(CGRectGetMinX(aspect), y, size.width, size.height);
+            CGFloat const y = CGRectGetMaxY(rect) - aspect.height;
+            return CGRectMake(CGRectGetMinX(rect), y, aspect.width, aspect.height);
         }
         case UIViewContentModeBottomRight: {
-            CGFloat const x = CGRectGetMaxX(aspect) - size.width;
-            CGFloat const y = CGRectGetMaxY(aspect) - size.height;
-            return CGRectMake(x, y, size.width, size.height);
+            CGFloat const x = CGRectGetMaxX(rect) - aspect.width;
+            CGFloat const y = CGRectGetMaxY(rect) - aspect.height;
+            return CGRectMake(x, y, aspect.width, aspect.height);
         }
     }
 }
 
+CGRect CGRectMakeAspectRatioInsideWithMode(CGRect const rect, CGSize const ratio, UIViewContentMode const contentMode) {
+    CGSize const size = CGSizeMakeAspectRatioInside(rect.size, ratio);
+    return CGRectMakeAspectRatioWithMode(rect, size, contentMode);
+}
 
-CGRect CGRectScaleAspectRatioWithMode(CGSize size, CGRect aspect, UIViewContentMode contentMode) {
-    return CGRectMakeAspectRatioWithMode(CGSizeMakeAspectRatioInside(size, aspect.size), aspect, contentMode);
+
+CGRect CGRectScaleAspectRatioInsideWithMode(CGRect const rect, CGSize const aspect, UIViewContentMode const contentMode) {
+    CGSize const size = CGSizeScaleAspectRatioInside(rect.size, aspect);
+    return CGRectMakeAspectRatioWithMode(rect, size, contentMode);
 }

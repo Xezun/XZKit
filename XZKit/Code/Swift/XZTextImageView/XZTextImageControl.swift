@@ -60,7 +60,7 @@ import XZGeometry
         didSet { setNeedsLayout() }
     }
     
-    open var textLayoutDirection: XZRectEdge = .bottom {
+    open var textLayoutDirection: NSDirectionalRectEdge = .bottom {
         didSet { setNeedsLayout() }
     }
     

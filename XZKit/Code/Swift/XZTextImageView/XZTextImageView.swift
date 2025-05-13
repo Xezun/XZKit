@@ -12,7 +12,7 @@ import XZGeometry
 /// 一个图片、文字上下布局的视图，可以自定义图片文字边距。
 @objc open class XZTextImageView: UIView, XZTextImageLayout {
 
-    open var textLayoutDirection: XZRectEdge = .bottom {
+    open var textLayoutDirection: NSDirectionalRectEdge = .bottom {
         didSet { setNeedsLayout() }
     }
     

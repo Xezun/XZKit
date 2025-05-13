@@ -11,6 +11,8 @@
 		040C8CA92DB22B9E0024BA72 /* XZDispatchMacrosTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 040C8CA82DB22B9E0024BA72 /* XZDispatchMacrosTests.m */; };
 		040F133B2D2B77CD00C4D6CD /* Example14ViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 040F133A2D2B77CD00C4D6CD /* Example14ViewController.m */; };
 		0414AD192D6EBD060085BEE3 /* Example01ViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 0414AD182D6EBD060085BEE3 /* Example01ViewController.m */; };
+		041723402DD31DBC0037ABE2 /* XZGeometryTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 0417233F2DD31DBC0037ABE2 /* XZGeometryTests.m */; };
+		041723422DD35E410037ABE2 /* Example10SelectViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 041723412DD35E410037ABE2 /* Example10SelectViewController.swift */; };
 		042D23CC2D30BB3200E0F7BD /* Example16ViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 042D23BE2D30BB3200E0F7BD /* Example16ViewController.m */; };
 		042D23CD2D30BB3200E0F7BD /* Example16SettingsEditCellViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 042D23C02D30BB3200E0F7BD /* Example16SettingsEditCellViewController.m */; };
 		042D23CE2D30BB3200E0F7BD /* Example16CollectonViewSectionModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 042D23BC2D30BB3200E0F7BD /* Example16CollectonViewSectionModel.m */; };
@@ -312,6 +314,8 @@
 		040F133A2D2B77CD00C4D6CD /* Example14ViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = Example14ViewController.m; sourceTree = "<group>"; };
 		0414AD172D6EBD060085BEE3 /* Example01ViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Example01ViewController.h; sourceTree = "<group>"; };
 		0414AD182D6EBD060085BEE3 /* Example01ViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = Example01ViewController.m; sourceTree = "<group>"; };
+		0417233F2DD31DBC0037ABE2 /* XZGeometryTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = XZGeometryTests.m; sourceTree = "<group>"; };
+		041723412DD35E410037ABE2 /* Example10SelectViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Example10SelectViewController.swift; sourceTree = "<group>"; };
 		042D23B72D30BB3200E0F7BD /* Example16CollectonViewCellModel.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Example16CollectonViewCellModel.h; sourceTree = "<group>"; };
 		042D23B82D30BB3200E0F7BD /* Example16CollectonViewCellModel.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = Example16CollectonViewCellModel.m; sourceTree = "<group>"; };
 		042D23B92D30BB3200E0F7BD /* Example16CollectonViewSectionHeaderFooterView.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Example16CollectonViewSectionHeaderFooterView.h; sourceTree = "<group>"; };
@@ -852,6 +856,14 @@
 			path = "14-XZURLQuery";
 			sourceTree = "<group>";
 		};
+		0417233E2DD31D980037ABE2 /* XZGeometry */ = {
+			isa = PBXGroup;
+			children = (
+				0417233F2DD31DBC0037ABE2 /* XZGeometryTests.m */,
+			);
+			path = XZGeometry;
+			sourceTree = "<group>";
+		};
 		042D23B62D30BACE00E0F7BD /* 16-XZCollectionViewFlowLayout */ = {
 			isa = PBXGroup;
 			children = (
@@ -959,6 +971,7 @@
 			children = (
 				29B3341E2D317814006A574A /* Example10.storyboard */,
 				299B56CD2D2A67ED00CC2F69 /* Example10ViewController.swift */,
+				041723412DD35E410037ABE2 /* Example10SelectViewController.swift */,
 			);
 			path = "10-XZGeometry";
 			sourceTree = "<group>";
@@ -2778,6 +2791,7 @@
 			isa = PBXGroup;
 			children = (
 				29648BFF2A72556E0090F445 /* ExampleTests.m */,
+				0417233E2DD31D980037ABE2 /* XZGeometry */,
 				04C46AFE2DB63658005EA389 /* XZObjcDescriptor */,
 				040C8CA72DB22B720024BA72 /* XZDefines */,
 			);
@@ -3160,6 +3174,7 @@
 				04D34E6A2D314ABB0013D4A3 /* Example17NextViewController.swift in Sources */,
 				292C17352D251F6D00E465BF /* Example0331Group100Cell.m in Sources */,
 				292C17362D251F6D00E465BF /* Example0330Group109CellViewModel.m in Sources */,
+				041723422DD35E410037ABE2 /* Example10SelectViewController.swift in Sources */,
 				292C17372D251F6D00E465BF /* Example0321ContactBook.m in Sources */,
 				292C17382D251F6D00E465BF /* Example0331Group110CellViewModel.m in Sources */,
 				292C17392D251F6D00E465BF /* Example0330ViewController.m in Sources */,
@@ -3359,6 +3374,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				29648C002A72556E0090F445 /* ExampleTests.m in Sources */,
+				041723402DD31DBC0037ABE2 /* XZGeometryTests.m in Sources */,
 				04C46B002DB6367B005EA389 /* XZObjcDescriptorTests.m in Sources */,
 				040C8CA92DB22B9E0024BA72 /* XZDispatchMacrosTests.m in Sources */,
 			);

@@ -23,12 +23,7 @@ extension NSDirectionalEdgeInsets {
     ///   - edgeInsets: 边距
     ///   - layoutDirection: 布局方向
     public init(_ edgeInsets: UIEdgeInsets, _ layoutDirection: UIUserInterfaceLayoutDirection) {
-        switch (layoutDirection) {
-        case .rightToLeft:
-            self.init(top: edgeInsets.top, leading: edgeInsets.right, bottom: edgeInsets.bottom, trailing: edgeInsets.left)
-        default:
-            self.init(top: edgeInsets.top, leading: edgeInsets.left, bottom: edgeInsets.bottom, trailing: edgeInsets.right)
-        }
+        self = __NSDirectionalEdgeInsetsFromUIEdgeInsets(edgeInsets, layoutDirection);
     }
     
 }
@@ -40,12 +35,7 @@ extension UIEdgeInsets {
     ///   - edgeInsets: XZEdgeInsets 边距
     ///   - layoutDirection: 布局方向
     public init(_ edgeInsets: NSDirectionalEdgeInsets, _ layoutDirection: UIUserInterfaceLayoutDirection) {
-        switch layoutDirection {
-        case .rightToLeft:
-            self.init(top: edgeInsets.top, left: edgeInsets.trailing, bottom: edgeInsets.bottom, right: edgeInsets.leading)
-        default:
-            self.init(top: edgeInsets.top, left: edgeInsets.leading, bottom: edgeInsets.bottom, right: edgeInsets.trailing)
-        }
+        self = __UIEdgeInsetsFromNSDirectionalEdgeInsets(edgeInsets, layoutDirection);
     }
     
 }
@@ -59,231 +49,81 @@ extension CGRect {
     ///   - edgeInsets: 边距。
     /// - Returns: 是否包含。
     public func contains(_ point: CGPoint, in edgeInsets: UIEdgeInsets) -> Bool {
-        return (point.x < minX + edgeInsets.left) || (point.x > maxX - edgeInsets.right) || (point.y < minY + edgeInsets.top) || (point.y > maxY - edgeInsets.bottom);
+        return __CGRectContainsPointInEdgeInsets(self, edgeInsets, point)
     }
     
 }
 
 extension CGSize {
     
-    /// 等比缩小到指定范围以内，如果已经在范围内则不缩小。
-    /// - Parameter size: 范围
-    /// - Returns: CGSize
-    public func scalingAspect(inside size: CGSize) -> CGSize {
-        if size.width == 0 || size.height == 0 {
-            return .zero
-        }
-        if width == 0 {
-            return CGSize(width: 0, height: height)
-        }
-        if height == 0 {
-            return CGSize(width: width, height: 0)
-        }
-        if width <= size.width && height <= size.height {
-            return self;
-        }
-        let w = size.height * (width / height);
-        if w > size.width {
-            return CGSize(width: size.width, height: size.width * (height / width))
-        }
-        return CGSize(width: w, height: size.height)
-    }
-    
-    /// 等比缩小到指定范围以内，如果已经在范围内则不缩小。
-    /// - Parameter size: 范围
-    /// - Returns: CGSize
-    public mutating func scaleAspect(inside size: CGSize) {
-        self = scalingAspect(inside: size)
-    }
-    
-    /// 创建一个指定宽高比，以及指定大小以内的 CGSize 。
+    /// 在 size 范围内创建一个宽高比为 ratio 的 CGSize 结构体。
     /// - Parameters:
-    ///   - size: 宽高最大值
-    ///   - ratio: 宽高比
+    ///   - size: 待创建 CGSize 的尺寸范围
+    ///   - ratio: 待创建 CGSize 的宽高比
     public init(inside size: CGSize, ratio: CGSize) {
-        if ratio.width == 0 || ratio.height == 0 {
-            self = size;
-        } else if size.width == 0 || size.height == 0 {
-            self = .zero;
-        } else {
-            let width = size.width
-            let height = width * ratio.height / ratio.width
-            if height <= size.height {
-                self.init(width: width, height: height)
-            } else {
-                let width = size.height * ratio.width / ratio.height
-                self.init(width: width, height: size.height)
-            }
-        }
+        self = __CGSizeMakeAspectRatioInside(size, ratio)
     }
     
+    /// 将当前大小的内容，缩放到 size 范围内，如果已经在范围内，则不缩放。
+    /// - Parameter size: 指定范围
+    /// - Returns: 缩放后的大小
+    public func scalingAspectRatio(inside size: CGSize) -> CGSize {
+        return __CGSizeScaleAspectRatioInside(size, self)
+    }
+    
+    /// 等比缩小到指定范围以内，如果已经在范围内，则不缩放。
+    /// - Parameter size: 范围
+    /// - Returns: CGSize
+    public mutating func scaleAspectRatio(inside size: CGSize) {
+        self = scalingAspectRatio(inside: size)
+    }
+    
+    /// 按 contentMode 模式，将当前大小的内容缩放到 rect 区域内。
+    ///
+    /// 根据 contentMode 模式适配规则，生成的 CGRect 可能与当前大小不同。
+    ///
+    /// - Parameters:
+    ///   - aspect: 待创建 CGRect 的大小或宽高比
+    ///   - contentMode: 适配模式
+    public func scalingAspectRatio(inside rect: CGRect, contentMode: UIView.ContentMode) -> CGRect {
+        return __CGRectScaleAspectRatioInsideWithMode(rect, self, contentMode)
+    }
+    
+    /// 按 contentModes 模式，依次将当前大小的内容缩放到 rect 区域内。
+    ///
+    /// 根据 contentMode 模式适配规则，生成的 CGRect 可能与当前大小不同。
+    ///
+    /// - Parameters:
+    ///   - rect: 缩放区域
+    ///   - contentModes: 适配模式
+    public func scalingAspectRatio(inside rect: CGRect, contentModes: [UIView.ContentMode]) -> CGRect {
+        return contentModes.reduce(CGRect.init(origin: rect.origin, size: self), { (aspect, contentMode) -> CGRect in
+            return aspect.size.scalingAspectRatio(inside: rect, contentMode: contentMode)
+        })
+    }
 }
 
 
 extension CGRect {
     
-    /// 在当前区域内，计算指定大小的内容，按指定模式进行适配时的方位。
+    /// 在 rect 区域内，为大小为 aspect 的内容，创建一个按 contentMode 模式适配的 CGRect 结构体。
+    ///
     /// - Parameters:
-    ///   - size: 待适配内容的大小
+    ///   - rect: 适配区域
+    ///   - aspect: 适配大小，根据 contentMode 模式，函数返回值结构体宽高值可能并非与此参数相同
     ///   - contentMode: 适配模式
-    public func scalingAspect(inside size: CGSize, in contentMode: UIView.ContentMode) -> CGRect {
-        switch (contentMode) {
-        case .scaleToFill:
-            return self;
-            
-        case .scaleAspectFit:
-            if (size.width == 0) {
-                return CGRect(x: self.minX, y: self.midY, width: 0, height: 0)
-            }
-            if (size.height == 0) {
-                return CGRect(x: self.midX, y: self.minY, width: 0, height: 0)
-            }
-            let height = self.size.width * (size.height / size.width)
-            if (height > self.size.height) {
-                // 高度比容器高，那么以容器的高为最大值，计算宽度。
-                let width = self.size.height * size.width / size.height
-                let x = (self.size.width - width) * 0.5 + self.minX
-                return CGRect(x: x, y: self.minY, width: width, height: self.size.height)
-            }
-            // 高度没有容器高，计算其在垂直方向居中的坐标。
-            let y = (self.size.height - height) * 0.5 + self.minY
-            return CGRect(x: self.minX, y: y, width: self.size.width, height: height)
-            
-        case .scaleAspectFill:
-            if size.width == 0 {
-                return CGRect(x: self.minX, y: self.minY, width: 0, height: self.height)
-            }
-            if size.height == 0 {
-                return CGRect(x: self.minX, y: self.maxY, width: self.width, height: 0)
-            }
-            // 高度比容器低，则以容器的高度为最大值，计算宽度，并计算其在水平方向居中的坐标。
-            let height = self.size.width * (size.height / size.width)
-            if (height < self.size.height) {
-                let width = self.size.height * size.width / size.height
-                let x = (self.size.width - width) * 0.5 + self.minX
-                return CGRect(x: x, y: self.minY, width: width, height: self.size.height)
-            }
-            let y = (self.size.height - height) * 0.5 + self.minY
-            return CGRect(x: self.minX, y: y, width: self.size.width, height: height)
-            
-        case .center:
-            let x = (self.size.width - size.width) * 0.5 + self.minX
-            let y = (self.size.height - size.height) * 0.5 + self.minY
-            return CGRect(x: x, y: y, width: size.width, height: size.height)
-            
-        case .top:
-            let x = (self.size.width - size.width) * 0.5 + self.minX
-            return CGRect(x: x, y: self.minY, width: size.width, height: size.height)
-            
-        case .bottom:
-            let x = (self.size.width - size.width) * 0.5 + self.minX
-            let y = self.maxY - size.height
-            return CGRect(x: x, y: y, width: size.width, height: size.height)
-            
-        case .left:
-            let y = (self.size.height - size.height) * 0.5 + self.minY
-            return CGRect(x: self.minX, y: y, width: size.width, height: size.height)
-            
-        case .right:
-            let x = self.maxX - size.width
-            let y = (self.size.height - size.height) * 0.5 + self.minY
-            return CGRect(x: x, y: y, width: size.width, height: size.height)
-            
-        case .topLeft:
-            return CGRect(x: self.minX, y: self.minY, width: size.width, height: size.height)
-            
-        case .topRight:
-            let x = self.maxX - size.width
-            return CGRect(x: x, y: self.minY, width: size.width, height: size.height)
-            
-        case .bottomLeft:
-            let y = self.maxY - size.height
-            return CGRect(x: self.minX, y: y, width: size.width, height: size.height)
-            
-        case .bottomRight:
-            let x = self.maxX - size.width
-            let y = self.maxY - size.height
-            return CGRect(x: x, y: y, width: size.width, height: size.height)
-            
-        default:
-            return self;
-        }
+    public init(inside rect: CGRect, aspect: CGSize, contentMode: UIView.ContentMode) {
+        self = __CGRectMakeAspectRatioWithMode(rect, aspect, contentMode)
     }
     
-    /// 在当前区域内，计算指定大小的内容，按指定模式依次进行适配时的方位。
+    /// 在 rect 区域内，为比例为 ratio 的内容，创建一个按 contentMode 模式适配的 CGRect 结构体。
+    ///
     /// - Parameters:
-    ///   - size: 内容的大小
-    ///   - contentModes: 适配模式，顺序会影响结果
-    public func scaleAspect(inside size: CGSize, in contentModes: [UIView.ContentMode]) -> CGRect {
-        let rect = CGRect(x: 0, y: 0, width: size.width, height: size.height)
-        return contentModes.reduce(rect, { (rect, contentMode) -> CGRect in
-            return rect.scalingAspect(inside: rect.size, in: contentMode)
-        })
-    }
-}
-
-/// 兼容 iOS 12.0 版本的 NSDirectionalRectEdge 自定义类型。
-public struct XZRectEdge: OptionSet, @unchecked Sendable {
-    
-    public var rawValue: UInt
-    
-    public init(rawValue: UInt) {
-        self.rawValue = rawValue
-    }
-    
-    @available(iOS 13.0, *)
-    public init(_ edge: NSDirectionalRectEdge) {
-        switch edge {
-        case .top:
-            self = .top;
-        case .leading:
-            self = .leading;
-        case .bottom:
-            self = .bottom;
-        case .trailing:
-            self = .trailing;
-        default:
-            var rawValue: UInt = 0
-            for item in [NSDirectionalRectEdge.top, NSDirectionalRectEdge.leading, NSDirectionalRectEdge.bottom, NSDirectionalRectEdge.trailing] {
-                if edge.contains(item) {
-                    rawValue += XZRectEdge(item).rawValue
-                }
-            }
-            self.init(rawValue: rawValue)
-        }
-    }
-    
-    public static let top      : XZRectEdge = .init(rawValue: 1 << 0)
-    public static let leading  : XZRectEdge = .init(rawValue: 1 << 1)
-    public static let bottom   : XZRectEdge = .init(rawValue: 1 << 2)
-    public static let trailing : XZRectEdge = .init(rawValue: 1 << 3)
-    public static let all      : XZRectEdge = [.top, .leading, .bottom, .trailing]
-    
-}
-
-
-@available(iOS 13.0, *)
-extension NSDirectionalRectEdge {
-    
-    public init(_ edge: XZRectEdge) {
-        switch edge {
-        case .top:
-            self = .top;
-        case .leading:
-            self = .leading;
-        case .bottom:
-            self = .bottom;
-        case .trailing:
-            self = .trailing;
-        default:
-            var rawValue: UInt = 0
-            for item in [XZRectEdge.top, XZRectEdge.leading, XZRectEdge.bottom, XZRectEdge.trailing] {
-                if edge.contains(item) {
-                    rawValue += NSDirectionalRectEdge(item).rawValue
-                }
-            }
-            self.init(rawValue: rawValue)
-        }
+    ///   - rect: 待创建 CGRect 所在的区域
+    ///   - ratio: 待创建 CGRect 的宽高比，根据 contentMode 模式，函数返回值结构体宽高比可能并非与此参数相同
+    ///   - contentMode: 待创建 CGRect 在 aspect 区域中的适配模式
+    public init(inside rect: CGRect, ratio: CGSize, contentMode: UIView.ContentMode) {
+        self = __CGRectMakeAspectRatioInsideWithMode(rect, ratio, contentMode);
     }
     
 }

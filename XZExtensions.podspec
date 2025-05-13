@@ -32,7 +32,7 @@ Pod::Spec.new do |s|
   s.default_subspec = 'Code'
   
   s.subspec 'Code' do |ss|
-    ss.source_files = 'XZKit/Code/ObjC/XZExtensions/**/*.{h,m}'
+    ss.source_files = 'XZKit/Code/{ObjC,Swift}/XZExtensions/**/*.{h,m,swift}'
     ss.dependency 'XZDefines'
   end
   
@@ -44,7 +44,7 @@ Pod::Spec.new do |s|
   def s.defineSubspec(name, dependencies)
     self.subspec name do |ss|
       ss.public_header_files = "XZKit/Code/ObjC/XZExtensions/#{name}/**/*.h";
-      ss.source_files        = "XZKit/Code/ObjC/XZExtensions/#{name}/**/*.{h,m}";
+      ss.source_files        = "XZKit/Code/{ObjC,Swift}/XZExtensions/#{name}/**/*.{h,m,swift}";
       for dependency in dependencies
         ss.dependency dependency;
       end
