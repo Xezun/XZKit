@@ -23,6 +23,13 @@ typedef UIView<XZToastView> *XZToastView;
 /// 这是一个基类，业务可通过子类自定义提示消息的视图。
 @interface XZToast : NSObject
 
+/// 默认数量限制。
+@property (class) NSInteger maximumNumberOfToasts;
+/// 设置默认位置偏移量。
++ (void)setOffset:(CGFloat)offset forToastInPosition:(XZToastPosition)position;
+/// 获取默认位置偏移量。
++ (CGFloat)offsetForToastInPosition:(XZToastPosition)position;
+
 /// 呈现提示消息的视图。
 @property (nonatomic, readonly) __kindof UIView<XZToastView> *view;
 
