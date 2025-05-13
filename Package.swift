@@ -11,7 +11,6 @@ private enum ModuleType {
 
 private var _modules: [(type: ModuleType, name: String, dependencies: [PackageDescription.Target.Dependency])] = [
     (.ObjC, "XZDefines", []),
-    (.ObjC, "XZExtensions", ["XZDefines"]),
     (.ObjC, "XZML", ["XZDefines", "XZExtensions"]),
     (.ObjC, "XZJSON", ["XZObjcDescriptor", "XZExtensions"]),
     (.ObjC, "XZRefresh", ["XZDefines"]),
@@ -28,6 +27,7 @@ private var _modules: [(type: ModuleType, name: String, dependencies: [PackageDe
     (.Swift, "XZContentStatus", ["XZTextImageView"]),
     (.Swift, "XZCollectionViewFlowLayout", []),
     (.Swift, "XZNavigationController", ["XZDefines"]),
+    (.Mixed, "XZExtensions", ["XZDefines"]),
     (.Mixed, "XZGeometry", []),
     (.Mixed, "XZToast", ["XZGeometry", "XZTextImageView", "XZExtensions"]),
     (.Mixed, "XZMocoa", ["XZDefines", "XZExtensions"]),

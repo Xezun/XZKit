@@ -5,7 +5,7 @@
 //  Created by 徐臻 on 2025/5/13.
 //
 
-import Foundation
+import UIKit
 
 extension UIView.ContentMode: @retroactive CustomStringConvertible {
     

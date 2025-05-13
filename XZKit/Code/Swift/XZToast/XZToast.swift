@@ -10,7 +10,7 @@ import XZGeometry
 import XZTextImageView
 
 #if SWIFT_PACKAGE
-import XZToastObjC
+@_exported import XZToastObjC
 
 extension XZToast.Position: @retroactive CustomStringConvertible {
     
