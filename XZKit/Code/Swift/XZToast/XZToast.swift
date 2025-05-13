@@ -11,7 +11,34 @@ import XZTextImageView
 
 #if SWIFT_PACKAGE
 import XZToastObjC
-#endif
+
+extension XZToast.Position: @retroactive CustomStringConvertible {
+    
+    public var description: String {
+        switch self {
+        case .top:
+            return "top"
+        case .middle:
+            return "middle"
+        case .bottom:
+            return "bottom"
+        @unknown default:
+            return "unknown"
+        }
+    }
+    
+}
+#else
+extension XZToast: ExpressibleByStringLiteral {
+    
+    public typealias StringLiteralType = String
+    
+    /// 实现字符字面量构造 `XZToast` 的方法，实际调用 `init(message:)` 方法的便利方法。
+    public required convenience init(stringLiteral value: String) {
+        self.init(message: value)
+    }
+    
+}
 
 extension XZToast.Position: CustomStringConvertible {
     
@@ -29,6 +56,9 @@ extension XZToast.Position: CustomStringConvertible {
     }
     
 }
+#endif
+
+
 
 extension XZToast {
     
@@ -70,16 +100,7 @@ extension XZToast {
     }
 }
 
-extension XZToast: ExpressibleByStringLiteral {
-    
-    public typealias StringLiteralType = String
-    
-    /// 实现字符字面量构造 `XZToast` 的方法，实际调用 `init(message:)` 方法的便利方法。
-    public required convenience init(stringLiteral value: String) {
-        self.init(message: value)
-    }
-    
-}
+
 
 
 
