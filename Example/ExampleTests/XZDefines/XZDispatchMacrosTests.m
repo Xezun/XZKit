@@ -57,7 +57,7 @@ static void *key = &key;
         {
             NSInteger a = 0, b __block = 0;
             XCTestExpectation *expectation = [self expectationWithDescription:@"dispatch_queue_async_v"];
-            dispatch_queue_async_v(queue, ^{
+            dispatch_queue_async_imp(queue, ^{
                 if ([(__bridge NSString *)dispatch_get_specific(key) isEqualToString:kQueueNameTest]) {
                     if (a == 0 && b == 1) {
                         NSLog(@"✅ 宏函数测试通过：dispatch_queue_async_v");
@@ -71,7 +71,7 @@ static void *key = &key;
         
         {
             NSInteger a = 0, b __block = 0;
-            dispatch_queue_sync_v(queue, ^{
+            dispatch_queue_sync_imp(queue, ^{
                 if ([(__bridge NSString *)dispatch_get_specific(key) isEqualToString:kQueueNameTest]) {
                     if (a == 0 && b == 0) {
                         NSLog(@"✅ 宏函数测试通过：dispatch_queue_sync_v");
@@ -84,7 +84,7 @@ static void *key = &key;
         {
             NSInteger a = 0, b __block = 0;
             XCTestExpectation *expectation = [self expectationWithDescription:@"dispatch_main_async_v"];
-            dispatch_main_async_v(^{
+            dispatch_main_async_imp(^{
                 if ([(__bridge NSString *)dispatch_get_specific(key) isEqualToString:kQueueNameMain]) {
                     if (a == 0 && b == 1) {
                         NSLog(@"✅ 宏函数测试通过：dispatch_main_async_v");
@@ -98,7 +98,7 @@ static void *key = &key;
         
         {
             NSInteger a = 0, b __block = 0;
-            dispatch_main_sync_v(^{
+            dispatch_main_sync_imp(^{
                 if ([(__bridge NSString *)dispatch_get_specific(key) isEqualToString:kQueueNameMain]) {
                     if (a == 0 && b == 0) {
                         NSLog(@"✅ 宏函数测试通过：dispatch_main_sync_v");
@@ -111,7 +111,7 @@ static void *key = &key;
         {
             NSInteger a = 0, b __block = 0;
             XCTestExpectation *expectation = [self expectationWithDescription:@"dispatch_global_async_v"];
-            dispatch_global_async_v(QOS_CLASS_DEFAULT, ^{
+            dispatch_global_async_imp(QOS_CLASS_DEFAULT, ^{
                 if ([(__bridge NSString *)dispatch_get_specific(key) isEqualToString:kQueueNameDefault]) {
                     if (a == 0 && b == 1) {
                         NSLog(@"✅ 宏函数测试通过：dispatch_global_async_v");
@@ -125,7 +125,7 @@ static void *key = &key;
         
         {
             NSInteger a = 0, b __block = 0;
-            dispatch_global_sync_v(QOS_CLASS_DEFAULT, ^{
+            dispatch_global_sync_imp(QOS_CLASS_DEFAULT, ^{
                 if ([(__bridge NSString *)dispatch_get_specific(key) isEqualToString:kQueueNameDefault]) {
                     if (a == 0 && b == 0) {
                         NSLog(@"✅ 宏函数测试通过：dispatch_global_sync_v");
@@ -160,39 +160,39 @@ static void *key = &key;
         
         {
             XCTestExpectation *expectation = [self expectationWithDescription:@"dispatch_queue_async_v"];
-            dispatch_queue_async_v(queue, block, kQueueNameTest, 1, expectation);
+            dispatch_queue_async_imp(queue, block, kQueueNameTest, 1, expectation);
             a = 1;
             [self waitForExpectations:@[expectation] timeout:1.0];
         }
         
         {
             XCTestExpectation *expectation = [self expectationWithDescription:@"dispatch_queue_sync_v"];
-            dispatch_queue_sync_v(queue, block, kQueueNameTest, 1, expectation);
+            dispatch_queue_sync_imp(queue, block, kQueueNameTest, 1, expectation);
             a = 2;
             [self waitForExpectations:@[expectation] timeout:1.0];
         }
         
         {
             XCTestExpectation *expectation = [self expectationWithDescription:@"dispatch_main_async_v"];
-            dispatch_main_async_v(block, kQueueNameMain, 3, expectation);
+            dispatch_main_async_imp(block, kQueueNameMain, 3, expectation);
             a = 3;
             [self waitForExpectations:@[expectation] timeout:1.0];
         }
         {
             XCTestExpectation *expectation = [self expectationWithDescription:@"dispatch_main_sync_v"];
-            dispatch_main_sync_v(block, kQueueNameMain, 3, expectation);
+            dispatch_main_sync_imp(block, kQueueNameMain, 3, expectation);
             a = 4;
             [self waitForExpectations:@[expectation] timeout:1.0];
         }
         {
             XCTestExpectation *expectation = [self expectationWithDescription:@"dispatch_global_async_v"];
-            dispatch_global_async_v(QOS_CLASS_DEFAULT, block, kQueueNameDefault, 5, expectation);
+            dispatch_global_async_imp(QOS_CLASS_DEFAULT, block, kQueueNameDefault, 5, expectation);
             a = 5;
             [self waitForExpectations:@[expectation] timeout:1.0];
         }
         {
             XCTestExpectation *expectation = [self expectationWithDescription:@"dispatch_global_sync_v"];
-            dispatch_global_sync_v(QOS_CLASS_DEFAULT, block, kQueueNameDefault, 5, expectation);
+            dispatch_global_sync_imp(QOS_CLASS_DEFAULT, block, kQueueNameDefault, 5, expectation);
             a = 6;
             [self waitForExpectations:@[expectation] timeout:1.0];
         }

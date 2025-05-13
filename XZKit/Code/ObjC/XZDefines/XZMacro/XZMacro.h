@@ -208,6 +208,7 @@ FOUNDATION_EXPORT void XZLogv(const char *file, const int line, const char *func
 /// 简化在列队 queue 中调用块函数的书写方式。
 ///
 /// 情形一：通常情况下，在 queue 在中执行 block 块函数的代码。
+///
 /// ```objc
 /// dispatch_async(queue, ^{
 ///      block(NO);
@@ -215,6 +216,7 @@ FOUNDATION_EXPORT void XZLogv(const char *file, const int line, const char *func
 /// ```
 ///
 /// 情形二：假如 block 可能为 nil 的话，还需要加上 if 语句。
+///
 /// ```objc
 /// if (block) {
 ///     dispatch_async(queue, ^{
@@ -223,21 +225,24 @@ FOUNDATION_EXPORT void XZLogv(const char *file, const int line, const char *func
 /// }
 /// ```
 ///
-/// 通过 dispatch_queue 宏函数，代码可以简化为如下格式。
+/// 通过 `dispatch_queue_macros` 宏函数，代码可以简化为如下格式。
+///
 /// ```objc
 /// dispatch_queue_async(queue, block, NO);
 /// ```
 ///
-/// 宏函数 dispatch_queue 会在调度列队前检查 block 是否为空值，如同上面“情形二”的做法一样。
-/// 
-/// 不需要对 block 判空时，可以直接带 _v 版本的 dispatch_queue 函数，比如在已经确定 block 为非空或使用 block 字面量。
+/// 宏函数 `dispatch_queue_macros` 会在调度列队前检查 `block` 是否为空值，如同上面“情形二”的做法一样。
+///
+/// 如果不需要对 `block` 判空时，比如在已经确定 `block` 为非空,或使用 `block` 字面量时，可以直接使用带 `_imp` 的宏函数。
+///
 /// ```objc
-/// dispatch_queue_async_v(queue, ^(BOOL finished) {
+/// dispatch_queue_async_imp(queue, ^(BOOL finished) {
 ///     NSLog(@"do sth.");
 /// }, NO);
 /// ```
 ///
 /// 主队列 mainQueue 和全局队列 globalQueue 的便利宏函数。
+///
 /// ```objc
 /// dispatch_main_async(block, NO);
 /// dispatch_global_async(QOS_CLASS_DEFAULT, block, NO);
@@ -245,19 +250,24 @@ FOUNDATION_EXPORT void XZLogv(const char *file, const int line, const char *func
 ///
 /// 宏函数 `dispatch_queue` 目前支持调度参数不超过 10 的 block 块函数。
 ///
-/// 使用 dispatch_queue 宏函数与常规写法是等价的，不存在性能损失。比如，
+/// 使用 `dispatch_queue_macros` 宏函数与常规写法是等价的，不存在性能损失。比如，
+///
 /// ```objc
-/// dispatch_main_async_v(^{
+/// dispatch_main_async_imp(^{
 ///     NSLog("do sth");
 /// })
 /// ```
+///
 /// 在宏展开后，就是如下写法。
+///
 /// ```objc
 /// dispatch_async(dispatch_get_main_queue(), ^{
 ///     NSLog("do sth");
 /// })
 /// ```
-/// 上面用的是 block 字面量，可以直接使用 _v 版本。如果是不带 _v 版本，则仅仅会多进行一步空值判断。
+///
+/// 上面用的是 block 字面量，可以直接使用 `_imp` 版本。如果是不带 `_imp` 版本，则仅仅会多进行一步空值判断。
+///
 /// - Parameters:
 ///   - queue: 调度列队
 ///   - block: 块函数
@@ -274,19 +284,19 @@ __dispatch_queue_imp_1__, __dispatch_queue_imp_1__, __dispatch_queue_imp_1__, \
 __dispatch_queue_imp_1__, __dispatch_queue_imp_1__, __dispatch_queue_imp_1__, \
 __dispatch_queue_imp_0__)(concurrency, queue, block, ##__VA_ARGS__)
 
-#define dispatch_queue_async_v(queue, block, ...)       __dispatch_queue_imp__(async, queue, block, ##__VA_ARGS__)
-#define dispatch_queue_sync_v(queue, block, ...)        __dispatch_queue_imp__(sync, queue, block, ##__VA_ARGS__)
-#define dispatch_main_async_v(block, ...)               __dispatch_queue_imp__(async, dispatch_get_main_queue(), block, ##__VA_ARGS__)
-#define dispatch_main_sync_v(block, ...)                __dispatch_queue_imp__(sync, dispatch_get_main_queue(), block, ##__VA_ARGS__)
-#define dispatch_global_async_v(QOS_CLASS_, block, ...) __dispatch_queue_imp__(async, dispatch_get_global_queue(QOS_CLASS_, 0), block, ##__VA_ARGS__)
-#define dispatch_global_sync_v(QOS_CLASS_, block, ...)  __dispatch_queue_imp__(sync, dispatch_get_global_queue(QOS_CLASS_, 0), block, ##__VA_ARGS__)
+#define dispatch_queue_async_imp(queue, block, ...)       __dispatch_queue_imp__(async, queue, block, ##__VA_ARGS__)
+#define dispatch_queue_sync_imp(queue, block, ...)        __dispatch_queue_imp__(sync, queue, block, ##__VA_ARGS__)
+#define dispatch_main_async_imp(block, ...)               __dispatch_queue_imp__(async, dispatch_get_main_queue(), block, ##__VA_ARGS__)
+#define dispatch_main_sync_imp(block, ...)                __dispatch_queue_imp__(sync, dispatch_get_main_queue(), block, ##__VA_ARGS__)
+#define dispatch_global_async_imp(QOS_CLASS_, block, ...) __dispatch_queue_imp__(async, dispatch_get_global_queue(QOS_CLASS_, 0), block, ##__VA_ARGS__)
+#define dispatch_global_sync_imp(QOS_CLASS_, block, ...)  __dispatch_queue_imp__(sync, dispatch_get_global_queue(QOS_CLASS_, 0), block, ##__VA_ARGS__)
 
-#define dispatch_queue_async(queue, block, ...)          { typeof(block) const handler = block; if (handler) { dispatch_queue_async_v(queue, handler, ##__VA_ARGS__); } }
-#define dispatch_queue_sync(queue, block, ...)           { typeof(block) const handler = block; if (handler) { dispatch_queue_sync_v(queue, handler, ##__VA_ARGS__); } }
-#define dispatch_main_async(block, ...)                  { typeof(block) const handler = block; if (handler) { dispatch_main_async_v(handler, ##__VA_ARGS__); } }
-#define dispatch_main_sync(block, ...)                   { typeof(block) const handler = block; if (handler) { dispatch_main_sync_v(handler, ##__VA_ARGS__); } }
-#define dispatch_global_async(QOS_CLASS_, block, ...)    { typeof(block) const handler = block; if (handler) { dispatch_global_async_v(QOS_CLASS_, handler, ##__VA_ARGS__); } }
-#define dispatch_global_sync(QOS_CLASS_, block, ...)     { typeof(block) const handler = block; if (handler) { dispatch_global_sync_v(QOS_CLASS_, handler, ##__VA_ARGS__); } }
+#define dispatch_queue_async(queue, block, ...)          { typeof(block) const handler = block; if (handler) { dispatch_queue_async_imp(queue, handler, ##__VA_ARGS__);         } }
+#define dispatch_queue_sync(queue, block, ...)           { typeof(block) const handler = block; if (handler) { dispatch_queue_sync_imp(queue, handler, ##__VA_ARGS__);          } }
+#define dispatch_main_async(block, ...)                  { typeof(block) const handler = block; if (handler) { dispatch_main_async_imp(handler, ##__VA_ARGS__);                 } }
+#define dispatch_main_sync(block, ...)                   { typeof(block) const handler = block; if (handler) { dispatch_main_sync_imp(handler, ##__VA_ARGS__);                  } }
+#define dispatch_global_async(QOS_CLASS_, block, ...)    { typeof(block) const handler = block; if (handler) { dispatch_global_async_imp(QOS_CLASS_, handler, ##__VA_ARGS__);   } }
+#define dispatch_global_sync(QOS_CLASS_, block, ...)     { typeof(block) const handler = block; if (handler) { dispatch_global_sync_imp(QOS_CLASS_, handler, ##__VA_ARGS__);    } }
 
 #endif
 

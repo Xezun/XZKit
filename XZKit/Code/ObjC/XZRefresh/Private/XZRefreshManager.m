@@ -1106,7 +1106,7 @@ static void const * const _context = &_context;
         // 那么在代理方法中立即结束刷新，会导致减速状态在此方法返回后立即完成，
         // 即 -scrollViewDidEndDecelerating: 方法在结束刷新的 UIView 动画结束前执行，
         // 从而导致退场动画被提前清理，丢失动画效果。
-        dispatch_main_async_v(^{
+        dispatch_main_async_imp(^{
             [delegate scrollView:_scrollView headerDidBeginRefreshing:_header.refreshView];
         });
     }
@@ -1140,7 +1140,7 @@ static void const * const _context = &_context;
     
     id<XZRefreshDelegate> const delegate = _footer.refreshView.delegate ?: (id)_scrollView.delegate;
     if ([delegate respondsToSelector:@selector(scrollView:footerDidBeginRefreshing:)]) {
-        dispatch_main_async_v(^{
+        dispatch_main_async_imp(^{
             [delegate scrollView:_scrollView footerDidBeginRefreshing:_footer.refreshView];
         });
     }
