@@ -27,7 +27,7 @@
         // _textLabel.backgroundColor = UIColor.greenColor;
         _textLabel.textColor = UIColor.whiteColor;
         _textLabel.textAlignment = NSTextAlignmentCenter;
-        _textLabel.font = [UIFont systemFontOfSize:17.0];
+        _textLabel.font = [UIFont monospacedDigitSystemFontOfSize:17.0 weight:(UIFontWeightRegular)];
         [self addSubview:_textLabel];
     }
     return self;
