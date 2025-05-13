@@ -81,6 +81,26 @@
 - (void)dealloc {
     free(_offsets);
     _offsets = NULL;
+    
+    for (XZToastTask *task in _hideingTasks) {
+        [task cancel];
+        [task finish];
+    }
+    
+    for (XZToastTask *task in _showingTasks) {
+        [task cancel];
+        [task finish];
+    }
+    
+    for (XZToastTask *task in _waitingToHideTasks) {
+        [task cancel];
+        [task finish];
+    }
+    
+    for (XZToastTask *task in _waitingToShowTasks) {
+        [task cancel];
+        [task finish];
+    }
 }
 
 - (void)setMaximumNumberOfToasts:(NSInteger)maximumNumberOfToasts {
@@ -95,7 +115,7 @@
     return CGRectInset(UIEdgeInsetsInsetRect(bounds, safeAreaInsets), XZToastMargin, XZToastMargin);
 }
 
-- (XZToastTask *)showToast:(XZToast *)toast duration:(NSTimeInterval)duration position:(XZToastPosition)position exclusive:(BOOL)exclusive completion:(void (^)(BOOL))completion {
+- (XZToastTask *)showToast:(XZToast *)toast duration:(NSTimeInterval)duration position:(XZToastPosition)position exclusive:(BOOL)exclusive completion:(XZToastCompletion)completion {
     NSParameterAssert(duration >= 0 && duration < DISPATCH_TIME_FOREVER);
     UIView * const toastView = toast.view;
     [toastView layoutIfNeeded];
@@ -295,7 +315,8 @@
         return;
     }
     
-    CGRect const _bounds = [self bounds];
+    UIViewController * const _viewController = self->_viewController;
+    CGRect             const _bounds         = [self bounds];
     
     // 将等待中的 toast 出列一个显示。
     // 每次只展示一个，这样每个 toast 最少有 XZToastAnimationDuration * maxCount 的展示时间。
@@ -512,6 +533,7 @@
         return;
     }
     _needslayoutToasts = YES;
+    
     [NSRunLoop.mainRunLoop performInModes:@[NSRunLoopCommonModes] block:^{
         [self layoutToastsIfNeeded];
     }];

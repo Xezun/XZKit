@@ -30,6 +30,7 @@ typedef NS_ENUM(NSInteger, XZToastMoveDirection) {
     CGRect _frame;
 }
 
+/// 复用模式下，该属性由外部复制，否则懒加载。
 @property (nonatomic, strong) XZToastShadowView *wrapperView;
 
 /// 独占的 toast 不会与其它 toast 同时显示：
@@ -64,7 +65,6 @@ typedef NS_ENUM(NSInteger, XZToastMoveDirection) {
 
 - (instancetype)initWithView:(UIView *)view NS_UNAVAILABLE;
 - (instancetype)initWithView:(UIView *)view duration:(NSTimeInterval)duration position:(XZToastPosition)position exclusive:(BOOL)exclusive completion:(XZToastCompletion)completion NS_DESIGNATED_INITIALIZER;
-//- (instancetype)initWithContainerView:(XZToastShadowView *)containerView duration:(NSTimeInterval)duration position:(XZToastPosition)position exclusive:(BOOL)exclusive completion:(XZToastCompletion)completion;
 
 @end
 

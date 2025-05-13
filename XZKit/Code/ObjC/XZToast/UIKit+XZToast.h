@@ -18,12 +18,14 @@ NS_ASSUME_NONNULL_BEGIN
 ///
 /// 展示提示消息依赖于控制器视图容器，因此应在 `-viewDidLoad` 之后使用，否则可能会提前控制器生命周期。
 ///
+/// > 呈现 XZToast 的控制器会强持有`completion`块函数，对于不能自动结束的类型，应注意循环引用造成的内存泄漏问题，或者保证`hideToast`一定会被调用。
+///
 /// - Parameters:
 ///   - toast: 提示消息
-///   - duration: 展示时长，值为 0 表示不限制时长
+///   - duration: 展示时长，值为 0 时，表示不限制时长，一直保持展示，除非调用 `hideToast` 方法
 ///   - position: 展示位置
 ///   - exclusive: 是否独占，独占的消息展示时，不再展示其它消息
-///   - completion: 消息展示完成时的回调，如果消息被提前结束，则回调参数为 NO
+///   - completion: 消息展示完成时的回调，如果消息被提前结束，则回调参数为 NO 值
 /// - Returns: 返回值与参数 toast 不是同一对象，当需要隐藏特定 toast 时，需要使用该返回值
 - (nullable XZToast *)xz_showToast:(XZToast *)toast duration:(NSTimeInterval)duration position:(XZToastPosition)position exclusive:(BOOL)exclusive completion:(nullable XZToastCompletion)completion NS_SWIFT_NAME(showToast(_:duration:position:exclusive:completion:));
 

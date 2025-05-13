@@ -15,7 +15,7 @@
 
 @dynamic view;
 
-- (instancetype)initWithView:(UIView *)view duration:(NSTimeInterval)duration position:(XZToastPosition)position exclusive:(BOOL)exclusive completion:(XZToastCompletion)completion {
+- (instancetype)initWithView:(UIView<XZToastView> *)view duration:(NSTimeInterval)duration position:(XZToastPosition)position exclusive:(BOOL)exclusive completion:(XZToastCompletion)completion {
     self = [super initWithView:view];
     if (self) {
         _wrapperView = nil;
@@ -26,14 +26,6 @@
         _isExclusive   = exclusive;
         _completion    = completion;
         _isCancelled   = NO;
-    }
-    return self;
-}
-
-- (instancetype)initWithContainerView:(XZToastShadowView *)containerView duration:(NSTimeInterval)duration position:(XZToastPosition)position exclusive:(BOOL)exclusive completion:(XZToastCompletion)completion {
-    self = [self initWithView:containerView.view duration:duration position:position exclusive:exclusive completion:completion];
-    if (self) {
-        _wrapperView = containerView;
     }
     return self;
 }

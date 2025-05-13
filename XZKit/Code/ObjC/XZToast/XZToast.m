@@ -15,7 +15,7 @@ NSTimeInterval const XZToastAnimationDuration = 0.35;
 
 @synthesize view = _view;
 
-- (instancetype)initWithView:(UIView *)view {
+- (instancetype)initWithView:(UIView<XZToastView> *)view {
     self = [super init];
     if (self) {
         _view = view;
@@ -23,7 +23,16 @@ NSTimeInterval const XZToastAnimationDuration = 0.35;
     return self;
 }
 
-+ (instancetype)viewToast:(UIView *)view {
+- (NSString *)text {
+    return self.view.text;
+}
+
+- (void)setText:(NSString *)text {
+    self.view.text = text;
+    [self.view xz_setNeedsLayoutToasts];
+}
+
++ (instancetype)viewToast:(UIView<XZToastView> *)view {
     return [[self alloc] initWithView:view];
 }
 

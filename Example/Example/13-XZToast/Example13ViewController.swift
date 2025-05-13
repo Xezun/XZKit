@@ -13,13 +13,17 @@ import XZDefines
 
 class Example13ViewController: UITableViewController {
     
+    deinit {
+        NSLog("\(self) is deinit");
+    }
+    
     var index = 0
     
     var position = XZToast.Position.middle;
     
     var isExclusive = false
     
-    weak var loadingView: XZToastActivityIndicatorView?
+    weak var loadingToast: XZToast?
     
     @IBOutlet weak var toastControllerSwitch: UISwitch!
 
@@ -84,16 +88,16 @@ class Example13ViewController: UITableViewController {
                 showMessage("短消息", duration: 3.0)
             
             case 7:
-                showToast(.success("操作成功"), exclusive: true);
+                showToast(.success("操作成功"), duration: 3.0, position: position, exclusive: isExclusive);
                 
             case 8:
-                showToast(.failure("操作失败"), exclusive: true)
+                showToast(.failure("操作失败"), duration: 3.0, position: position, exclusive: isExclusive)
             
             case 9:
-                showToast(.waiting("请耐心等待"), exclusive: true)
+                showToast(.waiting("请耐心等待"), duration: 3.0, position: position, exclusive: isExclusive)
                 
             case 10:
-                showToast(.warning("非法访问"), exclusive: true)
+                showToast(.warning("非法访问"), duration: 3.0, position: position, exclusive: isExclusive)
                 
             default:
                 self.hideToast();
@@ -102,14 +106,9 @@ class Example13ViewController: UITableViewController {
         case 1:
             switch indexPath.row {
             case 0:
-                var loadingView: XZToastActivityIndicatorView! = self.loadingView
-                if loadingView == nil {
-                    loadingView = XZToastActivityIndicatorView()
-                    self.loadingView = loadingView
-                }
-                loadingView.startAnimating()
-                self.showToast(.view(loadingView), duration: 0, position: position, exclusive: true) { finished in
+                loadingToast = showToast(.loading(nil), duration: 0, position: position, exclusive: true) { [weak self] finished in
                     NSLog("加载类型的 XZToast 展示结束：\(finished)")
+                    self?.loadingToast = nil;
                 }
             case 1:
                 break
@@ -174,15 +173,14 @@ class Example13ViewController: UITableViewController {
     }
     
     @IBAction func progressSliderValueChanged(_ sender: UISlider) {
-        guard let loadingView = self.loadingView else { return }
+        guard let loadingToast = self.loadingToast else { return }
         if sender.value == 0 {
-            loadingView.text = nil;
+            loadingToast.text = nil;
         } else if sender.value == 100.0 {
-            loadingView.text = "加载成功"
+            loadingToast.text = "加载成功"
         } else {
-            loadingView.text = String.init(format: "加载进度 %.2f%%", sender.value);
+            loadingToast.text = String.init(format: "加载进度 %.2f%%", sender.value);
         }
-        self.showToast(.view(loadingView))
     }
     
     // 由于当前容器视图为 UITableView 所以在

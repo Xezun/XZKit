@@ -13,7 +13,7 @@
 
 @implementation XZToastShadowView
 
-- (instancetype)initWithView:(UIView *)view {
+- (instancetype)initWithView:(UIView<XZToastView> *)view {
     CGSize const size = view.frame.size;
     self = [super initWithFrame:CGRectMake(0, 0, kPadding + size.width + kPadding, kPadding + size.height + kPadding)];
     if (self) {
@@ -33,10 +33,18 @@
     return self;
 }
 
+- (NSString *)text {
+    return self.view.text;
+}
+
+- (void)setText:(NSString *)text {
+    self.view.text = text;
+}
+
 - (void)willRemoveSubview:(UIView *)subview {
     [super willRemoveSubview:subview];
     
-    // 在复用的情况下，_view 可能会被其它的控制器拿走，如果是这样，就提前终止。
+    // 在复用的情况下，_view 可能会被其它的控制器拿走，如果是这样，就提前终止当前提示。
     if (self.window && subview == _view) {
         [self xz_hideToast:nil];
     }

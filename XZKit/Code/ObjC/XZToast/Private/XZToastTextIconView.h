@@ -6,10 +6,11 @@
 //
 
 #import <UIKit/UIKit.h>
+#import "XZToast.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
-@interface XZToastTextIconView : UIView
+@interface XZToastTextIconView : UIView <XZToastView>
 @property (nonatomic, copy, nullable) NSString *text;
 - (instancetype)initWithFrame:(CGRect)frame NS_UNAVAILABLE;
 - (instancetype)init NS_UNAVAILABLE;

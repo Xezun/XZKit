@@ -20,8 +20,11 @@ typedef NS_ENUM(NSInteger, XZToastPosition) {
     XZToastPositionBottom,
 } NS_SWIFT_NAME(XZToast.Position);
 
-/// 显示或隐藏提示信息的回调块函数类型。
-/// @param finished 如果 toast 在 duration 之前被取消，该参数为 NO 值
+/// 展示提示信息完成后的回调块函数类型。
+///
+/// 该块函数，会被呈现它的控制器强持有，直接捕获控制器可能会造成循环引用。比如，对于常显 XZToast 类型，即展示时长`duration`为零的类型，如果没有`hideToast`操作可能会造成内存泄漏。
+///
+/// @param finished 如果 XZToast 在 duration 之前被取消，该参数为 NO 值，所以对于常显类型，此参数肯定为 NO 值
 typedef void (^XZToastCompletion)(BOOL finished) NS_SWIFT_NAME(XZToast.Completion);
 
 

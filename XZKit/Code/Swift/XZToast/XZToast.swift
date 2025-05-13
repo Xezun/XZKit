@@ -35,7 +35,7 @@ extension XZToast {
     /// 通过 view 构造 XZToast 对象。
     /// - Parameter view: 呈现提示的视图
     /// - Returns: XZToast 对象
-    @objc public class func view(_ view: UIView) -> Self {
+    @objc public class func view(_ view: XZToastView) -> Self {
         return Self.init(view: view)
     }
     
