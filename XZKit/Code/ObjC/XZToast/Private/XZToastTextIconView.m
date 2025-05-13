@@ -99,6 +99,10 @@
     [self setNeedsLayout];
 }
 
+- (NSString *)description {
+    return [NSString stringWithFormat:@"<%p: %@, text: %@, icon: %@>", self, self.class, self.text, _iconView];
+}
+
 @end
 
 

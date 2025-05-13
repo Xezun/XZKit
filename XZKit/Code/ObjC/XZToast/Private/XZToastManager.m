@@ -491,7 +491,7 @@
                 CGFloat minY = CGRectGetMinY(lastTaskItem->_frame);
                 CGFloat maxY = CGRectGetMaxY(lastTaskItem->_frame);
                 for (NSInteger index = (NSInteger)(self->_showingTasks.count) - 2; index >= 0; index--) {
-                    XZToastTask *item = self->_showingTasks[index];
+                    XZToastTask * const item = self->_showingTasks[index];
                     if (item.moveDirection == XZToastMoveDirectionLand) {
                         item->_frame.origin.y = maxY;
                         item.wrapperView.frame = item->_frame;
@@ -518,7 +518,7 @@
             }
         }
         
-        for (XZToastTask *item in self->_hideingTasks) {
+        for (XZToastTask * const item in self->_hideingTasks) {
             if (item.isViewReused) {
                 continue;
             }
@@ -601,8 +601,8 @@
             CGFloat minY = CGRectGetMinY(item->_frame);
             CGFloat maxY = CGRectGetMaxY(item->_frame);
             for (NSInteger i = (NSInteger)(_showingTasks.count) - 2; i >= 0; i--) {
-                XZToastTask *item = _showingTasks[i];
-                if (item.moveDirection) {
+                XZToastTask * const item = _showingTasks[i];
+                if (item.moveDirection == XZToastMoveDirectionLand) {
                     item->_frame.origin.y = maxY;
                     item.wrapperView.frame = item->_frame;
                     maxY = CGRectGetMaxY(item->_frame);

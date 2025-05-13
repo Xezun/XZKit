@@ -67,4 +67,8 @@
     _isCancelled = YES;
 }
 
+- (NSString *)description {
+    return [NSString stringWithFormat:@"<%p: %@, wrapper: %@, view: %@>", self, self.class, _wrapperView, self.view];
+}
+
 @end
