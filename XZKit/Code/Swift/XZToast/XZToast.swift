@@ -69,11 +69,18 @@ extension XZToast {
         return Self.init(view: view)
     }
     
-    /// 构造表示文本消息的 XZToast 对象。
+    /// 构造文本消息的 XZToast 对象。
     /// - Parameter text: 待呈现的文本内容
     /// - Returns: XZToast 对象
     @objc public class func message(_ text: String) -> Self {
         return Self.init(message: text)
+    }
+    
+    /// 构造带图片、文本消息的 XZToast 对象。
+    /// - Parameter text: 待呈现的文本内容
+    /// - Returns: XZToast 对象
+    @objc public class func message(_ text: String, image: UIImage?) -> Self {
+        return Self.init(message: text, image: image)
     }
     
     /// 构造表示加载过程的 XZToast 对象。

@@ -6,6 +6,7 @@
 //
 
 #import "XZToastTextIconView.h"
+#import "XZGeometry.h"
 
 #define kPaddingT 15.0
 #define kPaddingL 15.0
@@ -61,7 +62,8 @@
         CGFloat const y = kPaddingT;
         CGFloat const w = kIconSize;
         CGFloat const h = kIconSize;
-        _iconView.frame = CGRectMake(x, y, w, h);
+        CGSize  const s = [_iconView sizeThatFits:CGSizeMake(w, h)];
+        _iconView.frame = CGRectScaleAspectRatioInsideWithMode(CGRectMake(x, y, w, h), s, UIViewContentModeCenter) ;
     }
     
     if (_textLabel.text.length > 0) {
@@ -124,9 +126,13 @@
 
 @implementation XZToastTextImageView
 
-- (instancetype)initWithImage:(XZToastBase64Image)base64image {
+- (instancetype)initWithBase64Image:(XZToastBase64Image)base64image {
     NSData *data = [[NSData alloc] initWithBase64EncodedString:base64image options:kNilOptions];
     UIImage *image = [[UIImage alloc] initWithData:data scale:3.0];
+    return [self initWithImage:image];
+}
+
+- (instancetype)initWithImage:(UIImage *)image {
     UIImageView *imageView = [[UIImageView alloc] initWithImage:image];
     imageView.contentMode = UIViewContentModeCenter;
     return [super initWithIconView:imageView];

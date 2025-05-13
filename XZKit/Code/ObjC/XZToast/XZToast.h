@@ -45,9 +45,16 @@ typedef UIView<XZToastView> *XZToastView;
 /// - Parameter view: 呈现提示消息的视图
 + (instancetype)viewToast:(UIView<XZToastView> *)view NS_SWIFT_UNAVAILABLE("Use instance initializer instead.");
 
-/// 消息类型的提示。
+/// 文本消息提示类型。
 /// - Parameter text: 文本内容
 + (instancetype)messageToast:(NSString *)text NS_SWIFT_NAME(init(message:));
+
+/// 带图片的消息提示类型。
+/// 图片大小 50x50 以内，推荐 37x37 。
+/// - Parameters:
+///   - text: 文本内容
+///   - image: 图片，
++ (instancetype)messageToast:(NSString *)text image:(nullable UIImage *)image NS_SWIFT_NAME(init(message:image:));
 
 /// 加载类型的提示。
 /// - Parameter text: 文本内容

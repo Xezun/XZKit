@@ -37,7 +37,8 @@ typedef NSString *XZToastBase64Image;
 
 @interface XZToastTextImageView : XZToastTextIconView
 
-- (instancetype)initWithImage:(XZToastBase64Image)image NS_DESIGNATED_INITIALIZER;
+- (instancetype)initWithImage:(UIImage *)image NS_DESIGNATED_INITIALIZER;
+- (instancetype)initWithBase64Image:(XZToastBase64Image)image;
 
 @end
 

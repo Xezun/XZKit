@@ -61,6 +61,15 @@ static CGFloat _offsets[3] = {0, 0, 0};
     return [[self alloc] initWithView:toastView];
 }
 
++ (instancetype)messageToast:(NSString *)text image:(UIImage *)image {
+    if (image == nil) {
+        return [self messageToast:text];
+    }
+    XZToastTextImageView *toastView = [[XZToastTextImageView alloc] initWithImage:image];
+    toastView.text = text;
+    return [[self alloc] initWithView:toastView];
+}
+
 + (instancetype)loadingToast:(NSString *)text {
     XZToastActivityIndicatorView *toastView = [[XZToastActivityIndicatorView alloc] init];
     [toastView startAnimating];
@@ -69,25 +78,25 @@ static CGFloat _offsets[3] = {0, 0, 0};
 }
 
 + (instancetype)successToast:(NSString *)text {
-    XZToastTextImageView *toastView = [[XZToastTextImageView alloc] initWithImage:XZToastBase64ImageSuccess];
+    XZToastTextImageView *toastView = [[XZToastTextImageView alloc] initWithBase64Image:XZToastBase64ImageSuccess];
     toastView.text = text;
     return [[self alloc] initWithView:toastView];
 }
 
 + (instancetype)failureToast:(NSString *)text {
-    XZToastTextImageView *toastView = [[XZToastTextImageView alloc] initWithImage:XZToastBase64ImageFailure];
+    XZToastTextImageView *toastView = [[XZToastTextImageView alloc] initWithBase64Image:XZToastBase64ImageFailure];
     toastView.text = text;
     return [[self alloc] initWithView:toastView];
 }
 
 + (instancetype)warningToast:(NSString *)text {
-    XZToastTextImageView *toastView = [[XZToastTextImageView alloc] initWithImage:XZToastBase64ImageWarning];
+    XZToastTextImageView *toastView = [[XZToastTextImageView alloc] initWithBase64Image:XZToastBase64ImageWarning];
     toastView.text = text;
     return [[self alloc] initWithView:toastView];
 }
 
 + (instancetype)waitingToast:(NSString *)text {
-    XZToastTextImageView *toastView = [[XZToastTextImageView alloc] initWithImage:XZToastBase64ImageWaiting];
+    XZToastTextImageView *toastView = [[XZToastTextImageView alloc] initWithBase64Image:XZToastBase64ImageWaiting];
     toastView.text = text;
     return [[self alloc] initWithView:toastView];
 }

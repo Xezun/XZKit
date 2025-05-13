@@ -56,7 +56,7 @@ UIKIT_EXTERN CGRect CGRectMakeAspectRatioInsideWithMode(CGRect rect, CGSize rati
 
 /// 在 rect 区域内，按 contentMode 模式，将 aspect 缩放到区域范围内。
 ///
-/// 生成的 CGRect 优先保持 aspect 不变，但是由于 contentMode 模式的不同，也可能比 aspect 大或小。
+/// 如需要，先将 aspect 缩小到 rect.size 范围内，然后按 contentMode 模式在 rect 内布局。
 ///
 /// - Parameters:
 ///   - rect: 待创建 CGRect 所在的区域
