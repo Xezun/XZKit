@@ -6,7 +6,7 @@
 //
 
 #import "XZToast.h"
-#import "XZToastTextIconView.h"
+#import "XZToastView.h"
 
 NSTimeInterval const XZToastAnimationDuration = 0.35;
 
