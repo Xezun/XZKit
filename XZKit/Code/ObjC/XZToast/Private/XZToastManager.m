@@ -7,7 +7,7 @@
 
 #import "XZToastManager.h"
 #import <objc/runtime.h>
-#import "XZToastShadowView.h"
+#import "XZToastWrapperView.h"
 #import "XZToastTask.h"
 #import "XZToast.h"
 #import "UIKit+XZToast.h"
@@ -211,7 +211,7 @@
             oldTask.isViewReused = YES;
             
             // 隐藏效果反转
-            XZToastShadowView * const wrapperView = oldTask.wrapperView;
+            XZToastWrapperView * const wrapperView = oldTask.wrapperView;
             CALayer * const presentationLayer = wrapperView.layer.presentationLayer;
             if (presentationLayer) {
                 [wrapperView.layer removeAllAnimations];
@@ -384,7 +384,7 @@
         
         // 复用的视图不会从移除，因此用来判断复用状态
         if (newToastItem.wrapperView.superview) {
-            XZToastShadowView * const view = newToastItem.wrapperView;
+            XZToastWrapperView * const view = newToastItem.wrapperView;
             CALayer * const layer = view.layer.presentationLayer;
             if (layer) {
                 // 保存动画状态

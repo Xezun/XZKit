@@ -31,6 +31,7 @@ Pod::Spec.new do |s|
   
   s.subspec 'Code' do |ss|
     ss.source_files = 'XZKit/Code/{ObjC,Swift}/XZToast/**/*.{h,m,swift}'
+    ss.project_header_files = 'XZKit/Code/ObjC/XZToast/**/Private/*.h'
     ss.dependency 'XZGeometry'
     ss.dependency 'XZExtensions/UIApplication'
     ss.dependency 'XZTextImageView'

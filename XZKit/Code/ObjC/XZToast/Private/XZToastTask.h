@@ -7,7 +7,7 @@
 
 #import <Foundation/Foundation.h>
 #import "XZToast.h"
-#import "XZToastShadowView.h"
+#import "XZToastWrapperView.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -35,7 +35,7 @@ typedef NS_ENUM(NSInteger, XZToastMoveDirection) {
 }
 
 /// 复用模式下，该属性由外部复制，否则懒加载。
-@property (nonatomic, strong) XZToastShadowView *wrapperView;
+@property (nonatomic, strong) XZToastWrapperView *wrapperView;
 
 /// 独占的 toast 不会与其它 toast 同时显示：
 /// - 展示时，带背景，且立即顶掉正在展示的所有 toast

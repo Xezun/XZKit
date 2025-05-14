@@ -6,7 +6,7 @@
 //
 
 #import "XZToastTask.h"
-#import "XZToastShadowView.h"
+#import "XZToastWrapperView.h"
 #import "XZToastManager.h"
 
 @implementation XZToastTask {
@@ -40,15 +40,15 @@
 
 @synthesize wrapperView = _wrapperView;
 
-- (XZToastShadowView *)wrapperView {
+- (XZToastWrapperView *)wrapperView {
     if (_wrapperView == nil) {
-        _wrapperView = [[XZToastShadowView alloc] initWithView:self.view];
+        _wrapperView = [[XZToastWrapperView alloc] initWithView:self.view];
         _wrapperView.task = self;
     }
     return _wrapperView;
 }
 
-- (void)setWrapperView:(XZToastShadowView *)wrapperView {
+- (void)setWrapperView:(XZToastWrapperView *)wrapperView {
     if (_wrapperView != wrapperView) {
         _wrapperView.task = nil;
         _wrapperView = wrapperView;

@@ -1,5 +1,5 @@
 //
-//  XZToastShadowView.h
+//  XZToastWrapperView.h
 //  XZToast
 //
 //  Created by 徐臻 on 2025/4/30.
@@ -15,7 +15,7 @@ NS_ASSUME_NONNULL_BEGIN
 /// toast 距离边缘的距离，为了避免 toast 贴边。
 #define XZToastMargin 20.0
 
-@interface XZToastShadowView : UIView <XZToastView>
+@interface XZToastWrapperView : UIView <XZToastView>
 
 @property (nonatomic, readonly) UIView<XZToastView> *view;
 

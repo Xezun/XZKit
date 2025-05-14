@@ -1,17 +1,17 @@
 //
-//  XZToastShadowView.m
+//  XZToastWrapperView.m
 //  XZToast
 //
 //  Created by 徐臻 on 2025/4/30.
 //
 
-#import "XZToastShadowView.h"
+#import "XZToastWrapperView.h"
 #import "XZToastTask.h"
 
 /// toast 与 container 之间的边距，为了显示阴影。
 #define kPadding 5.0
 
-@implementation XZToastShadowView
+@implementation XZToastWrapperView
 
 - (instancetype)initWithView:(UIView<XZToastView> *)view {
     CGSize const size = view.frame.size;
