@@ -6,7 +6,7 @@
 //
 
 import UIKit
-import XZJSON
+import XZGeometry
 
 class Example10ViewController: UIViewController {
     
@@ -32,6 +32,14 @@ class Example10ViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
+        containerView.backgroundColor = nil;
+        containerView.layer.borderColor = UIColor.red.cgColor;
+        containerView.layer.borderWidth = 2.0;
+        
+        insideView.backgroundColor = nil;
+        insideView.layer.borderColor = UIColor.green.cgColor;
+        insideView.layer.borderWidth = 4.0;
+        
         self.sliderValueChanged()
     }
     
@@ -54,9 +62,6 @@ class Example10ViewController: UIViewController {
         let insideFrame = insiderSize.scalingAspectRatio(inside: containerBounds, contentMode: self.mode);
         self.insiderScaleSizeLabel.text = String(format: "(%.2f, %.2f)", insideFrame.width, insideFrame.height)
         
-        if insideFrame.isNull || insideFrame.isInfinite || insideFrame.minX.isNaN || insideFrame.minY.isNaN || insideFrame.width.isNaN || insideFrame.height.isNaN {
-            NSLog("\(insideFrame)")
-        }
         self.insideView.frame = insideFrame
     }
     
