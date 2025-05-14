@@ -13,10 +13,12 @@ NS_ASSUME_NONNULL_BEGIN
 @class XZRefreshView;
 @protocol XZRefreshDelegate;
 
-/// 通过此掩码判断处于 XZRefreshState 的刷新状态时，UIScrollView 是否已将 refreshHeight 合并到 .contentInset 中。
-#define XZRefreshStateContentInsetsMask (1 << 8)
-/// 通过此掩码判断处于 XZRefreshState 的刷新状态时，UIScrollView 是否为“正在刷新中”的状态。
-#define XZRefreshStateRefreshingMask    (1 << 9)
+typedef NS_ENUM(NSUInteger, XZRefreshMask) {
+    /// 包含此掩码的 XZRefreshState 状态，为将 refreshHeight 合并到 .contentInset 中的状态。
+    XZRefreshMaskContentInsets = (1 << 8),
+    /// 包含此掩码的 XZRefreshState 状态，为 UIScrollView 正在刷新中的状态。
+    XZRefreshMaskRefreshing    = (1 << 9)
+};
 
 /// 刷新状态枚举，可通过掩码来区分状态。
 typedef NS_ENUM(NSUInteger, XZRefreshState) {
@@ -33,12 +35,12 @@ typedef NS_ENUM(NSUInteger, XZRefreshState) {
     /// 所以当 contentInset 改变后，手势平移的距离虽然没有变，但是由滚动区域发生了改变，在弹性区域的滚动距离就发生改变，从而页面滚动距离改变，发生页面抖动。
     /// 但是由于这个变化不是立即触发的，无法在改变后立即修复页面位置，所以无法在用户触摸的过程中调整 contentInset 属性，
     /// 需要在手势结束后，即 `-scrollViewWillEndDragging:` 才能更新 contentInset 属性。
-    XZRefreshStateWillRefreshing = (1 << 2) | XZRefreshStateRefreshingMask,
+    XZRefreshStateWillRefreshing = (1 << 2) | XZRefreshMaskRefreshing,
     /// 正在刷新。
     /// 为展示刷新视图，调整了 UIScrollView 的 contentInset 属性。
-    XZRefreshStateRefreshing     = (1 << 3) | XZRefreshStateRefreshingMask | XZRefreshStateContentInsetsMask,
+    XZRefreshStateRefreshing     = (1 << 3) | XZRefreshMaskRefreshing | XZRefreshMaskContentInsets,
     /// 正在恢复状态，但是仍在拖拽中，尚未恢复 UIScrollView 的 contentInsets 属性，需要在 willEndDragging 再执行恢复操作。
-    XZRefreshStateWillRecovering = (1 << 4) | XZRefreshStateContentInsetsMask,
+    XZRefreshStateWillRecovering = (1 << 4) | XZRefreshMaskContentInsets,
     /// 正在复原。刷新已经结束，且恢复了 UIScrollView 的 contentInset 属性，但是页面仍然处于动画，或减速滚动的过程中。
     /// > 结束刷新状态时，如果 UIScrollView 处于拖拽状态，由于修改 contentInset 属性可能会造成页面抖动，所以恢复 contentInset 的操作将在手势结束后。
     /// > 结束刷新的动画过程中，也是此状态。
@@ -68,7 +70,7 @@ typedef NS_ENUM(NSUInteger, XZRefreshState) {
 /// 自动刷新的距离。
 @property (nonatomic) CGFloat automaticRefreshDistance;
 
-/// 刷新视图的位置和大小。
+/// 刷新视图的位置和大小，用于保存历史值。
 @property (nonatomic) CGRect frame;
 /// 调整 frame 的过程是否需要动画状态。
 @property (nonatomic) BOOL needsAnimatedTransitioning;
