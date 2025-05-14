@@ -6,7 +6,6 @@
 //
 
 #import "XZToast.h"
-#import "XZToastTextView.h"
 #import "XZToastTextIconView.h"
 
 NSTimeInterval const XZToastAnimationDuration = 0.35;
@@ -56,15 +55,13 @@ static CGFloat _offsets[3] = {0, 0, 0};
 }
 
 + (instancetype)messageToast:(NSString *)text {
-    XZToastTextView *toastView = [[XZToastTextView alloc] init];
-    toastView.text = text;
-    return [[self alloc] initWithView:toastView];
+    return [self messageToast:text image:nil];
+//    XZToastTextView *toastView = [[XZToastTextView alloc] init];
+//    toastView.text = text;
+//    return [[self alloc] initWithView:toastView];
 }
 
 + (instancetype)messageToast:(NSString *)text image:(UIImage *)image {
-    if (image == nil) {
-        return [self messageToast:text];
-    }
     XZToastTextImageView *toastView = [[XZToastTextImageView alloc] initWithImage:image];
     toastView.text = text;
     return [[self alloc] initWithView:toastView];

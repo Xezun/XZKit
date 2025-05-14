@@ -62,32 +62,44 @@
         CGFloat const y = kPaddingT;
         CGFloat const w = kIconSize;
         CGFloat const h = kIconSize;
-        CGSize  const s = [_iconView sizeThatFits:CGSizeMake(w, h)];
-        _iconView.frame = CGRectScaleAspectRatioInsideWithMode(CGRectMake(x, y, w, h), s, UIViewContentModeCenter) ;
+        CGSize  const iconSize = [_iconView sizeThatFits:CGSizeMake(w, h)];
+        _iconView.frame = CGRectScaleAspectRatioInsideWithMode(CGRectMake(x, y, w, h), iconSize, UIViewContentModeCenter) ;
     }
     
-    if (_textLabel.text.length > 0) {
-        CGSize  const s = [_textLabel sizeThatFits:CGSizeMake(bounds.size.width - kPaddingL - kPaddingR, 0)];
-        CGFloat const w = MIN(bounds.size.width - kPaddingL - kPaddingR, s.width);
+    {
+        CGSize  const textSize = [_textLabel sizeThatFits:CGSizeMake(bounds.size.width - kPaddingL - kPaddingR, 0)];
+        CGFloat const w = MIN(bounds.size.width - kPaddingL - kPaddingR, textSize.width);
         CGFloat const h = kTextLine;
         CGFloat const x = bounds.origin.x + (bounds.size.width - w) * 0.5;
-        CGFloat const y = kPaddingT + kIconSize + kSpacing;
+        CGFloat const y = CGRectGetMaxY(bounds) - kPaddingB - kTextLine;
         _textLabel.frame = CGRectMake(x, y, w, h);
-    } else {
-        CGFloat const x = CGRectGetMidX(bounds);
-        CGFloat const y = kPaddingT + kIconSize + kSpacing;
-        _textLabel.frame = CGRectMake(x, y, 0, kTextLine);
     }
 }
 
 - (CGSize)sizeThatFits:(CGSize)size {
-    if (_textLabel.text.length > 0) {
-        CGSize  const s = [_textLabel sizeThatFits:CGSizeMake(size.width - kPaddingL - kPaddingR, 0)];
+    CGSize const iconSize = [_iconView sizeThatFits:CGSizeMake(kIconSize, kIconSize)];
+    CGSize const textSize = [_textLabel sizeThatFits:CGSizeMake(size.width - kPaddingL - kPaddingR, 0)];
+    
+    BOOL const hasIcon = (iconSize.width > 0 && iconSize.height > 0);
+    BOOL const hasText = (textSize.width > 0);
+    
+    if (hasIcon && hasText) {
         CGFloat const h = kPaddingT + kIconSize + kSpacing + kTextLine + kPaddingB;
-        CGFloat const w = MAX(h, MIN(size.width, kPaddingB + s.width + kPaddingR));
+        CGFloat const w = MAX(h, MIN(size.width, kPaddingB + textSize.width + kPaddingR));
         return CGSizeMake(w, h);
     }
-    return CGSizeMake(kPaddingL + kIconSize + kPaddingR, kPaddingT + kIconSize + kPaddingB);
+    
+    if (hasIcon) {
+        return CGSizeMake(kPaddingL + kIconSize + kPaddingR, kPaddingT + kIconSize + kPaddingB);
+    }
+    
+    if (hasText) {
+        CGFloat const h = kPaddingT + kTextLine + kPaddingB;
+        CGFloat const w = MAX(h, MIN(size.width, kPaddingB + textSize.width + kPaddingR));
+        return CGSizeMake(w, h);
+    }
+    
+    return CGSizeZero;
 }
 
 - (NSString *)text {
