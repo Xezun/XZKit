@@ -49,21 +49,21 @@ typedef NS_OPTIONS(NSUInteger, XZAxis) {
     XZAxisContentInsetsBottom          = 1 << 2,
     XZAxisAdjustedContentInsetsTop     = 1 << 3,
     XZAxisAdjustedContentInsetsBottom  = 1 << 4,
-    XZAxisX                            = 1 << 5,
-    XZAxisWidth                        = 1 << 6,
-    XZAxisHeight                       = 1 << 7,
-    XZAxisContentHeight                = 1 << 8,
+    XZAxisBoundsX                      = 1 << 5,
+    XZAxisBoundsWidth                  = 1 << 6,
+    XZAxisBoundsHeight                 = 1 << 7,
+    XZAxisContentSizeHeight            = 1 << 8,
 };
 
 /// 返回 YES 表示 bounds 要素发生了改变。
 static inline BOOL XZAxisCompareBounds(XZAxis const axis, CGRect const old, CGRect const new) {
-    if ((axis & XZAxisX) && old.origin.x != new.origin.x) {
+    if ((axis & XZAxisBoundsX) && old.origin.x != new.origin.x) {
         return YES;
     }
-    if ((axis & XZAxisWidth) && old.size.width != new.size.width) {
+    if ((axis & XZAxisBoundsWidth) && old.size.width != new.size.width) {
         return YES;
     }
-    if ((axis & XZAxisHeight) && old.size.height != new.size.height) {
+    if ((axis & XZAxisBoundsHeight) && old.size.height != new.size.height) {
         return YES;
     }
     return NO;
@@ -90,7 +90,7 @@ static inline BOOL XZAxisCompareAdjustedContentInsets(XZAxis const axis, UIEdgeI
 }
 /// 返回 YES 表示 contentSize 要素发生了改变。
 static inline BOOL XZAxisCompareContentSize(XZAxis const axis, CGSize const old, CGSize const new) {
-    return ((axis & XZAxisContentHeight) && old.height != new.height);
+    return ((axis & XZAxisContentSizeHeight) && old.height != new.height);
 }
 
 
@@ -105,7 +105,7 @@ static inline BOOL XZAxisCompareContentSize(XZAxis const axis, CGSize const old,
     // 3. 当视图大小发生改变时，不一定会触发 -scrollViewDidScroll: 方法，所以需要监听 bounds 属性（KVO）。
     //    比如从 sb/xib 中初始化的大小和最终大小不一致时，初始以 xib/sb 中预设的大小进行布局，但是在 scrollView 调整
     //    到最终大小后，虽然 frame.size/bounds.size 发生了改变，但是并没有触发滚动方法。
-    //    因为对 bounds.x 进行了依赖，所有监听了 bounds 属性而不是 frame 属性。
+    //    因为对 bounds.x 进行了依赖，所有监听了 bounds 属性而不是 frame 属性，另外监听 frame 似乎无效。
     // 基于以上原因，在  中通过判断以下关键值，实时重新计算 header/footer 布局。
     XZAxis       _headerAxis; // 当前布局 header 依赖的要素
     XZAxis       _footerAxis; // 当前布局 footer 依赖的要素
@@ -385,7 +385,7 @@ static inline BOOL XZAxisCompareContentSize(XZAxis const axis, CGSize const old,
 }
 
 - (void)setNeedsLayoutHeaderRefreshView {
-    if (_header.needsLayout) {
+    if (!_header.refreshView || _header.needsLayout) {
         return;
     }
     _header.needsLayout = YES;
@@ -396,7 +396,7 @@ static inline BOOL XZAxisCompareContentSize(XZAxis const axis, CGSize const old,
 }
 
 - (void)setNeedsLayoutFooterRefreshView {
-    if (_footer.needsLayout) {
+    if (!_footer.refreshView || _footer.needsLayout) {
         return;
     }
     _footer.needsLayout = YES;
@@ -427,6 +427,7 @@ static inline BOOL XZAxisCompareContentSize(XZAxis const axis, CGSize const old,
 // 2、偏移 offset 为在默认默认布局基础之上，按 offset 向上偏移 -offset 。
 // 在刷新时，刷新高度 refreshHeight 会合并到 .contentInset.top 中。
 - (void)layoutHeaderRefreshView {
+    XZLog(@"布局 Header");
     XZRefreshContext * const _header      = self->_header;
     XZRefreshView    * const _refreshView = _header.refreshView;
     if (_refreshView == nil) {
@@ -458,17 +459,17 @@ static inline BOOL XZAxisCompareContentSize(XZAxis const axis, CGSize const old,
         switch (_header.adjustment) {
             case XZRefreshAdjustmentAutomatic:
                 y = -(_adjustedContentInsets.top - _header.refreshHeight) - h;
-                _headerAxis = XZAxisX | XZAxisWidth | XZAxisAdjustedContentInsetsTop;
+                _headerAxis = XZAxisBoundsX | XZAxisBoundsWidth | XZAxisAdjustedContentInsetsTop;
                 break;
             case XZRefreshAdjustmentNormal: {
                 _contentInsets = _scrollView.contentInset;
                 y = -(_contentInsets.top - _header.refreshHeight) - h;
-                _headerAxis = XZAxisX | XZAxisWidth | XZAxisAdjustedContentInsetsTop | XZAxisContentInsetsTop;
+                _headerAxis = XZAxisBoundsX | XZAxisBoundsWidth | XZAxisAdjustedContentInsetsTop | XZAxisContentInsetsTop;
                 break;
             }
             case XZRefreshAdjustmentNone:
                 y = -h;
-                _headerAxis = XZAxisX | XZAxisWidth | XZAxisAdjustedContentInsetsTop;
+                _headerAxis = XZAxisBoundsX | XZAxisBoundsWidth | XZAxisAdjustedContentInsetsTop;
                 break;
         }
         CGRect  const frame = CGRectMake(CGRectGetMinX(_bounds), y - _header.offset, CGRectGetWidth(_bounds), h);
@@ -490,17 +491,17 @@ static inline BOOL XZAxisCompareContentSize(XZAxis const axis, CGSize const old,
         switch (_header.adjustment) {
             case XZRefreshAdjustmentAutomatic:
                 y = -_adjustedContentInsets.top - h;
-                _headerAxis = XZAxisX | XZAxisWidth | XZAxisAdjustedContentInsetsTop;
+                _headerAxis = XZAxisBoundsX | XZAxisBoundsWidth | XZAxisAdjustedContentInsetsTop;
                 break;
             case XZRefreshAdjustmentNormal: {
                 _contentInsets = _scrollView.contentInset;
                 y = -_contentInsets.top - h;
-                _headerAxis = XZAxisX | XZAxisWidth | XZAxisAdjustedContentInsetsTop | XZAxisContentInsetsTop;
+                _headerAxis = XZAxisBoundsX | XZAxisBoundsWidth | XZAxisAdjustedContentInsetsTop | XZAxisContentInsetsTop;
                 break;
             }
             case XZRefreshAdjustmentNone:
                 y = -h;
-                _headerAxis = XZAxisX | XZAxisWidth | XZAxisAdjustedContentInsetsTop;
+                _headerAxis = XZAxisBoundsX | XZAxisBoundsWidth | XZAxisAdjustedContentInsetsTop;
                 break;
         }
         CGRect const frame = CGRectMake(CGRectGetMinX(_bounds), y - _header.offset, CGRectGetWidth(_bounds), h);
@@ -527,6 +528,7 @@ static inline BOOL XZAxisCompareContentSize(XZAxis const axis, CGSize const old,
 /// 在附加了底部刷新高度边距后，如果页面高度仍不满足一屏，刷新视图刷新放在底部，
 /// 满足一屏，正常布局，放在页面尾部即可。
 - (void)layoutFooterRefreshView {
+    XZLog(@"布局 Footer");
     XZRefreshContext * const _footer      = self->_footer;
     XZRefreshView    * const _refreshView = _footer.refreshView;
     if (!_refreshView) {
@@ -556,7 +558,7 @@ static inline BOOL XZAxisCompareContentSize(XZAxis const axis, CGSize const old,
         BOOL         const isPageFilled  = _contentSize.height >= minPageHeight;
         CGFloat      const h = CGRectGetHeight(_refreshView.frame);
         
-        _footerAxis = XZAxisHeight | XZAxisContentHeight | XZAxisAdjustedContentInsetsTop | XZAxisAdjustedContentInsetsBottom;
+        _footerAxis = XZAxisBoundsHeight | XZAxisContentSizeHeight | XZAxisAdjustedContentInsetsTop | XZAxisAdjustedContentInsetsBottom;
         
         CGFloat y = 0;
         CGFloat contentOffsetY = 0;
@@ -593,7 +595,7 @@ static inline BOOL XZAxisCompareContentSize(XZAxis const axis, CGSize const old,
                 break;
         }
         CGRect const frame = CGRectMake(CGRectGetMinX(_bounds), y + _footer.offset, CGRectGetWidth(_bounds), h);
-        _footerAxis = _footerAxis | XZAxisX | XZAxisWidth;
+        _footerAxis = _footerAxis | XZAxisBoundsX | XZAxisBoundsWidth;
         
         _footer.frame = frame;
         _footer.contentOffsetY = contentOffsetY;
@@ -614,7 +616,7 @@ static inline BOOL XZAxisCompareContentSize(XZAxis const axis, CGSize const old,
         CGFloat      const minPageHeight        = _bounds.size.height - adjustedContentInset.top - adjustedContentInset.bottom;
         BOOL         const isPageFilled = _contentSize.height >= minPageHeight;
         
-        _footerAxis = XZAxisHeight | XZAxisContentHeight | XZAxisAdjustedContentInsetsTop | XZAxisAdjustedContentInsetsBottom;
+        _footerAxis = XZAxisBoundsHeight | XZAxisContentSizeHeight | XZAxisAdjustedContentInsetsTop | XZAxisAdjustedContentInsetsBottom;
 
         CGFloat y = 0;
         CGFloat contentOffsetY = 0;
@@ -652,7 +654,7 @@ static inline BOOL XZAxisCompareContentSize(XZAxis const axis, CGSize const old,
                 break;
         }
         CGRect const frame = CGRectMake(CGRectGetMinX(_bounds), y + _footer.offset, CGRectGetWidth(_bounds), CGRectGetHeight(_refreshView.frame));
-        _footerAxis = _footerAxis | XZAxisX | XZAxisWidth;
+        _footerAxis = _footerAxis | XZAxisBoundsX | XZAxisBoundsWidth;
         
         _footer.frame = frame;
         _footer.contentOffsetY = contentOffsetY;

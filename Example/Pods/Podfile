@@ -36,6 +36,8 @@ target 'Example' do
   pod 'YYModel', :git => 'https://github.com/Xezun/YYModel.git'
   # pod 'AFNetworking'
   
+  pod 'XZRefresh/DEBUG', :path => '../../'
+  
   target 'ExampleTests' do
     inherit! :search_paths
   end
