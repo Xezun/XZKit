@@ -131,7 +131,7 @@ static inline BOOL XZAxisCompareContentSize(XZAxis const axis, CGSize const old,
         NSKeyValueObservingOptions const options = NSKeyValueObservingOptionNew | NSKeyValueObservingOptionOld | NSKeyValueObservingOptionInitial;
         [scrollView addObserver:self forKeyPath:@"delegate" options:(options) context:(void *)_context];
         [scrollView addObserver:self forKeyPath:@"contentSize" options:(NSKeyValueObservingOptionNew) context:(void *)_context];
-        [scrollView addObserver:self forKeyPath:@"bounds" options:(NSKeyValueObservingOptionNew) context:(void *)_context];
+//        [scrollView addObserver:self forKeyPath:@"bounds" options:(NSKeyValueObservingOptionNew) context:(void *)_context];
     }
     return self;
 }
@@ -888,19 +888,7 @@ static inline BOOL XZAxisCompareContentSize(XZAxis const axis, CGSize const old,
     
     CGRect const bounds = scrollView.bounds;
     
-    if (XZAxisCompareBounds(_headerAxis, _bounds, bounds)
-        || XZAxisCompareContentSize(_headerAxis, _contentSize, scrollView.contentSize)
-        || XZAxisCompareContentInsets(_headerAxis, _contentInsets, scrollView.contentInset)
-        || XZAxisCompareAdjustedContentInsets(_headerAxis, _adjustedContentInsets, scrollView.adjustedContentInset)) {
-        [self layoutHeaderRefreshView];
-    }
     
-    if (XZAxisCompareBounds(_footerAxis, _bounds, bounds)
-        || XZAxisCompareContentSize(_footerAxis, _contentSize, scrollView.contentSize)
-        || XZAxisCompareContentInsets(_footerAxis, _contentInsets, scrollView.contentInset)
-        || XZAxisCompareAdjustedContentInsets(_footerAxis, _adjustedContentInsets, scrollView.adjustedContentInset)) {
-        [self layoutFooterRefreshView];
-    }
     
     // 头部已处于刷新状态时，不响应页面滚动
     if (_header.state != XZRefreshStatePendinging) {
@@ -931,6 +919,19 @@ static inline BOOL XZAxisCompareContentSize(XZAxis const axis, CGSize const old,
     // 现象：进入页面后 headerRefreshView 的初始状态不正确。
     // 因为初始化时，adjustedContentInset 为 zero，页面展示后，adjustedContentInset 更新先调用 -scrollViewDidScroll: 方法时，
     // 错误的将 .top 判断为下拉距离，从而展示了异常状态。
+    if (XZAxisCompareBounds(_headerAxis, _bounds, bounds)
+        || XZAxisCompareContentSize(_headerAxis, _contentSize, scrollView.contentSize)
+        || XZAxisCompareContentInsets(_headerAxis, _contentInsets, scrollView.contentInset)
+        || XZAxisCompareAdjustedContentInsets(_headerAxis, _adjustedContentInsets, scrollView.adjustedContentInset)) {
+        [self layoutHeaderRefreshView];
+    }
+    
+    if (XZAxisCompareBounds(_footerAxis, _bounds, bounds)
+        || XZAxisCompareContentSize(_footerAxis, _contentSize, scrollView.contentSize)
+        || XZAxisCompareContentInsets(_footerAxis, _contentInsets, scrollView.contentInset)
+        || XZAxisCompareAdjustedContentInsets(_footerAxis, _adjustedContentInsets, scrollView.adjustedContentInset)) {
+        [self layoutFooterRefreshView];
+    }
 //    if (!UIEdgeInsetsEqualToEdgeInsets(scrollView.adjustedContentInset, _adjustedContentInsets)) {
 //        [self layoutFooterRefreshView];
 //        [self layoutHeaderRefreshView];

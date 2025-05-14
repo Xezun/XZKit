@@ -83,7 +83,7 @@
     NSTimeInterval time = arc4random_uniform(20) * 0.1 + 2.0;
     dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(time * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
         NSInteger old = self->_numberOfCells;
-        if (old < 30) {
+        if (old < 20) {
             NSInteger new = MIN(arc4random_uniform(5) + 4, 30 - old);
             self->_numberOfCells = old + new;
             NSMutableArray *rows = [NSMutableArray arrayWithCapacity:new];
