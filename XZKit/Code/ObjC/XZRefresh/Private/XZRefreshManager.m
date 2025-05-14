@@ -102,10 +102,13 @@ static inline BOOL XZAxisCompareContentSize(XZAxis const axis, CGSize const old,
     //    这将导致在 -scrollViewDidScroll: 方法中，由于 context 未更新而不能判断  header/footer 的正确状态。
     // 2. 无法向 -layoutSubviews 方法注入代码，即使在 +load 中添加或交换方法实现，被注入的代码不执行。
     //    猜测是原生提前获取了 -layoutSubviews 方法的实现，以优化性能，因为在滚动时，方法 layoutSubviews 会一直调用。
-    // 基于以上原因，在 -scrollViewDidScroll: 中通过判断以下关键值，实时重新计算 header/footer 布局。
-    // TODO: - 测试当 frame 大小发生改变时，是否会触发 -scrollViewDidScroll: 方法
-    XZAxis _headerAxis;
-    XZAxis _footerAxis;
+    // 3. 当视图大小发生改变时，不一定会触发 -scrollViewDidScroll: 方法，所以需要监听 bounds 属性（KVO）。
+    //    比如从 sb/xib 中初始化的大小和最终大小不一致时，初始以 xib/sb 中预设的大小进行布局，但是在 scrollView 调整
+    //    到最终大小后，虽然 frame.size/bounds.size 发生了改变，但是并没有触发滚动方法。
+    //    因为对 bounds.x 进行了依赖，所有监听了 bounds 属性而不是 frame 属性。
+    // 基于以上原因，在  中通过判断以下关键值，实时重新计算 header/footer 布局。
+    XZAxis       _headerAxis; // 当前布局 header 依赖的要素
+    XZAxis       _footerAxis; // 当前布局 footer 依赖的要素
     CGRect       _bounds;
     CGSize       _contentSize;
     UIEdgeInsets _contentInsets;
@@ -125,9 +128,10 @@ static inline BOOL XZAxisCompareContentSize(XZAxis const axis, CGSize const old,
         _header = [XZRefreshContext headerContextForScrollView:scrollView];
         _footer = [XZRefreshContext footerContextForScrollView:scrollView];
         
-        NSKeyValueObservingOptions const options = NSKeyValueObservingOptionNew | NSKeyValueObservingOptionOld;
-        [scrollView addObserver:self forKeyPath:@"delegate" options:(options | NSKeyValueObservingOptionInitial) context:(void *)_context];
-        [scrollView addObserver:self forKeyPath:@"contentSize" options:options context:(void *)_context];
+        NSKeyValueObservingOptions const options = NSKeyValueObservingOptionNew | NSKeyValueObservingOptionOld | NSKeyValueObservingOptionInitial;
+        [scrollView addObserver:self forKeyPath:@"delegate" options:(options) context:(void *)_context];
+        [scrollView addObserver:self forKeyPath:@"contentSize" options:(NSKeyValueObservingOptionNew) context:(void *)_context];
+        [scrollView addObserver:self forKeyPath:@"bounds" options:(NSKeyValueObservingOptionNew) context:(void *)_context];
     }
     return self;
 }
@@ -138,6 +142,7 @@ static inline BOOL XZAxisCompareContentSize(XZAxis const axis, CGSize const old,
     if (scrollView) {
         [scrollView removeObserver:self forKeyPath:@"delegate" context:(void *)_context];
         [scrollView removeObserver:self forKeyPath:@"contentSize" context:(void *)_context];
+        [scrollView removeObserver:self forKeyPath:@"bounds" context:(void *)_context];
         _scrollView = nil;
     }
 }
@@ -148,25 +153,28 @@ static inline BOOL XZAxisCompareContentSize(XZAxis const axis, CGSize const old,
     }
     
     // 视图大小发生改变，重新布局刷新视图
-//    if ([keyPath isEqualToString:@"frame"] || [keyPath isEqualToString:@"bounds"]) {
-//        CGRect const new = [change[NSKeyValueChangeNewKey] CGRectValue];
-//        if (_width)) {
-//            return;
-//        }
-//        [self setNeedsLayoutRefreshViews];
-//        return;
-//    }
+    if ([keyPath isEqualToString:@"bounds"]) {
+        CGRect const new = [change[NSKeyValueChangeNewKey] CGRectValue];
+        if (XZAxisCompareBounds(_headerAxis, _bounds, new)) {
+            [self setNeedsLayoutHeaderRefreshView];
+        }
+        if (XZAxisCompareBounds(_footerAxis, _bounds, new)) {
+            [self setNeedsLayoutFooterRefreshView];
+        }
+        return;
+    }
     
     // 理论上来讲，contentSize 改变，不会影响 header
     // 1、页面大小发生改变
     // 2、下拉刷新，或上拉加载，导致页面内容变化
     if ([keyPath isEqualToString:@"contentSize"]) {
-        CGSize const old = [change[NSKeyValueChangeOldKey] CGSizeValue];
         CGSize const new = [change[NSKeyValueChangeNewKey] CGSizeValue];
-        if (CGSizeEqualToSize(new, old)) {
-            return;
+        if (XZAxisCompareContentSize(_headerAxis, _contentSize, new)) {
+            [self setNeedsLayoutHeaderRefreshView];
         }
-        [self setNeedsLayoutFooterRefreshView];
+        if (XZAxisCompareContentSize(_footerAxis, _contentSize, new)) {
+            [self setNeedsLayoutFooterRefreshView];
+        }
         return;
     }
     
