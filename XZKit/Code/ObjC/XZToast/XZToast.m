@@ -139,4 +139,8 @@ static CGFloat _offsets[3] = {0, 0, 0};
     return [self sharedToast:style text:text image:nil];
 }
 
++ (instancetype)sharedToast:(XZToastStyle)style image:(UIImage *)image {
+    return [self sharedToast:style text:nil image:image];
+}
+
 @end

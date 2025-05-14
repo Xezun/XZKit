@@ -97,7 +97,8 @@ typedef NS_ENUM(NSUInteger, XZToastStyle) {
 ///   - text: 提示文案
 ///   - image: 提示图标，并非所有类型的 XZToast 都适用，比如 loading 类型不展示图片
 + (instancetype)sharedToast:(XZToastStyle)style text:(nullable NSString *)text image:(nullable UIImage *)image NS_SWIFT_NAME(init(shared:text:image:));
-+ (instancetype)sharedToast:(XZToastStyle)style text:(nullable NSString *)text NS_SWIFT_UNAVAILABLE("Use XZToast.shared(for:text:image:) instead.");
++ (instancetype)sharedToast:(XZToastStyle)style text:(nullable NSString *)text NS_SWIFT_UNAVAILABLE("Use XZToast.shared(_:text:image:) instead.");
++ (instancetype)sharedToast:(XZToastStyle)style image:(nullable UIImage *)image NS_SWIFT_UNAVAILABLE("Use XZToast.shared(_:text:image:) instead.");
 
 @end
 
