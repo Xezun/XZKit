@@ -120,11 +120,21 @@
 
 - (XZToastTask *)showToast:(XZToast *)toast duration:(NSTimeInterval)duration position:(XZToastPosition)position exclusive:(BOOL)exclusive completion:(XZToastCompletion)completion {
     NSParameterAssert(duration >= 0 && duration < DISPATCH_TIME_FOREVER);
-    UIView * const toastView = toast.view;
+    UIView<XZToastView> * const toastView = toast.view;
     [toastView layoutIfNeeded];
     
-    XZToastTask * const newTask = [[XZToastTask alloc] initWithView:toastView duration:duration position:position exclusive:exclusive completion:completion];
+    XZToastTask * const newTask = [[XZToastTask alloc] initWithManager:self view:toastView duration:duration position:position exclusive:exclusive completion:completion];
+    
     if ([toast isKindOfClass:[XZToastTask class]]) {
+        XZToastTask * const oldTask = ((XZToastTask *)toast);
+        // toast 被其它控制器使用
+        if (oldTask.manager && oldTask.manager != self) {
+            newTask.isViewReused = YES;
+            [newTask cancel];
+            [_waitingToHideTasks addObject:newTask];
+            [self setNeedsUpdateToasts];
+            return newTask;
+        }
         newTask.wrapperView = ((XZToastTask *)toast).wrapperView;
     }
     
@@ -136,6 +146,7 @@
             newTask.isViewReused = YES;
             [newTask cancel];
             [_waitingToHideTasks addObject:newTask];
+            [self setNeedsUpdateToasts];
             return newTask;
         }
         // 视图复用
@@ -160,7 +171,12 @@
             newTask.isViewReused = YES;
             [newTask cancel];
             [_waitingToHideTasks addObject:newTask];
-            [self setNeedsLayoutToasts]; // 更新布局
+            if (oldTask.view == toastView) {
+                // 独占的 toast 被复用，其内容可能已经发生了改变
+                // 在 setNeedsUpdateToasts 中更新布局
+                oldTask->_needsUpdateFrame = YES;
+            }
+            [self setNeedsUpdateToasts];
             return newTask;
         }
         if (oldTask.view == toastView) {
@@ -364,6 +380,7 @@
         // 大小：通过 sizeThatFits 计算大小
         newToastItem->_frame.size = [newToastItem.wrapperView sizeThatFits:CGSizeMake(_bounds.size.width, 0)];
         newToastItem->_frame.origin.x = (_bounds.size.width - newToastItem->_frame.size.width) * 0.5 + _bounds.origin.x;
+        newToastItem->_needsUpdateFrame = NO;
         
         // 复用的视图不会从移除，因此用来判断复用状态
         if (newToastItem.wrapperView.superview) {
@@ -462,6 +479,14 @@
             break;
     }
     
+    for (XZToastTask * const item in _showingTasks) {
+        if (item->_needsUpdateFrame) {
+            item->_frame.size = [item.wrapperView sizeThatFits:CGSizeMake(_bounds.size.width, 0)];
+            item->_frame.origin.x = (_bounds.size.width - item->_frame.size.width) * 0.5 + _bounds.origin.x;
+            item->_needsUpdateFrame = NO;
+        }
+    }
+    
     UIViewAnimationOptions const options = UIViewAnimationOptionLayoutSubviews;
     [UIView animateWithDuration:XZToastAnimationDuration delay:0 usingSpringWithDamping:0.8 initialSpringVelocity:0.6 options:options animations:^{
         switch (self->_position) {
@@ -510,7 +535,7 @@
                 [self->_showingTasks enumerateObjectsWithOptions:NSEnumerationReverse usingBlock:^(XZToastTask * _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
                     obj.wrapperView.transform = CGAffineTransformIdentity;
                     obj.wrapperView.alpha = 1.0;
-                    obj->_frame.origin.y = y - CGRectGetHeight(obj->_frame);
+                    obj->_frame.origin.y  = y - CGRectGetHeight(obj->_frame);
                     obj.wrapperView.frame = obj->_frame;
                     y = obj->_frame.origin.y;
                 }];
@@ -574,11 +599,13 @@
     CGRect const _bounds = [self bounds];
     
     // 重新调整 toast 大小
-    for (XZToastTask *item in _showingTasks) {
+    for (XZToastTask * const item in _showingTasks) {
         UIView * const itemView = item.wrapperView;
-        item->_frame.size = [itemView sizeThatFits:CGSizeMake(_bounds.size.width, 0)];
-        item->_frame.origin.x = (_bounds.size.width - item->_frame.size.width) * 0.5 + _bounds.origin.x;
-        itemView.frame = item->_frame;
+        if (item->_needsUpdateFrame || item->_frame.size.width > _bounds.size.width) {
+            item->_needsUpdateFrame = NO;
+            item->_frame.size = [itemView sizeThatFits:CGSizeMake(_bounds.size.width, 0)];
+            item->_frame.origin.x = (_bounds.size.width - item->_frame.size.width) * 0.5 + _bounds.origin.x;
+        }
     }
     
     // 重新调整位置
@@ -587,14 +614,17 @@
             CGFloat __block y = CGRectGetMinY(_bounds) + _offsets[XZToastPositionTop];
             [_showingTasks enumerateObjectsWithOptions:NSEnumerationReverse usingBlock:^(XZToastTask *obj, NSUInteger idx, BOOL *stop) {
                 obj.wrapperView.alpha = 1.0;
-                obj->_frame.origin.y = y;
+                obj->_frame.origin.y  = y;
                 obj.wrapperView.frame = obj->_frame;
                 y = CGRectGetMaxY(obj->_frame);
             }];
             break;
         }
         case XZToastPositionMiddle: {
-            XZToastTask *item = _showingTasks.lastObject;
+            XZToastTask * const item = _showingTasks.lastObject;
+            if (item == nil) {
+                break;
+            }
             item.wrapperView.alpha = 1.0;
             item->_frame.origin.y = CGRectGetMidY(_bounds) - CGRectGetHeight(item->_frame) * 0.5 + _offsets[XZToastPositionMiddle];
             item.wrapperView.frame = item->_frame;
@@ -618,7 +648,7 @@
             CGFloat __block y = CGRectGetMaxY(_bounds) + _offsets[XZToastPositionBottom];
             [self->_showingTasks enumerateObjectsWithOptions:NSEnumerationReverse usingBlock:^(XZToastTask * _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
                 obj.wrapperView.alpha = 1.0;
-                obj->_frame.origin.y = y - CGRectGetHeight(obj->_frame);
+                obj->_frame.origin.y  = y - CGRectGetHeight(obj->_frame);
                 obj.wrapperView.frame = obj->_frame;
                 y = obj->_frame.origin.y;
             }];

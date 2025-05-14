@@ -47,7 +47,6 @@ static CGFloat _offsets[3] = {0, 0, 0};
 
 - (void)setText:(NSString *)text {
     self.view.text = text;
-    [self.view xz_setNeedsLayoutToasts];
 }
 
 + (instancetype)viewToast:(UIView<XZToastView> *)view {
@@ -56,45 +55,83 @@ static CGFloat _offsets[3] = {0, 0, 0};
 
 + (instancetype)messageToast:(NSString *)text {
     return [self messageToast:text image:nil];
-//    XZToastTextView *toastView = [[XZToastTextView alloc] init];
-//    toastView.text = text;
-//    return [[self alloc] initWithView:toastView];
 }
 
 + (instancetype)messageToast:(NSString *)text image:(UIImage *)image {
-    XZToastTextImageView *toastView = [[XZToastTextImageView alloc] initWithImage:image];
+    XZToastView *toastView = [[XZToastView alloc] init];
+    toastView.style = XZToastStyleMessage;
     toastView.text = text;
+    toastView.image = image;
     return [[self alloc] initWithView:toastView];
 }
 
 + (instancetype)loadingToast:(NSString *)text {
-    XZToastActivityIndicatorView *toastView = [[XZToastActivityIndicatorView alloc] init];
-    [toastView startAnimating];
+    XZToastView *toastView = [[XZToastView alloc] init];
+    toastView.style = XZToastStyleLoading;
     toastView.text = text;
+    [toastView startAnimating];
     return [[self alloc] initWithView:toastView];
 }
 
 + (instancetype)successToast:(NSString *)text {
-    XZToastTextImageView *toastView = [[XZToastTextImageView alloc] initWithBase64Image:XZToastBase64ImageSuccess];
-    toastView.text = text;
-    return [[self alloc] initWithView:toastView];
+    return [self messageToast:text image:UIImageFromXZToastBase64Image(XZToastBase64ImageSuccess)];
 }
 
 + (instancetype)failureToast:(NSString *)text {
-    XZToastTextImageView *toastView = [[XZToastTextImageView alloc] initWithBase64Image:XZToastBase64ImageFailure];
-    toastView.text = text;
-    return [[self alloc] initWithView:toastView];
+    return [self messageToast:text image:UIImageFromXZToastBase64Image(XZToastBase64ImageFailure)];
 }
 
 + (instancetype)warningToast:(NSString *)text {
-    XZToastTextImageView *toastView = [[XZToastTextImageView alloc] initWithBase64Image:XZToastBase64ImageWarning];
-    toastView.text = text;
-    return [[self alloc] initWithView:toastView];
+    return [self messageToast:text image:UIImageFromXZToastBase64Image(XZToastBase64ImageWarning)];
 }
 
 + (instancetype)waitingToast:(NSString *)text {
-    XZToastTextImageView *toastView = [[XZToastTextImageView alloc] initWithBase64Image:XZToastBase64ImageWaiting];
-    toastView.text = text;
+    return [self messageToast:text image:UIImageFromXZToastBase64Image(XZToastBase64ImageWaiting)];
+}
+
++ (XZToast *)sharedToast:(XZToastStyle const)style text:(NSString *)text image:(UIImage *)image {
+    static XZToastView * __weak _sharedToastView = nil;
+    
+    XZToastView *toastView = _sharedToastView;
+    
+    if (toastView == nil) {
+        toastView = [[XZToastView alloc] init];
+        _sharedToastView = toastView;
+    }
+    
+    switch (style) {
+        case XZToastStyleMessage:
+            toastView.style = XZToastStyleMessage;
+            toastView.text = text;
+            toastView.image = image;
+            break;
+        case XZToastStyleLoading:
+            toastView.style = XZToastStyleLoading;
+            toastView.text = text;
+            [toastView startAnimating];
+            break;
+        case XZToastStyleSuccess:
+            toastView.style = XZToastStyleMessage;
+            toastView.text = text;
+            toastView.image = image ?: UIImageFromXZToastBase64Image(XZToastBase64ImageSuccess);
+            break;
+        case XZToastStyleFailure:
+            toastView.style = XZToastStyleMessage;
+            toastView.text = text;
+            toastView.image = image ?: UIImageFromXZToastBase64Image(XZToastBase64ImageFailure);
+            break;
+        case XZToastStyleWarning:
+            toastView.style = XZToastStyleMessage;
+            toastView.text = text;
+            toastView.image = image ?: UIImageFromXZToastBase64Image(XZToastBase64ImageWarning);
+            break;
+        case XZToastStyleWaiting:
+            toastView.style = XZToastStyleMessage;
+            toastView.text = text;
+            toastView.image = image ?: UIImageFromXZToastBase64Image(XZToastBase64ImageWaiting);
+            break;
+    }
+    
     return [[self alloc] initWithView:toastView];
 }
 

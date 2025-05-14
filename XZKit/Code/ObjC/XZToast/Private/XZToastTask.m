@@ -7,6 +7,7 @@
 
 #import "XZToastTask.h"
 #import "XZToastShadowView.h"
+#import "XZToastManager.h"
 
 @implementation XZToastTask {
     dispatch_block_t _timer;
@@ -15,10 +16,11 @@
 
 @dynamic view;
 
-- (instancetype)initWithView:(UIView<XZToastView> *)view duration:(NSTimeInterval)duration position:(XZToastPosition)position exclusive:(BOOL)exclusive completion:(XZToastCompletion)completion {
+- (instancetype)initWithManager:(XZToastManager *)manager view:(UIView<XZToastView> *)view duration:(NSTimeInterval)duration position:(XZToastPosition)position exclusive:(BOOL)exclusive completion:(XZToastCompletion)completion {
     self = [super initWithView:view];
     if (self) {
-        _wrapperView = nil;
+        _manager       = manager;
+        _wrapperView   = nil;
         _hideReason    = XZToastHideReasonNormal;
         _moveDirection = XZToastMoveDirectionNone;
         _duration      = duration;
@@ -26,8 +28,14 @@
         _isExclusive   = exclusive;
         _completion    = completion;
         _isCancelled   = NO;
+        _needsUpdateFrame = YES;
     }
     return self;
+}
+
+- (void)setText:(NSString *)text {
+    [super setText:text];
+    [self setNeedsUpdateFrame];
 }
 
 @synthesize wrapperView = _wrapperView;
@@ -35,8 +43,17 @@
 - (XZToastShadowView *)wrapperView {
     if (_wrapperView == nil) {
         _wrapperView = [[XZToastShadowView alloc] initWithView:self.view];
+        _wrapperView.task = self;
     }
     return _wrapperView;
+}
+
+- (void)setWrapperView:(XZToastShadowView *)wrapperView {
+    if (_wrapperView != wrapperView) {
+        _wrapperView.task = nil;
+        _wrapperView = wrapperView;
+        _wrapperView.task = self;
+    }
 }
 
 - (void)resume:(void (^)(XZToastTask * _Nonnull))block {
@@ -65,6 +82,18 @@
         _timer = nil;
     }
     _isCancelled = YES;
+}
+
+- (void)setNeedsUpdateFrame {
+    if (_needsUpdateFrame) {
+        return;
+    }
+    _needsUpdateFrame = YES;
+    [self.manager setNeedsLayoutToasts];
+}
+
+- (void)hide:(void (^)(void))completion {
+    [self.manager hideToast:self completion:completion];
 }
 
 - (NSString *)description {

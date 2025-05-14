@@ -1,11 +1,11 @@
 //
-//  XZToastTextIconView.m
+//  XZToastView.m
 //  XZToast
 //
 //  Created by 徐臻 on 2025/5/9.
 //
 
-#import "XZToastTextIconView.h"
+#import "XZToastView.h"
 #import "XZGeometry.h"
 
 #define kPaddingT 15.0
@@ -16,7 +16,10 @@
 #define kTextLine 20.0
 #define kSpacing  10.0
 
-@implementation XZToastTextIconView {
+@interface XZToastView ()
+@end
+
+@implementation XZToastView {
     @package
     UILabel *_textLabel;
     UIView *_iconView;
@@ -28,20 +31,13 @@
 }
 
 - (instancetype)initWithFrame:(CGRect)frame {
-    NSString * const reason = @"需要使用子类，不可以直接创建使用";
-    @throw [NSException exceptionWithName:NSGenericException reason:reason userInfo:nil];
-}
-
-- (instancetype)initWithIconView:(UIView *)iconView {
-    CGFloat const width = kPaddingT + kIconSize + kSpacing + kTextLine + kPaddingB;
-    self = [super initWithFrame:CGRectMake(0, 0, width, width)];
+    self = [super initWithFrame:frame];
     if (self) {
         self.backgroundColor = [UIColor colorWithWhite:0 alpha:0.7];
         self.layer.cornerRadius = 6.0;
         self.clipsToBounds = true;
         
-        _iconView = iconView;
-        [self addSubview:_iconView];
+        _style = XZToastStyleMessage;
         
         _textLabel = [[UILabel alloc] init];
         _textLabel.textColor = UIColor.whiteColor;
@@ -115,15 +111,36 @@
     return [NSString stringWithFormat:@"<%p: %@, text: %@, icon: %@>", self, self.class, self.text, _iconView];
 }
 
-@end
-
-
-@implementation XZToastActivityIndicatorView
-
-- (instancetype)init {
-    UIActivityIndicatorView *_iconView = [[UIActivityIndicatorView alloc] initWithActivityIndicatorStyle:(UIActivityIndicatorViewStyleLarge)];
-    _iconView.color = UIColor.whiteColor;
-    return [super initWithIconView:_iconView];
+- (void)setStyle:(XZToastStyle)style {
+    switch (style) {
+        case XZToastStyleMessage:
+        case XZToastStyleSuccess:
+        case XZToastStyleFailure:
+        case XZToastStyleWarning:
+        case XZToastStyleWaiting:
+            if (_style == XZToastStyleMessage) {
+                return;
+            }
+            _style = XZToastStyleMessage;
+            if (_iconView != nil && ![_iconView isKindOfClass:UIImageView.class]) {
+                [_iconView removeFromSuperview];
+                _iconView = nil;
+            }
+            break;
+        case XZToastStyleLoading:
+            if (_style == XZToastStyleLoading) {
+                return;
+            }
+            _style = XZToastStyleLoading;
+            if (![_iconView isKindOfClass:UIActivityIndicatorView.class]) {
+                [_iconView removeFromSuperview];
+                UIActivityIndicatorView *iconView = [[UIActivityIndicatorView alloc] initWithActivityIndicatorStyle:(UIActivityIndicatorViewStyleLarge)];
+                iconView.color = UIColor.whiteColor;
+                [self addSubview:iconView];
+                _iconView = iconView;
+            }
+            break;
+    }
 }
 
 - (BOOL)isAnimating {
@@ -138,23 +155,28 @@
     [((UIActivityIndicatorView *)_iconView) stopAnimating];
 }
 
-@end
-
-@implementation XZToastTextImageView
-
-- (instancetype)initWithBase64Image:(XZToastBase64Image)base64image {
-    NSData *data = [[NSData alloc] initWithBase64EncodedString:base64image options:kNilOptions];
-    UIImage *image = [[UIImage alloc] initWithData:data scale:3.0];
-    return [self initWithImage:image];
+- (UIImage *)image {
+    return ((UIImageView *)_iconView).image;
 }
 
-- (instancetype)initWithImage:(UIImage *)image {
-    UIImageView *imageView = [[UIImageView alloc] initWithImage:image];
-    imageView.contentMode = UIViewContentModeCenter;
-    return [super initWithIconView:imageView];
+- (void)setImage:(UIImage *)image {
+    if (_iconView == nil) {
+        if (image) {
+            _iconView = [[UIImageView alloc] initWithImage:image];
+            _iconView.frame = CGRectMake(CGRectGetMidX(self.bounds), kPaddingT + kIconSize * 0.5, 0, 0);
+            [self addSubview:_iconView];
+        }
+    } else {
+        ((UIImageView *)_iconView).image = image;
+    }
 }
 
 @end
+
+UIImage *UIImageFromXZToastBase64Image(XZToastBase64Image base64Image) {
+    NSData *data = [[NSData alloc] initWithBase64EncodedString:base64Image options:kNilOptions];
+    return [[UIImage alloc] initWithData:data scale:3.0];;
+}
 
 
 XZToastBase64Image const XZToastBase64ImageSuccess = @""

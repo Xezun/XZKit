@@ -24,10 +24,14 @@ typedef NS_ENUM(NSInteger, XZToastMoveDirection) {
     XZToastMoveDirectionRise = -1
 };
 
+@class XZToastManager;
+
 @interface XZToastTask : XZToast {
     @package
     /// 为了方便计算 toastView 的 frame 而设置。
     CGRect _frame;
+    /// 标记 `_frame` 值需要更新。
+    BOOL _needsUpdateFrame;
 }
 
 /// 复用模式下，该属性由外部复制，否则懒加载。
@@ -64,7 +68,12 @@ typedef NS_ENUM(NSInteger, XZToastMoveDirection) {
 - (void)finish;
 
 - (instancetype)initWithView:(UIView *)view NS_UNAVAILABLE;
-- (instancetype)initWithView:(UIView *)view duration:(NSTimeInterval)duration position:(XZToastPosition)position exclusive:(BOOL)exclusive completion:(XZToastCompletion)completion NS_DESIGNATED_INITIALIZER;
+- (instancetype)initWithManager:(XZToastManager *)manager view:(UIView<XZToastView> *)view duration:(NSTimeInterval)duration position:(XZToastPosition)position exclusive:(BOOL)exclusive completion:(XZToastCompletion)completion NS_DESIGNATED_INITIALIZER;
+
+@property (nonatomic, weak, readonly) XZToastManager *manager;
+
+- (void)setNeedsUpdateFrame;
+- (void)hide:(void (^_Nullable)(void))completion;
 
 @end
 

@@ -24,7 +24,6 @@ class Example13ViewController: UITableViewController {
     var isExclusive = false
     var reuseMode = false
     
-    var messageToast: XZToast?
     weak var loadingToast: XZToast?
     
     @IBOutlet weak var toastControllerSwitch: UISwitch!
@@ -90,16 +89,19 @@ class Example13ViewController: UITableViewController {
                 showMessage("短消息", duration: 3.0)
             
             case 7:
-                showToast(.success("操作成功"), duration: 3.0, position: position, exclusive: isExclusive);
+                showMessage("操作成功", style: .success)
                 
             case 8:
-                showToast(.failure("操作失败"), duration: 3.0, position: position, exclusive: isExclusive)
+                showMessage("操作失败", style: .failure)
             
             case 9:
-                showToast(.waiting("请耐心等待"), duration: 3.0, position: position, exclusive: isExclusive)
+                showMessage("请耐心等待", style: .waiting)
                 
             case 10:
-                showToast(.warning("非法访问"), duration: 3.0, position: position, exclusive: isExclusive)
+                showMessage("非法访问", style: .warning)
+                
+            case 11:
+                showMessage("处理中", style: .loading)
                 
             default:
                 self.hideToast();
@@ -126,7 +128,7 @@ class Example13ViewController: UITableViewController {
         }
     }
     
-    func showMessage(_ message: String, duration: TimeInterval) {
+    func showMessage(_ message: String, style: XZToast.Style = .message, duration: TimeInterval = 3.0) {
         let start = timestamp()
         let index = self.index
         let text  = "\(index). \(message)"
@@ -136,11 +138,25 @@ class Example13ViewController: UITableViewController {
             NSLog("消息：\(index). \(message) \n状态：\(finished) \n定时：\(duration) \n耗时：\(delta)")
         };
         
-        if reuseMode, let toast = messageToast {
-            toast.text = text;
-            showToast(toast, duration: duration, position: self.position, exclusive: self.isExclusive, completion: completion)
+        if reuseMode {
+            showToast(.shared(for: style, text: text, image: nil), duration: duration, position: self.position, exclusive: self.isExclusive, completion: completion)
         } else {
-            messageToast = showToast(.message(text), duration: duration, position: self.position, exclusive: self.isExclusive, completion: completion)
+            switch style {
+            case .message:
+                showToast(.message(text), duration: duration, position: position, exclusive: isExclusive, completion: completion)
+            case .loading:
+                showToast(.loading(text), duration: duration, position: position, exclusive: isExclusive, completion: completion)
+            case .success:
+                showToast(.success(text), duration: duration, position: position, exclusive: isExclusive, completion: completion)
+            case .failure:
+                showToast(.failure(text), duration: duration, position: position, exclusive: isExclusive, completion: completion)
+            case .warning:
+                showToast(.warning(text), duration: duration, position: position, exclusive: isExclusive, completion: completion)
+            case .waiting:
+                showToast(.waiting(text), duration: duration, position: position, exclusive: isExclusive, completion: completion)
+            @unknown default:
+                showToast(.message(text), duration: duration, position: position, exclusive: isExclusive, completion: completion)
+            }
         }
         
         self.index = index + 1;

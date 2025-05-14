@@ -11,12 +11,20 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
+
 @protocol XZToastView <NSObject>
 @optional
 @property (nonatomic, copy, nullable) NSString *text;
 @end
 
-typedef UIView<XZToastView> *XZToastView;
+typedef NS_ENUM(NSUInteger, XZToastStyle) {
+    XZToastStyleMessage,
+    XZToastStyleLoading,
+    XZToastStyleSuccess,
+    XZToastStyleFailure,
+    XZToastStyleWarning,
+    XZToastStyleWaiting,
+} NS_SWIFT_NAME(XZToast.Style);
 
 /// 一种用于展示业务或逻辑状态的提示消息。
 ///
@@ -25,8 +33,10 @@ typedef UIView<XZToastView> *XZToastView;
 
 /// 默认数量限制。
 @property (class) NSInteger maximumNumberOfToasts;
+
 /// 设置默认位置偏移量。
 + (void)setOffset:(CGFloat)offset forToastInPosition:(XZToastPosition)position;
+
 /// 获取默认位置偏移量。
 + (CGFloat)offsetForToastInPosition:(XZToastPosition)position;
 
@@ -50,10 +60,10 @@ typedef UIView<XZToastView> *XZToastView;
 + (instancetype)messageToast:(NSString *)text NS_SWIFT_NAME(init(message:));
 
 /// 带图片的消息提示类型。
-/// 图片大小 50x50 以内，推荐 37x37 。
+/// 图片。
 /// - Parameters:
 ///   - text: 文本内容
-///   - image: 图片，
+///   - image: 图片，尺寸推荐 37x37 宽高，最大支持 50x50 宽高
 + (instancetype)messageToast:(NSString *)text image:(nullable UIImage *)image NS_SWIFT_NAME(init(message:image:));
 
 /// 加载类型的提示。
@@ -75,6 +85,18 @@ typedef UIView<XZToastView> *XZToastView;
 /// 操作状态提示类型：等待状态。
 /// - Parameter text: 文本内容
 + (instancetype)waitingToast:(nullable NSString *)text NS_SWIFT_NAME(init(waiting:));
+
+/// 构件一个全局共享视图的 XZToast 对象，返回值不是单例。
+///
+/// 如果 toast 视图正在被其它 toast 使用，那么该 toast 会被提前终止。
+///
+/// 
+///
+/// - Parameters:
+///   - style: 外观样式
+///   - text: 提示文案
+///   - image: 提示图标，并非所有类型的 XZToast 都适用，比如 loading 类型不展示图片
++ (instancetype)sharedToast:(XZToastStyle)style text:(nullable NSString *)text image:(nullable UIImage *)image NS_SWIFT_NAME(init(shared:text:image:));
 
 @end
 

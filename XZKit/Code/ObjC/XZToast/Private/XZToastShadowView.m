@@ -6,7 +6,7 @@
 //
 
 #import "XZToastShadowView.h"
-#import "UIKit+XZToast.h"
+#import "XZToastTask.h"
 
 /// toast 与 container 之间的边距，为了显示阴影。
 #define kPadding 5.0
@@ -46,7 +46,7 @@
     
     // 在复用的情况下，_view 可能会被其它的控制器拿走，如果是这样，就提前终止当前提示。
     if (self.window && subview == _view) {
-        [self xz_hideToast:nil];
+        [self.task hide:nil];
     }
 }
 
@@ -63,7 +63,7 @@
 
 - (CGSize)sizeThatFits:(CGSize)size {
     CGFloat const maxToastWidth = size.width - kPadding * 2.0;
-    CGSize const toastSize = [_view sizeThatFits:CGSizeMake(maxToastWidth, 0)];
+    CGSize  const toastSize = [_view sizeThatFits:CGSizeMake(maxToastWidth, 0)];
     CGFloat const width = MIN(size.width, toastSize.width + kPadding * 2.0);
     CGFloat const height = toastSize.height + kPadding * 2.0;
     return CGSizeMake(width, height);
