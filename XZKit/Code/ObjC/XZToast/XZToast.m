@@ -135,4 +135,8 @@ static CGFloat _offsets[3] = {0, 0, 0};
     return [[self alloc] initWithView:toastView];
 }
 
++ (instancetype)sharedToast:(XZToastStyle)style text:(NSString *)text {
+    return [self sharedToast:style text:text image:nil];
+}
+
 @end

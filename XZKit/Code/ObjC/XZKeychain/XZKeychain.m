@@ -154,20 +154,22 @@ static BOOL XZKeychainHandleOSStatus(OSStatus statusCode, NSError *__autoreleasi
 
 @end
 
+#define XZKeychainKeyUDID @"com.xezun.XZKeychain.UDID"
+
 @implementation XZKeychain (XZExtendedKeychain)
 
-+ (XZKeychain<XZKeychainInternetPasswordItem *> *)keychainWithAccount:(NSString *)account password:(NSString *)password server:(NSString *)server accessGroup:(NSString *)accessGroup {
++ (XZKeychain<XZKeychainInternetPasswordItem *> *)keychainWithAccount:(NSString *)account domain:(NSString *)domain accessGroup:(NSString *)accessGroup {
     XZKeychainInternetPasswordItem *item = [[XZKeychainInternetPasswordItem alloc] init];
     item.account = account;
     item.accessGroup = accessGroup;
-    item.server = server;
+    item.server = domain;
     item.accessGroup = accessGroup;
     
     return [XZKeychain keychainForItem:item];
 }
 
-+ (XZKeychain<XZKeychainInternetPasswordItem *> *)keychainWithAccount:(NSString *)account password:(NSString *)password server:(NSString *)server {
-    return [self keychainWithAccount:account password:password server:server accessGroup:nil];
++ (XZKeychain<XZKeychainInternetPasswordItem *> *)keychainWithAccount:(NSString *)account domain:(NSString *)domain {
+    return [self keychainWithAccount:account domain:domain accessGroup:nil];
 }
 
 + (NSString *)UDID {
@@ -175,25 +177,36 @@ static BOOL XZKeychainHandleOSStatus(OSStatus statusCode, NSError *__autoreleasi
 }
 
 + (NSString *)UDIDForGroup:(NSString *)accessGroup {
+    NSString * const UDID = [NSUserDefaults.standardUserDefaults stringForKey:XZKeychainKeyUDID];
+    if (UDID) {
+        return UDID;
+    }
+    
     XZKeychainGenericPasswordItem *item = [[XZKeychainGenericPasswordItem alloc] init];
-    item.account = @"com.xezun.XZKeychain.UDID";
     item.accessGroup = accessGroup;
-    item.userInfo = [@"com.xezun.XZKeychain.UDID" dataUsingEncoding:NSUTF8StringEncoding];
+    item.account     = XZKeychainKeyUDID;
+    item.userInfo    = [XZKeychainKeyUDID dataUsingEncoding:NSUTF8StringEncoding];
     
     XZKeychain<XZKeychainGenericPasswordItem *> *keychain = [XZKeychain keychainForItem:item];
 
     NSError *error = nil;
-    if (![keychain search:NO error:&error]) {
-        item.description = NSUUID.UUID.UUIDString;
-        if (![keychain insert:&error]) {
-            return nil;
-        }
+    if ([keychain search:NO error:&error]) {
+        return item.description;
     }
-    return item.description;
+    
+    NSString * const newUDID = NSUUID.UUID.UUIDString;
+    
+    [NSUserDefaults.standardUserDefaults setValue:newUDID forKey:XZKeychainKeyUDID];
+    item.description = newUDID;
+    
+    if (![keychain insert:&error]) {
+        NSLog(@"[XZKeychain] 无法在钥匙串中保存 UDID 数据：%@", error);
+    }
+    
+    return newUDID;
 }
 
 @end
-
 
 
 

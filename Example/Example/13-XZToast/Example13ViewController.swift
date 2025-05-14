@@ -139,7 +139,7 @@ class Example13ViewController: UITableViewController {
         };
         
         if reuseMode {
-            showToast(.shared(for: style, text: text, image: nil), duration: duration, position: self.position, exclusive: self.isExclusive, completion: completion)
+            showToast(.shared(style, text: text, image: nil), duration: duration, position: self.position, exclusive: self.isExclusive, completion: completion)
         } else {
             switch style {
             case .message:
