@@ -184,7 +184,7 @@ FOUNDATION_EXPORT void XZLogv(const char *file, const int line, const char *func
 /// 宏函数，控制台输出，实际调用 `NSLog` 完成输出，会额外输出语句所在的文件、行数、方法名，且如果待输出内容过大，则分批次输出，避免输出内容不完整。
 ///
 /// - Parameter format: 格式化输出模版
-FOUNDATION_EXPORT void XZLog(NSString *format, ...) NS_FORMAT_FUNCTION(1,2);
+FOUNDATION_EXTERN void XZLog(NSString *format, ...) NS_FORMAT_FUNCTION(1,2);
 
 #if XZ_FRAMEWORK
 

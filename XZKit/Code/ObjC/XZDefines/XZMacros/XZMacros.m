@@ -5,19 +5,10 @@
 //  Created by Xezun on 2023/8/6.
 //
 
-#import <Foundation/Foundation.h>
+#import "XZMacros.h"
 @import ObjectiveC;
 
-void XZLog(NSString *format, ...) {
-#if DEBUG
-    va_list arguments;
-    va_start(arguments, format);
-    NSLogv(format, arguments);
-    va_end(arguments);
-#endif
-}
 
-#import "XZMacros.h"
 
 void XZLogv(const char *file, const int line, const char *function, NSString *format, ...) {
     va_list arguments;
@@ -71,4 +62,14 @@ void XZLogv(const char *file, const int line, const char *function, NSString *fo
         // 下次输出的起点。如果是换行符，则会跳过换行符，因为 NSLog 已经包含一个换行符
         location = range.location + range.length;
     } while (location < messageLength);
+}
+
+#undef XZLog
+void XZLog(NSString *format, ...) {
+#if DEBUG
+    va_list arguments;
+    va_start(arguments, format);
+    NSLogv(format, arguments);
+    va_end(arguments);
+#endif
 }
