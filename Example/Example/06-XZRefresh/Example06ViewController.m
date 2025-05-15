@@ -10,6 +10,7 @@
 #import "Example06RefreshSettingsViewController.h"
 @import XZRefresh;
 @import XZExtensions;
+@import XZToast;
 
 @interface Example06ViewController () <XZRefreshDelegate, UITableViewDataSource> {
     NSInteger _numberOfCells;
@@ -75,6 +76,7 @@
         self->_numberOfCells = arc4random_uniform(10) + 5;
         [self.tableView reloadData];
         [refreshView endRefreshing:YES];
+        [self xz_showToast:[XZToast sharedToast:(XZToastStyleMessage) text:@"刷新成功"]];
     });
 }
 
@@ -92,6 +94,9 @@
                 [rows addObject:indexPath];
             }
             [self.tableView insertRowsAtIndexPaths:rows withRowAnimation:(UITableViewRowAnimationTop)];
+            [self xz_showToast:[XZToast sharedToast:(XZToastStyleMessage) text:[NSString stringWithFormat:@"新增 %ld 条数据", new]] position:(XZToastPositionBottom)];
+        } else {
+            [self xz_showToast:[XZToast sharedToast:(XZToastStyleMessage) text:@"没有更多数据了"] position:(XZToastPositionBottom)];
         }
         [refreshView endRefreshing:YES];
     });

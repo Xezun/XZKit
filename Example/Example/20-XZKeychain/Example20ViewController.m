@@ -10,7 +10,7 @@
 @import XZDefines;
 @import XZToast;
 
-@interface Example20ViewController ()
+@interface Example20ViewController () <UITextFieldDelegate>
 @property (weak, nonatomic) IBOutlet UITextField *accountTextField;
 @property (weak, nonatomic) IBOutlet UITextField *passwordTextField;
 @property (weak, nonatomic) IBOutlet UILabel *identifierLabel;
@@ -139,6 +139,10 @@
         [self xz_showToast:[XZToast sharedToast:(XZToastStyleWarning) text:@"没有找到钥匙串"]];
         self.messageLabel.text = error.localizedDescription;
     }
+}
+
+- (BOOL)textFieldShouldReturn:(UITextField *)textField {
+    return [textField resignFirstResponder];
 }
 
 @end

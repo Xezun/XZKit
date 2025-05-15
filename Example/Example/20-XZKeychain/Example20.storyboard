@@ -61,7 +61,10 @@
                                                     <constraint firstAttribute="height" constant="40" id="Q9P-Tf-RQ2"/>
                                                 </constraints>
                                                 <fontDescription key="fontDescription" type="system" pointSize="14"/>
-                                                <textInputTraits key="textInputTraits"/>
+                                                <textInputTraits key="textInputTraits" returnKeyType="done"/>
+                                                <connections>
+                                                    <outlet property="delegate" destination="uRw-8X-YF8" id="xSo-Co-1EN"/>
+                                                </connections>
                                             </textField>
                                         </subviews>
                                     </stackView>
@@ -88,7 +91,10 @@
                                                     <constraint firstAttribute="height" relation="greaterThanOrEqual" constant="40" id="ygG-L9-UOU"/>
                                                 </constraints>
                                                 <fontDescription key="fontDescription" type="system" pointSize="14"/>
-                                                <textInputTraits key="textInputTraits"/>
+                                                <textInputTraits key="textInputTraits" returnKeyType="done"/>
+                                                <connections>
+                                                    <outlet property="delegate" destination="uRw-8X-YF8" id="UPY-pf-DcP"/>
+                                                </connections>
                                             </textField>
                                         </subviews>
                                     </stackView>

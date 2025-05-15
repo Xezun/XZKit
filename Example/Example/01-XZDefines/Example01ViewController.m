@@ -7,6 +7,7 @@
 
 #import "Example01ViewController.h"
 @import XZDefines;
+@import XZToast;
 
 @interface Example01ViewController ()
 
@@ -26,6 +27,7 @@
         case 0:
             break;
         case 1: {
+            [self xz_showToast:[XZToast messageToast:@"请查看控制台输出情况"]];
             NSString *string = nil;
             
             string = [@"" stringByPaddingToLength:500 withString:@"1234567890" startingAtIndex:0];
