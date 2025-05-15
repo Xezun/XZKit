@@ -72,6 +72,14 @@
     return [self xz_showToast:toast duration:XZToastDuration position:(XZToastPositionMiddle) exclusive:false completion:nil];
 }
 
+- (nullable XZToast *)xz_showToast:(XZToast *)toast position:(XZToastPosition)position {
+    return [self xz_showToast:toast duration:XZToastDuration position:position exclusive:false completion:nil];
+}
+
+- (nullable XZToast *)xz_showToast:(XZToast *)toast position:(XZToastPosition)position completion:(nullable XZToastCompletion)completion {
+    return [self xz_showToast:toast duration:XZToastDuration position:position exclusive:false completion:completion];
+}
+
 - (nullable XZToast *)xz_showToast:(XZToast *)toast exclusive:(BOOL)exclusive completion:(nullable XZToastCompletion)completion {
     return [self xz_showToast:toast duration:XZToastDuration position:(XZToastPositionMiddle) exclusive:exclusive completion:completion];
 }

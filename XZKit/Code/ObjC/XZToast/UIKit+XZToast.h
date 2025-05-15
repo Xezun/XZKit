@@ -37,6 +37,9 @@ NS_ASSUME_NONNULL_BEGIN
 - (nullable XZToast *)xz_showToast:(XZToast *)toast completion:(nullable XZToastCompletion)completion NS_SWIFT_NAME(showToast(_:completion:));
 - (nullable XZToast *)xz_showToast:(XZToast *)toast NS_SWIFT_NAME(showToast(_:));
 
+- (nullable XZToast *)xz_showToast:(XZToast *)toast position:(XZToastPosition)position NS_SWIFT_NAME(showToast(_:position:));
+- (nullable XZToast *)xz_showToast:(XZToast *)toast position:(XZToastPosition)position completion:(nullable XZToastCompletion)completion NS_SWIFT_NAME(showToast(_:position:completion:));
+
 - (nullable XZToast *)xz_showToast:(XZToast *)toast exclusive:(BOOL)exclusive completion:(nullable XZToastCompletion)completion NS_SWIFT_NAME(showToast(_:exclusive:completion:));
 - (nullable XZToast *)xz_showToast:(XZToast *)toast exclusive:(BOOL)exclusive NS_SWIFT_NAME(showToast(_:exclusive:));
 
