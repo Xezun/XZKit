@@ -87,17 +87,17 @@ NS_ASSUME_NONNULL_BEGIN
 
 /// 当 scrollView 进入刷新状态时，此方法会被调用。
 /// @param scrollView 调用此方法 UIScrollView 对象
-/// @param animated 是否需要展示动画过程，用户操作触发刷新时，此参数为 NO
+/// @param animated 是否需要展示进入刷新的动画。比如用户下拉或上拉触发刷新时，由于在下拉或上拉已有过程动画，此参数为 NO 表示不需要再执行进入刷新的动画效果。
 - (void)scrollView:(UIScrollView *)scrollView didBeginRefreshing:(BOOL)animated;
 
 /// 当 scrollView 将要停止刷新时，此方法会被调用。
 /// @param scrollView 调用此方法 UIScrollView 对象
-/// @param animated 停止刷新状态是否动画过渡
+/// @param animated 是否需要展示退出刷新状态的动画。比如调用 -endRefreshing: 传入 animated 参数值为 NO 时，不需要添加退出刷新的动画效果。
 - (void)scrollView:(UIScrollView *)scrollView willEndRefreshing:(BOOL)animated;
 
 /// 当 scrollView 停止刷新时，此方法会被调用。
 /// @param scrollView 调用此方法 UIScrollView 对象
-/// @param animated 停止刷新状态是否动画过渡
+/// @param animated 当前结束刷新的过程，是否展示了退出刷新的动画效果
 - (void)scrollView:(UIScrollView *)scrollView didEndRefreshing:(BOOL)animated;
 
 @end

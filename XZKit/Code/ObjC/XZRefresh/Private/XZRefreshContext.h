@@ -24,7 +24,7 @@ typedef NS_ENUM(NSUInteger, XZRefreshMask) {
 
 /// 刷新状态枚举，可通过掩码来区分状态。
 typedef NS_ENUM(NSUInteger, XZRefreshState) {
-    /// 普通状态，非刷新状态。
+    /// 普通状态，只有处于此状态时，才可进入刷新流程。
     ///
     /// 此状态时，UIScrollView 未修改 contentInset 属性。
     ///
