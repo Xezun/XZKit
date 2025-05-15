@@ -49,6 +49,10 @@ static CGFloat _offsets[3] = {0, 0, 0};
     self.view.text = text;
 }
 
+- (id)copyWithZone:(NSZone *)zone {
+    return [[self.class alloc] initWithView:_view];
+}
+
 + (instancetype)viewToast:(UIView<XZToastView> *)view {
     return [[self alloc] initWithView:view];
 }

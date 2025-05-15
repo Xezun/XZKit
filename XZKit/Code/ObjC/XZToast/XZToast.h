@@ -24,12 +24,12 @@ typedef NS_ENUM(NSUInteger, XZToastStyle) {
     XZToastStyleFailure,
     XZToastStyleWarning,
     XZToastStyleWaiting,
-} NS_SWIFT_NAME(XZToast.Style);
+} NS_REFINED_FOR_SWIFT;
 
 /// 一种用于展示业务或逻辑状态的提示消息。
 ///
 /// 这是一个基类，业务可通过子类自定义提示消息的视图。
-@interface XZToast : NSObject
+NS_REFINED_FOR_SWIFT @interface XZToast : NSObject <NSCopying>
 
 /// 默认数量限制。
 @property (class) NSInteger maximumNumberOfToasts;

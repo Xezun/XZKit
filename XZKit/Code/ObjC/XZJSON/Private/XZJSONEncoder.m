@@ -482,5 +482,5 @@ void XZJSONModelEncodeProperty(id const __unsafe_unretained model, XZJSONPropert
         return;
     }
     
-    XZLog(@"[XZJSON] Can not encode property `%@` of `%@`", property->_name, property->_class->_class.name);
+    XZLog(@"[XZJSON] Can not encode property `%@` of `%@`", property->_name, property->_class->_raw.name);
 }
