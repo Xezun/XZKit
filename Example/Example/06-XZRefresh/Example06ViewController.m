@@ -168,22 +168,17 @@
         NSIndexPath *indexPath = [NSIndexPath indexPathForRow:self->_numberOfCells inSection:0];
         self->_numberOfCells += 1;
         [self.tableView insertRowsAtIndexPaths:@[indexPath] withRowAnimation:(UITableViewRowAnimationLeft)];
-        [UIView animateWithDuration:XZRefreshAnimationDuration animations:^{
-            [self.tableView xz_layoutRefreshViewsIfNeeded];
-        }];
     });
 }
 
 - (IBAction)unwindFromDeleteRowAction:(UIStoryboardSegue *)unwindSegue {
     dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.5 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
-        if (self->_numberOfCells > 0) {
-            self->_numberOfCells -= 1;
-            NSIndexPath *indexPath = [NSIndexPath indexPathForRow:self->_numberOfCells inSection:0];
-            [self.tableView deleteRowsAtIndexPaths:@[indexPath] withRowAnimation:(UITableViewRowAnimationRight)];
-            [UIView animateWithDuration:XZRefreshAnimationDuration animations:^{
-                [self.tableView xz_layoutRefreshViewsIfNeeded];
-            }];
+        if (self->_numberOfCells <= 0) {
+            return;
         }
+        self->_numberOfCells -= 1;
+        NSIndexPath *indexPath = [NSIndexPath indexPathForRow:self->_numberOfCells inSection:0];
+        [self.tableView deleteRowsAtIndexPaths:@[indexPath] withRowAnimation:(UITableViewRowAnimationLeft)];
     });
 }
 
