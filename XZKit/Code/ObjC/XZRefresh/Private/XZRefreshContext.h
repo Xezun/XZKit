@@ -7,6 +7,8 @@
 
 #import <UIKit/UIKit.h>
 #import "XZRefreshView.h"
+#import "XZRuntime.h"
+#import "XZMacro.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -51,42 +53,78 @@ typedef NS_ENUM(NSUInteger, XZRefreshState) {
 /// 由于 refreshControl 的以下属性，会直接影响到刷新视图的布局，
 /// 且在刷新的过程中，XZRefresh 需要根据这些值，来调整动画因此将它们的值缓存下来，
 /// 以避免非法的更改，导致布局异常。
-@interface XZRefreshContext : NSObject
+@interface XZRefreshContext : NSObject {
+    @package
+    XZRefreshView * _Nullable _refreshView;
+    XZRefreshState _state;
+    BOOL _needsLayout;
+    BOOL _isAutomatic;
+    CGFloat _automaticRefreshDistance;
+    CGRect _frame;
+    BOOL _needsAnimatedTransitioning;
+    CGFloat _contentOffsetY;
+    
+    // MARK: - 布局时，记录所使用的刷新视图属性
+    CGFloat _refreshHeight;
+    XZRefreshAdjustment _adjustment;
+    CGFloat _offset;
+}
+- (BOOL)needsLayoutForBounds:(CGRect)bounds;
+- (BOOL)needsLayoutForAxises:(UIScrollView *)scrollView;
+@end
 
-- (instancetype)init NS_UNAVAILABLE;
-+ (XZRefreshContext *)headerContextForScrollView:(UIScrollView *)scrollView;
-+ (XZRefreshContext *)footerContextForScrollView:(UIScrollView *)scrollView;
+// 记录布局 header/footer 时所依赖的 UIScrollView 属性值。
+// 理论上在需要的地方，比如 frameSize/contentSize/adjustedContentInsets 发生改变后，触发布局方法是最经济、最效率的方案。
+// 但是由于 Apple 原生逻辑的混乱，在上述这些状态改变后，相应的事件触发时机不固定：
+// 1. 当 adjustedContentInset 发生改变后，方法 -scrollViewDidScroll: 先于 -adjustedContentInsetDidChange: 调用。
+//    这将导致在 -scrollViewDidScroll: 方法中，由于 context 未更新而不能判断  header/footer 的正确状态。
+// 2. 无法向 -layoutSubviews 方法注入代码，即使在 +load 中添加或交换方法实现，被注入的代码不执行。
+//    猜测是原生提前获取了 -layoutSubviews 方法的实现，以优化性能，因为在滚动时，方法 layoutSubviews 会一直调用。
+// 3. 当视图大小发生改变时，不一定会触发 -scrollViewDidScroll: 方法，所以需要监听 bounds 属性（KVO）。
+//    比如从 sb/xib 中初始化的大小和最终大小不一致时，初始以 xib/sb 中预设的大小进行布局，但是在 scrollView 调整
+//    到最终大小后，虽然 frame.size/bounds.size 发生了改变，但是并没有触发滚动方法。
+//    因为对 bounds.x 进行了依赖，所有监听了 bounds 属性而不是 frame 属性，另外监听 frame 似乎无效。
+// 基于以上原因，在  中通过判断以下关键值，实时重新计算 header/footer 布局。
 
-@property (nonatomic, strong, nullable) XZRefreshView *refreshView;
-
-@property (nonatomic) XZRefreshState state;
-
-/// 是否需要调整布局的标记。
-@property (nonatomic) BOOL needsLayout;
-
-/// 当次下拉/上拉，能否自动进入刷新状态。
-/// 每次下拉/上拉开始时设置此值，以保证当次只会进入一次刷新状态。
-@property (nonatomic, setter=setAutomatic:) BOOL isAutomatic;
-/// 自动刷新的距离。
-@property (nonatomic) CGFloat automaticRefreshDistance;
-
-/// 刷新视图的位置和大小，用于保存历史值。
-@property (nonatomic) CGRect frame;
-/// 调整 frame 的过程是否需要动画状态。
-@property (nonatomic) BOOL needsAnimatedTransitioning;
-/// 自然状态下 UIScrollView 在头部或尾部时的 contentOffsetY 值。
-/// - 对于 header 表示 UIScrollView 在头部的自然位置。
-/// - 对于 footer 表示 UIScrollView 在尾部的自然位置。
-@property (nonatomic) CGFloat contentOffsetY;
-
-
-/// 刷新视图布局依赖的必须属性：刷新视图刷新时的高度。
-@property (nonatomic) CGFloat refreshHeight;
-/// 刷新视图布局依赖的必须属性：刷新视图适配边距的方式。
-@property (nonatomic) XZRefreshAdjustment adjustment;
-/// 刷新视图布局依赖的必须属性：刷新视图相对正常位置的偏移。
-@property (nonatomic) CGFloat offset;
+@interface XZRefreshHeaderContext : XZRefreshContext {
+    @package
+    // MARK: - 布局时，记录所使用的滚动视图属性
+    CGRect       _bounds;
+    UIEdgeInsets _contentInsets;
+    UIEdgeInsets _adjustedContentInsets;
+}
 
 @end
+
+@interface XZRefreshFooterContext : XZRefreshContext {
+    @package
+    // MARK: - 记录布局时，所使用的滚动视图属性
+    CGRect       _bounds;
+    CGSize       _contentSize;
+    UIEdgeInsets _contentInsets;
+    UIEdgeInsets _adjustedContentInsets;
+}
+- (BOOL)needsLayoutForContentSize:(CGSize)contentSize;
+@end
+
+UIKIT_STATIC_INLINE void UIViewAnimate(BOOL animated, void (^animations)(void), void (^completion)(BOOL finished)) {
+    if (animated) {
+        [UIView animateWithDuration:XZRefreshAnimationDuration animations:animations completion:completion];
+    } else {
+        animations();
+        dispatch_main_async(completion, NO);
+    }
+}
+
+UIKIT_STATIC_INLINE UIEdgeInsets UIEdgeInsetsIncreaseBottom(UIEdgeInsets insets, CGFloat bottom) {
+    insets.bottom += bottom;
+    return insets;
+}
+
+UIKIT_STATIC_INLINE UIEdgeInsets UIEdgeInsetsIncreaseTop(UIEdgeInsets insets, CGFloat top) {
+    insets.top += top;
+    return insets;
+}
+
 
 NS_ASSUME_NONNULL_END
