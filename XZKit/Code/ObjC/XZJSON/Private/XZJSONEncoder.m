@@ -9,7 +9,7 @@
 #import "XZJSONClassDescriptor.h"
 #import "XZJSONPropertyDescriptor.h"
 #import "XZJSONDefines.h"
-#import "XZMacro.h"
+#import "XZMacros.h"
 
 typedef id _Nullable (*XZJSONGetter)(id _Nonnull, SEL _Nonnull);
 static void XZJSONModelEncodeProperty(id model, XZJSONPropertyDescriptor *property, NSMutableDictionary *modelDictionary);

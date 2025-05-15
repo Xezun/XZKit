@@ -10,10 +10,10 @@
 @import ObjectiveC;
 #if __has_include(<XZDefines/XZRuntime.h>)
 #import <XZDefines/XZRuntime.h>
-#import <XZDefines/XZMacro.h>
+#import <XZDefines/XZMacros.h>
 #else
 #import "XZRuntime.h"
-#import "XZMacro.h"
+#import "XZMacros.h"
 #endif
 
 @interface XZPageViewVerticalContext : XZPageViewContext

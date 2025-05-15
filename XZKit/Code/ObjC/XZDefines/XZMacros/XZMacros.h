@@ -1,5 +1,5 @@
 //
-//  XZMacro.h
+//  XZMacros.h
 //  XZKit
 //
 //  Created by Xezun on 2021/4/20.
@@ -159,26 +159,6 @@ _Pragma("clang diagnostic pop")
 // 而且函数 __CFLogCString() 是 static 局部函数，保证 writev 线程安全的 CFLock_t 锁也是局部的，
 // 并不能被访问，而如果使用其它函数在控制台输出，就会不可避免出现与 NSLog 的输出内容互相嵌入的情况。
 
-#if XZ_FRAMEWORK
-
-#if XZ_DEBUG
-#define XZLog(format, ...) XZLogv(__FILE_NAME__, __LINE__, __FUNCTION__, format, ##__VA_ARGS__)
-#else
-#define XZLog(...)
-#endif
-
-#else
-
-#ifndef XZ_LOG
-#if DEBUG && XZ_DEBUG
-#define XZLog(format, ...) XZLogv(__FILE_NAME__, __LINE__, __FUNCTION__, format, ##__VA_ARGS__)
-#else
-#define XZLog(...)
-#endif
-#endif // XZ_LOG
-
-#endif
-
 /// 宏函数 `XZLog` 的实际调用的函数。请使用 `XZLog` 宏，而不是直接使用此函数。
 ///
 /// 通过 NSLog 输出到控制台，如果待输出内容过大，则分批次输出，避免输出内容不完整。
@@ -200,6 +180,32 @@ _Pragma("clang diagnostic pop")
 ///   - function: 输出语句所在的函数名
 ///   - format: 输出内容格式
 FOUNDATION_EXPORT void XZLogv(const char *file, const int line, const char *function, NSString *format, ...) NS_FORMAT_FUNCTION(4,5) NS_SWIFT_UNAVAILABLE("Use Swift.print instead");
+
+/// 宏函数，控制台输出，实际调用 `NSLog` 完成输出，会额外输出语句所在的文件、行数、方法名，且如果待输出内容过大，则分批次输出，避免输出内容不完整。
+///
+/// - Parameter format: 格式化输出模版
+FOUNDATION_EXPORT void XZLog(NSString *format, ...) NS_FORMAT_FUNCTION(1,2);
+
+#if XZ_FRAMEWORK
+
+#if XZ_DEBUG
+#define XZLog(format, ...) XZLogv(__FILE_NAME__, __LINE__, __FUNCTION__, format, ##__VA_ARGS__)
+#else
+#define XZLog(...)
+#endif
+
+#else
+
+#ifndef XZ_LOG
+#if DEBUG && XZ_DEBUG
+#define XZLog(format, ...) XZLogv(__FILE_NAME__, __LINE__, __FUNCTION__, format, ##__VA_ARGS__)
+#else
+#define XZLog(...)
+#endif
+#endif // XZ_LOG
+
+#endif
+
 
 #ifndef XZ_DISPATCH_MACROS
 

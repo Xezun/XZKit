@@ -60,11 +60,11 @@ Pod::Spec.new do |s|
   s.defineSubspec 'NSData',             [];
   s.defineSubspec 'NSDictionary',       ["XZExtensions/NSString", "XZExtensions/NSArray"];
   s.defineSubspec 'NSIndexSet',         [];
-  s.defineSubspec 'NSObject',           ["XZExtensions/NSArray", "XZDefines/XZMacro"];
+  s.defineSubspec 'NSObject',           ["XZExtensions/NSArray", "XZDefines/XZMacros"];
   s.defineSubspec 'NSString',           ["XZExtensions/NSCharacterSet", "XZExtensions/NSData"];
   s.defineSubspec 'UIApplication',      [];
   s.defineSubspec 'UIBezierPath',       [];
-  s.defineSubspec 'UIColor',            ["XZDefines/XZMacro"];
+  s.defineSubspec 'UIColor',            ["XZDefines/XZMacros"];
   s.defineSubspec 'UIDevice',           ["XZDefines/XZDefer"];
   s.defineSubspec 'UIFont',             ["XZDefines/XZDefer"];
   s.defineSubspec 'UIView',             [];

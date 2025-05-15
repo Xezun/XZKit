@@ -19,7 +19,7 @@
 
 
 #import <Foundation/Foundation.h>
-#import "XZMacro.h"
+#import "XZMacros.h"
 
 NS_ASSUME_NONNULL_BEGIN
 

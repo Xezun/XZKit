@@ -32,7 +32,7 @@ Pod::Spec.new do |s|
   s.subspec 'Code' do |ss|
     ss.source_files = 'XZKit/Code/ObjC/XZSegmentedControl/**/*.{h,m}'
     ss.project_header_files = 'XZKit/Code/ObjC/XZSegmentedControl/**/Private/*.h'
-    ss.dependency 'XZDefines/XZMacro'
+    ss.dependency 'XZDefines/XZMacros'
   end
   
   s.subspec 'DEBUG' do |ss|

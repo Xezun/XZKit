@@ -33,7 +33,7 @@ Pod::Spec.new do |s|
     ss.source_files = 'XZKit/Code/{ObjC,Swift}/XZMocoa/**/*.{h,m,swift}'
     ss.project_header_files = 'XZKit/Code/ObjC/XZMocoa/**/Private/*.h'
     
-    ss.dependency 'XZDefines/XZMacro'
+    ss.dependency 'XZDefines/XZMacros'
     ss.dependency 'XZDefines/XZRuntime'
     ss.dependency 'XZExtensions/NSArray'
     ss.dependency 'XZExtensions/NSIndexSet'

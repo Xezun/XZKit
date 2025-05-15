@@ -7,7 +7,7 @@
 
 #import "XZJSONPrivate.h"
 #import "XZJSON.h"
-#import "XZMacro.h"
+#import "XZMacros.h"
 #import "NSCharacterSet+XZKit.h"
 #import "NSData+XZKit.h"
 @import ObjectiveC;

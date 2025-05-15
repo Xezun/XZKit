@@ -6,7 +6,7 @@
 //
 
 #import "XZObjcTypeDescriptor.h"
-#import "XZMacro.h"
+#import "XZMacros.h"
 
 /// 类型描述词的存储对象类型。
 typedef NSMutableDictionary<NSString *, NSMutableDictionary<NSNumber *, XZObjcTypeDescriptor *> *> *XZObjcTypeStorage;

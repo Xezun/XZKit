@@ -8,7 +8,7 @@
 #import <UIKit/UIKit.h>
 #import "XZRefreshView.h"
 #import "XZRuntime.h"
-#import "XZMacro.h"
+#import "XZMacros.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -74,17 +74,7 @@ typedef NS_ENUM(NSUInteger, XZRefreshState) {
 @end
 
 // 记录布局 header/footer 时所依赖的 UIScrollView 属性值。
-// 理论上在需要的地方，比如 frameSize/contentSize/adjustedContentInsets 发生改变后，触发布局方法是最经济、最效率的方案。
-// 但是由于 Apple 原生逻辑的混乱，在上述这些状态改变后，相应的事件触发时机不固定：
-// 1. 当 adjustedContentInset 发生改变后，方法 -scrollViewDidScroll: 先于 -adjustedContentInsetDidChange: 调用。
-//    这将导致在 -scrollViewDidScroll: 方法中，由于 context 未更新而不能判断  header/footer 的正确状态。
-// 2. 无法向 -layoutSubviews 方法注入代码，即使在 +load 中添加或交换方法实现，被注入的代码不执行。
-//    猜测是原生提前获取了 -layoutSubviews 方法的实现，以优化性能，因为在滚动时，方法 layoutSubviews 会一直调用。
-// 3. 当视图大小发生改变时，不一定会触发 -scrollViewDidScroll: 方法，所以需要监听 bounds 属性（KVO）。
-//    比如从 sb/xib 中初始化的大小和最终大小不一致时，初始以 xib/sb 中预设的大小进行布局，但是在 scrollView 调整
-//    到最终大小后，虽然 frame.size/bounds.size 发生了改变，但是并没有触发滚动方法。
-//    因为对 bounds.x 进行了依赖，所有监听了 bounds 属性而不是 frame 属性，另外监听 frame 似乎无效。
-// 基于以上原因，在  中通过判断以下关键值，实时重新计算 header/footer 布局。
+
 
 @interface XZRefreshHeaderContext : XZRefreshContext {
     @package

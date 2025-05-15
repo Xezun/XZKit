@@ -1,12 +1,24 @@
 //
-//  XZMacro.m
+//  XZMacros.m
 //  XZDefines
 //
 //  Created by Xezun on 2023/8/6.
 //
 
-#import "XZMacro.h"
+#import <Foundation/Foundation.h>
 @import ObjectiveC;
+
+void XZLog(NSString *format, ...) {
+#if DEBUG
+    va_list arguments;
+    va_start(arguments, format);
+    NSLogv(format, arguments);
+    va_end(arguments);
+#endif
+}
+
+#import "XZMacros.h"
+
 void XZLogv(const char *file, const int line, const char *function, NSString *format, ...) {
     va_list arguments;
     va_start(arguments, format);

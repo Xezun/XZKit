@@ -34,7 +34,7 @@ Pod::Spec.new do |s|
   s.subspec 'Code' do |ss|
     ss.public_header_files = 'XZKit/Code/ObjC/XZObjcDescriptor/**/*.h'
     ss.source_files        = 'XZKit/Code/{ObjC,Swift}/XZObjcDescriptor/**/*.{h,m,swift}'
-    ss.dependency 'XZDefines/XZMacro'
+    ss.dependency 'XZDefines/XZMacros'
   end
   
   s.subspec 'DEBUG' do |ss|

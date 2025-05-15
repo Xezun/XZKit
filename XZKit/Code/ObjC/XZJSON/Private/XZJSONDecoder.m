@@ -5,7 +5,7 @@
 //  Created by 徐臻 on 2025/2/28.
 //
 
-#import "XZMacro.h"
+#import "XZMacros.h"
 #import "NSCharacterSet+XZKit.h"
 #import "NSData+XZKit.h"
 #import "XZJSONDecoder.h"

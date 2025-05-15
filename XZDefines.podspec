@@ -51,9 +51,9 @@ Pod::Spec.new do |s|
     end
   end
   
-  s.defineSubspec 'XZEmpty', ['XZDefines/XZMacro']
-  s.defineSubspec 'XZDefer', ['XZDefines/XZMacro']
-  s.defineSubspec 'XZMacro', []
+  s.defineSubspec 'XZEmpty', ['XZDefines/XZMacros']
+  s.defineSubspec 'XZDefer', ['XZDefines/XZMacros']
+  s.defineSubspec 'XZMacros', []
   s.defineSubspec 'XZRuntime', []
   s.defineSubspec 'XZUtils', []
 

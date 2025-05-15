@@ -6,7 +6,7 @@
 //
 
 #import "XZRuntime.h"
-#import "XZMacro.h"
+#import "XZMacros.h"
 
 Method xz_objc_class_getMethod(Class const cls, SEL const target) {
     Method __block result = NULL;

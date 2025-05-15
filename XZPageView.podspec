@@ -28,7 +28,7 @@ Pod::Spec.new do |s|
   s.pod_target_xcconfig = { 'GCC_PREPROCESSOR_DEFINITIONS' => 'XZ_FRAMEWORK=1' }
   
   s.default_subspec = 'Code'
-  s.dependency 'XZDefines/XZMacro'
+  s.dependency 'XZDefines/XZMacros'
   s.dependency 'XZDefines/XZRuntime'
   
   s.subspec 'Code' do |ss|
