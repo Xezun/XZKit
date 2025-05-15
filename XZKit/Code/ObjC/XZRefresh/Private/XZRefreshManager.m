@@ -14,10 +14,29 @@
 #import "XZRefreshDefines.h"
 #import "XZDefer.h"
 
-// 改变 UIScrollView 的 frame 或 bounds 属性，
-// 如果 adjustedContentInsets 因此也发生改变，则会额外触发 setBounds/scrollViewDidScroll: 等方法被调用。
-// 否则，甚至即使 contentOffset 因此而发生改变，也不会触发 scrollViewDidScroll: 方法。
-// 直接修改 frame 或 bounds 属性，不会触发 setNeedsLayout 方法，而是直接触发 layoutSubviews 方法。
+// 关于布局刷新视图。
+//
+// 理论上在需要的地方，比如 frameSize/contentSize/adjustedContentInsets 发生改变后，触发布局方法是最经济、最效率的方案，但是由于 Apple 原生逻辑的混乱，在上述这些状态改变后，相应的事件触发时机不固定。
+//
+// 1. 当 adjustedContentInset 发生改变后，方法 -scrollViewDidScroll: 先于 -adjustedContentInsetDidChange: 调用。
+//    这将导致在 -scrollViewDidScroll: 方法中，会由于 context 未更新而无法错误地判断了  header/footer 的状态。
+// 2. 无法向 -layoutSubviews 方法注入代码，即使在 +load 中添加或交换方法实现，被注入的代码不执行。
+//    猜测是原生提前获取了 -layoutSubviews 方法的实现，以优化性能，因为在滚动时，方法 layoutSubviews 会一直调用。
+// 3. 当视图大小发生改变时，不一定会触发 -scrollViewDidScroll: 方法，所以需要 KVO 监听 bounds 属性。
+//    比如从 sb/xib 中初始化的大小和最终大小不一致时，初始以 xib/sb 中预设的大小进行布局，但是在 scrollView 调整
+//    到最终大小后，虽然 frame.size/bounds.size 发生了改变，但是并没有触发 -scrollViewDidScroll: 滚动方法。
+//    因为对 bounds.x 进行了依赖，所有监听了 bounds 属性而不是 frame 属性。
+// 基于以上原因，在  中通过判断以下关键值，实时重新计算 header/footer 布局。
+//
+// 1. 从 nib 加载宽度 320 点，实际展示宽度 375 点，scrollView.frame 虽然发生了改变，但是 KVO 监听 frame 属性并没有触发。
+// 2. 直接修改 frame 或 bounds 属性，不会触发 setNeedsLayout 方法，而是直接触发 layoutSubviews 方法，而 layoutSubviews 方法不可以注入。
+// 3. 直接改变 UIScrollView 的 frame 或 bounds 属性，
+//    如果 adjustedContentInsets 因此也发生改变，则会额外触发 setBounds/scrollViewDidScroll: 等方法被调用。
+//    否则，甚至即使 contentOffset 因此而发生改变，也不会触发 scrollViewDidScroll: 方法。
+//
+// 关于 KVO 监听 bounds
+// 由于 bounds 变化并不一定触发 -scrollViewDidScroll: 方法，而 -scrollViewDidScroll: 方法触发了，则 bounds 一定发生了改变。
+// 直接设置 bounds 属性，不会触发 -scrollViewDidScroll: 方法。
 
 // KVO 标记。
 static void const * const _context = &_context;
@@ -37,12 +56,13 @@ static void const * const _context = &_context;
         _header = [[XZRefreshHeaderContext alloc] init];
         _footer = [[XZRefreshFooterContext alloc] init];
         
-        // 监听 delegate 来注入 UIScrollViewDelegate 方法。
+        // 监听 delegate 来注入 UIScrollViewDelegate 方法，获得更丝滑的动画效果。
         NSKeyValueObservingOptions const options = NSKeyValueObservingOptionNew | NSKeyValueObservingOptionOld | NSKeyValueObservingOptionInitial;
         [scrollView addObserver:self forKeyPath:@"delegate" options:(options) context:(void *)_context];
-        //
+        // 监听 contentSize 来调整底部刷新视图
         [scrollView addObserver:self forKeyPath:@"contentSize" options:(NSKeyValueObservingOptionNew) context:(void *)_context];
-//        [scrollView addObserver:self forKeyPath:@"bounds" options:(NSKeyValueObservingOptionNew) context:(void *)_context];
+        // 监听 bounds 感知 scrollView 滚动
+        [scrollView addObserver:self forKeyPath:@"bounds" options:(kNilOptions) context:(void *)_context];
     }
     return self;
 }
@@ -65,13 +85,7 @@ static void const * const _context = &_context;
     
     // 视图大小发生改变，重新布局刷新视图
     if ([keyPath isEqualToString:@"bounds"]) {
-        CGRect const new = [change[NSKeyValueChangeNewKey] CGRectValue];
-        if ([_header needsLayoutForBounds:new]) {
-            [self setNeedsLayoutHeaderRefreshView];
-        }
-        if ([_footer needsLayoutForBounds:new]) {
-            [self setNeedsLayoutFooterRefreshView];
-        }
+        [self scrollViewDidScroll:object];
         return;
     }
     
@@ -116,25 +130,10 @@ static void const * const _context = &_context;
     }
     objc_setAssociatedObject(aClass, _key, @(YES), OBJC_ASSOCIATION_COPY_NONATOMIC);
     
-    {
-        SEL          const selector = @selector(scrollViewDidScroll:);
-        const char * const encoding = xz_objc_class_getMethodTypeEncoding(self.class, selector);
-        xz_objc_class_addMethodWithBlock(aClass, selector, encoding, ^(id<UIScrollViewDelegate> self, UIScrollView *scrollView) {
-            [scrollView.xz_refreshManager scrollViewDidScroll:scrollView];
-        }, ^(id<UIScrollViewDelegate> self, UIScrollView *scrollView) {
-            [scrollView.xz_refreshManager scrollViewDidScroll:scrollView];
-            struct objc_super super = {
-                .receiver = self,
-                .super_class = class_getSuperclass(aClass)
-            };
-            ((void (*)(struct objc_super *, SEL, id))objc_msgSendSuper)(&super, selector, scrollView);
-        }, ^id _Nonnull(SEL  _Nonnull selector) {
-            return ^(id<UIScrollViewDelegate> self, UIScrollView *scrollView) {
-                [scrollView.xz_refreshManager scrollViewDidScroll:scrollView];
-                ((void (*)(id<UIScrollViewDelegate>, SEL, id))objc_msgSend)(self, selector, scrollView);
-            };
-        });
-    }
+    // 关于注入代理方法
+    // 1. UIScrollView 缓存了代理方法 -scrollViewDidScroll: 的方法实现，以优化方法的执行效率，所以需要重新设置代理（重复设置无效，因为值未改变）来刷新缓存。
+    // 2. 仅对 -scrollViewDidScroll: 进行上述处理，但目前通过 KVO 监听 bounds 来感知滚动，所以不需要注入 -scrollViewDidScroll: 方法了。
+    // 3. 如下所有方法，普通注入即可生效，不需要重新设置代理。
     
     {
         SEL          const selector = @selector(scrollViewWillEndDragging:withVelocity:targetContentOffset:);
@@ -215,13 +214,6 @@ static void const * const _context = &_context;
             };
         });
     }
-    
-    // 重新设置代理。
-    // UIScrollView 对代理进行了优化，直接获取了代理方法 -scrollViewDidScroll: 的方法实现，
-    // 在发送事件时，直接执行调用方法实现，为了让动态添加的方法生效，需要重新设置一遍代理。
-    // 重复设置 delegate 属性无效，因为值未改变，UIScrollView 不会重新获取 Method 。
-    scrollView.delegate = self;
-    scrollView.delegate = delegate;
 }
 
 - (void)setHeaderRefreshView:(XZRefreshView *)headerRefreshView {
@@ -238,7 +230,7 @@ static void const * const _context = &_context;
     if (headerRefreshView != nil) {
         [_scrollView addSubview:headerRefreshView];
     }
-    
+    XZLog(@"标记 Header 布局：%d", _header->_needsLayout);
     [self setNeedsLayoutHeaderRefreshView];
 }
 
@@ -299,6 +291,7 @@ static void const * const _context = &_context;
     _header->_needsLayout = YES;
     __weak typeof(self) wself = self;
     [NSRunLoop.mainRunLoop performInModes:@[NSRunLoopCommonModes] block:^{
+        XZLog(@"核销 Header 布局：%d", _header->_needsLayout);
         [wself layoutHeaderRefreshViewIfNeeded];
     }];
 }
@@ -320,6 +313,7 @@ static void const * const _context = &_context;
 }
 
 - (void)layoutRefreshViewsIfNeeded {
+    XZLog(@"核销 Header 布局：%d", _header->_needsLayout);
     [self layoutHeaderRefreshViewIfNeeded];
     [self layoutFooterRefreshViewIfNeeded];
 }
@@ -335,7 +329,6 @@ static void const * const _context = &_context;
 // 2、偏移 offset 为在默认默认布局基础之上，按 offset 向上偏移 -offset 。
 // 在刷新时，刷新高度 refreshHeight 会合并到 .contentInset.top 中。
 - (void)layoutHeaderRefreshView {
-    XZLog(@"布局 Header");
     XZRefreshHeaderContext * const _context     = self->_header;
     XZRefreshView          * const _refreshView = _context->_refreshView;
     if (_refreshView == nil) {
@@ -421,6 +414,8 @@ static void const * const _context = &_context;
         
         _refreshView.frame = frame;
     }
+    
+    XZLog(@"布局 Header 完成：%@, scrollView.bounds: %@, scrollView.frame: %@", NSStringFromCGRect(_refreshView.frame), NSStringFromCGRect(_header->_bounds), NSStringFromCGRect(_scrollView.frame));
 }
 
 - (void)layoutFooterRefreshViewIfNeeded {
@@ -439,7 +434,6 @@ static void const * const _context = &_context;
 /// 在附加了底部刷新高度边距后，如果页面高度仍不满足一屏，刷新视图刷新放在底部，
 /// 满足一屏，正常布局，放在页面尾部即可。
 - (void)layoutFooterRefreshView {
-    XZLog(@"布局 Footer");
     XZRefreshFooterContext * const _context     = self->_footer;
     XZRefreshView          * const _refreshView = _context->_refreshView;
     if (!_refreshView) {
@@ -606,6 +600,7 @@ static void const * const _context = &_context;
     }
     
     // 避免调用时，可能还没有同步 context 值
+    XZLog(@"核销 Header 布局：%d", _header->_needsLayout);
     [self layoutHeaderRefreshViewIfNeeded];
     
     UIScrollView * const _scrollView = self->_scrollView;
@@ -628,6 +623,7 @@ static void const * const _context = &_context;
         // 使用 UIView 动画直接进入刷新状态。
         // 因为动画的高度不一定是下拉刷新所需的距离，所以使用 -setContentOffset:animated: 滚动 UIScrollView 的方法可能不会触发刷新状态。
         UIViewAnimate(animated, ^{
+            XZLog(@"触发 Header 布局");
             [self layoutHeaderRefreshView];
             _scrollView.contentOffset = CGPointMake(0, self->_header->_contentOffsetY);
         }, completion);
@@ -709,6 +705,7 @@ static void const * const _context = &_context;
             _header->_state = XZRefreshStateRecovering;
             [_header->_refreshView scrollView:_scrollView willEndRefreshing:NO];
             
+            XZLog(@"触发 Header 布局");
             [self layoutHeaderRefreshView];
             
             _header->_state = XZRefreshStatePendinging;
@@ -722,6 +719,7 @@ static void const * const _context = &_context;
             [_header->_refreshView scrollView:_scrollView willEndRefreshing:animated];
             
             UIViewAnimate(animated, ^{
+                XZLog(@"触发 Header 布局");
                 [self layoutHeaderRefreshView];
                 _scrollView.contentOffset = CGPointMake(contentOffset.x, self->_header->_contentOffsetY);
             }, ^(BOOL finished) {
@@ -796,7 +794,6 @@ static void const * const _context = &_context;
 #pragma mark - <UIScrollViewDelegate>
 
 - (void)scrollViewDidScroll:(UIScrollView * const)scrollView {
-    XZLog(@"");
     if (scrollView != _scrollView) {
         return;
     }
@@ -831,6 +828,7 @@ static void const * const _context = &_context;
     // 因为初始化时，adjustedContentInset 为 zero，页面展示后，adjustedContentInset 更新先调用 -scrollViewDidScroll: 方法时，
     // 错误的将 .top 判断为下拉距离，从而展示了异常状态。
     if ([_header needsLayoutForAxises:scrollView]) {
+        XZLog(@"触发 Header 布局");
         [self layoutHeaderRefreshView];
     }
     
@@ -949,6 +947,7 @@ static void const * const _context = &_context;
             _scrollView.contentInset  = UIEdgeInsetsIncreaseTop(_scrollView.contentInset, _header->_refreshHeight);
             _scrollView.contentOffset = contentOffset;
             
+            XZLog(@"触发 Header 布局");
             [self layoutHeaderRefreshView];
             
             targetContentOffset->y = _header->_contentOffsetY;
@@ -963,6 +962,7 @@ static void const * const _context = &_context;
             _scrollView.contentOffset = contentOffset;
             
             _header->_state = XZRefreshStateRecovering;
+            XZLog(@"触发 Header 布局");
             [self layoutHeaderRefreshView];
             
             if (contentOffset.y < _header->_contentOffsetY) {
@@ -1070,6 +1070,7 @@ static void const * const _context = &_context;
     _scrollView.contentInset  = UIEdgeInsetsIncreaseTop(_scrollView.contentInset, _header->_refreshHeight);
     _scrollView.contentOffset = contentOffset;
     
+    XZLog(@"触发 Header 布局");
     [self layoutHeaderRefreshView];
     
     if (targetContentOffset) {
