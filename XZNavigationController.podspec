@@ -10,7 +10,7 @@
 
 Pod::Spec.new do |s|
   s.name             = 'XZNavigationController'
-  s.version          = '10.5.0'
+  s.version          = '10.8.0'
   s.summary          = '一个支持全屏手势导航、自定义导航栏的组件'
 
   s.description      = <<-DESC
@@ -23,7 +23,7 @@ Pod::Spec.new do |s|
   s.author           = { 'Xezun' => 'xezun@icloud.com' }
   s.source           = { :git => 'https://github.com/Xezun/XZKit.git', :tag => s.version.to_s }
   # s.social_media_url = 'https://twitter.com/<TWITTER_USERNAME>'
-  s.readme           = 'https://github.com/Xezun/XZKit/blob/main/Docs/#{s.name}/README.md'
+  s.readme           = "https://github.com/Xezun/XZKit/blob/main/Docs/#{s.name}/README.md"
 
   s.swift_version = '5.0'
   s.ios.deployment_target = '13.0'
@@ -37,7 +37,7 @@ Pod::Spec.new do |s|
   end
   
   s.subspec 'DEBUG' do |ss|
-    ss.dependency '#{s.name}/Code'
+    ss.dependency "#{s.name}/Code"
     ss.pod_target_xcconfig = { 'GCC_PREPROCESSOR_DEFINITIONS' => 'XZ_DEBUG=1' }
   end
   
