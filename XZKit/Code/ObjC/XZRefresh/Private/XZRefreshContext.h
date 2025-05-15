@@ -60,8 +60,7 @@ typedef NS_ENUM(NSUInteger, XZRefreshState) {
     BOOL _needsLayout;
     BOOL _isAutomatic;
     CGFloat _automaticRefreshDistance;
-    CGRect _frame;
-    BOOL _needsAnimatedTransitioning;
+    CGRect  _frame;
     CGFloat _contentOffsetY;
     
     // MARK: - 布局时，记录所使用的刷新视图属性
@@ -88,6 +87,13 @@ typedef NS_ENUM(NSUInteger, XZRefreshState) {
 
 @interface XZRefreshFooterContext : XZRefreshContext {
     @package
+    /// 是否需要跟随页面滚动进入刷新状态。
+    ///
+    /// 当 footer 进入刷新状态时，如果页面高度不满一屏，那么 footer 需要上移位置才能显示，
+    /// 但是处于上拉状态的页面，需要下落恢复正常位置，造成的效果就是 footer 先向上动画，然后再向下动画。
+    /// 为了避免这种情况，在进入刷新时，如果此属性为 YES，那么就先保持 footer 位置不变，
+    /// 然后在页面下落的过程中，跟随页面滚动调整 footer 直到 footer 回到正确位置。
+    BOOL _needsFollowPageScrollWhileRefreshing;
     // MARK: - 记录布局时，所使用的滚动视图属性
     CGRect       _bounds;
     CGSize       _contentSize;

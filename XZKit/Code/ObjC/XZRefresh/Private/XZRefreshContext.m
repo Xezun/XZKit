@@ -16,12 +16,10 @@
     self = [super init];
     if (self) {
         _state = XZRefreshStatePendinging;
-        _needsAnimatedTransitioning = NO;
         _needsLayout = NO;
         _isAutomatic = NO;
         _automaticRefreshDistance = 0;
         _frame = CGRectZero;
-        _needsAnimatedTransitioning = NO;
         _contentOffsetY = 0;
     }
     return self;
@@ -99,6 +97,7 @@
     if (self) {
         // 事件 scrollViewDidScroll 的触发可能比视图布局更早，避免事件发生时，此值不对而判断错了状态。
         _contentOffsetY = +CGFLOAT_MAX;
+        _needsFollowPageScrollWhileRefreshing = NO;
     }
     return self;
 }

@@ -506,7 +506,7 @@ static void const * const _context = &_context;
         
         _context->_frame = frame;
         _context->_contentOffsetY = contentOffsetY;
-        _context->_needsAnimatedTransitioning = (_adjustedContentInsets.top + _contentSize.height < _bounds.size.height); // ScrollingAnimation
+        _context->_needsFollowPageScrollWhileRefreshing = (_adjustedContentInsets.top + _contentSize.height < _bounds.size.height); // ScrollingAnimation
         
         _context->_bounds = _bounds;
         _context->_contentSize = _contentSize;
@@ -567,7 +567,7 @@ static void const * const _context = &_context;
         
         _context->_frame = frame;
         _context->_contentOffsetY = contentOffsetY;
-        _context->_needsAnimatedTransitioning = NO;
+        _context->_needsFollowPageScrollWhileRefreshing = NO;
         
         _context->_bounds = _bounds;
         _context->_contentSize = _contentSize;
@@ -783,13 +783,14 @@ static void const * const _context = &_context;
     
     // 底部已处于刷新状态时，不响应页面滚动，但需处理底部的恢复动画。
     if (_footer->_state != XZRefreshStatePendinging) {
-        if (_footer->_needsAnimatedTransitioning) {
-            CGRect const bounds = _scrollView.bounds;
+        if (_footer->_needsFollowPageScrollWhileRefreshing) {
+            CGRect  const bounds = _scrollView.bounds;
             CGFloat const newY   = _scrollView.contentOffset.y + bounds.size.height - _footer->_refreshHeight + _footer->_offset;
             CGRect newFrame = _footer->_refreshView.frame;
             if (newY <= _footer->_frame.origin.y) {
+                // footer 回归到正确位置后，不再跟随页面滚动
                 _footer->_refreshView.frame = _footer->_frame;
-                _footer->_needsAnimatedTransitioning = NO;
+                _footer->_needsFollowPageScrollWhileRefreshing = NO;
             } else if (newY < newFrame.origin.y) {
                 newFrame.origin.y = newY;
                 _footer->_refreshView.frame = newFrame;
@@ -1076,7 +1077,7 @@ static void const * const _context = &_context;
         targetContentOffset->y = _footer->_contentOffsetY;
     }
     
-    if (_footer->_needsAnimatedTransitioning) {
+    if (_footer->_needsFollowPageScrollWhileRefreshing) {
         _footer->_refreshView.frame = oldFrame;
     }
 
