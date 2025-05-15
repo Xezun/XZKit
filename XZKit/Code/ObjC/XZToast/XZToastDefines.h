@@ -7,7 +7,7 @@
 
 #import <UIKit/UIKit.h>
 
-/// 显示或隐藏 toast 的动画时长，0.3 秒。
+/// 显示或隐藏 toast 的动画时长，0.35 秒。
 FOUNDATION_EXPORT NSTimeInterval const XZToastAnimationDuration NS_SWIFT_NAME(XZToast.animationDuration);
 
 /// XZToast 的显示位置。

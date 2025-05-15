@@ -12,6 +12,8 @@
 #import "XZToastManager.h"
 @import ObjectiveC;
 
+#define XZToastDuration 1.0
+
 @implementation UIResponder (XZToast)
 
 - (XZToast *)xz_showToast:(XZToast *)toast duration:(NSTimeInterval)duration position:(XZToastPosition)position exclusive:(BOOL)exclusive completion:(XZToastCompletion)completion {
@@ -63,19 +65,19 @@
 }
 
 - (nullable XZToast *)xz_showToast:(XZToast *)toast completion:(nullable XZToastCompletion)completion {
-    return [self xz_showToast:toast duration:3.0 position:(XZToastPositionMiddle) exclusive:false completion:completion];
+    return [self xz_showToast:toast duration:XZToastDuration position:(XZToastPositionMiddle) exclusive:false completion:completion];
 }
 
 - (XZToast *)xz_showToast:(XZToast *)toast {
-    return [self xz_showToast:toast duration:3.0 position:(XZToastPositionMiddle) exclusive:false completion:nil];
+    return [self xz_showToast:toast duration:XZToastDuration position:(XZToastPositionMiddle) exclusive:false completion:nil];
 }
 
 - (nullable XZToast *)xz_showToast:(XZToast *)toast exclusive:(BOOL)exclusive completion:(nullable XZToastCompletion)completion {
-    return [self xz_showToast:toast duration:3.0 position:(XZToastPositionMiddle) exclusive:exclusive completion:completion];
+    return [self xz_showToast:toast duration:XZToastDuration position:(XZToastPositionMiddle) exclusive:exclusive completion:completion];
 }
 
 - (nullable XZToast *)xz_showToast:(XZToast *)toast exclusive:(BOOL)exclusive {
-    return [self xz_showToast:toast duration:3.0 position:(XZToastPositionMiddle) exclusive:exclusive completion:nil];
+    return [self xz_showToast:toast duration:XZToastDuration position:(XZToastPositionMiddle) exclusive:exclusive completion:nil];
 }
 
 - (void)xz_hideToast:(void (^)(void))completion {

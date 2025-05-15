@@ -46,11 +46,11 @@
     
     NSError *error = nil;
     if ([keychain search:YES error:&error]) {
-        [self xz_showToast:[XZToast sharedToast:(XZToastStyleSuccess) text:@"读取成功"] duration:3.0 completion:nil];
+        [self xz_showToast:[XZToast sharedToast:(XZToastStyleSuccess) text:@"读取成功"]];
         self.accountTextField.text = keychain.item.account;
         self.passwordTextField.text = keychain.item.password;
     } else {
-        [self xz_showToast:[XZToast sharedToast:(XZToastStyleFailure) text:@"读取失败"] duration:3.0 completion:nil];
+        [self xz_showToast:[XZToast sharedToast:(XZToastStyleFailure) text:@"读取失败"]];
         self.messageLabel.text = error.localizedDescription;
     }
 }
@@ -62,13 +62,13 @@
     
     NSString * const account = asNonEmpty(self.accountTextField.text, (NSString *)nil);
     if (account == nil) {
-        [self xz_showToast:[XZToast sharedToast:(XZToastStyleWarning) text:@"帐号不能为空"] duration:3.0 completion:nil];
+        [self xz_showToast:[XZToast sharedToast:(XZToastStyleWarning) text:@"帐号不能为空"]];
         return;
     }
     
     NSString * const password  = asNonEmpty(self.identifierLabel.text, (NSString *)nil);
     if (password == nil) {
-        [self xz_showToast:[XZToast sharedToast:(XZToastStyleWarning) text:@"密码不能为空"] duration:3.0 completion:nil];
+        [self xz_showToast:[XZToast sharedToast:(XZToastStyleWarning) text:@"密码不能为空"]];
         return;
     }
     
@@ -78,9 +78,9 @@
     
     NSError *error = nil;
     if ([keychain insert:&error]) {
-        [self xz_showToast:[XZToast sharedToast:(XZToastStyleSuccess) text:@"保存成功"] duration:3.0 completion:nil];
+        [self xz_showToast:[XZToast sharedToast:(XZToastStyleSuccess) text:@"添加成功"]];
     } else {
-        [self xz_showToast:[XZToast sharedToast:(XZToastStyleFailure) text:@"保存失败"] duration:3.0 completion:nil];
+        [self xz_showToast:[XZToast sharedToast:(XZToastStyleFailure) text:@"添加失败"]];
         self.messageLabel.text = error.localizedDescription;
     }
 }
@@ -91,7 +91,7 @@
     self.messageLabel.text = nil;
     NSString * const account = asNonEmpty(self.accountTextField.text, (NSString *)nil);
     if (account == nil) {
-        [self xz_showToast:[XZToast sharedToast:(XZToastStyleWarning) text:@"帐号不能为空"] duration:3.0 completion:nil];
+        [self xz_showToast:[XZToast sharedToast:(XZToastStyleWarning) text:@"帐号不能为空"]];
         return;
     }
     
@@ -100,9 +100,9 @@
     
     NSError *error = nil;
     if ([keychain delete:&error]) {
-        [self xz_showToast:[XZToast sharedToast:(XZToastStyleSuccess) text:@"删除成功"] duration:3.0 completion:nil];
+        [self xz_showToast:[XZToast sharedToast:(XZToastStyleSuccess) text:@"删除成功"]];
     } else {
-        [self xz_showToast:[XZToast sharedToast:(XZToastStyleFailure) text:@"删除失败"] duration:3.0 completion:nil];
+        [self xz_showToast:[XZToast sharedToast:(XZToastStyleFailure) text:@"删除失败"]];
         self.messageLabel.text = error.localizedDescription;
     }
 }
@@ -113,13 +113,13 @@
     self.messageLabel.text = nil;
     NSString * const account = asNonEmpty(self.accountTextField.text, (NSString *)nil);
     if (account == nil) {
-        [self xz_showToast:[XZToast sharedToast:(XZToastStyleWarning) text:@"帐号不能为空"] duration:3.0 completion:nil];
+        [self xz_showToast:[XZToast sharedToast:(XZToastStyleWarning) text:@"帐号不能为空"]];
         return;
     }
     
     NSString * const password  = asNonEmpty(self.identifierLabel.text, (NSString *)nil);
     if (password == nil) {
-        [self xz_showToast:[XZToast sharedToast:(XZToastStyleWarning) text:@"密码不能为空"] duration:3.0 completion:nil];
+        [self xz_showToast:[XZToast sharedToast:(XZToastStyleWarning) text:@"密码不能为空"]];
         return;
     }
     
@@ -130,13 +130,13 @@
     if ([keychain search:NO error:&error]) {
         keychain.item.password = self.passwordTextField.text;
         if ([keychain update:&error]) {
-            [self xz_showToast:[XZToast sharedToast:(XZToastStyleSuccess) text:@"修改成功"] duration:3.0 completion:nil];
+            [self xz_showToast:[XZToast sharedToast:(XZToastStyleSuccess) text:@"修改成功"]];
         } else {
-            [self xz_showToast:[XZToast sharedToast:(XZToastStyleFailure) text:@"修改失败"] duration:3.0 completion:nil];
+            [self xz_showToast:[XZToast sharedToast:(XZToastStyleFailure) text:@"修改失败"]];
             self.messageLabel.text = error.localizedDescription;
         }
     } else {
-        [self xz_showToast:[XZToast sharedToast:(XZToastStyleWarning) text:@"没有找到钥匙串"] duration:3.0 completion:nil];
+        [self xz_showToast:[XZToast sharedToast:(XZToastStyleWarning) text:@"没有找到钥匙串"]];
         self.messageLabel.text = error.localizedDescription;
     }
 }

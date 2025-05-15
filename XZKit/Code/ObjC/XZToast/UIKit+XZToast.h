@@ -22,7 +22,7 @@ NS_ASSUME_NONNULL_BEGIN
 ///
 /// - Parameters:
 ///   - toast: 提示消息
-///   - duration: 展示时长，值为 0 时，表示不限制时长，一直保持展示，除非调用 `hideToast` 方法
+///   - duration: 展示时长，值为 0 时，表示不限制时长，一直保持展示，除非调用 `hideToast` 方法，默认 1.0 秒
 ///   - position: 展示位置
 ///   - exclusive: 是否独占，独占的 toast 消息展示时，不再展示其它 toast 消息
 ///   - completion: 消息展示完成时的回调，如果消息被提前结束，则回调参数为 NO 值

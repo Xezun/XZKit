@@ -83,10 +83,10 @@ class Example13ViewController: UITableViewController {
                 showMessage("消息C", duration: 3.0 - XZToast.animationDuration * 2.0);
                 
             case 5:
-                showMessage("字数特别多、长度特别长的超级长消息", duration: 3.0)
+                showMessage("字数特别多、长度特别长的超级长消息")
                 
             case 6:
-                showMessage("短消息", duration: 3.0)
+                showMessage("短消息")
             
             case 7:
                 showMessage("操作成功", style: .success)
@@ -128,7 +128,7 @@ class Example13ViewController: UITableViewController {
         }
     }
     
-    func showMessage(_ message: String, style: XZToast.Style = .message, duration: TimeInterval = 3.0) {
+    func showMessage(_ message: String, style: XZToast.Style = .message, duration: TimeInterval = 1.0) {
         let start = timestamp()
         let index = self.index
         let text  = "\(index). \(message)"
