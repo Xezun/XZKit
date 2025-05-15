@@ -55,12 +55,12 @@ NS_ASSUME_NONNULL_BEGIN
 
 /// 进入下拉/上拉状态，并开始执行刷新动画。
 /// @param animated 是否动画过度到刷新状态。
-/// @param completion 动画完毕后的回调，finished 值为 NO 时，表示动画未完成，未执行动画，或动画中断。
+/// @param completion 动画完毕后的回调，回调参数 finished 值为 NO 表示动画未完成或中断，或者开始刷新的操作已开始，但是并未彻底开始刷新。
 - (void)beginRefreshing:(BOOL)animated completion:(nullable void (^)(BOOL finished))completion;
 
 ///  结束下拉/上拉状态，并停止刷新动画。
 /// @param animated 是否动画过度到刷新状态。
-/// @param completion 动画完毕后的回调。
+/// @param completion 动画完毕后的回调，回调参数 finished 值为 NO 表示动画未完成或中断，或者结束刷新的操作已开始，但是并未彻底结束刷新。
 - (void)endRefreshing:(BOOL)animated completion:(nullable void (^)(BOOL finished))completion;
 
 /// 进入下拉/上拉状态，并开始执行刷新动画。
