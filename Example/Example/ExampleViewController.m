@@ -38,7 +38,7 @@
         @"08. XZPageControl",
         @"09. XZSegmentedControl",
         @"10. XZGeometry",
-        @"11. XZTextImageView",
+        @"11. XZTextIconView",
         @"12. XZContentStatusView",
         @"13. XZToast",
         @"14. XZURLQuery",

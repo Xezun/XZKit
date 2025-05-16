@@ -34,7 +34,7 @@ Pod::Spec.new do |s|
     ss.project_header_files = 'XZKit/Code/ObjC/XZToast/**/Private/*.h'
     ss.dependency 'XZGeometry'
     ss.dependency 'XZExtensions/UIApplication'
-    ss.dependency 'XZTextImageView'
+    ss.dependency 'XZTextIconView'
   end
   
   s.subspec 'DEBUG' do |ss|

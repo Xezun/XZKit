@@ -6,10 +6,10 @@
 //
 
 import UIKit
-import XZTextImageView
+import XZTextIconView
 
 /// 呈现视图内容状态的视图。
-@MainActor @objc open class XZContentStatusView: UIControl, XZTextImageLayout, XZContentStatusConfigurable {
+@MainActor @objc open class XZContentStatusView: UIControl, XZTextIconLayout, XZContentStatusConfigurable {
     
     private class Style {
         var title: String?
@@ -27,7 +27,7 @@ import XZTextImageView
         var contentInsets = NSDirectionalEdgeInsets.zero
     }
     
-    private var styles = [XZContentStatus: Style]()
+    private var statedStyles = [XZContentStatus: Style]()
     
     public var textLabel: UILabel {
         get {
@@ -45,15 +45,15 @@ import XZTextImageView
     
     public var imageView: UIImageView {
         get {
-            if let imageView = imageViewIfLoaded {
+            if let imageView = iconViewIfLoaded {
                 return imageView
             }
             let imageView = UIImageView.init()
-            imageViewIfLoaded = imageView
+            iconViewIfLoaded = imageView
             return imageView
         }
         set {
-            imageViewIfLoaded = newValue
+            iconViewIfLoaded = newValue
         }
     }
     
@@ -89,10 +89,10 @@ import XZTextImageView
         }
     }
     
-    public private(set) var imageViewIfLoaded: UIImageView? {
+    public private(set) var iconViewIfLoaded: UIImageView? {
         didSet {
             oldValue?.removeFromSuperview()
-            if let imageView = imageViewIfLoaded {
+            if let imageView = iconViewIfLoaded {
                 let status = contentStatus
                 imageView.image = image(for: status)
                 addSubview(imageView)
@@ -148,16 +148,16 @@ import XZTextImageView
         }
     }
     
-    public var imageInsets: NSDirectionalEdgeInsets {
-        return styles[contentStatus]?.imageInsets ?? .zero
+    public var iconInsets: NSDirectionalEdgeInsets {
+        return statedStyles[contentStatus]?.imageInsets ?? .zero
     }
     
     public var contentInsets: NSDirectionalEdgeInsets {
-        return styles[contentStatus]?.contentInsets ?? .zero
+        return statedStyles[contentStatus]?.contentInsets ?? .zero
     }
     
     public var textInsets: NSDirectionalEdgeInsets {
-        return styles[contentStatus]?.titleInsets ?? .zero
+        return statedStyles[contentStatus]?.titleInsets ?? .zero
     }
     
     public override init(frame: CGRect) {
@@ -172,15 +172,15 @@ import XZTextImageView
     
     open override func layoutSubviews() {
         super.layoutSubviews()
-        self.layoutTextImageViews()
+        self.layoutTextIconViews()
     }
     
     private func style(for contentStatus: XZContentStatus) -> Style {
-        if let style = styles[contentStatus] {
+        if let style = statedStyles[contentStatus] {
             return style
         }
         let style = Style.init()
-        styles[contentStatus] = style
+        statedStyles[contentStatus] = style
         return style
     }
     
@@ -199,7 +199,7 @@ import XZTextImageView
         }
     }
     public func title(for contentStatus: XZContentStatus) -> String? {
-        return styles[contentStatus]?.title
+        return statedStyles[contentStatus]?.title
     }
     
     public func setTitleInsets(_ titleInsets: NSDirectionalEdgeInsets, for contentStatus: XZContentStatus) {
@@ -217,9 +217,9 @@ import XZTextImageView
     }
     public func titleInsets(for contentStatus: XZContentStatus) -> NSDirectionalEdgeInsets {
         if contentStatus == .default {
-            return styles[contentStatus]?.titleInsets ?? .zero
+            return statedStyles[contentStatus]?.titleInsets ?? .zero
         }
-        return styles[contentStatus]?.titleInsets ?? titleInsets(for: .default)
+        return statedStyles[contentStatus]?.titleInsets ?? titleInsets(for: .default)
     }
     
     public func setTitleColor(_ titleColor: UIColor?, for contentStatus: XZContentStatus) {
@@ -237,9 +237,9 @@ import XZTextImageView
     }
     public func titleColor(for contentStatus: XZContentStatus) -> UIColor? {
         if contentStatus == .default {
-            return styles[contentStatus]?.titleColor
+            return statedStyles[contentStatus]?.titleColor
         }
-        return styles[contentStatus]?.titleColor ?? titleColor(for: .default)
+        return statedStyles[contentStatus]?.titleColor ?? titleColor(for: .default)
     }
     
     public func setTitleFont(_ titleFont: UIFont?, for contentStatus: XZContentStatus) {
@@ -257,9 +257,9 @@ import XZTextImageView
     }
     public func titleFont(for contentStatus: XZContentStatus) -> UIFont? {
         if contentStatus == .default {
-            return styles[contentStatus]?.titleFont
+            return statedStyles[contentStatus]?.titleFont
         }
-        return styles[contentStatus]?.titleFont ?? titleFont(for: .default)
+        return statedStyles[contentStatus]?.titleFont ?? titleFont(for: .default)
     }
     
     public func setTitleShadowColor(_ titleShadowColor: UIColor?, for contentStatus: XZContentStatus) {
@@ -277,9 +277,9 @@ import XZTextImageView
     }
     public func titleShadowColor(for contentStatus: XZContentStatus) -> UIColor? {
         if contentStatus == .default {
-            return styles[contentStatus]?.titleShadowColor
+            return statedStyles[contentStatus]?.titleShadowColor
         }
-        return styles[contentStatus]?.titleShadowColor ?? titleShadowColor(for: .default)
+        return statedStyles[contentStatus]?.titleShadowColor ?? titleShadowColor(for: .default)
     }
     
     public func setAttributedTitle(_ attributedTitle: NSAttributedString?, for contentStatus: XZContentStatus) {
@@ -297,7 +297,7 @@ import XZTextImageView
         }
     }
     public func attributedTitle(for contentStatus: XZContentStatus) -> NSAttributedString? {
-        return styles[contentStatus]?.attributedTitle
+        return statedStyles[contentStatus]?.attributedTitle
     }
     
     public func setImage(_ image: UIImage?, for contentStatus: XZContentStatus) {
@@ -314,7 +314,7 @@ import XZTextImageView
         }
     }
     public func image(for contentStatus: XZContentStatus) -> UIImage? {
-        return styles[contentStatus]?.image
+        return statedStyles[contentStatus]?.image
     }
     
     public func setImageInsets(_ imageInsets: NSDirectionalEdgeInsets, for contentStatus: XZContentStatus) {
@@ -332,9 +332,9 @@ import XZTextImageView
     }
     public func imageInsets(for contentStatus: XZContentStatus) -> NSDirectionalEdgeInsets {
         if contentStatus == .default {
-            return styles[contentStatus]?.imageInsets ?? .zero
+            return statedStyles[contentStatus]?.imageInsets ?? .zero
         }
-        return styles[contentStatus]?.imageInsets ?? imageInsets(for: .default)
+        return statedStyles[contentStatus]?.imageInsets ?? imageInsets(for: .default)
     }
     
     public func setBackgroundImage(_ backgroundImage: UIImage?, for contentStatus: XZContentStatus) {
@@ -352,9 +352,9 @@ import XZTextImageView
     }
     public func backgroundImage(for contentStatus: XZContentStatus) -> UIImage? {
         if contentStatus == .default {
-            return styles[contentStatus]?.backgroundImage
+            return statedStyles[contentStatus]?.backgroundImage
         }
-        return styles[contentStatus]?.backgroundImage ?? backgroundImage(for: .default)
+        return statedStyles[contentStatus]?.backgroundImage ?? backgroundImage(for: .default)
     }
     
     public func setBackgroundColor(_ backgroundColor: UIColor?, for contentStatus: XZContentStatus) {
@@ -372,9 +372,9 @@ import XZTextImageView
     }
     public func backgroundColor(for contentStatus: XZContentStatus) -> UIColor? {
         if contentStatus == .default {
-            return styles[contentStatus]?.backgroundColor
+            return statedStyles[contentStatus]?.backgroundColor
         }
-        return styles[contentStatus]?.backgroundColor ?? backgroundColor(for: .default)
+        return statedStyles[contentStatus]?.backgroundColor ?? backgroundColor(for: .default)
     }
     
     public func setContentInsets(_ contentInsets: NSDirectionalEdgeInsets, for contentStatus: XZContentStatus) {
@@ -392,9 +392,9 @@ import XZTextImageView
     }
     public func contentInsets(for contentStatus: XZContentStatus) -> NSDirectionalEdgeInsets {
         if contentStatus == .default {
-            return styles[contentStatus]?.contentInsets ?? .zero
+            return statedStyles[contentStatus]?.contentInsets ?? .zero
         }
-        return styles[contentStatus]?.contentInsets ?? contentInsets(for: .default)
+        return statedStyles[contentStatus]?.contentInsets ?? contentInsets(for: .default)
     }
 }
 

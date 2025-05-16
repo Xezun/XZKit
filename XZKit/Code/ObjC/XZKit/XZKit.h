@@ -25,7 +25,7 @@
 @import XZPageView;
 @import XZRefresh;
 @import XZSegmentedControl;
-@import XZTextImageView;
+@import XZTextIconView;
 @import XZToast;
 @import XZURLQuery;
 @import XZObjcDescriptor;

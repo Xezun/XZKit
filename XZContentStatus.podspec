@@ -30,7 +30,7 @@ Pod::Spec.new do |s|
   s.default_subspec = 'Code'
   
   s.subspec 'Code' do |ss|
-    ss.dependency 'XZTextImageView'
+    ss.dependency 'XZTextIconView'
     ss.source_files = 'XZKit/Code/Swift/XZContentStatus/**/*.{h,m,swift}'
   end
   

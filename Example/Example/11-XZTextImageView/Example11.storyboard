@@ -2,14 +2,13 @@
 <document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="23504" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="237-04-XKa">
     <device id="retina6_12" orientation="portrait" appearance="light"/>
     <dependencies>
-        <deployment identifier="iOS"/>
         <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="23506"/>
         <capability name="Safe area layout guides" minToolsVersion="9.0"/>
         <capability name="System colors in document resources" minToolsVersion="11.0"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <scenes>
-        <!--XZTextImageView-->
+        <!--XZTextIconView-->
         <scene sceneID="s0d-6b-0kx">
             <objects>
                 <viewController id="Y6W-OH-hqX" customClass="Example11ViewController" customModule="Example" customModuleProvider="target" sceneMemberID="viewController">
@@ -19,7 +18,7 @@
                         <viewLayoutGuide key="safeArea" id="vDu-zF-Fre"/>
                         <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                     </view>
-                    <navigationItem key="navigationItem" title="XZTextImageView" id="vIv-4c-f8e">
+                    <navigationItem key="navigationItem" title="XZTextIconView" id="vIv-4c-f8e">
                         <barButtonItem key="leftBarButtonItem" title="Item" image="xmark" catalog="system" style="done" id="PzC-yo-0Yo">
                             <connections>
                                 <segue destination="6KN-Kh-Oa0" kind="unwind" unwindAction="unwindToMainPage:" id="JEi-Gn-Yd1"/>

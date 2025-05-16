@@ -1,5 +1,5 @@
 //
-//  XZTextImageControl.swift
+//  XZTextIconControl.swift
 //  XZKit
 //
 //  Created by Xezun on 2018/9/29.
@@ -9,7 +9,7 @@ import Foundation
 import UIKit
 import XZGeometry
 
-@objc open class XZTextImageControl: UIControl, XZTextImageLayout {
+@objc open class XZTextIconControl: UIControl, XZTextIconLayout {
     
     open var textLabel: UILabel {
         if let textLabel = textViewIfLoaded {
@@ -33,20 +33,20 @@ import XZGeometry
     open private(set) var textViewIfLoaded: UILabel?
     
     open var imageView: UIImageView {
-        if let imageView = imageViewIfLoaded {
+        if let imageView = iconViewIfLoaded {
             return imageView
         }
-        imageViewIfLoaded = UIImageView.init(frame: CGRect.init(x: 0, y: 0, width: 10, height: 10))
-        imageViewIfLoaded!.image = image(for: state) ?? image(for: .normal)
+        iconViewIfLoaded = UIImageView.init(frame: CGRect.init(x: 0, y: 0, width: 10, height: 10))
+        iconViewIfLoaded!.image = image(for: state) ?? image(for: .normal)
         if let titleLabel = textViewIfLoaded, titleLabel.superview == self {
-            insertSubview(imageViewIfLoaded!, belowSubview: titleLabel)
+            insertSubview(iconViewIfLoaded!, belowSubview: titleLabel)
         } else {
-            addSubview(imageViewIfLoaded!)
+            addSubview(iconViewIfLoaded!)
         }
-        return imageViewIfLoaded!
+        return iconViewIfLoaded!
     }
     
-    open private(set) var imageViewIfLoaded: UIImageView?
+    open private(set) var iconViewIfLoaded: UIImageView?
     
     open var contentInsets: NSDirectionalEdgeInsets = .zero {
         didSet { setNeedsLayout() }
@@ -56,7 +56,7 @@ import XZGeometry
         didSet { setNeedsLayout() }
     }
     
-    open var imageInsets: NSDirectionalEdgeInsets = .zero {
+    open var iconInsets: NSDirectionalEdgeInsets = .zero {
         didSet { setNeedsLayout() }
     }
     
@@ -79,15 +79,15 @@ import XZGeometry
     
     override open func layoutSubviews() {
         super.layoutSubviews()
-        self.layoutTextImageViews()
+        self.layoutTextIconViews()
     }
     
     open override var intrinsicContentSize: CGSize {
-        return self.textImageIntrinsicSize
+        return self.textIconIntrinsicSize
     }
     
     open override func sizeThatFits(_ size: CGSize) -> CGSize {
-        return self.textImageSizeThatFits(size)
+        return self.textIconSizeThatFits(size)
     }
     
     open override var isSelected: Bool {

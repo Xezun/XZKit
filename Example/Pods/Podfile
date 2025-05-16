@@ -20,7 +20,7 @@ target 'Example' do
   pod 'XZRefresh', :path => '../../'
   pod 'XZSegmentedControl', :path => '../../'
   pod 'XZGeometry', :path => '../../'
-  pod 'XZTextImageView', :path => '../../'
+  pod 'XZTextIconView', :path => '../../'
   pod 'XZContentStatus', :path => '../../'
   pod 'XZToast', :path => '../../'
   pod 'XZURLQuery', :path => '../../'

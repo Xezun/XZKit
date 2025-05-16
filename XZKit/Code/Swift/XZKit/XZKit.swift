@@ -23,7 +23,7 @@
 @_exported import XZPageView
 @_exported import XZRefresh
 @_exported import XZSegmentedControl
-@_exported import XZTextImageView
+@_exported import XZTextIconView
 @_exported import XZToast
 @_exported import XZURLQuery
 #endif

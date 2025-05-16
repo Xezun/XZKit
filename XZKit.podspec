@@ -50,7 +50,7 @@ Pod::Spec.new do |s|
     ss.dependency 'XZPageView'
     ss.dependency 'XZRefresh'
     ss.dependency 'XZSegmentedControl'
-    ss.dependency 'XZTextImageView'
+    ss.dependency 'XZTextIconView'
     ss.dependency 'XZToast'
     ss.dependency 'XZURLQuery'
     ss.dependency 'XZObjcDescriptor'
