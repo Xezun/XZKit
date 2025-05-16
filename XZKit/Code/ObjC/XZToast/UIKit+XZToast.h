@@ -10,7 +10,7 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-@class XZToast;
+@class XZToast, XZToastTask;
 
 @interface UIResponder (XZToast)
 
@@ -27,21 +27,21 @@ NS_ASSUME_NONNULL_BEGIN
 ///   - exclusive: 是否独占，独占的 toast 消息展示时，不再展示其它 toast 消息
 ///   - completion: 消息展示完成时的回调，如果消息被提前结束，则回调参数为 NO 值
 /// - Returns: 返回值与参数 toast 不是同一对象，当需要隐藏特定 toast 时，需要使用该返回值
-- (nullable XZToast *)xz_showToast:(XZToast *)toast duration:(NSTimeInterval)duration position:(XZToastPosition)position exclusive:(BOOL)exclusive completion:(nullable XZToastCompletion)completion NS_REFINED_FOR_SWIFT NS_SWIFT_NAME(__showToast(_:duration:position:exclusive:completion:));
+- (nullable XZToastTask *)xz_showToast:(XZToast *)toast duration:(NSTimeInterval)duration position:(XZToastPosition)position exclusive:(BOOL)exclusive completion:(nullable XZToastCompletion)completion NS_REFINED_FOR_SWIFT NS_SWIFT_NAME(__showToast(_:duration:position:exclusive:completion:));
 
-- (nullable XZToast *)xz_showToast:(XZToast *)toast duration:(NSTimeInterval)duration position:(XZToastPosition)position completion:(nullable XZToastCompletion)completion NS_SWIFT_UNAVAILABLE("");
-- (nullable XZToast *)xz_showToast:(XZToast *)toast duration:(NSTimeInterval)duration exclusive:(BOOL)exclusive completion:(nullable XZToastCompletion)completion NS_SWIFT_UNAVAILABLE("");
-- (nullable XZToast *)xz_showToast:(XZToast *)toast duration:(NSTimeInterval)duration completion:(nullable XZToastCompletion)completion NS_SWIFT_UNAVAILABLE("");
+- (nullable XZToastTask *)xz_showToast:(XZToast *)toast duration:(NSTimeInterval)duration position:(XZToastPosition)position completion:(nullable XZToastCompletion)completion NS_SWIFT_UNAVAILABLE("");
+- (nullable XZToastTask *)xz_showToast:(XZToast *)toast duration:(NSTimeInterval)duration exclusive:(BOOL)exclusive completion:(nullable XZToastCompletion)completion NS_SWIFT_UNAVAILABLE("");
+- (nullable XZToastTask *)xz_showToast:(XZToast *)toast duration:(NSTimeInterval)duration completion:(nullable XZToastCompletion)completion NS_SWIFT_UNAVAILABLE("");
 
-- (nullable XZToast *)xz_showToast:(XZToast *)toast duration:(NSTimeInterval)duration NS_SWIFT_UNAVAILABLE("");
-- (nullable XZToast *)xz_showToast:(XZToast *)toast completion:(nullable XZToastCompletion)completion NS_SWIFT_UNAVAILABLE("");
-- (nullable XZToast *)xz_showToast:(XZToast *)toast NS_SWIFT_UNAVAILABLE("");
+- (nullable XZToastTask *)xz_showToast:(XZToast *)toast duration:(NSTimeInterval)duration NS_SWIFT_UNAVAILABLE("");
+- (nullable XZToastTask *)xz_showToast:(XZToast *)toast completion:(nullable XZToastCompletion)completion NS_SWIFT_UNAVAILABLE("");
+- (nullable XZToastTask *)xz_showToast:(XZToast *)toast NS_SWIFT_UNAVAILABLE("");
 
-- (nullable XZToast *)xz_showToast:(XZToast *)toast position:(XZToastPosition)position NS_SWIFT_UNAVAILABLE("");
-- (nullable XZToast *)xz_showToast:(XZToast *)toast position:(XZToastPosition)position completion:(nullable XZToastCompletion)completion NS_SWIFT_UNAVAILABLE("");
+- (nullable XZToastTask *)xz_showToast:(XZToast *)toast position:(XZToastPosition)position NS_SWIFT_UNAVAILABLE("");
+- (nullable XZToastTask *)xz_showToast:(XZToast *)toast position:(XZToastPosition)position completion:(nullable XZToastCompletion)completion NS_SWIFT_UNAVAILABLE("");
 
-- (nullable XZToast *)xz_showToast:(XZToast *)toast exclusive:(BOOL)exclusive completion:(nullable XZToastCompletion)completion NS_SWIFT_UNAVAILABLE("");
-- (nullable XZToast *)xz_showToast:(XZToast *)toast exclusive:(BOOL)exclusive NS_SWIFT_UNAVAILABLE("");
+- (nullable XZToastTask *)xz_showToast:(XZToast *)toast exclusive:(BOOL)exclusive completion:(nullable XZToastCompletion)completion NS_SWIFT_UNAVAILABLE("");
+- (nullable XZToastTask *)xz_showToast:(XZToast *)toast exclusive:(BOOL)exclusive NS_SWIFT_UNAVAILABLE("");
 
 - (void)xz_hideToast:(nullable XZToast *)toast completion:(nullable void (^)(void))completion NS_REFINED_FOR_SWIFT NS_SWIFT_NAME(__hideToast(_:completion:));
 - (void)xz_hideToast:(nullable void (^)(void))completion NS_SWIFT_UNAVAILABLE("");

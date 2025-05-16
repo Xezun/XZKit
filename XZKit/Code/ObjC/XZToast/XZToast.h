@@ -102,4 +102,8 @@ NS_REFINED_FOR_SWIFT @interface XZToast : NSObject <NSCopying>
 
 @end
 
+NS_REFINED_FOR_SWIFT @interface XZToastTask : XZToast
+
+@end
+
 NS_ASSUME_NONNULL_END

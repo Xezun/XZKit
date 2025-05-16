@@ -26,7 +26,7 @@ typedef NS_ENUM(NSInteger, XZToastMoveDirection) {
 
 @class XZToastManager;
 
-@interface XZToastTask : XZToast {
+@interface XZToastTask () {
     @package
     /// 为了方便计算 toastView 的 frame 而设置。
     CGRect _frame;

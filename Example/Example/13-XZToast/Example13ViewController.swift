@@ -24,7 +24,7 @@ class Example13ViewController: UITableViewController {
     var isExclusive = false
     var reuseMode = false
     
-    var loadingToast: XZToast?
+    var loadingToast: XZToast.Task?
     
     @IBOutlet weak var toastControllerSwitch: UISwitch!
 
@@ -205,7 +205,7 @@ class Example13ViewController: UITableViewController {
     }
     
     @IBAction func progressSliderValueChanged(_ sender: UISlider) {
-        guard var loadingToast = self.loadingToast else { return }
+        guard let loadingToast = self.loadingToast else { return }
         if sender.value == 0 {
             loadingToast.text = nil;
         } else if sender.value == 100.0 {
