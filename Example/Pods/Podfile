@@ -37,6 +37,8 @@ target 'Example' do
   # pod 'AFNetworking'
   
   pod 'XZRefresh/DEBUG', :path => '../../'
+  pod 'XZJSON/DEBUG', :path => '../../'
+  pod 'XZMocoa/DEBUG', :path => '../../'
   
   target 'ExampleTests' do
     inherit! :search_paths

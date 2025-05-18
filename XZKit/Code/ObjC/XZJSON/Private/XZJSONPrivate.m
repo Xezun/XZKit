@@ -637,7 +637,7 @@ void XZJSONModelEncodeWithCoder(id model, NSCoder *aCoder) {
                     }
                 }
                 
-                XZLog(@"[XZJSON] [NSCoding] Can not encode property `%@` of `%@`!", modelClass->_class.name, property->_name);
+                XZLog(@"[XZJSON] [NSCoding] Can not encode property `%@` of `%@`!", modelClass->_raw.name, property->_name);
             }];
             break;
         }
@@ -909,7 +909,7 @@ id _Nullable XZJSONModelDecodeWithCoder(id model, NSCoder *aCoder) {
                     }
                 }
                 
-                XZLog(@"[XZJSON] [NSCoding] Can not decode property `%@` of `%@`!", modelClass->_class.name, property->_name);
+                XZLog(@"[XZJSON] [NSCoding] Can not decode property `%@` of `%@`!", modelClass->_raw.name, property->_name);
             }];
             break;
         }

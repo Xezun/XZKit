@@ -288,7 +288,7 @@
         if (block && block(newModel, property->_name)) {
             return;
         }
-        XZLog(@"[XZJSON] 无法复制 %@ 对象的属性 %@ 的值", modelClass->_class.raw, property->_name);
+        XZLog(@"[XZJSON] 无法复制 %@ 对象的属性 %@ 的值", modelClass->_raw.raw, property->_name);
     }];
     
     return newModel;
@@ -601,7 +601,7 @@
         }
         
         // 默认不相等。
-        XZLog(@"[XZJSON] 无法比较数据模型 %@ 与 %@ 的 属性 %@ 的值", model1Class->_class.raw, model2Class->_class.raw, name);
+        XZLog(@"[XZJSON] 无法比较数据模型 %@ 与 %@ 的 属性 %@ 的值", model1Class->_raw.raw, model2Class->_raw.raw, name);
         return NO;
     }
     

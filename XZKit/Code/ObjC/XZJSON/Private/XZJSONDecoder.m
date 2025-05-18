@@ -1053,5 +1053,5 @@ void XZJSONModelDecodeProperty(id const __unsafe_unretained model, XZJSONPropert
         return;
     }
     
-    XZLog(@"[XZJSON] Can not decode value `%@` for property `%@` of `%@`", JSONValue, property->_name, property->_class->_class.name);
+    XZLog(@"[XZJSON] Can not decode value `%@` for property `%@` of `%@`", JSONValue, property->_name, property->_raw.name);
 }
