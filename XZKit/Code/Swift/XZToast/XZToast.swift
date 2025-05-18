@@ -116,7 +116,7 @@ extension XZToast.Style: CustomStringConvertible {
 
 extension XZToast {
     
-    public class func shared(_ style: Style, text: String? = nil, image: UIImage? = nil) -> Self {
+    public class func shared(_ style: XZToast.Style, text: String? = nil, image: UIImage? = nil) -> Self {
         return Self.init(shared: style, text: text, image: image)
     }
     

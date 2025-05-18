@@ -26,7 +26,7 @@ NS_ASSUME_NONNULL_BEGIN
 /// 默认尾部刷新视图。必须能够使用 `-initWithFrame:` 方法初始化。
 @property (class, nonatomic, null_resettable) Class defaultFooterClass;
 
-/// 处理刷新事件的代理。
+/// 处理刷新事件的代理对象。
 /// @discussion
 /// 刷新事件会优先发送到此属性指定的对象，即，如果设置了此属性，那么`UIScrollView.delegate`将不会收到事件。
 /// @discussion

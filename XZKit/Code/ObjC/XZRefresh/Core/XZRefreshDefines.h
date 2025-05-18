@@ -34,7 +34,7 @@ typedef NS_ENUM(NSUInteger, XZRefreshAdjustment) {
     /// - 头部刷新视图布局在 contentSize 区域上面。
     /// - 底部刷新视图布局在 contentSize 区域的下面。
     XZRefreshAdjustmentNone,
-};
+} NS_SWIFT_NAME(Adjustment);
 
 @class XZRefreshView, UIRefreshControl, UICollectionView;
 
