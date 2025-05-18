@@ -39,7 +39,7 @@ NS_ASSUME_NONNULL_BEGIN
 /// - NSDate 类型，默认转换为 JSONNumber 时间戳，转特定格式，需要自定义。
 /// - 支持的结构体仅包括原生提供了 `NSStringFrom~` 和 `~FromString` 函数的结构体。
 ///
-/// 特色情况。
+/// 特殊情况。
 /// - 数据不是数组，但是属性是数组类型，自动包装为 `@[data]` 形式的数组。
 /// - 数据是数组，但属性是字典，自动包装为 `@{ @"index": item }` 形式的字典。
 /// - 数据不是字典，但是属性是自定义模型，自动包装为 `@{ @"rawValue": data }` 形式的字典。
@@ -52,7 +52,7 @@ NS_ASSUME_NONNULL_BEGIN
 ///
 /// 另外，非默认的日期格式的模型，可以通过`XZJSONCoding`协议自定日期转换过程。
 ///
-/// > 数值数据，默认当作时间戳（秒）转换为日期，即 JSON 数据为 number 且目标属性为 NSDate 类型。
+/// > 数值数据，默认当作时间戳（秒）转换为日期，即 JSON 数据为 number 且模型属性为 NSDate 类型。
 @property (class, nonatomic, readonly) NSDateFormatter *dateFormatter;
 @end
 

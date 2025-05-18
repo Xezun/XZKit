@@ -45,12 +45,13 @@ NS_ASSUME_NONNULL_BEGIN
 ///         return [
 ///             "name": "n",
 ///             "page": "p",
-///             "desc": "ext.desc", // 点号 . 会认为是 keyPath 如果不是，可以使用反斜杠转义，比如 "ext\\.desc"。
+///             "desc": "ext.desc",
 ///             "bookID": ["id", "ID", "book_id"]
 ///         ]
 ///     }
 /// }
 /// ```
+/// > 在 keyPath 中，反斜杠为转义字符。例如 `@"foo.bar"` 会认为是 keyPath 而 `@"foo\\.bar"` 则认为是 key 。
 @property (class, readonly, nullable) NSDictionary<NSString *, id> *mappingJSONCodingKeys;
 
 /// 模型属性的类型不明确时，可通过此属性提供映射关系，比如属性是集合或者 id 类型。
