@@ -661,7 +661,7 @@ typedef void(^XZMocoaListDelayedUpdates)(XZMocoaListViewSectionViewModel *self);
     }
 }
 
-#if XZ_DEBUG
+#if XZ_DEBUG || DEBUG
 - (NSArray *)cellDataModels {
     NSInteger const count = self.numberOfCells;
     NSMutableArray *result = [NSMutableArray arrayWithCapacity:count];

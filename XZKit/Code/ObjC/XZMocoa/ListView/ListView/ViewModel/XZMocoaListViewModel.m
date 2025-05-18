@@ -658,7 +658,7 @@ typedef void(^XZMocoaListDelayedUpdates)(__kindof XZMocoaViewModel *self);
 
 #pragma mark - DEBUG
 
-#if XZ_DEBUG
+#if XZ_DEBUG || DEBUG
 - (NSArray *)sectionDataModels {
     NSInteger const count = self.numberOfSections;
     NSMutableArray *result = [NSMutableArray arrayWithCapacity:count];

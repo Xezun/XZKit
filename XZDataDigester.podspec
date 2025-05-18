@@ -27,19 +27,20 @@ Pod::Spec.new do |s|
 
   s.swift_version = '5.0'
   s.ios.deployment_target = '13.0'
-  s.pod_target_xcconfig = { 'GCC_PREPROCESSOR_DEFINITIONS' => 'XZ_FRAMEWORK=1' }
   
   s.default_subspec = 'Code'
   
   s.subspec 'Code' do |ss|
+    ss.pod_target_xcconfig = { 'GCC_PREPROCESSOR_DEFINITIONS' => 'XZ_FRAMEWORK=1' }
+    ss.dependency 'XZExtensions'
+    ss.dependency 'XZDefines'
+    
     ss.source_files = 'XZKit/Code/ObjC/XZDataDigester/**/*.{h,m}'
-    ss.dependency 'XZExtensions/NSData'
-    ss.dependency 'XZDefines/XZDefer'
   end
   
   s.subspec 'DEBUG' do |ss|
-    ss.dependency "#{s.name}/Code"
     ss.pod_target_xcconfig = { 'GCC_PREPROCESSOR_DEFINITIONS' => 'XZ_DEBUG=1' }
+    ss.dependency "#{s.name}/Code"
   end
   
 end

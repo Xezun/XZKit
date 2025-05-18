@@ -27,35 +27,20 @@ Pod::Spec.new do |s|
   
   s.swift_version = '5.0'
   s.ios.deployment_target = '13.0'
-  s.pod_target_xcconfig = { 'GCC_PREPROCESSOR_DEFINITIONS' => 'XZ_FRAMEWORK=1' }
   
   s.default_subspec = 'Code'
   
   s.subspec 'Code' do |ss|
+    ss.pod_target_xcconfig = { 'GCC_PREPROCESSOR_DEFINITIONS' => 'XZ_FRAMEWORK=1' }
+    
     ss.public_header_files = 'XZKit/Code/ObjC/XZDefines/**/*.h'
     ss.source_files        = 'XZKit/Code/ObjC/XZDefines/**/*.{h,m}'
   end
   
   s.subspec 'DEBUG' do |ss|
-    ss.dependency "#{s.name}/Code"
     ss.pod_target_xcconfig = { 'GCC_PREPROCESSOR_DEFINITIONS' => 'XZ_DEBUG=1' }
+    ss.dependency "#{s.name}/Code"
   end
   
-  def s.defineSubspec(name, dependencies)
-    self.subspec name do |ss|
-      ss.public_header_files = "XZKit/Code/ObjC/XZDefines/#{name}/**/*.h";
-      ss.source_files        = "XZKit/Code/ObjC/XZDefines/#{name}/**/*.{h,m}";
-      for dependency in dependencies
-        ss.dependency dependency;
-      end
-    end
-  end
-  
-  s.defineSubspec 'XZEmpty', ['XZDefines/XZMacros']
-  s.defineSubspec 'XZDefer', ['XZDefines/XZMacros']
-  s.defineSubspec 'XZMacros', []
-  s.defineSubspec 'XZRuntime', []
-  s.defineSubspec 'XZUtils', []
-
 end
 

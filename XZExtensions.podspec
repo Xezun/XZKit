@@ -27,50 +27,20 @@ Pod::Spec.new do |s|
 
   s.swift_version = '5.0'
   s.ios.deployment_target = '13.0'
-  s.pod_target_xcconfig = { 'GCC_PREPROCESSOR_DEFINITIONS' => 'XZ_FRAMEWORK=1' }
   
   s.default_subspec = 'Code'
   
   s.subspec 'Code' do |ss|
-    ss.source_files = 'XZKit/Code/{ObjC,Swift}/XZExtensions/**/*.{h,m,swift}'
+    ss.pod_target_xcconfig = { 'GCC_PREPROCESSOR_DEFINITIONS' => 'XZ_FRAMEWORK=1' }
     ss.dependency 'XZDefines'
+    
+    ss.source_files = 'XZKit/Code/{ObjC,Swift}/XZExtensions/**/*.{h,m,swift}'
   end
   
   s.subspec 'DEBUG' do |ss|
-    ss.dependency "#{s.name}/Code"
     ss.pod_target_xcconfig = { 'GCC_PREPROCESSOR_DEFINITIONS' => 'XZ_DEBUG=1' }
+    ss.dependency "#{s.name}/Code"
   end
   
-  def s.defineSubspec(name, dependencies)
-    self.subspec name do |ss|
-      ss.public_header_files = "XZKit/Code/ObjC/XZExtensions/#{name}/**/*.h";
-      ss.source_files        = "XZKit/Code/{ObjC,Swift}/XZExtensions/#{name}/**/*.{h,m,swift}";
-      for dependency in dependencies
-        ss.dependency dependency;
-      end
-    end
-  end
-  
-  s.defineSubspec 'CAAnimation',        [];
-  s.defineSubspec 'CALayer',            [];
-  s.defineSubspec 'NSArray',            [];
-  s.defineSubspec 'NSAttributedString', ["XZExtensions/NSString"];
-  s.defineSubspec 'NSBundle',           [];
-  s.defineSubspec 'NSCharacterSet',     [];
-  s.defineSubspec 'NSData',             [];
-  s.defineSubspec 'NSDictionary',       ["XZExtensions/NSString", "XZExtensions/NSArray"];
-  s.defineSubspec 'NSIndexSet',         [];
-  s.defineSubspec 'NSObject',           ["XZExtensions/NSArray", "XZDefines/XZMacros"];
-  s.defineSubspec 'NSString',           ["XZExtensions/NSCharacterSet", "XZExtensions/NSData"];
-  s.defineSubspec 'UIApplication',      [];
-  s.defineSubspec 'UIBezierPath',       [];
-  s.defineSubspec 'UIColor',            ["XZDefines/XZMacros"];
-  s.defineSubspec 'UIDevice',           ["XZDefines/XZDefer"];
-  s.defineSubspec 'UIFont',             ["XZDefines/XZDefer"];
-  s.defineSubspec 'UIView',             [];
-  s.defineSubspec 'UIImage',            ["XZDefines/XZDefer"];
-  s.defineSubspec 'UIViewController',   ["XZExtensions/UIApplication", "XZDefines/XZRuntime"];
-  s.defineSubspec 'XZShapeView',        [];
-
 end
 
