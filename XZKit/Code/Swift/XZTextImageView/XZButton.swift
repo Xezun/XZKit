@@ -1,5 +1,5 @@
 //
-//  XZTextImageControl.swift
+//  XZButton.swift
 //  XZKit
 //
 //  Created by Xezun on 2018/9/29.
@@ -9,7 +9,7 @@ import Foundation
 import UIKit
 import XZGeometry
 
-@objc open class XZTextImageControl: UIControl, XZTextImageView.Layout {
+@objc open class XZButton: UIControl, XZTextImageView.Layout {
     
     open private(set) var textViewIfLoaded: UILabel?
     open private(set) var imageViewIfLoaded: UIImageView?
@@ -59,7 +59,7 @@ import XZGeometry
         didSet { setNeedsLayout() }
     }
     
-    open var style: XZTextImageView.Style = .bottom {
+    open var style: XZTextImageView.Style = .trailing {
         didSet { setNeedsLayout() }
     }
     
@@ -253,19 +253,5 @@ import XZGeometry
         lazy var textShadowColors = [UInt: UIColor]()
         lazy var images           = [UInt: UIImage]()
         lazy var backgroundImages = [UInt: UIImage]()
-    }
-}
-
-
-@objc public class XZButton: XZTextImageControl {
-    
-    public override init(frame: CGRect) {
-        super.init(frame: frame)
-        self.style = .trailing;
-    }
-    
-    public required init?(coder: NSCoder) {
-        super.init(coder: coder);
-        self.style = .trailing;
     }
 }

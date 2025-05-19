@@ -76,13 +76,18 @@ extension XZTextImageView.Layout {
     
     /// 为控件提供计算自然大小的能力，用于重写控件 intrinsicContentSize 属性。
     public var textImageIntrinsicSize: CGSize {
-        let imageSize = imageViewIfLoaded != nil ? imageViewIfLoaded!.intrinsicContentSize : .zero
-        let textSize = textViewIfLoaded != nil ? textViewIfLoaded!.intrinsicContentSize : .zero
+        let contentInsets = self.contentInsets
+        let size = self.frame.size
+        
+        let imageSize: CGSize = imageViewIfLoaded?.sizeThatFits(size) ?? .zero
+        let textSize: CGSize = textViewIfLoaded?.sizeThatFits(size) ?? .zero
+        
         if style == .bottom || style == .top {
             let width = max(imageSize.width, textSize.width) + contentInsets.leading + contentInsets.trailing
             let height = imageSize.height + textSize.height + contentInsets.top + contentInsets.bottom
             return CGSize.init(width: width, height: height)
         }
+
         let width = imageSize.width + textSize.width + contentInsets.leading + contentInsets.trailing
         let height = max(imageSize.height, textSize.height) + contentInsets.top + contentInsets.bottom
         return CGSize.init(width: width, height: height)
@@ -90,22 +95,28 @@ extension XZTextImageView.Layout {
     
     /// 为控件提供计算自适应大小的能力，用于重写 sizeThatFits(_:) 方法。
     public func textImageSizeThatFits(_ size: CGSize) -> CGSize {
-        let imageSize = imageViewIfLoaded != nil ? imageViewIfLoaded!.sizeThatFits(.zero) : .zero
-        // 设置 sizeThatFits 的大小，可能会影响结果。
-        let titleSize = textViewIfLoaded != nil ? textViewIfLoaded!.sizeThatFits(.zero) : .zero
+        let contentInsets = self.contentInsets
+        
+        let imageSize: CGSize = imageViewIfLoaded?.sizeThatFits(size) ?? .zero
+        let textSize: CGSize = textViewIfLoaded?.sizeThatFits(size) ?? .zero
+        
         if style == .bottom || style == .top {
-            let width = max(imageSize.width, titleSize.width) + contentInsets.leading + contentInsets.trailing
-            let height = imageSize.height + titleSize.height + contentInsets.top + contentInsets.bottom
+            let width = max(imageSize.width, textSize.width) + contentInsets.leading + contentInsets.trailing
+            let height = imageSize.height + textSize.height + contentInsets.top + contentInsets.bottom
             return CGSize.init(width: width, height: height)
         }
-        let width = imageSize.width + titleSize.width + contentInsets.leading + contentInsets.trailing
-        let height = max(imageSize.height, titleSize.height) + contentInsets.top + contentInsets.bottom
+        
+        let width = imageSize.width + textSize.width + contentInsets.leading + contentInsets.trailing
+        let height = max(imageSize.height, textSize.height) + contentInsets.top + contentInsets.bottom
         return CGSize.init(width: width, height: height)
     }
     
     /// 为控件提供自动布局 textLabelIfLoaded 与 imageViewIfLoaded 的能力，用于重写 layoutSubviews() 方法。
     public func layoutTextImage() -> Void {
         let layoutDirection = self.effectiveUserInterfaceLayoutDirection;
+        let contentInsets = self.contentInsets
+        let style = self.style
+        
         // 计算去掉边距的区域
         let layoutRect = self.bounds.inset(by: UIEdgeInsets(contentInsets, layoutDirection));
         
@@ -124,7 +135,7 @@ extension XZTextImageView.Layout {
                 if style == .bottom {
                     // 垂直布局，标题在下。
                     let textWidth = min(textSize.width, layoutRect.width)
-                    let textHeight = min(layoutRect.height - imageSize.height, textSize.height)
+                    let textHeight = max(min(layoutRect.height - imageSize.height, textSize.height), 0)
                     
                     let contentSize = CGSize(width: max(imageSize.width, textWidth), height: imageSize.height + textHeight)
                     let minY = layoutRect.minY + (layoutRect.height - contentSize.height) * 0.5
@@ -144,11 +155,10 @@ extension XZTextImageView.Layout {
                         width: textWidth - textInsets.leading - textInsets.trailing,
                         height: textHeight - textInsets.top - textInsets.bottom
                     )
-                    
                 } else if style == .top {
                     // 垂直布局，标题在上。
                     let textWidth = min(textSize.width, layoutRect.width)
-                    let textHeight = min(layoutRect.height - imageSize.height, textSize.height)
+                    let textHeight = max(min(layoutRect.height - imageSize.height, textSize.height), 0)
                     
                     let contentSize = CGSize(width: max(imageSize.width, textWidth), height: imageSize.height + textHeight)
                     let maxY = layoutRect.maxY - (layoutRect.height - contentSize.height) * 0.5
@@ -168,10 +178,9 @@ extension XZTextImageView.Layout {
                         width: textWidth - textInsets.leading - textInsets.trailing,
                         height: textHeight - textInsets.top - textInsets.bottom
                     )
-                    
                 } else {
                     // 水平布局。
-                    let textWidth = min(layoutRect.width - imageSize.width, textSize.width)
+                    let textWidth = max(min(layoutRect.width - imageSize.width, textSize.width), 0)
                     let textHeight = min(layoutRect.height, textSize.height)
                     
                     let contentSize = CGSize(width: imageSize.width + textWidth, height: max(imageSize.height, textHeight))
@@ -221,7 +230,6 @@ extension XZTextImageView.Layout {
                     height: imageSize.height - imageInsets.top - imageInsets.bottom
                 )
             }
-            
         } else if let textView = textViewIfLoaded {
             // 只有文字。
             let textSize = textView.sizeThatFits(layoutRect.size)

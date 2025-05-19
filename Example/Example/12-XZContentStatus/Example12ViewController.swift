@@ -28,12 +28,16 @@ class Example12ViewController: UIViewController, XZContentStatusRepresentable {
         let indicatorView = UIActivityIndicatorView.init(style: .large)
         indicatorView.startAnimating()
         setImageView(indicatorView, for: .loading)
-        setTitleInsets(.init(top: 0, leading: 0, bottom: -31, trailing: 0), for: .loading)
-        setImageInsets(.init(top: -32, leading: 0, bottom: 0, trailing: 0), for: .loading)
+        setTitleInsets(.init(top: +30, leading: -00, bottom: -30, trailing: -00), for: .loading)
+        setImageInsets(.init(top: -30, leading: -30, bottom: -30, trailing: -30), for: .loading)
         setImage(UIImage(named: "ex-12-error"), for: .error)
         
         contentStatusView.addTarget(self, action: #selector(contentStatusViewAction(_:)), for: .touchUpInside)
         contentStatus = .empty
+    }
+    
+    @IBAction func resetButtonAction(_ sender: UIBarButtonItem) {
+        self.contentStatus = .empty
     }
     
     @objc func contentStatusViewAction(_ sender: XZContentStatusView) {
