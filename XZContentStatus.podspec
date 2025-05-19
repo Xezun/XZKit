@@ -30,7 +30,7 @@ Pod::Spec.new do |s|
   
   s.subspec 'Code' do |ss|
     ss.pod_target_xcconfig = { 'GCC_PREPROCESSOR_DEFINITIONS' => 'XZ_FRAMEWORK=1' }
-    ss.dependency 'XZTextIconView'
+    ss.dependency 'XZTextImageView'
     
     ss.source_files = 'XZKit/Code/Swift/XZContentStatus/**/*.{h,m,swift}'
   end

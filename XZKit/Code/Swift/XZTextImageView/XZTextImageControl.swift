@@ -1,5 +1,5 @@
 //
-//  XZTextIconControl.swift
+//  XZTextImageControl.swift
 //  XZKit
 //
 //  Created by Xezun on 2018/9/29.
@@ -9,7 +9,10 @@ import Foundation
 import UIKit
 import XZGeometry
 
-@objc open class XZTextIconControl: UIControl, XZTextIconLayout {
+@objc open class XZTextImageControl: UIControl, XZTextImageView.Layout {
+    
+    open private(set) var textViewIfLoaded: UILabel?
+    open private(set) var imageViewIfLoaded: UIImageView?
     
     open var textLabel: UILabel {
         if let textLabel = textViewIfLoaded {
@@ -30,23 +33,19 @@ import XZGeometry
         return textViewIfLoaded!
     }
     
-    open private(set) var textViewIfLoaded: UILabel?
-    
     open var imageView: UIImageView {
-        if let imageView = iconViewIfLoaded {
+        if let imageView = imageViewIfLoaded {
             return imageView
         }
-        iconViewIfLoaded = UIImageView.init(frame: CGRect.init(x: 0, y: 0, width: 10, height: 10))
-        iconViewIfLoaded!.image = image(for: state) ?? image(for: .normal)
+        imageViewIfLoaded = UIImageView.init(frame: CGRect.init(x: 0, y: 0, width: 10, height: 10))
+        imageViewIfLoaded!.image = image(for: state) ?? image(for: .normal)
         if let titleLabel = textViewIfLoaded, titleLabel.superview == self {
-            insertSubview(iconViewIfLoaded!, belowSubview: titleLabel)
+            insertSubview(imageViewIfLoaded!, belowSubview: titleLabel)
         } else {
-            addSubview(iconViewIfLoaded!)
+            addSubview(imageViewIfLoaded!)
         }
-        return iconViewIfLoaded!
+        return imageViewIfLoaded!
     }
-    
-    open private(set) var iconViewIfLoaded: UIImageView?
     
     open var contentInsets: NSDirectionalEdgeInsets = .zero {
         didSet { setNeedsLayout() }
@@ -56,38 +55,38 @@ import XZGeometry
         didSet { setNeedsLayout() }
     }
     
-    open var iconInsets: NSDirectionalEdgeInsets = .zero {
+    open var imageInsets: NSDirectionalEdgeInsets = .zero {
         didSet { setNeedsLayout() }
     }
     
-    open var textLayoutDirection: NSDirectionalRectEdge = .bottom {
+    open var style: XZTextImageView.Style = .bottom {
         didSet { setNeedsLayout() }
     }
     
-    open var backgroundImageViewIfLoaded: UIImageView?
+    open private(set) var backgroundViewIfLoaded: UIImageView?
     
-    open var backgroundImageView: UIImageView {
-        if backgroundImageViewIfLoaded != nil {
-            return backgroundImageViewIfLoaded!
+    open var backgroundView: UIImageView {
+        if backgroundViewIfLoaded != nil {
+            return backgroundViewIfLoaded!
         }
-        backgroundImageViewIfLoaded = UIImageView.init(frame: self.bounds)
-        backgroundImageViewIfLoaded!.autoresizingMask = [.flexibleWidth, .flexibleHeight]
-        backgroundImageViewIfLoaded!.contentMode = .scaleAspectFill
-        insertSubview(backgroundImageViewIfLoaded!, at: 0)
-        return backgroundImageViewIfLoaded!
+        backgroundViewIfLoaded = UIImageView.init(frame: self.bounds)
+        backgroundViewIfLoaded!.autoresizingMask = [.flexibleWidth, .flexibleHeight]
+        backgroundViewIfLoaded!.contentMode = .scaleAspectFill
+        insertSubview(backgroundViewIfLoaded!, at: 0)
+        return backgroundViewIfLoaded!
     }
     
     override open func layoutSubviews() {
         super.layoutSubviews()
-        self.layoutTextIconViews()
+        self.layoutTextImage()
     }
     
     open override var intrinsicContentSize: CGSize {
-        return self.textIconIntrinsicSize
+        return self.textImageIntrinsicSize
     }
     
     open override func sizeThatFits(_ size: CGSize) -> CGSize {
-        return self.textIconSizeThatFits(size)
+        return self.textImageSizeThatFits(size)
     }
     
     open override var isSelected: Bool {
@@ -103,66 +102,66 @@ import XZGeometry
     }
 
     open func setText(_ text: String?, for state: UIControl.State) {
-        styles.texts[state.rawValue] = text
+        configuration.texts[state.rawValue] = text
         textDidChange()
     }
 
     open func text(for state: UIControl.State) -> String? {
-        return styles.texts[state.rawValue]
+        return configuration.texts[state.rawValue]
     }
 
     open func setAttributedText(_ attributedText: NSAttributedString?, for state: UIControl.State) {
-        styles.attributedTitles[state.rawValue] = attributedText
+        configuration.attributedTitles[state.rawValue] = attributedText
         textDidChange()
     }
 
     open func attributedText(for state: UIControl.State) -> NSAttributedString? {
-        return styles.attributedTitles[state.rawValue]
+        return configuration.attributedTitles[state.rawValue]
     }
     
     open func setFont(_ font: UIFont?, for state: UIControl.State) {
-        styles.fonts[state.rawValue] = font
+        configuration.fonts[state.rawValue] = font
         fontDidChange()
     }
 
     open func font(for state: UIControl.State) -> UIFont? {
-        return styles.fonts[state.rawValue]
+        return configuration.fonts[state.rawValue]
     }
 
     open func setTextColor(_ textColor: UIColor?, for state: UIControl.State) {
-        styles.textColors[state.rawValue] = textColor
+        configuration.textColors[state.rawValue] = textColor
         textColorDidChange()
     }
 
     open func textColor(for state: UIControl.State) -> UIColor? {
-        return styles.textColors[state.rawValue]
+        return configuration.textColors[state.rawValue]
     }
 
     open func setTextShadowColor(_ textShadowColor: UIColor?, for state: UIControl.State) {
-        styles.textShadowColors[state.rawValue] = textShadowColor
+        configuration.textShadowColors[state.rawValue] = textShadowColor
         textShadowColorDidChange()
     }
 
     open func textShadowColor(for state: UIControl.State) -> UIColor? {
-        return styles.textShadowColors[state.rawValue]
+        return configuration.textShadowColors[state.rawValue]
     }
 
     open func setImage(_ image: UIImage?, for state: UIControl.State) {
-        styles.images[state.rawValue] = image
+        configuration.images[state.rawValue] = image
         imageDidChange()
     }
 
     open func image(for state: UIControl.State) -> UIImage? {
-        return styles.images[state.rawValue]
+        return configuration.images[state.rawValue]
     }
 
     open func setBackgroundImage(_ backgroundImage: UIImage?, for state: UIControl.State) {
-        styles.backgroundImages[state.rawValue] = backgroundImage
+        configuration.backgroundImages[state.rawValue] = backgroundImage
         backgroundImageDidChange()
     }
 
     open func backgroundImage(for state: UIControl.State) -> UIImage? {
-        return styles.backgroundImages[state.rawValue]
+        return configuration.backgroundImages[state.rawValue]
     }
 
     open func stateDidChange() {
@@ -175,10 +174,10 @@ import XZGeometry
     }
     
     open func fontDidChange() {
-        if let font = styles.fonts[self.state.rawValue] {
+        if let font = configuration.fonts[self.state.rawValue] {
             textLabel.font = font
         } else if state != .normal {
-            textLabel.font = styles.fonts[UIControl.State.normal.rawValue]
+            textLabel.font = configuration.fonts[UIControl.State.normal.rawValue]
         } else {
             textLabel.font = .systemFont(ofSize: 17.0)
         }
@@ -186,15 +185,15 @@ import XZGeometry
     }
     
     open func textDidChange() {
-        if let attributedText = styles.attributedTitles[state.rawValue] {
+        if let attributedText = configuration.attributedTitles[state.rawValue] {
             textLabel.attributedText = attributedText
-        } else if let text = styles.texts[state.rawValue] {
+        } else if let text = configuration.texts[state.rawValue] {
             textLabel.text = text
         } else if state != .normal {
-            if let attributedText = styles.attributedTitles[UIControl.State.normal.rawValue] {
+            if let attributedText = configuration.attributedTitles[UIControl.State.normal.rawValue] {
                 textLabel.attributedText = attributedText
             } else {
-                textLabel.text = styles.texts[UIControl.State.normal.rawValue]
+                textLabel.text = configuration.texts[UIControl.State.normal.rawValue]
             }
         } else {
             textLabel.text = nil
@@ -203,30 +202,30 @@ import XZGeometry
     }
     
     open func textColorDidChange() {
-        if let textColor = styles.textColors[self.state.rawValue] {
+        if let textColor = configuration.textColors[self.state.rawValue] {
             textLabel.textColor = textColor
         } else if state != .normal {
-            textLabel.textColor =  styles.textColors[UIControl.State.normal.rawValue]
+            textLabel.textColor =  configuration.textColors[UIControl.State.normal.rawValue]
         } else {
             textLabel.textColor = nil
         }
     }
     
     open func textShadowColorDidChange() {
-        if let shadowColor = styles.textShadowColors[self.state.rawValue] {
+        if let shadowColor = configuration.textShadowColors[self.state.rawValue] {
             textLabel.shadowColor = shadowColor
         } else if state != .normal {
-            textLabel.shadowColor =  styles.textShadowColors[UIControl.State.normal.rawValue]
+            textLabel.shadowColor =  configuration.textShadowColors[UIControl.State.normal.rawValue]
         } else {
             textLabel.shadowColor = nil
         }
     }
     
     open func imageDidChange() {
-        if let image = styles.images[self.state.rawValue] {
+        if let image = configuration.images[self.state.rawValue] {
             imageView.image = image
         } else if state != .normal {
-            imageView.image = styles.images[UIControl.State.normal.rawValue]
+            imageView.image = configuration.images[UIControl.State.normal.rawValue]
         } else {
             imageView.image = nil
         }
@@ -234,19 +233,19 @@ import XZGeometry
     }
     
     open func backgroundImageDidChange() {
-        if let backgroundImage = styles.backgroundImages[self.state.rawValue] {
-            backgroundImageView.image = backgroundImage
+        if let backgroundImage = configuration.backgroundImages[self.state.rawValue] {
+            backgroundView.image = backgroundImage
         } else if state != .normal {
-            backgroundImageView.image = styles.backgroundImages[UIControl.State.normal.rawValue]
+            backgroundView.image = configuration.backgroundImages[UIControl.State.normal.rawValue]
         } else {
-            backgroundImageView.image = nil
+            backgroundView.image = nil
         }
     }
     
     /// 存储各个状态的样式。
-    private lazy var styles: StatedStyles = StatedStyles.init()
+    private lazy var configuration: Configuration = Configuration.init()
     
-    private class StatedStyles {
+    private class Configuration {
         lazy var fonts            = [UInt: UIFont]()
         lazy var texts            = [UInt: String]()
         lazy var attributedTitles = [UInt: NSAttributedString]()
@@ -254,5 +253,19 @@ import XZGeometry
         lazy var textShadowColors = [UInt: UIColor]()
         lazy var images           = [UInt: UIImage]()
         lazy var backgroundImages = [UInt: UIImage]()
+    }
+}
+
+
+@objc public class XZButton: XZTextImageControl {
+    
+    public override init(frame: CGRect) {
+        super.init(frame: frame)
+        self.style = .trailing;
+    }
+    
+    public required init?(coder: NSCoder) {
+        super.init(coder: coder);
+        self.style = .trailing;
     }
 }

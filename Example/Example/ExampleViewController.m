@@ -38,8 +38,8 @@
         @"08. XZPageControl",
         @"09. XZSegmentedControl",
         @"10. XZGeometry",
-        @"11. XZTextIconView",
-        @"12. XZContentStatusView",
+        @"11. XZTextImageView",
+        @"12. XZContentStatus",
         @"13. XZToast",
         @"14. XZURLQuery",
         @"15. XZLocale",
@@ -57,6 +57,9 @@
 
 - (void)viewDidAppear:(BOOL)animated {
     [super viewDidAppear:animated];
+    
+    UIButton * button;
+    [button titleEdgeInsets];
     
     // NSLog(@"%@", self.view.xz_description);
 }

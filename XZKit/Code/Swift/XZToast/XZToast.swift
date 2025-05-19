@@ -7,7 +7,6 @@
 
 import UIKit
 import XZGeometry
-import XZTextIconView
 #if SWIFT_PACKAGE
 @_exported import XZToastObjC
 #endif

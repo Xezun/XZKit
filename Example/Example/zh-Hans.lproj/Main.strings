@@ -278,8 +278,8 @@
 /* Class = "UISegmentedControl"; Gbp-5l-6JU.segmentTitles[5] = "5"; ObjectID = "Gbp-5l-6JU"; */
 "Gbp-5l-6JU.segmentTitles[5]" = "5";
 
-/* Class = "UILabel"; text = "11. XZTextIconView"; ObjectID = "GrJ-Xw-ggS"; */
-"GrJ-Xw-ggS.text" = "11. XZTextIconView";
+/* Class = "UILabel"; text = "11. XZTextImageView"; ObjectID = "GrJ-Xw-ggS"; */
+"GrJ-Xw-ggS.text" = "11. XZTextImageView";
 
 /* Class = "UILabel"; text = "1、状态栏"; ObjectID = "HZG-gB-TP8"; */
 "HZG-gB-TP8.text" = "1、状态栏";

@@ -11,7 +11,7 @@ import XZExtensions
 
 
 class Example12ViewController: UIViewController, XZContentStatusRepresentable {
-
+   
     override func viewDidLoad() {
         super.viewDidLoad()
         
@@ -25,7 +25,11 @@ class Example12ViewController: UIViewController, XZContentStatusRepresentable {
         setTitleColor(.red, for: .error)
         
         setImage(UIImage(named: "ex-12-empty"), for: .empty)
-        setImage(UIImage(named: "ex-12-loading"), for: .loading)
+        let indicatorView = UIActivityIndicatorView.init(style: .large)
+        indicatorView.startAnimating()
+        setImageView(indicatorView, for: .loading)
+        setTitleInsets(.init(top: 0, leading: 0, bottom: -31, trailing: 0), for: .loading)
+        setImageInsets(.init(top: -32, leading: 0, bottom: 0, trailing: 0), for: .loading)
         setImage(UIImage(named: "ex-12-error"), for: .error)
         
         contentStatusView.addTarget(self, action: #selector(contentStatusViewAction(_:)), for: .touchUpInside)

@@ -8,7 +8,7 @@
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <scenes>
-        <!--XZTextIconView-->
+        <!--XZTextImageView-->
         <scene sceneID="s0d-6b-0kx">
             <objects>
                 <viewController id="Y6W-OH-hqX" customClass="Example11ViewController" customModule="Example" customModuleProvider="target" sceneMemberID="viewController">
@@ -18,7 +18,7 @@
                         <viewLayoutGuide key="safeArea" id="vDu-zF-Fre"/>
                         <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                     </view>
-                    <navigationItem key="navigationItem" title="XZTextIconView" id="vIv-4c-f8e">
+                    <navigationItem key="navigationItem" title="XZTextImageView" id="vIv-4c-f8e">
                         <barButtonItem key="leftBarButtonItem" title="Item" image="xmark" catalog="system" style="done" id="PzC-yo-0Yo">
                             <connections>
                                 <segue destination="6KN-Kh-Oa0" kind="unwind" unwindAction="unwindToMainPage:" id="JEi-Gn-Yd1"/>

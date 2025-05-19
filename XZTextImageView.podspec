@@ -1,5 +1,5 @@
 #
-# Be sure to run `pod lib lint XZTextIconView.podspec' to ensure this is a
+# Be sure to run `pod lib lint XZTextImageView.podspec' to ensure this is a
 # valid spec before submitting.
 #
 # Any lines starting with a # are optional, but their use is encouraged
@@ -7,7 +7,7 @@
 #
 
 Pod::Spec.new do |s|
-  s.name             = 'XZTextIconView'
+  s.name             = 'XZTextImageView'
   s.version          = '10.8.0'
   s.summary          = '由图片和文字组成的视图控件'
 
@@ -32,7 +32,7 @@ Pod::Spec.new do |s|
     ss.pod_target_xcconfig = { 'GCC_PREPROCESSOR_DEFINITIONS' => 'XZ_FRAMEWORK=1' }
     ss.dependency 'XZGeometry'
 
-    ss.source_files = 'XZKit/Code/Swift/XZTextIconView/**/*.{h,m,swift}'
+    ss.source_files = 'XZKit/Code/Swift/XZTextImageView/**/*.{h,m,swift}'
   end
   
   s.subspec 'DEBUG' do |ss|

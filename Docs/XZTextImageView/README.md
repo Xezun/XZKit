@@ -3,7 +3,7 @@
 ## 安装
 
 ```ruby
-pod "XZKit/TextImageView"
+pod "XZTextImageView"
 ```
 
 ## 特性

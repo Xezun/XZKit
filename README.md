@@ -90,9 +90,9 @@ pod "XZKit"
 
 拓展的几何定义
 
-### [XZTextIconView](./Docs/XZTextIconView)
+### [XZTextImageView](./Docs/XZTextImageView)
 
-[![Version](https://img.shields.io/cocoapods/v/XZTextIconView.svg?style=flat)](https://cocoapods.org/pods/XZTextIconView)
+[![Version](https://img.shields.io/cocoapods/v/XZTextImageView.svg?style=flat)](https://cocoapods.org/pods/XZTextImageView)
 
 展示图片和文字的组件
 
