@@ -23,10 +23,25 @@ extension XZTextImageView {
         case bottom
     }
     
+    @MainActor public protocol Appearance {
+        /// 文字图片的位置关系。
+        var style: XZTextImageView.Style { get }
+        
+        /// 视图内边距，默认 .zero 。
+        var contentInsets: NSDirectionalEdgeInsets { get }
+        
+        /// 文本边距，默认 .zero 。
+        var textInsets: NSDirectionalEdgeInsets { get }
+        
+        /// 图片边距，默认 .zero 。
+        var imageInsets: NSDirectionalEdgeInsets { get }
+        
+    }
+    
     /// 实现了一个包含文本和图片的视图布局逻辑。
     /// - Note: 控件实现协议需重写 layoutSubviews 方法，并执行 layoutTextImage 方法。
     /// - Note: 如果需要支持 AutoLayout 自适应大小，需要重写 intrinsicContentSize 方法，并返回 intrinsicTextImageSize 。
-    @MainActor public protocol Layout: UIView {
+    @MainActor public protocol Layout: UIView, Appearance {
         
         /// 呈现文本的视图控件类型
         associatedtype TextView: UIView
@@ -39,18 +54,6 @@ extension XZTextImageView {
         
         /// 图片控件。
         var imageViewIfLoaded: ImageView? { get }
-        
-        /// 视图内边距，默认 .zero 。
-        var contentInsets: NSDirectionalEdgeInsets { get }
-        
-        /// 文本边距，默认 .zero 。
-        var textInsets: NSDirectionalEdgeInsets { get }
-        
-        /// 图片边距，默认 .zero 。
-        var imageInsets: NSDirectionalEdgeInsets { get }
-        
-        /// 文字图片的位置关系。
-        var style: XZTextImageView.Style { get }
         
     }
     

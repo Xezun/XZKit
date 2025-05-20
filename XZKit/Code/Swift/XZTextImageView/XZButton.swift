@@ -9,10 +9,7 @@ import Foundation
 import UIKit
 import XZGeometry
 
-@objc open class XZButton: UIControl, XZTextImageView.Layout {
-    
-    open private(set) var textViewIfLoaded: UILabel?
-    open private(set) var imageViewIfLoaded: UIImageView?
+@objc open class XZButton: UIControl, XZTextImageView.Layout, XZTextImageView.StatedAppearance {
     
     open var textLabel: UILabel {
         if let textLabel = textViewIfLoaded {
@@ -45,22 +42,6 @@ import XZGeometry
             addSubview(imageViewIfLoaded!)
         }
         return imageViewIfLoaded!
-    }
-    
-    open var contentInsets: NSDirectionalEdgeInsets = .zero {
-        didSet { setNeedsLayout() }
-    }
-    
-    open var textInsets: NSDirectionalEdgeInsets = .zero {
-        didSet { setNeedsLayout() }
-    }
-    
-    open var imageInsets: NSDirectionalEdgeInsets = .zero {
-        didSet { setNeedsLayout() }
-    }
-    
-    open var style: XZTextImageView.Style = .trailing {
-        didSet { setNeedsLayout() }
     }
     
     open private(set) var backgroundViewIfLoaded: UIImageView?
@@ -100,6 +81,29 @@ import XZGeometry
     open override var isEnabled: Bool {
         didSet { stateDidChange() }
     }
+    
+    // MARK: - XZTextImageView.Layout
+    
+    open var style: XZTextImageView.Style = .trailing {
+        didSet { setNeedsLayout() }
+    }
+    
+    open private(set) var textViewIfLoaded: UILabel?
+    open private(set) var imageViewIfLoaded: UIImageView?
+    
+    open var contentInsets: NSDirectionalEdgeInsets = .zero {
+        didSet { setNeedsLayout() }
+    }
+    
+    open var textInsets: NSDirectionalEdgeInsets = .zero {
+        didSet { setNeedsLayout() }
+    }
+    
+    open var imageInsets: NSDirectionalEdgeInsets = .zero {
+        didSet { setNeedsLayout() }
+    }
+    
+    // MARK: - XZTextImageView.StatedAppearance
 
     open func setText(_ text: String?, for state: UIControl.State) {
         configuration.texts[state.rawValue] = text
@@ -163,6 +167,8 @@ import XZGeometry
     open func backgroundImage(for state: UIControl.State) -> UIImage? {
         return configuration.backgroundImages[state.rawValue]
     }
+    
+    // MARK: - Methods for overrides
 
     open func stateDidChange() {
         textDidChange()
@@ -255,3 +261,34 @@ import XZGeometry
         lazy var backgroundImages = [UInt: UIImage]()
     }
 }
+
+extension XZTextImageView {
+    
+    public protocol StatedAppearance: XZTextImageView.Appearance {
+        
+        func text(for state: UIControl.State) -> String?
+        func setText(_ text: String?, for state: UIControl.State)
+        
+        func attributedText(for state: UIControl.State) -> NSAttributedString?
+        func setAttributedText(_ attributedText: NSAttributedString?, for state: UIControl.State)
+        
+        func font(for state: UIControl.State) -> UIFont?
+        func setFont(_ font: UIFont?, for state: UIControl.State)
+
+        func textColor(for state: UIControl.State) -> UIColor?
+        func setTextColor(_ textColor: UIColor?, for state: UIControl.State)
+
+        func textShadowColor(for state: UIControl.State) -> UIColor?
+        func setTextShadowColor(_ textShadowColor: UIColor?, for state: UIControl.State)
+
+        func image(for state: UIControl.State) -> UIImage?
+        func setImage(_ image: UIImage?, for state: UIControl.State)
+
+        func backgroundImage(for state: UIControl.State) -> UIImage?
+        func setBackgroundImage(_ backgroundImage: UIImage?, for state: UIControl.State)
+
+    }
+}
+
+
+
