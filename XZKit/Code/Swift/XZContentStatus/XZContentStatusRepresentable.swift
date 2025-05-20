@@ -7,10 +7,11 @@
 //
 
 import UIKit
+import XZTextImageView
 import ObjectiveC
 
 /// 本协议用于视图或视图控制器。
-@MainActor public protocol XZContentStatusRepresentable: XZContentStatusConfigurable {
+@MainActor public protocol XZContentStatusRepresentable {
     
     /// 控件的内容状态。
     /// - 默认情况下，内容状态 `.default` 不展示状态视图，可通过此状态，配置状态视图的默认外观样式。
@@ -19,386 +20,278 @@ import ObjectiveC
     /// - Note: 描述状态的 title/attributedTitle、image 值不属于外观，不存在默认值。
     var contentStatus: XZContentStatus { get set }
     
-    /// 呈现控件内容状态的视图。懒加载。
-    var contentStatusView: XZContentStatusView { get set }
-    
-    /// 呈现控件内容状态的视图。非懒加载。
-    var contentStatusViewIfLoaded: XZContentStatusView? { get }
+    /// 获取配置呈现指定内容状态视图的配置对象。
+    /// - Parameter contentStatus: 内容状态
+    /// - Returns: 配置呈现内容状态视图的对象
+    func configuration(for contentStatus: XZContentStatus) -> XZContentStatus.Configuration
     
 }
 
-extension XZContentStatusRepresentable {
-    
-    public var contentStatus: XZContentStatus {
-        get {
-            return contentStatusViewIfLoaded?.contentStatus ?? .default
-        }
-        set {
-            if newValue == .default {
-                contentStatusViewIfLoaded?.contentStatus = newValue
-            } else {
-                contentStatusView.contentStatus = newValue
-            }
-        }
-    }
-    
-}
+private var _manager = 0
 
 extension XZContentStatusRepresentable where Self: UIView {
     
-    public private(set) var contentStatusViewIfLoaded: XZContentStatusView? {
+    public var contentStatus: XZContentStatus {
         get {
-            return objc_getAssociatedObject(self, &AssociationKey.view) as? XZContentStatusView
+            return managerIfLoaded?.contentStatus ?? .default
         }
         set {
-            let oldValue = objc_getAssociatedObject(self, &AssociationKey.view) as? XZContentStatusView
-            if oldValue == newValue {
-                return
+            if newValue == .default {
+                managerIfLoaded?.contentStatus = newValue
+            } else {
+                manager.contentStatus = newValue
             }
-            oldValue?.removeFromSuperview()
-            
-            objc_setAssociatedObject(self, &AssociationKey.view, newValue, .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
-            
-            guard let newValue = newValue else { return }
-            newValue.frame = self.bounds;
-            newValue.contentStatus = oldValue?.contentStatus ?? .default
-            self.addSubview(newValue)
         }
     }
     
-    /// 所有已创建的状态视图。
-    /// - Note: 该属性可写，方便开发者自定义。
-    public var contentStatusView: XZContentStatusView {
+    public func configuration(for contentStatus: XZContentStatus) -> XZContentStatus.Configuration {
+        return manager.configuration(for: contentStatus)
+    }
+    
+    private var managerIfLoaded: XZContentStatusManager? {
         get {
-            if let view = objc_getAssociatedObject(self, &AssociationKey.view) as? XZContentStatusView {
-                return view
-            }
-            let view = XZContentStatusView.init()
-            contentStatusViewIfLoaded = view
-            return view
+            return objc_getAssociatedObject(self, &_manager) as? XZContentStatusManager
         }
         set {
-            contentStatusViewIfLoaded = newValue
+            let oldValue = objc_getAssociatedObject(self, &_manager) as? XZContentStatusManager
+            if oldValue === newValue {
+                return
+            }
+            objc_setAssociatedObject(self, &_manager, newValue, .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
         }
+    }
+    
+    private var manager: XZContentStatusManager {
+        if let manager = objc_getAssociatedObject(self, &_manager) as? XZContentStatusManager {
+            return manager
+        }
+        let manager = XZContentStatusManager.view(self)
+        managerIfLoaded = manager
+        return manager
     }
 }
 
 extension XZContentStatusRepresentable where Self: UIViewController {
     
-    public private(set) var contentStatusViewIfLoaded: XZContentStatusView? {
+    public var contentStatus: XZContentStatus {
         get {
-            return objc_getAssociatedObject(self, &AssociationKey.view) as? XZContentStatusView
+            return managerIfLoaded?.contentStatus ?? .default
         }
         set {
-            let oldValue = objc_getAssociatedObject(self, &AssociationKey.view) as? XZContentStatusView
-            if oldValue == newValue {
+            if newValue == .default {
+                managerIfLoaded?.contentStatus = newValue
+            } else {
+                manager.contentStatus = newValue
+            }
+        }
+    }
+    
+    public func configuration(for contentStatus: XZContentStatus) -> XZContentStatus.Configuration {
+        return manager.configuration(for: contentStatus)
+    }
+    
+    private var managerIfLoaded: XZContentStatusManager? {
+        get {
+            return objc_getAssociatedObject(self, &_manager) as? XZContentStatusManager
+        }
+        set {
+            let oldValue = objc_getAssociatedObject(self, &_manager) as? XZContentStatusManager
+            if oldValue === newValue {
                 return
             }
-            oldValue?.removeFromSuperview()
+            objc_setAssociatedObject(self, &_manager, newValue, .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
+        }
+    }
+    
+    private var manager: XZContentStatusManager {
+        if let manager = objc_getAssociatedObject(self, &_manager) as? XZContentStatusManager {
+            return manager
+        }
+        let manager = XZContentStatusManager.viewController(self)
+        managerIfLoaded = manager
+        return manager
+    }
+}
+
+@MainActor private class XZContentStatusManager: XZContentStatusRepresentable {
+    
+    static func view(_ view: UIView) -> XZContentStatusManager {
+        return ViewManager.init(view: view)
+    }
+    
+    static func viewController(_ viewController: UIViewController) -> XZContentStatusManager {
+        return ViewControllerManager.init(viewController: viewController)
+    }
+    
+    var contentStatus: XZContentStatus = .default {
+        didSet {
+            guard oldValue != contentStatus else {
+                return
+            }
             
-            objc_setAssociatedObject(self, &AssociationKey.view, newValue, .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
+            if oldValue != .default {
+                configuration(for: oldValue).view.removeFromSuperview()
+            }
             
-            guard let newValue = newValue else { return }
-            newValue.contentStatus = oldValue?.contentStatus ?? .default
-            
-            if let view = viewIfLoaded {
-                newValue.frame = view.bounds;
-                view.addSubview(newValue)
-            } else {
-                print("[XZContentStatus] 检测到控制器在 viewDidLoad 之前设置状态视图，请手动添加状态视图到控制器：\(self)")
+            updateAppearance()
+        }
+    }
+    
+    private var configurations = [XZContentStatus: XZContentStatus.Configuration]()
+    
+    func configuration(for contentStatus: XZContentStatus) -> XZContentStatus.Configuration {
+        assert(contentStatus != .default, "Configuration for XZContentStatus.defalut is not available")
+        if let configuration = configurations[contentStatus] {
+            return configuration
+        }
+        let configuration = XZContentStatus.Configuration.init(manager: self)
+        configurations[contentStatus] = configuration
+        return configuration
+    }
+    
+    func updateAppearance() {
+        
+    }
+    
+    @MainActor private class ViewManager: XZContentStatusManager {
+        
+        let view: UIView
+        
+        init(view: UIView) {
+            self.view = view
+            super.init()
+        }
+        
+        override func updateAppearance() {
+            let configuraion = configuration(for: contentStatus)
+            configuraion.view.frame = view.bounds
+            view.addSubview(configuraion.view)
+        }
+    }
+    
+    @MainActor private class ViewControllerManager: XZContentStatusManager {
+        
+        let viewController: UIViewController
+        
+        init(viewController: UIViewController) {
+            self.viewController = viewController
+            super.init()
+        }
+        
+        override func updateAppearance() {
+            guard contentStatus != .default else {
+                return
+            }
+            let configuraion = configuration(for: contentStatus)
+            configuraion.view.frame = viewController.view.bounds
+            viewController.view.addSubview(configuraion.view)
+        }
+    }
+}
+
+extension XZContentStatus {
+    
+    /// 配置状态视图的对象。
+    ///
+    /// 默认配置状态是的方法
+    @MainActor public class Configuration {
+        
+        fileprivate unowned let manager: XZContentStatusManager
+        
+        fileprivate init(manager: XZContentStatusManager) {
+            self.manager = manager
+        }
+        
+        /// 状态视图。如果设置了自定义状态视图，配置状态视图方法将不生效。
+        public lazy var view: UIView = XZContentStatusView.init() {
+            didSet {
+                manager.updateAppearance()
             }
         }
+        
     }
     
-    /// 所有已创建的状态视图。
-    /// - Note: 该属性可写，方便开发者自定义。
-    public var contentStatusView: XZContentStatusView {
-        get {
-            if let view = objc_getAssociatedObject(self, &AssociationKey.view) as? XZContentStatusView {
-                return view
-            }
-            let view = XZContentStatusView.init()
-            contentStatusViewIfLoaded = view
-            return view
-        }
-        set {
-            contentStatusViewIfLoaded = newValue
-        }
-    }
 }
 
-extension XZContentStatusRepresentable {
+extension XZContentStatus.Configuration: XZTextImageView.StatedAppearance {
     
-    public func setTitle(_ title: String?, for contentStatus: XZContentStatus) {
-        contentStatusView.setTitle(title, for: contentStatus)
+    public func addTarget(_ target: Any?, action: Selector, for controlEvents: UIControl.Event) {
+        (view as? XZButton)?.addTarget(target, action: action, for: controlEvents)
     }
     
-    public func title(for contentStatus: XZContentStatus) -> String? {
-        return contentStatusViewIfLoaded?.title(for: contentStatus);
+    public func text(for state: UIControl.State) -> String? {
+        return (view as? XZButton)?.text(for: state)
     }
     
-    public func setTitleColor(_ titleColor: UIColor?, for contentStatus: XZContentStatus) {
-        contentStatusView.setTitleColor(titleColor, for: contentStatus)
+    public func setText(_ text: String?, for state: UIControl.State) {
+        (view as? XZButton)?.setText(text, for: state)
     }
     
-    public func titleColor(for contentStatus: XZContentStatus) -> UIColor? {
-        return contentStatusViewIfLoaded?.titleColor(for: contentStatus)
+    public func attributedText(for state: UIControl.State) -> NSAttributedString? {
+        return (view as? XZButton)?.attributedText(for: state)
     }
     
-    public func setTitleShadowColor(_ titleShadowColor: UIColor?, for contentStatus: XZContentStatus) {
-        contentStatusView.setTitleShadowColor(titleShadowColor, for: contentStatus)
+    public func setAttributedText(_ attributedText: NSAttributedString?, for state: UIControl.State) {
+        (view as? XZButton)?.setAttributedText(attributedText, for: state)
     }
     
-    public func titleShadowColor(for contentStatus: XZContentStatus) -> UIColor? {
-        return contentStatusViewIfLoaded?.titleShadowColor(for: contentStatus)
+    public func font(for state: UIControl.State) -> UIFont? {
+        return (view as? XZButton)?.font(for: state)
     }
     
-    public func setAttributedTitle(_ attributedTitle: NSAttributedString?, for contentStatus: XZContentStatus) {
-        contentStatusView.setAttributedTitle(attributedTitle, for: contentStatus)
+    public func setFont(_ font: UIFont?, for state: UIControl.State) {
+        (view as? XZButton)?.setFont(font, for: state)
     }
     
-    public func attributedTitle(for contentStatus: XZContentStatus) -> NSAttributedString? {
-        return contentStatusViewIfLoaded?.attributedTitle(for: contentStatus)
+    public func textColor(for state: UIControl.State) -> UIColor? {
+        return (view as? XZButton)?.textColor(for: state)
     }
     
-    public func setImage(_ image: UIImage?, for contentStatus: XZContentStatus) {
-        contentStatusView.setImage(image, for: contentStatus)
+    public func setTextColor(_ textColor: UIColor?, for state: UIControl.State) {
+        (view as? XZButton)?.setTextColor(textColor, for: state)
     }
     
-    public func image(for contentStatus: XZContentStatus) -> UIImage? {
-        return contentStatusViewIfLoaded?.image(for: contentStatus)
+    public func textShadowColor(for state: UIControl.State) -> UIColor? {
+        return (view as? XZButton)?.textShadowColor(for: state)
     }
     
-    public func setBackgroundImage(_ backgroundImage: UIImage?, for contentStatus: XZContentStatus) {
-        contentStatusView.setBackgroundImage(backgroundImage, for: contentStatus)
+    public func setTextShadowColor(_ textShadowColor: UIColor?, for state: UIControl.State) {
+        (view as? XZButton)?.setTextShadowColor(textShadowColor, for: state)
     }
     
-    public func backgroundImage(for contentStatus: XZContentStatus) -> UIImage? {
-        return contentStatusViewIfLoaded?.backgroundImage(for: contentStatus)
+    public func image(for state: UIControl.State) -> UIImage? {
+        return (view as? XZButton)?.image(for: state)
     }
     
-    // MARK: - 无触控状态的样式。
-    
-    public func setBackgroundColor(_ backgroundColor: UIColor?, for contentStatus: XZContentStatus) {
-        contentStatusView.setBackgroundColor(backgroundColor, for: contentStatus)
+    public func setImage(_ image: UIImage?, for state: UIControl.State) {
+        (view as? XZButton)?.setImage(image, for: state)
     }
     
-    public func backgroundColor(for contentStatus: XZContentStatus) -> UIColor? {
-        return contentStatusViewIfLoaded?.backgroundColor(for: contentStatus)
+    public func backgroundImage(for state: UIControl.State) -> UIImage? {
+        return (view as? XZButton)?.backgroundImage(for: state)
     }
     
-    public func setTitleFont(_ titleFont: UIFont?, for contentStatus: XZContentStatus) {
-        contentStatusView.setTitleFont(titleFont, for: contentStatus)
+    public func setBackgroundImage(_ backgroundImage: UIImage?, for state: UIControl.State) {
+        (view as? XZButton)?.setBackgroundImage(backgroundImage, for: state)
     }
     
-    public func titleFont(for contentStatus: XZContentStatus) -> UIFont? {
-        return contentStatusViewIfLoaded?.titleFont(for: contentStatus)
+    public var style: XZTextImageView.Style {
+        get { return (view as? XZButton)?.style ?? .bottom }
+        set { (view as? XZButton)?.style = newValue }
     }
     
-    public func setContentInsets(_ contentInsets: NSDirectionalEdgeInsets, for contentStatus: XZContentStatus) {
-        contentStatusView.setContentInsets(contentInsets, for: contentStatus)
+    public var contentInsets: NSDirectionalEdgeInsets {
+        get { return (view as? XZButton)?.contentInsets ?? .zero }
+        set { (view as? XZButton)?.contentInsets = newValue }
     }
     
-    public func contentInsets(for contentStatus: XZContentStatus) -> NSDirectionalEdgeInsets {
-        return contentStatusView.contentInsets(for: contentStatus)
+    public var textInsets: NSDirectionalEdgeInsets {
+        get { return (view as? XZButton)?.textInsets ?? .zero }
+        set { (view as? XZButton)?.textInsets = newValue }
     }
     
-    public func setTitleInsets(_ titleEdgeInsets: NSDirectionalEdgeInsets, for contentStatus: XZContentStatus) {
-        contentStatusView.setTitleInsets(titleEdgeInsets, for: contentStatus)
+    public var imageInsets: NSDirectionalEdgeInsets {
+        get { return (view as? XZButton)?.imageInsets ?? .zero }
+        set { (view as? XZButton)?.imageInsets = newValue }
     }
-    
-    public func titleInsets(for contentStatus: XZContentStatus) -> NSDirectionalEdgeInsets {
-        return contentStatusView.titleInsets(for: contentStatus)
-    }
-    
-    public func setImageInsets(_ imageEdgeInsets: NSDirectionalEdgeInsets, for contentStatus: XZContentStatus) {
-        contentStatusView.setImageInsets(imageEdgeInsets, for: contentStatus)
-    }
-    
-    public func imageInsets(for contentStatus: XZContentStatus) -> NSDirectionalEdgeInsets {
-        return contentStatusView.imageInsets(for: contentStatus)
-    }
-    
-    public func imageView(for contentStatus: XZContentStatus) -> UIView? {
-        return contentStatusViewIfLoaded?.imageView(for: contentStatus)
-    }
-    
-    public func setImageView(_ view: UIView?, for contentStatus: XZContentStatus) {
-        contentStatusView.setImageView(view, for: contentStatus)
-    }
-}
-
-
-@MainActor private struct AssociationKey {
-    static var view: Int = 0
-}
-
-@MainActor public protocol XZContentStatusConfigurable: AnyObject {
-    
-    /// 设置指定内容状态下，状态视图显示的标题文本。
-    ///
-    /// - Parameters:
-    ///   - title: 标题文本。
-    ///   - contentStatus: 指定的内容状态。
-    ///   - state: 触控状态，默认 normal 。
-    func setTitle(_ title: String?, for contentStatus: XZContentStatus)
-    
-    /// 获取指定内容状态下，已设置的标题文本。
-    ///
-    /// - Parameters:
-    ///   - contentStatus: 指定的内容状态。
-    ///   - state: 触控状态，默认 normal 。
-    /// - Returns: 标题文字。
-    func title(for contentStatus: XZContentStatus) -> String?
-    
-    /// 设置指定内容状态下，标题文本的外边距。
-    ///
-    /// - Parameters:
-    ///   - titleEdgeInsets: 标题文本的外边距。
-    ///   - contentStatus: 指定的内容状态。
-    func setTitleInsets(_ titleInsets: NSDirectionalEdgeInsets, for contentStatus: XZContentStatus)
-    
-    /// 获取已设置的指定内容状态下的标题文本外边距。
-    ///
-    /// - Parameter contentStatus: 指定的内容状态。
-    /// - Returns: 标题文本的外边距。
-    func titleInsets(for contentStatus: XZContentStatus) -> NSDirectionalEdgeInsets
-    
-    /// 设置指定内容状态下，状态视图的标题文本颜色。
-    ///
-    /// - Parameters:
-    ///   - titleColor: 标题文本颜色。
-    ///   - contentStatus: 指定的内容状态。
-    ///   - state: 触控状态，默认 normal 。
-    func setTitleColor(_ titleColor: UIColor?, for contentStatus: XZContentStatus)
-    
-    /// 获取指定状态下已设置的标题文字颜色。
-    ///
-    /// - Parameters:
-    ///   - contentStatus: 指定的内容状态。
-    ///   - state: 触控状态，默认 normal 。
-    /// - Returns: 标题文本颜色。
-    func titleColor(for contentStatus: XZContentStatus) -> UIColor?
-    
-    /// 设置指定内容状态下，状态视图的标题文本字体。
-    ///
-    /// - Parameters:
-    ///   - titleFont: 标题文本字体。
-    ///   - contentStatus: 指定的内容状态。
-    func setTitleFont(_ titleFont: UIFont?, for contentStatus: XZContentStatus)
-    
-    /// 获取指定状态下已设置的标题文字字体。
-    ///
-    /// - Parameters:
-    ///   - contentStatus: 指定的内容状态。
-    /// - Returns: 标题文本字体。
-    func titleFont(for contentStatus: XZContentStatus) -> UIFont?
-    
-    /// 设置指定状态下的标题文本阴影颜色。
-    ///
-    /// - Parameters:
-    ///   - titleShadowColor: 标题文本阴影颜色。
-    ///   - contentStatus: 指定的内容状态。
-    ///   - state: 触控状态，默认 normal 。
-    func setTitleShadowColor(_ titleShadowColor: UIColor?, for contentStatus: XZContentStatus)
-    
-    /// 获取指定状态下已设置的标题文本阴影颜色。
-    ///
-    /// - Parameters:
-    ///   - contentStatus: 指定的内容状态。
-    ///   - state: 触控状态，默认 normal 。
-    /// - Returns: 标题文本阴影颜色。
-    func titleShadowColor(for contentStatus: XZContentStatus) -> UIColor?
-    
-    /// 设置指定状态下的标题富文本。
-    ///
-    /// - Parameters:
-    ///   - attributedTitle: 标题富文本。
-    ///   - contentStatus: 指定的内容状态。
-    ///   - state: 触控状态，默认 normal 。
-    func setAttributedTitle(_ attributedTitle: NSAttributedString?, for contentStatus: XZContentStatus)
-    
-    /// 获取指定状态下已设置的标题富文本。
-    ///
-    /// - Parameters:
-    ///   - contentStatus: 指定的内容状态。
-    ///   - state: 触控状态，默认 normal 。
-    /// - Returns: 标题富文本。
-    func attributedTitle(for contentStatus: XZContentStatus) -> NSAttributedString?
-    
-    /// 设置指定内容状态下，状态视图显示的图片。
-    ///
-    /// - Parameters:
-    ///   - image: 待显示的图片。
-    ///   - contentStatus: 指定的内容状态。
-    ///   - state: 触控状态，默认 normal 。
-    func setImage(_ image: UIImage?, for contentStatus: XZContentStatus)
-    
-    /// 获取已设置的状态图像。
-    ///
-    /// - Parameters:
-    ///   - contentStatus: 指定的内容状态。
-    ///   - state: 触控状态，默认 normal 。
-    /// - Returns: 已设置的图片。
-    func image(for contentStatus: XZContentStatus) -> UIImage?
-    
-    /// 设置指定内容状态下，图片的外边距。
-    ///
-    /// - Parameters:
-    ///   - imageEdgeInsets: 图片外边距。
-    ///   - contentStatus: 指定的内容状态。
-    func setImageInsets(_ imageInsets: NSDirectionalEdgeInsets, for contentStatus: XZContentStatus)
-    
-    /// 获取指定内容状态下，图片的外边距。
-    ///
-    /// - Parameter contentStatus: 指定的内容状态。
-    /// - Returns: 图片的外边距。
-    func imageInsets(for contentStatus: XZContentStatus) -> NSDirectionalEdgeInsets
-    
-    /// 设置在某一状态下要显示的背景图片。
-    ///
-    /// - Parameters:
-    ///   - backgroundImage: 背景图片。
-    ///   - contentStatus: 指定的内容状态。
-    ///   - state: 触控状态，默认 normal 。
-    func setBackgroundImage(_ backgroundImage: UIImage?, for contentStatus: XZContentStatus)
-    /// 获取已设置的状态背景图片。
-    ///
-    /// - Parameters:
-    ///   - contentStatus: 指定的内容状态。
-    ///   - state: 触控状态，默认 normal 。
-    /// - Returns: 已设置的背景图片。
-    func backgroundImage(for contentStatus: XZContentStatus) -> UIImage?
-    
-    /// 设置指定内容状态下，状态视图的背景色。
-    /// - Note: 背景色默认与当前视图一致，但如果状态视图创建后更改了当前视图背景色，状态视图不会自动改变背景色。
-    ///
-    /// - Parameters:
-    ///   - backgroundColor: 状态视图的背景色。
-    ///   - contentStatus: 指定的内容状态。
-    func setBackgroundColor(_ backgroundColor: UIColor?, for contentStatus: XZContentStatus)
-    
-    /// 获取指定状态下已设置的状态视图的背景色。
-    ///
-    /// - Parameters:
-    ///   - contentStatus: 指定的内容状态。
-    /// - Returns: 状态视图的背景色。
-    func backgroundColor(for contentStatus: XZContentStatus) -> UIColor?
-    
-    /// 设置指定状态下的状态视图的内边距。
-    ///
-    /// - Parameters:
-    ///   - contentInsets: 要指定的内边距。
-    ///   - contentStatus: 指定的内容状态。
-    func setContentInsets(_ contentInsets: NSDirectionalEdgeInsets, for contentStatus: XZContentStatus)
-    
-    /// 获取指定状态下，状态视图的内边距。
-    ///
-    /// - Parameter contentStatus: 指定的内容状态。
-    /// - Returns: 状态视图的内边距。
-    func contentInsets(for contentStatus: XZContentStatus) -> NSDirectionalEdgeInsets
-    
-    func setImageView(_ view: UIView?, for contentStatus: XZContentStatus)
-    
-    func imageView(for contentStatus: XZContentStatus) -> UIView?
 }

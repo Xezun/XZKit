@@ -264,7 +264,7 @@ import XZGeometry
 
 extension XZTextImageView {
     
-    public protocol StatedAppearance: XZTextImageView.Appearance {
+    @MainActor public protocol StatedAppearance: XZTextImageView.Appearance {
         
         func text(for state: UIControl.State) -> String?
         func setText(_ text: String?, for state: UIControl.State)
