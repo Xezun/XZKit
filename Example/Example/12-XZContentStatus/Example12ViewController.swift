@@ -12,6 +12,10 @@ import XZTextImageView
 import XZToast
 
 class Example12ViewController: UIViewController, XZContentStatusRepresentable {
+    
+    deinit {
+        NSLog("%@ deinit", self)
+    }
    
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -42,7 +46,7 @@ class Example12ViewController: UIViewController, XZContentStatusRepresentable {
     }
     
     @IBAction func resetButtonAction(_ sender: UIBarButtonItem) {
-        self.contentStatus = .empty
+        self.contentStatus = .loading
     }
     
     @objc func didClickEmptyStatus(_ sender: Any) {

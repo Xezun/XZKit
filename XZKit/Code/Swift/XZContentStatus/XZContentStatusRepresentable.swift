@@ -155,7 +155,7 @@ extension XZContentStatusRepresentable where Self: UIViewController {
     
     @MainActor private class ViewManager: XZContentStatusManager {
         
-        let view: UIView
+        unowned let view: UIView
         
         init(view: UIView) {
             self.view = view
@@ -171,7 +171,7 @@ extension XZContentStatusRepresentable where Self: UIViewController {
     
     @MainActor private class ViewControllerManager: XZContentStatusManager {
         
-        let viewController: UIViewController
+        unowned let viewController: UIViewController
         
         init(viewController: UIViewController) {
             self.viewController = viewController
