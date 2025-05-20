@@ -13,12 +13,14 @@ import XZTextImageView
     
     override public init(frame: CGRect) {
         super.init(frame: frame)
+        autoresizingMask = [.flexibleWidth, .flexibleHeight]
         backgroundColor = .white
         style = .bottom
     }
     
     required public init?(coder: NSCoder) {
         super.init(coder: coder)
+        autoresizingMask = [.flexibleWidth, .flexibleHeight]
         backgroundColor = .white
         style = .bottom
     }
