@@ -27,168 +27,6 @@ import ObjectiveC
     
 }
 
-private var _manager = 0
-
-extension XZContentStatusRepresentable where Self: UIView {
-    
-    public var contentStatus: XZContentStatus {
-        get {
-            return managerIfLoaded?.contentStatus ?? .default
-        }
-        set {
-            if newValue == .default {
-                managerIfLoaded?.contentStatus = newValue
-            } else {
-                manager.contentStatus = newValue
-            }
-        }
-    }
-    
-    public func configuration(for contentStatus: XZContentStatus) -> XZContentStatus.Configuration {
-        return manager.configuration(for: contentStatus)
-    }
-    
-    private var managerIfLoaded: XZContentStatusManager? {
-        get {
-            return objc_getAssociatedObject(self, &_manager) as? XZContentStatusManager
-        }
-        set {
-            let oldValue = objc_getAssociatedObject(self, &_manager) as? XZContentStatusManager
-            if oldValue === newValue {
-                return
-            }
-            objc_setAssociatedObject(self, &_manager, newValue, .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
-        }
-    }
-    
-    private var manager: XZContentStatusManager {
-        if let manager = objc_getAssociatedObject(self, &_manager) as? XZContentStatusManager {
-            return manager
-        }
-        let manager = XZContentStatusManager.view(self)
-        managerIfLoaded = manager
-        return manager
-    }
-}
-
-extension XZContentStatusRepresentable where Self: UIViewController {
-    
-    public var contentStatus: XZContentStatus {
-        get {
-            return managerIfLoaded?.contentStatus ?? .default
-        }
-        set {
-            if newValue == .default {
-                managerIfLoaded?.contentStatus = newValue
-            } else {
-                manager.contentStatus = newValue
-            }
-        }
-    }
-    
-    public func configuration(for contentStatus: XZContentStatus) -> XZContentStatus.Configuration {
-        return manager.configuration(for: contentStatus)
-    }
-    
-    private var managerIfLoaded: XZContentStatusManager? {
-        get {
-            return objc_getAssociatedObject(self, &_manager) as? XZContentStatusManager
-        }
-        set {
-            let oldValue = objc_getAssociatedObject(self, &_manager) as? XZContentStatusManager
-            if oldValue === newValue {
-                return
-            }
-            objc_setAssociatedObject(self, &_manager, newValue, .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
-        }
-    }
-    
-    private var manager: XZContentStatusManager {
-        if let manager = objc_getAssociatedObject(self, &_manager) as? XZContentStatusManager {
-            return manager
-        }
-        let manager = XZContentStatusManager.viewController(self)
-        managerIfLoaded = manager
-        return manager
-    }
-}
-
-@MainActor private class XZContentStatusManager: XZContentStatusRepresentable {
-    
-    static func view(_ view: UIView) -> XZContentStatusManager {
-        return ViewManager.init(view: view)
-    }
-    
-    static func viewController(_ viewController: UIViewController) -> XZContentStatusManager {
-        return ViewControllerManager.init(viewController: viewController)
-    }
-    
-    var contentStatus: XZContentStatus = .default {
-        didSet {
-            guard oldValue != contentStatus else {
-                return
-            }
-            
-            if oldValue != .default {
-                configuration(for: oldValue).view.removeFromSuperview()
-            }
-            
-            updateAppearance()
-        }
-    }
-    
-    private var configurations = [XZContentStatus: XZContentStatus.Configuration]()
-    
-    func configuration(for contentStatus: XZContentStatus) -> XZContentStatus.Configuration {
-        assert(contentStatus != .default, "Configuration for XZContentStatus.defalut is not available")
-        if let configuration = configurations[contentStatus] {
-            return configuration
-        }
-        let configuration = XZContentStatus.Configuration.init(manager: self)
-        configurations[contentStatus] = configuration
-        return configuration
-    }
-    
-    func updateAppearance() {
-        
-    }
-    
-    @MainActor private class ViewManager: XZContentStatusManager {
-        
-        unowned let view: UIView
-        
-        init(view: UIView) {
-            self.view = view
-            super.init()
-        }
-        
-        override func updateAppearance() {
-            let configuraion = configuration(for: contentStatus)
-            configuraion.view.frame = view.bounds
-            view.addSubview(configuraion.view)
-        }
-    }
-    
-    @MainActor private class ViewControllerManager: XZContentStatusManager {
-        
-        unowned let viewController: UIViewController
-        
-        init(viewController: UIViewController) {
-            self.viewController = viewController
-            super.init()
-        }
-        
-        override func updateAppearance() {
-            guard contentStatus != .default else {
-                return
-            }
-            let configuraion = configuration(for: contentStatus)
-            configuraion.view.frame = viewController.view.bounds
-            viewController.view.addSubview(configuraion.view)
-        }
-    }
-}
-
 extension XZContentStatus {
     
     /// 配置状态视图的对象。
@@ -293,5 +131,160 @@ extension XZContentStatus.Configuration: XZTextImageView.StatedAppearance {
     public var imageInsets: NSDirectionalEdgeInsets {
         get { return (view as? XZButton)?.imageInsets ?? .zero }
         set { (view as? XZButton)?.imageInsets = newValue }
+    }
+}
+
+private var _manager = 0
+
+extension XZContentStatusRepresentable where Self: UIView {
+    
+    public var contentStatus: XZContentStatus {
+        get {
+            return managerIfLoaded?.contentStatus ?? .default
+        }
+        set {
+            if newValue == .default {
+                managerIfLoaded?.contentStatus = newValue
+            } else {
+                manager.contentStatus = newValue
+            }
+        }
+    }
+    
+    public func configuration(for contentStatus: XZContentStatus) -> XZContentStatus.Configuration {
+        return manager.configuration(for: contentStatus)
+    }
+    
+    private var managerIfLoaded: XZContentStatusManager? {
+        get {
+            return objc_getAssociatedObject(self, &_manager) as? XZContentStatusManager
+        }
+        set {
+            let oldValue = objc_getAssociatedObject(self, &_manager) as? XZContentStatusManager
+            if oldValue === newValue {
+                return
+            }
+            objc_setAssociatedObject(self, &_manager, newValue, .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
+        }
+    }
+    
+    private var manager: XZContentStatusManager {
+        if let manager = objc_getAssociatedObject(self, &_manager) as? XZContentStatusManager {
+            return manager
+        }
+        let manager = XZViewContentStatusManager.init(self)
+        managerIfLoaded = manager
+        return manager
+    }
+}
+
+extension XZContentStatusRepresentable where Self: UIViewController {
+    
+    public var contentStatus: XZContentStatus {
+        get {
+            return managerIfLoaded?.contentStatus ?? .default
+        }
+        set {
+            if newValue == .default {
+                managerIfLoaded?.contentStatus = newValue
+            } else {
+                manager.contentStatus = newValue
+            }
+        }
+    }
+    
+    public func configuration(for contentStatus: XZContentStatus) -> XZContentStatus.Configuration {
+        return manager.configuration(for: contentStatus)
+    }
+    
+    private var managerIfLoaded: XZContentStatusManager? {
+        get {
+            return objc_getAssociatedObject(self, &_manager) as? XZContentStatusManager
+        }
+        set {
+            let oldValue = objc_getAssociatedObject(self, &_manager) as? XZContentStatusManager
+            if oldValue === newValue {
+                return
+            }
+            objc_setAssociatedObject(self, &_manager, newValue, .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
+        }
+    }
+    
+    private var manager: XZContentStatusManager {
+        if let manager = objc_getAssociatedObject(self, &_manager) as? XZContentStatusManager {
+            return manager
+        }
+        let manager = XZViewControllerContentStatusManager.init(self)
+        managerIfLoaded = manager
+        return manager
+    }
+}
+
+@MainActor private class XZContentStatusManager: XZContentStatusRepresentable {
+    
+    var contentStatus: XZContentStatus = .default {
+        didSet {
+            guard oldValue != contentStatus else {
+                return
+            }
+            
+            if oldValue != .default {
+                configuration(for: oldValue).view.removeFromSuperview()
+            }
+            
+            updateAppearance()
+        }
+    }
+    
+    private var configurations = [XZContentStatus: XZContentStatus.Configuration]()
+    
+    func configuration(for contentStatus: XZContentStatus) -> XZContentStatus.Configuration {
+        assert(contentStatus != .default, "Configuration for XZContentStatus.defalut is not available")
+        if let configuration = configurations[contentStatus] {
+            return configuration
+        }
+        let configuration = XZContentStatus.Configuration.init(manager: self)
+        configurations[contentStatus] = configuration
+        return configuration
+    }
+    
+    func updateAppearance() {
+        
+    }
+    
+}
+
+@MainActor private class XZViewContentStatusManager: XZContentStatusManager {
+    
+    unowned let view: UIView
+    
+    init(_ view: UIView) {
+        self.view = view
+        super.init()
+    }
+    
+    override func updateAppearance() {
+        let configuraion = configuration(for: contentStatus)
+        configuraion.view.frame = view.bounds
+        view.addSubview(configuraion.view)
+    }
+}
+
+@MainActor private class XZViewControllerContentStatusManager: XZContentStatusManager {
+    
+    unowned let viewController: UIViewController
+    
+    init(_ viewController: UIViewController) {
+        self.viewController = viewController
+        super.init()
+    }
+    
+    override func updateAppearance() {
+        guard contentStatus != .default else {
+            return
+        }
+        let configuraion = configuration(for: contentStatus)
+        configuraion.view.frame = viewController.view.bounds
+        viewController.view.addSubview(configuraion.view)
     }
 }
