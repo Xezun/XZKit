@@ -34,11 +34,7 @@
 }
 
 - (void)traitCollectionDidChange:(UITraitCollection *)previousTraitCollection {
-    if (self.traitCollection.userInterfaceStyle == UIUserInterfaceStyleDark) {
-        self.layer.shadowColor = [UIColor colorWithWhite:0.2 alpha:1.0].CGColor;
-    } else {
-        self.layer.shadowColor = UIColor.blackColor.CGColor;
-    }
+    self.layer.shadowColor = [XZToast.shadowColor resolvedColorWithTraitCollection:self.traitCollection].CGColor;
 }
 
 - (NSString *)text {

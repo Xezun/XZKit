@@ -33,12 +33,7 @@
 - (instancetype)initWithFrame:(CGRect)frame {
     self = [super initWithFrame:frame];
     if (self) {
-        self.backgroundColor = [UIColor colorWithDynamicProvider:^UIColor * _Nonnull(UITraitCollection * _Nonnull traitCollection) {
-            if (traitCollection.userInterfaceStyle == UIUserInterfaceStyleDark) {
-                return [UIColor colorWithWhite:0.3 alpha:0.9];
-            }
-            return [UIColor colorWithWhite:0.0 alpha:0.7];
-        }];
+        self.backgroundColor = XZToast.backgroundColor;
         self.layer.cornerRadius = 6.0;
         self.clipsToBounds = true;
         
@@ -46,7 +41,7 @@
         
         _textLabel = [[UILabel alloc] init];
         _textLabel.textColor = UIColor.whiteColor;
-        _textLabel.font = [UIFont monospacedDigitSystemFontOfSize:17.0 weight:(UIFontWeightRegular)];
+        _textLabel.font = XZToast.font;
         _textLabel.textAlignment = NSTextAlignmentCenter;
         _textLabel.numberOfLines = 2.0;
         _textLabel.lineBreakMode = NSLineBreakByTruncatingTail;

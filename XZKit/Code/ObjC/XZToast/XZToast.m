@@ -12,6 +12,10 @@ NSTimeInterval const XZToastAnimationDuration = 0.35;
 
 static NSInteger _maximumNumberOfToasts = 3;
 static CGFloat   _toastOffsets[3]       = {+20.0, 0.0, -20.0};
+static UIColor *_textColor = nil;
+static UIFont *_font = nil;
+static UIColor *_backgroundColor = nil;
+static UIColor *_shadowColor = nil;
 
 @implementation XZToast
 
@@ -29,6 +33,60 @@ static CGFloat   _toastOffsets[3]       = {+20.0, 0.0, -20.0};
 
 + (void)setToastOffset:(CGFloat)offset forPosition:(XZToastPosition)position {
     _toastOffsets[position] = offset;
+}
+
++ (UIColor *)textColor {
+    if (_textColor) {
+        return _textColor;
+    }
+    return UIColor.whiteColor;
+}
+
++ (void)setTextColor:(UIColor *)textColor {
+    _textColor = textColor;
+}
+
++ (UIColor *)backgroundColor {
+    if (_backgroundColor) {
+        return _backgroundColor;
+    }
+    return [UIColor colorWithDynamicProvider:^UIColor * _Nonnull(UITraitCollection * _Nonnull traitCollection) {
+        if (traitCollection.userInterfaceStyle == UIUserInterfaceStyleDark) {
+            return [UIColor colorWithWhite:0.3 alpha:0.9];
+        }
+        return [UIColor colorWithWhite:0.0 alpha:0.7];
+    }];
+}
+
++ (void)setBackgroundColor:(UIColor *)backgroundColor {
+    _backgroundColor = backgroundColor;
+}
+
++ (UIFont *)font {
+    if (_font) {
+        return _font;
+    }
+    return [UIFont monospacedDigitSystemFontOfSize:17.0 weight:(UIFontWeightRegular)];
+}
+
++ (void)setFont:(UIFont *)font {
+    _font = font;
+}
+
++ (UIColor *)shadowColor {
+    if (_shadowColor == nil) {
+        _shadowColor = [UIColor colorWithDynamicProvider:^UIColor * _Nonnull(UITraitCollection * _Nonnull traitCollection) {
+            if (traitCollection.userInterfaceStyle == UIUserInterfaceStyleDark) {
+                return [UIColor colorWithWhite:0.2 alpha:1.0];
+            }
+            return UIColor.blackColor;
+        }];
+    }
+    return _shadowColor;
+}
+
++ (void)setShadowColor:(UIColor *)shadowColor {
+    _shadowColor = shadowColor;
 }
 
 @synthesize view = _view;

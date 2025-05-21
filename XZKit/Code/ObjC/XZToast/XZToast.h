@@ -33,6 +33,10 @@ NS_REFINED_FOR_SWIFT @interface XZToast : NSObject <NSCopying>
 
 /// 默认数量限制。
 @property (class) NSInteger maximumNumberOfToasts;
+@property (class) UIColor *textColor;
+@property (class) UIFont *font;
+@property (class) UIColor *backgroundColor;
+@property (class) UIColor *shadowColor;
 
 /// 设置默认位置偏移量。
 + (void)setToastOffset:(CGFloat)offset forPosition:(XZToastPosition)position;
