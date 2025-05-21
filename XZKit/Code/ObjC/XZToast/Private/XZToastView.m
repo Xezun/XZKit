@@ -33,7 +33,12 @@
 - (instancetype)initWithFrame:(CGRect)frame {
     self = [super initWithFrame:frame];
     if (self) {
-        self.backgroundColor = [UIColor colorWithWhite:0 alpha:0.7];
+        self.backgroundColor = [UIColor colorWithDynamicProvider:^UIColor * _Nonnull(UITraitCollection * _Nonnull traitCollection) {
+            if (traitCollection.userInterfaceStyle == UIUserInterfaceStyleDark) {
+                return [UIColor colorWithWhite:0.3 alpha:0.9];
+            }
+            return [UIColor colorWithWhite:0.0 alpha:0.7];
+        }];
         self.layer.cornerRadius = 6.0;
         self.clipsToBounds = true;
         

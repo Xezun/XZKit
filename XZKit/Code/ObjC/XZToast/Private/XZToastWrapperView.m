@@ -33,6 +33,14 @@
     return self;
 }
 
+- (void)traitCollectionDidChange:(UITraitCollection *)previousTraitCollection {
+    if (self.traitCollection.userInterfaceStyle == UIUserInterfaceStyleDark) {
+        self.layer.shadowColor = [UIColor colorWithWhite:0.2 alpha:1.0].CGColor;
+    } else {
+        self.layer.shadowColor = UIColor.blackColor.CGColor;
+    }
+}
+
 - (NSString *)text {
     return self.view.text;
 }

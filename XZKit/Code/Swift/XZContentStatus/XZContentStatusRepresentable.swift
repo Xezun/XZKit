@@ -134,7 +134,7 @@ extension XZContentStatus.Configuration: XZTextImageView.StatedAppearance {
     }
 }
 
-private var _manager = 0
+nonisolated(unsafe) private var _manager = 0
 
 extension XZContentStatusRepresentable where Self: UIView {
     
