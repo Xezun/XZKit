@@ -35,10 +35,10 @@ NS_REFINED_FOR_SWIFT @interface XZToast : NSObject <NSCopying>
 @property (class) NSInteger maximumNumberOfToasts;
 
 /// 设置默认位置偏移量。
-+ (void)setOffset:(CGFloat)offset forToastInPosition:(XZToastPosition)position;
++ (void)setToastOffset:(CGFloat)offset forPosition:(XZToastPosition)position;
 
 /// 获取默认位置偏移量。
-+ (CGFloat)offsetForToastInPosition:(XZToastPosition)position;
++ (CGFloat)toastOffsetForPosition:(XZToastPosition)position;
 
 /// 呈现提示消息的视图。
 @property (nonatomic, readonly) __kindof UIView<XZToastView> *view;

@@ -69,9 +69,9 @@
         
         _maximumNumberOfToasts = XZToast.maximumNumberOfToasts;
         _offsets = calloc(3, sizeof(XZToastPosition));
-        _offsets[XZToastPositionTop] = [XZToast offsetForToastInPosition:(XZToastPositionTop)];
-        _offsets[XZToastPositionMiddle] = [XZToast offsetForToastInPosition:(XZToastPositionMiddle)];
-        _offsets[XZToastPositionBottom] = [XZToast offsetForToastInPosition:(XZToastPositionBottom)];
+        _offsets[XZToastPositionTop]    = [XZToast toastOffsetForPosition:(XZToastPositionTop)];
+        _offsets[XZToastPositionMiddle] = [XZToast toastOffsetForPosition:(XZToastPositionMiddle)];
+        _offsets[XZToastPositionBottom] = [XZToast toastOffsetForPosition:(XZToastPositionBottom)];
         
         _waitingToShowTasks = [NSMutableArray arrayWithCapacity:16];
         _showingTasks = [NSMutableArray arrayWithCapacity:16];
@@ -115,7 +115,7 @@
     UIView     * const _rootView      = _viewController.view;
     UIEdgeInsets const safeAreaInsets = _rootView.safeAreaInsets;
     CGRect       const bounds         = _rootView.bounds;
-    return CGRectInset(UIEdgeInsetsInsetRect(bounds, safeAreaInsets), XZToastMargin, XZToastMargin);
+    return CGRectInset(UIEdgeInsetsInsetRect(bounds, safeAreaInsets), XZToastMargin, 0);
 }
 
 - (XZToastTask *)showToast:(XZToast *)toast duration:(NSTimeInterval)duration position:(XZToastPosition)position exclusive:(BOOL)exclusive completion:(XZToastCompletion)completion {
@@ -397,23 +397,20 @@
             switch (_position) {
                 case XZToastPositionTop:
                     // 顶部 toast 入场动画：渐显下移
-                    newToastItem->_frame.origin.y = CGRectGetMinY(_bounds) - newToastItem->_frame.size.height;
-                    newToastItem->_frame.origin.y += _offsets[_position];
+                    newToastItem->_frame.origin.y = CGRectGetMinY(_bounds) - newToastItem->_frame.size.height + _offsets[XZToastPositionTop];
                     newToastItem.wrapperView.alpha = 0;
                     newToastItem.wrapperView.frame = newToastItem->_frame;
                     break;
                 case XZToastPositionMiddle:
                     // 中部 toast 入场动画：弹性放大
-                    newToastItem->_frame.origin.y = CGRectGetMidY(_bounds) - newToastItem->_frame.size.height * 0.5;
-                    newToastItem->_frame.origin.y += _offsets[_position];
+                    newToastItem->_frame.origin.y = CGRectGetMidY(_bounds) - newToastItem->_frame.size.height * 0.5 + _offsets[XZToastPositionMiddle];
                     newToastItem.wrapperView.alpha = 1.0;
                     newToastItem.wrapperView.frame = newToastItem->_frame;
                     newToastItem.wrapperView.transform = CGAffineTransformMakeScale(0.01, 0.01);
                     break;
                 case XZToastPositionBottom:
                     // 底部 toast 入场动画：渐显上移
-                    newToastItem->_frame.origin.y = CGRectGetMaxY(_bounds);
-                    newToastItem->_frame.origin.y += _offsets[_position];
+                    newToastItem->_frame.origin.y = CGRectGetMaxY(_bounds) + _offsets[XZToastPositionBottom];
                     newToastItem.wrapperView.alpha = 0;
                     newToastItem.wrapperView.frame = newToastItem->_frame;
                     break;

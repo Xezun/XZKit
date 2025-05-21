@@ -40,12 +40,12 @@
     [self.nextResponder xz_setMaximumNumberOfToasts:xz_maximumNumberOfToasts];
 }
 
-- (void)xz_setOffset:(CGFloat)offset forToastInPosition:(XZToastPosition)position {
-    [self.nextResponder xz_setOffset:offset forToastInPosition:position];
+- (void)xz_setToastOffset:(CGFloat)offset forPosition:(XZToastPosition)position {
+    [self.nextResponder xz_setToastOffset:offset forPosition:position];
 }
 
-- (CGFloat)xz_offsetForToastInPosition:(XZToastPosition)position {
-    return [self.nextResponder xz_offsetForToastInPosition:position];
+- (CGFloat)xz_toastOffsetForPosition:(XZToastPosition)position {
+    return [self.nextResponder xz_toastOffsetForPosition:position];
 }
 
 - (nullable XZToast *)xz_showToast:(XZToast *)toast duration:(NSTimeInterval)duration position:(XZToastPosition)position completion:(nullable XZToastCompletion)completion {
@@ -120,12 +120,12 @@
     [self.xz_mainWindow xz_setMaximumNumberOfToasts:xz_maximumNumberOfToasts];
 }
 
-- (void)xz_setOffset:(CGFloat)offset forToastInPosition:(XZToastPosition)position {
-    [self.xz_mainWindow xz_setOffset:offset forToastInPosition:position];
+- (void)xz_setToastOffset:(CGFloat)offset forPosition:(XZToastPosition)position {
+    [self.xz_mainWindow xz_setToastOffset:offset forPosition:position];
 }
 
-- (CGFloat)xz_offsetForToastInPosition:(XZToastPosition)position {
-    return [self.xz_mainWindow xz_offsetForToastInPosition:position];
+- (CGFloat)xz_toastOffsetForPosition:(XZToastPosition)position {
+    return [self.xz_mainWindow xz_toastOffsetForPosition:position];
 }
 
 @end
@@ -156,12 +156,12 @@
     [self.rootViewController xz_setMaximumNumberOfToasts:xz_maximumNumberOfToasts];
 }
 
-- (void)xz_setOffset:(CGFloat)offset forToastInPosition:(XZToastPosition)position {
-    [self.rootViewController xz_setOffset:offset forToastInPosition:position];
+- (void)xz_setToastOffset:(CGFloat)offset forPosition:(XZToastPosition)position {
+    [self.rootViewController xz_setToastOffset:offset forPosition:position];
 }
 
-- (CGFloat)xz_offsetForToastInPosition:(XZToastPosition)position {
-    return [self.rootViewController xz_offsetForToastInPosition:position];
+- (CGFloat)xz_toastOffsetForPosition:(XZToastPosition)position {
+    return [self.rootViewController xz_toastOffsetForPosition:position];
 }
 
 @end
@@ -201,7 +201,7 @@
     [XZToastManager managerForViewController:self].offsets[position] = offset;
 }
 
-- (CGFloat)xz_offsetForToastInPosition:(XZToastPosition)position {
+- (CGFloat)xz_toastOffsetForPosition:(XZToastPosition)position {
     return [XZToastManager managerForViewController:self].offsets[position];
 }
 

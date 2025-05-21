@@ -11,7 +11,7 @@
 NSTimeInterval const XZToastAnimationDuration = 0.35;
 
 static NSInteger _maximumNumberOfToasts = 3;
-static CGFloat _offsets[3] = {0, 0, 0};
+static CGFloat   _toastOffsets[3]       = {+20.0, 0.0, -20.0};
 
 @implementation XZToast
 
@@ -23,12 +23,12 @@ static CGFloat _offsets[3] = {0, 0, 0};
     _maximumNumberOfToasts = MAX(1, maximumNumberOfToasts);
 }
 
-+ (CGFloat)offsetForToastInPosition:(XZToastPosition)position {
-    return _offsets[position];
++ (CGFloat)toastOffsetForPosition:(XZToastPosition)position {
+    return _toastOffsets[position];
 }
 
-+ (void)setOffset:(CGFloat)offset forToastInPosition:(XZToastPosition)position {
-    _offsets[position] = offset;
++ (void)setToastOffset:(CGFloat)offset forPosition:(XZToastPosition)position {
+    _toastOffsets[position] = offset;
 }
 
 @synthesize view = _view;

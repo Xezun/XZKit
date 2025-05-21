@@ -10,10 +10,11 @@
 /// 显示或隐藏 toast 的动画时长，0.35 秒。
 FOUNDATION_EXPORT NSTimeInterval const XZToastAnimationDuration NS_REFINED_FOR_SWIFT;
 
-/// XZToast 的显示位置。
+/// XZToast 的显示位置，基于 safe area 位置。
+/// >  会被用作数组的索引，值从 0 开始且连续。
 typedef NS_ENUM(NSInteger, XZToastPosition) {
     /// XZToast 显示在顶部。
-    XZToastPositionTop = 0, // 会被用作数组 index 必须从 0 开始
+    XZToastPositionTop = 0,
     /// XZToast 显示在中部。
     XZToastPositionMiddle,
     /// XZToast 显示在底部。
@@ -26,6 +27,3 @@ typedef NS_ENUM(NSInteger, XZToastPosition) {
 ///
 /// @param finished 如果 XZToast 在 duration 之前被取消，该参数为 NO 值，所以对于常显类型，此参数肯定为 NO 值
 typedef void (^XZToastCompletion)(BOOL finished) NS_REFINED_FOR_SWIFT;
-
-
-
