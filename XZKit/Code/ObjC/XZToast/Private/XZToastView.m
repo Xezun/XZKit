@@ -43,6 +43,8 @@
         _textLabel.textColor = UIColor.whiteColor;
         _textLabel.font = [UIFont monospacedDigitSystemFontOfSize:17.0 weight:(UIFontWeightRegular)];
         _textLabel.textAlignment = NSTextAlignmentCenter;
+        _textLabel.numberOfLines = 2.0;
+        _textLabel.lineBreakMode = NSLineBreakByTruncatingTail;
         [self addSubview:_textLabel];
     }
     return self;

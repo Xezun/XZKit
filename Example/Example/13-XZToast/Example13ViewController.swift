@@ -215,8 +215,12 @@ class Example13ViewController: UITableViewController {
         }
     }
     
+    @IBAction func toastControllerSwitchValueChanged(_ sender: UISwitch) {
+        showToast(.shared(.message, text: sender.isOn ? "基于当前控制器进行展示" : "基于默认控制器进行展示"))
+    }
+    
     // 由于当前容器视图为 UITableView 所以在
     override var toastController: UIViewController? {
-        return toastControllerSwitch.isOn ? navigationController : self
+        return toastControllerSwitch.isOn ? self : super.toastController
     }
 }

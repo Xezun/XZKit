@@ -77,7 +77,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface UIViewController (XZToast)
 
-/// 展示 toast 的控制器，默认值为自身。
+/// 展示 toast 的控制器，默认值按 `presentedViewController`、`tabBarController`、 `navigationController` 的顺序查找第一个存在的控制器，如都没有则使用自身。
 ///
 /// 子类可以通过重写此属性来实现将 toast 转发到其它控制器展示。
 /// 1. 容器是滚动的控制器，比如 `UITableViewController` 等，避免 toast 会随页面滚动。
