@@ -5,6 +5,7 @@
         <deployment identifier="iOS"/>
         <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="23506"/>
         <capability name="Safe area layout guides" minToolsVersion="9.0"/>
+        <capability name="System colors in document resources" minToolsVersion="11.0"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <scenes>
@@ -17,9 +18,12 @@
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="sGh-Mr-7fN">
-                                <rect key="frame" x="0.0" y="0.0" width="393" height="852"/>
+                                <rect key="frame" x="108.66666666666669" y="409" width="176" height="34.333333333333314"/>
+                                <color key="backgroundColor" systemColor="systemBrownColor"/>
+                                <color key="tintColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                <inset key="contentEdgeInsets" minX="20" minY="20" maxX="20" maxY="20"/>
                                 <state key="normal" title="Button"/>
-                                <buttonConfiguration key="configuration" style="plain" title="页面内容"/>
+                                <buttonConfiguration key="configuration" style="plain" title="页面内容，点击刷新"/>
                                 <connections>
                                     <action selector="resetButtonAction:" destination="GLb-Oj-YWn" eventType="touchUpInside" id="EIF-8Y-sfw"/>
                                 </connections>
@@ -28,10 +32,8 @@
                         <viewLayoutGuide key="safeArea" id="6fN-xQ-J1W"/>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                         <constraints>
-                            <constraint firstItem="sGh-Mr-7fN" firstAttribute="top" secondItem="dS2-65-0qT" secondAttribute="top" id="8Rn-JI-nbb"/>
-                            <constraint firstItem="6fN-xQ-J1W" firstAttribute="trailing" secondItem="sGh-Mr-7fN" secondAttribute="trailing" id="OdS-Ew-qUV"/>
-                            <constraint firstItem="sGh-Mr-7fN" firstAttribute="leading" secondItem="6fN-xQ-J1W" secondAttribute="leading" id="m81-3z-Arv"/>
-                            <constraint firstAttribute="bottom" secondItem="sGh-Mr-7fN" secondAttribute="bottom" id="pZc-9M-eJW"/>
+                            <constraint firstItem="sGh-Mr-7fN" firstAttribute="centerY" secondItem="dS2-65-0qT" secondAttribute="centerY" id="Sr4-M1-iBW"/>
+                            <constraint firstItem="sGh-Mr-7fN" firstAttribute="centerX" secondItem="dS2-65-0qT" secondAttribute="centerX" id="wrZ-vi-8z1"/>
                         </constraints>
                     </view>
                     <navigationItem key="navigationItem" title="XZContentStatus" id="mmG-ui-ZND">
@@ -68,5 +70,8 @@
     </scenes>
     <resources>
         <image name="xmark" catalog="system" width="128" height="113"/>
+        <systemColor name="systemBrownColor">
+            <color red="0.63529411759999999" green="0.51764705879999995" blue="0.36862745099999999" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+        </systemColor>
     </resources>
 </document>

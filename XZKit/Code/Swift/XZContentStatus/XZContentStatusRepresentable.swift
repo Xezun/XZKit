@@ -10,19 +10,18 @@ import UIKit
 import XZTextImageView
 import ObjectiveC
 
-/// 本协议用于视图或视图控制器。
+/// 支持呈现内容状态的页面需要遵循的协议。
+///
+/// 提供了默认实现，视图或视图控制器声明遵循协议，即可支持协议中提供的方法和属性。
 @MainActor public protocol XZContentStatusRepresentable {
     
-    /// 控件的内容状态。
-    /// - 默认情况下，内容状态 `.default` 不展示状态视图，可通过此状态，配置状态视图的默认外观样式。
-    /// - 状态视图的默认背景色，为其被创建时的当前视图背景色。
-    /// - 默认情况下，状态视图的大小与当前视图保持一致。
-    /// - Note: 描述状态的 title/attributedTitle、image 值不属于外观，不存在默认值。
+    /// 当前的内容状态。
     var contentStatus: XZContentStatus { get set }
     
-    /// 获取配置呈现指定内容状态视图的配置对象。
+    /// 获取配置内容状态视图的对象。
+    /// > 不能为默认状态配置状态视图，所以不能通过此方法获取默认状态的配置对象。
     /// - Parameter contentStatus: 内容状态
-    /// - Returns: 配置呈现内容状态视图的对象
+    /// - Returns: 配置内容状态视图的对象
     func configuration(for contentStatus: XZContentStatus) -> XZContentStatus.Configuration
     
 }
@@ -30,8 +29,6 @@ import ObjectiveC
 extension XZContentStatus {
     
     /// 配置状态视图的对象。
-    ///
-    /// 默认配置状态是的方法
     @MainActor public class Configuration {
         
         fileprivate unowned let manager: XZContentStatusManager
@@ -39,8 +36,10 @@ extension XZContentStatus {
         fileprivate init(manager: XZContentStatusManager) {
             self.manager = manager
         }
-        
-        /// 状态视图。如果设置了自定义状态视图，配置状态视图方法将不生效。
+                
+        /// 状态视图。
+        ///
+        /// 如果状态视图不是 XZButton 的子类，默认提供的配置方法将不会生效。
         public lazy var view: UIView = XZContentStatusView.init() {
             didSet {
                 manager.updateAppearance()
@@ -53,6 +52,7 @@ extension XZContentStatus {
 
 extension XZContentStatus.Configuration: XZTextImageView.StatedAppearance {
     
+    /// 状态视图默认为 XZButton 视图，支持添加触摸事件。
     public func addTarget(_ target: Any?, action: Selector, for controlEvents: UIControl.Event) {
         (view as? XZButton)?.addTarget(target, action: action, for: controlEvents)
     }

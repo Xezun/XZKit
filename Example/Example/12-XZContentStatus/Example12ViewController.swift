@@ -20,6 +20,8 @@ class Example12ViewController: UIViewController, XZContentStatusRepresentable {
     override func viewDidLoad() {
         super.viewDidLoad()
         
+        self.view.backgroundColor = .white
+        
         let empty = self.configuration(for: .empty)
         empty.view.backgroundColor = .systemGray6
         empty.setText("暂无内容，请稍后查看", for: .normal)
@@ -42,7 +44,8 @@ class Example12ViewController: UIViewController, XZContentStatusRepresentable {
         error.setImage(UIImage(named: "ex-12-error"), for: .normal)
         error.addTarget(self, action: #selector(didClickErrorStatus(_:)), for: .touchUpInside)
         
-        contentStatus = .empty
+        self.contentStatus = .empty
+        self.setToastOffset(100, for: .middle)
     }
     
     @IBAction func resetButtonAction(_ sender: UIBarButtonItem) {
@@ -59,7 +62,7 @@ class Example12ViewController: UIViewController, XZContentStatusRepresentable {
     
     @objc func successButtonAction(_ sender: Any) {
         self.contentStatus = .default
-        showToast(.message("页面加载成功"))
+        showToast(.shared(.message, text: "页面加载成功"))
     }
     
     @objc func failureButtonAction(_ sender: Any) {
@@ -94,34 +97,34 @@ class Example12LoadingView: UIView {
         messageLabel.font = .systemFont(ofSize: 17.0)
         messageLabel.textColor = .gray
         messageLabel.numberOfLines = 3
-        messageLabel.text = "数据加载中\n\n请点击下发按钮，选择加载结果"
+        messageLabel.text = "数据加载中\n\n请点击按钮，选择加载结果"
         addSubview(messageLabel)
         
         successButton.frame = CGRect.init(x: 0, y: 100, width: 50, height: 40)
         successButton.layer.cornerRadius = 6.0
-        successButton.layer.borderColor  = UIColor.green.cgColor
+        successButton.layer.borderColor  = UIColor.lightGray.cgColor
         successButton.layer.borderWidth  = 1.0;
         successButton.titleLabel?.font = .systemFont(ofSize: 17.0)
         successButton.setTitle("成功", for: .normal)
-        successButton.setTitleColor(.green, for: .normal)
+        successButton.setTitleColor(.lightGray, for: .normal)
         addSubview(successButton)
         
         emptyButton.frame = CGRect.init(x: 33, y: 100, width: 50, height: 40)
         emptyButton.layer.cornerRadius = 6.0
-        emptyButton.layer.borderColor  = UIColor.blue.cgColor
+        emptyButton.layer.borderColor  = UIColor.lightGray.cgColor
         emptyButton.layer.borderWidth  = 1.0;
         emptyButton.titleLabel?.font = .systemFont(ofSize: 17.0)
         emptyButton.setTitle("无内容", for: .normal)
-        emptyButton.setTitleColor(.blue, for: .normal)
+        emptyButton.setTitleColor(.lightGray, for: .normal)
         addSubview(emptyButton)
         
         failureButton.frame = CGRect.init(x: 67, y: 100, width: 50, height: 40)
         failureButton.layer.cornerRadius = 6.0
-        failureButton.layer.borderColor  = UIColor.red.cgColor
+        failureButton.layer.borderColor  = UIColor.lightGray.cgColor
         failureButton.layer.borderWidth  = 1.0;
         failureButton.titleLabel?.font = .systemFont(ofSize: 17.0)
         failureButton.setTitle("失败", for: .normal)
-        failureButton.setTitleColor(.red, for: .normal)
+        failureButton.setTitleColor(.lightGray, for: .normal)
         addSubview(failureButton)
     }
     

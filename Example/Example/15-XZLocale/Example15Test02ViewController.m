@@ -33,7 +33,7 @@
         [self.tableView reloadData];
     }];
     
-    [self xz_setOffset:50 forToastInPosition:(XZToastPositionMiddle)];
+    [self xz_setToastOffset:50 forPosition:(XZToastPositionMiddle)];
     [self xz_showToast:[XZToast loadingToast:@"加载中..."] duration:0 completion:nil];
 }
 
