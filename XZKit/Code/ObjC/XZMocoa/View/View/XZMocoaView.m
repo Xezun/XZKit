@@ -49,8 +49,8 @@ static void xz_mocoa_copyMethod(Class const cls, SEL const target, SEL const sou
         xz_mocoa_copyMethod(self, @selector(navigationController), @selector(xz_mocoa_navigationController));
         xz_mocoa_copyMethod(self, @selector(tabBarController), @selector(xz_mocoa_tabBarController));
         
-        xz_mocoa_copyMethod(self, @selector(shouldPerformSegueWithIdentifier:), @selector(xz_mocoa_shouldPerformSegueWithIdentifier:));
-        xz_mocoa_copyMethod(self, @selector(prepareForSegue:), @selector(xz_mocoa_prepareForSegue:));
+        xz_mocoa_copyMethod(self, @selector(shouldPerformSegueWithIdentifier:sender:), @selector(xz_mocoa_shouldPerformSegueWithIdentifier:sender:));
+        xz_mocoa_copyMethod(self, @selector(prepareForSegue:sender:), @selector(xz_mocoa_prepareForSegue:sender:));
     }
 }
 
@@ -104,14 +104,17 @@ static void xz_mocoa_copyMethod(Class const cls, SEL const target, SEL const sou
     
 }
 
-- (BOOL)xz_mocoa_shouldPerformSegueWithIdentifier:(NSString *)identifier {
-    XZMocoaViewModel * const viewModel =  objc_getAssociatedObject(self, _viewModel);
-    return [viewModel shouldPerformSegueWithIdentifier:identifier];
+- (BOOL)xz_mocoa_shouldPerformSegueWithIdentifier:(NSString *)identifier sender:(id)sender {
+    if ([self conformsToProtocol:@protocol(XZMocoaView)]) {
+        return [((id<XZMocoaView>)self).viewModel shouldPerformSegueWithIdentifier:identifier sender:sender];
+    }
+    return YES;
 }
 
-- (void)xz_mocoa_prepareForSegue:(UIStoryboardSegue *)segue {
-    XZMocoaViewModel * const viewModel =  objc_getAssociatedObject(self, _viewModel);
-    [viewModel prepareForSegue:segue];
+- (void)xz_mocoa_prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {
+    if ([self conformsToProtocol:@protocol(XZMocoaView)]) {
+        return [((id<XZMocoaView>)self).viewModel prepareForSegue:segue sender:sender];
+    }
 }
 
 @end
@@ -150,31 +153,36 @@ static void xz_mocoa_copyMethod(Class const cls, SEL const target, SEL const sou
 }
 
 - (BOOL)xz_mocoa_new_shouldPerformSegueWithIdentifier:(NSString *)identifier sender:(id)sender {
-    if ([sender conformsToProtocol:@protocol(XZMocoaView)]) {
-        return [sender shouldPerformSegueWithIdentifier:identifier];
+    if ([self conformsToProtocol:@protocol(XZMocoaView)]) {
+        return [((id<XZMocoaView>)self).viewModel shouldPerformSegueWithIdentifier:identifier sender:sender];
     }
     return YES;
 }
 
 - (BOOL)xz_mocoa_exchange_shouldPerformSegueWithIdentifier:(NSString *)identifier sender:(id)sender {
+    if ([self conformsToProtocol:@protocol(XZMocoaView)]) {
+        return [((id<XZMocoaView>)self).viewModel shouldPerformSegueWithIdentifier:identifier sender:sender];
+    }
     if ([sender conformsToProtocol:@protocol(XZMocoaView)]) {
-        return [sender shouldPerformSegueWithIdentifier:identifier];
+        return [((id<XZMocoaView>)sender) shouldPerformSegueWithIdentifier:identifier sender:self];
     }
     return [self xz_mocoa_exchange_shouldPerformSegueWithIdentifier:identifier sender:sender];;
 }
 
 - (void)xz_mocoa_new_prepareForSegue:(UIStoryboardSegue *)segue sender:(id<XZMocoaView>)sender {
-    if ([sender conformsToProtocol:@protocol(XZMocoaView)]) {
-        [sender prepareForSegue:segue];
+    if ([self conformsToProtocol:@protocol(XZMocoaView)]) {
+        return [((id<XZMocoaView>)self).viewModel prepareForSegue:segue sender:sender];
     }
 }
 
 - (void)xz_mocoa_exchange_prepareForSegue:(UIStoryboardSegue *)segue sender:(id<XZMocoaView>)sender {
-    if ([sender conformsToProtocol:@protocol(XZMocoaView)]) {
-        [sender prepareForSegue:segue];
-    } else {
-        [self xz_mocoa_exchange_prepareForSegue:segue sender:sender];
+    if ([self conformsToProtocol:@protocol(XZMocoaView)]) {
+        return [((id<XZMocoaView>)self).viewModel prepareForSegue:segue sender:sender];
     }
+    if ([sender conformsToProtocol:@protocol(XZMocoaView)]) {
+        return [((id<XZMocoaView>)sender) prepareForSegue:segue sender:self];
+    }
+    return [self xz_mocoa_exchange_prepareForSegue:segue sender:sender];
 }
 
 @end

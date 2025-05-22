@@ -235,12 +235,17 @@ XZMocoaKey const XZMocoaKeyNone = @"";
 
 @implementation XZMocoaViewModel (XZStoryboardSupporting)
 
-- (BOOL)shouldPerformSegueWithIdentifier:(NSString *)identifier {
+- (BOOL)shouldPerformSegueWithIdentifier:(NSString *)identifier sender:(nullable id)sender {
+    if ([sender conformsToProtocol:@protocol(XZMocoaView)]) {
+        return [((id<XZMocoaView>)sender) shouldPerformSegueWithIdentifier:identifier sender:self];
+    }
     return YES;
 }
 
-- (void)prepareForSegue:(UIStoryboardSegue *)segue {
-    
+- (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(nullable id)sender {
+    if ([sender conformsToProtocol:@protocol(XZMocoaView)]) {
+        return [((id<XZMocoaView>)sender) prepareForSegue:segue sender:self];
+    }
 }
 
 @end

@@ -41,10 +41,10 @@ NS_SWIFT_UI_ACTOR @protocol XZMocoaView <NSObject>
 @property (nonatomic, readonly, nullable) __kindof UITabBarController *tabBarController;
 
 /// 控制器分发过来的 IB 转场事件，默认返回 YES 值。
-- (BOOL)shouldPerformSegueWithIdentifier:(NSString *)identifier;
+- (BOOL)shouldPerformSegueWithIdentifier:(NSString *)identifier sender:(nullable id)sender;
 
 /// 控制器分发过来的 IB 转场事件。
-- (void)prepareForSegue:(UIStoryboardSegue *)segue;
+- (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(nullable id)sender;
 
 @end
 
