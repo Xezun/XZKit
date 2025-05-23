@@ -16,14 +16,14 @@
 #import "XZMocoaViewModel.h"
 
 // ListView
-#import "XZMocoaListModel.h"
-#import "XZMocoaListSectionModel.h"
-#import "XZMocoaListView.h"
-#import "XZMocoaListViewModel.h"
-#import "XZMocoaListViewCellViewModel.h"
-#import "XZMocoaListViewSupplementaryViewModel.h"
-#import "XZMocoaListViewSectionViewModel.h"
-#import "XZMocoaListViewModel.h"
+#import "XZMocoaGridModel.h"
+#import "XZMocoaGridSectionModel.h"
+#import "XZMocoaGridView.h"
+#import "XZMocoaGridViewModel.h"
+#import "XZMocoaGridViewCellViewModel.h"
+#import "XZMocoaGridViewSupplementaryViewModel.h"
+#import "XZMocoaGridViewSectionViewModel.h"
+#import "XZMocoaGridViewModel.h"
 
 // TableView
 #import "XZMocoaTableModel.h"
