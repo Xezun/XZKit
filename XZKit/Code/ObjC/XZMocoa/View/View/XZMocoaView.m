@@ -15,13 +15,13 @@
 #import "NSArray+XZKit.h"
 #endif
 
-@implementation XZMocoaView
-@dynamic viewModel;
-@end
+//@implementation XZMocoaView
+//@dynamic viewModel;
+//@end
 
 static const void * const _viewModel = &_viewModel;
 
-static void xz_mocoa_copyMethod(Class const cls, SEL const target, SEL const source) {
+static void xz_mocoa_addMethod(Class const cls, SEL const target, SEL const source) {
     if (xz_objc_class_copyMethod(cls, source, nil, target)) return;
     XZLog(@"为协议 XZMocoaView 的方法 %@ 提供默认实现失败", NSStringFromSelector(target));
 }
@@ -40,17 +40,17 @@ static void xz_mocoa_copyMethod(Class const cls, SEL const target, SEL const sou
 
 + (void)load {
     if (self == [UIResponder class]) {
-        xz_mocoa_copyMethod(self, @selector(viewModel), @selector(xz_mocoa_viewModel));
-        xz_mocoa_copyMethod(self, @selector(setViewModel:), @selector(xz_mocoa_setViewModel:));
-        xz_mocoa_copyMethod(self, @selector(viewModelWillChange), @selector(xz_mocoa_viewModelWillChange));
-        xz_mocoa_copyMethod(self, @selector(viewModelDidChange), @selector(xz_mocoa_viewModelDidChange));
+        xz_mocoa_addMethod(self, @selector(viewModel), @selector(xz_mocoa_viewModel));
+        xz_mocoa_addMethod(self, @selector(setViewModel:), @selector(xz_mocoa_setViewModel:));
+        xz_mocoa_addMethod(self, @selector(viewModelWillChange), @selector(xz_mocoa_viewModelWillChange));
+        xz_mocoa_addMethod(self, @selector(viewModelDidChange), @selector(xz_mocoa_viewModelDidChange));
         
-        xz_mocoa_copyMethod(self, @selector(viewController), @selector(xz_mocoa_viewController));
-        xz_mocoa_copyMethod(self, @selector(navigationController), @selector(xz_mocoa_navigationController));
-        xz_mocoa_copyMethod(self, @selector(tabBarController), @selector(xz_mocoa_tabBarController));
+        xz_mocoa_addMethod(self, @selector(viewController), @selector(xz_mocoa_viewController));
+        xz_mocoa_addMethod(self, @selector(navigationController), @selector(xz_mocoa_navigationController));
+        xz_mocoa_addMethod(self, @selector(tabBarController), @selector(xz_mocoa_tabBarController));
         
-        xz_mocoa_copyMethod(self, @selector(shouldPerformSegueWithIdentifier:sender:), @selector(xz_mocoa_shouldPerformSegueWithIdentifier:sender:));
-        xz_mocoa_copyMethod(self, @selector(prepareForSegue:sender:), @selector(xz_mocoa_prepareForSegue:sender:));
+        xz_mocoa_addMethod(self, @selector(shouldPerformSegueWithIdentifier:sender:), @selector(xz_mocoa_shouldPerformSegueWithIdentifier:sender:));
+        xz_mocoa_addMethod(self, @selector(prepareForSegue:sender:), @selector(xz_mocoa_prepareForSegue:sender:));
     }
 }
 
@@ -108,12 +108,18 @@ static void xz_mocoa_copyMethod(Class const cls, SEL const target, SEL const sou
     if ([self conformsToProtocol:@protocol(XZMocoaView)]) {
         return [((id<XZMocoaView>)self).viewModel shouldPerformSegueWithIdentifier:identifier sender:sender];
     }
+    if ([sender conformsToProtocol:@protocol(XZMocoaView)]) {
+        return [((id<XZMocoaView>)sender) shouldPerformSegueWithIdentifier:identifier sender:nil];
+    }
     return YES;
 }
 
 - (void)xz_mocoa_prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {
     if ([self conformsToProtocol:@protocol(XZMocoaView)]) {
         return [((id<XZMocoaView>)self).viewModel prepareForSegue:segue sender:sender];
+    }
+    if ([sender conformsToProtocol:@protocol(XZMocoaView)]) {
+        return [((id<XZMocoaView>)sender) prepareForSegue:segue sender:nil];
     }
 }
 
@@ -156,6 +162,9 @@ static void xz_mocoa_copyMethod(Class const cls, SEL const target, SEL const sou
     if ([self conformsToProtocol:@protocol(XZMocoaView)]) {
         return [((id<XZMocoaView>)self).viewModel shouldPerformSegueWithIdentifier:identifier sender:sender];
     }
+    if ([sender conformsToProtocol:@protocol(XZMocoaView)]) {
+        return [((id<XZMocoaView>)sender) shouldPerformSegueWithIdentifier:identifier sender:nil];
+    }
     return YES;
 }
 
@@ -164,7 +173,7 @@ static void xz_mocoa_copyMethod(Class const cls, SEL const target, SEL const sou
         return [((id<XZMocoaView>)self).viewModel shouldPerformSegueWithIdentifier:identifier sender:sender];
     }
     if ([sender conformsToProtocol:@protocol(XZMocoaView)]) {
-        return [((id<XZMocoaView>)sender) shouldPerformSegueWithIdentifier:identifier sender:self];
+        return [((id<XZMocoaView>)sender) shouldPerformSegueWithIdentifier:identifier sender:nil];
     }
     return [self xz_mocoa_exchange_shouldPerformSegueWithIdentifier:identifier sender:sender];;
 }
@@ -173,6 +182,10 @@ static void xz_mocoa_copyMethod(Class const cls, SEL const target, SEL const sou
     if ([self conformsToProtocol:@protocol(XZMocoaView)]) {
         return [((id<XZMocoaView>)self).viewModel prepareForSegue:segue sender:sender];
     }
+    if ([sender conformsToProtocol:@protocol(XZMocoaView)]) {
+        return [((id<XZMocoaView>)sender) prepareForSegue:segue sender:nil];
+    }
+
 }
 
 - (void)xz_mocoa_exchange_prepareForSegue:(UIStoryboardSegue *)segue sender:(id<XZMocoaView>)sender {
@@ -180,7 +193,7 @@ static void xz_mocoa_copyMethod(Class const cls, SEL const target, SEL const sou
         return [((id<XZMocoaView>)self).viewModel prepareForSegue:segue sender:sender];
     }
     if ([sender conformsToProtocol:@protocol(XZMocoaView)]) {
-        return [((id<XZMocoaView>)sender) prepareForSegue:segue sender:self];
+        return [((id<XZMocoaView>)sender) prepareForSegue:segue sender:nil];
     }
     return [self xz_mocoa_exchange_prepareForSegue:segue sender:sender];
 }

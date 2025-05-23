@@ -27,7 +27,7 @@ NS_ASSUME_NONNULL_BEGIN
 @end
 
 /// XZMocoaListView 是 UITableView、UICollectionView 的抽象封装，不可直接使用。
-@interface XZMocoaListView : XZMocoaView <XZMocoaListView>
+@interface XZMocoaListView : UIView <XZMocoaListView>
 
 /// 提供子类用于监听 contentView 发生改变的方法。
 /// > 默认该方法什么也不做。

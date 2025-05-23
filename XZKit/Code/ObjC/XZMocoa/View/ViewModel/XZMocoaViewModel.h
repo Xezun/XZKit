@@ -281,7 +281,7 @@ FOUNDATION_EXPORT XZMocoaKey const XZMocoaKeyNone;
 
 @interface XZMocoaViewModel (XZStoryboardSupporting)
 
-/// 控制器分发过来的 IB 转场事件，默认返回 YES 值。
+/// 视图分发过来的 IB 转场事件，默认返回 YES 值。
 - (BOOL)shouldPerformSegueWithIdentifier:(NSString *)identifier sender:(nullable id)sender;
 
 /// 控制器分发过来的 IB 转场事件。

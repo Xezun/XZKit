@@ -14,15 +14,11 @@
 @dynamic viewModel;
 
 - (void)viewModelWillChange {
-    [super viewModelDidChange];
-    
     XZMocoaListViewModel * const _viewModel = self.viewModel;
     _viewModel.delegate = nil;
 }
 
 - (void)viewModelDidChange {
-    [super viewModelDidChange];
-    
     XZMocoaListViewModel * const _viewModel = self.viewModel;
     [self registerCellWithModule:_viewModel.module];
     _viewModel.delegate = self;

@@ -12,7 +12,7 @@
 NS_ASSUME_NONNULL_BEGIN
 
 #if DEBUG
-@interface XZMocoaListViewPlaceholderView : XZMocoaView
+@interface XZMocoaListViewPlaceholderView : UIView <XZMocoaView>
 @end
 #endif
 
