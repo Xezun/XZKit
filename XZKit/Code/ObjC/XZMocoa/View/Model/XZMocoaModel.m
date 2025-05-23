@@ -20,16 +20,8 @@ static const void * const _mocoaName = &_mocoaName;
 }
 
 - (void)setMocoaName:(XZMocoaName)mocoaName {
-    if ([self.mocoaName isEqualToString:mocoaName]) {
-        return;
-    }
     objc_setAssociatedObject(self, _mocoaName, mocoaName, OBJC_ASSOCIATION_COPY_NONATOMIC);
 }
 
-@end
-
-
-@implementation XZMocoaModel
-@synthesize mocoaName = _mocoaName;
 @end
 
