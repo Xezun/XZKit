@@ -1,1 +1,1 @@
-../../../../XZKit/Code/ObjC/XZMocoa/ListView/CollectionView/View/Private/XZMocoaCollectionViewProxy.h
+../../../../XZKit/Code/ObjC/XZMocoa/GridView/CollectionView/View/Private/XZMocoaCollectionViewProxy.h

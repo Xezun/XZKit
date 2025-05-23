@@ -1,1 +1,1 @@
-../../../../XZKit/Code/ObjC/XZMocoa/ListView/CollectionView/View/Private/XZMocoaCollectionViewPlaceholderCell.h
+../../../../XZKit/Code/ObjC/XZMocoa/GridView/CollectionView/View/Private/XZMocoaCollectionViewPlaceholderCell.h
