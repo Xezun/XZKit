@@ -40,12 +40,19 @@ NS_SWIFT_UI_ACTOR @protocol XZMocoaView <NSObject>
 /// 当前视图所属栏目控制器。
 @property (nonatomic, readonly, nullable) __kindof UITabBarController *tabBarController;
 
-/// 控制器分发过来的 IB 转场事件。
+/// 由 Cocoa MVC 中的控制器分发过来的 Segue 转场事件。
 ///
-/// 默认情况下，将按如下优先级对事件进行转发。
-/// 1. 如果当前视图为 XZMocoaView 那么，事件将转发给 viewModel 处理。
-/// 2. 如果 sender 为 XZMocoaView 的话，就转发给 sender 处理。
+/// 在视图或视图控制器中，Segue 事件转发规则如下。
+/// 1. 如果当前视图或视图控制器是 XZMocoaView 角色，那么事件会转发给视图控制器自身的 ViewModel 处理。
+/// 2. 如果 sender 为 XZMocoaView 角色，就转发给 sender 处理。
 /// 3. 返回 YES 值。
+/// 在视图模型中，Segue 事件转发规则如下。
+/// 1. 如果 sender 为 XZMocoaView 角色，就转发给 sender 处理。
+/// 2. 返回 YES 值。
+/// 因此，在 StoryBoard 中，视图的 Segue 转场会通过控制转发给视图，并最终转发给视图模型处理。
+/// 如果通过代码触发 Segue 事件，sender 参数应该传入接收事件的视图。
+///
+/// - TODO: 似乎可以研究通过 identifier 查找子模块转发事件
 - (BOOL)shouldPerformSegueWithIdentifier:(NSString *)identifier sender:(nullable id)sender;
 
 /// 控制器分发过来的 IB 转场事件。

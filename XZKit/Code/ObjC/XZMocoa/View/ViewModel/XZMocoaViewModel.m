@@ -239,18 +239,12 @@ XZMocoaKey const XZMocoaKeyNone = @"";
     if ([sender conformsToProtocol:@protocol(XZMocoaView)]) {
         return [((id<XZMocoaView>)sender) shouldPerformSegueWithIdentifier:identifier sender:nil];
     }
-    if ([sender isKindOfClass:[XZMocoaViewModel class]]) {
-        return [((XZMocoaViewModel *)sender) shouldPerformSegueWithIdentifier:identifier sender:nil];
-    }
     return YES;
 }
 
 - (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(nullable id)sender {
     if ([sender conformsToProtocol:@protocol(XZMocoaView)]) {
         return [((id<XZMocoaView>)sender) prepareForSegue:segue sender:nil];
-    }
-    if ([sender isKindOfClass:[XZMocoaViewModel class]]) {
-        return [((XZMocoaViewModel *)sender) prepareForSegue:segue sender:nil];
     }
 }
 
