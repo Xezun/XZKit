@@ -185,7 +185,6 @@ static void xz_mocoa_addMethod(Class const cls, SEL const target, SEL const sour
     if ([sender conformsToProtocol:@protocol(XZMocoaView)]) {
         return [((id<XZMocoaView>)sender) prepareForSegue:segue sender:nil];
     }
-
 }
 
 - (void)xz_mocoa_exchange_prepareForSegue:(UIStoryboardSegue *)segue sender:(id<XZMocoaView>)sender {

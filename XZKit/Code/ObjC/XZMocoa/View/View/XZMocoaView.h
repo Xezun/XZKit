@@ -23,12 +23,12 @@ NS_SWIFT_UI_ACTOR @protocol XZMocoaView <NSObject>
 /// 视图模型。
 ///
 /// 一般情况下，视图的 ViewModel 不应该改变，但是与 B 端不同，在 C 端利用“视图重用机制”可以有效提升性能，因此，此属性被设计为可写的。
-/// > UIResponder 及子类是天然的视图类型，可通过 ，
 @property (nonatomic, strong, nullable) __kindof XZMocoaViewModel *viewModel;
 
-/// 视图模型将要改变。默认实现不执行任何操作。
+/// 视图模型将要改变。默认不执行任何操作。
 - (void)viewModelWillChange;
-/// 视图模型已经改变。默认实现不执行任何操作。
+
+/// 视图模型已经改变。默认不执行任何操作。
 - (void)viewModelDidChange;
 
 /// 获取当前视图所在的视图控制器，如果自身已经是控制器，则返回自身。
@@ -40,12 +40,19 @@ NS_SWIFT_UI_ACTOR @protocol XZMocoaView <NSObject>
 /// 当前视图所属栏目控制器。
 @property (nonatomic, readonly, nullable) __kindof UITabBarController *tabBarController;
 
-/// 控制器分发过来的 IB 转场事件，默认返回 YES 值。
-/// vc -> vc.ViewModel -> sender
-/// 
+/// 控制器分发过来的 IB 转场事件。
+///
+/// 默认情况下，将按如下优先级对事件进行转发。
+/// 1. 如果当前视图为 XZMocoaView 那么，事件将转发给 viewModel 处理。
+/// 2. 如果 sender 为 XZMocoaView 的话，就转发给 sender 处理。
+/// 3. 返回 YES 值。
 - (BOOL)shouldPerformSegueWithIdentifier:(NSString *)identifier sender:(nullable id)sender;
 
 /// 控制器分发过来的 IB 转场事件。
+///
+/// 默认情况下，将按如下优先级对事件进行转发。
+/// 1. 如果当前视图为 XZMocoaView 那么，事件将转发给 viewModel 处理。
+/// 2. 如果 sender 为 XZMocoaView 的话，就转发给 sender 处理。
 - (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(nullable id)sender;
 
 @end
