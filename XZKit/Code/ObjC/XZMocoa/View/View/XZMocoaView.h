@@ -17,7 +17,7 @@ NS_ASSUME_NONNULL_BEGIN
 /// 任何 UIResponder 及子类是天然的视图类型，只需声明遵循此协议，即可获得协议中定义的属性和方法。
 /// - 用此协议标记类，用来表明该类为 Mocoa MVVM 的 View 元素，与其它设计模式的类进行简单区分。
 /// - 由于运行时特性，协议的默认实现可能会被类目或子类覆盖，需要开发者自行注意。
-NS_SWIFT_UI_ACTOR @protocol XZMocoaView <NSObject>
+NS_SWIFT_UI_ACTOR NS_REFINED_FOR_SWIFT @protocol XZMocoaView <NSObject>
 
 @optional
 /// 视图模型。
@@ -53,14 +53,14 @@ NS_SWIFT_UI_ACTOR @protocol XZMocoaView <NSObject>
 /// 如果通过代码触发 Segue 事件，sender 参数应该传入接收事件的视图。
 ///
 /// - TODO: 似乎可以研究通过 identifier 查找子模块转发事件
-- (BOOL)shouldPerformSegueWithIdentifier:(NSString *)identifier sender:(nullable id)sender;
+- (BOOL)shouldPerformSegueWithIdentifier:(NSString *)identifier sender:(nullable id)sender NS_SWIFT_NAME(shouldPerformSegue(withIdentifier:sender:));
 
 /// 控制器分发过来的 IB 转场事件。
 ///
 /// 默认情况下，将按如下优先级对事件进行转发。
 /// 1. 如果当前视图为 XZMocoaView 那么，事件将转发给 viewModel 处理。
 /// 2. 如果 sender 为 XZMocoaView 的话，就转发给 sender 处理。
-- (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(nullable id)sender;
+- (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(nullable id)sender NS_SWIFT_NAME(prepare(for:sender:));
 
 @end
 
