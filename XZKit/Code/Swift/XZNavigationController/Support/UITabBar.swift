@@ -58,25 +58,25 @@ private class XZUITabBar: UITabBar {
     /// 自定义类的 frame 属性，在修改值时，先判断当前是否允许修改。
     open override var frame: CGRect {
         get {
-            return xz_objc_msgSendSuper(self, type(of: self), rect: #selector(getter: self.frame))
+            return xz_objc_msgSendSuper(self, type(of: self), r: #selector(getter: self.frame))
         }
         set {
             if isFrozen {
                 return
             }
-            xz_objc_msgSendSuper(self, type(of: self), v: #selector(setter: self.frame), rect: newValue)
+            xz_objc_msgSendSuper(self, type(of: self), v: #selector(setter: self.frame), newValue)
         }
     }
 
     open override var bounds: CGRect {
         get {
-            return xz_objc_msgSendSuper(self, type(of: self), rect: #selector(getter: self.bounds))
+            return xz_objc_msgSendSuper(self, type(of: self), r: #selector(getter: self.bounds))
         }
         set {
             if isFrozen {
                 return
             }
-            xz_objc_msgSendSuper(self, type(of: self), v: #selector(setter: self.bounds), rect: newValue)
+            xz_objc_msgSendSuper(self, type(of: self), v: #selector(setter: self.bounds), newValue)
         }
     }
 
@@ -88,7 +88,7 @@ private class XZUITabBar: UITabBar {
             if isFrozen {
                 return
             }
-            xz_objc_msgSendSuper(self, type(of: self), v: #selector(setter: self.isHidden), b: newValue)
+            xz_objc_msgSendSuper(self, type(of: self), v: #selector(setter: self.isHidden), newValue)
         }
     }
 }

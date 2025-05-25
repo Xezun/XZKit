@@ -61,13 +61,13 @@ extension XZNavigationController {
                         let selector = #selector(UINavigationController.pushViewController(_:animated:));
                         let override: MethodType = { `self`, viewController, animated in
                             xz_navc_navigationController(self, customizeViewController: viewController)
-                            xz_objc_msgSendSuper(self, aClass, v: selector, o: viewController, b: animated)
+                            xz_objc_msgSendSuper(self, aClass, v: selector, viewController, animated)
                             xz_navc_navigationController(self, prepareForTransitioning: animated)
                         }
                         let exchange = { (selector: Selector) in
                             let exchange: MethodType = { `self`, viewController, animated in
                                 xz_navc_navigationController(self, customizeViewController: viewController)
-                                xz_objc_msgSend(self, v: selector, o: viewController, b: animated)
+                                xz_objc_msgSend(self, v: selector, viewController, animated)
                                 xz_navc_navigationController(self, prepareForTransitioning: animated)
                             }
                             return exchange
@@ -85,7 +85,7 @@ extension XZNavigationController {
                                 xz_navc_navigationController(self, customizeViewController: viewController)
                             }
                             let topViewController = self.topViewController
-                            xz_objc_msgSendSuper(self, aClass, v: selector, o: viewControllers, b: animated)
+                            xz_objc_msgSendSuper(self, aClass, v: selector, viewControllers, animated)
                             if topViewController != viewControllers.last { // 说明发生了转场
                                 xz_navc_navigationController(self, prepareForTransitioning: animated)
                             }
@@ -96,7 +96,7 @@ extension XZNavigationController {
                                     xz_navc_navigationController(self, customizeViewController: viewController)
                                 }
                                 let topViewController = self.topViewController
-                                xz_objc_msgSend(self, v: selector, o: viewControllers, b: animated)
+                                xz_objc_msgSend(self, v: selector, viewControllers, animated)
                                 if topViewController != viewControllers.last {
                                     xz_navc_navigationController(self, prepareForTransitioning: animated)
                                 }
@@ -112,7 +112,7 @@ extension XZNavigationController {
                         
                         let selector = #selector(UINavigationController.popViewController(animated:));
                         let override: MethodType = { `self`, animated in
-                            let viewController = xz_objc_msgSendSuper(self, aClass, o: selector, b: animated) as? UIViewController;
+                            let viewController = xz_objc_msgSendSuper(self, aClass, o: selector, animated) as? UIViewController;
                             if viewController != nil {
                                 xz_navc_navigationController(self, prepareForTransitioning: animated)
                             }
@@ -120,7 +120,7 @@ extension XZNavigationController {
                         }
                         let exchange = { (selector: Selector) in
                             let exchange: MethodType = { `self`, animated in
-                                let viewController = xz_objc_msgSend(self, o: selector, b: animated) as? UIViewController
+                                let viewController = xz_objc_msgSend(self, o: selector, animated) as? UIViewController
                                 if viewController != nil {
                                     xz_navc_navigationController(self, prepareForTransitioning: animated)
                                 }
@@ -137,7 +137,7 @@ extension XZNavigationController {
                         
                         let selector = #selector(UINavigationController.popToViewController(_:animated:));
                         let override: MethodType = { `self`, viewController, animated in
-                            let viewControllers = xz_objc_msgSendSuper(self, aClass, o: selector, o: viewController, b: animated) as? [UIViewController]
+                            let viewControllers = xz_objc_msgSendSuper(self, aClass, o: selector, viewController, animated) as? [UIViewController]
                             if let viewControllers = viewControllers, viewControllers.count > 0 {
                                 xz_navc_navigationController(self, prepareForTransitioning: animated)
                             }
@@ -145,7 +145,7 @@ extension XZNavigationController {
                         }
                         let exchange = { (selector: Selector) in
                             let exchange: MethodType = { `self`, viewController, animated in
-                                let viewControllers = xz_objc_msgSend(self, o: selector, o: viewController, b: animated) as? [UIViewController]
+                                let viewControllers = xz_objc_msgSend(self, o: selector, viewController, animated) as? [UIViewController]
                                 if let viewControllers = viewControllers, viewControllers.count > 0 {
                                     xz_navc_navigationController(self, prepareForTransitioning: animated)
                                 }
@@ -162,7 +162,7 @@ extension XZNavigationController {
                         
                         let selector = #selector(UINavigationController.popToRootViewController(animated:));
                         let override: MethodType = { `self`, animated in
-                            let viewControllers = xz_objc_msgSendSuper(self, aClass, o: selector, b: animated) as? [UIViewController]
+                            let viewControllers = xz_objc_msgSendSuper(self, aClass, o: selector, animated) as? [UIViewController]
                             if let viewControllers = viewControllers, viewControllers.count > 0 {
                                 xz_navc_navigationController(self, prepareForTransitioning: animated)
                             }
@@ -170,7 +170,7 @@ extension XZNavigationController {
                         }
                         let exchange = { (selector: Selector) in
                             let exchange: MethodType = { `self`, animated in
-                                let viewControllers = xz_objc_msgSend(self, o: selector, b: animated) as? [UIViewController]
+                                let viewControllers = xz_objc_msgSend(self, o: selector, animated) as? [UIViewController]
                                 if let viewControllers = viewControllers, viewControllers.count > 0 {
                                     xz_navc_navigationController(self, prepareForTransitioning: animated)
                                 }
@@ -230,12 +230,12 @@ extension XZNavigationController {
         
         let selector = #selector(UIViewController.viewWillAppear(_:))
         let override: MethodType = { `self`, animated in
-            xz_objc_msgSendSuper(self, aClass, v: selector, b: animated)
+            xz_objc_msgSendSuper(self, aClass, v: selector, animated)
             xz_navc_viewController(self, viewWillAppear: animated)
         }
         let exchange = { (selector: Selector) in
             let exchange: MethodType = { `self`, animated in
-                xz_objc_msgSend(self, v: selector, b: animated)
+                xz_objc_msgSend(self, v: selector, animated)
                 xz_navc_viewController(self, viewWillAppear: animated)
             }
             return exchange
@@ -248,12 +248,12 @@ extension XZNavigationController {
         
         let selector = #selector(UIViewController.viewDidAppear(_:))
         let override: MethodType = { `self`, animated in
-            xz_objc_msgSendSuper(self, aClass, v: selector, b: animated)
+            xz_objc_msgSendSuper(self, aClass, v: selector, animated)
             xz_navc_viewController(self, viewDidAppear: animated)
         }
         let exchange = { (selector: Selector) in
             let exchange: MethodType = { `self`, animated in
-                xz_objc_msgSend(self, v: selector, b: animated)
+                xz_objc_msgSend(self, v: selector, animated)
                 xz_navc_viewController(self, viewDidAppear: animated)
             }
             return exchange
