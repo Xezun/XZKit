@@ -268,10 +268,10 @@ FOUNDATION_EXPORT NSHashTable *xz_objc_class_getImplementedProtocolMethods(Class
 
 // 由于在 Swift 中无法直接调用 objc_msgSend/objc_msgSendSuper 函数，因此写了一下桥接函数，方便在 Swift 中使用。
 // 以返回值区分函数类型：
-// _void => void
-// _id   => id
-// _bool => BOOL
-// _rect => CGRect
+// _void   => void
+// _object => id
+// _bool   => BOOL
+// _rect   => CGRect
 
 // 在 xz_objc_msgSendSuper 方法中，除非没有子类，否则参数 receiverClass 不可以通过 receiver.class 动态获取，而应该是确定类型，否则会造成死循环。
 // 比如像下面这样实现的话
@@ -296,11 +296,11 @@ FOUNDATION_EXPORT void xz_objc_msgSend_void(id receiver, SEL selector) XZ_ATTR_O
 FOUNDATION_EXPORT void xz_objc_msgSend_void(id receiver, SEL selector, id _Nullable param1, NSInteger param2) XZ_ATTR_OVERLOAD;
 FOUNDATION_EXPORT void xz_objc_msgSend_void(id receiver, SEL selector, id _Nullable param1, id _Nullable param2) XZ_ATTR_OVERLOAD;
 
-FOUNDATION_EXPORT id _Nullable xz_objc_msgSend_id(id receiver, SEL selector, BOOL param1) XZ_ATTR_OVERLOAD;
-FOUNDATION_EXPORT id _Nullable xz_objc_msgSend_id(id receiver, SEL selector, id _Nullable param1, BOOL param2) XZ_ATTR_OVERLOAD;
-FOUNDATION_EXPORT id _Nullable xz_objc_msgSend_id(id receiver, SEL selector, id _Nullable param1, NSInteger param2, id _Nullable param3, id _Nullable param4) XZ_ATTR_OVERLOAD;
-FOUNDATION_EXPORT id _Nullable xz_objc_msgSend_id(id receiver, SEL selector, id _Nullable param1, id _Nullable param2) XZ_ATTR_OVERLOAD;
-FOUNDATION_EXPORT id _Nullable xz_objc_msgSend_id(id receiver, SEL selector) XZ_ATTR_OVERLOAD;
+FOUNDATION_EXPORT id _Nullable xz_objc_msgSend_object(id receiver, SEL selector, BOOL param1) XZ_ATTR_OVERLOAD;
+FOUNDATION_EXPORT id _Nullable xz_objc_msgSend_object(id receiver, SEL selector, id _Nullable param1, BOOL param2) XZ_ATTR_OVERLOAD;
+FOUNDATION_EXPORT id _Nullable xz_objc_msgSend_object(id receiver, SEL selector, id _Nullable param1, NSInteger param2, id _Nullable param3, id _Nullable param4) XZ_ATTR_OVERLOAD;
+FOUNDATION_EXPORT id _Nullable xz_objc_msgSend_object(id receiver, SEL selector, id _Nullable param1, id _Nullable param2) XZ_ATTR_OVERLOAD;
+FOUNDATION_EXPORT id _Nullable xz_objc_msgSend_object(id receiver, SEL selector) XZ_ATTR_OVERLOAD;
 
 FOUNDATION_EXPORT CGRect xz_objc_msgSend_rect(id receiver, SEL selector) XZ_ATTR_OVERLOAD;
 
@@ -314,11 +314,11 @@ FOUNDATION_EXPORT void xz_objc_msgSendSuper_void(id receiver, Class receiverClas
 FOUNDATION_EXPORT void xz_objc_msgSendSuper_void(id receiver, Class receiverClass, SEL selector, id _Nullable param1, NSInteger param2) XZ_ATTR_OVERLOAD;
 FOUNDATION_EXPORT void xz_objc_msgSendSuper_void(id receiver, Class receiverClass, SEL selector, id _Nullable param1, id _Nullable param2) XZ_ATTR_OVERLOAD;
 
-FOUNDATION_EXPORT id _Nullable xz_objc_msgSendSuper_id(id receiver, Class receiverClass, SEL selector, BOOL param1) XZ_ATTR_OVERLOAD;
-FOUNDATION_EXPORT id _Nullable xz_objc_msgSendSuper_id(id receiver, Class receiverClass, SEL selector, id _Nullable param1, BOOL param2) XZ_ATTR_OVERLOAD;
-FOUNDATION_EXPORT id _Nullable xz_objc_msgSendSuper_id(id receiver, Class receiverClass, SEL selector, id _Nullable param1, NSInteger param2, id _Nullable param3, id _Nullable param4) XZ_ATTR_OVERLOAD;
-FOUNDATION_EXPORT id _Nullable xz_objc_msgSendSuper_id(id receiver, Class receiverClass, SEL selector, id _Nullable param1, id _Nullable param2) XZ_ATTR_OVERLOAD;
-FOUNDATION_EXPORT id _Nullable xz_objc_msgSendSuper_id(id receiver, Class receiverClass, SEL selector) XZ_ATTR_OVERLOAD;
+FOUNDATION_EXPORT id _Nullable xz_objc_msgSendSuper_object(id receiver, Class receiverClass, SEL selector, BOOL param1) XZ_ATTR_OVERLOAD;
+FOUNDATION_EXPORT id _Nullable xz_objc_msgSendSuper_object(id receiver, Class receiverClass, SEL selector, id _Nullable param1, BOOL param2) XZ_ATTR_OVERLOAD;
+FOUNDATION_EXPORT id _Nullable xz_objc_msgSendSuper_object(id receiver, Class receiverClass, SEL selector, id _Nullable param1, NSInteger param2, id _Nullable param3, id _Nullable param4) XZ_ATTR_OVERLOAD;
+FOUNDATION_EXPORT id _Nullable xz_objc_msgSendSuper_object(id receiver, Class receiverClass, SEL selector, id _Nullable param1, id _Nullable param2) XZ_ATTR_OVERLOAD;
+FOUNDATION_EXPORT id _Nullable xz_objc_msgSendSuper_object(id receiver, Class receiverClass, SEL selector) XZ_ATTR_OVERLOAD;
 
 FOUNDATION_EXPORT CGRect xz_objc_msgSendSuper_rect(id receiver, Class receiverClass, SEL selector) XZ_ATTR_OVERLOAD;
 

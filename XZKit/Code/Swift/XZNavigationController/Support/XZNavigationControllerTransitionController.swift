@@ -91,7 +91,7 @@ import XZDefines
                 return transitionController.navigationController(navigationController, animationControllerFor: operation, from: fromVC, to: toVC)
             }
             let override: MethodType = { `self`, navigationController, operation, fromVC, toVC in
-                if let controller = xz_objc_msgSendSuper_id(self, aClass, selector, navigationController, operation.rawValue, fromVC, toVC) {
+                if let controller = xz_objc_msgSendSuper_object(self, aClass, selector, navigationController, operation.rawValue, fromVC, toVC) {
                     return controller as? UIViewControllerAnimatedTransitioning;
                 }
                 guard let transitionController = (navigationController as? XZNavigationController)?.transitionController else { return nil }
@@ -99,7 +99,7 @@ import XZDefines
             }
             let exchange = { (_ selector: Selector) in
                 let exchange: MethodType = { `self`, navigationController, operation, fromVC, toVC in
-                    if let controller = xz_objc_msgSend_id(self, selector, navigationController, operation.rawValue, fromVC, toVC) {
+                    if let controller = xz_objc_msgSend_object(self, selector, navigationController, operation.rawValue, fromVC, toVC) {
                         return controller as? UIViewControllerAnimatedTransitioning
                     }
                     guard let transitionController = (navigationController as? XZNavigationController)?.transitionController else { return nil }
@@ -119,7 +119,7 @@ import XZDefines
                 return transitionController.navigationController(navigationController, interactionControllerFor: animationController)
             }
             let override: MethodType = { `self`, navigationController, animationController in
-                if let controller = xz_objc_msgSendSuper_id(self, aClass, selector, navigationController, animationController) {
+                if let controller = xz_objc_msgSendSuper_object(self, aClass, selector, navigationController, animationController) {
                     return controller as? UIViewControllerInteractiveTransitioning;
                 }
                 guard let transitionController = (navigationController as? XZNavigationController)?.transitionController else { return nil }
@@ -127,7 +127,7 @@ import XZDefines
             }
             let exchange = { (_ selector: Selector) in
                 let exchange: MethodType = { `self`, navigationController, animationController in
-                    if let controller = xz_objc_msgSend_id(self, selector, navigationController, animationController) {
+                    if let controller = xz_objc_msgSend_object(self, selector, navigationController, animationController) {
                         return controller as? UIViewControllerInteractiveTransitioning
                     }
                     guard let transitionController = (navigationController as? XZNavigationController)?.transitionController else { return nil }

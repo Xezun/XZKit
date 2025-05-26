@@ -112,7 +112,7 @@ extension XZNavigationController {
                         
                         let selector = #selector(UINavigationController.popViewController(animated:));
                         let override: MethodType = { `self`, animated in
-                            let viewController = xz_objc_msgSendSuper_id(self, aClass, selector, animated) as? UIViewController;
+                            let viewController = xz_objc_msgSendSuper_object(self, aClass, selector, animated) as? UIViewController;
                             if viewController != nil {
                                 xz_navc_navigationController(self, prepareForTransitioning: animated)
                             }
@@ -120,7 +120,7 @@ extension XZNavigationController {
                         }
                         let exchange = { (selector: Selector) in
                             let exchange: MethodType = { `self`, animated in
-                                let viewController = xz_objc_msgSend_id(self, selector, animated) as? UIViewController
+                                let viewController = xz_objc_msgSend_object(self, selector, animated) as? UIViewController
                                 if viewController != nil {
                                     xz_navc_navigationController(self, prepareForTransitioning: animated)
                                 }
@@ -137,7 +137,7 @@ extension XZNavigationController {
                         
                         let selector = #selector(UINavigationController.popToViewController(_:animated:));
                         let override: MethodType = { `self`, viewController, animated in
-                            let viewControllers = xz_objc_msgSendSuper_id(self, aClass, selector, viewController, animated) as? [UIViewController]
+                            let viewControllers = xz_objc_msgSendSuper_object(self, aClass, selector, viewController, animated) as? [UIViewController]
                             if let viewControllers = viewControllers, viewControllers.count > 0 {
                                 xz_navc_navigationController(self, prepareForTransitioning: animated)
                             }
@@ -145,7 +145,7 @@ extension XZNavigationController {
                         }
                         let exchange = { (selector: Selector) in
                             let exchange: MethodType = { `self`, viewController, animated in
-                                let viewControllers = xz_objc_msgSend_id(self, selector, viewController, animated) as? [UIViewController]
+                                let viewControllers = xz_objc_msgSend_object(self, selector, viewController, animated) as? [UIViewController]
                                 if let viewControllers = viewControllers, viewControllers.count > 0 {
                                     xz_navc_navigationController(self, prepareForTransitioning: animated)
                                 }
@@ -162,7 +162,7 @@ extension XZNavigationController {
                         
                         let selector = #selector(UINavigationController.popToRootViewController(animated:));
                         let override: MethodType = { `self`, animated in
-                            let viewControllers = xz_objc_msgSendSuper_id(self, aClass, selector, animated) as? [UIViewController]
+                            let viewControllers = xz_objc_msgSendSuper_object(self, aClass, selector, animated) as? [UIViewController]
                             if let viewControllers = viewControllers, viewControllers.count > 0 {
                                 xz_navc_navigationController(self, prepareForTransitioning: animated)
                             }
@@ -170,7 +170,7 @@ extension XZNavigationController {
                         }
                         let exchange = { (selector: Selector) in
                             let exchange: MethodType = { `self`, animated in
-                                let viewControllers = xz_objc_msgSend_id(self, selector, animated) as? [UIViewController]
+                                let viewControllers = xz_objc_msgSend_object(self, selector, animated) as? [UIViewController]
                                 if let viewControllers = viewControllers, viewControllers.count > 0 {
                                     xz_navc_navigationController(self, prepareForTransitioning: animated)
                                 }
