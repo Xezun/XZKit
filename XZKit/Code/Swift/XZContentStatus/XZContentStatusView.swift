@@ -16,6 +16,9 @@ import XZTextImageView
         autoresizingMask = [.flexibleWidth, .flexibleHeight]
         backgroundColor = .white
         style = .bottom
+        contentInsets = .init(top: 10, leading: 0, bottom: 10, trailing: 0)
+        imageInsets   = .init(top: -5, leading: 0, bottom: +5, trailing: 0)
+        textInsets    = .init(top: +5, leading: 0, bottom: -5, trailing: 0)
     }
     
     required public init?(coder: NSCoder) {
@@ -23,6 +26,9 @@ import XZTextImageView
         autoresizingMask = [.flexibleWidth, .flexibleHeight]
         backgroundColor = .white
         style = .bottom
+        contentInsets = .init(top: 10, leading: 0, bottom: 10, trailing: 0)
+        imageInsets   = .init(top: -5, leading: 0, bottom: +5, trailing: 0)
+        textInsets    = .init(top: +5, leading: 0, bottom: -5, trailing: 0)
     }
     
 }
