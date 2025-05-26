@@ -208,6 +208,7 @@ FOUNDATION_EXTERN void XZLog(NSString *format, ...) NS_FORMAT_FUNCTION(1,2);
 
 
 #ifndef XZ_DISPATCH_MACROS
+#define XZ_DISPATCH_MACROS 1
 
 /// 请使用 `dispatch_queue/main/global_async/sync` 宏，此函数不可使用。
 ///
@@ -306,7 +307,8 @@ __dispatch_queue_imp_0__)(concurrency, queue, block, ##__VA_ARGS__)
 
 #endif
 
-
+#ifndef XZ_OBJC_MESSAGE_MACROS
+#define XZ_OBJC_MESSAGE_MACROS 1
 
 /// 在 x86 架构上，返回值若为超过16字节的结构体，则必须使用 objc_msgSend_stret 函数来发送消息。
 FOUNDATION_EXPORT void xz_objc_msgSend_stret(void);
@@ -346,4 +348,4 @@ FOUNDATION_EXPORT void xz_objc_msgSend_ldret(void);
     #define xz_objc_msgSend_ldret       objc_msgSend_fpret
 #endif
 
-
+#endif

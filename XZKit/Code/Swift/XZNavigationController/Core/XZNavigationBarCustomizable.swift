@@ -83,21 +83,21 @@ extension AnyNavigationBar {
     /// - Attention: 在 `isHidden` 属性的 willSet/set/didSet 方法中，直接设置原生导航条的属性，会导致循环调用。
     public func isHiddenDidChange() {
         guard let navigationBar = self.navigationBar else { return }
-        xz_objc_msgSendSuper(navigationBar, type(of: navigationBar), v: #selector(setter: UIKit.UINavigationBar.isHidden), self.isHidden)
+        xz_objc_msgSendSuper_void(navigationBar, type(of: navigationBar), #selector(setter: UIKit.UINavigationBar.isHidden), self.isHidden)
     }
     
     /// 当前导航条 prefersLargeTitles 属性发生改变时，通过此方法将状态同步给原生导航条。
     /// - Attention: 在 `prefersLargeTitles` 属性的 willSet/set/didSet 方法中，直接设置原生导航条的属性，会导致循环调用。
     public func prefersLargeTitlesDidChange() {
         guard let navigationBar = self.navigationBar else { return }
-        xz_objc_msgSendSuper(navigationBar, type(of: navigationBar), v: #selector(setter: UIKit.UINavigationBar.prefersLargeTitles), self.prefersLargeTitles)
+        xz_objc_msgSendSuper_void(navigationBar, type(of: navigationBar), #selector(setter: UIKit.UINavigationBar.prefersLargeTitles), self.prefersLargeTitles)
     }
     
     /// 当前导航条 isTranslucent 属性发生改变时，通过此方法将状态同步给原生导航条。
     /// - Attention: 在 `isTranslucent` 属性的 willSet/set/didSet 方法中，直接设置原生导航条的属性，会导致循环调用。
     public func isTranslucentDidChange() {
         guard let navigationBar = self.navigationBar else { return }
-        xz_objc_msgSendSuper(navigationBar, type(of: navigationBar), v: #selector(setter: UIKit.UINavigationBar.isTranslucent), self.isTranslucent)
+        xz_objc_msgSendSuper_void(navigationBar, type(of: navigationBar), #selector(setter: UIKit.UINavigationBar.isTranslucent), self.isTranslucent)
     }
     
     public var navigationController: UINavigationController? {
