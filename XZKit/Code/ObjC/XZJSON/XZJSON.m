@@ -299,7 +299,7 @@
 
 @implementation XZJSON (NSEquatable)
 
-+ (BOOL)model:(id)model1 isEqualToModel:(id)model2 comparator:(XZJSONEquation (^)(id _Nonnull, id _Nonnull, NSString * _Nonnull))block {
++ (BOOL)model:(id)model1 isEqualToModel:(id)model2 comparator:(NSComparisonResult (^)(id _Nonnull, id _Nonnull, NSString * _Nonnull))block {
     // 相等：同一对象
     if (model1 == model2) {
         return YES;
@@ -591,11 +591,11 @@
         // 无法比较的属性值
         if (block) {
             switch (block(model1, model2, name)) {
-                case XZJSONEquationNo:
+                case NSOrderedAscending:
                     return NO;
-                case XZJSONEquationUnknown:
+                case NSOrderedDescending:
                     break;
-                case XZJSONEquationYes:
+                case NSOrderedSame:
                     continue;
             }
         }

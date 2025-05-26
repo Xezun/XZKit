@@ -185,23 +185,20 @@ NS_ASSUME_NONNULL_BEGIN
 
 @end
 
-typedef NS_ENUM(NSUInteger, XZJSONEquation) {
-    /// 不相等
-    XZJSONEquationNo NS_SWIFT_NAME(False) = -1,
-    /// 未知，未比较
-    XZJSONEquationUnknown NS_SWIFT_NAME(Unknown) = 0,
-    /// 相等
-    XZJSONEquationYes NS_SWIFT_NAME(True) = 1,
-};
-
 @interface XZJSON (NSEquatable)
 
 /// 模型比较。如果模型的属性相同，则认为模型相等，即使模型的类型不同。
+///
+/// 块函数返回值各枚举值含义：
+/// - NSOrderedSame 相等
+/// - NSOrderedAscending 不相等
+/// - NSOrderedDescending 未比较
+///
 /// - Parameters:
 ///   - model1: 待比较的模型
 ///   - model2: 被比较的模型
 ///   - block: 如果属性值无法比较，将调用此块函数，如不提供，则认为属性不相等。
-+ (BOOL)model:(id)model1 isEqualToModel:(id)model2 comparator:(XZJSONEquation (^_Nullable)(id model1, id model2, NSString *key))block;
++ (BOOL)model:(id)model1 isEqualToModel:(id)model2 comparator:(NSComparisonResult (^_Nullable)(id model1, id model2, NSString *key))block;
 
 @end
 
