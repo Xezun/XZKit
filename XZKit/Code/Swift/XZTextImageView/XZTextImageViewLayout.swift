@@ -12,32 +12,36 @@ import XZGeometry
 
 extension XZTextImageView {
     
-    public enum Style {
+    /// 图片文字视图的样式。
+    @MainActor public enum Style {
         /// 文字在图片的前面（通常为左边）
-        case leading
+        case leadingText
         /// 文字在图片的后面（通常为右边）
-        case trailing
+        case trailingText
         /// 文字在图片的顶部
-        case top
+        case topText
         /// 文字在图片的底部，默认
-        case bottom
+        case bottomText
     }
     
-    @MainActor public protocol Appearance {
+    /// 图片文字视图的外观属性。
+    @MainActor public protocol Appearance: AnyObject {
         /// 文字图片的位置关系。
-        var style: XZTextImageView.Style { get }
+        var style: XZTextImageView.Style { get set }
         
         /// 视图内边距，默认 .zero 。
-        var contentInsets: NSDirectionalEdgeInsets { get }
+        var contentInsets: NSDirectionalEdgeInsets { get set }
         
         /// 文本边距，默认 .zero 。
-        var textInsets: NSDirectionalEdgeInsets { get }
+        var textInsets: NSDirectionalEdgeInsets { get set }
         
         /// 图片边距，默认 .zero 。
-        var imageInsets: NSDirectionalEdgeInsets { get }
+        var imageInsets: NSDirectionalEdgeInsets { get set }
         
     }
     
+    /// 图片文字视图的布局属性。
+    ///
     /// 实现了一个包含文本和图片的视图布局逻辑。
     /// - Note: 控件实现协议需重写 layoutSubviews 方法，并执行 layoutTextImage 方法。
     /// - Note: 如果需要支持 AutoLayout 自适应大小，需要重写 intrinsicContentSize 方法，并返回 intrinsicTextImageSize 。
@@ -74,7 +78,7 @@ extension XZTextImageView.Layout {
     }
     
     public var style: XZTextImageView.Style {
-        return .bottom
+        return .bottomText
     }
     
     /// 为控件提供计算自然大小的能力，用于重写控件 intrinsicContentSize 属性。
@@ -85,7 +89,7 @@ extension XZTextImageView.Layout {
         let imageSize: CGSize = imageViewIfLoaded?.sizeThatFits(size) ?? .zero
         let textSize: CGSize = textViewIfLoaded?.sizeThatFits(size) ?? .zero
         
-        if style == .bottom || style == .top {
+        if style == .bottomText || style == .topText {
             let width = max(imageSize.width, textSize.width) + contentInsets.leading + contentInsets.trailing
             let height = imageSize.height + textSize.height + contentInsets.top + contentInsets.bottom
             return CGSize.init(width: width, height: height)
@@ -103,7 +107,7 @@ extension XZTextImageView.Layout {
         let imageSize: CGSize = imageViewIfLoaded?.sizeThatFits(size) ?? .zero
         let textSize: CGSize = textViewIfLoaded?.sizeThatFits(size) ?? .zero
         
-        if style == .bottom || style == .top {
+        if style == .bottomText || style == .topText {
             let width = max(imageSize.width, textSize.width) + contentInsets.leading + contentInsets.trailing
             let height = imageSize.height + textSize.height + contentInsets.top + contentInsets.bottom
             return CGSize.init(width: width, height: height)
@@ -135,7 +139,7 @@ extension XZTextImageView.Layout {
                 // 如果多行显示，那么返回的大小，宽度与给定的大小相同，高度则根据文字有多少行（不超过限定的行数）确定。
                 let textSize = textView.sizeThatFits(layoutRect.size)
                 
-                if style == .bottom {
+                if style == .bottomText {
                     // 垂直布局，标题在下。
                     let textWidth = min(textSize.width, layoutRect.width)
                     let textHeight = max(min(layoutRect.height - imageSize.height, textSize.height), 0)
@@ -158,7 +162,7 @@ extension XZTextImageView.Layout {
                         width: textWidth - textInsets.leading - textInsets.trailing,
                         height: textHeight - textInsets.top - textInsets.bottom
                     )
-                } else if style == .top {
+                } else if style == .topText {
                     // 垂直布局，标题在上。
                     let textWidth = min(textSize.width, layoutRect.width)
                     let textHeight = max(min(layoutRect.height - imageSize.height, textSize.height), 0)
@@ -191,7 +195,7 @@ extension XZTextImageView.Layout {
                     let imageInsets = self.imageInsets
                     let textInsets = self.textInsets
                     
-                    if (style == .trailing && layoutDirection == .leftToRight) || (style == .leading && layoutDirection == .rightToLeft) {
+                    if (style == .trailingText && layoutDirection == .leftToRight) || (style == .leadingText && layoutDirection == .rightToLeft) {
                         // 标题在右
                         let minX = layoutRect.minX + (layoutRect.width - contentSize.width) * 0.5
                         imageView.frame = CGRect(

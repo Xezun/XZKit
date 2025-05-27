@@ -39,7 +39,7 @@ extension XZContentStatus {
                 
         /// 状态视图。
         ///
-        /// 如果状态视图不是 XZButton 的子类，默认提供的配置方法将不会生效。
+        /// 如果状态视图不是 XZTextImageButton 的子类，默认提供的配置方法将不会生效。
         public lazy var view: UIView = XZContentStatusView.init() {
             didSet {
                 manager.updateAppearance()
@@ -52,85 +52,85 @@ extension XZContentStatus {
 
 extension XZContentStatus.Configuration: XZTextImageView.StatedAppearance {
     
-    /// 状态视图默认为 XZButton 视图，支持添加触摸事件。
+    /// 状态视图默认为 XZTextImageButton 视图，支持添加触摸事件。
     public func addTarget(_ target: Any?, action: Selector, for controlEvents: UIControl.Event) {
-        (view as? XZButton)?.addTarget(target, action: action, for: controlEvents)
+        (view as? UIControl)?.addTarget(target, action: action, for: controlEvents)
     }
     
     public func text(for state: UIControl.State) -> String? {
-        return (view as? XZButton)?.text(for: state)
+        return (view as? XZTextImageView.StatedAppearance)?.text(for: state)
     }
     
     public func setText(_ text: String?, for state: UIControl.State) {
-        (view as? XZButton)?.setText(text, for: state)
+        (view as? XZTextImageView.StatedAppearance)?.setText(text, for: state)
     }
     
     public func attributedText(for state: UIControl.State) -> NSAttributedString? {
-        return (view as? XZButton)?.attributedText(for: state)
+        return (view as? XZTextImageView.StatedAppearance)?.attributedText(for: state)
     }
     
     public func setAttributedText(_ attributedText: NSAttributedString?, for state: UIControl.State) {
-        (view as? XZButton)?.setAttributedText(attributedText, for: state)
+        (view as? XZTextImageView.StatedAppearance)?.setAttributedText(attributedText, for: state)
     }
     
     public func font(for state: UIControl.State) -> UIFont? {
-        return (view as? XZButton)?.font(for: state)
+        return (view as? XZTextImageView.StatedAppearance)?.font(for: state)
     }
     
     public func setFont(_ font: UIFont?, for state: UIControl.State) {
-        (view as? XZButton)?.setFont(font, for: state)
+        (view as? XZTextImageView.StatedAppearance)?.setFont(font, for: state)
     }
     
     public func textColor(for state: UIControl.State) -> UIColor? {
-        return (view as? XZButton)?.textColor(for: state)
+        return (view as? XZTextImageView.StatedAppearance)?.textColor(for: state)
     }
     
     public func setTextColor(_ textColor: UIColor?, for state: UIControl.State) {
-        (view as? XZButton)?.setTextColor(textColor, for: state)
+        (view as? XZTextImageView.StatedAppearance)?.setTextColor(textColor, for: state)
     }
     
     public func textShadowColor(for state: UIControl.State) -> UIColor? {
-        return (view as? XZButton)?.textShadowColor(for: state)
+        return (view as? XZTextImageView.StatedAppearance)?.textShadowColor(for: state)
     }
     
     public func setTextShadowColor(_ textShadowColor: UIColor?, for state: UIControl.State) {
-        (view as? XZButton)?.setTextShadowColor(textShadowColor, for: state)
+        (view as? XZTextImageView.StatedAppearance)?.setTextShadowColor(textShadowColor, for: state)
     }
     
     public func image(for state: UIControl.State) -> UIImage? {
-        return (view as? XZButton)?.image(for: state)
+        return (view as? XZTextImageView.StatedAppearance)?.image(for: state)
     }
     
     public func setImage(_ image: UIImage?, for state: UIControl.State) {
-        (view as? XZButton)?.setImage(image, for: state)
+        (view as? XZTextImageView.StatedAppearance)?.setImage(image, for: state)
     }
     
     public func backgroundImage(for state: UIControl.State) -> UIImage? {
-        return (view as? XZButton)?.backgroundImage(for: state)
+        return (view as? XZTextImageView.StatedAppearance)?.backgroundImage(for: state)
     }
     
     public func setBackgroundImage(_ backgroundImage: UIImage?, for state: UIControl.State) {
-        (view as? XZButton)?.setBackgroundImage(backgroundImage, for: state)
+        (view as? XZTextImageView.StatedAppearance)?.setBackgroundImage(backgroundImage, for: state)
     }
     
     public var style: XZTextImageView.Style {
-        get { return (view as? XZButton)?.style ?? .bottom }
-        set { (view as? XZButton)?.style = newValue }
+        get { return (view as? XZTextImageView.StatedAppearance)?.style ?? .bottomText }
+        set { (view as? XZTextImageView.StatedAppearance)?.style = newValue }
     }
     
     public var contentInsets: NSDirectionalEdgeInsets {
-        get { return (view as? XZButton)?.contentInsets ?? .zero }
-        set { (view as? XZButton)?.contentInsets = newValue }
+        get { return (view as? XZTextImageView.StatedAppearance)?.contentInsets ?? .zero }
+        set { (view as? XZTextImageView.StatedAppearance)?.contentInsets = newValue }
     }
     
     public var textInsets: NSDirectionalEdgeInsets {
-        get { return (view as? XZButton)?.textInsets ?? .zero }
-        set { (view as? XZButton)?.textInsets = newValue }
+        get { return (view as? XZTextImageView.StatedAppearance)?.textInsets ?? .zero }
+        set { (view as? XZTextImageView.StatedAppearance)?.textInsets = newValue }
     }
     
     public var imageInsets: NSDirectionalEdgeInsets {
-        get { return (view as? XZButton)?.imageInsets ?? .zero }
-        set { (view as? XZButton)?.imageInsets = newValue }
+        get { return (view as? XZTextImageView.StatedAppearance)?.imageInsets ?? .zero }
+        set { (view as? XZTextImageView.StatedAppearance)?.imageInsets = newValue }
     }
 }
 

@@ -1,5 +1,5 @@
 //
-//  XZButton.swift
+//  XZTextImageButton.swift
 //  XZKit
 //
 //  Created by Xezun on 2018/9/29.
@@ -9,7 +9,36 @@ import Foundation
 import UIKit
 import XZGeometry
 
-@objc open class XZButton: UIControl, XZTextImageView.Layout, XZTextImageView.StatedAppearance {
+@objc open class XZTextImageButton: UIControl, XZTextImageView.Layout, XZTextImageView.StatedAppearance {
+    
+    // MARK: - 重写
+    
+    override open func layoutSubviews() {
+        super.layoutSubviews()
+        self.layoutTextImage()
+    }
+    
+    open override var intrinsicContentSize: CGSize {
+        return self.textImageIntrinsicSize
+    }
+    
+    open override func sizeThatFits(_ size: CGSize) -> CGSize {
+        return self.textImageSizeThatFits(size)
+    }
+    
+    open override var isSelected: Bool {
+        didSet { stateDidChange() }
+    }
+    
+    open override var isHighlighted: Bool {
+        didSet { stateDidChange() }
+    }
+    
+    open override var isEnabled: Bool {
+        didSet { stateDidChange() }
+    }
+    
+    // MARK: - 属性
     
     open var textLabel: UILabel {
         if let textLabel = textViewIfLoaded {
@@ -44,8 +73,6 @@ import XZGeometry
         return imageViewIfLoaded!
     }
     
-    open private(set) var backgroundViewIfLoaded: UIImageView?
-    
     open var backgroundView: UIImageView {
         if backgroundViewIfLoaded != nil {
             return backgroundViewIfLoaded!
@@ -57,39 +84,17 @@ import XZGeometry
         return backgroundViewIfLoaded!
     }
     
-    override open func layoutSubviews() {
-        super.layoutSubviews()
-        self.layoutTextImage()
-    }
-    
-    open override var intrinsicContentSize: CGSize {
-        return self.textImageIntrinsicSize
-    }
-    
-    open override func sizeThatFits(_ size: CGSize) -> CGSize {
-        return self.textImageSizeThatFits(size)
-    }
-    
-    open override var isSelected: Bool {
-        didSet { stateDidChange() }
-    }
-    
-    open override var isHighlighted: Bool {
-        didSet { stateDidChange() }
-    }
-    
-    open override var isEnabled: Bool {
-        didSet { stateDidChange() }
-    }
-    
     // MARK: - XZTextImageView.Layout
-    
-    open var style: XZTextImageView.Style = .trailing {
-        didSet { setNeedsLayout() }
-    }
     
     open private(set) var textViewIfLoaded: UILabel?
     open private(set) var imageViewIfLoaded: UIImageView?
+    open private(set) var backgroundViewIfLoaded: UIImageView?
+    
+    // MARK: - XZTextImageView.Layout
+    
+    open var style: XZTextImageView.Style = .trailingText {
+        didSet { setNeedsLayout() }
+    }
     
     open var contentInsets: NSDirectionalEdgeInsets = .zero {
         didSet { setNeedsLayout() }
@@ -262,33 +267,7 @@ import XZGeometry
     }
 }
 
-extension XZTextImageView {
-    
-    @MainActor public protocol StatedAppearance: XZTextImageView.Appearance {
-        
-        func text(for state: UIControl.State) -> String?
-        func setText(_ text: String?, for state: UIControl.State)
-        
-        func attributedText(for state: UIControl.State) -> NSAttributedString?
-        func setAttributedText(_ attributedText: NSAttributedString?, for state: UIControl.State)
-        
-        func font(for state: UIControl.State) -> UIFont?
-        func setFont(_ font: UIFont?, for state: UIControl.State)
 
-        func textColor(for state: UIControl.State) -> UIColor?
-        func setTextColor(_ textColor: UIColor?, for state: UIControl.State)
-
-        func textShadowColor(for state: UIControl.State) -> UIColor?
-        func setTextShadowColor(_ textShadowColor: UIColor?, for state: UIControl.State)
-
-        func image(for state: UIControl.State) -> UIImage?
-        func setImage(_ image: UIImage?, for state: UIControl.State)
-
-        func backgroundImage(for state: UIControl.State) -> UIImage?
-        func setBackgroundImage(_ backgroundImage: UIImage?, for state: UIControl.State)
-
-    }
-}
 
 
 
