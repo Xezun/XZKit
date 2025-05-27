@@ -91,7 +91,7 @@ static void xz_mocoa_addMethod(Class const cls, SEL const target, SEL const sour
         return;
     }
     [(id<XZMocoaView>)self viewModelWillChange];
-    // 在 viewModel 使用前（与 view 关联前），使其进入 isReady 状态
+    // VM 与 V 应该是完全独立的，在 VM 与 V 关联之前，使其进入 ready 状态
     [viewModel ready];
     objc_setAssociatedObject(self, _viewModel, viewModel, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
     [(id<XZMocoaView>)self viewModelDidChange];
