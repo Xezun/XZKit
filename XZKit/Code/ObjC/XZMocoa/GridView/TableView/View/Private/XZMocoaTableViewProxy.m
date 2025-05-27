@@ -180,6 +180,14 @@
     [self.contentView reloadData];
 }
 
+- (void)tableViewModel:(XZMocoaTableViewModel *)tableViewModel didSelectCellAtIndexPath:(NSIndexPath *)indexPath animated:(BOOL)animated scrollPosition:(UITableViewScrollPosition)scrollPosition {
+    [self.contentView selectRowAtIndexPath:indexPath animated:animated scrollPosition:scrollPosition];
+}
+
+- (void)tableViewModel:(XZMocoaTableViewModel *)tableViewModel didDeselectCellAtIndexPath:(NSIndexPath *)indexPath animated:(BOOL)animated {
+    [self.contentView deselectRowAtIndexPath:indexPath animated:animated];
+}
+
 - (void)tableViewModel:(XZMocoaTableViewModel *)tableViewModel didReloadCellsAtIndexPaths:(NSArray<NSIndexPath *> *)indexPaths {
     UITableViewRowAnimation const rowAnimation = tableViewModel.rowAnimation;
     [self.contentView reloadRowsAtIndexPaths:indexPaths withRowAnimation:rowAnimation];

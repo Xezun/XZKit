@@ -51,6 +51,9 @@ NS_SWIFT_UI_ACTOR @protocol XZMocoaGridViewModelDelegate <NSObject>
 /// 数据更新后，调用此方法以重载所有受管理的子视图模型。
 - (void)reloadData;
 
+- (void)selectCellAtIndexPath:(NSIndexPath *)indexPath animated:(BOOL)animated scrollPosition:(NSInteger)scrollPosition;
+- (void)deselectCellAtIndexPath:(NSIndexPath *)indexPath animated:(BOOL)animated;
+
 /// 指定 section 的数据发生更新后，调用此方法以重载该 section 的视图模型。
 /// @param section 数据发生更新的行
 - (void)reloadSectionAtIndex:(NSInteger)section;
@@ -92,6 +95,9 @@ NS_SWIFT_UI_ACTOR @protocol XZMocoaGridViewModelDelegate <NSObject>
 // 子类应该重新下面的方法，并更新视图。
 
 - (void)didReloadData;
+- (void)didDeselectCellAtIndexPath:(NSIndexPath *)indexPath animated:(BOOL)animated;
+- (void)didSelectCellAtIndexPath:(NSIndexPath *)indexPath animated:(BOOL)animated scrollPosition:(NSInteger)scrollPosition;
+
 - (void)didReloadCellsAtIndexPaths:(NSArray<NSIndexPath *> *)indexPaths;
 - (void)didInsertCellsAtIndexPaths:(NSArray<NSIndexPath *> *)indexPaths;
 - (void)didDeleteCellsAtIndexPaths:(NSArray<NSIndexPath *> *)indexPaths;

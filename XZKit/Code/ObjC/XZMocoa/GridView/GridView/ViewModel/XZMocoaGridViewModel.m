@@ -140,6 +140,14 @@ typedef void(^XZMocoaGridDelayedUpdates)(__kindof XZMocoaViewModel *self);
     [self didReloadData];
 }
 
+- (void)selectCellAtIndexPath:(NSIndexPath *)indexPath animated:(BOOL)animated scrollPosition:(NSInteger)scrollPosition {
+    [self didSelectCellAtIndexPath:indexPath animated:animated scrollPosition:scrollPosition];
+}
+
+- (void)deselectCellAtIndexPath:(NSIndexPath *)indexPath animated:(BOOL)animated {
+    [self didDeselectCellAtIndexPath:indexPath animated:animated];
+}
+
 - (void)reloadSectionAtIndex:(NSInteger)section {
     [self reloadSectionsAtIndexes:[NSIndexSet indexSetWithIndex:section]];
 }
@@ -601,6 +609,16 @@ typedef void(^XZMocoaGridDelayedUpdates)(__kindof XZMocoaViewModel *self);
 #pragma mark - 子类重写
 
 - (void)didReloadData {
+    NSString *reason = [NSString stringWithFormat:@"必须使用子类，并重 %s 方法", __PRETTY_FUNCTION__];
+    @throw [NSException exceptionWithName:NSGenericException reason:reason userInfo:nil];
+}
+
+- (void)didDeselectCellAtIndexPath:(NSIndexPath *)indexPath animated:(BOOL)animated {
+    NSString *reason = [NSString stringWithFormat:@"必须使用子类，并重 %s 方法", __PRETTY_FUNCTION__];
+    @throw [NSException exceptionWithName:NSGenericException reason:reason userInfo:nil];
+}
+
+- (void)didSelectCellAtIndexPath:(NSIndexPath *)indexPath animated:(BOOL)animated scrollPosition:(NSInteger)scrollPosition {
     NSString *reason = [NSString stringWithFormat:@"必须使用子类，并重 %s 方法", __PRETTY_FUNCTION__];
     @throw [NSException exceptionWithName:NSGenericException reason:reason userInfo:nil];
 }

@@ -32,6 +32,14 @@
     [self.delegate tableViewModel:self didReloadData:NULL];
 }
 
+- (void)didSelectCellAtIndexPath:(NSIndexPath *)indexPath animated:(BOOL)animated scrollPosition:(UITableViewScrollPosition)scrollPosition {
+    [self.delegate tableViewModel:self didSelectCellAtIndexPath:indexPath animated:animated scrollPosition:scrollPosition];
+}
+
+- (void)didDeselectCellAtIndexPath:(NSIndexPath *)indexPath animated:(BOOL)animated {
+    [self.delegate tableViewModel:self didDeselectCellAtIndexPath:indexPath animated:animated];
+}
+
 - (void)didReloadCellsAtIndexPaths:(NSArray<NSIndexPath *> *)indexPaths {
     if (!self.isReady) return;
     [self.delegate tableViewModel:self didReloadCellsAtIndexPaths:indexPaths];

@@ -279,13 +279,37 @@ FOUNDATION_EXPORT XZMocoaKey const XZMocoaKeyNone;
 
 @class UIControl;
 
+/// 执行 Segue 跳转事件的 XZMocoaKey 事件名。
+/// 默认会绑定此事件。
+FOUNDATION_EXPORT XZMocoaKey const XZMocoaKeyPerformSegue;
+/// 获取视图模型对应的视图控制器，或视图所在的控制器。
+/// 默认会绑定该事件。
+FOUNDATION_EXPORT XZMocoaKey const XZMocoaKeyViewController;
+
 @interface XZMocoaViewModel (XZStoryboardSupporting)
+
+/// 发送 XZMocoaKeyPerformSegue 事件给视图或视图控制器。
+/// - Parameters:
+///   - identifier: 标记符
+///   - sender: 发送者
+- (void)performSegueWithIdentifier:(NSString *)identifier sender:(nullable id)sender;
 
 /// 视图分发过来的 IB 转场事件，默认返回 YES 值。
 - (BOOL)shouldPerformSegueWithIdentifier:(NSString *)identifier sender:(nullable id)sender;
 
 /// 控制器分发过来的 IB 转场事件。
 - (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(nullable id)sender;
+
+
+// 不提供视图模型所属的视图的访问方式，是因为视图模型应该与视图完全隔离。
+// 提供视图控制器的访问方式，是因为在 Cocoa 体系中，视图控制器承担了很多公共功能，类似于 h5 的全局 window 对象，应该可以全局访问。
+
+/// 获取控制器，或视图所在的控制器。视图模型不应保存此属性值，否则可能造成内存泄漏。
+@property (nonatomic, readonly, nullable) UIViewController *viewController;
+/// 获取导航控制器，或视图所在的导航控制器。
+@property (nonatomic, readonly, nullable) UINavigationController *navigationController;
+/// 获取页签控制器，或视图所在的页签控制器。
+@property (nonatomic, readonly, nullable) UITabBarController *tabBarController;
 
 @end
 

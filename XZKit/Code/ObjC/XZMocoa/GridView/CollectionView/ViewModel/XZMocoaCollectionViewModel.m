@@ -15,6 +15,14 @@
     [self.delegate collectionViewModel:self didReloadData:NULL];
 }
 
+- (void)didSelectCellAtIndexPath:(NSIndexPath *)indexPath animated:(BOOL)animated scrollPosition:(NSInteger)scrollPosition {
+    [self.delegate collectionViewModel:self didSelectCellAtIndexPath:indexPath animated:animated scrollPosition:scrollPosition];
+}
+
+- (void)didDeselectCellAtIndexPath:(NSIndexPath *)indexPath animated:(BOOL)animated {
+    [self.delegate collectionViewModel:self didDeselectCellAtIndexPath:indexPath animated:animated];
+}
+
 - (void)didReloadCellsAtIndexPaths:(NSArray<NSIndexPath *> *)indexPaths {
     if (!self.isReady) return;
     [self.delegate collectionViewModel:self didReloadCellsAtIndexPaths:indexPaths];

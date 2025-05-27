@@ -203,6 +203,14 @@ static NSString *UIElementKindFromMocoaKind(XZMocoaKind kind) {
     [self.contentView reloadData];
 }
 
+- (void)collectionViewModel:(XZMocoaCollectionViewModel *)collectionViewModel didSelectCellAtIndexPath:(NSIndexPath *)indexPath animated:(BOOL)animated scrollPosition:(UICollectionViewScrollPosition)scrollPosition {
+    [self.contentView selectItemAtIndexPath:indexPath animated:animated scrollPosition:scrollPosition];
+}
+
+- (void)collectionViewModel:(XZMocoaCollectionViewModel *)collectionViewModel didDeselectCellAtIndexPath:(NSIndexPath *)indexPath animated:(BOOL)animated {
+    [self.contentView deselectItemAtIndexPath:indexPath animated:animated];
+}
+
 - (void)collectionViewModel:(XZMocoaCollectionViewModel *)collectionViewModel didReloadCellsAtIndexPaths:(NSArray<NSIndexPath *> *)indexPaths {
     [self.contentView reloadItemsAtIndexPaths:indexPaths];
 }

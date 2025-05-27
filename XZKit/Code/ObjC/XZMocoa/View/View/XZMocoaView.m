@@ -34,6 +34,7 @@ static void xz_mocoa_addMethod(Class const cls, SEL const target, SEL const sour
 #pragma mark - XZMocoaView 协议默认实现
 
 @interface UIResponder (XZMocoaView)
+
 @end
 
 @implementation UIResponder (XZMocoaView)
@@ -125,7 +126,40 @@ static void xz_mocoa_addMethod(Class const cls, SEL const target, SEL const sour
 
 @end
 
+@implementation UIView (XZMocoaView)
 
+- (void)viewModelWillChange {
+    XZMocoaViewModel *viewModel = ((id<XZMocoaView>)self).viewModel;
+    [viewModel removeTarget:self action:nil forKey:XZMocoaKeyPerformSegue];
+}
+
+- (void)viewModelDidChange {
+    XZMocoaViewModel *viewModel = ((id<XZMocoaView>)self).viewModel;
+    [viewModel addTarget:self action:@selector(xz_mocoa_viewModel:didSendActions:forKey:) forKey:XZMocoaKeyPerformSegue];
+    [viewModel addTarget:self action:@selector(xz_mocoa_viewModel:didSendActions:forKey:) forKey:XZMocoaKeyViewController];
+}
+
+- (void)xz_mocoa_viewModel:(XZMocoaViewModel *)viewModel didSendActions:(id)value forKey:(XZMocoaKey)akey {
+    if (akey == XZMocoaKeyPerformSegue) {
+        NSArray<NSString *> * const values = value;
+        switch (values.count) {
+            case 0:
+                break;
+            case 1:
+                [((id<XZMocoaView>)self).viewController performSegueWithIdentifier:values[0] sender:nil];
+                break;
+            default: {
+                [((id<XZMocoaView>)self).viewController performSegueWithIdentifier:values[0] sender:values[1]];
+                break;
+            }
+        }
+    } else if (akey == XZMocoaKeyViewController) {
+        void (^ const handler)(UIViewController *) = value;
+        handler(((id<XZMocoaView>)self).viewController);
+    }
+}
+
+@end
 
 @interface UIViewController (XZMocoaView)
 @end
@@ -155,6 +189,36 @@ static void xz_mocoa_addMethod(Class const cls, SEL const target, SEL const sour
                 XZLog(@"为 UIViewController 重载方法 %@ 失败，相关事件请手动处理", NSStringFromSelector(selT));
             }
         }
+    }
+}
+
+- (void)viewModelWillChange {
+    XZMocoaViewModel *viewModel = ((id<XZMocoaView>)self).viewModel;
+    [viewModel removeTarget:self action:nil forKey:XZMocoaKeyPerformSegue];
+}
+
+- (void)viewModelDidChange {
+    XZMocoaViewModel *viewModel = ((id<XZMocoaView>)self).viewModel;
+    [viewModel addTarget:self action:@selector(xz_mocoa_viewModel:didSendActions:forKey:) forKey:XZMocoaKeyPerformSegue];
+    [viewModel addTarget:self action:@selector(xz_mocoa_viewModel:didSendActions:forKey:) forKey:XZMocoaKeyViewController];
+}
+
+- (void)xz_mocoa_viewModel:(XZMocoaViewModel *)viewModel didSendActions:(id)value forKey:(XZMocoaKey)akey {
+    if (akey == XZMocoaKeyPerformSegue) {
+        NSArray<NSString *> * const values = value;
+        switch (values.count) {
+            case 0:
+                break;
+            case 1:
+                [self performSegueWithIdentifier:values[0] sender:nil];
+                break;
+            default:
+                [self performSegueWithIdentifier:values[0] sender:values[1]];
+                break;
+        }
+    } else if (akey == XZMocoaKeyViewController) {
+        void (^ const handler)(UIViewController *) = value;
+        handler(self);
     }
 }
 

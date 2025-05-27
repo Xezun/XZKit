@@ -17,6 +17,9 @@ NS_ASSUME_NONNULL_BEGIN
 @required
 - (void)collectionViewModel:(XZMocoaCollectionViewModel *)collectionViewModel didReloadData:(void * _Nullable)null;
 
+- (void)collectionViewModel:(XZMocoaCollectionViewModel *)tableViewModel didSelectCellAtIndexPath:(NSIndexPath *)indexPath animated:(BOOL)animated scrollPosition:(UICollectionViewScrollPosition)scrollPosition;
+- (void)collectionViewModel:(XZMocoaCollectionViewModel *)tableViewModel didDeselectCellAtIndexPath:(NSIndexPath *)indexPath animated:(BOOL)animated;
+
 - (void)collectionViewModel:(XZMocoaCollectionViewModel *)collectionViewModel didReloadCellsAtIndexPaths:(NSArray<NSIndexPath *> *)indexPaths;
 - (void)collectionViewModel:(XZMocoaCollectionViewModel *)collectionViewModel didInsertCellsAtIndexPaths:(NSArray<NSIndexPath *> *)indexPaths;
 - (void)collectionViewModel:(XZMocoaCollectionViewModel *)collectionViewModel didDeleteCellsAtIndexPaths:(NSArray<NSIndexPath *> *)indexPaths;
@@ -40,6 +43,10 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic, readonly) NSArray<__kindof XZMocoaCollectionViewSectionViewModel *> *sectionViewModels;
 - (__kindof XZMocoaCollectionViewSectionViewModel *)sectionViewModelAtIndex:(NSInteger)index;
 - (__kindof XZMocoaCollectionViewCellViewModel *)cellViewModelAtIndexPath:(NSIndexPath *)indexPath;
+
+- (void)selectCellAtIndexPath:(NSIndexPath *)indexPath animated:(BOOL)animated scrollPosition:(UICollectionViewScrollPosition)scrollPosition;
+- (void)didSelectCellAtIndexPath:(NSIndexPath *)indexPath animated:(BOOL)animated scrollPosition:(UICollectionViewScrollPosition)scrollPosition;
+
 @end
 
 NS_ASSUME_NONNULL_END

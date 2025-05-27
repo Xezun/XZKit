@@ -233,7 +233,15 @@ XZMocoaKey const XZMocoaKeyNone = @"";
 
 @end
 
+XZMocoaKey const XZMocoaKeyPerformSegue   = @"XZMocoaKeyPerformSegue";
+XZMocoaKey const XZMocoaKeyViewController = @"XZMocoaKeyViewController";
+
 @implementation XZMocoaViewModel (XZStoryboardSupporting)
+
+- (void)performSegueWithIdentifier:(NSString *)identifier sender:(id)sender {
+    NSArray *value = [NSArray arrayWithObjects:identifier, sender, nil];
+    [self sendActionsForKey:XZMocoaKeyPerformSegue value:value];
+}
 
 - (BOOL)shouldPerformSegueWithIdentifier:(NSString *)identifier sender:(nullable id)sender {
     if ([sender conformsToProtocol:@protocol(XZMocoaView)]) {
@@ -246,6 +254,22 @@ XZMocoaKey const XZMocoaKeyNone = @"";
     if ([sender conformsToProtocol:@protocol(XZMocoaView)]) {
         return [((id<XZMocoaView>)sender) prepareForSegue:segue sender:nil];
     }
+}
+
+- (UIViewController *)viewController {
+    UIViewController *__block _viewController = nil;
+    [self sendActionsForKey:XZMocoaKeyViewController value:^(UIViewController *viewController) {
+        _viewController = viewController;
+    }];
+    return _viewController;
+}
+
+- (UINavigationController *)navigationController {
+    return self.viewController.navigationController;
+}
+
+- (UITabBarController *)tabBarController {
+    return self.viewController.tabBarController;
 }
 
 @end
