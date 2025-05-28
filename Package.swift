@@ -30,7 +30,7 @@ private var _modules: [(type: ModuleType, name: String, dependencies: [PackageDe
     (.Mixed, "XZExtensions", ["XZDefines"]),
     (.Mixed, "XZGeometry", []),
     (.Mixed, "XZToast", ["XZGeometry", "XZTextImageView", "XZExtensions"]),
-    (.Mixed, "XZMocoa", ["XZDefines", "XZExtensions"]),
+    (.Mixed, "XZMocoa", ["XZDefines", "XZExtensions", "XZObjcDescriptor"]),
 ]
 _modules.append((.Swift, "XZKit", _modules.map({ .byName(name: $0.name) })))
 
