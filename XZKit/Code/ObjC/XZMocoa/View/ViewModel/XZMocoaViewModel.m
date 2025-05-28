@@ -246,6 +246,10 @@ XZMocoaKey const XZMocoaKeyNone = @"";
     [_targetActions sendActionsForKey:(key ?: XZMocoaKeyNone) value:value];
 }
 
+- (id)valueForUndefinedKey:(NSString *)key {
+    return nil;
+}
+
 @end
 
 XZMocoaKey const XZMocoaKeyPerformSegue   = @"XZMocoaKeyPerformSegue";
