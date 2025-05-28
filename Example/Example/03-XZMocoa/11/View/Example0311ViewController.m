@@ -48,9 +48,9 @@
     // 1、可以避免影响控制器生命周期，或者控制器生命周期影响 ViewModel 的逻辑处理。
     // 2、控制器作为独立入口，方便与外部引用、交互。
     Example0311ViewModel *viewModel = [[Example0311ViewModel alloc] init];
-    [viewModel ready];
-    [viewModel addTarget:self action:@selector(reloadData) forKey:XZMocoaKeyNone];
     self.viewModel = viewModel;
+    
+    [viewModel addTarget:self action:@selector(reloadData) forKey:XZMocoaKeyNone value:nil];
 }
 
 - (void)reloadData {

@@ -69,6 +69,8 @@ typedef NS_ENUM(NSUInteger, XZObjcType) {
     XZObjcTypeSEL              = ':',
     /// pointer to type
     XZObjcTypePointer          = '^',
+    /// C 数组
+    XZObjcTypeArray            = '[',
     /// bit field of num bits
     /// @code
     /// // 位域结构体的成员的类型即为 bit field
@@ -78,8 +80,6 @@ typedef NS_ENUM(NSUInteger, XZObjcType) {
     /// }
     /// @endcode
     XZObjcTypeBitField         = 'b',
-    /// C 数组
-    XZObjcTypeArray            = '[',
     /// C 共用体
     XZObjcTypeUnion            = '(',
     /// C 结构体；类结构体，如 NSObject 为 {NSObject=#}

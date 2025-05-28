@@ -239,7 +239,7 @@ XZMocoaKey const XZMocoaKeyNone = @"";
 
 - (void)sendActionsForKey:(XZMocoaKey)key value:(id)value {
     if (value == nil) {
-        value = [self valueForKey:key];
+        value = (key == XZMocoaKeyNone ? nil : [self valueForKey:key]);
     } else if (value == (id)kCFNull) {
         value = nil;
     }

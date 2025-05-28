@@ -241,6 +241,7 @@
 		292C17CF2D251FF400E465BF /* Example03ViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 292C17CE2D251FF400E465BF /* Example03ViewController.m */; };
 		29448F702D3194580055A183 /* Example07ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 29448F6F2D3194580055A183 /* Example07ViewController.swift */; };
 		29448F722D31956A0055A183 /* Example09ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 29448F712D31956A0055A183 /* Example09ViewController.swift */; };
+		29635C0B2DE779FE00C552AF /* XZMocoaTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 29635C0A2DE779FE00C552AF /* XZMocoaTests.m */; };
 		29648BE52A72556C0090F445 /* ExampleAppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 29648BE42A72556C0090F445 /* ExampleAppDelegate.m */; };
 		29648BEB2A72556C0090F445 /* Example01Test01ViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 29648BEA2A72556C0090F445 /* Example01Test01ViewController.m */; };
 		29648BF02A72556E0090F445 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 29648BEF2A72556E0090F445 /* Assets.xcassets */; };
@@ -734,6 +735,7 @@
 		292C17CE2D251FF400E465BF /* Example03ViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = Example03ViewController.m; sourceTree = "<group>"; };
 		29448F6F2D3194580055A183 /* Example07ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Example07ViewController.swift; sourceTree = "<group>"; };
 		29448F712D31956A0055A183 /* Example09ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Example09ViewController.swift; sourceTree = "<group>"; };
+		29635C0A2DE779FE00C552AF /* XZMocoaTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = XZMocoaTests.m; sourceTree = "<group>"; };
 		29648BE02A72556C0090F445 /* Example.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Example.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		29648BE32A72556C0090F445 /* ExampleAppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ExampleAppDelegate.h; sourceTree = "<group>"; };
 		29648BE42A72556C0090F445 /* ExampleAppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ExampleAppDelegate.m; sourceTree = "<group>"; };
@@ -2724,6 +2726,14 @@
 			path = 31;
 			sourceTree = "<group>";
 		};
+		29635C092DE779D500C552AF /* XZMocoa */ = {
+			isa = PBXGroup;
+			children = (
+				29635C0A2DE779FE00C552AF /* XZMocoaTests.m */,
+			);
+			path = XZMocoa;
+			sourceTree = "<group>";
+		};
 		29648BD72A72556C0090F445 = {
 			isa = PBXGroup;
 			children = (
@@ -2791,6 +2801,7 @@
 			isa = PBXGroup;
 			children = (
 				29648BFF2A72556E0090F445 /* ExampleTests.m */,
+				29635C092DE779D500C552AF /* XZMocoa */,
 				0417233E2DD31D980037ABE2 /* XZGeometry */,
 				04C46AFE2DB63658005EA389 /* XZObjcDescriptor */,
 				040C8CA72DB22B720024BA72 /* XZDefines */,
@@ -3053,9 +3064,13 @@
 			inputFileListPaths = (
 				"${PODS_ROOT}/Target Support Files/Pods-Example/Pods-Example-frameworks-${CONFIGURATION}-input-files.xcfilelist",
 			);
+			inputPaths = (
+			);
 			name = "[CP] Embed Pods Frameworks";
 			outputFileListPaths = (
 				"${PODS_ROOT}/Target Support Files/Pods-Example/Pods-Example-frameworks-${CONFIGURATION}-output-files.xcfilelist",
+			);
+			outputPaths = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
@@ -3376,6 +3391,7 @@
 				29648C002A72556E0090F445 /* ExampleTests.m in Sources */,
 				041723402DD31DBC0037ABE2 /* XZGeometryTests.m in Sources */,
 				04C46B002DB6367B005EA389 /* XZObjcDescriptorTests.m in Sources */,
+				29635C0B2DE779FE00C552AF /* XZMocoaTests.m in Sources */,
 				040C8CA92DB22B9E0024BA72 /* XZDispatchMacrosTests.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

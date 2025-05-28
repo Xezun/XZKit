@@ -396,23 +396,6 @@ struct Foobar {
                     }
                     break;
                 }
-                case XZObjcTypeBitField: {
-                    NSInteger const value = [object integerValue];
-                    switch (_count) {
-                        case 1:
-                            ((void (*)(id, SEL, NSInteger))objc_msgSend)(_target, _action, value);
-                            break;
-                        case 2:
-                            ((void (*)(id, SEL, NSInteger, id))objc_msgSend)(_target, _action, value, key);
-                            break;
-                        case 3:
-                            ((void (*)(id, SEL, NSInteger, id, XZMocoaKey))objc_msgSend)(_target, _action, value, key, sender);
-                            break;
-                        default:
-                            break;
-                    }
-                    break;
-                }
                 case XZObjcTypeArray: {
                     void * const value = [(NSValue *)object pointerValue];
                     switch (_count) {
@@ -430,40 +413,162 @@ struct Foobar {
                     }
                     break;
                 }
-                case XZObjcTypeUnion: {
-                    struct Foobar value;
-                    [(NSValue *)object getValue:&value size:_type.size];
-                    switch (_count) {
-                        case 1:
-                            ((void (*)(id, SEL, struct Foobar))objc_msgSend)(_target, _action, value);
-                            break;
-                        case 2:
-                            ((void (*)(id, SEL, struct Foobar, id))objc_msgSend)(_target, _action, value, key);
-                            break;
-                        case 3:
-                            ((void (*)(id, SEL, struct Foobar, id, XZMocoaKey))objc_msgSend)(_target, _action, value, key, sender);
-                            break;
-                        default:
-                            break;
-                    }
-                    break;
-                }
+                case XZObjcTypeBitField:
+                case XZObjcTypeUnion:
                 case XZObjcTypeStruct: {
-                    struct Foobar value;
-                    [(NSValue *)object getValue:&value size:_type.size];
-                    switch (_count) {
-                        case 1:
-                            ((void (*)(id, SEL, struct Foobar))objc_msgSend)(_target, _action, value);
-                            break;
-                        case 2:
-                            ((void (*)(id, SEL, struct Foobar, id))objc_msgSend)(_target, _action, value, key);
-                            break;
-                        case 3:
-                            ((void (*)(id, SEL, struct Foobar, id, XZMocoaKey))objc_msgSend)(_target, _action, value, key, sender);
-                            break;
+#pragma pack(push)
+#pragma pack(1)
+typedef struct { UInt8 a; }                 xz_size_t_1;
+typedef struct { UInt8 a; xz_size_t_1 b; }  xz_size_t_2;
+typedef struct { UInt8 a; xz_size_t_2 b; }  xz_size_t_3;
+typedef struct { UInt8 a; xz_size_t_3 b; }  xz_size_t_4;
+typedef struct { UInt8 a; xz_size_t_4 b; }  xz_size_t_5;
+typedef struct { UInt8 a; xz_size_t_5 b; }  xz_size_t_6;
+typedef struct { UInt8 a; xz_size_t_6 b; }  xz_size_t_7;
+typedef struct { UInt8 a; xz_size_t_7 b; }  xz_size_t_8;
+typedef struct { UInt8 a; xz_size_t_8 b; }  xz_size_t_9;
+typedef struct { UInt8 a; xz_size_t_9 b; }  xz_size_t_10;
+typedef struct { UInt8 a; xz_size_t_10 b; } xz_size_t_11;
+typedef struct { UInt8 a; xz_size_t_11 b; } xz_size_t_12;
+typedef struct { UInt8 a; xz_size_t_12 b; } xz_size_t_13;
+typedef struct { UInt8 a; xz_size_t_13 b; } xz_size_t_14;
+typedef struct { UInt8 a; xz_size_t_14 b; } xz_size_t_15;
+typedef struct { UInt8 a; xz_size_t_15 b; } xz_size_t_16;
+typedef struct { UInt8 a; xz_size_t_16 b; } xz_size_t_17;
+typedef struct { UInt8 a; xz_size_t_17 b; } xz_size_t_18;
+typedef struct { UInt8 a; xz_size_t_18 b; } xz_size_t_19;
+typedef struct { UInt8 a; xz_size_t_19 b; } xz_size_t_20;
+typedef struct { UInt8 a; xz_size_t_20 b; } xz_size_t_21;
+typedef struct { UInt8 a; xz_size_t_21 b; } xz_size_t_22;
+typedef struct { UInt8 a; xz_size_t_22 b; } xz_size_t_23;
+typedef struct { UInt8 a; xz_size_t_23 b; } xz_size_t_24;
+typedef struct { UInt8 a; xz_size_t_24 b; } xz_size_t_25;
+typedef struct { UInt8 a; xz_size_t_25 b; } xz_size_t_26;
+typedef struct { UInt8 a; xz_size_t_26 b; } xz_size_t_27;
+typedef struct { UInt8 a; xz_size_t_27 b; } xz_size_t_28;
+typedef struct { UInt8 a; xz_size_t_28 b; } xz_size_t_29;
+typedef struct { UInt8 a; xz_size_t_29 b; } xz_size_t_30;
+typedef struct { UInt8 a; xz_size_t_30 b; } xz_size_t_31;
+typedef struct { UInt8 a; xz_size_t_31 b; } xz_size_t_32;
+typedef struct { UInt8 a; xz_size_t_32 b; } xz_size_t_33;
+typedef struct { UInt8 a; xz_size_t_33 b; } xz_size_t_34;
+typedef struct { UInt8 a; xz_size_t_34 b; } xz_size_t_35;
+typedef struct { UInt8 a; xz_size_t_35 b; } xz_size_t_36;
+typedef struct { UInt8 a; xz_size_t_36 b; } xz_size_t_37;
+typedef struct { UInt8 a; xz_size_t_37 b; } xz_size_t_38;
+typedef struct { UInt8 a; xz_size_t_38 b; } xz_size_t_39;
+typedef struct { UInt8 a; xz_size_t_39 b; } xz_size_t_40;
+typedef struct { UInt8 a; xz_size_t_40 b; } xz_size_t_41;
+typedef struct { UInt8 a; xz_size_t_41 b; } xz_size_t_42;
+typedef struct { UInt8 a; xz_size_t_42 b; } xz_size_t_43;
+typedef struct { UInt8 a; xz_size_t_43 b; } xz_size_t_44;
+typedef struct { UInt8 a; xz_size_t_44 b; } xz_size_t_45;
+typedef struct { UInt8 a; xz_size_t_45 b; } xz_size_t_46;
+typedef struct { UInt8 a; xz_size_t_46 b; } xz_size_t_47;
+typedef struct { UInt8 a; xz_size_t_47 b; } xz_size_t_48;
+typedef struct { UInt8 a; xz_size_t_48 b; } xz_size_t_49;
+typedef struct { UInt8 a; xz_size_t_49 b; } xz_size_t_50;
+typedef struct { UInt8 a; xz_size_t_50 b; } xz_size_t_51;
+typedef struct { UInt8 a; xz_size_t_51 b; } xz_size_t_52;
+typedef struct { UInt8 a; xz_size_t_52 b; } xz_size_t_53;
+typedef struct { UInt8 a; xz_size_t_53 b; } xz_size_t_54;
+typedef struct { UInt8 a; xz_size_t_54 b; } xz_size_t_55;
+typedef struct { UInt8 a; xz_size_t_55 b; } xz_size_t_56;
+typedef struct { UInt8 a; xz_size_t_56 b; } xz_size_t_57;
+typedef struct { UInt8 a; xz_size_t_57 b; } xz_size_t_58;
+typedef struct { UInt8 a; xz_size_t_58 b; } xz_size_t_59;
+typedef struct { UInt8 a; xz_size_t_59 b; } xz_size_t_60;
+typedef struct { UInt8 a; xz_size_t_60 b; } xz_size_t_61;
+typedef struct { UInt8 a; xz_size_t_61 b; } xz_size_t_62;
+typedef struct { UInt8 a; xz_size_t_62 b; } xz_size_t_63;
+typedef struct { UInt8 a; xz_size_t_63 b; } xz_size_t_64;
+#pragma pack(pop)
+                    
+                    NSValue *nsValue = object;
+                    if (![nsValue isKindOfClass:NSValue.class]) {
+                        nsValue = nil;
+                    }
+
+                    #define case_type_size(_size_) \
+                    case _size_: { \
+                        __NSX_PASTE__(xz_size_t_, _size_) value = {0}; \
+                        [nsValue getValue:&value size:_size_]; \
+                        switch (_count) { \
+                            case 1: \
+                                ((void (*)(id, SEL, __NSX_PASTE__(xz_size_t_, _size_)))objc_msgSend)(_target, _action, value); \
+                                break; \
+                            case 2: \
+                                ((void (*)(id, SEL, __NSX_PASTE__(xz_size_t_, _size_), id))objc_msgSend)(_target, _action, value, key); \
+                                break; \
+                            case 3: \
+                                ((void (*)(id, SEL, __NSX_PASTE__(xz_size_t_, _size_), id, XZMocoaKey))objc_msgSend)(_target, _action, value, key, sender); \
+                                break; \
+                            default: \
+                                break; \
+                        } \
+                        break; \
+                    }
+                    
+                    switch (_type.size) {
+                        case_type_size(1);
+                        case_type_size(2);
+                        case_type_size(3);
+                        case_type_size(4);
+                        case_type_size(5);
+                        case_type_size(6);
+                        case_type_size(7);
+                        case_type_size(8);
+                        case_type_size(9);
+                        case_type_size(10);
+                        case_type_size(11);
+                        case_type_size(12);
+                        case_type_size(13);
+                        case_type_size(14);
+                        case_type_size(15);
+                        case_type_size(16);
+                        case_type_size(17);
+                        case_type_size(18);
+                        case_type_size(19);
+                        case_type_size(20);
+                        case_type_size(31);
+                        case_type_size(32);
+                        case_type_size(33);
+                        case_type_size(34);
+                        case_type_size(35);
+                        case_type_size(36);
+                        case_type_size(37);
+                        case_type_size(38);
+                        case_type_size(39);
+                        case_type_size(40);
+                        case_type_size(41);
+                        case_type_size(42);
+                        case_type_size(43);
+                        case_type_size(44);
+                        case_type_size(45);
+                        case_type_size(46);
+                        case_type_size(47);
+                        case_type_size(48);
+                        case_type_size(49);
+                        case_type_size(50);
+                        case_type_size(51);
+                        case_type_size(52);
+                        case_type_size(53);
+                        case_type_size(54);
+                        case_type_size(55);
+                        case_type_size(56);
+                        case_type_size(57);
+                        case_type_size(58);
+                        case_type_size(59);
+                        case_type_size(60);
+                        case_type_size(61);
+                        case_type_size(62);
+                        case_type_size(63);
+                        case_type_size(64);
                         default:
                             break;
                     }
+                    #undef case_type_size
+                    
                     break;
                 }
                 case XZObjcTypeObject: {
