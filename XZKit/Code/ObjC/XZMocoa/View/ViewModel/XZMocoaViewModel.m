@@ -8,13 +8,13 @@
 
 #import "XZMocoaViewModel.h"
 #import "XZMocoaView.h"
-#import "XZMocoaTargetActionStorage.h"
+#import "XZMocoaTargetActions.h"
 
 @implementation XZMocoaViewModel {
     @private
     NSMutableOrderedSet<XZMocoaViewModel *> *_subViewModels;
     XZMocoaViewModel * __unsafe_unretained _superViewModel;
-    XZMocoaTargetActionStorage  *_targetActions;
+    XZMocoaTargetActions  *_targetActions;
 }
 
 - (void)dealloc {
@@ -217,8 +217,9 @@ XZMocoaKey const XZMocoaKeyNone = @"";
         XZLog(@"为 target=%@ action=%@ 添加事件失败，参数不能为 nil", target, NSStringFromSelector(action));
         return;
     }
+    
     if (_targetActions == nil) {
-        _targetActions = [[XZMocoaTargetActionStorage alloc] initWithViewModel:self];
+        _targetActions = [[XZMocoaTargetActions alloc] initWithViewModel:self];
     }
     [_targetActions addTarget:target action:action forKey:(key ?: XZMocoaKeyNone)];
 }
@@ -227,7 +228,21 @@ XZMocoaKey const XZMocoaKeyNone = @"";
     [_targetActions removeTarget:target action:action forKey:key];
 }
 
+- (void)sendActionsForKey:(XZMocoaKey)key {
+    [_targetActions sendActionsForKey:(key ?: XZMocoaKeyNone) value:nil];
+}
+
+- (void)addTarget:(id)target action:(SEL)action forKey:(XZMocoaKey)key value:(nullable id)initialValue {
+    [self addTarget:target action:action forKey:key];
+    [self sendActionsForKey:key value:initialValue];
+}
+
 - (void)sendActionsForKey:(XZMocoaKey)key value:(id)value {
+    if (value == nil) {
+        value = [self valueForKey:key];
+    } else if (value == (id)kCFNull) {
+        value = nil;
+    }
     [_targetActions sendActionsForKey:(key ?: XZMocoaKeyNone) value:value];
 }
 

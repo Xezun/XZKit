@@ -10,10 +10,10 @@
 NS_ASSUME_NONNULL_BEGIN
 
 #if DEBUG
-@interface XZMocoaCollectionViewPlaceholderCell : XZMocoaCollectionViewCell
+@interface XZMocoaCollectionViewPlaceholderCell : UICollectionViewCell <XZMocoaCollectionViewCell>
 @end
 #else
-typedef XZMocoaCollectionViewCell XZMocoaCollectionViewPlaceholderCell;
+typedef UICollectionViewCell XZMocoaCollectionViewPlaceholderCell;
 #endif
 
 NS_ASSUME_NONNULL_END

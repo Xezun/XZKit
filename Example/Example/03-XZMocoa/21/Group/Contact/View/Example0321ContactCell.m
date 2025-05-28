@@ -16,25 +16,18 @@
     XZMocoa(@"https://mocoa.xezun.com/examples/21/").section.cell.viewNibClass = self;
 }
 
-- (void)viewModelWillChange {
-    [self.viewModel removeTarget:self action:nil forKey:nil];
+- (void)viewModelWillChange:(XZMocoaViewModel *)newValue {
+    [super viewModelWillChange:newValue];
+    
+    [self.viewModel removeTarget:self.textLabel action:nil forKey:nil];
+    [self.viewModel removeTarget:self.detailTextLabel action:nil forKey:nil];
 }
 
-- (void)viewModelDidChange {
-    [self.viewModel addTarget:self action:@selector(nameDidChange:) forKey:@"name"];
-    [self.viewModel addTarget:self action:@selector(phoneDidChange:) forKey:@"phone"];
-    [self nameDidChange:self.viewModel];
-    [self phoneDidChange:self.viewModel];
-}
-
-- (void)nameDidChange:(Example0321ContactCellViewModel *)viewModel {
-    XZLog(@"old: %@, new: %@", self.textLabel.text, viewModel.name);
-    self.textLabel.text = viewModel.name;
-}
-
-- (void)phoneDidChange:(Example0321ContactCellViewModel *)viewModel {
-    XZLog(@"old: %@, new: %@", self.detailTextLabel.text, viewModel.phone);
-    self.detailTextLabel.text = viewModel.phone;
+- (void)viewModelDidChange:(nullable XZMocoaViewModel *)oldValue {
+    [super viewModelDidChange:oldValue];
+    
+    [self.viewModel addTarget:self.textLabel action:@selector(setText:) forKey:@"name" value:nil];
+    [self.viewModel addTarget:self.detailTextLabel action:@selector(setText:) forKey:@"phone" value:nil];
 }
 
 @end

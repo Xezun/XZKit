@@ -33,7 +33,7 @@
         [UIApplication.sharedApplication openURL:url options:@{} completionHandler:nil];
     }]];
     [alertVC addAction:[UIAlertAction actionWithTitle:@"取消" style:(UIAlertActionStyleCancel) handler:nil]];
-    [tableView.viewController presentViewController:alertVC animated:YES completion:nil];
+    [tableView.xz_viewController presentViewController:alertVC animated:YES completion:nil];
 }
 
 @end

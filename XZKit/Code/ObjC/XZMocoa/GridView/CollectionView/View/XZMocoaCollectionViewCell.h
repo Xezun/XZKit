@@ -42,9 +42,8 @@ NS_ASSUME_NONNULL_BEGIN
 
 @end
 
-/// 因一致性而提供，非必须基类。
-/// @note 任何 UICollectionViewCell 对象都可以作为 Mocoa 的 View 实例，而非必须基于此类。
-@interface XZMocoaCollectionViewCell : UICollectionViewCell <XZMocoaCollectionViewCell>
+@interface UICollectionViewCell (XZMocoaCollectionViewCell)
+@property (nonatomic, strong, nullable) __kindof XZMocoaCollectionViewCellViewModel *viewModel;
 @end
 
 NS_ASSUME_NONNULL_END

@@ -56,8 +56,17 @@ typedef BOOL (^XZViewHierarchyEnumerator)(NSInteger hierarchy, __kindof UIView *
 /// @return 视图快照图片。
 - (nullable UIImage *)xz_snapshotImageAfterScreenUpdates:(BOOL)afterUpdates NS_SWIFT_NAME(snapshotImage(afterScreenUpdates:));
 
-/// 内容安全模式。设置为 YES 时，视图在截图、录屏中不可见。
-@property (nonatomic, setter=xz_setSecureContentMode:) BOOL xz_secureContentMode;
+/// 是否允许抓取页面安全内容。设置为 YES 时，当前视图在截图、录屏中不可见。
+@property (nonatomic, setter=xz_setSecureContentCapture:) BOOL xz_secureContentCapture NS_SWIFT_NAME(secureContentCapture);
+
+/// 获取当前视图所在的视图控制器，如果自身已经是控制器，则返回自身。
+@property (nonatomic, readonly, nullable) __kindof UIViewController *xz_viewController NS_SWIFT_NAME(viewController);
+
+/// 当前视图所属的导航控制器。
+@property (nonatomic, readonly, nullable) __kindof UINavigationController *xz_navigationController NS_SWIFT_NAME(navigationController);
+
+/// 当前视图所属栏目控制器。
+@property (nonatomic, readonly, nullable) __kindof UITabBarController *xz_tabBarController NS_SWIFT_NAME(tabBarController);
 
 @end
 

@@ -7,6 +7,11 @@
 
 #import <UIKit/UIKit.h>
 #import "XZMocoaViewModel.h"
+#if __has_include(<XZExtensions/UIView+XZKit.h>)
+#import <XZExtensions/UIView+XZKit.h>
+#else
+#import "UIView+XZKit.h"
+#endif
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -17,28 +22,19 @@ NS_ASSUME_NONNULL_BEGIN
 /// 任何 UIResponder 及子类是天然的视图类型，只需声明遵循此协议，即可获得协议中定义的属性和方法。
 /// - 用此协议标记类，用来表明该类为 Mocoa MVVM 的 View 元素，与其它设计模式的类进行简单区分。
 /// - 由于运行时特性，协议的默认实现可能会被类目或子类覆盖，需要开发者自行注意。
-NS_SWIFT_UI_ACTOR NS_REFINED_FOR_SWIFT @protocol XZMocoaView <NSObject>
+///
+/// 为了方便在 Swift 中使用，所以该协议在 UIResponder/UIView/UIViewController 中已默认实现。
+NS_SWIFT_UI_ACTOR @protocol XZMocoaView <NSObject>
 
 @optional
 /// 视图模型。
 ///
 /// 一般情况下，视图的 ViewModel 不应该改变，但是与 B 端不同，在 C 端利用“视图重用机制”可以有效提升性能，因此，此属性被设计为可写的。
 @property (nonatomic, strong, nullable) __kindof XZMocoaViewModel *viewModel;
-
 /// 视图模型将要改变。默认不执行任何操作。
-- (void)viewModelWillChange;
-
+- (void)viewModelWillChange:(nullable XZMocoaViewModel *)newValue;
 /// 视图模型已经改变。默认不执行任何操作。
-- (void)viewModelDidChange;
-
-/// 获取当前视图所在的视图控制器，如果自身已经是控制器，则返回自身。
-@property (nonatomic, readonly, nullable) __kindof UIViewController *viewController;
-
-/// 当前视图所属的导航控制器。
-@property (nonatomic, readonly, nullable) __kindof UINavigationController *navigationController;
-
-/// 当前视图所属栏目控制器。
-@property (nonatomic, readonly, nullable) __kindof UITabBarController *tabBarController;
+- (void)viewModelDidChange:(nullable XZMocoaViewModel *)oldValue;
 
 /// 由 Cocoa MVC 中的控制器分发过来的 Segue 转场事件。
 ///
@@ -62,6 +58,25 @@ NS_SWIFT_UI_ACTOR NS_REFINED_FOR_SWIFT @protocol XZMocoaView <NSObject>
 /// 2. 如果 sender 为 XZMocoaView 的话，就转发给 sender 处理。
 - (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(nullable id)sender NS_SWIFT_NAME(prepare(for:sender:));
 
+@end
+
+/// 所有 UIResponder 是天然的 MVVM 中 View 角色，所以为 UIResponder 拓展了 viewModel 属性。
+@interface UIResponder (XZMocoaView)
+@property (nonatomic, strong, nullable) __kindof XZMocoaViewModel *viewModel;
+- (void)viewModelWillChange:(nullable XZMocoaViewModel *)newValue;
+- (void)viewModelDidChange:(nullable XZMocoaViewModel *)oldValue;
+@end
+
+@interface UIView (XZMocoaView)
+- (void)viewModelWillChange:(nullable XZMocoaViewModel *)newValue NS_REQUIRES_SUPER;
+- (void)viewModelDidChange:(nullable XZMocoaViewModel *)oldValue NS_REQUIRES_SUPER;
+- (BOOL)shouldPerformSegueWithIdentifier:(NSString *)identifier sender:(nullable id)sender NS_SWIFT_NAME(shouldPerformSegue(withIdentifier:sender:));
+- (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(nullable id)sender NS_SWIFT_NAME(prepare(for:sender:));
+@end
+
+@interface UIViewController (XZMocoaView)
+- (void)viewModelWillChange:(nullable XZMocoaViewModel *)newValue NS_REQUIRES_SUPER;
+- (void)viewModelDidChange:(nullable XZMocoaViewModel *)oldValue NS_REQUIRES_SUPER;
 @end
 
 /// 模块初始化参数。可像字典一样取值。

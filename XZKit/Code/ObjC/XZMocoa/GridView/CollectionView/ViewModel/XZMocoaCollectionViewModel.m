@@ -15,7 +15,7 @@
     [self.delegate collectionViewModel:self didReloadData:NULL];
 }
 
-- (void)didSelectCellAtIndexPath:(NSIndexPath *)indexPath animated:(BOOL)animated scrollPosition:(NSInteger)scrollPosition {
+- (void)didSelectCellAtIndexPath:(NSIndexPath *)indexPath animated:(BOOL)animated scrollPosition:(UICollectionViewScrollPosition)scrollPosition {
     [self.delegate collectionViewModel:self didSelectCellAtIndexPath:indexPath animated:animated scrollPosition:scrollPosition];
 }
 

@@ -44,9 +44,8 @@ NS_ASSUME_NONNULL_BEGIN
 
 @end
 
-/// 因一致性而提供，非必须基类。
-/// @note 任何 UITableViewCell 对象都可以作为 Mocoa 的 View 实例，而非必须基于此类。
-@interface XZMocoaTableViewCell : UITableViewCell <XZMocoaTableViewCell>
+@interface UITableViewCell (XZMocoaTableViewCell)
+@property (nonatomic, strong, nullable) __kindof XZMocoaTableViewCellViewModel *viewModel;
 @end
 
 NS_ASSUME_NONNULL_END

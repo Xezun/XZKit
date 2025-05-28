@@ -24,7 +24,9 @@
     return self;
 }
 
-- (void)viewModelDidChange {
+- (void)viewModelDidChange:(nullable XZMocoaViewModel *)oldValue {
+    [super viewModelDidChange:oldValue];
+    
     XZMocoaGridViewPlaceholderViewModel *viewModel = [[XZMocoaGridViewPlaceholderViewModel alloc] initWithModel:self.viewModel];
     [viewModel ready];
     _view.viewModel = viewModel;

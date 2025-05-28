@@ -63,24 +63,24 @@
     return [self initWithCollectionViewClass:UICollectionView.class layout:layout];
 }
 
-- (void)contentViewWillChange {
-    [super contentViewWillChange];
+- (void)contentViewWillChange:(UIScrollView *)newValue {
+    [super contentViewWillChange:newValue];
     
     UICollectionView * const collectionView = self.contentView;
     collectionView.delegate = nil;
     collectionView.dataSource = nil;
 }
 
-- (void)contentViewDidChange {
-    [super contentViewDidChange];
+- (void)contentViewDidChange:(UIScrollView *)oldValue {
+    [super contentViewDidChange:oldValue];
     
     UICollectionView * const collectionView = self.contentView;
     collectionView.delegate   = self;
     collectionView.dataSource = self;
 }
 
-- (void)viewModelDidChange {
-    [super viewModelDidChange];
+- (void)viewModelDidChange:(nullable XZMocoaViewModel *)newValue {
+    [super viewModelDidChange:newValue];
     
     // 刷新视图。
     UICollectionView * const collectionView = self.contentView;

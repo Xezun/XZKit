@@ -1,18 +1,27 @@
 //
-//  XZMocoaTargetActionStorage.m
+//  XZMocoaTargetActions.m
 //  XZMocoa
 //
 //  Created by Xezun on 2023/8/8.
 //
 
-#import "XZMocoaTargetActionStorage.h"
+#import "XZMocoaTargetActions.h"
 @import ObjectiveC;
+
+static void * _context = &_context;
 
 /// stop 可能为 NULL
 typedef void (^const XZMocoaRemoveBlock)(NSString *key, NSMutableArray<XZMocoaTargetAction *> *targetActions, BOOL *stop);
 
-@implementation XZMocoaTargetActionStorage {
+@implementation XZMocoaTargetActions {
     NSMutableDictionary<NSString *, NSMutableArray<XZMocoaTargetAction *> *> *_table;
+    NSMutableDictionary<XZMocoaKey, NSNumber *> *_observers;
+}
+
+- (void)dealloc {
+    for (XZMocoaKey const key in _observers) {
+        [_viewModel removeObserver:self forKeyPath:key context:&_context];
+    }
 }
 
 - (instancetype)initWithViewModel:(XZMocoaViewModel *)viewModel {
@@ -153,5 +162,45 @@ typedef void (^const XZMocoaRemoveBlock)(NSString *key, NSMutableArray<XZMocoaTa
         }
     }];
 }
+
+#if DEBUG
+
+// 自动监听值并发送事件
+
+- (void)addObserver:(NSObject *)observer forKey:(XZMocoaKey)key {
+    if (_observers == nil) {
+        _observers = [NSMutableDictionary dictionary];
+    }
+    NSNumber *number = _observers[key];
+    if (number) {
+        _observers[key] = @(number.integerValue + 1);
+    } else {
+        _observers[key] = @(1);
+        [_viewModel addObserver:self forKeyPath:key options:NSKeyValueObservingOptionNew context:&_context];
+    }
+}
+
+- (void)removeObserver:(NSObject *)observer forKey:(XZMocoaKey)key {
+    if (_observers == nil) {
+        return;
+    }
+    NSInteger const number = _observers[key].integerValue;
+    if (number <= 1) {
+        _observers[key] = nil;
+        [_viewModel removeObserver:self forKeyPath:key context:&_context];
+    } else {
+        _observers[key] = @(number - 1);
+    }
+}
+
+- (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary<NSKeyValueChangeKey,id> *)change context:(void *)context {
+    if (_context != context) {
+        return;
+    }
+    id const newValue = change[NSKeyValueChangeNewKey];
+    [self sendActionsForKey:keyPath value:newValue];
+}
+
+#endif
 
 @end

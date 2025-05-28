@@ -10,10 +10,10 @@
 NS_ASSUME_NONNULL_BEGIN
 
 #if DEBUG
-@interface XZMocoaTableViewPlaceholderHeaderFooterView : XZMocoaTableViewHeaderFooterView
+@interface XZMocoaTableViewPlaceholderHeaderFooterView : UITableViewHeaderFooterView <XZMocoaTableViewHeaderFooterView>
 @end
 #else
-typedef XZMocoaTableViewHeaderFooterView XZMocoaTableViewPlaceholderHeaderFooterView;
+typedef UITableViewHeaderFooterView XZMocoaTableViewPlaceholderHeaderFooterView;
 #endif
 
 NS_ASSUME_NONNULL_END

@@ -69,8 +69,8 @@
     return self;
 }
 
-- (void)viewModelDidChange {
-    [super viewModelDidChange];
+- (void)viewModelDidChange:(nullable XZMocoaViewModel *)newValue {
+    [super viewModelDidChange:newValue];
     
     XZMocoaTableViewModel * const _viewModel = self.viewModel;
     _viewModel.delegate = self;
@@ -86,16 +86,16 @@
     }
 }
 
-- (void)contentViewWillChange {
-    [super contentViewWillChange];
+- (void)contentViewWillChange:(UIScrollView *)newValue {
+    [super contentViewWillChange:newValue];
     
     UITableView * const tableView = self.contentView;
     tableView.delegate = nil;
     tableView.dataSource = nil;
 }
 
-- (void)contentViewDidChange {
-    [super contentViewDidChange];
+- (void)contentViewDidChange:(UIScrollView *)oldValue {
+    [super contentViewDidChange:oldValue];
     
     UITableView * const tableView = self.contentView;
     tableView.delegate   = self;

@@ -7,6 +7,8 @@
 
 #import "XZMocoaTableViewHeaderFooterView.h"
 
-@implementation XZMocoaTableViewHeaderFooterView
+@implementation UITableViewHeaderFooterView (XZMocoaTableViewHeaderFooterView)
+
 @dynamic viewModel;
+
 @end

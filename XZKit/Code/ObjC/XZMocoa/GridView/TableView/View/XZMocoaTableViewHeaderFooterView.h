@@ -16,9 +16,8 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic, strong, nullable) __kindof XZMocoaTableViewHeaderFooterViewModel *viewModel;
 @end
 
-/// 因一致性而提供，非必须基类。
-/// @note 任何 UITableViewHeaderFooterView 对象都可以作为 Mocoa 的 View 实例，而非必须基于此类。
-@interface XZMocoaTableViewHeaderFooterView : UITableViewHeaderFooterView <XZMocoaTableViewHeaderFooterView>
+@interface UITableViewHeaderFooterView (XZMocoaTableViewHeaderFooterView)
+@property (nonatomic, strong, nullable) __kindof XZMocoaTableViewHeaderFooterViewModel *viewModel;
 @end
 
 NS_ASSUME_NONNULL_END

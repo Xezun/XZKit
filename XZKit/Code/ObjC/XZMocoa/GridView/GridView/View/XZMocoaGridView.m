@@ -13,12 +13,16 @@
 
 @dynamic viewModel;
 
-- (void)viewModelWillChange {
+- (void)viewModelWillChange:(nullable XZMocoaViewModel *)newValue {
+    [super viewModelWillChange:newValue];
+    
     XZMocoaGridViewModel * const _viewModel = self.viewModel;
     _viewModel.delegate = nil;
 }
 
-- (void)viewModelDidChange {
+- (void)viewModelDidChange:(nullable XZMocoaViewModel *)oldValue {
+    [super viewModelDidChange:oldValue];
+    
     XZMocoaGridViewModel * const _viewModel = self.viewModel;
     [self registerModule:_viewModel.module];
     _viewModel.delegate = self;
@@ -26,28 +30,29 @@
 
 @synthesize contentView = _contentView;
 
-- (void)setContentView:(__kindof UIScrollView *)contentView {
-    if (_contentView != contentView) {
-        [self contentViewWillChange];
+- (void)setContentView:(__kindof UIScrollView * const)newValue {
+    UIScrollView * const oldValue = _contentView;
+    if (newValue != oldValue) {
+        [self contentViewWillChange:newValue];
         
         [_contentView removeFromSuperview];
         
-        _contentView = contentView;
+        _contentView = newValue;
         
         _contentView.frame = self.bounds;
         _contentView.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
         [self addSubview:_contentView];
         [self registerModule:self.viewModel.module];
         
-        [self contentViewDidChange];
+        [self contentViewDidChange:oldValue];
     }
 }
 
-- (void)contentViewWillChange {
+- (void)contentViewWillChange:(UIScrollView *)newValue {
     
 }
 
-- (void)contentViewDidChange {
+- (void)contentViewDidChange:(UIScrollView *)oldValue {
     
 }
 

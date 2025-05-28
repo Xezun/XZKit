@@ -71,22 +71,26 @@
 @end
 
 
-@interface ExampleTableViewCell : XZMocoaTableViewCell
+@interface ExampleTableViewCell : UITableViewCell <XZMocoaTableViewCell>
 @end
 @implementation ExampleTableViewCell
 + (void)load {
     XZMocoa(@"https://xzkit.xezun.com/examples").section.cell.viewReuseIdentifier = @"cell";
 }
-- (void)viewModelDidChange {
+
+- (void)viewModelDidChange:(nullable XZMocoaViewModel *)newValue {
+    [super viewModelDidChange:newValue];
+    
     NSString *name = self.viewModel.model;
     self.textLabel.text = name;
 }
+
 - (void)tableView:(XZMocoaTableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
     NSString *name = [NSString stringWithFormat:@"Example%02ld", (long)(indexPath.row + 1)];
     UIViewController *viewController = [UIStoryboard storyboardWithName:name bundle:nil].instantiateInitialViewController;
     viewController.modalPresentationStyle = UIModalPresentationFullScreen;
     viewController.modalTransitionStyle = 0;
-    [self.viewController presentViewController:viewController animated:YES completion:nil];
+    [self.xz_viewController presentViewController:viewController animated:YES completion:nil];
 }
 @end
 

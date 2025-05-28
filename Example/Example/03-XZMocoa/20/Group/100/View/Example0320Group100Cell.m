@@ -28,7 +28,9 @@
     // Configure the view for the selected state
 }
 
-- (void)viewModelDidChange {
+- (void)viewModelDidChange:(nullable XZMocoaViewModel *)newValue {
+    [super viewModelDidChange:newValue];
+    
     Example0320Group100CellViewModel *viewModel = self.viewModel;
     self.titleLabel.text = viewModel.title;
     [self.imageView sd_setImageWithURL:viewModel.image];

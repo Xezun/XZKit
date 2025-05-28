@@ -20,9 +20,8 @@ NS_ASSUME_NONNULL_BEGIN
 - (void)collectionView:(id<XZMocoaCollectionView>)collectionView didEndDisplayingSupplementaryViewAtIndexPath:(NSIndexPath*)indexPath;
 @end
 
-/// 因一致性而提供，非必须基类。
-/// @note 任何 UICollectionReusableView 对象都可以作为 Mocoa 的 View 实例，而非必须基于此类。
-@interface XZMocoaCollectionViewSupplementaryView : UICollectionReusableView <XZMocoaCollectionViewSupplementaryView>
+@interface UICollectionReusableView (XZMocoaCollectionViewSupplementaryView)
+@property (nonatomic, strong, nullable) __kindof XZMocoaCollectionViewSupplementaryViewModel *viewModel;
 @end
 
 NS_ASSUME_NONNULL_END

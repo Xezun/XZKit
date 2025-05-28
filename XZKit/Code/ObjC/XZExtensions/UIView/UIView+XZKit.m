@@ -52,7 +52,7 @@ static const void * const _secureContentMode = &_secureContentMode;
     return snapImage;
 }
 
-- (void)xz_setSecureContentMode:(BOOL)xz_secureContentMode {
+- (void)xz_setSecureContentCapture:(BOOL)xz_secureContentCapture {
     // 通过逆向 -[UITextField setSecureTextEntry:] 方法所知，实现防录屏、截屏功能最终是通过
     // 设置 [_textCanvasView.layer setDisableUpdateMask:0x12] 实现的。
     // https://sidorov.tech/en/all/mastering-screen-recording-detection-in-ios-apps/
@@ -80,7 +80,7 @@ static const void * const _secureContentMode = &_secureContentMode;
         }
     }
     
-    if (xz_secureContentMode) {
+    if (xz_secureContentCapture) {
         if (_canvasView) {
             CALayer * const textLayer = _canvasView.layer;
             _secureView.secureTextEntry = NO;
@@ -99,11 +99,30 @@ static const void * const _secureContentMode = &_secureContentMode;
         [_canvasView setValue:textLayer forKey:@"layer"];
     }
     
-    objc_setAssociatedObject(self, _secureContentMode, @(xz_secureContentMode), OBJC_ASSOCIATION_COPY_NONATOMIC);
+    objc_setAssociatedObject(self, _secureContentMode, @(xz_secureContentCapture), OBJC_ASSOCIATION_COPY_NONATOMIC);
 }
 
-- (BOOL)xz_secureContentMode {
+- (BOOL)xz_secureContentCapture {
     return [objc_getAssociatedObject(self, _secureContentMode) boolValue];
+}
+
+- (UIViewController *)xz_viewController {
+    UIViewController *viewController = (id)self.nextResponder;
+    while (viewController != nil) {
+        if ([viewController isKindOfClass:UIViewController.class]) {
+            return viewController;
+        }
+        viewController = (id)viewController.nextResponder;
+    }
+    return nil;
+}
+
+- (UINavigationController *)xz_navigationController {
+    return [self xz_viewController].navigationController;
+}
+
+- (UITabBarController *)xz_tabBarController {
+    return [self xz_viewController].tabBarController;
 }
 
 @end

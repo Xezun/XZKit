@@ -50,29 +50,12 @@
     self.tableView.viewModel = viewModel.tableViewModel;
     
     // 刷新状态，通过监听 isHeaderRefreshing/isFooterRefreshing 来更新。
-    [viewModel addTarget:self action:@selector(headerRefreshingChanged:) forKey:@"isHeaderRefreshing"];
-    [viewModel addTarget:self action:@selector(footerRefreshingChanged:) forKey:@"isFooterRefreshing"];
-    [self headerRefreshingChanged:viewModel];
+    [viewModel addTarget:self.tableView.contentView.xz_headerRefreshView action:@selector(setRefreshing:) forKey:@"isHeaderRefreshing" value:nil];
+    [viewModel addTarget:self.tableView.contentView.xz_footerRefreshView action:@selector(setRefreshing:) forKey:@"isFooterRefreshing" value:nil];
 }
 
 - (void)scrollViewDidScroll:(UIScrollView *)scrollView {
     XZLog(@"%@ => %@", scrollView, NSStringFromCGPoint(scrollView.contentOffset));
-}
-
-- (void)headerRefreshingChanged:(Example0320ViewModel *)viewModel {
-    if (viewModel.isHeaderRefreshing) {
-        [self.tableView.contentView.xz_headerRefreshView beginRefreshing:YES];
-    } else {
-        [self.tableView.contentView.xz_headerRefreshView endRefreshing:YES];
-    }
-}
-
-- (void)footerRefreshingChanged:(Example0320ViewModel *)viewModel {
-    if (viewModel.isFooterRefreshing) {
-        [self.tableView.contentView.xz_footerRefreshView beginRefreshing:YES];
-    } else {
-        [self.tableView.contentView.xz_footerRefreshView endRefreshing:YES];
-    }
 }
 
 - (void)scrollView:(UIScrollView *)scrollView headerDidBeginRefreshing:(XZRefreshView *)refreshView {

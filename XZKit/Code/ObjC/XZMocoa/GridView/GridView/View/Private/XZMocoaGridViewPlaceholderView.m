@@ -74,7 +74,9 @@
     _detailBackgroundView.frame = CGRectMake(10.0, 55.0, bounds.size.width - 20.0, 60.0);
 }
 
-- (void)viewModelDidChange {
+- (void)viewModelDidChange:(nullable XZMocoaViewModel *)oldValue {
+    [super viewModelDidChange:oldValue];
+    
     XZMocoaGridViewPlaceholderViewModel *viewModel = self.viewModel;
     _reasonLabel.text = viewModel.reason;
     
@@ -94,7 +96,7 @@
     "占位视图仅在 DEBUG 环境展示。";
     UIAlertController *alertVC = [UIAlertController alertControllerWithTitle:title message:message preferredStyle:(UIAlertControllerStyleAlert)];
     [alertVC addAction:[UIAlertAction actionWithTitle:@"确定" style:(UIAlertActionStyleDefault) handler:nil]];
-    [self.viewController presentViewController:alertVC animated:YES completion:nil];
+    [self.xz_viewController presentViewController:alertVC animated:YES completion:nil];
     
     XZLog(@"[XZMocoa] [DEBUG] \n%@ \n%@", _reasonLabel.text, _detailLabel.text);
 }

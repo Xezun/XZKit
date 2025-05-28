@@ -252,10 +252,10 @@ FOUNDATION_EXPORT XZMocoaKey const XZMocoaKeyNone;
 /// @attention
 /// 绑定的 action 方法，必须无返回值，因为没有针对返回值的内存管理，可能会引起泄漏。可使用如下形式：
 /// @code
-/// - (void)method;
-/// - (void)method:(XZMocoaViewModel *)sender;
-/// - (void)method:(XZMocoaViewModel *)sender value:(nullable id)value;
-/// - (void)method:(XZMocoaViewModel *)sender value:(nullable id)value key:(XZMocoaKey)key;
+/// - (void)didChangeValue;
+/// - (void)didChangeValue:(nullable id)value;
+/// - (void)didChangeValue:(nullable id)value forKey:(XZMocoaKey)key;
+/// - (void)didChangeValue:(nullable id)value forKey:(XZMocoaKey)key sender:(XZMocoaViewModel *)sender;
 /// @endcode
 /// @param target 接收事件的对象
 /// @param action 执行事件的方法
@@ -271,8 +271,22 @@ FOUNDATION_EXPORT XZMocoaKey const XZMocoaKeyNone;
 - (void)removeTarget:(nullable id)target action:(nullable SEL)action forKey:(nullable XZMocoaKey)key;
 
 /// 发送 target-action 事件。
+/// @param key 事件值
+- (void)sendActionsForKey:(XZMocoaKey)key;
+
+/// 添加 target-action-value 事件，将视图模型的 key 键对应的值与 target 的 action 方法绑定。
+///
+/// 调用此方法会使用 initialValue 触发一次 action 方法。
+///
+/// @param target 接收值的对象
+/// @param action 接收值的方法，可以是属性的 setter 方法
+/// @param key 视图模型的事件键
+/// @param initialValue 事件初始值，值 nil 表示使用`-valueForKey:`获取视图模型当前值，值 NSNull 表示 nil 值
+- (void)addTarget:(id)target action:(SEL)action forKey:(XZMocoaKey)key value:(nullable id)initialValue;
+
+/// 发送 target-action-value 事件。
 /// @param key 事件，nil 表示发送默认事件
-/// @param value 事件值
+/// @param value 事件值，标量值需用 NSValue 包装，值 nil 表示使用`-valueForKey:`获取视图模型当前值，值 NSNull 表示 nil 值
 - (void)sendActionsForKey:(XZMocoaKey)key value:(nullable id)value;
 
 @end
@@ -280,10 +294,12 @@ FOUNDATION_EXPORT XZMocoaKey const XZMocoaKeyNone;
 @class UIControl;
 
 /// 执行 Segue 跳转事件的 XZMocoaKey 事件名。
-/// 默认会绑定此事件。
+///
+/// 此事件默认绑定，事件 value 值为 `@[identifier]` 或 `@[identifier, sender]` 的数组。
 FOUNDATION_EXPORT XZMocoaKey const XZMocoaKeyPerformSegue;
 /// 获取视图模型对应的视图控制器，或视图所在的控制器。
-/// 默认会绑定该事件。
+///
+/// 此事件默认绑定，事件 value 值为类型 `void (^)(UIViewController *)` 的块函数。
 FOUNDATION_EXPORT XZMocoaKey const XZMocoaKeyViewController;
 
 @interface XZMocoaViewModel (XZStoryboardSupporting)
@@ -299,7 +315,6 @@ FOUNDATION_EXPORT XZMocoaKey const XZMocoaKeyViewController;
 
 /// 控制器分发过来的 IB 转场事件。
 - (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(nullable id)sender;
-
 
 // 不提供视图模型所属的视图的访问方式，是因为视图模型应该与视图完全隔离。
 // 提供视图控制器的访问方式，是因为在 Cocoa 体系中，视图控制器承担了很多公共功能，类似于 h5 的全局 window 对象，应该可以全局访问。

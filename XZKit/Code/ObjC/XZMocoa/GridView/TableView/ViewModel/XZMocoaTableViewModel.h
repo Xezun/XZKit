@@ -47,6 +47,8 @@ NS_SWIFT_UI_ACTOR @protocol XZMocoaTableViewModelDelegate <XZMocoaGridViewModelD
 /// 总高度。
 @property (nonatomic, readonly) CGFloat height;
 
+- (void)didSelectCellAtIndexPath:(NSIndexPath *)indexPath animated:(BOOL)animated scrollPosition:(UITableViewScrollPosition)scrollPosition;
+
 @end
 
 @interface XZMocoaTableViewModel (XZMocoaTableViewModel)

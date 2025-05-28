@@ -27,7 +27,9 @@
     [super layoutSubviews];
 }
 
-- (void)viewModelDidChange {
+- (void)viewModelDidChange:(nullable XZMocoaViewModel *)newValue {
+    [super viewModelDidChange:newValue];
+    
     Example0310ContactViewModel *viewModel = self.viewModel;
     
     self.nameLabel.text = viewModel.name;

@@ -84,9 +84,9 @@ static Class _defaultFooterClass = Nil;
 
 - (void)setRefreshing:(BOOL)isRefreshing {
     if (isRefreshing) {
-        [self endRefreshing:NO];
+        [self beginRefreshing:YES];
     } else {
-        [self beginRefreshing:NO];
+        [self endRefreshing:YES];
     }
 }
 

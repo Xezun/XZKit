@@ -10,10 +10,10 @@
 NS_ASSUME_NONNULL_BEGIN
 
 #if DEBUG
-@interface XZMocoaCollectionViewPlaceholderSupplementaryView : XZMocoaCollectionViewSupplementaryView
+@interface XZMocoaCollectionViewPlaceholderSupplementaryView : UICollectionReusableView <XZMocoaCollectionViewSupplementaryView>
 @end
 #else
-typedef XZMocoaCollectionViewSupplementaryView XZMocoaCollectionViewPlaceholderSupplementaryView;
+typedef UICollectionReusableView XZMocoaCollectionViewPlaceholderSupplementaryView;
 #endif
 
 NS_ASSUME_NONNULL_END

@@ -16,25 +16,20 @@
 #import "XZRuntime.h"
 #endif
 
-@implementation XZMocoaTableViewCell
-@dynamic viewModel;
-@end
-
-static void xz_mocoa_copyMethod(Class const cls, SEL const target, SEL const source) {
+static void xz_mocoa_addMethod(Class const cls, SEL const target, SEL const source) {
     if (xz_objc_class_copyMethod(cls, source, nil, target)) return;
     XZLog(@"为协议 XZMocoaTableCell 的方法 %@ 提供默认实现失败", NSStringFromSelector(target));
 }
 
-@interface UITableViewCell (XZMocoaTableCell)
-@end
+@implementation UITableViewCell (XZMocoaTableViewCell)
 
-@implementation UITableViewCell (XZMocoaTableCell)
+@dynamic viewModel;
 
 + (void)load {
     if (self == [UITableViewCell class]) {
-        xz_mocoa_copyMethod(self, @selector(tableView:didSelectRowAtIndexPath:), @selector(xz_mocoa_tableView:didSelectRowAtIndexPath:));
-        xz_mocoa_copyMethod(self, @selector(tableView:willDisplayRowAtIndexPath:), @selector(xz_mocoa_tableView:willDisplayRowAtIndexPath:));
-        xz_mocoa_copyMethod(self, @selector(tableView:didEndDisplayingRowAtIndexPath:), @selector(xz_mocoa_tableView:didEndDisplayingRowAtIndexPath:));
+        xz_mocoa_addMethod(self, @selector(tableView:didSelectRowAtIndexPath:), @selector(xz_mocoa_tableView:didSelectRowAtIndexPath:));
+        xz_mocoa_addMethod(self, @selector(tableView:willDisplayRowAtIndexPath:), @selector(xz_mocoa_tableView:willDisplayRowAtIndexPath:));
+        xz_mocoa_addMethod(self, @selector(tableView:didEndDisplayingRowAtIndexPath:), @selector(xz_mocoa_tableView:didEndDisplayingRowAtIndexPath:));
     }
 }
 

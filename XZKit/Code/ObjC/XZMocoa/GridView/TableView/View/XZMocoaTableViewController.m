@@ -42,12 +42,16 @@
     [self setTableView:contentView];
 }
 
-- (void)viewModelWillChange {
+- (void)viewModelWillChange:(nullable XZMocoaViewModel *)newValue {
+    [super viewModelWillChange:newValue];
+    
     XZMocoaTableViewModel * const _viewModel = self.viewModel;
     _viewModel.delegate = nil;
 }
 
-- (void)viewModelDidChange {
+- (void)viewModelDidChange:(nullable XZMocoaViewModel *)oldValue {
+    [super viewModelDidChange:oldValue];
+    
     XZMocoaTableViewModel * const _viewModel = self.viewModel;
     [self registerModule:_viewModel.module];
     _viewModel.delegate = self;

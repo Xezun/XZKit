@@ -31,14 +31,11 @@ NS_ASSUME_NONNULL_BEGIN
 
 /// 提供子类用于监听 contentView 发生改变的方法。
 /// > 默认该方法什么也不做。
-- (void)contentViewWillChange;
+- (void)contentViewWillChange:(UIScrollView *)newValue;
 
 /// 提供子类用于监听 contentView 发生改变的方法。
 /// > 默认该方法什么也不做。
-- (void)contentViewDidChange;
-
-- (void)viewModelWillChange;
-- (void)viewModelDidChange;
+- (void)contentViewDidChange:(UIScrollView *)oldValue;
 
 @end
 
