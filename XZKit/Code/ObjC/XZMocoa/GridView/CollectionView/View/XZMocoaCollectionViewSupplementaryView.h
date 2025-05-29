@@ -16,8 +16,7 @@ NS_ASSUME_NONNULL_BEGIN
 @protocol XZMocoaCollectionViewSupplementaryView <XZMocoaView>
 @optional
 @property (nonatomic, strong, nullable) __kindof XZMocoaCollectionViewSupplementaryViewModel *viewModel;
-- (void)collectionView:(id<XZMocoaCollectionView>)collectionView willDisplaySupplementaryViewAtIndexPath:(NSIndexPath *)indexPath;
-- (void)collectionView:(id<XZMocoaCollectionView>)collectionView didEndDisplayingSupplementaryViewAtIndexPath:(NSIndexPath*)indexPath;
+- (void)collectionView:(id<XZMocoaCollectionView>)collectionView didUpdateForKey:(XZMocoaUpdatesKey)key atIndexPath:(NSIndexPath *)indexPath;
 @end
 
 @interface UICollectionReusableView (XZMocoaCollectionViewSupplementaryView)

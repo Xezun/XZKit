@@ -15,7 +15,7 @@ NS_ASSUME_NONNULL_BEGIN
 /// 使用 Mocoa 时，UICollectionViewCell 应遵循本协议。
 /// @note
 /// UICollectionViewCell 已默认实现了本协议，如需使用仅需声明遵循协议即可。
-@protocol XZMocoaCollectionViewCell <XZMocoaView>
+@protocol XZMocoaCollectionViewCell <XZMocoaGridViewCell>
 
 @optional
 /// ViewModel 对象。
@@ -25,20 +25,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 // MARK: - 由当前 Cell 所在的 UICollectionViewCell 传递回来的事件
 
-/// 当前 Cell 的点击事件。
-/// @param collectionView 当前 Cell 所属的 XZMocoaCollectionView 对象
-/// @param indexPath 当前 Cell 的当前所在的位置
-- (void)collectionView:(id<XZMocoaCollectionView>)collectionView didSelectItemAtIndexPath:(NSIndexPath *)indexPath;
-
-/// 当前 Cell 将要被展示在指定位置。
-/// @param collectionView 当前 Cell 所属的 UICollectionView 对象
-/// @param indexPath 当前 Cell 的将要展示的位置
-- (void)collectionView:(id<XZMocoaCollectionView>)collectionView willDisplayItemAtIndexPath:(NSIndexPath *)indexPath;
-
-/// 当前 Cell 已结束在指定位置的展示。
-/// @param collectionView 当前 Cell 所属的 XZMocoaCollectionView 对象
-/// @param indexPath 当前 Cell 的当前所在的位置
-- (void)collectionView:(id<XZMocoaCollectionView>)collectionView didEndDisplayingItemAtIndexPath:(NSIndexPath*)indexPath;
+- (void)collectionView:(id<XZMocoaCollectionView>)collectionView didUpdateForKey:(XZMocoaUpdatesKey)key atIndexPath:(NSIndexPath *)indexPath;
 
 @end
 

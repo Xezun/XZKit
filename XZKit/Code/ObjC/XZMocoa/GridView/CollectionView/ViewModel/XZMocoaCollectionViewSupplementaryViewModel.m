@@ -22,12 +22,8 @@
     self.frame = frame;
 }
 
-- (void)collectionView:(XZMocoaCollectionView *)collectionView willDisplaySupplementaryViewAtIndexPath:(NSIndexPath *)indexPath {
-    
-}
-
-- (void)collectionView:(XZMocoaCollectionView *)collectionView didEndDisplayingSupplementaryViewAtIndexPath:(NSIndexPath *)indexPath {
-    
+- (void)supplementaryView:(id<XZMocoaCollectionViewSupplementaryView>)supplementaryView didUpdateForKey:(XZMocoaUpdatesKey)key atIndexPath:(NSIndexPath *)indexPath {
+    [self view:(id)supplementaryView didUpdateForKey:key value:indexPath];
 }
 
 @end

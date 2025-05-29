@@ -185,12 +185,14 @@
 @end
 
 
-XZMocoaUpdatesKey const XZMocoaUpdatesKeyNone = @"";
-XZMocoaUpdatesKey const XZMocoaUpdatesKeyReload = @"XZMocoaUpdatesKeyReload";
-XZMocoaUpdatesKey const XZMocoaUpdatesKeyModify = @"XZMocoaUpdatesKeyModify";
-XZMocoaUpdatesKey const XZMocoaUpdatesKeyInsert = @"XZMocoaUpdatesKeyInsert";
-XZMocoaUpdatesKey const XZMocoaUpdatesKeyDelete = @"XZMocoaUpdatesKeyDelete";
-XZMocoaUpdatesKey const XZMocoaUpdatesKeySelect = @"XZMocoaUpdatesKeySelect";
+XZMocoaUpdatesKey const XZMocoaUpdatesKeyNone     = @"";
+XZMocoaUpdatesKey const XZMocoaUpdatesKeyReload   = @"XZMocoaUpdatesKeyReload";
+XZMocoaUpdatesKey const XZMocoaUpdatesKeyModify   = @"XZMocoaUpdatesKeyModify";
+XZMocoaUpdatesKey const XZMocoaUpdatesKeyInsert   = @"XZMocoaUpdatesKeyInsert";
+XZMocoaUpdatesKey const XZMocoaUpdatesKeyDelete   = @"XZMocoaUpdatesKeyDelete";
+XZMocoaUpdatesKey const XZMocoaUpdatesKeySelect   = @"XZMocoaUpdatesKeySelect";
+XZMocoaUpdatesKey const XZMocoaUpdatesKeyDidShow  = @"XZMocoaUpdatesKeyDidShow";
+XZMocoaUpdatesKey const XZMocoaUpdatesKeyDidHide  = @"XZMocoaUpdatesKeyDidHide";
 
 @implementation XZMocoaViewModel (XZMocoaViewModelHierarchyEvents)
 
@@ -204,6 +206,10 @@ XZMocoaUpdatesKey const XZMocoaUpdatesKeySelect = @"XZMocoaUpdatesKeySelect";
     if (!self.isReady) return;
     XZMocoaUpdates * const updates = [XZMocoaUpdates updatesWithKey:key value:value source:self];
     [self.superViewModel didReceiveUpdates:updates];
+}
+
+- (void)view:(id<XZMocoaView>)view didUpdateForKey:(XZMocoaUpdatesKey)key value:(id)value {
+    [self emitUpdatesForKey:key value:value];
 }
 
 @end
@@ -263,6 +269,8 @@ XZMocoaKey const XZMocoaKeyAttributedTitle  = @"attributedTitle";
 XZMocoaKey const XZMocoaKeySubtitle         = @"subtitle";
 XZMocoaKey const XZMocoaKeyTextColor        = @"textColor";
 XZMocoaKey const XZMocoaKeyFont             = @"font";
+XZMocoaKey const XZMocoaKeyDetail           = @"detail";
+XZMocoaKey const XZMocoaKeyIsEditing        = @"isEditing";
 
 @implementation XZMocoaViewModel (XZStoryboardSupporting)
 

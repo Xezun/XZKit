@@ -159,16 +159,16 @@
 }
 
 - (void)tableView:(UITableView *)tableView willDisplayCell:(UITableView<XZMocoaTableViewCell> *)cell forRowAtIndexPath:(NSIndexPath *)indexPath {
-    [cell tableView:self willDisplayRowAtIndexPath:indexPath];
+    [cell tableView:self didUpdateForKey:XZMocoaUpdatesKeyDidShow atIndexPath:indexPath];
 }
 
 - (void)tableView:(UITableView *)tableView didEndDisplayingCell:(UITableView<XZMocoaTableViewCell> *)cell forRowAtIndexPath:(NSIndexPath*)indexPath {
-    [cell tableView:self didEndDisplayingRowAtIndexPath:indexPath];
+    [cell tableView:self didUpdateForKey:XZMocoaUpdatesKeyDidHide atIndexPath:indexPath];
 }
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
     UITableView<XZMocoaTableViewCell> *cell = (id)[tableView cellForRowAtIndexPath:indexPath];
-    [cell tableView:self didSelectRowAtIndexPath:indexPath];
+    [cell tableView:self didUpdateForKey:XZMocoaUpdatesKeySelect atIndexPath:indexPath];
 }
 
 @end
@@ -176,7 +176,7 @@
 
 @implementation XZMocoaTableViewProxy (XZMocoaTableViewModelDelegate)
 
-- (void)tableViewModel:(XZMocoaTableViewModel *)tableViewModel didReloadData:(void *)foo {
+- (void)tableViewModel:(XZMocoaTableViewModel *)tableViewModel didReloadData:(void *)null {
     [self.contentView reloadData];
 }
 

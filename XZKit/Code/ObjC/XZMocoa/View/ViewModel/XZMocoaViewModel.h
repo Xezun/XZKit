@@ -207,6 +207,10 @@ FOUNDATION_EXPORT XZMocoaUpdatesKey const XZMocoaUpdatesKeyInsert;
 FOUNDATION_EXPORT XZMocoaUpdatesKey const XZMocoaUpdatesKeyDelete;
 /// 选择操作。比如单选 cell 时，只能由上层控制单选。
 FOUNDATION_EXPORT XZMocoaUpdatesKey const XZMocoaUpdatesKeySelect;
+FOUNDATION_EXPORT XZMocoaUpdatesKey const XZMocoaUpdatesKeyDidShow;
+FOUNDATION_EXPORT XZMocoaUpdatesKey const XZMocoaUpdatesKeyDidHide;
+
+@protocol XZMocoaView;
 
 @interface XZMocoaViewModel (XZMocoaViewModelHierarchyUpdates)
 /// 接收下级模块的更新，或监听到下级模块的数据变化。
@@ -222,6 +226,13 @@ FOUNDATION_EXPORT XZMocoaUpdatesKey const XZMocoaUpdatesKeySelect;
 /// @param key 事件名，如为 nil 则为默认名称 XZMocoaUpdatesKeyNone
 /// @param value 事件值
 - (void)emitUpdatesForKey:(XZMocoaUpdatesKey)key value:(nullable id)value;
+
+/// 接收来自视图的 Updates 事件。
+/// @param view 视图
+/// @param key 事件名
+/// @param value 事件值
+- (void)view:(id<XZMocoaView>)view didUpdateForKey:(XZMocoaUpdatesKey)key value:(nullable id)value;
+
 @end
 
 
@@ -329,6 +340,8 @@ FOUNDATION_EXPORT XZMocoaKey const XZMocoaKeyAttributedTitle;
 FOUNDATION_EXPORT XZMocoaKey const XZMocoaKeySubtitle;
 FOUNDATION_EXPORT XZMocoaKey const XZMocoaKeyTextColor;
 FOUNDATION_EXPORT XZMocoaKey const XZMocoaKeyFont;
+FOUNDATION_EXPORT XZMocoaKey const XZMocoaKeyDetail;
+FOUNDATION_EXPORT XZMocoaKey const XZMocoaKeyIsEditing;
 
 @interface XZMocoaViewModel (XZStoryboardSupporting)
 
