@@ -28,19 +28,19 @@
 }
 
 - (void)tableView:(id<XZMocoaTableView>)tableView didSelectCell:(UITableViewCell *)cell atIndexPath:(NSIndexPath *)indexPath {
-    [self emitUpdatesForKey:XZMocoaUpdatesKeySelect value:indexPath];
+    
 }
 
 - (void)tableView:(id<XZMocoaTableView>)tableView willDisplayCell:(UITableViewCell *)cell atIndexPath:(NSIndexPath *)indexPath {
-    [self emitUpdatesForKey:XZMocoaUpdatesKeyDidShow value:indexPath];
+    
 }
 
 - (void)tableView:(id<XZMocoaTableView>)tableView didEndDisplayingCell:(UITableViewCell *)cell atIndexPath:(NSIndexPath *)indexPath {
-    [self emitUpdatesForKey:XZMocoaUpdatesKeyDidHide value:indexPath];
+    
 }
 
 - (void)tableView:(id<XZMocoaTableView>)tableView didTrailingSwipeCell:(UITableViewCell *)cell atIndexPath:(NSIndexPath *)indexPath forUpdatesKey:(XZMocoaUpdatesKey)key {
-    [self emitUpdatesForKey:key value:indexPath];
+    
 }
 
 @end

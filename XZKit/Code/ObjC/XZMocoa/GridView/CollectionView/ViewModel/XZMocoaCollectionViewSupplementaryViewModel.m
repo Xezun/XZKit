@@ -23,11 +23,11 @@
 }
 
 - (void)collectionView:(id<XZMocoaCollectionView>)collectionView willDisplaySupplementaryView:(UICollectionReusableView *)supplementaryView atIndexPath:(NSIndexPath *)indexPath forElementOfKind:(NSString *)elementKind {
-    [self emitUpdatesForKey:XZMocoaUpdatesKeyDidShow value:@[indexPath, elementKind]];
+    
 }
 
 - (void)collectionView:(id<XZMocoaCollectionView>)collectionView didEndDisplayingSupplementaryView:(UICollectionReusableView *)supplementaryView atIndexPath:(NSIndexPath *)indexPath forElementOfKind:(NSString *)elementKind {
-    [self emitUpdatesForKey:XZMocoaUpdatesKeyDidHide value:@[indexPath, elementKind]];
+    
 }
 
 @end
