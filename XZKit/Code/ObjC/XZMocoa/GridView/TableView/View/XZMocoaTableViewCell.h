@@ -24,25 +24,25 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface UITableViewCell (XZMocoaTableViewCell)
 @property (nonatomic, strong, nullable) __kindof XZMocoaTableViewCellViewModel *viewModel;
-/// 当前 Cell 的点击事件。
+/// 当前 Cell 的点击事件。默认不执行任何操作。
 /// @param tableView 当前 Cell 所属的 UITableView 对象
 /// @param indexPath 当前 Cell 的当前所在的位置
 - (void)tableView:(id<XZMocoaTableView>)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath;
 
-/// 当前 Cell 将要被展示在指定位置。
+/// 当前 Cell 将要被展示在指定位置。默认不执行任何操作。
 /// @param tableView 当前 Cell 所属的 UITableView 对象
 /// @param indexPath 当前 Cell 的将要展示的位置
 - (void)tableView:(id<XZMocoaTableView>)tableView willDisplayRowAtIndexPath:(NSIndexPath *)indexPath;
 
-/// 当前 Cell 已结束在指定位置的展示。
+/// 当前 Cell 已结束在指定位置的展示。默认不执行任何操作。
 /// @param tableView 当前 Cell 所属的 UITableView 对象
 /// @param indexPath 当前 Cell 的当前所在的位置
 - (void)tableView:(id<XZMocoaTableView>)tableView didEndDisplayingRowAtIndexPath:(NSIndexPath*)indexPath;
 
-/// 当前 Cell 的侧滑编辑事件。
+/// 当前 Cell 的更新事件，比如侧滑编辑、删除等事件。默认直接通过层级关系向上传递事件。
 /// @param tableView cell 所在的容器视图
 /// @param indexPath cell 在容器视图中的位置
-/// @param key 已选择的侧滑编辑事件
+/// @param key 更新事件类型
 - (void)tableView:(id<XZMocoaTableView>)tableView didUpdateRowAtIndexPath:(NSIndexPath *)indexPath forKey:(XZMocoaUpdatesKey)key;
 @end
 

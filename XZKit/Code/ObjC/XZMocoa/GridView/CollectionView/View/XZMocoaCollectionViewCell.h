@@ -38,6 +38,10 @@ NS_ASSUME_NONNULL_BEGIN
 /// @param indexPath 当前 Cell 的当前所在的位置
 - (void)collectionView:(id<XZMocoaCollectionView>)collectionView didEndDisplayingItemAtIndexPath:(NSIndexPath*)indexPath;
 
+/// 当前 Cell 的更新事件。
+/// @param collectionView 当前 Cell 所属的 XZMocoaCollectionView 对象
+/// @param indexPath 当前 Cell 的当前所在的位置
+/// @param key 更新事件名
 - (void)collectionView:(id<XZMocoaCollectionView>)collectionView didUpdateRowAtIndexPath:(NSIndexPath *)indexPath forKey:(XZMocoaUpdatesKey)key;
 @end
 
