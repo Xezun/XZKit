@@ -10,15 +10,13 @@
 @import ObjectiveC;
 @import XZML;
 
-@interface Example03ViewController () <XZMocoaView>
+@interface Example03ViewController ()
 
 @property (nonatomic, copy) NSArray<NSArray<NSDictionary *> *> *dataArray;
 
 @end
 
 @implementation Example03ViewController
-
-@dynamic viewModel;
 
 - (void)viewDidLoad {
     [super viewDidLoad];
@@ -37,22 +35,22 @@
             }
         ], @[
             @{
-                @"title": @"20. TableView 展示",
+                @"title": @"20. UITableView 展示",
                 @"url": [NSURL URLWithString:@"https://mocoa.xezun.com/examples/20/"],
             }, @{
-                @"title": @"21. TableView 差异分析与局部刷新",
+                @"title": @"21. UITableView 差异分析与局部刷新",
                 @"url": [NSURL URLWithString:@"https://mocoa.xezun.com/examples/21/"],
                 
             }, @{
-                @"title": @"22. CollectionView 差异分析与局部刷新",
+                @"title": @"22. UICollectionView 差异分析与局部刷新",
                 @"url": [NSURL URLWithString:@"https://mocoa.xezun.com/examples/22/"]
             }
         ], @[
             @{
-                @"title": @"30. TableView 防崩溃测试",
+                @"title": @"30. UITableView 防崩溃测试",
                 @"url": [NSURL URLWithString:@"https://mocoa.xezun.com/examples/30/"],
             }, @{
-                @"title": @"31. CollectionView 防崩溃测试",
+                @"title": @"31. UICollectionView 防崩溃测试",
                 @"url": [NSURL URLWithString:@"https://mocoa.xezun.com/examples/31/"],
             }
         ]

@@ -7,7 +7,7 @@
 
 #import "XZMocoaGridViewCellViewModel.h"
 
-@protocol XZMocoaCollectionViewCell;
+@protocol XZMocoaCollectionView, XZMocoaCollectionViewCell;
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -16,12 +16,11 @@ NS_ASSUME_NONNULL_BEGIN
 
 @property (nonatomic) CGSize size;
 
-@end
-
-@interface XZMocoaCollectionViewCellViewModel (XZMocoaCollectionViewCellUpdates)
-
-- (void)cell:(id<XZMocoaCollectionViewCell>)cell didUpdateForKey:(XZMocoaUpdatesKey)key atIndexPath:(NSIndexPath *)indexPath;
+- (void)collectionView:(id<XZMocoaCollectionView>)collectionView didSelectCell:(UICollectionViewCell *)cell atIndexPath:(NSIndexPath *)indexPath;
+- (void)collectionView:(id<XZMocoaCollectionView>)collectionView willDisplayCell:(UICollectionViewCell *)cell atIndexPath:(NSIndexPath *)indexPath;
+- (void)collectionView:(id<XZMocoaCollectionView>)collectionView didEndDisplayingCell:(UICollectionViewCell *)cell atIndexPath:(NSIndexPath*)indexPath;
 
 @end
+
 
 NS_ASSUME_NONNULL_END

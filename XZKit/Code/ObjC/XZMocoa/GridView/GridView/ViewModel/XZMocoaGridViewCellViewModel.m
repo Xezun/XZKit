@@ -25,10 +25,6 @@
     return self;
 }
 
-- (void)cell:(id<XZMocoaView>)cell didUpdateForKey:(XZMocoaUpdatesKey)key atIndexPath:(NSIndexPath *)indexPath {
-    [self view:cell didUpdateForKey:key value:indexPath];
-}
-
 @end
 
 

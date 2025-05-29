@@ -6,12 +6,12 @@
 //
 
 #import <UIKit/UIKit.h>
-#import "XZMocoaView.h"
+#import "XZMocoaGridViewSupplementaryView.h"
 #import "XZMocoaTableViewHeaderFooterViewModel.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
-@protocol XZMocoaTableViewHeaderFooterView <XZMocoaView>
+@protocol XZMocoaTableViewHeaderFooterView <XZMocoaGridViewSupplementaryView>
 @optional
 @property (nonatomic, strong, nullable) __kindof XZMocoaTableViewHeaderFooterViewModel *viewModel;
 @end

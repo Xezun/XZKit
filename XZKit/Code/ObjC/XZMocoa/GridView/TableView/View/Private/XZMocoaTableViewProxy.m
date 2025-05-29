@@ -158,17 +158,17 @@
     return viewModel.height;
 }
 
-- (void)tableView:(UITableView *)tableView willDisplayCell:(UITableView<XZMocoaTableViewCell> *)cell forRowAtIndexPath:(NSIndexPath *)indexPath {
-    [cell tableView:self didUpdateForKey:XZMocoaUpdatesKeyDidShow atIndexPath:indexPath];
+- (void)tableView:(UITableView *)tableView willDisplayCell:(UITableViewCell<XZMocoaTableViewCell> *)cell forRowAtIndexPath:(NSIndexPath *)indexPath {
+    [cell tableView:self willDisplayRowAtIndexPath:indexPath];
 }
 
-- (void)tableView:(UITableView *)tableView didEndDisplayingCell:(UITableView<XZMocoaTableViewCell> *)cell forRowAtIndexPath:(NSIndexPath*)indexPath {
-    [cell tableView:self didUpdateForKey:XZMocoaUpdatesKeyDidHide atIndexPath:indexPath];
+- (void)tableView:(UITableView *)tableView didEndDisplayingCell:(UITableViewCell<XZMocoaTableViewCell> *)cell forRowAtIndexPath:(NSIndexPath*)indexPath {
+    [cell tableView:self didEndDisplayingRowAtIndexPath:indexPath];
 }
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
-    UITableView<XZMocoaTableViewCell> *cell = (id)[tableView cellForRowAtIndexPath:indexPath];
-    [cell tableView:self didUpdateForKey:XZMocoaUpdatesKeySelect atIndexPath:indexPath];
+    UITableViewCell<XZMocoaTableViewCell> *cell = (id)[tableView cellForRowAtIndexPath:indexPath];
+    [cell tableView:self didSelectRowAtIndexPath:indexPath];
 }
 
 @end

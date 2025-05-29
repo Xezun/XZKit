@@ -7,30 +7,43 @@
 //
 
 #import <UIKit/UIKit.h>
-#import "XZMocoaTableView.h"
+#import "XZMocoaGridViewCell.h"
 #import "XZMocoaTableViewCellViewModel.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
-@protocol UITableViewDelegate;
+@protocol XZMocoaTableView;
 
 /// 使用 Mocoa 时，UITableViewCell 应遵循本协议。
 /// @note
 /// UITableViewCell 已默认实现了本协议，如需使用仅需声明遵循协议即可。
 @protocol XZMocoaTableViewCell <XZMocoaGridViewCell>
-
 @optional
-/// ViewModel 对象。
-/// @note 监听此属性，子类不需要重写，直接方法 -viewModelDidUpdate 中操作即可。
-/// @note 在设置新值时，将先从移除旧的 viewModel 上绑定的事件。
 @property (nonatomic, strong, nullable) __kindof XZMocoaTableViewCellViewModel *viewModel;
-
-- (void)tableView:(id<XZMocoaTableView>)tableView didUpdateForKey:(XZMocoaUpdatesKey)key atIndexPath:(NSIndexPath *)indexPath;
-
 @end
 
 @interface UITableViewCell (XZMocoaTableViewCell)
 @property (nonatomic, strong, nullable) __kindof XZMocoaTableViewCellViewModel *viewModel;
+/// 当前 Cell 的点击事件。
+/// @param tableView 当前 Cell 所属的 UITableView 对象
+/// @param indexPath 当前 Cell 的当前所在的位置
+- (void)tableView:(id<XZMocoaTableView>)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath;
+
+/// 当前 Cell 将要被展示在指定位置。
+/// @param tableView 当前 Cell 所属的 UITableView 对象
+/// @param indexPath 当前 Cell 的将要展示的位置
+- (void)tableView:(id<XZMocoaTableView>)tableView willDisplayRowAtIndexPath:(NSIndexPath *)indexPath;
+
+/// 当前 Cell 已结束在指定位置的展示。
+/// @param tableView 当前 Cell 所属的 UITableView 对象
+/// @param indexPath 当前 Cell 的当前所在的位置
+- (void)tableView:(id<XZMocoaTableView>)tableView didEndDisplayingRowAtIndexPath:(NSIndexPath*)indexPath;
+
+/// 当前 Cell 已选择侧滑行为。
+/// @param tableView cell 所在的容器视图
+/// @param indexPath cell 在容器视图中的位置
+/// @param key 已选择的侧滑行为
+- (void)tableView:(id<XZMocoaTableView>)tableView didTrailingSwipeRowAtIndexPath:(NSIndexPath*)indexPath forUpdatesKey:(XZMocoaUpdatesKey)key;
 @end
 
 NS_ASSUME_NONNULL_END

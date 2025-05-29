@@ -85,7 +85,7 @@
     self.textLabel.text = name;
 }
 
-- (void)tableView:(XZMocoaTableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
+- (void)tableView:(id<XZMocoaTableView>)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
     NSString *name = [NSString stringWithFormat:@"Example%02ld", (long)(indexPath.row + 1)];
     UIViewController *viewController = [UIStoryboard storyboardWithName:name bundle:nil].instantiateInitialViewController;
     viewController.modalPresentationStyle = UIModalPresentationFullScreen;

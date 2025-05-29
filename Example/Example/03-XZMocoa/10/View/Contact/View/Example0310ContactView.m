@@ -27,8 +27,8 @@
     [super layoutSubviews];
 }
 
-- (void)viewModelDidChange:(nullable XZMocoaViewModel *)newValue {
-    [super viewModelDidChange:newValue];
+- (void)viewModelDidChange:(nullable XZMocoaViewModel *)oldValue {
+    [super viewModelDidChange:oldValue];
     
     Example0310ContactViewModel *viewModel = self.viewModel;
     

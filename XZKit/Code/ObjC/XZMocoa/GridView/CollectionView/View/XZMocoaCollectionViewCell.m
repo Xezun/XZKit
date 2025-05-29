@@ -19,10 +19,16 @@
 
 @dynamic viewModel;
 
-- (void)collectionView:(id<XZMocoaCollectionView>)collectionView didUpdateForKey:(XZMocoaUpdatesKey)key atIndexPath:(NSIndexPath *)indexPath {
-    if ([self conformsToProtocol:@protocol(XZMocoaCollectionViewCell) ]) {
-        [((id<XZMocoaCollectionViewCell>)self).viewModel cell:(id)self didUpdateForKey:key atIndexPath:indexPath];
-    }
+- (void)collectionView:(id<XZMocoaCollectionView>)collectionView didSelectItemAtIndexPath:(NSIndexPath *)indexPath {
+    [self.viewModel collectionView:collectionView didSelectCell:self atIndexPath:indexPath];
+}
+
+- (void)collectionView:(id<XZMocoaCollectionView>)collectionView willDisplayItemAtIndexPath:(NSIndexPath *)indexPath {
+    [self.viewModel collectionView:collectionView willDisplayCell:self atIndexPath:indexPath];
+}
+
+- (void)collectionView:(id<XZMocoaCollectionView>)collectionView didEndDisplayingItemAtIndexPath:(NSIndexPath *)indexPath {
+    [self.viewModel collectionView:collectionView didEndDisplayingCell:self atIndexPath:indexPath];
 }
 
 @end

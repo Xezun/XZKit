@@ -20,10 +20,20 @@
 
 @dynamic viewModel;
 
-- (void)tableView:(id<XZMocoaTableView>)tableView didUpdateForKey:(XZMocoaUpdatesKey)key atIndexPath:(NSIndexPath *)indexPath {
-    if ([self conformsToProtocol:@protocol(XZMocoaTableViewCell) ]) {
-        [((id<XZMocoaTableViewCell>)self).viewModel cell:(id)self didUpdateForKey:key atIndexPath:indexPath];
-    }
+- (void)tableView:(id<XZMocoaTableView>)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
+    [self.viewModel tableView:tableView didSelectCell:self atIndexPath:indexPath];
+}
+
+- (void)tableView:(id<XZMocoaTableView>)tableView willDisplayRowAtIndexPath:(NSIndexPath *)indexPath {
+    [self.viewModel tableView:tableView willDisplayCell:self atIndexPath:indexPath];
+}
+
+- (void)tableView:(id<XZMocoaTableView>)tableView didEndDisplayingRowAtIndexPath:(NSIndexPath *)indexPath {
+    [self.viewModel tableView:tableView didEndDisplayingCell:self atIndexPath:indexPath];
+}
+
+- (void)tableView:(id<XZMocoaTableView>)tableView didTrailingSwipeRowAtIndexPath:(NSIndexPath *)indexPath forUpdatesKey:(XZMocoaUpdatesKey)key {
+    [self.viewModel tableView:tableView didTrailingSwipeCell:self atIndexPath:indexPath forUpdatesKey:key];
 }
 
 @end

@@ -7,21 +7,19 @@
 
 #import "XZMocoaGridViewCellViewModel.h"
 
-@protocol XZMocoaTableViewCell;
+@protocol XZMocoaTableView, XZMocoaTableViewCell;
 
 NS_ASSUME_NONNULL_BEGIN
 
 /// UITableViewCell 视图模型基类。
 @interface XZMocoaTableViewCellViewModel : XZMocoaGridViewCellViewModel
-
 /// 视图高度。
 @property (nonatomic) CGFloat height;
 
-@end
-
-@interface XZMocoaTableViewCellViewModel (XZMocoaTableViewCellUpdates)
-
-- (void)cell:(id<XZMocoaTableViewCell>)cell didUpdateForKey:(XZMocoaUpdatesKey)key atIndexPath:(NSIndexPath *)indexPath;
+- (void)tableView:(id<XZMocoaTableView>)tableView didSelectCell:(UITableViewCell *)cell atIndexPath:(NSIndexPath *)indexPath;
+- (void)tableView:(id<XZMocoaTableView>)tableView willDisplayCell:(UITableViewCell *)cell atIndexPath:(NSIndexPath *)indexPath;
+- (void)tableView:(id<XZMocoaTableView>)tableView didEndDisplayingCell:(UITableViewCell *)cell atIndexPath:(NSIndexPath *)indexPath;
+- (void)tableView:(id<XZMocoaTableView>)tableView didTrailingSwipeCell:(UITableViewCell *)cell atIndexPath:(NSIndexPath *)indexPath forUpdatesKey:(XZMocoaUpdatesKey)key;
 
 @end
 

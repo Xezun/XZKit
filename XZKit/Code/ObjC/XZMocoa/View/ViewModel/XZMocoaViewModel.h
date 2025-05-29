@@ -167,16 +167,19 @@ NS_SWIFT_UI_ACTOR @protocol XZMocoaViewModel <NSObject>
 
 
 // - Mocoa Hierarchy Updates -
-// 层级更新机制：在具有层级关系的业务模块中，下级模块向上级模块传递数据或事件，或者上级模块监听下级模块的数据或事件，
-// 在 iOS 开发中一般使用代理模式，因为代理协议可以让上下级的逻辑关系看起来更清晰。
-// 但是在使用 MVVM 设计模式开发时，因为模块的划分，原本在 MVC 模式下，可以直接交互的逻辑，变得不再
-// 直接，这将间接导致我们在开发时，需要额外的工作量来设计模块交互的代码，开发效率和开发体验将会受影响。
-// 而如果不进行模块分层，或减少划分模块，那么很可能导致模块太大，代码也就不可避免的出现臃肿，这又与我
-// 们采用 MVVM 设计模式开发的初衷不符，所以划分模块是必须也是必要的。幸运的是，在实际开发中，大部分情
-// 况下，模块与模块之间的交互，都是一些简单的交互，在框架层提供一种简单的交互机制，即可解决大部分层级模
-// 块间的交互需求，所以 Mocoa 设计了基于层级关系的 Mocoa Hierarchy Updates 机制。
-// 该机制，只为解决层级模块间的交互问题，对于不同模块间的交互，或者比较复杂的
-// 交互，Mocoa 也是建议采用常规代理或通知机制，对于代码而言，保持可维护性是优先级最高的。
+// 层级更新机制：在具有层级关系的业务模块中，下级模块向上级模块传递数据或事件，或者上级模块监听下级模块的数据或事件。
+//
+// 在 iOS 开发中，事件传递一般使用代理模式，因为代理协议可以让上下级的逻辑关系看起来更清晰。
+// 但是在使用 MVVM 设计模式开发时，因为模块的划分，原本在 MVC 模式下，可以直接交互的逻辑，变得不再直接。
+// 比如，如果将 UITableView 视为一个模块，那么这个模块就会过于臃肿；而如果将每个 Cell 视为一个模块，
+// 又导致 Cell 与 Cell 之间、Cell 与 TableView 之间的交互变得难以维护，因为需要额外的工作，来设计
+// 模块之间的交互，开发效率和开发体验必将受影响。
+// 所以 Mocoa 设计了基于层级关系的 Mocoa Hierarchy Updates 机制，来简化层级模块间的交互问题。
+//
+// 虽然视图 View 可以通过调用 -didReceiveUpdates: 方法来向视图模型 ViewModel 传递事件或数据，
+// 但正确的做法应是，直接调用视图模型 ViewModel 的方法，因为视图模型对视图来说是公开的。
+// 而视图模型 ViewModel 向视图 View 传递事件或数据，按 Apple Cocoa 的习惯，应使用 delegate 机制，
+// 但是也可以使用 Mocoa 提供的 target-action-value 机制。
 
 /// 更新方式。
 typedef NSString *XZMocoaUpdatesKey NS_EXTENSIBLE_STRING_ENUM;
@@ -226,12 +229,6 @@ FOUNDATION_EXPORT XZMocoaUpdatesKey const XZMocoaUpdatesKeyDidHide;
 /// @param key 事件名，如为 nil 则为默认名称 XZMocoaUpdatesKeyNone
 /// @param value 事件值
 - (void)emitUpdatesForKey:(XZMocoaUpdatesKey)key value:(nullable id)value;
-
-/// 接收来自视图的 Updates 事件。
-/// @param view 视图
-/// @param key 事件名
-/// @param value 事件值
-- (void)view:(id<XZMocoaView>)view didUpdateForKey:(XZMocoaUpdatesKey)key value:(nullable id)value;
 
 @end
 
@@ -341,7 +338,6 @@ FOUNDATION_EXPORT XZMocoaKey const XZMocoaKeySubtitle;
 FOUNDATION_EXPORT XZMocoaKey const XZMocoaKeyTextColor;
 FOUNDATION_EXPORT XZMocoaKey const XZMocoaKeyFont;
 FOUNDATION_EXPORT XZMocoaKey const XZMocoaKeyDetail;
-FOUNDATION_EXPORT XZMocoaKey const XZMocoaKeyIsEditing;
 
 @interface XZMocoaViewModel (XZStoryboardSupporting)
 

@@ -23,7 +23,7 @@
     self.name = [NSString stringWithFormat:@"%@ %@", data.firstName, data.lastName];
 }
 
-- (void)tableView:(XZMocoaTableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
+- (void)tableView:(id<XZMocoaTableView>)tableView didSelectCell:(UITableViewCell *)cell atIndexPath:(NSIndexPath *)indexPath {
     Example0312CellModel *data = self.model;
     NSString *title = @"温馨提示";
     NSString *message = [NSString stringWithFormat:@"打电话给“%@”？", self.name];
@@ -33,7 +33,7 @@
         [UIApplication.sharedApplication openURL:url options:@{} completionHandler:nil];
     }]];
     [alertVC addAction:[UIAlertAction actionWithTitle:@"取消" style:(UIAlertActionStyleCancel) handler:nil]];
-    [tableView.xz_viewController presentViewController:alertVC animated:YES completion:nil];
+    [self.viewController presentViewController:alertVC animated:YES completion:nil];
 }
 
 @end

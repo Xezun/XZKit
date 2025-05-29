@@ -24,9 +24,6 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic, copy, XZ_READONLY) NSString *identifier;
 /// 修改属性不会发送事件，以避免发送事件太频繁。
 @property (nonatomic) CGRect frame;
-
-- (void)cell:(id<XZMocoaGridViewCell>)cell didUpdateForKey:(XZMocoaUpdatesKey)key atIndexPath:(NSIndexPath *)indexPath;
-
 @end
 
 NS_ASSUME_NONNULL_END

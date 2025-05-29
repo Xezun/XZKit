@@ -7,16 +7,15 @@
 
 #import "XZMocoaGridViewSupplementaryViewModel.h"
 
-@protocol XZMocoaCollectionViewSupplementaryView;
+@protocol XZMocoaCollectionView, XZMocoaCollectionViewSupplementaryView;
 
 NS_ASSUME_NONNULL_BEGIN
 
 @interface XZMocoaCollectionViewSupplementaryViewModel : XZMocoaGridViewSupplementaryViewModel
 
 @property (nonatomic) CGSize size;
-
-- (void)supplementaryView:(id<XZMocoaCollectionViewSupplementaryView>)supplementaryView didUpdateForKey:(XZMocoaUpdatesKey)key atIndexPath:(NSIndexPath *)indexPath;
-
+- (void)collectionView:(id<XZMocoaCollectionView>)collectionView willDisplaySupplementaryView:(UICollectionReusableView *)supplementaryView atIndexPath:(NSIndexPath *)indexPath forElementOfKind:(NSString *)elementKind;
+- (void)collectionView:(id<XZMocoaCollectionView>)collectionView didEndDisplayingSupplementaryView:(UICollectionReusableView *)supplementaryView atIndexPath:(NSIndexPath *)indexPath forElementOfKind:(NSString *)elementKind;
 @end
 
 NS_ASSUME_NONNULL_END

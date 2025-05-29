@@ -208,10 +208,6 @@ XZMocoaUpdatesKey const XZMocoaUpdatesKeyDidHide  = @"XZMocoaUpdatesKeyDidHide";
     [self.superViewModel didReceiveUpdates:updates];
 }
 
-- (void)view:(id<XZMocoaView>)view didUpdateForKey:(XZMocoaUpdatesKey)key value:(id)value {
-    [self emitUpdatesForKey:key value:value];
-}
-
 @end
 
 
@@ -270,7 +266,6 @@ XZMocoaKey const XZMocoaKeySubtitle         = @"subtitle";
 XZMocoaKey const XZMocoaKeyTextColor        = @"textColor";
 XZMocoaKey const XZMocoaKeyFont             = @"font";
 XZMocoaKey const XZMocoaKeyDetail           = @"detail";
-XZMocoaKey const XZMocoaKeyIsEditing        = @"isEditing";
 
 @implementation XZMocoaViewModel (XZStoryboardSupporting)
 

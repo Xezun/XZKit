@@ -14,7 +14,7 @@ NS_ASSUME_NONNULL_BEGIN
 @class UITableView, UICollectionView;
 
 /// 用以承载列表视图的容器视图的接口协议。
-@protocol XZMocoaGridView <XZMocoaView, XZMocoaGridViewModelDelegate>
+@protocol XZMocoaGridView <XZMocoaView>
 @optional
 /// 视图模型。
 @property (nonatomic, strong, nullable) __kindof XZMocoaGridViewModel *viewModel;
@@ -38,16 +38,5 @@ NS_ASSUME_NONNULL_BEGIN
 - (void)contentViewDidChange:(UIScrollView *)oldValue;
 
 @end
-
-@class XZMocoaGridViewCellViewModel;
-
-@protocol XZMocoaGridViewCell <XZMocoaView>
-
-@optional
-/// 视图模型。
-@property (nonatomic, strong, nullable) __kindof XZMocoaGridViewCellViewModel *viewModel;
-
-@end
-
 
 NS_ASSUME_NONNULL_END
