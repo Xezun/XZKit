@@ -38,6 +38,8 @@ typedef void(^XZMocoaGridDelayedUpdates)(__kindof XZMocoaViewModel *self);
 
 @implementation XZMocoaGridViewModel
 
+@dynamic delegate;
+
 - (instancetype)initWithModel:(id)model {
     self = [super initWithModel:model];
     if (self) {

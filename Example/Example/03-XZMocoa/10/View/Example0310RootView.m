@@ -14,26 +14,43 @@
     if (self) {
         self.alwaysBounceVertical = YES;
         
+        UIView *wrapperView = [[UIView alloc] init];
+        [self addSubview:wrapperView];
+        
+        wrapperView.translatesAutoresizingMaskIntoConstraints = NO;
+        [NSLayoutConstraint activateConstraints:@[
+            [wrapperView.widthAnchor constraintEqualToAnchor:self.frameLayoutGuide.widthAnchor],
+            [wrapperView.topAnchor constraintEqualToAnchor:self.contentLayoutGuide.topAnchor],
+            [wrapperView.leadingAnchor constraintEqualToAnchor:self.contentLayoutGuide.leadingAnchor],
+            [wrapperView.trailingAnchor constraintEqualToAnchor:self.contentLayoutGuide.trailingAnchor],
+            [wrapperView.bottomAnchor constraintEqualToAnchor:self.contentLayoutGuide.bottomAnchor],
+        ]];
+        
         _contactView = [Example0310ContactView contactView];
-        [self addSubview:_contactView];
+        [wrapperView addSubview:_contactView];
+        
         _contentView = [[Example0310ContentView alloc] init];
-        [self addSubview:_contentView];
+        [wrapperView addSubview:_contentView];
         
         _contactView.translatesAutoresizingMaskIntoConstraints = NO;
         _contentView.translatesAutoresizingMaskIntoConstraints = NO;
         [NSLayoutConstraint activateConstraints:@[
-            [_contactView.widthAnchor constraintEqualToAnchor:self.frameLayoutGuide.widthAnchor],
-            [_contactView.topAnchor constraintEqualToAnchor:self.contentLayoutGuide.topAnchor],
-            [_contactView.leadingAnchor constraintEqualToAnchor:self.contentLayoutGuide.leadingAnchor],
-            [_contactView.trailingAnchor constraintEqualToAnchor:self.contentLayoutGuide.trailingAnchor],
+            [_contactView.topAnchor constraintEqualToAnchor:wrapperView.topAnchor],
+            [_contactView.leadingAnchor constraintEqualToAnchor:wrapperView.leadingAnchor],
+            [_contactView.trailingAnchor constraintEqualToAnchor:wrapperView.trailingAnchor],
             
             [_contentView.topAnchor constraintEqualToAnchor:_contactView.bottomAnchor constant:20],
-            [_contentView.leadingAnchor constraintEqualToAnchor:self.contentLayoutGuide.leadingAnchor],
-            [_contentView.trailingAnchor constraintEqualToAnchor:self.contentLayoutGuide.trailingAnchor],
-            [_contentView.bottomAnchor constraintEqualToAnchor:self.contentLayoutGuide.bottomAnchor],
+            
+            [_contentView.leadingAnchor constraintEqualToAnchor:wrapperView.leadingAnchor],
+            [_contentView.trailingAnchor constraintEqualToAnchor:wrapperView.trailingAnchor],
+            [_contentView.bottomAnchor constraintEqualToAnchor:wrapperView.bottomAnchor],
         ]];
     }
     return self;
+}
+
+- (void)layoutSubviews {
+    [super layoutSubviews];
 }
 
 @end

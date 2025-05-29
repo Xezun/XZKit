@@ -44,11 +44,11 @@ static const void * const _viewModel = &_viewModel;
     if ([oldValue isEqual:newValue]) {
         return;
     }
-    [(id<XZMocoaView>)self viewModelWillChange:newValue];
+    [self viewModelWillChange:newValue];
     // VM 与 V 应该是完全独立的，在 VM 与 V 关联之前，使其进入 ready 状态
     [newValue ready];
     objc_setAssociatedObject(self, _viewModel, newValue, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
-    [(id<XZMocoaView>)self viewModelDidChange:oldValue];
+    [self viewModelDidChange:oldValue];
 }
 
 - (void)viewModelWillChange:(XZMocoaViewModel *)newValue {
@@ -82,35 +82,16 @@ static const void * const _viewModel = &_viewModel;
     }
 }
 
-- (void)viewModelWillChange:(nullable XZMocoaViewModel *)newValue {
-    XZMocoaViewModel *viewModel = ((id<XZMocoaView>)self).viewModel;
-    [viewModel removeTarget:self action:nil forKey:XZMocoaKeyPerformSegue];
+- (UIViewController *)viewModel:(id<XZMocoaViewModel>)viewModel viewController:(void *)null {
+    return self.xz_viewController;
 }
 
-- (void)viewModelDidChange:(nullable XZMocoaViewModel *)oldValue {
-    XZMocoaViewModel *viewModel = ((id<XZMocoaView>)self).viewModel;
-    [viewModel addTarget:self action:@selector(xz_mocoa_didChangeValue:forKey:sender:) forKey:XZMocoaKeyPerformSegue];
-    [viewModel addTarget:self action:@selector(xz_mocoa_didChangeValue:forKey:sender:) forKey:XZMocoaKeyViewController];
+- (void)viewModelWillChange:(XZMocoaViewModel *)newValue {
+    newValue.delegate = self;
 }
 
-- (void)xz_mocoa_didChangeValue:(id)value forKey:(XZMocoaKey)akey sender:(XZMocoaViewModel *)viewModel {
-    if (akey == XZMocoaKeyPerformSegue) {
-        NSArray<NSString *> * const values = value;
-        switch (values.count) {
-            case 0:
-                break;
-            case 1:
-                [self.xz_viewController performSegueWithIdentifier:values[0] sender:nil];
-                break;
-            default: {
-                [self.xz_viewController performSegueWithIdentifier:values[0] sender:values[1]];
-                break;
-            }
-        }
-    } else if (akey == XZMocoaKeyViewController) {
-        void (^ const handler)(UIViewController *) = value;
-        handler(self.xz_viewController);
-    }
+- (void)viewModelDidChange:(XZMocoaViewModel *)oldValue {
+    oldValue.delegate = nil;
 }
 
 @end
@@ -141,34 +122,16 @@ static const void * const _viewModel = &_viewModel;
     }
 }
 
-- (void)viewModelWillChange:(nullable XZMocoaViewModel *)newValue {
-    XZMocoaViewModel *viewModel = ((id<XZMocoaView>)self).viewModel;
-    [viewModel removeTarget:self action:nil forKey:XZMocoaKeyPerformSegue];
+- (void)viewModelWillChange:(XZMocoaViewModel *)newValue {
+    newValue.delegate = self;
 }
 
-- (void)viewModelDidChange:(nullable XZMocoaViewModel *)newValue {
-    XZMocoaViewModel *viewModel = ((id<XZMocoaView>)self).viewModel;
-    [viewModel addTarget:self action:@selector(xz_mocoa_didChangeValue:forKey:sender:) forKey:XZMocoaKeyPerformSegue];
-    [viewModel addTarget:self action:@selector(xz_mocoa_didChangeValue:forKey:sender:) forKey:XZMocoaKeyViewController];
+- (void)viewModelDidChange:(XZMocoaViewModel *)oldValue {
+    oldValue.delegate = nil;
 }
 
-- (void)xz_mocoa_didChangeValue:(id)value forKey:(XZMocoaKey)akey sender:(XZMocoaViewModel *)viewModel {
-    if (akey == XZMocoaKeyPerformSegue) {
-        NSArray<NSString *> * const values = value;
-        switch (values.count) {
-            case 0:
-                break;
-            case 1:
-                [self performSegueWithIdentifier:values[0] sender:nil];
-                break;
-            default:
-                [self performSegueWithIdentifier:values[0] sender:values[1]];
-                break;
-        }
-    } else if (akey == XZMocoaKeyViewController) {
-        void (^ const handler)(UIViewController *) = value;
-        handler(self);
-    }
+- (UIViewController *)viewModel:(id<XZMocoaViewModel>)viewModel viewController:(void *)null {
+    return self;
 }
 
 - (BOOL)xz_mocoa_new_shouldPerformSegueWithIdentifier:(NSString *)identifier sender:(id)sender {

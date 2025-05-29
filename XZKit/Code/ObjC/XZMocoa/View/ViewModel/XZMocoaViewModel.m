@@ -15,6 +15,7 @@
     NSMutableOrderedSet<XZMocoaViewModel *> *_subViewModels;
     XZMocoaViewModel * __unsafe_unretained _superViewModel;
     XZMocoaTargetActions  *_targetActions;
+    
 }
 
 - (void)dealloc {
@@ -193,15 +194,15 @@ XZMocoaUpdatesKey const XZMocoaUpdatesKeySelect = @"XZMocoaUpdatesKeySelect";
 
 @implementation XZMocoaViewModel (XZMocoaViewModelHierarchyEvents)
 
-- (void)sendUpdatesForKey:(NSString *)key value:(id)value {
-    if (!self.isReady) return;
-    XZMocoaUpdates * const updates = [XZMocoaUpdates updatesWithKey:key value:value source:self];
-    [self.superViewModel didReceiveUpdates:updates];
-}
-
 - (void)didReceiveUpdates:(XZMocoaUpdates *)updates {
     if (!self.isReady) return;
     updates.target = self;
+    [self.superViewModel didReceiveUpdates:updates];
+}
+
+- (void)emitUpdatesForKey:(NSString *)key value:(id)value {
+    if (!self.isReady) return;
+    XZMocoaUpdates * const updates = [XZMocoaUpdates updatesWithKey:key value:value source:self];
     [self.superViewModel didReceiveUpdates:updates];
 }
 
@@ -252,15 +253,18 @@ XZMocoaKey const XZMocoaKeyNone = @"";
 
 @end
 
-XZMocoaKey const XZMocoaKeyPerformSegue   = @"XZMocoaKeyPerformSegue";
-XZMocoaKey const XZMocoaKeyViewController = @"XZMocoaKeyViewController";
+XZMocoaKey const XZMocoaKeyText             = @"text";
+XZMocoaKey const XZMocoaKeyAttributedText   = @"attributedText";
+XZMocoaKey const XZMocoaKeyValue            = @"value";
+XZMocoaKey const XZMocoaKeyImage            = @"image";
+XZMocoaKey const XZMocoaKeyName             = @"name";
+XZMocoaKey const XZMocoaKeyTitle            = @"title";
+XZMocoaKey const XZMocoaKeyAttributedTitle  = @"attributedTitle";
+XZMocoaKey const XZMocoaKeySubtitle         = @"subtitle";
+XZMocoaKey const XZMocoaKeyTextColor        = @"textColor";
+XZMocoaKey const XZMocoaKeyFont             = @"font";
 
 @implementation XZMocoaViewModel (XZStoryboardSupporting)
-
-- (void)performSegueWithIdentifier:(NSString *)identifier sender:(id)sender {
-    NSArray *value = [NSArray arrayWithObjects:identifier, sender, nil];
-    [self sendActionsForKey:XZMocoaKeyPerformSegue value:value];
-}
 
 - (BOOL)shouldPerformSegueWithIdentifier:(NSString *)identifier sender:(nullable id)sender {
     if ([sender conformsToProtocol:@protocol(XZMocoaView)]) {
@@ -276,11 +280,11 @@ XZMocoaKey const XZMocoaKeyViewController = @"XZMocoaKeyViewController";
 }
 
 - (UIViewController *)viewController {
-    UIViewController *__block _viewController = nil;
-    [self sendActionsForKey:XZMocoaKeyViewController value:^(UIViewController *viewController) {
-        _viewController = viewController;
-    }];
-    return _viewController;
+    return [_delegate viewModel:self viewController:NULL];
+}
+
+- (void)performSegueWithIdentifier:(NSString *)identifier sender:(id)sender {
+    [self.viewController performSegueWithIdentifier:identifier sender:sender];
 }
 
 - (UINavigationController *)navigationController {

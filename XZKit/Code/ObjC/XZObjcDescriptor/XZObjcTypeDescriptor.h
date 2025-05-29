@@ -63,8 +63,6 @@ typedef NS_ENUM(NSUInteger, XZObjcType) {
     XZObjcTypeVoid             = 'v',
     /// C 字符串 char *
     XZObjcTypeString           = '*',
-    /// 类对象的类型
-    XZObjcTypeClass            = '#',
     /// SEL
     XZObjcTypeSEL              = ':',
     /// pointer to type
@@ -84,6 +82,8 @@ typedef NS_ENUM(NSUInteger, XZObjcType) {
     XZObjcTypeUnion            = '(',
     /// C 结构体；类结构体，如 NSObject 为 {NSObject=#}
     XZObjcTypeStruct           = '{',
+    /// 类对象的类型
+    XZObjcTypeClass            = '#',
     /// id. An object (whether statically typed or typed id)
     XZObjcTypeObject           = '@',
 };

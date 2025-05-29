@@ -40,7 +40,10 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic) XZRefreshAdjustment adjustment;
 
 /// 是否正在（上拉加载/下拉刷新）动画。
+/// @note 默认有动画。
 @property (nonatomic, setter=setRefreshing:) BOOL isRefreshing;
+
+- (void)setRefreshing:(BOOL)isRefreshing animated:(BOOL)animated;
 
 /// 刷新视图的相对默认位置的偏移。
 @property (nonatomic) CGFloat offset;

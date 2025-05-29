@@ -70,6 +70,9 @@ typedef BOOL (^XZViewHierarchyEnumerator)(NSInteger hierarchy, __kindof UIView *
 
 @end
 
+@interface UIWindow (XZKit)
+@end
+
 @interface UIView (XZDescription)
 
 /// 获取当前视图及所有层级的描述。

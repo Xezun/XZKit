@@ -127,6 +127,14 @@ static const void * const _secureContentMode = &_secureContentMode;
 
 @end
 
+@implementation UIWindow (XZKit)
+
+- (__kindof UIViewController *)xz_viewController {
+    return self.rootViewController;
+}
+
+@end
+
 
 @implementation UIView (XZDescription)
 

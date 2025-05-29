@@ -14,7 +14,7 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-NS_SWIFT_UI_ACTOR @protocol XZMocoaGridViewModelDelegate <NSObject>
+NS_SWIFT_UI_ACTOR @protocol XZMocoaGridViewModelDelegate <XZMocoaViewModelDelegate>
 @end
 
 /// 列表容器视图的视图模型。

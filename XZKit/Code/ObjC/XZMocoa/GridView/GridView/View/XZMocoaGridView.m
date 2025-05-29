@@ -13,19 +13,9 @@
 
 @dynamic viewModel;
 
-- (void)viewModelWillChange:(nullable XZMocoaViewModel *)newValue {
-    [super viewModelWillChange:newValue];
-    
-    XZMocoaGridViewModel * const _viewModel = self.viewModel;
-    _viewModel.delegate = nil;
-}
-
 - (void)viewModelDidChange:(nullable XZMocoaViewModel *)oldValue {
     [super viewModelDidChange:oldValue];
-    
-    XZMocoaGridViewModel * const _viewModel = self.viewModel;
-    [self registerModule:_viewModel.module];
-    _viewModel.delegate = self;
+    [self registerModule:self.viewModel.module];
 }
 
 @synthesize contentView = _contentView;

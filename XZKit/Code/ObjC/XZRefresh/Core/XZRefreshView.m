@@ -83,10 +83,14 @@ static Class _defaultFooterClass = Nil;
 }
 
 - (void)setRefreshing:(BOOL)isRefreshing {
+    [self setRefreshing:isRefreshing animated:YES];
+}
+
+- (void)setRefreshing:(BOOL)isRefreshing animated:(BOOL)animated {
     if (isRefreshing) {
-        [self beginRefreshing:YES];
+        [self beginRefreshing:animated];
     } else {
-        [self endRefreshing:YES];
+        [self endRefreshing:animated];
     }
 }
 

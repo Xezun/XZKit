@@ -19,9 +19,17 @@ NS_SWIFT_UI_ACTOR @protocol XZMocoaViewModel <NSObject>
 - (instancetype)initWithModel:(nullable id)model;
 @end
 
+/// 视图通过代理接收视图模型的事件。
+@protocol XZMocoaViewModelDelegate <NSObject>
+@optional
+- (nullable UIViewController *)viewModel:(id<XZMocoaViewModel>)viewModel viewController:(void * _Nullable)null;
+@end
+   
 /// 视图模型 ViewModel 基类。为视图模型提供了`ready`机制、层级关系等基础功能。
 /// - Note: 本基类为简化开发而提供，并非 module 必须，可选。
 @interface XZMocoaViewModel : NSObject <XZMocoaViewModel>
+
+@property (nonatomic, weak) id<XZMocoaViewModelDelegate> delegate;
 
 /// 当前视图模型所属的模块。一般情况下，此属性并非必须。
 ///
@@ -119,6 +127,7 @@ NS_SWIFT_UI_ACTOR @protocol XZMocoaViewModel <NSObject>
 /// - 默认该方法不执行任何操作，建议子类调用`super`以向后兼容。
 /// - 在此方法中，视图模型 isReady 始终为 NO 的状态。
 /// - 在此方法中创建添加下层视图模型，不需要发送`-ready`消息。
+/// - 此方法执行时，视图模型尚为与视图关联，即视图模型在初始化之后，才会被视图使用。
 - (void)prepare;
 
 @end
@@ -183,7 +192,7 @@ typedef NSString *XZMocoaUpdatesKey NS_EXTENSIBLE_STRING_ENUM;
 /// 传递当前事件的对象。
 @property (nonatomic, unsafe_unretained, XZ_READONLY) __kindof XZMocoaViewModel *target;
 - (instancetype)init NS_UNAVAILABLE;
-+ (instancetype)updatesWithKey:(XZMocoaUpdatesKey)key value:(nullable id)value source:(XZMocoaViewModel *)source;
++ (instancetype)updatesWithKey:(XZMocoaUpdatesKey)key value:(nullable id)value source:(XZMocoaViewModel *)source NS_SWIFT_NAME(init(_:value:source:));
 @end
 
 /// 通用事件。如果视图模型只有一个事件，或者没必要细分事件时，可以使用此名称。
@@ -212,11 +221,11 @@ FOUNDATION_EXPORT XZMocoaUpdatesKey const XZMocoaUpdatesKeySelect;
 /// @discussion 只有在 isReady 状态下，才会发送事件。
 /// @param key 事件名，如为 nil 则为默认名称 XZMocoaUpdatesKeyNone
 /// @param value 事件值
-- (void)sendUpdatesForKey:(XZMocoaUpdatesKey)key value:(nullable id)value;
+- (void)emitUpdatesForKey:(XZMocoaUpdatesKey)key value:(nullable id)value;
 @end
 
 
-// Mocoa Target-Action-Value 机制
+// - Mocoa Target Action Value -
 //
 // 设计背景：
 // 一种基于 target-action 方式的事件监听机制。这是一种被动机制，手动调用才会触发监听事件。
@@ -306,22 +315,22 @@ FOUNDATION_EXPORT XZMocoaKey const XZMocoaKeyNone;
 
 @class UIControl;
 
-/// 执行 Segue 跳转事件的 XZMocoaKey 事件名。
-///
-/// 此事件默认绑定，事件 value 值为 `@[identifier]` 或 `@[identifier, sender]` 的数组。
-FOUNDATION_EXPORT XZMocoaKey const XZMocoaKeyPerformSegue;
-/// 获取视图模型对应的视图控制器，或视图所在的控制器。
-///
-/// 此事件默认绑定，事件 value 值为类型 `void (^)(UIViewController *)` 的块函数。
-FOUNDATION_EXPORT XZMocoaKey const XZMocoaKeyViewController;
+// 以下为常用的 key
+
+@class UILabel, UIButton, UIImageView;
+
+FOUNDATION_EXPORT XZMocoaKey const XZMocoaKeyText;
+FOUNDATION_EXPORT XZMocoaKey const XZMocoaKeyAttributedText;
+FOUNDATION_EXPORT XZMocoaKey const XZMocoaKeyValue;
+FOUNDATION_EXPORT XZMocoaKey const XZMocoaKeyImage;
+FOUNDATION_EXPORT XZMocoaKey const XZMocoaKeyName;
+FOUNDATION_EXPORT XZMocoaKey const XZMocoaKeyTitle;
+FOUNDATION_EXPORT XZMocoaKey const XZMocoaKeyAttributedTitle;
+FOUNDATION_EXPORT XZMocoaKey const XZMocoaKeySubtitle;
+FOUNDATION_EXPORT XZMocoaKey const XZMocoaKeyTextColor;
+FOUNDATION_EXPORT XZMocoaKey const XZMocoaKeyFont;
 
 @interface XZMocoaViewModel (XZStoryboardSupporting)
-
-/// 发送 XZMocoaKeyPerformSegue 事件给视图或视图控制器。
-/// - Parameters:
-///   - identifier: 标记符
-///   - sender: 发送者
-- (void)performSegueWithIdentifier:(NSString *)identifier sender:(nullable id)sender;
 
 /// 视图分发过来的 IB 转场事件，默认返回 YES 值。
 - (BOOL)shouldPerformSegueWithIdentifier:(NSString *)identifier sender:(nullable id)sender;
@@ -329,11 +338,20 @@ FOUNDATION_EXPORT XZMocoaKey const XZMocoaKeyViewController;
 /// 控制器分发过来的 IB 转场事件。
 - (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(nullable id)sender;
 
-// 不提供视图模型所属的视图的访问方式，是因为视图模型应该与视图完全隔离。
-// 提供视图控制器的访问方式，是因为在 Cocoa 体系中，视图控制器承担了很多公共功能，类似于 h5 的全局 window 对象，应该可以全局访问。
-
-/// 获取控制器，或视图所在的控制器。视图模型不应保存此属性值，否则可能造成内存泄漏。
+/// 获取视图控制器，或视图所在的控制器。
+///
+/// 通过 XZMocoaKeyViewController 事件即时获取值，视图模型不应保存此属性值，否则可能造成内存泄漏。
+///
+/// > 在 Cocoa 中，视图控制器承担了很多公共功能，类似于 h5 的全局 window 对象，因此提供了访问方式。
+/// > 但理论上，视图模型应该与视图完全隔离。
 @property (nonatomic, readonly, nullable) UIViewController *viewController;
+
+/// 执行 Storyboard 转场的便利方法。
+/// - Parameters:
+///   - identifier: 标记符
+///   - sender: 发送者
+- (void)performSegueWithIdentifier:(NSString *)identifier sender:(nullable id)sender;
+
 /// 获取导航控制器，或视图所在的导航控制器。
 @property (nonatomic, readonly, nullable) UINavigationController *navigationController;
 /// 获取页签控制器，或视图所在的页签控制器。
