@@ -31,4 +31,8 @@
     [self.viewModel collectionView:collectionView didEndDisplayingCell:self atIndexPath:indexPath];
 }
 
+- (void)collectionView:(id<XZMocoaCollectionView>)collectionView didUpdateRowAtIndexPath:(NSIndexPath *)indexPath forKey:(XZMocoaUpdatesKey)key {
+    [self.viewModel collectionView:collectionView didUpdateCell:self atIndexPath:indexPath forKey:key];
+}
+
 @end

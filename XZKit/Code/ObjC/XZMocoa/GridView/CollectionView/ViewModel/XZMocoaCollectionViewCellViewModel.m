@@ -42,4 +42,8 @@
     
 }
 
+- (void)collectionView:(id<XZMocoaCollectionView>)collectionView didUpdateCell:(UICollectionViewCell *)cell atIndexPath:(NSIndexPath *)indexPath forKey:(XZMocoaUpdatesKey)key {
+    
+}
+
 @end

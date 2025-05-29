@@ -39,11 +39,11 @@ NS_ASSUME_NONNULL_BEGIN
 /// @param indexPath 当前 Cell 的当前所在的位置
 - (void)tableView:(id<XZMocoaTableView>)tableView didEndDisplayingRowAtIndexPath:(NSIndexPath*)indexPath;
 
-/// 当前 Cell 已选择侧滑行为。
+/// 当前 Cell 的侧滑编辑事件。
 /// @param tableView cell 所在的容器视图
 /// @param indexPath cell 在容器视图中的位置
-/// @param key 已选择的侧滑行为
-- (void)tableView:(id<XZMocoaTableView>)tableView didTrailingSwipeRowAtIndexPath:(NSIndexPath*)indexPath forUpdatesKey:(XZMocoaUpdatesKey)key;
+/// @param key 已选择的侧滑编辑事件
+- (void)tableView:(id<XZMocoaTableView>)tableView didUpdateRowAtIndexPath:(NSIndexPath *)indexPath forKey:(XZMocoaUpdatesKey)key;
 @end
 
 NS_ASSUME_NONNULL_END

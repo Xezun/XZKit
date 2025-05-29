@@ -39,7 +39,7 @@
     
 }
 
-- (void)tableView:(id<XZMocoaTableView>)tableView didTrailingSwipeCell:(UITableViewCell *)cell atIndexPath:(NSIndexPath *)indexPath forUpdatesKey:(XZMocoaUpdatesKey)key {
+- (void)tableView:(id<XZMocoaTableView>)tableView didUpdateCell:(UITableViewCell *)cell atIndexPath:(NSIndexPath *)indexPath forKey:(XZMocoaUpdatesKey)key {
     
 }
 

@@ -19,6 +19,7 @@ NS_ASSUME_NONNULL_BEGIN
 - (void)collectionView:(id<XZMocoaCollectionView>)collectionView didSelectCell:(UICollectionViewCell *)cell atIndexPath:(NSIndexPath *)indexPath;
 - (void)collectionView:(id<XZMocoaCollectionView>)collectionView willDisplayCell:(UICollectionViewCell *)cell atIndexPath:(NSIndexPath *)indexPath;
 - (void)collectionView:(id<XZMocoaCollectionView>)collectionView didEndDisplayingCell:(UICollectionViewCell *)cell atIndexPath:(NSIndexPath*)indexPath;
+- (void)collectionView:(id<XZMocoaCollectionView>)collectionView didUpdateCell:(UICollectionViewCell *)cell atIndexPath:(NSIndexPath *)indexPath forKey:(XZMocoaUpdatesKey)key;
 
 @end
 
