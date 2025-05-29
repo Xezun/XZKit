@@ -10,19 +10,6 @@
 @import ObjectiveC;
 @import XZObjcDescriptor;
 
-struct Foobar {
-    NSInteger a0;
-    NSInteger a1;
-    NSInteger a2;
-    NSInteger a3;
-    NSInteger a4;
-    NSInteger a5;
-    NSInteger a6;
-    NSInteger a7;
-    NSInteger a8;
-    NSInteger a9;
-};
-
 @implementation XZMocoaTargetAction {
     NSInteger _count;
     XZObjcTypeDescriptor *_type;
