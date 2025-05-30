@@ -812,11 +812,15 @@ typedef void(^XZMocoaGridDelayedUpdates)(__kindof XZMocoaViewModel *self);
 //- (void)controller:(NSFetchedResultsController *)controller didChangeContentWithDifference:(NSOrderedCollectionDifference<NSManagedObjectID *> *)diff { }
 
 - (void)controllerWillChangeContent:(NSFetchedResultsController *)controller {
+    if (!self.isReady) return;
+    
     _fetchedBatchUpdates = [NSMutableArray array];
     [self prepareBatchUpdates];
 }
 
 - (void)controllerDidChangeContent:(NSFetchedResultsController *)controller {
+    if (!self.isReady) return;
+    
     [self didPerformBatchUpdates:^{
         [_fetchedBatchUpdates enumerateObjectsWithOptions:NSEnumerationReverse usingBlock:^(XZMocoaGridDelayedUpdates const batchUpdates, NSUInteger idx, BOOL * _Nonnull stop) {
             batchUpdates(self);
@@ -827,6 +831,8 @@ typedef void(^XZMocoaGridDelayedUpdates)(__kindof XZMocoaViewModel *self);
 }
 
 - (void)controller:(NSFetchedResultsController *)controller didChangeSection:(id<NSFetchedResultsSectionInfo>)sectionInfo atIndex:(NSUInteger)sectionIndex forChangeType:(NSFetchedResultsChangeType)type {
+    if (!self.isReady) return;
+    
     switch (type) {
         case NSFetchedResultsChangeInsert: {
             [_fetchedBatchUpdates addObject:^(XZMocoaGridViewModel *self) {
@@ -846,10 +852,15 @@ typedef void(^XZMocoaGridDelayedUpdates)(__kindof XZMocoaViewModel *self);
     }
 }
 
+/// TODO: - CoreData 的更新事件似乎并是按更新的先后顺序发送，而且 section/cell 没有分离，直接批量操作似乎有风险
+/// 尝试：放弃按步骤更新，而使用 Mocoa 的批量更新。
 - (void)controller:(NSFetchedResultsController *)controller didChangeObject:(id)anObject atIndexPath:(NSIndexPath *)indexPath forChangeType:(NSFetchedResultsChangeType)type newIndexPath:(NSIndexPath *)newIndexPath {
+    if (!self.isReady) return;
+    
     switch (type) {
         case NSFetchedResultsChangeInsert: {
             [_fetchedBatchUpdates addObject:^(XZMocoaGridViewModel *self) {
+                // 如果 section 不存在，那么需要添加 section
                 NSInteger section = self.numberOfSections - 1;
                 if (section < newIndexPath.section) {
                     do {
@@ -858,6 +869,7 @@ typedef void(^XZMocoaGridDelayedUpdates)(__kindof XZMocoaViewModel *self);
                     } while (section < newIndexPath.section);
                     return;
                 }
+                // 正常添加 cell
                 [self insertCellAtIndexPath:newIndexPath];
             }];
             break;
