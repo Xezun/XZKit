@@ -139,4 +139,9 @@ NS_SWIFT_UI_ACTOR @protocol XZMocoaGridViewModelDelegate <XZMocoaViewModelDelega
 - (void)sectionViewModel:(__kindof XZMocoaGridViewSectionViewModel *)viewModel didPerformBatchUpdates:(void (^NS_NOESCAPE)(void))batchUpdates completion:(void (^ _Nullable)(BOOL))completion;
 @end
 
+@import CoreData;
+
+@interface XZMocoaGridViewModel (NSFetchedResultsControllerDelegate) <NSFetchedResultsControllerDelegate>
+@end
+
 NS_ASSUME_NONNULL_END

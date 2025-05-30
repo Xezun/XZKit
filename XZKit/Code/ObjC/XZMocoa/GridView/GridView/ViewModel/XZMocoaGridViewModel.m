@@ -29,6 +29,8 @@ typedef void(^XZMocoaGridDelayedUpdates)(__kindof XZMocoaViewModel *self);
     NSOrderedSet<XZMocoaGridViewSectionViewModel *> *_dataBeforeBatchUpdates;
     /// 批量更新时，被延迟的更新。
     NSMutableArray<XZMocoaGridDelayedUpdates> *_delayedBatchUpdates;
+    /// 使用 CoreData 时的批量更新
+    NSMutableArray<XZMocoaGridDelayedUpdates> *_fetchedBatchUpdates;
     /// 是否需要执行批量更新的差异分析。
     /// @note 在批量更新时，由于同一对象不能重复操作，因此任一独立更新操作被调用时，都会标记此值为NO，以关闭差异分析，避免重复操作。
     BOOL _needsDifferenceBatchUpdates;
@@ -330,10 +332,17 @@ typedef void(^XZMocoaGridDelayedUpdates)(__kindof XZMocoaViewModel *self);
 
 - (void)cleanupBatchUpdates {
     _dataBeforeBatchUpdates = nil;
-    for (XZMocoaGridDelayedUpdates batchUpdates in _delayedBatchUpdates) {
+    for (XZMocoaGridDelayedUpdates const batchUpdates in _delayedBatchUpdates) {
         batchUpdates(self);
     }
     _delayedBatchUpdates = nil;
+    
+    // 因为某些模块，可能会根据 index 来处理逻辑，所以在批量更新的过程设置 index 可能会造成视图刷新。
+    // 所以将更新 index 的操作，放到了批量更新之后进行。
+    NSInteger const count = self.numberOfSections;
+    for (NSInteger section = 0; section < count; section++) {
+        [self sectionViewModelAtIndex:section].index = section;
+    }
 }
 
 - (void)setNeedsDifferenceBatchUpdates {
@@ -352,7 +361,8 @@ typedef void(^XZMocoaGridDelayedUpdates)(__kindof XZMocoaViewModel *self);
     // 比如对 section 数据进行了排序，这并不是 section 整体的更新，
     // 因此对于未更新的 section 会在 table 批量更新后，执行 -performBatchUpdates:completion: 方法以进行更新。
     NSIndexSet * __block forwardIndexes = nil;
-    // 由于进行了分步批量更新，需要一个标记，使 completion 在所有更新完成后再执行。
+    // 批量更新回调，应该在 batchUpdates 和 forwardIndexes 更新之后，所以需要一个标记。
+    // 二者更新都会增加这个标记，触发回调就减少，当标记为 0 时执行回调。
     NSInteger    __block completionFlag = 0;
     
     void (^const tableViewBatchUpdates)(void) = ^{
@@ -377,13 +387,6 @@ typedef void(^XZMocoaGridDelayedUpdates)(__kindof XZMocoaViewModel *self);
     
     // 当前的批量操作已完成，清理批量更新环境，并执行延迟的事件
     [self cleanupBatchUpdates];
-    
-    // 因为某些模块，可能会根据 index 来处理逻辑，所以在批量更新的过程设置 index 可能会造成视图刷新。
-    // 所以将更新 index 的操作，放到了批量更新之后进行。
-    NSInteger const count = self.numberOfSections;
-    for (NSInteger section = 0; section < count; section++) {
-        [self sectionViewModelAtIndex:section].index = section;
-    }
     
     // 传递事件给保留的下级
     // 当前批量更新的数据变化监测，只针对的是 section 层级，而 section 的 cells 也可能发生了更新。
@@ -794,6 +797,96 @@ typedef void(^XZMocoaGridDelayedUpdates)(__kindof XZMocoaViewModel *self);
         if (completion) dispatch_async(dispatch_get_main_queue(), ^{ completion(NO); });
     } else {
         [self didPerformBatchUpdates:batchUpdates completion:completion];
+    }
+}
+
+@end
+
+
+@implementation XZMocoaGridViewModel (NSFetchedResultsControllerDelegate)
+
+/// 这个代理方法会阻断下面所有代理方法，且适合搭配 UITableViewDiffableDataSource/UIColletionViewDiffableDataSource 使用。似乎可能没有 move-to 这种操作。
+//- (void)controller:(NSFetchedResultsController *)controller didChangeContentWithSnapshot:(NSDiffableDataSourceSnapshot<NSString *,NSManagedObjectID *> *)snapshot {}
+
+/// 不分 section 时，此方法会阻断下面的方法。似乎只有 insert/remove 两种更新类型。
+//- (void)controller:(NSFetchedResultsController *)controller didChangeContentWithDifference:(NSOrderedCollectionDifference<NSManagedObjectID *> *)diff { }
+
+- (void)controllerWillChangeContent:(NSFetchedResultsController *)controller {
+    _fetchedBatchUpdates = [NSMutableArray array];
+    [self prepareBatchUpdates];
+}
+
+- (void)controllerDidChangeContent:(NSFetchedResultsController *)controller {
+    [self didPerformBatchUpdates:^{
+        [_fetchedBatchUpdates enumerateObjectsWithOptions:NSEnumerationReverse usingBlock:^(XZMocoaGridDelayedUpdates const batchUpdates, NSUInteger idx, BOOL * _Nonnull stop) {
+            batchUpdates(self);
+        }];
+    } completion:nil];
+    _fetchedBatchUpdates = nil;
+    [self cleanupBatchUpdates];
+}
+
+- (void)controller:(NSFetchedResultsController *)controller didChangeSection:(id<NSFetchedResultsSectionInfo>)sectionInfo atIndex:(NSUInteger)sectionIndex forChangeType:(NSFetchedResultsChangeType)type {
+    switch (type) {
+        case NSFetchedResultsChangeInsert: {
+            [_fetchedBatchUpdates addObject:^(XZMocoaGridViewModel *self) {
+                [self insertSectionAtIndex:sectionIndex];
+            }];
+            break;
+        }
+        case NSFetchedResultsChangeDelete: {
+            [_fetchedBatchUpdates addObject:^(XZMocoaGridViewModel *self) {
+                [self deleteSectionAtIndex:sectionIndex];
+            }];
+            break;
+        }
+        default:
+            @throw [NSException exceptionWithName:NSGenericException reason:@"should never be called" userInfo:nil];
+            break;
+    }
+}
+
+- (void)controller:(NSFetchedResultsController *)controller didChangeObject:(id)anObject atIndexPath:(NSIndexPath *)indexPath forChangeType:(NSFetchedResultsChangeType)type newIndexPath:(NSIndexPath *)newIndexPath {
+    switch (type) {
+        case NSFetchedResultsChangeInsert: {
+            [_fetchedBatchUpdates addObject:^(XZMocoaGridViewModel *self) {
+                NSInteger section = self.numberOfSections - 1;
+                if (section < newIndexPath.section) {
+                    do {
+                        section++;
+                        [self insertSectionAtIndex:section];
+                    } while (section < newIndexPath.section);
+                    return;
+                }
+                [self insertCellAtIndexPath:newIndexPath];
+            }];
+            break;
+        }
+        case NSFetchedResultsChangeMove: {
+            if (indexPath.section == newIndexPath.section) {
+                [_fetchedBatchUpdates addObject:^(XZMocoaGridViewModel *self) {
+                    [[self sectionViewModelAtIndex:indexPath.section] moveCellAtIndex:indexPath.item toIndex:newIndexPath.item];
+                }];
+            } else {
+                [_fetchedBatchUpdates addObject:^(XZMocoaGridViewModel *self) {
+                    [[self sectionViewModelAtIndex:indexPath.section] deleteCellAtIndex:indexPath.item];
+                    [[self sectionViewModelAtIndex:newIndexPath.section] insertCellAtIndex:newIndexPath.item];
+                }];
+            }
+            break;
+        }
+        case NSFetchedResultsChangeDelete: {
+            [_fetchedBatchUpdates addObject:^(XZMocoaGridViewModel *self) {
+                [[self sectionViewModelAtIndex:indexPath.section] deleteCellAtIndex:indexPath.item];
+            }];
+            break;
+        }
+        case NSFetchedResultsChangeUpdate: {
+            [_fetchedBatchUpdates addObject:^(XZMocoaGridViewModel *self) {
+                [[self sectionViewModelAtIndex:indexPath.section] reloadCellAtIndex:indexPath.item];
+            }];
+            break;
+        }
     }
 }
 
