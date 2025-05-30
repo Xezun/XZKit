@@ -39,7 +39,7 @@
     
 }
 
-- (void)tableView:(id<XZMocoaTableView>)tableView didUpdateCell:(UITableViewCell *)cell atIndexPath:(NSIndexPath *)indexPath forKey:(XZMocoaUpdatesKey)key {
+- (void)tableView:(id<XZMocoaTableView>)tableView didEditCell:(UITableViewCell *)cell atIndexPath:(NSIndexPath *)indexPath forUpdatesKey:(XZMocoaUpdatesKey)key {
     [self emitUpdatesForKey:key value:indexPath];
 }
 

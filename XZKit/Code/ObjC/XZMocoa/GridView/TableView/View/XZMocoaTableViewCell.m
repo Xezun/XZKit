@@ -32,8 +32,8 @@
     [self.viewModel tableView:tableView didEndDisplayingCell:self atIndexPath:indexPath];
 }
 
-- (void)tableView:(id<XZMocoaTableView>)tableView didUpdateRowAtIndexPath:(NSIndexPath *)indexPath forKey:(XZMocoaUpdatesKey)key {
-    [self.viewModel tableView:tableView didUpdateCell:self atIndexPath:indexPath forKey:key];
+- (void)tableView:(id<XZMocoaTableView>)tableView didEditRowAtIndexPath:(NSIndexPath *)indexPath forUpdatesKey:(XZMocoaUpdatesKey)key {
+    [self.viewModel tableView:tableView didEditCell:self atIndexPath:indexPath forUpdatesKey:key];
 }
 
 @end

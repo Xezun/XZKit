@@ -31,8 +31,10 @@ NS_SWIFT_UI_ACTOR @protocol XZMocoaView <NSObject>
 ///
 /// 一般情况下，视图的 ViewModel 不应该改变，但是与 B 端不同，在 C 端利用“视图重用机制”可以有效提升性能，因此，此属性被设计为可写的。
 @property (nonatomic, strong, nullable) __kindof XZMocoaViewModel *viewModel;
+
 /// 视图模型将要改变。默认不执行任何操作。
 - (void)viewModelWillChange:(nullable XZMocoaViewModel *)newValue;
+
 /// 视图模型已经改变。默认不执行任何操作。
 - (void)viewModelDidChange:(nullable XZMocoaViewModel *)oldValue;
 

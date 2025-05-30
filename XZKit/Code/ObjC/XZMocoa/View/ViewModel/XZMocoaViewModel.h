@@ -182,9 +182,10 @@ NS_SWIFT_UI_ACTOR @protocol XZMocoaViewModel <NSObject>
 // 但是也可以使用 Mocoa 提供的 target-action-value 机制。
 
 /// 更新方式。
-typedef NSString *XZMocoaUpdatesKey NS_EXTENSIBLE_STRING_ENUM;
+typedef NSString *XZMocoaUpdatesKey NS_EXTENSIBLE_STRING_ENUM NS_SWIFT_NAME(XZMocoaUpdates.Key);
 
 /// 更新信息模型。
+NS_SWIFT_NAME(XZMocoaViewModel.Updates)
 @interface XZMocoaUpdates : NSObject
 /// 更新方式，或者用来区分更新的标记。
 @property (nonatomic, copy, readonly) XZMocoaUpdatesKey key;
@@ -210,12 +211,11 @@ FOUNDATION_EXPORT XZMocoaUpdatesKey const XZMocoaUpdatesKeyInsert;
 FOUNDATION_EXPORT XZMocoaUpdatesKey const XZMocoaUpdatesKeyDelete;
 /// 选择操作。比如单选 cell 时，只能由上层控制单选。
 FOUNDATION_EXPORT XZMocoaUpdatesKey const XZMocoaUpdatesKeySelect;
-FOUNDATION_EXPORT XZMocoaUpdatesKey const XZMocoaUpdatesKeyDidShow;
-FOUNDATION_EXPORT XZMocoaUpdatesKey const XZMocoaUpdatesKeyDidHide;
 
 @protocol XZMocoaView;
 
 @interface XZMocoaViewModel (XZMocoaViewModelHierarchyUpdates)
+
 /// 接收下级模块的更新，或监听到下级模块的数据变化。
 /// @discussion
 /// 只有在 isReady 状态下，才会传递事件。
@@ -249,7 +249,7 @@ FOUNDATION_EXPORT XZMocoaUpdatesKey const XZMocoaUpdatesKeyDidHide;
 
 
 /// Mocoa Keyed Actions 事件名。
-typedef NSString *XZMocoaKey NS_EXTENSIBLE_STRING_ENUM;
+typedef NSString *XZMocoaKey NS_EXTENSIBLE_STRING_ENUM NS_SWIFT_NAME(XZMocoaViewModel.Key);
 
 /// 没有 key 也可作为一种事件，或者称为默认事件，值为空字符串。
 FOUNDATION_EXPORT XZMocoaKey const XZMocoaKeyNone;
@@ -331,21 +331,22 @@ FOUNDATION_EXPORT XZMocoaKey const XZMocoaKeyText;
 FOUNDATION_EXPORT XZMocoaKey const XZMocoaKeyAttributedText;
 FOUNDATION_EXPORT XZMocoaKey const XZMocoaKeyValue;
 FOUNDATION_EXPORT XZMocoaKey const XZMocoaKeyImage;
+FOUNDATION_EXPORT XZMocoaKey const XZMocoaKeyImageURL;
 FOUNDATION_EXPORT XZMocoaKey const XZMocoaKeyName;
 FOUNDATION_EXPORT XZMocoaKey const XZMocoaKeyTitle;
 FOUNDATION_EXPORT XZMocoaKey const XZMocoaKeyAttributedTitle;
 FOUNDATION_EXPORT XZMocoaKey const XZMocoaKeySubtitle;
 FOUNDATION_EXPORT XZMocoaKey const XZMocoaKeyTextColor;
 FOUNDATION_EXPORT XZMocoaKey const XZMocoaKeyFont;
-FOUNDATION_EXPORT XZMocoaKey const XZMocoaKeyDetail;
+FOUNDATION_EXPORT XZMocoaKey const XZMocoaKeyDetailText;
 
 @interface XZMocoaViewModel (XZStoryboardSupporting)
 
 /// 视图分发过来的 IB 转场事件，默认返回 YES 值。
-- (BOOL)shouldPerformSegueWithIdentifier:(NSString *)identifier sender:(nullable id)sender;
+- (BOOL)shouldPerformSegueWithIdentifier:(NSString *)identifier sender:(nullable id)sender NS_SWIFT_NAME(shouldPerformSegue(withIdentifier:sender:));
 
 /// 控制器分发过来的 IB 转场事件。
-- (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(nullable id)sender;
+- (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(nullable id)sender NS_SWIFT_NAME(prepare(for:sender:));
 
 /// 获取视图控制器，或视图所在的控制器。
 ///

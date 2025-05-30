@@ -37,14 +37,6 @@ NS_ASSUME_NONNULL_BEGIN
 ///   - indexPath: 视图在容器视图中的位置
 - (void)collectionView:(id<XZMocoaCollectionView>)collectionView didEndDisplayingCell:(UICollectionViewCell *)cell atIndexPath:(NSIndexPath*)indexPath;
 
-/// 收到来自 Cell 视图的更新事件。默认直接通过层级关系向上传递事件。
-/// - Parameters:
-///   - collectionView: 视图所在的容器视图
-///   - cell: 发送事件的视图
-///   - indexPath: 视图在容器视图中的位置
-///   - key: 区分事件的键名
-- (void)collectionView:(id<XZMocoaCollectionView>)collectionView didUpdateCell:(UICollectionViewCell *)cell atIndexPath:(NSIndexPath *)indexPath forKey:(XZMocoaUpdatesKey)key;
-
 @end
 
 

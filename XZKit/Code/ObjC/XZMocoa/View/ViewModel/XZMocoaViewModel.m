@@ -259,13 +259,14 @@ XZMocoaKey const XZMocoaKeyText             = @"text";
 XZMocoaKey const XZMocoaKeyAttributedText   = @"attributedText";
 XZMocoaKey const XZMocoaKeyValue            = @"value";
 XZMocoaKey const XZMocoaKeyImage            = @"image";
+XZMocoaKey const XZMocoaKeyImageURL         = @"imageURL";
 XZMocoaKey const XZMocoaKeyName             = @"name";
 XZMocoaKey const XZMocoaKeyTitle            = @"title";
 XZMocoaKey const XZMocoaKeyAttributedTitle  = @"attributedTitle";
 XZMocoaKey const XZMocoaKeySubtitle         = @"subtitle";
 XZMocoaKey const XZMocoaKeyTextColor        = @"textColor";
 XZMocoaKey const XZMocoaKeyFont             = @"font";
-XZMocoaKey const XZMocoaKeyDetail           = @"detail";
+XZMocoaKey const XZMocoaKeyDetailText       = @"detailText";
 
 @implementation XZMocoaViewModel (XZStoryboardSupporting)
 
