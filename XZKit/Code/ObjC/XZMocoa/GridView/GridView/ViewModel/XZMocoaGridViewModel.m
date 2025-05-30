@@ -288,7 +288,27 @@ typedef void(^XZMocoaGridDelayedUpdates)(__kindof XZMocoaViewModel *self);
 }
 
 - (void)insertCellAtIndexPath:(NSIndexPath *)indexPath {
-    [[self sectionViewModelAtIndex:indexPath.section] insertCellAtIndex:indexPath.row];
+    NSInteger const targetSection = indexPath.section;
+    
+    // 不需要添加新的 section
+    NSInteger const numberOfSections = self.numberOfSections;
+    if (targetSection <= numberOfSections - 1) {
+        [[self sectionViewModelAtIndex:targetSection] insertCellAtIndex:indexPath.row];
+        return;
+    }
+    
+    // 添加缺少的 section
+    NSMutableIndexSet *indexes = [NSMutableIndexSet indexSet];
+    for (NSInteger section = numberOfSections; section <= targetSection; section++) {
+        id const newDataModel = [self.model modelForSectionAtIndex:section];
+        id const newViewModel = [self model:asNonNull(newDataModel) viewModelForSectionAtIndex:section];
+        [self _insertSectionViewModel:newViewModel atIndex:section];
+        [indexes addIndex:section];
+    }
+    [self didInsertSectionsAtIndexes:indexes];
+    
+    // 发送添加 cell 的事件
+    [self didInsertCellsAtIndexPaths:@[indexPath]];
 }
 
 - (void)deleteCellAtIndexPath:(NSIndexPath *)indexPath {
@@ -860,16 +880,6 @@ typedef void(^XZMocoaGridDelayedUpdates)(__kindof XZMocoaViewModel *self);
     switch (type) {
         case NSFetchedResultsChangeInsert: {
             [_fetchedBatchUpdates addObject:^(XZMocoaGridViewModel *self) {
-                // 如果 section 不存在，那么需要添加 section
-                NSInteger section = self.numberOfSections - 1;
-                if (section < newIndexPath.section) {
-                    do {
-                        section++;
-                        [self insertSectionAtIndex:section];
-                    } while (section < newIndexPath.section);
-                    return;
-                }
-                // 正常添加 cell
                 [self insertCellAtIndexPath:newIndexPath];
             }];
             break;
