@@ -49,7 +49,6 @@
     [super viewDidLoad];
     
     self.view.backgroundColor = rgb(0xEEEEEE);
-    self.additionalSafeAreaInsets = UIEdgeInsetsMake(15.0, 15.0, 15.0, 15.0);
     
     [self loadData];
 }
