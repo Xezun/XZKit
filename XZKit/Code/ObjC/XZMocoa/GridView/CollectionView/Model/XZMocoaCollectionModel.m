@@ -6,7 +6,3 @@
 //
 
 #import "XZMocoaCollectionModel.h"
-
-@implementation XZMocoaCollectionModel
-
-@end

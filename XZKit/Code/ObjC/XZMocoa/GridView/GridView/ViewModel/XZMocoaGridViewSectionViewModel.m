@@ -12,7 +12,9 @@
 #if __has_include(<XZExtensions/NSArray+XZKit.h>)
 #import <XZExtensions/NSArray+XZKit.h>
 #import <XZExtensions/NSIndexSet+XZKit.h>
+#import <XZDefines/XZDefines.h>
 #else
+#import "XZDefines.h"
 #import "NSArray+XZKit.h"
 #import "NSIndexSet+XZKit.h"
 #endif
@@ -191,7 +193,8 @@ typedef void(^XZMocoaGridDelayedUpdates)(XZMocoaGridViewSectionViewModel *self);
             [oldRows addIndex:oldRow];
             [oldViewModel removeFromSuperViewModel];
             
-            id const newViewModel = [self _loadViewModelForCellAtIndex:row];
+            id<XZMocoaGridViewCellModel> const newDataModel = [self.model modelForCellAtIndex:row];
+            id const newViewModel = [self model:asNonNull(newDataModel) viewModelForCellAtIndex:row];
             [self _insertCellViewModel:newViewModel atIndex:row];
         }];
         [self didReloadCellsAtIndexes:oldRows];
@@ -200,7 +203,8 @@ typedef void(^XZMocoaGridDelayedUpdates)(XZMocoaGridViewSectionViewModel *self);
             XZMocoaGridViewCellViewModel * const oldViewModel = _cellViewModels[row];
             [oldViewModel removeFromSuperViewModel]; // 由 -didRemoveSubViewModel: 执行清理
             
-            id const newViewModel = [self _loadViewModelForCellAtIndex:row];
+            id<XZMocoaGridViewCellModel> const newDataModel = [self.model modelForCellAtIndex:row];
+            id const newViewModel = [self model:asNonNull(newDataModel) viewModelForCellAtIndex:row];
             [self _insertCellViewModel:newViewModel atIndex:row];
         }];
         [self didReloadCellsAtIndexes:rows];
@@ -215,7 +219,8 @@ typedef void(^XZMocoaGridDelayedUpdates)(XZMocoaGridViewSectionViewModel *self);
     }
     
     [rows enumerateIndexesUsingBlock:^(NSUInteger row, BOOL * _Nonnull stop) {
-        id const newViewModel = [self _loadViewModelForCellAtIndex:row];
+        id<XZMocoaGridViewCellModel> const newDataModel = [self.model modelForCellAtIndex:row];
+        id const newViewModel = [self model:asNonNull(newDataModel) viewModelForCellAtIndex:row];
         [self _insertCellViewModel:newViewModel atIndex:row];
     }];
     
@@ -374,7 +379,7 @@ typedef void(^XZMocoaGridDelayedUpdates)(XZMocoaGridViewSectionViewModel *self);
     }
     _needsDifferenceBatchUpdates = NO;
     
-    id<XZMocoaGridSectionModel> const model = self.model;
+    id<XZMocoaGridViewSectionModel> const model = self.model;
     
     BOOL needsUpdateAll = NO;
     for (XZMocoaKind const kind in self.superViewModel.supportedSupplementaryKinds) {
@@ -438,10 +443,10 @@ typedef void(^XZMocoaGridDelayedUpdates)(XZMocoaGridViewSectionViewModel *self);
     if ( needsUpdateAll ) {
         // 整体刷新时，就不需要差异性分析
         for (NSInteger index = 0; index < newCount; index++) {
-            id model = newDataModels[index];
-            NSInteger oldIndex = [oldDataModels indexOfObject:model];
+            id        const newDataModel = newDataModels[index];
+            NSInteger const oldIndex     = [oldDataModels indexOfObject:newDataModel];
             if (oldIndex == NSNotFound) {
-                id vm = [self _loadViewModelForCellAtIndex:index];
+                id const vm = [self model:asNonNull(newDataModel) viewModelForCellAtIndex:index];
                 [self _insertCellViewModel:vm atIndex:index];
             } else {
                 _cellViewModels[index] = oldViewModels[oldIndex];
@@ -463,7 +468,8 @@ typedef void(^XZMocoaGridDelayedUpdates)(XZMocoaGridViewSectionViewModel *self);
         
         NSMutableDictionary *newViewModels = [NSMutableDictionary dictionaryWithCapacity:inserts.count];
         [inserts enumerateIndexesUsingBlock:^(NSUInteger row, BOOL * _Nonnull stop) {
-            XZMocoaGridViewCellViewModel * const newViewModel = [self _loadViewModelForCellAtIndex:row];
+            id<XZMocoaGridViewCellModel>   const newDataModel = newDataModels[row];
+            XZMocoaGridViewCellViewModel * const newViewModel = [self model:asNonNull(newDataModel) viewModelForCellAtIndex:row];
             [self _insertCellViewModel:newViewModel atIndex:row];
             newViewModels[@(row)] = newViewModel;
         }];
@@ -520,12 +526,13 @@ typedef void(^XZMocoaGridDelayedUpdates)(XZMocoaGridViewSectionViewModel *self);
 - (void)_loadDataWithoutEvents {
     NSAssert(_supplementaryViewModels.count == 0 && _cellViewModels.count == 0, @"调用此方法前要清除现有的数据");
     
-    id<XZMocoaGridSectionModel> const model = self.model;
+    id<XZMocoaGridViewSectionModel> const model = self.model;
     
     for (XZMocoaKind kind in self.superViewModel.supportedSupplementaryKinds) {
         NSInteger const count = [model numberOfModelsForSupplementaryKind:kind];
         for (NSInteger index = 0; index < count; index++) {
-            XZMocoaGridViewSupplementaryViewModel *vm = [self _loadViewModelForSupplementaryKind:kind atIndex:index];
+            id const model = [self.model modelForSupplementaryKind:kind atIndex:index];
+            XZMocoaGridViewSupplementaryViewModel *vm = [self model:model viewModelForSupplementaryElementOfKind:kind atIndex:index];
             if (vm) {
                 if (_supplementaryViewModels[kind]) {
                     [_supplementaryViewModels[kind] addObject:vm];
@@ -539,7 +546,8 @@ typedef void(^XZMocoaGridDelayedUpdates)(XZMocoaGridViewSectionViewModel *self);
     
     NSInteger const count = model.numberOfCellModels;
     for (NSInteger index = 0; index < count; index++) {
-        XZMocoaGridViewCellViewModel *viewModel = [self _loadViewModelForCellAtIndex:index];
+        id<XZMocoaGridViewCellModel> const dataModel = [self.model modelForCellAtIndex:index];
+        XZMocoaGridViewCellViewModel *viewModel = [self model:asNonNull(dataModel) viewModelForCellAtIndex:index];
         [self _addCellViewModel:viewModel];
     }
 }
@@ -562,9 +570,8 @@ typedef void(^XZMocoaGridDelayedUpdates)(XZMocoaGridViewSectionViewModel *self);
     [self didMoveCellAtIndex:oldRow toIndex:newRow];
 }
 
-- (XZMocoaGridViewCellViewModel *)_loadViewModelForCellAtIndex:(NSInteger)index {
-    XZMocoaName     const section = ((id<XZMocoaGridSectionModel>)self.model).mocoaName;
-    id<XZMocoaModel> const model  = [self.model modelForCellAtIndex:index];
+- (XZMocoaGridViewCellViewModel *)model:(id<XZMocoaGridViewCellModel> const)model viewModelForCellAtIndex:(NSInteger)index {
+    XZMocoaName     const section = ((id<XZMocoaGridViewSectionModel>)self.model).mocoaName;
     XZMocoaName      const name   = model.mocoaName;
     XZMocoaModule *  const module = [self.module submoduleIfLoadedForKind:XZMocoaKindCell forName:name];
     
@@ -585,14 +592,12 @@ typedef void(^XZMocoaGridDelayedUpdates)(XZMocoaGridViewSectionViewModel *self);
     return viewModel;
 }
 
-- (XZMocoaGridViewSupplementaryViewModel *)_loadViewModelForSupplementaryKind:(XZMocoaKind)kind atIndex:(NSInteger)index {
-    id<XZMocoaModel> const model = [self.model modelForSupplementaryKind:kind atIndex:index];
-    
+- (XZMocoaGridViewSupplementaryViewModel *)model:(id<XZMocoaModel> const)model viewModelForSupplementaryElementOfKind:(XZMocoaKind)kind atIndex:(NSInteger)index {
     if (model == nil) {
         return nil; // 没有数据，就没有 header/footer
     }
     
-    XZMocoaName     const section = ((id<XZMocoaGridSectionModel>)self.model).mocoaName;
+    XZMocoaName     const section = ((id<XZMocoaGridViewSectionModel>)self.model).mocoaName;
     XZMocoaName     const name    = model.mocoaName;
     XZMocoaModule * const module  = [self.module submoduleIfLoadedForKind:kind forName:name];
     

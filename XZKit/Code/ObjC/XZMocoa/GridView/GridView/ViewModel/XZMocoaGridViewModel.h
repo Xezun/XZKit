@@ -113,6 +113,13 @@ NS_SWIFT_UI_ACTOR @protocol XZMocoaGridViewModelDelegate <XZMocoaViewModelDelega
 /// 子类应该重写此方法，并返回所需的 SectionViewModel 对象。
 - (Class)placeholderViewModelClassForSectionAtIndex:(NSInteger)index;
 
+// MARK: - 方便子类自定义
+
+/// 将数据模型转换为 Section 视图模型。默认情况下，将会为 nil 的数据创建默认视图模型。
+/// @param model 数据模型
+/// @param index Section 的位置
+- (XZMocoaGridViewSectionViewModel *)model:(nullable id)model viewModelForSectionAtIndex:(NSInteger)index;
+
 @end
 
 // MARK: - 下级 section 不能独自完成的事件，需要上级处理的事件

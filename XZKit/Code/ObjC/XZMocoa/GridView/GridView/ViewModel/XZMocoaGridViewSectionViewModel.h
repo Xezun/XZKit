@@ -8,7 +8,8 @@
 
 #import "XZMocoaViewModel.h"
 #import "XZMocoaGridViewModelDefines.h"
-#import "XZMocoaGridSectionModel.h"
+#import "XZMocoaGridViewCellModel.h"
+#import "XZMocoaGridViewSectionModel.h"
 #import "XZMocoaGridViewSupplementaryViewModel.h"
 #import "XZMocoaGridViewCellViewModel.h"
 
@@ -93,10 +94,25 @@ NS_ASSUME_NONNULL_BEGIN
 /// 向上级发送批量更新事件，以刷新视图。
 - (void)didPerformBatchUpdates:(void (^NS_NOESCAPE)(void))batchUpdates completion:(void (^ _Nullable)(BOOL))completion;
 
-// MARK: 子类必须重写的方法
+// MARK: - 子类必须重写的方法
 
 - (Class)placeholderViewModelClassForCellAtIndex:(NSInteger)index;
 - (Class)placeholderViewModelClassForSupplementaryKind:(XZMocoaKind)kind atIndex:(NSInteger)index;
+
+// MARK: - 子类自定义
+
+/// 将数据模型转换为 Supplementary 视图模型。默认不会为数据为 nil 的 Supplementary 创建视图模型，但子类可以重写这个规则。
+/// - Parameters:
+///   - model: Supplementary 的数据模型，数据源中值为 kCFNull 的对象，会转化为 nil 值
+///   - kind: Supplementary 的类型
+///   - index: Supplementary 的位置
+- (nullable XZMocoaGridViewSupplementaryViewModel *)model:(nullable id)model viewModelForSupplementaryElementOfKind:(XZMocoaKind)kind atIndex:(NSInteger)index;
+
+/// 将数据模型转换为 Cell 视图模型。数据为 nil 的数据，将创建默认的视图模型。
+/// - Parameters:
+///   - model: 数据模型，数据源中值为 kCFNull 的对象，会转化为 nil 值
+///   - index: Cell 的位置
+- (XZMocoaGridViewCellViewModel *)model:(nullable id)model viewModelForCellAtIndex:(NSInteger)index;
 
 @end
 

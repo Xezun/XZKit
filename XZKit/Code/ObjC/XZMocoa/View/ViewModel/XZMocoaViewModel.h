@@ -127,7 +127,7 @@ NS_SWIFT_UI_ACTOR @protocol XZMocoaViewModel <NSObject>
 /// - 默认该方法不执行任何操作，建议子类调用`super`以向后兼容。
 /// - 在此方法中，视图模型 isReady 始终为 NO 的状态。
 /// - 在此方法中创建添加下层视图模型，不需要发送`-ready`消息。
-/// - 此方法执行时，视图模型尚为与视图关联，即视图模型在初始化之后，才会被视图使用。
+/// - 此方法执行时，视图模型尚为与视图关联，即视图模型在初始化之后，才会被视图所使用。
 - (void)prepare;
 
 @end
@@ -350,10 +350,10 @@ FOUNDATION_EXPORT XZMocoaKey const XZMocoaKeyDetailText;
 
 /// 获取视图控制器，或视图所在的控制器。
 ///
-/// 通过 XZMocoaKeyViewController 事件即时获取值，视图模型不应保存此属性值，否则可能造成内存泄漏。
+/// > 视图模型不应保存此值，否则可能造成内存泄漏。
 ///
-/// > 在 Cocoa 中，视图控制器承担了很多公共功能，类似于 h5 的全局 window 对象，因此提供了访问方式。
-/// > 但理论上，视图模型应该与视图完全隔离。
+/// 在 Cocoa 中，视图控制器承担了很多公共功能，类似于 h5 的全局 window 对象，因此提供了访问方式。
+/// 但理论上，视图模型应该与视图完全隔离。
 @property (nonatomic, readonly, nullable) UIViewController *viewController;
 
 /// 执行 Storyboard 转场的便利方法。

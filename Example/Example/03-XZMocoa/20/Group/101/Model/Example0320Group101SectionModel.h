@@ -11,7 +11,7 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-@interface Example0320Group101SectionModel : XZMocoaTableViewSectionModel <XZJSONCoding>
+@interface Example0320Group101SectionModel : NSObject <XZMocoaTableViewSectionModel, XZJSONCoding>
 @property (nonatomic, copy) NSString *gid;
 @property (nonatomic, copy) NSArray *items;
 @end

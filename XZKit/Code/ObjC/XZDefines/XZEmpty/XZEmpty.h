@@ -47,7 +47,7 @@ FOUNDATION_STATIC_INLINE BOOL isNonEmpty(NSNumber * _Nullable value) XZ_ATTR_OVE
 }
 /// 当 value 不为 nil 和 NSNull.null 时，返回 YES 值。对于非 id 类型的变量，需要使用强转符号，才能命中此函数。
 FOUNDATION_STATIC_INLINE BOOL isNonEmpty(id _Nullable value) XZ_ATTR_OVERLOAD {
-    return (value != nil && value != NSNull.null);
+    return (value != nil && value != (id)kCFNull);
 }
 
 #endif // #ifndef XZ_IS_NON_EMPTY
@@ -97,6 +97,12 @@ FOUNDATION_STATIC_INLINE NSURL * _Nullable asNonEmpty(id _Nullable value, NSURL 
 /// 如果值 value 不为 nil 且不为 NSNull 值，那么返回 value 值，否则返回 defaultValue 值。
 FOUNDATION_STATIC_INLINE id _Nullable asNonEmpty(id _Nullable value, id _Nullable defaultValue) XZ_ATTR_OVERLOAD {
     return isNonEmpty(value) ? value : defaultValue;
+}
+
+/// 如果值为 kCFNull 则返回 nil 否则返回 value 。
+/// - Parameter value: 值
+FOUNDATION_STATIC_INLINE id _Nullable asNonNull(id _Nullable value) {
+    return (value == (id)kCFNull ? nil : value);
 }
 
 #endif // #ifndef XZ_AS_NON_EMPTY

@@ -13,7 +13,7 @@
     self = [super initWithModel:model];
     if (self) {
         _frame      = CGRectZero;
-        _identifier = XZMocoaReuseIdentifier(XZMocoaNameDefault, XZMocoaKindDefault, XZMocoaNameDefault);
+        _identifier = @"";
     }
     return self;
 }

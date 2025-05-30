@@ -6,9 +6,3 @@
 //
 
 #import "XZMocoaTableViewCellModel.h"
-
-@implementation XZMocoaTableViewCellModel
-
-@synthesize mocoaName = _mocoaName;
-
-@end

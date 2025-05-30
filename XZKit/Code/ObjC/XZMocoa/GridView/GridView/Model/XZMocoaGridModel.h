@@ -6,7 +6,7 @@
 //
 
 #import "XZMocoaModel.h"
-#import "XZMocoaGridSectionModel.h"
+#import "XZMocoaGridViewSectionModel.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -19,7 +19,23 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic, readonly) NSInteger numberOfSectionModels;
 /// section 的数据。
 /// - Parameter index: section 的位置
-- (nullable id<XZMocoaGridSectionModel>)modelForSectionAtIndex:(NSInteger)index;
+- (nullable id)modelForSectionAtIndex:(NSInteger)index;
+@end
+
+#if XZ_FRAMEWORK
+@interface NSObject (XZMocoaGridModel) <XZMocoaGridModel>
+@end
+#else
+@interface NSObject (XZMocoaGridModel)
+@end
+#endif
+
+@interface NSArray (XZMocoaGridModel)
+@end
+
+@import CoreData;
+
+@interface NSFetchedResultsController (XZMocoaGridModel)
 @end
 
 NS_ASSUME_NONNULL_END

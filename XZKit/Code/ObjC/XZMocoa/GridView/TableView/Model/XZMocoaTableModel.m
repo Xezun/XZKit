@@ -6,7 +6,3 @@
 //
 
 #import "XZMocoaTableModel.h"
-
-@implementation XZMocoaTableModel
-@synthesize mocoaName = _mocoaName;
-@end

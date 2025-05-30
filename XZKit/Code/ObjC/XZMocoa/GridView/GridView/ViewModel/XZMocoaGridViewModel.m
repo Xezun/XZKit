@@ -12,7 +12,9 @@
 #if __has_include(<XZExtensions/NSArray+XZKit.h>)
 #import <XZExtensions/NSArray+XZKit.h>
 #import <XZExtensions/NSIndexSet+XZKit.h>
+#import <XZDefines/XZDefines.h>
 #else
+#import "XZDefines.h"
 #import "NSArray+XZKit.h"
 #import "NSIndexSet+XZKit.h"
 #endif
@@ -183,7 +185,8 @@ typedef void(^XZMocoaGridDelayedUpdates)(__kindof XZMocoaViewModel *self);
             [oldSections addIndex:oldSection];
             [oldViewModel removeFromSuperViewModel];
             
-            id const newViewModel = [self _loadViewModelForSectionAtIndex:idx];
+            id const newDataModel = [self.model modelForSectionAtIndex:idx];
+            id const newViewModel = [self model:asNonNull(newDataModel) viewModelForSectionAtIndex:idx];
             [self _insertSectionViewModel:newViewModel atIndex:idx];
         }];
         
@@ -193,7 +196,8 @@ typedef void(^XZMocoaGridDelayedUpdates)(__kindof XZMocoaViewModel *self);
             XZMocoaGridViewSectionViewModel * const oldViewModel = [self sectionViewModelAtIndex:section];
             [oldViewModel removeFromSuperViewModel];
             
-            XZMocoaGridViewSectionViewModel *newViewModel = [self _loadViewModelForSectionAtIndex:section];
+            id const newDataModel = [self.model modelForSectionAtIndex:section];
+            XZMocoaGridViewSectionViewModel *newViewModel = [self model:asNonNull(newDataModel) viewModelForSectionAtIndex:section];
             [self _insertSectionViewModel:newViewModel atIndex:section];
         }];
         
@@ -210,7 +214,8 @@ typedef void(^XZMocoaGridDelayedUpdates)(__kindof XZMocoaViewModel *self);
     
     // 添加元素，正向遍历：只有前面的元素正确了，后面的才能正确。
     [sections enumerateIndexesUsingBlock:^(NSUInteger section, BOOL * _Nonnull stop) {
-        id const newViewModel = [self _loadViewModelForSectionAtIndex:section];
+        id const newDataModel = [self.model modelForSectionAtIndex:section];
+        id const newViewModel = [self model:asNonNull(newDataModel) viewModelForSectionAtIndex:section];
         [self _insertSectionViewModel:newViewModel atIndex:section];
     }];
     
@@ -484,7 +489,8 @@ typedef void(^XZMocoaGridDelayedUpdates)(__kindof XZMocoaViewModel *self);
     // 添加元素，正向遍历：按位置记录下新添加的元素，以便在后续排序时，查找该位置上的元素。
     NSMutableDictionary * const insertedViewModels = [NSMutableDictionary dictionaryWithCapacity:inserts.count];
     [inserts enumerateIndexesUsingBlock:^(NSUInteger section, BOOL * _Nonnull stop) {
-        XZMocoaGridViewSectionViewModel * const newViewModel = [self _loadViewModelForSectionAtIndex:section];
+        id const newDataModel = newDataModels[section];
+        XZMocoaGridViewSectionViewModel * const newViewModel = [self model:asNonNull(newDataModel) viewModelForSectionAtIndex:section];
         [self _insertSectionViewModel:newViewModel atIndex:section];
         insertedViewModels[@(section)] = newViewModel;
     }];
@@ -558,7 +564,8 @@ typedef void(^XZMocoaGridDelayedUpdates)(__kindof XZMocoaViewModel *self);
     NSInteger const count = model.numberOfSectionModels;
     
     for (NSInteger section = 0; section < count; section++) {
-        XZMocoaGridViewSectionViewModel *viewModel = [self _loadViewModelForSectionAtIndex:section];
+        id const dataModel = [self.model modelForSectionAtIndex:section];
+        XZMocoaGridViewSectionViewModel *viewModel = [self model:asNonNull(dataModel) viewModelForSectionAtIndex:section];
         [self _addSectionViewModel:viewModel];
     }
 }
@@ -583,8 +590,7 @@ typedef void(^XZMocoaGridDelayedUpdates)(__kindof XZMocoaViewModel *self);
     [self didMoveSectionAtIndex:oldSection toIndex:newSection];
 }
 
-- (XZMocoaGridViewSectionViewModel *)_loadViewModelForSectionAtIndex:(NSInteger)index {
-    id<XZMocoaGridSectionModel> const model = [self.model modelForSectionAtIndex:index];
+- (XZMocoaGridViewSectionViewModel *)model:(id<XZMocoaGridViewSectionModel> const)model viewModelForSectionAtIndex:(NSInteger)index {
     XZMocoaName     const name   = model.mocoaName;
     XZMocoaModule * const module = [self.module submoduleIfLoadedForKind:XZMocoaKindSection forName:name];
     

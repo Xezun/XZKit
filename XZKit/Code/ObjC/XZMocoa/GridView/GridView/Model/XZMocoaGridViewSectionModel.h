@@ -1,5 +1,5 @@
 //
-//  XZMocoaGridSectionModel.h
+//  XZMocoaGridViewSectionModel.h
 //  XZMocoa
 //
 //  Created by Xezun on 2021/8/21.
@@ -11,7 +11,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 /// 以 Cell 作为子视图的视图的数据模型。
 /// 在iOS开发中，视图UITableView、UICollectionView的Section为抽象层，而没有实际的视图层，但在数据或逻辑上，该层不可少。
-@protocol XZMocoaGridSectionModel <XZMocoaModel>
+@protocol XZMocoaGridViewSectionModel <XZMocoaModel>
 
 @optional
 /// cell 数量。

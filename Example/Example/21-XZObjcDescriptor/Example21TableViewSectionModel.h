@@ -9,7 +9,7 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-@interface Example21TableViewSectionModel : XZMocoaTableViewSectionModel
+@interface Example21TableViewSectionModel : NSObject <XZMocoaTableViewSectionModel>
 + (instancetype)modelWithName:(NSString *)name descriptors:(NSArray *)descriptors;
 @end
 

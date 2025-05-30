@@ -6,8 +6,3 @@
 //
 
 #import "XZMocoaCollectionViewSectionModel.h"
-
-
-@implementation XZMocoaCollectionViewSectionModel
-
-@end

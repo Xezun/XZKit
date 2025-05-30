@@ -1,16 +1,16 @@
 //
-//  XZMocoaGridSectionModel.m
+//  XZMocoaGridViewSectionModel.m
 //  XZMocoa
 //
 //  Created by Xezun on 2021/8/21.
 //
 
-#import "XZMocoaGridSectionModel.h"
+#import "XZMocoaGridViewSectionModel.h"
 
-@interface NSObject (XZMocoaGridSectionModel) <XZMocoaGridSectionModel>
+@interface NSObject (XZMocoaGridViewSectionModel) <XZMocoaGridViewSectionModel>
 @end
 
-@implementation NSObject (XZMocoaGridSectionModel)
+@implementation NSObject (XZMocoaGridViewSectionModel)
 
 - (NSInteger)numberOfCellModels {
     return 1;
@@ -47,10 +47,10 @@
 @end
 
 
-@interface NSArray (XZMocoaGridSectionModel)
+@interface NSArray (XZMocoaGridViewSectionModel)
 @end
 
-@implementation NSArray (XZMocoaGridSectionModel)
+@implementation NSArray (XZMocoaGridViewSectionModel)
 
 - (NSInteger)numberOfCellModels {
     return self.count;
