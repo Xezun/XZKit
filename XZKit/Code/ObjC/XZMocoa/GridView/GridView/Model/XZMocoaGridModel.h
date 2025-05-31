@@ -22,13 +22,8 @@ NS_ASSUME_NONNULL_BEGIN
 - (nullable id)modelForSectionAtIndex:(NSInteger)index;
 @end
 
-#if XZ_FRAMEWORK
-@interface NSObject (XZMocoaGridModel) <XZMocoaGridModel>
-@end
-#else
 @interface NSObject (XZMocoaGridModel)
 @end
-#endif
 
 @interface NSArray (XZMocoaGridModel)
 @end

@@ -188,7 +188,7 @@ typedef void(^XZMocoaGridDelayedUpdates)(__kindof XZMocoaViewModel *self);
             [oldViewModel removeFromSuperViewModel];
             
             id const newDataModel = [self model:model modelForSectionAtIndex:index];
-            id const newViewModel = [self viewModelForSectionWithModel:newDataModel atIndex:index];
+            id const newViewModel = [self makeViewModelWithModel:newDataModel forSectionAtIndex:index];
             [self _insertSectionViewModel:newViewModel atIndex:index];
         }];
         
@@ -199,7 +199,7 @@ typedef void(^XZMocoaGridDelayedUpdates)(__kindof XZMocoaViewModel *self);
             [oldViewModel removeFromSuperViewModel];
             
             id const newDataModel = [self model:model modelForSectionAtIndex:index];
-            XZMocoaGridViewSectionViewModel *newViewModel = [self viewModelForSectionWithModel:newDataModel atIndex:index];
+            XZMocoaGridViewSectionViewModel *newViewModel = [self makeViewModelWithModel:newDataModel forSectionAtIndex:index];
             [self _insertSectionViewModel:newViewModel atIndex:index];
         }];
         
@@ -219,7 +219,7 @@ typedef void(^XZMocoaGridDelayedUpdates)(__kindof XZMocoaViewModel *self);
     // 添加元素，正向遍历：只有前面的元素正确了，后面的才能正确。
     [sections enumerateIndexesUsingBlock:^(NSUInteger const index, BOOL * _Nonnull stop) {
         id const newDataModel = [self model:model modelForSectionAtIndex:index];
-        id const newViewModel = [self viewModelForSectionWithModel:newDataModel atIndex:index];
+        id const newViewModel = [self makeViewModelWithModel:newDataModel forSectionAtIndex:index];
         [self _insertSectionViewModel:newViewModel atIndex:index];
     }];
     
@@ -319,7 +319,7 @@ typedef void(^XZMocoaGridDelayedUpdates)(__kindof XZMocoaViewModel *self);
     NSMutableIndexSet *indexes = [NSMutableIndexSet indexSet];
     for (NSInteger section = numberOfSections; section <= targetSection; section++) {
         id const newDataModel = [self model:model modelForSectionAtIndex:section];
-        id const newViewModel = [self viewModelForSectionWithModel:newDataModel atIndex:section];
+        id const newViewModel = [self makeViewModelWithModel:newDataModel forSectionAtIndex:section];
         [self _insertSectionViewModel:newViewModel atIndex:section];
         [indexes addIndex:section];
     }
@@ -530,7 +530,7 @@ typedef void(^XZMocoaGridDelayedUpdates)(__kindof XZMocoaViewModel *self);
     NSMutableDictionary * const insertedViewModels = [NSMutableDictionary dictionaryWithCapacity:inserts.count];
     [inserts enumerateIndexesUsingBlock:^(NSUInteger index, BOOL * _Nonnull stop) {
         id const newDataModel = newDataModels[index];
-        XZMocoaGridViewSectionViewModel * const newViewModel = [self viewModelForSectionWithModel:newDataModel atIndex:index];
+        XZMocoaGridViewSectionViewModel * const newViewModel = [self makeViewModelWithModel:newDataModel forSectionAtIndex:index];
         [self _insertSectionViewModel:newViewModel atIndex:index];
         insertedViewModels[@(index)] = newViewModel;
     }];
@@ -606,7 +606,7 @@ typedef void(^XZMocoaGridDelayedUpdates)(__kindof XZMocoaViewModel *self);
     
     for (NSInteger section = 0; section < count; section++) {
         id const dataModel = [self model:model modelForSectionAtIndex:section];
-        XZMocoaGridViewSectionViewModel *viewModel = [self viewModelForSectionWithModel:dataModel atIndex:section];
+        XZMocoaGridViewSectionViewModel *viewModel = [self makeViewModelWithModel:dataModel forSectionAtIndex:section];
         [self _addSectionViewModel:viewModel];
     }
 }
@@ -634,7 +634,7 @@ typedef void(^XZMocoaGridDelayedUpdates)(__kindof XZMocoaViewModel *self);
 /// 构造 Section 视图模型
 /// @param nullableModel 可能为 Null 对象的数据模型
 /// @param index 位置
-- (XZMocoaGridViewSectionViewModel *)viewModelForSectionWithModel:(id)nullableModel atIndex:(NSInteger)index {
+- (XZMocoaGridViewSectionViewModel *)makeViewModelWithModel:(id)nullableModel forSectionAtIndex:(NSInteger)index {
     id<XZMocoaGridViewSectionModel> const model  = (nullableModel == (id)kCFNull ? nil : nullableModel);
     XZMocoaName                     const name   = model.mocoaName;
     XZMocoaModule *                 const module = [self.module submoduleIfLoadedForKind:XZMocoaKindSection forName:name];
@@ -866,7 +866,6 @@ typedef void(^XZMocoaGridDelayedUpdates)(__kindof XZMocoaViewModel *self);
 - (void)controllerWillChangeContent:(NSFetchedResultsController *)controller {
     if (!self.isReady) return;
 
-//    _fetchedBatchUpdates = [NSMutableArray array];
     [self prepareBatchUpdates];
     [self setNeedsDifferenceBatchUpdates];
 }
@@ -894,66 +893,50 @@ typedef void(^XZMocoaGridDelayedUpdates)(__kindof XZMocoaViewModel *self);
     }
 }
 
-//- (void)controller:(NSFetchedResultsController *)controller didChangeSection:(id<NSFetchedResultsSectionInfo>)sectionInfo atIndex:(NSUInteger)sectionIndex forChangeType:(NSFetchedResultsChangeType)type {
-//    if (!self.isReady) return;
-//    
-//    switch (type) {
-//        case NSFetchedResultsChangeInsert: {
-//            [_fetchedBatchUpdates addObject:^(XZMocoaGridViewModel *self) {
-//                [self insertSectionAtIndex:sectionIndex];
-//            }];
-//            break;
-//        }
-//        case NSFetchedResultsChangeDelete: {
-//            [_fetchedBatchUpdates addObject:^(XZMocoaGridViewModel *self) {
-//                [self deleteSectionAtIndex:sectionIndex];
-//            }];
-//            break;
-//        }
-//        default:
-//            @throw [NSException exceptionWithName:NSGenericException reason:@"should never be called" userInfo:nil];
-//            break;
-//    }
-//}
-//
-///// TODO: - CoreData 的更新事件似乎并是按更新的先后顺序发送，而且 section/cell 没有分离，直接批量操作似乎有风险
-///// 尝试：放弃按步骤更新，而使用 Mocoa 的批量更新。
-//- (void)controller:(NSFetchedResultsController *)controller didChangeObject:(id)anObject atIndexPath:(NSIndexPath *)indexPath forChangeType:(NSFetchedResultsChangeType)type newIndexPath:(NSIndexPath *)newIndexPath {
-//    if (!self.isReady) return;
-//    
-//    switch (type) {
-//        case NSFetchedResultsChangeInsert: {
-//            [_fetchedBatchUpdates addObject:^(XZMocoaGridViewModel *self) {
-//                [self insertCellAtIndexPath:newIndexPath];
-//            }];
-//            break;
-//        }
-//        case NSFetchedResultsChangeMove: {
-//            if (indexPath.section == newIndexPath.section) {
-//                [_fetchedBatchUpdates addObject:^(XZMocoaGridViewModel *self) {
-//                    [[self sectionViewModelAtIndex:indexPath.section] moveCellAtIndex:indexPath.item toIndex:newIndexPath.item];
-//                }];
-//            } else {
-//                [_fetchedBatchUpdates addObject:^(XZMocoaGridViewModel *self) {
-//                    [[self sectionViewModelAtIndex:indexPath.section] deleteCellAtIndex:indexPath.item];
-//                    [[self sectionViewModelAtIndex:newIndexPath.section] insertCellAtIndex:newIndexPath.item];
-//                }];
-//            }
-//            break;
-//        }
-//        case NSFetchedResultsChangeDelete: {
-//            [_fetchedBatchUpdates addObject:^(XZMocoaGridViewModel *self) {
-//                [[self sectionViewModelAtIndex:indexPath.section] deleteCellAtIndex:indexPath.item];
-//            }];
-//            break;
-//        }
-//        case NSFetchedResultsChangeUpdate: {
-//            [_fetchedBatchUpdates addObject:^(XZMocoaGridViewModel *self) {
-//                [[self sectionViewModelAtIndex:indexPath.section] reloadCellAtIndex:indexPath.item];
-//            }];
-//            break;
-//        }
-//    }
-//}
+// 虽然 CoreData 提供了数据更新的步骤，但是更新事件似乎并是按更新的先后顺序发送，可能是由于排序或者什么原因，比如同时插入三条数据时，
+// 触发代理的顺序可能时 0 2 1，这显然没办法直接操作数组。
+// 因为先收到插入数据 2 而这个时候 1 还没有插入，无法在数组中插入不连续的值。
+// 而且似乎 section/cell 没有分离，比如没有 section=5 时，会直接触发插入 {section=5,row=0} 从而导致更新问题，直接批量操作有风险。
+
+#if DEBUG
+- (void)controller:(NSFetchedResultsController *)controller didChangeSection:(id<NSFetchedResultsSectionInfo>)sectionInfo atIndex:(NSUInteger)sectionIndex forChangeType:(NSFetchedResultsChangeType)type {
+    // if (!self.isReady) return
+    switch (type) {
+        case NSFetchedResultsChangeInsert: {
+            XZLog(@"[CoreData][insert] %ld", sectionIndex);
+            break;
+        }
+        case NSFetchedResultsChangeDelete: {
+            XZLog(@"[CoreData][delete] %ld", sectionIndex);
+            break;
+        }
+        default:
+            @throw [NSException exceptionWithName:NSGenericException reason:@"should never be called" userInfo:nil];
+            break;
+    }
+}
+
+- (void)controller:(NSFetchedResultsController *)controller didChangeObject:(id)anObject atIndexPath:(NSIndexPath *)indexPath forChangeType:(NSFetchedResultsChangeType)type newIndexPath:(NSIndexPath *)newIndexPath {
+    // if (!self.isReady) return;
+    switch (type) {
+        case NSFetchedResultsChangeInsert: {
+            XZLog(@"[CoreData][insert] {%ld, %ld}", newIndexPath.section, newIndexPath.item);
+            break;
+        }
+        case NSFetchedResultsChangeMove: {
+            XZLog(@"[CoreData][move] {%ld, %ld} => {%ld, %ld}", indexPath.section, indexPath.item, newIndexPath.section, newIndexPath.item);
+            break;
+        }
+        case NSFetchedResultsChangeDelete: {
+            XZLog(@"[CoreData][delete] {%ld, %ld}", indexPath.section, indexPath.item);
+            break;
+        }
+        case NSFetchedResultsChangeUpdate: {
+            XZLog(@"[CoreData][update] {%ld, %ld}", indexPath.section, indexPath.item);
+            break;
+        }
+    }
+}
+#endif
 
 @end

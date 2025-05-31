@@ -25,8 +25,10 @@
 typedef void(^XZMocoaGridDelayedUpdates)(XZMocoaGridViewSectionViewModel *self);
 
 @interface XZMocoaGridViewSectionViewModel () {
-    /// 非 nil 时，表示当前正在批量更新。
-    NSOrderedSet *_isPerformingBatchUpdates;
+    /// 批量更新前保存的 cell 视图模型。非 nil 时，表示当前正在批量更新。
+    /// 没有直接更新 supplementary 的操作，所以 supplementary 视图模型在批量更新的过程中不会改变。
+    NSOrderedSet *_viewModelsBeforeBatchUpdates;
+    /// 批量更新过程中产生的事件。
     NSMutableArray<XZMocoaGridDelayedUpdates> *_delayedBatchUpdates;
     /// 是否需要执行批量更新的差异分析。
     /// @note 在批量更新时，任一更新操作被调用，都会标记此值为 NO
@@ -44,9 +46,9 @@ typedef void(^XZMocoaGridDelayedUpdates)(XZMocoaGridViewSectionViewModel *self);
 - (instancetype)initWithModel:(id)model {
     self = [super initWithModel:model];
     if (self) {
-        _isPerformingBatchUpdates = nil;
-        _cellViewModels           = [NSMutableOrderedSet orderedSet];
-        _supplementaryViewModels  = [NSMutableDictionary dictionary];
+        _viewModelsBeforeBatchUpdates = nil;
+        _cellViewModels          = [NSMutableOrderedSet orderedSet];
+        _supplementaryViewModels = [NSMutableDictionary dictionary];
     }
     return self;
 }
@@ -178,106 +180,110 @@ typedef void(^XZMocoaGridDelayedUpdates)(XZMocoaGridViewSectionViewModel *self);
     [self deleteCellsAtIndexes:[NSIndexSet indexSetWithIndex:row]];
 }
 
-- (void)reloadCellsAtIndexes:(NSIndexSet *)rows {
+- (void)reloadCellsAtIndexes:(NSIndexSet *)indexes {
     _needsDifferenceBatchUpdates = NO;
     
-    if (rows.count == 0) {
+    if (indexes.count == 0) {
         return;
     }
     
+    id const model = self.model;
+    
     if (self.isPerformingBatchUpdates) {
-        NSMutableIndexSet * const oldRows = [NSMutableIndexSet indexSet];
-        [rows enumerateIndexesUsingBlock:^(NSUInteger row, BOOL * _Nonnull stop) {
-            XZMocoaGridViewCellViewModel * const oldViewModel = [self cellViewModelAtIndex:row];
-            NSInteger const oldRow = [_isPerformingBatchUpdates indexOfObject:oldViewModel];
-            [oldRows addIndex:oldRow];
+        NSMutableIndexSet * const oldIndexes = [NSMutableIndexSet indexSet];
+        [indexes enumerateIndexesUsingBlock:^(NSUInteger const index, BOOL * _Nonnull stop) {
+            XZMocoaGridViewCellViewModel * const oldViewModel = [self cellViewModelAtIndex:index];
+            NSInteger const oldRow = [_viewModelsBeforeBatchUpdates indexOfObject:oldViewModel];
+            [oldIndexes addIndex:oldRow];
             [oldViewModel removeFromSuperViewModel];
             
-            id<XZMocoaGridViewCellModel> const newDataModel = [self.model modelForCellAtIndex:row];
-            id const newViewModel = [self model:asNonNull(newDataModel) viewModelForCellAtIndex:row];
-            [self _insertCellViewModel:newViewModel atIndex:row];
+            id const newDataModel = [self model:model modelForCellAtIndex:index];
+            id const newViewModel = [self makeViewModelWithModel:newDataModel forCellAtIndex:index];
+            [self insertCellViewModel:newViewModel atIndex:index];
         }];
-        [self didReloadCellsAtIndexes:oldRows];
+        [self didReloadCellsAtIndexes:oldIndexes];
     } else {
-        [rows enumerateIndexesUsingBlock:^(NSUInteger row, BOOL * _Nonnull stop) {
-            XZMocoaGridViewCellViewModel * const oldViewModel = _cellViewModels[row];
+        [indexes enumerateIndexesUsingBlock:^(NSUInteger const index, BOOL * _Nonnull stop) {
+            XZMocoaGridViewCellViewModel * const oldViewModel = _cellViewModels[index];
             [oldViewModel removeFromSuperViewModel]; // 由 -didRemoveSubViewModel: 执行清理
             
-            id<XZMocoaGridViewCellModel> const newDataModel = [self.model modelForCellAtIndex:row];
-            id const newViewModel = [self model:asNonNull(newDataModel) viewModelForCellAtIndex:row];
-            [self _insertCellViewModel:newViewModel atIndex:row];
+            id const newDataModel = [self model:model modelForCellAtIndex:index];
+            id const newViewModel = [self makeViewModelWithModel:newDataModel forCellAtIndex:index];
+            [self insertCellViewModel:newViewModel atIndex:index];
         }];
-        [self didReloadCellsAtIndexes:rows];
+        [self didReloadCellsAtIndexes:indexes];
     }
 }
 
-- (void)insertCellsAtIndexes:(NSIndexSet *)rows {
+- (void)insertCellsAtIndexes:(NSIndexSet *)indexes {
     _needsDifferenceBatchUpdates = NO;
     
-    if (rows.count == 0) {
+    if (indexes.count == 0) {
         return;
     }
     
-    [rows enumerateIndexesUsingBlock:^(NSUInteger row, BOOL * _Nonnull stop) {
-        id<XZMocoaGridViewCellModel> const newDataModel = [self.model modelForCellAtIndex:row];
-        id const newViewModel = [self model:asNonNull(newDataModel) viewModelForCellAtIndex:row];
-        [self _insertCellViewModel:newViewModel atIndex:row];
+    id const model = self.model;
+    
+    [indexes enumerateIndexesUsingBlock:^(NSUInteger const index, BOOL * _Nonnull stop) {
+        id const newDataModel = [self model:model modelForCellAtIndex:index];
+        id const newViewModel = [self makeViewModelWithModel:newDataModel forCellAtIndex:index];
+        [self insertCellViewModel:newViewModel atIndex:index];
     }];
     
-    [self didInsertCellsAtIndexes:rows];
+    [self didInsertCellsAtIndexes:indexes];
     
     NSInteger const count = self.numberOfCells;
-    for (NSInteger row = rows.firstIndex; row < count; row++) {
-        if ([rows containsIndex:row]) {
+    for (NSInteger index = indexes.firstIndex; index < count; index++) {
+        if ([indexes containsIndex:index]) {
             continue;
         }
-        [self cellViewModelAtIndex:row].index = row;
+        [self cellViewModelAtIndex:index].index = index;
     }
 }
 
-- (void)deleteCellsAtIndexes:(NSIndexSet *)rows {
+- (void)deleteCellsAtIndexes:(NSIndexSet *)indexes {
     _needsDifferenceBatchUpdates = NO;
     
-    if (rows.count == 0) {
+    if (indexes.count == 0) {
         return;
     }
     
     if (self.isPerformingBatchUpdates) {
-        NSMutableIndexSet * const oldRows = [NSMutableIndexSet indexSet];
-        [rows enumerateIndexesWithOptions:NSEnumerationReverse usingBlock:^(NSUInteger row, BOOL * _Nonnull stop) {
-            XZMocoaGridViewCellViewModel * const oldViewModel = [self cellViewModelAtIndex:row];
-            NSInteger const oldRow = [_isPerformingBatchUpdates indexOfObject:oldViewModel];
-            [oldRows addIndex:oldRow];
+        NSMutableIndexSet * const oldIndexes = [NSMutableIndexSet indexSet];
+        [indexes enumerateIndexesWithOptions:NSEnumerationReverse usingBlock:^(NSUInteger const index, BOOL * _Nonnull stop) {
+            XZMocoaGridViewCellViewModel * const oldViewModel = [self cellViewModelAtIndex:index];
+            NSInteger const oldRow = [_viewModelsBeforeBatchUpdates indexOfObject:oldViewModel];
+            [oldIndexes addIndex:oldRow];
             
             [oldViewModel removeFromSuperViewModel];
         }];
-        [self didDeleteCellsAtIndexes:oldRows];
+        [self didDeleteCellsAtIndexes:oldIndexes];
     } else {
-        [rows enumerateIndexesWithOptions:NSEnumerationReverse usingBlock:^(NSUInteger row, BOOL * _Nonnull stop) {
-            XZMocoaGridViewCellViewModel * const oldViewModel = [self cellViewModelAtIndex:row];
+        [indexes enumerateIndexesWithOptions:NSEnumerationReverse usingBlock:^(NSUInteger const index, BOOL * _Nonnull stop) {
+            XZMocoaGridViewCellViewModel * const oldViewModel = [self cellViewModelAtIndex:index];
             [oldViewModel removeFromSuperViewModel];
         }];
-        [self didDeleteCellsAtIndexes:rows];
+        [self didDeleteCellsAtIndexes:indexes];
         
         NSInteger const count = self.numberOfCells;
-        for (NSInteger row = rows.firstIndex; row < count; row++) {
-            [self cellViewModelAtIndex:row].index = row;
+        for (NSInteger index = indexes.firstIndex; index < count; index++) {
+            [self cellViewModelAtIndex:index].index = index;
         }
     }
 }
 
-- (void)moveCellAtIndex:(NSInteger)row toIndex:(NSInteger)newRow {
+- (void)moveCellAtIndex:(NSInteger)index toIndex:(NSInteger)newIndex {
     if (self.isPerformingBatchUpdates) {
-        id const viewModel = [self cellViewModelAtIndex:row];
-        NSInteger const oldRow = [_isPerformingBatchUpdates indexOfObject:viewModel];
-        [self _moveCellAtIndex:row fromIndex:oldRow toIndex:newRow];
+        id const viewModel = [self cellViewModelAtIndex:index];
+        NSInteger const oldIndex = [_viewModelsBeforeBatchUpdates indexOfObject:viewModel];
+        [self _moveCellAtIndex:index fromIndex:oldIndex toIndex:newIndex];
     } else {
-        [self _moveCellAtIndex:row fromIndex:row toIndex:newRow];
+        [self _moveCellAtIndex:index fromIndex:index toIndex:newIndex];
         
-        NSInteger const min = MIN(row, newRow);
-        NSInteger const max = MAX(row, newRow);
-        for (NSInteger row = min; row <= max; row++) {
-            [self cellViewModelAtIndex:row].index = row;
+        NSInteger const min = MIN(index, newIndex);
+        NSInteger const max = MAX(index, newIndex);
+        for (NSInteger index = min; index <= max; index++) {
+            [self cellViewModelAtIndex:index].index = index;
         }
     }
 }
@@ -321,21 +327,21 @@ typedef void(^XZMocoaGridDelayedUpdates)(XZMocoaGridViewSectionViewModel *self);
 #pragma mark - 批量更新
 
 - (BOOL)isPerformingBatchUpdates {
-    return _isPerformingBatchUpdates != nil;
+    return _viewModelsBeforeBatchUpdates != nil;
 }
 
 - (BOOL)prepareBatchUpdates {
-    if (_isPerformingBatchUpdates) {
+    if (_viewModelsBeforeBatchUpdates) {
         XZLog(@"当前正在批量更新，本次操作取消");
         return NO;
     }
-    _isPerformingBatchUpdates = _cellViewModels.copy;
+    _viewModelsBeforeBatchUpdates = _cellViewModels.copy;
     _delayedBatchUpdates = [NSMutableArray array];
     return YES;
 }
 
 - (void)cleanupBatchUpdates {
-    _isPerformingBatchUpdates = nil;
+    _viewModelsBeforeBatchUpdates = nil;
     
     for (XZMocoaGridDelayedUpdates batchUpdates in _delayedBatchUpdates) {
         batchUpdates(self);
@@ -379,54 +385,69 @@ typedef void(^XZMocoaGridDelayedUpdates)(XZMocoaGridViewSectionViewModel *self);
     }
     _needsDifferenceBatchUpdates = NO;
     
-    id<XZMocoaGridViewSectionModel> const model = self.model;
+    // 进入了差异性分析流程，说明当前视图模型数据没有发生修改
+    
+    id const model = self.model;
     
     BOOL needsUpdateAll = NO;
+    
+    // 检查并更新 Supplementary
     for (XZMocoaKind const kind in self.superViewModel.supportedSupplementaryKinds) {
-        NSInteger const count = [model numberOfModelsForSupplementaryKind:kind];
-        for (NSInteger index = 0; index < count; index++) {
-            id newModel = [model modelForSupplementaryKind:kind atIndex:index];
-            id oldModel = _supplementaryViewModels[kind][index].model;
-            if (!(newModel == oldModel || [newModel isEqual:oldModel])) {
+        NSInteger const newCount = [self model:model numberOfModelsForSupplementaryKind:kind];
+
+        NSMutableArray<XZMocoaViewModel *> * viewModels = _supplementaryViewModels[kind];
+        
+        for (NSInteger index = 0; index < newCount; index++) {
+            id const newDataModel = [self model:model modelForSupplementaryKind:kind atIndex:index];
+            
+            if (index < viewModels.count) {
+                id const oldDataModel = viewModels[index].model;
+                if (newDataModel == oldDataModel || (newDataModel && [newDataModel isEqual:oldDataModel])) {
+                    continue;
+                }
                 needsUpdateAll = YES;
-                break;
+                viewModels[index] = [self makeViewModelWithModel:newDataModel forSupplementaryElementOfKind:kind atIndex:index];
+            } else {
+                needsUpdateAll = YES;
+                if (viewModels == nil) {
+                    viewModels = [NSMutableArray arrayWithCapacity:newCount];
+                }
+                viewModels[index] = [self makeViewModelWithModel:newDataModel forSupplementaryElementOfKind:kind atIndex:index];
             }
         }
-        if (needsUpdateAll) break;
     }
     
-    NSInteger      const oldCount      = self.numberOfCells;
-    NSArray      * const oldDataModels = [NSMutableArray arrayWithCapacity:oldCount];
-    NSOrderedSet * const oldViewModels = _isPerformingBatchUpdates.copy;
-    for (NSInteger i = 0; i < oldCount; i++) {
-        XZMocoaGridViewCellViewModel * const viewModel = oldViewModels[i];
-        
-        id dataModel = viewModel.model;
-        if (dataModel == nil) {
-            dataModel = NSNull.null;
-        }
-        [(NSMutableArray *)oldDataModels addObject:dataModel];
-    }
-    
-    if (oldDataModels.xz_containsDuplicateObjects) {
-        [self reloadData];
-        XZLog(@"由于旧数据中包含重复元素，本次批量更新没有进行差异分析");
+    if (needsUpdateAll) {
+        XZLog(@"由于 Supplementary 需要整体刷新，本次批量更新没有进行差异分析");
+        [self reloadCellsAtIndexes:[NSIndexSet indexSetWithIndexesInRange:NSMakeRange(0, _cellViewModels.count)]];
         return nil;
     }
     
-    NSInteger        const newCount      = model.numberOfCellModels;
-    NSMutableArray * const newDataModels = [NSMutableArray arrayWithCapacity:newCount];
-    for (NSInteger i = 0; i < newCount; i++) {
-        id dataModel = [self.model modelForCellAtIndex:i];
-        if (dataModel == nil) {
-            dataModel = NSNull.null;
-        }
-        [newDataModels addObject:dataModel];
+    NSOrderedSet * const oldViewModels = _viewModelsBeforeBatchUpdates.copy;
+    NSInteger      const oldCount      = oldViewModels.count;
+    NSArray      * const oldDataModels = [NSMutableArray arrayWithCapacity:oldCount];
+    for (NSInteger i = 0; i < oldCount; i++) {
+        XZMocoaGridViewCellViewModel * const viewModel = oldViewModels[i];
+        id const oldDataModel = viewModel.model;
+        [(NSMutableArray *)oldDataModels addObject:(oldDataModel ?: (id)kCFNull)];
+    }
+    
+    if (oldDataModels.xz_containsDuplicateObjects) {
+        XZLog(@"由于旧数据中包含重复元素，本次批量更新没有进行差异分析");
+        [self reloadCellsAtIndexes:[NSIndexSet indexSetWithIndexesInRange:NSMakeRange(0, oldCount)]];
+        return nil;
+    }
+    
+    NSInteger const newCount      = [self model:model numberOfCellModels:NULL];
+    NSArray * const newDataModels = [NSMutableArray arrayWithCapacity:newCount];
+    for (NSInteger index = 0; index < newCount; index++) {
+        id const newDataModel = [self model:model modelForCellAtIndex:index];
+        [(NSMutableArray *)newDataModels addObject:(newDataModel ?: (id)kCFNull)];
     }
     
     if (newDataModels.xz_containsDuplicateObjects) {
-        [self reloadData];
         XZLog(@"由于新数据中包含重复元素，本次批量更新没有进行差异分析");
+        [self reloadCellsAtIndexes:[NSIndexSet indexSetWithIndexesInRange:NSMakeRange(0, oldCount)]];
         return nil;
     }
     
@@ -440,62 +461,44 @@ typedef void(^XZMocoaGridDelayedUpdates)(XZMocoaGridViewSectionViewModel *self);
     XZLog(@"『目标』%@", newDataModels);
     XZLog(@"【差异分析】开始");
     
-    if ( needsUpdateAll ) {
-        // 整体刷新时，就不需要差异性分析
-        for (NSInteger index = 0; index < newCount; index++) {
-            id        const newDataModel = newDataModels[index];
-            NSInteger const oldIndex     = [oldDataModels indexOfObject:newDataModel];
-            if (oldIndex == NSNotFound) {
-                id const vm = [self model:asNonNull(newDataModel) viewModelForCellAtIndex:index];
-                [self _insertCellViewModel:vm atIndex:index];
-            } else {
-                _cellViewModels[index] = oldViewModels[oldIndex];
-            }
-        }
-        for (NSInteger index = oldCount; index >= newCount; index--) {
-            [_cellViewModels[index] removeFromSuperViewModel];
-        }
-        [self didReloadData];
-    } else {
-        XZLog(@"『不变』%@", remains);
-        
-        // 1、更新数据：先执行删除，后执行添加
-        [deletes enumerateIndexesWithOptions:NSEnumerationReverse usingBlock:^(NSUInteger row, BOOL *stop) {
-            [[self cellViewModelAtIndex:row] removeFromSuperViewModel];
-        }];
-        [self didDeleteCellsAtIndexes:deletes];
-        XZLog(@"『删除』%@", deletes);
-        
-        NSMutableDictionary *newViewModels = [NSMutableDictionary dictionaryWithCapacity:inserts.count];
-        [inserts enumerateIndexesUsingBlock:^(NSUInteger row, BOOL * _Nonnull stop) {
-            id<XZMocoaGridViewCellModel>   const newDataModel = newDataModels[row];
-            XZMocoaGridViewCellViewModel * const newViewModel = [self model:asNonNull(newDataModel) viewModelForCellAtIndex:row];
-            [self _insertCellViewModel:newViewModel atIndex:row];
-            newViewModels[@(row)] = newViewModel;
-        }];
-        [self didInsertCellsAtIndexes:inserts];
-        XZLog(@"『添加』%@", inserts);
-        
-        // 排序移动
-        for (NSInteger to = 0; to < newCount; to++) {
-            if ([inserts containsIndex:to]) {
-                id const viewModel = newViewModels[@(to)];
-                NSInteger const index = [self indexOfCellViewModel:viewModel];
-                [self _moveCellViewModelFromIndex:index toIndex:to];
-                XZLog(@"『调整』%ld -> %ld, %@", (long)index, (long)to, self.cellDataModels);
-            } else if ([remains containsIndex:to]) {
-                // to 位置为保持不变的元素，在 old 中找到 viewModel 然后将其移动到 to 位置上。
-                NSInteger const index = [self indexOfCellViewModel:oldViewModels[to]];
-                [self _moveCellViewModelFromIndex:index toIndex:to];
-                XZLog(@"『调整』%ld -> %ld, %@", (long)index, (long)to, self.cellDataModels);
-            } else {
-                // to 位置为被移动的元素，先找到它原来的位置，然后找到 viewModel 然后再移动位置。
-                NSInteger const from  = changes[@(to)].integerValue;
-                NSInteger const index = [self indexOfCellViewModel:oldViewModels[from]];
-                [self _moveCellViewModelFromIndex:index toIndex:to];
-                [self didMoveCellAtIndex:from toIndex:to];
-                XZLog(@"『移动』%ld(%ld) -> %ld, %@", (long)from, (long)index, (long)to, self.cellDataModels);
-            }
+    XZLog(@"『不变』%@", remains);
+    
+    // 1、更新数据：先执行删除，后执行添加
+    [deletes enumerateIndexesWithOptions:NSEnumerationReverse usingBlock:^(NSUInteger const index, BOOL *stop) {
+        [[self cellViewModelAtIndex:index] removeFromSuperViewModel];
+    }];
+    [self didDeleteCellsAtIndexes:deletes];
+    XZLog(@"『删除』%@", deletes);
+    
+    NSDictionary<NSNumber *, XZMocoaViewModel *> * const newViewModels = [NSMutableDictionary dictionaryWithCapacity:inserts.count];
+    [inserts enumerateIndexesUsingBlock:^(NSUInteger const index, BOOL * _Nonnull stop) {
+        id<XZMocoaGridViewCellModel>   const newDataModel = newDataModels[index];
+        XZMocoaGridViewCellViewModel * const newViewModel = [self makeViewModelWithModel:newDataModel forCellAtIndex:index];
+        [self insertCellViewModel:newViewModel atIndex:index];
+        ((NSMutableDictionary *)newViewModels)[@(index)] = newViewModel;
+    }];
+    [self didInsertCellsAtIndexes:inserts];
+    XZLog(@"『添加』%@", inserts);
+    
+    // 排序移动
+    for (NSInteger to = 0; to < newCount; to++) {
+        if ([inserts containsIndex:to]) {
+            id const viewModel = newViewModels[@(to)];
+            NSInteger const index = [self indexOfCellViewModel:viewModel];
+            [self _moveCellViewModelFromIndex:index toIndex:to];
+            XZLog(@"『调整』%ld -> %ld, %@", (long)index, (long)to, self.cellDataModels);
+        } else if ([remains containsIndex:to]) {
+            // to 位置为保持不变的元素，在 old 中找到 viewModel 然后将其移动到 to 位置上。
+            NSInteger const index = [self indexOfCellViewModel:oldViewModels[to]];
+            [self _moveCellViewModelFromIndex:index toIndex:to];
+            XZLog(@"『调整』%ld -> %ld, %@", (long)index, (long)to, self.cellDataModels);
+        } else {
+            // to 位置为被移动的元素，先找到它原来的位置，然后找到 viewModel 然后再移动位置。
+            NSInteger const from  = changes[@(to)].integerValue;
+            NSInteger const index = [self indexOfCellViewModel:oldViewModels[from]];
+            [self _moveCellViewModelFromIndex:index toIndex:to];
+            [self didMoveCellAtIndex:from toIndex:to];
+            XZLog(@"『移动』%ld(%ld) -> %ld, %@", (long)from, (long)index, (long)to, self.cellDataModels);
         }
     }
     
@@ -511,7 +514,14 @@ typedef void(^XZMocoaGridDelayedUpdates)(XZMocoaGridViewSectionViewModel *self);
     [self addSubViewModel:cellViewModel];
 }
 
-- (void)_insertCellViewModel:(XZMocoaGridViewCellViewModel *)cellViewModel atIndex:(NSInteger)index {
+- (XZMocoaGridViewCellViewModel *)removeCellViewModelAtIndex:(NSInteger)index {
+    XZMocoaGridViewCellViewModel *viewModel = _cellViewModels[index];
+    [_cellViewModels removeObjectAtIndex:index];
+    [viewModel removeFromSuperViewModel];
+    return viewModel;
+}
+
+- (void)insertCellViewModel:(XZMocoaGridViewCellViewModel *)cellViewModel atIndex:(NSInteger)index {
     [_cellViewModels insertObject:cellViewModel atIndex:index];
     [self addSubViewModel:cellViewModel];
 }
@@ -526,28 +536,26 @@ typedef void(^XZMocoaGridDelayedUpdates)(XZMocoaGridViewSectionViewModel *self);
 - (void)_loadDataWithoutEvents {
     NSAssert(_supplementaryViewModels.count == 0 && _cellViewModels.count == 0, @"调用此方法前要清除现有的数据");
     
-    id<XZMocoaGridViewSectionModel> const model = self.model;
+    id const model = self.model;
     
     for (XZMocoaKind kind in self.superViewModel.supportedSupplementaryKinds) {
-        NSInteger const count = [model numberOfModelsForSupplementaryKind:kind];
+        NSInteger const count = [self model:model numberOfModelsForSupplementaryKind:kind];
         for (NSInteger index = 0; index < count; index++) {
-            id const model = [self.model modelForSupplementaryKind:kind atIndex:index];
-            XZMocoaGridViewSupplementaryViewModel *vm = [self model:model viewModelForSupplementaryElementOfKind:kind atIndex:index];
-            if (vm) {
-                if (_supplementaryViewModels[kind]) {
-                    [_supplementaryViewModels[kind] addObject:vm];
-                } else {
-                    _supplementaryViewModels[kind] = [NSMutableArray arrayWithObject:vm];
-                }
-                [self addSubViewModel:vm];
+            id const dataModel = [self model:model modelForSupplementaryKind:kind atIndex:index];
+            XZMocoaGridViewSupplementaryViewModel * const viewModel = [self makeViewModelWithModel:dataModel forSupplementaryElementOfKind:kind atIndex:index];
+            if (_supplementaryViewModels[kind]) {
+                [_supplementaryViewModels[kind] addObject:viewModel];
+            } else {
+                _supplementaryViewModels[kind] = [NSMutableArray arrayWithObject:viewModel];
             }
+            [self addSubViewModel:viewModel];
         }
     }
     
-    NSInteger const count = model.numberOfCellModels;
+    NSInteger const count = [self model:model numberOfCellModels:NULL];
     for (NSInteger index = 0; index < count; index++) {
-        id<XZMocoaGridViewCellModel> const dataModel = [self.model modelForCellAtIndex:index];
-        XZMocoaGridViewCellViewModel *viewModel = [self model:asNonNull(dataModel) viewModelForCellAtIndex:index];
+        id<XZMocoaGridViewCellModel> const dataModel = [self model:model modelForCellAtIndex:index];
+        XZMocoaGridViewCellViewModel *viewModel = [self makeViewModelWithModel:dataModel forCellAtIndex:index];
         [self _addCellViewModel:viewModel];
     }
 }
@@ -570,10 +578,11 @@ typedef void(^XZMocoaGridDelayedUpdates)(XZMocoaGridViewSectionViewModel *self);
     [self didMoveCellAtIndex:oldRow toIndex:newRow];
 }
 
-- (XZMocoaGridViewCellViewModel *)model:(id<XZMocoaGridViewCellModel> const)model viewModelForCellAtIndex:(NSInteger)index {
-    XZMocoaName     const section = ((id<XZMocoaGridViewSectionModel>)self.model).mocoaName;
-    XZMocoaName      const name   = model.mocoaName;
-    XZMocoaModule *  const module = [self.module submoduleIfLoadedForKind:XZMocoaKindCell forName:name];
+- (XZMocoaGridViewCellViewModel *)makeViewModelWithModel:(id<XZMocoaGridViewCellModel> const)nullableModel forCellAtIndex:(NSInteger)index {
+    id<XZMocoaModel> const model   = (nullableModel == (id)kCFNull ? nil : nullableModel);
+    XZMocoaName      const section = ((id<XZMocoaGridViewSectionModel>)self.model).mocoaName;
+    XZMocoaName      const name    = model.mocoaName;
+    XZMocoaModule *  const module  = [self.module submoduleIfLoadedForKind:XZMocoaKindCell forName:name];
     
     Class     VMClass    = [self _loadSubViewModelClassWithModule:module name:name kind:XZMocoaKindCell section:section];
     NSString *identifier = nil;
@@ -592,11 +601,8 @@ typedef void(^XZMocoaGridDelayedUpdates)(XZMocoaGridViewSectionViewModel *self);
     return viewModel;
 }
 
-- (XZMocoaGridViewSupplementaryViewModel *)model:(id<XZMocoaModel> const)model viewModelForSupplementaryElementOfKind:(XZMocoaKind)kind atIndex:(NSInteger)index {
-    if (model == nil) {
-        return nil; // 没有数据，就没有 header/footer
-    }
-    
+- (XZMocoaGridViewSupplementaryViewModel *)makeViewModelWithModel:(id const)nullableModel forSupplementaryElementOfKind:(XZMocoaKind)kind atIndex:(NSInteger)index {
+    id<XZMocoaModel> const model  = (nullableModel == (id)kCFNull ? nil : nullableModel);
     XZMocoaName     const section = ((id<XZMocoaGridViewSectionModel>)self.model).mocoaName;
     XZMocoaName     const name    = model.mocoaName;
     XZMocoaModule * const module  = [self.module submoduleIfLoadedForKind:kind forName:name];
@@ -691,6 +697,26 @@ typedef void(^XZMocoaGridDelayedUpdates)(XZMocoaGridViewSectionViewModel *self);
 - (Class)placeholderViewModelClassForSupplementaryKind:(XZMocoaKind)kind atIndex:(NSInteger)index {
     NSString *reason = [NSString stringWithFormat:@"必须使用子类，并重 %s 方法", __PRETTY_FUNCTION__];
     @throw [NSException exceptionWithName:NSGenericException reason:reason userInfo:nil];
+}
+
+@end
+
+@implementation XZMocoaGridViewSectionViewModel (XZMocoaGridViewSectionModelTransformer)
+
+- (nullable id)model:(nullable id)model modelForCellAtIndex:(NSInteger)index {
+    return [((id<XZMocoaGridViewSectionModel>)model) modelForCellAtIndex:index];
+}
+
+- (NSInteger)model:(nullable id)model numberOfCellModels:(void * _Nullable)null {
+    return [((id<XZMocoaGridViewSectionModel>)model) numberOfCellModels];
+}
+
+- (nullable id)model:(nullable id)model modelForSupplementaryKind:(nonnull XZMocoaKind)kind atIndex:(NSInteger)index {
+    return [((id<XZMocoaGridViewSectionModel>)model) modelForSupplementaryKind:kind atIndex:index];
+}
+
+- (NSInteger)model:(nullable id)model numberOfModelsForSupplementaryKind:(nonnull XZMocoaKind)kind {
+    return [((id<XZMocoaGridViewSectionModel>)model) numberOfModelsForSupplementaryKind:kind];
 }
 
 @end

@@ -7,9 +7,6 @@
 
 #import "XZMocoaGridViewSectionModel.h"
 
-@interface NSObject (XZMocoaGridViewSectionModel) <XZMocoaGridViewSectionModel>
-@end
-
 @implementation NSObject (XZMocoaGridViewSectionModel)
 
 - (NSInteger)numberOfCellModels {
@@ -21,7 +18,7 @@
 }
 
 - (NSInteger)numberOfModelsForSupplementaryKind:(XZMocoaKind)kind {
-    return 1;
+    return 0;
 }
 
 - (id)modelForSupplementaryKind:(XZMocoaKind)kind atIndex:(NSInteger)index {
@@ -46,9 +43,6 @@
 
 @end
 
-
-@interface NSArray (XZMocoaGridViewSectionModel)
-@end
 
 @implementation NSArray (XZMocoaGridViewSectionModel)
 

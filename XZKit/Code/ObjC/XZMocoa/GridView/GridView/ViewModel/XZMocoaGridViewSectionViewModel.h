@@ -12,6 +12,7 @@
 #import "XZMocoaGridViewSectionModel.h"
 #import "XZMocoaGridViewSupplementaryViewModel.h"
 #import "XZMocoaGridViewCellViewModel.h"
+#import "XZDefines.h"
 
 @class XZMocoaGridViewModel;
 
@@ -37,6 +38,9 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic, readonly) NSInteger numberOfCells;
 - (__kindof XZMocoaGridViewCellViewModel *)cellViewModelAtIndex:(NSInteger)index;
 - (NSInteger)indexOfCellViewModel:(__kindof XZMocoaGridViewCellViewModel *)cellViewModel;
+
+- (XZMocoaGridViewCellViewModel *)removeCellViewModelAtIndex:(NSInteger)index XZ_PRIVATE;
+- (void)insertCellViewModel:(XZMocoaGridViewCellViewModel *)cellViewModel atIndex:(NSInteger)index XZ_PRIVATE;
 
 // MARK: - 局部更新
 
@@ -99,21 +103,21 @@ NS_ASSUME_NONNULL_BEGIN
 - (Class)placeholderViewModelClassForCellAtIndex:(NSInteger)index;
 - (Class)placeholderViewModelClassForSupplementaryKind:(XZMocoaKind)kind atIndex:(NSInteger)index;
 
-// MARK: - 子类自定义
+@end
 
-/// 将数据模型转换为 Supplementary 视图模型。默认不会为数据为 nil 的 Supplementary 创建视图模型，但子类可以重写这个规则。
-/// - Parameters:
-///   - model: Supplementary 的数据模型，数据源中值为 kCFNull 的对象，会转化为 nil 值
-///   - kind: Supplementary 的类型
-///   - index: Supplementary 的位置
-- (nullable XZMocoaGridViewSupplementaryViewModel *)model:(nullable id)model viewModelForSupplementaryElementOfKind:(XZMocoaKind)kind atIndex:(NSInteger)index;
-
-/// 将数据模型转换为 Cell 视图模型。数据为 nil 的数据，将创建默认的视图模型。
-/// - Parameters:
-///   - model: 数据模型，数据源中值为 kCFNull 的对象，会转化为 nil 值
-///   - index: Cell 的位置
-- (XZMocoaGridViewCellViewModel *)model:(nullable id)model viewModelForCellAtIndex:(NSInteger)index;
-
+@interface XZMocoaGridViewSectionViewModel (XZMocoaGridViewSectionModelTransformer)
+/// 返回数据源 model 中 Cell 数据的数量。
+/// 子类可以重写此方法，以自定义数据源的转换过程。
+- (NSInteger)model:(nullable id)model numberOfCellModels:(void *_Nullable)null;
+/// 返回数据源 model 中指定 index 的 Cell 的数据。
+/// 子类可以重写此方法，以自定义数据源的转换过程。
+- (nullable id)model:(nullable id)model modelForCellAtIndex:(NSInteger)index;
+/// 返回数据源 model 中指定 kind 类型的 Supplementary 数据的数量。
+/// 子类可以重写此方法，以自定义数据源的转换过程。
+- (NSInteger)model:(nullable id)model numberOfModelsForSupplementaryKind:(XZMocoaKind)kind;
+/// 返回数据源 model 中指定位置 index 指定 kind 类型的 Supplementary 的数据。
+/// 子类可以重写此方法，以自定义数据源的转换过程。
+- (nullable id)model:(nullable id)model modelForSupplementaryKind:(XZMocoaKind)kind atIndex:(NSInteger)index;
 @end
 
 NS_ASSUME_NONNULL_END

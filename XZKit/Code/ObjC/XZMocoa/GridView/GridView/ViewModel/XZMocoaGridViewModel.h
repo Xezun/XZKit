@@ -137,7 +137,7 @@ NS_SWIFT_UI_ACTOR @protocol XZMocoaGridViewModelDelegate <XZMocoaViewModelDelega
 @interface XZMocoaGridViewModel (XZMocoaGridModelTransformer)
 - (NSInteger)model:(id)model numberOfSectionModels:(void * _Nullable)null;
 /// 获取 Section 的模型数据。
-///
+/// 子类可以重写此方法，以自定义数据源的转换过程。
 /// @param model 数据模型
 /// @param index Section 的位置
 - (nullable id)model:(id)model modelForSectionAtIndex:(NSInteger)index;
@@ -145,6 +145,9 @@ NS_SWIFT_UI_ACTOR @protocol XZMocoaGridViewModelDelegate <XZMocoaViewModelDelega
 
 @import CoreData;
 
+/// 支持直接使用 NSFetchedResultsController 作为数据源，且支持作为 NSFetchedResultsController 的代理。
+///
+/// 需要主动设置 NSFetchedResultsController 的代理为当前视图模型，默认不会主动设置。
 @interface XZMocoaGridViewModel (NSFetchedResultsControllerDelegate) <NSFetchedResultsControllerDelegate>
 @end
 

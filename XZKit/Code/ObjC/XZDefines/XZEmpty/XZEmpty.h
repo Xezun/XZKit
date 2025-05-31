@@ -99,12 +99,6 @@ FOUNDATION_STATIC_INLINE id _Nullable asNonEmpty(id _Nullable value, id _Nullabl
     return isNonEmpty(value) ? value : defaultValue;
 }
 
-/// 如果值为 kCFNull 则返回 nil 否则返回 value 。
-/// - Parameter value: 值
-FOUNDATION_STATIC_INLINE id _Nullable asNonNull(id _Nullable value) {
-    return (value == (id)kCFNull ? nil : value);
-}
-
 #endif // #ifndef XZ_AS_NON_EMPTY
 
 NS_ASSUME_NONNULL_END
