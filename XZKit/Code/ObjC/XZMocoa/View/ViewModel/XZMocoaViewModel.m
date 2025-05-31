@@ -212,6 +212,7 @@ XZMocoaUpdatesKey const XZMocoaUpdatesKeyDidHide  = @"XZMocoaUpdatesKeyDidHide";
 
 
 XZMocoaKey const XZMocoaKeyNone = @"";
+XZMocoaKey const XZMocoaKeyContentStatus = @"contentStatus";
 
 @implementation XZMocoaViewModel (XZMocoaViewModelTargetAction)
 

@@ -253,6 +253,7 @@ typedef NSString *XZMocoaKey NS_EXTENSIBLE_STRING_ENUM NS_SWIFT_NAME(XZMocoaView
 
 /// 没有 key 也可作为一种事件，或者称为默认事件，值为空字符串。
 FOUNDATION_EXPORT XZMocoaKey const XZMocoaKeyNone;
+FOUNDATION_EXPORT XZMocoaKey const XZMocoaKeyContentStatus;
 
 /// 用于标记属性可以被添加 target-action 的属性或方法，仅起标记作用。
 /// @code
