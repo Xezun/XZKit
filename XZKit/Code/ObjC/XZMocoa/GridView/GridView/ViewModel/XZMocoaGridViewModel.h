@@ -89,6 +89,8 @@ NS_SWIFT_UI_ACTOR @protocol XZMocoaGridViewModelDelegate <XZMocoaViewModelDelega
 /// @param newSection 移动后的位置
 - (void)moveSectionAtIndex:(NSInteger)section toIndex:(NSInteger)newSection;
 
+- (void)moveCellAtIndexPath:(NSIndexPath *)indexPath toIndexPath:(NSIndexPath *)newIndexPath;
+
 // MARK: - 视图模型的事件派发，子类必须重写并根据实际去实现
 
 // 如下 -did 方法，表示对应的事件已经发生，需要更新视图对应的视图了。
@@ -113,13 +115,6 @@ NS_SWIFT_UI_ACTOR @protocol XZMocoaGridViewModelDelegate <XZMocoaViewModelDelega
 /// 子类应该重写此方法，并返回所需的 SectionViewModel 对象。
 - (Class)placeholderViewModelClassForSectionAtIndex:(NSInteger)index;
 
-// MARK: - 方便子类自定义
-
-/// 将数据模型转换为 Section 视图模型。默认情况下，将会为 nil 的数据创建默认视图模型。
-/// @param model 数据模型
-/// @param index Section 的位置
-- (XZMocoaGridViewSectionViewModel *)model:(nullable id)model viewModelForSectionAtIndex:(NSInteger)index;
-
 @end
 
 // MARK: - 下级 section 不能独自完成的事件，需要上级处理的事件
@@ -137,6 +132,15 @@ NS_SWIFT_UI_ACTOR @protocol XZMocoaGridViewModelDelegate <XZMocoaViewModelDelega
 - (void)sectionViewModel:(__kindof XZMocoaGridViewSectionViewModel *)viewModel didMoveCellAtIndex:(NSInteger)row toIndex:(NSInteger)newRow;
 /// section 发送的批量更新事件，以刷新视图。
 - (void)sectionViewModel:(__kindof XZMocoaGridViewSectionViewModel *)viewModel didPerformBatchUpdates:(void (^NS_NOESCAPE)(void))batchUpdates completion:(void (^ _Nullable)(BOOL))completion;
+@end
+
+@interface XZMocoaGridViewModel (XZMocoaGridModelTransformer)
+- (NSInteger)model:(id)model numberOfSectionModels:(void * _Nullable)null;
+/// 获取 Section 的模型数据。
+///
+/// @param model 数据模型
+/// @param index Section 的位置
+- (nullable id)model:(id)model modelForSectionAtIndex:(NSInteger)index;
 @end
 
 @import CoreData;
