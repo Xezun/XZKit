@@ -191,6 +191,7 @@ XZMocoaUpdatesKey const XZMocoaUpdatesKeyModify   = @"XZMocoaUpdatesKeyModify";
 XZMocoaUpdatesKey const XZMocoaUpdatesKeyInsert   = @"XZMocoaUpdatesKeyInsert";
 XZMocoaUpdatesKey const XZMocoaUpdatesKeyDelete   = @"XZMocoaUpdatesKeyDelete";
 XZMocoaUpdatesKey const XZMocoaUpdatesKeySelect   = @"XZMocoaUpdatesKeySelect";
+XZMocoaUpdatesKey const XZMocoaUpdatesKeyDeselect = @"XZMocoaUpdatesKeyDeselect";
 XZMocoaUpdatesKey const XZMocoaUpdatesKeyDidShow  = @"XZMocoaUpdatesKeyDidShow";
 XZMocoaUpdatesKey const XZMocoaUpdatesKeyDidHide  = @"XZMocoaUpdatesKeyDidHide";
 
@@ -213,6 +214,7 @@ XZMocoaUpdatesKey const XZMocoaUpdatesKeyDidHide  = @"XZMocoaUpdatesKeyDidHide";
 
 XZMocoaKey const XZMocoaKeyNone = @"";
 XZMocoaKey const XZMocoaKeyContentStatus = @"contentStatus";
+XZMocoaKey const XZMocoaKeyIsChecked = @"isChecked";
 
 @implementation XZMocoaViewModel (XZMocoaViewModelTargetAction)
 

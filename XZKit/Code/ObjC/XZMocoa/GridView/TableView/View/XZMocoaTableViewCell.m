@@ -24,6 +24,10 @@
     [self.viewModel tableView:tableView didSelectCell:self atIndexPath:indexPath];
 }
 
+- (void)tableView:(id<XZMocoaTableView>)tableView didDeselectRowAtIndexPath:(NSIndexPath *)indexPath {
+    [self.viewModel tableView:tableView didDeselectCell:self atIndexPath:indexPath];
+}
+
 - (void)tableView:(id<XZMocoaTableView>)tableView willDisplayRowAtIndexPath:(NSIndexPath *)indexPath {
     [self.viewModel tableView:tableView willDisplayCell:self atIndexPath:indexPath];
 }

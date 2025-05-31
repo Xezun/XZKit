@@ -171,6 +171,11 @@
     [cell tableView:self didSelectRowAtIndexPath:indexPath];
 }
 
+- (void)tableView:(UITableView *)tableView didDeselectRowAtIndexPath:(NSIndexPath *)indexPath {
+    UITableViewCell<XZMocoaTableViewCell> *cell = (id)[tableView cellForRowAtIndexPath:indexPath];
+    [cell tableView:self didDeselectRowAtIndexPath:indexPath];
+}
+
 @end
 
 

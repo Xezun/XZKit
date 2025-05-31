@@ -12,7 +12,7 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-@protocol XZMocoaTableView;
+@protocol XZMocoaTableView, UITableViewDelegate;
 
 /// 使用 Mocoa 时，UITableViewCell 应遵循本协议。
 /// @note
@@ -28,6 +28,7 @@ NS_ASSUME_NONNULL_BEGIN
 /// @param tableView 当前 Cell 所属的 UITableView 对象
 /// @param indexPath 当前 Cell 的当前所在的位置
 - (void)tableView:(id<XZMocoaTableView>)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath;
+- (void)tableView:(id<XZMocoaTableView>)tableView didDeselectRowAtIndexPath:(NSIndexPath *)indexPath;
 
 /// 当前 Cell 将要被展示在指定位置。默认不执行任何操作。
 /// @param tableView 当前 Cell 所属的 UITableView 对象

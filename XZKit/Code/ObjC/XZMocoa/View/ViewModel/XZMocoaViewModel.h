@@ -211,6 +211,7 @@ FOUNDATION_EXPORT XZMocoaUpdatesKey const XZMocoaUpdatesKeyInsert;
 FOUNDATION_EXPORT XZMocoaUpdatesKey const XZMocoaUpdatesKeyDelete;
 /// 选择操作。比如单选 cell 时，只能由上层控制单选。
 FOUNDATION_EXPORT XZMocoaUpdatesKey const XZMocoaUpdatesKeySelect;
+FOUNDATION_EXPORT XZMocoaUpdatesKey const XZMocoaUpdatesKeyDeselect;
 
 @protocol XZMocoaView;
 
@@ -254,6 +255,7 @@ typedef NSString *XZMocoaKey NS_EXTENSIBLE_STRING_ENUM NS_SWIFT_NAME(XZMocoaView
 /// 没有 key 也可作为一种事件，或者称为默认事件，值为空字符串。
 FOUNDATION_EXPORT XZMocoaKey const XZMocoaKeyNone;
 FOUNDATION_EXPORT XZMocoaKey const XZMocoaKeyContentStatus;
+FOUNDATION_EXPORT XZMocoaKey const XZMocoaKeyIsChecked;
 
 /// 用于标记属性可以被添加 target-action 的属性或方法，仅起标记作用。
 /// @code
