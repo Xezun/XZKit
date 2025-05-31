@@ -149,6 +149,8 @@ NS_SWIFT_UI_ACTOR @protocol XZMocoaGridViewModelDelegate <XZMocoaViewModelDelega
 ///
 /// 需要主动设置 NSFetchedResultsController 的代理为当前视图模型，默认不会主动设置。
 @interface XZMocoaGridViewModel (NSFetchedResultsControllerDelegate) <NSFetchedResultsControllerDelegate>
+- (void)controllerWillChangeContent:(NSFetchedResultsController *)controller;
+- (void)controllerDidChangeContent:(NSFetchedResultsController *)controller;
 @end
 
 NS_ASSUME_NONNULL_END
