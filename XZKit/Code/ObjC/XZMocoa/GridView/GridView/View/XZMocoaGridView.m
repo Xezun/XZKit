@@ -31,7 +31,10 @@
         
         _contentView.frame = self.bounds;
         _contentView.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
-        [self addSubview:_contentView];
+        if (_contentView.superview != self) {
+            // 判断 superview 再决定是否添加，以避免从 IB 中初始化的情况下，改变视图层级
+            [self addSubview:_contentView];
+        }
         [self registerModule:self.viewModel.module];
         
         [self contentViewDidChange:oldValue];
