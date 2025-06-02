@@ -17,11 +17,11 @@
     return self;
 }
 
-- (NSInteger)numberOfModelsForSupplementaryKind:(XZMocoaKind)kind {
+- (NSInteger)numberOfModelsForSupplementaryElementOfKind:(XZMocoaKind)kind {
     return 0;
 }
 
-- (id)modelForSupplementaryKind:(XZMocoaKind)kind atIndex:(NSInteger)index {
+- (id)modelForSupplementaryElementOfKind:(XZMocoaKind)kind atIndex:(NSInteger)index {
     if (index == 0) {
         if ([kind isEqualToString:XZMocoaKindHeader]) {
             return self.headerModel;

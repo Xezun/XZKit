@@ -22,18 +22,18 @@ NS_ASSUME_NONNULL_BEGIN
 
 /// 附加视图的数量，默认 0 。
 /// - Parameter kind: 附加视图的类型
-- (NSInteger)numberOfModelsForSupplementaryKind:(XZMocoaKind)kind;
+- (NSInteger)numberOfModelsForSupplementaryElementOfKind:(XZMocoaKind)kind;
 /// 附加视图的数据。
 /// - Parameters:
 ///   - kind: 附加视图的类型
 ///   - index: 附加视图的位置
-- (nullable id)modelForSupplementaryKind:(XZMocoaKind)kind atIndex:(NSInteger)index;
+- (nullable id)modelForSupplementaryElementOfKind:(XZMocoaKind)kind atIndex:(NSInteger)index;
 
 /// Header 数据。
-/// @discussion 这是一个便利属性，重写`modelForSupplementaryKind:atIndex:`方法，可能使此属性失效。
+/// @discussion 这是一个便利属性，重写`modelForSupplementaryElementOfKind:atIndex:`方法，可能使此属性失效。
 @property (nonatomic, readonly, nullable) id headerModel;
 /// Footer 数据。
-/// @discussion 这是一个便利属性，重写`modelForSupplementaryKind:atIndex:`方法，可能使此属性失效。
+/// @discussion 这是一个便利属性，重写`modelForSupplementaryElementOfKind:atIndex:`方法，可能使此属性失效。
 @property (nonatomic, readonly, nullable) id footerModel;
 
 @end

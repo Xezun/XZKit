@@ -26,7 +26,7 @@ NS_ASSUME_NONNULL_BEGIN
 - (void)didReceiveUpdates:(XZMocoaUpdates *)updates;
 
 /// 所有 cell 视图模型。这是一个计算属性，除非遍历所有 cell 对象，请尽量避免直接使用。
-- (nullable __kindof XZMocoaGridViewSupplementaryViewModel *)viewModelForSupplementaryKind:(XZMocoaKind)kind atIndex:(NSInteger)index;
+- (nullable __kindof XZMocoaGridViewSupplementaryViewModel *)viewModelForSupplementaryElementOfKind:(XZMocoaKind)kind atIndex:(NSInteger)index;
 /// 直接返回了内部对象，外部请勿修改，使用请自行 copy 。
 @property (nonatomic, readonly) NSDictionary<XZMocoaKind, NSArray<__kindof XZMocoaGridViewSupplementaryViewModel *> *> *supplementaryViewModels;
 
@@ -114,10 +114,10 @@ NS_ASSUME_NONNULL_BEGIN
 - (nullable id)model:(nullable id)model modelForCellAtIndex:(NSInteger)index;
 /// 返回数据源 model 中指定 kind 类型的 Supplementary 数据的数量。
 /// 子类可以重写此方法，以自定义数据源的转换过程。
-- (NSInteger)model:(nullable id)model numberOfModelsForSupplementaryKind:(XZMocoaKind)kind;
+- (NSInteger)model:(nullable id)model numberOfModelsForSupplementaryElementOfKind:(XZMocoaKind)kind;
 /// 返回数据源 model 中指定位置 index 指定 kind 类型的 Supplementary 的数据。
 /// 子类可以重写此方法，以自定义数据源的转换过程。
-- (nullable id)model:(nullable id)model modelForSupplementaryKind:(XZMocoaKind)kind atIndex:(NSInteger)index;
+- (nullable id)model:(nullable id)model modelForSupplementaryElementOfKind:(XZMocoaKind)kind atIndex:(NSInteger)index;
 @end
 
 NS_ASSUME_NONNULL_END

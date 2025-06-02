@@ -55,8 +55,8 @@ pod 'XZMocoa'
 @optional
 @property (nonatomic, readonly) NSInteger numberOfCellModels;
 - (nullable id)modelForCellAtIndex:(NSInteger)index;
-- (NSInteger)numberOfModelsForSupplementaryKind:(XZMocoaKind)kind;
-- (nullable id)modelForSupplementaryKind:(XZMocoaKind)kind atIndex:(NSInteger)index;
+- (NSInteger)numberOfModelsForSupplementaryElementOfKind:(XZMocoaKind)kind;
+- (nullable id)modelForSupplementaryElementOfKind:(XZMocoaKind)kind atIndex:(NSInteger)index;
 @end
 ```
 

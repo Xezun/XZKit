@@ -120,7 +120,7 @@ typedef void(^XZMocoaGridDelayedUpdates)(XZMocoaGridViewSectionViewModel *self);
     return _cellViewModels.array;
 }
 
-- (XZMocoaViewModel *)viewModelForSupplementaryKind:(XZMocoaKind)kind atIndex:(NSInteger)index {
+- (XZMocoaViewModel *)viewModelForSupplementaryElementOfKind:(XZMocoaKind)kind atIndex:(NSInteger)index {
     return _supplementaryViewModels[kind][index];
 }
 
@@ -393,12 +393,12 @@ typedef void(^XZMocoaGridDelayedUpdates)(XZMocoaGridViewSectionViewModel *self);
     
     // 检查并更新 Supplementary
     for (XZMocoaKind const kind in self.superViewModel.supportedSupplementaryKinds) {
-        NSInteger const newCount = [self model:model numberOfModelsForSupplementaryKind:kind];
+        NSInteger const newCount = [self model:model numberOfModelsForSupplementaryElementOfKind:kind];
 
         NSMutableArray<XZMocoaViewModel *> * viewModels = _supplementaryViewModels[kind];
         
         for (NSInteger index = 0; index < newCount; index++) {
-            id const newDataModel = [self model:model modelForSupplementaryKind:kind atIndex:index];
+            id const newDataModel = [self model:model modelForSupplementaryElementOfKind:kind atIndex:index];
             
             if (index < viewModels.count) {
                 id const oldDataModel = viewModels[index].model;
@@ -539,9 +539,9 @@ typedef void(^XZMocoaGridDelayedUpdates)(XZMocoaGridViewSectionViewModel *self);
     id const model = self.model;
     
     for (XZMocoaKind kind in self.superViewModel.supportedSupplementaryKinds) {
-        NSInteger const count = [self model:model numberOfModelsForSupplementaryKind:kind];
+        NSInteger const count = [self model:model numberOfModelsForSupplementaryElementOfKind:kind];
         for (NSInteger index = 0; index < count; index++) {
-            id const dataModel = [self model:model modelForSupplementaryKind:kind atIndex:index];
+            id const dataModel = [self model:model modelForSupplementaryElementOfKind:kind atIndex:index];
             XZMocoaGridViewSupplementaryViewModel * const viewModel = [self makeViewModelWithModel:dataModel forSupplementaryElementOfKind:kind atIndex:index];
             if (_supplementaryViewModels[kind]) {
                 [_supplementaryViewModels[kind] addObject:viewModel];
@@ -711,12 +711,12 @@ typedef void(^XZMocoaGridDelayedUpdates)(XZMocoaGridViewSectionViewModel *self);
     return [((id<XZMocoaGridViewSectionModel>)model) numberOfCellModels];
 }
 
-- (nullable id)model:(nullable id)model modelForSupplementaryKind:(nonnull XZMocoaKind)kind atIndex:(NSInteger)index {
-    return [((id<XZMocoaGridViewSectionModel>)model) modelForSupplementaryKind:kind atIndex:index];
+- (nullable id)model:(nullable id)model modelForSupplementaryElementOfKind:(nonnull XZMocoaKind)kind atIndex:(NSInteger)index {
+    return [((id<XZMocoaGridViewSectionModel>)model) modelForSupplementaryElementOfKind:kind atIndex:index];
 }
 
-- (NSInteger)model:(nullable id)model numberOfModelsForSupplementaryKind:(nonnull XZMocoaKind)kind {
-    return [((id<XZMocoaGridViewSectionModel>)model) numberOfModelsForSupplementaryKind:kind];
+- (NSInteger)model:(nullable id)model numberOfModelsForSupplementaryElementOfKind:(nonnull XZMocoaKind)kind {
+    return [((id<XZMocoaGridViewSectionModel>)model) numberOfModelsForSupplementaryElementOfKind:kind];
 }
 
 @end

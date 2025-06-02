@@ -12,11 +12,11 @@
 @implementation XZMocoaTableViewSectionViewModel
 
 - (XZMocoaTableViewHeaderFooterViewModel *)headerViewModel {
-    return [self viewModelForSupplementaryKind:XZMocoaKindHeader atIndex:0];
+    return [self viewModelForSupplementaryElementOfKind:XZMocoaKindHeader atIndex:0];
 }
 
 - (XZMocoaTableViewHeaderFooterViewModel *)footerViewModel {
-    return [self viewModelForSupplementaryKind:XZMocoaKindFooter atIndex:0];
+    return [self viewModelForSupplementaryElementOfKind:XZMocoaKindFooter atIndex:0];
 }
 
 - (CGFloat)height {

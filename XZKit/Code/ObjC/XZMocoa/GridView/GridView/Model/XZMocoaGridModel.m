@@ -62,6 +62,26 @@
             };
             xz_objc_class_addMethodWithBlock(modelClass, selector, encoding, block, block, nil);
         }
+        
+        {
+            SEL const selector = @selector(numberOfModelsForSupplementaryElementOfKind:);
+            const char * const encoding = xz_objc_class_getMethodTypeEncoding([NSObject class], selector);
+            id const block = ^NSInteger(id<NSFetchedResultsSectionInfo> const self, XZMocoaKind kind) {
+                NSString * const name = self.name;
+                return name.length > 0 ? 1 : 0;
+            };
+            xz_objc_class_addMethodWithBlock(modelClass, selector, encoding, block, block, nil);
+        }
+        
+        {
+            SEL const selector = @selector(modelForSupplementaryElementOfKind:atIndex:);
+            const char * const encoding = xz_objc_class_getMethodTypeEncoding([NSObject class], selector);
+            id const block = ^id(id<NSFetchedResultsSectionInfo> const self, NSInteger index) {
+                NSString * const name = self.name;
+                return name;
+            };
+            xz_objc_class_addMethodWithBlock(modelClass, selector, encoding, block, block, nil);
+        }
     }
     
     return model;

@@ -11,8 +11,8 @@
 
 @implementation XZMocoaCollectionViewSectionViewModel
 
-- (__kindof XZMocoaCollectionViewSupplementaryViewModel *)viewModelForSupplementaryKind:(XZMocoaKind)kind atIndex:(NSInteger)index {
-    return [super viewModelForSupplementaryKind:kind atIndex:index];
+- (__kindof XZMocoaCollectionViewSupplementaryViewModel *)viewModelForSupplementaryElementOfKind:(XZMocoaKind)kind atIndex:(NSInteger)index {
+    return [super viewModelForSupplementaryElementOfKind:kind atIndex:index];
 }
 
 - (Class)placeholderViewModelClassForCellAtIndex:(NSInteger)index {
