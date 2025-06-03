@@ -185,15 +185,13 @@
 @end
 
 
-XZMocoaUpdatesKey const XZMocoaUpdatesKeyNone     = @"";
-XZMocoaUpdatesKey const XZMocoaUpdatesKeyReload   = @"XZMocoaUpdatesKeyReload";
-XZMocoaUpdatesKey const XZMocoaUpdatesKeyModify   = @"XZMocoaUpdatesKeyModify";
-XZMocoaUpdatesKey const XZMocoaUpdatesKeyInsert   = @"XZMocoaUpdatesKeyInsert";
-XZMocoaUpdatesKey const XZMocoaUpdatesKeyDelete   = @"XZMocoaUpdatesKeyDelete";
-XZMocoaUpdatesKey const XZMocoaUpdatesKeySelect   = @"XZMocoaUpdatesKeySelect";
-XZMocoaUpdatesKey const XZMocoaUpdatesKeyDeselect = @"XZMocoaUpdatesKeyDeselect";
-XZMocoaUpdatesKey const XZMocoaUpdatesKeyDidShow  = @"XZMocoaUpdatesKeyDidShow";
-XZMocoaUpdatesKey const XZMocoaUpdatesKeyDidHide  = @"XZMocoaUpdatesKeyDidHide";
+XZMocoaUpdatesKey const XZMocoaUpdatesKeyNone     = @"none";
+XZMocoaUpdatesKey const XZMocoaUpdatesKeyReload   = @"reload";
+XZMocoaUpdatesKey const XZMocoaUpdatesKeyModify   = @"modify";
+XZMocoaUpdatesKey const XZMocoaUpdatesKeyInsert   = @"insert";
+XZMocoaUpdatesKey const XZMocoaUpdatesKeyDelete   = @"delete";
+XZMocoaUpdatesKey const XZMocoaUpdatesKeySelect   = @"select";
+XZMocoaUpdatesKey const XZMocoaUpdatesKeyDeselect = @"deselect";
 
 @implementation XZMocoaViewModel (XZMocoaViewModelHierarchyEvents)
 
@@ -212,9 +210,21 @@ XZMocoaUpdatesKey const XZMocoaUpdatesKeyDidHide  = @"XZMocoaUpdatesKeyDidHide";
 @end
 
 
-XZMocoaKey const XZMocoaKeyNone = @"";
-XZMocoaKey const XZMocoaKeyContentStatus = @"contentStatus";
-XZMocoaKey const XZMocoaKeyIsChecked = @"isChecked";
+XZMocoaKey const XZMocoaKeyNone             = @"none";
+XZMocoaKey const XZMocoaKeyContentStatus    = @"contentStatus";
+XZMocoaKey const XZMocoaKeyIsChecked        = @"isChecked";
+XZMocoaKey const XZMocoaKeyText             = @"text";
+XZMocoaKey const XZMocoaKeyAttributedText   = @"attributedText";
+XZMocoaKey const XZMocoaKeyValue            = @"value";
+XZMocoaKey const XZMocoaKeyImage            = @"image";
+XZMocoaKey const XZMocoaKeyImageURL         = @"imageURL";
+XZMocoaKey const XZMocoaKeyName             = @"name";
+XZMocoaKey const XZMocoaKeyTitle            = @"title";
+XZMocoaKey const XZMocoaKeyAttributedTitle  = @"attributedTitle";
+XZMocoaKey const XZMocoaKeySubtitle         = @"subtitle";
+XZMocoaKey const XZMocoaKeyTextColor        = @"textColor";
+XZMocoaKey const XZMocoaKeyFont             = @"font";
+XZMocoaKey const XZMocoaKeyDetailText       = @"detailText";
 
 @implementation XZMocoaViewModel (XZMocoaViewModelTargetAction)
 
@@ -258,18 +268,6 @@ XZMocoaKey const XZMocoaKeyIsChecked = @"isChecked";
 
 @end
 
-XZMocoaKey const XZMocoaKeyText             = @"text";
-XZMocoaKey const XZMocoaKeyAttributedText   = @"attributedText";
-XZMocoaKey const XZMocoaKeyValue            = @"value";
-XZMocoaKey const XZMocoaKeyImage            = @"image";
-XZMocoaKey const XZMocoaKeyImageURL         = @"imageURL";
-XZMocoaKey const XZMocoaKeyName             = @"name";
-XZMocoaKey const XZMocoaKeyTitle            = @"title";
-XZMocoaKey const XZMocoaKeyAttributedTitle  = @"attributedTitle";
-XZMocoaKey const XZMocoaKeySubtitle         = @"subtitle";
-XZMocoaKey const XZMocoaKeyTextColor        = @"textColor";
-XZMocoaKey const XZMocoaKeyFont             = @"font";
-XZMocoaKey const XZMocoaKeyDetailText       = @"detailText";
 
 @implementation XZMocoaViewModel (XZStoryboardSupporting)
 

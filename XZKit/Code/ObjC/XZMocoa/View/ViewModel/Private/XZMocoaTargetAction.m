@@ -9,23 +9,40 @@
 #import "XZMocoaViewModel.h"
 @import ObjectiveC;
 @import XZObjcDescriptor;
+@import XZExtensions;
 
 @implementation XZMocoaTargetAction {
-    NSInteger _count;
-    XZObjcTypeDescriptor *_type;
+    /// action 的参数数量，不包括 self 和 SEL
+    NSInteger _numberOfArguments;
+    /// value 参数的值类型。
+    XZObjcTypeDescriptor *_valueArgumentType;
 }
 
 - (instancetype)initWithTarget:(id)target action:(SEL)action {
     self = [super init];
     if (self) {
-        Method const method = class_getInstanceMethod(object_getClass(target), action);
-        XZObjcMethodDescriptor * const descriptor = [XZObjcMethodDescriptor descriptorWithMethod:method];
-        
-        _count   = descriptor.argumentsTypes.count - 2;
-        NSAssert(_count <= 3, @"[XZMocoa] 通过视图模型的 %@ 方法绑定的方法，最多支持三个参数", NSStringFromSelector(@selector(addTarget:action:forKey:)));
-        _type    = (_count >= 1 ? descriptor.argumentsTypes[2] : nil);
         _target  = target;
         _action  = action;
+        
+        Method const method = class_getInstanceMethod(object_getClass(target), action);
+        
+        _numberOfArguments = method_getNumberOfArguments(method);
+        if (_numberOfArguments < 2) {
+            @throw [NSException exceptionWithName:NSGenericException reason:@"参数错误" userInfo:nil];
+        }
+        if (_numberOfArguments > 5) {
+            @throw [NSException exceptionWithName:NSGenericException reason:@"视图模型 target-action 机制最多支持三个参数" userInfo:nil];
+        }
+        _numberOfArguments -= 2;
+        
+        if (_numberOfArguments > 0) {
+            const char *encoding = method_copyArgumentType(method, 2);
+            _valueArgumentType = [XZObjcTypeDescriptor descriptorForObjcType:encoding];
+            free((void *)encoding);
+        } else {
+            _valueArgumentType = nil;
+        }
+        
         _handler = nil;
     }
     return self;
@@ -34,8 +51,8 @@
 - (instancetype)initWithTarget:(id)target handler:(XZMocoaTargetHandler)handler {
     self = [super init];
     if (self) {
-        _count   = -1;
-        _type    = nil;
+        _numberOfArguments = -1;
+        _valueArgumentType = nil;
         _target  = target;
         _action  = nil;
         _handler = [handler copy];
@@ -44,11 +61,7 @@
 }
 
 - (void)sendActionWithValue:(id)value forKey:(XZMocoaKey)key sender:(id)sender {
-    switch (_count) {
-        case -1: {
-            _handler(sender, _target, value, key);
-            break;
-        }
+    switch (_numberOfArguments) {
         case 0: {
             ((void (*)(id, SEL))objc_msgSend)(_target, _action);
             break;
@@ -56,18 +69,19 @@
         case 1:
         case 2:
         case 3: {
-            switch (_type.type) {
+            switch (_valueArgumentType.type) {
                 case XZObjcTypeUnknown: {
-                    void * const pointer = [(NSValue *)value pointerValue];
-                    switch (_count) {
+                    void *pointerValue = NULL;
+                    [(NSValue *)value getValue:&pointerValue size:sizeof(void *)];
+                    switch (_numberOfArguments) {
                         case 1:
-                            ((void (*)(id, SEL, void *))objc_msgSend)(_target, _action, pointer);
+                            ((void (*)(id, SEL, void *))objc_msgSend)(_target, _action, pointerValue);
                             break;
                         case 2:
-                            ((void (*)(id, SEL, void *, id))objc_msgSend)(_target, _action, pointer, key);
+                            ((void (*)(id, SEL, void *, id))objc_msgSend)(_target, _action, pointerValue, key);
                             break;
                         case 3:
-                            ((void (*)(id, SEL, void *, id, XZMocoaKey))objc_msgSend)(_target, _action, pointer, key, sender);
+                            ((void (*)(id, SEL, void *, id, XZMocoaKey))objc_msgSend)(_target, _action, pointerValue, key, sender);
                             break;
                         default:
                             break;
@@ -75,8 +89,9 @@
                     break;
                 }
                 case XZObjcTypeChar: {
-                    char const charValue = [value charValue];
-                    switch (_count) {
+                    char charValue = 0;
+                    [(NSValue *)value getValue:&charValue size:sizeof(char)];
+                    switch (_numberOfArguments) {
                         case 1:
                             ((void (*)(id, SEL, char))objc_msgSend)(_target, _action, charValue);
                             break;
@@ -92,8 +107,9 @@
                     break;
                 }
                 case XZObjcTypeUnsignedChar: {
-                    unsigned char const ucharValue = [value unsignedCharValue];
-                    switch (_count) {
+                    unsigned char ucharValue = 0;
+                    [(NSValue *)value getValue:&ucharValue size:sizeof(unsigned char)];
+                    switch (_numberOfArguments) {
                         case 1:
                             ((void (*)(id, SEL, unsigned char))objc_msgSend)(_target, _action, ucharValue);
                             break;
@@ -109,8 +125,9 @@
                     break;
                 }
                 case XZObjcTypeInt: {
-                    int const intValue = [value intValue];
-                    switch (_count) {
+                    int intValue = 0;
+                    [(NSValue *)value getValue:&intValue size:sizeof(int)];
+                    switch (_numberOfArguments) {
                         case 1:
                             ((void (*)(id, SEL, int))objc_msgSend)(_target, _action, intValue);
                             break;
@@ -126,8 +143,9 @@
                     break;
                 }
                 case XZObjcTypeUnsignedInt: {
-                    unsigned int const uintValue = [value unsignedIntValue];
-                    switch (_count) {
+                    unsigned int uintValue = 0;
+                    [(NSValue *)value getValue:&uintValue size:sizeof(unsigned int)];
+                    switch (_numberOfArguments) {
                         case 1:
                             ((void (*)(id, SEL, unsigned int))objc_msgSend)(_target, _action, uintValue);
                             break;
@@ -143,8 +161,9 @@
                     break;
                 }
                 case XZObjcTypeShort: {
-                    short const shortValue = [value shortValue];
-                    switch (_count) {
+                    short shortValue = 0;
+                    [(NSValue *)value getValue:&shortValue size:sizeof(short)];
+                    switch (_numberOfArguments) {
                         case 1:
                             ((void (*)(id, SEL, short))objc_msgSend)(_target, _action, shortValue);
                             break;
@@ -160,8 +179,9 @@
                     break;
                 }
                 case XZObjcTypeUnsignedShort: {
-                    unsigned short const ushortValue = [value unsignedShortValue];
-                    switch (_count) {
+                    unsigned short ushortValue = 0;
+                    [(NSValue *)value getValue:&ushortValue size:sizeof(unsigned short)];
+                    switch (_numberOfArguments) {
                         case 1:
                             ((void (*)(id, SEL, unsigned short))objc_msgSend)(_target, _action, ushortValue);
                             break;
@@ -177,8 +197,9 @@
                     break;
                 }
                 case XZObjcTypeLong: {
-                    long const longValue = [value longValue];
-                    switch (_count) {
+                    long longValue = 0;
+                    [(NSValue *)value getValue:&longValue size:sizeof(long)];
+                    switch (_numberOfArguments) {
                         case 1:
                             ((void (*)(id, SEL, long))objc_msgSend)(_target, _action, longValue);
                             break;
@@ -194,8 +215,9 @@
                     break;
                 }
                 case XZObjcTypeUnsignedLong: {
-                    unsigned long const ulongValue = [value unsignedLongValue];
-                    switch (_count) {
+                    unsigned long ulongValue = 0;
+                    [(NSValue *)value getValue:&ulongValue size:sizeof(unsigned long)];
+                    switch (_numberOfArguments) {
                         case 1:
                             ((void (*)(id, SEL, unsigned long))objc_msgSend)(_target, _action, ulongValue);
                             break;
@@ -211,8 +233,9 @@
                     break;
                 }
                 case XZObjcTypeLongLong: {
-                    long long const longlongValue = [value longLongValue];
-                    switch (_count) {
+                    long long longlongValue = 0;
+                    [(NSValue *)value getValue:&longlongValue size:sizeof(long long)];
+                    switch (_numberOfArguments) {
                         case 1:
                             ((void (*)(id, SEL, long long))objc_msgSend)(_target, _action, longlongValue);
                             break;
@@ -228,8 +251,9 @@
                     break;
                 }
                 case XZObjcTypeUnsignedLongLong: {
-                    unsigned long long const ulonglongValue = [value unsignedLongLongValue];
-                    switch (_count) {
+                    unsigned long long ulonglongValue = 0;
+                    [(NSValue *)value getValue:&ulonglongValue size:sizeof(unsigned long long)];
+                    switch (_numberOfArguments) {
                         case 1:
                             ((void (*)(id, SEL, unsigned long long))objc_msgSend)(_target, _action, ulonglongValue);
                             break;
@@ -245,8 +269,9 @@
                     break;
                 }
                 case XZObjcTypeFloat: {
-                    float const floatValue = [value floatValue];
-                    switch (_count) {
+                    float floatValue = 0;
+                    [(NSValue *)value getValue:&floatValue size:sizeof(float)];
+                    switch (_numberOfArguments) {
                         case 1:
                             ((void (*)(id, SEL, float))objc_msgSend)(_target, _action, floatValue);
                             break;
@@ -262,8 +287,9 @@
                     break;
                 }
                 case XZObjcTypeDouble: {
-                    double const doubleValue = [value doubleValue];
-                    switch (_count) {
+                    double doubleValue = 0;
+                    [(NSValue *)value getValue:&doubleValue size:sizeof(double)];
+                    switch (_numberOfArguments) {
                         case 1:
                             ((void (*)(id, SEL, double))objc_msgSend)(_target, _action, doubleValue);
                             break;
@@ -279,8 +305,9 @@
                     break;
                 }
                 case XZObjcTypeLongDouble: {
-                    long double const longDoubleValue = [value doubleValue];
-                    switch (_count) {
+                    long double longDoubleValue = 0;
+                    [(NSValue *)value getValue:&longDoubleValue size:sizeof(long double)];
+                    switch (_numberOfArguments) {
                         case 1:
                             ((void (*)(id, SEL, long double))objc_msgSend)(_target, _action, longDoubleValue);
                             break;
@@ -296,8 +323,9 @@
                     break;
                 }
                 case XZObjcTypeBool: {
-                    BOOL const boolValue = [value boolValue];
-                    switch (_count) {
+                    BOOL boolValue = 0;
+                    [(NSValue *)value getValue:&boolValue size:sizeof(BOOL)];
+                    switch (_numberOfArguments) {
                         case 1:
                             ((void (*)(id, SEL, BOOL))objc_msgSend)(_target, _action, boolValue);
                             break;
@@ -316,8 +344,9 @@
                     break;
                 }
                 case XZObjcTypeString: {
-                    char * const stringValue = (char *)[(NSValue *)value pointerValue];
-                    switch (_count) {
+                    char * stringValue = 0;
+                    [(NSValue *)value getValue:&stringValue size:sizeof(char *)];
+                    switch (_numberOfArguments) {
                         case 1:
                             ((void (*)(id, SEL, char *))objc_msgSend)(_target, _action, stringValue);
                             break;
@@ -333,8 +362,9 @@
                     break;
                 }
                 case XZObjcTypeSEL: {
-                    SEL const selectorValue = (SEL)[(NSValue *)value pointerValue];
-                    switch (_count) {
+                    SEL selectorValue = 0;
+                    [(NSValue *)value getValue:&selectorValue size:sizeof(SEL)];
+                    switch (_numberOfArguments) {
                         case 1:
                             ((void (*)(id, SEL, SEL))objc_msgSend)(_target, _action, selectorValue);
                             break;
@@ -350,8 +380,9 @@
                     break;
                 }
                 case XZObjcTypePointer: {
-                    void * const pointerValue = [(NSValue *)value pointerValue];
-                    switch (_count) {
+                    void * pointerValue = 0;
+                    [(NSValue *)value getValue:&pointerValue size:sizeof(void *)];
+                    switch (_numberOfArguments) {
                         case 1:
                             ((void (*)(id, SEL, void *))objc_msgSend)(_target, _action, pointerValue);
                             break;
@@ -367,8 +398,9 @@
                     break;
                 }
                 case XZObjcTypeArray: {
-                    void * const arrayValue = [(NSValue *)value pointerValue];
-                    switch (_count) {
+                    void * arrayValue = 0;
+                    [(NSValue *)value getValue:&arrayValue size:sizeof(void *)];
+                    switch (_numberOfArguments) {
                         case 1:
                             ((void (*)(id, SEL, void *))objc_msgSend)(_target, _action, arrayValue);
                             break;
@@ -384,161 +416,51 @@
                     break;
                 }
                 case XZObjcTypeBitField:
-                case XZObjcTypeUnion:
+                case XZObjcTypeUnion: {
+                    // 共用体的情况比较复杂，暂不支持：
+                    // 1. NSInvocation 不支持
+                    // 2. 不能简单地直接使用共用体的最大数据类型，因为数据在函数参数传递的过程中，会发生改变。
+                    // 在 testUnionConvertion 单元测试中，类型 {int, double} 的共用体，
+                    // a. 存储到 NSValue 中
+                    // b. 用 double 取出来
+                    // c. 然后赋值给参数类型为 double 的函数，
+                    // d. 即使函数实际参数是原始的共用体，也无法复原原始的共用体，大概是在步骤 c 中，数据发生了改变。
+                    break;
+                }
                 case XZObjcTypeStruct: {
-                    #pragma pack(push)
-                    #pragma pack(1)
-                    typedef struct { UInt8 a; }                 xz_size_t_1;
-                    typedef struct { UInt8 a; xz_size_t_1 b; }  xz_size_t_2;
-                    typedef struct { UInt8 a; xz_size_t_2 b; }  xz_size_t_3;
-                    typedef struct { UInt8 a; xz_size_t_3 b; }  xz_size_t_4;
-                    typedef struct { UInt8 a; xz_size_t_4 b; }  xz_size_t_5;
-                    typedef struct { UInt8 a; xz_size_t_5 b; }  xz_size_t_6;
-                    typedef struct { UInt8 a; xz_size_t_6 b; }  xz_size_t_7;
-                    typedef struct { UInt8 a; xz_size_t_7 b; }  xz_size_t_8;
-                    typedef struct { UInt8 a; xz_size_t_8 b; }  xz_size_t_9;
-                    typedef struct { UInt8 a; xz_size_t_9 b; }  xz_size_t_10;
-                    typedef struct { UInt8 a; xz_size_t_10 b; } xz_size_t_11;
-                    typedef struct { UInt8 a; xz_size_t_11 b; } xz_size_t_12;
-                    typedef struct { UInt8 a; xz_size_t_12 b; } xz_size_t_13;
-                    typedef struct { UInt8 a; xz_size_t_13 b; } xz_size_t_14;
-                    typedef struct { UInt8 a; xz_size_t_14 b; } xz_size_t_15;
-                    typedef struct { UInt8 a; xz_size_t_15 b; } xz_size_t_16;
-                    typedef struct { UInt8 a; xz_size_t_16 b; } xz_size_t_17;
-                    typedef struct { UInt8 a; xz_size_t_17 b; } xz_size_t_18;
-                    typedef struct { UInt8 a; xz_size_t_18 b; } xz_size_t_19;
-                    typedef struct { UInt8 a; xz_size_t_19 b; } xz_size_t_20;
-                    typedef struct { UInt8 a; xz_size_t_20 b; } xz_size_t_21;
-                    typedef struct { UInt8 a; xz_size_t_21 b; } xz_size_t_22;
-                    typedef struct { UInt8 a; xz_size_t_22 b; } xz_size_t_23;
-                    typedef struct { UInt8 a; xz_size_t_23 b; } xz_size_t_24;
-                    typedef struct { UInt8 a; xz_size_t_24 b; } xz_size_t_25;
-                    typedef struct { UInt8 a; xz_size_t_25 b; } xz_size_t_26;
-                    typedef struct { UInt8 a; xz_size_t_26 b; } xz_size_t_27;
-                    typedef struct { UInt8 a; xz_size_t_27 b; } xz_size_t_28;
-                    typedef struct { UInt8 a; xz_size_t_28 b; } xz_size_t_29;
-                    typedef struct { UInt8 a; xz_size_t_29 b; } xz_size_t_30;
-                    typedef struct { UInt8 a; xz_size_t_30 b; } xz_size_t_31;
-                    typedef struct { UInt8 a; xz_size_t_31 b; } xz_size_t_32;
-                    typedef struct { UInt8 a; xz_size_t_32 b; } xz_size_t_33;
-                    typedef struct { UInt8 a; xz_size_t_33 b; } xz_size_t_34;
-                    typedef struct { UInt8 a; xz_size_t_34 b; } xz_size_t_35;
-                    typedef struct { UInt8 a; xz_size_t_35 b; } xz_size_t_36;
-                    typedef struct { UInt8 a; xz_size_t_36 b; } xz_size_t_37;
-                    typedef struct { UInt8 a; xz_size_t_37 b; } xz_size_t_38;
-                    typedef struct { UInt8 a; xz_size_t_38 b; } xz_size_t_39;
-                    typedef struct { UInt8 a; xz_size_t_39 b; } xz_size_t_40;
-                    typedef struct { UInt8 a; xz_size_t_40 b; } xz_size_t_41;
-                    typedef struct { UInt8 a; xz_size_t_41 b; } xz_size_t_42;
-                    typedef struct { UInt8 a; xz_size_t_42 b; } xz_size_t_43;
-                    typedef struct { UInt8 a; xz_size_t_43 b; } xz_size_t_44;
-                    typedef struct { UInt8 a; xz_size_t_44 b; } xz_size_t_45;
-                    typedef struct { UInt8 a; xz_size_t_45 b; } xz_size_t_46;
-                    typedef struct { UInt8 a; xz_size_t_46 b; } xz_size_t_47;
-                    typedef struct { UInt8 a; xz_size_t_47 b; } xz_size_t_48;
-                    typedef struct { UInt8 a; xz_size_t_48 b; } xz_size_t_49;
-                    typedef struct { UInt8 a; xz_size_t_49 b; } xz_size_t_50;
-                    typedef struct { UInt8 a; xz_size_t_50 b; } xz_size_t_51;
-                    typedef struct { UInt8 a; xz_size_t_51 b; } xz_size_t_52;
-                    typedef struct { UInt8 a; xz_size_t_52 b; } xz_size_t_53;
-                    typedef struct { UInt8 a; xz_size_t_53 b; } xz_size_t_54;
-                    typedef struct { UInt8 a; xz_size_t_54 b; } xz_size_t_55;
-                    typedef struct { UInt8 a; xz_size_t_55 b; } xz_size_t_56;
-                    typedef struct { UInt8 a; xz_size_t_56 b; } xz_size_t_57;
-                    typedef struct { UInt8 a; xz_size_t_57 b; } xz_size_t_58;
-                    typedef struct { UInt8 a; xz_size_t_58 b; } xz_size_t_59;
-                    typedef struct { UInt8 a; xz_size_t_59 b; } xz_size_t_60;
-                    typedef struct { UInt8 a; xz_size_t_60 b; } xz_size_t_61;
-                    typedef struct { UInt8 a; xz_size_t_61 b; } xz_size_t_62;
-                    typedef struct { UInt8 a; xz_size_t_62 b; } xz_size_t_63;
-                    typedef struct { UInt8 a; xz_size_t_63 b; } xz_size_t_64;
-                    #pragma pack(pop)
+                    void *buffer = calloc(_valueArgumentType.size, 1);
+                    [(NSValue *)value getValue:buffer size:_valueArgumentType.size];
                     
-                    #define case_type_size(_size_) \
-                    case _size_: { \
-                        __NSX_PASTE__(xz_size_t_, _size_) cValue = {0}; \
-                        [(NSValue *)value getValue:&value size:_size_]; \
-                        switch (_count) { \
-                            case 1: \
-                                ((void (*)(id, SEL, __NSX_PASTE__(xz_size_t_, _size_)))objc_msgSend)(_target, _action, cValue); \
-                                break; \
-                            case 2: \
-                                ((void (*)(id, SEL, __NSX_PASTE__(xz_size_t_, _size_), id))objc_msgSend)(_target, _action, cValue, key); \
-                                break; \
-                            case 3: \
-                                ((void (*)(id, SEL, __NSX_PASTE__(xz_size_t_, _size_), id, XZMocoaKey))objc_msgSend)(_target, _action, cValue, key, sender); \
-                                break; \
-                            default: \
-                                break; \
-                        } \
-                        break; \
-                    }
-                    switch (_type.size) {
-                        case_type_size(1);
-                        case_type_size(2);
-                        case_type_size(3);
-                        case_type_size(4);
-                        case_type_size(5);
-                        case_type_size(6);
-                        case_type_size(7);
-                        case_type_size(8);
-                        case_type_size(9);
-                        case_type_size(10);
-                        case_type_size(11);
-                        case_type_size(12);
-                        case_type_size(13);
-                        case_type_size(14);
-                        case_type_size(15);
-                        case_type_size(16);
-                        case_type_size(17);
-                        case_type_size(18);
-                        case_type_size(19);
-                        case_type_size(20);
-                        case_type_size(31);
-                        case_type_size(32);
-                        case_type_size(33);
-                        case_type_size(34);
-                        case_type_size(35);
-                        case_type_size(36);
-                        case_type_size(37);
-                        case_type_size(38);
-                        case_type_size(39);
-                        case_type_size(40);
-                        case_type_size(41);
-                        case_type_size(42);
-                        case_type_size(43);
-                        case_type_size(44);
-                        case_type_size(45);
-                        case_type_size(46);
-                        case_type_size(47);
-                        case_type_size(48);
-                        case_type_size(49);
-                        case_type_size(50);
-                        case_type_size(51);
-                        case_type_size(52);
-                        case_type_size(53);
-                        case_type_size(54);
-                        case_type_size(55);
-                        case_type_size(56);
-                        case_type_size(57);
-                        case_type_size(58);
-                        case_type_size(59);
-                        case_type_size(60);
-                        case_type_size(61);
-                        case_type_size(62);
-                        case_type_size(63);
-                        case_type_size(64);
-                        default:
-                            break;
-                    }
-                    #undef case_type_size
+                    Method              const method     = class_getInstanceMethod(object_getClass(_target), _action);
+                    NSMethodSignature * const signature  = [NSMethodSignature signatureWithObjCTypes:method_getTypeEncoding(method)];
+                    NSInvocation *      const invocation = [NSInvocation invocationWithMethodSignature:signature];
                     
+                    invocation.target   = _target;
+                    invocation.selector = _action;
+                    for (int i = 0; i < _numberOfArguments; i++) {
+                        switch (i) {
+                            case 0:
+                                [invocation setArgument:buffer atIndex:2];
+                                break;
+                            case 1:
+                                [invocation setArgument:(__bridge void *)key atIndex:3];
+                                break;
+                            case 2:
+                                [invocation setArgument:(__bridge void *)sender atIndex:4];
+                                break;
+                            default:
+                                break;
+                        }
+                    }
+                    [invocation invoke];
+                    
+                    free(buffer);
                     break;
                 }
                 case XZObjcTypeClass:
                 case XZObjcTypeObject:
                 default: {
-                    switch (_count) {
+                    switch (_numberOfArguments) {
                         case 1:
                             ((void (*)(id, SEL, id))objc_msgSend)(_target, _action, value);
                             break;

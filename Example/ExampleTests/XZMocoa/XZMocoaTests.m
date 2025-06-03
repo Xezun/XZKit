@@ -8,6 +8,13 @@
 #import <XCTest/XCTest.h>
 @import XZMocoa;
 @import XZDefines;
+@import XZExtensions;
+
+typedef void (*FoobarFunction) (void);
+union FoobarUnion { int a; double b; };
+
+static void fooFunction(void) { }
+static void barFunction(void) { }
 
 @interface XZMocoaTests : XCTestCase
 
@@ -26,44 +33,110 @@
 - (void)testExample {
     XZMocoaViewModel *viewModel = [[XZMocoaViewModel alloc] initWithModel:nil];
     
-    [viewModel addTarget:self action:@selector(boolValueChanged:) forKey:@"boolValue"];
-    [viewModel sendActionsForKey:@"boolValue" value:@(YES)];
-    [viewModel sendActionsForKey:@"boolValue" value:@(NO)];
+    [viewModel addTarget:self action:@selector(functionPointerValueChanged:) forKey:@"functionPointer"];
+    [viewModel sendActionsForKey:@"functionPointer" value:[NSValue valueWithPointer:fooFunction]];
+    [viewModel sendActionsForKey:@"functionPointer" value:[NSValue valueWithPointer:barFunction]];
     
-    [viewModel addTarget:self action:@selector(int8ValueChanged:) forKey:@"int8Value"];
-    [viewModel sendActionsForKey:@"int8Value" value:@(123)];
-    [viewModel sendActionsForKey:@"int8Value" value:@(-123)];
+    [viewModel addTarget:self action:@selector(charValueChanged:) forKey:@"char"];
+    [viewModel sendActionsForKey:@"char" value:@((char)'a')];
+    [viewModel sendActionsForKey:@"char" value:@((char)'z')];
     
-    [viewModel addTarget:self action:@selector(int16ValueChanged:) forKey:@"int16Value"];
-    [viewModel sendActionsForKey:@"int16Value" value:@((int16_t)123)];
-    [viewModel sendActionsForKey:@"int16Value" value:@((int16_t)-123)];
+    [viewModel addTarget:self action:@selector(unsignedCharValueChanged:) forKey:@"unsignedChar"];
+    [viewModel sendActionsForKey:@"unsignedChar" value:@((unsigned char)100)];
+    [viewModel sendActionsForKey:@"unsignedChar" value:@((unsigned char)240)];
     
-    [viewModel addTarget:self action:@selector(int32ValueChanged:) forKey:@"int32Value"];
-    [viewModel sendActionsForKey:@"int32Value" value:@((int32_t)123)];
-    [viewModel sendActionsForKey:@"int32Value" value:@((int32_t)-123)];
+    [viewModel addTarget:self action:@selector(intValueChanged:) forKey:@"int"];
+    [viewModel sendActionsForKey:@"int" value:@((int)+123)];
+    [viewModel sendActionsForKey:@"int" value:@((int)-123)];
     
-    [viewModel addTarget:self action:@selector(int64ValueChanged:) forKey:@"int64Value"];
-    [viewModel sendActionsForKey:@"int64Value" value:@(123)];
-    [viewModel sendActionsForKey:@"int64Value" value:@(-123)];
+    [viewModel addTarget:self action:@selector(unsignedIntValueChanged:) forKey:@"unsignedInt"];
+    [viewModel sendActionsForKey:@"unsignedInt" value:@((unsigned int)+123)];
+    [viewModel sendActionsForKey:@"unsignedInt" value:@((unsigned int)-123)];
     
-    [viewModel addTarget:self action:@selector(integerValueChanged:) forKey:@"integerValue"];
-    [viewModel sendActionsForKey:@"integerValue" value:@((NSInteger)123)];
-    [viewModel sendActionsForKey:@"integerValue" value:@((NSInteger)-123)];
+    [viewModel addTarget:self action:@selector(shortValueChanged:) forKey:@"short"];
+    [viewModel sendActionsForKey:@"short" value:@((short)+100)];
+    [viewModel sendActionsForKey:@"short" value:@((short)+240)];
     
-    [viewModel addTarget:self action:@selector(floatValueChanged:) forKey:@"floatValue"];
-    [viewModel sendActionsForKey:@"floatValue" value:@(12.35)];
-    [viewModel sendActionsForKey:@"floatValue" value:@(-1.23)];
+    [viewModel addTarget:self action:@selector(unsignedShortValueChanged:) forKey:@"unsignedShort"];
+    [viewModel sendActionsForKey:@"unsignedShort" value:@((unsigned short)+100)];
+    [viewModel sendActionsForKey:@"unsignedShort" value:@((unsigned short)+240)];
+    
+    [viewModel addTarget:self action:@selector(longValueChanged:) forKey:@"long"];
+    [viewModel sendActionsForKey:@"long" value:@((long)+100)];
+    [viewModel sendActionsForKey:@"long" value:@((long)+240)];
+    
+    [viewModel addTarget:self action:@selector(unsignedLongValueChanged:) forKey:@"unsignedLong"];
+    [viewModel sendActionsForKey:@"unsignedLong" value:@((unsigned long)+100)];
+    [viewModel sendActionsForKey:@"unsignedLong" value:@((unsigned long)+240)];
+    
+    [viewModel addTarget:self action:@selector(longLongValueChanged:) forKey:@"longLong"];
+    [viewModel sendActionsForKey:@"longLong" value:@((long long)+100)];
+    [viewModel sendActionsForKey:@"longLong" value:@((long long)+240)];
+    
+    [viewModel addTarget:self action:@selector(unsignedLongValueChanged:) forKey:@"unsignedLongLong"];
+    [viewModel sendActionsForKey:@"unsignedLongLong" value:@((unsigned long long)+100)];
+    [viewModel sendActionsForKey:@"unsignedLongLong" value:@((unsigned long long)+240)];
+    
+    [viewModel addTarget:self action:@selector(floatValueChanged:) forKey:@"float"];
+    [viewModel sendActionsForKey:@"float" value:@((float)100)];
+    [viewModel sendActionsForKey:@"float" value:@((float)240)];
+    
+    [viewModel addTarget:self action:@selector(doubleValueChanged:) forKey:@"double"];
+    [viewModel sendActionsForKey:@"double" value:@((double)100)];
+    [viewModel sendActionsForKey:@"double" value:@((double)240)];
+    
+    [viewModel addTarget:self action:@selector(boolValueChanged:) forKey:@"bool"];
+    [viewModel sendActionsForKey:@"bool" value:@(YES)];
+    
+    [viewModel addTarget:self action:@selector(stringValueChanged:) forKey:@"string"];
+    {
+        char *foo = "foo"; char *bar = "bar";
+        [viewModel sendActionsForKey:@"string" value:[NSValue valueWithPointer:foo]];
+        [viewModel sendActionsForKey:@"string" value:[NSValue valueWithPointer:bar]];
+    }
+    
+    
+    [viewModel addTarget:self action:@selector(selectorValueChanged:) forKey:@"selector"];
+    [viewModel sendActionsForKey:@"selector" value:[NSValue valueWithPointer:(void *)(@selector(selectorValueChanged:))]];
+    [viewModel sendActionsForKey:@"selector" value:[NSValue valueWithPointer:(void *)(@selector(pointerValueChanged:))]];
+    
+    [viewModel addTarget:self action:@selector(pointerValueChanged:) forKey:@"pointer"];
+    {
+        int foo = 100; float bar = 200;
+        [viewModel sendActionsForKey:@"pointer" value:[NSValue valueWithPointer:&foo]];
+        [viewModel sendActionsForKey:@"pointer" value:[NSValue valueWithPointer:&bar]];
+    }
+    
+    [viewModel addTarget:self action:@selector(arrayValueChanged:) forKey:@"array"];
+    {
+        int foo[3] = { 1, 2, 3 };
+        [viewModel sendActionsForKey:@"array" value:[NSValue valueWithPointer:foo]];
+    }
+    
+    [viewModel addTarget:self action:@selector(unionValueChanged:) forKey:@"union"];
+    {
+        union FoobarUnion foo;
+        foo.a = 100;
+        [viewModel sendActionsForKey:@"union" value:[NSValue valueWithBytes:&foo objCType:@encode(union FoobarUnion)]];
+        foo.b = 200;
+        [viewModel sendActionsForKey:@"union" value:[NSValue valueWithBytes:&foo objCType:@encode(union FoobarUnion)]];
+    }
+    
+    [viewModel addTarget:self action:@selector(rectValueChanged:) forKey:@"rect"];
+    [viewModel sendActionsForKey:@"rect" value:@(CGRectMake(10, 20, 30, 40))];
+    [viewModel sendActionsForKey:@"rect" value:@(CGRectMake(40, 30, 20, 10))];
+    
+    [viewModel addTarget:self action:@selector(edgeInsetsValueChanged:) forKey:@"edgeInsets"];
+    [viewModel sendActionsForKey:@"edgeInsets" value:@(UIEdgeInsetsMake(10, 20, 30, 40))];
+    [viewModel sendActionsForKey:@"edgeInsets" value:@(UIEdgeInsetsMake(40, 30, 20, 10))];
+    
+    [viewModel addTarget:self action:@selector(classValueChanged:) forKey:@"class"];
+    [viewModel sendActionsForKey:@"class" value:NSObject.class];
+    [viewModel sendActionsForKey:@"class" value:NSProxy.class];
 
-    [viewModel addTarget:self action:@selector(doubleValueChanged:) forKey:@"doubleValue"];
-    [viewModel sendActionsForKey:@"doubleValue" value:@(12.35)];
-    [viewModel sendActionsForKey:@"doubleValue" value:@(-1.23)];
-
-    [viewModel addTarget:self action:@selector(rectValueChanged:) forKey:@"rectValue"];
-    [viewModel sendActionsForKey:@"rectValue" value:@(CGRectMake(10, 20, 30, 40))];
-    [viewModel sendActionsForKey:@"rectValue" value:@(CGRectMake(30, 20, 10, 50))];
-    
-    [viewModel addTarget:self action:@selector(pointerValueChanged:) forKey:@"pointerValue"];
-    [viewModel sendActionsForKey:@"pointerValue" value:[NSValue valueWithPointer:(__bridge const void * _Nullable)(self)]];
+    [viewModel addTarget:self action:@selector(objectValueChanged:key:target:) forKey:@"object"];
+    [viewModel sendActionsForKey:@"object" value:self];
+    [viewModel sendActionsForKey:@"object" value:viewModel];
 }
 
 - (void)testPerformanceExample {
@@ -73,44 +146,160 @@
     }];
 }
 
-- (void)boolValueChanged:(BOOL)value {
-    XZLog(@"%d", value);
+- (void)functionPointerValueChanged:(FoobarFunction)value {
+    XCTAssert(value == fooFunction || value == barFunction);
 }
 
-- (void)int8ValueChanged:(int8_t)value {
-    XZLog(@"%d", value);
+- (void)charValueChanged:(char)value {
+    XCTAssert(value == 'a' || value == 'z');
 }
 
-- (void)int16ValueChanged:(int16_t)value {
-    XZLog(@"%d", value);
+- (void)unsignedCharValueChanged:(unsigned char)value {
+    XCTAssert(value == 100 || value == 240);
 }
 
-- (void)int32ValueChanged:(int32_t)value {
-    XZLog(@"%d", value);
+- (void)intValueChanged:(int)value {
+    XCTAssert(value == 123 || value == -123);
 }
 
-- (void)int64ValueChanged:(int64_t)value {
-    XZLog(@"%lld", value);
+- (void)unsignedIntValueChanged:(unsigned int)value {
+    XCTAssert(value == 123 || value == -123);
 }
 
-- (void)integerValueChanged:(NSInteger)value {
-    XZLog(@"%ld", value);
+- (void)shortValueChanged:(short)value {
+    XCTAssert(value == 100 || value == 240);
+}
+
+- (void)unsignedShortValueChanged:(unsigned short)value {
+    XCTAssert(value == 100 || value == 240);
+}
+
+- (void)longValueChanged:(long)value {
+    XCTAssert(value == 100 || value == 240);
+}
+
+- (void)unsignedLongValueChanged:(unsigned long)value {
+    XCTAssert(value == 100 || value == 240);
+}
+
+- (void)longLongValueChanged:(long long)value {
+    XCTAssert(value == 100 || value == 240);
+}
+
+- (void)unsignedLongLongValueChanged:(unsigned long long)value {
+    XCTAssert(value == 100 || value == 240);
 }
 
 - (void)floatValueChanged:(float)value {
-    XZLog(@"%f", value);
+    XCTAssert(value == 100 || value == 240);
 }
 
 - (void)doubleValueChanged:(double)value {
-    XZLog(@"%f", value);
+    XCTAssert(value == 100 || value == 240);
 }
 
-- (void)rectValueChanged:(CGRect)value {
-    XZLog(@"%@", NSStringFromCGRect(value));
+- (void)boolValueChanged:(BOOL)value {
+    XCTAssert(value == YES);
+}
+
+// void
+
+- (void)stringValueChanged:(char *)value {
+    XCTAssert(strcmp(value, "foo") == 0 || strcmp(value, "bar") == 0);
+}
+
+- (void)selectorValueChanged:(SEL)value {
+    XCTAssert(value == @selector(selectorValueChanged:) || value == @selector(pointerValueChanged:));
 }
 
 - (void)pointerValueChanged:(void *)value {
-    XZLog(@"%p - %p", self, value);
+    XCTAssert(*((int *)value) == 100 || *((float *)value) == 200);
+}
+
+- (void)arrayValueChanged:(int[3])value {
+    XCTAssert(value[0] == 1 || value[1] == 2 || value[2] == 3);
+}
+
+// bitfield
+
+- (void)unionValueChanged:(union FoobarUnion)value {
+    XCTAssert(value.a == 100 || value.b == 200);
+}
+
+- (void)rectValueChanged:(CGRect)value {
+    XCTAssert(CGRectEqualToRect(value, CGRectMake(10, 20, 30, 40)) || CGRectEqualToRect(value, CGRectMake(40, 30, 20, 10)));
+}
+
+- (void)edgeInsetsValueChanged:(UIEdgeInsets)value {
+    XCTAssert(UIEdgeInsetsEqualToEdgeInsets(value, UIEdgeInsetsMake(10, 20, 30, 40)) || UIEdgeInsetsEqualToEdgeInsets(value, UIEdgeInsetsMake(40, 30, 20, 10)));
+}
+
+- (void)classValueChanged:(Class)value {
+    XCTAssert(value == NSObject.class || value == NSProxy.class);
+}
+
+- (void)objectValueChanged:(id)value key:(XZMocoaKey)key target:(id)target {
+    XCTAssert([key isEqualToString:@"object"]);
+    XCTAssert(value == self || value == target);
+}
+
+
+- (void)testUnionConvertion {
+    {
+        union FoobarUnion u;
+        u.a = 100;
+        
+        ((void (*)(id,SEL,int))(objc_msgSend))(self, @selector(printIntValue:), *(int *)&u);
+        
+        u.b = 200;
+        ((void (*)(id,SEL,double))(objc_msgSend))(self, @selector(printDoubleValue:), *(double *)&u);
+    }
+    
+    {
+        union FoobarUnion u;
+        u.a = 100;
+        NSValue *value = [NSValue valueWithBytes:&u objCType:@encode(union FoobarUnion)];
+        
+        union FoobarUnion n;
+        [value getValue:&n size:sizeof(union FoobarUnion)];
+        [self printUnionValueA:n];
+        
+        double d = 0;
+        [value getValue:&d size:sizeof(union FoobarUnion)];
+        [self printUnionValueA:*(union FoobarUnion *)&d];
+        
+        ((void (*)(id,SEL,double))(objc_msgSend))(self, @selector(printUnionValueA:), d);
+        
+        typedef void (*FoobarImp)(id,SEL,double);
+        Method method = class_getInstanceMethod(self.class, @selector(printUnionValueA:));
+        FoobarImp imp = (FoobarImp)method_getImplementation(method);
+        imp(self, @selector(printUnionValueA:), d);
+    }
+    {
+        union FoobarUnion u;
+        u.b = 200;
+        NSValue *value = [NSValue valueWithBytes:&u objCType:@encode(union FoobarUnion)];
+        
+        double d = 0;
+        [value getValue:&d size:sizeof(double)];
+        ((void (*)(id,SEL,double))(objc_msgSend))(self, @selector(printUnionValueB:), d);
+    }
+}
+
+- (void)printIntValue:(int)aValue {
+    NSLog(@"%d", aValue);
+}
+
+- (void)printDoubleValue:(double)aValue {
+    NSLog(@"%f", aValue);
+}
+
+- (void)printUnionValueA:(union FoobarUnion)aValue {
+    NSLog(@"%d", aValue.a);
+}
+
+- (void)printUnionValueB:(union FoobarUnion)aValue {
+    NSLog(@"%f", aValue.b);
 }
 
 @end

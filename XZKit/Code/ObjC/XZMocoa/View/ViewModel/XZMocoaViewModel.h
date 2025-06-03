@@ -24,11 +24,26 @@ NS_SWIFT_UI_ACTOR @protocol XZMocoaViewModel <NSObject>
 @optional
 - (nullable UIViewController *)viewModel:(id<XZMocoaViewModel>)viewModel viewController:(void * _Nullable)null;
 @end
-   
-/// 视图模型 ViewModel 基类。为视图模型提供了`ready`机制、层级关系等基础功能。
-/// - Note: 本基类为简化开发而提供，并非 module 必须，可选。
+
+/// 为简化开发，Mocoa 提供的视图模型基类。
+///
+/// - 延迟初始化的 ready 机制。
+/// - 层级关系。
+/// - 下层模块 到 上层模块 的 Updates 事件机制。
+/// - 视图监听视图模型属性的 target-action 机制。
+///
+/// **数据监听**
+///
+/// 对数据的监听是 MVVM 设计模式的特色之一，但在 iOS 实际开发中，数据在大部分情形下，都是单向流动的，类似从网络请求到页面展示的场景居多。
+/// 双向的数据流动的业务场景也有，但在开发中并不多。鉴于此，默认情况下 XZMocoa 不监听数据 Model 的变更。
+/// 而对于要监听数据的变化的少量情形，我们可以通过传统的方式处理，比如的 KVO 或通知。
+///
+/// - 数据在视图模型外更新，通过 KVO 或通知监听。
+/// - 数据在视图模型中更新：下层视图模型，可通过 Updates 机制通知上层模型；上层视图模型，定义统一的方法直接调用。
+/// - 在视图中，通过 target-action 机制绑定。
 @interface XZMocoaViewModel : NSObject <XZMocoaViewModel>
 
+/// 视图模型事件的代理，通常为视图。
 @property (nonatomic, weak) id<XZMocoaViewModelDelegate> delegate;
 
 /// 当前视图模型所属的模块。一般情况下，此属性并非必须。
@@ -38,65 +53,7 @@ NS_SWIFT_UI_ACTOR @protocol XZMocoaViewModel <NSObject>
 
 /// 数据。
 ///
-/// - Note: 属性可写是为兼容 Swift 结构体数据类型，默认情况下，修改属性除修改数据外，不执行任何操作。
-///
-/// 在实际开发中，数据在大部分情形下，都是单向流动，比如从网络/缓存到页面展示，双向的数据流动的业务场景并不多，视图模型只需要处理数据一次即可。
-///
-/// 基于此，默认情况下 XZMocoa 认为数据始终不变，视图模型不会监听数据 Model 的变更。而对于要监听数据的变化的少量情形，我们可以传统的通过 KVO 或通知方式来处理。
-///
-/// - 数据在视图模型外更新，视图模型监听。
-///
-/// ```objc
-/// - (void)prepare {
-///     [super prepare];
-///     [self.model addObserver:self forKeyPath:@"aKey" options:NSKeyValueObservingOptionNew context:nil];
-/// }
-/// - (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary<NSKeyValueChangeKey,id> *)change context:(void *)context {
-///     if ([keyPath isEqualToString:@"aKey"]) {
-///         // do sth
-///     } else {
-///         [super observeValueForKeyPath:keyPath ofObject:object change:change context:context];
-///     }
-/// }
-/// ```
-///
-/// - 视图模型更新数据，建议提供精细化的方法，来触发数据的变更。
-///
-/// > 比如在 XZMocoaTableView 中，如果 section 数据发生更新，就可以通过如下方法来通知视图模型处理。
-///
-/// ```objc
-/// @implementation TableViewSectionViewModel
-///
-/// // 视图的删除按钮事件的绑定方法
-/// - (void)deleteDataAtIndex:(NSInteger)index sender:(id)sender {
-///     NSMutableArray *array = (id)self.model;
-///     [array removeObjectAtIndex:index]; // 更新数据
-///     [self deleteCellAtIndex:index];    // 更新视图
-/// }
-///
-/// @end
-/// ```
-/// 虽然方法略显笨拙，但是学习成本更低，且效率更高，且相比引入一套高负载的监听机制，在成本上更低廉。
-///
-/// - 具有从属关系的视图模型，可以通过 Updates 机制，将事件传递给上级视图模型处理。
-///
-/// ```swift
-/// class TableViewCellViewModel: XZMocoaTableViewCellViewModel {
-///
-///     func deleteButtonAction() {
-///         // cell 受 table 管理，自身是没办法删除的（使用 CoreData 除外，因为 fetchedController 具有监听数据的作用），所以需要将事件传递给上层处理。
-///         sendUpdates(forKey: .delete, value: nil)
-///     }
-///
-///     func showAllButtonAction() {
-///         // cell 自行更新数据
-///         self.model.showAll = true;
-///         // 如果高度变化，重载 cell 需要上层 table 处理
-///         sendUpdates(forKey: .reload, value: nil)
-///     }
-///
-/// }
-/// ```
+/// > 属性可写是为兼容 Swift 结构体数据类型，默认情况下，修改属性除修改数据外，不执行任何操作。
 @property (nonatomic, strong, nullable) id model;
 
 /// 视图在列表中的排序。
@@ -211,6 +168,7 @@ FOUNDATION_EXPORT XZMocoaUpdatesKey const XZMocoaUpdatesKeyInsert;
 FOUNDATION_EXPORT XZMocoaUpdatesKey const XZMocoaUpdatesKeyDelete;
 /// 选择操作。比如单选 cell 时，只能由上层控制单选。
 FOUNDATION_EXPORT XZMocoaUpdatesKey const XZMocoaUpdatesKeySelect;
+/// 反选操作。
 FOUNDATION_EXPORT XZMocoaUpdatesKey const XZMocoaUpdatesKeyDeselect;
 
 @protocol XZMocoaView;
@@ -254,8 +212,24 @@ typedef NSString *XZMocoaKey NS_EXTENSIBLE_STRING_ENUM NS_SWIFT_NAME(XZMocoaView
 
 /// 没有 key 也可作为一种事件，或者称为默认事件，值为空字符串。
 FOUNDATION_EXPORT XZMocoaKey const XZMocoaKeyNone;
+
+// 以下为常用的 key
+@class UILabel, UIButton, UIImageView;
+
 FOUNDATION_EXPORT XZMocoaKey const XZMocoaKeyContentStatus;
 FOUNDATION_EXPORT XZMocoaKey const XZMocoaKeyIsChecked;
+FOUNDATION_EXPORT XZMocoaKey const XZMocoaKeyText;
+FOUNDATION_EXPORT XZMocoaKey const XZMocoaKeyAttributedText;
+FOUNDATION_EXPORT XZMocoaKey const XZMocoaKeyValue;
+FOUNDATION_EXPORT XZMocoaKey const XZMocoaKeyImage;
+FOUNDATION_EXPORT XZMocoaKey const XZMocoaKeyImageURL;
+FOUNDATION_EXPORT XZMocoaKey const XZMocoaKeyName;
+FOUNDATION_EXPORT XZMocoaKey const XZMocoaKeyTitle;
+FOUNDATION_EXPORT XZMocoaKey const XZMocoaKeyAttributedTitle;
+FOUNDATION_EXPORT XZMocoaKey const XZMocoaKeySubtitle;
+FOUNDATION_EXPORT XZMocoaKey const XZMocoaKeyTextColor;
+FOUNDATION_EXPORT XZMocoaKey const XZMocoaKeyFont;
+FOUNDATION_EXPORT XZMocoaKey const XZMocoaKeyDetailText;
 
 /// 用于标记属性可以被添加 target-action 的属性或方法，仅起标记作用。
 /// @code
@@ -325,23 +299,6 @@ FOUNDATION_EXPORT XZMocoaKey const XZMocoaKeyIsChecked;
 @end
 
 @class UIControl;
-
-// 以下为常用的 key
-
-@class UILabel, UIButton, UIImageView;
-
-FOUNDATION_EXPORT XZMocoaKey const XZMocoaKeyText;
-FOUNDATION_EXPORT XZMocoaKey const XZMocoaKeyAttributedText;
-FOUNDATION_EXPORT XZMocoaKey const XZMocoaKeyValue;
-FOUNDATION_EXPORT XZMocoaKey const XZMocoaKeyImage;
-FOUNDATION_EXPORT XZMocoaKey const XZMocoaKeyImageURL;
-FOUNDATION_EXPORT XZMocoaKey const XZMocoaKeyName;
-FOUNDATION_EXPORT XZMocoaKey const XZMocoaKeyTitle;
-FOUNDATION_EXPORT XZMocoaKey const XZMocoaKeyAttributedTitle;
-FOUNDATION_EXPORT XZMocoaKey const XZMocoaKeySubtitle;
-FOUNDATION_EXPORT XZMocoaKey const XZMocoaKeyTextColor;
-FOUNDATION_EXPORT XZMocoaKey const XZMocoaKeyFont;
-FOUNDATION_EXPORT XZMocoaKey const XZMocoaKeyDetailText;
 
 @interface XZMocoaViewModel (XZStoryboardSupporting)
 
