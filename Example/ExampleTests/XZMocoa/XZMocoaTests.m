@@ -11,7 +11,7 @@
 @import XZExtensions;
 
 typedef void (*FoobarFunction) (void);
-union FoobarUnion { int a; double b; };
+union FoobarUnion { double b; int a; };
 
 static void fooFunction(void) { }
 static void barFunction(void) { }
@@ -245,6 +245,33 @@ static void barFunction(void) { }
 
 
 - (void)testUnionConvertion {
+    NSLog(@"%lu == %lu", sizeof(double), sizeof(union FoobarUnion));
+    {
+        union FoobarUnion u;
+        
+        {
+            u.b = 0x123456;
+            double b = 0x123456;
+            UInt8 *byteU = (UInt8 *)&u;
+            NSLog(@"%02X%02X%02X%02X%02X%02X%02X%02X", byteU[0],byteU[1],byteU[2],byteU[3],byteU[4],byteU[5],byteU[6],byteU[7]);
+            
+            UInt8 *byteB = (UInt8 *)&b;
+            NSLog(@"%02X%02X%02X%02X%02X%02X%02X%02X", byteB[0],byteB[1],byteB[2],byteB[3],byteB[4],byteB[5],byteB[6],byteB[7]); // 0000000056343241
+        }
+        
+        {
+            u.a = 0x123456;
+            NSInteger a = 0x123456;
+            UInt8 *byteU = (UInt8 *)&u;
+            NSLog(@"%02X%02X%02X%02X%02X%02X%02X%02X", byteU[0],byteU[1],byteU[2],byteU[3],byteU[4],byteU[5],byteU[6],byteU[7]);
+            
+            UInt8 *byteB = (UInt8 *)&a;
+            NSLog(@"%02X%02X%02X%02X%02X%02X%02X%02X", byteB[0],byteB[1],byteB[2],byteB[3],byteB[4],byteB[5],byteB[6],byteB[7]); // 5634120000000000
+        }
+        
+        // double 类型：1 符号位，11 指数位，52 小数位
+    }
+    
     {
         union FoobarUnion u;
         u.a = 100;
@@ -274,6 +301,28 @@ static void barFunction(void) { }
         Method method = class_getInstanceMethod(self.class, @selector(printUnionValueA:));
         FoobarImp imp = (FoobarImp)method_getImplementation(method);
         imp(self, @selector(printUnionValueA:), d);
+        
+        void *buffer = calloc(1, sizeof(double));
+        [value getValue:buffer size:sizeof(union FoobarUnion)];
+        [self printUnionValueA:*(union FoobarUnion *)buffer];
+        
+        ((void (*)(id,SEL,double))(objc_msgSend))(self, @selector(printUnionValueA:), *(double *)buffer);
+        imp(self, @selector(printUnionValueA:), *(double *)buffer);
+        
+        double b = 0;
+        union FoobarUnion c;
+        memcpy(&b, buffer, sizeof(double));
+        memcpy(&c, buffer, sizeof(union FoobarUnion));
+        ((void (*)(id,SEL,double))(objc_msgSend))(self, @selector(printUnionValueA:), b);
+        imp(self, @selector(printUnionValueA:), b);
+        
+        [self printUnionValueA:c];
+        
+        union FoobarUnion e;
+        memcpy(&e, &b, sizeof(double));
+        [self printUnionValueA:c];
+        
+        free(buffer);
     }
     {
         union FoobarUnion u;
