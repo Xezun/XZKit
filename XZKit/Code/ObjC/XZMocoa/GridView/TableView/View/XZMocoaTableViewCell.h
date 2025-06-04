@@ -44,7 +44,7 @@ NS_ASSUME_NONNULL_BEGIN
 /// @param tableView cell 所在的容器视图
 /// @param indexPath cell 在容器视图中的位置
 /// @param key 更新事件类型
-- (void)tableView:(id<XZMocoaTableView>)tableView didEditRowAtIndexPath:(NSIndexPath *)indexPath forUpdatesKey:(XZMocoaUpdatesKey)key NS_SWIFT_NAME(tableView(_:didEditRowAt:forUpdates:));
+- (void)tableView:(id<XZMocoaTableView>)tableView didEditRowAtIndexPath:(NSIndexPath *)indexPath forUpdatesKey:(XZMocoaUpdatesKey)key completion:(void (^_Nullable)(BOOL succeed))completion NS_SWIFT_NAME(tableView(_:didEditRowAt:forUpdates:completion:));
 @end
 
 NS_ASSUME_NONNULL_END
