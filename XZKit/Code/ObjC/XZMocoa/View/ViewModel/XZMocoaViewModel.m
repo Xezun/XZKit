@@ -225,6 +225,11 @@ XZMocoaKey const XZMocoaKeySubtitle         = @"subtitle";
 XZMocoaKey const XZMocoaKeyTextColor        = @"textColor";
 XZMocoaKey const XZMocoaKeyFont             = @"font";
 XZMocoaKey const XZMocoaKeyDetailText       = @"detailText";
+XZMocoaKey const XZMocoaKeyStartAnimating   = @"startAnimating";
+XZMocoaKey const XZMocoaKeyStopAnimating    = @"stopAnimating";
+XZMocoaKey const XZMocoaKeyIsRefreshing     = @"isRefreshing";
+XZMocoaKey const XZMocoaKeyIsRequesting     = @"isRequesting";
+XZMocoaKey const XZMocoaKeyIsLoading        = @"isLoading";
 
 @implementation XZMocoaViewModel (XZMocoaViewModelTargetAction)
 
@@ -264,6 +269,10 @@ XZMocoaKey const XZMocoaKeyDetailText       = @"detailText";
 
 - (id)valueForUndefinedKey:(NSString *)key {
     return nil;
+}
+
+- (void)setValue:(id)value forUndefinedKey:(NSString *)key {
+    
 }
 
 @end

@@ -230,6 +230,11 @@ FOUNDATION_EXPORT XZMocoaKey const XZMocoaKeySubtitle;
 FOUNDATION_EXPORT XZMocoaKey const XZMocoaKeyTextColor;
 FOUNDATION_EXPORT XZMocoaKey const XZMocoaKeyFont;
 FOUNDATION_EXPORT XZMocoaKey const XZMocoaKeyDetailText;
+FOUNDATION_EXPORT XZMocoaKey const XZMocoaKeyStartAnimating;
+FOUNDATION_EXPORT XZMocoaKey const XZMocoaKeyStopAnimating;
+FOUNDATION_EXPORT XZMocoaKey const XZMocoaKeyIsRefreshing;
+FOUNDATION_EXPORT XZMocoaKey const XZMocoaKeyIsRequesting;
+FOUNDATION_EXPORT XZMocoaKey const XZMocoaKeyIsLoading;
 
 /// 用于标记属性可以被添加 target-action 的属性或方法，仅起标记作用。
 /// @code
@@ -245,18 +250,27 @@ FOUNDATION_EXPORT XZMocoaKey const XZMocoaKeyDetailText;
 
 /// 添加 target-action 事件。调用此方法不会触发 action 方法。
 ///
-/// @attention
-/// 绑定的 action 方法，必须无返回值，因为没有针对返回值的内存管理，可能会引起泄漏。
+/// @li 方法 action 必须无返回值，因为没有针对返回值的内存管理，可能会引起泄漏。
+/// @li 方法 action 的 value 参数不建议为 union 类型，除非 union 类型的大小为 1/2/4/8/16/32/64/128 字节。
+/// @li 参数 action 方法形式如下：
 ///
-/// 参数 action 可使用的方法形式如下：
 /// @code
 /// - (void)action;
-/// - (void)action:(nullable id)value;
-/// - (void)action:(nullable id)value forKey:(XZMocoaKey)key;
-/// - (void)action:(nullable id)value forKey:(XZMocoaKey)key sender:(XZMocoaViewModel *)sender;
+/// - (void)didChangeValue:(nullable id)value;
+/// - (void)key:(XZMocoaKey *)key didChangeValue:(nullable id)value;
+/// - (void)viewModel:(XZMocoaViewModel *)sender key:(XZMocoaKey)key didChangeValue:(nullable id)value;
 /// @endcode
 ///
-/// 因为对于视图而言，大部分情况下都是绑定视图模型的值变化，所以绑定方法的第一个参数为 key 对应 value 值。
+/// 使用示例：
+///
+/// @code
+/// // 绑定 startAnimating 事件
+/// [viewModel addTarget:indicator action:@selector(startAnimating) forKey:XZMocoaKeyStartAnimating value:nil];
+/// // 绑定 text 属性，并赋初始值 initialValue
+/// [viewModel addTarget:label action:@selector(setText:) forKey:XZMocoaKeyText value:@"initialValue"];
+/// // 绑定 image 属性，不赋初始值
+/// [viewModel addTarget:imageView action:@selector(setImage:) forKey:XZMocoaKeyImage];
+/// @endcode
 ///
 /// @param target 接收事件的对象
 /// @param action 执行事件的方法
