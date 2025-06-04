@@ -35,12 +35,33 @@
         }
         _numberOfArguments -= 2;
         
-        if (_numberOfArguments > 0) {
-            const char *encoding = method_copyArgumentType(method, 2);
-            _valueArgumentType = [XZObjcTypeDescriptor descriptorForObjcType:encoding];
-            free((void *)encoding);
-        } else {
-            _valueArgumentType = nil;
+        switch (_numberOfArguments) {
+            case 0: {
+                _valueArgumentType = nil;
+                break;
+            }
+            case 1: {
+                const char *encoding = method_copyArgumentType(method, 2);
+                _valueArgumentType = [XZObjcTypeDescriptor descriptorForObjcType:encoding];
+                free((void *)encoding);
+                break;
+            }
+            case 2: {
+                const char *encoding = method_copyArgumentType(method, 3);
+                _valueArgumentType = [XZObjcTypeDescriptor descriptorForObjcType:encoding];
+                free((void *)encoding);
+                break;
+            }
+            case 3: {
+                const char *encoding = method_copyArgumentType(method, 4);
+                _valueArgumentType = [XZObjcTypeDescriptor descriptorForObjcType:encoding];
+                free((void *)encoding);
+                break;
+            }
+            default: {
+                _valueArgumentType = nil;
+                break;
+            }
         }
         
         _handler = nil;
@@ -90,6 +111,7 @@
                 }
                 case XZObjcTypeChar: {
                     char charValue = 0;
+                    // 使用 getValue:size: 而不是 charValue 取值，是为了避免没有使用 NSNumber 而是直接使用 NSValue 封装的标量值
                     [(NSValue *)value getValue:&charValue size:sizeof(char)];
                     switch (_numberOfArguments) {
                         case 1:
@@ -418,13 +440,153 @@
                 case XZObjcTypeBitField:
                 case XZObjcTypeUnion: {
                     // 共用体的情况比较复杂，暂不支持：
-                    // 1. NSInvocation 不支持
+                    // 1. NSInvocation 不支持带自定义共用体参数的方法。
                     // 2. 不能简单地直接使用共用体的最大数据类型，因为数据在函数参数传递的过程中，会发生改变。
-                    // 在 testUnionConvertion 单元测试中，类型 {int, double} 的共用体，
-                    // a. 存储到 NSValue 中
+                    //
+                    // 在 testUnionConvertion 单元测试中，假如有类型为 {int, double} 的共用体，
+                    // a. 将共用体存储到 NSValue 中
                     // b. 用 double 取出来
-                    // c. 然后赋值给参数类型为 double 的函数，
-                    // d. 即使函数实际参数是原始的共用体，也无法复原原始的共用体，大概是在步骤 c 中，数据发生了改变。
+                    // c. 由于在然后将 double 赋值给参数类型为 double 的函数
+                    // d. 使用 double 类型通过 objc_msgSend 发送消息
+                    // 即使函数实际参数是原始的共用体，也无法复原原始的共用体，因为 double 内存布局为 1 符号位，11 指数位，52 小数位
+                    // 如果存储 int 值，那么实际只填充了前12位，那么这个 double 会因为没有小数位，而被认为实际是 0
+                    size_t const size = _valueArgumentType.size;
+                    if (size < 2) {
+                        UInt8 bitValue = 0;
+                        [(NSValue *)value getValue:&bitValue size:sizeof(UInt8)];
+                        switch (_numberOfArguments) {
+                            case 1:
+                                ((void (*)(id, SEL, UInt8))objc_msgSend)(_target, _action, bitValue);
+                                break;
+                            case 2:
+                                ((void (*)(id, SEL, UInt8, id))objc_msgSend)(_target, _action, bitValue, key);
+                                break;
+                            case 3:
+                                ((void (*)(id, SEL, UInt8, id, XZMocoaKey))objc_msgSend)(_target, _action, bitValue, key, sender);
+                                break;
+                            default:
+                                break;
+                        }
+                    } else if (size < 4) {
+                        UInt16 bitValue = 0;
+                        [(NSValue *)value getValue:&bitValue size:sizeof(UInt16)];
+                        switch (_numberOfArguments) {
+                            case 1:
+                                ((void (*)(id, SEL, UInt16))objc_msgSend)(_target, _action, bitValue);
+                                break;
+                            case 2:
+                                ((void (*)(id, SEL, UInt16, id))objc_msgSend)(_target, _action, bitValue, key);
+                                break;
+                            case 3:
+                                ((void (*)(id, SEL, UInt16, id, XZMocoaKey))objc_msgSend)(_target, _action, bitValue, key, sender);
+                                break;
+                            default:
+                                break;
+                        }
+                    } else if (size < 8) {
+                        UInt32 bitValue = 0;
+                        [(NSValue *)value getValue:&bitValue size:sizeof(UInt32)];
+                        switch (_numberOfArguments) {
+                            case 1:
+                                ((void (*)(id, SEL, UInt32))objc_msgSend)(_target, _action, bitValue);
+                                break;
+                            case 2:
+                                ((void (*)(id, SEL, UInt32, id))objc_msgSend)(_target, _action, bitValue, key);
+                                break;
+                            case 3:
+                                ((void (*)(id, SEL, UInt32, id, XZMocoaKey))objc_msgSend)(_target, _action, bitValue, key, sender);
+                                break;
+                            default:
+                                break;
+                        }
+                    } else if (size < 16) {
+                        UInt64 bitValue = 0;
+                        [(NSValue *)value getValue:&bitValue size:sizeof(UInt64)];
+                        switch (_numberOfArguments) {
+                            case 1:
+                                ((void (*)(id, SEL, UInt64))objc_msgSend)(_target, _action, bitValue);
+                                break;
+                            case 2:
+                                ((void (*)(id, SEL, UInt64, id))objc_msgSend)(_target, _action, bitValue, key);
+                                break;
+                            case 3:
+                                ((void (*)(id, SEL, UInt64, id, XZMocoaKey))objc_msgSend)(_target, _action, bitValue, key, sender);
+                                break;
+                            default:
+                                break;
+                        }
+                    } else if (size < 32) {
+                        typedef struct { UInt64 a; UInt64 b; } XZ_UInt128;
+                        XZ_UInt128 bitValue = {0};
+                        [(NSValue *)value getValue:&bitValue size:sizeof(XZ_UInt128)];
+                        switch (_numberOfArguments) {
+                            case 1:
+                                ((void (*)(id, SEL, XZ_UInt128))objc_msgSend)(_target, _action, bitValue);
+                                break;
+                            case 2:
+                                ((void (*)(id, SEL, XZ_UInt128, id))objc_msgSend)(_target, _action, bitValue, key);
+                                break;
+                            case 3:
+                                ((void (*)(id, SEL, XZ_UInt128, id, XZMocoaKey))objc_msgSend)(_target, _action, bitValue, key, sender);
+                                break;
+                            default:
+                                break;
+                        }
+                    } else if (size < 64) {
+                        typedef struct { UInt64 a; UInt64 b; UInt64 c; UInt64 d; } XZ_UInt256;
+                        XZ_UInt256 bitValue = {0};
+                        [(NSValue *)value getValue:&bitValue size:sizeof(XZ_UInt256)];
+                        switch (_numberOfArguments) {
+                            case 1:
+                                ((void (*)(id, SEL, XZ_UInt256))objc_msgSend)(_target, _action, bitValue);
+                                break;
+                            case 2:
+                                ((void (*)(id, SEL, XZ_UInt256, id))objc_msgSend)(_target, _action, bitValue, key);
+                                break;
+                            case 3:
+                                ((void (*)(id, SEL, XZ_UInt256, id, XZMocoaKey))objc_msgSend)(_target, _action, bitValue, key, sender);
+                                break;
+                            default:
+                                break;
+                        }
+                    } else if (size < 128) {
+                        typedef struct { UInt64 a; UInt64 b; UInt64 c; UInt64 d; UInt64 e; UInt64 f; UInt64 g; UInt64 h; } XZ_UInt512;
+                        XZ_UInt512 bitValue = {0};
+                        [(NSValue *)value getValue:&bitValue size:sizeof(XZ_UInt512)];
+                        switch (_numberOfArguments) {
+                            case 1:
+                                ((void (*)(id, SEL, XZ_UInt512))objc_msgSend)(_target, _action, bitValue);
+                                break;
+                            case 2:
+                                ((void (*)(id, SEL, XZ_UInt512, id))objc_msgSend)(_target, _action, bitValue, key);
+                                break;
+                            case 3:
+                                ((void (*)(id, SEL, XZ_UInt512, id, XZMocoaKey))objc_msgSend)(_target, _action, bitValue, key, sender);
+                                break;
+                            default:
+                                break;
+                        }
+                    } else {
+                        typedef struct {
+                            UInt64 a; UInt64 b; UInt64 c; UInt64 d; UInt64 e; UInt64 f; UInt64 g; UInt64 h;
+                            UInt64 i; UInt64 j; UInt64 k; UInt64 l; UInt64 m; UInt64 n; UInt64 o; UInt64 p;
+                        } XZ_UInt1024;
+                        XZ_UInt1024 bitValue = {0};
+                        [(NSValue *)value getValue:&bitValue size:sizeof(XZ_UInt1024)];
+                        switch (_numberOfArguments) {
+                            case 1:
+                                ((void (*)(id, SEL, XZ_UInt1024))objc_msgSend)(_target, _action, bitValue);
+                                break;
+                            case 2:
+                                ((void (*)(id, SEL, XZ_UInt1024, id))objc_msgSend)(_target, _action, bitValue, key);
+                                break;
+                            case 3:
+                                ((void (*)(id, SEL, XZ_UInt1024, id, XZMocoaKey))objc_msgSend)(_target, _action, bitValue, key, sender);
+                                break;
+                            default:
+                                break;
+                        }
+                    }
                     break;
                 }
                 case XZObjcTypeStruct: {
