@@ -189,6 +189,9 @@ NS_SWIFT_NAME(XZMocoaModule.SubmoduleCollection)
 
 @interface XZMocoaModule (XZMocoaExtendedModule)
 
+/// 列表
+@property (nonatomic, strong, null_resettable) XZMocoaModule *list;
+
 #pragma mark - 为 tableView、collectionView 提供的便利方法
 
 /// UITableView 或 UICollectionView 模块的默认的 section 模块。

@@ -54,6 +54,11 @@
     return self;
 }
 
++ (instancetype)viewModelWithMocoaURL:(NSURL *)mocoaURL model:(nullable id)model {
+    XZMocoaModule *module = [XZMocoaModule moduleForURL:mocoaURL];
+    return [[module.viewModelClass alloc] initWithModel:model];
+}
+
 - (void)ready {
     if (_isReady) {
         return;

@@ -63,6 +63,8 @@ NS_SWIFT_UI_ACTOR @protocol XZMocoaViewModel <NSObject>
 /// @param model 数据
 - (instancetype)initWithModel:(nullable id)model NS_DESIGNATED_INITIALIZER;
 
++ (nullable instancetype)viewModelWithMocoaURL:(NSURL *)mocoaURL model:(nullable id)model NS_SWIFT_NAME(init(_:model:));
+
 /// 是否已完成初始化。
 ///
 /// 关于 ready 机制

@@ -339,14 +339,22 @@ FOUNDATION_STATIC_INLINE NSString *XZMocoaPathCreate(XZMocoaKind kind, XZMocoaNa
 
 @implementation XZMocoaModule (XZMocoaExtendedModule)
 
+- (XZMocoaModule *)list {
+    return [self submoduleForKind:XZMocoaKindDefault forName:XZMocoaNameList];
+}
+
+- (void)setList:(XZMocoaModule *)list {
+    [self setSubmodule:list forKind:XZMocoaKindDefault forName:XZMocoaNameList];
+}
+
 #pragma mark - 为 tableView、collectionView 提供的便利方法
 
 - (XZMocoaModule *)section {
-    return [self submoduleForKind:XZMocoaKindDefault forName:XZMocoaNameDefault];
+    return [self submoduleForKind:XZMocoaKindSection forName:XZMocoaNameDefault];
 }
 
 - (void)setSection:(XZMocoaModule *)section {
-    [self setSubmodule:section forKind:XZMocoaKindDefault forName:XZMocoaNameDefault];
+    [self setSubmodule:section forKind:XZMocoaKindSection forName:XZMocoaNameDefault];
 }
 
 - (XZMocoaModule *)sectionForName:(XZMocoaName)name {
