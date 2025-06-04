@@ -99,10 +99,10 @@
                             ((void (*)(id, SEL, void *))objc_msgSend)(_target, _action, pointerValue);
                             break;
                         case 2:
-                            ((void (*)(id, SEL, void *, id))objc_msgSend)(_target, _action, pointerValue, key);
+                            ((void (*)(id, SEL, XZMocoaKey, void *))objc_msgSend)(_target, _action, key, pointerValue);
                             break;
                         case 3:
-                            ((void (*)(id, SEL, void *, id, XZMocoaKey))objc_msgSend)(_target, _action, pointerValue, key, sender);
+                            ((void (*)(id, SEL, id, XZMocoaKey, void *))objc_msgSend)(_target, _action, sender, key, pointerValue);
                             break;
                         default:
                             break;
@@ -118,10 +118,10 @@
                             ((void (*)(id, SEL, char))objc_msgSend)(_target, _action, charValue);
                             break;
                         case 2:
-                            ((void (*)(id, SEL, char, id))objc_msgSend)(_target, _action, charValue, key);
+                            ((void (*)(id, SEL, XZMocoaKey, char))objc_msgSend)(_target, _action, key, charValue);
                             break;
                         case 3:
-                            ((void (*)(id, SEL, char, id, XZMocoaKey))objc_msgSend)(_target, _action, charValue, key, sender);
+                            ((void (*)(id, SEL, id, XZMocoaKey, char))objc_msgSend)(_target, _action, sender, key, charValue);
                             break;
                         default:
                             break;
@@ -136,10 +136,10 @@
                             ((void (*)(id, SEL, unsigned char))objc_msgSend)(_target, _action, ucharValue);
                             break;
                         case 2:
-                            ((void (*)(id, SEL, unsigned char, id))objc_msgSend)(_target, _action, ucharValue, key);
+                            ((void (*)(id, SEL, XZMocoaKey, unsigned char))objc_msgSend)(_target, _action, key, ucharValue);
                             break;
                         case 3:
-                            ((void (*)(id, SEL, unsigned char, id, XZMocoaKey))objc_msgSend)(_target, _action, ucharValue, key, sender);
+                            ((void (*)(id, SEL, id, XZMocoaKey, unsigned char))objc_msgSend)(_target, _action, sender, key, ucharValue);
                             break;
                         default:
                             break;
@@ -154,10 +154,10 @@
                             ((void (*)(id, SEL, int))objc_msgSend)(_target, _action, intValue);
                             break;
                         case 2:
-                            ((void (*)(id, SEL, int, id))objc_msgSend)(_target, _action, intValue, key);
+                            ((void (*)(id, SEL, XZMocoaKey, int))objc_msgSend)(_target, _action, key, intValue);
                             break;
                         case 3:
-                            ((void (*)(id, SEL, int, id, XZMocoaKey))objc_msgSend)(_target, _action, intValue, key, sender);
+                            ((void (*)(id, SEL, id, XZMocoaKey, int))objc_msgSend)(_target, _action, sender, key, intValue);
                             break;
                         default:
                             break;
@@ -172,10 +172,10 @@
                             ((void (*)(id, SEL, unsigned int))objc_msgSend)(_target, _action, uintValue);
                             break;
                         case 2:
-                            ((void (*)(id, SEL, unsigned int, id))objc_msgSend)(_target, _action, uintValue, key);
+                            ((void (*)(id, SEL, XZMocoaKey, unsigned int))objc_msgSend)(_target, _action, key, uintValue);
                             break;
                         case 3:
-                            ((void (*)(id, SEL, unsigned int, id, XZMocoaKey))objc_msgSend)(_target, _action, uintValue, key, sender);
+                            ((void (*)(id, SEL, id, XZMocoaKey, unsigned int))objc_msgSend)(_target, _action, sender, key, uintValue);
                             break;
                         default:
                             break;
@@ -190,10 +190,10 @@
                             ((void (*)(id, SEL, short))objc_msgSend)(_target, _action, shortValue);
                             break;
                         case 2:
-                            ((void (*)(id, SEL, short, id))objc_msgSend)(_target, _action, shortValue, key);
+                            ((void (*)(id, SEL, XZMocoaKey, short))objc_msgSend)(_target, _action, key, shortValue);
                             break;
                         case 3:
-                            ((void (*)(id, SEL, short, id, XZMocoaKey))objc_msgSend)(_target, _action, shortValue, key, sender);
+                            ((void (*)(id, SEL, id, XZMocoaKey, short))objc_msgSend)(_target, _action, sender, key, shortValue);
                             break;
                         default:
                             break;
@@ -208,10 +208,10 @@
                             ((void (*)(id, SEL, unsigned short))objc_msgSend)(_target, _action, ushortValue);
                             break;
                         case 2:
-                            ((void (*)(id, SEL, unsigned short, id))objc_msgSend)(_target, _action, ushortValue, key);
+                            ((void (*)(id, SEL, XZMocoaKey, unsigned short))objc_msgSend)(_target, _action, key, ushortValue);
                             break;
                         case 3:
-                            ((void (*)(id, SEL, unsigned short, id, XZMocoaKey))objc_msgSend)(_target, _action, ushortValue, key, sender);
+                            ((void (*)(id, SEL, id, XZMocoaKey, unsigned short))objc_msgSend)(_target, _action, sender, key, ushortValue);
                             break;
                         default:
                             break;
@@ -226,10 +226,10 @@
                             ((void (*)(id, SEL, long))objc_msgSend)(_target, _action, longValue);
                             break;
                         case 2:
-                            ((void (*)(id, SEL, long, id))objc_msgSend)(_target, _action, longValue, key);
+                            ((void (*)(id, SEL, XZMocoaKey, long))objc_msgSend)(_target, _action, key, longValue);
                             break;
                         case 3:
-                            ((void (*)(id, SEL, long, id, XZMocoaKey))objc_msgSend)(_target, _action, longValue, key, sender);
+                            ((void (*)(id, SEL, id, XZMocoaKey, long))objc_msgSend)(_target, _action, sender, key, longValue);
                             break;
                         default:
                             break;
@@ -244,10 +244,10 @@
                             ((void (*)(id, SEL, unsigned long))objc_msgSend)(_target, _action, ulongValue);
                             break;
                         case 2:
-                            ((void (*)(id, SEL, unsigned long, id))objc_msgSend)(_target, _action, ulongValue, key);
+                            ((void (*)(id, SEL, XZMocoaKey, unsigned long))objc_msgSend)(_target, _action, key, ulongValue);
                             break;
                         case 3:
-                            ((void (*)(id, SEL, unsigned long, id, XZMocoaKey))objc_msgSend)(_target, _action, ulongValue, key, sender);
+                            ((void (*)(id, SEL, id, XZMocoaKey, unsigned long))objc_msgSend)(_target, _action, sender, key, ulongValue);
                             break;
                         default:
                             break;
@@ -262,10 +262,10 @@
                             ((void (*)(id, SEL, long long))objc_msgSend)(_target, _action, longlongValue);
                             break;
                         case 2:
-                            ((void (*)(id, SEL, long long, id))objc_msgSend)(_target, _action, longlongValue, key);
+                            ((void (*)(id, SEL, XZMocoaKey, long long))objc_msgSend)(_target, _action, key, longlongValue);
                             break;
                         case 3:
-                            ((void (*)(id, SEL, long long, id, XZMocoaKey))objc_msgSend)(_target, _action, longlongValue, key, sender);
+                            ((void (*)(id, SEL, id, XZMocoaKey, long long))objc_msgSend)(_target, _action, sender, key, longlongValue);
                             break;
                         default:
                             break;
@@ -280,10 +280,10 @@
                             ((void (*)(id, SEL, unsigned long long))objc_msgSend)(_target, _action, ulonglongValue);
                             break;
                         case 2:
-                            ((void (*)(id, SEL, unsigned long long, id))objc_msgSend)(_target, _action, ulonglongValue, key);
+                            ((void (*)(id, SEL, XZMocoaKey, unsigned long long))objc_msgSend)(_target, _action, key, ulonglongValue);
                             break;
                         case 3:
-                            ((void (*)(id, SEL, unsigned long long, id, XZMocoaKey))objc_msgSend)(_target, _action, ulonglongValue, key, sender);
+                            ((void (*)(id, SEL, id, XZMocoaKey, unsigned long long))objc_msgSend)(_target, _action, sender, key, ulonglongValue);
                             break;
                         default:
                             break;
@@ -298,10 +298,10 @@
                             ((void (*)(id, SEL, float))objc_msgSend)(_target, _action, floatValue);
                             break;
                         case 2:
-                            ((void (*)(id, SEL, float, id))objc_msgSend)(_target, _action, floatValue, key);
+                            ((void (*)(id, SEL, XZMocoaKey, float))objc_msgSend)(_target, _action, key, floatValue);
                             break;
                         case 3:
-                            ((void (*)(id, SEL, float, id, XZMocoaKey))objc_msgSend)(_target, _action, floatValue, key, sender);
+                            ((void (*)(id, SEL, id, XZMocoaKey, float))objc_msgSend)(_target, _action, sender, key, floatValue);
                             break;
                         default:
                             break;
@@ -316,10 +316,10 @@
                             ((void (*)(id, SEL, double))objc_msgSend)(_target, _action, doubleValue);
                             break;
                         case 2:
-                            ((void (*)(id, SEL, double, id))objc_msgSend)(_target, _action, doubleValue, key);
+                            ((void (*)(id, SEL, XZMocoaKey, double))objc_msgSend)(_target, _action, key, doubleValue);
                             break;
                         case 3:
-                            ((void (*)(id, SEL, double, id, XZMocoaKey))objc_msgSend)(_target, _action, doubleValue, key, sender);
+                            ((void (*)(id, SEL, id, XZMocoaKey, double))objc_msgSend)(_target, _action, sender, key, doubleValue);
                             break;
                         default:
                             break;
@@ -334,10 +334,10 @@
                             ((void (*)(id, SEL, long double))objc_msgSend)(_target, _action, longDoubleValue);
                             break;
                         case 2:
-                            ((void (*)(id, SEL, long double, id))objc_msgSend)(_target, _action, longDoubleValue, key);
+                            ((void (*)(id, SEL, XZMocoaKey, long double))objc_msgSend)(_target, _action, key, longDoubleValue);
                             break;
                         case 3:
-                            ((void (*)(id, SEL, long double, id, XZMocoaKey))objc_msgSend)(_target, _action, longDoubleValue, key, sender);
+                            ((void (*)(id, SEL, id, XZMocoaKey, long double))objc_msgSend)(_target, _action, sender, key, longDoubleValue);
                             break;
                         default:
                             break;
@@ -352,10 +352,10 @@
                             ((void (*)(id, SEL, BOOL))objc_msgSend)(_target, _action, boolValue);
                             break;
                         case 2:
-                            ((void (*)(id, SEL, BOOL, id))objc_msgSend)(_target, _action, boolValue, key);
+                            ((void (*)(id, SEL, XZMocoaKey, BOOL))objc_msgSend)(_target, _action, key, boolValue);
                             break;
                         case 3:
-                            ((void (*)(id, SEL, BOOL, id, XZMocoaKey))objc_msgSend)(_target, _action, boolValue, key, sender);
+                            ((void (*)(id, SEL, id, XZMocoaKey, BOOL))objc_msgSend)(_target, _action, sender, key, boolValue);
                             break;
                         default:
                             break;
@@ -373,10 +373,10 @@
                             ((void (*)(id, SEL, char *))objc_msgSend)(_target, _action, stringValue);
                             break;
                         case 2:
-                            ((void (*)(id, SEL, char *, id))objc_msgSend)(_target, _action, stringValue, key);
+                            ((void (*)(id, SEL, XZMocoaKey, char *))objc_msgSend)(_target, _action, key, stringValue);
                             break;
                         case 3:
-                            ((void (*)(id, SEL, char *, id, XZMocoaKey))objc_msgSend)(_target, _action, stringValue, key, sender);
+                            ((void (*)(id, SEL, id, XZMocoaKey, char *))objc_msgSend)(_target, _action, sender, key, stringValue);
                             break;
                         default:
                             break;
@@ -391,10 +391,10 @@
                             ((void (*)(id, SEL, SEL))objc_msgSend)(_target, _action, selectorValue);
                             break;
                         case 2:
-                            ((void (*)(id, SEL, SEL, id))objc_msgSend)(_target, _action, selectorValue, key);
+                            ((void (*)(id, SEL, XZMocoaKey, SEL))objc_msgSend)(_target, _action, key, selectorValue);
                             break;
                         case 3:
-                            ((void (*)(id, SEL, SEL, id, XZMocoaKey))objc_msgSend)(_target, _action, selectorValue, key, sender);
+                            ((void (*)(id, SEL, id, XZMocoaKey, SEL))objc_msgSend)(_target, _action, sender, key, selectorValue);
                             break;
                         default:
                             break;
@@ -409,10 +409,10 @@
                             ((void (*)(id, SEL, void *))objc_msgSend)(_target, _action, pointerValue);
                             break;
                         case 2:
-                            ((void (*)(id, SEL, void *, id))objc_msgSend)(_target, _action, pointerValue, key);
+                            ((void (*)(id, SEL, XZMocoaKey, void *))objc_msgSend)(_target, _action, key, pointerValue);
                             break;
                         case 3:
-                            ((void (*)(id, SEL, void *, id, XZMocoaKey))objc_msgSend)(_target, _action, pointerValue, key, sender);
+                            ((void (*)(id, SEL, id, XZMocoaKey, void *))objc_msgSend)(_target, _action, sender, key, pointerValue);
                             break;
                         default:
                             break;
@@ -427,10 +427,10 @@
                             ((void (*)(id, SEL, void *))objc_msgSend)(_target, _action, arrayValue);
                             break;
                         case 2:
-                            ((void (*)(id, SEL, void *, id))objc_msgSend)(_target, _action, arrayValue, key);
+                            ((void (*)(id, SEL, XZMocoaKey, void *))objc_msgSend)(_target, _action, key, arrayValue);
                             break;
                         case 3:
-                            ((void (*)(id, SEL, void *, id, XZMocoaKey))objc_msgSend)(_target, _action, arrayValue, key, sender);
+                            ((void (*)(id, SEL, id, XZMocoaKey, void *))objc_msgSend)(_target, _action, sender, key, arrayValue);
                             break;
                         default:
                             break;
@@ -459,10 +459,10 @@
                                 ((void (*)(id, SEL, UInt8))objc_msgSend)(_target, _action, bitValue);
                                 break;
                             case 2:
-                                ((void (*)(id, SEL, UInt8, id))objc_msgSend)(_target, _action, bitValue, key);
+                                ((void (*)(id, SEL, XZMocoaKey, UInt8))objc_msgSend)(_target, _action, key, bitValue);
                                 break;
                             case 3:
-                                ((void (*)(id, SEL, UInt8, id, XZMocoaKey))objc_msgSend)(_target, _action, bitValue, key, sender);
+                                ((void (*)(id, SEL, id, XZMocoaKey, UInt8))objc_msgSend)(_target, _action, sender, key, bitValue);
                                 break;
                             default:
                                 break;
@@ -475,10 +475,10 @@
                                 ((void (*)(id, SEL, UInt16))objc_msgSend)(_target, _action, bitValue);
                                 break;
                             case 2:
-                                ((void (*)(id, SEL, UInt16, id))objc_msgSend)(_target, _action, bitValue, key);
+                                ((void (*)(id, SEL, XZMocoaKey, UInt16))objc_msgSend)(_target, _action, key, bitValue);
                                 break;
                             case 3:
-                                ((void (*)(id, SEL, UInt16, id, XZMocoaKey))objc_msgSend)(_target, _action, bitValue, key, sender);
+                                ((void (*)(id, SEL, id, XZMocoaKey, UInt16))objc_msgSend)(_target, _action, sender, key, bitValue);
                                 break;
                             default:
                                 break;
@@ -491,10 +491,10 @@
                                 ((void (*)(id, SEL, UInt32))objc_msgSend)(_target, _action, bitValue);
                                 break;
                             case 2:
-                                ((void (*)(id, SEL, UInt32, id))objc_msgSend)(_target, _action, bitValue, key);
+                                ((void (*)(id, SEL, XZMocoaKey, UInt32))objc_msgSend)(_target, _action, key, bitValue);
                                 break;
                             case 3:
-                                ((void (*)(id, SEL, UInt32, id, XZMocoaKey))objc_msgSend)(_target, _action, bitValue, key, sender);
+                                ((void (*)(id, SEL, id, XZMocoaKey, UInt32))objc_msgSend)(_target, _action, sender, key, bitValue);
                                 break;
                             default:
                                 break;
@@ -507,10 +507,10 @@
                                 ((void (*)(id, SEL, UInt64))objc_msgSend)(_target, _action, bitValue);
                                 break;
                             case 2:
-                                ((void (*)(id, SEL, UInt64, id))objc_msgSend)(_target, _action, bitValue, key);
+                                ((void (*)(id, SEL, XZMocoaKey, UInt64))objc_msgSend)(_target, _action, key, bitValue);
                                 break;
                             case 3:
-                                ((void (*)(id, SEL, UInt64, id, XZMocoaKey))objc_msgSend)(_target, _action, bitValue, key, sender);
+                                ((void (*)(id, SEL, id, XZMocoaKey, UInt64))objc_msgSend)(_target, _action, sender, key, bitValue);
                                 break;
                             default:
                                 break;
@@ -524,10 +524,10 @@
                                 ((void (*)(id, SEL, XZ_UInt128))objc_msgSend)(_target, _action, bitValue);
                                 break;
                             case 2:
-                                ((void (*)(id, SEL, XZ_UInt128, id))objc_msgSend)(_target, _action, bitValue, key);
+                                ((void (*)(id, SEL, XZMocoaKey, XZ_UInt128))objc_msgSend)(_target, _action, key, bitValue);
                                 break;
                             case 3:
-                                ((void (*)(id, SEL, XZ_UInt128, id, XZMocoaKey))objc_msgSend)(_target, _action, bitValue, key, sender);
+                                ((void (*)(id, SEL, id, XZMocoaKey, XZ_UInt128))objc_msgSend)(_target, _action, sender, key, bitValue);
                                 break;
                             default:
                                 break;
@@ -541,10 +541,10 @@
                                 ((void (*)(id, SEL, XZ_UInt256))objc_msgSend)(_target, _action, bitValue);
                                 break;
                             case 2:
-                                ((void (*)(id, SEL, XZ_UInt256, id))objc_msgSend)(_target, _action, bitValue, key);
+                                ((void (*)(id, SEL, XZMocoaKey, XZ_UInt256))objc_msgSend)(_target, _action, key, bitValue);
                                 break;
                             case 3:
-                                ((void (*)(id, SEL, XZ_UInt256, id, XZMocoaKey))objc_msgSend)(_target, _action, bitValue, key, sender);
+                                ((void (*)(id, SEL, id, XZMocoaKey, XZ_UInt256))objc_msgSend)(_target, _action, sender, key, bitValue);
                                 break;
                             default:
                                 break;
@@ -558,10 +558,10 @@
                                 ((void (*)(id, SEL, XZ_UInt512))objc_msgSend)(_target, _action, bitValue);
                                 break;
                             case 2:
-                                ((void (*)(id, SEL, XZ_UInt512, id))objc_msgSend)(_target, _action, bitValue, key);
+                                ((void (*)(id, SEL, XZMocoaKey, XZ_UInt512))objc_msgSend)(_target, _action, key, bitValue);
                                 break;
                             case 3:
-                                ((void (*)(id, SEL, XZ_UInt512, id, XZMocoaKey))objc_msgSend)(_target, _action, bitValue, key, sender);
+                                ((void (*)(id, SEL, id, XZMocoaKey, XZ_UInt512))objc_msgSend)(_target, _action, sender, key, bitValue);
                                 break;
                             default:
                                 break;
@@ -578,10 +578,10 @@
                                 ((void (*)(id, SEL, XZ_UInt1024))objc_msgSend)(_target, _action, bitValue);
                                 break;
                             case 2:
-                                ((void (*)(id, SEL, XZ_UInt1024, id))objc_msgSend)(_target, _action, bitValue, key);
+                                ((void (*)(id, SEL, XZMocoaKey, XZ_UInt1024))objc_msgSend)(_target, _action, key, bitValue);
                                 break;
                             case 3:
-                                ((void (*)(id, SEL, XZ_UInt1024, id, XZMocoaKey))objc_msgSend)(_target, _action, bitValue, key, sender);
+                                ((void (*)(id, SEL, id, XZMocoaKey, XZ_UInt1024))objc_msgSend)(_target, _action, sender, key, bitValue);
                                 break;
                             default:
                                 break;
@@ -627,10 +627,10 @@
                             ((void (*)(id, SEL, id))objc_msgSend)(_target, _action, value);
                             break;
                         case 2:
-                            ((void (*)(id, SEL, id, id))objc_msgSend)(_target, _action, value, key);
+                            ((void (*)(id, SEL, XZMocoaKey, id))objc_msgSend)(_target, _action, key, value);
                             break;
                         case 3:
-                            ((void (*)(id, SEL, id, id, XZMocoaKey))objc_msgSend)(_target, _action, value, key, sender);
+                            ((void (*)(id, SEL, id, XZMocoaKey, id))objc_msgSend)(_target, _action, sender, key, value);
                             break;
                         default:
                             break;

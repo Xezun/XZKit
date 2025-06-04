@@ -61,7 +61,7 @@ static void barFunction(void) { }
     [viewModel sendActionsForKey:@"unsignedShort" value:@((unsigned short)+100)];
     [viewModel sendActionsForKey:@"unsignedShort" value:@((unsigned short)+240)];
     
-    [viewModel addTarget:self action:@selector(longValueChanged:) forKey:@"long"];
+    [viewModel addTarget:self action:@selector(longKey:didChangeValue:) forKey:@"long"];
     [viewModel sendActionsForKey:@"long" value:@((long)+100)];
     [viewModel sendActionsForKey:@"long" value:@((long)+240)];
     
@@ -94,7 +94,6 @@ static void barFunction(void) { }
         [viewModel sendActionsForKey:@"string" value:[NSValue valueWithPointer:foo]];
         [viewModel sendActionsForKey:@"string" value:[NSValue valueWithPointer:bar]];
     }
-    
     
     [viewModel addTarget:self action:@selector(selectorValueChanged:) forKey:@"selector"];
     [viewModel sendActionsForKey:@"selector" value:[NSValue valueWithPointer:(void *)(@selector(selectorValueChanged:))]];
@@ -134,7 +133,7 @@ static void barFunction(void) { }
     [viewModel sendActionsForKey:@"class" value:NSObject.class];
     [viewModel sendActionsForKey:@"class" value:NSProxy.class];
 
-    [viewModel addTarget:self action:@selector(objectValueChanged:key:target:) forKey:@"object"];
+    [viewModel addTarget:self action:@selector(viewModel:key:didChangeObjectValue:) forKey:@"object"];
     [viewModel sendActionsForKey:@"object" value:self];
     [viewModel sendActionsForKey:@"object" value:viewModel];
 }
@@ -174,7 +173,8 @@ static void barFunction(void) { }
     XCTAssert(value == 100 || value == 240);
 }
 
-- (void)longValueChanged:(long)value {
+- (void)longKey:(XZMocoaKey)key didChangeValue:(long)value {
+    XCTAssert([key isEqualToString:@"long"]);
     XCTAssert(value == 100 || value == 240);
 }
 
@@ -238,11 +238,11 @@ static void barFunction(void) { }
     XCTAssert(value == NSObject.class || value == NSProxy.class);
 }
 
-- (void)objectValueChanged:(id)value key:(XZMocoaKey)key target:(id)target {
+- (void)viewModel:(XZMocoaViewModel *)viewModel key:(XZMocoaKey)key didChangeObjectValue:(id)value {
     XCTAssert([key isEqualToString:@"object"]);
-    XCTAssert(value == self || value == target);
+    XCTAssert([viewModel isKindOfClass:[XZMocoaViewModel class]]);
+    XCTAssert(value == self || value == viewModel);
 }
-
 
 - (void)testUnionConvertion {
     NSLog(@"%lu == %lu", sizeof(double), sizeof(union FoobarUnion));
