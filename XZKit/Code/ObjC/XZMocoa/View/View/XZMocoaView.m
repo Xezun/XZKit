@@ -45,8 +45,6 @@ static const void * const _viewModel = &_viewModel;
         return;
     }
     [self viewModelWillChange:newValue];
-    // VM 与 V 应该是完全独立的，在 VM 与 V 关联之前，使其进入 ready 状态
-    [newValue ready];
     objc_setAssociatedObject(self, _viewModel, newValue, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
     [self viewModelDidChange:oldValue];
 }
@@ -87,6 +85,8 @@ static const void * const _viewModel = &_viewModel;
 }
 
 - (void)viewModelWillChange:(XZMocoaViewModel *)newValue {
+    // VM 与 V 应该是完全独立的，在 VM 与 V 关联之前，使其进入 ready 状态
+    [newValue ready];
     newValue.delegate = self;
 }
 
@@ -118,6 +118,13 @@ static const void * const _viewModel = &_viewModel;
             if (!xz_objc_class_addMethod(self, selT, nil, selN, NULL, selE)) {
                 XZLog(@"为 UIViewController 重载方法 %@ 失败，相关事件请手动处理", NSStringFromSelector(selT));
             }
+        } {
+            SEL const selT = @selector(viewDidLoad);
+            SEL const selN = @selector(xz_mocoa_new_viewDidLoad);
+            SEL const selE = @selector(xz_mocoa_exchange_viewDidLoad);
+            if (!xz_objc_class_addMethod(self, selT, nil, selN, NULL, selE)) {
+                XZLog(@"为 UIViewController 重载方法 %@ 失败，相关事件请手动处理", NSStringFromSelector(selT));
+            }
         }
     }
 }
@@ -132,6 +139,15 @@ static const void * const _viewModel = &_viewModel;
 
 - (UIViewController *)viewModel:(id<XZMocoaViewModel>)viewModel viewController:(void *)null {
     return self;
+}
+
+- (void)xz_mocoa_new_viewDidLoad {
+    [self.viewModel ready];
+}
+
+- (void)xz_mocoa_exchange_viewDidLoad {
+    [self xz_mocoa_exchange_viewDidLoad];
+    [self.viewModel ready];
 }
 
 - (BOOL)xz_mocoa_new_shouldPerformSegueWithIdentifier:(NSString *)identifier sender:(id)sender {
