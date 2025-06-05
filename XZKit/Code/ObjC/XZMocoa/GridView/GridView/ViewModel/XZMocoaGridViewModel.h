@@ -151,6 +151,7 @@ NS_SWIFT_UI_ACTOR @protocol XZMocoaGridViewModelDelegate <XZMocoaViewModelDelega
 @interface XZMocoaGridViewModel (NSFetchedResultsControllerDelegate) <NSFetchedResultsControllerDelegate>
 - (void)controllerWillChangeContent:(NSFetchedResultsController *)controller;
 - (void)controllerDidChangeContent:(NSFetchedResultsController *)controller;
+- (void)controller:(NSFetchedResultsController *)controller didChangeObject:(id)anObject atIndexPath:(nullable NSIndexPath *)indexPath forChangeType:(NSFetchedResultsChangeType)type newIndexPath:(nullable NSIndexPath *)newIndexPath;
 @end
 
 NS_ASSUME_NONNULL_END

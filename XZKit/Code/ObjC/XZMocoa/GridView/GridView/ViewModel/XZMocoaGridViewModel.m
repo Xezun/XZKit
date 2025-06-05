@@ -858,6 +858,7 @@ typedef void(^XZMocoaGridDelayedUpdates)(__kindof XZMocoaViewModel *self);
 @implementation XZMocoaGridViewModel (NSFetchedResultsControllerDelegate)
 
 /// 这个代理方法会阻断下面所有代理方法，且适合搭配 UITableViewDiffableDataSource/UIColletionViewDiffableDataSource 使用。似乎可能没有 move-to 这种操作。
+/// 从目前公开的接口，无法分析出 snapshot 包含的更新内容。
 //- (void)controller:(NSFetchedResultsController *)controller didChangeContentWithSnapshot:(NSDiffableDataSourceSnapshot<NSString *,NSManagedObjectID *> *)snapshot {}
 
 /// 不分 section 时，此方法会阻断下面的方法。似乎只有 insert/remove 两种更新类型。
@@ -903,11 +904,11 @@ typedef void(^XZMocoaGridDelayedUpdates)(__kindof XZMocoaViewModel *self);
     // if (!self.isReady) return
     switch (type) {
         case NSFetchedResultsChangeInsert: {
-            XZLog(@"[CoreData][insert] %ld", sectionIndex);
+            XZLog(@"[CoreData][section][insert] %ld", sectionIndex);
             break;
         }
         case NSFetchedResultsChangeDelete: {
-            XZLog(@"[CoreData][delete] %ld", sectionIndex);
+            XZLog(@"[CoreData][section][delete] %ld", sectionIndex);
             break;
         }
         default:
@@ -915,8 +916,9 @@ typedef void(^XZMocoaGridDelayedUpdates)(__kindof XZMocoaViewModel *self);
             break;
     }
 }
+#endif
 
-- (void)controller:(NSFetchedResultsController *)controller didChangeObject:(id)anObject atIndexPath:(NSIndexPath *)indexPath forChangeType:(NSFetchedResultsChangeType)type newIndexPath:(NSIndexPath *)newIndexPath {
+- (void)controller:(NSFetchedResultsController *)controller didChangeObject:(NSManagedObject *)anObject atIndexPath:(NSIndexPath *)indexPath forChangeType:(NSFetchedResultsChangeType)type newIndexPath:(NSIndexPath *)newIndexPath {
     // if (!self.isReady) return;
     switch (type) {
         case NSFetchedResultsChangeInsert: {
@@ -924,19 +926,31 @@ typedef void(^XZMocoaGridDelayedUpdates)(__kindof XZMocoaViewModel *self);
             break;
         }
         case NSFetchedResultsChangeMove: {
-            XZLog(@"[CoreData][move] {%ld, %ld} => {%ld, %ld}", indexPath.section, indexPath.item, newIndexPath.section, newIndexPath.item);
+            XZLog(@"[CoreData][move] hasChanges=%d {%ld, %ld} => {%ld, %ld}", anObject.hasChanges, indexPath.section, indexPath.item, newIndexPath.section, newIndexPath.item);
+            if ([anObject hasChanges]) {
+                XZMocoaGridViewCellViewModel * const viewModel = [self cellViewModelAtIndexPath:indexPath];
+                [anObject.changedValues enumerateKeysAndObjectsUsingBlock:^(NSString * _Nonnull key, id  _Nonnull obj, BOOL * _Nonnull stop) {
+                    XZLog(@"[CoreData][move][change][key] %@", key);
+                    [viewModel model:anObject didChangeValue:obj forKey:key];
+                }];
+            }
             break;
         }
         case NSFetchedResultsChangeDelete: {
-            XZLog(@"[CoreData][delete] {%ld, %ld}", indexPath.section, indexPath.item);
+            XZLog(@"[CoreData][delete] {%ld, %ld} hasChanges=%d", indexPath.section, indexPath.item, anObject.hasChanges);
             break;
         }
         case NSFetchedResultsChangeUpdate: {
+            // 如果同时发生了 move 事件，则不会调用此方法
             XZLog(@"[CoreData][update] {%ld, %ld}", indexPath.section, indexPath.item);
+            XZMocoaGridViewCellViewModel * const viewModel = [self cellViewModelAtIndexPath:indexPath];
+            [anObject.changedValues enumerateKeysAndObjectsUsingBlock:^(NSString * _Nonnull key, id  _Nonnull obj, BOOL * _Nonnull stop) {
+                XZLog(@"[CoreData][move][update][key] %@", key);
+                [viewModel model:anObject didChangeValue:obj forKey:key];
+            }];
             break;
         }
     }
 }
-#endif
 
 @end

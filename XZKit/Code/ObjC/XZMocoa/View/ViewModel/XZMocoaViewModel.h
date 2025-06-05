@@ -323,6 +323,21 @@ FOUNDATION_EXPORT XZMocoaKey const XZMocoaKeyIsLoading;
 /// @param value 事件值，标量值需用 NSValue 包装，值 nil 表示使用`-valueForKey:`获取视图模型当前值，值 NSNull 表示 nil 值
 - (void)sendActionsForKey:(XZMocoaKey)key value:(nullable id)value;
 
+/// 当视图模型更新了其他视图模型的数据模型后，可通过此方法通知目标视图模型。
+///
+/// 此方法默认调用已与 key 关联的方法。
+///
+/// @param model 数据模型
+/// @param key 发生改变的属性值
+- (void)model:(nullable id)model didChangeValue:(nullable id)value forKey:(NSString *)key;
+
+/// 将数据模型的 key 的值与指定的方法进行关联。
+/// @param action 接收数据模型值的方法
+/// @param key 数据模型的键
+/// @param model nil 表示不限定数据模型
+/// @param initialValue 初始值
+- (void)setAction:(SEL _Nullable)action forModel:(nullable id)model forKey:(NSString *)key value:(nullable id)initialValue;
+
 @end
 
 @class UIControl;

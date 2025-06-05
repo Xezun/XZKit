@@ -82,9 +82,17 @@
 }
 
 - (void)sendActionWithValue:(id)value forKey:(XZMocoaKey)key sender:(id)sender {
+    id const target = _target;
+    if (target == nil) {
+        return;
+    }
+    [self sendActionForTarget:target forKey:key sender:sender value:value];
+}
+
+- (void)sendActionForTarget:(id const)target forKey:(XZMocoaKey)key sender:(id)sender value:(id)value {
     switch (_numberOfArguments) {
         case 0: {
-            ((void (*)(id, SEL))objc_msgSend)(_target, _action);
+            ((void (*)(id, SEL))objc_msgSend)(target, _action);
             break;
         }
         case 1:
@@ -96,13 +104,13 @@
                     [(NSValue *)value getValue:&pointerValue size:sizeof(void *)];
                     switch (_numberOfArguments) {
                         case 1:
-                            ((void (*)(id, SEL, void *))objc_msgSend)(_target, _action, pointerValue);
+                            ((void (*)(id, SEL, void *))objc_msgSend)(target, _action, pointerValue);
                             break;
                         case 2:
-                            ((void (*)(id, SEL, XZMocoaKey, void *))objc_msgSend)(_target, _action, key, pointerValue);
+                            ((void (*)(id, SEL, XZMocoaKey, void *))objc_msgSend)(target, _action, key, pointerValue);
                             break;
                         case 3:
-                            ((void (*)(id, SEL, id, XZMocoaKey, void *))objc_msgSend)(_target, _action, sender, key, pointerValue);
+                            ((void (*)(id, SEL, id, XZMocoaKey, void *))objc_msgSend)(target, _action, sender, key, pointerValue);
                             break;
                         default:
                             break;
@@ -115,13 +123,13 @@
                     [(NSValue *)value getValue:&charValue size:sizeof(char)];
                     switch (_numberOfArguments) {
                         case 1:
-                            ((void (*)(id, SEL, char))objc_msgSend)(_target, _action, charValue);
+                            ((void (*)(id, SEL, char))objc_msgSend)(target, _action, charValue);
                             break;
                         case 2:
-                            ((void (*)(id, SEL, XZMocoaKey, char))objc_msgSend)(_target, _action, key, charValue);
+                            ((void (*)(id, SEL, XZMocoaKey, char))objc_msgSend)(target, _action, key, charValue);
                             break;
                         case 3:
-                            ((void (*)(id, SEL, id, XZMocoaKey, char))objc_msgSend)(_target, _action, sender, key, charValue);
+                            ((void (*)(id, SEL, id, XZMocoaKey, char))objc_msgSend)(target, _action, sender, key, charValue);
                             break;
                         default:
                             break;
@@ -133,13 +141,13 @@
                     [(NSValue *)value getValue:&ucharValue size:sizeof(unsigned char)];
                     switch (_numberOfArguments) {
                         case 1:
-                            ((void (*)(id, SEL, unsigned char))objc_msgSend)(_target, _action, ucharValue);
+                            ((void (*)(id, SEL, unsigned char))objc_msgSend)(target, _action, ucharValue);
                             break;
                         case 2:
-                            ((void (*)(id, SEL, XZMocoaKey, unsigned char))objc_msgSend)(_target, _action, key, ucharValue);
+                            ((void (*)(id, SEL, XZMocoaKey, unsigned char))objc_msgSend)(target, _action, key, ucharValue);
                             break;
                         case 3:
-                            ((void (*)(id, SEL, id, XZMocoaKey, unsigned char))objc_msgSend)(_target, _action, sender, key, ucharValue);
+                            ((void (*)(id, SEL, id, XZMocoaKey, unsigned char))objc_msgSend)(target, _action, sender, key, ucharValue);
                             break;
                         default:
                             break;
@@ -151,13 +159,13 @@
                     [(NSValue *)value getValue:&intValue size:sizeof(int)];
                     switch (_numberOfArguments) {
                         case 1:
-                            ((void (*)(id, SEL, int))objc_msgSend)(_target, _action, intValue);
+                            ((void (*)(id, SEL, int))objc_msgSend)(target, _action, intValue);
                             break;
                         case 2:
-                            ((void (*)(id, SEL, XZMocoaKey, int))objc_msgSend)(_target, _action, key, intValue);
+                            ((void (*)(id, SEL, XZMocoaKey, int))objc_msgSend)(target, _action, key, intValue);
                             break;
                         case 3:
-                            ((void (*)(id, SEL, id, XZMocoaKey, int))objc_msgSend)(_target, _action, sender, key, intValue);
+                            ((void (*)(id, SEL, id, XZMocoaKey, int))objc_msgSend)(target, _action, sender, key, intValue);
                             break;
                         default:
                             break;
@@ -169,13 +177,13 @@
                     [(NSValue *)value getValue:&uintValue size:sizeof(unsigned int)];
                     switch (_numberOfArguments) {
                         case 1:
-                            ((void (*)(id, SEL, unsigned int))objc_msgSend)(_target, _action, uintValue);
+                            ((void (*)(id, SEL, unsigned int))objc_msgSend)(target, _action, uintValue);
                             break;
                         case 2:
-                            ((void (*)(id, SEL, XZMocoaKey, unsigned int))objc_msgSend)(_target, _action, key, uintValue);
+                            ((void (*)(id, SEL, XZMocoaKey, unsigned int))objc_msgSend)(target, _action, key, uintValue);
                             break;
                         case 3:
-                            ((void (*)(id, SEL, id, XZMocoaKey, unsigned int))objc_msgSend)(_target, _action, sender, key, uintValue);
+                            ((void (*)(id, SEL, id, XZMocoaKey, unsigned int))objc_msgSend)(target, _action, sender, key, uintValue);
                             break;
                         default:
                             break;
@@ -187,13 +195,13 @@
                     [(NSValue *)value getValue:&shortValue size:sizeof(short)];
                     switch (_numberOfArguments) {
                         case 1:
-                            ((void (*)(id, SEL, short))objc_msgSend)(_target, _action, shortValue);
+                            ((void (*)(id, SEL, short))objc_msgSend)(target, _action, shortValue);
                             break;
                         case 2:
-                            ((void (*)(id, SEL, XZMocoaKey, short))objc_msgSend)(_target, _action, key, shortValue);
+                            ((void (*)(id, SEL, XZMocoaKey, short))objc_msgSend)(target, _action, key, shortValue);
                             break;
                         case 3:
-                            ((void (*)(id, SEL, id, XZMocoaKey, short))objc_msgSend)(_target, _action, sender, key, shortValue);
+                            ((void (*)(id, SEL, id, XZMocoaKey, short))objc_msgSend)(target, _action, sender, key, shortValue);
                             break;
                         default:
                             break;
@@ -205,13 +213,13 @@
                     [(NSValue *)value getValue:&ushortValue size:sizeof(unsigned short)];
                     switch (_numberOfArguments) {
                         case 1:
-                            ((void (*)(id, SEL, unsigned short))objc_msgSend)(_target, _action, ushortValue);
+                            ((void (*)(id, SEL, unsigned short))objc_msgSend)(target, _action, ushortValue);
                             break;
                         case 2:
-                            ((void (*)(id, SEL, XZMocoaKey, unsigned short))objc_msgSend)(_target, _action, key, ushortValue);
+                            ((void (*)(id, SEL, XZMocoaKey, unsigned short))objc_msgSend)(target, _action, key, ushortValue);
                             break;
                         case 3:
-                            ((void (*)(id, SEL, id, XZMocoaKey, unsigned short))objc_msgSend)(_target, _action, sender, key, ushortValue);
+                            ((void (*)(id, SEL, id, XZMocoaKey, unsigned short))objc_msgSend)(target, _action, sender, key, ushortValue);
                             break;
                         default:
                             break;
@@ -223,13 +231,13 @@
                     [(NSValue *)value getValue:&longValue size:sizeof(long)];
                     switch (_numberOfArguments) {
                         case 1:
-                            ((void (*)(id, SEL, long))objc_msgSend)(_target, _action, longValue);
+                            ((void (*)(id, SEL, long))objc_msgSend)(target, _action, longValue);
                             break;
                         case 2:
-                            ((void (*)(id, SEL, XZMocoaKey, long))objc_msgSend)(_target, _action, key, longValue);
+                            ((void (*)(id, SEL, XZMocoaKey, long))objc_msgSend)(target, _action, key, longValue);
                             break;
                         case 3:
-                            ((void (*)(id, SEL, id, XZMocoaKey, long))objc_msgSend)(_target, _action, sender, key, longValue);
+                            ((void (*)(id, SEL, id, XZMocoaKey, long))objc_msgSend)(target, _action, sender, key, longValue);
                             break;
                         default:
                             break;
@@ -241,13 +249,13 @@
                     [(NSValue *)value getValue:&ulongValue size:sizeof(unsigned long)];
                     switch (_numberOfArguments) {
                         case 1:
-                            ((void (*)(id, SEL, unsigned long))objc_msgSend)(_target, _action, ulongValue);
+                            ((void (*)(id, SEL, unsigned long))objc_msgSend)(target, _action, ulongValue);
                             break;
                         case 2:
-                            ((void (*)(id, SEL, XZMocoaKey, unsigned long))objc_msgSend)(_target, _action, key, ulongValue);
+                            ((void (*)(id, SEL, XZMocoaKey, unsigned long))objc_msgSend)(target, _action, key, ulongValue);
                             break;
                         case 3:
-                            ((void (*)(id, SEL, id, XZMocoaKey, unsigned long))objc_msgSend)(_target, _action, sender, key, ulongValue);
+                            ((void (*)(id, SEL, id, XZMocoaKey, unsigned long))objc_msgSend)(target, _action, sender, key, ulongValue);
                             break;
                         default:
                             break;
@@ -259,13 +267,13 @@
                     [(NSValue *)value getValue:&longlongValue size:sizeof(long long)];
                     switch (_numberOfArguments) {
                         case 1:
-                            ((void (*)(id, SEL, long long))objc_msgSend)(_target, _action, longlongValue);
+                            ((void (*)(id, SEL, long long))objc_msgSend)(target, _action, longlongValue);
                             break;
                         case 2:
-                            ((void (*)(id, SEL, XZMocoaKey, long long))objc_msgSend)(_target, _action, key, longlongValue);
+                            ((void (*)(id, SEL, XZMocoaKey, long long))objc_msgSend)(target, _action, key, longlongValue);
                             break;
                         case 3:
-                            ((void (*)(id, SEL, id, XZMocoaKey, long long))objc_msgSend)(_target, _action, sender, key, longlongValue);
+                            ((void (*)(id, SEL, id, XZMocoaKey, long long))objc_msgSend)(target, _action, sender, key, longlongValue);
                             break;
                         default:
                             break;
@@ -277,13 +285,13 @@
                     [(NSValue *)value getValue:&ulonglongValue size:sizeof(unsigned long long)];
                     switch (_numberOfArguments) {
                         case 1:
-                            ((void (*)(id, SEL, unsigned long long))objc_msgSend)(_target, _action, ulonglongValue);
+                            ((void (*)(id, SEL, unsigned long long))objc_msgSend)(target, _action, ulonglongValue);
                             break;
                         case 2:
-                            ((void (*)(id, SEL, XZMocoaKey, unsigned long long))objc_msgSend)(_target, _action, key, ulonglongValue);
+                            ((void (*)(id, SEL, XZMocoaKey, unsigned long long))objc_msgSend)(target, _action, key, ulonglongValue);
                             break;
                         case 3:
-                            ((void (*)(id, SEL, id, XZMocoaKey, unsigned long long))objc_msgSend)(_target, _action, sender, key, ulonglongValue);
+                            ((void (*)(id, SEL, id, XZMocoaKey, unsigned long long))objc_msgSend)(target, _action, sender, key, ulonglongValue);
                             break;
                         default:
                             break;
@@ -295,13 +303,13 @@
                     [(NSValue *)value getValue:&floatValue size:sizeof(float)];
                     switch (_numberOfArguments) {
                         case 1:
-                            ((void (*)(id, SEL, float))objc_msgSend)(_target, _action, floatValue);
+                            ((void (*)(id, SEL, float))objc_msgSend)(target, _action, floatValue);
                             break;
                         case 2:
-                            ((void (*)(id, SEL, XZMocoaKey, float))objc_msgSend)(_target, _action, key, floatValue);
+                            ((void (*)(id, SEL, XZMocoaKey, float))objc_msgSend)(target, _action, key, floatValue);
                             break;
                         case 3:
-                            ((void (*)(id, SEL, id, XZMocoaKey, float))objc_msgSend)(_target, _action, sender, key, floatValue);
+                            ((void (*)(id, SEL, id, XZMocoaKey, float))objc_msgSend)(target, _action, sender, key, floatValue);
                             break;
                         default:
                             break;
@@ -313,13 +321,13 @@
                     [(NSValue *)value getValue:&doubleValue size:sizeof(double)];
                     switch (_numberOfArguments) {
                         case 1:
-                            ((void (*)(id, SEL, double))objc_msgSend)(_target, _action, doubleValue);
+                            ((void (*)(id, SEL, double))objc_msgSend)(target, _action, doubleValue);
                             break;
                         case 2:
-                            ((void (*)(id, SEL, XZMocoaKey, double))objc_msgSend)(_target, _action, key, doubleValue);
+                            ((void (*)(id, SEL, XZMocoaKey, double))objc_msgSend)(target, _action, key, doubleValue);
                             break;
                         case 3:
-                            ((void (*)(id, SEL, id, XZMocoaKey, double))objc_msgSend)(_target, _action, sender, key, doubleValue);
+                            ((void (*)(id, SEL, id, XZMocoaKey, double))objc_msgSend)(target, _action, sender, key, doubleValue);
                             break;
                         default:
                             break;
@@ -331,13 +339,13 @@
                     [(NSValue *)value getValue:&longDoubleValue size:sizeof(long double)];
                     switch (_numberOfArguments) {
                         case 1:
-                            ((void (*)(id, SEL, long double))objc_msgSend)(_target, _action, longDoubleValue);
+                            ((void (*)(id, SEL, long double))objc_msgSend)(target, _action, longDoubleValue);
                             break;
                         case 2:
-                            ((void (*)(id, SEL, XZMocoaKey, long double))objc_msgSend)(_target, _action, key, longDoubleValue);
+                            ((void (*)(id, SEL, XZMocoaKey, long double))objc_msgSend)(target, _action, key, longDoubleValue);
                             break;
                         case 3:
-                            ((void (*)(id, SEL, id, XZMocoaKey, long double))objc_msgSend)(_target, _action, sender, key, longDoubleValue);
+                            ((void (*)(id, SEL, id, XZMocoaKey, long double))objc_msgSend)(target, _action, sender, key, longDoubleValue);
                             break;
                         default:
                             break;
@@ -349,13 +357,13 @@
                     [(NSValue *)value getValue:&boolValue size:sizeof(BOOL)];
                     switch (_numberOfArguments) {
                         case 1:
-                            ((void (*)(id, SEL, BOOL))objc_msgSend)(_target, _action, boolValue);
+                            ((void (*)(id, SEL, BOOL))objc_msgSend)(target, _action, boolValue);
                             break;
                         case 2:
-                            ((void (*)(id, SEL, XZMocoaKey, BOOL))objc_msgSend)(_target, _action, key, boolValue);
+                            ((void (*)(id, SEL, XZMocoaKey, BOOL))objc_msgSend)(target, _action, key, boolValue);
                             break;
                         case 3:
-                            ((void (*)(id, SEL, id, XZMocoaKey, BOOL))objc_msgSend)(_target, _action, sender, key, boolValue);
+                            ((void (*)(id, SEL, id, XZMocoaKey, BOOL))objc_msgSend)(target, _action, sender, key, boolValue);
                             break;
                         default:
                             break;
@@ -370,13 +378,13 @@
                     [(NSValue *)value getValue:&stringValue size:sizeof(char *)];
                     switch (_numberOfArguments) {
                         case 1:
-                            ((void (*)(id, SEL, char *))objc_msgSend)(_target, _action, stringValue);
+                            ((void (*)(id, SEL, char *))objc_msgSend)(target, _action, stringValue);
                             break;
                         case 2:
-                            ((void (*)(id, SEL, XZMocoaKey, char *))objc_msgSend)(_target, _action, key, stringValue);
+                            ((void (*)(id, SEL, XZMocoaKey, char *))objc_msgSend)(target, _action, key, stringValue);
                             break;
                         case 3:
-                            ((void (*)(id, SEL, id, XZMocoaKey, char *))objc_msgSend)(_target, _action, sender, key, stringValue);
+                            ((void (*)(id, SEL, id, XZMocoaKey, char *))objc_msgSend)(target, _action, sender, key, stringValue);
                             break;
                         default:
                             break;
@@ -388,13 +396,13 @@
                     [(NSValue *)value getValue:&selectorValue size:sizeof(SEL)];
                     switch (_numberOfArguments) {
                         case 1:
-                            ((void (*)(id, SEL, SEL))objc_msgSend)(_target, _action, selectorValue);
+                            ((void (*)(id, SEL, SEL))objc_msgSend)(target, _action, selectorValue);
                             break;
                         case 2:
-                            ((void (*)(id, SEL, XZMocoaKey, SEL))objc_msgSend)(_target, _action, key, selectorValue);
+                            ((void (*)(id, SEL, XZMocoaKey, SEL))objc_msgSend)(target, _action, key, selectorValue);
                             break;
                         case 3:
-                            ((void (*)(id, SEL, id, XZMocoaKey, SEL))objc_msgSend)(_target, _action, sender, key, selectorValue);
+                            ((void (*)(id, SEL, id, XZMocoaKey, SEL))objc_msgSend)(target, _action, sender, key, selectorValue);
                             break;
                         default:
                             break;
@@ -406,13 +414,13 @@
                     [(NSValue *)value getValue:&pointerValue size:sizeof(void *)];
                     switch (_numberOfArguments) {
                         case 1:
-                            ((void (*)(id, SEL, void *))objc_msgSend)(_target, _action, pointerValue);
+                            ((void (*)(id, SEL, void *))objc_msgSend)(target, _action, pointerValue);
                             break;
                         case 2:
-                            ((void (*)(id, SEL, XZMocoaKey, void *))objc_msgSend)(_target, _action, key, pointerValue);
+                            ((void (*)(id, SEL, XZMocoaKey, void *))objc_msgSend)(target, _action, key, pointerValue);
                             break;
                         case 3:
-                            ((void (*)(id, SEL, id, XZMocoaKey, void *))objc_msgSend)(_target, _action, sender, key, pointerValue);
+                            ((void (*)(id, SEL, id, XZMocoaKey, void *))objc_msgSend)(target, _action, sender, key, pointerValue);
                             break;
                         default:
                             break;
@@ -424,13 +432,13 @@
                     [(NSValue *)value getValue:&arrayValue size:sizeof(void *)];
                     switch (_numberOfArguments) {
                         case 1:
-                            ((void (*)(id, SEL, void *))objc_msgSend)(_target, _action, arrayValue);
+                            ((void (*)(id, SEL, void *))objc_msgSend)(target, _action, arrayValue);
                             break;
                         case 2:
-                            ((void (*)(id, SEL, XZMocoaKey, void *))objc_msgSend)(_target, _action, key, arrayValue);
+                            ((void (*)(id, SEL, XZMocoaKey, void *))objc_msgSend)(target, _action, key, arrayValue);
                             break;
                         case 3:
-                            ((void (*)(id, SEL, id, XZMocoaKey, void *))objc_msgSend)(_target, _action, sender, key, arrayValue);
+                            ((void (*)(id, SEL, id, XZMocoaKey, void *))objc_msgSend)(target, _action, sender, key, arrayValue);
                             break;
                         default:
                             break;
@@ -456,13 +464,13 @@
                         [(NSValue *)value getValue:&bitValue size:sizeof(UInt8)];
                         switch (_numberOfArguments) {
                             case 1:
-                                ((void (*)(id, SEL, UInt8))objc_msgSend)(_target, _action, bitValue);
+                                ((void (*)(id, SEL, UInt8))objc_msgSend)(target, _action, bitValue);
                                 break;
                             case 2:
-                                ((void (*)(id, SEL, XZMocoaKey, UInt8))objc_msgSend)(_target, _action, key, bitValue);
+                                ((void (*)(id, SEL, XZMocoaKey, UInt8))objc_msgSend)(target, _action, key, bitValue);
                                 break;
                             case 3:
-                                ((void (*)(id, SEL, id, XZMocoaKey, UInt8))objc_msgSend)(_target, _action, sender, key, bitValue);
+                                ((void (*)(id, SEL, id, XZMocoaKey, UInt8))objc_msgSend)(target, _action, sender, key, bitValue);
                                 break;
                             default:
                                 break;
@@ -472,13 +480,13 @@
                         [(NSValue *)value getValue:&bitValue size:sizeof(UInt16)];
                         switch (_numberOfArguments) {
                             case 1:
-                                ((void (*)(id, SEL, UInt16))objc_msgSend)(_target, _action, bitValue);
+                                ((void (*)(id, SEL, UInt16))objc_msgSend)(target, _action, bitValue);
                                 break;
                             case 2:
-                                ((void (*)(id, SEL, XZMocoaKey, UInt16))objc_msgSend)(_target, _action, key, bitValue);
+                                ((void (*)(id, SEL, XZMocoaKey, UInt16))objc_msgSend)(target, _action, key, bitValue);
                                 break;
                             case 3:
-                                ((void (*)(id, SEL, id, XZMocoaKey, UInt16))objc_msgSend)(_target, _action, sender, key, bitValue);
+                                ((void (*)(id, SEL, id, XZMocoaKey, UInt16))objc_msgSend)(target, _action, sender, key, bitValue);
                                 break;
                             default:
                                 break;
@@ -488,13 +496,13 @@
                         [(NSValue *)value getValue:&bitValue size:sizeof(UInt32)];
                         switch (_numberOfArguments) {
                             case 1:
-                                ((void (*)(id, SEL, UInt32))objc_msgSend)(_target, _action, bitValue);
+                                ((void (*)(id, SEL, UInt32))objc_msgSend)(target, _action, bitValue);
                                 break;
                             case 2:
-                                ((void (*)(id, SEL, XZMocoaKey, UInt32))objc_msgSend)(_target, _action, key, bitValue);
+                                ((void (*)(id, SEL, XZMocoaKey, UInt32))objc_msgSend)(target, _action, key, bitValue);
                                 break;
                             case 3:
-                                ((void (*)(id, SEL, id, XZMocoaKey, UInt32))objc_msgSend)(_target, _action, sender, key, bitValue);
+                                ((void (*)(id, SEL, id, XZMocoaKey, UInt32))objc_msgSend)(target, _action, sender, key, bitValue);
                                 break;
                             default:
                                 break;
@@ -504,13 +512,13 @@
                         [(NSValue *)value getValue:&bitValue size:sizeof(UInt64)];
                         switch (_numberOfArguments) {
                             case 1:
-                                ((void (*)(id, SEL, UInt64))objc_msgSend)(_target, _action, bitValue);
+                                ((void (*)(id, SEL, UInt64))objc_msgSend)(target, _action, bitValue);
                                 break;
                             case 2:
-                                ((void (*)(id, SEL, XZMocoaKey, UInt64))objc_msgSend)(_target, _action, key, bitValue);
+                                ((void (*)(id, SEL, XZMocoaKey, UInt64))objc_msgSend)(target, _action, key, bitValue);
                                 break;
                             case 3:
-                                ((void (*)(id, SEL, id, XZMocoaKey, UInt64))objc_msgSend)(_target, _action, sender, key, bitValue);
+                                ((void (*)(id, SEL, id, XZMocoaKey, UInt64))objc_msgSend)(target, _action, sender, key, bitValue);
                                 break;
                             default:
                                 break;
@@ -521,13 +529,13 @@
                         [(NSValue *)value getValue:&bitValue size:sizeof(XZ_UInt128)];
                         switch (_numberOfArguments) {
                             case 1:
-                                ((void (*)(id, SEL, XZ_UInt128))objc_msgSend)(_target, _action, bitValue);
+                                ((void (*)(id, SEL, XZ_UInt128))objc_msgSend)(target, _action, bitValue);
                                 break;
                             case 2:
-                                ((void (*)(id, SEL, XZMocoaKey, XZ_UInt128))objc_msgSend)(_target, _action, key, bitValue);
+                                ((void (*)(id, SEL, XZMocoaKey, XZ_UInt128))objc_msgSend)(target, _action, key, bitValue);
                                 break;
                             case 3:
-                                ((void (*)(id, SEL, id, XZMocoaKey, XZ_UInt128))objc_msgSend)(_target, _action, sender, key, bitValue);
+                                ((void (*)(id, SEL, id, XZMocoaKey, XZ_UInt128))objc_msgSend)(target, _action, sender, key, bitValue);
                                 break;
                             default:
                                 break;
@@ -538,13 +546,13 @@
                         [(NSValue *)value getValue:&bitValue size:sizeof(XZ_UInt256)];
                         switch (_numberOfArguments) {
                             case 1:
-                                ((void (*)(id, SEL, XZ_UInt256))objc_msgSend)(_target, _action, bitValue);
+                                ((void (*)(id, SEL, XZ_UInt256))objc_msgSend)(target, _action, bitValue);
                                 break;
                             case 2:
-                                ((void (*)(id, SEL, XZMocoaKey, XZ_UInt256))objc_msgSend)(_target, _action, key, bitValue);
+                                ((void (*)(id, SEL, XZMocoaKey, XZ_UInt256))objc_msgSend)(target, _action, key, bitValue);
                                 break;
                             case 3:
-                                ((void (*)(id, SEL, id, XZMocoaKey, XZ_UInt256))objc_msgSend)(_target, _action, sender, key, bitValue);
+                                ((void (*)(id, SEL, id, XZMocoaKey, XZ_UInt256))objc_msgSend)(target, _action, sender, key, bitValue);
                                 break;
                             default:
                                 break;
@@ -555,13 +563,13 @@
                         [(NSValue *)value getValue:&bitValue size:sizeof(XZ_UInt512)];
                         switch (_numberOfArguments) {
                             case 1:
-                                ((void (*)(id, SEL, XZ_UInt512))objc_msgSend)(_target, _action, bitValue);
+                                ((void (*)(id, SEL, XZ_UInt512))objc_msgSend)(target, _action, bitValue);
                                 break;
                             case 2:
-                                ((void (*)(id, SEL, XZMocoaKey, XZ_UInt512))objc_msgSend)(_target, _action, key, bitValue);
+                                ((void (*)(id, SEL, XZMocoaKey, XZ_UInt512))objc_msgSend)(target, _action, key, bitValue);
                                 break;
                             case 3:
-                                ((void (*)(id, SEL, id, XZMocoaKey, XZ_UInt512))objc_msgSend)(_target, _action, sender, key, bitValue);
+                                ((void (*)(id, SEL, id, XZMocoaKey, XZ_UInt512))objc_msgSend)(target, _action, sender, key, bitValue);
                                 break;
                             default:
                                 break;
@@ -575,13 +583,13 @@
                         [(NSValue *)value getValue:&bitValue size:sizeof(XZ_UInt1024)];
                         switch (_numberOfArguments) {
                             case 1:
-                                ((void (*)(id, SEL, XZ_UInt1024))objc_msgSend)(_target, _action, bitValue);
+                                ((void (*)(id, SEL, XZ_UInt1024))objc_msgSend)(target, _action, bitValue);
                                 break;
                             case 2:
-                                ((void (*)(id, SEL, XZMocoaKey, XZ_UInt1024))objc_msgSend)(_target, _action, key, bitValue);
+                                ((void (*)(id, SEL, XZMocoaKey, XZ_UInt1024))objc_msgSend)(target, _action, key, bitValue);
                                 break;
                             case 3:
-                                ((void (*)(id, SEL, id, XZMocoaKey, XZ_UInt1024))objc_msgSend)(_target, _action, sender, key, bitValue);
+                                ((void (*)(id, SEL, id, XZMocoaKey, XZ_UInt1024))objc_msgSend)(target, _action, sender, key, bitValue);
                                 break;
                             default:
                                 break;
@@ -593,11 +601,11 @@
                     void *buffer = calloc(_valueArgumentType.size, 1);
                     [(NSValue *)value getValue:buffer size:_valueArgumentType.size];
                     
-                    Method              const method     = class_getInstanceMethod(object_getClass(_target), _action);
+                    Method              const method     = class_getInstanceMethod(object_getClass(target), _action);
                     NSMethodSignature * const signature  = [NSMethodSignature signatureWithObjCTypes:method_getTypeEncoding(method)];
                     NSInvocation *      const invocation = [NSInvocation invocationWithMethodSignature:signature];
                     
-                    invocation.target   = _target;
+                    invocation.target   = target;
                     invocation.selector = _action;
                     for (int i = 0; i < _numberOfArguments; i++) {
                         switch (i) {
@@ -624,13 +632,13 @@
                 default: {
                     switch (_numberOfArguments) {
                         case 1:
-                            ((void (*)(id, SEL, id))objc_msgSend)(_target, _action, value);
+                            ((void (*)(id, SEL, id))objc_msgSend)(target, _action, value);
                             break;
                         case 2:
-                            ((void (*)(id, SEL, XZMocoaKey, id))objc_msgSend)(_target, _action, key, value);
+                            ((void (*)(id, SEL, XZMocoaKey, id))objc_msgSend)(target, _action, key, value);
                             break;
                         case 3:
-                            ((void (*)(id, SEL, id, XZMocoaKey, id))objc_msgSend)(_target, _action, sender, key, value);
+                            ((void (*)(id, SEL, id, XZMocoaKey, id))objc_msgSend)(target, _action, sender, key, value);
                             break;
                         default:
                             break;

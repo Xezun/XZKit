@@ -22,7 +22,9 @@ typedef void (^XZMocoaTargetHandler)(id sender, id target, XZMocoaKey key, id va
 - (instancetype)init NS_UNAVAILABLE;
 - (instancetype)initWithTarget:(id)target action:(SEL)action NS_DESIGNATED_INITIALIZER;
 - (instancetype)initWithTarget:(id)target handler:(XZMocoaTargetHandler)handler NS_DESIGNATED_INITIALIZER;
+
 - (void)sendActionWithValue:(nullable id)value forKey:(XZMocoaKey)key sender:(id)sender;
+- (void)sendActionForTarget:(id)target forKey:(XZMocoaKey)key sender:(id)sender value:(nullable id)value;
 
 @end
 

@@ -14,14 +14,12 @@ static void * _context = &_context;
 typedef void (^const XZMocoaRemoveBlock)(NSString *key, NSMutableArray<XZMocoaTargetAction *> *targetActions, BOOL *stop);
 
 @implementation XZMocoaTargetActions {
-    NSMutableDictionary<NSString *, NSMutableArray<XZMocoaTargetAction *> *> *_table;
-    NSMutableDictionary<XZMocoaKey, NSNumber *> *_observers;
+    NSMutableDictionary<XZMocoaKey, NSMutableArray<XZMocoaTargetAction *> *> *_table;
+    NSMutableDictionary<NSString *, XZMocoaTargetAction *> *_observers;
 }
 
 - (void)dealloc {
-    for (XZMocoaKey const key in _observers) {
-        [_viewModel removeObserver:self forKeyPath:key context:&_context];
-    }
+    
 }
 
 - (instancetype)initWithViewModel:(XZMocoaViewModel *)viewModel {
@@ -33,7 +31,7 @@ typedef void (^const XZMocoaRemoveBlock)(NSString *key, NSMutableArray<XZMocoaTa
     return self;
 }
 
-- (void)addTarget:(id)target action:(SEL)action forKey:(NSString *)key {
+- (void)addTarget:(id)target action:(SEL)action forKey:(XZMocoaKey)key {
     NSMutableArray<XZMocoaTargetAction *> *targetActions = _table[key];
     if (targetActions == nil) {
         targetActions = [NSMutableArray array];
@@ -43,7 +41,7 @@ typedef void (^const XZMocoaRemoveBlock)(NSString *key, NSMutableArray<XZMocoaTa
     [targetActions addObject:targetAction];
 }
 
-- (void)addTarget:(id)target handler:(XZMocoaTargetHandler)handler forKey:(NSString *)key {
+- (void)addTarget:(id)target handler:(XZMocoaTargetHandler)handler forKey:(XZMocoaKey)key {
     NSMutableArray<XZMocoaTargetAction *> *targetActions = _table[key];
     if (targetActions == nil) {
         targetActions = [NSMutableArray array];
@@ -54,7 +52,7 @@ typedef void (^const XZMocoaRemoveBlock)(NSString *key, NSMutableArray<XZMocoaTa
     [targetAction sendActionWithValue:nil forKey:key sender:_viewModel];
 }
 
-- (void)removeTarget:(nullable id)target action:(nullable SEL)action forKey:(nullable NSString *)key {
+- (void)removeTarget:(nullable id)target action:(nullable SEL)action forKey:(nullable XZMocoaKey)key {
     if (target == nil) {
         if (action == nil) {
             if (key == nil) {
@@ -87,7 +85,7 @@ typedef void (^const XZMocoaRemoveBlock)(NSString *key, NSMutableArray<XZMocoaTa
 }
 
 /// 移除 key 事件的所有行为
-- (void)_removeForKeyEvents:(NSString *)key {
+- (void)_removeForKeyEvents:(XZMocoaKey)key {
     [_table[key] removeAllObjects];
 }
 
@@ -97,7 +95,7 @@ typedef void (^const XZMocoaRemoveBlock)(NSString *key, NSMutableArray<XZMocoaTa
 }
 
 /// 移除 key 事件的 action 行为
-- (void)_removeAction:(SEL)action forKey:(NSString *)key {
+- (void)_removeAction:(SEL)action forKey:(XZMocoaKey)key {
     NSMutableArray<XZMocoaTargetAction *> * const targetActions = _table[key];
     [targetActions enumerateObjectsWithOptions:NSEnumerationReverse usingBlock:^(XZMocoaTargetAction *obj, NSUInteger idx, BOOL *stop) {
         id const target1 = obj.target;
@@ -109,13 +107,13 @@ typedef void (^const XZMocoaRemoveBlock)(NSString *key, NSMutableArray<XZMocoaTa
 
 /// 移除所有事件的 action 行为
 - (void)_removeAction:(SEL)action {
-    for (NSString *key in _table) {
+    for (XZMocoaKey key in _table) {
         [self _removeAction:action forKey:key];
     }
 }
 
 /// 移除 key 事件的 target 目标
-- (void)_removeTarget:(id)target forKey:(NSString *)key {
+- (void)_removeTarget:(id)target forKey:(XZMocoaKey)key {
     NSMutableArray<XZMocoaTargetAction *> * const targetActions = _table[key];
     [targetActions enumerateObjectsWithOptions:NSEnumerationReverse usingBlock:^(XZMocoaTargetAction *obj, NSUInteger idx, BOOL *stop) {
         id const target1 = obj.target;
@@ -127,13 +125,13 @@ typedef void (^const XZMocoaRemoveBlock)(NSString *key, NSMutableArray<XZMocoaTa
 
 /// 移除所有事件的 target 目标
 - (void)_removeTarget:(id)target {
-    for (NSString *key in _table) {
+    for (XZMocoaKey key in _table) {
         [self _removeTarget:target forKey:key];
     }
 }
 
 /// 移除 key 事件的 target 目标的 action 行为
-- (void)_removeTarget:(id)target action:(SEL)action forKey:(NSString *)key {
+- (void)_removeTarget:(id)target action:(SEL)action forKey:(XZMocoaKey)key {
     NSMutableArray<XZMocoaTargetAction *> * const targetActions = _table[key];
     [targetActions enumerateObjectsWithOptions:NSEnumerationReverse usingBlock:^(XZMocoaTargetAction *obj, NSUInteger idx, BOOL *stop) {
         id const target1 = obj.target;
@@ -145,12 +143,12 @@ typedef void (^const XZMocoaRemoveBlock)(NSString *key, NSMutableArray<XZMocoaTa
 
 /// 移除所有事件的 target 目标的 action 行为
 - (void)_removeTarget:(id)target action:(SEL)action {
-    for (NSString *key in _table) {
+    for (XZMocoaKey key in _table) {
         [self _removeTarget:target action:action forKey:key];
     }
 }
 
-- (void)sendActionsForKey:(NSString *)key value:(nullable)value {
+- (void)sendActionsForKey:(XZMocoaKey)key value:(nullable)value {
     NSMutableArray<XZMocoaTargetAction *> *targetActions = _table[key];
     id const sender = self.viewModel;
     [targetActions enumerateObjectsWithOptions:NSEnumerationReverse usingBlock:^(XZMocoaTargetAction *targetAction, NSUInteger idx, BOOL *stop) {
@@ -163,44 +161,35 @@ typedef void (^const XZMocoaRemoveBlock)(NSString *key, NSMutableArray<XZMocoaTa
     }];
 }
 
-#if DEBUG
+#pragma mark - 模型监听方法关联
 
-// 自动监听值并发送事件
-
-- (void)addObserver:(NSObject *)observer forKey:(XZMocoaKey)key {
+- (void)setAction:(SEL)action forModel:(id)model forKey:(NSString *)key {
+    if (key == nil) {
+        return;
+    }
+    if (action == nil) {
+        if (_observers) {
+            [_observers removeObjectForKey:key];
+        }
+        return;
+    }
     if (_observers == nil) {
         _observers = [NSMutableDictionary dictionary];
     }
-    NSNumber *number = _observers[key];
-    if (number) {
-        _observers[key] = @(number.integerValue + 1);
-    } else {
-        _observers[key] = @(1);
-        [_viewModel addObserver:self forKeyPath:key options:NSKeyValueObservingOptionNew context:&_context];
-    }
+    XZMocoaTargetAction *observer = [[XZMocoaTargetAction alloc] initWithTarget:model action:action];
+    _observers[key] = observer;
 }
 
-- (void)removeObserver:(NSObject *)observer forKey:(XZMocoaKey)key {
-    if (_observers == nil) {
+- (void)sendActionForModel:(id)model forKey:(NSString *)key value:(id)value {
+    if (key == nil) {
         return;
     }
-    NSInteger const number = _observers[key].integerValue;
-    if (number <= 1) {
-        _observers[key] = nil;
-        [_viewModel removeObserver:self forKeyPath:key context:&_context];
-    } else {
-        _observers[key] = @(number - 1);
+    XZMocoaTargetAction * const observer = _observers[key];
+    
+    id const target = observer.target;
+    if (target == nil || target == model) {
+        [observer sendActionForTarget:_viewModel forKey:key sender:model value:value];
     }
 }
-
-- (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary<NSKeyValueChangeKey,id> *)change context:(void *)context {
-    if (_context != context) {
-        return;
-    }
-    id const newValue = change[NSKeyValueChangeNewKey];
-    [self sendActionsForKey:keyPath value:newValue];
-}
-
-#endif
 
 @end

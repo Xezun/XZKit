@@ -215,7 +215,7 @@ XZMocoaUpdatesKey const XZMocoaUpdatesKeyDeselect = @"deselect";
 @end
 
 
-XZMocoaKey const XZMocoaKeyNone             = @"none";
+XZMocoaKey const XZMocoaKeyNone             = @"XZMocoaKeyNone";
 XZMocoaKey const XZMocoaKeyContentStatus    = @"contentStatus";
 XZMocoaKey const XZMocoaKeyIsChecked        = @"isChecked";
 XZMocoaKey const XZMocoaKeyText             = @"text";
@@ -278,6 +278,34 @@ XZMocoaKey const XZMocoaKeyIsLoading        = @"isLoading";
 
 - (void)setValue:(id)value forUndefinedKey:(NSString *)key {
     
+}
+
+- (void)model:(id)model didChangeValue:(id)value forKey:(NSString *)key {
+    if (key == nil) {
+        return;
+    }
+    if (value == nil) {
+        value = [model valueForKey:key];
+    } else if (value == (id)kCFNull) {
+        value = nil;
+    }
+    [_targetActions sendActionForModel:model forKey:key value:value];
+}
+
+- (void)setAction:(SEL)action forModel:(nullable id)model forKey:(nonnull NSString *)key value:(nullable id)initialValue {
+    if (key == nil) {
+        return;
+    }
+    if (_targetActions == nil) {
+        _targetActions = [[XZMocoaTargetActions alloc] initWithViewModel:self];
+    }
+    [_targetActions setAction:action forModel:model forKey:key];
+    if (initialValue == nil) {
+        initialValue = [model valueForKey:key];
+    } else if (initialValue == (id)kCFNull) {
+        initialValue = nil;
+    }
+    [_targetActions sendActionForModel:model forKey:key value:initialValue];
 }
 
 @end
