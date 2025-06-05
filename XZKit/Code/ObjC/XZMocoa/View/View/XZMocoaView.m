@@ -17,14 +17,13 @@
 #import "UIView+XZKit.h"
 #endif
 
-//@implementation XZMocoaView
-//@dynamic viewModel;
-//@end
-
 static const void * const _viewModel = &_viewModel;
 
+XZMocoaOptionKey const XZMocoaOptionKeyModel = @"model";
+XZMocoaOptionKey const XZMocoaOptionKeyName = @"name";
+
 @interface XZMocoaOptions ()
-- (instancetype)initWithURL:(nonnull NSURL *)url options:(nullable NSDictionary *)options;
+- (instancetype)initWithModule:(XZMocoaModule *)module url:(NSURL *)url options:(NSDictionary *)options;
 @end
 
 
@@ -202,7 +201,7 @@ static const void * const _viewModel = &_viewModel;
     }
     switch (module.viewForm) {
         case XZMocoaModuleViewFormClass: {
-            XZMocoaOptions * const mocoaOptions = [[XZMocoaOptions alloc] initWithURL:url options:options];
+            XZMocoaOptions * const mocoaOptions = [[XZMocoaOptions alloc] initWithModule:module url:url options:options];
             return [[module.viewClass alloc] initWithMocoaOptions:mocoaOptions frame:frame];
         }
         case XZMocoaModuleViewFormNib: {
@@ -210,7 +209,7 @@ static const void * const _viewModel = &_viewModel;
             Class const ViewClass = module.viewNibClass ?: self.class;
             for (UIView *object in [nib instantiateWithOwner:nil options:nil]) {
                 if ([object isKindOfClass:ViewClass]) {
-                    XZMocoaOptions * const mocoaOptions = [[XZMocoaOptions alloc] initWithURL:url options:options];
+                    XZMocoaOptions * const mocoaOptions = [[XZMocoaOptions alloc] initWithModule:module url:url options:options];
                     [object awakeFromNibWithMocoaOptions:mocoaOptions frame:frame];
                     return object;
                 }
@@ -259,9 +258,8 @@ static const void * const _viewModel = &_viewModel;
                 XZLog(@"模块 %@ 不是 UIViewController 模块，无法构造视图控制器", module);
                 return nil;
             }
-            XZMocoaOptions * const mocoaOptions = [[XZMocoaOptions alloc] initWithURL:url options:options];
-            UIViewController * const viewController = [[ViewController alloc] initWithMocoaOptions:mocoaOptions nibName:nil bundle:nil];
-            return viewController;
+            XZMocoaOptions * const mocoaOptions = [[XZMocoaOptions alloc] initWithModule:module url:url options:options];
+            return [[ViewController alloc] initWithMocoaOptions:mocoaOptions nibName:nil bundle:nil];
         }
         case XZMocoaModuleViewFormNib: {
             Class const ViewController = module.viewNibClass;
@@ -271,9 +269,8 @@ static const void * const _viewModel = &_viewModel;
             }
             NSString *nibName = module.viewNibName;
             NSBundle *bundle  = module.viewNibBundle;
-            XZMocoaOptions * const mocoaOptions = [[XZMocoaOptions alloc] initWithURL:url options:options];
-            UIViewController * const viewController = [[ViewController alloc] initWithMocoaOptions:mocoaOptions nibName:nibName bundle:bundle];
-            return viewController;
+            XZMocoaOptions * const mocoaOptions = [[XZMocoaOptions alloc] initWithModule:module url:url options:options];
+            return [[ViewController alloc] initWithMocoaOptions:mocoaOptions nibName:nibName bundle:bundle];
         }
         case XZMocoaModuleViewFormStoryboard: {
             UIStoryboard *storyboard = [UIStoryboard storyboardWithName:module.viewStoryboardName bundle:module.viewStoryboardBundle];
@@ -283,7 +280,11 @@ static const void * const _viewModel = &_viewModel;
             } else {
                 vc = [storyboard instantiateInitialViewController];
             }
-            return [vc isKindOfClass:self.class] ? vc : nil;
+            if (![vc isKindOfClass:self]) {
+                return nil;
+            }
+            XZMocoaOptions * const mocoaOptions = [[XZMocoaOptions alloc] initWithModule:module url:url options:options];
+            return [vc didInitWithMocoaOptions:mocoaOptions];
         }
         default:
             XZLog(@"模块 %@ 不是 UIViewController 模块，无法构造视图控制器", module);
@@ -296,7 +297,11 @@ static const void * const _viewModel = &_viewModel;
 }
 
 - (instancetype)initWithMocoaOptions:(XZMocoaOptions *)options nibName:(NSString *)nibName bundle:(NSBundle *)bundle {
-    return [self initWithNibName:nibName bundle:bundle];
+    return [[self initWithNibName:nibName bundle:bundle] didInitWithMocoaOptions:options];
+}
+
+- (instancetype)didInitWithMocoaOptions:(XZMocoaOptions *)options {
+    return self;
 }
 
 - (__kindof UIViewController *)presentMocoaURL:(NSURL *)url options:(nullable NSDictionary *)options animated:(BOOL)flag completion:(void (^ _Nullable)(void))completion {
@@ -416,10 +421,11 @@ static const void * const _viewModel = &_viewModel;
     NSURLComponents *_components;
 }
 
-- (instancetype)initWithURL:(NSURL *)url options:(NSDictionary *)options {
+- (instancetype)initWithModule:(XZMocoaModule *)module url:(NSURL *)url options:(NSDictionary *)options {
     self = [super init];
     if (self) {
         _url = url;
+        _module = module;
         _options = options.mutableCopy;
     }
     return self;

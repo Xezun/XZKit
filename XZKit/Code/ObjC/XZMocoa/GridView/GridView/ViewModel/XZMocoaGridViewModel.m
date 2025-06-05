@@ -743,7 +743,7 @@ typedef void(^XZMocoaGridDelayedUpdates)(__kindof XZMocoaViewModel *self);
 @end
 
 
-@implementation XZMocoaGridViewModel (XZMocoaGridViewSectionViewModelDelegate)
+@implementation XZMocoaGridViewModel (XZMocoaGridViewSectionViewModelUpdates)
 
 - (void)sectionViewModel:(XZMocoaGridViewSectionViewModel *)viewModel didReloadData:(void * _Nullable)null {
     NSInteger const index = [self indexOfSectionViewModel:viewModel];

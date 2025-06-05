@@ -81,18 +81,28 @@ NS_SWIFT_UI_ACTOR @protocol XZMocoaView <NSObject>
 - (void)viewModelDidChange:(nullable XZMocoaViewModel *)oldValue NS_REQUIRES_SUPER;
 @end
 
+
+typedef NSString *XZMocoaOptionKey NS_EXTENSIBLE_STRING_ENUM NS_SWIFT_NAME(XZMocoaOptions.Key);
+FOUNDATION_EXPORT XZMocoaOptionKey const XZMocoaOptionKeyModel;
+FOUNDATION_EXPORT XZMocoaOptionKey const XZMocoaOptionKeyName;
+
 /// 模块初始化参数。可像字典一样取值。
 /// @code
 /// XZMocoaOptions options;
 /// id value = options[@"value"];
 /// @endcode
 @interface XZMocoaOptions : NSObject
+
+/// 模块。
+@property (nonatomic, readonly) XZMocoaModule *module;
 /// 原始 URL
 @property (nonatomic, readonly) NSURL *url;
 /// 合并了 URL query 参数
-@property (nonatomic, readonly) NSDictionary *options;
-- (nullable id)objectForKeyedSubscript:(NSString *)key;
-- (BOOL)containsKey:(NSString *)aKey;
+@property (nonatomic, readonly) NSDictionary<XZMocoaOptionKey, id> *options;
+
+- (nullable id)objectForKeyedSubscript:(XZMocoaOptionKey)key;
+- (BOOL)containsKey:(XZMocoaOptionKey)aKey;
+
 @end
 
 
@@ -113,27 +123,33 @@ NS_SWIFT_UI_ACTOR @protocol XZMocoaView <NSObject>
 /// 参数 url 的 query 将作为 options 参数，调用 -viewControllerWithMocoaModule:options: 方法完成实例化控制器。
 /// @param url 模块地址
 /// @param options 额外参数
-+ (nullable __kindof UIViewController *)viewControllerWithMocoaURL:(NSURL *)url options:(nullable NSDictionary *)options;
++ (nullable __kindof UIViewController *)viewControllerWithMocoaURL:(NSURL *)url options:(nullable NSDictionary<XZMocoaOptionKey, id> *)options;
 
 /// 根据视图控制器的模块地址，构造视图控制器。
 + (nullable __kindof UIViewController *)viewControllerWithMocoaURL:(NSURL *)url;
 
 /// XZMocoa 使用此方法初始化控制器。
 /// @discussion
-/// 便利初始化方法，默认直接调用 -initWithNibName:bundle: 方法完成初始化。
+/// 便利初始化方法，先调用 -initWithNibName:bundle: 方法完成基本初始化，再调用 -didInitWithMocoaOptions: 完成额外初始化。
+/// @discussion
+/// 通过 nib/storyboard 加载的控制器，因为已经初始化，不会调用此方法，但是会调用 -didInitWithMocoaOptions: 方法。
 /// @discussion
 /// 子类可以通过重写此方法获取 options 中的参数信息，或将控制器的初始化改为其它初始化方法。
+/// @discussion
+/// 由于在类目中无法定义指定初始化方法，所以 Swift 无法直接重写此方法，可重新 -didInitWithMocoaOptions: 方法。
 /// @param options 初始化参数
 - (instancetype)initWithMocoaOptions:(XZMocoaOptions *)options nibName:(nullable NSString *)nibName bundle:(nullable NSBundle *)bundle;
+
+- (instancetype)didInitWithMocoaOptions:(XZMocoaOptions *)options;
 
 /// 通过 XZMocoaURL 弹出层控制器。
 /// @discussion 如果 XZMocoaURL 没有对应的控制器，那么此方法将不产生任何效果。
 /// @param url XZMocoaURL
 /// @param animated 是否动画
 /// @param completion 回调
-- (nullable __kindof UIViewController *)presentMocoaURL:(nullable NSURL *)url options:(nullable NSDictionary *)options animated:(BOOL)animated completion:(void (^_Nullable)(void))completion;
-- (nullable __kindof UIViewController *)presentMocoaURL:(nullable NSURL *)url options:(nullable NSDictionary *)options completion:(void (^_Nullable)(void))completion;
-- (nullable __kindof UIViewController *)presentMocoaURL:(nullable NSURL *)url options:(nullable NSDictionary *)options animated:(BOOL)animated;
+- (nullable __kindof UIViewController *)presentMocoaURL:(nullable NSURL *)url options:(nullable NSDictionary<XZMocoaOptionKey, id> *)options animated:(BOOL)animated completion:(void (^_Nullable)(void))completion;
+- (nullable __kindof UIViewController *)presentMocoaURL:(nullable NSURL *)url options:(nullable NSDictionary<XZMocoaOptionKey, id> *)options completion:(void (^_Nullable)(void))completion;
+- (nullable __kindof UIViewController *)presentMocoaURL:(nullable NSURL *)url options:(nullable NSDictionary<XZMocoaOptionKey, id> *)options animated:(BOOL)animated;
 - (nullable __kindof UIViewController *)presentMocoaURL:(nullable NSURL *)url animated:(BOOL)animated completion:(void (^_Nullable)(void))completion;
 - (nullable __kindof UIViewController *)presentMocoaURL:(nullable NSURL *)url animated:(BOOL)animated;
 - (nullable __kindof UIViewController *)presentMocoaURL:(nullable NSURL *)url completion:(void (^_Nullable)(void))completion;
@@ -142,7 +158,7 @@ NS_SWIFT_UI_ACTOR @protocol XZMocoaView <NSObject>
 /// 通过 XZMocoaURL 添加子控制器。
 /// @discussion 如果 XZMocoaURL 没有对应的控制器，那么此方法将不产生任何效果。
 /// @param url XZMocoaURL
-- (nullable __kindof UIViewController *)addChildMocoaURL:(nullable NSURL *)url options:(nullable NSDictionary *)options;
+- (nullable __kindof UIViewController *)addChildMocoaURL:(nullable NSURL *)url options:(nullable NSDictionary<XZMocoaOptionKey, id> *)options;
 - (nullable __kindof UIViewController *)addChildMocoaURL:(nullable NSURL *)url;
 - (nullable __kindof UIViewController *)addChildViewControllerWithMocoaURL:(nullable NSURL *)url API_DEPRECATED_WITH_REPLACEMENT("-addChildMocoaURL:", ios(1.0, 12.0));
 @end
@@ -154,7 +170,7 @@ NS_SWIFT_UI_ACTOR @protocol XZMocoaView <NSObject>
 /// 通过 XZMocoaURL 创建根控制器初始化。
 /// @discussion 如果没有找到 XZMocoaURL 对应的控制器，那么将调用 -init 方法进行初始化。
 /// @param url XZMocoaURL
-- (instancetype)initWithRootMocoaURL:(nullable NSURL *)url options:(nullable NSDictionary *)options;
+- (instancetype)initWithRootMocoaURL:(nullable NSURL *)url options:(nullable NSDictionary<XZMocoaOptionKey, id> *)options;
 /// 通过 XZMocoaURL 创建根控制器初始化。
 - (instancetype)initWithRootMocoaURL:(nullable NSURL *)url;
 - (instancetype)initWithRootViewControllerWithMocoaURL:(nullable NSURL *)url API_DEPRECATED_WITH_REPLACEMENT("-initWithRootMocoaURL:", ios(1.0, 12.0));
@@ -164,9 +180,9 @@ NS_SWIFT_UI_ACTOR @protocol XZMocoaView <NSObject>
 /// @param url XZMocoaURL
 /// @param animated 是否动画。
 /// @param options 参数
-- (nullable __kindof UIViewController *)pushMocoaURL:(nullable NSURL *)url options:(nullable NSDictionary *)options animated:(BOOL)animated;
+- (nullable __kindof UIViewController *)pushMocoaURL:(nullable NSURL *)url options:(nullable NSDictionary<XZMocoaOptionKey, id> *)options animated:(BOOL)animated;
 - (nullable __kindof UIViewController *)pushMocoaURL:(nullable NSURL *)url animated:(BOOL)animated;
-- (nullable __kindof UIViewController *)pushMocoaURL:(nullable NSURL *)url options:(nullable NSDictionary *)options;
+- (nullable __kindof UIViewController *)pushMocoaURL:(nullable NSURL *)url options:(nullable NSDictionary<XZMocoaOptionKey, id> *)options;
 - (nullable __kindof UIViewController *)pushViewControllerWithMocoaURL:(nullable NSURL *)url animated:(BOOL)animated API_DEPRECATED_WITH_REPLACEMENT("-pushMocoaURL:animated:", ios(1.0, 12.0));
 
 @end

@@ -119,7 +119,7 @@ NS_SWIFT_UI_ACTOR @protocol XZMocoaGridViewModelDelegate <XZMocoaViewModelDelega
 
 // MARK: - 下级 section 不能独自完成的事件，需要上级处理的事件
 
-@interface XZMocoaGridViewModel (XZMocoaGridViewSectionViewModelDelegate)
+@interface XZMocoaGridViewModel (XZMocoaGridViewSectionViewModelUpdates)
 /// section 发送的 Section 重载事件，以刷新视图。
 - (void)sectionViewModel:(__kindof XZMocoaGridViewSectionViewModel *)viewModel didReloadData:(void * _Nullable)null;
 /// section 发送的 Cell 重载事件，以刷新视图。

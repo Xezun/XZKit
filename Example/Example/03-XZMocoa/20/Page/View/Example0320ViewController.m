@@ -28,13 +28,10 @@
     XZMocoa(@"https://mocoa.xezun.com/examples/20").viewNibClass = self;
 }
 
-- (instancetype)initWithMocoaOptions:(XZMocoaOptions *)options nibName:(NSString *)nibName bundle:(NSBundle *)bundle {
-    self = [super initWithMocoaOptions:options nibName:nibName bundle:bundle];
-    if (self) {
-        self.title = @"Example 20";
-        self.hidesBottomBarWhenPushed = YES;
-        self.navigationItem.backButtonTitle = @"返回";
-    }
+- (instancetype)didInitWithMocoaOptions:(XZMocoaOptions *)options {
+    self.title = @"Example 20";
+    self.hidesBottomBarWhenPushed = YES;
+    self.navigationItem.backButtonTitle = @"返回";
     return self;
 }
 

@@ -26,21 +26,29 @@ NS_SWIFT_UI_ACTOR @protocol XZMocoaViewModel <NSObject>
 @end
 
 /// 为简化开发，Mocoa 提供的视图模型基类。
-///
+///  
 /// - 延迟初始化的 ready 机制。
 /// - 层级关系。
 /// - 下层模块 到 上层模块 的 Updates 事件机制。
 /// - 视图监听视图模型属性的 target-action 机制。
-///
-/// **数据监听**
+///  
+/// # 数据监听
 ///
 /// 对数据的监听是 MVVM 设计模式的特色之一，但在 iOS 实际开发中，数据在大部分情形下，都是单向流动的，类似从网络请求到页面展示的场景居多。
 /// 双向的数据流动的业务场景也有，但在开发中并不多。鉴于此，默认情况下 XZMocoa 不监听数据 Model 的变更。
 /// 而对于要监听数据的变化的少量情形，我们可以通过传统的方式处理，比如的 KVO 或通知。
-///
-/// - 数据在视图模型外更新，通过 KVO 或通知监听。
-/// - 数据在视图模型中更新：下层视图模型，可通过 Updates 机制通知上层模型；上层视图模型，定义统一的方法直接调用。
-/// - 在视图中，通过 target-action 机制绑定。
+///  
+/// ## 一、数据在视图模型外更新
+/// 1. 通过 Cocoa 传统的 KVO、通知、代理等机制监听。
+/// 2. 使用 CoreData 的 NSFetchedResultsController 代理方法。
+/// 3. 不监听数据细节，整体刷新。
+/// ## 二、数据在视图模型中更新
+/// 1. 数据在下层视图模型更新后，可通过 Updates 机制通知上层模型。
+/// 2. 数据在下层视图模型更新后，如下层视图模型与上层视图模型关系明确，比如 section 与 tableView 之间，上层视图模型可定义方法供下层视图模型直接调用。
+/// 3. 数据在上层视图模型更新后，通过协议定义监听方法，上层视图模型直接调用下层视图模型的协议方法，其实就是代理机制。
+/// 4. 数据在上层视图模型更新后，下层视图模型也可以通过 KVO 监听。
+/// 5. 数据更新后，视图模型通过 target-action 机制，通知视图渲染。
+/// 5. 数据更新后，也可通过 delegate 通知视图。
 @interface XZMocoaViewModel : NSObject <XZMocoaViewModel>
 
 /// 视图模型事件的代理，通常为视图。
@@ -63,7 +71,10 @@ NS_SWIFT_UI_ACTOR @protocol XZMocoaViewModel <NSObject>
 /// @param model 数据
 - (instancetype)initWithModel:(nullable id)model NS_DESIGNATED_INITIALIZER;
 
-+ (nullable instancetype)viewModelWithMocoaURL:(NSURL *)mocoaURL model:(nullable id)model NS_SWIFT_NAME(init(_:model:));
+/// 通过模块 URL 初始化视图模型。
+/// @param URL 模块 URL
+/// @param model 数据模型
++ (nullable __kindof XZMocoaViewModel *)viewModelWithURL:(NSURL *)URL model:(nullable id)model NS_SWIFT_NAME(init(_:model:));
 
 /// 是否已完成初始化。
 ///

@@ -54,9 +54,9 @@
     return self;
 }
 
-+ (instancetype)viewModelWithMocoaURL:(NSURL *)mocoaURL model:(nullable id)model {
-    XZMocoaModule *module = [XZMocoaModule moduleForURL:mocoaURL];
-    return [[module.viewModelClass alloc] initWithModel:model];
++ (instancetype)viewModelWithURL:(NSURL *)URL model:(nullable id)model {
+    XZMocoaModule * const module = [XZMocoaModule moduleForURL:URL];
+    return [module instantiateViewModelWithModel:model];
 }
 
 - (void)ready {

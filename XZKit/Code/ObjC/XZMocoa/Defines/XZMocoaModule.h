@@ -16,7 +16,7 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-@class XZMocoaModule, NSDictionary;
+@class XZMocoaModule, NSDictionary, XZMocoaViewModel;
 
 /// 实现视图的形式。
 typedef NS_ENUM(NSUInteger, XZMocoaModuleViewForm) {
@@ -88,6 +88,10 @@ NS_SWIFT_NAME(XZMocoaModule.SubmoduleCollection)
 /// 推荐使用 XZMocoa(stringOrURL) 函数，获取模块对象。
 /// - Parameter urlString: 模块地址
 + (nullable XZMocoaModule *)moduleForURLString:(nullable NSString *)urlString NS_SWIFT_NAME(init(forURL:));
+
+#pragma mark - 构造实例
+
+- (nullable __kindof XZMocoaViewModel *)instantiateViewModelWithModel:(nullable id)model;
 
 #pragma mark - MVVM 基本结构
 

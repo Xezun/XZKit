@@ -7,6 +7,7 @@
 //
 
 #import "XZMocoaModule.h"
+#import "XZMocoaViewModel.h"
 
 /// 将 MocoaURL 中的单个 path 部分解析成 MVVM 模块的 kind 和 name 值。
 /// - Parameters:
@@ -92,6 +93,14 @@ FOUNDATION_STATIC_INLINE NSString *XZMocoaPathCreate(XZMocoaKind kind, XZMocoaNa
         _url = url.copy;
     }
     return self;
+}
+
+// - 实例
+
+- (__kindof XZMocoaViewModel *)instantiateViewModelWithModel:(id)model {
+    XZMocoaViewModel * const viewModel = [[self.viewModelClass alloc] initWithModel:model];
+    viewModel.module = self;
+    return viewModel;
 }
 
 // view class

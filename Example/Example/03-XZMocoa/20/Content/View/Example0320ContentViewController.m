@@ -21,13 +21,10 @@
     XZMocoa(@"https://mocoa.xezun.com/examples/20/content/").viewNibClass = self;
 }
 
-- (instancetype)initWithMocoaOptions:(XZMocoaOptions *)options nibName:(NSString *)nibName bundle:(NSBundle *)bundle {
-    self = [super initWithMocoaOptions:options nibName:nibName bundle:bundle];
-    if (self) {
-        self.title = @"WebView";
-        _url = [NSURL URLWithString:options[@"url"]];
-        XZLog(@"url: %@", _url);
-    }
+- (instancetype)didInitializeWithMocoaOptions:(XZMocoaOptions *)options {
+    self.title = @"WebView";
+    _url = [NSURL URLWithString:options[@"url"]];
+    XZLog(@"url: %@", _url);
     return self;
 }
 
