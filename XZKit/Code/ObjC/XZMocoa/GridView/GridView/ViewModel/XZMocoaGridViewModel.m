@@ -928,7 +928,7 @@ typedef void(^XZMocoaGridDelayedUpdates)(__kindof XZMocoaViewModel *self);
         case NSFetchedResultsChangeMove: {
             XZLog(@"[CoreData][move] hasChanges=%d {%ld, %ld} => {%ld, %ld}", anObject.hasChanges, indexPath.section, indexPath.item, newIndexPath.section, newIndexPath.item);
             if ([anObject hasChanges]) {
-                NSDictionary<NSString *, id> * const changedValues = anObject.changedValues;
+                NSDictionary<NSString *, id> * const changedValues = anObject.changedValuesForCurrentEvent;
                 XZLog(@"[CoreData][move][change][key] %@", changedValues);
                 
                 XZMocoaGridViewCellViewModel * const viewModel = [self cellViewModelAtIndexPath:indexPath];
@@ -944,7 +944,7 @@ typedef void(^XZMocoaGridDelayedUpdates)(__kindof XZMocoaViewModel *self);
             // 如果同时发生了 move 事件，则不会调用此方法
             XZLog(@"[CoreData][update] {%ld, %ld}", indexPath.section, indexPath.item);
             
-            NSDictionary<NSString *, id> * const changedValues = anObject.changedValues;
+            NSDictionary<NSString *, id> * const changedValues = anObject.changedValuesForCurrentEvent;
             XZLog(@"[CoreData][move][update][key] %@", changedValues);
             
             XZMocoaGridViewCellViewModel * const viewModel = [self cellViewModelAtIndexPath:indexPath];

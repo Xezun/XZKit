@@ -389,8 +389,6 @@ static NSArray *XZMocoaGetMappingModelKeys(XZMocoaViewModel *viewModel);
                 
                 [invocation invoke];
             }
-            NSArray                * const keys   = _methodToKeys[methodName];
-            
         }
     }
 }
