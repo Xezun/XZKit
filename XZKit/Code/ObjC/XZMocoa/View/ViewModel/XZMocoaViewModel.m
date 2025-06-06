@@ -256,6 +256,7 @@ XZMocoaKey const XZMocoaKeyIsLoading        = @"isLoading";
 }
 
 - (void)sendActionsForKey:(XZMocoaKey)key {
+    if (!self.isReady) return;
     [_targetActions sendActionsForKey:(key ?: XZMocoaKeyNone) value:nil];
 }
 
@@ -265,6 +266,7 @@ XZMocoaKey const XZMocoaKeyIsLoading        = @"isLoading";
 }
 
 - (void)sendActionsForKey:(XZMocoaKey)key value:(id)value {
+    if (!self.isReady) return;
     if (value == nil) {
         value = (key == XZMocoaKeyNone ? nil : [self valueForKey:key]);
     } else if (value == (id)kCFNull) {
