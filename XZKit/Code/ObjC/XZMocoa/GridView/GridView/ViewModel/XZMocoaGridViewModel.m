@@ -928,11 +928,11 @@ typedef void(^XZMocoaGridDelayedUpdates)(__kindof XZMocoaViewModel *self);
         case NSFetchedResultsChangeMove: {
             XZLog(@"[CoreData][move] hasChanges=%d {%ld, %ld} => {%ld, %ld}", anObject.hasChanges, indexPath.section, indexPath.item, newIndexPath.section, newIndexPath.item);
             if ([anObject hasChanges]) {
+                NSDictionary<NSString *, id> * const changedValues = anObject.changedValues;
+                XZLog(@"[CoreData][move][change][key] %@", changedValues);
+                
                 XZMocoaGridViewCellViewModel * const viewModel = [self cellViewModelAtIndexPath:indexPath];
-                [anObject.changedValues enumerateKeysAndObjectsUsingBlock:^(NSString * _Nonnull key, id  _Nonnull obj, BOOL * _Nonnull stop) {
-                    XZLog(@"[CoreData][move][change][key] %@", key);
-                    [viewModel model:anObject didChangeValue:obj forKey:key];
-                }];
+                [viewModel model:anObject didUpdateValuesForKeys:changedValues.allKeys];
             }
             break;
         }
@@ -943,11 +943,12 @@ typedef void(^XZMocoaGridDelayedUpdates)(__kindof XZMocoaViewModel *self);
         case NSFetchedResultsChangeUpdate: {
             // 如果同时发生了 move 事件，则不会调用此方法
             XZLog(@"[CoreData][update] {%ld, %ld}", indexPath.section, indexPath.item);
+            
+            NSDictionary<NSString *, id> * const changedValues = anObject.changedValues;
+            XZLog(@"[CoreData][move][update][key] %@", changedValues);
+            
             XZMocoaGridViewCellViewModel * const viewModel = [self cellViewModelAtIndexPath:indexPath];
-            [anObject.changedValues enumerateKeysAndObjectsUsingBlock:^(NSString * _Nonnull key, id  _Nonnull obj, BOOL * _Nonnull stop) {
-                XZLog(@"[CoreData][move][update][key] %@", key);
-                [viewModel model:anObject didChangeValue:obj forKey:key];
-            }];
+            [viewModel model:anObject didUpdateValuesForKeys:changedValues.allKeys];
             break;
         }
     }

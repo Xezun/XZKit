@@ -9,6 +9,7 @@
 #import "XZMocoaViewModel.h"
 #import "XZMocoaView.h"
 #import "XZMocoaTargetActions.h"
+@import XZObjcDescriptor;
 
 @implementation XZMocoaViewModel {
     @private
@@ -280,34 +281,6 @@ XZMocoaKey const XZMocoaKeyIsLoading        = @"isLoading";
     
 }
 
-- (void)model:(id)model didChangeValue:(id)value forKey:(NSString *)key {
-    if (key == nil) {
-        return;
-    }
-    if (value == nil) {
-        value = [model valueForKey:key];
-    } else if (value == (id)kCFNull) {
-        value = nil;
-    }
-    [_targetActions sendActionForModel:model forKey:key value:value];
-}
-
-- (void)setAction:(SEL)action forModel:(nullable id)model forKey:(nonnull NSString *)key value:(nullable id)initialValue {
-    if (key == nil) {
-        return;
-    }
-    if (_targetActions == nil) {
-        _targetActions = [[XZMocoaTargetActions alloc] initWithViewModel:self];
-    }
-    [_targetActions setAction:action forModel:model forKey:key];
-    if (initialValue == nil) {
-        initialValue = [model valueForKey:key];
-    } else if (initialValue == (id)kCFNull) {
-        initialValue = nil;
-    }
-    [_targetActions sendActionForModel:model forKey:key value:initialValue];
-}
-
 @end
 
 
@@ -344,158 +317,157 @@ XZMocoaKey const XZMocoaKeyIsLoading        = @"isLoading";
 
 @end
 
-//#import "XZMocoaImageView.h"
-//
-//@interface XZMocoaObserver : NSObject
-//@property (nonatomic, unsafe_unretained) XZMocoaViewModel *owner;
-//- (instancetype)initWithOwner:(XZMocoaViewModel *)owner;
-//- (void)addTarget:(id)target action:(XZMocoaAction)action forKey:(NSString *)key;
-//- (void)removeAllTargets;
-//@end
-//
-//@interface XZMocoaTargetAction : NSObject
-//@property (nonatomic, copy) NSString *key;
-//- (instancetype)initWithTarget:(id)target action:(XZMocoaAction)action key:(NSString *)key owner:(XZMocoaObserver *)owner;
-//- (void)sendActionsForKeyValue:(id)newValue;
-//@end
-//
-//@implementation XZMocoaViewModel (XZMocoaKeyValueBinding)
-//
-//- (void (^)(NSString *, id, XZMocoaAction))bind {
-//    return ^(NSString * key, id target, XZMocoaAction action) {
-//        NSParameterAssert(key && target && action);
-//        if (self->_observer == nil) {
-//            self->_observer = [[XZMocoaObserver alloc] initWithOwner:self];
-//        }
-//        [self->_observer addTarget:target action:action forKey:key];
-//        action([self valueForKey:key], target, self);
-//    };
-//}
-//
-//@end
-//
-//static void *_observerContext = &_observerContext;
-//
-//@implementation XZMocoaObserver {
-//    NSMutableDictionary<NSString *, NSMutableArray<XZMocoaTargetAction *> *> *_table;
-//}
-//
-//- (void)removeAllTargets {
-//    for (NSString *key in _table) {
-//        [_owner removeObserver:self forKeyPath:key context:_observerContext];
-//    }
-//}
-//
-//- (instancetype)initWithOwner:(XZMocoaViewModel *)owner {
-//    self = [super init];
-//    if (self) {
-//        _owner = owner;
-//        _table = [NSMutableDictionary dictionary];
-//    }
-//    return self;
-//}
-//
-//- (void)removeTargetAction:(XZMocoaTargetAction *)targetAction {
-//    [_table[targetAction.key] removeObject:targetAction];
-//}
-//
-//- (void)addTarget:(id)target action:(XZMocoaAction)action forKey:(NSString *)key {
-//    NSMutableArray<XZMocoaTargetAction *> *targetActions = _table[key];
-//    if (targetActions == nil) {
-//        targetActions = [NSMutableArray array];
-//        _table[key] = targetActions;
-//        [_owner addObserver:self forKeyPath:key options:NSKeyValueObservingOptionNew context:_observerContext];
-//    }
-//
-//    id targetAction = [[XZMocoaTargetAction alloc] initWithTarget:target action:action key:key owner:self];
-//    [targetActions addObject:targetAction];
-//}
-//
-//- (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary<NSKeyValueChangeKey,id> *)change context:(void *)context {
-//    if (_observerContext != context) {
-//        return;
-//    }
-//    for (XZMocoaTargetAction * const targetAction in _table[keyPath]) {
-//        id newValue = change[NSKeyValueChangeNewKey];
-//        if (newValue == NSNull.null) {
-//            newValue = nil;
-//        }
-//        [targetAction sendActionsForKeyValue:newValue];
-//    }
-//}
-//
-//@end
-//
-//@interface XZMocoaTargetAction ()
-//@property (nonatomic, unsafe_unretained) XZMocoaObserver *owner;
-//@property (nonatomic, weak) id target;
-//@property (nonatomic, copy) XZMocoaAction action;
-//@end
-//
-//@implementation XZMocoaTargetAction
-//
-//- (instancetype)initWithTarget:(id)target action:(XZMocoaAction)action key:(NSString *)key owner:(XZMocoaObserver *)owner {
-//    self = [super init];
-//    if (self) {
-//        _owner  = owner;
-//        _key    = key.copy;
-//        _target = target;
-//        _action = action;
-//    }
-//    return self;
-//}
-//
-//- (void)sendActionsForKeyValue:(id)newValue {
-//    id const target = self.target;
-//    if (target == nil) {
-//        [self.owner removeTargetAction:self];
-//    } else {
-//        self.action(newValue, target, self.owner.owner);
-//    }
-//}
-//
-//@end
-//
-//void __mocoa_bind_3(XZMocoaViewModel *vm, SEL keySel, UILabel *target) XZ_ATTR_OVERLOAD {
-//    NSString *key = NSStringFromSelector(keySel);
-//    vm.bind(key, target, ^(id value, UILabel *self, id vm) {
-//        self.text = value;
-//    });
-//}
-//
-//void __mocoa_bind_3(XZMocoaViewModel *vm, SEL keySel, UIImageView *target) XZ_ATTR_OVERLOAD {
-//    NSString *key = NSStringFromSelector(keySel);
-//    vm.bind(key, target, ^(id value, UIImageView *self, id vm) {
-//        self.image = value;
-//    });
-//}
-//
-//void __mocoa_bind_4(XZMocoaViewModel *vm, SEL keySel, UILabel *target, id no) XZ_ATTR_OVERLOAD {
-//    NSString *key = NSStringFromSelector(keySel);
-//    vm.bind(key, target, ^(id value, UILabel *self, id vm) {
-//        self.attributedText = value;
-//    });
-//}
-//
-//void __mocoa_bind_4(XZMocoaViewModel *vm, SEL keySel, UIImageView *target, id completion) XZ_ATTR_OVERLOAD {
-//    NSString *key = NSStringFromSelector(keySel);
-//    vm.bind(key, target, ^(id value, UIImageView<XZMocoaImageView> *self, id vm) {
-//        [self xz_mocoa_setImageWithURL:value completion:completion];
-//    });
-//
-//    [NSObject automaticallyNotifiesObserversForKey:nil];
-//}
-//
-//void __mocoa_bind_5(XZMocoaViewModel *vm, SEL keySel, id target, SEL setter, id no) XZ_ATTR_OVERLOAD {
-//    NSString *key = NSStringFromSelector(keySel);
-//    vm.bind(key, target, ^(id value, NSObject *self, id vm) {
-//#pragma clang diagnostic push
-//#pragma clang diagnostic ignored "-Warc-performSelector-leaks"
-//        [self performSelector:setter withObject:value];
-//#pragma clang diagnostic pop
-//    });
-//}
-//
-//void __mocoa_bind_5(XZMocoaViewModel *vm, SEL keySel, id target, XZMocoaAction action, id no) XZ_ATTR_OVERLOAD {
-//    vm.bind(NSStringFromSelector(keySel), target, action);
-//}
+static NSArray *XZMocoaGetMappingModelKeys(XZMocoaViewModel *viewModel);
+
+@implementation XZMocoaViewModel (XZMocoaModelObserving)
+
++ (NSDictionary<NSString *,id> *)mappingModelKeys {
+    return nil;
+}
+
+- (void)model:(id)model didUpdateValuesForKeys:(NSArray<NSString *> * const)changeKeys {
+    NSArray * const mappingModelKeys = XZMocoaGetMappingModelKeys(self);
+    if (mappingModelKeys == nil) {
+        return;
+    }
+    
+    NSDictionary * const _methodToKeys = mappingModelKeys[0];
+    NSDictionary * const _keyToMethods = mappingModelKeys[1];
+    
+    NSMutableSet                        * const invokedMethods = [NSMutableSet setWithCapacity:_methodToKeys.count];
+    NSMutableDictionary<NSString *, id> * const fetchedValues  = [NSMutableDictionary dictionaryWithCapacity:_keyToMethods.count];
+    XZObjcClassDescriptor               * const class          = [XZObjcClassDescriptor descriptorWithClass:self.class];
+    
+    for (NSString * const changeKey in changeKeys) {
+        for (NSString * const methodName in _keyToMethods[changeKey]) {
+            if ([invokedMethods containsObject:methodName]) {
+                continue;
+            }
+            [invokedMethods addObject:methodName];
+            
+            for (NSArray *keys in _methodToKeys[methodName]) {
+                XZObjcMethodDescriptor * const method = class.methods[methodName];
+                
+                if (method == nil || keys.count != method.argumentsTypes.count - 2) {
+                    continue;
+                }
+                
+                NSMethodSignature * const signature  = [NSMethodSignature signatureWithObjCTypes:method_getTypeEncoding(method.raw)];
+                NSInvocation      * const invocation = [NSInvocation invocationWithMethodSignature:signature];
+                
+                invocation.target   = self;
+                invocation.selector = method.selector;
+                
+                for (NSInteger i = 2; i < method.argumentsTypes.count; i++) {
+                    NSString * const key = keys[i - 2];
+                    
+                    id value = fetchedValues[key];
+                    if (value == nil) {
+                        value = [model valueForKey:key];
+                        fetchedValues[key] = value ?: (id)kCFNull;
+                    }
+                    if (value == (id)kCFNull) {
+                        value = nil;
+                    }
+                    
+                    XZObjcTypeDescriptor *type = method.argumentsTypes[i];
+                    switch (type.type) {
+                        case XZObjcTypeClass:
+                        case XZObjcTypeObject: {
+                            [invocation setArgument:&value atIndex:i];
+                            break;
+                        }
+                        default: {
+                            void *buffer = calloc(type.size, 1);
+                            [(NSValue *)value getValue:buffer size:type.size];
+                            [invocation setArgument:buffer atIndex:i];
+                            free(buffer);
+                            break;
+                        }
+                    }
+                }
+                
+                [invocation invoke];
+            }
+            NSArray                * const keys   = _methodToKeys[methodName];
+            
+        }
+    }
+}
+
+@end
+
+static inline void XZMocoaMappingKeyToMethod(NSMutableDictionary * const keyToMethods, NSString * const key, NSString * const methodName) {
+    NSMutableSet *selectors = keyToMethods[key];
+    if (selectors == nil) {
+        selectors = [NSMutableSet set];
+        keyToMethods[key] = selectors;
+    }
+    [selectors addObject:methodName];
+}
+
+static inline void XZMocoaMappingModelKeys(Class const VMClass, NSMutableDictionary * const methodToKeys, NSMutableDictionary * const keyToMethods) {
+    NSDictionary<NSString *, id> * const mappingModelKeys = [VMClass mappingModelKeys];
+    if (mappingModelKeys.count == 0) {
+        return;
+    }
+    
+    [mappingModelKeys enumerateKeysAndObjectsUsingBlock:^(NSString * const methodName, id keyOrKeys, BOOL * _Nonnull stop) {
+        // 方法是否已实现
+        if (!class_respondsToSelector(VMClass, NSSelectorFromString(methodName))) {
+            return;
+        }
+        
+        // 方法已存在映射
+        if (methodToKeys[methodName]) {
+            return;
+        }
+        
+        NSMutableSet *keys = methodToKeys[methodName];
+        if (keys == nil) {
+            keys = [NSMutableSet set];
+            methodToKeys[methodName] = keys;
+        }
+        
+        if ([keyOrKeys isKindOfClass:NSString.class]) {
+            [keys addObject:@[keyOrKeys]];
+            XZMocoaMappingKeyToMethod(keyToMethods, keyOrKeys, methodName);
+        } else {
+            [keys addObject:keyOrKeys];
+            for (NSString *key in keyOrKeys) {
+                XZMocoaMappingKeyToMethod(keyToMethods, key, methodName);
+            }
+        }
+    }];
+}
+
+static NSArray *XZMocoaGetMappingModelKeys(XZMocoaViewModel *viewModel) {
+    static const void * const _key = &_key;
+    
+    Class const VMClass = viewModel.class;
+    
+    NSArray *_mappingModelKeys = objc_getAssociatedObject(VMClass, _key);
+    if (_mappingModelKeys) {
+        return _mappingModelKeys == (id)kCFNull ? nil : _mappingModelKeys;
+    }
+    
+    // method -> [key1, key2] 或 method -> [[key1,key2], [key3, key4]]
+    NSMutableDictionary<NSString *, NSSet *>             * const methodToKeys = [NSMutableDictionary dictionary];
+    // key -> [method1, method2]
+    NSMutableDictionary<NSString *, NSSet<NSString *> *> * const keyToMethods = [NSMutableDictionary dictionary];
+    
+    Class superClass = VMClass;
+    do {
+        XZMocoaMappingModelKeys(superClass, methodToKeys, keyToMethods);
+        superClass = class_getSuperclass(superClass);
+    } while ([superClass isSubclassOfClass:[XZMocoaViewModel class]]);
+    
+    if (methodToKeys.count == 0) {
+        objc_setAssociatedObject(VMClass, _key, (id)kCFNull, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
+        return nil;
+    }
+    
+    _mappingModelKeys = @[methodToKeys, keyToMethods];
+    objc_setAssociatedObject(VMClass, _key, _mappingModelKeys, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
+    return _mappingModelKeys;
+}

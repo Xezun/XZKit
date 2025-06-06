@@ -23,11 +23,6 @@ NS_ASSUME_NONNULL_BEGIN
 - (void)removeTarget:(nullable id)target action:(nullable SEL)action forKey:(nullable NSString *)key;
 - (void)sendActionsForKey:(NSString *)key value:(nullable)value;
 
-- (void)addTarget:(id)target handler:(XZMocoaTargetHandler)handler forKey:(NSString *)key;
-
-- (void)setAction:(SEL)action forModel:(id)model forKey:(nonnull NSString *)key;
-- (void)sendActionForModel:(id)model forKey:(NSString *)key value:(id)value;
-
 @end
 
 NS_ASSUME_NONNULL_END

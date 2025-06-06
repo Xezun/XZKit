@@ -16,6 +16,9 @@ union FoobarUnion { double b; int a; };
 static void fooFunction(void) { }
 static void barFunction(void) { }
 
+@interface XZMocoaTestsViewModel : XZMocoaViewModel
+@end
+
 @interface XZMocoaTests : XCTestCase
 
 @end
@@ -349,6 +352,83 @@ static void barFunction(void) { }
 
 - (void)printUnionValueB:(union FoobarUnion)aValue {
     NSLog(@"%f", aValue.b);
+}
+
+- (void)testModelObserving {
+    id model = @{
+        @"name": @"John",
+        @"age": @((NSInteger)20),
+        @"from": @((CGFloat)10),
+        @"to": @((float)30),
+        @"rect": @(CGRectMake(10, 20, 30, 40))
+    };
+    XZMocoaTestsViewModel *viewModel = [[XZMocoaTestsViewModel alloc] initWithModel:model];
+    
+    [viewModel model:model didUpdateValuesForKeys:@[@"name"]];
+    [viewModel model:model didUpdateValuesForKeys:@[@"age"]];
+    [viewModel model:model didUpdateValuesForKeys:@[@"from"]];
+    [viewModel model:model didUpdateValuesForKeys:@[@"to"]];
+    [viewModel model:model didUpdateValuesForKeys:@[@"rect"]];
+    [viewModel model:model didUpdateValuesForKeys:@[@"name", @"age"]];
+    [viewModel model:model didUpdateValuesForKeys:@[@"name", @"from"]];
+    [viewModel model:model didUpdateValuesForKeys:@[@"name", @"to"]];
+    [viewModel model:model didUpdateValuesForKeys:@[@"age", @"from"]];
+    [viewModel model:model didUpdateValuesForKeys:@[@"age", @"to"]];
+    [viewModel model:model didUpdateValuesForKeys:@[@"from", @"to"]];
+    [viewModel model:model didUpdateValuesForKeys:@[@"name", @"age", @"rect"]];
+    [viewModel model:model didUpdateValuesForKeys:@[@"name", @"from", @"rect"]];
+    [viewModel model:model didUpdateValuesForKeys:@[@"name", @"to", @"rect"]];
+    [viewModel model:model didUpdateValuesForKeys:@[@"age", @"from", @"rect"]];
+    [viewModel model:model didUpdateValuesForKeys:@[@"age", @"to", @"rect"]];
+    [viewModel model:model didUpdateValuesForKeys:@[@"from", @"to", @"rect"]];
+    [viewModel model:model didUpdateValuesForKeys:@[@"name", @"age", @"from"]];
+    [viewModel model:model didUpdateValuesForKeys:@[@"name", @"age", @"to"]];
+    [viewModel model:model didUpdateValuesForKeys:@[@"name", @"from", @"to"]];
+    [viewModel model:model didUpdateValuesForKeys:@[@"age", @"from", @"to"]];
+    [viewModel model:model didUpdateValuesForKeys:@[@"name", @"age", @"from", @"to"]];
+    [viewModel model:model didUpdateValuesForKeys:@[@"name", @"age", @"from", @"rect"]];
+    [viewModel model:model didUpdateValuesForKeys:@[@"name", @"age", @"to", @"rect"]];
+    [viewModel model:model didUpdateValuesForKeys:@[@"name", @"from", @"to", @"rect"]];
+    [viewModel model:model didUpdateValuesForKeys:@[@"age", @"from", @"to", @"rect"]];
+    [viewModel model:model didUpdateValuesForKeys:@[@"name", @"age", @"from", @"to", @"rect"]];
+}
+
+@end
+
+
+@implementation XZMocoaTestsViewModel
+
++ (NSDictionary<NSString *,id> *)mappingModelKeys {
+    return @{
+        NSStringFromSelector(@selector(setName:)): @"name",
+        NSStringFromSelector(@selector(setAge:)): @"age",
+        NSStringFromSelector(@selector(setRect:)): @"rect",
+        NSStringFromSelector(@selector(setFrom:to:)): @[@"from", @"to"],
+    };
+}
+
+- (void)setName:(NSString *)name {
+    NSLog(@"%s: %@", __FUNCTION__, name);
+    XCTAssert([name isEqualToString:@"John"]);
+}
+
+- (void)setAge:(NSInteger)age {
+    NSLog(@"%s: %ld", __FUNCTION__, age);
+    XCTAssert(age == 20);
+}
+
+- (void)setFrom:(CGFloat)from to:(float)to {
+    NSLog(@"%s: %f %f", __FUNCTION__, from, to);
+    XCTAssert(from ==10);
+}
+
+- (void)setRect:(CGRect)rect {
+    NSLog(@"%s: %@", __FUNCTION__, NSStringFromCGRect(rect));
+    XCTAssert(CGRectEqualToRect(rect, CGRectMake(10, 20, 30, 40)));
+}
+
+- (void)valueChanged {
+    
 }
 
 @end

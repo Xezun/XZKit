@@ -8,18 +8,8 @@
 #import "XZMocoaTargetActions.h"
 @import ObjectiveC;
 
-static void * _context = &_context;
-
-/// stop 可能为 NULL
-typedef void (^const XZMocoaRemoveBlock)(NSString *key, NSMutableArray<XZMocoaTargetAction *> *targetActions, BOOL *stop);
-
 @implementation XZMocoaTargetActions {
     NSMutableDictionary<XZMocoaKey, NSMutableArray<XZMocoaTargetAction *> *> *_table;
-    NSMutableDictionary<NSString *, XZMocoaTargetAction *> *_observers;
-}
-
-- (void)dealloc {
-    
 }
 
 - (instancetype)initWithViewModel:(XZMocoaViewModel *)viewModel {
@@ -39,17 +29,6 @@ typedef void (^const XZMocoaRemoveBlock)(NSString *key, NSMutableArray<XZMocoaTa
     }
     XZMocoaTargetAction *targetAction = [[XZMocoaTargetAction alloc] initWithTarget:target action:action];
     [targetActions addObject:targetAction];
-}
-
-- (void)addTarget:(id)target handler:(XZMocoaTargetHandler)handler forKey:(XZMocoaKey)key {
-    NSMutableArray<XZMocoaTargetAction *> *targetActions = _table[key];
-    if (targetActions == nil) {
-        targetActions = [NSMutableArray array];
-        _table[key] = targetActions;
-    }
-    XZMocoaTargetAction *targetAction = [[XZMocoaTargetAction alloc] initWithTarget:target handler:handler];
-    [targetActions addObject:targetAction];
-    [targetAction sendActionWithValue:nil forKey:key sender:_viewModel];
 }
 
 - (void)removeTarget:(nullable id)target action:(nullable SEL)action forKey:(nullable XZMocoaKey)key {
@@ -156,40 +135,9 @@ typedef void (^const XZMocoaRemoveBlock)(NSString *key, NSMutableArray<XZMocoaTa
         if (target == nil) {
             [targetActions removeObjectAtIndex:idx]; // 删除 target 已销毁的监听
         } else {
-            [targetAction sendActionWithValue:value forKey:key sender:sender];
+            [targetAction sender:sender sendActionForKey:key value:value];
         }
     }];
-}
-
-#pragma mark - 模型监听方法关联
-
-- (void)setAction:(SEL)action forModel:(id)model forKey:(NSString *)key {
-    if (key == nil) {
-        return;
-    }
-    if (action == nil) {
-        if (_observers) {
-            [_observers removeObjectForKey:key];
-        }
-        return;
-    }
-    if (_observers == nil) {
-        _observers = [NSMutableDictionary dictionary];
-    }
-    XZMocoaTargetAction *observer = [[XZMocoaTargetAction alloc] initWithTarget:model action:action];
-    _observers[key] = observer;
-}
-
-- (void)sendActionForModel:(id)model forKey:(NSString *)key value:(id)value {
-    if (key == nil) {
-        return;
-    }
-    XZMocoaTargetAction * const observer = _observers[key];
-    
-    id const target = observer.target;
-    if (target == nil || target == model) {
-        [observer sendActionForTarget:_viewModel forKey:key sender:model value:value];
-    }
 }
 
 @end
