@@ -7,6 +7,7 @@
 
 #if SWIFT_PACKAGE
 @_exported import XZMocoaObjC
+
 extension XZMocoaKind: @retroactive ExpressibleByStringLiteral {
     public typealias StringLiteralType = String
     public init(stringLiteral value: String) {
@@ -37,6 +38,26 @@ extension XZMocoaOptions.Key: @retroactive ExpressibleByStringLiteral {
         self.init(rawValue: value)
     }
 }
+
+
+@freestanding(expression)
+public macro mocoa<T>(_ value: T) -> XZMocoaModule = #externalMacro(module: "XZMocoaMacros", type: "MocoaMacro")
+
+@attached(member, names: named(Key))
+public macro mocoa() = #externalMacro(module: "XZMocoaMacros", type: "MocoaMacro")
+
+@attached(peer, names: arbitrary)
+@attached(accessor, names: arbitrary)
+public macro mocoaKey() = #externalMacro(module: "XZMocoaMacros", type: "MocoaKeyMacro")
+
+//@InitializerDeclSyntax
+//func registerModule() {
+//    
+//}
+//
+//@attached(memberAttribute)
+//public macro func mocoaKey() = #externalMacro(module: "XZMocoaMacros", type: "XZMocoaKeyMacro")
+
 #else
 extension XZMocoaKind: ExpressibleByStringLiteral {
     public typealias StringLiteralType = String
@@ -69,3 +90,6 @@ extension XZMocoaOptions.Key: ExpressibleByStringLiteral {
     }
 }
 #endif
+
+
+

@@ -2,6 +2,7 @@
 // The swift-tools-version declares the minimum version of Swift required to build this package.
 
 import PackageDescription
+import CompilerPluginSupport
 
 private enum ModuleType {
     case ObjC;
@@ -30,12 +31,24 @@ private var _modules: [(type: ModuleType, name: String, dependencies: [PackageDe
     (.Mixed, "XZExtensions", ["XZDefines"]),
     (.Mixed, "XZGeometry", []),
     (.Mixed, "XZToast", ["XZGeometry", "XZTextImageView", "XZExtensions"]),
-    (.Mixed, "XZMocoa", ["XZDefines", "XZExtensions", "XZObjcDescriptor"]),
+    (.Mixed, "XZMocoa", ["XZDefines", "XZExtensions", "XZObjcDescriptor", "XZMocoaMacros"]),
 ]
 _modules.append((.Swift, "XZKit", _modules.map({ .byName(name: $0.name) })))
 
 private var _products = [Product]();
 private var _targets = [Target]();
+
+_targets.append(
+    .macro(
+        name: "XZMocoaMacros",
+        dependencies: [
+            .product(name: "SwiftSyntaxMacros", package: "swift-syntax"),
+            .product(name: "SwiftCompilerPlugin", package: "swift-syntax")
+        ],
+        path: "XZKit",
+        sources: ["Code/Macro/XZMocoa"],
+    )
+)
 
 for module in _modules {
     _products.append(.library(name: module.name, targets: [module.name]))
@@ -78,4 +91,12 @@ for module in _modules {
     }
 }
 
-let package = Package(name: "XZKit", platforms: [.iOS(.v13)], products: _products, dependencies: [], targets: _targets)
+let package = Package(
+    name: "XZKit",
+    platforms: [.iOS(.v13), .macOS(.v15)],
+    products: _products,
+    dependencies: [
+        .package(url: "https://github.com/apple/swift-syntax.git", from: "601.0.1")
+    ],
+    targets: _targets
+)

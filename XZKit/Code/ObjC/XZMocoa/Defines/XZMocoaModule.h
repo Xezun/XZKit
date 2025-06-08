@@ -87,7 +87,7 @@ NS_SWIFT_NAME(XZMocoaModule.SubmoduleCollection)
 /// @discussion
 /// 推荐使用 XZMocoa(stringOrURL) 函数，获取模块对象。
 /// - Parameter urlString: 模块地址
-+ (nullable XZMocoaModule *)moduleForURLString:(nullable NSString *)urlString NS_SWIFT_NAME(init(forURL:));
++ (nullable XZMocoaModule *)moduleForURLString:(nullable NSString *)urlString NS_SWIFT_NAME(init(for:));
 
 #pragma mark - 构造实例
 
@@ -338,7 +338,7 @@ NS_SWIFT_NAME(XZMocoaModule.SubmoduleCollection)
 /// - mocoa://xzkit.xezun.com/example
 ///
 /// @param moduleURLString 模块地址
-FOUNDATION_STATIC_INLINE XZMocoaModule * _Nullable XZMocoa(NSString *moduleURLString) XZ_ATTR_OVERLOAD NS_SWIFT_NAME(mocoa(_:)) {
+FOUNDATION_STATIC_INLINE XZMocoaModule * _Nullable XZMocoa(NSString *moduleURLString) XZ_ATTR_OVERLOAD NS_REFINED_FOR_SWIFT {
     return [XZMocoaModule moduleForURLString:moduleURLString];
 }
 
@@ -349,7 +349,7 @@ FOUNDATION_STATIC_INLINE XZMocoaModule * _Nullable XZMocoa(NSString *moduleURLSt
 /// - mocoa://xzkit.xezun.com/example
 ///
 /// @param moduleURL 模块地址
-FOUNDATION_STATIC_INLINE XZMocoaModule * _Nullable XZMocoa(NSURL *moduleURL) XZ_ATTR_OVERLOAD NS_SWIFT_NAME(mocoa(_:)) {
+FOUNDATION_STATIC_INLINE XZMocoaModule * _Nullable XZMocoa(NSURL *moduleURL) XZ_ATTR_OVERLOAD NS_REFINED_FOR_SWIFT {
     return [XZMocoaModule moduleForURL:moduleURL];
 }
 
