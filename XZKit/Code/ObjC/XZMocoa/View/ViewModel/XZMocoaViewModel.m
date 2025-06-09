@@ -427,15 +427,14 @@ static inline void XZMocoaMappingModelKeys(Class const VMClass, NSMutableDiction
             return;
         }
         
-        namedMethods[methodName] = [XZObjcMethodDescriptor descriptorWithMethod:class_getInstanceMethod(VMClass, selector)];
+        XZObjcClassDescriptor *class = [XZObjcClassDescriptor descriptorWithClass:VMClass];
+        namedMethods[methodName] = class.methods[methodName];
         
         NSMutableSet *keys = methodToKeys[methodName];
         if (keys == nil) {
             keys = [NSMutableSet set];
             methodToKeys[methodName] = keys;
         }
-        
-        
         
         if ([keyOrKeys isKindOfClass:NSString.class]) {
             [keys addObject:@[keyOrKeys]];
