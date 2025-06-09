@@ -4,6 +4,8 @@
 import PackageDescription
 import CompilerPluginSupport
 
+// 模块
+
 private enum ModuleType {
     case ObjC;
     case Swift;
@@ -37,18 +39,6 @@ _modules.append((.Swift, "XZKit", _modules.map({ .byName(name: $0.name) })))
 
 private var _products = [Product]();
 private var _targets = [Target]();
-
-_targets.append(
-    .macro(
-        name: "XZMocoaMacros",
-        dependencies: [
-            .product(name: "SwiftSyntaxMacros", package: "swift-syntax"),
-            .product(name: "SwiftCompilerPlugin", package: "swift-syntax")
-        ],
-        path: "XZKit",
-        sources: ["Code/Macro/XZMocoa"],
-    )
-)
 
 for module in _modules {
     _products.append(.library(name: module.name, targets: [module.name]))
@@ -91,12 +81,55 @@ for module in _modules {
     }
 }
 
+// 宏
+
+_targets.append(
+    .macro(
+        name: "XZMocoaMacros",
+        dependencies: [
+            .product(name: "SwiftSyntaxMacros", package: "swift-syntax"),
+            .product(name: "SwiftCompilerPlugin", package: "swift-syntax")
+        ],
+        path: "XZKit",
+        sources: ["Code/Macro/XZMocoa"]
+    )
+)
+
+// 应用
+
+_targets.append(
+    .executableTarget(
+        name: "Example",
+        dependencies: ["XZKit"],
+        path: "XZKit",
+        sources: ["Code/Swift/Example"]
+    )
+)
+_products.append(
+    .executable(name: "Example", targets: ["Example"])
+)
+
+// 单元测试
+
+_targets.append(
+    .testTarget(
+        name: "XZMocoaMacrosTests",
+        dependencies: [
+            "XZMocoaMacros",
+            .product(name: "SwiftSyntaxMacrosTestSupport", package: "swift-syntax"),
+        ],
+        path: "Tests",
+        sources: ["Macro/XZMocoa"]
+    )
+)
+
+
 let package = Package(
     name: "XZKit",
     platforms: [.iOS(.v13), .macOS(.v15)],
     products: _products,
     dependencies: [
-        .package(url: "https://github.com/apple/swift-syntax.git", from: "601.0.1")
+        .package(url: "https://github.com/swiftlang/swift-syntax.git", from: "600.0.0-latest"),
     ],
     targets: _targets
 )

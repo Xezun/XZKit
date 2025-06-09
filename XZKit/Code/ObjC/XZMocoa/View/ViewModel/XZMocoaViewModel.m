@@ -335,10 +335,10 @@ static NSArray *XZMocoaGetMappingModelKeys(XZMocoaViewModel *viewModel);
     
     NSDictionary * const _methodToKeys = mappingModelKeys[0];
     NSDictionary * const _keyToMethods = mappingModelKeys[1];
+    NSDictionary * const _namedMethods = mappingModelKeys[2];
     
     NSMutableSet                        * const invokedMethods = [NSMutableSet setWithCapacity:_methodToKeys.count];
     NSMutableDictionary<NSString *, id> * const fetchedValues  = [NSMutableDictionary dictionaryWithCapacity:_keyToMethods.count];
-    XZObjcClassDescriptor               * const class          = [XZObjcClassDescriptor descriptorWithClass:self.class];
     
     for (NSString * const changeKey in changeKeys) {
         for (NSString * const methodName in _keyToMethods[changeKey]) {
@@ -348,7 +348,7 @@ static NSArray *XZMocoaGetMappingModelKeys(XZMocoaViewModel *viewModel);
             [invokedMethods addObject:methodName];
             
             for (NSArray *keys in _methodToKeys[methodName]) {
-                XZObjcMethodDescriptor * const method = class.methods[methodName];
+                XZObjcMethodDescriptor * const method = _namedMethods[methodName];
                 
                 if (method == nil || keys.count != method.argumentsTypes.count - 2) {
                     continue;
@@ -406,15 +406,19 @@ static inline void XZMocoaMappingKeyToMethod(NSMutableDictionary * const keyToMe
     [selectors addObject:methodName];
 }
 
-static inline void XZMocoaMappingModelKeys(Class const VMClass, NSMutableDictionary * const methodToKeys, NSMutableDictionary * const keyToMethods) {
+static inline void XZMocoaMappingModelKeys(Class const VMClass, NSMutableDictionary * const methodToKeys, NSMutableDictionary * const keyToMethods, NSMutableDictionary * const namedMethods) {
     NSDictionary<NSString *, id> * const mappingModelKeys = [VMClass mappingModelKeys];
     if (mappingModelKeys.count == 0) {
         return;
     }
     
     [mappingModelKeys enumerateKeysAndObjectsUsingBlock:^(NSString * const methodName, id keyOrKeys, BOOL * _Nonnull stop) {
+        SEL const selector = NSSelectorFromString(methodName);
+        if (selector == NULL) {
+            return;
+        }
         // 方法是否已实现
-        if (!class_respondsToSelector(VMClass, NSSelectorFromString(methodName))) {
+        if (!class_respondsToSelector(VMClass, selector)) {
             return;
         }
         
@@ -423,11 +427,15 @@ static inline void XZMocoaMappingModelKeys(Class const VMClass, NSMutableDiction
             return;
         }
         
+        namedMethods[methodName] = [XZObjcMethodDescriptor descriptorWithMethod:class_getInstanceMethod(VMClass, selector)];
+        
         NSMutableSet *keys = methodToKeys[methodName];
         if (keys == nil) {
             keys = [NSMutableSet set];
             methodToKeys[methodName] = keys;
         }
+        
+        
         
         if ([keyOrKeys isKindOfClass:NSString.class]) {
             [keys addObject:@[keyOrKeys]];
@@ -455,10 +463,12 @@ static NSArray *XZMocoaGetMappingModelKeys(XZMocoaViewModel *viewModel) {
     NSMutableDictionary<NSString *, NSSet *>             * const methodToKeys = [NSMutableDictionary dictionary];
     // key -> [method1, method2]
     NSMutableDictionary<NSString *, NSSet<NSString *> *> * const keyToMethods = [NSMutableDictionary dictionary];
+    // method -> XZObjcMethodDescriptor
+    NSMutableDictionary<NSString *, NSSet<NSString *> *> * const namedMethods = [NSMutableDictionary dictionary];
     
     Class superClass = VMClass;
     do {
-        XZMocoaMappingModelKeys(superClass, methodToKeys, keyToMethods);
+        XZMocoaMappingModelKeys(superClass, methodToKeys, keyToMethods, namedMethods);
         superClass = class_getSuperclass(superClass);
     } while ([superClass isSubclassOfClass:[XZMocoaViewModel class]]);
     
@@ -467,7 +477,7 @@ static NSArray *XZMocoaGetMappingModelKeys(XZMocoaViewModel *viewModel) {
         return nil;
     }
     
-    _mappingModelKeys = @[methodToKeys, keyToMethods];
+    _mappingModelKeys = @[methodToKeys, keyToMethods, namedMethods];
     objc_setAssociatedObject(VMClass, _key, _mappingModelKeys, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
     return _mappingModelKeys;
 }

@@ -43,12 +43,34 @@ extension XZMocoaOptions.Key: @retroactive ExpressibleByStringLiteral {
 @freestanding(expression)
 public macro mocoa<T>(_ value: T) -> XZMocoaModule = #externalMacro(module: "XZMocoaMacros", type: "MocoaMacro")
 
-@attached(member, names: named(Key))
+@attached(memberAttribute)
+@attached(member, names: arbitrary)
 public macro mocoa() = #externalMacro(module: "XZMocoaMacros", type: "MocoaMacro")
 
+// MARK: - @key
+
+/// 不带参数，使用属性名作为键名。
 @attached(peer, names: arbitrary)
 @attached(accessor, names: arbitrary)
-public macro mocoaKey() = #externalMacro(module: "XZMocoaMacros", type: "MocoaKeyMacro")
+public macro key() = #externalMacro(module: "XZMocoaMacros", type: "MocoaKeyMacro")
+
+/// 单个参数且不带标签，参数为键名。
+@attached(peer, names: arbitrary)
+@attached(accessor, names: arbitrary)
+public macro key(_ name: String) = #externalMacro(module: "XZMocoaMacros", type: "MocoaKeyMacro")
+
+/// 单个参数，带 value 标签，使用属性名作为键并，value 参数为初始值。
+@attached(peer, names: arbitrary)
+@attached(accessor, names: arbitrary)
+public macro key(value: Any) = #externalMacro(module: "XZMocoaMacros", type: "MocoaKeyMacro")
+
+/// 两个参数：第一个参数为键名，第二个参数为初始值。
+@attached(peer, names: arbitrary)
+@attached(accessor, names: arbitrary)
+public macro key(_ name: String, _ value: Any) = #externalMacro(module: "XZMocoaMacros", type: "MocoaKeyMacro")
+
+@attached(body)
+public macro bind(_ name: String...) = #externalMacro(module: "XZMocoaMacros", type: "MocoaBindMacro")
 
 //@InitializerDeclSyntax
 //func registerModule() {
