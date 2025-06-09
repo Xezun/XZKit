@@ -82,6 +82,38 @@
             };
             xz_objc_class_addMethodWithBlock(modelClass, selector, encoding, block, block, nil);
         }
+        
+        {
+            SEL const selector = @selector(isEqual:);
+            const char * const encoding = xz_objc_class_getMethodTypeEncoding([NSObject class], selector);
+            id const block = ^BOOL(id<NSFetchedResultsSectionInfo> const self, id<NSFetchedResultsSectionInfo> that) {
+                if (object_getClass(self) != object_getClass(that)) {
+                    return NO;
+                }
+                NSString *name1 = self.name;
+                NSString *name2 = that.name;
+                if (name1 == nil) {
+                    if (name2 != nil) {
+                        return NO;
+                    }
+                } else if (name2 == nil) {
+                    return NO;
+                } else if (![name1 isEqualToString:name2]) {
+                    return NO;
+                }
+                NSUInteger const numberOfObjects = self.numberOfObjects;
+                if (numberOfObjects != that.numberOfObjects) {
+                    return NO;
+                }
+                for (NSUInteger i = 0 ; i < numberOfObjects; i++) {
+                    if (![self.objects[i] isEqual:that.objects[i]]) {
+                        return NO;
+                    }
+                }
+                return YES;
+            };
+            xz_objc_class_addMethodWithBlock(modelClass, selector, encoding, block, block, nil);
+        }
     }
     
     return model;
