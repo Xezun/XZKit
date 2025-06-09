@@ -319,7 +319,7 @@ XZMocoaKey const XZMocoaKeyIsLoading        = @"isLoading";
 
 @end
 
-static NSArray *XZMocoaGetMappingModelKeys(XZMocoaViewModel *viewModel);
+static NSArray<NSDictionary *> *XZMocoaGetMappingModelKeys(Class const VMClass);
 
 @implementation XZMocoaViewModel (XZMocoaModelObserving)
 
@@ -328,7 +328,7 @@ static NSArray *XZMocoaGetMappingModelKeys(XZMocoaViewModel *viewModel);
 }
 
 - (void)model:(id)model didUpdateValuesForKeys:(NSArray<NSString *> * const)changeKeys {
-    NSArray * const mappingModelKeys = XZMocoaGetMappingModelKeys(self);
+    NSArray * const mappingModelKeys = XZMocoaGetMappingModelKeys(self.class);
     if (mappingModelKeys == nil) {
         return;
     }
@@ -340,57 +340,56 @@ static NSArray *XZMocoaGetMappingModelKeys(XZMocoaViewModel *viewModel);
     NSMutableSet                        * const invokedMethods = [NSMutableSet setWithCapacity:_methodToKeys.count];
     NSMutableDictionary<NSString *, id> * const fetchedValues  = [NSMutableDictionary dictionaryWithCapacity:_keyToMethods.count];
     
-    for (NSString * const changeKey in changeKeys) {
+    for (NSString * const changeKey in (changeKeys.count > 0 ? changeKeys : _keyToMethods.allKeys)) {
         for (NSString * const methodName in _keyToMethods[changeKey]) {
             if ([invokedMethods containsObject:methodName]) {
                 continue;
             }
             [invokedMethods addObject:methodName];
             
-            for (NSArray *keys in _methodToKeys[methodName]) {
-                XZObjcMethodDescriptor * const method = _namedMethods[methodName];
-                
-                if (method == nil || keys.count != method.argumentsTypes.count - 2) {
-                    continue;
-                }
-                
-                NSMethodSignature * const signature  = [NSMethodSignature signatureWithObjCTypes:method_getTypeEncoding(method.raw)];
-                NSInvocation      * const invocation = [NSInvocation invocationWithMethodSignature:signature];
-                
-                invocation.target   = self;
-                invocation.selector = method.selector;
-                
-                for (NSInteger i = 2; i < method.argumentsTypes.count; i++) {
-                    NSString * const key = keys[i - 2];
-                    
-                    id value = fetchedValues[key];
-                    if (value == nil) {
-                        value = [model valueForKey:key];
-                        fetchedValues[key] = value ?: (id)kCFNull;
-                    }
-                    if (value == (id)kCFNull) {
-                        value = nil;
-                    }
-                    
-                    XZObjcTypeDescriptor *type = method.argumentsTypes[i];
-                    switch (type.type) {
-                        case XZObjcTypeClass:
-                        case XZObjcTypeObject: {
-                            [invocation setArgument:&value atIndex:i];
-                            break;
-                        }
-                        default: {
-                            void *buffer = calloc(type.size, 1);
-                            [(NSValue *)value getValue:buffer size:type.size];
-                            [invocation setArgument:buffer atIndex:i];
-                            free(buffer);
-                            break;
-                        }
-                    }
-                }
-                
-                [invocation invoke];
+            NSArray<NSString *>    * const keys   = _methodToKeys[methodName];
+            XZObjcMethodDescriptor * const method = _namedMethods[methodName];
+            
+            if (method == nil || keys.count != method.argumentsTypes.count - 2) {
+                continue;
             }
+            
+            NSMethodSignature * const signature  = [NSMethodSignature signatureWithObjCTypes:method_getTypeEncoding(method.raw)];
+            NSInvocation      * const invocation = [NSInvocation invocationWithMethodSignature:signature];
+            
+            invocation.target   = self;
+            invocation.selector = method.selector;
+            
+            for (NSInteger i = 2; i < method.argumentsTypes.count; i++) {
+                NSString * const key = keys[i - 2];
+                
+                id value = fetchedValues[key];
+                if (value == nil) {
+                    value = [model valueForKey:key];
+                    fetchedValues[key] = value ?: (id)kCFNull;
+                }
+                if (value == (id)kCFNull) {
+                    value = nil;
+                }
+                
+                XZObjcTypeDescriptor *type = method.argumentsTypes[i];
+                switch (type.type) {
+                    case XZObjcTypeClass:
+                    case XZObjcTypeObject: {
+                        [invocation setArgument:&value atIndex:i];
+                        break;
+                    }
+                    default: {
+                        void *buffer = calloc(type.size, 1);
+                        [(NSValue *)value getValue:buffer size:type.size];
+                        [invocation setArgument:buffer atIndex:i];
+                        free(buffer);
+                        break;
+                    }
+                }
+            }
+            
+            [invocation invoke];
         }
     }
 }
@@ -427,20 +426,14 @@ static inline void XZMocoaMappingModelKeys(Class const VMClass, NSMutableDiction
             return;
         }
         
-        XZObjcClassDescriptor *class = [XZObjcClassDescriptor descriptorWithClass:VMClass];
-        namedMethods[methodName] = class.methods[methodName];
-        
-        NSMutableSet *keys = methodToKeys[methodName];
-        if (keys == nil) {
-            keys = [NSMutableSet set];
-            methodToKeys[methodName] = keys;
-        }
+        XZObjcClassDescriptor * const descriptor = [XZObjcClassDescriptor descriptorWithClass:VMClass];
+        namedMethods[methodName] = descriptor.methods[methodName];
         
         if ([keyOrKeys isKindOfClass:NSString.class]) {
-            [keys addObject:@[keyOrKeys]];
+            methodToKeys[methodName] = @[keyOrKeys];
             XZMocoaMappingKeyToMethod(keyToMethods, keyOrKeys, methodName);
         } else {
-            [keys addObject:keyOrKeys];
+            methodToKeys[methodName] = keyOrKeys;
             for (NSString *key in keyOrKeys) {
                 XZMocoaMappingKeyToMethod(keyToMethods, key, methodName);
             }
@@ -448,35 +441,34 @@ static inline void XZMocoaMappingModelKeys(Class const VMClass, NSMutableDiction
     }];
 }
 
-static NSArray *XZMocoaGetMappingModelKeys(XZMocoaViewModel *viewModel) {
-    static const void * const _key = &_key;
-    
-    Class const VMClass = viewModel.class;
-    
-    NSArray *_mappingModelKeys = objc_getAssociatedObject(VMClass, _key);
-    if (_mappingModelKeys) {
-        return _mappingModelKeys == (id)kCFNull ? nil : _mappingModelKeys;
-    }
-    
-    // method -> [key1, key2] 或 method -> [[key1,key2], [key3, key4]]
-    NSMutableDictionary<NSString *, NSSet *>             * const methodToKeys = [NSMutableDictionary dictionary];
-    // key -> [method1, method2]
-    NSMutableDictionary<NSString *, NSSet<NSString *> *> * const keyToMethods = [NSMutableDictionary dictionary];
-    // method -> XZObjcMethodDescriptor
-    NSMutableDictionary<NSString *, NSSet<NSString *> *> * const namedMethods = [NSMutableDictionary dictionary];
-    
-    Class superClass = VMClass;
-    do {
-        XZMocoaMappingModelKeys(superClass, methodToKeys, keyToMethods, namedMethods);
-        superClass = class_getSuperclass(superClass);
-    } while ([superClass isSubclassOfClass:[XZMocoaViewModel class]]);
-    
-    if (methodToKeys.count == 0) {
-        objc_setAssociatedObject(VMClass, _key, (id)kCFNull, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
+static NSArray<NSDictionary *> *XZMocoaGetMappingModelKeys(Class const VMClass) {
+    if (VMClass == [XZMocoaViewModel class]) {
         return nil;
     }
     
-    _mappingModelKeys = @[methodToKeys, keyToMethods, namedMethods];
-    objc_setAssociatedObject(VMClass, _key, _mappingModelKeys, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
-    return _mappingModelKeys;
+    static const void * const _key = &_key;
+    
+    NSArray *_modelMapping = objc_getAssociatedObject(VMClass, _key);
+    if (_modelMapping) {
+        return _modelMapping == (id)kCFNull ? nil : _modelMapping;
+    }
+    
+    // 方法名 => 绑定的属性 method -> [key1, key2] 或 method -> [[key1,key2], [key3, key4]]
+    NSMutableDictionary<NSString *, NSArray<NSString *> *> * const methodToKeys = [NSMutableDictionary dictionary];
+    // 属性名 => 包含的方法 key -> [method1, method2]
+    NSMutableDictionary<NSString *, NSSet<NSString *> *>   * const keyToMethods = [NSMutableDictionary dictionary];
+    // 方法名 => 方法的描述 method -> XZObjcMethodDescriptor
+    NSMutableDictionary<NSString *, NSSet<NSString *> *>   * const namedMethods = [NSMutableDictionary dictionary];
+    
+    NSArray *superMapping = XZMocoaGetMappingModelKeys(class_getSuperclass(VMClass));
+    if ( superMapping ) {
+        [methodToKeys addEntriesFromDictionary:superMapping[0]];
+        [keyToMethods addEntriesFromDictionary:superMapping[1]];
+        [namedMethods addEntriesFromDictionary:superMapping[2]];
+    }
+    XZMocoaMappingModelKeys(VMClass, methodToKeys, keyToMethods, namedMethods);
+    
+    _modelMapping = @[methodToKeys, keyToMethods, namedMethods];
+    objc_setAssociatedObject(VMClass, _key, _modelMapping, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
+    return _modelMapping;
 }
