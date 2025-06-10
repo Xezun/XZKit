@@ -45,7 +45,7 @@ extension XZMocoaOptions.Key: @retroactive ExpressibleByStringLiteral {
 /// #module("https://mocoa.xezun.com/main")
 /// ```
 @freestanding(expression)
-public macro module<T>(_ value: T) -> XZMocoaModule = #externalMacro(module: "XZMocoaMacros", type: "MocoaModuleMacro")
+public macro module<T>(_ value: T) -> XZMocoaModule = #externalMacro(module: "XZMocoaMacros", type: "XZMocoaModuleMacro")
 
 
 public enum Role {
@@ -70,41 +70,41 @@ public enum Role {
 /// ```
 @attached(memberAttribute)
 @attached(member, names: arbitrary)
-public macro mocoa(_ role: Role) = #externalMacro(module: "XZMocoaMacros", type: "MocoaMacro")
+public macro mocoa(_ role: Role) = #externalMacro(module: "XZMocoaMacros", type: "XZMocoaMacro")
 
 // MARK: - @key
 
 /// 不带参数，使用属性名作为键名。
 @attached(peer, names: arbitrary)
 @attached(accessor, names: arbitrary)
-public macro key() = #externalMacro(module: "XZMocoaMacros", type: "MocoaKeyMacro")
+public macro key() = #externalMacro(module: "XZMocoaMacros", type: "XZMocoaKeyMacro")
 
 /// 单个参数且不带标签，参数为键名。
 @attached(peer, names: arbitrary)
 @attached(accessor, names: arbitrary)
-public macro key(_ name: String) = #externalMacro(module: "XZMocoaMacros", type: "MocoaKeyMacro")
+public macro key(_ name: XZMocoaKey) = #externalMacro(module: "XZMocoaMacros", type: "XZMocoaKeyMacro")
 
 /// 单个参数，带 value 标签，使用属性名作为键并，value 参数为初始值。
 @attached(peer, names: arbitrary)
 @attached(accessor, names: arbitrary)
-public macro key(value: Any) = #externalMacro(module: "XZMocoaMacros", type: "MocoaKeyMacro")
+public macro key(value: Any) = #externalMacro(module: "XZMocoaMacros", type: "XZMocoaKeyMacro")
 
 /// 两个参数：第一个参数为键名，第二个参数为初始值。
 @attached(peer, names: arbitrary)
 @attached(accessor, names: arbitrary)
-public macro key(_ name: String, _ value: Any) = #externalMacro(module: "XZMocoaMacros", type: "MocoaKeyMacro")
+public macro key(_ name: XZMocoaKey, _ value: Any) = #externalMacro(module: "XZMocoaMacros", type: "XZMocoaKeyMacro")
 
 @attached(peer, names: arbitrary)
-public macro bind(_ name: XZMocoaKey...) = #externalMacro(module: "XZMocoaMacros", type: "MocoaBindMacro")
+public macro bind(_ name: XZMocoaKey...) = #externalMacro(module: "XZMocoaMacros", type: "XZMocoaBindMacro")
 
 //@freestanding(expression)
-//public macro bind(text textLabel: UILabel, _ viewModel: XZMocoaViewModel, _ key: XZMocoaKey = .text, _ value: Any? = nil) = #externalMacro(module: "XZMocoaMacros", type: "MocoaBindLabelMacro")
+//public macro bind(text textLabel: UILabel, _ viewModel: XZMocoaViewModel, _ key: XZMocoaKey = .text, _ value: Any? = nil) = #externalMacro(module: "XZMocoaMacros", type: "XZMocoaBindLabelMacro")
 //
 //@freestanding(expression)
-//public macro bind(text textView: UITextView, _ viewModel: XZMocoaViewModel, _ key: XZMocoaKey = .text, _ value: Any? = nil) = #externalMacro(module: "XZMocoaMacros", type: "MocoaBindTextViewMacro")
+//public macro bind(text textView: UITextView, _ viewModel: XZMocoaViewModel, _ key: XZMocoaKey = .text, _ value: Any? = nil) = #externalMacro(module: "XZMocoaMacros", type: "XZMocoaBindTextViewMacro")
 //
 //@freestanding(expression)
-//public macro bind(image imageView: UIImageView, _ viewModel: XZMocoaViewModel, _ key: XZMocoaKey = .image, _ value: Any? = nil) = #externalMacro(module: "XZMocoaMacros", type: "MocoaBindImageViewMacro")
+//public macro bind(image imageView: UIImageView, _ viewModel: XZMocoaViewModel, _ key: XZMocoaKey = .image, _ value: Any? = nil) = #externalMacro(module: "XZMocoaMacros", type: "XZMocoaBindImageViewMacro")
 
 //@InitializerDeclSyntax
 //func registerModule() {

@@ -46,7 +46,7 @@ class FooViewModel: XZMocoaViewModel {
     @key(value: 12)
     var age: Int
     
-    @key("detailText")
+    @key(.detailText)
     var detail: String?
     
     @key("fooBar", 20)
@@ -83,7 +83,10 @@ class BarViewModel : FooViewModel {
 @mocoa(.v)
 class View: UIView, XZMocoaView {
     
-    @bind var nameLabel: UILabel!
-    @bind(.imageURL) var imageView: UIImageView!
+    @bind
+    @IBOutlet var nameLabel: UILabel!
+    
+    @bind(.imageURL)
+    var imageView: UIImageView!
     
 }
