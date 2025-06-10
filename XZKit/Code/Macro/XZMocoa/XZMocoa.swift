@@ -20,7 +20,7 @@ public enum MacroError: Error, CustomStringConvertible {
     }
 }
 
-/// @mocoa: 为带 @key、@bind 的成员，就添加 @objc 标记
+/// 宏 `@mocoa(role)` 的实现：为 `@key`、`@bind` 的成员添加 `@objc` 标记。
 public struct MocoaMacro: MemberAttributeMacro {
 
     public static func expansion(of node: SwiftSyntax.AttributeSyntax, attachedTo declaration: some SwiftSyntax.DeclGroupSyntax, providingAttributesFor member: some SwiftSyntax.DeclSyntaxProtocol, in context: some SwiftSyntaxMacros.MacroExpansionContext) throws -> [SwiftSyntax.AttributeSyntax] {
@@ -31,7 +31,7 @@ public struct MocoaMacro: MemberAttributeMacro {
                 if case let .attribute(attr) = item {
                     let name = attr.attributeName.trimmedDescription
                     // 已有 objc 标记
-                    if name == "objc" {
+                    if name == "objc" || name == "IBAction" || name == "IBOutlet" {
                         return []
                     }
                     // 找到 key 标记
@@ -53,7 +53,7 @@ public struct MocoaMacro: MemberAttributeMacro {
                 if case let .attribute(attr) = item {
                     let name = attr.attributeName.trimmedDescription
                     // 已有 objc 标记
-                    if name == "objc" {
+                    if name == "objc" || name == "IBAction" || name == "IBOutlet" {
                         return []
                     }
                     // 找到 key 标记
@@ -74,8 +74,259 @@ public struct MocoaMacro: MemberAttributeMacro {
     
 }
 
+/// 宏 `@mocoa(role)` 的实现：注册角色中带 @bind 的成员方法 mappingModelKeys
+extension MocoaMacro: MemberMacro {
+    
+    public static func expansion(of node: AttributeSyntax, providingMembersOf declaration: some DeclGroupSyntax, in context: some MacroExpansionContext) throws -> [DeclSyntax] {
+        
+        guard let classDecl = declaration.as(ClassDeclSyntax.self) else {
+            throw MacroError.message("@mocoa: 只能应用于类")
+        }
+        
+        guard let arguments = node.arguments, case let .argumentList(argumentList) = arguments, let role = argumentList.first?.trimmedDescription else {
+            throw MacroError.message("@mocoa: 缺少 role 参数")
+        }
+        
+        switch role {
+        case ".m":
+            throw MacroError.message("@mocoa: 暂未实现")
+        case ".v":
+            // 判断是否自定义 viewModelDidChange 方法
+            for member in classDecl.memberBlock.members {
+                if let member = member.decl.as(FunctionDeclSyntax.self) {
+                    let methodName = member.name.trimmedDescription
+                    if methodName == "viewModelDidChange" {
+                        // TODO: 是否有必要校验是否为 static 方法
+                        return []
+                    }
+                }
+            }
+            
+            var bindClauseStrings = [String]()
+            
+            // 遍历 class 包体
+            for member in classDecl.memberBlock.members {
+                // 只处理方法
+                guard let property = member.decl.as(VariableDeclSyntax.self) else {
+                    continue
+                }
+                
+                // 遍历属性
+                for propertyAttribute in property.attributes {
+                    // 找到宏属性
+                    guard case let .attribute(macroAttribute) = propertyAttribute else {
+                        continue
+                    }
+                    // 只处理带 @bind 标记的属性。
+                    guard macroAttribute.attributeName.trimmedDescription == "bind" else {
+                        continue
+                    }
+                    // 获取宏参数
+                    var keysArray = [String]()
+                    if let macroArguments = macroAttribute.arguments {
+                        switch macroArguments {
+                        case .argumentList(let arguments):
+                            for argument in arguments {
+                                keysArray.append(argument.expression.trimmedDescription)
+                            }
+                        default:
+                            break
+                        }
+                    }
+                    
+                    guard let propertyType = ({ (type: TypeSyntax?) -> (name: String, isOptional: Bool)? in
+                        guard let type = type else { return nil }
+                        if let op = type.as(OptionalTypeSyntax.self) {
+                            return (op.wrappedType.trimmedDescription, true)
+                        }
+                        if let op = type.as(ImplicitlyUnwrappedOptionalTypeSyntax.self) {
+                            return (op.wrappedType.trimmedDescription, true)
+                        }
+                        return (type.trimmedDescription, false)
+                    })(property.bindings.first?.typeAnnotation?.type) else {
+                        throw MacroError.message("@mocoa: 无法确定属性类型")
+                    }
+                    
+                    var vkey = ".text"
+                    var vmKey = ".text"
+                    var selector = ""
+                    switch keysArray.count {
+                    case 0:
+                        switch propertyType.name {
+                        case "UILabel":
+                            vmKey = ".text"
+                            vkey = ".text"
+                        case "UITextView":
+                            vmKey = ".text"
+                            vkey = ".text"
+                        case "UIImageView":
+                            vmKey = ".image"
+                            vkey = ".image"
+                        default:
+                            throw MacroError.message("@mocoa: 暂未为 \(propertyType) 类型提供默认支持")
+                        }
+                        selector = "#selector(setter: \(propertyType.name)\(vkey))"
+                    case 1:
+                        vmKey = keysArray[0]
+                        switch propertyType.name {
+                        case "UILabel":
+                            vkey = ".text"
+                        case "UITextView":
+                            vkey = ".text"
+                        case "UIImageView":
+                            vkey = ".image"
+                        default:
+                            throw MacroError.message("@mocoa: 暂未为 \(propertyType) 类型提供默认支持")
+                        }
+                        selector = "#selector(setter: \(propertyType.name)\(vkey))"
+                    case 2:
+                        vmKey = keysArray[0]
+                        vkey = keysArray[1]
+                        selector = "#selector(setter: \(propertyType.name)\(vkey))"
+                    case 3:
+                        vmKey = keysArray[0]
+                        vkey = keysArray[1]
+                        selector = keysArray[2]
+                    default:
+                        throw MacroError.message("@mocoa: 参数错误，仅支持 (viewKey, viewModelKey, selector) 三个参数")
+                    }
+                    
+                    guard let propertyName = property.bindings.first?.pattern.as(IdentifierPatternSyntax.self)?.identifier.text else {
+                        throw MacroError.message("@mocoa: 无法确定属性名")
+                    }
+                    
+                    var bindClause = "viewModel.addTarget(\(propertyName), action: \(selector), forKey: \(vmKey), value: nil)"
+                    if propertyType.isOptional {
+                        // TODO: add didSet to optional properties
+                        bindClause = "if let \(propertyName) = self.\(propertyName) { \(bindClause) }"
+                    }
+                    bindClauseStrings.append(bindClause)
+                    break
+                }
+            }
+            
+            if bindClauseStrings.count == 0 {
+                return []
+            }
+            
+            let clauseString = bindClauseStrings.joined(separator: "\n")
+            
+            let methodSyntax = try FunctionDeclSyntax(
+                """
+                override func viewModelDidChange(_ oldValue: XZMocoaViewModel?) {
+                    super.viewModelDidChange(oldValue)
+                
+                    guard let viewModel = self.viewModel else { return }
+                    \(raw: clauseString)
+                }
+                """
+            )
+            
+            return [DeclSyntax(methodSyntax)]
+        case ".vm":
+            // 判断是否自定义 mappingModelKeys 属性
+            for member in classDecl.memberBlock.members {
+                if let member = member.decl.as(VariableDeclSyntax.self) {
+                    if let propertyName = member.bindings.first?.pattern.as(IdentifierPatternSyntax.self)?.identifier.text {
+                        if propertyName == "mappingModelKeys" {
+                            for modifier in member.modifiers {
+                                if modifier.name.trimmedDescription == "class" {
+                                    return []
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+            
+            var mappingKeyValueStrings = [String]()
+            
+            // 遍历 class 包体
+            for member in classDecl.memberBlock.members {
+                // 只处理方法
+                guard let method = member.decl.as(FunctionDeclSyntax.self) else {
+                    continue
+                }
+                // 遍历方法属性
+                for methodAttribute in method.attributes {
+                    guard case let .attribute(macroAttribute) = methodAttribute else {
+                        continue
+                    }
+                    // 只处理带 @bind 标记的方法。
+                    guard macroAttribute.attributeName.trimmedDescription == "bind" else {
+                        continue
+                    }
+                    // 获取宏参数
+                    var keysArray = [String]()
+                    if let macroArguments = macroAttribute.arguments {
+                        switch macroArguments {
+                        case .argumentList(let arguments):
+                            for argument in arguments {
+                                if let key = argument.expression.as(StringLiteralExprSyntax.self)?.representedLiteralValue {
+                                    keysArray.append(key)
+                                }
+                            }
+                        default:
+                            break
+                        }
+                    }
+                    // 遍历方法参数，拼接方法名
+                    var selector = method.name.text + "("
+                    if keysArray.count == 0 {
+                        for parameter in method.signature.parameterClause.parameters {
+                            selector += parameter.firstName.text + ":"
+                            if let name = parameter.secondName {
+                                keysArray.append(name.text)
+                            } else {
+                                keysArray.append(parameter.firstName.text)
+                            }
+                        }
+                    } else {
+                        for parameter in method.signature.parameterClause.parameters {
+                            selector += parameter.firstName.text + ":"
+                        }
+                    }
+                    selector += ")"
+                    
+                    let keysString = "\"" + keysArray.joined(separator: "\", \"") + "\""
+                    
+                    mappingKeyValueStrings.append("NSStringFromSelector(#selector(Self.\(selector))): [\(keysString)]")
+                    
+                    break
+                }
+            }
+            
+            if mappingKeyValueStrings.count == 0 {
+                return []
+            }
+            
+            let mappingKeyValues = mappingKeyValueStrings.joined(separator: ", \n")
+            
+            let methodSyntax = try VariableDeclSyntax(
+                """
+                override class var mappingModelKeys: [String : Any]? {
+                    return [ 
+                        \(raw: mappingKeyValues)
+                    ]
+                }
+                """
+            )
+            
+            return [DeclSyntax(methodSyntax)]
+        default:
+            throw MacroError.message("@mocoa: 暂不支持 \(role) 角色")
+        }
+        
+    }
+    
+    public static func expansion(of node: AttributeSyntax, providingMembersOf declaration: some DeclGroupSyntax, conformingTo protocols: [TypeSyntax], in context: some MacroExpansionContext) throws -> [DeclSyntax] {
+        return try expansion(of: node, providingMembersOf: declaration, in: context)
+    }
+    
+}
 
-extension MocoaMacro: ExpressionMacro {
+/// 宏 `#module(URL)` 的实现。
+public struct MocoaModuleMacro: ExpressionMacro {
     
     public static func expansion(of node: some FreestandingMacroExpansionSyntax, in context: some MacroExpansionContext) throws -> ExprSyntax {
         guard node.arguments.count == 1, let argument = node.arguments.first else {
@@ -97,7 +348,7 @@ extension MocoaMacro: ExpressionMacro {
 }
 
 
-/// 为 @mocoaKey(key) 生成存储属性。
+/// 宏 `@key("key")` 的实现：生成存储属性。
 public struct MocoaKeyMacro: PeerMacro {
     
     public static func expansion(of node: SwiftSyntax.AttributeSyntax, providingPeersOf declaration: some SwiftSyntax.DeclSyntaxProtocol, in context: some SwiftSyntaxMacros.MacroExpansionContext) throws -> [SwiftSyntax.DeclSyntax] {
@@ -240,7 +491,7 @@ public struct MocoaKeyMacro: PeerMacro {
     
 }
 
-/// 为 @mocoaKey(key) 生成 setter getter
+/// 宏 `@key("key")` 的实现： 生成 setter getter 方法。
 extension MocoaKeyMacro: AccessorMacro {
     
     public static func expansion(of node: SwiftSyntax.AttributeSyntax, providingAccessorsOf declaration: some SwiftSyntax.DeclSyntaxProtocol, in context: some SwiftSyntaxMacros.MacroExpansionContext) throws -> [SwiftSyntax.AccessorDeclSyntax] {
@@ -392,151 +643,248 @@ extension MocoaKeyMacro: AccessorMacro {
 }
 
 // @bind: 校验 @bind 标记的宏的合法性
-public struct MocoaBindMacro: BodyMacro {
+public struct MocoaBindMacro: PeerMacro {
     
-    public static func expansion(of node: SwiftSyntax.AttributeSyntax, providingBodyFor declaration: some SwiftSyntax.DeclSyntaxProtocol & SwiftSyntax.WithOptionalCodeBlockSyntax, in context: some SwiftSyntaxMacros.MacroExpansionContext) throws -> [SwiftSyntax.CodeBlockItemSyntax] {
-        
-        guard let method = declaration.as(FunctionDeclSyntax.self) else { throw MacroError.message("@key: 只能应用于函数") }
-        
-        // 函数参数的数量
-        if method.signature.parameterClause.parameters.count == 0 {
-            throw MacroError.message("@bind: 函数的参数必须与绑定的键一一对应")
+    public static func expansion(of node: SwiftSyntax.AttributeSyntax, providingPeersOf declaration: some SwiftSyntax.DeclSyntaxProtocol, in context: some SwiftSyntaxMacros.MacroExpansionContext) throws -> [SwiftSyntax.DeclSyntax] {
+        // 绑定函数
+        if let method = declaration.as(FunctionDeclSyntax.self) {
+            // 函数参数的数量
+            if method.signature.parameterClause.parameters.count == 0 {
+                throw MacroError.message("@bind: 函数的参数必须与绑定的键一一对应")
+            }
+            
+            // 宏参数
+            if let arguments = node.arguments {
+                switch arguments {
+                case .argumentList(let list):
+                    // 宏的参数必须为 0 或者与方法的参数相同
+                    if list.count == 0 {
+                        return []
+                    }
+                    if list.count != method.signature.parameterClause.parameters.count {
+                        throw MacroError.message("@bind: 函数的参数与绑定的键数量不一致")
+                    }
+                    if list.contains(where: { item in
+                        return item.expression.as(StringLiteralExprSyntax.self) == nil
+                    }) {
+                        throw MacroError.message("@bind: 指定键名必须为 String 字面量")
+                    }
+                    return []
+                default:
+                    throw MacroError.message("@bind: 必须指定当前函数所监听 key 键")
+                }
+            }
         }
         
-        // 宏参数
-        if let arguments = node.arguments {
-            switch arguments {
-            case .argumentList(let list):
-                // 宏的参数必须为 0 或者与方法的参数相同
-                if list.count == 0 {
-                    return []
-                }
-                if list.count != method.signature.parameterClause.parameters.count {
-                    throw MacroError.message("@bind: 函数的参数与绑定的键数量不一致")
-                }
-                if list.contains(where: { item in
-                    return item.expression.as(StringLiteralExprSyntax.self) == nil
-                }) {
-                    throw MacroError.message("@bind: 指定键名必须为 String 字面量")
-                }
-                return []
-            default:
-                throw MacroError.message("@bind: 必须指定当前函数所监听 key 键")
-            }
+        if let _ = declaration.as(VariableDeclSyntax.self) {
+            return [] // TODO: 绑定属性校验
         }
         
         return []
     }
-    
+
 }
 
-/// @mocoa: 为成员中带 @bind 的方法注册 mappingModelKeys
-extension MocoaMacro: MemberMacro {
+/// 实现 `#bind(text: UILabel)` 宏
+public struct MocoaBindLabelMacro: ExpressionMacro {
     
-    public static func expansion(of node: AttributeSyntax, providingMembersOf declaration: some DeclGroupSyntax, in context: some MacroExpansionContext) throws -> [DeclSyntax] {
+    public static func expansion(of node: some SwiftSyntax.FreestandingMacroExpansionSyntax, in context: some SwiftSyntaxMacros.MacroExpansionContext) throws -> SwiftSyntax.ExprSyntax {
+        let arguments = node.arguments
         
-        guard let classDecl = declaration.as(ClassDeclSyntax.self) else {
-            throw MacroError.message("@mocoa: 只能应用于类")
-        }
-        
-        // 判断是否自定义 mappingModelKeys 属性
-        for member in classDecl.memberBlock.members {
-            if let member = member.decl.as(VariableDeclSyntax.self) {
-                if let propertyName = member.bindings.first?.pattern.as(IdentifierPatternSyntax.self)?.identifier.text {
-                    if propertyName == "mappingModelKeys" {
-                        for modifier in member.modifiers {
-                            if modifier.name.trimmedDescription == "class" {
-                                return []
-                            }
-                        }
-                    }
-                }
+        switch arguments.count {
+        case 0:
+            throw MacroError.message("#bind: 缺少参数")
+        case 1:
+            throw MacroError.message("#bind: 参数不足，至少需要提供 view 和 viewModel 两个参数")
+        case 2:
+            var index = arguments.startIndex
+            guard let label = arguments[index].label?.trimmedDescription else {
+                throw MacroError.message("#bind: 缺少标签")
             }
-        }
-        
-        var mappingKeyValueStrings = [String]()
-        
-        // 遍历 class 包体
-        for member in classDecl.memberBlock.members {
-            // 只处理方法
-            guard let method = member.decl.as(FunctionDeclSyntax.self) else {
-                continue
+            switch label {
+            case "text":
+                let view = arguments[index].expression.trimmedDescription
+                index = arguments.index(after: index)
+                let viewModel = arguments[index].expression.trimmedDescription
+                return "\(raw: viewModel).addTarget(\(raw: view), action: #selector(setter: UILabel.text), forKey: .text, value: nil)"
+            default:
+                throw MacroError.message("#bind: 暂不支持")
             }
-            // 遍历方法属性
-            for methodAttribute in method.attributes {
-                guard case let .attribute(macroAttribute) = methodAttribute else {
-                    continue
-                }
-                // 只处理带 @bind 标记的方法。
-                guard macroAttribute.attributeName.trimmedDescription == "bind" else {
-                    continue
-                }
-                // 获取宏参数
-                var keysArray = [String]()
-                if let macroArguments = macroAttribute.arguments {
-                    switch macroArguments {
-                    case .argumentList(let arguments):
-                        for argument in arguments {
-                            if let key = argument.expression.as(StringLiteralExprSyntax.self)?.representedLiteralValue {
-                                keysArray.append(key)
-                            }
-                        }
-                    default:
-                        break
-                    }
-                }
-                // 遍历方法参数，拼接方法名
-                var selector = method.name.text + "("
-                if keysArray.count == 0 {
-                    for parameter in method.signature.parameterClause.parameters {
-                        selector += parameter.firstName.text + ":"
-                        if let name = parameter.secondName {
-                            keysArray.append(name.text)
-                        } else {
-                            keysArray.append(parameter.firstName.text)
-                        }
-                    }
-                } else {
-                    for parameter in method.signature.parameterClause.parameters {
-                        selector += parameter.firstName.text + ":"
-                    }
-                }
-                selector += ")"
-                
-                let keysString = "\"" + keysArray.joined(separator: "\", \"") + "\""
-                
-                mappingKeyValueStrings.append("NSStringFromSelector(#selector(Self.\(selector))): [\(keysString)]")
-                
-                break
+        case 3:
+            var index = arguments.startIndex
+            guard let label = arguments[index].label?.trimmedDescription else {
+                throw MacroError.message("#bind: 缺少标签")
             }
-        }
-        
-        if mappingKeyValueStrings.count == 0 {
-            return []
-        }
-        
-        let mappingKeyValues = mappingKeyValueStrings.joined(separator: ", \n")
-        
-        let sdf = try VariableDeclSyntax(
-            """
-            override class var mappingModelKeys: [String : Any]? {
-                return [ 
-                    \(raw: mappingKeyValues)
-                ]
+            switch label {
+            case "text":
+                let view = arguments[index].expression.trimmedDescription
+                index = arguments.index(after: index)
+                let viewModel = arguments[index].expression.trimmedDescription
+                index = arguments.index(after: index)
+                let key = arguments[index].expression.trimmedDescription
+                return "\(raw: viewModel).addTarget(\(raw: view), action: #selector(setter: UILabel.text), forKey: \(raw: key), value: nil)"
+            default:
+                throw MacroError.message("#bind: 暂不支持")
             }
-            """
-        )
-        
-        return [DeclSyntax(sdf)]
-    }
-    
-    public static func expansion(of node: AttributeSyntax, providingMembersOf declaration: some DeclGroupSyntax, conformingTo protocols: [TypeSyntax], in context: some MacroExpansionContext) throws -> [DeclSyntax] {
-        return try expansion(of: node, providingMembersOf: declaration, in: context)
+        case 4:
+            var index = arguments.startIndex
+            guard let label = arguments[index].label?.trimmedDescription else {
+                throw MacroError.message("#bind: 缺少标签")
+            }
+            switch label {
+            case "text":
+                let view = arguments[index].expression.trimmedDescription
+                index = arguments.index(after: index)
+                let viewModel = arguments[index].expression.trimmedDescription
+                index = arguments.index(after: index)
+                let key = arguments[index].expression.trimmedDescription
+                index = arguments.index(after: index)
+                let value = arguments[index].expression.trimmedDescription
+                return "\(raw: viewModel).addTarget(\(raw: view), action: #selector(setter: UILabel.text), forKey: \(raw: key), value: \(raw: value))"
+            default:
+                throw MacroError.message("#bind: 暂不支持")
+            }
+            
+        default:
+            throw MacroError.message("#bind: 暂不支持")
+        }
     }
     
 }
 
- 
+/// 实现 `#bind(text: UITextView)` 宏
+public struct MocoaBindTextViewMacro: ExpressionMacro {
+    
+    public static func expansion(of node: some SwiftSyntax.FreestandingMacroExpansionSyntax, in context: some SwiftSyntaxMacros.MacroExpansionContext) throws -> SwiftSyntax.ExprSyntax {
+        let arguments = node.arguments
+        
+        switch arguments.count {
+        case 0:
+            throw MacroError.message("#bind: 缺少参数")
+        case 1:
+            throw MacroError.message("#bind: 参数不足，至少需要提供 view 和 viewModel 两个参数")
+        case 2:
+            var index = arguments.startIndex
+            guard let label = arguments[index].label?.trimmedDescription else {
+                throw MacroError.message("#bind: 缺少标签")
+            }
+            switch label {
+            case "text":
+                let view = arguments[index].expression.trimmedDescription
+                index = arguments.index(after: index)
+                let viewModel = arguments[index].expression.trimmedDescription
+                return "\(raw: viewModel).addTarget(\(raw: view), action: #selector(setter: UITextView.text), forKey: .text, value: nil)"
+            default:
+                throw MacroError.message("#bind: 暂不支持")
+            }
+        case 3:
+            var index = arguments.startIndex
+            guard let label = arguments[index].label?.trimmedDescription else {
+                throw MacroError.message("#bind: 缺少标签")
+            }
+            switch label {
+            case "text":
+                let view = arguments[index].expression.trimmedDescription
+                index = arguments.index(after: index)
+                let viewModel = arguments[index].expression.trimmedDescription
+                index = arguments.index(after: index)
+                let key = arguments[index].expression.trimmedDescription
+                return "\(raw: viewModel).addTarget(\(raw: view), action: #selector(setter: UITextView.text), forKey: \(raw: key), value: nil)"
+            default:
+                throw MacroError.message("#bind: 暂不支持")
+            }
+        case 4:
+            var index = arguments.startIndex
+            guard let label = arguments[index].label?.trimmedDescription else {
+                throw MacroError.message("#bind: 缺少标签")
+            }
+            switch label {
+            case "text":
+                let view = arguments[index].expression.trimmedDescription
+                index = arguments.index(after: index)
+                let viewModel = arguments[index].expression.trimmedDescription
+                index = arguments.index(after: index)
+                let key = arguments[index].expression.trimmedDescription
+                index = arguments.index(after: index)
+                let value = arguments[index].expression.trimmedDescription
+                return "\(raw: viewModel).addTarget(\(raw: view), action: #selector(setter: UITextView.text), forKey: \(raw: key), value: \(raw: value))"
+            default:
+                throw MacroError.message("#bind: 暂不支持")
+            }
+            
+        default:
+            throw MacroError.message("#bind: 暂不支持")
+        }
+    }
+    
+}
+
+/// 实现 `#bind(text: UIImageView)` 宏
+public struct MocoaBindImageViewMacro: ExpressionMacro {
+    
+    public static func expansion(of node: some SwiftSyntax.FreestandingMacroExpansionSyntax, in context: some SwiftSyntaxMacros.MacroExpansionContext) throws -> SwiftSyntax.ExprSyntax {
+        let arguments = node.arguments
+        
+        switch arguments.count {
+        case 0:
+            throw MacroError.message("#bind: 缺少参数")
+        case 1:
+            throw MacroError.message("#bind: 参数不足，至少需要提供 view 和 viewModel 两个参数")
+        case 2:
+            var index = arguments.startIndex
+            guard let label = arguments[index].label?.trimmedDescription else {
+                throw MacroError.message("#bind: 缺少标签")
+            }
+            switch label {
+            case "image":
+                let view = arguments[index].expression.trimmedDescription
+                index = arguments.index(after: index)
+                let viewModel = arguments[index].expression.trimmedDescription
+                return "\(raw: viewModel).addTarget(\(raw: view), action: #selector(setter: UIImageView.image), forKey: .text, value: nil)"
+            default:
+                throw MacroError.message("#bind: 暂不支持")
+            }
+        case 3:
+            var index = arguments.startIndex
+            guard let label = arguments[index].label?.trimmedDescription else {
+                throw MacroError.message("#bind: 缺少标签")
+            }
+            switch label {
+            case "image":
+                let view = arguments[index].expression.trimmedDescription
+                index = arguments.index(after: index)
+                let viewModel = arguments[index].expression.trimmedDescription
+                index = arguments.index(after: index)
+                let key = arguments[index].expression.trimmedDescription
+                return "\(raw: viewModel).addTarget(\(raw: view), action: #selector(setter: UIImageView.image), forKey: \(raw: key), value: nil)"
+            default:
+                throw MacroError.message("#bind: 暂不支持")
+            }
+        case 4:
+            var index = arguments.startIndex
+            guard let label = arguments[index].label?.trimmedDescription else {
+                throw MacroError.message("#bind: 缺少标签")
+            }
+            switch label {
+            case "image":
+                let view = arguments[index].expression.trimmedDescription
+                index = arguments.index(after: index)
+                let viewModel = arguments[index].expression.trimmedDescription
+                index = arguments.index(after: index)
+                let key = arguments[index].expression.trimmedDescription
+                index = arguments.index(after: index)
+                let value = arguments[index].expression.trimmedDescription
+                return "\(raw: viewModel).addTarget(\(raw: view), action: #selector(setter: UIImageView.image), forKey: \(raw: key), value: \(raw: value))"
+            default:
+                throw MacroError.message("#bind: 暂不支持")
+            }
+            
+        default:
+            throw MacroError.message("#bind: 暂不支持")
+        }
+    }
+    
+}
 
 import SwiftCompilerPlugin
 import Foundation
@@ -545,7 +893,11 @@ import Foundation
 struct MocoaMacros: CompilerPlugin {
     var providingMacros: [Macro.Type] = [
         MocoaMacro.self,
+        MocoaModuleMacro.self,
         MocoaKeyMacro.self,
-        MocoaBindMacro.self
+        MocoaBindMacro.self,
+        MocoaBindLabelMacro.self,
+        MocoaBindTextViewMacro.self,
+        MocoaBindImageViewMacro.self
     ]
 }

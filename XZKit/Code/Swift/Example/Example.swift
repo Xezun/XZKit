@@ -13,11 +13,13 @@ import XZMocoa
 class AppDelegate: NSObject, UIApplicationDelegate {
     
     func applicationDidFinishLaunching(_ application: UIApplication) {
+        let viewModel = TestFoo.init(model: nil)
         
+        let label = UILabel.init()
     }
 }
 
-@mocoa
+@mocoa(.vm)
 class TestFoo: XZMocoaViewModel {
     
     @bind("foo", "bar")
@@ -30,9 +32,10 @@ class TestFoo: XZMocoaViewModel {
         
     }
     
+    
 }
 
-@mocoa
+@mocoa(.vm)
 class FooViewModel: XZMocoaViewModel {
     
     
@@ -71,7 +74,16 @@ class FooViewModel: XZMocoaViewModel {
 }
 
 
-@mocoa
+@mocoa(.vm)
 class BarViewModel : FooViewModel {
+    
+}
+
+
+@mocoa(.v)
+class View: UIView, XZMocoaView {
+    
+    @bind var nameLabel: UILabel!
+    @bind(.imageURL) var imageView: UIImageView!
     
 }

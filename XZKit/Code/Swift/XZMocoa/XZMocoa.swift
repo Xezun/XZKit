@@ -26,7 +26,7 @@ extension XZMocoaViewModel.Updates.Key: @retroactive ExpressibleByStringLiteral 
         self.init(rawValue: value)
     }
 }
-extension XZMocoaViewModel.Key: @retroactive ExpressibleByStringLiteral {
+extension XZMocoaKey: @retroactive ExpressibleByStringLiteral {
     public typealias StringLiteralType = String
     public init(stringLiteral value: String) {
         self.init(rawValue: value)
@@ -39,13 +39,38 @@ extension XZMocoaOptions.Key: @retroactive ExpressibleByStringLiteral {
     }
 }
 
-
+/// 通过 URL 构造 Mocoa 模块。
+///
+/// ```swift
+/// #module("https://mocoa.xezun.com/main")
+/// ```
 @freestanding(expression)
-public macro mocoa<T>(_ value: T) -> XZMocoaModule = #externalMacro(module: "XZMocoaMacros", type: "MocoaMacro")
+public macro module<T>(_ value: T) -> XZMocoaModule = #externalMacro(module: "XZMocoaMacros", type: "MocoaModuleMacro")
 
+
+public enum Role {
+    case m
+    case v
+    case vm
+}
+
+/// 为带 @key、@bind 的成员，添加 @objc 标记。
+/// ```swift
+/// @mocoa(.vm)
+/// class ViewModel: XZMocoaViewModel {
+///     @key name: String?
+///     @bind func didChange(_ text: String?) {
+///         name = text
+///     }
+/// }
+/// @mocoa(.v)
+/// class View: UIView, XZMocoaView {
+///     @bind var textLabel: UILabel!
+/// }
+/// ```
 @attached(memberAttribute)
 @attached(member, names: arbitrary)
-public macro mocoa() = #externalMacro(module: "XZMocoaMacros", type: "MocoaMacro")
+public macro mocoa(_ role: Role) = #externalMacro(module: "XZMocoaMacros", type: "MocoaMacro")
 
 // MARK: - @key
 
@@ -69,8 +94,17 @@ public macro key(value: Any) = #externalMacro(module: "XZMocoaMacros", type: "Mo
 @attached(accessor, names: arbitrary)
 public macro key(_ name: String, _ value: Any) = #externalMacro(module: "XZMocoaMacros", type: "MocoaKeyMacro")
 
-@attached(body)
-public macro bind(_ name: String...) = #externalMacro(module: "XZMocoaMacros", type: "MocoaBindMacro")
+@attached(peer, names: arbitrary)
+public macro bind(_ name: XZMocoaKey...) = #externalMacro(module: "XZMocoaMacros", type: "MocoaBindMacro")
+
+//@freestanding(expression)
+//public macro bind(text textLabel: UILabel, _ viewModel: XZMocoaViewModel, _ key: XZMocoaKey = .text, _ value: Any? = nil) = #externalMacro(module: "XZMocoaMacros", type: "MocoaBindLabelMacro")
+//
+//@freestanding(expression)
+//public macro bind(text textView: UITextView, _ viewModel: XZMocoaViewModel, _ key: XZMocoaKey = .text, _ value: Any? = nil) = #externalMacro(module: "XZMocoaMacros", type: "MocoaBindTextViewMacro")
+//
+//@freestanding(expression)
+//public macro bind(image imageView: UIImageView, _ viewModel: XZMocoaViewModel, _ key: XZMocoaKey = .image, _ value: Any? = nil) = #externalMacro(module: "XZMocoaMacros", type: "MocoaBindImageViewMacro")
 
 //@InitializerDeclSyntax
 //func registerModule() {
@@ -99,7 +133,7 @@ extension XZMocoaViewModel.Updates.Key: ExpressibleByStringLiteral {
         self.init(rawValue: value)
     }
 }
-extension XZMocoaViewModel.Key: ExpressibleByStringLiteral {
+extension XZMocoaKey: ExpressibleByStringLiteral {
     public typealias StringLiteralType = String
     public init(stringLiteral value: String) {
         self.init(rawValue: value)
