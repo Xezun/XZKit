@@ -255,7 +255,7 @@ FOUNDATION_EXTERN void XZLog(NSString *format, ...) NS_FORMAT_FUNCTION(1,2);
 /// dispatch_global_async(QOS_CLASS_DEFAULT, block, NO);
 /// ```
 ///
-/// 宏函数 `dispatch_queue` 目前支持调度参数不超过 10 的 block 块函数。
+/// 宏函数 `dispatch_queue` 目前支持调度参数不超过 9 的 block 块函数。
 ///
 /// 使用 `dispatch_queue_macros` 宏函数与常规写法是等价的，不存在性能损失。比如，
 ///
@@ -280,7 +280,7 @@ FOUNDATION_EXTERN void XZLog(NSString *format, ...) NS_FORMAT_FUNCTION(1,2);
 ///   - block: 块函数
 FOUNDATION_EXPORT void dispatch_queue_macros(dispatch_queue_t queue, dispatch_block_t block, ...) NS_UNAVAILABLE;
 
-#define __dispatch_queue_forward__(_01, _02, _03, _04, _05, _06, _07, _08, _09, _10, ...) _10
+#define __dispatch_queue_forward__(_00, _01, _02, _03, _04, _05, _06, _07, _08, _09, _10, ...) _10
 
 #define __dispatch_queue_imp_0__(concurrency, queue, block)      xz_macro_paste(dispatch_, concurrency)(queue, block)
 #define __dispatch_queue_imp_1__(concurrency, queue, block, ...) xz_macro_paste(dispatch_, concurrency)(queue, ^{ (block)(__VA_ARGS__); })
