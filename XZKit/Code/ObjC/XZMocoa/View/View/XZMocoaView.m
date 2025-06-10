@@ -53,7 +53,7 @@ XZMocoaOptionKey const XZMocoaOptionKeyName = @"name";
 }
 
 - (void)viewModelDidChange:(XZMocoaViewModel *)oldValue {
-    
+    [oldValue removeTarget:self action:nil forKey:nil];
 }
 
 @end
