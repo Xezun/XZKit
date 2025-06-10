@@ -548,6 +548,8 @@ typedef void(^XZMocoaGridDelayedUpdates)(__kindof XZMocoaViewModel *self);
         } else if ([remains containsIndex:to]) {
             // to 位置为保持不变的元素，在 old 中找到 viewModel 然后将其移动到 to 位置上。
             XZMocoaGridViewSectionViewModel *viewModel = oldViewModels[to];
+            // 数据模型 isEqual 结果可能相同，但是内容可能发生改变
+            viewModel.model = newDataModels[to];
             NSInteger const index = [self indexOfSectionViewModel:viewModel];
             [self moveSubViewModelAtIndex:index toIndex:to];
             // 执行更新。在数据更新的过程中，由数据引发的更新已经在更新数据时被拦截下来，在这里差异分析时，不会再触发了。
@@ -557,10 +559,14 @@ typedef void(^XZMocoaGridDelayedUpdates)(__kindof XZMocoaViewModel *self);
             XZLog(@"【调整】%ld -> %ld, %@", (long)index, (long)to, self.sectionDataModels);
         } else {
             // to 位置为被移动的元素，先找到它原来的位置，然后找到 viewModel 然后再移动位置。
-            NSInteger const from  = changes[@(to)].integerValue;
-            NSInteger const index = [self indexOfSectionViewModel:oldViewModels[from]];
-            // 移动 section 并更新视图
+            NSInteger const from = changes[@(to)].integerValue;
+            // 根据原来的位置，找到 viewModel 即其当前的位置，并更新数据
+            XZMocoaGridViewSectionViewModel * const viewModel = oldViewModels[from];
+            viewModel.model = newDataModels[to];
+            NSInteger const index = [self indexOfSectionViewModel:viewModel];
+            // 移动 section
             [self _moveSectionViewModelFromIndex:index toIndex:to];
+            // 更新 UI
             [self didMoveSectionAtIndex:from toIndex:to];
             XZLog(@"【移动】%ld(%ld) -> %ld, %@", from, index, to, self.sectionDataModels);
             // 记录待更新的 section

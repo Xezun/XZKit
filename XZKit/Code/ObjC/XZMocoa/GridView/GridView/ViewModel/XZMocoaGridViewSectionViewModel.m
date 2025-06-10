@@ -489,13 +489,21 @@ typedef void(^XZMocoaGridDelayedUpdates)(XZMocoaGridViewSectionViewModel *self);
             XZLog(@"『调整』%ld -> %ld, %@", (long)index, (long)to, self.cellDataModels);
         } else if ([remains containsIndex:to]) {
             // to 位置为保持不变的元素，在 old 中找到 viewModel 然后将其移动到 to 位置上。
-            NSInteger const index = [self indexOfCellViewModel:oldViewModels[to]];
+            XZMocoaGridViewCellViewModel * const viewModel = oldViewModels[to];
+            // 更新数据
+            viewModel.model = newDataModels[to];
+            // 调整位置
+            NSInteger const index = [self indexOfCellViewModel:viewModel];
             [self _moveCellViewModelFromIndex:index toIndex:to];
             XZLog(@"『调整』%ld -> %ld, %@", (long)index, (long)to, self.cellDataModels);
         } else {
             // to 位置为被移动的元素，先找到它原来的位置，然后找到 viewModel 然后再移动位置。
-            NSInteger const from  = changes[@(to)].integerValue;
-            NSInteger const index = [self indexOfCellViewModel:oldViewModels[from]];
+            NSInteger const from = changes[@(to)].integerValue;
+            // 更新数据
+            XZMocoaGridViewCellViewModel * const viewModel = oldViewModels[from];
+            viewModel.model = newDataModels[to];
+            // 移动位置
+            NSInteger const index = [self indexOfCellViewModel:viewModel];
             [self _moveCellViewModelFromIndex:index toIndex:to];
             [self didMoveCellAtIndex:from toIndex:to];
             XZLog(@"『移动』%ld(%ld) -> %ld, %@", (long)from, (long)index, (long)to, self.cellDataModels);
