@@ -691,7 +691,7 @@ static void const * const _context = &_context;
         return;
     }
     
-    UIScrollView * const _scrollView   = self->_scrollView;
+    UIScrollView * const _scrollView = self->_scrollView;
     
     if (_scrollView.isDragging) {
         // 当拖拽时，结束刷新仅展示结束动画，布局调整在 -willEndDragging 中处理。
@@ -831,7 +831,7 @@ static void const * const _context = &_context;
         if (_header->_isAutomatic && contentOffset.y - _header->_contentOffsetY <= _header->_automaticRefreshDistance) {
             // 自动刷新
             _header->_isAutomatic = NO;
-            [self scrollView:_scrollView header:_header hadBeenDraggedRefreshing:NULL];
+            [self scrollView:_scrollView header:_header wasDraggedToBeginRefreshing:NULL];
         } else {
             
         }
@@ -855,7 +855,7 @@ static void const * const _context = &_context;
         // 如果满足自动刷新，则进入刷新状态
         if (_footer->_isAutomatic && _footer->_contentOffsetY - contentOffset.y <= _footer->_automaticRefreshDistance) {
             _footer->_isAutomatic = NO;
-            [self scrollView:_scrollView footer:_footer hadBeenDraggedRefreshing:NULL];
+            [self scrollView:_scrollView footer:_footer wasDraggedToBeginRefreshing:NULL];
         }
         return;
     }
@@ -876,19 +876,63 @@ static void const * const _context = &_context;
     }
     XZLog(@"%@", NSStringFromCGPoint(_scrollView.contentOffset));
     
-    if (_header->_refreshView.automaticRefreshDistance > 0) {
-        CGFloat const y = _scrollView.contentOffset.y;
-        _header->_automaticRefreshDistance = _header->_refreshView.automaticRefreshDistance;
-        _header->_isAutomatic = (y - _header->_contentOffsetY > _header->_automaticRefreshDistance);
-    } else {
-        _header->_isAutomatic = NO;
+    switch (_header->_state) {
+        case XZRefreshStatePendinging:
+            if (_header->_refreshView.automaticRefreshDistance > 0) {
+                CGFloat const y = _scrollView.contentOffset.y;
+                _header->_automaticRefreshDistance = _header->_refreshView.automaticRefreshDistance;
+                _header->_isAutomatic = (y - _header->_contentOffsetY > _header->_automaticRefreshDistance);
+            } else {
+                _header->_isAutomatic = NO;
+            }
+            break;
+        case XZRefreshStateWillRefreshing:
+            
+            break;
+        case XZRefreshStateRefreshingDelayedEvents: {
+            _header->_state = XZRefreshStateRefreshing;
+            id<XZRefreshDelegate> const delegate = _header->_refreshView.delegate ?: (id)_scrollView.delegate;
+            [delegate scrollView:_scrollView headerDidBeginRefreshing:_header->_refreshView];
+            break;
+        }
+        case XZRefreshStateRefreshing:
+            break;
+        case XZRefreshStateWillRecovering:
+            
+            break;
+        case XZRefreshStateRecovering:
+            
+            break;
     }
-    if (_footer->_refreshView.automaticRefreshDistance > 0) {
-        CGFloat const y = _scrollView.contentOffset.y;
-        _footer->_automaticRefreshDistance = _footer->_refreshView.automaticRefreshDistance;
-        _footer->_isAutomatic = (_footer->_contentOffsetY - y > _footer->_automaticRefreshDistance);
-    } else {
-        _footer->_isAutomatic = NO;
+    
+    switch (_footer->_state) {
+        case XZRefreshStatePendinging:
+            if (_footer->_refreshView.automaticRefreshDistance > 0) {
+                CGFloat const y = _scrollView.contentOffset.y;
+                _footer->_automaticRefreshDistance = _footer->_refreshView.automaticRefreshDistance;
+                _footer->_isAutomatic = (_footer->_contentOffsetY - y > _footer->_automaticRefreshDistance);
+            } else {
+                _footer->_isAutomatic = NO;
+            }
+            break;
+        case XZRefreshStateWillRefreshing:
+            
+            break;
+        case XZRefreshStateRefreshingDelayedEvents: {
+            _footer->_state = XZRefreshStateRefreshing;
+            id<XZRefreshDelegate> const delegate = _footer->_refreshView.delegate ?: (id)_scrollView.delegate;
+            [delegate scrollView:_scrollView footerDidBeginRefreshing:_footer->_refreshView];
+            break;
+        }
+        case XZRefreshStateRefreshing:
+            
+            break;
+        case XZRefreshStateWillRecovering:
+            
+            break;
+        case XZRefreshStateRecovering:
+            
+            break;
     }
 }
 
@@ -904,7 +948,7 @@ static void const * const _context = &_context;
         case XZRefreshStatePendinging: {
             if (_distance < 0) {
                 if ([_header->_refreshView scrollView:_scrollView shouldBeginRefreshing:-_distance]) {
-                    [self scrollView:_scrollView header:_header hadBeenDraggedRefreshing:targetContentOffset];
+                    [self scrollView:_scrollView header:_header wasDraggedToBeginRefreshing:targetContentOffset];
                 }
                 return;
             }
@@ -948,7 +992,7 @@ static void const * const _context = &_context;
         case XZRefreshStatePendinging: {
             if (_distance > 0) {
                 if ([_footer->_refreshView scrollView:_scrollView shouldBeginRefreshing:+_distance]) {
-                    [self scrollView:_scrollView footer:_footer hadBeenDraggedRefreshing:targetContentOffset];
+                    [self scrollView:_scrollView footer:_footer wasDraggedToBeginRefreshing:targetContentOffset];
                 }
                 return;
             }
@@ -1006,6 +1050,12 @@ static void const * const _context = &_context;
     XZLog(@"%@", NSStringFromCGPoint(_scrollView.contentOffset));
     
     switch (_header->_state) {
+        case XZRefreshStateRefreshingDelayedEvents: {
+            _header->_state = XZRefreshStateRefreshing;
+            id<XZRefreshDelegate> const delegate = _header->_refreshView.delegate ?: (id)_scrollView.delegate;
+            [delegate scrollView:_scrollView headerDidBeginRefreshing:_header->_refreshView];
+            break;
+        }
         case XZRefreshStateRecovering:
             _header->_state = XZRefreshStatePendinging;
             [_header->_refreshView scrollView:_scrollView didEndRefreshing:YES];
@@ -1016,6 +1066,12 @@ static void const * const _context = &_context;
     }
     
     switch (_footer->_state) {
+        case XZRefreshStateRefreshingDelayedEvents: {
+            _footer->_state = XZRefreshStateRefreshing;
+            id<XZRefreshDelegate> const delegate = _footer->_refreshView.delegate ?: (id)_scrollView.delegate;
+            [delegate scrollView:_scrollView footerDidBeginRefreshing:_footer->_refreshView];
+            break;
+        }
         case XZRefreshStateRecovering:
             _footer->_state = XZRefreshStatePendinging;
             [_footer->_refreshView scrollView:_scrollView didEndRefreshing:YES];
@@ -1026,69 +1082,54 @@ static void const * const _context = &_context;
     }
 }
 
-- (void)scrollView:(UIScrollView *)_scrollView header:(XZRefreshHeaderContext *const)_header hadBeenDraggedRefreshing:(inout CGPoint *_Nullable)targetContentOffset {
-    CGPoint const contentOffset = _scrollView.contentOffset;
-    
+- (void)scrollView:(UIScrollView *)_scrollView header:(XZRefreshHeaderContext *const)_header wasDraggedToBeginRefreshing:(inout CGPoint *_Nullable)targetContentOffset {
     _distance = 0;
-    _header->_state = XZRefreshStateRefreshing;
+    _header->_state = XZRefreshStateRefreshingDelayedEvents;
     
     // 增加到 contentInset 的边距会叠加到 adjustedContentInset 中
     // 改变 contentInset 会触发 didScroll 方法，可能改变 contentOffset
+    CGPoint const contentOffset = _scrollView.contentOffset;
     _scrollView.contentInset  = UIEdgeInsetsIncreaseTop(_scrollView.contentInset, _header->_refreshHeight);
     _scrollView.contentOffset = contentOffset;
     
     XZLog(@"触发 Header 布局");
     [self layoutHeaderRefreshViewIfNeeded:YES];
     
+    [_header->_refreshView scrollView:_scrollView didBeginRefreshing:NO];
+    
     if (targetContentOffset) {
         targetContentOffset->y = _header->_contentOffsetY;
-    }
-    
-    [_header->_refreshView scrollView:_scrollView didBeginRefreshing:NO];
-    // [_header->_view sendActionsForControlEvents:(UIControlEventValueChanged)];
-    
-    id<XZRefreshDelegate> const delegate = _header->_refreshView.delegate ?: (id)_scrollView.delegate;
-    if ([delegate respondsToSelector:@selector(scrollView:headerDidBeginRefreshing:)]) {
-        // 由于结束刷新的动画是 UIView 动画，会立即设置 contentOffset 到目标位置，
-        // 而当前方法可能处于手势结束，进入减速前的准备状态中，如果直接同步发送代理事件，
-        // 那么在代理方法中立即结束刷新，会导致减速状态在此方法返回后立即完成，
-        // 即 -scrollViewDidEndDecelerating: 方法在结束刷新的 UIView 动画结束前执行，
-        // 从而导致退场动画被提前清理，丢失动画效果。
-        dispatch_main_async_imp(^{
-            [delegate scrollView:_scrollView headerDidBeginRefreshing:_header->_refreshView];
-        });
+    } else {
+        _header->_state = XZRefreshStateRefreshing;
+        id<XZRefreshDelegate> const delegate = _header->_refreshView.delegate ?: (id)_scrollView.delegate;
+        [delegate scrollView:_scrollView headerDidBeginRefreshing:_header->_refreshView];
     }
 }
 
-- (void)scrollView:(UIScrollView *)_scrollView footer:(XZRefreshFooterContext *const)_footer hadBeenDraggedRefreshing:(inout CGPoint *_Nullable)targetContentOffset {
-    CGPoint const contentOffset = _scrollView.contentOffset;
-    
+- (void)scrollView:(UIScrollView *)_scrollView footer:(XZRefreshFooterContext *const)_footer wasDraggedToBeginRefreshing:(inout CGPoint *_Nullable)targetContentOffset {
     _distance = 0;
-    _footer->_state = XZRefreshStateRefreshing;
+    _footer->_state = XZRefreshStateRefreshingDelayedEvents;
     
+    CGPoint const contentOffset = _scrollView.contentOffset;
     _scrollView.contentInset = UIEdgeInsetsIncreaseBottom(_scrollView.contentInset, _footer->_refreshHeight);
     _scrollView.contentOffset = contentOffset;
 
     CGRect const oldFrame = _footer->_refreshView.frame;
     [self layoutFooterRefreshViewIfNeeded:YES];
     
-    // 回弹的目标位置
-    if (targetContentOffset) {
-        targetContentOffset->y = _footer->_contentOffsetY;
-    }
-    
     if (_footer->_needsFollowPageScrollWhileRefreshing) {
         _footer->_refreshView.frame = oldFrame;
     }
-
-    [_footer->_refreshView scrollView:_scrollView didBeginRefreshing:NO];
-    // [_footer->_view sendActionsForControlEvents:(UIControlEventValueChanged)];
     
-    id<XZRefreshDelegate> const delegate = _footer->_refreshView.delegate ?: (id)_scrollView.delegate;
-    if ([delegate respondsToSelector:@selector(scrollView:footerDidBeginRefreshing:)]) {
-        dispatch_main_async_imp(^{
-            [delegate scrollView:_scrollView footerDidBeginRefreshing:_footer->_refreshView];
-        });
+    [_footer->_refreshView scrollView:_scrollView didBeginRefreshing:NO];
+    
+    // 回弹的目标位置
+    if (targetContentOffset) {
+        targetContentOffset->y = _footer->_contentOffsetY;
+    } else {
+        _footer->_state = XZRefreshStateRefreshing;
+        id<XZRefreshDelegate> const delegate = _footer->_refreshView.delegate ?: (id)_scrollView.delegate;
+        [delegate scrollView:_scrollView footerDidBeginRefreshing:_footer->_refreshView];
     }
 }
 

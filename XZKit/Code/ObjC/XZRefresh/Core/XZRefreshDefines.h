@@ -42,11 +42,13 @@ typedef NS_ENUM(NSUInteger, XZRefreshAdjustment) {
 NS_SWIFT_UI_ACTOR @protocol XZRefreshDelegate <UIScrollViewDelegate>
 @optional
 /// 当头部视图开始动画时，此方法会被调用。
+///
 /// @param scrollView 触发此方法的 UIScrollView 对象。
 /// @param refreshView 已开始动的 XZRefreshView 对象。
 - (void)scrollView:(UIScrollView *)scrollView headerDidBeginRefreshing:(XZRefreshView *)refreshView;
 
 /// 当尾部视图开始动画时，此方法会被调用。
+/// 
 /// @param scrollView 触发此方法的 UIScrollView 对象。
 /// @param refreshView 已开始动画的 XZRefreshView 对象。
 - (void)scrollView:(UIScrollView *)scrollView footerDidBeginRefreshing:(XZRefreshView *)refreshView;

@@ -16,9 +16,9 @@ NS_ASSUME_NONNULL_BEGIN
 @protocol XZRefreshDelegate;
 
 typedef NS_ENUM(NSUInteger, XZRefreshMask) {
-    /// 包含此掩码的 XZRefreshState 状态，为将 refreshHeight 合并到 .contentInset 中的状态。
+    /// 包含此掩码的 XZRefreshState 状态，表明已将 refreshHeight 合并到 .contentInset 中。
     XZRefreshMaskContentInsets = (1 << 8),
-    /// 包含此掩码的 XZRefreshState 状态，为 UIScrollView 正在刷新中的状态。
+    /// 包含此掩码的 XZRefreshState 状态，表明视图 UIScrollView 正在刷新中。
     XZRefreshMaskRefreshing    = (1 << 9)
 };
 
@@ -29,7 +29,7 @@ typedef NS_ENUM(NSUInteger, XZRefreshState) {
     /// 此状态时，UIScrollView 未修改 contentInset 属性。
     ///
     /// 此状态下，不处理 `scrollViewDidScroll:` 事件。
-    XZRefreshStatePendinging     = (1 << 1),
+    XZRefreshStatePendinging                = (1 << 1),
     /// 已经开始刷新，但是由于仍然处于手势拖拽状态，尚未调整 UIScrollView 的 contentInset 属性。
     ///
     /// **在拖拽的过程中，改变 contentInset 可能会导致页面抖动。**
@@ -37,16 +37,33 @@ typedef NS_ENUM(NSUInteger, XZRefreshState) {
     /// 所以当 contentInset 改变后，手势平移的距离虽然没有变，但是由滚动区域发生了改变，在弹性区域的滚动距离就发生改变，从而页面滚动距离改变，发生页面抖动。
     /// 但是由于这个变化不是立即触发的，无法在改变后立即修复页面位置，所以无法在用户触摸的过程中调整 contentInset 属性，
     /// 需要在手势结束后，即 `-scrollViewWillEndDragging:` 才能更新 contentInset 属性。
-    XZRefreshStateWillRefreshing = (1 << 2) | XZRefreshMaskRefreshing,
-    /// 正在刷新。
-    /// 为展示刷新视图，调整了 UIScrollView 的 contentInset 属性。
-    XZRefreshStateRefreshing     = (1 << 3) | XZRefreshMaskRefreshing | XZRefreshMaskContentInsets,
-    /// 正在恢复状态，但是仍在拖拽中，尚未恢复 UIScrollView 的 contentInsets 属性，需要在 willEndDragging 再执行恢复操作。
-    XZRefreshStateWillRecovering = (1 << 4) | XZRefreshMaskContentInsets,
+    XZRefreshStateWillRefreshing            = (1 << 2) | XZRefreshMaskRefreshing,
+    /// 正在刷新，但是尚未发送事件给代理，即刷新状态未同步给宿主，只是单方面进入了刷新状态，但已调整 contentInset 属性。
+    ///
+    /// 如果在进入刷新状态时，立即发送事件，那么：
+    /// 1. 如果在事件方法中立即结束刷新，那么会导致结束刷新的“退场动画”丢失。
+    ///    这是因为结束刷新动画是 UIView 动画，会立即设置 contentOffset 到目标位置，
+    ///    而当前可能处于手势结束、进入减速前的准备状态中，设置 contentOffset 会触发“停止减速”方法，
+    ///    而结束刷新，会在“停止减速”执行清理刷新动画的操作。即 -scrollViewDidEndDecelerating: 方法，
+    ///    在结束刷新的 UIView 动画 completion 前执行。
+    /// 2. 代理事件中，如果立即 reloadData 或调整了 contentSize 的话，处于回弹过程中的 scrollView 可能会出现抖动。
+    XZRefreshStateRefreshingDelayedEvents   = (1 << 3) | XZRefreshMaskRefreshing | XZRefreshMaskContentInsets,
+    /// 正在刷新，已经发送事件给代理。
+    XZRefreshStateRefreshing                = (1 << 4) | XZRefreshMaskRefreshing | XZRefreshMaskContentInsets,
+    /// 将要进入复原过程。已经退出刷新，但是仍在拖拽中，尚未恢复 UIScrollView 的 contentInsets 属性，需要在 willEndDragging 再执行恢复操作。
+    XZRefreshStateWillRecovering            = (1 << 5) | XZRefreshMaskContentInsets,
     /// 正在复原。刷新已经结束，且恢复了 UIScrollView 的 contentInset 属性，但是页面仍然处于动画，或减速滚动的过程中。
-    /// > 结束刷新状态时，如果 UIScrollView 处于拖拽状态，由于修改 contentInset 属性可能会造成页面抖动，所以恢复 contentInset 的操作将在手势结束后。
-    /// > 结束刷新的动画过程中，也是此状态。
-    XZRefreshStateRecovering     = (1 << 5)
+    ///
+    /// 处于此状态的过程包括：
+    /// - 结束刷新的 UIView 动画过程中。
+    /// - 如果 UIScrollView 处于拖拽状态，从结束刷新，到停止减速及滚动。
+    ///
+    /// 如此处理的原因：
+    /// - 在手势的过程中，调整 contentInset 可能会造成页面抖动。
+    /// - 在回弹减速的过程中，调整 contentSize 也可能会造成页面抖动。
+    ///
+    /// 所以将恢复 contentInset 的操作将在手势结束后，且避免在恢复的过程中，产生新的刷新造成页面调整。
+    XZRefreshStateRecovering                = (1 << 6)
 };
 
 /// 记录刷新过程中的环境值，这是一个值对象，不负责任何事件逻辑。
