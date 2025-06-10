@@ -86,29 +86,20 @@
         {
             SEL const selector = @selector(isEqual:);
             const char * const encoding = xz_objc_class_getMethodTypeEncoding([NSObject class], selector);
-            id const block = ^BOOL(id<NSFetchedResultsSectionInfo> const self, id<NSFetchedResultsSectionInfo> that) {
-                if (object_getClass(self) != object_getClass(that)) {
-                    return NO;
+            id const block = ^BOOL(id<NSFetchedResultsSectionInfo> const self, id<NSFetchedResultsSectionInfo> const that) {
+                if (self == that) {
+                    return YES;
                 }
-                NSString *name1 = self.name;
-                NSString *name2 = that.name;
-                if (name1 == nil) {
-                    if (name2 != nil) {
+                NSString * const thisName = self.name;
+                NSString * const thatName = that.name;
+                if (thisName == nil) {
+                    if (thatName != nil) {
                         return NO;
                     }
-                } else if (name2 == nil) {
+                } else if (thatName == nil) {
                     return NO;
-                } else if (![name1 isEqualToString:name2]) {
+                } else if (![thisName isEqualToString:thatName]) {
                     return NO;
-                }
-                NSUInteger const numberOfObjects = self.numberOfObjects;
-                if (numberOfObjects != that.numberOfObjects) {
-                    return NO;
-                }
-                for (NSUInteger i = 0 ; i < numberOfObjects; i++) {
-                    if (![self.objects[i] isEqual:that.objects[i]]) {
-                        return NO;
-                    }
                 }
                 return YES;
             };
