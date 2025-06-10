@@ -13,32 +13,33 @@ import SwiftSyntax
 public struct XZMocoaBindMacro: PeerMacro {
     
     public static func expansion(of node: SwiftSyntax.AttributeSyntax, providingPeersOf declaration: some SwiftSyntax.DeclSyntaxProtocol, in context: some SwiftSyntaxMacros.MacroExpansionContext) throws -> [SwiftSyntax.DeclSyntax] {
+        
         // 绑定函数
         if let method = declaration.as(FunctionDeclSyntax.self) {
+            let funcitonArgumentsCount = method.signature.parameterClause.parameters.count;
+            
             // 函数参数的数量
-            if method.signature.parameterClause.parameters.count == 0 {
-                throw XZMocoaMacroError.message("@bind: 函数的参数必须与绑定的键一一对应")
+            if funcitonArgumentsCount == 0 {
+                throw XZMocoaMacroError.message("@bind: 函数没有参数，无法接收被绑定的键值")
             }
             
             // 宏参数
-            if let arguments = node.arguments {
-                switch arguments {
-                case .argumentList(let list):
+            if let macroArgumentsSyntax = node.arguments {
+                switch macroArgumentsSyntax {
+                case .argumentList(let macroArguments):
                     // 宏的参数必须为 0 或者与方法的参数相同
-                    if list.count == 0 {
+                    if macroArguments.count == 0 {
                         return []
                     }
-                    if list.count != method.signature.parameterClause.parameters.count {
+                    if macroArguments.count != funcitonArgumentsCount {
                         throw XZMocoaMacroError.message("@bind: 函数的参数与绑定的键数量不一致")
                     }
-                    if list.contains(where: { item in
-                        return item.expression.as(StringLiteralExprSyntax.self) == nil
-                    }) {
-                        throw XZMocoaMacroError.message("@bind: 指定键名必须为 String 字面量")
+                    if macroArguments.contains(where: { $0.expression.as(StringLiteralExprSyntax.self) == nil && $0.expression.as(MemberAccessExprSyntax.self) == nil }) {
+                        throw XZMocoaMacroError.message("@bind: 指定键名必须为 String 字面量或 XZMocoaKey 枚举值")
                     }
                     return []
                 default:
-                    throw XZMocoaMacroError.message("@bind: 必须指定当前函数所监听 key 键")
+                    throw XZMocoaMacroError.message("@bind: 不支持当前指定 key 键")
                 }
             }
         }

@@ -32,6 +32,11 @@ class TestFoo: XZMocoaViewModel {
         
     }
     
+    @bind
+    func dosomething(_ bar: Int) {
+        
+    }
+    
     
 }
 
