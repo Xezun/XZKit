@@ -20,28 +20,7 @@ struct XZMocoaMacros: CompilerPlugin {
     ]
 }
 
-public enum XZMocoaMacroError: Error, CustomStringConvertible, DiagnosticMessage {
-    
-    public var message: String {
-        switch self {
-        case .message(let text):
-            return text
-        }
-    }
-    
-    public var diagnosticID: SwiftDiagnostics.MessageID {
-        switch self {
-        case .message(let text):
-            return .init(domain: "com.xezun.XZKit", id: text)
-        }
-    }
-    
-    public var severity: SwiftDiagnostics.DiagnosticSeverity {
-        switch self {
-        case .message(let text):
-            return .warning
-        }
-    }
+public enum XZMocoaMacroError: Error, CustomStringConvertible {
     
     case message(String)
     
@@ -53,4 +32,15 @@ public enum XZMocoaMacroError: Error, CustomStringConvertible, DiagnosticMessage
     }
     
     
+}
+
+public struct XZMocoaMacroDiagnosticMessage: DiagnosticMessage {
+    
+    public let message: String
+    
+    public var diagnosticID: SwiftDiagnostics.MessageID {
+        return .init(domain: "com.xezun.XZKit", id: "XZMocoa")
+    }
+    
+    public let severity: SwiftDiagnostics.DiagnosticSeverity
 }
