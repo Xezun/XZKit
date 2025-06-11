@@ -48,12 +48,16 @@ XZMocoaOptionKey const XZMocoaOptionKeyName = @"name";
     [self viewModelDidChange:oldValue];
 }
 
+- (UIViewController *)viewModel:(id<XZMocoaViewModel>)viewModel viewController:(void *)null {
+    return nil;
+}
+
 - (void)viewModelWillChange:(XZMocoaViewModel *)newValue {
-    
+    newValue.delegate = self;
 }
 
 - (void)viewModelDidChange:(XZMocoaViewModel *)oldValue {
-    [oldValue removeTarget:self action:nil forKey:nil];
+    oldValue.delegate = nil;
 }
 
 @end
@@ -86,11 +90,7 @@ XZMocoaOptionKey const XZMocoaOptionKeyName = @"name";
 - (void)viewModelWillChange:(XZMocoaViewModel *)newValue {
     // VM 与 V 应该是完全独立的，在 VM 与 V 关联之前，使其进入 ready 状态
     [newValue ready];
-    newValue.delegate = self;
-}
-
-- (void)viewModelDidChange:(XZMocoaViewModel *)oldValue {
-    oldValue.delegate = nil;
+    [super viewModelWillChange:newValue];
 }
 
 @end
@@ -126,14 +126,6 @@ XZMocoaOptionKey const XZMocoaOptionKeyName = @"name";
             }
         }
     }
-}
-
-- (void)viewModelWillChange:(XZMocoaViewModel *)newValue {
-    newValue.delegate = self;
-}
-
-- (void)viewModelDidChange:(XZMocoaViewModel *)oldValue {
-    oldValue.delegate = nil;
 }
 
 - (UIViewController *)viewModel:(id<XZMocoaViewModel>)viewModel viewController:(void *)null {

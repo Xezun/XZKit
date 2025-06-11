@@ -63,22 +63,18 @@ NS_SWIFT_UI_ACTOR @protocol XZMocoaView <NSObject>
 @end
 
 /// 所有 UIResponder 是天然的 MVVM 中 View 角色，所以为 UIResponder 拓展了 viewModel 属性。
-@interface UIResponder (XZMocoaView)
+@interface UIResponder (XZMocoaView) <XZMocoaViewModelDelegate>
 @property (nonatomic, strong, nullable) __kindof XZMocoaViewModel *viewModel;
-- (void)viewModelWillChange:(nullable XZMocoaViewModel *)newValue;
-- (void)viewModelDidChange:(nullable XZMocoaViewModel *)oldValue;
-@end
-
-@interface UIView (XZMocoaView) <XZMocoaViewModelDelegate>
 - (void)viewModelWillChange:(nullable XZMocoaViewModel *)newValue NS_REQUIRES_SUPER;
 - (void)viewModelDidChange:(nullable XZMocoaViewModel *)oldValue NS_REQUIRES_SUPER;
+@end
+
+@interface UIView (XZMocoaView)
 - (BOOL)shouldPerformSegueWithIdentifier:(NSString *)identifier sender:(nullable id)sender NS_SWIFT_NAME(shouldPerformSegue(withIdentifier:sender:));
 - (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(nullable id)sender NS_SWIFT_NAME(prepare(for:sender:));
 @end
 
-@interface UIViewController (XZMocoaView) <XZMocoaViewModelDelegate>
-- (void)viewModelWillChange:(nullable XZMocoaViewModel *)newValue NS_REQUIRES_SUPER;
-- (void)viewModelDidChange:(nullable XZMocoaViewModel *)oldValue NS_REQUIRES_SUPER;
+@interface UIViewController (XZMocoaView) 
 @end
 
 

@@ -94,8 +94,84 @@ public macro key(value: Any) = #externalMacro(module: "XZMocoaMacros", type: "XZ
 @attached(accessor, names: arbitrary)
 public macro key(_ name: XZMocoaKey, _ value: Any) = #externalMacro(module: "XZMocoaMacros", type: "XZMocoaKeyMacro")
 
+/// 标记视图属性：绑定属性的默认值
+/// ```swift
+/// @mocoa(.v)
+/// class View: UIView, XZMocoaView {
+///
+///     // 单向同步：将 viewModel.text 绑定给 textLabel.text
+///     @bind
+///     var textLabel: UILabel!
+///
+///     // 单向同步：将 viewModel.name  绑定给 textLabel.text
+///     @bind(.name)
+///     var textLabel: UILabel!
+///
+///     // 单向同步：将 viewModel.textColor 绑定给 textLabel.textColor
+///     @bind(v: .textColor)
+///     var textLabel: UILabel!
+///
+///     // 单向同步：将 viewModel.color 绑定给 textLabel.textColor
+///     @bind(.color, .textColor)
+///     var textLabel: UILabel!
+///
+///     // 单向同步：将 viewModel.imageURL 绑定给 -[imageView setImageWithURL:] 方法
+///     @bind(.imageURL, selector: #selector(setImageWithURL:))
+///     var imageView: UIImageView!
+///
+///     // 单向同步：将 viewModel.imageURL 绑定到此方法
+///     @bind
+///     func setAvatar(with imageURL: URL?) {
+///         avatarImageView.sd_setImage(with: imageURL)
+///     }
+///
+///     // 单向同步：将 viewModel.backgroundURL 绑定到此方法
+///     @bind(.backgroundURL)
+///     func setBackgroundImage(with imageURL: URL?) {
+///         backgroundImageView.sd_setImage(with: imageURL)
+///     }
+///
+/// }
+/// ```
+///
+/// 标记视图模型：
+/// ```swift
+/// @mocoa(.vm)
+/// class ViewModel: XZMocoaViewModel {
+///
+///     // 单向同步：将 model.name 绑定到 name 属性的 setter 方法
+///     @bind
+///     var name: String?
+///
+///     // 单向同步：将 model.desc 绑定到 description 属性的 setter 方法
+///     @bind(.desc)
+///     var description: String?
+///
+///     @bind
+///     var didChange(min: Int, max: Int) {
+///         // 将 model.min、model.max 绑定到当前方法
+///     }
+///
+///     @bind(var1, var2)
+///     var didChange(min: Int, max: Int) {
+///         // 将 model.var1、model.var2 绑定到当前方法
+///     }
+/// }
+/// ```
 @attached(peer, names: arbitrary)
-public macro bind(_ name: XZMocoaKey...) = #externalMacro(module: "XZMocoaMacros", type: "XZMocoaBindMacro")
+public macro bind() = #externalMacro(module: "XZMocoaMacros", type: "XZMocoaBindMacro")
+
+@attached(peer, names: arbitrary)
+public macro bind(_ key: XZMocoaKey) = #externalMacro(module: "XZMocoaMacros", type: "XZMocoaBindMacro")
+
+@attached(peer, names: arbitrary)
+public macro bind(v key: XZMocoaKey) = #externalMacro(module: "XZMocoaMacros", type: "XZMocoaBindMacro")
+
+@attached(peer, names: arbitrary)
+public macro bind(_ fromKey: XZMocoaKey, _ toKey: XZMocoaKey) = #externalMacro(module: "XZMocoaMacros", type: "XZMocoaBindMacro")
+
+@attached(peer, names: arbitrary)
+public macro bind(_ key1: XZMocoaKey, _ key2: XZMocoaKey, _ key3: XZMocoaKey...) = #externalMacro(module: "XZMocoaMacros", type: "XZMocoaBindMacro")
 
 //@freestanding(expression)
 //public macro bind(text textLabel: UILabel, _ viewModel: XZMocoaViewModel, _ key: XZMocoaKey = .text, _ value: Any? = nil) = #externalMacro(module: "XZMocoaMacros", type: "XZMocoaBindLabelMacro")

@@ -9,29 +9,105 @@ import SwiftCompilerPlugin
 import SwiftSyntaxMacros
 import SwiftSyntax
 
-/// 宏 `@mocoa(role)` 的实现：为 `@key`、`@bind` 的成员添加 `@objc` 标记。
-public struct XZMocoaMacro: MemberAttributeMacro {
+public enum XZMocoaRole: String {
+    case m
+    case v
+    case vm
+}
 
+public struct XZMocoaMacro {
+    
+    public static func role(of node: SwiftSyntax.AttributeSyntax, attachedTo declaration: SwiftSyntax.DeclGroupSyntax) throws -> (role: XZMocoaRole, ClassDeclSyntax, LabeledExprListSyntax) {
+        guard let classDecl = declaration.as(ClassDeclSyntax.self) else {
+            throw XZMocoaMacroError.message("@mocoa: 只能应用于类")
+        }
+        
+        guard let arguments = node.arguments, case let .argumentList(argumentList) = arguments,
+              let roleValue = argumentList.first?.expression.as(MemberAccessExprSyntax.self)?.declName.trimmedDescription else {
+            throw XZMocoaMacroError.message("@mocoa: 缺少 role 参数，或者 role 不是合法的枚举值")
+        }
+        
+        guard let role = XZMocoaRole.init(rawValue: roleValue) else {
+            throw XZMocoaMacroError.message("@mocoa: 仅支持 .m .v .vm 三种角色")
+        }
+        
+        return (role, classDecl, argumentList)
+    }
+}
+
+/// 宏 `@mocoa(role)` 的实现：为 `@key`、`@bind` 的成员添加 `@objc` 标记。
+extension XZMocoaMacro: MemberAttributeMacro {
+    
     public static func expansion(of node: SwiftSyntax.AttributeSyntax, attachedTo declaration: some SwiftSyntax.DeclGroupSyntax, providingAttributesFor member: some SwiftSyntax.DeclSyntaxProtocol, in context: some SwiftSyntaxMacros.MacroExpansionContext) throws -> [SwiftSyntax.AttributeSyntax] {
+        
+        let (role, classDecl, argumentList) = try role(of: node, attachedTo: declaration)
         
         if let member = member.as(VariableDeclSyntax.self) {
             var objcAttributes: String? = nil
             
-            for item in member.attributes {
-                if case let .attribute(attr) = item {
-                    switch attr.attributeName.trimmedDescription {
-                    case "objc", "IBAction", "IBOutlet": // 已有 objc 标记
-                        return []
-                    case "key": // 找到 key 标记
-                        if let name = try XZMocoaKeyMacro.macroArguments(from: attr).name {
-                            objcAttributes = "@objc(\(name))"
-                        } else {
+            switch role {
+            case .m:
+                throw XZMocoaMacroError.message("@mocoa: 暂不支持 .m 角色使用")
+                
+            case .v:
+                for item in member.attributes {
+                    if case let .attribute(attr) = item {
+                        switch attr.attributeName.trimmedDescription {
+                        case "objc", "IBOutlet":
+                            // 已有 @objc 标记
+                            return []
+                        case "key":
+                            do {
+                                _ = try XZMocoaKeyMacro.checkMacroArguments(in: .v, of: attr, for: member)
+                            } catch {
+                                context.diagnose(.init(node: member, message: XZMocoaMacroError.message("@mocoa: 无效的 @key 标记")))
+                            }
+                            
+                        case "bind":
+                            // TODO: 视图属性的 @bind 标记：绑定属性的 setter
+                            guard objcAttributes == nil else {
+                                break
+                            }
                             objcAttributes = "@objc"
+                            break
+                            
+                        default:
+                            break
                         }
-                    case "bind":
-                        objcAttributes = "@objc"
-                    default:
-                        break
+                    }
+                }
+                
+            case .vm:
+                for item in member.attributes {
+                    if case let .attribute(attr) = item {
+                        switch attr.attributeName.trimmedDescription {
+                        case "objc", "IBAction", "IBOutlet":
+                            // 已有 @objc 标记
+                            return []
+                        case "key":
+                            // 视图模型属性的 @key 标记：自定义属性名、key-event 事件名
+                            guard objcAttributes == nil else {
+                                break
+                            }
+                            do {
+                                let binding = try XZMocoaKeyMacro.checkMacroArguments(in: .vm, of: attr, for: member).binding
+                                let name    = try XZMocoaKeyMacro.macroArguments(from: attr, property: binding).name
+                                objcAttributes = "@objc(\(name))"
+                            } catch {
+                                context.diagnose(.init(node: member, message: XZMocoaMacroError.message("@mocoa: 无效的 @key 标记")))
+                            }
+                            
+                        case "bind":
+                            // 视图模型属性的 @bind 标记：绑定属性的 setter
+                            guard objcAttributes == nil else {
+                                break
+                            }
+                            objcAttributes = "@objc"
+                            break
+                            
+                        default:
+                            break
+                        }
                     }
                 }
             }
@@ -44,25 +120,62 @@ public struct XZMocoaMacro: MemberAttributeMacro {
         }
         
         if let member = member.as(FunctionDeclSyntax.self) {
-            var needsAttachAttribute = false
-            for item in member.attributes {
-                if case let .attribute(attr) = item {
-                    let name = attr.attributeName.trimmedDescription
-                    // 已有 objc 标记
-                    if name == "objc" || name == "IBAction" || name == "IBOutlet" {
-                        return []
+            var objcAttributes: String? = nil
+            
+            switch role {
+            case .m:
+                throw XZMocoaMacroError.message("@mocoa: 暂不支持 .m 角色使用")
+                
+            case .v:
+                for item in member.attributes {
+                    if case let .attribute(attr) = item {
+                        switch attr.attributeName.trimmedDescription {
+                        case "objc", "IBAction":
+                            // 已有 @objc 标记
+                            return []
+                        
+                        case "bind":
+                            // 视图模型属性的 @bind 标记：绑定属性的 setter
+                            guard objcAttributes == nil else {
+                                break
+                            }
+                            objcAttributes = "@objc"
+                            break
+                            
+                        default:
+                            break
+                        }
                     }
-                    // 找到 key 标记
-                    if name == "bind" {
-                        needsAttachAttribute = true;
+                }
+                
+            case .vm:
+                for item in member.attributes {
+                    if case let .attribute(attr) = item {
+                        switch attr.attributeName.trimmedDescription {
+                        case "objc", "IBAction":
+                            // 已有 @objc 标记
+                            return []
+                        
+                        case "bind":
+                            // 视图模型属性的 @bind 标记：绑定属性的 setter
+                            guard objcAttributes == nil else {
+                                break
+                            }
+                            objcAttributes = "@objc"
+                            break
+                            
+                        default:
+                            break
+                        }
                     }
                 }
             }
             
-            if needsAttachAttribute {
-                return ["@objc"]
+            guard let objcAttributes = objcAttributes else {
+                return []
             }
-            return []
+            
+            return ["\(raw: objcAttributes)"]
         }
    
         return []
@@ -75,24 +188,22 @@ extension XZMocoaMacro: MemberMacro {
     
     public static func expansion(of node: AttributeSyntax, providingMembersOf declaration: some DeclGroupSyntax, in context: some MacroExpansionContext) throws -> [DeclSyntax] {
         
-        guard let classDecl = declaration.as(ClassDeclSyntax.self) else {
-            throw XZMocoaMacroError.message("@mocoa: 只能应用于类")
-        }
-        
-        guard let arguments = node.arguments, case let .argumentList(argumentList) = arguments, let role = argumentList.first?.trimmedDescription else {
-            throw XZMocoaMacroError.message("@mocoa: 缺少 role 参数")
-        }
+        let (role, classDecl, argumentList) = try role(of: node, attachedTo: declaration)
         
         switch role {
-        case ".m":
-            throw XZMocoaMacroError.message("@mocoa: 暂未实现")
-        case ".v":
+        case .m:
+            throw XZMocoaMacroError.message("@mocoa: 暂未不支持 .m 角色")
+            
+        case .v:
             // 判断是否自定义 viewModelDidChange 方法
             for member in classDecl.memberBlock.members {
                 if let member = member.decl.as(FunctionDeclSyntax.self) {
                     let methodName = member.name.trimmedDescription
                     if methodName == "viewModelDidChange" {
                         // TODO: 是否有必要校验是否为 static 方法
+                        
+                        
+                        
                         return []
                     }
                 }
@@ -220,7 +331,7 @@ extension XZMocoaMacro: MemberMacro {
             
             return [DeclSyntax(methodSyntax)]
             
-        case ".vm":
+        case .vm:
             // 判断是否自定义 mappingModelKeys 属性
             for member in classDecl.memberBlock.members {
                 if let member = member.decl.as(VariableDeclSyntax.self) {
@@ -310,8 +421,6 @@ extension XZMocoaMacro: MemberMacro {
             )
             
             return [DeclSyntax(methodSyntax)]
-        default:
-            throw XZMocoaMacroError.message("@mocoa: 暂不支持 \(role) 角色")
         }
         
     }

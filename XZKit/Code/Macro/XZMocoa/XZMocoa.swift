@@ -8,6 +8,7 @@
 import SwiftCompilerPlugin
 import SwiftSyntaxMacros
 import SwiftSyntax
+import SwiftDiagnostics
 
 @main
 struct XZMocoaMacros: CompilerPlugin {
@@ -19,7 +20,28 @@ struct XZMocoaMacros: CompilerPlugin {
     ]
 }
 
-public enum XZMocoaMacroError: Error, CustomStringConvertible {
+public enum XZMocoaMacroError: Error, CustomStringConvertible, DiagnosticMessage {
+    
+    public var message: String {
+        switch self {
+        case .message(let text):
+            return text
+        }
+    }
+    
+    public var diagnosticID: SwiftDiagnostics.MessageID {
+        switch self {
+        case .message(let text):
+            return .init(domain: "com.xezun.XZKit", id: text)
+        }
+    }
+    
+    public var severity: SwiftDiagnostics.DiagnosticSeverity {
+        switch self {
+        case .message(let text):
+            return .warning
+        }
+    }
     
     case message(String)
     
@@ -29,5 +51,6 @@ public enum XZMocoaMacroError: Error, CustomStringConvertible {
             return text
         }
     }
+    
+    
 }
-
