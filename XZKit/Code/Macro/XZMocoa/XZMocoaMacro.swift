@@ -134,6 +134,9 @@ extension XZMocoaMacro: MemberAttributeMacro {
                             context.diagnose(.init(node: methodNode, message: Message(error, severity: .warning)))
                         }
                         
+                    case "ready":
+                        objcAttributes = "@nonobjc"
+                        
                     default:
                         break
                     }
@@ -281,7 +284,9 @@ extension XZMocoaMacro: MemberMacro {
                 }
             }
             
+            var allKeys = Set<String>()
             var mappingKeyValueStrings = [String]()
+            var readyMethodNames = [String]()
             
             // 遍历 class 包体
             for member in classDecl.memberBlock.members {
@@ -320,8 +325,10 @@ extension XZMocoaMacro: MemberMacro {
                         }
                         
                         if keysArray.isEmpty {
+                            allKeys.insert(name)
                             mappingKeyValueStrings.append("NSStringFromSelector(#selector(setter: Self.\(name))): [\"\(name)\"]")
                         } else {
+                            allKeys.insert(keysArray[0])
                             mappingKeyValueStrings.append("NSStringFromSelector(#selector(setter: Self.\(name))): [\"\(keysArray[0])\"]")
                         }
                     }
@@ -335,9 +342,17 @@ extension XZMocoaMacro: MemberMacro {
                         guard case let .attribute(macroAttribute) = methodAttribute else {
                             continue
                         }
-                        guard macroAttribute.attributeName.trimmedDescription == "bind" else {
+                        
+                        switch macroAttribute.attributeName.trimmedDescription {
+                        case "bind":
+                            break
+                        case "ready":
+                            readyMethodNames.append(methodDecl.name.text)
+                            continue
+                        default:
                             continue
                         }
+                        
                         // 获取宏参数
                         var keysArray = [String]()
                         if let macroArguments = macroAttribute.arguments {
@@ -347,9 +362,11 @@ extension XZMocoaMacro: MemberMacro {
                                     if let key = argument.expression.as(StringLiteralExprSyntax.self)?.representedLiteralValue {
                                         // 去掉了字面量双引号
                                         keysArray.append(key)
+                                        allKeys.insert(key)
                                     } else if let key = argument.expression.as(MemberAccessExprSyntax.self)?.declName.trimmedDescription {
                                         // 去掉了点号
                                         keysArray.append(key)
+                                        allKeys.insert(key)
                                     }
                                 }
                             default:
@@ -362,8 +379,10 @@ extension XZMocoaMacro: MemberMacro {
                             for parameter in methodDecl.signature.parameterClause.parameters {
                                 selector += parameter.firstName.text + ":"
                                 if let name = parameter.secondName {
+                                    allKeys.insert(name.text)
                                     keysArray.append(name.text)
                                 } else {
+                                    allKeys.insert(parameter.firstName.text)
                                     keysArray.append(parameter.firstName.text)
                                 }
                             }
@@ -373,6 +392,7 @@ extension XZMocoaMacro: MemberMacro {
                             }
                         }
                         selector += ")"
+                        
                         
                         let keysString = "\"" + keysArray.joined(separator: "\", \"") + "\""
                         
@@ -384,12 +404,20 @@ extension XZMocoaMacro: MemberMacro {
             }
             
             if mappingKeyValueStrings.count == 0 {
-                return []
+                let methodSyntax = try FunctionDeclSyntax(
+                    """
+                    override func __prepare() {
+                        super.__prepare()
+                        \(raw: readyMethodNames.map({ "\($0)()" }).joined(separator: "\n"))
+                    }
+                    """
+                )
+                return [DeclSyntax(methodSyntax)]
             }
             
             let mappingKeyValues = mappingKeyValueStrings.joined(separator: ", \n")
             
-            let methodSyntax = try VariableDeclSyntax(
+            let variableSyntax = try VariableDeclSyntax(
                 """
                 override class var mappingModelKeys: [String : Any]? {
                     return [ 
@@ -399,7 +427,19 @@ extension XZMocoaMacro: MemberMacro {
                 """
             )
             
-            return [DeclSyntax(methodSyntax)]
+            let methodSyntax = try FunctionDeclSyntax(
+                """
+                override func __prepare() {
+                    super.__prepare()
+                    // 所有初始化方法依次调用
+                    \(raw: readyMethodNames.map({ "\($0)()" }).joined(separator: "\n"))
+                    // 所有绑定键自动触发一次
+                    model(self.model, didUpdateValuesForKeys: \(raw: allKeys))
+                }
+                """
+            )
+            
+            return [DeclSyntax(methodSyntax), DeclSyntax(variableSyntax)]
         }
         
     }

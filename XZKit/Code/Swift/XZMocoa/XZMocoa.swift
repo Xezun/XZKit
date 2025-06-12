@@ -175,6 +175,10 @@ public macro bind(_ vmKey: XZMocoaKey, selector: Selector) = #externalMacro(modu
 
 @attached(body)
 public macro mocoa() = #externalMacro(module: "XZMocoaMacros", type: "XZMocoaBindViewMacro")
+
+@attached(body)
+public macro ready() = #externalMacro(module: "XZMocoaMacros", type: "XZMocoaReadyMacro")
+
 #else
 extension XZMocoaKind: ExpressibleByStringLiteral {
     public typealias StringLiteralType = String

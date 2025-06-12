@@ -35,8 +35,14 @@ class FooViewModel: XZMocoaViewModel {
     @key("fooBar", 20)
     var foobar : Int
 
-    override func prepare() {
-        super.prepare()
+    @ready
+    func prepare1() {
+        
+    }
+    
+    @ready
+    func prepare2() {
+        
     }
     
     @bind("foo", "bar")

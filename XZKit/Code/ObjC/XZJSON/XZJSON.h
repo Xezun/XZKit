@@ -200,6 +200,9 @@ NS_ASSUME_NONNULL_BEGIN
 ///   - block: 如果属性值无法比较，将调用此块函数，如不提供，则认为属性不相等。
 + (BOOL)model:(id)model1 isEqualToModel:(id)model2 comparator:(NSComparisonResult (^_Nullable)(id model1, id model2, NSString *key))block;
 
++ (NSArray<NSString *> *)model:(id)model compareToModel:(id)newModel;
+
+
 @end
 
 NS_ASSUME_NONNULL_END

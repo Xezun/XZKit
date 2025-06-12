@@ -608,6 +608,24 @@
     return YES;
 }
 
++ (NSArray<NSString *> *)model:(id)model compareToModel:(id)newModel {
+    if (model == newModel) {
+        return @[];
+    }
+    
+    if (model == nil) {
+        return ([XZJSONClassDescriptor descriptorWithClass:object_getClass(newModel)]->_namedProperties).allKeys;
+    }
+    
+    if (newModel == nil) {
+        return ([XZJSONClassDescriptor descriptorWithClass:object_getClass(model)]->_namedProperties).allKeys;
+    }
+    
+    // TODO: 模型差异比较
+    
+    return @[];
+}
+
 @end
 
 
