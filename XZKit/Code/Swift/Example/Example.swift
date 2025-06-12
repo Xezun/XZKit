@@ -36,12 +36,12 @@ class FooViewModel: XZMocoaViewModel {
     var foobar : Int
 
     @ready
-    func prepare1() {
+    private func prepare1() {
         
     }
     
     @ready
-    func prepare2() {
+    private func prepare2() {
         
     }
     

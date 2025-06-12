@@ -136,6 +136,11 @@ public struct XZMocoaReadyMacro: BodyMacro {
         guard declaration.signature.parameterClause.parameters.count == 0 else {
             throw Message("@ready: 初始化方法没有参数")
         }
+        
+        guard declaration.modifiers.contains(where: { $0.name.text == "private" }) else {
+            throw Message("@ready: 初始化方法必须使用 private 标记")
+        }
+        
         return []
     }
     
