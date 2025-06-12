@@ -12,15 +12,18 @@ import SwiftDiagnostics
 
 @main
 struct XZMocoaMacros: CompilerPlugin {
+    
     var providingMacros: [Macro.Type] = [
         XZMocoaMacro.self,
         XZMocoaModuleMacro.self,
         XZMocoaKeyMacro.self,
-        XZMocoaBindMacro.self
+        XZMocoaBindMacro.self,
+        XZMocoaBindViewMacro.self
     ]
+    
 }
 
-public enum XZMocoaMacroError: Error, CustomStringConvertible {
+private enum XZMocoaMacroError: Error, CustomStringConvertible {
     
     case message(String)
     
@@ -31,10 +34,9 @@ public enum XZMocoaMacroError: Error, CustomStringConvertible {
         }
     }
     
-    
 }
 
-public struct XZMocoaMacroDiagnosticMessage: DiagnosticMessage {
+private struct XZMocoaMacroDiagnosticMessage: DiagnosticMessage {
     
     public let message: String
     
@@ -43,4 +45,57 @@ public struct XZMocoaMacroDiagnosticMessage: DiagnosticMessage {
     }
     
     public let severity: SwiftDiagnostics.DiagnosticSeverity
+    
+}
+
+func Message(_ message: String) -> Error {
+    return XZMocoaMacroError.message(message)
+}
+
+func Message(_ message: String, severity: SwiftDiagnostics.DiagnosticSeverity) -> any DiagnosticMessage {
+    return XZMocoaMacroDiagnosticMessage.init(message: message, severity: severity)
+}
+
+func Message(_ error: Error, severity: SwiftDiagnostics.DiagnosticSeverity) -> any DiagnosticMessage {
+    if case let .message(message) = (error as? XZMocoaMacroError) {
+        return Message(message, severity: severity)
+    }
+    return Message("出现未知错误", severity: .error)
+}
+
+
+
+extension SwiftSyntax.AttributeSyntax {
+    
+    var argumentsArray: [(label: String?, value: String, representedLiteralValue: String?)] {
+        
+        var macroArguments = [(String?, String, String?)]()
+        if let arguments = self.arguments {
+            switch arguments {
+            case .argumentList(let arguments):
+                for argument in arguments {
+                    let label = argument.label?.trimmedDescription;
+                    let value = argument.expression.trimmedDescription
+                    let key = argument.expression.as(StringLiteralExprSyntax.self)?.representedLiteralValue
+                    macroArguments.append((label, value, key))
+                }
+            default:
+                break
+            }
+        }
+        
+        return macroArguments
+    }
+    
+    var firstArgument: (label: String?, value: String)? {
+        guard let arguments = self.arguments else { return nil }
+        switch arguments {
+        case .argumentList(let arguments):
+            guard let first = arguments.first else { return nil }
+            return (first.label?.trimmedDescription, first.expression.trimmedDescription)
+        default:
+            return nil
+        }
+    }
+    
 }

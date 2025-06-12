@@ -9,18 +9,145 @@ import SwiftCompilerPlugin
 import SwiftSyntaxMacros
 import SwiftSyntax
 
-// @bind: 校验 @bind 标记的宏的合法性
+// 不带参数标签的 `@bind` 宏的实现。
 public struct XZMocoaBindMacro {
     
-    public static func isValid(macro node: SwiftSyntax.AttributeSyntax, declaration: FunctionDeclSyntax, in role: XZMocoaRole) throws {
+    public static func type(forVariable variableDecl: VariableDeclSyntax) throws -> (name: String, isOptional: Bool) {
+        guard let type = variableDecl.bindings.first?.typeAnnotation?.type else {
+            throw Message("@bind: 无法确定属性类型")
+        }
+        
+        if let op = type.as(OptionalTypeSyntax.self) {
+            return (op.wrappedType.trimmedDescription, true)
+        }
+        
+        if let op = type.as(ImplicitlyUnwrappedOptionalTypeSyntax.self) {
+            return (op.wrappedType.trimmedDescription, true)
+        }
+        
+        return (type.trimmedDescription, false)
+        
+    }
+    
+    public static func arguments(forMacro macroNode: SwiftSyntax.AttributeSyntax, forVariable typeName: String) throws -> (selector: String, key: String) {
+        // 获取宏参数
+        let macroArguments = macroNode.argumentsArray;
+        
+        var selector = ""
+        var vmkey    = ""
+        
+        switch macroArguments.count {
+        case 0:
+            switch typeName {
+            case "UILabel":
+                vmkey = ".text"
+                selector = "#selector(setter: UILabel.text)"
+            case "UITextView":
+                vmkey = ".text"
+                selector = "#selector(setter: UITextView.text)"
+            case "UIImageView":
+                vmkey = ".image"
+                selector = "#selector(setter: UIImageView.image)"
+            default:
+                throw Message("@bind: 暂未为 \(typeName) 类型提供默认支持")
+            }
+            
+        case 1:
+            let macroArgument = macroArguments[0]
+            if macroArgument.label == nil {
+                vmkey = macroArgument.value
+                switch typeName {
+                case "UILabel":
+                    selector = "#selector(setter: UILabel.text)"
+                case "UITextView":
+                    selector = "#selector(setter: UITextView.text)"
+                case "UIImageView":
+                    selector = "#selector(setter: UIImageView.image)"
+                default:
+                    throw Message("@bind: 暂未为 \(typeName) 类型提供默认支持")
+                }
+            } else {
+                vmkey = macroArgument.value
+                if let key = macroArgument.representedLiteralValue {
+                    selector = "#selector(setter: \(typeName).\(key))"
+                } else {
+                    selector = "#selector(setter: \(typeName)\(vmkey))"
+                }
+            }
+        case 2:
+            vmkey = macroArguments[0].value
+            if macroArguments[1].label == "selector" {
+                selector = macroArguments[1].value
+            } else if let key = macroArguments[1].representedLiteralValue {
+                selector = "#selector(setter: \(typeName).\(key))"
+            } else {
+                selector = "#selector(setter: \(typeName)\(macroArguments[1].value))"
+            }
+            
+        default:
+            throw Message("@bind: 参数错误，仅支持两个个参数")
+        }
+        
+        return (selector, vmkey)
+    }
+    
+    public static func statements(forMacro macroNodes: [SwiftSyntax.AttributeSyntax], forVariable declaration: VariableDeclSyntax) throws -> String {
+        if macroNodes.isEmpty {
+            return ""
+        }
+        
+        guard let propertyName = declaration.bindings.first?.pattern.as(IdentifierPatternSyntax.self)?.identifier.text else {
+            throw Message("@bind: 无法确定属性名")
+        }
+        
+        let propertyType = try Self.type(forVariable: declaration)
+        
+        let statements = try macroNodes.map({ macroNode throws -> String in
+            let arguments = try Self.arguments(forMacro: macroNode, forVariable: propertyType.name)
+            return "viewModel.addTarget(\(propertyName), action: \(arguments.selector), forKey: \(arguments.key), value: nil)"
+        }).joined(separator: "\n")
+        
+        if propertyType.isOptional {
+            return "if let \(propertyName) = self.\(propertyName) { \(statements) }"
+        }
+        return statements
+    }
+    
+    public static func arguments(forMacro macroNode: SwiftSyntax.AttributeSyntax, forFunction declaration: FunctionDeclSyntax) throws -> (selector: String, key: String) {
+        var vmKey = macroNode.firstArgument?.value
+        
+        // 遍历方法参数，拼接方法名
+        var selector = "#selector(Self.\(declaration.name.text)("
+        for parameter in declaration.signature.parameterClause.parameters {
+            selector += parameter.firstName.text + ":"
+            
+            if vmKey == nil {
+                vmKey = "\"\(parameter.secondName?.text ?? parameter.firstName.text)\""
+            }
+        }
+        selector += "))"
+        
+        guard let vmKey = vmKey else {
+            throw Message("@bind: 无法确定要绑定的视图模型的键名")
+        }
+        
+        return (selector, vmKey)
+    }
+    
+    public static func statement(forMacro macroNode: SwiftSyntax.AttributeSyntax, forFunction declaration: FunctionDeclSyntax) throws -> String {
+        let arguments = try Self.arguments(forMacro: macroNode, forFunction: declaration)
+        return "viewModel.addTarget(self, action: \(arguments.selector), forKey: \(arguments.key), value: nil)"
+    }
+    
+    public static func isValid(forMacro node: SwiftSyntax.AttributeSyntax, forFunction methodDeclaration: FunctionDeclSyntax, for role: XZMocoaRole) throws {
         switch role {
         case .m:
-            throw XZMocoaMacroError.message("@bind: 暂不支持 .m 角色")
+            throw Message("@bind: 暂不支持 .m 角色")
             
         case .v:
-            let methodArgumentsCount = declaration.signature.parameterClause.parameters.count;
+            let methodArgumentsCount = methodDeclaration.signature.parameterClause.parameters.count;
             guard methodArgumentsCount <= 3 else {
-                throw XZMocoaMacroError.message("@bind: 仅支持绑定 value、key-value、sender-key-value 三种参数形式的方法")
+                throw Message("@bind: 仅支持绑定 value、key-value、sender-key-value 三种参数形式的方法")
             }
             
             // 宏参数
@@ -33,23 +160,23 @@ public struct XZMocoaBindMacro {
                     case 1:
                         let expression = macroArguments[macroArguments.startIndex].expression
                         if expression.as(StringLiteralExprSyntax.self) == nil && expression.as(MemberAccessExprSyntax.self) == nil {
-                            throw XZMocoaMacroError.message("@bind: 指定键名必须为 String 字面量或 XZMocoaKey 枚举值")
+                            throw Message("@bind: 指定键名必须为 String 字面量或 XZMocoaKey 枚举值")
                         }
                     default:
-                        throw XZMocoaMacroError.message("@bind: 仅可指定 key 一个参数")
+                        throw Message("@bind: 仅可指定 key 一个参数")
                     }
                     
                 default:
-                    throw XZMocoaMacroError.message("@bind: 不支持绑定当前的键类型")
+                    throw Message("@bind: 不支持绑定当前的键类型")
                 }
             }
             
         case .vm:
-            let methodArgumentsCount = declaration.signature.parameterClause.parameters.count;
+            let methodArgumentsCount = methodDeclaration.signature.parameterClause.parameters.count;
             
             // 函数参数的数量
             guard methodArgumentsCount > 0 else {
-                throw XZMocoaMacroError.message("@bind: 函数没有参数，无法接收被绑定的键值")
+                throw Message("@bind: 函数没有参数，无法接收被绑定的键值")
             }
             
             // 宏参数
@@ -62,37 +189,37 @@ public struct XZMocoaBindMacro {
                     case methodArgumentsCount:
                         let expression = macroArguments[macroArguments.startIndex].expression
                         if expression.as(StringLiteralExprSyntax.self) == nil && expression.as(MemberAccessExprSyntax.self) == nil {
-                            throw XZMocoaMacroError.message("@bind: 指定键名必须为 String 字面量或 XZMocoaKey 枚举值")
+                            throw Message("@bind: 指定键名必须为 String 字面量或 XZMocoaKey 枚举值")
                         }
                         break
                     default:
-                        throw XZMocoaMacroError.message("@bind: 函数的参数与绑定的键数量不一致")
+                        throw Message("@bind: 函数的参数与绑定的键数量不一致")
                     }
 
                 default:
-                    throw XZMocoaMacroError.message("@bind: 不支持绑定当前的键类型")
+                    throw Message("@bind: 不支持绑定当前的键类型")
                 }
             }
         }
     }
     
-    public static func isValid(macro node: SwiftSyntax.AttributeSyntax, declaration: VariableDeclSyntax, in role: XZMocoaRole) throws {
+    public static func isValid(forMacro node: SwiftSyntax.AttributeSyntax, forVariable declaration: VariableDeclSyntax, for role: XZMocoaRole) throws -> Bool {
         switch role {
         case .m:
-            throw XZMocoaMacroError.message("@bind: 暂不支持 .m 角色")
+            throw Message("@bind: 暂不支持 .m 角色")
             
         case .v:
-            guard let propertyType = ({ (type: TypeSyntax?) -> (name: String, isOptional: Bool)? in
+            guard let propertyType = ({ (type: TypeSyntax?) -> (name: String, isOptional: Int)? in
                 guard let type = type else { return nil }
                 if let op = type.as(OptionalTypeSyntax.self) {
-                    return (op.wrappedType.trimmedDescription, true)
+                    return (op.wrappedType.trimmedDescription, 1)
                 }
                 if let op = type.as(ImplicitlyUnwrappedOptionalTypeSyntax.self) {
-                    return (op.wrappedType.trimmedDescription, true)
+                    return (op.wrappedType.trimmedDescription, 2)
                 }
-                return (type.trimmedDescription, false)
+                return (type.trimmedDescription, 0)
             })(declaration.bindings.first?.typeAnnotation?.type) else {
-                throw XZMocoaMacroError.message("@bind: 无法确定属性类型")
+                throw Message("@bind: 无法确定属性类型")
             }
             
             // 宏参数
@@ -107,13 +234,13 @@ public struct XZMocoaBindMacro {
                         case "UIImageView":
                             break;
                         default:
-                            throw XZMocoaMacroError.message("@bind: 默认绑定还不支持 \(propertyType.name) 类型")
+                            throw Message("@bind: 默认绑定还不支持 \(propertyType.name) 类型")
                         }
                     case 1:
                         let macroArgument = macroArguments[macroArguments.startIndex]
                         if let label = macroArgument.label?.trimmedDescription {
                             if label != "v" {
-                                throw XZMocoaMacroError.message("@bind: 单个参数仅支持 v 标签（指定 View 属性）")
+                                throw Message("@bind: 单个参数仅支持 v 标签（指定 View 属性）")
                             }
                         } else {
                             switch propertyType.name {
@@ -122,36 +249,38 @@ public struct XZMocoaBindMacro {
                             case "UIImageView":
                                 break;
                             default:
-                                throw XZMocoaMacroError.message("@bind: 默认绑定还不支持 \(propertyType.name) 类型")
+                                throw Message("@bind: 默认绑定还不支持 \(propertyType.name) 类型")
                             }
                         }
                     case 2:
                         let firstExpression = macroArguments[macroArguments.startIndex].expression
                         if let stringValue = firstExpression.as(StringLiteralExprSyntax.self)?.representedLiteralValue {
                             guard stringValue.count > 0 else {
-                                throw XZMocoaMacroError.message("@bind: 绑定 vm 键名不能为空，若 vm 键与 v 属性同名，可在第一个参数前添加 v: 标签")
+                                throw Message("@bind: 第一个参数不能为空，若仅指定 v 属性名，可使用 @bind(v:) 宏")
                             }
                         } else if firstExpression.as(MemberAccessExprSyntax.self) == nil {
-                            throw XZMocoaMacroError.message("@bind: 绑定 vm 键名必须是 String 字面量或 XZMocoaKey 枚举值")
+                            throw Message("@bind: 绑定 vm 键名必须是 String 字面量或 XZMocoaKey 枚举值")
                         }
                         
                         let secondExpression = macroArguments[macroArguments.index(after: macroArguments.startIndex)].expression
                         if let stringValue = secondExpression.as(StringLiteralExprSyntax.self)?.representedLiteralValue {
                             guard stringValue.count > 0 else {
-                                throw XZMocoaMacroError.message("@bind: 绑定 v 键名不能为空；若 v 支持默认键名，请不要提供第二参数")
+                                throw Message("@bind: 绑定 v 键名不能为空；若 v 支持默认键名，请不要提供第二参数")
                             }
                         } else if secondExpression.as(MemberAccessExprSyntax.self) == nil {
-                            throw XZMocoaMacroError.message("@bind: 绑定 v 键名必须是 String 字面量或 XZMocoaKey 枚举值")
+                            throw Message("@bind: 绑定 v 键名必须是 String 字面量或 XZMocoaKey 枚举值")
                         }
                         
                     default:
-                        throw XZMocoaMacroError.message("@bind: 绑定 v 属性仅支持 (.vmKey)、(v: .vKey)、(vmKey, vKey) 三种形式的参数")
+                        throw Message("@bind: 仅支持 (.vmKey)、(.vmKey, .vKey) 两种形式的参数")
                     }
                     
                 default:
-                    throw XZMocoaMacroError.message("@bind: 不支持绑定当前的键类型")
+                    throw Message("@bind: 不支持绑定当前的键类型")
                 }
             }
+            
+            return propertyType.isOptional == 1
             
         case .vm:
             // 宏参数
@@ -162,24 +291,30 @@ public struct XZMocoaBindMacro {
                     case 0:
                         break
                     case 1:
-                        let expression = macroArguments[macroArguments.startIndex].expression
+                        let macroArgument = macroArguments[macroArguments.startIndex]
+                        if let label = macroArgument.label, label.trimmedDescription.count > 0 {
+                            throw Message("@bind: 在 .vm 上不支持该绑定，请移除参数标签")
+                        }
+                        let expression = macroArgument.expression
                         if let stringValue = expression.as(StringLiteralExprSyntax.self)?.representedLiteralValue {
                             guard stringValue.count > 0 else {
-                                throw XZMocoaMacroError.message("@bind: 绑定 vm 键名不能为空，若 m 键与 vm 属性同名，可省略参数")
+                                throw Message("@bind: 绑定 vm 键名不能为空，若 m 键与 vm 属性同名，可省略参数")
                             }
                         } else if expression.as(MemberAccessExprSyntax.self) == nil {
-                            throw XZMocoaMacroError.message("@bind: 绑定 vm 属性的键名必须为 String 字面量或 XZMocoaKey 枚举值")
+                            throw Message("@bind: 绑定 vm 属性的键名必须为 String 字面量或 XZMocoaKey 枚举值")
                         }
                         break
                     default:
-                        throw XZMocoaMacroError.message("@bind: 绑定 vm 属性仅支持一个参数")
+                        throw Message("@bind: 绑定 vm 属性仅支持一个参数")
                     }
 
                 default:
-                    throw XZMocoaMacroError.message("@bind: 不支持绑定当前的键类型")
+                    throw Message("@bind: 不支持绑定当前的键类型")
                 }
             }
         }
+        
+        return false
     }
     
 }
@@ -187,10 +322,129 @@ public struct XZMocoaBindMacro {
 extension XZMocoaBindMacro: PeerMacro {
     
     public static func expansion(of node: SwiftSyntax.AttributeSyntax, providingPeersOf declaration: some SwiftSyntax.DeclSyntaxProtocol, in context: some SwiftSyntaxMacros.MacroExpansionContext) throws -> [SwiftSyntax.DeclSyntax] {
+        // 无法通过 node 或 method 的 declaration 属性找到上级，无法确定 role 所以无法验证
+        return []
+    }
+    
+}
+
+public struct XZMocoaBindViewMacro {
+    
+}
+
+extension XZMocoaBindViewMacro: AccessorMacro {
+    
+    public static func expansion(of node: SwiftSyntax.AttributeSyntax, providingAccessorsOf declaration: some SwiftSyntax.DeclSyntaxProtocol, in context: some SwiftSyntaxMacros.MacroExpansionContext) throws -> [SwiftSyntax.AccessorDeclSyntax] {
+        guard let declaration = declaration.as(VariableDeclSyntax.self) else {
+            throw Message("@bind(v:) 仅支持属性")
+        }
         
-        // do nothing, but check in @mocoa macro, because there is no common check for all roles.
+        for binding in declaration.bindings {
+            guard let accessorBlock = binding.accessorBlock else {
+                continue
+            }
+            switch accessorBlock.accessors {
+            case .getter:
+                throw Message("@bind: 只读计算属性不能绑定")
+            case .accessors(let accessors):
+                for accessor in accessors {
+                    switch accessor.accessorSpecifier.text {
+                    case "didSet":
+                        /*if var body = accessor.body {
+                            body.statements.insert("defer { if let viewModel = self.viewModel { \(raw: statements) } }", at: body.statements.startIndex)
+                            return [.init(accessorSpecifier: "didSet", body: body)]
+                        }*/
+                        context.diagnose(.init(node: node, message: Message("@oberve: 已有 didSet 无法绑定监听，请移除 didSet 或移除 @observe 后自行处理", severity: .warning)))
+                        return []
+                    default:
+                        break
+                    }
+                }
+            }
+        }
         
-        // TODO: - 视图可选属性绑定 vm 键，是否可以添加 didSet 绑定 vm
+        let statements = try XZMocoaBindMacro.statements(forMacro: declaration.attributes.compactMap({ attribute in
+            switch attribute {
+            case .attribute(let macroNode):
+                if macroNode.attributeName.trimmedDescription == "bind" {
+                    return macroNode
+                }
+                return nil
+            case .ifConfigDecl:
+                return nil
+            }
+        }), forVariable: declaration)
+        
+        return [
+            """
+            didSet {
+                guard let viewModel = self.viewModel else { return }
+                \(raw: statements)
+            }
+            """
+        ]
+    }
+    
+}
+
+extension XZMocoaBindViewMacro: BodyMacro {
+    
+    public static func expansion(of node: SwiftSyntax.AttributeSyntax, providingBodyFor declaration: some SwiftSyntax.DeclSyntaxProtocol & SwiftSyntax.WithOptionalCodeBlockSyntax, in context: some SwiftSyntaxMacros.MacroExpansionContext) throws -> [SwiftSyntax.CodeBlockItemSyntax] {
+        
+        if let declaration = declaration.as(FunctionDeclSyntax.self) {
+            let statement = CodeBlockItemSyntax("defer { _viewModelDidChange() }")
+            
+            if var body = declaration.body {
+                body.statements.insert(statement, at: body.statements.startIndex)
+                return body.statements.map({ $0 })
+            }
+            return [statement]
+        }
+        
+        if let declaration = declaration.as(VariableDeclSyntax.self) {
+            
+            let statements = try XZMocoaBindMacro.statements(forMacro: declaration.attributes.compactMap({ attribute in
+                switch attribute {
+                case .attribute(let macroNode):
+                    if macroNode.attributeName.trimmedDescription == "bind" {
+                        return macroNode
+                    }
+                    return nil
+                case .ifConfigDecl:
+                    return nil
+                }
+            }), forVariable: declaration)
+            
+            var string = ""
+            
+            for binding in declaration.bindings {
+                guard let accessorBlock = binding.accessorBlock else {
+                    continue
+                }
+                switch accessorBlock.accessors {
+                case .getter:
+                    throw Message("@bind: 只读计算属性不能绑定")
+                case .accessors(let accessors):
+                    for accessor in accessors {
+                        let specifier = accessor.accessorSpecifier.text;
+                        switch specifier {
+                        case "didSet":
+                            if var body = accessor.body {
+                                body.statements.insert("defer { if let viewModel = self.viewModel { \(raw: statements) } }", at: body.statements.startIndex)
+                                string.append("\n didSet { \(body.trimmedDescription) }")
+                            }
+                        default:
+                            if let body = accessor.body {
+                                string.append("\n\(specifier) { \(body.trimmedDescription) }")
+                            }
+                            break
+                        }
+                    }
+                }
+            }
+            
+            return ["{ \(raw: string) }"]
+        }
         
         return []
     }
@@ -206,13 +460,13 @@ public struct MocoaBindLabelMacro: ExpressionMacro {
         
         switch arguments.count {
         case 0:
-            throw XZMocoaMacroError.message("#bind: 缺少参数")
+            throw Message("#bind: 缺少参数")
         case 1:
-            throw XZMocoaMacroError.message("#bind: 参数不足，至少需要提供 view 和 viewModel 两个参数")
+            throw Message("#bind: 参数不足，至少需要提供 view 和 viewModel 两个参数")
         case 2:
             var index = arguments.startIndex
             guard let label = arguments[index].label?.trimmedDescription else {
-                throw XZMocoaMacroError.message("#bind: 缺少标签")
+                throw Message("#bind: 缺少标签")
             }
             switch label {
             case "text":
@@ -221,12 +475,12 @@ public struct MocoaBindLabelMacro: ExpressionMacro {
                 let viewModel = arguments[index].expression.trimmedDescription
                 return "\(raw: viewModel).addTarget(\(raw: view), action: #selector(setter: UILabel.text), forKey: .text, value: nil)"
             default:
-                throw XZMocoaMacroError.message("#bind: 暂不支持")
+                throw Message("#bind: 暂不支持")
             }
         case 3:
             var index = arguments.startIndex
             guard let label = arguments[index].label?.trimmedDescription else {
-                throw XZMocoaMacroError.message("#bind: 缺少标签")
+                throw Message("#bind: 缺少标签")
             }
             switch label {
             case "text":
@@ -237,12 +491,12 @@ public struct MocoaBindLabelMacro: ExpressionMacro {
                 let key = arguments[index].expression.trimmedDescription
                 return "\(raw: viewModel).addTarget(\(raw: view), action: #selector(setter: UILabel.text), forKey: \(raw: key), value: nil)"
             default:
-                throw XZMocoaMacroError.message("#bind: 暂不支持")
+                throw Message("#bind: 暂不支持")
             }
         case 4:
             var index = arguments.startIndex
             guard let label = arguments[index].label?.trimmedDescription else {
-                throw XZMocoaMacroError.message("#bind: 缺少标签")
+                throw Message("#bind: 缺少标签")
             }
             switch label {
             case "text":
@@ -255,11 +509,11 @@ public struct MocoaBindLabelMacro: ExpressionMacro {
                 let value = arguments[index].expression.trimmedDescription
                 return "\(raw: viewModel).addTarget(\(raw: view), action: #selector(setter: UILabel.text), forKey: \(raw: key), value: \(raw: value))"
             default:
-                throw XZMocoaMacroError.message("#bind: 暂不支持")
+                throw Message("#bind: 暂不支持")
             }
             
         default:
-            throw XZMocoaMacroError.message("#bind: 暂不支持")
+            throw Message("#bind: 暂不支持")
         }
     }
     
@@ -273,13 +527,13 @@ public struct MocoaBindTextViewMacro: ExpressionMacro {
         
         switch arguments.count {
         case 0:
-            throw XZMocoaMacroError.message("#bind: 缺少参数")
+            throw Message("#bind: 缺少参数")
         case 1:
-            throw XZMocoaMacroError.message("#bind: 参数不足，至少需要提供 view 和 viewModel 两个参数")
+            throw Message("#bind: 参数不足，至少需要提供 view 和 viewModel 两个参数")
         case 2:
             var index = arguments.startIndex
             guard let label = arguments[index].label?.trimmedDescription else {
-                throw XZMocoaMacroError.message("#bind: 缺少标签")
+                throw Message("#bind: 缺少标签")
             }
             switch label {
             case "text":
@@ -288,12 +542,12 @@ public struct MocoaBindTextViewMacro: ExpressionMacro {
                 let viewModel = arguments[index].expression.trimmedDescription
                 return "\(raw: viewModel).addTarget(\(raw: view), action: #selector(setter: UITextView.text), forKey: .text, value: nil)"
             default:
-                throw XZMocoaMacroError.message("#bind: 暂不支持")
+                throw Message("#bind: 暂不支持")
             }
         case 3:
             var index = arguments.startIndex
             guard let label = arguments[index].label?.trimmedDescription else {
-                throw XZMocoaMacroError.message("#bind: 缺少标签")
+                throw Message("#bind: 缺少标签")
             }
             switch label {
             case "text":
@@ -304,12 +558,12 @@ public struct MocoaBindTextViewMacro: ExpressionMacro {
                 let key = arguments[index].expression.trimmedDescription
                 return "\(raw: viewModel).addTarget(\(raw: view), action: #selector(setter: UITextView.text), forKey: \(raw: key), value: nil)"
             default:
-                throw XZMocoaMacroError.message("#bind: 暂不支持")
+                throw Message("#bind: 暂不支持")
             }
         case 4:
             var index = arguments.startIndex
             guard let label = arguments[index].label?.trimmedDescription else {
-                throw XZMocoaMacroError.message("#bind: 缺少标签")
+                throw Message("#bind: 缺少标签")
             }
             switch label {
             case "text":
@@ -322,11 +576,11 @@ public struct MocoaBindTextViewMacro: ExpressionMacro {
                 let value = arguments[index].expression.trimmedDescription
                 return "\(raw: viewModel).addTarget(\(raw: view), action: #selector(setter: UITextView.text), forKey: \(raw: key), value: \(raw: value))"
             default:
-                throw XZMocoaMacroError.message("#bind: 暂不支持")
+                throw Message("#bind: 暂不支持")
             }
             
         default:
-            throw XZMocoaMacroError.message("#bind: 暂不支持")
+            throw Message("#bind: 暂不支持")
         }
     }
     
@@ -340,13 +594,13 @@ public struct MocoaBindImageViewMacro: ExpressionMacro {
         
         switch arguments.count {
         case 0:
-            throw XZMocoaMacroError.message("#bind: 缺少参数")
+            throw Message("#bind: 缺少参数")
         case 1:
-            throw XZMocoaMacroError.message("#bind: 参数不足，至少需要提供 view 和 viewModel 两个参数")
+            throw Message("#bind: 参数不足，至少需要提供 view 和 viewModel 两个参数")
         case 2:
             var index = arguments.startIndex
             guard let label = arguments[index].label?.trimmedDescription else {
-                throw XZMocoaMacroError.message("#bind: 缺少标签")
+                throw Message("#bind: 缺少标签")
             }
             switch label {
             case "image":
@@ -355,12 +609,12 @@ public struct MocoaBindImageViewMacro: ExpressionMacro {
                 let viewModel = arguments[index].expression.trimmedDescription
                 return "\(raw: viewModel).addTarget(\(raw: view), action: #selector(setter: UIImageView.image), forKey: .text, value: nil)"
             default:
-                throw XZMocoaMacroError.message("#bind: 暂不支持")
+                throw Message("#bind: 暂不支持")
             }
         case 3:
             var index = arguments.startIndex
             guard let label = arguments[index].label?.trimmedDescription else {
-                throw XZMocoaMacroError.message("#bind: 缺少标签")
+                throw Message("#bind: 缺少标签")
             }
             switch label {
             case "image":
@@ -371,12 +625,12 @@ public struct MocoaBindImageViewMacro: ExpressionMacro {
                 let key = arguments[index].expression.trimmedDescription
                 return "\(raw: viewModel).addTarget(\(raw: view), action: #selector(setter: UIImageView.image), forKey: \(raw: key), value: nil)"
             default:
-                throw XZMocoaMacroError.message("#bind: 暂不支持")
+                throw Message("#bind: 暂不支持")
             }
         case 4:
             var index = arguments.startIndex
             guard let label = arguments[index].label?.trimmedDescription else {
-                throw XZMocoaMacroError.message("#bind: 缺少标签")
+                throw Message("#bind: 缺少标签")
             }
             switch label {
             case "image":
@@ -389,11 +643,11 @@ public struct MocoaBindImageViewMacro: ExpressionMacro {
                 let value = arguments[index].expression.trimmedDescription
                 return "\(raw: viewModel).addTarget(\(raw: view), action: #selector(setter: UIImageView.image), forKey: \(raw: key), value: \(raw: value))"
             default:
-                throw XZMocoaMacroError.message("#bind: 暂不支持")
+                throw Message("#bind: 暂不支持")
             }
             
         default:
-            throw XZMocoaMacroError.message("#bind: 暂不支持")
+            throw Message("#bind: 暂不支持")
         }
     }
     

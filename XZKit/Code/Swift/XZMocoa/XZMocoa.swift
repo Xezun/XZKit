@@ -162,33 +162,22 @@ public macro key(_ name: XZMocoaKey, _ value: Any) = #externalMacro(module: "XZM
 public macro bind() = #externalMacro(module: "XZMocoaMacros", type: "XZMocoaBindMacro")
 
 @attached(peer, names: arbitrary)
-public macro bind(_ key: XZMocoaKey) = #externalMacro(module: "XZMocoaMacros", type: "XZMocoaBindMacro")
+public macro bind(_ key: XZMocoaKey...) = #externalMacro(module: "XZMocoaMacros", type: "XZMocoaBindMacro")
 
 @attached(peer, names: arbitrary)
-public macro bind(v key: XZMocoaKey) = #externalMacro(module: "XZMocoaMacros", type: "XZMocoaBindMacro")
+public macro bind(v vkey: XZMocoaKey) = #externalMacro(module: "XZMocoaMacros", type: "XZMocoaBindMacro")
 
 @attached(peer, names: arbitrary)
-public macro bind(_ fromKey: XZMocoaKey, _ toKey: XZMocoaKey) = #externalMacro(module: "XZMocoaMacros", type: "XZMocoaBindMacro")
+public macro bind(_ vmKey: XZMocoaKey, v vkey: XZMocoaKey) = #externalMacro(module: "XZMocoaMacros", type: "XZMocoaBindMacro")
 
 @attached(peer, names: arbitrary)
-public macro bind(_ key1: XZMocoaKey, _ key2: XZMocoaKey, _ key3: XZMocoaKey...) = #externalMacro(module: "XZMocoaMacros", type: "XZMocoaBindMacro")
+public macro bind(_ vmKey: XZMocoaKey, selector: Selector) = #externalMacro(module: "XZMocoaMacros", type: "XZMocoaBindMacro")
 
-//@freestanding(expression)
-//public macro bind(text textLabel: UILabel, _ viewModel: XZMocoaViewModel, _ key: XZMocoaKey = .text, _ value: Any? = nil) = #externalMacro(module: "XZMocoaMacros", type: "XZMocoaBindLabelMacro")
-//
-//@freestanding(expression)
-//public macro bind(text textView: UITextView, _ viewModel: XZMocoaViewModel, _ key: XZMocoaKey = .text, _ value: Any? = nil) = #externalMacro(module: "XZMocoaMacros", type: "XZMocoaBindTextViewMacro")
-//
-//@freestanding(expression)
-//public macro bind(image imageView: UIImageView, _ viewModel: XZMocoaViewModel, _ key: XZMocoaKey = .image, _ value: Any? = nil) = #externalMacro(module: "XZMocoaMacros", type: "XZMocoaBindImageViewMacro")
+@attached(body)
+public macro rewrite() = #externalMacro(module: "XZMocoaMacros", type: "XZMocoaBindViewMacro")
 
-//@InitializerDeclSyntax
-//func registerModule() {
-//    
-//}
-//
-//@attached(memberAttribute)
-//public macro func mocoaKey() = #externalMacro(module: "XZMocoaMacros", type: "XZMocoaKeyMacro")
+@attached(accessor, names: named(didSet))
+public macro observe() = #externalMacro(module: "XZMocoaMacros", type: "XZMocoaBindViewMacro")
 
 #else
 extension XZMocoaKind: ExpressibleByStringLiteral {

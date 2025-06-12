@@ -13,14 +13,31 @@ import XZMocoa
 class AppDelegate: NSObject, UIApplicationDelegate {
     
     func applicationDidFinishLaunching(_ application: UIApplication) {
-        let viewModel = TestFoo.init(model: nil)
         
-        let label = UILabel.init()
     }
+    
 }
 
 @mocoa(.vm)
-class TestFoo: XZMocoaViewModel {
+class FooViewModel: XZMocoaViewModel {
+    
+    @key
+    var name: String?
+    
+    @key(value: 12)
+    @bind
+    var age: Int
+    
+    @key(.detailText)
+    @bind
+    var detail: String?
+    
+    @key("fooBar", 20)
+    var foobar : Int
+
+    override func prepare() {
+        super.prepare()
+    }
     
     @bind("foo", "bar")
     func foobar(foo arg1: Int, bar arg2: Int) {
@@ -28,70 +45,41 @@ class TestFoo: XZMocoaViewModel {
     }
     
     @bind("some")
-    func dosom(_ any: Int) {
+    func doSomething(_ any: Int) {
         
     }
     
     @bind
-    func dosomething(_ bar: Int) {
-        
-    }
-    
-    
-}
-
-@mocoa(.vm)
-class FooViewModel: XZMocoaViewModel {
-    
-    
-    
-    @key
-    var name: String?
-    
-    @key(value: 12)
-    var age: Int
-    
-    @key(.detailText)
-    var detail: String?
-    
-    @key("fooBar", 20)
-    var foobar : Int
-    
-    
-    var foo = 1
-    
-//    @model("age", "foobar") func setAge(_ age: Int, fooBar: Int) {
-//        
-//    }
-//    @key("maxAge", value: 20) var age: Int
-    
-//    @key(value: 20.0) var length: Double
-    
-    @objc(dosomthing) func som() {
-        
-    }
-    
-    override func prepare() {
-        super.prepare()
+    func doAnything(_ bar: Int) {
         
     }
     
 }
-
-
-@mocoa(.vm)
-class BarViewModel : FooViewModel {
-    
-}
-
 
 @mocoa(.v)
 class View: UIView, XZMocoaView {
     
     @bind
+    var imageView: UIImageView!
+    
+    @bind(.name)
     @IBOutlet var nameLabel: UILabel!
     
-    @bind(.imageURL)
-    var imageView: UIImageView!
+    @observe
+    @bind(.detailText)
+    @bind(v: "textColor")
+    var detailLabel: UILabel?
+    
+    @bind
+    @bind("max")
+    @bind("min")
+    func valueDidChange(_ value: Int) {
+        
+    }
+    
+    @rewrite
+    override func viewModelDidChange(_ oldValue: XZMocoaViewModel?) {
+        super.viewModelDidChange(oldValue)
+    }
     
 }
