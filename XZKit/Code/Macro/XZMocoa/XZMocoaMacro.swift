@@ -9,18 +9,14 @@ import SwiftCompilerPlugin
 import SwiftSyntaxMacros
 import SwiftSyntax
 
-public enum XZMocoaRole: String {
-    case m
-    case v
-    case vm
-}
+
 
 public struct XZMocoaMacro {
     
     /// 获取节点 node 上 `@mocoa(role)` 宏的角色声明。
     /// - Parameters:
-    ///   - node: 宏节点
-    ///   - declaration: 类的声明，必须确定是类声明的情况下再调用
+    ///   - node: 由于无法从子节点获取父节点，该节点必须是声明在类上的宏节点
+    ///   - declaration: 类的声明
     /// - Returns: 角色枚举，以及宏所在的声明
     public static func role(forMacro node: SwiftSyntax.AttributeSyntax, forClass declaration: SwiftSyntax.ClassDeclSyntax) throws -> XZMocoaRole {
         if let arguments = node.arguments {
@@ -50,49 +46,9 @@ public struct XZMocoaMacro {
         }
         
         let className = declaration.name.trimmedDescription
-        
-        /*if className.hasSuffix("ViewModel") {
-            return (.vm, classDecl)
-        }
-        
-        if className.hasSuffix("View") || className.hasSuffix("Cell") || className.hasSuffix("Controller") || className.hasSuffix("Bar") {
-            return (.v, classDecl)
-        }
-        
-        if className.hasSuffix("Model") {
-            return (.m, classDecl)
-        }*/
-         
         throw Message("@mocoa: 无法确定 \(className) 的角色，请通过 role 参数指定")
     }
     
-    /// 读取节点所在 class 声明上的 `@mocoa` 宏的 role 参数。
-    /// - Unavailable: 无法从子节点获取父节点
-    /// - Parameter declaration: 节点
-    /// - Returns: 角色、类声明节点
-    private static func role(forDeclaration declaration: SwiftSyntax.SyntaxProtocol?) throws -> XZMocoaRole {
-        guard let declaration = declaration else {
-            throw Message("@mocoa: 仅可用于 class 及 class 成员的声明")
-        }
-        
-        guard let classDecl = declaration.as(ClassDeclSyntax.self) else {
-            return try role(forDeclaration: declaration.parent)
-        }
-        
-        for attribute in classDecl.attributes {
-            switch attribute {
-            case .attribute(let macro):
-                if macro.attributeName.trimmedDescription == "mocoa" {
-                    return try role(forMacro: macro, forClass: classDecl)
-                }
-                
-            default:
-                break
-            }
-        }
-        
-        throw Message("@mocoa: 类 \(classDecl.name.trimmedDescription ) 缺少 @mocoa(role) 声明")
-    }
 }
 
 /// 宏 `@mocoa(role)` 的实现：为 `@key`、`@bind` 的成员添加 `@objc` 标记。
@@ -126,13 +82,17 @@ extension XZMocoaMacro: MemberAttributeMacro {
                     case "bind":
                         do {
                             if try XZMocoaBindMacro.isValid(forMacro: macroNode, forVariable: variableDecl, for: role) {
-                                if !variableDecl.attributes.contains(where: { attribute in
-                                    if case let .attribute(macroNode) = attribute, macroNode.attributeName.trimmedDescription == "observe" {
-                                        return true
+                                if !variableDecl.attributes.attributes(forName: "bind").contains(where: { item -> Bool in
+                                    guard let arguments = item.arguments else { return false }
+                                    switch arguments {
+                                    case .argumentList(let labeledExprListSyntax):
+                                        return labeledExprListSyntax.contains(where: { $0.label?.text == "v" })
+                                    default:
+                                        return false
                                     }
-                                    return false
                                 }) {
-                                    context.diagnose(.init(node: macroNode, message: Message("@mocoa: 检测到该属性为可选类型，自动绑定可能失效，若该确定属性不为空，请使用隐式可选类型，或使用 @observe 标记", severity: .warning)))
+                                    let message = "@mocoa: 检测到该属性为可选类型，自动绑定可能失效，若该确定属性不为空，请使用隐式可选类型，或使用 @observe 标记";
+                                    context.diagnose(.init(node: macroNode, message: Message(message, severity: .warning)))
                                 }
                             }
                             guard objcAttributes == nil else {
@@ -217,7 +177,7 @@ extension XZMocoaMacro: MemberMacro {
                     let methodName = methodDecl.name.trimmedDescription
                     if methodName == "viewModelDidChange" {
                         if methodDecl.attributes.contains(where: { attribute in
-                            if case let .attribute(macroNode) = attribute, macroNode.attributeName.trimmedDescription == "rewrite" {
+                            if case let .attribute(macroNode) = attribute, macroNode.attributeName.trimmedDescription == "mocoa" {
                                 return true
                             }
                             return false

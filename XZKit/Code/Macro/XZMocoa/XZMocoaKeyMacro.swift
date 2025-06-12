@@ -38,14 +38,14 @@ public struct XZMocoaKeyMacro {
                 throw Message("@key: 只适用于单个属性")
             }
             
+            if syntax.attributes.attributes(forName: "key").count > 1 {
+                throw Message("@key: 标记重复，只可标记一次")
+            }
+            
             let expression = syntax.bindings[syntax.bindings.startIndex]
             
             if expression.initializer != nil {
-                let (_, value) = try XZMocoaKeyMacro.arguments(forMacro: node, forVariable: expression)
-                if value == nil {
-                    throw Message("@key: 请通过 value 参数提供初始值，请删除属性初始值")
-                }
-                throw Message("@key: 不支持在此处提供属性的初始值")
+                throw Message("@key: 被 @key 标记的属性，需通过 @key(value:) 或 @key(.akey, value:) 提供初始值")
             }
             
             var accessors = [String]()

@@ -139,13 +139,13 @@ public struct XZMocoaBindMacro {
         return "viewModel.addTarget(self, action: \(arguments.selector), forKey: \(arguments.key), value: nil)"
     }
     
-    public static func isValid(forMacro node: SwiftSyntax.AttributeSyntax, forFunction methodDeclaration: FunctionDeclSyntax, for role: XZMocoaRole) throws {
+    public static func isValid(forMacro node: SwiftSyntax.AttributeSyntax, forFunction declaration: FunctionDeclSyntax, for role: XZMocoaRole) throws {
         switch role {
         case .m:
             throw Message("@bind: 暂不支持 .m 角色")
             
         case .v:
-            let methodArgumentsCount = methodDeclaration.signature.parameterClause.parameters.count;
+            let methodArgumentsCount = declaration.signature.parameterClause.parameters.count;
             guard methodArgumentsCount <= 3 else {
                 throw Message("@bind: 仅支持绑定 value、key-value、sender-key-value 三种参数形式的方法")
             }
@@ -172,7 +172,7 @@ public struct XZMocoaBindMacro {
             }
             
         case .vm:
-            let methodArgumentsCount = methodDeclaration.signature.parameterClause.parameters.count;
+            let methodArgumentsCount = declaration.signature.parameterClause.parameters.count;
             
             // 函数参数的数量
             guard methodArgumentsCount > 0 else {
@@ -209,6 +209,7 @@ public struct XZMocoaBindMacro {
             throw Message("@bind: 暂不支持 .m 角色")
             
         case .v:
+            
             guard let propertyType = ({ (type: TypeSyntax?) -> (name: String, isOptional: Int)? in
                 guard let type = type else { return nil }
                 if let op = type.as(OptionalTypeSyntax.self) {
@@ -450,206 +451,3 @@ extension XZMocoaBindViewMacro: BodyMacro {
     }
     
 }
-
-/*
-/// 实现 `#bind(text: UILabel)` 宏
-public struct MocoaBindLabelMacro: ExpressionMacro {
-    
-    public static func expansion(of node: some SwiftSyntax.FreestandingMacroExpansionSyntax, in context: some SwiftSyntaxMacros.MacroExpansionContext) throws -> SwiftSyntax.ExprSyntax {
-        let arguments = node.arguments
-        
-        switch arguments.count {
-        case 0:
-            throw Message("#bind: 缺少参数")
-        case 1:
-            throw Message("#bind: 参数不足，至少需要提供 view 和 viewModel 两个参数")
-        case 2:
-            var index = arguments.startIndex
-            guard let label = arguments[index].label?.trimmedDescription else {
-                throw Message("#bind: 缺少标签")
-            }
-            switch label {
-            case "text":
-                let view = arguments[index].expression.trimmedDescription
-                index = arguments.index(after: index)
-                let viewModel = arguments[index].expression.trimmedDescription
-                return "\(raw: viewModel).addTarget(\(raw: view), action: #selector(setter: UILabel.text), forKey: .text, value: nil)"
-            default:
-                throw Message("#bind: 暂不支持")
-            }
-        case 3:
-            var index = arguments.startIndex
-            guard let label = arguments[index].label?.trimmedDescription else {
-                throw Message("#bind: 缺少标签")
-            }
-            switch label {
-            case "text":
-                let view = arguments[index].expression.trimmedDescription
-                index = arguments.index(after: index)
-                let viewModel = arguments[index].expression.trimmedDescription
-                index = arguments.index(after: index)
-                let key = arguments[index].expression.trimmedDescription
-                return "\(raw: viewModel).addTarget(\(raw: view), action: #selector(setter: UILabel.text), forKey: \(raw: key), value: nil)"
-            default:
-                throw Message("#bind: 暂不支持")
-            }
-        case 4:
-            var index = arguments.startIndex
-            guard let label = arguments[index].label?.trimmedDescription else {
-                throw Message("#bind: 缺少标签")
-            }
-            switch label {
-            case "text":
-                let view = arguments[index].expression.trimmedDescription
-                index = arguments.index(after: index)
-                let viewModel = arguments[index].expression.trimmedDescription
-                index = arguments.index(after: index)
-                let key = arguments[index].expression.trimmedDescription
-                index = arguments.index(after: index)
-                let value = arguments[index].expression.trimmedDescription
-                return "\(raw: viewModel).addTarget(\(raw: view), action: #selector(setter: UILabel.text), forKey: \(raw: key), value: \(raw: value))"
-            default:
-                throw Message("#bind: 暂不支持")
-            }
-            
-        default:
-            throw Message("#bind: 暂不支持")
-        }
-    }
-    
-}
-
-/// 实现 `#bind(text: UITextView)` 宏
-public struct MocoaBindTextViewMacro: ExpressionMacro {
-    
-    public static func expansion(of node: some SwiftSyntax.FreestandingMacroExpansionSyntax, in context: some SwiftSyntaxMacros.MacroExpansionContext) throws -> SwiftSyntax.ExprSyntax {
-        let arguments = node.arguments
-        
-        switch arguments.count {
-        case 0:
-            throw Message("#bind: 缺少参数")
-        case 1:
-            throw Message("#bind: 参数不足，至少需要提供 view 和 viewModel 两个参数")
-        case 2:
-            var index = arguments.startIndex
-            guard let label = arguments[index].label?.trimmedDescription else {
-                throw Message("#bind: 缺少标签")
-            }
-            switch label {
-            case "text":
-                let view = arguments[index].expression.trimmedDescription
-                index = arguments.index(after: index)
-                let viewModel = arguments[index].expression.trimmedDescription
-                return "\(raw: viewModel).addTarget(\(raw: view), action: #selector(setter: UITextView.text), forKey: .text, value: nil)"
-            default:
-                throw Message("#bind: 暂不支持")
-            }
-        case 3:
-            var index = arguments.startIndex
-            guard let label = arguments[index].label?.trimmedDescription else {
-                throw Message("#bind: 缺少标签")
-            }
-            switch label {
-            case "text":
-                let view = arguments[index].expression.trimmedDescription
-                index = arguments.index(after: index)
-                let viewModel = arguments[index].expression.trimmedDescription
-                index = arguments.index(after: index)
-                let key = arguments[index].expression.trimmedDescription
-                return "\(raw: viewModel).addTarget(\(raw: view), action: #selector(setter: UITextView.text), forKey: \(raw: key), value: nil)"
-            default:
-                throw Message("#bind: 暂不支持")
-            }
-        case 4:
-            var index = arguments.startIndex
-            guard let label = arguments[index].label?.trimmedDescription else {
-                throw Message("#bind: 缺少标签")
-            }
-            switch label {
-            case "text":
-                let view = arguments[index].expression.trimmedDescription
-                index = arguments.index(after: index)
-                let viewModel = arguments[index].expression.trimmedDescription
-                index = arguments.index(after: index)
-                let key = arguments[index].expression.trimmedDescription
-                index = arguments.index(after: index)
-                let value = arguments[index].expression.trimmedDescription
-                return "\(raw: viewModel).addTarget(\(raw: view), action: #selector(setter: UITextView.text), forKey: \(raw: key), value: \(raw: value))"
-            default:
-                throw Message("#bind: 暂不支持")
-            }
-            
-        default:
-            throw Message("#bind: 暂不支持")
-        }
-    }
-    
-}
-
-/// 实现 `#bind(text: UIImageView)` 宏
-public struct MocoaBindImageViewMacro: ExpressionMacro {
-    
-    public static func expansion(of node: some SwiftSyntax.FreestandingMacroExpansionSyntax, in context: some SwiftSyntaxMacros.MacroExpansionContext) throws -> SwiftSyntax.ExprSyntax {
-        let arguments = node.arguments
-        
-        switch arguments.count {
-        case 0:
-            throw Message("#bind: 缺少参数")
-        case 1:
-            throw Message("#bind: 参数不足，至少需要提供 view 和 viewModel 两个参数")
-        case 2:
-            var index = arguments.startIndex
-            guard let label = arguments[index].label?.trimmedDescription else {
-                throw Message("#bind: 缺少标签")
-            }
-            switch label {
-            case "image":
-                let view = arguments[index].expression.trimmedDescription
-                index = arguments.index(after: index)
-                let viewModel = arguments[index].expression.trimmedDescription
-                return "\(raw: viewModel).addTarget(\(raw: view), action: #selector(setter: UIImageView.image), forKey: .text, value: nil)"
-            default:
-                throw Message("#bind: 暂不支持")
-            }
-        case 3:
-            var index = arguments.startIndex
-            guard let label = arguments[index].label?.trimmedDescription else {
-                throw Message("#bind: 缺少标签")
-            }
-            switch label {
-            case "image":
-                let view = arguments[index].expression.trimmedDescription
-                index = arguments.index(after: index)
-                let viewModel = arguments[index].expression.trimmedDescription
-                index = arguments.index(after: index)
-                let key = arguments[index].expression.trimmedDescription
-                return "\(raw: viewModel).addTarget(\(raw: view), action: #selector(setter: UIImageView.image), forKey: \(raw: key), value: nil)"
-            default:
-                throw Message("#bind: 暂不支持")
-            }
-        case 4:
-            var index = arguments.startIndex
-            guard let label = arguments[index].label?.trimmedDescription else {
-                throw Message("#bind: 缺少标签")
-            }
-            switch label {
-            case "image":
-                let view = arguments[index].expression.trimmedDescription
-                index = arguments.index(after: index)
-                let viewModel = arguments[index].expression.trimmedDescription
-                index = arguments.index(after: index)
-                let key = arguments[index].expression.trimmedDescription
-                index = arguments.index(after: index)
-                let value = arguments[index].expression.trimmedDescription
-                return "\(raw: viewModel).addTarget(\(raw: view), action: #selector(setter: UIImageView.image), forKey: \(raw: key), value: \(raw: value))"
-            default:
-                throw Message("#bind: 暂不支持")
-            }
-            
-        default:
-            throw Message("#bind: 暂不支持")
-        }
-    }
-    
-}
-*/

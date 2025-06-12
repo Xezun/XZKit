@@ -48,7 +48,7 @@ extension XZMocoaOptions.Key: @retroactive ExpressibleByStringLiteral {
 public macro module<T>(_ value: T) -> XZMocoaModule = #externalMacro(module: "XZMocoaMacros", type: "XZMocoaModuleMacro")
 
 
-public enum Role {
+public enum XZMocoaRole {
     case m
     case v
     case vm
@@ -70,7 +70,7 @@ public enum Role {
 /// ```
 @attached(memberAttribute)
 @attached(member, names: arbitrary)
-public macro mocoa(_ role: Role) = #externalMacro(module: "XZMocoaMacros", type: "XZMocoaMacro")
+public macro mocoa(_ role: XZMocoaRole) = #externalMacro(module: "XZMocoaMacros", type: "XZMocoaMacro")
 
 // MARK: - @key
 
@@ -164,21 +164,17 @@ public macro bind() = #externalMacro(module: "XZMocoaMacros", type: "XZMocoaBind
 @attached(peer, names: arbitrary)
 public macro bind(_ key: XZMocoaKey...) = #externalMacro(module: "XZMocoaMacros", type: "XZMocoaBindMacro")
 
-@attached(peer, names: arbitrary)
-public macro bind(v vkey: XZMocoaKey) = #externalMacro(module: "XZMocoaMacros", type: "XZMocoaBindMacro")
-
-@attached(peer, names: arbitrary)
-public macro bind(_ vmKey: XZMocoaKey, v vkey: XZMocoaKey) = #externalMacro(module: "XZMocoaMacros", type: "XZMocoaBindMacro")
-
-@attached(peer, names: arbitrary)
-public macro bind(_ vmKey: XZMocoaKey, selector: Selector) = #externalMacro(module: "XZMocoaMacros", type: "XZMocoaBindMacro")
-
-@attached(body)
-public macro rewrite() = #externalMacro(module: "XZMocoaMacros", type: "XZMocoaBindViewMacro")
+@attached(accessor, names: named(didSet))
+public macro bind(v vkey: XZMocoaKey) = #externalMacro(module: "XZMocoaMacros", type: "XZMocoaBindViewMacro")
 
 @attached(accessor, names: named(didSet))
-public macro observe() = #externalMacro(module: "XZMocoaMacros", type: "XZMocoaBindViewMacro")
+public macro bind(_ vmKey: XZMocoaKey, v vkey: XZMocoaKey) = #externalMacro(module: "XZMocoaMacros", type: "XZMocoaBindViewMacro")
 
+@attached(accessor, names: named(didSet))
+public macro bind(_ vmKey: XZMocoaKey, selector: Selector) = #externalMacro(module: "XZMocoaMacros", type: "XZMocoaBindViewMacro")
+
+@attached(body)
+public macro mocoa() = #externalMacro(module: "XZMocoaMacros", type: "XZMocoaBindViewMacro")
 #else
 extension XZMocoaKind: ExpressibleByStringLiteral {
     public typealias StringLiteralType = String

@@ -10,6 +10,12 @@ import SwiftSyntaxMacros
 import SwiftSyntax
 import SwiftDiagnostics
 
+public enum XZMocoaRole: String {
+    case m
+    case v
+    case vm
+}
+
 @main
 struct XZMocoaMacros: CompilerPlugin {
     
@@ -96,6 +102,25 @@ extension SwiftSyntax.AttributeSyntax {
         default:
             return nil
         }
+    }
+    
+}
+
+extension SwiftSyntax.AttributeListSyntax {
+    
+    func attributes(forName name: String) -> [AttributeSyntax] {
+        var results = [AttributeSyntax]()
+        for attribute in self {
+            switch attribute {
+            case .attribute(let attributeSyntax):
+                if attributeSyntax.attributeName.trimmedDescription == name {
+                    results.append(attributeSyntax)
+                }
+            case .ifConfigDecl(let ifConfigDeclSyntax):
+                break
+            }
+        }
+        return results
     }
     
 }

@@ -65,7 +65,6 @@ class View: UIView, XZMocoaView {
     @bind(.name)
     @IBOutlet var nameLabel: UILabel!
     
-    @observe
     @bind(.detailText)
     @bind(v: "textColor")
     var detailLabel: UILabel?
@@ -77,7 +76,7 @@ class View: UIView, XZMocoaView {
         
     }
     
-    @rewrite
+    @mocoa
     override func viewModelDidChange(_ oldValue: XZMocoaViewModel?) {
         super.viewModelDidChange(oldValue)
     }
