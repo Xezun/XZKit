@@ -31,6 +31,7 @@ target 'Example' do
   pod 'XZDataCryptor', :path => '../../'
   pod 'XZKeychain', :path => '../../'
   pod 'XZObjcDescriptor', :path => '../../'
+  # pod 'XZMocoaMacros', :path => '../../'
   
   pod 'SDWebImage'
   pod 'YYModel', :git => 'https://github.com/Xezun/YYModel.git'

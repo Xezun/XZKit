@@ -938,7 +938,7 @@ typedef void(^XZMocoaGridDelayedUpdates)(__kindof XZMocoaViewModel *self);
                 XZLog(@"[CoreData][move][change][key] %@", changedValues);
                 
                 XZMocoaGridViewCellViewModel * const viewModel = [self cellViewModelAtIndexPath:indexPath];
-                [viewModel model:anObject didUpdateValuesForKeys:changedValues.allKeys];
+                [viewModel model:anObject didUpdateValuesForKeys:[NSSet setWithArray:changedValues.allKeys]];
             }
             break;
         }
@@ -956,7 +956,7 @@ typedef void(^XZMocoaGridDelayedUpdates)(__kindof XZMocoaViewModel *self);
                 XZLog(@"[CoreData][move][update][key] %@", changedValues);
                 
                 XZMocoaGridViewCellViewModel * const viewModel = [self cellViewModelAtIndexPath:indexPath];
-                [viewModel model:anObject didUpdateValuesForKeys:changedValues.allKeys];
+                [viewModel model:anObject didUpdateValuesForKeys:[NSSet setWithArray:changedValues.allKeys]];
             }
             break;
         }
