@@ -9,8 +9,6 @@ import SwiftCompilerPlugin
 import SwiftSyntaxMacros
 import SwiftSyntax
 
-
-
 public struct XZMocoaMacro {
     
     /// 获取节点 node 上 `@mocoa(role)` 宏的角色声明。
@@ -46,6 +44,19 @@ public struct XZMocoaMacro {
         }
         
         let className = declaration.name.trimmedDescription
+        
+        if className.hasSuffix("ViewModel") {
+            return .vm
+        }
+        
+        if className.hasSuffix("View") || className.hasSuffix("Cell") || className.hasSuffix("Controller") || className.hasSuffix("Bar") {
+            return .v
+        }
+        
+        if className.hasSuffix("Model") {
+            return .m
+        }
+        
         throw Message("@mocoa: 无法确定 \(className) 的角色，请通过 role 参数指定")
     }
     
@@ -81,6 +92,7 @@ extension XZMocoaMacro: MemberAttributeMacro {
                         
                     case "bind":
                         do {
+                            // 如果是可选属性，检测是否包含 bind(v:) 调用，否则给出警告
                             if try XZMocoaBindMacro.isValid(forMacro: macroNode, forVariable: variableDecl, for: role) {
                                 if !variableDecl.attributes.attributes(forName: "bind").contains(where: { item -> Bool in
                                     guard let arguments = item.arguments else { return false }
@@ -91,7 +103,7 @@ extension XZMocoaMacro: MemberAttributeMacro {
                                         return false
                                     }
                                 }) {
-                                    let message = "@mocoa: 检测到该属性为可选类型，自动绑定可能失效，若该确定属性不为空，请使用隐式可选类型，或使用 @observe 标记";
+                                    let message = "@mocoa: 检测到该属性为可选类型，普通绑定可能失效，请使用 @bind(v:) 进行绑定；若该确定属性不为空，也可使用隐式可选类型，以消除此警告";
                                     context.diagnose(.init(node: macroNode, message: Message(message, severity: .warning)))
                                 }
                             }
@@ -171,32 +183,18 @@ extension XZMocoaMacro: MemberMacro {
             
         case .v:
             // 判断是否自定义 viewModelDidChange 方法
-            var viewModelDidChange = """
-                override func viewModelDidChange(_ oldValue: XZMocoaViewModel?) {
-                    super.viewModelDidChange(oldValue)
-                """
             for member in classDecl.memberBlock.members {
                 if let methodDecl = member.decl.as(FunctionDeclSyntax.self) {
                     let methodName = methodDecl.name.trimmedDescription
-                    if methodName == "viewModelDidChange" {
-                        if methodDecl.attributes.contains(where: { attribute in
-                            if case let .attribute(macroNode) = attribute, macroNode.attributeName.trimmedDescription == "mocoa" {
-                                return true
-                            }
-                            return false
-                        }) {
-                            viewModelDidChange = """
-                            private func _viewModelDidChange() {
-                            """
-                            break
-                        }
-                        context.diagnose(.init(node: member, message: Message("@mocoa: 检测到自定义的 viewModelDidChange 方法，带 @bind 声明将不生效，如需生效，请在方法前添加 @mocoa 声明", severity: .warning)))
+                    if methodName == "__viewModelDidChange" {
+                        context.diagnose(.init(node: methodDecl, message: Message("@mocoa: 重写 __viewModelDidChange 将会绑定实效，请使用 @ready 标记初始化方法", severity: .warning)))
                         return []
                     }
                 }
             }
             
             var bindStatements = [String]()
+            var readyMethodNames = [String]()
             
             // 遍历 class 包体
             for member in classDecl.memberBlock.members {
@@ -235,7 +233,16 @@ extension XZMocoaMacro: MemberMacro {
                             continue
                         }
                         
-                        // 只处理带 @bind 标记的属性。
+                        switch macroNode.attributeName.trimmedDescription {
+                        case "bind":
+                            break // 只处理带 @bind 标记的属性。
+                        case "ready":
+                            readyMethodNames.append(methodDecl.name.text)
+                            continue
+                        default:
+                            continue
+                        }
+                        
                         guard macroNode.attributeName.trimmedDescription == "bind" else {
                             continue
                         }
@@ -250,17 +257,31 @@ extension XZMocoaMacro: MemberMacro {
                 }
             }
             
-            if bindStatements.count == 0 {
-                return []
+            if bindStatements.isEmpty {
+                if readyMethodNames.isEmpty {
+                    return []
+                }
+                let methodSyntax = try FunctionDeclSyntax(
+                    """
+                    override func __viewModelDidChange(_ oldValue: XZMocoaViewModel?) {
+                        super.__viewModelDidChange(oldValue)
+                        \(raw: readyMethodNames.map({ "\($0)()" }).joined(separator: "\n"))
+                    }
+                    """
+                )
+                return [DeclSyntax(methodSyntax)]
             }
             
-            let clauseString = bindStatements.joined(separator: "\n")
+            let bindStatementString = bindStatements.joined(separator: "\n")
+            let readyStatementString = readyMethodNames.map({ "\($0)()" }).joined(separator: "\n")
             
             let methodSyntax = try FunctionDeclSyntax(
                 """
-                \(raw: viewModelDidChange)
+                override func __viewModelDidChange(_ oldValue: XZMocoaViewModel?) {
+                    super.__viewModelDidChange(oldValue)
+                    \(raw: readyStatementString)
                     guard let viewModel = self.viewModel else { return }
-                    \(raw: clauseString)
+                    \(raw: bindStatementString)
                 }
                 """
             )
@@ -284,7 +305,7 @@ extension XZMocoaMacro: MemberMacro {
                 }
             }
             
-            var allKeys = Set<String>()
+            var allMappingKeys = Set<String>()
             var mappingKeyValueStrings = [String]()
             var readyMethodNames = [String]()
             
@@ -325,10 +346,10 @@ extension XZMocoaMacro: MemberMacro {
                         }
                         
                         if keysArray.isEmpty {
-                            allKeys.insert(name)
+                            allMappingKeys.insert(name)
                             mappingKeyValueStrings.append("NSStringFromSelector(#selector(setter: Self.\(name))): [\"\(name)\"]")
                         } else {
-                            allKeys.insert(keysArray[0])
+                            allMappingKeys.insert(keysArray[0])
                             mappingKeyValueStrings.append("NSStringFromSelector(#selector(setter: Self.\(name))): [\"\(keysArray[0])\"]")
                         }
                     }
@@ -362,11 +383,11 @@ extension XZMocoaMacro: MemberMacro {
                                     if let key = argument.expression.as(StringLiteralExprSyntax.self)?.representedLiteralValue {
                                         // 去掉了字面量双引号
                                         keysArray.append(key)
-                                        allKeys.insert(key)
+                                        allMappingKeys.insert(key)
                                     } else if let key = argument.expression.as(MemberAccessExprSyntax.self)?.declName.trimmedDescription {
                                         // 去掉了点号
                                         keysArray.append(key)
-                                        allKeys.insert(key)
+                                        allMappingKeys.insert(key)
                                     }
                                 }
                             default:
@@ -379,10 +400,10 @@ extension XZMocoaMacro: MemberMacro {
                             for parameter in methodDecl.signature.parameterClause.parameters {
                                 selector += parameter.firstName.text + ":"
                                 if let name = parameter.secondName {
-                                    allKeys.insert(name.text)
+                                    allMappingKeys.insert(name.text)
                                     keysArray.append(name.text)
                                 } else {
-                                    allKeys.insert(parameter.firstName.text)
+                                    allMappingKeys.insert(parameter.firstName.text)
                                     keysArray.append(parameter.firstName.text)
                                 }
                             }
@@ -434,7 +455,7 @@ extension XZMocoaMacro: MemberMacro {
                     // 所有初始化方法依次调用
                     \(raw: readyMethodNames.map({ "\($0)()" }).joined(separator: "\n"))
                     // 所有绑定键自动触发一次
-                    model(self.model, didUpdateValuesForKeys: \(raw: allKeys))
+                    model(self.model, didUpdateValuesForKeys: \(raw: allMappingKeys))
                 }
                 """
             )

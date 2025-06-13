@@ -84,9 +84,10 @@ NS_SWIFT_UI_ACTOR @protocol XZMocoaViewModel <NSObject>
 /// 3. 视图模型在使用前，必须处于`isReady == YES`状态。
 @property (nonatomic, readonly) BOOL isReady;
 
+/// 一般情况下，子类请勿重写此方法。
+///
 /// 视图模型在使用前，应调用此方法，以初始化视图模型。
 ///
-/// - 一般情况下，请勿重写此方法。
 /// - 上层视图模型会自动向下层视图模型发送`-ready`消息，在层级关系中，仅需顶层视图模型调用此方法即可。
 /// - 此方法可重复调用，且不会重复`-prepare`初始化。
 - (void)ready;
@@ -223,8 +224,9 @@ FOUNDATION_EXPORT XZMocoaUpdatesKey const XZMocoaUpdatesKeyDeselect;
 /// Mocoa Keyed Actions 事件名。
 typedef NSString *XZMocoaKey NS_EXTENSIBLE_STRING_ENUM;
 
-/// 没有 key 也可作为一种事件，或者称为默认事件，值为空字符串。
-FOUNDATION_EXPORT XZMocoaKey const XZMocoaKeyNone;
+/// 特殊 key 键，值为空字符串。
+/// 在添加或发送 key-target-action 事件时，如果 key 参数使用了 nil 则会使用此键。
+FOUNDATION_EXPORT XZMocoaKey const XZMocoaKeyNone NS_SWIFT_NAME(XZMocoaKeyNone);
 
 // 以下为常用的 key
 @class UILabel, UIButton, UIImageView;
@@ -288,7 +290,7 @@ FOUNDATION_EXPORT XZMocoaKey const XZMocoaKeyIsLoading;
 /// @param target 接收事件的对象
 /// @param action 执行事件的方法
 /// @param key 事件，nil 表示添加默认事件
-- (void)addTarget:(id)target action:(SEL)action forKey:(XZMocoaKey)key;
+- (void)addTarget:(id)target action:(SEL)action forKey:(nullable XZMocoaKey)key;
 
 /// 移除 target-action 事件。
 /// @discussion
@@ -300,7 +302,7 @@ FOUNDATION_EXPORT XZMocoaKey const XZMocoaKeyIsLoading;
 
 /// 发送 target-action 事件。
 /// @param key 事件值
-- (void)sendActionsForKey:(XZMocoaKey)key;
+- (void)sendActionsForKey:(nullable XZMocoaKey)key;
 
 /// 添加 target-action-value 事件，将视图模型的 key 键对应的值与 target 的 action 方法绑定。
 /// 调用此方法会使用 initialValue 触发一次 action 方法。
@@ -313,7 +315,7 @@ FOUNDATION_EXPORT XZMocoaKey const XZMocoaKeyIsLoading;
 /// @param action 接收值的方法，比如属性的 setter 方法
 /// @param key 视图模型的事件键
 /// @param initialValue 事件初始值，值 nil 表示使用`-valueForKey:`获取视图模型当前值，值 kCFNull 表示 nil 值
-- (void)addTarget:(id)target action:(SEL)action forKey:(XZMocoaKey)key value:(nullable id)initialValue;
+- (void)addTarget:(id)target action:(SEL)action forKey:(nullable XZMocoaKey)key value:(nullable id)initialValue;
 
 /// 发送 target-action-value 事件。
 ///
@@ -321,7 +323,7 @@ FOUNDATION_EXPORT XZMocoaKey const XZMocoaKeyIsLoading;
 ///
 /// @param key 事件，nil 表示发送默认事件
 /// @param value 事件值，标量值需用 NSValue 包装，值 nil 表示使用`-valueForKey:`获取视图模型当前值，值 NSNull 表示 nil 值
-- (void)sendActionsForKey:(XZMocoaKey)key value:(nullable id)value;
+- (void)sendActionsForKey:(nullable XZMocoaKey)key value:(nullable id)value;
 
 @end
 
@@ -351,6 +353,7 @@ FOUNDATION_EXPORT XZMocoaKey const XZMocoaKeyIsLoading;
 
 /// 获取导航控制器，或视图所在的导航控制器。
 @property (nonatomic, readonly, nullable) UINavigationController *navigationController;
+
 /// 获取页签控制器，或视图所在的页签控制器。
 @property (nonatomic, readonly, nullable) UITabBarController *tabBarController;
 
@@ -376,27 +379,18 @@ FOUNDATION_EXPORT XZMocoaKey const XZMocoaKeyIsLoading;
 
 /// 当视图模型更新了 其他视图模型 的 数据模型 后，可通过此方法通知目标视图模型。
 ///
-/// 默认情况下，此方法按照 mappingModelKeys 调用相应的方法。子类可重写。
+/// 默认情况下，此方法按照 `mappingModelKeys` 调用相应的方法。子类可重写。
 ///
-/// @note 基于 NSFetchedResultsController 的 XZMocoaTableView 会自动触发此方法。
+/// 若参数 `keys` 为空，则表示触发所有绑定方法。
+///
+/// 以 NSFetchedResultsController 作为数据模型的 XZMocoaTableView 会自动触发此方法。
+///
+/// 为了方便在 Swift 中使用枚举，参数 keys 集合元素使用了 XZMocoaKey 类型，理论上应该为 NSString 类型。
 ///
 /// @param model 数据模型
-/// @param keys 值发生改变的属性
-- (void)model:(nullable id)model didUpdateValuesForKeys:(NSArray<NSString *> *)keys;
+/// @param changedKeys 值发生改变的属性
+- (void)model:(nullable id)model didUpdateValuesForKeys:(NSSet<XZMocoaKey> *)changedKeys;
 
 @end
-
-
-//FOUNDATION_EXPORT void __mocoa_bind_3(XZMocoaViewModel *vm, SEL keySel, UILabel *target) XZ_ATTR_OVERLOAD;
-//FOUNDATION_EXPORT void __mocoa_bind_3(XZMocoaViewModel *vm, SEL keySel, UIImageView *target) XZ_ATTR_OVERLOAD;
-//
-//FOUNDATION_EXPORT void __mocoa_bind_4(XZMocoaViewModel *vm, SEL keySel, UILabel *target, id _Nullable no) XZ_ATTR_OVERLOAD;
-//FOUNDATION_EXPORT void __mocoa_bind_4(XZMocoaViewModel *vm, SEL keySel, UIImageView *target, id _Nullable completion) XZ_ATTR_OVERLOAD;
-//
-//FOUNDATION_EXPORT void __mocoa_bind_5(XZMocoaViewModel *vm, SEL keySel, id target, SEL setter, id _Nullable no) XZ_ATTR_OVERLOAD;
-//FOUNDATION_EXPORT void __mocoa_bind_5(XZMocoaViewModel *vm, SEL keySel, id target, XZMocoaAction action, id _Nullable no) XZ_ATTR_OVERLOAD;
-//
-//#define __mocoa_bind_macro_imp_(index, vm, sel, view, ...) xzmacro_args_paste(__mocoa_bind_, index)(vm, @selector(sel), view, ##__VA_ARGS__)
-//#define mocoa(viewModel, key, view, ...) xzmacro_keyize __mocoa_bind_macro_imp_(xzmacro_args_args_count(viewModel, key, view, ##__VA_ARGS__), viewModel, key, view, ##__VA_ARGS__)
 
 NS_ASSUME_NONNULL_END

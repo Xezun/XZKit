@@ -82,9 +82,9 @@ class View: UIView, XZMocoaView {
         
     }
     
-    @mocoa
-    override func viewModelDidChange(_ oldValue: XZMocoaViewModel?) {
-        super.viewModelDidChange(oldValue)
+    @ready
+    private func prepare() {
+        
     }
     
 }

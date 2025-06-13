@@ -72,60 +72,98 @@ public enum XZMocoaRole {
 @attached(member, names: arbitrary)
 public macro mocoa(_ role: XZMocoaRole) = #externalMacro(module: "XZMocoaMacros", type: "XZMocoaMacro")
 
+@attached(memberAttribute)
+@attached(member, names: arbitrary)
+public macro mocoa() = #externalMacro(module: "XZMocoaMacros", type: "XZMocoaMacro")
+
 // MARK: - @key
 
+/// 标记 .vm 的属性，使其获得带下划线前缀的存储属性和自动发送 key-action 的能力。
 /// 不带参数，使用属性名作为键名。
 @attached(peer, names: arbitrary)
 @attached(accessor, names: arbitrary)
 public macro key() = #externalMacro(module: "XZMocoaMacros", type: "XZMocoaKeyMacro")
 
+/// 标记 .vm 的属性，使其获得带下划线前缀的存储属性和自动发送 key-action 的能力。
 /// 单个参数且不带标签，参数为键名。
 @attached(peer, names: arbitrary)
 @attached(accessor, names: arbitrary)
 public macro key(_ name: XZMocoaKey) = #externalMacro(module: "XZMocoaMacros", type: "XZMocoaKeyMacro")
 
-/// 单个参数，带 value 标签，使用属性名作为键并，value 参数为初始值。
+/// 标记 .vm 的属性，使其获得带下划线前缀的存储属性和自动发送 key-action 的能力。
+/// 单个参数，带 value 标签，以属性名作为键，以 value 参数为初始值。
 @attached(peer, names: arbitrary)
 @attached(accessor, names: arbitrary)
 public macro key(value: Any) = #externalMacro(module: "XZMocoaMacros", type: "XZMocoaKeyMacro")
 
+/// 标记 .vm 的属性，使其获得带下划线前缀的存储属性和自动发送 key-action 的能力。
 /// 两个参数：第一个参数为键名，第二个参数为初始值。
 @attached(peer, names: arbitrary)
 @attached(accessor, names: arbitrary)
 public macro key(_ name: XZMocoaKey, _ value: Any) = #externalMacro(module: "XZMocoaMacros", type: "XZMocoaKeyMacro")
 
-/// 标记视图属性：绑定属性的默认值
+/// 单向同步：用于 .v 和 .vm 的普通绑定标记。
+/// ```swift
+/// @mocoa(.vm)
+/// class ViewModel: XZMocoaViewModel {
+///
+///     // 将 model.name 绑定到 #selector(setter: Self.name) 方法
+///     @bind
+///     var name: String?
+///
+///     // 将 model.desc 绑定到 #selector(setter: Self.description) 方法
+///     @bind(.desc)
+///     var description: String?
+///
+///     // 将 model.min、model.max 绑定到当前方法
+///     @bind
+///     func didChange(_ min: Int, max: Int) { }
+///
+///     // 将 model.var1、model.var2 绑定到当前方法
+///     @bind(var1, var2)
+///     func didChange(min: Int, max: Int) { }
+/// }
+/// ```
+@attached(peer, names: arbitrary)
+public macro bind() = #externalMacro(module: "XZMocoaMacros", type: "XZMocoaBindMacro")
+
+/// 单向同步：用于 .v 和 .vm 的的普通绑定标记。
+/// - SeeAlso: 不带参数的 `macro bind()` 宏
+@attached(peer, names: arbitrary)
+public macro bind(_ key: XZMocoaKey...) = #externalMacro(module: "XZMocoaMacros", type: "XZMocoaBindMacro")
+
+/// 单向同步：用于 .v 专用绑定标记，如果属性为可选类型，将生成 `didSet` 自动绑定。
 /// ```swift
 /// @mocoa(.v)
 /// class View: UIView, XZMocoaView {
 ///
-///     // 单向同步：将 viewModel.text 绑定给 textLabel.text
+///     // 将 viewModel.text 绑定给 textLabel.text
 ///     @bind
 ///     var textLabel: UILabel!
 ///
-///     // 单向同步：将 viewModel.name  绑定给 textLabel.text
+///     // 将 viewModel.name  绑定给 textLabel.text
 ///     @bind(.name)
 ///     var textLabel: UILabel!
 ///
-///     // 单向同步：将 viewModel.textColor 绑定给 textLabel.textColor
+///     // 将 viewModel.textColor 绑定给 textLabel.textColor
 ///     @bind(v: .textColor)
 ///     var textLabel: UILabel!
 ///
-///     // 单向同步：将 viewModel.color 绑定给 textLabel.textColor
+///     // 将 viewModel.color 绑定给 textLabel.textColor
 ///     @bind(.color, .textColor)
 ///     var textLabel: UILabel!
 ///
-///     // 单向同步：将 viewModel.imageURL 绑定给 -[imageView setImageWithURL:] 方法
+///     // 将 viewModel.imageURL 绑定给 -[imageView setImageWithURL:] 方法
 ///     @bind(.imageURL, selector: #selector(setImageWithURL:))
 ///     var imageView: UIImageView!
 ///
-///     // 单向同步：将 viewModel.imageURL 绑定到此方法
+///     // 将 viewModel.imageURL 绑定到此方法
 ///     @bind
 ///     func setAvatar(with imageURL: URL?) {
 ///         avatarImageView.sd_setImage(with: imageURL)
 ///     }
 ///
-///     // 单向同步：将 viewModel.backgroundURL 绑定到此方法
+///     // 将 viewModel.backgroundURL 绑定到此方法
 ///     @bind(.backgroundURL)
 ///     func setBackgroundImage(with imageURL: URL?) {
 ///         backgroundImageView.sd_setImage(with: imageURL)
@@ -133,37 +171,6 @@ public macro key(_ name: XZMocoaKey, _ value: Any) = #externalMacro(module: "XZM
 ///
 /// }
 /// ```
-///
-/// 标记视图模型：
-/// ```swift
-/// @mocoa(.vm)
-/// class ViewModel: XZMocoaViewModel {
-///
-///     // 单向同步：将 model.name 绑定到 name 属性的 setter 方法
-///     @bind
-///     var name: String?
-///
-///     // 单向同步：将 model.desc 绑定到 description 属性的 setter 方法
-///     @bind(.desc)
-///     var description: String?
-///
-///     @bind
-///     var didChange(min: Int, max: Int) {
-///         // 将 model.min、model.max 绑定到当前方法
-///     }
-///
-///     @bind(var1, var2)
-///     var didChange(min: Int, max: Int) {
-///         // 将 model.var1、model.var2 绑定到当前方法
-///     }
-/// }
-/// ```
-@attached(peer, names: arbitrary)
-public macro bind() = #externalMacro(module: "XZMocoaMacros", type: "XZMocoaBindMacro")
-
-@attached(peer, names: arbitrary)
-public macro bind(_ key: XZMocoaKey...) = #externalMacro(module: "XZMocoaMacros", type: "XZMocoaBindMacro")
-
 @attached(accessor, names: named(didSet))
 public macro bind(v vkey: XZMocoaKey) = #externalMacro(module: "XZMocoaMacros", type: "XZMocoaBindViewMacro")
 
@@ -172,9 +179,6 @@ public macro bind(_ vmKey: XZMocoaKey, v vkey: XZMocoaKey) = #externalMacro(modu
 
 @attached(accessor, names: named(didSet))
 public macro bind(_ vmKey: XZMocoaKey, selector: Selector) = #externalMacro(module: "XZMocoaMacros", type: "XZMocoaBindViewMacro")
-
-@attached(body)
-public macro mocoa() = #externalMacro(module: "XZMocoaMacros", type: "XZMocoaBindViewMacro")
 
 @attached(body)
 public macro ready() = #externalMacro(module: "XZMocoaMacros", type: "XZMocoaReadyMacro")

@@ -216,7 +216,7 @@ XZMocoaUpdatesKey const XZMocoaUpdatesKeyDeselect = @"deselect";
 @end
 
 
-XZMocoaKey const XZMocoaKeyNone             = @"XZMocoaKeyNone";
+XZMocoaKey const XZMocoaKeyNone             = @"";
 XZMocoaKey const XZMocoaKeyContentStatus    = @"contentStatus";
 XZMocoaKey const XZMocoaKeyIsChecked        = @"isChecked";
 XZMocoaKey const XZMocoaKeyText             = @"text";
@@ -319,6 +319,8 @@ XZMocoaKey const XZMocoaKeyIsLoading        = @"isLoading";
 
 @end
 
+@import CoreData;
+
 static NSArray<NSDictionary *> *XZMocoaGetMappingModelKeys(Class const VMClass);
 
 @implementation XZMocoaViewModel (XZMocoaModelObserving)
@@ -327,7 +329,11 @@ static NSArray<NSDictionary *> *XZMocoaGetMappingModelKeys(Class const VMClass);
     return nil;
 }
 
-- (void)model:(id)model didUpdateValuesForKeys:(NSArray<NSString *> *)changeKeys {
+- (void)model:(id)model didUpdateValuesForKeys:(NSSet<XZMocoaKey> *)changedKeys {
+    if (model != self.model) {
+        return;
+    }
+    
     NSArray * const mappingModelKeys = XZMocoaGetMappingModelKeys(self.class);
     if (mappingModelKeys == nil) {
         return;
@@ -340,17 +346,8 @@ static NSArray<NSDictionary *> *XZMocoaGetMappingModelKeys(Class const VMClass);
     NSMutableSet                        * const invokedMethods = [NSMutableSet setWithCapacity:_methodToKeys.count];
     NSMutableDictionary<NSString *, id> * const fetchedValues  = [NSMutableDictionary dictionaryWithCapacity:_keyToMethods.count];
     
-    if (changeKeys.count == 0) {
-        if (self.model == model) {
-            changeKeys = _keyToMethods.allKeys;
-        } else {
-            // TODO: 比较模型差异
-            changeKeys = nil;
-        }
-    }
-    
-    
-    for (NSString * const changeKey in (changeKeys.count > 0 ? changeKeys : _keyToMethods.allKeys)) {
+    for (NSString * const changeKey in (changedKeys.count > 0 ? changedKeys : _keyToMethods.allKeys)) {
+        // TODO: 检查 model 是否包含 key ？
         for (NSString * const methodName in _keyToMethods[changeKey]) {
             if ([invokedMethods containsObject:methodName]) {
                 continue;

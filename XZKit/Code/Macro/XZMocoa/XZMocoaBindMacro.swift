@@ -12,20 +12,26 @@ import SwiftSyntax
 // 不带参数标签的 `@bind` 宏的实现。
 public struct XZMocoaBindMacro {
     
-    public static func type(forVariable variableDecl: VariableDeclSyntax) throws -> (name: String, isOptional: Bool) {
+    public enum OptionalType {
+        case unwrapped
+        case wrapped
+        case autoUnwrapped
+    }
+    
+    public static func type(forVariable variableDecl: VariableDeclSyntax) throws -> (name: String, optional: OptionalType) {
         guard let type = variableDecl.bindings.first?.typeAnnotation?.type else {
             throw Message("@bind: 无法确定属性类型")
         }
         
         if let op = type.as(OptionalTypeSyntax.self) {
-            return (op.wrappedType.trimmedDescription, true)
+            return (op.wrappedType.trimmedDescription, .wrapped)
         }
         
         if let op = type.as(ImplicitlyUnwrappedOptionalTypeSyntax.self) {
-            return (op.wrappedType.trimmedDescription, true)
+            return (op.wrappedType.trimmedDescription, .autoUnwrapped)
         }
         
-        return (type.trimmedDescription, false)
+        return (type.trimmedDescription, .unwrapped)
         
     }
     
@@ -107,7 +113,7 @@ public struct XZMocoaBindMacro {
             return "viewModel.addTarget(\(propertyName), action: \(arguments.selector), forKey: \(arguments.key), value: nil)"
         }).joined(separator: "\n")
         
-        if propertyType.isOptional {
+        if propertyType.optional != .unwrapped {
             return "if let \(propertyName) = self.\(propertyName) { \(statements) }"
         }
         return statements
@@ -351,17 +357,17 @@ extension XZMocoaBindViewMacro: AccessorMacro {
                 for accessor in accessors {
                     switch accessor.accessorSpecifier.text {
                     case "didSet":
-                        /*if var body = accessor.body {
-                            body.statements.insert("defer { if let viewModel = self.viewModel { \(raw: statements) } }", at: body.statements.startIndex)
-                            return [.init(accessorSpecifier: "didSet", body: body)]
-                        }*/
-                        context.diagnose(.init(node: node, message: Message("@oberve: 已有 didSet 无法绑定监听，请移除 didSet 或移除 @observe 后自行处理", severity: .warning)))
+                        context.diagnose(.init(node: node, message: Message("@oberve: 已自定义 didSet 无法绑定监听，请在 didSet 中自行处理", severity: .warning)))
                         return []
                     default:
                         break
                     }
                 }
             }
+        }
+        
+        guard try XZMocoaBindMacro.type(forVariable: declaration).optional == .wrapped else {
+            return []
         }
         
         let statements = try XZMocoaBindMacro.statements(forMacro: declaration.attributes.compactMap({ attribute in
@@ -388,66 +394,3 @@ extension XZMocoaBindViewMacro: AccessorMacro {
     
 }
 
-extension XZMocoaBindViewMacro: BodyMacro {
-    
-    public static func expansion(of node: SwiftSyntax.AttributeSyntax, providingBodyFor declaration: some SwiftSyntax.DeclSyntaxProtocol & SwiftSyntax.WithOptionalCodeBlockSyntax, in context: some SwiftSyntaxMacros.MacroExpansionContext) throws -> [SwiftSyntax.CodeBlockItemSyntax] {
-        
-        if let declaration = declaration.as(FunctionDeclSyntax.self) {
-            let statement = CodeBlockItemSyntax("defer { _viewModelDidChange() }")
-            
-            if var body = declaration.body {
-                body.statements.insert(statement, at: body.statements.startIndex)
-                return body.statements.map({ $0 })
-            }
-            return [statement]
-        }
-        
-        if let declaration = declaration.as(VariableDeclSyntax.self) {
-            
-            let statements = try XZMocoaBindMacro.statements(forMacro: declaration.attributes.compactMap({ attribute in
-                switch attribute {
-                case .attribute(let macroNode):
-                    if macroNode.attributeName.trimmedDescription == "bind" {
-                        return macroNode
-                    }
-                    return nil
-                case .ifConfigDecl:
-                    return nil
-                }
-            }), forVariable: declaration)
-            
-            var string = ""
-            
-            for binding in declaration.bindings {
-                guard let accessorBlock = binding.accessorBlock else {
-                    continue
-                }
-                switch accessorBlock.accessors {
-                case .getter:
-                    throw Message("@bind: 只读计算属性不能绑定")
-                case .accessors(let accessors):
-                    for accessor in accessors {
-                        let specifier = accessor.accessorSpecifier.text;
-                        switch specifier {
-                        case "didSet":
-                            if var body = accessor.body {
-                                body.statements.insert("defer { if let viewModel = self.viewModel { \(raw: statements) } }", at: body.statements.startIndex)
-                                string.append("\n didSet { \(body.trimmedDescription) }")
-                            }
-                        default:
-                            if let body = accessor.body {
-                                string.append("\n\(specifier) { \(body.trimmedDescription) }")
-                            }
-                            break
-                        }
-                    }
-                }
-            }
-            
-            return ["{ \(raw: string) }"]
-        }
-        
-        return []
-    }
-    
-}
