@@ -77,6 +77,36 @@ static unsigned char const XZHexEncodingTable[2][16] = {
     return [self xz_dataWithJSONObject:object options:(NSJSONWritingFragmentsAllowed)];
 }
 
++ (instancetype)xz_dataWithInteger:(NSInteger)integerValue {
+    return [[self alloc] initWithBytes:&integerValue length:sizeof(NSInteger)];
+}
+
+- (NSInteger)xz_integerValue {
+    NSInteger value = 0;
+    [self getBytes:&value length:sizeof(NSInteger)];
+    return value;
+}
+
++ (instancetype)xz_dataWithDouble:(double)doubleValue {
+    return [[self alloc] initWithBytes:&doubleValue length:sizeof(double)];
+}
+
+- (double)xz_doubleValue {
+    double value = 0;
+    [self getBytes:&value length:sizeof(double)];
+    return value;
+}
+
++ (instancetype)xz_dataWithTimeInterval:(NSTimeInterval)timeInterval {
+    return [[self alloc] initWithBytes:&timeInterval length:sizeof(NSTimeInterval)];
+}
+
+- (NSTimeInterval)xz_timeIntervalValue {
+    NSTimeInterval value = 0;
+    [self getBytes:&value length:sizeof(NSTimeInterval)];
+    return value;
+}
+
 @end
 
 unsigned char XZHexEncoder(UInt8 byte, XZHexEncoding hexEncoding) {

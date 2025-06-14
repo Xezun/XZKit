@@ -130,6 +130,11 @@ FOUNDATION_EXPORT XZMocoaOptionKey const XZMocoaOptionKeyName;
 /// @param options 初始化参数
 - (instancetype)initWithMocoaOptions:(XZMocoaOptions *)options nibName:(nullable NSString *)nibName bundle:(nullable NSBundle *)bundle;
 
+/// 通过 Mocoa 创建控制的额外的初始化方法。
+///
+/// 由于在 Category 中无法定义 `NS_DESIGNATED_INITIALIZER` 初始化方法（无法桥接到 Swift 中），所有才有此方法。
+///
+/// @param options 初始化参数
 - (instancetype)didInitWithMocoaOptions:(XZMocoaOptions *)options;
 
 /// 通过 XZMocoaURL 弹出层控制器。
