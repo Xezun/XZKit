@@ -23,7 +23,6 @@ NS_SWIFT_UI_ACTOR @protocol XZMocoaModel <NSObject>
 @class XZMocoaViewModel;
 
 @interface NSObject (XZMocoaModel)
-- (void)addObserver:(XZMocoaViewModel *)observer forKeyPath:(NSString *)keyPath;
 @end
 
 NS_ASSUME_NONNULL_END

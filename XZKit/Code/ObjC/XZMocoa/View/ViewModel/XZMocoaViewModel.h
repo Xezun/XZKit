@@ -95,7 +95,7 @@ NS_SWIFT_UI_ACTOR @protocol XZMocoaViewModel <NSObject>
 /// 视图模型的初始化方法。
 ///
 /// - 一般情况下，请勿直接调用此方法，而是调用`-ready`方法，否则可能会重复初始化。
-/// - 默认该方法不执行任何操作，建议子类调用`super`以向后兼容。
+/// - 子类重写应调用`super`实现。
 /// - 在此方法中，视图模型 isReady 始终为 NO 的状态。
 /// - 在此方法中创建添加下层视图模型，不需要发送`-ready`消息。
 /// - 此方法执行时，视图模型尚为与视图关联，即视图模型在初始化之后，才会被视图所使用。
@@ -361,9 +361,6 @@ FOUNDATION_EXPORT XZMocoaKey const XZMocoaKeyIsLoading;
 
 @interface XZMocoaViewModel (XZMocoaModelObserving)
 
-/// 是否主动观察模型。
-@property (class, readonly) BOOL shouldActivelyObserveModelKeys;
-
 /// 被动数据模型键值观察机制。
 ///
 /// 注册 视图模型方法 与 数据模型属性 之间映射关系的字典。
@@ -379,6 +376,9 @@ FOUNDATION_EXPORT XZMocoaKey const XZMocoaKeyIsLoading;
 ///
 /// @note 方法的参数类型、参数数量，比如与属性类型、属性数量保持一致。
 @property (class, nullable, readonly) NSDictionary<NSString *, id> *mappingModelKeys;
+
+/// 是否主动观察模型。
+@property (nonatomic, readonly) BOOL shouldReactModelKeys;
 
 /// 当视图模型更新了 其他视图模型 的 数据模型 后，可通过此方法通知目标视图模型。
 ///
