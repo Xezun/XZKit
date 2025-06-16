@@ -179,12 +179,12 @@ _Pragma("clang diagnostic pop")
 ///   - line: 输出语句所在的行数
 ///   - function: 输出语句所在的函数名
 ///   - format: 输出内容格式
-FOUNDATION_EXPORT void XZLogv(const char *file, const int line, const char *function, NSString *format, ...) NS_FORMAT_FUNCTION(4,5) NS_SWIFT_UNAVAILABLE("Use Swift.print instead");
+FOUNDATION_EXPORT void XZLogv(const char *file, const int line, const char *function, NSString *format, ...) NS_FORMAT_FUNCTION(4,5) NS_SWIFT_UNAVAILABLE("Use #XZLog instead");
 
 /// 宏函数，控制台输出，实际调用 `NSLog` 完成输出，会额外输出语句所在的文件、行数、方法名，且如果待输出内容过大，则分批次输出，避免输出内容不完整。
 ///
 /// - Parameter format: 格式化输出模版
-FOUNDATION_EXTERN void XZLog(NSString *format, ...) NS_FORMAT_FUNCTION(1,2);
+FOUNDATION_EXTERN void XZLog(NSString *format, ...) NS_FORMAT_FUNCTION(1,2) NS_SWIFT_UNAVAILABLE("Use #XZLog instead");
 
 #if XZ_FRAMEWORK
 

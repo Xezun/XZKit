@@ -10,9 +10,6 @@
 
 static const void * const _mocoaName = &_mocoaName;
 
-@interface NSObject (XZMocoaModel) <XZMocoaModel>
-@end
-
 @implementation NSObject (XZMocoaModel)
 
 - (XZMocoaName)mocoaName {
@@ -24,4 +21,7 @@ static const void * const _mocoaName = &_mocoaName;
 }
 
 @end
+
+#import "XZMocoaViewModel.h"
+
 

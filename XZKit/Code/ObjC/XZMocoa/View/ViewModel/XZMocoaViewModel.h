@@ -361,6 +361,9 @@ FOUNDATION_EXPORT XZMocoaKey const XZMocoaKeyIsLoading;
 
 @interface XZMocoaViewModel (XZMocoaModelObserving)
 
+/// 是否主动观察模型。
+@property (class, readonly) BOOL shouldActivelyObserveModelKeys;
+
 /// 被动数据模型键值观察机制。
 ///
 /// 注册 视图模型方法 与 数据模型属性 之间映射关系的字典。

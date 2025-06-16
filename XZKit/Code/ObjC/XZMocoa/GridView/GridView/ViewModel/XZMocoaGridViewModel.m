@@ -574,8 +574,10 @@ typedef void(^XZMocoaGridDelayedUpdates)(__kindof XZMocoaViewModel *self);
         }
     }
 
+#if XZ_DEBUG || DEBUG
     // 检查结果
     NSAssert([self.sectionDataModels isEqualToArray:newDataModels], @"更新结果与预期不一致");
+#endif
     
     return forwardIndexes;
 }

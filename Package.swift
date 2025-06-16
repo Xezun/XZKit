@@ -13,7 +13,6 @@ private enum ModuleType {
 }
 
 private var _modules: [(type: ModuleType, name: String, dependencies: [PackageDescription.Target.Dependency])] = [
-    (.ObjC, "XZDefines", []),
     (.ObjC, "XZML", ["XZDefines", "XZExtensions"]),
     (.ObjC, "XZJSON", ["XZObjcDescriptor", "XZExtensions"]),
     (.ObjC, "XZRefresh", ["XZDefines"]),
@@ -30,6 +29,7 @@ private var _modules: [(type: ModuleType, name: String, dependencies: [PackageDe
     (.Swift, "XZContentStatus", ["XZTextImageView"]),
     (.Swift, "XZCollectionViewFlowLayout", []),
     (.Swift, "XZNavigationController", ["XZDefines"]),
+    (.Mixed, "XZDefines", ["XZDefinesMacros"]),
     (.Mixed, "XZExtensions", ["XZDefines"]),
     (.Mixed, "XZGeometry", []),
     (.Mixed, "XZToast", ["XZGeometry", "XZTextImageView", "XZExtensions"]),
@@ -92,6 +92,18 @@ _targets.append(
         ],
         path: "XZKit",
         sources: ["Code/Macro/XZMocoa"]
+    )
+)
+
+_targets.append(
+    .macro(
+        name: "XZDefinesMacros",
+        dependencies: [
+            .product(name: "SwiftSyntaxMacros", package: "swift-syntax"),
+            .product(name: "SwiftCompilerPlugin", package: "swift-syntax")
+        ],
+        path: "XZKit",
+        sources: ["Code/Macro/XZDefines"]
     )
 )
 

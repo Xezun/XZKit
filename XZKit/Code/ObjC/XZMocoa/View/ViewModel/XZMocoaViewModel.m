@@ -11,6 +11,13 @@
 #import "XZMocoaTargetActions.h"
 @import XZObjcDescriptor;
 
+@interface XZMocoaObserver : NSObject
++ (XZMocoaObserver *)observerForModel:(NSObject *)model;
+- (void)addKeyPath:(NSString *)keyPath;
+- (void)addViewModel:(XZMocoaViewModel *)viewModel;
+- (void)removeViewModel:(XZMocoaViewModel *)viewModel;
+@end
+
 @implementation XZMocoaViewModel {
     @private
     NSMutableOrderedSet<XZMocoaViewModel *> *_subViewModels;
@@ -72,11 +79,45 @@
 }
 
 - (void)prepare {
-    
+    [self modelDidChange:nil];
 }
 
 - (NSString *)description {
     return [NSString stringWithFormat:@"<%@: %p, isReady = %@; subViewModels = (%ld objects)>", self.class, self, @(self.isReady), self.subViewModels.count];
+}
+
+- (void)setModel:(id)model {
+    if (_model != model) {
+        id const oldValue = _model;
+        _model = model;
+        [self modelDidChange:oldValue];
+    }
+}
+
+- (void)modelDidChange:(id)oldValue {
+    Class const aClass = self.class;
+    
+    if ([aClass shouldActivelyObserveModelKeys]) {
+        XZMocoaObserver *observer = [XZMocoaObserver observerForModel:oldValue];
+        [observer removeViewModel:self];
+        
+        id const newValue = self.model;
+        if (newValue == nil) {
+            return;
+        }
+        observer = [XZMocoaObserver observerForModel:newValue];
+        [observer addViewModel:self];
+        
+        [[aClass mappingModelKeys].allValues enumerateObjectsUsingBlock:^(id  _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
+            if ([obj isKindOfClass:NSString.class]) {
+                [observer addKeyPath:obj];
+            } else {
+                for (NSString *keyPath in (NSArray *)obj) {
+                    [observer addKeyPath:keyPath];
+                }
+            }
+        }];
+    }
 }
 
 @end
@@ -325,6 +366,10 @@ static NSArray<NSDictionary *> *XZMocoaGetMappingModelKeys(Class const VMClass);
 
 @implementation XZMocoaViewModel (XZMocoaModelObserving)
 
++ (BOOL)shouldAutomaticallyObserveModelKeys {
+    return NO;
+}
+
 + (NSDictionary<NSString *,id> *)mappingModelKeys {
     return nil;
 }
@@ -372,7 +417,7 @@ static NSArray<NSDictionary *> *XZMocoaGetMappingModelKeys(Class const VMClass);
                 
                 id value = fetchedValues[key];
                 if (value == nil) {
-                    value = [model valueForKey:key];
+                    value = [model valueForKeyPath:key];
                     fetchedValues[key] = value ?: (id)kCFNull;
                 }
                 if (value == (id)kCFNull) {
@@ -479,3 +524,66 @@ static NSArray<NSDictionary *> *XZMocoaGetMappingModelKeys(Class const VMClass) 
     objc_setAssociatedObject(VMClass, _key, _modelMapping, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
     return _modelMapping;
 }
+
+
+
+@implementation XZMocoaObserver {
+    NSObject *__unsafe_unretained _model;
+    NSHashTable *_viewModels;
+    NSMutableSet *_changedKeys;
+    NSMutableSet *_observedKeys;
+    BOOL _needsNotification;
+}
+
+- (instancetype)initWithModel:(NSObject *)model {
+    self = [super init];
+    if (self) {
+        _model = model;
+        _viewModels = [NSHashTable weakObjectsHashTable];
+        _changedKeys = [NSMutableSet set];
+    }
+    return self;
+}
+
+- (void)addViewModel:(XZMocoaViewModel *)viewModel forKeyPath:(NSString *)keyPath {
+    [_viewModels addObject:viewModel];
+    if ([_observedKeys containsObject:keyPath]) {
+        return;
+    }
+    [_model addObserver:self forKeyPath:keyPath options:NSKeyValueObservingOptionNew context:nil];
+}
+
+- (void)addKey:(NSString *)key {
+    [_model addObserver:self forKeyPath:key options:(NSKeyValueObservingOptionNew) context:nil];
+}
+
+- (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary<NSKeyValueChangeKey,id> *)change context:(void *)context {
+    [_changedKeys addObject:keyPath];
+    [self setNeedsNotification];
+}
+
+- (void)setNeedsNotification {
+    if (_needsNotification) {
+        return;
+    }
+    _needsNotification = YES;
+    [NSRunLoop.mainRunLoop performInModes:@[NSRunLoopCommonModes] block:^{
+        [self notificationIfNeeded];
+    }];
+}
+
+- (void)notificationIfNeeded {
+    if (!_needsNotification) {
+        return;
+    }
+    _needsNotification = NO;
+    
+    NSSet * const changedKeys = _changedKeys;
+    [_changedKeys removeAllObjects];
+    
+    for (XZMocoaViewModel * const viewModel in _viewModels) {
+        [viewModel model:_model didUpdateValuesForKeys:changedKeys];
+    }
+}
+
+@end

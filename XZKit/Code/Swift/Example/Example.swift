@@ -7,7 +7,6 @@
 
 import UIKit
 import XZKit
-import XZMocoa
 
 @main
 class AppDelegate: NSObject, UIApplicationDelegate {
