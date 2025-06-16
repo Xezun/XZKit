@@ -47,6 +47,8 @@ typedef NS_ENUM(NSUInteger, XZObjcType) {
     /// unsigned long
     /// > 64位编译器会将 unsigned long 当作 unsigned long long 处理，在代码中，可使用 `XZ_LONG_IS_LLONG` 宏进行条件编译。
     XZObjcTypeUnsignedLong     = 'L',
+    XZObjcTypeInt128           = _C_INT128,
+    XZObjcTypeUnsignedInt128   = _C_UINT128,
     /// long long
     XZObjcTypeLongLong         = 'q',
     /// unsigned long long
@@ -69,6 +71,8 @@ typedef NS_ENUM(NSUInteger, XZObjcType) {
     XZObjcTypePointer          = '^',
     /// C 数组
     XZObjcTypeArray            = '[',
+    /// Vector
+    XZObjcTypeVector           = _C_VECTOR,
     /// bit field of num bits
     /// @code
     /// // 位域结构体的成员的类型即为 bit field
@@ -88,43 +92,46 @@ typedef NS_ENUM(NSUInteger, XZObjcType) {
     XZObjcTypeObject           = '@',
 };
 
-/// 类型修饰符。
-typedef NS_OPTIONS(NSUInteger, XZObjcQualifiers) {
-    // Qualifiers for Variables
-    XZObjcVariableQualifiers = 0xFF00,
+/// 类型修饰符。Modifiers
+typedef NS_OPTIONS(NSUInteger, XZObjcModifiers) {
+    // modifiers for Variables
+    XZObjcVariableModifiers = 0x3FF00,
     /// const
-    XZObjcQualifierConst  = 1 << 8,
+    XZObjcModifierConst  = 1 << 8,
     /// in
-    XZObjcQualifierIn     = 1 << 9,
+    XZObjcModifierIn     = 1 << 9,
     /// inout
-    XZObjcQualifierInout  = 1 << 10,
+    XZObjcModifierInout  = 1 << 10,
     /// out
-    XZObjcQualifierOut    = 1 << 11,
+    XZObjcModifierOut    = 1 << 11,
     /// bycopy
-    XZObjcQualifierByCopy = 1 << 12,
+    XZObjcModifierByCopy = 1 << 12,
     /// byref
-    XZObjcQualifierByRef  = 1 << 13,
+    XZObjcModifierByRef  = 1 << 13,
     /// oneway
-    XZObjcQualifierOneway = 1 << 14,
-    /// Qualifier for Properties
+    XZObjcModifierOneway      = 1 << 14,
+    XZObjcModifierComplex     = 1 << 15,
+    XZObjcModifierAtomic      = 1 << 16,
+    XZObjcModifierGNURegister = 1 << 17,
+    /// modifiers for Properties
     /// > 没有 assign/unsafe_unretained 修饰符，只能反向判断
-    XZObjcPropertyQualifiers = 0xFF0000,
+    XZObjcPropertyModifiers = 0xFF00000,
     /// readonly
-    XZObjcQualifierReadonly  = 1 << 16,
+    XZObjcModifierReadonly  = 1 << (20 + 0),
     /// copy
-    XZObjcQualifierCopy      = 1 << 17,
+    XZObjcModifierCopy      = 1 << (20 + 1),
     /// retain
-    XZObjcQualifierRetain    = 1 << 18,
+    XZObjcModifierRetain    = 1 << (20 + 2),
     /// weak
-    XZObjcQualifierWeak      = 1 << 20,
+    XZObjcModifierWeak      = 1 << (20 + 3),
     /// nonatomic
-    XZObjcQualifierNonatomic = 1 << 19,
+    XZObjcModifierNonatomic = 1 << (20 + 4),
     /// getter=
-    XZObjcQualifierGetter    = 1 << 21,
+    XZObjcModifierGetter    = 1 << (20 + 5),
     /// setter=
-    XZObjcQualifierSetter    = 1 << 22,
+    XZObjcModifierSetter    = 1 << (20 + 6),
     /// @dynamic
-    XZObjcQualifierDynamic   = 1 << 23,
+    XZObjcModifierDynamic   = 1 << (20 + 7),
 };
 
 /// 类型描述词，描述数据类型的对象。
@@ -139,7 +146,7 @@ typedef NS_OPTIONS(NSUInteger, XZObjcQualifiers) {
 @property (nonatomic, readonly) XZObjcType type;
 
 /// 类型修饰符。
-@property (nonatomic, readonly) XZObjcQualifiers qualifiers;
+@property (nonatomic, readonly) XZObjcModifiers modifiers;
 
 /// 类型名称。
 @property (nonatomic, copy, readonly) NSString *name;
@@ -192,8 +199,8 @@ typedef NS_OPTIONS(NSUInteger, XZObjcQualifiers) {
 ///
 /// - Parameters:
 ///   - objcType: 类型编码
-///   - qualifiers: 修饰符，因为属性修饰符不包含在类型编码中，可通过此参数提供
-+ (nullable XZObjcTypeDescriptor *)descriptorForObjcType:(const char * _Nullable)objcType qualifiers:(XZObjcQualifiers)qualifiers NS_SWIFT_NAME(init(for:qualifiers:));
+///   - modifiers: 修饰符，因为属性修饰符不包含在类型编码中，可通过此参数提供
++ (nullable XZObjcTypeDescriptor *)descriptorForObjcType:(const char * _Nullable)objcType modifiers:(XZObjcModifiers)modifiers NS_SWIFT_NAME(init(for:modifiers:));
 
 /// 设置结构体类型的大小和字节对齐值。
 ///

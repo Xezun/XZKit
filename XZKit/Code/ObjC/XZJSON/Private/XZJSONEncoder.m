@@ -463,6 +463,11 @@ void XZJSONModelEncodeProperty(id const __unsafe_unretained model, XZJSONPropert
             }
             break;
         }
+        case XZObjcTypeInt128:
+        case XZObjcTypeUnsignedInt128:
+        case XZObjcTypeVector:
+            NSLog(@"[XZJSON] 目前平台不支持该数据类型");
+            break;
     }
     
     if (key == nil) {

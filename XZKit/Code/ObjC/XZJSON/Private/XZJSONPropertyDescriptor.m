@@ -47,8 +47,8 @@
         descriptor->_subtype = property.type.subtype;
         descriptor->_foundationClassType = XZJSONFoundationClassTypeFromClass(descriptor->_subtype);
         descriptor->_foundationStructType = XZJSONFoundationStructTypeUnknown;
-        XZObjcQualifiers const qualifiers = property.type.qualifiers;
-        descriptor->_isUnownedReferenceProperty = (qualifiers & XZObjcQualifierWeak) || (!(qualifiers & XZObjcQualifierCopy) && !(qualifiers & XZObjcQualifierRetain));
+        XZObjcModifiers const modifiers = property.type.modifiers;
+        descriptor->_isUnownedReferenceProperty = (modifiers & XZObjcModifierWeak) || (!(modifiers & XZObjcModifierCopy) && !(modifiers & XZObjcModifierRetain));
     } else {
         descriptor->_subtype = Nil;
         descriptor->_foundationClassType = XZJSONFoundationClassTypeUnknown;

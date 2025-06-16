@@ -283,6 +283,11 @@
             case XZObjcTypeUnknown: {
                 break;
             }
+            case XZObjcTypeInt128:
+            case XZObjcTypeUnsignedInt128:
+            case XZObjcTypeVector:
+                NSLog(@"[XZJSON] 目前平台不支持该数据类型");
+                break;
         }
         // 无法复制的属性
         if (block && block(newModel, property->_name)) {
@@ -586,6 +591,11 @@
                 }
                 break;
             }
+            case XZObjcTypeInt128:
+            case XZObjcTypeUnsignedInt128:
+            case XZObjcTypeVector:
+                NSLog(@"[XZJSON] 目前平台不支持该数据类型");
+                break;
         }
         
         // 无法比较的属性值

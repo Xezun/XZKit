@@ -296,6 +296,11 @@ NSString * _Nonnull XZJSONModelDescription(NSObject *_Nonnull model, NSUInteger 
                 }
                 break;
             }
+            case XZObjcTypeInt128:
+            case XZObjcTypeUnsignedInt128:
+            case XZObjcTypeVector:
+                NSLog(@"[XZJSON] 目前平台不支持该数据类型");
+                break;
         }
         [desc appendFormat:@"%@    %@: %@,\n", padding, key, value];
     }];
@@ -626,6 +631,11 @@ void XZJSONModelEncodeWithCoder(id model, NSCoder *aCoder) {
                         }
                         break;
                     }
+                    case XZObjcTypeInt128:
+                    case XZObjcTypeUnsignedInt128:
+                    case XZObjcTypeVector:
+                        NSLog(@"[XZJSON] 目前平台不支持该数据类型");
+                        break;
                 }
                 
                 // 不能处理的属性
@@ -901,6 +911,11 @@ id _Nullable XZJSONModelDecodeWithCoder(id model, NSCoder *aCoder) {
                         }
                         break;
                     }
+                    case XZObjcTypeInt128:
+                    case XZObjcTypeUnsignedInt128:
+                    case XZObjcTypeVector:
+                        NSLog(@"[XZJSON] 目前平台不支持该数据类型");
+                        break;
                 }
                 
                 if ([aCoder containsValueForKey:name] && modelClass->_usesPropertyJSONDecodingMethod) {

@@ -33,17 +33,17 @@
         const char * const objcType = "ri";
         XZObjcTypeDescriptor *descriptor = [XZObjcTypeDescriptor descriptorForObjcType:objcType];
         XCTAssert(descriptor.type == XZObjcTypeInt);
-        XCTAssert(descriptor.qualifiers == XZObjcQualifierConst);
+        XCTAssert(descriptor.modifiers == XZObjcModifierConst);
     } {
         const char * const objcType = "rnNoORVi";
         XZObjcTypeDescriptor *descriptor = [XZObjcTypeDescriptor descriptorForObjcType:objcType];
         XCTAssert(descriptor.type == XZObjcTypeInt);
-        XCTAssert(descriptor.qualifiers & XZObjcQualifierConst);
-        XCTAssert(descriptor.qualifiers & XZObjcQualifierIn);
-        XCTAssert(descriptor.qualifiers & XZObjcQualifierInout);
-        XCTAssert(descriptor.qualifiers & XZObjcQualifierByCopy);
-        XCTAssert(descriptor.qualifiers & XZObjcQualifierByRef);
-        XCTAssert(descriptor.qualifiers & XZObjcQualifierOneway);
+        XCTAssert(descriptor.modifiers & XZObjcModifierConst);
+        XCTAssert(descriptor.modifiers & XZObjcModifierIn);
+        XCTAssert(descriptor.modifiers & XZObjcModifierInout);
+        XCTAssert(descriptor.modifiers & XZObjcModifierByCopy);
+        XCTAssert(descriptor.modifiers & XZObjcModifierByRef);
+        XCTAssert(descriptor.modifiers & XZObjcModifierOneway);
     } {
         XZObjcTypeDescriptor *descriptor1 = [XZObjcTypeDescriptor descriptorForObjcType:@encode(int)];
         XZObjcTypeDescriptor *descriptor2 = [XZObjcTypeDescriptor descriptorForObjcType:@encode(int)];

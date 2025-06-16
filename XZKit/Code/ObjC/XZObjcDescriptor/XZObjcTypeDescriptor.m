@@ -42,10 +42,10 @@ static id _Nullable withStorage(id (^ NS_NOESCAPE block)(XZObjcTypeStorage const
 }
 
 + (XZObjcTypeDescriptor *)descriptorForObjcType:(const char *)objcType {
-    return [self descriptorForObjcType:objcType qualifiers:kNilOptions];
+    return [self descriptorForObjcType:objcType modifiers:kNilOptions];
 }
 
-+ (XZObjcTypeDescriptor *)descriptorForObjcType:(const char *)objcType qualifiers:(XZObjcQualifiers)qualifiers {
++ (XZObjcTypeDescriptor *)descriptorForObjcType:(const char *)objcType modifiers:(XZObjcModifiers)modifiers {
     // 非空处理
     if (objcType == NULL) {
         return nil;
@@ -62,31 +62,43 @@ static id _Nullable withStorage(id (^ NS_NOESCAPE block)(XZObjcTypeStorage const
     for (size_t i = 0; i < objcTypeLength; i++) {
         switch (objcType[i]) {
             case 'r': {
-                qualifiers |= XZObjcQualifierConst;
+                modifiers |= XZObjcModifierConst;
                 continue;
             }
             case 'n': {
-                qualifiers |= XZObjcQualifierIn;
+                modifiers |= XZObjcModifierIn;
                 continue;
             }
             case 'N': {
-                qualifiers |= XZObjcQualifierInout;
+                modifiers |= XZObjcModifierInout;
                 continue;
             }
             case 'o': {
-                qualifiers |= XZObjcQualifierOut;
+                modifiers |= XZObjcModifierOut;
                 continue;
             }
             case 'O': {
-                qualifiers |= XZObjcQualifierByCopy;
+                modifiers |= XZObjcModifierByCopy;
                 continue;
             }
             case 'R': {
-                qualifiers |= XZObjcQualifierByRef;
+                modifiers |= XZObjcModifierByRef;
                 continue;
             }
             case 'V': {
-                qualifiers |= XZObjcQualifierOneway;
+                modifiers |= XZObjcModifierOneway;
+                continue;
+            }
+            case 'j': {
+                modifiers |= XZObjcModifierComplex;
+                continue;
+            }
+            case 'A': {
+                modifiers |= XZObjcModifierAtomic;
+                continue;
+            }
+            case '+': {
+                modifiers |= XZObjcModifierGNURegister;
                 continue;
             }
             default: {
@@ -103,7 +115,7 @@ static id _Nullable withStorage(id (^ NS_NOESCAPE block)(XZObjcTypeStorage const
         break;
     }
     
-    NSNumber * const key = @(qualifiers);
+    NSNumber * const key = @(modifiers);
     
     { // 查询是否已创建。
         NSString *encoding = [NSString stringWithCString:objcType encoding:NSASCIIStringEncoding];
@@ -226,6 +238,24 @@ static id _Nullable withStorage(id (^ NS_NOESCAPE block)(XZObjcTypeStorage const
             _size = sizeof(unsigned long);
             _sizeInBit = _size * 8;
             _alignment = _Alignof(unsigned long);
+            break;
+        }
+        case _C_INT128: {
+            _raw  = @"t";
+            _type = XZObjcTypeInt128;
+            _name = @"integer 128";
+            _size = sizeof(UInt64) * 2;
+            _sizeInBit = _size * 8;
+            _alignment = _size;
+            break;
+        }
+        case _C_UINT128: {
+            _raw  = @"t";
+            _type = XZObjcTypeUnsignedInt128;
+            _name = @"unsigned integer 128";
+            _size = sizeof(UInt64) * 2;
+            _sizeInBit = _size * 8;
+            _alignment = _size;
             break;
         }
         case 'f': {
@@ -390,6 +420,15 @@ static id _Nullable withStorage(id (^ NS_NOESCAPE block)(XZObjcTypeStorage const
             _sizeInBit = _size * 8;
             _alignment = member.alignment;
             _members = @[member];
+            break;
+        }
+        case _C_VECTOR: {
+            _raw  = @"!";
+            _type = XZObjcTypeVector;
+            _name = @"vector";
+            _size = sizeof(void *);
+            _sizeInBit = _size * 8;
+            _alignment = _Alignof(void *);
             break;
         }
         case '(': { // (Foobar=icq)
@@ -570,7 +609,7 @@ static id _Nullable withStorage(id (^ NS_NOESCAPE block)(XZObjcTypeStorage const
         if (descriptor) {
             return descriptor;
         }
-        descriptor = [[self alloc] initWithRaw:_raw type:_type qualifiers:qualifiers name:_name size:_size sizeInBit:_sizeInBit alignment:_alignment members:_members subtype:_subtype protocols:_protocols];
+        descriptor = [[self alloc] initWithRaw:_raw type:_type modifiers:modifiers name:_name size:_size sizeInBit:_sizeInBit alignment:_alignment members:_members subtype:_subtype protocols:_protocols];
         NSMutableDictionary *dictM = storage[_raw];
         if (dictM == nil) {
             dictM = [NSMutableDictionary dictionary];
@@ -581,13 +620,13 @@ static id _Nullable withStorage(id (^ NS_NOESCAPE block)(XZObjcTypeStorage const
     });
 }
 
-- (instancetype)initWithRaw:(NSString *)raw type:(XZObjcType)type qualifiers:(XZObjcQualifiers)qualifiers name:(NSString *)name size:(size_t)size sizeInBit:(size_t)sizeInBit alignment:(size_t)alignment members:(NSArray<XZObjcTypeDescriptor *> *)members subtype:(Class)subtype protocols:(NSArray<Protocol *> *)protocols {
+- (instancetype)initWithRaw:(NSString *)raw type:(XZObjcType)type modifiers:(XZObjcModifiers)modifiers name:(NSString *)name size:(size_t)size sizeInBit:(size_t)sizeInBit alignment:(size_t)alignment members:(NSArray<XZObjcTypeDescriptor *> *)members subtype:(Class)subtype protocols:(NSArray<Protocol *> *)protocols {
     self = [super init];
     if (self) {
         _raw = raw;
         _type = type;
         _name = name;
-        _qualifiers = qualifiers;
+        _modifiers = modifiers;
         _size = size;
         _sizeInBit = sizeInBit;
         _alignment = alignment;

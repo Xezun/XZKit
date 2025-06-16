@@ -21,7 +21,7 @@
         return nil;
     }
 
-    XZObjcQualifiers qualifiers = kNilOptions;
+    XZObjcModifiers modifiers = kNilOptions;
     XZObjcIvarDescriptor *_ivar = nil;
     SEL _getter = nil;
     SEL _setter = nil;
@@ -56,37 +56,37 @@
             }
 
             case 'R': {
-                qualifiers |= XZObjcQualifierReadonly;
+                modifiers |= XZObjcModifierReadonly;
                 break;
             }
 
             case 'C': {
-                qualifiers |= XZObjcQualifierCopy;
+                modifiers |= XZObjcModifierCopy;
                 break;
             }
 
             case '&': {
-                qualifiers |= XZObjcQualifierRetain;
+                modifiers |= XZObjcModifierRetain;
                 break;
             }
 
             case 'N': {
-                qualifiers |= XZObjcQualifierNonatomic;
+                modifiers |= XZObjcModifierNonatomic;
                 break;
             }
 
             case 'D': {
-                qualifiers |= XZObjcQualifierDynamic;
+                modifiers |= XZObjcModifierDynamic;
                 break;
             }
 
             case 'W': {
-                qualifiers |= XZObjcQualifierWeak;
+                modifiers |= XZObjcModifierWeak;
                 break;
             }
 
             case 'G': {
-                qualifiers |= XZObjcQualifierGetter;
+                modifiers |= XZObjcModifierGetter;
 
                 if (attrValue) {
                     _getter = sel_getUid(attrValue);
@@ -95,7 +95,7 @@
             }
 
             case 'S': {
-                qualifiers |= XZObjcQualifierSetter;
+                modifiers |= XZObjcModifierSetter;
 
                 if (attrValue) {
                     _setter = sel_getUid(attrValue);
@@ -108,7 +108,7 @@
         }
     }
     
-    XZObjcTypeDescriptor *_type = [XZObjcTypeDescriptor descriptorForObjcType:typeEncoding qualifiers:qualifiers];
+    XZObjcTypeDescriptor *_type = [XZObjcTypeDescriptor descriptorForObjcType:typeEncoding modifiers:modifiers];
     if (_type == nil) {
         return nil;
     }
@@ -126,7 +126,7 @@
         }
     }
 
-    if (!_setter && !(qualifiers & XZObjcQualifierReadonly)) {
+    if (!_setter && !(modifiers & XZObjcModifierReadonly)) {
         NSString *setterName = [NSString stringWithFormat:@"set%c%s:", toupper(name[0]), name + 1];
         _setter = NSSelectorFromString(setterName);
     }
