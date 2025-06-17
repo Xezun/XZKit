@@ -265,6 +265,7 @@ extension XZMocoaMacro: MemberMacro {
                     """
                     override func __viewModelDidChange(_ oldValue: XZMocoaViewModel?) {
                         super.__viewModelDidChange(oldValue)
+                        guard let _ = self.viewModel else { return }
                         \(raw: readyMethodNames.map({ "\($0)()" }).joined(separator: "\n"))
                     }
                     """
@@ -273,19 +274,32 @@ extension XZMocoaMacro: MemberMacro {
             }
             
             let bindStatementString = bindStatements.joined(separator: "\n")
+            
+            if readyMethodNames.isEmpty {
+                let methodSyntax = try FunctionDeclSyntax(
+                    """
+                    override func __viewModelDidChange(_ oldValue: XZMocoaViewModel?) {
+                        super.__viewModelDidChange(oldValue)
+                        guard let viewModel = self.viewModel else { return }
+                        \(raw: bindStatementString)
+                    }
+                    """
+                )
+                return [DeclSyntax(methodSyntax)]
+            }
+            
             let readyStatementString = readyMethodNames.map({ "\($0)()" }).joined(separator: "\n")
             
             let methodSyntax = try FunctionDeclSyntax(
                 """
                 override func __viewModelDidChange(_ oldValue: XZMocoaViewModel?) {
                     super.__viewModelDidChange(oldValue)
-                    \(raw: readyStatementString)
                     guard let viewModel = self.viewModel else { return }
                     \(raw: bindStatementString)
+                    \(raw: readyStatementString)
                 }
                 """
             )
-            
             return [DeclSyntax(methodSyntax)]
             
         case .vm:
