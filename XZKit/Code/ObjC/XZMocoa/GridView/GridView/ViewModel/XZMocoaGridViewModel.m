@@ -936,10 +936,13 @@ typedef void(^XZMocoaGridDelayedUpdates)(__kindof XZMocoaViewModel *self);
         case NSFetchedResultsChangeMove: {
             XZLog(@"[CoreData][move] hasChanges=%d {%ld, %ld} => {%ld, %ld}", anObject.hasChanges, indexPath.section, indexPath.item, newIndexPath.section, newIndexPath.item);
             if ([anObject hasPersistentChangedValues]) {
+                XZMocoaGridViewCellViewModel * const viewModel = [self cellViewModelAtIndexPath:indexPath];
+                if (viewModel.shouldObserveModelKeysActively) {
+                    break;
+                }
                 NSDictionary<NSString *, id> * const changedValues = anObject.changedValuesForCurrentEvent;
                 XZLog(@"[CoreData][move][change][key] %@", changedValues);
                 
-                XZMocoaGridViewCellViewModel * const viewModel = [self cellViewModelAtIndexPath:indexPath];
                 [viewModel model:anObject didUpdateValuesForKeys:[NSSet setWithArray:changedValues.allKeys]];
             }
             break;
@@ -954,10 +957,13 @@ typedef void(^XZMocoaGridDelayedUpdates)(__kindof XZMocoaViewModel *self);
             
             // changedValuesForCurrentEvent 仅包含持久存储属性变更，因此需使用 hasPersistentChangedValues 判断
             if ([anObject hasPersistentChangedValues]) {
+                XZMocoaGridViewCellViewModel * const viewModel = [self cellViewModelAtIndexPath:indexPath];
+                if (viewModel.shouldObserveModelKeysActively) {
+                    break;
+                }
                 NSDictionary<NSString *, id> * const changedValues = anObject.changedValuesForCurrentEvent;
                 XZLog(@"[CoreData][move][update][key] %@", changedValues);
                 
-                XZMocoaGridViewCellViewModel * const viewModel = [self cellViewModelAtIndexPath:indexPath];
                 [viewModel model:anObject didUpdateValuesForKeys:[NSSet setWithArray:changedValues.allKeys]];
             }
             break;

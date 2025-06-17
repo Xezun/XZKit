@@ -305,7 +305,6 @@ extension XZMocoaMacro: MemberMacro {
                 }
             }
             
-            var allMappingKeys = Set<String>()
             var mappingKeyValueStrings = [String]()
             var readyMethodNames = [String]()
             
@@ -346,10 +345,8 @@ extension XZMocoaMacro: MemberMacro {
                         }
                         
                         if keysArray.isEmpty {
-                            allMappingKeys.insert(name)
                             mappingKeyValueStrings.append("NSStringFromSelector(#selector(setter: Self.\(name))): [\"\(name)\"]")
                         } else {
-                            allMappingKeys.insert(keysArray[0])
                             mappingKeyValueStrings.append("NSStringFromSelector(#selector(setter: Self.\(name))): [\"\(keysArray[0])\"]")
                         }
                     }
@@ -383,11 +380,9 @@ extension XZMocoaMacro: MemberMacro {
                                     if let key = argument.expression.as(StringLiteralExprSyntax.self)?.representedLiteralValue {
                                         // 去掉了字面量双引号
                                         keysArray.append(key)
-                                        allMappingKeys.insert(key)
                                     } else if let key = argument.expression.as(MemberAccessExprSyntax.self)?.declName.trimmedDescription {
                                         // 去掉了点号
                                         keysArray.append(key)
-                                        allMappingKeys.insert(key)
                                     }
                                 }
                             default:
@@ -400,10 +395,8 @@ extension XZMocoaMacro: MemberMacro {
                             for parameter in methodDecl.signature.parameterClause.parameters {
                                 selector += parameter.firstName.text + ":"
                                 if let name = parameter.secondName {
-                                    allMappingKeys.insert(name.text)
                                     keysArray.append(name.text)
                                 } else {
-                                    allMappingKeys.insert(parameter.firstName.text)
                                     keysArray.append(parameter.firstName.text)
                                 }
                             }
@@ -452,10 +445,7 @@ extension XZMocoaMacro: MemberMacro {
                 """
                 override func __prepare() {
                     super.__prepare()
-                    // 所有初始化方法依次调用
                     \(raw: readyMethodNames.map({ "\($0)()" }).joined(separator: "\n"))
-                    // 所有绑定键自动触发一次
-                    model(self.model, didUpdateValuesForKeys: \(raw: allMappingKeys))
                 }
                 """
             )

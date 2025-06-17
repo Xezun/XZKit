@@ -361,7 +361,7 @@ FOUNDATION_EXPORT XZMocoaKey const XZMocoaKeyIsLoading;
 
 @interface XZMocoaViewModel (XZMocoaModelObserving)
 
-/// 被动数据模型键值观察机制。
+/// 数据模型键值观察映射表。
 ///
 /// 注册 视图模型方法 与 数据模型属性 之间映射关系的字典。
 ///
@@ -374,11 +374,19 @@ FOUNDATION_EXPORT XZMocoaKey const XZMocoaKeyIsLoading;
 ///
 /// 表示同时观察 min、max 属性，它们二者任一发生改变，都会调用 `-setMin:max:` 方法。
 ///
-/// @note 方法的参数类型、参数数量，比如与属性类型、属性数量保持一致。
+/// 方法的参数类型、参数数量，比如与属性类型、属性数量保持一致。
+///
+/// 默认情况下，键值观察是被动的。在开发中，大多数情况下，数据都是单向流动的，数据更新只在绑定时发生一次，
+/// 或者很少发生数据更新，且数据更新也大多在视图模型内或在层级关系内，视图模型完全可以主动触发数据事件，
+/// 没有必要额外的注册观察者。
 @property (class, nullable, readonly) NSDictionary<NSString *, id> *mappingModelKeys;
 
-/// 是否主动观察模型。
-@property (nonatomic, readonly) BOOL shouldReactModelKeys;
+/// 是否主动观察模型。默认 NO 否。
+///
+/// 使用 NSKeyValueObserving 对 `mappingModelKeys` 中的键进行观察。
+///
+/// 子类重写，可以根据数据模型的类型，决定是否需要主动绑定。
+@property (nonatomic, readonly) BOOL shouldObserveModelKeysActively;
 
 /// 当视图模型更新了 其他视图模型 的 数据模型 后，可通过此方法通知目标视图模型。
 ///
