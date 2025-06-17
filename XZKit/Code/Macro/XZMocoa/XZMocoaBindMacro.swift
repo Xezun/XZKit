@@ -13,26 +13,42 @@ import SwiftSyntax
 public struct XZMocoaBindMacro {
     
     public enum OptionalType {
+        /// 非可选
         case unwrapped
+        /// 可选
         case wrapped
+        /// 隐式可选
         case autoUnwrapped
     }
     
     public static func type(forVariable variableDecl: VariableDeclSyntax) throws -> (name: String, optional: OptionalType) {
-        guard let type = variableDecl.bindings.first?.typeAnnotation?.type else {
-            throw Message("@bind: 无法确定属性类型")
+        guard let expression = variableDecl.bindings.first else {
+            throw Message("@bind: 没有找到属性类型")
         }
         
-        if let op = type.as(OptionalTypeSyntax.self) {
-            return (op.wrappedType.trimmedDescription, .wrapped)
+        // 示例：var textLabel: UILabel!
+        if let type = expression.typeAnnotation?.type {
+            if let op = type.as(OptionalTypeSyntax.self) {
+                return (op.wrappedType.trimmedDescription, .wrapped)
+            }
+            
+            if let op = type.as(ImplicitlyUnwrappedOptionalTypeSyntax.self) {
+                return (op.wrappedType.trimmedDescription, .autoUnwrapped)
+            }
+            
+            return (type.trimmedDescription, .unwrapped)
         }
         
-        if let op = type.as(ImplicitlyUnwrappedOptionalTypeSyntax.self) {
-            return (op.wrappedType.trimmedDescription, .autoUnwrapped)
+        // 示例：var textLabel = UILabel.init()
+        if expression.initializer != nil {
+            throw Message("@bind: 无法推断属性类型，请使用 var view: UIView = .init() 的形式初始化属性")
+            // 由于表达式的返回值值及返回值的可选性无法推断，因此如下获取获取类型，必准确
+            //if let expression = initializer.value.as(FunctionCallExprSyntax.self)?.calledExpression.as(MemberAccessExprSyntax.self)?.base {
+            //    return (expression.trimmedDescription, .unwrapped)
+            //}
         }
         
-        return (type.trimmedDescription, .unwrapped)
-        
+        throw Message("@bind: 无法解析属性类型")
     }
     
     public static func arguments(forMacro macroNode: SwiftSyntax.AttributeSyntax, forVariable typeName: String) throws -> (selector: String, key: String) {
@@ -209,25 +225,14 @@ public struct XZMocoaBindMacro {
         }
     }
     
-    public static func isValid(forMacro node: SwiftSyntax.AttributeSyntax, forVariable declaration: VariableDeclSyntax, for role: XZMocoaRole) throws -> Bool {
+    public static func isValid(forMacro node: SwiftSyntax.AttributeSyntax, forVariable declaration: VariableDeclSyntax, for role: XZMocoaRole) throws -> OptionalType {
         switch role {
         case .m:
             throw Message("@bind: 暂不支持 .m 角色")
             
         case .v:
             
-            guard let propertyType = ({ (type: TypeSyntax?) -> (name: String, isOptional: Int)? in
-                guard let type = type else { return nil }
-                if let op = type.as(OptionalTypeSyntax.self) {
-                    return (op.wrappedType.trimmedDescription, 1)
-                }
-                if let op = type.as(ImplicitlyUnwrappedOptionalTypeSyntax.self) {
-                    return (op.wrappedType.trimmedDescription, 2)
-                }
-                return (type.trimmedDescription, 0)
-            })(declaration.bindings.first?.typeAnnotation?.type) else {
-                throw Message("@bind: 无法确定属性类型")
-            }
+            let propertyType = try self.type(forVariable: declaration)
             
             // 宏参数
             if let macroArguments = node.arguments {
@@ -287,7 +292,7 @@ public struct XZMocoaBindMacro {
                 }
             }
             
-            return propertyType.isOptional == 1
+            return propertyType.optional
             
         case .vm:
             // 宏参数
@@ -321,7 +326,7 @@ public struct XZMocoaBindMacro {
             }
         }
         
-        return false
+        return .unwrapped
     }
     
 }

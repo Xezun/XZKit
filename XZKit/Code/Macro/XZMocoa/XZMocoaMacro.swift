@@ -93,7 +93,7 @@ extension XZMocoaMacro: MemberAttributeMacro {
                     case "bind":
                         do {
                             // 如果是可选属性，检测是否包含 bind(v:) 调用，否则给出警告
-                            if try XZMocoaBindMacro.isValid(forMacro: macroNode, forVariable: variableDecl, for: role) {
+                            if try XZMocoaBindMacro.isValid(forMacro: macroNode, forVariable: variableDecl, for: role) == .wrapped {
                                 if !variableDecl.attributes.attributes(forName: "bind").contains(where: { item -> Bool in
                                     guard let arguments = item.arguments else { return false }
                                     switch arguments {
