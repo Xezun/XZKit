@@ -13,4 +13,10 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic) CGFloat height;
 @end
 
+@interface XZMocoaTableViewHeaderViewModel : XZMocoaTableViewHeaderFooterViewModel
+@end
+
+@interface XZMocoaTableViewFooterViewModel : XZMocoaTableViewHeaderFooterViewModel
+@end
+
 NS_ASSUME_NONNULL_END

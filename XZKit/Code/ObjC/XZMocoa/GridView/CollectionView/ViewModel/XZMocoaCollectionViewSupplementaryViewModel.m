@@ -31,3 +31,13 @@
 }
 
 @end
+
+
+@implementation XZMocoaCollectionViewHeaderFooterViewModel
+@end
+
+@implementation XZMocoaCollectionViewHeaderViewModel
+@end
+
+@implementation XZMocoaCollectionViewFooterViewModel
+@end

@@ -86,4 +86,7 @@ class View: UIView, XZMocoaView {
         
     }
     
+    @bind
+    let label = UILabel.init()
+    
 }

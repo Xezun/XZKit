@@ -31,3 +31,10 @@
 }
 
 @end
+
+
+@implementation XZMocoaTableViewHeaderViewModel
+@end
+
+@implementation XZMocoaTableViewFooterViewModel
+@end

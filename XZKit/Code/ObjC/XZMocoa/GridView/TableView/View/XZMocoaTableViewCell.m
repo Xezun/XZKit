@@ -18,6 +18,18 @@
 
 @implementation UITableViewCell (XZMocoaTableViewCell)
 
++ (void)load {
+    if (self == [UITableViewCell class]) {
+        const char *encoding = xz_objc_class_getMethodTypeEncoding(self, @selector(prepareForReuse));
+        xz_objc_class_addMethodWithBlock(self, @selector(prepareForReuse), encoding, nil, nil, ^id _Nonnull(SEL  _Nonnull selector) {
+            return ^(UITableViewCell *self) {
+                ((void (*)(UITableViewCell *, SEL))objc_msgSend)(self, selector);
+                self.viewModel = nil;
+            };
+        });
+    }
+}
+
 @dynamic viewModel;
 
 - (void)tableView:(id<XZMocoaTableView>)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
@@ -38,6 +50,10 @@
 
 - (void)tableView:(id<XZMocoaTableView>)tableView didEditRowAtIndexPath:(NSIndexPath *)indexPath forUpdatesKey:(XZMocoaUpdatesKey)key completion:(void (^ _Nullable)(BOOL))completion {
     [self.viewModel tableView:tableView didEditCell:self atIndexPath:indexPath forUpdatesKey:key completion:completion];
+}
+
+- (void)mocoa_exchange_prepareForReuse {
+    
 }
 
 @end

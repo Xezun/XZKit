@@ -18,4 +18,14 @@ NS_ASSUME_NONNULL_BEGIN
 - (void)collectionView:(id<XZMocoaCollectionView>)collectionView didEndDisplayingSupplementaryView:(UICollectionReusableView *)supplementaryView atIndexPath:(NSIndexPath *)indexPath forElementOfKind:(NSString *)elementKind;
 @end
 
+
+@interface XZMocoaCollectionViewHeaderFooterViewModel : XZMocoaCollectionViewSupplementaryViewModel
+@end
+
+@interface XZMocoaCollectionViewHeaderViewModel : XZMocoaCollectionViewHeaderFooterViewModel
+@end
+
+@interface XZMocoaCollectionViewFooterViewModel : XZMocoaCollectionViewHeaderFooterViewModel
+@end
+
 NS_ASSUME_NONNULL_END
