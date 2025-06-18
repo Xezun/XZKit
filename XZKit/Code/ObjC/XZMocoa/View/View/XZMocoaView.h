@@ -64,11 +64,13 @@ NS_SWIFT_UI_ACTOR @protocol XZMocoaView <NSObject>
 @end
 
 @interface UIView (XZMocoaView)
+- (void)viewModelWillChange:(nullable XZMocoaViewModel *)newValue NS_REQUIRES_SUPER;
 - (BOOL)shouldPerformSegueWithIdentifier:(NSString *)identifier sender:(nullable id)sender NS_SWIFT_NAME(shouldPerformSegue(withIdentifier:sender:));
 - (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(nullable id)sender NS_SWIFT_NAME(prepare(for:sender:));
 @end
 
-@interface UIViewController (XZMocoaView) 
+@interface UIViewController (XZMocoaView)
+- (void)viewModelWillChange:(nullable XZMocoaViewModel *)newValue NS_REQUIRES_SUPER;
 @end
 
 

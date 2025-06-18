@@ -129,6 +129,13 @@ XZMocoaOptionKey const XZMocoaOptionKeyName = @"name";
     }
 }
 
+- (void)viewModelWillChange:(XZMocoaViewModel *)newValue {
+    if (newValue && self.isViewLoaded) {
+        [newValue ready];
+    }
+    [super viewModelWillChange:newValue];
+}
+
 - (UIViewController *)viewModel:(id<XZMocoaViewModel>)viewModel viewController:(void *)null {
     return self;
 }
