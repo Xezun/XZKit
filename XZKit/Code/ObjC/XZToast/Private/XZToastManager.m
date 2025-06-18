@@ -15,6 +15,7 @@
 @implementation XZToastManager {
     UIViewController * __weak _viewController;
     
+    CGFloat _offsets[3];
     /// 展示位置。
     XZToastPosition _position;
     /// 待展示。
@@ -39,18 +40,6 @@
 }
 
 + (XZToastManager *)managerForViewController:(UIViewController *)viewController {
-    if (viewController == nil) {
-        return nil;
-    }
-    
-    do {
-        UIViewController * const toastController = viewController.xz_toastController;
-        if (toastController == nil || toastController == viewController) {
-            break;
-        }
-        viewController = toastController;
-    } while (YES);
-    
     static const void * const _manager = &_manager;
     XZToastManager *manager = objc_getAssociatedObject(viewController, _manager);
     if (manager) {
@@ -68,7 +57,6 @@
         _viewController = viewController;
         
         _maximumNumberOfToasts = XZToast.maximumNumberOfToasts;
-        _offsets = calloc(3, sizeof(XZToastPosition));
         _offsets[XZToastPositionTop]    = [XZToast toastOffsetForPosition:(XZToastPositionTop)];
         _offsets[XZToastPositionMiddle] = [XZToast toastOffsetForPosition:(XZToastPositionMiddle)];
         _offsets[XZToastPositionBottom] = [XZToast toastOffsetForPosition:(XZToastPositionBottom)];
@@ -82,9 +70,6 @@
 }
 
 - (void)dealloc {
-    free(_offsets);
-    _offsets = NULL;
-    
     for (XZToastTask *task in _hideingTasks) {
         [task cancel];
         [task finish];
@@ -376,6 +361,9 @@
                 [_hideingTasks addObject:item];
             }
         }
+
+        // 应用配置
+        [newToastItem.wrapperView applyConfiguration:self];
         
         // 大小：通过 sizeThatFits 计算大小
         newToastItem->_frame.size = [newToastItem.wrapperView sizeThatFits:CGSizeMake(_bounds.size.width, 0)];
@@ -586,6 +574,15 @@
     }
     [self layoutToastViews];
     _needslayoutToasts = NO;
+}
+
+- (CGFloat)offsetForPosition:(XZToastPosition)position { 
+    return _offsets[position];
+}
+
+
+- (void)setOffset:(CGFloat)offset forPosition:(XZToastPosition)position { 
+    _offsets[position] = offset;
 }
 
 - (void)layoutToastViews {

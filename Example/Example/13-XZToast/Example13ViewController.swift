@@ -30,6 +30,9 @@ class Example13ViewController: UITableViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
+        
+        backgroundColorWell.addTarget(self, action: #selector(backgroundColorWellValueChanged(_:)), for: .valueChanged)
+        textColorWell.addTarget(self, action: #selector(textColorWellValueChanged(_:)), for: .valueChanged)
     }
     
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
@@ -44,7 +47,7 @@ class Example13ViewController: UITableViewController {
             case 0:
                 cell.detailTextLabel?.text = "\(self.position)"
             case 1:
-                cell.detailTextLabel?.text = "\(self.maximumNumberOfToasts)"
+                cell.detailTextLabel?.text = "\(self.toastConfiguration.maximumNumberOfToasts)"
             default:
                 break
             }
@@ -168,7 +171,7 @@ class Example13ViewController: UITableViewController {
         case "position":
             select.value = position.rawValue
         case "maximumNumberOfToasts":
-            select.value = self.maximumNumberOfToasts;
+            select.value = self.toastConfiguration.maximumNumberOfToasts;
         default:
             break
         }
@@ -187,7 +190,7 @@ class Example13ViewController: UITableViewController {
                 cell.detailTextLabel?.text = position.description
             }
         case "maximumNumberOfToasts":
-            self.maximumNumberOfToasts = select.value
+            self.toastConfiguration.maximumNumberOfToasts = select.value
             if let cell = tableView.cellForRow(at: .init(row: 1, section: 2)) {
                 cell.detailTextLabel?.text = select.value.description
             }
@@ -220,7 +223,17 @@ class Example13ViewController: UITableViewController {
     }
     
     // 由于当前容器视图为 UITableView 所以在
-    override var toastController: UIViewController? {
-        return toastControllerSwitch.isOn ? self : super.toastController
+    override var toastController: UIViewController {
+        return toastControllerSwitch.isOn ? self : self.navigationController!
+    }
+    
+    @IBOutlet weak var backgroundColorWell: UIColorWell!
+    @IBAction func backgroundColorWellValueChanged(_ sender: UIColorWell) {
+        self.toastConfiguration.backgroundColor = sender.selectedColor
+    }
+    
+    @IBOutlet weak var textColorWell: UIColorWell!
+    @IBAction func textColorWellValueChanged(_ sender: UIColorWell) {
+        self.toastConfiguration.textColor = sender.selectedColor
     }
 }

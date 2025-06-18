@@ -11,10 +11,12 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
+@protocol XZToastConfiguration;
 
 @protocol XZToastView <NSObject>
 @optional
 @property (nonatomic, copy, nullable) NSString *text;
+- (void)applyConfiguration:(id<XZToastConfiguration>)configuration;
 @end
 
 typedef NS_ENUM(NSUInteger, XZToastStyle) {
@@ -33,10 +35,10 @@ NS_REFINED_FOR_SWIFT @interface XZToast : NSObject <NSCopying>
 
 /// 默认数量限制。
 @property (class) NSInteger maximumNumberOfToasts;
-@property (class) UIColor *textColor;
-@property (class) UIFont *font;
-@property (class) UIColor *backgroundColor;
-@property (class) UIColor *shadowColor;
+@property (class) UIColor * textColor;
+@property (class) UIFont  * font;
+@property (class) UIColor * backgroundColor;
+@property (class) UIColor * shadowColor;
 
 /// 设置默认位置偏移量。
 + (void)setToastOffset:(CGFloat)offset forPosition:(XZToastPosition)position;
@@ -107,6 +109,41 @@ NS_REFINED_FOR_SWIFT @interface XZToast : NSObject <NSCopying>
 @end
 
 NS_REFINED_FOR_SWIFT @interface XZToastTask : XZToast
+
+@end
+
+
+@protocol XZToastConfiguration <NSObject>
+
+/// 可同时展示的 toast 的数量。
+@property (nonatomic) NSInteger maximumNumberOfToasts;
+@property (nonatomic, nullable) UIColor * textColor;
+@property (nonatomic, nullable) UIFont  * font;
+@property (nonatomic, nullable) UIColor * backgroundColor;
+@property (nonatomic, nullable) UIColor * shadowColor;
+
+/// 设置 toast 相对默认位置的偏移值。
+///
+/// 默认偏移值：
+/// - top: 向下偏移 +20.0 点
+/// - middle: 不偏移 0.0 点
+/// - bottom: 向上偏移 -20.0 点
+///
+/// - Parameters:
+///   - offset: 偏移值，正数向下，负数向上
+///   - position: toast 展示位置
+- (void)setOffset:(CGFloat)offset forPosition:(XZToastPosition)position;
+/// 获取指定位置 toast 的偏移值。
+/// - Parameter position: toast 展示位置
+- (CGFloat)offsetForPosition:(XZToastPosition)position;
+
+/// 刷新 toast 的布局。
+///
+/// 如果在展示 toast 的期间，控制器的大小发生了改变，需要调用此方法来刷新布局。
+///
+/// 比如在容器视图为滚动视图时，可通过调用此方法刷新位置，让 toast 跟随滚动。
+- (void)setNeedsLayoutToasts;
+- (void)layoutToastsIfNeeded;
 
 @end
 

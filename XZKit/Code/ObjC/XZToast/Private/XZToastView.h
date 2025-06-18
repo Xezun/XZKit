@@ -17,6 +17,8 @@ NS_ASSUME_NONNULL_BEGIN
 - (instancetype)initWithFrame:(CGRect)frame NS_DESIGNATED_INITIALIZER;
 - (nullable instancetype)initWithCoder:(NSCoder *)coder NS_UNAVAILABLE;
 
+- (void)applyConfiguration:(id<XZToastConfiguration>)configuration;
+
 @property (nonatomic) XZToastStyle style;
 
 @property(nonatomic, readonly) BOOL isAnimating;

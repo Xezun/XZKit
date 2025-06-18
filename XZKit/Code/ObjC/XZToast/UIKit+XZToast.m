@@ -24,29 +24,11 @@
     [self.nextResponder xz_hideToast:toast completion:completion];
 }
 
-- (void)xz_setNeedsLayoutToasts {
-    [self.nextResponder xz_setNeedsLayoutToasts];
+- (id<XZToastConfiguration>)xz_toastConfiguration {
+    return self.nextResponder.xz_toastConfiguration;
 }
 
-- (void)xz_layoutToastsIfNeeded {
-    [self.nextResponder xz_layoutToastsIfNeeded];
-}
-
-- (NSInteger)xz_maximumNumberOfToasts {
-    return [self.nextResponder xz_maximumNumberOfToasts];
-}
-
-- (void)xz_setMaximumNumberOfToasts:(NSInteger)xz_maximumNumberOfToasts {
-    [self.nextResponder xz_setMaximumNumberOfToasts:xz_maximumNumberOfToasts];
-}
-
-- (void)xz_setToastOffset:(CGFloat)offset forPosition:(XZToastPosition)position {
-    [self.nextResponder xz_setToastOffset:offset forPosition:position];
-}
-
-- (CGFloat)xz_toastOffsetForPosition:(XZToastPosition)position {
-    return [self.nextResponder xz_toastOffsetForPosition:position];
-}
+#pragma mark - 便利方法
 
 - (nullable XZToast *)xz_showToast:(XZToast *)toast duration:(NSTimeInterval)duration position:(XZToastPosition)position completion:(nullable XZToastCompletion)completion {
     return [self xz_showToast:toast duration:duration position:position exclusive:false completion:completion];
@@ -104,28 +86,8 @@
     [self.xz_mainWindow xz_hideToast:toast completion:completion];
 }
 
-- (void)xz_setNeedsLayoutToasts {
-    [self.xz_mainWindow xz_setNeedsLayoutToasts];
-}
-
-- (void)xz_layoutToastsIfNeeded {
-    [self.xz_mainWindow xz_layoutToastsIfNeeded];
-}
-
-- (NSInteger)xz_maximumNumberOfToasts {
-    return [self.xz_mainWindow xz_maximumNumberOfToasts];
-}
-
-- (void)xz_setMaximumNumberOfToasts:(NSInteger)xz_maximumNumberOfToasts {
-    [self.xz_mainWindow xz_setMaximumNumberOfToasts:xz_maximumNumberOfToasts];
-}
-
-- (void)xz_setToastOffset:(CGFloat)offset forPosition:(XZToastPosition)position {
-    [self.xz_mainWindow xz_setToastOffset:offset forPosition:position];
-}
-
-- (CGFloat)xz_toastOffsetForPosition:(XZToastPosition)position {
-    return [self.xz_mainWindow xz_toastOffsetForPosition:position];
+- (id<XZToastConfiguration>)xz_toastConfiguration {
+    return self.xz_mainWindow.xz_toastConfiguration;
 }
 
 @end
@@ -140,28 +102,8 @@
     [self.rootViewController xz_hideToast:toast completion:completion];
 }
 
-- (void)xz_setNeedsLayoutToasts {
-    [self.rootViewController xz_setNeedsLayoutToasts];
-}
-
-- (void)xz_layoutToastsIfNeeded {
-    [self.rootViewController xz_layoutToastsIfNeeded];
-}
-
-- (NSInteger)xz_maximumNumberOfToasts {
-    return [self.rootViewController xz_maximumNumberOfToasts];
-}
-
-- (void)xz_setMaximumNumberOfToasts:(NSInteger)xz_maximumNumberOfToasts {
-    [self.rootViewController xz_setMaximumNumberOfToasts:xz_maximumNumberOfToasts];
-}
-
-- (void)xz_setToastOffset:(CGFloat)offset forPosition:(XZToastPosition)position {
-    [self.rootViewController xz_setToastOffset:offset forPosition:position];
-}
-
-- (CGFloat)xz_toastOffsetForPosition:(XZToastPosition)position {
-    return [self.rootViewController xz_toastOffsetForPosition:position];
+- (id<XZToastConfiguration>)xz_toastConfiguration {
+    return self.rootViewController.xz_toastConfiguration;
 }
 
 @end
@@ -174,35 +116,15 @@
 }
 
 - (XZToast *)xz_showToast:(XZToast *)toast duration:(NSTimeInterval)duration position:(XZToastPosition)position exclusive:(BOOL)exclusive completion:(XZToastCompletion)completion {
-    return [[XZToastManager managerForViewController:self] showToast:toast duration:duration position:position exclusive:exclusive completion:completion];
+    return [[XZToastManager managerForViewController:self.xz_toastController] showToast:toast duration:duration position:position exclusive:exclusive completion:completion];
 }
 
 - (void)xz_hideToast:(XZToast *)toast completion:(void (^)(void))completion {
-    [[XZToastManager managerForViewController:self] hideToast:toast completion:completion];
+    [[XZToastManager managerForViewController:self.xz_toastController] hideToast:toast completion:completion];
 }
 
-- (void)xz_setNeedsLayoutToasts {
-    [[XZToastManager managerForViewController:self] setNeedsLayoutToasts];
-}
-
-- (void)xz_layoutToastsIfNeeded {
-    [[XZToastManager managerForViewController:self] layoutToastsIfNeeded];
-}
-
-- (NSInteger)xz_maximumNumberOfToasts {
-    return [XZToastManager managerForViewController:self].maximumNumberOfToasts;
-}
-
-- (void)xz_setMaximumNumberOfToasts:(NSInteger)xz_maximumNumberOfToasts {
-    [XZToastManager managerForViewController:self].maximumNumberOfToasts = xz_maximumNumberOfToasts;
-}
-
-- (void)xz_setToastOffset:(CGFloat)offset forPosition:(XZToastPosition)position {
-    [XZToastManager managerForViewController:self].offsets[position] = offset;
-}
-
-- (CGFloat)xz_toastOffsetForPosition:(XZToastPosition)position {
-    return [XZToastManager managerForViewController:self].offsets[position];
+- (id<XZToastConfiguration>)xz_toastConfiguration {
+    return [XZToastManager managerForViewController:self.xz_toastController];
 }
 
 @end

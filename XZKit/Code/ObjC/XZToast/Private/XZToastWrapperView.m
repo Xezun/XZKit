@@ -21,7 +21,7 @@
         // self.backgroundColor = UIColor.redColor;
         
         CALayer * const layer = self.layer;
-        layer.shadowColor   = UIColor.blackColor.CGColor;
+        layer.shadowColor   = XZToast.shadowColor.CGColor;
         layer.shadowOffset  = CGSizeZero;
         layer.shadowOpacity = 0.8;
         layer.shadowRadius  = kPadding * 0.5;
@@ -35,6 +35,16 @@
 
 - (void)traitCollectionDidChange:(UITraitCollection *)previousTraitCollection {
     self.layer.shadowColor = [XZToast.shadowColor resolvedColorWithTraitCollection:self.traitCollection].CGColor;
+}
+
+- (void)applyConfiguration:(id<XZToastConfiguration>)configuration {
+    UIColor *shadowColor = configuration.shadowColor;
+    if (shadowColor) {
+        self.layer.shadowColor = shadowColor.CGColor;
+    }
+    if ([_view respondsToSelector:@selector(applyConfiguration:)]) {
+        [_view applyConfiguration:configuration];
+    }
 }
 
 - (NSString *)text {

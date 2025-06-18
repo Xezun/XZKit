@@ -11,6 +11,7 @@
 NS_ASSUME_NONNULL_BEGIN
 
 @class XZToast, XZToastTask;
+@protocol XZToastConfiguration;
 
 @interface UIResponder (XZToast)
 
@@ -46,34 +47,10 @@ NS_ASSUME_NONNULL_BEGIN
 - (void)xz_hideToast:(nullable XZToast *)toast completion:(nullable void (^)(void))completion NS_REFINED_FOR_SWIFT NS_SWIFT_NAME(__hideToast(_:completion:));
 - (void)xz_hideToast:(nullable void (^)(void))completion NS_SWIFT_UNAVAILABLE("");
 
-/// 刷新 toast 的布局。
-///
-/// 如果在展示 toast 的期间，控制器的大小发生了改变，需要调用此方法来刷新布局。
-///
-/// 比如在容器视图为滚动视图时，可通过调用此方法刷新位置，让 toast 跟随滚动。
-- (void)xz_setNeedsLayoutToasts NS_SWIFT_NAME(setNeedsLayoutToasts());
-- (void)xz_layoutToastsIfNeeded NS_SWIFT_NAME(layoutToastsIfNeeded());
-
-/// 可同时展示的 toast 的数量。
-@property (nonatomic, setter=xz_setMaximumNumberOfToasts:) NSInteger xz_maximumNumberOfToasts NS_SWIFT_NAME(maximumNumberOfToasts);
-
-/// 设置 toast 相对默认位置的偏移值。
-///
-/// 默认偏移值：
-/// - top: 向下偏移 +20.0 点
-/// - middle: 不偏移 0.0 点
-/// - bottom: 向上偏移 -20.0 点
-///
-/// - Parameters:
-///   - offset: 偏移值，正数向下，负数向上
-///   - position: toast 展示位置
-- (void)xz_setToastOffset:(CGFloat)offset forPosition:(XZToastPosition)position NS_SWIFT_NAME(setToastOffset(_:for:));
-
-/// 获取指定位置 toast 的偏移值。
-/// - Parameter position: toast 展示位置
-- (CGFloat)xz_toastOffsetForPosition:(XZToastPosition)position NS_SWIFT_NAME(toastOffset(for:));
+@property (nonatomic, strong, readonly) id<XZToastConfiguration> xz_toastConfiguration NS_SWIFT_NAME(toastConfiguration);
 
 @end
+
 
 @interface UIViewController (XZToast)
 
@@ -82,7 +59,7 @@ NS_ASSUME_NONNULL_BEGIN
 /// 子类可以通过重写此属性来实现将 toast 转发到其它控制器展示。
 /// 1. 容器是滚动的控制器，比如 `UITableViewController` 等，避免 toast 会随页面滚动。
 /// 2. 统一 toast 的显示和管理。
-@property (nonatomic, readonly, nullable) UIViewController *xz_toastController NS_SWIFT_NAME(toastController);
+@property (nonatomic, readonly) UIViewController *xz_toastController NS_SWIFT_NAME(toastController);
 
 @end
 

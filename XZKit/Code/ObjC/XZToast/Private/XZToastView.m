@@ -33,15 +33,15 @@
 - (instancetype)initWithFrame:(CGRect)frame {
     self = [super initWithFrame:frame];
     if (self) {
-        self.backgroundColor = XZToast.backgroundColor;
+        self.backgroundColor    = XZToast.backgroundColor;
         self.layer.cornerRadius = 6.0;
-        self.clipsToBounds = true;
+        self.clipsToBounds      = true;
         
         _style = XZToastStyleMessage;
         
         _textLabel = [[UILabel alloc] init];
-        _textLabel.textColor = UIColor.whiteColor;
-        _textLabel.font = XZToast.font;
+        _textLabel.textColor     = XZToast.textColor; // UIColor.whiteColor;
+        _textLabel.font          = XZToast.font;
         _textLabel.textAlignment = NSTextAlignmentCenter;
         _textLabel.numberOfLines = 3;
         _textLabel.lineBreakMode = NSLineBreakByTruncatingTail;
@@ -98,6 +98,21 @@
     }
     
     return CGSizeZero;
+}
+
+- (void)applyConfiguration:(id<XZToastConfiguration>)configuration {
+    UIColor *backgroundColor = configuration.backgroundColor;
+    if (backgroundColor) {
+        self.backgroundColor = backgroundColor;
+    }
+    UIColor *textColor = configuration.textColor;
+    if (textColor) {
+        _textLabel.textColor = textColor;
+    }
+    UIFont *font = configuration.font;
+    if (font) {
+        _textLabel.font = font;
+    }
 }
 
 - (NSString *)text {

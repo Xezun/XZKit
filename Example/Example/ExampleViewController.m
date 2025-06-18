@@ -57,11 +57,6 @@
 
 - (void)viewDidAppear:(BOOL)animated {
     [super viewDidAppear:animated];
-    
-    UIButton * button;
-    [button titleEdgeInsets];
-    
-    // NSLog(@"%@", self.view.xz_description);
 }
 
 - (IBAction)unwindToMainPage:(UIStoryboardSegue *)unwindSegue {

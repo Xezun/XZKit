@@ -45,7 +45,7 @@ class Example12ViewController: UIViewController, XZContentStatusRepresentable {
         error.addTarget(self, action: #selector(didClickErrorStatus(_:)), for: .touchUpInside)
         
         self.contentStatus = .empty
-        self.setToastOffset(100, for: .middle)
+        self.toastConfiguration.setOffset(100, for: .middle)
     }
     
     @IBAction func resetButtonAction(_ sender: UIBarButtonItem) {

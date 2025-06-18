@@ -12,11 +12,15 @@ NS_ASSUME_NONNULL_BEGIN
 
 @class XZToastTask;
 
-@interface XZToastManager : NSObject
+@interface XZToastManager : NSObject <XZToastConfiguration>
 
 @property (nonatomic) NSInteger maximumNumberOfToasts;
-
-@property (nonatomic, readonly) CGFloat *offsets;
+@property (nonatomic, strong, nullable) UIColor * textColor;
+@property (nonatomic, strong, nullable) UIFont  * font;
+@property (nonatomic, strong, nullable) UIColor * backgroundColor;
+@property (nonatomic, strong, nullable) UIColor * shadowColor;
+- (void)setNeedsLayoutToasts;
+- (void)layoutToastsIfNeeded;
 
 @property (nonatomic) NSArray<XZToastTask *> *tasks;
 
@@ -25,10 +29,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 @property (nonatomic) NSArray<UIView *> *subviews;
 
-+ (nullable XZToastManager *)managerForViewController:(UIViewController *)viewController;
-
-- (void)setNeedsLayoutToasts;
-- (void)layoutToastsIfNeeded;
++ (XZToastManager *)managerForViewController:(UIViewController *)viewController;
 
 @end
 

@@ -24,6 +24,8 @@ NS_ASSUME_NONNULL_BEGIN
 - (nullable instancetype)initWithCoder:(NSCoder *)coder NS_UNAVAILABLE;
 - (instancetype)initWithView:(UIView<XZToastView> *)view NS_DESIGNATED_INITIALIZER;
 
+- (void)applyConfiguration:(id<XZToastConfiguration>)configuration;
+
 @property (nonatomic, weak) XZToastTask *task;
 
 @end

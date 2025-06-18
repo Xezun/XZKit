@@ -12,10 +12,10 @@ NSTimeInterval const XZToastAnimationDuration = 0.35;
 
 static NSInteger _maximumNumberOfToasts = 3;
 static CGFloat   _toastOffsets[3]       = {+20.0, 0.0, -20.0};
-static UIColor *_textColor = nil;
-static UIFont *_font = nil;
-static UIColor *_backgroundColor = nil;
-static UIColor *_shadowColor = nil;
+static UIColor * _textColor             = nil;
+static UIFont  * _font                  = nil;
+static UIColor * _backgroundColor       = nil;
+static UIColor * _shadowColor           = nil;
 
 @implementation XZToast
 
