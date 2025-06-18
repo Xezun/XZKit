@@ -423,6 +423,7 @@ XZMocoaKey const XZMocoaKeyNone = @"";
 
 XZMocoaKey const XZMocoaKeyContentStatus    = @"contentStatus";
 XZMocoaKey const XZMocoaKeyIsChecked        = @"isChecked";
+XZMocoaKey const XZMocoaKeyIsEnabled        = @"isEnabled";
 XZMocoaKey const XZMocoaKeyValue            = @"value";
 XZMocoaKey const XZMocoaKeyName             = @"name";
 

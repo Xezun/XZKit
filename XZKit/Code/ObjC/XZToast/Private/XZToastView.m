@@ -43,7 +43,7 @@
         _textLabel.textColor = UIColor.whiteColor;
         _textLabel.font = XZToast.font;
         _textLabel.textAlignment = NSTextAlignmentCenter;
-        _textLabel.numberOfLines = 2.0;
+        _textLabel.numberOfLines = 3;
         _textLabel.lineBreakMode = NSLineBreakByTruncatingTail;
         [self addSubview:_textLabel];
     }
@@ -67,9 +67,9 @@
     {
         CGSize  const textSize = [_textLabel sizeThatFits:CGSizeMake(bounds.size.width - kPaddingL - kPaddingR, 0)];
         CGFloat const w = MIN(bounds.size.width - kPaddingL - kPaddingR, textSize.width);
-        CGFloat const h = kTextLine;
+        CGFloat const h = MAX(textSize.height, kTextLine);
         CGFloat const x = bounds.origin.x + (bounds.size.width - w) * 0.5;
-        CGFloat const y = CGRectGetMaxY(bounds) - kPaddingB - kTextLine;
+        CGFloat const y = CGRectGetMaxY(bounds) - kPaddingB - h;
         _textLabel.frame = CGRectMake(x, y, w, h);
     }
 }
@@ -82,7 +82,7 @@
     BOOL const hasText = (textSize.width > 0);
     
     if (hasIcon && hasText) {
-        CGFloat const h = kPaddingT + kIconSize + kSpacing + kTextLine + kPaddingB;
+        CGFloat const h = kPaddingT + kIconSize + kSpacing + MAX(textSize.height, kTextLine) + kPaddingB;
         CGFloat const w = MAX(h, MIN(size.width, kPaddingB + textSize.width + kPaddingR));
         return CGSizeMake(w, h);
     }
@@ -92,7 +92,7 @@
     }
     
     if (hasText) {
-        CGFloat const h = kPaddingT + kTextLine + kPaddingB;
+        CGFloat const h = kPaddingT + MAX(textSize.height, kTextLine) + kPaddingB;
         CGFloat const w = MAX(h, MIN(size.width, kPaddingB + textSize.width + kPaddingR));
         return CGSizeMake(w, h);
     }
