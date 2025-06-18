@@ -17,6 +17,15 @@ class AppDelegate: NSObject, UIApplicationDelegate {
     
 }
 
+struct Foobar {
+   
+    static let foo = Foobar.init()
+    
+    var bar: XZMocoaKey {
+        return "foo.bar"
+    }
+}
+
 @mocoa(.vm)
 class FooViewModel: XZMocoaViewModel {
     
@@ -59,6 +68,24 @@ class FooViewModel: XZMocoaViewModel {
         
     }
     
+    @bind(Foobar.foo.bar.bar)
+    func setKeyPathValue1(_ value: Int) {
+        
+    }
+    
+    @key(value: 0)
+    @bind(.foo.bar.bar)
+    var keyPathValue2: Int
+    
+}
+
+extension XZMocoaKey {
+    
+    static let foo = XZMocoaKey("foo")
+    
+    var bar: XZMocoaKey {
+        return "bar"
+    }
 }
 
 @mocoa(.v)

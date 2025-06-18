@@ -60,6 +60,22 @@ public struct XZMocoaMacro {
         throw Message("@mocoa: 无法确定 \(className) 的角色，请通过 role 参数指定")
     }
     
+    public static func keyPath(fromMacroArgument argument: LabeledExprSyntax) -> String? {
+        guard var keyExpr = argument.expression.as(MemberAccessExprSyntax.self) else {
+            return nil
+        }
+        
+        // declName 为去掉了点号的部分
+        var keyPath = keyExpr.declName.trimmedDescription;
+        
+        while let base = keyExpr.base?.as(MemberAccessExprSyntax.self) {
+            keyPath = "\(base.declName.trimmedDescription).\(keyPath)"
+            keyExpr = base
+        }
+        
+        return keyPath
+    }
+    
 }
 
 /// 宏 `@mocoa(role)` 的实现：为 `@key`、`@bind` 的成员添加 `@objc` 标记。
@@ -348,9 +364,9 @@ extension XZMocoaMacro: MemberMacro {
                                     if let key = argument.expression.as(StringLiteralExprSyntax.self)?.representedLiteralValue {
                                         // 去掉了字面量双引号
                                         keysArray.append(key)
-                                    } else if let key = argument.expression.as(MemberAccessExprSyntax.self)?.declName.trimmedDescription {
+                                    } else if let keyPath = Self.keyPath(fromMacroArgument: argument) {
                                         // 去掉了点号
-                                        keysArray.append(key)
+                                        keysArray.append(keyPath)
                                     }
                                 }
                             default:
@@ -394,9 +410,8 @@ extension XZMocoaMacro: MemberMacro {
                                     if let key = argument.expression.as(StringLiteralExprSyntax.self)?.representedLiteralValue {
                                         // 去掉了字面量双引号
                                         keysArray.append(key)
-                                    } else if let key = argument.expression.as(MemberAccessExprSyntax.self)?.declName.trimmedDescription {
-                                        // 去掉了点号
-                                        keysArray.append(key)
+                                    } else if let keyPath = Self.keyPath(fromMacroArgument: argument) {
+                                        keysArray.append(keyPath)
                                     }
                                 }
                             default:
