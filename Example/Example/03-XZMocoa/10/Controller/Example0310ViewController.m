@@ -45,8 +45,6 @@
 - (void)viewDidLoad {
     [super viewDidLoad];
     
-    self.view.backgroundColor = rgb(0xEEEEEE);
-    
     [self loadData];
 }
 

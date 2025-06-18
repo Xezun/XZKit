@@ -13,6 +13,7 @@
     self = [super initWithFrame:frame];
     if (self) {
         self.alwaysBounceVertical = YES;
+        self.backgroundColor = UIColor.systemGray5Color;
         
         UIView *wrapperView = [[UIView alloc] init];
         [self addSubview:wrapperView];

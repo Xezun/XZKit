@@ -19,7 +19,7 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic, copy) NSString *address;
 
 @property (nonatomic, copy) NSString *title;
-@property (nonatomic, copy) NSString *content;
+@property (nonatomic, copy) NSAttributedString *content;
 
 @end
 

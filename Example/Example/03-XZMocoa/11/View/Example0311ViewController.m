@@ -46,18 +46,18 @@
     // 2、控制器作为独立入口，方便与外部引用、交互。
     Example0311ViewModel *viewModel = [[Example0311ViewModel alloc] init];
     self.viewModel = viewModel;
-    
-    [viewModel addTarget:self action:@selector(reloadData) forKey:XZMocoaKeyNone value:nil];
 }
 
-- (void)reloadData {
+- (void)viewModelDidChange:(XZMocoaViewModel *)oldValue {
+    [super viewModelDidChange:oldValue];
+    
     Example0311ViewModel *viewModel = self.viewModel;
     self.nameLabel.text = viewModel.name;
     [self.photoImageView sd_setImageWithURL:viewModel.photo];
     self.phoneLabel.text = viewModel.phone;
     self.addressLabel.text = viewModel.address;
     self.titleLabel.text = viewModel.title;
-    self.contentLabel.text = viewModel.content;
+    self.contentLabel.attributedText = viewModel.content;
 }
 
 @end
