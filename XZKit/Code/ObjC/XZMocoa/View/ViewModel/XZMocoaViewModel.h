@@ -222,34 +222,22 @@ FOUNDATION_EXPORT XZMocoaUpdatesKey const XZMocoaUpdatesKeyDeselect;
 
 
 /// Mocoa Keyed Actions 事件名。
+///
+/// 在添加或发送 key-target-action 事件时，如果 key 参数使用了 nil 则会使用此键。
+///
+/// 在 Swift 中，通 SPM 引用可通过 `@key` 标记属性，会生成发送 key 事件的 setter 中方法。
+/// ```swift
+/// @key
+/// var name: String?
+///
+/// // 事件名与属性名不同
+/// @key("bar")
+/// var foo: String?
+/// ```
 typedef NSString *XZMocoaKey NS_EXTENSIBLE_STRING_ENUM;
 
 /// 特殊 key 键，值为空字符串。
-/// 在添加或发送 key-target-action 事件时，如果 key 参数使用了 nil 则会使用此键。
 FOUNDATION_EXPORT XZMocoaKey const XZMocoaKeyNone NS_SWIFT_NAME(XZMocoaKeyNone);
-
-// 以下为常用的 key
-@class UILabel, UIButton, UIImageView;
-
-FOUNDATION_EXPORT XZMocoaKey const XZMocoaKeyContentStatus;
-FOUNDATION_EXPORT XZMocoaKey const XZMocoaKeyIsChecked;
-FOUNDATION_EXPORT XZMocoaKey const XZMocoaKeyText;
-FOUNDATION_EXPORT XZMocoaKey const XZMocoaKeyAttributedText;
-FOUNDATION_EXPORT XZMocoaKey const XZMocoaKeyValue;
-FOUNDATION_EXPORT XZMocoaKey const XZMocoaKeyImage;
-FOUNDATION_EXPORT XZMocoaKey const XZMocoaKeyImageURL;
-FOUNDATION_EXPORT XZMocoaKey const XZMocoaKeyName;
-FOUNDATION_EXPORT XZMocoaKey const XZMocoaKeyTitle;
-FOUNDATION_EXPORT XZMocoaKey const XZMocoaKeyAttributedTitle;
-FOUNDATION_EXPORT XZMocoaKey const XZMocoaKeySubtitle;
-FOUNDATION_EXPORT XZMocoaKey const XZMocoaKeyTextColor;
-FOUNDATION_EXPORT XZMocoaKey const XZMocoaKeyFont;
-FOUNDATION_EXPORT XZMocoaKey const XZMocoaKeyDetailText;
-FOUNDATION_EXPORT XZMocoaKey const XZMocoaKeyStartAnimating;
-FOUNDATION_EXPORT XZMocoaKey const XZMocoaKeyStopAnimating;
-FOUNDATION_EXPORT XZMocoaKey const XZMocoaKeyIsRefreshing;
-FOUNDATION_EXPORT XZMocoaKey const XZMocoaKeyIsRequesting;
-FOUNDATION_EXPORT XZMocoaKey const XZMocoaKeyIsLoading;
 
 /// 用于标记属性可以被添加 target-action 的属性或方法，仅起标记作用。
 /// @code
@@ -403,5 +391,41 @@ FOUNDATION_EXPORT XZMocoaKey const XZMocoaKeyIsLoading;
 - (void)model:(nullable id)model didUpdateValuesForKeys:(NSSet<XZMocoaKey> *)changedKeys;
 
 @end
+
+// 常用的 key 枚举
+@class UILabel, UIButton, UIImageView;
+
+FOUNDATION_EXPORT XZMocoaKey const XZMocoaKeyContentStatus;
+FOUNDATION_EXPORT XZMocoaKey const XZMocoaKeyIsChecked;
+FOUNDATION_EXPORT XZMocoaKey const XZMocoaKeyValue;
+FOUNDATION_EXPORT XZMocoaKey const XZMocoaKeyName;
+
+@class UILabel;
+FOUNDATION_EXPORT XZMocoaKey const XZMocoaKeyText;
+FOUNDATION_EXPORT XZMocoaKey const XZMocoaKeyFont;
+FOUNDATION_EXPORT XZMocoaKey const XZMocoaKeyTextColor;
+FOUNDATION_EXPORT XZMocoaKey const XZMocoaKeyShadowColor;
+FOUNDATION_EXPORT XZMocoaKey const XZMocoaKeyAttributedText;
+FOUNDATION_EXPORT XZMocoaKey const XZMocoaKeyHighlightedTextColor;
+
+
+@class UIImageView;
+FOUNDATION_EXPORT XZMocoaKey const XZMocoaKeyImage;
+FOUNDATION_EXPORT XZMocoaKey const XZMocoaKeyHighlightedImage;
+FOUNDATION_EXPORT XZMocoaKey const XZMocoaKeyIsAnimating;
+FOUNDATION_EXPORT XZMocoaKey const XZMocoaKeyImageURL;
+
+@class UIButton;
+FOUNDATION_EXPORT XZMocoaKey const XZMocoaKeyTitle;
+FOUNDATION_EXPORT XZMocoaKey const XZMocoaKeyAttributedTitle;
+
+FOUNDATION_EXPORT XZMocoaKey const XZMocoaKeySubtitle;
+FOUNDATION_EXPORT XZMocoaKey const XZMocoaKeyDetailText;
+
+FOUNDATION_EXPORT XZMocoaKey const XZMocoaKeyStartAnimating;
+FOUNDATION_EXPORT XZMocoaKey const XZMocoaKeyStopAnimating;
+FOUNDATION_EXPORT XZMocoaKey const XZMocoaKeyIsRefreshing;
+FOUNDATION_EXPORT XZMocoaKey const XZMocoaKeyIsRequesting;
+FOUNDATION_EXPORT XZMocoaKey const XZMocoaKeyIsLoading;
 
 NS_ASSUME_NONNULL_END

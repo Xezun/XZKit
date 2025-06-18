@@ -252,26 +252,7 @@ XZMocoaUpdatesKey const XZMocoaUpdatesKeyDeselect = @"deselect";
 @end
 
 
-XZMocoaKey const XZMocoaKeyNone             = @"";
-XZMocoaKey const XZMocoaKeyContentStatus    = @"contentStatus";
-XZMocoaKey const XZMocoaKeyIsChecked        = @"isChecked";
-XZMocoaKey const XZMocoaKeyText             = @"text";
-XZMocoaKey const XZMocoaKeyAttributedText   = @"attributedText";
-XZMocoaKey const XZMocoaKeyValue            = @"value";
-XZMocoaKey const XZMocoaKeyImage            = @"image";
-XZMocoaKey const XZMocoaKeyImageURL         = @"imageURL";
-XZMocoaKey const XZMocoaKeyName             = @"name";
-XZMocoaKey const XZMocoaKeyTitle            = @"title";
-XZMocoaKey const XZMocoaKeyAttributedTitle  = @"attributedTitle";
-XZMocoaKey const XZMocoaKeySubtitle         = @"subtitle";
-XZMocoaKey const XZMocoaKeyTextColor        = @"textColor";
-XZMocoaKey const XZMocoaKeyFont             = @"font";
-XZMocoaKey const XZMocoaKeyDetailText       = @"detailText";
-XZMocoaKey const XZMocoaKeyStartAnimating   = @"startAnimating";
-XZMocoaKey const XZMocoaKeyStopAnimating    = @"stopAnimating";
-XZMocoaKey const XZMocoaKeyIsRefreshing     = @"isRefreshing";
-XZMocoaKey const XZMocoaKeyIsRequesting     = @"isRequesting";
-XZMocoaKey const XZMocoaKeyIsLoading        = @"isLoading";
+XZMocoaKey const XZMocoaKeyNone = @"";
 
 @implementation XZMocoaViewModel (XZMocoaViewModelTargetAction)
 
@@ -440,5 +421,31 @@ XZMocoaKey const XZMocoaKeyIsLoading        = @"isLoading";
 @end
 
 
+XZMocoaKey const XZMocoaKeyContentStatus    = @"contentStatus";
+XZMocoaKey const XZMocoaKeyIsChecked        = @"isChecked";
+XZMocoaKey const XZMocoaKeyValue            = @"value";
+XZMocoaKey const XZMocoaKeyName             = @"name";
 
+XZMocoaKey const XZMocoaKeyText             = @"text";
+XZMocoaKey const XZMocoaKeyFont             = @"font";
+XZMocoaKey const XZMocoaKeyTextColor        = @"textColor";
+XZMocoaKey const XZMocoaKeyShadowColor      = @"shadowColor";
+XZMocoaKey const XZMocoaKeyAttributedText   = @"attributedText";
+XZMocoaKey const XZMocoaKeyHighlightedTextColor = @"highlightedTextColor";
 
+XZMocoaKey const XZMocoaKeyImage            = @"image";
+XZMocoaKey const XZMocoaKeyHighlightedImage = @"highlightedImage";
+XZMocoaKey const XZMocoaKeyIsAnimating      = @"isAnimating";
+XZMocoaKey const XZMocoaKeyImageURL         = @"imageURL";
+
+XZMocoaKey const XZMocoaKeyTitle            = @"title";
+XZMocoaKey const XZMocoaKeyAttributedTitle  = @"attributedTitle";
+
+XZMocoaKey const XZMocoaKeySubtitle         = @"subtitle";
+XZMocoaKey const XZMocoaKeyDetailText       = @"detailText";
+
+XZMocoaKey const XZMocoaKeyStartAnimating   = @"startAnimating";
+XZMocoaKey const XZMocoaKeyStopAnimating    = @"stopAnimating";
+XZMocoaKey const XZMocoaKeyIsRefreshing     = @"isRefreshing";
+XZMocoaKey const XZMocoaKeyIsRequesting     = @"isRequesting";
+XZMocoaKey const XZMocoaKeyIsLoading        = @"isLoading";
