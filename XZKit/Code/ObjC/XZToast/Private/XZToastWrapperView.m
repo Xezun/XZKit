@@ -42,7 +42,9 @@
     if (shadowColor) {
         self.layer.shadowColor = shadowColor.CGColor;
     }
-    [_view willShowInViewController:viewController];
+    if ([_view respondsToSelector:@selector(willShowInViewController:)]) {
+        [_view willShowInViewController:viewController];
+    }
 }
 
 - (NSString *)text {

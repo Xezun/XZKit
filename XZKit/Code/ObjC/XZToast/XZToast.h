@@ -14,9 +14,15 @@ NS_ASSUME_NONNULL_BEGIN
 @protocol XZToastConfiguration;
 
 @protocol XZToastView <NSObject>
-- (void)willShowInViewController:(UIViewController *)viewController;
 @optional
+/// 提示文本。
 @property (nonatomic, copy, nullable) NSString *text;
+/// 当视图将要在控制器中显示时，此方法会被调用。
+///
+/// 如果视图被复用，那么视图每次被复用时，此方法也会被调用，即使视图已经在控制器中。
+///
+/// - Parameter viewController: 当前视图将要展示于其中的控制器对象
+- (void)willShowInViewController:(UIViewController *)viewController;
 @end
 
 typedef NS_ENUM(NSUInteger, XZToastStyle) {
