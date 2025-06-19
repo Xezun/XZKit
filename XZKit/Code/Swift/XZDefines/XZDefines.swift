@@ -11,4 +11,10 @@ import Foundation
 @_exported import XZDefinesObjC
 @freestanding(expression)
 public macro XZLog(_ message: String) = #externalMacro(module: "XZDefinesMacros", type: "XZDefinesLogMacro")
+#else
+public func XZLog(_ message: String, file: String = #file, line: Int = #line, function: String = #function) {
+    #if DEBUG
+    XZLogv(file, line, function, message)
+    #endif
+}
 #endif

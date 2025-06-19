@@ -25,16 +25,14 @@ Pod::Spec.new do |s|
   # s.social_media_url = 'https://twitter.com/<TWITTER_USERNAME>'
   s.readme           = "https://github.com/Xezun/XZKit/blob/main/Docs/#{s.name}/README.md"
   
-  s.swift_version = '5.0'
+  s.swift_version = '5.9'
   s.ios.deployment_target = '13.0'
   
   s.default_subspec = 'Code'
-  
+
   s.subspec 'Code' do |ss|
-    ss.pod_target_xcconfig = { 'GCC_PREPROCESSOR_DEFINITIONS' => 'XZ_FRAMEWORK=1' }
-    
     ss.public_header_files = 'XZKit/Code/ObjC/XZDefines/**/*.h'
-    ss.source_files        = 'XZKit/Code/ObjC/XZDefines/**/*.{h,m}'
+    ss.source_files        = 'XZKit/Code/{ObjC,Swift}/XZDefines/**/*.{h,m,swift}'
   end
   
   s.subspec 'DEBUG' do |ss|
