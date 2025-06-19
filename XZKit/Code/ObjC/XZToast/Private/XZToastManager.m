@@ -363,7 +363,7 @@
         }
 
         // 应用配置
-        [newToastItem.wrapperView applyConfiguration:self];
+        [newToastItem.wrapperView willShowInViewController:_viewController];
         
         // 大小：通过 sizeThatFits 计算大小
         newToastItem->_frame.size = [newToastItem.wrapperView sizeThatFits:CGSizeMake(_bounds.size.width, 0)];

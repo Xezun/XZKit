@@ -14,9 +14,9 @@ NS_ASSUME_NONNULL_BEGIN
 @protocol XZToastConfiguration;
 
 @protocol XZToastView <NSObject>
+- (void)willShowInViewController:(UIViewController *)viewController;
 @optional
 @property (nonatomic, copy, nullable) NSString *text;
-- (void)applyConfiguration:(id<XZToastConfiguration>)configuration;
 @end
 
 typedef NS_ENUM(NSUInteger, XZToastStyle) {
@@ -32,19 +32,6 @@ typedef NS_ENUM(NSUInteger, XZToastStyle) {
 ///
 /// 这是一个基类，业务可通过子类自定义提示消息的视图。
 NS_REFINED_FOR_SWIFT @interface XZToast : NSObject <NSCopying>
-
-/// 默认数量限制。
-@property (class) NSInteger maximumNumberOfToasts;
-@property (class) UIColor * textColor;
-@property (class) UIFont  * font;
-@property (class) UIColor * backgroundColor;
-@property (class) UIColor * shadowColor;
-
-/// 设置默认位置偏移量。
-+ (void)setToastOffset:(CGFloat)offset forPosition:(XZToastPosition)position;
-
-/// 获取默认位置偏移量。
-+ (CGFloat)toastOffsetForPosition:(XZToastPosition)position;
 
 /// 呈现提示消息的视图。
 @property (nonatomic, readonly) __kindof UIView<XZToastView> *view;
@@ -106,6 +93,25 @@ NS_REFINED_FOR_SWIFT @interface XZToast : NSObject <NSCopying>
 + (instancetype)sharedToast:(XZToastStyle)style text:(nullable NSString *)text NS_SWIFT_UNAVAILABLE("Use XZToast.shared(_:text:image:) instead.");
 + (instancetype)sharedToast:(XZToastStyle)style image:(nullable UIImage *)image NS_SWIFT_UNAVAILABLE("Use XZToast.shared(_:text:image:) instead.");
 
+@end
+
+@interface XZToast (XZToastConfiguration)
+/// 默认数量限制。
+@property (class) NSInteger maximumNumberOfToasts;
+/// 默认文本颜色。
+@property (class) UIColor * textColor;
+/// 默认文本字体。
+@property (class) UIFont  * font;
+/// 默认背景色。
+@property (class) UIColor * backgroundColor;
+/// 默认阴影色。
+@property (class) UIColor * shadowColor;
+
+/// 设置默认位置偏移量。
++ (void)setToastOffset:(CGFloat)offset forPosition:(XZToastPosition)position;
+
+/// 获取默认位置偏移量。
++ (CGFloat)toastOffsetForPosition:(XZToastPosition)position;
 @end
 
 NS_REFINED_FOR_SWIFT @interface XZToastTask : XZToast

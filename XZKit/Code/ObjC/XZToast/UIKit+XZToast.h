@@ -47,6 +47,9 @@ NS_ASSUME_NONNULL_BEGIN
 - (void)xz_hideToast:(nullable XZToast *)toast completion:(nullable void (^)(void))completion NS_REFINED_FOR_SWIFT NS_SWIFT_NAME(__hideToast(_:completion:));
 - (void)xz_hideToast:(nullable void (^)(void))completion NS_SWIFT_UNAVAILABLE("");
 
+/// 可用于配置 XZToast 外观样式的对象。
+///
+/// 通过此属性配置的外观样式仅应用于当前控制，若要配置全局默认样式，可通过``XZToast``的类属性或类方法。
 @property (nonatomic, strong, readonly) id<XZToastConfiguration> xz_toastConfiguration NS_SWIFT_NAME(toastConfiguration);
 
 @end

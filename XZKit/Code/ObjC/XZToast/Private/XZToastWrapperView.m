@@ -37,14 +37,12 @@
     self.layer.shadowColor = [XZToast.shadowColor resolvedColorWithTraitCollection:self.traitCollection].CGColor;
 }
 
-- (void)applyConfiguration:(id<XZToastConfiguration>)configuration {
-    UIColor *shadowColor = configuration.shadowColor;
+- (void)willShowInViewController:(UIViewController *)viewController {
+    UIColor *shadowColor = viewController.xz_toastConfiguration.shadowColor;
     if (shadowColor) {
         self.layer.shadowColor = shadowColor.CGColor;
     }
-    if ([_view respondsToSelector:@selector(applyConfiguration:)]) {
-        [_view applyConfiguration:configuration];
-    }
+    [_view willShowInViewController:viewController];
 }
 
 - (NSString *)text {

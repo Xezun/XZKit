@@ -100,16 +100,17 @@
     return CGSizeZero;
 }
 
-- (void)applyConfiguration:(id<XZToastConfiguration>)configuration {
-    UIColor *backgroundColor = configuration.backgroundColor;
+- (void)willShowInViewController:(UIViewController *)viewController {
+    id<XZToastConfiguration> const configuration = viewController.xz_toastConfiguration;
+    UIColor * const backgroundColor = configuration.backgroundColor;
     if (backgroundColor) {
         self.backgroundColor = backgroundColor;
     }
-    UIColor *textColor = configuration.textColor;
+    UIColor * const textColor = configuration.textColor;
     if (textColor) {
         _textLabel.textColor = textColor;
     }
-    UIFont *font = configuration.font;
+    UIFont * const font = configuration.font;
     if (font) {
         _textLabel.font = font;
     }
