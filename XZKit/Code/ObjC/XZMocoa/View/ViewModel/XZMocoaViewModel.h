@@ -396,6 +396,7 @@ FOUNDATION_EXPORT XZMocoaKey const XZMocoaKeyNone NS_SWIFT_NAME(XZMocoaKeyNone);
 @class UILabel, UIButton, UIImageView;
 
 FOUNDATION_EXPORT XZMocoaKey const XZMocoaKeyContentStatus;
+FOUNDATION_EXPORT XZMocoaKey const XZMocoaKeyStatus;
 FOUNDATION_EXPORT XZMocoaKey const XZMocoaKeyIsChecked;
 FOUNDATION_EXPORT XZMocoaKey const XZMocoaKeyIsEnabled;
 FOUNDATION_EXPORT XZMocoaKey const XZMocoaKeyValue;
