@@ -112,7 +112,7 @@
     if (model == nil || ![self shouldObserveModelKeysActively]) {
         return;
     }
-    [[XZMocoaKeysObserver observerForObject:model] removeReceiver:self];
+    [[XZMocoaKeysObserver observerForObject:model] detachReceiver:self];
 }
 
 @end

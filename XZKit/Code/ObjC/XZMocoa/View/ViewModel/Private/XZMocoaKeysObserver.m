@@ -19,7 +19,7 @@ static void * _context = &_context;
     /// 视图模型 => 被观察的键。
     NSMapTable<XZMocoaViewModel *, NSSet<NSString *> *> *_viewModels;
     /// 所有被观察的键 => 被观察的次数
-    NSMutableDictionary<NSString *, NSNumber *>         *_observedKeys;
+    NSMutableDictionary<NSString *, NSNumber *>         *_observingKeys;
     /// 当前是否已经标记发生通知。
     BOOL _needsNotification;
 }
@@ -29,14 +29,14 @@ static void * _context = &_context;
         return nil;
     }
     
-    static void * _proxy = NULL;
-    XZMocoaKeysObserver *proxy = objc_getAssociatedObject(model, &_proxy);
-    if (proxy) {
-        return proxy;
+    static void * _observer = NULL;
+    XZMocoaKeysObserver *observer = objc_getAssociatedObject(model, &_observer);
+    if (observer) {
+        return observer;
     }
-    proxy = [[XZMocoaKeysObserver alloc] initWithModel:model];
-    objc_setAssociatedObject(model, &_proxy, proxy, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
-    return proxy;
+    observer = [[XZMocoaKeysObserver alloc] initWithModel:model];
+    objc_setAssociatedObject(model, &_observer, observer, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
+    return observer;
 }
 
 - (instancetype)initWithModel:(NSObject *)model {
@@ -66,7 +66,7 @@ static void * _context = &_context;
         }
         
         NSSet * const newKeys = [NSSet setWithSet:keysM];
-        [self _addObservedKeys:newKeys];
+        [self addObservingKeys:newKeys];
         
         [keysM unionSet:observedKeys];
         observedKeys = [NSSet setWithSet:keysM];
@@ -76,33 +76,33 @@ static void * _context = &_context;
     } else {
         observedKeys = [NSSet setWithArray:keys];
         
-        [self _addObservedKeys:observedKeys];
+        [self addObservingKeys:observedKeys];
         [_viewModels setObject:observedKeys forKey:viewModel];
         
         [viewModel model:_model didUpdateValuesForKeys:observedKeys];
     }
 }
 
-- (void)_addObservedKeys:(NSSet<NSString *> * const)keys {
+- (void)addObservingKeys:(NSSet<NSString *> * const)keys {
     for (NSString * const key in keys) {
-        NSInteger const count = _observedKeys[key].integerValue;
+        NSInteger const count = _observingKeys[key].integerValue;
         if (count == 0) {
-            _observedKeys[key] = @(1);
+            _observingKeys[key] = @(1);
             [_model addObserver:self forKeyPath:key options:NSKeyValueObservingOptionNew context:&_context];
         } else {
-            _observedKeys[key] = @(count + 1);
+            _observingKeys[key] = @(count + 1);
         }
     }
 }
 
-- (void)removeReceiver:(XZMocoaViewModel *)viewModel {
+- (void)detachReceiver:(XZMocoaViewModel *)viewModel {
     NSSet * const keys = [_viewModels objectForKey:viewModel];
     for (NSString * const key in keys) {
-        NSInteger const count = _observedKeys[key].integerValue;
+        NSInteger const count = _observingKeys[key].integerValue;
         if (count > 1) {
-            _observedKeys[key] = @(count - 1);
+            _observingKeys[key] = @(count - 1);
         } else {
-            _observedKeys[key] = nil;
+            _observingKeys[key] = nil;
             [_model removeObserver:self forKeyPath:key context:&_context];
         }
     }
