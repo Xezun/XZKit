@@ -32,7 +32,7 @@ public struct XZDefinesLogMacro: ExpressionMacro {
         
 #if DEBUG
         return """
-            print(\"⌘ \\(#file)(\\(#line)) ⌘ \\(#function) ⌘\", \(raw: message.trimmedDescription), separator: \"\\n\")
+            XZLogv(#file, #line, #function, \(raw: message.trimmedDescription))
         """
         
 #else

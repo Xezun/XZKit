@@ -7,6 +7,8 @@
 
 #import <Foundation/Foundation.h>
 
+NS_ASSUME_NONNULL_BEGIN
+
 #if DEBUG
 // 空的 @autoreleasepool 不会被优化，只在 DEBUG 中使用。
 #define xz_macro_keyize autoreleasepool {}
@@ -181,10 +183,14 @@ _Pragma("clang diagnostic pop")
 ///   - format: 输出内容格式
 FOUNDATION_EXPORT void XZLogv(const char *file, const int line, const char *function, NSString *format, ...) NS_FORMAT_FUNCTION(4,5) NS_SWIFT_UNAVAILABLE("Use #XZLog instead");
 
+/// 供 Swift 使用 NSLog 的函数。
+FOUNDATION_EXPORT void __XZLogv__(NSString *file, NSInteger line, NSString *function, NSString *message) NS_SWIFT_NAME(XZLogv(_:_:_:_:));
+
 /// 宏函数，控制台输出，实际调用 `NSLog` 完成输出，会额外输出语句所在的文件、行数、方法名，且如果待输出内容过大，则分批次输出，避免输出内容不完整。
 ///
 /// - Parameter format: 格式化输出模版
 FOUNDATION_EXTERN void XZLog(NSString *format, ...) NS_FORMAT_FUNCTION(1,2) NS_SWIFT_UNAVAILABLE("Use #XZLog instead");
+
 
 #if XZ_FRAMEWORK
 
@@ -349,3 +355,5 @@ FOUNDATION_EXPORT void xz_objc_msgSend_ldret(void);
 #endif
 
 #endif
+
+NS_ASSUME_NONNULL_END

@@ -128,13 +128,15 @@ FOUNDATION_EXPORT XZMocoaOptionKey const XZMocoaOptionKeyName;
 /// @discussion
 /// 子类可以通过重写此方法获取 options 中的参数信息，或将控制器的初始化改为其它初始化方法。
 /// @discussion
-/// 由于在类目中无法定义指定初始化方法，所以 Swift 无法直接重写此方法，可重新 -didInitWithMocoaOptions: 方法。
+/// 由于在 Category 中定义的初始化方法，无法用`NS_DESIGNATED_INITIALIZER`标记，无法桥接到 Swift 中，所以此方法在 Swift 中无法访问。
+/// 但是 Swift 可通过重写 `-didInitWithMocoaOptions:` 方法，来接收 Mocoa 初始化参数。
 /// @param options 初始化参数
 - (instancetype)initWithMocoaOptions:(XZMocoaOptions *)options nibName:(nullable NSString *)nibName bundle:(nullable NSBundle *)bundle;
 
-/// 通过 Mocoa 创建控制的额外的初始化方法。
+/// 通过 Mocoa 创建控制器的额外初始化方法。
 ///
-/// 由于在 Category 中无法定义 `NS_DESIGNATED_INITIALIZER` 初始化方法（无法桥接到 Swift 中），所有才有此方法。
+/// 通过 Mocoa 提供的方法创建的控制器，一定会调用此方法。
+/// 且在 Swift 中，只能通过此方法接收 Mocoa 初始化参数。
 ///
 /// @param options 初始化参数
 - (instancetype)didInitWithMocoaOptions:(XZMocoaOptions *)options;
