@@ -351,18 +351,24 @@ extension XZMocoaBindViewMacro: AccessorMacro {
             throw Message("@bind(v:) 仅支持属性")
         }
         
+        let type = try XZMocoaBindMacro.type(forVariable: declaration);
+        
         for binding in declaration.bindings {
             guard let accessorBlock = binding.accessorBlock else {
                 continue
             }
             switch accessorBlock.accessors {
             case .getter:
-                throw Message("@bind: 只读计算属性不能绑定")
+                if type.optional == .wrapped {
+                    context.diagnose(.init(node: node, message: Message("@bind: 可选类型的只读计算属性，可能无法实时绑定，如果该属性不为 nil 请使用非可选或隐式可选类型，以消除此警告", severity: .warning)))
+                }
+                return []
+                
             case .accessors(let accessors):
                 for accessor in accessors {
                     switch accessor.accessorSpecifier.text {
                     case "didSet":
-                        context.diagnose(.init(node: node, message: Message("@oberve: 已自定义 didSet 无法绑定监听，请在 didSet 中自行处理", severity: .warning)))
+                        context.diagnose(.init(node: node, message: Message("@bind: 已自定义 didSet 无法绑定动态监听，若已自行处理，请使用 @bind(vmKey, vKey) 以消除此警告", severity: .warning)))
                         return []
                     default:
                         break
@@ -371,7 +377,7 @@ extension XZMocoaBindViewMacro: AccessorMacro {
             }
         }
         
-        guard try XZMocoaBindMacro.type(forVariable: declaration).optional == .wrapped else {
+        guard type.optional == .wrapped else {
             return []
         }
         
