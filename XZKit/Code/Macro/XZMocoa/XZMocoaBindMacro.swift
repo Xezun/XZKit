@@ -53,7 +53,7 @@ public struct XZMocoaBindMacro {
     
     public static func arguments(forMacro macroNode: SwiftSyntax.AttributeSyntax, forVariable typeName: String) throws -> (selector: String, key: String) {
         // 获取宏参数
-        let macroArguments = macroNode.argumentsArray;
+        let macroArguments = macroNode.arguments?.arrayRepresentation ?? []
         
         var selector = ""
         var vmkey    = ""
@@ -136,7 +136,7 @@ public struct XZMocoaBindMacro {
     }
     
     public static func arguments(forMacro macroNode: SwiftSyntax.AttributeSyntax, forFunction declaration: FunctionDeclSyntax) throws -> (selector: String, key: String) {
-        var vmKey = macroNode.firstArgument?.value
+        var vmKey = macroNode.arguments?.first?.value
         
         // 遍历方法参数，拼接方法名
         var selector = "#selector(Self.\(declaration.name.text)("

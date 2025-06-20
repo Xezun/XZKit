@@ -100,7 +100,7 @@ public macro bind() = #externalMacro(module: "XZMocoaMacros", type: "XZMocoaBind
 @attached(peer, names: arbitrary)
 public macro bind(_ key: XZMocoaKey...) = #externalMacro(module: "XZMocoaMacros", type: "XZMocoaBindMacro")
 
-/// 单向同步：用于 .v 专用绑定标记，如果属性为可选类型，将生成 `didSet` 自动绑定。
+/// 单向同步：专用于 .v 的绑定标记；如果属性为可选类型，将生成 `didSet` 以实现动态绑定。
 /// ```swift
 /// @mocoa(.v)
 /// class View: UIView, XZMocoaView {

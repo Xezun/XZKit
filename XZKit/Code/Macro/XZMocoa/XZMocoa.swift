@@ -71,32 +71,41 @@ func Message(_ error: Error, severity: SwiftDiagnostics.DiagnosticSeverity) -> a
 }
 
 
-
-extension SwiftSyntax.AttributeSyntax {
+extension SwiftSyntax.AttributeSyntax.Arguments {
     
-    var argumentsArray: [(label: String?, value: String, representedLiteralValue: String?)] {
-        
+    /// 获取宏参数个数，列表形式的参数个数。
+    var count: Int {
+        switch self {
+        case .argumentList(let arguments):
+            return arguments.count
+        default:
+            break
+        }
+        return 0
+    }
+    
+    /// 宏参数列表的数组形式。
+    var arrayRepresentation: [(label: String?, value: String, representedLiteralValue: String?)] {
         var macroArguments = [(String?, String, String?)]()
-        if let arguments = self.arguments {
-            switch arguments {
-            case .argumentList(let arguments):
-                for argument in arguments {
-                    let label = argument.label?.trimmedDescription;
-                    let value = argument.expression.trimmedDescription
-                    let key = argument.expression.as(StringLiteralExprSyntax.self)?.representedLiteralValue
-                    macroArguments.append((label, value, key))
-                }
-            default:
-                break
+        
+        switch self {
+        case .argumentList(let arguments):
+            for argument in arguments {
+                let label = argument.label?.trimmedDescription;
+                let value = argument.expression.trimmedDescription
+                let key = argument.expression.as(StringLiteralExprSyntax.self)?.representedLiteralValue
+                macroArguments.append((label, value, key))
             }
+        default:
+            break
         }
         
         return macroArguments
     }
     
-    var firstArgument: (label: String?, value: String)? {
-        guard let arguments = self.arguments else { return nil }
-        switch arguments {
+    /// 第一个参数
+    var first: (label: String?, value: String)? {
+        switch self {
         case .argumentList(let arguments):
             guard let first = arguments.first else { return nil }
             return (first.label?.trimmedDescription, first.expression.trimmedDescription)
@@ -109,6 +118,10 @@ extension SwiftSyntax.AttributeSyntax {
 
 extension SwiftSyntax.AttributeListSyntax {
     
+    /// 获取当前声明的所有属性中，名称为 name 的属性。
+    /// 比如获取属性所有 `@bind` 宏标记。
+    /// - Parameter name: 宏名称
+    /// - Returns: 宏
     func attributes(forName name: String) -> [AttributeSyntax] {
         var results = [AttributeSyntax]()
         for attribute in self {
