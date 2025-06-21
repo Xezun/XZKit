@@ -102,6 +102,14 @@
     tableView.dataSource = self;
 }
 
+- (void)reloadData {
+    [self.viewModel reloadData];
+}
+
+- (void)performBatchUpdates:(void (^)(void))updates completion:(void (^)(BOOL))completion {
+    [self.viewModel performBatchUpdates:updates completion:completion];
+}
+
 @end
 
 
