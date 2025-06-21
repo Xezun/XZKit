@@ -57,7 +57,7 @@
     @throw [NSException exceptionWithName:NSGenericException reason:@"必须使用子类，并重写此方法" userInfo:nil];
 }
 
-- (void)performBatchUpdates:(void (^)(void))updates completion:(void (^)(BOOL))completion {
+- (void)performBatchUpdates:(void (NS_NOESCAPE ^)(void))updates completion:(void (^)(BOOL))completion {
     @throw [NSException exceptionWithName:NSGenericException reason:@"必须使用子类，并重写此方法" userInfo:nil];
 }
 

@@ -11,17 +11,17 @@ import SwiftSyntax
 import SwiftDiagnostics
 
 @main
-struct XZMocoaMacros: CompilerPlugin {
+struct XZDefinesMacros: CompilerPlugin {
     
     var providingMacros: [Macro.Type] = [
-        XZDefinesLogMacro.self
+        XZDefinesLOGMacro.self
     ]
     
 }
 
 
 /// 宏 `XZLog(message)` 的实现。
-public struct XZDefinesLogMacro: ExpressionMacro {
+public struct XZDefinesLOGMacro: ExpressionMacro {
     
     public static func expansion(of node: some SwiftSyntax.FreestandingMacroExpansionSyntax, in context: some SwiftSyntaxMacros.MacroExpansionContext) throws -> SwiftSyntax.ExprSyntax {
         guard node.arguments.count == 1 else {
@@ -34,11 +34,9 @@ public struct XZDefinesLogMacro: ExpressionMacro {
         return """
             XZLogv(#file, #line, #function, \(raw: message.trimmedDescription))
         """
-        
 #else
         return "while false { }"
 #endif
-        
     }
     
 }

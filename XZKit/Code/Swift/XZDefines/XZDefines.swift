@@ -10,7 +10,7 @@ import Foundation
 #if SWIFT_PACKAGE
 @_exported import XZDefinesObjC
 @freestanding(expression)
-public macro XZLog(_ message: String) = #externalMacro(module: "XZDefinesMacros", type: "XZDefinesLogMacro")
+public macro LOG(_ message: String) = #externalMacro(module: "XZDefinesMacros", type: "XZDefinesLOGMacro")
 #else
 public func XZLog(_ message: String, file: String = #file, line: Int = #line, function: String = #function) {
     #if DEBUG

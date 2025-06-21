@@ -97,7 +97,7 @@
     [self.viewModel reloadData];
 }
 
-- (void)performBatchUpdates:(void (^)(void))updates completion:(void (^)(BOOL))completion {
+- (void)performBatchUpdates:(void (NS_NOESCAPE ^)(void))updates completion:(void (^)(BOOL))completion {
     [self.viewModel performBatchUpdates:updates completion:completion];
 }
 

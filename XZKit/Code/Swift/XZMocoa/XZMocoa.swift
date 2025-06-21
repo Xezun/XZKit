@@ -7,7 +7,6 @@
 
 #if SWIFT_PACKAGE
 @_exported import XZMocoaObjC
-
 extension XZMocoaKind: @retroactive ExpressibleByStringLiteral {
     public typealias StringLiteralType = String
     public init(stringLiteral value: String) {
@@ -38,7 +37,6 @@ extension XZMocoaOptions.Key: @retroactive ExpressibleByStringLiteral {
         self.init(rawValue: value)
     }
 }
-
 #else
 extension XZMocoaKind: ExpressibleByStringLiteral {
     public typealias StringLiteralType = String
