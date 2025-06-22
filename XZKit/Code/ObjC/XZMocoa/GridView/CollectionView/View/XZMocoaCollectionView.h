@@ -16,6 +16,7 @@ NS_ASSUME_NONNULL_BEGIN
 @end
 
 @interface XZMocoaCollectionView : XZMocoaGridView <XZMocoaCollectionView>
+@property (nonatomic, strong) IBOutlet UICollectionView *contentView;
 - (instancetype)initWithCoder:(NSCoder *)coder NS_DESIGNATED_INITIALIZER;
 - (instancetype)initWithCollectionViewClass:(Class)collectionViewClass layout:(UICollectionViewLayout *)layout NS_DESIGNATED_INITIALIZER;
 - (instancetype)initWithLayout:(UICollectionViewLayout *)layout;

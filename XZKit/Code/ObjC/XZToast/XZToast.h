@@ -125,13 +125,22 @@ NS_REFINED_FOR_SWIFT @interface XZToastTask : XZToast
 @end
 
 
+/// 配置 XZToast 内置样式的对象。
 @protocol XZToastConfiguration <NSObject>
 
 /// 可同时展示的 toast 的数量。
 @property (nonatomic) NSInteger maximumNumberOfToasts;
+
+/// 文本颜色。
 @property (nonatomic, nullable) UIColor * textColor;
+
+/// 文本字体。
 @property (nonatomic, nullable) UIFont  * font;
+
+/// 背景色。
 @property (nonatomic, nullable) UIColor * backgroundColor;
+
+/// 投影色。
 @property (nonatomic, nullable) UIColor * shadowColor;
 
 /// 设置 toast 相对默认位置的偏移值。
@@ -145,16 +154,22 @@ NS_REFINED_FOR_SWIFT @interface XZToastTask : XZToast
 ///   - offset: 偏移值，正数向下，负数向上
 ///   - position: toast 展示位置
 - (void)setOffset:(CGFloat)offset forPosition:(XZToastPosition)position;
+
 /// 获取指定位置 toast 的偏移值。
 /// - Parameter position: toast 展示位置
 - (CGFloat)offsetForPosition:(XZToastPosition)position;
 
-/// 刷新 toast 的布局。
+/// 标记 XZToast 需要调整布局。
 ///
 /// 如果在展示 toast 的期间，控制器的大小发生了改变，需要调用此方法来刷新布局。
 ///
 /// 比如在容器视图为滚动视图时，可通过调用此方法刷新位置，让 toast 跟随滚动。
 - (void)setNeedsLayoutToasts;
+
+
+/// 如果当前已经标记了需要更新布局，那么调用此方法会立即更新布局。
+///
+/// > 默认情况下，每个 runloop 周期，最多只会执行一次布局刷新。
 - (void)layoutToastsIfNeeded;
 
 @end

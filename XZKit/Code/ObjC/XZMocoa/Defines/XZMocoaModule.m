@@ -367,11 +367,11 @@ FOUNDATION_STATIC_INLINE NSString *XZMocoaPathCreate(XZMocoaKind kind, XZMocoaNa
 }
 
 - (XZMocoaModule *)sectionForName:(XZMocoaName)name {
-    return [self submoduleForKind:XZMocoaKindDefault forName:name];
+    return [self submoduleForKind:XZMocoaKindSection forName:name];
 }
 
 - (void)setSection:(XZMocoaModule *)section forName:(XZMocoaName)name {
-    [self setSubmodule:section forKind:XZMocoaKindDefault forName:name];
+    [self setSubmodule:section forKind:XZMocoaKindSection forName:name];
 }
 
 - (XZMocoaModule *)header {
@@ -391,19 +391,19 @@ FOUNDATION_STATIC_INLINE NSString *XZMocoaPathCreate(XZMocoaKind kind, XZMocoaNa
 }
 
 - (XZMocoaModule *)cell {
-    return [self submoduleForKind:XZMocoaNameDefault forName:XZMocoaNameDefault];
+    return [self submoduleForKind:XZMocoaKindCell forName:XZMocoaNameDefault];
 }
 
 - (void)setCell:(XZMocoaModule *)cell {
-    [self setSubmodule:cell forKind:XZMocoaKindDefault forName:XZMocoaNameDefault];
+    [self setSubmodule:cell forKind:XZMocoaKindCell forName:XZMocoaNameDefault];
 }
 
 - (XZMocoaModule *)cellForName:(XZMocoaName)name {
-    return [self submoduleForKind:XZMocoaNameDefault forName:name];
+    return [self submoduleForKind:XZMocoaKindCell forName:name];
 }
 
 - (void)setCell:(XZMocoaModule *)cell forName:(XZMocoaName)name {
-    [self setSubmodule:cell forKind:XZMocoaKindDefault forName:name];
+    [self setSubmodule:cell forKind:XZMocoaKindCell forName:name];
 }
 
 - (XZMocoaModule *)footer {

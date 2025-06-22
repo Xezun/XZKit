@@ -30,10 +30,13 @@ NS_ASSUME_NONNULL_BEGIN
 - (nullable id)modelForSupplementaryElementOfKind:(XZMocoaKind)kind atIndex:(NSInteger)index;
 
 /// Header 数据。
-/// @discussion 这是一个便利属性，重写`modelForSupplementaryElementOfKind:atIndex:`方法，可能使此属性失效。
+///
+/// 当获取数据源的 header 数据时，方法``-modelForSupplementaryElementOfKind:atIndex:``会直接返回此属性。
 @property (nonatomic, readonly, nullable) id headerModel;
+
 /// Footer 数据。
-/// @discussion 这是一个便利属性，重写`modelForSupplementaryElementOfKind:atIndex:`方法，可能使此属性失效。
+///
+/// 当获取数据源的 footer 数据时，方法``-modelForSupplementaryElementOfKind:atIndex:``会直接返回此属性。
 @property (nonatomic, readonly, nullable) id footerModel;
 
 @end
