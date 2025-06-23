@@ -564,14 +564,14 @@
     if (_titleColor != nil) {
         return _titleColor;
     }
-    return UIColor.blackColor;
+    return UIColor.labelColor;
 }
 
 - (UIColor *)selectedTitleColor {
     if (_selectedTitleColor != nil) {
         return _selectedTitleColor;
     }
-    return UIColor.blueColor;
+    return UIColor.systemBlueColor;
 }
 
 #pragma mark - Private Methods
@@ -583,11 +583,11 @@
     
     _titleFont = [UIFont systemFontOfSize:17.0];
     _selectedTitleFont = [UIFont boldSystemFontOfSize:17.0];
-    _titleColor = UIColor.blackColor;
+    _titleColor = UIColor.labelColor;
     if (@available(iOS 15.0, *)) {
         _selectedTitleColor = UIColor.tintColor;
     } else {
-        _selectedTitleColor = UIColor.blueColor;
+        _selectedTitleColor = UIColor.systemBlueColor;
     }
     
     _flowLayout = [[XZSegmentedControlFlowLayout alloc] initWithSegmentedControl:self];
