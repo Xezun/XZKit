@@ -78,7 +78,7 @@ UIKIT_STATIC_INLINE BOOL XZScrollDirection(NSInteger from, NSInteger to, NSInteg
 - (void)didScrollToReusingPage:(CGRect const)bounds maxPage:(NSInteger const)maxPage direction:(BOOL const)direction;
 
 /// 不处理、发送事件。
-- (void)setCurrentPage:(NSInteger)newPage animated:(BOOL)animated;
+- (void)setCurrentPage:(NSInteger)newPage animated:(BOOL)animated completion:(void (^ __nullable)(BOOL finished))completion;
 
 @end
 

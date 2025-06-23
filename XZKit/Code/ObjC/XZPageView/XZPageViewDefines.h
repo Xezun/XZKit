@@ -9,7 +9,8 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-@class XZPageView;
+@class XZPageView, UITableView;
+@protocol UITableViewDelegate;
 
 /// 翻页效果动画时长。
 FOUNDATION_EXPORT NSTimeInterval const XZPageViewAnimationDuration;
@@ -57,10 +58,14 @@ NS_SWIFT_UI_ACTOR @protocol XZPageViewDelegate <UIScrollViewDelegate>
 /// @param index 被展示元素的索引，不会是 NSNotFound
 - (void)pageView:(XZPageView *)pageView didShowPageAtIndex:(NSInteger)index NS_SWIFT_NAME(pageView(_:didShowPageAt:));
 
-/// 当用户翻动页面时，此方法会被调用。
+/// 在用户翻动页面的过程中，通知转场进度。
+///
+/// 命名 inTransition 等同 inProgress 表示在翻页中。
+///
 /// @param pageView 调用此方法的 XZPageView 对象。
-/// @param transition 翻动的进度，值范围为 (0, 1.0) 之间，不包括边界值。
-- (void)pageView:(XZPageView *)pageView didTurnPageInTransition:(CGFloat)transition NS_SWIFT_NAME(pageView(_:didTurnPageIn:));
+/// @param pendingView 翻转的目的页面的视图
+/// @param transition 翻动的进度，值范围为 (-1.0, 0) 和 (0, 1.0) 之间，不包括边界值。
+- (void)pageView:(XZPageView *)pageView didTurnPageToView:(UIView *)pendingView inTransition:(CGFloat)transition NS_SWIFT_NAME(pageView(_:didTurnPageTo:in:));
 
 @end
 

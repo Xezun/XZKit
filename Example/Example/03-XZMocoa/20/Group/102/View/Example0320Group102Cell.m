@@ -53,7 +53,7 @@
 }
 
 - (void)pageControlValueChanged:(XZPageControl *)pageControl {
-    [self.pageView setCurrentPage:pageControl.currentPage animated:YES];
+    [self.pageView setCurrentPage:pageControl.currentPage animated:YES completion:nil];
     Example0320Group102CellViewModel *viewModel = self.viewModel;
     viewModel.currentIndex = pageControl.currentPage;
 }

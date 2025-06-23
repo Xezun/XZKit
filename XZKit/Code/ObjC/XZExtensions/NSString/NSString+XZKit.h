@@ -54,6 +54,11 @@ NS_ASSUME_NONNULL_BEGIN
 /// @discussion 本方法一般用于将字符串拼接到 URL 参数中。
 @property (nonatomic, readonly) NSString *xz_stringByAddingURIComponentEncoding NS_SWIFT_NAME(addingURIComponentEncoding);
 
+@property (nonatomic, readonly) NSString *xz_stringByRemovingURIEncoding NS_SWIFT_NAME(removingURIEncoding);
+@property (nonatomic, readonly) NSString *xz_stringByRemovingURIComponentEncoding NS_SWIFT_NAME(removingURIComponentEncoding);
+
+@property (nonatomic, readonly) NSString *xz_stringByTransformingMandarinToLatin NS_SWIFT_NAME(transformingMandarinToLatin);
+
 @end
 
 /// 将`NSNumber`对象或`纯数字字符串`对象转换为十进制整数，否则返回默认值。

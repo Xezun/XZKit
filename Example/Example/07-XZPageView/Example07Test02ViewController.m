@@ -41,7 +41,7 @@
 }
 
 - (void)segmentedControlValueChanged:(XZSegmentedControl *)sender {
-    [self.pageView setCurrentPage:sender.selectedIndex animated:YES];
+    [self.pageView setCurrentPage:sender.selectedIndex animated:YES completion:nil];
 }
 
 - (IBAction)orientationSwitchAction:(UISwitch *)sender {

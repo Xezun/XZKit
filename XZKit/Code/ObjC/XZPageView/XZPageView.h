@@ -49,6 +49,12 @@ NS_ASSUME_NONNULL_BEGIN
 /// @attention 设置此属性不会触发代理方法。
 @property (nonatomic) NSInteger currentPage;
 
+/// 当前正展示的视图。
+@property (nonatomic, readonly, nullable) UIView *currentView;
+
+/// 可能将展示的视图。
+@property (nonatomic, readonly, nullable) UIView *pendingView;
+
 /// 设置当前展示视图。
 /// @discussion 调用此方法改变当前页，会重置自动翻页计时。
 /// @discussion 调用此方法不会触发代理事件。
@@ -61,7 +67,8 @@ NS_ASSUME_NONNULL_BEGIN
 /// @endcode
 /// @param currentPage 待展示的视图的索引
 /// @param animated 是否动画
-- (void)setCurrentPage:(NSInteger)currentPage animated:(BOOL)animated;
+/// @param completion 回调函数，一定会调用，且是异步的
+- (void)setCurrentPage:(NSInteger)currentPage animated:(BOOL)animated completion:(void (^ __nullable)(BOOL finished))completion;
 
 /// 事件代理。
 @property (nonatomic, weak) id<XZPageViewDelegate> delegate;

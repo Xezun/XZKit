@@ -156,15 +156,23 @@
 }
 
 - (void)setCurrentPage:(NSInteger)currentPage {
-    [_context setCurrentPage:currentPage animated:NO];
+    [_context setCurrentPage:currentPage animated:NO completion:nil];
     // 自动翻页重新计时
     [_context resumeAutoPagingTimer];
 }
 
-- (void)setCurrentPage:(NSInteger)currentPage animated:(BOOL)animated {
-    [_context setCurrentPage:currentPage animated:animated];
+- (void)setCurrentPage:(NSInteger)currentPage animated:(BOOL)animated completion:(void (^ __nullable)(BOOL finished))completion {
+    [_context setCurrentPage:currentPage animated:animated completion:completion];
     // 自动翻页重新计时
     [_context resumeAutoPagingTimer];
+}
+
+- (UIView *)currentView {
+    return _currentView;
+}
+
+- (UIView *)pendingView {
+    return _reusingView;
 }
 
 - (void)setDelegate:(id<XZPageViewDelegate>)delegate {

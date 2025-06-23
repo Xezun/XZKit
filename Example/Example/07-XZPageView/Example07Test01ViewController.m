@@ -78,7 +78,7 @@
 }
 
 - (void)pageControlDidChangeValue:(XZPageControl *)pageControl {
-    [self.pageView setCurrentPage:pageControl.currentPage animated:YES];
+    [self.pageView setCurrentPage:pageControl.currentPage animated:YES completion:nil];
 }
 
 - (IBAction)loopableSwitchAction:(UISwitch *)sender {

@@ -63,7 +63,7 @@
 
 - (void)reloadCurrentPageView:(CGRect const)bounds {
     NSInteger const currentPage = _pageView->_currentPage;
-    UIView *  const oldView     = _pageView->_currentPageView;
+    UIView *  const oldView     = _pageView->_currentView;
     
     // 进入备用状态，从 window 移除；当再次重用时，需要重新添加到 window 上
     [oldView removeFromSuperview];
@@ -71,33 +71,33 @@
     // 没有数据时，如果有当前页，则进入备用状态。
     if (currentPage == NSNotFound) {
         if (oldView != nil) {
-            _pageView->_currentPageView = [_pageView.dataSource pageView:_pageView prepareForReusingView:oldView];
+            _pageView->_currentView = [_pageView.dataSource pageView:_pageView prepareForReusingView:oldView];
         }
         return;
     }
     
     UIView * const newView = [_pageView.dataSource pageView:_pageView viewForPageAtIndex:currentPage reusingView:oldView];
     [_pageView addSubview:newView];
-    _pageView->_currentPageView = newView;
+    _pageView->_currentView = newView;
 }
 
 - (void)reloadReusingPageView:(CGRect const)bounds {
     NSInteger const reusingPage = _pageView->_reusingPage;
-    UIView *  const oldView     = _pageView->_reusingPageView;
+    UIView *  const oldView     = _pageView->_reusingView;
     
     [oldView removeFromSuperview];
     
     // 没有数据，备用视图进入备用状态。
     if (reusingPage == NSNotFound) {
         if (oldView != nil) {
-            _pageView->_reusingPageView = [_pageView.dataSource pageView:_pageView prepareForReusingView:oldView];
+            _pageView->_reusingView = [_pageView.dataSource pageView:_pageView prepareForReusingView:oldView];
         }
         return;
     }
     
     UIView * const newView = [_pageView.dataSource pageView:_pageView viewForPageAtIndex:reusingPage reusingView:oldView];
     [_pageView addSubview:newView];
-    _pageView->_reusingPageView = newView;
+    _pageView->_reusingView = newView;
 }
 
 - (void)scheduleAutoPagingTimerIfNeeded {
@@ -118,7 +118,7 @@
 
 - (void)autoPagingTimerAction:(NSTimer *)timer {
     NSInteger const newPage = XZLoopPage(_pageView->_currentPage, YES, _pageView->_numberOfPages - 1, YES);
-    [self setCurrentPage:newPage animated:YES];
+    [self setCurrentPage:newPage animated:YES completion:nil];
 
     // 自动翻页，发送事件
     XZCallBlock(_pageView->_didShowPage, _pageView, _pageView->_currentPage);
@@ -310,16 +310,16 @@
     _pageView->_didShowPage = ^(XZPageView * const self, NSInteger currentPage) {
         id const delegate = self.delegate;
         if (delegate == nil || delegate == self) return;
-        didShowPage(delegate, @selector(pageView:didShowPageAtIndex:), self, currentPage);
+        didShowPage(delegate, selector, self, currentPage);
     };
 }
 
 /// - Attention: 调用次方法前已判断 aClass 遵循 XZPageViewDelegate 协议。
 - (void)notifyDidTurnPage:(nonnull Class)aClass {
-    typedef void (*MethodType)(id<XZPageViewDelegate>, SEL, XZPageView *, CGFloat);
+    typedef void (*MethodType)(id<XZPageViewDelegate>, SEL, XZPageView *, UIView *, CGFloat);
     _pageView->_didTurnPage = nil;
     
-    SEL const selector = @selector(pageView:didTurnPageInTransition:);
+    SEL const selector = @selector(pageView:didTurnPageToView:inTransition:);
     if (![aClass instancesRespondToSelector:selector]) {
         return;
     }
@@ -327,33 +327,33 @@
     MethodType const didTurnPage = (MethodType)method_getImplementation(class_getInstanceMethod(aClass, selector));
     if (didTurnPage == NULL) return;
     
-    _pageView->_didTurnPage = ^(XZPageView * const self, CGFloat x, CGFloat width, NSInteger fromPage, NSInteger toPage) {
+    _pageView->_didTurnPage = ^(XZPageView * const self, UIView *pendingView, CGFloat x, CGFloat width) {
         id const delegate = self.delegate;
         if (delegate == nil || delegate == self) return;
         CGFloat const transition = x / width;
         // 一次翻多页的情况，在当前设计模式下不存在。
         // 如果有，可以根据 transition 的正负判断翻页方向，再根据 fromPage 和 toPage 以及它们之差，计算出翻页进度。
-        didTurnPage(delegate, @selector(pageView:didTurnPageInTransition:), self, transition);
+        didTurnPage(delegate, selector, self, pendingView, transition);
     };
 }
 
 // 子类重写的方法
 
 - (void)layoutCurrentPageView:(CGRect const)bounds {
-    _pageView->_currentPageView.frame = CGRectMake(0, 0, bounds.size.width, bounds.size.height);
+    _pageView->_currentView.frame = CGRectMake(0, 0, bounds.size.width, bounds.size.height);
 }
 
 - (void)layoutReusingPageView:(CGRect const)bounds {
     switch (_pageView.effectiveUserInterfaceLayoutDirection) {
         case UIUserInterfaceLayoutDirectionRightToLeft: {
             CGFloat const x = (_pageView->_reusingPageDirection ? -bounds.size.width : +bounds.size.width);
-            _pageView->_reusingPageView.frame = CGRectMake(x, 0, bounds.size.width, bounds.size.height);
+            _pageView->_reusingView.frame = CGRectMake(x, 0, bounds.size.width, bounds.size.height);
             break;
         }
         case UIUserInterfaceLayoutDirectionLeftToRight:
         default: {
             CGFloat const x = (_pageView->_reusingPageDirection ? +bounds.size.width : -bounds.size.width);
-            _pageView->_reusingPageView.frame = CGRectMake(x, 0, bounds.size.width, bounds.size.height);
+            _pageView->_reusingView.frame = CGRectMake(x, 0, bounds.size.width, bounds.size.height);
             break;
         }
     }
@@ -497,7 +497,7 @@
             _pageView.contentOffset = CGPointZero;
         } else {
             // 发送转场进度
-            XZCallBlock(_pageView->_didTurnPage, _pageView, offsetX, PageWidth, _pageView->_currentPage, _pageView->_reusingPage);
+            XZCallBlock(_pageView->_didTurnPage, _pageView, _pageView->_reusingView, offsetX, PageWidth);
             // 滚动停止，滚动未过半，不执行翻页，退回原点，否则执行翻页
             CGFloat const halfPageWidth = PageWidth * 0.5;
             if (offsetX >= +halfPageWidth) {
@@ -514,13 +514,13 @@
         }
     } else {
         // 发送转场进度
-        XZCallBlock(_pageView->_didTurnPage, _pageView, offsetX, PageWidth, _pageView->_currentPage, _pageView->_reusingPage);
+        XZCallBlock(_pageView->_didTurnPage, _pageView, _pageView->_reusingView, offsetX, PageWidth);
     }
 }
 
 - (void)didScrollToReusingPage:(CGRect const)bounds maxPage:(NSInteger const)maxPage direction:(BOOL const)direction {
     XZExchangeValue(_pageView->_currentPage, _pageView->_reusingPage);
-    XZExchangeValue(_pageView->_currentPageView, _pageView->_reusingPageView);
+    XZExchangeValue(_pageView->_currentView, _pageView->_reusingView);
     
     [self layoutCurrentPageView:bounds];
     _pageView->_reusingPageDirection = !direction;
@@ -531,8 +531,9 @@
 }
 
 /// 本方法不发送事件。
-- (void)setCurrentPage:(NSInteger const)newPage animated:(BOOL)animated {
+- (void)setCurrentPage:(NSInteger const)newPage animated:(BOOL)animated completion:(void (^ __nullable)(BOOL finished))completion {
     if (_pageView->_currentPage == newPage) {
+        dispatch_main_async(completion, NO);
         return;
     }
     NSParameterAssert(newPage >= 0 && newPage < _pageView->_numberOfPages);
@@ -559,7 +560,7 @@
         
         // 交换值并布局
         XZExchangeValue(_pageView->_currentPage, _pageView->_reusingPage);
-        XZExchangeValue(_pageView->_currentPageView, _pageView->_reusingPageView);
+        XZExchangeValue(_pageView->_currentView, _pageView->_reusingView);
         [self layoutCurrentPageView:bounds];
         [self layoutReusingPageView:bounds];
         
@@ -569,7 +570,7 @@
         // 如果需要展示动画的话，先恢复显示内容
         if (animated) {
             // offset.x 实际上就是 currentPage 的偏移，由于 currentPage 已经交换为 reusingPage 所以可以直接通过偏移计算目标位置
-            CGFloat const x = _pageView->_reusingPageView.frame.origin.x + bounds.origin.x;
+            CGFloat const x = _pageView->_reusingView.frame.origin.x + bounds.origin.x;
             [_pageView setBounds:CGRectMake(x, bounds.origin.y, bounds.size.width, bounds.size.height)];
         }
     }];
@@ -579,9 +580,10 @@
         // 修改 bounds 不会触发 -scrollViewDidScroll: 方法，但是会触发 -layoutSubviews 方法。
         [UIView animateWithDuration:XZPageViewAnimationDuration animations:^{
             [self->_pageView setBounds:CGRectMake(0, 0, bounds.size.width, bounds.size.height)];
-        }];
+        } completion:completion];
     } else {
         [_pageView setBounds:CGRectMake(0, 0, bounds.size.width, bounds.size.height)];
+        dispatch_main_async(completion, YES);
     }
 }
 
@@ -650,12 +652,12 @@
 }
 
 - (void)layoutCurrentPageView:(CGRect const)bounds {
-    _pageView->_currentPageView.frame = CGRectMake(0, 0, bounds.size.width, bounds.size.height);
+    _pageView->_currentView.frame = CGRectMake(0, 0, bounds.size.width, bounds.size.height);
 }
 
 - (void)layoutReusingPageView:(CGRect const)bounds {
     CGFloat const y = (_pageView->_reusingPageDirection ? +bounds.size.height : -bounds.size.height);
-    _pageView->_reusingPageView.frame = CGRectMake(0, y, bounds.size.width, bounds.size.height);
+    _pageView->_reusingView.frame = CGRectMake(0, y, bounds.size.width, bounds.size.height);
 }
 
 /// 调整 contentInset 以适配 currentPage 和 isLooped 状态。
@@ -690,7 +692,7 @@
 }
 
 /// 发生滚动
-- (void)didScroll:(BOOL)stopped {
+- (void)didScroll:(BOOL)stopped animated:(BOOL)animated {
     CGRect  const bounds  = _pageView.bounds;
     CGSize  const size    = bounds.size;
     CGFloat const offsetY = bounds.origin.y;
@@ -779,7 +781,7 @@
             _pageView.contentOffset = CGPointZero;
         } else {
             // 发送转场进度
-            XZCallBlock(_pageView->_didTurnPage, _pageView, offsetY, PageHeight, _pageView->_currentPage, _pageView->_reusingPage);
+            XZCallBlock(_pageView->_didTurnPage, _pageView, _pageView->_reusingView, offsetY, PageHeight);
             // 滚动停止，滚动未过半，不执行翻页，退回原点，否则执行翻页
             CGFloat const halfPageWidth = PageHeight * 0.5;
             if (offsetY >= +halfPageWidth) {
@@ -796,13 +798,13 @@
         }
     } else {
         // 发送转场进度
-        XZCallBlock(_pageView->_didTurnPage, _pageView, offsetY, PageHeight, _pageView->_currentPage, _pageView->_reusingPage);
+        XZCallBlock(_pageView->_didTurnPage, _pageView, _pageView->_reusingView, offsetY, PageHeight);
     }
 }
 
 - (void)didScrollToReusingPage:(CGRect const)bounds maxPage:(NSInteger const)maxPage direction:(BOOL const)direction {
     XZExchangeValue(_pageView->_currentPage, _pageView->_reusingPage);
-    XZExchangeValue(_pageView->_currentPageView, _pageView->_reusingPageView);
+    XZExchangeValue(_pageView->_currentView, _pageView->_reusingView);
     
     [self layoutCurrentPageView:bounds];
     _pageView->_reusingPageDirection = !direction;
@@ -841,7 +843,7 @@
         
         // 交换值并布局
         XZExchangeValue(_pageView->_currentPage, _pageView->_reusingPage);
-        XZExchangeValue(_pageView->_currentPageView, _pageView->_reusingPageView);
+        XZExchangeValue(_pageView->_currentView, _pageView->_reusingView);
         [self layoutCurrentPageView:bounds];
         [self layoutReusingPageView:bounds];
         
@@ -851,7 +853,7 @@
         // 如果需要展示动画的话，先恢复显示内容
         if (animated) {
             // offset.x 实际上就是 currentPage 的偏移，由于 currentPage 已经交换为 reusingPage 所以可以直接通过偏移计算目标位置
-            CGFloat const y = _pageView->_reusingPageView.frame.origin.y + bounds.origin.y;
+            CGFloat const y = _pageView->_reusingView.frame.origin.y + bounds.origin.y;
             [_pageView setBounds:CGRectMake(bounds.origin.x, y, bounds.size.width, bounds.size.height)];
         }
     }];

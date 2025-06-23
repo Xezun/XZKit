@@ -90,6 +90,23 @@
     return [self stringByAddingPercentEncodingWithAllowedCharacters:NSCharacterSet.xz_URIComponentAllowedCharacterSet];
 }
 
+- (NSString *)xz_stringByRemovingURIEncoding {
+    return [self stringByRemovingPercentEncoding];
+}
+
+- (NSString *)xz_stringByRemovingURIComponentEncoding {
+    return [self stringByRemovingPercentEncoding];
+}
+
+- (NSString *)xz_stringByTransformingMandarinToLatin {
+    CFMutableStringRef mString = CFStringCreateMutableCopy(kCFAllocatorDefault, self.length, (__bridge CFStringRef)self);
+    
+    CFStringTransform(mString, nil, kCFStringTransformMandarinLatin, false);
+    CFStringTransform(mString, nil, kCFStringTransformStripDiacritics, false);
+    
+    return (__bridge_transfer NSString *)mString;
+}
+
 @end
 
 

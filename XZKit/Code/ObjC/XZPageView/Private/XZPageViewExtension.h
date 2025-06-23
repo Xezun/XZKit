@@ -15,9 +15,9 @@
     
     BOOL                _isLooped;
     NSInteger           _numberOfPages;
-    UIView  * _Nullable _currentPageView;
+    UIView  * _Nullable _currentView;
     NSInteger           _currentPage;
-    UIView  * _Nullable _reusingPageView;
+    UIView  * _Nullable _reusingView;
     NSInteger           _reusingPage;
     BOOL                _reusingPageDirection; ///< YES 表示加载在正向滚动的方向上，NO 表示加载在反向滚动的方向上。
     
@@ -31,7 +31,7 @@
     NSTimer * _Nullable __unsafe_unretained _autoPagingTimer;
     
     void (^ _Nullable _didShowPage)(XZPageView * _Nonnull pageView, NSInteger currentPage);
-    void (^ _Nullable _didTurnPage)(XZPageView * _Nonnull pageView, CGFloat x, CGFloat width, NSInteger from, NSInteger to);
+    void (^ _Nullable _didTurnPage)(XZPageView * _Nonnull pageView, UIView * _Nonnull pendingView, CGFloat x, CGFloat width);
 }
 
 @end
