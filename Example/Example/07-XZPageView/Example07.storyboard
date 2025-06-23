@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="23504" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="teg-e1-Yth">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="23727" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="teg-e1-Yth">
     <device id="retina6_12" orientation="portrait" appearance="light"/>
     <dependencies>
         <deployment identifier="iOS"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="23506"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="23721"/>
         <capability name="Safe area layout guides" minToolsVersion="9.0"/>
         <capability name="System colors in document resources" minToolsVersion="11.0"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
@@ -91,7 +91,7 @@
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="4uX-0E-7FN" customClass="XZSegmentedControl">
-                                <rect key="frame" x="0.0" y="103" width="393" height="44"/>
+                                <rect key="frame" x="0.0" y="162" width="393" height="44"/>
                                 <color key="backgroundColor" systemColor="systemTealColor"/>
                                 <constraints>
                                     <constraint firstAttribute="height" constant="44" id="HSL-5O-hwF"/>
@@ -102,20 +102,23 @@
                                     </userDefinedRuntimeAttribute>
                                 </userDefinedRuntimeAttributes>
                             </view>
-                            <scrollView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="5hr-07-Nht" customClass="XZPageView">
-                                <rect key="frame" x="0.0" y="147" width="393" height="705"/>
-                            </scrollView>
+                            <containerView opaque="NO" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="aBO-OB-bsr">
+                                <rect key="frame" x="0.0" y="206" width="393" height="646"/>
+                                <connections>
+                                    <segue destination="wM1-tP-mLk" kind="embed" identifier="pageViewController" id="t7l-eq-59K"/>
+                                </connections>
+                            </containerView>
                         </subviews>
                         <viewLayoutGuide key="safeArea" id="euF-Lu-gjC"/>
                         <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                         <constraints>
                             <constraint firstItem="4uX-0E-7FN" firstAttribute="top" secondItem="euF-Lu-gjC" secondAttribute="top" id="UUK-3R-C5W"/>
-                            <constraint firstAttribute="bottom" secondItem="5hr-07-Nht" secondAttribute="bottom" id="b7R-Vi-yB7"/>
                             <constraint firstItem="euF-Lu-gjC" firstAttribute="trailing" secondItem="4uX-0E-7FN" secondAttribute="trailing" id="bpA-PD-aRd"/>
-                            <constraint firstItem="euF-Lu-gjC" firstAttribute="trailing" secondItem="5hr-07-Nht" secondAttribute="trailing" id="ebc-XD-A66"/>
-                            <constraint firstItem="5hr-07-Nht" firstAttribute="leading" secondItem="euF-Lu-gjC" secondAttribute="leading" id="heM-8h-Apg"/>
+                            <constraint firstItem="aBO-OB-bsr" firstAttribute="leading" secondItem="euF-Lu-gjC" secondAttribute="leading" id="nkT-rw-sHR"/>
                             <constraint firstItem="4uX-0E-7FN" firstAttribute="leading" secondItem="euF-Lu-gjC" secondAttribute="leading" id="r1E-nj-EMy"/>
-                            <constraint firstItem="5hr-07-Nht" firstAttribute="top" secondItem="4uX-0E-7FN" secondAttribute="bottom" id="rIf-kO-en9"/>
+                            <constraint firstItem="aBO-OB-bsr" firstAttribute="top" secondItem="4uX-0E-7FN" secondAttribute="bottom" id="vpJ-Rq-Qph"/>
+                            <constraint firstItem="euF-Lu-gjC" firstAttribute="trailing" secondItem="aBO-OB-bsr" secondAttribute="trailing" id="w06-rO-aFV"/>
+                            <constraint firstAttribute="bottom" secondItem="aBO-OB-bsr" secondAttribute="bottom" id="zZR-10-Rsm"/>
                         </constraints>
                     </view>
                     <navigationItem key="navigationItem" title="示例二" id="Wsj-PE-Gil">
@@ -130,7 +133,6 @@
                         </barButtonItem>
                     </navigationItem>
                     <connections>
-                        <outlet property="pageView" destination="5hr-07-Nht" id="I81-iz-dmH"/>
                         <outlet property="segmentedControl" destination="4uX-0E-7FN" id="eej-CI-Zf5"/>
                     </connections>
                 </viewController>
@@ -147,7 +149,7 @@
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <scrollView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" showsHorizontalScrollIndicator="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Uxw-uf-vT4">
-                                <rect key="frame" x="0.0" y="103" width="393" height="715"/>
+                                <rect key="frame" x="0.0" y="162" width="393" height="622"/>
                                 <subviews>
                                     <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="BYs-Fp-Ram">
                                         <rect key="frame" x="0.0" y="0.0" width="393" height="602"/>
@@ -446,7 +448,7 @@
                 <navigationController automaticallyAdjustsScrollViewInsets="NO" id="teg-e1-Yth" sceneMemberID="viewController">
                     <toolbarItems/>
                     <navigationBar key="navigationBar" contentMode="scaleToFill" id="tAf-eh-3A7">
-                        <rect key="frame" x="0.0" y="59" width="393" height="44"/>
+                        <rect key="frame" x="0.0" y="118" width="393" height="44"/>
                         <autoresizingMask key="autoresizingMask"/>
                     </navigationBar>
                     <nil name="viewControllers"/>
@@ -457,6 +459,20 @@
                 <placeholder placeholderIdentifier="IBFirstResponder" id="Oj7-dn-6r0" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
             </objects>
             <point key="canvasLocation" x="1745.8015267175572" y="3153.5211267605637"/>
+        </scene>
+        <!--Page View Controller-->
+        <scene sceneID="3CH-DP-c8j">
+            <objects>
+                <viewController id="wM1-tP-mLk" customClass="XZPageViewController" sceneMemberID="viewController">
+                    <view key="view" contentMode="scaleToFill" id="LS6-xy-zzN">
+                        <rect key="frame" x="0.0" y="0.0" width="393" height="646"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <color key="backgroundColor" systemColor="systemBackgroundColor"/>
+                    </view>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="2yJ-xp-UTt" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="4847" y="3628"/>
         </scene>
     </scenes>
     <resources>

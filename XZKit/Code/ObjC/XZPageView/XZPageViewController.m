@@ -8,6 +8,7 @@
 
 #import "XZPageViewController.h"
 #import "XZPageViewContext.h"
+#import "XZPageView.h"
 
 typedef NSString *XZTransitionStage;
 static XZTransitionStage viewWillAppear    = @"viewWillAppear";
@@ -139,6 +140,14 @@ static void setTransitionStatus(UIViewController * _Nonnull viewController, XZTr
     _transitionStage = viewDidDisappear;
 }
 
+- (UIViewController *)currentViewController {
+    return (id)self.pageView.currentView.nextResponder;
+}
+
+- (UIViewController *)pendingViewController {
+    return (id)self.pageView.pendingView.nextResponder;
+}
+
 - (void)reloadData {
     [self.pageView reloadData];
 }
@@ -246,8 +255,8 @@ static void setTransitionStatus(UIViewController * _Nonnull viewController, XZTr
     }
 }
 
-- (void)pageView:(XZPageView *)pageView didTurnPageToView:(UIView *)nextView inTransition:(CGFloat)transition {
-    UIViewController * const nextViewController = (id)nextView.nextResponder;
+- (void)pageView:(XZPageView *)pageView didTurnPageInTransition:(CGFloat)transition {
+    UIViewController * const nextViewController = (id)pageView.pendingView.nextResponder;
     
     if (_pendingViewController == nil) {
         [self forwardTransitionStage:(viewWillDisappear) forViewController:_currentViewController animated:YES];
@@ -261,8 +270,8 @@ static void setTransitionStatus(UIViewController * _Nonnull viewController, XZTr
         // 持续转场中
     }
     
-    if ([_delegate respondsToSelector:@selector(pageViewController:didTurnViewController:inTransition:)]) {
-        [_delegate pageViewController:self didTurnViewController:_pendingViewController inTransition:transition];
+    if ([_delegate respondsToSelector:@selector(pageViewController:didTurnViewControllerInTransition:)]) {
+        [_delegate pageViewController:self didTurnViewControllerInTransition:transition];
     }
 }
 

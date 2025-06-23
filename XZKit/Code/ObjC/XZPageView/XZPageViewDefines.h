@@ -60,12 +60,15 @@ NS_SWIFT_UI_ACTOR @protocol XZPageViewDelegate <UIScrollViewDelegate>
 
 /// 在用户翻动页面的过程中，通知转场进度。
 ///
+/// 除调用 ``-setCurrentPage:animated:completion:`` 之外，如果 currentPage 发生改变，即会调用此方法，比如。
+/// 1. 首次显示时，自动展示第一个视图。
+/// 2. 刷新时，如果数量减少，currenPage 的自动调整。
+///
 /// 命名 inTransition 等同 inProgress 表示在翻页中。
 ///
 /// @param pageView 调用此方法的 XZPageView 对象。
-/// @param pendingView 翻转的目的页面的视图
 /// @param transition 翻动的进度，值范围为 (-1.0, 0) 和 (0, 1.0) 之间，不包括边界值。
-- (void)pageView:(XZPageView *)pageView didTurnPageToView:(UIView *)pendingView inTransition:(CGFloat)transition NS_SWIFT_NAME(pageView(_:didTurnPageTo:in:));
+- (void)pageView:(XZPageView *)pageView didTurnPageInTransition:(CGFloat)transition NS_SWIFT_NAME(pageView(_:didTurnPageIn:));
 
 @end
 

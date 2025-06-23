@@ -31,7 +31,7 @@
     NSTimer * _Nullable __unsafe_unretained _autoPagingTimer;
     
     void (^ _Nullable _didShowPage)(XZPageView * _Nonnull pageView, NSInteger currentPage);
-    void (^ _Nullable _didTurnPage)(XZPageView * _Nonnull pageView, UIView * _Nonnull pendingView, CGFloat x, CGFloat width);
+    void (^ _Nullable _didTurnPage)(XZPageView * _Nonnull pageView, CGFloat x, CGFloat width);
 }
 
 @end

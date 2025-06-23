@@ -316,10 +316,10 @@
 
 /// - Attention: 调用次方法前已判断 aClass 遵循 XZPageViewDelegate 协议。
 - (void)notifyDidTurnPage:(nonnull Class)aClass {
-    typedef void (*MethodType)(id<XZPageViewDelegate>, SEL, XZPageView *, UIView *, CGFloat);
+    typedef void (*MethodType)(id<XZPageViewDelegate>, SEL, XZPageView *, CGFloat);
     _pageView->_didTurnPage = nil;
     
-    SEL const selector = @selector(pageView:didTurnPageToView:inTransition:);
+    SEL const selector = @selector(pageView:didTurnPageInTransition:);
     if (![aClass instancesRespondToSelector:selector]) {
         return;
     }
@@ -327,13 +327,13 @@
     MethodType const didTurnPage = (MethodType)method_getImplementation(class_getInstanceMethod(aClass, selector));
     if (didTurnPage == NULL) return;
     
-    _pageView->_didTurnPage = ^(XZPageView * const self, UIView *pendingView, CGFloat x, CGFloat width) {
+    _pageView->_didTurnPage = ^(XZPageView * const self, CGFloat x, CGFloat width) {
         id const delegate = self.delegate;
         if (delegate == nil || delegate == self) return;
         CGFloat const transition = x / width;
         // 一次翻多页的情况，在当前设计模式下不存在。
         // 如果有，可以根据 transition 的正负判断翻页方向，再根据 fromPage 和 toPage 以及它们之差，计算出翻页进度。
-        didTurnPage(delegate, selector, self, pendingView, transition);
+        didTurnPage(delegate, selector, self, transition);
     };
 }
 
@@ -497,7 +497,7 @@
             _pageView.contentOffset = CGPointZero;
         } else {
             // 发送转场进度
-            XZCallBlock(_pageView->_didTurnPage, _pageView, _pageView->_reusingView, offsetX, PageWidth);
+            XZCallBlock(_pageView->_didTurnPage, _pageView, offsetX, PageWidth);
             // 滚动停止，滚动未过半，不执行翻页，退回原点，否则执行翻页
             CGFloat const halfPageWidth = PageWidth * 0.5;
             if (offsetX >= +halfPageWidth) {
@@ -514,7 +514,7 @@
         }
     } else {
         // 发送转场进度
-        XZCallBlock(_pageView->_didTurnPage, _pageView, _pageView->_reusingView, offsetX, PageWidth);
+        XZCallBlock(_pageView->_didTurnPage, _pageView, offsetX, PageWidth);
     }
 }
 
@@ -781,7 +781,7 @@
             _pageView.contentOffset = CGPointZero;
         } else {
             // 发送转场进度
-            XZCallBlock(_pageView->_didTurnPage, _pageView, _pageView->_reusingView, offsetY, PageHeight);
+            XZCallBlock(_pageView->_didTurnPage, _pageView, offsetY, PageHeight);
             // 滚动停止，滚动未过半，不执行翻页，退回原点，否则执行翻页
             CGFloat const halfPageWidth = PageHeight * 0.5;
             if (offsetY >= +halfPageWidth) {
@@ -798,7 +798,7 @@
         }
     } else {
         // 发送转场进度
-        XZCallBlock(_pageView->_didTurnPage, _pageView, _pageView->_reusingView, offsetY, PageHeight);
+        XZCallBlock(_pageView->_didTurnPage, _pageView, offsetY, PageHeight);
     }
 }
 
