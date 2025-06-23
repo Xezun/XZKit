@@ -34,7 +34,10 @@
 }
 
 - (void)traitCollectionDidChange:(UITraitCollection *)previousTraitCollection {
-    self.layer.shadowColor = [XZToast.shadowColor resolvedColorWithTraitCollection:self.traitCollection].CGColor;
+    [super traitCollectionDidChange:previousTraitCollection];
+    if (self.traitCollection.userInterfaceStyle != previousTraitCollection.userInterfaceStyle) {
+        self.layer.shadowColor = [XZToast.shadowColor resolvedColorWithTraitCollection:self.traitCollection].CGColor;
+    }
 }
 
 - (void)willShowInViewController:(UIViewController *)viewController {

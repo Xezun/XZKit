@@ -173,9 +173,9 @@ static UIColor * _shadowColor           = nil;
     }
     return [UIColor colorWithDynamicProvider:^UIColor * _Nonnull(UITraitCollection * _Nonnull traitCollection) {
         if (traitCollection.userInterfaceStyle == UIUserInterfaceStyleDark) {
-            return [UIColor colorWithWhite:0.3 alpha:0.9];
+            return [UIColor colorWithWhite:0.15 alpha:0.9];
         }
-        return [UIColor colorWithWhite:0.0 alpha:0.7];
+        return [UIColor colorWithWhite:0.0 alpha:0.75];
     }];
 }
 
@@ -198,7 +198,7 @@ static UIColor * _shadowColor           = nil;
     if (_shadowColor == nil) {
         _shadowColor = [UIColor colorWithDynamicProvider:^UIColor * _Nonnull(UITraitCollection * _Nonnull traitCollection) {
             if (traitCollection.userInterfaceStyle == UIUserInterfaceStyleDark) {
-                return [UIColor colorWithWhite:0.2 alpha:1.0];
+                return [UIColor colorWithWhite:0.10 alpha:1.0];
             }
             return UIColor.blackColor;
         }];
