@@ -16,7 +16,7 @@ private var _modules: [(type: ModuleType, name: String, dependencies: [PackageDe
     (.ObjC, "XZML", ["XZDefines", "XZExtensions"]),
     (.ObjC, "XZJSON", ["XZObjcDescriptor", "XZExtensions"]),
     (.ObjC, "XZRefresh", ["XZDefines"]),
-    (.ObjC, "XZPageView", ["XZDefines"]),
+    (.ObjC, "XZPageView", ["XZDefines", "XZGeometry"]),
     (.ObjC, "XZPageControl", ["XZExtensions"]),
     (.ObjC, "XZSegmentedControl", ["XZDefines"]),
     (.ObjC, "XZURLQuery", []),
