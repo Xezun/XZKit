@@ -17,18 +17,6 @@
 
 @dynamic viewModel;
 
-+ (void)load {
-    if (self == [UICollectionReusableView class]) {
-        const char *encoding = xz_objc_class_getMethodTypeEncoding(self, @selector(prepareForReuse));
-        xz_objc_class_addMethodWithBlock(self, @selector(prepareForReuse), encoding, nil, nil, ^id _Nonnull(SEL  _Nonnull selector) {
-            return ^(UICollectionReusableView *self) {
-                ((void (*)(UICollectionReusableView *, SEL))objc_msgSend)(self, selector);
-                self.viewModel = nil;
-            };
-        });
-    }
-}
-
 - (void)collectionView:(id<XZMocoaCollectionView>)collectionView willDisplaySupplementaryViewAtIndexPath:(NSIndexPath *)indexPath forElementOfKind:(NSString *)elementKind {
     [self.viewModel collectionView:collectionView willDisplaySupplementaryView:self atIndexPath:indexPath forElementOfKind:elementKind];
 }

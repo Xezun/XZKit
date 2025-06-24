@@ -23,7 +23,11 @@ NS_ASSUME_NONNULL_BEGIN
 @end
 
 @interface UITableViewCell (XZMocoaTableViewCell)
+
+/// 视图模型。
+/// @attention 在 Cell 回归重用池时，此属性不会置空，所以如果执行清理操作，需要重写``-prepareForReuse``方法。
 @property (nonatomic, strong, nullable) __kindof XZMocoaTableViewCellViewModel *viewModel;
+
 /// 当前 Cell 的点击事件。默认不执行任何操作。
 /// @param tableView 当前 Cell 所属的 UITableView 对象
 /// @param indexPath 当前 Cell 的当前所在的位置
