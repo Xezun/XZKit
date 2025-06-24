@@ -45,8 +45,8 @@ NS_ASSUME_NONNULL_BEGIN
 - (void)zoomToRect:(CGRect)rect animated:(BOOL)animated;
 - (void)setZoomScale:(CGFloat)scale animated:(BOOL)animated;
 
-@property (nonatomic, readonly) CGPoint contentOffset;
-- (void)setContentOffset:(CGPoint)contentOffset animated:(BOOL)animated;
+//@property (nonatomic, readonly) CGPoint contentOffset;
+//- (void)setContentOffset:(CGPoint)contentOffset animated:(BOOL)animated;
 
 /// 自定义过渡动画作用在此上视图，该视图直接添加到当前视图上。懒加载。
 //@property (nonatomic, readonly, nonnull) UIView *transitionView;
@@ -54,7 +54,7 @@ NS_ASSUME_NONNULL_BEGIN
 //- (void)bringBackTransitionViewIfNeeded;
 
 /// 内容视图，改变该属性，请用设置方法。
-@property (nonatomic, readonly, nullable) UIView *contentView;
+@property (nonatomic, readonly) UIImageView *imageView;
 
 /// 正值 左边留间距，负值右边留间距。间距作用于 zoomingView 。
 @property (nonatomic) CGFloat interitemSpacing;
