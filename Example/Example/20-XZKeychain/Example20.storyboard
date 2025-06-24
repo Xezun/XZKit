@@ -1,10 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="23727" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="oPM-Ob-5Cp">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="23504" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="oPM-Ob-5Cp">
     <device id="retina6_12" orientation="portrait" appearance="light"/>
     <dependencies>
         <deployment identifier="iOS"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="23721"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="23506"/>
         <capability name="Safe area layout guides" minToolsVersion="9.0"/>
+        <capability name="System colors in document resources" minToolsVersion="11.0"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <scenes>
@@ -14,7 +15,7 @@
                 <navigationController automaticallyAdjustsScrollViewInsets="NO" id="oPM-Ob-5Cp" sceneMemberID="viewController">
                     <toolbarItems/>
                     <navigationBar key="navigationBar" contentMode="scaleToFill" id="aIg-f1-XCR">
-                        <rect key="frame" x="0.0" y="118" width="393" height="44"/>
+                        <rect key="frame" x="0.0" y="59" width="393" height="44"/>
                         <autoresizingMask key="autoresizingMask"/>
                     </navigationBar>
                     <nil name="viewControllers"/>
@@ -39,20 +40,20 @@
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" spacing="20" translatesAutoresizingMaskIntoConstraints="NO" id="qm7-0K-7hp">
-                                <rect key="frame" x="20" y="212" width="353" height="260"/>
+                                <rect key="frame" x="20" y="153" width="353" height="260"/>
                                 <subviews>
                                     <stackView opaque="NO" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="bDP-BL-8pf">
                                         <rect key="frame" x="0.0" y="0.0" width="353" height="40"/>
                                         <subviews>
                                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="fZS-Mc-VfF">
                                                 <rect key="frame" x="0.0" y="0.0" width="60" height="40"/>
-                                                <color key="backgroundColor" red="0.1529411765" green="0.1529411765" blue="0.1529411765" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                                <color key="backgroundColor" systemColor="labelColor"/>
                                                 <constraints>
                                                     <constraint firstAttribute="height" constant="40" id="ECT-Mo-Upy"/>
                                                     <constraint firstAttribute="width" constant="60" id="PWz-Dr-4nr"/>
                                                 </constraints>
                                                 <state key="normal" title="帐号">
-                                                    <color key="titleColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                                    <color key="titleColor" systemColor="systemBackgroundColor"/>
                                                 </state>
                                             </button>
                                             <textField opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="line" textAlignment="natural" minimumFontSize="17" clearButtonMode="whileEditing" translatesAutoresizingMaskIntoConstraints="NO" id="q57-jC-RbR">
@@ -73,7 +74,7 @@
                                         <subviews>
                                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Msk-aj-88L">
                                                 <rect key="frame" x="0.0" y="0.0" width="60" height="40"/>
-                                                <color key="backgroundColor" red="0.1529411765" green="0.1529411765" blue="0.1529411765" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                                <color key="backgroundColor" systemColor="labelColor"/>
                                                 <constraints>
                                                     <constraint firstAttribute="height" constant="40" id="HMb-7d-UFe"/>
                                                     <constraint firstAttribute="height" relation="greaterThanOrEqual" constant="40" id="m1D-3u-YWE"/>
@@ -81,7 +82,7 @@
                                                     <constraint firstAttribute="width" relation="greaterThanOrEqual" constant="60" id="zHy-gW-i1o"/>
                                                 </constraints>
                                                 <state key="normal" title="密码">
-                                                    <color key="titleColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                                    <color key="titleColor" systemColor="systemBackgroundColor"/>
                                                 </state>
                                             </button>
                                             <textField opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="line" textAlignment="natural" minimumFontSize="17" clearButtonMode="whileEditing" translatesAutoresizingMaskIntoConstraints="NO" id="StX-3s-tEl">
@@ -171,7 +172,7 @@
                             </stackView>
                         </subviews>
                         <viewLayoutGuide key="safeArea" id="PaR-eD-a9C"/>
-                        <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                        <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                         <constraints>
                             <constraint firstItem="qm7-0K-7hp" firstAttribute="top" secondItem="PaR-eD-a9C" secondAttribute="top" constant="50" id="H8o-Fs-kj4"/>
                             <constraint firstItem="qm7-0K-7hp" firstAttribute="leading" secondItem="PaR-eD-a9C" secondAttribute="leading" constant="20" id="ZnJ-wh-fqD"/>
@@ -200,5 +201,11 @@
     </scenes>
     <resources>
         <image name="xmark" catalog="system" width="128" height="113"/>
+        <systemColor name="labelColor">
+            <color white="0.0" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+        </systemColor>
+        <systemColor name="systemBackgroundColor">
+            <color white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+        </systemColor>
     </resources>
 </document>
