@@ -173,9 +173,9 @@ static UIColor * _shadowColor           = nil;
     }
     return [UIColor colorWithDynamicProvider:^UIColor * _Nonnull(UITraitCollection * _Nonnull traitCollection) {
         if (traitCollection.userInterfaceStyle == UIUserInterfaceStyleDark) {
-            return [UIColor colorWithWhite:0.15 alpha:0.9];
+            return [UIColor colorWithWhite:0.2 alpha:0.95];
         }
-        return [UIColor colorWithWhite:0.0 alpha:0.75];
+        return [UIColor colorWithWhite:0.0 alpha:0.80];
     }];
 }
 
