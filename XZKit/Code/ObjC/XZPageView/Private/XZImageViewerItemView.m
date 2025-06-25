@@ -123,6 +123,8 @@
     [_zoomingView setBackgroundColor:backgroundColor];
 }
 
+@dynamic contentMode;
+
 - (void)setContentMode:(UIViewContentMode)contentMode {
     [super setContentMode:contentMode];
     
@@ -147,9 +149,9 @@
 
 - (void)XZImageViewerItemViewLayoutSubviews {
     // 如果 _transitionView 不在当前视图上，不处理。
-    CGRect const kBounds      = self.bounds;
-    
-    CGRect const contentFrame = CGRectScaleAspectRatioInsideWithMode(kBounds, _imageView.image.size, self.contentMode);
+    CGRect            const kBounds      = self.bounds;
+    UIViewContentMode const contentMode  = self.contentMode;
+    CGRect            const contentFrame = CGRectScaleAspectRatioInsideWithMode(kBounds, _imageView.image.size, contentMode);
     
     // 调整间距，会改变 _zoomingView 或 _wrapperView 的 frame 。
     // 因为 _contentView 的 autosizingMask 未知，所以如果先更新了 _contentView ，那么在设置 _wrapperView 的 frame 时，

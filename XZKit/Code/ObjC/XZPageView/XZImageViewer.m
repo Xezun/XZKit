@@ -51,21 +51,17 @@
     return self;
 }
 
-- (XZPageView *)pageView {
-    return (XZPageView *)self.view;
-}
-
-- (void)loadView {
-    self.view = [[XZPageView alloc] initWithFrame:UIScreen.mainScreen.bounds];;
-}
-
 - (void)viewDidLoad {
     [super viewDidLoad];
     
-    XZPageView * const pageView = self.pageView;
-    pageView.backgroundColor = UIColor.blackColor;
-    pageView.delegate = self;
-    pageView.dataSource = self;
+    self.view.contentMode = UIViewContentModeScaleAspectFit;
+    
+    _pageView = [[XZPageView alloc] initWithFrame:UIScreen.mainScreen.bounds];
+    _pageView.backgroundColor = UIColor.blackColor;
+    [self.view addSubview:_pageView];
+    
+    _pageView.delegate = self;
+    _pageView.dataSource = self;
     
     // 双击缩放
     UITapGestureRecognizer * const doubleTapGestureRecognizer = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(doubleTapGestureRecognizerAction:)];
@@ -103,6 +99,7 @@
     if (reusingView == nil) {
         CGRect const kBounds = pageView.bounds;
         reusingView = [[XZImageViewerItemView alloc] initWithFrame:kBounds];
+        reusingView.contentMode = self.view.contentMode;
     }
     
     UIImage *image = [_dataSource imageViewer:self loadImageForItemAtIndex:index];
