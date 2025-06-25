@@ -8,6 +8,7 @@
 #import <UIKit/UIKit.h>
 #import "XZPageViewDefines.h"
 #import "XZPageViewController.h"
+#import "XZImageViewer.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -51,10 +52,10 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic) NSInteger currentPage;
 
 /// 当前正展示的视图。
-@property (nonatomic, readonly, nullable) UIView *currentView;
+@property (nonatomic, readonly, nullable) __kindof UIView *currentView;
 
 /// 可能将展示的视图。
-@property (nonatomic, readonly, nullable) UIView *pendingView;
+@property (nonatomic, readonly, nullable) __kindof UIView *pendingView;
 
 /// 设置当前展示视图。
 /// @discussion 调用此方法改变当前页，会重置自动翻页计时。

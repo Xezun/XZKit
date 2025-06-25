@@ -47,6 +47,7 @@
 		04D34E6C2D314B0A0013D4A3 /* Example17NavigationBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = 04D34E6B2D314B0A0013D4A3 /* Example17NavigationBar.swift */; };
 		04DD47012D674030003AD7D2 /* Example05TextViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 04DD47002D674030003AD7D2 /* Example05TextViewController.m */; };
 		04FE1C8F2D34CC0D001CC274 /* Example15.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 04FE1C8D2D34CC0D001CC274 /* Example15.storyboard */; };
+		2921169B2E0C4DCE00940DE3 /* Example07Test03ViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 2921169A2E0C4DCE00940DE3 /* Example07Test03ViewController.m */; };
 		292A5A472D254D010037579D /* Example04ViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 292A5A462D254D010037579D /* Example04ViewController.m */; };
 		292A5A482D254D010037579D /* Example04FontSizeViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 292A5A402D254D010037579D /* Example04FontSizeViewController.m */; };
 		292A5A492D254D010037579D /* Example04SettingsViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 292A5A422D254D010037579D /* Example04SettingsViewController.m */; };
@@ -370,6 +371,8 @@
 		04FE1C912D34CC4B001CC274 /* zh-Hans */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "zh-Hans"; path = "zh-Hans.lproj/Example15.strings"; sourceTree = "<group>"; };
 		04FE1C932D34CC4C001CC274 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/Example15.strings; sourceTree = "<group>"; };
 		055F0304DE9A092BAF52FF06 /* Pods_Example.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Example.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		292116992E0C4DCE00940DE3 /* Example07Test03ViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Example07Test03ViewController.h; sourceTree = "<group>"; };
+		2921169A2E0C4DCE00940DE3 /* Example07Test03ViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = Example07Test03ViewController.m; sourceTree = "<group>"; };
 		2921DE5FDDA8FC1A0BE46778 /* Pods_ExampleUITests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_ExampleUITests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		292A5A3D2D254D010037579D /* Example04FontNameViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Example04FontNameViewController.h; sourceTree = "<group>"; };
 		292A5A3E2D254D010037579D /* Example04FontNameViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = Example04FontNameViewController.m; sourceTree = "<group>"; };
@@ -1055,6 +1058,8 @@
 				292A5A622D2563E20037579D /* Example07Test01ViewController.m */,
 				292A5A632D2563E20037579D /* Example07Test02ViewController.h */,
 				292A5A642D2563E20037579D /* Example07Test02ViewController.m */,
+				292116992E0C4DCE00940DE3 /* Example07Test03ViewController.h */,
+				2921169A2E0C4DCE00940DE3 /* Example07Test03ViewController.m */,
 			);
 			path = "07-XZPageView";
 			sourceTree = "<group>";
@@ -3064,9 +3069,13 @@
 			inputFileListPaths = (
 				"${PODS_ROOT}/Target Support Files/Pods-Example/Pods-Example-frameworks-${CONFIGURATION}-input-files.xcfilelist",
 			);
+			inputPaths = (
+			);
 			name = "[CP] Embed Pods Frameworks";
 			outputFileListPaths = (
 				"${PODS_ROOT}/Target Support Files/Pods-Example/Pods-Example-frameworks-${CONFIGURATION}-output-files.xcfilelist",
+			);
+			outputPaths = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
@@ -3281,6 +3290,7 @@
 				292C17782D251F6D00E465BF /* Example0312CellModel.m in Sources */,
 				292C17792D251F6D00E465BF /* Example0330Group100CellModel.m in Sources */,
 				04D34E6C2D314B0A0013D4A3 /* Example17NavigationBar.swift in Sources */,
+				2921169B2E0C4DCE00940DE3 /* Example07Test03ViewController.m in Sources */,
 				042D23CC2D30BB3200E0F7BD /* Example16ViewController.m in Sources */,
 				042D23CD2D30BB3200E0F7BD /* Example16SettingsEditCellViewController.m in Sources */,
 				042D23CE2D30BB3200E0F7BD /* Example16CollectonViewSectionModel.m in Sources */,
