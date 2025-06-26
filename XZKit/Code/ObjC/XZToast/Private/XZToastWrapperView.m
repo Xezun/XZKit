@@ -11,7 +11,10 @@
 /// toast 与 container 之间的边距，为了显示阴影。
 #define kPadding 5.0
 
-@implementation XZToastWrapperView
+@implementation XZToastWrapperView {
+    /// 由于投影是 CGColor 不能自动适配 Dark 模式切换，需要记录下来，以便在切换时使用。
+    UIColor *_shadowColor;
+}
 
 - (instancetype)initWithView:(UIView<XZToastView> *)view {
     CGSize const size = view.frame.size;
@@ -36,14 +39,15 @@
 - (void)traitCollectionDidChange:(UITraitCollection *)previousTraitCollection {
     [super traitCollectionDidChange:previousTraitCollection];
     if (self.traitCollection.userInterfaceStyle != previousTraitCollection.userInterfaceStyle) {
-        self.layer.shadowColor = [XZToast.shadowColor resolvedColorWithTraitCollection:self.traitCollection].CGColor;
+        UIColor * const shadowColor = _shadowColor ?: XZToast.shadowColor;
+        self.layer.shadowColor = [shadowColor resolvedColorWithTraitCollection:self.traitCollection].CGColor;
     }
 }
 
 - (void)willShowInViewController:(UIViewController *)viewController {
-    UIColor *shadowColor = viewController.xz_toastConfiguration.shadowColor;
-    if (shadowColor) {
-        self.layer.shadowColor = shadowColor.CGColor;
+    _shadowColor = viewController.xz_toastConfiguration.shadowColor;
+    if (_shadowColor) {
+        self.layer.shadowColor = [_shadowColor resolvedColorWithTraitCollection:self.traitCollection].CGColor;
     }
     if ([_view respondsToSelector:@selector(willShowInViewController:)]) {
         [_view willShowInViewController:viewController];
