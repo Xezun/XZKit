@@ -72,4 +72,34 @@ UIKIT_EXTERN CGRect CGRectMakeAspectRatioInsideWithMode(CGRect rect, CGSize rati
 ///   - contentMode: 适配模式
 UIKIT_EXTERN CGRect CGRectScaleAspectRatioInsideWithMode(CGRect rect, CGSize aspect, UIViewContentMode contentMode) NS_REFINED_FOR_SWIFT;
 
+FOUNDATION_STATIC_INLINE CGRect CGRectSetSize(CGRect rect, CGSize size) {
+    rect.size = size;
+    return rect;
+}
+
+FOUNDATION_STATIC_INLINE CGRect CGRectSetPoint(CGRect rect, CGPoint point) {
+    rect.origin = point;
+    return rect;
+}
+
+FOUNDATION_STATIC_INLINE CGRect CGRectSetX(CGRect rect, CGFloat x) {
+    rect.origin.x = x;
+    return rect;
+}
+
+FOUNDATION_STATIC_INLINE CGRect CGRectSetY(CGRect rect, CGFloat y) {
+    rect.origin.y = y;
+    return rect;
+}
+
+FOUNDATION_STATIC_INLINE CGRect CGRectSetWidth(CGRect rect, CGFloat width) {
+    rect.size.width = width;
+    return rect;
+}
+
+FOUNDATION_STATIC_INLINE CGRect CGRectSetHeight(CGRect rect, CGFloat height) {
+    rect.size.height = height;
+    return rect;
+}
+
 NS_ASSUME_NONNULL_END

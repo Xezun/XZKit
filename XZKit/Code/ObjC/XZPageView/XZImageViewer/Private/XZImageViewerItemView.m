@@ -6,21 +6,10 @@
 //
 
 #import "XZImageViewerItemView.h"
+#import "XZImageViewer.h"
+#import "XZImageViewerItemViewZoomingView.h"
 @import XZGeometry;
 @import XZExtensions;
-
-@interface XZImageViewerItemViewTransitionView : UIView
-@end
-@interface XZImageViewerItemViewZoomingView : UIScrollView
-@end
-@interface XZImageViewerItemViewContentView : UIView
-@end
-@implementation XZImageViewerItemViewTransitionView
-@end
-@implementation XZImageViewerItemViewZoomingView
-@end
-@implementation XZImageViewerItemViewContentView
-@end
 
 @interface XZImageViewerItemView ()
 /// 提供缩放功能的滚动视图。
@@ -31,14 +20,13 @@
 
 @synthesize zoomingView = _zoomingView; // 处理缩放的视图。
 
-- (instancetype)initWithFrame:(CGRect)frame {
-    self = [super initWithFrame:frame];
+- (instancetype)initWithImageViewer:(XZImageViewer *)imageViewer {
+    self = [super initWithFrame:CGRectMake(0, 0, 320, 480)];
     if (self) {
         self.clipsToBounds = YES;
         
+        _imageViewer = imageViewer;
         _index = NSNotFound;
-        _interitemSpacing = 0.0;
-        
         _imageView = [[UIImageView alloc] init];
         [self addSubview:_imageView];
     }
@@ -107,7 +95,7 @@
     [super layoutSubviews];
     
     CGRect            const kBounds      = self.bounds;
-    CGSize            const imageSize    = [_imageView.image xz_sizeInScale:self.window.windowScene.screen.scale];
+    CGSize            const imageSize    = _imageView.frame.size;
     CGRect            const contentFrame = CGRectScaleAspectRatioInsideWithMode(kBounds, imageSize, UIViewContentModeScaleAspectFit);
     
     if (_zoomingView) {
@@ -124,15 +112,15 @@
 #pragma mark - <UIScrollViewDelegate.拖动>
 
 - (void)scrollViewWillBeginDragging:(UIScrollView *)scrollView {
-    [_delegate XZImageViewerItemViewWillBeginDragging:self];
+    
 }
 
 - (void)scrollViewDidEndDragging:(UIScrollView *)scrollView willDecelerate:(BOOL)decelerate {
-    [_delegate XZImageViewerItemViewDidEndDragging:self willDecelerate:decelerate];
+    
 }
 
 - (void)scrollViewDidEndDecelerating:(UIScrollView *)scrollView {
-    [_delegate XZImageViewerItemViewDidEndDecelerating:self];
+    
 }
 
 #pragma mark - <UIScrollViewDelegate.缩放>
@@ -143,7 +131,7 @@
 
 - (void)scrollViewWillBeginZooming:(UIScrollView *)scrollView withView:(nullable UIView *)view {
     _zoomingView.bounces = YES;
-    [_delegate XZImageViewerItemViewWillBeginZooming:self];
+    [_delegate imageViewer:_imageViewer willBeginZoomingImageAtIndex:_index];
 }
 
 - (void)scrollViewDidZoom:(UIScrollView *)scrollView {
@@ -163,13 +151,12 @@
     }
     _imageView.frame = frame;
     
-    [_delegate XZImageViewerItemViewDidZoom:self];
+    [_delegate imageViewer:_imageViewer didZoomImageAtIndex:_index];
 }
 
 - (void)scrollViewDidEndZooming:(UIScrollView *)scrollView withView:(nullable UIView *)view atScale:(CGFloat)scale {
     _zoomingView.bounces = (scale != 1.0);
-    
-    [_delegate XZImageViewerItemViewDidEndZooming:self atScale:scale];
+    [_delegate imageViewer:_imageViewer didEndZoomingImageAtIndex:_index atScale:scale];
 }
 
 @end

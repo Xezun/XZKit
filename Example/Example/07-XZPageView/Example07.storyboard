@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="23504" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="teg-e1-Yth">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="23727" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="teg-e1-Yth">
     <device id="retina6_12" orientation="portrait" appearance="light"/>
     <dependencies>
         <deployment identifier="iOS"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="23506"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="23721"/>
         <capability name="Safe area layout guides" minToolsVersion="9.0"/>
         <capability name="System colors in document resources" minToolsVersion="11.0"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
@@ -111,7 +111,7 @@
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="4uX-0E-7FN" customClass="XZSegmentedControl">
-                                <rect key="frame" x="0.0" y="103" width="393" height="44"/>
+                                <rect key="frame" x="0.0" y="162" width="393" height="44"/>
                                 <color key="backgroundColor" systemColor="systemTealColor"/>
                                 <constraints>
                                     <constraint firstAttribute="height" constant="44" id="HSL-5O-hwF"/>
@@ -123,7 +123,7 @@
                                 </userDefinedRuntimeAttributes>
                             </view>
                             <containerView opaque="NO" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="aBO-OB-bsr">
-                                <rect key="frame" x="0.0" y="147" width="393" height="705"/>
+                                <rect key="frame" x="0.0" y="206" width="393" height="646"/>
                                 <connections>
                                     <segue destination="wM1-tP-mLk" kind="embed" identifier="pageViewController" id="t7l-eq-59K"/>
                                 </connections>
@@ -169,7 +169,7 @@
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <scrollView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" showsHorizontalScrollIndicator="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Uxw-uf-vT4">
-                                <rect key="frame" x="0.0" y="103" width="393" height="715"/>
+                                <rect key="frame" x="0.0" y="162" width="393" height="622"/>
                                 <subviews>
                                     <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="BYs-Fp-Ram">
                                         <rect key="frame" x="0.0" y="0.0" width="393" height="602"/>
@@ -468,7 +468,7 @@
                 <navigationController automaticallyAdjustsScrollViewInsets="NO" id="teg-e1-Yth" sceneMemberID="viewController">
                     <toolbarItems/>
                     <navigationBar key="navigationBar" contentMode="scaleToFill" id="tAf-eh-3A7">
-                        <rect key="frame" x="0.0" y="59" width="393" height="44"/>
+                        <rect key="frame" x="0.0" y="118" width="393" height="44"/>
                         <autoresizingMask key="autoresizingMask"/>
                     </navigationBar>
                     <nil name="viewControllers"/>
@@ -485,7 +485,7 @@
             <objects>
                 <viewController id="wM1-tP-mLk" customClass="XZPageViewController" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="LS6-xy-zzN">
-                        <rect key="frame" x="0.0" y="0.0" width="393" height="705"/>
+                        <rect key="frame" x="0.0" y="0.0" width="393" height="646"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <viewLayoutGuide key="safeArea" id="DS9-Zm-YMd"/>
                         <color key="backgroundColor" systemColor="systemBackgroundColor"/>
@@ -504,37 +504,37 @@
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" distribution="fillEqually" spacing="5" translatesAutoresizingMaskIntoConstraints="NO" id="ThZ-qv-Cp5">
-                                <rect key="frame" x="20" y="123" width="353" height="300"/>
+                                <rect key="frame" x="20" y="182" width="353" height="300"/>
                                 <subviews>
                                     <stackView opaque="NO" contentMode="scaleToFill" distribution="fillEqually" spacing="5" translatesAutoresizingMaskIntoConstraints="NO" id="buw-Ww-k1z">
                                         <rect key="frame" x="0.0" y="0.0" width="353" height="96.666666666666671"/>
                                         <subviews>
-                                            <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="8Km-TM-wn7">
+                                            <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="8Km-TM-wn7">
                                                 <rect key="frame" x="0.0" y="0.0" width="114.33333333333333" height="96.666666666666671"/>
                                                 <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                                             </imageView>
-                                            <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="JA0-Kj-5DB">
+                                            <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="JA0-Kj-5DB">
                                                 <rect key="frame" x="119.33333333333334" y="0.0" width="114.33333333333334" height="96.666666666666671"/>
                                                 <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                                             </imageView>
-                                            <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="1gn-IR-oUL">
+                                            <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="1gn-IR-oUL">
                                                 <rect key="frame" x="238.66666666666671" y="0.0" width="114.33333333333334" height="96.666666666666671"/>
                                                 <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                                             </imageView>
                                         </subviews>
                                     </stackView>
                                     <stackView opaque="NO" contentMode="scaleToFill" distribution="fillEqually" spacing="5" translatesAutoresizingMaskIntoConstraints="NO" id="qcX-bo-QAm">
-                                        <rect key="frame" x="0.0" y="101.66666666666666" width="353" height="96.666666666666657"/>
+                                        <rect key="frame" x="0.0" y="101.66666666666669" width="353" height="96.666666666666686"/>
                                         <subviews>
-                                            <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="fal-lt-UT2">
+                                            <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="fal-lt-UT2">
                                                 <rect key="frame" x="0.0" y="0.0" width="114.33333333333333" height="96.666666666666671"/>
                                                 <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                                             </imageView>
-                                            <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="UNA-zC-LPm">
+                                            <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="UNA-zC-LPm">
                                                 <rect key="frame" x="119.33333333333334" y="0.0" width="114.33333333333334" height="96.666666666666671"/>
                                                 <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                                             </imageView>
-                                            <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="7L3-ta-Hwp">
+                                            <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="7L3-ta-Hwp">
                                                 <rect key="frame" x="238.66666666666671" y="0.0" width="114.33333333333334" height="96.666666666666671"/>
                                                 <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                                             </imageView>
@@ -543,15 +543,15 @@
                                     <stackView opaque="NO" contentMode="scaleToFill" distribution="fillEqually" spacing="5" translatesAutoresizingMaskIntoConstraints="NO" id="s82-2p-3gb">
                                         <rect key="frame" x="0.0" y="203.33333333333331" width="353" height="96.666666666666686"/>
                                         <subviews>
-                                            <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="mDL-Pp-THS">
+                                            <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="mDL-Pp-THS">
                                                 <rect key="frame" x="0.0" y="0.0" width="114.33333333333333" height="96.666666666666671"/>
                                                 <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                                             </imageView>
-                                            <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="5hf-Ek-bUx">
+                                            <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="5hf-Ek-bUx">
                                                 <rect key="frame" x="119.33333333333334" y="0.0" width="114.33333333333334" height="96.666666666666671"/>
                                                 <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                                             </imageView>
-                                            <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="FFz-lz-Fo6">
+                                            <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="FFz-lz-Fo6">
                                                 <rect key="frame" x="238.66666666666671" y="0.0" width="114.33333333333334" height="96.666666666666671"/>
                                                 <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                                             </imageView>

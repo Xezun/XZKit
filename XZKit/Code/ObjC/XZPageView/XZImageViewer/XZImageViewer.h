@@ -21,6 +21,9 @@ NS_ASSUME_NONNULL_BEGIN
 /// @param index 图片的索引。
 - (void)imageViewer:(XZImageViewer *)imageViewer didShowImageAtIndex:(NSInteger)index;
 
+- (void)imageViewer:(XZImageViewer *)imageViewer willBeginZoomingImageAtIndex:(NSInteger)index;
+- (void)imageViewer:(XZImageViewer *)imageViewer didZoomImageAtIndex:(NSInteger)index;
+- (void)imageViewer:(XZImageViewer *)imageViewer didEndZoomingImageAtIndex:(NSInteger)index atScale:(CGFloat)scale;
 @end
 
 @protocol UITableViewDataSource, UICollectionViewDataSource;
@@ -45,8 +48,13 @@ NS_ASSUME_NONNULL_BEGIN
 
 @end
 
+
+@class XZPageView;
+
 /// 图片查看器，全屏查看图片的控制器。
 @interface XZImageViewer : UIViewController
+
+@property (nonatomic, readonly) XZPageView *pageView;
 
 @property (nonatomic, weak) UIView *sourceView;
 
@@ -54,27 +62,10 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic) NSInteger currentIndex;
 - (void)setCurrentIndex:(NSInteger)newIndex animated:(BOOL)animated;
 
-- (nullable UIImage *)imageForItemAtIndex:(NSInteger)index;
-- (void)setImage:(UIImage *)image forItemAtIndex:(NSInteger)index animated:(BOOL)animated;
-
 /// 代理。
 @property (nonatomic, weak, nullable) id<XZImageViewerDelegate> delegate;
 @property (nonatomic, weak, nullable) id<XZImageViewerDataSource> dataSource;
 
-+ (BOOL)isViewControllerBasedStatusBarAppearance;
-
-@end
-
-@interface _XZImageViewerPresentingAnimationController : NSObject <UIViewControllerAnimatedTransitioning>
-@property (nonatomic, weak, readonly) XZImageViewer *delegate;
-- (instancetype)init NS_UNAVAILABLE;
-+ (nullable _XZImageViewerPresentingAnimationController *)animationControllerWithSourceView:(UIView *)sourceView;
-@end
-
-@interface _XZImageViewerDismissingAnimationController : NSObject <UIViewControllerAnimatedTransitioning>
-@property (nonatomic, weak, readonly) XZImageViewer *delegate;
-- (instancetype)init NS_UNAVAILABLE;
-+ (nullable _XZImageViewerDismissingAnimationController *)animationControllerWithSourceView:(UIView *)sourceView;
 @end
 
 NS_ASSUME_NONNULL_END
