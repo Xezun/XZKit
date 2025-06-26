@@ -59,8 +59,13 @@
     [super didMoveToWindow];
     
     if (self.window != nil && _numberOfPages == 0 && _dataSource != nil) {
+        NSInteger const oldPage = _currentPage;
         // 添加到 window 时，如果数据为空，则尝试自动刷新
         [self reloadData];
+        // 发送事件
+        if (_currentPage != NSNotFound && _currentPage != oldPage && _didShowPage) {
+            _didShowPage(self, _currentPage);
+        }
     } else {
         // 开启自动计时器
         [_context scheduleAutoPagingTimerIfNeeded];
@@ -178,8 +183,8 @@
 - (void)reloadData {
     _numberOfPages = [_dataSource numberOfPagesInPageView:self];
         
-    CGRect    const bounds  = self.bounds;
-    NSInteger const oldPage = _currentPage;
+    CGRect const bounds = self.bounds;
+    
     // 自动调整当前页
     if (_numberOfPages == 0) {
         _currentPage = NSNotFound;
@@ -205,10 +210,6 @@
     
     // 重启自动翻页计时器
     [_context scheduleAutoPagingTimerIfNeeded];
-    
-    if (_currentPage != NSNotFound && _currentPage != oldPage && _didShowPage) {
-        _didShowPage(self, _currentPage);
-    }
 }
 
 @end
