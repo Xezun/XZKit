@@ -20,7 +20,9 @@
 
 @end
 
-@implementation XZPageViewContext
+@implementation XZPageViewContext {
+    CGSize _size;
+}
 
 + (XZPageViewContext *)contextWithPageView:(XZPageView *)pageView orientation:(XZPageViewOrientation)orientation {
     switch (orientation) {
@@ -53,6 +55,10 @@
 }
 
 - (void)layoutSubviews:(const CGRect)bounds {
+    if (CGSizeEqualToSize(bounds.size, _size)) {
+        return;
+    }
+    _size = bounds.size;
     // 布局子视图
     [self layoutCurrentPageView:bounds];
     [self layoutReusingPageView:bounds];
@@ -118,7 +124,7 @@
 
 - (void)autoPagingTimerAction:(NSTimer *)timer {
     NSInteger const newPage = XZLoopPage(_pageView->_currentPage, YES, _pageView->_numberOfPages - 1, YES);
-    [self setCurrentPage:newPage animated:YES completion:nil];
+    [self setCurrentPage:newPage animated:YES];
 
     // 自动翻页，发送事件
     XZCallBlock(_pageView->_didShowPage, _pageView, _pageView->_currentPage);
@@ -286,16 +292,16 @@
         }
     }
     
-    [self notifyDelegateOfClass:aClass];
+    [self handlDelegateMethodForClass:aClass];
 }
 
-- (void)notifyDelegateOfClass:(Class)aClass {
-    [self notifyDidShowPage:aClass];
-    [self notifyDidTurnPage:aClass];
+- (void)handlDelegateMethodForClass:(Class)aClass {
+    [self handleDidShowPageForClass:aClass];
+    [self handleDidTurnPageForClass:aClass];
 }
 
 /// - Attention: 调用次方法前已判断 aClass 遵循 XZPageViewDelegate 协议。
-- (void)notifyDidShowPage:(nonnull Class)aClass {
+- (void)handleDidShowPageForClass:(nonnull Class)aClass {
     typedef void (*MethodType)(id<XZPageViewDelegate>, SEL, XZPageView *, NSInteger);
     _pageView->_didShowPage = nil;
     
@@ -315,7 +321,7 @@
 }
 
 /// - Attention: 调用次方法前已判断 aClass 遵循 XZPageViewDelegate 协议。
-- (void)notifyDidTurnPage:(nonnull Class)aClass {
+- (void)handleDidTurnPageForClass:(nonnull Class)aClass {
     typedef void (*MethodType)(id<XZPageViewDelegate>, SEL, XZPageView *, CGFloat);
     _pageView->_didTurnPage = nil;
     
@@ -531,9 +537,8 @@
 }
 
 /// 本方法不发送事件。
-- (void)setCurrentPage:(NSInteger const)newPage animated:(BOOL)animated completion:(void (^ __nullable)(BOOL finished))completion {
+- (void)setCurrentPage:(NSInteger const)newPage animated:(BOOL)animated {
     if (_pageView->_currentPage == newPage) {
-        dispatch_main_async(completion, NO);
         return;
     }
     NSParameterAssert(newPage >= 0 && newPage < _pageView->_numberOfPages);
@@ -580,10 +585,9 @@
         // 修改 bounds 不会触发 -scrollViewDidScroll: 方法，但是会触发 -layoutSubviews 方法。
         [UIView animateWithDuration:XZPageViewAnimationDuration animations:^{
             [self->_pageView setBounds:CGRectMake(0, 0, bounds.size.width, bounds.size.height)];
-        } completion:completion];
+        } completion:nil];
     } else {
         [_pageView setBounds:CGRectMake(0, 0, bounds.size.width, bounds.size.height)];
-        dispatch_main_async(completion, YES);
     }
 }
 
@@ -692,7 +696,7 @@
 }
 
 /// 发生滚动
-- (void)didScroll:(BOOL)stopped animated:(BOOL)animated {
+- (void)didScroll:(BOOL)stopped {
     CGRect  const bounds  = _pageView.bounds;
     CGSize  const size    = bounds.size;
     CGFloat const offsetY = bounds.origin.y;

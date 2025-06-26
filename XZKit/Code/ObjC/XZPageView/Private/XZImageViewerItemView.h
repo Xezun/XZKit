@@ -24,8 +24,6 @@ NS_ASSUME_NONNULL_BEGIN
 /// 单个内容视图的容器，提供了缩放功能。
 @interface XZImageViewerItemView : UIView <UIScrollViewDelegate>
 
-/// 该属性已被重写，原有的功能被屏蔽，现在只起记录作用，并在调整布局时通过此属性的值来优化布局。
-@property (nonatomic) UIViewContentMode contentMode;
 /// 事件代理。
 @property (nonatomic, weak) id<XZImageViewerItemViewDelegate> delegate;
 /// 当前容器所显示的内容的索引。
@@ -33,6 +31,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 /// 偏好大小。默认为 contentView 设置时的大小。
 @property (nonatomic, readonly) CGSize preferredContentSize;
+
 /// 更新偏好大小。
 - (void)setPreferredContentSize:(CGSize)preferredSize animated:(BOOL)animated;
 

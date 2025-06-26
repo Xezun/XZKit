@@ -40,9 +40,26 @@
 }
 
 - (IBAction)tapAction:(UITapGestureRecognizer *)sender {
+    UIImageView *sourceView = nil;
+    
+    UIView * const view  = sender.view;
+    CGPoint  const point = [sender locationInView:sender.view];
+    for (UIImageView *imageView in self.imageViews) {
+        if (CGRectContainsPoint([imageView convertRect:imageView.bounds toView:view], point)) {
+            sourceView = imageView;
+            break;
+        }
+    }
+    
+    if (sourceView == nil) {
+        return;
+    }
+    
     XZImageViewer *imageViewer = [[XZImageViewer alloc] init];
     imageViewer.delegate = self;
     imageViewer.dataSource = self;
+    imageViewer.sourceView = sourceView;
+    imageViewer.currentIndex = [self.imageViews indexOfObject:sourceView];
     [self presentViewController:imageViewer animated:YES completion:nil];
 }
 
@@ -52,14 +69,17 @@
     return _imageViews.count;
 }
 
-- (UIImage *)imageViewer:(XZImageViewer *)imageViewer loadImageForItemAtIndex:(NSInteger)index {
+- (UIImage *)imageViewer:(XZImageViewer *)imageViewer loadImageForItemAtIndex:(NSInteger)index completion:(void (^)(UIImage * _Nonnull))completion {
+    [SDWebImageManager.sharedManager loadImageWithURL:_imageURLs[index] options:0 progress:nil completed:^(UIImage * _Nullable image, NSData * _Nullable data, NSError * _Nullable error, SDImageCacheType cacheType, BOOL finished, NSURL * _Nullable imageURL) {
+        completion(image);
+    }];
     return _imageViews[index].image;
 }
 
 #pragma mark - XZImageViewerDelegate
 
 - (void)imageViewer:(XZImageViewer *)imageViewer didShowImageAtIndex:(NSInteger)index {
-    
+    imageViewer.sourceView = self.imageViews[index];
 }
 
 

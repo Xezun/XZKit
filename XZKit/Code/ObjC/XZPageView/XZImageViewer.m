@@ -9,6 +9,7 @@
 #import "XZPageViewDefines.h"
 #import "XZPageView.h"
 #import "XZImageViewerItemView.h"
+@import XZDefines;
 
 //@interface _XZImageViewerView : UIView
 //@property (nonatomic, readonly, nonnull) XZCarouselView *carouselView;
@@ -38,7 +39,6 @@
     self = [super initWithNibName:nibNameOrNil bundle:nibBundleOrNil];
     if (self) {
         self.modalPresentationStyle = UIModalPresentationFullScreen;
-//        self.transitioningDelegate = self;
     }
     return self;
 }
@@ -46,22 +46,29 @@
 - (instancetype)initWithCoder:(NSCoder *)aDecoder {
     self = [super initWithCoder:aDecoder];
     if (self) {
-        self.transitioningDelegate = self;
+        self.modalPresentationStyle = UIModalPresentationFullScreen;
     }
     return self;
+}
+
+@synthesize pageView = _pageView;
+
+- (XZPageView *)pageView {
+    if (_pageView == nil) {
+        _pageView = [[XZPageView alloc] initWithFrame:CGRectMake(0, 0, 320, 480)];
+        _pageView.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
+        _pageView.delegate = self;
+        _pageView.dataSource = self;
+        [_pageView reloadData];
+    }
+    return _pageView;
 }
 
 - (void)viewDidLoad {
     [super viewDidLoad];
     
     self.view.contentMode = UIViewContentModeScaleAspectFit;
-    
-    _pageView = [[XZPageView alloc] initWithFrame:UIScreen.mainScreen.bounds];
-    _pageView.backgroundColor = UIColor.blackColor;
-    [self.view addSubview:_pageView];
-    
-    _pageView.delegate = self;
-    _pageView.dataSource = self;
+    [self.view addSubview:self.pageView];
     
     // 双击缩放
     UITapGestureRecognizer * const doubleTapGestureRecognizer = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(doubleTapGestureRecognizerAction:)];
@@ -81,12 +88,24 @@
     [panGestureRecognizer requireGestureRecognizerToFail:tapGestureRecognizer];
 }
 
+- (void)viewDidLayoutSubviews {
+    [super viewDidLayoutSubviews];
+    self.pageView.frame = self.view.bounds;
+}
+
 - (UIStatusBarAnimation)preferredStatusBarUpdateAnimation {
     return UIStatusBarAnimationFade;
 }
 
 - (BOOL)prefersStatusBarHidden {
     return YES;
+}
+
+- (void)setSourceView:(UIView *)sourceView {
+    if (_sourceView != sourceView) {
+        _sourceView = sourceView;
+        self.transitioningDelegate = _sourceView ? self : nil;
+    }
 }
 
 #pragma mark - XZPageViewDataSource
@@ -100,11 +119,44 @@
         CGRect const kBounds = pageView.bounds;
         reusingView = [[XZImageViewerItemView alloc] initWithFrame:kBounds];
         reusingView.contentMode = self.view.contentMode;
+        [reusingView setMinimumZoomScale:0.1 maximumZoomScale:10.0];
     }
     
-    UIImage *image = [_dataSource imageViewer:self loadImageForItemAtIndex:index];
+    BOOL __block didSetImage = NO;
     
-    reusingView.imageView.image = image;
+    enweak(self, reusingView);
+    UIImage *image = [_dataSource imageViewer:self loadImageForItemAtIndex:index completion:^(UIImage * _Nonnull image) {
+        deweak(self, reusingView);
+        
+        if (!didSetImage) {
+            reusingView.imageView.image = image;
+            didSetImage = YES;
+            return;
+        }
+        
+        if (self == nil) {
+            return;
+        }
+        
+        XZPageView * const pageView = self.pageView;
+        if (pageView.currentPage != index) {
+            return;
+        }
+        
+        XZImageViewerItemView * const itemView = pageView.currentView;
+        itemView.imageView.image = image;
+        [UIView animateWithDuration:XZPageViewAnimationDuration animations:^{
+            [itemView setNeedsLayout];
+            [itemView layoutIfNeeded];
+        }];
+    }];
+    
+    if (!didSetImage) {
+        reusingView.imageView.image = image;
+        didSetImage = YES;
+    }
+    
+    [reusingView setNeedsLayout];
     
     return reusingView;
 }
@@ -218,40 +270,21 @@
 }
 
 - (void)setCurrentIndex:(NSInteger)currentIndex {
-    self.pageView.currentPage = currentIndex;
+    [self setCurrentIndex:currentIndex animated:NO];
 }
 
 - (void)setCurrentIndex:(NSInteger)newIndex animated:(BOOL)animated {
-    [self.pageView setCurrentPage:newIndex animated:animated completion:nil];
+    [self.pageView setCurrentPage:newIndex animated:animated];
 }
 
 #pragma mark - UIViewControllerAnimatedTransitioning 代理
 
 - (nullable id <UIViewControllerAnimatedTransitioning>)animationControllerForPresentedController:(UIViewController *)presented presentingController:(UIViewController *)presenting sourceController:(UIViewController *)source {
-    // 状态栏是否隐藏，与 present 时一致。
-    _prefersStatusBarHidden = UIApplication.sharedApplication.isStatusBarHidden;
-    
-    switch (presented.modalPresentationStyle) {
-        case UIModalPresentationFullScreen:
-        case UIModalPresentationCustom: {
-            return [[_XZImageViewerPresentingAnimationController alloc] initWithDelegate:self];
-        }
-        default: {
-            return nil;
-        }
-    }
+    return [_XZImageViewerPresentingAnimationController animationControllerWithSourceView:self.sourceView];
 }
 
 - (nullable id <UIViewControllerAnimatedTransitioning>)animationControllerForDismissedController:(UIViewController *)dismissed {
-    switch (dismissed.modalPresentationStyle) {
-        case UIModalPresentationFullScreen:
-        case UIModalPresentationCustom: {
-            return [[_XZImageViewerDismissingAnimationController alloc] initWithDelegate:self];
-        }
-        default: {
-            return nil;
-        }
-    }
+    return [_XZImageViewerDismissingAnimationController animationControllerWithSourceView:self.sourceView];
 }
 
 - (nullable id <UIViewControllerInteractiveTransitioning>)interactionControllerForPresentation:(id <UIViewControllerAnimatedTransitioning>)animator {
@@ -291,118 +324,134 @@
 
 
 
-@implementation _XZImageViewerPresentingAnimationController
+@implementation _XZImageViewerPresentingAnimationController {
+    UIView *_sourceView;
+}
 
-//- (instancetype)initWithDelegate:(XZImageViewer *)delegate {
-//    self = [super init];
-//    if (self) {
-//        _delegate = delegate;
-//    }
-//    return self;
-//}
-//
-//- (NSTimeInterval)transitionDuration:(id<UIViewControllerContextTransitioning>)transitionContext {
-//    return XZPageViewAnimationDuration;
-//}
-//
-//- (void)animateTransition:(id<UIViewControllerContextTransitioning>)transitionContext {
-//    UIView * const containerView = transitionContext.containerView;
-//    CGRect const kBounds = containerView.bounds;
-//    
-//    UIView * const fromView = [transitionContext viewForKey:UITransitionContextFromViewKey];
-//    
-//    UIView * const shadowView = [[UIView alloc] initWithFrame:kBounds];
-//    shadowView.backgroundColor = [UIColor clearColor];
-//    [containerView insertSubview:shadowView aboveSubview:fromView];
-//    
-//    CGRect const _sourceRect = [containerView.window convertRect:[_delegate _XZImageViewerSourceRectForCurrentImage:NO] toView:containerView];
-//    UIViewContentMode const _sourceContentMode = [_delegate _XZImageViewerSourceContentModeForCurrentImage];
-//    
-//    UIViewController * const toVC = [transitionContext viewControllerForKey:UITransitionContextToViewControllerKey];;
-//    _XZImageViewerView * const toView = [transitionContext viewForKey:UITransitionContextToViewKey];
-//    UIViewContentMode const targetContentMode = toView.carouselView.contentMode;
-//    // present 有原始模式向目的模式过渡。
-//    toView.carouselView.backgroundColor = UIColor.clearColor;
-//    toView.carouselView.contentMode     = _sourceContentMode;
-//    [toView setFrame:_sourceRect keepsCarouselViewFullScreen:NO];
-//    [toView layoutIfNeeded];
-//    [containerView addSubview:toView];
-//    
-//    NSTimeInterval const duration = [self transitionDuration:transitionContext];
-//    [UIView animateWithDuration:duration delay:0 options:(UIViewAnimationOptionLayoutSubviews | UIViewAnimationOptionCurveEaseInOut) animations:^{
-//        shadowView.backgroundColor = UIColor.blackColor;
-//        // 下面两句的顺序不能颠倒，不然动画效果不对。
-//        toView.carouselView.contentMode = targetContentMode;
-//        [toView setFrame:[transitionContext finalFrameForViewController:toVC] keepsCarouselViewFullScreen:YES];
-//    } completion:^(BOOL finished) {
-//        [shadowView removeFromSuperview];
-//        if (transitionContext.transitionWasCancelled) {
-//            [toView removeFromSuperview];
-//            [transitionContext completeTransition:NO];
-//        } else {
-//            toView.carouselView.backgroundColor = UIColor.blackColor;
-//            [transitionContext completeTransition:YES];
-//        }
-//    }];
-//}
++ (_XZImageViewerPresentingAnimationController *)animationControllerWithSourceView:(UIView *)sourceView {
+    if (sourceView == nil) {
+        return nil;
+    }
+    return [[self alloc] initWithSourceView:sourceView];
+}
+
+- (instancetype)initWithSourceView:(UIView *)sourceView {
+    self = [super init];
+    if (self) {
+        _sourceView = sourceView;
+    }
+    return self;
+}
+
+- (NSTimeInterval)transitionDuration:(id<UIViewControllerContextTransitioning>)transitionContext {
+    return XZPageViewAnimationDuration;
+}
+
+- (void)animateTransition:(id<UIViewControllerContextTransitioning>)transitionContext {
+    UIView * const containerView = transitionContext.containerView;
+//    CGRect   const kBounds = containerView.bounds;
+    
+    UIViewController * const toVC = [transitionContext viewControllerForKey:UITransitionContextToViewControllerKey];
+    
+    // UIView * const fromView = [transitionContext viewForKey:UITransitionContextFromViewKey];
+    UIView * const toView   = [transitionContext viewForKey:UITransitionContextToViewKey];
+    
+    CGRect const sourceRect = [_sourceView convertRect:_sourceView.bounds toView:nil];
+    
+    toView.backgroundColor = UIColor.clearColor;
+    toView.frame = sourceRect;
+    [containerView addSubview:toView];
+    [toView layoutIfNeeded];
+    
+    CGRect const toViewFrame = [transitionContext finalFrameForViewController:toVC];
+    
+    UIView *shadowView = [[UIView alloc] initWithFrame:toViewFrame];
+    shadowView.backgroundColor = UIColor.clearColor;
+    [containerView insertSubview:shadowView belowSubview:toView];
+    
+    NSTimeInterval const duration = [self transitionDuration:transitionContext];
+    [UIView animateWithDuration:duration delay:0 options:UIViewAnimationOptionLayoutSubviews animations:^{
+        toView.frame = toViewFrame;
+        shadowView.backgroundColor = UIColor.blackColor;
+    } completion:^(BOOL finished) {
+        if (transitionContext.transitionWasCancelled) {
+            [toView removeFromSuperview];
+            [transitionContext completeTransition:NO];
+        } else {
+            [transitionContext completeTransition:YES];
+            toView.backgroundColor = UIColor.blackColor;
+        }
+        [shadowView removeFromSuperview];
+    }];
+}
 
 @end
 
 
-@implementation _XZImageViewerDismissingAnimationController
+@implementation _XZImageViewerDismissingAnimationController {
+    UIView *_sourceView;
+}
 
-//- (instancetype)initWithDelegate:(XZImageViewer *)delegate {
-//    self = [super init];
-//    if (self) {
-//        _delegate = delegate;
-//    }
-//    return self;
-//}
-//
-//- (NSTimeInterval)transitionDuration:(id<UIViewControllerContextTransitioning>)transitionContext {
-//    return XZCarouselViewAnimationDuration;
-//}
-//
-//- (void)animateTransition:(id<UIViewControllerContextTransitioning>)transitionContext {
-//    UIView * const containerView = transitionContext.containerView;
-//    CGRect const kBounds = containerView.bounds;
-//    
-//    UIViewController *fromVC = [transitionContext viewControllerForKey:UITransitionContextFromViewControllerKey];
-//    CGRect const fromViewFrame1 = [transitionContext initialFrameForViewController:fromVC];
-//    _XZImageViewerView * const fromView = [transitionContext viewForKey:UITransitionContextFromViewKey];
-//    fromView.carouselView.backgroundColor = UIColor.clearColor;
-//    // 虽然在转场完成后，系统会自动将 toView 添加到 window 上显示，但是如果不添加到 containerView 上，那么在 in-cell 状态下，toView 的位置就会异常。
-//    UIViewController *toVC = [transitionContext viewControllerForKey:UITransitionContextToViewControllerKey];
-//    UIView *toView = [transitionContext viewForKey:UITransitionContextToViewKey];
-//    toView.frame = [transitionContext finalFrameForViewController:toVC];
-//    [containerView insertSubview:toView belowSubview:fromView];
-//    
-//    UIView * const shadowView = [[UIView alloc] initWithFrame:kBounds];
-//    shadowView.backgroundColor = [UIColor blackColor];
-//    [containerView insertSubview:shadowView aboveSubview:toView];
-//    
-//    CGRect const _sourceRect = [containerView.window convertRect:[_delegate _XZImageViewerSourceRectForCurrentImage:NO] toView:containerView];
-//    UIViewContentMode const _sourceContentMode = [_delegate _XZImageViewerSourceContentModeForCurrentImage];
-//    
-//    [UIView animateWithDuration:[self transitionDuration:transitionContext] delay:0 options:(UIViewAnimationOptionLayoutSubviews | UIViewAnimationOptionCurveEaseInOut) animations:^{
-//        shadowView.backgroundColor = UIColor.clearColor;
++ (_XZImageViewerDismissingAnimationController *)animationControllerWithSourceView:(UIView *)sourceView {
+    if (sourceView == nil) {
+        return nil;
+    }
+    return [[self alloc] initWithSourceView:sourceView];
+}
+
+- (instancetype)initWithSourceView:(UIView *)sourceView {
+    self = [super init];
+    if (self) {
+        _sourceView = sourceView;
+    }
+    return self;
+}
+
+- (NSTimeInterval)transitionDuration:(id<UIViewControllerContextTransitioning>)transitionContext {
+    return XZPageViewAnimationDuration;
+}
+
+- (void)animateTransition:(id<UIViewControllerContextTransitioning>)transitionContext {
+    UIView * const containerView = transitionContext.containerView;
+    CGRect   const bounds = containerView.bounds;
+    
+    UIViewController *fromVC = [transitionContext viewControllerForKey:UITransitionContextFromViewControllerKey];
+    UIView    * const fromView = [transitionContext viewForKey:UITransitionContextFromViewKey];
+    fromView.frame = [transitionContext initialFrameForViewController:fromVC];
+    [containerView addSubview:fromView];
+    
+    // 虽然在转场完成后，系统会自动将 toView 添加到 window 上显示，但是如果不添加到 containerView 上，那么在 in-cell 状态下，toView 的位置就会异常。
+    UIViewController *toVC = [transitionContext viewControllerForKey:UITransitionContextToViewControllerKey];
+    UIView *toView = [transitionContext viewForKey:UITransitionContextToViewKey];
+    toView.frame = [transitionContext finalFrameForViewController:toVC];
+    [containerView insertSubview:toView belowSubview:fromView];
+    
+    UIView *shadowView = [[UIView alloc] initWithFrame:bounds];
+    shadowView.backgroundColor = UIColor.blackColor;
+    [containerView insertSubview:shadowView belowSubview:fromView];
+    
+    fromView.backgroundColor = UIColor.clearColor;
+    
+    CGRect const sourceRect = [_sourceView convertRect:_sourceView.bounds toView:containerView];
+    
+    NSTimeInterval const duration   = [self transitionDuration:transitionContext];
+    [UIView animateWithDuration:duration delay:0 options:UIViewAnimationOptionLayoutSubviews animations:^{
+        shadowView.backgroundColor = UIColor.clearColor;
 //        if (transitionContext.isInteractive) {
 //            return;
 //        }
-//        fromView.carouselView.contentMode = _sourceContentMode;
-//        [fromView setFrame:_sourceRect keepsCarouselViewFullScreen:NO];
-//    } completion:^(BOOL finished) {
-//        [shadowView removeFromSuperview];
-//        if (transitionContext.transitionWasCancelled) {
-//            fromView.carouselView.backgroundColor = UIColor.blackColor;
-//            [fromView setFrame:fromViewFrame1 keepsCarouselViewFullScreen:YES];
-//            [toView removeFromSuperview];
-//            [transitionContext completeTransition:NO];
-//        } else {
-//            [transitionContext completeTransition:YES];
-//        }
-//    }];
-//}
+        fromView.frame = sourceRect;
+    } completion:^(BOOL finished) {
+        if (transitionContext.transitionWasCancelled) {
+            fromView.backgroundColor = UIColor.blackColor;
+            [toView removeFromSuperview];
+            [transitionContext completeTransition:NO];
+        } else {
+            [transitionContext completeTransition:YES];
+        }
+        [shadowView removeFromSuperview];
+    }];
+}
 
 @end
 

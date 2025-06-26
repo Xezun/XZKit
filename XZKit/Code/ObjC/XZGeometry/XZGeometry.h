@@ -40,7 +40,11 @@ UIKIT_EXTERN CGSize CGSizeMakeAspectRatioInside(CGSize size, CGSize ratio) NS_RE
 ///   - aspect: 被缩的 CGSize 值
 UIKIT_EXTERN CGSize CGSizeScaleAspectRatioInside(CGSize size, CGSize aspect) NS_REFINED_FOR_SWIFT;
 
-/// 返回在 rect 区域内，将尺寸为 aspect 的内容，按 contentMode 模式适配时，表示内容的大小和位置 CGRect 结构体值。
+FOUNDATION_STATIC_INLINE CGSize CGSizeApplyScale(CGSize size, CGFloat scale) NS_REFINED_FOR_SWIFT {
+    return CGSizeMake(size.width * scale, size.height * scale);
+};
+
+/// 在 rect 区域内，将尺寸为 aspect 的内容，按 contentMode 模式适配，返回表示内容的大小和位置 CGRect 结构体值。
 ///
 /// - Parameters:
 ///   - rect: 适配区域
@@ -50,7 +54,7 @@ UIKIT_EXTERN CGRect CGRectMakeAspectRatioWithMode(CGRect rect, CGSize aspect, UI
 
 /// 在 rect 区域内，先创建一个宽高比为 ratio 的最大范围内容区域，然后再按 contentMode 模式对内容进行适配，并返回表示内容大小和位置的 CGRect 结构体值。
 ///
-/// 除非是``UIViewContentModeScaleToFill``模式，否则返回的结构体一定是 ratio 的宽高比。
+/// 返回的 CGRect 的宽高比一定与 ratio 参数相同，因此模式 `.scaleToFill`、`.scaleAspectFit`、`.scaleAspectFill` 的效果与 `.center` 相同。
 ///
 /// - Parameters:
 ///   - rect: 待创建 CGRect 所在的区域
@@ -60,7 +64,7 @@ UIKIT_EXTERN CGRect CGRectMakeAspectRatioInsideWithMode(CGRect rect, CGSize rati
 
 /// 先将大小范围为 aspect 的内容，保持宽高比缩放到 rect 区域范围内，然后再按 contentMode 模式适配，并返回表示内容大小和位置的 CGRect 结构体值。
 ///
-/// 如果 aspect 比较小，那么它可以在 rect 中保持大小不变。
+/// 如果 aspect 比 rect 小，那么它在 rect 中保持大小不变，因此模式 `.scaleToFill`、`.scaleAspectFit`、`.scaleAspectFill` 的效果与 `.center` 相同。
 ///
 /// - Parameters:
 ///   - rect: 待创建 CGRect 所在的区域

@@ -58,8 +58,8 @@
 - (void)didMoveToWindow {
     [super didMoveToWindow];
     
-    // 添加到 window 时，如果数据为空，则尝试自动刷新
     if (self.window != nil && _numberOfPages == 0 && _dataSource != nil) {
+        // 添加到 window 时，如果数据为空，则尝试自动刷新
         [self reloadData];
     } else {
         // 开启自动计时器
@@ -67,25 +67,10 @@
     }
 }
 
-- (void)setFrame:(CGRect)frame {
-    CGSize const old = self.frame.size;
-    [super setFrame:frame];
-    CGSize const new = self.frame.size;
+- (void)layoutSubviews {
+    [super layoutSubviews];
     
-    if (!CGSizeEqualToSize(old, new)) {
-        [_context layoutSubviews:self.bounds];
-    }
-}
-
-- (void)setBounds:(CGRect)bounds {
-    CGRect const old = self.bounds;
-    [super setBounds:bounds];
-    CGRect const new = self.bounds;
-    
-    // setFrame 不会触发 setBounds
-    if (!CGSizeEqualToSize(old.size, new.size)) {
-        [_context layoutSubviews:new];
-    }
+    [_context layoutSubviews:self.bounds];
 }
 
 @dynamic delegate;
@@ -156,13 +141,11 @@
 }
 
 - (void)setCurrentPage:(NSInteger)currentPage {
-    [_context setCurrentPage:currentPage animated:NO completion:nil];
-    // 自动翻页重新计时
-    [_context resumeAutoPagingTimer];
+    [self setCurrentPage:currentPage animated:NO];
 }
 
-- (void)setCurrentPage:(NSInteger)currentPage animated:(BOOL)animated completion:(void (^ __nullable)(BOOL finished))completion {
-    [_context setCurrentPage:currentPage animated:animated completion:completion];
+- (void)setCurrentPage:(NSInteger)currentPage animated:(BOOL)animated {
+    [_context setCurrentPage:currentPage animated:animated];
     // 自动翻页重新计时
     [_context resumeAutoPagingTimer];
 }

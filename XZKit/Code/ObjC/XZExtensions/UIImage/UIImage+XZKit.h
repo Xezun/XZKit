@@ -16,6 +16,10 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface UIImage (XZKit)
 
+/// 返回图片在指定倍率下的大小。
+/// - Parameter scale: 倍率
+- (CGSize)xz_sizeInScale:(CGFloat)targetScale NS_SWIFT_NAME(size(in:));
+
 /// 绘制指定颜色、指定大小的图片。
 /// - Parameters:
 ///   - color: 图片颜色

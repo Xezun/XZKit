@@ -186,7 +186,9 @@ static void setTransitionStatus(UIViewController * _Nonnull viewController, XZTr
 
 - (void)setCurrentPage:(NSInteger)newPage animated:(BOOL)animated {
     // 回调是异步的。
-    [self.pageView setCurrentPage:newPage animated:animated completion:^(BOOL finished) {
+    [UIView animateWithDuration:XZPageViewAnimationDuration animations:^{
+        [self.pageView setCurrentPage:newPage animated:animated];
+    } completion:^(BOOL finished) {
         if (self->_pendingViewController == nil) {
             return;
         }

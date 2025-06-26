@@ -169,11 +169,32 @@ CGRect CGRectMakeAspectRatioWithMode(CGRect const rect, CGSize const aspect, UIV
 
 CGRect CGRectMakeAspectRatioInsideWithMode(CGRect const rect, CGSize const ratio, UIViewContentMode const contentMode) {
     CGSize const size = CGSizeMakeAspectRatioInside(rect.size, ratio);
-    return CGRectMakeAspectRatioWithMode(rect, size, contentMode);
+    switch (contentMode) {
+        case UIViewContentModeScaleToFill:
+        case UIViewContentModeScaleAspectFit:
+        case UIViewContentModeScaleAspectFill:
+            return CGRectMakeAspectRatioWithMode(rect, size, UIViewContentModeCenter);
+        default: {
+            return CGRectMakeAspectRatioWithMode(rect, size, contentMode);
+        }
+    }
 }
 
 
 CGRect CGRectScaleAspectRatioInsideWithMode(CGRect const rect, CGSize const aspect, UIViewContentMode const contentMode) {
-    CGSize const size = CGSizeScaleAspectRatioInside(rect.size, aspect);
-    return CGRectMakeAspectRatioWithMode(rect, size, contentMode);
+    switch (contentMode) {
+        case UIViewContentModeScaleToFill:
+        case UIViewContentModeScaleAspectFit:
+        case UIViewContentModeScaleAspectFill:
+            if (aspect.width <= rect.size.width && aspect.height <= rect.size.width) {
+                return CGRectMakeAspectRatioWithMode(rect, aspect, UIViewContentModeCenter);
+            }
+            return CGRectMakeAspectRatioInsideWithMode(rect, aspect, UIViewContentModeCenter);
+        default: {
+            if (aspect.width <= rect.size.width && aspect.height <= rect.size.width) {
+                return CGRectMakeAspectRatioWithMode(rect, aspect, contentMode);
+            }
+            return CGRectMakeAspectRatioInsideWithMode(rect, aspect, contentMode);
+        }
+    }
 }

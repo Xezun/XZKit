@@ -156,7 +156,7 @@
 #pragma XZPageControl Events
 
 - (void)pageControlDidChangeValue:(XZPageControl *)pageControl {
-    [self.pageView setCurrentPage:pageControl.currentPage animated:YES completion:nil];
+    [self.pageView setCurrentPage:pageControl.currentPage animated:YES];
 }
 
 #pragma mark - XZPageViewDataSource

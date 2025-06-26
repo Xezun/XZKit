@@ -16,6 +16,19 @@
 
 @implementation UIImage (XZKit)
 
+- (CGSize)xz_sizeInScale:(CGFloat)targetScale {
+    if (targetScale < 1.0) {
+        return CGSizeZero;
+    }
+    CGFloat const imageScale = self.scale;
+    if (imageScale == targetScale) {
+        return self.size;
+    }
+    CGSize const imageSize = self.size;
+    CGFloat const scale = imageScale / targetScale;
+    return CGSizeMake(imageSize.width * scale, imageSize.height * scale);
+}
+
 + (UIImage *)xz_imageWithColor:(UIColor *)color size:(CGSize)size {
     return [self xz_imageWithGraphics:^(CGContextRef  _Nonnull context) {
         CGContextSetFillColorWithColor(context, color.CGColor);

@@ -31,6 +31,7 @@ Pod::Spec.new do |s|
   s.subspec 'Code' do |ss|
     ss.pod_target_xcconfig = { 'GCC_PREPROCESSOR_DEFINITIONS' => 'XZ_FRAMEWORK=1' }
     ss.dependency 'XZDefines'
+    ss.dependency 'XZExtensions'
     ss.dependency 'XZGeometry'
 
     ss.source_files = 'XZKit/Code/ObjC/XZPageView/**/*.{h,m}'

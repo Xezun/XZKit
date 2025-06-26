@@ -69,8 +69,7 @@ NS_ASSUME_NONNULL_BEGIN
 /// @endcode
 /// @param currentPage 待展示的视图的索引
 /// @param animated 是否动画
-/// @param completion 回调函数，一定会调用，且是异步的
-- (void)setCurrentPage:(NSInteger)currentPage animated:(BOOL)animated completion:(void (^ __nullable)(BOOL finished))completion;
+- (void)setCurrentPage:(NSInteger)currentPage animated:(BOOL)animated;
 
 /// 事件代理。
 @property (nonatomic, weak) id<XZPageViewDelegate> delegate;
