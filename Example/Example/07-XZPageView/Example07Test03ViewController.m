@@ -58,8 +58,8 @@
     XZImageViewer *imageViewer = [[XZImageViewer alloc] init];
     imageViewer.delegate = self;
     imageViewer.dataSource = self;
-    imageViewer.sourceView = sourceView;
     imageViewer.currentIndex = [self.imageViews indexOfObject:sourceView];
+    imageViewer.sourceView = sourceView;
     [self presentViewController:imageViewer animated:YES completion:nil];
 }
 

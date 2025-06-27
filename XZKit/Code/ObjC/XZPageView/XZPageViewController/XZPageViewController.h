@@ -37,6 +37,8 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic, readonly, nullable) UIViewController *currentViewController;
 @property (nonatomic, readonly, nullable) UIViewController *pendingViewController;
 
+// 以下方法会导致 viewDidLoad 提前调用。
+
 @property (nonatomic) XZPageViewOrientation orientation;
 @property (nonatomic, setter=setLooped:) BOOL isLooped;
 @property (nonatomic) NSTimeInterval autoPagingInterval;

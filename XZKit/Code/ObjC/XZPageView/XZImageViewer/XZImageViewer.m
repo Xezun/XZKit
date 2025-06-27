@@ -48,10 +48,8 @@
 - (XZPageView *)pageView {
     if (_pageView == nil) {
         _pageView = [[XZPageView alloc] initWithFrame:CGRectMake(0, 0, 320, 480)];
-        _pageView.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
         _pageView.delegate = self;
         _pageView.dataSource = self;
-        [_pageView reloadData];
     }
     return _pageView;
 }
@@ -82,6 +80,7 @@
 
 - (void)viewDidLayoutSubviews {
     [super viewDidLayoutSubviews];
+    // 使用 autoresizingMask 效果不正常。
     self.pageView.frame = self.view.bounds;
 }
 
@@ -152,13 +151,13 @@
         didSetImage = YES;
     }
     
-    reusingView.imageView.frame =  CGRectSetSize(reusingView.imageView.frame, image.size);
+    reusingView.imageView.frame = CGRectSetSize(reusingView.imageView.frame, image.size);
     [reusingView setNeedsLayout];
     
     return reusingView;
 }
 
-- (UIView *)pageView:(XZPageView *)pageView prepareForReusingView:(__kindof UIView *)reusingView {
+- (UIView *)pageView:(XZPageView *)pageView prepareReuseForView:(nonnull __kindof UIView *)reusingView {
     return reusingView;
 }
 

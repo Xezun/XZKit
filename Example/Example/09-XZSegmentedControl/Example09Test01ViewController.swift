@@ -92,7 +92,7 @@ extension Example09Test01ViewController: XZPageViewDataSource {
         return view
     }
     
-    func pageView(_ pageView: XZPageView, prepareForReusing reusingView: UIView) -> UIView? {
+    func pageView(_ pageView: XZPageView, prepareReuseFor reusingView: UIView) -> UIView? {
         return reusingView
     }
     

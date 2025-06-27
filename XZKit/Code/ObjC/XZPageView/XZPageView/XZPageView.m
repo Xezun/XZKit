@@ -10,6 +10,10 @@
 #import "XZPageViewContext.h"
 @import ObjectiveC;
 
+@interface XZPageView ()
+@property (nonatomic, readonly) XZPageViewContext *context;
+@end
+
 @implementation XZPageView
 
 - (instancetype)initWithFrame:(CGRect)frame orientation:(XZPageViewOrientation)orientation {
@@ -33,7 +37,6 @@
 }
 
 - (void)XZPageViewDidInitialize:(XZPageViewOrientation)orientation {
-    // 默认以自身为代理
     _context = [XZPageViewContext contextWithPageView:self orientation:orientation];
     [super setDelegate:_context];
     
@@ -57,30 +60,25 @@
 
 - (void)didMoveToWindow {
     [super didMoveToWindow];
-    
-    if (self.window != nil && _numberOfPages == 0 && _dataSource != nil) {
-        NSInteger const oldPage = _currentPage;
-        // 添加到 window 时，如果数据为空，则尝试自动刷新
-        [self reloadData];
-        // 发送事件
-        if (_currentPage != NSNotFound && _currentPage != oldPage && _didShowPage) {
-            _didShowPage(self, _currentPage);
-        }
-    } else {
-        // 开启自动计时器
-        [_context scheduleAutoPagingTimerIfNeeded];
-    }
+    // 开启自动计时器
+    [_context scheduleAutoPagingTimerIfNeeded];
 }
 
 - (void)layoutSubviews {
     [super layoutSubviews];
-    
     [_context layoutSubviews:self.bounds];
 }
 
 @dynamic delegate;
 
 #pragma mark - 属性
+
+- (void)setDataSource:(id<XZPageViewDataSource>)dataSource {
+    if (_dataSource != dataSource) {
+        _dataSource = dataSource;
+        [self reloadData];
+    }
+}
 
 - (XZPageViewOrientation)orientation {
     return _context.orientation;
@@ -181,9 +179,28 @@
 #pragma mark - 公开方法
 
 - (void)reloadData {
-    _numberOfPages = [_dataSource numberOfPagesInPageView:self];
-        
+    // 重置数据
+    _numberOfPages = 0;
+    _currentPage = NSNotFound;
+    [_context reloadCurrentPageView];
+    _reusingPage = NSNotFound;
+    [_context reloadReusingPageView];
+    
+    // 刷新
+    [self reloadDataWithoutEvents];
+    
+    // 发送事件
+    if (_didShowPage && _currentPage != NSNotFound) {
+        _didShowPage(self, _currentPage);
+    }
+}
+
+#pragma mark - 私有方法
+
+- (void)reloadDataWithoutEvents {
     CGRect const bounds = self.bounds;
+    
+    _numberOfPages = [_dataSource numberOfPagesInPageView:self];
     
     // 自动调整当前页
     if (_numberOfPages == 0) {
@@ -195,12 +212,12 @@
     }
     
     // 重载当前页
-    [_context reloadCurrentPageView:bounds];
+    [_context reloadCurrentPageView];
     [_context layoutCurrentPageView:bounds];
     
     // 重载备用页
     _reusingPage = NSNotFound;
-    [_context reloadReusingPageView:bounds];
+    [_context reloadReusingPageView];
     [_context layoutReusingPageView:bounds];
     
     // 调整 contentInset 已适配当前状态，并重置页面位置

@@ -173,7 +173,7 @@
     return reusingView;
 }
 
-- (nullable UIView *)pageView:(XZPageView *)pageView prepareForReusingView:(UIImageView *)reusingView {
+- (nullable UIView *)pageView:(XZPageView *)pageView prepareReuseForView:(UIImageView *)reusingView {
     reusingView.image = nil;
     return reusingView;
 }

@@ -49,10 +49,10 @@
     self.segmentedControl.titles = self.titles;
     [self.segmentedControl addTarget:self action:@selector(segmentedControlValueChanged:) forControlEvents:(UIControlEventValueChanged)];
     
-    XZPageViewController *pageViewController = self.pageViewController;
-    pageViewController.isLooped = NO;
-    pageViewController.delegate = self;
-    pageViewController.dataSource = self;
+    _pageViewController.pageView.isLooped = NO;
+    
+    _pageViewController.delegate = self;
+    _pageViewController.dataSource = self;
 }
 
 - (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {

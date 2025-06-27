@@ -51,9 +51,8 @@ static void setTransitionStatus(UIViewController * _Nonnull viewController, XZTr
     _transitionStage = viewDidDisappear;
 
     XZPageView * const pageView = self.pageView;
-    pageView.contentMode = UIViewContentModeScaleToFill;
-    pageView.isLooped   = NO;
-    pageView.delegate   = self;
+    pageView.isLooped = NO;
+    pageView.delegate = self;
     pageView.dataSource = self;
 }
 
@@ -152,6 +151,13 @@ static void setTransitionStatus(UIViewController * _Nonnull viewController, XZTr
     [self.pageView reloadData];
 }
 
+- (void)setDataSource:(id<XZPageViewControllerDataSource>)dataSource {
+    if (_dataSource != dataSource) {
+        _dataSource = dataSource;
+        [self.pageView reloadData];
+    }
+}
+
 - (BOOL)isLooped {
     return self.pageView.isLooped;
 }
@@ -186,9 +192,7 @@ static void setTransitionStatus(UIViewController * _Nonnull viewController, XZTr
 
 - (void)setCurrentPage:(NSInteger)newPage animated:(BOOL)animated {
     // 回调是异步的。
-    [UIView animateWithDuration:XZPageViewAnimationDuration animations:^{
-        [self.pageView setCurrentPage:newPage animated:animated];
-    } completion:^(BOOL finished) {
+    void (^ const completion)(BOOL) = ^(BOOL finished) {
         if (self->_pendingViewController == nil) {
             return;
         }
@@ -198,7 +202,19 @@ static void setTransitionStatus(UIViewController * _Nonnull viewController, XZTr
         self->_currentViewController = self->_pendingViewController;
         [self forwardTransitionStage:viewDidAppear forViewController:self->_currentViewController animated:animated];
         self->_pendingViewController = nil;
-    }];
+    };
+    
+    // 执行翻页
+    if (animated) {
+        [UIView animateWithDuration:XZPageViewAnimationDuration animations:^{
+            [self.pageView setCurrentPage:newPage animated:animated];
+        } completion:completion];
+    } else {
+        [self.pageView setCurrentPage:newPage animated:animated];
+        dispatch_async(dispatch_get_main_queue(), ^{
+            completion(YES);
+        });
+    }
     
     // 检查是否翻页
     _pendingViewController = (id)self.pageView.currentView.nextResponder;
@@ -226,7 +242,7 @@ static void setTransitionStatus(UIViewController * _Nonnull viewController, XZTr
     return viewController.view;
 }
 
-- (nullable UIView *)pageView:(XZPageView *)pageView prepareForReusingView:(nonnull __kindof UIView *)reusingView {
+- (nullable UIView *)pageView:(XZPageView *)pageView prepareReuseForView:(nonnull __kindof UIView *)reusingView {
     UIViewController *viewController = (UIViewController *)[reusingView nextResponder];
     [viewController removeFromParentViewController];
     return nil;

@@ -12,7 +12,9 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-/// 翻页视图：支持多视图横向滚动翻页的视图。
+@class UIPageViewController, UIPageControl;
+
+/// 翻页视图：支持横向、纵向翻页的容器视图。
 @interface XZPageView : UIScrollView
 
 /// 指定初始化构造方法。
@@ -51,12 +53,6 @@ NS_ASSUME_NONNULL_BEGIN
 /// @attention 设置此属性不会触发代理方法。
 @property (nonatomic) NSInteger currentPage;
 
-/// 当前正展示的视图。
-@property (nonatomic, readonly, nullable) __kindof UIView *currentView;
-
-/// 可能将展示的视图。
-@property (nonatomic, readonly, nullable) __kindof UIView *pendingView;
-
 /// 设置当前展示视图。
 /// @discussion 调用此方法改变当前页，会重置自动翻页计时。
 /// @discussion 调用此方法不会触发代理事件。
@@ -71,13 +67,19 @@ NS_ASSUME_NONNULL_BEGIN
 /// @param animated 是否动画
 - (void)setCurrentPage:(NSInteger)currentPage animated:(BOOL)animated;
 
+/// 当前正展示的视图。
+@property (nonatomic, readonly, nullable) __kindof UIView *currentView;
+
+/// 可能将展示的视图，也可能是重用中的视图。
+@property (nonatomic, readonly, nullable) __kindof UIView *pendingView;
+
 /// 事件代理。
 @property (nonatomic, weak) id<XZPageViewDelegate> delegate;
 /// 数据源。
 @property (nonatomic, weak) id<XZPageViewDataSource> dataSource;
 
-/// 重新加载。
-/// @discussion
+/// 刷新视图。
+/// 
 /// 当前页数 currentPage 可能会发生改变，以适配新的数据，但是不会发送事件。
 /// @discussion
 /// 自动翻页计时会重置。

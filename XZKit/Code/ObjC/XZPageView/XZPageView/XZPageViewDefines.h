@@ -9,7 +9,7 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-@class XZPageView, UITableView;
+@class XZPageView, UITableView, UITableViewCell;
 @protocol UITableViewDelegate;
 
 /// 翻页效果动画时长。
@@ -41,10 +41,10 @@ NS_SWIFT_UI_ACTOR @protocol XZPageViewDataSource <NSObject>
 - (UIView *)pageView:(XZPageView *)pageView viewForPageAtIndex:(NSInteger)index reusingView:(nullable __kindof UIView *)reusingView;
                                     
 /// 当视图不再展示时，此方法会被调用，此方法返回的视图将会被缓存，并在需要时重用。
-/// @discussion 如果有待展示的内容，视图会直接在 `pageView:viewForPageAtIndex:reusingView:` 方法中作为 reusingView 使用，而不会调用此方法。
+///
 /// @param pageView 调用此方法的对象
 /// @param reusingView 需要被重置的视图
-- (nullable UIView *)pageView:(XZPageView *)pageView prepareForReusingView:(__kindof UIView *)reusingView;
+- (nullable UIView *)pageView:(XZPageView *)pageView prepareReuseForView:(__kindof UIView *)reusingView;
 
 @end
 
@@ -60,8 +60,8 @@ NS_SWIFT_UI_ACTOR @protocol XZPageViewDelegate <UIScrollViewDelegate>
 
 /// 在用户翻动页面的过程中，通知转场进度。
 ///
-/// 除调用 ``-setCurrentPage:animated:completion:`` 之外，如果 currentPage 发生改变，即会调用此方法，比如。
-/// 1. 首次显示时，自动展示第一个视图。
+/// 除调用 ``-setCurrentPage:animated:`` 之外，如果 currentPage 发生改变，即会调用此方法。
+/// 1. 首次显示时，自动展示第一个视图会调用此方法。
 /// 2. 刷新时，如果数量减少，currenPage 的自动调整。
 ///
 /// 命名 inTransition 等同 inProgress 表示在翻页中。

@@ -35,15 +35,15 @@
     ];
     self.count = self.imageURLs.count;
     
+    self.pageControl.numberOfPages = self.count;
+    self.pageControl.indicatorFillColor = UIColor.whiteColor;
+    self.pageControl.currentIndicatorFillColor = UIColor.orangeColor;
+    
     self.pageView.isLooped = YES;
     // self.pageView.autoPagingInterval = 5.0;
     
     self.pageView.delegate = self;
     self.pageView.dataSource = self;
-    
-    self.pageControl.numberOfPages = self.count;
-    self.pageControl.indicatorFillColor = UIColor.whiteColor;
-    self.pageControl.currentIndicatorFillColor = UIColor.orangeColor;
     [self.pageControl addTarget:self action:@selector(pageControlDidChangeValue:) forControlEvents:(UIControlEventValueChanged)];
 }
 
@@ -63,7 +63,7 @@
     return reusingView;
 }
 
-- (nullable UIView *)pageView:(XZPageView *)pageView prepareForReusingView:(UIImageView *)reusingView {
+- (nullable UIView *)pageView:(XZPageView *)pageView prepareReuseForView:(UIImageView *)reusingView {
     reusingView.image = nil;
     return reusingView;
 }

@@ -67,43 +67,57 @@
     [self adjustContentInsets:bounds];
 }
 
-- (void)reloadCurrentPageView:(CGRect const)bounds {
+- (void)reloadCurrentPageView {
     NSInteger const currentPage = _pageView->_currentPage;
     UIView *  const oldView     = _pageView->_currentView;
     
-    // 进入备用状态，从 window 移除；当再次重用时，需要重新添加到 window 上
-    [oldView removeFromSuperview];
-    
     // 没有数据时，如果有当前页，则进入备用状态。
     if (currentPage == NSNotFound) {
-        if (oldView != nil) {
-            _pageView->_currentView = [_pageView.dataSource pageView:_pageView prepareForReusingView:oldView];
+        if (oldView == nil) {
+            return;
         }
+        _pageView->_currentView = [_pageView.dataSource pageView:_pageView prepareReuseForView:oldView];
+        [oldView removeFromSuperview];
         return;
     }
     
-    UIView * const newView = [_pageView.dataSource pageView:_pageView viewForPageAtIndex:currentPage reusingView:oldView];
-    [_pageView addSubview:newView];
-    _pageView->_currentView = newView;
+    if (oldView) {
+        UIView * const newView = [_pageView.dataSource pageView:_pageView viewForPageAtIndex:currentPage reusingView:oldView];
+        if (oldView != newView) {
+            [oldView removeFromSuperview];
+            [_pageView addSubview:newView];
+        } else if (newView.superview != _pageView) {
+            [_pageView addSubview:newView];
+        }
+        _pageView->_currentView = newView;
+    } else {
+        _pageView->_currentView = [_pageView.dataSource pageView:_pageView viewForPageAtIndex:currentPage reusingView:oldView];
+        [_pageView addSubview:_pageView->_currentView];
+    }
 }
 
-- (void)reloadReusingPageView:(CGRect const)bounds {
+- (void)reloadReusingPageView {
     NSInteger const reusingPage = _pageView->_reusingPage;
-    UIView *  const oldView     = _pageView->_reusingView;
+    UIView *  const oldView = _pageView->_reusingView;
     
-    [oldView removeFromSuperview];
-    
-    // 没有数据，备用视图进入备用状态。
     if (reusingPage == NSNotFound) {
-        if (oldView != nil) {
-            _pageView->_reusingView = [_pageView.dataSource pageView:_pageView prepareForReusingView:oldView];
+        // 重用视图不显示，保存视图即可
+        [oldView removeFromSuperview];
+        if (oldView == nil) {
+            return;
         }
-        return;
+        _pageView->_reusingView = [_pageView.dataSource pageView:_pageView prepareReuseForView:oldView];
+    } else {
+        // 重用视图作为待显视图展示
+        UIView * const newView = [_pageView.dataSource pageView:_pageView viewForPageAtIndex:reusingPage reusingView:oldView];
+        if (newView != oldView) {
+            [oldView removeFromSuperview];
+        }
+        if (newView != nil) {
+            [_pageView addSubview:newView];
+        }
+        _pageView->_reusingView = newView;
     }
-    
-    UIView * const newView = [_pageView.dataSource pageView:_pageView viewForPageAtIndex:reusingPage reusingView:oldView];
-    [_pageView addSubview:newView];
-    _pageView->_reusingView = newView;
 }
 
 - (void)scheduleAutoPagingTimerIfNeeded {
@@ -449,7 +463,7 @@
     if (_pageView->_reusingPage != pendingPage) {
         _pageView->_reusingPage = pendingPage;
         _pageView->_reusingPageDirection = direction;
-        [self reloadReusingPageView:bounds];
+        [self reloadReusingPageView];
         [self layoutReusingPageView:bounds];
     } else if (direction != _pageView->_reusingPageDirection) {
         _pageView->_reusingPageDirection = direction;
@@ -555,7 +569,7 @@
         // 加载目标视图
         if (_pageView->_reusingPage != newPage) {
             _pageView->_reusingPage = newPage;
-            [self reloadReusingPageView:bounds];
+            [self reloadReusingPageView];
         }
         
         // 关于滚动方向
@@ -580,7 +594,7 @@
         }
     }];
     
-    if (animated) {
+    if (animated && UIView.inheritedAnimationDuration == 0) {
         // 动画到当前视图上。
         // 修改 bounds 不会触发 -scrollViewDidScroll: 方法，但是会触发 -layoutSubviews 方法。
         [UIView animateWithDuration:XZPageViewAnimationDuration animations:^{
@@ -731,7 +745,7 @@
     if (_pageView->_reusingPage != pendingPage) {
         _pageView->_reusingPage = pendingPage;
         _pageView->_reusingPageDirection = direction;
-        [self reloadReusingPageView:bounds];
+        [self reloadReusingPageView];
         [self layoutReusingPageView:bounds];
     } else if (direction != _pageView->_reusingPageDirection) {
         _pageView->_reusingPageDirection = direction;
@@ -837,7 +851,7 @@
         // 加载目标视图
         if (_pageView->_reusingPage != newPage) {
             _pageView->_reusingPage = newPage;
-            [self reloadReusingPageView:bounds];
+            [self reloadReusingPageView];
         }
         
         // 关于滚动方向

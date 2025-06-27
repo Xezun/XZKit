@@ -11,15 +11,18 @@
 
 @interface XZPageView () {
     @package
-    XZPageViewContext * _Nonnull _context;
+    XZPageViewContext * _context;
     
     BOOL                _isLooped;
     NSInteger           _numberOfPages;
-    UIView  * _Nullable _currentView;
+    
     NSInteger           _currentPage;
+    UIView  * _Nullable _currentView;
+    
     UIView  * _Nullable _reusingView;
     NSInteger           _reusingPage;
-    BOOL                _reusingPageDirection; ///< YES 表示加载在正向滚动的方向上，NO 表示加载在反向滚动的方向上。
+    /// YES 表示加载在正向滚动的方向上，NO 表示加载在反向滚动的方向上。
+    BOOL                _reusingPageDirection;
     
     NSTimeInterval      _autoPagingInterval;
     /// 自动翻页定时器，请使用方法操作计时器，而非直接使用变量。

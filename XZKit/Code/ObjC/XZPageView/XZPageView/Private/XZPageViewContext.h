@@ -51,8 +51,9 @@ UIKIT_STATIC_INLINE BOOL XZScrollDirection(NSInteger from, NSInteger to, NSInteg
 // 以下方法作为 XZPageView 的私有方法，子类不应重写它们。
 
 - (void)layoutSubviews:(CGRect const)bounds;
-- (void)reloadCurrentPageView:(CGRect const)bounds;
-- (void)reloadReusingPageView:(CGRect const)bounds;
+
+- (void)reloadCurrentPageView;
+- (void)reloadReusingPageView;
 
 /// 启动自动翻页计时器。
 /// @discussion 1、若不满足启动条件，则销毁当前计时器；
