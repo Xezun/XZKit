@@ -10,10 +10,6 @@
 #import "XZPageViewContext.h"
 @import ObjectiveC;
 
-@interface XZPageView ()
-@property (nonatomic, readonly) XZPageViewContext *context;
-@end
-
 @implementation XZPageView
 
 - (instancetype)initWithFrame:(CGRect)frame orientation:(XZPageViewOrientation)orientation {
