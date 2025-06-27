@@ -42,8 +42,9 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic) XZPageViewOrientation orientation;
 @property (nonatomic, setter=setLooped:) BOOL isLooped;
 @property (nonatomic) NSTimeInterval autoPagingInterval;
-@property (nonatomic) NSInteger currentPage;
 
+/// 必须调用控制器的方法翻页，否则会造成子控制器的生命周期不完整。
+@property (nonatomic) NSInteger currentPage;
 - (void)setCurrentPage:(NSInteger)newPage animated:(BOOL)animated;
 
 - (void)reloadData;

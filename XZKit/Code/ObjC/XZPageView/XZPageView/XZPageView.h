@@ -50,7 +50,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 /// 当前页面。
 /// @note 值 NSNotFound 表示当前没有内容。
-/// @attention 设置此属性不会触发代理方法。
+/// @attention 设置此属性不会触发 didShow 代理方法。
 @property (nonatomic) NSInteger currentPage;
 
 /// 设置当前展示视图。
@@ -75,14 +75,14 @@ NS_ASSUME_NONNULL_BEGIN
 
 /// 事件代理。
 @property (nonatomic, weak) id<XZPageViewDelegate> delegate;
-/// 数据源。
+
+/// 数据代理，设置此属性会立即刷新页面。
 @property (nonatomic, weak) id<XZPageViewDataSource> dataSource;
 
 /// 刷新视图。
-/// 
-/// 当前页数 currentPage 可能会发生改变，以适配新的数据，但是不会发送事件。
-/// @discussion
-/// 自动翻页计时会重置。
+///
+/// 1. 如果数据不为空，调用此方法会发送 didShow 代理方法。
+/// 2. 自动翻页计时会重置。
 - (void)reloadData;
 
 @end

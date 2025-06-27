@@ -66,6 +66,10 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic, weak, nullable) id<XZImageViewerDelegate> delegate;
 @property (nonatomic, weak, nullable) id<XZImageViewerDataSource> dataSource;
 
+@property (nonatomic, readonly) CGFloat minimumZoomScale;
+@property (nonatomic, readonly) CGFloat maximumZoomScale;
+- (void)setMinimumZoomScale:(CGFloat)minimumZoomScale maximumZoomScale:(CGFloat)maximumZoomScale;
+
 @end
 
 NS_ASSUME_NONNULL_END

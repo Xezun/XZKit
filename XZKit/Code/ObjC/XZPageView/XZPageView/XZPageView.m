@@ -33,9 +33,10 @@
 }
 
 - (void)XZPageViewDidInitialize:(XZPageViewOrientation)orientation {
-    _context = [XZPageViewContext contextWithPageView:self orientation:orientation];
+    _context = [XZPageViewContext contextForView:self orientation:orientation];
     [super setDelegate:_context];
     
+    _isReady       = NO;
     _isLooped      = YES;
     _currentPage   = NSNotFound;
     _reusingPage   = NSNotFound;
@@ -52,11 +53,19 @@
     self.contentInsetAdjustmentBehavior = UIScrollViewContentInsetAdjustmentNever;
 }
 
+- (void)_loadContextWithOrientation:(XZPageViewOrientation)orientation {
+    
+}
+
 #pragma mark - 重写方法
 
 - (void)didMoveToWindow {
     [super didMoveToWindow];
-    // 开启自动计时器
+    // 执行首次刷新
+    if (!_isReady) {
+        [self reloadData];
+    }
+    // 检查定时器
     [_context scheduleAutoPagingTimerIfNeeded];
 }
 
@@ -68,13 +77,6 @@
 @dynamic delegate;
 
 #pragma mark - 属性
-
-- (void)setDataSource:(id<XZPageViewDataSource>)dataSource {
-    if (_dataSource != dataSource) {
-        _dataSource = dataSource;
-        [self reloadData];
-    }
-}
 
 - (XZPageViewOrientation)orientation {
     return _context.orientation;
@@ -101,8 +103,10 @@
                 return;
             }
         }
-        _context = [XZPageViewContext contextWithPageView:self orientation:orientation];
-        [self reloadData];
+        _context = [XZPageViewContext contextForView:self orientation:orientation];
+        if (_isReady) {
+            [_context layoutSubviews:self.bounds];
+        }
     }
 }
 
@@ -115,7 +119,7 @@
         _isLooped = isLooped;
     
         // 不可循环
-        if (_numberOfPages <= 1) {
+        if (!_isReady || _numberOfPages <= 1) {
             return;
         }
         
@@ -135,6 +139,9 @@
 - (void)setAutoPagingInterval:(NSTimeInterval)autoPagingInterval {
     if (_autoPagingInterval != autoPagingInterval) {
         _autoPagingInterval = autoPagingInterval;
+        if (!_isReady) {
+            return;
+        }
         [_context scheduleAutoPagingTimerIfNeeded];
     }
 }
@@ -144,9 +151,13 @@
 }
 
 - (void)setCurrentPage:(NSInteger)currentPage animated:(BOOL)animated {
-    [_context setCurrentPage:currentPage animated:animated];
-    // 自动翻页重新计时
-    [_context resumeAutoPagingTimer];
+    if (_isReady) {
+        [_context setCurrentPage:currentPage animated:animated];
+        // 自动翻页重新计时
+        [_context resumeAutoPagingTimer];
+    } else {
+        _currentPage = currentPage;
+    }
 }
 
 - (UIView *)currentView {
@@ -172,57 +183,56 @@
     }
 }
 
+- (void)setDataSource:(id<XZPageViewDataSource>)dataSource {
+    if (_dataSource != dataSource) {
+        _dataSource = dataSource;
+        if (_isReady) {
+            [self reloadData];
+        }
+    }
+}
+
 #pragma mark - 公开方法
 
 - (void)reloadData {
-    // 重置数据
-    _numberOfPages = 0;
-    _currentPage = NSNotFound;
-    [_context reloadCurrentPageView];
-    _reusingPage = NSNotFound;
-    [_context reloadReusingPageView];
+    _isReady = YES;
     
-    // 刷新
-    [self reloadDataWithoutEvents];
+    { // 刷新
+        CGRect const bounds = self.bounds;
+        
+        _numberOfPages = [_dataSource numberOfPagesInPageView:self];
+        
+        // 自动调整当前页
+        if (_numberOfPages == 0) {
+            _currentPage = NSNotFound;
+        } else if (_currentPage == NSNotFound) {
+            _currentPage = 0;
+        } else if (_currentPage >= _numberOfPages) {
+            _currentPage = _numberOfPages - 1;
+        }
+        
+        // 重载当前页
+        [_context reloadCurrentPageView];
+        [_context layoutCurrentPageView:bounds];
+        
+        // 重载备用页
+        _reusingPage = NSNotFound;
+        [_context reloadReusingPageView];
+        [_context layoutReusingPageView:bounds];
+        
+        // 调整 contentInset 已适配当前状态，并重置页面位置
+        // 方法 -setContentOffset:animated: 可以停到当前可能存在的滚动
+        [_context adjustContentInsets:bounds];
+        [self setContentOffset:CGPointZero animated:NO];
+        
+        // 重启自动翻页计时器
+        [_context scheduleAutoPagingTimerIfNeeded];
+    }
     
     // 发送事件
     if (_didShowPage && _currentPage != NSNotFound) {
         _didShowPage(self, _currentPage);
     }
-}
-
-#pragma mark - 私有方法
-
-- (void)reloadDataWithoutEvents {
-    CGRect const bounds = self.bounds;
-    
-    _numberOfPages = [_dataSource numberOfPagesInPageView:self];
-    
-    // 自动调整当前页
-    if (_numberOfPages == 0) {
-        _currentPage = NSNotFound;
-    } else if (_currentPage == NSNotFound) {
-        _currentPage = 0;
-    } else if (_currentPage >= _numberOfPages) {
-        _currentPage = _numberOfPages - 1;
-    }
-    
-    // 重载当前页
-    [_context reloadCurrentPageView];
-    [_context layoutCurrentPageView:bounds];
-    
-    // 重载备用页
-    _reusingPage = NSNotFound;
-    [_context reloadReusingPageView];
-    [_context layoutReusingPageView:bounds];
-    
-    // 调整 contentInset 已适配当前状态，并重置页面位置
-    // 方法 -setContentOffset:animated: 可以停到当前可能存在的滚动
-    [_context adjustContentInsets:bounds];
-    [self setContentOffset:CGPointZero animated:NO];
-    
-    // 重启自动翻页计时器
-    [_context scheduleAutoPagingTimerIfNeeded];
 }
 
 @end

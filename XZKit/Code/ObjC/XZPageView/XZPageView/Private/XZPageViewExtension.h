@@ -13,6 +13,9 @@
     @package
     XZPageViewContext * _context;
     
+    /// 用来标记是否已执行首次刷新。
+    BOOL _isReady;
+    
     BOOL                _isLooped;
     NSInteger           _numberOfPages;
     

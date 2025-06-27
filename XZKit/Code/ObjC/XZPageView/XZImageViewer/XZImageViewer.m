@@ -30,6 +30,8 @@
 - (instancetype)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil {
     self = [super initWithNibName:nibNameOrNil bundle:nibBundleOrNil];
     if (self) {
+        _minimumZoomScale = 1.0;
+        _maximumZoomScale = 1.0;
         self.modalPresentationStyle = UIModalPresentationFullScreen;
     }
     return self;
@@ -38,6 +40,8 @@
 - (instancetype)initWithCoder:(NSCoder *)aDecoder {
     self = [super initWithCoder:aDecoder];
     if (self) {
+        _minimumZoomScale = 1.0;
+        _maximumZoomScale = 1.0;
         self.modalPresentationStyle = UIModalPresentationFullScreen;
     }
     return self;
@@ -99,6 +103,13 @@
     }
 }
 
+- (void)setMinimumZoomScale:(CGFloat)minimumZoomScale maximumZoomScale:(CGFloat)maximumZoomScale {
+    XZImageViewerItemView * const itemView = self.pageView.currentView;
+    [itemView setMinimumZoomScale:minimumZoomScale maximumZoomScale:maximumZoomScale];
+    _minimumZoomScale = itemView.minimumZoomScale;
+    _maximumZoomScale = itemView.maximumZoomScale;
+}
+
 #pragma mark - XZPageViewDataSource
 
 - (NSInteger)numberOfPagesInPageView:(XZPageView *)pageView {
@@ -109,10 +120,9 @@
     if (reusingView == nil) {
         reusingView = [[XZImageViewerItemView alloc] initWithImageViewer:self];
         reusingView.frame = pageView.bounds;
-        [reusingView setMinimumZoomScale:0.1 maximumZoomScale:10.0];
-    } else {
-        [reusingView setZoomScale:1.0 animated:0];
     }
+    [reusingView setMinimumZoomScale:_minimumZoomScale maximumZoomScale:_maximumZoomScale];
+    [reusingView setZoomScale:1.0 animated:NO];
     reusingView.index = index;
     reusingView.delegate = self.delegate;
     
@@ -157,7 +167,7 @@
     return reusingView;
 }
 
-- (UIView *)pageView:(XZPageView *)pageView prepareReuseForView:(nonnull __kindof UIView *)reusingView {
+- (UIView *)pageView:(XZPageView *)pageView prepareReuseForView:(__kindof UIView *)reusingView {
     return reusingView;
 }
 

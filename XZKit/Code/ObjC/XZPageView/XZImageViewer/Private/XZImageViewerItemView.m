@@ -78,9 +78,11 @@
 }
 
 - (void)setMinimumZoomScale:(CGFloat)minimumZoomScale maximumZoomScale:(CGFloat)maximumZoomScale {
-    UIScrollView * const zoomingView = self.zoomingView;
-    zoomingView.minimumZoomScale = minimumZoomScale;
-    zoomingView.maximumZoomScale = maximumZoomScale;
+    if (minimumZoomScale != maximumZoomScale) {
+        UIScrollView * const zoomingView = self.zoomingView;
+        zoomingView.minimumZoomScale = minimumZoomScale;
+        zoomingView.maximumZoomScale = maximumZoomScale;
+    }
 }
 
 - (void)zoomToRect:(CGRect)rect animated:(BOOL)animated {
@@ -88,7 +90,11 @@
 }
 
 - (void)setZoomScale:(CGFloat)scale animated:(BOOL)animated {
-    [self.zoomingView setZoomScale:scale animated:animated];
+    if (scale == 1.0) {
+        [_zoomingView setZoomScale:scale animated:animated];
+    } else {
+        [self.zoomingView setZoomScale:scale animated:animated];
+    }
 }
 
 - (void)layoutSubviews {

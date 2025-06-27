@@ -40,11 +40,11 @@ UIKIT_STATIC_INLINE BOOL XZScrollDirection(NSInteger from, NSInteger to, NSInteg
 /// 默认 delegate 会被设置为自身；如果外部设置代理，则会通过运行时，向目标注入处理事件的逻辑。
 @interface XZPageViewContext : NSObject <UIScrollViewDelegate> {
     @package
-    XZPageView * __unsafe_unretained _pageView;
+    XZPageView * __unsafe_unretained _view;
 }
 
 - (instancetype)init NS_UNAVAILABLE;
-+ (XZPageViewContext *)contextWithPageView:(XZPageView *)pageView orientation:(XZPageViewOrientation)orientation;
++ (XZPageViewContext *)contextForView:(XZPageView *)pageView orientation:(XZPageViewOrientation)orientation;
 
 @property (nonatomic, readonly) XZPageViewOrientation orientation;
 
@@ -60,6 +60,8 @@ UIKIT_STATIC_INLINE BOOL XZScrollDirection(NSInteger from, NSInteger to, NSInteg
 /// @discussion 2、满足条件，若计时器已开始，则重置当前开始计时；
 /// @discussion 3、满足条件，若计时器没创建，则自动创建。
 - (void)scheduleAutoPagingTimerIfNeeded;
+/// 倒计时事件。
+/// @param timer 定时器
 - (void)autoPagingTimerAction:(NSTimer *)timer;
 /// 暂停自动翻页计时器。
 - (void)freezeAutoPagingTimer;
@@ -81,6 +83,9 @@ UIKIT_STATIC_INLINE BOOL XZScrollDirection(NSInteger from, NSInteger to, NSInteg
 /// 不处理、发送事件。
 - (void)setCurrentPage:(NSInteger)newPage animated:(BOOL)animated;
 
+@end
+
+@interface XZPageViewVerticalContext : XZPageViewContext
 @end
 
 NS_ASSUME_NONNULL_END

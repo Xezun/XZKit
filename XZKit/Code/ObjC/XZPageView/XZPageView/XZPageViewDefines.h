@@ -44,7 +44,7 @@ NS_SWIFT_UI_ACTOR @protocol XZPageViewDataSource <NSObject>
 ///
 /// @param pageView 调用此方法的对象
 /// @param reusingView 需要被重置的视图
-- (nullable UIView *)pageView:(XZPageView *)pageView prepareReuseForView:(__kindof UIView *)reusingView;
+- (BOOL)pageView:(XZPageView *)pageView shouldPrepareReuseForView:(__kindof UIView *)reusingView;
 
 @end
 
