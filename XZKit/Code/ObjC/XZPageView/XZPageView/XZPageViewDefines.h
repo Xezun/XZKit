@@ -20,7 +20,7 @@ typedef NS_ENUM(NSUInteger, XZPageViewOrientation) {
     /// 横向翻页。
     XZPageViewOrientationHorizontal = 0,
     /// 纵向翻页。
-    XZPageViewOrientationVertical = 1,
+    XZPageViewOrientationVertical   = 1,
 };
 
 /// XZPageView 数据源。
@@ -40,24 +40,24 @@ NS_SWIFT_UI_ACTOR @protocol XZPageViewDataSource <NSObject>
 /// @param reusingView 可重用的视图
 - (UIView *)pageView:(XZPageView *)pageView viewForPageAtIndex:(NSInteger)index reusingView:(nullable __kindof UIView *)reusingView;
                                     
-/// 当视图不再展示时，此方法会被调用，此方法返回的视图将会被缓存，并在需要时重用。
+/// 当视图不展示时，此方法会被调用，询问该视图是否可以重用。
 ///
 /// @param pageView 调用此方法的对象
 /// @param reusingView 需要被重置的视图
-- (BOOL)pageView:(XZPageView *)pageView shouldPrepareReuseForView:(__kindof UIView *)reusingView;
+- (BOOL)pageView:(XZPageView *)pageView shouldReuseView:(__kindof UIView *)reusingView;
 
 @end
 
 /// XZPageView 事件方法列表。
 NS_SWIFT_UI_ACTOR @protocol XZPageViewDelegate <UIScrollViewDelegate>
 
-@optional
-/// 翻页到某页时，此方法会被调用。
-/// @discussion 只有用户操作或者自动翻页会触发此代理方法。
-/// @param pageView 调用此方法的 XZPageView 对象
-/// @param index 被展示元素的索引，不会是 NSNotFound
-- (void)pageView:(XZPageView *)pageView didShowPageAtIndex:(NSInteger)index NS_SWIFT_NAME(pageView(_:didShowPageAt:));
 
+- (void)pageView:(XZPageView *)pageView willShowView:(UIView *)view animated:(BOOL)animated NS_SWIFT_NAME(pageView(_:willShowView:animated:));
+- (void)pageView:(XZPageView *)pageView didShowView:(UIView *)view animated:(BOOL)animated NS_SWIFT_NAME(pageView(_:didShowView:animated:));
+- (void)pageView:(XZPageView *)pageView willHideView:(UIView *)view animated:(BOOL)animated NS_SWIFT_NAME(pageView(_:willHideView:animated:));
+- (void)pageView:(XZPageView *)pageView didHideView:(UIView *)view animated:(BOOL)animated NS_SWIFT_NAME(pageView(_:didHideView:animated:));
+
+@optional
 /// 在用户翻动页面的过程中，通知转场进度。
 ///
 /// 除调用 ``-setCurrentPage:animated:`` 之外，如果 currentPage 发生改变，即会调用此方法。

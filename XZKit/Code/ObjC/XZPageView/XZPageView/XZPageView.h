@@ -76,11 +76,14 @@ NS_ASSUME_NONNULL_BEGIN
 /// 事件代理。
 @property (nonatomic, weak) id<XZPageViewDelegate> delegate;
 
-/// 数据代理，设置此属性会立即刷新页面。
+/// 数据代理。
+///
+/// 更换数据源必须调用``-reloadData``方法，除非页面不在``window``上。
 @property (nonatomic, weak) id<XZPageViewDataSource> dataSource;
 
 /// 刷新视图。
 ///
+/// 页面被添加到 window 时，会自动尝试调用
 /// 1. 如果数据不为空，调用此方法会发送 didShow 代理方法。
 /// 2. 自动翻页计时会重置。
 - (void)reloadData;

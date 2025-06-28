@@ -14,7 +14,7 @@
     XZPageViewContext * _context;
     
     /// 用来标记是否已执行首次刷新。
-    BOOL _isReady;
+    BOOL _isPageLoaded;
     
     BOOL                _isLooped;
     NSInteger           _numberOfPages;
@@ -22,10 +22,14 @@
     NSInteger           _currentPage;
     UIView  * _Nullable _currentView;
     
+    NSInteger           _pendingPage;
+    UIView  * _Nullable _pendingView;
+    BOOL                _pendingPageDirection;
+    
     UIView  * _Nullable _reusingView;
     NSInteger           _reusingPage;
     /// YES 表示加载在正向滚动的方向上，NO 表示加载在反向滚动的方向上。
-    BOOL                _reusingPageDirection;
+//    BOOL                _reusingPageDirection;
     
     NSTimeInterval      _autoPagingInterval;
     /// 自动翻页定时器，请使用方法操作计时器，而非直接使用变量。
@@ -36,7 +40,6 @@
     /// 5、改变 currentPage 定时器会重新计时。
     NSTimer * _Nullable __unsafe_unretained _autoPagingTimer;
     
-    void (^ _Nullable _didShowPage)(XZPageView * _Nonnull pageView, NSInteger currentPage);
     void (^ _Nullable _didTurnPage)(XZPageView * _Nonnull pageView, CGFloat x, CGFloat width);
 }
 

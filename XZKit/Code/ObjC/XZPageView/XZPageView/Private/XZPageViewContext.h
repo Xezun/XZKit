@@ -17,6 +17,9 @@ NS_ASSUME_NONNULL_BEGIN
 /// @param max 最大值
 /// @param isLooped 循环模式
 UIKIT_STATIC_INLINE NSInteger XZLoopPage(NSInteger index, BOOL increases, NSInteger max, BOOL isLooped) {
+    if (max <= 0) {
+        return NSNotFound;
+    }
     if (isLooped) {
         return (increases ? ((index >= max) ? 0 : (index + 1)) : ((index <= 0) ? max : (index - 1)));
     }
@@ -52,9 +55,6 @@ UIKIT_STATIC_INLINE BOOL XZScrollDirection(NSInteger from, NSInteger to, NSInteg
 
 - (void)layoutSubviews:(CGRect const)bounds;
 
-- (void)reloadCurrentPageView;
-- (void)reloadReusingPageView;
-
 /// 启动自动翻页计时器。
 /// @discussion 1、若不满足启动条件，则销毁当前计时器；
 /// @discussion 2、满足条件，若计时器已开始，则重置当前开始计时；
@@ -73,12 +73,12 @@ UIKIT_STATIC_INLINE BOOL XZScrollDirection(NSInteger from, NSInteger to, NSInteg
 
 // 子类需要重写的方法。
 
-- (void)layoutCurrentPageView:(CGRect const)bounds;
-- (void)layoutReusingPageView:(CGRect const)bounds;
+- (void)layoutCurrentView:(CGRect const)bounds;
+- (void)layoutPendingView:(CGRect const)bounds;
 - (void)adjustContentInsets:(CGRect const)bounds;
 
 - (void)didScroll:(BOOL)stopped;
-- (void)didScrollToReusingPage:(CGRect const)bounds maxPage:(NSInteger const)maxPage direction:(BOOL const)direction;
+- (void)didScrollToPendingPage:(CGRect const)bounds maxPage:(NSInteger const)maxPage direction:(BOOL const)direction;
 
 /// 不处理、发送事件。
 - (void)setCurrentPage:(NSInteger)newPage animated:(BOOL)animated;

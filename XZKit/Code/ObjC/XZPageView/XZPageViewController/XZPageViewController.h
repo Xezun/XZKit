@@ -32,7 +32,7 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic, weak, nullable) id<XZPageViewControllerDelegate> delegate;
 @property (nonatomic, weak, nullable) id<XZPageViewControllerDataSource> dataSource;
 
-@property (nonatomic, readonly) XZPageView *pageView;
+
 
 @property (nonatomic, readonly, nullable) UIViewController *currentViewController;
 @property (nonatomic, readonly, nullable) UIViewController *pendingViewController;

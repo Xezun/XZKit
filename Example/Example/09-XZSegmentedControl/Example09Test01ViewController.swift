@@ -70,6 +70,22 @@ class Example09Test01ViewController: UIViewController, UIScrollViewDelegate {
 }
 
 extension Example09Test01ViewController: XZPageViewDelegate {
+    func pageView(_ pageView: XZPageView, willShowView view: UIView, animated: Bool) {
+        
+    }
+    
+    func pageView(_ pageView: XZPageView, didShowView view: UIView, animated: Bool) {
+        
+    }
+    
+    func pageView(_ pageView: XZPageView, willHideView view: UIView, animated: Bool) {
+        
+    }
+    
+    func pageView(_ pageView: XZPageView, didHideView view: UIView, animated: Bool) {
+        
+    }
+    
     
     func pageView(_ pageView: XZPageView, didShowPageAt index: Int) {
         segmentedControl.setSelectedIndex(index, animated: true)
@@ -81,6 +97,10 @@ extension Example09Test01ViewController: XZPageViewDelegate {
 }
 
 extension Example09Test01ViewController: XZPageViewDataSource {
+    func pageView(_ pageView: XZPageView, shouldReuse reusingView: UIView) -> Bool {
+        return true
+    }
+    
     
     func numberOfPages(in pageView: XZPageView) -> Int {
         return self.titles.count

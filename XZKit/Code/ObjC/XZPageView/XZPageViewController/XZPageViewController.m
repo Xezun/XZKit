@@ -31,7 +31,11 @@ static void SetTransitionStage(UIViewController * _Nonnull viewController, XZTra
     /// 代理事件触发的子控制器的生命周期，除控制器移除外，其它的只在 XZPageViewController 处于 viewDidAppear 时才执行；
     /// 同时触发控制器方法时，都监测控制器当前的状态，如有需要，先转换状态，以保证不论控制器处于什么状态，都是以最后的状态为准。
     XZTransitionStage _transitionStage;
+    BOOL              _isAnimatedStage;
 }
+
+@property (nonatomic, readonly) XZPageView *pageView;
+@property (nonatomic, readonly, nullable) XZPageView *pageViewIfLoaded;
 
 @end
 
@@ -39,6 +43,10 @@ static void SetTransitionStage(UIViewController * _Nonnull viewController, XZTra
 
 - (XZPageView *)pageView {
     return (XZPageView *)[self view];
+}
+
+- (XZPageView *)pageViewIfLoaded {
+    return (XZPageView *)[self viewIfLoaded];
 }
 
 - (void)loadView {
@@ -68,9 +76,6 @@ static void SetTransitionStage(UIViewController * _Nonnull viewController, XZTra
         if (oldStage == viewWillAppear || oldStage == viewDidAppear) {
             continue;
         }
-        if (oldStage != nil) {
-            [viewController willMoveToParentViewController:self];
-        }
         [viewController beginAppearanceTransition:YES animated:animated];
         SetTransitionStage(viewController, viewWillAppear);
     }
@@ -80,20 +85,15 @@ static void SetTransitionStage(UIViewController * _Nonnull viewController, XZTra
 - (void)viewDidAppear:(BOOL)animated {
     [super viewDidAppear:animated];
     
-    if (_currentViewController != nil) {
-        XZTransitionStage const oldStage = GetTransitionStage(_currentViewController);
+    for (UIViewController *viewController in self.childViewControllers) {
+        XZTransitionStage const oldStage = GetTransitionStage(viewController);
         if (oldStage == viewWillAppear) {
-            [_currentViewController endAppearanceTransition];
-            [_currentViewController didMoveToParentViewController:self];
-            SetTransitionStage(_currentViewController, viewDidAppear);
+            [viewController endAppearanceTransition];
+            SetTransitionStage(viewController, viewDidAppear);
         } else if (oldStage != viewDidAppear) {
-            if (oldStage != nil) {
-                [_currentViewController willMoveToParentViewController:self];
-            }
-            [_currentViewController beginAppearanceTransition:YES animated:NO];
-            [_currentViewController endAppearanceTransition];
-            [_currentViewController didMoveToParentViewController:self];
-            SetTransitionStage(_currentViewController, viewDidAppear);
+            [viewController beginAppearanceTransition:YES animated:NO];
+            [viewController endAppearanceTransition];
+            SetTransitionStage(viewController, viewDidAppear);
         }
     }
     _transitionStage = viewDidAppear;
@@ -107,11 +107,6 @@ static void SetTransitionStage(UIViewController * _Nonnull viewController, XZTra
         if (oldStage == viewWillDisappear || oldStage == viewDidDisappear) {
             continue;
         }
-        if (oldStage == nil) {
-            [viewController willMoveToParentViewController:nil];
-            continue;
-        }
-        [viewController willMoveToParentViewController:nil];
         [viewController beginAppearanceTransition:NO animated:animated];
         SetTransitionStage(viewController, viewWillDisappear);
     }
@@ -123,18 +118,14 @@ static void SetTransitionStage(UIViewController * _Nonnull viewController, XZTra
     
     for (UIViewController *viewController in self.childViewControllers) {
         XZTransitionStage const oldStage = GetTransitionStage(viewController);
-        if (oldStage == viewDidDisappear || oldStage == nil ) {
-            continue;
-        }
         if (oldStage == viewWillDisappear) {
             [viewController endAppearanceTransition];
             SetTransitionStage(viewController, viewDidDisappear);
-            continue;
+        } else if (oldStage != nil && oldStage != viewDidDisappear) {
+            [viewController beginAppearanceTransition:NO animated:NO];
+            [viewController endAppearanceTransition];
+            SetTransitionStage(viewController, viewDidDisappear);
         }
-        [viewController willMoveToParentViewController:nil];
-        [viewController beginAppearanceTransition:NO animated:NO];
-        [viewController endAppearanceTransition];
-        SetTransitionStage(viewController, viewDidDisappear);
     }
     _transitionStage = viewDidDisappear;
 }
@@ -153,8 +144,9 @@ static void SetTransitionStage(UIViewController * _Nonnull viewController, XZTra
 
 - (void)setDataSource:(id<XZPageViewControllerDataSource>)dataSource {
     if (_dataSource != dataSource) {
+        self.pageViewIfLoaded.dataSource = nil;
         _dataSource = dataSource;
-        [self.pageView reloadData];
+        self.pageViewIfLoaded.dataSource = self;
     }
 }
 
@@ -237,152 +229,120 @@ static void SetTransitionStage(UIViewController * _Nonnull viewController, XZTra
 }
 
 - (UIView *)pageView:(XZPageView *)pageView viewForPageAtIndex:(NSInteger)index reusingView:(nullable __kindof UIView *)reusingView {
-    UIViewController *viewController = [_dataSource pageViewController:self viewControllerForPageAtIndex:index];
-    [self addChildViewController:viewController];
+    UIViewController * const viewController = [_dataSource pageViewController:self viewControllerForPageAtIndex:index];
     return viewController.view;
 }
 
-- (nullable UIView *)pageView:(XZPageView *)pageView prepareReuseForView:(nonnull __kindof UIView *)reusingView {
-    UIViewController *viewController = (UIViewController *)[reusingView nextResponder];
-    [viewController removeFromParentViewController];
-    return nil;
+- (BOOL)pageView:(XZPageView *)pageView shouldReuseView:(__kindof UIView *)reusingView {
+    return NO;
 }
 
 #pragma mark - Delegate
 
+- (void)pageView:(XZPageView *)pageView willShowView:(UIView *)view animated:(BOOL)animated {
+    UIViewController * const viewController = (UIViewController *)view.nextResponder;
+    [self addChildViewController:viewController];
+    [self forwardTransitionStage:viewWillAppear forViewController:viewController animated:animated];
+}
+
+- (void)pageView:(XZPageView *)pageView didShowView:(UIView *)view animated:(BOOL)animated {
+    UIViewController * const viewController = (UIViewController *)view.nextResponder;
+    [viewController didMoveToParentViewController:self];
+    [self forwardTransitionStage:viewDidAppear forViewController:viewController animated:animated];
+}
+
+- (void)pageView:(XZPageView *)pageView willHideView:(UIView *)view animated:(BOOL)animated {
+    UIViewController * const viewController = (UIViewController *)view.nextResponder;
+    [viewController willMoveToParentViewController:nil];
+    [self forwardTransitionStage:viewWillDisappear forViewController:viewController animated:animated];
+}
+
+- (void)pageView:(XZPageView *)pageView didHideView:(UIView *)view animated:(BOOL)animated {
+    UIViewController * const viewController = (UIViewController *)view.nextResponder;
+    [viewController removeFromParentViewController];
+    [self forwardTransitionStage:viewDidDisappear forViewController:viewController animated:animated];
+}
+
 - (void)pageView:(XZPageView *)pageView didShowPageAtIndex:(NSInteger)index {
-    UIViewController * const viewController = (UIViewController *)[pageView.currentView nextResponder];
-    
-    if (viewController != _currentViewController) {
-        if (_currentViewController) {
-            [self forwardTransitionStage:(viewDidDisappear) forViewController:_currentViewController animated:YES];
-        }
-        
-        if (viewController == _pendingViewController) {
-            _currentViewController = viewController;
-            [self forwardTransitionStage:(viewDidAppear) forViewController:_currentViewController animated:YES];
-        } else {
-            [self forwardTransitionStage:(viewWillAppear) forViewController:viewController animated:NO];
-            _currentViewController = viewController;
-            [self forwardTransitionStage:(viewDidAppear) forViewController:_currentViewController animated:NO];
-        }
-        
-        _pendingViewController = nil;
-    }
-    
-    if ([_delegate respondsToSelector:@selector(pageViewController:didShowViewControllerAtIndex:)]) {
-        [_delegate pageViewController:self didShowViewControllerAtIndex:pageView.currentPage];
-    }
+//    UIViewController * const viewController = (UIViewController *)[pageView.currentView nextResponder];
+//    
+//    if (viewController != _currentViewController) {
+//        if (_currentViewController) {
+//            [self forwardTransitionStage:(viewDidDisappear) forViewController:_currentViewController animated:YES];
+//        }
+//        
+//        if (viewController == _pendingViewController) {
+//            _currentViewController = viewController;
+//            [self forwardTransitionStage:(viewDidAppear) forViewController:_currentViewController animated:YES];
+//        } else {
+//            [self forwardTransitionStage:(viewWillAppear) forViewController:viewController animated:NO];
+//            _currentViewController = viewController;
+//            [self forwardTransitionStage:(viewDidAppear) forViewController:_currentViewController animated:NO];
+//        }
+//        
+//        _pendingViewController = nil;
+//    }
+//    
+//    if ([_delegate respondsToSelector:@selector(pageViewController:didShowViewControllerAtIndex:)]) {
+//        [_delegate pageViewController:self didShowViewControllerAtIndex:pageView.currentPage];
+//    }
 }
 
 - (void)pageView:(XZPageView *)pageView didTurnPageInTransition:(CGFloat)transition {
-    UIViewController * const nextViewController = (id)pageView.pendingView.nextResponder;
-    
-    if (_pendingViewController == nil) {
-        [self forwardTransitionStage:(viewWillDisappear) forViewController:_currentViewController animated:YES];
-        _pendingViewController = nextViewController;
-        [self forwardTransitionStage:(viewWillAppear) forViewController:_pendingViewController animated:YES];
-    } else if (_pendingViewController != nextViewController) {
-        [self forwardTransitionStage:(viewDidDisappear) forViewController:_pendingViewController animated:YES];
-        _pendingViewController = nextViewController;
-        [self forwardTransitionStage:(viewWillAppear) forViewController:_pendingViewController animated:YES];
-    } else {
-        // 持续转场中
-    }
-    
-    if ([_delegate respondsToSelector:@selector(pageViewController:didTurnViewControllerInTransition:)]) {
-        [_delegate pageViewController:self didTurnViewControllerInTransition:transition];
-    }
+//    UIViewController * const nextViewController = (id)pageView.pendingView.nextResponder;
+//    
+//    if (_pendingViewController == nil) {
+//        [self forwardTransitionStage:(viewWillDisappear) forViewController:_currentViewController animated:YES];
+//        _pendingViewController = nextViewController;
+//        [self forwardTransitionStage:(viewWillAppear) forViewController:_pendingViewController animated:YES];
+//    } else if (_pendingViewController != nextViewController) {
+//        [self forwardTransitionStage:(viewDidDisappear) forViewController:_pendingViewController animated:YES];
+//        _pendingViewController = nextViewController;
+//        [self forwardTransitionStage:(viewWillAppear) forViewController:_pendingViewController animated:YES];
+//    } else {
+//        // 持续转场中
+//    }
+//    
+//    if ([_delegate respondsToSelector:@selector(pageViewController:didTurnViewControllerInTransition:)]) {
+//        [_delegate pageViewController:self didTurnViewControllerInTransition:transition];
+//    }
 }
 
-- (void)forwardTransitionStage:(nonnull XZTransitionStage const)transitionAppearance forViewController:(UIViewController * const)viewController animated:(BOOL)animated {
-    if (transitionAppearance == viewWillAppear) {
-        if (_transitionStage == viewDidAppear || _transitionStage == viewWillAppear) {
-            // 当前控制器处于 viewDidAppear/viewWillAppear 状态，才向控制器发送或补发 viewWillAppear 事件。
-            XZTransitionStage const currentTransition = GetTransitionStage(viewController);
-            if (currentTransition == nil) {
-                [viewController beginAppearanceTransition:YES animated:animated];
-                SetTransitionStage(viewController, viewWillAppear);
-            } else if (currentTransition == viewDidDisappear) {
-                // 控制器未显示，发送事件。
-                [viewController willMoveToParentViewController:self];
-                [viewController beginAppearanceTransition:YES animated:animated];
-                SetTransitionStage(viewController, viewWillAppear);
-            } else if (currentTransition == viewDidAppear || currentTransition == viewWillAppear) {
-                // 控制器将要或者已经显示，不需要操作。
-            } else {
-                // 控制器将要消失。
-                [viewController willMoveToParentViewController:self];
-                [viewController beginAppearanceTransition:YES animated:animated];
-                SetTransitionStage(viewController, viewWillAppear);
-            }
-        }
+- (void)forwardTransitionStage:(XZTransitionStage const)newStage forViewController:(UIViewController * const)viewController animated:(BOOL)animated {
+    // 只在 viewDidAppear 转发转场
+    if (_transitionStage != viewDidAppear) {
         return;
     }
+    XZTransitionStage const oldStage = GetTransitionStage(viewController);
     
-    if (transitionAppearance == viewDidAppear) {
-        if (_transitionStage == viewDidAppear) {
-            // 当前控制器处于 viewDidAppear 状态，才向控制器发送 viewDidAppear 事件。
-            XZTransitionStage const currentTransition = GetTransitionStage(viewController);
-            if (currentTransition == viewDidAppear) {
-                // 控制器已经是 viewDidAppear 状态，不需要处理。
-            } else if (currentTransition == viewWillAppear) {
-                // 当前为 viewWillAppear 状态，正常情况下的状态。
-                [viewController endAppearanceTransition];
-                [viewController didMoveToParentViewController:self];
-                SetTransitionStage(viewController, viewDidAppear);
-            } else {
-                if (currentTransition != nil) {
-                    [viewController willMoveToParentViewController:self];
-                }
-                [viewController beginAppearanceTransition:YES animated:NO];
-                [viewController endAppearanceTransition];
-                [viewController didMoveToParentViewController:self];
-                SetTransitionStage(viewController, viewDidAppear);
-            }
+    if (newStage == viewWillAppear) {
+        if (oldStage == nil || oldStage == viewDidDisappear || oldStage == viewWillDisappear) {
+            [viewController beginAppearanceTransition:YES animated:animated];
+            SetTransitionStage(viewController, viewWillAppear);
         }
-        return;
-    }
-    
-    if (transitionAppearance == viewWillDisappear) {
-        if (_transitionStage == viewDidAppear || _transitionStage == viewWillDisappear) {
-            // 当前控制器处于 viewDidAppear/viewWillDisappear 状态，才向控制器发送或补发 viewWillDisappear 事件。
-            XZTransitionStage const currentTransition = GetTransitionStage(viewController);
-            if (currentTransition == viewDidAppear) {
-                [viewController willMoveToParentViewController:nil];
-                [viewController beginAppearanceTransition:NO animated:animated];
-                SetTransitionStage(viewController, viewWillDisappear);
-            } else if (currentTransition == viewWillDisappear || currentTransition == viewDidDisappear || currentTransition == nil) {
-                // 已经是该状态，不需要处理。
-            } else {
-                // 将要出现的状态。
-                [viewController willMoveToParentViewController:nil];
-                [viewController beginAppearanceTransition:NO animated:animated];
-                SetTransitionStage(viewController, viewWillDisappear);
-            }
-        }
-        return;
-    }
-    
-    if (transitionAppearance == viewDidDisappear) {
-        // 控制器被移除。
-        XZTransitionStage const currentTransition = GetTransitionStage(viewController);
-        if (currentTransition == nil) {
-            // 已经 viewDidDisappear 就不需要操作了。
-            [viewController willMoveToParentViewController:nil];
-        } else if (currentTransition == viewDidDisappear) {
-            SetTransitionStage(viewController, nil);
-        } else if (currentTransition == viewWillDisappear) {
-            // 正常情况下。
+    } else if (newStage == viewDidAppear) {
+        if (oldStage == viewWillAppear) {
             [viewController endAppearanceTransition];
-            SetTransitionStage(viewController, nil);
-        } else if (currentTransition == viewDidAppear || currentTransition == viewWillAppear) {
-            [viewController willMoveToParentViewController:nil];
+            SetTransitionStage(viewController, viewDidAppear);
+        } else if (oldStage == nil || oldStage == viewWillDisappear || oldStage == viewDidDisappear) {
+            [viewController beginAppearanceTransition:YES animated:NO];
+            [viewController endAppearanceTransition];
+            SetTransitionStage(viewController, viewDidAppear);
+        }
+    } else if (newStage == viewWillDisappear) {
+        if (oldStage == viewDidAppear || oldStage == viewWillAppear) {
+            [viewController beginAppearanceTransition:NO animated:animated];
+            SetTransitionStage(viewController, viewWillDisappear);
+        }
+    } else if (newStage == viewDidDisappear) {
+        if (oldStage == viewWillAppear || oldStage == viewDidAppear) {
             [viewController beginAppearanceTransition:NO animated:NO];
             [viewController endAppearanceTransition];
-            SetTransitionStage(viewController, nil);
+            SetTransitionStage(viewController, viewDidDisappear);
+        } else if (oldStage == viewWillDisappear) {
+            [viewController endAppearanceTransition];
+            SetTransitionStage(viewController, viewDidDisappear);
         }
-        return;
     }
 }
 
