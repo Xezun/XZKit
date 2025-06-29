@@ -41,29 +41,35 @@
     UIView        * const fromView = [transitionContext viewForKey:UITransitionContextFromViewKey];
     fromView.frame = [transitionContext initialFrameForViewController:fromVC];
     [containerView addSubview:fromView];
+    [fromView layoutIfNeeded];
     
     // 虽然在转场完成后，系统会自动将 toView 添加到 window 上显示，但是如果不添加到 containerView 上，那么在 in-cell 状态下，toView 的位置就会异常。
     UIViewController * const toVC   = [transitionContext viewControllerForKey:UITransitionContextToViewControllerKey];
     UIView           * const toView = [transitionContext viewForKey:UITransitionContextToViewKey];
     toView.frame = [transitionContext finalFrameForViewController:toVC];
     [containerView insertSubview:toView belowSubview:fromView];
+    [toView layoutIfNeeded];
     
     XZImageViewerItemView * const itemView = fromVC.pageView.currentView;
-    itemView.imageView.clipsToBounds = _sourceView.clipsToBounds;
-    itemView.imageView.contentMode   = _sourceView.contentMode;
     [itemView layoutIfNeeded];
+    itemView.hidden = YES;
     
-    CGRect const sourceRect = [_sourceView convertRect:_sourceView.bounds toView:containerView];
-
+    UIImageView *imageView = [[UIImageView alloc] initWithImage:itemView.imageView.image];
+    imageView.clipsToBounds = _sourceView.clipsToBounds;
+    imageView.contentMode = _sourceView.contentMode;
+    imageView.frame = [itemView.imageView convertRect:itemView.imageView.bounds toView:containerView];
+    [containerView addSubview:imageView];
+    
     NSTimeInterval const duration = [self transitionDuration:transitionContext];
     [UIView animateWithDuration:duration delay:0 options:0 animations:^{
         fromView.backgroundColor = UIColor.clearColor;
-        itemView.imageView.frame = sourceRect;
+        imageView.frame = [self->_sourceView convertRect:self->_sourceView.bounds toView:containerView];;
     } completion:^(BOOL finished) {
+        [imageView removeFromSuperview];
+        itemView.hidden = NO;
         if (transitionContext.transitionWasCancelled) {
             [toView removeFromSuperview];
             fromView.backgroundColor = UIColor.blackColor;
-            itemView.imageView.frame = CGRectSetSize(itemView.imageView.frame, itemView.imageView.image.size);
             [transitionContext completeTransition:NO];
         } else {
             [transitionContext completeTransition:YES];

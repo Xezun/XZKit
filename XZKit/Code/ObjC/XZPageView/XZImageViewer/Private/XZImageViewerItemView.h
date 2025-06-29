@@ -19,8 +19,6 @@ NS_ASSUME_NONNULL_BEGIN
     XZImageViewer * __unsafe_unretained _imageViewer;
 }
 
-/// 事件代理。
-@property (nonatomic, weak) id<XZImageViewerDelegate> delegate;
 /// 当前容器所显示的内容的索引。
 @property (nonatomic) NSInteger index;
 

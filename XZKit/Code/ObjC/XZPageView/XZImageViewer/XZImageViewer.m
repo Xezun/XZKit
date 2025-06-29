@@ -105,10 +105,9 @@
 }
 
 - (void)setMinimumZoomScale:(CGFloat)minimumZoomScale maximumZoomScale:(CGFloat)maximumZoomScale {
-    XZImageViewerItemView * const itemView = self.pageView.currentView;
-    [itemView setMinimumZoomScale:minimumZoomScale maximumZoomScale:maximumZoomScale];
-    _minimumZoomScale = itemView.minimumZoomScale;
-    _maximumZoomScale = itemView.maximumZoomScale;
+    _minimumZoomScale = minimumZoomScale;
+    _maximumZoomScale = maximumZoomScale;
+    [_pageView reloadData];
 }
 
 #pragma mark - XZPageViewDataSource
@@ -123,9 +122,7 @@
         reusingView.frame = pageView.bounds;
     }
     [reusingView setMinimumZoomScale:_minimumZoomScale maximumZoomScale:_maximumZoomScale];
-    [reusingView setZoomScale:1.0 animated:NO];
     reusingView.index = index;
-    reusingView.delegate = self.delegate;
     
     BOOL __block didSetImage = NO;
     
@@ -150,7 +147,6 @@
         
         XZImageViewerItemView * const itemView = pageView.currentView;
         itemView.imageView.image = image;
-        itemView.imageView.frame = CGRectSetSize(reusingView.imageView.frame, image.size);
         [UIView animateWithDuration:XZPageViewAnimationDuration animations:^{
             [itemView setNeedsLayout];
             [itemView layoutIfNeeded];
@@ -162,13 +158,13 @@
         didSetImage = YES;
     }
     
-    reusingView.imageView.frame = CGRectSetSize(reusingView.imageView.frame, image.size);
     [reusingView setNeedsLayout];
     
     return reusingView;
 }
 
-- (BOOL)pageView:(XZPageView *)pageView shouldReuseView:(__kindof UIView *)reusingView {
+- (BOOL)pageView:(XZPageView *)pageView shouldReuseView:(XZImageViewerItemView *)reusingView {
+    [reusingView setZoomScale:1.0 animated:NO];
     return YES;
 }
 

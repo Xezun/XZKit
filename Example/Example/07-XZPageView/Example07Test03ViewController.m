@@ -56,6 +56,7 @@
     }
     
     XZImageViewer *imageViewer = [[XZImageViewer alloc] init];
+    [imageViewer setMinimumZoomScale:0.1 maximumZoomScale:10.0];
     imageViewer.delegate = self;
     imageViewer.dataSource = self;
     imageViewer.currentIndex = [self.imageViews indexOfObject:sourceView];

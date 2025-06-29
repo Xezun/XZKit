@@ -45,17 +45,22 @@
     [toView layoutIfNeeded];
     
     XZImageViewerItemView *itemView = toVC.pageView.currentView;
-    itemView.imageView.clipsToBounds = _sourceView.clipsToBounds;
-    itemView.imageView.contentMode   = _sourceView.contentMode;
-    itemView.imageView.frame         = [_sourceView convertRect:_sourceView.bounds toView:containerView];;
+    [itemView layoutIfNeeded];
+    itemView.hidden = YES;
+    
+    UIImageView *imageView = [[UIImageView alloc] initWithImage:itemView.imageView.image];
+    imageView.clipsToBounds = _sourceView.clipsToBounds;
+    imageView.contentMode   = _sourceView.contentMode;
+    imageView.frame         = [_sourceView convertRect:_sourceView.bounds toView:containerView];
+    [containerView addSubview:imageView];
     
     NSTimeInterval const duration = [self transitionDuration:transitionContext];
     [UIView animateWithDuration:duration delay:0 options:UIViewAnimationOptionLayoutSubviews animations:^{
-        itemView.imageView.frame = CGRectSetSize(itemView.imageView.frame, itemView.imageView.image.size);
-        [itemView setNeedsLayout];
-        [itemView layoutIfNeeded];
+        imageView.frame = [itemView.imageView convertRect:itemView.imageView.bounds toView:containerView];
         toView.backgroundColor = UIColor.blackColor;
     } completion:^(BOOL finished) {
+        [imageView removeFromSuperview];
+        itemView.hidden = NO;
         if (transitionContext.transitionWasCancelled) {
             [toView removeFromSuperview];
             [transitionContext completeTransition:NO];

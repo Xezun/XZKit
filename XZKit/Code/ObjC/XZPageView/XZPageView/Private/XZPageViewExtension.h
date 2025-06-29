@@ -24,12 +24,11 @@
     
     NSInteger           _pendingPage;
     UIView  * _Nullable _pendingView;
+    /// YES 表示加载在正向滚动的方向上，NO 表示加载在反向滚动的方向上。
     BOOL                _pendingPageDirection;
     
     UIView  * _Nullable _reusingView;
     NSInteger           _reusingPage;
-    /// YES 表示加载在正向滚动的方向上，NO 表示加载在反向滚动的方向上。
-//    BOOL                _reusingPageDirection;
     
     NSTimeInterval      _autoPagingInterval;
     /// 自动翻页定时器，请使用方法操作计时器，而非直接使用变量。

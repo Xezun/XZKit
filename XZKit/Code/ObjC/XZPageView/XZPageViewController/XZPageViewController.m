@@ -183,43 +183,7 @@ static void SetTransitionStage(UIViewController * _Nonnull viewController, XZTra
 }
 
 - (void)setCurrentPage:(NSInteger)newPage animated:(BOOL)animated {
-    // 回调是异步的。
-    void (^ const completion)(BOOL) = ^(BOOL finished) {
-        if (self->_pendingViewController == nil) {
-            return;
-        }
-        if (self->_currentViewController) {
-            [self forwardTransitionStage:viewDidDisappear forViewController:self->_currentViewController animated:animated];
-        }
-        self->_currentViewController = self->_pendingViewController;
-        [self forwardTransitionStage:viewDidAppear forViewController:self->_currentViewController animated:animated];
-        self->_pendingViewController = nil;
-    };
-    
-    // 执行翻页
-    if (animated) {
-        [UIView animateWithDuration:XZPageViewAnimationDuration animations:^{
-            [self.pageView setCurrentPage:newPage animated:animated];
-        } completion:completion];
-    } else {
-        [self.pageView setCurrentPage:newPage animated:animated];
-        dispatch_async(dispatch_get_main_queue(), ^{
-            completion(YES);
-        });
-    }
-    
-    // 检查是否翻页
-    _pendingViewController = (id)self.pageView.currentView.nextResponder;
-    if (_currentViewController == _pendingViewController) {
-        _pendingViewController = nil;
-        return;
-    }
-    
-    // 发送事件
-    if (_currentViewController) {
-        [self forwardTransitionStage:viewWillDisappear forViewController:_currentViewController animated:animated];
-    }
-    [self forwardTransitionStage:viewWillAppear forViewController:_pendingViewController animated:animated];
+    [self.pageView setCurrentPage:newPage animated:animated];
 }
 
 #pragma mark - DataSource

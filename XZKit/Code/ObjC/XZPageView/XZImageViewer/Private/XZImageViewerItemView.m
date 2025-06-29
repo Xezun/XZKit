@@ -100,9 +100,9 @@
 - (void)layoutSubviews {
     [super layoutSubviews];
     
-    CGRect            const kBounds      = self.bounds;
-    CGSize            const imageSize    = _imageView.frame.size;
-    CGRect            const contentFrame = CGRectScaleAspectRatioInsideWithMode(kBounds, imageSize, UIViewContentModeScaleAspectFit);
+    CGRect const kBounds      = self.bounds;
+    CGSize const imageSize    = _imageView.image.size;
+    CGRect const contentFrame = CGRectScaleAspectRatioInsideWithMode(kBounds, imageSize, UIViewContentModeScaleAspectFit);
     
     if (_zoomingView) {
         _zoomingView.frame = kBounds;
@@ -141,7 +141,10 @@
 
 - (void)scrollViewWillBeginZooming:(UIScrollView *)scrollView withView:(nullable UIView *)view {
     _zoomingView.bounces = YES;
-    [_delegate imageViewer:_imageViewer willBeginZoomingImageAtIndex:_index];
+    
+    if ([_imageViewer.delegate respondsToSelector:@selector(imageViewer:willBeginZoomingImageAtIndex:)]) {
+        [_imageViewer.delegate imageViewer:_imageViewer willBeginZoomingImageAtIndex:_index];
+    }
 }
 
 - (void)scrollViewDidZoom:(UIScrollView *)scrollView {
@@ -161,12 +164,17 @@
     }
     _imageView.frame = frame;
     
-    [_delegate imageViewer:_imageViewer didZoomImageAtIndex:_index];
+    if ([_imageViewer.delegate respondsToSelector:@selector(imageViewer:didZoomImageAtIndex:)]) {
+        [_imageViewer.delegate imageViewer:_imageViewer didZoomImageAtIndex:_index];
+    }
 }
 
 - (void)scrollViewDidEndZooming:(UIScrollView *)scrollView withView:(nullable UIView *)view atScale:(CGFloat)scale {
     _zoomingView.bounces = (scale != 1.0);
-    [_delegate imageViewer:_imageViewer didEndZoomingImageAtIndex:_index atScale:scale];
+    
+    if ([_imageViewer.delegate respondsToSelector:@selector(imageViewer:didEndZoomingImageAtIndex:atScale:)]) {
+        [_imageViewer.delegate imageViewer:_imageViewer didEndZoomingImageAtIndex:_index atScale:scale];
+    }
 }
 
 @end
