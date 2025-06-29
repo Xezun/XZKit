@@ -71,6 +71,18 @@ UIKIT_STATIC_INLINE BOOL XZScrollDirection(NSInteger from, NSInteger to, NSInteg
 /// 处理 aClass 使之可以作为代理对象。
 - (void)handleDelegateOfClass:(nonnull Class)aClass;
 
+// 调用代理方法
+
+- (UIView *)viewForPageAtIndex:(NSInteger)index reusingView:(nullable UIView *)reusingView;
+- (BOOL)shouldReuseView:(UIView *)reusingView;
+
+- (void)willShowView:(UIView *)view animated:(BOOL)animated;
+- (void)didShowView:(UIView *)view animated:(BOOL)animated;
+- (void)willHideView:(UIView *)view animated:(BOOL)animated;
+- (void)didHideView:(UIView *)view animated:(BOOL)animated;
+
+- (void)didShowPageAtIndex:(NSInteger)index;
+
 // 子类需要重写的方法。
 
 - (void)layoutCurrentView:(CGRect const)bounds;

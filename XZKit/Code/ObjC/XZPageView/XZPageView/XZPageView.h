@@ -48,9 +48,9 @@ NS_ASSUME_NONNULL_BEGIN
 /// 页面的数量。
 @property (nonatomic, readonly) NSInteger numberOfPages;
 
-/// 当前页面。
-/// @note 值 NSNotFound 表示当前没有内容。
-/// @attention 设置此属性不会触发 didShow 代理方法。
+/// 当前页面，值 NSNotFound 表示当前没有页面。
+///
+/// 在`reloadData`之前设置此属性，表示设置初始页面。
 @property (nonatomic) NSInteger currentPage;
 
 /// 设置当前展示视图。
@@ -83,9 +83,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 /// 刷新视图。
 ///
-/// 页面被添加到 window 时，会自动尝试调用
-/// 1. 如果数据不为空，调用此方法会发送 didShow 代理方法。
-/// 2. 自动翻页计时会重置。
+/// 页面被添加到 window 时，会自动尝试调用此方法。
 - (void)reloadData;
 
 @end

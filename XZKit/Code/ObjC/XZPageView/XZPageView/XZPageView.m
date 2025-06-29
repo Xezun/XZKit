@@ -12,6 +12,12 @@
 
 @implementation XZPageView
 
+- (void)dealloc {
+    if (_isPageLoaded) {
+        [self XZPageViewCleanUpViews];
+    }
+}
+
 - (instancetype)initWithFrame:(CGRect)frame orientation:(XZPageViewOrientation)orientation {
     self = [super initWithFrame:frame];
     if (self) {
@@ -124,42 +130,46 @@
         }
         
         // 只有当位置处于第一个或者最后一个时，才需要进行调整
-        // TODO: 以下逻辑似乎只包含从 循环 => 非循环 模式。
         NSInteger const maxPage = _numberOfPages - 1;
-        if (_pendingView && (_currentPage == 0 || _currentPage == maxPage)) {
-            id<XZPageViewDelegate> const delegate = self.delegate;
+        if (_currentPage == 0 || _currentPage == maxPage) {
             CGRect const bounds = self.bounds;
-            NSInteger const pendingPage = XZLoopPage(_currentPage, _pendingPageDirection, maxPage, _isLooped);
-            if (pendingPage == NSNotFound) {
-                [delegate pageView:self willHideView:_pendingView animated:NO];
-                [_pendingView removeFromSuperview];
-                [delegate pageView:self didHideView:_pendingView animated:NO];
-                if ([_dataSource pageView:self shouldReuseView:_pendingView]) {
-                    _reusingPage = _pendingPage;
-                    _reusingView = _pendingView;
-                }
-                _pendingView = nil;
-                _pendingPage = NSNotFound;
-            } else if (pendingPage != _pendingPage) {
-                // 似乎不太可能
-                [delegate pageView:self willHideView:_pendingView animated:NO];
-                [_pendingView removeFromSuperview];
-                [delegate pageView:self didHideView:_pendingView animated:NO];
-                
-                _pendingPage = pendingPage;
-                if ([_dataSource pageView:self shouldReuseView:_pendingView]) {
-                    _pendingView = [_dataSource pageView:self viewForPageAtIndex:_pendingPage reusingView:_pendingView];
+            
+            // 从 循环 => 非循环 模式，可能需要隐藏待显视图
+            // 从 非循环 => 循环 模式，如果没有加载待显视图，那么由进一步的滚动事件处理即可
+            if (_pendingView) {
+                NSInteger const pendingPage = XZLoopPage(_currentPage, _pendingPageDirection, maxPage, _isLooped);
+                if (pendingPage == NSNotFound) {
+                    [_context willHideView:_pendingView animated:NO];
+                    [_pendingView removeFromSuperview];
+                    [_context didHideView:_pendingView animated:NO];
+                    if ([_dataSource pageView:self shouldReuseView:_pendingView]) {
+                        _reusingPage = _pendingPage;
+                        _reusingView = _pendingView;
+                    }
+                    _pendingView = nil;
+                    _pendingPage = NSNotFound;
+                } else if (pendingPage != _pendingPage) {
+                    // 似乎不太可能
+                    [_context willHideView:_pendingView animated:NO];
+                    [_pendingView removeFromSuperview];
+                    [_context didHideView:_pendingView animated:NO];
+                    
+                    _pendingPage = pendingPage;
+                    if ([_dataSource pageView:self shouldReuseView:_pendingView]) {
+                        _pendingView = [_dataSource pageView:self viewForPageAtIndex:_pendingPage reusingView:_pendingView];
+                    } else {
+                        _pendingView = [_dataSource pageView:self viewForPageAtIndex:_pendingPage reusingView:_reusingView];
+                        _reusingView = nil;
+                        _reusingPage = NSNotFound;
+                    }
+                    [_context willShowView:_pendingView animated:NO];
+                    [self addSubview:_pendingView];
+                    [_context layoutPendingView:bounds];
                 } else {
-                    _pendingView = [_dataSource pageView:self viewForPageAtIndex:_pendingPage reusingView:_reusingView];
-                    _reusingView = nil;
-                    _reusingPage = NSNotFound;
+                    [_context layoutPendingView:bounds];
                 }
-                [delegate pageView:self willShowView:_pendingView animated:NO];
-                [self addSubview:_pendingView];
-                [_context layoutPendingView:bounds];
-            } else {
-                [_context layoutPendingView:bounds];
             }
+            
             [_context adjustContentInsets:bounds];
         }
     }
@@ -173,6 +183,13 @@
         }
         [_context scheduleAutoPagingTimerIfNeeded];
     }
+}
+
+- (NSInteger)numberOfPages {
+    if (!_isPageLoaded) {
+        [self reloadData];
+    }
+    return _numberOfPages;
 }
 
 - (void)setCurrentPage:(NSInteger)currentPage {
@@ -190,11 +207,17 @@
 }
 
 - (UIView *)currentView {
+    if (!_isPageLoaded) {
+        [self reloadData];
+    }
     return _currentView;
 }
 
 - (UIView *)pendingView {
-    return _reusingView;
+    if (!_isPageLoaded) {
+        [self reloadData];
+    }
+    return _pendingView;
 }
 
 - (void)setDelegate:(id<XZPageViewDelegate>)delegate {
@@ -215,32 +238,10 @@
 - (void)setDataSource:(id<XZPageViewDataSource>)dataSource {
     if (_dataSource != dataSource) {
         if (_isPageLoaded) {
-            id<XZPageViewDelegate> const delegate = self.delegate;
-            
-            // 清理页面
-            if (_currentPage != NSNotFound) {
-                if (!_pendingView) {
-                    [delegate pageView:self willHideView:_currentView animated:NO];
-                }
-                [_currentView removeFromSuperview];
-                [delegate pageView:self didHideView:_currentView animated:NO];
-                _currentView = nil;
-                _currentPage = NSNotFound;
-            }
-            
-            if (_pendingPage != NSNotFound) {
-                [delegate pageView:self willHideView:_pendingView animated:NO];
-                [_pendingView removeFromSuperview];
-                [delegate pageView:self didHideView:_pendingView animated:NO];
-                _pendingView = nil;
-                _pendingPage = NSNotFound;
-            }
-            
-            _reusingPage = NSNotFound;
-            _reusingView = nil;
-            
+            // 清除数据
+            [self XZPageViewCleanUpViews];
+            // 新数据源
             _dataSource = dataSource;
-
             // 页面进入未加载状态
             _isPageLoaded = NO;
         } else {
@@ -255,7 +256,6 @@
     _isPageLoaded = YES;
     
     CGRect const bounds = self.bounds;
-    id<XZPageViewDelegate> const delegate = self.delegate;
     
     {
         _numberOfPages = [_dataSource numberOfPagesInPageView:self];
@@ -271,10 +271,10 @@
         
         if (_currentView) {
             if (!_pendingView) {
-                [delegate pageView:self willHideView:_currentView animated:NO];
+                [_context willHideView:_currentView animated:NO];
             }
             [_currentView removeFromSuperview];
-            [delegate pageView:self didHideView:_currentView animated:NO];
+            [_context didHideView:_currentView animated:NO];
             
             if (_currentPage != NSNotFound) {
                 if ([_dataSource pageView:self shouldReuseView:_currentView]) {
@@ -284,9 +284,9 @@
                     _reusingView = nil;
                     _reusingPage = NSNotFound;
                 }
-                [delegate pageView:self willShowView:_currentView animated:NO];
+                [_context willShowView:_currentView animated:NO];
                 [self addSubview:_currentView];
-                [delegate pageView:self didShowView:_currentView animated:NO];
+                [_context didShowView:_currentView animated:NO];
                 [_context layoutCurrentView:bounds];
             } else {
                 if ([_dataSource pageView:self shouldReuseView:_currentView]) {
@@ -300,9 +300,9 @@
                 _currentView = [_dataSource pageView:self viewForPageAtIndex:_currentPage reusingView:_reusingView];
                 _reusingView = nil;
                 _reusingPage = NSNotFound;
-                [delegate pageView:self willShowView:_currentView animated:NO];
+                [_context willShowView:_currentView animated:NO];
                 [self addSubview:_currentView];
-                [delegate pageView:self didShowView:_currentView animated:NO];
+                [_context didShowView:_currentView animated:NO];
                 [_context layoutCurrentView:bounds];
             } else {
                 // 没有 _currentView 也没有 _currentPage 不需要处理
@@ -310,9 +310,9 @@
         }
         
         if (_pendingView) {
-            [delegate pageView:self willHideView:_pendingView animated:NO];
+            [_context willHideView:_pendingView animated:NO];
             [_pendingView removeFromSuperview];
-            [delegate pageView:self didHideView:_pendingView animated:NO];
+            [_context didHideView:_pendingView animated:NO];
             
             _pendingPage = XZLoopPage(_currentPage, _pendingPageDirection, _numberOfPages - 1, _isLooped);
             
@@ -324,7 +324,7 @@
                     _reusingView = nil;
                     _reusingPage = NSNotFound;
                 }
-                [delegate pageView:self willShowView:_pendingView animated:NO];
+                [_context willShowView:_pendingView animated:NO];
                 [self addSubview:_pendingView];
             } else {
                 if ([_dataSource pageView:self shouldReuseView:_pendingView]) {
@@ -344,6 +344,32 @@
         // 重启自动翻页计时器
         [_context scheduleAutoPagingTimerIfNeeded];
     }
+}
+
+#pragma mark - 私有方法
+
+- (void)XZPageViewCleanUpViews {
+    // 清理页面
+    if (_currentPage != NSNotFound) {
+        if (!_pendingView) {
+            [_context willHideView:_currentView animated:NO];
+        }
+        [_currentView removeFromSuperview];
+        [_context didHideView:_currentView animated:NO];
+        _currentView = nil;
+        _currentPage = NSNotFound;
+    }
+    
+    if (_pendingPage != NSNotFound) {
+        [_context willHideView:_pendingView animated:NO];
+        [_pendingView removeFromSuperview];
+        [_context didHideView:_pendingView animated:NO];
+        _pendingView = nil;
+        _pendingPage = NSNotFound;
+    }
+    
+    _reusingPage = NSNotFound;
+    _reusingView = nil;
 }
 
 @end

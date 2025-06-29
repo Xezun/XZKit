@@ -76,9 +76,8 @@
     return reusingView;
 }
 
-- (UIView *)pageView:(XZPageView *)pageView prepareReuseForView:(UIImageView *)reusingView {
-    reusingView.image = nil;
-    return reusingView;
+- (BOOL)pageView:(XZPageView *)pageView shouldReuseView:(__kindof UIView *)reusingView {
+    return YES;
 }
 
 - (void)pageView:(XZPageView *)pageView didShowPageAtIndex:(NSInteger)index {

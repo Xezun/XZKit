@@ -51,11 +51,12 @@
     XZImageViewerItemView * const itemView = fromVC.pageView.currentView;
     itemView.imageView.clipsToBounds = _sourceView.clipsToBounds;
     itemView.imageView.contentMode   = _sourceView.contentMode;
-
+    [itemView layoutIfNeeded];
+    
     CGRect const sourceRect = [_sourceView convertRect:_sourceView.bounds toView:containerView];
 
     NSTimeInterval const duration = [self transitionDuration:transitionContext];
-    [UIView animateWithDuration:duration delay:0 options:UIViewAnimationOptionLayoutSubviews animations:^{
+    [UIView animateWithDuration:duration delay:0 options:0 animations:^{
         fromView.backgroundColor = UIColor.clearColor;
         itemView.imageView.frame = sourceRect;
     } completion:^(BOOL finished) {

@@ -115,6 +115,10 @@
     }
 }
 
+- (void)setNeedsLayout {
+    [super setNeedsLayout];
+}
+
 #pragma mark - <UIScrollViewDelegate.拖动>
 
 - (void)scrollViewWillBeginDragging:(UIScrollView *)scrollView {

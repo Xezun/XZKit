@@ -59,22 +59,34 @@
     if (reusingView == nil) {
         reusingView = [[UIImageView alloc] initWithFrame:pageView.bounds];
     }
+    reusingView.tag = index;
     [reusingView sd_setImageWithURL:self.imageURLs[index]];
     return reusingView;
 }
 
-- (nullable UIView *)pageView:(XZPageView *)pageView prepareReuseForView:(UIImageView *)reusingView {
-    reusingView.image = nil;
-    return reusingView;
+- (BOOL)pageView:(XZPageView *)pageView shouldReuseView:(__kindof UIView *)reusingView {
+    return YES;
 }
 
-- (void)pageView:(XZPageView *)pageView didShowPageAtIndex:(NSInteger)index {
-    XZLog(@"didPageToIndex: %ld", index);
-    self.pageControl.currentPage = index;
+- (void)pageView:(XZPageView *)pageView willShowView:(UIView *)view animated:(BOOL)animated {
+    NSLog(@"%s, view: %ld, animated: %@", __PRETTY_FUNCTION__, view.tag, animated ? @"true" : @"false");
+}
+
+- (void)pageView:(XZPageView *)pageView didShowView:(UIView *)view animated:(BOOL)animated {
+    NSLog(@"%s, view: %ld, animated: %@", __PRETTY_FUNCTION__, view.tag, animated ? @"true" : @"false");
+    self.pageControl.currentPage = pageView.currentPage;
+}
+
+- (void)pageView:(XZPageView *)pageView willHideView:(UIView *)view animated:(BOOL)animated {
+    NSLog(@"%s, view: %ld, animated: %@", __PRETTY_FUNCTION__, view.tag, animated ? @"true" : @"false");
+}
+
+- (void)pageView:(XZPageView *)pageView didHideView:(UIView *)view animated:(BOOL)animated {
+    NSLog(@"%s, view: %ld, animated: %@", __PRETTY_FUNCTION__, view.tag, animated ? @"true" : @"false");
 }
 
 - (void)pageView:(XZPageView *)pageView didTurnPageInTransition:(CGFloat)transition {
-    XZLog(@"didTurnPageInTransition: %f", transition);
+    // XZLog(@"didTurnPageInTransition: %f", transition);
 }
 
 - (void)pageControlDidChangeValue:(XZPageControl *)pageControl {

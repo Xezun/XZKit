@@ -173,9 +173,8 @@
     return reusingView;
 }
 
-- (nullable UIView *)pageView:(XZPageView *)pageView prepareReuseForView:(UIImageView *)reusingView {
-    reusingView.image = nil;
-    return reusingView;
+- (BOOL)pageView:(XZPageView *)pageView shouldReuseView:(__kindof UIView *)reusingView {
+    return YES;
 }
 
 #pragma mark - XZPageViewDelegate

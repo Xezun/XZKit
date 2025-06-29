@@ -32,6 +32,7 @@
     if (self) {
         _minimumZoomScale = 1.0;
         _maximumZoomScale = 1.0;
+        self.transitioningDelegate = self;
         self.modalPresentationStyle = UIModalPresentationFullScreen;
     }
     return self;
@@ -42,6 +43,7 @@
     if (self) {
         _minimumZoomScale = 1.0;
         _maximumZoomScale = 1.0;
+        self.transitioningDelegate = self;
         self.modalPresentationStyle = UIModalPresentationFullScreen;
     }
     return self;
@@ -99,7 +101,6 @@
 - (void)setSourceView:(UIView *)sourceView {
     if (_sourceView != sourceView) {
         _sourceView = sourceView;
-        self.transitioningDelegate = _sourceView ? self : nil;
     }
 }
 
@@ -167,8 +168,8 @@
     return reusingView;
 }
 
-- (UIView *)pageView:(XZPageView *)pageView prepareReuseForView:(__kindof UIView *)reusingView {
-    return reusingView;
+- (BOOL)pageView:(XZPageView *)pageView shouldReuseView:(__kindof UIView *)reusingView {
+    return YES;
 }
 
 #pragma mark - XZPageViewDelegate

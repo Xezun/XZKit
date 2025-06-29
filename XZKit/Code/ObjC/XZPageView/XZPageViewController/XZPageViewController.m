@@ -264,48 +264,15 @@ static void SetTransitionStage(UIViewController * _Nonnull viewController, XZTra
 }
 
 - (void)pageView:(XZPageView *)pageView didShowPageAtIndex:(NSInteger)index {
-//    UIViewController * const viewController = (UIViewController *)[pageView.currentView nextResponder];
-//    
-//    if (viewController != _currentViewController) {
-//        if (_currentViewController) {
-//            [self forwardTransitionStage:(viewDidDisappear) forViewController:_currentViewController animated:YES];
-//        }
-//        
-//        if (viewController == _pendingViewController) {
-//            _currentViewController = viewController;
-//            [self forwardTransitionStage:(viewDidAppear) forViewController:_currentViewController animated:YES];
-//        } else {
-//            [self forwardTransitionStage:(viewWillAppear) forViewController:viewController animated:NO];
-//            _currentViewController = viewController;
-//            [self forwardTransitionStage:(viewDidAppear) forViewController:_currentViewController animated:NO];
-//        }
-//        
-//        _pendingViewController = nil;
-//    }
-//    
-//    if ([_delegate respondsToSelector:@selector(pageViewController:didShowViewControllerAtIndex:)]) {
-//        [_delegate pageViewController:self didShowViewControllerAtIndex:pageView.currentPage];
-//    }
+    if ([self.delegate respondsToSelector:@selector(pageViewController:didShowViewControllerAtIndex:)]) {
+        [self.delegate pageViewController:self didShowViewControllerAtIndex:index];
+    }
 }
 
 - (void)pageView:(XZPageView *)pageView didTurnPageInTransition:(CGFloat)transition {
-//    UIViewController * const nextViewController = (id)pageView.pendingView.nextResponder;
-//    
-//    if (_pendingViewController == nil) {
-//        [self forwardTransitionStage:(viewWillDisappear) forViewController:_currentViewController animated:YES];
-//        _pendingViewController = nextViewController;
-//        [self forwardTransitionStage:(viewWillAppear) forViewController:_pendingViewController animated:YES];
-//    } else if (_pendingViewController != nextViewController) {
-//        [self forwardTransitionStage:(viewDidDisappear) forViewController:_pendingViewController animated:YES];
-//        _pendingViewController = nextViewController;
-//        [self forwardTransitionStage:(viewWillAppear) forViewController:_pendingViewController animated:YES];
-//    } else {
-//        // 持续转场中
-//    }
-//    
-//    if ([_delegate respondsToSelector:@selector(pageViewController:didTurnViewControllerInTransition:)]) {
-//        [_delegate pageViewController:self didTurnViewControllerInTransition:transition];
-//    }
+    if ([self.delegate respondsToSelector:@selector(pageViewController:didTurnViewControllerInTransition:)]) {
+        [self.delegate pageViewController:self didTurnViewControllerInTransition:transition];
+    }
 }
 
 - (void)forwardTransitionStage:(XZTransitionStage const)newStage forViewController:(UIViewController * const)viewController animated:(BOOL)animated {

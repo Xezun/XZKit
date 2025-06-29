@@ -51,13 +51,16 @@ NS_SWIFT_UI_ACTOR @protocol XZPageViewDataSource <NSObject>
 /// XZPageView 事件方法列表。
 NS_SWIFT_UI_ACTOR @protocol XZPageViewDelegate <UIScrollViewDelegate>
 
-
+@optional
+// 视图的展示周期。
 - (void)pageView:(XZPageView *)pageView willShowView:(UIView *)view animated:(BOOL)animated NS_SWIFT_NAME(pageView(_:willShowView:animated:));
 - (void)pageView:(XZPageView *)pageView didShowView:(UIView *)view animated:(BOOL)animated NS_SWIFT_NAME(pageView(_:didShowView:animated:));
 - (void)pageView:(XZPageView *)pageView willHideView:(UIView *)view animated:(BOOL)animated NS_SWIFT_NAME(pageView(_:willHideView:animated:));
 - (void)pageView:(XZPageView *)pageView didHideView:(UIView *)view animated:(BOOL)animated NS_SWIFT_NAME(pageView(_:didHideView:animated:));
 
-@optional
+/// 切换到页面。
+- (void)pageView:(XZPageView *)pageView didShowPageAtIndex:(NSInteger)index;
+
 /// 在用户翻动页面的过程中，通知转场进度。
 ///
 /// 除调用 ``-setCurrentPage:animated:`` 之外，如果 currentPage 发生改变，即会调用此方法。
