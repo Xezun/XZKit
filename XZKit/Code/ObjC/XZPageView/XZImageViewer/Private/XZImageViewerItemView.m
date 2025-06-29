@@ -86,15 +86,11 @@
 }
 
 - (void)zoomToRect:(CGRect)rect animated:(BOOL)animated {
-    [self.zoomingView zoomToRect:rect animated:animated];
+    [_zoomingView zoomToRect:rect animated:animated];
 }
 
 - (void)setZoomScale:(CGFloat)scale animated:(BOOL)animated {
-    if (scale == 1.0) {
-        [_zoomingView setZoomScale:scale animated:animated];
-    } else {
-        [self.zoomingView setZoomScale:scale animated:animated];
-    }
+    [_zoomingView setZoomScale:scale animated:animated];
 }
 
 - (void)layoutSubviews {

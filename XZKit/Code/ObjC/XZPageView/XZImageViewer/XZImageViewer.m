@@ -177,16 +177,20 @@
 #pragma mark - 事件
 
 - (void)doubleTapGestureRecognizerAction:(UITapGestureRecognizer *)tap {
-    
+    XZImageViewerItemView *itemView = _pageView.currentView;
+    if (itemView.zoomScale != 1.0) {
+        [itemView setZoomScale:1.0 animated:YES];
+    } else {
+        CGPoint const location = [tap locationInView:itemView.imageView];
+        
+        // _scrollView.scrollEnabled = !_isZoomingLockEnabled;
+        // 会触发 layoutSubviews 方法；会触发代理方法。
+        [itemView zoomToRect:CGRectMake(location.x, location.y, 0, 0) animated:YES];
+    }
 }
 
 - (void)tapGestureRecognizerAction:(UITapGestureRecognizer *)tapGestureRecognizer {
-    XZImageViewerItemView *itemView = self.pageView.currentView;
-    [UIView animateWithDuration:itemView.zoomScale == 1.0 ? 0 : XZPageViewAnimationDuration animations:^{
-        [itemView setZoomScale:1.0 animated:NO];
-    } completion:^(BOOL finished) {
-        [self dismissViewControllerAnimated:true completion:nil];
-    }];
+    [self dismissViewControllerAnimated:true completion:nil];
 }
 
 - (void)panGestureRecognizerAction:(UIPanGestureRecognizer *)panGestureRecognizer {

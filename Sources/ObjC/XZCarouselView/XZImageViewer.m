@@ -6,6 +6,6 @@
 //
 
 #import "XZImageViewer.h"
-#import "XZImageCarouselView.h"
+#import "XZImageCarouselView.h "
 
 

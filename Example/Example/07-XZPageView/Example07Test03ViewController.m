@@ -13,7 +13,7 @@
 
 @property (strong, nonatomic) IBOutletCollection(UIImageView) NSArray<UIImageView *> *imageViews;
 
-@property (nonatomic, copy) NSArray<NSURL *> *imageURLs;
+@property (nonatomic, copy) NSArray<NSDictionary<NSString *, NSURL *> *> *imageURLs;
 
 @end
 
@@ -23,19 +23,48 @@
     [super viewDidLoad];
     
     _imageURLs = @[
-        [NSURL URLWithString:@"https://img.ithome.com/newsuploadfiles/thumbnail/2023/8/710869_240.jpg?r=1691399630700"],
-        [NSURL URLWithString:@"https://img.ithome.com/newsuploadfiles/thumbnail/2023/8/710853_240.jpg?r=1691398369990"],
-        [NSURL URLWithString:@"https://img.ithome.com/newsuploadfiles/thumbnail/2023/8/710845_240.jpg?r=1691400153800"],
-        [NSURL URLWithString:@"https://img.ithome.com/newsuploadfiles/thumbnail/2023/8/710826_240.jpg?r=1691393973783"],
-        [NSURL URLWithString:@"https://img.ithome.com/newsuploadfiles/thumbnail/2023/8/710817_240.jpg?r=1691391503670"],
-        [NSURL URLWithString:@"https://img.ithome.com/newsuploadfiles/thumbnail/2023/8/710802_240.jpg?r=1691389332627"],
-        [NSURL URLWithString:@"https://img.ithome.com/newsuploadfiles/thumbnail/2023/8/710778_240.jpg?r=1691380407190"],
-        [NSURL URLWithString:@"https://img.ithome.com/newsuploadfiles/thumbnail/2023/8/710748_240.jpg?r=1691376229133"],
-        [NSURL URLWithString:@"https://img.ithome.com/newsuploadfiles/thumbnail/2023/8/710715_240.jpg?r=1691336123867"],
+        @{
+            @"cover": [NSURL URLWithString:@"https://img2.baidu.com/it/u=822205830,2647734930&fm=253&fmt=auto&app=138&f=JPEG?w=750&h=500"],
+            @"image": [NSURL URLWithString:@"https://q7.itc.cn/q_70/images03/20250112/fc5705a8d8894a67a9fd579502e7024d.jpeg"]
+        },
+        @{
+            @"cover": [NSURL URLWithString:@"https://img.ithome.com/newsuploadfiles/thumbnail/2023/8/710853_240.jpg?r=1691398369990"],
+            @"image": [NSURL URLWithString:@"https://img.ithome.com/newsuploadfiles/thumbnail/2023/8/710853_240.jpg?r=1691398369990"]
+        },
+        @{
+            @"cover": [NSURL URLWithString:@"https://img.ithome.com/newsuploadfiles/thumbnail/2023/8/710845_240.jpg?r=1691400153800"],
+            @"image": [NSURL URLWithString:@"https://img.ithome.com/newsuploadfiles/thumbnail/2023/8/710845_240.jpg?r=1691400153800"]
+        },
+        
+        @{
+            @"cover": [NSURL URLWithString:@"https://img.ithome.com/newsuploadfiles/thumbnail/2023/8/710826_240.jpg?r=1691393973783"],
+            @"image": [NSURL URLWithString:@"https://img.ithome.com/newsuploadfiles/thumbnail/2023/8/710826_240.jpg?r=1691393973783"]
+        },
+        @{
+            @"cover": [NSURL URLWithString:@"https://img0.baidu.com/it/u=1327435806,2633434759&fm=253&fmt=auto&app=120&f=JPEG?w=667&h=500"],
+            @"image": [NSURL URLWithString:@"https://i0.hdslb.com/bfs/archive/f04cdf2dacd16a5c72fc4b8575480c5309d84247.jpg"]
+        },
+        @{
+            @"cover": [NSURL URLWithString:@"https://img.ithome.com/newsuploadfiles/thumbnail/2023/8/710802_240.jpg?r=1691389332627"],
+            @"image": [NSURL URLWithString:@"https://img.ithome.com/newsuploadfiles/thumbnail/2023/8/710802_240.jpg?r=1691389332627"]
+        },
+        
+        @{
+            @"cover": [NSURL URLWithString:@"https://img0.baidu.com/it/u=1921545104,2825374292&fm=253&fmt=auto&app=120&f=JPEG?w=500&h=889"],
+            @"image": [NSURL URLWithString:@"https://pic.rmb.bdstatic.com/bjh/bb9195431ff5/250530/f0c0d02853bcc6ae34a2d84ae22f3621.jpeg"]
+        },
+        @{
+            @"cover": [NSURL URLWithString:@"https://img.ithome.com/newsuploadfiles/thumbnail/2023/8/710748_240.jpg?r=1691376229133"],
+            @"image": [NSURL URLWithString:@"https://img.ithome.com/newsuploadfiles/thumbnail/2023/8/710748_240.jpg?r=1691376229133"]
+        },
+        @{
+            @"cover": [NSURL URLWithString:@"https://img1.baidu.com/it/u=3654298861,3467786631&fm=253&fmt=auto&app=120&f=JPEG?w=889&h=500"],
+            @"image": [NSURL URLWithString:@"https://i0.hdslb.com/bfs/archive/71dbafaf58269f890560de7a1cb773b6477281be.jpg"]
+        }
     ];
     
     [self.imageViews enumerateObjectsUsingBlock:^(UIImageView * _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
-        [obj sd_setImageWithURL:self.imageURLs[idx]];
+        [obj sd_setImageWithURL:self.imageURLs[idx][@"cover"]];
     }];
 }
 
@@ -71,7 +100,7 @@
 }
 
 - (UIImage *)imageViewer:(XZImageViewer *)imageViewer loadImageForItemAtIndex:(NSInteger)index completion:(void (^)(UIImage * _Nonnull))completion {
-    [SDWebImageManager.sharedManager loadImageWithURL:_imageURLs[index] options:0 progress:nil completed:^(UIImage * _Nullable image, NSData * _Nullable data, NSError * _Nullable error, SDImageCacheType cacheType, BOOL finished, NSURL * _Nullable imageURL) {
+    [SDWebImageManager.sharedManager loadImageWithURL:_imageURLs[index][@"image"] options:0 progress:nil completed:^(UIImage * _Nullable image, NSData * _Nullable data, NSError * _Nullable error, SDImageCacheType cacheType, BOOL finished, NSURL * _Nullable imageURL) {
         completion(image);
     }];
     return _imageViews[index].image;
