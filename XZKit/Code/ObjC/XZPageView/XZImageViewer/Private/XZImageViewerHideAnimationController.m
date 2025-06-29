@@ -13,19 +13,18 @@
 
 @implementation XZImageViewerHideAnimationController {
     UIView *_sourceView;
+    UIImageView *_imageView;
 }
 
-+ (XZImageViewerHideAnimationController *)animationControllerWithSourceView:(UIView *)sourceView {
-    if (sourceView == nil) {
-        return nil;
-    }
-    return [[self alloc] initWithSourceView:sourceView];
++ (XZImageViewerHideAnimationController *)animationControllerWithSourceView:(UIView *)sourceView imageView:(UIImageView *)imageView {
+    return [[self alloc] initWithSourceView:sourceView imageView:imageView];
 }
 
-- (instancetype)initWithSourceView:(UIView *)sourceView {
+- (instancetype)initWithSourceView:(UIView *)sourceView imageView:(UIImageView *)imageView {
     self = [super init];
     if (self) {
         _sourceView = sourceView;
+        _imageView  = imageView;
     }
     return self;
 }
@@ -54,27 +53,86 @@
     [itemView layoutIfNeeded];
     itemView.hidden = YES;
     
-    UIImageView *imageView = [[UIImageView alloc] initWithImage:itemView.imageView.image];
-    imageView.clipsToBounds = _sourceView.clipsToBounds;
-    imageView.contentMode = _sourceView.contentMode;
-    imageView.frame = [itemView.imageView convertRect:itemView.imageView.bounds toView:containerView];
-    [containerView addSubview:imageView];
-    
-    NSTimeInterval const duration = [self transitionDuration:transitionContext];
-    [UIView animateWithDuration:duration delay:0 options:0 animations:^{
-        fromView.backgroundColor = UIColor.clearColor;
-        imageView.frame = [self->_sourceView convertRect:self->_sourceView.bounds toView:containerView];;
-    } completion:^(BOOL finished) {
-        [imageView removeFromSuperview];
-        itemView.hidden = NO;
-        if (transitionContext.transitionWasCancelled) {
-            [toView removeFromSuperview];
-            fromView.backgroundColor = UIColor.blackColor;
-            [transitionContext completeTransition:NO];
+    if (_sourceView) {
+        if (_imageView) {
+            UIImageView *imageView = _imageView;
+            imageView.clipsToBounds = _sourceView.clipsToBounds;
+            imageView.contentMode = _sourceView.contentMode;
+            imageView.frame = [itemView.imageView convertRect:itemView.imageView.bounds toView:containerView];
+            [containerView addSubview:imageView];
+            
+            NSTimeInterval const duration = [self transitionDuration:transitionContext];
+            [UIView animateWithDuration:duration delay:0 options:0 animations:^{
+                fromView.backgroundColor = UIColor.clearColor;
+//                imageView.frame = [self->_sourceView convertRect:self->_sourceView.bounds toView:containerView];;
+            } completion:^(BOOL finished) {
+                [imageView removeFromSuperview];
+                itemView.hidden = NO;
+                if (transitionContext.transitionWasCancelled) {
+                    [toView removeFromSuperview];
+                    fromView.backgroundColor = UIColor.blackColor;
+                    [transitionContext completeTransition:NO];
+                } else {
+                    [transitionContext completeTransition:YES];
+                }
+            }];
         } else {
-            [transitionContext completeTransition:YES];
+            UIImageView *imageView = [[UIImageView alloc] initWithImage:itemView.imageView.image];
+            imageView.clipsToBounds = _sourceView.clipsToBounds;
+            imageView.contentMode = _sourceView.contentMode;
+            imageView.frame = [itemView.imageView convertRect:itemView.imageView.bounds toView:containerView];
+            [containerView addSubview:imageView];
+            
+            NSTimeInterval const duration = [self transitionDuration:transitionContext];
+            [UIView animateWithDuration:duration delay:0 options:0 animations:^{
+                fromView.backgroundColor = UIColor.clearColor;
+                imageView.frame = [self->_sourceView convertRect:self->_sourceView.bounds toView:containerView];;
+            } completion:^(BOOL finished) {
+                [imageView removeFromSuperview];
+                itemView.hidden = NO;
+                if (transitionContext.transitionWasCancelled) {
+                    [toView removeFromSuperview];
+                    fromView.backgroundColor = UIColor.blackColor;
+                    [transitionContext completeTransition:NO];
+                } else {
+                    [transitionContext completeTransition:YES];
+                }
+            }];
         }
-    }];
+    } else {
+        UIImageView *imageView = _imageView ?: [[UIImageView alloc] initWithImage:itemView.imageView.image];
+        imageView.frame = [itemView.imageView convertRect:itemView.imageView.bounds toView:containerView];
+        [containerView addSubview:imageView];
+        
+        NSTimeInterval const duration = [self transitionDuration:transitionContext];
+        [UIView animateWithDuration:duration delay:0 options:0 animations:^{
+            fromView.backgroundColor = UIColor.clearColor;
+            imageView.frame = CGRectOffset(imageView.frame, 0, CGRectGetMaxY(containerView.bounds) - CGRectGetMinY(imageView.frame));
+        } completion:^(BOOL finished) {
+            [imageView removeFromSuperview];
+            itemView.hidden = NO;
+            if (transitionContext.transitionWasCancelled) {
+                [toView removeFromSuperview];
+                fromView.backgroundColor = UIColor.blackColor;
+                [transitionContext completeTransition:NO];
+            } else {
+                [transitionContext completeTransition:YES];
+            }
+        }];
+    }
+}
+
+@end
+
+
+@implementation XZImageViewerHideInteractiveController
+
+- (instancetype)initWithImageView:(UIImageView *)imageView {
+    self = [super init];
+    if (self) {
+        _imageView = imageView;
+    }
+    return self;
 }
 
 @end

@@ -15,10 +15,9 @@
 @import XZExtensions;
 @import XZGeometry;
 
-@interface XZImageViewer () <UIViewControllerTransitioningDelegate, XZPageViewDelegate, XZPageViewDataSource> {
-    // 记录状态栏的初始状态。
-    BOOL _prefersStatusBarHidden;
-    UIPercentDrivenInteractiveTransition *_interactionController;
+@interface XZImageViewer () <UIViewControllerTransitioningDelegate, XZPageViewDelegate, XZPageViewDataSource, UIGestureRecognizerDelegate> {
+    XZImageViewerHideInteractiveController *_interactionController;
+    UIPanGestureRecognizer *_panGestureRecognizer;
 }
 
 @end
@@ -67,21 +66,22 @@
     [self.view addSubview:self.pageView];
     
     // 双击缩放
-    UITapGestureRecognizer * const doubleTapGestureRecognizer = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(doubleTapGestureRecognizerAction:)];
-    doubleTapGestureRecognizer.numberOfTapsRequired = 2;
-    [self.view addGestureRecognizer:doubleTapGestureRecognizer];
+    UITapGestureRecognizer * const _doubleTapGestureRecognizer = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(doubleTapGestureRecognizerAction:)];
+    _doubleTapGestureRecognizer.numberOfTapsRequired = 2;
+    [self.view addGestureRecognizer:_doubleTapGestureRecognizer];
     
     // 单击退场
-    UITapGestureRecognizer * const tapGestureRecognizer = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(tapGestureRecognizerAction:)];
-    [self.view addGestureRecognizer:tapGestureRecognizer];
+    UITapGestureRecognizer * const _tapGestureRecognizer = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(tapGestureRecognizerAction:)];
+    [self.view addGestureRecognizer:_tapGestureRecognizer];
     
     // 拖动退场
-     UIPanGestureRecognizer * const panGestureRecognizer = [[UIPanGestureRecognizer alloc] initWithTarget:self action:@selector(panGestureRecognizerAction:)];
-    panGestureRecognizer.maximumNumberOfTouches = 1;
-    [self.view addGestureRecognizer:panGestureRecognizer];
+    _panGestureRecognizer = [[UIPanGestureRecognizer alloc] initWithTarget:self action:@selector(panGestureRecognizerAction:)];
+    _panGestureRecognizer.maximumNumberOfTouches = 1;
+    _panGestureRecognizer.delegate = self;
+    [self.view addGestureRecognizer:_panGestureRecognizer];
     
-    [tapGestureRecognizer requireGestureRecognizerToFail:doubleTapGestureRecognizer];
-    [panGestureRecognizer requireGestureRecognizerToFail:tapGestureRecognizer];
+    [_tapGestureRecognizer requireGestureRecognizerToFail:_doubleTapGestureRecognizer];
+    [_panGestureRecognizer requireGestureRecognizerToFail:_tapGestureRecognizer];
 }
 
 - (void)viewDidLayoutSubviews {
@@ -174,6 +174,31 @@
     [self.delegate imageViewer:self didShowImageAtIndex:index];
 }
 
+#pragma mark - UIGestureRecognizerDelegate
+
+- (BOOL)gestureRecognizerShouldBegin:(UIGestureRecognizer *)gestureRecognizer {
+    if (gestureRecognizer != _panGestureRecognizer) {
+        return YES;
+    }
+    XZImageViewerItemView * const itemView = _pageView.currentView;
+    
+    if (itemView == nil) {
+        return NO;
+    }
+    
+    if (!CGRectContainsPoint(itemView.imageView.bounds, [gestureRecognizer locationInView:itemView.imageView])) {
+        return NO;
+    }
+    
+    CGPoint const translation = [_panGestureRecognizer translationInView:nil];
+    
+    if (translation.x / translation.y > 0.1) {
+        return NO;
+    }
+    
+    return YES;
+}
+
 #pragma mark - 事件
 
 - (void)doubleTapGestureRecognizerAction:(UITapGestureRecognizer *)tap {
@@ -194,82 +219,80 @@
 }
 
 - (void)panGestureRecognizerAction:(UIPanGestureRecognizer *)panGestureRecognizer {
-//    switch (panGestureRecognizer.state) {
-//        case UIGestureRecognizerStateBegan: {
-//            // 将屏幕快照放到底层，作为拖拽手势过程中的背景。
-//            // 一般情况下，当前控制器在显示时，底层时没有控制器的；
-//            // 如果将快照放在当前控制器底层，那么在 in-cell 模式下，dismiss 时当前控制器可能会向下移动，
-//            // 而系统没有提供合适的接口来修正其位置（viewWillDisappear/viewDidLayoutSubviews等方法中都不可以，偶尔会发生快照抖动），
-//            // 因此这么做会限制 XZImageViewer 的呈现模式必须时普通模式，否则动画效果可能与预期不一样。
-//            CGRect const frame = self.pageView.frame;
-//            CGPoint const location = [panGestureRecognizer locationInView:self.carouselView];
-//            
-////            self.carouselView.layer.anchorPoint = CGPointMake(location.x / frame.size.width, location.y / frame.size.height);
-////            self.carouselView.frame = frame;
-//            
-//            _interactionController = [[UIPercentDrivenInteractiveTransition alloc] init];
-//            if (![XZImageViewer isViewControllerBasedStatusBarAppearance]) {
-//                [UIApplication.sharedApplication setStatusBarHidden:_prefersStatusBarHidden withAnimation:(UIStatusBarAnimationNone)];
-//            }
-//            [self dismissViewControllerAnimated:YES completion:nil];
-//            break;
-//        }
-//        case UIGestureRecognizerStateChanged: {
-//            CGRect const kBounds = self.view.bounds;
-//            CGPoint const translation = [panGestureRecognizer translationInView:nil];
-//            CGFloat const kPercent = MAX(0, translation.y) / kBounds.size.height;
-//            
-//            CGFloat const kScale = MAX(1.0 - kPercent, 0.3);
-//            
-//            [_interactionController updateInteractiveTransition:kPercent];
-////            self.carouselView.transform = CGAffineTransformScale(CGAffineTransformMakeTranslation(translation.x, translation.y), kScale, kScale);
-//            break;
-//        }
-//            
-//        case UIGestureRecognizerStateCancelled:
-//        case UIGestureRecognizerStateEnded: {
-//            if (_interactionController == nil) {
-//                return;
-//            }
-//            CGRect const kBounds = self.view.bounds;
-//            CGPoint const translation = [panGestureRecognizer translationInView:nil];
-//            CGPoint const velocity = [panGestureRecognizer velocityInView:nil];
-//            if ( velocity.y > 400 || (translation.y > 0 && translation.y >= 0.3 * kBounds.size.height) ) {
-//                CGRect const frame = CGRectIntegral(self.carouselView.frame);
-//                self.carouselView.transform = CGAffineTransformIdentity;
-//                self.carouselView.frame = frame;
-//                [self.carouselView layoutIfNeeded];
-//                
-//                CGRect const targetRect = [self.view.window convertRect:[self _XZImageViewerSourceRectForCurrentImage:YES] toView:self.view];
-//                UIViewContentMode const targetMode = [self _XZImageViewerSourceContentModeForCurrentImage];
-//                _interactionController.completionSpeed = 1.0 - _interactionController.percentComplete;
-//                [UIView animateWithDuration:_interactionController.duration delay:0 options:(UIViewAnimationOptionLayoutSubviews | UIViewAnimationOptionCurveEaseInOut) animations:^{
-//                    self.carouselView.contentMode = targetMode;
-//                    [(_XZImageViewerView *)[self view] setFrame:targetRect keepsCarouselViewFullScreen:NO];
-//                } completion:nil];
-//                [_interactionController finishInteractiveTransition];
-//                _interactionController = nil;
-//                return;
-//            }
-//        }
-//            
-//        case UIGestureRecognizerStateFailed: {
-//            if (_interactionController == nil) {
-//                return;
-//            }
-//            UIPercentDrivenInteractiveTransition *interactionController = _interactionController;
-//            [UIView animateWithDuration:XZCarouselViewAnimationDuration delay:0 options:(UIViewAnimationOptionCurveEaseInOut) animations:^{
-//                self.carouselView.transform = CGAffineTransformIdentity;
-//            } completion:^(BOOL finished) {
-//                [interactionController cancelInteractiveTransition];
-//            }];
-//            _interactionController = nil;
-//            break;
-//        }
-//        
-//        default:
-//            break;
-//    }
+    if (panGestureRecognizer != _panGestureRecognizer) {
+        return;
+    }
+    XZImageViewerItemView * const itemView = _pageView.currentView;
+    switch (panGestureRecognizer.state) {
+        case UIGestureRecognizerStateBegan: {
+            UIImageView *imageView = [[UIImageView alloc] initWithImage:itemView.imageView.image];
+            _interactionController = [[XZImageViewerHideInteractiveController alloc] initWithImageView:imageView];
+            [self dismissViewControllerAnimated:YES completion:nil];
+            break;
+        }
+        case UIGestureRecognizerStateChanged: {
+            CGRect  const bounds      = self.view.bounds;
+            CGPoint const translation = [panGestureRecognizer translationInView:nil];
+            CGFloat const percent     = MAX(0, translation.y) / bounds.size.height;
+            
+            // 更新背景色
+            [_interactionController updateInteractiveTransition:percent];
+            
+            // 拖拽 imageView
+            CGRect frame = [itemView.imageView convertRect:itemView.imageView.bounds toView:_interactionController.imageView.superview];
+            frame = CGRectInset(frame, frame.size.width * percent, frame.size.height * percent);
+            frame.origin.x += translation.x;
+            frame.origin.y += translation.y;
+            _interactionController.imageView.frame = frame;
+            break;
+        }
+        case UIGestureRecognizerStateCancelled:
+        case UIGestureRecognizerStateEnded: {
+            CGRect  const bounds      = self.view.bounds;
+            CGPoint const translation = [panGestureRecognizer translationInView:nil];
+            CGFloat const percent     = MAX(0, translation.y) / bounds.size.height;
+            CGPoint const velocity    = [panGestureRecognizer velocityInView:nil];
+            if ( velocity.y > 400 || (translation.y > 0 && translation.y >= 0.3 * bounds.size.height) ) {
+                [_interactionController updateInteractiveTransition:1.0];
+
+                UIView      * const sourceView = self.sourceView;
+                UIImageView * const imageView  = _interactionController.imageView;
+                                
+                self.view.backgroundColor = [UIColor colorWithWhite:0 alpha:1.0 - percent];
+                [UIView animateWithDuration:XZPageViewAnimationDuration animations:^{
+                    if (sourceView) {
+                        imageView.frame = [sourceView convertRect:sourceView.bounds toView:imageView.superview];
+                    } else {
+                        imageView.frame = CGRectOffset(imageView.frame, 0, CGRectGetMaxY(imageView.superview.bounds) - CGRectGetMinY(imageView.frame));
+                    }
+                    self.view.backgroundColor = UIColor.clearColor;
+                } completion:^(BOOL finished) {
+                    [_interactionController finishInteractiveTransition];
+                    _interactionController = nil;
+                }];
+                return;
+            }
+        }
+        case UIGestureRecognizerStateFailed: {
+            CGRect  const bounds      = self.view.bounds;
+            CGPoint const translation = [panGestureRecognizer translationInView:nil];
+            CGFloat const percent     = MAX(0, translation.y) / bounds.size.height;
+            UIImageView * const imageView  = _interactionController.imageView;
+            
+            self.view.backgroundColor = [UIColor colorWithWhite:0 alpha:1.0 - percent];
+            [UIView animateWithDuration:XZPageViewAnimationDuration animations:^{
+                imageView.frame = [itemView.imageView convertRect:itemView.bounds toView:imageView.superview];
+                self.view.backgroundColor = UIColor.blackColor;
+            } completion:^(BOOL finished) {
+                [_interactionController cancelInteractiveTransition];
+                _interactionController = nil;
+            }];
+            break;
+        }
+        
+        default:
+            break;
+    }
 }
 
 #pragma mark - 私有方法
@@ -295,7 +318,7 @@
 }
 
 - (nullable id <UIViewControllerAnimatedTransitioning>)animationControllerForDismissedController:(UIViewController *)dismissed {
-    return [XZImageViewerHideAnimationController animationControllerWithSourceView:self.sourceView];
+    return [XZImageViewerHideAnimationController animationControllerWithSourceView:self.sourceView imageView:_interactionController.imageView];
 }
 
 - (nullable id <UIViewControllerInteractiveTransitioning>)interactionControllerForPresentation:(id <UIViewControllerAnimatedTransitioning>)animator {
