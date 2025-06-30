@@ -11,7 +11,7 @@
 #import "XZImageViewerItemView.h"
 #import "XZImageViewerShowAnimationController.h"
 #import "XZImageViewerHideAnimationController.h"
-@import XZDefines;
+#import "XZDefines.h"
 @import XZExtensions;
 @import XZGeometry;
 

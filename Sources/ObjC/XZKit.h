@@ -69,7 +69,7 @@ FOUNDATION_EXPORT const unsigned char XZKitVersionString[];
 //#import <XZKit/XZDataCryptor.h>
 //
 // MARK: - Image
-#import <XZKit/XZImage.h>
+#import "XZImage.h"
 
 // MARK: - Color
 #import <XZKit/XZColor.h>

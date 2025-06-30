@@ -8,7 +8,7 @@
 #import "XZImageViewerItemView.h"
 #import "XZImageViewer.h"
 #import "XZImageViewerItemViewZoomingView.h"
-@import XZGeometry;
+#import "XZGeometry.h"
 @import XZExtensions;
 
 @interface XZImageViewerItemView ()
