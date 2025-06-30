@@ -54,16 +54,17 @@ NS_REFINED_FOR_SWIFT @interface XZToast : NSObject <NSCopying>
 /// - Parameter view: 呈现提示消息的视图
 + (instancetype)viewToast:(UIView<XZToastView> *)view NS_SWIFT_UNAVAILABLE("Use instance initializer instead.");
 
-/// 文本消息提示类型。
-/// - Parameter text: 文本内容
-+ (instancetype)messageToast:(NSString *)text NS_SWIFT_NAME(init(message:));
 
 /// 带图片的消息提示类型。
 /// 图片。
 /// - Parameters:
 ///   - text: 文本内容
 ///   - image: 图片，尺寸推荐 37x37 宽高，最大支持 50x50 宽高
-+ (instancetype)messageToast:(NSString *)text image:(nullable UIImage *)image NS_SWIFT_NAME(init(message:image:));
++ (instancetype)toastWithStyle:(XZToastStyle)style text:(nullable NSString *)text image:(nullable UIImage *)image NS_SWIFT_NAME(init(style:text:image:));
+
+/// 文本消息提示类型。
+/// - Parameter text: 文本内容
++ (instancetype)messageToast:(NSString *)text NS_SWIFT_NAME(init(message:));
 
 /// 加载类型的提示。
 /// - Parameter text: 文本内容
@@ -88,8 +89,6 @@ NS_REFINED_FOR_SWIFT @interface XZToast : NSObject <NSCopying>
 /// 构件一个全局共享视图的 XZToast 对象，返回值不是单例。
 ///
 /// 如果 toast 视图正在被其它 toast 使用，那么该 toast 会被提前终止。
-///
-/// 
 ///
 /// - Parameters:
 ///   - style: 外观样式
@@ -118,6 +117,15 @@ NS_REFINED_FOR_SWIFT @interface XZToast : NSObject <NSCopying>
 
 /// 获取默认位置偏移量。
 + (CGFloat)toastOffsetForPosition:(XZToastPosition)position;
+
+/// 获取指定样式提示消息的默认提示图片。
++ (nullable UIImage *)imageForStyle:(XZToastStyle)style;
+/// 设置指定样式提示消息的默认提示图片。
+/// - Parameters:
+///   - image: 图片
+///   - style: 消息样式
++ (void)setImage:(nullable UIImage *)image forStyle:(XZToastStyle)style;
+
 @end
 
 NS_REFINED_FOR_SWIFT @interface XZToastTask : XZToast

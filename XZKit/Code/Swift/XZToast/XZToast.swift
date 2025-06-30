@@ -124,7 +124,7 @@ extension XZToast {
     /// - Returns: 提示消息对象
     public class func shared(_ style: XZToast.Style, text: String?, image: UIImage? = nil) -> Self {
         return Self.init(shared: style, text: text, image: image)
-    }
+    } 
     
     /// 通过 view 构造 XZToast 对象。
     /// - Parameter view: 呈现提示的视图
@@ -138,13 +138,6 @@ extension XZToast {
     /// - Returns: 提示消息对象
     public class func message(_ text: String) -> Self {
         return Self.init(message: text)
-    }
-    
-    /// 构造带图片、文本消息的 XZToast 对象。
-    /// - Parameter text: 待呈现的文本内容
-    /// - Returns: 提示消息对象
-    public class func message(_ text: String, image: UIImage?) -> Self {
-        return Self.init(message: text, image: image)
     }
     
     /// 构造表示加载过程的 XZToast 对象。

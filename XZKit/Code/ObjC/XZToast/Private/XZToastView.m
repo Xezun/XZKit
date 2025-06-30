@@ -129,75 +129,73 @@
     return [NSString stringWithFormat:@"<%p: %@, text: %@, icon: %@>", self, self.class, self.text, _iconView];
 }
 
-- (void)setStyle:(XZToastStyle)style {
-    switch (style) {
+- (UIImage *)image {
+    if ([_iconView isKindOfClass:UIImageView.class]) {
+        return ((UIImageView *)_iconView).image;
+    }
+    return nil;
+}
+
+- (void)setStyle:(XZToastStyle)style image:(UIImage *)image {
+    _style = style;
+    if (image) {
+        if (![_iconView isKindOfClass:UIImageView.class]) {
+            [_iconView removeFromSuperview];
+            _iconView = nil;
+        }
+        
+        if (_iconView == nil) {
+            _iconView = [[UIImageView alloc] initWithImage:image];
+        } else {
+            [(UIImageView *)_iconView setImage:image];
+        }
+        
+        _iconView.frame = CGRectMake(CGRectGetMidX(self.bounds), kPaddingT + kIconSize * 0.5, kIconSize, kIconSize);
+        [self addSubview:_iconView];
+        
+        // 动图
+        if (image.images.count > 0) {
+            [(UIImageView *)_iconView startAnimating];
+        }
+    } else {
+        if ([_iconView isKindOfClass:UIImageView.class]) {
+            [(UIImageView *)_iconView setImage:nil];
+        }
+    }
+    switch (_style) {
         case XZToastStyleMessage:
+            break;
         case XZToastStyleSuccess:
+            break;
         case XZToastStyleFailure:
+            break;
         case XZToastStyleWarning:
+            break;
         case XZToastStyleWaiting:
-            if (_style == XZToastStyleMessage) {
-                return;
-            }
-            _style = XZToastStyleMessage;
-            if (_iconView != nil && ![_iconView isKindOfClass:UIImageView.class]) {
-                [_iconView removeFromSuperview];
-                _iconView = nil;
-            }
             break;
         case XZToastStyleLoading:
-            if (_style == XZToastStyleLoading) {
-                return;
+            // 已有图片
+            if (image != nil) {
+                break;
             }
-            _style = XZToastStyleLoading;
+            // 默认使用 UIActivityIndicatorView
             if (![_iconView isKindOfClass:UIActivityIndicatorView.class]) {
                 [_iconView removeFromSuperview];
                 UIActivityIndicatorView *iconView = [[UIActivityIndicatorView alloc] initWithActivityIndicatorStyle:(UIActivityIndicatorViewStyleLarge)];
                 iconView.color = UIColor.whiteColor;
                 [self addSubview:iconView];
                 _iconView = iconView;
+                [iconView startAnimating];
             }
             break;
-    }
-}
-
-- (BOOL)isAnimating {
-    return ((UIActivityIndicatorView *)_iconView).isAnimating;
-}
-
-- (void)startAnimating {
-    [((UIActivityIndicatorView *)_iconView) startAnimating];
-}
-
-- (void)stopAnimating {
-    [((UIActivityIndicatorView *)_iconView) stopAnimating];
-}
-
-- (UIImage *)image {
-    return ((UIImageView *)_iconView).image;
-}
-
-- (void)setImage:(UIImage *)image {
-    if (_iconView == nil) {
-        if (image) {
-            _iconView = [[UIImageView alloc] initWithImage:image];
-            _iconView.frame = CGRectMake(CGRectGetMidX(self.bounds), kPaddingT + kIconSize * 0.5, 0, 0);
-            [self addSubview:_iconView];
-        }
-    } else {
-        ((UIImageView *)_iconView).image = image;
+        default:
+            return;
     }
 }
 
 @end
 
-UIImage *UIImageFromXZToastBase64Image(XZToastBase64Image base64Image) {
-    NSData *data = [[NSData alloc] initWithBase64EncodedString:base64Image options:kNilOptions];
-    return [[UIImage alloc] initWithData:data scale:3.0];;
-}
-
-
-XZToastBase64Image const XZToastBase64ImageSuccess = @""
+static NSString * const XZToastBase64ImageSuccess = @""
 "iVBORw0KGgoAAAANSUhEUgAAAG8AAABvCAMAAADVG25SAAAAOVBMVEUAAAD/////////////////////////////////////////////////////////////////////"
 "//8KOjVvAAAAEnRSTlMAEPDQgMCgYDAgUECwkOBw36+FtWvYAAAC80lEQVRo3tWb2bLbMAiGJbRZy/HC+z9sTy9aZU4dGwHqOP9VJpnJF2wQi4kZU03+CCHgb4UQDp+q"
 "maS8HYBngmPL2rASd7zSHosebImA94K4aMCs35Gq3VsxDXBE4K0WbT4xAXIEieclAbkKjPjwKJEfDW6HMrkhEwugVFDouC/U0Bc1CiLqKNJwDrXkLBsnB8pxcmDH6QPl"
@@ -209,7 +207,7 @@ XZToastBase64Image const XZToastBase64ImageSuccess = @""
 "E6nEzp2J0/IHQW2Q9nFeFqcz+fqGw1lyj3i+Oe/57UOeT096/v6f9wuetD/xAvzIhRRnH7ffo7m/9Mz9LK39swfv18n3Bx+/HynZ//yQ/Vb+/q6IuJJp62Y/bv/6z375"
 "em1ZLEZZOTU4N6ylbCapJt9e/h/QfKlmSL8A4VNXuCzbHDYAAAAASUVORK5CYII=";
 
-XZToastBase64Image const XZToastBase64ImageFailure = @""
+static NSString * const XZToastBase64ImageFailure = @""
 "iVBORw0KGgoAAAANSUhEUgAAAG8AAABvCAMAAADVG25SAAAAPFBMVEUAAAD/////////////////////////////////////////////////////////////////////"
 "///////YSWgTAAAAE3RSTlMAEGDQ8IAwwKDvIFCwQN+Q4HCviFmp3wAAAtVJREFUaN7V29uWoyAQBdACQeRmLuf//3W6n6o7k2VBRRjnPLvcVpaISIX6Uq1/hhDwnRDC"
 "09tKg5Iez4h3ic9HOhvL246j7Fs+D1u3CDlxW8/AjN/Rmt2bj7WInkQW9dos0bLWJVqVtgZoE1I/5/FJfKeWFnyWpavEHPFpYm7nbjgjt0bNbDgnWxu34KwsZhLH4CSO"
@@ -221,7 +219,7 @@ XZToastBase64Image const XZToastBase64ImageFailure = @""
 "Sv0Tv8H/ryFlMZfr7zmzf+ma/Vlfye5jzeUL99fN6x/kpEn9kRzrVJqz+v5W16992FHrJmks3pu1+8Oc03/tWkrb1jP7y+/HlW2ZTk6yxb0vrNhEg1KtLz/+H1B8rtSV"
 "P0M2b1OW+lTZAAAAAElFTkSuQmCC";
 
-XZToastBase64Image const XZToastBase64ImageWarning = @""
+static NSString * const XZToastBase64ImageWarning = @""
 "iVBORw0KGgoAAAANSUhEUgAAAG8AAABvCAMAAADVG25SAAAAqFBMVEX///8AAAD/////////////////////////////////////////////////////////////////"
 "////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////"
 "//////////////////////82TosEAAAAN3RSTlP1APr0/Inwj1lk5iDTamASjBgJxkY9J+3LreqDQ7p4L+DAlzK9klLdSSSzck45NyzXnH4Nv6UHW/JU9AAABLNJREFU"
@@ -239,7 +237,7 @@ XZToastBase64Image const XZToastBase64ImageWarning = @""
 "jxsuj++/U/Xg084XbH/U/ETh8yE/bv6lyPme9Y+cX9rtw34h81knnT/zHk86XxflmR8UfYr5wVTV2knmI63iMnLMf6pRnH++9Zydb+01l//R/O7bfHKrgr+sHS04fj7Z"
 "auPNBYD6ZnpK5t6mwPnyl83k2/ny683Lv5if9wYf5ucHHjk/Tyn58P8BCfcDvwH1PJFqyEDOJQAAAABJRU5ErkJggg==";
 
-XZToastBase64Image const XZToastBase64ImageWaiting = @""
+static NSString * const XZToastBase64ImageWaiting = @""
 "iVBORw0KGgoAAAANSUhEUgAAAG8AAABvCAMAAADVG25SAAAAolBMVEUAAAD/////////////////////////////////////////////////////////////////////"
 "////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////"
 "//////////////8ELnaCAAAANXRSTlMAhUfC8RAnyQR7Vgh/PQy9+Nbk6MujkjgwF+vQoHC5XNKujHTuqE9E4dofHN6mnWpfFLRlK8lcy6gAAAMLSURBVGje3dvZcuIw"
@@ -252,3 +250,30 @@ XZToastBase64Image const XZToastBase64ImageWaiting = @""
 "sNQIfHwVy9jKpPpLiEmH2OJCya3X7ZGWlYcvB0e2ARqSno3lVnYCwlJ/V8fxhFy+vwuLtM378v1rFF1SptOfx4madVK7XzF/y5lTkzyOy00hVrn/02cHN3C/yX1/q/4i"
 "1J8T2ZJ50xuaL2CenzA/H9IveOdfCtb5nlXrBueXzM1n3ez8mZH5upueH9Sdj/wF85/n+dYNy3yrUIRqz/gYvkGPGyvMJ69dM/PXY5b5a8GNVjzz5UKQGJmf5/7/gD/5"
 "YSxK2yYMJwAAAABJRU5ErkJggg==";
+
+UIImage *UIImageFromXZToastStyle(XZToastStyle style) {
+    NSString * base64Image = nil;
+    switch (style) {
+        case XZToastStyleMessage:
+            return nil;
+            break;
+        case XZToastStyleLoading:
+            return nil;
+            break;
+        case XZToastStyleSuccess:
+            base64Image = XZToastBase64ImageSuccess;
+            break;
+        case XZToastStyleFailure:
+            base64Image = XZToastBase64ImageFailure;
+            break;
+        case XZToastStyleWarning:
+            base64Image = XZToastBase64ImageWarning;
+            break;
+        case XZToastStyleWaiting:
+            base64Image = XZToastBase64ImageWaiting;
+            break;
+    }
+    NSData *data = [[NSData alloc] initWithBase64EncodedString:base64Image options:kNilOptions];
+    return [[UIImage alloc] initWithData:data scale:3.0];;
+}
+

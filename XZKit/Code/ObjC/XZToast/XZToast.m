@@ -38,40 +38,35 @@ NSTimeInterval const XZToastAnimationDuration = 0.35;
     return [[self alloc] initWithView:view];
 }
 
-+ (instancetype)messageToast:(NSString *)text {
-    return [self messageToast:text image:nil];
++ (instancetype)toastWithStyle:(XZToastStyle)style text:(NSString *)text image:(UIImage *)image {
+    XZToastView *toastView = [[XZToastView alloc] init];
+    toastView.text  = text;
+    [toastView setStyle:style image:(image ?: [XZToast imageForStyle:style])];
+    return [[self alloc] initWithView:toastView];
 }
 
-+ (instancetype)messageToast:(NSString *)text image:(UIImage *)image {
-    XZToastView *toastView = [[XZToastView alloc] init];
-    toastView.style = XZToastStyleMessage;
-    toastView.text  = text;
-    toastView.image = image;
-    return [[self alloc] initWithView:toastView];
++ (instancetype)messageToast:(NSString *)text {
+    return [self toastWithStyle:XZToastStyleMessage text:text image:nil];
 }
 
 + (instancetype)loadingToast:(NSString *)text {
-    XZToastView *toastView = [[XZToastView alloc] init];
-    toastView.style = XZToastStyleLoading;
-    toastView.text  = text;
-    [toastView startAnimating];
-    return [[self alloc] initWithView:toastView];
+    return [self toastWithStyle:XZToastStyleLoading text:text image:nil];
 }
 
 + (instancetype)successToast:(NSString *)text {
-    return [self messageToast:text image:UIImageFromXZToastBase64Image(XZToastBase64ImageSuccess)];
+    return [self toastWithStyle:XZToastStyleSuccess text:text image:nil];
 }
 
 + (instancetype)failureToast:(NSString *)text {
-    return [self messageToast:text image:UIImageFromXZToastBase64Image(XZToastBase64ImageFailure)];
+    return [self toastWithStyle:XZToastStyleFailure text:text image:nil];
 }
 
 + (instancetype)warningToast:(NSString *)text {
-    return [self messageToast:text image:UIImageFromXZToastBase64Image(XZToastBase64ImageWarning)];
+    return [self toastWithStyle:XZToastStyleWarning text:text image:nil];
 }
 
 + (instancetype)waitingToast:(NSString *)text {
-    return [self messageToast:text image:UIImageFromXZToastBase64Image(XZToastBase64ImageWaiting)];
+    return [self toastWithStyle:XZToastStyleWaiting text:text image:nil];
 }
 
 + (XZToast *)sharedToast:(XZToastStyle const)style text:(NSString *)text image:(UIImage *)image {
@@ -84,38 +79,8 @@ NSTimeInterval const XZToastAnimationDuration = 0.35;
         _sharedToastView = toastView;
     }
     
-    switch (style) {
-        case XZToastStyleMessage:
-            toastView.style = XZToastStyleMessage;
-            toastView.text  = text;
-            toastView.image = image;
-            break;
-        case XZToastStyleLoading:
-            toastView.style = XZToastStyleLoading;
-            toastView.text  = text;
-            [toastView startAnimating];
-            break;
-        case XZToastStyleSuccess:
-            toastView.style = XZToastStyleMessage;
-            toastView.text  = text;
-            toastView.image = image ?: UIImageFromXZToastBase64Image(XZToastBase64ImageSuccess);
-            break;
-        case XZToastStyleFailure:
-            toastView.style = XZToastStyleMessage;
-            toastView.text  = text;
-            toastView.image = image ?: UIImageFromXZToastBase64Image(XZToastBase64ImageFailure);
-            break;
-        case XZToastStyleWarning:
-            toastView.style = XZToastStyleMessage;
-            toastView.text  = text;
-            toastView.image = image ?: UIImageFromXZToastBase64Image(XZToastBase64ImageWarning);
-            break;
-        case XZToastStyleWaiting:
-            toastView.style = XZToastStyleMessage;
-            toastView.text  = text;
-            toastView.image = image ?: UIImageFromXZToastBase64Image(XZToastBase64ImageWaiting);
-            break;
-    }
+    toastView.text  = text;
+    [toastView setStyle:style image:(image ?: [XZToast imageForStyle:style])];
     
     return [[self alloc] initWithView:toastView];
 }
@@ -131,12 +96,13 @@ NSTimeInterval const XZToastAnimationDuration = 0.35;
 @end
 
 
-static NSInteger _maximumNumberOfToasts = 3;
-static CGFloat   _toastOffsets[3]       = {+20.0, 0.0, -20.0};
-static UIColor * _textColor             = nil;
-static UIFont  * _font                  = nil;
-static UIColor * _backgroundColor       = nil;
-static UIColor * _shadowColor           = nil;
+static NSInteger _maximumNumberOfToasts  = 3;
+static CGFloat   _toastOffsets[3]        = {+20.0, 0.0, -20.0};
+static UIColor * _textColor              = nil;
+static UIFont  * _font                   = nil;
+static UIColor * _backgroundColor        = nil;
+static UIColor * _shadowColor            = nil;
+static NSMutableDictionary *_styleImages = nil;
 
 @implementation XZToast (XZToastConfiguration)
 
@@ -210,5 +176,19 @@ static UIColor * _shadowColor           = nil;
     _shadowColor = shadowColor;
 }
 
++ (UIImage *)imageForStyle:(XZToastStyle)style {
+    return _styleImages[@(style)] ?: UIImageFromXZToastStyle(style);
+}
+
++ (void)setImage:(UIImage *)image forStyle:(XZToastStyle)style {
+    if (image == nil) {
+        _styleImages[@(style)] = image;
+    } else {
+        if (_styleImages == nil) {
+            _styleImages = [NSMutableDictionary dictionaryWithCapacity:16];
+        }
+        _styleImages[@(style)] = image;
+    }
+}
 
 @end
