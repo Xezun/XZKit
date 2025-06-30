@@ -64,10 +64,10 @@ UIKIT_STATIC_INLINE BOOL XZScrollDirection(NSInteger from, NSInteger to, NSInteg
 /// @param timer 定时器
 - (void)autoPagingTimerAction:(NSTimer *)timer;
 /// 暂停自动翻页计时器。
-- (void)freezeAutoPagingTimer;
+- (void)suspendAutoPagingTimer;
 /// 重置自动翻页计时器。
-- (void)resumeAutoPagingTimer;
-
+- (void)restartAutoPagingTimer;
+        
 /// 处理 aClass 使之可以作为代理对象。
 - (void)handleDelegateOfClass:(nonnull Class)aClass;
 
@@ -85,11 +85,16 @@ UIKIT_STATIC_INLINE BOOL XZScrollDirection(NSInteger from, NSInteger to, NSInteg
 
 // 子类需要重写的方法。
 
+/// 布局当前视图。
 - (void)layoutCurrentView:(CGRect const)bounds;
+/// 布局待显视图。
 - (void)layoutPendingView:(CGRect const)bounds;
-- (void)adjustContentInsets:(CGRect const)bounds;
+/// 适配调整边距。
+- (void)adaptContentInset:(CGRect const)bounds;
 
 - (void)didScroll:(BOOL)stopped;
+/// 滚动到待显视图：待显视图变为当前视图。
+/// 这个方法不需要重写。
 - (void)didScrollToPendingPage:(CGRect const)bounds maxPage:(NSInteger const)maxPage direction:(BOOL const)direction;
 
 /// 不处理、发送事件。

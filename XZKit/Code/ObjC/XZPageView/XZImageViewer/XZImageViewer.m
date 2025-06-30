@@ -62,7 +62,8 @@
 - (void)viewDidLoad {
     [super viewDidLoad];
     
-    self.view.contentMode = UIViewContentModeScaleAspectFit;
+    self.pageView.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
+    self.pageView.frame = self.view.bounds;
     [self.view addSubview:self.pageView];
     
     // 双击缩放
@@ -84,18 +85,17 @@
     [_panGestureRecognizer requireGestureRecognizerToFail:_tapGestureRecognizer];
 }
 
-- (void)viewDidLayoutSubviews {
-    [super viewDidLayoutSubviews];
-    // 使用 autoresizingMask 效果不正常。
-    self.pageView.frame = self.view.bounds;
-}
-
 - (UIStatusBarAnimation)preferredStatusBarUpdateAnimation {
     return UIStatusBarAnimationFade;
 }
 
 - (BOOL)prefersStatusBarHidden {
-    return YES;
+    // 交互式退场时，让状态栏与目标控制器一致。
+    // Apple 交互式转场可能存在 BUG ：
+    // 非交互式退场，在 animateTransition: 方法中布局时，目标控制器是计算了状态栏的布局，safeArea.top = 20
+    // 但在交互式退场时，目标控制器布局没有计算状态栏，即 safeArea.top = 0
+    // 所以在交互式退场时，提前将状态栏显示出来，以避免目标控制器布局不正确。
+    return _interactionController ? self.presentingViewController.prefersStatusBarHidden : YES;
 }
 
 - (void)setSourceView:(UIView *)sourceView {
@@ -141,11 +141,14 @@
         }
         
         XZPageView * const pageView = self.pageView;
-        if (pageView.currentPage != index) {
-            return;
+
+        XZImageViewerItemView *itemView = pageView.currentView;
+        if (itemView.index != index) {
+            itemView = pageView.pendingView;
+            if (itemView.index != index) {
+                return;
+            }
         }
-        
-        XZImageViewerItemView * const itemView = pageView.currentView;
         itemView.imageView.image = image;
         [UIView animateWithDuration:XZPageViewAnimationDuration animations:^{
             [itemView setNeedsLayout];
@@ -180,19 +183,21 @@
     if (gestureRecognizer != _panGestureRecognizer) {
         return YES;
     }
-    XZImageViewerItemView * const itemView = _pageView.currentView;
     
+    XZImageViewerItemView * const itemView = _pageView.currentView;
     if (itemView == nil) {
         return NO;
     }
     
+    // 拖动的目标是 imageView
     if (!CGRectContainsPoint(itemView.imageView.bounds, [gestureRecognizer locationInView:itemView.imageView])) {
         return NO;
     }
     
     CGPoint const translation = [_panGestureRecognizer translationInView:nil];
     
-    if (translation.x / translation.y > 0.1) {
+    // 垂直向下拖动
+    if (translation.y <= 0 || ABS(translation.x / translation.y) > 0.1) {
         return NO;
     }
     
@@ -225,22 +230,32 @@
     XZImageViewerItemView * const itemView = _pageView.currentView;
     switch (panGestureRecognizer.state) {
         case UIGestureRecognizerStateBegan: {
+            [_pageView suspendAutoPaging];
             UIImageView *imageView = [[UIImageView alloc] initWithImage:itemView.imageView.image];
             _interactionController = [[XZImageViewerHideInteractiveController alloc] initWithImageView:imageView];
+            [self setNeedsStatusBarAppearanceUpdate];
             [self dismissViewControllerAnimated:YES completion:nil];
             break;
         }
         case UIGestureRecognizerStateChanged: {
-            CGRect  const bounds      = self.view.bounds;
             CGPoint const translation = [panGestureRecognizer translationInView:nil];
-            CGFloat const percent     = MAX(0, translation.y) / bounds.size.height;
+            CGFloat const translationY = MAX(0, translation.y);
             
-            // 更新背景色
-            [_interactionController updateInteractiveTransition:percent];
+            // 目标控制器放大：只需要 40 的距离即可跑满进度，避免手势完成时，目标控制器还没有完成入场，进度突进到 100% 无动画效果。
+            [_interactionController updateInteractiveTransition:MIN(40.0, translationY) / 40.0];
+            
+            // 根据 sourceView 确定缩放
+            CGFloat const percent = MIN(160, translationY) / 160.0;
+            // 背景色透明
+            self.view.backgroundColor = [UIColor colorWithWhite:0 alpha:(1.0 - percent)];
             
             // 拖拽 imageView
             CGRect frame = [itemView.imageView convertRect:itemView.imageView.bounds toView:_interactionController.imageView.superview];
-            frame = CGRectInset(frame, frame.size.width * percent, frame.size.height * percent);
+            if (_sourceView) {
+                CGFloat const deltaW = (frame.size.width - _sourceView.frame.size.width) * percent * 0.5;
+                CGFloat const deltaH = (frame.size.height - _sourceView.frame.size.height) * percent * 0.5;
+                frame = CGRectInset(frame, deltaW, deltaH);
+            }
             frame.origin.x += translation.x;
             frame.origin.y += translation.y;
             _interactionController.imageView.frame = frame;
@@ -248,45 +263,46 @@
         }
         case UIGestureRecognizerStateCancelled:
         case UIGestureRecognizerStateEnded: {
-            CGRect  const bounds      = self.view.bounds;
             CGPoint const translation = [panGestureRecognizer translationInView:nil];
-            CGFloat const percent     = MAX(0, translation.y) / bounds.size.height;
             CGPoint const velocity    = [panGestureRecognizer velocityInView:nil];
-            if ( velocity.y > 400 || (translation.y > 0 && translation.y >= 0.3 * bounds.size.height) ) {
-                [_interactionController updateInteractiveTransition:1.0];
+            if ( velocity.y > 400 || (translation.y >= 80) ) {
+                XZImageViewerHideInteractiveController * const interactionController = _interactionController;
 
-                UIView      * const sourceView = self.sourceView;
-                UIImageView * const imageView  = _interactionController.imageView;
-                                
-                self.view.backgroundColor = [UIColor colorWithWhite:0 alpha:1.0 - percent];
+                UIView      * const sourceView    = _sourceView;
+                UIImageView * const imageView     = interactionController.imageView;
+                UIView      * const containerView = imageView.superview;
+                
+                [interactionController updateInteractiveTransition:1.0];
                 [UIView animateWithDuration:XZPageViewAnimationDuration animations:^{
                     if (sourceView) {
-                        imageView.frame = [sourceView convertRect:sourceView.bounds toView:imageView.superview];
+                        imageView.frame = [sourceView convertRect:sourceView.bounds toView:containerView];
                     } else {
-                        imageView.frame = CGRectOffset(imageView.frame, 0, CGRectGetMaxY(imageView.superview.bounds) - CGRectGetMinY(imageView.frame));
+                        imageView.frame = CGRectOffset(imageView.frame, 0, CGRectGetMaxY(containerView.bounds) - CGRectGetMinY(imageView.frame));
                     }
                     self.view.backgroundColor = UIColor.clearColor;
                 } completion:^(BOOL finished) {
-                    [_interactionController finishInteractiveTransition];
-                    _interactionController = nil;
+                    [interactionController finishInteractiveTransition];
                 }];
+                
+                _interactionController = nil;
                 return;
             }
         }
         case UIGestureRecognizerStateFailed: {
-            CGRect  const bounds      = self.view.bounds;
-            CGPoint const translation = [panGestureRecognizer translationInView:nil];
-            CGFloat const percent     = MAX(0, translation.y) / bounds.size.height;
-            UIImageView * const imageView  = _interactionController.imageView;
+            [_pageView restartAutoPaging];
             
-            self.view.backgroundColor = [UIColor colorWithWhite:0 alpha:1.0 - percent];
+            XZImageViewerHideInteractiveController * const interactionController = _interactionController;
+            UIImageView * const imageView  = interactionController.imageView;
+            
             [UIView animateWithDuration:XZPageViewAnimationDuration animations:^{
-                imageView.frame = [itemView.imageView convertRect:itemView.bounds toView:imageView.superview];
+                imageView.frame = [itemView.imageView convertRect:itemView.imageView.bounds toView:imageView.superview];
                 self.view.backgroundColor = UIColor.blackColor;
             } completion:^(BOOL finished) {
-                [_interactionController cancelInteractiveTransition];
-                _interactionController = nil;
+                [interactionController cancelInteractiveTransition];
             }];
+            
+            _interactionController = nil;
+            [self setNeedsStatusBarAppearanceUpdate];
             break;
         }
         
@@ -332,27 +348,6 @@
 - (nullable UIPresentationController *)presentationControllerForPresentedViewController:(UIViewController *)presented presentingViewController:(nullable UIViewController *)presenting sourceViewController:(UIViewController *)source {
     return nil;
 }
-
-//- (CGRect)_XZImageViewerSourceRectForCurrentImage:(BOOL)isInteractive {
-//    NSInteger const currentIndex = self.carouselView.currentIndex;
-//    if ([_delegate respondsToSelector:@selector(imageViewer:sourceRectForImageAtIndex:)]) {
-//        return [_delegate imageViewer:self sourceRectForImageAtIndex:currentIndex];
-//    }
-//    if (isInteractive) {
-//        CGRect const frame = self.carouselView.frame;
-//        return CGRectOffset(frame, 0, self.view.bounds.size.height - frame.origin.y);
-//    }
-//    CGRect const kBounds = UIScreen.mainScreen.bounds;
-//    return CGRectMake(CGRectGetMidX(kBounds), CGRectGetMidY(kBounds), 0, 0);
-//}
-//
-//- (UIViewContentMode)_XZImageViewerSourceContentModeForCurrentImage {
-//    NSInteger const currentIndex = self.carouselView.currentIndex;
-//    if ([_delegate respondsToSelector:@selector(imageViewer:sourceContentModeForImageAtIndex:)]) {
-//        return [_delegate imageViewer:self sourceContentModeForImageAtIndex:currentIndex];
-//    }
-//    return self.carouselView.contentMode;
-//}
 
 @end
 

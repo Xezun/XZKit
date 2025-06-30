@@ -44,6 +44,10 @@ NS_ASSUME_NONNULL_BEGIN
 
 /// 自动翻到下一页的时间间隔，单位秒，不包括翻页动画时长。
 @property (nonatomic) NSTimeInterval autoPagingInterval;
+/// 暂停已开启的自动翻页。
+- (void)suspendAutoPaging;
+/// 重启已暂停的自动翻页。
+- (void)restartAutoPaging;
 
 /// 页面的数量。
 @property (nonatomic, readonly) NSInteger numberOfPages;

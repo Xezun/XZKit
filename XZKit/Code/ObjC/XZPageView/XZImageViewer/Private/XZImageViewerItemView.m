@@ -14,6 +14,7 @@
 @interface XZImageViewerItemView ()
 /// 提供缩放功能的滚动视图。
 @property (nonatomic, readonly, nonnull) UIScrollView *zoomingView;
+@property (nonatomic, readonly, nonnull) UIActivityIndicatorView *activityIndicatorView;
 @end
 
 @implementation XZImageViewerItemView
@@ -47,7 +48,7 @@
     _zoomingView.showsHorizontalScrollIndicator = NO;
     _zoomingView.contentInsetAdjustmentBehavior = UIScrollViewContentInsetAdjustmentNever;
     _zoomingView.delegate = self;
-    [self addSubview:_zoomingView];
+    [self insertSubview:_zoomingView atIndex:0];
     
     [_zoomingView addSubview:_imageView];
     [_zoomingView setDelegate:self];
@@ -96,12 +97,12 @@
 - (void)layoutSubviews {
     [super layoutSubviews];
     
-    CGRect const kBounds      = self.bounds;
+    CGRect const bounds       = self.bounds;
     CGSize const imageSize    = _imageView.image.size;
-    CGRect const contentFrame = CGRectScaleAspectRatioInsideWithMode(kBounds, imageSize, UIViewContentModeScaleAspectFit);
+    CGRect const contentFrame = CGRectScaleAspectRatioInsideWithMode(bounds, imageSize, UIViewContentModeScaleAspectFit);
     
     if (_zoomingView) {
-        _zoomingView.frame = kBounds;
+        _zoomingView.frame = bounds;
         if (_zoomingView.zoomScale == 1.0) {
             _zoomingView.contentSize = contentFrame.size;
             _imageView.frame = contentFrame;
@@ -109,6 +110,26 @@
     } else {
         _imageView.frame = contentFrame;
     }
+    
+    if (CGSizeEqualToSize(imageSize, CGSizeZero)) {
+        [self.activityIndicatorView startAnimating];
+    } else {
+        [_activityIndicatorView stopAnimating];
+    }
+    if (_activityIndicatorView) {
+        _activityIndicatorView.frame = CGRectInset(bounds, (bounds.size.width - 100) * 0.5, (bounds.size.height - 100) * 0.5);
+    }
+}
+
+@synthesize activityIndicatorView = _activityIndicatorView;
+
+- (UIActivityIndicatorView *)activityIndicatorView {
+    if (_activityIndicatorView == nil) {
+        _activityIndicatorView = [[UIActivityIndicatorView alloc] initWithActivityIndicatorStyle:(UIActivityIndicatorViewStyleLarge)];
+        _activityIndicatorView.hidesWhenStopped = YES;
+        [self addSubview:_activityIndicatorView];
+    }
+    return _activityIndicatorView;
 }
 
 - (void)setNeedsLayout {

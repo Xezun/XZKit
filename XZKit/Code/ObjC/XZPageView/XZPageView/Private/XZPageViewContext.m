@@ -60,7 +60,7 @@
     [self layoutPendingView:bounds];
     // 重新配置 _scrollView
     _view.contentSize = bounds.size;
-    [self adjustContentInsets:bounds];
+    [self adaptContentInset:bounds];
 }
 
 - (void)scheduleAutoPagingTimerIfNeeded {
@@ -86,13 +86,13 @@
     [self didShowPageAtIndex:newPage];
 }
 
-- (void)freezeAutoPagingTimer {
+- (void)suspendAutoPagingTimer {
     if (_view->_autoPagingTimer != nil) {
         _view->_autoPagingTimer.fireDate = NSDate.distantFuture;
     }
 }
 
-- (void)resumeAutoPagingTimer {
+- (void)restartAutoPagingTimer {
     if (_view->_numberOfPages > 1 && _view->_autoPagingTimer != nil) {
         _view->_autoPagingTimer.fireDate = [NSDate dateWithTimeIntervalSinceNow:_view->_autoPagingInterval];
     }
@@ -340,7 +340,7 @@
 
 /// 调整 contentInset 以适配 currentPage 和 isLooped 状态。
 /// @note 仅在需要调整 contentInset 的地方调用此方法。
-- (void)adjustContentInsets:(CGRect const)bounds {
+- (void)adaptContentInset:(CGRect const)bounds {
     UIEdgeInsets newInsets = UIEdgeInsetsZero;
     if (_view->_numberOfPages <= 1) {
         // 只有一个 page 不可滚动。
@@ -585,7 +585,7 @@
     [self didShowView:_view->_currentView animated:YES];
     
     // 调整 contentInset
-    [self adjustContentInsets:bounds];
+    [self adaptContentInset:bounds];
 }
 
 - (void)setCurrentPage:(NSInteger const)newPage animated:(BOOL)animated {
@@ -655,7 +655,7 @@
         [self layoutPendingView:bounds];
         
         // 根据当前情况调整边距，因为可能会因此 didScroll 事件，所以先将位置重置到原点，这样即使触发事件，也不影响。
-        [self adjustContentInsets:bounds];
+        [self adaptContentInset:bounds];
         
         // 如果需要展示动画的话，先恢复显示内容
         if (animated) {
@@ -719,7 +719,7 @@
     }
     
     // 用户操作，暂停计时器
-    [self freezeAutoPagingTimer];
+    [self suspendAutoPagingTimer];
 }
 
 - (void)scrollViewDidEndDragging:(UIScrollView *)scrollView willDecelerate:(BOOL)decelerate {
@@ -728,7 +728,7 @@
     }
     
     // 用户停止操作，恢复计时器
-    [self resumeAutoPagingTimer];
+    [self restartAutoPagingTimer];
     
     // 检查翻页：用户停止操作
     if (decelerate) {
@@ -773,7 +773,7 @@
 
 /// 调整 contentInset 以适配 currentPage 和 isLooped 状态。
 /// @note 仅在需要调整 contentInset 的地方调用此方法。
-- (void)adjustContentInsets:(CGRect const)bounds {
+- (void)adaptContentInset:(CGRect const)bounds {
     UIEdgeInsets newInsets = UIEdgeInsetsZero;
     if (_view->_numberOfPages <= 1) {
         // 只有一个 page 不可滚动。
@@ -1047,7 +1047,7 @@
         [self layoutPendingView:bounds];
         
         // 根据当前情况调整边距，因为可能会因此 didScroll 事件，所以先将位置重置到原点，这样即使触发事件，也不影响。
-        [self adjustContentInsets:bounds];
+        [self adaptContentInset:bounds];
         
         // 如果需要展示动画的话，先恢复显示内容
         if (animated) {

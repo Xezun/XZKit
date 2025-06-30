@@ -48,6 +48,7 @@
     _reusingPage   = NSNotFound;
     _numberOfPages = 0;
     
+    self.contentOffset                  = CGPointZero;
     self.clipsToBounds                  = YES;
     self.contentSize                    = self.bounds.size;
     self.contentInset                   = UIEdgeInsetsZero;
@@ -170,7 +171,7 @@
                 }
             }
             
-            [_context adjustContentInsets:bounds];
+            [_context adaptContentInset:bounds];
         }
     }
 }
@@ -183,6 +184,14 @@
         }
         [_context scheduleAutoPagingTimerIfNeeded];
     }
+}
+
+- (void)suspendAutoPaging {
+    [_context suspendAutoPagingTimer];
+}
+
+- (void)restartAutoPaging {
+    [_context restartAutoPagingTimer];
 }
 
 - (NSInteger)numberOfPages {
@@ -200,7 +209,7 @@
     if (_isPageLoaded) {
         [_context setCurrentPage:currentPage animated:animated];
         // 自动翻页重新计时
-        [_context resumeAutoPagingTimer];
+        [_context restartAutoPagingTimer];
     } else {
         _currentPage = currentPage;
     }
@@ -338,7 +347,7 @@
         
         // 调整 contentInset 已适配当前状态，并重置页面位置
         // 方法 -setContentOffset:animated: 可以停到当前可能存在的滚动
-        [_context adjustContentInsets:bounds];
+        [_context adaptContentInset:bounds];
         [self setContentOffset:CGPointZero animated:NO];
         
         // 重启自动翻页计时器

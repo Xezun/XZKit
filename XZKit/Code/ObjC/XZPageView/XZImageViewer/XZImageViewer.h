@@ -33,17 +33,16 @@ NS_ASSUME_NONNULL_BEGIN
 
 /// 获取图片的数量。
 ///
-/// @param imageViewer 调用此方法的 XZImageViewer 对象。
-/// @return 图片数量。
+/// @param imageViewer 调用此方法的 XZImageViewer 对象
+/// @returns 图片数量
 - (NSInteger)numberOfItemsInImageViewer:(XZImageViewer *)imageViewer;
 
 /// 加载图片。
 ///
-/// @param imageViewer 调用此方法的 XZImageViewer 对象。
-/// @param imageView 展示图片的 UIImageView 对象。
-/// @param index 图片的索引。
-/// @param completion 如果是网络图片，图片加载完成后，通过此句柄更新图片视图的大小；本地图片无须此参数，直接在此方法中设置图片，并修改 UIImageView 的大小即可。
-//- (void)imageViewer:(XZImageViewer *)imageViewer imageView:(UIImageView *)imageView loadImageAtIndex:(NSInteger)index completion:(void (^)(CGSize preferredImageSize, BOOL animated))completion;
+/// @param imageViewer 调用此方法的 XZImageViewer 对象
+/// @param index 图片的索引
+/// @param completion 如果是网络图片，图片加载完成后，通过此回调更新
+/// @returns 待展示的图片，或网络图片的占位图
 - (nullable UIImage *)imageViewer:(XZImageViewer *)imageViewer loadImageForItemAtIndex:(NSInteger)index completion:(void (^)(UIImage *image))completion;
 
 @end
@@ -56,9 +55,10 @@ NS_ASSUME_NONNULL_BEGIN
 
 @property (nonatomic, readonly) XZPageView *pageView;
 
+/// 源视图，如果设置，XZImageViewer 将展示从 sourceView 缩放入场的动画过程。
 @property (nonatomic, weak) UIView *sourceView;
 
-/// 设置当前展示的图片。
+/// 设置当前展示的图片，或默认展示的图片。
 @property (nonatomic) NSInteger currentIndex;
 - (void)setCurrentIndex:(NSInteger)newIndex animated:(BOOL)animated;
 

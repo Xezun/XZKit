@@ -37,6 +37,8 @@
 - (void)animateTransition:(id<UIViewControllerContextTransitioning>)transitionContext {
     UIView * const containerView = transitionContext.containerView;
     
+    UIView * const fromView = [transitionContext viewForKey:UITransitionContextFromViewKey];
+    
     XZImageViewer * const toVC   = [transitionContext viewControllerForKey:UITransitionContextToViewControllerKey];
     UIView        * const toView = [transitionContext viewForKey:UITransitionContextToViewKey];
     toView.backgroundColor = UIColor.clearColor;
@@ -56,11 +58,10 @@
     
     NSTimeInterval const duration = [self transitionDuration:transitionContext];
     [UIView animateWithDuration:duration delay:0 options:UIViewAnimationOptionLayoutSubviews animations:^{
+        fromView.transform = CGAffineTransformMakeScale(0.9, 0.9);
         imageView.frame = [itemView.imageView convertRect:itemView.imageView.bounds toView:containerView];
         toView.backgroundColor = UIColor.blackColor;
     } completion:^(BOOL finished) {
-        [imageView removeFromSuperview];
-        itemView.hidden = NO;
         if (transitionContext.transitionWasCancelled) {
             [toView removeFromSuperview];
             [transitionContext completeTransition:NO];
@@ -68,6 +69,9 @@
             [transitionContext completeTransition:YES];
             toView.backgroundColor = UIColor.blackColor;
         }
+        [imageView removeFromSuperview];
+        itemView.hidden = NO;
+        fromView.transform = CGAffineTransformIdentity;
     }];
 }
 
