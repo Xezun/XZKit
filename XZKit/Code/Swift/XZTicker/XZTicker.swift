@@ -8,10 +8,10 @@
 
 import UIKit
 
-/// 任何对象继承 TimeTickable 协议即可获得基于 DispatchSourceTimer 计时能力。
-/// - SeeAlso: TimeTiker
+/// 任何对象继承 XZTickable 协议即可获得基于 DispatchSourceTimer 计时能力。
+/// - SeeAlso: XZTiker
 public protocol XZTickable: XZTicking, XZTickerDelegate {
-    // XZTickerDelegate 是唯一需要实现的方法
+    
 }
 
 /// 定义了 XZTicker 计时器所具有的属性和特征。
@@ -97,7 +97,7 @@ open class XZTicker: XZTicking {
     
     open func resume() {
         guard isPaused else {
-            assert(false, "TimeTiker is ticking already.")
+            assert(false, "XZTiker is ticking already.")
             return
         }
         
