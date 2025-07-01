@@ -5,11 +5,11 @@
 //  Created by 徐臻 on 2025/1/31.
 //
 
-#import <XZMocoa/XZMocoa.h>
+@import XZMocoaObjC;
 
 NS_ASSUME_NONNULL_BEGIN
 
-@interface Example21TableViewHeaderView : XZMocoaTableViewHeaderFooterView
+@interface Example21TableViewHeaderView : UITableViewHeaderFooterView <XZMocoaTableViewHeaderFooterView>
 
 @end
 

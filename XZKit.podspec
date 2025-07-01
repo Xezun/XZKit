@@ -8,7 +8,7 @@
 
 Pod::Spec.new do |s|
   s.name             = 'XZKit'
-  s.version          = '10.6.0'
+  s.version          = '10.8.0'
   s.summary          = '一款高效、轻量、强大的 iOS 开发库'
   s.description      = <<-DESC
   一款包含 iOS 开发中常用开发组件、高频方法拓展、高性能工具类的开发库，采用了组件最小化设计原则，可以按需最小化引用。
@@ -21,8 +21,8 @@ Pod::Spec.new do |s|
   s.source           = { :git => 'https://github.com/Xezun/XZKit.git', :tag => s.version.to_s }
   # s.social_media_url = 'https://twitter.com/<TWITTER_USERNAME>'
 
-  s.swift_version = '6.0'
-  s.ios.deployment_target = '12.0'
+  s.swift_version = '5.0'
+  s.ios.deployment_target = '13.0'
   s.pod_target_xcconfig = {
     'GCC_PREPROCESSOR_DEFINITIONS' => 'XZ_FRAMEWORK=1',
     'OTHER_SWIFT_FLAGS' => '-D XZ_FRAMEWORK'

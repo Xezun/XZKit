@@ -11,14 +11,15 @@
 
 @implementation XZJSONPropertyDescriptor
 
-+ (XZJSONPropertyDescriptor *)descriptorWithClass:(XZJSONClassDescriptor *)aClass property:(XZObjcPropertyDescriptor *)property elementType:(Class)elementType {
++ (XZJSONPropertyDescriptor *)descriptorWithProperty:(XZObjcPropertyDescriptor *)property elementType:(nullable Class)elementType ofClass:(XZJSONClassDescriptor *)aClass {
     // 必须是读写属性才参与 JSON 处理
     SEL const setter = property.setter;
-    if (setter == nil || ![aClass->_class.raw instancesRespondToSelector:setter]) {
+    if (setter == nil || ![aClass->_raw.raw instancesRespondToSelector:setter]) {
         return nil;
     }
+    
     SEL const getter = property.getter;
-    if (getter == nil || ![aClass->_class.raw instancesRespondToSelector:getter]) {
+    if (getter == nil || ![aClass->_raw.raw instancesRespondToSelector:getter]) {
         return nil;
     }
     
@@ -35,7 +36,7 @@
     
     XZJSONPropertyDescriptor *descriptor = [self new];
     descriptor->_class       = aClass;
-    descriptor->_property    = property;
+    descriptor->_raw         = property;
     descriptor->_name        = property.name;
     descriptor->_type        = property.type.type;
     descriptor->_elementType = elementType;
@@ -44,16 +45,14 @@
     
     if (descriptor->_type == XZObjcTypeObject) {
         descriptor->_subtype = property.type.subtype;
-        descriptor->_classType = XZJSONClassTypeFromClass(descriptor->_subtype);
-        descriptor->_structType = XZJSONStructTypeUnknown;
-        descriptor->_isScalarNumber = NO;
-        XZObjcQualifiers const qualifiers = property.type.qualifiers;
-        descriptor->_isUnownedReferenceProperty = (qualifiers & XZObjcQualifierWeak) || (!(qualifiers & XZObjcQualifierCopy) && !(qualifiers & XZObjcQualifierRetain));
+        descriptor->_foundationClassType = XZJSONFoundationClassTypeFromClass(descriptor->_subtype);
+        descriptor->_foundationStructType = XZJSONFoundationStructTypeUnknown;
+        XZObjcModifiers const modifiers = property.type.modifiers;
+        descriptor->_isUnownedReferenceProperty = (modifiers & XZObjcModifierWeak) || (!(modifiers & XZObjcModifierCopy) && !(modifiers & XZObjcModifierRetain));
     } else {
         descriptor->_subtype = Nil;
-        descriptor->_classType = XZJSONClassTypeUnknown;
-        descriptor->_structType = XZJSONStructTypeFromType(property.type);
-        descriptor->_isScalarNumber = XZObjcIsScalarNumber(descriptor->_type);
+        descriptor->_foundationClassType = XZJSONFoundationClassTypeUnknown;
+        descriptor->_foundationStructType = XZJSONFoundationStructTypeFromType(property.type);
         descriptor->_isUnownedReferenceProperty = NO;
     }
     

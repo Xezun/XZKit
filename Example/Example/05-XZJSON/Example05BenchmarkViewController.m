@@ -10,7 +10,7 @@
 @import XZJSON;
 @import YYModel;
 @import XZToast;
-@import XZExtensions;
+@import XZExtensionsObjC;
 
 @interface Example05BenchmarkViewController ()
 @property (nonatomic, weak) IBOutlet UILabel *textLabel;
@@ -29,7 +29,7 @@
     self.timeButton.enabled = NO;
     _textLabel.text = [NSString stringWithFormat:@"Device: %@\n\n", UIDevice.currentDevice.xz_productName];
     
-    [self xz_showToast:XZToast.loading(@"请稍后") duration:0 offset:CGPointZero completion:nil];
+    [self xz_showToast:[XZToast loadingToast:@"请稍后"] duration:0 completion:nil];
     
     dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(1.0 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
         [self benchmarkGithubUser];

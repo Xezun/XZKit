@@ -8,7 +8,7 @@
 
 Pod::Spec.new do |s|
   s.name             = 'XZPageControl'
-  s.version          = '10.5.0'
+  s.version          = '10.8.0'
   s.summary          = '一款支持自由定制外观的、类似于 UIPageControl 的视图控件。'
 
   s.description      = <<-DESC
@@ -23,16 +23,24 @@ Pod::Spec.new do |s|
   s.author           = { 'Xezun' => 'xezun@icloud.com' }
   s.source           = { :git => 'https://github.com/Xezun/XZKit.git', :tag => s.version.to_s }
   # s.social_media_url = 'https://twitter.com/<TWITTER_USERNAME>'
-  s.readme           = 'https://github.com/Xezun/XZKit/blob/main/Docs/#{s.name}/README.md'
+  s.readme           = "https://github.com/Xezun/XZKit/blob/main/Docs/#{s.name}/README.md"
 
-  s.swift_version = '6.0'
-  s.ios.deployment_target = '12.0'
-  s.pod_target_xcconfig = { 'GCC_PREPROCESSOR_DEFINITIONS' => 'XZ_FRAMEWORK=1' }
+  s.swift_version = '5.0'
+  s.ios.deployment_target = '13.0'
+  
+  s.default_subspec = 'Code'
   
   s.subspec 'Code' do |ss|
+    ss.pod_target_xcconfig = { 'GCC_PREPROCESSOR_DEFINITIONS' => 'XZ_FRAMEWORK=1' }
+    ss.dependency 'XZExtensions'
+
     ss.source_files = 'XZKit/Code/ObjC/XZPageControl/**/*.{h,m}'
     ss.project_header_files = 'XZKit/Code/ObjC/XZPageControl/**/Private/*.h'
-    ss.dependency 'XZExtensions/XZShapeView'
+  end
+  
+  s.subspec 'DEBUG' do |ss|
+    ss.pod_target_xcconfig = { 'GCC_PREPROCESSOR_DEFINITIONS' => 'XZ_DEBUG=1' }
+    ss.dependency "#{s.name}/Code"
   end
   
 end

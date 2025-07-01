@@ -28,13 +28,10 @@
     XZMocoa(@"https://mocoa.xezun.com/examples/20").viewNibClass = self;
 }
 
-- (instancetype)initWithMocoaOptions:(XZMocoaOptions *)options nibName:(NSString *)nibName bundle:(NSBundle *)bundle {
-    self = [super initWithMocoaOptions:options nibName:nibName bundle:bundle];
-    if (self) {
-        self.title = @"Example 20";
-        self.hidesBottomBarWhenPushed = YES;
-        self.navigationItem.backButtonTitle = @"返回";
-    }
+- (instancetype)didInitWithMocoaOptions:(XZMocoaOptions *)options {
+    self.title = @"Example 20";
+    self.hidesBottomBarWhenPushed = YES;
+    self.navigationItem.backButtonTitle = @"返回";
     return self;
 }
 
@@ -50,29 +47,12 @@
     self.tableView.viewModel = viewModel.tableViewModel;
     
     // 刷新状态，通过监听 isHeaderRefreshing/isFooterRefreshing 来更新。
-    [viewModel addTarget:self action:@selector(headerRefreshingChanged:) forKey:@"isHeaderRefreshing"];
-    [viewModel addTarget:self action:@selector(footerRefreshingChanged:) forKey:@"isFooterRefreshing"];
-    [self headerRefreshingChanged:viewModel];
+    [viewModel addTarget:self.tableView.contentView.xz_headerRefreshView action:@selector(setRefreshing:) forKey:@"isHeaderRefreshing" value:nil];
+    [viewModel addTarget:self.tableView.contentView.xz_footerRefreshView action:@selector(setRefreshing:) forKey:@"isFooterRefreshing" value:nil];
 }
 
 - (void)scrollViewDidScroll:(UIScrollView *)scrollView {
     XZLog(@"%@ => %@", scrollView, NSStringFromCGPoint(scrollView.contentOffset));
-}
-
-- (void)headerRefreshingChanged:(Example0320ViewModel *)viewModel {
-    if (viewModel.isHeaderRefreshing) {
-        [self.tableView.contentView.xz_headerRefreshView beginRefreshing];
-    } else {
-        [self.tableView.contentView.xz_headerRefreshView endRefreshing];
-    }
-}
-
-- (void)footerRefreshingChanged:(Example0320ViewModel *)viewModel {
-    if (viewModel.isFooterRefreshing) {
-        [self.tableView.contentView.xz_footerRefreshView beginRefreshing];
-    } else {
-        [self.tableView.contentView.xz_footerRefreshView endRefreshing];
-    }
 }
 
 - (void)scrollView:(UIScrollView *)scrollView headerDidBeginRefreshing:(XZRefreshView *)refreshView {

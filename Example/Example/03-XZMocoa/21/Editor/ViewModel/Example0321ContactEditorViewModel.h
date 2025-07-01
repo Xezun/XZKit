@@ -6,7 +6,7 @@
 //  Copyright © 2021 Xezun. All rights reserved.
 //
 
-#import <XZMocoa/XZMocoa.h>
+@import XZMocoaObjC;
 
 NS_ASSUME_NONNULL_BEGIN
 

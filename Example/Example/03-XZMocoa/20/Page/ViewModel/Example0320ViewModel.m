@@ -7,6 +7,7 @@
 
 #import "Example0320ViewModel.h"
 #import "Example0320Model.h"
+@import XZToast;
 
 @implementation Example0320ViewModel {
     NSMutableArray *_dataArray;
@@ -57,9 +58,11 @@
                 [self->_dataArray addObjectsFromArray:data];
             } completion:^(BOOL finished) {
                 self.isHeaderRefreshing = NO;
+                [self.viewController xz_showToast:[XZToast successToast:@"刷新成功"]];
             }];
         } else {
             self.isHeaderRefreshing = NO;
+            [self.viewController xz_showToast:[XZToast warningToast:@"暂无更新"]];
         }
     }];
 }
@@ -80,9 +83,12 @@
                 [self->_dataArray addObjectsFromArray:data];
             } completion:^(BOOL finished) {
                 self.isFooterRefreshing = NO;
+                NSString *message = [NSString stringWithFormat:@"加载了 %ld 条数据", data.count];
+                [self.viewController xz_showToast:[XZToast successToast:message] position:(XZToastPositionBottom)];
             }];
         } else {
             self.isFooterRefreshing = NO;
+            [self.viewController xz_showToast:[XZToast warningToast:@"暂无更多数据"] position:(XZToastPositionBottom)];
         }
     }];
 }

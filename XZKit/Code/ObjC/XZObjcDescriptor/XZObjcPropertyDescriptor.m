@@ -10,7 +10,7 @@
 
 @implementation XZObjcPropertyDescriptor
 
-+ (instancetype)descriptorForProperty:(objc_property_t)property forClass:(Class)aClass {
++ (instancetype)descriptorWithProperty:(objc_property_t)property ofClass:(Class)aClass {
     if (!property) {
         return nil;
     }
@@ -21,7 +21,7 @@
         return nil;
     }
 
-    XZObjcQualifiers qualifiers = kNilOptions;
+    XZObjcModifiers modifiers = kNilOptions;
     XZObjcIvarDescriptor *_ivar = nil;
     SEL _getter = nil;
     SEL _setter = nil;
@@ -49,44 +49,44 @@
                 if (attrValue) {
                     Ivar ivar = class_getInstanceVariable(aClass, attrValue);
                     if (ivar) {
-                        _ivar = [XZObjcIvarDescriptor descriptorForIvar:ivar];
+                        _ivar = [XZObjcIvarDescriptor descriptorWithIvar:ivar];
                     }
                 }
                 break;
             }
 
             case 'R': {
-                qualifiers |= XZObjcQualifierReadonly;
+                modifiers |= XZObjcModifierReadonly;
                 break;
             }
 
             case 'C': {
-                qualifiers |= XZObjcQualifierCopy;
+                modifiers |= XZObjcModifierCopy;
                 break;
             }
 
             case '&': {
-                qualifiers |= XZObjcQualifierRetain;
+                modifiers |= XZObjcModifierRetain;
                 break;
             }
 
             case 'N': {
-                qualifiers |= XZObjcQualifierNonatomic;
+                modifiers |= XZObjcModifierNonatomic;
                 break;
             }
 
             case 'D': {
-                qualifiers |= XZObjcQualifierDynamic;
+                modifiers |= XZObjcModifierDynamic;
                 break;
             }
 
             case 'W': {
-                qualifiers |= XZObjcQualifierWeak;
+                modifiers |= XZObjcModifierWeak;
                 break;
             }
 
             case 'G': {
-                qualifiers |= XZObjcQualifierGetter;
+                modifiers |= XZObjcModifierGetter;
 
                 if (attrValue) {
                     _getter = sel_getUid(attrValue);
@@ -95,7 +95,7 @@
             }
 
             case 'S': {
-                qualifiers |= XZObjcQualifierSetter;
+                modifiers |= XZObjcModifierSetter;
 
                 if (attrValue) {
                     _setter = sel_getUid(attrValue);
@@ -108,7 +108,7 @@
         }
     }
     
-    XZObjcTypeDescriptor *_type = [XZObjcTypeDescriptor descriptorForTypeEncoding:typeEncoding qualifiers:qualifiers];
+    XZObjcTypeDescriptor *_type = [XZObjcTypeDescriptor descriptorForObjcType:typeEncoding modifiers:modifiers];
     if (_type == nil) {
         return nil;
     }
@@ -126,7 +126,7 @@
         }
     }
 
-    if (!_setter && !(qualifiers & XZObjcQualifierReadonly)) {
+    if (!_setter && !(modifiers & XZObjcModifierReadonly)) {
         NSString *setterName = [NSString stringWithFormat:@"set%c%s:", toupper(name[0]), name + 1];
         _setter = NSSelectorFromString(setterName);
     }
@@ -151,8 +151,11 @@
 }
 
 - (NSString *)description {
-    NSString *type = [NSString stringWithFormat:@"<%p: %@>", self.type, ((id)self.type.subtype ?: self.type.name)];
-    return [NSString stringWithFormat:@"<%@: %p, name: %@, type: %@, ivar: %p, getter: %@, setter: %@>", NSStringFromClass(self.class), self, self.name, type, self.ivar, NSStringFromSelector(self.getter), (self.setter ? NSStringFromSelector(self.setter) : nil)];
+    NSString * const className = NSStringFromClass(self.class);
+    NSString * const type   = [NSString stringWithFormat:@"<%p: %@>", self.type, ((id)self.type.subtype ?: self.type.name)];
+    NSString * const getter = NSStringFromSelector(self.getter);
+    NSString * const setter = (self.setter ? NSStringFromSelector(self.setter) : nil);
+    return [NSString stringWithFormat:@"<%@: %p, name: %@, type: %@, ivar: %p, getter: %@, setter: %@>", className, self, self.name, type, self.ivar, getter, setter];
 }
 
 @end

@@ -9,13 +9,21 @@
 @import XZSegmentedControl;
 @import XZPageView;
 @import XZDefines;
+@import XZToast;
+@import XZExtensionsObjC;
 
-@interface Example07Test02ViewController () <XZPageViewDelegate, XZPageViewDataSource>
+@interface Example07Test02ChildViewController : UIViewController
+@property (nonatomic) NSInteger index;
+@end
+
+@interface Example07Test02ViewController () <XZPageViewControllerDelegate, XZPageViewControllerDataSource>
 
 @property (weak, nonatomic) IBOutlet XZSegmentedControl *segmentedControl;
-@property (weak, nonatomic) IBOutlet XZPageView *pageView;
+@property (nonatomic, strong) XZPageViewController *pageViewController;
 
 @property (nonatomic, copy) NSArray *titles;
+
+@property (nonatomic, copy) NSArray *viewControllers;
 
 @end
 
@@ -25,78 +33,101 @@
     [super viewDidLoad];
     
     self.titles = @[@"业界", @"手机", @"电脑", @"测评", @"视频", @"AI", @"苹果", @"鸿蒙", @"软件", @"数码"];
+    self.viewControllers = [self.titles xz_map:^id _Nonnull(id  _Nonnull obj, NSInteger idx, BOOL * _Nonnull stop) {
+        Example07Test02ChildViewController *viewController = [[Example07Test02ChildViewController alloc] init];
+        viewController.title = obj;
+        viewController.index = idx;
+        return viewController;
+    }];
     
-    self.segmentedControl.backgroundColor = UIColor.whiteColor;
+    self.segmentedControl.backgroundColor = UIColor.systemBackgroundColor;
     self.segmentedControl.indicatorSize = CGSizeMake(20, 4.0);
-    self.segmentedControl.indicatorColor = UIColor.redColor;
+    self.segmentedControl.indicatorColor = UIColor.systemRedColor;
     self.segmentedControl.interitemSpacing = 10;
     self.segmentedControl.headerView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, 10, 10)];
     self.segmentedControl.footerView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, 10, 10)];
     self.segmentedControl.titles = self.titles;
     [self.segmentedControl addTarget:self action:@selector(segmentedControlValueChanged:) forControlEvents:(UIControlEventValueChanged)];
     
-    self.pageView.isLooped = NO;
-    self.pageView.delegate = self;
-    self.pageView.dataSource = self;
+    _pageViewController.delegate = self;
+    _pageViewController.dataSource = self;
+}
+
+- (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {
+    if ([segue.identifier isEqualToString:@"pageViewController"]) {
+        _pageViewController = segue.destinationViewController;
+        [self addChildViewController:_pageViewController];
+        [_pageViewController didMoveToParentViewController:self];
+    }
 }
 
 - (void)segmentedControlValueChanged:(XZSegmentedControl *)sender {
-    [self.pageView setCurrentPage:sender.selectedIndex animated:YES];
+    [self.pageViewController setCurrentPage:sender.selectedIndex animated:YES];
 }
 
 - (IBAction)orientationSwitchAction:(UISwitch *)sender {
-    NSString *title = nil;
     if (sender.isOn) {
-        title = @"已切换为纵向滚动";
-        self.pageView.orientation = XZPageViewOrientationVertical;
+        self.pageViewController.orientation = XZPageViewOrientationVertical;
+        [self xz_showToast:[XZToast messageToast:@"已切换为纵向滚动"]];
     } else {
-        title = @"已切换为横向滚动";
-        self.pageView.orientation = XZPageViewOrientationHorizontal;
+        self.pageViewController.orientation = XZPageViewOrientationHorizontal;
+        [self xz_showToast:[XZToast messageToast:@"已切换为横向滚动"]];
     }
-    
-    UIAlertController *alert = [UIAlertController alertControllerWithTitle:title message:nil preferredStyle:(UIAlertControllerStyleAlert)];
-    [alert addAction:[UIAlertAction actionWithTitle:@"确定" style:(UIAlertActionStyleDefault) handler:nil]];
-    [self presentViewController:alert animated:YES completion:nil];
 }
 
-- (void)pageView:(XZPageView *)pageView didShowPageAtIndex:(NSInteger)index {
-    XZLog(@"didPageToIndex: %ld", index);
-    [self.segmentedControl setSelectedIndex:index animated:YES];
-}
-
-- (void)pageView:(XZPageView *)pageView didTurnPageInTransition:(CGFloat)transition {
-    XZLog(@"didTurnPageInTransition: %f", transition);
-    [self.segmentedControl updateInteractiveTransition:transition];
-}
-
-- (NSInteger)numberOfPagesInPageView:(XZPageView *)pageView {
+- (NSInteger)numberOfViewControllersInPageViewController:(XZPageViewController *)pageViewController {
     return self.titles.count;
 }
 
-- (UIView *)pageView:(XZPageView *)pageView viewForPageAtIndex:(NSInteger)index reusingView:(UILabel *)reusingView {
-    if (reusingView == nil) {
-        reusingView = [[UILabel alloc] init];
-        reusingView.font = [UIFont boldSystemFontOfSize:32];
-        reusingView.textAlignment = NSTextAlignmentCenter;
-        reusingView.numberOfLines = 0;
-    }
-    reusingView.text = [NSString stringWithFormat:@"%@\n\n- 第 %ld 页 -", self.titles[index], (long)index];
-    return reusingView;
+- (UIViewController *)pageViewController:(XZPageViewController *)pageViewController viewControllerForPageAtIndex:(NSInteger)index {
+    return self.viewControllers[index];
 }
 
-- (nullable UIView *)pageView:(nonnull XZPageView *)pageView prepareForReusingView:(nonnull __kindof UIView *)reusingView {
-    return reusingView;
+- (void)pageViewController:(XZPageViewController *)pageViewController didShowViewControllerAtIndex:(NSInteger)index {
+    XZLog(@"%ld", index);
+    [self.segmentedControl setSelectedIndex:index animated:YES];
 }
 
+- (void)pageViewController:(XZPageViewController *)pageViewController didTurnViewControllerInTransition:(CGFloat)transition {
+    [self.segmentedControl updateInteractiveTransition:transition];
+}
 
-/*
- #pragma mark - Navigation
- 
- // In a storyboard-based application, you will often want to do a little preparation before navigation
- - (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {
- // Get the new view controller using [segue destinationViewController].
- // Pass the selected object to the new view controller.
- }
- */
+@end
+
+
+@implementation Example07Test02ChildViewController
+
+- (void)loadView {
+    UILabel *label = [[UILabel alloc] init];
+    label.font = [UIFont boldSystemFontOfSize:32];
+    label.textAlignment = NSTextAlignmentCenter;
+    label.numberOfLines = 0;
+    label.text = [NSString stringWithFormat:@"%@\n\n- 第 %ld 页 -", self.title, (long)self.index];
+    self.view = label;
+}
+
+- (void)viewDidLoad {
+    [super viewDidLoad];
+}
+
+- (void)viewWillAppear:(BOOL)animated {
+    [super viewWillAppear:animated];
+    XZLog(@"index: %ld, title: %@, animated: %@", self.index, self.title, (animated ? @"YES" : @"NO"));
+}
+
+- (void)viewDidAppear:(BOOL)animated {
+    [super viewDidAppear:animated];
+    XZLog(@"index: %ld, title: %@, animated: %@", self.index, self.title, (animated ? @"YES" : @"NO"));
+}
+
+- (void)viewWillDisappear:(BOOL)animated {
+    [super viewWillDisappear:animated];
+    XZLog(@"index: %ld, title: %@, animated: %@", self.index, self.title, (animated ? @"YES" : @"NO"));
+}
+
+- (void)viewDidDisappear:(BOOL)animated {
+    [super viewDidDisappear:animated];
+    XZLog(@"index: %ld, title: %@, animated: %@", self.index, self.title, (animated ? @"YES" : @"NO"));
+}
 
 @end

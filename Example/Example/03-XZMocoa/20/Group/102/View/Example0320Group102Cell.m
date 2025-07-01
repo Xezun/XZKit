@@ -42,8 +42,13 @@
     // Configure the view for the selected state
 }
 
-- (void)viewModelDidChange {
+- (void)viewModelDidChange:(nullable XZMocoaViewModel *)oldValue {
+    [super viewModelDidChange:oldValue];
+    
     Example0320Group102CellViewModel *viewModel = self.viewModel;
+    if (viewModel == nil) {
+        return;
+    }
     self.pageControl.numberOfPages = viewModel.images.count;
     self.pageControl.currentPage = 0;
     [self.pageView reloadData];
@@ -71,9 +76,8 @@
     return reusingView;
 }
 
-- (UIView *)pageView:(XZPageView *)pageView prepareForReusingView:(UIImageView *)reusingView {
-    reusingView.image = nil;
-    return reusingView;
+- (BOOL)pageView:(XZPageView *)pageView shouldReuseView:(__kindof UIView *)reusingView {
+    return YES;
 }
 
 - (void)pageView:(XZPageView *)pageView didShowPageAtIndex:(NSInteger)index {

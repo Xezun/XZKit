@@ -11,32 +11,44 @@ NS_ASSUME_NONNULL_BEGIN
 
 /// 过渡动画所使用的时长 0.35 秒。
 FOUNDATION_EXPORT NSTimeInterval const XZRefreshAnimationDuration NS_SWIFT_NAME(animationDuration);
-/// 默认刷新视图的高度 50.0 点。
+/// 默认刷新视图的高度 44.0 点。
 FOUNDATION_EXPORT CGFloat        const XZRefreshHeight NS_SWIFT_NAME(refreshHeight);
 
-/// XZRefreshView 适配 UIScrollView 边距的方式。
+/// 刷新视图适配 UIScrollView 边距的方式。
 typedef NS_ENUM(NSUInteger, XZRefreshAdjustment) {
-    /// 自动适配由 contentInsetAdjustmentBehavior 影响的边距。
+    /// 刷新视图适配 UIScrollView.adjustedContentInset 边距。
+    ///
+    /// 在该适配模式下：
+    /// - 头部刷新视图布局在 adjustedContentInset.top 区域上面。
+    /// - 底部刷新视图布局在 adjustedContentInset.bottom 区域的下面。
     XZRefreshAdjustmentAutomatic,
-    /// 仅适配 UIScrollView 自身的边距。
+    /// 刷新视图适配 UIScrollView.contentInset 边距。
+    ///
+    /// 在该适配模式下：
+    /// - 头部刷新视图布局在 contentInset.top 区域上面。
+    /// - 底部刷新视图布局在 contentInset.bottom 区域的下面。
     XZRefreshAdjustmentNormal,
-    /// 不适配边距。
+    /// 刷新视图不适配边距。
+    ///
+    /// 在该适配模式下：
+    /// - 头部刷新视图布局在 contentSize 区域上面。
+    /// - 底部刷新视图布局在 contentSize 区域的下面。
     XZRefreshAdjustmentNone,
-};
+} NS_SWIFT_NAME(Adjustment);
 
 @class XZRefreshView, UIRefreshControl, UICollectionView;
 
-/// 在使用 XZRefresh 时，除 target-action 方式外，还可通过此协议接收刷新事件。
-/// @note 本协议与 UIScrollViewDelegate 协议使用同一事件接收者，即为 UIScrollView 的属性 delegate 对象。
-NS_SWIFT_UI_ACTOR
-@protocol XZRefreshDelegate <UIScrollViewDelegate>
+/// XZRefresh 使用 UIScrollView.delegate 作为刷新事件的接收者。
+NS_SWIFT_UI_ACTOR @protocol XZRefreshDelegate <UIScrollViewDelegate>
 @optional
 /// 当头部视图开始动画时，此方法会被调用。
+///
 /// @param scrollView 触发此方法的 UIScrollView 对象。
 /// @param refreshView 已开始动的 XZRefreshView 对象。
 - (void)scrollView:(UIScrollView *)scrollView headerDidBeginRefreshing:(XZRefreshView *)refreshView;
 
 /// 当尾部视图开始动画时，此方法会被调用。
+/// 
 /// @param scrollView 触发此方法的 UIScrollView 对象。
 /// @param refreshView 已开始动画的 XZRefreshView 对象。
 - (void)scrollView:(UIScrollView *)scrollView footerDidBeginRefreshing:(XZRefreshView *)refreshView;

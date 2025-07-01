@@ -18,6 +18,7 @@
 @_exported import XZLocale
 @_exported import XZML
 @_exported import XZMocoa
+@_exported import XZMocoaObjC
 @_exported import XZNavigationController
 @_exported import XZPageControl
 @_exported import XZPageView
@@ -26,4 +27,6 @@
 @_exported import XZTextImageView
 @_exported import XZToast
 @_exported import XZURLQuery
+@_exported import XZTicker
+@_exported import XZProgressView
 #endif

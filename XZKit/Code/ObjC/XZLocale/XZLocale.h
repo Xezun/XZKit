@@ -29,31 +29,41 @@ FOUNDATION_EXPORT NSNotificationName const XZLanguagePreferencesDidChangeNotific
 /// 本地化支持组件。
 ///
 /// 读取本地化字符串，推荐使用本组件建提供的宏，支持在本地化字符串中使用参数（最多支持 64 个参数）。
-/// @code
+///
+/// ```objc
 /// XZLocalizedString(stringToBeLocalized, ...)
-/// @endcode
+/// ```
+///
 /// 示例：以中文为本地化的默认语言时，展示某人在某时去过某地，比如，小明在10月1日去过天安门，如下代码。
-/// @code
+///
+/// ```objc
 /// self.textLabel.text = XZLocalizedString(@"{0}在{1}去过{2}。", data.name, data.date, data.spot);
-/// @endcode
+/// ```
+///
 /// 那么，在进行英文本地化时，就可以像下面这样配置本地化字符串表。
-/// @code
+///
+/// ```objc
 /// "{0}在{1}去过{2}。" = "{0} went to {2} on {1}.";
-/// @endcode
+/// ```
+///
 /// 虽然英文和中文的语序并不一致，但是在代码中，我们不需要调整的参数的书写顺序，只需要调整本地化字符串引用参数的顺序即可。
-/// @note 由于 OC 参数列表限制，值 nil 之后的参数会被忽略。
-/// @note 虽然查找字符串中的参数的插值，会有产生额外操作，但是当本地化字符串没有参数时，使用的是原生的本地化方法，实际对性能影响已降至最低。
+///
+/// > 默认采用了花括号`{INDEX}`包裹参数序号的形式，与原生`NSString`支持的使用`INDEX$`插入到`%@`中间（比如`%2$@`表示第2个参数）的形式不同，目的是与其它平台保持一致。
+///
+/// > 由于 OC 参数列表限制，值 nil 之后的参数会被忽略。
+/// 
+/// > 虽然查找字符串中的参数的插值，会有产生额外操作，但是当本地化字符串没有参数时，使用的是原生的本地化方法，实际对性能影响已降至最低。
 @interface XZLocalization : NSObject
 
 - (instancetype)init NS_UNAVAILABLE;
 
 /// 当前生效的语言。
-/// @note 该属性只能表明在创建新 UI 时生效的语言，不表示当前已有 UI 的显示语言。
+/// > 该属性只能表明在创建新 UI 时生效的语言，不表示当前已有 UI 的显示语言。
 @property (class, readonly) XZLanguage effectiveLanguage;
 
 /// 应用首选语言。
 ///
-/// - Note: 更新首选语言，默认需重启应用才会生效。
+/// > 更新首选语言，默认需重启应用才会生效。
 ///
 /// 结合 `isInAppLanguagePreferenceEnabled` 属性，可以开启在应用内切换应用语言。
 ///
@@ -83,14 +93,14 @@ FOUNDATION_EXPORT NSNotificationName const XZLanguagePreferencesDidChangeNotific
 @property (class, nonatomic, copy) XZLanguage preferredLanguage;
 
 /// 语言的书写方向。
-/// @param language 语言
+/// - Parameter language: 语言
 + (NSLocaleLanguageDirection)languageDirectionForLanguage:(XZLanguage)language;
 
 /// 应用支持的所有语言。
 @property (class, nonatomic, copy, readonly) NSArray<XZLanguage> *supportedLanguages;
 
 /// 是否开启应用内语言偏好设置。默认否。
-/// @note 开启功能后，更改应用语言立即生效，新的页面将按照新的语言展示。
+/// > 开启功能后，更改应用语言立即生效，新的页面将按照新的语言展示。
 @property (class, nonatomic, setter=setInAppLanguagePreferencesEnabled:) BOOL isInAppLanguagePreferencesEnabled;
 
 /// 构造本地化字符串。

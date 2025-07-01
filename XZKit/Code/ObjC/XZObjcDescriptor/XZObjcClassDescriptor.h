@@ -11,11 +11,19 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-FOUNDATION_EXPORT NSNotificationName const XZObjcClassNeedsUpdateNotification;
-FOUNDATION_EXPORT NSString *         const XZObjcClassUpdateTypeUserInfoKey;
-FOUNDATION_EXPORT NSString *         const XZObjcClassUpdateTypeIvars;
-FOUNDATION_EXPORT NSString *         const XZObjcClassUpdateTypeMethods;
-FOUNDATION_EXPORT NSString *         const XZObjcClassUpdateTypeProperties;
+/// 当 XZObjcClassDescriptor 发生更新时，会发送此通知。
+FOUNDATION_EXPORT NSNotificationName const XZObjcClassDidUpdateNotification;
+/// 在 XZObjcClassDescriptor 的通知中，获取变更枚举 XZObjcClassUpdate 的键。
+FOUNDATION_EXPORT NSString * const XZObjcClassUpdateUserInfoKey;
+
+/// 变更类型。
+typedef NSString *XZObjcClassUpdates NS_STRING_ENUM;
+/// XZObjcClassDescriptor 实例变量更新。
+FOUNDATION_EXPORT XZObjcClassUpdates const XZObjcClassUpdateIvars;
+/// XZObjcClassDescriptor 方法更新。
+FOUNDATION_EXPORT XZObjcClassUpdates const XZObjcClassUpdateMethods;
+/// XZObjcClassDescriptor 属性更新。
+FOUNDATION_EXPORT XZObjcClassUpdates const XZObjcClassUpdateProperties;
 
 /// 描述类的对象。
 ///
@@ -24,7 +32,7 @@ FOUNDATION_EXPORT NSString *         const XZObjcClassUpdateTypeProperties;
 
 /// 当前类，当前对象所描述的类。
 @property (nonatomic, readonly) Class raw;
-
+ 
 /// 描述当前类的超类的对象。
 @property (nonatomic, readonly, nullable) XZObjcClassDescriptor *super;
 
@@ -56,7 +64,7 @@ FOUNDATION_EXPORT NSString *         const XZObjcClassUpdateTypeProperties;
 
 /// 获取类 aClass 的描述信息。
 /// - Parameter aClass: 类
-+ (nullable XZObjcClassDescriptor *)descriptorForClass:(nullable Class)aClass;
++ (nullable XZObjcClassDescriptor *)descriptorWithClass:(nullable Class)aClass NS_SWIFT_NAME(init(_:));
 
 @end
 

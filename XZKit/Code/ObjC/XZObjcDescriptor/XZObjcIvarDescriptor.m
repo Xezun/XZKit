@@ -9,7 +9,7 @@
 
 @implementation XZObjcIvarDescriptor
 
-+ (instancetype)descriptorForIvar:(Ivar)ivar {
++ (instancetype)descriptorWithIvar:(Ivar)ivar {
     if (ivar == nil) {
         return nil;
     }
@@ -26,7 +26,7 @@
         return nil;
     }
     
-    XZObjcTypeDescriptor * _type = [XZObjcTypeDescriptor descriptorForTypeEncoding:typeEncoding];
+    XZObjcTypeDescriptor * _type = [XZObjcTypeDescriptor descriptorForObjcType:typeEncoding];
     if (_type == nil) {
         return nil;
     }

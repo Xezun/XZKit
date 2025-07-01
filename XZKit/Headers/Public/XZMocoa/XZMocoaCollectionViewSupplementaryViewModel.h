@@ -1,1 +1,1 @@
-../../../../XZKit/Code/ObjC/XZMocoa/ListView/CollectionView/ViewModel/XZMocoaCollectionViewSupplementaryViewModel.h
+../../../../XZKit/Code/ObjC/XZMocoa/GridView/CollectionView/ViewModel/XZMocoaCollectionViewSupplementaryViewModel.h

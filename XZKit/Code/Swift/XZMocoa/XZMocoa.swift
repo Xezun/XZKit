@@ -13,22 +13,25 @@ extension XZMocoaKind: @retroactive ExpressibleByStringLiteral {
         self.init(rawValue: value)
     }
 }
-
 extension XZMocoaName: @retroactive ExpressibleByStringLiteral {
     public typealias StringLiteralType = String
     public init(stringLiteral value: String) {
         self.init(rawValue: value)
     }
 }
-
-extension XZMocoaUpdatesKey: @retroactive ExpressibleByStringLiteral {
+extension XZMocoaViewModel.Updates.Key: @retroactive ExpressibleByStringLiteral {
     public typealias StringLiteralType = String
     public init(stringLiteral value: String) {
         self.init(rawValue: value)
     }
 }
-
 extension XZMocoaKey: @retroactive ExpressibleByStringLiteral {
+    public typealias StringLiteralType = String
+    public init(stringLiteral value: String) {
+        self.init(rawValue: value)
+    }
+}
+extension XZMocoaOptions.Key: @retroactive ExpressibleByStringLiteral {
     public typealias StringLiteralType = String
     public init(stringLiteral value: String) {
         self.init(rawValue: value)
@@ -41,29 +44,31 @@ extension XZMocoaKind: ExpressibleByStringLiteral {
         self.init(rawValue: value)
     }
 }
-
 extension XZMocoaName: ExpressibleByStringLiteral {
     public typealias StringLiteralType = String
     public init(stringLiteral value: String) {
         self.init(rawValue: value)
     }
 }
-
-extension XZMocoaUpdatesKey: ExpressibleByStringLiteral {
+extension XZMocoaViewModel.Updates.Key: ExpressibleByStringLiteral {
     public typealias StringLiteralType = String
     public init(stringLiteral value: String) {
         self.init(rawValue: value)
     }
 }
-
 extension XZMocoaKey: ExpressibleByStringLiteral {
     public typealias StringLiteralType = String
     public init(stringLiteral value: String) {
         self.init(rawValue: value)
     }
 }
+extension XZMocoaOptions.Key: ExpressibleByStringLiteral {
+    public typealias StringLiteralType = String
+    public init(stringLiteral value: String) {
+        self.init(rawValue: value)
+    }
+}
 #endif
-
 
 
 

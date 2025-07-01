@@ -7,6 +7,7 @@
 //
 
 #import "XZMocoaModule.h"
+#import "XZMocoaViewModel.h"
 
 /// 将 MocoaURL 中的单个 path 部分解析成 MVVM 模块的 kind 和 name 值。
 /// - Parameters:
@@ -92,6 +93,14 @@ FOUNDATION_STATIC_INLINE NSString *XZMocoaPathCreate(XZMocoaKind kind, XZMocoaNa
         _url = url.copy;
     }
     return self;
+}
+
+// - 实例
+
+- (__kindof XZMocoaViewModel *)instantiateViewModelWithModel:(id)model {
+    XZMocoaViewModel * const viewModel = [[self.viewModelClass alloc] initWithModel:model];
+    viewModel.module = self;
+    return viewModel;
 }
 
 // view class
@@ -339,22 +348,30 @@ FOUNDATION_STATIC_INLINE NSString *XZMocoaPathCreate(XZMocoaKind kind, XZMocoaNa
 
 @implementation XZMocoaModule (XZMocoaExtendedModule)
 
+- (XZMocoaModule *)list {
+    return [self submoduleForKind:XZMocoaKindDefault forName:XZMocoaNameList];
+}
+
+- (void)setList:(XZMocoaModule *)list {
+    [self setSubmodule:list forKind:XZMocoaKindDefault forName:XZMocoaNameList];
+}
+
 #pragma mark - 为 tableView、collectionView 提供的便利方法
 
 - (XZMocoaModule *)section {
-    return [self submoduleForKind:XZMocoaKindDefault forName:XZMocoaNameDefault];
+    return [self submoduleForKind:XZMocoaKindSection forName:XZMocoaNameDefault];
 }
 
 - (void)setSection:(XZMocoaModule *)section {
-    [self setSubmodule:section forKind:XZMocoaKindDefault forName:XZMocoaNameDefault];
+    [self setSubmodule:section forKind:XZMocoaKindSection forName:XZMocoaNameDefault];
 }
 
 - (XZMocoaModule *)sectionForName:(XZMocoaName)name {
-    return [self submoduleForKind:XZMocoaKindDefault forName:name];
+    return [self submoduleForKind:XZMocoaKindSection forName:name];
 }
 
 - (void)setSection:(XZMocoaModule *)section forName:(XZMocoaName)name {
-    [self setSubmodule:section forKind:XZMocoaKindDefault forName:name];
+    [self setSubmodule:section forKind:XZMocoaKindSection forName:name];
 }
 
 - (XZMocoaModule *)header {
@@ -374,19 +391,19 @@ FOUNDATION_STATIC_INLINE NSString *XZMocoaPathCreate(XZMocoaKind kind, XZMocoaNa
 }
 
 - (XZMocoaModule *)cell {
-    return [self submoduleForKind:XZMocoaNameDefault forName:XZMocoaNameDefault];
+    return [self submoduleForKind:XZMocoaKindCell forName:XZMocoaNameDefault];
 }
 
 - (void)setCell:(XZMocoaModule *)cell {
-    [self setSubmodule:cell forKind:XZMocoaKindDefault forName:XZMocoaNameDefault];
+    [self setSubmodule:cell forKind:XZMocoaKindCell forName:XZMocoaNameDefault];
 }
 
 - (XZMocoaModule *)cellForName:(XZMocoaName)name {
-    return [self submoduleForKind:XZMocoaNameDefault forName:name];
+    return [self submoduleForKind:XZMocoaKindCell forName:name];
 }
 
 - (void)setCell:(XZMocoaModule *)cell forName:(XZMocoaName)name {
-    [self setSubmodule:cell forKind:XZMocoaKindDefault forName:name];
+    [self setSubmodule:cell forKind:XZMocoaKindCell forName:name];
 }
 
 - (XZMocoaModule *)footer {

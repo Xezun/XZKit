@@ -41,7 +41,9 @@
     return self;
 }
 
-- (void)viewModelDidChange {
+- (void)viewModelDidChange:(nullable XZMocoaViewModel *)newValue {
+    [super viewModelDidChange:newValue];
+    
     _textLabel.text = @"Footer视图";
     _detailTextLabel.text = self.viewModel.model;
 }

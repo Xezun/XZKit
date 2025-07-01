@@ -52,8 +52,15 @@
     self.phone   = [self formatPhoneNumber:data.phone];
     self.address = data.address;
     self.title   = data.title;
-    self.content = data.content;
-    [self sendActionsForKey:XZMocoaKeyNone value:nil];
+    NSMutableParagraphStyle *style = [[NSMutableParagraphStyle alloc] init];
+    style.minimumLineHeight = 20.0;
+    style.firstLineHeadIndent = 30.0;
+    style.paragraphSpacingBefore = 10.0;
+    style.paragraphSpacing = 10.0;
+    self.content = [[NSAttributedString alloc] initWithString:data.content attributes:@{
+        NSParagraphStyleAttributeName: style
+    }];
+    [self sendActionsForKey:XZMocoaKeyNone];
 }
 
 - (NSString *)formatPhoneNumber:(NSString *)phone {

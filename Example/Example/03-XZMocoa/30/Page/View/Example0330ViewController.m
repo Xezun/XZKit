@@ -7,7 +7,7 @@
 
 #import "Example0330ViewController.h"
 #import "Example0330ViewModel.h"
-@import XZMocoa;
+@import XZMocoaObjC;
 
 @interface Example0330ViewController () <XZMocoaView>
 @property (nonatomic, strong) XZMocoaTableView *tableView;

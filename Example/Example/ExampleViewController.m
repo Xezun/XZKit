@@ -7,7 +7,7 @@
 
 #import "ExampleViewController.h"
 @import XZExtensions;
-@import XZMocoa;
+@import XZMocoaObjC;
 @import XZToast;
 
 @interface ExampleViewController () {
@@ -27,17 +27,6 @@
 - (void)viewDidLoad {
     [super viewDidLoad];
     
-//    NSDictionary *obj = @{
-//        @"items": @[
-//            @{ @"id": @"2" },
-//            @{ @"id": @"3" },
-//            @{ @"id": @"4" }
-//        ]
-//    };
-//    NSLog(@"%@", [obj valueForKeyPath:@"items.@firstObject.id"]);
-    
-    XZLog(@"__IPHONE_OS_VERSION_MIN_REQUIRED => %d", __IPHONE_OS_VERSION_MIN_REQUIRED);
-    
     NSArray *data = @[
         @"01. XZDefines",
         @"02. XZExtensions",
@@ -50,7 +39,7 @@
         @"09. XZSegmentedControl",
         @"10. XZGeometry",
         @"11. XZTextImageView",
-        @"12. XZContentStatusView",
+        @"12. XZContentStatus",
         @"13. XZToast",
         @"14. XZURLQuery",
         @"15. XZLocale",
@@ -68,33 +57,35 @@
 
 - (void)viewDidAppear:(BOOL)animated {
     [super viewDidAppear:animated];
-    
-    // NSLog(@"%@", self.view.xz_description);
 }
 
 - (IBAction)unwindToMainPage:(UIStoryboardSegue *)unwindSegue {
-    
+   
 }
 
 @end
 
 
-@interface ExampleTableViewCell : XZMocoaTableViewCell
+@interface ExampleTableViewCell : UITableViewCell <XZMocoaTableViewCell>
 @end
 @implementation ExampleTableViewCell
 + (void)load {
     XZMocoa(@"https://xzkit.xezun.com/examples").section.cell.viewReuseIdentifier = @"cell";
 }
-- (void)viewModelDidChange {
+
+- (void)viewModelDidChange:(nullable XZMocoaViewModel *)newValue {
+    [super viewModelDidChange:newValue];
+    
     NSString *name = self.viewModel.model;
     self.textLabel.text = name;
 }
-- (void)tableView:(XZMocoaTableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
+
+- (void)tableView:(id<XZMocoaTableView>)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
     NSString *name = [NSString stringWithFormat:@"Example%02ld", (long)(indexPath.row + 1)];
     UIViewController *viewController = [UIStoryboard storyboardWithName:name bundle:nil].instantiateInitialViewController;
     viewController.modalPresentationStyle = UIModalPresentationFullScreen;
     viewController.modalTransitionStyle = 0;
-    [self.viewController presentViewController:viewController animated:YES completion:nil];
+    [self.xz_viewController presentViewController:viewController animated:YES completion:nil];
 }
 @end
 

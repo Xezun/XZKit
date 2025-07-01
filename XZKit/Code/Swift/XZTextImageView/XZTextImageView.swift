@@ -10,9 +10,9 @@ import UIKit
 import XZGeometry
 
 /// 一个图片、文字上下布局的视图，可以自定义图片文字边距。
-@objc open class XZTextImageView: UIView, XZTextImageLayout {
+@objc open class XZTextImageView: UIView, XZTextImageView.Layout {
 
-    open var textLayoutDirection: XZRectEdge = .bottom {
+    open var style: XZTextImageView.Style = .bottomText {
         didSet { setNeedsLayout() }
     }
     
@@ -37,13 +37,13 @@ import XZGeometry
     
     /// 标题文字。
     open var text: String? {
-        get { return textLabelIfLoaded?.text  }
+        get { return textViewIfLoaded?.text  }
         set { textLabel.text = newValue; setNeedsLayout(); }
     }
     
     /// 富文本标题。
     open var attributedText: NSAttributedString? {
-        get { return textLabelIfLoaded?.attributedText; }
+        get { return textViewIfLoaded?.attributedText; }
         set { textLabel.attributedText = newValue; setNeedsLayout(); }
     }
     
@@ -54,21 +54,21 @@ import XZGeometry
     }
 
     /// 如果 textLabel 已加载，将返回它，否则 nil 。
-    open private(set) var textLabelIfLoaded: UILabel?
+    open private(set) var textViewIfLoaded: UILabel?
     
     /// 文字控件，懒加载属性。
     /// - Note: 在限定的宽度下，文字可能会多行显示。
     /// - Note: 请不要通过此属性来设置标题。
     /// - Note: 默认情况下，文本视图在图片视图上方，也就是说，文字不会被图片遮挡。
     open var textLabel: UILabel {
-        if let textLabel = textLabelIfLoaded {
+        if let textLabel = textViewIfLoaded {
             return textLabel
         }
-        textLabelIfLoaded = UILabel.init(frame: self.bounds)
-        textLabelIfLoaded!.numberOfLines = 0
-        textLabelIfLoaded!.textAlignment = .center
-        self.addSubview(textLabelIfLoaded!)
-        return textLabelIfLoaded!
+        textViewIfLoaded = UILabel.init(frame: self.bounds)
+        textViewIfLoaded!.numberOfLines = 0
+        textViewIfLoaded!.textAlignment = .center
+        self.addSubview(textViewIfLoaded!)
+        return textViewIfLoaded!
     }
     
     /// 如果 imageView 已加载，将返回它，否则 nil 。
@@ -85,10 +85,9 @@ import XZGeometry
         return imageViewIfLoaded!
     }
 
-    
     override open func layoutSubviews() {
         super.layoutSubviews()
-        self.layoutTextImageViews()
+        self.layoutTextImage()
     }
     
     open override var intrinsicContentSize: CGSize {
@@ -102,5 +101,31 @@ import XZGeometry
 }
 
 
+extension XZTextImageView {
+    
+    @MainActor public protocol StatedAppearance: XZTextImageView.Appearance {
+        
+        func text(for state: UIControl.State) -> String?
+        func setText(_ text: String?, for state: UIControl.State)
+        
+        func attributedText(for state: UIControl.State) -> NSAttributedString?
+        func setAttributedText(_ attributedText: NSAttributedString?, for state: UIControl.State)
+        
+        func font(for state: UIControl.State) -> UIFont?
+        func setFont(_ font: UIFont?, for state: UIControl.State)
 
+        func textColor(for state: UIControl.State) -> UIColor?
+        func setTextColor(_ textColor: UIColor?, for state: UIControl.State)
 
+        func textShadowColor(for state: UIControl.State) -> UIColor?
+        func setTextShadowColor(_ textShadowColor: UIColor?, for state: UIControl.State)
+
+        func image(for state: UIControl.State) -> UIImage?
+        func setImage(_ image: UIImage?, for state: UIControl.State)
+
+        func backgroundImage(for state: UIControl.State) -> UIImage?
+        func setBackgroundImage(_ backgroundImage: UIImage?, for state: UIControl.State)
+
+    }
+    
+}

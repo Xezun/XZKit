@@ -5,12 +5,12 @@
 //  Created by Xezun on 2023/8/20.
 //
 
-#import <XZMocoa/XZMocoa.h>
+@import XZMocoaObjC;
 #import "Example0330Group106CellModel.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
-@interface Example0330Group106SectionModel : XZMocoaTableViewSectionModel
+@interface Example0330Group106SectionModel : NSObject <XZMocoaTableViewSectionModel>
 @property (nonatomic, strong) Example0330Group106CellModel *model;
 @end
 

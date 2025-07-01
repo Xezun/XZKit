@@ -8,7 +8,7 @@
 
 Pod::Spec.new do |s|
   s.name             = 'XZPageView'
-  s.version          = '10.5.0'
+  s.version          = '10.8.0'
   s.summary          = 'XZPageView 是一款高效的分页视图管理组件'
 
   s.description      = <<-DESC
@@ -21,24 +21,26 @@ Pod::Spec.new do |s|
   s.author           = { 'Xezun' => 'xezun@icloud.com' }
   s.source           = { :git => 'https://github.com/Xezun/XZKit.git', :tag => s.version.to_s }
   # s.social_media_url = 'https://twitter.com/<TWITTER_USERNAME>'
-  s.readme           = 'https://github.com/Xezun/XZKit/blob/main/Docs/#{s.name}/README.md'
+  s.readme           = "https://github.com/Xezun/XZKit/blob/main/Docs/#{s.name}/README.md"
 
-  s.swift_version = '6.0'
-  s.ios.deployment_target = '12.0'
-  s.pod_target_xcconfig = { 'GCC_PREPROCESSOR_DEFINITIONS' => 'XZ_FRAMEWORK=1' }
+  s.swift_version = '5.0'
+  s.ios.deployment_target = '13.0'
   
   s.default_subspec = 'Code'
-  s.dependency 'XZDefines/XZMacro'
-  s.dependency 'XZDefines/XZRuntime'
   
   s.subspec 'Code' do |ss|
+    ss.pod_target_xcconfig = { 'GCC_PREPROCESSOR_DEFINITIONS' => 'XZ_FRAMEWORK=1' }
+    ss.dependency 'XZDefines'
+    ss.dependency 'XZExtensions'
+    ss.dependency 'XZGeometry'
+
     ss.source_files = 'XZKit/Code/ObjC/XZPageView/**/*.{h,m}'
     ss.project_header_files = 'XZKit/Code/ObjC/XZPageView/**/Private/*.h'
   end
   
   s.subspec 'DEBUG' do |ss|
-    ss.dependency 'XZPageView/Code'
     ss.pod_target_xcconfig = { 'GCC_PREPROCESSOR_DEFINITIONS' => 'XZ_DEBUG=1' }
+    ss.dependency "#{s.name}/Code"
   end
   
 end

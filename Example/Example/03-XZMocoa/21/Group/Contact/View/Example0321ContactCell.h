@@ -6,12 +6,12 @@
 //  Copyright © 2021 Xezun. All rights reserved.
 //
 
-#import <XZMocoa/XZMocoa.h>
+@import XZMocoaObjC;
 #import "Example0321ContactCellViewModel.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
-@interface Example0321ContactCell : XZMocoaTableViewCell
+@interface Example0321ContactCell : UITableViewCell <XZMocoaTableViewCell>
 
 @property (nonatomic, strong, nullable) Example0321ContactCellViewModel *viewModel;
 

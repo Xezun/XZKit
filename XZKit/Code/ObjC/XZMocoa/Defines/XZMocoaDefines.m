@@ -20,4 +20,5 @@ XZMocoaKind const XZMocoaKindFooter  = @"footer";
 XZMocoaKind const XZMocoaKindSection = @"";
 XZMocoaKind const XZMocoaKindCell    = @"";
 
+XZMocoaName const XZMocoaNameList        = @"list";
 XZMocoaName const XZMocoaNamePlaceholder = @"XZMocoaNamePlaceholder";

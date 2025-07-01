@@ -45,6 +45,15 @@ typedef NS_ENUM(NSUInteger, XZHexEncoding) {
 /// @param object 可转换为 JSON 的对象
 + (nullable instancetype)xz_dataWithJSONObject:(nullable id)object NS_SWIFT_NAME(init(JSONObject:));
 
++ (instancetype)xz_dataWithInteger:(NSInteger)integerValue NS_SWIFT_NAME(init(integerValue:));
+@property (nonatomic, readonly) NSInteger xz_integerValue NS_SWIFT_NAME(integerValue);
+
++ (instancetype)xz_dataWithDouble:(double)doubleValue NS_SWIFT_NAME(init(doubleValue:));
+@property (nonatomic, readonly) double xz_doubleValue NS_SWIFT_NAME(doubleValue);
+
++ (instancetype)xz_dataWithTimeInterval:(NSTimeInterval)timeIntervalValue NS_SWIFT_NAME(init(timeIntervalValue:));
+@property (nonatomic, readonly) NSTimeInterval xz_timeIntervalValue NS_SWIFT_NAME(timeIntervalValue);
+
 @end
 
 /// 返回二进制字节数据对应的十六进制编码。

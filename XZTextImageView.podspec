@@ -8,11 +8,11 @@
 
 Pod::Spec.new do |s|
   s.name             = 'XZTextImageView'
-  s.version          = '10.5.0'
-  s.summary          = '有图片和文字组成的视图控件'
+  s.version          = '10.8.0'
+  s.summary          = '由图片和文字组成的视图控件'
 
   s.description      = <<-DESC
-  用来方便处理开发中常见的图片文字组合视图，提高开发效率。
+  为开发中常见的“文字与图片”组合的视图，提供快速便利的布局方式，提高开发效率。
   DESC
 
   s.homepage         = 'https://github.com/Xezun/XZKit'
@@ -21,15 +21,23 @@ Pod::Spec.new do |s|
   s.author           = { 'Xezun' => 'xezun@icloud.com' }
   s.source           = { :git => 'https://github.com/Xezun/XZKit.git', :tag => s.version.to_s }
   # s.social_media_url = 'https://twitter.com/<TWITTER_USERNAME>'
-  s.readme           = 'https://github.com/Xezun/XZKit/blob/main/Docs/#{s.name}/README.md'
+  s.readme           = "https://github.com/Xezun/XZKit/blob/main/Docs/#{s.name}/README.md"
 
-  s.swift_version = '6.0'
-  s.ios.deployment_target = '12.0'
-  s.pod_target_xcconfig = { 'GCC_PREPROCESSOR_DEFINITIONS' => 'XZ_FRAMEWORK=1' }
+  s.swift_version = '5.0'
+  s.ios.deployment_target = '13.0'
+  
+  s.default_subspec = 'Code'
   
   s.subspec 'Code' do |ss|
-    ss.source_files = 'XZKit/Code/Swift/XZTextImageView/**/*.{h,m,swift}'
+    ss.pod_target_xcconfig = { 'GCC_PREPROCESSOR_DEFINITIONS' => 'XZ_FRAMEWORK=1' }
     ss.dependency 'XZGeometry'
+
+    ss.source_files = 'XZKit/Code/Swift/XZTextImageView/**/*.{h,m,swift}'
+  end
+  
+  s.subspec 'DEBUG' do |ss|
+    ss.pod_target_xcconfig = { 'GCC_PREPROCESSOR_DEFINITIONS' => 'XZ_DEBUG=1' }
+    ss.dependency "#{s.name}/Code"
   end
   
 end

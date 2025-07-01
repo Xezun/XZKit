@@ -27,7 +27,9 @@
     self.tableView.estimatedSectionHeaderHeight = 0;
     self.tableView.estimatedRowHeight = 44.0;
     self.tableView.estimatedSectionFooterHeight = 10.0;
-    self.tableView.sectionHeaderTopPadding = 0;
+    if (@available(iOS 15.0, *)) {
+        self.tableView.sectionHeaderTopPadding = 0;
+    }
     self.tableView.tableHeaderView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, 100, 0.00001)];
     self.tableView.tableFooterView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, 100, 0.00001)];
     

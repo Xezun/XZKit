@@ -6,15 +6,19 @@
 //
 
 #import <UIKit/UIKit.h>
-#if __has_include(<XZDefines/XZMacro.h>)
-#import <XZDefines/XZMacro.h>
+#if __has_include(<XZDefines/XZMacros.h>)
+#import <XZDefines/XZMacros.h>
 #else
-#import "XZMacro.h"
+#import "XZMacros.h"
 #endif
 
 NS_ASSUME_NONNULL_BEGIN
 
 @interface UIImage (XZKit)
+
+/// 返回图片在指定倍率下的大小。
+/// - Parameter scale: 倍率
+- (CGSize)xz_sizeInScale:(CGFloat)targetScale NS_SWIFT_NAME(size(in:));
 
 /// 绘制指定颜色、指定大小的图片。
 /// - Parameters:
@@ -37,6 +41,9 @@ NS_ASSUME_NONNULL_BEGIN
 ///   - imageGraphics: 绘制图片
 ///   - size: 图片大小
 + (nullable UIImage *)xz_imageWithGraphics:(void (^NS_NOESCAPE)(CGContextRef context))imageGraphics size:(CGSize)size NS_SWIFT_NAME(init(_:size:));
+
++ (nullable UIImage *)xz_animatedImageWithGIFImageData:(nullable NSData *)GIFImageData repeatCount:(NSInteger * _Nullable)repeatCount;
++ (nullable UIImage *)xz_animatedImageWithGIFImagePath:(nullable NSString *)GIFImagePath repeatCount:(NSInteger * _Nullable)repeatCount;
 
 @end
 

@@ -39,7 +39,7 @@ NS_ASSUME_NONNULL_BEGIN
 /// - NSDate 类型，默认转换为 JSONNumber 时间戳，转特定格式，需要自定义。
 /// - 支持的结构体仅包括原生提供了 `NSStringFrom~` 和 `~FromString` 函数的结构体。
 ///
-/// 特色情况。
+/// 特殊情况。
 /// - 数据不是数组，但是属性是数组类型，自动包装为 `@[data]` 形式的数组。
 /// - 数据是数组，但属性是字典，自动包装为 `@{ @"index": item }` 形式的字典。
 /// - 数据不是字典，但是属性是自定义模型，自动包装为 `@{ @"rawValue": data }` 形式的字典。
@@ -52,7 +52,7 @@ NS_ASSUME_NONNULL_BEGIN
 ///
 /// 另外，非默认的日期格式的模型，可以通过`XZJSONCoding`协议自定日期转换过程。
 ///
-/// > 数值数据，默认当作时间戳（秒）转换为日期，即 JSON 数据为 number 且目标属性为 NSDate 类型。
+/// > 数值数据，默认当作时间戳（秒）转换为日期，即 JSON 数据为 number 且模型属性为 NSDate 类型。
 @property (class, nonatomic, readonly) NSDateFormatter *dateFormatter;
 @end
 
@@ -185,23 +185,23 @@ NS_ASSUME_NONNULL_BEGIN
 
 @end
 
-typedef NS_ENUM(NSUInteger, XZJSONEquation) {
-    /// 不相等
-    XZJSONEquationNo NS_SWIFT_NAME(False) = -1,
-    /// 未知，未比较
-    XZJSONEquationUnknown NS_SWIFT_NAME(Unknown) = 0,
-    /// 相等
-    XZJSONEquationYes NS_SWIFT_NAME(True) = 1,
-};
-
 @interface XZJSON (NSEquatable)
 
 /// 模型比较。如果模型的属性相同，则认为模型相等，即使模型的类型不同。
+///
+/// 块函数返回值各枚举值含义：
+/// - NSOrderedSame 相等
+/// - NSOrderedAscending 不相等
+/// - NSOrderedDescending 未比较
+///
 /// - Parameters:
 ///   - model1: 待比较的模型
 ///   - model2: 被比较的模型
 ///   - block: 如果属性值无法比较，将调用此块函数，如不提供，则认为属性不相等。
-+ (BOOL)model:(id)model1 isEqualToModel:(id)model2 comparator:(XZJSONEquation (^_Nullable)(id model1, id model2, NSString *key))block;
++ (BOOL)model:(id)model1 isEqualToModel:(id)model2 comparator:(NSComparisonResult (^_Nullable)(id model1, id model2, NSString *key))block;
+
++ (NSArray<NSString *> *)model:(id)model compareToModel:(id)newModel;
+
 
 @end
 

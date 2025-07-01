@@ -6,10 +6,10 @@
 //
 
 #import <UIKit/UIKit.h>
-#if __has_include(<XZDefines/XZMacro.h>)
-#import <XZDefines/XZMacro.h>
+#if __has_include(<XZDefines/XZMacros.h>)
+#import <XZDefines/XZMacros.h>
 #else
-#import "XZMacro.h"
+#import "XZMacros.h"
 #endif
 
 NS_ASSUME_NONNULL_BEGIN

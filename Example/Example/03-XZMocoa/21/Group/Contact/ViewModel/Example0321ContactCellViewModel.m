@@ -48,9 +48,9 @@
     [self sendActionsForKey:updates.key value:nil];
 }
 
-- (void)tableView:(XZMocoaTableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
+- (void)tableView:(id<XZMocoaTableView>)tableView didSelectCell:(UITableViewCell *)cell atIndexPath:(NSIndexPath *)indexPath {
     NSURL *moduleURL = [NSURL URLWithString:@"https://mocoa.xezun.com/examples/21/editor"];
-    UIViewController<XZMocoaView> *nextVC = [tableView.navigationController presentMocoaURL:moduleURL options:@{
+    UIViewController<XZMocoaView> *nextVC = [self.navigationController presentMocoaURL:moduleURL options:@{
         @"model": self.model
     } animated:YES];
     [self addSubViewModel:nextVC.viewModel]; // 添加为子模块，使用 emit 机制监听 name/phone 的变化

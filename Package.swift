@@ -2,6 +2,9 @@
 // The swift-tools-version declares the minimum version of Swift required to build this package.
 
 import PackageDescription
+import CompilerPluginSupport
+
+// 模块
 
 private enum ModuleType {
     case ObjC;
@@ -10,12 +13,10 @@ private enum ModuleType {
 }
 
 private var _modules: [(type: ModuleType, name: String, dependencies: [PackageDescription.Target.Dependency])] = [
-    (.ObjC, "XZDefines", []),
-    (.ObjC, "XZExtensions", ["XZDefines"]),
     (.ObjC, "XZML", ["XZDefines", "XZExtensions"]),
     (.ObjC, "XZJSON", ["XZObjcDescriptor", "XZExtensions"]),
     (.ObjC, "XZRefresh", ["XZDefines"]),
-    (.ObjC, "XZPageView", ["XZDefines"]),
+    (.ObjC, "XZPageView", ["XZDefines", "XZGeometry", "XZExtensions"]),
     (.ObjC, "XZPageControl", ["XZExtensions"]),
     (.ObjC, "XZSegmentedControl", ["XZDefines"]),
     (.ObjC, "XZURLQuery", []),
@@ -23,14 +24,19 @@ private var _modules: [(type: ModuleType, name: String, dependencies: [PackageDe
     (.ObjC, "XZDataCryptor", ["XZDefines"]),
     (.ObjC, "XZDataDigester", ["XZDefines", "XZExtensions"]),
     (.ObjC, "XZKeychain", []),
-    (.Swift, "XZGeometry", []),
+    (.ObjC, "XZImage", ["XZGeometry"]),
+    (.ObjC, "XZObjcDescriptor", ["XZDefines"]),
     (.Swift, "XZTextImageView", ["XZGeometry"]),
     (.Swift, "XZContentStatus", ["XZTextImageView"]),
     (.Swift, "XZCollectionViewFlowLayout", []),
+    (.Swift, "XZProgressView", []),
+    (.Swift, "XZTicker", []),
     (.Swift, "XZNavigationController", ["XZDefines"]),
-    (.Mixed, "XZToast", []),
-    (.Mixed, "XZMocoa", ["XZDefines", "XZExtensions"]),
-    (.Mixed, "XZObjcDescriptor", ["XZDefines"]),
+    (.Mixed, "XZDefines", ["XZDefinesMacros"]),
+    (.Mixed, "XZExtensions", ["XZDefines"]),
+    (.Mixed, "XZGeometry", []),
+    (.Mixed, "XZToast", ["XZGeometry", "XZTextImageView", "XZExtensions"]),
+    (.Mixed, "XZMocoa", ["XZDefines", "XZExtensions", "XZObjcDescriptor", "XZMocoaMacros"]),
 ]
 _modules.append((.Swift, "XZKit", _modules.map({ .byName(name: $0.name) })))
 
@@ -78,4 +84,67 @@ for module in _modules {
     }
 }
 
-let package = Package(name: "XZKit", platforms: [.iOS(.v12)], products: _products, dependencies: [], targets: _targets)
+// 宏
+
+_targets.append(
+    .macro(
+        name: "XZMocoaMacros",
+        dependencies: [
+            .product(name: "SwiftSyntaxMacros", package: "swift-syntax"),
+            .product(name: "SwiftCompilerPlugin", package: "swift-syntax")
+        ],
+        path: "XZKit",
+        sources: ["Code/Macro/XZMocoa"]
+    )
+)
+
+_targets.append(
+    .macro(
+        name: "XZDefinesMacros",
+        dependencies: [
+            .product(name: "SwiftSyntaxMacros", package: "swift-syntax"),
+            .product(name: "SwiftCompilerPlugin", package: "swift-syntax")
+        ],
+        path: "XZKit",
+        sources: ["Code/Macro/XZDefines"]
+    )
+)
+
+// 应用
+
+_targets.append(
+    .executableTarget(
+        name: "Example",
+        dependencies: ["XZKit"],
+        path: "XZKit",
+        sources: ["Code/Swift/Example"]
+    )
+)
+_products.append(
+    .executable(name: "Example", targets: ["Example"])
+)
+
+// 单元测试
+
+_targets.append(
+    .testTarget(
+        name: "XZMocoaMacrosTests",
+        dependencies: [
+            "XZMocoaMacros",
+            .product(name: "SwiftSyntaxMacrosTestSupport", package: "swift-syntax"),
+        ],
+        path: "Tests",
+        sources: ["Macro/XZMocoa"]
+    )
+)
+
+
+let package = Package(
+    name: "XZKit",
+    platforms: [.iOS(.v13), .macOS(.v15)],
+    products: _products,
+    dependencies: [
+        .package(url: "https://github.com/swiftlang/swift-syntax.git", from: "600.0.0-latest"),
+    ],
+    targets: _targets
+)

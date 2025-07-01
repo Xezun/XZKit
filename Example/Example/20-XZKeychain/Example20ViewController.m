@@ -7,10 +7,10 @@
 
 #import "Example20ViewController.h"
 @import XZKeychain;
-@import XZDefines;
+@import XZDefinesObjC;
 @import XZToast;
 
-@interface Example20ViewController ()
+@interface Example20ViewController () <UITextFieldDelegate>
 @property (weak, nonatomic) IBOutlet UITextField *accountTextField;
 @property (weak, nonatomic) IBOutlet UITextField *passwordTextField;
 @property (weak, nonatomic) IBOutlet UILabel *identifierLabel;
@@ -22,7 +22,9 @@
 - (void)viewDidLoad {
     [super viewDidLoad];
     
-    XZLog(@"设备唯一标识符：%@", XZKeychain.UDID);
+    NSString * const UDID = XZKeychain.UDID;
+    XZLog(@"设备唯一标识符：%@", UDID);
+    self.messageLabel.text = [NSString stringWithFormat:@"设备标识符\n%@", UDID];
 }
 
 - (void)viewDidAppear:(BOOL)animated {
@@ -37,80 +39,110 @@
 
 - (IBAction)searchButtonAction:(id)sender {
     self.messageLabel.text = nil;
-    NSString *account = asNonEmpty(self.accountTextField.text, (NSString *)nil);
-    NSString *server  = asNonEmpty(self.identifierLabel.text, (NSString *)nil);
-    XZKeychain<XZKeychainInternetPasswordItem *> *keychain = [XZKeychain keychainWithAccount:account password:nil server:server];
-    [self xz_showToast:XZToast.loading(@"处理中") duration:0 offset:CGPointZero completion:nil];
+    NSString * const domain  = asNonEmpty(self.identifierLabel.text, @"XZKeychain.xezun.com");
+    NSString * const account = asNonEmpty(self.accountTextField.text, (NSString *)nil);
+    XZKeychain<XZKeychainInternetPasswordItem *> *keychain = [XZKeychain keychainWithAccount:account domain:domain];
+    [self xz_showToast:[XZToast sharedToast:(XZToastStyleLoading) text:@"处理中"] duration:0 completion:nil];
     
     NSError *error = nil;
     if ([keychain search:YES error:&error]) {
-        [self xz_showToast:XZToast.message(@"读取成功") duration:3.0 offset:CGPointZero completion:nil];
+        [self xz_showToast:[XZToast sharedToast:(XZToastStyleSuccess) text:@"读取成功"]];
         self.accountTextField.text = keychain.item.account;
         self.passwordTextField.text = keychain.item.password;
     } else {
-        [self xz_showToast:XZToast.message(@"读取失败") duration:3.0 offset:CGPointZero completion:nil];
+        [self xz_showToast:[XZToast sharedToast:(XZToastStyleFailure) text:@"读取失败"]];
         self.messageLabel.text = error.localizedDescription;
     }
 }
 
 - (IBAction)insertButtonAction:(id)sender {
+    NSString * const domain  = asNonEmpty(self.identifierLabel.text, @"XZKeychain.xezun.com");
+    
     self.messageLabel.text = nil;
-    NSString *account = asNonEmpty(self.accountTextField.text, (NSString *)nil);
-    NSString *server  = asNonEmpty(self.identifierLabel.text, (NSString *)nil);
-    if (account == 0 || server == 0) {
-        [self xz_showToast:XZToast.message(@"帐号或密码不能为空") duration:3.0 offset:CGPointZero completion:nil];
+    
+    NSString * const account = asNonEmpty(self.accountTextField.text, (NSString *)nil);
+    if (account == nil) {
+        [self xz_showToast:[XZToast sharedToast:(XZToastStyleWarning) text:@"帐号不能为空"]];
         return;
     }
-    XZKeychain<XZKeychainInternetPasswordItem *> *keychain = [XZKeychain keychainWithAccount:account password:nil server:server];
+    
+    NSString * const password  = asNonEmpty(self.identifierLabel.text, (NSString *)nil);
+    if (password == nil) {
+        [self xz_showToast:[XZToast sharedToast:(XZToastStyleWarning) text:@"密码不能为空"]];
+        return;
+    }
+    
+    XZKeychain<XZKeychainInternetPasswordItem *> *keychain = [XZKeychain keychainWithAccount:account domain:domain];
     keychain.item.password = self.passwordTextField.text;
-    [self xz_showToast:XZToast.loading(@"处理中") duration:0 offset:CGPointZero completion:nil];
+    [self xz_showToast:[XZToast sharedToast:(XZToastStyleLoading) text:@"处理中"] duration:0 completion:nil];
     
     NSError *error = nil;
     if ([keychain insert:&error]) {
-        [self xz_showToast:XZToast.message(@"保存成功") duration:3.0 offset:CGPointZero completion:nil];
+        [self xz_showToast:[XZToast sharedToast:(XZToastStyleSuccess) text:@"添加成功"]];
     } else {
-        [self xz_showToast:XZToast.message(@"保存失败") duration:3.0 offset:CGPointZero completion:nil];
+        [self xz_showToast:[XZToast sharedToast:(XZToastStyleFailure) text:@"添加失败"]];
         self.messageLabel.text = error.localizedDescription;
     }
 }
 
 - (IBAction)deleteButtonAction:(id)sender {
+    NSString * const domain  = asNonEmpty(self.identifierLabel.text, @"XZKeychain.xezun.com");
+    
     self.messageLabel.text = nil;
-    NSString *account = asNonEmpty(self.accountTextField.text, (NSString *)nil);
-    NSString *server  = asNonEmpty(self.identifierLabel.text, (NSString *)nil);
-    XZKeychain<XZKeychainInternetPasswordItem *> *keychain = [XZKeychain keychainWithAccount:account password:nil server:server];
-    [self xz_showToast:XZToast.loading(@"处理中") duration:0 offset:CGPointZero completion:nil];
+    NSString * const account = asNonEmpty(self.accountTextField.text, (NSString *)nil);
+    if (account == nil) {
+        [self xz_showToast:[XZToast sharedToast:(XZToastStyleWarning) text:@"帐号不能为空"]];
+        return;
+    }
+    
+    XZKeychain<XZKeychainInternetPasswordItem *> *keychain = [XZKeychain keychainWithAccount:account domain:domain];
+    [self xz_showToast:[XZToast sharedToast:(XZToastStyleLoading) text:@"处理中"] duration:0 completion:nil];
     
     NSError *error = nil;
     if ([keychain delete:&error]) {
-        [self xz_showToast:XZToast.message(@"删除成功") duration:3.0 offset:CGPointZero completion:nil];
-        
+        [self xz_showToast:[XZToast sharedToast:(XZToastStyleSuccess) text:@"删除成功"]];
     } else {
-        [self xz_showToast:XZToast.message(@"删除失败") duration:3.0 offset:CGPointZero completion:nil];
+        [self xz_showToast:[XZToast sharedToast:(XZToastStyleFailure) text:@"删除失败"]];
         self.messageLabel.text = error.localizedDescription;
     }
 }
 
 - (IBAction)updateButtonAction:(UIButton *)sender {
+    NSString * const domain  = asNonEmpty(self.identifierLabel.text, @"XZKeychain.xezun.com");
+    
     self.messageLabel.text = nil;
-    NSString *account = asNonEmpty(self.accountTextField.text, (NSString *)nil);
-    NSString *server  = asNonEmpty(self.identifierLabel.text, (NSString *)nil);
-    XZKeychain<XZKeychainInternetPasswordItem *> *keychain = [XZKeychain keychainWithAccount:account password:nil server:server];
-    [self xz_showToast:XZToast.loading(@"处理中") duration:0 offset:CGPointZero completion:nil];
+    NSString * const account = asNonEmpty(self.accountTextField.text, (NSString *)nil);
+    if (account == nil) {
+        [self xz_showToast:[XZToast sharedToast:(XZToastStyleWarning) text:@"帐号不能为空"]];
+        return;
+    }
+    
+    NSString * const password  = asNonEmpty(self.identifierLabel.text, (NSString *)nil);
+    if (password == nil) {
+        [self xz_showToast:[XZToast sharedToast:(XZToastStyleWarning) text:@"密码不能为空"]];
+        return;
+    }
+    
+    XZKeychain<XZKeychainInternetPasswordItem *> *keychain = [XZKeychain keychainWithAccount:account domain:domain];
+    [self xz_showToast:[XZToast sharedToast:(XZToastStyleLoading) text:@"处理中"] duration:0 completion:nil];
     
     NSError *error = nil;
     if ([keychain search:NO error:&error]) {
         keychain.item.password = self.passwordTextField.text;
         if ([keychain update:&error]) {
-            [self xz_showToast:XZToast.message(@"修改成功") duration:3.0 offset:CGPointZero completion:nil];
+            [self xz_showToast:[XZToast sharedToast:(XZToastStyleSuccess) text:@"修改成功"]];
         } else {
-            [self xz_showToast:XZToast.message(@"修改失败") duration:3.0 offset:CGPointZero completion:nil];
+            [self xz_showToast:[XZToast sharedToast:(XZToastStyleFailure) text:@"修改失败"]];
             self.messageLabel.text = error.localizedDescription;
         }
     } else {
-        [self xz_showToast:XZToast.message(@"没有找到钥匙串") duration:3.0 offset:CGPointZero completion:nil];
+        [self xz_showToast:[XZToast sharedToast:(XZToastStyleWarning) text:@"没有找到钥匙串"]];
         self.messageLabel.text = error.localizedDescription;
     }
+}
+
+- (BOOL)textFieldShouldReturn:(UITextField *)textField {
+    return [textField resignFirstResponder];
 }
 
 @end

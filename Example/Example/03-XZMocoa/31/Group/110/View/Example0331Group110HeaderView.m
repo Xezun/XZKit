@@ -41,7 +41,9 @@
     return self;
 }
 
-- (void)viewModelDidChange {
+- (void)viewModelDidChange:(nullable XZMocoaViewModel *)newValue {
+    [super viewModelDidChange:newValue];
+    
     self.textLabel.text = @"Header视图";
     self.detailTextLabel.text = self.viewModel.model;
 }

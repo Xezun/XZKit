@@ -22,7 +22,9 @@
     self.viewModel = nil;
 }
 
-- (void)viewModelDidChange {
+- (void)viewModelDidChange:(nullable XZMocoaViewModel *)newValue {
+    [super viewModelDidChange:newValue];
+    
     self.textLabel.text = self.viewModel.model;
 }
 

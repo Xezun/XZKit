@@ -29,12 +29,11 @@
         self.details = model.comments;
     }
 } 
-
-- (void)tableView:(XZMocoaTableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
+- (void)tableView:(id<XZMocoaTableView>)tableView didSelectCell:(UITableViewCell *)cell atIndexPath:(NSIndexPath *)indexPath {
     // 通过 url 参数传值
     Example0320Group100CellModel *model = self.model;
     NSURL *url = [NSURL URLWithString:@"https://mocoa.xezun.com/examples/20/content/"];
-    [tableView.navigationController pushMocoaURL:url options:@{ @"url": model.url }];
+    [self.navigationController pushMocoaURL:url options:@{ @"url": model.url }];
 }
 
 @end

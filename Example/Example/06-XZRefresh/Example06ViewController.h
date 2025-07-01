@@ -7,7 +7,7 @@
 
 #import <UIKit/UIKit.h>
 
-@interface Example06ViewController : UITableViewController
+@interface Example06ViewController : UIViewController
 
 
 @end

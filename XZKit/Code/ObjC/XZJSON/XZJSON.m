@@ -5,12 +5,9 @@
 //  Created by Xezun on 2024/9/28.
 //
 
-#import "XZMacro.h"
 #import "XZJSON.h"
-#import "XZJSONFoundation.h"
-#import "XZJSONClassDescriptor.h"
-#import "XZJSONDecoder.h"
-#import "XZJSONEncoder.h"
+#import "XZJSONPrivate.h"
+#import "XZMacros.h"
 
 @implementation XZJSON
 
@@ -68,7 +65,7 @@
 }
 
 + (void)model:(id)model decodeFromDictionary:(NSDictionary *)dictionary {
-    XZJSONClassDescriptor * const modelClass = [XZJSONClassDescriptor descriptorForClass:[model class]];
+    XZJSONClassDescriptor * const modelClass = [XZJSONClassDescriptor descriptorWithClass:[model class]];
     if (modelClass) {
         XZJSONModelDecodeFromDictionary(model, modelClass, dictionary);
     }
@@ -83,16 +80,16 @@
     if (object == nil) {
         return nil;
     }
-    XZJSONClassDescriptor * const objectClass = [XZJSONClassDescriptor descriptorForClass:object_getClass(object)];
+    XZJSONClassDescriptor * const objectClass = [XZJSONClassDescriptor descriptorWithClass:object_getClass(object)];
     if (objectClass == nil) {
         return nil;
     }
-    id const JSONObject = XZJSONEncodeObjectIntoDictionary(object, objectClass, objectClass->_classType, nil);
+    id const JSONObject = XZJSONEncodeObjectIntoDictionary(object, objectClass, objectClass->_foundationClassType, nil);
     return [NSJSONSerialization dataWithJSONObject:JSONObject options:options error:error];
 }
 
 + (void)model:(id)model encodeIntoDictionary:(NSMutableDictionary *)dictionary {
-    XZJSONClassDescriptor * const modelClass = [XZJSONClassDescriptor descriptorForClass:[model class]];
+    XZJSONClassDescriptor * const modelClass = [XZJSONClassDescriptor descriptorWithClass:[model class]];
     if (modelClass) {
         XZJSONModelEncodeIntoDictionary(model, modelClass, dictionary);
     }
@@ -130,17 +127,17 @@
         return model;
     }
     
-    XZJSONClassDescriptor * const modelClass  = [XZJSONClassDescriptor descriptorForClass:[model class]];
+    XZJSONClassDescriptor * const modelClass  = [XZJSONClassDescriptor descriptorWithClass:[model class]];
     
     // 原生对象不支持复制
-    if (modelClass->_classType) {
+    if (modelClass->_foundationClassType) {
         return [model copy];
     }
     
-    id const newModel = [modelClass->_class.raw new];
+    id const newModel = [modelClass->_raw.raw new];
     
     // 模型复制，只复制同名属性
-    [modelClass->_properties enumerateObjectsUsingBlock:^(XZJSONPropertyDescriptor * const property, NSUInteger idx, BOOL * _Nonnull stop) {
+    [modelClass->_sortedProperties enumerateObjectsUsingBlock:^(XZJSONPropertyDescriptor * const property, NSUInteger idx, BOOL * _Nonnull stop) {
         SEL const getter = property->_getter;
         SEL const setter = property->_setter;
         switch (property->_type) {
@@ -149,29 +146,14 @@
                 ((void (*)(id, SEL, char))objc_msgSend)(newModel, setter, value);
                 return;
             }
-            case XZObjcTypeInt: {
-                int const value = ((int (*)(id, SEL))objc_msgSend)(self, getter);
-                ((void (*)(id, SEL, int))objc_msgSend)(newModel, setter, value);
-                return;
-            }
-            case XZObjcTypeShort: {
-                short const value = ((short (*)(id, SEL))objc_msgSend)(self, getter);
-                ((void (*)(id, SEL, short))objc_msgSend)(newModel, setter, value);
-                return;
-            }
-            case XZObjcTypeLong: {
-                long const value = ((long (*)(id, SEL))objc_msgSend)(self, getter);
-                ((void (*)(id, SEL, long))objc_msgSend)(newModel, setter, value);
-                return;
-            }
-            case XZObjcTypeLongLong: {
-                long long const value = ((long long (*)(id, SEL))objc_msgSend)(self, getter);
-                ((void (*)(id, SEL, long long))objc_msgSend)(newModel, setter, value);
-                return;
-            }
             case XZObjcTypeUnsignedChar: {
                 unsigned char const value = ((unsigned char (*)(id, SEL))objc_msgSend)(self, getter);
                 ((void (*)(id, SEL, unsigned char))objc_msgSend)(newModel, setter, value);
+                return;
+            }
+            case XZObjcTypeInt: {
+                int const value = ((int (*)(id, SEL))objc_msgSend)(self, getter);
+                ((void (*)(id, SEL, int))objc_msgSend)(newModel, setter, value);
                 return;
             }
             case XZObjcTypeUnsignedInt: {
@@ -179,14 +161,29 @@
                 ((void (*)(id, SEL, unsigned int))objc_msgSend)(newModel, setter, value);
                 return;
             }
+            case XZObjcTypeShort: {
+                short const value = ((short (*)(id, SEL))objc_msgSend)(self, getter);
+                ((void (*)(id, SEL, short))objc_msgSend)(newModel, setter, value);
+                return;
+            }
             case XZObjcTypeUnsignedShort: {
                 unsigned short const value = ((unsigned short (*)(id, SEL))objc_msgSend)(self, getter);
                 ((void (*)(id, SEL, unsigned short))objc_msgSend)(newModel, setter, value);
                 return;
             }
+            case XZObjcTypeLong: {
+                long const value = ((long (*)(id, SEL))objc_msgSend)(self, getter);
+                ((void (*)(id, SEL, long))objc_msgSend)(newModel, setter, value);
+                return;
+            }
             case XZObjcTypeUnsignedLong: {
                 unsigned long const value = ((unsigned long (*)(id, SEL))objc_msgSend)(self, getter);
                 ((void (*)(id, SEL, unsigned long))objc_msgSend)(newModel, setter, value);
+                return;
+            }
+            case XZObjcTypeLongLong: {
+                long long const value = ((long long (*)(id, SEL))objc_msgSend)(self, getter);
+                ((void (*)(id, SEL, long long))objc_msgSend)(newModel, setter, value);
                 return;
             }
             case XZObjcTypeUnsignedLongLong: {
@@ -195,17 +192,17 @@
                 return;
             }
             case XZObjcTypeFloat: {
-                float const value = ((float (*)(id, SEL))objc_msgSend)(self, getter);
+                float const value = ((float (*)(id, SEL))xz_objc_msgSend_ftret)(self, getter);
                 ((void (*)(id, SEL, float))objc_msgSend)(newModel, setter, value);
                 return;
             }
             case XZObjcTypeDouble: {
-                double const value = ((double (*)(id, SEL))objc_msgSend)(self, getter);
+                double const value = ((double (*)(id, SEL))xz_objc_msgSend_dbret)(self, getter);
                 ((void (*)(id, SEL, double))objc_msgSend)(newModel, setter, value);
                 return;
             }
             case XZObjcTypeLongDouble: {
-                long double const value = ((long double (*)(id, SEL))objc_msgSend)(self, getter);
+                long double const value = ((long double (*)(id, SEL))xz_objc_msgSend_ldret)(self, getter);
                 ((void (*)(id, SEL, long double))objc_msgSend)(newModel, setter, value);
                 return;
             }
@@ -230,46 +227,46 @@
                 return;
             }
             case XZObjcTypeStruct: {
-                switch (property->_structType) {
-                    case XZJSONStructTypeUnknown: {
+                switch (property->_foundationStructType) {
+                    case XZJSONFoundationStructTypeUnknown: {
                         break;
                     }
-                    case XZJSONStructTypeCGRect: {
-                        CGRect const value = ((CGRect (*)(id, SEL))objc_msgSend)(self, getter);
+                    case XZJSONFoundationStructTypeCGRect: {
+                        CGRect const value = ((CGRect (*)(id, SEL))xz_objc_msgSend_stret)(self, getter);
                         ((void (*)(id, SEL, CGRect))objc_msgSend)(newModel, setter, value);
                         return;
                     }
-                    case XZJSONStructTypeCGSize: {
+                    case XZJSONFoundationStructTypeCGSize: {
                         CGSize const value = ((CGSize (*)(id, SEL))objc_msgSend)(self, getter);
                         ((void (*)(id, SEL, CGSize))objc_msgSend)(newModel, setter, value);
                         return;
                     }
-                    case XZJSONStructTypeCGPoint: {
+                    case XZJSONFoundationStructTypeCGPoint: {
                         CGPoint const value = ((CGPoint (*)(id, SEL))objc_msgSend)(self, getter);
                         ((void (*)(id, SEL, CGPoint))objc_msgSend)(newModel, setter, value);
                         return;
                     }
-                    case XZJSONStructTypeUIEdgeInsets: {
-                        UIEdgeInsets const value = ((UIEdgeInsets (*)(id, SEL))objc_msgSend)(self, getter);
+                    case XZJSONFoundationStructTypeUIEdgeInsets: {
+                        UIEdgeInsets const value = ((UIEdgeInsets (*)(id, SEL))xz_objc_msgSend_stret)(self, getter);
                         ((void (*)(id, SEL, UIEdgeInsets))objc_msgSend)(newModel, setter, value);
                         return;
                     }
-                    case XZJSONStructTypeCGVector: {
+                    case XZJSONFoundationStructTypeCGVector: {
                         CGVector const value = ((CGVector (*)(id, SEL))objc_msgSend)(self, getter);
                         ((void (*)(id, SEL, CGVector))objc_msgSend)(newModel, setter, value);
                         return;
                     }
-                    case XZJSONStructTypeCGAffineTransform: {
-                        CGAffineTransform const value = ((CGAffineTransform (*)(id, SEL))objc_msgSend)(self, getter);
+                    case XZJSONFoundationStructTypeCGAffineTransform: {
+                        CGAffineTransform const value = ((CGAffineTransform (*)(id, SEL))xz_objc_msgSend_stret)(self, getter);
                         ((void (*)(id, SEL, CGAffineTransform))objc_msgSend)(newModel, setter, value);
                         return;
                     }
-                    case XZJSONStructTypeNSDirectionalEdgeInsets: {
-                        NSDirectionalEdgeInsets const value = ((NSDirectionalEdgeInsets (*)(id, SEL))objc_msgSend)(self, getter);
+                    case XZJSONFoundationStructTypeNSDirectionalEdgeInsets: {
+                        NSDirectionalEdgeInsets const value = ((NSDirectionalEdgeInsets (*)(id, SEL))xz_objc_msgSend_stret)(self, getter);
                         ((void (*)(id, SEL, NSDirectionalEdgeInsets))objc_msgSend)(newModel, setter, value);
                         return;
                     }
-                    case XZJSONStructTypeUIOffset: {
+                    case XZJSONFoundationStructTypeUIOffset: {
                         UIOffset const value = ((UIOffset (*)(id, SEL))objc_msgSend)(self, getter);
                         ((void (*)(id, SEL, UIOffset))objc_msgSend)(newModel, setter, value);
                         return;
@@ -286,12 +283,17 @@
             case XZObjcTypeUnknown: {
                 break;
             }
+            case XZObjcTypeInt128:
+            case XZObjcTypeUnsignedInt128:
+            case XZObjcTypeVector:
+                NSLog(@"[XZJSON] 目前平台不支持该数据类型");
+                break;
         }
         // 无法复制的属性
         if (block && block(newModel, property->_name)) {
             return;
         }
-        XZLog(@"[XZJSON] 无法复制 %@ 对象的属性 %@ 的值", modelClass->_class.raw, property->_name);
+        XZLog(@"[XZJSON] 无法复制 %@ 对象的属性 %@ 的值", modelClass->_raw.raw, property->_name);
     }];
     
     return newModel;
@@ -302,7 +304,7 @@
 
 @implementation XZJSON (NSEquatable)
 
-+ (BOOL)model:(id)model1 isEqualToModel:(id)model2 comparator:(XZJSONEquation (^)(id _Nonnull, id _Nonnull, NSString * _Nonnull))block {
++ (BOOL)model:(id)model1 isEqualToModel:(id)model2 comparator:(NSComparisonResult (^)(id _Nonnull, id _Nonnull, NSString * _Nonnull))block {
     // 相等：同一对象
     if (model1 == model2) {
         return YES;
@@ -313,8 +315,8 @@
         return NO;
     }
     
-    XZJSONClassDescriptor * const model1Class = [XZJSONClassDescriptor descriptorForClass:[model1 class]];
-    XZJSONClassDescriptor * const model2Class = [XZJSONClassDescriptor descriptorForClass:[model2 class]];
+    XZJSONClassDescriptor * const model1Class = [XZJSONClassDescriptor descriptorWithClass:[model1 class]];
+    XZJSONClassDescriptor * const model2Class = [XZJSONClassDescriptor descriptorWithClass:[model2 class]];
     
     // 不相等：属性数量不一样
     if (model1Class->_numberOfProperties != model2Class->_numberOfProperties) {
@@ -322,17 +324,17 @@
     }
     
     // 原生类型之间的比较
-    if (model1Class->_classType && model2Class->_classType) {
+    if (model1Class->_foundationClassType && model2Class->_foundationClassType) {
         return [model1 isEqual:model2];
     }
     
     // 一个是模型，一个是原生类型
-    if (model1Class->_classType || model2Class->_classType) {
+    if (model1Class->_foundationClassType || model2Class->_foundationClassType) {
         return NO;
     }
     
     // 都是模型，逐个比较属性。
-    for (XZJSONPropertyDescriptor * const property1 in model1Class->_properties) {
+    for (XZJSONPropertyDescriptor * const property1 in model1Class->_sortedProperties) {
         NSString                 * const name      = property1->_name;
         XZJSONPropertyDescriptor * const property2 = model2Class->_namedProperties[name];
         
@@ -351,112 +353,112 @@
             case XZObjcTypeUnknown:
                 break;
             case XZObjcTypeChar: {
-                char value1 = ((char(*)(id,SEL))objc_msgSend)(model1, property1->_getter);
-                char value2 = ((char(*)(id,SEL))objc_msgSend)(model1, property2->_getter);
+                char const value1 = ((char(*)(id,SEL))objc_msgSend)(model1, property1->_getter);
+                char const value2 = ((char(*)(id,SEL))objc_msgSend)(model1, property2->_getter);
                 if (value1 != value2) {
                     return NO;
                 }
                 continue;
             }
             case XZObjcTypeUnsignedChar: {
-                unsigned char value1 = ((unsigned char(*)(id,SEL))objc_msgSend)(model1, property1->_getter);
-                unsigned char value2 = ((unsigned char(*)(id,SEL))objc_msgSend)(model1, property2->_getter);
+                unsigned char const value1 = ((unsigned char(*)(id,SEL))objc_msgSend)(model1, property1->_getter);
+                unsigned char const value2 = ((unsigned char(*)(id,SEL))objc_msgSend)(model1, property2->_getter);
                 if (value1 != value2) {
                     return NO;
                 }
                 continue;
             }
             case XZObjcTypeInt: {
-                int value1 = ((int(*)(id,SEL))objc_msgSend)(model1, property1->_getter);
-                int value2 = ((int(*)(id,SEL))objc_msgSend)(model1, property2->_getter);
+                int const value1 = ((int(*)(id,SEL))objc_msgSend)(model1, property1->_getter);
+                int const value2 = ((int(*)(id,SEL))objc_msgSend)(model1, property2->_getter);
                 if (value1 != value2) {
                     return NO;
                 }
                 continue;
             }
             case XZObjcTypeUnsignedInt: {
-                unsigned int value1 = ((unsigned int(*)(id,SEL))objc_msgSend)(model1, property1->_getter);
-                unsigned int value2 = ((unsigned int(*)(id,SEL))objc_msgSend)(model1, property2->_getter);
+                unsigned int const value1 = ((unsigned int(*)(id,SEL))objc_msgSend)(model1, property1->_getter);
+                unsigned int const value2 = ((unsigned int(*)(id,SEL))objc_msgSend)(model1, property2->_getter);
                 if (value1 != value2) {
                     return NO;
                 }
                 continue;
             }
             case XZObjcTypeShort: {
-                short value1 = ((short(*)(id,SEL))objc_msgSend)(model1, property1->_getter);
-                short value2 = ((short(*)(id,SEL))objc_msgSend)(model1, property2->_getter);
+                short const value1 = ((short(*)(id,SEL))objc_msgSend)(model1, property1->_getter);
+                short const value2 = ((short(*)(id,SEL))objc_msgSend)(model1, property2->_getter);
                 if (value1 != value2) {
                     return NO;
                 }
                 continue;
             }
             case XZObjcTypeUnsignedShort: {
-                unsigned short value1 = ((unsigned short(*)(id,SEL))objc_msgSend)(model1, property1->_getter);
-                unsigned short value2 = ((unsigned short(*)(id,SEL))objc_msgSend)(model1, property2->_getter);
+                unsigned short const value1 = ((unsigned short(*)(id,SEL))objc_msgSend)(model1, property1->_getter);
+                unsigned short const value2 = ((unsigned short(*)(id,SEL))objc_msgSend)(model1, property2->_getter);
                 if (value1 != value2) {
                     return NO;
                 }
                 continue;
             }
             case XZObjcTypeLong: {
-                long value1 = ((long(*)(id,SEL))objc_msgSend)(model1, property1->_getter);
-                long value2 = ((long(*)(id,SEL))objc_msgSend)(model1, property2->_getter);
+                long const value1 = ((long(*)(id,SEL))objc_msgSend)(model1, property1->_getter);
+                long const value2 = ((long(*)(id,SEL))objc_msgSend)(model1, property2->_getter);
                 if (value1 != value2) {
                     return NO;
                 }
                 continue;
             }
             case XZObjcTypeUnsignedLong: {
-                unsigned long value1 = ((unsigned long(*)(id,SEL))objc_msgSend)(model1, property1->_getter);
-                unsigned long value2 = ((unsigned long(*)(id,SEL))objc_msgSend)(model1, property2->_getter);
+                unsigned long const value1 = ((unsigned long(*)(id,SEL))objc_msgSend)(model1, property1->_getter);
+                unsigned long const value2 = ((unsigned long(*)(id,SEL))objc_msgSend)(model1, property2->_getter);
                 if (value1 != value2) {
                     return NO;
                 }
                 continue;
             }
             case XZObjcTypeLongLong: {
-                long long value1 = ((long long(*)(id,SEL))objc_msgSend)(model1, property1->_getter);
-                long long value2 = ((long long(*)(id,SEL))objc_msgSend)(model1, property2->_getter);
+                long long const value1 = ((long long(*)(id,SEL))objc_msgSend)(model1, property1->_getter);
+                long long const value2 = ((long long(*)(id,SEL))objc_msgSend)(model1, property2->_getter);
                 if (value1 != value2) {
                     return NO;
                 }
                 continue;
             }
             case XZObjcTypeUnsignedLongLong: {
-                unsigned long long value1 = ((unsigned long long(*)(id,SEL))objc_msgSend)(model1, property1->_getter);
-                unsigned long long value2 = ((unsigned long long(*)(id,SEL))objc_msgSend)(model1, property2->_getter);
+                unsigned long long const value1 = ((unsigned long long(*)(id,SEL))objc_msgSend)(model1, property1->_getter);
+                unsigned long long const value2 = ((unsigned long long(*)(id,SEL))objc_msgSend)(model1, property2->_getter);
                 if (value1 != value2) {
                     return NO;
                 }
                 continue;
             }
             case XZObjcTypeFloat: {
-                float value1 = ((float(*)(id,SEL))objc_msgSend)(model1, property1->_getter);
-                float value2 = ((float(*)(id,SEL))objc_msgSend)(model1, property2->_getter);
+                float const value1 = ((float(*)(id,SEL))xz_objc_msgSend_ftret)(model1, property1->_getter);
+                float const value2 = ((float(*)(id,SEL))xz_objc_msgSend_ftret)(model1, property2->_getter);
                 if (value1 != value2) {
                     return NO;
                 }
                 continue;
             }
             case XZObjcTypeDouble: {
-                double value1 = ((double(*)(id,SEL))objc_msgSend)(model1, property1->_getter);
-                double value2 = ((double(*)(id,SEL))objc_msgSend)(model1, property2->_getter);
+                double const value1 = ((double(*)(id,SEL))xz_objc_msgSend_dbret)(model1, property1->_getter);
+                double const value2 = ((double(*)(id,SEL))xz_objc_msgSend_dbret)(model1, property2->_getter);
                 if (value1 != value2) {
                     return NO;
                 }
                 continue;
             }
             case XZObjcTypeLongDouble: {
-                long double value1 = ((long double(*)(id,SEL))objc_msgSend)(model1, property1->_getter);
-                long double value2 = ((long double(*)(id,SEL))objc_msgSend)(model1, property2->_getter);
+                long double const value1 = ((long double(*)(id,SEL))xz_objc_msgSend_ldret)(model1, property1->_getter);
+                long double const value2 = ((long double(*)(id,SEL))xz_objc_msgSend_ldret)(model1, property2->_getter);
                 if (value1 != value2) {
                     return NO;
                 }
                 continue;
             }
             case XZObjcTypeBool: {
-                BOOL value1 = ((BOOL(*)(id,SEL))objc_msgSend)(model1, property1->_getter);
-                BOOL value2 = ((BOOL(*)(id,SEL))objc_msgSend)(model1, property2->_getter);
+                BOOL const value1 = ((BOOL(*)(id,SEL))objc_msgSend)(model1, property1->_getter);
+                BOOL const value2 = ((BOOL(*)(id,SEL))objc_msgSend)(model1, property2->_getter);
                 if (value1 != value2) {
                     return NO;
                 }
@@ -471,72 +473,72 @@
                 break;
             }
             case XZObjcTypeStruct:
-                if (property1->_structType != property2->_structType) {
+                if (property1->_foundationStructType != property2->_foundationStructType) {
                     return NO;
                 }
-                switch (property1->_structType) {
-                    case XZJSONStructTypeUnknown: {
+                switch (property1->_foundationStructType) {
+                    case XZJSONFoundationStructTypeUnknown: {
                         break;
                     }
-                    case XZJSONStructTypeCGRect: {
-                        CGRect value1 = ((CGRect(*)(id,SEL))objc_msgSend)(model1, property1->_getter);
-                        CGRect value2 = ((CGRect(*)(id,SEL))objc_msgSend)(model1, property2->_getter);
+                    case XZJSONFoundationStructTypeCGRect: {
+                        CGRect const value1 = ((CGRect(*)(id,SEL))xz_objc_msgSend_stret)(model1, property1->_getter);
+                        CGRect const value2 = ((CGRect(*)(id,SEL))xz_objc_msgSend_stret)(model1, property2->_getter);
                         if (!CGRectEqualToRect(value1, value2)) {
                             return NO;
                         }
                         continue;
                     }
-                    case XZJSONStructTypeCGSize: {
-                        CGSize value1 = ((CGSize(*)(id,SEL))objc_msgSend)(model1, property1->_getter);
-                        CGSize value2 = ((CGSize(*)(id,SEL))objc_msgSend)(model1, property2->_getter);
+                    case XZJSONFoundationStructTypeCGSize: {
+                        CGSize const value1 = ((CGSize(*)(id,SEL))objc_msgSend)(model1, property1->_getter);
+                        CGSize const value2 = ((CGSize(*)(id,SEL))objc_msgSend)(model1, property2->_getter);
                         if (!CGSizeEqualToSize(value1, value2)) {
                             return NO;
                         }
                         continue;
                     }
-                    case XZJSONStructTypeCGPoint: {
-                        CGPoint value1 = ((CGPoint(*)(id,SEL))objc_msgSend)(model1, property1->_getter);
-                        CGPoint value2 = ((CGPoint(*)(id,SEL))objc_msgSend)(model1, property2->_getter);
+                    case XZJSONFoundationStructTypeCGPoint: {
+                        CGPoint const value1 = ((CGPoint(*)(id,SEL))objc_msgSend)(model1, property1->_getter);
+                        CGPoint const value2 = ((CGPoint(*)(id,SEL))objc_msgSend)(model1, property2->_getter);
                         if (!CGPointEqualToPoint(value1, value2)) {
                             return NO;
                         }
                         continue;
                     }
-                    case XZJSONStructTypeUIEdgeInsets: {
-                        UIEdgeInsets value1 = ((UIEdgeInsets(*)(id,SEL))objc_msgSend)(model1, property1->_getter);
-                        UIEdgeInsets value2 = ((UIEdgeInsets(*)(id,SEL))objc_msgSend)(model1, property2->_getter);
+                    case XZJSONFoundationStructTypeUIEdgeInsets: {
+                        UIEdgeInsets const value1 = ((UIEdgeInsets(*)(id,SEL))xz_objc_msgSend_stret)(model1, property1->_getter);
+                        UIEdgeInsets const value2 = ((UIEdgeInsets(*)(id,SEL))xz_objc_msgSend_stret)(model1, property2->_getter);
                         if (!UIEdgeInsetsEqualToEdgeInsets(value1, value2)) {
                             return NO;
                         }
                         continue;
                     }
-                    case XZJSONStructTypeCGVector: {
-                        CGVector value1 = ((CGVector(*)(id,SEL))objc_msgSend)(model1, property1->_getter);
-                        CGVector value2 = ((CGVector(*)(id,SEL))objc_msgSend)(model1, property2->_getter);
+                    case XZJSONFoundationStructTypeCGVector: {
+                        CGVector const value1 = ((CGVector(*)(id,SEL))objc_msgSend)(model1, property1->_getter);
+                        CGVector const value2 = ((CGVector(*)(id,SEL))objc_msgSend)(model1, property2->_getter);
                         if (value1.dx != value2.dx || value1.dy != value2.dy) {
                             return NO;
                         }
                         continue;
                     }
-                    case XZJSONStructTypeCGAffineTransform: {
-                        CGAffineTransform value1 = ((CGAffineTransform(*)(id,SEL))objc_msgSend)(model1, property1->_getter);
-                        CGAffineTransform value2 = ((CGAffineTransform(*)(id,SEL))objc_msgSend)(model1, property2->_getter);
+                    case XZJSONFoundationStructTypeCGAffineTransform: {
+                        CGAffineTransform const value1 = ((CGAffineTransform(*)(id,SEL))xz_objc_msgSend_stret)(model1, property1->_getter);
+                        CGAffineTransform const value2 = ((CGAffineTransform(*)(id,SEL))xz_objc_msgSend_stret)(model1, property2->_getter);
                         if (!CGAffineTransformEqualToTransform(value1, value2)) {
                             return NO;
                         }
                         continue;
                     }
-                    case XZJSONStructTypeNSDirectionalEdgeInsets: {
-                        NSDirectionalEdgeInsets value1 = ((NSDirectionalEdgeInsets(*)(id,SEL))objc_msgSend)(model1, property1->_getter);
-                        NSDirectionalEdgeInsets value2 = ((NSDirectionalEdgeInsets(*)(id,SEL))objc_msgSend)(model1, property2->_getter);
+                    case XZJSONFoundationStructTypeNSDirectionalEdgeInsets: {
+                        NSDirectionalEdgeInsets const value1 = ((NSDirectionalEdgeInsets(*)(id,SEL))xz_objc_msgSend_stret)(model1, property1->_getter);
+                        NSDirectionalEdgeInsets const value2 = ((NSDirectionalEdgeInsets(*)(id,SEL))xz_objc_msgSend_stret)(model1, property2->_getter);
                         if (!NSDirectionalEdgeInsetsEqualToDirectionalEdgeInsets(value1, value2)) {
                             return NO;
                         }
                         continue;
                     }
-                    case XZJSONStructTypeUIOffset: {
-                        UIOffset value1 = ((UIOffset(*)(id,SEL))objc_msgSend)(model1, property1->_getter);
-                        UIOffset value2 = ((UIOffset(*)(id,SEL))objc_msgSend)(model1, property2->_getter);
+                    case XZJSONFoundationStructTypeUIOffset: {
+                        UIOffset const value1 = ((UIOffset(*)(id,SEL))objc_msgSend)(model1, property1->_getter);
+                        UIOffset const value2 = ((UIOffset(*)(id,SEL))objc_msgSend)(model1, property2->_getter);
                         if (!UIOffsetEqualToOffset(value1, value2)) {
                             return NO;
                         }
@@ -545,24 +547,24 @@
                 }
                 break;
             case XZObjcTypeClass: {
-                Class value1 = ((Class(*)(id,SEL))objc_msgSend)(model1, property1->_getter);
-                Class value2 = ((Class(*)(id,SEL))objc_msgSend)(model1, property2->_getter);
+                Class const value1 = ((Class(*)(id,SEL))objc_msgSend)(model1, property1->_getter);
+                Class const value2 = ((Class(*)(id,SEL))objc_msgSend)(model1, property2->_getter);
                 if (value1 != value2) {
                     return NO;
                 }
                 continue;
             }
             case XZObjcTypeSEL: {
-                SEL value1 = ((SEL(*)(id,SEL))objc_msgSend)(model1, property1->_getter);
-                SEL value2 = ((SEL(*)(id,SEL))objc_msgSend)(model1, property2->_getter);
+                SEL const value1 = ((SEL(*)(id,SEL))objc_msgSend)(model1, property1->_getter);
+                SEL const value2 = ((SEL(*)(id,SEL))objc_msgSend)(model1, property2->_getter);
                 if (value1 != value2) {
                     return NO;
                 }
                 continue;
             }
             case XZObjcTypeObject: {
-                id value1 = ((id(*)(id,SEL))objc_msgSend)(model1, property1->_getter);
-                id value2 = ((id(*)(id,SEL))objc_msgSend)(model1, property2->_getter);
+                id const value1 = ((id(*)(id,SEL))objc_msgSend)(model1, property1->_getter);
+                id const value2 = ((id(*)(id,SEL))objc_msgSend)(model1, property2->_getter);
                 
                 if (value1 == nil) {
                     if (value2 == nil) {
@@ -589,26 +591,49 @@
                 }
                 break;
             }
+            case XZObjcTypeInt128:
+            case XZObjcTypeUnsignedInt128:
+            case XZObjcTypeVector:
+                NSLog(@"[XZJSON] 目前平台不支持该数据类型");
+                break;
         }
         
         // 无法比较的属性值
         if (block) {
             switch (block(model1, model2, name)) {
-                case XZJSONEquationNo:
+                case NSOrderedAscending:
                     return NO;
-                case XZJSONEquationUnknown:
+                case NSOrderedDescending:
                     break;
-                case XZJSONEquationYes:
+                case NSOrderedSame:
                     continue;
             }
         }
         
         // 默认不相等。
-        XZLog(@"[XZJSON] 无法比较数据模型 %@ 与 %@ 的 属性 %@ 的值", model1Class->_class.raw, model2Class->_class.raw, name);
+        XZLog(@"[XZJSON] 无法比较数据模型 %@ 与 %@ 的 属性 %@ 的值", model1Class->_raw.raw, model2Class->_raw.raw, name);
         return NO;
     }
     
     return YES;
+}
+
++ (NSArray<NSString *> *)model:(id)model compareToModel:(id)newModel {
+    if (model == newModel) {
+        return @[];
+    }
+    
+    if (model == nil) {
+        return ([XZJSONClassDescriptor descriptorWithClass:object_getClass(newModel)]->_namedProperties).allKeys;
+    }
+    
+    if (newModel == nil) {
+        return ([XZJSONClassDescriptor descriptorWithClass:object_getClass(model)]->_namedProperties).allKeys;
+    }
+    
+    // TODO: 模型差异比较
+    
+    return @[];
 }
 
 @end

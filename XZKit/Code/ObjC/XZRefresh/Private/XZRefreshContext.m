@@ -10,58 +10,35 @@
 #import "UIScrollView+XZRefresh.h"
 #import "XZRefreshDefines.h"
 
-@interface XZRefreshHeaderContext : XZRefreshContext
-@end
-
-@interface XZRefreshFooterContext : XZRefreshContext
-@end
-
-@interface XZRefreshContext () {
-    @package
-    XZRefreshAdjustment   _adjustment;
-    XZRefreshState        _state;
-    CGFloat               _height;
-    CGFloat               _contentOffsetY;
-    UIScrollView * __weak _scrollView;
-}
-- (instancetype)initWithScrollView:(UIScrollView *)scrollView NS_DESIGNATED_INITIALIZER;
-@end
-
 @implementation XZRefreshContext
 
-+ (XZRefreshContext *)headerContextForScrollView:(UIScrollView *)scrollView {
-    return [[XZRefreshHeaderContext alloc] initWithScrollView:scrollView];
-}
-
-+ (XZRefreshContext *)footerContextForScrollView:(UIScrollView *)scrollView {
-    return [[XZRefreshFooterContext alloc] initWithScrollView:scrollView];
-}
-
-+ (instancetype)contextWithScrollView:(UIScrollView *)scrollView {
-    return [[self alloc] initWithScrollView:scrollView];
-}
-
-- (instancetype)initWithScrollView:(UIScrollView *)scrollView {
+- (instancetype)init {
     self = [super init];
     if (self) {
-        _scrollView = scrollView;
         _state = XZRefreshStatePendinging;
-        _needsAnimatedTransitioning = NO;
+        _needsLayout = NO;
+        _isAutomatic = NO;
+        _automaticRefreshDistance = 0;
+        _frame = CGRectZero;
+        _contentOffsetY = 0;
     }
     return self;
 }
 
-- (UIEdgeInsets)layoutInsets {
-    NSString *reason = @"应该使用 XZRefreshContext 的子类";
-    @throw [NSException exceptionWithName:NSGenericException reason:reason userInfo:nil];
+- (BOOL)needsLayoutForBounds:(CGRect)bounds {
+    return NO;
+}
+
+- (BOOL)needsLayoutForAxises:(UIScrollView *)scrollView {
+    return NO;
 }
 
 @end
 
 @implementation XZRefreshHeaderContext
 
-- (instancetype)initWithScrollView:(UIScrollView *)scrollView {
-    self = [super initWithScrollView:scrollView];
+- (instancetype)init {
+    self = [super init];
     if (self) {
         // 事件 scrollViewDidScroll 的触发可能比视图布局更早，避免事件发生时，此值不对而判断错了状态。
         _contentOffsetY = -CGFLOAT_MAX;
@@ -69,67 +46,117 @@
     return self;
 }
 
-- (UIEdgeInsets)layoutInsets {
+- (BOOL)needsLayoutForBounds:(CGRect)bounds {
+    if (bounds.origin.x != _bounds.origin.x) {
+        return YES;
+    }
+    if (bounds.size.width != _bounds.size.width) {
+        return YES;
+    }
+    return NO;
+}
+
+- (BOOL)needsLayoutForAxises:(UIScrollView *)scrollView {
+    CGRect const bounds = scrollView.bounds;
+    if (bounds.origin.x != _bounds.origin.x) {
+        return YES;
+    }
+    if (bounds.size.width != _bounds.size.width) {
+        return YES;
+    }
+    
+    UIEdgeInsets const adjustedContentInsets = scrollView.adjustedContentInset;
+    if (adjustedContentInsets.top != _adjustedContentInsets.top) {
+        return YES;
+    }
+    
     switch (_adjustment) {
         case XZRefreshAdjustmentAutomatic: {
-            return _scrollView.adjustedContentInset;
+            break;
         }
         case XZRefreshAdjustmentNormal: {
-            return _scrollView.contentInset;
-        }
-        case XZRefreshAdjustmentNone: {
-            switch (_state) {
-                case XZRefreshStateRefreshing:
-                case XZRefreshStateWillRecovering:
-                    return UIEdgeInsetsMake(_height, 0, 0, 0);
-                default:
-                    return UIEdgeInsetsZero;
+            UIEdgeInsets const contentInsets = scrollView.contentInset;
+            if (contentInsets.top != _contentInsets.top) {
+                return YES;
             }
             break;
         }
-        default: {
-            NSString *reason = [NSString stringWithFormat:@"属性 adjustment 的值错误：%ld", (long)_adjustment];
-            @throw [NSException exceptionWithName:NSGenericException reason:reason userInfo:nil];
+        case XZRefreshAdjustmentNone: {
+            break;
         }
     }
+    return NO;
 }
 
 @end
 
 @implementation XZRefreshFooterContext
 
-- (instancetype)initWithScrollView:(UIScrollView *)scrollView {
-    self = [super initWithScrollView:scrollView];
+- (instancetype)init {
+    self = [super init];
     if (self) {
         // 事件 scrollViewDidScroll 的触发可能比视图布局更早，避免事件发生时，此值不对而判断错了状态。
         _contentOffsetY = +CGFLOAT_MAX;
+        _needsFollowPageScrollWhileRefreshing = NO;
     }
     return self;
 }
 
-- (UIEdgeInsets)layoutInsets {
+- (BOOL)needsLayoutForBounds:(CGRect)bounds {
+    if (bounds.origin.x != _bounds.origin.x) {
+        return YES;
+    }
+    if (bounds.size.width != _bounds.size.width) {
+        return YES;
+    }
+    if (bounds.size.height != _bounds.size.height) {
+        return YES;
+    }
+    return NO;
+}
+
+- (BOOL)needsLayoutForContentSize:(CGSize)contentSize {
+    return contentSize.height != _contentSize.height;
+}
+
+- (BOOL)needsLayoutForAxises:(UIScrollView *)scrollView {
+    CGRect const bounds = scrollView.bounds;
+    if (bounds.origin.x != _bounds.origin.x) {
+        return YES;
+    }
+    if (bounds.size.width != _bounds.size.width) {
+        return YES;
+    }
+    if (bounds.size.height != _bounds.size.height) {
+        return YES;
+    }
+    
+    UIEdgeInsets const adjustedContentInsets = scrollView.adjustedContentInset;
+    if (adjustedContentInsets.top != _adjustedContentInsets.top) {
+        return YES;
+    }
+    if (adjustedContentInsets.bottom != _adjustedContentInsets.bottom) {
+        return YES;
+    }
+    
     switch (_adjustment) {
         case XZRefreshAdjustmentAutomatic: {
-            return _scrollView.adjustedContentInset;
+            break;
         }
         case XZRefreshAdjustmentNormal: {
-            return _scrollView.contentInset;
-        }
-        case XZRefreshAdjustmentNone: {
-            switch (_state) {
-                case XZRefreshStateRefreshing:
-                case XZRefreshStateWillRecovering:
-                    return UIEdgeInsetsMake(0, 0, _height, 0);
-                default:
-                    return UIEdgeInsetsZero;
+            UIEdgeInsets const contentInsets = scrollView.contentInset;
+            if (contentInsets.bottom != _contentInsets.bottom) {
+                return YES;
             }
             break;
         }
-        default: {
-            NSString *reason = [NSString stringWithFormat:@"属性 adjustment 的值错误：%ld", (long)_adjustment];
-            @throw [NSException exceptionWithName:NSGenericException reason:reason userInfo:nil];
+        case XZRefreshAdjustmentNone: {
+            break;
         }
     }
+    
+    CGSize const contentSize = scrollView.contentSize;
+    return contentSize.height != _contentSize.height;
 }
 
 @end

@@ -33,7 +33,9 @@
     // Configure the view for the selected state
 }
 
-- (void)viewModelDidChange {
+- (void)viewModelDidChange:(nullable XZMocoaViewModel *)newValue {
+    [super viewModelDidChange:newValue];
+    
     Example0330Group109CellViewModel *viewModel = self.viewModel;
     self.textLabel.text = @"Cell视图";
     self.detailTextLabel.text = viewModel.text;

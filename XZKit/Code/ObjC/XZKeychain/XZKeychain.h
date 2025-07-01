@@ -52,21 +52,21 @@ NS_ASSUME_NONNULL_BEGIN
 /// 保存密码的通用钥匙串创建方法。
 /// - Parameters:
 ///   - account: 用户名
-///   - password: 密码
-///   - server: 密码来源或用途
+///   - domain: 密码来源或用途
 ///   - accessGroup: 共享组
-+ (XZKeychain<XZKeychainInternetPasswordItem *> *)keychainWithAccount:(nullable NSString *)account password:(nullable NSString *)password server:(nullable NSString *)server accessGroup:(nullable NSString *)accessGroup NS_SWIFT_NAME(keychain(account:password:server:accessGroup:));
++ (XZKeychain<XZKeychainInternetPasswordItem *> *)keychainWithAccount:(nullable NSString *)account domain:(nullable NSString *)domain accessGroup:(nullable NSString *)accessGroup NS_SWIFT_NAME(keychain(account:domain:accessGroup:));
+
 /// 保存密码的通用钥匙串创建方法。
 /// - Parameters:
 ///   - account: 用户名
-///   - password: 密码
-///   - server: 密码来源或用途
-+ (XZKeychain<XZKeychainInternetPasswordItem *> *)keychainWithAccount:(nullable NSString *)account password:(nullable NSString *)password server:(nullable NSString *)server NS_SWIFT_NAME(keychain(account:password:server:));
+///   - domain: 密码来源或用途
++ (XZKeychain<XZKeychainInternetPasswordItem *> *)keychainWithAccount:(nullable NSString *)account domain:(nullable NSString *)domain NS_SWIFT_NAME(keychain(account:domain:));
 
 /// 以 kXZGenericPasswordKeychainDeviceIdentifier 作为唯一标识符，以 UUID 作为设备 ID 的钥匙串。
 /// 因为存储在钥匙串里的内容，不会因为删除 App 而清空，故可以用已储存的 UUID 作设备的唯一标识。
-@property (class, nonatomic, readonly, nullable) NSString *UDID;
-+ (nullable NSString *)UDIDForGroup:(nullable NSString *)accessGroup NS_SWIFT_NAME(UDID(for:));
+@property (class, nonatomic, readonly) NSString *UDID;
+
++ (NSString *)UDIDForGroup:(nullable NSString *)accessGroup NS_SWIFT_NAME(UDID(for:));
 
 @end
 

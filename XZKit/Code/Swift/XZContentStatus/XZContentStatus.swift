@@ -26,13 +26,14 @@ extension XZContentStatus {
 
 }
 
-/// XZContentStatus 用于描述对象的内容的状态。
+/// 描述页面（视图或视图控制器）内容的状态的文本类型结构体。
+/// 
 /// - 判断内容状态是否相同唯一依据为 rawValue 属性。
 public struct XZContentStatus: RawRepresentable, CustomStringConvertible, Hashable, Equatable, Sendable {
 
     public typealias RawValue = String
 
-    /// 标识内容状态的原始值。
+    /// 标识内容状态的文本。
     public let rawValue: String
 
     /// 构造一个内容状态结构体。
@@ -96,3 +97,5 @@ extension XZContentStatus: ReferenceConvertible {
     }
     
 }
+
+

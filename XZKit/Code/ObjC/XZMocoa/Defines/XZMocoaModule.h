@@ -8,15 +8,15 @@
 
 #import "XZMocoaDefines.h"
 #import "XZMocoaModuleDomain.h"
-#if __has_include(<XZDefines/XZMacro.h>)
-#import <XZDefines/XZMacro.h>
+#if __has_include(<XZDefines/XZMacros.h>)
+#import <XZDefines/XZMacros.h>
 #else
-#import "XZMacro.h"
+#import "XZMacros.h"
 #endif
 
 NS_ASSUME_NONNULL_BEGIN
 
-@class XZMocoaModule, NSDictionary;
+@class XZMocoaModule, NSDictionary, XZMocoaViewModel;
 
 /// 实现视图的形式。
 typedef NS_ENUM(NSUInteger, XZMocoaModuleViewForm) {
@@ -87,7 +87,11 @@ NS_SWIFT_NAME(XZMocoaModule.SubmoduleCollection)
 /// @discussion
 /// 推荐使用 XZMocoa(stringOrURL) 函数，获取模块对象。
 /// - Parameter urlString: 模块地址
-+ (nullable XZMocoaModule *)moduleForURLString:(nullable NSString *)urlString NS_SWIFT_NAME(init(forURL:));
++ (nullable XZMocoaModule *)moduleForURLString:(nullable NSString *)urlString NS_SWIFT_NAME(init(for:));
+
+#pragma mark - 构造实例
+
+- (nullable __kindof XZMocoaViewModel *)instantiateViewModelWithModel:(nullable id)model;
 
 #pragma mark - MVVM 基本结构
 
@@ -188,6 +192,9 @@ NS_SWIFT_NAME(XZMocoaModule.SubmoduleCollection)
 @end
 
 @interface XZMocoaModule (XZMocoaExtendedModule)
+
+/// 列表
+@property (nonatomic, strong, null_resettable) XZMocoaModule *list;
 
 #pragma mark - 为 tableView、collectionView 提供的便利方法
 
@@ -331,7 +338,7 @@ NS_SWIFT_NAME(XZMocoaModule.SubmoduleCollection)
 /// - mocoa://xzkit.xezun.com/example
 ///
 /// @param moduleURLString 模块地址
-FOUNDATION_STATIC_INLINE XZMocoaModule * _Nullable XZMocoa(NSString *moduleURLString) XZ_ATTR_OVERLOAD NS_SWIFT_NAME(mocoa(_:)) {
+FOUNDATION_STATIC_INLINE XZMocoaModule * _Nullable XZMocoa(NSString *moduleURLString) XZ_ATTR_OVERLOAD NS_REFINED_FOR_SWIFT {
     return [XZMocoaModule moduleForURLString:moduleURLString];
 }
 
@@ -342,7 +349,7 @@ FOUNDATION_STATIC_INLINE XZMocoaModule * _Nullable XZMocoa(NSString *moduleURLSt
 /// - mocoa://xzkit.xezun.com/example
 ///
 /// @param moduleURL 模块地址
-FOUNDATION_STATIC_INLINE XZMocoaModule * _Nullable XZMocoa(NSURL *moduleURL) XZ_ATTR_OVERLOAD NS_SWIFT_NAME(mocoa(_:)) {
+FOUNDATION_STATIC_INLINE XZMocoaModule * _Nullable XZMocoa(NSURL *moduleURL) XZ_ATTR_OVERLOAD NS_REFINED_FOR_SWIFT {
     return [XZMocoaModule moduleForURL:moduleURL];
 }
 

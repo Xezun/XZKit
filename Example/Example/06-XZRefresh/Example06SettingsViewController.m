@@ -7,8 +7,12 @@
 
 #import "Example06SettingsViewController.h"
 #import "Example06RefreshSettingsViewController.h"
+@import XZRefresh;
 
 @interface Example06SettingsViewController ()
+
+@property (nonatomic, weak) IBOutlet UISwitch *headerInsetSwitch;
+@property (nonatomic, weak) IBOutlet UISwitch *footerInsetSwitch;
 
 @end
 
@@ -17,11 +21,9 @@
 - (void)viewDidLoad {
     [super viewDidLoad];
     
-    // Uncomment the following line to preserve selection between presentations.
-    // self.clearsSelectionOnViewWillAppear = NO;
-    
-    // Uncomment the following line to display an Edit button in the navigation bar for this view controller.
-    // self.navigationItem.rightBarButtonItem = self.editButtonItem;
+    UIEdgeInsets insets = self.scrollView.contentInset;
+    self.headerInsetSwitch.on = insets.top > 0;
+    self.footerInsetSwitch.on = insets.bottom > 0;
 }
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
@@ -40,11 +42,23 @@
     Example06RefreshSettingsViewController *vc = segue.destinationViewController;
     if ([identifier isEqualToString:@"Header"]) {
         vc.title = @"下拉刷新";
-        vc.refreshView = self.headerRefreshView;
+        vc.refreshView = self.scrollView.xz_headerRefreshView;
     } else if ([identifier isEqualToString:@"Footer"]) {
         vc.title = @"上拉加载";
-        vc.refreshView = self.footerRefreshView;
+        vc.refreshView = self.scrollView.xz_footerRefreshView;
     }
+}
+
+- (IBAction)headerInsetSwitchChanged:(UISwitch *)sender {
+    UIEdgeInsets insets = self.scrollView.contentInset;
+    insets.top = sender.isOn ? 30.0 : 0;
+    self.scrollView.contentInset = insets;
+}
+
+- (IBAction)footerInsetSwitchChanged:(UISwitch *)sender {
+    UIEdgeInsets insets = self.scrollView.contentInset;
+    insets.bottom = sender.isOn ? 30.0 : 0;
+    self.scrollView.contentInset = insets;
 }
 
 @end

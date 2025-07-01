@@ -5,11 +5,11 @@
 //  Created by Xezun on 2023/8/9.
 //
 
-#import <XZMocoa/XZMocoa.h>
+@import XZMocoaObjC;
 
 NS_ASSUME_NONNULL_BEGIN
 
-@interface Example0322TextModel : XZMocoaCollectionViewCellModel
+@interface Example0322TextModel : NSObject <XZMocoaCollectionViewCellModel>
 @property (nonatomic, copy) NSString *firstName;
 @property (nonatomic, copy) NSString *lastName;
 

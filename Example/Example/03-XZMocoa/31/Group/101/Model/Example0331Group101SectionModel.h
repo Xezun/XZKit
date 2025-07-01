@@ -6,12 +6,12 @@
 //
 // 模拟 cell 模块 ViewModel 没有注册的情况
 
-#import <XZMocoa/XZMocoa.h>
+@import XZMocoaObjC;
 #import "Example0331Group101CellModel.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
-@interface Example0331Group101SectionModel : XZMocoaCollectionViewSectionModel
+@interface Example0331Group101SectionModel : NSObject <XZMocoaCollectionViewSectionModel>
 @property (nonatomic, strong) Example0331Group101CellModel *model;
 @end
 

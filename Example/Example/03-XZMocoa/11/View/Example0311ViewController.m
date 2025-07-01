@@ -8,7 +8,7 @@
 #import "Example0311ViewController.h"
 #import "Example0311ViewModel.h"
 @import SDWebImage;
-@import XZMocoa;
+@import XZMocoaObjC;
 
 @interface Example0311ViewController () <XZMocoaView>
 
@@ -29,12 +29,9 @@
     XZMocoa(@"https://mocoa.xezun.com/examples/11/").viewNibClass = self;
 }
 
-- (instancetype)initWithMocoaOptions:(XZMocoaOptions *)options nibName:(nullable NSString *)nibName bundle:(nullable NSBundle *)bundle {
-    self = [super initWithMocoaOptions:options nibName:nibName bundle:bundle];
-    if (self) {
-        self.title = @"Example 11";
-        self.hidesBottomBarWhenPushed = YES;
-    }
+- (instancetype)didInitWithMocoaOptions:(XZMocoaOptions *)options {
+    self.title = @"Example 11";
+    self.hidesBottomBarWhenPushed = YES;
     return self;
 }
 
@@ -48,19 +45,19 @@
     // 1、可以避免影响控制器生命周期，或者控制器生命周期影响 ViewModel 的逻辑处理。
     // 2、控制器作为独立入口，方便与外部引用、交互。
     Example0311ViewModel *viewModel = [[Example0311ViewModel alloc] init];
-    [viewModel ready];
-    [viewModel addTarget:self action:@selector(viewModelDidChange) forKey:XZMocoaKeyNone];
     self.viewModel = viewModel;
 }
 
-- (void)viewModelDidChange {
+- (void)viewModelDidChange:(XZMocoaViewModel *)oldValue {
+    [super viewModelDidChange:oldValue];
+    
     Example0311ViewModel *viewModel = self.viewModel;
     self.nameLabel.text = viewModel.name;
     [self.photoImageView sd_setImageWithURL:viewModel.photo];
     self.phoneLabel.text = viewModel.phone;
     self.addressLabel.text = viewModel.address;
     self.titleLabel.text = viewModel.title;
-    self.contentLabel.text = viewModel.content;
+    self.contentLabel.attributedText = viewModel.content;
 }
 
 @end

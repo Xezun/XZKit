@@ -29,7 +29,7 @@ LinkHeaders() {
                 fi
                 if [[ -d "XZKit/Headers/$headerType/$moduleName" ]]; then
                     ln -s "../../../../$path" "XZKit/Headers/$headerType/$moduleName/$name"
-                    echo "🔗 [$headerType] $path"
+                    echo "✅ [$headerType] $path"
                 else
                     echo "🚫 \033[31m目录 $headerType/$moduleName 不存在，且无法创建\033[0m"
                 fi
@@ -67,13 +67,13 @@ echo "☕️ \033[32m清理操作开始\033[0m"
 if [[ -d "XZKit/Headers/Public/${MODULE_NAME}" ]]; then
     for path in "XZKit/Headers/Public/${MODULE_NAME}"/*; do
         rm -rf "$path"
-        echo "⛓️‍💥  $path "
+        echo "❌  $path "
     done
 fi
 if [[ -d "XZKit/Headers/Private/${MODULE_NAME}" ]]; then
     for path in "XZKit/Headers/Private/${MODULE_NAME}"/*; do
         rm -rf "$path"
-        echo "⛓️‍💥  $path "
+        echo "❌  $path "
     done
 fi
 echo "🎉 \033[32m清理操作结束\033[0m"

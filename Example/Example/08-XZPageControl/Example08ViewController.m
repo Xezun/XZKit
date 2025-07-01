@@ -9,7 +9,7 @@
 @import SDWebImage;
 @import XZPageControl;
 @import XZPageView;
-@import XZDefines;
+@import XZDefinesObjC;
 
 @interface Example08ViewController () <XZPageViewDelegate, XZPageViewDataSource>
 
@@ -173,9 +173,8 @@
     return reusingView;
 }
 
-- (nullable UIView *)pageView:(XZPageView *)pageView prepareForReusingView:(UIImageView *)reusingView {
-    reusingView.image = nil;
-    return reusingView;
+- (BOOL)pageView:(XZPageView *)pageView shouldReuseView:(__kindof UIView *)reusingView {
+    return YES;
 }
 
 #pragma mark - XZPageViewDelegate

@@ -9,99 +9,99 @@
 #import "XZObjcTypeDescriptor.h"
 
 /// 原生对象类型枚举。Foundation Class Type
-typedef NS_ENUM (NSUInteger, XZJSONClassType) {
-    XZJSONClassTypeUnknown = 0,
-    XZJSONClassTypeNSString,
-    XZJSONClassTypeNSMutableString,
-    XZJSONClassTypeNSValue,
-    XZJSONClassTypeNSNumber,
-    XZJSONClassTypeNSDecimalNumber,
-    XZJSONClassTypeNSData,
-    XZJSONClassTypeNSMutableData,
-    XZJSONClassTypeNSDate,
-    XZJSONClassTypeNSURL,
-    XZJSONClassTypeNSArray,
-    XZJSONClassTypeNSMutableArray,
-    XZJSONClassTypeNSSet,
-    XZJSONClassTypeNSMutableSet,
-    XZJSONClassTypeNSCountedSet,
-    XZJSONClassTypeNSOrderedSet,
-    XZJSONClassTypeNSMutableOrderedSet,
-    XZJSONClassTypeNSDictionary,
-    XZJSONClassTypeNSMutableDictionary,
+typedef NS_ENUM (NSUInteger, XZJSONFoundationClassType) {
+    XZJSONFoundationClassTypeUnknown = 0,
+    XZJSONFoundationClassTypeNSString,
+    XZJSONFoundationClassTypeNSMutableString,
+    XZJSONFoundationClassTypeNSValue,
+    XZJSONFoundationClassTypeNSNumber,
+    XZJSONFoundationClassTypeNSDecimalNumber,
+    XZJSONFoundationClassTypeNSData,
+    XZJSONFoundationClassTypeNSMutableData,
+    XZJSONFoundationClassTypeNSDate,
+    XZJSONFoundationClassTypeNSURL,
+    XZJSONFoundationClassTypeNSArray,
+    XZJSONFoundationClassTypeNSMutableArray,
+    XZJSONFoundationClassTypeNSSet,
+    XZJSONFoundationClassTypeNSMutableSet,
+    XZJSONFoundationClassTypeNSCountedSet,
+    XZJSONFoundationClassTypeNSOrderedSet,
+    XZJSONFoundationClassTypeNSMutableOrderedSet,
+    XZJSONFoundationClassTypeNSDictionary,
+    XZJSONFoundationClassTypeNSMutableDictionary,
 };
 
 /// Get the Foundation class type from property info.
-FOUNDATION_STATIC_INLINE XZJSONClassType XZJSONClassTypeFromClass(Class aClass) {
-    if (aClass == Nil) return XZJSONClassTypeUnknown;
-    if ([aClass isSubclassOfClass:[NSMutableString class]])        return XZJSONClassTypeNSMutableString;
-    if ([aClass isSubclassOfClass:[NSString class]])               return XZJSONClassTypeNSString;
-    if ([aClass isSubclassOfClass:[NSDecimalNumber class]])        return XZJSONClassTypeNSDecimalNumber;
-    if ([aClass isSubclassOfClass:[NSNumber class]])               return XZJSONClassTypeNSNumber;
-    if ([aClass isSubclassOfClass:[NSValue class]])                return XZJSONClassTypeNSValue;
-    if ([aClass isSubclassOfClass:[NSMutableData class]])          return XZJSONClassTypeNSMutableData;
-    if ([aClass isSubclassOfClass:[NSData class]])                 return XZJSONClassTypeNSData;
-    if ([aClass isSubclassOfClass:[NSDate class]])                 return XZJSONClassTypeNSDate;
-    if ([aClass isSubclassOfClass:[NSURL class]])                  return XZJSONClassTypeNSURL;
-    if ([aClass isSubclassOfClass:[NSMutableArray class]])         return XZJSONClassTypeNSMutableArray;
-    if ([aClass isSubclassOfClass:[NSArray class]])                return XZJSONClassTypeNSArray;
-    if ([aClass isSubclassOfClass:[NSMutableDictionary class]])    return XZJSONClassTypeNSMutableDictionary;
-    if ([aClass isSubclassOfClass:[NSDictionary class]])           return XZJSONClassTypeNSDictionary;
-    if ([aClass isSubclassOfClass:[NSCountedSet class]])           return XZJSONClassTypeNSCountedSet;
-    if ([aClass isSubclassOfClass:[NSMutableSet class]])           return XZJSONClassTypeNSMutableSet;
-    if ([aClass isSubclassOfClass:[NSSet class]])                  return XZJSONClassTypeNSSet;
-    if ([aClass isSubclassOfClass:[NSMutableOrderedSet class]])    return XZJSONClassTypeNSMutableOrderedSet;
-    if ([aClass isSubclassOfClass:[NSOrderedSet class]])           return XZJSONClassTypeNSOrderedSet;
-    return XZJSONClassTypeUnknown;
+FOUNDATION_STATIC_INLINE XZJSONFoundationClassType XZJSONFoundationClassTypeFromClass(Class aClass) {
+    if (aClass == Nil) return XZJSONFoundationClassTypeUnknown;
+    if ([aClass isSubclassOfClass:[NSMutableString class]])        return XZJSONFoundationClassTypeNSMutableString;
+    if ([aClass isSubclassOfClass:[NSString class]])               return XZJSONFoundationClassTypeNSString;
+    if ([aClass isSubclassOfClass:[NSDecimalNumber class]])        return XZJSONFoundationClassTypeNSDecimalNumber;
+    if ([aClass isSubclassOfClass:[NSNumber class]])               return XZJSONFoundationClassTypeNSNumber;
+    if ([aClass isSubclassOfClass:[NSValue class]])                return XZJSONFoundationClassTypeNSValue;
+    if ([aClass isSubclassOfClass:[NSMutableData class]])          return XZJSONFoundationClassTypeNSMutableData;
+    if ([aClass isSubclassOfClass:[NSData class]])                 return XZJSONFoundationClassTypeNSData;
+    if ([aClass isSubclassOfClass:[NSDate class]])                 return XZJSONFoundationClassTypeNSDate;
+    if ([aClass isSubclassOfClass:[NSURL class]])                  return XZJSONFoundationClassTypeNSURL;
+    if ([aClass isSubclassOfClass:[NSMutableArray class]])         return XZJSONFoundationClassTypeNSMutableArray;
+    if ([aClass isSubclassOfClass:[NSArray class]])                return XZJSONFoundationClassTypeNSArray;
+    if ([aClass isSubclassOfClass:[NSMutableDictionary class]])    return XZJSONFoundationClassTypeNSMutableDictionary;
+    if ([aClass isSubclassOfClass:[NSDictionary class]])           return XZJSONFoundationClassTypeNSDictionary;
+    if ([aClass isSubclassOfClass:[NSCountedSet class]])           return XZJSONFoundationClassTypeNSCountedSet;
+    if ([aClass isSubclassOfClass:[NSMutableSet class]])           return XZJSONFoundationClassTypeNSMutableSet;
+    if ([aClass isSubclassOfClass:[NSSet class]])                  return XZJSONFoundationClassTypeNSSet;
+    if ([aClass isSubclassOfClass:[NSMutableOrderedSet class]])    return XZJSONFoundationClassTypeNSMutableOrderedSet;
+    if ([aClass isSubclassOfClass:[NSOrderedSet class]])           return XZJSONFoundationClassTypeNSOrderedSet;
+    return XZJSONFoundationClassTypeUnknown;
 }
 
 
-typedef NS_ENUM(NSUInteger, XZJSONStructType) {
-    XZJSONStructTypeUnknown = 0,
-    XZJSONStructTypeCGRect,
-    XZJSONStructTypeCGSize,
-    XZJSONStructTypeCGPoint,
-    XZJSONStructTypeUIEdgeInsets,
-    XZJSONStructTypeCGVector,
-    XZJSONStructTypeCGAffineTransform,
-    XZJSONStructTypeNSDirectionalEdgeInsets,
-    XZJSONStructTypeUIOffset
+typedef NS_ENUM(NSUInteger, XZJSONFoundationStructType) {
+    XZJSONFoundationStructTypeUnknown = 0,
+    XZJSONFoundationStructTypeCGRect,
+    XZJSONFoundationStructTypeCGSize,
+    XZJSONFoundationStructTypeCGPoint,
+    XZJSONFoundationStructTypeUIEdgeInsets,
+    XZJSONFoundationStructTypeCGVector,
+    XZJSONFoundationStructTypeCGAffineTransform,
+    XZJSONFoundationStructTypeNSDirectionalEdgeInsets,
+    XZJSONFoundationStructTypeUIOffset
 };
 
-FOUNDATION_STATIC_INLINE XZJSONStructType XZJSONStructTypeFromString(NSString *name) {
+FOUNDATION_STATIC_INLINE XZJSONFoundationStructType XZJSONFoundationStructTypeFromString(NSString *name) {
     if ([name isEqualToString:@"CGRect"]) {
-        return XZJSONStructTypeCGRect;
+        return XZJSONFoundationStructTypeCGRect;
     }
     if ([name isEqualToString:@"CGSize"]) {
-        return XZJSONStructTypeCGSize;
+        return XZJSONFoundationStructTypeCGSize;
     }
     if ([name isEqualToString:@"CGPoint"]) {
-        return XZJSONStructTypeCGPoint;
+        return XZJSONFoundationStructTypeCGPoint;
     }
     if ([name isEqualToString:@"UIEdgeInsets"]) {
-        return XZJSONStructTypeUIEdgeInsets;
+        return XZJSONFoundationStructTypeUIEdgeInsets;
     }
     if ([name isEqualToString:@"CGVector"]) {
-        return XZJSONStructTypeCGVector;
+        return XZJSONFoundationStructTypeCGVector;
     }
     if ([name isEqualToString:@"CGAffineTransform"]) {
-        return XZJSONStructTypeCGAffineTransform;
+        return XZJSONFoundationStructTypeCGAffineTransform;
     }
     if ([name isEqualToString:@"NSDirectionalEdgeInsets"]) {
-        return XZJSONStructTypeNSDirectionalEdgeInsets;
+        return XZJSONFoundationStructTypeNSDirectionalEdgeInsets;
     }
     if ([name isEqualToString:@"UIOffset"]) {
-        return XZJSONStructTypeUIOffset;
+        return XZJSONFoundationStructTypeUIOffset;
     }
-    return XZJSONStructTypeUnknown;
+    return XZJSONFoundationStructTypeUnknown;
 }
 
-FOUNDATION_STATIC_INLINE XZJSONStructType XZJSONStructTypeFromType(XZObjcTypeDescriptor *type) {
+FOUNDATION_STATIC_INLINE XZJSONFoundationStructType XZJSONFoundationStructTypeFromType(XZObjcTypeDescriptor *type) {
     switch (type.type) {
         case XZObjcTypeStruct:
-            return XZJSONStructTypeFromString(type.name);
+            return XZJSONFoundationStructTypeFromString(type.name);
         default:
-            return XZJSONStructTypeUnknown;
+            return XZJSONFoundationStructTypeUnknown;
     }
 }
 

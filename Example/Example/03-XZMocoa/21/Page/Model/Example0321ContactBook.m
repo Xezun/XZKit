@@ -29,7 +29,7 @@
     return 1;
 }
 
-- (id<XZMocoaListSectionModel>)modelForSectionAtIndex:(NSInteger)index {
+- (id<XZMocoaGridViewSectionModel>)modelForSectionAtIndex:(NSInteger)index {
     return self;
 }
 

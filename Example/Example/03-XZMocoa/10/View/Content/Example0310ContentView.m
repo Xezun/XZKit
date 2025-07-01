@@ -42,6 +42,7 @@
             [_titleLabel.trailingAnchor constraintEqualToAnchor:self.trailingAnchor constant:-20],
             
             [_contentLabel.topAnchor constraintEqualToAnchor:_titleLabel.bottomAnchor constant:20],
+            
             [_contentLabel.leadingAnchor constraintEqualToAnchor:self.leadingAnchor constant:+20],
             [_contentLabel.trailingAnchor constraintEqualToAnchor:self.trailingAnchor constant:-20],
             [_contentLabel.bottomAnchor constraintEqualToAnchor:self.bottomAnchor constant:-20],

@@ -7,6 +7,7 @@
 
 #import "ExampleAppDelegate.h"
 @import XZLocale;
+@import XZDefines;
 
 @interface ExampleAppDelegate ()
 

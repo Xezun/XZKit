@@ -18,7 +18,7 @@ class Example17NextViewController: UITableViewController {
         super.viewDidLoad()
 
         navigationBar.title        = "中间页"
-        navigationBar.barTintColor = .systemMint
+        navigationBar.barTintColor = .systemOrange
     }
     
     override func viewWillAppear(_ animated: Bool) {

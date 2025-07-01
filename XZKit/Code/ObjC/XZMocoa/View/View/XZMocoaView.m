@@ -10,121 +10,94 @@
 #if __has_include(<XZDefines/XZRuntime.h>)
 #import <XZDefines/XZRuntime.h>
 #import <XZExtensions/NSArray+XZKit.h>
+#import <XZExtensions/UIView+XZKit.h>
 #else
 #import "XZRuntime.h"
 #import "NSArray+XZKit.h"
+#import "UIView+XZKit.h"
 #endif
-
-@implementation XZMocoaView
-@dynamic viewModel;
-@end
 
 static const void * const _viewModel = &_viewModel;
 
-static void xz_mocoa_copyMethod(Class const cls, SEL const target, SEL const source) {
-    if (xz_objc_class_copyMethod(cls, source, nil, target)) return;
-    XZLog(@"为协议 XZMocoaView 的方法 %@ 提供默认实现失败", NSStringFromSelector(target));
-}
+XZMocoaOptionKey const XZMocoaOptionKeyModel = @"model";
+XZMocoaOptionKey const XZMocoaOptionKeyName = @"name";
 
 @interface XZMocoaOptions ()
-- (instancetype)initWithURL:(nonnull NSURL *)url options:(nullable NSDictionary *)options;
+- (instancetype)initWithModule:(XZMocoaModule *)module url:(NSURL *)url options:(NSDictionary *)options;
 @end
 
 
 #pragma mark - XZMocoaView 协议默认实现
 
-@interface UIResponder (XZMocoaView)
-@end
-
 @implementation UIResponder (XZMocoaView)
 
-+ (void)load {
-    if (self == [UIResponder class]) {
-        xz_mocoa_copyMethod(self, @selector(viewModel), @selector(xz_mocoa_viewModel));
-        xz_mocoa_copyMethod(self, @selector(setViewModel:), @selector(xz_mocoa_setViewModel:));
-        xz_mocoa_copyMethod(self, @selector(viewModelWillChange), @selector(xz_mocoa_viewModelWillChange));
-        xz_mocoa_copyMethod(self, @selector(viewModelDidChange), @selector(xz_mocoa_viewModelDidChange));
-        
-        xz_mocoa_copyMethod(self, @selector(viewController), @selector(xz_mocoa_viewController));
-        xz_mocoa_copyMethod(self, @selector(navigationController), @selector(xz_mocoa_navigationController));
-        xz_mocoa_copyMethod(self, @selector(tabBarController), @selector(xz_mocoa_tabBarController));
-        
-        xz_mocoa_copyMethod(self, @selector(shouldPerformSegueWithIdentifier:), @selector(xz_mocoa_shouldPerformSegueWithIdentifier:));
-        xz_mocoa_copyMethod(self, @selector(prepareForSegue:), @selector(xz_mocoa_prepareForSegue:));
-    }
-}
-
-- (UIViewController *)xz_mocoa_viewControllerImplementation {
-    UIViewController *viewController = (id)self.nextResponder;
-    while (viewController != nil) {
-        if ([viewController isKindOfClass:UIViewController.class]) {
-            return viewController;
-        }
-        viewController = (id)viewController.nextResponder;
-    }
-    return nil;
-}
-
-- (UIViewController *)xz_mocoa_viewController {
-    return [self xz_mocoa_viewControllerImplementation];
-}
-
-- (UINavigationController *)xz_mocoa_navigationController {
-    return [self xz_mocoa_viewControllerImplementation].navigationController;
-}
-
-- (UITabBarController *)xz_mocoa_tabBarController {
-    return [self xz_mocoa_viewControllerImplementation].tabBarController;
-}
-
-- (XZMocoaViewModel *)xz_mocoa_viewModel {
+- (__kindof XZMocoaViewModel *)viewModel {
     return objc_getAssociatedObject(self, _viewModel);
 }
 
-- (void)xz_mocoa_setViewModel:(XZMocoaViewModel *)viewModel {
-    XZMocoaViewModel *oldValue = objc_getAssociatedObject(self, _viewModel);
-    if (oldValue == nil && viewModel == nil) {
+- (void)setViewModel:(__kindof XZMocoaViewModel * const )newValue {
+    XZMocoaViewModel * const oldValue = objc_getAssociatedObject(self, _viewModel);
+    if (oldValue == nil && newValue == nil) {
         return;
     }
-    if ([oldValue isEqual:viewModel]) {
+    if ([oldValue isEqual:newValue]) {
         return;
     }
-    [(id<XZMocoaView>)self viewModelWillChange];
-    // 在 viewModel 使用前（与 view 关联前），使其进入 isReady 状态
-    [viewModel ready];
-    objc_setAssociatedObject(self, _viewModel, viewModel, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
-    [(id<XZMocoaView>)self viewModelDidChange];
+    [self viewModelWillChange:newValue];
+    objc_setAssociatedObject(self, _viewModel, newValue, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
+    [self viewModelDidChange:oldValue];
 }
 
-- (void)xz_mocoa_viewModelDidChange {
-    
+- (UIViewController *)viewModel:(id<XZMocoaViewModel>)viewModel viewController:(void *)null {
+    return nil;
 }
 
-- (void)xz_mocoa_viewModelWillChange {
-    
+- (void)viewModelWillChange:(XZMocoaViewModel *)newValue {
+    newValue.delegate = self;
 }
 
-- (BOOL)xz_mocoa_shouldPerformSegueWithIdentifier:(NSString *)identifier {
-    XZMocoaViewModel * const viewModel =  objc_getAssociatedObject(self, _viewModel);
-    return [viewModel shouldPerformSegueWithIdentifier:identifier];
+- (void)viewModelDidChange:(XZMocoaViewModel *)oldValue {
+    [oldValue removeTarget:self action:nil forKey:nil];
+    oldValue.delegate = nil;
 }
 
-- (void)xz_mocoa_prepareForSegue:(UIStoryboardSegue *)segue {
-    XZMocoaViewModel * const viewModel =  objc_getAssociatedObject(self, _viewModel);
-    [viewModel prepareForSegue:segue];
+@end
+
+@implementation UIView (XZMocoaView)
+
+- (BOOL)shouldPerformSegueWithIdentifier:(NSString *)identifier sender:(id)sender {
+    if ([self conformsToProtocol:@protocol(XZMocoaView)]) {
+        return [((id<XZMocoaView>)self).viewModel shouldPerformSegueWithIdentifier:identifier sender:sender];
+    }
+    if ([sender conformsToProtocol:@protocol(XZMocoaView)]) {
+        return [((id<XZMocoaView>)sender) shouldPerformSegueWithIdentifier:identifier sender:nil];
+    }
+    return YES;
+}
+
+- (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {
+    if ([self conformsToProtocol:@protocol(XZMocoaView)]) {
+        return [((id<XZMocoaView>)self).viewModel prepareForSegue:segue sender:sender];
+    }
+    if ([sender conformsToProtocol:@protocol(XZMocoaView)]) {
+        return [((id<XZMocoaView>)sender) prepareForSegue:segue sender:nil];
+    }
+}
+
+- (UIViewController *)viewModel:(id<XZMocoaViewModel>)viewModel viewController:(void *)null {
+    return self.xz_viewController;
+}
+
+- (void)viewModelWillChange:(XZMocoaViewModel *)newValue {
+    // VM 与 V 应该是完全独立的，在 VM 与 V 关联之前，使其进入 ready 状态
+    [newValue ready];
+    [super viewModelWillChange:newValue];
 }
 
 @end
 
 
-
-@interface UIViewController (XZMocoaView)
-@end
 @implementation UIViewController (XZMocoaView)
-
-- (UIViewController *)xz_mocoa_viewControllerImplementation {
-    return self;
-}
 
 // MARK: 转发控制器的 IB 事件给视图
 // 如果 sender 为 MVVM 的视图，则将事件转发给视图 sender 处理。
@@ -145,36 +118,74 @@ static void xz_mocoa_copyMethod(Class const cls, SEL const target, SEL const sou
             if (!xz_objc_class_addMethod(self, selT, nil, selN, NULL, selE)) {
                 XZLog(@"为 UIViewController 重载方法 %@ 失败，相关事件请手动处理", NSStringFromSelector(selT));
             }
+        } {
+            SEL const selT = @selector(viewDidLoad);
+            SEL const selN = @selector(xz_mocoa_new_viewDidLoad);
+            SEL const selE = @selector(xz_mocoa_exchange_viewDidLoad);
+            if (!xz_objc_class_addMethod(self, selT, nil, selN, NULL, selE)) {
+                XZLog(@"为 UIViewController 重载方法 %@ 失败，相关事件请手动处理", NSStringFromSelector(selT));
+            }
         }
     }
 }
 
+- (void)viewModelWillChange:(XZMocoaViewModel *)newValue {
+    if (newValue && self.isViewLoaded) {
+        [newValue ready];
+    }
+    [super viewModelWillChange:newValue];
+}
+
+- (UIViewController *)viewModel:(id<XZMocoaViewModel>)viewModel viewController:(void *)null {
+    return self;
+}
+
+- (void)xz_mocoa_new_viewDidLoad {
+    [self.viewModel ready];
+}
+
+- (void)xz_mocoa_exchange_viewDidLoad {
+    [self xz_mocoa_exchange_viewDidLoad];
+    [self.viewModel ready];
+}
+
 - (BOOL)xz_mocoa_new_shouldPerformSegueWithIdentifier:(NSString *)identifier sender:(id)sender {
+    if ([self conformsToProtocol:@protocol(XZMocoaView)]) {
+        return [((id<XZMocoaView>)self).viewModel shouldPerformSegueWithIdentifier:identifier sender:sender];
+    }
     if ([sender conformsToProtocol:@protocol(XZMocoaView)]) {
-        return [sender shouldPerformSegueWithIdentifier:identifier];
+        return [((id<XZMocoaView>)sender) shouldPerformSegueWithIdentifier:identifier sender:nil];
     }
     return YES;
 }
 
 - (BOOL)xz_mocoa_exchange_shouldPerformSegueWithIdentifier:(NSString *)identifier sender:(id)sender {
+    if ([self conformsToProtocol:@protocol(XZMocoaView)]) {
+        return [((id<XZMocoaView>)self).viewModel shouldPerformSegueWithIdentifier:identifier sender:sender];
+    }
     if ([sender conformsToProtocol:@protocol(XZMocoaView)]) {
-        return [sender shouldPerformSegueWithIdentifier:identifier];
+        return [((id<XZMocoaView>)sender) shouldPerformSegueWithIdentifier:identifier sender:nil];
     }
     return [self xz_mocoa_exchange_shouldPerformSegueWithIdentifier:identifier sender:sender];;
 }
 
 - (void)xz_mocoa_new_prepareForSegue:(UIStoryboardSegue *)segue sender:(id<XZMocoaView>)sender {
+    if ([self conformsToProtocol:@protocol(XZMocoaView)]) {
+        return [((id<XZMocoaView>)self).viewModel prepareForSegue:segue sender:sender];
+    }
     if ([sender conformsToProtocol:@protocol(XZMocoaView)]) {
-        [sender prepareForSegue:segue];
+        return [((id<XZMocoaView>)sender) prepareForSegue:segue sender:nil];
     }
 }
 
 - (void)xz_mocoa_exchange_prepareForSegue:(UIStoryboardSegue *)segue sender:(id<XZMocoaView>)sender {
-    if ([sender conformsToProtocol:@protocol(XZMocoaView)]) {
-        [sender prepareForSegue:segue];
-    } else {
-        [self xz_mocoa_exchange_prepareForSegue:segue sender:sender];
+    if ([self conformsToProtocol:@protocol(XZMocoaView)]) {
+        return [((id<XZMocoaView>)self).viewModel prepareForSegue:segue sender:sender];
     }
+    if ([sender conformsToProtocol:@protocol(XZMocoaView)]) {
+        return [((id<XZMocoaView>)sender) prepareForSegue:segue sender:nil];
+    }
+    return [self xz_mocoa_exchange_prepareForSegue:segue sender:sender];
 }
 
 @end
@@ -190,7 +201,7 @@ static void xz_mocoa_copyMethod(Class const cls, SEL const target, SEL const sou
     }
     switch (module.viewForm) {
         case XZMocoaModuleViewFormClass: {
-            XZMocoaOptions * const mocoaOptions = [[XZMocoaOptions alloc] initWithURL:url options:options];
+            XZMocoaOptions * const mocoaOptions = [[XZMocoaOptions alloc] initWithModule:module url:url options:options];
             return [[module.viewClass alloc] initWithMocoaOptions:mocoaOptions frame:frame];
         }
         case XZMocoaModuleViewFormNib: {
@@ -198,7 +209,7 @@ static void xz_mocoa_copyMethod(Class const cls, SEL const target, SEL const sou
             Class const ViewClass = module.viewNibClass ?: self.class;
             for (UIView *object in [nib instantiateWithOwner:nil options:nil]) {
                 if ([object isKindOfClass:ViewClass]) {
-                    XZMocoaOptions * const mocoaOptions = [[XZMocoaOptions alloc] initWithURL:url options:options];
+                    XZMocoaOptions * const mocoaOptions = [[XZMocoaOptions alloc] initWithModule:module url:url options:options];
                     [object awakeFromNibWithMocoaOptions:mocoaOptions frame:frame];
                     return object;
                 }
@@ -247,9 +258,8 @@ static void xz_mocoa_copyMethod(Class const cls, SEL const target, SEL const sou
                 XZLog(@"模块 %@ 不是 UIViewController 模块，无法构造视图控制器", module);
                 return nil;
             }
-            XZMocoaOptions * const mocoaOptions = [[XZMocoaOptions alloc] initWithURL:url options:options];
-            UIViewController * const viewController = [[ViewController alloc] initWithMocoaOptions:mocoaOptions nibName:nil bundle:nil];
-            return viewController;
+            XZMocoaOptions * const mocoaOptions = [[XZMocoaOptions alloc] initWithModule:module url:url options:options];
+            return [[ViewController alloc] initWithMocoaOptions:mocoaOptions nibName:nil bundle:nil];
         }
         case XZMocoaModuleViewFormNib: {
             Class const ViewController = module.viewNibClass;
@@ -259,9 +269,8 @@ static void xz_mocoa_copyMethod(Class const cls, SEL const target, SEL const sou
             }
             NSString *nibName = module.viewNibName;
             NSBundle *bundle  = module.viewNibBundle;
-            XZMocoaOptions * const mocoaOptions = [[XZMocoaOptions alloc] initWithURL:url options:options];
-            UIViewController * const viewController = [[ViewController alloc] initWithMocoaOptions:mocoaOptions nibName:nibName bundle:bundle];
-            return viewController;
+            XZMocoaOptions * const mocoaOptions = [[XZMocoaOptions alloc] initWithModule:module url:url options:options];
+            return [[ViewController alloc] initWithMocoaOptions:mocoaOptions nibName:nibName bundle:bundle];
         }
         case XZMocoaModuleViewFormStoryboard: {
             UIStoryboard *storyboard = [UIStoryboard storyboardWithName:module.viewStoryboardName bundle:module.viewStoryboardBundle];
@@ -271,7 +280,11 @@ static void xz_mocoa_copyMethod(Class const cls, SEL const target, SEL const sou
             } else {
                 vc = [storyboard instantiateInitialViewController];
             }
-            return [vc isKindOfClass:self.class] ? vc : nil;
+            if (![vc isKindOfClass:self]) {
+                return nil;
+            }
+            XZMocoaOptions * const mocoaOptions = [[XZMocoaOptions alloc] initWithModule:module url:url options:options];
+            return [vc didInitWithMocoaOptions:mocoaOptions];
         }
         default:
             XZLog(@"模块 %@ 不是 UIViewController 模块，无法构造视图控制器", module);
@@ -284,7 +297,11 @@ static void xz_mocoa_copyMethod(Class const cls, SEL const target, SEL const sou
 }
 
 - (instancetype)initWithMocoaOptions:(XZMocoaOptions *)options nibName:(NSString *)nibName bundle:(NSBundle *)bundle {
-    return [self initWithNibName:nibName bundle:bundle];
+    return [[self initWithNibName:nibName bundle:bundle] didInitWithMocoaOptions:options];
+}
+
+- (instancetype)didInitWithMocoaOptions:(XZMocoaOptions *)options {
+    return self;
 }
 
 - (__kindof UIViewController *)presentMocoaURL:(NSURL *)url options:(nullable NSDictionary *)options animated:(BOOL)flag completion:(void (^ _Nullable)(void))completion {
@@ -404,10 +421,11 @@ static void xz_mocoa_copyMethod(Class const cls, SEL const target, SEL const sou
     NSURLComponents *_components;
 }
 
-- (instancetype)initWithURL:(NSURL *)url options:(NSDictionary *)options {
+- (instancetype)initWithModule:(XZMocoaModule *)module url:(NSURL *)url options:(NSDictionary *)options {
     self = [super init];
     if (self) {
         _url = url;
+        _module = module;
         _options = options.mutableCopy;
     }
     return self;

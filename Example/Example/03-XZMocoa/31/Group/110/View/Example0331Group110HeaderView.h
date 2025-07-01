@@ -5,11 +5,11 @@
 //  Created by Xezun on 2023/8/21.
 //
 
-#import <XZMocoa/XZMocoa.h>
+@import XZMocoaObjC;
 
 NS_ASSUME_NONNULL_BEGIN
 
-@interface Example0331Group110HeaderView : XZMocoaCollectionViewSupplementaryView
+@interface Example0331Group110HeaderView : UICollectionReusableView <XZMocoaCollectionViewSupplementaryView>
 
 @end
 

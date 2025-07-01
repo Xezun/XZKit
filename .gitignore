@@ -30,6 +30,7 @@ xcuserdata/
 *.ipa
 *.dSYM.zip
 *.dSYM
+*.resolved
 
 # CocoaPods
 #

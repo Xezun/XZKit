@@ -15,6 +15,7 @@ NS_ASSUME_NONNULL_BEGIN
 ///
 /// Property information.
 @interface XZObjcPropertyDescriptor : NSObject <XZObjcDescriptor>
+
 /// 原始值。 property's opaque struct
 @property (nonatomic, assign, readonly) objc_property_t raw;
 /// 属性名。 property's name
@@ -28,8 +29,10 @@ NS_ASSUME_NONNULL_BEGIN
 /// 存值方法。可能为空。
 @property (nonatomic, assign, readonly, nullable) SEL setter;
 
-+ (nullable instancetype)descriptorForProperty:(objc_property_t)property forClass:(Class)aClass;
 - (instancetype)init NS_UNAVAILABLE;
+
++ (nullable instancetype)descriptorWithProperty:(objc_property_t)property ofClass:(Class)aClass NS_SWIFT_NAME(init(_:of:));
+
 @end
 
 NS_ASSUME_NONNULL_END

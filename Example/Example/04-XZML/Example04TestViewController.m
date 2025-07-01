@@ -8,7 +8,7 @@
 #import "Example04TestViewController.h"
 #import "Example04SettingsViewController.h"
 @import XZML;
-@import XZExtensions;
+@import XZExtensionsObjC;
 
 @interface Example04TestViewController () <UITextViewDelegate> {
     NSMutableDictionary<NSAttributedStringKey, id> *_attributes;

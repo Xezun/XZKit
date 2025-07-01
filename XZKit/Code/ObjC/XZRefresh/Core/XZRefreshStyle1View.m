@@ -12,13 +12,13 @@
 
 #define kTrackColor         [UIColor colorWithWhite:0.90 alpha:1.0]
 
-#define kAnimationCircles 6     // 总圈数，整数
-#define kAnimationDistOne 6.0   // 一圈距离
-#define kAnimationDistAll 36.0  // 总距离 = kAnimationCircles * kAnimationDistOne
-#define kAnimationDistMin 5.0   // 最小动画距离
-#define kAnimationDistMax 10.0  // 最大动画距离 = kAnimationDistMin + kAnimationDistOne - 1.0
-#define kAnimationValues1 @[@(0.0/36.0), @(10.0/36.0), @(15.0/36.0), @(25.0/36.0), @(30.0/36.0)]
-#define kAnimationValues2 @[@(5.8/36.0), @(11.0/36.0), @(20.8/36.0), @(26.0/36.0), @(35.8/36.0)]
+#define kAnimationNum 4     // 总圈数，整数
+#define kAnimationOne 4.0   // 一圈距离
+#define kAnimationAll 16.0  // 总距离 = kAnimationNum * kAnimationOne
+#define kAnimationMin 2.0   // 最小动画距离
+#define kAnimationMax 5.0   // 最大动画距离
+#define kAnimationValues1 @[@(1.0/kAnimationAll), @(5.8/kAnimationAll), @(7.0/kAnimationAll), @(11.8/kAnimationAll), @(13.0/kAnimationAll)]
+#define kAnimationValues2 @[@(4.0/kAnimationAll), @(6.0/kAnimationAll), @(10.0/kAnimationAll), @(12.0/kAnimationAll), @(16.0/kAnimationAll)]
 
 @implementation XZRefreshStyle1View {
     UIView *_view;
@@ -51,7 +51,7 @@
     CGFloat const y = CGRectGetMidY(bounds) - 15.0;
     CGRect  const frame = CGRectMake(x, y, 30.0, 30.0);
     
-    _animationDuration = 1.0;
+    _animationDuration = 0.6;
     
     _view = [[UIView alloc] initWithFrame:frame];
     _view.userInteractionEnabled = NO;
@@ -83,12 +83,12 @@
     
     UIBezierPath *path = [UIBezierPath bezierPath];
     [path moveToPoint:CGPointMake(15.0, 5.0)];
-    for (NSInteger i = 0; i < kAnimationCircles; i++) {
+    for (NSInteger i = 0; i < kAnimationNum; i++) {
         [path addArcWithCenter:CGPointMake(15.0, 15.0) radius:10.0 startAngle:-M_PI_2 endAngle:M_PI * 1.5 clockwise:YES];
     }
     _shapeLayer.path = path.CGPath;
     
-    // 初始状态：展示 1 / 4 进度的圆弧，无限小
+    // 初始状态：0 进度的圆弧，无限小
     _shapeLayer.strokeStart = 0;
     _shapeLayer.strokeEnd   = 0;
     _trackLayer.transform = CATransform3DMakeScale(0.0, 0.0, 1.0);
@@ -123,7 +123,7 @@
 - (void)scrollView:(UIScrollView *)scrollView didScrollRefreshing:(CGFloat)distance {
     // NSLog(@"%s", __PRETTY_FUNCTION__);
     
-    CGFloat const RefreshHeight = self.height;
+    CGFloat const RefreshHeight = self.refreshHeight;
     CGFloat const PullHeight    = RefreshHeight * 1.5; // 进入下拉刷新的高度为刷新高度的 1.5 倍
     CGFloat const ViewHeight_2  = self.frame.size.height * 0.5;
     
@@ -140,7 +140,7 @@
         if (transition < 0.5) {
             // 变大进场：圆弧开始增长，并从小变大
             _shapeLayer.strokeStart = 0;
-            _shapeLayer.strokeEnd   = transition * kAnimationDistOne / kAnimationDistAll;
+            _shapeLayer.strokeEnd   = transition * kAnimationOne / kAnimationAll;
             _trackLayer.transform   = CATransform3DMakeScale(transition * 2.0, transition * 2.0, 1.0);
             _shapeLayer.transform   = CATransform3DMakeScale(transition * 2.0, transition * 2.0, 1.0);
         } else if (transition < 1.0) {
@@ -148,13 +148,13 @@
             // 由于线端 cap 的原因，圆弧进度在略小于 1.0 的时候，显示效果就已经为闭合状态，
             // 因此减 0.2 以保证在进度未满时，圆弧必须处于未闭合状态，而用户看到闭合的圆环时，松手一定可以进入刷新状态。
             _shapeLayer.strokeStart = 0;
-            _shapeLayer.strokeEnd   = MIN(transition, 58.0/60.0) * kAnimationDistOne / kAnimationDistAll;
+            _shapeLayer.strokeEnd   = MIN(transition, 58.0/60.0) * kAnimationOne / kAnimationAll;
             _trackLayer.transform   = CATransform3DIdentity;
             _shapeLayer.transform   = CATransform3DIdentity;
         } else {
             // 等待刷新
             _shapeLayer.strokeStart = 0;
-            _shapeLayer.strokeEnd   = kAnimationDistOne / kAnimationDistAll;
+            _shapeLayer.strokeEnd   = kAnimationOne / kAnimationAll;
             _trackLayer.transform   = CATransform3DIdentity;
             _shapeLayer.transform   = CATransform3DIdentity;
         }
@@ -163,7 +163,7 @@
 
 - (BOOL)scrollView:(UIScrollView *)scrollView shouldBeginRefreshing:(CGFloat)distance {
     // NSLog(@"%s", __PRETTY_FUNCTION__);
-    return (distance >= self.height * 1.5);
+    return (distance >= self.refreshHeight * 1.5);
 }
 
 - (void)scrollView:(UIScrollView *)scrollView didBeginRefreshing:(BOOL)animated {
@@ -174,15 +174,15 @@
     // 将动画效果延时到进场动画之后
     CFTimeInterval beginTime = 0;
     
-    // 直接触发刷新时，由于没有进场过程，因此需要添加动画效果模拟进场。
     if (animated) {
+        // 直接触发刷新时，由于没有进场过程，因此需要添加动画效果模拟进场。
         beginTime = [_shapeLayer convertTime:CACurrentMediaTime() toLayer:nil] + XZRefreshAnimationDuration;
         
         // 直接进场时，动画的距离与下拉时的动画距离并不相同，因此动画效果为满圆进场。
         [CATransaction begin];
         [CATransaction setDisableActions:YES];
-        _shapeLayer.strokeStart = 0;
-        _shapeLayer.strokeEnd   = kAnimationDistOne / kAnimationDistAll;
+        _shapeLayer.strokeStart = 1.0 / kAnimationAll;
+        _shapeLayer.strokeEnd   = kAnimationOne / kAnimationAll;
         [CATransaction commit];
         
         // iOS 16.2: transform 的隐式动画时长不受控制，因此用了 CAAnimation 处理缩放效果。
@@ -195,33 +195,44 @@
         animation.keyTimes = @[@(0), @(0.5), @(1.0)];
         animation.duration = XZRefreshAnimationDuration;
         animation.removedOnCompletion = YES;
-        [_trackLayer addAnimation:animation forKey:@"entering"];
-        [_shapeLayer addAnimation:animation forKey:@"entering"];
+        [_trackLayer addAnimation:animation forKey:@"entering.animated"];
+        [_shapeLayer addAnimation:animation forKey:@"entering.animated"];
+    } else {
+        // 交互进场时，动画初始状态，不是动画过程中的初始状态
+        CGFloat const duration = self.animationDuration * (1.0 / kAnimationOne);
+        beginTime = [_shapeLayer convertTime:CACurrentMediaTime() toLayer:nil] + duration;
+        
+        CAKeyframeAnimation *animation = [CAKeyframeAnimation animationWithKeyPath:@"strokeStart"];
+        animation.values = @[@(0.0/kAnimationAll), @(1.0/kAnimationAll)];
+        animation.duration = duration;
+        animation.removedOnCompletion = YES;
+        [_shapeLayer addAnimation:animation forKey:@"entering.interactive"];
     }
     
-    // 自定义个动画曲线，以实现运动速度平滑过渡。
-    // 1、动画曲线斜率 y/x 即表示速度。
-    // 2、根据运动距离，最快速度为 AnimationMax / t，最慢速度为 AnimationMin / t。
-    // 距离=AnimationMin的动画，匀速 x ；
-    // 距离=AnimationMax的动画，以 x 为小值缓入缓出，缓入过程0.2，缓出过程0.3
-    CGFloat const control = kAnimationDistMin / kAnimationDistMax;
-    CAMediaTimingFunction *easeio = [CAMediaTimingFunction functionWithControlPoints:0.1 :0.1 * control :0.9 :1.0 - 0.1 * control];
+    // 自定义动画速度曲线，以实现运动速度平滑过渡。
+    // 1、一个动画周期内：动画距离短的端，执行匀速动画 Vmin ；动画距离长的端，执行“缓入缓出”动画 Vmax 。
+    // 2、动画速度 = 动画曲线斜率 y/x * 平均速度
+    // 3、要使速度过渡平滑，就要 Vmax * k = Vmin 所以缓出换出时的斜率为 Vmin / Vmax
+    // 4、速度曲线是一个从 (0, 0) 到 (1.0, 1.0) 的二次曲线，控制点就是两端切线上的点。
+    CGFloat const ratio = kAnimationMin / kAnimationMax;
+    CGFloat const eases = 0.2; // 缓动动的距离 0 ~ 1.0
+    CAMediaTimingFunction *easeio = [CAMediaTimingFunction functionWithControlPoints:(eases) :(eases * ratio) :(1.0 - eases) :(1.0 - eases * ratio)];
     CAMediaTimingFunction *linear = [CAMediaTimingFunction functionWithName:kCAMediaTimingFunctionLinear];
     
     // strokeStart 快速时，收缩进度
     CAKeyframeAnimation *an1 = [CAKeyframeAnimation animationWithKeyPath:@"strokeStart"];
     an1.values = kAnimationValues1;
-    an1.timingFunctions = @[easeio, linear, easeio, linear, easeio, linear, easeio, linear, easeio, linear, easeio, linear];
+    an1.timingFunctions = @[easeio, linear, easeio, linear];
     
     // strokeEnd 快速时，拉伸进度
     CAKeyframeAnimation *an2 = [CAKeyframeAnimation animationWithKeyPath:@"strokeEnd"];
     an2.values = kAnimationValues2;
-    an2.timingFunctions = @[linear, easeio, linear, easeio, linear, easeio, linear, easeio, linear, easeio, linear, easeio];
+    an2.timingFunctions = @[linear, easeio, linear, easeio];
     
     CAAnimationGroup *group = [CAAnimationGroup animation];
     group.animations  = @[an1, an2];
     group.beginTime   = beginTime;
-    group.duration    = self.animationDuration * kAnimationCircles;
+    group.duration    = self.animationDuration * kAnimationNum;
     group.repeatCount = FLT_MAX;
     group.removedOnCompletion = NO;
     [_shapeLayer addAnimation:group forKey:@"refreshing"];
@@ -235,11 +246,21 @@
     
     if (animated) {
         // 退场准备：拷贝末尾进度
+        CGFloat const unit = kAnimationOne / kAnimationAll;
         [CATransaction begin];
         [CATransaction setDisableActions:YES];
-        _shapeLayer.strokeStart = start;
-        _shapeLayer.strokeEnd   = end;
+        _shapeLayer.strokeStart = (start >= unit ? start - unit : start);
+        _shapeLayer.strokeEnd   = (start >= unit ? end - unit : end);
         [CATransaction commit];
+        
+        // 进度满。如果保持进度不变，在缩小的过程中，进度的长度在变短，会有进度变少的错觉。
+        CAKeyframeAnimation *animation1 = [CAKeyframeAnimation animationWithKeyPath:@"strokeEnd"];
+        animation1.values = @[ @(_shapeLayer.strokeEnd), @(_shapeLayer.strokeStart + unit), @(_shapeLayer.strokeStart + unit)];
+        animation1.keyTimes = @[@(0), @(0.5), @(1.0)];
+        animation1.duration = XZRefreshAnimationDuration;
+        animation1.removedOnCompletion = NO;
+        animation1.fillMode = kCAFillModeBoth;
+        [_shapeLayer addAnimation:animation1 forKey:@"recovering.strokeEnd"];
         
         // 退场动画：圆圈变小
         CAKeyframeAnimation *animation2 = [CAKeyframeAnimation animationWithKeyPath:@"transform"];

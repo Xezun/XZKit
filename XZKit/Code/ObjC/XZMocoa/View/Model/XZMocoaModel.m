@@ -10,9 +10,6 @@
 
 static const void * const _mocoaName = &_mocoaName;
 
-@interface NSObject (XZMocoaModel) <XZMocoaModel>
-@end
-
 @implementation NSObject (XZMocoaModel)
 
 - (XZMocoaName)mocoaName {
@@ -20,16 +17,11 @@ static const void * const _mocoaName = &_mocoaName;
 }
 
 - (void)setMocoaName:(XZMocoaName)mocoaName {
-    if ([self.mocoaName isEqualToString:mocoaName]) {
-        return;
-    }
     objc_setAssociatedObject(self, _mocoaName, mocoaName, OBJC_ASSOCIATION_COPY_NONATOMIC);
 }
 
 @end
 
+#import "XZMocoaViewModel.h"
 
-@implementation XZMocoaModel
-@synthesize mocoaName = _mocoaName;
-@end
 

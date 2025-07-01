@@ -32,12 +32,9 @@
     [self.viewModel removeFromSuperViewModel];
 }
 
-- (instancetype)initWithMocoaOptions:(XZMocoaOptions *)options nibName:(NSString *)nibName bundle:(NSBundle *)bundle {
-    self = [super initWithMocoaOptions:options nibName:nibName bundle:bundle];
-    if (self) {
-        self.viewModel = [[Example0321ContactEditorViewModel alloc] initWithModel:options[@"model"]];
-        self.modalPresentationStyle = UIModalPresentationOverFullScreen;
-    }
+- (instancetype)didInitWithMocoaOptions:(XZMocoaOptions *)options {
+    self.viewModel = [[Example0321ContactEditorViewModel alloc] initWithModel:options[@"model"]];
+    self.modalPresentationStyle = UIModalPresentationOverFullScreen;
     return self;
 }
 
