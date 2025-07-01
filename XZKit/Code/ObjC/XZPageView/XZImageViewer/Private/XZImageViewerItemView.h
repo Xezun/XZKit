@@ -31,8 +31,10 @@ NS_ASSUME_NONNULL_BEGIN
 - (void)zoomToRect:(CGRect)rect animated:(BOOL)animated;
 - (void)setZoomScale:(CGFloat)scale animated:(BOOL)animated;
 
-/// 内容视图，改变该属性，请用设置方法。
-@property (nonatomic, readonly) UIImageView *imageView;
+/// 在入场退场的过程中，imageView 可能会离开当前视图。
+/// 将 imageView 放回，调用 setter 方法即可。
+@property (nonatomic, strong) UIImageView *imageView;
+- (CGRect)imageRectForBounds:(CGRect)bounds;
 
 - (instancetype)init NS_UNAVAILABLE;
 - (nullable instancetype)initWithCoder:(NSCoder *)aDecoder NS_UNAVAILABLE;

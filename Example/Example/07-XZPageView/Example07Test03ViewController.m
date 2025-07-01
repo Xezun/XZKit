@@ -24,8 +24,8 @@
     
     _imageURLs = @[
         @{
-            @"cover": [NSURL URLWithString:@"https://img2.baidu.com/it/u=822205830,2647734930&fm=253&fmt=auto&app=138&f=JPEG?w=750&h=500"],
-            @"image": [NSURL URLWithString:@"https://q7.itc.cn/q_70/images03/20250112/fc5705a8d8894a67a9fd579502e7024d.jpeg"]
+            @"cover": [NSURL URLWithString:@"https://img.ithome.com/newsuploadfiles/thumbnail/2025/7/864977_240.jpg"],
+            @"image": [NSURL URLWithString:@"https://img.ithome.com/newsuploadfiles/2025/7/fefed262-fb66-4dbe-a6d7-15dad215fb5d.png"]
         },
         @{
             @"cover": [NSURL URLWithString:@"https://img.ithome.com/newsuploadfiles/thumbnail/2023/8/710853_240.jpg?r=1691398369990"],
@@ -41,8 +41,8 @@
             @"image": [NSURL URLWithString:@"https://img.ithome.com/newsuploadfiles/thumbnail/2023/8/710826_240.jpg?r=1691393973783"]
         },
         @{
-            @"cover": [NSURL URLWithString:@"https://img0.baidu.com/it/u=1327435806,2633434759&fm=253&fmt=auto&app=120&f=JPEG?w=667&h=500"],
-            @"image": [NSURL URLWithString:@"https://i0.hdslb.com/bfs/archive/f04cdf2dacd16a5c72fc4b8575480c5309d84247.jpg"]
+            @"cover": [NSURL URLWithString:@"https://img.ithome.com/newsuploadfiles/thumbnail/2025/7/864968_240.jpg"],
+            @"image": [NSURL URLWithString:@"https://img.ithome.com/newsuploadfiles/2025/7/934f770f-e692-4b99-b4eb-c1c4db702d34.jpg"]
         },
         @{
             @"cover": [NSURL URLWithString:@"https://img.ithome.com/newsuploadfiles/thumbnail/2023/8/710802_240.jpg?r=1691389332627"],
@@ -50,16 +50,16 @@
         },
         
         @{
-            @"cover": [NSURL URLWithString:@"https://img0.baidu.com/it/u=1921545104,2825374292&fm=253&fmt=auto&app=120&f=JPEG?w=500&h=889"],
-            @"image": [NSURL URLWithString:@"https://pic.rmb.bdstatic.com/bjh/bb9195431ff5/250530/f0c0d02853bcc6ae34a2d84ae22f3621.jpeg"]
+            @"cover": [NSURL URLWithString:@"https://img.ithome.com/newsuploadfiles/thumbnail/2025/7/864960_240.jpg"],
+            @"image": [NSURL URLWithString:@"https://img.ithome.com/newsuploadfiles/2025/7/68e8c3de-0e6c-43ae-9945-3ec4b5510586.jpg"]
         },
         @{
             @"cover": [NSURL URLWithString:@"https://img.ithome.com/newsuploadfiles/thumbnail/2023/8/710748_240.jpg?r=1691376229133"],
             @"image": [NSURL URLWithString:@"https://img.ithome.com/newsuploadfiles/thumbnail/2023/8/710748_240.jpg?r=1691376229133"]
         },
         @{
-            @"cover": [NSURL URLWithString:@"https://img1.baidu.com/it/u=3654298861,3467786631&fm=253&fmt=auto&app=120&f=JPEG?w=889&h=500"],
-            @"image": [NSURL URLWithString:@"https://i0.hdslb.com/bfs/archive/71dbafaf58269f890560de7a1cb773b6477281be.jpg"]
+            @"cover": [NSURL URLWithString:@"https://img.ithome.com/newsuploadfiles/thumbnail/2025/7/864938_240.jpg"],
+            @"image": [NSURL URLWithString:@"https://img.ithome.com/newsuploadfiles/2025/7/2fd7a3c4-db99-4f8c-8d2f-f10a6f404d35.jpg"]
         }
     ];
     

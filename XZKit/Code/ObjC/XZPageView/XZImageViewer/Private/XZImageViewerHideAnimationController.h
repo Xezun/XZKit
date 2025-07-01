@@ -17,6 +17,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface XZImageViewerHideInteractiveController : UIPercentDrivenInteractiveTransition
 @property (nonatomic, readonly) UIImageView *imageView;
+@property (nonatomic, readonly) CGRect imageRect;
 - (instancetype)initWithImageView:(UIImageView *)imageView;
 @end
 NS_ASSUME_NONNULL_END

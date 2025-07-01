@@ -56,7 +56,6 @@
     
     XZImageViewerItemView * const itemView = fromVC.pageView.currentView;
     [itemView layoutIfNeeded];
-    itemView.hidden = YES;
     
     if (_imageView) {
         // 交互式
@@ -80,12 +79,11 @@
             } else {
                 [transitionContext completeTransition:YES];
             }
-            [imageView removeFromSuperview];
-            itemView.hidden = NO;
+            itemView.imageView = imageView;
         }];
     } else if (_sourceView) {
         // 非交互式
-        UIImageView * const imageView = [[UIImageView alloc] initWithImage:itemView.imageView.image];
+        UIImageView * const imageView = itemView.imageView;
         imageView.clipsToBounds = _sourceView.clipsToBounds;
         imageView.contentMode   = _sourceView.contentMode;
         imageView.frame         = [itemView.imageView convertRect:itemView.imageView.bounds toView:containerView];
@@ -105,12 +103,11 @@
             } else {
                 [transitionContext completeTransition:YES];
             }
-            [imageView removeFromSuperview];
-            itemView.hidden = NO;
+            itemView.imageView = imageView;
         }];
     } else {
         // 非交互式，无源视图：图片向下平移
-        UIImageView *imageView = [[UIImageView alloc] initWithImage:itemView.imageView.image];
+        UIImageView * const imageView = itemView.imageView; 
         imageView.frame = [itemView.imageView convertRect:itemView.imageView.bounds toView:containerView];
         [containerView addSubview:imageView];
         
@@ -128,8 +125,7 @@
             } else {
                 [transitionContext completeTransition:YES];
             }
-            [imageView removeFromSuperview];
-            itemView.hidden = NO;
+            itemView.imageView = imageView;
         }];
     }
 }
@@ -142,6 +138,7 @@
     self = [super init];
     if (self) {
         _imageView = imageView;
+        _imageRect = imageView.frame;
     }
     return self;
 }

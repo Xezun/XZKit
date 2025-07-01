@@ -48,18 +48,19 @@
     
     XZImageViewerItemView *itemView = toVC.pageView.currentView;
     [itemView layoutIfNeeded];
-    itemView.hidden = YES;
     
-    UIImageView *imageView = [[UIImageView alloc] initWithImage:itemView.imageView.image];
+    UIImageView * const imageView = itemView.imageView;
     imageView.clipsToBounds = _sourceView.clipsToBounds;
     imageView.contentMode   = _sourceView.contentMode;
-    imageView.frame         = [_sourceView convertRect:_sourceView.bounds toView:containerView];
     [containerView addSubview:imageView];
+    
+    CGRect const imageToRect = imageView.frame;
+    imageView.frame = [_sourceView convertRect:_sourceView.bounds toView:containerView];
     
     NSTimeInterval const duration = [self transitionDuration:transitionContext];
     [UIView animateWithDuration:duration delay:0 options:UIViewAnimationOptionLayoutSubviews animations:^{
         fromView.transform = CGAffineTransformMakeScale(0.9, 0.9);
-        imageView.frame = [itemView.imageView convertRect:itemView.imageView.bounds toView:containerView];
+        imageView.frame = imageToRect;
         toView.backgroundColor = UIColor.blackColor;
     } completion:^(BOOL finished) {
         if (transitionContext.transitionWasCancelled) {
@@ -69,9 +70,9 @@
             [transitionContext completeTransition:YES];
             toView.backgroundColor = UIColor.blackColor;
         }
-        [imageView removeFromSuperview];
-        itemView.hidden = NO;
+        itemView.imageView = imageView;
         fromView.transform = CGAffineTransformIdentity;
+        NSLog(@"[XZImageViewer] 入场动画结束");
     }];
 }
 

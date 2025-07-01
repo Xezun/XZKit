@@ -55,6 +55,28 @@
     return _zoomingView;
 }
 
+@synthesize imageView = _imageView;
+
+- (void)setImageView:(UIImageView *)imageView {
+    if (_imageView != imageView) {
+        return;
+    }
+    if ([_imageView isDescendantOfView:self]) {
+        return;
+    }
+    if (_zoomingView) {
+        [_zoomingView addSubview:_imageView];
+        [self setNeedsLayout];
+    } else {
+        [self addSubview:_imageView];
+    }
+}
+
+- (CGRect)imageRectForBounds:(CGRect)bounds {
+    CGSize const imageSize = _imageView.image.size;
+    return CGRectScaleAspectRatioInsideWithMode(bounds, imageSize, UIViewContentModeScaleAspectFit);
+}
+
 - (BOOL)bouncesZoom {
     return _zoomingView.bouncesZoom;
 }
@@ -98,20 +120,20 @@
     [super layoutSubviews];
     
     CGRect const bounds       = self.bounds;
-    CGSize const imageSize    = _imageView.image.size;
-    CGRect const contentFrame = CGRectScaleAspectRatioInsideWithMode(bounds, imageSize, UIViewContentModeScaleAspectFit);
+    CGRect const contentFrame = [self imageRectForBounds:bounds];
     
     if (_zoomingView) {
         _zoomingView.frame = bounds;
         if (_zoomingView.zoomScale == 1.0) {
             _zoomingView.contentSize = contentFrame.size;
-            _imageView.frame = contentFrame;
         }
-    } else {
+    }
+    
+    if ([_imageView isDescendantOfView:self]) {
         _imageView.frame = contentFrame;
     }
     
-    if (CGSizeEqualToSize(imageSize, CGSizeZero)) {
+    if (CGSizeEqualToSize(contentFrame.size, CGSizeZero)) {
         [self.activityIndicatorView startAnimating];
     } else {
         [_activityIndicatorView stopAnimating];
@@ -126,6 +148,12 @@
 - (UIActivityIndicatorView *)activityIndicatorView {
     if (_activityIndicatorView == nil) {
         _activityIndicatorView = [[UIActivityIndicatorView alloc] initWithActivityIndicatorStyle:(UIActivityIndicatorViewStyleLarge)];
+        _activityIndicatorView.color = [UIColor colorWithDynamicProvider:^UIColor * _Nonnull(UITraitCollection * _Nonnull traitCollection) {
+            if (traitCollection.userInterfaceStyle == UIUserInterfaceStyleDark) {
+                return UIColor.lightGrayColor;
+            }
+            return UIColor.whiteColor;
+        }];
         _activityIndicatorView.hidesWhenStopped = YES;
         [self addSubview:_activityIndicatorView];
     }
