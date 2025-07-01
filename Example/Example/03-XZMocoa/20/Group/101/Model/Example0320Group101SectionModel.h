@@ -7,7 +7,7 @@
 
 
 @import XZJSON;
-@import XZMocoa;
+@import XZMocoaObjC;
 
 NS_ASSUME_NONNULL_BEGIN
 

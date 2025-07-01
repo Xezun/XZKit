@@ -5,7 +5,7 @@
 //  Created by Xezun on 2023/8/9.
 //
 
-#import <XZMocoa/XZMocoa.h>
+@import XZMocoaObjC;
 #import "Example0322TextViewModel.h"
 
 NS_ASSUME_NONNULL_BEGIN

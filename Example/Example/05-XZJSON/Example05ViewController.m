@@ -12,7 +12,7 @@
 @import XZObjcDescriptor;
 @import XZToast;
 @import XZDefines;
-@import XZExtensions;
+@import XZExtensionsObjC;
 
 @interface Example05ViewController () {
     NSString *_JSONString;

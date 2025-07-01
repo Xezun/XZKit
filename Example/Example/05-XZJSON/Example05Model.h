@@ -5,7 +5,7 @@
 //  Created by Xezun on 2024/10/12.
 //
 
-#import <Foundation/Foundation.h>
+#import <UIKit/UIKit.h>
 @import XZJSON;
 @import YYModel;
 

@@ -9,7 +9,7 @@
 @import SDWebImage;
 @import XZPageControl;
 @import XZPageView;
-@import XZDefines;
+@import XZDefinesObjC;
 
 @interface Example08ViewController () <XZPageViewDelegate, XZPageViewDataSource>
 

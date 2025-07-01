@@ -6,7 +6,7 @@
 //
 
 #import "Example01ViewController.h"
-@import XZDefines;
+@import XZDefinesObjC;
 @import XZToast;
 
 @interface Example01ViewController ()
