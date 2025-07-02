@@ -65,12 +65,14 @@
     }
     
     {
+        CGFloat const minY = _iconView ? (kPaddingT + kIconSize + kSpacing) : (kPaddingT);
+        CGFloat const maxH = bounds.size.height - minY - kPaddingB;
         CGSize  const textSize = [_textLabel sizeThatFits:CGSizeMake(bounds.size.width - kPaddingL - kPaddingR, 0)];
         CGFloat const w = MIN(bounds.size.width - kPaddingL - kPaddingR, textSize.width);
-        CGFloat const h = MAX(textSize.height, kTextLine);
+        CGFloat const h = MIN(MAX(textSize.height, kTextLine), maxH);
         CGFloat const x = bounds.origin.x + (bounds.size.width - w) * 0.5;
         CGFloat const y = CGRectGetMaxY(bounds) - kPaddingB - h;
-        _textLabel.frame = CGRectMake(x, y, w, h);
+        _textLabel.frame = CGRectMake(x, MAX(y, minY), w, h);
     }
 }
 
