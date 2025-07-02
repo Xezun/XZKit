@@ -33,6 +33,10 @@
     return self;
 }
 
+- (void)hide:(void (^)(void))completion {
+    [_manager hideToast:self completion:completion];
+}
+
 - (void)setText:(NSString *)text {
     [super setText:text];
     [self setNeedsUpdateFrame];
@@ -90,10 +94,6 @@
     }
     _needsUpdateFrame = YES;
     [self.manager setNeedsLayoutToasts];
-}
-
-- (void)hide:(void (^)(void))completion {
-    [self.manager hideToast:self completion:completion];
 }
 
 - (NSString *)description {

@@ -129,7 +129,9 @@ NS_REFINED_FOR_SWIFT @interface XZToast : NSObject <NSCopying>
 @end
 
 NS_REFINED_FOR_SWIFT @interface XZToastTask : XZToast
-
+/// 隐藏（移除）当前提示信息。
+/// - Parameter completion: 提示信息隐藏后执行的回调
+- (void)hide:(void (^_Nullable)(void))completion;
 @end
 
 

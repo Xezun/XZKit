@@ -73,7 +73,6 @@ typedef NS_ENUM(NSInteger, XZToastMoveDirection) {
 @property (nonatomic, weak, readonly) XZToastManager *manager;
 
 - (void)setNeedsUpdateFrame;
-- (void)hide:(void (^_Nullable)(void))completion;
 
 @end
 
