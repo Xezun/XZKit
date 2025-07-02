@@ -106,7 +106,6 @@
 - (XZToastTask *)showToast:(XZToast *)toast duration:(NSTimeInterval)duration position:(XZToastPosition)position exclusive:(BOOL)exclusive completion:(XZToastCompletion)completion {
     NSParameterAssert(duration >= 0 && duration < DISPATCH_TIME_FOREVER);
     UIView<XZToastView> * const toastView = toast.view;
-    [toastView layoutIfNeeded];
     
     XZToastTask * const newTask = [[XZToastTask alloc] initWithManager:self view:toastView duration:duration position:position exclusive:exclusive completion:completion];
     
