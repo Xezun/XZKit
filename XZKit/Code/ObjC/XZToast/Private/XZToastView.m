@@ -149,8 +149,10 @@
         }
         
         if (_iconView == nil) {
-            _iconView = [[UIImageView alloc] initWithImage:image];
-            _iconView.frame = CGRectMake((self.bounds.size.width - kIconSize) * 0.5, kPaddingT, kIconSize, kIconSize);
+            UIImageView *iconView = [[UIImageView alloc] initWithFrame:CGRectMake((self.bounds.size.width - kIconSize) * 0.5, kPaddingT, kIconSize, kIconSize)];
+            iconView.animationRepeatCount = 0; // 动图无限循环
+            iconView.image = image;
+            _iconView = iconView;
         } else {
             [(UIImageView *)_iconView setImage:image];
         }
@@ -177,7 +179,8 @@
                 if (![_iconView isKindOfClass:UIActivityIndicatorView.class]) {
                     [_iconView removeFromSuperview];
                     
-                    UIActivityIndicatorView *iconView = [[UIActivityIndicatorView alloc] initWithActivityIndicatorStyle:(UIActivityIndicatorViewStyleLarge)];
+                    UIActivityIndicatorView *iconView = [[UIActivityIndicatorView alloc] initWithFrame:CGRectMake((self.bounds.size.width - kIconSize) * 0.5, kPaddingT, kIconSize, kIconSize)];
+                    iconView.activityIndicatorViewStyle = UIActivityIndicatorViewStyleLarge;
                     iconView.color = UIColor.whiteColor;
                     [iconView startAnimating];
                     [self addSubview:iconView];
