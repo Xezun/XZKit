@@ -31,6 +31,8 @@ typedef NS_ENUM(NSInteger, XZToastMoveDirection) {
     /// 为了方便计算 toastView 的 frame 而设置。
     CGRect _frame;
     /// 标记 `_frame` 值需要更新。
+    /// 当独占式的 toast 被复用时，但是由于其独占性，不会生成新的 task ，但是
+    /// 其内容却可能已经发生了改变，需要在 setNeedsUpdateToasts 中重新计算布局。
     BOOL _needsUpdateFrame;
 }
 

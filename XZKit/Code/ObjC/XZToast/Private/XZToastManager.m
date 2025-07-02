@@ -156,8 +156,6 @@
             [newTask cancel];
             [_waitingToHideTasks addObject:newTask];
             if (oldTask.view == toastView) {
-                // 独占的 toast 被复用，其内容可能已经发生了改变
-                // 在 setNeedsUpdateToasts 中更新布局
                 oldTask->_needsUpdateFrame = YES;
             }
             [self setNeedsUpdateToasts];
