@@ -138,7 +138,9 @@
 
 - (void)setStyle:(XZToastStyle)style image:(UIImage *)image {
     _style = style;
+    
     if (image) {
+        // 有图片
         if (![_iconView isKindOfClass:UIImageView.class]) {
             [_iconView removeFromSuperview];
             _iconView = nil;
@@ -146,11 +148,11 @@
         
         if (_iconView == nil) {
             _iconView = [[UIImageView alloc] initWithImage:image];
+            _iconView.frame = CGRectMake((self.bounds.size.width - kIconSize) * 0.5, kPaddingT, kIconSize, kIconSize);
         } else {
             [(UIImageView *)_iconView setImage:image];
         }
         
-        _iconView.frame = CGRectMake(CGRectGetMidX(self.bounds), kPaddingT + kIconSize * 0.5, kIconSize, kIconSize);
         [self addSubview:_iconView];
         
         // 动图
@@ -158,39 +160,34 @@
             [(UIImageView *)_iconView startAnimating];
         }
     } else {
-        if ([_iconView isKindOfClass:UIImageView.class]) {
-            [(UIImageView *)_iconView setImage:nil];
+        // 没有图片
+        switch (_style) {
+            case XZToastStyleMessage:
+            case XZToastStyleSuccess:
+            case XZToastStyleFailure:
+            case XZToastStyleWarning:
+            case XZToastStyleWaiting:
+                [_iconView removeFromSuperview];
+                _iconView = nil;
+                break;
+            case XZToastStyleLoading:
+                // 默认使用 UIActivityIndicatorView
+                if (![_iconView isKindOfClass:UIActivityIndicatorView.class]) {
+                    [_iconView removeFromSuperview];
+                    
+                    UIActivityIndicatorView *iconView = [[UIActivityIndicatorView alloc] initWithActivityIndicatorStyle:(UIActivityIndicatorViewStyleLarge)];
+                    iconView.color = UIColor.whiteColor;
+                    [iconView startAnimating];
+                    [self addSubview:iconView];
+                    
+                    _iconView = iconView;
+                }
+                break;
+            default:
+                return;
         }
     }
-    switch (_style) {
-        case XZToastStyleMessage:
-            break;
-        case XZToastStyleSuccess:
-            break;
-        case XZToastStyleFailure:
-            break;
-        case XZToastStyleWarning:
-            break;
-        case XZToastStyleWaiting:
-            break;
-        case XZToastStyleLoading:
-            // 已有图片
-            if (image != nil) {
-                break;
-            }
-            // 默认使用 UIActivityIndicatorView
-            if (![_iconView isKindOfClass:UIActivityIndicatorView.class]) {
-                [_iconView removeFromSuperview];
-                UIActivityIndicatorView *iconView = [[UIActivityIndicatorView alloc] initWithActivityIndicatorStyle:(UIActivityIndicatorViewStyleLarge)];
-                iconView.color = UIColor.whiteColor;
-                [self addSubview:iconView];
-                _iconView = iconView;
-                [iconView startAnimating];
-            }
-            break;
-        default:
-            return;
-    }
+    
 }
 
 @end
