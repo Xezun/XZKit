@@ -72,7 +72,6 @@
         }
         itemView.imageView = imageView;
         fromView.transform = CGAffineTransformIdentity;
-        NSLog(@"[XZImageViewer] 入场动画结束");
     }];
 }
 

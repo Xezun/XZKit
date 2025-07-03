@@ -7,6 +7,7 @@
 
 #import "XZPageViewContext.h"
 #import "XZPageViewExtension.h"
+#import "XZLog.h"
 @import ObjectiveC;
 #if __has_include(<XZDefines/XZRuntime.h>)
 #import <XZDefines/XZRuntime.h>
@@ -453,7 +454,7 @@
         [self willHideView:_view->_currentView animated:YES];
         
         if (_view->_pendingView) {
-            NSLog(@"待显视图：当前与目标不一致，%ld vs %ld", _view->_pendingPage, pendingPage);
+            XZLog(XZLogSystem.XZKit, @"待显视图：当前与目标不一致，%ld vs %ld", _view->_pendingPage, pendingPage);
             [self willHideView:_view->_pendingView animated:NO];
             [_view->_pendingView removeFromSuperview];
             [self didHideView:_view->_pendingView animated:NO];
@@ -474,12 +475,12 @@
             [_view addSubview:_view->_pendingView];
             [self layoutPendingView:bounds];
         } else if (_view->_reusingPage == pendingPage) {
-            NSLog(@"待显视图：直接使用复用视图，%ld", pendingPage);
+            XZLog(XZLogSystem.XZKit, @"待显视图：直接使用复用视图，%ld", pendingPage);
             _view->_pendingView = _view->_reusingView;
             _view->_reusingView = nil;
             _view->_reusingPage = NSNotFound;
         } else {
-            NSLog(@"待显视图：加载新的待显视图，%ld", pendingPage);
+            XZLog(XZLogSystem.XZKit, @"待显视图：加载新的待显视图，%ld", pendingPage);
             _view->_pendingView = [self viewForPageAtIndex:pendingPage reusingView:_view->_reusingView];
             _view->_reusingView = nil;
             _view->_reusingPage = NSNotFound;
@@ -491,7 +492,7 @@
         _view->_pendingPageDirection = direction;
         [self layoutPendingView:bounds];
     } else if (direction != _view->_pendingPageDirection) {
-        NSLog(@"待显视图：与当前方向不一致，%d, %ld", direction, pendingPage);
+        XZLog(XZLogSystem.XZKit, @"待显视图：与当前方向不一致，%d, %ld", direction, pendingPage);
         _view->_pendingPageDirection = direction;
         [self layoutPendingView:bounds];
     }
@@ -536,7 +537,7 @@
     if (stopped) {
         if (PageWidth - offsetX < 1.0 || -PageWidth - offsetX > -1.0) {
             // 小于一个点，可能是因为 width 不是整数，翻页宽度与 width 不一致，认为翻页完成
-            XZLog(@"翻页修复：停止滚动，距翻页不足一个点，%@", NSStringFromCGRect(bounds));
+            XZLog(XZLogSystem.XZKit, @"翻页修复：停止滚动，距翻页不足一个点，%@", NSStringFromCGRect(bounds));
             [self didScrollToPendingPage:bounds maxPage:maxPage direction:direction];
             // 发送翻页事件
             [self didShowPageAtIndex:_view->_currentPage];
@@ -548,14 +549,14 @@
             // 滚动停止，滚动未过半，不执行翻页，退回原点，否则执行翻页
             CGFloat const halfPageWidth = PageWidth * 0.5;
             if (offsetX >= +halfPageWidth) {
-                XZLog(@"翻页修复：停止滚动，向右滚动距离超过一半，翻页，%@", NSStringFromCGRect(bounds));
+                XZLog(XZLogSystem.XZKit, @"翻页修复：停止滚动，向右滚动距离超过一半，翻页，%@", NSStringFromCGRect(bounds));
                 [_view setContentOffset:CGPointMake(PageWidth, 0) animated:YES];
             } else if (offsetX <= -halfPageWidth) {
-                XZLog(@"翻页修复：停止滚动，向左滚动距离超过一半，翻页，%@", NSStringFromCGRect(bounds));
+                XZLog(XZLogSystem.XZKit, @"翻页修复：停止滚动，向左滚动距离超过一半，翻页，%@", NSStringFromCGRect(bounds));
                 [_view setContentOffset:CGPointMake(-PageWidth, 0) animated:YES];
             } else {
                 // 滚动未超过一半，不翻页，回到原点
-                XZLog(@"翻页修复：停止滚动，滚动距离未超过一半，不翻页，%@", NSStringFromCGRect(bounds));
+                XZLog(XZLogSystem.XZKit, @"翻页修复：停止滚动，滚动距离未超过一半，不翻页，%@", NSStringFromCGRect(bounds));
                 [_view setContentOffset:CGPointZero animated:YES];
             }
         }
@@ -866,7 +867,7 @@
         [self willHideView:_view->_currentView animated:YES];
         
         if (_view->_pendingView) {
-            NSLog(@"待显视图：当前与目标不一致，%ld vs %ld", _view->_pendingPage, pendingPage);
+            XZLog(XZLogSystem.XZKit, @"待显视图：当前与目标不一致，%ld vs %ld", _view->_pendingPage, pendingPage);
             [self willHideView:_view->_pendingView animated:NO];
             [_view->_pendingView removeFromSuperview];
             [self didHideView:_view->_pendingView animated:NO];
@@ -887,12 +888,12 @@
             [_view addSubview:_view->_pendingView];
             [self layoutPendingView:bounds];
         } else if (_view->_reusingPage == pendingPage) {
-            NSLog(@"待显视图：直接使用复用视图，%ld", pendingPage);
+            XZLog(XZLogSystem.XZKit, @"待显视图：直接使用复用视图，%ld", pendingPage);
             _view->_pendingView = _view->_reusingView;
             _view->_reusingView = nil;
             _view->_reusingPage = NSNotFound;
         } else {
-            NSLog(@"待显视图：加载新的待显视图，%ld", pendingPage);
+            XZLog(XZLogSystem.XZKit, @"待显视图：加载新的待显视图，%ld", pendingPage);
             _view->_pendingView = [self viewForPageAtIndex:pendingPage reusingView:_view->_reusingView];
             _view->_reusingView = nil;
             _view->_reusingPage = NSNotFound;
@@ -904,7 +905,7 @@
         _view->_pendingPageDirection = direction;
         [self layoutPendingView:bounds];
     } else if (direction != _view->_pendingPageDirection) {
-        NSLog(@"待显视图：与当前方向不一致，%d, %ld", direction, pendingPage);
+        XZLog(XZLogSystem.XZKit, @"待显视图：与当前方向不一致，%d, %ld", direction, pendingPage);
         _view->_pendingPageDirection = direction;
         [self layoutPendingView:bounds];
     }
@@ -949,7 +950,7 @@
     if (stopped) {
         if (PageHeight - offsetY < 1.0 || -PageHeight - offsetY > -1.0) {
             // 小于一个点，可能是因为 width 不是整数，翻页宽度与 width 不一致，认为翻页完成
-            XZLog(@"翻页修复：停止滚动，距翻页不足一个点，%@", NSStringFromCGRect(bounds));
+            XZLog(XZLogSystem.XZKit, @"翻页修复：停止滚动，距翻页不足一个点，%@", NSStringFromCGRect(bounds));
             [self didScrollToPendingPage:bounds maxPage:maxPage direction:direction];
             
             // 发送翻页事件
@@ -963,14 +964,14 @@
             // 滚动停止，滚动未过半，不执行翻页，退回原点，否则执行翻页
             CGFloat const halfPageHeight = PageHeight * 0.5;
             if (offsetY >= +halfPageHeight) {
-                XZLog(@"翻页修复：停止滚动，向右滚动距离超过一半，翻页，%@", NSStringFromCGRect(bounds));
+                XZLog(XZLogSystem.XZKit, @"翻页修复：停止滚动，向右滚动距离超过一半，翻页，%@", NSStringFromCGRect(bounds));
                 [_view setContentOffset:CGPointMake(PageHeight, 0) animated:YES];
             } else if (offsetY <= -halfPageHeight) {
-                XZLog(@"翻页修复：停止滚动，向左滚动距离超过一半，翻页，%@", NSStringFromCGRect(bounds));
+                XZLog(XZLogSystem.XZKit, @"翻页修复：停止滚动，向左滚动距离超过一半，翻页，%@", NSStringFromCGRect(bounds));
                 [_view setContentOffset:CGPointMake(-PageHeight, 0) animated:YES];
             } else {
                 // 滚动未超过一半，不翻页，回到原点
-                XZLog(@"翻页修复：停止滚动，滚动距离未超过一半，不翻页，%@", NSStringFromCGRect(bounds));
+                XZLog(XZLogSystem.XZKit, @"翻页修复：停止滚动，滚动距离未超过一半，不翻页，%@", NSStringFromCGRect(bounds));
                 [_view setContentOffset:CGPointZero animated:YES];
             }
         }

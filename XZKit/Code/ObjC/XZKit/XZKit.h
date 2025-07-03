@@ -8,6 +8,7 @@
 #import <UIKit/UIKit.h>
 
 // 全模块引用
+@import XZLog;
 @import XZDefines;
 @import XZExtensions;
 @import XZCollectionViewFlowLayout;

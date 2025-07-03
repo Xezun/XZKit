@@ -6,6 +6,7 @@
 //
 
 #import "XZMocoaGridViewPlaceholderView.h"
+#import "XZLog.h"
 
 #if DEBUG
 @implementation XZMocoaGridViewPlaceholderView {
@@ -98,7 +99,7 @@
     [alertVC addAction:[UIAlertAction actionWithTitle:@"确定" style:(UIAlertActionStyleDefault) handler:nil]];
     [self.xz_viewController presentViewController:alertVC animated:YES completion:nil];
     
-    XZLog(@"[XZMocoa] [DEBUG] \n%@ \n%@", _reasonLabel.text, _detailLabel.text);
+    XZLog(XZLogSystem.XZKit, @"[XZMocoa] [DEBUG] \n%@ \n%@", _reasonLabel.text, _detailLabel.text);
 }
 
 @end

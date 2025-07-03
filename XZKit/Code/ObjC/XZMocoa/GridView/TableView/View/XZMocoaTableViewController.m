@@ -9,6 +9,7 @@
 #import "XZMocoaTableViewCell.h"
 #import "XZMocoaTableViewHeaderFooterView.h"
 #import "XZMocoaTableViewProxy.h"
+#import "XZLog.h"
 @import ObjectiveC;
 
 @interface XZMocoaTableViewController ()
@@ -26,7 +27,7 @@
             IMP const implemnt = method_getImplementation(method);
             const char * const types = method_getTypeEncoding(method);
             if (!class_addMethod(self, selector, implemnt, types)) {
-                XZLog(@"为 %@ 添加方法 %@ 失败", self, NSStringFromSelector(selector));
+                XZLog(XZLogSystem.XZKit, @"为 %@ 添加方法 %@ 失败", self, NSStringFromSelector(selector));
             }
         }
     }

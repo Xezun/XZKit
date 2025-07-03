@@ -299,7 +299,7 @@ NSString * _Nonnull XZJSONModelDescription(NSObject *_Nonnull model, NSUInteger 
             case XZObjcTypeInt128:
             case XZObjcTypeUnsignedInt128:
             case XZObjcTypeVector:
-                NSLog(@"[XZJSON] 目前平台不支持该数据类型");
+                XZLog(XZLogSystem.XZKit, @"[XZJSON] 目前平台不支持该数据类型");
                 break;
         }
         [desc appendFormat:@"%@    %@: %@,\n", padding, key, value];
@@ -634,7 +634,7 @@ void XZJSONModelEncodeWithCoder(id model, NSCoder *aCoder) {
                     case XZObjcTypeInt128:
                     case XZObjcTypeUnsignedInt128:
                     case XZObjcTypeVector:
-                        NSLog(@"[XZJSON] 目前平台不支持该数据类型");
+                        XZLog(XZLogSystem.XZKit, @"[XZJSON] 目前平台不支持该数据类型");
                         break;
                 }
                 
@@ -647,7 +647,7 @@ void XZJSONModelEncodeWithCoder(id model, NSCoder *aCoder) {
                     }
                 }
                 
-                XZLog(@"[XZJSON] [NSCoding] Can not encode property `%@` of `%@`!", modelClass->_raw.name, property->_name);
+                XZLog(XZLogSystem.XZKit, @"[XZJSON] [NSCoding] Can not encode property `%@` of `%@`!", modelClass->_raw.name, property->_name);
             }];
             break;
         }
@@ -914,7 +914,7 @@ id _Nullable XZJSONModelDecodeWithCoder(id model, NSCoder *aCoder) {
                     case XZObjcTypeInt128:
                     case XZObjcTypeUnsignedInt128:
                     case XZObjcTypeVector:
-                        NSLog(@"[XZJSON] 目前平台不支持该数据类型");
+                        XZLog(XZLogSystem.XZKit, @"[XZJSON] 目前平台不支持该数据类型");
                         break;
                 }
                 
@@ -924,7 +924,7 @@ id _Nullable XZJSONModelDecodeWithCoder(id model, NSCoder *aCoder) {
                     }
                 }
                 
-                XZLog(@"[XZJSON] [NSCoding] Can not decode property `%@` of `%@`!", modelClass->_raw.name, property->_name);
+                XZLog(XZLogSystem.XZKit, @"[XZJSON] [NSCoding] Can not decode property `%@` of `%@`!", modelClass->_raw.name, property->_name);
             }];
             break;
         }

@@ -6,6 +6,7 @@
 //
 
 #import "XZSegmentedControlTextSegment.h"
+#import "XZLog.h"
 
 @implementation XZSegmentedControlTextSegment {
     XZSegmentedControlTextLabel *_textLabel;
@@ -40,7 +41,7 @@
 
 - (void)setSelected:(BOOL)selected {
     [super setSelected:selected];
-    XZLog(@"segment(%@).setSelected: %@", self.text, selected ? @"true" : @"false");
+    XZLog(XZLogSystem.XZKit, @"segment(%@).setSelected: %@", self.text, selected ? @"true" : @"false");
 
     [self updateInteractiveTransition:selected ? 1.0 : 0];
 }
@@ -49,7 +50,7 @@
     [super updateInteractiveTransition:interactiveTransition];
     
     XZSegmentedControl * const segmentedControl = _segmentedControl;
-    XZLog(@"segment(%@, %ld).setTransition: %f", self.text, segmentedControl.selectedIndex, interactiveTransition);
+    XZLog(XZLogSystem.XZKit, @"segment(%@, %ld).setTransition: %f", self.text, segmentedControl.selectedIndex, interactiveTransition);
 
     [UIView performWithoutAnimation:^{
         if (interactiveTransition == 0) {

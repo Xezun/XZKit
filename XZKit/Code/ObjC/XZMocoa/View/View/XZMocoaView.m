@@ -16,6 +16,7 @@
 #import "NSArray+XZKit.h"
 #import "UIView+XZKit.h"
 #endif
+#import "XZLog.h"
 
 static const void * const _viewModel = &_viewModel;
 
@@ -109,21 +110,21 @@ XZMocoaOptionKey const XZMocoaOptionKeyName = @"name";
             SEL const selN = @selector(xz_mocoa_new_shouldPerformSegueWithIdentifier:sender:);
             SEL const selE = @selector(xz_mocoa_exchange_shouldPerformSegueWithIdentifier:sender:);
             if (!xz_objc_class_addMethod(self, selT, nil, selN, NULL, selE)) {
-                XZLog(@"为 UIViewController 重载方法 %@ 失败，相关事件请手动处理", NSStringFromSelector(selT));
+                XZLog(XZLogSystem.XZKit, @"为 UIViewController 重载方法 %@ 失败，相关事件请手动处理", NSStringFromSelector(selT));
             }
         } {
             SEL const selT = @selector(prepareForSegue:sender:);
             SEL const selN = @selector(xz_mocoa_new_prepareForSegue:sender:);
             SEL const selE = @selector(xz_mocoa_exchange_prepareForSegue:sender:);
             if (!xz_objc_class_addMethod(self, selT, nil, selN, NULL, selE)) {
-                XZLog(@"为 UIViewController 重载方法 %@ 失败，相关事件请手动处理", NSStringFromSelector(selT));
+                XZLog(XZLogSystem.XZKit, @"为 UIViewController 重载方法 %@ 失败，相关事件请手动处理", NSStringFromSelector(selT));
             }
         } {
             SEL const selT = @selector(viewDidLoad);
             SEL const selN = @selector(xz_mocoa_new_viewDidLoad);
             SEL const selE = @selector(xz_mocoa_exchange_viewDidLoad);
             if (!xz_objc_class_addMethod(self, selT, nil, selN, NULL, selE)) {
-                XZLog(@"为 UIViewController 重载方法 %@ 失败，相关事件请手动处理", NSStringFromSelector(selT));
+                XZLog(XZLogSystem.XZKit, @"为 UIViewController 重载方法 %@ 失败，相关事件请手动处理", NSStringFromSelector(selT));
             }
         }
     }
@@ -255,7 +256,7 @@ XZMocoaOptionKey const XZMocoaOptionKeyName = @"name";
         case XZMocoaModuleViewFormClass: {
             Class const ViewController = module.viewClass;
             if (![ViewController isSubclassOfClass:UIViewController.class]) {
-                XZLog(@"模块 %@ 不是 UIViewController 模块，无法构造视图控制器", module);
+                XZLog(XZLogSystem.XZKit, @"模块 %@ 不是 UIViewController 模块，无法构造视图控制器", module);
                 return nil;
             }
             XZMocoaOptions * const mocoaOptions = [[XZMocoaOptions alloc] initWithModule:module url:url options:options];
@@ -264,7 +265,7 @@ XZMocoaOptionKey const XZMocoaOptionKeyName = @"name";
         case XZMocoaModuleViewFormNib: {
             Class const ViewController = module.viewNibClass;
             if (![ViewController isSubclassOfClass:UIViewController.class]) {
-                XZLog(@"模块 %@ 不是 UIViewController 模块，无法构造视图控制器", module);
+                XZLog(XZLogSystem.XZKit, @"模块 %@ 不是 UIViewController 模块，无法构造视图控制器", module);
                 return nil;
             }
             NSString *nibName = module.viewNibName;
@@ -287,7 +288,7 @@ XZMocoaOptionKey const XZMocoaOptionKeyName = @"name";
             return [vc didInitWithMocoaOptions:mocoaOptions];
         }
         default:
-            XZLog(@"模块 %@ 不是 UIViewController 模块，无法构造视图控制器", module);
+            XZLog(XZLogSystem.XZKit, @"模块 %@ 不是 UIViewController 模块，无法构造视图控制器", module);
             return nil;
     }
 }

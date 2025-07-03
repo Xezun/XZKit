@@ -11,6 +11,7 @@
 @import XZDefines;
 @import XZToast;
 @import XZExtensionsObjC;
+@import XZLogObjC;
 
 @interface Example07Test02ChildViewController : UIViewController
 @property (nonatomic) NSInteger index;

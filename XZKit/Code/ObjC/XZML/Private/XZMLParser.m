@@ -185,7 +185,7 @@ static Class<XZMLParser> _defaultParser = Nil;
             return XZMLAttributeParagraphParser(context, element, value);
         }
         default: {
-            XZLog(@"XZML：自定义属性 %c 暂不支持", attribute);
+            XZLog(XZLogSystem.XZKit, @"XZML：自定义属性 %c 暂不支持", attribute);
             return XZMLReadingAll;
         }
     }
@@ -282,7 +282,7 @@ FOUNDATION_STATIC_INLINE UIFont * _Nullable XZMLFontFromContext(const XZMLParser
                 // 使用预设值
                 font = context.defaultAttributes[XZMLFontAttributeName];
                 if (font == nil) {
-                    XZLog(@"[XZML] 解析字体失败，无法确定字号");
+                    XZLog(XZLogSystem.XZKit, @"[XZML] 解析字体失败，无法确定字号");
                     return nil;
                 }
             }

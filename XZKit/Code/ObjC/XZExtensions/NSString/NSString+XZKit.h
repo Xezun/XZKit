@@ -19,9 +19,9 @@ NS_ASSUME_NONNULL_BEGIN
 
 /// 字符串转 CGFloat 值。字符串必须是纯数字值，否则返回零。
 /// @code
-/// NSLog(@"%f", @"0.12".xz_CGFloatValue); // 0.12
-/// NSLog(@"%f", @"a.12".xz_CGFloatValue); // 0.00
-/// NSLog(@"%f", @"0.1a".xz_CGFloatValue); // 0.00
+/// XZLog(@"%f", @"0.12".xz_CGFloatValue); // 0.12
+/// XZLog(@"%f", @"a.12".xz_CGFloatValue); // 0.00
+/// XZLog(@"%f", @"0.1a".xz_CGFloatValue); // 0.00
 /// @endcode
 @property (nonatomic, readonly) CGFloat xz_floatValue OBJC_SWIFT_UNAVAILABLE("请直接使用 Swift 版本");
 

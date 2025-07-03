@@ -6,8 +6,9 @@
 //
 
 #import "Example01Test01ViewController.h"
-@import XZDefinesObjC;
+@import XZDefines;
 @import ObjectiveC;
+@import XZLogObjC;
 
 @interface Example01TestView : UIView
 @end
@@ -22,7 +23,7 @@
 
 - (void)dealloc {
     self.block(__PRETTY_FUNCTION__);
-    XZLog(@"控制台看到此信息，表明 enweak、deweak 测试成功。");
+    XZLog(XZLogSystem.XZKit, @"控制台看到此信息，表明 enweak、deweak 测试成功。");
 }
 
 - (void)viewDidLoad {

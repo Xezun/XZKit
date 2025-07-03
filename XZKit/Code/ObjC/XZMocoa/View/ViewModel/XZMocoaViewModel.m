@@ -11,6 +11,7 @@
 #import "XZMocoaTargetActions.h"
 #import "XZMocoaKeysObserver.h"
 #import "XZMocoaKeysMapTable.h"
+#import "XZLog.h"
 @import XZObjcDescriptor;
 
 @implementation XZMocoaViewModel {
@@ -258,7 +259,7 @@ XZMocoaKey const XZMocoaKeyNone = @"";
 
 - (void)addTarget:(id)target action:(SEL)action forKey:(XZMocoaKey)key {
     if (target == nil || action == nil) {
-        XZLog(@"为 target=%@ action=%@ 添加事件失败，参数不能为 nil", target, NSStringFromSelector(action));
+        XZLog(XZLogSystem.XZKit, @"为 target=%@ action=%@ 添加事件失败，参数不能为 nil", target, NSStringFromSelector(action));
         return;
     }
     

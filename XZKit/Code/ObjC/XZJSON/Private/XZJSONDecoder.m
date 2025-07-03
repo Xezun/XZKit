@@ -1042,7 +1042,7 @@ void XZJSONModelDecodeProperty(id const __unsafe_unretained model, XZJSONPropert
         case XZObjcTypeInt128:
         case XZObjcTypeUnsignedInt128:
         case XZObjcTypeVector:
-            NSLog(@"[XZJSON] 目前平台不支持该数据类型");
+            XZLog(XZLogSystem.XZKit, @"[XZJSON] 目前平台不支持该数据类型");
             break;
     }
     
@@ -1058,5 +1058,5 @@ void XZJSONModelDecodeProperty(id const __unsafe_unretained model, XZJSONPropert
         return;
     }
     
-    XZLog(@"[XZJSON] Can not decode value `%@` for property `%@` of `%@`", JSONValue, property->_name, property->_raw.name);
+    XZLog(XZLogSystem.XZKit, @"[XZJSON] Can not decode value `%@` for property `%@` of `%@`", JSONValue, property->_name, property->_raw.name);
 }

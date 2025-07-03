@@ -6,6 +6,7 @@
 //
 
 #import "XZSegmentedControlLineIndicator.h"
+#import "XZLog.h"
 
 #define kIndicatorWidth 3.0
 
@@ -52,7 +53,7 @@
     CGRect  const from    = layoutAttributes.frame;
     CGFloat const percent = ABS(transition) / ceil(ABS(transition));
     
-    XZLog(@"from: %@, to: %@, interactiveTransition: %f, percent: %f", NSStringFromCGRect(from), NSStringFromCGRect(to), transition, percent);
+    XZLog(XZLogSystem.XZKit, @"from: %@, to: %@, interactiveTransition: %f, percent: %f", NSStringFromCGRect(from), NSStringFromCGRect(to), transition, percent);
     
     CGFloat x = from.origin.x + (to.origin.x - from.origin.x) * percent;
     CGFloat y = from.origin.y + (to.origin.y - from.origin.y) * percent;

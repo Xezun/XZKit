@@ -24,7 +24,7 @@ NS_ASSUME_NONNULL_BEGIN
 /// if ([aClass instancesRespondToSelector:target]) {
 ///     Method method = xz_objc_class_getMethod(aClass, target);
 ///     if (method == nil) {
-///         NSLog(@"方法 %s 从父类继承而来", target);
+///         XZLog(@"方法 %s 从父类继承而来", target);
 ///     }
 /// }
 /// ```

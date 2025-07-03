@@ -6,6 +6,7 @@
 //
 
 #import <Foundation/Foundation.h>
+#import "XZLog.h"
 
 NS_ASSUME_NONNULL_BEGIN
 

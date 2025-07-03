@@ -6,8 +6,9 @@
 //
 
 #import "ExampleAppDelegate.h"
+@import XZKit;
+@import XZLogObjC;
 @import XZLocale;
-@import XZDefines;
 
 @interface ExampleAppDelegate ()
 
@@ -19,6 +20,11 @@
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
     [NSNotificationCenter.defaultCenter addObserver:self selector:@selector(didChangeAppLanguage) name:XZLanguagePreferencesDidChangeNotification object:nil];
+    
+#if DEBUG
+    XZLogSystem.XZKit.isEnabled = YES;
+#endif
+    
     return YES;
 }
 

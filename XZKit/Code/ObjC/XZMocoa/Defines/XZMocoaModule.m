@@ -8,6 +8,7 @@
 
 #import "XZMocoaModule.h"
 #import "XZMocoaViewModel.h"
+#import "XZLog.h"
 
 /// 将 MocoaURL 中的单个 path 部分解析成 MVVM 模块的 kind 和 name 值。
 /// - Parameters:
@@ -52,7 +53,7 @@ FOUNDATION_STATIC_INLINE NSString *XZMocoaPathCreate(XZMocoaKind kind, XZMocoaNa
 + (XZMocoaModule *)moduleForURL:(NSURL *)url {
     NSString *host = url.host;
     if (host == nil) {
-        XZLog(@"参数 url 不合法：%@", url);
+        XZLog(XZLogSystem.XZKit, @"参数 url 不合法：%@", url);
         return nil;
     }
     

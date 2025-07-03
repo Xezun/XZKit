@@ -6,8 +6,9 @@
 //
 
 #import "Example20ViewController.h"
+#import "XZLog.h"
 @import XZKeychain;
-@import XZDefinesObjC;
+@import XZDefines;
 @import XZToast;
 
 @interface Example20ViewController () <UITextFieldDelegate>
