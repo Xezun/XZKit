@@ -70,7 +70,7 @@
             imageView.clipsToBounds = _sourceView.clipsToBounds;
             imageView.contentMode   = _sourceView.contentMode;
         }
-        imageView.frame = [itemView.imageView convertRect:itemView.imageView.bounds toView:containerView];
+        imageView.frame = [itemView convertRect:itemView.imageFrame toView:containerView];
         [containerView addSubview:imageView];
         
         NSTimeInterval const duration = [self transitionDuration:transitionContext];
@@ -92,7 +92,7 @@
         UIImageView * const imageView = itemView.imageView;
         imageView.clipsToBounds = _sourceView.clipsToBounds;
         imageView.contentMode   = _sourceView.contentMode;
-        imageView.frame         = [itemView.imageView convertRect:itemView.imageView.bounds toView:containerView];
+        imageView.frame         = [itemView convertRect:itemView.imageFrame toView:containerView];
         [containerView addSubview:imageView];
         
         NSTimeInterval const duration = [self transitionDuration:transitionContext];
@@ -114,7 +114,7 @@
     } else {
         // 非交互式，无源视图：图片向下平移
         UIImageView * const imageView = itemView.imageView; 
-        imageView.frame = [itemView.imageView convertRect:itemView.imageView.bounds toView:containerView];
+        imageView.frame = [itemView convertRect:itemView.imageFrame toView:containerView];
         [containerView addSubview:imageView];
         
         NSTimeInterval const duration = [self transitionDuration:transitionContext];

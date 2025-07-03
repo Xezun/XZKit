@@ -206,7 +206,9 @@
     }
     
     XZImageViewerItemView * const itemView = _pageView.currentView;
-    if (itemView == nil) {
+    
+    // 缩放状态下，不可手势退场（理论上不会触发）
+    if (itemView == nil || itemView.zoomScale != 1.0) {
         return NO;
     }
     

@@ -31,6 +31,10 @@ NS_ASSUME_NONNULL_BEGIN
 - (void)zoomToRect:(CGRect)rect animated:(BOOL)animated;
 - (void)setZoomScale:(CGFloat)scale animated:(BOOL)animated;
 
+/// 返回图片相对当前视图的位置。
+/// 如果图片处于缩放状态，则返回缩放状态下相对当前视图的位置。
+@property (nonatomic, readonly) CGRect imageFrame;
+
 /// 在入场退场的过程中，imageView 可能会离开当前视图。
 /// 将 imageView 放回，调用 setter 方法即可。
 @property (nonatomic, strong) UIImageView *imageView;

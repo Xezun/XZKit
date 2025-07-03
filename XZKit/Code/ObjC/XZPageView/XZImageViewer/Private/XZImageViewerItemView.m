@@ -55,6 +55,32 @@
     return _zoomingView;
 }
 
+- (CGRect)imageFrame {
+    if (_zoomingView) {
+        CGRect const bounds = self.bounds;
+        CGSize const contentSize = _zoomingView.contentSize;
+        
+        CGRect frame = _imageView.frame;
+        if (contentSize.width < bounds.size.width) {
+            frame.origin.x = (bounds.size.width - contentSize.width) * 0.5;
+        } else {
+            frame.origin.x = 0;
+        }
+        if (contentSize.height < bounds.size.height) {
+            frame.origin.y = (bounds.size.height - contentSize.height) * 0.5;
+        } else {
+            frame.origin.y = 0;
+        }
+        frame.size = contentSize;
+
+        CGPoint const contentOffset = _zoomingView.contentOffset;
+        frame.origin.x -= contentOffset.x;
+        frame.origin.y -= contentOffset.y;
+        return frame;
+    }
+    return _imageView.frame;
+}
+
 @synthesize imageView = _imageView;
 
 - (void)setImageView:(UIImageView *)imageView {
@@ -193,17 +219,17 @@
 }
 
 - (void)scrollViewDidZoom:(UIScrollView *)scrollView {
-    CGRect const kBounds = self.bounds;
+    CGRect const bounds = self.bounds;
     CGSize const contentSize = _zoomingView.contentSize;
     
     CGRect frame = _imageView.frame;
-    if (contentSize.width < kBounds.size.width) {
-        frame.origin.x = (kBounds.size.width - contentSize.width) * 0.5;
+    if (contentSize.width < bounds.size.width) {
+        frame.origin.x = (bounds.size.width - contentSize.width) * 0.5;
     } else {
         frame.origin.x = 0;
     }
-    if (contentSize.height < kBounds.size.height) {
-        frame.origin.y = (kBounds.size.height - contentSize.height) * 0.5;
+    if (contentSize.height < bounds.size.height) {
+        frame.origin.y = (bounds.size.height - contentSize.height) * 0.5;
     } else {
         frame.origin.y = 0;
     }
