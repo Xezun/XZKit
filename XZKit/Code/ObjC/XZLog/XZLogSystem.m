@@ -9,7 +9,7 @@
 
 @implementation XZLogSystem
 
-+ (XZLogSystem *)XZKit {
++ (XZLogSystem *)XZKitLogSystem {
     static XZLogSystem *_system = nil;
     static dispatch_once_t onceToken;
     dispatch_once(&onceToken, ^{

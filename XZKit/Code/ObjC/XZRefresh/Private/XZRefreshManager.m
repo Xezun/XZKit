@@ -96,7 +96,7 @@ static void const * const _context = &_context;
     if ([keyPath isEqualToString:@"contentSize"]) {
         CGSize const new = [change[NSKeyValueChangeNewKey] CGSizeValue];
         if ([_footer needsLayoutForContentSize:new]) {
-            XZLog(XZLogSystem.XZKit, @"触发 KVO 事件：%@, %@", keyPath, NSStringFromCGSize(new));
+            XZLog(@"触发 KVO 事件：%@, %@", keyPath, NSStringFromCGSize(new));
             [UIView animateWithDuration:XZRefreshAnimationDuration animations:^{
                 [self layoutFooterRefreshViewIfNeeded:YES];
             }];
@@ -234,7 +234,7 @@ static void const * const _context = &_context;
     if (headerRefreshView != nil) {
         [_scrollView addSubview:headerRefreshView];
     }
-    XZLog(XZLogSystem.XZKit, @"标记 Header 布局：%d", _header->_needsLayout);
+    XZLog(@"标记 Header 布局：%d", _header->_needsLayout);
     [self setNeedsLayoutHeaderRefreshView];
 }
 
@@ -296,7 +296,7 @@ static void const * const _context = &_context;
     _header->_needsLayout = YES;
     __weak typeof(self) wself = self;
     [NSRunLoop.mainRunLoop performInModes:@[NSRunLoopCommonModes] block:^{
-        XZLog(XZLogSystem.XZKit, @"核销 Header 布局：%d", _header->_needsLayout);
+        XZLog(@"核销 Header 布局：%d", _header->_needsLayout);
         [wself layoutHeaderRefreshViewIfNeeded:NO];
     }];
 }
@@ -318,7 +318,7 @@ static void const * const _context = &_context;
 }
 
 - (void)layoutRefreshViewsIfNeeded {
-    XZLog(XZLogSystem.XZKit, @"核销 Header 布局：%d", _header->_needsLayout);
+    XZLog(@"核销 Header 布局：%d", _header->_needsLayout);
     [self layoutHeaderRefreshViewIfNeeded:NO];
     [self layoutFooterRefreshViewIfNeeded:NO];
 }
@@ -334,7 +334,7 @@ static void const * const _context = &_context;
 // 2、偏移 offset 为在默认默认布局基础之上，按 offset 向上偏移 -offset 。
 // 在刷新时，刷新高度 refreshHeight 会合并到 .contentInset.top 中。
 - (void)layoutHeaderRefreshView {
-    XZLog(XZLogSystem.XZKit, @"执行 Footer 布局");
+    XZLog(@"执行 Footer 布局");
     XZRefreshHeaderContext * const _context     = self->_header;
     XZRefreshView          * const _refreshView = _context->_refreshView;
     if (_refreshView == nil) {
@@ -421,7 +421,7 @@ static void const * const _context = &_context;
         _refreshView.frame = frame;
     }
     
-    XZLog(XZLogSystem.XZKit, @"布局 Header 完成：%@, scrollView.bounds: %@, scrollView.frame: %@", NSStringFromCGRect(_refreshView.frame), NSStringFromCGRect(_header->_bounds), NSStringFromCGRect(_scrollView.frame));
+    XZLog(@"布局 Header 完成：%@, scrollView.bounds: %@, scrollView.frame: %@", NSStringFromCGRect(_refreshView.frame), NSStringFromCGRect(_header->_bounds), NSStringFromCGRect(_scrollView.frame));
 }
 
 - (void)layoutFooterRefreshViewIfNeeded:(BOOL)force {
@@ -440,7 +440,7 @@ static void const * const _context = &_context;
 /// 在附加了底部刷新高度边距后，如果页面高度仍不满足一屏，刷新视图刷新放在底部，
 /// 满足一屏，正常布局，放在页面尾部即可。
 - (void)layoutFooterRefreshView {
-    XZLog(XZLogSystem.XZKit, @"执行 Footer 布局");
+    XZLog(@"执行 Footer 布局");
     XZRefreshFooterContext * const _context     = self->_footer;
     XZRefreshView          * const _refreshView = _context->_refreshView;
     if (!_refreshView) {
@@ -607,7 +607,7 @@ static void const * const _context = &_context;
     }
     
     // 避免调用时，可能还没有同步 context 到最新状态
-    XZLog(XZLogSystem.XZKit, @"核销 Header 布局：%d", _header->_needsLayout);
+    XZLog(@"核销 Header 布局：%d", _header->_needsLayout);
     [self layoutHeaderRefreshViewIfNeeded:NO];
     
     UIScrollView * const _scrollView = self->_scrollView;
@@ -632,7 +632,7 @@ static void const * const _context = &_context;
         // 2. 设置 bounds 不会触发 didScroll 事件，但是子视图也不会更新，比如在 tableView 底部触发刷新，页面回到顶部时，没有加载 cell
         // 3. 修改 contentOffset 触发的 didScroll 事件，已在第一步通过状态屏蔽。
         UIViewAnimate(animated, ^{
-            XZLog(XZLogSystem.XZKit, @"触发 Header 布局");
+            XZLog(@"触发 Header 布局");
             [self layoutHeaderRefreshViewIfNeeded:YES];
             _scrollView.contentOffset = CGPointMake(0, _header->_contentOffsetY);
             [_header->_refreshView scrollView:_scrollView didBeginRefreshing:animated];
@@ -717,7 +717,7 @@ static void const * const _context = &_context;
         _header->_state = XZRefreshStateRecovering;
         
         UIViewAnimate(animated, ^{
-            XZLog(XZLogSystem.XZKit, @"触发 Header 布局");
+            XZLog(@"触发 Header 布局");
             [self layoutHeaderRefreshViewIfNeeded:YES];
             // 刷新视图不在展示区域内时，不需要调整页面位置。
             if (contentOffset.y <= _header->_contentOffsetY + _header->_refreshHeight) {
@@ -775,7 +775,7 @@ static void const * const _context = &_context;
     if (_scrollView != self->_scrollView) {
         return;
     }
-    XZLog(XZLogSystem.XZKit, @"%@", NSStringFromCGPoint(_scrollView.contentOffset));
+    XZLog(@"%@", NSStringFromCGPoint(_scrollView.contentOffset));
     
     // 头部已处于刷新状态时，不响应页面滚动
     if (_header->_state != XZRefreshStatePendinging) {
@@ -806,7 +806,7 @@ static void const * const _context = &_context;
     // 因为初始化时，adjustedContentInset 为 zero，页面展示后，adjustedContentInset 更新先调用 -scrollViewDidScroll: 方法时，
     // 错误的将 .top 判断为下拉距离，从而展示了异常状态。
     if ([_header needsLayoutForAxises:_scrollView]) {
-        XZLog(XZLogSystem.XZKit, @"触发 Header 布局");
+        XZLog(@"触发 Header 布局");
         [self layoutHeaderRefreshViewIfNeeded:YES];
     }
     if ([_footer needsLayoutForAxises:_scrollView]) {
@@ -875,7 +875,7 @@ static void const * const _context = &_context;
     if (_scrollView != self->_scrollView) {
         return;
     }
-    XZLog(XZLogSystem.XZKit, @"%@", NSStringFromCGPoint(_scrollView.contentOffset));
+    XZLog(@"%@", NSStringFromCGPoint(_scrollView.contentOffset));
     
     switch (_header->_state) {
         case XZRefreshStatePendinging:
@@ -941,7 +941,7 @@ static void const * const _context = &_context;
     if (_scrollView != self->_scrollView) {
         return;
     }
-    XZLog(XZLogSystem.XZKit, @"%@, velocity: %@, targetContentOffset: %@", NSStringFromCGPoint(_scrollView.contentOffset), NSStringFromCGPoint(velocity), NSStringFromCGPoint(*targetContentOffset));
+    XZLog(@"%@, velocity: %@, targetContentOffset: %@", NSStringFromCGPoint(_scrollView.contentOffset), NSStringFromCGPoint(velocity), NSStringFromCGPoint(*targetContentOffset));
     
     XZRefreshHeaderContext * const _header = self->_header;
     
@@ -962,7 +962,7 @@ static void const * const _context = &_context;
             _scrollView.contentInset  = UIEdgeInsetsIncreaseTop(_scrollView.contentInset, _header->_refreshHeight);
             _scrollView.contentOffset = contentOffset;
             
-            XZLog(XZLogSystem.XZKit, @"触发 Header 布局");
+            XZLog(@"触发 Header 布局");
             [self layoutHeaderRefreshViewIfNeeded:YES];
             
             targetContentOffset->y = _header->_contentOffsetY;
@@ -975,7 +975,7 @@ static void const * const _context = &_context;
             _scrollView.contentInset = UIEdgeInsetsIncreaseTop(_scrollView.contentInset, -_header->_refreshHeight);
             _scrollView.contentOffset = contentOffset;
             
-            XZLog(XZLogSystem.XZKit, @"触发 Header 布局");
+            XZLog(@"触发 Header 布局");
             [self layoutHeaderRefreshViewIfNeeded:YES];
             
             if (contentOffset.y < _header->_contentOffsetY) {
@@ -1036,7 +1036,7 @@ static void const * const _context = &_context;
     if (_scrollView != self->_scrollView) {
         return;
     }
-    XZLog(XZLogSystem.XZKit, @"%@, decelerate: %d", NSStringFromCGPoint(_scrollView.contentOffset), decelerate);
+    XZLog(@"%@, decelerate: %d", NSStringFromCGPoint(_scrollView.contentOffset), decelerate);
     
     if (decelerate) {
         return;
@@ -1048,7 +1048,7 @@ static void const * const _context = &_context;
     if (_scrollView != self->_scrollView) {
         return;
     }
-    XZLog(XZLogSystem.XZKit, @"%@", NSStringFromCGPoint(_scrollView.contentOffset));
+    XZLog(@"%@", NSStringFromCGPoint(_scrollView.contentOffset));
     
     switch (_header->_state) {
         case XZRefreshStateRefreshingDelayedEvents: {
@@ -1093,7 +1093,7 @@ static void const * const _context = &_context;
     _scrollView.contentInset  = UIEdgeInsetsIncreaseTop(_scrollView.contentInset, _header->_refreshHeight);
     _scrollView.contentOffset = contentOffset;
     
-    XZLog(XZLogSystem.XZKit, @"触发 Header 布局");
+    XZLog(@"触发 Header 布局");
     [self layoutHeaderRefreshViewIfNeeded:YES];
     
     [_header->_refreshView scrollView:_scrollView didBeginRefreshing:NO];

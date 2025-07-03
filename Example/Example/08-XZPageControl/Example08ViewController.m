@@ -10,7 +10,7 @@
 @import XZPageControl;
 @import XZPageView;
 @import XZDefines;
-@import XZLogObjC;
+@import XZLogCore;
 
 @interface Example08ViewController () <XZPageViewDelegate, XZPageViewDataSource>
 

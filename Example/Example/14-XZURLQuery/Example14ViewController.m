@@ -9,7 +9,7 @@
 @import XZURLQuery;
 @import XZLocale;
 @import XZDefines;
-@import XZLogObjC;
+@import XZLogCore;
 
 @interface Example14ViewController ()
 

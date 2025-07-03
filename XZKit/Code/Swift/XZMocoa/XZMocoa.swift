@@ -6,7 +6,7 @@
 //
 
 #if SWIFT_PACKAGE
-@_exported import XZMocoaObjC
+@_exported import XZMocoaCore
 extension XZMocoaKind: @retroactive ExpressibleByStringLiteral {
     public typealias StringLiteralType = String
     public init(stringLiteral value: String) {

@@ -9,7 +9,7 @@
 #import "Example06SettingsViewController.h"
 #import "Example06RefreshSettingsViewController.h"
 @import XZRefresh;
-@import XZExtensionsObjC;
+@import XZExtensionsCore;
 @import XZToast;
 
 @interface Example06ViewController () <XZRefreshDelegate, UITableViewDataSource> {

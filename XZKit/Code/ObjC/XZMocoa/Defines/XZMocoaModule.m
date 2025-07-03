@@ -53,7 +53,7 @@ FOUNDATION_STATIC_INLINE NSString *XZMocoaPathCreate(XZMocoaKind kind, XZMocoaNa
 + (XZMocoaModule *)moduleForURL:(NSURL *)url {
     NSString *host = url.host;
     if (host == nil) {
-        XZLog(XZLogSystem.XZKit, @"参数 url 不合法：%@", url);
+        XZLog(@"参数 url 不合法：%@", url);
         return nil;
     }
     

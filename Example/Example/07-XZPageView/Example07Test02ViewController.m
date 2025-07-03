@@ -10,8 +10,8 @@
 @import XZPageView;
 @import XZDefines;
 @import XZToast;
-@import XZExtensionsObjC;
-@import XZLogObjC;
+@import XZExtensionsCore;
+@import XZLogCore;
 
 @interface Example07Test02ChildViewController : UIViewController
 @property (nonatomic) NSInteger index;

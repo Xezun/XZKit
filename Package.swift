@@ -85,7 +85,7 @@ for module in _modules {
         ))
     case .Mixed:
         _targets.append(.target(
-            name: "\(module.name)ObjC",
+            name: "\(module.name)Core",
             dependencies: dependencies,
             path: "XZKit",
             sources: ["Code/ObjC/\(module.name)"],
@@ -95,7 +95,7 @@ for module in _modules {
         ))
         _targets.append(.target(
             name: module.name,
-            dependencies: [.byName(name: "\(module.name)ObjC")],
+            dependencies: [.byName(name: "\(module.name)Core")],
             path: "XZKit",
             sources: ["Code/Swift/\(module.name)"],
             swiftSettings: [.define("XZ_FRAMEWORK")]

@@ -10,7 +10,7 @@ import Foundation
 import UIKit
 
 #if SWIFT_PACKAGE
-import XZGeometryObjC
+@_exported import XZGeometryCore
 #endif
 
 // MARK: CGGeometry

@@ -130,7 +130,7 @@
 }
 
 - (void)scrollView:(UIScrollView *)scrollView didScrollRefreshing:(CGFloat)distance {
-    XZLog(XZLogSystem.XZKit, @"%s", __PRETTY_FUNCTION__);
+    XZLog(@"%s", __PRETTY_FUNCTION__);
     
     CGFloat const RefreshHeight = self.refreshHeight;
     CGFloat const PullHeight    = RefreshHeight * 1.5; // 进入下拉刷新的高度为刷新高度的 1.5 倍
@@ -171,12 +171,12 @@
 }
 
 - (BOOL)scrollView:(UIScrollView *)scrollView shouldBeginRefreshing:(CGFloat)distance {
-    XZLog(XZLogSystem.XZKit, @"%s", __PRETTY_FUNCTION__);
+    XZLog(@"%s", __PRETTY_FUNCTION__);
     return (distance >= self.refreshHeight * 1.5);
 }
 
 - (void)scrollView:(UIScrollView *)scrollView didBeginRefreshing:(BOOL)animated {
-    XZLog(XZLogSystem.XZKit, @"%s", __PRETTY_FUNCTION__);
+    XZLog(@"%s", __PRETTY_FUNCTION__);
     _trackLayer.transform = CATransform3DIdentity;
     _shapeLayer.transform = CATransform3DIdentity;
     
@@ -248,7 +248,7 @@
 }
 
 - (void)scrollView:(UIScrollView *)scrollView willEndRefreshing:(BOOL)animated {
-    XZLog(XZLogSystem.XZKit, @"%s", __PRETTY_FUNCTION__);
+    XZLog(@"%s", __PRETTY_FUNCTION__);
     CGFloat const start = _shapeLayer.presentationLayer.strokeStart;
     CGFloat const end   = _shapeLayer.presentationLayer.strokeEnd;
     [_shapeLayer removeAnimationForKey:@"refreshing"];
@@ -294,7 +294,7 @@
     [_trackLayer removeAnimationForKey:@"recovering.transform"];
     [_shapeLayer removeAnimationForKey:@"recovering.transform"];
     
-    XZLog(XZLogSystem.XZKit, @"%s", __PRETTY_FUNCTION__);
+    XZLog(@"%s", __PRETTY_FUNCTION__);
     
     [CATransaction begin];
     [CATransaction setDisableActions:YES];

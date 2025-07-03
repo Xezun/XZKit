@@ -6,7 +6,7 @@
 //
 
 #import "Example03ViewController.h"
-@import XZMocoaObjC;
+@import XZMocoaCore;
 @import ObjectiveC;
 @import XZML;
 

@@ -7,7 +7,7 @@
 
 #import "ExampleAppDelegate.h"
 @import XZKit;
-@import XZLogObjC;
+@import XZLogCore;
 @import XZLocale;
 
 @interface ExampleAppDelegate ()
@@ -22,10 +22,16 @@
     [NSNotificationCenter.defaultCenter addObserver:self selector:@selector(didChangeAppLanguage) name:XZLanguagePreferencesDidChangeNotification object:nil];
     
 #if DEBUG
-    XZLogSystem.XZKit.isEnabled = YES;
+    XZLogSystem.XZKitLogSystem.isEnabled = YES;
 #endif
     
     return YES;
+}
+
+- (UISceneConfiguration *)application:(UIApplication *)application configurationForConnectingSceneSession:(UISceneSession *)connectingSceneSession options:(UISceneConnectionOptions *)options {
+    // Called when a new scene session is being created.
+    // Use this method to select a configuration to create the new scene with.
+    return [[UISceneConfiguration alloc] initWithName:@"Default Configuration" sessionRole:connectingSceneSession.role];
 }
 
 - (void)didChangeAppLanguage {
@@ -52,5 +58,7 @@
         self->_window.layer.shadowColor = nil;
     }];
 }
+
+
 
 @end

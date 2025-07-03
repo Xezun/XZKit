@@ -55,7 +55,7 @@ static BOOL _isInAppLanguagePreferencesSupported  = NO;
     
     // 判断是否支持目标语言
     if (![self.supportedLanguages containsObject:newValue]) {
-        XZLog(XZLogSystem.XZKit, @"语言设置失败，不支持 %@ 语言。", newValue);
+        XZLog(@"语言设置失败，不支持 %@ 语言。", newValue);
         return;
     }
     _preferredLanguage = newValue.copy;

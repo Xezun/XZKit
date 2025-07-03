@@ -201,7 +201,7 @@ static BOOL XZKeychainHandleOSStatus(OSStatus statusCode, NSError *__autoreleasi
     item.description = newUDID;
     
     if (![keychain insert:&error]) {
-        XZLog(XZLogSystem.XZKit, @"[XZKeychain] 无法在钥匙串中保存 UDID 数据：%@", error);
+        XZLog(@"[XZKeychain] 无法在钥匙串中保存 UDID 数据：%@", error);
     }
     
     return newUDID;

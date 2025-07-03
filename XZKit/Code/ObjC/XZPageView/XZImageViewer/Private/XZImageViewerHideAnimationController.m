@@ -9,7 +9,13 @@
 #import "XZPageView.h"
 #import "XZImageViewer.h"
 #import "XZImageViewerItemView.h"
+#if SWIFT_PACKAGE
+@import XZGeometryCore;
+@import XZLogCore;
+#else
 @import XZGeometry;
+@import XZLog;
+#endif
 
 @implementation XZImageViewerHideAnimationController {
     UIView *_sourceView;

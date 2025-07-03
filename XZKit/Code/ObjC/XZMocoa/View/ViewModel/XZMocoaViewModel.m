@@ -259,7 +259,7 @@ XZMocoaKey const XZMocoaKeyNone = @"";
 
 - (void)addTarget:(id)target action:(SEL)action forKey:(XZMocoaKey)key {
     if (target == nil || action == nil) {
-        XZLog(XZLogSystem.XZKit, @"为 target=%@ action=%@ 添加事件失败，参数不能为 nil", target, NSStringFromSelector(action));
+        XZLog(@"为 target=%@ action=%@ 添加事件失败，参数不能为 nil", target, NSStringFromSelector(action));
         return;
     }
     

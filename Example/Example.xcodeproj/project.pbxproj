@@ -261,6 +261,7 @@
 		296537BE2D70CA0500559997 /* Example05XZGHUser.m in Sources */ = {isa = PBXBuildFile; fileRef = 296537BD2D70CA0500559997 /* Example05XZGHUser.m */; };
 		296537C12D70CA4100559997 /* Example05YYGHUser.m in Sources */ = {isa = PBXBuildFile; fileRef = 296537C02D70CA4100559997 /* Example05YYGHUser.m */; };
 		29776A142D3240E70033AAF9 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 29776A132D3240E70033AAF9 /* Main.storyboard */; };
+		298442EC2E16D6E0006B45E3 /* ExampleSceneDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 298442EB2E16D6E0006B45E3 /* ExampleSceneDelegate.m */; };
 		2989CE3C2DCFABF3003C9C9D /* Example13SelectViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2989CE3B2DCFABF3003C9C9D /* Example13SelectViewController.swift */; };
 		299B56CE2D2A67ED00CC2F69 /* Example10ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 299B56CD2D2A67ED00CC2F69 /* Example10ViewController.swift */; };
 		299B56D02D2A680300CC2F69 /* Example11ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 299B56CF2D2A680300CC2F69 /* Example11ViewController.swift */; };
@@ -765,6 +766,8 @@
 		296537C02D70CA4100559997 /* Example05YYGHUser.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = Example05YYGHUser.m; sourceTree = "<group>"; };
 		29776A0E2D3199DE0033AAF9 /* ExampleBridgingHeader.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ExampleBridgingHeader.h; sourceTree = "<group>"; };
 		29776A132D3240E70033AAF9 /* Main.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = Main.storyboard; sourceTree = "<group>"; };
+		298442EA2E16D6E0006B45E3 /* ExampleSceneDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ExampleSceneDelegate.h; sourceTree = "<group>"; };
+		298442EB2E16D6E0006B45E3 /* ExampleSceneDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ExampleSceneDelegate.m; sourceTree = "<group>"; };
 		2989CE3B2DCFABF3003C9C9D /* Example13SelectViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Example13SelectViewController.swift; sourceTree = "<group>"; };
 		299B56CD2D2A67ED00CC2F69 /* Example10ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Example10ViewController.swift; sourceTree = "<group>"; };
 		299B56CF2D2A680300CC2F69 /* Example11ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Example11ViewController.swift; sourceTree = "<group>"; };
@@ -2756,6 +2759,8 @@
 			children = (
 				29648BE32A72556C0090F445 /* ExampleAppDelegate.h */,
 				29648BE42A72556C0090F445 /* ExampleAppDelegate.m */,
+				298442EA2E16D6E0006B45E3 /* ExampleSceneDelegate.h */,
+				298442EB2E16D6E0006B45E3 /* ExampleSceneDelegate.m */,
 				29776A0E2D3199DE0033AAF9 /* ExampleBridgingHeader.h */,
 				292C15432D25182000E465BF /* ExampleNavigationController.h */,
 				292C15442D25182000E465BF /* ExampleNavigationController.m */,
@@ -3280,6 +3285,7 @@
 				292C179D2D251F6D00E465BF /* Example0330ViewModel.m in Sources */,
 				292C179E2D251F6D00E465BF /* Example0331Group108CellViewModel.m in Sources */,
 				292C179F2D251F6D00E465BF /* Example0330Group109Cell.m in Sources */,
+				298442EC2E16D6E0006B45E3 /* ExampleSceneDelegate.m in Sources */,
 				292C17A02D251F6D00E465BF /* Example0331Group110HeaderView.m in Sources */,
 				292C17A12D251F6D00E465BF /* Example0330Group103CellModel.m in Sources */,
 				04D06B002D2D45300056A53A /* Example15Test02ViewController.m in Sources */,

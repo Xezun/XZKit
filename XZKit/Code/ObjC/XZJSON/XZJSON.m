@@ -286,14 +286,14 @@
             case XZObjcTypeInt128:
             case XZObjcTypeUnsignedInt128:
             case XZObjcTypeVector:
-                XZLog(XZLogSystem.XZKit, @"[XZJSON] 目前平台不支持该数据类型");
+                XZLog(@"[XZJSON] 目前平台不支持该数据类型");
                 break;
         }
         // 无法复制的属性
         if (block && block(newModel, property->_name)) {
             return;
         }
-        XZLog(XZLogSystem.XZKit, @"[XZJSON] 无法复制 %@ 对象的属性 %@ 的值", modelClass->_raw.raw, property->_name);
+        XZLog(@"[XZJSON] 无法复制 %@ 对象的属性 %@ 的值", modelClass->_raw.raw, property->_name);
     }];
     
     return newModel;
@@ -594,7 +594,7 @@
             case XZObjcTypeInt128:
             case XZObjcTypeUnsignedInt128:
             case XZObjcTypeVector:
-                XZLog(XZLogSystem.XZKit, @"[XZJSON] 目前平台不支持该数据类型");
+                XZLog(@"[XZJSON] 目前平台不支持该数据类型");
                 break;
         }
         
@@ -611,7 +611,7 @@
         }
         
         // 默认不相等。
-        XZLog(XZLogSystem.XZKit, @"[XZJSON] 无法比较数据模型 %@ 与 %@ 的 属性 %@ 的值", model1Class->_raw.raw, model2Class->_raw.raw, name);
+        XZLog(@"[XZJSON] 无法比较数据模型 %@ 与 %@ 的 属性 %@ 的值", model1Class->_raw.raw, model2Class->_raw.raw, name);
         return NO;
     }
     

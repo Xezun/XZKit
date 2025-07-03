@@ -332,7 +332,7 @@ typedef void(^XZMocoaGridDelayedUpdates)(XZMocoaGridViewSectionViewModel *self);
 
 - (BOOL)prepareBatchUpdates {
     if (_viewModelsBeforeBatchUpdates) {
-        XZLog(XZLogSystem.XZKit, @"当前正在批量更新，本次操作取消");
+        XZLog(@"当前正在批量更新，本次操作取消");
         return NO;
     }
     _viewModelsBeforeBatchUpdates = _cellViewModels.copy;
@@ -355,7 +355,7 @@ typedef void(^XZMocoaGridDelayedUpdates)(XZMocoaGridViewSectionViewModel *self);
 
 - (void)performBatchUpdates:(void (^NS_NOESCAPE)(void))batchUpdates completion:(void (^ _Nullable)(BOOL))completion {
     NSAssert(batchUpdates != nil, @"必须提供 batchUpdates 参数");
-    XZLog(XZLogSystem.XZKit, @"----- 批量更新开始 %@ -----", self);
+    XZLog(@"----- 批量更新开始 %@ -----", self);
     if (![self prepareBatchUpdates]) {
         return;
     }
@@ -376,7 +376,7 @@ typedef void(^XZMocoaGridDelayedUpdates)(XZMocoaGridViewSectionViewModel *self);
         [self cellViewModelAtIndex:row].index = row;
     }
     
-    XZLog(XZLogSystem.XZKit, @"----- 批量更新结束 %@ -----", self);
+    XZLog(@"----- 批量更新结束 %@ -----", self);
 }
 
 - (NSIndexSet *)differenceBatchUpdatesIfNeeded {
@@ -418,7 +418,7 @@ typedef void(^XZMocoaGridDelayedUpdates)(XZMocoaGridViewSectionViewModel *self);
     }
     
     if (needsUpdateAll) {
-        XZLog(XZLogSystem.XZKit, @"由于 Supplementary 需要整体刷新，本次批量更新没有进行差异分析");
+        XZLog(@"由于 Supplementary 需要整体刷新，本次批量更新没有进行差异分析");
         [self reloadCellsAtIndexes:[NSIndexSet indexSetWithIndexesInRange:NSMakeRange(0, _cellViewModels.count)]];
         return nil;
     }
@@ -433,7 +433,7 @@ typedef void(^XZMocoaGridDelayedUpdates)(XZMocoaGridViewSectionViewModel *self);
     }
     
     if (oldDataModels.xz_containsDuplicateObjects) {
-        XZLog(XZLogSystem.XZKit, @"由于旧数据中包含重复元素，本次批量更新没有进行差异分析");
+        XZLog(@"由于旧数据中包含重复元素，本次批量更新没有进行差异分析");
         [self reloadCellsAtIndexes:[NSIndexSet indexSetWithIndexesInRange:NSMakeRange(0, oldCount)]];
         return nil;
     }
@@ -446,7 +446,7 @@ typedef void(^XZMocoaGridDelayedUpdates)(XZMocoaGridViewSectionViewModel *self);
     }
     
     if (newDataModels.xz_containsDuplicateObjects) {
-        XZLog(XZLogSystem.XZKit, @"由于新数据中包含重复元素，本次批量更新没有进行差异分析");
+        XZLog(@"由于新数据中包含重复元素，本次批量更新没有进行差异分析");
         [self reloadCellsAtIndexes:[NSIndexSet indexSetWithIndexesInRange:NSMakeRange(0, oldCount)]];
         return nil;
     }
@@ -457,18 +457,18 @@ typedef void(^XZMocoaGridDelayedUpdates)(XZMocoaGridViewSectionViewModel *self);
     NSDictionary<NSNumber *, NSNumber *> * const changes = [NSMutableDictionary dictionaryWithCapacity:oldCount];
     [newDataModels xz_differenceFromArray:oldDataModels inserts:(id)inserts deletes:(id)deletes changes:(id)changes remains:(id)remains];
     
-    XZLog(XZLogSystem.XZKit, @"『原始』%@", oldDataModels);
-    XZLog(XZLogSystem.XZKit, @"『目标』%@", newDataModels);
-    XZLog(XZLogSystem.XZKit, @"【差异分析】开始");
+    XZLog(@"『原始』%@", oldDataModels);
+    XZLog(@"『目标』%@", newDataModels);
+    XZLog(@"【差异分析】开始");
     
-    XZLog(XZLogSystem.XZKit, @"『不变』%@", remains);
+    XZLog(@"『不变』%@", remains);
     
     // 1、更新数据：先执行删除，后执行添加
     [deletes enumerateIndexesWithOptions:NSEnumerationReverse usingBlock:^(NSUInteger const index, BOOL *stop) {
         [[self cellViewModelAtIndex:index] removeFromSuperViewModel];
     }];
     [self didDeleteCellsAtIndexes:deletes];
-    XZLog(XZLogSystem.XZKit, @"『删除』%@", deletes);
+    XZLog(@"『删除』%@", deletes);
     
     NSDictionary<NSNumber *, XZMocoaViewModel *> * const newViewModels = [NSMutableDictionary dictionaryWithCapacity:inserts.count];
     [inserts enumerateIndexesUsingBlock:^(NSUInteger const index, BOOL * _Nonnull stop) {
@@ -478,7 +478,7 @@ typedef void(^XZMocoaGridDelayedUpdates)(XZMocoaGridViewSectionViewModel *self);
         ((NSMutableDictionary *)newViewModels)[@(index)] = newViewModel;
     }];
     [self didInsertCellsAtIndexes:inserts];
-    XZLog(XZLogSystem.XZKit, @"『添加』%@", inserts);
+    XZLog(@"『添加』%@", inserts);
     
     // 排序移动
     for (NSInteger to = 0; to < newCount; to++) {
@@ -486,7 +486,7 @@ typedef void(^XZMocoaGridDelayedUpdates)(XZMocoaGridViewSectionViewModel *self);
             id const viewModel = newViewModels[@(to)];
             NSInteger const index = [self indexOfCellViewModel:viewModel];
             [self _moveCellViewModelFromIndex:index toIndex:to];
-            XZLog(XZLogSystem.XZKit, @"『调整』%ld -> %ld, %@", (long)index, (long)to, self.cellDataModels);
+            XZLog(@"『调整』%ld -> %ld, %@", (long)index, (long)to, self.cellDataModels);
         } else if ([remains containsIndex:to]) {
             // to 位置为保持不变的元素，在 old 中找到 viewModel 然后将其移动到 to 位置上。
             XZMocoaGridViewCellViewModel * const viewModel = oldViewModels[to];
@@ -495,7 +495,7 @@ typedef void(^XZMocoaGridDelayedUpdates)(XZMocoaGridViewSectionViewModel *self);
             // 调整位置
             NSInteger const index = [self indexOfCellViewModel:viewModel];
             [self _moveCellViewModelFromIndex:index toIndex:to];
-            XZLog(XZLogSystem.XZKit, @"『调整』%ld -> %ld, %@", (long)index, (long)to, self.cellDataModels);
+            XZLog(@"『调整』%ld -> %ld, %@", (long)index, (long)to, self.cellDataModels);
         } else {
             // to 位置为被移动的元素，先找到它原来的位置，然后找到 viewModel 然后再移动位置。
             NSInteger const from = changes[@(to)].integerValue;
@@ -506,7 +506,7 @@ typedef void(^XZMocoaGridDelayedUpdates)(XZMocoaGridViewSectionViewModel *self);
             NSInteger const index = [self indexOfCellViewModel:viewModel];
             [self _moveCellViewModelFromIndex:index toIndex:to];
             [self didMoveCellAtIndex:from toIndex:to];
-            XZLog(XZLogSystem.XZKit, @"『移动』%ld(%ld) -> %ld, %@", (long)from, (long)index, (long)to, self.cellDataModels);
+            XZLog(@"『移动』%ld(%ld) -> %ld, %@", (long)from, (long)index, (long)to, self.cellDataModels);
         }
     }
     

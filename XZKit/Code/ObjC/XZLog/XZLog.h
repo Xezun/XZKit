@@ -53,13 +53,13 @@ NS_ASSUME_NONNULL_BEGIN
 ///   - line: 输出语句所在的行数
 ///   - function: 输出语句所在的函数名
 ///   - format: 输出内容格式
-FOUNDATION_EXPORT void XZLogs(const char *file, const int line, const char *function, XZLogSystem *system, NSString *format, ...) __attribute__(( availability(swift, unavailable, message=""), overloadable, format(__NSString__, 5, 6) ));
+FOUNDATION_EXPORT void XZLogv(const char *file, const int line, const char *function, XZLogSystem *system, NSString *format, ...) __attribute__(( availability(swift, unavailable, message=""), overloadable, format(__NSString__, 5, 6) ));
 
 /// 默认输出。
-FOUNDATION_EXPORT void XZLogs(const char *file, const int line, const char *function, NSString *format, ...) __attribute__(( availability(swift, unavailable, message=""), overloadable, format(__NSString__, 4, 5) ));
+FOUNDATION_EXPORT void XZLogv(const char *file, const int line, const char *function, NSString *format, ...) __attribute__(( availability(swift, unavailable, message=""), overloadable, format(__NSString__, 4, 5) ));
 
 /// 供 Swift 使用 NSLog 的函数。
-FOUNDATION_EXPORT void XZLogv(XZLogSystem * _Nullable system, NSString *file, NSInteger line, NSString *function, NSString *message);
+FOUNDATION_EXPORT void XZLogs(XZLogSystem * _Nullable system, NSString *file, NSInteger line, NSString *function, NSString *message) NS_SWIFT_NAME(XZLogv);
 
 /// 宏函数，控制台输出，实际调用 `NSLog` 完成输出，会额外输出语句所在的文件、行数、方法名，且如果待输出内容过大，则分批次输出，避免输出内容不完整。
 /// 
@@ -67,8 +67,13 @@ FOUNDATION_EXPORT void XZLogv(XZLogSystem * _Nullable system, NSString *file, NS
 /// - Parameter format: 格式化输出模版
 FOUNDATION_EXTERN void XZLog(XZLogSystem *system, NSString *format, ...) __attribute__(( availability(swift, unavailable, message=""), overloadable, format(__NSString__, 2, 3) ));
 
+#undef XZLog
 #if DEBUG
-#define XZLog(format, ...) XZLogs(__FILE_NAME__, __LINE__, __FUNCTION__, format, ##__VA_ARGS__)
+#if XZ_FRAMEWORK
+#define XZLog(format, ...) XZLogv(__FILE_NAME__, __LINE__, __FUNCTION__, XZLogSystem.XZKitLogSystem, format, ##__VA_ARGS__)
+#else
+#define XZLog(format, ...) XZLogv(__FILE_NAME__, __LINE__, __FUNCTION__, format, ##__VA_ARGS__)
+#endif
 #else
 #define XZLog(...)
 #endif

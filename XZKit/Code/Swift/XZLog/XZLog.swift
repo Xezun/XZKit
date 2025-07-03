@@ -8,7 +8,7 @@
 import Foundation
 
 #if SWIFT_PACKAGE
-@_exported import XZLogObjC
+@_exported import XZLogCore
 @freestanding(expression)
 public macro XZLog(_ message: String, in system: XZLogSystem? = nil) = #externalMacro(module: "XZLogMacros", type: "XZLogMacro")
 #else

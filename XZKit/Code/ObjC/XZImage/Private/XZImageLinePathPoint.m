@@ -13,7 +13,7 @@
 - (void)drawInContext:(CGContextRef)context {
     CGContextAddLineToPoint(context, _endPoint.x, _endPoint.y);
     
-    XZLog(XZLogSystem.XZKit, @"addLine: (%.2f, %.2f)", _endPoint.x, _endPoint.y);
+    XZLog(@"addLine: (%.2f, %.2f)", _endPoint.x, _endPoint.y);
 }
 
 - (void)addToPath:(UIBezierPath *)path {

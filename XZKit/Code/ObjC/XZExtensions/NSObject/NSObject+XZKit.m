@@ -82,7 +82,7 @@ typedef void (^_XZKeyPathEnumerator)(id _Nullable value, NSInteger idx, BOOL *st
         @try {
             nextObject = [self valueForKey:key];
         } @catch (NSException *exception) {
-            XZLog(XZLogSystem.XZKit, @"[XZKeyPathEnumeration] 在获取对象 %@ 键值 %@ 时出错：%@", self, key, exception);
+            XZLog(@"[XZKeyPathEnumeration] 在获取对象 %@ 键值 %@ 时出错：%@", self, key, exception);
             nextObject = nil;
         } @finally {
             

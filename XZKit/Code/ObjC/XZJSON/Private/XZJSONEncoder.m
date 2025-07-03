@@ -466,7 +466,7 @@ void XZJSONModelEncodeProperty(id const __unsafe_unretained model, XZJSONPropert
         case XZObjcTypeInt128:
         case XZObjcTypeUnsignedInt128:
         case XZObjcTypeVector:
-            XZLog(XZLogSystem.XZKit, @"[XZJSON] 目前平台不支持该数据类型");
+            XZLog(@"[XZJSON] 目前平台不支持该数据类型");
             break;
     }
     
@@ -487,5 +487,5 @@ void XZJSONModelEncodeProperty(id const __unsafe_unretained model, XZJSONPropert
         return;
     }
     
-    XZLog(XZLogSystem.XZKit, @"[XZJSON] Can not encode property `%@` of `%@`", property->_name, property->_class->_raw.name);
+    XZLog(@"[XZJSON] Can not encode property `%@` of `%@`", property->_name, property->_class->_raw.name);
 }
