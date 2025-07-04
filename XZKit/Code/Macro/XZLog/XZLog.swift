@@ -28,7 +28,7 @@ public struct XZLogMacro: ExpressionMacro {
         case 1:
             let message = node.arguments[node.arguments.startIndex].expression
             return """
-                XZLogs(nil, #file, #line, #function, \(raw: message.trimmedDescription))
+                XZLogs(XZLogSystem.default, #file, #line, #function, \(raw: message.trimmedDescription))
             """
         case 2:
             let message = node.arguments[node.arguments.startIndex].expression

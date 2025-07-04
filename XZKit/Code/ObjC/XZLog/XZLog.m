@@ -88,6 +88,10 @@ void XZLogv(const char *file, const int line, const char *function, NSString *fo
 }
 
 void XZLogs(XZLogSystem *system, NSString *file, NSInteger line, NSString *function, NSString *message) {
+    NSRange const range = [file rangeOfString:system.name];
+    if (range.location == 0 && (range.length + 1) < file.length && [file characterAtIndex:range.length] == '/') {
+        file = [file substringFromIndex:range.length + 1];
+    }
     const char * cfile = [file cStringUsingEncoding:NSUTF8StringEncoding];
     const char * cfunc = [function cStringUsingEncoding:NSUTF8StringEncoding];
     XZLog(cfile, (int)line, cfunc, system, message);
