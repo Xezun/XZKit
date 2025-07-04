@@ -177,7 +177,7 @@ static NSMutableDictionary *_styleImages = nil;
 }
 
 + (UIImage *)imageForStyle:(XZToastStyle)style {
-    return _styleImages[@(style)] ?: UIImageFromXZToastStyle(style);
+    return _styleImages[@(style)] ?: XZToastStyleImage(style);
 }
 
 + (void)setImage:(UIImage *)image forStyle:(XZToastStyle)style {
