@@ -137,6 +137,7 @@ typedef NS_ENUM(NSUInteger, XZImageViewerHideStyle) {
             }
             case XZImageViewerHideStyleZoomDown: {
                 [UIView addKeyframeWithRelativeStartTime:0.0 relativeDuration:1.0 animations:^{
+                    // 必须将下面的操作放一起，贯穿且为整个动画过程，否则 imageViewer 退场后，状态栏的样式可能会不正确。
                     [toVC setNeedsStatusBarAppearanceUpdate];
                     fromView.backgroundColor = UIColor.clearColor;
                     toView.transform         = CGAffineTransformIdentity;

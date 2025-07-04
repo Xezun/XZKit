@@ -260,7 +260,6 @@
             [_pageView suspendAutoPaging];
             XZImageViewerItemView * const itemView = _pageView.currentView;
             _hideController = [[XZImageViewerHideInteractiveController alloc] initWithItemView:itemView];
-            [self setNeedsStatusBarAppearanceUpdate];
             [self dismissViewControllerAnimated:YES completion:nil];
             break;
         }

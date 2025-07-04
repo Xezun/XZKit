@@ -12,7 +12,9 @@ NS_ASSUME_NONNULL_BEGIN
 @class XZPageView, UITableView, UITableViewCell;
 @protocol UITableViewDelegate;
 
-/// 翻页效果动画时长。
+/// 翻页效果动画时长，0.30秒。
+///
+/// @attention 在 XZImageViewer 退场动画中，如果此动画时长值为 0.35 秒或 0.40 秒，退场后状态栏的样式可能不正常。
 FOUNDATION_EXPORT NSTimeInterval const XZPageViewAnimationDuration;
 
 /// 翻页方向。
