@@ -8,7 +8,7 @@
 
 ## 环境需求
 
-iOS 12.0, Swift 5.0, Xcode 16.0.
+iOS 13.0, Swift 6.0, Xcode 16.0.
 
 ## 安装集成
 
@@ -155,6 +155,14 @@ pod "XZKit"
 所有组件都有单独的[示例代码](./Example)，下载到本地后，代码运行前需在 Pod 目录执行 `pod update` 安装相关依赖。
 
 ## 更新日志
+
+- 2025.07.05
+
+  将 XZLog 调整为独立模块。
+
+- 2025.07.01
+
+  组件 XZPageView 优化；新增 XZPageViewController/XZImageViewer、XZImage、XZTicker 等组件
 
 - 2025.02.26
 

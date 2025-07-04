@@ -17,7 +17,7 @@ struct Foobar {
     }
 }
 
-@mocoa(.vm)
+@mocoa
 class FooViewModel: XZMocoaViewModel {
     
     @key
@@ -67,6 +67,8 @@ class FooViewModel: XZMocoaViewModel {
     @key(value: 0)
     @bind(.foo.bar.bar)
     var keyPathValue2: Int
+    
+    
     
 }
 
