@@ -7,7 +7,7 @@
 
 #import "ExampleViewController.h"
 @import XZExtensions;
-@import XZMocoaObjC;
+@import XZMocoaCore;
 @import XZToast;
 
 @interface ExampleViewController () {

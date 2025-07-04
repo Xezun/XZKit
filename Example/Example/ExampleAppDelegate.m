@@ -6,8 +6,10 @@
 //
 
 #import "ExampleAppDelegate.h"
+@import XZKit;
+@import XZLogCore;
 @import XZLocale;
-@import XZDefines;
+@import OSLog;
 
 @interface ExampleAppDelegate ()
 
@@ -18,8 +20,15 @@
 @synthesize window = _window;
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
+    XZLog(@"App (%@) was launched: %@", XZLogSystem.defaultLogSystem.domain, launchOptions);
     [NSNotificationCenter.defaultCenter addObserver:self selector:@selector(didChangeAppLanguage) name:XZLanguagePreferencesDidChangeNotification object:nil];
     return YES;
+}
+
+- (UISceneConfiguration *)application:(UIApplication *)application configurationForConnectingSceneSession:(UISceneSession *)connectingSceneSession options:(UISceneConnectionOptions *)options {
+    // Called when a new scene session is being created.
+    // Use this method to select a configuration to create the new scene with.
+    return [[UISceneConfiguration alloc] initWithName:@"Default Configuration" sessionRole:connectingSceneSession.role];
 }
 
 - (void)didChangeAppLanguage {
@@ -46,5 +55,7 @@
         self->_window.layer.shadowColor = nil;
     }];
 }
+
+
 
 @end

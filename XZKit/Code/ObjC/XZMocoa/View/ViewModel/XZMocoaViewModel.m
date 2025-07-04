@@ -11,6 +11,7 @@
 #import "XZMocoaTargetActions.h"
 #import "XZMocoaKeysObserver.h"
 #import "XZMocoaKeysMapTable.h"
+#import "XZLog.h"
 @import XZObjcDescriptor;
 
 @implementation XZMocoaViewModel {

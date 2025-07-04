@@ -23,7 +23,7 @@ NS_ASSUME_NONNULL_BEGIN
 /// NSNumber *sum = [models xz_reduce:@(0) next:^id(NSNumber *result, id obj, NSInteger idx, BOOL *stop) {
 ///     return result.integerValue + obj.integerValue;
 /// }];
-/// NSLog(@"%@", sum); // prints 6
+/// XZLog(@"%@", sum); // prints 6
 /// @endcode
 /// @param initialValue 初始值
 /// @param next 执行数组元素合并的块函数

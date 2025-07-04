@@ -7,6 +7,7 @@
 
 #import "XZPageViewContext.h"
 #import "XZPageViewExtension.h"
+#import "XZLog.h"
 @import ObjectiveC;
 #if __has_include(<XZDefines/XZRuntime.h>)
 #import <XZDefines/XZRuntime.h>
@@ -453,7 +454,7 @@
         [self willHideView:_view->_currentView animated:YES];
         
         if (_view->_pendingView) {
-            NSLog(@"待显视图：当前与目标不一致，%ld vs %ld", _view->_pendingPage, pendingPage);
+            XZLog(@"待显视图：当前与目标不一致，%ld vs %ld", _view->_pendingPage, pendingPage);
             [self willHideView:_view->_pendingView animated:NO];
             [_view->_pendingView removeFromSuperview];
             [self didHideView:_view->_pendingView animated:NO];
@@ -474,12 +475,12 @@
             [_view addSubview:_view->_pendingView];
             [self layoutPendingView:bounds];
         } else if (_view->_reusingPage == pendingPage) {
-            NSLog(@"待显视图：直接使用复用视图，%ld", pendingPage);
+            XZLog(@"待显视图：直接使用复用视图，%ld", pendingPage);
             _view->_pendingView = _view->_reusingView;
             _view->_reusingView = nil;
             _view->_reusingPage = NSNotFound;
         } else {
-            NSLog(@"待显视图：加载新的待显视图，%ld", pendingPage);
+            XZLog(@"待显视图：加载新的待显视图，%ld", pendingPage);
             _view->_pendingView = [self viewForPageAtIndex:pendingPage reusingView:_view->_reusingView];
             _view->_reusingView = nil;
             _view->_reusingPage = NSNotFound;
@@ -491,7 +492,7 @@
         _view->_pendingPageDirection = direction;
         [self layoutPendingView:bounds];
     } else if (direction != _view->_pendingPageDirection) {
-        NSLog(@"待显视图：与当前方向不一致，%d, %ld", direction, pendingPage);
+        XZLog(@"待显视图：与当前方向不一致，%d, %ld", direction, pendingPage);
         _view->_pendingPageDirection = direction;
         [self layoutPendingView:bounds];
     }
@@ -866,7 +867,7 @@
         [self willHideView:_view->_currentView animated:YES];
         
         if (_view->_pendingView) {
-            NSLog(@"待显视图：当前与目标不一致，%ld vs %ld", _view->_pendingPage, pendingPage);
+            XZLog(@"待显视图：当前与目标不一致，%ld vs %ld", _view->_pendingPage, pendingPage);
             [self willHideView:_view->_pendingView animated:NO];
             [_view->_pendingView removeFromSuperview];
             [self didHideView:_view->_pendingView animated:NO];
@@ -887,12 +888,12 @@
             [_view addSubview:_view->_pendingView];
             [self layoutPendingView:bounds];
         } else if (_view->_reusingPage == pendingPage) {
-            NSLog(@"待显视图：直接使用复用视图，%ld", pendingPage);
+            XZLog(@"待显视图：直接使用复用视图，%ld", pendingPage);
             _view->_pendingView = _view->_reusingView;
             _view->_reusingView = nil;
             _view->_reusingPage = NSNotFound;
         } else {
-            NSLog(@"待显视图：加载新的待显视图，%ld", pendingPage);
+            XZLog(@"待显视图：加载新的待显视图，%ld", pendingPage);
             _view->_pendingView = [self viewForPageAtIndex:pendingPage reusingView:_view->_reusingView];
             _view->_reusingView = nil;
             _view->_reusingPage = NSNotFound;
@@ -904,7 +905,7 @@
         _view->_pendingPageDirection = direction;
         [self layoutPendingView:bounds];
     } else if (direction != _view->_pendingPageDirection) {
-        NSLog(@"待显视图：与当前方向不一致，%d, %ld", direction, pendingPage);
+        XZLog(@"待显视图：与当前方向不一致，%d, %ld", direction, pendingPage);
         _view->_pendingPageDirection = direction;
         [self layoutPendingView:bounds];
     }

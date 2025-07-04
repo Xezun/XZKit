@@ -6,7 +6,7 @@
 //
 
 #import <XCTest/XCTest.h>
-@import XZMocoaObjC;
+@import XZMocoaCore;
 @import XZDefines;
 @import XZExtensions;
 

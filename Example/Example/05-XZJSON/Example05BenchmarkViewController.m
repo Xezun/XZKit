@@ -10,7 +10,7 @@
 @import XZJSON;
 @import YYModel;
 @import XZToast;
-@import XZExtensionsObjC;
+@import XZExtensionsCore;
 
 @interface Example05BenchmarkViewController ()
 @property (nonatomic, weak) IBOutlet UILabel *textLabel;

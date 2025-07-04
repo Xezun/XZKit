@@ -39,15 +39,15 @@ __attribute__((objc_subclassing_restricted))
 /// @discussion
 /// 4、重复的字段，返回值 NSArray 对象，包含的元素为 NSString 或 NSNull 对象，比如 key3 字段值。
 /// @code
-/// NSLog(@"[%@], %d", query[@"key0"], [query containsValueForName:@"key0"]);
+/// XZLog(@"[%@], %d", query[@"key0"], [query containsValueForName:@"key0"]);
 /// // prints: nil, 0
-/// NSLog(@"[%@], %d", query[@"key1"], [query containsValueForName:@"key1"]);
+/// XZLog(@"[%@], %d", query[@"key1"], [query containsValueForName:@"key1"]);
 /// // prints: "x", 1
-/// NSLog(@"[%@], %d", query[@"key2"], [query containsValueForName:@"key2"]);
+/// XZLog(@"[%@], %d", query[@"key2"], [query containsValueForName:@"key2"]);
 /// // prints: "", 1
-/// NSLog(@"[%@], %d", query[@"key3"], [query containsValueForName:@"key3"]);
+/// XZLog(@"[%@], %d", query[@"key3"], [query containsValueForName:@"key3"]);
 /// // prints: ["x", "", <NSNull>], 1
-/// NSLog(@"[%@], %d", query[@"key4"], [query containsValueForName:@"key4"]);
+/// XZLog(@"[%@], %d", query[@"key4"], [query containsValueForName:@"key4"]);
 /// // prints: nil, 1
 /// @endcode
 /// - Parameter name: 字段名

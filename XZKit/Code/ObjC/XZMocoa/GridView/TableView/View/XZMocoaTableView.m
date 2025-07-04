@@ -11,6 +11,7 @@
 #import "XZMocoaTableViewCell.h"
 #import "XZMocoaTableViewHeaderFooterView.h"
 #import "XZMocoaTableViewProxy.h"
+#import "XZLog.h"
 @import ObjectiveC;
 
 @interface XZMocoaTableView ()

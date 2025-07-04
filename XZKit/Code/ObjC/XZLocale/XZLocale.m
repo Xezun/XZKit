@@ -8,6 +8,7 @@
 #import "XZLocale.h"
 #import "XZRuntime.h"
 #import "XZMacros.h"
+#import "XZLog.h"
 @import ObjectiveC;
 
 XZLocalizationPredicate const XZLocalizationPredicateBraces   = { '{', '}' };

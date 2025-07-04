@@ -6,7 +6,7 @@
 //
 
 #import "Example16CollectonViewCellModel.h"
-@import XZExtensionsObjC;
+@import XZExtensionsCore;
 
 @implementation Example16CollectonViewCellModel
 - (instancetype)initWithScrollDirection:(UICollectionViewScrollDirection)scrollDirection {

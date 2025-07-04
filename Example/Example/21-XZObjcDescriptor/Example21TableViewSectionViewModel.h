@@ -5,7 +5,7 @@
 //  Created by 徐臻 on 2025/1/31.
 //
 
-@import XZMocoaObjC;
+@import XZMocoaCore;
 
 NS_ASSUME_NONNULL_BEGIN
 

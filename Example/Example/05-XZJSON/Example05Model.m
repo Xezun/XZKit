@@ -6,7 +6,7 @@
 //
 
 #import "Example05Model.h"
-@import XZExtensionsObjC;
+@import XZExtensionsCore;
 
 @implementation Example05Response
 @end

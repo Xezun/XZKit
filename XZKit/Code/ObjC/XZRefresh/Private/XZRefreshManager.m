@@ -13,6 +13,7 @@
 #import "XZRefreshContext.h"
 #import "XZRefreshDefines.h"
 #import "XZDefer.h"
+#import "XZLog.h"
 
 // 关于布局刷新视图。
 //

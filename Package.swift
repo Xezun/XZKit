@@ -6,50 +6,78 @@ import CompilerPluginSupport
 
 // 模块
 
-private enum ModuleType {
+private enum ModuleLang {
     case ObjC;
     case Swift;
     case Mixed;
 }
 
-private var _modules: [(type: ModuleType, name: String, dependencies: [PackageDescription.Target.Dependency])] = [
-    (.ObjC, "XZML", ["XZDefines", "XZExtensions"]),
-    (.ObjC, "XZJSON", ["XZObjcDescriptor", "XZExtensions"]),
-    (.ObjC, "XZRefresh", ["XZDefines"]),
-    (.ObjC, "XZPageView", ["XZDefines", "XZGeometry", "XZExtensions"]),
-    (.ObjC, "XZPageControl", ["XZExtensions"]),
-    (.ObjC, "XZSegmentedControl", ["XZDefines"]),
-    (.ObjC, "XZURLQuery", []),
-    (.ObjC, "XZLocale", ["XZDefines"]),
-    (.ObjC, "XZDataCryptor", ["XZDefines"]),
-    (.ObjC, "XZDataDigester", ["XZDefines", "XZExtensions"]),
-    (.ObjC, "XZKeychain", []),
-    (.ObjC, "XZImage", ["XZGeometry"]),
-    (.ObjC, "XZObjcDescriptor", ["XZDefines"]),
-    (.Swift, "XZTextImageView", ["XZGeometry"]),
-    (.Swift, "XZContentStatus", ["XZTextImageView"]),
-    (.Swift, "XZCollectionViewFlowLayout", []),
-    (.Swift, "XZProgressView", []),
-    (.Swift, "XZTicker", []),
-    (.Swift, "XZNavigationController", ["XZDefines"]),
-    (.Mixed, "XZDefines", ["XZDefinesMacros"]),
-    (.Mixed, "XZExtensions", ["XZDefines"]),
-    (.Mixed, "XZGeometry", []),
-    (.Mixed, "XZToast", ["XZGeometry", "XZTextImageView", "XZExtensions"]),
-    (.Mixed, "XZMocoa", ["XZDefines", "XZExtensions", "XZObjcDescriptor", "XZMocoaMacros"]),
+private var modules: [(name: String, lang: ModuleLang, macros: Bool, dependencies: [PackageDescription.Target.Dependency])] = [
+    // 基础
+    ("XZLog",        .Mixed, true, []),
+    ("XZDefines",    .ObjC,  false, ["XZLog"]),
+    ("XZExtensions", .Mixed, false, ["XZDefines"]),
+    
+    // 拓展
+    ("XZURLQuery",       .ObjC,  false, []),
+    ("XZGeometry",       .Mixed, false, []),
+    ("XZContentStatus",  .Swift, false, ["XZTextImageView"]),
+    ("XZImage",          .ObjC, false, ["XZLog", "XZGeometry"]),
+    ("XZObjcDescriptor", .ObjC, false, ["XZDefines"]),
+    
+    // 核心
+    ("XZML",      .ObjC,  false, ["XZDefines", "XZExtensions"]),
+    ("XZMocoa",   .Mixed, true,  ["XZDefines", "XZExtensions", "XZObjcDescriptor"]),
+    ("XZToast",   .Mixed, false, ["XZGeometry", "XZTextImageView", "XZExtensions"]),
+    ("XZRefresh", .ObjC,  false, ["XZDefines"]),
+    
+    // 自定义组件
+    ("XZPageView",                 .ObjC,  false, ["XZDefines", "XZGeometry", "XZExtensions"]),
+    ("XZProgressView",             .Swift, false, []),
+    ("XZPageControl",              .ObjC,  false, ["XZExtensions"]),
+    ("XZSegmentedControl",         .ObjC,  false, ["XZDefines"]),
+    ("XZTextImageView",            .Swift, false, ["XZGeometry"]),
+    ("XZNavigationController",     .Swift, false, ["XZDefines"]),
+    ("XZCollectionViewFlowLayout", .Swift, false, []),
+    
+    // 工具类
+    ("XZTicker",         .Swift, false, []),
+    ("XZJSON",           .ObjC, false, ["XZObjcDescriptor", "XZExtensions"]),
+    ("XZLocale",         .ObjC, false, ["XZDefines"]),
+    ("XZDataCryptor",    .ObjC, false, ["XZDefines"]),
+    ("XZDataDigester",   .ObjC, false, ["XZDefines", "XZExtensions"]),
+    ("XZKeychain",       .ObjC, false, ["XZLog"]),
 ]
-_modules.append((.Swift, "XZKit", _modules.map({ .byName(name: $0.name) })))
+modules.append(("XZKit", .Swift, false, modules.map({ .byName(name: $0.name) })))
 
-private var _products = [Product]();
-private var _targets = [Target]();
+private var libraries = [Product]();
+private var targets = [Target]();
 
-for module in _modules {
-    _products.append(.library(name: module.name, targets: [module.name]))
-    switch module.type {
+for module in modules {
+    libraries.append(.library(name: module.name, targets: [module.name]))
+    
+    var dependencies = module.dependencies;
+    
+    if module.macros {
+        dependencies.append(.init(stringLiteral: "\(module.name)Macros"))
+        targets.append(
+            .macro(
+                name: "\(module.name)Macros",
+                dependencies: [
+                    .product(name: "SwiftSyntaxMacros", package: "swift-syntax"),
+                    .product(name: "SwiftCompilerPlugin", package: "swift-syntax")
+                ],
+                path: "XZKit",
+                sources: ["Code/Macro/\(module.name)"]
+            )
+        )
+    }
+    
+    switch module.lang {
     case .ObjC:
-        _targets.append(.target(
+        targets.append(.target(
             name: module.name,
-            dependencies: module.dependencies,
+            dependencies: dependencies,
             path: "XZKit",
             sources: ["Code/ObjC/\(module.name)"],
             publicHeadersPath: "Headers/Public/\(module.name)",
@@ -57,76 +85,37 @@ for module in _modules {
             cxxSettings: [.define("XZ_FRAMEWORK")]
         ))
     case .Swift:
-        _targets.append(.target(
+        targets.append(.target(
             name: module.name,
-            dependencies: module.dependencies,
+            dependencies: dependencies,
             path: "XZKit",
             sources: ["Code/Swift/\(module.name)"],
             swiftSettings: [.define("XZ_FRAMEWORK")]
         ))
     case .Mixed:
-        _targets.append(.target(
-            name: "\(module.name)ObjC",
-            dependencies: module.dependencies,
+        targets.append(.target(
+            name: "\(module.name)Core",
+            dependencies: dependencies,
             path: "XZKit",
             sources: ["Code/ObjC/\(module.name)"],
             publicHeadersPath: "Headers/Public/\(module.name)",
             cSettings: [.headerSearchPath("Headers/Private/\(module.name)")],
             cxxSettings: [.define("XZ_FRAMEWORK")]
         ))
-        _targets.append(.target(
+        targets.append(.target(
             name: module.name,
-            dependencies: [.byName(name: "\(module.name)ObjC")],
+            dependencies: [.byName(name: "\(module.name)Core")],
             path: "XZKit",
             sources: ["Code/Swift/\(module.name)"],
             swiftSettings: [.define("XZ_FRAMEWORK")]
         ))
     }
+    
 }
-
-// 宏
-
-_targets.append(
-    .macro(
-        name: "XZMocoaMacros",
-        dependencies: [
-            .product(name: "SwiftSyntaxMacros", package: "swift-syntax"),
-            .product(name: "SwiftCompilerPlugin", package: "swift-syntax")
-        ],
-        path: "XZKit",
-        sources: ["Code/Macro/XZMocoa"]
-    )
-)
-
-_targets.append(
-    .macro(
-        name: "XZDefinesMacros",
-        dependencies: [
-            .product(name: "SwiftSyntaxMacros", package: "swift-syntax"),
-            .product(name: "SwiftCompilerPlugin", package: "swift-syntax")
-        ],
-        path: "XZKit",
-        sources: ["Code/Macro/XZDefines"]
-    )
-)
-
-// 应用
-
-_targets.append(
-    .executableTarget(
-        name: "Example",
-        dependencies: ["XZKit"],
-        path: "XZKit",
-        sources: ["Code/Swift/Example"]
-    )
-)
-_products.append(
-    .executable(name: "Example", targets: ["Example"])
-)
 
 // 单元测试
 
-_targets.append(
+targets.append(
     .testTarget(
         name: "XZMocoaMacrosTests",
         dependencies: [
@@ -142,9 +131,9 @@ _targets.append(
 let package = Package(
     name: "XZKit",
     platforms: [.iOS(.v13), .macOS(.v15)],
-    products: _products,
+    products: libraries,
     dependencies: [
         .package(url: "https://github.com/swiftlang/swift-syntax.git", from: "600.0.0-latest"),
     ],
-    targets: _targets
+    targets: targets
 )

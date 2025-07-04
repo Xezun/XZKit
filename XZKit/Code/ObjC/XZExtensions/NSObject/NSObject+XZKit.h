@@ -49,7 +49,7 @@ typedef BOOL (^XZKeyPathComparator)(id _Nullable value, NSString *keyPath, BOOL 
 /// @discussion 遍历其中所有的`url`则可以使用本方法。
 /// @code
 /// [table xz_enumerateValues:^(NSURL *url, BOOL *stop){
-///     NSLog(@"%@", url);
+///     XZLog(@"%@", url);
 /// } forKeyPaths:@[
 ///     @"table.url",
 ///     @"table.sections.url",

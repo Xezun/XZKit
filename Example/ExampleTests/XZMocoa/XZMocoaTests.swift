@@ -1,21 +1,12 @@
 //
-//  main.swift
-//  XZKit
+//  XZMocoaTests.swift
+//  Example
 //
-//  Created by 徐臻 on 2025/6/9.
+//  Created by 徐臻 on 2025/7/4.
 //
 
 import UIKit
 import XZKit
-
-@main
-class AppDelegate: NSObject, UIApplicationDelegate {
-    
-    func applicationDidFinishLaunching(_ application: UIApplication) {
-        
-    }
-    
-}
 
 struct Foobar {
    
@@ -26,7 +17,7 @@ struct Foobar {
     }
 }
 
-@mocoa(.vm)
+@mocoa
 class FooViewModel: XZMocoaViewModel {
     
     @key
@@ -77,6 +68,8 @@ class FooViewModel: XZMocoaViewModel {
     @bind(.foo.bar.bar)
     var keyPathValue2: Int
     
+    
+    
 }
 
 extension XZMocoaKey {
@@ -114,6 +107,6 @@ class View: UIView, XZMocoaView {
     }
     
     @bind
-    let label = UILabel.init()
+    let label: UILabel = UILabel.init()
     
 }

@@ -9,6 +9,7 @@
 #import "XZKeychain.h"
 #import <objc/runtime.h>
 #import "XZKeychainPasswordItem.h"
+#import "XZLog.h"
 
 static BOOL XZKeychainHandleOSStatus(OSStatus statusCode, NSError *__autoreleasing  _Nullable *error);
 
@@ -200,7 +201,7 @@ static BOOL XZKeychainHandleOSStatus(OSStatus statusCode, NSError *__autoreleasi
     item.description = newUDID;
     
     if (![keychain insert:&error]) {
-        NSLog(@"[XZKeychain] 无法在钥匙串中保存 UDID 数据：%@", error);
+        XZLog(@"[XZKeychain] 无法在钥匙串中保存 UDID 数据：%@", error);
     }
     
     return newUDID;

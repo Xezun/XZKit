@@ -8,6 +8,7 @@
 #import "NSObject+XZKit.h"
 #import "NSArray+XZKit.h"
 #import "XZMacros.h"
+#import "XZLog.h"
 
 typedef void (^_XZKeyPathEnumerator)(id _Nullable value, NSInteger idx, BOOL *stop);
 

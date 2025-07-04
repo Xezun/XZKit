@@ -106,7 +106,6 @@
 - (XZToastTask *)showToast:(XZToast *)toast duration:(NSTimeInterval)duration position:(XZToastPosition)position exclusive:(BOOL)exclusive completion:(XZToastCompletion)completion {
     NSParameterAssert(duration >= 0 && duration < DISPATCH_TIME_FOREVER);
     UIView<XZToastView> * const toastView = toast.view;
-    [toastView layoutIfNeeded];
     
     XZToastTask * const newTask = [[XZToastTask alloc] initWithManager:self view:toastView duration:duration position:position exclusive:exclusive completion:completion];
     
@@ -157,8 +156,6 @@
             [newTask cancel];
             [_waitingToHideTasks addObject:newTask];
             if (oldTask.view == toastView) {
-                // 独占的 toast 被复用，其内容可能已经发生了改变
-                // 在 setNeedsUpdateToasts 中更新布局
                 oldTask->_needsUpdateFrame = YES;
             }
             [self setNeedsUpdateToasts];

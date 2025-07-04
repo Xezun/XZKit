@@ -8,6 +8,7 @@
 
 #import "XZMocoaModule.h"
 #import "XZMocoaViewModel.h"
+#import "XZLog.h"
 
 /// 将 MocoaURL 中的单个 path 部分解析成 MVVM 模块的 kind 和 name 值。
 /// - Parameters:

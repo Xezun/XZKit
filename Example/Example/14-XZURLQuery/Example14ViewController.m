@@ -8,7 +8,8 @@
 #import "Example14ViewController.h"
 @import XZURLQuery;
 @import XZLocale;
-@import XZDefinesObjC;
+@import XZDefines;
+@import XZLogCore;
 
 @interface Example14ViewController ()
 

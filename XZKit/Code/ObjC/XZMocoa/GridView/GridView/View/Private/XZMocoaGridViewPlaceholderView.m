@@ -6,6 +6,7 @@
 //
 
 #import "XZMocoaGridViewPlaceholderView.h"
+#import "XZLog.h"
 
 #if DEBUG
 @implementation XZMocoaGridViewPlaceholderView {

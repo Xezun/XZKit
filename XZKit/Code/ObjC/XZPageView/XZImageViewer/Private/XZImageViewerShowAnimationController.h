@@ -11,7 +11,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface XZImageViewerShowAnimationController : NSObject <UIViewControllerAnimatedTransitioning>
 - (instancetype)init NS_UNAVAILABLE;
-+ (nullable XZImageViewerShowAnimationController *)animationControllerWithSourceView:(UIView *)sourceView;
++ (XZImageViewerShowAnimationController *)animationControllerWithSourceView:(nullable UIView *)sourceView;
 @end
 
 NS_ASSUME_NONNULL_END

@@ -14,6 +14,7 @@
 @property (strong, nonatomic) IBOutletCollection(UIImageView) NSArray<UIImageView *> *imageViews;
 
 @property (nonatomic, copy) NSArray<NSDictionary<NSString *, NSURL *> *> *imageURLs;
+@property (weak, nonatomic) IBOutlet UISwitch *sourceSwitch;
 
 @end
 
@@ -89,8 +90,12 @@
     imageViewer.delegate = self;
     imageViewer.dataSource = self;
     imageViewer.currentIndex = [self.imageViews indexOfObject:sourceView];
-    imageViewer.sourceView = sourceView;
+    imageViewer.sourceView = self.sourceSwitch.isOn ? sourceView : nil;
     [self presentViewController:imageViewer animated:YES completion:nil];
+}
+
+- (IBAction)refreshStatusBarButtonAction:(UIButton *)sender {
+    [self setNeedsStatusBarAppearanceUpdate];
 }
 
 #pragma mark - XZImageViewerDataSource
@@ -109,7 +114,7 @@
 #pragma mark - XZImageViewerDelegate
 
 - (void)imageViewer:(XZImageViewer *)imageViewer didShowImageAtIndex:(NSInteger)index {
-    imageViewer.sourceView = self.imageViews[index];
+    imageViewer.sourceView = self.sourceSwitch.isOn ? self.imageViews[index] : nil;
 }
 
 

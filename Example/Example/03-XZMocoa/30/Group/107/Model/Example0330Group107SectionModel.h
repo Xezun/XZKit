@@ -5,7 +5,7 @@
 //  Created by Xezun on 2023/8/20.
 //
 
-@import XZMocoaObjC;
+@import XZMocoaCore;
 #import "Example0330Group107CellModel.h"
 
 NS_ASSUME_NONNULL_BEGIN

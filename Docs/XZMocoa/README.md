@@ -6,7 +6,7 @@
 [![License](https://img.shields.io/cocoapods/l/XZMocoa.svg?style=flat)](https://cocoapods.org/pods/XZMocoa)
 [![Platform](https://img.shields.io/cocoapods/p/XZMocoa.svg?style=flat)](https://cocoapods.org/pods/XZMocoa)
 
-XZMocoa 是基于 Cocoa 框架设计的一款 MVVM 设计模式的基础框架，完全 Apple 风格的代码风格，可无缝接入到任意项目中。
+XZMocoa 是一款基于 Apple Cocoa 的 MVVM 设计模式框架，的 API 设计风格基于 Cocoa 框架设计的一款，可无缝接入到任意项目中。
 
 ## 示例项目
 
@@ -16,7 +16,7 @@ To run the example project, clone the repo, and run `pod install` from the Pods 
 
 ## 版本需求
 
-iOS 11.0+，Xcode 14.0+
+iOS 13.0+，Xcode 16.0+
 
 ## 如何安装
 
@@ -27,6 +27,48 @@ XZMocoa is available through [CocoaPods](https://cocoapods.org). To install it, 
 ```ruby
 pod 'XZMocoa'
 ```
+
+## 特色
+
+### 数据绑定
+
+```swift
+@mocoa
+class FoobarViewModel : XZMocoaViewModel {
+    
+    @key
+    @bind
+    var name: String?
+    
+    @key
+    var detail: String?
+    
+    @bind
+    func setMin(_ min: Int, max: Int) {
+        detail = "From \(min) to \(max)."
+    }
+}
+
+@mocoa
+class FoobarView: UIView, XZMocoaView {
+    
+    @bind(.foo)
+    var textLabel: UILabel!
+
+    var detailTextLabel: UILabel!
+    
+    @bind(.detail)
+    func setDetail(_ detail: String?) {
+        detailTextLabel.text = detail
+        detailTextLabel.isHidden = detail != nil && detail!.count > 0
+        setNeedsLayout()
+    }
+}
+```
+
+- `@mocoa`: 标记 XZMocoa 成员，只有拥有此标记，class 的属性或方法的`@bind`和`@key`标记才会生效。
+- `@key`: 标记的 ViewModel 属性，可以被 View 用`@bind`绑定。
+- `@bind`: ViewModel 绑定 Model 的属性，或 View 绑定 ViewModel 的 `@key` 属性。
 
 ## 如何使用
 

@@ -24,6 +24,6 @@ NS_ASSUME_NONNULL_BEGIN
 
 @end
 
-UIKIT_EXTERN UIImage * _Nullable UIImageFromXZToastStyle(XZToastStyle style);
+UIKIT_EXTERN UIImage * _Nullable XZToastStyleImage(XZToastStyle style);
 
 NS_ASSUME_NONNULL_END

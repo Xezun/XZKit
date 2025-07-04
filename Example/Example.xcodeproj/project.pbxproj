@@ -12,6 +12,8 @@
 		0414AD192D6EBD060085BEE3 /* Example01ViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 0414AD182D6EBD060085BEE3 /* Example01ViewController.m */; };
 		041723402DD31DBC0037ABE2 /* XZGeometryTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 0417233F2DD31DBC0037ABE2 /* XZGeometryTests.m */; };
 		041723422DD35E410037ABE2 /* Example10SelectViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 041723412DD35E410037ABE2 /* Example10SelectViewController.swift */; };
+		042C3E1C2E17C73E00E66A46 /* ExampleSettingsViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 042C3E1B2E17C73E00E66A46 /* ExampleSettingsViewController.m */; };
+		042C3E1F2E17F9BB00E66A46 /* Example07NavigationController.m in Sources */ = {isa = PBXBuildFile; fileRef = 042C3E1E2E17F9BB00E66A46 /* Example07NavigationController.m */; };
 		042D23CC2D30BB3200E0F7BD /* Example16ViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 042D23BE2D30BB3200E0F7BD /* Example16ViewController.m */; };
 		042D23CD2D30BB3200E0F7BD /* Example16SettingsEditCellViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 042D23C02D30BB3200E0F7BD /* Example16SettingsEditCellViewController.m */; };
 		042D23CE2D30BB3200E0F7BD /* Example16CollectonViewSectionModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 042D23BC2D30BB3200E0F7BD /* Example16CollectonViewSectionModel.m */; };
@@ -32,6 +34,7 @@
 		046CE63F2D34C38C00B9389F /* Example19SelectViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 046CE6392D34C38C00B9389F /* Example19SelectViewController.swift */; };
 		046CE6422D34C3A800B9389F /* Example19.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 046CE6402D34C3A800B9389F /* Example19.storyboard */; };
 		046CE6472D34C4A700B9389F /* Example18.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 046CE6462D34C4A700B9389F /* Example18.storyboard */; };
+		04A2932A2E176D73009631C8 /* XZMocoaTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 04A293292E176D6C009631C8 /* XZMocoaTests.swift */; };
 		04B12AC92D37D6F200FADC8B /* Example20ViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 04B12AC82D37D6F200FADC8B /* Example20ViewController.m */; };
 		04B1EA432D41E31D004F5DF0 /* Example02NavigationController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 04B1EA422D41E31D004F5DF0 /* Example02NavigationController.swift */; };
 		04BA17B82E1383910017F62B /* SDWebImage in Frameworks */ = {isa = PBXBuildFile; productRef = 04BA17B72E1383910017F62B /* SDWebImage */; };
@@ -261,6 +264,7 @@
 		296537BE2D70CA0500559997 /* Example05XZGHUser.m in Sources */ = {isa = PBXBuildFile; fileRef = 296537BD2D70CA0500559997 /* Example05XZGHUser.m */; };
 		296537C12D70CA4100559997 /* Example05YYGHUser.m in Sources */ = {isa = PBXBuildFile; fileRef = 296537C02D70CA4100559997 /* Example05YYGHUser.m */; };
 		29776A142D3240E70033AAF9 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 29776A132D3240E70033AAF9 /* Main.storyboard */; };
+		298442EC2E16D6E0006B45E3 /* ExampleSceneDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 298442EB2E16D6E0006B45E3 /* ExampleSceneDelegate.m */; };
 		2989CE3C2DCFABF3003C9C9D /* Example13SelectViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2989CE3B2DCFABF3003C9C9D /* Example13SelectViewController.swift */; };
 		299B56CE2D2A67ED00CC2F69 /* Example10ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 299B56CD2D2A67ED00CC2F69 /* Example10ViewController.swift */; };
 		299B56D02D2A680300CC2F69 /* Example11ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 299B56CF2D2A680300CC2F69 /* Example11ViewController.swift */; };
@@ -318,6 +322,10 @@
 		0414AD182D6EBD060085BEE3 /* Example01ViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = Example01ViewController.m; sourceTree = "<group>"; };
 		0417233F2DD31DBC0037ABE2 /* XZGeometryTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = XZGeometryTests.m; sourceTree = "<group>"; };
 		041723412DD35E410037ABE2 /* Example10SelectViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Example10SelectViewController.swift; sourceTree = "<group>"; };
+		042C3E1A2E17C73E00E66A46 /* ExampleSettingsViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ExampleSettingsViewController.h; sourceTree = "<group>"; };
+		042C3E1B2E17C73E00E66A46 /* ExampleSettingsViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ExampleSettingsViewController.m; sourceTree = "<group>"; };
+		042C3E1D2E17F9BB00E66A46 /* Example07NavigationController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Example07NavigationController.h; sourceTree = "<group>"; };
+		042C3E1E2E17F9BB00E66A46 /* Example07NavigationController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = Example07NavigationController.m; sourceTree = "<group>"; };
 		042D23B72D30BB3200E0F7BD /* Example16CollectonViewCellModel.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Example16CollectonViewCellModel.h; sourceTree = "<group>"; };
 		042D23B82D30BB3200E0F7BD /* Example16CollectonViewCellModel.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = Example16CollectonViewCellModel.m; sourceTree = "<group>"; };
 		042D23B92D30BB3200E0F7BD /* Example16CollectonViewSectionHeaderFooterView.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Example16CollectonViewSectionHeaderFooterView.h; sourceTree = "<group>"; };
@@ -346,6 +354,7 @@
 		046CE63B2D34C38C00B9389F /* Example19ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Example19ViewController.swift; sourceTree = "<group>"; };
 		046CE6412D34C3A800B9389F /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Example19.storyboard; sourceTree = "<group>"; };
 		046CE6462D34C4A700B9389F /* Example18.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = Example18.storyboard; sourceTree = "<group>"; };
+		04A293292E176D6C009631C8 /* XZMocoaTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = XZMocoaTests.swift; sourceTree = "<group>"; };
 		04B12AC72D37D6F200FADC8B /* Example20ViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Example20ViewController.h; sourceTree = "<group>"; };
 		04B12AC82D37D6F200FADC8B /* Example20ViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = Example20ViewController.m; sourceTree = "<group>"; };
 		04B1EA422D41E31D004F5DF0 /* Example02NavigationController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Example02NavigationController.swift; sourceTree = "<group>"; };
@@ -765,6 +774,8 @@
 		296537C02D70CA4100559997 /* Example05YYGHUser.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = Example05YYGHUser.m; sourceTree = "<group>"; };
 		29776A0E2D3199DE0033AAF9 /* ExampleBridgingHeader.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ExampleBridgingHeader.h; sourceTree = "<group>"; };
 		29776A132D3240E70033AAF9 /* Main.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = Main.storyboard; sourceTree = "<group>"; };
+		298442EA2E16D6E0006B45E3 /* ExampleSceneDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ExampleSceneDelegate.h; sourceTree = "<group>"; };
+		298442EB2E16D6E0006B45E3 /* ExampleSceneDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ExampleSceneDelegate.m; sourceTree = "<group>"; };
 		2989CE3B2DCFABF3003C9C9D /* Example13SelectViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Example13SelectViewController.swift; sourceTree = "<group>"; };
 		299B56CD2D2A67ED00CC2F69 /* Example10ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Example10ViewController.swift; sourceTree = "<group>"; };
 		299B56CF2D2A680300CC2F69 /* Example11ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Example11ViewController.swift; sourceTree = "<group>"; };
@@ -1044,6 +1055,8 @@
 			isa = PBXGroup;
 			children = (
 				29B334182D3177C5006A574A /* Example07.storyboard */,
+				042C3E1D2E17F9BB00E66A46 /* Example07NavigationController.h */,
+				042C3E1E2E17F9BB00E66A46 /* Example07NavigationController.m */,
 				29448F6F2D3194580055A183 /* Example07ViewController.swift */,
 				292A5A612D2563E20037579D /* Example07Test01ViewController.h */,
 				292A5A622D2563E20037579D /* Example07Test01ViewController.m */,
@@ -2726,6 +2739,7 @@
 			isa = PBXGroup;
 			children = (
 				29635C0A2DE779FE00C552AF /* XZMocoaTests.m */,
+				04A293292E176D6C009631C8 /* XZMocoaTests.swift */,
 			);
 			path = XZMocoa;
 			sourceTree = "<group>";
@@ -2756,11 +2770,15 @@
 			children = (
 				29648BE32A72556C0090F445 /* ExampleAppDelegate.h */,
 				29648BE42A72556C0090F445 /* ExampleAppDelegate.m */,
+				298442EA2E16D6E0006B45E3 /* ExampleSceneDelegate.h */,
+				298442EB2E16D6E0006B45E3 /* ExampleSceneDelegate.m */,
 				29776A0E2D3199DE0033AAF9 /* ExampleBridgingHeader.h */,
 				292C15432D25182000E465BF /* ExampleNavigationController.h */,
 				292C15442D25182000E465BF /* ExampleNavigationController.m */,
 				292C15452D25182000E465BF /* ExampleViewController.h */,
 				292C15462D25182000E465BF /* ExampleViewController.m */,
+				042C3E1A2E17C73E00E66A46 /* ExampleSettingsViewController.h */,
+				042C3E1B2E17C73E00E66A46 /* ExampleSettingsViewController.m */,
 				292C153B2D25145900E465BF /* 01-XZDefines */,
 				292C153C2D25148B00E465BF /* 02-XZExtensions */,
 				292C15492D25190B00E465BF /* 03-XZMocoa */,
@@ -2929,7 +2947,7 @@
 			isa = PBXProject;
 			attributes = {
 				BuildIndependentTargetsInParallel = 1;
-				LastUpgradeCheck = 1620;
+				LastUpgradeCheck = 1640;
 				TargetAttributes = {
 					29648BDF2A72556C0090F445 = {
 						CreatedOnToolsVersion = 14.2;
@@ -2937,6 +2955,7 @@
 					};
 					29648BFA2A72556E0090F445 = {
 						CreatedOnToolsVersion = 14.2;
+						LastSwiftMigration = 1620;
 						TestTargetID = 29648BDF2A72556C0090F445;
 					};
 					29648C042A72556E0090F445 = {
@@ -3244,6 +3263,7 @@
 				292C17802D251F6D00E465BF /* Example0330Group103CellViewModel.m in Sources */,
 				292C17812D251F6D00E465BF /* Example0331Group109CellModel.m in Sources */,
 				292C17822D251F6D00E465BF /* Example0331Group106SectionModel.m in Sources */,
+				042C3E1C2E17C73E00E66A46 /* ExampleSettingsViewController.m in Sources */,
 				040F133B2D2B77CD00C4D6CD /* Example14ViewController.m in Sources */,
 				292C17832D251F6D00E465BF /* Example0331Group105Cell.m in Sources */,
 				29448F722D31956A0055A183 /* Example09ViewController.swift in Sources */,
@@ -3274,12 +3294,14 @@
 				292C17972D251F6D00E465BF /* Example0331Group100SectionModel.m in Sources */,
 				292C17982D251F6D00E465BF /* Example0331Group104CellViewModel.m in Sources */,
 				292C17992D251F6D00E465BF /* Example0330Group110Cell.m in Sources */,
+				042C3E1F2E17F9BB00E66A46 /* Example07NavigationController.m in Sources */,
 				292C179A2D251F6D00E465BF /* Example0330Group105CellModel.m in Sources */,
 				292C179B2D251F6D00E465BF /* Example0331Group101SectionModel.m in Sources */,
 				292C179C2D251F6D00E465BF /* Example0331Group103SectionModel.m in Sources */,
 				292C179D2D251F6D00E465BF /* Example0330ViewModel.m in Sources */,
 				292C179E2D251F6D00E465BF /* Example0331Group108CellViewModel.m in Sources */,
 				292C179F2D251F6D00E465BF /* Example0330Group109Cell.m in Sources */,
+				298442EC2E16D6E0006B45E3 /* ExampleSceneDelegate.m in Sources */,
 				292C17A02D251F6D00E465BF /* Example0331Group110HeaderView.m in Sources */,
 				292C17A12D251F6D00E465BF /* Example0330Group103CellModel.m in Sources */,
 				04D06B002D2D45300056A53A /* Example15Test02ViewController.m in Sources */,
@@ -3328,6 +3350,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				29648C002A72556E0090F445 /* ExampleTests.m in Sources */,
+				04A2932A2E176D73009631C8 /* XZMocoaTests.swift in Sources */,
 				041723402DD31DBC0037ABE2 /* XZGeometryTests.m in Sources */,
 				04C46B002DB6367B005EA389 /* XZObjcDescriptorTests.m in Sources */,
 				29635C0B2DE779FE00C552AF /* XZMocoaTests.m in Sources */,
@@ -3427,6 +3450,7 @@
 				COMPILER_INDEX_STORE_ENABLE = NO;
 				COPY_PHASE_STRIP = NO;
 				DEBUG_INFORMATION_FORMAT = dwarf;
+				DEVELOPMENT_TEAM = LWKDD4DJ6H;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				ENABLE_TESTABILITY = YES;
 				ENABLE_USER_SCRIPT_SANDBOXING = YES;
@@ -3489,6 +3513,7 @@
 				COMPILER_INDEX_STORE_ENABLE = NO;
 				COPY_PHASE_STRIP = NO;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				DEVELOPMENT_TEAM = LWKDD4DJ6H;
 				ENABLE_NS_ASSERTIONS = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				ENABLE_USER_SCRIPT_SANDBOXING = YES;
@@ -3518,7 +3543,6 @@
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = LWKDD4DJ6H;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = Example/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = XZKit;
@@ -3527,6 +3551,7 @@
 				INFOPLIST_KEY_UIMainStoryboardFile = Main;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				IPHONEOS_DEPLOYMENT_TARGET = 14.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -3552,7 +3577,6 @@
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = LWKDD4DJ6H;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = Example/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = XZKit;
@@ -3561,6 +3585,7 @@
 				INFOPLIST_KEY_UIMainStoryboardFile = Main;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				IPHONEOS_DEPLOYMENT_TARGET = 14.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -3580,14 +3605,16 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				BUNDLE_LOADER = "$(TEST_HOST)";
+				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = LWKDD4DJ6H;
 				GENERATE_INFOPLIST_FILE = YES;
 				MARKETING_VERSION = 1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.xezun.example.XZKit.Tests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 6.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Example.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/Example";
 			};
@@ -3597,14 +3624,15 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				BUNDLE_LOADER = "$(TEST_HOST)";
+				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = LWKDD4DJ6H;
 				GENERATE_INFOPLIST_FILE = YES;
 				MARKETING_VERSION = 1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.xezun.example.XZKit.Tests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_VERSION = 6.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Example.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/Example";
 			};
@@ -3615,7 +3643,6 @@
 			buildSettings = {
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = LWKDD4DJ6H;
 				GENERATE_INFOPLIST_FILE = YES;
 				MARKETING_VERSION = 1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.xezun.example.XZKit.UITests;
@@ -3631,7 +3658,6 @@
 			buildSettings = {
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = LWKDD4DJ6H;
 				GENERATE_INFOPLIST_FILE = YES;
 				MARKETING_VERSION = 1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.xezun.example.XZKit.UITests;
@@ -3695,8 +3721,8 @@
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/Xezun/YYModel.git";
 			requirement = {
-				branch = master;
-				kind = branch;
+				kind = upToNextMajorVersion;
+				minimumVersion = 1.0.5;
 			};
 		};
 		04BA17B62E1383910017F62B /* XCRemoteSwiftPackageReference "SDWebImage" */ = {

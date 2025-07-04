@@ -8,7 +8,7 @@
 import UIKit
 import XZGeometry
 #if SWIFT_PACKAGE
-@_exported import XZToastObjC
+@_exported import XZToastCore
 #endif
 
 /// 由于无法在 Swift 中为 XZToast 拓展 ExpressibleByStringLiteral 协议而使用了子类。
