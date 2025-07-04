@@ -12,13 +12,10 @@
 @import XZGeometry;
 
 @implementation XZImageViewerShowAnimationController {
-    UIView *_sourceView;
+    UIView * _Nullable _sourceView;
 }
 
 + (XZImageViewerShowAnimationController *)animationControllerWithSourceView:(UIView *)sourceView {
-    if (sourceView == nil) {
-        return nil;
-    }
     return [[self alloc] initWithSourceView:sourceView];
 }
 
@@ -46,21 +43,26 @@
     [containerView addSubview:toView];
     [toView layoutIfNeeded];
     
-    XZImageViewerItemView *itemView = toVC.pageView.currentView;
+    XZImageViewerItemView * const itemView = toVC.pageView.currentView;
     [itemView layoutIfNeeded];
     
-    UIImageView * const imageView = itemView.imageView;
-    imageView.clipsToBounds = _sourceView.clipsToBounds;
-    imageView.contentMode   = _sourceView.contentMode;
+    UIImageView * const imageView   = itemView.imageView;
+    CGRect        const imageToRect = [itemView convertRect:itemView.imageFrame toView:containerView];
+    
     [containerView addSubview:imageView];
     
-    CGRect const imageToRect = imageView.frame;
-    imageView.frame = [_sourceView convertRect:_sourceView.bounds toView:containerView];
+    if (_sourceView) {
+        imageView.clipsToBounds = _sourceView.clipsToBounds;
+        imageView.contentMode   = _sourceView.contentMode;
+        imageView.frame = [_sourceView convertRect:_sourceView.bounds toView:containerView];
+    } else {
+        imageView.frame = CGRectOffset(imageToRect, 0, CGRectGetMaxY(containerView.bounds) - CGRectGetMinY(imageToRect));
+    }
     
     NSTimeInterval const duration = [self transitionDuration:transitionContext];
     [UIView animateWithDuration:duration delay:0 options:UIViewAnimationOptionLayoutSubviews animations:^{
         fromView.transform = CGAffineTransformMakeScale(0.9, 0.9);
-        imageView.frame = imageToRect;
+        imageView.frame    = imageToRect;
         toView.backgroundColor = UIColor.blackColor;
     } completion:^(BOOL finished) {
         if (transitionContext.transitionWasCancelled) {

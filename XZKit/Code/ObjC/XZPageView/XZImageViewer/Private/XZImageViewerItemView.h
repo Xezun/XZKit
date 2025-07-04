@@ -27,6 +27,7 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic, readonly) CGFloat maximumZoomScale;
 - (void)setMinimumZoomScale:(CGFloat)minimumZoomScale maximumZoomScale:(CGFloat)maximumZoomScale;
 
+@property (nonatomic, readonly) BOOL isZoomed;
 @property (nonatomic, readonly) CGFloat zoomScale;
 - (void)zoomToRect:(CGRect)rect animated:(BOOL)animated;
 - (void)setZoomScale:(CGFloat)scale animated:(BOOL)animated;

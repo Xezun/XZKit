@@ -462,10 +462,10 @@
             </objects>
             <point key="canvasLocation" x="3917" y="2323"/>
         </scene>
-        <!--Navigation Controller-->
+        <!--Example07 Navigation Controller-->
         <scene sceneID="TSv-bO-noi">
             <objects>
-                <navigationController automaticallyAdjustsScrollViewInsets="NO" id="teg-e1-Yth" sceneMemberID="viewController">
+                <navigationController automaticallyAdjustsScrollViewInsets="NO" id="teg-e1-Yth" customClass="Example07NavigationController" sceneMemberID="viewController">
                     <toolbarItems/>
                     <navigationBar key="navigationBar" contentMode="scaleToFill" id="tAf-eh-3A7">
                         <rect key="frame" x="0.0" y="59" width="393" height="44"/>
@@ -567,17 +567,39 @@
                                     <outletCollection property="gestureRecognizers" destination="aCd-ZP-DS1" appends="YES" id="yBA-ei-3KL"/>
                                 </connections>
                             </stackView>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="b5V-pe-BJF">
+                                <rect key="frame" x="20" y="453" width="353" height="50"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="50" id="CVg-yX-zdi"/>
+                                </constraints>
+                                <state key="normal" title="Button"/>
+                                <buttonConfiguration key="configuration" style="plain" title="刷新状态栏"/>
+                                <connections>
+                                    <action selector="refreshStatusBarButtonAction:" destination="aZm-jE-J3D" eventType="touchUpInside" id="zTN-hD-hdm"/>
+                                </connections>
+                            </button>
                         </subviews>
                         <viewLayoutGuide key="safeArea" id="fyw-Ok-ZD4"/>
                         <color key="backgroundColor" systemColor="systemGray6Color"/>
                         <constraints>
                             <constraint firstItem="ThZ-qv-Cp5" firstAttribute="top" secondItem="fyw-Ok-ZD4" secondAttribute="top" constant="20" id="3li-xg-KUl"/>
+                            <constraint firstItem="fyw-Ok-ZD4" firstAttribute="trailing" secondItem="b5V-pe-BJF" secondAttribute="trailing" constant="20" id="5qU-96-hVu"/>
                             <constraint firstItem="fyw-Ok-ZD4" firstAttribute="trailing" secondItem="ThZ-qv-Cp5" secondAttribute="trailing" constant="20" id="GRt-54-BPm"/>
+                            <constraint firstItem="b5V-pe-BJF" firstAttribute="leading" secondItem="fyw-Ok-ZD4" secondAttribute="leading" constant="20" id="UFZ-Vk-HD7"/>
                             <constraint firstItem="ThZ-qv-Cp5" firstAttribute="leading" secondItem="fyw-Ok-ZD4" secondAttribute="leading" constant="20" id="ZFO-dY-TIi"/>
+                            <constraint firstItem="b5V-pe-BJF" firstAttribute="top" secondItem="ThZ-qv-Cp5" secondAttribute="bottom" constant="30" id="giM-IS-mb1"/>
                         </constraints>
                     </view>
-                    <navigationItem key="navigationItem" title="XZImageViewer" id="dBC-M9-Pri"/>
+                    <navigationItem key="navigationItem" title="XZImageViewer" id="dBC-M9-Pri">
+                        <barButtonItem key="rightBarButtonItem" style="done" id="pwH-6n-mAo">
+                            <switch key="customView" opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" contentHorizontalAlignment="center" contentVerticalAlignment="center" on="YES" id="VZr-B3-fhQ">
+                                <rect key="frame" x="326" y="6.6666666666666679" width="51" height="31.000000000000004"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                            </switch>
+                        </barButtonItem>
+                    </navigationItem>
                     <connections>
+                        <outlet property="sourceSwitch" destination="VZr-B3-fhQ" id="u5g-4R-qNR"/>
                         <outletCollection property="imageViews" destination="8Km-TM-wn7" id="7d5-w7-Ffp"/>
                         <outletCollection property="imageViews" destination="JA0-Kj-5DB" id="2zs-bd-azG"/>
                         <outletCollection property="imageViews" destination="1gn-IR-oUL" id="6WO-FS-C3q"/>

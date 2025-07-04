@@ -111,6 +111,10 @@
     [self.zoomingView setBouncesZoom:bouncesZoom];
 }
 
+- (BOOL)isZoomed {
+    return _zoomingView.zoomScale != 1.0;
+}
+
 - (CGFloat)zoomScale {
     if (_zoomingView == nil) {
         return 1.0;

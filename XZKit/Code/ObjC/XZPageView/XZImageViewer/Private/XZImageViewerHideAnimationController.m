@@ -17,18 +17,39 @@
 @import XZLog;
 #endif
 
+typedef NS_ENUM(NSUInteger, XZImageViewerHideStyle) {
+    // 交互式退场
+    XZImageViewerHideStyleNone,
+    // 缩放退场
+    XZImageViewerHideStyleZoom,
+    // 向下退场
+    XZImageViewerHideStyleDown,
+    // 先缩放，后向下退场
+    XZImageViewerHideStyleZoomDown,
+};
+
 @implementation XZImageViewerHideAnimationController {
+    XZImageViewerHideStyle _style;
     UIView *_sourceView;
     UIImageView *_imageView;
 }
 
-+ (XZImageViewerHideAnimationController *)animationControllerWithSourceView:(UIView *)sourceView imageView:(UIImageView *)imageView {
-    return [[self alloc] initWithSourceView:sourceView imageView:imageView];
++ (XZImageViewerHideAnimationController *)animationControllerWithItemView:(XZImageViewerItemView *)itemView sourceView:(UIView *)sourceView {
+    return [[self alloc] initWithSourceView:sourceView imageView:itemView.imageView isZoomed:itemView.isZoomed];
 }
 
-- (instancetype)initWithSourceView:(UIView *)sourceView imageView:(UIImageView *)imageView {
+- (instancetype)initWithSourceView:(UIView *)sourceView imageView:(UIImageView *)imageView isZoomed:(BOOL)isZoomed {
     self = [super init];
     if (self) {
+        if (imageView) {
+            _style = XZImageViewerHideStyleNone;
+        } else if (sourceView) {
+            _style = XZImageViewerHideStyleZoom;
+        } else if (isZoomed) {
+            _style = XZImageViewerHideStyleZoomDown;
+        } else {
+            _style = XZImageViewerHideStyleDown;
+        }
         _sourceView = sourceView;
         _imageView  = imageView;
     }
@@ -63,88 +84,98 @@
     XZImageViewerItemView * const itemView = fromVC.pageView.currentView;
     [itemView layoutIfNeeded];
     
+    UIImageView *imageView = _imageView;
     if (_imageView) {
-        // 交互式
-        UIImageView * const imageView = _imageView;
         if (_sourceView) {
             imageView.clipsToBounds = _sourceView.clipsToBounds;
             imageView.contentMode   = _sourceView.contentMode;
         }
-        imageView.frame = [itemView convertRect:itemView.imageFrame toView:containerView];
-        [containerView addSubview:imageView];
-        
-        NSTimeInterval const duration = [self transitionDuration:transitionContext];
-        [UIView animateWithDuration:duration delay:0 options:0 animations:^{
-            toView.transform = CGAffineTransformIdentity;
-        } completion:^(BOOL finished) {
-            if (transitionContext.transitionWasCancelled) {
-                toView.transform = CGAffineTransformIdentity;
-                [toView removeFromSuperview];
-                fromView.backgroundColor = UIColor.blackColor;
-                [transitionContext completeTransition:NO];
-            } else {
-                [transitionContext completeTransition:YES];
-            }
-            itemView.imageView = imageView;
-        }];
     } else if (_sourceView) {
         // 非交互式
-        UIImageView * const imageView = itemView.imageView;
+        imageView = itemView.imageView;
         imageView.clipsToBounds = _sourceView.clipsToBounds;
         imageView.contentMode   = _sourceView.contentMode;
-        imageView.frame         = [itemView convertRect:itemView.imageFrame toView:containerView];
-        [containerView addSubview:imageView];
-        
-        NSTimeInterval const duration = [self transitionDuration:transitionContext];
-        [UIView animateWithDuration:duration delay:0 options:0 animations:^{
-            imageView.frame          = sourceRect;
-            fromView.backgroundColor = UIColor.clearColor;
-            toView.transform         = CGAffineTransformIdentity;
-        } completion:^(BOOL finished) {
-            if (transitionContext.transitionWasCancelled) {
-                toView.transform = CGAffineTransformIdentity;
-                [toView removeFromSuperview];
-                fromView.backgroundColor = UIColor.blackColor;
-                [transitionContext completeTransition:NO];
-            } else {
-                [transitionContext completeTransition:YES];
-            }
-            itemView.imageView = imageView;
-        }];
     } else {
         // 非交互式，无源视图：图片向下平移
-        UIImageView * const imageView = itemView.imageView; 
-        imageView.frame = [itemView convertRect:itemView.imageFrame toView:containerView];
-        [containerView addSubview:imageView];
-        
-        NSTimeInterval const duration = [self transitionDuration:transitionContext];
-        [UIView animateWithDuration:duration delay:0 options:0 animations:^{
-            imageView.frame          = CGRectOffset(imageView.frame, 0, CGRectGetMaxY(containerView.bounds) - CGRectGetMinY(imageView.frame));
-            fromView.backgroundColor = UIColor.clearColor;
-            toView.transform         = CGAffineTransformIdentity;
-        } completion:^(BOOL finished) {
-            if (transitionContext.transitionWasCancelled) {
-                toView.transform = CGAffineTransformIdentity;
-                [toView removeFromSuperview];
-                fromView.backgroundColor = UIColor.blackColor;
-                [transitionContext completeTransition:NO];
-            } else {
-                [transitionContext completeTransition:YES];
-            }
-            itemView.imageView = imageView;
-        }];
+        imageView = itemView.imageView;
     }
+    
+    CGRect const imageRect0 = [itemView convertRect:itemView.imageFrame toView:containerView];
+    CGRect const imageRect1 = [itemView convertRect:[itemView imageRectForBounds:itemView.bounds] toView:containerView];
+    CGRect const imageRect2 = CGRectOffset(imageRect1, 0, CGRectGetMaxY(containerView.bounds) - CGRectGetMinY(imageRect1));
+    
+    imageView.frame = imageRect0;
+    [containerView addSubview:imageView];
+    
+    NSTimeInterval const duration = [self transitionDuration:transitionContext];
+    [UIView animateKeyframesWithDuration:duration delay:0 options:0 animations:^{
+        switch (self->_style) {
+            case XZImageViewerHideStyleNone: {
+                [UIView addKeyframeWithRelativeStartTime:0 relativeDuration:1.0 animations:^{
+                    toView.transform = CGAffineTransformIdentity;
+                    [toVC setNeedsStatusBarAppearanceUpdate];
+                }];
+                break;
+            }
+            case XZImageViewerHideStyleZoom: {
+                [UIView addKeyframeWithRelativeStartTime:0 relativeDuration:1.0 animations:^{
+                    [toVC setNeedsStatusBarAppearanceUpdate];
+                    imageView.frame          = sourceRect;
+                    fromView.backgroundColor = UIColor.clearColor;
+                    toView.transform         = CGAffineTransformIdentity;
+                }];
+                break;
+            }
+            case XZImageViewerHideStyleDown: {
+                [UIView addKeyframeWithRelativeStartTime:0 relativeDuration:1.0 animations:^{
+                    [toVC setNeedsStatusBarAppearanceUpdate];
+                    fromView.backgroundColor = UIColor.clearColor;
+                    toView.transform         = CGAffineTransformIdentity;
+                    imageView.frame          = imageRect2;
+                }];
+                break;
+            }
+            case XZImageViewerHideStyleZoomDown: {
+                [UIView addKeyframeWithRelativeStartTime:0.0 relativeDuration:1.0 animations:^{
+                    [toVC setNeedsStatusBarAppearanceUpdate];
+                    fromView.backgroundColor = UIColor.clearColor;
+                    toView.transform         = CGAffineTransformIdentity;
+                }];
+                [UIView addKeyframeWithRelativeStartTime:0.0 relativeDuration:0.7 animations:^{
+                    imageView.frame = CGRectOffset(imageRect2, 0, -imageRect2.size.height);
+                }];
+                [UIView addKeyframeWithRelativeStartTime:0.7 relativeDuration:0.3 animations:^{
+                    imageView.frame          = imageRect2;
+                }];
+                break;
+            }
+        }
+    } completion:^(BOOL finished) {
+        if (transitionContext.transitionWasCancelled) {
+            [transitionContext completeTransition:NO];
+            toView.transform = CGAffineTransformIdentity;
+            [toView removeFromSuperview];
+            fromView.backgroundColor = UIColor.blackColor;
+        } else {
+            [transitionContext completeTransition:YES];
+        }
+        itemView.imageView = imageView;
+    }];
+}
+
+- (void)animationEnded:(BOOL)transitionCompleted {
+    
 }
 
 @end
 
 @implementation XZImageViewerHideInteractiveController
 
-- (instancetype)initWithImageView:(UIImageView *)imageView {
+- (instancetype)initWithItemView:(XZImageViewerItemView *)itemView {
     self = [super init];
     if (self) {
-        _imageView = imageView;
-        _imageRect = imageView.frame;
+        _itemView = itemView;
+        _imageViewInitialFrame = itemView.imageView.frame;
     }
     return self;
 }
