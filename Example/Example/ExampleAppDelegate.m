@@ -9,6 +9,7 @@
 @import XZKit;
 @import XZLogCore;
 @import XZLocale;
+@import OSLog;
 
 @interface ExampleAppDelegate ()
 
@@ -19,12 +20,8 @@
 @synthesize window = _window;
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
+    XZLog(@"App (%@) was launched: %@", XZLogSystem.defaultLogSystem.domain, launchOptions);
     [NSNotificationCenter.defaultCenter addObserver:self selector:@selector(didChangeAppLanguage) name:XZLanguagePreferencesDidChangeNotification object:nil];
-    
-#if DEBUG
-    XZLogSystem.XZKitLogSystem.isEnabled = YES;
-#endif
-    
     return YES;
 }
 

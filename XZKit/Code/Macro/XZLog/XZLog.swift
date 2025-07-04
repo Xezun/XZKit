@@ -28,13 +28,13 @@ public struct XZLogMacro: ExpressionMacro {
         case 1:
             let message = node.arguments[node.arguments.startIndex].expression
             return """
-                XZLogv(nil, #file, #line, #function, \(raw: message.trimmedDescription))
+                XZLogs(nil, #file, #line, #function, \(raw: message.trimmedDescription))
             """
         case 2:
             let message = node.arguments[node.arguments.startIndex].expression
             let system  = node.arguments[node.arguments.index(after: node.arguments.startIndex)].expression
             return """
-                XZLogv(\(raw: system.trimmedDescription), #file, #line, #function, \(raw: message.trimmedDescription))
+                XZLogs(\(raw: system.trimmedDescription), #file, #line, #function, \(raw: message.trimmedDescription))
             """
         default:
             throw XZLogMacroError.message("#XZLog: 只支持一个参数")

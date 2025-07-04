@@ -9,13 +9,12 @@
 #undef XZLog
 
 static void XZLog(const char *file, const int line, const char *function, XZLogSystem *system, NSString *message) __attribute__((overloadable)) {
-    if (system && !system.isEnabled) {
+    if (!system.isEnabled) {
         return;
     }
     
-    NSString * const domain  = system ? [NSString stringWithFormat:@"⌘ %@ ", system.domain] : @"";
     NSUInteger const length  = message.length;
-    NSString * const metrics = [NSString stringWithFormat:@"%@⌘ %s(%d) ⌘ %s ⌘", domain, file, line, function];
+    NSString * const metrics = [NSString stringWithFormat:@"⌘ %@ ⌘ %s(%d) ⌘ %s ⌘", system.name, file, line, function];
     
     if (length == 0) {
         NSLog(@"%@", metrics);
@@ -85,7 +84,7 @@ void XZLogv(const char *file, const int line, const char *function, NSString *fo
     va_start(arguments, format);
     NSString * const message = [[NSString alloc] initWithFormat:format arguments:arguments];
     va_end(arguments);
-    XZLog(file, line, function, (XZLogSystem *)nil, message);
+    XZLog(file, line, function, XZLogSystem.defaultLogSystem, message);
 }
 
 void XZLogs(XZLogSystem *system, NSString *file, NSInteger line, NSString *function, NSString *message) {

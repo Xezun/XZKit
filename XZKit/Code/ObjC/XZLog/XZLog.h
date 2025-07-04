@@ -12,6 +12,8 @@ NS_ASSUME_NONNULL_BEGIN
 
 #pragma mark - XZLog
 
+#define XZ_LOG_ATTR(A, B, msg) __attribute__(( availability(swift, unavailable, message=msg), overloadable, format(__NSString__, A, B) ));
+
 // 关于重写 NSLog 的一点笔记
 // stderr: 标准错误输出，立即输出到屏幕。
 // stdout: 标准输出，当遇到刷新标志（比如换行）或缓冲满时，才把缓冲的数据输出到设备中。
@@ -53,27 +55,35 @@ NS_ASSUME_NONNULL_BEGIN
 ///   - line: 输出语句所在的行数
 ///   - function: 输出语句所在的函数名
 ///   - format: 输出内容格式
-FOUNDATION_EXPORT void XZLogv(const char *file, const int line, const char *function, XZLogSystem *system, NSString *format, ...) __attribute__(( availability(swift, unavailable, message=""), overloadable, format(__NSString__, 5, 6) ));
+FOUNDATION_EXPORT void XZLogv(const char *file, const int line, const char *function, XZLogSystem *system, NSString *format, ...) XZ_LOG_ATTR(5, 6, "Use #XZLog instead");
 
 /// 默认输出。
-FOUNDATION_EXPORT void XZLogv(const char *file, const int line, const char *function, NSString *format, ...) __attribute__(( availability(swift, unavailable, message=""), overloadable, format(__NSString__, 4, 5) ));
+FOUNDATION_EXPORT void XZLogv(const char *file, const int line, const char *function, NSString *format, ...) XZ_LOG_ATTR(4, 5, "Use #XZLog instead");
 
 /// 供 Swift 使用 NSLog 的函数。
-FOUNDATION_EXPORT void XZLogs(XZLogSystem * _Nullable system, NSString *file, NSInteger line, NSString *function, NSString *message) NS_SWIFT_NAME(XZLogv);
+FOUNDATION_EXPORT void XZLogs(XZLogSystem * _Nullable system, NSString *file, NSInteger line, NSString *function, NSString *message);
 
-/// 宏函数，控制台输出，实际调用 `NSLog` 完成输出，会额外输出语句所在的文件、行数、方法名，且如果待输出内容过大，则分批次输出，避免输出内容不完整。
-/// 
+/// 输出日志指定系统。
+///
+/// 宏函数，实际调用``NSLog``输出控制台。
+///
+/// 日志额包含语句所在的文件、行数、方法名，且如果待输出内容过大，则分批次输出，避免输出内容不完整。
+///
 /// - Parameter system: 日志系统
 /// - Parameter format: 格式化输出模版
-FOUNDATION_EXTERN void XZLog(XZLogSystem *system, NSString *format, ...) __attribute__(( availability(swift, unavailable, message=""), overloadable, format(__NSString__, 2, 3) ));
+FOUNDATION_EXTERN void XZLog(XZLogSystem *system, NSString *format, ...) XZ_LOG_ATTR(2, 3, "Use #XZLog instead");
+/// 输出日志到 defaultLogSystem 系统。
+///
+/// 日志额包含语句所在的文件、行数、方法名，且如果待输出内容过大，则分批次输出，避免输出内容不完整。
+///
+/// 宏函数，实际使用``NSLog``输出到控制台。
+FOUNDATION_EXTERN void XZLog(NSString *format, ...) XZ_LOG_ATTR(1, 2, "Use #XZLog instead");
 
 #undef XZLog
-#if DEBUG
-#if XZ_FRAMEWORK
+#if DEBUG && XZ_FRAMEWORK
 #define XZLog(format, ...) XZLogv(__FILE_NAME__, __LINE__, __FUNCTION__, XZLogSystem.XZKitLogSystem, format, ##__VA_ARGS__)
-#else
+#elif DEBUG
 #define XZLog(format, ...) XZLogv(__FILE_NAME__, __LINE__, __FUNCTION__, format, ##__VA_ARGS__)
-#endif
 #else
 #define XZLog(...)
 #endif
