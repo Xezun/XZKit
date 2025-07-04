@@ -104,20 +104,6 @@ for module in _modules {
     
 }
 
-// 应用
-
-_targets.append(
-    .executableTarget(
-        name: "Example",
-        dependencies: ["XZKit"],
-        path: "XZKit",
-        sources: ["Code/Swift/Example"]
-    )
-)
-_products.append(
-    .executable(name: "Example", targets: ["Example"])
-)
-
 // 单元测试
 
 _targets.append(
