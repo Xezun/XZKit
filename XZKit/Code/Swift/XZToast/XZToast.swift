@@ -182,7 +182,7 @@ extension UIResponder {
     /// 展示提示消息。
     /// - Parameters:
     ///   - toast: 提示消息
-    ///   - duration: 展示时长，0 表示永久
+    ///   - duration: 展示时长，0 表示永久，默认 1.0 秒
     ///   - position: 展示位置
     ///   - exclusive: 是否独占
     ///   - completion: 提示消息结束展示后执行的回调
