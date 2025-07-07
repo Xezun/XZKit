@@ -32,13 +32,20 @@ NSTimeInterval const XZToastAnimationDuration = 0.35;
 
 + (instancetype)toastWithStyle:(XZToastStyle)style text:(NSString *)text image:(UIImage *)image progress:(CGFloat)progress {
     XZToastView *toastView = [[XZToastView alloc] init];
-    toastView.text  = text;
-    [toastView setStyle:style image:(image ?: [XZToast imageForStyle:style]) progress:progress];
+    toastView.text = text;
+    if (image == nil) {
+        image = [XZToast imageForStyle:style];
+    }
+    [toastView setStyle:style image:image progress:-1.0];
     return [[self alloc] initWithView:toastView];
 }
 
 + (instancetype)toastWithStyle:(XZToastStyle)style text:(NSString *)text image:(UIImage *)image {
     return [self toastWithStyle:style text:text image:image progress:-1.0];
+}
+
++ (instancetype)toastWithStyle:(XZToastStyle)style text:(NSString *)text progress:(CGFloat)progress {
+    return [self toastWithStyle:style text:text image:nil progress:progress];
 }
 
 #pragma mark - <XZToastView>

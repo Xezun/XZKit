@@ -162,7 +162,7 @@ class Example13ViewController: UITableViewController {
             switch indexPath.row {
             case 0:
                 guard loadingToast == nil else { return }
-                loadingToast = showToast(.loading("加载中，请稍后"), duration: 0, position: position, exclusive: true) { [weak self] finished in
+                loadingToast = showToast(.loading("请稍后"), duration: 0, position: position, exclusive: true) { [weak self] finished in
                     NSLog("加载类型的 XZToast 展示结束：\(finished)")
                     self?.loadingToast = nil;
                 }
@@ -258,11 +258,11 @@ class Example13ViewController: UITableViewController {
     @IBAction func progressSliderValueChanged(_ sender: UISlider) {
         guard let loadingToast = self.loadingToast else { return }
         if sender.value == 0 {
-            loadingToast.text = "加载中，请稍后";
+            loadingToast.text = "请稍后";
         } else if sender.value == 100.0 {
             loadingToast.text = "加载成功"
         } else {
-            loadingToast.text =  String.init(format: "加载进度 %.2f%%", sender.value);
+            loadingToast.text =  String.init(format: "已加载 %0.2f%%", sender.value);
         }
         loadingToast.progress = CGFloat(sender.value / 100);
     }

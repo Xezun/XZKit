@@ -47,7 +47,7 @@
 #pragma mark - <XZToastView>
 
 - (NSString *)text {
-    UIView<XZToastView> * const view = self.view;
+    UIView<XZToastView> * const view = (id)self.view;
     if ([view conformsToProtocol:@protocol(XZToastView)]) {
         return view.text;
     }
@@ -55,14 +55,14 @@
 }
 
 - (void)setText:(NSString *)text {
-    UIView<XZToastView> * const view = self.view;
+    UIView<XZToastView> * const view = (id)self.view;
     if ([view conformsToProtocol:@protocol(XZToastView)]) {
         view.text = text;
     }
 }
 
 - (void)willShowInViewController:(UIViewController *)viewController {
-    UIView<XZToastView> * const view = self.view;
+    UIView<XZToastView> * const view = (id)self.view;
     _shadowColor = viewController.xz_toastConfiguration.shadowColor;
     if (_shadowColor) {
         self.layer.shadowColor = [_shadowColor resolvedColorWithTraitCollection:self.traitCollection].CGColor;
@@ -73,14 +73,14 @@
 }
 
 - (void)setProgress:(CGFloat)progress {
-    UIView<XZToastView> * const view = self.view;
+    UIView<XZToastView> * const view = (id)self.view;
     if ([view conformsToProtocol:@protocol(XZToastView)]) {
         view.progress = progress;
     }
 }
 
 - (CGFloat)progress {
-    UIView<XZToastView> * const view = self.view;
+    UIView<XZToastView> * const view = (id)self.view;
     if ([view conformsToProtocol:@protocol(XZToastView)]) {
         return view.progress;
     }

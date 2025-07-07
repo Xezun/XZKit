@@ -54,41 +54,76 @@ NS_REFINED_FOR_SWIFT @interface XZToast : NSObject <XZToastView, NSCopying>
 
 /// 便利构造方法。
 /// - Parameter view: 呈现提示消息的视图
-+ (instancetype)viewToast:(UIView *)view NS_SWIFT_UNAVAILABLE("Use instance initializer instead.");
++ (instancetype)viewToast:(UIView *)view NS_SWIFT_NAME(view(_:));
+
+#pragma mark - 便利构造器
+
+/// 便利方法。构造提示消息。
+/// - Parameters:
+///   - style: 提示消息样式
+///   - text: 提示消息文案
+///   - image: 提示消息图片
+///   - progress: 进度，值在 0 ~ 1.0 范围以内；目前仅支持 loading 类型的提示消息；小于 0 的数字，将不会展示进度，而是加载动画
++ (instancetype)toastWithStyle:(XZToastStyle)style text:(nullable NSString *)text image:(nullable UIImage *)image progress:(CGFloat)progress NS_SWIFT_NAME(init(style:text:image:progress:));
+
+/// 便利方法。构造全局共享的提示消息。
+///
+/// 如果当前已有共享的提示消息视图，那么此方法会直接使用该视图，作为提示消息的展示视图。
+///
+/// - Parameters:
+///   - style: 提示消息样式
+///   - text: 提示消息文案
+///   - image: 提示消息图片
+///   - progress: 进度，值在 0 ~ 1.0 范围以内；目前仅支持 loading 类型的提示消息；小于 0 的数字，将不会展示进度，而是加载动画
++ (instancetype)sharedToast:(XZToastStyle)style text:(nullable NSString *)text image:(nullable UIImage *)image progress:(CGFloat)progress NS_SWIFT_NAME(init(shared:text:image:progress:));
+
+#pragma mark - 二级便利构造器
 
 /// 带图片的消息提示类型。
 /// 图片。
 /// - Parameters:
-///   - text: 文本内容
+///   - text: 提示消息文案
 ///   - image: 图片，尺寸推荐 37x37 宽高，最大支持 50x50 宽高
 + (instancetype)toastWithStyle:(XZToastStyle)style text:(nullable NSString *)text image:(nullable UIImage *)image NS_SWIFT_NAME(init(style:text:image:));
 
+/// 带进度的提示消息。目前仅支持 loading 类型的提示消息。
+/// - Parameters:
+///   - style: 提示消息样式
+///   - text: 提示消息文案
+///   - progress: 进度，值在 0 ~ 1.0 范围以内；小于 0 的数字，将不会展示进度，而是加载动画
++ (instancetype)toastWithStyle:(XZToastStyle)style text:(NSString *)text progress:(CGFloat)progress NS_SWIFT_NAME(init(style:text:progress:));
+
 /// 文本消息提示类型。
-/// - Parameter text: 文本内容
-+ (instancetype)messageToast:(NSString *)text NS_SWIFT_NAME(init(message:));
+/// - Parameter text: 提示消息文案
++ (instancetype)messageToast:(NSString *)text NS_SWIFT_NAME(message(_:));
 
 /// 加载类型的提示。
-/// - Parameter text: 文本内容
-+ (instancetype)loadingToast:(nullable NSString *)text NS_SWIFT_NAME(init(loading:));
-+ (instancetype)loadingToast:(nullable NSString *)text progress:(CGFloat)progress NS_SWIFT_NAME(init(loading:progress));
+/// - Parameter text: 提示消息文案
++ (instancetype)loadingToast:(nullable NSString *)text NS_SWIFT_NAME(loading(_:));
+
+/// 带加载进度的提示消息类型。
+/// - Parameters:
+///   - text: 消息文本内容
+///   - progress: 进度，值在 0 ~ 1.0 范围以内；小于 0 的数字，将不会展示进度，而是加载动画
++ (instancetype)loadingToast:(nullable NSString *)text progress:(CGFloat)progress NS_SWIFT_NAME(loading(_:progress:));
 
 /// 操作状态提示类型：成功状态。
-/// - Parameter text: 文本内容
-+ (instancetype)successToast:(nullable NSString *)text NS_SWIFT_NAME(init(success:));
+/// - Parameter text: 提示消息文案
++ (instancetype)successToast:(nullable NSString *)text NS_SWIFT_NAME(success(_:));
 
 /// 操作状态提示类型：失败状态。
-/// - Parameter text: 文本内容
-+ (instancetype)failureToast:(nullable NSString *)text NS_SWIFT_NAME(init(failure:));
+/// - Parameter text: 提示消息文案
++ (instancetype)failureToast:(nullable NSString *)text NS_SWIFT_NAME(failure(_:));
 
 /// 操作状态提示类型：警告状态。
-/// - Parameter text: 文本内容
-+ (instancetype)warningToast:(nullable NSString *)text NS_SWIFT_NAME(init(warning:));
+/// - Parameter text: 提示消息文案
++ (instancetype)warningToast:(nullable NSString *)text NS_SWIFT_NAME(warning(_:));
 
 /// 操作状态提示类型：等待状态。
-/// - Parameter text: 文本内容
-+ (instancetype)waitingToast:(nullable NSString *)text NS_SWIFT_NAME(init(waiting:));
+/// - Parameter text: 提示消息文案
++ (instancetype)waitingToast:(nullable NSString *)text NS_SWIFT_NAME(waiting(_:));
 
-/// 构造一个全局共享视图的提示消息对象。
+/// 构造全局共享视图的提示消息对象。
 ///
 /// 请注意，返回值不是单例。如果 toast 视图正在被其它 toast 使用，那么该 toast 会被提前终止。
 ///
@@ -96,24 +131,31 @@ NS_REFINED_FOR_SWIFT @interface XZToast : NSObject <XZToastView, NSCopying>
 ///   - style: 提示消息样式
 ///   - text: 提示文案
 ///   - image: 提示图标，并非所有类型的 XZToast 都适用，比如 loading 类型不展示图片
-+ (instancetype)sharedToast:(XZToastStyle)style text:(nullable NSString *)text image:(nullable UIImage *)image NS_SWIFT_NAME(init(shared:text:image:));
-+ (instancetype)sharedToast:(XZToastStyle)style text:(nullable NSString *)text progress:(CGFloat)progress NS_SWIFT_NAME(init(shared:text:progress:));
++ (instancetype)sharedToast:(XZToastStyle)style text:(nullable NSString *)text image:(nullable UIImage *)image NS_SWIFT_NAME(shared(_:text:image:));
+
+/// 构造全局共享视图的展示进度的提示消息。
+/// - Parameters:
+///   - style: 提示消息样式，目前仅 loading 样式有效
+///   - text: 提示消息文案
+///   - progress: 进度，值在 0 ~ 1.0 范围以内；小于 0 的数字，将不会展示进度，而是加载动画
++ (instancetype)sharedToast:(XZToastStyle)style text:(nullable NSString *)text progress:(CGFloat)progress NS_SWIFT_NAME(shared(_:text:progress:));
 
 /// 构造一个全局共享的提示消息对象。
 /// - Parameters:
 ///   - style: 提示消息样式
 ///   - text: 提示消息文案
-+ (instancetype)sharedToast:(XZToastStyle)style text:(nullable NSString *)text NS_SWIFT_NAME(init(shared:text:));
++ (instancetype)sharedToast:(XZToastStyle)style text:(nullable NSString *)text NS_SWIFT_NAME(shared(_:text:));
 
 /// 构造一个全局共享的提示消息对象。
 /// - Parameters:
 ///   - style: 提示消息样式
 ///   - image: 提示消息图片
-+ (instancetype)sharedToast:(XZToastStyle)style image:(nullable UIImage *)image NS_SWIFT_NAME(init(shared:image:));
++ (instancetype)sharedToast:(XZToastStyle)style image:(nullable UIImage *)image NS_SWIFT_NAME(shared(_:image:));
 
 @end
 
 @interface XZToast (XZToastConfiguration)
+
 /// 默认数量限制。
 @property (class) NSInteger maximumNumberOfToasts;
 /// 默认文本颜色。
@@ -124,7 +166,9 @@ NS_REFINED_FOR_SWIFT @interface XZToast : NSObject <XZToastView, NSCopying>
 @property (class) UIColor * backgroundColor;
 /// 默认阴影色。
 @property (class) UIColor * shadowColor;
+/// 进度默认颜色。
 @property (class) UIColor * color;
+/// 进度轨道的默认颜色。
 @property (class) UIColor * trackColor;
 
 /// 设置默认位置偏移量。
