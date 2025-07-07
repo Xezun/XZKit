@@ -57,9 +57,9 @@
         _viewController = viewController;
         
         _maximumNumberOfToasts = XZToast.maximumNumberOfToasts;
-        _offsets[XZToastPositionTop]    = [XZToast toastOffsetForPosition:(XZToastPositionTop)];
-        _offsets[XZToastPositionMiddle] = [XZToast toastOffsetForPosition:(XZToastPositionMiddle)];
-        _offsets[XZToastPositionBottom] = [XZToast toastOffsetForPosition:(XZToastPositionBottom)];
+        _offsets[XZToastPositionTop]    = [XZToast offsetForPosition:(XZToastPositionTop)];
+        _offsets[XZToastPositionMiddle] = [XZToast offsetForPosition:(XZToastPositionMiddle)];
+        _offsets[XZToastPositionBottom] = [XZToast offsetForPosition:(XZToastPositionBottom)];
         
         _waitingToShowTasks = [NSMutableArray arrayWithCapacity:16];
         _showingTasks = [NSMutableArray arrayWithCapacity:16];

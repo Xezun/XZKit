@@ -37,6 +37,8 @@
     [_manager hideToast:self completion:completion];
 }
 
+#pragma mark - <XZToastView>
+
 - (void)setText:(NSString *)text {
     [super setText:text];
     [self setNeedsUpdateFrame];

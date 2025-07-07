@@ -102,6 +102,17 @@
     return CGSizeZero;
 }
 
+#pragma mark - <XZToastView>
+
+- (NSString *)text {
+    return _textLabel.text;
+}
+
+- (void)setText:(NSString *)text {
+    _textLabel.text = text;
+    [self setNeedsLayout];
+}
+
 - (void)willShowInViewController:(UIViewController *)viewController {
     id<XZToastConfiguration> const configuration = viewController.xz_toastConfiguration;
     UIColor * const backgroundColor = configuration.backgroundColor;
@@ -118,14 +129,7 @@
     }
 }
 
-- (NSString *)text {
-    return _textLabel.text;
-}
-
-- (void)setText:(NSString *)text {
-    _textLabel.text = text;
-    [self setNeedsLayout];
-}
+#pragma mark - 重写继承的方法
 
 - (NSString *)description {
     return [NSString stringWithFormat:@"<%p: %@, text: %@, icon: %@>", self, self.class, self.text, _iconView];

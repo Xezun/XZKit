@@ -44,23 +44,35 @@
     }
 }
 
+#pragma mark - <XZToastView>
+
+- (NSString *)text {
+    UIView<XZToastView> * const view = self.view;
+    if ([view conformsToProtocol:@protocol(XZToastView)]) {
+        return view.text;
+    }
+    return nil;
+}
+
+- (void)setText:(NSString *)text {
+    UIView<XZToastView> * const view = self.view;
+    if ([view conformsToProtocol:@protocol(XZToastView)]) {
+        view.text = text;
+    }
+}
+
 - (void)willShowInViewController:(UIViewController *)viewController {
+    UIView<XZToastView> * const view = self.view;
     _shadowColor = viewController.xz_toastConfiguration.shadowColor;
     if (_shadowColor) {
         self.layer.shadowColor = [_shadowColor resolvedColorWithTraitCollection:self.traitCollection].CGColor;
     }
-    if ([_view respondsToSelector:@selector(willShowInViewController:)]) {
-        [_view willShowInViewController:viewController];
+    if ([view conformsToProtocol:@protocol(XZToastView)]) {
+        [view willShowInViewController:viewController];
     }
 }
 
-- (NSString *)text {
-    return self.view.text;
-}
-
-- (void)setText:(NSString *)text {
-    self.view.text = text;
-}
+#pragma mark - 重写继承的方法
 
 - (void)willRemoveSubview:(UIView *)subview {
     [super willRemoveSubview:subview];

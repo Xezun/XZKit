@@ -14,7 +14,6 @@ NS_ASSUME_NONNULL_BEGIN
 @protocol XZToastConfiguration;
 
 @protocol XZToastView <NSObject>
-@optional
 /// 提示文本。
 @property (nonatomic, copy, nullable) NSString *text;
 /// 当视图将要在控制器中显示时，此方法会被调用。
@@ -37,10 +36,10 @@ typedef NS_ENUM(NSUInteger, XZToastStyle) {
 /// 一种用于展示业务或逻辑状态的提示消息。
 ///
 /// 这是一个基类，业务可通过子类自定义提示消息的视图。
-NS_REFINED_FOR_SWIFT @interface XZToast : NSObject <NSCopying>
+NS_REFINED_FOR_SWIFT @interface XZToast : NSObject <XZToastView, NSCopying>
 
 /// 呈现提示消息的视图。
-@property (nonatomic, readonly) __kindof UIView<XZToastView> *view;
+@property (nonatomic, readonly) __kindof UIView *view;
 
 /// 提示消息文案。
 ///
@@ -48,12 +47,11 @@ NS_REFINED_FOR_SWIFT @interface XZToast : NSObject <NSCopying>
 @property (nonatomic, copy, nullable) NSString *text;
 
 - (instancetype)init NS_UNAVAILABLE;
-- (instancetype)initWithView:(UIView<XZToastView> *)view NS_DESIGNATED_INITIALIZER;
+- (instancetype)initWithView:(UIView *)view NS_DESIGNATED_INITIALIZER;
 
 /// 便利构造方法。
 /// - Parameter view: 呈现提示消息的视图
-+ (instancetype)viewToast:(UIView<XZToastView> *)view NS_SWIFT_UNAVAILABLE("Use instance initializer instead.");
-
++ (instancetype)viewToast:(UIView *)view NS_SWIFT_UNAVAILABLE("Use instance initializer instead.");
 
 /// 带图片的消息提示类型。
 /// 图片。
@@ -86,17 +84,27 @@ NS_REFINED_FOR_SWIFT @interface XZToast : NSObject <NSCopying>
 /// - Parameter text: 文本内容
 + (instancetype)waitingToast:(nullable NSString *)text NS_SWIFT_NAME(init(waiting:));
 
-/// 构件一个全局共享视图的 XZToast 对象，返回值不是单例。
+/// 构造一个全局共享视图的提示消息对象。
 ///
-/// 如果 toast 视图正在被其它 toast 使用，那么该 toast 会被提前终止。
+/// 请注意，返回值不是单例。如果 toast 视图正在被其它 toast 使用，那么该 toast 会被提前终止。
 ///
 /// - Parameters:
-///   - style: 外观样式
+///   - style: 提示消息样式
 ///   - text: 提示文案
 ///   - image: 提示图标，并非所有类型的 XZToast 都适用，比如 loading 类型不展示图片
 + (instancetype)sharedToast:(XZToastStyle)style text:(nullable NSString *)text image:(nullable UIImage *)image NS_SWIFT_NAME(init(shared:text:image:));
-+ (instancetype)sharedToast:(XZToastStyle)style text:(nullable NSString *)text NS_SWIFT_UNAVAILABLE("Use XZToast.shared(_:text:image:) instead.");
-+ (instancetype)sharedToast:(XZToastStyle)style image:(nullable UIImage *)image NS_SWIFT_UNAVAILABLE("Use XZToast.shared(_:text:image:) instead.");
+
+/// 构造一个全局共享的提示消息对象。
+/// - Parameters:
+///   - style: 提示消息样式
+///   - text: 提示消息文案
++ (instancetype)sharedToast:(XZToastStyle)style text:(nullable NSString *)text NS_SWIFT_NAME(init(shared:text:));
+
+/// 构造一个全局共享的提示消息对象。
+/// - Parameters:
+///   - style: 提示消息样式
+///   - image: 提示消息图片
++ (instancetype)sharedToast:(XZToastStyle)style image:(nullable UIImage *)image NS_SWIFT_NAME(init(shared:image:));
 
 @end
 
@@ -113,10 +121,10 @@ NS_REFINED_FOR_SWIFT @interface XZToast : NSObject <NSCopying>
 @property (class) UIColor * shadowColor;
 
 /// 设置默认位置偏移量。
-+ (void)setToastOffset:(CGFloat)offset forPosition:(XZToastPosition)position;
++ (void)setOffset:(CGFloat)offset forPosition:(XZToastPosition)position;
 
 /// 获取默认位置偏移量。
-+ (CGFloat)toastOffsetForPosition:(XZToastPosition)position;
++ (CGFloat)offsetForPosition:(XZToastPosition)position;
 
 /// 获取指定样式提示消息的默认提示图片。
 + (nullable UIImage *)imageForStyle:(XZToastStyle)style;

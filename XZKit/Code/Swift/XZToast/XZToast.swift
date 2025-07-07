@@ -23,7 +23,7 @@ import XZGeometry
         return __XZToastAnimationDuration;
     }
     
-    public override required init(view: any UIView & XZToastView) {
+    public override required init(view: UIView) {
         super.init(view: view)
     }
     
@@ -122,14 +122,22 @@ extension XZToast {
     ///   - text: 消息文本
     ///   - image: 消息图片
     /// - Returns: 提示消息对象
-    public class func shared(_ style: XZToast.Style, text: String?, image: UIImage? = nil) -> Self {
+    public class func shared(_ style: XZToast.Style, text: String?, image: UIImage?) -> Self {
         return Self.init(shared: style, text: text, image: image)
-    } 
+    }
+    
+    public class func shared(_ style: XZToast.Style, text: String?) -> Self {
+        return Self.init(shared: style, text: text)
+    }
+    
+    public class func shared(_ style: XZToast.Style, image: UIImage?) -> Self {
+        return Self.init(shared: style, image: image)
+    }
     
     /// 通过 view 构造 XZToast 对象。
     /// - Parameter view: 呈现提示的视图
     /// - Returns: 提示消息对象
-    public class func view(_ view: UIView & XZToastView) -> Self {
+    public class func view(_ view: UIView) -> Self {
         return Self.init(view: view)
     }
     

@@ -14,7 +14,7 @@ NSTimeInterval const XZToastAnimationDuration = 0.35;
 
 @synthesize view = _view;
 
-- (instancetype)initWithView:(UIView<XZToastView> *)view {
+- (instancetype)initWithView:(UIView *)view {
     self = [super init];
     if (self) {
         _view = view;
@@ -22,19 +22,11 @@ NSTimeInterval const XZToastAnimationDuration = 0.35;
     return self;
 }
 
-- (NSString *)text {
-    return self.view.text;
-}
-
-- (void)setText:(NSString *)text {
-    self.view.text = text;
-}
-
 - (id)copyWithZone:(NSZone *)zone {
     return [[self.class alloc] initWithView:_view];
 }
 
-+ (instancetype)viewToast:(UIView<XZToastView> *)view {
++ (instancetype)viewToast:(UIView *)view {
     return [[self alloc] initWithView:view];
 }
 
@@ -44,6 +36,32 @@ NSTimeInterval const XZToastAnimationDuration = 0.35;
     [toastView setStyle:style image:(image ?: [XZToast imageForStyle:style])];
     return [[self alloc] initWithView:toastView];
 }
+
+#pragma mark - <XZToastView>
+
+- (NSString *)text {
+    UIView<XZToastView> * const view = self.view;
+    if ([view conformsToProtocol:@protocol(XZToastView)]) {
+        return view.text;
+    }
+    return nil;
+}
+
+- (void)setText:(NSString *)text {
+    UIView<XZToastView> * const view = self.view;
+    if ([view conformsToProtocol:@protocol(XZToastView)]) {
+        view.text = text;
+    }
+}
+
+- (void)willShowInViewController:(UIViewController *)viewController {
+    UIView<XZToastView> * const view = self.view;
+    if ([view conformsToProtocol:@protocol(XZToastView)]) {
+        [view willShowInViewController:viewController];
+    }
+}
+
+#pragma mark - 便利初始化方法
 
 + (instancetype)messageToast:(NSString *)text {
     return [self toastWithStyle:XZToastStyleMessage text:text image:nil];
@@ -79,8 +97,12 @@ NSTimeInterval const XZToastAnimationDuration = 0.35;
         _sharedToastView = toastView;
     }
     
-    toastView.text  = text;
-    [toastView setStyle:style image:(image ?: [XZToast imageForStyle:style])];
+    if (image == nil) {
+        image = [XZToast imageForStyle:style];
+    }
+    
+    toastView.text = text;
+    [toastView setStyle:style image:image];
     
     return [[self alloc] initWithView:toastView];
 }
@@ -114,11 +136,11 @@ static NSMutableDictionary *_styleImages = nil;
     _maximumNumberOfToasts = MAX(1, maximumNumberOfToasts);
 }
 
-+ (CGFloat)toastOffsetForPosition:(XZToastPosition)position {
++ (CGFloat)offsetForPosition:(XZToastPosition)position {
     return _toastOffsets[position];
 }
 
-+ (void)setToastOffset:(CGFloat)offset forPosition:(XZToastPosition)position {
++ (void)setOffset:(CGFloat)offset forPosition:(XZToastPosition)position {
     _toastOffsets[position] = offset;
 }
 
