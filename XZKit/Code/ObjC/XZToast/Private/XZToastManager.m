@@ -387,7 +387,7 @@
         newToastItem->_frame.origin.x = (_bounds.size.width - newToastItem->_frame.size.width) * 0.5 + _bounds.origin.x;
         newToastItem->_needsUpdateFrame = NO;
         
-        // 复用的视图不会从移除，因此用来判断复用状态
+        // 复用的视图不会从父视图移除，因此用来判断复用状态
         if (newToastItem.wrapperView.superview) {
             XZToastWrapperView * const view = newToastItem.wrapperView;
             CALayer * const layer = view.layer.presentationLayer;
