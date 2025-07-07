@@ -156,7 +156,7 @@ NSTimeInterval const XZToastAnimationDuration = 0.35;
 @end
 
 
-static NSInteger _maximumNumberOfToasts  = 3;
+static NSInteger _maximumNumberOfToasts  = 1;
 static CGFloat   _toastOffsets[3]        = {+20.0, 0.0, -20.0};
 static UIColor * _textColor              = nil;
 static UIFont  * _font                   = nil;

@@ -198,7 +198,7 @@ NS_REFINED_FOR_SWIFT @interface XZToastTask : XZToast
 /// 配置 XZToast 内置样式的对象。
 @protocol XZToastConfiguration <NSObject>
 
-/// 可同时展示的 toast 的数量。
+/// 可同时展示的 toast 的数量。默认 1 。
 @property (nonatomic) NSInteger maximumNumberOfToasts;
 
 /// 文本颜色。
