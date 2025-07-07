@@ -7,6 +7,7 @@
 
 #import "XZToastView.h"
 #import "XZGeometry.h"
+#import "XZToastProgressView.h"
 
 #define kPaddingT 15.0
 #define kPaddingL 15.0
@@ -15,12 +16,6 @@
 #define kIconSize 50.0
 #define kTextLine 20.0
 #define kSpacing  10.0
-
-@interface XZToastProgressView : UIView
-@property (nonatomic, strong) UIColor *color;
-@property (nonatomic, strong) UIColor *trackColor;
-@property (nonatomic) CGFloat progress;
-@end
 
 @interface XZToastView ()
 @end
@@ -61,13 +56,8 @@
     
     CGRect const bounds = self.bounds;
     
-    {
-        CGFloat const x = bounds.origin.x + (bounds.size.width - kIconSize) * 0.5;
-        CGFloat const y = kPaddingT;
-        CGFloat const w = kIconSize;
-        CGFloat const h = kIconSize;
-        CGSize  const iconSize = [_iconView sizeThatFits:CGSizeMake(w, h)];
-        _iconView.frame = CGRectScaleAspectRatioInsideWithMode(CGRectMake(x, y, w, h), iconSize, UIViewContentModeCenter) ;
+    if (_iconView) {
+        _iconView.frame = [self iconRectForBounds:bounds];
     }
     
     {
@@ -106,6 +96,15 @@
     }
     
     return CGSizeZero;
+}
+
+- (CGRect)iconRectForBounds:(CGRect)bounds {
+    CGFloat const x = bounds.origin.x + (bounds.size.width - kIconSize) * 0.5;
+    CGFloat const y = kPaddingT;
+    CGFloat const w = kIconSize;
+    CGFloat const h = kIconSize;
+    CGSize  const iconSize = [_iconView sizeThatFits:CGSizeMake(w, h)];
+    return CGRectScaleAspectRatioInsideWithMode(CGRectMake(x, y, w, h), iconSize, UIViewContentModeCenter);
 }
 
 #pragma mark - <XZToastView>
@@ -149,9 +148,8 @@
     if (![_iconView isKindOfClass:[XZToastProgressView class]]) {
         [_iconView removeFromSuperview];
         
-        CGRect frame = CGRectMake((self.bounds.size.width - kIconSize) * 0.5, kPaddingT, kIconSize, kIconSize);
         XZToastProgressView *iconView = [[XZToastProgressView alloc] init];
-        iconView.frame = CGRectScaleAspectRatioInsideWithMode(frame, iconView.frame.size, UIViewContentModeCenter);;
+        iconView.frame = [self iconRectForBounds:self.bounds];
         iconView.color = XZToast.color;
         iconView.trackColor = XZToast.trackColor;
         [self addSubview:iconView];
@@ -214,7 +212,7 @@
         case XZToastStyleLoading: {
             if (progress >= 0) {
                 // 使用进度条
-                [self setProgress:0];
+                [self setProgress:progress];
             } else if (image) {
                 // 使用图片
                 if (![_iconView isKindOfClass:UIImageView.class]) {
@@ -291,79 +289,3 @@ UIImage *XZToastStyleImage(XZToastStyle style) {
 }
 
 
-@implementation XZToastProgressView {
-    CAShapeLayer *_trackLayer;
-    CAShapeLayer *_shapeLayer;
-}
-
-- (instancetype)initWithFrame:(CGRect)frame {
-    self = [super initWithFrame:CGRectMake(0, 0, 37.0, 37.0)];
-    if (self) {
-        CALayer * const layer = self.layer;
-        
-        _color = UIColor.systemBlueColor;
-        _trackColor = UIColor.systemGray5Color;
-        
-        UIBezierPath *path = [UIBezierPath bezierPathWithArcCenter:CGPointMake(18.5, 18.5) radius:16.5 startAngle:-M_PI_2 endAngle:M_PI * 1.5 clockwise:YES];
-        
-        _trackLayer = [[CAShapeLayer alloc] init];
-        _trackLayer.frame = CGRectMake(0, 0, 37, 37);
-        _trackLayer.lineWidth = 3.0;
-        _trackLayer.strokeColor = [UIColor colorWithWhite:0.9 alpha:1.0].CGColor;
-        _trackLayer.fillColor   = UIColor.clearColor.CGColor;
-        _trackLayer.strokeStart = 0;
-        _trackLayer.strokeEnd   = 1.0;
-        _trackLayer.path = path.CGPath;
-        [layer addSublayer:_trackLayer];
-        
-        _shapeLayer = [[CAShapeLayer alloc] init];
-        _shapeLayer.frame = CGRectMake(0, 0, 37, 37);
-        _shapeLayer.lineWidth = 3.0;
-        _shapeLayer.lineCap = kCALineCapRound;
-        _shapeLayer.strokeColor = self.tintColor.CGColor;
-        _shapeLayer.fillColor   = UIColor.clearColor.CGColor;
-        _shapeLayer.strokeStart = 0;
-        _shapeLayer.strokeEnd   = 0;
-        _shapeLayer.repeatCount = FLT_MAX;
-        _shapeLayer.autoreverses = YES;
-        _shapeLayer.path = _trackLayer.path;
-        [layer addSublayer:_shapeLayer];
-    }
-    return self;
-}
-
-- (CGFloat)progress {
-    return _shapeLayer.strokeEnd;
-}
-
-- (void)setProgress:(CGFloat)progress {
-    _shapeLayer.strokeEnd = progress;
-}
-
-- (CGSize)sizeThatFits:(CGSize)size {
-    return CGSizeMake(37.0, 37.0);
-}
-
-- (void)setColor:(UIColor *)color {
-    if (_color != color) {
-        _color = color ?: UIColor.systemBlueColor;
-        _shapeLayer.strokeColor = [_color resolvedColorWithTraitCollection:self.traitCollection].CGColor;
-    }
-}
-
-- (void)setTrackColor:(UIColor *)trackColor {
-    if (_trackColor != trackColor) {
-        _trackColor = trackColor ?: UIColor.systemGray5Color;
-        _trackLayer.strokeColor = [_trackColor resolvedColorWithTraitCollection:self.traitCollection].CGColor;
-    }
-}
-
-- (void)traitCollectionDidChange:(UITraitCollection *)previousTraitCollection {
-    [super traitCollectionDidChange:previousTraitCollection];
-    
-    UITraitCollection * const traitCollection = self.traitCollection;
-    _trackLayer.strokeColor = [_trackColor resolvedColorWithTraitCollection:traitCollection].CGColor;
-    _shapeLayer.strokeColor = [_color resolvedColorWithTraitCollection:traitCollection].CGColor;
-}
-
-@end
