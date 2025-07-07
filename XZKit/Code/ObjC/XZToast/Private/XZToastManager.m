@@ -39,6 +39,28 @@
     BOOL _needslayoutToasts;
 }
 
+- (void)dealloc {
+    for (XZToastTask *task in _hideingTasks) {
+        [task cancel];
+        [task finish];
+    }
+    
+    for (XZToastTask *task in _showingTasks) {
+        [task cancel];
+        [task finish];
+    }
+    
+    for (XZToastTask *task in _waitingToHideTasks) {
+        [task cancel];
+        [task finish];
+    }
+    
+    for (XZToastTask *task in _waitingToShowTasks) {
+        [task cancel];
+        [task finish];
+    }
+}
+
 + (XZToastManager *)managerForViewController:(UIViewController *)viewController {
     static const void * const _manager = &_manager;
     XZToastManager *manager = objc_getAssociatedObject(viewController, _manager);
@@ -69,32 +91,7 @@
     return self;
 }
 
-- (void)dealloc {
-    for (XZToastTask *task in _hideingTasks) {
-        [task cancel];
-        [task finish];
-    }
-    
-    for (XZToastTask *task in _showingTasks) {
-        [task cancel];
-        [task finish];
-    }
-    
-    for (XZToastTask *task in _waitingToHideTasks) {
-        [task cancel];
-        [task finish];
-    }
-    
-    for (XZToastTask *task in _waitingToShowTasks) {
-        [task cancel];
-        [task finish];
-    }
-}
-
-- (void)setMaximumNumberOfToasts:(NSInteger)maximumNumberOfToasts {
-    _maximumNumberOfToasts = MAX(1, maximumNumberOfToasts);
-    [self setNeedsUpdateToasts];
-}
+#pragma mark - override methods
 
 - (CGRect)bounds {
     UIView     * const _rootView      = _viewController.view;
@@ -304,6 +301,29 @@
     }
     _needsUpdateToasts = YES;
     [self updateToastsIfNeeded];
+}
+
+#pragma mark - <XZToastConfiguration>
+
+@synthesize maximumNumberOfToasts = _maximumNumberOfToasts;
+@synthesize textColor = _textColor;
+@synthesize font = _font;
+@synthesize backgroundColor = _backgroundColor;
+@synthesize shadowColor = _shadowColor;
+@synthesize color = _color;
+@synthesize trackColor = _trackColor;
+
+- (void)setMaximumNumberOfToasts:(NSInteger)maximumNumberOfToasts {
+    _maximumNumberOfToasts = MAX(1, maximumNumberOfToasts);
+    [self setNeedsUpdateToasts];
+}
+
+- (CGFloat)offsetForPosition:(XZToastPosition)position {
+    return _offsets[position];
+}
+
+- (void)setOffset:(CGFloat)offset forPosition:(XZToastPosition)position {
+    _offsets[position] = offset;
 }
 
 - (void)updateToastsIfNeeded {
@@ -571,15 +591,6 @@
     }
     [self layoutToastViews];
     _needslayoutToasts = NO;
-}
-
-- (CGFloat)offsetForPosition:(XZToastPosition)position { 
-    return _offsets[position];
-}
-
-
-- (void)setOffset:(CGFloat)offset forPosition:(XZToastPosition)position { 
-    _offsets[position] = offset;
 }
 
 - (void)layoutToastViews {

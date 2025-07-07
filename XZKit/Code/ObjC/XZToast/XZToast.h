@@ -22,6 +22,9 @@ NS_ASSUME_NONNULL_BEGIN
 ///
 /// - Parameter viewController: 当前视图将要展示于其中的控制器对象
 - (void)willShowInViewController:(UIViewController *)viewController;
+@optional
+/// 进度。
+@property (nonatomic) CGFloat progress;
 @end
 
 typedef NS_ENUM(NSUInteger, XZToastStyle) {
@@ -67,6 +70,7 @@ NS_REFINED_FOR_SWIFT @interface XZToast : NSObject <XZToastView, NSCopying>
 /// 加载类型的提示。
 /// - Parameter text: 文本内容
 + (instancetype)loadingToast:(nullable NSString *)text NS_SWIFT_NAME(init(loading:));
++ (instancetype)loadingToast:(nullable NSString *)text progress:(CGFloat)progress NS_SWIFT_NAME(init(loading:progress));
 
 /// 操作状态提示类型：成功状态。
 /// - Parameter text: 文本内容
@@ -93,6 +97,7 @@ NS_REFINED_FOR_SWIFT @interface XZToast : NSObject <XZToastView, NSCopying>
 ///   - text: 提示文案
 ///   - image: 提示图标，并非所有类型的 XZToast 都适用，比如 loading 类型不展示图片
 + (instancetype)sharedToast:(XZToastStyle)style text:(nullable NSString *)text image:(nullable UIImage *)image NS_SWIFT_NAME(init(shared:text:image:));
++ (instancetype)sharedToast:(XZToastStyle)style text:(nullable NSString *)text progress:(CGFloat)progress NS_SWIFT_NAME(init(shared:text:progress:));
 
 /// 构造一个全局共享的提示消息对象。
 /// - Parameters:
@@ -119,6 +124,8 @@ NS_REFINED_FOR_SWIFT @interface XZToast : NSObject <XZToastView, NSCopying>
 @property (class) UIColor * backgroundColor;
 /// 默认阴影色。
 @property (class) UIColor * shadowColor;
+@property (class) UIColor * color;
+@property (class) UIColor * trackColor;
 
 /// 设置默认位置偏移量。
 + (void)setOffset:(CGFloat)offset forPosition:(XZToastPosition)position;
@@ -128,6 +135,7 @@ NS_REFINED_FOR_SWIFT @interface XZToast : NSObject <XZToastView, NSCopying>
 
 /// 获取指定样式提示消息的默认提示图片。
 + (nullable UIImage *)imageForStyle:(XZToastStyle)style;
+
 /// 设置指定样式提示消息的默认提示图片。
 /// - Parameters:
 ///   - image: 图片
@@ -150,16 +158,23 @@ NS_REFINED_FOR_SWIFT @interface XZToastTask : XZToast
 @property (nonatomic) NSInteger maximumNumberOfToasts;
 
 /// 文本颜色。
-@property (nonatomic, nullable) UIColor * textColor;
+@property (nonatomic) UIColor * textColor;
 
 /// 文本字体。
-@property (nonatomic, nullable) UIFont  * font;
+@property (nonatomic) UIFont  * font;
 
 /// 背景色。
-@property (nonatomic, nullable) UIColor * backgroundColor;
+@property (nonatomic) UIColor * backgroundColor;
 
 /// 投影色。
-@property (nonatomic, nullable) UIColor * shadowColor;
+@property (nonatomic) UIColor * shadowColor;
+
+/// 进度颜色。
+@property (nonatomic) UIColor * color;
+
+/// 进度轨道颜色。
+@property (nonatomic) UIColor * trackColor;
+
 
 /// 设置 toast 相对默认位置的偏移值。
 ///

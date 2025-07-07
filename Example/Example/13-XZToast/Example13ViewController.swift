@@ -10,6 +10,7 @@ import XZToast
 import XZMocoa
 import XZLocale
 import XZDefines
+import XZKit
 
 class Example13ViewController: UITableViewController {
     
@@ -30,6 +31,53 @@ class Example13ViewController: UITableViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
+        
+//        showToast(.message("请稍后"))
+//        showToast("请稍后");
+//        showToast("请稍后", duration: 3.0)
+//        showToast("请稍后", duration: 3.0, position: .bottom)
+//        showToast("请稍后", duration: 3.0, position: .bottom, exclusive: true)
+//        showToast("请稍后", duration: 3.0, position: .bottom, exclusive: true, completion: { finished in
+//            #XZLog("提示消息已结束展示：\(finished)")
+//        })
+//        
+//        loadingToast = showToast(.loading("加载中"));
+//        do {
+//            loadingToast?.text = "加载进度：50.5%"
+//        }
+//        loadingToast?.hide()
+//        
+//        showToast(.success("操作成功"))
+//        showToast(.failure("操作失败"))
+//        showToast(.waiting("即将开始"))
+//        showToast(.warning("即将到期"))
+//        
+//        showToast(.shared(.success, text: "操作成功"))
+//        showToast(.shared(.failure, text: "操作失败"))
+//        showToast(.shared(.waiting, text: "即将开始"))
+//        showToast(.shared(.warning, text: "即将到期"))
+//        
+//        let config = self.toastConfiguration
+//        config.font                  = .systemFont(ofSize: 15)
+//        config.textColor             = .red
+//        config.shadowColor           = .red
+//        config.backgroundColor       = .white
+//        config.maximumNumberOfToasts = 3
+//        config.setOffset(-50, for: .bottom)
+//        
+//        XZToast.font                  = .systemFont(ofSize: 15)
+//        XZToast.textColor             = .red
+//        XZToast.shadowColor           = .red
+//        XZToast.backgroundColor       = .white
+//        XZToast.maximumNumberOfToasts = 3
+//        XZToast.setOffset(-2, for: .bottom)
+//        
+//        let button = UIButton.init(type: .system)
+//        button.backgroundColor = UIColor.orange
+//        button.setTitleColor(.white, for: .normal)
+//        button.setTitle("点击这里", for: .normal);
+//        button.contentEdgeInsets = .init(top: 10, left: 10, bottom: 10, right: 10)
+//        showToast(.view(button), duration: 0)
         
         backgroundColorWell.addTarget(self, action: #selector(backgroundColorWellValueChanged(_:)), for: .valueChanged)
         textColorWell.addTarget(self, action: #selector(textColorWellValueChanged(_:)), for: .valueChanged)
@@ -114,7 +162,7 @@ class Example13ViewController: UITableViewController {
             switch indexPath.row {
             case 0:
                 guard loadingToast == nil else { return }
-                loadingToast = showToast(.loading(nil), duration: 0, position: position, exclusive: true) { [weak self] finished in
+                loadingToast = showToast(.loading("加载中，请稍后"), duration: 0, position: position, exclusive: true) { [weak self] finished in
                     NSLog("加载类型的 XZToast 展示结束：\(finished)")
                     self?.loadingToast = nil;
                 }
@@ -210,12 +258,13 @@ class Example13ViewController: UITableViewController {
     @IBAction func progressSliderValueChanged(_ sender: UISlider) {
         guard let loadingToast = self.loadingToast else { return }
         if sender.value == 0 {
-            loadingToast.text = nil;
+            loadingToast.text = "加载中，请稍后";
         } else if sender.value == 100.0 {
             loadingToast.text = "加载成功"
         } else {
-            loadingToast.text = String.init(format: "加载进度 %.2f%%", sender.value);
+            loadingToast.text =  String.init(format: "加载进度 %.2f%%", sender.value);
         }
+        loadingToast.progress = CGFloat(sender.value / 100);
     }
     
     @IBAction func toastControllerSwitchValueChanged(_ sender: UISwitch) {
@@ -229,11 +278,13 @@ class Example13ViewController: UITableViewController {
     
     @IBOutlet weak var backgroundColorWell: UIColorWell!
     @IBAction func backgroundColorWellValueChanged(_ sender: UIColorWell) {
-        self.toastConfiguration.backgroundColor = sender.selectedColor
+        guard let selectedColor = sender.selectedColor else { return }
+        self.toastConfiguration.backgroundColor = selectedColor
     }
     
     @IBOutlet weak var textColorWell: UIColorWell!
     @IBAction func textColorWellValueChanged(_ sender: UIColorWell) {
-        self.toastConfiguration.textColor = sender.selectedColor
+        guard let selectedColor = sender.selectedColor else { return }
+        self.toastConfiguration.textColor = selectedColor
     }
 }

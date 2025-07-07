@@ -14,14 +14,6 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface XZToastManager : NSObject <XZToastConfiguration>
 
-@property (nonatomic) NSInteger maximumNumberOfToasts;
-@property (nonatomic, strong, nullable) UIColor * textColor;
-@property (nonatomic, strong, nullable) UIFont  * font;
-@property (nonatomic, strong, nullable) UIColor * backgroundColor;
-@property (nonatomic, strong, nullable) UIColor * shadowColor;
-- (void)setNeedsLayoutToasts;
-- (void)layoutToastsIfNeeded;
-
 @property (nonatomic) NSArray<XZToastTask *> *tasks;
 
 - (XZToastTask *)showToast:(XZToast *)toast duration:(NSTimeInterval)duration position:(XZToastPosition)position exclusive:(BOOL)exclusive completion:(nullable XZToastCompletion)completion;

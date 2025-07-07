@@ -16,7 +16,7 @@
     UIColor *_shadowColor;
 }
 
-- (instancetype)initWithView:(UIView<XZToastView> *)view {
+- (instancetype)initWithView:(UIView *)view {
     CGSize const size = view.frame.size;
     self = [super initWithFrame:CGRectMake(0, 0, kPadding + size.width + kPadding, kPadding + size.height + kPadding)];
     if (self) {
@@ -70,6 +70,21 @@
     if ([view conformsToProtocol:@protocol(XZToastView)]) {
         [view willShowInViewController:viewController];
     }
+}
+
+- (void)setProgress:(CGFloat)progress {
+    UIView<XZToastView> * const view = self.view;
+    if ([view conformsToProtocol:@protocol(XZToastView)]) {
+        view.progress = progress;
+    }
+}
+
+- (CGFloat)progress {
+    UIView<XZToastView> * const view = self.view;
+    if ([view conformsToProtocol:@protocol(XZToastView)]) {
+        return view.progress;
+    }
+    return 0;
 }
 
 #pragma mark - 重写继承的方法
