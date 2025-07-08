@@ -17,12 +17,12 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface XZToastWrapperView : UIView <XZToastView>
 
-@property (nonatomic, readonly) UIView<XZToastView> *view;
+@property (nonatomic, readonly) UIView *view;
 
 - (instancetype)init NS_UNAVAILABLE;
 - (instancetype)initWithFrame:(CGRect)frame NS_UNAVAILABLE;
 - (nullable instancetype)initWithCoder:(NSCoder *)coder NS_UNAVAILABLE;
-- (instancetype)initWithView:(UIView<XZToastView> *)view NS_DESIGNATED_INITIALIZER;
+- (instancetype)initWithView:(UIView *)view NS_DESIGNATED_INITIALIZER;
 
 @property (nonatomic, weak) XZToastTask *task;
 

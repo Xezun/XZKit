@@ -23,7 +23,7 @@ import XZGeometry
         return __XZToastAnimationDuration;
     }
     
-    public override required init(view: any UIView & XZToastView) {
+    public override required init(view: UIView) {
         super.init(view: view)
     }
     
@@ -32,7 +32,7 @@ import XZGeometry
     public typealias StringLiteralType = String
     
     public required convenience init(stringLiteral value: String) {
-        self.init(message: value)
+        self.init(style: .message, text: value, image: nil)
     }
     
 }
@@ -113,76 +113,12 @@ extension XZToast.Style: CustomStringConvertible {
 }
 #endif
 
-
-extension XZToast {
-    
-    /// 全局共享的提示消息。
-    /// - Parameters:
-    ///   - style: 消息样式
-    ///   - text: 消息文本
-    ///   - image: 消息图片
-    /// - Returns: 提示消息对象
-    public class func shared(_ style: XZToast.Style, text: String?, image: UIImage? = nil) -> Self {
-        return Self.init(shared: style, text: text, image: image)
-    } 
-    
-    /// 通过 view 构造 XZToast 对象。
-    /// - Parameter view: 呈现提示的视图
-    /// - Returns: 提示消息对象
-    public class func view(_ view: UIView & XZToastView) -> Self {
-        return Self.init(view: view)
-    }
-    
-    /// 构造文本消息的 XZToast 对象。
-    /// - Parameter text: 待呈现的文本内容
-    /// - Returns: 提示消息对象
-    public class func message(_ text: String) -> Self {
-        return Self.init(message: text)
-    }
-    
-    /// 构造表示加载过程的 XZToast 对象。
-    /// - Parameter text: 加载过程的描述文案
-    /// - Returns: 提示消息对象
-    public class func loading(_ text: String?) -> Self {
-        return Self.init(loading: text)
-    }
-    
-    /// 带成功图片的提示消息。
-    /// - Parameter text: 消息文本
-    /// - Returns: 提示消息对象
-    public class func success(_ text: String?) -> Self {
-        return Self.init(success: text)
-    }
-    
-    /// 带失败图片的提示消息。
-    /// - Parameter text: 消息文本
-    /// - Returns: 提示消息对象
-    public class func failure(_ text: String?) -> Self {
-        return Self.init(failure: text)
-    }
-    
-    /// 带警告图片的提示消息。
-    /// - Parameter text: 消息文本
-    /// - Returns: 提示消息对象
-    public class func warning(_ text: String?) -> Self {
-        return Self.init(warning: text)
-    }
-    
-    /// 带等待图片的提示消息。
-    /// - Parameter text: 消息文本
-    /// - Returns: 提示消息对象
-    public class func waiting(_ text: String?) -> Self {
-        return Self.init(waiting: text)
-    }
-    
-}
-
 extension UIResponder {
     
     /// 展示提示消息。
     /// - Parameters:
     ///   - toast: 提示消息
-    ///   - duration: 展示时长，0 表示永久
+    ///   - duration: 展示时长，0 表示永久，默认 1.0 秒
     ///   - position: 展示位置
     ///   - exclusive: 是否独占
     ///   - completion: 提示消息结束展示后执行的回调
@@ -196,7 +132,7 @@ extension UIResponder {
     /// - Parameters:
     ///   - toast: 提示消息
     ///   - completion: 提示消息完成隐藏后执行的回调
-    public func hideToast(_ toast: __XZToast? = nil, completion: (()->Void)? = nil) {
+    public func hideToast(_ toast: XZToast.Task? = nil, completion: (()->Void)? = nil) {
         __hideToast(toast, completion: completion)
     }
     

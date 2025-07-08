@@ -6,11 +6,9 @@
 # To learn more about a Podspec see https://guides.cocoapods.org/syntax/podspec.html
 #
 
-
-
 Pod::Spec.new do |s|
   s.name             = 'XZNavigationController'
-  s.version          = '10.8.0'
+  s.version          = '10.10.0'
   s.summary          = '一个支持全屏手势导航、自定义导航栏的组件'
 
   s.description      = <<-DESC
@@ -35,11 +33,6 @@ Pod::Spec.new do |s|
     ss.dependency 'XZDefines'
     
     ss.source_files = 'XZKit/Code/Swift/XZNavigationController/**/*.{h,m,swift}'
-  end
-  
-  s.subspec 'DEBUG' do |ss|
-    ss.pod_target_xcconfig = { 'GCC_PREPROCESSOR_DEFINITIONS' => 'XZ_DEBUG=1' }
-    ss.dependency "#{s.name}/Code"
   end
   
 end

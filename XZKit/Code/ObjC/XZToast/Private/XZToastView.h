@@ -20,7 +20,7 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic, readonly, nullable) UIImage *image;
 @property (nonatomic, readonly) XZToastStyle style;
 
-- (void)setStyle:(XZToastStyle)style image:(nullable UIImage *)image;
+- (void)setStyle:(XZToastStyle)style image:(nullable UIImage *)image progress:(CGFloat)progress;
 
 @end
 

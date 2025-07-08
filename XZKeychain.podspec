@@ -6,11 +6,9 @@
 # To learn more about a Podspec see https://guides.cocoapods.org/syntax/podspec.html
 #
 
-
-
 Pod::Spec.new do |s|
   s.name             = 'XZKeychain'
-  s.version          = '10.8.0'
+  s.version          = '10.10.0'
   s.summary          = '一款访问钥匙串的工具类'
 
   s.description      = <<-DESC
@@ -33,11 +31,7 @@ Pod::Spec.new do |s|
   s.subspec 'Code' do |ss|
     ss.pod_target_xcconfig = { 'GCC_PREPROCESSOR_DEFINITIONS' => 'XZ_FRAMEWORK=1' }
     ss.source_files = 'XZKit/Code/ObjC/XZKeychain/**/*.{h,m}'
-  end
-  
-  s.subspec 'DEBUG' do |ss|
-    ss.pod_target_xcconfig = { 'GCC_PREPROCESSOR_DEFINITIONS' => 'XZ_DEBUG=1' }
-    ss.dependency "#{s.name}/Code"
+    ss.dependency 'XZLog'
   end
 
 end

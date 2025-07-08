@@ -39,36 +39,6 @@
     BOOL _needslayoutToasts;
 }
 
-+ (XZToastManager *)managerForViewController:(UIViewController *)viewController {
-    static const void * const _manager = &_manager;
-    XZToastManager *manager = objc_getAssociatedObject(viewController, _manager);
-    if (manager) {
-        return manager;
-    }
-    
-    manager = [[XZToastManager alloc] initWithViewController:viewController];
-    objc_setAssociatedObject(viewController, _manager, manager, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
-    return manager;
-}
-
-- (instancetype)initWithViewController:(UIViewController *)viewController {
-    self = [super init];
-    if (self) {
-        _viewController = viewController;
-        
-        _maximumNumberOfToasts = XZToast.maximumNumberOfToasts;
-        _offsets[XZToastPositionTop]    = [XZToast toastOffsetForPosition:(XZToastPositionTop)];
-        _offsets[XZToastPositionMiddle] = [XZToast toastOffsetForPosition:(XZToastPositionMiddle)];
-        _offsets[XZToastPositionBottom] = [XZToast toastOffsetForPosition:(XZToastPositionBottom)];
-        
-        _waitingToShowTasks = [NSMutableArray arrayWithCapacity:16];
-        _showingTasks = [NSMutableArray arrayWithCapacity:16];
-        _waitingToHideTasks = [NSMutableArray arrayWithCapacity:16];
-        _hideingTasks = [NSMutableArray arrayWithCapacity:16];
-    }
-    return self;
-}
-
 - (void)dealloc {
     for (XZToastTask *task in _hideingTasks) {
         [task cancel];
@@ -91,10 +61,37 @@
     }
 }
 
-- (void)setMaximumNumberOfToasts:(NSInteger)maximumNumberOfToasts {
-    _maximumNumberOfToasts = MAX(1, maximumNumberOfToasts);
-    [self setNeedsUpdateToasts];
++ (XZToastManager *)managerForViewController:(UIViewController *)viewController {
+    static const void * const _manager = &_manager;
+    XZToastManager *manager = objc_getAssociatedObject(viewController, _manager);
+    if (manager) {
+        return manager;
+    }
+    
+    manager = [[XZToastManager alloc] initWithViewController:viewController];
+    objc_setAssociatedObject(viewController, _manager, manager, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
+    return manager;
 }
+
+- (instancetype)initWithViewController:(UIViewController *)viewController {
+    self = [super init];
+    if (self) {
+        _viewController = viewController;
+        
+        _maximumNumberOfToasts = XZToast.maximumNumberOfToasts;
+        _offsets[XZToastPositionTop]    = [XZToast offsetForPosition:(XZToastPositionTop)];
+        _offsets[XZToastPositionMiddle] = [XZToast offsetForPosition:(XZToastPositionMiddle)];
+        _offsets[XZToastPositionBottom] = [XZToast offsetForPosition:(XZToastPositionBottom)];
+        
+        _waitingToShowTasks = [NSMutableArray arrayWithCapacity:16];
+        _showingTasks = [NSMutableArray arrayWithCapacity:16];
+        _waitingToHideTasks = [NSMutableArray arrayWithCapacity:16];
+        _hideingTasks = [NSMutableArray arrayWithCapacity:16];
+    }
+    return self;
+}
+
+#pragma mark - override methods
 
 - (CGRect)bounds {
     UIView     * const _rootView      = _viewController.view;
@@ -367,7 +364,7 @@
         newToastItem->_frame.origin.x = (_bounds.size.width - newToastItem->_frame.size.width) * 0.5 + _bounds.origin.x;
         newToastItem->_needsUpdateFrame = NO;
         
-        // 复用的视图不会从移除，因此用来判断复用状态
+        // 复用的视图不会从父视图移除，因此用来判断复用状态
         if (newToastItem.wrapperView.superview) {
             XZToastWrapperView * const view = newToastItem.wrapperView;
             CALayer * const layer = view.layer.presentationLayer;
@@ -416,14 +413,16 @@
     }
     
     // 检查数量限制，超出就直接移除
-    while (_showingTasks.count > _maximumNumberOfToasts) {
-        XZToastTask *firstItem = _showingTasks.firstObject;
-        [_showingTasks removeObjectAtIndex:0];
-        
-        // 标记是被顶掉的
-        firstItem.hideReason = XZToastHideReasonExceed;
-        [firstItem cancel];
-        [_hideingTasks addObject:firstItem];
+    if (_maximumNumberOfToasts > 0) {
+        while (_showingTasks.count > _maximumNumberOfToasts) {
+            XZToastTask *firstItem = _showingTasks.firstObject;
+            [_showingTasks removeObjectAtIndex:0];
+            
+            // 标记是被顶掉的
+            firstItem.hideReason = XZToastHideReasonExceed;
+            [firstItem cancel];
+            [_hideingTasks addObject:firstItem];
+        }
     }
     
     // 确定动画方向
@@ -554,6 +553,29 @@
     }];
 }
 
+#pragma mark - <XZToastConfiguration>
+
+@synthesize maximumNumberOfToasts = _maximumNumberOfToasts;
+@synthesize textColor = _textColor;
+@synthesize font = _font;
+@synthesize backgroundColor = _backgroundColor;
+@synthesize shadowColor = _shadowColor;
+@synthesize color = _color;
+@synthesize trackColor = _trackColor;
+
+- (void)setMaximumNumberOfToasts:(NSInteger)maximumNumberOfToasts {
+    _maximumNumberOfToasts = MAX(0, maximumNumberOfToasts);
+    [self setNeedsUpdateToasts];
+}
+
+- (CGFloat)offsetForPosition:(XZToastPosition)position {
+    return _offsets[position];
+}
+
+- (void)setOffset:(CGFloat)offset forPosition:(XZToastPosition)position {
+    _offsets[position] = offset;
+}
+
 - (void)setNeedsLayoutToasts {
     if (_needslayoutToasts) {
         return;
@@ -571,15 +593,6 @@
     }
     [self layoutToastViews];
     _needslayoutToasts = NO;
-}
-
-- (CGFloat)offsetForPosition:(XZToastPosition)position { 
-    return _offsets[position];
-}
-
-
-- (void)setOffset:(CGFloat)offset forPosition:(XZToastPosition)position { 
-    _offsets[position] = offset;
 }
 
 - (void)layoutToastViews {

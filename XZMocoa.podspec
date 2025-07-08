@@ -8,7 +8,7 @@
 
 Pod::Spec.new do |s|
   s.name             = 'XZMocoa'
-  s.version          = '10.8.0'
+  s.version          = '10.10.0'
   s.summary          = '一款用于 MVVM 设计模式进行 iOS 开发的基础库'
 
   s.description      = <<-DESC
@@ -36,11 +36,6 @@ Pod::Spec.new do |s|
     
     ss.source_files = 'XZKit/Code/{ObjC,Swift}/XZMocoa/**/*.{h,m,swift}'
     ss.project_header_files = 'XZKit/Code/ObjC/XZMocoa/**/Private/*.h'
-  end
-  
-  s.subspec 'DEBUG' do |ss|
-    ss.pod_target_xcconfig = { 'GCC_PREPROCESSOR_DEFINITIONS' => 'XZ_DEBUG=1' }
-    ss.dependency "#{s.name}/Code"
   end
   
 end

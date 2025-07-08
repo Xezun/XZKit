@@ -10,6 +10,7 @@ import XZToast
 import XZMocoa
 import XZLocale
 import XZDefines
+import XZKit
 
 class Example13ViewController: UITableViewController {
     
@@ -114,7 +115,7 @@ class Example13ViewController: UITableViewController {
             switch indexPath.row {
             case 0:
                 guard loadingToast == nil else { return }
-                loadingToast = showToast(.loading(nil), duration: 0, position: position, exclusive: true) { [weak self] finished in
+                loadingToast = showToast(.loading("请稍后"), duration: 0, position: position, exclusive: true) { [weak self] finished in
                     NSLog("加载类型的 XZToast 展示结束：\(finished)")
                     self?.loadingToast = nil;
                 }
@@ -210,12 +211,13 @@ class Example13ViewController: UITableViewController {
     @IBAction func progressSliderValueChanged(_ sender: UISlider) {
         guard let loadingToast = self.loadingToast else { return }
         if sender.value == 0 {
-            loadingToast.text = nil;
+            loadingToast.text = "请稍后";
         } else if sender.value == 100.0 {
             loadingToast.text = "加载成功"
         } else {
-            loadingToast.text = String.init(format: "加载进度 %.2f%%", sender.value);
+            loadingToast.text =  String.init(format: "已加载 %0.2f%%", sender.value);
         }
+        loadingToast.progress = CGFloat(sender.value / 100);
     }
     
     @IBAction func toastControllerSwitchValueChanged(_ sender: UISwitch) {
@@ -229,11 +231,13 @@ class Example13ViewController: UITableViewController {
     
     @IBOutlet weak var backgroundColorWell: UIColorWell!
     @IBAction func backgroundColorWellValueChanged(_ sender: UIColorWell) {
-        self.toastConfiguration.backgroundColor = sender.selectedColor
+        guard let selectedColor = sender.selectedColor else { return }
+        self.toastConfiguration.backgroundColor = selectedColor
     }
     
     @IBOutlet weak var textColorWell: UIColorWell!
     @IBAction func textColorWellValueChanged(_ sender: UIColorWell) {
-        self.toastConfiguration.textColor = sender.selectedColor
+        guard let selectedColor = sender.selectedColor else { return }
+        self.toastConfiguration.textColor = selectedColor
     }
 }

@@ -8,7 +8,7 @@
 
 Pod::Spec.new do |s|
   s.name             = 'XZPageView'
-  s.version          = '10.8.0'
+  s.version          = '10.10.0'
   s.summary          = 'XZPageView 是一款高效的分页视图管理组件'
 
   s.description      = <<-DESC
@@ -36,11 +36,6 @@ Pod::Spec.new do |s|
 
     ss.source_files = 'XZKit/Code/ObjC/XZPageView/**/*.{h,m}'
     ss.project_header_files = 'XZKit/Code/ObjC/XZPageView/**/Private/*.h'
-  end
-  
-  s.subspec 'DEBUG' do |ss|
-    ss.pod_target_xcconfig = { 'GCC_PREPROCESSOR_DEFINITIONS' => 'XZ_DEBUG=1' }
-    ss.dependency "#{s.name}/Code"
   end
   
 end

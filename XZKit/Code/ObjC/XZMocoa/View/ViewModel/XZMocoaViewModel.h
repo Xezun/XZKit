@@ -330,8 +330,8 @@ FOUNDATION_EXPORT XZMocoaKey const XZMocoaKeyNone NS_SWIFT_NAME(XZMocoaKeyNone);
 ///
 /// > 视图模型不应保存此值，否则可能造成内存泄漏。
 ///
-/// 在 Cocoa 中，视图控制器承担了很多公共功能，类似于 h5 的全局 window 对象，因此提供了访问方式。
-/// 但理论上，视图模型应该与视图完全隔离。
+/// 理论上，视图模型应该与视图隔离，但是在 Cocoa 结构中，视图控制器承担了很多基础功能，比如跳转页面等。
+/// 因此，为了让视图可以直接执行这些基础功能，Mocoa 提供了获取视图控制的方法。
 @property (nonatomic, readonly, nullable) UIViewController *viewController;
 
 /// 执行 Storyboard 转场的便利方法。

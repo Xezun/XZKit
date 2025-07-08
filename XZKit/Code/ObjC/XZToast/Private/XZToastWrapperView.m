@@ -16,7 +16,7 @@
     UIColor *_shadowColor;
 }
 
-- (instancetype)initWithView:(UIView<XZToastView> *)view {
+- (instancetype)initWithView:(UIView *)view {
     CGSize const size = view.frame.size;
     self = [super initWithFrame:CGRectMake(0, 0, kPadding + size.width + kPadding, kPadding + size.height + kPadding)];
     if (self) {
@@ -26,7 +26,7 @@
         CALayer * const layer = self.layer;
         layer.shadowColor   = XZToast.shadowColor.CGColor;
         layer.shadowOffset  = CGSizeZero;
-        layer.shadowOpacity = 0.8;
+        layer.shadowOpacity = 0.3;
         layer.shadowRadius  = kPadding * 0.5;
         
         _view = view;
@@ -44,23 +44,50 @@
     }
 }
 
+#pragma mark - <XZToastView>
+
+- (NSString *)text {
+    UIView<XZToastView> * const view = (id)self.view;
+    if ([view conformsToProtocol:@protocol(XZToastView)]) {
+        return view.text;
+    }
+    return nil;
+}
+
+- (void)setText:(NSString *)text {
+    UIView<XZToastView> * const view = (id)self.view;
+    if ([view conformsToProtocol:@protocol(XZToastView)]) {
+        view.text = text;
+    }
+}
+
 - (void)willShowInViewController:(UIViewController *)viewController {
+    UIView<XZToastView> * const view = (id)self.view;
     _shadowColor = viewController.xz_toastConfiguration.shadowColor;
     if (_shadowColor) {
         self.layer.shadowColor = [_shadowColor resolvedColorWithTraitCollection:self.traitCollection].CGColor;
     }
-    if ([_view respondsToSelector:@selector(willShowInViewController:)]) {
-        [_view willShowInViewController:viewController];
+    if ([view conformsToProtocol:@protocol(XZToastView)]) {
+        [view willShowInViewController:viewController];
     }
 }
 
-- (NSString *)text {
-    return self.view.text;
+- (void)setProgress:(CGFloat)progress {
+    UIView<XZToastView> * const view = (id)self.view;
+    if ([view conformsToProtocol:@protocol(XZToastView)]) {
+        view.progress = progress;
+    }
 }
 
-- (void)setText:(NSString *)text {
-    self.view.text = text;
+- (CGFloat)progress {
+    UIView<XZToastView> * const view = (id)self.view;
+    if ([view conformsToProtocol:@protocol(XZToastView)]) {
+        return view.progress;
+    }
+    return 0;
 }
+
+#pragma mark - 重写继承的方法
 
 - (void)willRemoveSubview:(UIView *)subview {
     [super willRemoveSubview:subview];

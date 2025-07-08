@@ -8,7 +8,7 @@
 
 Pod::Spec.new do |s|
   s.name             = 'XZGeometry'
-  s.version          = '10.8.0'
+  s.version          = '10.10.0'
   s.summary          = '几何结构体拓展'
 
   s.description      = <<-DESC
@@ -32,11 +32,6 @@ Pod::Spec.new do |s|
     ss.pod_target_xcconfig = { 'GCC_PREPROCESSOR_DEFINITIONS' => 'XZ_FRAMEWORK=1' }
     
     ss.source_files = 'XZKit/Code/{ObjC,Swift}/XZGeometry/**/*.{h,m,swift}'
-  end
-  
-  s.subspec 'DEBUG' do |ss|
-    ss.pod_target_xcconfig = { 'GCC_PREPROCESSOR_DEFINITIONS' => 'XZ_DEBUG=1' }
-    ss.dependency "#{s.name}/Code"
   end
   
 end

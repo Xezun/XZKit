@@ -185,6 +185,7 @@ open class XZProgressView: UIView {
     }
     
     private var needsTrackPathUpdate = false
+    
     private func setNeedsTrackPathUpdate() {
         if needsTrackPathUpdate {
             return
@@ -194,6 +195,7 @@ open class XZProgressView: UIView {
             self.updateTrackPathIfNeeded()
         })
     }
+    
     private func updateTrackPathIfNeeded() {
         guard needsTrackPathUpdate else {
             return

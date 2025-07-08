@@ -7,6 +7,7 @@
 
 #import "XZToastView.h"
 #import "XZGeometry.h"
+#import "XZToastProgressView.h"
 
 #define kPaddingT 15.0
 #define kPaddingL 15.0
@@ -55,13 +56,8 @@
     
     CGRect const bounds = self.bounds;
     
-    {
-        CGFloat const x = bounds.origin.x + (bounds.size.width - kIconSize) * 0.5;
-        CGFloat const y = kPaddingT;
-        CGFloat const w = kIconSize;
-        CGFloat const h = kIconSize;
-        CGSize  const iconSize = [_iconView sizeThatFits:CGSizeMake(w, h)];
-        _iconView.frame = CGRectScaleAspectRatioInsideWithMode(CGRectMake(x, y, w, h), iconSize, UIViewContentModeCenter) ;
+    if (_iconView) {
+        _iconView.frame = [self iconRectForBounds:bounds];
     }
     
     {
@@ -102,6 +98,26 @@
     return CGSizeZero;
 }
 
+- (CGRect)iconRectForBounds:(CGRect)bounds {
+    CGFloat const x = bounds.origin.x + (bounds.size.width - kIconSize) * 0.5;
+    CGFloat const y = kPaddingT;
+    CGFloat const w = kIconSize;
+    CGFloat const h = kIconSize;
+    CGSize  const iconSize = [_iconView sizeThatFits:CGSizeMake(w, h)];
+    return CGRectScaleAspectRatioInsideWithMode(CGRectMake(x, y, w, h), iconSize, UIViewContentModeCenter);
+}
+
+#pragma mark - <XZToastView>
+
+- (NSString *)text {
+    return _textLabel.text;
+}
+
+- (void)setText:(NSString *)text {
+    _textLabel.text = text;
+    [self setNeedsLayout];
+}
+
 - (void)willShowInViewController:(UIViewController *)viewController {
     id<XZToastConfiguration> const configuration = viewController.xz_toastConfiguration;
     UIColor * const backgroundColor = configuration.backgroundColor;
@@ -118,14 +134,32 @@
     }
 }
 
-- (NSString *)text {
-    return _textLabel.text;
+- (CGFloat)progress {
+    if ([_iconView isKindOfClass:[XZToastProgressView class]]) {
+        return [(XZToastProgressView *)_iconView progress];
+    }
+    return 0;
 }
 
-- (void)setText:(NSString *)text {
-    _textLabel.text = text;
-    [self setNeedsLayout];
+- (void)setProgress:(CGFloat)progress {
+    if (_style != XZToastStyleLoading) {
+        return;
+    }
+    if (![_iconView isKindOfClass:[XZToastProgressView class]]) {
+        [_iconView removeFromSuperview];
+        
+        XZToastProgressView *iconView = [[XZToastProgressView alloc] init];
+        iconView.frame = [self iconRectForBounds:self.bounds];
+        iconView.color = XZToast.color;
+        iconView.trackColor = XZToast.trackColor;
+        [self addSubview:iconView];
+        
+        _iconView = iconView;
+    }
+    [(XZToastProgressView *)_iconView setProgress:progress];
 }
+
+#pragma mark - 重写继承的方法
 
 - (NSString *)description {
     return [NSString stringWithFormat:@"<%p: %@, text: %@, icon: %@>", self, self.class, self.text, _iconView];
@@ -138,61 +172,86 @@
     return nil;
 }
 
-- (void)setStyle:(XZToastStyle)style image:(UIImage *)image {
+- (void)setStyle:(XZToastStyle)style image:(UIImage *)image progress:(CGFloat)progress {
     _style = style;
     
-    if (image) {
-        // 有图片
-        if (![_iconView isKindOfClass:UIImageView.class]) {
-            [_iconView removeFromSuperview];
-            _iconView = nil;
-        }
-        
-        if (_iconView == nil) {
-            UIImageView *iconView = [[UIImageView alloc] initWithFrame:CGRectMake((self.bounds.size.width - kIconSize) * 0.5, kPaddingT, kIconSize, kIconSize)];
-            iconView.animationRepeatCount = 0; // 动图无限循环
-            iconView.image = image;
-            _iconView = iconView;
-        } else {
-            [(UIImageView *)_iconView setImage:image];
-        }
-        
-        [self addSubview:_iconView];
-        
-        // 动图
-        if (image.images.count > 0) {
-            [(UIImageView *)_iconView startAnimating];
-        }
-    } else {
-        // 没有图片
-        switch (_style) {
-            case XZToastStyleMessage:
-            case XZToastStyleSuccess:
-            case XZToastStyleFailure:
-            case XZToastStyleWarning:
-            case XZToastStyleWaiting:
-                [_iconView removeFromSuperview];
-                _iconView = nil;
-                break;
-            case XZToastStyleLoading:
-                // 默认使用 UIActivityIndicatorView
-                if (![_iconView isKindOfClass:UIActivityIndicatorView.class]) {
+    // 没有图片
+    switch (_style) {
+        case XZToastStyleMessage:
+        case XZToastStyleSuccess:
+        case XZToastStyleFailure:
+        case XZToastStyleWarning:
+        case XZToastStyleWaiting: {
+            if (image) {
+                // 有图片
+                if (![_iconView isKindOfClass:UIImageView.class]) {
                     [_iconView removeFromSuperview];
                     
-                    UIActivityIndicatorView *iconView = [[UIActivityIndicatorView alloc] initWithFrame:CGRectMake((self.bounds.size.width - kIconSize) * 0.5, kPaddingT, kIconSize, kIconSize)];
-                    iconView.activityIndicatorViewStyle = UIActivityIndicatorViewStyleLarge;
-                    iconView.color = UIColor.whiteColor;
-                    [iconView startAnimating];
+                    CGRect frame = CGRectMake((self.bounds.size.width - kIconSize) * 0.5, kPaddingT, kIconSize, kIconSize);
+                    frame = CGRectScaleAspectRatioInsideWithMode(frame, image.size, UIViewContentModeCenter);
+                    UIImageView *iconView = [[UIImageView alloc] initWithFrame:frame];
+                    iconView.animationRepeatCount = 0; // 动图无限循环
+                    iconView.image = image;
                     [self addSubview:iconView];
                     
                     _iconView = iconView;
                 }
-                break;
-            default:
-                return;
+                
+                [(UIImageView *)_iconView setImage:image];
+                
+                // 动图
+                if (image.images.count > 0) {
+                    [(UIImageView *)_iconView startAnimating];
+                }
+            } else {
+                [_iconView removeFromSuperview];
+                _iconView = nil;
+            }
+            break;
+        }
+        case XZToastStyleLoading: {
+            if (progress >= 0) {
+                // 使用进度条
+                [self setProgress:progress];
+            } else if (image) {
+                // 使用图片
+                if (![_iconView isKindOfClass:UIImageView.class]) {
+                    [_iconView removeFromSuperview];
+                    
+                    CGRect frame = CGRectMake((self.bounds.size.width - kIconSize) * 0.5, kPaddingT, kIconSize, kIconSize);
+                    frame = CGRectScaleAspectRatioInsideWithMode(frame, image.size, UIViewContentModeCenter);
+                    UIImageView *iconView = [[UIImageView alloc] initWithFrame:frame];
+                    iconView.animationRepeatCount = 0; // 动图无限循环
+                    iconView.image = image;
+                    [self addSubview:iconView];
+                    
+                    _iconView = iconView;
+                }
+                
+                [(UIImageView *)_iconView setImage:image];
+                
+                // 动图
+                if (image.images.count > 0) {
+                    [(UIImageView *)_iconView startAnimating];
+                }
+            } else if (![_iconView isKindOfClass:UIActivityIndicatorView.class]) {
+                // 默认，使用 UIActivityIndicatorView
+                [_iconView removeFromSuperview];
+                
+                UIActivityIndicatorView *iconView = [[UIActivityIndicatorView alloc] initWithFrame:CGRectMake((self.bounds.size.width - kIconSize) * 0.5, kPaddingT, kIconSize, kIconSize)];
+                iconView.activityIndicatorViewStyle = UIActivityIndicatorViewStyleLarge;
+                iconView.color = UIColor.whiteColor;
+                [iconView startAnimating];
+                [self addSubview:iconView];
+                
+                _iconView = iconView;
+            }
+            break;
+        }
+        default: {
+            return;
         }
     }
-    
 }
 
 @end
@@ -228,3 +287,5 @@ UIImage *XZToastStyleImage(XZToastStyle style) {
     image = [image imageByApplyingSymbolConfiguration:config];
     return [image imageWithTintColor:UIColor.whiteColor renderingMode:(UIImageRenderingModeAlwaysOriginal)];
 }
+
+
