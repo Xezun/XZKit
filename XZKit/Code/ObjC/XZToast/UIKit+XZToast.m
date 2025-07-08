@@ -112,7 +112,7 @@
 @implementation UIViewController (XZToast)
 
 - (UIViewController *)xz_toastController {
-    return self.presentedViewController ?: self.tabBarController ?: self.navigationController ?: self;
+    return self.isViewLoaded ? self : (self.presentedViewController ?: self.tabBarController ?: self.navigationController ?: self);
 }
 
 - (XZToast *)xz_showToast:(XZToast *)toast duration:(NSTimeInterval)duration position:(XZToastPosition)position exclusive:(BOOL)exclusive completion:(XZToastCompletion)completion {

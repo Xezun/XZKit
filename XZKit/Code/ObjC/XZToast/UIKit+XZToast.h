@@ -57,11 +57,16 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface UIViewController (XZToast)
 
-/// 展示 toast 的控制器，默认值按 `presentedViewController`、`tabBarController`、 `navigationController` 的顺序查找第一个存在的控制器，如都没有则使用自身。
+/// 展示提示消息的控制器，默认为自身。
 ///
-/// 子类可以通过重写此属性来实现将 toast 转发到其它控制器展示。
-/// 1. 容器是滚动的控制器，比如 `UITableViewController` 等，避免 toast 会随页面滚动。
-/// 2. 统一 toast 的显示和管理。
+/// 如果当前控制的容器视图未加载，即判断 ``isViewLoaded`` 的值，那么将按
+/// `presentedViewController`、`tabBarController`、`navigationController`
+/// 的顺序转发给第一个存在的控制器来展示。
+///
+/// 如果这些控制器都没有，则会强制加载当前控制器的 view 容器视图，提前开始当前控制器的生命周期。
+///
+/// 子类可以通过重写此属性来实现将 toast 转发到其它控制器展示，比如，控制器容器视图是滚动到视图的 `UITableViewController` 等，
+/// 将 提示消息 转发到上层控制器展示，可以避免 提示消息 跟随页面滚动。
 @property (nonatomic, readonly) UIViewController *xz_toastController NS_SWIFT_NAME(toastController);
 
 @end
