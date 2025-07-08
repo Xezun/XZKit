@@ -32,8 +32,6 @@ class Example13ViewController: UITableViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        toastConfiguration.maximumNumberOfToasts = 3
-        
         backgroundColorWell.addTarget(self, action: #selector(backgroundColorWellValueChanged(_:)), for: .valueChanged)
         textColorWell.addTarget(self, action: #selector(textColorWellValueChanged(_:)), for: .valueChanged)
     }
