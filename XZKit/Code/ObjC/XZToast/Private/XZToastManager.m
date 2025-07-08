@@ -303,29 +303,6 @@
     [self updateToastsIfNeeded];
 }
 
-#pragma mark - <XZToastConfiguration>
-
-@synthesize maximumNumberOfToasts = _maximumNumberOfToasts;
-@synthesize textColor = _textColor;
-@synthesize font = _font;
-@synthesize backgroundColor = _backgroundColor;
-@synthesize shadowColor = _shadowColor;
-@synthesize color = _color;
-@synthesize trackColor = _trackColor;
-
-- (void)setMaximumNumberOfToasts:(NSInteger)maximumNumberOfToasts {
-    _maximumNumberOfToasts = MAX(1, maximumNumberOfToasts);
-    [self setNeedsUpdateToasts];
-}
-
-- (CGFloat)offsetForPosition:(XZToastPosition)position {
-    return _offsets[position];
-}
-
-- (void)setOffset:(CGFloat)offset forPosition:(XZToastPosition)position {
-    _offsets[position] = offset;
-}
-
 - (void)updateToastsIfNeeded {
     if (!_needsUpdateToasts) {
         return;
@@ -574,6 +551,29 @@
         
         [self updateToastsIfNeeded];
     }];
+}
+
+#pragma mark - <XZToastConfiguration>
+
+@synthesize maximumNumberOfToasts = _maximumNumberOfToasts;
+@synthesize textColor = _textColor;
+@synthesize font = _font;
+@synthesize backgroundColor = _backgroundColor;
+@synthesize shadowColor = _shadowColor;
+@synthesize color = _color;
+@synthesize trackColor = _trackColor;
+
+- (void)setMaximumNumberOfToasts:(NSInteger)maximumNumberOfToasts {
+    _maximumNumberOfToasts = MAX(0, maximumNumberOfToasts);
+    [self setNeedsUpdateToasts];
+}
+
+- (CGFloat)offsetForPosition:(XZToastPosition)position {
+    return _offsets[position];
+}
+
+- (void)setOffset:(CGFloat)offset forPosition:(XZToastPosition)position {
+    _offsets[position] = offset;
 }
 
 - (void)setNeedsLayoutToasts {

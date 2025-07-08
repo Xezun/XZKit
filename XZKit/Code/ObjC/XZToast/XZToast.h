@@ -23,7 +23,7 @@ NS_ASSUME_NONNULL_BEGIN
 /// - Parameter viewController: 当前视图将要展示于其中的控制器对象
 - (void)willShowInViewController:(UIViewController *)viewController;
 @optional
-/// 进度。
+/// 加载进度。默认情况下，仅 loading 类型的提示消息支持。
 @property (nonatomic) CGFloat progress;
 @end
 

@@ -26,7 +26,7 @@
         CALayer * const layer = self.layer;
         layer.shadowColor   = XZToast.shadowColor.CGColor;
         layer.shadowOffset  = CGSizeZero;
-        layer.shadowOpacity = 0.8;
+        layer.shadowOpacity = 0.3;
         layer.shadowRadius  = kPadding * 0.5;
         
         _view = view;
