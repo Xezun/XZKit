@@ -436,14 +436,16 @@
     }
     
     // 检查数量限制，超出就直接移除
-    while (_showingTasks.count > _maximumNumberOfToasts) {
-        XZToastTask *firstItem = _showingTasks.firstObject;
-        [_showingTasks removeObjectAtIndex:0];
-        
-        // 标记是被顶掉的
-        firstItem.hideReason = XZToastHideReasonExceed;
-        [firstItem cancel];
-        [_hideingTasks addObject:firstItem];
+    if (_maximumNumberOfToasts > 0) {
+        while (_showingTasks.count > _maximumNumberOfToasts) {
+            XZToastTask *firstItem = _showingTasks.firstObject;
+            [_showingTasks removeObjectAtIndex:0];
+            
+            // 标记是被顶掉的
+            firstItem.hideReason = XZToastHideReasonExceed;
+            [firstItem cancel];
+            [_hideingTasks addObject:firstItem];
+        }
     }
     
     // 确定动画方向
