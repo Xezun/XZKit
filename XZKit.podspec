@@ -8,7 +8,7 @@
 
 Pod::Spec.new do |s|
   s.name             = 'XZKit'
-  s.version          = '10.8.0'
+  s.version          = '10.10.0'
   s.summary          = '一款高效、轻量、强大的 iOS 开发库'
   s.description      = <<-DESC
   一款包含 iOS 开发中常用开发组件、高频方法拓展、高性能工具类的开发库，采用了组件最小化设计原则，可以按需最小化引用。
@@ -33,6 +33,7 @@ Pod::Spec.new do |s|
   s.subspec 'Code' do |ss|
     ss.public_header_files = 'XZKit/Code/ObjC/XZKit/**/*.h'
     ss.source_files        = 'XZKit/Code/ObjC/XZKit/**/*.{h,m}'
+    ss.dependency 'XZLog'
     ss.dependency 'XZDefines'
     ss.dependency 'XZExtensions'
     ss.dependency 'XZCollectionViewFlowLayout'

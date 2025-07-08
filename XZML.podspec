@@ -8,7 +8,7 @@
 
 Pod::Spec.new do |s|
   s.name             = 'XZML'
-  s.version          = '10.8.0'
+  s.version          = '10.10.0'
   s.summary          = 'XZML 富文本标记语言'
 
   s.description      = <<-DESC
@@ -30,16 +30,12 @@ Pod::Spec.new do |s|
   
   s.subspec 'Code' do |ss|
     ss.pod_target_xcconfig = { 'GCC_PREPROCESSOR_DEFINITIONS' => 'XZ_FRAMEWORK=1' }
+    ss.dependency 'XZLog'
     ss.dependency 'XZDefines'
     ss.dependency 'XZExtensions'
 
     ss.source_files = 'XZKit/Code/ObjC/XZML/**/*.{h,m}'
     ss.private_header_files = 'XZKit/Code/ObjC/XZML/**/Private/*.h'
-  end
-  
-  s.subspec 'DEBUG' do |ss|
-    ss.pod_target_xcconfig = { 'GCC_PREPROCESSOR_DEFINITIONS' => 'XZ_DEBUG=1' }
-    ss.dependency "#{s.name}/Code"
   end
   
 end

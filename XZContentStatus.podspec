@@ -8,7 +8,7 @@
 
 Pod::Spec.new do |s|
   s.name             = 'XZContentStatus'
-  s.version          = '10.8.0'
+  s.version          = '10.10.0'
   s.summary          = '页面状态提示控件'
 
   s.description      = <<-DESC
@@ -33,11 +33,6 @@ Pod::Spec.new do |s|
     ss.dependency 'XZTextImageView'
     
     ss.source_files = 'XZKit/Code/Swift/XZContentStatus/**/*.{h,m,swift}'
-  end
-  
-  s.subspec 'DEBUG' do |ss|
-    ss.pod_target_xcconfig = { 'GCC_PREPROCESSOR_DEFINITIONS' => 'XZ_DEBUG=1' }
-    ss.dependency "#{s.name}/Code"
   end
   
 end

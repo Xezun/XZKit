@@ -8,7 +8,7 @@
 
 Pod::Spec.new do |s|
   s.name             = 'XZURLQuery'
-  s.version          = '10.8.0'
+  s.version          = '10.10.0'
   s.summary          = '专门处理 url 的 query 的库'
 
   s.description      = <<-DESC
@@ -31,11 +31,6 @@ Pod::Spec.new do |s|
   s.subspec 'Code' do |ss|
     ss.pod_target_xcconfig = { 'GCC_PREPROCESSOR_DEFINITIONS' => 'XZ_FRAMEWORK=1' }
     ss.source_files = 'XZKit/Code/ObjC/XZURLQuery/**/*.{h,m}'
-  end
-  
-  s.subspec 'DEBUG' do |ss|
-    ss.pod_target_xcconfig = { 'GCC_PREPROCESSOR_DEFINITIONS' => 'XZ_DEBUG=1' }
-    ss.dependency "#{s.name}/Code"
   end
   
 end

@@ -8,7 +8,7 @@
 
 Pod::Spec.new do |s|
   s.name             = 'XZSegmentedControl'
-  s.version          = '10.8.0'
+  s.version          = '10.10.0'
   s.summary          = 'A customizable segmented control for iOS'
 
   s.description      = <<-DESC
@@ -34,11 +34,6 @@ Pod::Spec.new do |s|
 
     ss.source_files = 'XZKit/Code/ObjC/XZSegmentedControl/**/*.{h,m}'
     ss.project_header_files = 'XZKit/Code/ObjC/XZSegmentedControl/**/Private/*.h'
-  end
-  
-  s.subspec 'DEBUG' do |ss|
-    ss.pod_target_xcconfig = { 'GCC_PREPROCESSOR_DEFINITIONS' => 'XZ_DEBUG=1' }
-    ss.dependency "#{s.name}/Code"
   end
   
 end

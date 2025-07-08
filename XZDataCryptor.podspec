@@ -6,11 +6,9 @@
 # To learn more about a Podspec see https://guides.cocoapods.org/syntax/podspec.html
 #
 
-
-
 Pod::Spec.new do |s|
   s.name             = 'XZDataCryptor'
-  s.version          = '10.8.0'
+  s.version          = '10.10.0'
   s.summary          = '基于 CommonCrypto 封装的面向对象的 AES/DES 等对称加密工具。'
 
   s.description      = <<-DESC
@@ -34,11 +32,6 @@ Pod::Spec.new do |s|
     ss.pod_target_xcconfig = { 'GCC_PREPROCESSOR_DEFINITIONS' => 'XZ_FRAMEWORK=1' }
 
     ss.source_files = 'XZKit/Code/ObjC/XZDataCryptor/**/*.{h,m}'
-  end
-  
-  s.subspec 'DEBUG' do |ss|
-    ss.pod_target_xcconfig = { 'GCC_PREPROCESSOR_DEFINITIONS' => 'XZ_DEBUG=1' }
-    ss.dependency "#{s.name}/Code"
   end
   
 end
