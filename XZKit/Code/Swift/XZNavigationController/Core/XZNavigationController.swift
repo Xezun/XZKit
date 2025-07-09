@@ -8,7 +8,6 @@
 
 import UIKit
 import ObjectiveC
-import XZDefines
 
 /// 为导航控制器 UINavigationController 提供 自定义全屏手势 功能和 自定义导航条 功能的协议。
 ///

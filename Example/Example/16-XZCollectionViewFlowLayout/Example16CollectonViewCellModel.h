@@ -6,7 +6,7 @@
 //
 
 #import <Foundation/Foundation.h>
-@import XZCollectionViewFlowLayout;
+@import XZKit;
 
 NS_ASSUME_NONNULL_BEGIN
 

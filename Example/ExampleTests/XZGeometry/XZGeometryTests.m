@@ -6,7 +6,7 @@
 //
 
 #import <XCTest/XCTest.h>
-@import XZGeometry;
+@import XZKit;
 
 @interface XZGeometryTests : XCTestCase
 

@@ -6,7 +6,7 @@
 //
 
 #import "Example0330Group110FooterView.h"
-@import XZExtensions;
+@import XZKit;
 
 @implementation Example0330Group110FooterView {
     UILabel *_textLabel;

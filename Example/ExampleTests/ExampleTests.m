@@ -7,7 +7,7 @@
 
 #import <XCTest/XCTest.h>
 @import ObjectiveC;
-@import XZDefines;
+@import XZKit;
 
 @interface Foo : NSObject
 - (void)foo;

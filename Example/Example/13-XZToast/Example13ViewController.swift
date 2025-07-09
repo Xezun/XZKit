@@ -6,10 +6,10 @@
 //
 
 import UIKit
-import XZToast
-import XZMocoa
-import XZLocale
-import XZDefines
+import XZKit
+import XZKit
+import XZKit
+import XZKit
 
 class Example13ViewController: UITableViewController {
     

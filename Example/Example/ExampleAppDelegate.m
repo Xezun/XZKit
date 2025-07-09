@@ -6,8 +6,7 @@
 //
 
 #import "ExampleAppDelegate.h"
-@import XZLog;
-@import XZLocale;
+@import XZKit;
 @import OSLog;
 
 @interface ExampleAppDelegate ()

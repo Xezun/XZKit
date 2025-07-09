@@ -12,7 +12,7 @@
 #import "XZMocoaKeysObserver.h"
 #import "XZMocoaKeysMapTable.h"
 #import "XZLog.h"
-@import XZObjcDescriptor;
+#import "XZObjcDescriptor.h"
 
 @implementation XZMocoaViewModel {
     @private

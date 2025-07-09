@@ -6,7 +6,7 @@
 //
 
 import UIKit
-import XZNavigationController
+import XZKit
 
 class Example17AppleViewController: UITableViewController {
     

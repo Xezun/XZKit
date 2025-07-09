@@ -6,8 +6,8 @@
 //
 
 import UIKit
-import XZNavigationController
-import XZDataCryptor
+import XZKit
+import XZKit
 
 class Example19CryptorViewController: UITableViewController {
     

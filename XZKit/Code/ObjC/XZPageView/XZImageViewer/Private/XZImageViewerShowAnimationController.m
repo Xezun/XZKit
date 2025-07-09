@@ -9,7 +9,6 @@
 #import "XZPageView.h"
 #import "XZImageViewer.h"
 #import "XZImageViewerItemView.h"
-@import XZGeometry;
 
 @implementation XZImageViewerShowAnimationController {
     UIView * _Nullable _sourceView;

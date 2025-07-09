@@ -7,7 +7,6 @@
 //
 
 import UIKit
-import XZDefines
 
 // 在 right-to-left 布局的环境中，当导航控制器使用了自定义的转场动画后，
 // tabBar 在转场的过程中的动画效果，与 left-to-right 环境一样，不符合要求。

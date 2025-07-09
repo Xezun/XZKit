@@ -8,8 +8,8 @@
 #import "XZMocoaKeysMapTable.h"
 #import "XZMocoaViewModel.h"
 @import ObjectiveC;
-@import XZDefines;
-@import XZObjcDescriptor;
+#import "XZDefines.h"
+#import "XZObjcDescriptor.h"
 
 static inline void XZMocoaMappingKeyToMethod(NSMutableDictionary * const keyToMethods, NSString * const key, NSString * const methodName) {
     NSMutableSet *selectors = keyToMethods[key];

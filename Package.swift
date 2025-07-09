@@ -42,11 +42,11 @@ private var modules: [(name: String, lang: ModuleLang, macros: Bool, dependencie
     
     // 工具类
     ("XZTicker",         .Swift, false, []),
-    ("XZJSON",           .ObjC, false, ["XZObjcDescriptor", "XZExtensions"]),
-    ("XZLocale",         .ObjC, false, ["XZDefines"]),
-    ("XZDataCryptor",    .ObjC, false, ["XZDefines"]),
-    ("XZDataDigester",   .ObjC, false, ["XZDefines", "XZExtensions"]),
-    ("XZKeychain",       .ObjC, false, ["XZLog"]),
+    ("XZJSON",           .ObjC, false,  ["XZObjcDescriptor", "XZExtensions"]),
+    ("XZLocale",         .ObjC, false,  ["XZDefines"]),
+    ("XZDataCryptor",    .ObjC, false,  ["XZDefines"]),
+    ("XZDataDigester",   .ObjC, false,  ["XZDefines", "XZExtensions"]),
+    ("XZKeychain",       .ObjC, false,  ["XZLog"]),
 ]
 modules.append(("XZKit", .Swift, false, modules.map({ .byName(name: $0.name) })))
 

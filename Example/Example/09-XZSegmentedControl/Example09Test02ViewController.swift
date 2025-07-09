@@ -6,8 +6,8 @@
 //
 
 import UIKit
-import XZSegmentedControl
-import XZMocoa
+import XZKit
+import XZKit
 
 class Example09Test02ViewController: UIViewController, UIScrollViewDelegate {
 

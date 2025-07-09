@@ -7,7 +7,7 @@
 
 #import "Example06SettingsViewController.h"
 #import "Example06RefreshSettingsViewController.h"
-@import XZRefresh;
+@import XZKit;
 
 @interface Example06SettingsViewController ()
 

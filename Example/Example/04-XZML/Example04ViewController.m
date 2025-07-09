@@ -7,8 +7,7 @@
 
 #import "Example04ViewController.h"
 #import "Example04TestViewController.h"
-@import XZML;
-@import XZExtensions;
+@import XZKit;
 
 @interface Example04ViewController ()
 

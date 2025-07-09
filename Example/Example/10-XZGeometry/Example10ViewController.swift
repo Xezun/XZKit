@@ -6,7 +6,7 @@
 //
 
 import UIKit
-import XZGeometry
+import XZKit
 
 class Example10ViewController: UIViewController {
     

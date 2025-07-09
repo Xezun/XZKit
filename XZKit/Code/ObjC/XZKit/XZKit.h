@@ -7,30 +7,43 @@
 
 #import <UIKit/UIKit.h>
 
-// 全模块引用
-@import XZLog;
-@import XZDefines;
-@import XZExtensions;
-@import XZCollectionViewFlowLayout;
-@import XZContentStatus;
-@import XZDataCryptor;
-@import XZDataDigester;
-@import XZGeometry;
-@import XZJSON;
-@import XZKeychain;
-@import XZLocale;
-@import XZML;
-@import XZMocoa;
-@import XZNavigationController;
-@import XZPageControl;
-@import XZPageView;
-@import XZRefresh;
-@import XZSegmentedControl;
-@import XZTextImageView;
-@import XZToast;
-@import XZURLQuery;
-@import XZObjcDescriptor;
-
-
+#if COCOAPODS
+#import <XZKit/XZKit-umbrella.h>
+#else
 FOUNDATION_EXPORT double XZKitVersionNumber;
 FOUNDATION_EXPORT const unsigned char XZKitVersionString[];
+// 基础
+#import <XZKit/XZLog.h>
+#import <XZKit/XZDefines.h>
+#import <XZKit/XZExtensions.h>
+  
+// 拓展
+#import <XZKit/XZURLQuery.h>
+#import <XZKit/XZGeometry.h>
+#import <XZKit/XZContentStatus.h>
+#import <XZKit/XZImage.h>
+#import <XZKit/XZObjcDescriptor.h>
+  
+// 核心
+#import <XZKit/XZML.h>
+#import <XZKit/XZMocoa.h>
+#import <XZKit/XZToast.h>
+#import <XZKit/XZRefresh.h>
+  
+// 自定义组件
+#import <XZKit/XZPageView.h>
+#import <XZKit/XZProgressView.h>
+#import <XZKit/XZPageControl.h>
+#import <XZKit/XZSegmentedControl.h>
+#import <XZKit/XZTextImageView.h>
+#import <XZKit/XZNavigationController.h>
+#import <XZKit/XZCollectionViewFlowLayout.h>
+  
+// 工具类
+#import <XZKit/XZTicker.h>
+#import <XZKit/XZJSON.h>
+#import <XZKit/XZLocale.h>
+#import <XZKit/XZDataCryptor.h>
+#import <XZKit/XZDataDigester.h>
+#import <XZKit/XZKeychain.h>
+#endif

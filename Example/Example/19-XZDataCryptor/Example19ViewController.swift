@@ -6,7 +6,7 @@
 //
 
 import UIKit
-import XZLog
+import XZKit
 
 class Example19ViewController: UITableViewController {
 

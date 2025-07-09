@@ -7,10 +7,7 @@
 
 #import "Example08ViewController.h"
 @import SDWebImage;
-@import XZPageControl;
-@import XZPageView;
-@import XZDefines;
-@import XZLog;
+@import XZKit;
 
 @interface Example08ViewController () <XZPageViewDelegate, XZPageViewDataSource>
 

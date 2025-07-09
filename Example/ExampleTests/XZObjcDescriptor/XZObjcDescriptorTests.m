@@ -6,7 +6,7 @@
 //
 
 #import <XCTest/XCTest.h>
-@import XZObjcDescriptor;
+@import XZKit;
 
 @interface XZObjcDescriptorTests : XCTestCase
 

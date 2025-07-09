@@ -7,7 +7,7 @@
 
 #import <Foundation/Foundation.h>
 #import "Example16CollectonViewCellModel.h"
-@import XZCollectionViewFlowLayout;
+@import XZKit;
 
 NS_ASSUME_NONNULL_BEGIN
 

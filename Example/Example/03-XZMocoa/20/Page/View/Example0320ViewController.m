@@ -7,9 +7,7 @@
 
 #import "Example0320ViewController.h"
 #import "Example0320ViewModel.h"
-@import XZRefresh;
-@import XZExtensions;
-@import XZLog;
+@import XZKit;
 
 // 当前示例展示了：
 // 1、控制器展示下拉刷新、列表、上拉加载

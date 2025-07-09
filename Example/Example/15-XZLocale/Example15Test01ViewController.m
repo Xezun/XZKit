@@ -6,7 +6,7 @@
 //
 
 #import "Example15Test01ViewController.h"
-@import XZLocale;
+@import XZKit;
 
 @interface Example15Test01ViewController ()
 

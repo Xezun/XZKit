@@ -6,7 +6,7 @@
 //
 
 #import "Example07Test03ViewController.h"
-@import XZPageView;
+@import XZKit;
 @import SDWebImage;
 
 @interface Example07Test03ViewController () <XZImageViewerDataSource, XZImageViewerDelegate>

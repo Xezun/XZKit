@@ -8,7 +8,7 @@
 #import "Example21ViewController.h"
 #import "Example21TableViewSectionModel.h"
 #import "Example05TextViewController.h"
-@import XZObjcDescriptor;
+@import XZKit;
 
 @interface Example21ViewController ()
 

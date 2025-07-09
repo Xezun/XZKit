@@ -6,10 +6,7 @@
 //
 
 #import <UIKit/UIKit.h>
-@import XZJSON;
-@import XZMocoa;
-@import XZPageView;
-@import XZPageControl;
+@import XZKit;
 
 @class Example0320Group102CellViewModel;
 

@@ -6,9 +6,8 @@
 //
 
 #import "Example03ViewController.h"
-@import XZMocoa;
+@import XZKit;
 @import ObjectiveC;
-@import XZML;
 
 @interface Example03ViewController ()
 

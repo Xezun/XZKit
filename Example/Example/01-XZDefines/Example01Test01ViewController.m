@@ -6,9 +6,8 @@
 //
 
 #import "Example01Test01ViewController.h"
-@import XZDefines;
+@import XZKit;
 @import ObjectiveC;
-@import XZLog;
 
 @interface Example01TestView : UIView
 @end

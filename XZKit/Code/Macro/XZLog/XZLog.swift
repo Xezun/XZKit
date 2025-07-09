@@ -11,7 +11,7 @@ import SwiftSyntax
 import SwiftDiagnostics
 
 @main
-struct XZDefinesMacros: CompilerPlugin {
+struct XZLogMacros: CompilerPlugin {
     
     var providingMacros: [Macro.Type] = [
         XZLogMacro.self

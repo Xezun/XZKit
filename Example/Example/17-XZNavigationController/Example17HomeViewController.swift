@@ -6,7 +6,7 @@
 //
 
 import UIKit
-import XZNavigationController
+import XZKit
 
 // 自定义功能的导航栈中，普通控制器与在普通的导航栈中没有任何区别的，但是对于声明遵循 XZNavigationBarCustomizable 自定义导航条协议的控制器：。
 // 1、导航栈自动根据自定义导航条，配置原生导航条状态。

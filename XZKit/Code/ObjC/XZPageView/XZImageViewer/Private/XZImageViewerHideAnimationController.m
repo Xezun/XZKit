@@ -9,13 +9,6 @@
 #import "XZPageView.h"
 #import "XZImageViewer.h"
 #import "XZImageViewerItemView.h"
-#if SWIFT_PACKAGE
-@import XZGeometryCore;
-@import XZLog;
-#else
-@import XZGeometry;
-@import XZLog;
-#endif
 
 typedef NS_ENUM(NSUInteger, XZImageViewerHideStyle) {
     // 交互式退场

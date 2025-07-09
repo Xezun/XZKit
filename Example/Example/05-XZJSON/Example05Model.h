@@ -6,7 +6,7 @@
 //
 
 #import <UIKit/UIKit.h>
-@import XZJSON;
+@import XZKit;
 @import YYModel;
 
 NS_ASSUME_NONNULL_BEGIN

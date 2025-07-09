@@ -6,11 +6,9 @@
 //
 
 import UIKit
-import XZContentStatus
-import XZExtensions
-import XZTextImageView
-import XZToast
+import XZKit
 
+@mocoa
 class Example12ViewController: UIViewController, XZContentStatusRepresentable {
     
     deinit {

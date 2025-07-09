@@ -7,7 +7,7 @@
 
 #import "Example0320Group102CellViewModel.h"
 #import "Example0320Group102CellModel.h"
-@import XZExtensions;
+@import XZKit;
 
 @implementation Example0320Group102CellViewModel
 + (void)load {

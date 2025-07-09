@@ -7,7 +7,6 @@
 
 import Foundation
 import UIKit
-import XZGeometry
 
 @objc open class XZTextImageButton: UIControl, XZTextImageView.Layout, XZTextImageView.StatedAppearance {
     

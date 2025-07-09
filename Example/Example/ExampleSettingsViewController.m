@@ -6,7 +6,7 @@
 //
 
 #import "ExampleSettingsViewController.h"
-@import XZLog;
+@import XZKit;
 
 @interface ExampleSettingsViewController ()
 

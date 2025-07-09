@@ -5,7 +5,7 @@
 //  Created by Xezun on 2023/8/10.
 //
 
-@import XZMocoa;
+@import XZKit;
 
 NS_ASSUME_NONNULL_BEGIN
 

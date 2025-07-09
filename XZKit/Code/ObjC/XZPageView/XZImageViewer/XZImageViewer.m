@@ -12,8 +12,6 @@
 #import "XZImageViewerShowAnimationController.h"
 #import "XZImageViewerHideAnimationController.h"
 #import "XZDefines.h"
-@import XZExtensions;
-@import XZGeometry;
 
 @interface XZImageViewer () <UIViewControllerTransitioningDelegate, XZPageViewDelegate, XZPageViewDataSource, UIGestureRecognizerDelegate> {
     XZImageViewerHideInteractiveController *_hideController;

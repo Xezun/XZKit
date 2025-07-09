@@ -6,7 +6,7 @@
 //
 
 #import "Example0310ContentView.h"
-@import XZML;
+@import XZKit;
 
 @implementation Example0310ContentView {
     UILabel *_titleLabel;

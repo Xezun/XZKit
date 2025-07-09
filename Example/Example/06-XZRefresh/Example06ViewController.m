@@ -8,9 +8,7 @@
 #import "Example06ViewController.h"
 #import "Example06SettingsViewController.h"
 #import "Example06RefreshSettingsViewController.h"
-@import XZRefresh;
-@import XZExtensions;
-@import XZToast;
+@import XZKit;
 
 @interface Example06ViewController () <XZRefreshDelegate, UITableViewDataSource> {
     NSInteger _numberOfCells;

@@ -6,7 +6,7 @@
 //
 
 import UIKit
-import XZNavigationController
+import XZKit
 
 // 导航控制器声明遵循 XZNavigationController 协议。
 // 推荐使用自定义的导航条控制器，当然也可以直接给 UINavigationController 进行声明，

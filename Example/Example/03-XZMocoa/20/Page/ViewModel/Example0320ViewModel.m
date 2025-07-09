@@ -7,7 +7,7 @@
 
 #import "Example0320ViewModel.h"
 #import "Example0320Model.h"
-@import XZToast;
+@import XZKit;
 
 @implementation Example0320ViewModel {
     NSMutableArray *_dataArray;

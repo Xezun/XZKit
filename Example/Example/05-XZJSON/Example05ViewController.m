@@ -10,10 +10,7 @@
 #import "Example05TextViewController.h"
 #import "XZLog.h"
 
-@import XZObjcDescriptor;
-@import XZToast;
-@import XZDefines;
-@import XZExtensions;
+@import XZKit;
 
 @interface Example05ViewController () {
     NSString *_JSONString;

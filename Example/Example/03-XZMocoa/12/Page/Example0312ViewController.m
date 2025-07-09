@@ -6,9 +6,7 @@
 //
 
 #import "Example0312ViewController.h"
-@import XZMocoa;
-@import XZExtensions;
-@import XZJSON;
+@import XZKit;
 
 @interface Example0312ViewController ()
 

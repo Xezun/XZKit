@@ -7,7 +7,6 @@
 //
 
 import UIKit
-import XZTextImageView
 import ObjectiveC
 
 /// 支持呈现内容状态的页面需要遵循的协议。

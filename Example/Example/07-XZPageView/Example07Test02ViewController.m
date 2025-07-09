@@ -6,12 +6,7 @@
 //
 
 #import "Example07Test02ViewController.h"
-@import XZSegmentedControl;
-@import XZPageView;
-@import XZDefines;
-@import XZToast;
-@import XZExtensions;
-@import XZLog;
+@import XZKit;
 
 @interface Example07Test02ChildViewController : UIViewController
 @property (nonatomic) NSInteger index;

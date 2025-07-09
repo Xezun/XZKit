@@ -6,7 +6,7 @@
 //
 
 #import "Example0331Group110HeaderView.h"
-@import XZExtensions;
+@import XZKit;
 
 @interface Example0331Group110HeaderView ()
 @property (nonatomic, strong) UILabel *textLabel;

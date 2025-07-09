@@ -6,7 +6,7 @@
 //
 
 import UIKit
-import XZSegmentedControl
+import XZKit
 
 
 class Example09SettingsViewController: UITableViewController {

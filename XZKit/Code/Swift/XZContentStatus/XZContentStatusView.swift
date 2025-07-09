@@ -6,7 +6,6 @@
 //
 
 import UIKit
-import XZTextImageView
 
 /// 呈现视图内容状态的视图。
 @objc public class XZContentStatusView: XZTextImageButton {

@@ -6,7 +6,7 @@
 //
 
 #import "Example05Model.h"
-@import XZExtensions;
+@import XZKit;
 
 @implementation Example05Response
 @end
@@ -317,8 +317,6 @@
 }
 
 @end
-
-@import XZObjcDescriptor;
 
 @implementation Example05Student
 

@@ -9,7 +9,6 @@
 #import "XZImageViewer.h"
 #import "XZImageViewerItemViewZoomingView.h"
 #import "XZGeometry.h"
-@import XZExtensions;
 
 @interface XZImageViewerItemView ()
 /// 提供缩放功能的滚动视图。

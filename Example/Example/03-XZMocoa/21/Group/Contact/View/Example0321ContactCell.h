@@ -6,7 +6,7 @@
 //  Copyright © 2021 Xezun. All rights reserved.
 //
 
-@import XZMocoa;
+@import XZKit;
 #import "Example0321ContactCellViewModel.h"
 
 NS_ASSUME_NONNULL_BEGIN

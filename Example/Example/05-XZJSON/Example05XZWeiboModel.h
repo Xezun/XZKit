@@ -6,7 +6,7 @@
 //
 
 #import <Foundation/Foundation.h>
-@import XZJSON;
+@import XZKit;
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -111,7 +111,6 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic, strong) NSString *verifiedReasonModified;
 @end
 
-@import XZJSON;
 @interface Example05XZWeiboStatus : NSObject <NSCoding, NSCopying, XZJSONCoding>
 @property (nonatomic, assign) uint64_t statusID;
 @property (nonatomic, strong) NSString *idstr;

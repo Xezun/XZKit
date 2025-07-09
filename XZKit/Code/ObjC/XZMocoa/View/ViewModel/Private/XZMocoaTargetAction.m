@@ -6,10 +6,9 @@
 //
 
 #import "XZMocoaTargetAction.h"
+#import "XZObjcTypeDescriptor.h"
 #import "XZMocoaViewModel.h"
 @import ObjectiveC;
-@import XZObjcDescriptor;
-@import XZExtensions;
 
 @implementation XZMocoaTargetAction {
     /// action 的参数数量，不包括 self 和 SEL

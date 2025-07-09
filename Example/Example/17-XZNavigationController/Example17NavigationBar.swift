@@ -7,7 +7,7 @@
 
 import UIKit
 import ObjectiveC
-import XZNavigationController
+import XZKit
 
 // 示例功能
 // 1、如何自定义导航条

@@ -6,9 +6,7 @@
 //
 
 #import "ExampleViewController.h"
-@import XZExtensions;
-@import XZMocoa;
-@import XZToast;
+@import XZKit;
 
 @interface ExampleViewController () {
     NSArray<NSString *> *_dataArray;

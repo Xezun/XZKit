@@ -6,7 +6,7 @@
 //
 
 #import <XCTest/XCTest.h>
-@import XZDefines;
+@import XZKit;
 
 static void *key = &key;
 

@@ -8,8 +8,6 @@
 
 import UIKit
 import ObjectiveC
-import XZDefines
-
 
 extension UIKit.UINavigationBar {
     

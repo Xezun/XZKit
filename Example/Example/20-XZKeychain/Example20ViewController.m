@@ -7,9 +7,7 @@
 
 #import "Example20ViewController.h"
 #import "XZLog.h"
-@import XZKeychain;
-@import XZDefines;
-@import XZToast;
+@import XZKit;
 
 @interface Example20ViewController () <UITextFieldDelegate>
 @property (weak, nonatomic) IBOutlet UITextField *accountTextField;

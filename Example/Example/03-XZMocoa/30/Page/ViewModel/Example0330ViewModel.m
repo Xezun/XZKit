@@ -6,8 +6,7 @@
 //
 
 #import "Example0330ViewModel.h"
-@import XZExtensions;
-@import XZJSON;
+@import XZKit;
 
 @implementation Example0330ViewModel
 

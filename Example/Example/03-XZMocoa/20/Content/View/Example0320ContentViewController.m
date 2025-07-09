@@ -7,8 +7,7 @@
 
 #import "Example0320ContentViewController.h"
 @import WebKit;
-@import XZMocoa;
-@import XZLog;
+@import XZKit;
 
 @interface Example0320ContentViewController ()
 

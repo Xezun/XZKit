@@ -8,7 +8,6 @@
 
 import UIKit
 import ObjectiveC
-import XZDefines
 
 /// 视图控制器遵循协议，表明该控制器使用自定义的导航条。
 @MainActor public protocol XZNavigationBarCustomizable: UIViewController {

@@ -6,7 +6,7 @@
 //
 
 #import "Example21TableViewCell.h"
-@import XZObjcDescriptor;
+@import XZKit;
 
 @implementation Example21TableViewCell
 

@@ -7,8 +7,6 @@
 
 import Foundation
 import UIKit
-import XZGeometry
-
 
 extension XZTextImageView {
     

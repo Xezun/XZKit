@@ -6,7 +6,6 @@
 //
 
 #import "XZMocoaTableViewHeaderFooterView.h"
-@import XZDefines;
 
 @implementation UITableViewHeaderFooterView (XZMocoaTableViewHeaderFooterView)
 

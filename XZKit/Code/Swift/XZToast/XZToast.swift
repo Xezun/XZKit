@@ -6,13 +6,11 @@
 //
 
 import UIKit
-import XZGeometry
-#if SWIFT_PACKAGE
-@_exported import XZToastCore
-#endif
 
 /// 由于无法在 Swift 中为 XZToast 拓展 ExpressibleByStringLiteral 协议而使用了子类。
-@objc(XZToastSwift) open class XZToast: __XZToast, ExpressibleByStringLiteral {
+///
+/// 不能将名字指定为 `__XZToast` 会触发 circular reference 编译错误。
+@objc(__XZ_TOAST_SWIFT__) open class XZToast: __XZToast, ExpressibleByStringLiteral {
     
     public typealias Position   = __XZToastPosition
     public typealias Completion = __XZToastCompletion

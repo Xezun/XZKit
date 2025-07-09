@@ -6,10 +6,7 @@
 //
 
 #import "Example14ViewController.h"
-@import XZURLQuery;
-@import XZLocale;
-@import XZDefines;
-@import XZLog;
+@import XZKit;
 
 @interface Example14ViewController ()
 

@@ -7,7 +7,7 @@
 
 #import "Example04SettingsViewController.h"
 #import "Example04FontSizeViewController.h"
-@import XZML;
+@import XZKit;
 
 @interface Example04SettingsViewController ()
 

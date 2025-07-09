@@ -6,9 +6,7 @@
 //
 
 #import <XCTest/XCTest.h>
-@import XZMocoa;
-@import XZDefines;
-@import XZExtensions;
+@import XZKit;
 
 typedef void (*FoobarFunction) (void);
 union FoobarUnion { double b; int a; };
