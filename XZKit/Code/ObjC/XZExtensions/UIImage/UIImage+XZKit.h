@@ -42,8 +42,10 @@ NS_ASSUME_NONNULL_BEGIN
 ///   - size: 图片大小
 + (nullable UIImage *)xz_imageWithGraphics:(void (^NS_NOESCAPE)(CGContextRef context))imageGraphics size:(CGSize)size NS_SWIFT_NAME(init(_:size:));
 
-+ (nullable UIImage *)xz_animatedImageWithGIFImageData:(nullable NSData *)GIFImageData repeatCount:(NSInteger * _Nullable)repeatCount;
-+ (nullable UIImage *)xz_animatedImageWithGIFImagePath:(nullable NSString *)GIFImagePath repeatCount:(NSInteger * _Nullable)repeatCount;
++ (nullable UIImage *)xz_animatedImageWithGIFImageData:(nullable NSData *)GIFImageData NS_SWIFT_NAME(init(GIF:));
++ (nullable UIImage *)xz_animatedImageWithGIFImagePath:(nullable NSString *)GIFImagePath NS_SWIFT_NAME(init(GIF:));
+
+@property (nonatomic, readonly) NSInteger xz_repeatCount NS_SWIFT_NAME(repeatCount);
 
 @end
 

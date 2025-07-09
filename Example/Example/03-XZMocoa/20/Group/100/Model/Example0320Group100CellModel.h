@@ -6,7 +6,7 @@
 //
 
 #import <Foundation/Foundation.h>
-@import XZMocoaCore;
+@import XZMocoa;
 
 NS_ASSUME_NONNULL_BEGIN
 

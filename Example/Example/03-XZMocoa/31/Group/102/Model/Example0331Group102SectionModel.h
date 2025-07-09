@@ -6,7 +6,7 @@
 //
 // 模拟 cell 模块 Model 没有注册的情况
 
-@import XZMocoaCore;
+@import XZMocoa;
 #import "Example0331Group102CellModel.h"
 
 NS_ASSUME_NONNULL_BEGIN

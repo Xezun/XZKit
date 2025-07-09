@@ -7,7 +7,9 @@
 
 #import "XZLogSystem.h"
 
-@implementation XZLogSystem
+@implementation XZLogSystem {
+    os_log_t _Nullable _OSLogSystem;
+}
 
 + (XZLogSystem *)defaultLogSystem {
     static XZLogSystem *_system = nil;
@@ -69,8 +71,6 @@
     });
     return _system;
 }
-
-@synthesize OSLogSystem = _OSLogSystem;
 
 - (os_log_t)OSLogSystem {
     if (_OSLogSystem == nil) {

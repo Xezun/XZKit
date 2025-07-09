@@ -7,6 +7,7 @@
 
 #import "XZMLParser.h"
 #import "XZMLDSL.h"
+#import "XZLog.h"
 #if __has_include(<XZDefines/XZMacros.h>)
 #import <XZDefines/XZMacros.h>
 #import <XZExtensions/UIColor+XZKit.h>

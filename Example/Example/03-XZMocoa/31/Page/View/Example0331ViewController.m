@@ -7,7 +7,7 @@
 
 #import "Example0331ViewController.h"
 #import "Example0331ViewModel.h"
-@import XZMocoaCore;
+@import XZMocoa;
 
 @interface Example0331ViewController () <XZMocoaView>
 @property (nonatomic, strong) XZMocoaCollectionView *collectionView;

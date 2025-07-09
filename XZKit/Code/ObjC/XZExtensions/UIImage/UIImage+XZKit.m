@@ -18,15 +18,21 @@
 #import <MobileCoreServices/MobileCoreServices.h>
 #import <objc/runtime.h>
 
-// 最大公约数。
-static inline NSInteger GCD(NSInteger a, NSInteger b) {
-    return a == 0 ? b : (GCD(b % a, a));
+// 最大公约数。GreatestCommonDivisor
+static inline NSInteger GreatestCommonDivisor(NSInteger a, NSInteger b) {
+    while (a != 0) {
+        a = b % a;
+        b = a;
+    }
+    return b;
 };
 
-typedef struct {
-    UIImage * __unsafe_unretained image;
-    NSInteger delay;
-} _XZAnimatedImageFrameInfo;
+@interface XZGIFImageFrame : NSObject
+@property (nonatomic, strong) UIImage *image;
+@property (nonatomic) NSInteger delay;
+@end
+
+static const void * const _repeatCount = &_repeatCount;
 
 @implementation UIImage (XZKit)
 
@@ -74,39 +80,36 @@ typedef struct {
     return UIGraphicsGetImageFromCurrentImageContext();
 }
 
-+ (UIImage *)xz_animatedImageWithGIFImagePath:(NSString *)GIFImagePath repeatCount:(NSInteger * _Nullable)repeatCount {
++ (UIImage *)xz_animatedImageWithGIFImagePath:(NSString *)GIFImagePath {
     if (GIFImagePath == nil) {
         return nil;
     }
     NSData *data = [NSData dataWithContentsOfFile:GIFImagePath];
-    return [self xz_animatedImageWithGIFImageData:data repeatCount:repeatCount];
+    return [self xz_animatedImageWithGIFImageData:data];
 }
 
-+ (UIImage *)xz_animatedImageWithGIFImageData:(NSData *)GIFImageData repeatCount:(NSInteger * _Nullable)repeatCount {
++ (UIImage *)xz_animatedImageWithGIFImageData:(NSData *)GIFImageData {
     if (GIFImageData == nil) {
         return nil;
     }
+    
     CGImageSourceRef const imageSource = CGImageSourceCreateWithData((__bridge CFDataRef)GIFImageData, (__bridge CFDictionaryRef)@{(NSString *)kCGImageSourceShouldCache: @(NO)});
     if (imageSource == nil) {
         return nil;
     }
-    if (!UTTypeConformsTo(CGImageSourceGetType(imageSource), kUTTypeGIF)) {
+    
+    defer(^{
         CFRelease(imageSource);
+    });
+    
+    if (!UTTypeConformsTo(CGImageSourceGetType(imageSource), kUTTypeGIF)) {
         return nil;
     }
     
-    NSDictionary *imageProperties = (__bridge_transfer NSDictionary *)CGImageSourceCopyProperties(imageSource, NULL);
+    NSDictionary * const imageProperties = (__bridge_transfer NSDictionary *)CGImageSourceCopyProperties(imageSource, NULL);
+    NSInteger      const imageCount      = CGImageSourceGetCount(imageSource);
     
-    if (repeatCount) {
-        *repeatCount = (^(NSDictionary *imageProperties){
-            NSNumber *value = [[imageProperties objectForKey:(id)kCGImagePropertyGIFDictionary] objectForKey:(id)kCGImagePropertyGIFLoopCount];
-            return (value == nil ? 1 : value.integerValue);
-        })(imageProperties);
-    }
-    
-    NSInteger const imageCount = CGImageSourceGetCount(imageSource);
-    
-    _XZAnimatedImageFrameInfo * const frameInfos = calloc(imageCount, sizeof(_XZAnimatedImageFrameInfo));
+    NSMutableArray<XZGIFImageFrame *> * const frames = [NSMutableArray arrayWithCapacity:imageCount];
     
     // 浏览器（Chrome/Firefox）默认 GIF 帧率为 25帧/秒，即一帧 40 毫秒。
     NSInteger const kMinFrameInterval = 40;
@@ -116,54 +119,70 @@ typedef struct {
     NSTimeInterval duration = 0; // GIF 时长。
     for (NSInteger i = 0; i < imageCount; i++) {
         @autoreleasepool {
-            CGImageRef frameImageRef = CGImageSourceCreateImageAtIndex(imageSource, i, NULL);
-            if (frameImageRef == nil) {
-                continue;
-            }
+            XZGIFImageFrame * const frame = (^XZGIFImageFrame *(NSArray *frames, CGImageSourceRef imageSource, NSInteger i){
+                CGImageRef frameImageRef = CGImageSourceCreateImageAtIndex(imageSource, i, NULL);
+                if (frameImageRef) {
+                    XZGIFImageFrame *frame = [[XZGIFImageFrame alloc] init];
+                    frame.image = [UIImage imageWithCGImage:frameImageRef];
+                    CFRelease(frameImageRef);
+                    frameImageRef = nil;
+                }
+                return frames.lastObject;
+            })(frames, imageSource, i);
             
-            UIImage *frameImage = [UIImage imageWithCGImage:frameImageRef];
-            CFRelease(frameImageRef);
-            if (frameImage == nil) {
+            if (frame == nil) {
                 continue;
             }
+            [frames addObject:frame];
             
             NSDictionary *frameProperties = (__bridge_transfer NSDictionary *)CGImageSourceCopyPropertiesAtIndex(imageSource, i, NULL);
-            NSDictionary *framePropertiesGIF = [frameProperties objectForKey:(id)kCGImagePropertyGIFDictionary];
+            if (!frameProperties) {
+                continue;
+            }
+            NSDictionary *GIFProperties = [frameProperties objectForKey:(id)kCGImagePropertyGIFDictionary];
             
-            NSInteger const frameDelay = (^NSInteger (NSDictionary *framePropertiesGIF) {
-                NSNumber *value = [framePropertiesGIF objectForKey:(id)kCGImagePropertyGIFUnclampedDelayTime];
+            NSInteger const frameDelay = (^NSInteger (NSDictionary *GIFProperties) {
+                NSNumber *value = [GIFProperties objectForKey:(id)kCGImagePropertyGIFUnclampedDelayTime];
                 if (value != nil) {
                     return MAX((NSInteger)(value.doubleValue * 1000), kMinFrameInterval);
                 }
-                value = [framePropertiesGIF objectForKey:(id)kCGImagePropertyGIFDelayTime];
+                value = [GIFProperties objectForKey:(id)kCGImagePropertyGIFDelayTime];
                 if (value == nil) {
                     return kMinFrameInterval;
                 }
                 NSInteger delay = (NSInteger)(value.doubleValue * 1000);
                 return (delay > 50 ? delay : 100);
-            })(framePropertiesGIF);
+            })(GIFProperties);
             
-            divisor = GCD(frameDelay, divisor);
+            divisor = GreatestCommonDivisor(frameDelay, divisor);
             duration += frameDelay;
             
-            frameInfos[i].image = CFRetain((__bridge CFTypeRef)(frameImage));
-            frameInfos[i].delay = frameDelay;
+            frame.delay = frameDelay;
         }
     }
-    CFRelease(imageSource);
     
-    NSMutableArray<UIImage *> *animatedImages = [NSMutableArray arrayWithCapacity:(NSUInteger)(duration * 40)];
+    NSMutableArray<UIImage *> * const images = [NSMutableArray arrayWithCapacity:(NSUInteger)(duration * 40)];
+
     for (NSInteger i = 0; i < imageCount; i++) {
-        NSInteger const count = frameInfos[i].delay / divisor;
+        XZGIFImageFrame * const frame = frames[i];
+        NSInteger const count = frame.delay / divisor;
         for (NSInteger j = 0; j < count; j++) {
-            [animatedImages addObject:frameInfos[i].image];
+            [images addObject:frame.image];
         }
-        CFRelease((__bridge CFTypeRef)(frameInfos[i].image));
     }
     
-    free(frameInfos);
+    UIImage * const image = [UIImage animatedImageWithImages:images duration:duration / 1000.0];
     
-    return [UIImage animatedImageWithImages:animatedImages duration:duration / 1000.0];
+    if (image) {
+        NSNumber * const repeatCount = [[imageProperties objectForKey:(id)kCGImagePropertyGIFDictionary] objectForKey:(id)kCGImagePropertyGIFLoopCount];
+        objc_setAssociatedObject(image, &_repeatCount, (repeatCount ?: @(1)), OBJC_ASSOCIATION_COPY_NONATOMIC);
+    }
+    
+    return image;
+}
+
+- (NSInteger)xz_repeatCount {
+    return [objc_getAssociatedObject(self, &_repeatCount) integerValue];
 }
 
 @end
@@ -410,4 +429,7 @@ typedef struct {
     return image;
 }
 
+@end
+
+@implementation XZGIFImageFrame
 @end

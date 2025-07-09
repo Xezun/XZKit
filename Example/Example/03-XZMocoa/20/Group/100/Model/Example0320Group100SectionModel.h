@@ -7,7 +7,7 @@
 
 #import <Foundation/Foundation.h>
 @import XZJSON;
-@import XZMocoaCore;
+@import XZMocoa;
 
 NS_ASSUME_NONNULL_BEGIN
 

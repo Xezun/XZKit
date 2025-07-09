@@ -11,7 +11,7 @@
 #import "XZImageViewerItemView.h"
 #if SWIFT_PACKAGE
 @import XZGeometryCore;
-@import XZLogCore;
+@import XZLog;
 #else
 @import XZGeometry;
 @import XZLog;

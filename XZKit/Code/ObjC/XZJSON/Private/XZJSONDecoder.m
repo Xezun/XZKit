@@ -13,6 +13,7 @@
 #import "XZJSONClassDescriptor.h"
 #import "XZJSONDefines.h"
 #import "XZJSONPropertyDescriptor.h"
+#import "XZLog.h"
 
 NS_ASSUME_NONNULL_BEGIN
 typedef void (*XZJSONSetter)(id, SEL, id _Nullable);

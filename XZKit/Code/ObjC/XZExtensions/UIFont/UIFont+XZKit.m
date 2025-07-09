@@ -15,15 +15,15 @@
 
 @implementation UIFont (XZKit)
 
-+ (void)xz_registerFontWithURL:(NSURL *)fontURL error:(NSError *__autoreleasing *)error {
++ (BOOL)xz_registerFontWithURL:(NSURL *)fontURL error:(NSError *__autoreleasing *)error {
     NSData * const data = [NSData dataWithContentsOfURL:fontURL options:0 error:error];
     if (data == nil) {
-        return;
+        return YES;
     }
     
     CGDataProviderRef const cgProvider = CGDataProviderCreateWithCFData((CFDataRef)data);
     if (cgProvider == NULL) {
-        return;
+        return YES;
     }
     defer(^{
         CFRelease(cgProvider);
@@ -31,7 +31,7 @@
     
     CGFontRef const cgFont = CGFontCreateWithDataProvider(cgProvider);
     if (cgFont == NULL) {
-        return;
+        return YES;
     }
     defer(^{
         CFRelease(cgFont);
@@ -39,13 +39,14 @@
     
     CFErrorRef cfError = NULL;
     if (CTFontManagerRegisterGraphicsFont(cgFont, &cfError)) {
-        return;
+        return YES;
     }
     
     if (error == nil) {
-        return;
+        return YES;
     }
     *error = (__bridge NSError *)(cfError);
+    return NO;
 }
 
 - (BOOL)xz_matchesGlyphsForCharactersInString:(NSString *)aString {

@@ -13,6 +13,7 @@
 #import "Example0310Model.h"
 @import XZExtensions;
 @import XZJSON;
+@import XZLog;
 
 @interface Example0310ViewController ()
 @property (nonatomic, readonly) Example0310RootView *rootView;

@@ -9,6 +9,7 @@
 #import "XZMocoaGridViewModel.h"
 #import "XZMocoaDefines.h"
 #import "XZMocoaModule.h"
+#import "XZLog.h"
 #if __has_include(<XZExtensions/NSArray+XZKit.h>)
 #import <XZExtensions/NSArray+XZKit.h>
 #import <XZExtensions/NSIndexSet+XZKit.h>

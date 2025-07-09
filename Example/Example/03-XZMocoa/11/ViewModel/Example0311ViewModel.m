@@ -8,6 +8,7 @@
 #import "Example0311ViewModel.h"
 #import "Example0311Model.h"
 @import XZJSON;
+@import XZLog;
 
 @implementation Example0311ViewModel
 

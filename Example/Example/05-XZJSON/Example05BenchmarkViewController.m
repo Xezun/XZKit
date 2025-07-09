@@ -7,10 +7,11 @@
 
 #import "Example05BenchmarkViewController.h"
 #import "Example05Model.h"
+#import "XZLog.h"
 @import XZJSON;
 @import YYModel;
 @import XZToast;
-@import XZExtensionsCore;
+@import XZExtensions;
 
 @interface Example05BenchmarkViewController ()
 @property (nonatomic, weak) IBOutlet UILabel *textLabel;

@@ -8,6 +8,7 @@
 #import "XZJSON.h"
 #import "XZJSONPrivate.h"
 #import "XZMacros.h"
+#import "XZLog.h"
 
 @implementation XZJSON
 

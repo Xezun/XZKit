@@ -6,7 +6,7 @@
 //  Copyright © 2021 Xezun. All rights reserved.
 //
 
-@import XZMocoaCore;
+@import XZMocoa;
 #import "Example0321ContactBookViewController.h"
 #import "Example0321ContactBookViewModel.h"
 #import "Example0321ContactBookTestViewController.h"

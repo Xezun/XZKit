@@ -8,7 +8,7 @@
 #import "Example01ViewController.h"
 @import XZDefines;
 @import XZToast;
-@import XZLogCore;
+@import XZLog;
 
 @interface Example01ViewController ()
 

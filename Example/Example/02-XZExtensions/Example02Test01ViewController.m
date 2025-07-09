@@ -6,7 +6,7 @@
 //
 
 #import "Example02Test01ViewController.h"
-@import XZExtensionsCore;
+@import XZExtensions;
 
 @interface Example02Test01ViewController ()
 

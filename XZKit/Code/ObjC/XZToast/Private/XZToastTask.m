@@ -12,6 +12,7 @@
 @implementation XZToastTask {
     dispatch_block_t _timer;
     XZToastCompletion _completion;
+    XZToastWrapperView * _Nullable _wrapperView;
 }
 
 @dynamic view;
@@ -43,8 +44,6 @@
     [super setText:text];
     [self setNeedsUpdateFrame];
 }
-
-@synthesize wrapperView = _wrapperView;
 
 - (XZToastWrapperView *)wrapperView {
     if (_wrapperView == nil) {

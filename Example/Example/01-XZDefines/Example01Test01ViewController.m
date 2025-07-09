@@ -8,7 +8,7 @@
 #import "Example01Test01ViewController.h"
 @import XZDefines;
 @import ObjectiveC;
-@import XZLogCore;
+@import XZLog;
 
 @interface Example01TestView : UIView
 @end

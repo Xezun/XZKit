@@ -8,6 +8,7 @@
 
 #import "Example0321ContactEditorViewModel.h"
 #import "Example0321Contact.h"
+@import XZLog;
 
 @implementation Example0321ContactEditorViewModel
 

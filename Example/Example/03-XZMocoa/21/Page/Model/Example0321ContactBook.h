@@ -6,7 +6,7 @@
 //  Copyright © 2021 Xezun. All rights reserved.
 //
 
-@import XZMocoaCore;
+@import XZMocoa;
 #import "Example0321Contact.h"
 
 NS_ASSUME_NONNULL_BEGIN

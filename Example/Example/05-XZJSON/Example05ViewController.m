@@ -8,11 +8,12 @@
 #import "Example05ViewController.h"
 #import "Example05Model.h"
 #import "Example05TextViewController.h"
+#import "XZLog.h"
 
 @import XZObjcDescriptor;
 @import XZToast;
 @import XZDefines;
-@import XZExtensionsCore;
+@import XZExtensions;
 
 @interface Example05ViewController () {
     NSString *_JSONString;

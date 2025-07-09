@@ -12,9 +12,9 @@ import Foundation
 @freestanding(expression)
 public macro XZLog(_ message: String, in system: XZLogSystem = .default) = #externalMacro(module: "XZLogMacros", type: "XZLogMacro")
 #else
-public func  XZLog(_ message: String, in system: XZLogSystem? = .default, file: String = #file, line: Int = #line, function: String = #function) {
+public func  XZLog(_ message: String, in system: XZLogSystem = .default, file: String = #file, line: Int = #line, function: String = #function) {
     #if DEBUG
-    XZLogv(system, file, line, function, message)
+    XZLogs(system, file, line, function, message)
     #endif
 }
 #endif
