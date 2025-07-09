@@ -15,13 +15,13 @@ CreatePath() {
     fi
 }
 
-LinkHeaders() {
+LinkModuleHeaders() {
     local moduleName="$1";
     local modulePath="$2";
     local headerType="$3";
     for path in "$modulePath"/*; do
         # echo "path => $path"
-        name=$(basename "$path")
+        local name=$(basename "$path")
         if [[ -f $path ]]; then
             if [[ "$name" =~ ".h"$ ]]; then
                 if [[ ! -d "XZKit/Headers/$headerType/$moduleName" ]]; then
@@ -36,9 +36,38 @@ LinkHeaders() {
             fi
         elif [[ -d $path ]]; then
             if [[ "$name" == "Private" ]]; then
-                LinkHeaders "$moduleName" "$path" "Private"
+                LinkModuleHeaders "$moduleName" "$path" "Private"
             else
-                LinkHeaders "$moduleName" "$path" "$headerType"
+                LinkModuleHeaders "$moduleName" "$path" "$headerType"
+            fi
+        fi
+    done
+    return 0
+}
+
+LinkXZKitHeaders() {
+    local modulePath="$1";
+    local headerType="$2";
+    for path in "$modulePath"/*; do
+        # echo "path => $path"
+        local name=$(basename "$path")
+        if [[ -f $path ]]; then
+            if [[ "$name" =~ ".h"$ ]]; then
+                if [[ ! -d "XZKit/Headers/$headerType/XZKit" ]]; then
+                    CreatePath "XZKit/Headers/$headerType/XZKit"
+                fi
+                if [[ -d "XZKit/Headers/$headerType/XZKit" ]]; then
+                    ln -s "../../../../$path" "XZKit/Headers/$headerType/XZKit/$name"
+                    echo "\033[32m[+] [$headerType] $path \033[0m"
+                else
+                    echo "🚫 \033[33m目录 $headerType/XZKit 不存在，且无法创建\033[0m"
+                fi
+            fi
+        elif [[ -d $path ]]; then
+            if [[ "$name" == "Private" ]]; then
+                LinkXZKitHeaders "$path" "Private"
+            else
+                LinkXZKitHeaders "$path" "$headerType"
             fi
         fi
     done
@@ -48,7 +77,7 @@ LinkHeaders() {
 MODULE_NAME="$1"
 
 # 检查脚本参数
-if [[ -z "$MODULE_NAME" || "$MODULE_NAME" == "XZKit" ]]; then
+if [[ -z "$MODULE_NAME" ]]; then
     echo "🚫 \033[33m请在第一个参数指定子模块名！\033[0m"
     exit 1;
 fi
@@ -79,5 +108,9 @@ fi
 echo "🎉 \033[34m清理操作结束\033[0m"
 
 echo "\033[34m☕️ 开始链接头文件\033[0m"
-LinkHeaders "$MODULE_NAME" "XZKit/Code/ObjC/${MODULE_NAME}" "Public"
+if [[ "$MODULE_NAME" == "XZKit" ]]; then
+    LinkXZKitHeaders "XZKit/Code/ObjC" "Public"
+else
+    LinkModuleHeaders "$MODULE_NAME" "XZKit/Code/ObjC/${MODULE_NAME}" "Public"
+fi
 echo "\033[34m🎉 链接头文件完成\033[0m"

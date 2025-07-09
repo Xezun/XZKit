@@ -8,8 +8,8 @@
 import Foundation
 import UIKit
 
-#if SWIFT_PACKAGE
-@_exported import XZExtensionsCore
-#endif
+//#if SWIFT_PACKAGE
+//@_exported import XZExtensionsCore
+//#endif
 
 
