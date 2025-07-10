@@ -7,8 +7,13 @@
 //
 
 #import <UIKit/UIKit.h>
+#if __has_include(<XZKit/XZKit.h>)
+#import <XZKit/XZMocoaGridViewCell.h>
+#import <XZKit/XZMocoaTableViewCellViewModel.h>
+#else
 #import "XZMocoaGridViewCell.h"
 #import "XZMocoaTableViewCellViewModel.h"
+#endif
 
 NS_ASSUME_NONNULL_BEGIN
 

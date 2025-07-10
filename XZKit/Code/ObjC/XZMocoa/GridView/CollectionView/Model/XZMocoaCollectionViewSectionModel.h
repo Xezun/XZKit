@@ -5,7 +5,11 @@
 //  Created by Xezun on 2023/7/23.
 //
 
+#if __has_include(<XZKit/XZKit.h>)
+#import <XZKit/XZMocoaGridViewSectionModel.h>
+#else
 #import "XZMocoaGridViewSectionModel.h"
+#endif
 
 NS_ASSUME_NONNULL_BEGIN
 

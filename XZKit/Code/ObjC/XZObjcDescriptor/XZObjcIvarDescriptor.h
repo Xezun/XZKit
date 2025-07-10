@@ -5,8 +5,12 @@
 //  Created by 徐臻 on 2025/1/26.
 //
 
+#import <objc/message.h>
+#if __has_include(<XZKit/XZKit.h>)
+#import <XZKit/XZObjcTypeDescriptor.h>
+#else
 #import "XZObjcTypeDescriptor.h"
-@import ObjectiveC;
+#endif
 
 @class XZObjcTypeDescriptor;
 

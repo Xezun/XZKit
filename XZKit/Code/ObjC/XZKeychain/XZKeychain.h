@@ -7,9 +7,15 @@
 //
 
 #import <Foundation/Foundation.h>
+#if __has_include(<XZKit/XZKit.h>)
+#import <XZKit/XZKeychainItem.h>
+#import <XZKit/XZKeychainKeyItem.h>
+#import <XZKit/XZKeychainPasswordItem.h>
+#else
 #import "XZKeychainItem.h"
 #import "XZKeychainKeyItem.h"
 #import "XZKeychainPasswordItem.h"
+#endif
 
 NS_ASSUME_NONNULL_BEGIN
 

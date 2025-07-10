@@ -31,8 +31,8 @@ Pod::Spec.new do |s|
   # s.default_subspec = 'Code'
   
   s.subspec "Core" do |ss|
-    ss.public_header_files = 'XZKit/Code/ObjC/XZKit/XZKit.h'
-    ss.source_files        = 'XZKit/Code/ObjC/XZKit/XZKit.h'
+    ss.public_header_files = 'XZKit/Code/ObjC/XZKit.h'
+    ss.source_files        = 'XZKit/Code/ObjC/XZKit.h'
   end
 
   def s.defineSubspec(name, languages, hasPrivates, dependencies, hasMacros)

@@ -82,16 +82,6 @@ if [[ -z "$MODULE_NAME" ]]; then
     exit 1;
 fi
 
-# 检查 MODULE_PATH
-if [[ ! -d "XZKit/Code/ObjC/${MODULE_NAME}" ]]; then
-    echo "🚫 \033[33m模块 ${MODULE_NAME} 不存在！\033[0m"
-    exit 2;
-fi
-
-# 进入目录
-CreatePath "XZKit/Headers/Public"
-CreatePath "XZKit/Headers/Private"
-
 echo "☕️ \033[34m清理操作开始\033[0m"
 if [[ -d "XZKit/Headers/Public/${MODULE_NAME}" ]]; then
     for path in "XZKit/Headers/Public/${MODULE_NAME}"/*; do
@@ -107,10 +97,23 @@ if [[ -d "XZKit/Headers/Private/${MODULE_NAME}" ]]; then
 fi
 echo "🎉 \033[34m清理操作结束\033[0m"
 
+# 进入目录
+CreatePath "XZKit/Headers/Public"
+CreatePath "XZKit/Headers/Private"
+
 echo "\033[34m☕️ 开始链接头文件\033[0m"
 if [[ "$MODULE_NAME" == "XZKit" ]]; then
     LinkXZKitHeaders "XZKit/Code/ObjC" "Public"
 else
+    # 检查 MODULE_PATH
+    if [[ ! -d "XZKit/Code/ObjC/${MODULE_NAME}" ]]; then
+        echo "🚫 \033[33m模块 ${MODULE_NAME} 不存在！\033[0m"
+        exit 2;
+    fi
     LinkModuleHeaders "$MODULE_NAME" "XZKit/Code/ObjC/${MODULE_NAME}" "Public"
 fi
 echo "\033[34m🎉 链接头文件完成\033[0m"
+
+
+
+

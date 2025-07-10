@@ -5,7 +5,11 @@
 //  Created by Xezun on 2021/8/21.
 //
 
+#if __has_include(<XZKit/XZKit.h>)
+#import <XZKit/XZMocoaModel.h>
+#else
 #import "XZMocoaModel.h"
+#endif
 
 NS_ASSUME_NONNULL_BEGIN
 

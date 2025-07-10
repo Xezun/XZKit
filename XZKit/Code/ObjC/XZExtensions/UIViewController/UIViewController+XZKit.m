@@ -5,11 +5,11 @@
 //  Created by Xezun on 2021/6/23.
 //
 
+@import ObjectiveC;
 #import "UIViewController+XZKit.h"
 #import "UIApplication+XZKit.h"
-@import ObjectiveC;
-#if __has_include(<XZDefines/XZRuntime.h>)
-#import <XZDefines/XZRuntime.h>
+#if __has_include(<XZKit/XZKit.h>)
+#import <XZKit/XZRuntime.h>
 #else
 #import "XZRuntime.h"
 #endif

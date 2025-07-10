@@ -6,12 +6,8 @@
 //
 
 #import "XZMocoaCollectionViewSupplementaryView.h"
-#import <objc/runtime.h>
-#if __has_include(<XZDefines/XZRuntime.h>)
-#import <XZDefines/XZRuntime.h>
-#else
 #import "XZRuntime.h"
-#endif
+#import <objc/runtime.h>
 
 @implementation UICollectionReusableView (XZMocoaCollectionViewSupplementaryView)
 

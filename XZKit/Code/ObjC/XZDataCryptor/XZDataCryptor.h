@@ -7,7 +7,11 @@
 //
 
 #import <Foundation/Foundation.h>
+#if __has_include(<XZKit/XZKit.h>)
+#import <XZKit/XZDataCryptorDefines.h>
+#else
 #import "XZDataCryptorDefines.h"
+#endif
 
 // 因为对称加解密属于复杂且耗时的操作，应交由专门的对象处理。
 // 不适合写成 NSString、NSData 的类目，以免让人误以为它是一个常规方法。

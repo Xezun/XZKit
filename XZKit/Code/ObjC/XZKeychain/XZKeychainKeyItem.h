@@ -6,7 +6,11 @@
 //  Copyright © 2025 Xezun Individual. All rights reserved.
 //
 
+#if __has_include(<XZKit/XZKit.h>)
+#import <XZKit/XZKeychainItem.h>
+#else
 #import "XZKeychainItem.h"
+#endif
 
 NS_ASSUME_NONNULL_BEGIN
 

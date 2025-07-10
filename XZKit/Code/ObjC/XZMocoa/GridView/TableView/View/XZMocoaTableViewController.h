@@ -6,7 +6,11 @@
 //
 
 #import <UIKit/UIKit.h>
+#if __has_include(<XZKit/XZKit.h>)
+#import <XZKit/XZMocoaTableView.h>
+#else
 #import "XZMocoaTableView.h"
+#endif
 
 NS_ASSUME_NONNULL_BEGIN
 

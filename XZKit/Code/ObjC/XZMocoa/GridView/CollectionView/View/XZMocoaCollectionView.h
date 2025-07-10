@@ -5,8 +5,13 @@
 //  Created by Xezun on 2023/7/24.
 //
 
+#if __has_include(<XZKit/XZKit.h>)
+#import <XZKit/XZMocoaGridView.h>
+#import <XZKit/XZMocoaCollectionViewModel.h>
+#else
 #import "XZMocoaGridView.h"
 #import "XZMocoaCollectionViewModel.h"
+#endif
 
 NS_ASSUME_NONNULL_BEGIN
 

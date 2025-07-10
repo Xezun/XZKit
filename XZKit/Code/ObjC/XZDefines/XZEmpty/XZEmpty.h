@@ -19,7 +19,11 @@
 
 
 #import <Foundation/Foundation.h>
+#if __has_include(<XZKit/XZKit.h>)
+#import <XZKit/XZMacros.h>
+#else
 #import "XZMacros.h"
+#endif
 
 NS_ASSUME_NONNULL_BEGIN
 

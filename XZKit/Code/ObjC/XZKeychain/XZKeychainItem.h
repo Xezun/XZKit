@@ -7,7 +7,7 @@
 //
 
 #import <Foundation/Foundation.h>
-@import Security;
+#import <Security/Security.h>
 
 NS_ASSUME_NONNULL_BEGIN
 

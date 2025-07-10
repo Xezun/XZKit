@@ -7,15 +7,9 @@
 
 #import "XZMocoaView.h"
 #import "XZMocoaDefines.h"
-#if __has_include(<XZDefines/XZRuntime.h>)
-#import <XZDefines/XZRuntime.h>
-#import <XZExtensions/NSArray+XZKit.h>
-#import <XZExtensions/UIView+XZKit.h>
-#else
 #import "XZRuntime.h"
 #import "NSArray+XZKit.h"
 #import "UIView+XZKit.h"
-#endif
 #import "XZLog.h"
 
 static const void * const _viewModel = &_viewModel;

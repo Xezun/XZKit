@@ -6,7 +6,7 @@
 //
 
 #import <Foundation/Foundation.h>
-@import OSLog;
+#import <OSLog/OSLog.h>
 
 NS_ASSUME_NONNULL_BEGIN
 

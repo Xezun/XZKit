@@ -6,8 +6,13 @@
 //
 
 #import <Foundation/Foundation.h>
+#if __has_include(<XZKit/XZKit.h>)
+#import <XZKit/XZToast.h>
+#import <XZKit/XZToastWrapperView.h>
+#else
 #import "XZToast.h"
 #import "XZToastWrapperView.h"
+#endif
 
 NS_ASSUME_NONNULL_BEGIN
 

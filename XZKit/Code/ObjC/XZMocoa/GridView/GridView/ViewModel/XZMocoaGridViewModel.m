@@ -10,15 +10,9 @@
 #import "XZMocoaDefines.h"
 #import "XZMocoaModule.h"
 #import "XZLog.h"
-#if __has_include(<XZExtensions/NSArray+XZKit.h>)
-#import <XZExtensions/NSArray+XZKit.h>
-#import <XZExtensions/NSIndexSet+XZKit.h>
-#import <XZDefines/XZDefines.h>
-#else
 #import "XZDefines.h"
 #import "NSArray+XZKit.h"
 #import "NSIndexSet+XZKit.h"
-#endif
 
 /// 在批量更新的过程中，同一元素只能应用一个操作，但是在 MVVM 结构中，
 /// 数据变化也可能会引起刷新操作，为了避免多个更新操作，因此会将这些操作暂存并延迟执行。

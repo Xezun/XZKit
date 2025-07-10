@@ -8,7 +8,7 @@
 import UIKit
 import XZKit
 
-@mocoa
+//@mocoa
 class Example12ViewController: UIViewController, XZContentStatusRepresentable {
     
     deinit {

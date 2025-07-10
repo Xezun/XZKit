@@ -6,9 +6,15 @@
 //
 
 #import <UIKit/UIKit.h>
+#if __has_include(<XZKit/XZKit.h>)
+#import <XZKit/XZPageViewDefines.h>
+#import <XZKit/XZPageViewController.h>
+#import <XZKit/XZImageViewer.h>
+#else
 #import "XZPageViewDefines.h"
 #import "XZPageViewController.h"
 #import "XZImageViewer.h"
+#endif
 
 NS_ASSUME_NONNULL_BEGIN
 

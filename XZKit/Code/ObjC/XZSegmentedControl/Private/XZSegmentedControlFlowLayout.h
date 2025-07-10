@@ -6,8 +6,13 @@
 //
 
 #import <UIKit/UIKit.h>
+#if __has_include(<XZKit/XZKit.h>)
+#import <XZKit/XZSegmentedControl.h>
+#import <XZKit/XZSegmentedControlIndicator.h>
+#else
 #import "XZSegmentedControl.h"
 #import "XZSegmentedControlIndicator.h"
+#endif
 
 NS_ASSUME_NONNULL_BEGIN
 

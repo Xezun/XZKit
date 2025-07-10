@@ -5,13 +5,21 @@
 //  Created by Xezun on 2024/9/29.
 //
 
+@import ObjectiveC;
 #import <Foundation/Foundation.h>
+#if __has_include(<XZKit/XZKit.h>)
+#import <XZKit/XZJSONDecoder.h>
+#import <XZKit/XZJSONDefines.h>
+#import <XZKit/XZJSONClassDescriptor.h>
+#import <XZKit/XZJSONPropertyDescriptor.h>
+#import <XZKit/XZJSONEncoder.h>
+#else
 #import "XZJSONDefines.h"
 #import "XZJSONClassDescriptor.h"
 #import "XZJSONPropertyDescriptor.h"
 #import "XZJSONEncoder.h"
 #import "XZJSONDecoder.h"
-@import ObjectiveC;
+#endif
 
 // 从 JSON 解析数据时，如果无法转换为需要的类型，则认为该值不存在，不使用默认值或 nil 填充。
 

@@ -5,18 +5,18 @@
 //  Created by Xezun on 2024/6/12.
 //
 
-#import "UIImage+XZKit.h"
-@import CoreGraphics;
-@import CoreImage;
-#if __has_include(<XZDefines/XZDefer.h>)
-#import <XZDefines/XZDefer.h>
-#else
-#import "XZDefer.h"
-#endif
-
 #import <ImageIO/ImageIO.h>
 #import <MobileCoreServices/MobileCoreServices.h>
 #import <objc/runtime.h>
+#import "UIImage+XZKit.h"
+#if __has_include(<XZKit/XZKit.h>)
+#import <XZKit/XZDefer.h>
+#else
+#import "XZDefer.h"
+#endif
+@import CoreGraphics;
+@import CoreImage;
+@import UniformTypeIdentifiers;
 
 // 最大公约数。GreatestCommonDivisor
 static inline NSInteger GreatestCommonDivisor(NSInteger a, NSInteger b) {
@@ -102,8 +102,19 @@ static const void * const _repeatCount = &_repeatCount;
         CFRelease(imageSource);
     });
     
-    if (!UTTypeConformsTo(CGImageSourceGetType(imageSource), kUTTypeGIF)) {
-        return nil;
+    // 判断是否为 GIF 图片
+    if (@available(iOS 15.0, *)) {
+        NSString * const imageType = (__bridge NSString *)CGImageSourceGetType(imageSource);
+        if (!imageType) {
+            return nil;
+        }
+        if (![[UTType typeWithIdentifier:imageType] conformsToType:UTTypeGIF]) {
+            return nil;
+        }
+    } else {
+        if (!UTTypeConformsTo(CGImageSourceGetType(imageSource), kUTTypeGIF)) {
+            return nil;
+        }
     }
     
     NSDictionary * const imageProperties = (__bridge_transfer NSDictionary *)CGImageSourceCopyProperties(imageSource, NULL);

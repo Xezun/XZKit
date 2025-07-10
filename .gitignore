@@ -9,6 +9,7 @@
 build/
 DerivedData/
 Products/
+.build/
 
 ## Various settings
 *.pbxuser

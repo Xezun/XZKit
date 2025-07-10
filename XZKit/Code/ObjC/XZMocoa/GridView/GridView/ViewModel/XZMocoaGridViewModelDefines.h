@@ -5,8 +5,13 @@
 //  Created by Xezun on 2021/9/1.
 //
 
+#if __has_include(<XZKit/XZKit.h>)
+#import <XZKit/XZMocoaDefines.h>
+#import <XZKit/XZMocoaViewModel.h>
+#else
 #import "XZMocoaDefines.h"
 #import "XZMocoaViewModel.h"
+#endif
 
 NS_ASSUME_NONNULL_BEGIN
 

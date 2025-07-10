@@ -6,8 +6,13 @@
 //  Copyright © 2021 Xezun. All rights reserved.
 //
 
+#if __has_include(<XZKit/XZKit.h>)
+#import <XZKit/XZMocoaDefines.h>
+#import <XZKit/XZMocoaViewModel.h>
+#else
 #import "XZMocoaDefines.h"
 #import "XZMocoaViewModel.h"
+#endif
 
 NS_ASSUME_NONNULL_BEGIN
 

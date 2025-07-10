@@ -5,7 +5,11 @@
 //  Created by Xezun on 2023/7/22.
 //
 
+#if __has_include(<XZKit/XZKit.h>)
+#import <XZKit/XZMocoaGridViewCellViewModel.h>
+#else
 #import "XZMocoaGridViewCellViewModel.h"
+#endif
 
 @protocol XZMocoaTableView, XZMocoaTableViewCell;
 

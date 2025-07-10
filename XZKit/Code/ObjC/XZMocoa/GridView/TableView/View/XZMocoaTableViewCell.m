@@ -6,15 +6,11 @@
 //  Copyright © 2021 Xezun. All rights reserved.
 //
 
+#import <objc/runtime.h>
 #import "XZMocoaTableViewCell.h"
 #import "XZMocoaModule.h"
 #import "XZMocoaDefines.h"
-#import <objc/runtime.h>
-#if __has_include(<XZDefines/XZRuntime.h>)
-#import <XZDefines/XZRuntime.h>
-#else
 #import "XZRuntime.h"
-#endif
 
 @implementation UITableViewCell (XZMocoaTableViewCell)
 

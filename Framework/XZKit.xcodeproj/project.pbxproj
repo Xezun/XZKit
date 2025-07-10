@@ -1,0 +1,635 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 77;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		047FA0C42E1F8D8B00830368 /* XZKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 047FA0B82E1F8D8B00830368 /* XZKit.framework */; };
+		047FADC22E1F99A000830368 /* Security.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 047FADC12E1F99A000830368 /* Security.framework */; };
+		047FB0FE2E1F9A5D00830368 /* CoreData.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 047FB0FD2E1F9A5D00830368 /* CoreData.framework */; };
+		04A392132E1FA09F00A48BC0 /* UniformTypeIdentifiers.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 04A392122E1FA09F00A48BC0 /* UniformTypeIdentifiers.framework */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		047FA0C52E1F8D8B00830368 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 047FA0AF2E1F8D8B00830368 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 047FA0B72E1F8D8B00830368;
+			remoteInfo = XZKit;
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXFileReference section */
+		047FA0B82E1F8D8B00830368 /* XZKit.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = XZKit.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		047FA0C32E1F8D8B00830368 /* XZKitTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = XZKitTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		047FADC12E1F99A000830368 /* Security.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Security.framework; path = Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.5.sdk/System/Library/Frameworks/Security.framework; sourceTree = DEVELOPER_DIR; };
+		047FB0FD2E1F9A5D00830368 /* CoreData.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreData.framework; path = Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.5.sdk/System/Library/Frameworks/CoreData.framework; sourceTree = DEVELOPER_DIR; };
+		047FB0FF2E1F9A6600830368 /* libswiftObjectiveC.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libswiftObjectiveC.tbd; path = Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.5.sdk/usr/lib/swift/libswiftObjectiveC.tbd; sourceTree = DEVELOPER_DIR; };
+		04A392122E1FA09F00A48BC0 /* UniformTypeIdentifiers.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UniformTypeIdentifiers.framework; path = Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.5.sdk/System/Library/Frameworks/UniformTypeIdentifiers.framework; sourceTree = DEVELOPER_DIR; };
+/* End PBXFileReference section */
+
+/* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
+		04A39F082E1FC40400A48BC0 /* Exceptions for "XZKit" folder in "XZKit" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			publicHeaders = (
+				Code/ObjC/XZDataCryptor/XZDataCryptor.h,
+				Code/ObjC/XZDataCryptor/XZDataCryptorDefines.h,
+				"Code/ObjC/XZDataDigester/NSData+XZDataDigester.h",
+				"Code/ObjC/XZDataDigester/NSString+XZDataDigester.h",
+				Code/ObjC/XZDataDigester/XZDataDigester.h,
+				Code/ObjC/XZDefines/XZDefer/XZDefer.h,
+				Code/ObjC/XZDefines/XZDefines.h,
+				Code/ObjC/XZDefines/XZEmpty/XZEmpty.h,
+				Code/ObjC/XZDefines/XZMacros/XZMacros.h,
+				Code/ObjC/XZDefines/XZRuntime/XZRuntime.h,
+				Code/ObjC/XZDefines/XZUtils/XZUtils.h,
+				"Code/ObjC/XZExtensions/CAAnimation/CAAnimation+XZKit.h",
+				"Code/ObjC/XZExtensions/CALayer/CALayer+XZKit.h",
+				"Code/ObjC/XZExtensions/NSArray/NSArray+XZKit.h",
+				"Code/ObjC/XZExtensions/NSAttributedString/NSAttributedString+XZKit.h",
+				"Code/ObjC/XZExtensions/NSBundle/NSBundle+XZKit.h",
+				"Code/ObjC/XZExtensions/NSCharacterSet/NSCharacterSet+XZKit.h",
+				"Code/ObjC/XZExtensions/NSData/NSData+XZKit.h",
+				"Code/ObjC/XZExtensions/NSDictionary/NSDictionary+XZKit.h",
+				"Code/ObjC/XZExtensions/NSIndexSet/NSIndexSet+XZKit.h",
+				"Code/ObjC/XZExtensions/NSObject/NSObject+XZKit.h",
+				"Code/ObjC/XZExtensions/NSString/NSString+XZKit.h",
+				"Code/ObjC/XZExtensions/UIApplication/UIApplication+XZKit.h",
+				"Code/ObjC/XZExtensions/UIBezierPath/UIBezierPath+XZKit.h",
+				"Code/ObjC/XZExtensions/UIColor/UIColor+XZKit.h",
+				"Code/ObjC/XZExtensions/UIDevice/UIDevice+XZKit.h",
+				"Code/ObjC/XZExtensions/UIFont/UIFont+XZKit.h",
+				"Code/ObjC/XZExtensions/UIImage/UIImage+XZKit.h",
+				"Code/ObjC/XZExtensions/UIView/UIView+XZKit.h",
+				"Code/ObjC/XZExtensions/UIViewController/UIViewController+XZKit.h",
+				Code/ObjC/XZExtensions/XZExtensions.h,
+				Code/ObjC/XZExtensions/XZShapeView/XZShapeView.h,
+				Code/ObjC/XZGeometry/XZGeometry.h,
+				Code/ObjC/XZImage/XZImage.h,
+				Code/ObjC/XZImage/XZImageArrow.h,
+				Code/ObjC/XZImage/XZImageAttribute.h,
+				Code/ObjC/XZImage/XZImageBorder.h,
+				Code/ObjC/XZImage/XZImageBorders.h,
+				Code/ObjC/XZImage/XZImageCorner.h,
+				Code/ObjC/XZImage/XZImageCorners.h,
+				Code/ObjC/XZImage/XZImageLine.h,
+				Code/ObjC/XZImage/XZImageLineDash.h,
+				Code/ObjC/XZJSON/XZJSON.h,
+				Code/ObjC/XZJSON/XZJSONDefines.h,
+				Code/ObjC/XZKeychain/XZKeychain.h,
+				Code/ObjC/XZKeychain/XZKeychainItem.h,
+				Code/ObjC/XZKeychain/XZKeychainKeyItem.h,
+				Code/ObjC/XZKeychain/XZKeychainPasswordItem.h,
+				Code/ObjC/XZKit.h,
+				Code/ObjC/XZLocale/XZLocale.h,
+				Code/ObjC/XZLog/XZLog.h,
+				Code/ObjC/XZLog/XZLogSystem.h,
+				"Code/ObjC/XZML/Foundation+XZML.h",
+				"Code/ObjC/XZML/UIKit+XZML.h",
+				Code/ObjC/XZML/XZML.h,
+				Code/ObjC/XZML/XZMLDefines.h,
+				Code/ObjC/XZMocoa/Defines/XZMocoaDefines.h,
+				Code/ObjC/XZMocoa/Defines/XZMocoaModule.h,
+				Code/ObjC/XZMocoa/Defines/XZMocoaModuleDomain.h,
+				Code/ObjC/XZMocoa/GridView/CollectionView/Model/XZMocoaCollectionModel.h,
+				Code/ObjC/XZMocoa/GridView/CollectionView/Model/XZMocoaCollectionViewCellModel.h,
+				Code/ObjC/XZMocoa/GridView/CollectionView/Model/XZMocoaCollectionViewSectionModel.h,
+				Code/ObjC/XZMocoa/GridView/CollectionView/View/XZMocoaCollectionView.h,
+				Code/ObjC/XZMocoa/GridView/CollectionView/View/XZMocoaCollectionViewCell.h,
+				Code/ObjC/XZMocoa/GridView/CollectionView/View/XZMocoaCollectionViewController.h,
+				Code/ObjC/XZMocoa/GridView/CollectionView/View/XZMocoaCollectionViewSupplementaryView.h,
+				Code/ObjC/XZMocoa/GridView/CollectionView/ViewModel/XZMocoaCollectionViewCellViewModel.h,
+				Code/ObjC/XZMocoa/GridView/CollectionView/ViewModel/XZMocoaCollectionViewModel.h,
+				Code/ObjC/XZMocoa/GridView/CollectionView/ViewModel/XZMocoaCollectionViewSectionViewModel.h,
+				Code/ObjC/XZMocoa/GridView/CollectionView/ViewModel/XZMocoaCollectionViewSupplementaryViewModel.h,
+				Code/ObjC/XZMocoa/GridView/GridView/Model/XZMocoaGridModel.h,
+				Code/ObjC/XZMocoa/GridView/GridView/Model/XZMocoaGridViewCellModel.h,
+				Code/ObjC/XZMocoa/GridView/GridView/Model/XZMocoaGridViewSectionModel.h,
+				Code/ObjC/XZMocoa/GridView/GridView/View/XZMocoaGridView.h,
+				Code/ObjC/XZMocoa/GridView/GridView/View/XZMocoaGridViewCell.h,
+				Code/ObjC/XZMocoa/GridView/GridView/View/XZMocoaGridViewSupplementaryView.h,
+				Code/ObjC/XZMocoa/GridView/GridView/ViewModel/XZMocoaGridViewCellViewModel.h,
+				Code/ObjC/XZMocoa/GridView/GridView/ViewModel/XZMocoaGridViewModel.h,
+				Code/ObjC/XZMocoa/GridView/GridView/ViewModel/XZMocoaGridViewModelDefines.h,
+				Code/ObjC/XZMocoa/GridView/GridView/ViewModel/XZMocoaGridViewSectionViewModel.h,
+				Code/ObjC/XZMocoa/GridView/GridView/ViewModel/XZMocoaGridViewSupplementaryViewModel.h,
+				Code/ObjC/XZMocoa/GridView/TableView/Model/XZMocoaTableModel.h,
+				Code/ObjC/XZMocoa/GridView/TableView/Model/XZMocoaTableViewCellModel.h,
+				Code/ObjC/XZMocoa/GridView/TableView/Model/XZMocoaTableViewSectionModel.h,
+				Code/ObjC/XZMocoa/GridView/TableView/View/XZMocoaTableView.h,
+				Code/ObjC/XZMocoa/GridView/TableView/View/XZMocoaTableViewCell.h,
+				Code/ObjC/XZMocoa/GridView/TableView/View/XZMocoaTableViewController.h,
+				Code/ObjC/XZMocoa/GridView/TableView/View/XZMocoaTableViewHeaderFooterView.h,
+				Code/ObjC/XZMocoa/GridView/TableView/ViewModel/XZMocoaTableViewCellViewModel.h,
+				Code/ObjC/XZMocoa/GridView/TableView/ViewModel/XZMocoaTableViewHeaderFooterViewModel.h,
+				Code/ObjC/XZMocoa/GridView/TableView/ViewModel/XZMocoaTableViewModel.h,
+				Code/ObjC/XZMocoa/GridView/TableView/ViewModel/XZMocoaTableViewSectionViewModel.h,
+				Code/ObjC/XZMocoa/View/Model/XZMocoaModel.h,
+				Code/ObjC/XZMocoa/View/View/XZMocoaView.h,
+				Code/ObjC/XZMocoa/View/ViewModel/XZMocoaViewModel.h,
+				Code/ObjC/XZMocoa/XZMocoa.h,
+				Code/ObjC/XZObjcDescriptor/XZObjcClassDescriptor.h,
+				Code/ObjC/XZObjcDescriptor/XZObjcDescriptor.h,
+				Code/ObjC/XZObjcDescriptor/XZObjcIvarDescriptor.h,
+				Code/ObjC/XZObjcDescriptor/XZObjcMethodDescriptor.h,
+				Code/ObjC/XZObjcDescriptor/XZObjcPropertyDescriptor.h,
+				Code/ObjC/XZObjcDescriptor/XZObjcTypeDescriptor.h,
+				Code/ObjC/XZPageControl/XZPageControl.h,
+				Code/ObjC/XZPageControl/XZPageControlDefines.h,
+				Code/ObjC/XZPageView/XZImageViewer/XZImageViewer.h,
+				Code/ObjC/XZPageView/XZPageView/XZPageView.h,
+				Code/ObjC/XZPageView/XZPageView/XZPageViewDefines.h,
+				Code/ObjC/XZPageView/XZPageViewController/XZPageViewController.h,
+				"Code/ObjC/XZRefresh/Core/UIScrollView+XZRefresh.h",
+				Code/ObjC/XZRefresh/Core/XZRefreshDefines.h,
+				Code/ObjC/XZRefresh/Core/XZRefreshStyle1View.h,
+				Code/ObjC/XZRefresh/Core/XZRefreshStyle2View.h,
+				Code/ObjC/XZRefresh/Core/XZRefreshView.h,
+				Code/ObjC/XZRefresh/XZRefresh.h,
+				Code/ObjC/XZSegmentedControl/XZSegmentedControl.h,
+				Code/ObjC/XZSegmentedControl/XZSegmentedControlDefines.h,
+				Code/ObjC/XZSegmentedControl/XZSegmentedControlIndicator.h,
+				Code/ObjC/XZSegmentedControl/XZSegmentedControlSegment.h,
+				"Code/ObjC/XZToast/UIKit+XZToast.h",
+				Code/ObjC/XZToast/XZToast.h,
+				Code/ObjC/XZToast/XZToastDefines.h,
+				"Code/ObjC/XZURLQuery/NSURL+XZURLQuery.h",
+				Code/ObjC/XZURLQuery/XZURLQuery.h,
+			);
+			target = 047FA0B72E1F8D8B00830368 /* XZKit */;
+		};
+/* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
+
+/* Begin PBXFileSystemSynchronizedRootGroup section */
+		047FA0BA2E1F8D8B00830368 /* XZKit */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			exceptions = (
+				04A39F082E1FC40400A48BC0 /* Exceptions for "XZKit" folder in "XZKit" target */,
+			);
+			path = XZKit;
+			sourceTree = "<group>";
+		};
+		047FA0C72E1F8D8B00830368 /* XZKitTests */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			path = XZKitTests;
+			sourceTree = "<group>";
+		};
+/* End PBXFileSystemSynchronizedRootGroup section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		047FA0B52E1F8D8B00830368 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				04A392132E1FA09F00A48BC0 /* UniformTypeIdentifiers.framework in Frameworks */,
+				047FB0FE2E1F9A5D00830368 /* CoreData.framework in Frameworks */,
+				047FADC22E1F99A000830368 /* Security.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		047FA0C02E1F8D8B00830368 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				047FA0C42E1F8D8B00830368 /* XZKit.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		047FA0AE2E1F8D8B00830368 = {
+			isa = PBXGroup;
+			children = (
+				047FA0BA2E1F8D8B00830368 /* XZKit */,
+				047FA0C72E1F8D8B00830368 /* XZKitTests */,
+				047FADC02E1F99A000830368 /* Frameworks */,
+				047FA0B92E1F8D8B00830368 /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		047FA0B92E1F8D8B00830368 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				047FA0B82E1F8D8B00830368 /* XZKit.framework */,
+				047FA0C32E1F8D8B00830368 /* XZKitTests.xctest */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		047FADC02E1F99A000830368 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				04A392122E1FA09F00A48BC0 /* UniformTypeIdentifiers.framework */,
+				047FB0FF2E1F9A6600830368 /* libswiftObjectiveC.tbd */,
+				047FB0FD2E1F9A5D00830368 /* CoreData.framework */,
+				047FADC12E1F99A000830368 /* Security.framework */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXHeadersBuildPhase section */
+		047FA0B32E1F8D8B00830368 /* Headers */ = {
+			isa = PBXHeadersBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXHeadersBuildPhase section */
+
+/* Begin PBXNativeTarget section */
+		047FA0B72E1F8D8B00830368 /* XZKit */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 047FA0CB2E1F8D8B00830368 /* Build configuration list for PBXNativeTarget "XZKit" */;
+			buildPhases = (
+				047FA0B32E1F8D8B00830368 /* Headers */,
+				047FA0B42E1F8D8B00830368 /* Sources */,
+				047FA0B52E1F8D8B00830368 /* Frameworks */,
+				047FA0B62E1F8D8B00830368 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			fileSystemSynchronizedGroups = (
+				047FA0BA2E1F8D8B00830368 /* XZKit */,
+			);
+			name = XZKit;
+			packageProductDependencies = (
+			);
+			productName = XZKit;
+			productReference = 047FA0B82E1F8D8B00830368 /* XZKit.framework */;
+			productType = "com.apple.product-type.framework";
+		};
+		047FA0C22E1F8D8B00830368 /* XZKitTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 047FA0D02E1F8D8B00830368 /* Build configuration list for PBXNativeTarget "XZKitTests" */;
+			buildPhases = (
+				047FA0BF2E1F8D8B00830368 /* Sources */,
+				047FA0C02E1F8D8B00830368 /* Frameworks */,
+				047FA0C12E1F8D8B00830368 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				047FA0C62E1F8D8B00830368 /* PBXTargetDependency */,
+			);
+			fileSystemSynchronizedGroups = (
+				047FA0C72E1F8D8B00830368 /* XZKitTests */,
+			);
+			name = XZKitTests;
+			packageProductDependencies = (
+			);
+			productName = XZKitTests;
+			productReference = 047FA0C32E1F8D8B00830368 /* XZKitTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		047FA0AF2E1F8D8B00830368 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				BuildIndependentTargetsInParallel = 1;
+				LastUpgradeCheck = 1640;
+				TargetAttributes = {
+					047FA0B72E1F8D8B00830368 = {
+						CreatedOnToolsVersion = 16.4;
+					};
+					047FA0C22E1F8D8B00830368 = {
+						CreatedOnToolsVersion = 16.4;
+					};
+				};
+			};
+			buildConfigurationList = 047FA0B22E1F8D8B00830368 /* Build configuration list for PBXProject "XZKit" */;
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+				Base,
+			);
+			mainGroup = 047FA0AE2E1F8D8B00830368;
+			minimizedProjectReferenceProxies = 1;
+			preferredProjectObjectVersion = 77;
+			productRefGroup = 047FA0B92E1F8D8B00830368 /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				047FA0B72E1F8D8B00830368 /* XZKit */,
+				047FA0C22E1F8D8B00830368 /* XZKitTests */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		047FA0B62E1F8D8B00830368 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		047FA0C12E1F8D8B00830368 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		047FA0B42E1F8D8B00830368 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		047FA0BF2E1F8D8B00830368 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		047FA0C62E1F8D8B00830368 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 047FA0B72E1F8D8B00830368 /* XZKit */;
+			targetProxy = 047FA0C52E1F8D8B00830368 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
+/* Begin XCBuildConfiguration section */
+		047FA0CC2E1F8D8B00830368 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUILD_LIBRARY_FOR_DISTRIBUTION = YES;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEFINES_MODULE = YES;
+				DEVELOPMENT_TEAM = LWKDD4DJ6H;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				ENABLE_MODULE_VERIFIER = YES;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"$(inherited)",
+					"XZ_FRAMEWORK=1",
+				);
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				MODULE_VERIFIER_SUPPORTED_LANGUAGES = "objective-c objective-c++";
+				MODULE_VERIFIER_SUPPORTED_LANGUAGE_STANDARDS = "gnu17 gnu++20";
+				PRODUCT_BUNDLE_IDENTIFIER = com.xezun.XZKit;
+				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
+				SKIP_INSTALL = NO;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		047FA0CD2E1F8D8B00830368 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUILD_LIBRARY_FOR_DISTRIBUTION = YES;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEFINES_MODULE = YES;
+				DEVELOPMENT_TEAM = LWKDD4DJ6H;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				ENABLE_MODULE_VERIFIER = YES;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"$(inherited)",
+					"XZ_FRAMEWORK=1",
+				);
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				MODULE_VERIFIER_SUPPORTED_LANGUAGES = "objective-c objective-c++";
+				MODULE_VERIFIER_SUPPORTED_LANGUAGE_STANDARDS = "gnu17 gnu++20";
+				PRODUCT_BUNDLE_IDENTIFIER = com.xezun.XZKit;
+				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
+				SKIP_INSTALL = NO;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
+		047FA0CE2E1F8D8B00830368 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				CURRENT_PROJECT_VERSION = 1;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				DEVELOPMENT_TEAM = LWKDD4DJ6H;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu17;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 18.5;
+				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = iphoneos;
+				SWIFT_VERSION = 6.0;
+				VERSIONING_SYSTEM = "apple-generic";
+				VERSION_INFO_PREFIX = "";
+			};
+			name = Debug;
+		};
+		047FA0CF2E1F8D8B00830368 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				CURRENT_PROJECT_VERSION = 1;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				DEVELOPMENT_TEAM = LWKDD4DJ6H;
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu17;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 18.5;
+				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				MTL_FAST_MATH = YES;
+				SDKROOT = iphoneos;
+				SWIFT_VERSION = 6.0;
+				VALIDATE_PRODUCT = YES;
+				VERSIONING_SYSTEM = "apple-generic";
+				VERSION_INFO_PREFIX = "";
+			};
+			name = Release;
+		};
+		047FA0D12E1F8D8B00830368 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = LWKDD4DJ6H;
+				GENERATE_INFOPLIST_FILE = YES;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.xezun.XZKitTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		047FA0D22E1F8D8B00830368 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = LWKDD4DJ6H;
+				GENERATE_INFOPLIST_FILE = YES;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.xezun.XZKitTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		047FA0B22E1F8D8B00830368 /* Build configuration list for PBXProject "XZKit" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				047FA0CE2E1F8D8B00830368 /* Debug */,
+				047FA0CF2E1F8D8B00830368 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		047FA0CB2E1F8D8B00830368 /* Build configuration list for PBXNativeTarget "XZKit" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				047FA0CC2E1F8D8B00830368 /* Debug */,
+				047FA0CD2E1F8D8B00830368 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		047FA0D02E1F8D8B00830368 /* Build configuration list for PBXNativeTarget "XZKitTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				047FA0D12E1F8D8B00830368 /* Debug */,
+				047FA0D22E1F8D8B00830368 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = 047FA0AF2E1F8D8B00830368 /* Project object */;
+}

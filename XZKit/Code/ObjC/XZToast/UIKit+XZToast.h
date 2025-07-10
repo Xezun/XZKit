@@ -6,7 +6,11 @@
 //
 
 #import <UIKit/UIKit.h>
+#if __has_include(<XZKit/XZKit.h>)
+#import <XZKit/XZToastDefines.h>
+#else
 #import "XZToastDefines.h"
+#endif
 
 NS_ASSUME_NONNULL_BEGIN
 

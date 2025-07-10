@@ -8,12 +8,12 @@
 #import "XZMocoaCollectionViewCell.h"
 #import "XZMocoaModule.h"
 #import "XZMocoaDefines.h"
-#import <objc/runtime.h>
-#if __has_include(<XZDefines/XZRuntime.h>)
-#import <XZDefines/XZRuntime.h>
+#if __has_include(<XZKit/XZKit.h>)
+#import <XZKit/XZRuntime.h>
 #else
 #import "XZRuntime.h"
 #endif
+#import <objc/runtime.h>
 
 @implementation UICollectionViewCell (XZMocoaCollectionViewCell)
 

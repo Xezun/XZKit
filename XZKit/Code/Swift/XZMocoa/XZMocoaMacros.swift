@@ -7,6 +7,8 @@
 
 import Foundation
 
+#if SWIFT_PACKAGE
+@_exported import XZKitObjC
 /// 通过 URL 构造 Mocoa 模块。
 ///
 /// ```swift
@@ -149,5 +151,4 @@ public macro bind(_ vmKey: XZMocoaKey, selector: Selector) = #externalMacro(modu
 
 @attached(body)
 public macro ready() = #externalMacro(module: "XZMocoaMacros", type: "XZMocoaReadyMacro")
-#if SWIFT_PACKAGE
 #endif

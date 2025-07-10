@@ -5,7 +5,11 @@
 //  Created by Xezun on 2024/9/25.
 //
 
+#if __has_include(<XZKit/XZKit.h>)
+#import <XZKit/XZPageView.h>
+#else
 #import "XZPageView.h"
+#endif
 
 @class XZPageViewContext;
 

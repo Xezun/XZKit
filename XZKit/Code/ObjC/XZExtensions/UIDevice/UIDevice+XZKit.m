@@ -5,10 +5,10 @@
 //  Created by Xezun on 2021/11/21.
 //
 
-#import "UIDevice+XZKit.h"
 #import <sys/sysctl.h>
-#if __has_include(<XZDefines/XZDefer.h>)
-#import <XZDefines/XZDefer.h>
+#import "UIDevice+XZKit.h"
+#if __has_include(<XZKit/XZKit.h>)
+#import <XZKit/XZDefer.h>
 #else
 #import "XZDefer.h"
 #endif

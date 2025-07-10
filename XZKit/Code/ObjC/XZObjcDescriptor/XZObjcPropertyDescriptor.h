@@ -5,7 +5,11 @@
 //  Created by 徐臻 on 2025/1/26.
 //
 
+#if __has_include(<XZKit/XZKit.h>)
+#import <XZKit/XZObjcTypeDescriptor.h>
+#else
 #import "XZObjcTypeDescriptor.h"
+#endif
 
 @class XZObjcIvarDescriptor, XZObjcTypeDescriptor;
 

@@ -8,13 +8,8 @@
 #import "XZMLParser.h"
 #import "XZMLDSL.h"
 #import "XZLog.h"
-#if __has_include(<XZDefines/XZMacros.h>)
-#import <XZDefines/XZMacros.h>
-#import <XZExtensions/UIColor+XZKit.h>
-#else
 #import "XZMacros.h"
 #import "UIColor+XZKit.h"
-#endif
 
 /// 安全文本替代字符。默认替代字符为 `*` 星号。
 /// @note 在元素属性中，有此属性有值表明这是一个安全文本。

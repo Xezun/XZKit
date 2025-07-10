@@ -6,8 +6,8 @@
 //
 
 #import <UIKit/UIKit.h>
-#if __has_include(<XZDefines/XZMacros.h>)
-#import <XZDefines/XZMacros.h>
+#if __has_include(<XZKit/XZKit.h>)
+#import <XZKit/XZMacros.h>
 #else
 #import "XZMacros.h"
 #endif

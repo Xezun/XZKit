@@ -5,10 +5,10 @@
 //  Created by Xezun on 2021/10/5.
 //
 
-#import "UIFont+XZKit.h"
 #import <CoreText/CoreText.h>
-#if __has_include(<XZDefines/XZDefer.h>)
-#import <XZDefines/XZDefer.h>
+#import "UIFont+XZKit.h"
+#if __has_include(<XZKit/XZKit.h>)
+#import <XZKit/XZDefer.h>
 #else
 #import "XZDefer.h"
 #endif
@@ -16,37 +16,12 @@
 @implementation UIFont (XZKit)
 
 + (BOOL)xz_registerFontWithURL:(NSURL *)fontURL error:(NSError *__autoreleasing *)error {
-    NSData * const data = [NSData dataWithContentsOfURL:fontURL options:0 error:error];
-    if (data == nil) {
-        return YES;
-    }
-    
-    CGDataProviderRef const cgProvider = CGDataProviderCreateWithCFData((CFDataRef)data);
-    if (cgProvider == NULL) {
-        return YES;
-    }
-    defer(^{
-        CFRelease(cgProvider);
-    });
-    
-    CGFontRef const cgFont = CGFontCreateWithDataProvider(cgProvider);
-    if (cgFont == NULL) {
-        return YES;
-    }
-    defer(^{
-        CFRelease(cgFont);
-    });
-    
     CFErrorRef cfError = NULL;
-    if (CTFontManagerRegisterGraphicsFont(cgFont, &cfError)) {
-        return YES;
+    BOOL const result = CTFontManagerRegisterFontsForURL((__bridge CFURLRef) fontURL, kCTFontManagerScopePersistent, &cfError);
+    if (error) {
+        *error = (__bridge NSError *)cfError;
     }
-    
-    if (error == nil) {
-        return YES;
-    }
-    *error = (__bridge NSError *)(cfError);
-    return NO;
+    return result;
 }
 
 - (BOOL)xz_matchesGlyphsForCharactersInString:(NSString *)aString {

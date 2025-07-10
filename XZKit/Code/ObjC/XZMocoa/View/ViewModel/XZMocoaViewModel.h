@@ -7,9 +7,15 @@
 //
 
 #import <UIKit/UIKit.h>
+#if __has_include(<XZKit/XZKit.h>)
+#import <XZKit/XZMocoaDefines.h>
+#import <XZKit/XZMocoaModule.h>
+#import <XZKit/XZMocoaModel.h>
+#else
 #import "XZMocoaDefines.h"
 #import "XZMocoaModule.h"
 #import "XZMocoaModel.h"
+#endif
 
 NS_ASSUME_NONNULL_BEGIN
 

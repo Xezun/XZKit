@@ -6,13 +6,9 @@
 //  Copyright © 2016年 J. W. Z. All rights reserved.
 //
 
-#import "XZDataDigester.h"
 #import <CommonCrypto/CommonDigest.h>
-#if __has_include(<XZDefines/XZDefer.h>)
-#import <XZDefines/XZDefer.h>
-#else
 #import "XZDefer.h"
-#endif
+#import "XZDataDigester.h"
 
 /// 在 CommonDigest.h 头文件中，消息摘要是通过 init、update、final 三个过程函数以及 context 结构体实现的。
 /// 以下三个函数类型，分别代表这三种通用的操作，通过 DataDigesterContextCreate() 函数关联实际的操作函数。

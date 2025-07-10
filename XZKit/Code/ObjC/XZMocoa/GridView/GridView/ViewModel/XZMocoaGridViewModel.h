@@ -6,11 +6,20 @@
 //  Copyright © 2021 Xezun. All rights reserved.
 //
 
+#import <CoreData/CoreData.h>
+#if __has_include(<XZKit/XZKit.h>)
+#import <XZKit/XZMocoaViewModel.h>
+#import <XZKit/XZMocoaGridViewSectionViewModel.h>
+#import <XZKit/XZMocoaGridViewCellViewModel.h>
+#import <XZKit/XZMocoaGridModel.h>
+#import <XZKit/XZMocoaGridViewModelDefines.h>
+#else
 #import "XZMocoaViewModel.h"
 #import "XZMocoaGridViewSectionViewModel.h"
 #import "XZMocoaGridViewCellViewModel.h"
 #import "XZMocoaGridModel.h"
 #import "XZMocoaGridViewModelDefines.h"
+#endif
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -142,8 +151,6 @@ NS_SWIFT_UI_ACTOR @protocol XZMocoaGridViewModelDelegate <XZMocoaViewModelDelega
 /// @param index Section 的位置
 - (nullable id)model:(id)model modelForSectionAtIndex:(NSInteger)index;
 @end
-
-@import CoreData;
 
 /// 支持直接使用 NSFetchedResultsController 作为数据源，且支持作为 NSFetchedResultsController 的代理。
 ///

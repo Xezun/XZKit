@@ -6,6 +6,15 @@
 //  Copyright © 2021 Xezun. All rights reserved.
 //
 
+#if __has_include(<XZKit/XZKit.h>)
+#import <XZKit/XZMocoaViewModel.h>
+#import <XZKit/XZMocoaGridViewModelDefines.h>
+#import <XZKit/XZMocoaGridViewCellModel.h>
+#import <XZKit/XZMocoaGridViewSectionModel.h>
+#import <XZKit/XZMocoaGridViewSupplementaryViewModel.h>
+#import <XZKit/XZMocoaGridViewCellViewModel.h>
+#import <XZKit/XZDefines.h>
+#else
 #import "XZMocoaViewModel.h"
 #import "XZMocoaGridViewModelDefines.h"
 #import "XZMocoaGridViewCellModel.h"
@@ -13,6 +22,7 @@
 #import "XZMocoaGridViewSupplementaryViewModel.h"
 #import "XZMocoaGridViewCellViewModel.h"
 #import "XZDefines.h"
+#endif
 
 @class XZMocoaGridViewModel;
 

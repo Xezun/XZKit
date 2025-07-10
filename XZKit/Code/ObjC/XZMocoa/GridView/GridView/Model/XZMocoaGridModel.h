@@ -5,8 +5,14 @@
 //  Created by Xezun on 2021/4/10.
 //
 
+#import <CoreData/CoreData.h>
+#if __has_include(<XZKit/XZKit.h>)
+#import <XZKit/XZMocoaModel.h>
+#import <XZKit/XZMocoaGridViewSectionModel.h>
+#else
 #import "XZMocoaModel.h"
 #import "XZMocoaGridViewSectionModel.h"
+#endif
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -27,8 +33,6 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface NSArray (XZMocoaGridModel)
 @end
-
-@import CoreData;
 
 @interface NSFetchedResultsController (XZMocoaGridModel)
 @end

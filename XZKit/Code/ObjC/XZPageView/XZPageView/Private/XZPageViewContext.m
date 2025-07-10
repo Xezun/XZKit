@@ -5,17 +5,12 @@
 //  Created by Xezun on 2024/9/24.
 //
 
+@import ObjectiveC;
 #import "XZPageViewContext.h"
 #import "XZPageViewExtension.h"
 #import "XZLog.h"
-@import ObjectiveC;
-#if __has_include(<XZDefines/XZRuntime.h>)
-#import <XZDefines/XZRuntime.h>
-#import <XZDefines/XZMacros.h>
-#else
 #import "XZRuntime.h"
 #import "XZMacros.h"
-#endif
 
 @implementation XZPageViewContext {
     CGSize _viewSize;

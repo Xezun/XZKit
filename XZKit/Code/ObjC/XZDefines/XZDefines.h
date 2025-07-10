@@ -5,11 +5,19 @@
 //  Created by Xezun on 2021/2/22.
 //
 
+#if __has_include(<XZKit/XZKit.h>)
+#import <XZKit/XZMacros.h>
+#import <XZKit/XZDefer.h>
+#import <XZKit/XZEmpty.h>
+#import <XZKit/XZRuntime.h>
+#import <XZKit/XZUtils.h>
+#else
 #import "XZMacros.h"
 #import "XZDefer.h"
 #import "XZEmpty.h"
 #import "XZRuntime.h"
 #import "XZUtils.h"
+#endif
 
 /**
  编程路漫漫兮，吾将上下而求索。

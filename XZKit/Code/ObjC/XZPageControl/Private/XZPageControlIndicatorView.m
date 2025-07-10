@@ -6,11 +6,7 @@
 //
 
 #import "XZPageControlIndicatorView.h"
-#if __has_include(<XZExtensions/XZShapeView.h>)
-#import <XZExtensions/XZShapeView.h>
-#else
 #import "XZShapeView.h"
-#endif
 
 #define XZPageControlAnimationDuration 0.35
 
