@@ -8,7 +8,7 @@
 import Foundation
 
 #if SWIFT_PACKAGE
-@_exported import XZKitObjC
+@_exported import _XZKitObjC
 /// 通过 URL 构造 Mocoa 模块。
 ///
 /// ```swift
