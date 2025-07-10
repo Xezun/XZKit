@@ -53,13 +53,16 @@ Pod::Spec.new do |s|
         ss.project_header_files = "XZKit/Code/Objc/#{name}/**/Private/**/*.h"
       end
       if hasMacros
-        ss.preserve_paths = ["XZKit/Products/Macro/#{name}"]
-        ss.pod_target_xcconfig = {
-          'OTHER_SWIFT_FLAGS' => "-load-plugin-executable ${PODS_ROOT}/#{name}/XZKit/Products/Macro/#{name}Macros\##{name}Macros"
-        }
-        ss.user_target_xcconfig = {
-          'OTHER_SWIFT_FLAGS' => "-load-plugin-executable ${PODS_ROOT}/#{name}/XZKit/Products/Macro/#{name}Macros\##{name}Macros"
-        }
+      	# 需要 拼接 OTHER_SWIFT_FLAGS 否则会因为多个子库，生成了不同的值而产生冲突
+        #ss.preserve_paths = ["XZKit/Products/Macro/#{name}"]
+#        ss.pod_target_xcconfig = {
+#         'OTHER_SWIFT_FLAGS[config=Debug]' => "-load-plugin-executable ${PODS_ROOT}/#{name}/XZKit/Products/Macros/#{name}/Debug\##{name}Macros",
+#         'OTHER_SWIFT_FLAGS[config=Release]' => "-load-plugin-executable ${PODS_ROOT}/#{name}/XZKit/Products/Macros/#{name}/Release\##{name}Macros"
+#        }
+        # ss.user_target_xcconfig = {
+        #  'OTHER_SWIFT_FLAGS[config=Debug]' => "-load-plugin-executable ${PODS_ROOT}/#{name}/XZKit/Products/Macros/#{name}/Debug\##{name}Macros",
+        #  'OTHER_SWIFT_FLAGS[config=Release]' => "-load-plugin-executable ${PODS_ROOT}/#{name}/XZKit/Products/Macros/#{name}/Release\##{name}Macros"
+        # }
       end
       # 依赖
       ss.dependency "XZKit/Core"

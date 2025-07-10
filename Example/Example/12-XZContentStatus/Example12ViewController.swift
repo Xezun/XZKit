@@ -17,7 +17,7 @@ class Example12ViewController: UIViewController, XZContentStatusRepresentable {
    
     override func viewDidLoad() {
         super.viewDidLoad()
-        
+        #XZLog("XZLog in Swift.");
         self.view.backgroundColor = .white
         
         let empty = self.configuration(for: .empty)
