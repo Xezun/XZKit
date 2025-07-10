@@ -72,22 +72,27 @@ void XZLog(XZLogSystem *system, NSString *format, ...) __attribute__((overloadab
 }
 
 void XZLogv(const char *file, const int line, const char *function, XZLogSystem *system, NSString *format, ...) __attribute__((overloadable)) {
+#if DEBUG
     va_list arguments;
     va_start(arguments, format);
     NSString * const message = [[NSString alloc] initWithFormat:format arguments:arguments];
     va_end(arguments);
     XZLog(file, line, function, system, message);
+#endif
 }
 
 void XZLogv(const char *file, const int line, const char *function, NSString *format, ...) __attribute__((overloadable)) {
+#if DEBUG
     va_list arguments;
     va_start(arguments, format);
     NSString * const message = [[NSString alloc] initWithFormat:format arguments:arguments];
     va_end(arguments);
     XZLog(file, line, function, XZLogSystem.defaultLogSystem, message);
+#endif
 }
 
 void XZLogs(XZLogSystem *system, NSString *file, NSInteger line, NSString *function, NSString *message) {
+#if DEBUG
     NSRange const range = [file rangeOfString:system.name];
     if (range.location == 0 && (range.length + 1) < file.length && [file characterAtIndex:range.length] == '/') {
         file = [file substringFromIndex:range.length + 1];
@@ -95,6 +100,7 @@ void XZLogs(XZLogSystem *system, NSString *file, NSInteger line, NSString *funct
     const char * cfile = [file cStringUsingEncoding:NSUTF8StringEncoding];
     const char * cfunc = [function cStringUsingEncoding:NSUTF8StringEncoding];
     XZLog(cfile, (int)line, cfunc, system, message);
+#endif
 }
 
 
