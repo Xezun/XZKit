@@ -20,11 +20,12 @@ Pod::Spec.new do |s|
   s.author           = { 'Xezun' => 'xezun@icloud.com' }
   s.source           = { :git => 'https://github.com/Xezun/XZKit.git', :tag => s.version.to_s }
   # s.social_media_url = 'https://twitter.com/<TWITTER_USERNAME>'
+  s.readme           = "https://github.com/Xezun/XZKit/blob/main/README.md"
 
   s.swift_version = '6.0'
   s.ios.deployment_target = '13.0'
   
-  s.preserve_paths = ["Products/XZKitMacros-{debug,release}"]
+  s.preserve_paths = ["Products"]
   s.pod_target_xcconfig = {
     # 注入 OC 编译变量
     'GCC_PREPROCESSOR_DEFINITIONS' => 'XZ_FRAMEWORK=1',
@@ -35,23 +36,22 @@ Pod::Spec.new do |s|
     'OTHER_SWIFT_FLAGS[config=Release]' => '-load-plugin-executable ${PODS_ROOT}/XZKit/Products/XZKitMacros-release#XZKitMacros'
   }
 
-  # 在宿主项目中注入宏
-  # 无法单独为每一个子库导入宏，因为所有子库 OTHER_SWIFT_FLAGS 的值需要保持一致，否则无法导入
+  # 在宿主项目中注入 Swift 宏插件
+  # 无法单独为每一个子库导入宏插件，因为 CocoaPods 支持为子库设置不同 OTHER_SWIFT_FLAGS[config=Debug] 值（不带 [config=Debug] 的话支持）。
   s.user_target_xcconfig = {
     'OTHER_SWIFT_FLAGS[config=Debug]' => '-load-plugin-executable ${PODS_ROOT}/XZKit/Products/XZKitMacros-debug#XZKitMacros',
-    'OTHER_SWIFT_FLAGS[config=Release]' => '-load-plugin-executable ${PODS_ROOT}/XZKit/Products/XZKitMacros-debug#XZKitMacros'
+    'OTHER_SWIFT_FLAGS[config=Release]' => '-load-plugin-executable ${PODS_ROOT}/XZKit/Products/XZKitMacros-release#XZKitMacros'
   }
 
   # s.default_subspec = 'Code'
   
+  # XZKit.h 在 XZKit-Swift.h 中引用到
   s.subspec "Core" do |ss|
     ss.public_header_files = 'Sources/Code/ObjC/XZKit.h'
     ss.source_files        = 'Sources/Code/ObjC/XZKit.h'
   end
   
-  D_FLAGS = [];
-  R_FLAGS = [];
-
+  # 拓展一个定义子库的方法
   def s.defineSubspec(name, languages, hasPrivates, dependencies, macrosType)
     self.subspec name do |ss|
       # 源代码
