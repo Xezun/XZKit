@@ -23,47 +23,54 @@ Pod::Spec.new do |s|
 
   s.swift_version = '6.0'
   s.ios.deployment_target = '13.0'
-  s.pod_target_xcconfig = {
-    'GCC_PREPROCESSOR_DEFINITIONS' => 'XZ_FRAMEWORK=1',
-    'OTHER_SWIFT_FLAGS' => '-D XZ_FRAMEWORK'
-  }
   
+  s.preserve_paths = ["Products/XZKitMacros-{debug,release}"]
+  s.pod_target_xcconfig = {
+    # 注入 OC 编译变量
+    'GCC_PREPROCESSOR_DEFINITIONS' => 'XZ_FRAMEWORK=1',
+    # 注入 Swift 编译变量
+    'OTHER_SWIFT_FLAGS' => "-D XZ_FRAMEWORK",
+    # 引入宏
+    'OTHER_SWIFT_FLAGS[config=Debug]' => '-load-plugin-executable ${PODS_ROOT}/XZKit/Products/XZKitMacros-debug#XZKitMacros',
+    'OTHER_SWIFT_FLAGS[config=Release]' => '-load-plugin-executable ${PODS_ROOT}/XZKit/Products/XZKitMacros-release#XZKitMacros'
+  }
+
+  # 在宿主项目中注入宏
+  # 无法单独为每一个子库导入宏，因为所有子库 OTHER_SWIFT_FLAGS 的值需要保持一致，否则无法导入
+  s.user_target_xcconfig = {
+    'OTHER_SWIFT_FLAGS[config=Debug]' => '-load-plugin-executable ${PODS_ROOT}/XZKit/Products/XZKitMacros-debug#XZKitMacros',
+    'OTHER_SWIFT_FLAGS[config=Release]' => '-load-plugin-executable ${PODS_ROOT}/XZKit/Products/XZKitMacros-debug#XZKitMacros'
+  }
+
   # s.default_subspec = 'Code'
   
   s.subspec "Core" do |ss|
-    ss.public_header_files = 'XZKit/Code/ObjC/XZKit.h'
-    ss.source_files        = 'XZKit/Code/ObjC/XZKit.h'
+    ss.public_header_files = 'Sources/Code/ObjC/XZKit.h'
+    ss.source_files        = 'Sources/Code/ObjC/XZKit.h'
   end
+  
+  D_FLAGS = [];
+  R_FLAGS = [];
 
-  def s.defineSubspec(name, languages, hasPrivates, dependencies, hasMacros)
+  def s.defineSubspec(name, languages, hasPrivates, dependencies, macrosType)
     self.subspec name do |ss|
       # 源代码
       case languages
       when "ObjC"
-        ss.public_header_files  = "XZKit/Code/ObjC/#{name}/**/*.h";
-        ss.source_files         = "XZKit/Code/ObjC/#{name}/**/*.{h,m}";
+        ss.public_header_files  = "Sources/Code/ObjC/#{name}/**/*.h";
+        ss.source_files         = "Sources/Code/ObjC/#{name}/**/*.{h,m}";
       when "Swift"
-        ss.source_files         = "XZKit/Code/Swift/#{name}/**/*.swift";
+        ss.source_files         = "Sources/Code/Swift/#{name}/**/*.swift";
       when "Mixed"
-        ss.public_header_files  = "XZKit/Code/ObjC/#{name}/**/*.h";
-        ss.source_files         = "XZKit/Code/{ObjC,Swift}/#{name}/**/*.{h,m,swift}";
+        ss.public_header_files  = "Sources/Code/ObjC/#{name}/**/*.h";
+        ss.source_files         = "Sources/Code/{ObjC,Swift}/#{name}/**/*.{h,m,swift}";
       end
+      
       # 私有文件
       if hasPrivates
-        ss.project_header_files = "XZKit/Code/Objc/#{name}/**/Private/**/*.h"
+        ss.project_header_files = "Sources/Code/Objc/#{name}/**/Private/**/*.h"
       end
-      if hasMacros
-      	# 需要 拼接 OTHER_SWIFT_FLAGS 否则会因为多个子库，生成了不同的值而产生冲突
-        #ss.preserve_paths = ["XZKit/Products/Macro/#{name}"]
-#        ss.pod_target_xcconfig = {
-#         'OTHER_SWIFT_FLAGS[config=Debug]' => "-load-plugin-executable ${PODS_ROOT}/#{name}/XZKit/Products/Macros/#{name}/Debug\##{name}Macros",
-#         'OTHER_SWIFT_FLAGS[config=Release]' => "-load-plugin-executable ${PODS_ROOT}/#{name}/XZKit/Products/Macros/#{name}/Release\##{name}Macros"
-#        }
-        # ss.user_target_xcconfig = {
-        #  'OTHER_SWIFT_FLAGS[config=Debug]' => "-load-plugin-executable ${PODS_ROOT}/#{name}/XZKit/Products/Macros/#{name}/Debug\##{name}Macros",
-        #  'OTHER_SWIFT_FLAGS[config=Release]' => "-load-plugin-executable ${PODS_ROOT}/#{name}/XZKit/Products/Macros/#{name}/Release\##{name}Macros"
-        # }
-      end
+
       # 依赖
       ss.dependency "XZKit/Core"
       for dependency in dependencies
@@ -73,39 +80,39 @@ Pod::Spec.new do |s|
   end
 
   # 基础
-  s.defineSubspec "XZLog",        "Mixed", false, [], true
-  s.defineSubspec "XZDefines",    "ObjC",  false, ["XZLog"], false
-  s.defineSubspec "XZExtensions", "Mixed", false, ["XZDefines"], false
+  s.defineSubspec "XZLog",        "Mixed", false, [], 2
+  s.defineSubspec "XZDefines",    "ObjC",  false, ["XZLog"], 0
+  s.defineSubspec "XZExtensions", "Mixed", false, ["XZDefines"], 0
   
   # 拓展
-  s.defineSubspec "XZURLQuery",       "ObjC",  false, [], false
-  s.defineSubspec "XZGeometry",       "Mixed", false, [], false
-  s.defineSubspec "XZContentStatus",  "Swift", false, ["XZTextImageView"], false
-  s.defineSubspec "XZImage",          "ObjC",  true,  ["XZLog", "XZGeometry"], false
-  s.defineSubspec "XZObjcDescriptor", "ObjC",  false, ["XZDefines"], false
+  s.defineSubspec "XZURLQuery",       "ObjC",  false, [], 0
+  s.defineSubspec "XZGeometry",       "Mixed", false, [], 0
+  s.defineSubspec "XZContentStatus",  "Swift", false, ["XZTextImageView"], 0
+  s.defineSubspec "XZImage",          "ObjC",  true,  ["XZLog", "XZGeometry"], 0
+  s.defineSubspec "XZObjcDescriptor", "ObjC",  false, ["XZDefines"], 0
   
   # 核心
-  s.defineSubspec "XZML",      "ObjC",  true, ["XZDefines", "XZExtensions"], false
-  s.defineSubspec "XZMocoa",   "Mixed", true, ["XZDefines", "XZExtensions", "XZObjcDescriptor"], true
-  s.defineSubspec "XZToast",   "Mixed", true, ["XZGeometry", "XZTextImageView", "XZExtensions"], false
-  s.defineSubspec "XZRefresh", "ObjC",  true, ["XZDefines"], false
+  s.defineSubspec "XZML",      "ObjC",  true, ["XZDefines", "XZExtensions"], 0
+  s.defineSubspec "XZMocoa",   "Mixed", true, ["XZDefines", "XZExtensions", "XZObjcDescriptor"], 1
+  s.defineSubspec "XZToast",   "Mixed", true, ["XZGeometry", "XZTextImageView", "XZExtensions"], 0
+  s.defineSubspec "XZRefresh", "ObjC",  true, ["XZDefines"], 0
   
   # 自定义组件
-  s.defineSubspec "XZPageView",                 "ObjC",  true,  ["XZDefines", "XZGeometry", "XZExtensions"], false
-  s.defineSubspec "XZProgressView",             "Swift", false, [], false
-  s.defineSubspec "XZPageControl",              "ObjC",  false, ["XZExtensions"], false
-  s.defineSubspec "XZSegmentedControl",         "ObjC",  true,  ["XZDefines"], false
-  s.defineSubspec "XZTextImageView",            "Swift", false, ["XZGeometry"], false
-  s.defineSubspec "XZNavigationController",     "Swift", false, ["XZDefines"], false
-  s.defineSubspec "XZCollectionViewFlowLayout", "Swift", false, [], false
+  s.defineSubspec "XZPageView",                 "ObjC",  true,  ["XZDefines", "XZGeometry", "XZExtensions"], 0
+  s.defineSubspec "XZProgressView",             "Swift", false, [], 0
+  s.defineSubspec "XZPageControl",              "ObjC",  false, ["XZExtensions"], 0
+  s.defineSubspec "XZSegmentedControl",         "ObjC",  true,  ["XZDefines"], 0
+  s.defineSubspec "XZTextImageView",            "Swift", false, ["XZGeometry"], 0
+  s.defineSubspec "XZNavigationController",     "Swift", false, ["XZDefines"], 0
+  s.defineSubspec "XZCollectionViewFlowLayout", "Swift", false, [], 0
   
   # 工具类
-  s.defineSubspec "XZTicker",         "Swift", false, [], false
-  s.defineSubspec "XZJSON",           "ObjC",  true,  ["XZObjcDescriptor", "XZExtensions"], false
-  s.defineSubspec "XZLocale",         "ObjC",  false, ["XZDefines"], false
-  s.defineSubspec "XZDataCryptor",    "ObjC",  false, ["XZDefines"], false
-  s.defineSubspec "XZDataDigester",   "ObjC",  false, ["XZDefines", "XZExtensions"], false
-  s.defineSubspec "XZKeychain",       "ObjC",  false, ["XZLog"], false
+  s.defineSubspec "XZTicker",         "Swift", false, [], 0
+  s.defineSubspec "XZJSON",           "ObjC",  true,  ["XZObjcDescriptor", "XZExtensions"], 0
+  s.defineSubspec "XZLocale",         "ObjC",  false, ["XZDefines"], 0
+  s.defineSubspec "XZDataCryptor",    "ObjC",  false, ["XZDefines"], 0
+  s.defineSubspec "XZDataDigester",   "ObjC",  false, ["XZDefines", "XZExtensions"], 0
+  s.defineSubspec "XZKeychain",       "ObjC",  false, ["XZLog"], 0
   
 end
 

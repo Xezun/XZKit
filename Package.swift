@@ -16,14 +16,14 @@ let package = Package(
     targets: [
         .target(
             name: "XZKit",
-            dependencies: ["_XZKitObjC", "XZLogMacros", "XZMocoaMacros"],
-            path: "XZKit",
+            dependencies: ["_XZKitObjC", "XZKitMacros"],
+            path: "Sources",
             sources: ["Code/Swift"],
             swiftSettings: [.define("XZ_FRAMEWORK")]
         ),
         .target(
             name: "_XZKitObjC",
-            path: "XZKit",
+            path: "Sources",
             sources: ["Code/ObjC"],
             publicHeadersPath: "Headers/Public/XZKit",
             cSettings: [
@@ -32,22 +32,13 @@ let package = Package(
             cxxSettings: [.define("XZ_FRAMEWORK")]
         ),
         .macro(
-            name: "XZLogMacros",
+            name: "XZKitMacros",
             dependencies: [
                 .product(name: "SwiftSyntaxMacros", package: "swift-syntax"),
                 .product(name: "SwiftCompilerPlugin", package: "swift-syntax")
             ],
-            path: "XZKit",
-            sources: ["Code/Macro/XZLog"]
-        ),
-        .macro(
-            name: "XZMocoaMacros",
-            dependencies: [
-                .product(name: "SwiftSyntaxMacros", package: "swift-syntax"),
-                .product(name: "SwiftCompilerPlugin", package: "swift-syntax")
-            ],
-            path: "XZKit",
-            sources: ["Code/Macro/XZMocoa"]
+            path: "Sources",
+            sources: ["Code/Macro"]
         )
     ]
 )
