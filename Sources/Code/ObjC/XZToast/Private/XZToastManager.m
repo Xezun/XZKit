@@ -189,7 +189,7 @@
         if (oldTask.view == toastView) {
             oldTask.isViewReused = YES;
             
-            // 隐藏效果反转
+            // MARK: - 视图复用：隐藏动画效果反转
             XZToastWrapperView * const wrapperView = oldTask.wrapperView;
             CALayer * const presentationLayer = wrapperView.layer.presentationLayer;
             if (presentationLayer) {
@@ -528,10 +528,28 @@
             if (item.isViewReused) {
                 continue;
             }
-            // 隐藏效果：渐隐，缩小，反向平移；在复用模式下，会有相反的动画处理。
-            CGFloat const deltaY = item->_frame.size.height * (-item.moveDirection) * item.hideReason;
+            // - MARK: - 隐藏效果：
+            // alpha: 渐隐
+            // transform: 缩小、平移（如果是正常隐藏，则反向平移；如果是被Exceed隐藏，则正向平移；如果没有方向，Exceed隐藏向上平移，正常隐藏不平移）。
+            // 如果此处新增动画效果，也需要在复用处添加相应的反向效果。
+            // 在复用模式下，上述这些动画，需要执行相反的动画处理，即隐藏包含 alpha/transform 两种动画，复用逻辑则这两种动画的反向动画。
+            CGFloat moveDirection = 0.0;
+            switch (item.moveDirection) {
+                case XZToastMoveDirectionNone:
+                    if (item.hideReason == XZToastHideReasonExceed) {
+                        moveDirection = -1.0;
+                    }
+                    break;
+                case XZToastMoveDirectionLand:
+                    moveDirection = XZToastMoveDirectionRise * item.hideReason;
+                    break;
+                case XZToastMoveDirectionRise:
+                    moveDirection = XZToastMoveDirectionLand * item.hideReason;
+                    break;
+            }
+            CGFloat const deltaY = item->_frame.size.height * moveDirection;
             item.wrapperView.alpha = 0.0;
-            item.wrapperView.transform = CGAffineTransformTranslate(CGAffineTransformMakeScale(0.66, 0.66), 0, deltaY);
+            item.wrapperView.transform = CGAffineTransformTranslate(CGAffineTransformMakeScale(0.8, 0.8), 0, deltaY);
         }
     } completion:^(BOOL finished) {
         // 向移除的 toast 发送消息

@@ -203,7 +203,7 @@ static NSMutableDictionary<NSNumber *, UIImage *> *_styleImages = nil;
         if (traitCollection.userInterfaceStyle == UIUserInterfaceStyleDark) {
             return [UIColor colorWithWhite:0.2 alpha:0.95];
         }
-        return [UIColor colorWithWhite:0.0 alpha:0.90];
+        return [UIColor colorWithWhite:0.1 alpha:0.95];
     }];
 }
 
