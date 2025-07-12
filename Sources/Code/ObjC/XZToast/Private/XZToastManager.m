@@ -376,22 +376,23 @@
             }
             [_viewController.view bringSubviewToFront:view];
         } else {
+            // MARK: - 视图入场：准备动画
             switch (_position) {
                 case XZToastPositionTop:
-                    // 顶部 toast 入场动画：渐显下移
+                    // 顶部 toast 入场动画：渐显+下移
                     newToastItem->_frame.origin.y = CGRectGetMinY(_bounds) - newToastItem->_frame.size.height + _offsets[XZToastPositionTop];
                     newToastItem.wrapperView.alpha = 0;
                     newToastItem.wrapperView.frame = newToastItem->_frame;
                     break;
                 case XZToastPositionMiddle:
-                    // 中部 toast 入场动画：弹性放大
+                    // 中部 toast 入场动画：渐显+放大
                     newToastItem->_frame.origin.y = CGRectGetMidY(_bounds) - newToastItem->_frame.size.height * 0.5 + _offsets[XZToastPositionMiddle];
-                    newToastItem.wrapperView.alpha = 1.0;
+                    newToastItem.wrapperView.alpha = 0.0;
                     newToastItem.wrapperView.frame = newToastItem->_frame;
                     newToastItem.wrapperView.transform = CGAffineTransformMakeScale(0.01, 0.01);
                     break;
                 case XZToastPositionBottom:
-                    // 底部 toast 入场动画：渐显上移
+                    // 底部 toast 入场动画：渐显+上移
                     newToastItem->_frame.origin.y = CGRectGetMaxY(_bounds) + _offsets[XZToastPositionBottom];
                     newToastItem.wrapperView.alpha = 0;
                     newToastItem.wrapperView.frame = newToastItem->_frame;
@@ -468,8 +469,9 @@
         }
     }
     
+    // MARK: - 视图入场：执行动画
     UIViewAnimationOptions const options = UIViewAnimationOptionLayoutSubviews;
-    [UIView animateWithDuration:XZToastAnimationDuration delay:0 usingSpringWithDamping:0.8 initialSpringVelocity:0.6 options:options animations:^{
+    [UIView animateWithDuration:XZToastAnimationDuration delay:0 options:options animations:^{
         switch (self->_position) {
             case XZToastPositionTop: {
                 CGFloat __block y = CGRectGetMinY(_bounds) + self->_offsets[XZToastPositionTop];
@@ -528,28 +530,29 @@
             if (item.isViewReused) {
                 continue;
             }
-            // - MARK: - 隐藏效果：
-            // alpha: 渐隐
-            // transform: 缩小、平移（如果是正常隐藏，则反向平移；如果是被Exceed隐藏，则正向平移；如果没有方向，Exceed隐藏向上平移，正常隐藏不平移）。
+            // - MARK: - 视图退场：执行动画，渐隐、平移
             // 如果此处新增动画效果，也需要在复用处添加相应的反向效果。
             // 在复用模式下，上述这些动画，需要执行相反的动画处理，即隐藏包含 alpha/transform 两种动画，复用逻辑则这两种动画的反向动画。
             CGFloat moveDirection = 0.0;
-            switch (item.moveDirection) {
-                case XZToastMoveDirectionNone:
-                    if (item.hideReason == XZToastHideReasonExceed) {
-                        moveDirection = -1.0;
+            switch (item.position) {
+                case XZToastPositionMiddle:
+                    // 中部，正常隐藏，不平移
+                    if (item.hideReason == XZToastHideReasonNormal) {
+                        break;
                     }
-                    break;
-                case XZToastMoveDirectionLand:
-                    moveDirection = XZToastMoveDirectionRise * item.hideReason;
-                    break;
-                case XZToastMoveDirectionRise:
-                    moveDirection = XZToastMoveDirectionLand * item.hideReason;
+                    // 中部，初始位置溢出隐藏，不平移
+                    if (item.moveDirection == XZToastMoveDirectionNone) {
+                        break;
+                    }
+                case XZToastPositionTop:
+                case XZToastPositionBottom:
+                    // 正常隐藏，反向平移；溢出隐藏，正向平移
+                    moveDirection = (-item.moveDirection * item.hideReason);
                     break;
             }
-            CGFloat const deltaY = item->_frame.size.height * moveDirection;
+            CGFloat const deltaY = (item->_frame.size.height + 20) * moveDirection;
             item.wrapperView.alpha = 0.0;
-            item.wrapperView.transform = CGAffineTransformTranslate(CGAffineTransformMakeScale(0.8, 0.8), 0, deltaY);
+            item.wrapperView.transform = CGAffineTransformMakeTranslation(0, deltaY);
         }
     } completion:^(BOOL finished) {
         // 向移除的 toast 发送消息
