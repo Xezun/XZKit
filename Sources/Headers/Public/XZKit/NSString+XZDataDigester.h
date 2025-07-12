@@ -1,0 +1,1 @@
+../../../../Sources/Code/ObjC/XZDataDigester/NSString+XZDataDigester.h

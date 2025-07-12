@@ -1,0 +1,25 @@
+use_frameworks!
+
+platform :ios, '15.0'
+#inhibit_all_warnings!
+
+workspace '../Example.xcworkspace'
+project '../Example.xcodeproj'
+
+target 'Example' do
+
+  pod 'XZKit', :path => '../../../'
+  
+  pod 'SDWebImage'
+  pod 'YYModel', :git => 'https://github.com/Xezun/YYModel.git'
+  # pod 'AFNetworking'
+  
+  target 'ExampleTests' do
+    inherit! :search_paths
+  end
+
+  target 'ExampleUITests' do
+    inherit! :search_paths
+  end
+  
+end
