@@ -8,6 +8,9 @@
 #import "XZLog.h"
 #undef XZLog
 
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wunused-function"
+
 static void XZLog(const char *file, const int line, const char *function, XZLogSystem *system, NSString *message) __attribute__((overloadable)) {
     if (!system.isEnabled) {
         return;
@@ -103,4 +106,4 @@ void XZLogs(XZLogSystem *system, NSString *file, NSInteger line, NSString *funct
 #endif
 }
 
-
+#pragma clang diagnostic pop
