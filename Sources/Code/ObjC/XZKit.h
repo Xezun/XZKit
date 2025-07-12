@@ -13,7 +13,11 @@ FOUNDATION_EXPORT double XZKitVersionNumber;
 //! Project version string for XZKit.
 FOUNDATION_EXPORT const unsigned char XZKitVersionString[];
 
-#if __has_include(<XZKit/XZKit.h>)
+#if COCOAPODS
+
+#import <XZKit/XZKit-umbrella.h>
+
+#elif __has_include(<XZKit/XZKit.h>)
 
 #import <XZKit/XZLog.h>
 #import <XZKit/XZDefines.h>
