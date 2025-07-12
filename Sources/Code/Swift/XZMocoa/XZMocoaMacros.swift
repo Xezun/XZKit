@@ -73,7 +73,14 @@ public macro key(value: Any) = #externalMacro(module: "XZKitMacros", type: "XZMo
 @attached(accessor, names: arbitrary)
 public macro key(_ name: XZMocoaKey, _ value: Any) = #externalMacro(module: "XZKitMacros", type: "XZMocoaKeyMacro")
 
-/// 单向同步：用于 .v 和 .vm 的普通绑定标记。
+/// 单向同步，用于标记 Mocoa 中的 .v 和 .vm 角色的绑定标记。
+///
+/// ### 属性绑定
+///
+/// 标记 Mocoa 角色中，需要单向同步的属性。
+///
+/// 1. ViewModel 绑定 Model 的属性
+///
 /// ```swift
 /// @mocoa(.vm)
 /// class ViewModel: XZMocoaViewModel {
@@ -91,19 +98,13 @@ public macro key(_ name: XZMocoaKey, _ value: Any) = #externalMacro(module: "XZK
 ///     func didChange(_ min: Int, max: Int) { }
 ///
 ///     // 将 model.var1、model.var2 绑定到当前方法
-///     @bind(var1, var2)
+///     @bind(.var1, .var2)
 ///     func didChange(min: Int, max: Int) { }
 /// }
 /// ```
-@attached(peer, names: arbitrary)
-public macro bind() = #externalMacro(module: "XZKitMacros", type: "XZMocoaBindMacro")
-
-/// 单向同步：用于 .v 和 .vm 的的普通绑定标记。
-/// - SeeAlso: 不带参数的 `macro bind()` 宏
-@attached(peer, names: arbitrary)
-public macro bind(_ key: XZMocoaKey...) = #externalMacro(module: "XZKitMacros", type: "XZMocoaBindMacro")
-
-/// 单向同步：专用于 .v 的绑定标记；如果属性为可选类型，将生成 `didSet` 以实现动态绑定。
+///
+/// 2. View 绑定 ViewModel 的属性
+///
 /// ```swift
 /// @mocoa(.v)
 /// class View: UIView, XZMocoaView {
@@ -142,14 +143,58 @@ public macro bind(_ key: XZMocoaKey...) = #externalMacro(module: "XZKitMacros", 
 ///
 /// }
 /// ```
+@attached(peer, names: arbitrary)
+public macro bind() = #externalMacro(module: "XZKitMacros", type: "XZMocoaBindMacro")
+
+/// 将 Model 或 ViewModel 的属性 key 的值，绑定到 ViewModel 或 View 被标记的方法或属性。
+///
+/// - SeeAlso: ``bind()``
+///
+/// - Parameter key: Model 或 ViewModel 的属性
+@attached(peer, names: arbitrary)
+public macro bind(_ key: XZMocoaKey...) = #externalMacro(module: "XZKitMacros", type: "XZMocoaBindMacro")
+
+/// 将 ViewModel 的属性 vkey 值，绑定到 View 的 vkey 属性。
+///
+/// 专用于 .v 角色的绑定标记。如果属性为可选类型，将生成 `didSet` 以实现动态绑定。
+///
+/// - SeeAlso: ``bind()``
+///
+/// - Parameter vkey: ViewModel 和 View 的属性
 @attached(accessor, names: named(didSet))
 public macro bind(v vkey: XZMocoaKey) = #externalMacro(module: "XZKitMacros", type: "XZMocoaBindViewMacro")
 
+/// - SeeAlso: ``bind(v:)``
+///
+/// - Parameters:
+///   - vmkey: ViewModel 的属性
+///   - vkey: View 的属性
 @attached(accessor, names: named(didSet))
 public macro bind(_ vmKey: XZMocoaKey, v vkey: XZMocoaKey) = #externalMacro(module: "XZKitMacros", type: "XZMocoaBindViewMacro")
 
+/// - SeeAlso: ``bind(v:)``
+///
+/// - Parameters:
+///   - vmkey: ViewModel 的属性
+///   - selector: View 的方法
 @attached(accessor, names: named(didSet))
 public macro bind(_ vmKey: XZMocoaKey, selector: Selector) = #externalMacro(module: "XZKitMacros", type: "XZMocoaBindViewMacro")
 
+/// 标记方法为 View 或 ViewModel 的角色初始化方法（非对象的初始化方法）。
+///
+/// 此标记用以取代视图模型的`-[XZMocoaViewModel prepare]`基类方法。
+///
+/// 被标记的方法需要使用 `private` 标记，并且支持多个初始化方法，多个初始化方法将按书写顺序执行。
+///
+/// ```swift
+/// class ViewModel: XZMocoaViewModel {
+///
+///     @ready
+///     private func prepare() {
+///
+///     }
+///
+/// }
+/// ```
 @attached(body)
 public macro ready() = #externalMacro(module: "XZKitMacros", type: "XZMocoaReadyMacro")
