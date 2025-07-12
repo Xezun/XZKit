@@ -355,45 +355,65 @@ FOUNDATION_EXPORT XZMocoaKey const XZMocoaKeyNone NS_SWIFT_NAME(XZMocoaKeyNone);
 
 @interface XZMocoaViewModel (XZMocoaModelObserving)
 
-/// 数据模型键值观察映射表。
+/// “视图模型”观察“数据模型”的键值观察映射表。
 ///
 /// 注册 视图模型方法 与 数据模型属性 之间映射关系的字典。
 ///
-/// @li 键: 接收数据模型属性值的方法。
-/// @li 值: 数据模型的属性名字符串，或属性名字符串组成的数组。
+/// - 键: 接收数据模型属性值的方法。
+/// - 值: 数据模型的“属性名”字符串，或“属性名”字符串组成的数组。
 ///
-/// 方法参数数量，必须与被观察的属性数量一致，比如
+/// - Important: 方法的参数类型、参数数量，必须与属性类型、属性数量保持一致。
 ///
-/// `{ "setMin:max:" : ["min", "max"] }`
+/// 比如要同时观察 min、max 属性，它们二者任一发生改变，都要调用指定方法，那么映射关系如下。
 ///
-/// 表示同时观察 min、max 属性，它们二者任一发生改变，都会调用 `-setMin:max:` 方法。
+/// ```objc
+/// @{
+///     @"setRangeMin:max:" : @[@"min", @"max"]
+/// }
+/// ```
 ///
-/// 方法的参数类型、参数数量，比如与属性类型、属性数量保持一致。
+/// 在 Swift 中，仅需要 `@mocoa` 和 `@bind` 这两个标记，即可自动创建上述映射关系。
 ///
-/// 默认情况下，键值观察是被动的。在开发中，大多数情况下，数据都是单向流动的，数据更新只在绑定时发生一次，
-/// 或者很少发生数据更新，且数据更新也大多在视图模型内或在层级关系内，视图模型完全可以主动触发数据事件，
-/// 没有必要额外的注册观察者。
+/// ```swift
+/// @mocoa
+/// ViewModel: XZMocoaViewModel {
+///     @bind
+///     func setRange(min: Int, max: Int) {
+///     }
+/// }
+/// ```
+///
+/// 因为层级关系可以处理大部分数据更新事件，还有某些框架已经了提供数据更新事件，所以默认情况下，键值观察是被动的。
+/// 若要开启主动键值观察，重写``shouldObserveModelKeysActively``属性，并返回`YES`即可。
 @property (class, nullable, readonly) NSDictionary<NSString *, id> *mappingModelKeys;
 
-/// 是否主动观察模型。默认 NO 否。
+/// 是否主动观察数据模型。默认 NO 否。
 ///
-/// 使用 NSKeyValueObserving 对 `mappingModelKeys` 中的键进行观察。
+/// 使用 NSKeyValueObserving 对 ``mappingModelKeys`` 中的键进行观察。
 ///
 /// 子类重写，可以根据数据模型的类型，决定是否需要主动绑定。
 @property (nonatomic, readonly) BOOL shouldObserveModelKeysActively;
 
 /// 当视图模型更新了 其他视图模型 的 数据模型 后，可通过此方法通知目标视图模型。
-///
+/// 
 /// 默认情况下，此方法按照 `mappingModelKeys` 调用相应的方法。子类可重写。
+/// 
+/// 使用 ``NSFetchedResultsController`` 作为数据源时，可以在代理方法中，触发此方法以跟踪数据变化。
+/// 
+/// ```objc
+/// - (void)controller:(NSFetchedResultsController *)controller didChangeObject:(NSManagedObject *)anObject atIndexPath:(NSIndexPath *)indexPath forChangeType:(NSFetchedResultsChangeType)type newIndexPath:(NSIndexPath *)newIndexPath {
+///     NSDictionary<NSString *, id> * const changedValues = anObject.changedValuesForCurrentEvent;
+///     [viewModel model:anObject didUpdateValuesForKeys:[NSSet setWithArray:changedValues.allKeys]];
+/// }
+/// ```
 ///
-/// 若参数 `keys` 为空，则表示触发所有绑定方法。
+/// - Attention: 当 `NSFetchedResultsController` 作为视图模型 `XZMocoaTableView` 的数据源和代理时，会自动触发此方法。
 ///
-/// 以 NSFetchedResultsController 作为数据模型的 XZMocoaTableView 会自动触发此方法。
+/// - Note: 为了方便在 Swift 中使用枚举，参数 keys 集合元素使用了 XZMocoaKey 类型，理论上应该为 NSString 类型。
 ///
-/// 为了方便在 Swift 中使用枚举，参数 keys 集合元素使用了 XZMocoaKey 类型，理论上应该为 NSString 类型。
-///
-/// @param model 数据模型
-/// @param changedKeys 值发生改变的属性
+/// - Parameters:
+///   - model: 数据模型
+///   - changedKeys: 值发生改变的属性
 - (void)model:(nullable id)model didUpdateValuesForKeys:(NSSet<XZMocoaKey> *)changedKeys;
 
 @end

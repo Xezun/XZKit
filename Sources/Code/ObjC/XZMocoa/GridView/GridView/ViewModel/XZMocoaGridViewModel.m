@@ -950,7 +950,7 @@ typedef void(^XZMocoaGridDelayedUpdates)(__kindof XZMocoaViewModel *self);
             // 如果同时发生了 move 事件，则不会调用此方法
             XZLog(@"[CoreData][update] {%ld, %ld}", indexPath.section, indexPath.item);
             
-            // changedValuesForCurrentEvent 仅包含持久存储属性变更，因此需使用 hasPersistentChangedValues 判断
+            // changedValuesForCurrentEvent 中仅包含持久存储属性变更，先使用 hasPersistentChangedValues 判断是否有更新以优化性能
             if ([anObject hasPersistentChangedValues]) {
                 XZMocoaGridViewCellViewModel * const viewModel = [self cellViewModelAtIndexPath:indexPath];
                 if (viewModel.shouldObserveModelKeysActively) {
