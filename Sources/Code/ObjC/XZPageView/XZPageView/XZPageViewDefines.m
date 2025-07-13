@@ -7,4 +7,4 @@
 
 #import "XZPageViewDefines.h"
 
-NSTimeInterval const XZPageViewAnimationDuration = 0.3;
+NSTimeInterval const XZPageViewAnimationDuration = 0.35;

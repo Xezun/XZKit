@@ -50,7 +50,7 @@ typedef NS_ENUM(NSUInteger, XZImageViewerHideStyle) {
 }
 
 - (NSTimeInterval)transitionDuration:(id<UIViewControllerContextTransitioning>)transitionContext {
-    return XZPageViewAnimationDuration;
+    return 0.5;
 }
 
 - (void)animateTransition:(id<UIViewControllerContextTransitioning>)transitionContext {
@@ -93,6 +93,7 @@ typedef NS_ENUM(NSUInteger, XZImageViewerHideStyle) {
         imageView = itemView.imageView;
     }
     
+    // itemView 可能处于缩放状态：缩放状态 => 正常状态 => 原始状态
     CGRect const imageRect0 = [itemView convertRect:itemView.imageFrame toView:containerView];
     CGRect const imageRect1 = [itemView convertRect:[itemView imageRectForBounds:itemView.bounds] toView:containerView];
     CGRect const imageRect2 = CGRectOffset(imageRect1, 0, CGRectGetMaxY(containerView.bounds) - CGRectGetMinY(imageRect1));
@@ -104,13 +105,15 @@ typedef NS_ENUM(NSUInteger, XZImageViewerHideStyle) {
     [UIView animateKeyframesWithDuration:duration delay:0 options:0 animations:^{
         switch (self->_style) {
             case XZImageViewerHideStyleNone: {
+                // 交互式退场，imageView 的动画已由手势处理，这里仅处理背景（不能没有动画）。
                 [UIView addKeyframeWithRelativeStartTime:0 relativeDuration:1.0 animations:^{
-                    toView.transform = CGAffineTransformIdentity;
                     [toVC setNeedsStatusBarAppearanceUpdate];
+                    toView.transform = CGAffineTransformIdentity;
                 }];
                 break;
             }
             case XZImageViewerHideStyleZoom: {
+                // 缩放到 sourceView 的位置
                 [UIView addKeyframeWithRelativeStartTime:0 relativeDuration:1.0 animations:^{
                     [toVC setNeedsStatusBarAppearanceUpdate];
                     imageView.frame          = sourceRect;
@@ -120,6 +123,7 @@ typedef NS_ENUM(NSUInteger, XZImageViewerHideStyle) {
                 break;
             }
             case XZImageViewerHideStyleDown: {
+                // 直接向下平移退场，没有指定 sourceView
                 [UIView addKeyframeWithRelativeStartTime:0 relativeDuration:1.0 animations:^{
                     [toVC setNeedsStatusBarAppearanceUpdate];
                     fromView.backgroundColor = UIColor.clearColor;
@@ -129,6 +133,7 @@ typedef NS_ENUM(NSUInteger, XZImageViewerHideStyle) {
                 break;
             }
             case XZImageViewerHideStyleZoomDown: {
+                // 处于缩放状态，在离开显示区域前，先缩放到普通状态，然后再退场。
                 [UIView addKeyframeWithRelativeStartTime:0.0 relativeDuration:1.0 animations:^{
                     // 必须将下面的操作放一起，贯穿且为整个动画过程，否则 imageViewer 退场后，状态栏的样式可能会不正确。
                     [toVC setNeedsStatusBarAppearanceUpdate];
@@ -139,12 +144,13 @@ typedef NS_ENUM(NSUInteger, XZImageViewerHideStyle) {
                     imageView.frame = CGRectOffset(imageRect2, 0, -imageRect2.size.height);
                 }];
                 [UIView addKeyframeWithRelativeStartTime:0.7 relativeDuration:0.3 animations:^{
-                    imageView.frame          = imageRect2;
+                    imageView.frame = imageRect2;
                 }];
                 break;
             }
         }
     } completion:^(BOOL finished) {
+        itemView.imageView = imageView;
         if (transitionContext.transitionWasCancelled) {
             [transitionContext completeTransition:NO];
             toView.transform = CGAffineTransformIdentity;
@@ -153,7 +159,6 @@ typedef NS_ENUM(NSUInteger, XZImageViewerHideStyle) {
         } else {
             [transitionContext completeTransition:YES];
         }
-        itemView.imageView = imageView;
     }];
 }
 

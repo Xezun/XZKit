@@ -88,16 +88,22 @@
 }
 
 - (BOOL)prefersStatusBarHidden {
-    // 交互式退场时，让状态栏与目标控制器一致。
-    // Apple 交互式转场可能存在 BUG ：
-    // 非交互式退场，在 animateTransition: 方法中布局时，目标控制器是计算了状态栏的布局，safeArea.top = 20
-    // 但在交互式退场时，目标控制器布局没有计算状态栏，即 safeArea.top = 0
-    // 所以在交互式退场时，提前将状态栏显示出来，以避免目标控制器布局不正确。
+    // 目的：交互式退场时，让状态栏与目标控制器一致。
+    //
+    // 【UIKit 可能存在 BUG 】
+    // 在 animateTransition: 方法中获取布局时，
+    // 非交互式退场，目标控制器计算了状态栏高度，获取到 safeArea.top 的值为 20 点；
+    // 在交互式退场，目标控制器未计算状态栏高度，获取到 safeArea.top 的值为 0  点。
+    // 这导致在交互式转场时，获取 sourceView 位置不准确。
+    //
+    // 所以，在交互式退场时，状态栏与目标控制器保持一致，以避免目标控制器布局不正确。
     return _hideController ? self.presentingViewController.prefersStatusBarHidden : YES;
 }
 
 - (UIStatusBarStyle)preferredStatusBarStyle {
-    return _hideController ? self.presentingViewController.preferredStatusBarStyle : UIStatusBarStyleLightContent;
+    // 【UIKit 可能存在 BUG 】
+    // 当转场动画时长为 0.35 秒时，Viewer 退场后，状态栏的样式可能不正确，使用 0.3 秒正常，目前使用 0.5 秒也正常。
+    return _hideController ? self.presentingViewController.preferredStatusBarStyle : UIStatusBarStyleDarkContent;
 }
 
 - (void)setSourceView:(UIView *)sourceView {

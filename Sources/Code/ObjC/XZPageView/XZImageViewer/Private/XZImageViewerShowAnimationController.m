@@ -27,7 +27,7 @@
 }
 
 - (NSTimeInterval)transitionDuration:(id<UIViewControllerContextTransitioning>)transitionContext {
-    return XZPageViewAnimationDuration;
+    return 0.5;
 }
 
 - (void)animateTransition:(id<UIViewControllerContextTransitioning>)transitionContext {
@@ -64,6 +64,8 @@
         imageView.frame    = imageToRect;
         toView.backgroundColor = UIColor.blackColor;
     } completion:^(BOOL finished) {
+        itemView.imageView = imageView;
+        fromView.transform = CGAffineTransformIdentity;
         if (transitionContext.transitionWasCancelled) {
             [toView removeFromSuperview];
             [transitionContext completeTransition:NO];
@@ -71,8 +73,6 @@
             [transitionContext completeTransition:YES];
             toView.backgroundColor = UIColor.blackColor;
         }
-        itemView.imageView = imageView;
-        fromView.transform = CGAffineTransformIdentity;
     }];
 }
 
