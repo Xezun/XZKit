@@ -110,6 +110,10 @@
             @"iPhone17,2": @"iPhone 16 Pro Max",
             @"iPhone17,3": @"iPhone 16",
             @"iPhone17,4": @"iPhone 16 Plus",
+            @"iPhone18,1": @"iPhone 17 Pro",
+            @"iPhone18,2": @"iPhone 17 Pro Max",
+            @"iPhone18,3": @"iPhone 17",
+            @"iPhone18,4": @"iPhone 17 Plus",
             // 模拟器
             @"i386":    @"Simulator",
             @"x86_64":    @"Simulator",
