@@ -169,7 +169,16 @@
 
 XZMarkupPredicate const XZMarkupPredicateBraces = { '{', '}' };
 
-@implementation NSString (XZLocalization)
+static inline void appendBytes(NSMutableString *results, const char *string, NSInteger from, NSInteger to) {
+    NSInteger const length = to - from;
+    if (length < 1) {
+        return;
+    }
+    NSString * const substring = [[NSString alloc] initWithBytesNoCopy:(void *)(string + from) length:length encoding:NSUTF8StringEncoding freeWhenDone:NO];
+    [results appendString:substring];
+}
+
+@implementation NSString (XZMarkupPredicate)
 
 + (instancetype)xz_stringWithBytesInBytes:(void *)bytes from:(NSInteger)from to:(NSInteger)to encoding:(NSStringEncoding)encoding freeWhenDone:(BOOL)freeBuffer {
     NSInteger const length = to - from;
@@ -189,7 +198,7 @@ XZMarkupPredicate const XZMarkupPredicateBraces = { '{', '}' };
     
     NSInteger from  = 0;
     NSInteger to    = 0;
-    NSInteger state = 0; ///< 0，普通字符; 1，已遇到开始字符；2，已遇到结束字符
+    NSInteger state = 0; ///< 0，未遇到开始字符，也未遇到结束字符; 1，已遇到开始字符；2，已遇到结束字符；3，前一个字符是结束字符
     
     NSMutableString * const results = [NSMutableString stringWithCapacity:length * 2];
     NSMutableString * const matched = [NSMutableString string];
@@ -202,25 +211,47 @@ XZMarkupPredicate const XZMarkupPredicateBraces = { '{', '}' };
             continue;
         }
         
+        // 1. 遇到标记字符就结算
+        // 2. 结算不包括标记字符
+        // 3. 连续两个标记字符，视为一个普通字符
+        
         if (character == predicate.end) {
             switch (state) {
                 case 0:
-                    // 没有遇到开始字符，就遇到结束字符，当作普通字符处理，包括多个连续的结束字符
-                    to += 1;
+                    // 没有遇到开始字符，就遇到结束字符
+                    state = 3;
+                    appendBytes(results, string, from, to);
+                    from = to + 1;
+                    to = from;
                     break;
                 case 1:
-                    // 遇到开始字符后，再遇到结束字符，先标记遇到结束字符
+                    // 遇到开始字符后，再遇到结束字符，先标记遇到结束字符，如果紧接着遇到
+                    // 1. 结束字符，视为结束字符逃逸
+                    // 2. 其他字符，结算
                     state = 2;
-                    [matched xz_appendBytesInBytes:(void *)string from:from to:to encoding:NSUTF8StringEncoding freeWhenDone:NO];
+                    appendBytes(matched, string, from, to);
                     from = to + 1;
                     to = from;
                     break;
                 case 2:
                     // 遇到开始字符后，遇到连续的结束字符，逃逸一个结束字符为普通字符
-                    state = 1;
+                    state = 1; // 字符逃逸，恢复没有遇到结束字符状态
                     [matched appendFormat:@"%c", character];
                     from = to + 1;
                     to = from;
+                    break;
+                case 3:
+                    // 没开始遇到结束字符，
+                    if (from == to) {
+                        // 连续遇到结束字符，第二个结束字符，当普通字符
+                        state = 0;
+                        to += 1;
+                    } else {
+                        // 不连续遇到结束字符
+                        appendBytes(results, string, from, to);
+                        from = to + 1;
+                        to = from;
+                    }
                     break;
                 default:
                     NSAssert(NO, @"Never");
@@ -236,9 +267,15 @@ XZMarkupPredicate const XZMarkupPredicateBraces = { '{', '}' };
                     to = from;
                     break;
                 case 1:
-                    // 连续遇到开始字符，逃逸一个开始字符为普通字符
-                    state = 0;
-                    [results appendFormat:@"%c", character];
+                    if (from == to) {
+                        // 连续遇到开始字符，逃逸一个开始字符为普通字符
+                        state = 0;
+                        [results appendFormat:@"%c", character];
+                    } else {
+                        // 不连续遇到开始字符，重新开始
+                        //  [results appendFormat:@"%c", character];
+                        [results xz_appendBytesInBytes:(void *)string from:from to:to encoding:NSUTF8StringEncoding freeWhenDone:NO];
+                    }
                     from = to + 1;
                     to = from;
                     break;
@@ -247,6 +284,12 @@ XZMarkupPredicate const XZMarkupPredicateBraces = { '{', '}' };
                     [results appendString:transform(matched)];
                     [matched setString:@""];
                     // 标记状态
+                    state = 1;
+                    from = to + 1;
+                    to = from;
+                    break;
+                case 3:
+                    // 忽略前面这个结束字符
                     state = 1;
                     from = to + 1;
                     to = from;
@@ -262,6 +305,11 @@ XZMarkupPredicate const XZMarkupPredicateBraces = { '{', '}' };
             [results appendString:transform(matched)];
             [matched setString:@""];
             // 标记状态
+            state = 0;
+            from = to;
+            to += 1;
+        } else if (state == 3) {
+            // 没开始就遇到结束字符，后遇到普通字符
             state = 0;
             from = to;
             to += 1;

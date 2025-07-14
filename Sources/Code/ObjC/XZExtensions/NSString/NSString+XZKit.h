@@ -158,7 +158,7 @@ FOUNDATION_STATIC_INLINE XZMarkupPredicate XZMarkupPredicateMake(char start, cha
 /// 本地化字符串中，默认以大括号 `{}` 作为参数分隔符。
 FOUNDATION_EXPORT XZMarkupPredicate const XZMarkupPredicateBraces;
 
-@interface NSString (XZLocalization)
+@interface NSString (XZMarkupPredicate)
 
 /// 以 bytes 中从 from 到 to 的读取字节创建字符串。
 /// - Parameters:
@@ -185,18 +185,35 @@ FOUNDATION_EXPORT XZMarkupPredicate const XZMarkupPredicateBraces;
 
 /// 使用标记字符作为占位符的字符串格式化创建方式。
 ///
-/// 以花括号作为标记字符为例。
-/// ```objc
-/// // 使用数字 n 表示第 n 个参数
-/// [NSString xz_stringWithBracesFormat:@"{1}{2}{1}", @"A", @"B"] // equals @"ABA"
-/// // 支持 c 字符串格式，且只需要指明第一个
-/// [NSString xz_stringWithBracesFormat:@"{1%.2f}{2}{1}", M_PI, @"B"] // equals @"3.14B3.14"
-/// ```
+/// 以花括号作为标记字符为例，格式化规则如下。
 /// - 使用自然数（从 1 开始）作为代表列表中指定位置的参数。
-/// - 支持 c 字符串格式
-/// - 两个连续的标记，将视为一个普通字符逃逸
-/// - 没有匹配结束字符的开始字符，自动逃逸
-/// - 没有匹配开始字符的结束字符，自动逃逸
+/// ```objc
+/// // will produce @"ABA"
+/// [NSString xz_stringWithBracesFormat:@"{1}{2}{1}", @"A", @"B"]
+/// ```
+/// - 支持 c 字符串格式，且格式会继承。
+/// ```objc
+/// // will produce @"3.14"
+/// [NSString xz_stringWithBracesFormat:@"{1%.2f}", M_PI];
+/// // will produce @"3.14 3.14"
+/// [NSString xz_stringWithBracesFormat:@"{1%.2f} {1}", M_PI];
+/// // will produce @"3.14 3.14 3.142 3.142"
+/// [NSString xz_stringWithBracesFormat:@"{1%.2f} {1} {1%.3f} {1}", M_PI];
+/// ```
+/// - 两个连续的标记，将视为一个普通字符逃逸。
+/// ```objc
+/// // will produce @"{1}"
+/// [NSString xz_stringWithBracesFormat:@"{{1}}", @"abc"]
+/// // will produce @"{abc}"
+/// [NSString xz_stringWithBracesFormat:@"{{{1}}}", @"abc"]
+/// ```
+/// - 单独的标记字符会被忽略。
+/// ```objc
+/// // will produce @"123abc"
+/// [NSString xz_stringWithBracesFormat:@"{123{1}", @"abc"]
+/// // will produce @"abc123"
+/// [NSString xz_stringWithBracesFormat:@"{1}123}", @"abc"]
+/// ```
 ///
 /// - Parameters:
 ///   - predicate: 标记字符

@@ -24,13 +24,13 @@
     NSLog(@"%@", string);
     XCTAssert([string isEqualToString:@"3.14"]);
     
-    string = [NSString xz_stringWithBracesFormat:@"{{123}"];
+    string = [NSString xz_stringWithBracesFormat:@"{{123}}"];
     NSLog(@"%@", string);
     XCTAssert([string isEqualToString:@"{123}"]);
     
     string = [NSString xz_stringWithBracesFormat:@"{1{1}", @"abc"];
     NSLog(@"%@", string);
-    XCTAssert([string isEqualToString:@"{1abc"]);
+    XCTAssert([string isEqualToString:@"1abc"]);
     
     string = [NSString xz_stringWithBracesFormat:@"M_PI = {1%.2f}", value];
     NSLog(@"%@", string);
