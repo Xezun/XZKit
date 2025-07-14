@@ -109,7 +109,7 @@ Pod::Spec.new do |s|
   # 工具类
   s.defineSubspec "XZTicker",         "Swift", false, [], 0
   s.defineSubspec "XZJSON",           "ObjC",  true,  ["XZObjcDescriptor", "XZExtensions"], 0
-  s.defineSubspec "XZLocale",         "ObjC",  false, ["XZDefines"], 0
+  s.defineSubspec "XZLocale",         "ObjC",  false, ["XZDefines", "XZExtensions"], 0
   s.defineSubspec "XZDataCryptor",    "ObjC",  false, ["XZDefines"], 0
   s.defineSubspec "XZDataDigester",   "ObjC",  false, ["XZDefines", "XZExtensions"], 0
   s.defineSubspec "XZKeychain",       "ObjC",  false, ["XZLog"], 0

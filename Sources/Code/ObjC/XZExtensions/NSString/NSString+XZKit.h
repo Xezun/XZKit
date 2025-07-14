@@ -138,4 +138,76 @@ FOUNDATION_STATIC_INLINE CGFloat XZMakeFloat(id _Nullable aValue, NSInteger defa
 
 @end
 
+
+/// 以指定字符作为开始结束标记的判断模式。
+typedef struct XZMarkupPredicate {
+    /// 开始字符。两个连续的开始字符，视为一个逃逸了的开始字符。
+    char start;
+    /// 结束字符。没有匹配开始字符的结束字符，作为普通字符处理。
+    char end;
+} XZMarkupPredicate;
+
+/// 构造占位分隔符。
+/// - Parameters:
+///   - start: 起始字符
+///   - end: 终止字符
+FOUNDATION_STATIC_INLINE XZMarkupPredicate XZMarkupPredicateMake(char start, char end) {
+    return (XZMarkupPredicate){ start, end };
+}
+
+/// 本地化字符串中，默认以大括号 `{}` 作为参数分隔符。
+FOUNDATION_EXPORT XZMarkupPredicate const XZMarkupPredicateBraces;
+
+@interface NSString (XZLocalization)
+
+/// 以 bytes 中从 from 到 to 的读取字节创建字符串。
+/// - Parameters:
+///   - bytes: 二进制流
+///   - from: 待创建字符串的开始字节（从 0 开始计算）位置
+///   - to: 待创建字符串的结束字节（从 0 开始计算）位置，不包含 to 位置的字节
+///   - encoding: 字符串编码
+///   - freeBuffer: 是否自动释放二进制流
++ (nullable instancetype)xz_stringWithBytesInBytes:(void *)bytes from:(NSInteger)from to:(NSInteger)to encoding:(NSStringEncoding)encoding freeWhenDone:(BOOL)freeBuffer NS_SWIFT_NAME(init(inBytes:from:to:freeWhenDone:));
+
+/// 替换字符串中被分隔符分割的占位符。
+/// - Parameters:
+///   - predicate: 分隔符
+///   - transform: 获取占位符的替换内容的块函数
+- (NSString *)xz_stringByReplacingMatchesOfPredicate:(XZMarkupPredicate)predicate usingBlock:(id(^NS_NOESCAPE)(NSString *matchedString))transform NS_SWIFT_NAME(replacingMatches(of:using:));
+
+/// 替换字符串中被分隔符分割的占位符。
+/// - Parameters:
+///   - predicate: 分隔符
+///   - aDictionary: key 为占位符，value 为替换内容
+- (NSString *)xz_stringByReplacingMatchesOfPredicate:(XZMarkupPredicate)predicate usingDictionary:(NSDictionary<NSString *, id> *)aDictionary NS_SWIFT_NAME(replacingMatches(of:using:));
+
++ (instancetype)xz_stringWithPredicate:(XZMarkupPredicate)predicate format:(NSString *)format arguments:(va_list)arguments;
+
+/// 使用标记字符作为占位符的字符串格式化创建方式。
+///
+/// 以花括号作为标记字符为例。
+/// ```objc
+/// // 使用数字 n 表示第 n 个参数
+/// [NSString xz_stringWithBracesFormat:@"{1}{2}{1}", @"A", @"B"] // equals @"ABA"
+/// // 支持 c 字符串格式，且只需要指明第一个
+/// [NSString xz_stringWithBracesFormat:@"{1%.2f}{2}{1}", M_PI, @"B"] // equals @"3.14B3.14"
+/// ```
+/// - 使用自然数（从 1 开始）作为代表列表中指定位置的参数。
+/// - 支持 c 字符串格式
+/// - 两个连续的标记，将视为一个普通字符逃逸
+/// - 没有匹配结束字符的开始字符，自动逃逸
+/// - 没有匹配开始字符的结束字符，自动逃逸
+///
+/// - Parameters:
+///   - predicate: 标记字符
+///   - format: 字符串格式
++ (instancetype)xz_stringWithPredicate:(XZMarkupPredicate)predicate format:(NSString *)format, ...;
++ (instancetype)xz_stringWithBracesFormat:(NSString *)format, ...;
+
+@end
+
+@interface NSMutableString (XZKit)
+- (void)xz_appendBytesInBytes:(void *)bytes from:(NSInteger)from to:(NSInteger)to encoding:(NSStringEncoding)encoding freeWhenDone:(BOOL)freeBuffer;
+@end
+
 NS_ASSUME_NONNULL_END

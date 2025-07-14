@@ -136,38 +136,6 @@ FOUNDATION_EXPORT NSNotificationName const XZLanguagePreferencesDidChangeNotific
 - (NSBundle *)xz_languageResourceBundleForLanguage:(XZLanguage)language NS_SWIFT_NAME(resourceBundle(for:));
 @end
 
-/// 识别字符串中的占位参数的格式。
-typedef struct XZLocalizationPredicate {
-    /// 开始字符
-    char start;
-    /// 结束字符。
-    char end;
-} XZLocalizationPredicate;
-
-/// 构造占位分隔符。
-/// - Parameters:
-///   - start: 起始字符
-///   - end: 终止字符
-FOUNDATION_STATIC_INLINE XZLocalizationPredicate XZLocalizationPredicateMake(char start, char end) {
-    return (XZLocalizationPredicate){ start, end };
-}
-
-/// 本地化字符串中，默认以大括号 `{}` 作为参数分隔符。
-FOUNDATION_EXPORT XZLocalizationPredicate const XZLocalizationPredicateBraces;
-
-@interface NSString (XZLocalization)
-/// 替换字符串中被分隔符分割的占位符。
-/// - Parameters:
-///   - predicate: 分隔符
-///   - transform: 获取占位符的替换内容的块函数
-- (NSString *)xz_stringByReplacingMatchesOfPredicate:(XZLocalizationPredicate)predicate withBlock:(id(^NS_NOESCAPE)(NSString *matchedString))transform NS_SWIFT_NAME(replacingMatches(of:with:));
-/// 替换字符串中被分隔符分割的占位符。
-/// - Parameters:
-///   - predicate: 分隔符
-///   - aDictionary: key 为占位符，value 为替换内容
-- (NSString *)xz_stringByReplacingMatchesOfPredicate:(XZLocalizationPredicate)predicate withDictionary:(NSDictionary<NSString *, id> *)aDictionary NS_SWIFT_NAME(replacingMatches(of:with:));
-@end
-
 #ifndef XZLocalizedString
 
 #define _XZLocalizedString(_stringToBeLocalized_, _table_, _bundle_, _defaultValue_, ...) \

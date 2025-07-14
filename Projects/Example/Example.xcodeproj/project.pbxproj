@@ -33,6 +33,7 @@
 		046CE6422D34C3A800B9389F /* Example19.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 046CE6402D34C3A800B9389F /* Example19.storyboard */; };
 		046CE6472D34C4A700B9389F /* Example18.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 046CE6462D34C4A700B9389F /* Example18.storyboard */; };
 		04A2932A2E176D73009631C8 /* XZMocoaTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 04A293292E176D6C009631C8 /* XZMocoaTests.swift */; };
+		04A583B72E25057C00254AF0 /* XZExtensions.m in Sources */ = {isa = PBXBuildFile; fileRef = 04A583B62E25057C00254AF0 /* XZExtensions.m */; };
 		04B12AC92D37D6F200FADC8B /* Example20ViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 04B12AC82D37D6F200FADC8B /* Example20ViewController.m */; };
 		04B1EA432D41E31D004F5DF0 /* Example02NavigationController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 04B1EA422D41E31D004F5DF0 /* Example02NavigationController.swift */; };
 		04C46B002DB6367B005EA389 /* XZObjcDescriptorTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 04C46AFF2DB6367B005EA389 /* XZObjcDescriptorTests.m */; };
@@ -355,6 +356,7 @@
 		046CE6412D34C3A800B9389F /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Example19.storyboard; sourceTree = "<group>"; };
 		046CE6462D34C4A700B9389F /* Example18.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = Example18.storyboard; sourceTree = "<group>"; };
 		04A293292E176D6C009631C8 /* XZMocoaTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = XZMocoaTests.swift; sourceTree = "<group>"; };
+		04A583B62E25057C00254AF0 /* XZExtensions.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = XZExtensions.m; sourceTree = "<group>"; };
 		04B12AC72D37D6F200FADC8B /* Example20ViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Example20ViewController.h; sourceTree = "<group>"; };
 		04B12AC82D37D6F200FADC8B /* Example20ViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = Example20ViewController.m; sourceTree = "<group>"; };
 		04B1EA422D41E31D004F5DF0 /* Example02NavigationController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Example02NavigationController.swift; sourceTree = "<group>"; };
@@ -945,6 +947,14 @@
 				046CE63A2D34C38C00B9389F /* Example19TextViewController.swift */,
 			);
 			path = "19-XZDataCryptor";
+			sourceTree = "<group>";
+		};
+		04A583B42E25055900254AF0 /* XZExtensions */ = {
+			isa = PBXGroup;
+			children = (
+				04A583B62E25057C00254AF0 /* XZExtensions.m */,
+			);
+			path = XZExtensions;
 			sourceTree = "<group>";
 		};
 		04C46AFE2DB63658005EA389 /* XZObjcDescriptor */ = {
@@ -2824,6 +2834,7 @@
 			isa = PBXGroup;
 			children = (
 				29648BFF2A72556E0090F445 /* ExampleTests.m */,
+				04A583B42E25055900254AF0 /* XZExtensions */,
 				29635C092DE779D500C552AF /* XZMocoa */,
 				0417233E2DD31D980037ABE2 /* XZGeometry */,
 				04C46AFE2DB63658005EA389 /* XZObjcDescriptor */,
@@ -3110,9 +3121,13 @@
 			inputFileListPaths = (
 				"${PODS_ROOT}/Target Support Files/Pods-Example/Pods-Example-frameworks-${CONFIGURATION}-input-files.xcfilelist",
 			);
+			inputPaths = (
+			);
 			name = "[CP] Embed Pods Frameworks";
 			outputFileListPaths = (
 				"${PODS_ROOT}/Target Support Files/Pods-Example/Pods-Example-frameworks-${CONFIGURATION}-output-files.xcfilelist",
+			);
+			outputPaths = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
@@ -3416,6 +3431,7 @@
 				04A2932A2E176D73009631C8 /* XZMocoaTests.swift in Sources */,
 				041723402DD31DBC0037ABE2 /* XZGeometryTests.m in Sources */,
 				04C46B002DB6367B005EA389 /* XZObjcDescriptorTests.m in Sources */,
+				04A583B72E25057C00254AF0 /* XZExtensions.m in Sources */,
 				29635C0B2DE779FE00C552AF /* XZMocoaTests.m in Sources */,
 				040C8CA92DB22B9E0024BA72 /* XZDispatchMacrosTests.m in Sources */,
 			);

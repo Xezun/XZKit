@@ -166,3 +166,184 @@
 
 @end
 
+
+XZMarkupPredicate const XZMarkupPredicateBraces = { '{', '}' };
+
+@implementation NSString (XZLocalization)
+
++ (instancetype)xz_stringWithBytesInBytes:(void *)bytes from:(NSInteger)from to:(NSInteger)to encoding:(NSStringEncoding)encoding freeWhenDone:(BOOL)freeBuffer {
+    NSInteger const length = to - from;
+    if (length < 1) {
+        return nil;
+    }
+    return [[self alloc] initWithBytesNoCopy:(bytes + from) length:length encoding:encoding freeWhenDone:freeBuffer];
+}
+
+
+- (NSString *)xz_stringByReplacingMatchesOfPredicate:(XZMarkupPredicate)predicate usingBlock:(id  _Nonnull (^NS_NOESCAPE)(NSString * _Nonnull))transform {
+    NSInteger const length = [self lengthOfBytesUsingEncoding:NSUTF8StringEncoding];
+    if (length < 3) {
+        return self;
+    }
+    const char * const string = [self cStringUsingEncoding:NSUTF8StringEncoding];
+    
+    NSInteger from  = 0;
+    NSInteger to    = 0;
+    NSInteger state = 0; ///< 0，普通字符; 1，已遇到开始字符；2，已遇到结束字符
+    
+    NSMutableString * const results = [NSMutableString stringWithCapacity:length * 2];
+    NSMutableString * const matched = [NSMutableString string];
+    
+    while (to < length) {
+        char const character = string[to];
+        
+        // 在 UTF-8 编码中 ASCII 字符是首位为 0 的字节
+        if (character & 0b10000000) {
+            continue;
+        }
+        
+        if (character == predicate.end) {
+            switch (state) {
+                case 0:
+                    // 没有遇到开始字符，就遇到结束字符，当作普通字符处理，包括多个连续的结束字符
+                    to += 1;
+                    break;
+                case 1:
+                    // 遇到开始字符后，再遇到结束字符，先标记遇到结束字符
+                    state = 2;
+                    [matched xz_appendBytesInBytes:(void *)string from:from to:to encoding:NSUTF8StringEncoding freeWhenDone:NO];
+                    from = to + 1;
+                    to = from;
+                    break;
+                case 2:
+                    // 遇到开始字符后，遇到连续的结束字符，逃逸一个结束字符为普通字符
+                    state = 1;
+                    [matched appendFormat:@"%c", character];
+                    from = to + 1;
+                    to = from;
+                    break;
+                default:
+                    NSAssert(NO, @"Never");
+                    break;
+            }
+        } else if (character == predicate.start) {
+            switch (state) {
+                case 0:
+                    // 遇到开始字符，标记状态
+                    state = 1;
+                    [results xz_appendBytesInBytes:(void *)string from:from to:to encoding:NSUTF8StringEncoding freeWhenDone:NO];
+                    from = to + 1;
+                    to = from;
+                    break;
+                case 1:
+                    // 连续遇到开始字符，逃逸一个开始字符为普通字符
+                    state = 0;
+                    [results appendFormat:@"%c", character];
+                    from = to + 1;
+                    to = from;
+                    break;
+                case 2:
+                    // 遇到开始字符时，前面时配对的匹配字符，结算
+                    [results appendString:transform(matched)];
+                    [matched setString:@""];
+                    // 标记状态
+                    state = 1;
+                    from = to + 1;
+                    to = from;
+                    break;
+                default:
+                    NSAssert(NO, @"Never");
+                    break;
+            }
+        } else if (state == 1) {
+            to += 1;
+        } else if (state == 2) {
+            // 普通字符，前面是配对的匹配字符，结算
+            [results appendString:transform(matched)];
+            [matched setString:@""];
+            // 标记状态
+            state = 0;
+            from = to;
+            to += 1;
+        } else {
+            // 普通字符
+            to += 1;
+        }
+    }
+    
+    // 最终结算，如果是遇到标记字符，则加上标记字符
+    switch (state) {
+        case 0:
+            [results xz_appendBytesInBytes:(void *)string from:from to:to encoding:NSUTF8StringEncoding freeWhenDone:NO];
+            break;
+        case 1:
+            from -= 1;
+            [results xz_appendBytesInBytes:(void *)string from:from to:to encoding:NSUTF8StringEncoding freeWhenDone:NO];
+            break;
+        case 2:
+            [results appendString:transform(matched)];
+            break;
+        default:
+            NSAssert(NO, @"Never");
+            break;
+    }
+    
+    return results;
+}
+
+- (NSString *)xz_stringByReplacingMatchesOfPredicate:(XZMarkupPredicate)predicate usingDictionary:(NSDictionary<NSString *,id> *)aDictionary {
+    return [self xz_stringByReplacingMatchesOfPredicate:predicate usingBlock:^NSString * _Nonnull(NSString * _Nonnull string) {
+        id const value = aDictionary[string];
+        return value ?: [NSString stringWithFormat:@"%c%@%c", predicate.start, string, predicate.end];
+    }];
+}
+
++ (instancetype)xz_stringWithPredicate:(XZMarkupPredicate)predicate format:(NSString *)format arguments:(va_list)arguments {
+    NSMutableDictionary<NSString *, NSString *> * const map = [NSMutableDictionary dictionary];
+    format = [format xz_stringByReplacingMatchesOfPredicate:predicate usingBlock:^id(NSString * const matchedString) {
+        NSRange const range = [matchedString rangeOfString:@"%"];
+        if (range.location == NSNotFound) {
+            NSString * const format = map[matchedString];
+            if (format) {
+                return [NSString stringWithFormat:@"%%%@$%@", matchedString, format];
+            }
+            return [NSString stringWithFormat:@"%%%@$@", matchedString];
+        }
+        NSString *index = [matchedString substringToIndex:range.location];
+        NSString *format = [matchedString substringFromIndex:range.location + 1];
+        map[index] = format;
+        return [NSString stringWithFormat:@"%%%@$%@", index, format];
+    }];
+    return [[NSString alloc] initWithFormat:format arguments:arguments];
+}
+
++ (instancetype)xz_stringWithPredicate:(XZMarkupPredicate)predicate format:(NSString *)format, ... {
+    va_list arguments;
+    va_start(arguments, format);
+    NSString *result = [self xz_stringWithPredicate:predicate format:format arguments:arguments];
+    va_end(arguments);
+    return result;
+}
+
++ (instancetype)xz_stringWithBracesFormat:(NSString *)format, ... {
+    va_list arguments;
+    va_start(arguments, format);
+    NSString *result = [self xz_stringWithPredicate:XZMarkupPredicateBraces format:format arguments:arguments];
+    va_end(arguments);
+    return result;
+}
+
+@end
+
+
+@implementation NSMutableString (XZKit)
+
+- (void)xz_appendBytesInBytes:(void *)bytes from:(NSInteger)from to:(NSInteger)to encoding:(NSStringEncoding)encoding freeWhenDone:(BOOL)freeBuffer {
+    NSString *string = [NSString xz_stringWithBytesInBytes:bytes from:from to:to encoding:encoding freeWhenDone:freeBuffer];
+    if (string == nil) {
+        return;
+    }
+    [self appendString:string];
+}
+
+@end
