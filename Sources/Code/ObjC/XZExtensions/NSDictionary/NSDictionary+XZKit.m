@@ -29,19 +29,19 @@
 }
 
 - (NSInteger)xz_integerValueForKey:(id)aKey defaultValue:(NSInteger)defaultValue {
-    return XZMakeInteger([self objectForKey:aKey], defaultValue);
+    return NSIntegerFromValue([self objectForKey:aKey], defaultValue);
 }
 
 - (NSInteger)xz_integerValueForKey:(id)aKey {
-    return XZMakeInteger([self objectForKey:aKey], 0);
+    return NSIntegerFromValue([self objectForKey:aKey], 0);
 }
 
 - (CGFloat)xz_floatValueForKey:(id)aKey defaultValue:(NSInteger)defaultValue {
-    return XZMakeFloat([self objectForKey:aKey], defaultValue);
+    return CGFloatFromValue([self objectForKey:aKey], defaultValue);
 }
 
 - (CGFloat)xz_floatValueForKey:(id)aKey {
-    return XZMakeFloat([self objectForKey:aKey], 0);
+    return CGFloatFromValue([self objectForKey:aKey], 0);
 }
 
 + (instancetype)xz_dictionaryWithJSON:(id)json options:(NSJSONReadingOptions)options {

@@ -189,9 +189,9 @@ static inline void AppendCStringWithRange(NSMutableString *mutableString, const 
     AppendCStringWithLength(mutableString, string, from, length);
 }
 
-@implementation NSString (XZMarkupPredicate)
+@implementation NSString (XZMarkupReplacing)
 
-- (NSString *)xz_stringByReplacingMatchesOfPredicate:(XZMarkupPredicate)predicate usingBlock:(id  _Nonnull (^NS_NOESCAPE)(NSString * _Nonnull))transform {
+- (NSString *)xz_stringByReplacingMatchesOfPredicate:(XZMarkupPredicate)predicate usingBlock:(NSString *(^NS_NOESCAPE)(NSString *))transform {
     NSInteger const length = [self lengthOfBytesUsingEncoding:NSUTF8StringEncoding];
     if (length < 1) {
         return self;
@@ -438,12 +438,16 @@ static inline void AppendCStringWithRange(NSMutableString *mutableString, const 
     return results;
 }
 
-- (NSString *)xz_stringByReplacingMatchesOfPredicate:(XZMarkupPredicate)predicate usingDictionary:(NSDictionary<NSString *,id> *)aDictionary {
+- (NSString *)xz_stringByReplacingMatchesOfPredicate:(XZMarkupPredicate)predicate usingDictionary:(NSDictionary<NSString *, NSString *> *)aDictionary {
     return [self xz_stringByReplacingMatchesOfPredicate:predicate usingBlock:^NSString * _Nonnull(NSString * _Nonnull string) {
-        id const value = aDictionary[string];
+        NSString * const value = aDictionary[string];
         return value ?: [NSString stringWithFormat:@"%c%@%c", predicate.start, string, predicate.end];
     }];
 }
+
+@end
+
+@implementation NSString (XZMarkupFormatting)
 
 + (instancetype)xz_stringWithMarkup:(XZMarkupPredicate)markup format:(NSString *)format arguments:(va_list)arguments {
     NSMutableDictionary<NSString *, NSString *> * const map = [NSMutableDictionary dictionary];

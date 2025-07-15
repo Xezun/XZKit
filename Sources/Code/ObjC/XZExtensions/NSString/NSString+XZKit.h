@@ -76,7 +76,7 @@ NS_ASSUME_NONNULL_BEGIN
 @end
 
 /// 将`NSNumber`对象或`纯数字字符串`对象转换为十进制整数，否则返回默认值。
-FOUNDATION_STATIC_INLINE NSInteger XZMakeInteger(id _Nullable aValue, NSInteger defaultValue) NS_SWIFT_UNAVAILABLE("请遵循 Swift 类型安全编码规则") {
+FOUNDATION_STATIC_INLINE NSInteger NSIntegerFromValue(id _Nullable aValue, NSInteger defaultValue) NS_SWIFT_UNAVAILABLE("请遵循 Swift 类型安全编码规则") {
     if ( aValue == nil )                       return defaultValue;
     if ([aValue isKindOfClass:NSNumber.class]) return [(NSNumber *)aValue integerValue];
     if ([aValue isKindOfClass:NSString.class]) return [(NSString *)aValue xz_integerValue:defaultValue base:10];
@@ -85,7 +85,7 @@ FOUNDATION_STATIC_INLINE NSInteger XZMakeInteger(id _Nullable aValue, NSInteger 
 
 
 /// 将`NSNumber`对象或`纯数字字符串`对象转换为十进制小数，否则返回默认值。
-FOUNDATION_STATIC_INLINE CGFloat XZMakeFloat(id _Nullable aValue, NSInteger defaultValue) NS_SWIFT_UNAVAILABLE("请遵循 Swift 类型安全编码规则") {
+FOUNDATION_STATIC_INLINE CGFloat CGFloatFromValue(id _Nullable aValue, NSInteger defaultValue) NS_SWIFT_UNAVAILABLE("请遵循 Swift 类型安全编码规则") {
     if ([aValue isKindOfClass:NSNumber.class]) {
 #if CGFLOAT_IS_DOUBLE
         return [(NSNumber *)aValue doubleValue];
@@ -168,25 +168,30 @@ FOUNDATION_STATIC_INLINE XZMarkupPredicate XZMarkupPredicateMake(char start, cha
 /// 本地化字符串中，默认以大括号 `{}` 作为参数分隔符。
 FOUNDATION_EXPORT XZMarkupPredicate const XZMarkupPredicateBraces;
 
-@interface NSString (XZMarkupPredicate)
+@interface NSString (XZMarkupReplacing)
 
-/// 替换字符串中被分隔符分割的占位符。
+/// 替换字符串中被指定标记符包裹的字符串。
 /// - Parameters:
-///   - predicate: 分隔符
-///   - transform: 获取占位符的替换内容的块函数
-- (NSString *)xz_stringByReplacingMatchesOfPredicate:(XZMarkupPredicate)predicate usingBlock:(id(^NS_NOESCAPE)(NSString *matchedString))transform NS_SWIFT_NAME(replacingMatches(of:using:));
+///   - predicate: 标记符
+///   - transform: 被标记包裹的字符串
+- (NSString *)xz_stringByReplacingMatchesOfPredicate:(XZMarkupPredicate)predicate usingBlock:(NSString *(^NS_NOESCAPE)(NSString *matchedString))transform NS_SWIFT_NAME(replacingMatches(of:using:));
 
-/// 替换字符串中被分隔符分割的占位符。
+/// 替换字符串中被指定标记符包裹的字符串。
 /// - Parameters:
-///   - predicate: 分隔符
-///   - aDictionary: key 为占位符，value 为替换内容
-- (NSString *)xz_stringByReplacingMatchesOfPredicate:(XZMarkupPredicate)predicate usingDictionary:(NSDictionary<NSString *, id> *)aDictionary NS_SWIFT_NAME(replacingMatches(of:using:));
+///   - predicate: 标记符
+///   - aDictionary: key 为被标记符包裹的字符串，value 为待替换的内容
+- (NSString *)xz_stringByReplacingMatchesOfPredicate:(XZMarkupPredicate)predicate usingDictionary:(NSDictionary<NSString *, NSString *> *)aDictionary NS_SWIFT_NAME(replacingMatches(of:using:));
+
+@end
+
 
 typedef XZMarkupPredicate XZFormatMarkup;
 
 #define XZBracesFormatMarkup XZMarkupPredicateBraces
 
-+ (instancetype)xz_stringWithMarkup:(XZFormatMarkup)markup format:(NSString *)format arguments:(va_list)arguments NS_SWIFT_NAME(init(markup:format:arguments:));
+@interface NSString (XZMarkupFormatting)
+
++ (instancetype)xz_stringWithMarkup:(XZFormatMarkup)markup format:(NSString *)format arguments:(va_list)arguments NS_SWIFT_UNAVAILABLE("Swift Not Support");
 
 /// 使用标记字符作为占位符的字符串格式化创建方式。
 ///
@@ -223,8 +228,12 @@ typedef XZMarkupPredicate XZFormatMarkup;
 /// - Parameters:
 ///   - predicate: 标记字符
 ///   - format: 字符串格式
-+ (instancetype)xz_stringWithMarkup:(XZFormatMarkup)markup format:(NSString *)format, ... NS_SWIFT_NAME(init(markup:format:));
-+ (instancetype)xz_stringWithBracesFormat:(NSString *)format, ... NS_SWIFT_NAME(init(bracesFormat:));
++ (instancetype)xz_stringWithMarkup:(XZFormatMarkup)markup format:(NSString *)format, ...;
+
+/// 使用花括号作为标记的字符串格式。
+///
+/// - Parameter format: 字符串格式
++ (instancetype)xz_stringWithBracesFormat:(NSString *)format, ...;
 
 @end
 
