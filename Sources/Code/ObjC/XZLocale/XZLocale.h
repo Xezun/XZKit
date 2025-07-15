@@ -37,13 +37,13 @@ FOUNDATION_EXPORT NSNotificationName const XZLanguagePreferencesDidChangeNotific
 /// 示例：以中文为本地化的默认语言时，展示某人在某时去过某地，比如，小明在10月1日去过天安门，如下代码。
 ///
 /// ```objc
-/// self.textLabel.text = XZLocalizedString(@"{0}在{1}去过{2}。", data.name, data.date, data.spot);
+/// self.textLabel.text = XZLocalizedString(@"{1}在{2}去过{3}。", data.name, data.date, data.spot);
 /// ```
 ///
 /// 那么，在进行英文本地化时，就可以像下面这样配置本地化字符串表。
 ///
 /// ```objc
-/// "{0}在{1}去过{2}。" = "{0} went to {2} on {1}.";
+/// "{1}在{2}去过{3}。" = "{1} went to {3} on {2}.";
 /// ```
 ///
 /// 虽然英文和中文的语序并不一致，但是在代码中，我们不需要调整的参数的书写顺序，只需要调整本地化字符串引用参数的顺序即可。
@@ -114,8 +114,8 @@ FOUNDATION_EXPORT NSNotificationName const XZLanguagePreferencesDidChangeNotific
 
 /// 字符串本地化便利函数。请直接使用 `XZLocalizedString` 宏，而非此函数。
 ///  
-/// 支持在本地化字符串中，使用形如 {0}、{1}、{2} 的参数占位符，其中的数字表示参数的顺序，参数必须为对象。
-///  
+/// 支持在本地化字符串中，使用形如 {1}、{2}、{3} 的参数占位符，其中的数字表示参数的顺序，参数必须为对象。
+///
 /// - Note: not for direct use
 ///  
 /// - Parameters:

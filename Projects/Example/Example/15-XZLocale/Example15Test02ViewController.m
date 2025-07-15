@@ -21,13 +21,13 @@
     
     [self requestData:^(NSDictionary<NSString *,NSString *> *data) {
         [self xz_hideToast:nil];
-        NSString *string = XZLocalizedString(@"{0}在{1}去过{2}。", data[@"name"], data[@"date"], data[@"place"]);
+        NSString *string = XZLocalizedString(@"{1}在{2}去过{3}。", data[@"name"], data[@"date"], data[@"place"]);
         XZLanguage language = XZLocalization.isInAppLanguagePreferencesEnabled ? XZLocalization.preferredLanguage  : XZLocalization.effectiveLanguage;
         self.strings = @[
-            XZLocalizedString(@"语言：{0}", language),
-            XZLocalizedString(@"模版：{0}", @"{0}在{1}去过{2}"),
-            XZLocalizedString(@"数据：{0}, {1}, {2}", data[@"name"], data[@"date"], data[@"place"]),
-            XZLocalizedString(@"效果：{0}", string)
+            XZLocalizedString(@"语言：{1}", language),
+            XZLocalizedString(@"模版：{1}", @"{1}在{2}去过{3}"),
+            XZLocalizedString(@"数据：{1}, {2}, {3}", data[@"name"], data[@"date"], data[@"place"]),
+            XZLocalizedString(@"效果：{1}", string)
         ];
         [self.tableView reloadData];
     }];

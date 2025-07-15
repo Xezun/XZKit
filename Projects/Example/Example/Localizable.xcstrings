@@ -1,35 +1,35 @@
 {
   "sourceLanguage" : "zh-Hans",
   "strings" : {
-    "{0}在{1}去过{2}。" : {
+    "{1}在{2}去过{3}。" : {
       "extractionState" : "manual",
       "localizations" : {
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "{0} went to {2} on {1}."
+            "value" : "{1} went to {3} on {2}."
           }
         }
       }
     },
-    "效果：{0}" : {
+    "效果：{1}" : {
       "extractionState" : "manual",
       "localizations" : {
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Result: {0}"
+            "value" : "Result: {1}"
           }
         }
       }
     },
-    "数据：{0}, {1}, {2}" : {
+    "数据：{1}, {2}, {3}" : {
       "extractionState" : "manual",
       "localizations" : {
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Data: {0}, {1}, {2}"
+            "value" : "Data: {1}, {2}, {3}"
           }
         }
       }
@@ -45,24 +45,24 @@
         }
       }
     },
-    "模版：{0}" : {
+    "模版：{1}" : {
       "extractionState" : "manual",
       "localizations" : {
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Sample: {0}"
+            "value" : "Sample: {1}"
           }
         }
       }
     },
-    "语言：{0}" : {
+    "语言：{1}" : {
       "extractionState" : "manual",
       "localizations" : {
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Language: {0}"
+            "value" : "Language: {1}"
           }
         }
       }

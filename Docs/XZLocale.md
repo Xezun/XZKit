@@ -26,5 +26,5 @@ Swift 示例：
 // 设置当前语言。
 XZLocalization.preferredLanguage = .English
 // XZKit 优化的语言国际化函数。
-textLabel.text = XZLocalizedString("我的名字叫{0}。", names[indexPath.row], comment: "My Name is {0}.")
+textLabel.text = XZLocalizedString("我的名字叫{1}。", names[indexPath.row], comment: "My Name is {1}.")
 ```

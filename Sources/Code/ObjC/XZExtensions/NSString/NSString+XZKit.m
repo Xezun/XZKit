@@ -10,6 +10,7 @@
 #import <CoreText/CoreText.h>
 #import <objc/NSObjCRuntime.h>
 #import <CommonCrypto/CommonDigest.h>
+#import "XZLog.h"
 
 @implementation NSString (XZKit)
 
@@ -107,9 +108,15 @@
     return (__bridge_transfer NSString *)mString;
 }
 
++ (instancetype)xz_initWithBytesNoCopy:(void *)bytes from:(NSInteger)from to:(NSInteger)to encoding:(NSStringEncoding)encoding freeWhenDone:(BOOL)freeBuffer {
+    NSInteger const length = to - from;
+    if (length < 1) {
+        return nil;
+    }
+    return [[self alloc] initWithBytesNoCopy:(bytes + from) length:length encoding:encoding freeWhenDone:freeBuffer];
+}
+
 @end
-
-
 
 @implementation NSString (XZHexEncoding)
 
@@ -169,170 +176,262 @@
 
 XZMarkupPredicate const XZMarkupPredicateBraces = { '{', '}' };
 
-static inline void appendBytes(NSMutableString *results, const char *string, NSInteger from, NSInteger to) {
-    NSInteger const length = to - from;
+static inline void AppendCStringWithLength(NSMutableString *mutableString, const char *string, NSInteger from, NSInteger length) {
     if (length < 1) {
         return;
     }
     NSString * const substring = [[NSString alloc] initWithBytesNoCopy:(void *)(string + from) length:length encoding:NSUTF8StringEncoding freeWhenDone:NO];
-    [results appendString:substring];
+    [mutableString appendString:substring];
+}
+
+static inline void AppendCStringWithRange(NSMutableString *mutableString, const char *string, NSInteger from, NSInteger to) {
+    NSInteger const length = to - from;
+    AppendCStringWithLength(mutableString, string, from, length);
 }
 
 @implementation NSString (XZMarkupPredicate)
 
-+ (instancetype)xz_stringWithBytesInBytes:(void *)bytes from:(NSInteger)from to:(NSInteger)to encoding:(NSStringEncoding)encoding freeWhenDone:(BOOL)freeBuffer {
-    NSInteger const length = to - from;
-    if (length < 1) {
-        return nil;
-    }
-    return [[self alloc] initWithBytesNoCopy:(bytes + from) length:length encoding:encoding freeWhenDone:freeBuffer];
-}
-
-
 - (NSString *)xz_stringByReplacingMatchesOfPredicate:(XZMarkupPredicate)predicate usingBlock:(id  _Nonnull (^NS_NOESCAPE)(NSString * _Nonnull))transform {
     NSInteger const length = [self lengthOfBytesUsingEncoding:NSUTF8StringEncoding];
-    if (length < 3) {
+    if (length < 1) {
         return self;
     }
     const char * const string = [self cStringUsingEncoding:NSUTF8StringEncoding];
     
-    NSInteger from  = 0;
-    NSInteger to    = 0;
-    NSInteger state = 0; ///< 0，未遇到开始字符，也未遇到结束字符; 1，已遇到开始字符；2，已遇到结束字符；3，前一个字符是结束字符
+    /// 匹配状态，表示是否处于收集匹配 predicate 的字符的过程中。
+    typedef enum : NSUInteger {
+        /// 0. 未进入匹配模式，前一个字符是普通字符
+        NotMatchStateText  = 0,
+        /// 1. 未进入匹配模式，前一个字符是开始字符
+        NotMatchStateStart = 1,
+        /// 2. 匹配模式，前一个字符是普通字符
+        MatchingStateText  = 2,
+        /// 3. 匹配模式，前一个字符是开始字符
+        MatchingStateStart = 3,
+        /// 4. 匹配模式，前一个字符是结束字符
+        MatchingStateEnd   = 4,
+        /// 5. 未进入匹配模式，前一个字符是结束字符
+        NotMatchStateEnd   = 5
+    } MatchState;
     
+    NSInteger  from  = 0;
+    NSInteger  to    = 0;
+    MatchState state = NotMatchStateText;
+    
+    // 存放结果的字符串
     NSMutableString * const results = [NSMutableString stringWithCapacity:length * 2];
-    NSMutableString * const matched = [NSMutableString string];
+    // 存放匹配的字符串
+    NSMutableString * const matches = [NSMutableString string];
     
     while (to < length) {
         char const character = string[to];
         
-        // 在 UTF-8 编码中 ASCII 字符是首位为 0 的字节
-        if (character & 0b10000000) {
-            continue;
-        }
-        
-        // 1. 遇到标记字符就结算
-        // 2. 结算不包括标记字符
-        // 3. 连续两个标记字符，视为一个普通字符
+        // 1. 将字符分三类，普通字符、开始字符、结束字符。
+        // 2. 遍历到字符不立即计算，而是切换到对应的状态，当遍历新的字符，要改变状态时，再结算前一个字符的值，这样可以获取该类字符的数量，从而计算逃逸字符。
         
         if (character == predicate.end) {
             switch (state) {
-                case 0:
-                    // 没有遇到开始字符，就遇到结束字符
-                    state = 3;
-                    appendBytes(results, string, from, to);
-                    from = to + 1;
-                    to = from;
-                    break;
-                case 1:
-                    // 遇到开始字符后，再遇到结束字符，先标记遇到结束字符，如果紧接着遇到
-                    // 1. 结束字符，视为结束字符逃逸
-                    // 2. 其他字符，结算
-                    state = 2;
-                    appendBytes(matched, string, from, to);
-                    from = to + 1;
-                    to = from;
-                    break;
-                case 2:
-                    // 遇到开始字符后，遇到连续的结束字符，逃逸一个结束字符为普通字符
-                    state = 1; // 字符逃逸，恢复没有遇到结束字符状态
-                    [matched appendFormat:@"%c", character];
-                    from = to + 1;
-                    to = from;
-                    break;
-                case 3:
-                    // 没开始遇到结束字符，
-                    if (from == to) {
-                        // 连续遇到结束字符，第二个结束字符，当普通字符
-                        state = 0;
-                        to += 1;
+                case NotMatchStateText:
+                    AppendCStringWithRange(results, string, from, to);
+                    state = NotMatchStateEnd;
+                    from = to;
+                    to += 1;
+                    continue;
+                case NotMatchStateStart: {
+                    NSInteger const count = to - from;
+                    
+                    AppendCStringWithLength(results, string, from, count / 2);
+                    if (count % 2 == 0) {
+                        // 偶数个开始字符，视为逃逸字符
+                        state = NotMatchStateEnd;
                     } else {
-                        // 不连续遇到结束字符
-                        appendBytes(results, string, from, to);
-                        from = to + 1;
-                        to = from;
+                        // 奇数个开始字符，最后一个为开始字符，这里直接遇到结束字符，匹配值为空字符串
+                        state = MatchingStateEnd;
                     }
-                    break;
-                default:
-                    NSAssert(NO, @"Never");
-                    break;
+                    
+                    from = to;
+                    to += 1;
+                    continue;
+                }
+                case MatchingStateText:
+                    AppendCStringWithRange(matches, string, from, to);
+                    state = MatchingStateEnd;
+                    from = to;
+                    to += 1;
+                    continue;
+                case MatchingStateStart: {
+                    NSInteger const count = to - from;
+                    if (count % 2 == 0) {
+                        // 偶数个开始字符，视为逃逸字符
+                        AppendCStringWithLength(matches, string, from, count / 2);
+                    } else {
+                        // 匹配的过程中，遇到奇数个开始字符，那么匹配从新标记重新开始，前面匹配的作为普通字符加入结果
+                        [results appendString:matches];
+                        [matches setString:@""];
+                        AppendCStringWithLength(results, string, from, count / 2);
+                    }
+                    state = MatchingStateEnd;
+                    from = to;
+                    to += 1;
+                    continue;
+                }
+                case MatchingStateEnd:
+                    to += 1;
+                    continue;
+                case NotMatchStateEnd:
+                    to += 1;
+                    continue;
             }
-        } else if (character == predicate.start) {
+        }
+        
+        if (character == predicate.start) {
             switch (state) {
-                case 0:
+                case NotMatchStateText:
                     // 遇到开始字符，标记状态
-                    state = 1;
-                    [results xz_appendBytesInBytes:(void *)string from:from to:to encoding:NSUTF8StringEncoding freeWhenDone:NO];
-                    from = to + 1;
-                    to = from;
-                    break;
-                case 1:
-                    if (from == to) {
-                        // 连续遇到开始字符，逃逸一个开始字符为普通字符
-                        state = 0;
-                        [results appendFormat:@"%c", character];
+                    AppendCStringWithRange(results, string, from, to);
+                    state = NotMatchStateStart;
+                    from = to;
+                    to += 1;
+                    continue;
+                case NotMatchStateStart:
+                    to += 1;
+                    continue;
+                case MatchingStateText: {
+                    AppendCStringWithRange(matches, string, from, to);
+                    state = MatchingStateStart;
+                    from = to;
+                    to += 1;
+                    continue;
+                }
+                case MatchingStateStart:
+                    to += 1;
+                    continue;
+                case MatchingStateEnd: {
+                    NSInteger const count = to - from;
+                    
+                    AppendCStringWithLength(matches, string, from, count / 2);
+                    if (count % 2 == 0) {
+                        state = MatchingStateStart;
                     } else {
-                        // 不连续遇到开始字符，重新开始
-                        //  [results appendFormat:@"%c", character];
-                        [results xz_appendBytesInBytes:(void *)string from:from to:to encoding:NSUTF8StringEncoding freeWhenDone:NO];
+                        // 匹配的过程中遇到奇数个结束字符，那么前一个匹配成功结束
+                        [results appendString:transform(matches)];
+                        [matches setString:@""];
+                        state = NotMatchStateStart;
                     }
-                    from = to + 1;
-                    to = from;
-                    break;
-                case 2:
-                    // 遇到开始字符时，前面时配对的匹配字符，结算
-                    [results appendString:transform(matched)];
-                    [matched setString:@""];
-                    // 标记状态
-                    state = 1;
-                    from = to + 1;
-                    to = from;
-                    break;
-                case 3:
-                    // 忽略前面这个结束字符
-                    state = 1;
-                    from = to + 1;
-                    to = from;
-                    break;
-                default:
-                    NSAssert(NO, @"Never");
-                    break;
+                    
+                    from = to;
+                    to += 1;
+                    continue;
+                }
+                case NotMatchStateEnd: {
+                    NSInteger const count = to - from;
+                    
+                    AppendCStringWithLength(results, string, from, count / 2);
+                    state = NotMatchStateStart;
+                    
+                    from = to;
+                    to += 1;
+                    continue;
+                }
             }
-        } else if (state == 1) {
-            to += 1;
-        } else if (state == 2) {
-            // 普通字符，前面是配对的匹配字符，结算
-            [results appendString:transform(matched)];
-            [matched setString:@""];
-            // 标记状态
-            state = 0;
-            from = to;
-            to += 1;
-        } else if (state == 3) {
-            // 没开始就遇到结束字符，后遇到普通字符
-            state = 0;
-            from = to;
-            to += 1;
-        } else {
-            // 普通字符
-            to += 1;
+        }
+        
+        switch (state) {
+            case NotMatchStateText:
+                to += 1;
+                continue;
+            case NotMatchStateStart: {
+                NSInteger const count = to - from;
+                
+                AppendCStringWithLength(results, string, from, count / 2);
+                if (count % 2 == 0) {
+                    state = NotMatchStateText;
+                } else {
+                    state = MatchingStateText;
+                }
+                
+                from = to;
+                to += 1;
+                continue;
+            }
+            case MatchingStateText:
+                to += 1;
+                continue;
+            case MatchingStateStart: {
+                NSInteger const count = to - from;
+                
+                AppendCStringWithLength(matches, string, from, count / 2);
+                if (count % 2 == 0) {
+                    state = NotMatchStateText;
+                } else {
+                    [results appendString:matches];
+                    AppendCStringWithLength(results, string, from, count / 2);
+                    [matches setString:@""];
+                    state = MatchingStateText;
+                }
+                
+                from = to;
+                to += 1;
+                continue;
+            }
+            case MatchingStateEnd: {
+                NSInteger const count = to - from;
+                
+                if (count % 2 == 0) {
+                    AppendCStringWithLength(matches, string, from, count / 2);
+                    state = MatchingStateText;
+                } else {
+                    [results appendString:transform(matches)];
+                    [matches setString:@""];
+                    AppendCStringWithLength(results, string, from, count / 2);
+                    state = NotMatchStateText;
+                }
+                
+                from = to;
+                to += 1;
+                continue;
+            }
+            case NotMatchStateEnd: {
+                NSInteger const count = to - from;
+                
+                AppendCStringWithLength(results, string, from, count / 2);
+                state = NotMatchStateText;
+                
+                from = to;
+                to += 1;
+                continue;
+            }
         }
     }
     
-    // 最终结算，如果是遇到标记字符，则加上标记字符
     switch (state) {
-        case 0:
-            [results xz_appendBytesInBytes:(void *)string from:from to:to encoding:NSUTF8StringEncoding freeWhenDone:NO];
+        case NotMatchStateText:
+            AppendCStringWithRange(results, string, from, to);
             break;
-        case 1:
-            from -= 1;
-            [results xz_appendBytesInBytes:(void *)string from:from to:to encoding:NSUTF8StringEncoding freeWhenDone:NO];
+        case NotMatchStateStart:
+            AppendCStringWithLength(results, string, from, (to - from) / 2);
             break;
-        case 2:
-            [results appendString:transform(matched)];
+        case MatchingStateText:
+            [results appendString:matches];
+            AppendCStringWithRange(results, string, from, to);
             break;
-        default:
-            NSAssert(NO, @"Never");
+        case MatchingStateStart:
+            [results appendString:matches];
+            AppendCStringWithLength(results, string, from, (to - from) / 2);
+            break;
+        case MatchingStateEnd: {
+            NSInteger const count = to - from;
+            if (count % 2 == 0) {
+                [results appendString:matches];
+                AppendCStringWithLength(results, string, from, count / 2);
+            } else {
+                [results appendString:transform(matches)];
+                AppendCStringWithLength(results, string, from, count / 2);
+            }
+            break;
+        }
+        case NotMatchStateEnd:
+            AppendCStringWithLength(results, string, from, (to - from) / 2);
             break;
     }
     
@@ -346,9 +445,9 @@ static inline void appendBytes(NSMutableString *results, const char *string, NSI
     }];
 }
 
-+ (instancetype)xz_stringWithPredicate:(XZMarkupPredicate)predicate format:(NSString *)format arguments:(va_list)arguments {
++ (instancetype)xz_stringWithMarkup:(XZMarkupPredicate)markup format:(NSString *)format arguments:(va_list)arguments {
     NSMutableDictionary<NSString *, NSString *> * const map = [NSMutableDictionary dictionary];
-    format = [format xz_stringByReplacingMatchesOfPredicate:predicate usingBlock:^id(NSString * const matchedString) {
+    format = [format xz_stringByReplacingMatchesOfPredicate:markup usingBlock:^id(NSString * const matchedString) {
         NSRange const range = [matchedString rangeOfString:@"%"];
         if (range.location == NSNotFound) {
             NSString * const format = map[matchedString];
@@ -365,10 +464,10 @@ static inline void appendBytes(NSMutableString *results, const char *string, NSI
     return [[NSString alloc] initWithFormat:format arguments:arguments];
 }
 
-+ (instancetype)xz_stringWithPredicate:(XZMarkupPredicate)predicate format:(NSString *)format, ... {
++ (instancetype)xz_stringWithMarkup:(XZMarkupPredicate)markup format:(NSString *)format, ... {
     va_list arguments;
     va_start(arguments, format);
-    NSString *result = [self xz_stringWithPredicate:predicate format:format arguments:arguments];
+    NSString *result = [self xz_stringWithMarkup:markup format:format arguments:arguments];
     va_end(arguments);
     return result;
 }
@@ -376,22 +475,9 @@ static inline void appendBytes(NSMutableString *results, const char *string, NSI
 + (instancetype)xz_stringWithBracesFormat:(NSString *)format, ... {
     va_list arguments;
     va_start(arguments, format);
-    NSString *result = [self xz_stringWithPredicate:XZMarkupPredicateBraces format:format arguments:arguments];
+    NSString *result = [self xz_stringWithMarkup:XZBracesFormatMarkup format:format arguments:arguments];
     va_end(arguments);
     return result;
-}
-
-@end
-
-
-@implementation NSMutableString (XZKit)
-
-- (void)xz_appendBytesInBytes:(void *)bytes from:(NSInteger)from to:(NSInteger)to encoding:(NSStringEncoding)encoding freeWhenDone:(BOOL)freeBuffer {
-    NSString *string = [NSString xz_stringWithBytesInBytes:bytes from:from to:to encoding:encoding freeWhenDone:freeBuffer];
-    if (string == nil) {
-        return;
-    }
-    [self appendString:string];
 }
 
 @end

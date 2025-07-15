@@ -63,6 +63,16 @@ NS_ASSUME_NONNULL_BEGIN
 
 @property (nonatomic, readonly) NSString *xz_stringByTransformingMandarinToLatin NS_SWIFT_NAME(transformingMandarinToLatin);
 
+
+/// 以 bytes 中从 from 到 to 的读取字节创建字符串。
+/// - Parameters:
+///   - bytes: 二进制流
+///   - from: 待创建字符串的开始字节（从 0 开始计算）位置
+///   - to: 待创建字符串的结束字节（从 0 开始计算）位置，不包含 to 位置的字节
+///   - encoding: 字符串编码
+///   - freeBuffer: 是否自动释放二进制流
++ (nullable instancetype)xz_initWithBytesNoCopy:(void *)bytes from:(NSInteger)from to:(NSInteger)to encoding:(NSStringEncoding)encoding freeWhenDone:(BOOL)freeBuffer NS_SWIFT_UNAVAILABLE("no bytes with swift");
+
 @end
 
 /// 将`NSNumber`对象或`纯数字字符串`对象转换为十进制整数，否则返回默认值。
@@ -160,15 +170,6 @@ FOUNDATION_EXPORT XZMarkupPredicate const XZMarkupPredicateBraces;
 
 @interface NSString (XZMarkupPredicate)
 
-/// 以 bytes 中从 from 到 to 的读取字节创建字符串。
-/// - Parameters:
-///   - bytes: 二进制流
-///   - from: 待创建字符串的开始字节（从 0 开始计算）位置
-///   - to: 待创建字符串的结束字节（从 0 开始计算）位置，不包含 to 位置的字节
-///   - encoding: 字符串编码
-///   - freeBuffer: 是否自动释放二进制流
-+ (nullable instancetype)xz_stringWithBytesInBytes:(void *)bytes from:(NSInteger)from to:(NSInteger)to encoding:(NSStringEncoding)encoding freeWhenDone:(BOOL)freeBuffer NS_SWIFT_NAME(init(inBytes:from:to:freeWhenDone:));
-
 /// 替换字符串中被分隔符分割的占位符。
 /// - Parameters:
 ///   - predicate: 分隔符
@@ -181,50 +182,50 @@ FOUNDATION_EXPORT XZMarkupPredicate const XZMarkupPredicateBraces;
 ///   - aDictionary: key 为占位符，value 为替换内容
 - (NSString *)xz_stringByReplacingMatchesOfPredicate:(XZMarkupPredicate)predicate usingDictionary:(NSDictionary<NSString *, id> *)aDictionary NS_SWIFT_NAME(replacingMatches(of:using:));
 
-+ (instancetype)xz_stringWithPredicate:(XZMarkupPredicate)predicate format:(NSString *)format arguments:(va_list)arguments;
+typedef XZMarkupPredicate XZFormatMarkup;
+
+#define XZBracesFormatMarkup XZMarkupPredicateBraces
+
++ (instancetype)xz_stringWithMarkup:(XZFormatMarkup)markup format:(NSString *)format arguments:(va_list)arguments NS_SWIFT_NAME(init(markup:format:arguments:));
 
 /// 使用标记字符作为占位符的字符串格式化创建方式。
 ///
 /// 以花括号作为标记字符为例，格式化规则如下。
 /// - 使用自然数（从 1 开始）作为代表列表中指定位置的参数。
 /// ```objc
-/// // will produce @"ABA"
+/// // produces: @"ABA"
 /// [NSString xz_stringWithBracesFormat:@"{1}{2}{1}", @"A", @"B"]
 /// ```
-/// - 支持 c 字符串格式，且格式会继承。
+/// - 支持 c 字符串格式，且格式会继承前一个。
 /// ```objc
-/// // will produce @"3.14"
+/// // produces @"3.14"
 /// [NSString xz_stringWithBracesFormat:@"{1%.2f}", M_PI];
-/// // will produce @"3.14 3.14"
+/// // produces: @"3.14 3.14"
 /// [NSString xz_stringWithBracesFormat:@"{1%.2f} {1}", M_PI];
-/// // will produce @"3.14 3.14 3.142 3.142"
+/// // produces: @"3.14 3.14 3.142 3.142"
 /// [NSString xz_stringWithBracesFormat:@"{1%.2f} {1} {1%.3f} {1}", M_PI];
 /// ```
-/// - 两个连续的标记，将视为一个普通字符逃逸。
+/// - 两个连续的标记，将视为一个普通字符逃逸，且按照“开始标记左结合，结束标记右结合”的结合性规则进行逃逸。
 /// ```objc
-/// // will produce @"{1}"
+/// // produces: @"{1}"
 /// [NSString xz_stringWithBracesFormat:@"{{1}}", @"abc"]
-/// // will produce @"{abc}"
+/// // produces: @"{abc}"
 /// [NSString xz_stringWithBracesFormat:@"{{{1}}}", @"abc"]
 /// ```
 /// - 单独的标记字符会被忽略。
 /// ```objc
-/// // will produce @"123abc"
+/// // produces: @"123abc"
 /// [NSString xz_stringWithBracesFormat:@"{123{1}", @"abc"]
-/// // will produce @"abc123"
+/// // produces: @"abc123"
 /// [NSString xz_stringWithBracesFormat:@"{1}123}", @"abc"]
 /// ```
 ///
 /// - Parameters:
 ///   - predicate: 标记字符
 ///   - format: 字符串格式
-+ (instancetype)xz_stringWithPredicate:(XZMarkupPredicate)predicate format:(NSString *)format, ...;
-+ (instancetype)xz_stringWithBracesFormat:(NSString *)format, ...;
++ (instancetype)xz_stringWithMarkup:(XZFormatMarkup)markup format:(NSString *)format, ... NS_SWIFT_NAME(init(markup:format:));
++ (instancetype)xz_stringWithBracesFormat:(NSString *)format, ... NS_SWIFT_NAME(init(bracesFormat:));
 
-@end
-
-@interface NSMutableString (XZKit)
-- (void)xz_appendBytesInBytes:(void *)bytes from:(NSInteger)from to:(NSInteger)to encoding:(NSStringEncoding)encoding freeWhenDone:(BOOL)freeBuffer;
 @end
 
 NS_ASSUME_NONNULL_END
