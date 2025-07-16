@@ -5,7 +5,6 @@
 //  Created by Xezun on 2021/10/5.
 //
 
-@import ObjectiveC;
 #import <CoreText/CoreText.h>
 #import "UIFont+XZKit.h"
 #if __has_include(<XZKit/XZKit.h>)
@@ -26,15 +25,9 @@
 }
 
 - (NSCharacterSet *)xz_characterSet {
-    static void *_characterSet = nil;
-    
-    NSCharacterSet * value = objc_getAssociatedObject(self, &_characterSet);
-    if (value == nil) {
-        CTFontRef const font = CTFontCreateWithName((__bridge CFStringRef)[self fontName], self.pointSize, NULL);
-        value = (__bridge_transfer NSCharacterSet *)CTFontCopyCharacterSet(font);
-        objc_setAssociatedObject(self, &_characterSet, value, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
-        CFRelease(font);
-    }
+    CTFontRef const font = CTFontCreateWithName((__bridge CFStringRef)[self fontName], self.pointSize, NULL);
+    NSCharacterSet * const value = (__bridge_transfer NSCharacterSet *)CTFontCopyCharacterSet(font);
+    CFRelease(font);
     return value;
 }
 
@@ -81,50 +74,28 @@
     
     NSCharacterSet * const characterSet = self.xz_characterSet;
     
-    for (NSInteger i = 0; i < length; ) {
-        CFRange range = CFRangeMake(i, length - i);
-        if (CFStringFindCharacterFromSet((__bridge CFStringRef)aString, (__bridge CFCharacterSetRef)characterSet, range, 0, &range)) {
-            if (range.location != i) {
-                
-            }
-            i += range.length;
-            continue;
-        }
-        return NO;
-    }
-    
-    
-    
-    CTFontRef const font = CTFontCreateWithName((__bridge CFStringRef)[self fontName], self.pointSize, NULL);
-    // CoreText 使用 UTF16 编码
-    unichar * const cext = calloc(textLength, sizeof(UniChar));
-    defer(^{
-        free(cext);
-    });
-    [aString getCharacters:cext range:NSMakeRange(0, textLength)];
-    
-    BOOL    __block start = NO;
-    NSRange __block range = NSMakeRange(NSNotFound, 0);
-    
-    [aString enumerateSubstringsInRange:NSMakeRange(0, textLength) options:NSStringEnumerationByComposedCharacterSequences usingBlock:^(NSString * _Nullable substring, NSRange substringRange, NSRange enclosingRange, BOOL * _Nonnull stop) {
-        CGGlyph glyph[10];
-        if (CTFontGetGlyphsForCharacters(font, cext + enclosingRange.location, glyph, enclosingRange.length)) {
-            if (start) {
-                range.length += enclosingRange.length;
+    NSRange range = NSMakeRange(0, 0);
+    do {
+        NSInteger const i = range.location + range.length;
+        CFRange temp = CFRangeMake(i, length - i);
+        if (CFStringFindCharacterFromSet((__bridge CFStringRef)aString, (__bridge CFCharacterSetRef)characterSet, temp, 0, &temp)) {
+            if (temp.location == i) {
+                range.length += temp.length;
             } else {
-                start = YES;
-                range = enclosingRange;
+                if (range.length > 0) {
+                    block(range);
+                }
+                range = NSMakeRange(temp.location, temp.length);
             }
-            return;
+        } else {
+            if (range.length > 0) {
+                block(range);
+            }
+            break;
         }
-        if (start) {
-            block(range);
-            range.location = NSNotFound;
-            start = NO;
-        }
-    }];
+    } while (range.location < length);
     
-    if (start) {
+    if (range.length > 0) {
         block(range);
     }
 }
