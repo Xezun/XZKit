@@ -14,39 +14,6 @@
 
 @implementation NSString (XZKit)
 
-- (void)xz_enumerateSubstringsMatchedGlyphOfFont:(UIFont *)textFont usingBlock:(void (^)(NSRange range))block {
-    if (block == nil || textFont == nil) {
-        return;
-    }
-    
-    CTFontRef const font = CTFontCreateWithName((__bridge CFStringRef)[textFont fontName], textFont.pointSize, NULL);
-    UniChar * const cext = (UniChar *)[self cStringUsingEncoding:NSUTF16StringEncoding]; // CoreText 使用 UTF16 编码
-    
-    BOOL    __block start = NO;
-    NSRange __block range = NSMakeRange(NSNotFound, 0);
-    [self enumerateSubstringsInRange:NSMakeRange(0, self.length) options:NSStringEnumerationByComposedCharacterSequences usingBlock:^(NSString * _Nullable substring, NSRange substringRange, NSRange enclosingRange, BOOL * _Nonnull stop) {
-        CGGlyph glyph[10];
-        if (CTFontGetGlyphsForCharacters(font, cext + enclosingRange.location, glyph, enclosingRange.length)) {
-            if (start) {
-                range.length += enclosingRange.length;
-            } else {
-                start = YES;
-                range = enclosingRange;
-            }
-            return;
-        }
-        if (start) {
-            block(range);
-            range.location = NSNotFound;
-            start = NO;
-        }
-    }];
-    
-    if (start) {
-        block(range);
-    }
-}
-
 - (CGFloat)xz_floatValue {
     return [self xz_floatValue:0];
 }
