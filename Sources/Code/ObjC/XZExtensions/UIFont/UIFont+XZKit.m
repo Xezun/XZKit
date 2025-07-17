@@ -31,7 +31,7 @@
     return value;
 }
 
-- (BOOL)xz_containsGlyphsForCharactersInString:(NSString *)aString {
+- (BOOL)xz_containsGlyphsInString:(NSString *)aString {
     if (![aString isKindOfClass:NSString.class]) {
         return NO;
     }
@@ -60,7 +60,7 @@
     return YES;
 }
 
-- (void)xz_enumerateMatchesGlyphsInString:(NSString *)aString usingBlock:(void (^)(NSRange))block {
+- (void)xz_enumerateGlyphsInString:(NSString *)aString usingBlock:(void (^)(NSRange))block {
     if (block == nil || aString == nil || aString.length == 0) {
         return;
     }

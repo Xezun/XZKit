@@ -13,7 +13,8 @@ NS_ASSUME_NONNULL_BEGIN
 
 /// 给富文本中的包含字形的字符添加字体。
 /// @param font 字体
-- (NSAttributedString *)xz_attributedStringByAddingFontAttributeForCharatersMatchedGlyphOfFont:(UIFont *)font NS_SWIFT_NAME(addingFontAttributeForCharatersMatchedGlyph(of:));
+/// @param charactersInGlyphs 是否仅处理在字体中包含字型的文本 
+- (NSAttributedString *)xz_attributedStringByAddingFontAttribute:(UIFont *)font forCharactersInGlyphs:(BOOL)charactersInGlyphs NS_SWIFT_NAME(addingFontAttribute(_:forCharactersInGlyphs:));
 
 @end
 
@@ -21,7 +22,8 @@ NS_ASSUME_NONNULL_BEGIN
 
 /// 给富文本中的包含字形的字符添加字体。
 /// @param font 字体
-- (void)xz_addFontAttributeForCharatersMatchedGlyphOfFont:(UIFont *)font NS_SWIFT_NAME(addFontAttributeForCharatersMatchedGlyph(of:));
+/// @param charactersInGlyphs 是否仅处理在字体中包含字型的文本
+- (void)xz_addFontAttribute:(UIFont *)font forCharactersInGlyphs:(BOOL)charactersInGlyphs NS_SWIFT_NAME(addFontAttribute(_:forCharactersInGlyphs:));
 
 @end
 

@@ -126,7 +126,7 @@ static BOOL _isInAppLanguagePreferencesSupported  = NO;
 
 + (NSString *)localizedString:(NSString *)stringToBeLocalized fromTable:(NSString *)table inBundle:(NSBundle *)bundle defaultValue:(NSString *)defaultValue arguments:(va_list)arguments {
     stringToBeLocalized = NSLocalizedStringWithDefaultValue(stringToBeLocalized, table, bundle, defaultValue, @"");
-    return [NSString xz_stringWithMarkup:(XZBracesFormatMarkup) format:stringToBeLocalized arguments:arguments];
+    return [NSString xz_stringWithMarkup:(XZStringMarkupBraces) format:stringToBeLocalized arguments:arguments];
 }
 
 + (NSString *)localizedString:(NSString *)stringToBeLocalized fromTable:(NSString *)table inBundle:(NSBundle *)bundle defaultValue:(NSString *)defaultValue, ... {

@@ -9,9 +9,11 @@
 #if __has_include(<XZKit/XZKit.h>)
 #import <XZKit/NSString+XZHexEncoding.h>
 #import <XZKit/NSString+XZExtendedEncoding.h>
+#import <XZKit/NSString+XZStringMarkup.h>
 #else
 #import "NSString+XZHexEncoding.h"
 #import "NSString+XZExtendedEncoding.h"
+#import "NSString+XZStringMarkup.h"
 #endif
 
 NS_ASSUME_NONNULL_BEGIN
@@ -49,6 +51,21 @@ NS_ASSUME_NONNULL_BEGIN
 ///   - freeBuffer: 是否自动释放二进制流
 + (nullable instancetype)xz_initWithBytesNoCopy:(void *)bytes from:(NSInteger)from to:(NSInteger)to encoding:(NSStringEncoding)encoding freeWhenDone:(BOOL)freeBuffer NS_SWIFT_UNAVAILABLE("no bytes with swift");
 
+/// 将对象 object 转换为 JSON 字符串。
+/// @note JSON 字符串使用`UTF-8`编码。
+/// @param object 可转换为 JSON 的对象
+/// @param options 序列化选项
++ (nullable instancetype)xz_stringWithJSONObject:(nullable id)object options:(NSJSONWritingOptions)options;
+
+/// 将对象 object 转换为 JSON 字符串。
+/// @note JSON 字符串使用`UTF-8`编码，使用 `NSJSONWritingFragmentsAllowed` 选项。
+/// @param object 可转换为 JSON 的对象
++ (nullable instancetype)xz_stringWithJSONObject:(nullable id)object;
+
+/// 将二进制形式 JSON 转换为字符串形式。
+/// @param json 二进制形式的 JSON 数据
++ (nullable instancetype)xz_stringWithJSON:(nullable NSData *)json;
+
 @end
 
 /// 将`NSNumber`对象或`纯数字字符串`对象转换为十进制整数，否则返回默认值。
@@ -73,114 +90,5 @@ FOUNDATION_STATIC_INLINE CGFloat CGFloatFromValue(id _Nullable aValue, NSInteger
     }
     return defaultValue;
 }
-
-
-@interface NSString (XZJSON)
-
-/// 将对象 object 转换为 JSON 字符串。
-/// @note JSON 字符串使用`UTF-8`编码。
-/// @param object 可转换为 JSON 的对象
-/// @param options 序列化选项
-+ (nullable instancetype)xz_stringWithJSONObject:(nullable id)object options:(NSJSONWritingOptions)options;
-
-/// 将对象 object 转换为 JSON 字符串。
-/// @note JSON 字符串使用`UTF-8`编码，使用 `NSJSONWritingFragmentsAllowed` 选项。
-/// @param object 可转换为 JSON 的对象
-+ (nullable instancetype)xz_stringWithJSONObject:(nullable id)object;
-
-/// 将二进制形式 JSON 转换为字符串形式。
-/// @param json 二进制形式的 JSON 数据
-+ (nullable instancetype)xz_stringWithJSON:(nullable NSData *)json;
-
-@end
-
-
-/// 以指定字符作为开始结束标记的判断模式。
-typedef struct XZMarkupPredicate {
-    /// 开始字符。两个连续的开始字符，视为一个逃逸了的开始字符。
-    char start;
-    /// 结束字符。没有匹配开始字符的结束字符，作为普通字符处理。
-    char end;
-} XZMarkupPredicate;
-
-/// 构造占位分隔符。
-/// - Parameters:
-///   - start: 起始字符
-///   - end: 终止字符
-FOUNDATION_STATIC_INLINE XZMarkupPredicate XZMarkupPredicateMake(char start, char end) {
-    return (XZMarkupPredicate){ start, end };
-}
-
-/// 本地化字符串中，默认以大括号 `{}` 作为参数分隔符。
-FOUNDATION_EXPORT XZMarkupPredicate const XZMarkupPredicateBraces;
-
-@interface NSString (XZMarkupReplacing)
-
-/// 替换字符串中被指定标记符包裹的字符串。
-/// - Parameters:
-///   - predicate: 标记符
-///   - transform: 被标记包裹的字符串
-- (NSString *)xz_stringByReplacingMatchesOfPredicate:(XZMarkupPredicate)predicate usingBlock:(NSString *(^NS_NOESCAPE)(NSString *matchedString))transform NS_SWIFT_NAME(replacingMatches(of:using:));
-
-/// 替换字符串中被指定标记符包裹的字符串。
-/// - Parameters:
-///   - predicate: 标记符
-///   - aDictionary: key 为被标记符包裹的字符串，value 为待替换的内容
-- (NSString *)xz_stringByReplacingMatchesOfPredicate:(XZMarkupPredicate)predicate usingDictionary:(NSDictionary<NSString *, NSString *> *)aDictionary NS_SWIFT_NAME(replacingMatches(of:using:));
-
-@end
-
-
-typedef XZMarkupPredicate XZFormatMarkup;
-
-#define XZBracesFormatMarkup XZMarkupPredicateBraces
-
-@interface NSString (XZMarkupFormatting)
-
-+ (instancetype)xz_stringWithMarkup:(XZFormatMarkup)markup format:(NSString *)format arguments:(va_list)arguments NS_SWIFT_UNAVAILABLE("Swift Not Support");
-
-/// 使用标记字符作为占位符的字符串格式化创建方式。
-///
-/// 以花括号作为标记字符为例，格式化规则如下。
-/// - 使用自然数（从 1 开始）作为代表列表中指定位置的参数。
-/// ```objc
-/// // produces: @"ABA"
-/// [NSString xz_stringWithBracesFormat:@"{1}{2}{1}", @"A", @"B"]
-/// ```
-/// - 支持 c 字符串格式，且格式会继承前一个。
-/// ```objc
-/// // produces @"3.14"
-/// [NSString xz_stringWithBracesFormat:@"{1%.2f}", M_PI];
-/// // produces: @"3.14 3.14"
-/// [NSString xz_stringWithBracesFormat:@"{1%.2f} {1}", M_PI];
-/// // produces: @"3.14 3.14 3.142 3.142"
-/// [NSString xz_stringWithBracesFormat:@"{1%.2f} {1} {1%.3f} {1}", M_PI];
-/// ```
-/// - 两个连续的标记，将视为一个普通字符逃逸，且按照“开始标记左结合，结束标记右结合”的结合性规则进行逃逸。
-/// ```objc
-/// // produces: @"{1}"
-/// [NSString xz_stringWithBracesFormat:@"{{1}}", @"abc"]
-/// // produces: @"{abc}"
-/// [NSString xz_stringWithBracesFormat:@"{{{1}}}", @"abc"]
-/// ```
-/// - 单独的标记字符会被忽略。
-/// ```objc
-/// // produces: @"123abc"
-/// [NSString xz_stringWithBracesFormat:@"{123{1}", @"abc"]
-/// // produces: @"abc123"
-/// [NSString xz_stringWithBracesFormat:@"{1}123}", @"abc"]
-/// ```
-///
-/// - Parameters:
-///   - predicate: 标记字符
-///   - format: 字符串格式
-+ (instancetype)xz_stringWithMarkup:(XZFormatMarkup)markup format:(NSString *)format, ...;
-
-/// 使用花括号作为标记的字符串格式。
-///
-/// - Parameter format: 字符串格式
-+ (instancetype)xz_stringWithBracesFormat:(NSString *)format, ...;
-
-@end
 
 NS_ASSUME_NONNULL_END
