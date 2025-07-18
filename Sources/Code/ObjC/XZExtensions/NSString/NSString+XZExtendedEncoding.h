@@ -38,7 +38,7 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic, readonly) NSString *xz_stringByTransformingMandarinToLatin NS_SWIFT_NAME(transformingMandarinToLatin);
 
 /// 中文转拼音。
-/// - Parameter removesDiacriticMarkings: 是否溢出音标
+/// - Parameter removesDiacriticMarkings: 是否移除音标
 - (NSString *)xz_stringByTransformingMandarinToLatin:(BOOL)removesDiacriticMarkings NS_SWIFT_NAME(transformingMandarinToLatin(_:));
 
 @end
