@@ -30,10 +30,10 @@ pod "XZKit/CarouselView"
 
 ### 1. XZCarouselView
 
-轮播视图组件 `XZCarouselView ` 是 UIView 子类，像 UIView 一样使用即可。
+轮播视图组件 `XZCarouselView` 是 UIView 子类，像 UIView 一样使用即可。
 
 ```swift
-let carouselView = CarouselView.init(frame: UIScreen.main.bounds);
+let carouselView = XZCarouselView.init(frame: UIScreen.main.bounds);
 self.addSubview(carouselView)
 ```
 
