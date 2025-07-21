@@ -66,7 +66,7 @@
 }
 
 + (void)model:(id)model decodeFromDictionary:(NSDictionary *)dictionary {
-    XZJSONClassDescriptor * const modelClass = [XZJSONClassDescriptor descriptorWithClass:[model class]];
+    XZJSONClassDescriptor * const modelClass = [XZJSONClassDescriptor descriptorForClass:[model class]];
     if (modelClass) {
         XZJSONModelDecodeFromDictionary(model, modelClass, dictionary);
     }
@@ -81,7 +81,7 @@
     if (object == nil) {
         return nil;
     }
-    XZJSONClassDescriptor * const objectClass = [XZJSONClassDescriptor descriptorWithClass:object_getClass(object)];
+    XZJSONClassDescriptor * const objectClass = [XZJSONClassDescriptor descriptorForClass:object_getClass(object)];
     if (objectClass == nil) {
         return nil;
     }
@@ -90,7 +90,7 @@
 }
 
 + (void)model:(id)model encodeIntoDictionary:(NSMutableDictionary *)dictionary {
-    XZJSONClassDescriptor * const modelClass = [XZJSONClassDescriptor descriptorWithClass:[model class]];
+    XZJSONClassDescriptor * const modelClass = [XZJSONClassDescriptor descriptorForClass:[model class]];
     if (modelClass) {
         XZJSONModelEncodeIntoDictionary(model, modelClass, dictionary);
     }
@@ -128,7 +128,7 @@
         return model;
     }
     
-    XZJSONClassDescriptor * const modelClass  = [XZJSONClassDescriptor descriptorWithClass:[model class]];
+    XZJSONClassDescriptor * const modelClass  = [XZJSONClassDescriptor descriptorForClass:[model class]];
     
     // 原生对象不支持复制
     if (modelClass->_foundationClassType) {
@@ -316,8 +316,8 @@
         return NO;
     }
     
-    XZJSONClassDescriptor * const model1Class = [XZJSONClassDescriptor descriptorWithClass:[model1 class]];
-    XZJSONClassDescriptor * const model2Class = [XZJSONClassDescriptor descriptorWithClass:[model2 class]];
+    XZJSONClassDescriptor * const model1Class = [XZJSONClassDescriptor descriptorForClass:[model1 class]];
+    XZJSONClassDescriptor * const model2Class = [XZJSONClassDescriptor descriptorForClass:[model2 class]];
     
     // 不相等：属性数量不一样
     if (model1Class->_numberOfProperties != model2Class->_numberOfProperties) {
@@ -625,11 +625,11 @@
     }
     
     if (model == nil) {
-        return ([XZJSONClassDescriptor descriptorWithClass:object_getClass(newModel)]->_namedProperties).allKeys;
+        return ([XZJSONClassDescriptor descriptorForClass:object_getClass(newModel)]->_namedProperties).allKeys;
     }
     
     if (newModel == nil) {
-        return ([XZJSONClassDescriptor descriptorWithClass:object_getClass(model)]->_namedProperties).allKeys;
+        return ([XZJSONClassDescriptor descriptorForClass:object_getClass(model)]->_namedProperties).allKeys;
     }
     
     // TODO: 模型差异比较

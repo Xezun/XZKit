@@ -21,7 +21,7 @@ FOUNDATION_STATIC_INLINE id XZJSONEncodeCollection(id<NSFastEnumeration> const _
     }
     NSMutableArray *newArray = [NSMutableArray arrayWithCapacity:count];
     for (id item in collection) {
-        XZJSONClassDescriptor *itemClass = [XZJSONClassDescriptor descriptorWithClass:object_getClass(item)];
+        XZJSONClassDescriptor *itemClass = [XZJSONClassDescriptor descriptorForClass:object_getClass(item)];
         if (itemClass == nil) {
             continue;
         }
@@ -115,7 +115,7 @@ id XZJSONEncodeObjectIntoDictionary(id const __unsafe_unretained object, XZJSONC
             [(NSDictionary *)object enumerateKeysAndObjectsUsingBlock:^(NSString *key, id obj, BOOL *stop) {
                 NSString * const JSONKey = [key description];
                 if (!JSONKey) return;
-                XZJSONClassDescriptor *objClass = [XZJSONClassDescriptor descriptorWithClass:object_getClass(obj)];
+                XZJSONClassDescriptor *objClass = [XZJSONClassDescriptor descriptorForClass:object_getClass(obj)];
                 if (objClass == nil) {
                     return;
                 }
@@ -143,7 +143,7 @@ id XZJSONEncodeObjectIntoDictionary(id const __unsafe_unretained object, XZJSONC
             }
             
             if (!objectClass) {
-                objectClass = [XZJSONClassDescriptor descriptorWithClass:object_getClass(object)];
+                objectClass = [XZJSONClassDescriptor descriptorForClass:object_getClass(object)];
             }
             
             if (dictionary == nil) {

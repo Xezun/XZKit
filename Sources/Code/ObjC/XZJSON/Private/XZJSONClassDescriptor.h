@@ -37,9 +37,9 @@ NS_ASSUME_NONNULL_BEGIN
     NSArray<XZJSONPropertyDescriptor *> *_keyArrayProperties;
     
     /// 是否需要转发模型解析。
-    BOOL _forwardsClassForDecoding;
+    BOOL _forwardsDecodingClass;
     /// 是否校验数据。
-    BOOL _verifiesValueForDecoding;
+    BOOL _verifiesDecodingValue;
     
     /// 是否使用自定义模型化方法，即 -initWithJSONDictionary: 方法。
     BOOL _usesJSONDecodingInitializer;
@@ -53,7 +53,7 @@ NS_ASSUME_NONNULL_BEGIN
 }
 
 - (instancetype)init NS_UNAVAILABLE;
-+ (nullable XZJSONClassDescriptor *)descriptorWithClass:(nullable Class)aClass;
++ (nullable XZJSONClassDescriptor *)descriptorForClass:(nullable Class)aClass;
 
 @end
 

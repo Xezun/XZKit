@@ -117,7 +117,7 @@ NSString * _Nonnull XZJSONModelDescription(NSObject *_Nonnull model, NSUInteger 
         return [NSString stringWithFormat:@"<%@: %p>", object_getClass(model), model];
     }
 
-    XZJSONClassDescriptor * const modelClass = [XZJSONClassDescriptor descriptorWithClass:model.class];
+    XZJSONClassDescriptor * const modelClass = [XZJSONClassDescriptor descriptorForClass:model.class];
 
     if (modelClass->_foundationClassType) {
         return XZJSONModelDescriptionForFoundationClassOfType(model, modelClass->_foundationClassType, indent);
@@ -366,7 +366,7 @@ void XZJSONModelEncodeWithCoder(id model, NSCoder *aCoder) {
         return;
     }
     
-    XZJSONClassDescriptor * const modelClass = [XZJSONClassDescriptor descriptorWithClass:[model class]];
+    XZJSONClassDescriptor * const modelClass = [XZJSONClassDescriptor descriptorForClass:[model class]];
     
     switch (modelClass->_foundationClassType) {
         case XZJSONFoundationClassTypeNSString:
@@ -665,7 +665,7 @@ id _Nullable XZJSONModelDecodeWithCoder(id model, NSCoder *aCoder) {
         return model;
     }
     
-    XZJSONClassDescriptor * const modelClass = [XZJSONClassDescriptor descriptorWithClass:[model class]];
+    XZJSONClassDescriptor * const modelClass = [XZJSONClassDescriptor descriptorForClass:[model class]];
     switch (modelClass->_foundationClassType) {
         case XZJSONFoundationClassTypeNSString:
         case XZJSONFoundationClassTypeNSMutableString:

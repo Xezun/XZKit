@@ -66,9 +66,9 @@ FOUNDATION_EXPORT XZObjcClassUpdates const XZObjcClassUpdateProperties;
 
 - (instancetype)init NS_UNAVAILABLE;
 
-/// 获取类 aClass 的描述信息。
+/// 获取类 aClass 的描述信息。单例。
 /// - Parameter aClass: 类
-+ (nullable XZObjcClassDescriptor *)descriptorWithClass:(nullable Class)aClass NS_SWIFT_NAME(init(_:));
++ (nullable XZObjcClassDescriptor *)descriptorForClass:(nullable Class)aClass NS_SWIFT_NAME(init(_:));
 
 @end
 

@@ -21,7 +21,7 @@ static id XZJSONKeyFromString(NSString *aString);
 - (instancetype)initWithClass:(nonnull Class)rawClass {
     self = [super init];
     if (self) {
-        _raw = [XZObjcClassDescriptor descriptorWithClass:rawClass];
+        _raw = [XZObjcClassDescriptor descriptorForClass:rawClass];
         _foundationClassType = XZJSONFoundationClassTypeFromClass(rawClass);
         
         // 原生对象，不需要获取属性
@@ -32,8 +32,8 @@ static id XZJSONKeyFromString(NSString *aString);
             _keyProperties = @{};
             _keyPathProperties = @[];
             _keyArrayProperties = @[];
-            _forwardsClassForDecoding = NO;
-            _verifiesValueForDecoding = NO;
+            _forwardsDecodingClass = NO;
+            _verifiesDecodingValue = NO;
             _usesJSONDecodingInitializer = NO;
             _usesJSONEncodingInitializer = NO;
             _usesPropertyJSONDecodingMethod = NO;
@@ -260,8 +260,8 @@ static id XZJSONKeyFromString(NSString *aString);
     _keyArrayProperties = keyArrayProperties;
     
     BOOL const conformsToXZJSONCoding = [rawClass conformsToProtocol:@protocol(XZJSONCoding)];
-    _forwardsClassForDecoding = (conformsToXZJSONCoding && [rawClass respondsToSelector:@selector(forwardingClassForJSONDictionary:)]);
-    _verifiesValueForDecoding = (conformsToXZJSONCoding && [rawClass respondsToSelector:@selector(canDecodeFromJSONDictionary:)]);
+    _forwardsDecodingClass = (conformsToXZJSONCoding && [rawClass respondsToSelector:@selector(forwardingClassForJSONDictionary:)]);
+    _verifiesDecodingValue = (conformsToXZJSONCoding && [rawClass respondsToSelector:@selector(canDecodeFromJSONDictionary:)]);
     
     _usesJSONDecodingInitializer = conformsToXZJSONCoding && [rawClass instancesRespondToSelector:@selector(initWithJSONDictionary:)];
     _usesJSONEncodingInitializer = conformsToXZJSONCoding && [rawClass instancesRespondToSelector:@selector(encodeIntoJSONDictionary:)];
@@ -271,7 +271,7 @@ static id XZJSONKeyFromString(NSString *aString);
 }
 
 
-+ (XZJSONClassDescriptor *)descriptorWithClass:(Class)aClass {
++ (XZJSONClassDescriptor *)descriptorForClass:(Class)aClass {
     if (aClass == Nil || !object_isClass(aClass) || [aClass superclass] == Nil || class_isMetaClass(aClass)) {
         return nil;
     }

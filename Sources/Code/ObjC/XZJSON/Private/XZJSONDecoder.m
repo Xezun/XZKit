@@ -29,29 +29,32 @@ id _Nullable XZJSONDecodeJSONData(NSData * const __unsafe_unretained data, NSJSO
     return nil;
 }
 
-FOUNDATION_STATIC_INLINE id _Nullable XZJSONDecodeJSONDictionary(Class __unsafe_unretained modelRawClass, XZJSONClassDescriptor * _Nullable __unsafe_unretained modelClass, NSDictionary * __strong JSONDictionary) {
+FOUNDATION_STATIC_INLINE id _Nullable XZJSONDecodeJSONDictionary(Class __unsafe_unretained modelRawClass, XZJSONClassDescriptor * _Nullable __unsafe_unretained modelClass, NSDictionary * __unsafe_unretained JSONDictionary) {
     // 获取模型描述
     if (modelClass == nil) {
-        modelClass = [XZJSONClassDescriptor descriptorWithClass:modelRawClass]; // 单例，不需要强持有
+        modelClass = [XZJSONClassDescriptor descriptorForClass:modelRawClass]; // 单例，不需要强持有
     }
     // 转发解析
-    if (modelClass->_forwardsClassForDecoding) {
+    if (modelClass->_forwardsDecodingClass) {
         Class const newRawClass = [modelRawClass forwardingClassForJSONDictionary:JSONDictionary];
         if (newRawClass == Nil) {
             return nil;
         }
         if (newRawClass != modelRawClass) {
             modelRawClass = newRawClass;
-            modelClass = [XZJSONClassDescriptor descriptorWithClass:modelRawClass];
+            modelClass = [XZJSONClassDescriptor descriptorForClass:modelRawClass];
         }
     }
     // 数据校验
-    if (modelClass->_verifiesValueForDecoding) {
+    if (modelClass->_verifiesDecodingValue) {
         JSONDictionary = [modelRawClass canDecodeFromJSONDictionary:JSONDictionary];
         if (JSONDictionary == nil) {
             return nil;
         }
-        NSCAssert([JSONDictionary isKindOfClass:NSDictionary.class], @"[XZJSON] 方法 +canDecodeFromJSONDictionary: 的返回值必须是 NSDictionary 对象");
+        // 返回值必须是 NSDictionary 对象
+        if (![JSONDictionary isKindOfClass:NSDictionary.class]) {
+            return nil;
+        }
     }
     // 自定义初始化过程
     if (modelClass->_usesJSONDecodingInitializer) {
@@ -66,14 +69,14 @@ FOUNDATION_STATIC_INLINE id _Nullable XZJSONDecodeJSONDictionary(Class __unsafe_
 }
 
 id _Nullable XZJSONDecodeJSONObject(id const __unsafe_unretained object, Class const __unsafe_unretained aClass) {
-    if (object == NSNull.null) {
+    if (object == (id)kCFNull) {
         return nil;
     }
     // 如果为字典，则认为是模型数据。
     if ([object isKindOfClass:NSDictionary.class]) {
         return XZJSONDecodeJSONDictionary(aClass, nil, object);
     }
-    // 如果是数组，则对数组元素是模型数据（也可能是模型数据数组）。
+    // 如果是数组，则数组元素是模型数据（也可能是模型数据数组）。
     if ([object isKindOfClass:NSArray.class]) {
         NSArray * const array = object;
         if (array.count == 0) {
@@ -103,8 +106,8 @@ typedef struct XZJSONDecodeEnumeratorContext {
     void *dictionary;
 } XZJSONDecodeEnumeratorContext;
 
-/// 用于遍历 NSDictionary 的函数。
-static void XZJSONDecodePropertyDictionaryEnumerator(const void *_key, const void *_value, void *_context) {
+/// 遍历 JSONDictionary 的函数。
+static void XZJSONDecodeDictionaryEnumerator(const void *_key, const void *_value, void *_context) {
     XZJSONDecodeEnumeratorContext * const                     context    = _context;
     id                              const __unsafe_unretained model      = (__bridge id)(context->model);
     XZJSONClassDescriptor         * const __unsafe_unretained modelClass = (__bridge XZJSONClassDescriptor *)(context->modelClass);
@@ -118,8 +121,8 @@ static void XZJSONDecodePropertyDictionaryEnumerator(const void *_key, const voi
     };
 }
 
-/// 用于遍历模型属性数组的函数。
-static void XZJSONDecodePropertyArrayEnumerator(const void * const propertyRef, void * const contextRef) {
+/// 遍历模型属性数组的函数。
+static void XZJSONDecodePropertiesEnumerator(const void * const propertyRef, void * const contextRef) {
     XZJSONDecodeEnumeratorContext * const                     context    = contextRef;
     NSDictionary                  * const __unsafe_unretained dictionary = (__bridge NSDictionary *)(context->dictionary);
     XZJSONPropertyDescriptor      * const __unsafe_unretained property   = (__bridge XZJSONPropertyDescriptor *)(propertyRef);
@@ -131,7 +134,7 @@ static void XZJSONDecodePropertyArrayEnumerator(const void * const propertyRef, 
     }
 }
 
-void XZJSONModelDecodeFromDictionary(id const __unsafe_unretained model, XZJSONClassDescriptor * const __unsafe_unretained modelClass, NSDictionary * const __unsafe_unretained dictionary) {
+void XZJSONModelDecodeFromDictionary(id const __unsafe_unretained model, XZJSONClassDescriptor * const __unsafe_unretained modelClass, NSDictionary * const __unsafe_unretained JSONDictionary) {
     // 没有可用的属性
     if (modelClass->_numberOfProperties == 0) {
         return;
@@ -140,29 +143,29 @@ void XZJSONModelDecodeFromDictionary(id const __unsafe_unretained model, XZJSONC
     XZJSONDecodeEnumeratorContext context = (XZJSONDecodeEnumeratorContext){
         (__bridge void *)modelClass,
         (__bridge void *)model,
-        (__bridge void *)dictionary
+        (__bridge void *)JSONDictionary
     };
    
     // 遍历数量少的集合，可以提高通用模型的解析效率。
-    if (modelClass->_numberOfProperties >= CFDictionaryGetCount((CFDictionaryRef)dictionary)) {
+    if (modelClass->_numberOfProperties >= CFDictionaryGetCount((CFDictionaryRef)JSONDictionary)) {
         // 遍历 key 映射的属性
-        CFDictionaryApplyFunction((CFDictionaryRef)dictionary, XZJSONDecodePropertyDictionaryEnumerator, &context);
+        CFDictionaryApplyFunction((CFDictionaryRef)JSONDictionary, XZJSONDecodeDictionaryEnumerator, &context);
         
         // 遍历 keyPath 映射的属性
         if (modelClass->_keyPathProperties) {
             CFRange const range = CFRangeMake(0, CFArrayGetCount((CFArrayRef)modelClass->_keyPathProperties));
-            CFArrayApplyFunction((CFArrayRef)modelClass->_keyPathProperties, range, XZJSONDecodePropertyArrayEnumerator, &context);
+            CFArrayApplyFunction((CFArrayRef)modelClass->_keyPathProperties, range, XZJSONDecodePropertiesEnumerator, &context);
         }
         
         // 遍历 keyArray 映射的属性
         if (modelClass->_keyArrayProperties) {
             CFRange const range = CFRangeMake(0, CFArrayGetCount((CFArrayRef)modelClass->_keyArrayProperties));
-            CFArrayApplyFunction((CFArrayRef)modelClass->_keyArrayProperties, range, XZJSONDecodePropertyArrayEnumerator, &context);
+            CFArrayApplyFunction((CFArrayRef)modelClass->_keyArrayProperties, range, XZJSONDecodePropertiesEnumerator, &context);
         }
     } else {
         // 遍历所有属性
         CFRange const range = CFRangeMake(0, CFArrayGetCount((CFArrayRef)modelClass->_sortedProperties));
-        CFArrayApplyFunction((CFArrayRef)modelClass->_sortedProperties, range, XZJSONDecodePropertyArrayEnumerator, &context);
+        CFArrayApplyFunction((CFArrayRef)modelClass->_sortedProperties, range, XZJSONDecodePropertiesEnumerator, &context);
     }
 }
 
@@ -750,12 +753,15 @@ FOUNDATION_STATIC_INLINE BOOL XZJSONModelDecodePropertyFallback(id const __unsaf
     }
 }
 
-void XZJSONModelDecodeProperty(id const __unsafe_unretained model, XZJSONPropertyDescriptor * const __unsafe_unretained property, id _Nonnull __strong JSONValue) {
+void XZJSONModelDecodeProperty(id const __unsafe_unretained model, XZJSONPropertyDescriptor * const __unsafe_unretained property, id _Nonnull __unsafe_unretained JSONValue) {
     switch (property->_type) {
         case XZObjcTypeUnknown:
         case XZObjcTypeVoid:
         case XZObjcTypeString:
-        case XZObjcTypeArray:
+        case XZObjcTypeArray: {
+            // 无法处理的类型
+            break;
+        }
         case XZObjcTypeBitField:
         case XZObjcTypePointer:
         case XZObjcTypeUnion: {
@@ -1014,7 +1020,7 @@ void XZJSONModelDecodeProperty(id const __unsafe_unretained model, XZJSONPropert
                         // 未指定对象类型，或者已经是指定的自定义对象类型，直接赋值
                         value = JSONValue;
                     } else {
-                        XZJSONClassDescriptor * const valueClass = [XZJSONClassDescriptor descriptorWithClass:property->_subtype];
+                        XZJSONClassDescriptor * const valueClass = [XZJSONClassDescriptor descriptorForClass:property->_subtype];
                         if (!valueClass) {
                             break;
                         }
@@ -1042,9 +1048,10 @@ void XZJSONModelDecodeProperty(id const __unsafe_unretained model, XZJSONPropert
         }
         case XZObjcTypeInt128:
         case XZObjcTypeUnsignedInt128:
-        case XZObjcTypeVector:
-            XZLog(@"[XZJSON] 目前平台不支持该数据类型");
+        case XZObjcTypeVector: {
+            // 无法处理的类型
             break;
+        }
     }
     
     // JSONValue 无法解析为目标属性值

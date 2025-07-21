@@ -30,7 +30,7 @@ NSString *         const XZObjcClassUpdateProperties      = @"XZObjcClassUpdateP
     self = [super init];
     if (self) {
         _raw = aClass;
-        _super = [XZObjcClassDescriptor descriptorWithClass:[aClass superclass]];
+        _super = [XZObjcClassDescriptor descriptorForClass:[aClass superclass]];
         _name = NSStringFromClass(aClass);
         _type = [XZObjcTypeDescriptor descriptorForObjcType:@encode(Class)];
         _ivars = _super ? nil : @{};
@@ -144,7 +144,7 @@ NSString *         const XZObjcClassUpdateProperties      = @"XZObjcClassUpdateP
     }
 }
 
-+ (instancetype)descriptorWithClass:(Class)aClass {
++ (instancetype)descriptorForClass:(Class)aClass {
     if (!object_isClass(aClass)) {
         return nil;
     }
@@ -168,11 +168,11 @@ NSString *         const XZObjcClassUpdateProperties      = @"XZObjcClassUpdateP
     descriptor = [[XZObjcClassDescriptor alloc] initWithClass:aClass];
     
     dispatch_semaphore_wait(_lock, DISPATCH_TIME_FOREVER);
-    XZObjcClassDescriptor *descriptor2 = CFDictionaryGetValue(_storage, (__bridge const void *)aClass);
-    if (descriptor2 == nil) {
+    XZObjcClassDescriptor *newDescriptor = CFDictionaryGetValue(_storage, (__bridge const void *)aClass);
+    if (newDescriptor == nil) {
         CFDictionarySetValue(_storage, (__bridge const void *)aClass, (__bridge const void *)descriptor);
     } else {
-        descriptor = descriptor2;
+        descriptor = newDescriptor;
     }
     dispatch_semaphore_signal(_lock);
     
