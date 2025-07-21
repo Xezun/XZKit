@@ -32,7 +32,7 @@ NS_ASSUME_NONNULL_BEGIN
 ///   - exclusive: 是否独占，独占的 toast 消息展示时，不再展示其它 toast 消息
 ///   - completion: 消息展示完成时的回调，如果消息被提前结束，则回调参数为 NO 值
 /// - Returns: 返回值与参数 toast 不是同一对象，当需要隐藏特定 toast 时，需要使用该返回值
-- (nullable XZToastTask *)xz_showToast:(XZToast *)toast duration:(NSTimeInterval)duration position:(XZToastPosition)position exclusive:(BOOL)exclusive completion:(nullable XZToastCompletion)completion NS_REFINED_FOR_SWIFT NS_SWIFT_NAME(__showToast(_:duration:position:exclusive:completion:));
+- (nullable XZToastTask *)xz_showToast:(XZToast *)toast duration:(NSTimeInterval)duration position:(XZToastPosition)position exclusive:(BOOL)exclusive completion:(nullable XZToastCompletion)completion NS_SWIFT_NAME(__showToast(_:duration:position:exclusive:completion:));
 
 - (nullable XZToastTask *)xz_showToast:(XZToast *)toast duration:(NSTimeInterval)duration position:(XZToastPosition)position completion:(nullable XZToastCompletion)completion NS_SWIFT_UNAVAILABLE("");
 - (nullable XZToastTask *)xz_showToast:(XZToast *)toast duration:(NSTimeInterval)duration exclusive:(BOOL)exclusive completion:(nullable XZToastCompletion)completion NS_SWIFT_UNAVAILABLE("");
