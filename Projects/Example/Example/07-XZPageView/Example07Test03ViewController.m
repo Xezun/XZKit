@@ -104,6 +104,18 @@
     [self presentViewController:imageViewer animated:YES completion:nil];
 }
 
+- (IBAction)cleanImageCachesButtonAction:(UIButton *)sender {
+    SDWebImageManager *manager = SDWebImageManager.sharedManager;
+    
+    for (NSDictionary *dict in _imageURLs) {
+        NSURL *url = dict[@"image"];
+        NSString *key = [manager cacheKeyForURL:url];
+        [SDWebImageManager.sharedManager.imageCache removeImageForKey:key cacheType:(SDImageCacheTypeAll) completion:nil];
+    }
+    
+    [self xz_showToast:[XZToast successToast:@"清理成功"]];
+}
+
 - (IBAction)refreshStatusBarButtonAction:(UIButton *)sender {
     [self setNeedsStatusBarAppearanceUpdate];
 }
