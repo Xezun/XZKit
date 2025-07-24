@@ -49,7 +49,7 @@ NS_SWIFT_NAME(XZDataCryptor.Algorithm)
 
 /// 3DES 算法，密钥长度 24 字节，块大小 8 字节。
 /// @note 如果密钥长度不是 24，则默认为 24 ，超出截取，不足补 \0 。
-+ (XZDataCryptorAlgorithm *)DES3:(NSString *)key vector:(nullable NSString *)vector NS_SWIFT_NAME(DES3(key:vector:));
++ (XZDataCryptorAlgorithm *)tripleDES:(NSString *)key vector:(nullable NSString *)vector NS_SWIFT_NAME(tripleDES(key:vector:));
 
 /// CAST 算法，密钥长度 5-16 字节，块大小 8 字节。
 /// @note 如果密钥长度不足 5，则末尾补 \0 到 5 位，如果大于 16，将截取前 16 位。

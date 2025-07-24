@@ -78,7 +78,7 @@ static NSString *XZDataCryptorCanonicalVector(NSString *vector, size_t blockSize
     return [self algorithm:kCCAlgorithmDES key:key vector:vector blockSize:kCCBlockSizeDES contextSize:kCCContextSizeDES];
 }
 
-+ (XZDataCryptorAlgorithm *)DES3:(NSString *)key vector:(NSString *)vector {
++ (XZDataCryptorAlgorithm *)tripleDES:(NSString *)key vector:(NSString *)vector {
     return [self algorithm:kCCAlgorithm3DES key:key vector:vector blockSize:kCCBlockSize3DES contextSize:kCCContextSize3DES];
 }
 

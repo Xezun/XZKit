@@ -145,7 +145,7 @@ class Example19CryptorViewController: UITableViewController {
         case "DES":
             return .DES(key: key, vector: vector)
         case "3DES":
-            return .DES3(key: key, vector: vector)
+            return .tripleDES(key: key, vector: vector)
         case "CAST":
             return .CAST(key: key, vector: vector)
         case "RC4":
