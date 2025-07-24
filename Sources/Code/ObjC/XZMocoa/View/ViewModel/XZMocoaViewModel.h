@@ -372,7 +372,7 @@ FOUNDATION_EXPORT XZMocoaKey const XZMocoaKeyNone NS_SWIFT_NAME(XZMocoaKeyNone);
 /// }
 /// ```
 ///
-/// 在 Swift 中，仅需要 `@mocoa` 和 `@bind` 这两个标记，即可自动创建上述映射关系。
+/// 在 Swift 中，可使用 `@mocoa` 和 `@bind` 标记属性或方法，即可自动创建上述映射关系。
 ///
 /// ```swift
 /// @mocoa
@@ -383,15 +383,25 @@ FOUNDATION_EXPORT XZMocoaKey const XZMocoaKeyNone NS_SWIFT_NAME(XZMocoaKeyNone);
 /// }
 /// ```
 ///
-/// 因为层级关系可以处理大部分数据更新事件，还有某些框架已经了提供数据更新事件，所以默认情况下，键值观察是被动的。
-/// 若要开启主动键值观察，重写``shouldObserveModelKeysActively``属性，并返回`YES`即可。
+/// - SeeAlso: ``shouldObserveModelKeysActively`` 属性
 @property (class, nullable, readonly) NSDictionary<NSString *, id> *mappingModelKeys;
 
 /// 是否主动观察数据模型。默认 NO 否。
 ///
-/// 使用 NSKeyValueObserving 对 ``mappingModelKeys`` 中的键进行观察。
+/// ### 默认被动的观察机制
 ///
-/// 子类重写，可以根据数据模型的类型，决定是否需要主动绑定。
+/// - 在 iOS 开发中，数据相关的逻辑，大多可以通过层级关系来处理。
+/// - 在某些情况下，数据不需要动态监听，比如当 `UITableViewCell` 需要刷新时，往往整个 Cell 视图的重载。
+/// - 数据管理框架，比如 CoreData 框架，自带数据监听机制。
+///
+/// 所以默认情况下，键值观察是被动的。
+///
+/// 若要开启主动键值观察，重写此属性，并返回`YES`即可。
+///
+/// 使用 `NSKeyValueObserving` 对 ``mappingModelKeys`` 中的键进行观察，
+/// 且单个 Runloop 内的键值事件，会合并统一处理，即在一个 Runloop 内，同一个 key 即使发生多次改变，绑定的方法只会执行一次。
+///
+/// 在 Swift 中，使用 `@mocoa` 和 `@bind` 标记的绑定的键值事件，也属于此被动观察机制。
 @property (nonatomic, readonly) BOOL shouldObserveModelKeysActively;
 
 /// 当视图模型更新了 其他视图模型 的 数据模型 后，可通过此方法通知目标视图模型。
