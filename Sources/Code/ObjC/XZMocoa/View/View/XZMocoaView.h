@@ -121,16 +121,18 @@ FOUNDATION_EXPORT XZMocoaOptionKey const XZMocoaOptionKeyName;
 /// 根据视图控制器的模块地址，构造视图控制器。
 + (nullable __kindof UIViewController *)viewControllerWithMocoaURL:(NSURL *)url;
 
-/// XZMocoa 使用此方法初始化控制器。
+/// Mocoa 使用此方法初始化控制器。
 /// @discussion
 /// 便利初始化方法，先调用 -initWithNibName:bundle: 方法完成基本初始化，再调用 -didInitWithMocoaOptions: 完成额外初始化。
 /// @discussion
-/// 通过 nib/storyboard 加载的控制器，因为已经初始化，不会调用此方法，但是会调用 -didInitWithMocoaOptions: 方法。
+/// 通过 Mocoa 加载由 xib/storyboard 定义的控制器，由于控制器已经初始化，此方法不会被调用，但是会调用 -didInitWithMocoaOptions: 方法。
 /// @discussion
-/// 子类可以通过重写此方法获取 options 中的参数信息，或将控制器的初始化改为其它初始化方法。
+/// 子类可以通过 options 中的参数信息，调用指定初始化方法完成最终的初始化。
 /// @discussion
-/// 由于在 Category 中定义的初始化方法，无法用`NS_DESIGNATED_INITIALIZER`标记，无法桥接到 Swift 中，所以此方法在 Swift 中无法访问。
-/// 但是 Swift 可通过重写 `-didInitWithMocoaOptions:` 方法，来接收 Mocoa 初始化参数。
+/// 在 Swift 中，此方法无法访问，但是可通过重写``-didInitWithMocoaOptions:``方法接收 Mocoa 初始化参数。
+/// @note
+/// 在 Category 中定义的初始化方法，无法用`NS_DESIGNATED_INITIALIZER`标记，也无法桥接到 Swift 中。
+///
 /// @param options 初始化参数
 - (instancetype)initWithMocoaOptions:(XZMocoaOptions *)options nibName:(nullable NSString *)nibName bundle:(nullable NSBundle *)bundle;
 
