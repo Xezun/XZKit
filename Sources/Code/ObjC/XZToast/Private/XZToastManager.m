@@ -389,7 +389,6 @@
                     newToastItem->_frame.origin.y = CGRectGetMidY(_bounds) - newToastItem->_frame.size.height * 0.5 + _offsets[XZToastPositionMiddle];
                     newToastItem.wrapperView.alpha = 0.0;
                     newToastItem.wrapperView.frame = newToastItem->_frame;
-                    newToastItem.wrapperView.transform = CGAffineTransformMakeScale(0.01, 0.01);
                     break;
                 case XZToastPositionBottom:
                     // 底部 toast 入场动画：渐显+上移
@@ -530,7 +529,7 @@
             if (item.isViewReused) {
                 continue;
             }
-            // - MARK: - 视图退场：执行动画，渐隐、平移
+            // MARK: - 视图退场：执行动画，渐隐、平移
             // 如果此处新增动画效果，也需要在复用处添加相应的反向效果。
             // 在复用模式下，上述这些动画，需要执行相反的动画处理，即隐藏包含 alpha/transform 两种动画，复用逻辑则这两种动画的反向动画。
             CGFloat moveDirection = 0.0;
