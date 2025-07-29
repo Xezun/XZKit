@@ -107,17 +107,17 @@
 
 // Qwen3-32B 写的测试案例
 
-typedef XZMarkupPredicate Predicate;
+typedef XZStringMarkup Predicate;
 
 static NSString *replace(NSString *self, Predicate predicate, NSString *(^transform)(NSString *)) {
-    return [self xz_stringByReplacingMatchesOfPredicate:predicate usingBlock:transform];
+    return [self xz_stringByReplacingMatchesOfMarkup:predicate usingBlock:transform];
 }
 
 // 1. **空字符串或长度不足**
 
 - (void)testEmptyString {
     NSString *input = @"";
-    XZMarkupPredicate predicate = {'[', ']'};
+    XZStringMarkup predicate = {'[', ']'};
     NSString *result = replace(input, predicate, ^NSString *(NSString *match) {
         return @"";
     });

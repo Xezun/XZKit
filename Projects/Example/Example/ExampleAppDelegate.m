@@ -34,9 +34,10 @@
     
     CGRect const bounds = UIScreen.mainScreen.bounds;
     
+    UIViewController *rootVC = [UIStoryboard storyboardWithName:@"Main" bundle:nil].instantiateInitialViewController;
+
     _window = [[UIWindow alloc] initWithFrame:bounds];
     _window.backgroundColor = UIColor.whiteColor;
-    UIViewController *rootVC = [UIStoryboard storyboardWithName:@"Main" bundle:nil].instantiateInitialViewController;
     _window.rootViewController = rootVC;
     [_window makeKeyAndVisible];
     
