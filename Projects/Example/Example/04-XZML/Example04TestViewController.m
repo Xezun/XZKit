@@ -55,8 +55,8 @@
 - (void)reloadData {
     NSString *xzml = self.data[@"xzml"];
 
-    [self.textView setXZMLText:xzml attributes:_attributes];
-    self.textLabel.text = [[NSString alloc] initWithXZMLString:xzml attributes:_attributes];
+    [self.textView setXZML:xzml attributes:_attributes];
+    self.textLabel.text = [[NSString alloc] initWithXZML:xzml attributes:_attributes];
     
     self.consoleLabel.text = self.textView.attributedText.description;
 }

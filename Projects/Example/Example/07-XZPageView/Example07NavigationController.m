@@ -6,6 +6,7 @@
 //
 
 #import "Example07NavigationController.h"
+@import XZKit;
 
 @interface Example07NavigationController ()
 

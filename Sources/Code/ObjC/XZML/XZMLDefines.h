@@ -29,28 +29,28 @@ NS_ASSUME_NONNULL_BEGIN
 /// 通过此键为 XZML 样式预设字体名。
 /// 1. 值为 UIFont 对象。
 /// 2. 只有字体名是预设值，字体大小仅在指定值、继承值、默认值都不存在时才会使用。
-FOUNDATION_EXPORT NSAttributedStringKey const XZMLFontAttributeName;
+FOUNDATION_EXPORT NSAttributedStringKey const XZMLFontAttributeName NS_REFINED_FOR_SWIFT;
 
 /// 通过此键为 XZML 样式预设前景色。
 /// 1. 值为代表前景色的 UIColor 对象。
-FOUNDATION_EXPORT NSAttributedStringKey const XZMLForegroundColorAttributeName;
+FOUNDATION_EXPORT NSAttributedStringKey const XZMLForegroundColorAttributeName NS_REFINED_FOR_SWIFT;
 
 /// 通过此键为 XZML 样式预设文本修饰类型。
 /// 1. 值为代表文本修饰类型枚举 XZMLDecorationType 的值的 NSNumber 对象。
-FOUNDATION_EXPORT NSAttributedStringKey const XZMLDecorationAttributeName;
+FOUNDATION_EXPORT NSAttributedStringKey const XZMLDecorationAttributeName NS_REFINED_FOR_SWIFT;
 
 /// 通过此键为 XZML 样式预设安全模式。
 /// 1. 值为布尔值，YES 表示当前为安全模式，NO 为非安全模式。
-FOUNDATION_EXPORT NSAttributedStringKey const XZMLSecurityModeAttributeName;
+FOUNDATION_EXPORT NSAttributedStringKey const XZMLSecurityModeAttributeName NS_REFINED_FOR_SWIFT;
 
 /// 通过此键为 XZML 样式预设超链接。
 /// 1. 值为 NSString 或 NSURL 对象。
 /// 2. 其中功能以 `~` 或 `/` 开头的 NSString 对象，会被认为是文件路径，用 `+[NSURL fileURLWithPath:]` 转换为 NSURL 对象。
-FOUNDATION_EXPORT NSAttributedStringKey const XZMLLinkAttributeName;
+FOUNDATION_EXPORT NSAttributedStringKey const XZMLLinkAttributeName NS_REFINED_FOR_SWIFT;
 
 /// 通过此键为 XZML 样式预设段落（最小）行高。
 /// 1. 值为代表文本段落最小行高的 CGFloat 值的 NSNumber 对象。
-FOUNDATION_EXPORT NSAttributedStringKey const XZMLLineHeightAttributeName;
+FOUNDATION_EXPORT NSAttributedStringKey const XZMLLineHeightAttributeName NS_REFINED_FOR_SWIFT;
 
 
 /// 文本修饰类型枚举。

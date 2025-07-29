@@ -92,7 +92,7 @@ Pod::Spec.new do |s|
   s.defineSubspec "XZObjcDescriptor", "ObjC",  false, ["XZDefines"], 0
   
   # 核心
-  s.defineSubspec "XZML",      "ObjC",  true, ["XZDefines", "XZExtensions"], 0
+  s.defineSubspec "XZML",      "Mixed", true, ["XZDefines", "XZExtensions"], 0
   s.defineSubspec "XZMocoa",   "Mixed", true, ["XZDefines", "XZExtensions", "XZObjcDescriptor"], 1
   s.defineSubspec "XZToast",   "Mixed", true, ["XZGeometry", "XZTextImageView", "XZExtensions"], 0
   s.defineSubspec "XZRefresh", "ObjC",  true, ["XZDefines"], 0

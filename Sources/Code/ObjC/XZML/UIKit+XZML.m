@@ -10,7 +10,7 @@
 
 @implementation UILabel (XZML)
 
-- (void)setXZMLText:(NSString *)XZMLString attributes:(nullable NSDictionary<NSString *,id> *)attributes {
+- (void)setXZML:(NSString *)XZMLString attributes:(nullable NSDictionary<NSAttributedStringKey, id> *)attributes {
     // 读取字体、字体颜色的默认值
     if (attributes == nil || attributes[NSFontAttributeName] == nil || attributes[NSForegroundColorAttributeName] == nil) {
         self.text = nil;
@@ -22,18 +22,18 @@
         }
         attributes = newAttributes;
     }
-    self.attributedText = [[NSMutableAttributedString alloc] initWithXZMLString:XZMLString attributes:attributes];
+    self.attributedText = [[NSMutableAttributedString alloc] initWithXZML:XZMLString attributes:attributes];
 }
 
-- (void)setXZMLText:(NSString *)XZMLString {
-    [self setXZMLText:XZMLString attributes:nil];
+- (void)setXZML:(NSString *)XZMLString {
+    [self setXZML:XZMLString attributes:nil];
 }
 
 @end
 
 @implementation UIButton (XZML)
 
-- (void)setXZMLTitle:(NSString *)XZMLString forState:(UIControlState)state attributes:(nullable NSDictionary<NSString *,id> *)attributes {
+- (void)setXZML:(NSString *)XZMLString forState:(UIControlState)state attributes:(nullable NSDictionary<NSAttributedStringKey, id> *)attributes {
     // 读取字体、字体颜色的默认值
     if (attributes == nil || attributes[NSFontAttributeName] == nil || attributes[NSForegroundColorAttributeName] == nil) {
         NSMutableDictionary *newAttributes = [NSMutableDictionary dictionaryWithCapacity:attributes.count + 2];
@@ -44,19 +44,19 @@
         }
         attributes = newAttributes;
     }
-    id const title = [[NSMutableAttributedString alloc] initWithXZMLString:XZMLString attributes:attributes];
+    id const title = [[NSMutableAttributedString alloc] initWithXZML:XZMLString attributes:attributes];
     [self setAttributedTitle:title forState:state];
 }
 
-- (void)setXZMLTitle:(NSString *)XZMLString forState:(UIControlState)state {
-    [self setXZMLTitle:XZMLString forState:state attributes:nil];
+- (void)setXZML:(NSString *)XZMLString forState:(UIControlState)state {
+    [self setXZML:XZMLString forState:state attributes:nil];
 }
 
 @end
 
 @implementation UITextView (XZML)
 
-- (void)setXZMLText:(NSString *)XZMLString attributes:(NSDictionary<NSString *,id> *)attributes {
+- (void)setXZML:(NSString *)XZMLString attributes:(NSDictionary<NSAttributedStringKey, id> *)attributes {
     // 读取字体、字体颜色的默认值
     if (attributes == nil || attributes[NSFontAttributeName] == nil || attributes[NSForegroundColorAttributeName] == nil) {
         self.text = nil;
@@ -68,18 +68,18 @@
         }
         attributes = newAttributes;
     }
-    self.attributedText = [[NSMutableAttributedString alloc] initWithXZMLString:XZMLString attributes:attributes];
+    self.attributedText = [[NSMutableAttributedString alloc] initWithXZML:XZMLString attributes:attributes];
 }
 
-- (void)setXZMLText:(NSString *)XZMLString {
-    [self setXZMLText:XZMLString attributes:nil];
+- (void)setXZML:(NSString *)XZMLString {
+    [self setXZML:XZMLString attributes:nil];
 }
 
 @end
 
 @implementation UITextField (XZML)
 
-- (void)setXZMLText:(NSString *)XZMLString attributes:(NSDictionary<NSString *,id> *)attributes {
+- (void)setXZML:(NSString *)XZMLString attributes:(NSDictionary<NSAttributedStringKey, id> *)attributes {
     // 读取字体、字体颜色的默认值
     if (attributes == nil || attributes[NSFontAttributeName] == nil || attributes[NSForegroundColorAttributeName] == nil) {
         self.text = nil;
@@ -91,11 +91,11 @@
         }
         attributes = newAttributes;
     }
-    self.attributedText = [[NSMutableAttributedString alloc] initWithXZMLString:XZMLString attributes:attributes];
+    self.attributedText = [[NSMutableAttributedString alloc] initWithXZML:XZMLString attributes:attributes];
 }
 
-- (void)setXZMLText:(NSString *)XZMLString {
-    [self setXZMLText:XZMLString attributes:nil];
+- (void)setXZML:(NSString *)XZMLString {
+    [self setXZML:XZMLString attributes:nil];
 }
 
 @end

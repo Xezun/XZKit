@@ -25,11 +25,11 @@ NS_ASSUME_NONNULL_BEGIN
 ///
 /// @param XZMLString XZML 字符串
 /// @param attributes 富文本属性
-- (instancetype)initWithXZMLString:(nullable NSString *)XZMLString attributes:(nullable NSDictionary<NSString *, id> *)attributes NS_SWIFT_NAME(init(XZML:attributes:));
+- (instancetype)initWithXZML:(nullable NSString *)XZMLString attributes:(nullable NSDictionary<NSAttributedStringKey, id> *)attributes NS_SWIFT_NAME(init(XZML:attributes:));
 
 /// 通过 XZML 构造对象。
 /// @param XZMLString XZML 字符串
-- (instancetype)initWithXZMLString:(nullable NSString *)XZMLString NS_SWIFT_NAME(init(XZML:));
+- (instancetype)initWithXZML:(nullable NSString *)XZMLString NS_SWIFT_NAME(init(XZML:));
 
 @end
 
@@ -41,7 +41,7 @@ NS_ASSUME_NONNULL_BEGIN
 /// 使用 XZML 添加富文本。
 /// @param XZMLString XZML
 /// @param attributes 默认属性
-- (void)appendXZMLString:(nullable NSString *)XZMLString attributes:(nullable NSDictionary<NSString *,id> *)attributes NS_SWIFT_NAME(append(XZML:attributes:));
+- (void)appendXZML:(nullable NSString *)XZMLString attributes:(nullable NSDictionary<NSAttributedStringKey,id> *)attributes NS_SWIFT_NAME(append(XZML:attributes:));
 
 @end
 

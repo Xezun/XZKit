@@ -28,12 +28,16 @@ pod "XZKit"
 
 ## 组件 Components
 
+### [XZDefines](./Docs/XZDefines.md) 
+
+开发中常用的宏、定义、函数。
+
+### [XZExtensions](./Docs/XZExtensions.md) 
+
+原生框架UIKit、Foundation的拓展与增强
+
 ### [XZMocoa](./Docs/XZMocoa.md) 
-
-An MVVM library for Cocoa.
-
-基于原生风格的轻量级 MVVM 开发框架。
-
+    
 ```swift
 import XZKit
 
@@ -95,17 +99,19 @@ class ViewModel: XZMocoaViewModel {
 }
 ```
 
-### [XZDefines](./Docs/XZDefines.md) 
-
-开发中常用的宏、定义、函数。
-
-### [XZExtensions](./Docs/XZExtensions.md) 
-
-原生框架UIKit、Foundation的拓展与增强
-
 ### [XZML](./Docs/XZML.md) 
 
 富文本标记语言
+
+```swift
+// 使用 # 改变文本颜色
+let _ = NSAttributedString(XZML: "<f00#Red> <0f0#Green> <996633#Brown>")
+// 使用 & 修改文本字体
+let _ = NSAttributedString(XZML: "a <&bold> text", attributes: [
+    .font: UIFont.systemFont(ofSize: 24),
+    .XZML.font: UIFont.boldSystemFont(ofSize: 24)
+]);
+```
 
 ### [XZObjcDescriptor](./Docs/XZObjcDescriptor.md) 
 

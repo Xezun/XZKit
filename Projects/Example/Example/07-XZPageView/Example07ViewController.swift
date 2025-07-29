@@ -6,6 +6,7 @@
 //
 
 import UIKit
+import XZKit
 
 class Example07ViewController: UITableViewController {
 

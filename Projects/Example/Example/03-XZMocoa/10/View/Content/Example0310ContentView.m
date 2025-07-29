@@ -65,7 +65,7 @@
 
 - (void)setContent:(NSString *)content {
     NSString *xzml = [NSString stringWithFormat:@"<30H3A^%@>", content];
-    [_contentLabel setXZMLText:xzml];
+    [_contentLabel setXZML:xzml];
 }
 
 @end

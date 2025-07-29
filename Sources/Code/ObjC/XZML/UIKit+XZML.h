@@ -23,12 +23,12 @@ NS_ASSUME_NONNULL_BEGIN
 /// - Parameters:
 ///   - XZMLString: XZML 文本
 ///   - attributes: 文本样式属性
-- (void)setXZMLText:(nullable NSString *)XZMLString attributes:(nullable NSDictionary<NSString *, id> *)attributes;
+- (void)setXZML:(nullable NSString *)XZMLString attributes:(nullable NSDictionary<NSAttributedStringKey, id> *)attributes;
 
 /// 设置 XZML 格式的文本。
 /// - Parameters:
 ///   - XZMLString: XZML 文本
-- (void)setXZMLText:(nullable NSString *)XZMLString;
+- (void)setXZML:(nullable NSString *)XZMLString;
 
 @end
 
@@ -43,13 +43,13 @@ NS_ASSUME_NONNULL_BEGIN
 ///   - XZMLString: XZML 文本
 ///   - state: 状态
 ///   - attributes: 文本样式属性
-- (void)setXZMLTitle:(nullable NSString *)XZMLString forState:(UIControlState)state attributes:(nullable NSDictionary<NSString *, id> *)attributes;
+- (void)setXZML:(nullable NSString *)XZMLString forState:(UIControlState)state attributes:(nullable NSDictionary<NSAttributedStringKey, id> *)attributes;
 
 /// 设置 XZML 格式的标题文本。
 /// - Parameters:
 ///   - XZMLString: XZML 文本
 ///   - state: 状态
-- (void)setXZMLTitle:(nullable NSString *)XZMLString forState:(UIControlState)state;
+- (void)setXZML:(nullable NSString *)XZMLString forState:(UIControlState)state;
 
 @end
 
@@ -62,12 +62,12 @@ NS_ASSUME_NONNULL_BEGIN
 /// - Parameters:
 ///   - XZMLString: XZML 文本
 ///   - attributes: 文本样式属性
-- (void)setXZMLText:(nullable NSString *)XZMLString attributes:(nullable NSDictionary<NSString *, id> *)attributes;
+- (void)setXZML:(nullable NSString *)XZMLString attributes:(nullable NSDictionary<NSAttributedStringKey, id> *)attributes;
 
 /// 设置 XZML 格式的文本。
 /// - Parameters:
 ///   - XZMLString: XZML 文本
-- (void)setXZMLText:(nullable NSString *)XZMLString;
+- (void)setXZML:(nullable NSString *)XZMLString;
 
 @end
 
@@ -80,12 +80,12 @@ NS_ASSUME_NONNULL_BEGIN
 /// - Parameters:
 ///   - XZMLString: XZML 文本
 ///   - attributes: 文本样式属性
-- (void)setXZMLText:(nullable NSString *)XZMLString attributes:(nullable NSDictionary<NSString *, id> *)attributes;
+- (void)setXZML:(nullable NSString *)XZMLString attributes:(nullable NSDictionary<NSAttributedStringKey, id> *)attributes;
 
 /// 设置 XZML 格式的文本。
 /// - Parameters:
 ///   - XZMLString: XZML 文本
-- (void)setXZMLText:(nullable NSString *)XZMLString;
+- (void)setXZML:(nullable NSString *)XZMLString;
 
 @end
 
