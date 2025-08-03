@@ -30,24 +30,6 @@ NSTimeInterval const XZToastAnimationDuration = 0.35;
     return [[self alloc] initWithView:view];
 }
 
-+ (instancetype)toastWithStyle:(XZToastStyle)style text:(NSString *)text image:(UIImage *)image progress:(CGFloat)progress {
-    XZToastView *toastView = [[XZToastView alloc] init];
-    toastView.text = text;
-    if (image == nil) {
-        image = [XZToast imageForStyle:style];
-    }
-    [toastView setStyle:style image:image progress:-1.0];
-    return [[self alloc] initWithView:toastView];
-}
-
-+ (instancetype)toastWithStyle:(XZToastStyle)style text:(NSString *)text image:(UIImage *)image {
-    return [self toastWithStyle:style text:text image:image progress:-1.0];
-}
-
-+ (instancetype)toastWithStyle:(XZToastStyle)style text:(NSString *)text progress:(CGFloat)progress {
-    return [self toastWithStyle:style text:text image:nil progress:progress];
-}
-
 #pragma mark - <XZToastView>
 
 - (NSString *)text {
@@ -87,7 +69,47 @@ NSTimeInterval const XZToastAnimationDuration = 0.35;
     }
 }
 
+#pragma mark - 一级便利构造器
+
++ (instancetype)toastWithStyle:(XZToastStyle)style text:(NSString *)text image:(UIImage *)image progress:(CGFloat)progress {
+    XZToastView *toastView = [[XZToastView alloc] init];
+    toastView.text = text;
+    if (image == nil) {
+        image = [XZToast imageForStyle:style];
+    }
+    [toastView setStyle:style image:image progress:-1.0];
+    return [[self alloc] initWithView:toastView];
+}
+
++ (XZToast *)sharedToast:(XZToastStyle const)style text:(NSString *)text image:(UIImage *)image progress:(CGFloat)progress {
+    static XZToastView * __weak _sharedToastView = nil;
+    
+    XZToastView *toastView = _sharedToastView;
+    
+    if (toastView == nil) {
+        toastView = [[XZToastView alloc] init];
+        _sharedToastView = toastView;
+    }
+    
+    if (image == nil) {
+        image = [XZToast imageForStyle:style];
+    }
+    
+    toastView.text = text;
+    [toastView setStyle:style image:image progress:progress];
+    
+    return [[self alloc] initWithView:toastView];
+}
+
 #pragma mark - 便利初始化方法
+
++ (instancetype)toastWithStyle:(XZToastStyle)style text:(NSString *)text image:(UIImage *)image {
+    return [self toastWithStyle:style text:text image:image progress:-1.0];
+}
+
++ (instancetype)toastWithStyle:(XZToastStyle)style text:(NSString *)text progress:(CGFloat)progress {
+    return [self toastWithStyle:style text:text image:nil progress:progress];
+}
 
 + (instancetype)messageToast:(NSString *)text {
     return [self toastWithStyle:XZToastStyleMessage text:text image:nil];
@@ -115,26 +137,6 @@ NSTimeInterval const XZToastAnimationDuration = 0.35;
 
 + (instancetype)waitingToast:(NSString *)text {
     return [self toastWithStyle:XZToastStyleWaiting text:text image:nil];
-}
-
-+ (XZToast *)sharedToast:(XZToastStyle const)style text:(NSString *)text image:(UIImage *)image progress:(CGFloat)progress {
-    static XZToastView * __weak _sharedToastView = nil;
-    
-    XZToastView *toastView = _sharedToastView;
-    
-    if (toastView == nil) {
-        toastView = [[XZToastView alloc] init];
-        _sharedToastView = toastView;
-    }
-    
-    if (image == nil) {
-        image = [XZToast imageForStyle:style];
-    }
-    
-    toastView.text = text;
-    [toastView setStyle:style image:image progress:progress];
-    
-    return [[self alloc] initWithView:toastView];
 }
 
 + (XZToast *)sharedToast:(XZToastStyle const)style text:(NSString *)text image:(UIImage *)image {
