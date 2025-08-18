@@ -17,11 +17,6 @@ typedef struct XZMLDSLContext {
     NSUInteger         index;
 } XZMLDSLContext;
 
-/// 判断是否为元素标记。
-FOUNDATION_STATIC_INLINE BOOL XZMLDSLIsElement(XZMLElement element) {
-    return (element != XZMLElementNotAnElement);
-}
-
 /// 从 context 的当前位置开始，查找下一个 ASCII 字符的位置。
 static inline NSUInteger XZMLDSLContextSearchASCII(XZMLDSLContext *context) {
     NSUInteger index = context->index;
@@ -60,7 +55,7 @@ static void XZMLElementDSLAbort(XZMLDSLContext * const context, XZMLElement cons
         
         XZMLElement const newElement = shouldBeginElement(character);
         // character 是元素开始字符
-        if (XZMLDSLIsElement(newElement)) {
+        if (newElement != XZMLElementNotAnElement) {
             XZMLElementDSLAbort(context, newElement, shouldBeginElement);
             continue;
         }
@@ -112,7 +107,7 @@ static NSString *XZMLElementDSLText(XZMLDSLContext * const context, XZMLElement 
         XZMLElement const newElement = shouldBeginElement(character);
 
         // 子元素开始：character 是元素开始字符
-        if (XZMLDSLIsElement(newElement)) {
+        if (newElement != XZMLElementNotAnElement) {
             // 标记当前元素不再识别属性标记
             shouldRecognizeAttributes = NO;
             
@@ -152,14 +147,14 @@ static void XZMLElementDSL(XZMLDSLContext * const context,
     
     NSMutableString * const value = [NSMutableString stringWithCapacity:context->length - context->index];
     
-    /// 文本段
+    // 文本段。如果当前元素包含多个子元素，那么此值表示被子元素分隔在文本段的次序。
     NSUInteger fragment = 0;
-    /// 当前循环轮次是否处于逃逸模式
+    // 当前循环轮次是否处于逃逸模式
     BOOL isEscaping = NO;
-    /// 当前元素是否应该继续识别属性
+    // 当前元素是否应该继续识别属性
     BOOL shouldRecognizeAttributes = YES;
     
-    /// 因为元素识别是从元素开始标记后的第一个字符开始，所以直接用 do-while 循环。
+    // 因为元素识别是从元素开始标记后的第一个字符开始，所以直接用 do-while 循环。
     do {
         NSUInteger const index = XZMLDSLContextSearchASCII(context);
         if (context->index < index) {
@@ -195,7 +190,7 @@ static void XZMLElementDSL(XZMLDSLContext * const context,
         XZMLElement const newElement = shouldBeginElement(character);
 
         // 子元素开始：character 是元素开始字符
-        if (XZMLDSLIsElement(newElement)) {
+        if (newElement != XZMLElementNotAnElement) {
             // 标记当前元素不再识别属性标记
             shouldRecognizeAttributes = NO;
             
@@ -281,7 +276,7 @@ void XZMLDSL(NSString *XZMLString,
         }
         
         XZMLElement const element = shouldBeginElement(character);
-        if (XZMLDSLIsElement(element)) {
+        if (element != XZMLElementNotAnElement) {
             // 识别元素前，处理非元素文本。
             if (start < index) {
                 const char * const bytes = context.UTF8String + start;
