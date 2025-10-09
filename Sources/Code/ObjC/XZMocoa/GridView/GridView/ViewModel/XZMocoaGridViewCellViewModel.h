@@ -19,7 +19,7 @@ NS_ASSUME_NONNULL_BEGIN
 @protocol XZMocoaGridViewCell;
 
 /// cell 视图模型基类。
-@interface XZMocoaGridViewCellViewModel : XZMocoaViewModel
+NS_SWIFT_UI_ACTOR @interface XZMocoaGridViewCellViewModel : XZMocoaViewModel
 
 /// 重用标识符。
 ///

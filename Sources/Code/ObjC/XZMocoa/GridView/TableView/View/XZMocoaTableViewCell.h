@@ -22,7 +22,7 @@ NS_ASSUME_NONNULL_BEGIN
 /// 使用 Mocoa 时，UITableViewCell 应遵循本协议。
 /// @note
 /// UITableViewCell 已默认实现了本协议，如需使用仅需声明遵循协议即可。
-@protocol XZMocoaTableViewCell <XZMocoaGridViewCell>
+NS_SWIFT_UI_ACTOR @protocol XZMocoaTableViewCell <XZMocoaGridViewCell>
 @optional
 @property (nonatomic, strong, nullable) __kindof XZMocoaTableViewCellViewModel *viewModel;
 @end
@@ -53,7 +53,7 @@ NS_ASSUME_NONNULL_BEGIN
 /// @param tableView cell 所在的容器视图
 /// @param indexPath cell 在容器视图中的位置
 /// @param key 更新事件类型
-- (void)tableView:(id<XZMocoaTableView>)tableView didEditRowAtIndexPath:(NSIndexPath *)indexPath forUpdatesKey:(XZMocoaUpdatesKey)key completion:(void (^_Nullable)(BOOL succeed))completion NS_SWIFT_NAME(tableView(_:didEditRowAt:forUpdates:completion:));
+- (void)tableView:(id<XZMocoaTableView>)tableView didEditRowAtIndexPath:(NSIndexPath *)indexPath forUpdatesKey:(XZMocoaUpdatesKey)key completion:(void (NS_SWIFT_NONSENDABLE ^ _Nullable)(BOOL succeed))completion NS_SWIFT_NAME(tableView(_:didEditRowAt:forUpdates:completion:));
 @end
 
 NS_ASSUME_NONNULL_END

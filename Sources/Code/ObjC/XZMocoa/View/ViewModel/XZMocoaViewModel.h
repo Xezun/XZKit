@@ -55,7 +55,7 @@ NS_SWIFT_UI_ACTOR @protocol XZMocoaViewModel <NSObject>
 /// 4. 数据在上层视图模型更新后，下层视图模型也可以通过 KVO 监听。
 /// 5. 数据更新后，视图模型通过 target-action 机制，通知视图渲染。
 /// 5. 数据更新后，也可通过 delegate 通知视图。
-@interface XZMocoaViewModel : NSObject <XZMocoaViewModel>
+NS_SWIFT_UI_ACTOR @interface XZMocoaViewModel : NSObject <XZMocoaViewModel>
 
 /// 视图模型事件的代理，通常为视图。
 @property (nonatomic, weak) id<XZMocoaViewModelDelegate> delegate;

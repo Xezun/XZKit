@@ -16,7 +16,7 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-@protocol XZMocoaGridViewCell <XZMocoaView>
+NS_SWIFT_UI_ACTOR @protocol XZMocoaGridViewCell <XZMocoaView>
 @optional
 /// 视图模型。
 @property (nonatomic, strong, nullable) __kindof XZMocoaGridViewCellViewModel *viewModel;

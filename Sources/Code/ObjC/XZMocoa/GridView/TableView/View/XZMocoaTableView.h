@@ -26,14 +26,14 @@ NS_ASSUME_NONNULL_BEGIN
 // XZMocoaTableViewCellModel
 // XZMocoaTableViewCellViewModel
 
-@protocol XZMocoaTableView <XZMocoaGridView>
+NS_SWIFT_UI_ACTOR @protocol XZMocoaTableView <XZMocoaGridView>
 @optional
 @property (nonatomic, strong, nullable) __kindof XZMocoaTableViewModel *viewModel;
 @property (nonatomic, strong) IBOutlet UITableView *contentView;
 @end
 
 /// 对 UITableView 进行了封装，以支持 MVVM 设计模式。
-@interface XZMocoaTableView : XZMocoaGridView <XZMocoaTableView>
+NS_SWIFT_UI_ACTOR @interface XZMocoaTableView : XZMocoaGridView <XZMocoaTableView>
 
 @property (nonatomic, strong) IBOutlet UITableView *contentView;
 

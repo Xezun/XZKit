@@ -16,7 +16,7 @@
 NS_ASSUME_NONNULL_BEGIN
 
 /// UITableViewCell 视图模型基类。
-@interface XZMocoaTableViewCellViewModel : XZMocoaGridViewCellViewModel
+NS_SWIFT_UI_ACTOR @interface XZMocoaTableViewCellViewModel : XZMocoaGridViewCellViewModel
 /// 视图高度。
 @property (nonatomic) CGFloat height;
 
@@ -24,7 +24,7 @@ NS_ASSUME_NONNULL_BEGIN
 - (void)tableView:(id<XZMocoaTableView>)tableView didDeselectCell:(UITableViewCell *)cell atIndexPath:(NSIndexPath *)indexPath;
 - (void)tableView:(id<XZMocoaTableView>)tableView willDisplayCell:(UITableViewCell *)cell atIndexPath:(NSIndexPath *)indexPath;
 - (void)tableView:(id<XZMocoaTableView>)tableView didEndDisplayingCell:(UITableViewCell *)cell atIndexPath:(NSIndexPath *)indexPath;
-- (void)tableView:(id<XZMocoaTableView>)tableView didEditCell:(UITableViewCell *)cell atIndexPath:(NSIndexPath *)indexPath forUpdatesKey:(XZMocoaUpdatesKey)key completion:(void (^ _Nullable)(BOOL))completion NS_SWIFT_NAME(tableView(_:didEdit:at:forUpdates:completion:));
+- (void)tableView:(id<XZMocoaTableView>)tableView didEditCell:(UITableViewCell *)cell atIndexPath:(NSIndexPath *)indexPath forUpdatesKey:(XZMocoaUpdatesKey)key completion:(void (NS_SWIFT_NONSENDABLE ^ _Nullable)(BOOL))completion NS_SWIFT_NAME(tableView(_:didEdit:at:forUpdates:completion:));
 
 @end
 
