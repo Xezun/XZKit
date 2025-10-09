@@ -20,21 +20,36 @@ NS_ASSUME_NONNULL_BEGIN
 /// - 模型转换依赖于 `setter` 方法，所以只读属性会被忽略。
 /// - 通用逻辑无法处理弱引用关系，所以 `unsafe_unretained` 或 `assign` 修饰的对象的属性会被忽略。
 ///
-/// ### 基础数据类型
-/// - 所有 C 基础数据类型，比如 int、float、double 等，包括 NSInteger、CGFloat、CGRect 等类型别名和结构体。
+/// ### 数据转换规则
+///
+/// - 基础数据类型，如 int、float、double、 NSInteger、CGFloat 等类型或类型别名。
+///     - 数字。
+///     - 字符串。
+/// - 内置结构体 CGRect、CGSize、CGPoint、UIEdgeInsets、CGVector、CGAffineTransform、NSDirectionalEdgeInsets、UIOffset 等。
+///     - 使用 `NSStringFrom<Type>` 函数转换为字符串
+///     - 使用 `<Type>FromString` 函数转换为结构体。
 /// - 基础类型 NSString、NSNumber 及它们的可变类型等。
 /// - 集合类型 NSArray、NSDictionary、NSSet、NSOrderedSet 及它们的可变类型。
-/// - 字面类型 NSURL、NSDecimalNumber、NSData、NSDate、NSValue 及 NSString 数字。
 ///
 /// ### 高级数据类型
-/// - NSURL：符合 [RFC 2396](https://datatracker.ietf.org/doc/html/rfc2396) 规范的字符串
-/// - NSDecimalNumber：十进制数字
-/// - NSData：严格的 base64 字符串，或符合 [RFC 2397](https://datatracker.ietf.org/doc/html/rfc2397) 规范的 URI 字符串，或者格式如 `{ "type": "base64", "data": "base64" }` 字典，当前仅支持 hex 和 base64 编码。
+/// - NSURL：符合 [RFC 2396](https://datatracker.ietf.org/doc/html/rfc2396) 规范的字符串。
+/// - NSDecimalNumber：十进制数字，字符串。
+/// - NSData：支持如下三种类型的 JSON 数据。
+///     - 严格的 base64 字符串。
+///     - 符合 [RFC 2397](https://datatracker.ietf.org/doc/html/rfc2397) 规范的 URI 字符串。
+///     - 符合如下格式的字符。
+///     ```json
+///     {
+///         "type": "content-type",
+///         "encoding": "base64 or hex",
+///         "data": "binary data in base64 or hex encoding"
+///     }
+///     ```
 /// - NSDate：以“秒”为单位的时间戳（整数或浮点数），或者符合 `yyyy-MM-dd HH:mm:ss` 格式的字符串。
 /// - NSValue：数值或布尔值，或者类似 `{ "type": "CGRect", "value": "{{1,2},{3,4}}" }`格式的结构体的字典。
 ///
 /// ### 自定义转换规则
-/// 模型可通过 `XZJSONCoding` 协议，自定义模型转换规则，同时该协议也会用于 `NSCoding` 的归档/解档过程。
+/// 模型可通过 `XZJSONCoding` 协议，自定义模型转换规则，同时该协议也会用于 `NSCoding` 的归 档/解档过程。
 /// - ``-JSONDecodeValue:forKey:`` 自定义“数据”转“模型属性”的过程
 /// - ``-JSONEncodeValueForKey:`` 自定义“模型属性”转“数据”的过程
 ///
