@@ -165,15 +165,11 @@
         if (animationKey == nil) {
             itemView.imageView.image = image;
         } else {
-            // 接力入场动画
-            CAAnimation * const animation = [imageView.layer animationForKey:animationKey];
-            duration = animation.duration - (CACurrentMediaTime() - animation.beginTime);
-            
-            // 获取当前位置
+            // 接力转场的入场动画，获取图片当前的位置
             CGRect const fromRect = [imageView.superview convertRect:imageView.layer.presentationLayer.frame toView:itemView];
             [imageView.layer removeAllAnimations];
             
-            // 将 imageView 放回
+            // 将 imageView 放回 itemView 中
             imageView.image = image;
             imageView.frame = fromRect;
             itemView.imageView = imageView;
