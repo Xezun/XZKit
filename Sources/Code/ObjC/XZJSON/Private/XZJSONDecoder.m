@@ -567,12 +567,12 @@ FOUNDATION_STATIC_INLINE id NSDataFromJSONValue(id const _Nonnull __unsafe_unret
         NSUInteger const JSONLength = JSONString.length;
         if ([JSONString hasPrefix:@"data:"] && JSONLength > 5) {
             NSString *type = nil;
-            NSString *data = nil;
+            NSString *value = nil;
             
             NSUInteger const max = [JSONString rangeOfString:@"," options:0 range:NSMakeRange(5, MIN(1024, JSONLength - 5))].location;
             if (max == NSNotFound) {
                 type = @"base64";
-                data = [JSONString substringFromIndex:5];
+                value = [JSONString substringFromIndex:5];
             } else {
                 NSUInteger const min = [JSONString rangeOfString:@";" options:(NSBackwardsSearch) range:NSMakeRange(5, max - 5)].location;
                 
@@ -589,15 +589,15 @@ FOUNDATION_STATIC_INLINE id NSDataFromJSONValue(id const _Nonnull __unsafe_unret
                     type = [type lowercaseString];
                 }
                 
-                data = [JSONString substringFromIndex:max + 1];
+                value = [JSONString substringFromIndex:max + 1];
             }
             
             if ([type isEqualToString:@"base64"]) {
-                return [[NSMutableData alloc] initWithBase64EncodedString:data options:(NSDataBase64DecodingIgnoreUnknownCharacters)];
+                return [[NSMutableData alloc] initWithBase64EncodedString:value options:(NSDataBase64DecodingIgnoreUnknownCharacters)];
             }
             
             if ([type isEqualToString:@"hex"]) {
-                return [NSMutableData xz_dataWithHexEncodedString:data];
+                return [NSMutableData xz_dataWithHexEncodedString:value];
             }
             
             return nil;
@@ -608,13 +608,13 @@ FOUNDATION_STATIC_INLINE id NSDataFromJSONValue(id const _Nonnull __unsafe_unret
     }
     
     if ([JSONValue isKindOfClass:NSDictionary.class]) {
-        NSString *type = ((NSDictionary *)JSONValue)[@"type"];
+        NSString *encoding = ((NSDictionary *)JSONValue)[@"encoding"];
         NSString *data = ((NSDictionary *)JSONValue)[@"data"];
-        if ([type isKindOfClass:NSString.class] && [data isKindOfClass:NSString.class]) {
-            if ([type isEqualToString:@"base64"]) {
+        if ([encoding isKindOfClass:NSString.class] && [data isKindOfClass:NSString.class]) {
+            if ([encoding isEqualToString:@"base64"]) {
                 return [[NSMutableData alloc] initWithBase64EncodedString:JSONValue options:(NSDataBase64DecodingIgnoreUnknownCharacters)];
             }
-            if ([type isEqualToString:@"hex"]) {
+            if ([encoding isEqualToString:@"hex"]) {
                 return [NSMutableData xz_dataWithHexEncodedString:data];
             }
         }
