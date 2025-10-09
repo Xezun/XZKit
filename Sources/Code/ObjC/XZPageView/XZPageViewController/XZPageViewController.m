@@ -10,16 +10,17 @@
 #import "XZPageViewContext.h"
 #import "XZPageView.h"
 
+/// 控制器当前的转场阶段，或生命周期阶段。
 typedef NSString *XZTransitionStage;
-static XZTransitionStage viewWillAppear    = @"viewWillAppear";
-static XZTransitionStage viewDidAppear     = @"viewDidAppear";
-static XZTransitionStage viewWillDisappear = @"viewWillDisappear";
-static XZTransitionStage viewDidDisappear  = @"viewDidDisappear";
+static XZTransitionStage const viewWillAppear    = @"viewWillAppear";
+static XZTransitionStage const viewDidAppear     = @"viewDidAppear";
+static XZTransitionStage const viewWillDisappear = @"viewWillDisappear";
+static XZTransitionStage const viewDidDisappear  = @"viewDidDisappear";
 
 /// 获取控制器生命周期阶段，返回 nil 表示控制器刚添加到 XZPageViewController 上或添加后从未参与生命周期切换。
 static XZTransitionStage _Nullable GetTransitionStage(UIViewController * _Nonnull viewController);
 /// 设置控制器所处的生命周期阶段，当控制器移出 XZPageViewController 请设置为 nil 。
-static void SetTransitionStage(UIViewController * _Nonnull viewController, XZTransitionStage _Nullable transitionAppearance);
+static void SetTransitionStage(UIViewController * _Nonnull viewController, XZTransitionStage _Nullable transitionStage);
 
 @interface XZPageViewController () {
     // 记录当前控制器
@@ -282,12 +283,12 @@ static void SetTransitionStage(UIViewController * _Nonnull viewController, XZTra
 
 #import <objc/runtime.h>
 
-static const void * const _transitionAppearance = &_transitionAppearance;
+static const void * const _transitionStage = &_transitionStage;
 
 static XZTransitionStage GetTransitionStage(UIViewController *viewController) {
-    return objc_getAssociatedObject(viewController, _transitionAppearance);
+    return objc_getAssociatedObject(viewController, _transitionStage);
 }
 
-static void SetTransitionStage(UIViewController *viewController, XZTransitionStage transitionAppearance) {
-    objc_setAssociatedObject(viewController, _transitionAppearance, transitionAppearance, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
+static void SetTransitionStage(UIViewController *viewController, XZTransitionStage transitionStage) {
+    objc_setAssociatedObject(viewController, _transitionStage, transitionStage, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
 }
