@@ -24,6 +24,7 @@
 		042D23D32D30BB3200E0F7BD /* Example16SettingsSelectNumberViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 042D23C62D30BB3200E0F7BD /* Example16SettingsSelectNumberViewController.m */; };
 		042D23D42D30BB3200E0F7BD /* Example16SettingsEditSectionViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 042D23C42D30BB3200E0F7BD /* Example16SettingsEditSectionViewController.m */; };
 		042D23D52D30BB3200E0F7BD /* Example16SettingsViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 042D23CA2D30BB3200E0F7BD /* Example16SettingsViewController.m */; };
+		044546CD2E9A40E9001C3595 /* Example02ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 044546CC2E9A40E9001C3595 /* Example02ViewController.swift */; };
 		0465D9182D3E3D340064DE0C /* WebKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0465D9172D3E3D340064DE0C /* WebKit.framework */; };
 		046C96712D37828C0060EEBE /* Example20.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 046C96702D37828C0060EEBE /* Example20.storyboard */; };
 		046CE63C2D34C38C00B9389F /* Example19ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 046CE63B2D34C38C00B9389F /* Example19ViewController.swift */; };
@@ -74,7 +75,6 @@
 		292A5A782D256A240037579D /* Example09SettingsColorSelectViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 292A5A6C2D256A240037579D /* Example09SettingsColorSelectViewController.swift */; };
 		292A5A792D256A240037579D /* Example09Test01ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 292A5A712D256A240037579D /* Example09Test01ViewController.swift */; };
 		292A5A7A2D256A240037579D /* Example09SettingsSelectViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 292A5A6E2D256A240037579D /* Example09SettingsSelectViewController.swift */; };
-		292C15412D25163700E465BF /* Example02ViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 292C15402D25163700E465BF /* Example02ViewController.m */; };
 		292C15422D25163700E465BF /* Example02Test01ViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 292C153E2D25163700E465BF /* Example02Test01ViewController.m */; };
 		292C15472D25182000E465BF /* ExampleNavigationController.m in Sources */ = {isa = PBXBuildFile; fileRef = 292C15442D25182000E465BF /* ExampleNavigationController.m */; };
 		292C15482D25182000E465BF /* ExampleViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 292C15462D25182000E465BF /* ExampleViewController.m */; };
@@ -347,6 +347,7 @@
 		042D23C82D30BB3200E0F7BD /* Example16SettingsSelectSectionViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = Example16SettingsSelectSectionViewController.m; sourceTree = "<group>"; };
 		042D23C92D30BB3200E0F7BD /* Example16SettingsViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Example16SettingsViewController.h; sourceTree = "<group>"; };
 		042D23CA2D30BB3200E0F7BD /* Example16SettingsViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = Example16SettingsViewController.m; sourceTree = "<group>"; };
+		044546CC2E9A40E9001C3595 /* Example02ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Example02ViewController.swift; sourceTree = "<group>"; };
 		0465D9172D3E3D340064DE0C /* WebKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = WebKit.framework; path = System/Library/Frameworks/WebKit.framework; sourceTree = SDKROOT; };
 		046C96702D37828C0060EEBE /* Example20.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = Example20.storyboard; sourceTree = "<group>"; };
 		046CE6382D34C38C00B9389F /* Example19CryptorViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Example19CryptorViewController.swift; sourceTree = "<group>"; };
@@ -421,8 +422,6 @@
 		292A5A722D256A240037579D /* Example09Test02ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Example09Test02ViewController.swift; sourceTree = "<group>"; };
 		292C153D2D25163700E465BF /* Example02Test01ViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Example02Test01ViewController.h; sourceTree = "<group>"; };
 		292C153E2D25163700E465BF /* Example02Test01ViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = Example02Test01ViewController.m; sourceTree = "<group>"; };
-		292C153F2D25163700E465BF /* Example02ViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Example02ViewController.h; sourceTree = "<group>"; };
-		292C15402D25163700E465BF /* Example02ViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = Example02ViewController.m; sourceTree = "<group>"; };
 		292C15432D25182000E465BF /* ExampleNavigationController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ExampleNavigationController.h; sourceTree = "<group>"; };
 		292C15442D25182000E465BF /* ExampleNavigationController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ExampleNavigationController.m; sourceTree = "<group>"; };
 		292C15452D25182000E465BF /* ExampleViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ExampleViewController.h; sourceTree = "<group>"; };
@@ -1131,8 +1130,7 @@
 			children = (
 				29B3340E2D317749006A574A /* Example02.storyboard */,
 				04B1EA422D41E31D004F5DF0 /* Example02NavigationController.swift */,
-				292C153F2D25163700E465BF /* Example02ViewController.h */,
-				292C15402D25163700E465BF /* Example02ViewController.m */,
+				044546CC2E9A40E9001C3595 /* Example02ViewController.swift */,
 				292C153D2D25163700E465BF /* Example02Test01ViewController.h */,
 				292C153E2D25163700E465BF /* Example02Test01ViewController.m */,
 			);
@@ -3181,6 +3179,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				044546CD2E9A40E9001C3595 /* Example02ViewController.swift in Sources */,
 				292A5A5E2D25616D0037579D /* Example06ViewController.m in Sources */,
 				292A5A5F2D25616D0037579D /* Example06RefreshSettingsViewController.m in Sources */,
 				292A5A602D25616D0037579D /* Example06SettingsViewController.m in Sources */,
@@ -3413,7 +3412,6 @@
 				292C17BD2D251F6D00E465BF /* Example0330Group107SectionModel.m in Sources */,
 				292C17BE2D251F6D00E465BF /* Example0322ViewController.m in Sources */,
 				292C17BF2D251F6D00E465BF /* Example0330Group109FooterViewModel.m in Sources */,
-				292C15412D25163700E465BF /* Example02ViewController.m in Sources */,
 				292C15422D25163700E465BF /* Example02Test01ViewController.m in Sources */,
 				292A5A6A2D25685C0037579D /* Example08ViewController.m in Sources */,
 			);
