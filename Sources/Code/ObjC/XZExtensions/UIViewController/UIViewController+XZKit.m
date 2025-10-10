@@ -14,24 +14,18 @@
 #import "XZRuntime.h"
 #endif
 
-static const void * const _prefersStatusBarAppearance = &_prefersStatusBarAppearance;
+static const void * const _definesStatusBarAppearance = &_definesStatusBarAppearance;
 static const void * const _preferredStatusBarStyle = &_preferredStatusBarStyle;
 static const void * const _prefersStatusBarHidden = &_prefersStatusBarHidden;
 
-@implementation UIViewController (XZKit)
-
-- (BOOL)xz_prefersStatusBarAppearance {
-    return objc_getAssociatedObject(self.class, _prefersStatusBarAppearance);
-}
-
-- (BOOL)xz_setPrefersStatusBarAppearance {
-    Class const aClass = self.class;
-    if (objc_getAssociatedObject(aClass, _prefersStatusBarAppearance)) {
-        return NO;
+static void setDefinesPrefersStatusBarAppearance(UIViewController * __unsafe_unretained viewController) {
+    Class const aClass = viewController.class;
+    if (objc_getAssociatedObject(aClass, _definesStatusBarAppearance)) {
+        return;
     }
-    objc_setAssociatedObject(aClass, _prefersStatusBarAppearance, @(YES), OBJC_ASSOCIATION_COPY_NONATOMIC);
+    objc_setAssociatedObject(aClass, _definesStatusBarAppearance, @(YES), OBJC_ASSOCIATION_COPY_NONATOMIC);
     
-    NSAssert(UIApplication.xz_isViewControllerBasedStatusBarAppearance, @"必须在 Info.plist 中配置键 UIViewControllerBasedStatusBarAppearance 对应的值为 YES 才能开启控制器状态栏配置能力。");
+    NSCAssert(UIApplication.xz_isViewControllerBasedStatusBarAppearance, @"必须在 Info.plist 中配置键 UIViewControllerBasedStatusBarAppearance 对应的值为 YES 才能开启控制器状态栏配置能力。");
     
     // 重写超类不调用超类实现，因为超类一般是 UIViewController 没有必要调用。
     // 交换自身则调用自身实现，以避免自身实现中的业务逻辑丢失。
@@ -53,14 +47,18 @@ static const void * const _prefersStatusBarHidden = &_prefersStatusBarHidden;
             return self.xz_prefersStatusBarHidden;
         };
     });
-    
-    return YES;
+}
+
+@implementation UIViewController (XZKit)
+
+- (BOOL)xz_definesStatusBarAppearance {
+    return objc_getAssociatedObject(self.class, _definesStatusBarAppearance);
 }
 
 #pragma mark - 状态栏样式
 
 - (UIStatusBarStyle)xz_preferredStatusBarStyle {
-    if (self.xz_prefersStatusBarAppearance) {
+    if (self.xz_definesStatusBarAppearance) {
         NSNumber *value = objc_getAssociatedObject(self, _preferredStatusBarStyle);
         return value ? value.integerValue : UIStatusBarStyleDefault;
     } else if (UIApplication.xz_isViewControllerBasedStatusBarAppearance) {
@@ -78,7 +76,7 @@ static const void * const _prefersStatusBarHidden = &_prefersStatusBarHidden;
 }
 
 - (void)xz_setPreferredStatusBarStyle:(UIStatusBarStyle)preferredStatusBarStyle animated:(BOOL)animated {
-    if ([self xz_prefersStatusBarAppearance]) {
+    if (self.xz_definesStatusBarAppearance) {
         objc_setAssociatedObject(self, _preferredStatusBarStyle, @(preferredStatusBarStyle), OBJC_ASSOCIATION_COPY_NONATOMIC);
         if (animated) {
             [UIView animateWithDuration:0.35 animations:^{
@@ -88,7 +86,7 @@ static const void * const _prefersStatusBarHidden = &_prefersStatusBarHidden;
             [self setNeedsStatusBarAppearanceUpdate];
         }
     } else if (UIApplication.xz_isViewControllerBasedStatusBarAppearance) {
-        [self xz_setPrefersStatusBarAppearance];
+        setDefinesPrefersStatusBarAppearance(self);
         [self xz_setPreferredStatusBarStyle:preferredStatusBarStyle animated:animated];
     } else {
 #pragma clang diagnostic push
@@ -101,7 +99,7 @@ static const void * const _prefersStatusBarHidden = &_prefersStatusBarHidden;
 #pragma mark - 状态栏显示或隐藏
 
 - (BOOL)xz_prefersStatusBarHidden {
-    if ([self xz_prefersStatusBarAppearance]) {
+    if (self.xz_definesStatusBarAppearance) {
         NSNumber *value = objc_getAssociatedObject(self, _prefersStatusBarHidden);
         return value ? value.boolValue : NO;
     } else if (UIApplication.xz_isViewControllerBasedStatusBarAppearance) {
@@ -119,7 +117,7 @@ static const void * const _prefersStatusBarHidden = &_prefersStatusBarHidden;
 }
 
 - (void)xz_setPrefersStatusBarHidden:(BOOL)prefersStatusBarHidden animated:(BOOL)animated {
-    if ([self xz_prefersStatusBarAppearance]) {
+    if (self.xz_definesStatusBarAppearance) {
         objc_setAssociatedObject(self, _prefersStatusBarHidden, @(prefersStatusBarHidden), OBJC_ASSOCIATION_COPY_NONATOMIC);
         if (animated) {
             [UIView animateWithDuration:0.35 animations:^{
@@ -129,7 +127,7 @@ static const void * const _prefersStatusBarHidden = &_prefersStatusBarHidden;
             [self setNeedsStatusBarAppearanceUpdate];
         }
     } else if (UIApplication.xz_isViewControllerBasedStatusBarAppearance) {
-        [self xz_setPrefersStatusBarAppearance];
+        setDefinesPrefersStatusBarAppearance(self);
         [self xz_setPrefersStatusBarHidden:prefersStatusBarHidden animated:animated];
     } else {
 #pragma clang diagnostic push
