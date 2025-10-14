@@ -26,7 +26,7 @@ extension Date {
     ///   - dateFormat: 日期格式
     ///   - formatter: 格式化工具
     /// - Returns: 格式化的日期字符串
-    public func string(using formatter: DateFormatter = .dateTime) -> String {
+    public func formatted(using formatter: DateFormatter = .dateTime) -> String {
         return formatter.string(from: self)
     }
     

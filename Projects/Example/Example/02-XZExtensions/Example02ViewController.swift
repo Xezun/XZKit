@@ -13,8 +13,6 @@ class Example02ViewController: UITableViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        #XZLog("")
-
         // Uncomment the following line to preserve selection between presentations
         // self.clearsSelectionOnViewWillAppear = false
 
@@ -26,24 +24,26 @@ class Example02ViewController: UITableViewController {
         switch indexPath.row {
         case 1:
             let dateString = "2025-09-09 09:10:20"
+            #XZLog("日期字符串：\(dateString)")
             
-            let date = Date.init(from: dateString, using: .dateTime)!            
+            let date = Date.init(from: dateString, using: .dateTime)!
             
-            #XZLog("\(XZDateFormat.dateTime) => \(date.string(using: .dateTime))");
-            #XZLog("\(XZDateFormat.shortDateTime) => \(date.string(using: .shortDateTime))");
+            #XZLog("\(XZDateFormat.dateTime) => \(date.formatted(using: .dateTime))");
+            #XZLog("\(XZDateFormat.shortDateTime) => \(date.formatted(using: .shortDateTime))");
             
-            #XZLog("\(XZDateFormat.date) => \(date.string(using: .date))");
-            #XZLog("\(XZDateFormat.shortDate) => \(date.string(using: .shortDate))");
+            #XZLog("\(XZDateFormat.date) => \(date.formatted(using: .date))");
+            #XZLog("\(XZDateFormat.shortDate) => \(date.formatted(using: .shortDate))");
             
-            #XZLog("\(XZDateFormat.monthDay) => \(date.string(using: .monthDay))");
-            #XZLog("\(XZDateFormat.shortMonthDay) => \(date.string(using: .shortMonthDay))");
+            #XZLog("\(XZDateFormat.monthDay) => \(date.formatted(using: .monthDay))");
+            #XZLog("\(XZDateFormat.shortMonthDay) => \(date.formatted(using: .shortMonthDay))");
             
-            #XZLog("\(XZDateFormat.time) => \(date.string(using: .time))");
-            #XZLog("\(XZDateFormat.shortTime) => \(date.string(using: .shortTime))");
+            #XZLog("\(XZDateFormat.time) => \(date.formatted(using: .time))");
+            #XZLog("\(XZDateFormat.shortTime) => \(date.formatted(using: .shortTime))");
             
-            #XZLog("\(XZDateFormat.hourMinute) => \(date.string(using: .hourMinute))");
-            #XZLog("\(XZDateFormat.shortHourMinute) => \(date.string(using: .shortHourMinute))");
+            #XZLog("\(XZDateFormat.hourMinute) => \(date.formatted(using: .hourMinute))");
+            #XZLog("\(XZDateFormat.shortHourMinute) => \(date.formatted(using: .shortHourMinute))");
             
+            showToast("请查看控制台");
         default:
             super.tableView(tableView, didSelectRowAt: indexPath)
         }
