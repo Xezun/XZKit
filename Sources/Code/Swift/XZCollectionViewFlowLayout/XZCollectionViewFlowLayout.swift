@@ -8,6 +8,47 @@
 
 import UIKit
 
+extension XZCollectionViewFlowLayout {
+    
+    /// 描述行与行中的元素的对齐和布局方式的枚举。
+    /// 1. 垂直滚动时，水平方向为一行，行的左边为首端，行的右边为末端。
+    /// 2. 水平滚动时，垂直方向为一行，行的上边为首端，行的下边为末端。
+    @objc(XZCollectionViewLineAlignment) public enum LineAlignment: Int {
+        
+        /// 首端对齐，末端不足则留空，类似于文字排版的向左对齐。
+        case leading
+        /// 居中对齐，不足行两端留空，类似于文字排版的居中对齐。
+        case center
+        /// 末端对齐，首端不足则留空，类似于文字排版的向右对齐。
+        case trailing
+        /// 分散两端对齐，平均分布行空间，类似于文字排版的分散两端对齐。
+        /// - Note: 只有一个元素的行使用 leading 进行对齐。
+        case justified
+        /// 两端对齐，平均分布行空间，只有一个元素的行或最后一行使用 leading 进行对齐。
+        case justifiedLeading
+        /// 两端对齐，平均分布行空间，只有一个元素的行或最后一行使用 center 进行对齐
+        case justifiedCenter
+        /// 两端对齐，平均分布行空间，只有一个元素的行或最后一行使用 trailing 进行对齐。
+        case justifiedTrailing
+        
+    }
+    
+    /// 描述行内元素在垂直方向（即滚动方向）上的对齐方式。
+    /// 1. 垂直滚动时，元素的上边为顶部，元素的下边为底部。
+    /// 2. 水平滚动时，元素的左边为顶部，元素的右边为底部。
+    @objc(XZCollectionViewInteritemAlignment) public enum InteritemAlignment: Int {
+        
+        /// 顶部对齐。
+        case ascended
+        /// 中线对齐。
+        case median
+        /// 底部对齐。
+        case descended
+        
+    }
+    
+}
+
 /// 通过本协议，可以具体的控制 XZCollectionViewFlowLayout 布局的行对齐、元素对齐方式。
 @objc public protocol XZCollectionViewDelegateFlowLayout: UICollectionViewDelegateFlowLayout {
     
@@ -16,7 +57,7 @@ import UIKit
     /// - Parameters:
     ///   - collectionView: UICollectionView 视图。
     ///   - layout: 调用此方法的对象。
-    ///   - indexPath: line 信息，可用 `section` 和 `line` 属性。
+    ///   - indexPath: 行在 `section` 中的 `line` 信息。
     /// - Returns: 行对齐方式。
     @objc(collectionView:layout:lineAlignmentForLineAtIndexPath:)
     optional func collectionView(_ collectionView: UICollectionView, layout: XZCollectionViewFlowLayout, lineAlignmentForLineAt indexPath: IndexPath) -> XZCollectionViewFlowLayout.LineAlignment
@@ -26,7 +67,7 @@ import UIKit
     /// - Parameters:
     ///   - collectionView: UICollectionView 视图。
     ///   - layout: UICollectionViewLayout 视图布局对象。
-    ///   - indexPath: column 信息，可用 `section`、`item`、`line`、`column` 属性。
+    ///   - indexPath: 元素在 `section` 中的 `item` 信息，以及在 `line` 中的 `column` 信息。
     /// - Returns: 元素对齐方式。
     @objc(collectionView:layout:interitemAlignmentForItemAtIndexPath:)
     optional func collectionView(_ collectionView: UICollectionView, layout: XZCollectionViewFlowLayout, interitemAlignmentForItemAt indexPath: IndexPath) -> XZCollectionViewFlowLayout.InteritemAlignment
@@ -80,46 +121,7 @@ extension IndexPath {
 
 
 
-extension XZCollectionViewFlowLayout {
-    
-    /// 描述了元素的行对齐方式。
-    /// 1. 垂直滚动时，水平方向为一行，行的首端为左，末端为右。
-    /// 2. 水平滚动时，垂直方向为一行，行的首端为上，末端为下。
-    @objc(XZCollectionViewLineAlignment) public enum LineAlignment: Int {
-        
-        /// 首端对齐，末端不足则留空，类似于文字排版的向左对齐。
-        case leading
-        /// 居中对齐，不足行两端留空，类似于文字排版的居中对齐。
-        case center
-        /// 末端对齐，首端不足则留空，类似于文字排版的向右对齐。
-        case trailing
-        /// 分散两端对齐，平均分布行空间，类似于文字排版的分散两端对齐。
-        /// - Note: 只有一个元素的行使用 leading 进行对齐。
-        case justified
-        /// 两端对齐，平均分布行空间，只有一个元素的行或最后一行使用 leading 进行对齐。
-        case justifiedLeading
-        /// 两端对齐，平均分布行空间，只有一个元素的行或最后一行使用 center 进行对齐
-        case justifiedCenter
-        /// 两端对齐，平均分布行空间，只有一个元素的行或最后一行使用 trailing 进行对齐。
-        case justifiedTrailing
-        
-    }
-    
-    /// 描述了元素的内对齐方式。
-    /// 1. 垂直滚动时，元素的顶部为上，底部为下。
-    /// 2. 水平滚动时，元素的顶部为左，底部为右。
-    @objc(XZCollectionViewInteritemAlignment) public enum InteritemAlignment: Int {
-        
-        /// 顶部对齐。
-        case ascended
-        /// 中线对齐。
-        case median
-        /// 底部对齐。
-        case descended
-        
-    }
-    
-}
+
 
 /// 记录每一行的信息。
 private struct XZCollectionViewLineAttributes {
