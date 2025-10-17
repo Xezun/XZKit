@@ -18,13 +18,13 @@ pod "XZLocale"
 
 ObjectiveC 示例：
 ```ObjectiveC
-XZLocalization.preferredLanguage = XZLanguageEnglish;
+XZLocale.preferredLanguage = XZLocaleLanguageEnglish;
 ```
 
 Swift 示例：
 ```Swift
 // 设置当前语言。
-XZLocalization.preferredLanguage = .English
+XZLocale.preferredLanguage = .English
 // XZKit 优化的语言国际化函数。
 textLabel.text = XZLocalizedString("我的名字叫{1}。", names[indexPath.row], comment: "My Name is {1}.")
 ```

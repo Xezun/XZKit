@@ -10,7 +10,7 @@
 
 @interface Example15Test01ViewController ()
 
-@property (nonatomic, copy) NSArray<XZLanguage> *languages;
+@property (nonatomic, copy) NSArray<XZLocaleLanguage> *languages;
 @property (weak, nonatomic) IBOutlet UISwitch *inAppPreferenceSwitch;
 
 @end
@@ -20,8 +20,8 @@
 - (void)viewDidLoad {
     [super viewDidLoad];
     
-    self.languages = @[XZLanguageChinese, XZLanguageEnglish];
-    self.inAppPreferenceSwitch.on = XZLocalization.isInAppLanguagePreferencesEnabled;
+    self.languages = @[XZLocaleLanguageChinese, XZLocaleLanguageEnglish];
+    self.inAppPreferenceSwitch.on = XZLocale.isInAppLanguagePreferencesEnabled;
 }
 
 #pragma mark - Table view data source
@@ -30,11 +30,11 @@
     UITableViewCell *cell = [super tableView:tableView cellForRowAtIndexPath:indexPath];
     
     if (indexPath.section == 0) {
-        if ([self.languages[indexPath.row] isEqual:XZLocalization.preferredLanguage]) {
-            if ([XZLocalization.preferredLanguage isEqualToString:XZLocalization.effectiveLanguage]) {
+        if ([self.languages[indexPath.row] isEqual:XZLocale.preferredLanguage]) {
+            if ([XZLocale.preferredLanguage isEqualToString:XZLocale.effectiveLanguage]) {
                 cell.accessoryType = UITableViewCellAccessoryCheckmark;
                 cell.detailTextLabel.text = nil;
-            } else if (XZLocalization.isInAppLanguagePreferencesEnabled) {
+            } else if (XZLocale.isInAppLanguagePreferencesEnabled) {
                 cell.accessoryType = UITableViewCellAccessoryNone;
                 cell.detailTextLabel.text = XZLocalizedString(@"新页面生效");
             } else {
@@ -54,25 +54,25 @@
 }
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
-    XZLanguage newValue = self.languages[indexPath.row];
-    if ([newValue isEqualToString:XZLocalization.preferredLanguage]) {
+    XZLocaleLanguage newValue = self.languages[indexPath.row];
+    if ([newValue isEqualToString:XZLocale.preferredLanguage]) {
         return;
     }
     
     UIAlertController *alert = [UIAlertController alertControllerWithTitle:@"切换应用语言" message:nil preferredStyle:(UIAlertControllerStyleActionSheet)];
-    if (XZLocalization.isInAppLanguagePreferencesEnabled) {
+    if (XZLocale.isInAppLanguagePreferencesEnabled) {
         [alert addAction:[UIAlertAction actionWithTitle:@"重建页面，立即切换" style:(UIAlertActionStyleDestructive) handler:^(UIAlertAction * _Nonnull action) {
-            XZLocalization.preferredLanguage = newValue;
+            XZLocale.preferredLanguage = newValue;
         }]];
     } else {
         [alert addAction:[UIAlertAction actionWithTitle:@"直接切换，重启生效" style:(UIAlertActionStyleDefault) handler:^(UIAlertAction * _Nonnull action) {
-            XZLocalization.preferredLanguage = newValue;
+            XZLocale.preferredLanguage = newValue;
             [self.tableView reloadSections:[NSIndexSet indexSetWithIndex:0] withRowAnimation:(UITableViewRowAnimationNone)];
         }]];
         [alert addAction:[UIAlertAction actionWithTitle:@"重建界面，立即生效" style:(UIAlertActionStyleDestructive) handler:^(UIAlertAction * _Nonnull action) {
             self.inAppPreferenceSwitch.on = YES;
-            XZLocalization.isInAppLanguagePreferencesEnabled = YES;
-            XZLocalization.preferredLanguage = newValue;
+            XZLocale.isInAppLanguagePreferencesEnabled = YES;
+            XZLocale.preferredLanguage = newValue;
         }]];
     }
     [alert addAction:[UIAlertAction actionWithTitle:@"取消" style:(UIAlertActionStyleCancel) handler:nil]];
@@ -82,7 +82,7 @@
 #pragma mark - Events
 
 - (IBAction)InAppPreferenceSwitchValueChanged:(UISwitch *)sender {
-    XZLocalization.isInAppLanguagePreferencesEnabled = sender.isOn;
+    XZLocale.isInAppLanguagePreferencesEnabled = sender.isOn;
     [self.tableView reloadSections:[NSIndexSet indexSetWithIndex:0] withRowAnimation:(UITableViewRowAnimationNone)];
 }
 

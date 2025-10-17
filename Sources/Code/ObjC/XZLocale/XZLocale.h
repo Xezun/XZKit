@@ -10,21 +10,22 @@
 NS_ASSUME_NONNULL_BEGIN
 
 /// App 语言，如 cn、en、ar 等。
-typedef NSString *XZLanguage NS_EXTENSIBLE_STRING_ENUM;
+typedef NSString *XZLocaleLanguage NS_EXTENSIBLE_STRING_ENUM NS_SWIFT_NAME(XZLocale.Language);
 
 /// 简体中文，符号为 zh-Hans 字符串。
 ///
 /// - `>= iOS 7.0`: zh-HK（香港繁体）
 /// - `< iOS 9.0`: zh-Hans（简体）、zh-Hant（繁体）
 /// - `>= iOS 9.0`: zh-Hans-CN（简体）、zh-Hant-CN（繁体）、zh-TW（台湾繁体）
-FOUNDATION_EXPORT XZLanguage const XZLanguageChinese NS_SWIFT_NAME(XZLanguage.Chinese);
+FOUNDATION_EXPORT XZLocaleLanguage const XZLocaleLanguageChinese NS_SWIFT_NAME(XZLocaleLanguage.Chinese);
 /// 繁体中文，符号为 zh-Hant 字符串。
-FOUNDATION_EXPORT XZLanguage const XZLanguageChineseTraditional NS_SWIFT_NAME(XZLanguage.ChineseTraditional);
+FOUNDATION_EXPORT XZLocaleLanguage const XZLocaleLanguageChineseTraditional NS_SWIFT_NAME(XZLocaleLanguage.ChineseTraditional);
 /// 英文，符号为 en 字符串。
-FOUNDATION_EXPORT XZLanguage const XZLanguageEnglish NS_SWIFT_NAME(XZLanguage.English);
+FOUNDATION_EXPORT XZLocaleLanguage const XZLocaleLanguageEnglish NS_SWIFT_NAME(XZLocaleLanguage.English);
 
 /// 语言偏好设置发生改变。
-FOUNDATION_EXPORT NSNotificationName const XZLanguagePreferencesDidChangeNotification NS_SWIFT_NAME(XZLocalization.languagePreferencesDidChangeNotification);
+/// > 实际显示语言可能并未改变。
+FOUNDATION_EXPORT NSNotificationName const XZLocaleDidChangeLanguageNotification NS_SWIFT_NAME(XZLocale.didChangeLanguageNotification);
 
 /// 本地化支持组件。
 ///
@@ -53,13 +54,13 @@ FOUNDATION_EXPORT NSNotificationName const XZLanguagePreferencesDidChangeNotific
 /// > 由于 OC 参数列表限制，值 nil 之后的参数会被忽略。
 /// 
 /// > 虽然查找字符串中的参数的插值，会有产生额外操作，但是当本地化字符串没有参数时，使用的是原生的本地化方法，实际对性能影响已降至最低。
-@interface XZLocalization : NSObject
+@interface XZLocale : NSObject
 
 - (instancetype)init NS_UNAVAILABLE;
 
 /// 当前生效的语言。
 /// > 该属性只能表明在创建新 UI 时生效的语言，不表示当前已有 UI 的显示语言。
-@property (class, readonly) XZLanguage effectiveLanguage;
+@property (class, readonly) XZLocaleLanguage effectiveLanguage;
 
 /// 应用首选语言。
 ///
@@ -90,14 +91,14 @@ FOUNDATION_EXPORT NSNotificationName const XZLanguagePreferencesDidChangeNotific
 ///     self->_window.layer.shadowColor = nil;
 /// }];
 /// ```
-@property (class, nonatomic, copy) XZLanguage preferredLanguage;
+@property (class, nonatomic, copy) XZLocaleLanguage preferredLanguage;
 
 /// 语言的书写方向。
 /// - Parameter language: 语言
-+ (NSLocaleLanguageDirection)languageDirectionForLanguage:(XZLanguage)language;
++ (NSLocaleLanguageDirection)languageDirectionForLanguage:(XZLocaleLanguage)language;
 
 /// 应用支持的所有语言。
-@property (class, nonatomic, copy, readonly) NSArray<XZLanguage> *supportedLanguages;
+@property (class, nonatomic, copy, readonly) NSArray<XZLocaleLanguage> *supportedLanguages;
 
 /// 是否开启应用内语言偏好设置。默认否。
 /// > 开启功能后，更改应用语言立即生效，新的页面将按照新的语言展示。
@@ -130,16 +131,16 @@ FOUNDATION_EXPORT NSNotificationName const XZLanguagePreferencesDidChangeNotific
 
 @class NSArray;
 
-@interface NSBundle (XZLocalization)
+@interface NSBundle (XZLocale)
 /// 获取指定语言的语言包。如果没有找到语言包，则返回自身。
 /// - Parameter language: 语言
-- (NSBundle *)xz_languageResourceBundleForLanguage:(XZLanguage)language NS_SWIFT_NAME(resourceBundle(for:));
+- (NSBundle *)xz_languageResourceBundleForLanguage:(XZLocaleLanguage)language NS_SWIFT_NAME(resourceBundle(for:));
 @end
 
 #ifndef XZLocalizedString
 
 #define _XZLocalizedString(_stringToBeLocalized_, _table_, _bundle_, _defaultValue_, ...) \
-[XZLocalization localizedString:_stringToBeLocalized_ fromTable:_table_ inBundle:_bundle_ defaultValue:_defaultValue_, ##__VA_ARGS__, nil]
+[XZLocale localizedString:_stringToBeLocalized_ fromTable:_table_ inBundle:_bundle_ defaultValue:_defaultValue_, ##__VA_ARGS__, nil]
 
 #define _XZLocalizeForward(_00, \
 _01, _02, _03, _04, _05, _06, _07, _08, _09, _10, \

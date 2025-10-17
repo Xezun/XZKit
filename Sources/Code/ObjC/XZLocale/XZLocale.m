@@ -12,37 +12,37 @@
 #import "NSString+XZKit.h"
 @import ObjectiveC;
 
-XZLanguage              const XZLanguageChinese            = @"zh-Hans";
-XZLanguage              const XZLanguageChineseTraditional = @"zh-Hant";
-XZLanguage              const XZLanguageEnglish            = @"en";
-NSNotificationName      const XZLanguagePreferencesDidChangeNotification = @"XZLanguagePreferencesDidChangeNotification";
+XZLocaleLanguage              const XZLocaleLanguageChinese               = @"zh-Hans";
+XZLocaleLanguage              const XZLocaleLanguageChineseTraditional    = @"zh-Hant";
+XZLocaleLanguage              const XZLocaleLanguageEnglish               = @"en";
+NSNotificationName            const XZLocaleDidChangeLanguageNotification = @"XZLocaleDidChangeLanguageNotification";
 
 /// 语言偏好设置在 NSUserDefaults 中的键名。
 static NSString * const AppleLanguages = @"AppleLanguages";
 /// 记录了当前的语言偏好设置。
-static XZLanguage _Nullable _preferredLanguage = nil;
+static XZLocaleLanguage _Nullable _preferredLanguage = nil;
 /// 是否开启应用内切换语言功能。
 static BOOL _isInAppLanguagePreferencesEnabled    = NO;
 /// 是否支持应用内切换语言功能。
 static BOOL _isInAppLanguagePreferencesSupported  = NO;
 
-@implementation XZLocalization
+@implementation XZLocale
 
-+ (XZLanguage)effectiveLanguage {
++ (XZLocaleLanguage)effectiveLanguage {
     NSBundle * const mainBundle = NSBundle.mainBundle;
-    return mainBundle.preferredLocalizations.firstObject ?: mainBundle.localizations.firstObject ?: XZLanguageEnglish;
+    return mainBundle.preferredLocalizations.firstObject ?: mainBundle.localizations.firstObject ?: XZLocaleLanguageEnglish;
 }
 
-+ (XZLanguage)preferredLanguage {
++ (XZLocaleLanguage)preferredLanguage {
     if (_preferredLanguage != nil) {
         return _preferredLanguage;
     }
     NSBundle * const mainBundle = NSBundle.mainBundle;
-    _preferredLanguage = mainBundle.preferredLocalizations.firstObject ?: mainBundle.localizations.firstObject ?: XZLanguageEnglish;
+    _preferredLanguage = mainBundle.preferredLocalizations.firstObject ?: mainBundle.localizations.firstObject ?: XZLocaleLanguageEnglish;
     return _preferredLanguage;
 }
 
-+ (void)setPreferredLanguage:(XZLanguage)newValue {
++ (void)setPreferredLanguage:(XZLocaleLanguage)newValue {
     // 参数校验
     if (newValue == nil || newValue.length == 0) {
         return;
@@ -62,11 +62,11 @@ static BOOL _isInAppLanguagePreferencesSupported  = NO;
     
     // 如果没有开启应用内语言设置，不保存值。
     if (self.isInAppLanguagePreferencesEnabled) {
-        [NSNotificationCenter.defaultCenter postNotificationName:XZLanguagePreferencesDidChangeNotification object:self];
+        [NSNotificationCenter.defaultCenter postNotificationName:XZLocaleDidChangeLanguageNotification object:self];
     }
     
     // 更新语言偏好设置
-    NSArray<XZLanguage> *preferredLanguages = [NSUserDefaults.standardUserDefaults stringArrayForKey:AppleLanguages];
+    NSArray<XZLocaleLanguage> *preferredLanguages = [NSUserDefaults.standardUserDefaults stringArrayForKey:AppleLanguages];
     if (preferredLanguages.count > 0) {
         NSInteger index = [preferredLanguages indexOfObject:newValue];
         if (index == 0) {
@@ -84,12 +84,12 @@ static BOOL _isInAppLanguagePreferencesSupported  = NO;
     [NSUserDefaults.standardUserDefaults setObject:preferredLanguages forKey:AppleLanguages];
 }
 
-+ (NSLocaleLanguageDirection)languageDirectionForLanguage:(XZLanguage)language {
++ (NSLocaleLanguageDirection)languageDirectionForLanguage:(XZLocaleLanguage)language {
     NSString *identifier = [NSLocale canonicalLanguageIdentifierFromString:language];
     return [NSLocale characterDirectionForLanguage:identifier];
 }
 
-+ (NSArray<XZLanguage> *)supportedLanguages {
++ (NSArray<XZLocaleLanguage> *)supportedLanguages {
     return NSBundle.mainBundle.localizations;
 }
 
@@ -114,7 +114,7 @@ static BOOL _isInAppLanguagePreferencesSupported  = NO;
         return ^NSString *(NSBundle *self, NSString *key, NSString *value, NSString *tableName) {
             if (_isInAppLanguagePreferencesEnabled) {
                 // 开启状态下，NSBundle 查找本地化字符串，先查找语言包
-                XZLanguage const preferredLanguage = XZLocalization.preferredLanguage;
+                XZLocaleLanguage const preferredLanguage = XZLocale.preferredLanguage;
                 NSBundle * const languageBundle    = [self xz_languageResourceBundleForLanguage:preferredLanguage];
                 // 这里已经是语言包，直接向原始实现发送消息
                 return ((NSString *(*)(NSBundle *, SEL, NSString *, NSString *, NSString *))objc_msgSend)(languageBundle, selector, key, value, tableName);
@@ -139,9 +139,11 @@ static BOOL _isInAppLanguagePreferencesSupported  = NO;
 
 @end
 
-@implementation NSBundle (XZLocalization)
 
-- (NSBundle *)xz_languageResourceBundleForLanguage:(XZLanguage)language {
+
+@implementation NSBundle (XZLocale)
+
+- (NSBundle *)xz_languageResourceBundleForLanguage:(XZLocaleLanguage)language {
     static const void * const _languageBundles = &_languageBundles;
     NSMutableDictionary<NSString *, id> *languageBundles = objc_getAssociatedObject(self, _languageBundles);
     
