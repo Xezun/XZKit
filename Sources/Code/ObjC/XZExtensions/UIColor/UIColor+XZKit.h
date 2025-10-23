@@ -33,13 +33,21 @@ typedef struct XZColor {
 
 @end
 
+UIKIT_EXTERN XZColor const XZColorClear;
+
 // MARK: - XZColor
 
 /// 从字符串中解析颜色 RGBA 值。
 /// @param string 任意字符串
-/// @param color 颜色值通过此参数输出，**必须不能为空指针**
-/// @return 返回 NO 表示字符串不包含颜色值
-UIKIT_EXTERN BOOL XZColorParser(NSString * _Nullable string, XZColor *color);
+/// @param error 如果字符串不包含 3 ～ 8 位连续的十六进制数，那么此值将返回非 0 值
+/// @return XZColor
+UIKIT_EXTERN XZColor XZColorFromString(NSString * _Nullable string, int *error);
+
+/// 将 XZColor 转化成如 #AABBCCFF 的字符串形式。
+/// @param color XZColor
+FOUNDATION_STATIC_INLINE NSString *NSStringFromXZColor(XZColor color) {
+    return [NSString stringWithFormat:@"#%02X%02X%02X%02X", color.red, color.green, color.blue, color.alpha];
+}
 
 /// 通过 [0, 255] 颜色通道值，构造 XZColor 结构体。
 FOUNDATION_STATIC_INLINE XZColor XZColorMake(UInt32 red, UInt32 green, UInt32 blue, UInt32 alpha) {
@@ -53,11 +61,7 @@ FOUNDATION_STATIC_INLINE NSInteger NSIntegerFromXZColor(XZColor rgba) {
     return (((NSInteger)rgba.red << 24) + ((NSInteger)rgba.green << 16) + ((NSInteger)rgba.blue << 8) + rgba.alpha);
 }
 
-/// 将 XZColor 转化成如 #AABBCCFF 的字符串形式。
-/// @param color XZColor
-FOUNDATION_STATIC_INLINE NSString *NSStringFromXZColor(XZColor color) {
-    return [NSString stringWithFormat:@"#%02X%02X%02X%02X", color.red, color.green, color.blue, color.alpha];
-}
+
 
 /// 将 UIColor 转化成字符串形式。
 /// @param color UIColor
@@ -69,8 +73,11 @@ FOUNDATION_STATIC_INLINE NSString *NSStringFromUIColor(UIColor *color) {
 
 // MARK: - 便利函数
 
-/// 如何避免命名冲突？
-/// 在引用本头文件前，提前定义宏 XZ_RGBA_COLOR 可屏蔽下面的静态内联函数，避免命名冲突。
+// 1、运算符优先级
+// 位移运算符（ >> 或 << ）的优先级比按位与运算符（ & ）的优先级高，都是左结合性，所以 value >> 24 & 0xFF 会先计算位移，然后再按位与。
+// 2、如何避免命名冲突
+// 如下函数都是静态内联函数，所以不会有符号，在引用本头文件前，提前定义宏 XZ_RGBA_COLOR 可屏蔽下面的静态内联函数，避免命名冲突。
+
 #ifndef XZ_RGBA_COLOR
 #define XZ_RGBA_COLOR
 
@@ -78,37 +85,37 @@ FOUNDATION_STATIC_INLINE NSString *NSStringFromUIColor(UIColor *color) {
 
 /// 通过十六进制整数形式的 0xRRGGBBAA 颜色值构造 UIColor 对象。
 FOUNDATION_STATIC_INLINE UIColor *rgba(int value) XZ_ATTR_OVERLOAD {
-    CGFloat const red   = (value>>24&0xFF) / 255.0;
-    CGFloat const green = (value>>16&0xFF) / 255.0;
-    CGFloat const blue  = (value>> 8&0xFF) / 255.0;
-    CGFloat const alpha = (value>> 0&0xFF) / 255.0;
+    CGFloat const red   = (value >> 24 & 0xFF) / 255.0;
+    CGFloat const green = (value >> 16 & 0xFF) / 255.0;
+    CGFloat const blue  = (value >> 8  & 0xFF) / 255.0;
+    CGFloat const alpha = (value >> 0  & 0xFF) / 255.0;
     return [UIColor colorWithRed:red green:green blue:blue alpha:alpha];
 }
 
 /// 通过十六进制整数形式的 0xRRGGBBAA 颜色值构造 UIColor 对象。
 FOUNDATION_STATIC_INLINE UIColor *rgba(unsigned int value) XZ_ATTR_OVERLOAD {
-    CGFloat const red   = (value>>24&0xFF) / 255.0;
-    CGFloat const green = (value>>16&0xFF) / 255.0;
-    CGFloat const blue  = (value>> 8&0xFF) / 255.0;
-    CGFloat const alpha = (value>> 0&0xFF) / 255.0;
+    CGFloat const red   = (value >> 24 & 0xFF) / 255.0;
+    CGFloat const green = (value >> 16 & 0xFF) / 255.0;
+    CGFloat const blue  = (value >> 8  & 0xFF) / 255.0;
+    CGFloat const alpha = (value >> 0  & 0xFF) / 255.0;
     return [UIColor colorWithRed:red green:green blue:blue alpha:alpha];
 }
 
 /// 通过十六进制整数形式的 0xRRGGBBAA 颜色值构造 UIColor 对象。
 FOUNDATION_STATIC_INLINE UIColor *rgba(long value) XZ_ATTR_OVERLOAD {
-    CGFloat const red   = (value>>24&0xFF) / 255.0;
-    CGFloat const green = (value>>16&0xFF) / 255.0;
-    CGFloat const blue  = (value>> 8&0xFF) / 255.0;
-    CGFloat const alpha = (value>> 0&0xFF) / 255.0;
+    CGFloat const red   = (value >> 24 & 0xFF) / 255.0;
+    CGFloat const green = (value >> 16 & 0xFF) / 255.0;
+    CGFloat const blue  = (value >> 8  & 0xFF) / 255.0;
+    CGFloat const alpha = (value >> 0  & 0xFF) / 255.0;
     return [UIColor colorWithRed:red green:green blue:blue alpha:alpha];
 }
 
 /// 通过十六进制整数形式的 0xRRGGBBAA 颜色值构造 UIColor 对象。
 FOUNDATION_STATIC_INLINE UIColor *rgba(unsigned long value) XZ_ATTR_OVERLOAD {
-    CGFloat const red   = (value>>24&0xFF) / 255.0;
-    CGFloat const green = (value>>16&0xFF) / 255.0;
-    CGFloat const blue  = (value>> 8&0xFF) / 255.0;
-    CGFloat const alpha = (value>> 0&0xFF) / 255.0;
+    CGFloat const red   = (value >> 24 & 0xFF) / 255.0;
+    CGFloat const green = (value >> 16 & 0xFF) / 255.0;
+    CGFloat const blue  = (value >> 8  & 0xFF) / 255.0;
+    CGFloat const alpha = (value >> 0  & 0xFF) / 255.0;
     return [UIColor colorWithRed:red green:green blue:blue alpha:alpha];
 }
 
@@ -117,65 +124,65 @@ FOUNDATION_STATIC_INLINE UIColor *rgba(unsigned long value) XZ_ATTR_OVERLOAD {
 
 /// 通过十六进制整数形式的 0xRRGGBB 颜色值和 [0, 1.0] alpha通道值，构造 UIColor 对象。
 FOUNDATION_STATIC_INLINE UIColor *rgba(int value, float alpha) XZ_ATTR_OVERLOAD {
-    CGFloat const red   = (value>>16&0xFF) / 255.0;
-    CGFloat const green = (value>> 8&0xFF) / 255.0;
-    CGFloat const blue  = (value>> 0&0xFF) / 255.0;
+    CGFloat const red   = (value >> 16 & 0xFF) / 255.0;
+    CGFloat const green = (value >> 8  & 0xFF) / 255.0;
+    CGFloat const blue  = (value >> 0  & 0xFF) / 255.0;
     return [UIColor colorWithRed:red green:green blue:blue alpha:alpha];
 }
 
 /// 通过十六进制整数形式的 0xRRGGBB 颜色值和 [0, 1.0] alpha通道值，构造 UIColor 对象。
 FOUNDATION_STATIC_INLINE UIColor *rgba(unsigned int value, float alpha) XZ_ATTR_OVERLOAD {
-    CGFloat const red   = (value>>16&0xFF) / 255.0;
-    CGFloat const green = (value>> 8&0xFF) / 255.0;
-    CGFloat const blue  = (value>> 0&0xFF) / 255.0;
+    CGFloat const red   = (value >> 16 & 0xFF) / 255.0;
+    CGFloat const green = (value >> 8  & 0xFF) / 255.0;
+    CGFloat const blue  = (value >> 0  & 0xFF) / 255.0;
     return [UIColor colorWithRed:red green:green blue:blue alpha:alpha];
 }
 
 /// 通过十六进制整数形式的 0xRRGGBB 颜色值和 [0, 1.0] alpha通道值，构造 UIColor 对象。
 FOUNDATION_STATIC_INLINE UIColor *rgba(long value, float alpha) XZ_ATTR_OVERLOAD {
-    CGFloat const red   = (value>>16&0xFF) / 255.0;
-    CGFloat const green = (value>> 8&0xFF) / 255.0;
-    CGFloat const blue  = (value>> 0&0xFF) / 255.0;
+    CGFloat const red   = (value >> 16 & 0xFF) / 255.0;
+    CGFloat const green = (value >> 8  & 0xFF) / 255.0;
+    CGFloat const blue  = (value >> 0  & 0xFF) / 255.0;
     return [UIColor colorWithRed:red green:green blue:blue alpha:alpha];
 }
 
 /// 通过十六进制整数形式的 0xRRGGBB 颜色值和 alpha[0, 1.0] 通道值，构造 UIColor 对象。
 FOUNDATION_STATIC_INLINE UIColor *rgba(unsigned long value, float alpha) XZ_ATTR_OVERLOAD {
-    CGFloat const red   = (value>>16&0xFF) / 255.0;
-    CGFloat const green = (value>> 8&0xFF) / 255.0;
-    CGFloat const blue  = (value>> 0&0xFF) / 255.0;
+    CGFloat const red   = (value >> 16 & 0xFF) / 255.0;
+    CGFloat const green = (value >> 8  & 0xFF) / 255.0;
+    CGFloat const blue  = (value >> 0  & 0xFF) / 255.0;
     return [UIColor colorWithRed:red green:green blue:blue alpha:alpha];
 }
 
 /// 通过十六进制整数形式的 0xRRGGBB 颜色值和 [0, 1.0] alpha通道值，构造 UIColor 对象。
 FOUNDATION_STATIC_INLINE UIColor *rgba(int value, double alpha) XZ_ATTR_OVERLOAD {
-    CGFloat const red   = (value>>16&0xFF) / 255.0;
-    CGFloat const green = (value>> 8&0xFF) / 255.0;
-    CGFloat const blue  = (value>> 0&0xFF) / 255.0;
+    CGFloat const red   = (value >> 16 & 0xFF) / 255.0;
+    CGFloat const green = (value >> 8  & 0xFF) / 255.0;
+    CGFloat const blue  = (value >> 0  & 0xFF) / 255.0;
     return [UIColor colorWithRed:red green:green blue:blue alpha:alpha];
 }
 
 /// 通过十六进制整数形式的 0xRRGGBB 颜色值和 [0, 1.0] alpha通道值，构造 UIColor 对象。
 FOUNDATION_STATIC_INLINE UIColor *rgba(unsigned int value, double alpha) XZ_ATTR_OVERLOAD {
-    CGFloat const red   = (value>>16&0xFF) / 255.0;
-    CGFloat const green = (value>> 8&0xFF) / 255.0;
-    CGFloat const blue  = (value>> 0&0xFF) / 255.0;
+    CGFloat const red   = (value >> 16 & 0xFF) / 255.0;
+    CGFloat const green = (value >> 8  & 0xFF) / 255.0;
+    CGFloat const blue  = (value >> 0  & 0xFF) / 255.0;
     return [UIColor colorWithRed:red green:green blue:blue alpha:alpha];
 }
 
 /// 通过十六进制整数形式的 0xRRGGBB 颜色值和 [0, 1.0] alpha通道值，构造 UIColor 对象。
 FOUNDATION_STATIC_INLINE UIColor *rgba(long value, double alpha) XZ_ATTR_OVERLOAD {
-    CGFloat const red   = (value>>16&0xFF) / 255.0;
-    CGFloat const green = (value>> 8&0xFF) / 255.0;
-    CGFloat const blue  = (value>> 0&0xFF) / 255.0;
+    CGFloat const red   = (value >> 16 & 0xFF) / 255.0;
+    CGFloat const green = (value >> 8  & 0xFF) / 255.0;
+    CGFloat const blue  = (value >> 0  & 0xFF) / 255.0;
     return [UIColor colorWithRed:red green:green blue:blue alpha:alpha];
 }
 
 /// 通过十六进制整数形式的 0xRRGGBB 颜色值和 alpha[0, 1.0] 通道值，构造 UIColor 对象。
 FOUNDATION_STATIC_INLINE UIColor *rgba(unsigned long value, double alpha) XZ_ATTR_OVERLOAD {
-    CGFloat const red   = (value>>16&0xFF) / 255.0;
-    CGFloat const green = (value>> 8&0xFF) / 255.0;
-    CGFloat const blue  = (value>> 0&0xFF) / 255.0;
+    CGFloat const red   = (value >> 16 & 0xFF) / 255.0;
+    CGFloat const green = (value >> 8  & 0xFF) / 255.0;
+    CGFloat const blue  = (value >> 0  & 0xFF) / 255.0;
     return [UIColor colorWithRed:red green:green blue:blue alpha:alpha];
 }
 
@@ -183,42 +190,42 @@ FOUNDATION_STATIC_INLINE UIColor *rgba(unsigned long value, double alpha) XZ_ATT
 // MARK: - integer R_G_B_A
 /// 通过 R、G、B、A 各个通道值 [0, 255] 构造 UIColor 对象。
 FOUNDATION_STATIC_INLINE UIColor *rgba(long red, long green, long blue, long alpha) XZ_ATTR_OVERLOAD {
-    return [UIColor colorWithRed:red/255.0 green:green/255.0 blue:blue/255.0 alpha:alpha/255.0];
+    return [UIColor colorWithRed:(red / 255.0) green:(green / 255.0) blue:(blue / 255.0) alpha:(alpha / 255.0)];
 }
 
 /// 通过 R、G、B、A 各个通道值 [0, 255] 构造 UIColor 对象。
 FOUNDATION_STATIC_INLINE UIColor *rgba(int red, int green, int blue, int alpha) XZ_ATTR_OVERLOAD {
-    return [UIColor colorWithRed:red/255.0 green:green/255.0 blue:blue/255.0 alpha:alpha/255.0];
+    return [UIColor colorWithRed:(red / 255.0) green:(green / 255.0) blue:(blue / 255.0) alpha:(alpha / 255.0)];
 }
 
 /// 通过 R、G、B、A 各个通道值 [0, 255] 构造 UIColor 对象。
 FOUNDATION_STATIC_INLINE UIColor *rgba(unsigned int red, unsigned int green, unsigned int blue, unsigned int alpha) XZ_ATTR_OVERLOAD {
-    return [UIColor colorWithRed:red/255.0 green:green/255.0 blue:blue/255.0 alpha:alpha/255.0];
+    return [UIColor colorWithRed:(red / 255.0) green:(green / 255.0) blue:(blue / 255.0) alpha:(alpha / 255.0)];
 }
 
 /// 通过 R、G、B、A 各个通道值 [0, 255] 构造 UIColor 对象。
 FOUNDATION_STATIC_INLINE UIColor *rgba(unsigned long red, unsigned long green, unsigned long blue, unsigned long alpha) XZ_ATTR_OVERLOAD {
-    return [UIColor colorWithRed:red/255.0 green:green/255.0 blue:blue/255.0 alpha:alpha/255.0];
+    return [UIColor colorWithRed:(red / 255.0) green:(green / 255.0) blue:(blue / 255.0) alpha:(alpha / 255.0)];
 }
 
 /// 由 [0, 255] 的  R、G、B 通道值和 [0, 1.0] 的 alpha 通道值构造 UIColor 对象。
 FOUNDATION_STATIC_INLINE UIColor *rgba(int red, int green, int blue, double alpha) XZ_ATTR_OVERLOAD {
-    return [UIColor colorWithRed:red/255.0 green:green/255.0 blue:blue/255.0 alpha:alpha];
+    return [UIColor colorWithRed:(red / 255.0) green:(green / 255.0) blue:(blue / 255.0) alpha:alpha];
 }
 
 /// 由 [0, 255] 的  R、G、B 通道值和 [0, 1.0] 的 alpha 通道值构造 UIColor 对象。
 FOUNDATION_STATIC_INLINE UIColor *rgba(int red, int green, int blue, float alpha) XZ_ATTR_OVERLOAD {
-    return [UIColor colorWithRed:red/255.0 green:green/255.0 blue:blue/255.0 alpha:alpha];
+    return [UIColor colorWithRed:(red / 255.0) green:(green / 255.0) blue:(blue / 255.0) alpha:alpha];
 }
 
 /// 由 [0, 255] 的  R、G、B 通道值和 [0, 1.0] 的 alpha 通道值构造 UIColor 对象。
 FOUNDATION_STATIC_INLINE UIColor *rgba(long red, long green, long blue, double alpha) XZ_ATTR_OVERLOAD {
-    return [UIColor colorWithRed:red/255.0 green:green/255.0 blue:blue/255.0 alpha:alpha];
+    return [UIColor colorWithRed:(red / 255.0) green:(green / 255.0) blue:(blue / 255.0) alpha:alpha];
 }
 
 /// 由 [0, 255] 的  R、G、B 通道值和 [0, 1.0] 的 alpha 通道值构造 UIColor 对象。
 FOUNDATION_STATIC_INLINE UIColor *rgba(long red, long green, long blue, float alpha) XZ_ATTR_OVERLOAD {
-    return [UIColor colorWithRed:red/255.0 green:green/255.0 blue:blue/255.0 alpha:alpha];
+    return [UIColor colorWithRed:(red / 255.0) green:(green / 255.0) blue:(blue / 255.0) alpha:alpha];
 }
 
 // MARK: - float R_G_B_A
@@ -236,33 +243,33 @@ FOUNDATION_STATIC_INLINE UIColor *rgba(double red, double green, double blue, do
 // MARK: - RGB
 /// 通过十六进制整数形式的 0xRRGGBB 颜色值构造 UIColor 对象。
 FOUNDATION_STATIC_INLINE UIColor *rgb(int value) XZ_ATTR_OVERLOAD {
-    CGFloat const red   = (value>>16&0xFF) / 255.0;
-    CGFloat const green = (value>> 8&0xFF) / 255.0;
-    CGFloat const blue  = (value>> 0&0xFF) / 255.0;
+    CGFloat const red   = (value >> 16 & 0xFF) / 255.0;
+    CGFloat const green = (value >> 8  & 0xFF) / 255.0;
+    CGFloat const blue  = (value >> 0  & 0xFF) / 255.0;
     return [UIColor colorWithRed:red green:green blue:blue alpha:1.0];
 }
 
 /// 通过十六进制整数形式的 0xRRGGBB 颜色值构造 UIColor 对象。
 FOUNDATION_STATIC_INLINE UIColor *rgb(long value) XZ_ATTR_OVERLOAD {
-    CGFloat const red   = (value>>16&0xFF) / 255.0;
-    CGFloat const green = (value>> 8&0xFF) / 255.0;
-    CGFloat const blue  = (value>> 0&0xFF) / 255.0;
+    CGFloat const red   = (value >> 16 & 0xFF) / 255.0;
+    CGFloat const green = (value >> 8  & 0xFF) / 255.0;
+    CGFloat const blue  = (value >> 0  & 0xFF) / 255.0;
     return [UIColor colorWithRed:red green:green blue:blue alpha:1.0];
 }
 
 /// 通过十六进制整数形式的 0xRRGGBB 颜色值构造 UIColor 对象。
 FOUNDATION_STATIC_INLINE UIColor *rgb(unsigned int value) XZ_ATTR_OVERLOAD {
-    CGFloat const red   = (value>>16&0xFF) / 255.0;
-    CGFloat const green = (value>> 8&0xFF) / 255.0;
-    CGFloat const blue  = (value>> 0&0xFF) / 255.0;
+    CGFloat const red   = (value >> 16 & 0xFF) / 255.0;
+    CGFloat const green = (value >> 8  & 0xFF) / 255.0;
+    CGFloat const blue  = (value >> 0  & 0xFF) / 255.0;
     return [UIColor colorWithRed:red green:green blue:blue alpha:1.0];
 }
 
 /// 通过十六进制整数形式的 0xRRGGBB 颜色值构造 UIColor 对象。
 FOUNDATION_STATIC_INLINE UIColor *rgb(unsigned long value) XZ_ATTR_OVERLOAD {
-    CGFloat const red   = (value>>16&0xFF) / 255.0;
-    CGFloat const green = (value>> 8&0xFF) / 255.0;
-    CGFloat const blue  = (value>> 0&0xFF) / 255.0;
+    CGFloat const red   = (value >> 16 & 0xFF) / 255.0;
+    CGFloat const green = (value >> 8  & 0xFF) / 255.0;
+    CGFloat const blue  = (value >> 0  & 0xFF) / 255.0;
     return [UIColor colorWithRed:red green:green blue:blue alpha:1.0];
 }
 
@@ -270,22 +277,22 @@ FOUNDATION_STATIC_INLINE UIColor *rgb(unsigned long value) XZ_ATTR_OVERLOAD {
 // MARK: - integer R_G_B
 /// 通过 R、G、B 各通道值 [0, 255] 构造 UIColor 对象。
 FOUNDATION_STATIC_INLINE UIColor *rgb(long red, long green, long blue) XZ_ATTR_OVERLOAD {
-    return [UIColor colorWithRed:red/255.0 green:green/255.0 blue:blue/255.0 alpha:1.0];
+    return [UIColor colorWithRed:(red / 255.0) green:(green / 255.0) blue:(blue / 255.0) alpha:1.0];
 }
 
 /// 通过 R、G、B 各通道值 [0, 255] 构造 UIColor 对象。
 FOUNDATION_STATIC_INLINE UIColor *rgb(int red, int green, int blue) XZ_ATTR_OVERLOAD {
-    return [UIColor colorWithRed:red/255.0 green:green/255.0 blue:blue/255.0 alpha:1.0];
+    return [UIColor colorWithRed:(red / 255.0) green:(green / 255.0) blue:(blue / 255.0) alpha:1.0];
 }
 
 /// 通过 R、G、B 各通道值 [0, 255] 构造 UIColor 对象。
 FOUNDATION_STATIC_INLINE UIColor *rgb(unsigned long red, unsigned long green, unsigned long blue) XZ_ATTR_OVERLOAD {
-    return [UIColor colorWithRed:red/255.0 green:green/255.0 blue:blue/255.0 alpha:1.0];
+    return [UIColor colorWithRed:(red / 255.0) green:(green / 255.0) blue:(blue / 255.0) alpha:1.0];
 }
 
 /// 通过 R、G、B 各通道值 [0, 255] 构造 UIColor 对象。
 FOUNDATION_STATIC_INLINE UIColor *rgb(unsigned int red, unsigned int green, unsigned int blue) XZ_ATTR_OVERLOAD {
-    return [UIColor colorWithRed:red/255.0 green:green/255.0 blue:blue/255.0 alpha:1.0];
+    return [UIColor colorWithRed:(red / 255.0) green:(green / 255.0) blue:(blue / 255.0) alpha:1.0];
 }
 
 
@@ -304,8 +311,9 @@ FOUNDATION_STATIC_INLINE UIColor *rgb(double red, double green, double blue) XZ_
 
 /// 通过 rgba 字符串构造 UIColor 对象，并指定字符串解析失败时的默认颜色。
 FOUNDATION_STATIC_INLINE UIColor * _Nullable rgba(NSString * _Nullable string, UIColor * _Nullable defaultColor) XZ_ATTR_OVERLOAD {
-    XZColor color;
-    if (XZColorParser(string, &color)) {
+    OSStatus code = noErr;
+    XZColor const color = XZColorFromString(string, &code);
+    if (code == noErr) {
         CGFloat const red   = color.red   / 255.0;
         CGFloat const green = color.green / 255.0;
         CGFloat const blue  = color.blue  / 255.0;
@@ -317,8 +325,9 @@ FOUNDATION_STATIC_INLINE UIColor * _Nullable rgba(NSString * _Nullable string, U
 
 /// 通过 rgba 字符串构造 UIColor 对象，如果字符串解析失败则使用默认颜色颜值创建。
 FOUNDATION_STATIC_INLINE UIColor *rgba(NSString * _Nullable string, long defaultColorRGBA) XZ_ATTR_OVERLOAD {
-    XZColor color;
-    if (XZColorParser(string, &color)) {
+    OSStatus code = noErr;
+    XZColor const color = XZColorFromString(string, &code);
+    if (code == noErr) {
         CGFloat const red   = color.red   / 255.0;
         CGFloat const green = color.green / 255.0;
         CGFloat const blue  = color.blue  / 255.0;
@@ -330,8 +339,9 @@ FOUNDATION_STATIC_INLINE UIColor *rgba(NSString * _Nullable string, long default
 
 /// 通过 rgba 字符串构造 UIColor 对象，如果字符串解析失败则使用默认颜色颜值创建。
 FOUNDATION_STATIC_INLINE UIColor *rgba(NSString * _Nullable string, int defaultColorRGBA) XZ_ATTR_OVERLOAD {
-    XZColor color;
-    if (XZColorParser(string, &color)) {
+    OSStatus code = noErr;
+    XZColor const color = XZColorFromString(string, &code);
+    if (code == noErr) {
         CGFloat const red   = color.red   / 255.0;
         CGFloat const green = color.green / 255.0;
         CGFloat const blue  = color.blue  / 255.0;
@@ -343,8 +353,9 @@ FOUNDATION_STATIC_INLINE UIColor *rgba(NSString * _Nullable string, int defaultC
 
 /// 通过 rgba 字符串构造 UIColor 对象，默认返回透明色。
 FOUNDATION_STATIC_INLINE UIColor *rgba(NSString * _Nullable string) XZ_ATTR_OVERLOAD {
-    XZColor color;
-    if (XZColorParser(string, &color)) {
+    OSStatus code = noErr;
+    XZColor const color = XZColorFromString(string, &code);
+    if (code == noErr) {
         CGFloat const red   = color.red   / 255.0;
         CGFloat const green = color.green / 255.0;
         CGFloat const blue  = color.blue  / 255.0;
@@ -359,8 +370,9 @@ FOUNDATION_STATIC_INLINE UIColor *rgba(NSString * _Nullable string) XZ_ATTR_OVER
 
 /// 通过 rgb 字符串构造 UIColor 对象，并指定 alpha 通道值，如果字符串解析失败则使用默认颜色。
 FOUNDATION_STATIC_INLINE UIColor * _Nullable rgba(NSString *string, float alpha, UIColor * _Nullable defaultColor) XZ_ATTR_OVERLOAD {
-    XZColor color;
-    if (XZColorParser(string, &color)) {
+    OSStatus code = noErr;
+    XZColor const color = XZColorFromString(string, &code);
+    if (code == noErr) {
         CGFloat const red   = color.red   / 255.0;
         CGFloat const green = color.green / 255.0;
         CGFloat const blue  = color.blue  / 255.0;
@@ -371,8 +383,9 @@ FOUNDATION_STATIC_INLINE UIColor * _Nullable rgba(NSString *string, float alpha,
 
 /// 通过 rgb 字符串构造 UIColor 对象，并指定 alpha 通道值，如果字符串解析失败则使用默认颜色。
 FOUNDATION_STATIC_INLINE UIColor * _Nullable rgba(NSString *string, double alpha, UIColor * _Nullable defaultColor) XZ_ATTR_OVERLOAD {
-    XZColor color;
-    if (XZColorParser(string, &color)) {
+    OSStatus code = noErr;
+    XZColor const color = XZColorFromString(string, &code);
+    if (code == noErr) {
         CGFloat const red   = color.red   / 255.0;
         CGFloat const green = color.green / 255.0;
         CGFloat const blue  = color.blue  / 255.0;
@@ -383,8 +396,9 @@ FOUNDATION_STATIC_INLINE UIColor * _Nullable rgba(NSString *string, double alpha
 
 /// 通过 rgb 字符串构造 UIColor 对象，并指定 alpha 通道值，如果字符串解析失败则使用默认颜色值创建。
 FOUNDATION_STATIC_INLINE UIColor *rgba(NSString *string, float alpha, int defaultColorRGB) XZ_ATTR_OVERLOAD {
-    XZColor color;
-    if (XZColorParser(string, &color)) {
+    OSStatus code = noErr;
+    XZColor const color = XZColorFromString(string, &code);
+    if (code == noErr) {
         CGFloat const red   = color.red   / 255.0;
         CGFloat const green = color.green / 255.0;
         CGFloat const blue  = color.blue  / 255.0;
@@ -395,8 +409,9 @@ FOUNDATION_STATIC_INLINE UIColor *rgba(NSString *string, float alpha, int defaul
 
 /// 通过 rgb 字符串构造 UIColor 对象，并指定 alpha 通道值，如果字符串解析失败则使用默认颜色值创建。
 FOUNDATION_STATIC_INLINE UIColor *rgba(NSString *string, float alpha, long defaultColorRGB) XZ_ATTR_OVERLOAD {
-    XZColor color;
-    if (XZColorParser(string, &color)) {
+    OSStatus code = noErr;
+    XZColor const color = XZColorFromString(string, &code);
+    if (code == noErr) {
         CGFloat const red   = color.red   / 255.0;
         CGFloat const green = color.green / 255.0;
         CGFloat const blue  = color.blue  / 255.0;
@@ -407,8 +422,9 @@ FOUNDATION_STATIC_INLINE UIColor *rgba(NSString *string, float alpha, long defau
 
 /// 通过 rgb 字符串构造 UIColor 对象，并指定 alpha 通道值，如果字符串解析失败则使用默认颜色值创建。
 FOUNDATION_STATIC_INLINE UIColor *rgba(NSString *string, double alpha, int defaultColorRGB) XZ_ATTR_OVERLOAD {
-    XZColor color;
-    if (XZColorParser(string, &color)) {
+    OSStatus code = noErr;
+    XZColor const color = XZColorFromString(string, &code);
+    if (code == noErr) {
         CGFloat const red   = color.red   / 255.0;
         CGFloat const green = color.green / 255.0;
         CGFloat const blue  = color.blue  / 255.0;
@@ -419,8 +435,9 @@ FOUNDATION_STATIC_INLINE UIColor *rgba(NSString *string, double alpha, int defau
 
 /// 通过 rgb 字符串构造 UIColor 对象，并指定 alpha 通道值，如果字符串解析失败则使用默认颜色值创建。
 FOUNDATION_STATIC_INLINE UIColor *rgba(NSString *string, double alpha, long defaultColorRGB) XZ_ATTR_OVERLOAD {
-    XZColor color;
-    if (XZColorParser(string, &color)) {
+    OSStatus code = noErr;
+    XZColor const color = XZColorFromString(string, &code);
+    if (code == noErr) {
         CGFloat const red   = color.red   / 255.0;
         CGFloat const green = color.green / 255.0;
         CGFloat const blue  = color.blue  / 255.0;
@@ -431,8 +448,9 @@ FOUNDATION_STATIC_INLINE UIColor *rgba(NSString *string, double alpha, long defa
 
 /// 通过 rgb 字符串构造 UIColor 对象，并指定 alpha 通道值，如果字符串解析失败则返回透明色。
 FOUNDATION_STATIC_INLINE UIColor *rgba(NSString *string, double alpha) XZ_ATTR_OVERLOAD {
-    XZColor color;
-    if (XZColorParser(string, &color)) {
+    OSStatus code = noErr;
+    XZColor const color = XZColorFromString(string, &code);
+    if (code == noErr) {
         CGFloat const red   = color.red   / 255.0;
         CGFloat const green = color.green / 255.0;
         CGFloat const blue  = color.blue  / 255.0;
@@ -443,8 +461,9 @@ FOUNDATION_STATIC_INLINE UIColor *rgba(NSString *string, double alpha) XZ_ATTR_O
 
 /// 通过字符串构造颜色，默认返回透明色。
 FOUNDATION_STATIC_INLINE UIColor *rgba(NSString *string, float alpha) XZ_ATTR_OVERLOAD {
-    XZColor color;
-    if (XZColorParser(string, &color)) {
+    OSStatus code = noErr;
+    XZColor const color = XZColorFromString(string, &code);
+    if (code == noErr) {
         CGFloat const red   = color.red   / 255.0;
         CGFloat const green = color.green / 255.0;
         CGFloat const blue  = color.blue  / 255.0;
@@ -457,8 +476,9 @@ FOUNDATION_STATIC_INLINE UIColor *rgba(NSString *string, float alpha) XZ_ATTR_OV
 
 /// 通过 rgb 字符串构造 UIColor 对象，如果字符串解析失败则使用默认颜色。
 FOUNDATION_STATIC_INLINE UIColor * _Nullable rgb(NSString *string, UIColor * _Nullable defaultColor) XZ_ATTR_OVERLOAD {
-    XZColor color;
-    if (XZColorParser(string, &color)) {
+    OSStatus code = noErr;
+    XZColor const color = XZColorFromString(string, &code);
+    if (code == noErr) {
         CGFloat const red   = color.red   / 255.0;
         CGFloat const green = color.green / 255.0;
         CGFloat const blue  = color.blue  / 255.0;
@@ -469,8 +489,9 @@ FOUNDATION_STATIC_INLINE UIColor * _Nullable rgb(NSString *string, UIColor * _Nu
 
 /// 通过 rgb 字符串构造 UIColor 对象，如果字符串解析失败则使用默认颜色值创建。
 FOUNDATION_STATIC_INLINE UIColor *rgb(NSString *string, int defaultColorRGB) XZ_ATTR_OVERLOAD {
-    XZColor color;
-    if (XZColorParser(string, &color)) {
+    OSStatus code = noErr;
+    XZColor const color = XZColorFromString(string, &code);
+    if (code == noErr) {
         CGFloat const red   = color.red   / 255.0;
         CGFloat const green = color.green / 255.0;
         CGFloat const blue  = color.blue  / 255.0;
@@ -481,8 +502,9 @@ FOUNDATION_STATIC_INLINE UIColor *rgb(NSString *string, int defaultColorRGB) XZ_
 
 /// 通过 rgb 字符串构造 UIColor 对象，如果字符串解析失败则使用默认颜色值创建。
 FOUNDATION_STATIC_INLINE UIColor *rgb(NSString *string, long defaultColorRGB) XZ_ATTR_OVERLOAD {
-    XZColor color;
-    if (XZColorParser(string, &color)) {
+    OSStatus code = noErr;
+    XZColor const color = XZColorFromString(string, &code);
+    if (code == noErr) {
         CGFloat const red   = color.red   / 255.0;
         CGFloat const green = color.green / 255.0;
         CGFloat const blue  = color.blue  / 255.0;
@@ -493,8 +515,9 @@ FOUNDATION_STATIC_INLINE UIColor *rgb(NSString *string, long defaultColorRGB) XZ
 
 /// 通过 rgb 字符串构造 UIColor 对象，如果字符串解析失败则使用默认颜色值创建。
 FOUNDATION_STATIC_INLINE UIColor *rgb(NSString *string) XZ_ATTR_OVERLOAD {
-    XZColor color;
-    if (XZColorParser(string, &color)) {
+    OSStatus code = noErr;
+    XZColor const color = XZColorFromString(string, &code);
+    if (code == noErr) {
         CGFloat const red   = color.red   / 255.0;
         CGFloat const green = color.green / 255.0;
         CGFloat const blue  = color.blue  / 255.0;

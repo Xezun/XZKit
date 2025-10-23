@@ -7,6 +7,9 @@
 
 #import "UIColor+XZKit.h"
 
+XZColor const XZColorClear = (XZColor){0, 0, 0, 0};
+#define XZColorError 1
+
 @implementation UIColor (XZKit)
 
 - (XZColor)xzColor {
@@ -19,13 +22,19 @@
 
 @end
 
-BOOL XZColorParser(NSString * _Nullable string, XZColor *color) {
+XZColor XZColorFromString(NSString * _Nullable string, int *error) {
     NSCParameterAssert(string == nil || [string isKindOfClass:NSString.class]);
-    NSCParameterAssert(color != NULL);
+    
+    if (error) {
+        *error = noErr;
+    }
     
     NSUInteger const length = string.length;
     if (length < 3) {
-        return NO;
+        if (error) {
+            *error = XZColorError;
+        }
+        return XZColorClear;
     }
     
     char numbers[9] = {0};  // 存储数字。
@@ -68,51 +77,58 @@ BOOL XZColorParser(NSString * _Nullable string, XZColor *color) {
         count = 0;
     }
     
+    XZColor color = XZColorClear;
+    
     switch (count) {
         case 3: { // #ABC => #AABBCCFF
-            color->red   = numbers[0] * 16 + numbers[0];
-            color->green = numbers[1] * 16 + numbers[1];
-            color->blue  = numbers[2] * 16 + numbers[2];
-            color->alpha = 255;
-            return YES;
+            color.red   = numbers[0] * 16 + numbers[0];
+            color.green = numbers[1] * 16 + numbers[1];
+            color.blue  = numbers[2] * 16 + numbers[2];
+            color.alpha = 255;
+            break;
         }
         case 4: { // #ABCD => #AABBCCDD
-            color->red   = numbers[0] * 16 + numbers[0];
-            color->green = numbers[1] * 16 + numbers[1];
-            color->blue  = numbers[2] * 16 + numbers[2];
-            color->alpha = numbers[3] * 16 + numbers[3];
-            return YES;
+            color.red   = numbers[0] * 16 + numbers[0];
+            color.green = numbers[1] * 16 + numbers[1];
+            color.blue  = numbers[2] * 16 + numbers[2];
+            color.alpha = numbers[3] * 16 + numbers[3];
+            break;
         }
         case 5: { // #ABCDE => #AABBCCDE
-            color->red   = numbers[0] * 16 + numbers[0];
-            color->green = numbers[1] * 16 + numbers[1];
-            color->blue  = numbers[2] * 16 + numbers[2];
-            color->alpha = numbers[3] * 16 + numbers[4];
-            return YES;
+            color.red   = numbers[0] * 16 + numbers[0];
+            color.green = numbers[1] * 16 + numbers[1];
+            color.blue  = numbers[2] * 16 + numbers[2];
+            color.alpha = numbers[3] * 16 + numbers[4];
+            break;
         }
         case 6:{ // #123456 => #123456FF
-            color->red   = numbers[0] * 16 + numbers[1];
-            color->green = numbers[2] * 16 + numbers[3];
-            color->blue  = numbers[4] * 16 + numbers[5];
-            color->alpha = 255;
-            return YES;
+            color.red   = numbers[0] * 16 + numbers[1];
+            color.green = numbers[2] * 16 + numbers[3];
+            color.blue  = numbers[4] * 16 + numbers[5];
+            color.alpha = 255;
+            break;
         }
         case 7: { // #123456A => #123456AA
-            color->red   = numbers[0] * 16 + numbers[1];
-            color->green = numbers[2] * 16 + numbers[3];
-            color->blue  = numbers[4] * 16 + numbers[5];
-            color->alpha = numbers[6] * 16 + numbers[6];
-            return YES;
+            color.red   = numbers[0] * 16 + numbers[1];
+            color.green = numbers[2] * 16 + numbers[3];
+            color.blue  = numbers[4] * 16 + numbers[5];
+            color.alpha = numbers[6] * 16 + numbers[6];
+            break;
         }
         case 8: { // #123456AA => #123456AA
-            color->red   = numbers[0] * 16 + numbers[1];
-            color->green = numbers[2] * 16 + numbers[3];
-            color->blue  = numbers[4] * 16 + numbers[5];
-            color->alpha = numbers[6] * 16 + numbers[7];
-            return YES;
+            color.red   = numbers[0] * 16 + numbers[1];
+            color.green = numbers[2] * 16 + numbers[3];
+            color.blue  = numbers[4] * 16 + numbers[5];
+            color.alpha = numbers[6] * 16 + numbers[7];
+            break;
         }
         default: {
-            return NO;
+            if (error) {
+                *error = XZColorError;
+            }
+            break;
         }
     }
+    
+    return color;
 }
