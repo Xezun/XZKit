@@ -93,38 +93,42 @@ NS_ASSUME_NONNULL_BEGIN
 #define XZ_PRIVATE             NS_UNAVAILABLE
 #endif
 
-#pragma mark - enweak & deweak
+#pragma mark - @enweak & @deweak
 
 #ifndef enweak
-/// 弱引用编码：将变量进行弱引用编码，以准备在 block 中使用 `deweak` 解码后使用，避免循环引用。
-/// @discussion
-/// 由于 -ize 后缀 weakize/strongize 不能表明操作需配对使用，所以使用 en-、de- 表明操作必须配对使用的。
-/// @discussion
-/// 在 block 外，先对变量进行 enweak 编码；然后在 block 中，使用外部变量前，再对变量进行 deweak 解码。
-/// @discussion
-/// 编码不改变变量自身的引用属性，只是根据变量名，先进行编码，生成弱引用变量，然后在 block 中，再进行解码，生成名称相同的强引用变量。
-/// @discussion
-/// 编码不改变对象的引用计数。
-/// @code
-/// enweak(self);              // 将变量进行 weak 编码
+
+/// ### 弱引用的编码与解码
+///
+/// 在 block 中，通常需要使用 `__weak` 来捕获外部变量，以避免内存泄漏，因此提供了 `@enweak` 和 `@deweak` 宏，以便可以更方便快捷的实现这一操作。
+///
+/// ```objc
+/// @enweak(self);              // 将变量进行 weak 编码
 /// dispatch_async(dispatch_get_main_queue(), ^{
-///     deweak(self);          // 将变量进行 weak 解码
-///     if (!self) return;
-///     [self description];    // 此处的 self 为强引用，为 block 内局部变量，非捕获外部的变量
+///     @deweak(self);          // 将变量进行 weak 解码
+///     if (!self) return;      // 从弱引用取出值，使用前需检查是否位空
+///     [self description];     // 此处的 self 为强引用，为 block 内局部变量，非捕获外部的变量
 /// });
-/// @endcode
-/// @attention 必须搭配 `deweak` 一起使用。
-FOUNDATION_EXPORT void enweak(id var, ...) NS_SWIFT_UNAVAILABLE("Use swift weak instead");
-#undef enweak
-#define enweak(...)                 xz_macro_args_map(__enweak_imp__, , __VA_ARGS__)
+/// ```
+///
+/// 在 block 外，先使用 `@enweak` 先对变量进行弱引用编码；然后在 block 中，使用外部变量前，再对变量进行 `@deweak` 弱引用解码。
+///
+/// > 关于命名：由于 -ize 后缀 weakize/strongize 不能表明操作需配对使用，所以使用 en-、de- 表明操作必须配对使用的。
+/// 
+/// 编码不改变变量自身的引用属性，只是根据变量名，先进行编码，生成弱引用变量，然后在 block 中，再进行解码，生成名称相同的强引用变量。
+///
+/// 编码不改变对象的引用计数。
+///
+/// - Attention: 须搭配 `\@deweak` 一起使用。
+///
+#define enweak(...)                 xz_macro_keyize xz_macro_args_map(__enweak_imp__, , __VA_ARGS__)
 #define __enweak_imp__(INDEX, VAR)  __typeof__(VAR) __weak const xz_macro_paste(__xz_weak_, VAR) = (VAR);
 #endif
 
 #ifndef deweak
-/// 弱引用解码：将 block 外使用 `enweak` 弱引用编码的外部变量，解码为 block 内的局部强引用变量使用，变量名不变。
+/// 弱引用解码：将 block 外使用 `@enweak` 弱引用编码的外部变量，解码为 block 内的局部强引用变量使用，变量名不变。
 /// @discussion 解码会增加引用计数，但可能为 nil 值，所以使用前应先判断。
-/// @seealso 请查看 `enweak` 获取更多说明。
-/// @attention 必须搭配 `enweak` 一起使用。
+/// @seealso 请查看 `@enweak` 获取更多说明。
+/// @attention 必须搭配 `@enweak` 一起使用。
 FOUNDATION_EXPORT void deweak(id var, ...) NS_SWIFT_UNAVAILABLE("Use swift weak instead");
 #undef deweak
 // 关于 typeof 的使用。
@@ -133,7 +137,7 @@ FOUNDATION_EXPORT void deweak(id var, ...) NS_SWIFT_UNAVAILABLE("Use swift weak 
 #define deweak(...)                                 \
 _Pragma("clang diagnostic push")                    \
 _Pragma("clang diagnostic ignored \"-Wshadow\"")    \
-xz_macro_args_map(__deweak_imp__,, __VA_ARGS__)     \
+xz_macro_keyize xz_macro_args_map(__deweak_imp__,, __VA_ARGS__)     \
 _Pragma("clang diagnostic pop")
 #define __deweak_imp__(INDEX, VAR)  __typeof__(xz_macro_paste(__xz_weak_, VAR)) __strong _Nullable VAR = xz_macro_paste(__xz_weak_, VAR);
 #endif

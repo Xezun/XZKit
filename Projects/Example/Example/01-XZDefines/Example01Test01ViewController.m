@@ -28,9 +28,9 @@
 - (void)viewDidLoad {
     [super viewDidLoad];
     
-    enweak(self)
+    @enweak(self)
     self.block = ^(const char *methodName) {
-        deweak(self);
+        @deweak(self);
         XZLog(@"在方法 %s 中，捕获的变量 self 值的为：%@", methodName, self);
     };
 }

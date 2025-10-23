@@ -134,9 +134,9 @@
     
     BOOL __block didSetImage = NO;
     
-    enweak(self, reusingView);
+    @enweak(self, reusingView);
     UIImage *image = [_dataSource imageViewer:self loadImageForItemAtIndex:index completion:^(UIImage * _Nonnull image) {
-        deweak(self, reusingView);
+        @deweak(self, reusingView);
         
         if (!didSetImage) {
             reusingView.imageView.image = image;
