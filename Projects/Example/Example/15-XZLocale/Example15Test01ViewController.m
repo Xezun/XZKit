@@ -21,7 +21,7 @@
     [super viewDidLoad];
     
     self.languages = @[XZLocaleLanguageChinese, XZLocaleLanguageEnglish];
-    self.inAppPreferenceSwitch.on = XZLocale.isInAppLanguagePreferencesEnabled;
+    self.inAppPreferenceSwitch.on = XZLocale.supportsInAppLanguagePreferences;
 }
 
 #pragma mark - Table view data source
@@ -34,7 +34,7 @@
             if ([XZLocale.preferredLanguage isEqualToString:XZLocale.effectiveLanguage]) {
                 cell.accessoryType = UITableViewCellAccessoryCheckmark;
                 cell.detailTextLabel.text = nil;
-            } else if (XZLocale.isInAppLanguagePreferencesEnabled) {
+            } else if (XZLocale.supportsInAppLanguagePreferences) {
                 cell.accessoryType = UITableViewCellAccessoryNone;
                 cell.detailTextLabel.text = XZLocalizedString(@"新页面生效");
             } else {
@@ -60,7 +60,7 @@
     }
     
     UIAlertController *alert = [UIAlertController alertControllerWithTitle:@"切换应用语言" message:nil preferredStyle:(UIAlertControllerStyleActionSheet)];
-    if (XZLocale.isInAppLanguagePreferencesEnabled) {
+    if (XZLocale.supportsInAppLanguagePreferences) {
         [alert addAction:[UIAlertAction actionWithTitle:@"重建页面，立即切换" style:(UIAlertActionStyleDestructive) handler:^(UIAlertAction * _Nonnull action) {
             XZLocale.preferredLanguage = newValue;
         }]];
@@ -71,7 +71,7 @@
         }]];
         [alert addAction:[UIAlertAction actionWithTitle:@"重建界面，立即生效" style:(UIAlertActionStyleDestructive) handler:^(UIAlertAction * _Nonnull action) {
             self.inAppPreferenceSwitch.on = YES;
-            XZLocale.isInAppLanguagePreferencesEnabled = YES;
+            XZLocale.supportsInAppLanguagePreferences = YES;
             XZLocale.preferredLanguage = newValue;
         }]];
     }
@@ -82,7 +82,7 @@
 #pragma mark - Events
 
 - (IBAction)InAppPreferenceSwitchValueChanged:(UISwitch *)sender {
-    XZLocale.isInAppLanguagePreferencesEnabled = sender.isOn;
+    XZLocale.supportsInAppLanguagePreferences = sender.isOn;
     [self.tableView reloadSections:[NSIndexSet indexSetWithIndex:0] withRowAnimation:(UITableViewRowAnimationNone)];
 }
 

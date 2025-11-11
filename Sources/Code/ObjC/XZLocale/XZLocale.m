@@ -15,14 +15,14 @@
 XZLocaleLanguage              const XZLocaleLanguageChinese               = @"zh-Hans";
 XZLocaleLanguage              const XZLocaleLanguageChineseTraditional    = @"zh-Hant";
 XZLocaleLanguage              const XZLocaleLanguageEnglish               = @"en";
-NSNotificationName            const XZLocaleDidChangeLanguageNotification = @"XZLocaleDidChangeLanguageNotification";
+NSNotificationName            const XZLocaleDidChangePreferredLanguageNotification = @"XZLocaleDidChangePreferredLanguageNotification";
 
 /// 语言偏好设置在 NSUserDefaults 中的键名。
 static NSString * const AppleLanguages = @"AppleLanguages";
 /// 记录了当前的语言偏好设置。
 static XZLocaleLanguage _Nullable _preferredLanguage = nil;
 /// 是否开启应用内切换语言功能。
-static BOOL _isInAppLanguagePreferencesEnabled    = NO;
+static BOOL _supportsInAppLanguagePreferences    = NO;
 /// 是否支持应用内切换语言功能。
 static BOOL _isInAppLanguagePreferencesSupported  = NO;
 
@@ -30,15 +30,13 @@ static BOOL _isInAppLanguagePreferencesSupported  = NO;
 
 + (XZLocaleLanguage)effectiveLanguage {
     NSBundle * const mainBundle = NSBundle.mainBundle;
-    return mainBundle.preferredLocalizations.firstObject ?: mainBundle.localizations.firstObject ?: XZLocaleLanguageEnglish;
+    return mainBundle.preferredLocalizations.firstObject ?: mainBundle.localizations.firstObject ?: (mainBundle.developmentLocalization ?: XZLocaleLanguageEnglish);
 }
 
 + (XZLocaleLanguage)preferredLanguage {
-    if (_preferredLanguage != nil) {
-        return _preferredLanguage;
+    if (_preferredLanguage == nil) {
+        _preferredLanguage = self.effectiveLanguage;
     }
-    NSBundle * const mainBundle = NSBundle.mainBundle;
-    _preferredLanguage = mainBundle.preferredLocalizations.firstObject ?: mainBundle.localizations.firstObject ?: XZLocaleLanguageEnglish;
     return _preferredLanguage;
 }
 
@@ -61,8 +59,8 @@ static BOOL _isInAppLanguagePreferencesSupported  = NO;
     _preferredLanguage = newValue.copy;
     
     // 如果没有开启应用内语言设置，不保存值。
-    if (self.isInAppLanguagePreferencesEnabled) {
-        [NSNotificationCenter.defaultCenter postNotificationName:XZLocaleDidChangeLanguageNotification object:self];
+    if (self.supportsInAppLanguagePreferences) {
+        [NSNotificationCenter.defaultCenter postNotificationName:XZLocaleDidChangePreferredLanguageNotification object:self];
     }
     
     // 更新语言偏好设置
@@ -93,14 +91,14 @@ static BOOL _isInAppLanguagePreferencesSupported  = NO;
     return NSBundle.mainBundle.localizations;
 }
 
-+ (BOOL)isInAppLanguagePreferencesEnabled {
-    return _isInAppLanguagePreferencesEnabled;
++ (BOOL)supportsInAppLanguagePreferences {
+    return _supportsInAppLanguagePreferences;
 }
 
-+ (void)setInAppLanguagePreferencesEnabled:(BOOL)isInAppLanguagePreferencesEnabled {
++ (void)setSupportsInAppLanguagePreferences:(BOOL)supportsInAppLanguagePreferences {
     NSAssert(NSThread.isMainThread, XZLocalizedString(@"方法 %s 只能在主线程调用。"),  __PRETTY_FUNCTION__);
     [self setInAppLanguagePreferencesSupported];
-    _isInAppLanguagePreferencesEnabled = isInAppLanguagePreferencesEnabled;
+    _supportsInAppLanguagePreferences = supportsInAppLanguagePreferences;
 }
 
 + (void)setInAppLanguagePreferencesSupported {
@@ -112,10 +110,10 @@ static BOOL _isInAppLanguagePreferencesSupported  = NO;
     SEL const method = @selector(localizedStringForKey:value:table:);
     xz_objc_class_addMethodWithBlock(NSBundle.class, method, nil, nil, nil, ^id _Nonnull(SEL  _Nonnull selector) {
         return ^NSString *(NSBundle *self, NSString *key, NSString *value, NSString *tableName) {
-            if (_isInAppLanguagePreferencesEnabled) {
+            if (_supportsInAppLanguagePreferences) {
                 // 开启状态下，NSBundle 查找本地化字符串，先查找语言包
                 XZLocaleLanguage const preferredLanguage = XZLocale.preferredLanguage;
-                NSBundle * const languageBundle    = [self xz_languageResourceBundleForLanguage:preferredLanguage];
+                NSBundle *       const languageBundle    = [self xz_languageResourceBundleForLanguage:preferredLanguage];
                 // 这里已经是语言包，直接向原始实现发送消息
                 return ((NSString *(*)(NSBundle *, SEL, NSString *, NSString *, NSString *))objc_msgSend)(languageBundle, selector, key, value, tableName);
             }

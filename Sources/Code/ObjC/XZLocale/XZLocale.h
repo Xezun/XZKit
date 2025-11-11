@@ -24,8 +24,9 @@ FOUNDATION_EXPORT XZLocaleLanguage const XZLocaleLanguageChineseTraditional NS_S
 FOUNDATION_EXPORT XZLocaleLanguage const XZLocaleLanguageEnglish NS_SWIFT_NAME(XZLocaleLanguage.English);
 
 /// 语言偏好设置发生改变。
-/// > 实际显示语言可能并未改变。
-FOUNDATION_EXPORT NSNotificationName const XZLocaleDidChangeLanguageNotification NS_SWIFT_NAME(XZLocale.didChangeLanguageNotification);
+///
+/// 如果页面没有为偏好语言配置本地化资源，那么实际显示语言可能并未改变。
+FOUNDATION_EXPORT NSNotificationName const XZLocaleDidChangePreferredLanguageNotification NS_SWIFT_NAME(XZLocale.didChangePreferredLanguageNotification);
 
 /// 本地化支持组件。
 ///
@@ -102,7 +103,7 @@ FOUNDATION_EXPORT NSNotificationName const XZLocaleDidChangeLanguageNotification
 
 /// 是否开启应用内语言偏好设置。默认否。
 /// > 开启功能后，更改应用语言立即生效，新的页面将按照新的语言展示。
-@property (class, nonatomic, setter=setInAppLanguagePreferencesEnabled:) BOOL isInAppLanguagePreferencesEnabled;
+@property (class, nonatomic) BOOL supportsInAppLanguagePreferences;
 
 /// 构造本地化字符串。
 /// - Parameters:

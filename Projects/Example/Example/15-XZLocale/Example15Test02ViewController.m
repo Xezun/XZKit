@@ -22,7 +22,7 @@
     [self requestData:^(NSDictionary<NSString *,NSString *> *data) {
         [self xz_hideToast:nil];
         NSString *string = XZLocalizedString(@"{1}在{2}去过{3}。", data[@"name"], data[@"date"], data[@"place"]);
-        XZLocaleLanguage language = XZLocale.isInAppLanguagePreferencesEnabled ? XZLocale.preferredLanguage  : XZLocale.effectiveLanguage;
+        XZLocaleLanguage language = XZLocale.supportsInAppLanguagePreferences ? XZLocale.preferredLanguage  : XZLocale.effectiveLanguage;
         self.strings = @[
             XZLocalizedString(@"语言：{1}", language),
             XZLocalizedString(@"模版：{1}", @"{1}在{2}去过{3}"),

@@ -19,7 +19,7 @@
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
     XZLog(@"App (%@) was launched: %@", XZLogSystem.defaultLogSystem.domain, launchOptions);
-    [NSNotificationCenter.defaultCenter addObserver:self selector:@selector(didChangeLanguageNotification:) name:XZLocaleDidChangeLanguageNotification object:nil];
+    [NSNotificationCenter.defaultCenter addObserver:self selector:@selector(didChangeLanguageNotification:) name:XZLocaleDidChangePreferredLanguageNotification object:nil];
     return YES;
 }
 
