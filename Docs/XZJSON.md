@@ -127,9 +127,11 @@ NSData *json = [XZJSON encode:model options:NSJSONWritingPrettyPrinted error:nil
 - 自定义模型化过程、数据校验
 
 ```objc
-- (BOOL)decodeFromJSONDictionary:(NSDictionary *)JSON {
+- (BOOL)decodeFromJSONDictionary:(NSDictionary *)aJSONDictionary {
     // 使用 XZJSON 进行初始化。
-    [XZJSON object:self decodeWithDictionary:JSON];
+    if (![XZJSON object:self decodeWithDictionary:aJSONDictionary]) {
+        return NO;
+    }
     
     // 处理自定义逻辑：关联学生和老师
     [self.students enumerateObjectsUsingBlock:^(Example001Student * _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
@@ -155,7 +157,7 @@ NSData *json = [XZJSON encode:model options:NSJSONWritingPrettyPrinted error:nil
 - 模型转发
 
 ```objc
-+ (nullable Class)forwardingClassForJSONDictionary:(NSDictionary *)JSON {
++ (nullable Class)forwardingClassForJSONDictionary:(NSDictionary *)aJSONDictionary {
     // 在此方法中，可通过对 JSON 数据进行判断，返回适合的模型进行解析数据。
     return SomeModelClass;
 }
@@ -164,7 +166,7 @@ NSData *json = [XZJSON encode:model options:NSJSONWritingPrettyPrinted error:nil
 - 前置数据校验。
 
 ```objc
-+ (nullable NSDictionary *)canDecodeFromJSONDictionary:(NSDictionary *)JSON {
++ (nullable NSDictionary *)canDecodeFromJSONDictionary:(NSDictionary *)aJSONDictionary {
     // 在此方法中，可校验或修改数据，返回 nil 表示数据不合法，停止模型化
 }
 ```
@@ -172,7 +174,7 @@ NSData *json = [XZJSON encode:model options:NSJSONWritingPrettyPrinted error:nil
 - 自定义 JSON 序列化。
 
 ```objc
-- (nullable NSDictionary *)encodeIntoJSONDictionary:(NSMutableDictionary *)dictionary {
+- (nullable NSDictionary *)encodeIntoJSONDictionary:(NSMutableDictionary *)aJSONDictionary {
     [XZJSON object:self encodeIntoDictionary:dictionary];
     dictionary[@"date"] = @(NSDate.date.timeIntervalSince1970); // 自定义：向序列化数据中，加入一个时间戳
     return dictionary;

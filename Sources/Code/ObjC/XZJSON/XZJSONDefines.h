@@ -100,33 +100,33 @@ NS_ASSUME_NONNULL_BEGIN
 
 @optional
 /// 转发数据到其它模型。
-/// - Parameter JSON: 字符串或二进制形式的原始 JSON 数据，或已序列化的字典或数组数据
-+ (nullable Class)forwardingClassForJSONDictionary:(NSDictionary *)JSON;
+/// - Parameter aJSONDictionary: 字典形式的 JSON 数据
++ (nullable Class)forwardingClassForJSONDictionary:(NSDictionary *)aJSONDictionary;
 
 /// 模型化之前的数据校验，一般为初步校验，比如校验统一格式等。
-/// - Parameter JSON: 字符串或二进制形式的原始 JSON 数据，或已序列化的字典或数组数据。
+/// - Parameter aJSONDictionary: 字典形式的 JSON 数据
 /// - Returns: 返回 nil 表示无效数据，不进行模型化。
-+ (nullable NSDictionary *)canDecodeFromJSONDictionary:(NSDictionary *)JSON;
++ (nullable NSDictionary *)canDecodeFromJSONDictionary:(NSDictionary *)aJSONDictionary;
 
 /// 自定义 JSON 数据模型化方法。如果需要自定义模型化过程，或者模型校验，可实现此方法。
 ///
 /// ```objc
-/// - (BOOL)decodeFromJSONDictionary:(NSDictionary *)JSON {
+/// - (BOOL)decodeFromJSONDictionary:(NSDictionary *)aJSONDictionary {
 ///     // 验证 JSON 数据是否合法
-///     if (![JSON[@"type"] isKindOfClass:NSNumber.class]) {
+///     if (![aJSONDictionary[@"type"] isKindOfClass:NSNumber.class]) {
 ///         return NO;
 ///     }
 ///
 ///     // 调用自定义的指定初始化方法，完成初始化。
-///     self = [self initWithBar:[JSON[@"type"] intValue]];
+///     self = [self initWithBar:[aJSONDictionary[@"type"] intValue]];
 ///     if (self == nil) {
 ///         return NO;
 ///     }
 ///
 ///     // 使用 XZJOSN 进行模型化，可选。
 ///     // 在 XZJSON 模型化的基础上，再进行自定义模型化的过程，以减少代码量，当然也可以完全自定义这个过程。
-///     [XZJSON object:self decodeWithDictionary:JSON];
-/// 
+///     [XZJSON object:self decodeWithDictionary:aJSONDictionary];
+///
 ///     // 验证模型是否正确，可选。
 ///     if (self.foo == nil) {
 ///         return NO;
@@ -137,8 +137,8 @@ NS_ASSUME_NONNULL_BEGIN
 /// ```
 ///
 /// > 如果不实现此方法，则使用 `init` 方法初始化模型对象，因此自定义了指定初始化方法的模型对象，需要实现此方法，否则指定初始化方法不会被调用。
-/// - Parameter JSON: JSON 字符串或二进制形式的原始 JSON 数据，或已序列化的字典或数组数据
-- (BOOL)decodeFromJSONDictionary:(NSDictionary *)JSON;
+/// - Parameter aJSONDictionary: 字典形式的 JSON 数据
+- (BOOL)decodeFromJSONDictionary:(NSDictionary *)aJSONDictionary;
 
 /// 自定义属性值解析。
 ///
@@ -163,8 +163,8 @@ NS_ASSUME_NONNULL_BEGIN
 /// }
 /// ```
 /// - Note: 如果需要校验 XZJSON 序列化的结果，也可以通过此方法实现。
-/// - Parameter JSON: 数据字典
-- (nullable NSMutableDictionary *)encodeIntoJSONDictionary:(NSMutableDictionary *)JSON;
+/// - Parameter aJSONDictionary: 字典形式的 JSON 数据
+- (nullable NSMutableDictionary *)encodeIntoJSONDictionary:(NSMutableDictionary *)aJSONDictionary;
 
 /// 需要自行实现序列化过程的属性。
 ///

@@ -151,7 +151,7 @@ id XZJSONEncodeObjectIntoDictionary(id const _Unsafe object, XZJSONClassDescript
             }
             
             // 自定义序列化
-            if (objectClass->_usesJSONEncodingInitializer) {
+            if (objectClass->_usesJSONEncodingMethod) {
                 return [(id<XZJSONCoding>)object encodeIntoJSONDictionary:dictionary];
             }
             

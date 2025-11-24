@@ -80,14 +80,12 @@ NS_ASSUME_NONNULL_BEGIN
 #pragma mark - 数据转模型
 
 enum {
+    /// NSJSONReadingOptions 的拓展。
     /// 如果提供此标记，当转换由 JSON 数据组成的数组时，那么输出的数组将与输入保持相同大小，转换失败的数据将使用 kCFNull 代替。
     ///
     /// 此标记不影响模型的转换过程，模型的集合属性，在转换时，是否保持大小，由模型决定。
     XZJSONReadingKeepCapacity = (1UL << 63)
 };
-
-
-@class NSMutableArray;
 
 @interface XZJSON (XZJSONDecoder)
 
@@ -102,18 +100,20 @@ enum {
 ///
 /// - Parameters:
 ///   - json: JSON 数据
-///   - options: JSON 读取选项，如果 JSON 已解析，则此参数忽略
+///   - options: JSON 读取选项，如果 JSON 已解析，则此参数忽略，可使用 XZJSONReadingKeepCapacity 保持输入输出的数组元素数量一致
 ///   - class: 模型的类对象
 + (nullable id)decode:(nullable id)json options:(NSJSONReadingOptions)options class:(Class)aClass;
 
-/// 使用模型实例对象 model 对 JSON 字典数据进行模型化。
+/// 通用的模型化方法：使用模型实例对象 model 对 JSON 字典数据进行模型化。
 ///
-/// 由于已经是具体的模型对象，所以调用此方法不会触发模型化转发的流程。
+/// - 由于已经是具体的模型对象，所以调用此方法不会触发模型化转发的流程。
+/// - 如果模型定义了 `+canDecodeFromJSONDictionary:` 方法，则会先调用该方法检查数据合法性。
 ///
 /// - Parameters:
 ///   - model: 模型实例对象
 ///   - dictionary: JSON 数据字典
-+ (void)model:(id)model decodeFromDictionary:(NSDictionary *)dictionary;
+/// - Returns: 是否成功执行模型化
++ (BOOL)model:(id)model decodeFromDictionary:(NSDictionary *)dictionary;
 
 @end
 
