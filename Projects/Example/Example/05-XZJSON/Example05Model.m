@@ -217,7 +217,7 @@
 }
 
 - (NSString *)description {
-    return [XZJSON model:self description:0];
+    return [XZJSON model:self descriptionWithIndent:0];
 }
 
 @end
@@ -247,7 +247,7 @@
 }
 
 - (NSString *)description {
-    return [XZJSON model:self description:0];
+    return [XZJSON model:self descriptionWithIndent:0];
 }
 
 @end
@@ -267,19 +267,16 @@
     };
 }
 
-- (instancetype)initWithJSONDictionary:(NSDictionary *)JSON {
-    // 调用指定初始化方法。
-    self = [self init];
-    if (self != nil) {
-        // 使用 XZJSON 进行初始化。
-        [XZJSON model:self decodeFromDictionary:JSON];
-        
-        // 处理自定义逻辑：关联学生和老师
-        for (Example05Student *student in self.students) {
-            student.teacher = self;
-        }
+- (BOOL)decodeFromJSONDictionary:(NSDictionary *)JSON {
+    // 使用 XZJSON 进行初始化。
+    [XZJSON model:self decodeFromDictionary:JSON];
+    
+    // 处理自定义逻辑：关联学生和老师
+    for (Example05Student *student in self.students) {
+        student.teacher = self;
     }
-    return self;
+    
+    return YES;
 }
 
 - (void)dealloc {

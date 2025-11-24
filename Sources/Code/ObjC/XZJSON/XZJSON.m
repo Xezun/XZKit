@@ -30,7 +30,7 @@
 
 + (id)decode:(id)json options:(NSJSONReadingOptions)options class:(Class)aClass {
     // 判空
-    if (json == nil || json == NSNull.null) {
+    if (json == nil || json == (id)kCFNull) {
         return nil;
     }
     // 二进制流形式的 json 数据
@@ -57,6 +57,8 @@
             id const model = [self decode:json options:options class:aClass];
             if (model) {
                 [models addObject:model];
+            } else if (options & XZJSONReadingKeepCapacity) {
+                [models addObject:(id)kCFNull];
             }
         }
         return models;
@@ -66,10 +68,33 @@
 }
 
 + (void)model:(id)model decodeFromDictionary:(NSDictionary *)dictionary {
-    XZJSONClassDescriptor * const modelClass = [XZJSONClassDescriptor descriptorForClass:[model class]];
-    if (modelClass) {
-        XZJSONModelDecodeFromDictionary(model, modelClass, dictionary);
+    Class modelRawClass = object_getClass(model);
+    
+    XZJSONClassDescriptor * const modelClass = [XZJSONClassDescriptor descriptorForClass:modelRawClass];
+    if (modelClass == nil) {
+        return;
     }
+    
+    // 数据校验
+    if (modelClass->_verifiesDecodingValue) {
+        dictionary = [modelRawClass canDecodeFromJSONDictionary:dictionary];
+        if (dictionary == nil) {
+            return;
+        }
+        // 返回值必须是 NSDictionary 对象
+        if (![dictionary isKindOfClass:NSDictionary.class]) {
+            return;
+        }
+    }
+    
+    // 使用自定义初始化过程
+    if (modelClass->_usesJSONDecodingInitializer) {
+        [model decodeFromJSONDictionary:dictionary];
+        return;
+    }
+    
+    // 使用通用初始化过程
+    XZJSONModelDecodeFromDictionary(model, modelClass, dictionary);
 }
 
 @end
@@ -114,7 +139,7 @@
 
 @implementation XZJSON (NSDescription)
 
-+ (NSString *)model:(id)model description:(NSUInteger)indent {
++ (NSString *)model:(id)model descriptionWithIndent:(NSUInteger)indent {
     return XZJSONModelDescription(model, indent);
 }
 

@@ -8,6 +8,10 @@
 #import <Foundation/Foundation.h>
 #import "XZObjcTypeDescriptor.h"
 
+#ifndef _Unsafe
+#define _Unsafe __unsafe_unretained
+#endif
+
 /// 原生对象类型枚举。Foundation Class Type
 typedef NS_ENUM (NSUInteger, XZJSONFoundationClassType) {
     XZJSONFoundationClassTypeUnknown = 0,

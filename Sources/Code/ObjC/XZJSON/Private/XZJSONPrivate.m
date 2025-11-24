@@ -211,7 +211,7 @@ NSString * _Nonnull XZJSONModelDescription(NSObject *_Nonnull model, NSUInteger 
                 } else if (property->_foundationClassType) {
                     value = XZJSONModelDescriptionForFoundationClassOfType(value, property->_foundationClassType, indent);
                 } else {
-                    value = [XZJSON model:value description:indent];
+                    value = [XZJSON model:value descriptionWithIndent:indent];
                 }
                 break;
             }

@@ -17,34 +17,27 @@
 
 NS_ASSUME_NONNULL_BEGIN
 typedef void (*XZJSONSetter)(id, SEL, id _Nullable);
-static void XZJSONModelDecodeProperty(id const __unsafe_unretained model, XZJSONPropertyDescriptor * const __unsafe_unretained property, id const __unsafe_unretained JSONValue);
+static void XZJSONModelDecodeProperty(id const _Unsafe model, XZJSONPropertyDescriptor * const _Unsafe property, id const _Unsafe JSONValue);
 NS_ASSUME_NONNULL_END
 
-id _Nullable XZJSONDecodeJSONData(NSData * const __unsafe_unretained data, NSJSONReadingOptions const options, Class const __unsafe_unretained aClass) {
-    NSError *error = nil;
-    id const object = [NSJSONSerialization JSONObjectWithData:data options:options error:&error];
-    if ((error == nil || error.code == noErr) && object != nil) {
-        return XZJSONDecodeJSONObject(object, aClass);
-    }
-    return nil;
-}
-
-FOUNDATION_STATIC_INLINE id _Nullable XZJSONDecodeJSONDictionary(Class __unsafe_unretained modelRawClass, XZJSONClassDescriptor * _Nullable __unsafe_unretained modelClass, NSDictionary * __unsafe_unretained JSONDictionary) {
+FOUNDATION_STATIC_INLINE id _Nullable XZJSONClassDecodeDictionary(Class _Unsafe modelRawClass, XZJSONClassDescriptor * _Nullable _Unsafe modelClass, NSDictionary * _Unsafe JSONDictionary) {
     // 获取模型描述
     if (modelClass == nil) {
         modelClass = [XZJSONClassDescriptor descriptorForClass:modelRawClass]; // 单例，不需要强持有
     }
+    
     // 转发解析
     if (modelClass->_forwardsDecodingClass) {
-        Class const newRawClass = [modelRawClass forwardingClassForJSONDictionary:JSONDictionary];
-        if (newRawClass == Nil) {
-            return nil;
-        }
-        if (newRawClass != modelRawClass) {
-            modelRawClass = newRawClass;
-            modelClass = [XZJSONClassDescriptor descriptorForClass:modelRawClass];
+        while (YES) {
+            Class const newRawClass = [modelRawClass forwardingClassForJSONDictionary:JSONDictionary];
+            if (newRawClass && newRawClass != modelRawClass) {
+                modelRawClass = newRawClass;
+                continue;
+            }
+            break;
         }
     }
+    
     // 数据校验
     if (modelClass->_verifiesDecodingValue) {
         JSONDictionary = [modelRawClass canDecodeFromJSONDictionary:JSONDictionary];
@@ -56,25 +49,43 @@ FOUNDATION_STATIC_INLINE id _Nullable XZJSONDecodeJSONDictionary(Class __unsafe_
             return nil;
         }
     }
-    // 自定义初始化过程
+    
+    id const model = [[modelRawClass alloc] init];
+    
+    // 使用自定义初始化过程
     if (modelClass->_usesJSONDecodingInitializer) {
-        return [[modelRawClass alloc] initWithJSONDictionary:JSONDictionary];
+        if ([model decodeFromJSONDictionary:JSONDictionary]) {
+            return model;
+        }
+        return nil;
     }
-    // 通用初始化方法
-    id const model = [modelRawClass new];
-    if (model != nil) {
-        XZJSONModelDecodeFromDictionary(model, modelClass, JSONDictionary);
-    }
+    
+    // 使用通用初始化过程
+    XZJSONModelDecodeFromDictionary(model, modelClass, JSONDictionary);
+    
     return model;
 }
 
-id _Nullable XZJSONDecodeJSONObject(id const __unsafe_unretained object, Class const __unsafe_unretained aClass) {
+id _Nullable XZJSONDecodeJSONData(NSData * const _Unsafe data, NSJSONReadingOptions const options, Class const _Unsafe aClass) {
+    NSError *error = nil;
+    id const object = [NSJSONSerialization JSONObjectWithData:data options:options error:&error];
+    if ((error == nil || error.code == noErr) && object != nil) {
+        return XZJSONDecodeJSONObject(object, aClass);
+    }
+    return nil;
+}
+
+id _Nullable XZJSONDecodeJSONObject(id const _Unsafe object, Class const _Unsafe aClass) {
     if (object == (id)kCFNull) {
         return nil;
     }
+    // 如果已经模型对象，直接使用。
+    if ([object isKindOfClass:aClass]) {
+        return object;
+    }
     // 如果为字典，则认为是模型数据。
     if ([object isKindOfClass:NSDictionary.class]) {
-        return XZJSONDecodeJSONDictionary(aClass, nil, object);
+        return XZJSONClassDecodeDictionary(aClass, nil, object);
     }
     // 如果是数组，则数组元素是模型数据（也可能是模型数据数组）。
     if ([object isKindOfClass:NSArray.class]) {
@@ -92,10 +103,6 @@ id _Nullable XZJSONDecodeJSONObject(id const __unsafe_unretained object, Class c
         }
         return models;
     }
-    // 如果已经模型对象，直接使用。
-    if ([object isKindOfClass:aClass]) {
-        return object;
-    }
     // 模型化失败。
     return nil;
 }
@@ -109,13 +116,13 @@ typedef struct XZJSONDecodeEnumeratorContext {
 /// 遍历 JSONDictionary 的函数。
 static void XZJSONDecodeDictionaryEnumerator(const void *_key, const void *_value, void *_context) {
     XZJSONDecodeEnumeratorContext * const                     context    = _context;
-    id                              const __unsafe_unretained model      = (__bridge id)(context->model);
-    XZJSONClassDescriptor         * const __unsafe_unretained modelClass = (__bridge XZJSONClassDescriptor *)(context->modelClass);
+    id                              const _Unsafe model      = (__bridge id)(context->model);
+    XZJSONClassDescriptor         * const _Unsafe modelClass = (__bridge XZJSONClassDescriptor *)(context->modelClass);
     
-    XZJSONPropertyDescriptor * __unsafe_unretained property = CFDictionaryGetValue((CFDictionaryRef)modelClass->_keyProperties, _key);
+    XZJSONPropertyDescriptor * _Unsafe property = CFDictionaryGetValue((CFDictionaryRef)modelClass->_keyProperties, _key);
     while (property) {
         if (property->_setter) {
-            XZJSONModelDecodeProperty(model, property, (__bridge __unsafe_unretained id)_value);
+            XZJSONModelDecodeProperty(model, property, (__bridge _Unsafe id)_value);
         }
         property = property->_next;
     };
@@ -124,17 +131,17 @@ static void XZJSONDecodeDictionaryEnumerator(const void *_key, const void *_valu
 /// 遍历模型属性数组的函数。
 static void XZJSONDecodePropertiesEnumerator(const void * const propertyRef, void * const contextRef) {
     XZJSONDecodeEnumeratorContext * const                     context    = contextRef;
-    NSDictionary                  * const __unsafe_unretained dictionary = (__bridge NSDictionary *)(context->dictionary);
-    XZJSONPropertyDescriptor      * const __unsafe_unretained property   = (__bridge XZJSONPropertyDescriptor *)(propertyRef);
+    NSDictionary                  * const _Unsafe dictionary = (__bridge NSDictionary *)(context->dictionary);
+    XZJSONPropertyDescriptor      * const _Unsafe property   = (__bridge XZJSONPropertyDescriptor *)(propertyRef);
     
     id const value = (property->_valueDecoder)(dictionary);
     if (value) {
-        __unsafe_unretained id const model = (__bridge id)(context->model);
+        _Unsafe id const model = (__bridge id)(context->model);
         XZJSONModelDecodeProperty(model, property, value);
     }
 }
 
-void XZJSONModelDecodeFromDictionary(id const __unsafe_unretained model, XZJSONClassDescriptor * const __unsafe_unretained modelClass, NSDictionary * const __unsafe_unretained JSONDictionary) {
+void XZJSONModelDecodeFromDictionary(id const _Unsafe model, XZJSONClassDescriptor * const _Unsafe modelClass, NSDictionary * const _Unsafe JSONDictionary) {
     // 没有可用的属性
     if (modelClass->_numberOfProperties == 0) {
         return;
@@ -169,7 +176,7 @@ void XZJSONModelDecodeFromDictionary(id const __unsafe_unretained model, XZJSONC
     }
 }
 
-FOUNDATION_STATIC_INLINE BOOL NSCharFromJSONValue(id const _Nonnull __unsafe_unretained JSONValue, char *value) {
+FOUNDATION_STATIC_INLINE BOOL NSCharFromJSONValue(id const _Nonnull _Unsafe JSONValue, char *value) {
     if ([JSONValue isKindOfClass:NSNumber.class]) {
         *value = [(NSNumber *)JSONValue charValue];
         return YES;
@@ -186,7 +193,7 @@ FOUNDATION_STATIC_INLINE BOOL NSCharFromJSONValue(id const _Nonnull __unsafe_unr
     return NO;
 }
 
-FOUNDATION_STATIC_INLINE BOOL NSIntegerFromJSONValue(id const _Nonnull __unsafe_unretained JSONValue, int *value) {
+FOUNDATION_STATIC_INLINE BOOL NSIntegerFromJSONValue(id const _Nonnull _Unsafe JSONValue, int *value) {
     if ([JSONValue isKindOfClass:NSNumber.class]) {
         *value = [(NSNumber *)JSONValue intValue];
         return YES;
@@ -203,7 +210,7 @@ FOUNDATION_STATIC_INLINE BOOL NSIntegerFromJSONValue(id const _Nonnull __unsafe_
     return NO;
 }
 
-FOUNDATION_STATIC_INLINE BOOL NSLongIntegerFromJSONValue(id const _Nonnull __unsafe_unretained JSONValue, long *value) {
+FOUNDATION_STATIC_INLINE BOOL NSLongIntegerFromJSONValue(id const _Nonnull _Unsafe JSONValue, long *value) {
     if ([JSONValue isKindOfClass:NSNumber.class]) {
         *value = [(NSNumber *)JSONValue integerValue];
         return YES;
@@ -220,7 +227,7 @@ FOUNDATION_STATIC_INLINE BOOL NSLongIntegerFromJSONValue(id const _Nonnull __uns
     return NO;
 }
 
-FOUNDATION_STATIC_INLINE BOOL NSLongLongIntegerFromJSONValue(id const _Nonnull __unsafe_unretained JSONValue, long long *value) {
+FOUNDATION_STATIC_INLINE BOOL NSLongLongIntegerFromJSONValue(id const _Nonnull _Unsafe JSONValue, long long *value) {
     if ([JSONValue isKindOfClass:NSNumber.class]) {
         *value = [(NSNumber *)JSONValue longLongValue];
         return YES;
@@ -237,7 +244,7 @@ FOUNDATION_STATIC_INLINE BOOL NSLongLongIntegerFromJSONValue(id const _Nonnull _
     return NO;
 }
 
-FOUNDATION_STATIC_INLINE BOOL NSFloatFromJSONValue(id const _Nonnull __unsafe_unretained JSONValue, float *value) {
+FOUNDATION_STATIC_INLINE BOOL NSFloatFromJSONValue(id const _Nonnull _Unsafe JSONValue, float *value) {
     if ([JSONValue isKindOfClass:NSNumber.class]) {
         *value = [(NSNumber *)JSONValue floatValue];
         return YES;
@@ -258,7 +265,7 @@ FOUNDATION_STATIC_INLINE BOOL NSFloatFromJSONValue(id const _Nonnull __unsafe_un
     return NO;
 }
 
-FOUNDATION_STATIC_INLINE BOOL NSDoubleFromJSONValue(id const  _Nonnull __unsafe_unretained JSONValue, double *value) {
+FOUNDATION_STATIC_INLINE BOOL NSDoubleFromJSONValue(id const  _Nonnull _Unsafe JSONValue, double *value) {
     if ([JSONValue isKindOfClass:NSNumber.class]) {
         *value = [(NSNumber *)JSONValue doubleValue];
         return YES;
@@ -279,7 +286,7 @@ FOUNDATION_STATIC_INLINE BOOL NSDoubleFromJSONValue(id const  _Nonnull __unsafe_
     return NO;
 }
 
-FOUNDATION_STATIC_INLINE BOOL NSLongDoubleFromJSONValue(id const _Nonnull __unsafe_unretained JSONValue, long double *value) {
+FOUNDATION_STATIC_INLINE BOOL NSLongDoubleFromJSONValue(id const _Nonnull _Unsafe JSONValue, long double *value) {
     if ([JSONValue isKindOfClass:NSNumber.class]) {
         *value = [(NSNumber *)JSONValue doubleValue];
         return YES;
@@ -300,7 +307,7 @@ FOUNDATION_STATIC_INLINE BOOL NSLongDoubleFromJSONValue(id const _Nonnull __unsa
     return NO;
 }
 
-FOUNDATION_STATIC_INLINE BOOL NSBoolFromJSONValue(id const _Nonnull __unsafe_unretained JSONValue, BOOL *value) {
+FOUNDATION_STATIC_INLINE BOOL NSBoolFromJSONValue(id const _Nonnull _Unsafe JSONValue, BOOL *value) {
     if ([JSONValue isKindOfClass:NSNumber.class]) {
         *value = [(NSNumber *)JSONValue boolValue];
         return YES;
@@ -314,7 +321,7 @@ FOUNDATION_STATIC_INLINE BOOL NSBoolFromJSONValue(id const _Nonnull __unsafe_unr
 
 /// 将 JSON 值转换为 NSString 值。
 /// - Parameter value: JSON 值
-FOUNDATION_STATIC_INLINE NSString * _Nullable NSStringFromJSONValue(id const __unsafe_unretained JSONValue, BOOL mutable) {
+FOUNDATION_STATIC_INLINE NSString * _Nullable NSStringFromJSONValue(id const _Unsafe JSONValue, BOOL mutable) {
     if ([JSONValue isKindOfClass:NSString.class]) {
         if (mutable) {
             if ([JSONValue isKindOfClass:NSMutableString.class]) {
@@ -336,7 +343,7 @@ FOUNDATION_STATIC_INLINE NSString * _Nullable NSStringFromJSONValue(id const __u
     return nil;
 }
 
-FOUNDATION_STATIC_INLINE NSNumber * _Nullable NSObjectNumberFromJSONValue(id const _Nonnull __unsafe_unretained JSONValue) {
+FOUNDATION_STATIC_INLINE NSNumber * _Nullable NSObjectNumberFromJSONValue(id const _Nonnull _Unsafe JSONValue) {
     if ([JSONValue isKindOfClass:[NSNumber class]]) {
         return JSONValue;
     }
@@ -380,7 +387,7 @@ FOUNDATION_STATIC_INLINE NSNumber * _Nullable NSObjectNumberFromJSONValue(id con
 
 /// 将 JSON 值转换为 NSDecimalNumber 值。
 /// - Parameter value: JSON 值
-FOUNDATION_STATIC_INLINE NSDecimalNumber * _Nullable NSDecimalNumberFromJSONValue(id const _Nonnull __unsafe_unretained JSONValue) {
+FOUNDATION_STATIC_INLINE NSDecimalNumber * _Nullable NSDecimalNumberFromJSONValue(id const _Nonnull _Unsafe JSONValue) {
     if ([JSONValue isKindOfClass:[NSNumber class]]) {
         NSNumber *number = JSONValue;
         return [NSDecimalNumber decimalNumberWithDecimal:[number decimalValue]];
@@ -397,7 +404,7 @@ FOUNDATION_STATIC_INLINE NSDecimalNumber * _Nullable NSDecimalNumberFromJSONValu
     return nil;
 }
 
-FOUNDATION_STATIC_INLINE NSURL * _Nullable NSURLFromJSONValue(id const _Nonnull __unsafe_unretained JSONValue) {
+FOUNDATION_STATIC_INLINE NSURL * _Nullable NSURLFromJSONValue(id const _Nonnull _Unsafe JSONValue) {
     if ([JSONValue isKindOfClass:[NSURL class]]) {
         return JSONValue;
     }
@@ -417,7 +424,7 @@ FOUNDATION_STATIC_INLINE NSURL * _Nullable NSURLFromJSONValue(id const _Nonnull 
     return nil;
 }
 
-FOUNDATION_STATIC_INLINE NSArray * _Nullable NSArrayFromJSONValue(id const _Nonnull __unsafe_unretained JSONValue, Class _Nullable const elementClass, BOOL mutable) {
+FOUNDATION_STATIC_INLINE NSArray * _Nullable NSArrayFromJSONValue(id const _Nonnull _Unsafe JSONValue, Class _Nullable const elementClass, BOOL mutable) {
     if ([JSONValue isKindOfClass:NSArray.class]) {
         if (elementClass) {
             NSMutableArray * const arrayM = [NSMutableArray arrayWithCapacity:((NSArray *)JSONValue).count];
@@ -454,7 +461,7 @@ FOUNDATION_STATIC_INLINE NSArray * _Nullable NSArrayFromJSONValue(id const _Nonn
     return [NSMutableArray arrayWithObject:JSONValue];
 }
 
-FOUNDATION_STATIC_INLINE NSSet * _Nullable NSSetFromJSONValue(id const _Nonnull __unsafe_unretained JSONValue, Class _Nullable const elementClass, Class const MutableSetClass) {
+FOUNDATION_STATIC_INLINE NSSet * _Nullable NSSetFromJSONValue(id const _Nonnull _Unsafe JSONValue, Class _Nullable const elementClass, Class const MutableSetClass) {
     if ([JSONValue isKindOfClass:NSArray.class]) {
         if (elementClass) {
             NSMutableSet * const setM = [MutableSetClass setWithCapacity:((NSArray *)JSONValue).count];
@@ -483,7 +490,7 @@ FOUNDATION_STATIC_INLINE NSSet * _Nullable NSSetFromJSONValue(id const _Nonnull 
     return [MutableSetClass setWithObject:JSONValue];
 }
 
-FOUNDATION_STATIC_INLINE NSMutableOrderedSet * _Nullable NSOrderedSetFromJSONValue(id const _Nonnull __unsafe_unretained JSONValue, Class const _Nullable elementClass) {
+FOUNDATION_STATIC_INLINE NSMutableOrderedSet * _Nullable NSOrderedSetFromJSONValue(id const _Nonnull _Unsafe JSONValue, Class const _Nullable elementClass) {
     if ([JSONValue isKindOfClass:NSArray.class]) {
         if (elementClass) {
             NSMutableOrderedSet * const orderedSetM = [NSMutableOrderedSet orderedSetWithCapacity:((NSArray *)JSONValue).count];
@@ -513,7 +520,7 @@ FOUNDATION_STATIC_INLINE NSMutableOrderedSet * _Nullable NSOrderedSetFromJSONVal
     return [NSMutableOrderedSet orderedSetWithObject:JSONValue];
 }
 
-FOUNDATION_STATIC_INLINE NSDictionary * _Nullable NSDictionaryFromJSONValue(id const _Nonnull __unsafe_unretained JSONValue, Class _Nullable const elementClass, BOOL mutable) {
+FOUNDATION_STATIC_INLINE NSDictionary * _Nullable NSDictionaryFromJSONValue(id const _Nonnull _Unsafe JSONValue, Class _Nullable const elementClass, BOOL mutable) {
     if (elementClass) {
         if ([JSONValue isKindOfClass:NSDictionary.class]) {
             NSMutableDictionary *dictM = [NSMutableDictionary new];
@@ -558,7 +565,7 @@ FOUNDATION_STATIC_INLINE NSDictionary * _Nullable NSDictionaryFromJSONValue(id c
     return nil;
 }
 
-FOUNDATION_STATIC_INLINE id NSDataFromJSONValue(id const _Nonnull __unsafe_unretained JSONValue, BOOL mutable) {
+FOUNDATION_STATIC_INLINE id NSDataFromJSONValue(id const _Nonnull _Unsafe JSONValue, BOOL mutable) {
     if ([JSONValue isKindOfClass:NSString.class]) {
         // 符合 RFC2397 URL Data 规范的字符
         // data:[<mediatype>][;base64],<data>
@@ -625,7 +632,7 @@ FOUNDATION_STATIC_INLINE id NSDataFromJSONValue(id const _Nonnull __unsafe_unret
 
 /// 将 JSON 值 value 转换为 NSDate 对象。
 /// - Parameter JSONValue: JSON 值
-FOUNDATION_STATIC_INLINE NSDate *NSDateFromJSONValue(id const _Nonnull __unsafe_unretained JSONValue) {
+FOUNDATION_STATIC_INLINE NSDate *NSDateFromJSONValue(id const _Nonnull _Unsafe JSONValue) {
     // 时间戳，默认秒
     if ([JSONValue isKindOfClass:NSNumber.class]) {
         NSTimeInterval const timeInterval = [(NSNumber *)JSONValue doubleValue];
@@ -642,7 +649,7 @@ FOUNDATION_STATIC_INLINE NSDate *NSDateFromJSONValue(id const _Nonnull __unsafe_
 
 /// 默认解析器，用来解析 NSData、NSDate 等具有多种原生形式的数据。
 /// JSONValue 非 nil 且非 NSNull 且非 `property->_classType` 类型。
-FOUNDATION_STATIC_INLINE BOOL XZJSONModelDecodePropertyFallback(id const __unsafe_unretained model, XZJSONPropertyDescriptor * const __unsafe_unretained property, id const __unsafe_unretained JSONValue) {
+FOUNDATION_STATIC_INLINE BOOL XZJSONModelDecodePropertyFallback(id const _Unsafe model, XZJSONPropertyDescriptor * const _Unsafe property, id const _Unsafe JSONValue) {
     switch (property->_foundationClassType) {
         case XZJSONFoundationClassTypeUnknown:
         case XZJSONFoundationClassTypeNSString:
@@ -753,7 +760,7 @@ FOUNDATION_STATIC_INLINE BOOL XZJSONModelDecodePropertyFallback(id const __unsaf
     }
 }
 
-void XZJSONModelDecodeProperty(id const __unsafe_unretained model, XZJSONPropertyDescriptor * const __unsafe_unretained property, id _Nonnull __unsafe_unretained JSONValue) {
+void XZJSONModelDecodeProperty(id const _Unsafe model, XZJSONPropertyDescriptor * const _Unsafe property, id _Nonnull _Unsafe JSONValue) {
     switch (property->_type) {
         case XZObjcTypeUnknown:
         case XZObjcTypeVoid:
@@ -1033,7 +1040,7 @@ void XZJSONModelDecodeProperty(id const __unsafe_unretained model, XZJSONPropert
                         if ([value isKindOfClass:property->_subtype]) {
                             XZJSONModelDecodeFromDictionary(value, valueClass, JSONValue);
                         } else {
-                            value = XZJSONDecodeJSONDictionary(property->_subtype, valueClass, JSONValue);
+                            value = XZJSONClassDecodeDictionary(property->_subtype, valueClass, JSONValue);
                         }
                     }
                     break;

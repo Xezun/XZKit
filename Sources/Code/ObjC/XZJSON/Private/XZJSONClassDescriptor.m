@@ -263,7 +263,7 @@ static id XZJSONKeyFromString(NSString *aString);
     _forwardsDecodingClass = (conformsToXZJSONCoding && [rawClass respondsToSelector:@selector(forwardingClassForJSONDictionary:)]);
     _verifiesDecodingValue = (conformsToXZJSONCoding && [rawClass respondsToSelector:@selector(canDecodeFromJSONDictionary:)]);
     
-    _usesJSONDecodingInitializer = conformsToXZJSONCoding && [rawClass instancesRespondToSelector:@selector(initWithJSONDictionary:)];
+    _usesJSONDecodingInitializer = conformsToXZJSONCoding && [rawClass instancesRespondToSelector:@selector(decodeFromJSONDictionary:)];
     _usesJSONEncodingInitializer = conformsToXZJSONCoding && [rawClass instancesRespondToSelector:@selector(encodeIntoJSONDictionary:)];
     
     _usesPropertyJSONDecodingMethod = conformsToXZJSONCoding && [rawClass instancesRespondToSelector:@selector(JSONDecodeValue:forKey:)];

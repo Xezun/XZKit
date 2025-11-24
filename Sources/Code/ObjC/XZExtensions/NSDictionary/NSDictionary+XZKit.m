@@ -22,7 +22,7 @@
     if ([object isKindOfClass:NSString.class]) {
         return [(NSString *)object boolValue];
     }
-    if ([object isEqual:NSNull.null]) {
+    if (object == (id)kCFNull) {
         return NO;
     }
     return YES;

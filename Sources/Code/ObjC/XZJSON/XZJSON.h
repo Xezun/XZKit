@@ -21,7 +21,6 @@ NS_ASSUME_NONNULL_BEGIN
 /// - 通用逻辑无法处理弱引用关系，所以 `unsafe_unretained` 或 `assign` 修饰的对象的属性会被忽略。
 ///
 /// ### 数据转换规则
-///
 /// - 基础数据类型，如 int、float、double、 NSInteger、CGFloat 等类型或类型别名。
 ///     - 数字。
 ///     - 字符串。
@@ -49,9 +48,9 @@ NS_ASSUME_NONNULL_BEGIN
 /// - NSValue：数值或布尔值，或者类似 `{ "type": "CGRect", "value": "{{1,2},{3,4}}" }`格式的结构体的字典。
 ///
 /// ### 自定义转换规则
-/// 模型可通过 `XZJSONCoding` 协议，自定义模型转换规则，同时该协议也会用于 `NSCoding` 的归 档/解档过程。
-/// - ``-JSONDecodeValue:forKey:`` 自定义“数据”转“模型属性”的过程
-/// - ``-JSONEncodeValueForKey:`` 自定义“模型属性”转“数据”的过程
+/// 模型可通过 `XZJSONCoding` 协议，自定义模型转换规则，同时该协议也会用于 `NSCoding` 的归档/解档过程。
+/// - ``-JSONDecodeValue:forKey:`` 自定义“数据”转“模型属性”的过程。
+/// - ``-JSONEncodeValueForKey:`` 自定义“模型属性”转“数据”的过程。
 ///
 /// ### 其它规则
 /// - 字面类型数据 NSData、NSDate、NSValue 支持多种格式，但 XZJSON 只支持其中固定的两种格式，所以在处理它们时，会通过 `XZJSONCoding` 协议，优先让模型处理，模型不处理，才会执行内置解析过程。
@@ -64,6 +63,7 @@ NS_ASSUME_NONNULL_BEGIN
 /// - 数据是数组，但属性是字典，自动包装为 `@{ @"index": item }` 形式的字典。
 /// - 数据不是字典，但是属性是自定义模型，自动包装为 `@{ @"rawValue": data }` 形式的字典。
 @interface XZJSON : NSObject
+
 /// “字符串-日期”转换的默认格式化工具，默认 `yyyy-MM-dd HH:mm:ss` 格式。
 ///
 /// 建议在业务中，使用统一的日期格式，这样在程序初始化时，模型转换开始前，通过此属性设置默认日期格式，即可避免在每个模型中重复处理。
@@ -74,16 +74,31 @@ NS_ASSUME_NONNULL_BEGIN
 ///
 /// > 数值数据，默认当作时间戳（秒）转换为日期，即当 JSON 数据为 number 类型，模型属性为 NSDate 类型时，JSON 数据的 number 将被当作时间戳（秒）处理。
 @property (class, nonatomic, readonly) NSDateFormatter *dateFormatter;
+
 @end
 
+#pragma mark - 数据转模型
+
+enum {
+    /// 如果提供此标记，当转换由 JSON 数据组成的数组时，那么输出的数组将与输入保持相同大小，转换失败的数据将使用 kCFNull 代替。
+    ///
+    /// 此标记不影响模型的转换过程，模型的集合属性，在转换时，是否保持大小，由模型决定。
+    XZJSONReadingKeepCapacity = (1UL << 63)
+};
+
+
+@class NSMutableArray;
+
 @interface XZJSON (XZJSONDecoder)
+
 /// JSON 数据模型化。
 ///
 /// 参数 json 支持的类型：
 ///
-/// - JSON 字符串
-/// - JSON 二进制流
-/// - JSON 字符串或 JSON 二进制流组成的数组
+/// - JSON 字符串。
+/// - JSON 二进制流。
+/// - JSON 字符串或 JSON 二进制流组成的数组。
+/// - 以上三种类型数据组成的数组。
 ///
 /// - Parameters:
 ///   - json: JSON 数据
@@ -93,13 +108,19 @@ NS_ASSUME_NONNULL_BEGIN
 
 /// 使用模型实例对象 model 对 JSON 字典数据进行模型化。
 ///
+/// 由于已经是具体的模型对象，所以调用此方法不会触发模型化转发的流程。
+///
 /// - Parameters:
 ///   - model: 模型实例对象
 ///   - dictionary: JSON 数据字典
 + (void)model:(id)model decodeFromDictionary:(NSDictionary *)dictionary;
+
 @end
 
+#pragma mark - 模型转数据
+
 @interface XZJSON (XZJSONEncoder)
+
 /// 将任意实例对象进行 JSON 数据化。
 ///
 /// - Parameters:
@@ -116,7 +137,10 @@ NS_ASSUME_NONNULL_BEGIN
 ///   - model: 模型实例对象
 ///   - dictionary: 数据字典
 + (void)model:(id)model encodeIntoDictionary:(NSMutableDictionary *)dictionary;
+
 @end
+
+#pragma mark - 归档解档
 
 @interface XZJSON (NSCoding)
 
@@ -154,14 +178,18 @@ NS_ASSUME_NONNULL_BEGIN
 
 @end
 
+#pragma mark - 模型描述
 
 @interface XZJSON (NSDescription)
+
 /// 生成模型的描述文本。
 /// - Parameter model: 待描述的模型对象
 /// - Parameter indent: 输出模型时的缩进等级
-+ (NSString *)model:(id)model description:(NSUInteger)indent;
++ (NSString *)model:(id)model descriptionWithIndent:(NSUInteger)indent;
+
 @end
 
+#pragma mark - 模型复制
 
 @interface XZJSON (NSCopying)
 
@@ -201,6 +229,8 @@ NS_ASSUME_NONNULL_BEGIN
 + (id)model:(id)model copy:(BOOL (^_Nullable)(id newModel, NSString *key))block;
 
 @end
+
+#pragma mark - 模型比较
 
 @interface XZJSON (NSEquatable)
 

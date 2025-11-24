@@ -41,7 +41,7 @@ NS_ASSUME_NONNULL_BEGIN
     /// 是否校验数据。
     BOOL _verifiesDecodingValue;
     
-    /// 是否使用自定义模型化方法，即 -initWithJSONDictionary: 方法。
+    /// 是否使用自定义模型化方法，即 -decodeFromJSONDictionary: 方法。
     BOOL _usesJSONDecodingInitializer;
     /// 是否使用自定义序列化方法，即 -encodeIntoJSONDictionary: 方法。
     BOOL _usesJSONEncodingInitializer;

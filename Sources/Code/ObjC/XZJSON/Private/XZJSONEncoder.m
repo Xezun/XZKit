@@ -15,7 +15,7 @@
 typedef id _Nullable (*XZJSONGetter)(id _Nonnull, SEL _Nonnull);
 static void XZJSONModelEncodeProperty(id model, XZJSONPropertyDescriptor *property, NSMutableDictionary *modelDictionary);
 
-FOUNDATION_STATIC_INLINE id XZJSONEncodeCollection(id<NSFastEnumeration> const __unsafe_unretained collection, NSUInteger count) {
+FOUNDATION_STATIC_INLINE id XZJSONEncodeCollection(id<NSFastEnumeration> const _Unsafe collection, NSUInteger count) {
     if ([NSJSONSerialization isValidJSONObject:collection]) {
         return collection;
     }
@@ -33,7 +33,7 @@ FOUNDATION_STATIC_INLINE id XZJSONEncodeCollection(id<NSFastEnumeration> const _
     return newArray;
 }
 
-id XZJSONEncodeObjectIntoDictionary(id const __unsafe_unretained object, XZJSONClassDescriptor * _Nullable __unsafe_unretained objectClass, XZJSONFoundationClassType const classType, NSMutableDictionary * _Nullable dictionary) {
+id XZJSONEncodeObjectIntoDictionary(id const _Unsafe object, XZJSONClassDescriptor * _Nullable _Unsafe objectClass, XZJSONFoundationClassType const classType, NSMutableDictionary * _Nullable dictionary) {
     switch (classType) {
         case XZJSONFoundationClassTypeNSString:
         case XZJSONFoundationClassTypeNSMutableString: {
@@ -172,13 +172,13 @@ typedef struct XZJSONEncodeEnumeratorContext {
 /// 用于遍历模型属性数组的函数。
 static void XZJSONEncodePropertyArrayEnumerator(const void * const propertyRef, void * const contextRef) {
     XZJSONEncodeEnumeratorContext * const                     context    = contextRef;
-    NSMutableDictionary           * const __unsafe_unretained dictionary = (__bridge NSMutableDictionary *)(context->dictionary);
-    XZJSONPropertyDescriptor      * const __unsafe_unretained property   = (__bridge XZJSONPropertyDescriptor *)(propertyRef);
-    id                              const __unsafe_unretained model      = (__bridge id)(context->model);
+    NSMutableDictionary           * const _Unsafe dictionary = (__bridge NSMutableDictionary *)(context->dictionary);
+    XZJSONPropertyDescriptor      * const _Unsafe property   = (__bridge XZJSONPropertyDescriptor *)(propertyRef);
+    id                              const _Unsafe model      = (__bridge id)(context->model);
     XZJSONModelEncodeProperty(model, property, dictionary);
 }
 
-void XZJSONModelEncodeIntoDictionary(id const __unsafe_unretained model, XZJSONClassDescriptor * const __unsafe_unretained modelClass, NSMutableDictionary * const __unsafe_unretained dictionary) {
+void XZJSONModelEncodeIntoDictionary(id const _Unsafe model, XZJSONClassDescriptor * const _Unsafe modelClass, NSMutableDictionary * const _Unsafe dictionary) {
     XZJSONEncodeEnumeratorContext context = (XZJSONEncodeEnumeratorContext){
         (__bridge void *)modelClass,
         (__bridge void *)model,
@@ -192,7 +192,7 @@ void XZJSONModelEncodeIntoDictionary(id const __unsafe_unretained model, XZJSONC
 /// - Parameters:
 ///   - dictionary: JSON 字典
 ///   - keyPath: 键路径
-FOUNDATION_STATIC_INLINE NSMutableDictionary *NSDictionaryForLastKeyInKeyPath(NSMutableDictionary * _Nonnull __unsafe_unretained dictionary, NSArray<NSString *> * const __unsafe_unretained keyPath) {
+FOUNDATION_STATIC_INLINE NSMutableDictionary *NSDictionaryForLastKeyInKeyPath(NSMutableDictionary * _Nonnull _Unsafe dictionary, NSArray<NSString *> * const _Unsafe keyPath) {
     for (NSUInteger i = 0, max = keyPath.count - 1; i < max; i++) {
         NSString * const subKey = keyPath[i];
         NSMutableDictionary *subDict = [dictionary valueForKey:subKey];
@@ -212,7 +212,7 @@ FOUNDATION_STATIC_INLINE NSMutableDictionary *NSDictionaryForLastKeyInKeyPath(NS
     return dictionary;
 }
 
-FOUNDATION_STATIC_INLINE id _Nullable XZJSONModelEncodePropertyFallback(id const __unsafe_unretained model, XZJSONPropertyDescriptor * const __unsafe_unretained property) {
+FOUNDATION_STATIC_INLINE id _Nullable XZJSONModelEncodePropertyFallback(id const _Unsafe model, XZJSONPropertyDescriptor * const _Unsafe property) {
     switch (property->_foundationClassType) {
         case XZJSONFoundationClassTypeNSDate:
         case XZJSONFoundationClassTypeNSData:
@@ -229,7 +229,7 @@ FOUNDATION_STATIC_INLINE id _Nullable XZJSONModelEncodePropertyFallback(id const
 }
 
 /// 根据映射找到 JSONKey 以及 JSONKey 所在的字典。
-FOUNDATION_STATIC_INLINE BOOL XZJSONModelEncodePropertyPrepare(XZJSONPropertyDescriptor * const __unsafe_unretained property, NSString **key, NSMutableDictionary **keyInDictionary, BOOL merges) {
+FOUNDATION_STATIC_INLINE BOOL XZJSONModelEncodePropertyPrepare(XZJSONPropertyDescriptor * const _Unsafe property, NSString **key, NSMutableDictionary **keyInDictionary, BOOL merges) {
     // 映射 key
     if (property->_JSONKey) {
         id const value = (*keyInDictionary)[property->_JSONKey];
@@ -293,7 +293,7 @@ FOUNDATION_STATIC_INLINE BOOL XZJSONModelEncodePropertyPrepare(XZJSONPropertyDes
     return NO;
 }
 
-void XZJSONModelEncodeProperty(id const __unsafe_unretained model, XZJSONPropertyDescriptor * const __unsafe_unretained property, NSMutableDictionary * const __unsafe_unretained modelDictionary) {
+void XZJSONModelEncodeProperty(id const _Unsafe model, XZJSONPropertyDescriptor * const _Unsafe property, NSMutableDictionary * const _Unsafe modelDictionary) {
     NSString            *key = nil;
     NSMutableDictionary *keyInDictionary = modelDictionary;
     id JSONValue = nil;

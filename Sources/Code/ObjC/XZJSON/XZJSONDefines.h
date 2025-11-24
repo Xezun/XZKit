@@ -111,16 +111,16 @@ NS_ASSUME_NONNULL_BEGIN
 /// 自定义 JSON 数据模型化方法。如果需要自定义模型化过程，或者模型校验，可实现此方法。
 ///
 /// ```objc
-/// - (instancetype)initWithJSONDictionary:(NSDictionary *)JSON {
+/// - (BOOL)decodeFromJSONDictionary:(NSDictionary *)JSON {
 ///     // 验证 JSON 数据是否合法
 ///     if (![JSON[@"type"] isKindOfClass:NSNumber.class]) {
-///         return nil;
+///         return NO;
 ///     }
 ///
 ///     // 调用自定义的指定初始化方法，完成初始化。
 ///     self = [self initWithBar:[JSON[@"type"] intValue]];
 ///     if (self == nil) {
-///         return nil;
+///         return NO;
 ///     }
 ///
 ///     // 使用 XZJOSN 进行模型化，可选。
@@ -129,16 +129,16 @@ NS_ASSUME_NONNULL_BEGIN
 /// 
 ///     // 验证模型是否正确，可选。
 ///     if (self.foo == nil) {
-///         return nil;
+///         return NO;
 ///     }
 /// 
-///     return self;
+///     return YES;
 /// }
 /// ```
 ///
 /// > 如果不实现此方法，则使用 `init` 方法初始化模型对象，因此自定义了指定初始化方法的模型对象，需要实现此方法，否则指定初始化方法不会被调用。
 /// - Parameter JSON: JSON 字符串或二进制形式的原始 JSON 数据，或已序列化的字典或数组数据
-- (nullable instancetype)initWithJSONDictionary:(NSDictionary *)JSON;
+- (BOOL)decodeFromJSONDictionary:(NSDictionary *)JSON;
 
 /// 自定义属性值解析。
 ///

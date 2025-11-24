@@ -127,19 +127,16 @@ NSData *json = [XZJSON encode:model options:NSJSONWritingPrettyPrinted error:nil
 - 自定义模型化过程、数据校验
 
 ```objc
-- (instancetype)initWithJSONDictionary:(NSDictionary *)JSON {
-    // 调用指定初始化方法。
-    self = [self init];
-    if (self != nil) {
-        // 使用 XZJSON 进行初始化。
-        [XZJSON object:self decodeWithDictionary:JSON];
-        
-        // 处理自定义逻辑：关联学生和老师
-        [self.students enumerateObjectsUsingBlock:^(Example001Student * _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
-            obj.teacher = self;
-        }];
-    }
-    return self;
+- (BOOL)decodeFromJSONDictionary:(NSDictionary *)JSON {
+    // 使用 XZJSON 进行初始化。
+    [XZJSON object:self decodeWithDictionary:JSON];
+    
+    // 处理自定义逻辑：关联学生和老师
+    [self.students enumerateObjectsUsingBlock:^(Example001Student * _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
+        obj.teacher = self;
+    }];
+    
+    return YES;
 }
 ```
 

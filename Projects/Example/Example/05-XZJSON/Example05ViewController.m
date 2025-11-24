@@ -208,7 +208,7 @@
                 }
                 case 3: {
                     _teachers = [XZJSON decode:_response.teachers options:(NSJSONReadingAllowFragments) class:[Example05Teacher class]];
-                    text = [XZJSON model:_teachers description:0];
+                    text = [XZJSON model:_teachers descriptionWithIndent:0];
                     break;
                 }
                 case 4: {
@@ -265,7 +265,7 @@
                         [self xz_showToast:[XZToast messageToast:@"解档失败"] completion:nil];
                         return;
                     }
-                    text = [XZJSON model:teachers description:0];
+                    text = [XZJSON model:teachers descriptionWithIndent:0];
                     break;
                 }
                 case 2: {
