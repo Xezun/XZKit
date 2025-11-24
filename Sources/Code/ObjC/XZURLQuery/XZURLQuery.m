@@ -9,7 +9,7 @@
 
 /// value 不能为数组。
 FOUNDATION_STATIC_INLINE id XZURLQueryMakeValue(id value) {
-    if (value == NSNull.null) {
+    if (value == (id)kCFNull) {
         return nil;
     }
     if ([value isKindOfClass:NSString.class]) {
@@ -27,7 +27,7 @@ FOUNDATION_STATIC_INLINE id XZURLQueryMakeValue(id value) {
 FOUNDATION_STATIC_INLINE void XZURLQueryParser(NSMutableDictionary *dictM, NSURLComponents *components) {
     [components.queryItems enumerateObjectsUsingBlock:^(NSURLQueryItem * _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
         NSString * const name  = obj.name;
-        id         const value = obj.value ?: NSNull.null;
+        id         const value = obj.value ?: (id)kCFNull;
         NSMutableArray * const oldValue = dictM[obj.name];
         if (oldValue == nil) {
             dictM[name] = value;
@@ -153,7 +153,7 @@ FOUNDATION_STATIC_INLINE void XZURLQueryParser(NSMutableDictionary *dictM, NSURL
 
 - (id)valueForName:(NSString *)name {
     id value = self.keyedValues[name];
-    if (value == NSNull.null) {
+    if (value == (id)kCFNull) {
         return nil;
     }
     return value;
@@ -175,7 +175,7 @@ FOUNDATION_STATIC_INLINE void XZURLQueryParser(NSMutableDictionary *dictM, NSURL
 
 - (void)addValue:(id)value forName:(NSString *)name {
     if (value == nil) {
-        [self addValue:NSNull.null forKey:name];
+        [self addValue:(id)kCFNull forKey:name];
     } else if ([value isKindOfClass:NSArray.class]) {
         for (NSObject *object in value) {
             [self addValue:object forKey:value];
@@ -211,7 +211,7 @@ FOUNDATION_STATIC_INLINE void XZURLQueryParser(NSMutableDictionary *dictM, NSURL
     if ([value isKindOfClass:NSString.class]) {
         return value;
     }
-    if (value == NSNull.null) {
+    if (value == (id)kCFNull) {
         return nil;
     }
     if ([value isKindOfClass:NSArray.class]) {

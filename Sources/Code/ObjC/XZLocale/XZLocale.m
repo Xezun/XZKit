@@ -148,7 +148,7 @@ static BOOL _isInAppLanguagePreferencesSupported  = NO;
     // 查找缓存
     NSBundle *resourceBundle = languageBundles[language];
     if (resourceBundle != nil) {
-        return ((id)resourceBundle == NSNull.null) ? self : resourceBundle;
+        return ((id)resourceBundle == (id)kCFNull) ? self : resourceBundle;
     }
     
     // 建立缓存
@@ -160,7 +160,7 @@ static BOOL _isInAppLanguagePreferencesSupported  = NO;
     // 查找语言包，找不到返回自身，使用 NSNull 标记已经找过了。
     if ([self.bundleURL.lastPathComponent hasSuffix:@".lproj"]) {
         // 自身就是语言包
-        languageBundles[language] = NSNull.null;
+        languageBundles[language] = (id)kCFNull;
         resourceBundle = self;
     } else {
         NSString *path = [self pathForResource:language ofType:@"lproj"];
@@ -170,7 +170,7 @@ static BOOL _isInAppLanguagePreferencesSupported  = NO;
         if (resourceBundle != nil) {
             languageBundles[language] = resourceBundle;
         } else {
-            languageBundles[language] = NSNull.null;
+            languageBundles[language] = (id)kCFNull;
             resourceBundle = self;
         }
     }

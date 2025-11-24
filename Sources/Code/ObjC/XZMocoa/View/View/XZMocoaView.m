@@ -447,7 +447,7 @@ XZMocoaOptionKey const XZMocoaOptionKeyName = @"name";
     // 直接读值
     id value = _options[key];
     if (value != nil) {
-        return value == NSNull.null ? nil : value;
+        return value == (id)kCFNull ? nil : value;
     }
     
     // 合并参数
@@ -457,7 +457,7 @@ XZMocoaOptionKey const XZMocoaOptionKeyName = @"name";
     
     // 重新读值
     value = _options[key];
-    return value == NSNull.null ? nil : value;
+    return value == (id)kCFNull ? nil : value;
 }
 
 - (BOOL)mergesURLQuery {
@@ -469,7 +469,7 @@ XZMocoaOptionKey const XZMocoaOptionKeyName = @"name";
     NSMutableDictionary *keyedValues = [NSMutableDictionary dictionaryWithCapacity:queryItems.count];
     [queryItems enumerateObjectsUsingBlock:^(NSURLQueryItem * _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
         NSString *       const name     = obj.name;
-        id               const newValue = obj.value ?: NSNull.null;
+        id               const newValue = obj.value ?: (id)kCFNull;
         NSMutableArray * const oldValue = keyedValues[name];
         if (oldValue == nil) {
             keyedValues[name] = newValue;

@@ -471,7 +471,7 @@ typedef void(^XZMocoaGridDelayedUpdates)(__kindof XZMocoaViewModel *self);
     for (NSInteger i = 0; i < oldCount; i++) {
         XZMocoaGridViewSectionViewModel * const viewModel = oldViewModels[i];
         id const dataModel = viewModel.model;
-        [(NSMutableArray *)oldDataModels addObject:(dataModel ?: NSNull.null)];
+        [(NSMutableArray *)oldDataModels addObject:(dataModel ?: (id)kCFNull)];
     }
     
     if (oldDataModels.xz_containsDuplicateObjects) {
@@ -487,7 +487,7 @@ typedef void(^XZMocoaGridDelayedUpdates)(__kindof XZMocoaViewModel *self);
     NSArray * const newDataModels = [NSMutableArray arrayWithCapacity:newCount];
     for (NSInteger i = 0; i < newCount; i++) {
         id const newDataModel = [self model:model modelForSectionAtIndex:i];
-        [(NSMutableArray *)newDataModels addObject:(newDataModel ?: NSNull.null)];
+        [(NSMutableArray *)newDataModels addObject:(newDataModel ?: (id)kCFNull)];
     }
     
     if (newDataModels.xz_containsDuplicateObjects) {
