@@ -67,12 +67,12 @@
     return XZJSONDecodeJSONObject(json, aClass);
 }
 
-+ (void)model:(id)model decodeFromDictionary:(NSDictionary *)aJSONDictionary {
++ (void)model:(id)model decodeFromDictionary:(NSDictionary *)dictionary {
     Class const modelRawClass = object_getClass(model);
     
     XZJSONClassDescriptor * const modelClass = [XZJSONClassDescriptor descriptorForClass:modelRawClass];
     if (modelClass) {
-        XZJSONModelDecodeFromDictionary(model, modelClass, aJSONDictionary);
+        XZJSONModelDecodeFromDictionary(model, modelClass, dictionary);
     }
 }
 

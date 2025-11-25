@@ -127,9 +127,12 @@ NSData *json = [XZJSON encode:model options:NSJSONWritingPrettyPrinted error:nil
 - 自定义模型化过程、数据校验
 
 ```objc
-- (BOOL)decodeFromJSONDictionary:(NSDictionary *)aJSONDictionary {
-    // 使用 XZJSON 进行初始化。
-    if (![XZJSON object:self decodeWithDictionary:aJSONDictionary]) {
+- (BOOL)decodeFromJSONDictionary:(NSDictionary *)dictionary {
+    // 执行 XZJSON 通用的模型化过程。
+    [XZJSON object:self decodeWithDictionary:dictionary];
+    
+    // 验证上一步模型化的结果是否合法。
+    if (self.students.count == 0) {
         return NO;
     }
     
@@ -157,7 +160,7 @@ NSData *json = [XZJSON encode:model options:NSJSONWritingPrettyPrinted error:nil
 - 模型转发
 
 ```objc
-+ (nullable Class)forwardingClassForJSONDictionary:(NSDictionary *)aJSONDictionary {
++ (nullable Class)forwardingClassForJSONDictionary:(NSDictionary *)dictionary {
     // 在此方法中，可通过对 JSON 数据进行判断，返回适合的模型进行解析数据。
     return SomeModelClass;
 }
@@ -166,7 +169,7 @@ NSData *json = [XZJSON encode:model options:NSJSONWritingPrettyPrinted error:nil
 - 前置数据校验。
 
 ```objc
-+ (nullable NSDictionary *)canDecodeFromJSONDictionary:(NSDictionary *)aJSONDictionary {
++ (nullable NSDictionary *)canDecodeFromJSONDictionary:(NSDictionary *)dictionary {
     // 在此方法中，可校验或修改数据，返回 nil 表示数据不合法，停止模型化
 }
 ```
@@ -174,7 +177,7 @@ NSData *json = [XZJSON encode:model options:NSJSONWritingPrettyPrinted error:nil
 - 自定义 JSON 序列化。
 
 ```objc
-- (nullable NSDictionary *)encodeIntoJSONDictionary:(NSMutableDictionary *)aJSONDictionary {
+- (nullable NSDictionary *)encodeIntoJSONDictionary:(NSMutableDictionary *)dictionary {
     [XZJSON object:self encodeIntoDictionary:dictionary];
     dictionary[@"date"] = @(NSDate.date.timeIntervalSince1970); // 自定义：向序列化数据中，加入一个时间戳
     return dictionary;

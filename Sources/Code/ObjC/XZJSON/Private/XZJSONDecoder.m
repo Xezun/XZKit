@@ -20,7 +20,7 @@ typedef void (*XZJSONSetter)(id, SEL, id _Nullable);
 static void XZJSONModelDecodeProperty(id const _Unsafe model, XZJSONPropertyDescriptor * const _Unsafe property, id const _Unsafe JSONValue);
 NS_ASSUME_NONNULL_END
 
-FOUNDATION_STATIC_INLINE id _Nullable XZJSONClassDecodeDictionary(Class _Unsafe modelRawClass, XZJSONClassDescriptor * _Nullable _Unsafe modelClass, NSDictionary * _Unsafe aJSONDictionary, id _Nullable model) {
+FOUNDATION_STATIC_INLINE id _Nullable XZJSONClassDecodeDictionary(Class _Unsafe modelRawClass, XZJSONClassDescriptor * _Nullable _Unsafe modelClass, NSDictionary * _Unsafe dictionary, id _Nullable model) {
     // 获取模型描述
     if (modelClass == nil) {
         modelClass = [XZJSONClassDescriptor descriptorForClass:modelRawClass]; // 单例，不需要强持有
@@ -29,7 +29,7 @@ FOUNDATION_STATIC_INLINE id _Nullable XZJSONClassDecodeDictionary(Class _Unsafe 
     // 转发解析
     if (modelClass->_forwardsDecodingClass) {
         while (YES) {
-            Class const newRawClass = [modelRawClass forwardingClassForJSONDictionary:aJSONDictionary];
+            Class const newRawClass = [modelRawClass forwardingClassForJSONDictionary:dictionary];
             if (newRawClass && newRawClass != modelRawClass) {
                 modelRawClass = newRawClass;
                 continue;
@@ -40,12 +40,12 @@ FOUNDATION_STATIC_INLINE id _Nullable XZJSONClassDecodeDictionary(Class _Unsafe 
     
     // 数据校验
     if (modelClass->_verifiesDecodingValue) {
-        aJSONDictionary = [modelRawClass canDecodeFromJSONDictionary:aJSONDictionary];
-        if (aJSONDictionary == nil) {
+        dictionary = [modelRawClass canDecodeFromJSONDictionary:dictionary];
+        if (dictionary == nil) {
             return nil;
         }
         // 返回值必须是 NSDictionary 对象
-        if (![aJSONDictionary isKindOfClass:NSDictionary.class]) {
+        if (![dictionary isKindOfClass:NSDictionary.class]) {
             return nil;
         }
     }
@@ -56,10 +56,10 @@ FOUNDATION_STATIC_INLINE id _Nullable XZJSONClassDecodeDictionary(Class _Unsafe 
     
     if (modelClass->_usesJSONDecodingMethod) {
         // 使用自定义初始化过程
-        [model decodeFromJSONDictionary:aJSONDictionary];
+        [model decodeFromJSONDictionary:dictionary];
     } else {
         // 使用通用初始化过程
-        XZJSONModelDecodeFromDictionary(model, modelClass, aJSONDictionary);
+        XZJSONModelDecodeFromDictionary(model, modelClass, dictionary);
     }
     
     return model;

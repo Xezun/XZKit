@@ -41,9 +41,8 @@
         "4、本例中的业务逻辑，比如格式化手机号、姓名等操作，对于作为View的控制器来说是透明的。"
     };
     
-    if ([XZJSON model:self.model decodeFromDictionary:dict]) {
-        [self dataDidChange];
-    }
+    [XZJSON model:self.model decodeFromDictionary:dict];
+    [self dataDidChange];
 }
 
 - (void)dataDidChange {

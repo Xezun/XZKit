@@ -267,11 +267,9 @@
     };
 }
 
-- (BOOL)decodeFromJSONDictionary:(NSDictionary *)aJSONDictionary {
-    // 使用 XZJSON 进行初始化。
-    if (![XZJSON model:self decodeFromDictionary:aJSONDictionary]) {
-        return NO;
-    }
+- (BOOL)decodeFromJSONDictionary:(NSDictionary *)dictionary {
+    // 执行 XZJSON 通用模型化过程。
+    [XZJSON model:self decodeFromDictionary:dictionary];
     
     // 处理自定义逻辑：关联学生和老师
     for (Example05Student *student in self.students) {

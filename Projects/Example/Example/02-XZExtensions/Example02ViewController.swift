@@ -7,6 +7,7 @@
 
 import UIKit
 import XZKit
+import MapKit
 
 class Example02ViewController: UITableViewController {
 

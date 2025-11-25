@@ -7,6 +7,7 @@
 
 #import "Example01ViewController.h"
 @import XZKit;
+@import MapKit;
 
 @interface Example01ViewController ()
 
