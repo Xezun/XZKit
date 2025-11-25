@@ -20,7 +20,7 @@ typedef void (*XZJSONSetter)(id, SEL, id _Nullable);
 static void XZJSONModelDecodeProperty(id const _Unsafe model, XZJSONPropertyDescriptor * const _Unsafe property, id const _Unsafe JSONValue);
 NS_ASSUME_NONNULL_END
 
-FOUNDATION_STATIC_INLINE id _Nullable XZJSONClassDecodeDictionary(Class _Unsafe modelRawClass, XZJSONClassDescriptor * _Nullable _Unsafe modelClass, NSDictionary * _Unsafe aJSONDictionary) {
+FOUNDATION_STATIC_INLINE id _Nullable XZJSONClassDecodeDictionary(Class _Unsafe modelRawClass, XZJSONClassDescriptor * _Nullable _Unsafe modelClass, NSDictionary * _Unsafe aJSONDictionary, id _Nullable model) {
     // 获取模型描述
     if (modelClass == nil) {
         modelClass = [XZJSONClassDescriptor descriptorForClass:modelRawClass]; // 单例，不需要强持有
@@ -50,18 +50,17 @@ FOUNDATION_STATIC_INLINE id _Nullable XZJSONClassDecodeDictionary(Class _Unsafe 
         }
     }
     
-    id const model = [[modelRawClass alloc] init];
-    
-    // 使用自定义初始化过程
-    if (modelClass->_usesJSONDecodingMethod) {
-        if ([model decodeFromJSONDictionary:aJSONDictionary]) {
-            return model;
-        }
-        return nil;
+    if (![model isKindOfClass:modelRawClass]) {
+        model = [[modelRawClass alloc] init];
     }
     
-    // 使用通用初始化过程
-    XZJSONModelDecodeFromDictionary(model, modelClass, aJSONDictionary);
+    if (modelClass->_usesJSONDecodingMethod) {
+        // 使用自定义初始化过程
+        [model decodeFromJSONDictionary:aJSONDictionary];
+    } else {
+        // 使用通用初始化过程
+        XZJSONModelDecodeFromDictionary(model, modelClass, aJSONDictionary);
+    }
     
     return model;
 }
@@ -85,7 +84,7 @@ id _Nullable XZJSONDecodeJSONObject(id const _Unsafe object, Class const _Unsafe
     }
     // 如果为字典，则认为是模型数据。
     if ([object isKindOfClass:NSDictionary.class]) {
-        return XZJSONClassDecodeDictionary(aClass, nil, object);
+        return XZJSONClassDecodeDictionary(aClass, nil, object, nil);
     }
     // 如果是数组，则数组元素是模型数据（也可能是模型数据数组）。
     if ([object isKindOfClass:NSArray.class]) {
@@ -1036,12 +1035,8 @@ void XZJSONModelDecodeProperty(id const _Unsafe model, XZJSONPropertyDescriptor 
                             JSONValue = @{ @"rawValue": JSONValue }; // 非字典数据，包装为字典
                         }
                         // 如果属性已有值，直接更新它，否则创建新的。
-                        value = ((id (*)(id, SEL))(void *) objc_msgSend)((id)model, property->_getter);;
-                        if ([value isKindOfClass:property->_subtype]) {
-                            XZJSONModelDecodeFromDictionary(value, valueClass, JSONValue);
-                        } else {
-                            value = XZJSONClassDecodeDictionary(property->_subtype, valueClass, JSONValue);
-                        }
+                        value = ((id (*)(id, SEL))(void *) objc_msgSend)((id)model, property->_getter);
+                        value = XZJSONClassDecodeDictionary(property->_subtype, valueClass, JSONValue, value);
                     }
                     break;
                 }

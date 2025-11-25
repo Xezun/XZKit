@@ -67,30 +67,13 @@
     return XZJSONDecodeJSONObject(json, aClass);
 }
 
-+ (BOOL)model:(id)model decodeFromDictionary:(NSDictionary *)dictionary {
-    Class modelRawClass = object_getClass(model);
++ (void)model:(id)model decodeFromDictionary:(NSDictionary *)aJSONDictionary {
+    Class const modelRawClass = object_getClass(model);
     
     XZJSONClassDescriptor * const modelClass = [XZJSONClassDescriptor descriptorForClass:modelRawClass];
-    if (modelClass == nil) {
-        return NO;
+    if (modelClass) {
+        XZJSONModelDecodeFromDictionary(model, modelClass, aJSONDictionary);
     }
-    
-    // 数据校验
-    if (modelClass->_verifiesDecodingValue) {
-        dictionary = [modelRawClass canDecodeFromJSONDictionary:dictionary];
-        if (dictionary == nil) {
-            return NO;
-        }
-        // 返回值必须是 NSDictionary 对象
-        if (![dictionary isKindOfClass:NSDictionary.class]) {
-            return NO;
-        }
-    }
-    
-    // 使用通用初始化过程
-    XZJSONModelDecodeFromDictionary(model, modelClass, dictionary);
-    
-    return YES;
 }
 
 @end

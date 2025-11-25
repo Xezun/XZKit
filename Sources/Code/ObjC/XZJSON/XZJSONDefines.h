@@ -138,7 +138,7 @@ NS_ASSUME_NONNULL_BEGIN
 ///
 /// > 如果不实现此方法，则使用 `init` 方法初始化模型对象，因此自定义了指定初始化方法的模型对象，需要实现此方法，否则指定初始化方法不会被调用。
 /// - Parameter aJSONDictionary: 字典形式的 JSON 数据
-- (BOOL)decodeFromJSONDictionary:(NSDictionary *)aJSONDictionary;
+- (void)decodeFromJSONDictionary:(NSDictionary *)aJSONDictionary;
 
 /// 自定义属性值解析。
 ///

@@ -104,16 +104,12 @@ enum {
 ///   - class: 模型的类对象
 + (nullable id)decode:(nullable id)json options:(NSJSONReadingOptions)options class:(Class)aClass;
 
-/// 通用的模型化方法：使用模型实例对象 model 对 JSON 字典数据进行模型化。
-///
-/// - 由于已经是具体的模型对象，所以调用此方法不会触发模型化转发的流程。
-/// - 如果模型定义了 `+canDecodeFromJSONDictionary:` 方法，则会先调用该方法检查数据合法性。
+/// 使用模型实例对象 model 对 JSON 字典数据进行模型化。
 ///
 /// - Parameters:
 ///   - model: 模型实例对象
-///   - dictionary: JSON 数据字典
-/// - Returns: 是否成功执行模型化
-+ (BOOL)model:(id)model decodeFromDictionary:(NSDictionary *)dictionary;
+///   - aJSONDictionary: JSON 数据字典
++ (void)model:(id)model decodeFromDictionary:(NSDictionary *)aJSONDictionary;
 
 @end
 
@@ -135,8 +131,8 @@ enum {
 ///
 /// - Parameters:
 ///   - model: 模型实例对象
-///   - dictionary: 数据字典
-+ (void)model:(id)model encodeIntoDictionary:(NSMutableDictionary *)dictionary;
+///   - aJSONDictionary: 数据字典
++ (void)model:(id)model encodeIntoDictionary:(NSMutableDictionary *)aJSONDictionary;
 
 @end
 
