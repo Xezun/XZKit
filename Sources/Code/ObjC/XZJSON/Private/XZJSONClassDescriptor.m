@@ -120,6 +120,59 @@ static id XZJSONKeyFromString(NSString *aString);
                     return; // 必须同时有 getter 和 setter
                 }
                 XZJSONPropertyDescriptor *descriptor = [XZJSONPropertyDescriptor descriptorWithProperty:property elementType:mappingClasses[property.name] ofClass:self];
+                switch (descriptor->_type) {
+                    case XZObjcTypeUnknown:
+                        return;
+                    case XZObjcTypeChar:
+                    case XZObjcTypeUnsignedChar:
+                    case XZObjcTypeInt:
+                    case XZObjcTypeUnsignedInt:
+                    case XZObjcTypeShort:
+                    case XZObjcTypeUnsignedShort:
+                    case XZObjcTypeLong:
+                    case XZObjcTypeUnsignedLong:
+                    case XZObjcTypeInt128:
+                    case XZObjcTypeUnsignedInt128:
+                    case XZObjcTypeLongLong:
+                    case XZObjcTypeUnsignedLongLong:
+                    case XZObjcTypeFloat:
+                    case XZObjcTypeDouble:
+                    case XZObjcTypeLongDouble:
+                    case XZObjcTypeBool:
+                        break;
+                    case XZObjcTypeVoid:
+                        return;
+                    case XZObjcTypeString:
+                        return;
+                    case XZObjcTypeSEL:
+                        break;
+                    case XZObjcTypePointer:
+                        return;
+                    case XZObjcTypeArray:
+                        return;
+                    case XZObjcTypeVector:
+                        return;
+                    case XZObjcTypeBitField:
+                        return;
+                    case XZObjcTypeUnion:
+                        return;
+                    case XZObjcTypeStruct:
+                        if (descriptor->_foundationStructType) {
+                            break;
+                        }
+                        return;
+                    case XZObjcTypeClass:
+                        break;
+                    case XZObjcTypeObject:
+                        if (descriptor->_foundationClassType) {
+                            break;
+                        }
+                        // 弱引用
+                        if (descriptor->_isUnownedReferenceProperty) {
+                            return;
+                        }
+                        break;
+                }
                 allProperties[name] = descriptor;
             }];
         } while ((class = class.super));

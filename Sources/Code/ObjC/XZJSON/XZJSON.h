@@ -224,40 +224,35 @@ enum {
 
 @interface XZJSON (NSCopying)
 
-/// 模型复制，仅复制同名、且数据类型相同的属性。
+/// 模型复制。仅复制可 JSON 序列化、同名且数据类型相同的属性的。
 /// 
-/// > 模型使用 `+[Class new]` 方法创建新的模型对象，因此模型如果需要特殊的初始化方法，可重写此方法。
-///
-/// 结构体、共用体、C指针等类型的属性，由于存在无法确定内存管理方式，或无法确定数据大小等情况，所以需要在 block 中自行实现复制方式。
-///
+/// 以下情形，需开发者先创建 targetModel 然后作为参数传入。
+/// - sourceModel 与 targetModel 的类型不同。
+/// - sourceModel 使用自定义的初始化方法。
+/// - sourceModel 有 JSON 无法序列化（即无法复制）的属性。
+/// 
 /// ```objc
 /// - (id)copyWithZone:(NSZone *)zone {
-///     return [XZJSON model:self copy:^BOOL(Foo *newModel, NSString * _Nonnull key) {
-///         if ([key isEqualToString:@"foo"]) {
-///             if (self->_foo) {
-///                 size_t const count = strlen(self->_foo);
-///                 newModel->_foo = calloc(count, sizeof(char));
-///                 strcpy(newModel->_foo, self->_foo);
-///             }
-///             return YES;
-///         }
-///         return NO;
-///     }];
+///     // 使用了自定义初始化方法
+///     id const newModel = [[Foobar alloc] initWithName:self.name];
+/// 
+///     // 无法复制的属性
+///     if (self->_foobar) {
+///         size_t const count = strlen(self->_foobar);
+///         newModel->_foobar = calloc(count, sizeof(char));
+///         strcpy(newModel->_foobar, self->_foobar);
+///     }
+/// 
+///     // 调用 XZJSON 复制过程
+///     return [XZJSON model:self copy:newModel];
 /// }
 /// ```
-///
-/// 如果超类已经调用此方法实现了 NSCopying 协议，那么子类不宜直接调用此方法，而是像下面这样处理，否则子类就需要在 block 中重新处理超类中“无法确定复制方式”的属性。
-///
-/// ```objc
-/// - (void)copyWithZone:(NSZone *)zone {
-///     Bar *newModel = [super copyWithZone:zone];
-///     newModel.bar = self.bar;
-/// }
-/// ```
-/// - Parameter model: 被复制的模型对象
-/// - Parameter block: 需要自行实现复制的属性，返回 NO 标识未处理，控制台将输出未处理的输出
-/// - Returns: 复制后的模型对象
-+ (id)model:(id)model copy:(BOOL (^_Nullable)(id newModel, NSString *key))block;
+/// 
+/// - Parameters:
+///   - sourceModel: 被复制的模型对象。
+///   - targetModel: 复制到的目标对象，如果未提供，则使用 `+[sourceModel.class new]` 方法创建。
+/// - Returns: 复制后的模型对象，如果传入 targetModel 参数，则为该参数值。
++ (id)model:(id)sourceModel copy:(nullable id)targetModel;
 
 @end
 
@@ -265,21 +260,24 @@ enum {
 
 @interface XZJSON (NSEquatable)
 
-/// 模型比较。如果模型的属性相同，则认为模型相等，即使模型的类型不同。
-///
-/// 块函数返回值各枚举值含义：
-/// - NSOrderedSame 相等
-/// - NSOrderedAscending 不相等
-/// - NSOrderedDescending 未比较
-///
+/// 模型比较：如果模型可 JSON 序列化属性完全相同，那么就认为两个模型相等，即使两个模型的类型不同。
+/// 
+/// ```objc
+/// - (BOOL)isEqual:(id)object {
+///     // 自行比较不可序列化的属性
+///     if (self.foo != object.bar) {
+///         return NO;
+///     }
+///     // 可序列化的属性，由 XZJSON 进行比较
+///     return [XZJSON model:self isEqual:object];
+/// }
+/// ```
+/// 
 /// - Parameters:
-///   - model1: 待比较的模型
-///   - model2: 被比较的模型
-///   - block: 如果属性值无法比较，将调用此块函数，如不提供，则认为属性不相等。
-+ (BOOL)model:(id)model1 isEqualToModel:(id)model2 comparator:(NSComparisonResult (^_Nullable)(id model1, id model2, NSString *key))block;
-
-+ (NSArray<NSString *> *)model:(id)model compareToModel:(id)newModel;
-
+///   - model1: 待比较的模型。
+///   - model2: 被比较的模型。
+///   - excludes: 需要排除不比较的属性名的集合。
++ (BOOL)model:(nullable id)model1 isEqual:(nullable id)model2 excludes:(nullable NSArray<NSString *> *)excludes;
 
 @end
 
