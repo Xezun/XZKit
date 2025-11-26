@@ -28,33 +28,31 @@
 
 @implementation XZJSON (XZJSONDecoder)
 
-+ (id)decode:(id)json options:(NSJSONReadingOptions)options class:(Class)aClass {
++ (id)decode:(id)json options:(NSJSONReadingOptions)options class:(Class)modelClass {
     // 判空
     if (json == nil || json == (id)kCFNull) {
         return nil;
     }
     // 二进制流形式的 json 数据
     if ([json isKindOfClass:NSData.class]) {
-        return XZJSONDecodeJSONData(json, options, aClass);
+        return XZJSONDecodeJSONData((NSData *)json, options, modelClass);
     }
     // 字符串形式的 json 数据
     if ([json isKindOfClass:NSString.class]) {
-        NSString * const JSONString = json;
-        NSData   * const JSONData = [JSONString dataUsingEncoding:NSUTF8StringEncoding];
-        if (JSONData == nil) {
+        NSData * const data = [(NSString *)json dataUsingEncoding:NSUTF8StringEncoding];
+        if (data == nil) {
             return nil;
         }
-        return XZJSONDecodeJSONData(JSONData, options, aClass);
+        return XZJSONDecodeJSONData(data, options, modelClass);
     }
     // 如果为数组，视为解析多个 json 数据
     if ([json isKindOfClass:NSArray.class]) {
-        NSArray * const JSONArray = json;
-        if (JSONArray.count == 0) {
-            return JSONArray;
+        if (((NSArray *)json).count == 0) {
+            return json;
         }
-        NSMutableArray * const models = [NSMutableArray arrayWithCapacity:JSONArray.count];
-        for (id json in JSONArray) {
-            id const model = [self decode:json options:options class:aClass];
+        NSMutableArray * const models = [NSMutableArray arrayWithCapacity:((NSArray *)json).count];
+        for (id item in ((NSArray *)json)) {
+            id const model = [self decode:item options:options class:modelClass];
             if (model) {
                 [models addObject:model];
             } else if (options & XZJSONReadingKeepCapacity) {
@@ -64,15 +62,14 @@
         return models;
     }
     // 其它情况视为已解析好的 json
-    return XZJSONDecodeJSONObject(json, aClass);
+    return XZJSONDecodeJSONObject(json, modelClass);
 }
 
 + (void)model:(id)model decodeFromDictionary:(NSDictionary *)dictionary {
-    Class const modelRawClass = object_getClass(model);
-    
-    XZJSONClassDescriptor * const modelClass = [XZJSONClassDescriptor descriptorForClass:modelRawClass];
+    Class const modelClass = object_getClass(model);
+    XZJSONClassDescriptor * const descriptor = [XZJSONClassDescriptor descriptorForClass:modelClass];
     if (modelClass) {
-        XZJSONModelDecodeFromDictionary(model, modelClass, dictionary);
+        XZJSONModelDecodeFromDictionary(model, descriptor, dictionary);
     }
 }
 
@@ -81,22 +78,27 @@
 
 @implementation XZJSON (XZJSONEncoder)
 
-+ (NSData *)encode:(id)object options:(NSJSONWritingOptions)options error:(NSError *__autoreleasing  _Nullable * _Nullable)error {
-    if (object == nil) {
++ (NSData *)encode:(id)model options:(NSJSONWritingOptions)options error:(NSError *__autoreleasing  _Nullable * _Nullable)error {
+    if (model == nil) {
         return nil;
     }
-    XZJSONClassDescriptor * const objectClass = [XZJSONClassDescriptor descriptorForClass:object_getClass(object)];
-    if (objectClass == nil) {
+    Class const modelClass = object_getClass(model);
+    if (modelClass == Nil) {
         return nil;
     }
-    id const JSONObject = XZJSONEncodeObjectIntoDictionary(object, objectClass, objectClass->_foundationClassType, nil);
-    return [NSJSONSerialization dataWithJSONObject:JSONObject options:options error:error];
+    XZJSONClassDescriptor * const descriptor = [XZJSONClassDescriptor descriptorForClass:modelClass];
+    if (descriptor == nil) {
+        return nil;
+    }
+    id const dictionary = XZJSONEncodeModelIntoDictionary(model, descriptor, descriptor->_foundationClassType, nil);
+    return [NSJSONSerialization dataWithJSONObject:dictionary options:options error:error];
 }
 
 + (void)model:(id)model encodeIntoDictionary:(NSMutableDictionary *)dictionary {
-    XZJSONClassDescriptor * const modelClass = [XZJSONClassDescriptor descriptorForClass:[model class]];
-    if (modelClass) {
-        XZJSONModelEncodeIntoDictionary(model, modelClass, dictionary);
+    Class const modelClass = object_getClass(model);
+    XZJSONClassDescriptor * const descriptor = [XZJSONClassDescriptor descriptorForClass:modelClass];
+    if (descriptor) {
+        XZJSONModelEncodeIntoDictionary(model, descriptor, dictionary);
     }
 }
 

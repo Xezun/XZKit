@@ -18,10 +18,10 @@ NS_ASSUME_NONNULL_BEGIN
 ///
 /// ### 关于模型属性
 /// - 模型转换依赖于 `setter` 方法，所以只读属性会被忽略。
-/// - 通用逻辑无法处理弱引用关系，所以 `unsafe_unretained` 或 `assign` 修饰的对象的属性会被忽略。
+/// - 通用逻辑无法处理弱引用关系，所以使用 `weak`、`unsafe_unretained` 或 `assign` 修饰的属性会被忽略。
 ///
 /// ### 数据转换规则
-/// - 基础数据类型，如 int、float、double、 NSInteger、CGFloat 等类型或类型别名。
+/// - 基础数据类型，如 int、float、double 等类型或 NSInteger、CGFloat 等类型别名。
 ///     - 数字。
 ///     - 字符串。
 /// - 内置结构体 CGRect、CGSize、CGPoint、UIEdgeInsets、CGVector、CGAffineTransform、NSDirectionalEdgeInsets、UIOffset 等。
@@ -81,7 +81,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 enum {
     /// NSJSONReadingOptions 的拓展。
-    /// 如果提供此标记，当转换由 JSON 数据组成的数组时，那么输出的数组将与输入保持相同大小，转换失败的数据将使用 kCFNull 代替。
+    /// 如果提供此标记，当转换由 JSON 数据组成的数组时，那么输出的数组将与输入保持相同大小，转换失败的数据将使用 kCFNull 占位。
     ///
     /// 此标记不影响模型的转换过程，模型的集合属性，在转换时，是否保持大小，由模型决定。
     XZJSONReadingKeepCapacity = (1UL << 63)
@@ -91,18 +91,19 @@ enum {
 
 /// JSON 数据模型化。
 ///
-/// 参数 json 支持的类型：
+/// 支持的 JSON 数据类型如下：
+/// - 字符串形式的 JSON 数据。
+/// - 二进制流形式的 JSON 数据。
+/// - 上述两种形式 JSON 数据组成的数组。
+/// - 上述三种类型数据组成的数组。
 ///
-/// - JSON 字符串。
-/// - JSON 二进制流。
-/// - JSON 字符串或 JSON 二进制流组成的数组。
-/// - 以上三种类型数据组成的数组。
+/// 如果序列化多个 JSON 数据，则可使用 XZJSONReadingKeepCapacity 标记，保持输入输出的数组元素数量一致。
 ///
 /// - Parameters:
 ///   - json: JSON 数据
-///   - options: JSON 读取选项，如果 JSON 已解析，则此参数忽略，可使用 XZJSONReadingKeepCapacity 保持输入输出的数组元素数量一致
-///   - class: 模型的类对象
-+ (nullable id)decode:(nullable id)json options:(NSJSONReadingOptions)options class:(Class)aClass;
+///   - options: 模型化 JSON 数据为模型的可选项；如果 JSON 已解析，则此参数忽略
+///   - modelClass: 模型的类对象
++ (nullable id)decode:(nullable id)json options:(NSJSONReadingOptions)options class:(Class)modelClass;
 
 /// 通用模型化过程，直接使用模型实例对象 model 对 JSON 字典数据进行模型化。
 ///
@@ -110,6 +111,27 @@ enum {
 /// - 不触发参数 dictionary 的校验过程。
 /// - 不触发模型化转发流程。
 /// - 不触发模型自定义初始化流程。
+///
+/// 在自定义模型化过程时，可调用此方法，先执行通用模型化过程，然后再执行自定义过程。
+///
+/// ```objc
+/// - (BOOL)decodeFromJSONDictionary:(NSDictionary *)dictionary {
+///     // 执行通用模型化过程。
+///     [XZJSON model:self decodeFromDictionary:dictionary];
+///
+///     // 验证模型是否正确。
+///     if (self.students.count == 0) {
+///         return NO;
+///     }
+///
+///     // 处理自定义逻辑：关联学生和老师
+///     for (Example05Student *student in self.students) {
+///         student.teacher = self;
+///     }
+///
+///     return YES;
+/// }
+/// ```
 ///
 /// - Parameters:
 ///   - model: 模型实例对象
@@ -122,15 +144,25 @@ enum {
 
 @interface XZJSON (XZJSONEncoder)
 
-/// 将任意实例对象进行 JSON 数据化。
+/// 将模型对象进行 JSON 数据化。
 ///
 /// - Parameters:
-///   - object: 任意对象
-///   - options: JSON 生成选项
+///   - model: 模型对象，也可以是模型对象组成的数组
+///   - options: 序列化模型为 JSON 数据的可选项
 ///   - error: 错误输出
-+ (nullable NSData *)encode:(nullable id)object options:(NSJSONWritingOptions)options error:(NSError **)error;
++ (nullable NSData *)encode:(nullable id)model options:(NSJSONWritingOptions)options error:(NSError **)error;
 
 /// 将模型实例对象 model 序列化进 JSON 字典。
+///
+/// 在定义模型序列化过程的方法中，可以调用此方法完成通用的序列化逻辑，然再执行自定义序列化过程。
+///
+/// ```objc
+/// - (NSMutableDictionary *)encodeIntoJSONDictionary:(NSMutableDictionary *)dictionary {
+///     [XZJSON model:self encodeIntoDictionary:dictionary];
+///     dictionary[@"signature"] = @"a signature to verify this model";
+///     return dictionary;
+/// }
+/// ```
 ///
 /// - Parameters:
 ///   - model: 模型实例对象，必须为模型实例对象

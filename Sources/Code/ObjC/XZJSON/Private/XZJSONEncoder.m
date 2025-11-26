@@ -25,7 +25,7 @@ FOUNDATION_STATIC_INLINE id XZJSONEncodeCollection(id<NSFastEnumeration> const _
         if (itemClass == nil) {
             continue;
         }
-        id const JSONObject = XZJSONEncodeObjectIntoDictionary(item, itemClass, itemClass->_foundationClassType, nil);
+        id const JSONObject = XZJSONEncodeModelIntoDictionary(item, itemClass, itemClass->_foundationClassType, nil);
         if (JSONObject != nil) {
             [newArray addObject:JSONObject];
         }
@@ -33,7 +33,7 @@ FOUNDATION_STATIC_INLINE id XZJSONEncodeCollection(id<NSFastEnumeration> const _
     return newArray;
 }
 
-id XZJSONEncodeObjectIntoDictionary(id const _Unsafe object, XZJSONClassDescriptor * _Nullable _Unsafe objectClass, XZJSONFoundationClassType const classType, NSMutableDictionary * _Nullable dictionary) {
+id XZJSONEncodeModelIntoDictionary(id const _Unsafe object, XZJSONClassDescriptor * _Nullable _Unsafe objectClass, XZJSONFoundationClassType const classType, NSMutableDictionary * _Nullable dictionary) {
     switch (classType) {
         case XZJSONFoundationClassTypeNSString:
         case XZJSONFoundationClassTypeNSMutableString: {
@@ -119,7 +119,7 @@ id XZJSONEncodeObjectIntoDictionary(id const _Unsafe object, XZJSONClassDescript
                 if (objClass == nil) {
                     return;
                 }
-                id const JSONValue = XZJSONEncodeObjectIntoDictionary(obj, objClass, objClass->_foundationClassType, nil);
+                id const JSONValue = XZJSONEncodeModelIntoDictionary(obj, objClass, objClass->_foundationClassType, nil);
                 if (JSONValue != nil) {
                     dictM[JSONKey] = JSONValue;
                 }
@@ -220,7 +220,7 @@ FOUNDATION_STATIC_INLINE id _Nullable XZJSONModelEncodePropertyFallback(id const
         case XZJSONFoundationClassTypeNSValue: {
             id const value = ((id (*)(id, SEL))(void *) objc_msgSend)((id)model, property->_getter);
             // value 类型已验证，不一致的情况已提前转换为 kCFNull 不会进入此方法
-            return XZJSONEncodeObjectIntoDictionary(value, nil, property->_foundationClassType, nil);
+            return XZJSONEncodeModelIntoDictionary(value, nil, property->_foundationClassType, nil);
         }
         default: {
             return nil;
@@ -449,15 +449,15 @@ void XZJSONModelEncodeProperty(id const _Unsafe model, XZJSONPropertyDescriptor 
                 case XZJSONFoundationClassTypeNSMutableDictionary: {
                     if (XZJSONModelEncodePropertyPrepare(property, &key, &keyInDictionary, NO)) {
                         // 已经判断 value 的类型与声明的类型一致
-                        JSONValue = XZJSONEncodeObjectIntoDictionary(value, nil, property->_foundationClassType, nil);
+                        JSONValue = XZJSONEncodeModelIntoDictionary(value, nil, property->_foundationClassType, nil);
                     }
                     break;
                 }
                 case XZJSONFoundationClassTypeUnknown: {
                     if (XZJSONModelEncodePropertyPrepare(property, &key, &keyInDictionary, YES)) {
-                        JSONValue = XZJSONEncodeObjectIntoDictionary(value, nil, XZJSONFoundationClassTypeUnknown, keyInDictionary[key]);
+                        JSONValue = XZJSONEncodeModelIntoDictionary(value, nil, XZJSONFoundationClassTypeUnknown, keyInDictionary[key]);
                     } else {
-                        JSONValue = XZJSONEncodeObjectIntoDictionary(value, nil, XZJSONFoundationClassTypeUnknown, nil);
+                        JSONValue = XZJSONEncodeModelIntoDictionary(value, nil, XZJSONFoundationClassTypeUnknown, nil);
                     }
                     break;
                 }
