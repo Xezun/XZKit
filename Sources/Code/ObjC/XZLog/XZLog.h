@@ -18,9 +18,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 #define XZ_LOG_ATTR(A, B, msg) __attribute__(( availability(swift, unavailable, message=msg), overloadable, format(__NSString__, A, B) ));
 
-/// 控制台日志输出。
-///
-/// 请使用 `XZLog` 宏，而不是直接使用此函数。
+/// 使用指定日志系统输出日志，请使用`XZLog`宏，不要直接使用此函数。
 ///
 /// 宏 `XZLog` 的用法与 `NSLog` 函数类似，但是宏 `XZLog` 在编译时会展开为此函数。
 /// 
@@ -35,8 +33,8 @@ NS_ASSUME_NONNULL_BEGIN
 /// 
 /// 此函数使用 `NSLog` 进行输出，而不是 `printf` 等函数，以避免控制台日志互相嵌套的问题。
 /// 
-/// > 自 iOS 10 之后，有迹象表明 NSLog 底层已由 ASL 切换为 OSLog 框架，虽然官方没有明确说明。
-/// 
+/// > 自 iOS 10 之后，有迹象表明 NSLog 底层已由 ASL 切换为 OSLog 框架，或者使用了与 OSLog 相同的更底层框架，虽然官方没有明确说明。
+///
 /// - Parameters:
 ///   - file: 日志语句所在的文件名
 ///   - line: 日志语句所在的行数
@@ -45,20 +43,20 @@ NS_ASSUME_NONNULL_BEGIN
 ///   - format: 日志内容
 FOUNDATION_EXPORT void XZLogv(const char *file, const int line, const char *function, XZLogSystem *system, NSString *format, ...) XZ_LOG_ATTR(5, 6, "Use #XZLog instead");
 
-/// 调用默认日志系统输出日志到控制台。
+/// 使用默认日志系统输出日志，请使用`XZLog`宏，不要直接使用此函数。
 FOUNDATION_EXPORT void XZLogv(const char *file, const int line, const char *function, NSString *format, ...) XZ_LOG_ATTR(4, 5, "Use #XZLog instead");
 
 /// 供 Swift 使用 NSLog 的函数。
 FOUNDATION_EXPORT void XZLogs(XZLogSystem *system, NSString *file, NSInteger line, NSString *function, NSString *message);
 
-/// 调用日志系统输出日志到控制台。
+/// 使用指定日志系统输出日志。
 ///
 /// - SeeAlso: ``XZLogv``
 /// - Parameter system: 日志系统
 /// - Parameter format: 日志内容
 FOUNDATION_EXTERN void XZLog(XZLogSystem *system, NSString *format, ...) XZ_LOG_ATTR(2, 3, "Use #XZLog instead");
 
-/// 调用默认日志系统输出日志到控制台。
+/// 使用默认日志系统输出日志。
 ///
 /// - SeeAlso: ``XZLogv``
 /// - Parameter format: 日志内容
