@@ -49,14 +49,14 @@ FOUNDATION_EXPORT void XZLogv(const char *file, const int line, const char *func
 /// 供 Swift 使用 NSLog 的函数。
 FOUNDATION_EXPORT void XZLogs(XZLogSystem *system, NSString *file, NSInteger line, NSString *function, NSString *message);
 
-/// 使用指定日志系统输出日志。
+/// 宏，使用指定日志系统输出日志。
 ///
 /// - SeeAlso: ``XZLogv``
 /// - Parameter system: 日志系统
 /// - Parameter format: 日志内容
 FOUNDATION_EXTERN void XZLog(XZLogSystem *system, NSString *format, ...) XZ_LOG_ATTR(2, 3, "Use #XZLog instead");
 
-/// 使用默认日志系统输出日志。
+/// 宏，使用默认日志系统输出日志。
 ///
 /// - SeeAlso: ``XZLogv``
 /// - Parameter format: 日志内容
