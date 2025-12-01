@@ -193,14 +193,14 @@ typedef NS_OPTIONS(NSUInteger, XZObjcModifiers) {
 /// 构造类型描述。
 /// > 因为类型不能直接作为参数，而枚举 XZObjcType 并不包含完整的类型信息，因此需要使用类型编码来构造。
 /// - Parameter objcType: 类型编码，可以是类型编码中的子类型
-+ (nullable XZObjcTypeDescriptor *)descriptorForObjcType:(const char * _Nullable)objcType NS_SWIFT_NAME(init(for:));
++ (nullable XZObjcTypeDescriptor *)descriptorForType:(const char * _Nullable)objcType NS_SWIFT_NAME(init(for:));
 
 /// 构造类型描述符。
 ///
 /// - Parameters:
 ///   - objcType: 类型编码
 ///   - modifiers: 修饰符，因为属性修饰符不包含在类型编码中，可通过此参数提供
-+ (nullable XZObjcTypeDescriptor *)descriptorForObjcType:(const char * _Nullable)objcType modifiers:(XZObjcModifiers)modifiers NS_SWIFT_NAME(init(for:modifiers:));
++ (nullable XZObjcTypeDescriptor *)descriptorForType:(const char * _Nullable)objcType modifiers:(XZObjcModifiers)modifiers NS_SWIFT_NAME(init(for:modifiers:));
 
 /// 设置结构体类型的大小和字节对齐值。
 ///
@@ -224,12 +224,18 @@ typedef NS_OPTIONS(NSUInteger, XZObjcModifiers) {
 ///   - size: 大小
 ///   - alignment: 对齐方式
 ///   - objcType: 结构体类型编码
-+ (void)setSize:(size_t)size alignment:(size_t)alignment forObjcType:(const char *)objcType;
++ (void)registerSize:(size_t)size alignment:(size_t)alignment forType:(const char *)objcType;
 
 @end
 
+/// @function XZObjcTypeRegister
+/// 注册结构体、联合体的大小和内存对齐。
+///
+/// @param objcType
+/// 类型，比如 CGRect 等
+///
 /// 注册结构体字节大小和对齐的宏，比如 XZObjcTypeRegister(CGRect) 。
-#define XZObjcTypeRegister(objcType) [XZObjcTypeDescriptor setSize:sizeof(objcType) alignment:_Alignof(objcType) forObjcType:@encode(objcType)]
+#define XZObjcTypeRegister(objcType) [XZObjcTypeDescriptor registerSize:sizeof(objcType) alignment:_Alignof(objcType) forType:@encode(objcType)]
 
 @protocol XZObjcDescriptor <NSObject>
 @property (nonatomic, readonly) NSString *name;

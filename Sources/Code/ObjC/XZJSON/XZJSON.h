@@ -260,8 +260,8 @@ enum {
 
 @interface XZJSON (NSEquatable)
 
-/// 模型比较：如果模型可 JSON 序列化属性完全相同，那么就认为两个模型相等，即使两个模型的类型不同。
-/// 
+/// 模型比较：如果两个模型的 JSON 可序列化属性完全相同，那么就认为两个模型相等，即使两个模型的类型不同。
+///
 /// ```objc
 /// - (BOOL)isEqual:(id)object {
 ///     // 自行比较不可序列化的属性
@@ -276,8 +276,7 @@ enum {
 /// - Parameters:
 ///   - model1: 待比较的模型。
 ///   - model2: 被比较的模型。
-///   - excludes: 需要排除不比较的属性名的集合。
-+ (BOOL)model:(nullable id)model1 isEqual:(nullable id)model2 excludes:(nullable NSArray<NSString *> *)excludes;
++ (BOOL)model:(nullable id)model1 isEqual:(nullable id)model2;
 
 @end
 

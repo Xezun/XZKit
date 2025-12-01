@@ -18,10 +18,11 @@ NS_ASSUME_NONNULL_BEGIN
 /// 当 XZObjcClassDescriptor 发生更新时，会发送此通知。
 FOUNDATION_EXPORT NSNotificationName const XZObjcClassDidUpdateNotification;
 /// 在 XZObjcClassDescriptor 的通知中，获取变更枚举 XZObjcClassUpdate 的键。
-FOUNDATION_EXPORT NSString * const XZObjcClassUpdateUserInfoKey;
+FOUNDATION_EXPORT NSString * const XZObjcClassUpdatesUserInfoKey;
 
 /// 变更类型。
 typedef NSString *XZObjcClassUpdates NS_STRING_ENUM;
+
 /// XZObjcClassDescriptor 实例变量更新。
 FOUNDATION_EXPORT XZObjcClassUpdates const XZObjcClassUpdateIvars;
 /// XZObjcClassDescriptor 方法更新。
@@ -38,7 +39,7 @@ FOUNDATION_EXPORT XZObjcClassUpdates const XZObjcClassUpdateProperties;
 @property (nonatomic, readonly) Class raw;
  
 /// 描述当前类的超类的对象。
-@property (nonatomic, readonly, nullable) XZObjcClassDescriptor *super;
+@property (nonatomic, readonly, nullable) XZObjcClassDescriptor *superDescriptor;
 
 /// 类名。class name
 @property (nonatomic, readonly) NSString *name;
@@ -47,13 +48,13 @@ FOUNDATION_EXPORT XZObjcClassUpdates const XZObjcClassUpdateProperties;
 @property (nonatomic, readonly) XZObjcTypeDescriptor *type;
 
 /// 类实例变量。ivars
-@property (copy, readonly) NSDictionary<NSString *, XZObjcIvarDescriptor *>     *ivars;
+@property (copy, readonly) NSDictionary<NSString *, XZObjcIvarDescriptor *> *ivars;
 
 /// 在运行时更新了类的实例变量后，应调用此方法标记更新。
 - (void)setNeedsUpdateIvars;
 
 /// 类方法。 methods
-@property (copy, readonly) NSDictionary<NSString *, XZObjcMethodDescriptor *>   *methods;
+@property (copy, readonly) NSDictionary<NSString *, XZObjcMethodDescriptor *> *methods;
 
 /// 在运行时更新了类的实例方法后，应调用此方法标记更新。
 - (void)setNeedsUpdateMethods;
@@ -67,8 +68,8 @@ FOUNDATION_EXPORT XZObjcClassUpdates const XZObjcClassUpdateProperties;
 - (instancetype)init NS_UNAVAILABLE;
 
 /// 获取类 aClass 的描述信息。单例。
-/// - Parameter aClass: 类
-+ (nullable XZObjcClassDescriptor *)descriptorForClass:(nullable Class)aClass NS_SWIFT_NAME(init(_:));
+/// - Parameter rawClass: 类
++ (nullable XZObjcClassDescriptor *)descriptorForClass:(nullable Class)rawClass NS_SWIFT_NAME(init(_:));
 
 @end
 

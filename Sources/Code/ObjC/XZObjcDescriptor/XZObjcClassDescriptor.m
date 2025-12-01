@@ -11,7 +11,7 @@
 #import "XZObjcMethodDescriptor.h"
 
 NSNotificationName const XZObjcClassDidUpdateNotification = @"XZObjcClassDidUpdateNotification";
-NSString *         const XZObjcClassUpdateUserInfoKey     = @"XZObjcClassUpdateUserInfoKey";
+NSString *         const XZObjcClassUpdatesUserInfoKey    = @"XZObjcClassUpdatesUserInfoKey";
 NSString *         const XZObjcClassUpdateIvars           = @"XZObjcClassUpdateIvars";
 NSString *         const XZObjcClassUpdateMethods         = @"XZObjcClassUpdateMethods";
 NSString *         const XZObjcClassUpdateProperties      = @"XZObjcClassUpdateProperties";
@@ -26,16 +26,16 @@ NSString *         const XZObjcClassUpdateProperties      = @"XZObjcClassUpdateP
 
 @implementation XZObjcClassDescriptor
 
-- (instancetype)initWithClass:(nonnull Class)aClass {
+- (instancetype)initWithClass:(nonnull Class)rawClass {
     self = [super init];
     if (self) {
-        _raw = aClass;
-        _super = [XZObjcClassDescriptor descriptorForClass:[aClass superclass]];
-        _name = NSStringFromClass(aClass);
-        _type = [XZObjcTypeDescriptor descriptorForObjcType:@encode(Class)];
-        _ivars = _super ? nil : @{};
-        _methods = _super ? nil : @{};
-        _properties = _super ? nil : @{};
+        _raw = rawClass;
+        _superDescriptor = [XZObjcClassDescriptor descriptorForClass:[rawClass superclass]];
+        _name = NSStringFromClass(rawClass);
+        _type = [XZObjcTypeDescriptor descriptorForType:@encode(Class)];
+        _ivars = _superDescriptor ? nil : @{};
+        _methods = _superDescriptor ? nil : @{};
+        _properties = _superDescriptor ? nil : @{};
     }
     return self;
 }
@@ -50,7 +50,7 @@ NSString *         const XZObjcClassUpdateProperties      = @"XZObjcClassUpdateP
     if (list && ivarCount > 0) {
         NSMutableDictionary * const descriptors = [NSMutableDictionary dictionaryWithCapacity:ivarCount];
         for (unsigned int i = 0; i < ivarCount; i++) {
-            XZObjcIvarDescriptor *descriptor = [XZObjcIvarDescriptor descriptorWithIvar:list[i]];
+            XZObjcIvarDescriptor *descriptor = [XZObjcIvarDescriptor descriptorForIvar:list[i]];
             if (descriptor) {
                 descriptors[descriptor.name] = descriptor;
             }
@@ -66,10 +66,10 @@ NSString *         const XZObjcClassUpdateProperties      = @"XZObjcClassUpdateP
 }
 
 - (void)setNeedsUpdateIvars {
-    if (_super) {
+    if (_superDescriptor) {
         _ivars = nil;
         [NSNotificationCenter.defaultCenter postNotificationName:XZObjcClassDidUpdateNotification object:self userInfo:@{
-            XZObjcClassUpdateUserInfoKey: XZObjcClassUpdateIvars
+            XZObjcClassUpdatesUserInfoKey: XZObjcClassUpdateIvars
         }];
     }
 }
@@ -83,7 +83,7 @@ NSString *         const XZObjcClassUpdateProperties      = @"XZObjcClassUpdateP
     if (list && methodCount > 0) {
         NSMutableDictionary *descriptors = [NSMutableDictionary dictionaryWithCapacity:methodCount];
         for (unsigned int i = 0; i < methodCount; i++) {
-            XZObjcMethodDescriptor *descriptor = [XZObjcMethodDescriptor descriptorWithMethod:list[i]];
+            XZObjcMethodDescriptor *descriptor = [XZObjcMethodDescriptor descriptorForMethod:list[i]];
             if (descriptor) {
                 descriptors[descriptor.name] = descriptor;
             }
@@ -99,10 +99,10 @@ NSString *         const XZObjcClassUpdateProperties      = @"XZObjcClassUpdateP
 }
 
 - (void)setNeedsUpdateMethods {
-    if (_super) {
+    if (_superDescriptor) {
         _methods = nil;
         [NSNotificationCenter.defaultCenter postNotificationName:XZObjcClassDidUpdateNotification object:self userInfo:@{
-            XZObjcClassUpdateUserInfoKey: XZObjcClassUpdateMethods
+            XZObjcClassUpdatesUserInfoKey: XZObjcClassUpdateMethods
         }];
     }
 }
@@ -119,7 +119,7 @@ NSString *         const XZObjcClassUpdateProperties      = @"XZObjcClassUpdateP
     if (list && propertyCount > 0) {
         NSMutableDictionary *descriptors = [NSMutableDictionary dictionaryWithCapacity:propertyCount];
         for (unsigned int i = 0; i < propertyCount; i++) {
-            XZObjcPropertyDescriptor *descriptor = [XZObjcPropertyDescriptor descriptorWithProperty:list[i] ofClass:raw];
+            XZObjcPropertyDescriptor *descriptor = [XZObjcPropertyDescriptor descriptorForProperty:list[i] ofClass:raw];
             if (descriptor) {
                 descriptors[descriptor.name] = descriptor;
             }
@@ -136,16 +136,16 @@ NSString *         const XZObjcClassUpdateProperties      = @"XZObjcClassUpdateP
 }
 
 - (void)setNeedsUpdateProperties {
-    if (_super) {
+    if (_superDescriptor) {
         _properties = nil;
         [NSNotificationCenter.defaultCenter postNotificationName:XZObjcClassDidUpdateNotification object:self userInfo:@{
-            XZObjcClassUpdateUserInfoKey: XZObjcClassUpdateProperties
+            XZObjcClassUpdatesUserInfoKey: XZObjcClassUpdateProperties
         }];
     }
 }
 
-+ (instancetype)descriptorForClass:(Class)aClass {
-    if (!object_isClass(aClass)) {
++ (instancetype)descriptorForClass:(Class)rawClass {
+    if (!object_isClass(rawClass)) {
         return nil;
     }
     
@@ -159,18 +159,18 @@ NSString *         const XZObjcClassUpdateProperties      = @"XZObjcClassUpdateP
     });
     
     dispatch_semaphore_wait(_lock, DISPATCH_TIME_FOREVER);
-    XZObjcClassDescriptor *descriptor = CFDictionaryGetValue(_storage, (__bridge const void *)aClass);
+    XZObjcClassDescriptor *descriptor = CFDictionaryGetValue(_storage, (__bridge const void *)rawClass);
     dispatch_semaphore_signal(_lock);
     
     if (descriptor) {
         return descriptor;
     }
-    descriptor = [[XZObjcClassDescriptor alloc] initWithClass:aClass];
+    descriptor = [[XZObjcClassDescriptor alloc] initWithClass:rawClass];
     
     dispatch_semaphore_wait(_lock, DISPATCH_TIME_FOREVER);
-    XZObjcClassDescriptor *newDescriptor = CFDictionaryGetValue(_storage, (__bridge const void *)aClass);
+    XZObjcClassDescriptor *newDescriptor = CFDictionaryGetValue(_storage, (__bridge const void *)rawClass);
     if (newDescriptor == nil) {
-        CFDictionarySetValue(_storage, (__bridge const void *)aClass, (__bridge const void *)descriptor);
+        CFDictionarySetValue(_storage, (__bridge const void *)rawClass, (__bridge const void *)descriptor);
     } else {
         descriptor = newDescriptor;
     }

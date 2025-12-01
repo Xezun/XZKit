@@ -23,19 +23,8 @@
         return nil;
     }
     
-    // support pseudo generic class with protocol name
-    if (!elementType && property.type.protocols) {
-        for (Protocol *protocol in property.type.protocols) {
-            Class cls = objc_getClass(protocol_getName(protocol));
-            if ([cls conformsToProtocol:protocol]) {
-                elementType = cls;
-                break;
-            }
-        }
-    }
-    
-    XZJSONPropertyDescriptor *descriptor = [self new];
-    descriptor->_class       = aClass;
+    XZJSONPropertyDescriptor * const descriptor = [self new];
+    descriptor->_owner       = aClass;
     descriptor->_raw         = property;
     descriptor->_name        = property.name;
     descriptor->_type        = property.type.type;
@@ -45,23 +34,84 @@
     
     if (descriptor->_type == XZObjcTypeObject) {
         descriptor->_subtype = property.type.subtype;
-        descriptor->_foundationClassType = XZJSONFoundationClassTypeFromClass(descriptor->_subtype);
-        descriptor->_foundationStructType = XZJSONFoundationStructTypeUnknown;
+        descriptor->_foundationClass = XZJSONFoundationClassFromClass(descriptor->_subtype);
+        descriptor->_foundationStruct = XZJSONFoundationStructUnknown;
         XZObjcModifiers const modifiers = property.type.modifiers;
-        descriptor->_isUnownedReferenceProperty = (modifiers & XZObjcModifierWeak) || (!(modifiers & XZObjcModifierCopy) && !(modifiers & XZObjcModifierRetain));
+        descriptor->_isUnownedReference = (modifiers & XZObjcModifierWeak) || (!(modifiers & XZObjcModifierCopy) && !(modifiers & XZObjcModifierRetain));
     } else {
         descriptor->_subtype = Nil;
-        descriptor->_foundationClassType = XZJSONFoundationClassTypeUnknown;
-        descriptor->_foundationStructType = XZJSONFoundationStructTypeFromType(property.type);
-        descriptor->_isUnownedReferenceProperty = NO;
+        descriptor->_foundationClass = XZJSONFoundationClassUnknown;
+        descriptor->_foundationStruct = XZJSONFoundationStructFromType(property.type);
+        descriptor->_isUnownedReference = NO;
     }
     
     // 不是以 set 开头的 setter 无法被 KVC 找到。
     NSString * const setterName = NSStringFromSelector(descriptor->_setter);
     if ([setterName hasPrefix:@"set"]) {
-        descriptor->_isKeyValueCodable = [setterName substringWithRange:NSMakeRange(3, setterName.length - 4)];
+        if (setterName.length >= 5) {
+            descriptor->_isKeyValueCodable = [setterName substringWithRange:NSMakeRange(3, setterName.length - 4)];
+        }
     } else if ([setterName hasPrefix:@"_set"]) {
-        descriptor->_isKeyValueCodable = [setterName substringWithRange:NSMakeRange(4, setterName.length - 5)];
+        if (setterName.length >= 6) {
+            descriptor->_isKeyValueCodable = [setterName substringWithRange:NSMakeRange(4, setterName.length - 5)];
+        }
+    }
+    
+    switch (property.type.type) {
+        case XZObjcTypeUnknown:
+            descriptor->_isCodable = NO;
+            break;
+        case XZObjcTypeChar:
+        case XZObjcTypeUnsignedChar:
+        case XZObjcTypeInt:
+        case XZObjcTypeUnsignedInt:
+        case XZObjcTypeShort:
+        case XZObjcTypeUnsignedShort:
+        case XZObjcTypeLong:
+        case XZObjcTypeUnsignedLong:
+        case XZObjcTypeInt128:
+        case XZObjcTypeUnsignedInt128:
+        case XZObjcTypeLongLong:
+        case XZObjcTypeUnsignedLongLong:
+        case XZObjcTypeFloat:
+        case XZObjcTypeDouble:
+        case XZObjcTypeLongDouble:
+        case XZObjcTypeBool:
+            descriptor->_isCodable = YES;
+            break;
+        case XZObjcTypeVoid:
+            descriptor->_isCodable = NO;
+            break;
+        case XZObjcTypeString:
+            descriptor->_isCodable = NO;
+            break;
+        case XZObjcTypeSEL:
+            descriptor->_isCodable = YES;
+            break;
+        case XZObjcTypePointer:
+            descriptor->_isCodable = NO;
+            break;
+        case XZObjcTypeArray:
+            descriptor->_isCodable = NO;
+            break;
+        case XZObjcTypeVector:
+            descriptor->_isCodable = NO;
+            break;
+        case XZObjcTypeBitField:
+            descriptor->_isCodable = NO;
+            break;
+        case XZObjcTypeUnion:
+            descriptor->_isCodable = NO;
+            break;
+        case XZObjcTypeStruct:
+            descriptor->_isCodable = (descriptor->_foundationStruct != XZJSONFoundationStructUnknown);
+            break;
+        case XZObjcTypeClass:
+            descriptor->_isCodable = YES;
+            break;
+        case XZObjcTypeObject:
+            descriptor->_isCodable = !descriptor->_isUnownedReference;
+            break;
     }
     
     return descriptor;

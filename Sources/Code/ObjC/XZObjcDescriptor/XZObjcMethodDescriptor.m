@@ -9,7 +9,7 @@
 
 @implementation XZObjcMethodDescriptor
 
-+ (instancetype)descriptorWithMethod:(Method)method {
++ (instancetype)descriptorForMethod:(Method)method {
     if (method == nil) {
         return nil;
     }
@@ -38,10 +38,10 @@
     
     char *returnType = method_copyReturnType(method);
     if (returnType != nil) {
-        _returnType = [XZObjcTypeDescriptor descriptorForObjcType:returnType];
+        _returnType = [XZObjcTypeDescriptor descriptorForType:returnType];
         free(returnType);
     } else {
-        _returnType = [XZObjcTypeDescriptor descriptorForObjcType:@encode(void)];
+        _returnType = [XZObjcTypeDescriptor descriptorForType:@encode(void)];
     }
 
     unsigned int const count = method_getNumberOfArguments(method);
@@ -50,7 +50,7 @@
         for (unsigned int i = 0; i < count; i++) {
             char *argumentType = method_copyArgumentType(method, i);
             if (argumentType) {
-                XZObjcTypeDescriptor *type = [XZObjcTypeDescriptor descriptorForObjcType:argumentType];
+                XZObjcTypeDescriptor *type = [XZObjcTypeDescriptor descriptorForType:argumentType];
                 if (type) {
                     [_argumentsTypes addObject:type];
                 }

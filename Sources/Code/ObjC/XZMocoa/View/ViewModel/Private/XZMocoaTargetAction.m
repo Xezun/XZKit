@@ -41,19 +41,19 @@
             }
             case 1: {
                 const char *encoding = method_copyArgumentType(method, 2);
-                _valueArgumentType = [XZObjcTypeDescriptor descriptorForObjcType:encoding];
+                _valueArgumentType = [XZObjcTypeDescriptor descriptorForType:encoding];
                 free((void *)encoding);
                 break;
             }
             case 2: {
                 const char *encoding = method_copyArgumentType(method, 3);
-                _valueArgumentType = [XZObjcTypeDescriptor descriptorForObjcType:encoding];
+                _valueArgumentType = [XZObjcTypeDescriptor descriptorForType:encoding];
                 free((void *)encoding);
                 break;
             }
             case 3: {
                 const char *encoding = method_copyArgumentType(method, 4);
-                _valueArgumentType = [XZObjcTypeDescriptor descriptorForObjcType:encoding];
+                _valueArgumentType = [XZObjcTypeDescriptor descriptorForType:encoding];
                 free((void *)encoding);
                 break;
             }

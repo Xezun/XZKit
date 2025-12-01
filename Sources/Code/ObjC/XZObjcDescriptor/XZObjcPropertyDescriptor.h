@@ -35,7 +35,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 - (instancetype)init NS_UNAVAILABLE;
 
-+ (nullable instancetype)descriptorWithProperty:(objc_property_t)property ofClass:(Class)aClass NS_SWIFT_NAME(init(_:of:));
++ (nullable instancetype)descriptorForProperty:(objc_property_t)property ofClass:(Class)aClass NS_SWIFT_NAME(init(for:of:));
 
 @end
 

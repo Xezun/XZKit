@@ -10,7 +10,7 @@
 
 @implementation XZObjcPropertyDescriptor
 
-+ (instancetype)descriptorWithProperty:(objc_property_t)property ofClass:(Class)aClass {
++ (instancetype)descriptorForProperty:(objc_property_t)property ofClass:(Class)aClass {
     if (!property) {
         return nil;
     }
@@ -49,7 +49,7 @@
                 if (attrValue) {
                     Ivar ivar = class_getInstanceVariable(aClass, attrValue);
                     if (ivar) {
-                        _ivar = [XZObjcIvarDescriptor descriptorWithIvar:ivar];
+                        _ivar = [XZObjcIvarDescriptor descriptorForIvar:ivar];
                     }
                 }
                 break;
@@ -108,7 +108,7 @@
         }
     }
     
-    XZObjcTypeDescriptor *_type = [XZObjcTypeDescriptor descriptorForObjcType:typeEncoding modifiers:modifiers];
+    XZObjcTypeDescriptor *_type = [XZObjcTypeDescriptor descriptorForType:typeEncoding modifiers:modifiers];
     if (_type == nil) {
         return nil;
     }

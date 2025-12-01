@@ -41,11 +41,11 @@ static id _Nullable withStorage(id (^ NS_NOESCAPE block)(XZObjcTypeStorage const
     return NO;
 }
 
-+ (XZObjcTypeDescriptor *)descriptorForObjcType:(const char *)objcType {
-    return [self descriptorForObjcType:objcType modifiers:kNilOptions];
++ (XZObjcTypeDescriptor *)descriptorForType:(const char *)objcType {
+    return [self descriptorForType:objcType modifiers:kNilOptions];
 }
 
-+ (XZObjcTypeDescriptor *)descriptorForObjcType:(const char *)objcType modifiers:(XZObjcModifiers)modifiers {
++ (XZObjcTypeDescriptor *)descriptorForType:(const char *)objcType modifiers:(XZObjcModifiers)modifiers {
     // 非空处理
     if (objcType == NULL) {
         return nil;
@@ -331,7 +331,7 @@ static id _Nullable withStorage(id (^ NS_NOESCAPE block)(XZObjcTypeStorage const
             break;
         }
         case '^': {
-            XZObjcTypeDescriptor *member = [XZObjcTypeDescriptor descriptorForObjcType:objcType + 1];
+            XZObjcTypeDescriptor *member = [XZObjcTypeDescriptor descriptorForType:objcType + 1];
             if (member == nil) {
                 return nil;
             }
@@ -399,7 +399,7 @@ static id _Nullable withStorage(id (^ NS_NOESCAPE block)(XZObjcTypeStorage const
             }
             
             // 元素类型
-            XZObjcTypeDescriptor *member = [XZObjcTypeDescriptor descriptorForObjcType:(objcType + i)];
+            XZObjcTypeDescriptor *member = [XZObjcTypeDescriptor descriptorForType:(objcType + i)];
             if (member == nil) {
                 return nil;
             }
@@ -460,7 +460,7 @@ static id _Nullable withStorage(id (^ NS_NOESCAPE block)(XZObjcTypeStorage const
                 if (objcType[i] == ')') {
                     break;
                 }
-                XZObjcTypeDescriptor *member = [XZObjcTypeDescriptor descriptorForObjcType:(objcType + i)];
+                XZObjcTypeDescriptor *member = [XZObjcTypeDescriptor descriptorForType:(objcType + i)];
                 if (member == nil) {
                     return nil;
                 }
@@ -501,7 +501,7 @@ static id _Nullable withStorage(id (^ NS_NOESCAPE block)(XZObjcTypeStorage const
                 if (objcType[i] == '}') {
                     break;
                 }
-                XZObjcTypeDescriptor *member = [XZObjcTypeDescriptor descriptorForObjcType:(objcType + i)];
+                XZObjcTypeDescriptor *member = [XZObjcTypeDescriptor descriptorForType:(objcType + i)];
                 if (member == nil) {
                     return nil;
                 }
@@ -679,7 +679,7 @@ typedef struct XZObjcTypeLayout {
     return _typeLayouts;
 }
 
-+ (void)setSize:(size_t)size alignment:(size_t)alignment forObjcType:(const char * const)objcType {
++ (void)registerSize:(size_t)size alignment:(size_t)alignment forType:(const char * const)objcType {
     if (objcType == NULL) {
         return;
     }

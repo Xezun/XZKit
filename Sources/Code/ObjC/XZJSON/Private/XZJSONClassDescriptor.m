@@ -18,14 +18,14 @@ static id XZJSONKeyFromString(NSString *aString);
 
 @implementation XZJSONClassDescriptor
 
-- (instancetype)initWithClass:(nonnull Class)rawClass {
+- (instancetype)initWithClass:(nonnull Class)aClass {
     self = [super init];
     if (self) {
-        _raw = [XZObjcClassDescriptor descriptorForClass:rawClass];
-        _foundationClassType = XZJSONFoundationClassTypeFromClass(rawClass);
+        _raw = [XZObjcClassDescriptor descriptorForClass:aClass];
+        _foundationClass = XZJSONFoundationClassFromClass(aClass);
         
         // 原生对象，不需要获取属性
-        if (_foundationClassType) {
+        if (_foundationClass != XZJSONFoundationClassUnknown) {
             _numberOfProperties = 0;
             _sortedProperties = @[];
             _namedProperties = @{};
@@ -39,11 +39,11 @@ static id XZJSONKeyFromString(NSString *aString);
             _usesPropertyJSONDecodingMethod = NO;
             _usesPropertyJSONEncodingMethod = NO;
         } else {
-            XZObjcClassDescriptor *descriptor = _raw;
+            XZObjcClassDescriptor *rawClass = self->_raw;
             
-            while (descriptor.super) {
-                [NSNotificationCenter.defaultCenter addObserver:self selector:@selector(classNeedsUpdateNotification:) name:XZObjcClassDidUpdateNotification object:descriptor];
-                descriptor = descriptor.super;
+            while (rawClass.superDescriptor) {
+                [NSNotificationCenter.defaultCenter addObserver:self selector:@selector(classNeedsUpdateNotification:) name:XZObjcClassDidUpdateNotification object:rawClass];
+                rawClass = rawClass.superDescriptor;
             }
             
             [self update];
@@ -53,7 +53,7 @@ static id XZJSONKeyFromString(NSString *aString);
 }
 
 - (void)classNeedsUpdateNotification:(nullable NSNotification *)notification {
-    if (notification && notification.userInfo[XZObjcClassUpdateUserInfoKey] != XZObjcClassUpdateProperties) {
+    if (notification && notification.userInfo[XZObjcClassUpdatesUserInfoKey] != XZObjcClassUpdateProperties) {
         return;
     }
     
@@ -157,25 +157,25 @@ static id XZJSONKeyFromString(NSString *aString);
                     case XZObjcTypeUnion:
                         return;
                     case XZObjcTypeStruct:
-                        if (descriptor->_foundationStructType) {
+                        if (descriptor->_foundationStruct) {
                             break;
                         }
                         return;
                     case XZObjcTypeClass:
                         break;
                     case XZObjcTypeObject:
-                        if (descriptor->_foundationClassType) {
+                        if (descriptor->_foundationClass) {
                             break;
                         }
                         // 弱引用
-                        if (descriptor->_isUnownedReferenceProperty) {
+                        if (descriptor->_isUnownedReference) {
                             return;
                         }
                         break;
                 }
                 allProperties[name] = descriptor;
             }];
-        } while ((class = class.super));
+        } while ((class = class.superDescriptor));
     }
     
     _numberOfProperties = allProperties.count;

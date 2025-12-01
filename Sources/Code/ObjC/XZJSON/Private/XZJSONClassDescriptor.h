@@ -20,12 +20,14 @@ NS_ASSUME_NONNULL_BEGIN
     XZObjcClassDescriptor *_raw;
     
     /// 如果是，原生对象的类型。 Model class type.
-    XZJSONFoundationClassType _foundationClassType;
+    XZJSONFoundationClass _foundationClass;
     
     /// 所有可模型化或序列化的属性的数量。
     NSUInteger _numberOfProperties;
+    
     /// 按名称排序的，所有可模型化、序列化的属性的集合，包括从超类继承的。
     NSArray<XZJSONPropertyDescriptor *> *_sortedProperties;
+    
     /// 以属性名为键的，所有可模型化、序列化属性组成的字典，包括从超类继承的。
     NSDictionary<NSString *, XZJSONPropertyDescriptor *> *_namedProperties;
     
