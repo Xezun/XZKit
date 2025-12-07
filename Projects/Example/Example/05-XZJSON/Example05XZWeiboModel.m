@@ -39,7 +39,7 @@ static NSDateFormatter *dateFormatter(void) {
 }
 
 - (BOOL)isEqual:(id)object {
-    return [XZJSON model:self isEqual:object excludes:nil];
+    return [XZJSON model:self isEqual:object];
 }
 
 - (id)copyWithZone:(NSZone *)zone {
@@ -75,7 +75,7 @@ static NSDateFormatter *dateFormatter(void) {
 }
 
 - (BOOL)isEqual:(id)object {
-    return [XZJSON model:self isEqual:object excludes:nil];
+    return [XZJSON model:self isEqual:object];
 }
 
 - (id)copyWithZone:(NSZone *)zone {
@@ -113,7 +113,7 @@ static NSDateFormatter *dateFormatter(void) {
 }
 
 - (BOOL)isEqual:(id)object {
-    return [XZJSON model:self isEqual:object excludes:nil];
+    return [XZJSON model:self isEqual:object];
 }
 
 - (id)copyWithZone:(NSZone *)zone {
@@ -184,7 +184,7 @@ static NSDateFormatter *dateFormatter(void) {
 }
 
 - (BOOL)isEqual:(id)object {
-    return [XZJSON model:self isEqual:object excludes:nil];
+    return [XZJSON model:self isEqual:object];
 }
 
 - (id)copyWithZone:(NSZone *)zone {
@@ -253,7 +253,7 @@ static NSDateFormatter *dateFormatter(void) {
 }
 
 - (BOOL)isEqual:(id)object {
-    return [XZJSON model:self isEqual:object excludes:nil];
+    return [XZJSON model:self isEqual:object];
 }
 
 - (id)copyWithZone:(NSZone *)zone {

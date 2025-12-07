@@ -15,20 +15,8 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-/// 当 XZObjcClassDescriptor 发生更新时，会发送此通知。
-FOUNDATION_EXPORT NSNotificationName const XZObjcClassDidUpdateNotification;
-/// 在 XZObjcClassDescriptor 的通知中，获取变更枚举 XZObjcClassUpdate 的键。
-FOUNDATION_EXPORT NSString * const XZObjcClassUpdatesUserInfoKey;
-
-/// 变更类型。
-typedef NSString *XZObjcClassUpdates NS_STRING_ENUM;
-
-/// XZObjcClassDescriptor 实例变量更新。
-FOUNDATION_EXPORT XZObjcClassUpdates const XZObjcClassUpdateIvars;
-/// XZObjcClassDescriptor 方法更新。
-FOUNDATION_EXPORT XZObjcClassUpdates const XZObjcClassUpdateMethods;
-/// XZObjcClassDescriptor 属性更新。
-FOUNDATION_EXPORT XZObjcClassUpdates const XZObjcClassUpdateProperties;
+/// 当 Class 发生更新时，会发送此通知。
+FOUNDATION_EXPORT NSNotificationName const XZObjcClassDidChangeNotification;
 
 /// 描述类的对象。
 ///
@@ -39,7 +27,7 @@ FOUNDATION_EXPORT XZObjcClassUpdates const XZObjcClassUpdateProperties;
 @property (nonatomic, readonly) Class raw;
  
 /// 描述当前类的超类的对象。
-@property (nonatomic, readonly, nullable) XZObjcClassDescriptor *superDescriptor;
+@property (readonly, nullable) XZObjcClassDescriptor *superDescriptor;
 
 /// 类名。class name
 @property (nonatomic, readonly) NSString *name;
@@ -50,26 +38,28 @@ FOUNDATION_EXPORT XZObjcClassUpdates const XZObjcClassUpdateProperties;
 /// 类实例变量。ivars
 @property (copy, readonly) NSDictionary<NSString *, XZObjcIvarDescriptor *> *ivars;
 
-/// 在运行时更新了类的实例变量后，应调用此方法标记更新。
-- (void)setNeedsUpdateIvars;
-
 /// 类方法。 methods
 @property (copy, readonly) NSDictionary<NSString *, XZObjcMethodDescriptor *> *methods;
-
-/// 在运行时更新了类的实例方法后，应调用此方法标记更新。
-- (void)setNeedsUpdateMethods;
 
 /// 类属性。 properties
 @property (copy, readonly) NSDictionary<NSString *, XZObjcPropertyDescriptor *> *properties;
 
-/// 在运行时更新了类的实例属性后，应调用此方法标记更新。
-- (void)setNeedsUpdateProperties;
+- (void)invalidate;
+
+@property (atomic, readonly) BOOL isValid;
 
 - (instancetype)init NS_UNAVAILABLE;
 
-/// 获取类 aClass 的描述信息。单例。
+/// 获取类 aClass 的描述信息。
+///
+/// 由于运行时类的信息可能会被修改，因此 XZObjcClassDescriptor 可能会失效，因此
+///
+/// > 返回值并非单例，已过期的 XZObjcClassDescriptor 会被释放，因此调用者需持有该对象。
+///
 /// - Parameter rawClass: 类
 + (nullable XZObjcClassDescriptor *)descriptorForClass:(nullable Class)rawClass NS_SWIFT_NAME(init(_:));
+
++ (void)invalidateForClass:(Class)rawClass;
 
 @end
 

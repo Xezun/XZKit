@@ -64,7 +64,7 @@ NS_ASSUME_NONNULL_BEGIN
 /// - 数据不是字典，但是属性是自定义模型，自动包装为 `@{ @"rawValue": data }` 形式的字典。
 @interface XZJSON : NSObject
 
-/// “字符串-日期”转换的默认格式化工具，默认 `yyyy-MM-dd HH:mm:ss` 格式。
+/// 默认的格式化日期转换工具，默认使用 `yyyy-MM-dd HH:mm:ss` 格式。
 ///
 /// 建议在业务中，使用统一的日期格式，这样在程序初始化时，模型转换开始前，通过此属性设置默认日期格式，即可避免在每个模型中重复处理。
 ///
@@ -97,7 +97,7 @@ enum {
 /// - 上述两种形式 JSON 数据组成的数组。
 /// - 上述三种类型数据组成的数组。
 ///
-/// 如果序列化多个 JSON 数据，则可使用 XZJSONReadingKeepCapacity 标记，保持输入输出的数组元素数量一致。
+/// 如果序列化多个 JSON 数据，则可使用 XZJSONReadingKeepCapacity 标记，将可能会插入 `(id)kCFNull` 对象，以保持输入输出的数组元素数量一致。
 ///
 /// - Parameters:
 ///   - json: JSON 数据
