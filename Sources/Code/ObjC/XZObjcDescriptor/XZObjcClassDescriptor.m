@@ -10,10 +10,10 @@
 #import "XZObjcPropertyDescriptor.h"
 #import "XZObjcMethodDescriptor.h"
 
-NSNotificationName const XZObjcClassDidChangeNotification = @"XZObjcClassDidChangeNotification";
+NSNotificationName const XZObjcClassDidDidBecomeInvalidNotification = @"XZObjcClassDidDidBecomeInvalidNotification";
 
 /// 在 block 中，可以安全的访问存储。
-static id withStorage(id (^block)(CFMutableDictionaryRef const storage)) {
+static id XZObjcStorage(id (^block)(CFMutableDictionaryRef const storage)) {
     static CFMutableDictionaryRef _storage = nil;
     static dispatch_semaphore_t _lock;
     
@@ -163,7 +163,37 @@ static id withStorage(id (^block)(CFMutableDictionaryRef const storage)) {
 }
 
 - (void)invalidate {
-    [XZObjcClassDescriptor invalidateDescriptor:self];
+    // 基类不会失效
+    if (self.superDescriptor == nil) {
+        return;
+    }
+    
+    // 已经实效了
+    if (!self.isValid) {
+        return;
+    }
+    
+    //
+    XZObjcClassDescriptor * const descriptor = XZObjcStorage(^id(const CFMutableDictionaryRef storage) {
+        // 再次检测是否已经失效
+        if (!self.isValid) {
+            return nil;
+        }
+        
+        // 标记已失效
+        self.isValid = NO;
+
+        // 从存储中移除
+        Class const rawClass = self.raw;
+        CFDictionaryRemoveValue(storage, (__bridge const void *)rawClass);
+        
+        return self;
+    });
+    
+    // 发送通知
+    if (descriptor) {
+        [NSNotificationCenter.defaultCenter postNotificationName:XZObjcClassDidDidBecomeInvalidNotification object:descriptor];
+    }
 }
 
 + (instancetype)descriptorForClass:(Class)rawClass {
@@ -171,7 +201,7 @@ static id withStorage(id (^block)(CFMutableDictionaryRef const storage)) {
         return nil;
     }
     
-    XZObjcClassDescriptor * const descriptor = withStorage(^id(CFMutableDictionaryRef const storage) {
+    XZObjcClassDescriptor * const descriptor = XZObjcStorage(^id(CFMutableDictionaryRef const storage) {
         CFTypeRef const value = CFDictionaryGetValue(storage, (__bridge const void *)rawClass);
         return value ? (__bridge_transfer id)CFRetain(value) : nil;
     });
@@ -180,7 +210,7 @@ static id withStorage(id (^block)(CFMutableDictionaryRef const storage)) {
     }
     
     XZObjcClassDescriptor * const newDescriptor = [[XZObjcClassDescriptor alloc] initWithClass:rawClass];
-    return withStorage(^id(CFMutableDictionaryRef const storage) {
+    return XZObjcStorage(^id(CFMutableDictionaryRef const storage) {
         CFTypeRef const oldDescriptor = CFDictionaryGetValue(storage, (__bridge const void *)rawClass);
         if (oldDescriptor) {
             return (__bridge_transfer id)CFRetain(oldDescriptor);
@@ -190,46 +220,30 @@ static id withStorage(id (^block)(CFMutableDictionaryRef const storage)) {
     });
 }
 
-+ (void)invalidateDescriptor:(XZObjcClassDescriptor *)descriptor {
-    if (descriptor.superDescriptor == nil) {
-        return;
-    }
-    if (!descriptor.isValid) {
++ (void)invalidate:(Class)rawClass {
+    if (!object_isClass(rawClass)) {
         return;
     }
     
-    descriptor = withStorage(^id(const CFMutableDictionaryRef storage) {
+    XZObjcClassDescriptor *descriptor = XZObjcStorage(^id(const CFMutableDictionaryRef storage) {
+        CFTypeRef const value = CFDictionaryGetValue(storage, (__bridge const void *)rawClass);
+        if (value == NULL) {
+            return nil;
+        }
+        
+        XZObjcClassDescriptor * const descriptor = (__bridge_transfer id)CFRetain(value);
         if (!descriptor.isValid) {
             return nil;
         }
+        
         descriptor.isValid = NO;
-
-        Class const rawClass = descriptor.raw;
         CFDictionaryRemoveValue(storage, (__bridge const void *)rawClass);
         
         return descriptor;
     });
     
     if (descriptor) {
-        [NSNotificationCenter.defaultCenter postNotificationName:XZObjcClassDidChangeNotification object:descriptor];
-    }
-}
-
-+ (void)invalidateForClass:(Class)rawClass {
-    if (!object_isClass(rawClass)) {
-        return;
-    }
-    
-    XZObjcClassDescriptor *descriptor = withStorage(^id(const CFMutableDictionaryRef storage) {
-        CFTypeRef const value = CFDictionaryGetValue(storage, (__bridge const void *)rawClass);
-        if (value == NULL) {
-            return nil;
-        }
-        return (__bridge_transfer id)CFRetain(value);
-    });
-    
-    if (descriptor) {
-        [self invalidateDescriptor:descriptor];
+        [NSNotificationCenter.defaultCenter postNotificationName:XZObjcClassDidDidBecomeInvalidNotification object:descriptor];
     }
 }
 

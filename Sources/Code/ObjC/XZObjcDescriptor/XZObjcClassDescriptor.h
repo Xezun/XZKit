@@ -16,7 +16,7 @@
 NS_ASSUME_NONNULL_BEGIN
 
 /// 当 Class 发生更新时，会发送此通知。
-FOUNDATION_EXPORT NSNotificationName const XZObjcClassDidChangeNotification;
+FOUNDATION_EXPORT NSNotificationName const XZObjcClassDidDidBecomeInvalidNotification;
 
 /// 描述类的对象。
 ///
@@ -36,13 +36,13 @@ FOUNDATION_EXPORT NSNotificationName const XZObjcClassDidChangeNotification;
 @property (nonatomic, readonly) XZObjcTypeDescriptor *type;
 
 /// 类实例变量。ivars
-@property (copy, readonly) NSDictionary<NSString *, XZObjcIvarDescriptor *> *ivars;
+@property (nonatomic, copy, readonly) NSDictionary<NSString *, XZObjcIvarDescriptor *> *ivars;
 
 /// 类方法。 methods
-@property (copy, readonly) NSDictionary<NSString *, XZObjcMethodDescriptor *> *methods;
+@property (nonatomic, copy, readonly) NSDictionary<NSString *, XZObjcMethodDescriptor *> *methods;
 
 /// 类属性。 properties
-@property (copy, readonly) NSDictionary<NSString *, XZObjcPropertyDescriptor *> *properties;
+@property (nonatomic, copy, readonly) NSDictionary<NSString *, XZObjcPropertyDescriptor *> *properties;
 
 - (void)invalidate;
 
@@ -59,7 +59,7 @@ FOUNDATION_EXPORT NSNotificationName const XZObjcClassDidChangeNotification;
 /// - Parameter rawClass: 类
 + (nullable XZObjcClassDescriptor *)descriptorForClass:(nullable Class)rawClass NS_SWIFT_NAME(init(_:));
 
-+ (void)invalidateForClass:(Class)rawClass;
++ (void)invalidate:(Class)rawClass;
 
 @end
 

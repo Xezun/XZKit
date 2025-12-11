@@ -11,7 +11,22 @@
 /// 类型描述词的存储对象类型。
 typedef NSMutableDictionary<NSString *, NSMutableDictionary<NSNumber *, XZObjcTypeDescriptor *> *> *XZObjcTypeStorage;
 /// 访问类型描述词存储的函数。
-static id _Nullable withStorage(id (^ NS_NOESCAPE block)(XZObjcTypeStorage const _Nonnull storage));
+static id _Nullable XZObjcStorage(id (^NS_NOESCAPE block)(XZObjcTypeStorage const storage)) {
+    static dispatch_semaphore_t _lock;
+    static XZObjcTypeStorage _storage = nil;
+    
+    static dispatch_once_t onceToken;
+    dispatch_once(&onceToken, ^{
+        _lock = dispatch_semaphore_create(1);
+        _storage = [NSMutableDictionary dictionary];
+    });
+    
+    dispatch_semaphore_wait(_lock, DISPATCH_TIME_FOREVER);
+    id value = block(_storage);
+    dispatch_semaphore_signal(_lock);
+    
+    return value;
+}
 
 @interface XZObjcTypeDescriptor ()
 @property (class, readonly) NSMutableDictionary<NSString *, NSValue *> *typeLayouts;
@@ -120,7 +135,7 @@ static id _Nullable withStorage(id (^ NS_NOESCAPE block)(XZObjcTypeStorage const
     { // 查询是否已创建。
         NSString *encoding = [NSString stringWithCString:objcType encoding:NSASCIIStringEncoding];
         
-        XZObjcTypeDescriptor * const descriptor = withStorage(^id(XZObjcTypeStorage const storage) {
+        XZObjcTypeDescriptor * const descriptor = XZObjcStorage(^id(XZObjcTypeStorage const storage) {
             return storage[encoding][key];
         });
         
@@ -604,7 +619,7 @@ static id _Nullable withStorage(id (^ NS_NOESCAPE block)(XZObjcTypeStorage const
         }
     }
     
-    return withStorage(^id(XZObjcTypeStorage const storage) {
+    return XZObjcStorage(^id(XZObjcTypeStorage const storage) {
         XZObjcTypeDescriptor *descriptor = storage[_raw][key];
         if (descriptor) {
             return descriptor;
@@ -706,17 +721,4 @@ typedef struct XZObjcTypeLayout {
 @end
 
 
-static id withStorage(id (^NS_NOESCAPE block)(XZObjcTypeStorage const storage)) {
-    static dispatch_semaphore_t _lock;
-    static XZObjcTypeStorage _storage = nil;
-    
-    static dispatch_once_t onceToken;
-    dispatch_once(&onceToken, ^{
-        _lock = dispatch_semaphore_create(1);
-        _storage = [NSMutableDictionary dictionary];
-    });
-    dispatch_semaphore_wait(_lock, DISPATCH_TIME_FOREVER);
-    id value = block(_storage);
-    dispatch_semaphore_signal(_lock);
-    return value;
-}
+
