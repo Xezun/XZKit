@@ -25,223 +25,223 @@
 - (void)testExample {
     { // 测试空值
         const char * const objcType = NULL;
-        XZObjcTypeDescriptor *descriptor = [XZObjcTypeDescriptor descriptorForType:objcType];
+        XZOBJCType *descriptor = [XZOBJCType typeWithEncoding:objcType];
         XCTAssert(descriptor == nil);
-        descriptor = [XZObjcTypeDescriptor descriptorForType:""];
+        descriptor = [XZOBJCType typeWithEncoding:""];
         XCTAssert(descriptor == nil);
     } { // 带修饰符的编码
         const char * const objcType = "ri";
-        XZObjcTypeDescriptor *descriptor = [XZObjcTypeDescriptor descriptorForType:objcType];
-        XCTAssert(descriptor.type == XZObjcTypeInt);
-        XCTAssert(descriptor.modifiers == XZObjcModifierConst);
+        XZOBJCType *descriptor = [XZOBJCType typeWithEncoding:objcType];
+        XCTAssert(descriptor.raw == XZISOCTypeInt);
+        XCTAssert(descriptor.modifiers == XZISOCModifierConst);
     } {
         const char * const objcType = "rnNoORVi";
-        XZObjcTypeDescriptor *descriptor = [XZObjcTypeDescriptor descriptorForType:objcType];
-        XCTAssert(descriptor.type == XZObjcTypeInt);
-        XCTAssert(descriptor.modifiers & XZObjcModifierConst);
-        XCTAssert(descriptor.modifiers & XZObjcModifierIn);
-        XCTAssert(descriptor.modifiers & XZObjcModifierInout);
-        XCTAssert(descriptor.modifiers & XZObjcModifierByCopy);
-        XCTAssert(descriptor.modifiers & XZObjcModifierByRef);
-        XCTAssert(descriptor.modifiers & XZObjcModifierOneway);
+        XZOBJCType *descriptor = [XZOBJCType typeWithEncoding:objcType];
+        XCTAssert(descriptor.raw == XZISOCTypeInt);
+        XCTAssert(descriptor.modifiers & XZISOCModifierConst);
+        XCTAssert(descriptor.modifiers & XZISOCModifierIn);
+        XCTAssert(descriptor.modifiers & XZISOCModifierInout);
+        XCTAssert(descriptor.modifiers & XZISOCModifierByCopy);
+        XCTAssert(descriptor.modifiers & XZISOCModifierByRef);
+        XCTAssert(descriptor.modifiers & XZISOCModifierOneway);
     } {
-        XZObjcTypeDescriptor *descriptor1 = [XZObjcTypeDescriptor descriptorForType:@encode(int)];
-        XZObjcTypeDescriptor *descriptor2 = [XZObjcTypeDescriptor descriptorForType:@encode(int)];
-        XZObjcTypeDescriptor *descriptor3 = [XZObjcTypeDescriptor descriptorForType:"ri"];
+        XZOBJCType *descriptor1 = [XZOBJCType typeWithEncoding:@encode(int)];
+        XZOBJCType *descriptor2 = [XZOBJCType typeWithEncoding:@encode(int)];
+        XZOBJCType *descriptor3 = [XZOBJCType typeWithEncoding:"ri"];
         XCTAssert(descriptor1 == descriptor2);
         XCTAssert(descriptor1 != descriptor3);
     } { // 未知类型
         typedef void (Foobar)(void);
         const char * const objcType = @encode(Foobar);
-        XZObjcTypeDescriptor *descriptor = [XZObjcTypeDescriptor descriptorForType:objcType];
-        XCTAssert(descriptor.type == XZObjcTypeUnknown);
-        XCTAssert(strcmp(objcType, [descriptor.raw cStringUsingEncoding:NSASCIIStringEncoding]) == 0);
+        XZOBJCType *descriptor = [XZOBJCType typeWithEncoding:objcType];
+        XCTAssert(descriptor.raw == XZISOCTypeUnknown);
+        XCTAssert(strcmp(objcType, [descriptor.encoding cStringUsingEncoding:NSASCIIStringEncoding]) == 0);
         XCTAssert(descriptor.size == sizeof(Foobar));
         XCTAssert(descriptor.sizeInBit == (sizeof(Foobar) * 8));
         XCTAssert(descriptor.alignment == _Alignof(Foobar));
     } { // char
         const char * const objcType = @encode(char);
-        XZObjcTypeDescriptor *descriptor = [XZObjcTypeDescriptor descriptorForType:objcType];
-        XCTAssert(descriptor.type == XZObjcTypeChar);
-        XCTAssert(strcmp(objcType, [descriptor.raw cStringUsingEncoding:NSASCIIStringEncoding]) == 0);
+        XZOBJCType *descriptor = [XZOBJCType typeWithEncoding:objcType];
+        XCTAssert(descriptor.raw == XZISOCTypeChar);
+        XCTAssert(strcmp(objcType, [descriptor.encoding cStringUsingEncoding:NSASCIIStringEncoding]) == 0);
         XCTAssert(descriptor.size == sizeof(char));
         XCTAssert(descriptor.sizeInBit == (sizeof(char) * 8));
         XCTAssert(descriptor.alignment == _Alignof(char));
     } { // unsigned char
         const char * const objcType = @encode(unsigned char);
-        XZObjcTypeDescriptor *descriptor = [XZObjcTypeDescriptor descriptorForType:objcType];
-        XCTAssert(descriptor.type == XZObjcTypeUnsignedChar);
-        XCTAssert(strcmp(objcType, [descriptor.raw cStringUsingEncoding:NSASCIIStringEncoding]) == 0);
+        XZOBJCType *descriptor = [XZOBJCType typeWithEncoding:objcType];
+        XCTAssert(descriptor.raw == XZISOCTypeUnsignedChar);
+        XCTAssert(strcmp(objcType, [descriptor.encoding cStringUsingEncoding:NSASCIIStringEncoding]) == 0);
         XCTAssert(descriptor.size == sizeof(unsigned char));
         XCTAssert(descriptor.sizeInBit == (sizeof(unsigned char) * 8));
         XCTAssert(descriptor.alignment == _Alignof(unsigned char));
     } { // int
         const char * const objcType = @encode(int);
-        XZObjcTypeDescriptor *descriptor = [XZObjcTypeDescriptor descriptorForType:objcType];
-        XCTAssert(descriptor.type == XZObjcTypeInt);
-        XCTAssert(strcmp(objcType, [descriptor.raw cStringUsingEncoding:NSASCIIStringEncoding]) == 0);
+        XZOBJCType *descriptor = [XZOBJCType typeWithEncoding:objcType];
+        XCTAssert(descriptor.raw == XZISOCTypeInt);
+        XCTAssert(strcmp(objcType, [descriptor.encoding cStringUsingEncoding:NSASCIIStringEncoding]) == 0);
         XCTAssert(descriptor.size == sizeof(int));
         XCTAssert(descriptor.sizeInBit == (sizeof(int) * 8));
         XCTAssert(descriptor.alignment == _Alignof(int));
     } { // unsigned int
         const char * const objcType = @encode(unsigned int);
-        XZObjcTypeDescriptor *descriptor = [XZObjcTypeDescriptor descriptorForType:objcType];
-        XCTAssert(descriptor.type == XZObjcTypeUnsignedInt);
-        XCTAssert(strcmp(objcType, [descriptor.raw cStringUsingEncoding:NSASCIIStringEncoding]) == 0);
+        XZOBJCType *descriptor = [XZOBJCType typeWithEncoding:objcType];
+        XCTAssert(descriptor.raw == XZISOCTypeUnsignedInt);
+        XCTAssert(strcmp(objcType, [descriptor.encoding cStringUsingEncoding:NSASCIIStringEncoding]) == 0);
         XCTAssert(descriptor.size == sizeof(unsigned int));
         XCTAssert(descriptor.sizeInBit == (sizeof(unsigned int) * 8));
         XCTAssert(descriptor.alignment == _Alignof(unsigned int));
     } {
         const char * const objcType = @encode(short);
-        XZObjcTypeDescriptor *descriptor = [XZObjcTypeDescriptor descriptorForType:objcType];
-        XCTAssert(descriptor.type == XZObjcTypeShort);
-        XCTAssert(strcmp(objcType, [descriptor.raw cStringUsingEncoding:NSASCIIStringEncoding]) == 0);
+        XZOBJCType *descriptor = [XZOBJCType typeWithEncoding:objcType];
+        XCTAssert(descriptor.raw == XZISOCTypeShort);
+        XCTAssert(strcmp(objcType, [descriptor.encoding cStringUsingEncoding:NSASCIIStringEncoding]) == 0);
         XCTAssert(descriptor.size == sizeof(short));
         XCTAssert(descriptor.sizeInBit == (sizeof(short) * 8));
         XCTAssert(descriptor.alignment == _Alignof(short));
     } {
         const char * const objcType = @encode(unsigned short);
-        XZObjcTypeDescriptor *descriptor = [XZObjcTypeDescriptor descriptorForType:objcType];
-        XCTAssert(descriptor.type == XZObjcTypeUnsignedShort);
-        XCTAssert(strcmp(objcType, [descriptor.raw cStringUsingEncoding:NSASCIIStringEncoding]) == 0);
+        XZOBJCType *descriptor = [XZOBJCType typeWithEncoding:objcType];
+        XCTAssert(descriptor.raw == XZISOCTypeUnsignedShort);
+        XCTAssert(strcmp(objcType, [descriptor.encoding cStringUsingEncoding:NSASCIIStringEncoding]) == 0);
         XCTAssert(descriptor.size == sizeof(unsigned short));
         XCTAssert(descriptor.sizeInBit == (sizeof(unsigned short) * 8));
         XCTAssert(descriptor.alignment == _Alignof(unsigned short));
     } {
         const char * const objcType = @encode(long long);
-        XZObjcTypeDescriptor *descriptor = [XZObjcTypeDescriptor descriptorForType:objcType];
-        XCTAssert(descriptor.type == XZObjcTypeLongLong);
-        XCTAssert(strcmp(objcType, [descriptor.raw cStringUsingEncoding:NSASCIIStringEncoding]) == 0);
+        XZOBJCType *descriptor = [XZOBJCType typeWithEncoding:objcType];
+        XCTAssert(descriptor.raw == XZISOCTypeLongLong);
+        XCTAssert(strcmp(objcType, [descriptor.encoding cStringUsingEncoding:NSASCIIStringEncoding]) == 0);
         XCTAssert(descriptor.size == sizeof(long long));
         XCTAssert(descriptor.sizeInBit == (sizeof(long long) * 8));
         XCTAssert(descriptor.alignment == _Alignof(long long));
     } {
         const char * const objcType = @encode(unsigned long long);
-        XZObjcTypeDescriptor *descriptor = [XZObjcTypeDescriptor descriptorForType:objcType];
-        XCTAssert(descriptor.type == XZObjcTypeUnsignedLongLong);
-        XCTAssert(strcmp(objcType, [descriptor.raw cStringUsingEncoding:NSASCIIStringEncoding]) == 0);
+        XZOBJCType *descriptor = [XZOBJCType typeWithEncoding:objcType];
+        XCTAssert(descriptor.raw == XZISOCTypeUnsignedLongLong);
+        XCTAssert(strcmp(objcType, [descriptor.encoding cStringUsingEncoding:NSASCIIStringEncoding]) == 0);
         XCTAssert(descriptor.size == sizeof(unsigned long long));
         XCTAssert(descriptor.sizeInBit == (sizeof(unsigned long long) * 8));
         XCTAssert(descriptor.alignment == _Alignof(unsigned long long));
     } {
         const char * const objcType = @encode(long);
-        XZObjcTypeDescriptor *descriptor = [XZObjcTypeDescriptor descriptorForType:objcType];
-        XCTAssert(descriptor.type == (XZ_LONG_IS_LLONG ? XZObjcTypeLongLong : XZObjcTypeLong));
-        XCTAssert(strcmp(objcType, [descriptor.raw cStringUsingEncoding:NSASCIIStringEncoding]) == 0);
+        XZOBJCType *descriptor = [XZOBJCType typeWithEncoding:objcType];
+        XCTAssert(descriptor.raw == (XZ_LONG_IS_LLONG ? XZISOCTypeLongLong : XZISOCTypeLong));
+        XCTAssert(strcmp(objcType, [descriptor.encoding cStringUsingEncoding:NSASCIIStringEncoding]) == 0);
         XCTAssert(descriptor.size == sizeof(long));
         XCTAssert(descriptor.sizeInBit == (sizeof(long) * 8));
         XCTAssert(descriptor.alignment == _Alignof(long));
     } {
         const char * const objcType = @encode(unsigned long);
-        XZObjcTypeDescriptor *descriptor = [XZObjcTypeDescriptor descriptorForType:objcType];
-        XCTAssert(descriptor.type == (XZ_LONG_IS_LLONG ? XZObjcTypeUnsignedLongLong : XZObjcTypeUnsignedLong));
-        XCTAssert(strcmp(objcType, [descriptor.raw cStringUsingEncoding:NSASCIIStringEncoding]) == 0);
+        XZOBJCType *descriptor = [XZOBJCType typeWithEncoding:objcType];
+        XCTAssert(descriptor.raw == (XZ_LONG_IS_LLONG ? XZISOCTypeUnsignedLongLong : XZISOCTypeUnsignedLong));
+        XCTAssert(strcmp(objcType, [descriptor.encoding cStringUsingEncoding:NSASCIIStringEncoding]) == 0);
         XCTAssert(descriptor.size == sizeof(unsigned long));
         XCTAssert(descriptor.sizeInBit == (sizeof(unsigned long) * 8));
         XCTAssert(descriptor.alignment == _Alignof(unsigned long));
     } {
         const char * const objcType = @encode(float);
-        XZObjcTypeDescriptor *descriptor = [XZObjcTypeDescriptor descriptorForType:objcType];
-        XCTAssert(descriptor.type == XZObjcTypeFloat);
-        XCTAssert(strcmp(objcType, [descriptor.raw cStringUsingEncoding:NSASCIIStringEncoding]) == 0);
+        XZOBJCType *descriptor = [XZOBJCType typeWithEncoding:objcType];
+        XCTAssert(descriptor.raw == XZISOCTypeFloat);
+        XCTAssert(strcmp(objcType, [descriptor.encoding cStringUsingEncoding:NSASCIIStringEncoding]) == 0);
         XCTAssert(descriptor.size == sizeof(float));
         XCTAssert(descriptor.sizeInBit == (sizeof(float) * 8));
         XCTAssert(descriptor.alignment == _Alignof(float));
     } {
         const char * const objcType = @encode(double);
-        XZObjcTypeDescriptor *descriptor = [XZObjcTypeDescriptor descriptorForType:objcType];
-        XCTAssert(descriptor.type == XZObjcTypeDouble);
-        XCTAssert(strcmp(objcType, [descriptor.raw cStringUsingEncoding:NSASCIIStringEncoding]) == 0);
+        XZOBJCType *descriptor = [XZOBJCType typeWithEncoding:objcType];
+        XCTAssert(descriptor.raw == XZISOCTypeDouble);
+        XCTAssert(strcmp(objcType, [descriptor.encoding cStringUsingEncoding:NSASCIIStringEncoding]) == 0);
         XCTAssert(descriptor.size == sizeof(double));
         XCTAssert(descriptor.sizeInBit == (sizeof(double) * 8));
         XCTAssert(descriptor.alignment == _Alignof(double));
     } {
         const char * const objcType = @encode(bool);
-        XZObjcTypeDescriptor *descriptor = [XZObjcTypeDescriptor descriptorForType:objcType];
-        XCTAssert(descriptor.type == XZObjcTypeBool);
-        XCTAssert(strcmp(objcType, [descriptor.raw cStringUsingEncoding:NSASCIIStringEncoding]) == 0);
+        XZOBJCType *descriptor = [XZOBJCType typeWithEncoding:objcType];
+        XCTAssert(descriptor.raw == XZISOCTypeBool);
+        XCTAssert(strcmp(objcType, [descriptor.encoding cStringUsingEncoding:NSASCIIStringEncoding]) == 0);
         XCTAssert(descriptor.size == sizeof(bool));
         XCTAssert(descriptor.sizeInBit == (sizeof(bool) * 8));
         XCTAssert(descriptor.alignment == _Alignof(bool));
     } {
         const char * const objcType = @encode(void);
-        XZObjcTypeDescriptor *descriptor = [XZObjcTypeDescriptor descriptorForType:objcType];
-        XCTAssert(descriptor.type == XZObjcTypeVoid);
-        XCTAssert(strcmp(objcType, [descriptor.raw cStringUsingEncoding:NSASCIIStringEncoding]) == 0);
+        XZOBJCType *descriptor = [XZOBJCType typeWithEncoding:objcType];
+        XCTAssert(descriptor.raw == XZISOCTypeVoid);
+        XCTAssert(strcmp(objcType, [descriptor.encoding cStringUsingEncoding:NSASCIIStringEncoding]) == 0);
         XCTAssert(descriptor.size == sizeof(void));
         XCTAssert(descriptor.sizeInBit == (sizeof(void) * 8));
         XCTAssert(descriptor.alignment == _Alignof(void));
     } { // c string
         const char * const objcType = @encode(char *);
-        XZObjcTypeDescriptor *descriptor = [XZObjcTypeDescriptor descriptorForType:objcType];
-        XCTAssert(descriptor.type == XZObjcTypeString);
-        XCTAssert(strcmp(objcType, [descriptor.raw cStringUsingEncoding:NSASCIIStringEncoding]) == 0);
+        XZOBJCType *descriptor = [XZOBJCType typeWithEncoding:objcType];
+        XCTAssert(descriptor.raw == XZISOCTypeString);
+        XCTAssert(strcmp(objcType, [descriptor.encoding cStringUsingEncoding:NSASCIIStringEncoding]) == 0);
         XCTAssert(descriptor.size == sizeof(char *));
         XCTAssert(descriptor.alignment == _Alignof(char *));
     } { // class
         const char * const objcType = @encode(Class);
-        XZObjcTypeDescriptor *descriptor = [XZObjcTypeDescriptor descriptorForType:objcType];
-        XCTAssert(descriptor.type == XZObjcTypeClass);
-        XCTAssert(strcmp(objcType, [descriptor.raw cStringUsingEncoding:NSASCIIStringEncoding]) == 0);
+        XZOBJCType *descriptor = [XZOBJCType typeWithEncoding:objcType];
+        XCTAssert(descriptor.raw == XZISOCTypeClass);
+        XCTAssert(strcmp(objcType, [descriptor.encoding cStringUsingEncoding:NSASCIIStringEncoding]) == 0);
         XCTAssert(descriptor.size == sizeof(Class));
         XCTAssert(descriptor.sizeInBit == (sizeof(Class) * 8));
         XCTAssert(descriptor.alignment == _Alignof(Class));
     } {
         const char * const objcType = @encode(SEL);
-        XZObjcTypeDescriptor *descriptor = [XZObjcTypeDescriptor descriptorForType:objcType];
-        XCTAssert(descriptor.type == XZObjcTypeSEL);
-        XCTAssert(strcmp(objcType, [descriptor.raw cStringUsingEncoding:NSASCIIStringEncoding]) == 0);
+        XZOBJCType *descriptor = [XZOBJCType typeWithEncoding:objcType];
+        XCTAssert(descriptor.raw == XZISOCTypeSEL);
+        XCTAssert(strcmp(objcType, [descriptor.encoding cStringUsingEncoding:NSASCIIStringEncoding]) == 0);
         XCTAssert(descriptor.size == sizeof(SEL));
         XCTAssert(descriptor.sizeInBit == (sizeof(SEL) * 8));
         XCTAssert(descriptor.alignment == _Alignof(SEL));
     } { // int pointer
         const char * const objcType = @encode(int *);
-        XZObjcTypeDescriptor *descriptor = [XZObjcTypeDescriptor descriptorForType:objcType];
-        XCTAssert(descriptor.type == XZObjcTypePointer);
-        XCTAssert(strcmp(objcType, [descriptor.raw cStringUsingEncoding:NSASCIIStringEncoding]) == 0);
+        XZOBJCType *descriptor = [XZOBJCType typeWithEncoding:objcType];
+        XCTAssert(descriptor.raw == XZISOCTypePointer);
+        XCTAssert(strcmp(objcType, [descriptor.encoding cStringUsingEncoding:NSASCIIStringEncoding]) == 0);
         XCTAssert(descriptor.size == sizeof(int *));
         XCTAssert(descriptor.alignment == _Alignof(int *));
     } { // CGRect point
         const char * const objcType = @encode(CGRect *);
-        XZObjcTypeDescriptor *descriptor = [XZObjcTypeDescriptor descriptorForType:objcType];
-        XCTAssert(descriptor.type == XZObjcTypePointer);
-        XCTAssert(strcmp(objcType, [descriptor.raw cStringUsingEncoding:NSASCIIStringEncoding]) == 0);
+        XZOBJCType *descriptor = [XZOBJCType typeWithEncoding:objcType];
+        XCTAssert(descriptor.raw == XZISOCTypePointer);
+        XCTAssert(strcmp(objcType, [descriptor.encoding cStringUsingEncoding:NSASCIIStringEncoding]) == 0);
         XCTAssert(descriptor.size == sizeof(CGRect *));
         XCTAssert(descriptor.alignment == _Alignof(CGRect *));
     } {
         // bit field could not be test
     } { // int c array
         const char * const objcType = @encode(int[10]);
-        XZObjcTypeDescriptor *descriptor = [XZObjcTypeDescriptor descriptorForType:objcType];
-        XCTAssert(descriptor.type == XZObjcTypeArray);
-        XCTAssert(strcmp(objcType, [descriptor.raw cStringUsingEncoding:NSASCIIStringEncoding]) == 0);
+        XZOBJCType *descriptor = [XZOBJCType typeWithEncoding:objcType];
+        XCTAssert(descriptor.raw == XZISOCTypeArray);
+        XCTAssert(strcmp(objcType, [descriptor.encoding cStringUsingEncoding:NSASCIIStringEncoding]) == 0);
         XCTAssert(descriptor.size == sizeof(int[10]));
         XCTAssert(descriptor.alignment == _Alignof(int[10]));
-        XCTAssert(descriptor.members.firstObject.type == XZObjcTypeInt);
+        XCTAssert(descriptor.members.firstObject.raw == XZISOCTypeInt);
     } { // CGRect c array
         const char * const objcType = @encode(CGRect[10]);
-        XZObjcTypeDescriptor *descriptor = [XZObjcTypeDescriptor descriptorForType:objcType];
-        XCTAssert(descriptor.type == XZObjcTypeArray);
-        XCTAssert(strcmp(objcType, [descriptor.raw cStringUsingEncoding:NSASCIIStringEncoding]) == 0);
+        XZOBJCType *descriptor = [XZOBJCType typeWithEncoding:objcType];
+        XCTAssert(descriptor.raw == XZISOCTypeArray);
+        XCTAssert(strcmp(objcType, [descriptor.encoding cStringUsingEncoding:NSASCIIStringEncoding]) == 0);
         XCTAssert(descriptor.size == sizeof(CGRect[10]));
         XCTAssert(descriptor.alignment == _Alignof(CGRect[10]));
-        XCTAssert(descriptor.members.firstObject.type == XZObjcTypeStruct);
+        XCTAssert(descriptor.members.firstObject.raw == XZISOCTypeStruct);
     } { // union
         union Foobar {
             int a: 1;
             char b: 2;
             BOOL c;
         };
-        XZObjcTypeRegister(union Foobar);
+        XZOBJCTypeRegister(union Foobar);
         const char * const objcType = @encode(union Foobar);
-        XZObjcTypeDescriptor *descriptor = [XZObjcTypeDescriptor descriptorForType:objcType];
+        XZOBJCType *descriptor = [XZOBJCType typeWithEncoding:objcType];
         NSLog(@"%@, %lu, %lu", descriptor, sizeof(union Foobar), _Alignof(union Foobar));
-        XCTAssert(descriptor.type == XZObjcTypeUnion);
-        XCTAssert(strcmp(objcType, [descriptor.raw cStringUsingEncoding:NSASCIIStringEncoding]) == 0);
+        XCTAssert(descriptor.raw == XZISOCTypeUnion);
+        XCTAssert(strcmp(objcType, [descriptor.encoding cStringUsingEncoding:NSASCIIStringEncoding]) == 0);
         XCTAssert(descriptor.size == sizeof(union Foobar));
         XCTAssert(descriptor.sizeInBit == (sizeof(union Foobar) * 8));
         XCTAssert(descriptor.alignment == _Alignof(union Foobar));
-        XCTAssert(descriptor.members[0].type == XZObjcTypeBitField);
+        XCTAssert(descriptor.members[0].raw == XZISOCTypeBitField);
     } {
         union Foobar {
             int a;
@@ -249,32 +249,32 @@
             BOOL c;
         };
         const char * const objcType = @encode(union Foobar);
-        XZObjcTypeDescriptor *descriptor = [XZObjcTypeDescriptor descriptorForType:objcType];
+        XZOBJCType *descriptor = [XZOBJCType typeWithEncoding:objcType];
         NSLog(@"%@, %lu, %lu", descriptor, sizeof(union Foobar), _Alignof(union Foobar));
-        XCTAssert(descriptor.type == XZObjcTypeUnion);
-        XCTAssert(strcmp(objcType, [descriptor.raw cStringUsingEncoding:NSASCIIStringEncoding]) == 0);
+        XCTAssert(descriptor.raw == XZISOCTypeUnion);
+        XCTAssert(strcmp(objcType, [descriptor.encoding cStringUsingEncoding:NSASCIIStringEncoding]) == 0);
         XCTAssert(descriptor.size == sizeof(union Foobar));
         XCTAssert(descriptor.sizeInBit == (sizeof(union Foobar) * 8));
         XCTAssert(descriptor.alignment == _Alignof(union Foobar));
-        XCTAssert(descriptor.members[0].type == XZObjcTypeInt);
-        XCTAssert(descriptor.members[1].type == XZObjcTypeFloat);
-        XCTAssert(descriptor.members[2].type == XZObjcTypeBool);
+        XCTAssert(descriptor.members[0].raw == XZISOCTypeInt);
+        XCTAssert(descriptor.members[1].raw == XZISOCTypeFloat);
+        XCTAssert(descriptor.members[2].raw == XZISOCTypeBool);
     } { // struct
         struct Foobar {
             int a: 1;
             int b: 2;
             BOOL c: 1;
         };
-        XZObjcTypeRegister(struct Foobar);
+        XZOBJCTypeRegister(struct Foobar);
         const char * const objcType = @encode(struct Foobar);
-        XZObjcTypeDescriptor *descriptor = [XZObjcTypeDescriptor descriptorForType:objcType];
+        XZOBJCType *descriptor = [XZOBJCType typeWithEncoding:objcType];
         NSLog(@"%@, %lu, %lu", descriptor, sizeof(struct Foobar), _Alignof(struct Foobar));
-        XCTAssert(descriptor.type == XZObjcTypeStruct);
-        XCTAssert(strcmp(objcType, [descriptor.raw cStringUsingEncoding:NSASCIIStringEncoding]) == 0);
+        XCTAssert(descriptor.raw == XZISOCTypeStruct);
+        XCTAssert(strcmp(objcType, [descriptor.encoding cStringUsingEncoding:NSASCIIStringEncoding]) == 0);
         XCTAssert(descriptor.size == sizeof(struct Foobar));
         XCTAssert(descriptor.sizeInBit == (sizeof(struct Foobar) * 8));
         XCTAssert(descriptor.alignment == _Alignof(struct Foobar));
-        XCTAssert(descriptor.members[0].type == XZObjcTypeBitField);
+        XCTAssert(descriptor.members[0].raw == XZISOCTypeBitField);
     } {
         struct Foobar {
             int a;
@@ -282,40 +282,40 @@
             BOOL c;
         };
         const char * const objcType = @encode(struct Foobar);
-        XZObjcTypeDescriptor *descriptor = [XZObjcTypeDescriptor descriptorForType:objcType];
+        XZOBJCType *descriptor = [XZOBJCType typeWithEncoding:objcType];
         NSLog(@"%@, %lu, %lu", descriptor, sizeof(struct Foobar), _Alignof(struct Foobar));
-        XCTAssert(descriptor.type == XZObjcTypeStruct);
-        XCTAssert(strcmp(objcType, [descriptor.raw cStringUsingEncoding:NSASCIIStringEncoding]) == 0);
+        XCTAssert(descriptor.raw == XZISOCTypeStruct);
+        XCTAssert(strcmp(objcType, [descriptor.encoding cStringUsingEncoding:NSASCIIStringEncoding]) == 0);
         XCTAssert(descriptor.size == sizeof(struct Foobar));
         XCTAssert(descriptor.sizeInBit == (sizeof(struct Foobar) * 8));
         XCTAssert(descriptor.alignment == _Alignof(struct Foobar));
-        XCTAssert(descriptor.members[0].type == XZObjcTypeInt);
-        XCTAssert(descriptor.members[1].type == XZObjcTypeFloat);
-        XCTAssert(descriptor.members[2].type == XZObjcTypeBool);
+        XCTAssert(descriptor.members[0].raw == XZISOCTypeInt);
+        XCTAssert(descriptor.members[1].raw == XZISOCTypeFloat);
+        XCTAssert(descriptor.members[2].raw == XZISOCTypeBool);
     } {
-        XZObjcTypeDescriptor *descriptor = [XZObjcTypeDescriptor descriptorForType:"@"];
-        XCTAssert(descriptor.type == XZObjcTypeObject && [descriptor.raw isEqualToString:@"@"]);
+        XZOBJCType *descriptor = [XZOBJCType typeWithEncoding:"@"];
+        XCTAssert(descriptor.raw == XZISOCTypeObject && [descriptor.encoding isEqualToString:@"@"]);
     } {
-        XZObjcTypeDescriptor *descriptor = [XZObjcTypeDescriptor descriptorForType:"@\""];
-        XCTAssert(descriptor.type == XZObjcTypeObject && [descriptor.raw isEqualToString:@"@"]);
+        XZOBJCType *descriptor = [XZOBJCType typeWithEncoding:"@\""];
+        XCTAssert(descriptor.raw == XZISOCTypeObject && [descriptor.encoding isEqualToString:@"@"]);
     } {
-        XZObjcTypeDescriptor *descriptor = [XZObjcTypeDescriptor descriptorForType:"@\"\""];
-        XCTAssert(descriptor.type == XZObjcTypeObject && [descriptor.raw isEqualToString:@"@"]);
+        XZOBJCType *descriptor = [XZOBJCType typeWithEncoding:"@\"\""];
+        XCTAssert(descriptor.raw == XZISOCTypeObject && [descriptor.encoding isEqualToString:@"@"]);
     } {
-        XZObjcTypeDescriptor *descriptor = [XZObjcTypeDescriptor descriptorForType:"@\"NSObject\""];
-        XCTAssert(descriptor.type == XZObjcTypeObject && descriptor.subtype == NSObject.class);
+        XZOBJCType *descriptor = [XZOBJCType typeWithEncoding:"@\"NSObject\""];
+        XCTAssert(descriptor.raw == XZISOCTypeObject && descriptor.subtype == NSObject.class);
     } {
-        XZObjcTypeDescriptor *descriptor = [XZObjcTypeDescriptor descriptorForType:"@\"<UIScrollViewDelegate>\""];
-        XCTAssert(descriptor.type == XZObjcTypeObject);
+        XZOBJCType *descriptor = [XZOBJCType typeWithEncoding:"@\"<UIScrollViewDelegate>\""];
+        XCTAssert(descriptor.raw == XZISOCTypeObject);
         XCTAssert(protocol_isEqual(descriptor.protocols.firstObject, @protocol(UIScrollViewDelegate)));
     } {
-        XZObjcTypeDescriptor *descriptor = [XZObjcTypeDescriptor descriptorForType:"@\"NSObject<UIScrollViewDelegate>\""];
-        XCTAssert(descriptor.type == XZObjcTypeObject);
+        XZOBJCType *descriptor = [XZOBJCType typeWithEncoding:"@\"NSObject<UIScrollViewDelegate>\""];
+        XCTAssert(descriptor.raw == XZISOCTypeObject);
         XCTAssert(descriptor.subtype == NSObject.class);
         XCTAssert(protocol_isEqual(descriptor.protocols.firstObject, @protocol(UIScrollViewDelegate)));
     } {
-        XZObjcTypeDescriptor *descriptor = [XZObjcTypeDescriptor descriptorForType:"@\"NSObject<UIScrollViewDelegate><UITableViewDataSource>\""];
-        XCTAssert(descriptor.type == XZObjcTypeObject);
+        XZOBJCType *descriptor = [XZOBJCType typeWithEncoding:"@\"NSObject<UIScrollViewDelegate><UITableViewDataSource>\""];
+        XCTAssert(descriptor.raw == XZISOCTypeObject);
         XCTAssert(descriptor.subtype == NSObject.class);
         XCTAssert(protocol_isEqual(descriptor.protocols.firstObject, @protocol(UIScrollViewDelegate)));
         XCTAssert(protocol_isEqual(descriptor.protocols.lastObject, @protocol(UITableViewDataSource)));

@@ -1,14 +1,14 @@
 //
-//  XZObjcClassDescriptor.m
+//  XZOBJCClass.m
 //  XZKit
 //
 //  Created by 徐臻 on 2025/1/26.
 //
 
-#import "XZObjcClassDescriptor.h"
-#import "XZObjcIvarDescriptor.h"
-#import "XZObjcPropertyDescriptor.h"
-#import "XZObjcMethodDescriptor.h"
+#import "XZOBJCClass.h"
+#import "XZOBJCIvar.h"
+#import "XZOBJCProperty.h"
+#import "XZOBJCMethod.h"
 
 NSNotificationName const XZObjcClassDidDidBecomeInvalidNotification = @"XZObjcClassDidDidBecomeInvalidNotification";
 
@@ -30,17 +30,17 @@ static id XZObjcStorage(id (^block)(CFMutableDictionaryRef const storage)) {
     return value;
 }
 
-@interface XZObjcClassDescriptor () {
-    NSDictionary<NSString *,XZObjcIvarDescriptor *> * _Nullable _ivars;
-    NSDictionary<NSString *,XZObjcMethodDescriptor *> * _Nullable _methods;
-    NSDictionary<NSString *,XZObjcPropertyDescriptor *> * _Nullable _properties;
+@interface XZOBJCClass () {
+    NSDictionary<NSString *,XZOBJCIvar *> * _Nullable _ivars;
+    NSDictionary<NSString *,XZOBJCMethod *> * _Nullable _methods;
+    NSDictionary<NSString *,XZOBJCProperty *> * _Nullable _properties;
 }
 
 @property (atomic, readwrite) BOOL isValid;
 
 @end
 
-@implementation XZObjcClassDescriptor
+@implementation XZOBJCClass
 
 - (instancetype)initWithClass:(nonnull Class)rawClass {
     self = [super init];
@@ -48,16 +48,16 @@ static id XZObjcStorage(id (^block)(CFMutableDictionaryRef const storage)) {
         _raw = rawClass;
         _isValid = YES;
         _name = NSStringFromClass(rawClass);
-        _type = [XZObjcTypeDescriptor descriptorForType:@encode(Class)];
+        _type = [XZOBJCType typeWithEncoding:@encode(Class)];
         
-        if ([XZObjcClassDescriptor descriptorForClass:[rawClass superclass]]) {
+        if ([XZOBJCClass descriptorForClass:[rawClass superclass]]) {
             {
                 unsigned int ivarCount = 0;
                 Ivar *list = class_copyIvarList(rawClass, &ivarCount);
                 if (list && ivarCount > 0) {
                     NSMutableDictionary * const descriptors = [NSMutableDictionary dictionaryWithCapacity:ivarCount];
                     for (unsigned int i = 0; i < ivarCount; i++) {
-                        XZObjcIvarDescriptor *descriptor = [XZObjcIvarDescriptor descriptorForIvar:list[i]];
+                        XZOBJCIvar *descriptor = [XZOBJCIvar descriptorForIvar:list[i]];
                         if (descriptor) {
                             descriptors[descriptor.name] = descriptor;
                         }
@@ -77,7 +77,7 @@ static id XZObjcStorage(id (^block)(CFMutableDictionaryRef const storage)) {
                 if (list && methodCount > 0) {
                     NSMutableDictionary *descriptors = [NSMutableDictionary dictionaryWithCapacity:methodCount];
                     for (unsigned int i = 0; i < methodCount; i++) {
-                        XZObjcMethodDescriptor *descriptor = [XZObjcMethodDescriptor descriptorForMethod:list[i]];
+                        XZOBJCMethod *descriptor = [XZOBJCMethod descriptorForMethod:list[i]];
                         if (descriptor) {
                             descriptors[descriptor.name] = descriptor;
                         }
@@ -97,7 +97,7 @@ static id XZObjcStorage(id (^block)(CFMutableDictionaryRef const storage)) {
                 if (list && propertyCount > 0) {
                     NSMutableDictionary *descriptors = [NSMutableDictionary dictionaryWithCapacity:propertyCount];
                     for (unsigned int i = 0; i < propertyCount; i++) {
-                        XZObjcPropertyDescriptor *descriptor = [XZObjcPropertyDescriptor descriptorForProperty:list[i] ofClass:rawClass];
+                        XZOBJCProperty *descriptor = [XZOBJCProperty descriptorForProperty:list[i] ofClass:rawClass];
                         if (descriptor) {
                             descriptors[descriptor.name] = descriptor;
                         }
@@ -119,15 +119,15 @@ static id XZObjcStorage(id (^block)(CFMutableDictionaryRef const storage)) {
     return self;
 }
 
-- (XZObjcClassDescriptor *)superDescriptor {
-    return [XZObjcClassDescriptor descriptorForClass:[self->_raw superclass]];
+- (XZOBJCClass *)superDescriptor {
+    return [XZOBJCClass descriptorForClass:[self->_raw superclass]];
 }
 
 - (NSString *)description {
     NSString *ivars = nil;
     if (self.ivars.count > 0) {
         NSMutableString *stringM = [[NSMutableString alloc] initWithString:@"[\n"];
-        [self.ivars enumerateKeysAndObjectsUsingBlock:^(NSString * _Nonnull key, XZObjcIvarDescriptor * _Nonnull obj, BOOL * _Nonnull stop) {
+        [self.ivars enumerateKeysAndObjectsUsingBlock:^(NSString * _Nonnull key, XZOBJCIvar * _Nonnull obj, BOOL * _Nonnull stop) {
             [stringM appendFormat:@"    <%p, %@, %@>,\n", obj, obj.name, ((id)obj.type.subtype ?: obj.type.name)];
         }];
         [stringM deleteCharactersInRange:NSMakeRange(stringM.length - 2, 1)];
@@ -138,7 +138,7 @@ static id XZObjcStorage(id (^block)(CFMutableDictionaryRef const storage)) {
     NSString *properties = nil;
     if (self.properties.count > 0) {
         NSMutableString *stringM = [[NSMutableString alloc] initWithString:@"[\n"];
-        [self.properties enumerateKeysAndObjectsUsingBlock:^(NSString * _Nonnull key, XZObjcPropertyDescriptor * _Nonnull obj, BOOL * _Nonnull stop) {
+        [self.properties enumerateKeysAndObjectsUsingBlock:^(NSString * _Nonnull key, XZOBJCProperty * _Nonnull obj, BOOL * _Nonnull stop) {
             [stringM appendFormat:@"    <%p, %@, %@>,\n", obj, obj.name, ((id)obj.type.subtype ?: obj.type.name)];
         }];
         [stringM deleteCharactersInRange:NSMakeRange(stringM.length - 2, 1)];
@@ -149,7 +149,7 @@ static id XZObjcStorage(id (^block)(CFMutableDictionaryRef const storage)) {
     NSString *methods = nil;
     if (self.methods.count > 0) {
         NSMutableString *stringM = [[NSMutableString alloc] initWithString:@"[\n"];
-        [self.methods enumerateKeysAndObjectsUsingBlock:^(NSString * _Nonnull key, XZObjcMethodDescriptor * _Nonnull obj, BOOL * _Nonnull stop) {
+        [self.methods enumerateKeysAndObjectsUsingBlock:^(NSString * _Nonnull key, XZOBJCMethod * _Nonnull obj, BOOL * _Nonnull stop) {
             [stringM appendFormat:@"    <%p, %@, %@>,\n", obj, obj.name, ((id)obj.type.subtype ?: obj.type.name)];
         }];
         [stringM deleteCharactersInRange:NSMakeRange(stringM.length - 2, 1)];
@@ -174,7 +174,7 @@ static id XZObjcStorage(id (^block)(CFMutableDictionaryRef const storage)) {
     }
     
     //
-    XZObjcClassDescriptor * const descriptor = XZObjcStorage(^id(const CFMutableDictionaryRef storage) {
+    XZOBJCClass * const descriptor = XZObjcStorage(^id(const CFMutableDictionaryRef storage) {
         // 再次检测是否已经失效
         if (!self.isValid) {
             return nil;
@@ -201,7 +201,7 @@ static id XZObjcStorage(id (^block)(CFMutableDictionaryRef const storage)) {
         return nil;
     }
     
-    XZObjcClassDescriptor * const descriptor = XZObjcStorage(^id(CFMutableDictionaryRef const storage) {
+    XZOBJCClass * const descriptor = XZObjcStorage(^id(CFMutableDictionaryRef const storage) {
         CFTypeRef const value = CFDictionaryGetValue(storage, (__bridge const void *)rawClass);
         return value ? (__bridge_transfer id)CFRetain(value) : nil;
     });
@@ -209,7 +209,7 @@ static id XZObjcStorage(id (^block)(CFMutableDictionaryRef const storage)) {
         return descriptor;
     }
     
-    XZObjcClassDescriptor * const newDescriptor = [[XZObjcClassDescriptor alloc] initWithClass:rawClass];
+    XZOBJCClass * const newDescriptor = [[XZOBJCClass alloc] initWithClass:rawClass];
     return XZObjcStorage(^id(CFMutableDictionaryRef const storage) {
         CFTypeRef const oldDescriptor = CFDictionaryGetValue(storage, (__bridge const void *)rawClass);
         if (oldDescriptor) {
@@ -225,13 +225,13 @@ static id XZObjcStorage(id (^block)(CFMutableDictionaryRef const storage)) {
         return;
     }
     
-    XZObjcClassDescriptor *descriptor = XZObjcStorage(^id(const CFMutableDictionaryRef storage) {
+    XZOBJCClass *descriptor = XZObjcStorage(^id(const CFMutableDictionaryRef storage) {
         CFTypeRef const value = CFDictionaryGetValue(storage, (__bridge const void *)rawClass);
         if (value == NULL) {
             return nil;
         }
         
-        XZObjcClassDescriptor * const descriptor = (__bridge_transfer id)CFRetain(value);
+        XZOBJCClass * const descriptor = (__bridge_transfer id)CFRetain(value);
         if (!descriptor.isValid) {
             return nil;
         }

@@ -86,22 +86,22 @@ Pod::Spec.new do |s|
   end
 
   # 基础
-  s.defineSubspec "XZLog",        "Mixed", false, []
-  s.defineSubspec "XZDefines",    "ObjC",  false, ["XZLog"]
-  s.defineSubspec "XZExtensions", "Mixed", false, ["XZDefines"]
+  s.defineSubspec "XZLog",                      "Mixed", false, []
+  s.defineSubspec "XZDefines",                  "ObjC",  false, ["XZLog"]
+  s.defineSubspec "XZExtensions",               "Mixed", false, ["XZDefines"]
   
   # 拓展
-  s.defineSubspec "XZURLQuery",       "ObjC",  false, []
-  s.defineSubspec "XZGeometry",       "Mixed", false, []
-  s.defineSubspec "XZContentStatus",  "Swift", false, ["XZTextImageView"]
-  s.defineSubspec "XZImage",          "ObjC",  true,  ["XZLog", "XZGeometry"]
-  s.defineSubspec "XZObjcDescriptor", "ObjC",  false, ["XZDefines"]
+  s.defineSubspec "XZURLQuery",                 "ObjC",  false, []
+  s.defineSubspec "XZGeometry",                 "Mixed", false, []
+  s.defineSubspec "XZContentStatus",            "Swift", false, ["XZTextImageView"]
+  s.defineSubspec "XZImage",                    "ObjC",  true,  ["XZLog", "XZGeometry"]
+  s.defineSubspec "XZRuntime",                  "ObjC",  false, ["XZDefines"]
   
   # 核心
-  s.defineSubspec "XZML",      "Mixed", true, ["XZDefines", "XZExtensions"]
-  s.defineSubspec "XZMocoa",   "Mixed", true, ["XZDefines", "XZExtensions", "XZObjcDescriptor"]
-  s.defineSubspec "XZToast",   "Mixed", true, ["XZGeometry", "XZTextImageView", "XZExtensions"]
-  s.defineSubspec "XZRefresh", "ObjC",  true, ["XZDefines"]
+  s.defineSubspec "XZML",                       "Mixed", true, ["XZDefines", "XZExtensions"]
+  s.defineSubspec "XZMocoa",                    "Mixed", true, ["XZDefines", "XZExtensions", "XZRuntime"]
+  s.defineSubspec "XZToast",                    "Mixed", true, ["XZGeometry", "XZTextImageView", "XZExtensions"]
+  s.defineSubspec "XZRefresh",                  "ObjC",  true, ["XZDefines"]
   
   # 自定义组件
   s.defineSubspec "XZPageView",                 "ObjC",  true,  ["XZDefines", "XZGeometry", "XZExtensions"]
@@ -113,12 +113,12 @@ Pod::Spec.new do |s|
   s.defineSubspec "XZCollectionViewFlowLayout", "Swift", false, []
   
   # 工具类
-  s.defineSubspec "XZTicker",         "Swift", false, []
-  s.defineSubspec "XZJSON",           "ObjC",  true,  ["XZObjcDescriptor", "XZExtensions"]
-  s.defineSubspec "XZLocale",         "ObjC",  false, ["XZDefines", "XZExtensions"]
-  s.defineSubspec "XZDataCryptor",    "ObjC",  false, ["XZDefines"]
-  s.defineSubspec "XZDataDigester",   "ObjC",  false, ["XZDefines", "XZExtensions"]
-  s.defineSubspec "XZKeychain",       "ObjC",  false, ["XZLog"]
+  s.defineSubspec "XZTicker",                   "Swift", false, []
+  s.defineSubspec "XZJSON",                     "ObjC",  true,  ["XZRuntime", "XZExtensions"]
+  s.defineSubspec "XZLocale",                   "ObjC",  false, ["XZDefines", "XZExtensions"]
+  s.defineSubspec "XZDataCryptor",              "ObjC",  false, ["XZDefines"]
+  s.defineSubspec "XZDataDigester",             "ObjC",  false, ["XZDefines", "XZExtensions"]
+  s.defineSubspec "XZKeychain",                 "ObjC",  false, ["XZLog"]
   
 end
 

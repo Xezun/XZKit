@@ -6,7 +6,7 @@
 //
 
 #import <Foundation/Foundation.h>
-#import "XZObjcTypeDescriptor.h"
+#import "XZOBJCType.h"
 
 #ifdef _Unsafe
 #undef _Unsafe
@@ -101,9 +101,9 @@ FOUNDATION_STATIC_INLINE XZJSONFoundationStruct XZJSONFoundationStructFromString
     return XZJSONFoundationStructUnknown;
 }
 
-FOUNDATION_STATIC_INLINE XZJSONFoundationStruct XZJSONFoundationStructFromType(XZObjcTypeDescriptor *type) {
-    switch (type.type) {
-        case XZObjcTypeStruct:
+FOUNDATION_STATIC_INLINE XZJSONFoundationStruct XZJSONFoundationStructFromType(XZOBJCType *type) {
+    switch (type.raw) {
+        case XZISOCTypeStruct:
             return XZJSONFoundationStructFromString(type.name);
         default:
             return XZJSONFoundationStructUnknown;

@@ -11,7 +11,7 @@
 
 @implementation XZJSONPropertyDescriptor
 
-+ (XZJSONPropertyDescriptor *)descriptorWithProperty:(XZObjcPropertyDescriptor *)property elementType:(nullable Class)elementType ofClass:(XZJSONClassDescriptor *)aClass {
++ (XZJSONPropertyDescriptor *)descriptorWithProperty:(XZOBJCProperty *)property elementType:(nullable Class)elementType ofClass:(XZJSONClassDescriptor *)aClass {
     // 必须是读写属性才参与 JSON 处理
     SEL const setter = property.setter;
     if (setter == nil || ![aClass->_raw.raw instancesRespondToSelector:setter]) {
@@ -27,17 +27,17 @@
     descriptor->_owner       = aClass;
     descriptor->_raw         = property;
     descriptor->_name        = property.name;
-    descriptor->_type        = property.type.type;
+    descriptor->_type        = property.type.raw;
     descriptor->_elementType = elementType;
     descriptor->_getter      = getter;
     descriptor->_setter      = setter;
     
-    if (descriptor->_type == XZObjcTypeObject) {
+    if (descriptor->_type == XZISOCTypeObject) {
         descriptor->_subtype = property.type.subtype;
         descriptor->_foundationClass = XZJSONFoundationClassFromClass(descriptor->_subtype);
         descriptor->_foundationStruct = XZJSONFoundationStructUnknown;
-        XZObjcModifiers const modifiers = property.type.modifiers;
-        descriptor->_isUnownedReference = (modifiers & XZObjcModifierWeak) || (!(modifiers & XZObjcModifierCopy) && !(modifiers & XZObjcModifierRetain));
+        XZISOCModifiers const modifiers = property.type.modifiers;
+        descriptor->_isUnownedReference = (modifiers & XZISOCModifierWeak) || (!(modifiers & XZISOCModifierCopy) && !(modifiers & XZISOCModifierRetain));
     } else {
         descriptor->_subtype = Nil;
         descriptor->_foundationClass = XZJSONFoundationClassUnknown;
@@ -57,59 +57,59 @@
         }
     }
     
-    switch (property.type.type) {
-        case XZObjcTypeUnknown:
+    switch (property.type.raw) {
+        case XZISOCTypeUnknown:
             descriptor->_isCodable = NO;
             break;
-        case XZObjcTypeChar:
-        case XZObjcTypeUnsignedChar:
-        case XZObjcTypeInt:
-        case XZObjcTypeUnsignedInt:
-        case XZObjcTypeShort:
-        case XZObjcTypeUnsignedShort:
-        case XZObjcTypeLong:
-        case XZObjcTypeUnsignedLong:
-        case XZObjcTypeInt128:
-        case XZObjcTypeUnsignedInt128:
-        case XZObjcTypeLongLong:
-        case XZObjcTypeUnsignedLongLong:
-        case XZObjcTypeFloat:
-        case XZObjcTypeDouble:
-        case XZObjcTypeLongDouble:
-        case XZObjcTypeBool:
+        case XZISOCTypeChar:
+        case XZISOCTypeUnsignedChar:
+        case XZISOCTypeInt:
+        case XZISOCTypeUnsignedInt:
+        case XZISOCTypeShort:
+        case XZISOCTypeUnsignedShort:
+        case XZISOCTypeLong:
+        case XZISOCTypeUnsignedLong:
+        case XZISOCTypeInt128:
+        case XZISOCTypeUnsignedInt128:
+        case XZISOCTypeLongLong:
+        case XZISOCTypeUnsignedLongLong:
+        case XZISOCTypeFloat:
+        case XZISOCTypeDouble:
+        case XZISOCTypeLongDouble:
+        case XZISOCTypeBool:
             descriptor->_isCodable = YES;
             break;
-        case XZObjcTypeVoid:
+        case XZISOCTypeVoid:
             descriptor->_isCodable = NO;
             break;
-        case XZObjcTypeString:
+        case XZISOCTypeString:
             descriptor->_isCodable = NO;
             break;
-        case XZObjcTypeSEL:
+        case XZISOCTypeSEL:
             descriptor->_isCodable = YES;
             break;
-        case XZObjcTypePointer:
+        case XZISOCTypePointer:
             descriptor->_isCodable = NO;
             break;
-        case XZObjcTypeArray:
+        case XZISOCTypeArray:
             descriptor->_isCodable = NO;
             break;
-        case XZObjcTypeVector:
+        case XZISOCTypeVector:
             descriptor->_isCodable = NO;
             break;
-        case XZObjcTypeBitField:
+        case XZISOCTypeBitField:
             descriptor->_isCodable = NO;
             break;
-        case XZObjcTypeUnion:
+        case XZISOCTypeUnion:
             descriptor->_isCodable = NO;
             break;
-        case XZObjcTypeStruct:
+        case XZISOCTypeStruct:
             descriptor->_isCodable = (descriptor->_foundationStruct != XZJSONFoundationStructUnknown);
             break;
-        case XZObjcTypeClass:
+        case XZISOCTypeClass:
             descriptor->_isCodable = YES;
             break;
-        case XZObjcTypeObject:
+        case XZISOCTypeObject:
             descriptor->_isCodable = !descriptor->_isUnownedReference;
             break;
     }

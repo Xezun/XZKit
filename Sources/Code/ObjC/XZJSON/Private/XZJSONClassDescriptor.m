@@ -21,7 +21,7 @@ static id XZJSONKeyFromString(NSString *aString);
 - (instancetype)initWithClass:(nonnull Class)aClass {
     self = [super init];
     if (self) {
-        _raw = [XZObjcClassDescriptor descriptorForClass:aClass];
+        _raw = [XZOBJCClass descriptorForClass:aClass];
         _foundationClass = XZJSONFoundationClassFromClass(aClass);
         
         // 原生对象，不需要获取属性
@@ -39,7 +39,7 @@ static id XZJSONKeyFromString(NSString *aString);
             _usesPropertyJSONDecodingMethod = NO;
             _usesPropertyJSONEncodingMethod = NO;
         } else {
-            XZObjcClassDescriptor *rawClass = self->_raw;
+            XZOBJCClass *rawClass = self->_raw;
             
             while (rawClass.superDescriptor) {
                 [NSNotificationCenter.defaultCenter addObserver:self selector:@selector(classNeedsUpdateNotification:) name:XZObjcClassDidDidBecomeInvalidNotification object:rawClass];
@@ -53,10 +53,6 @@ static id XZJSONKeyFromString(NSString *aString);
 }
 
 - (void)classNeedsUpdateNotification:(nullable NSNotification *)notification {
-    if (notification && notification.userInfo[XZObjcClassUpdatesUserInfoKey] != XZObjcClassUpdateProperties) {
-        return;
-    }
-    
     @synchronized (self) {
         [self update];
     }
@@ -104,9 +100,9 @@ static id XZJSONKeyFromString(NSString *aString);
     // 所有属性
     NSMutableDictionary * const allProperties = [NSMutableDictionary new];
     {
-        XZObjcClassDescriptor *class = _raw;
+        XZOBJCClass *class = _raw;
         do {
-            [class.properties enumerateKeysAndObjectsUsingBlock:^(NSString *name, XZObjcPropertyDescriptor *property, BOOL *stop) {
+            [class.properties enumerateKeysAndObjectsUsingBlock:^(NSString *name, XZOBJCProperty *property, BOOL *stop) {
                 if (blockedKeys && [blockedKeys containsObject:name])     {
                     return; // 有黑名单，则不能在黑名单中
                 }
@@ -121,49 +117,49 @@ static id XZJSONKeyFromString(NSString *aString);
                 }
                 XZJSONPropertyDescriptor *descriptor = [XZJSONPropertyDescriptor descriptorWithProperty:property elementType:mappingClasses[property.name] ofClass:self];
                 switch (descriptor->_type) {
-                    case XZObjcTypeUnknown:
+                    case XZISOCTypeUnknown:
                         return;
-                    case XZObjcTypeChar:
-                    case XZObjcTypeUnsignedChar:
-                    case XZObjcTypeInt:
-                    case XZObjcTypeUnsignedInt:
-                    case XZObjcTypeShort:
-                    case XZObjcTypeUnsignedShort:
-                    case XZObjcTypeLong:
-                    case XZObjcTypeUnsignedLong:
-                    case XZObjcTypeInt128:
-                    case XZObjcTypeUnsignedInt128:
-                    case XZObjcTypeLongLong:
-                    case XZObjcTypeUnsignedLongLong:
-                    case XZObjcTypeFloat:
-                    case XZObjcTypeDouble:
-                    case XZObjcTypeLongDouble:
-                    case XZObjcTypeBool:
+                    case XZISOCTypeChar:
+                    case XZISOCTypeUnsignedChar:
+                    case XZISOCTypeInt:
+                    case XZISOCTypeUnsignedInt:
+                    case XZISOCTypeShort:
+                    case XZISOCTypeUnsignedShort:
+                    case XZISOCTypeLong:
+                    case XZISOCTypeUnsignedLong:
+                    case XZISOCTypeInt128:
+                    case XZISOCTypeUnsignedInt128:
+                    case XZISOCTypeLongLong:
+                    case XZISOCTypeUnsignedLongLong:
+                    case XZISOCTypeFloat:
+                    case XZISOCTypeDouble:
+                    case XZISOCTypeLongDouble:
+                    case XZISOCTypeBool:
                         break;
-                    case XZObjcTypeVoid:
+                    case XZISOCTypeVoid:
                         return;
-                    case XZObjcTypeString:
+                    case XZISOCTypeString:
                         return;
-                    case XZObjcTypeSEL:
+                    case XZISOCTypeSEL:
                         break;
-                    case XZObjcTypePointer:
+                    case XZISOCTypePointer:
                         return;
-                    case XZObjcTypeArray:
+                    case XZISOCTypeArray:
                         return;
-                    case XZObjcTypeVector:
+                    case XZISOCTypeVector:
                         return;
-                    case XZObjcTypeBitField:
+                    case XZISOCTypeBitField:
                         return;
-                    case XZObjcTypeUnion:
+                    case XZISOCTypeUnion:
                         return;
-                    case XZObjcTypeStruct:
+                    case XZISOCTypeStruct:
                         if (descriptor->_foundationStruct) {
                             break;
                         }
                         return;
-                    case XZObjcTypeClass:
+                    case XZISOCTypeClass:
                         break;
-                    case XZObjcTypeObject:
+                    case XZISOCTypeObject:
                         if (descriptor->_foundationClass) {
                             break;
                         }

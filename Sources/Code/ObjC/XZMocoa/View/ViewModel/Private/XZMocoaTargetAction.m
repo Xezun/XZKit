@@ -6,7 +6,7 @@
 //
 
 #import "XZMocoaTargetAction.h"
-#import "XZObjcTypeDescriptor.h"
+#import "XZOBJCType.h"
 #import "XZMocoaViewModel.h"
 @import ObjectiveC;
 
@@ -14,7 +14,7 @@
     /// action 的参数数量，不包括 self 和 SEL
     NSInteger _numberOfArguments;
     /// value 参数的值类型。
-    XZObjcTypeDescriptor *_valueArgumentType;
+    XZOBJCType *_valueArgumentType;
 }
 
 - (instancetype)initWithTarget:(id)target action:(SEL)action {
@@ -41,19 +41,19 @@
             }
             case 1: {
                 const char *encoding = method_copyArgumentType(method, 2);
-                _valueArgumentType = [XZObjcTypeDescriptor descriptorForType:encoding];
+                _valueArgumentType = [XZOBJCType typeWithEncoding:encoding];
                 free((void *)encoding);
                 break;
             }
             case 2: {
                 const char *encoding = method_copyArgumentType(method, 3);
-                _valueArgumentType = [XZObjcTypeDescriptor descriptorForType:encoding];
+                _valueArgumentType = [XZOBJCType typeWithEncoding:encoding];
                 free((void *)encoding);
                 break;
             }
             case 3: {
                 const char *encoding = method_copyArgumentType(method, 4);
-                _valueArgumentType = [XZObjcTypeDescriptor descriptorForType:encoding];
+                _valueArgumentType = [XZOBJCType typeWithEncoding:encoding];
                 free((void *)encoding);
                 break;
             }
@@ -75,8 +75,8 @@
         case 1:
         case 2:
         case 3: {
-            switch (_valueArgumentType.type) {
-                case XZObjcTypeUnknown: {
+            switch (_valueArgumentType.raw) {
+                case XZISOCTypeUnknown: {
                     void *pointerValue = NULL;
                     [(NSValue *)value getValue:&pointerValue size:sizeof(void *)];
                     switch (_numberOfArguments) {
@@ -94,7 +94,7 @@
                     }
                     break;
                 }
-                case XZObjcTypeChar: {
+                case XZISOCTypeChar: {
                     char charValue = 0;
                     // 使用 getValue:size: 而不是 charValue 取值，是为了避免没有使用 NSNumber 而是直接使用 NSValue 封装的标量值
                     [(NSValue *)value getValue:&charValue size:sizeof(char)];
@@ -113,7 +113,7 @@
                     }
                     break;
                 }
-                case XZObjcTypeUnsignedChar: {
+                case XZISOCTypeUnsignedChar: {
                     unsigned char ucharValue = 0;
                     [(NSValue *)value getValue:&ucharValue size:sizeof(unsigned char)];
                     switch (_numberOfArguments) {
@@ -131,7 +131,7 @@
                     }
                     break;
                 }
-                case XZObjcTypeInt: {
+                case XZISOCTypeInt: {
                     int intValue = 0;
                     [(NSValue *)value getValue:&intValue size:sizeof(int)];
                     switch (_numberOfArguments) {
@@ -149,7 +149,7 @@
                     }
                     break;
                 }
-                case XZObjcTypeUnsignedInt: {
+                case XZISOCTypeUnsignedInt: {
                     unsigned int uintValue = 0;
                     [(NSValue *)value getValue:&uintValue size:sizeof(unsigned int)];
                     switch (_numberOfArguments) {
@@ -167,7 +167,7 @@
                     }
                     break;
                 }
-                case XZObjcTypeShort: {
+                case XZISOCTypeShort: {
                     short shortValue = 0;
                     [(NSValue *)value getValue:&shortValue size:sizeof(short)];
                     switch (_numberOfArguments) {
@@ -185,7 +185,7 @@
                     }
                     break;
                 }
-                case XZObjcTypeUnsignedShort: {
+                case XZISOCTypeUnsignedShort: {
                     unsigned short ushortValue = 0;
                     [(NSValue *)value getValue:&ushortValue size:sizeof(unsigned short)];
                     switch (_numberOfArguments) {
@@ -203,7 +203,7 @@
                     }
                     break;
                 }
-                case XZObjcTypeLong: {
+                case XZISOCTypeLong: {
                     long longValue = 0;
                     [(NSValue *)value getValue:&longValue size:sizeof(long)];
                     switch (_numberOfArguments) {
@@ -221,7 +221,7 @@
                     }
                     break;
                 }
-                case XZObjcTypeUnsignedLong: {
+                case XZISOCTypeUnsignedLong: {
                     unsigned long ulongValue = 0;
                     [(NSValue *)value getValue:&ulongValue size:sizeof(unsigned long)];
                     switch (_numberOfArguments) {
@@ -239,7 +239,7 @@
                     }
                     break;
                 }
-                case XZObjcTypeLongLong: {
+                case XZISOCTypeLongLong: {
                     long long longlongValue = 0;
                     [(NSValue *)value getValue:&longlongValue size:sizeof(long long)];
                     switch (_numberOfArguments) {
@@ -257,7 +257,7 @@
                     }
                     break;
                 }
-                case XZObjcTypeUnsignedLongLong: {
+                case XZISOCTypeUnsignedLongLong: {
                     unsigned long long ulonglongValue = 0;
                     [(NSValue *)value getValue:&ulonglongValue size:sizeof(unsigned long long)];
                     switch (_numberOfArguments) {
@@ -275,7 +275,7 @@
                     }
                     break;
                 }
-                case XZObjcTypeFloat: {
+                case XZISOCTypeFloat: {
                     float floatValue = 0;
                     [(NSValue *)value getValue:&floatValue size:sizeof(float)];
                     switch (_numberOfArguments) {
@@ -293,7 +293,7 @@
                     }
                     break;
                 }
-                case XZObjcTypeDouble: {
+                case XZISOCTypeDouble: {
                     double doubleValue = 0;
                     [(NSValue *)value getValue:&doubleValue size:sizeof(double)];
                     switch (_numberOfArguments) {
@@ -311,7 +311,7 @@
                     }
                     break;
                 }
-                case XZObjcTypeLongDouble: {
+                case XZISOCTypeLongDouble: {
                     long double longDoubleValue = 0;
                     [(NSValue *)value getValue:&longDoubleValue size:sizeof(long double)];
                     switch (_numberOfArguments) {
@@ -329,7 +329,7 @@
                     }
                     break;
                 }
-                case XZObjcTypeBool: {
+                case XZISOCTypeBool: {
                     BOOL boolValue = 0;
                     [(NSValue *)value getValue:&boolValue size:sizeof(BOOL)];
                     switch (_numberOfArguments) {
@@ -347,10 +347,10 @@
                     }
                     break;
                 }
-                case XZObjcTypeVoid: {
+                case XZISOCTypeVoid: {
                     break;
                 }
-                case XZObjcTypeString: {
+                case XZISOCTypeString: {
                     char * stringValue = 0;
                     [(NSValue *)value getValue:&stringValue size:sizeof(char *)];
                     switch (_numberOfArguments) {
@@ -368,7 +368,7 @@
                     }
                     break;
                 }
-                case XZObjcTypeSEL: {
+                case XZISOCTypeSEL: {
                     SEL selectorValue = 0;
                     [(NSValue *)value getValue:&selectorValue size:sizeof(SEL)];
                     switch (_numberOfArguments) {
@@ -386,7 +386,7 @@
                     }
                     break;
                 }
-                case XZObjcTypePointer: {
+                case XZISOCTypePointer: {
                     void * pointerValue = 0;
                     [(NSValue *)value getValue:&pointerValue size:sizeof(void *)];
                     switch (_numberOfArguments) {
@@ -404,7 +404,7 @@
                     }
                     break;
                 }
-                case XZObjcTypeArray: {
+                case XZISOCTypeArray: {
                     void * arrayValue = 0;
                     [(NSValue *)value getValue:&arrayValue size:sizeof(void *)];
                     switch (_numberOfArguments) {
@@ -422,8 +422,8 @@
                     }
                     break;
                 }
-                case XZObjcTypeBitField:
-                case XZObjcTypeUnion: {
+                case XZISOCTypeBitField:
+                case XZISOCTypeUnion: {
                     // 共用体的情况比较复杂，暂不支持：
                     // 1. NSInvocation 不支持带自定义共用体参数的方法。
                     // 2. 不能简单地直接使用共用体的最大数据类型，因为数据在函数参数传递的过程中，会发生改变。
@@ -574,7 +574,7 @@
                     }
                     break;
                 }
-                case XZObjcTypeStruct: {
+                case XZISOCTypeStruct: {
                     void *buffer = calloc(_valueArgumentType.size, 1);
                     [(NSValue *)value getValue:buffer size:_valueArgumentType.size];
                     
@@ -604,8 +604,8 @@
                     free(buffer);
                     break;
                 }
-                case XZObjcTypeClass:
-                case XZObjcTypeObject:
+                case XZISOCTypeClass:
+                case XZISOCTypeObject:
                 default: {
                     switch (_numberOfArguments) {
                         case 1:

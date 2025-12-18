@@ -1,9 +1,9 @@
-# XZObjcDescriptor
+# XZRumtime
 
 ## 安装
 
 ```ruby
-pod "XZObjcDescriptor"
+pod "XZRumtime"
 ```
 
 ## 效果

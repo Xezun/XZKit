@@ -10,8 +10,18 @@
 #import <objc/message.h>
 #if __has_include(<XZKit/XZKit.h>)
 #import <XZKit/XZMacros.h>
+#import <XZKit/XZOBJCType.h>
+#import <XZKit/XZOBJCIvar.h>
+#import <XZKit/XZOBJCProperty.h>
+#import <XZKit/XZOBJCMethod.h>
+#import <XZKit/XZOBJCClass.h>
 #else
 #import "XZMacros.h"
+#import "XZISOCTypeDescriptor.h"
+#import "XZObjcIvarDescriptor.h"
+#import "XZObjcPropertyDescriptor.h"
+#import "XZObjcMethodDescriptor.h"
+#import "XZObjcClassDescriptor.h"
 #endif
 
 // 命名规则：
