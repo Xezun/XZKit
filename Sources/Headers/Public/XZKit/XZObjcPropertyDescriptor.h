@@ -1,1 +1,0 @@
-../../../../Sources/Code/ObjC/XZObjcDescriptor/XZObjcPropertyDescriptor.h
