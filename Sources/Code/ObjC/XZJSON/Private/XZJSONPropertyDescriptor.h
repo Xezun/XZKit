@@ -6,7 +6,7 @@
 //
 
 #import <Foundation/Foundation.h>
-#import "XZRuntime.h"
+#import "XZObjc.h"
 #import "XZJSONDescriptor.h"
 #import "XZMacros.h"
 
@@ -21,7 +21,7 @@ typedef id _Nullable (^XZJSONValueDecoder)(NSDictionary *dictionary);
 @interface XZJSONPropertyDescriptor : NSObject {
     @package
     /// 属性。 property's info
-    XZOBJCProperty *_raw;
+    XZObjcProperty *_raw;
     
     /// 属性映射链表，“多属性-单一键”的映射链表。
     XZJSONPropertyDescriptor *_next;
@@ -40,7 +40,7 @@ typedef id _Nullable (^XZJSONValueDecoder)(NSDictionary *dictionary);
     SEL _setter;
     
     /// 属性值类型。
-    XZISOCType _type;
+    XZStdcType _type;
     /// 属性值为对象时，对象的类。
     Class _Nullable _subtype;
     /// 属性为集合对象时，元素的类。
@@ -69,7 +69,7 @@ typedef id _Nullable (^XZJSONValueDecoder)(NSDictionary *dictionary);
     BOOL _isUnownedReference;
 }
 
-+ (nullable instancetype)descriptorWithProperty:(XZOBJCProperty *)property elementType:(nullable Class)elementType ofClass:(XZJSONClassDescriptor *)aClass;
++ (nullable instancetype)descriptorWithProperty:(XZObjcProperty *)property elementType:(nullable Class)elementType ofClass:(XZJSONClassDescriptor *)aClass;
 
 @end
 

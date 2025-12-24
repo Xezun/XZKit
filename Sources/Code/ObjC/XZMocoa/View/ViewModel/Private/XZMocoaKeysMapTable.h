@@ -9,7 +9,7 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-@class XZOBJCMethod;
+@class XZObjcMethod;
 
 @interface XZMocoaKeysMapTable : NSObject
 
@@ -17,8 +17,8 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic, readonly) NSDictionary<NSString *, NSArray *>                *methodToKeys;
 // 属性名 => 包含的方法 key -> [method1, method2]
 @property (nonatomic, readonly) NSDictionary<NSString *, NSSet<NSString *> *>      *keyToMethods;
-// 方法名 => 方法的描述 method -> XZOBJCMethod
-@property (nonatomic, readonly) NSDictionary<NSString *, XZOBJCMethod *> *namedMethods;
+// 方法名 => 方法的描述 method -> XZObjcMethod
+@property (nonatomic, readonly) NSDictionary<NSString *, XZObjcMethod *> *namedMethods;
 
 + (nullable XZMocoaKeysMapTable *)mapTableForClass:(Class)aClass;
 

@@ -1,5 +1,5 @@
 //
-//  XZOBJCIvar.h
+//  XZObjcIvar.h
 //  XZKit
 //
 //  Created by 徐臻 on 2025/1/26.
@@ -7,24 +7,24 @@
 
 #import <objc/message.h>
 #if __has_include(<XZKit/XZKit.h>)
-#import <XZKit/XZOBJCType.h>
+#import <XZKit/XZObjcType.h>
 #else
-#import "XZISOCTypeDescriptor.h"
+#import "XZStdcTypeDescriptor.h"
 #endif
 
-@class XZOBJCType;
+@class XZObjcType;
 
 NS_ASSUME_NONNULL_BEGIN
 
 /// 描述实例的成员变量的对象。
 ///
 /// Instance variable information.
-@interface XZOBJCIvar : NSObject <XZOBJCType>
+@interface XZObjcIvar : NSObject <XZObjcType>
 
 /// 成员变量原始值。 ivar opaque struct
 @property (nonatomic, readonly) Ivar raw;
 /// 变量类型。Ivar's type
-@property (nonatomic, readonly) XZOBJCType *type;
+@property (nonatomic, readonly) XZObjcType *type;
 /// 变量名。Ivar's name
 @property (nonatomic, readonly) NSString *name;
 /// 成员变量偏移。Ivar's offset

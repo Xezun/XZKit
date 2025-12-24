@@ -20,13 +20,13 @@ FOUNDATION_EXPORT const unsigned char XZKitVersionString[];
 #elif __has_include(<XZKit/XZKit.h>)
 
 #import <XZKit/XZLog.h>
+#import <XZKit/XZObjc.h>
 #import <XZKit/XZDefines.h>
 #import <XZKit/XZExtensions.h>
 
 #import <XZKit/XZURLQuery.h>
 #import <XZKit/XZGeometry.h>
 #import <XZKit/XZImage.h>
-#import <XZKit/XZObjcDescriptor.h>
 
 #import <XZKit/XZJSON.h>
 #import <XZKit/XZLocale.h>
@@ -46,13 +46,13 @@ FOUNDATION_EXPORT const unsigned char XZKitVersionString[];
 #else
 
 #import "XZLog.h"
+#import "XZObjc.h"
 #import "XZDefines.h"
 #import "XZExtensions.h"
 
 #import "XZURLQuery.h"
 #import "XZGeometry.h"
 #import "XZImage.h"
-#import "XZObjcDescriptor.h"
 
 #import "XZJSON.h"
 #import "XZLocale.h"

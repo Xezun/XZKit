@@ -6,7 +6,7 @@
 //
 
 #import <Foundation/Foundation.h>
-#import "XZRuntime.h"
+#import "XZObjc.h"
 #import "XZJSONDescriptor.h"
 
 NS_ASSUME_NONNULL_BEGIN
@@ -17,7 +17,7 @@ NS_ASSUME_NONNULL_BEGIN
 @interface XZJSONClassDescriptor : NSObject {
     @package
     /// 描述类基本信息的对象。
-    XZOBJCClass *_raw;
+    XZObjcClass *_raw;
     
     /// 如果是，原生对象的类型。 Model class type.
     XZJSONFoundationClass _foundationClass;

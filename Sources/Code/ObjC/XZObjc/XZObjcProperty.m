@@ -1,14 +1,14 @@
 //
-//  XZOBJCProperty.m
+//  XZObjcProperty.m
 //  XZKit
 //
 //  Created by 徐臻 on 2025/1/26.
 //
 
-#import "XZOBJCProperty.h"
-#import "XZOBJCIvar.h"
+#import "XZObjcProperty.h"
+#import "XZObjcIvar.h"
 
-@implementation XZOBJCProperty
+@implementation XZObjcProperty
 
 + (instancetype)descriptorForProperty:(objc_property_t)property ofClass:(Class)aClass {
     if (!property) {
@@ -21,8 +21,8 @@
         return nil;
     }
 
-    XZISOCModifiers modifiers = kNilOptions;
-    XZOBJCIvar *_ivar = nil;
+    XZStdcModifiers modifiers = kNilOptions;
+    XZObjcIvar *_ivar = nil;
     SEL _getter = nil;
     SEL _setter = nil;
     const char *typeEncoding = NULL;
@@ -49,44 +49,44 @@
                 if (attrValue) {
                     Ivar ivar = class_getInstanceVariable(aClass, attrValue);
                     if (ivar) {
-                        _ivar = [XZOBJCIvar descriptorForIvar:ivar];
+                        _ivar = [XZObjcIvar descriptorForIvar:ivar];
                     }
                 }
                 break;
             }
 
             case 'R': {
-                modifiers |= XZISOCModifierReadonly;
+                modifiers |= XZStdcModifierReadonly;
                 break;
             }
 
             case 'C': {
-                modifiers |= XZISOCModifierCopy;
+                modifiers |= XZStdcModifierCopy;
                 break;
             }
 
             case '&': {
-                modifiers |= XZISOCModifierRetain;
+                modifiers |= XZStdcModifierRetain;
                 break;
             }
 
             case 'N': {
-                modifiers |= XZISOCModifierNonatomic;
+                modifiers |= XZStdcModifierNonatomic;
                 break;
             }
 
             case 'D': {
-                modifiers |= XZISOCModifierDynamic;
+                modifiers |= XZStdcModifierDynamic;
                 break;
             }
 
             case 'W': {
-                modifiers |= XZISOCModifierWeak;
+                modifiers |= XZStdcModifierWeak;
                 break;
             }
 
             case 'G': {
-                modifiers |= XZISOCModifierGetter;
+                modifiers |= XZStdcModifierGetter;
 
                 if (attrValue) {
                     _getter = sel_getUid(attrValue);
@@ -95,7 +95,7 @@
             }
 
             case 'S': {
-                modifiers |= XZISOCModifierSetter;
+                modifiers |= XZStdcModifierSetter;
 
                 if (attrValue) {
                     _setter = sel_getUid(attrValue);
@@ -108,7 +108,7 @@
         }
     }
     
-    XZOBJCType *_type = [XZOBJCType typeWithEncoding:typeEncoding modifiers:modifiers];
+    XZObjcType *_type = [XZObjcType typeWithEncoding:typeEncoding modifiers:modifiers];
     if (_type == nil) {
         return nil;
     }
@@ -126,7 +126,7 @@
         }
     }
 
-    if (!_setter && !(modifiers & XZISOCModifierReadonly)) {
+    if (!_setter && !(modifiers & XZStdcModifierReadonly)) {
         NSString *setterName = [NSString stringWithFormat:@"set%c%s:", toupper(name[0]), name + 1];
         _setter = NSSelectorFromString(setterName);
     }
@@ -135,7 +135,7 @@
     return [[self alloc] initWithProperty:property name:_name type:_type ivar:_ivar getter:_getter setter:_setter];
 }
 
-- (instancetype)initWithProperty:(objc_property_t)property name:(NSString *)name type:(XZOBJCType *)type ivar:(XZOBJCIvar *)ivar getter:(SEL)getter setter:(SEL)setter {
+- (instancetype)initWithProperty:(objc_property_t)property name:(NSString *)name type:(XZObjcType *)type ivar:(XZObjcIvar *)ivar getter:(SEL)getter setter:(SEL)setter {
     self = [super init];
 
     if (self != nil) {

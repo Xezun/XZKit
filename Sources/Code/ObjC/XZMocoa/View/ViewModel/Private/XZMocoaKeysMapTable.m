@@ -9,7 +9,7 @@
 #import "XZMocoaViewModel.h"
 @import ObjectiveC;
 #import "XZDefines.h"
-#import "XZRuntime.h"
+#import "XZObjc.h"
 
 static inline void XZMocoaMappingKeyToMethod(NSMutableDictionary * const keyToMethods, NSString * const key, NSString * const methodName) {
     NSMutableSet *selectors = keyToMethods[key];
@@ -45,7 +45,7 @@ static inline void XZMocoaMappingModelKeys(Class const VMClass, NSMutableDiction
             return;
         }
         
-        XZOBJCClass * const descriptor = [XZOBJCClass descriptorForClass:VMClass];
+        XZObjcClass * const descriptor = [XZObjcClass descriptorForClass:VMClass];
         namedMethods[methodName] = descriptor.methods[methodName];
         
         if ([keyOrKeys isKindOfClass:NSString.class]) {

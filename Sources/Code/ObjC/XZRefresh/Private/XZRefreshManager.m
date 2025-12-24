@@ -14,6 +14,7 @@
 #import "XZRefreshDefines.h"
 #import "XZDefer.h"
 #import "XZLog.h"
+@import ObjectiveC;
 
 // 关于布局刷新视图。
 //

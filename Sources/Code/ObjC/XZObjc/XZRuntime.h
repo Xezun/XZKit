@@ -6,23 +6,12 @@
 //
 
 #import <Foundation/Foundation.h>
-#import <objc/runtime.h>
-#import <objc/message.h>
 #if __has_include(<XZKit/XZKit.h>)
 #import <XZKit/XZMacros.h>
-#import <XZKit/XZOBJCType.h>
-#import <XZKit/XZOBJCIvar.h>
-#import <XZKit/XZOBJCProperty.h>
-#import <XZKit/XZOBJCMethod.h>
-#import <XZKit/XZOBJCClass.h>
 #else
 #import "XZMacros.h"
-#import "XZISOCTypeDescriptor.h"
-#import "XZObjcIvarDescriptor.h"
-#import "XZObjcPropertyDescriptor.h"
-#import "XZObjcMethodDescriptor.h"
-#import "XZObjcClassDescriptor.h"
 #endif
+@import ObjectiveC;
 
 // 命名规则：
 // 所有函数默认作用于实例方法、属性、变量。

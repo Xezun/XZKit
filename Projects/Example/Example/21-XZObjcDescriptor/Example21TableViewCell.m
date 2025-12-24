@@ -28,7 +28,7 @@
 - (void)viewModelDidChange:(nullable XZMocoaViewModel *)newValue {
     [super viewModelDidChange:newValue];
     
-    id<XZOBJCType> descriptor = self.viewModel.model;
+    id<XZObjcType> descriptor = self.viewModel.model;
     
     self.textLabel.text = descriptor.name; // [NSString stringWithFormat:@"%@", self.viewModel.model];
     self.detailTextLabel.text = descriptor.type.name;

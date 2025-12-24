@@ -1,13 +1,13 @@
 //
-//  XZOBJCIvar.m
+//  XZObjcIvar.m
 //  XZKit
 //
 //  Created by 徐臻 on 2025/1/26.
 //
 
-#import "XZOBJCIvar.h"
+#import "XZObjcIvar.h"
 
-@implementation XZOBJCIvar
+@implementation XZObjcIvar
 
 + (instancetype)descriptorForIvar:(Ivar)ivar {
     if (ivar == nil) {
@@ -26,7 +26,7 @@
         return nil;
     }
     
-    XZOBJCType * _type = [XZOBJCType typeWithEncoding:typeEncoding];
+    XZObjcType * _type = [XZObjcType typeWithEncoding:typeEncoding];
     if (_type == nil) {
         return nil;
     }
@@ -35,7 +35,7 @@
     return [[self alloc] initWithIvar:ivar name:_name type:_type];
 }
 
-- (instancetype)initWithIvar:(Ivar)ivar name:(NSString *)name type:(XZOBJCType *)type {
+- (instancetype)initWithIvar:(Ivar)ivar name:(NSString *)name type:(XZObjcType *)type {
     self = [super init];
     if (self) {
         _raw = ivar;

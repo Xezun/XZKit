@@ -62,12 +62,12 @@ Pod::Spec.new do |s|
     self.subspec name do |ss|
       # 源代码
       case type
-      when "ObjC"
+      when "objc"
         ss.public_header_files  = "Sources/Code/ObjC/#{name}/**/*.h";
         ss.source_files         = "Sources/Code/ObjC/#{name}/**/*.{h,m}";
-      when "Swift"
+      when "swift"
         ss.source_files         = "Sources/Code/Swift/#{name}/**/*.swift";
-      when "Mixed"
+      when "mixed"
         ss.public_header_files  = "Sources/Code/ObjC/#{name}/**/*.h";
         ss.source_files         = "Sources/Code/{ObjC,Swift}/#{name}/**/*.{h,m,swift}";
       end
@@ -86,39 +86,40 @@ Pod::Spec.new do |s|
   end
 
   # 基础
-  s.defineSubspec "XZLog",                      "Mixed", false, []
-  s.defineSubspec "XZDefines",                  "ObjC",  false, ["XZLog"]
-  s.defineSubspec "XZExtensions",               "Mixed", false, ["XZDefines"]
-  
+  s.defineSubspec "XZLog",                      "mixed", false, [];
+  s.defineSubspec "XZObjc",                     "objc",  false, ["XZDefines"];
+  s.defineSubspec "XZDefines",                  "objc",  false, ["XZLog"];
+  s.defineSubspec "XZExtensions",               "mixed", false, ["XZDefines"];
+
   # 拓展
-  s.defineSubspec "XZURLQuery",                 "ObjC",  false, []
-  s.defineSubspec "XZGeometry",                 "Mixed", false, []
-  s.defineSubspec "XZContentStatus",            "Swift", false, ["XZTextImageView"]
-  s.defineSubspec "XZImage",                    "ObjC",  true,  ["XZLog", "XZGeometry"]
-  s.defineSubspec "XZRuntime",                  "ObjC",  false, ["XZDefines"]
+  s.defineSubspec "XZURLQuery",                 "objc",  false, [];
+  s.defineSubspec "XZGeometry",                 "mixed", false, [];
+  s.defineSubspec "XZContentStatus",            "swift", false, ["XZTextImageView"];
+  s.defineSubspec "XZImage",                    "objc",  true,  ["XZLog", "XZGeometry"];
+  
   
   # 核心
-  s.defineSubspec "XZML",                       "Mixed", true, ["XZDefines", "XZExtensions"]
-  s.defineSubspec "XZMocoa",                    "Mixed", true, ["XZDefines", "XZExtensions", "XZRuntime"]
-  s.defineSubspec "XZToast",                    "Mixed", true, ["XZGeometry", "XZTextImageView", "XZExtensions"]
-  s.defineSubspec "XZRefresh",                  "ObjC",  true, ["XZDefines"]
+  s.defineSubspec "XZML",                       "mixed", true, ["XZDefines", "XZExtensions"];
+  s.defineSubspec "XZMocoa",                    "mixed", true, ["XZDefines", "XZExtensions", "XZObjc"];
+  s.defineSubspec "XZToast",                    "mixed", true, ["XZGeometry", "XZTextImageView", "XZExtensions"];
+  s.defineSubspec "XZRefresh",                  "objc",  true, ["XZDefines"]
   
   # 自定义组件
-  s.defineSubspec "XZPageView",                 "ObjC",  true,  ["XZDefines", "XZGeometry", "XZExtensions"]
-  s.defineSubspec "XZProgressView",             "Swift", false, []
-  s.defineSubspec "XZPageControl",              "ObjC",  false, ["XZExtensions"]
-  s.defineSubspec "XZSegmentedControl",         "ObjC",  true,  ["XZDefines"]
-  s.defineSubspec "XZTextImageView",            "Swift", false, ["XZGeometry"]
-  s.defineSubspec "XZNavigationController",     "Swift", false, ["XZDefines"]
-  s.defineSubspec "XZCollectionViewFlowLayout", "Swift", false, []
+  s.defineSubspec "XZPageView",                 "objc",  true,  ["XZDefines", "XZGeometry", "XZExtensions"];
+  s.defineSubspec "XZProgressView",             "swift", false, [];
+  s.defineSubspec "XZPageControl",              "objc",  false, ["XZExtensions"];
+  s.defineSubspec "XZSegmentedControl",         "objc",  true,  ["XZDefines"];
+  s.defineSubspec "XZTextImageView",            "swift", false, ["XZGeometry"];
+  s.defineSubspec "XZNavigationController",     "swift", false, ["XZDefines"];
+  s.defineSubspec "XZCollectionViewFlowLayout", "swift", false, [];
   
   # 工具类
-  s.defineSubspec "XZTicker",                   "Swift", false, []
-  s.defineSubspec "XZJSON",                     "ObjC",  true,  ["XZRuntime", "XZExtensions"]
-  s.defineSubspec "XZLocale",                   "ObjC",  false, ["XZDefines", "XZExtensions"]
-  s.defineSubspec "XZDataCryptor",              "ObjC",  false, ["XZDefines"]
-  s.defineSubspec "XZDataDigester",             "ObjC",  false, ["XZDefines", "XZExtensions"]
-  s.defineSubspec "XZKeychain",                 "ObjC",  false, ["XZLog"]
+  s.defineSubspec "XZTicker",                   "swift", false, [];
+  s.defineSubspec "XZJSON",                     "objc",  true,  ["XZObjc", "XZExtensions"];
+  s.defineSubspec "XZLocale",                   "objc",  false, ["XZDefines", "XZExtensions"];
+  s.defineSubspec "XZDataCryptor",              "objc",  false, ["XZDefines"];
+  s.defineSubspec "XZDataDigester",             "objc",  false, ["XZDefines", "XZExtensions"];
+  s.defineSubspec "XZKeychain",                 "objc",  false, ["XZLog"];
   
 end
 

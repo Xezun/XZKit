@@ -174,92 +174,92 @@
         SEL const getter = property->_getter;
         SEL const setter = property->_setter;
         switch (property->_type) {
-            case XZISOCTypeChar: {
+            case XZStdcTypeChar: {
                 char const value = ((char (*)(id, SEL))objc_msgSend)(self, getter);
                 ((void (*)(id, SEL, char))objc_msgSend)(targetModel, setter, value);
                 return;
             }
-            case XZISOCTypeUnsignedChar: {
+            case XZStdcTypeUnsignedChar: {
                 unsigned char const value = ((unsigned char (*)(id, SEL))objc_msgSend)(self, getter);
                 ((void (*)(id, SEL, unsigned char))objc_msgSend)(targetModel, setter, value);
                 return;
             }
-            case XZISOCTypeInt: {
+            case XZStdcTypeInt: {
                 int const value = ((int (*)(id, SEL))objc_msgSend)(self, getter);
                 ((void (*)(id, SEL, int))objc_msgSend)(targetModel, setter, value);
                 return;
             }
-            case XZISOCTypeUnsignedInt: {
+            case XZStdcTypeUnsignedInt: {
                 unsigned int const value = ((unsigned int (*)(id, SEL))objc_msgSend)(self, getter);
                 ((void (*)(id, SEL, unsigned int))objc_msgSend)(targetModel, setter, value);
                 return;
             }
-            case XZISOCTypeShort: {
+            case XZStdcTypeShort: {
                 short const value = ((short (*)(id, SEL))objc_msgSend)(self, getter);
                 ((void (*)(id, SEL, short))objc_msgSend)(targetModel, setter, value);
                 return;
             }
-            case XZISOCTypeUnsignedShort: {
+            case XZStdcTypeUnsignedShort: {
                 unsigned short const value = ((unsigned short (*)(id, SEL))objc_msgSend)(self, getter);
                 ((void (*)(id, SEL, unsigned short))objc_msgSend)(targetModel, setter, value);
                 return;
             }
-            case XZISOCTypeLong: {
+            case XZStdcTypeLong: {
                 long const value = ((long (*)(id, SEL))objc_msgSend)(self, getter);
                 ((void (*)(id, SEL, long))objc_msgSend)(targetModel, setter, value);
                 return;
             }
-            case XZISOCTypeUnsignedLong: {
+            case XZStdcTypeUnsignedLong: {
                 unsigned long const value = ((unsigned long (*)(id, SEL))objc_msgSend)(self, getter);
                 ((void (*)(id, SEL, unsigned long))objc_msgSend)(targetModel, setter, value);
                 return;
             }
-            case XZISOCTypeLongLong: {
+            case XZStdcTypeLongLong: {
                 long long const value = ((long long (*)(id, SEL))objc_msgSend)(self, getter);
                 ((void (*)(id, SEL, long long))objc_msgSend)(targetModel, setter, value);
                 return;
             }
-            case XZISOCTypeUnsignedLongLong: {
+            case XZStdcTypeUnsignedLongLong: {
                 unsigned long long const value = ((unsigned long long (*)(id, SEL))objc_msgSend)(self, getter);
                 ((void (*)(id, SEL, unsigned long long))objc_msgSend)(targetModel, setter, value);
                 return;
             }
-            case XZISOCTypeFloat: {
+            case XZStdcTypeFloat: {
                 float const value = ((float (*)(id, SEL))xz_objc_msgSend_ftret)(self, getter);
                 ((void (*)(id, SEL, float))objc_msgSend)(targetModel, setter, value);
                 return;
             }
-            case XZISOCTypeDouble: {
+            case XZStdcTypeDouble: {
                 double const value = ((double (*)(id, SEL))xz_objc_msgSend_dbret)(self, getter);
                 ((void (*)(id, SEL, double))objc_msgSend)(targetModel, setter, value);
                 return;
             }
-            case XZISOCTypeLongDouble: {
+            case XZStdcTypeLongDouble: {
                 long double const value = ((long double (*)(id, SEL))xz_objc_msgSend_ldret)(self, getter);
                 ((void (*)(id, SEL, long double))objc_msgSend)(targetModel, setter, value);
                 return;
             }
-            case XZISOCTypeBool: {
+            case XZStdcTypeBool: {
                 BOOL const value = ((BOOL (*)(id, SEL))objc_msgSend)(self, getter);
                 ((void (*)(id, SEL, BOOL))objc_msgSend)(targetModel, setter, value);
                 return;
             }
-            case XZISOCTypeClass: {
+            case XZStdcTypeClass: {
                 Class const value = ((Class (*)(id, SEL))objc_msgSend)(self, getter);
                 ((void (*)(id, SEL, Class))objc_msgSend)(targetModel, setter, value);
                 return;
             }
-            case XZISOCTypeSEL:  {
+            case XZStdcTypeSEL:  {
                 SEL const value = ((SEL (*)(id, SEL))objc_msgSend)(self, getter);
                 ((void (*)(id, SEL, SEL))objc_msgSend)(targetModel, setter, value);
                 return;
             }
-            case XZISOCTypeObject:  {
+            case XZStdcTypeObject:  {
                 id const value = ((id (*)(id, SEL))objc_msgSend)(self, getter);
                 ((void (*)(id, SEL, id))objc_msgSend)(targetModel, setter, value);
                 return;
             }
-            case XZISOCTypeStruct: {
+            case XZStdcTypeStruct: {
                 switch (property->_foundationStruct) {
                     case XZJSONFoundationStructUnknown: {
                         break;
@@ -307,18 +307,18 @@
                 }
                 break;
             }
-            case XZISOCTypeUnion:
-            case XZISOCTypeBitField:
-            case XZISOCTypeVoid:
-            case XZISOCTypeString:
-            case XZISOCTypeArray:
-            case XZISOCTypePointer:
-            case XZISOCTypeUnknown: {
+            case XZStdcTypeUnion:
+            case XZStdcTypeBitField:
+            case XZStdcTypeVoid:
+            case XZStdcTypeString:
+            case XZStdcTypeArray:
+            case XZStdcTypePointer:
+            case XZStdcTypeUnknown: {
                 break;
             }
-            case XZISOCTypeInt128:
-            case XZISOCTypeUnsignedInt128:
-            case XZISOCTypeVector:
+            case XZStdcTypeInt128:
+            case XZStdcTypeUnsignedInt128:
+            case XZStdcTypeVector:
                 XZLog(@"[XZJSON] 目前平台不支持该数据类型");
                 break;
         }
@@ -384,9 +384,9 @@
         
         // 比较属性值
         switch (property1->_type) {
-            case XZISOCTypeUnknown:
+            case XZStdcTypeUnknown:
                 continue;
-            case XZISOCTypeChar: {
+            case XZStdcTypeChar: {
                 char const value1 = ((char(*)(id,SEL))objc_msgSend)(model1, property1->_getter);
                 char const value2 = ((char(*)(id,SEL))objc_msgSend)(model1, property2->_getter);
                 if (value1 != value2) {
@@ -394,7 +394,7 @@
                 }
                 continue;
             }
-            case XZISOCTypeUnsignedChar: {
+            case XZStdcTypeUnsignedChar: {
                 unsigned char const value1 = ((unsigned char(*)(id,SEL))objc_msgSend)(model1, property1->_getter);
                 unsigned char const value2 = ((unsigned char(*)(id,SEL))objc_msgSend)(model1, property2->_getter);
                 if (value1 != value2) {
@@ -402,7 +402,7 @@
                 }
                 continue;
             }
-            case XZISOCTypeInt: {
+            case XZStdcTypeInt: {
                 int const value1 = ((int(*)(id,SEL))objc_msgSend)(model1, property1->_getter);
                 int const value2 = ((int(*)(id,SEL))objc_msgSend)(model1, property2->_getter);
                 if (value1 != value2) {
@@ -410,7 +410,7 @@
                 }
                 continue;
             }
-            case XZISOCTypeUnsignedInt: {
+            case XZStdcTypeUnsignedInt: {
                 unsigned int const value1 = ((unsigned int(*)(id,SEL))objc_msgSend)(model1, property1->_getter);
                 unsigned int const value2 = ((unsigned int(*)(id,SEL))objc_msgSend)(model1, property2->_getter);
                 if (value1 != value2) {
@@ -418,7 +418,7 @@
                 }
                 continue;
             }
-            case XZISOCTypeShort: {
+            case XZStdcTypeShort: {
                 short const value1 = ((short(*)(id,SEL))objc_msgSend)(model1, property1->_getter);
                 short const value2 = ((short(*)(id,SEL))objc_msgSend)(model1, property2->_getter);
                 if (value1 != value2) {
@@ -426,7 +426,7 @@
                 }
                 continue;
             }
-            case XZISOCTypeUnsignedShort: {
+            case XZStdcTypeUnsignedShort: {
                 unsigned short const value1 = ((unsigned short(*)(id,SEL))objc_msgSend)(model1, property1->_getter);
                 unsigned short const value2 = ((unsigned short(*)(id,SEL))objc_msgSend)(model1, property2->_getter);
                 if (value1 != value2) {
@@ -434,7 +434,7 @@
                 }
                 continue;
             }
-            case XZISOCTypeLong: {
+            case XZStdcTypeLong: {
                 long const value1 = ((long(*)(id,SEL))objc_msgSend)(model1, property1->_getter);
                 long const value2 = ((long(*)(id,SEL))objc_msgSend)(model1, property2->_getter);
                 if (value1 != value2) {
@@ -442,7 +442,7 @@
                 }
                 continue;
             }
-            case XZISOCTypeUnsignedLong: {
+            case XZStdcTypeUnsignedLong: {
                 unsigned long const value1 = ((unsigned long(*)(id,SEL))objc_msgSend)(model1, property1->_getter);
                 unsigned long const value2 = ((unsigned long(*)(id,SEL))objc_msgSend)(model1, property2->_getter);
                 if (value1 != value2) {
@@ -450,7 +450,7 @@
                 }
                 continue;
             }
-            case XZISOCTypeLongLong: {
+            case XZStdcTypeLongLong: {
                 long long const value1 = ((long long(*)(id,SEL))objc_msgSend)(model1, property1->_getter);
                 long long const value2 = ((long long(*)(id,SEL))objc_msgSend)(model1, property2->_getter);
                 if (value1 != value2) {
@@ -458,7 +458,7 @@
                 }
                 continue;
             }
-            case XZISOCTypeUnsignedLongLong: {
+            case XZStdcTypeUnsignedLongLong: {
                 unsigned long long const value1 = ((unsigned long long(*)(id,SEL))objc_msgSend)(model1, property1->_getter);
                 unsigned long long const value2 = ((unsigned long long(*)(id,SEL))objc_msgSend)(model1, property2->_getter);
                 if (value1 != value2) {
@@ -466,7 +466,7 @@
                 }
                 continue;
             }
-            case XZISOCTypeFloat: {
+            case XZStdcTypeFloat: {
                 float const value1 = ((float(*)(id,SEL))xz_objc_msgSend_ftret)(model1, property1->_getter);
                 float const value2 = ((float(*)(id,SEL))xz_objc_msgSend_ftret)(model1, property2->_getter);
                 if (value1 != value2) {
@@ -474,7 +474,7 @@
                 }
                 continue;
             }
-            case XZISOCTypeDouble: {
+            case XZStdcTypeDouble: {
                 double const value1 = ((double(*)(id,SEL))xz_objc_msgSend_dbret)(model1, property1->_getter);
                 double const value2 = ((double(*)(id,SEL))xz_objc_msgSend_dbret)(model1, property2->_getter);
                 if (value1 != value2) {
@@ -482,7 +482,7 @@
                 }
                 continue;
             }
-            case XZISOCTypeLongDouble: {
+            case XZStdcTypeLongDouble: {
                 long double const value1 = ((long double(*)(id,SEL))xz_objc_msgSend_ldret)(model1, property1->_getter);
                 long double const value2 = ((long double(*)(id,SEL))xz_objc_msgSend_ldret)(model1, property2->_getter);
                 if (value1 != value2) {
@@ -490,7 +490,7 @@
                 }
                 continue;
             }
-            case XZISOCTypeBool: {
+            case XZStdcTypeBool: {
                 BOOL const value1 = ((BOOL(*)(id,SEL))objc_msgSend)(model1, property1->_getter);
                 BOOL const value2 = ((BOOL(*)(id,SEL))objc_msgSend)(model1, property2->_getter);
                 if (value1 != value2) {
@@ -498,15 +498,15 @@
                 }
                 continue;
             }
-            case XZISOCTypeVoid:
-            case XZISOCTypeString:
-            case XZISOCTypeArray:
-            case XZISOCTypeBitField:
-            case XZISOCTypePointer:
-            case XZISOCTypeUnion: {
+            case XZStdcTypeVoid:
+            case XZStdcTypeString:
+            case XZStdcTypeArray:
+            case XZStdcTypeBitField:
+            case XZStdcTypePointer:
+            case XZStdcTypeUnion: {
                 continue;
             }
-            case XZISOCTypeStruct:
+            case XZStdcTypeStruct:
                 if (property1->_foundationStruct != property2->_foundationStruct) {
                     continue;
                 }
@@ -580,7 +580,7 @@
                     }
                 }
                 break;
-            case XZISOCTypeClass: {
+            case XZStdcTypeClass: {
                 Class const value1 = ((Class(*)(id,SEL))objc_msgSend)(model1, property1->_getter);
                 Class const value2 = ((Class(*)(id,SEL))objc_msgSend)(model1, property2->_getter);
                 if (value1 != value2) {
@@ -588,7 +588,7 @@
                 }
                 continue;
             }
-            case XZISOCTypeSEL: {
+            case XZStdcTypeSEL: {
                 SEL const value1 = ((SEL(*)(id,SEL))objc_msgSend)(model1, property1->_getter);
                 SEL const value2 = ((SEL(*)(id,SEL))objc_msgSend)(model1, property2->_getter);
                 if (value1 != value2) {
@@ -596,7 +596,7 @@
                 }
                 continue;
             }
-            case XZISOCTypeObject: {
+            case XZStdcTypeObject: {
                 id const value1 = ((id(*)(id,SEL))objc_msgSend)(model1, property1->_getter);
                 id const value2 = ((id(*)(id,SEL))objc_msgSend)(model1, property2->_getter);
                 if ([value1 isEqual:value2]) {
@@ -604,9 +604,9 @@
                 }
                 return NO;
             }
-            case XZISOCTypeInt128:
-            case XZISOCTypeUnsignedInt128:
-            case XZISOCTypeVector:
+            case XZStdcTypeInt128:
+            case XZStdcTypeUnsignedInt128:
+            case XZStdcTypeVector:
                 XZLog(@"[XZJSON] 目前平台不支持该数据类型");
                 continue;
         }

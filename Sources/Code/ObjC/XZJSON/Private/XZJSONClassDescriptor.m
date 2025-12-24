@@ -21,7 +21,7 @@ static id XZJSONKeyFromString(NSString *aString);
 - (instancetype)initWithClass:(nonnull Class)aClass {
     self = [super init];
     if (self) {
-        _raw = [XZOBJCClass descriptorForClass:aClass];
+        _raw = [XZObjcClass descriptorForClass:aClass];
         _foundationClass = XZJSONFoundationClassFromClass(aClass);
         
         // 原生对象，不需要获取属性
@@ -39,7 +39,7 @@ static id XZJSONKeyFromString(NSString *aString);
             _usesPropertyJSONDecodingMethod = NO;
             _usesPropertyJSONEncodingMethod = NO;
         } else {
-            XZOBJCClass *rawClass = self->_raw;
+            XZObjcClass *rawClass = self->_raw;
             
             while (rawClass.superDescriptor) {
                 [NSNotificationCenter.defaultCenter addObserver:self selector:@selector(classNeedsUpdateNotification:) name:XZObjcClassDidDidBecomeInvalidNotification object:rawClass];
@@ -100,9 +100,9 @@ static id XZJSONKeyFromString(NSString *aString);
     // 所有属性
     NSMutableDictionary * const allProperties = [NSMutableDictionary new];
     {
-        XZOBJCClass *class = _raw;
+        XZObjcClass *class = _raw;
         do {
-            [class.properties enumerateKeysAndObjectsUsingBlock:^(NSString *name, XZOBJCProperty *property, BOOL *stop) {
+            [class.properties enumerateKeysAndObjectsUsingBlock:^(NSString *name, XZObjcProperty *property, BOOL *stop) {
                 if (blockedKeys && [blockedKeys containsObject:name])     {
                     return; // 有黑名单，则不能在黑名单中
                 }
@@ -117,49 +117,49 @@ static id XZJSONKeyFromString(NSString *aString);
                 }
                 XZJSONPropertyDescriptor *descriptor = [XZJSONPropertyDescriptor descriptorWithProperty:property elementType:mappingClasses[property.name] ofClass:self];
                 switch (descriptor->_type) {
-                    case XZISOCTypeUnknown:
+                    case XZStdcTypeUnknown:
                         return;
-                    case XZISOCTypeChar:
-                    case XZISOCTypeUnsignedChar:
-                    case XZISOCTypeInt:
-                    case XZISOCTypeUnsignedInt:
-                    case XZISOCTypeShort:
-                    case XZISOCTypeUnsignedShort:
-                    case XZISOCTypeLong:
-                    case XZISOCTypeUnsignedLong:
-                    case XZISOCTypeInt128:
-                    case XZISOCTypeUnsignedInt128:
-                    case XZISOCTypeLongLong:
-                    case XZISOCTypeUnsignedLongLong:
-                    case XZISOCTypeFloat:
-                    case XZISOCTypeDouble:
-                    case XZISOCTypeLongDouble:
-                    case XZISOCTypeBool:
+                    case XZStdcTypeChar:
+                    case XZStdcTypeUnsignedChar:
+                    case XZStdcTypeInt:
+                    case XZStdcTypeUnsignedInt:
+                    case XZStdcTypeShort:
+                    case XZStdcTypeUnsignedShort:
+                    case XZStdcTypeLong:
+                    case XZStdcTypeUnsignedLong:
+                    case XZStdcTypeInt128:
+                    case XZStdcTypeUnsignedInt128:
+                    case XZStdcTypeLongLong:
+                    case XZStdcTypeUnsignedLongLong:
+                    case XZStdcTypeFloat:
+                    case XZStdcTypeDouble:
+                    case XZStdcTypeLongDouble:
+                    case XZStdcTypeBool:
                         break;
-                    case XZISOCTypeVoid:
+                    case XZStdcTypeVoid:
                         return;
-                    case XZISOCTypeString:
+                    case XZStdcTypeString:
                         return;
-                    case XZISOCTypeSEL:
+                    case XZStdcTypeSEL:
                         break;
-                    case XZISOCTypePointer:
+                    case XZStdcTypePointer:
                         return;
-                    case XZISOCTypeArray:
+                    case XZStdcTypeArray:
                         return;
-                    case XZISOCTypeVector:
+                    case XZStdcTypeVector:
                         return;
-                    case XZISOCTypeBitField:
+                    case XZStdcTypeBitField:
                         return;
-                    case XZISOCTypeUnion:
+                    case XZStdcTypeUnion:
                         return;
-                    case XZISOCTypeStruct:
+                    case XZStdcTypeStruct:
                         if (descriptor->_foundationStruct) {
                             break;
                         }
                         return;
-                    case XZISOCTypeClass:
+                    case XZStdcTypeClass:
                         break;
-                    case XZISOCTypeObject:
+                    case XZStdcTypeObject:
                         if (descriptor->_foundationClass) {
                             break;
                         }

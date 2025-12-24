@@ -1,5 +1,5 @@
 //
-//  XZOBJCType.h
+//  XZObjcType.h
 //  XZKit
 //
 //  Created by Xezun on 2021/2/12.
@@ -22,141 +22,141 @@ NS_ASSUME_NONNULL_BEGIN
 
 /// ANSI/ISO C 数据类型枚举。
 ///
-/// 1. 官方文档 [Objective-C Runtime Programming Guide - Type Encodings](https://developer.apple.com/library/archive/documentation/Cocoa/Conceptual/ObjCRuntimeGuide/Articles/ocrtTypeEncodings.html)
+/// 1.  [Objective-C Runtime Programming Guide - Type Encodings](https://developer.apple.com/library/archive/documentation/Cocoa/Conceptual/ObjCRuntimeGuide/Articles/ocrtTypeEncodings.html)
 ///
 /// 2. [Objective-C Runtime Programming Guide - Declared Properties](https://developer.apple.com/library/mac/documentation/Cocoa/Conceptual/ObjCRuntimeGuide/Articles/ocrtPropertyIntrospection.html)
-typedef NS_ENUM(NSInteger, XZISOCType) {
+typedef NS_ENUM(NSInteger, XZStdcType) {
     /// unknown type (among other things, this code is used for function pointers)
     /// > 匿名的结构体、共用体也会被编码为此名字，如 {?=ics}。
-    XZISOCTypeUnknown          = _C_UNDEF,
+    XZStdcTypeUnknown          = _C_UNDEF,
     /// char
-    XZISOCTypeChar             = _C_CHR,
+    XZStdcTypeChar             = _C_CHR,
     /// unsigned char
-    XZISOCTypeUnsignedChar     = _C_UCHR,
+    XZStdcTypeUnsignedChar     = _C_UCHR,
     /// int
-    XZISOCTypeInt              = _C_INT,
+    XZStdcTypeInt              = _C_INT,
     /// unsigned int
-    XZISOCTypeUnsignedInt      = _C_UINT,
+    XZStdcTypeUnsignedInt      = _C_UINT,
     /// short
-    XZISOCTypeShort            = _C_SHT,
+    XZStdcTypeShort            = _C_SHT,
     /// unsigned short
-    XZISOCTypeUnsignedShort    = _C_USHT,
+    XZStdcTypeUnsignedShort    = _C_USHT,
     /// long
     /// > 64位编译器会将 long 当作 long long 处理，在代码中，可使用 `XZ_LONG_IS_LLONG` 宏进行条件编译。
-    XZISOCTypeLong             = _C_LNG,
+    XZStdcTypeLong             = _C_LNG,
     /// unsigned long
     /// > 64位编译器会将 unsigned long 当作 unsigned long long 处理，在代码中，可使用 `XZ_LONG_IS_LLONG` 宏进行条件编译。
-    XZISOCTypeUnsignedLong     = _C_ULNG,
-    XZISOCTypeInt128           = _C_INT128,
-    XZISOCTypeUnsignedInt128   = _C_UINT128,
+    XZStdcTypeUnsignedLong     = _C_ULNG,
+    XZStdcTypeInt128           = _C_INT128,
+    XZStdcTypeUnsignedInt128   = _C_UINT128,
     /// long long
-    XZISOCTypeLongLong         = _C_LNG_LNG,
+    XZStdcTypeLongLong         = _C_LNG_LNG,
     /// unsigned long long
-    XZISOCTypeUnsignedLongLong = _C_ULNG_LNG,
+    XZStdcTypeUnsignedLongLong = _C_ULNG_LNG,
     /// float
-    XZISOCTypeFloat            = _C_FLT,
+    XZStdcTypeFloat            = _C_FLT,
     /// double
-    XZISOCTypeDouble           = _C_DBL,
+    XZStdcTypeDouble           = _C_DBL,
     /// long double
-    XZISOCTypeLongDouble       = _C_LNG_DBL,
+    XZStdcTypeLongDouble       = _C_LNG_DBL,
     /// bool
-    XZISOCTypeBool             = _C_BOOL,
+    XZStdcTypeBool             = _C_BOOL,
     /// void
-    XZISOCTypeVoid             = _C_VOID,
+    XZStdcTypeVoid             = _C_VOID,
     /// C 字符串 char *
-    XZISOCTypeString           = _C_CHARPTR,
+    XZStdcTypeString           = _C_CHARPTR,
     /// SEL
-    XZISOCTypeSEL              = _C_SEL,
+    XZStdcTypeSEL              = _C_SEL,
     /// pointer to type
-    XZISOCTypePointer          = _C_PTR,
+    XZStdcTypePointer          = _C_PTR,
     /// C 数组
-    XZISOCTypeArray            = _C_ARY_B,
+    XZStdcTypeArray            = _C_ARY_B,
     /// C 动态数组，Vector 
-    XZISOCTypeVector           = _C_VECTOR,
+    XZStdcTypeVector           = _C_VECTOR,
     /// bit field of num bits
-    /// @code
+    /// ```objc
     /// // 位域结构体的成员的类型即为 bit field
     /// struct Bitfield {
     ///     int a:1;
     ///     char b:2;
     /// }
-    /// @endcode
-    XZISOCTypeBitField         = _C_BFLD,
+    /// ```
+    XZStdcTypeBitField         = _C_BFLD,
     /// C 共用体
-    XZISOCTypeUnion            = _C_UNION_B,
+    XZStdcTypeUnion            = _C_UNION_B,
     /// C 结构体；类结构体，如 NSObject 为 {NSObject=#}
-    XZISOCTypeStruct           = _C_STRUCT_B,
+    XZStdcTypeStruct           = _C_STRUCT_B,
     /// 类对象的类型
-    XZISOCTypeClass            = _C_CLASS,
+    XZStdcTypeClass            = _C_CLASS,
     /// id. An object (whether statically typed or typed id)
-    XZISOCTypeObject           = _C_ID,
+    XZStdcTypeObject           = _C_ID,
 };
 
 /// 类型修饰符。Modifiers
-typedef NS_OPTIONS(NSUInteger, XZISOCModifiers) {
+typedef NS_OPTIONS(NSUInteger, XZStdcModifiers) {
     // modifiers for Variables
-    XZISOCVariableModifiers = 0x3FF00,
+    XZStdcVariableModifiers = 0x3FF00,
     /// const
-    XZISOCModifierConst  = 1 << 8,
+    XZStdcModifierConst  = 1 << 8,
     /// in
-    XZISOCModifierIn     = 1 << 9,
+    XZStdcModifierIn     = 1 << 9,
     /// inout
-    XZISOCModifierInout  = 1 << 10,
+    XZStdcModifierInout  = 1 << 10,
     /// out
-    XZISOCModifierOut    = 1 << 11,
+    XZStdcModifierOut    = 1 << 11,
     /// bycopy
-    XZISOCModifierByCopy = 1 << 12,
+    XZStdcModifierByCopy = 1 << 12,
     /// byref
-    XZISOCModifierByRef  = 1 << 13,
+    XZStdcModifierByRef  = 1 << 13,
     /// oneway
-    XZISOCModifierOneway      = 1 << 14,
-    XZISOCModifierComplex     = 1 << 15,
-    XZISOCModifierAtomic      = 1 << 16,
-    XZISOCModifierGNURegister = 1 << 17,
+    XZStdcModifierOneway      = 1 << 14,
+    XZStdcModifierComplex     = 1 << 15,
+    XZStdcModifierAtomic      = 1 << 16,
+    XZStdcModifierGNURegister = 1 << 17,
     /// modifiers for Properties
     /// > 没有 assign/unsafe_unretained 修饰符，只能反向判断
-    XZISOCPropertyModifiers = 0xFF00000,
+    XZStdcPropertyModifiers = 0xFF00000,
     /// readonly
-    XZISOCModifierReadonly  = 1 << (20 + 0),
+    XZStdcModifierReadonly  = 1 << (20 + 0),
     /// copy
-    XZISOCModifierCopy      = 1 << (20 + 1),
+    XZStdcModifierCopy      = 1 << (20 + 1),
     /// retain
-    XZISOCModifierRetain    = 1 << (20 + 2),
+    XZStdcModifierRetain    = 1 << (20 + 2),
     /// weak
-    XZISOCModifierWeak      = 1 << (20 + 3),
+    XZStdcModifierWeak      = 1 << (20 + 3),
     /// nonatomic
-    XZISOCModifierNonatomic = 1 << (20 + 4),
+    XZStdcModifierNonatomic = 1 << (20 + 4),
     /// getter=
-    XZISOCModifierGetter    = 1 << (20 + 5),
+    XZStdcModifierGetter    = 1 << (20 + 5),
     /// setter=
-    XZISOCModifierSetter    = 1 << (20 + 6),
+    XZStdcModifierSetter    = 1 << (20 + 6),
     /// @dynamic
-    XZISOCModifierDynamic   = 1 << (20 + 7),
+    XZStdcModifierDynamic   = 1 << (20 + 7),
 };
 
-@class XZOBJCType;
+@class XZObjcType;
 
-@protocol XZOBJCType <NSObject>
+@protocol XZObjcType <NSObject>
 @property (nonatomic, readonly) NSString *name;
-@property (nonatomic, readonly) XZOBJCType *type;
+@property (nonatomic, readonly) XZObjcType *type;
 @end
 
 /// 类型描述词，描述数据类型的对象。
 ///
 /// 数据类型，通常也称为变量类型。在 objc 中，数据类型包括 c 基础类型，比如 int、float 等，和 NSObject 等对象类型，可通过 `@encoding(type)` 可将类型编码为字符串。
-@interface XZOBJCType : NSObject <XZOBJCType>
+@interface XZObjcType : NSObject <XZObjcType>
 
 /// 类型名称。
 @property (nonatomic, readonly) NSString *name;
 
 /// 返回自身。
-@property (nonatomic, readonly) XZOBJCType *type;
+@property (nonatomic, readonly) XZObjcType *type;
 
 /// 类型。
-@property (nonatomic, readonly) XZISOCType raw;
+@property (nonatomic, readonly) XZStdcType raw;
 
 /// 类型修饰符。
-@property (nonatomic, readonly) XZISOCModifiers modifiers;
+@property (nonatomic, readonly) XZStdcModifiers modifiers;
 
 /// 类型的原始值，即类型的编码。
 @property (nonatomic, readonly) NSString *encoding;
@@ -178,40 +178,40 @@ typedef NS_OPTIONS(NSUInteger, XZISOCModifiers) {
 /// > 使用 `#pragma pack (value)` 或 `__attribute__((packed))` 可以自定义字节对齐。
 ///
 /// ```objc
-/// +[XZOBJCType setSize:sizeof(Type) alignment:_Alignof(Type) forType:\@encode(Type)];
+/// +[XZObjcType setSize:sizeof(Type) alignment:_Alignof(Type) forType:\@encode(Type)];
 /// // 或
-/// XZOBJCTypeRegister(Type);
+/// XZObjcTypeRegister(Type);
 /// ```
 @property (nonatomic, readonly) size_t alignment;
 
 /// 当前类型的成员类型，比如结构体、共用体的组成成员，或者指针类型（一般被认为是数组）的值的类型等。
-@property (nonatomic, readonly, nullable) NSArray<XZOBJCType *> *members;
+@property (nonatomic, readonly, nullable) NSArray<XZObjcType *> *members;
 
 /// 子类型，对象的类型。
 ///
-/// 此属性仅在 `type` 为 `XZISOCTypeObject` 时才可能有值。
+/// 此属性仅在 `type` 为 `XZStdcTypeObject` 时才可能有值。
 @property (nonatomic, readonly, nullable) Class subtype;
 
 /// 对象类型遵循的协议。
 ///
-/// 此属性仅在 `type` 为 `XZISOCTypeObject` 时才可能有值。
+/// 此属性仅在 `type` 为 `XZStdcTypeObject` 时才可能有值。
 @property (nonatomic, readonly, nullable) NSArray<Protocol *> *protocols;
 
 - (instancetype)init NS_UNAVAILABLE;
 + (instancetype)new NS_UNAVAILABLE;
 
 /// 构造类型描述。
-/// > 因为类型不能直接作为参数，而枚举 XZOBJCType 并不包含完整的类型信息，因此需要使用类型编码来构造。
+/// > 因为类型不能直接作为参数，而枚举 XZObjcType 并不包含完整的类型信息，因此需要使用类型编码来构造。
 /// - Parameter encoding: 类型编码，可以是类型编码中的子类型
-+ (nullable XZOBJCType *)typeWithEncoding:(const char * _Nullable)encoding NS_SWIFT_NAME(init(encoding:));
++ (nullable XZObjcType *)typeWithEncoding:(const char * _Nullable)encoding NS_SWIFT_NAME(init(encoding:));
 
 /// 构造类型描述符。
 ///
 /// - Parameters:
 ///   - encoding: 类型编码
 ///   - modifiers: 修饰符，因为属性修饰符不包含在类型编码中，可通过此参数提供
-+ (nullable XZOBJCType *)typeWithEncoding:(const char * _Nullable)encoding modifiers:(XZISOCModifiers)modifiers NS_SWIFT_NAME(init(encoding:modifiers:));
-+ (nullable XZOBJCType *)typeWithEncoding:(const char * _Nullable)encoding size:(size_t)size alignment:(size_t)alignment NS_SWIFT_NAME(init(encoding:size:alignment:));
++ (nullable XZObjcType *)typeWithEncoding:(const char * _Nullable)encoding modifiers:(XZStdcModifiers)modifiers NS_SWIFT_NAME(init(encoding:modifiers:));
++ (nullable XZObjcType *)typeWithEncoding:(const char * _Nullable)encoding size:(size_t)size alignment:(size_t)alignment NS_SWIFT_NAME(init(encoding:size:alignment:));
 
 /// 设置结构体类型的大小和字节对齐值。
 ///
@@ -223,9 +223,9 @@ typedef NS_OPTIONS(NSUInteger, XZISOCModifiers) {
 ///     float b;
 /// } Foobar;
 /// // 注册该自定义类型的 size 和 alignment
-/// [XZOBJCType setSize:sizeof(Foobar) alignment:_Alignof(Foobar) forType:\@encode(Foobar)];
+/// [XZObjcType setSize:sizeof(Foobar) alignment:_Alignof(Foobar) forType:\@encode(Foobar)];
 /// // 或者使用宏
-/// XZOBJCTypeRegister(Foobar);
+/// XZObjcTypeRegister(Foobar);
 /// ```
 ///
 /// - 类型的名字必须是原始名字，非 typedef 定义的别名。
@@ -239,14 +239,14 @@ typedef NS_OPTIONS(NSUInteger, XZISOCModifiers) {
 
 @end
 
-/// @function XZOBJCTypeRegister
+/// @function XZObjcTypeRegister
 /// 注册结构体、联合体的大小和内存对齐。
 ///
 /// @param objcType
 /// 类型，比如 CGRect 等
 ///
-/// 注册结构体字节大小和对齐的宏，比如 XZOBJCTypeRegister(CGRect) 。
-#define XZOBJCTypeRegister(objcType) [XZOBJCType registerSize:sizeof(objcType) alignment:_Alignof(objcType) forType:@encode(objcType)]
+/// 注册结构体字节大小和对齐的宏，比如 XZObjcTypeRegister(CGRect) 。
+#define XZObjcTypeRegister(objcType) [XZObjcType registerSize:sizeof(objcType) alignment:_Alignof(objcType) forType:@encode(objcType)]
 
 
 

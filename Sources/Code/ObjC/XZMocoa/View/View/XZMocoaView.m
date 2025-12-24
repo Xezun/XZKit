@@ -11,6 +11,7 @@
 #import "NSArray+XZKit.h"
 #import "UIView+XZKit.h"
 #import "XZLog.h"
+@import ObjectiveC;
 
 static const void * const _viewModel = &_viewModel;
 

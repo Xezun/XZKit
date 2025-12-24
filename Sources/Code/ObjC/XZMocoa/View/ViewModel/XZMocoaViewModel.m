@@ -12,7 +12,7 @@
 #import "XZMocoaKeysObserver.h"
 #import "XZMocoaKeysMapTable.h"
 #import "XZLog.h"
-#import "XZRuntime.h"
+#import "XZObjc.h"
 
 @implementation XZMocoaViewModel {
     @private
@@ -373,7 +373,7 @@ XZMocoaKey const XZMocoaKeyNone = @"";
             [invokedMethods addObject:methodName];
             
             NSArray<NSString *>    * const keys   = mapTable.methodToKeys[methodName];
-            XZOBJCMethod * const method = mapTable.namedMethods[methodName];
+            XZObjcMethod * const method = mapTable.namedMethods[methodName];
             
             if (method == nil || keys.count != method.argumentsTypes.count - 2) {
                 continue;
@@ -397,10 +397,10 @@ XZMocoaKey const XZMocoaKeyNone = @"";
                     value = nil;
                 }
                 
-                XZOBJCType *type = method.argumentsTypes[i];
+                XZObjcType *type = method.argumentsTypes[i];
                 switch (type.raw) {
-                    case XZISOCTypeClass:
-                    case XZISOCTypeObject: {
+                    case XZStdcTypeClass:
+                    case XZStdcTypeObject: {
                         [invocation setArgument:&value atIndex:i];
                         break;
                     }
