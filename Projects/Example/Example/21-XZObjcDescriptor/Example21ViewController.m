@@ -19,7 +19,7 @@
 - (void)viewDidLoad {
     [super viewDidLoad];
     
-    XZObjcClass *descriptor = [XZObjcClass descriptorForClass:objc_getClass("Example21Model")];
+    XZObjcClass *descriptor = [XZObjcClass classForClass:objc_getClass("Example21Model")];
         
     XZMocoaTableViewModel *viewModel = [[XZMocoaTableViewModel alloc] initWithModel:@[
         [Example21TableViewSectionModel modelWithName:@"模型" descriptors:@[descriptor]],

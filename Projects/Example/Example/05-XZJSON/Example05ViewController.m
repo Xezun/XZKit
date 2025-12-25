@@ -43,7 +43,7 @@
                     break;
                 }
                 case 1: {
-                    text = [[XZObjcClass descriptorForClass:[Example05Model class]] description];
+                    text = [[XZObjcClass classForClass:[Example05Model class]] description];
                     break;
                 }
                 case 2: {
@@ -195,15 +195,15 @@
         case 2: {
             switch (indexPath.row) {
                 case 0: {
-                    text = [[XZObjcClass descriptorForClass:[Example05Human class]] description];
+                    text = [[XZObjcClass classForClass:[Example05Human class]] description];
                     break;
                 }
                 case 1: {
-                    text = [[XZObjcClass descriptorForClass:[Example05Teacher class]] description];
+                    text = [[XZObjcClass classForClass:[Example05Teacher class]] description];
                     break;
                 }
                 case 2: {
-                    text = [[XZObjcClass descriptorForClass:[Example05Student class]] description];
+                    text = [[XZObjcClass classForClass:[Example05Student class]] description];
                     break;
                 }
                 case 3: {

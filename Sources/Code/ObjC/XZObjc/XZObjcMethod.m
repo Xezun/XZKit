@@ -9,12 +9,12 @@
 
 @implementation XZObjcMethod
 
-+ (instancetype)descriptorForMethod:(Method)method {
-    if (method == nil) {
++ (instancetype)methodForMethod:(Method)rawMethod {
+    if (rawMethod == nil) {
         return nil;
     }
 
-    SEL const _selector = method_getName(method);
+    SEL const _selector = method_getName(rawMethod);
     if (_selector == nil) {
         return nil;
     }
@@ -25,18 +25,18 @@
         return nil;
     }
 
-    const char * const typeEncoding = method_getTypeEncoding(method);
+    const char * const typeEncoding = method_getTypeEncoding(rawMethod);
 
     if (typeEncoding == nil) {
         return nil;
     }
     
-    IMP const _implementation = method_getImplementation(method);
+    IMP const _implementation = method_getImplementation(rawMethod);
     NSString * const _typeEncoding = [NSString stringWithUTF8String:typeEncoding];
     XZObjcType *_returnType = nil;
     NSMutableArray *_argumentsTypes = nil;
     
-    char *returnType = method_copyReturnType(method);
+    char *returnType = method_copyReturnType(rawMethod);
     if (returnType != nil) {
         _returnType = [XZObjcType typeWithEncoding:returnType];
         free(returnType);
@@ -44,11 +44,11 @@
         _returnType = [XZObjcType typeWithEncoding:@encode(void)];
     }
 
-    unsigned int const count = method_getNumberOfArguments(method);
+    unsigned int const count = method_getNumberOfArguments(rawMethod);
     if (count > 0) {
         _argumentsTypes = [NSMutableArray arrayWithCapacity:count];
         for (unsigned int i = 0; i < count; i++) {
-            char *argumentType = method_copyArgumentType(method, i);
+            char *argumentType = method_copyArgumentType(rawMethod, i);
             if (argumentType) {
                 XZObjcType *type = [XZObjcType typeWithEncoding:argumentType];
                 if (type) {
@@ -59,7 +59,7 @@
         }
     }
 
-    return [[self alloc] initWithMethod:method name:_name selector:_selector implementation:_implementation typeEncoding:_typeEncoding returnType:_returnType argumentsTypes:_argumentsTypes];
+    return [[self alloc] initWithMethod:rawMethod name:_name selector:_selector implementation:_implementation typeEncoding:_typeEncoding returnType:_returnType argumentsTypes:_argumentsTypes];
 }
 
 - (instancetype)initWithMethod:(Method)method name:(NSString *)name selector:(SEL)selector implementation:(IMP)implementation typeEncoding:(NSString *)typeEncoding returnType:(XZObjcType *)returnType argumentsTypes:(NSArray *)argumentsTypes {

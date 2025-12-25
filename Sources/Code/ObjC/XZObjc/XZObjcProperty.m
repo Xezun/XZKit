@@ -10,12 +10,12 @@
 
 @implementation XZObjcProperty
 
-+ (instancetype)descriptorForProperty:(objc_property_t)property ofClass:(Class)aClass {
-    if (!property) {
++ (instancetype)propertyForProperty:(objc_property_t)rawProperty forClass:(Class)aClass {
+    if (!rawProperty) {
         return nil;
     }
 
-    const char * const name = property_getName(property);
+    const char * const name = property_getName(rawProperty);
 
     if (name == nil || strlen(name) == 0) {
         return nil;
@@ -28,7 +28,7 @@
     const char *typeEncoding = NULL;
     
     unsigned int attrCount;
-    objc_property_attribute_t *attrs = property_copyAttributeList(property, &attrCount);
+    objc_property_attribute_t *attrs = property_copyAttributeList(rawProperty, &attrCount);
 
     for (unsigned int i = 0; i < attrCount; i++) {
         const char * const attrValue = attrs[i].value;
@@ -49,7 +49,7 @@
                 if (attrValue) {
                     Ivar ivar = class_getInstanceVariable(aClass, attrValue);
                     if (ivar) {
-                        _ivar = [XZObjcIvar descriptorForIvar:ivar];
+                        _ivar = [XZObjcIvar ivarForIvar:ivar];
                     }
                 }
                 break;
@@ -132,7 +132,7 @@
     }
     
     NSString *_name = [NSString stringWithCString:name encoding:(NSASCIIStringEncoding)];
-    return [[self alloc] initWithProperty:property name:_name type:_type ivar:_ivar getter:_getter setter:_setter];
+    return [[self alloc] initWithProperty:rawProperty name:_name type:_type ivar:_ivar getter:_getter setter:_setter];
 }
 
 - (instancetype)initWithProperty:(objc_property_t)property name:(NSString *)name type:(XZObjcType *)type ivar:(XZObjcIvar *)ivar getter:(SEL)getter setter:(SEL)setter {

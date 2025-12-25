@@ -50,15 +50,15 @@ FOUNDATION_EXPORT NSNotificationName const XZObjcClassDidDidBecomeInvalidNotific
 
 - (instancetype)init NS_UNAVAILABLE;
 
-/// 获取类 aClass 的描述信息。
+/// 获取描述`rawClass`的对象。
 ///
-/// 由于运行时类的信息可能会被修改，因此 XZObjcClass 可能会失效，因此
-///
-/// > 返回值并非单例，已过期的 XZObjcClass 会被释放，因此调用者需持有该对象。
+/// 如果运行时修改了`Class`的信息，那么`XZObjcClass`对象可能会因失效而被释放，因此调用者需持有该对象。
 ///
 /// - Parameter rawClass: 类
-+ (nullable XZObjcClass *)descriptorForClass:(nullable Class)rawClass NS_SWIFT_NAME(init(_:));
++ (nullable XZObjcClass *)classForClass:(nullable Class)rawClass NS_SWIFT_NAME(init(_:));
 
+/// 使`rawClass`当前的描述对象失效。
+/// - Parameter rawClass: 待失效描述对象
 + (void)invalidate:(Class)rawClass;
 
 @end

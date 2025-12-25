@@ -25,7 +25,7 @@ NS_ASSUME_NONNULL_BEGIN
 /// 返回值类型编码。 return value's type
 @property (nonatomic, readonly) XZObjcType *type;
 /// 方法标识。method's selector
-@property (nonatomic, assign, readonly) SEL selector;
+@property (nonatomic, readonly) SEL selector;
 /// 方法实现。method's implementation
 @property (nonatomic, assign, readonly) IMP implementation;
 /// 方法参数和返回值类型编码。method's parameter and return types
@@ -33,7 +33,7 @@ NS_ASSUME_NONNULL_BEGIN
 /// 参数类型编码。 array of arguments' type
 @property (nonatomic, readonly, nullable) NSArray<XZObjcType *> *argumentsTypes;
 
-+ (nullable instancetype)descriptorForMethod:(Method)method NS_SWIFT_NAME(init(for:));
++ (nullable instancetype)methodForMethod:(Method)rawMethod NS_SWIFT_NAME(init(for:));
 - (instancetype)init NS_UNAVAILABLE;
 
 @end

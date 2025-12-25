@@ -9,18 +9,18 @@
 
 @implementation XZObjcIvar
 
-+ (instancetype)descriptorForIvar:(Ivar)ivar {
-    if (ivar == nil) {
++ (instancetype)ivarForIvar:(Ivar)rawIvar {
+    if (rawIvar == nil) {
         return nil;
     }
 
-    const char * const name = ivar_getName(ivar);
+    const char * const name = ivar_getName(rawIvar);
 
     if (name == nil) {
         return nil;
     }
 
-    const char * const typeEncoding = ivar_getTypeEncoding(ivar);
+    const char * const typeEncoding = ivar_getTypeEncoding(rawIvar);
 
     if (typeEncoding == nil) {
         return nil;
@@ -32,7 +32,7 @@
     }
 
     NSString *_name = [NSString stringWithCString:name encoding:NSASCIIStringEncoding];
-    return [[self alloc] initWithIvar:ivar name:_name type:_type];
+    return [[self alloc] initWithIvar:rawIvar name:_name type:_type];
 }
 
 - (instancetype)initWithIvar:(Ivar)ivar name:(NSString *)name type:(XZObjcType *)type {

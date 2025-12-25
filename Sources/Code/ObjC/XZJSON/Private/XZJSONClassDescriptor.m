@@ -21,7 +21,7 @@ static id XZJSONKeyFromString(NSString *aString);
 - (instancetype)initWithClass:(nonnull Class)aClass {
     self = [super init];
     if (self) {
-        _raw = [XZObjcClass descriptorForClass:aClass];
+        _raw = [XZObjcClass classForClass:aClass];
         _foundationClass = XZJSONFoundationClassFromClass(aClass);
         
         // 原生对象，不需要获取属性

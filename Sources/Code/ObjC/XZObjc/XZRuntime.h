@@ -6,12 +6,12 @@
 //
 
 #import <Foundation/Foundation.h>
+@import ObjectiveC;
 #if __has_include(<XZKit/XZKit.h>)
 #import <XZKit/XZMacros.h>
 #else
 #import "XZMacros.h"
 #endif
-@import ObjectiveC;
 
 // 命名规则：
 // 所有函数默认作用于实例方法、属性、变量。

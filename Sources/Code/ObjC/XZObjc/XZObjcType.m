@@ -9,24 +9,10 @@
 #import "XZMacros.h"
 
 /// 类型描述词的存储对象类型。
-typedef NSMutableDictionary<NSString *, NSMutableDictionary<NSNumber *, XZObjcType *> *> *XZStdcTypeStorage;
+typedef NSMutableDictionary<NSString *, NSMutableDictionary<NSNumber *, XZObjcType *> *> *XZObjcTypeStorage;
+
 /// 访问类型描述词存储的函数。
-static id _Nullable XZObjcStorage(id (^NS_NOESCAPE block)(XZStdcTypeStorage const storage)) {
-    static dispatch_semaphore_t _lock;
-    static XZStdcTypeStorage _storage = nil;
-    
-    static dispatch_once_t onceToken;
-    dispatch_once(&onceToken, ^{
-        _lock = dispatch_semaphore_create(1);
-        _storage = [NSMutableDictionary dictionary];
-    });
-    
-    dispatch_semaphore_wait(_lock, DISPATCH_TIME_FOREVER);
-    id value = block(_storage);
-    dispatch_semaphore_signal(_lock);
-    
-    return value;
-}
+static id _Nullable withStorage(id (^NS_NOESCAPE block)(XZObjcTypeStorage const storage));
 
 static XZObjcType __unsafe_unretained *XZStaticOBJCTypes[CHAR_MAX] = { NULL };
 
@@ -51,9 +37,6 @@ static XZObjcType __unsafe_unretained *XZStaticOBJCTypes[CHAR_MAX] = { NULL };
         XZObjcTypeRegister(NSRange);
         
         XZObjcTypeRegister(CGAffineTransform);
-        
-        XZObjcType *type = XZStaticOBJCTypes[0];
-        type.raw;
     }
 }
 
@@ -84,6 +67,18 @@ static XZObjcType __unsafe_unretained *XZStaticOBJCTypes[CHAR_MAX] = { NULL };
     // 字符串非法
     if (encodingLength == 0) {
         return nil;
+    }
+    
+    if (modifiers == kNilOptions) {
+        NSString * const key = [NSString stringWithCString:encoding encoding:NSASCIIStringEncoding];
+        
+        XZObjcType * const type = withStorage(^id(XZObjcTypeStorage const storage) {
+            return storage[key];
+        });
+        
+        if (type) {
+            return type;
+        }
     }
     
     // 处理修饰符，类型编码可能会包含修饰符，比如方法参数的类型编码。
@@ -145,17 +140,7 @@ static XZObjcType __unsafe_unretained *XZStaticOBJCTypes[CHAR_MAX] = { NULL };
     
     NSNumber * const key = @(modifiers);
     
-    { // 查询是否已创建。
-        NSString *encodingKey = [NSString stringWithCString:encoding encoding:NSASCIIStringEncoding];
-        
-        XZObjcType * const descriptor = XZObjcStorage(^id(XZStdcTypeStorage const storage) {
-            return storage[encodingKey][key];
-        });
-        
-        if (descriptor) {
-            return descriptor;
-        }
-    }
+
     
     XZStdcType const _raw = encoding[0];
     
@@ -620,7 +605,7 @@ static XZObjcType __unsafe_unretained *XZStaticOBJCTypes[CHAR_MAX] = { NULL };
         }
     }
     
-    return XZObjcStorage(^id(XZStdcTypeStorage const storage) {
+    return withStorage(^id(XZObjcTypeStorage const storage) {
         XZObjcType *descriptor = storage[_encoding][key];
         if (descriptor) {
             return descriptor;
@@ -727,3 +712,19 @@ typedef struct XZStdcTypeLayout {
 
 
 
+static id _Nullable withStorage(id (^NS_NOESCAPE block)(XZObjcTypeStorage const storage)) {
+    static dispatch_semaphore_t _lock;
+    static XZObjcTypeStorage _storage = nil;
+    
+    static dispatch_once_t onceToken;
+    dispatch_once(&onceToken, ^{
+        _lock = dispatch_semaphore_create(1);
+        _storage = [NSMutableDictionary dictionary];
+    });
+    
+    dispatch_semaphore_wait(_lock, DISPATCH_TIME_FOREVER);
+    id const value = block(_storage);
+    dispatch_semaphore_signal(_lock);
+    
+    return value;
+}

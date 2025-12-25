@@ -30,7 +30,7 @@ NS_ASSUME_NONNULL_BEGIN
 /// 成员变量偏移。Ivar's offset
 @property (nonatomic, readonly) ptrdiff_t offset;
 
-+ (nullable instancetype)descriptorForIvar:(Ivar)ivar NS_SWIFT_NAME(init(for:));
++ (nullable instancetype)ivarForIvar:(Ivar)rawIvar NS_SWIFT_NAME(init(for:));
 - (instancetype)init NS_UNAVAILABLE;
 
 @end
