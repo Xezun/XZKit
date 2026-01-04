@@ -14,7 +14,7 @@ typedef NSMutableDictionary<NSString *, NSMutableDictionary<NSNumber *, XZObjcTy
 /// 访问类型描述词存储的函数。
 static id _Nullable withStorage(id (^NS_NOESCAPE block)(XZObjcTypeStorage const storage));
 
-static XZObjcType __unsafe_unretained *XZStaticOBJCTypes[CHAR_MAX] = { NULL };
+static XZObjcType __unsafe_unretained *XZStaticObjcTypes[CHAR_MAX] = { NULL };
 
 @interface XZObjcType ()
 @property (class, readonly) NSMutableDictionary<NSString *, NSValue *> *typeLayouts;
@@ -145,7 +145,7 @@ static XZObjcType __unsafe_unretained *XZStaticOBJCTypes[CHAR_MAX] = { NULL };
     XZStdcType const _raw = encoding[0];
     
     if (modifiers == kNilOptions) {
-        XZObjcType * const type = XZStaticOBJCTypes[_raw];
+        XZObjcType * const type = XZStaticObjcTypes[_raw];
         if (type != NULL) {
             return type;
         }

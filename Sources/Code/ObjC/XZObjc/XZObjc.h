@@ -14,9 +14,9 @@
 #import <XZKit/XZObjcClass.h>
 #else
 #import "XZRuntime.h"
-#import "XZStdcTypeDescriptor.h"
-#import "XZObjcIvarDescriptor.h"
-#import "XZObjcPropertyDescriptor.h"
-#import "XZObjcMethodDescriptor.h"
-#import "XZObjcClassDescriptor.h"
+#import "XZObjcType.h"
+#import "XZObjcIvar.h"
+#import "XZObjcProperty.h"
+#import "XZObjcMethod.h"
+#import "XZObjcClass.h"
 #endif
