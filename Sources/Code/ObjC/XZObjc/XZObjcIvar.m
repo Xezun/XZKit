@@ -26,7 +26,7 @@
         return nil;
     }
     
-    XZObjcType * _type = [XZObjcType typeWithEncoding:typeEncoding];
+    XZObjcType * _type = [XZObjcType typeForEncoding:typeEncoding];
     if (_type == nil) {
         return nil;
     }

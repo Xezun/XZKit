@@ -108,7 +108,7 @@
         }
     }
     
-    XZObjcType *_type = [XZObjcType typeWithEncoding:typeEncoding modifiers:modifiers];
+    XZObjcType *_type = [XZObjcType typeForEncoding:typeEncoding modifiers:modifiers];
     if (_type == nil) {
         return nil;
     }

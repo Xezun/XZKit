@@ -32,7 +32,7 @@ static id withStorage(id (^NS_NOESCAPE block)(CFMutableDictionaryRef const stora
         _raw = rawClass;
         _isValid = YES;
         _name = NSStringFromClass(rawClass);
-        _type = [XZObjcType typeWithEncoding:@encode(Class)];
+        _type = [XZObjcType typeForEncoding:@encode(Class)];
         
         if ([XZObjcClass classForClass:[rawClass superclass]]) {
             {

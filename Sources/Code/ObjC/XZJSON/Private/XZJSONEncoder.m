@@ -47,7 +47,7 @@ id XZJSONEncodeModelIntoDictionary(id const _Unsafe object, XZJSONClassDescripto
             NSValue    * const nsValue  = object;
             const char * const encoding = nsValue.objCType;
             
-            XZObjcType *type = [XZObjcType typeWithEncoding:encoding];
+            XZObjcType *type = [XZObjcType typeForEncoding:encoding];
             if (type == nil) {
                 return nil;
             }

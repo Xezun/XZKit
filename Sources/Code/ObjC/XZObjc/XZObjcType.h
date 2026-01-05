@@ -130,7 +130,7 @@ typedef NS_OPTIONS(NSUInteger, XZStdcModifiers) {
     XZStdcModifierGetter    = 1 << (20 + 5),
     /// setter=
     XZStdcModifierSetter    = 1 << (20 + 6),
-    /// @dynamic
+    /// 使用 `\@dynamic` 标记的属性。
     XZStdcModifierDynamic   = 1 << (20 + 7),
 };
 
@@ -143,7 +143,7 @@ typedef NS_OPTIONS(NSUInteger, XZStdcModifiers) {
 
 /// 类型描述词，描述数据类型的对象。
 ///
-/// 数据类型，通常也称为变量类型。在 objc 中，数据类型包括 c 基础类型，比如 int、float 等，和 NSObject 等对象类型，可通过 `@encoding(type)` 可将类型编码为字符串。
+/// 数据类型，通常也称为变量类型。在 objc 中，数据类型包括 c 基础类型，比如 int、float 等，和 NSObject 等对象类型，可通过 `\@encoding(type)` 可将类型编码为字符串。
 @interface XZObjcType : NSObject <XZObjcType>
 
 /// 类型名称。
@@ -200,18 +200,27 @@ typedef NS_OPTIONS(NSUInteger, XZStdcModifiers) {
 - (instancetype)init NS_UNAVAILABLE;
 + (instancetype)new NS_UNAVAILABLE;
 
+
++ (XZObjcType *)typeForType:(XZStdcType)stdcType;
+
 /// 构造类型描述。
-/// > 因为类型不能直接作为参数，而枚举 XZObjcType 并不包含完整的类型信息，因此需要使用类型编码来构造。
-/// - Parameter encoding: 类型编码，可以是类型编码中的子类型
-+ (nullable XZObjcType *)typeWithEncoding:(const char * _Nullable)encoding NS_SWIFT_NAME(init(encoding:));
+///
+/// 可以通过 `\@encode(type-name)` 语法对类型进行编码。
+///
+/// ```objc
+/// [XZObjcType typeForEncoding:\@encode(NSInteger)];
+/// ```
+///
+/// - Parameter encoding: 类型编码，或者复合类型编码中的子类型。
++ (nullable XZObjcType *)typeForEncoding:(const char * _Nullable)encoding NS_SWIFT_NAME(init(for:));
 
 /// 构造类型描述符。
 ///
 /// - Parameters:
 ///   - encoding: 类型编码
 ///   - modifiers: 修饰符，因为属性修饰符不包含在类型编码中，可通过此参数提供
-+ (nullable XZObjcType *)typeWithEncoding:(const char * _Nullable)encoding modifiers:(XZStdcModifiers)modifiers NS_SWIFT_NAME(init(encoding:modifiers:));
-+ (nullable XZObjcType *)typeWithEncoding:(const char * _Nullable)encoding size:(size_t)size alignment:(size_t)alignment NS_SWIFT_NAME(init(encoding:size:alignment:));
++ (nullable XZObjcType *)typeForEncoding:(const char * _Nullable)encoding modifiers:(XZStdcModifiers)modifiers NS_SWIFT_NAME(init(for:_:));
++ (nullable XZObjcType *)typeForEncoding:(const char * _Nullable)encoding size:(size_t)size alignment:(size_t)alignment NS_SWIFT_NAME(init(for:size:alignment:));
 
 /// 设置结构体类型的大小和字节对齐值。
 ///
@@ -239,10 +248,10 @@ typedef NS_OPTIONS(NSUInteger, XZStdcModifiers) {
 
 @end
 
-/// @function XZObjcTypeRegister
+/// Function: XZObjcTypeRegister
 /// 注册结构体、联合体的大小和内存对齐。
 ///
-/// @param objcType
+/// Param objcType
 /// 类型，比如 CGRect 等
 ///
 /// 注册结构体字节大小和对齐的宏，比如 XZObjcTypeRegister(CGRect) 。

@@ -37,6 +37,11 @@ static XZObjcType __unsafe_unretained *XZStaticObjcTypes[CHAR_MAX] = { NULL };
         XZObjcTypeRegister(NSRange);
         
         XZObjcTypeRegister(CGAffineTransform);
+        
+        
+        XZStaticObjcTypes[_C_UNDEF] = [XZObjcType typeForEncoding:"?"];
+        XZStaticObjcTypes[_C_UNDEF] = [XZObjcType typeForEncoding:"?"];
+        
     }
 }
 
@@ -44,15 +49,15 @@ static XZObjcType __unsafe_unretained *XZStaticObjcTypes[CHAR_MAX] = { NULL };
     return NO;
 }
 
-+ (XZObjcType *)typeWithEncoding:(const char *)encoding {
++ (XZObjcType *)typeForEncoding:(const char *)encoding {
     return [self typeWithEncoding:encoding size:0 alignment:0 modifiers:kNilOptions];
 }
 
-+ (XZObjcType *)typeWithEncoding:(const char *)encoding modifiers:(XZStdcModifiers)modifiers {
++ (XZObjcType *)typeForEncoding:(const char *)encoding modifiers:(XZStdcModifiers)modifiers {
     return [self typeWithEncoding:encoding size:0 alignment:0 modifiers:modifiers];
 }
 
-+ (XZObjcType *)typeWithEncoding:(const char *)encoding size:(size_t)size alignment:(size_t)alignment {
++ (XZObjcType *)typeForEncoding:(const char *)encoding size:(size_t)size alignment:(size_t)alignment {
     return [self typeWithEncoding:encoding size:size alignment:alignment modifiers:kNilOptions];
 }
 
@@ -331,7 +336,7 @@ static XZObjcType __unsafe_unretained *XZStaticObjcTypes[CHAR_MAX] = { NULL };
             break;
         }
         case XZStdcTypePointer: {
-            XZObjcType *member = [XZObjcType typeWithEncoding:encoding + 1];
+            XZObjcType *member = [XZObjcType typeForEncoding:encoding + 1];
             if (member == nil) {
                 return nil;
             }
@@ -397,7 +402,7 @@ static XZObjcType __unsafe_unretained *XZStaticObjcTypes[CHAR_MAX] = { NULL };
             }
             
             // 元素类型
-            XZObjcType *member = [XZObjcType typeWithEncoding:(encoding + i)];
+            XZObjcType *member = [XZObjcType typeForEncoding:(encoding + i)];
             if (member == nil) {
                 return nil;
             }
@@ -456,7 +461,7 @@ static XZObjcType __unsafe_unretained *XZStaticObjcTypes[CHAR_MAX] = { NULL };
                 if (encoding[i] == ')') {
                     break;
                 }
-                XZObjcType *member = [XZObjcType typeWithEncoding:(encoding + i)];
+                XZObjcType *member = [XZObjcType typeForEncoding:(encoding + i)];
                 if (member == nil) {
                     return nil;
                 }
@@ -504,7 +509,7 @@ static XZObjcType __unsafe_unretained *XZStaticObjcTypes[CHAR_MAX] = { NULL };
                 if (encoding[i] == '}') {
                     break;
                 }
-                XZObjcType *member = [XZObjcType typeWithEncoding:(encoding + i)];
+                XZObjcType *member = [XZObjcType typeForEncoding:(encoding + i)];
                 if (member == nil) {
                     return nil;
                 }
