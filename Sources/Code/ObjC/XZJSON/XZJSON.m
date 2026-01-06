@@ -249,7 +249,7 @@
                 ((void (*)(id, SEL, Class))objc_msgSend)(targetModel, setter, value);
                 return;
             }
-            case XZStdcTypeSEL:  {
+            case XZStdcTypeSelector:  {
                 SEL const value = ((SEL (*)(id, SEL))objc_msgSend)(self, getter);
                 ((void (*)(id, SEL, SEL))objc_msgSend)(targetModel, setter, value);
                 return;
@@ -588,7 +588,7 @@
                 }
                 continue;
             }
-            case XZStdcTypeSEL: {
+            case XZStdcTypeSelector: {
                 SEL const value1 = ((SEL(*)(id,SEL))objc_msgSend)(model1, property1->_getter);
                 SEL const value2 = ((SEL(*)(id,SEL))objc_msgSend)(model1, property2->_getter);
                 if (value1 != value2) {

@@ -393,7 +393,7 @@ void XZJSONModelEncodeProperty(id const _Unsafe model, XZJSONPropertyDescriptor 
             }
             break;
         }
-        case XZStdcTypeSEL: {
+        case XZStdcTypeSelector: {
             if (XZJSONModelEncodePropertyPrepare(property, &key, &keyInDictionary, NO)) {
                 SEL const aSelector = ((SEL (*)(id, SEL))(void *)objc_msgSend)((id)model, property->_getter);
                 JSONValue = aSelector ? NSStringFromSelector(aSelector) : (id)kCFNull;

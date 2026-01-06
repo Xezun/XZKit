@@ -189,7 +189,7 @@
     } {
         const char * const objcType = @encode(SEL);
         XZObjcType *descriptor = [XZObjcType typeForEncoding:objcType];
-        XCTAssert(descriptor.raw == XZStdcTypeSEL);
+        XCTAssert(descriptor.raw == XZStdcTypeSelector);
         XCTAssert(strcmp(objcType, [descriptor.encoding cStringUsingEncoding:NSASCIIStringEncoding]) == 0);
         XCTAssert(descriptor.size == sizeof(SEL));
         XCTAssert(descriptor.sizeInBit == (sizeof(SEL) * 8));

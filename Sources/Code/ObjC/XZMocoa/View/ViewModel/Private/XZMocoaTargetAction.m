@@ -368,7 +368,7 @@
                     }
                     break;
                 }
-                case XZStdcTypeSEL: {
+                case XZStdcTypeSelector: {
                     SEL selectorValue = 0;
                     [(NSValue *)value getValue:&selectorValue size:sizeof(SEL)];
                     switch (_numberOfArguments) {

@@ -910,7 +910,7 @@ void XZJSONModelDecodeProperty(id const _Unsafe model, XZJSONPropertyDescriptor 
             }
             break;
         }
-        case XZStdcTypeSEL: {
+        case XZStdcTypeSelector: {
             if (JSONValue == (id)kCFNull) {
                 ((void (*)(id, SEL, SEL))(void *) objc_msgSend)((id)model, property->_setter, (SEL)NULL);
                 return;

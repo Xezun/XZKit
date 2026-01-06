@@ -140,7 +140,7 @@ static id XZJSONKeyFromString(NSString *aString);
                         return;
                     case XZStdcTypeString:
                         return;
-                    case XZStdcTypeSEL:
+                    case XZStdcTypeSelector:
                         break;
                     case XZStdcTypePointer:
                         return;

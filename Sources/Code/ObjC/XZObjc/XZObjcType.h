@@ -25,7 +25,7 @@ NS_ASSUME_NONNULL_BEGIN
 /// 1.  [Objective-C Runtime Programming Guide - Type Encodings](https://developer.apple.com/library/archive/documentation/Cocoa/Conceptual/ObjCRuntimeGuide/Articles/ocrtTypeEncodings.html)
 ///
 /// 2. [Objective-C Runtime Programming Guide - Declared Properties](https://developer.apple.com/library/mac/documentation/Cocoa/Conceptual/ObjCRuntimeGuide/Articles/ocrtPropertyIntrospection.html)
-typedef NS_ENUM(NSInteger, XZStdcType) {
+typedef NS_ENUM(NSUInteger, XZStdcType) {
     /// unknown type (among other things, this code is used for function pointers)
     /// > 匿名的结构体、共用体也会被编码为此名字，如 {?=ics}。
     XZStdcTypeUnknown          = _C_UNDEF,
@@ -66,7 +66,7 @@ typedef NS_ENUM(NSInteger, XZStdcType) {
     /// C 字符串 char *
     XZStdcTypeString           = _C_CHARPTR,
     /// SEL
-    XZStdcTypeSEL              = _C_SEL,
+    XZStdcTypeSelector         = _C_SEL,
     /// pointer to type
     XZStdcTypePointer          = _C_PTR,
     /// C 数组
@@ -92,46 +92,60 @@ typedef NS_ENUM(NSInteger, XZStdcType) {
     XZStdcTypeObject           = _C_ID,
 };
 
-/// 类型修饰符。Modifiers
+enum {
+    /// 数据类型掩码。
+    XZStdcTypeMask             = 0x00000FF,
+    /// 变量修饰符掩码。
+    XZStdcVariableModifierMask = 0x003FF00,
+    /// 属性修饰符掩码。
+    XZStdcPropertyModifierMask = 0x3FC0000,
+    /// 属性或变量修饰符掩码。
+    XZStdcModifierMask = XZStdcPropertyModifierMask | XZStdcVariableModifierMask,
+};
+
+/// 变量或属性的类型修饰符。
+///
+/// 可使用 NSUInteger 将类型、修饰符融合在一起，通过掩码来获取指定部分的值。
+/// 
+/// > 没有 assign/unsafe_unretained 修饰符，只能反向判断。
 typedef NS_OPTIONS(NSUInteger, XZStdcModifiers) {
-    // modifiers for Variables
-    XZStdcVariableModifiers = 0x3FF00,
     /// const
-    XZStdcModifierConst  = 1 << 8,
+    XZStdcModifierConst       = 1 << (8 + 0),
     /// in
-    XZStdcModifierIn     = 1 << 9,
+    XZStdcModifierIn          = 1 << (8 + 1),
     /// inout
-    XZStdcModifierInout  = 1 << 10,
+    XZStdcModifierInout       = 1 << (8 + 2),
     /// out
-    XZStdcModifierOut    = 1 << 11,
+    XZStdcModifierOut         = 1 << (8 + 3),
     /// bycopy
-    XZStdcModifierByCopy = 1 << 12,
+    XZStdcModifierByCopy      = 1 << (8 + 4),
     /// byref
-    XZStdcModifierByRef  = 1 << 13,
+    XZStdcModifierByRef       = 1 << (8 + 5),
     /// oneway
-    XZStdcModifierOneway      = 1 << 14,
-    XZStdcModifierComplex     = 1 << 15,
-    XZStdcModifierAtomic      = 1 << 16,
-    XZStdcModifierGNURegister = 1 << 17,
-    /// modifiers for Properties
-    /// > 没有 assign/unsafe_unretained 修饰符，只能反向判断
-    XZStdcPropertyModifiers = 0xFF00000,
+    XZStdcModifierOneway      = 1 << (8 + 6),
+    /// complex
+    XZStdcModifierComplex     = 1 << (8 + 7),
+    /// atomic
+    XZStdcModifierAtomic      = 1 << (8 + 8),
+    /// GNU register
+    XZStdcModifierGNURegister = 1 << (8 + 9),
+    // 以下为用于修饰属性的修饰符。
     /// readonly
-    XZStdcModifierReadonly  = 1 << (20 + 0),
+    XZStdcModifierReadonly    = 1 << (8 + 10),
     /// copy
-    XZStdcModifierCopy      = 1 << (20 + 1),
+    XZStdcModifierCopy        = 1 << (8 + 11),
     /// retain
-    XZStdcModifierRetain    = 1 << (20 + 2),
+    XZStdcModifierRetain      = 1 << (8 + 12),
     /// weak
-    XZStdcModifierWeak      = 1 << (20 + 3),
+    XZStdcModifierWeak        = 1 << (8 + 13),
     /// nonatomic
-    XZStdcModifierNonatomic = 1 << (20 + 4),
+    XZStdcModifierNonatomic   = 1 << (8 + 14),
     /// getter=
-    XZStdcModifierGetter    = 1 << (20 + 5),
+    XZStdcModifierGetter      = 1 << (8 + 15),
     /// setter=
-    XZStdcModifierSetter    = 1 << (20 + 6),
-    /// 使用 `\@dynamic` 标记的属性。
-    XZStdcModifierDynamic   = 1 << (20 + 7),
+    XZStdcModifierSetter      = 1 << (8 + 16),
+    /// dynamic
+    XZStdcModifierDynamic     = 1 << (8 + 17),
 };
 
 @class XZObjcType;
@@ -185,7 +199,7 @@ typedef NS_OPTIONS(NSUInteger, XZStdcModifiers) {
 @property (nonatomic, readonly) size_t alignment;
 
 /// 当前类型的成员类型，比如结构体、共用体的组成成员，或者指针类型（一般被认为是数组）的值的类型等。
-@property (nonatomic, readonly, nullable) NSArray<XZObjcType *> *members;
+@property (nonatomic, readonly) NSArray<XZObjcType *> *members;
 
 /// 子类型，对象的类型。
 ///
@@ -195,7 +209,7 @@ typedef NS_OPTIONS(NSUInteger, XZStdcModifiers) {
 /// 对象类型遵循的协议。
 ///
 /// 此属性仅在 `type` 为 `XZStdcTypeObject` 时才可能有值。
-@property (nonatomic, readonly, nullable) NSArray<Protocol *> *protocols;
+@property (nonatomic, readonly) NSArray<Protocol *> *protocols;
 
 - (instancetype)init NS_UNAVAILABLE;
 + (instancetype)new NS_UNAVAILABLE;

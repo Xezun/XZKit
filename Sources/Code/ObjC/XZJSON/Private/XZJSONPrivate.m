@@ -220,7 +220,7 @@ NSString * _Nonnull XZJSONModelDescription(NSObject *_Nonnull model, NSUInteger 
                 value = [NSString stringWithFormat:@"<class: %@>", value ?: @"Nil"];
                 break;
             }
-            case XZStdcTypeSEL: {
+            case XZStdcTypeSelector: {
                 SEL sel = ((SEL (*)(id, SEL))(void *)objc_msgSend)((id)model, property->_getter);
                 value = [NSString stringWithFormat:@"<selector: %@>", sel ? NSStringFromSelector(sel) : @"nil"];
                 break;
@@ -499,7 +499,7 @@ void XZJSONModelEncodeWithCoder(id model, NSCoder *aCoder) {
                         [aCoder encodeObject:className forKey:name];
                         return;
                     }
-                    case XZStdcTypeSEL: {
+                    case XZStdcTypeSelector: {
                         SEL const aValue = ((SEL (*)(id, SEL))objc_msgSend)(model, getter);
                         NSString *selectorName = NSStringFromSelector(aValue);
                         [aCoder encodeObject:selectorName forKey:name];
@@ -823,7 +823,7 @@ id _Nullable XZJSONModelDecodeWithCoder(id model, NSCoder *aCoder) {
                         }
                         break;
                     }
-                    case XZStdcTypeSEL: {
+                    case XZStdcTypeSelector: {
                         id aValue = nil;
                         if (aCoder.requiresSecureCoding) {
                             aValue = [aCoder decodeObjectOfClass:NSString.class forKey:name];

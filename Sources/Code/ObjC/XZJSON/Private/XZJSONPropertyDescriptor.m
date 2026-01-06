@@ -85,7 +85,7 @@
         case XZStdcTypeString:
             descriptor->_isCodable = NO;
             break;
-        case XZStdcTypeSEL:
+        case XZStdcTypeSelector:
             descriptor->_isCodable = YES;
             break;
         case XZStdcTypePointer:
