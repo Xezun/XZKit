@@ -12,7 +12,7 @@ import SwiftDiagnostics
 
 public struct XZLogMacros {
     
-    static let providingMacros: [Macro.Type] = [
+    nonisolated(unsafe) static let providingMacros: [Macro.Type] = [
         XZLogMacro.self
     ]
     

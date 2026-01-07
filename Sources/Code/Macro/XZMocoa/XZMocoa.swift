@@ -12,7 +12,7 @@ import SwiftDiagnostics
 
 public struct XZMocoaMacros: Sendable {
     
-    static let providingMacros: [Macro.Type] = [
+    nonisolated(unsafe) static let providingMacros: [Macro.Type] = [
         XZMocoaMacro.self,
         XZMocoaModuleMacro.self,
         XZMocoaKeyMacro.self,

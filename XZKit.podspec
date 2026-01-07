@@ -26,21 +26,26 @@ Pod::Spec.new do |s|
   s.ios.deployment_target = '13.0'
   
   s.preserve_paths = ["Products"]
+  
+  # 编译宏
+  # 执行 pod install 前，可通过环境变量指定 Debug 和 Release 的配置。默认的 Debug 和 Release 不需要指定。
+  # export DEBUG_CONFIGURATIONS="Debug,Test"
+  # export RELEASE_CONFIGURATIONS="Release,Beta"
+  s.prepare_command = <<-CMD
+    sh "./Scripts/LinkMacros.sh" "${DEBUG_CONFIGURATIONS}" "${RELEASE_CONFIGURATIONS}";
+  CMD
+  
   s.pod_target_xcconfig = {
     # 注入 OC 编译变量
     'GCC_PREPROCESSOR_DEFINITIONS' => 'XZ_FRAMEWORK=1',
     # 注入 Swift 编译变量
-    'OTHER_SWIFT_FLAGS' => "-D XZ_FRAMEWORK",
-    # 引入宏
-    'OTHER_SWIFT_FLAGS[config=Debug]' => '-load-plugin-executable ${PODS_ROOT}/XZKit/Products/XZKitMacros-debug#XZKitMacros',
-    'OTHER_SWIFT_FLAGS[config=Release]' => '-load-plugin-executable ${PODS_ROOT}/XZKit/Products/XZKitMacros-release#XZKitMacros'
+    'OTHER_SWIFT_FLAGS' => "-D XZ_FRAMEWORK -load-plugin-executable ${PODS_ROOT}/XZKit/Products/XZKitMacros-${CONFIGURATION}#XZKitMacros",
   }
 
   # 在宿主项目中注入 Swift 宏插件
   # 无法单独为每一个子库导入宏插件，因为 CocoaPods 支持为子库设置不同 OTHER_SWIFT_FLAGS[config=Debug] 值（不带 [config=Debug] 的话支持）。
   s.user_target_xcconfig = {
-    'OTHER_SWIFT_FLAGS[config=Debug]' => '-load-plugin-executable ${PODS_ROOT}/XZKit/Products/XZKitMacros-debug#XZKitMacros',
-    'OTHER_SWIFT_FLAGS[config=Release]' => '-load-plugin-executable ${PODS_ROOT}/XZKit/Products/XZKitMacros-release#XZKitMacros'
+    'OTHER_SWIFT_FLAGS' => '-load-plugin-executable ${PODS_ROOT}/XZKit/Products/XZKitMacros-${CONFIGURATION}#XZKitMacros',
   }
 
   # s.default_subspec = 'Code'
