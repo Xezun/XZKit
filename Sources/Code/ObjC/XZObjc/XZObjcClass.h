@@ -8,7 +8,7 @@
 #if __has_include(<XZKit/XZKit.h>)
 #import <XZKit/XZObjcType.h>
 #else
-#import "XZStdcTypeDescriptor.h"
+#import "XZObjcType.h"
 #endif
 
 @class XZObjcIvar, XZObjcMethod, XZObjcProperty;
