@@ -6,7 +6,7 @@
 //
 
 #import <Foundation/Foundation.h>
-@import ObjectiveC;
+#import <objc/runtime.h>
 #if __has_include(<XZKit/XZKit.h>)
 #import <XZKit/XZMacros.h>
 #else

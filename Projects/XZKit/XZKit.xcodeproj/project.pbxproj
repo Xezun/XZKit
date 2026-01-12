@@ -47,7 +47,6 @@
 				XZDefines/XZDefines.h,
 				XZDefines/XZEmpty/XZEmpty.h,
 				XZDefines/XZMacros/XZMacros.h,
-				XZDefines/XZRuntime/XZRuntime.h,
 				XZDefines/XZUtils/XZUtils.h,
 				"XZExtensions/CAAnimation/CAAnimation+XZKit.h",
 				"XZExtensions/CALayer/CALayer+XZKit.h",
@@ -59,7 +58,10 @@
 				"XZExtensions/NSDictionary/NSDictionary+XZKit.h",
 				"XZExtensions/NSIndexSet/NSIndexSet+XZKit.h",
 				"XZExtensions/NSObject/NSObject+XZKit.h",
+				"XZExtensions/NSString/NSString+XZExtendedEncoding.h",
+				"XZExtensions/NSString/NSString+XZHexEncoding.h",
 				"XZExtensions/NSString/NSString+XZKit.h",
+				"XZExtensions/NSString/NSString+XZStringMarkup.h",
 				"XZExtensions/UIApplication/UIApplication+XZKit.h",
 				"XZExtensions/UIBezierPath/UIBezierPath+XZKit.h",
 				"XZExtensions/UIColor/UIColor+XZKit.h",
@@ -134,12 +136,13 @@
 				XZMocoa/View/View/XZMocoaView.h,
 				XZMocoa/View/ViewModel/XZMocoaViewModel.h,
 				XZMocoa/XZMocoa.h,
-				XZObjcDescriptor/XZObjcClassDescriptor.h,
-				XZObjcDescriptor/XZObjcDescriptor.h,
-				XZObjcDescriptor/XZObjcIvarDescriptor.h,
-				XZObjcDescriptor/XZObjcMethodDescriptor.h,
-				XZObjcDescriptor/XZObjcPropertyDescriptor.h,
-				XZObjcDescriptor/XZObjcTypeDescriptor.h,
+				XZObjc/XZObjc.h,
+				XZObjc/XZObjcClass.h,
+				XZObjc/XZObjcIvar.h,
+				XZObjc/XZObjcMethod.h,
+				XZObjc/XZObjcProperty.h,
+				XZObjc/XZObjcType.h,
+				XZObjc/XZRuntime.h,
 				XZPageControl/XZPageControl.h,
 				XZPageControl/XZPageControlDefines.h,
 				XZPageView/XZImageViewer/XZImageViewer.h,
@@ -326,7 +329,7 @@
 			isa = PBXProject;
 			attributes = {
 				BuildIndependentTargetsInParallel = 1;
-				LastUpgradeCheck = 1640;
+				LastUpgradeCheck = 2620;
 				TargetAttributes = {
 					047FA0B72E1F8D8B00830368 = {
 						CreatedOnToolsVersion = 16.4;
@@ -404,6 +407,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				BUILD_LIBRARY_FOR_DISTRIBUTION = YES;
+				CODE_SIGN_IDENTITY = "";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEFINES_MODULE = YES;
@@ -440,6 +444,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				BUILD_LIBRARY_FOR_DISTRIBUTION = YES;
+				CODE_SIGN_IDENTITY = "";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEFINES_MODULE = YES;
@@ -533,6 +538,7 @@
 				ONLY_ACTIVE_ARCH = YES;
 				OTHER_SWIFT_FLAGS = "-D DEBUG -load-plugin-executable ${SRCROOT}/../../Products/XZKitMacros-${CONFIGURATION}#XZKitMacros";
 				SDKROOT = iphoneos;
+				STRING_CATALOG_GENERATE_SYMBOLS = YES;
 				SWIFT_VERSION = 6.0;
 				VERSIONING_SYSTEM = "apple-generic";
 				VERSION_INFO_PREFIX = "";
@@ -593,6 +599,8 @@
 				MTL_FAST_MATH = YES;
 				OTHER_SWIFT_FLAGS = "-load-plugin-executable ${SRCROOT}/../../Products/XZKitMacros-${CONFIGURATION}#XZKitMacros";
 				SDKROOT = iphoneos;
+				STRING_CATALOG_GENERATE_SYMBOLS = YES;
+				SWIFT_COMPILATION_MODE = wholemodule;
 				SWIFT_VERSION = 6.0;
 				VALIDATE_PRODUCT = YES;
 				VERSIONING_SYSTEM = "apple-generic";
