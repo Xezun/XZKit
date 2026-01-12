@@ -11,6 +11,7 @@
 		047FADC22E1F99A000830368 /* Security.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 047FADC12E1F99A000830368 /* Security.framework */; };
 		047FB0FE2E1F9A5D00830368 /* CoreData.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 047FB0FD2E1F9A5D00830368 /* CoreData.framework */; };
 		04A392132E1FA09F00A48BC0 /* UniformTypeIdentifiers.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 04A392122E1FA09F00A48BC0 /* UniformTypeIdentifiers.framework */; };
+		295DB0262F1531C4008E5C04 /* XZKit.docc in Sources */ = {isa = PBXBuildFile; fileRef = 295DB0222F1531C4008E5C04 /* XZKit.docc */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -30,153 +31,161 @@
 		047FB0FD2E1F9A5D00830368 /* CoreData.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreData.framework; path = Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.5.sdk/System/Library/Frameworks/CoreData.framework; sourceTree = DEVELOPER_DIR; };
 		047FB0FF2E1F9A6600830368 /* libswiftObjectiveC.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libswiftObjectiveC.tbd; path = Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.5.sdk/usr/lib/swift/libswiftObjectiveC.tbd; sourceTree = DEVELOPER_DIR; };
 		04A392122E1FA09F00A48BC0 /* UniformTypeIdentifiers.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UniformTypeIdentifiers.framework; path = Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.5.sdk/System/Library/Frameworks/UniformTypeIdentifiers.framework; sourceTree = DEVELOPER_DIR; };
+		295DB0222F1531C4008E5C04 /* XZKit.docc */ = {isa = PBXFileReference; lastKnownFileType = folder.documentationcatalog; path = XZKit.docc; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
-		04A39F082E1FC40400A48BC0 /* Exceptions for "XZKit" folder in "XZKit" target */ = {
+		295DB6B72F1532B2008E5C04 /* Exceptions for "ObjC" folder in "XZKit" target */ = {
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			publicHeaders = (
-				Code/ObjC/XZDataCryptor/XZDataCryptor.h,
-				Code/ObjC/XZDataCryptor/XZDataCryptorDefines.h,
-				"Code/ObjC/XZDataDigester/NSData+XZDataDigester.h",
-				"Code/ObjC/XZDataDigester/NSString+XZDataDigester.h",
-				Code/ObjC/XZDataDigester/XZDataDigester.h,
-				Code/ObjC/XZDefines/XZDefer/XZDefer.h,
-				Code/ObjC/XZDefines/XZDefines.h,
-				Code/ObjC/XZDefines/XZEmpty/XZEmpty.h,
-				Code/ObjC/XZDefines/XZMacros/XZMacros.h,
-				Code/ObjC/XZDefines/XZRuntime/XZRuntime.h,
-				Code/ObjC/XZDefines/XZUtils/XZUtils.h,
-				"Code/ObjC/XZExtensions/CAAnimation/CAAnimation+XZKit.h",
-				"Code/ObjC/XZExtensions/CALayer/CALayer+XZKit.h",
-				"Code/ObjC/XZExtensions/NSArray/NSArray+XZKit.h",
-				"Code/ObjC/XZExtensions/NSAttributedString/NSAttributedString+XZKit.h",
-				"Code/ObjC/XZExtensions/NSBundle/NSBundle+XZKit.h",
-				"Code/ObjC/XZExtensions/NSCharacterSet/NSCharacterSet+XZKit.h",
-				"Code/ObjC/XZExtensions/NSData/NSData+XZKit.h",
-				"Code/ObjC/XZExtensions/NSDictionary/NSDictionary+XZKit.h",
-				"Code/ObjC/XZExtensions/NSIndexSet/NSIndexSet+XZKit.h",
-				"Code/ObjC/XZExtensions/NSObject/NSObject+XZKit.h",
-				"Code/ObjC/XZExtensions/NSString/NSString+XZKit.h",
-				"Code/ObjC/XZExtensions/UIApplication/UIApplication+XZKit.h",
-				"Code/ObjC/XZExtensions/UIBezierPath/UIBezierPath+XZKit.h",
-				"Code/ObjC/XZExtensions/UIColor/UIColor+XZKit.h",
-				"Code/ObjC/XZExtensions/UIDevice/UIDevice+XZKit.h",
-				"Code/ObjC/XZExtensions/UIFont/UIFont+XZKit.h",
-				"Code/ObjC/XZExtensions/UIImage/UIImage+XZKit.h",
-				"Code/ObjC/XZExtensions/UIView/UIView+XZKit.h",
-				"Code/ObjC/XZExtensions/UIViewController/UIViewController+XZKit.h",
-				Code/ObjC/XZExtensions/XZExtensions.h,
-				Code/ObjC/XZExtensions/XZShapeView/XZShapeView.h,
-				Code/ObjC/XZGeometry/XZGeometry.h,
-				Code/ObjC/XZImage/XZImage.h,
-				Code/ObjC/XZImage/XZImageArrow.h,
-				Code/ObjC/XZImage/XZImageAttribute.h,
-				Code/ObjC/XZImage/XZImageBorder.h,
-				Code/ObjC/XZImage/XZImageBorders.h,
-				Code/ObjC/XZImage/XZImageCorner.h,
-				Code/ObjC/XZImage/XZImageCorners.h,
-				Code/ObjC/XZImage/XZImageLine.h,
-				Code/ObjC/XZImage/XZImageLineDash.h,
-				Code/ObjC/XZJSON/XZJSON.h,
-				Code/ObjC/XZJSON/XZJSONDefines.h,
-				Code/ObjC/XZKeychain/XZKeychain.h,
-				Code/ObjC/XZKeychain/XZKeychainItem.h,
-				Code/ObjC/XZKeychain/XZKeychainKeyItem.h,
-				Code/ObjC/XZKeychain/XZKeychainPasswordItem.h,
-				Code/ObjC/XZKit.h,
-				Code/ObjC/XZLocale/XZLocale.h,
-				Code/ObjC/XZLog/XZLog.h,
-				Code/ObjC/XZLog/XZLogSystem.h,
-				"Code/ObjC/XZML/Foundation+XZML.h",
-				"Code/ObjC/XZML/UIKit+XZML.h",
-				Code/ObjC/XZML/XZML.h,
-				Code/ObjC/XZML/XZMLDefines.h,
-				Code/ObjC/XZMocoa/Defines/XZMocoaDefines.h,
-				Code/ObjC/XZMocoa/Defines/XZMocoaModule.h,
-				Code/ObjC/XZMocoa/Defines/XZMocoaModuleDomain.h,
-				Code/ObjC/XZMocoa/GridView/CollectionView/Model/XZMocoaCollectionModel.h,
-				Code/ObjC/XZMocoa/GridView/CollectionView/Model/XZMocoaCollectionViewCellModel.h,
-				Code/ObjC/XZMocoa/GridView/CollectionView/Model/XZMocoaCollectionViewSectionModel.h,
-				Code/ObjC/XZMocoa/GridView/CollectionView/View/XZMocoaCollectionView.h,
-				Code/ObjC/XZMocoa/GridView/CollectionView/View/XZMocoaCollectionViewCell.h,
-				Code/ObjC/XZMocoa/GridView/CollectionView/View/XZMocoaCollectionViewController.h,
-				Code/ObjC/XZMocoa/GridView/CollectionView/View/XZMocoaCollectionViewSupplementaryView.h,
-				Code/ObjC/XZMocoa/GridView/CollectionView/ViewModel/XZMocoaCollectionViewCellViewModel.h,
-				Code/ObjC/XZMocoa/GridView/CollectionView/ViewModel/XZMocoaCollectionViewModel.h,
-				Code/ObjC/XZMocoa/GridView/CollectionView/ViewModel/XZMocoaCollectionViewSectionViewModel.h,
-				Code/ObjC/XZMocoa/GridView/CollectionView/ViewModel/XZMocoaCollectionViewSupplementaryViewModel.h,
-				Code/ObjC/XZMocoa/GridView/GridView/Model/XZMocoaGridModel.h,
-				Code/ObjC/XZMocoa/GridView/GridView/Model/XZMocoaGridViewCellModel.h,
-				Code/ObjC/XZMocoa/GridView/GridView/Model/XZMocoaGridViewSectionModel.h,
-				Code/ObjC/XZMocoa/GridView/GridView/View/XZMocoaGridView.h,
-				Code/ObjC/XZMocoa/GridView/GridView/View/XZMocoaGridViewCell.h,
-				Code/ObjC/XZMocoa/GridView/GridView/View/XZMocoaGridViewSupplementaryView.h,
-				Code/ObjC/XZMocoa/GridView/GridView/ViewModel/XZMocoaGridViewCellViewModel.h,
-				Code/ObjC/XZMocoa/GridView/GridView/ViewModel/XZMocoaGridViewModel.h,
-				Code/ObjC/XZMocoa/GridView/GridView/ViewModel/XZMocoaGridViewModelDefines.h,
-				Code/ObjC/XZMocoa/GridView/GridView/ViewModel/XZMocoaGridViewSectionViewModel.h,
-				Code/ObjC/XZMocoa/GridView/GridView/ViewModel/XZMocoaGridViewSupplementaryViewModel.h,
-				Code/ObjC/XZMocoa/GridView/TableView/Model/XZMocoaTableModel.h,
-				Code/ObjC/XZMocoa/GridView/TableView/Model/XZMocoaTableViewCellModel.h,
-				Code/ObjC/XZMocoa/GridView/TableView/Model/XZMocoaTableViewSectionModel.h,
-				Code/ObjC/XZMocoa/GridView/TableView/View/XZMocoaTableView.h,
-				Code/ObjC/XZMocoa/GridView/TableView/View/XZMocoaTableViewCell.h,
-				Code/ObjC/XZMocoa/GridView/TableView/View/XZMocoaTableViewController.h,
-				Code/ObjC/XZMocoa/GridView/TableView/View/XZMocoaTableViewHeaderFooterView.h,
-				Code/ObjC/XZMocoa/GridView/TableView/ViewModel/XZMocoaTableViewCellViewModel.h,
-				Code/ObjC/XZMocoa/GridView/TableView/ViewModel/XZMocoaTableViewHeaderFooterViewModel.h,
-				Code/ObjC/XZMocoa/GridView/TableView/ViewModel/XZMocoaTableViewModel.h,
-				Code/ObjC/XZMocoa/GridView/TableView/ViewModel/XZMocoaTableViewSectionViewModel.h,
-				Code/ObjC/XZMocoa/View/Model/XZMocoaModel.h,
-				Code/ObjC/XZMocoa/View/View/XZMocoaView.h,
-				Code/ObjC/XZMocoa/View/ViewModel/XZMocoaViewModel.h,
-				Code/ObjC/XZMocoa/XZMocoa.h,
-				Code/ObjC/XZObjcDescriptor/XZObjcClassDescriptor.h,
-				Code/ObjC/XZObjcDescriptor/XZObjcDescriptor.h,
-				Code/ObjC/XZObjcDescriptor/XZObjcIvarDescriptor.h,
-				Code/ObjC/XZObjcDescriptor/XZObjcMethodDescriptor.h,
-				Code/ObjC/XZObjcDescriptor/XZObjcPropertyDescriptor.h,
-				Code/ObjC/XZObjcDescriptor/XZObjcTypeDescriptor.h,
-				Code/ObjC/XZPageControl/XZPageControl.h,
-				Code/ObjC/XZPageControl/XZPageControlDefines.h,
-				Code/ObjC/XZPageView/XZImageViewer/XZImageViewer.h,
-				Code/ObjC/XZPageView/XZPageView/XZPageView.h,
-				Code/ObjC/XZPageView/XZPageView/XZPageViewDefines.h,
-				Code/ObjC/XZPageView/XZPageViewController/XZPageViewController.h,
-				"Code/ObjC/XZRefresh/Core/UIScrollView+XZRefresh.h",
-				Code/ObjC/XZRefresh/Core/XZRefreshDefines.h,
-				Code/ObjC/XZRefresh/Core/XZRefreshStyle1View.h,
-				Code/ObjC/XZRefresh/Core/XZRefreshStyle2View.h,
-				Code/ObjC/XZRefresh/Core/XZRefreshView.h,
-				Code/ObjC/XZRefresh/XZRefresh.h,
-				Code/ObjC/XZSegmentedControl/XZSegmentedControl.h,
-				Code/ObjC/XZSegmentedControl/XZSegmentedControlDefines.h,
-				Code/ObjC/XZSegmentedControl/XZSegmentedControlIndicator.h,
-				Code/ObjC/XZSegmentedControl/XZSegmentedControlSegment.h,
-				"Code/ObjC/XZToast/UIKit+XZToast.h",
-				Code/ObjC/XZToast/XZToast.h,
-				Code/ObjC/XZToast/XZToastDefines.h,
-				"Code/ObjC/XZURLQuery/NSURL+XZURLQuery.h",
-				Code/ObjC/XZURLQuery/XZURLQuery.h,
+				XZDataCryptor/XZDataCryptor.h,
+				XZDataCryptor/XZDataCryptorDefines.h,
+				"XZDataDigester/NSData+XZDataDigester.h",
+				"XZDataDigester/NSString+XZDataDigester.h",
+				XZDataDigester/XZDataDigester.h,
+				XZDefines/XZDefer/XZDefer.h,
+				XZDefines/XZDefines.h,
+				XZDefines/XZEmpty/XZEmpty.h,
+				XZDefines/XZMacros/XZMacros.h,
+				XZDefines/XZRuntime/XZRuntime.h,
+				XZDefines/XZUtils/XZUtils.h,
+				"XZExtensions/CAAnimation/CAAnimation+XZKit.h",
+				"XZExtensions/CALayer/CALayer+XZKit.h",
+				"XZExtensions/NSArray/NSArray+XZKit.h",
+				"XZExtensions/NSAttributedString/NSAttributedString+XZKit.h",
+				"XZExtensions/NSBundle/NSBundle+XZKit.h",
+				"XZExtensions/NSCharacterSet/NSCharacterSet+XZKit.h",
+				"XZExtensions/NSData/NSData+XZKit.h",
+				"XZExtensions/NSDictionary/NSDictionary+XZKit.h",
+				"XZExtensions/NSIndexSet/NSIndexSet+XZKit.h",
+				"XZExtensions/NSObject/NSObject+XZKit.h",
+				"XZExtensions/NSString/NSString+XZKit.h",
+				"XZExtensions/UIApplication/UIApplication+XZKit.h",
+				"XZExtensions/UIBezierPath/UIBezierPath+XZKit.h",
+				"XZExtensions/UIColor/UIColor+XZKit.h",
+				"XZExtensions/UIDevice/UIDevice+XZKit.h",
+				"XZExtensions/UIFont/UIFont+XZKit.h",
+				"XZExtensions/UIImage/UIImage+XZKit.h",
+				"XZExtensions/UIView/UIView+XZKit.h",
+				"XZExtensions/UIViewController/UIViewController+XZKit.h",
+				XZExtensions/XZExtensions.h,
+				XZExtensions/XZShapeView/XZShapeView.h,
+				XZGeometry/XZGeometry.h,
+				XZImage/XZImage.h,
+				XZImage/XZImageArrow.h,
+				XZImage/XZImageAttribute.h,
+				XZImage/XZImageBorder.h,
+				XZImage/XZImageBorders.h,
+				XZImage/XZImageCorner.h,
+				XZImage/XZImageCorners.h,
+				XZImage/XZImageLine.h,
+				XZImage/XZImageLineDash.h,
+				XZJSON/XZJSON.h,
+				XZJSON/XZJSONDefines.h,
+				XZKeychain/XZKeychain.h,
+				XZKeychain/XZKeychainItem.h,
+				XZKeychain/XZKeychainKeyItem.h,
+				XZKeychain/XZKeychainPasswordItem.h,
+				XZKit.h,
+				XZLocale/XZLocale.h,
+				XZLog/XZLog.h,
+				XZLog/XZLogSystem.h,
+				"XZML/Foundation+XZML.h",
+				"XZML/UIKit+XZML.h",
+				XZML/XZML.h,
+				XZML/XZMLDefines.h,
+				XZMocoa/Defines/XZMocoaDefines.h,
+				XZMocoa/Defines/XZMocoaModule.h,
+				XZMocoa/Defines/XZMocoaModuleDomain.h,
+				XZMocoa/GridView/CollectionView/Model/XZMocoaCollectionModel.h,
+				XZMocoa/GridView/CollectionView/Model/XZMocoaCollectionViewCellModel.h,
+				XZMocoa/GridView/CollectionView/Model/XZMocoaCollectionViewSectionModel.h,
+				XZMocoa/GridView/CollectionView/View/XZMocoaCollectionView.h,
+				XZMocoa/GridView/CollectionView/View/XZMocoaCollectionViewCell.h,
+				XZMocoa/GridView/CollectionView/View/XZMocoaCollectionViewController.h,
+				XZMocoa/GridView/CollectionView/View/XZMocoaCollectionViewSupplementaryView.h,
+				XZMocoa/GridView/CollectionView/ViewModel/XZMocoaCollectionViewCellViewModel.h,
+				XZMocoa/GridView/CollectionView/ViewModel/XZMocoaCollectionViewModel.h,
+				XZMocoa/GridView/CollectionView/ViewModel/XZMocoaCollectionViewSectionViewModel.h,
+				XZMocoa/GridView/CollectionView/ViewModel/XZMocoaCollectionViewSupplementaryViewModel.h,
+				XZMocoa/GridView/GridView/Model/XZMocoaGridModel.h,
+				XZMocoa/GridView/GridView/Model/XZMocoaGridViewCellModel.h,
+				XZMocoa/GridView/GridView/Model/XZMocoaGridViewSectionModel.h,
+				XZMocoa/GridView/GridView/View/XZMocoaGridView.h,
+				XZMocoa/GridView/GridView/View/XZMocoaGridViewCell.h,
+				XZMocoa/GridView/GridView/View/XZMocoaGridViewSupplementaryView.h,
+				XZMocoa/GridView/GridView/ViewModel/XZMocoaGridViewCellViewModel.h,
+				XZMocoa/GridView/GridView/ViewModel/XZMocoaGridViewModel.h,
+				XZMocoa/GridView/GridView/ViewModel/XZMocoaGridViewModelDefines.h,
+				XZMocoa/GridView/GridView/ViewModel/XZMocoaGridViewSectionViewModel.h,
+				XZMocoa/GridView/GridView/ViewModel/XZMocoaGridViewSupplementaryViewModel.h,
+				XZMocoa/GridView/TableView/Model/XZMocoaTableModel.h,
+				XZMocoa/GridView/TableView/Model/XZMocoaTableViewCellModel.h,
+				XZMocoa/GridView/TableView/Model/XZMocoaTableViewSectionModel.h,
+				XZMocoa/GridView/TableView/View/XZMocoaTableView.h,
+				XZMocoa/GridView/TableView/View/XZMocoaTableViewCell.h,
+				XZMocoa/GridView/TableView/View/XZMocoaTableViewController.h,
+				XZMocoa/GridView/TableView/View/XZMocoaTableViewHeaderFooterView.h,
+				XZMocoa/GridView/TableView/ViewModel/XZMocoaTableViewCellViewModel.h,
+				XZMocoa/GridView/TableView/ViewModel/XZMocoaTableViewHeaderFooterViewModel.h,
+				XZMocoa/GridView/TableView/ViewModel/XZMocoaTableViewModel.h,
+				XZMocoa/GridView/TableView/ViewModel/XZMocoaTableViewSectionViewModel.h,
+				XZMocoa/View/Model/XZMocoaModel.h,
+				XZMocoa/View/View/XZMocoaView.h,
+				XZMocoa/View/ViewModel/XZMocoaViewModel.h,
+				XZMocoa/XZMocoa.h,
+				XZObjcDescriptor/XZObjcClassDescriptor.h,
+				XZObjcDescriptor/XZObjcDescriptor.h,
+				XZObjcDescriptor/XZObjcIvarDescriptor.h,
+				XZObjcDescriptor/XZObjcMethodDescriptor.h,
+				XZObjcDescriptor/XZObjcPropertyDescriptor.h,
+				XZObjcDescriptor/XZObjcTypeDescriptor.h,
+				XZPageControl/XZPageControl.h,
+				XZPageControl/XZPageControlDefines.h,
+				XZPageView/XZImageViewer/XZImageViewer.h,
+				XZPageView/XZPageView/XZPageView.h,
+				XZPageView/XZPageView/XZPageViewDefines.h,
+				XZPageView/XZPageViewController/XZPageViewController.h,
+				"XZRefresh/Core/UIScrollView+XZRefresh.h",
+				XZRefresh/Core/XZRefreshDefines.h,
+				XZRefresh/Core/XZRefreshStyle1View.h,
+				XZRefresh/Core/XZRefreshStyle2View.h,
+				XZRefresh/Core/XZRefreshView.h,
+				XZRefresh/XZRefresh.h,
+				XZSegmentedControl/XZSegmentedControl.h,
+				XZSegmentedControl/XZSegmentedControlDefines.h,
+				XZSegmentedControl/XZSegmentedControlIndicator.h,
+				XZSegmentedControl/XZSegmentedControlSegment.h,
+				"XZToast/UIKit+XZToast.h",
+				XZToast/XZToast.h,
+				XZToast/XZToastDefines.h,
+				"XZURLQuery/NSURL+XZURLQuery.h",
+				XZURLQuery/XZURLQuery.h,
 			);
 			target = 047FA0B72E1F8D8B00830368 /* XZKit */;
 		};
 /* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
-		047FA0BA2E1F8D8B00830368 /* XZKit */ = {
-			isa = PBXFileSystemSynchronizedRootGroup;
-			exceptions = (
-				04A39F082E1FC40400A48BC0 /* Exceptions for "XZKit" folder in "XZKit" target */,
-			);
-			path = XZKit;
-			sourceTree = "<group>";
-		};
 		047FA0C72E1F8D8B00830368 /* XZKitTests */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
 			path = XZKitTests;
 			sourceTree = "<group>";
+		};
+		295DB1CF2F153211008E5C04 /* ObjC */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			exceptions = (
+				295DB6B72F1532B2008E5C04 /* Exceptions for "ObjC" folder in "XZKit" target */,
+			);
+			name = ObjC;
+			path = /Users/Xezun/Desktop/Code/iOS/XZKit/Sources/Code/ObjC;
+			sourceTree = "<absolute>";
+		};
+		295DB3512F153222008E5C04 /* Swift */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			name = Swift;
+			path = /Users/Xezun/Desktop/Code/iOS/XZKit/Sources/Code/Swift;
+			sourceTree = "<absolute>";
 		};
 /* End PBXFileSystemSynchronizedRootGroup section */
 
@@ -205,7 +214,7 @@
 		047FA0AE2E1F8D8B00830368 = {
 			isa = PBXGroup;
 			children = (
-				047FA0BA2E1F8D8B00830368 /* XZKit */,
+				295DB0232F1531C4008E5C04 /* XZKit */,
 				047FA0C72E1F8D8B00830368 /* XZKitTests */,
 				047FADC02E1F99A000830368 /* Frameworks */,
 				047FA0B92E1F8D8B00830368 /* Products */,
@@ -230,6 +239,24 @@
 				047FADC12E1F99A000830368 /* Security.framework */,
 			);
 			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		295DB0212F1531C4008E5C04 /* Code */ = {
+			isa = PBXGroup;
+			children = (
+				295DB1CF2F153211008E5C04 /* ObjC */,
+				295DB3512F153222008E5C04 /* Swift */,
+			);
+			path = Code;
+			sourceTree = "<group>";
+		};
+		295DB0232F1531C4008E5C04 /* XZKit */ = {
+			isa = PBXGroup;
+			children = (
+				295DB0212F1531C4008E5C04 /* Code */,
+				295DB0222F1531C4008E5C04 /* XZKit.docc */,
+			);
+			path = XZKit;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -259,7 +286,8 @@
 			dependencies = (
 			);
 			fileSystemSynchronizedGroups = (
-				047FA0BA2E1F8D8B00830368 /* XZKit */,
+				295DB1CF2F153211008E5C04 /* ObjC */,
+				295DB3512F153222008E5C04 /* Swift */,
 			);
 			name = XZKit;
 			packageProductDependencies = (
@@ -350,6 +378,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				295DB0262F1531C4008E5C04 /* XZKit.docc in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -502,7 +531,7 @@
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
 				MTL_FAST_MATH = YES;
 				ONLY_ACTIVE_ARCH = YES;
-				OTHER_SWIFT_FLAGS = "-D DEBUG -load-plugin-executable ${SRCROOT}/../../Products/XZKitMacros-debug#XZKitMacros";
+				OTHER_SWIFT_FLAGS = "-D DEBUG -load-plugin-executable ${SRCROOT}/../../Products/XZKitMacros-${CONFIGURATION}#XZKitMacros";
 				SDKROOT = iphoneos;
 				SWIFT_VERSION = 6.0;
 				VERSIONING_SYSTEM = "apple-generic";
@@ -562,7 +591,7 @@
 				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				MTL_FAST_MATH = YES;
-				OTHER_SWIFT_FLAGS = "-load-plugin-executable ${SRCROOT}/../../Products/XZKitMacros-release#XZKitMacros";
+				OTHER_SWIFT_FLAGS = "-load-plugin-executable ${SRCROOT}/../../Products/XZKitMacros-${CONFIGURATION}#XZKitMacros";
 				SDKROOT = iphoneos;
 				SWIFT_VERSION = 6.0;
 				VALIDATE_PRODUCT = YES;
