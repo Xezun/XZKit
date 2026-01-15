@@ -8,38 +8,40 @@ if [[ ! -d "Products" ]]; then
     mkdir "Products";
 fi
 
-cd "Projects/XZKitMacros"
+cd "Projects/XZKitMacros";
 
-swift build -c debug
-mv ".build/debug/XZKitMacros-tool" "../../Products/XZKitMacros-Debug"
-swift build -c release
-mv ".build/release/XZKitMacros-tool" "../../Products/XZKitMacros-Release"
+swift build -c debug;
+mv ".build/debug/XZKitMacros-tool" "../../Products/XZKitMacros-Debug";
+swift build -c release;
+mv ".build/release/XZKitMacros-tool" "../../Products/XZKitMacros-Release";
 
-cd "../../Products"
+cd "../../Products";
 
-# echo "DEBUG_CONFIGS => ${1}";
+# echo "DEBUG_CONFIGURATIONS => ${1}";
 
 OFS=${IFS};
 IFS=',';
-DEBUG_CONFIGS=(${1});
-for CONFIG in ${DEBUG_CONFIGS[@]}; do
-    if [[ "${CONFIG}" == "Debug" ]]; then
+
+DEBUG_CONFIGURATIONS=(${1});
+for CONFIGURATION in ${DEBUG_CONFIGURATIONS[@]}; do
+    if [[ "${CONFIGURATION}" == "Debug" ]]; then
         continue;
     fi
-    if [[ ! -f "XZKitMacros-${CONFIG}" ]]; then
-        ln -s -n "XZKitMacros-Debug" "XZKitMacros-${CONFIG}"
+    if [[ ! -f "XZKitMacros-${CONFIGURATION}" ]]; then
+        ln -s -n "XZKitMacros-Debug" "XZKitMacros-${CONFIGURATION}";
     fi
 done
 
-# echo "RELEASE_CONFIGS => ${2}"
+# echo "RELEASE_CONFIGURATIONS => ${2}"
 
-RELEASE_CONFIGS=(${2})
-for CONFIG in ${RELEASE_CONFIGS[@]}; do
-    if [[ "${CONFIG}" == "Release" ]]; then
+RELEASE_CONFIGURATIONS=(${2});
+for CONFIGURATION in ${RELEASE_CONFIGURATIONS[@]}; do
+    if [[ "${CONFIGURATION}" == "Release" ]]; then
         continue;
     fi
-    if [[ ! -f "XZKitMacros-${CONFIG}" ]]; then
-        ln -s -n "XZKitMacros-Release" "XZKitMacros-${CONFIG}"
+    if [[ ! -f "XZKitMacros-${CONFIGURATION}" ]]; then
+        ln -s -n "XZKitMacros-Release" "XZKitMacros-${CONFIGURATION}";
     fi
 done
+
 IFS=${OFS};
