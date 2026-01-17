@@ -215,7 +215,7 @@ typedef NS_OPTIONS(NSUInteger, XZStdcModifiers) {
 + (instancetype)new NS_UNAVAILABLE;
 
 
-+ (XZObjcType *)typeForType:(XZStdcType)stdcType;
++ (nullable XZObjcType *)typeForType:(XZStdcType)stdcType;
 
 /// 构造类型描述。
 ///
