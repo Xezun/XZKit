@@ -102,7 +102,6 @@ Pod::Spec.new do |s|
   s.defineSubspec "XZContentStatus",            "swift", false, ["XZTextImageView"];
   s.defineSubspec "XZImage",                    "objc",  true,  ["XZLog", "XZGeometry"];
   
-  
   # 核心
   s.defineSubspec "XZML",                       "mixed", true, ["XZDefines", "XZExtensions"];
   s.defineSubspec "XZMocoa",                    "mixed", true, ["XZDefines", "XZExtensions", "XZObjc"];

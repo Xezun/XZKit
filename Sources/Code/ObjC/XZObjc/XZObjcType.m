@@ -23,54 +23,6 @@ static XZObjcType __unsafe_unretained *XZStaticObjcTypes[CHAR_MAX] = { NULL };
 
 @implementation XZObjcType
 
-+ (void)initialize {
-    if (self == [XZObjcType class]) {
-        XZObjcTypeRegister(CGPoint);
-        XZObjcTypeRegister(CGSize);
-        XZObjcTypeRegister(CGRect);
-        XZObjcTypeRegister(CGVector);
-        
-        XZObjcTypeRegister(UIEdgeInsets);
-        XZObjcTypeRegister(UIOffset);
-        
-        XZObjcTypeRegister(NSDirectionalEdgeInsets);
-        XZObjcTypeRegister(NSRange);
-        
-        XZObjcTypeRegister(CGAffineTransform);
-        
-#define XZStaticObjcTypeRegister(anStdcType) XZStaticObjcTypes[(char)anStdcType] = [XZObjcType typeForType:(anStdcType)]
-        XZStaticObjcTypeRegister(XZStdcTypeUnknown);
-        XZStaticObjcTypeRegister(XZStdcTypeChar);
-        XZStaticObjcTypeRegister(XZStdcTypeUnsignedChar);
-        XZStaticObjcTypeRegister(XZStdcTypeInt);
-        XZStaticObjcTypeRegister(XZStdcTypeUnsignedInt);
-        XZStaticObjcTypeRegister(XZStdcTypeShort);
-        XZStaticObjcTypeRegister(XZStdcTypeUnsignedShort);
-        XZStaticObjcTypeRegister(XZStdcTypeLong);
-        XZStaticObjcTypeRegister(XZStdcTypeUnsignedLong);
-        XZStaticObjcTypeRegister(XZStdcTypeInt128);
-        XZStaticObjcTypeRegister(XZStdcTypeUnsignedInt128);
-        XZStaticObjcTypeRegister(XZStdcTypeLongLong);
-        XZStaticObjcTypeRegister(XZStdcTypeUnsignedLongLong);
-        XZStaticObjcTypeRegister(XZStdcTypeFloat);
-        XZStaticObjcTypeRegister(XZStdcTypeDouble);
-        XZStaticObjcTypeRegister(XZStdcTypeLongDouble);
-        XZStaticObjcTypeRegister(XZStdcTypeBool);
-        XZStaticObjcTypeRegister(XZStdcTypeVoid);
-        XZStaticObjcTypeRegister(XZStdcTypeString);
-        XZStaticObjcTypeRegister(XZStdcTypeSelector);
-        XZStaticObjcTypeRegister(XZStdcTypePointer);
-        XZStaticObjcTypeRegister(XZStdcTypeArray);
-        XZStaticObjcTypeRegister(XZStdcTypeVector);
-        XZStaticObjcTypeRegister(XZStdcTypeBitField);
-        XZStaticObjcTypeRegister(XZStdcTypeUnion);
-        XZStaticObjcTypeRegister(XZStdcTypeStruct);
-        XZStaticObjcTypeRegister(XZStdcTypeClass);
-        XZStaticObjcTypeRegister(XZStdcTypeObject);
-#undef XZStaticObjcTypeRegister
-    }
-}
-
 + (BOOL)accessInstanceVariablesDirectly {
     return NO;
 }
@@ -909,6 +861,10 @@ static XZObjcType __unsafe_unretained *XZStaticObjcTypes[CHAR_MAX] = { NULL };
     });
 }
 
+- (instancetype)initWithRaw:(XZStdcType)raw encoding:(NSString *)encoding name:(NSString *)name size:(size_t)size sizeInBit:(size_t)sizeInBit alignment:(size_t)alignment {
+    return [self initWithRaw:raw encoding:encoding modifiers:kNilOptions name:name size:size sizeInBit:sizeInBit alignment:alignment members:@[] subtype:Nil protocols:@[]];
+}
+
 - (instancetype)initWithRaw:(XZStdcType)raw encoding:(NSString *)encoding modifiers:(XZStdcModifiers)modifiers name:(NSString *)name size:(size_t)size sizeInBit:(size_t)sizeInBit alignment:(size_t)alignment members:(NSArray<XZObjcType *> *)members subtype:(Class)subtype protocols:(NSArray<Protocol *> *)protocols {
     self = [super init];
     if (self) {
@@ -994,6 +950,54 @@ typedef struct XZStdcTypeLayout {
     *size      = typeLayout.size;
     *alignment = typeLayout.alignment;
     return YES;
+}
+
++ (void)initialize {
+    if (self == [XZObjcType class]) {
+        XZObjcTypeRegister(CGPoint);
+        XZObjcTypeRegister(CGSize);
+        XZObjcTypeRegister(CGRect);
+        XZObjcTypeRegister(CGVector);
+        
+        XZObjcTypeRegister(UIEdgeInsets);
+        XZObjcTypeRegister(UIOffset);
+        
+        XZObjcTypeRegister(NSDirectionalEdgeInsets);
+        XZObjcTypeRegister(NSRange);
+        
+        XZObjcTypeRegister(CGAffineTransform);
+        
+#define XZStaticObjcTypeRegister(anStdcType) XZStaticObjcTypes[(char)anStdcType] = [XZObjcType typeForType:(anStdcType)]
+        XZStaticObjcTypeRegister(XZStdcTypeUnknown);
+        XZStaticObjcTypeRegister(XZStdcTypeChar);
+        XZStaticObjcTypeRegister(XZStdcTypeUnsignedChar);
+        XZStaticObjcTypeRegister(XZStdcTypeInt);
+        XZStaticObjcTypeRegister(XZStdcTypeUnsignedInt);
+        XZStaticObjcTypeRegister(XZStdcTypeShort);
+        XZStaticObjcTypeRegister(XZStdcTypeUnsignedShort);
+        XZStaticObjcTypeRegister(XZStdcTypeLong);
+        XZStaticObjcTypeRegister(XZStdcTypeUnsignedLong);
+        XZStaticObjcTypeRegister(XZStdcTypeInt128);
+        XZStaticObjcTypeRegister(XZStdcTypeUnsignedInt128);
+        XZStaticObjcTypeRegister(XZStdcTypeLongLong);
+        XZStaticObjcTypeRegister(XZStdcTypeUnsignedLongLong);
+        XZStaticObjcTypeRegister(XZStdcTypeFloat);
+        XZStaticObjcTypeRegister(XZStdcTypeDouble);
+        XZStaticObjcTypeRegister(XZStdcTypeLongDouble);
+        XZStaticObjcTypeRegister(XZStdcTypeBool);
+        XZStaticObjcTypeRegister(XZStdcTypeVoid);
+        XZStaticObjcTypeRegister(XZStdcTypeString);
+        XZStaticObjcTypeRegister(XZStdcTypeSelector);
+        XZStaticObjcTypeRegister(XZStdcTypePointer);
+        XZStaticObjcTypeRegister(XZStdcTypeArray);
+        XZStaticObjcTypeRegister(XZStdcTypeVector);
+        XZStaticObjcTypeRegister(XZStdcTypeBitField);
+        XZStaticObjcTypeRegister(XZStdcTypeUnion);
+        XZStaticObjcTypeRegister(XZStdcTypeStruct);
+        XZStaticObjcTypeRegister(XZStdcTypeClass);
+        XZStaticObjcTypeRegister(XZStdcTypeObject);
+#undef XZStaticObjcTypeRegister
+    }
 }
 
 @end

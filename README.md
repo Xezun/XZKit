@@ -26,6 +26,8 @@ https://github.com/Xezun/XZKit.git
 pod "XZKit"
 ```
 
+执行命令的过程中，会编译 Swift 宏插件，需要的时间可能比较长，请保持网络通畅。
+
 ## 组件 Components
 
 ### [XZDefines](./Docs/XZDefines.md) 
