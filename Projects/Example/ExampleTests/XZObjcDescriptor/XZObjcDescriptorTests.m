@@ -126,7 +126,7 @@
     } {
         const char * const objcType = @encode(long);
         XZObjcType *descriptor = [XZObjcType typeForEncoding:objcType];
-        XCTAssert(descriptor.raw == (XZ_LONG_IS_LLONG ? XZStdcTypeLongLong : XZStdcTypeLong));
+        XCTAssert(descriptor.raw == (XZ_TYPE_LLONG_IS_LONG ? XZStdcTypeLongLong : XZStdcTypeLong));
         XCTAssert(strcmp(objcType, [descriptor.encoding cStringUsingEncoding:NSASCIIStringEncoding]) == 0);
         XCTAssert(descriptor.size == sizeof(long));
         XCTAssert(descriptor.sizeInBit == (sizeof(long) * 8));
@@ -134,7 +134,7 @@
     } {
         const char * const objcType = @encode(unsigned long);
         XZObjcType *descriptor = [XZObjcType typeForEncoding:objcType];
-        XCTAssert(descriptor.raw == (XZ_LONG_IS_LLONG ? XZStdcTypeUnsignedLongLong : XZStdcTypeUnsignedLong));
+        XCTAssert(descriptor.raw == (XZ_TYPE_LLONG_IS_LONG ? XZStdcTypeUnsignedLongLong : XZStdcTypeUnsignedLong));
         XCTAssert(strcmp(objcType, [descriptor.encoding cStringUsingEncoding:NSASCIIStringEncoding]) == 0);
         XCTAssert(descriptor.size == sizeof(unsigned long));
         XCTAssert(descriptor.sizeInBit == (sizeof(unsigned long) * 8));

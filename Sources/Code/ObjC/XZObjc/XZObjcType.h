@@ -15,9 +15,9 @@ NS_ASSUME_NONNULL_BEGIN
 /// 在不同的架构中，long 的实际类型可能不同。
 /// - 在 arm64 架构中，long 会被编译为 long long 类型，即会被编码为`q`而不是`l`。
 /// > 官方文档相关说明：`l` is treated as a 32-bit quantity on 64-bit programs.
-#define XZ_LONG_IS_LLONG 1
+#define XZ_TYPE_LLONG_IS_LONG 1
 #else
-#define XZ_LONG_IS_LLONG 0
+#define XZ_TYPE_LLONG_IS_LONG 0
 #endif
 
 /// ANSI/ISO C 数据类型枚举。
@@ -42,10 +42,10 @@ typedef NS_ENUM(NSUInteger, XZStdcType) {
     /// unsigned short
     XZStdcTypeUnsignedShort    = _C_USHT,
     /// long
-    /// > 64位编译器会将 long 当作 long long 处理，在代码中，可使用 `XZ_LONG_IS_LLONG` 宏进行条件编译。
+    /// > 64位编译器会将 long 当作 long long 处理，在代码中，可使用 `XZ_TYPE_LLONG_IS_LONG` 宏进行条件编译。
     XZStdcTypeLong             = _C_LNG,
     /// unsigned long
-    /// > 64位编译器会将 unsigned long 当作 unsigned long long 处理，在代码中，可使用 `XZ_LONG_IS_LLONG` 宏进行条件编译。
+    /// > 64位编译器会将 unsigned long 当作 unsigned long long 处理，在代码中，可使用 `XZ_TYPE_LLONG_IS_LONG` 宏进行条件编译。
     XZStdcTypeUnsignedLong     = _C_ULNG,
     XZStdcTypeInt128           = _C_INT128,
     XZStdcTypeUnsignedInt128   = _C_UINT128,

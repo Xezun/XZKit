@@ -20,7 +20,13 @@
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
     XZLog(@"App (%@) was launched: %@", XZLogSystem.defaultLogSystem.domain, launchOptions);
     
-    XZLog(@"%s", @encode(NSObject));
+    XZLog(@"NSObject => %s", @encode(NSObject));
+    XZLog(@"double => %s", @encode(double));
+    XZLog(@"long double => %s", @encode(long double));
+    XZLog(@"long => %s", @encode(long));
+    XZLog(@"long long => %s", @encode(long long));
+    
+    
     
     [NSNotificationCenter.defaultCenter addObserver:self selector:@selector(didChangeLanguageNotification:) name:XZLocaleDidChangePreferredLanguageNotification object:nil];
     

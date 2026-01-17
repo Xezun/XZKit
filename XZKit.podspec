@@ -22,7 +22,7 @@ Pod::Spec.new do |s|
   # s.social_media_url = 'https://twitter.com/<TWITTER_USERNAME>'
   s.readme           = "https://github.com/Xezun/XZKit/blob/main/README.md"
 
-  s.swift_version = '6.0'
+  s.swift_version = '5.9'
   s.ios.deployment_target = '13.0'
   
   s.preserve_paths = ["Products"]
