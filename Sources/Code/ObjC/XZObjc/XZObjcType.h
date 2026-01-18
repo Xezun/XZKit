@@ -163,7 +163,7 @@ typedef NS_OPTIONS(NSUInteger, XZStdcModifiers) {
 /// 类型名称。
 @property (nonatomic, readonly) NSString *name;
 
-/// 返回自身。
+/// 返回静态类型或自身。
 @property (nonatomic, readonly) XZObjcType *type;
 
 /// 类型。
@@ -215,7 +215,7 @@ typedef NS_OPTIONS(NSUInteger, XZStdcModifiers) {
 + (instancetype)new NS_UNAVAILABLE;
 
 
-+ (nullable XZObjcType *)typeForType:(XZStdcType)stdcType;
++ (XZObjcType *)typeForType:(XZStdcType)stdcType;
 
 /// 构造类型描述。
 ///
@@ -234,6 +234,12 @@ typedef NS_OPTIONS(NSUInteger, XZStdcModifiers) {
 ///   - encoding: 类型编码
 ///   - modifiers: 修饰符，因为属性修饰符不包含在类型编码中，可通过此参数提供
 + (nullable XZObjcType *)typeForEncoding:(const char * _Nullable)encoding modifiers:(XZStdcModifiers)modifiers NS_SWIFT_NAME(init(for:_:));
+
+/// 对于使用了自定义 alignment 的结构体来说，可以通过此方法构建类型描述对象。
+/// - Parameters:
+///   - encoding: 类型编码
+///   - size: 类型大小
+///   - alignment: 类型内存对齐
 + (nullable XZObjcType *)typeForEncoding:(const char * _Nullable)encoding size:(size_t)size alignment:(size_t)alignment NS_SWIFT_NAME(init(for:size:alignment:));
 
 /// 设置结构体类型的大小和字节对齐值。

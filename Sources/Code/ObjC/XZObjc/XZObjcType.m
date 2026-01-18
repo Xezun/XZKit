@@ -24,24 +24,15 @@ static XZObjcType __unsafe_unretained *XZStaticObjcTypes[CHAR_MAX] = { NULL };
 
 @implementation XZObjcType
 
+@synthesize type = _type;
+
 + (BOOL)accessInstanceVariablesDirectly {
     return NO;
 }
 
 + (XZObjcType *)typeForType:(XZStdcType)stdcType {
-    XZStdcModifiers const modifiers = (stdcType & XZStdcModifierMask);
-    
-    if (!modifiers) {
-        return XZStaticObjcTypes[(stdcType)];
-    }
-    
-    XZObjcType * const staticType = XZStaticObjcTypes[(stdcType & XZStdcTypeMask)];
-    
-    if (!staticType) {
-        return nil;
-    }
-    
-    return [[self alloc] initWithRaw:staticType.raw encoding:staticType.encoding modifiers:modifiers name:staticType.name size:staticType.size sizeInBit:staticType.sizeInBit alignment:staticType.alignment members:staticType.members subtype:staticType.subtype protocols:staticType.protocols];
+    NSAssert((stdcType == (stdcType & XZStdcTypeMask)), @"");
+    return XZStaticObjcTypes[(stdcType)] ?: XZStaticObjcTypes[XZStdcTypeUnknown];
 }
 
 + (XZObjcType *)typeForEncoding:(const char *)encoding {
@@ -56,34 +47,22 @@ static XZObjcType __unsafe_unretained *XZStaticObjcTypes[CHAR_MAX] = { NULL };
     return [self typeWithEncoding:encoding size:size alignment:alignment modifiers:kNilOptions];
 }
 
-+ (XZObjcType *)typeWithEncoding:(const char *)encoding size:(size_t const)size alignment:(size_t const)alignment modifiers:(XZStdcModifiers)modifiers {
++ (XZObjcType *)typeWithEncoding:(const char *)typeEncoding size:(size_t const)size alignment:(size_t const)alignment modifiers:(XZStdcModifiers)modifiers {
     // 非空处理
-    if (encoding == NULL) {
+    if (typeEncoding == NULL) {
         return nil;
     }
     
-    size_t encodingLength = strlen(encoding);
+    size_t typeEncodingLength = strlen(typeEncoding);
     
     // 字符串非法
-    if (encodingLength == 0) {
+    if (typeEncodingLength == 0) {
         return nil;
     }
     
-    if (modifiers == kNilOptions) {
-        NSString * const key = [NSString stringWithCString:encoding encoding:NSASCIIStringEncoding];
-        
-        XZObjcType * const type = withStorage(^id(XZObjcTypeStorage const storage) {
-            return storage[key];
-        });
-        
-        if (type) {
-            return type;
-        }
-    }
-    
-    // 处理修饰符，类型编码可能会包含修饰符，比如方法参数的类型编码。
-    for (size_t i = 0; i < encodingLength; i++) {
-        switch (encoding[i]) {
+    // 处理修饰符：类型编码可能会包含修饰符，比如方法参数的类型编码。
+    for (size_t i = 0; i < typeEncodingLength; i++) {
+        switch (typeEncoding[i]) {
             case _C_CONST: {
                 modifiers |= XZStdcModifierConst;
                 continue;
@@ -126,26 +105,44 @@ static XZObjcType __unsafe_unretained *XZStaticObjcTypes[CHAR_MAX] = { NULL };
             }
             default: {
                 // 只有修饰符，不是合法的编码
-                if (i >= encodingLength) {
+                if (i >= typeEncodingLength) {
                     return nil;
                 }
                 // 重新定位字符编码的起点
-                encoding = encoding + i;
-                encodingLength -= i;
+                typeEncoding = typeEncoding + i;
+                typeEncodingLength -= i;
                 break;
             }
         }
         break;
     }
     
+    // 确定类型编码长度
+    
+    
+    // 没有修饰符。
+    if (!modifiers) {
+        NSString * const key = [NSString stringWithCString:typeEncoding encoding:NSASCIIStringEncoding];
+        
+        XZObjcType * const type = withStorage(^id(XZObjcTypeStorage const storage) {
+            return storage[key];
+        });
+        
+        if (type) {
+            return type;
+        }
+    }
+    
+    
+    
     NSNumber * const key = @(modifiers);
     
-
     
-    XZStdcType const _raw = encoding[0];
+    
+    XZStdcType const stdcType = (XZStdcType)typeEncoding[0];
     
     if (modifiers == kNilOptions) {
-        XZObjcType * const type = XZStaticObjcTypes[_raw];
+        XZObjcType * const type = XZStaticObjcTypes[stdcType];
         if (type != NULL) {
             return type;
         }
@@ -160,223 +157,80 @@ static XZObjcType __unsafe_unretained *XZStaticObjcTypes[CHAR_MAX] = { NULL };
     Class      _subtype   = Nil;
     NSArray  * _protocols = nil;
     
-    switch (_raw) {
-        case XZStdcTypeUnknown: {
-            typedef void (Foobar)(void);
-            _encoding = [NSString stringWithFormat:@"%c", (char)_raw];
-            _name = @"unknown";
-            _size = sizeof(Foobar);
-            _sizeInBit = _size * 8;
-            _alignment = _Alignof(Foobar);
-            break;
-        }
-        case XZStdcTypeChar: {
-            _encoding = [NSString stringWithFormat:@"%c", (char)_raw];
-            _name = @"char";
-            _size = sizeof(char);
-            _sizeInBit = _size * 8;
-            _alignment = _Alignof(char);
-            break;
-        }
-        case XZStdcTypeUnsignedChar: {
-            _encoding = [NSString stringWithFormat:@"%c", (char)_raw];
-            _name = @"unsigned char";
-            _size = sizeof(unsigned char);
-            _sizeInBit = _size * 8;
-            _alignment = _Alignof(unsigned char);
-            break;
-        }
-        case XZStdcTypeInt: {
-            _encoding = [NSString stringWithFormat:@"%c", (char)_raw];
-            _name = @"int";
-            _size = sizeof(int);
-            _sizeInBit = _size * 8;
-            _alignment = _Alignof(int);
-            break;
-        }
-        case XZStdcTypeUnsignedInt: {
-            _encoding = [NSString stringWithFormat:@"%c", (char)_raw];
-            _name = @"unsigned int";
-            _size = sizeof(unsigned int);
-            _sizeInBit = _size * 8;
-            _alignment = _Alignof(unsigned int);
-            break;
-        }
-        case XZStdcTypeShort: {
-            _encoding = [NSString stringWithFormat:@"%c", (char)_raw];
-            _name = @"short";
-            _size = sizeof(short);
-            _sizeInBit = _size * 8;
-            _alignment = _Alignof(short);
-            break;
-        }
-        case XZStdcTypeUnsignedShort: {
-            _encoding = [NSString stringWithFormat:@"%c", (char)_raw];
-            _name = @"unsigned short";
-            _size = sizeof(unsigned short);
-            _sizeInBit = _size * 8;
-            _alignment = _Alignof(unsigned short);
-            break;
-        }
-        case XZStdcTypeLongLong: {
-            _encoding = [NSString stringWithFormat:@"%c", (char)_raw];
-            _name = @"long long";
-            _size = sizeof(long long);
-            _sizeInBit = _size * 8;
-            _alignment = _Alignof(long long);
-            break;
-        }
-        case XZStdcTypeUnsignedLongLong: {
-            _encoding = [NSString stringWithFormat:@"%c", (char)_raw];
-            _name = @"unsigned long long";
-            _size = sizeof(unsigned long long);
-            _sizeInBit = _size * 8;
-            _alignment = _Alignof(unsigned long long);
-            break;
-        }
-        case XZStdcTypeLong: {
-            _encoding = [NSString stringWithFormat:@"%c", (char)_raw];
-            _name = @"long";
-            _size = sizeof(long);
-            _sizeInBit = _size * 8;
-            _alignment = _Alignof(long);
-            break;
-        }
-        case XZStdcTypeUnsignedLong: {
-            _encoding = [NSString stringWithFormat:@"%c", (char)_raw];
-            _name = @"unsigned long";
-            _size = sizeof(unsigned long);
-            _sizeInBit = _size * 8;
-            _alignment = _Alignof(unsigned long);
-            break;
-        }
-        case XZStdcTypeInt128: {
-            _encoding = [NSString stringWithFormat:@"%c", (char)_raw];
-            _name = @"integer 128";
-            _size = sizeof(UInt64) * 2;
-            _sizeInBit = _size * 8;
-            _alignment = _size;
-            break;
-        }
-        case XZStdcTypeUnsignedInt128: {
-            _encoding = [NSString stringWithFormat:@"%c", (char)_raw];
-            _name = @"unsigned integer 128";
-            _size = sizeof(UInt64) * 2;
-            _sizeInBit = _size * 8;
-            _alignment = _size;
-            break;
-        }
-        case XZStdcTypeFloat: {
-            _encoding = [NSString stringWithFormat:@"%c", (char)_raw];
-            _name = @"float";
-            _size = sizeof(float);
-            _sizeInBit = _size * 8;
-            _alignment = _Alignof(float);
-            break;
-        }
-        case XZStdcTypeDouble: {
-            _encoding = [NSString stringWithFormat:@"%c", (char)_raw];
-            _name = @"double";
-            _size = sizeof(double);
-            _sizeInBit = _size * 8;
-            _alignment = _Alignof(double);
-            break;
-        }
-        case XZStdcTypeLongDouble: {
-            _encoding = [NSString stringWithFormat:@"%c", (char)_raw];
-            _name = @"long double";
-            _size = sizeof(long double);
-            _sizeInBit = _size * 8;
-            _alignment = _Alignof(long double);
-            break;
-        }
-        case XZStdcTypeBool: {
-            _encoding = [NSString stringWithFormat:@"%c", (char)_raw];
-            _name = @"bool";
-            _size = sizeof(bool);
-            _sizeInBit = _size * 8;
-            _alignment = _Alignof(bool);
-            break;
-        }
-        case XZStdcTypeVoid: {
-            _encoding = [NSString stringWithFormat:@"%c", (char)_raw];
-            _name = @"void";
-            _size = sizeof(void);
-            _sizeInBit = _size * 8;
-            _alignment = _Alignof(void);
-            break;
-        }
-        case XZStdcTypeString: {
-            _encoding = [NSString stringWithFormat:@"%c", (char)_raw];
-            _name = @"char *";
-            _size = sizeof(char *);
-            _sizeInBit = _size * 8;
-            _alignment = _Alignof(char *);
-            break;
-        }
-        case XZStdcTypeClass: {
-            _encoding = [NSString stringWithFormat:@"%c", (char)_raw];
-            _name = @"class";
-            _size = sizeof(Class);
-            _sizeInBit = _size * 8;
-            _alignment = _Alignof(Class);
-            break;
-        }
+    switch (stdcType) {
+        case XZStdcTypeUnknown:
+        case XZStdcTypeChar:
+        case XZStdcTypeUnsignedChar:
+        case XZStdcTypeInt:
+        case XZStdcTypeUnsignedInt:
+        case XZStdcTypeShort:
+        case XZStdcTypeUnsignedShort:
+        case XZStdcTypeLongLong:
+        case XZStdcTypeUnsignedLongLong:
+        case XZStdcTypeLong:
+        case XZStdcTypeUnsignedLong:
+        case XZStdcTypeInt128:
+        case XZStdcTypeUnsignedInt128:
+        case XZStdcTypeFloat:
+        case XZStdcTypeDouble:
+        case XZStdcTypeLongDouble:
+        case XZStdcTypeBool:
+        case XZStdcTypeVoid:
+        case XZStdcTypeString:
+        case XZStdcTypeClass:
         case XZStdcTypeSelector: {
-            _encoding = [NSString stringWithFormat:@"%c", (char)_raw];
-            _name = @"selector";
-            _size = sizeof(SEL);
-            _sizeInBit = _size * 8;
-            _alignment = _Alignof(SEL);
-            break;
+            XZObjcType * const type = XZStaticObjcTypes[stdcType];
+            if (!modifiers) {
+                return type;
+            }
+            return [[self alloc] initWithType:type modifiers:modifiers];
         }
         case XZStdcTypePointer: {
-            XZObjcType *member = [XZObjcType typeForEncoding:encoding + 1];
+            XZObjcType * const type = XZStaticObjcTypes[XZStdcTypePointer];
+            XZObjcType * const member = [XZObjcType typeForEncoding:typeEncoding + 1];
             if (member == nil) {
-                return nil;
+                return type;
             }
-            NSUInteger const length = 1 + member.encoding.length;
-            _encoding  = [[NSString alloc] initWithBytes:encoding length:length encoding:(NSASCIIStringEncoding)];
-            _name = [NSString stringWithFormat:@"%@ *", member.name];
-            _size = sizeof(void *);
-            _sizeInBit = _size * 8;
-            _alignment = _Alignof(void *);
-            _members   = @[member];
-            break;
+            NSString * const name = [NSString stringWithFormat:@"%@ pointer", member.name];
+            NSString * const encoding = [[NSString alloc] initWithBytes:typeEncoding length:member.encoding.length + 1 encoding:NSUTF8StringEncoding];
+            return [[self alloc] initWithType:type modifiers:modifiers name:name encoding:encoding];
         }
         case XZStdcTypeBitField: { // {Foobar=b1b2b3}
-            if (encodingLength < 2) {
-                return nil;
+            XZObjcType * const type = XZStaticObjcTypes[XZStdcTypeBitField];
+            if (typeEncodingLength == 2) {
+                return type;
             }
             
+            size_t sizeInBit = 0;
+            // bit field 十进制
             size_t newLength = 1;
-            while (newLength < encodingLength) {
-                const char number = encoding[newLength];
+            while (newLength < typeEncodingLength) {
+                const char number = typeEncoding[newLength];
                 if (number >= '0' && number <= '9') {
-                    _sizeInBit = _sizeInBit * 10 + (number - '0');
+                    sizeInBit = sizeInBit * 10 + (number - '0');
                     newLength += 1;
                     continue;
                 }
                 if (newLength == 1) {
-                    return nil;
+                    return type;
                 }
                 break;
             }
-            encodingLength = newLength;
+            typeEncodingLength = newLength;
             
             // 从位域的编码中，只能获取占用内存的位数，而实际占用内存和对齐，跟声明位域的类型有关。
             // 比如 int a:1 占用 1 位 4 字节，long a:1 占用 1 位 8 字节。
-            
-            _encoding  = [[NSString alloc] initWithBytes:encoding length:encodingLength encoding:NSASCIIStringEncoding];
-            _name = [NSString stringWithFormat:@"%ld bit field", (long)_sizeInBit];
-            _size = (_sizeInBit - 1) / 8 + 1;
-            _alignment = _size;
+            NSString * const encoding = [[NSString alloc] initWithBytes:typeEncoding length:typeEncodingLength encoding:NSASCIIStringEncoding];
+            NSString * const name = [NSString stringWithFormat:@"%ld bits field", sizeInBit];
+            size_t     const size = (sizeInBit - 1) / 8 + 1;
+            size_t     const alignment = size;
+            return [[self alloc] initWithType:type modifiers:modifiers name:name encoding:encoding size:size alignment:alignment sizeInBit:sizeInBit];
             break;
         }
         case XZStdcTypeArray: {
             // int[10]    => [10i]
             // int[10][2] => [10[2i]]
-            if (encodingLength < 4) {
+            if (typeEncodingLength < 4) {
                 return nil;
             }
             
@@ -384,8 +238,8 @@ static XZObjcType __unsafe_unretained *XZStaticObjcTypes[CHAR_MAX] = { NULL };
             
             // 元素数量
             size_t count = 0;
-            while (i < encodingLength) {
-                char const number = encoding[i];
+            while (i < typeEncodingLength) {
+                char const number = typeEncoding[i];
                 if (number < '0' || number > '9') {
                     break;
                 }
@@ -397,21 +251,21 @@ static XZObjcType __unsafe_unretained *XZStaticObjcTypes[CHAR_MAX] = { NULL };
             }
             
             // 元素类型
-            XZObjcType *member = [XZObjcType typeForEncoding:(encoding + i)];
+            XZObjcType *member = [XZObjcType typeForEncoding:(typeEncoding + i)];
             if (member == nil) {
                 return nil;
             }
             
             // 查找 encoding 结尾字符
             i += member.encoding.length; // 定位到 member 的下一个字符
-            if (i >= encodingLength) {
+            if (i >= typeEncodingLength) {
                 return nil;
             }
-            if (encoding[i] != ']') {
+            if (typeEncoding[i] != ']') {
                 return nil;
             }
             
-            _encoding  = [[NSString alloc] initWithBytes:encoding length:(i + 1) encoding:NSASCIIStringEncoding];
+            _encoding  = [[NSString alloc] initWithBytes:typeEncoding length:(i + 1) encoding:NSASCIIStringEncoding];
             _name = [NSString stringWithFormat:@"%@[%ld]", member.name, (long)count];
             _size = member.size * count;
             _sizeInBit = _size * 8;
@@ -420,7 +274,7 @@ static XZObjcType __unsafe_unretained *XZStaticObjcTypes[CHAR_MAX] = { NULL };
             break;
         }
         case XZStdcTypeVector: {
-            _encoding = [NSString stringWithFormat:@"%c", (char)_raw];
+            _encoding = [NSString stringWithFormat:@"%c", (char)stdcType];
             _name = @"vector";
             _size = sizeof(void *);
             _sizeInBit = _size * 8;
@@ -428,7 +282,7 @@ static XZObjcType __unsafe_unretained *XZStaticObjcTypes[CHAR_MAX] = { NULL };
             break;
         }
         case XZStdcTypeUnion: { // (Foobar=icq)
-            if (encodingLength < 4) {
+            if (typeEncodingLength < 4) {
                 return nil;
             }
             
@@ -436,15 +290,15 @@ static XZObjcType __unsafe_unretained *XZStaticObjcTypes[CHAR_MAX] = { NULL };
             
             // 定位到 = 字符，获取共用体名字
             do {
-                if (i >= encodingLength) {
+                if (i >= typeEncodingLength) {
                     return nil;
                 }
-                if (encoding[i] == '=') {
+                if (typeEncoding[i] == '=') {
                     break;
                 }
                 i += 1;
             } while (YES);
-            _name = [[NSString alloc] initWithBytes:(encoding + 1) length:(i - 1) encoding:NSASCIIStringEncoding];
+            _name = [[NSString alloc] initWithBytes:(typeEncoding + 1) length:(i - 1) encoding:NSASCIIStringEncoding];
             
             union Foobar { };
             _size = sizeof(union Foobar);
@@ -452,11 +306,11 @@ static XZObjcType __unsafe_unretained *XZStaticObjcTypes[CHAR_MAX] = { NULL };
             _alignment = _Alignof(union Foobar);
             
             NSMutableArray * const members = [NSMutableArray array];
-            for (i += 1; i < encodingLength; ) {
-                if (encoding[i] == ')') {
+            for (i += 1; i < typeEncodingLength; ) {
+                if (typeEncoding[i] == ')') {
                     break;
                 }
-                XZObjcType *member = [XZObjcType typeForEncoding:(encoding + i)];
+                XZObjcType *member = [XZObjcType typeForEncoding:(typeEncoding + i)];
                 if (member == nil) {
                     return nil;
                 }
@@ -470,41 +324,41 @@ static XZObjcType __unsafe_unretained *XZStaticObjcTypes[CHAR_MAX] = { NULL };
             
             if (size > 0 && alignment > 0) {
                 if (modifiers) {
-//                    [[self alloc] initWithRaw:_encoding type:_raw modifiers:kNilOptions name:_name size:size sizeInBit:size * 8 alignment:alignment members:members subtype:Nil protocols:nil];
+                    //                    [[self alloc] initWithRaw:_encoding type:_raw modifiers:kNilOptions name:_name size:size sizeInBit:size * 8 alignment:alignment members:members subtype:Nil protocols:nil];
                 } else {
                     
                 }
             }
             
-            _encoding = [[NSString alloc] initWithBytes:encoding length:(i + 1) encoding:NSASCIIStringEncoding];
+            _encoding = [[NSString alloc] initWithBytes:typeEncoding length:(i + 1) encoding:NSASCIIStringEncoding];
             [self size:&_size alignment:&_alignment forObjcType:_encoding];
             _sizeInBit = _size * 8;
             
             break;
         }
         case XZStdcTypeStruct: { // {name=type...}
-            if (encodingLength < 4) {
+            if (typeEncodingLength < 4) {
                 return nil;
             }
             
             size_t i = 1;
             do {
-                if (i >= encodingLength) {
+                if (i >= typeEncodingLength) {
                     return nil;
                 }
-                if (encoding[i] == '=') {
+                if (typeEncoding[i] == '=') {
                     break;
                 }
                 i += 1;
             } while (YES);
-            _name = [[NSString alloc] initWithBytes:(encoding + 1) length:(i - 1) encoding:NSASCIIStringEncoding];
+            _name = [[NSString alloc] initWithBytes:(typeEncoding + 1) length:(i - 1) encoding:NSASCIIStringEncoding];
             
             NSMutableArray * const members = [NSMutableArray array];
-            for (i += 1; i < encodingLength; ) {
-                if (encoding[i] == '}') {
+            for (i += 1; i < typeEncodingLength; ) {
+                if (typeEncoding[i] == '}') {
                     break;
                 }
-                XZObjcType *member = [XZObjcType typeForEncoding:(encoding + i)];
+                XZObjcType *member = [XZObjcType typeForEncoding:(typeEncoding + i)];
                 if (member == nil) {
                     return nil;
                 }
@@ -513,7 +367,7 @@ static XZObjcType __unsafe_unretained *XZStaticObjcTypes[CHAR_MAX] = { NULL };
             }
             _members = members.copy;
             
-            _encoding = [[NSString alloc] initWithBytes:encoding length:(i + 1) encoding:NSASCIIStringEncoding];
+            _encoding = [[NSString alloc] initWithBytes:typeEncoding length:(i + 1) encoding:NSASCIIStringEncoding];
             if (![self size:&_size alignment:&_alignment forObjcType:_encoding]) {
                 if (members.count > 0) {
                     for (XZObjcType *member in _members) {
@@ -548,33 +402,33 @@ static XZObjcType __unsafe_unretained *XZStaticObjcTypes[CHAR_MAX] = { NULL };
             // id<UITableViewDataSource, UITableViewDelegate>       => @"<UITableViewDataSource><UITableViewDelegate>"
             // UIView<UITableViewDataSource, UITableViewDelegate> * => @"UIView<UITableViewDataSource><UITableViewDelegate>"
             // 所以，如果长度超 1 则表示可能包含类名。
-            if (encodingLength > 1) {
-                if (encoding[1] != '"') { // 第2个字符必须时双引号
-                    encodingLength = 1;
-                } else if (encodingLength < 4) { // 包含类名时，长度不能小于4，比如 @"A"
-                    encodingLength = 1;
+            if (typeEncodingLength > 1) {
+                if (typeEncoding[1] != '"') { // 第2个字符必须时双引号
+                    typeEncodingLength = 1;
+                } else if (typeEncodingLength < 4) { // 包含类名时，长度不能小于4，比如 @"A"
+                    typeEncodingLength = 1;
                 } else {
                     size_t newLength = 1;
-                    for (size_t i = 2; i < encodingLength; i++) {
-                        if (encoding[i] == '"') {
+                    for (size_t i = 2; i < typeEncodingLength; i++) {
+                        if (typeEncoding[i] == '"') {
                             newLength = i + 1;
                             break;
                         }
                     }
-                    encodingLength = newLength;
+                    typeEncodingLength = newLength;
                 }
             }
             
-            _encoding  = [[NSString alloc] initWithBytes:encoding length:encodingLength encoding:NSASCIIStringEncoding];
+            _encoding  = [[NSString alloc] initWithBytes:typeEncoding length:typeEncodingLength encoding:NSASCIIStringEncoding];
             _name = @"object";
             _size = sizeof(id);
             _sizeInBit = _size * 8;
             _alignment = _Alignof(id);
             
-            if (encodingLength > 1) {
+            if (typeEncodingLength > 1) {
                 NSRange range = [_encoding rangeOfString:@"<"];
                 if (range.location == NSNotFound) {
-                    NSString * const className = [_encoding substringWithRange:NSMakeRange(2, encodingLength - 3)];
+                    NSString * const className = [_encoding substringWithRange:NSMakeRange(2, typeEncodingLength - 3)];
                     _subtype = NSClassFromString(className);
                     _name = [NSString stringWithFormat:@"%@ %@", className, _name];
                     _protocols = nil;
@@ -585,7 +439,7 @@ static XZObjcType __unsafe_unretained *XZStaticObjcTypes[CHAR_MAX] = { NULL };
                         _name = [NSString stringWithFormat:@"%@ %@", className, _name];
                     }
                     // 起点：第一个 < 符号的下一个字符。长度：总长度 - 第一个 < 左边的字符长度 - 末尾的双引号 - 末尾的 > 符号
-                    NSString * const protocolString = [_encoding substringWithRange:NSMakeRange(range.location + 1, encodingLength - (range.location + 1) - 1 - 1)];
+                    NSString * const protocolString = [_encoding substringWithRange:NSMakeRange(range.location + 1, typeEncodingLength - (range.location + 1) - 1 - 1)];
                     NSArray<NSString *> * const protocolNames = [protocolString componentsSeparatedByString:@"><"];
                     NSMutableArray * const protocols = [NSMutableArray arrayWithCapacity:protocolNames.count];
                     for (NSString * const name in protocolNames) {
@@ -610,7 +464,7 @@ static XZObjcType __unsafe_unretained *XZStaticObjcTypes[CHAR_MAX] = { NULL };
         if (descriptor) {
             return descriptor;
         }
-        descriptor = [[self alloc] initWithRaw:_raw encoding:_encoding modifiers:modifiers name:_name size:_size sizeInBit:_sizeInBit alignment:_alignment members:_members subtype:_subtype protocols:_protocols];
+        descriptor = [[self alloc] initWithRaw:stdcType encoding:_encoding modifiers:modifiers name:_name size:_size sizeInBit:_sizeInBit alignment:_alignment members:_members subtype:_subtype protocols:_protocols];
         NSMutableDictionary *dictM = storage[_encoding];
         if (dictM == nil) {
             dictM = [NSMutableDictionary dictionary];
@@ -625,12 +479,43 @@ static XZObjcType __unsafe_unretained *XZStaticObjcTypes[CHAR_MAX] = { NULL };
     return [self initWithRaw:raw encoding:encoding modifiers:kNilOptions name:name size:size sizeInBit:sizeInBit alignment:alignment members:@[] subtype:Nil protocols:@[]];
 }
 
-- (instancetype)initWithRaw:(XZStdcType)raw encoding:(NSString *)encoding modifiers:(XZStdcModifiers)modifiers name:(NSString *)name size:(size_t)size sizeInBit:(size_t)sizeInBit alignment:(size_t)alignment members:(NSArray<XZObjcType *> *)members subtype:(Class)subtype protocols:(NSArray<Protocol *> *)protocols {
+- (instancetype)initWithType:(XZObjcType *)type modifiers:(XZStdcModifiers)modifiers {
+    XZStdcType const stdcType  = type.raw;
+    NSString * const encoding  = type.encoding;
+    NSString * const name      = type.name;
+    size_t     const size      = type.size;
+    size_t     const sizeInBit = type.sizeInBit;
+    size_t     const alignment = type.alignment;
+    Class      const subtype   = type.subtype;
+    NSArray  * const members   = type.members;
+    NSArray  * const protocols = type.protocols;
+    return [self initWithRaw:stdcType encoding:encoding modifiers:modifiers name:name size:size sizeInBit:sizeInBit alignment:alignment members:members subtype:subtype protocols:protocols];
+}
+
+- (instancetype)initWithType:(XZObjcType *)type modifiers:(XZStdcModifiers)modifiers name:(NSString *)name encoding:(NSString *)encoding {
+    XZStdcType const stdcType  = type.raw;
+    size_t     const size      = type.size;
+    size_t     const sizeInBit = type.sizeInBit;
+    size_t     const alignment = type.alignment;
+    Class      const subtype   = type.subtype;
+    NSArray  * const members   = type.members;
+    NSArray  * const protocols = type.protocols;
+    return [self initWithRaw:stdcType encoding:encoding modifiers:modifiers name:name size:size sizeInBit:sizeInBit alignment:alignment members:members subtype:subtype protocols:protocols];
+}
+
+- (instancetype)initWithType:(XZObjcType *)type modifiers:(XZStdcModifiers)modifiers name:(NSString *)name encoding:(NSString *)encoding size:(size_t)size alignment:(size_t)alignment sizeInBit:(size_t)sizeInBit {
+    XZStdcType const stdcType  = type.raw;
+    Class      const subtype   = type.subtype;
+    NSArray  * const members   = type.members;
+    NSArray  * const protocols = type.protocols;
+    return [self initWithRaw:stdcType encoding:encoding modifiers:modifiers name:name size:size sizeInBit:sizeInBit alignment:alignment members:members subtype:subtype protocols:protocols];
+}
+- (instancetype)initWithRaw:(XZStdcType)stdcType encoding:(NSString *)encoding modifiers:(XZStdcModifiers)modifiers name:(NSString *)name size:(size_t)size sizeInBit:(size_t)sizeInBit alignment:(size_t)alignment members:(NSArray<XZObjcType *> *)members subtype:(Class)subtype protocols:(NSArray<Protocol *> *)protocols {
     self = [super init];
     if (self) {
-        _encoding = encoding;
-        _raw = raw;
-        _name = name;
+        _raw = stdcType;
+        _encoding = encoding.copy;
+        _name     = name.copy;
         _modifiers = modifiers;
         _size = size;
         _sizeInBit = sizeInBit;
@@ -643,7 +528,7 @@ static XZObjcType __unsafe_unretained *XZStaticObjcTypes[CHAR_MAX] = { NULL };
 }
 
 - (XZObjcType *)type {
-    return self;
+    return XZStaticObjcTypes[_raw];
 }
 
 - (NSString *)description {
@@ -714,7 +599,6 @@ typedef struct XZStdcTypeLayout {
 
 + (void)initialize {
     if (self == [XZObjcType class]) {
-        return;
         XZObjcTypeRegister(CGPoint);
         XZObjcTypeRegister(CGSize);
         XZObjcTypeRegister(CGRect);
@@ -728,37 +612,30 @@ typedef struct XZStdcTypeLayout {
         
         XZObjcTypeRegister(CGAffineTransform);
         
-        NSString * _encoding  = @"";
-        NSString * _name      = @"";
-        size_t     _size      = 0;
-        size_t     _sizeInBit = 0;
-        size_t     _alignment = 0;
-        NSArray  * _members   = @[];
-        Class      _subtype   = Nil;
-        NSArray  * _protocols = @[];
-        
-//#define TO_STR(ST) @"" # __VA_ARGS__
-#define setStaticType(type) { \
-    const char * const raw = @encode(type);\
-    XZStdcType const stdcType = raw[0]; \
-    NSString * const encoding = [NSString stringWithFormat:@"%s", raw]; \
+#define XZRegisterStaticType(type) { \
+    const char * const typeEncoding = @encode(type);\
+    XZStdcType const stdcType = (XZStdcType)typeEncoding[0]; \
+    NSString * const encoding = [NSString stringWithFormat:@"%s", typeEncoding]; \
     NSString * const name = @"" # type; \
     size_t const size = sizeof(type); \
     size_t const sizeInBit = size * 8; \
     size_t const alignment = _Alignof(type); \
     XZStaticObjcTypes[stdcType] = (__bridge id)(__bridge_retained CFTypeRef)[[XZObjcType alloc] initWithRaw:stdcType encoding:encoding modifiers:kNilOptions name:name size:size sizeInBit:sizeInBit alignment:alignment members:@[] subtype:Nil protocols:@[]];\
 }
-        
-        setStaticType(char);
-        setStaticType(unsigned char);
-        setStaticType(int);
-        setStaticType(unsigned int);
-        setStaticType(short);
-        setStaticType(unsigned short);
-        setStaticType(long);
-        setStaticType(unsigned long);
-        { // Int128
-            XZStdcType const stdcType = _C_INT128;
+        {
+            typedef void (unknown)(void);
+            XZRegisterStaticType(unknown);
+        }
+        XZRegisterStaticType(char);
+        XZRegisterStaticType(unsigned char);
+        XZRegisterStaticType(int);
+        XZRegisterStaticType(unsigned int);
+        XZRegisterStaticType(short);
+        XZRegisterStaticType(unsigned short);
+        XZRegisterStaticType(long);
+        XZRegisterStaticType(unsigned long);
+        { // int_128
+            XZStdcType const stdcType = (XZStdcType)_C_INT128;
             NSString * const encoding = [NSString stringWithFormat:@"%c", _C_INT128];
             NSString * const name = @"int 128";
             size_t const size = __SIZEOF_INT128__;
@@ -766,9 +643,18 @@ typedef struct XZStdcTypeLayout {
             size_t const alignment = size;
             XZStaticObjcTypes[_C_INT128] = (__bridge id)(__bridge_retained CFStringRef)[[XZObjcType alloc] initWithRaw:stdcType encoding:encoding modifiers:kNilOptions name:name size:size sizeInBit:sizeInBit alignment:alignment members:@[] subtype:Nil protocols:@[]];
         }
+        { // unsigned int_128
+            XZStdcType const stdcType = (XZStdcType)_C_UINT128;
+            NSString * const encoding = [NSString stringWithFormat:@"%c", _C_UINT128];
+            NSString * const name = @"unsigned int 128";
+            size_t const size = __SIZEOF_INT128__;
+            size_t const sizeInBit = size * 8;
+            size_t const alignment = size;
+            XZStaticObjcTypes[_C_UINT128] = (__bridge id)(__bridge_retained CFStringRef)[[XZObjcType alloc] initWithRaw:stdcType encoding:encoding modifiers:kNilOptions name:name size:size sizeInBit:sizeInBit alignment:alignment members:@[] subtype:Nil protocols:@[]];
+        }
 #if XZ_TYPE_LLONG_IS_LONG
         { // long long
-            XZStdcType const stdcType = _C_LNG_LNG;
+            XZStdcType const stdcType = (XZStdcType)_C_LNG_LNG;
             NSString * const encoding = [NSString stringWithFormat:@"%c", _C_LNG_LNG];
             NSString * const name = @"long long";
             size_t const size = sizeof(long long);
@@ -777,7 +663,7 @@ typedef struct XZStdcTypeLayout {
             XZStaticObjcTypes[_C_LNG_LNG] = (__bridge id)(__bridge_retained CFStringRef)[[XZObjcType alloc] initWithRaw:stdcType encoding:encoding modifiers:kNilOptions name:name size:size sizeInBit:sizeInBit alignment:alignment members:@[] subtype:Nil protocols:@[]];
         }
         { // unsigned long long
-            XZStdcType const stdcType = _C_ULNG_LNG;
+            XZStdcType const stdcType = (XZStdcType)_C_ULNG_LNG;
             NSString * const encoding = [NSString stringWithFormat:@"%c", _C_ULNG_LNG];
             NSString * const name = @"unsigned long long";
             size_t const size = sizeof(unsigned long long);
@@ -786,16 +672,14 @@ typedef struct XZStdcTypeLayout {
             XZStaticObjcTypes[_C_ULNG_LNG] = (__bridge id)(__bridge_retained CFStringRef)[[XZObjcType alloc] initWithRaw:stdcType encoding:encoding modifiers:kNilOptions name:name size:size sizeInBit:sizeInBit alignment:alignment members:@[] subtype:Nil protocols:@[]];
         }
 #else
-        setStaticType(long long);
-        setStaticType(unsigned long long);
+        XZRegisterStaticType(long long);
+        XZRegisterStaticType(unsigned long long);
 #endif
-        setStaticType(float);
-        setStaticType(double);
-        
-        
+        XZRegisterStaticType(float);
+        XZRegisterStaticType(double);
 #if TYPE_LONGDOUBLE_IS_DOUBLE
         { // long double
-            XZStdcType const stdcType = _C_LNG_DBL;
+            XZStdcType const stdcType = (XZStdcType)_C_LNG_DBL;
             NSString * const encoding = [NSString stringWithFormat:@"%c", _C_LNG_DBL];
             NSString * const name = @"long double";
             size_t const size = sizeof(long double);
@@ -804,295 +688,75 @@ typedef struct XZStdcTypeLayout {
             XZStaticObjcTypes[_C_LNG_DBL] = (__bridge id)(__bridge_retained CFStringRef)[[XZObjcType alloc] initWithRaw:stdcType encoding:encoding modifiers:kNilOptions name:name size:size sizeInBit:sizeInBit alignment:alignment members:@[] subtype:Nil protocols:@[]];
         }
 #else
-        setStaticType(long double);
+        XZRegisterStaticType(long double);
 #endif
-        
-        setStaticType(BOOL);
-        setStaticType(void);
-        setStaticType(char *);
-        setStaticType(SEL);
-        setStaticType(void *);
-        setStaticType(int[1]); // todo
-        setStaticType(emulation_vector_t); // todo
-        setStaticType(GLbitfield) // todo
-//        setStaticType(union);
-//        setStaticType(struct);
-        setStaticType(Class);
-        setStaticType(id);
-        
-        
-        const char * const encoding = @encode(char);
-        
-        
-        
-        
-//        switch (stdcType) {
-//            case XZStdcTypeUnknown: {
-//                typedef void (Foobar)(void);
-//                _encoding = [NSString stringWithFormat:@"%c", (char)stdcType];
-//                _name = @"unknown";
-//                _size = sizeof(Foobar);
-//                _sizeInBit = _size * 8;
-//                _alignment = _Alignof(Foobar);
-//                break;
-//            }
-//            case XZStdcTypeChar: {
-//                _encoding = [NSString stringWithFormat:@"%c", (char)stdcType];
-//                _name = @"char";
-//                _size = sizeof(char);
-//                _sizeInBit = _size * 8;
-//                _alignment = _Alignof(char);
-//                break;
-//            }
-//            case XZStdcTypeUnsignedChar: {
-//                _encoding = [NSString stringWithFormat:@"%c", (char)stdcType];
-//                _name = @"unsigned char";
-//                _size = sizeof(unsigned char);
-//                _sizeInBit = _size * 8;
-//                _alignment = _Alignof(unsigned char);
-//                break;
-//            }
-//            case XZStdcTypeInt: {
-//                _encoding = [NSString stringWithFormat:@"%c", (char)stdcType];
-//                _name = @"int";
-//                _size = sizeof(int);
-//                _sizeInBit = _size * 8;
-//                _alignment = _Alignof(int);
-//                break;
-//            }
-//            case XZStdcTypeUnsignedInt: {
-//                _encoding = [NSString stringWithFormat:@"%c", (char)stdcType];
-//                _name = @"unsigned int";
-//                _size = sizeof(unsigned int);
-//                _sizeInBit = _size * 8;
-//                _alignment = _Alignof(unsigned int);
-//                break;
-//            }
-//            case XZStdcTypeShort: {
-//                _encoding = [NSString stringWithFormat:@"%c", (char)stdcType];
-//                _name = @"short";
-//                _size = sizeof(short);
-//                _sizeInBit = _size * 8;
-//                _alignment = _Alignof(short);
-//                break;
-//            }
-//            case XZStdcTypeUnsignedShort: {
-//                _encoding = [NSString stringWithFormat:@"%c", (char)stdcType];
-//                _name = @"unsigned short";
-//                _size = sizeof(unsigned short);
-//                _sizeInBit = _size * 8;
-//                _alignment = _Alignof(unsigned short);
-//                break;
-//            }
-//            case XZStdcTypeLongLong: {
-//                _encoding = [NSString stringWithFormat:@"%c", (char)stdcType];
-//                _name = @"long long";
-//                _size = sizeof(long long);
-//                _sizeInBit = _size * 8;
-//                _alignment = _Alignof(long long);
-//                break;
-//            }
-//            case XZStdcTypeUnsignedLongLong: {
-//                _encoding = [NSString stringWithFormat:@"%c", (char)stdcType];
-//                _name = @"unsigned long long";
-//                _size = sizeof(unsigned long long);
-//                _sizeInBit = _size * 8;
-//                _alignment = _Alignof(unsigned long long);
-//                break;
-//            }
-//            case XZStdcTypeLong: {
-//                _encoding = [NSString stringWithFormat:@"%c", (char)stdcType];
-//                _name = @"long";
-//                _size = sizeof(long);
-//                _sizeInBit = _size * 8;
-//                _alignment = _Alignof(long);
-//                break;
-//            }
-//            case XZStdcTypeUnsignedLong: {
-//                _encoding = [NSString stringWithFormat:@"%c", (char)stdcType];
-//                _name = @"unsigned long";
-//                _size = sizeof(unsigned long);
-//                _sizeInBit = _size * 8;
-//                _alignment = _Alignof(unsigned long);
-//                break;
-//            }
-//            case XZStdcTypeInt128: {
-//                _encoding = [NSString stringWithFormat:@"%c", (char)stdcType];
-//                _name = @"integer 128";
-//                _size = sizeof(UInt64) * 2;
-//                _sizeInBit = _size * 8;
-//                _alignment = _size;
-//                break;
-//            }
-//            case XZStdcTypeUnsignedInt128: {
-//                _encoding = [NSString stringWithFormat:@"%c", (char)stdcType];
-//                _name = @"unsigned integer 128";
-//                _size = sizeof(UInt64) * 2;
-//                _sizeInBit = _size * 8;
-//                _alignment = _size;
-//                break;
-//            }
-//            case XZStdcTypeFloat: {
-//                _encoding = [NSString stringWithFormat:@"%c", (char)stdcType];
-//                _name = @"float";
-//                _size = sizeof(float);
-//                _sizeInBit = _size * 8;
-//                _alignment = _Alignof(float);
-//                break;
-//            }
-//            case XZStdcTypeDouble: {
-//                _encoding = [NSString stringWithFormat:@"%c", (char)stdcType];
-//                _name = @"double";
-//                _size = sizeof(double);
-//                _sizeInBit = _size * 8;
-//                _alignment = _Alignof(double);
-//                break;
-//            }
-//            case XZStdcTypeLongDouble: {
-//                _encoding = [NSString stringWithFormat:@"%c", (char)stdcType];
-//                _name = @"long double";
-//                _size = sizeof(long double);
-//                _sizeInBit = _size * 8;
-//                _alignment = _Alignof(long double);
-//                break;
-//            }
-//            case XZStdcTypeBool: {
-//                _encoding = [NSString stringWithFormat:@"%c", (char)stdcType];
-//                _name = @"bool";
-//                _size = sizeof(bool);
-//                _sizeInBit = _size * 8;
-//                _alignment = _Alignof(bool);
-//                break;
-//            }
-//            case XZStdcTypeVoid: {
-//                _encoding = [NSString stringWithFormat:@"%c", (char)stdcType];
-//                _name = @"void";
-//                _size = sizeof(void);
-//                _sizeInBit = _size * 8;
-//                _alignment = _Alignof(void);
-//                break;
-//            }
-//            case XZStdcTypeString: {
-//                _encoding = [NSString stringWithFormat:@"%c", (char)stdcType];
-//                _name = @"char *";
-//                _size = sizeof(char *);
-//                _sizeInBit = _size * 8;
-//                _alignment = _Alignof(char *);
-//                break;
-//            }
-//            case XZStdcTypeClass: {
-//                _encoding = [NSString stringWithFormat:@"%c", (char)stdcType];
-//                _name = @"class";
-//                _size = sizeof(Class);
-//                _sizeInBit = _size * 8;
-//                _alignment = _Alignof(Class);
-//                break;
-//            }
-//            case XZStdcTypeSelector: {
-//                _encoding = [NSString stringWithFormat:@"%c", (char)stdcType];
-//                _name = @"selector";
-//                _size = sizeof(SEL);
-//                _sizeInBit = _size * 8;
-//                _alignment = _Alignof(SEL);
-//                break;
-//            }
-//            case XZStdcTypePointer: {
-//                _encoding = [[NSString alloc] initWithCString:@encode(void *) encoding:(NSASCIIStringEncoding)];
-//                _name = @"void *";
-//                _size = sizeof(void *);
-//                _sizeInBit = _size * 8;
-//                _alignment = _Alignof(void *);
-//                _members   = @[];
-//                break;
-//            }
-//            case XZStdcTypeBitField: { // {Foobar=b1b2b3}
-//                // TODO: check this
-//                _encoding = @"b1";
-//                _name = @"bit field";
-//                _size = 1;
-//                _sizeInBit = 1;
-//                _alignment = 1;
-//                _members   = @[];
-//                break;
-//            }
-//            case XZStdcTypeArray: {
-//                // TODO: check this
-//                _encoding = [NSString stringWithFormat:@"%c", (char)stdcType];
-//                _name = @"void *";
-//                _size = sizeof(void *);
-//                _sizeInBit = _size * 8;
-//                _alignment = _Alignof(void *);
-//                _members   = @[];
-//                break;
-//            }
-//            case XZStdcTypeVector: {
-//                _encoding = [NSString stringWithFormat:@"%c", (char)stdcType];
-//                _name = @"vector";
-//                _size = sizeof(void *);
-//                _sizeInBit = _size * 8;
-//                _alignment = _Alignof(void *);
-//                break;
-//            }
-//            case XZStdcTypeUnion: { // (Foobar=icq)
-//                _encoding = [NSString stringWithFormat:@"%c", (char)stdcType];
-//                _name = @"vector";
-//                _size = sizeof(void *);
-//                _sizeInBit = _size * 8;
-//                _alignment = _Alignof(void *);
-//                break;
-//            }
-//            case XZStdcTypeStruct: { // {name=type...}
-//                _encoding = [NSString stringWithFormat:@"%c", (char)stdcType];
-//                _name = @"vector";
-//                _size = sizeof(void *);
-//                _sizeInBit = _size * 8;
-//                _alignment = _Alignof(void *);
-//                break;
-//            }
-//            case XZStdcTypeObject: {
-//                _encoding = [NSString stringWithFormat:@"%c", (char)stdcType];
-//                _name = @"vector";
-//                _size = sizeof(void *);
-//                _sizeInBit = _size * 8;
-//                _alignment = _Alignof(void *);
-//                break;
-//            }
-//            default: {
-//                NSAssert(NO, @"Invalid stdcType value: %lud", (unsigned long)stdcType);
-//                break;
-//            }
-//        }
-        
-//#define XZStaticObjcTypeRegister(anStdcType) XZStaticObjcTypes[(char)anStdcType] = [XZObjcType typeForType:(anStdcType)]
-//        XZStaticObjcTypeRegister(XZStdcTypeUnknown);
-//        XZStaticObjcTypeRegister(XZStdcTypeChar);
-//        XZStaticObjcTypeRegister(XZStdcTypeUnsignedChar);
-//        XZStaticObjcTypeRegister(XZStdcTypeInt);
-//        XZStaticObjcTypeRegister(XZStdcTypeUnsignedInt);
-//        XZStaticObjcTypeRegister(XZStdcTypeShort);
-//        XZStaticObjcTypeRegister(XZStdcTypeUnsignedShort);
-//        XZStaticObjcTypeRegister(XZStdcTypeLong);
-//        XZStaticObjcTypeRegister(XZStdcTypeUnsignedLong);
-//        XZStaticObjcTypeRegister(XZStdcTypeInt128);
-//        XZStaticObjcTypeRegister(XZStdcTypeUnsignedInt128);
-//        XZStaticObjcTypeRegister(XZStdcTypeLongLong);
-//        XZStaticObjcTypeRegister(XZStdcTypeUnsignedLongLong);
-//        XZStaticObjcTypeRegister(XZStdcTypeFloat);
-//        XZStaticObjcTypeRegister(XZStdcTypeDouble);
-//        XZStaticObjcTypeRegister(XZStdcTypeLongDouble);
-//        XZStaticObjcTypeRegister(XZStdcTypeBool);
-//        XZStaticObjcTypeRegister(XZStdcTypeVoid);
-//        XZStaticObjcTypeRegister(XZStdcTypeString);
-//        XZStaticObjcTypeRegister(XZStdcTypeSelector);
-//        XZStaticObjcTypeRegister(XZStdcTypePointer);
-//        XZStaticObjcTypeRegister(XZStdcTypeArray);
-//        XZStaticObjcTypeRegister(XZStdcTypeVector);
-//        XZStaticObjcTypeRegister(XZStdcTypeBitField);
-//        XZStaticObjcTypeRegister(XZStdcTypeUnion);
-//        XZStaticObjcTypeRegister(XZStdcTypeStruct);
-//        XZStaticObjcTypeRegister(XZStdcTypeClass);
-//        XZStaticObjcTypeRegister(XZStdcTypeObject);
-//#undef XZStaticObjcTypeRegister
+        XZRegisterStaticType(bool);
+        XZRegisterStaticType(void);
+        { // c string
+            typedef char *string;
+            XZRegisterStaticType(string);
+        }
+        XZRegisterStaticType(SEL);
+        XZRegisterStaticType(void *);
+        { // pointer XZStdcTypePointer
+            XZStdcType const stdcType = (XZStdcType)_C_PTR;
+            NSString * const encoding = [NSString stringWithFormat:@"%c", _C_PTR];
+            NSString * const name = @"pointer";
+            size_t const size = sizeof(void *);
+            size_t const sizeInBit = size * 8;
+            size_t const alignment = _Alignof(void *);
+            XZStaticObjcTypes[_C_PTR] = (__bridge id)(__bridge_retained CFStringRef)[[XZObjcType alloc] initWithRaw:stdcType encoding:encoding modifiers:kNilOptions name:name size:size sizeInBit:sizeInBit alignment:alignment members:@[] subtype:Nil protocols:@[]];
+        }
+        { // c array
+            XZStdcType const stdcType = (XZStdcType)_C_ARY_B;
+            NSString * const encoding = [NSString stringWithFormat:@"%c%c", _C_ARY_B, _C_ARY_E];
+            NSString * const name = @"array";
+            size_t const size = sizeof(void *);
+            size_t const sizeInBit = size * 8;
+            size_t const alignment = _Alignof(void *);
+            XZStaticObjcTypes[_C_ARY_B] = (__bridge id)(__bridge_retained CFStringRef)[[XZObjcType alloc] initWithRaw:stdcType encoding:encoding modifiers:kNilOptions name:name size:size sizeInBit:sizeInBit alignment:alignment members:@[] subtype:Nil protocols:@[]];
+        }
+        { // c++ vector
+            XZStdcType const stdcType = (XZStdcType)_C_VECTOR;
+            NSString * const encoding = [NSString stringWithFormat:@"%c", _C_VECTOR];
+            NSString * const name = @"vector";
+            size_t const size = sizeof(void *);
+            size_t const sizeInBit = size * 8;
+            size_t const alignment = _Alignof(void *);
+            XZStaticObjcTypes[_C_VECTOR] = (__bridge id)(__bridge_retained CFStringRef)[[XZObjcType alloc] initWithRaw:stdcType encoding:encoding modifiers:kNilOptions name:name size:size sizeInBit:sizeInBit alignment:alignment members:@[] subtype:Nil protocols:@[]];
+        }
+        { // bit field
+            XZStdcType const stdcType = (XZStdcType)_C_BFLD;
+            NSString * const encoding = [NSString stringWithFormat:@"%c", _C_BFLD];
+            NSString * const name = @"bit field";
+            size_t const size = 1;
+            size_t const sizeInBit = 1;
+            size_t const alignment = _Alignof(int);
+            XZStaticObjcTypes[_C_VECTOR] = (__bridge id)(__bridge_retained CFStringRef)[[XZObjcType alloc] initWithRaw:stdcType encoding:encoding modifiers:kNilOptions name:name size:size sizeInBit:sizeInBit alignment:alignment members:@[] subtype:Nil protocols:@[]];
+        }
+        { // union
+            typedef union Empty { } Empty;
+            XZStdcType const stdcType = (XZStdcType)_C_UNION_B;
+            NSString * const encoding = [NSString stringWithFormat:@"%c%c", _C_UNION_B, _C_UNION_E];
+            NSString * const name = @"union";
+            size_t const size = sizeof(Empty);
+            size_t const sizeInBit = size * 8;
+            size_t const alignment = _Alignof(Empty);
+            XZStaticObjcTypes[_C_UNION_B] = (__bridge id)(__bridge_retained CFStringRef)[[XZObjcType alloc] initWithRaw:stdcType encoding:encoding modifiers:kNilOptions name:name size:size sizeInBit:sizeInBit alignment:alignment members:@[] subtype:Nil protocols:@[]];
+        }
+        { // union
+            typedef struct Empty { } Empty;
+            XZStdcType const stdcType = (XZStdcType)_C_STRUCT_B;
+            NSString * const encoding = [NSString stringWithFormat:@"%c%c", _C_STRUCT_B, _C_STRUCT_E];
+            NSString * const name = @"struct";
+            size_t const size = sizeof(Empty);
+            size_t const sizeInBit = size * 8;
+            size_t const alignment = _Alignof(Empty);
+            XZStaticObjcTypes[_C_STRUCT_B] = (__bridge id)(__bridge_retained CFStringRef)[[XZObjcType alloc] initWithRaw:stdcType encoding:encoding modifiers:kNilOptions name:name size:size sizeInBit:sizeInBit alignment:alignment members:@[] subtype:Nil protocols:@[]];
+        }
+        XZRegisterStaticType(Class);
+        XZRegisterStaticType(id);
+#undef XZRegisterStaticType
     }
 }
 
