@@ -25,5 +25,7 @@ class Example13SelectViewController: UITableViewController {
         value = indexPath.row
         tableView.reloadData()
     }
+    
+
 
 }

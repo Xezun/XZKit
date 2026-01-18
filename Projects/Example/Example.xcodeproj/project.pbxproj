@@ -244,6 +244,7 @@
 		292C17CB2D251F6D00E465BF /* Example0320Model.json in Resources */ = {isa = PBXBuildFile; fileRef = 292C15AA2D251F6D00E465BF /* Example0320Model.json */; };
 		292C17CC2D251F6D00E465BF /* Example0311ViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 292C15672D251F6D00E465BF /* Example0311ViewController.xib */; };
 		292C17CF2D251FF400E465BF /* Example03ViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 292C17CE2D251FF400E465BF /* Example03ViewController.m */; };
+		294386452F1D287B00D2C741 /* Example13ColorViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 294386442F1D287B00D2C741 /* Example13ColorViewController.swift */; };
 		29448F702D3194580055A183 /* Example07ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 29448F6F2D3194580055A183 /* Example07ViewController.swift */; };
 		29448F722D31956A0055A183 /* Example09ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 29448F712D31956A0055A183 /* Example09ViewController.swift */; };
 		29635C0B2DE779FE00C552AF /* XZMocoaTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 29635C0A2DE779FE00C552AF /* XZMocoaTests.m */; };
@@ -745,6 +746,7 @@
 		292C17242D251F6D00E465BF /* Example0331ViewModel.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = Example0331ViewModel.m; sourceTree = "<group>"; };
 		292C17CD2D251FF400E465BF /* Example03ViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Example03ViewController.h; sourceTree = "<group>"; };
 		292C17CE2D251FF400E465BF /* Example03ViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = Example03ViewController.m; sourceTree = "<group>"; };
+		294386442F1D287B00D2C741 /* Example13ColorViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Example13ColorViewController.swift; sourceTree = "<group>"; };
 		29448F6F2D3194580055A183 /* Example07ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Example07ViewController.swift; sourceTree = "<group>"; };
 		29448F712D31956A0055A183 /* Example09ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Example09ViewController.swift; sourceTree = "<group>"; };
 		29635C0A2DE779FE00C552AF /* XZMocoaTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = XZMocoaTests.m; sourceTree = "<group>"; };
@@ -2865,6 +2867,7 @@
 				29B334242D317835006A574A /* Example13.storyboard */,
 				299B56E32D2AD87800CC2F69 /* Example13ViewController.swift */,
 				2989CE3B2DCFABF3003C9C9D /* Example13SelectViewController.swift */,
+				294386442F1D287B00D2C741 /* Example13ColorViewController.swift */,
 			);
 			path = "13-XZToast";
 			sourceTree = "<group>";
@@ -3234,6 +3237,7 @@
 				292A5A742D256A240037579D /* Example09SettingsImageSelectViewController.swift in Sources */,
 				292A5A752D256A240037579D /* Example09SegmentedControlIndicator.swift in Sources */,
 				292A5A762D256A240037579D /* Example09SettingsViewController.swift in Sources */,
+				294386452F1D287B00D2C741 /* Example13ColorViewController.swift in Sources */,
 				292A5A772D256A240037579D /* Example09SettingsSizeViewController.swift in Sources */,
 				299B56E42D2AD87800CC2F69 /* Example13ViewController.swift in Sources */,
 				292A5A782D256A240037579D /* Example09SettingsColorSelectViewController.swift in Sources */,

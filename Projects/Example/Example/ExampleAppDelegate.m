@@ -48,7 +48,7 @@
     };
     
     XZLog(@"struct Foobar => %s", @encode(struct Foobar));
-    exit(0);
+    
     for (int i = 0; i < CHAR_MAX; i++) {
         XZObjcType *type = [XZObjcType typeForType:(XZStdcType)i];
         if (type) {

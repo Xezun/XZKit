@@ -207,22 +207,22 @@ NS_REFINED_FOR_SWIFT @interface XZToastTask : XZToast
 @property (nonatomic) NSInteger maximumNumberOfToasts;
 
 /// 文本颜色。
-@property (nonatomic) UIColor * textColor;
+@property (nonatomic, nullable) UIColor * textColor;
 
 /// 文本字体。
-@property (nonatomic) UIFont  * font;
+@property (nonatomic, nullable) UIFont  * font;
 
 /// 背景色。
-@property (nonatomic) UIColor * backgroundColor;
+@property (nonatomic, nullable) UIColor * backgroundColor;
 
 /// 投影色。
-@property (nonatomic) UIColor * shadowColor;
+@property (nonatomic, nullable) UIColor * shadowColor;
 
 /// 进度颜色。
-@property (nonatomic) UIColor * color;
+@property (nonatomic, nullable) UIColor * color;
 
 /// 进度轨道颜色。
-@property (nonatomic) UIColor * trackColor;
+@property (nonatomic, nullable) UIColor * trackColor;
 
 
 /// 设置 toast 相对默认位置的偏移值。

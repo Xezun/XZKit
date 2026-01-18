@@ -27,12 +27,21 @@ class Example13ViewController: UITableViewController {
     var loadingToast: XZToast.Task?
     
     @IBOutlet weak var toastControllerSwitch: UISwitch!
+    @IBOutlet weak var toastBackgroundColorPreviewr: UIView!
+    @IBOutlet weak var toastTextColorPreviewr: UIView!
 
     override func viewDidLoad() {
         super.viewDidLoad()
+        toastBackgroundColorPreviewr.layer.cornerRadius = 15.0;
+        toastBackgroundColorPreviewr.layer.borderWidth = 1.0;
+        toastBackgroundColorPreviewr.layer.borderColor = UIColor.lightGray.cgColor;
         
-        backgroundColorWell.addTarget(self, action: #selector(backgroundColorWellValueChanged(_:)), for: .valueChanged)
-        textColorWell.addTarget(self, action: #selector(textColorWellValueChanged(_:)), for: .valueChanged)
+        toastTextColorPreviewr.layer.cornerRadius = 15.0;
+        toastTextColorPreviewr.layer.borderWidth = 1.0;
+        toastTextColorPreviewr.layer.borderColor = UIColor.lightGray.cgColor;
+        
+        toastBackgroundColorPreviewr.backgroundColor = self.toastConfiguration.backgroundColor ?? XZToast.backgroundColor;
+        toastTextColorPreviewr.backgroundColor = self.toastConfiguration.textColor ?? XZToast.textColor;
     }
     
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
@@ -166,12 +175,22 @@ class Example13ViewController: UITableViewController {
     }
     
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        guard let select = segue.destination as? Example13SelectViewController else { return }
+        
         switch segue.identifier {
         case "position":
+            guard let select = segue.destination as? Example13SelectViewController else { return }
             select.value = position.rawValue
         case "maximumNumberOfToasts":
+            guard let select = segue.destination as? Example13SelectViewController else { return }
             select.value = self.toastConfiguration.maximumNumberOfToasts;
+        case "backgroundColorPicker":
+            guard let picker = segue.destination as? Example13ColorViewController else { return }
+            picker.color = self.toastConfiguration.backgroundColor ?? XZToast.backgroundColor;
+            picker.identifier = segue.identifier;
+        case "textColorPicker":
+            guard let picker = segue.destination as? Example13ColorViewController else { return }
+            picker.color = self.toastConfiguration.textColor ?? XZToast.textColor;
+            picker.identifier = segue.identifier;
         default:
             break
         }
@@ -182,17 +201,30 @@ class Example13ViewController: UITableViewController {
     }
     
     @IBAction func unwindToBack(_ unwindSegue: UIStoryboardSegue) {
-        guard let select = unwindSegue.source as? Example13SelectViewController else { return }
         switch unwindSegue.identifier {
         case "position":
+            guard let select = unwindSegue.source as? Example13SelectViewController else { return }
             self.position = XZToast.Position.init(rawValue: select.value)!
             if let cell = tableView.cellForRow(at: .init(row: 0, section: 2)) {
                 cell.detailTextLabel?.text = position.description
             }
         case "maximumNumberOfToasts":
+            guard let select = unwindSegue.source as? Example13SelectViewController else { return }
             self.toastConfiguration.maximumNumberOfToasts = select.value
             if let cell = tableView.cellForRow(at: .init(row: 1, section: 2)) {
                 cell.detailTextLabel?.text = select.value.description
+            }
+        case "colorPicker":
+            guard let picker = unwindSegue.source as? Example13ColorViewController else { return }
+            switch picker.identifier {
+            case "backgroundColorPicker":
+                self.toastConfiguration.backgroundColor = picker.color;
+                self.toastBackgroundColorPreviewr.backgroundColor = picker.color;
+            case "textColorPicker":
+                self.toastConfiguration.textColor = picker.color;
+                self.toastTextColorPreviewr.backgroundColor = picker.color;
+            default:
+                break;
             }
         default:
             break
@@ -228,15 +260,4 @@ class Example13ViewController: UITableViewController {
         return toastControllerSwitch.isOn ? self : self.navigationController!
     }
     
-    @IBOutlet weak var backgroundColorWell: UIColorWell!
-    @IBAction func backgroundColorWellValueChanged(_ sender: UIColorWell) {
-        guard let selectedColor = sender.selectedColor else { return }
-        self.toastConfiguration.backgroundColor = selectedColor
-    }
-    
-    @IBOutlet weak var textColorWell: UIColorWell!
-    @IBAction func textColorWellValueChanged(_ sender: UIColorWell) {
-        guard let selectedColor = sender.selectedColor else { return }
-        self.toastConfiguration.textColor = selectedColor
-    }
 }
