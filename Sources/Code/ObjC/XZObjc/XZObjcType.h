@@ -177,11 +177,11 @@ typedef NS_OPTIONS(NSUInteger, XZStdcModifiers) {
 
 /// 大小，占用的空间大小，度量单位”字节byte“。
 /// - 对于位域而言，此值并不一定准确。
-@property (nonatomic, readonly) size_t size;
+@property (nonatomic, readonly) NSInteger size;
 
 /// 大小，占用的空间大小，度量单位”位bit“。
 /// > 对于结构体 sizeInBit 才是 bit field 成员类型的实际大小。
-@property (nonatomic, readonly) size_t sizeInBit;
+@property (nonatomic, readonly) NSInteger sizeInBit;
 
 /// 字节对齐，度量单位“字节byte”。
 ///
@@ -196,7 +196,7 @@ typedef NS_OPTIONS(NSUInteger, XZStdcModifiers) {
 /// // 或
 /// XZObjcTypeRegister(Type);
 /// ```
-@property (nonatomic, readonly) size_t alignment;
+@property (nonatomic, readonly) NSInteger alignment;
 
 /// 当前类型的成员类型，比如结构体、共用体的组成成员，或者指针类型（一般被认为是数组）的值的类型等。
 @property (nonatomic, readonly) NSArray<XZObjcType *> *members;
