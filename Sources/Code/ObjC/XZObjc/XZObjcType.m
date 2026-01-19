@@ -15,7 +15,7 @@ typedef NSMutableDictionary<NSString *, NSMutableDictionary<NSNumber *, XZObjcTy
 static id _Nullable withStorage(id (^NS_NOESCAPE block)(XZObjcTypeStorage const storage));
 
 /// 静态类型，只读，在 `+intialize` 方法中初始化。
-static XZObjcType __unsafe_unretained *XZStaticObjcTypes[CHAR_MAX] = { NULL };
+static XZObjcType __unsafe_unretained *_staticObjcTypes[CHAR_MAX] = { NULL };
 
 @interface XZObjcType ()
 @property (class, readonly) NSMutableDictionary<NSString *, NSValue *> *typeLayouts;
@@ -32,7 +32,7 @@ static XZObjcType __unsafe_unretained *XZStaticObjcTypes[CHAR_MAX] = { NULL };
 
 + (XZObjcType *)typeForType:(XZStdcType)stdcType {
     NSAssert((stdcType == (stdcType & XZStdcTypeMask)), @"");
-    return XZStaticObjcTypes[(stdcType)] ?: XZStaticObjcTypes[XZStdcTypeUnknown];
+    return _staticObjcTypes[(stdcType)] ?: _staticObjcTypes[XZStdcTypeUnknown];
 }
 
 + (XZObjcType *)typeForEncoding:(const char *)encoding {
@@ -120,6 +120,7 @@ static XZObjcType __unsafe_unretained *XZStaticObjcTypes[CHAR_MAX] = { NULL };
     // 确定类型编码长度
     
     
+    
     // 没有修饰符。
     if (!modifiers) {
         NSString * const key = [NSString stringWithCString:typeEncoding encoding:NSASCIIStringEncoding];
@@ -141,13 +142,12 @@ static XZObjcType __unsafe_unretained *XZStaticObjcTypes[CHAR_MAX] = { NULL };
     
     XZStdcType const stdcType = (XZStdcType)typeEncoding[0];
     
-    if (modifiers == kNilOptions) {
-        XZObjcType * const type = XZStaticObjcTypes[stdcType];
-        if (type != NULL) {
-            return type;
-        }
+    // 任何类型都有对应一个静态类型。
+    XZObjcType * const staticType = _staticObjcTypes[stdcType];
+    if (!staticType) {
+        return nil;
     }
-    
+        
     NSString * _encoding  = nil;
     NSString * _name      = nil;
     size_t     _size      = 0;
@@ -178,27 +178,25 @@ static XZObjcType __unsafe_unretained *XZStaticObjcTypes[CHAR_MAX] = { NULL };
         case XZStdcTypeVoid:
         case XZStdcTypeString:
         case XZStdcTypeClass:
-        case XZStdcTypeSelector: {
-            XZObjcType * const type = XZStaticObjcTypes[stdcType];
-            if (!modifiers) {
-                return type;
+        case XZStdcTypeSelector:
+        case XZStdcTypeVector: {
+            if (modifiers) {
+                return [[self alloc] initWithType:staticType modifiers:modifiers];
             }
-            return [[self alloc] initWithType:type modifiers:modifiers];
+            return staticType;
         }
         case XZStdcTypePointer: {
-            XZObjcType * const type = XZStaticObjcTypes[XZStdcTypePointer];
             XZObjcType * const member = [XZObjcType typeForEncoding:typeEncoding + 1];
             if (member == nil) {
-                return type;
+                return nil;
             }
-            NSString * const name = [NSString stringWithFormat:@"%@ pointer", member.name];
+            NSString * const name = [NSString stringWithFormat:@"%@ *", member.name];
             NSString * const encoding = [[NSString alloc] initWithBytes:typeEncoding length:member.encoding.length + 1 encoding:NSUTF8StringEncoding];
-            return [[self alloc] initWithType:type modifiers:modifiers name:name encoding:encoding];
+            return [[self alloc] initWithType:staticType modifiers:modifiers name:name encoding:encoding];
         }
         case XZStdcTypeBitField: { // {Foobar=b1b2b3}
-            XZObjcType * const type = XZStaticObjcTypes[XZStdcTypeBitField];
-            if (typeEncodingLength == 2) {
-                return type;
+            if (typeEncodingLength < 2) {
+                return nil;
             }
             
             size_t sizeInBit = 0;
@@ -212,7 +210,7 @@ static XZObjcType __unsafe_unretained *XZStaticObjcTypes[CHAR_MAX] = { NULL };
                     continue;
                 }
                 if (newLength == 1) {
-                    return type;
+                    return nil;
                 }
                 break;
             }
@@ -224,7 +222,7 @@ static XZObjcType __unsafe_unretained *XZStaticObjcTypes[CHAR_MAX] = { NULL };
             NSString * const name = [NSString stringWithFormat:@"%ld bits field", sizeInBit];
             size_t     const size = (sizeInBit - 1) / 8 + 1;
             size_t     const alignment = size;
-            return [[self alloc] initWithType:type modifiers:modifiers name:name encoding:encoding size:size alignment:alignment sizeInBit:sizeInBit];
+            return [[self alloc] initWithType:staticType modifiers:modifiers name:name encoding:encoding size:size alignment:alignment sizeInBit:sizeInBit];
             break;
         }
         case XZStdcTypeArray: {
@@ -273,14 +271,6 @@ static XZObjcType __unsafe_unretained *XZStaticObjcTypes[CHAR_MAX] = { NULL };
             _members = @[member];
             break;
         }
-        case XZStdcTypeVector: {
-            _encoding = [NSString stringWithFormat:@"%c", (char)stdcType];
-            _name = @"vector";
-            _size = sizeof(void *);
-            _sizeInBit = _size * 8;
-            _alignment = _Alignof(void *);
-            break;
-        }
         case XZStdcTypeUnion: { // (Foobar=icq)
             if (typeEncodingLength < 4) {
                 return nil;
@@ -298,43 +288,39 @@ static XZObjcType __unsafe_unretained *XZStaticObjcTypes[CHAR_MAX] = { NULL };
                 }
                 i += 1;
             } while (YES);
-            _name = [[NSString alloc] initWithBytes:(typeEncoding + 1) length:(i - 1) encoding:NSASCIIStringEncoding];
+            NSString * const name = [[NSString alloc] initWithBytes:(typeEncoding + 1) length:(i - 1) encoding:NSASCIIStringEncoding];
             
-            union Foobar { };
-            _size = sizeof(union Foobar);
-            _sizeInBit = _size * 8;
-            _alignment = _Alignof(union Foobar);
+            size_t _size = staticType.size;
+            size_t _sizeInBit = _size * 8;
+            size_t _alignment = staticType.alignment;
             
             NSMutableArray * const members = [NSMutableArray array];
             for (i += 1; i < typeEncodingLength; ) {
+                // 匹配结尾
                 if (typeEncoding[i] == ')') {
                     break;
                 }
+                // 匹配成员
                 XZObjcType *member = [XZObjcType typeForEncoding:(typeEncoding + i)];
                 if (member == nil) {
                     return nil;
                 }
                 [members addObject:member];
-                i += member.encoding.length; // 移动到下一个字符
+                
                 // 共用体对齐是成员中最大的
                 _size = MAX(_size, member.size);
                 _alignment = MAX(_alignment, member.alignment);
+                
+                // 移动到下一个字符
+                i += member.encoding.length;
             }
-            _members = members.copy;
+            NSArray * const _members = members.copy;
             
-            if (size > 0 && alignment > 0) {
-                if (modifiers) {
-                    //                    [[self alloc] initWithRaw:_encoding type:_raw modifiers:kNilOptions name:_name size:size sizeInBit:size * 8 alignment:alignment members:members subtype:Nil protocols:nil];
-                } else {
-                    
-                }
-            }
-            
-            _encoding = [[NSString alloc] initWithBytes:typeEncoding length:(i + 1) encoding:NSASCIIStringEncoding];
+            NSString * const encoding = [[NSString alloc] initWithBytes:typeEncoding length:(i + 1) encoding:NSASCIIStringEncoding];
             [self size:&_size alignment:&_alignment forObjcType:_encoding];
             _sizeInBit = _size * 8;
             
-            break;
+            return [[self alloc] initWithRaw:stdcType encoding:encoding modifiers:modifiers name:name size:size sizeInBit:_sizeInBit alignment:alignment members:members subtype:Nil protocols:nil];
         }
         case XZStdcTypeStruct: { // {name=type...}
             if (typeEncodingLength < 4) {
@@ -528,7 +514,7 @@ static XZObjcType __unsafe_unretained *XZStaticObjcTypes[CHAR_MAX] = { NULL };
 }
 
 - (XZObjcType *)type {
-    return XZStaticObjcTypes[_raw];
+    return _staticObjcTypes[_raw];
 }
 
 - (NSString *)description {
@@ -620,7 +606,7 @@ typedef struct XZStdcTypeLayout {
     size_t const size = sizeof(type); \
     size_t const sizeInBit = size * 8; \
     size_t const alignment = _Alignof(type); \
-    XZStaticObjcTypes[stdcType] = (__bridge id)(__bridge_retained CFTypeRef)[[XZObjcType alloc] initWithRaw:stdcType encoding:encoding modifiers:kNilOptions name:name size:size sizeInBit:sizeInBit alignment:alignment members:@[] subtype:Nil protocols:@[]];\
+    _staticObjcTypes[stdcType] = (__bridge id)(__bridge_retained CFTypeRef)[[XZObjcType alloc] initWithRaw:stdcType encoding:encoding modifiers:kNilOptions name:name size:size sizeInBit:sizeInBit alignment:alignment members:@[] subtype:Nil protocols:@[]];\
 }
         {
             typedef void (unknown)(void);
@@ -641,7 +627,7 @@ typedef struct XZStdcTypeLayout {
             size_t const size = __SIZEOF_INT128__;
             size_t const sizeInBit = size * 8;
             size_t const alignment = size;
-            XZStaticObjcTypes[_C_INT128] = (__bridge id)(__bridge_retained CFStringRef)[[XZObjcType alloc] initWithRaw:stdcType encoding:encoding modifiers:kNilOptions name:name size:size sizeInBit:sizeInBit alignment:alignment members:@[] subtype:Nil protocols:@[]];
+            _staticObjcTypes[_C_INT128] = (__bridge id)(__bridge_retained CFStringRef)[[XZObjcType alloc] initWithRaw:stdcType encoding:encoding modifiers:kNilOptions name:name size:size sizeInBit:sizeInBit alignment:alignment members:@[] subtype:Nil protocols:@[]];
         }
         { // unsigned int_128
             XZStdcType const stdcType = (XZStdcType)_C_UINT128;
@@ -650,7 +636,7 @@ typedef struct XZStdcTypeLayout {
             size_t const size = __SIZEOF_INT128__;
             size_t const sizeInBit = size * 8;
             size_t const alignment = size;
-            XZStaticObjcTypes[_C_UINT128] = (__bridge id)(__bridge_retained CFStringRef)[[XZObjcType alloc] initWithRaw:stdcType encoding:encoding modifiers:kNilOptions name:name size:size sizeInBit:sizeInBit alignment:alignment members:@[] subtype:Nil protocols:@[]];
+            _staticObjcTypes[_C_UINT128] = (__bridge id)(__bridge_retained CFStringRef)[[XZObjcType alloc] initWithRaw:stdcType encoding:encoding modifiers:kNilOptions name:name size:size sizeInBit:sizeInBit alignment:alignment members:@[] subtype:Nil protocols:@[]];
         }
 #if XZ_TYPE_LLONG_IS_LONG
         { // long long
@@ -660,7 +646,7 @@ typedef struct XZStdcTypeLayout {
             size_t const size = sizeof(long long);
             size_t const sizeInBit = size * 8;
             size_t const alignment = _Alignof(long long);
-            XZStaticObjcTypes[_C_LNG_LNG] = (__bridge id)(__bridge_retained CFStringRef)[[XZObjcType alloc] initWithRaw:stdcType encoding:encoding modifiers:kNilOptions name:name size:size sizeInBit:sizeInBit alignment:alignment members:@[] subtype:Nil protocols:@[]];
+            _staticObjcTypes[_C_LNG_LNG] = (__bridge id)(__bridge_retained CFStringRef)[[XZObjcType alloc] initWithRaw:stdcType encoding:encoding modifiers:kNilOptions name:name size:size sizeInBit:sizeInBit alignment:alignment members:@[] subtype:Nil protocols:@[]];
         }
         { // unsigned long long
             XZStdcType const stdcType = (XZStdcType)_C_ULNG_LNG;
@@ -669,7 +655,7 @@ typedef struct XZStdcTypeLayout {
             size_t const size = sizeof(unsigned long long);
             size_t const sizeInBit = size * 8;
             size_t const alignment = _Alignof(unsigned long long);
-            XZStaticObjcTypes[_C_ULNG_LNG] = (__bridge id)(__bridge_retained CFStringRef)[[XZObjcType alloc] initWithRaw:stdcType encoding:encoding modifiers:kNilOptions name:name size:size sizeInBit:sizeInBit alignment:alignment members:@[] subtype:Nil protocols:@[]];
+            _staticObjcTypes[_C_ULNG_LNG] = (__bridge id)(__bridge_retained CFStringRef)[[XZObjcType alloc] initWithRaw:stdcType encoding:encoding modifiers:kNilOptions name:name size:size sizeInBit:sizeInBit alignment:alignment members:@[] subtype:Nil protocols:@[]];
         }
 #else
         XZRegisterStaticType(long long);
@@ -685,7 +671,7 @@ typedef struct XZStdcTypeLayout {
             size_t const size = sizeof(long double);
             size_t const sizeInBit = size * 8;
             size_t const alignment = _Alignof(long double);
-            XZStaticObjcTypes[_C_LNG_DBL] = (__bridge id)(__bridge_retained CFStringRef)[[XZObjcType alloc] initWithRaw:stdcType encoding:encoding modifiers:kNilOptions name:name size:size sizeInBit:sizeInBit alignment:alignment members:@[] subtype:Nil protocols:@[]];
+            _staticObjcTypes[_C_LNG_DBL] = (__bridge id)(__bridge_retained CFStringRef)[[XZObjcType alloc] initWithRaw:stdcType encoding:encoding modifiers:kNilOptions name:name size:size sizeInBit:sizeInBit alignment:alignment members:@[] subtype:Nil protocols:@[]];
         }
 #else
         XZRegisterStaticType(long double);
@@ -697,15 +683,14 @@ typedef struct XZStdcTypeLayout {
             XZRegisterStaticType(string);
         }
         XZRegisterStaticType(SEL);
-        XZRegisterStaticType(void *);
-        { // pointer XZStdcTypePointer
+        { // pointer
             XZStdcType const stdcType = (XZStdcType)_C_PTR;
             NSString * const encoding = [NSString stringWithFormat:@"%c", _C_PTR];
             NSString * const name = @"pointer";
             size_t const size = sizeof(void *);
             size_t const sizeInBit = size * 8;
             size_t const alignment = _Alignof(void *);
-            XZStaticObjcTypes[_C_PTR] = (__bridge id)(__bridge_retained CFStringRef)[[XZObjcType alloc] initWithRaw:stdcType encoding:encoding modifiers:kNilOptions name:name size:size sizeInBit:sizeInBit alignment:alignment members:@[] subtype:Nil protocols:@[]];
+            _staticObjcTypes[_C_PTR] = (__bridge id)(__bridge_retained CFStringRef)[[XZObjcType alloc] initWithRaw:stdcType encoding:encoding modifiers:kNilOptions name:name size:size sizeInBit:sizeInBit alignment:alignment members:@[] subtype:Nil protocols:@[]];
         }
         { // c array
             XZStdcType const stdcType = (XZStdcType)_C_ARY_B;
@@ -714,7 +699,7 @@ typedef struct XZStdcTypeLayout {
             size_t const size = sizeof(void *);
             size_t const sizeInBit = size * 8;
             size_t const alignment = _Alignof(void *);
-            XZStaticObjcTypes[_C_ARY_B] = (__bridge id)(__bridge_retained CFStringRef)[[XZObjcType alloc] initWithRaw:stdcType encoding:encoding modifiers:kNilOptions name:name size:size sizeInBit:sizeInBit alignment:alignment members:@[] subtype:Nil protocols:@[]];
+            _staticObjcTypes[_C_ARY_B] = (__bridge id)(__bridge_retained CFStringRef)[[XZObjcType alloc] initWithRaw:stdcType encoding:encoding modifiers:kNilOptions name:name size:size sizeInBit:sizeInBit alignment:alignment members:@[] subtype:Nil protocols:@[]];
         }
         { // c++ vector
             XZStdcType const stdcType = (XZStdcType)_C_VECTOR;
@@ -723,7 +708,7 @@ typedef struct XZStdcTypeLayout {
             size_t const size = sizeof(void *);
             size_t const sizeInBit = size * 8;
             size_t const alignment = _Alignof(void *);
-            XZStaticObjcTypes[_C_VECTOR] = (__bridge id)(__bridge_retained CFStringRef)[[XZObjcType alloc] initWithRaw:stdcType encoding:encoding modifiers:kNilOptions name:name size:size sizeInBit:sizeInBit alignment:alignment members:@[] subtype:Nil protocols:@[]];
+            _staticObjcTypes[_C_VECTOR] = (__bridge id)(__bridge_retained CFStringRef)[[XZObjcType alloc] initWithRaw:stdcType encoding:encoding modifiers:kNilOptions name:name size:size sizeInBit:sizeInBit alignment:alignment members:@[] subtype:Nil protocols:@[]];
         }
         { // bit field
             XZStdcType const stdcType = (XZStdcType)_C_BFLD;
@@ -732,7 +717,7 @@ typedef struct XZStdcTypeLayout {
             size_t const size = 1;
             size_t const sizeInBit = 1;
             size_t const alignment = _Alignof(int);
-            XZStaticObjcTypes[_C_VECTOR] = (__bridge id)(__bridge_retained CFStringRef)[[XZObjcType alloc] initWithRaw:stdcType encoding:encoding modifiers:kNilOptions name:name size:size sizeInBit:sizeInBit alignment:alignment members:@[] subtype:Nil protocols:@[]];
+            _staticObjcTypes[_C_VECTOR] = (__bridge id)(__bridge_retained CFStringRef)[[XZObjcType alloc] initWithRaw:stdcType encoding:encoding modifiers:kNilOptions name:name size:size sizeInBit:sizeInBit alignment:alignment members:@[] subtype:Nil protocols:@[]];
         }
         { // union
             typedef union Empty { } Empty;
@@ -742,7 +727,7 @@ typedef struct XZStdcTypeLayout {
             size_t const size = sizeof(Empty);
             size_t const sizeInBit = size * 8;
             size_t const alignment = _Alignof(Empty);
-            XZStaticObjcTypes[_C_UNION_B] = (__bridge id)(__bridge_retained CFStringRef)[[XZObjcType alloc] initWithRaw:stdcType encoding:encoding modifiers:kNilOptions name:name size:size sizeInBit:sizeInBit alignment:alignment members:@[] subtype:Nil protocols:@[]];
+            _staticObjcTypes[_C_UNION_B] = (__bridge id)(__bridge_retained CFStringRef)[[XZObjcType alloc] initWithRaw:stdcType encoding:encoding modifiers:kNilOptions name:name size:size sizeInBit:sizeInBit alignment:alignment members:@[] subtype:Nil protocols:@[]];
         }
         { // union
             typedef struct Empty { } Empty;
@@ -752,7 +737,7 @@ typedef struct XZStdcTypeLayout {
             size_t const size = sizeof(Empty);
             size_t const sizeInBit = size * 8;
             size_t const alignment = _Alignof(Empty);
-            XZStaticObjcTypes[_C_STRUCT_B] = (__bridge id)(__bridge_retained CFStringRef)[[XZObjcType alloc] initWithRaw:stdcType encoding:encoding modifiers:kNilOptions name:name size:size sizeInBit:sizeInBit alignment:alignment members:@[] subtype:Nil protocols:@[]];
+            _staticObjcTypes[_C_STRUCT_B] = (__bridge id)(__bridge_retained CFStringRef)[[XZObjcType alloc] initWithRaw:stdcType encoding:encoding modifiers:kNilOptions name:name size:size sizeInBit:sizeInBit alignment:alignment members:@[] subtype:Nil protocols:@[]];
         }
         XZRegisterStaticType(Class);
         XZRegisterStaticType(id);
