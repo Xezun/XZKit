@@ -31,7 +31,8 @@ static XZBasicObjcType __unsafe_unretained *_basicTypes[CHAR_MAX] = { NULL };
 
 - (instancetype)initWithType:(XZBasicObjcType *)type modifiers:(XZStdcModifiers)modifiers;
 - (instancetype)initWithType:(XZBasicObjcType *)type name:(NSString *)name encoding:(NSString *)encoding modifiers:(XZStdcModifiers)modifiers;
-
+- (instancetype)initWithType:(XZBasicObjcType *)type name:(NSString *)name encoding:(NSString *)encoding size:(size_t)size alignment:(size_t)alignment sizeInBit:(size_t)sizeInBit modifiers:(XZStdcModifiers)modifiers;
+- (instancetype)initWithType:(XZBasicObjcType *)type name:(NSString *)name encoding:(NSString *)encoding size:(size_t)size alignment:(size_t)alignment sizeInBit:(size_t)sizeInBit modifiers:(XZStdcModifiers)modifiers members:(NSArray *)members;
 @end
 
 @interface XZObjcType () {
@@ -56,32 +57,28 @@ static XZBasicObjcType __unsafe_unretained *_basicTypes[CHAR_MAX] = { NULL };
 }
 
 + (XZObjcType *)typeForEncoding:(const char *)encoding {
-    return [self typeWithEncoding:encoding size:0 alignment:0 modifiers:kNilOptions];
+    return [self typeWithEncoding:encoding size:0 alignment:0];
 }
 
-+ (XZObjcType *)typeForEncoding:(const char *)encoding modifiers:(XZStdcModifiers)modifiers {
-    return [self typeWithEncoding:encoding size:0 alignment:0 modifiers:modifiers];
-}
-
-+ (XZObjcType *)typeForEncoding:(const char *)encoding size:(size_t)size alignment:(size_t)alignment {
-    return [self typeWithEncoding:encoding size:size alignment:alignment modifiers:kNilOptions];
-}
-
-+ (XZObjcType *)typeWithEncoding:(const char *)typeEncoding size:(size_t const)size alignment:(size_t const)alignment modifiers:(XZStdcModifiers)modifiers {
-    // 非空处理
-    if (typeEncoding == NULL) {
++ (XZObjcType *)typeWithEncoding:(const char *)encoding size:(size_t const)size alignment:(size_t const)alignment {
+    if (encoding == NULL) {
         return nil;
     }
     
-    size_t typeEncodingLength = strlen(typeEncoding);
+    NSInteger const encodingLength = strlen(encoding);
     
-    // 字符串非法
-    if (typeEncodingLength == 0) {
+    if (encodingLength == 0) {
         return nil;
     }
+    
+    const char *typeEncoding = encoding;
+    NSInteger typeEncodingStart = 0;
+    NSInteger typeEncodingLength = 0;
+    
+    XZStdcModifiers modifiers = kNilOptions;
     
     // 处理修饰符：类型编码可能会包含修饰符，比如方法参数的类型编码。
-    for (size_t i = 0; i < typeEncodingLength; i++) {
+    for (NSInteger i = 0; i < encodingLength; i++) {
         switch (typeEncoding[i]) {
             case _C_CONST: {
                 modifiers |= XZStdcModifierConst;
@@ -168,61 +165,40 @@ static XZBasicObjcType __unsafe_unretained *_basicTypes[CHAR_MAX] = { NULL };
         case XZStdcTypeSelector:
         case XZStdcTypeVector: {
             if (modifiers) {
-                return [[XZAdvanceObjcType alloc] initWithType:basicType modifiers:modifiers];
+                NSString *encodingString = [NSString alloc] initWithBytes:encoding length:<#(NSUInteger)#> encoding:<#(NSStringEncoding)#>
+                return [[XZAdvanceObjcType alloc] initWithType:basicType name:basicType.name encoding: modifiers:modifiers];
             }
             return basicType;
         }
         case XZStdcTypePointer: {
-            // 没有修饰符，直接查缓存。
-            if (!modifiers) {
-                NSString * const key = [NSString stringWithCString:typeEncoding encoding:NSUTF8StringEncoding];
-                XZObjcType * const type = withStorage(^id(NSMutableDictionary * const storage) {
-                    return storage[key];
-                });
-                
-                if (type) {
-                    return type;
-                }
-            }
-            
-            XZObjcType * const member = [XZObjcType typeForEncoding:typeEncoding + 1];
+            XZObjcType * const member = [XZObjcType typeForEncoding:typeEncoding + 1 size:size alignment:alignment];
             if (member == nil) {
                 return nil;
             }
-            
             NSString * const name = [NSString stringWithFormat:@"%@ *", member.name];
             NSString * const encoding = [[NSString alloc] initWithBytes:typeEncoding length:member.encoding.length + 1 encoding:NSUTF8StringEncoding];
-            
-            // 带修饰符的不缓存。
-            if (modifiers) {
-                return [[XZAdvanceObjcType alloc] initWithType:basicType name:name encoding:encoding modifiers:modifiers];
-            }
-            
-            // 返回第一个创建的缓存。
-            return withStorage(^id(NSMutableDictionary * const storage) {
-                XZObjcType *type = storage[encoding];
-                if (type == nil) {
-                    type = [[XZAdvanceObjcType alloc] initWithType:basicType name:name encoding:encoding modifiers:kNilOptions];
-                    storage[encoding] = type;
-                }
-                return type;
-            });
+            return [[XZAdvanceObjcType alloc] initWithType:basicType name:name encoding:encoding modifiers:modifiers];
         }
-        case XZStdcTypeBitField: { // {Foobar=b1b2b3}
+        case XZStdcTypeBitField: {
+            // 位域，结构体成员。
+            // struct Foobar { int a:1; int b: 22 } => {Foobar=b1b22}
+            // 从位域的编码中，只能获取占用内存的位数，而实际占用内存和对齐，跟声明位域的类型有关。
+            // 比如 int a:1 占用 1 位 4 字节，long a:1 占用 1 位 8 字节。
             if (typeEncodingLength < 2) {
                 return nil;
             }
             
             size_t sizeInBit = 0;
-            // bit field 十进制
             size_t newLength = 1;
             while (newLength < typeEncodingLength) {
                 const char number = typeEncoding[newLength];
+                // 位域编码中，是以十进制表示位域宽度的。
                 if (number >= '0' && number <= '9') {
                     sizeInBit = sizeInBit * 10 + (number - '0');
                     newLength += 1;
                     continue;
                 }
+                // 不合法的编码
                 if (newLength == 1) {
                     return nil;
                 }
@@ -230,14 +206,11 @@ static XZBasicObjcType __unsafe_unretained *_basicTypes[CHAR_MAX] = { NULL };
             }
             typeEncodingLength = newLength;
             
-            // 从位域的编码中，只能获取占用内存的位数，而实际占用内存和对齐，跟声明位域的类型有关。
-            // 比如 int a:1 占用 1 位 4 字节，long a:1 占用 1 位 8 字节。
             NSString * const encoding = [[NSString alloc] initWithBytes:typeEncoding length:typeEncodingLength encoding:NSUTF8StringEncoding];
-            NSString * const name = [NSString stringWithFormat:@"%ld bits field", sizeInBit];
+            NSString * const name = sizeInBit > 1 ? [NSString stringWithFormat:@"%ld bits field", sizeInBit] : @"1 bit field";
             size_t     const size = (sizeInBit - 1) / 8 + 1;
             size_t     const alignment = size;
-            return [[self alloc] initWithType:staticType modifiers:modifiers name:name encoding:encoding size:size alignment:alignment sizeInBit:sizeInBit];
-            break;
+            return [[XZAdvanceObjcType alloc] initWithType:basicType name:name encoding:encoding size:size alignment:alignment sizeInBit:sizeInBit modifiers:modifiers];
         }
         case XZStdcTypeArray: {
             // int[10]    => [10i]
@@ -263,7 +236,7 @@ static XZBasicObjcType __unsafe_unretained *_basicTypes[CHAR_MAX] = { NULL };
             }
             
             // 元素类型
-            XZObjcType *member = [XZObjcType typeForEncoding:(typeEncoding + i)];
+            XZObjcType *member = [XZObjcType typeForEncoding:(typeEncoding + i) size:size alignment:alignment];
             if (member == nil) {
                 return nil;
             }
@@ -277,22 +250,74 @@ static XZBasicObjcType __unsafe_unretained *_basicTypes[CHAR_MAX] = { NULL };
                 return nil;
             }
             
-            _encoding  = [[NSString alloc] initWithBytes:typeEncoding length:(i + 1) encoding:NSUTF8StringEncoding];
-            _name = [NSString stringWithFormat:@"%@[%ld]", member.name, (long)count];
-            _size = member.size * count;
-            _sizeInBit = _size * 8;
-            _alignment = member.alignment;
-            _members = @[member];
-            break;
+            NSString * const encoding  = [[NSString alloc] initWithBytes:typeEncoding length:(i + 1) encoding:NSUTF8StringEncoding];
+            NSString * const name = [NSString stringWithFormat:@"%@[%ld]", member.name, (long)count];
+            NSInteger const size = member.size * count;
+            NSInteger const sizeInBit = size * 8;
+            NSInteger const alignment = member.alignment;
+            NSArray * const members = @[member];
+            return [[XZAdvanceObjcType alloc] initWithType:basicType name:name encoding:encoding size:size alignment:alignment sizeInBit:sizeInBit modifiers:modifiers members:members];
         }
-        case XZStdcTypeUnion: { // (Foobar=icq)
+        case XZStdcTypeUnion: {
+            // (Foobar=icq)
+            if (typeEncodingLength < 4) {
+                return nil;
+            }
+            
+            size_t _index = 1;
+            
+            // 定位到 = 字符，获取共用体名字
+            do {
+                if (_index >= typeEncodingLength) {
+                    return nil;
+                }
+                if (typeEncoding[_index] == '=') {
+                    break;
+                }
+                _index += 1;
+            } while (YES);
+            NSString * const _name = [[NSString alloc] initWithBytes:(typeEncoding + 1) length:(_index - 1) encoding:NSUTF8StringEncoding];
+            
+            NSInteger _size = basicType.size;
+            NSInteger _sizeInBit = _size * 8;
+            NSInteger _alignment = basicType.alignment;
+            
+            NSMutableArray * const _members = [NSMutableArray array];
+            while (YES) {
+                _index += 1;
+                // 未匹配到结尾，编码不合法
+                if (_index >= typeEncodingLength) {
+                    return nil;
+                }
+                // 匹配结尾
+                if (typeEncoding[_index] == ')') {
+                    break;
+                }
+                // 匹配成员
+                XZObjcType *member = [XZObjcType typeForEncoding:(typeEncoding + _index) size:size alignment:alignment];
+                if (member == nil) {
+                    return nil;
+                }
+                [_members addObject:member];
+                
+                // 共用体对齐是成员中最大的
+                _size = MAX(_size, member.size);
+                _alignment = MAX(_alignment, member.alignment);
+                
+                // 移动到下一个字符
+                _index += member.encoding.length;
+            }
+            
+            NSString * const _encoding = [[NSString alloc] initWithBytes:typeEncoding length:(_index + 1) encoding:NSUTF8StringEncoding];
+            return [[XZAdvanceObjcType alloc] initWithType:basicType name:_name encoding:_encoding size:size alignment:alignment sizeInBit:_sizeInBit modifiers:modifiers members:_members];
+        }
+        case XZStdcTypeStruct: {
+            // {name=type...}
             if (typeEncodingLength < 4) {
                 return nil;
             }
             
             size_t i = 1;
-            
-            // 定位到 = 字符，获取共用体名字
             do {
                 if (i >= typeEncodingLength) {
                     return nil;
@@ -304,57 +329,9 @@ static XZBasicObjcType __unsafe_unretained *_basicTypes[CHAR_MAX] = { NULL };
             } while (YES);
             NSString * const name = [[NSString alloc] initWithBytes:(typeEncoding + 1) length:(i - 1) encoding:NSUTF8StringEncoding];
             
-            size_t _size = basicType.size;
-            size_t _sizeInBit = _size * 8;
-            size_t _alignment = basicType.alignment;
-            
             NSMutableArray * const members = [NSMutableArray array];
-            for (i += 1; i < typeEncodingLength; ) {
-                // 匹配结尾
-                if (typeEncoding[i] == ')') {
-                    break;
-                }
-                // 匹配成员
-                XZObjcType *member = [XZObjcType typeForEncoding:(typeEncoding + i)];
-                if (member == nil) {
-                    return nil;
-                }
-                [members addObject:member];
-                
-                // 共用体对齐是成员中最大的
-                _size = MAX(_size, member.size);
-                _alignment = MAX(_alignment, member.alignment);
-                
-                // 移动到下一个字符
-                i += member.encoding.length;
-            }
-            NSArray * const _members = members.copy;
-            
-            NSString * const encoding = [[NSString alloc] initWithBytes:typeEncoding length:(i + 1) encoding:NSUTF8StringEncoding];
-            [self size:&_size alignment:&_alignment forObjcType:_encoding];
-            _sizeInBit = _size * 8;
-            
-            return [[self alloc] initWithRaw:stdcType encoding:encoding modifiers:modifiers name:name size:size sizeInBit:_sizeInBit alignment:alignment members:members subtype:Nil protocols:nil];
-        }
-        case XZStdcTypeStruct: { // {name=type...}
-            if (typeEncodingLength < 4) {
-                return nil;
-            }
-            
-            size_t i = 1;
-            do {
-                if (i >= typeEncodingLength) {
-                    return nil;
-                }
-                if (typeEncoding[i] == '=') {
-                    break;
-                }
+            while ( YES ) {
                 i += 1;
-            } while (YES);
-            _name = [[NSString alloc] initWithBytes:(typeEncoding + 1) length:(i - 1) encoding:NSUTF8StringEncoding];
-            
-            NSMutableArray * const members = [NSMutableArray array];
-            for (i += 1; i < typeEncodingLength; ) {
                 if (typeEncoding[i] == '}') {
                     break;
                 }
@@ -364,30 +341,35 @@ static XZBasicObjcType __unsafe_unretained *_basicTypes[CHAR_MAX] = { NULL };
                 }
                 [members addObject:member];
                 i += member.encoding.length;
-            }
-            _members = members.copy;
-            
-            _encoding = [[NSString alloc] initWithBytes:typeEncoding length:(i + 1) encoding:NSUTF8StringEncoding];
-            if (![self size:&_size alignment:&_alignment forObjcType:_encoding]) {
-                if (members.count > 0) {
-                    for (XZObjcType *member in _members) {
-                        if (_size % member.alignment == 0) {
-                            _size += member.size;
-                        } else {
-                            _size = (_size / member.alignment + 1) * member.alignment + member.size;
-                        }
-                        _sizeInBit = _sizeInBit + member.sizeInBit;
-                        _alignment = MAX(_alignment, member.alignment);
-                    }
-                    size_t const delta = _size % _alignment;
-                    if (delta > 0) {
-                        _size += _alignment - delta;
-                    }
-                } else {
-                    struct Foobar { };
-                    _size = sizeof(struct Foobar);
-                    _alignment = _Alignof(struct Foobar);
+                if (i < typeEncodingLength) {
+                    continue;
                 }
+                return nil;
+            }
+            
+            NSInteger _size = basicType.size;
+            NSInteger _sizeInBit = basicType.sizeInBit;
+            NSInteger _alignment = basicType.alignment;
+            
+            NSString * const encoding = [[NSString alloc] initWithBytes:typeEncoding length:(i + 1) encoding:NSUTF8StringEncoding];
+            if (members.count > 0) {
+                for (XZObjcType *member in members) {
+                    if (_size % member.alignment == 0) {
+                        _size += member.size;
+                    } else {
+                        _size = (_size / member.alignment + 1) * member.alignment + member.size;
+                    }
+                    _sizeInBit = _sizeInBit + member.sizeInBit;
+                    _alignment = MAX(_alignment, member.alignment);
+                }
+                size_t const delta = _size % _alignment;
+                if (delta > 0) {
+                    _size += _alignment - delta;
+                }
+            } else {
+                struct Foobar { };
+                _size = sizeof(struct Foobar);
+                _alignment = _Alignof(struct Foobar);
             }
             _sizeInBit = _size * 8;
             
@@ -646,7 +628,7 @@ typedef struct XZStdcTypeLayout {
     return [self initWithType:stdcType encoding:encoding modifiers:modifiers name:name size:size sizeInBit:sizeInBit alignment:alignment members:members subtype:subtype protocols:protocols];
 }
 
-- (instancetype)initWithType:(XZObjcType *)type modifiers:(XZStdcModifiers)modifiers name:(NSString *)name encoding:(NSString *)encoding size:(size_t)size alignment:(size_t)alignment sizeInBit:(size_t)sizeInBit {
+- (instancetype)initWithType:(XZBasicObjcType *)type name:(NSString *)name encoding:(NSString *)encoding size:(size_t)size alignment:(size_t)alignment sizeInBit:(size_t)sizeInBit modifiers:(XZStdcModifiers)modifiers {
     XZStdcType const stdcType  = type.raw;
     Class      const subtype   = type.subtype;
     NSArray  * const members   = type.members;

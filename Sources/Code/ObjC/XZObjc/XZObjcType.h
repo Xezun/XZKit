@@ -228,13 +228,6 @@ typedef NS_OPTIONS(NSUInteger, XZStdcModifiers) {
 /// - Parameter encoding: 类型编码，或者复合类型编码中的子类型。
 + (nullable XZObjcType *)typeForEncoding:(const char * _Nullable)encoding NS_SWIFT_NAME(init(for:));
 
-/// 构造类型描述符。
-///
-/// - Parameters:
-///   - encoding: 类型编码
-///   - modifiers: 修饰符，因为属性修饰符不包含在类型编码中，可通过此参数提供
-+ (nullable XZObjcType *)typeForEncoding:(const char * _Nullable)encoding modifiers:(XZStdcModifiers)modifiers NS_SWIFT_NAME(init(for:_:));
-
 /// 对于使用了自定义 alignment 的结构体来说，可以通过此方法构建类型描述对象。
 /// - Parameters:
 ///   - encoding: 类型编码
@@ -242,41 +235,6 @@ typedef NS_OPTIONS(NSUInteger, XZStdcModifiers) {
 ///   - alignment: 类型内存对齐
 + (nullable XZObjcType *)typeForEncoding:(const char * _Nullable)encoding size:(size_t)size alignment:(size_t)alignment NS_SWIFT_NAME(init(for:size:alignment:));
 
-/// 设置结构体类型的大小和字节对齐值。
-///
-/// ```objc
-/// // 第一个 Foobar 为结构体的真实名字，是 TypeEncoding 捕获的名字；
-/// // 第二个 Foobar 为结构体的别名，不能用在类型编码中。
-/// typedef struct Foobar {
-///     int a;
-///     float b;
-/// } Foobar;
-/// // 注册该自定义类型的 size 和 alignment
-/// [XZObjcType setSize:sizeof(Foobar) alignment:_Alignof(Foobar) forType:\@encode(Foobar)];
-/// // 或者使用宏
-/// XZObjcTypeRegister(Foobar);
-/// ```
-///
-/// - 类型的名字必须是原始名字，非 typedef 定义的别名。
-/// - 只有别名的结构体，类型编码变成一个匿名的结构体，如 {?=if} 。
-///
-/// - Parameters:
-///   - size: 大小
-///   - alignment: 对齐方式
-///   - objcType: 结构体类型编码
-+ (void)registerSize:(size_t)size alignment:(size_t)alignment forType:(const char *)objcType;
-
 @end
-
-/// Function: XZObjcTypeRegister
-/// 注册结构体、联合体的大小和内存对齐。
-///
-/// Param objcType
-/// 类型，比如 CGRect 等
-///
-/// 注册结构体字节大小和对齐的宏，比如 XZObjcTypeRegister(CGRect) 。
-#define XZObjcTypeRegister(objcType) [XZObjcType registerSize:sizeof(objcType) alignment:_Alignof(objcType) forType:@encode(objcType)]
-
-
 
 NS_ASSUME_NONNULL_END
