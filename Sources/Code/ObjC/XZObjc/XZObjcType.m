@@ -73,6 +73,7 @@ static XZBasicObjcType __unsafe_unretained *_basicTypes[CHAR_MAX] = { NULL };
     
     const char *typeEncoding = NULL;
     NSInteger typeEncodingLength = 0;
+    NSInteger modifierEncodingLength = 0;
     
     XZStdcModifiers modifiers = kNilOptions;
     
@@ -127,13 +128,14 @@ static XZBasicObjcType __unsafe_unretained *_basicTypes[CHAR_MAX] = { NULL };
                 // 重新定位字符编码的起点
                 typeEncoding = encoding + i;
                 typeEncodingLength = encodingLength - i;
+                modifierEncodingLength = i;
                 break;
             }
         }
         break;
     }
     
-    NSInteger const modifierLength = 0;
+    
     
     // 基本类型：任何类型都对应一个基本类型。
     XZStdcType const stdcType = (XZStdcType)typeEncoding[0];
@@ -177,8 +179,9 @@ static XZBasicObjcType __unsafe_unretained *_basicTypes[CHAR_MAX] = { NULL };
                 return nil;
             }
             NSString * const name = [NSString stringWithFormat:@"%@ *", member.name];
-            NSString * const encodingString = [[NSString alloc] initWithBytes:encoding length:member.encoding.length + 1 encoding:NSUTF8StringEncoding];
-            return [[XZAdvanceObjcType alloc] initWithType:basicType name:name encoding:encoding modifiers:modifiers];
+            NSInteger const length = modifierEncodingLength + 1 + member.encoding.length;
+            NSString * const encodingString = [[NSString alloc] initWithBytes:encoding length:length encoding:NSUTF8StringEncoding];
+            return [[XZAdvanceObjcType alloc] initWithType:basicType name:name encoding:encodingString modifiers:modifiers];
         }
         case XZStdcTypeBitField: {
             // 位域，结构体成员。
@@ -207,11 +210,12 @@ static XZBasicObjcType __unsafe_unretained *_basicTypes[CHAR_MAX] = { NULL };
             }
             typeEncodingLength = newLength;
             
-            NSString * const encoding = [[NSString alloc] initWithBytes:typeEncoding length:typeEncodingLength encoding:NSUTF8StringEncoding];
+            NSInteger  const length = modifierEncodingLength + typeEncodingLength;
+            NSString * const encodingString = [[NSString alloc] initWithBytes:encoding length:length encoding:NSUTF8StringEncoding];
             NSString * const name = sizeInBit > 1 ? [NSString stringWithFormat:@"%ld bits field", sizeInBit] : @"1 bit field";
             size_t     const size = (sizeInBit - 1) / 8 + 1;
             size_t     const alignment = size;
-            return [[XZAdvanceObjcType alloc] initWithType:basicType name:name encoding:encoding size:size alignment:alignment sizeInBit:sizeInBit modifiers:modifiers];
+            return [[XZAdvanceObjcType alloc] initWithType:basicType name:name encoding:encodingString size:size alignment:alignment sizeInBit:sizeInBit modifiers:modifiers];
         }
         case XZStdcTypeArray: {
             // int[10]    => [10i]
