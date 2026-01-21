@@ -71,15 +71,14 @@ static XZBasicObjcType __unsafe_unretained *_basicTypes[CHAR_MAX] = { NULL };
         return nil;
     }
     
-    const char *typeEncoding = encoding;
-    NSInteger typeEncodingStart = 0;
+    const char *typeEncoding = NULL;
     NSInteger typeEncodingLength = 0;
     
     XZStdcModifiers modifiers = kNilOptions;
     
     // 处理修饰符：类型编码可能会包含修饰符，比如方法参数的类型编码。
     for (NSInteger i = 0; i < encodingLength; i++) {
-        switch (typeEncoding[i]) {
+        switch (encoding[i]) {
             case _C_CONST: {
                 modifiers |= XZStdcModifierConst;
                 continue;
@@ -122,17 +121,19 @@ static XZBasicObjcType __unsafe_unretained *_basicTypes[CHAR_MAX] = { NULL };
             }
             default: {
                 // 只有修饰符，不是合法的编码
-                if (i >= typeEncodingLength) {
+                if (i >= encodingLength) {
                     return nil;
                 }
                 // 重新定位字符编码的起点
-                typeEncoding = typeEncoding + i;
-                typeEncodingLength -= i;
+                typeEncoding = encoding + i;
+                typeEncodingLength = encodingLength - i;
                 break;
             }
         }
         break;
     }
+    
+    NSInteger const modifierLength = 0;
     
     // 基本类型：任何类型都对应一个基本类型。
     XZStdcType const stdcType = (XZStdcType)typeEncoding[0];
@@ -165,8 +166,8 @@ static XZBasicObjcType __unsafe_unretained *_basicTypes[CHAR_MAX] = { NULL };
         case XZStdcTypeSelector:
         case XZStdcTypeVector: {
             if (modifiers) {
-                NSString *encodingString = [NSString alloc] initWithBytes:encoding length:<#(NSUInteger)#> encoding:<#(NSStringEncoding)#>
-                return [[XZAdvanceObjcType alloc] initWithType:basicType name:basicType.name encoding: modifiers:modifiers];
+                NSString *encodingString = [[NSString alloc] initWithBytes:encoding length:encodingLength encoding:NSUTF8StringEncoding];
+                return [[XZAdvanceObjcType alloc] initWithType:basicType name:basicType.name encoding:encodingString modifiers:modifiers];
             }
             return basicType;
         }
@@ -176,7 +177,7 @@ static XZBasicObjcType __unsafe_unretained *_basicTypes[CHAR_MAX] = { NULL };
                 return nil;
             }
             NSString * const name = [NSString stringWithFormat:@"%@ *", member.name];
-            NSString * const encoding = [[NSString alloc] initWithBytes:typeEncoding length:member.encoding.length + 1 encoding:NSUTF8StringEncoding];
+            NSString * const encodingString = [[NSString alloc] initWithBytes:encoding length:member.encoding.length + 1 encoding:NSUTF8StringEncoding];
             return [[XZAdvanceObjcType alloc] initWithType:basicType name:name encoding:encoding modifiers:modifiers];
         }
         case XZStdcTypeBitField: {
