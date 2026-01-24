@@ -148,63 +148,27 @@ typedef NS_OPTIONS(NSUInteger, XZStdcModifiers) {
     XZStdcModifierDynamic     = 1 << (8 + 17),
 };
 
-@class XZObjcType;
-
-@protocol XZObjcType <NSObject>
-@property (nonatomic, readonly) NSString *name;
-@property (nonatomic, readonly) XZObjcType *type;
-@end
-
-/// 类型描述词，描述数据类型的对象。
+/// 描述基本数据类型的对象。
 ///
 /// 数据类型，通常也称为变量类型。在 objc 中，数据类型包括 c 基础类型，比如 int、float 等，和 NSObject 等对象类型，可通过 `\@encoding(type)` 可将类型编码为字符串。
-@interface XZObjcType : NSObject <XZObjcType>
+@interface XZObjcType : NSObject
 
-/// 类型名称。
-@property (nonatomic, readonly) NSString *name;
-
-/// 返回静态类型或自身。
-@property (nonatomic, readonly) XZObjcType *type;
-
-/// 类型。
+/// 类型。改名为 type 或 prototype
 @property (nonatomic, readonly) XZStdcType raw;
 
-/// 类型修饰符。
-@property (nonatomic, readonly) XZStdcModifiers modifiers;
+/// 对象类型的类对象类型。classType
+///
+/// 此属性仅在 `type` 为 `XZStdcTypeObject` 时才可能有值。
+@property (nonatomic, readonly, nullable) Class subtype;
 
 /// 类型的原始值，即类型的编码。
 @property (nonatomic, readonly) NSString *encoding;
 
-/// 大小，占用的空间大小，度量单位”字节byte“。
-/// - 对于位域而言，此值并不一定准确。
-@property (nonatomic, readonly) NSInteger size;
+/// 通用名称。
+@property (nonatomic, readonly) NSString *name;
 
-/// 大小，占用的空间大小，度量单位”位bit“。
-/// > 对于结构体 sizeInBit 才是 bit field 成员类型的实际大小。
-@property (nonatomic, readonly) NSInteger sizeInBit;
-
-/// 字节对齐，度量单位“字节byte”。
-///
-/// 必须注册内存对齐的情形：
-/// - 自定义了对齐的结构体和共用体。
-/// - 包含 位域 的结构体或共用体。
-///
-/// > 使用 `#pragma pack (value)` 或 `__attribute__((packed))` 可以自定义字节对齐。
-///
-/// ```objc
-/// +[XZObjcType setSize:sizeof(Type) alignment:_Alignof(Type) forType:\@encode(Type)];
-/// // 或
-/// XZObjcTypeRegister(Type);
-/// ```
-@property (nonatomic, readonly) NSInteger alignment;
-
-/// 当前类型的成员类型，比如结构体、共用体的组成成员，或者指针类型（一般被认为是数组）的值的类型等。
+/// 比如数组、结构体、共用体等复合类型的成员类型。
 @property (nonatomic, readonly) NSArray<XZObjcType *> *members;
-
-/// 子类型，对象的类型。
-///
-/// 此属性仅在 `type` 为 `XZStdcTypeObject` 时才可能有值。
-@property (nonatomic, readonly, nullable) Class subtype;
 
 /// 对象类型遵循的协议。
 ///
@@ -227,13 +191,6 @@ typedef NS_OPTIONS(NSUInteger, XZStdcModifiers) {
 ///
 /// - Parameter encoding: 类型编码，或者复合类型编码中的子类型。
 + (nullable XZObjcType *)typeForEncoding:(const char * _Nullable)encoding NS_SWIFT_NAME(init(for:));
-
-/// 对于使用了自定义 alignment 的结构体来说，可以通过此方法构建类型描述对象。
-/// - Parameters:
-///   - encoding: 类型编码
-///   - size: 类型大小
-///   - alignment: 类型内存对齐
-+ (nullable XZObjcType *)typeForEncoding:(const char * _Nullable)encoding size:(size_t)size alignment:(size_t)alignment NS_SWIFT_NAME(init(for:size:alignment:));
 
 @end
 
