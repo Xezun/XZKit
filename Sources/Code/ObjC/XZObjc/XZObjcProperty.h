@@ -18,7 +18,7 @@ NS_ASSUME_NONNULL_BEGIN
 /// 描述对象属性的对象。
 ///
 /// Property information.
-@interface XZObjcProperty : NSObject <XZObjcType>
+@interface XZObjcProperty : NSObject
 
 /// 原始值。 property's opaque struct
 @property (nonatomic, readonly) objc_property_t raw;
@@ -26,6 +26,8 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic, readonly) NSString *name;
 /// 属性值的类型。
 @property (nonatomic, readonly) XZObjcType *type;
+/// 属性修饰类型。
+@property (nonatomic, readonly) XZStdcModifiers modifiers;
 /// 属性的实例变量。
 @property (nonatomic, strong, readonly, nullable) XZObjcIvar *ivar;
 /// 取值方法，非空。
@@ -35,7 +37,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 - (instancetype)init NS_UNAVAILABLE;
 
-+ (nullable instancetype)propertyForProperty:(objc_property_t)rawProperty forClass:(Class)aClass NS_SWIFT_NAME(init(for:for:));
++ (nullable instancetype)propertyWithProperty:(objc_property_t)rawProperty class:(Class)aClass NS_SWIFT_NAME(init(_:class:));
 
 @end
 

@@ -1,17 +1,17 @@
 //
-//  XZJSONPropertyDescriptor.m
+//  XZJSONProperty.m
 //  XZJSON
 //
 //  Created by Xezun on 2024/9/29.
 //
 
-#import "XZJSONPropertyDescriptor.h"
+#import "XZJSONProperty.h"
 #import "XZJSONDefines.h"
-#import "XZJSONClassDescriptor.h"
+#import "XZJSONClass.h"
 
-@implementation XZJSONPropertyDescriptor
+@implementation XZJSONProperty
 
-+ (XZJSONPropertyDescriptor *)descriptorWithProperty:(XZObjcProperty *)property elementType:(nullable Class)elementType ofClass:(XZJSONClassDescriptor *)aClass {
++ (XZJSONProperty *)descriptorWithProperty:(XZObjcProperty *)property elementType:(nullable Class)elementType ofClass:(XZJSONClass *)aClass {
     // 必须是读写属性才参与 JSON 处理
     SEL const setter = property.setter;
     if (setter == nil || ![aClass->_raw.raw instancesRespondToSelector:setter]) {
@@ -23,25 +23,25 @@
         return nil;
     }
     
-    XZJSONPropertyDescriptor * const descriptor = [self new];
+    XZJSONProperty * const descriptor = [self new];
     descriptor->_owner       = aClass;
     descriptor->_raw         = property;
     descriptor->_name        = property.name;
-    descriptor->_type        = property.type.raw;
+    descriptor->_type        = property.type.type;
     descriptor->_elementType = elementType;
     descriptor->_getter      = getter;
     descriptor->_setter      = setter;
     
     if (descriptor->_type == XZStdcTypeObject) {
-        descriptor->_subtype = property.type.subtype;
-        descriptor->_foundationClass = XZJSONFoundationClassFromClass(descriptor->_subtype);
-        descriptor->_foundationStruct = XZJSONFoundationStructUnknown;
-        XZStdcModifiers const modifiers = property.type.modifiers;
+        descriptor->_classType = property.type.classType;
+        descriptor->_cocoaType = XZJSONCocoaTypeFromClass(descriptor->_classType);
+        descriptor->_composeType = XZStdcCocoaTypeUnknown;
+        XZStdcModifiers const modifiers = property.modifiers;
         descriptor->_isUnownedReference = (modifiers & XZStdcModifierWeak) || (!(modifiers & XZStdcModifierCopy) && !(modifiers & XZStdcModifierRetain));
     } else {
-        descriptor->_subtype = Nil;
-        descriptor->_foundationClass = XZJSONFoundationClassUnknown;
-        descriptor->_foundationStruct = XZJSONFoundationStructFromType(property.type);
+        descriptor->_classType = Nil;
+        descriptor->_cocoaType = XZJSONCocoaTypeUnknown;
+        descriptor->_composeType = XZStdcCocoaTypeFromType(property.type);
         descriptor->_isUnownedReference = NO;
     }
     
@@ -57,7 +57,7 @@
         }
     }
     
-    switch (property.type.raw) {
+    switch (property.type.type) {
         case XZStdcTypeUnknown:
             descriptor->_isCodable = NO;
             break;
@@ -104,7 +104,7 @@
             descriptor->_isCodable = NO;
             break;
         case XZStdcTypeStruct:
-            descriptor->_isCodable = (descriptor->_foundationStruct != XZJSONFoundationStructUnknown);
+            descriptor->_isCodable = (descriptor->_composeType != XZStdcCocoaTypeUnknown);
             break;
         case XZStdcTypeClass:
             descriptor->_isCodable = YES;

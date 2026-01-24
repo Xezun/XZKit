@@ -19,7 +19,7 @@ NS_ASSUME_NONNULL_BEGIN
 /// 描述实例的成员变量的对象。
 ///
 /// Instance variable information.
-@interface XZObjcIvar : NSObject <XZObjcType>
+@interface XZObjcIvar : NSObject
 
 /// 成员变量原始值。 ivar opaque struct
 @property (nonatomic, readonly) Ivar raw;
@@ -30,7 +30,7 @@ NS_ASSUME_NONNULL_BEGIN
 /// 成员变量偏移。Ivar's offset
 @property (nonatomic, readonly) ptrdiff_t offset;
 
-+ (nullable instancetype)ivarForIvar:(Ivar)rawIvar NS_SWIFT_NAME(init(for:));
++ (nullable instancetype)ivarWithIvar:(Ivar)ivar NS_SWIFT_NAME(init(_:));
 - (instancetype)init NS_UNAVAILABLE;
 
 @end

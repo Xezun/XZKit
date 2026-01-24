@@ -6,11 +6,11 @@
 //
 
 #import <Foundation/Foundation.h>
-#import "XZJSONDescriptor.h"
+#import "XZJSONType.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
-@class XZJSONClassDescriptor;
+@class XZJSONClass;
 
 /// 解析 JSON 数据流。
 FOUNDATION_EXPORT id _Nullable XZJSONDecodeJSONData(NSData * const _Unsafe data, NSJSONReadingOptions const options, Class const _Unsafe aClass);
@@ -19,6 +19,6 @@ FOUNDATION_EXPORT id _Nullable XZJSONDecodeJSONData(NSData * const _Unsafe data,
 FOUNDATION_EXPORT id _Nullable XZJSONDecodeJSONObject(id const _Unsafe object, Class const _Unsafe aClass);
 
 /// 模型实例对象，解码 JSON 数据。
-FOUNDATION_EXPORT void XZJSONModelDecodeFromDictionary(id const _Unsafe model, XZJSONClassDescriptor * const _Unsafe modelClass, NSDictionary * const _Unsafe dictionary);
+FOUNDATION_EXPORT void XZJSONModelDecodeFromDictionary(id const _Unsafe model, XZJSONClass * const _Unsafe modelClass, NSDictionary * const _Unsafe dictionary);
 
 NS_ASSUME_NONNULL_END

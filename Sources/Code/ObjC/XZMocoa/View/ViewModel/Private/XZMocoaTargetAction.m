@@ -62,6 +62,41 @@
                 break;
             }
         }
+        
+        // 共用体的情况比较复杂，暂不支持：
+        // 1. NSInvocation 不支持带自定义共用体参数的方法。
+        // 2. 不能简单地直接使用共用体的最大数据类型，因为数据在函数参数传递的过程中，会发生改变。
+        //
+        // 在 testUnionConvertion 单元测试中，假如有类型为 {int, double} 的共用体，
+        // a. 将共用体存储到 NSValue 中
+        // b. 用 double 取出来
+        // c. 由于在然后将 double 赋值给参数类型为 double 的函数
+        // d. 使用 double 类型通过 objc_msgSend 发送消息
+        // 即使函数实际参数是原始的共用体，也无法复原共用体，因为 double 内存布局为 1 符号位，11 指数位，52 小数位
+        // 如果存储 int 值，那么实际只填充了前12位，那么这个 double 会因为没有小数位，而被认为实际是 0
+        //
+        // 所以共用体必须用 NSValue 接收。
+        if (_valueArgumentType) {
+            switch (_valueArgumentType.type) {
+                case XZStdcTypeUnion: {
+                    NSString *reason = NSLocalizedString(@"运行时不支持使用 union 类型作为参数，请使用 NSValue 代替。", @"");
+                    @throw [NSException exceptionWithName:NSInvalidArgumentException reason:reason userInfo:nil];
+                    break;
+                }
+                case XZStdcTypeStruct: {
+                    if (_valueArgumentType.cocoaType == XZStdcCocoaTypeUnknown) {
+                        NSString *reason = NSLocalizedString(@"运行时不支持使用自定义 struct 类型作为参数，请使用 NSValue 代替。", @"");
+                        @throw [NSException exceptionWithName:NSInvalidArgumentException reason:reason userInfo:nil];
+                    }
+                    break;
+                }
+                default:
+                    break;
+            }
+            if (_valueArgumentType.type == XZStdcTypeUnion) {
+                
+            }
+        }
     }
     return self;
 }
@@ -75,7 +110,7 @@
         case 1:
         case 2:
         case 3: {
-            switch (_valueArgumentType.raw) {
+            switch (_valueArgumentType.type) {
                 case XZStdcTypeUnknown: {
                     void *pointerValue = NULL;
                     [(NSValue *)value getValue:&pointerValue size:sizeof(void *)];
@@ -348,6 +383,7 @@
                     break;
                 }
                 case XZStdcTypeVoid: {
+                    // 不存在此类型的参数。
                     break;
                 }
                 case XZStdcTypeString: {
@@ -369,7 +405,7 @@
                     break;
                 }
                 case XZStdcTypeSelector: {
-                    SEL selectorValue = 0;
+                    SEL selectorValue = NULL;
                     [(NSValue *)value getValue:&selectorValue size:sizeof(SEL)];
                     switch (_numberOfArguments) {
                         case 1:
@@ -422,186 +458,181 @@
                     }
                     break;
                 }
-                case XZStdcTypeBitField:
+                case XZStdcTypeBitField: {
+                    // 此类型不会出现在方法的参数中
+                    break;
+                }
                 case XZStdcTypeUnion: {
-                    // 共用体的情况比较复杂，暂不支持：
-                    // 1. NSInvocation 不支持带自定义共用体参数的方法。
-                    // 2. 不能简单地直接使用共用体的最大数据类型，因为数据在函数参数传递的过程中，会发生改变。
-                    //
-                    // 在 testUnionConvertion 单元测试中，假如有类型为 {int, double} 的共用体，
-                    // a. 将共用体存储到 NSValue 中
-                    // b. 用 double 取出来
-                    // c. 由于在然后将 double 赋值给参数类型为 double 的函数
-                    // d. 使用 double 类型通过 objc_msgSend 发送消息
-                    // 即使函数实际参数是原始的共用体，也无法复原原始的共用体，因为 double 内存布局为 1 符号位，11 指数位，52 小数位
-                    // 如果存储 int 值，那么实际只填充了前12位，那么这个 double 会因为没有小数位，而被认为实际是 0
-                    size_t const size = _valueArgumentType.size;
-                    if (size < 2) {
-                        UInt8 bitValue = 0;
-                        [(NSValue *)value getValue:&bitValue size:sizeof(UInt8)];
-                        switch (_numberOfArguments) {
-                            case 1:
-                                ((void (*)(id, SEL, UInt8))objc_msgSend)(_target, _action, bitValue);
-                                break;
-                            case 2:
-                                ((void (*)(id, SEL, XZMocoaKey, UInt8))objc_msgSend)(_target, _action, key, bitValue);
-                                break;
-                            case 3:
-                                ((void (*)(id, SEL, id, XZMocoaKey, UInt8))objc_msgSend)(_target, _action, sender, key, bitValue);
-                                break;
-                            default:
-                                break;
-                        }
-                    } else if (size < 4) {
-                        UInt16 bitValue = 0;
-                        [(NSValue *)value getValue:&bitValue size:sizeof(UInt16)];
-                        switch (_numberOfArguments) {
-                            case 1:
-                                ((void (*)(id, SEL, UInt16))objc_msgSend)(_target, _action, bitValue);
-                                break;
-                            case 2:
-                                ((void (*)(id, SEL, XZMocoaKey, UInt16))objc_msgSend)(_target, _action, key, bitValue);
-                                break;
-                            case 3:
-                                ((void (*)(id, SEL, id, XZMocoaKey, UInt16))objc_msgSend)(_target, _action, sender, key, bitValue);
-                                break;
-                            default:
-                                break;
-                        }
-                    } else if (size < 8) {
-                        UInt32 bitValue = 0;
-                        [(NSValue *)value getValue:&bitValue size:sizeof(UInt32)];
-                        switch (_numberOfArguments) {
-                            case 1:
-                                ((void (*)(id, SEL, UInt32))objc_msgSend)(_target, _action, bitValue);
-                                break;
-                            case 2:
-                                ((void (*)(id, SEL, XZMocoaKey, UInt32))objc_msgSend)(_target, _action, key, bitValue);
-                                break;
-                            case 3:
-                                ((void (*)(id, SEL, id, XZMocoaKey, UInt32))objc_msgSend)(_target, _action, sender, key, bitValue);
-                                break;
-                            default:
-                                break;
-                        }
-                    } else if (size < 16) {
-                        UInt64 bitValue = 0;
-                        [(NSValue *)value getValue:&bitValue size:sizeof(UInt64)];
-                        switch (_numberOfArguments) {
-                            case 1:
-                                ((void (*)(id, SEL, UInt64))objc_msgSend)(_target, _action, bitValue);
-                                break;
-                            case 2:
-                                ((void (*)(id, SEL, XZMocoaKey, UInt64))objc_msgSend)(_target, _action, key, bitValue);
-                                break;
-                            case 3:
-                                ((void (*)(id, SEL, id, XZMocoaKey, UInt64))objc_msgSend)(_target, _action, sender, key, bitValue);
-                                break;
-                            default:
-                                break;
-                        }
-                    } else if (size < 32) {
-                        typedef struct { UInt64 a; UInt64 b; } XZ_UInt128;
-                        XZ_UInt128 bitValue = {0};
-                        [(NSValue *)value getValue:&bitValue size:sizeof(XZ_UInt128)];
-                        switch (_numberOfArguments) {
-                            case 1:
-                                ((void (*)(id, SEL, XZ_UInt128))objc_msgSend)(_target, _action, bitValue);
-                                break;
-                            case 2:
-                                ((void (*)(id, SEL, XZMocoaKey, XZ_UInt128))objc_msgSend)(_target, _action, key, bitValue);
-                                break;
-                            case 3:
-                                ((void (*)(id, SEL, id, XZMocoaKey, XZ_UInt128))objc_msgSend)(_target, _action, sender, key, bitValue);
-                                break;
-                            default:
-                                break;
-                        }
-                    } else if (size < 64) {
-                        typedef struct { UInt64 a; UInt64 b; UInt64 c; UInt64 d; } XZ_UInt256;
-                        XZ_UInt256 bitValue = {0};
-                        [(NSValue *)value getValue:&bitValue size:sizeof(XZ_UInt256)];
-                        switch (_numberOfArguments) {
-                            case 1:
-                                ((void (*)(id, SEL, XZ_UInt256))objc_msgSend)(_target, _action, bitValue);
-                                break;
-                            case 2:
-                                ((void (*)(id, SEL, XZMocoaKey, XZ_UInt256))objc_msgSend)(_target, _action, key, bitValue);
-                                break;
-                            case 3:
-                                ((void (*)(id, SEL, id, XZMocoaKey, XZ_UInt256))objc_msgSend)(_target, _action, sender, key, bitValue);
-                                break;
-                            default:
-                                break;
-                        }
-                    } else if (size < 128) {
-                        typedef struct { UInt64 a; UInt64 b; UInt64 c; UInt64 d; UInt64 e; UInt64 f; UInt64 g; UInt64 h; } XZ_UInt512;
-                        XZ_UInt512 bitValue = {0};
-                        [(NSValue *)value getValue:&bitValue size:sizeof(XZ_UInt512)];
-                        switch (_numberOfArguments) {
-                            case 1:
-                                ((void (*)(id, SEL, XZ_UInt512))objc_msgSend)(_target, _action, bitValue);
-                                break;
-                            case 2:
-                                ((void (*)(id, SEL, XZMocoaKey, XZ_UInt512))objc_msgSend)(_target, _action, key, bitValue);
-                                break;
-                            case 3:
-                                ((void (*)(id, SEL, id, XZMocoaKey, XZ_UInt512))objc_msgSend)(_target, _action, sender, key, bitValue);
-                                break;
-                            default:
-                                break;
-                        }
-                    } else {
-                        typedef struct {
-                            UInt64 a; UInt64 b; UInt64 c; UInt64 d; UInt64 e; UInt64 f; UInt64 g; UInt64 h;
-                            UInt64 i; UInt64 j; UInt64 k; UInt64 l; UInt64 m; UInt64 n; UInt64 o; UInt64 p;
-                        } XZ_UInt1024;
-                        XZ_UInt1024 bitValue = {0};
-                        [(NSValue *)value getValue:&bitValue size:sizeof(XZ_UInt1024)];
-                        switch (_numberOfArguments) {
-                            case 1:
-                                ((void (*)(id, SEL, XZ_UInt1024))objc_msgSend)(_target, _action, bitValue);
-                                break;
-                            case 2:
-                                ((void (*)(id, SEL, XZMocoaKey, XZ_UInt1024))objc_msgSend)(_target, _action, key, bitValue);
-                                break;
-                            case 3:
-                                ((void (*)(id, SEL, id, XZMocoaKey, XZ_UInt1024))objc_msgSend)(_target, _action, sender, key, bitValue);
-                                break;
-                            default:
-                                break;
-                        }
-                    }
+                    // 不支持此类型
                     break;
                 }
                 case XZStdcTypeStruct: {
-                    void *buffer = calloc(_valueArgumentType.size, 1);
-                    [(NSValue *)value getValue:buffer size:_valueArgumentType.size];
-                    
-                    Method              const method     = class_getInstanceMethod(object_getClass(_target), _action);
-                    NSMethodSignature * const signature  = [NSMethodSignature signatureWithObjCTypes:method_getTypeEncoding(method)];
-                    NSInvocation *      const invocation = [NSInvocation invocationWithMethodSignature:signature];
-                    
-                    invocation.target   = _target;
-                    invocation.selector = _action;
-                    for (int i = 0; i < _numberOfArguments; i++) {
-                        switch (i) {
-                            case 0:
-                                [invocation setArgument:buffer atIndex:2];
-                                break;
-                            case 1:
-                                [invocation setArgument:&key atIndex:3];
-                                break;
-                            case 2:
-                                [invocation setArgument:&sender atIndex:4];
-                                break;
-                            default:
-                                break;
+                    switch (_valueArgumentType.cocoaType) {
+                        case XZStdcCocoaTypeUnknown:
+                            break;
+                        case XZStdcCocoaTypeCGRect: {
+                            CGRect structValue;
+                            [(NSValue *)value getValue:&structValue size:sizeof(CGRect)];
+                            switch (_numberOfArguments) {
+                                case 1:
+                                    ((void (*)(id, SEL, CGRect))objc_msgSend)(_target, _action, structValue);
+                                    break;
+                                case 2:
+                                    ((void (*)(id, SEL, XZMocoaKey, CGRect))objc_msgSend)(_target, _action, key, structValue);
+                                    break;
+                                case 3:
+                                    ((void (*)(id, SEL, id, XZMocoaKey, CGRect))objc_msgSend)(_target, _action, sender, key, structValue);
+                                    break;
+                                default:
+                                    break;
+                            }
+                            break;
+                        }
+                        case XZStdcCocoaTypeCGSize: {
+                            CGSize structValue;
+                            [(NSValue *)value getValue:&structValue size:sizeof(CGSize)];
+                            switch (_numberOfArguments) {
+                                case 1:
+                                    ((void (*)(id, SEL, CGSize))objc_msgSend)(_target, _action, structValue);
+                                    break;
+                                case 2:
+                                    ((void (*)(id, SEL, XZMocoaKey, CGSize))objc_msgSend)(_target, _action, key, structValue);
+                                    break;
+                                case 3:
+                                    ((void (*)(id, SEL, id, XZMocoaKey, CGSize))objc_msgSend)(_target, _action, sender, key, structValue);
+                                    break;
+                                default:
+                                    break;
+                            }
+                            break;
+                        }
+                        case XZStdcCocoaTypeCGPoint: {
+                            CGPoint structValue;
+                            [(NSValue *)value getValue:&structValue size:sizeof(CGPoint)];
+                            switch (_numberOfArguments) {
+                                case 1:
+                                    ((void (*)(id, SEL, CGPoint))objc_msgSend)(_target, _action, structValue);
+                                    break;
+                                case 2:
+                                    ((void (*)(id, SEL, XZMocoaKey, CGPoint))objc_msgSend)(_target, _action, key, structValue);
+                                    break;
+                                case 3:
+                                    ((void (*)(id, SEL, id, XZMocoaKey, CGPoint))objc_msgSend)(_target, _action, sender, key, structValue);
+                                    break;
+                                default:
+                                    break;
+                            }
+                            break;
+                        }
+                        case XZStdcCocoaTypeCGVector: {
+                            CGVector structValue;
+                            [(NSValue *)value getValue:&structValue size:sizeof(CGVector)];
+                            switch (_numberOfArguments) {
+                                case 1:
+                                    ((void (*)(id, SEL, CGVector))objc_msgSend)(_target, _action, structValue);
+                                    break;
+                                case 2:
+                                    ((void (*)(id, SEL, XZMocoaKey, CGVector))objc_msgSend)(_target, _action, key, structValue);
+                                    break;
+                                case 3:
+                                    ((void (*)(id, SEL, id, XZMocoaKey, CGVector))objc_msgSend)(_target, _action, sender, key, structValue);
+                                    break;
+                                default:
+                                    break;
+                            }
+                            break;
+                        }
+                        case XZStdcCocoaTypeCGAffineTransform: {
+                            CGAffineTransform structValue;
+                            [(NSValue *)value getValue:&structValue size:sizeof(CGAffineTransform)];
+                            switch (_numberOfArguments) {
+                                case 1:
+                                    ((void (*)(id, SEL, CGAffineTransform))objc_msgSend)(_target, _action, structValue);
+                                    break;
+                                case 2:
+                                    ((void (*)(id, SEL, XZMocoaKey, CGAffineTransform))objc_msgSend)(_target, _action, key, structValue);
+                                    break;
+                                case 3:
+                                    ((void (*)(id, SEL, id, XZMocoaKey, CGAffineTransform))objc_msgSend)(_target, _action, sender, key, structValue);
+                                    break;
+                                default:
+                                    break;
+                            }
+                            break;
+                        }
+                        case XZStdcCocoaTypeNSDirectionalEdgeInsets: {
+                            NSDirectionalEdgeInsets structValue;
+                            [(NSValue *)value getValue:&structValue size:sizeof(NSDirectionalEdgeInsets)];
+                            switch (_numberOfArguments) {
+                                case 1:
+                                    ((void (*)(id, SEL, NSDirectionalEdgeInsets))objc_msgSend)(_target, _action, structValue);
+                                    break;
+                                case 2:
+                                    ((void (*)(id, SEL, XZMocoaKey, NSDirectionalEdgeInsets))objc_msgSend)(_target, _action, key, structValue);
+                                    break;
+                                case 3:
+                                    ((void (*)(id, SEL, id, XZMocoaKey, NSDirectionalEdgeInsets))objc_msgSend)(_target, _action, sender, key, structValue);
+                                    break;
+                                default:
+                                    break;
+                            }
+                            break;
+                        }
+                        case XZStdcCocoaTypeNSRange: {
+                            NSRange structValue;
+                            [(NSValue *)value getValue:&structValue size:sizeof(NSRange)];
+                            switch (_numberOfArguments) {
+                                case 1:
+                                    ((void (*)(id, SEL, NSRange))objc_msgSend)(_target, _action, structValue);
+                                    break;
+                                case 2:
+                                    ((void (*)(id, SEL, XZMocoaKey, NSRange))objc_msgSend)(_target, _action, key, structValue);
+                                    break;
+                                case 3:
+                                    ((void (*)(id, SEL, id, XZMocoaKey, NSRange))objc_msgSend)(_target, _action, sender, key, structValue);
+                                    break;
+                                default:
+                                    break;
+                            }
+                            break;
+                        }
+                        case XZStdcCocoaTypeUIEdgeInsets: {
+                            UIEdgeInsets structValue;
+                            [(NSValue *)value getValue:&structValue size:sizeof(UIEdgeInsets)];
+                            switch (_numberOfArguments) {
+                                case 1:
+                                    ((void (*)(id, SEL, UIEdgeInsets))objc_msgSend)(_target, _action, structValue);
+                                    break;
+                                case 2:
+                                    ((void (*)(id, SEL, XZMocoaKey, UIEdgeInsets))objc_msgSend)(_target, _action, key, structValue);
+                                    break;
+                                case 3:
+                                    ((void (*)(id, SEL, id, XZMocoaKey, UIEdgeInsets))objc_msgSend)(_target, _action, sender, key, structValue);
+                                    break;
+                                default:
+                                    break;
+                            }
+                            break;
+                        }
+                        case XZStdcCocoaTypeUIOffset: {
+                            UIOffset structValue;
+                            [(NSValue *)value getValue:&structValue size:sizeof(UIOffset)];
+                            switch (_numberOfArguments) {
+                                case 1:
+                                    ((void (*)(id, SEL, UIOffset))objc_msgSend)(_target, _action, structValue);
+                                    break;
+                                case 2:
+                                    ((void (*)(id, SEL, XZMocoaKey, UIOffset))objc_msgSend)(_target, _action, key, structValue);
+                                    break;
+                                case 3:
+                                    ((void (*)(id, SEL, id, XZMocoaKey, UIOffset))objc_msgSend)(_target, _action, sender, key, structValue);
+                                    break;
+                                default:
+                                    break;
+                            }
+                            break;
                         }
                     }
-                    [invocation invoke];
-                    
-                    free(buffer);
                     break;
                 }
                 case XZStdcTypeClass:

@@ -372,10 +372,10 @@ XZMocoaKey const XZMocoaKeyNone = @"";
             }
             [invokedMethods addObject:methodName];
             
-            NSArray<NSString *>    * const keys   = mapTable.methodToKeys[methodName];
+            NSArray<NSString *> * const keys = mapTable.methodToKeys[methodName];
             XZObjcMethod * const method = mapTable.namedMethods[methodName];
             
-            if (method == nil || keys.count != method.argumentsTypes.count - 2) {
+            if (method == nil || keys.count != method.arguments.count - 2) {
                 continue;
             }
             
@@ -385,7 +385,7 @@ XZMocoaKey const XZMocoaKeyNone = @"";
             invocation.target   = self;
             invocation.selector = method.selector;
             
-            for (NSInteger i = 2; i < method.argumentsTypes.count; i++) {
+            for (NSInteger i = 2; i < method.arguments.count; i++) {
                 NSString * const key = keys[i - 2];
                 
                 id value = fetchedValues[key];
@@ -397,18 +397,220 @@ XZMocoaKey const XZMocoaKeyNone = @"";
                     value = nil;
                 }
                 
-                XZObjcType *type = method.argumentsTypes[i];
-                switch (type.raw) {
+                XZObjcType * const type = method.arguments[i];
+                switch (type.type) {
+                    case XZStdcTypeUnknown: {
+                        void *argumentValue = NULL;
+                        [(NSValue *)value getValue:&argumentValue size:sizeof(void *)];
+                        [invocation setArgument:&argumentValue atIndex:i];
+                        break;
+                    }
+                    case XZStdcTypeChar: {
+                        char argumentValue;
+                        [(NSValue *)value getValue:&argumentValue size:sizeof(char)];
+                        [invocation setArgument:&argumentValue atIndex:i];
+                        break;
+                    }
+                    case XZStdcTypeUnsignedChar: {
+                        unsigned char argumentValue;
+                        [(NSValue *)value getValue:&argumentValue size:sizeof(unsigned char)];
+                        [invocation setArgument:&argumentValue atIndex:i];
+                        break;
+                    }
+                    case XZStdcTypeInt: {
+                        int argumentValue;
+                        [(NSValue *)value getValue:&argumentValue size:sizeof(int)];
+                        [invocation setArgument:&argumentValue atIndex:i];
+                        break;
+                    }
+                    case XZStdcTypeUnsignedInt: {
+                        unsigned int argumentValue;
+                        [(NSValue *)value getValue:&argumentValue size:sizeof(unsigned int)];
+                        [invocation setArgument:&argumentValue atIndex:i];
+                        break;
+                    }
+                    case XZStdcTypeShort: {
+                        short argumentValue;
+                        [(NSValue *)value getValue:&argumentValue size:sizeof(short)];
+                        [invocation setArgument:&argumentValue atIndex:i];
+                        break;
+                    }
+                    case XZStdcTypeUnsignedShort: {
+                        unsigned short argumentValue;
+                        [(NSValue *)value getValue:&argumentValue size:sizeof(unsigned short)];
+                        [invocation setArgument:&argumentValue atIndex:i];
+                        break;
+                    }
+                    case XZStdcTypeLong: {
+                        long argumentValue;
+                        [(NSValue *)value getValue:&argumentValue size:sizeof(long)];
+                        [invocation setArgument:&argumentValue atIndex:i];
+                        break;
+                    }
+                    case XZStdcTypeUnsignedLong: {
+                        unsigned long argumentValue;
+                        [(NSValue *)value getValue:&argumentValue size:sizeof(unsigned long)];
+                        [invocation setArgument:&argumentValue atIndex:i];
+                        break;
+                    }
+                    case XZStdcTypeInt128: {
+                        SInt64 argumentValue;
+                        [(NSValue *)value getValue:&argumentValue size:sizeof(SInt64)];
+                        [invocation setArgument:&argumentValue atIndex:i];
+                        break;
+                    }
+                    case XZStdcTypeUnsignedInt128: {
+                        UInt64 argumentValue;
+                        [(NSValue *)value getValue:&argumentValue size:sizeof(UInt64)];
+                        [invocation setArgument:&argumentValue atIndex:i];
+                        break;
+                    }
+                    case XZStdcTypeLongLong: {
+                        long long argumentValue;
+                        [(NSValue *)value getValue:&argumentValue size:sizeof(long long)];
+                        [invocation setArgument:&argumentValue atIndex:i];
+                        break;
+                    }
+                    case XZStdcTypeUnsignedLongLong: {
+                        unsigned long long argumentValue;
+                        [(NSValue *)value getValue:&argumentValue size:sizeof(unsigned long long)];
+                        [invocation setArgument:&argumentValue atIndex:i];
+                        break;
+                    }
+                    case XZStdcTypeFloat: {
+                        float argumentValue;
+                        [(NSValue *)value getValue:&argumentValue size:sizeof(float)];
+                        [invocation setArgument:&argumentValue atIndex:i];
+                        break;
+                    }
+                    case XZStdcTypeDouble: {
+                        double argumentValue;
+                        [(NSValue *)value getValue:&argumentValue size:sizeof(double)];
+                        [invocation setArgument:&argumentValue atIndex:i];
+                        break;
+                    }
+                    case XZStdcTypeLongDouble: {
+                        long double argumentValue;
+                        [(NSValue *)value getValue:&argumentValue size:sizeof(long double)];
+                        [invocation setArgument:&argumentValue atIndex:i];
+                        break;
+                    }
+                    case XZStdcTypeBool: {
+                        BOOL argumentValue;
+                        [(NSValue *)value getValue:&argumentValue size:sizeof(BOOL)];
+                        [invocation setArgument:&argumentValue atIndex:i];
+                        break;
+                    }
+                    case XZStdcTypeVoid: {
+                        // 不会出现此类型
+                        break;
+                    }
+                    case XZStdcTypeString: {
+                        char *argumentValue;
+                        [(NSValue *)value getValue:&argumentValue size:sizeof(char *)];
+                        [invocation setArgument:&argumentValue atIndex:i];
+                        break;
+                    }
+                    case XZStdcTypeSelector: {
+                        SEL argumentValue;
+                        [(NSValue *)value getValue:&argumentValue size:sizeof(SEL)];
+                        [invocation setArgument:&argumentValue atIndex:i];
+                        break;
+                    }
+                    case XZStdcTypePointer: {
+                        void *argumentValue;
+                        [(NSValue *)value getValue:&argumentValue size:sizeof(void *)];
+                        [invocation setArgument:&argumentValue atIndex:i];
+                        break;
+                    }
+                    case XZStdcTypeArray: {
+                        void *argumentValue;
+                        [(NSValue *)value getValue:&argumentValue size:sizeof(void *)];
+                        [invocation setArgument:&argumentValue atIndex:i];
+                        break;
+                    }
+                    case XZStdcTypeVector: {
+                        void *argumentValue;
+                        [(NSValue *)value getValue:&argumentValue size:sizeof(void *)];
+                        [invocation setArgument:&argumentValue atIndex:i];
+                        break;
+                    }
+                    case XZStdcTypeBitField: {
+                        // 不会出现此类型
+                        break;
+                    }
+                    case XZStdcTypeUnion: {
+                        NSString *reason = [NSString stringWithFormat:@"暂不支持 union 类型，请使用 NSValue 代替：%@", type.name];
+                        @throw [NSException exceptionWithName:NSInvalidArgumentException reason:reason userInfo:nil];
+                        break;
+                    }
+                    case XZStdcTypeStruct: {
+                        switch (type.cocoaType) {
+                            case XZStdcCocoaTypeUnknown: {
+                                NSString *reason = [NSString stringWithFormat:@"暂不支持 struct 类型，请使用 NSValue 代替：%@", type.name];
+                                @throw [NSException exceptionWithName:NSInvalidArgumentException reason:reason userInfo:nil];
+                                break;
+                            }
+                            case XZStdcCocoaTypeCGRect: {
+                                CGRect argumentValue;
+                                [(NSValue *)value getValue:&argumentValue size:sizeof(CGRect)];
+                                [invocation setArgument:&argumentValue atIndex:i];
+                                break;
+                            }
+                            case XZStdcCocoaTypeCGSize: {
+                                CGSize argumentValue;
+                                [(NSValue *)value getValue:&argumentValue size:sizeof(CGSize)];
+                                [invocation setArgument:&argumentValue atIndex:i];
+                                break;
+                            }
+                            case XZStdcCocoaTypeCGPoint: {
+                                CGPoint argumentValue;
+                                [(NSValue *)value getValue:&argumentValue size:sizeof(CGPoint)];
+                                [invocation setArgument:&argumentValue atIndex:i];
+                                break;
+                            }
+                            case XZStdcCocoaTypeCGVector: {
+                                CGVector argumentValue;
+                                [(NSValue *)value getValue:&argumentValue size:sizeof(CGVector)];
+                                [invocation setArgument:&argumentValue atIndex:i];
+                                break;
+                            }
+                            case XZStdcCocoaTypeCGAffineTransform: {
+                                CGAffineTransform argumentValue;
+                                [(NSValue *)value getValue:&argumentValue size:sizeof(CGAffineTransform)];
+                                [invocation setArgument:&argumentValue atIndex:i];
+                                break;
+                            }
+                            case XZStdcCocoaTypeNSDirectionalEdgeInsets: {
+                                NSDirectionalEdgeInsets argumentValue;
+                                [(NSValue *)value getValue:&argumentValue size:sizeof(NSDirectionalEdgeInsets)];
+                                [invocation setArgument:&argumentValue atIndex:i];
+                                break;
+                            }
+                            case XZStdcCocoaTypeNSRange: {
+                                NSRange argumentValue;
+                                [(NSValue *)value getValue:&argumentValue size:sizeof(NSRange)];
+                                [invocation setArgument:&argumentValue atIndex:i];
+                                break;
+                            }
+                            case XZStdcCocoaTypeUIEdgeInsets: {
+                                UIEdgeInsets argumentValue;
+                                [(NSValue *)value getValue:&argumentValue size:sizeof(UIEdgeInsets)];
+                                [invocation setArgument:&argumentValue atIndex:i];
+                                break;
+                            }
+                            case XZStdcCocoaTypeUIOffset: {
+                                UIOffset argumentValue;
+                                [(NSValue *)value getValue:&argumentValue size:sizeof(UIOffset)];
+                                [invocation setArgument:&argumentValue atIndex:i];
+                                break;
+                            }
+                        }
+                        break;
+                    }
                     case XZStdcTypeClass:
                     case XZStdcTypeObject: {
                         [invocation setArgument:&value atIndex:i];
-                        break;
-                    }
-                    default: {
-                        void *buffer = calloc(type.size, 1);
-                        [(NSValue *)value getValue:buffer size:type.size];
-                        [invocation setArgument:buffer atIndex:i];
-                        free(buffer);
                         break;
                     }
                 }

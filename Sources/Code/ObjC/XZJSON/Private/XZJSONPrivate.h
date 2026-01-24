@@ -10,8 +10,8 @@
 #if __has_include(<XZKit/XZKit.h>)
 #import <XZKit/XZJSONDecoder.h>
 #import <XZKit/XZJSONDefines.h>
-#import <XZKit/XZJSONClassDescriptor.h>
-#import <XZKit/XZJSONPropertyDescriptor.h>
+#import <XZKit/XZJSONClass.h>
+#import <XZKit/XZJSONProperty.h>
 #import <XZKit/XZJSONEncoder.h>
 #else
 #import "XZJSONDefines.h"

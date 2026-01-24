@@ -318,7 +318,7 @@
 @implementation Example05Student
 
 + (void)load {
-    XZObjcTypeRegister(Example05Struct);
+    
 }
 
 + (NSArray<NSString *> *)allowedJSONCodingKeys {

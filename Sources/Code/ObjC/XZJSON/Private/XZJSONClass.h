@@ -1,5 +1,5 @@
 //
-//  XZJSONClassDescriptor.h
+//  XZJSONClass.h
 //  XZJSON
 //
 //  Created by Xezun on 2024/9/29.
@@ -7,36 +7,36 @@
 
 #import <Foundation/Foundation.h>
 #import "XZObjc.h"
-#import "XZJSONDescriptor.h"
+#import "XZJSONType.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
-@class XZJSONPropertyDescriptor;
+@class XZJSONProperty;
 
 /// 用于描述进行 JSON 模型化或序列化的 Class 信息。
-@interface XZJSONClassDescriptor : NSObject {
+@interface XZJSONClass : NSObject {
     @package
     /// 描述类基本信息的对象。
     XZObjcClass *_raw;
     
     /// 如果是，原生对象的类型。 Model class type.
-    XZJSONFoundationClass _foundationClass;
+    XZJSONCocoaType _foundationClass;
     
     /// 所有可模型化或序列化的属性的数量。
     NSUInteger _numberOfProperties;
     
     /// 按名称排序的，所有可模型化、序列化的属性的集合，包括从超类继承的。
-    NSArray<XZJSONPropertyDescriptor *> *_sortedProperties;
+    NSArray<XZJSONProperty *> *_sortedProperties;
     
     /// 以属性名为键的，所有可模型化、序列化属性组成的字典，包括从超类继承的。
-    NSDictionary<NSString *, XZJSONPropertyDescriptor *> *_namedProperties;
+    NSDictionary<NSString *, XZJSONProperty *> *_namedProperties;
     
     /// 使用 key 映射的属性。
-    NSDictionary<NSString *, XZJSONPropertyDescriptor *> *_keyProperties;
+    NSDictionary<NSString *, XZJSONProperty *> *_keyProperties;
     /// 使用 keyPath 映射的属性。
-    NSArray<XZJSONPropertyDescriptor *> *_keyPathProperties;
+    NSArray<XZJSONProperty *> *_keyPathProperties;
     /// 使用 keyArray 映射的属性。
-    NSArray<XZJSONPropertyDescriptor *> *_keyArrayProperties;
+    NSArray<XZJSONProperty *> *_keyArrayProperties;
     
     /// 是否需要转发模型解析。
     BOOL _forwardsDecodingClass;
@@ -55,7 +55,7 @@ NS_ASSUME_NONNULL_BEGIN
 }
 
 - (instancetype)init NS_UNAVAILABLE;
-+ (nullable XZJSONClassDescriptor *)descriptorForClass:(nullable Class)aClass;
++ (nullable XZJSONClass *)descriptorForClass:(nullable Class)aClass;
 
 @end
 

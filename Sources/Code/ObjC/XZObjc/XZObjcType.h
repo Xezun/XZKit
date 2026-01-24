@@ -67,12 +67,12 @@ typedef NS_ENUM(NSUInteger, XZStdcType) {
     XZStdcTypeString           = _C_CHARPTR,
     /// SEL
     XZStdcTypeSelector         = _C_SEL,
-    /// pointer to type
+    /// C 指针。pointer to type
     XZStdcTypePointer          = _C_PTR,
-    /// C 数组
-    XZStdcTypeArray            = _C_ARY_B,
     /// C 动态数组，Vector 
     XZStdcTypeVector           = _C_VECTOR,
+    /// C 数组
+    XZStdcTypeArray            = _C_ARY_B,
     /// bit field of num bits
     /// ```objc
     /// // 位域结构体的成员的类型即为 bit field
@@ -148,36 +148,52 @@ typedef NS_OPTIONS(NSUInteger, XZStdcModifiers) {
     XZStdcModifierDynamic     = 1 << (8 + 17),
 };
 
+/// 常用 C 复合数据类型：结构体和共用体。
+typedef NS_ENUM(NSUInteger, XZStdcCocoaType) {
+    XZStdcCocoaTypeUnknown = 0,
+    XZStdcCocoaTypeCGRect,
+    XZStdcCocoaTypeCGSize,
+    XZStdcCocoaTypeCGPoint,
+    XZStdcCocoaTypeCGVector,
+    XZStdcCocoaTypeCGAffineTransform,
+    XZStdcCocoaTypeNSDirectionalEdgeInsets,
+    XZStdcCocoaTypeNSRange,
+    XZStdcCocoaTypeUIEdgeInsets,
+    XZStdcCocoaTypeUIOffset
+};
+FOUNDATION_EXPORT XZStdcCocoaType XZStdcCocoaTypeFromString(NSString *name);
+
 /// 描述基本数据类型的对象。
 ///
 /// 数据类型，通常也称为变量类型。在 objc 中，数据类型包括 c 基础类型，比如 int、float 等，和 NSObject 等对象类型，可通过 `\@encoding(type)` 可将类型编码为字符串。
 @interface XZObjcType : NSObject
 
 /// 类型。改名为 type 或 prototype
-@property (nonatomic, readonly) XZStdcType raw;
-
-/// 对象类型的类对象类型。classType
-///
-/// 此属性仅在 `type` 为 `XZStdcTypeObject` 时才可能有值。
-@property (nonatomic, readonly, nullable) Class subtype;
-
-/// 类型的原始值，即类型的编码。
-@property (nonatomic, readonly) NSString *encoding;
+@property (nonatomic, readonly) XZStdcType type;
 
 /// 通用名称。
 @property (nonatomic, readonly) NSString *name;
 
-/// 比如数组、结构体、共用体等复合类型的成员类型。
+/// 类型的原始值，即类型的编码。
+@property (nonatomic, readonly) NSString *encoding;
+
+/// 集合类型：C数组、位域、指针。
+@property (nonatomic, readonly, nullable) XZObjcType *elementType;
+/// 集合类型的容量。非集合类型返回零。
+@property (nonatomic, readonly) NSInteger capacity;
+
+/// 复合类型的实际类型枚举。
+@property (nonatomic, readonly) XZStdcCocoaType cocoaType;
+/// 复合类型的成员组成。
 @property (nonatomic, readonly) NSArray<XZObjcType *> *members;
 
+/// 对象类型的类对象类型。classType
+@property (nonatomic, readonly, nullable) Class classType;
 /// 对象类型遵循的协议。
-///
-/// 此属性仅在 `type` 为 `XZStdcTypeObject` 时才可能有值。
 @property (nonatomic, readonly) NSArray<Protocol *> *protocols;
 
 - (instancetype)init NS_UNAVAILABLE;
 + (instancetype)new NS_UNAVAILABLE;
-
 
 + (XZObjcType *)typeForType:(XZStdcType)stdcType;
 
@@ -193,5 +209,12 @@ typedef NS_OPTIONS(NSUInteger, XZStdcModifiers) {
 + (nullable XZObjcType *)typeForEncoding:(const char * _Nullable)encoding NS_SWIFT_NAME(init(for:));
 
 @end
+
+FOUNDATION_STATIC_INLINE XZStdcCocoaType XZStdcCocoaTypeFromType(XZObjcType *type) {
+    if (type.type == XZStdcTypeStruct) {
+        return XZStdcCocoaTypeFromString(type.name);
+    }
+    return XZStdcCocoaTypeUnknown;
+}
 
 NS_ASSUME_NONNULL_END

@@ -9,18 +9,18 @@
 
 @implementation XZObjcIvar
 
-+ (instancetype)ivarForIvar:(Ivar)rawIvar {
-    if (rawIvar == nil) {
++ (instancetype)ivarWithIvar:(Ivar)ivar {
+    if (ivar == nil) {
         return nil;
     }
 
-    const char * const name = ivar_getName(rawIvar);
+    const char * const name = ivar_getName(ivar);
 
     if (name == nil) {
         return nil;
     }
 
-    const char * const typeEncoding = ivar_getTypeEncoding(rawIvar);
+    const char * const typeEncoding = ivar_getTypeEncoding(ivar);
 
     if (typeEncoding == nil) {
         return nil;
@@ -32,7 +32,7 @@
     }
 
     NSString *_name = [NSString stringWithCString:name encoding:NSASCIIStringEncoding];
-    return [[self alloc] initWithIvar:rawIvar name:_name type:_type];
+    return [[self alloc] initWithIvar:ivar name:_name type:_type];
 }
 
 - (instancetype)initWithIvar:(Ivar)ivar name:(NSString *)name type:(XZObjcType *)type {
@@ -47,7 +47,7 @@
 }
 
 - (NSString *)description {
-    return [NSString stringWithFormat:@"<%@: %p, name: %@, type: <%p: %@>, offset: %ld>", NSStringFromClass(self.class), self, self.name, self.type, ((id)self.type.subtype ?: self.type.name), self.offset];
+    return [NSString stringWithFormat:@"<%@: %p, name: %@, type: <%p: %@>, offset: %ld>", NSStringFromClass(self.class), self, self.name, self.type, ((id)self.type.classType ?: self.type.name), self.offset];
 }
 
 @end

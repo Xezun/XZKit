@@ -10,32 +10,32 @@
 
 @implementation XZObjcProperty
 
-+ (instancetype)propertyForProperty:(objc_property_t)rawProperty forClass:(Class)aClass {
-    if (!rawProperty) {
++ (instancetype)propertyWithProperty:(objc_property_t)property class:(Class)aClass {
+    if (!property) {
         return nil;
     }
 
-    const char * const name = property_getName(rawProperty);
+    const char * const name = property_getName(property);
 
     if (name == nil || strlen(name) == 0) {
         return nil;
     }
 
-    XZStdcModifiers modifiers = kNilOptions;
-    XZObjcIvar *_ivar = nil;
-    SEL _getter = nil;
-    SEL _setter = nil;
-    const char *typeEncoding = NULL;
+    XZStdcModifiers _modifiers = kNilOptions;
+    XZObjcIvar *    _ivar = nil;
+    SEL             _getter = nil;
+    SEL             _setter = nil;
     
+    const char * typeEncoding = NULL;
     unsigned int attrCount;
-    objc_property_attribute_t *attrs = property_copyAttributeList(rawProperty, &attrCount);
+    objc_property_attribute_t *attrLists = property_copyAttributeList(property, &attrCount);
 
     for (unsigned int i = 0; i < attrCount; i++) {
-        const char * const attrValue = attrs[i].value;
+        const char * const attrValue = attrLists[i].value;
         if (attrValue == NULL) {
             continue;
         }
-        const char * const attrName  = attrs[i].name;
+        const char * const attrName  = attrLists[i].name;
         if (attrName == NULL) {
             continue;
         }
@@ -49,44 +49,44 @@
                 if (attrValue) {
                     Ivar ivar = class_getInstanceVariable(aClass, attrValue);
                     if (ivar) {
-                        _ivar = [XZObjcIvar ivarForIvar:ivar];
+                        _ivar = [XZObjcIvar ivarWithIvar:ivar];
                     }
                 }
                 break;
             }
 
             case 'R': {
-                modifiers |= XZStdcModifierReadonly;
+                _modifiers |= XZStdcModifierReadonly;
                 break;
             }
 
             case 'C': {
-                modifiers |= XZStdcModifierCopy;
+                _modifiers |= XZStdcModifierCopy;
                 break;
             }
 
             case '&': {
-                modifiers |= XZStdcModifierRetain;
+                _modifiers |= XZStdcModifierRetain;
                 break;
             }
 
             case 'N': {
-                modifiers |= XZStdcModifierNonatomic;
+                _modifiers |= XZStdcModifierNonatomic;
                 break;
             }
 
             case 'D': {
-                modifiers |= XZStdcModifierDynamic;
+                _modifiers |= XZStdcModifierDynamic;
                 break;
             }
 
             case 'W': {
-                modifiers |= XZStdcModifierWeak;
+                _modifiers |= XZStdcModifierWeak;
                 break;
             }
 
             case 'G': {
-                modifiers |= XZStdcModifierGetter;
+                _modifiers |= XZStdcModifierGetter;
 
                 if (attrValue) {
                     _getter = sel_getUid(attrValue);
@@ -95,7 +95,7 @@
             }
 
             case 'S': {
-                modifiers |= XZStdcModifierSetter;
+                _modifiers |= XZStdcModifierSetter;
 
                 if (attrValue) {
                     _setter = sel_getUid(attrValue);
@@ -108,14 +108,14 @@
         }
     }
     
-    XZObjcType *_type = [XZObjcType typeForEncoding:typeEncoding modifiers:modifiers];
+    XZObjcType *_type = [XZObjcType typeForEncoding:typeEncoding];
     if (_type == nil) {
         return nil;
     }
     
-    if (attrs) {
-        free(attrs);
-        attrs = NULL;
+    if (attrLists) {
+        free(attrLists);
+        attrLists = NULL;
     }
 
     if (!_getter) {
@@ -126,33 +126,32 @@
         }
     }
 
-    if (!_setter && !(modifiers & XZStdcModifierReadonly)) {
+    if (!_setter && !(_modifiers & XZStdcModifierReadonly)) {
         NSString *setterName = [NSString stringWithFormat:@"set%c%s:", toupper(name[0]), name + 1];
         _setter = NSSelectorFromString(setterName);
     }
     
     NSString *_name = [NSString stringWithCString:name encoding:(NSASCIIStringEncoding)];
-    return [[self alloc] initWithProperty:rawProperty name:_name type:_type ivar:_ivar getter:_getter setter:_setter];
+    return [[self alloc] initWithProperty:property name:_name type:_type ivar:_ivar modifiers:_modifiers getter:_getter setter:_setter];
 }
 
-- (instancetype)initWithProperty:(objc_property_t)property name:(NSString *)name type:(XZObjcType *)type ivar:(XZObjcIvar *)ivar getter:(SEL)getter setter:(SEL)setter {
+- (instancetype)initWithProperty:(objc_property_t)property name:(NSString *)name type:(XZObjcType *)type ivar:(XZObjcIvar *)ivar modifiers:(XZStdcModifiers)modifiers getter:(SEL)getter setter:(SEL)setter {
     self = [super init];
-
     if (self != nil) {
         _raw = property;
         _name = name;
         _type = type;
         _ivar = ivar;
+        _modifiers = modifiers;
         _getter = getter;
         _setter = setter;
     }
-
     return self;
 }
 
 - (NSString *)description {
     NSString * const className = NSStringFromClass(self.class);
-    NSString * const type   = [NSString stringWithFormat:@"<%p: %@>", self.type, ((id)self.type.subtype ?: self.type.name)];
+    NSString * const type   = [NSString stringWithFormat:@"<%p: %@>", self.type, ((id)self.type.classType ?: self.type.name)];
     NSString * const getter = NSStringFromSelector(self.getter);
     NSString * const setter = (self.setter ? NSStringFromSelector(self.setter) : nil);
     return [NSString stringWithFormat:@"<%@: %p, name: %@, type: %@, ivar: %p, getter: %@, setter: %@>", className, self, self.name, type, self.ivar, getter, setter];

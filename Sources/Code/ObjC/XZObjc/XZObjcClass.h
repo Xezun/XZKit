@@ -21,7 +21,7 @@ FOUNDATION_EXPORT NSNotificationName const XZObjcClassDidDidBecomeInvalidNotific
 /// 描述类的对象。
 ///
 /// Class information for a class.
-@interface XZObjcClass : NSObject <XZObjcType>
+@interface XZObjcClass : NSObject
 
 /// 当前类，当前对象所描述的类。
 @property (nonatomic, readonly) Class raw;
