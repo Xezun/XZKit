@@ -34,14 +34,14 @@
     
     if (descriptor->_type == XZStdcTypeObject) {
         descriptor->_classType = property.type.classType;
-        descriptor->_cocoaType = XZJSONCocoaTypeFromClass(descriptor->_classType);
-        descriptor->_composeType = XZStdcCocoaTypeUnknown;
+        descriptor->_cocoaClass = XZJSONCocoaClassFromClass(descriptor->_classType);
+        descriptor->_structType = XZStdcStructTypeUnknown;
         XZStdcModifiers const modifiers = property.modifiers;
         descriptor->_isUnownedReference = (modifiers & XZStdcModifierWeak) || (!(modifiers & XZStdcModifierCopy) && !(modifiers & XZStdcModifierRetain));
     } else {
         descriptor->_classType = Nil;
-        descriptor->_cocoaType = XZJSONCocoaTypeUnknown;
-        descriptor->_composeType = XZStdcCocoaTypeFromType(property.type);
+        descriptor->_cocoaClass = XZJSONCocoaClassUnknown;
+        descriptor->_structType = XZStdcStructTypeFromType(property.type);
         descriptor->_isUnownedReference = NO;
     }
     
@@ -104,7 +104,7 @@
             descriptor->_isCodable = NO;
             break;
         case XZStdcTypeStruct:
-            descriptor->_isCodable = (descriptor->_composeType != XZStdcCocoaTypeUnknown);
+            descriptor->_isCodable = (descriptor->_structType != XZStdcStructTypeUnknown);
             break;
         case XZStdcTypeClass:
             descriptor->_isCodable = YES;

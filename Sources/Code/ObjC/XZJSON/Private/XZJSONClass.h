@@ -7,7 +7,7 @@
 
 #import <Foundation/Foundation.h>
 #import "XZObjc.h"
-#import "XZJSONType.h"
+#import "XZJSONPrivateDefines.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -20,7 +20,7 @@ NS_ASSUME_NONNULL_BEGIN
     XZObjcClass *_raw;
     
     /// 如果是，原生对象的类型。 Model class type.
-    XZJSONCocoaType _foundationClass;
+    XZJSONCocoaClass _cocoaClass;
     
     /// 所有可模型化或序列化的属性的数量。
     NSUInteger _numberOfProperties;

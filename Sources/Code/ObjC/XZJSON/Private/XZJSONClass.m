@@ -22,10 +22,10 @@ static id XZJSONKeyFromString(NSString *aString);
     self = [super init];
     if (self) {
         _raw = [XZObjcClass classForClass:aClass];
-        _foundationClass = XZJSONCocoaTypeFromClass(aClass);
+        _cocoaClass = XZJSONCocoaClassFromClass(aClass);
         
         // 原生对象，不需要获取属性
-        if (_foundationClass != XZJSONCocoaTypeUnknown) {
+        if (_cocoaClass != XZJSONCocoaClassUnknown) {
             _numberOfProperties = 0;
             _sortedProperties = @[];
             _namedProperties = @{};
@@ -153,14 +153,14 @@ static id XZJSONKeyFromString(NSString *aString);
                     case XZStdcTypeUnion:
                         return;
                     case XZStdcTypeStruct:
-                        if (descriptor->_composeType) {
+                        if (descriptor->_structType != XZStdcStructTypeUnknown) {
                             break;
                         }
                         return;
                     case XZStdcTypeClass:
                         break;
                     case XZStdcTypeObject:
-                        if (descriptor->_cocoaType) {
+                        if (descriptor->_cocoaClass) {
                             break;
                         }
                         // 弱引用

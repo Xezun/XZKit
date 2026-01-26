@@ -545,61 +545,61 @@ XZMocoaKey const XZMocoaKeyNone = @"";
                         break;
                     }
                     case XZStdcTypeStruct: {
-                        switch (type.cocoaType) {
-                            case XZStdcCocoaTypeUnknown: {
+                        switch (type.structType) {
+                            case XZStdcStructTypeUnknown: {
                                 NSString *reason = [NSString stringWithFormat:@"暂不支持 struct 类型，请使用 NSValue 代替：%@", type.name];
                                 @throw [NSException exceptionWithName:NSInvalidArgumentException reason:reason userInfo:nil];
                                 break;
                             }
-                            case XZStdcCocoaTypeCGRect: {
+                            case XZStdcStructTypeCGRect: {
                                 CGRect argumentValue;
                                 [(NSValue *)value getValue:&argumentValue size:sizeof(CGRect)];
                                 [invocation setArgument:&argumentValue atIndex:i];
                                 break;
                             }
-                            case XZStdcCocoaTypeCGSize: {
+                            case XZStdcStructTypeCGSize: {
                                 CGSize argumentValue;
                                 [(NSValue *)value getValue:&argumentValue size:sizeof(CGSize)];
                                 [invocation setArgument:&argumentValue atIndex:i];
                                 break;
                             }
-                            case XZStdcCocoaTypeCGPoint: {
+                            case XZStdcStructTypeCGPoint: {
                                 CGPoint argumentValue;
                                 [(NSValue *)value getValue:&argumentValue size:sizeof(CGPoint)];
                                 [invocation setArgument:&argumentValue atIndex:i];
                                 break;
                             }
-                            case XZStdcCocoaTypeCGVector: {
+                            case XZStdcStructTypeCGVector: {
                                 CGVector argumentValue;
                                 [(NSValue *)value getValue:&argumentValue size:sizeof(CGVector)];
                                 [invocation setArgument:&argumentValue atIndex:i];
                                 break;
                             }
-                            case XZStdcCocoaTypeCGAffineTransform: {
+                            case XZStdcStructTypeCGAffineTransform: {
                                 CGAffineTransform argumentValue;
                                 [(NSValue *)value getValue:&argumentValue size:sizeof(CGAffineTransform)];
                                 [invocation setArgument:&argumentValue atIndex:i];
                                 break;
                             }
-                            case XZStdcCocoaTypeNSDirectionalEdgeInsets: {
+                            case XZStdcStructTypeNSDirectionalEdgeInsets: {
                                 NSDirectionalEdgeInsets argumentValue;
                                 [(NSValue *)value getValue:&argumentValue size:sizeof(NSDirectionalEdgeInsets)];
                                 [invocation setArgument:&argumentValue atIndex:i];
                                 break;
                             }
-                            case XZStdcCocoaTypeNSRange: {
+                            case XZStdcStructTypeNSRange: {
                                 NSRange argumentValue;
                                 [(NSValue *)value getValue:&argumentValue size:sizeof(NSRange)];
                                 [invocation setArgument:&argumentValue atIndex:i];
                                 break;
                             }
-                            case XZStdcCocoaTypeUIEdgeInsets: {
+                            case XZStdcStructTypeUIEdgeInsets: {
                                 UIEdgeInsets argumentValue;
                                 [(NSValue *)value getValue:&argumentValue size:sizeof(UIEdgeInsets)];
                                 [invocation setArgument:&argumentValue atIndex:i];
                                 break;
                             }
-                            case XZStdcCocoaTypeUIOffset: {
+                            case XZStdcStructTypeUIOffset: {
                                 UIOffset argumentValue;
                                 [(NSValue *)value getValue:&argumentValue size:sizeof(UIOffset)];
                                 [invocation setArgument:&argumentValue atIndex:i];

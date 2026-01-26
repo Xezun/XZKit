@@ -148,20 +148,20 @@ typedef NS_OPTIONS(NSUInteger, XZStdcModifiers) {
     XZStdcModifierDynamic     = 1 << (8 + 17),
 };
 
-/// 常用 C 复合数据类型：结构体和共用体。
-typedef NS_ENUM(NSUInteger, XZStdcCocoaType) {
-    XZStdcCocoaTypeUnknown = 0,
-    XZStdcCocoaTypeCGRect,
-    XZStdcCocoaTypeCGSize,
-    XZStdcCocoaTypeCGPoint,
-    XZStdcCocoaTypeCGVector,
-    XZStdcCocoaTypeCGAffineTransform,
-    XZStdcCocoaTypeNSDirectionalEdgeInsets,
-    XZStdcCocoaTypeNSRange,
-    XZStdcCocoaTypeUIEdgeInsets,
-    XZStdcCocoaTypeUIOffset
+/// 常用 C 复合数据类型：结构体。
+typedef NS_ENUM(NSUInteger, XZStdcStructType) {
+    XZStdcStructTypeUnknown = 0,
+    XZStdcStructTypeCGRect,
+    XZStdcStructTypeCGSize,
+    XZStdcStructTypeCGPoint,
+    XZStdcStructTypeCGVector,
+    XZStdcStructTypeCGAffineTransform,
+    XZStdcStructTypeNSDirectionalEdgeInsets,
+    XZStdcStructTypeNSRange,
+    XZStdcStructTypeUIEdgeInsets,
+    XZStdcStructTypeUIOffset
 };
-FOUNDATION_EXPORT XZStdcCocoaType XZStdcCocoaTypeFromString(NSString *name);
+FOUNDATION_EXPORT XZStdcStructType XZStdcStructTypeFromString(NSString *name);
 
 /// 描述基本数据类型的对象。
 ///
@@ -183,7 +183,7 @@ FOUNDATION_EXPORT XZStdcCocoaType XZStdcCocoaTypeFromString(NSString *name);
 @property (nonatomic, readonly) NSInteger capacity;
 
 /// 复合类型的实际类型枚举。
-@property (nonatomic, readonly) XZStdcCocoaType cocoaType;
+@property (nonatomic, readonly) XZStdcStructType structType;
 /// 复合类型的成员组成。
 @property (nonatomic, readonly) NSArray<XZObjcType *> *members;
 
@@ -210,11 +210,11 @@ FOUNDATION_EXPORT XZStdcCocoaType XZStdcCocoaTypeFromString(NSString *name);
 
 @end
 
-FOUNDATION_STATIC_INLINE XZStdcCocoaType XZStdcCocoaTypeFromType(XZObjcType *type) {
+FOUNDATION_STATIC_INLINE XZStdcStructType XZStdcStructTypeFromType(XZObjcType *type) {
     if (type.type == XZStdcTypeStruct) {
-        return XZStdcCocoaTypeFromString(type.name);
+        return XZStdcStructTypeFromString(type.name);
     }
-    return XZStdcCocoaTypeUnknown;
+    return XZStdcStructTypeUnknown;
 }
 
 NS_ASSUME_NONNULL_END

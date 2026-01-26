@@ -35,49 +35,49 @@ static NSString * _Nonnull XZJSONModelDescriptionForNSCollection(id<NSFastEnumer
     return desc;
 }
 
-NSString * _Nonnull XZJSONModelDescriptionForFoundationClassOfType(id model, XZJSONCocoaType const classType, NSUInteger indent) {
+NSString * _Nonnull XZJSONModelDescriptionForCocoaClass(id model, XZJSONCocoaClass const classType, NSUInteger indent) {
     switch (classType) {
-        case XZJSONCocoaTypeNSString:
-        case XZJSONCocoaTypeNSMutableString: {
+        case XZJSONCocoaClassNSString:
+        case XZJSONCocoaClassNSMutableString: {
             NSString *aString = model;
             aString = [aString stringByReplacingOccurrencesOfString:@"\n" withString:@"\\n"];
             return [NSString stringWithFormat:@"\"%@\"", aString];
         }
-        case XZJSONCocoaTypeNSValue: {
+        case XZJSONCocoaClassNSValue: {
             return ((NSValue *)model).description;
             break;
         }
-        case XZJSONCocoaTypeNSNumber: {
+        case XZJSONCocoaClassNSNumber: {
             return [(NSNumber *)model stringValue];
         }
-        case XZJSONCocoaTypeNSData:
-        case XZJSONCocoaTypeNSMutableData: {
+        case XZJSONCocoaClassNSData:
+        case XZJSONCocoaClassNSMutableData: {
             return [(NSData *)model description];
         }
-        case XZJSONCocoaTypeNSDecimalNumber: {
+        case XZJSONCocoaClassNSDecimalNumber: {
             return [(NSDecimalNumber *)model stringValue];
         }
-        case XZJSONCocoaTypeNSDate: {
+        case XZJSONCocoaClassNSDate: {
             return [XZJSON.dateFormatter stringFromDate:model];
         }
-        case XZJSONCocoaTypeNSURL: {
+        case XZJSONCocoaClassNSURL: {
             return ((NSURL *)model).absoluteString;
         }
-        case XZJSONCocoaTypeNSSet:
-        case XZJSONCocoaTypeNSMutableSet:
-        case XZJSONCocoaTypeNSCountedSet: {
+        case XZJSONCocoaClassNSSet:
+        case XZJSONCocoaClassNSMutableSet:
+        case XZJSONCocoaClassNSCountedSet: {
             return XZJSONModelDescriptionForNSCollection(((NSSet *)model).allObjects, ((NSSet *)model).count, indent);
         }
-        case XZJSONCocoaTypeNSOrderedSet:
-        case XZJSONCocoaTypeNSMutableOrderedSet: {
+        case XZJSONCocoaClassNSOrderedSet:
+        case XZJSONCocoaClassNSMutableOrderedSet: {
             return XZJSONModelDescriptionForNSCollection((NSOrderedSet *)model, ((NSOrderedSet *)model).count, indent);
         }
-        case XZJSONCocoaTypeNSArray:
-        case XZJSONCocoaTypeNSMutableArray: {
+        case XZJSONCocoaClassNSArray:
+        case XZJSONCocoaClassNSMutableArray: {
             return XZJSONModelDescriptionForNSCollection((NSArray *)model, ((NSArray *)model).count, indent);
         }
-        case XZJSONCocoaTypeNSDictionary:
-        case XZJSONCocoaTypeNSMutableDictionary: {
+        case XZJSONCocoaClassNSDictionary:
+        case XZJSONCocoaClassNSMutableDictionary: {
             NSDictionary * const dict  = (id)model;
             NSUInteger     const count = dict.count;
             if (count == 0) {
@@ -98,7 +98,7 @@ NSString * _Nonnull XZJSONModelDescriptionForFoundationClassOfType(id model, XZJ
             
             return desc;
         }
-        case XZJSONCocoaTypeUnknown: {
+        case XZJSONCocoaClassUnknown: {
             @throw [NSException exceptionWithName:NSGenericException reason:@"" userInfo:nil];
         }
     }
@@ -119,8 +119,8 @@ NSString * _Nonnull XZJSONModelDescription(NSObject *_Nonnull model, NSUInteger 
 
     XZJSONClass * const modelClass = [XZJSONClass descriptorForClass:model.class];
 
-    if (modelClass->_foundationClass != XZJSONCocoaTypeUnknown) {
-        return XZJSONModelDescriptionForFoundationClassOfType(model, modelClass->_foundationClass, indent);
+    if (modelClass->_cocoaClass != XZJSONCocoaClassUnknown) {
+        return XZJSONModelDescriptionForCocoaClass(model, modelClass->_cocoaClass, indent);
     }
     
     if (modelClass->_sortedProperties.count == 0) {
@@ -208,8 +208,8 @@ NSString * _Nonnull XZJSONModelDescription(NSObject *_Nonnull model, NSUInteger 
                 value = ((id (*)(id _Nonnull, SEL _Nonnull))objc_msgSend)((id)model, property->_getter);
                 if (property->_isUnownedReference) {
                     value = [NSString stringWithFormat:@"<%@: %p>", value.class, value];
-                } else if (property->_cocoaType) {
-                    value = XZJSONModelDescriptionForFoundationClassOfType(value, property->_cocoaType, indent);
+                } else if (property->_cocoaClass) {
+                    value = XZJSONModelDescriptionForCocoaClass(value, property->_cocoaClass, indent);
                 } else {
                     value = [XZJSON model:value descriptionWithIndent:indent];
                 }
@@ -358,39 +358,39 @@ void XZJSONModelEncodeWithCoder(id model, NSCoder *aCoder) {
     
     XZJSONClass * const modelClass = [XZJSONClass descriptorForClass:[model class]];
     
-    switch (modelClass->_foundationClass) {
-        case XZJSONCocoaTypeNSString:
-        case XZJSONCocoaTypeNSMutableString:
-        case XZJSONCocoaTypeNSValue:
-        case XZJSONCocoaTypeNSNumber:
-        case XZJSONCocoaTypeNSDecimalNumber:
-        case XZJSONCocoaTypeNSData:
-        case XZJSONCocoaTypeNSMutableData:
-        case XZJSONCocoaTypeNSDate:
-        case XZJSONCocoaTypeNSURL: {
+    switch (modelClass->_cocoaClass) {
+        case XZJSONCocoaClassNSString:
+        case XZJSONCocoaClassNSMutableString:
+        case XZJSONCocoaClassNSValue:
+        case XZJSONCocoaClassNSNumber:
+        case XZJSONCocoaClassNSDecimalNumber:
+        case XZJSONCocoaClassNSData:
+        case XZJSONCocoaClassNSMutableData:
+        case XZJSONCocoaClassNSDate:
+        case XZJSONCocoaClassNSURL: {
             [(id<NSCoding>)model encodeWithCoder:aCoder];
             break;
         }
-        case XZJSONCocoaTypeNSArray:
-        case XZJSONCocoaTypeNSMutableArray:
-        case XZJSONCocoaTypeNSSet:
-        case XZJSONCocoaTypeNSMutableSet:
-        case XZJSONCocoaTypeNSCountedSet:
-        case XZJSONCocoaTypeNSOrderedSet:
-        case XZJSONCocoaTypeNSMutableOrderedSet: {
+        case XZJSONCocoaClassNSArray:
+        case XZJSONCocoaClassNSMutableArray:
+        case XZJSONCocoaClassNSSet:
+        case XZJSONCocoaClassNSMutableSet:
+        case XZJSONCocoaClassNSCountedSet:
+        case XZJSONCocoaClassNSOrderedSet:
+        case XZJSONCocoaClassNSMutableOrderedSet: {
             if (NSCollectionConformsNSCoding(model)) {
                 [(id<NSCoding>)model encodeWithCoder:aCoder];
             }
             break;
         }
-        case XZJSONCocoaTypeNSDictionary:
-        case XZJSONCocoaTypeNSMutableDictionary: {
+        case XZJSONCocoaClassNSDictionary:
+        case XZJSONCocoaClassNSMutableDictionary: {
             if (NSDictionaryConformsNSCoding(model)) {
                 [(id<NSCoding>)model encodeWithCoder:aCoder];
             }
             break;
         }
-        case XZJSONCocoaTypeUnknown: {
+        case XZJSONCocoaClassUnknown: {
             [modelClass->_sortedProperties enumerateObjectsUsingBlock:^(XZJSONProperty *property, NSUInteger idx, BOOL *stop) {
                 SEL        const getter = property->_getter;
                 NSString * const name   = property->_name;
@@ -519,14 +519,14 @@ void XZJSONModelEncodeWithCoder(id model, NSCoder *aCoder) {
                                 break;
                             }
                             // 如果是集合类型，需要进一步判断元素
-                            switch (property->_cocoaType) {
-                                case XZJSONCocoaTypeNSArray:
-                                case XZJSONCocoaTypeNSMutableArray:
-                                case XZJSONCocoaTypeNSSet:
-                                case XZJSONCocoaTypeNSMutableSet:
-                                case XZJSONCocoaTypeNSCountedSet:
-                                case XZJSONCocoaTypeNSOrderedSet:
-                                case XZJSONCocoaTypeNSMutableOrderedSet: {
+                            switch (property->_cocoaClass) {
+                                case XZJSONCocoaClassNSArray:
+                                case XZJSONCocoaClassNSMutableArray:
+                                case XZJSONCocoaClassNSSet:
+                                case XZJSONCocoaClassNSMutableSet:
+                                case XZJSONCocoaClassNSCountedSet:
+                                case XZJSONCocoaClassNSOrderedSet:
+                                case XZJSONCocoaClassNSMutableOrderedSet: {
                                     // 无法确定元素类型，无法进行安全归档
                                     if (!property->_elementType) {
                                         break;
@@ -543,8 +543,8 @@ void XZJSONModelEncodeWithCoder(id model, NSCoder *aCoder) {
                                     [aCoder encodeObject:aValue forKey:name];
                                     return;
                                 }
-                                case XZJSONCocoaTypeNSDictionary:
-                                case XZJSONCocoaTypeNSMutableDictionary: {
+                                case XZJSONCocoaClassNSDictionary:
+                                case XZJSONCocoaClassNSMutableDictionary: {
                                     // 没有元素类型，无法进行编码
                                     if (!property->_elementType) {
                                         break;
@@ -561,16 +561,16 @@ void XZJSONModelEncodeWithCoder(id model, NSCoder *aCoder) {
                                     [aCoder encodeObject:aValue forKey:name];
                                     return;
                                 }
-                                case XZJSONCocoaTypeNSString:
-                                case XZJSONCocoaTypeNSMutableString:
-                                case XZJSONCocoaTypeNSValue:
-                                case XZJSONCocoaTypeNSNumber:
-                                case XZJSONCocoaTypeNSDecimalNumber:
-                                case XZJSONCocoaTypeNSData:
-                                case XZJSONCocoaTypeNSMutableData:
-                                case XZJSONCocoaTypeNSDate:
-                                case XZJSONCocoaTypeNSURL:
-                                case XZJSONCocoaTypeUnknown: {
+                                case XZJSONCocoaClassNSString:
+                                case XZJSONCocoaClassNSMutableString:
+                                case XZJSONCocoaClassNSValue:
+                                case XZJSONCocoaClassNSNumber:
+                                case XZJSONCocoaClassNSDecimalNumber:
+                                case XZJSONCocoaClassNSData:
+                                case XZJSONCocoaClassNSMutableData:
+                                case XZJSONCocoaClassNSDate:
+                                case XZJSONCocoaClassNSURL:
+                                case XZJSONCocoaClassUnknown: {
                                     // 执行归档：支持安全归档的已知普通类型
                                     [aCoder encodeObject:aValue forKey:name];
                                     return;
@@ -583,14 +583,14 @@ void XZJSONModelEncodeWithCoder(id model, NSCoder *aCoder) {
                         if (![property->_classType conformsToProtocol:@protocol(NSCoding)]) {
                             break;
                         }
-                        switch (property->_cocoaType) {
-                            case XZJSONCocoaTypeNSArray:
-                            case XZJSONCocoaTypeNSMutableArray:
-                            case XZJSONCocoaTypeNSSet:
-                            case XZJSONCocoaTypeNSMutableSet:
-                            case XZJSONCocoaTypeNSCountedSet:
-                            case XZJSONCocoaTypeNSOrderedSet:
-                            case XZJSONCocoaTypeNSMutableOrderedSet: {
+                        switch (property->_cocoaClass) {
+                            case XZJSONCocoaClassNSArray:
+                            case XZJSONCocoaClassNSMutableArray:
+                            case XZJSONCocoaClassNSSet:
+                            case XZJSONCocoaClassNSMutableSet:
+                            case XZJSONCocoaClassNSCountedSet:
+                            case XZJSONCocoaClassNSOrderedSet:
+                            case XZJSONCocoaClassNSMutableOrderedSet: {
                                 // 检查元素是否合法：元素只要支持归档即可。
                                 if (NSCollectionConformsNSCoding(aValue)) {
                                     [aCoder encodeObject:aValue forKey:name];
@@ -598,8 +598,8 @@ void XZJSONModelEncodeWithCoder(id model, NSCoder *aCoder) {
                                 }
                                 break;
                             }
-                            case XZJSONCocoaTypeNSDictionary:
-                            case XZJSONCocoaTypeNSMutableDictionary: {
+                            case XZJSONCocoaClassNSDictionary:
+                            case XZJSONCocoaClassNSMutableDictionary: {
                                 // 检查元素是否合法：元素只需要支持归档即可
                                 if (NSDictionaryConformsNSCoding(aValue)) {
                                     [aCoder encodeObject:aValue forKey:name];
@@ -607,16 +607,16 @@ void XZJSONModelEncodeWithCoder(id model, NSCoder *aCoder) {
                                 }
                                 break;
                             }
-                            case XZJSONCocoaTypeNSString:
-                            case XZJSONCocoaTypeNSMutableString:
-                            case XZJSONCocoaTypeNSValue:
-                            case XZJSONCocoaTypeNSNumber:
-                            case XZJSONCocoaTypeNSDecimalNumber:
-                            case XZJSONCocoaTypeNSData:
-                            case XZJSONCocoaTypeNSMutableData:
-                            case XZJSONCocoaTypeNSDate:
-                            case XZJSONCocoaTypeNSURL:
-                            case XZJSONCocoaTypeUnknown: {
+                            case XZJSONCocoaClassNSString:
+                            case XZJSONCocoaClassNSMutableString:
+                            case XZJSONCocoaClassNSValue:
+                            case XZJSONCocoaClassNSNumber:
+                            case XZJSONCocoaClassNSDecimalNumber:
+                            case XZJSONCocoaClassNSData:
+                            case XZJSONCocoaClassNSMutableData:
+                            case XZJSONCocoaClassNSDate:
+                            case XZJSONCocoaClassNSURL:
+                            case XZJSONCocoaClassUnknown: {
                                 [aCoder encodeObject:aValue forKey:name];
                                 return;
                             }
@@ -656,38 +656,38 @@ id _Nullable XZJSONModelDecodeWithCoder(id model, NSCoder *aCoder) {
     }
     
     XZJSONClass * const modelClass = [XZJSONClass descriptorForClass:[model class]];
-    switch (modelClass->_foundationClass) {
-        case XZJSONCocoaTypeNSString:
-        case XZJSONCocoaTypeNSMutableString:
-        case XZJSONCocoaTypeNSValue:
-        case XZJSONCocoaTypeNSNumber:
-        case XZJSONCocoaTypeNSDecimalNumber:
-        case XZJSONCocoaTypeNSData:
-        case XZJSONCocoaTypeNSMutableData:
-        case XZJSONCocoaTypeNSDate:
-        case XZJSONCocoaTypeNSURL: {
+    switch (modelClass->_cocoaClass) {
+        case XZJSONCocoaClassNSString:
+        case XZJSONCocoaClassNSMutableString:
+        case XZJSONCocoaClassNSValue:
+        case XZJSONCocoaClassNSNumber:
+        case XZJSONCocoaClassNSDecimalNumber:
+        case XZJSONCocoaClassNSData:
+        case XZJSONCocoaClassNSMutableData:
+        case XZJSONCocoaClassNSDate:
+        case XZJSONCocoaClassNSURL: {
             return [(id<NSCoding>)model initWithCoder:aCoder];
         }
-        case XZJSONCocoaTypeNSArray:
-        case XZJSONCocoaTypeNSMutableArray:
-        case XZJSONCocoaTypeNSSet:
-        case XZJSONCocoaTypeNSMutableSet:
-        case XZJSONCocoaTypeNSCountedSet:
-        case XZJSONCocoaTypeNSOrderedSet:
-        case XZJSONCocoaTypeNSMutableOrderedSet: {
+        case XZJSONCocoaClassNSArray:
+        case XZJSONCocoaClassNSMutableArray:
+        case XZJSONCocoaClassNSSet:
+        case XZJSONCocoaClassNSMutableSet:
+        case XZJSONCocoaClassNSCountedSet:
+        case XZJSONCocoaClassNSOrderedSet:
+        case XZJSONCocoaClassNSMutableOrderedSet: {
             if (NSCollectionConformsNSCoding(model)) {
                 return [(id<NSCoding>)model initWithCoder:aCoder];
             }
             return nil;
         }
-        case XZJSONCocoaTypeNSDictionary:
-        case XZJSONCocoaTypeNSMutableDictionary: {
+        case XZJSONCocoaClassNSDictionary:
+        case XZJSONCocoaClassNSMutableDictionary: {
             if (NSDictionaryConformsNSCoding(model)) {
                 return [(id<NSCoding>)model initWithCoder:aCoder];
             }
             return nil;
         }
-        case XZJSONCocoaTypeUnknown: {
+        case XZJSONCocoaClassUnknown: {
             [modelClass->_sortedProperties enumerateObjectsUsingBlock:^(XZJSONProperty *property, NSUInteger idx, BOOL *stop) {
                 NSString * const name   = property->_name;
                 SEL        const setter = property->_setter;
@@ -844,11 +844,11 @@ id _Nullable XZJSONModelDecodeWithCoder(id model, NSCoder *aCoder) {
                                 break;
                             }
                             // 集合类型的元素也需要支持安全解档
-                            switch (property->_cocoaType) {
-                                case XZJSONCocoaTypeNSArray:
-                                case XZJSONCocoaTypeNSMutableArray:
-                                case XZJSONCocoaTypeNSSet:
-                                case XZJSONCocoaTypeNSMutableSet: {
+                            switch (property->_cocoaClass) {
+                                case XZJSONCocoaClassNSArray:
+                                case XZJSONCocoaClassNSMutableArray:
+                                case XZJSONCocoaClassNSSet:
+                                case XZJSONCocoaClassNSMutableSet: {
                                     // 元素类型未知，无法安全解档
                                     if (!property->_elementType) {
                                         break;
@@ -865,8 +865,8 @@ id _Nullable XZJSONModelDecodeWithCoder(id model, NSCoder *aCoder) {
                                     }
                                     break;
                                 }
-                                case XZJSONCocoaTypeNSDictionary:
-                                case XZJSONCocoaTypeNSMutableDictionary: {
+                                case XZJSONCocoaClassNSDictionary:
+                                case XZJSONCocoaClassNSMutableDictionary: {
                                     // 元素类型未知，无法安全解档
                                     if (!property->_elementType) {
                                         break;

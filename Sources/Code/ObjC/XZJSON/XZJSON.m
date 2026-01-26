@@ -90,7 +90,7 @@
     if (descriptor == nil) {
         return nil;
     }
-    id const dictionary = XZJSONEncodeModelIntoDictionary(model, descriptor, descriptor->_foundationClass, nil);
+    id const dictionary = XZJSONEncodeModelIntoDictionary(model, descriptor, descriptor->_cocoaClass, nil);
     return [NSJSONSerialization dataWithJSONObject:dictionary options:options error:error];
 }
 
@@ -139,7 +139,7 @@
     XZJSONClass * const sourceDescriptor  = [XZJSONClass descriptorForClass:sourceClass];
     
     // 不支持复制原生对象
-    if (sourceDescriptor->_foundationClass) {
+    if (sourceDescriptor->_cocoaClass) {
         return targetModel ?: [sourceModel copy];
     }
     
@@ -260,51 +260,51 @@
                 return;
             }
             case XZStdcTypeStruct: {
-                switch (property->_composeType) {
-                    case XZStdcCocoaTypeUnknown: {
+                switch (property->_structType) {
+                    case XZStdcStructTypeUnknown: {
                         break;
                     }
-                    case XZStdcCocoaTypeCGRect: {
+                    case XZStdcStructTypeCGRect: {
                         CGRect const value = ((CGRect (*)(id, SEL))xz_objc_msgSend_stret)(self, getter);
                         ((void (*)(id, SEL, CGRect))objc_msgSend)(targetModel, setter, value);
                         return;
                     }
-                    case XZStdcCocoaTypeCGSize: {
+                    case XZStdcStructTypeCGSize: {
                         CGSize const value = ((CGSize (*)(id, SEL))objc_msgSend)(self, getter);
                         ((void (*)(id, SEL, CGSize))objc_msgSend)(targetModel, setter, value);
                         return;
                     }
-                    case XZStdcCocoaTypeCGPoint: {
+                    case XZStdcStructTypeCGPoint: {
                         CGPoint const value = ((CGPoint (*)(id, SEL))objc_msgSend)(self, getter);
                         ((void (*)(id, SEL, CGPoint))objc_msgSend)(targetModel, setter, value);
                         return;
                     }
-                    case XZStdcCocoaTypeCGVector: {
+                    case XZStdcStructTypeCGVector: {
                         CGVector const value = ((CGVector (*)(id, SEL))objc_msgSend)(self, getter);
                         ((void (*)(id, SEL, CGVector))objc_msgSend)(targetModel, setter, value);
                         return;
                     }
-                    case XZStdcCocoaTypeCGAffineTransform: {
+                    case XZStdcStructTypeCGAffineTransform: {
                         CGAffineTransform const value = ((CGAffineTransform (*)(id, SEL))xz_objc_msgSend_stret)(self, getter);
                         ((void (*)(id, SEL, CGAffineTransform))objc_msgSend)(targetModel, setter, value);
                         return;
                     }
-                    case XZStdcCocoaTypeNSDirectionalEdgeInsets: {
+                    case XZStdcStructTypeNSDirectionalEdgeInsets: {
                         NSDirectionalEdgeInsets const value = ((NSDirectionalEdgeInsets (*)(id, SEL))xz_objc_msgSend_stret)(self, getter);
                         ((void (*)(id, SEL, NSDirectionalEdgeInsets))objc_msgSend)(targetModel, setter, value);
                         return;
                     }
-                    case XZStdcCocoaTypeNSRange: {
+                    case XZStdcStructTypeNSRange: {
                         NSRange const value = ((NSRange (*)(id, SEL))xz_objc_msgSend_stret)(self, getter);
                         ((void (*)(id, SEL, NSRange))objc_msgSend)(targetModel, setter, value);
                         return;
                     }
-                    case XZStdcCocoaTypeUIEdgeInsets: {
+                    case XZStdcStructTypeUIEdgeInsets: {
                         UIEdgeInsets const value = ((UIEdgeInsets (*)(id, SEL))xz_objc_msgSend_stret)(self, getter);
                         ((void (*)(id, SEL, UIEdgeInsets))objc_msgSend)(targetModel, setter, value);
                         return;
                     }
-                    case XZStdcCocoaTypeUIOffset: {
+                    case XZStdcStructTypeUIOffset: {
                         UIOffset const value = ((UIOffset (*)(id, SEL))objc_msgSend)(self, getter);
                         ((void (*)(id, SEL, UIOffset))objc_msgSend)(targetModel, setter, value);
                         return;
@@ -357,12 +357,12 @@
     XZJSONClass * const model2Descriptor = [XZJSONClass descriptorForClass:model2Class];
     
     // 原生类型之间的比较
-    if ((model1Descriptor->_foundationClass != XZJSONCocoaTypeUnknown) && (model2Descriptor->_foundationClass != XZJSONCocoaTypeUnknown)) {
+    if ((model1Descriptor->_cocoaClass != XZJSONCocoaClassUnknown) && (model2Descriptor->_cocoaClass != XZJSONCocoaClassUnknown)) {
         return [model1 isEqual:model2];
     }
     
     // 一个是模型，一个是原生类型
-    if ((model1Descriptor->_foundationClass != XZJSONCocoaTypeUnknown) || (model2Descriptor->_foundationClass != XZJSONCocoaTypeUnknown)) {
+    if ((model1Descriptor->_cocoaClass != XZJSONCocoaClassUnknown) || (model2Descriptor->_cocoaClass != XZJSONCocoaClassUnknown)) {
         return NO;
     }
     
@@ -512,14 +512,14 @@
                 continue;
             }
             case XZStdcTypeStruct:
-                if (property1->_composeType != property2->_composeType) {
+                if (property1->_structType != property2->_structType) {
                     continue;
                 }
-                switch (property1->_composeType) {
-                    case XZStdcCocoaTypeUnknown: {
+                switch (property1->_structType) {
+                    case XZStdcStructTypeUnknown: {
                         break;
                     }
-                    case XZStdcCocoaTypeCGRect: {
+                    case XZStdcStructTypeCGRect: {
                         CGRect const value1 = ((CGRect(*)(id,SEL))xz_objc_msgSend_stret)(model1, property1->_getter);
                         CGRect const value2 = ((CGRect(*)(id,SEL))xz_objc_msgSend_stret)(model1, property2->_getter);
                         if (!CGRectEqualToRect(value1, value2)) {
@@ -527,7 +527,7 @@
                         }
                         continue;
                     }
-                    case XZStdcCocoaTypeCGSize: {
+                    case XZStdcStructTypeCGSize: {
                         CGSize const value1 = ((CGSize(*)(id,SEL))objc_msgSend)(model1, property1->_getter);
                         CGSize const value2 = ((CGSize(*)(id,SEL))objc_msgSend)(model1, property2->_getter);
                         if (!CGSizeEqualToSize(value1, value2)) {
@@ -535,7 +535,7 @@
                         }
                         continue;
                     }
-                    case XZStdcCocoaTypeCGPoint: {
+                    case XZStdcStructTypeCGPoint: {
                         CGPoint const value1 = ((CGPoint(*)(id,SEL))objc_msgSend)(model1, property1->_getter);
                         CGPoint const value2 = ((CGPoint(*)(id,SEL))objc_msgSend)(model1, property2->_getter);
                         if (!CGPointEqualToPoint(value1, value2)) {
@@ -543,7 +543,7 @@
                         }
                         continue;
                     }
-                    case XZStdcCocoaTypeCGVector: {
+                    case XZStdcStructTypeCGVector: {
                         CGVector const value1 = ((CGVector(*)(id,SEL))objc_msgSend)(model1, property1->_getter);
                         CGVector const value2 = ((CGVector(*)(id,SEL))objc_msgSend)(model1, property2->_getter);
                         if (value1.dx != value2.dx || value1.dy != value2.dy) {
@@ -551,7 +551,7 @@
                         }
                         continue;
                     }
-                    case XZStdcCocoaTypeCGAffineTransform: {
+                    case XZStdcStructTypeCGAffineTransform: {
                         CGAffineTransform const value1 = ((CGAffineTransform(*)(id,SEL))xz_objc_msgSend_stret)(model1, property1->_getter);
                         CGAffineTransform const value2 = ((CGAffineTransform(*)(id,SEL))xz_objc_msgSend_stret)(model1, property2->_getter);
                         if (!CGAffineTransformEqualToTransform(value1, value2)) {
@@ -559,7 +559,7 @@
                         }
                         continue;
                     }
-                    case XZStdcCocoaTypeNSDirectionalEdgeInsets: {
+                    case XZStdcStructTypeNSDirectionalEdgeInsets: {
                         NSDirectionalEdgeInsets const value1 = ((NSDirectionalEdgeInsets(*)(id,SEL))xz_objc_msgSend_stret)(model1, property1->_getter);
                         NSDirectionalEdgeInsets const value2 = ((NSDirectionalEdgeInsets(*)(id,SEL))xz_objc_msgSend_stret)(model1, property2->_getter);
                         if (!NSDirectionalEdgeInsetsEqualToDirectionalEdgeInsets(value1, value2)) {
@@ -567,7 +567,7 @@
                         }
                         continue;
                     }
-                    case XZStdcCocoaTypeNSRange: {
+                    case XZStdcStructTypeNSRange: {
                         NSRange const value1 = ((NSRange(*)(id,SEL))xz_objc_msgSend_stret)(model1, property1->_getter);
                         NSRange const value2 = ((NSRange(*)(id,SEL))xz_objc_msgSend_stret)(model1, property2->_getter);
                         if (!NSEqualRanges(value1, value2)) {
@@ -575,7 +575,7 @@
                         }
                         continue;
                     }
-                    case XZStdcCocoaTypeUIEdgeInsets: {
+                    case XZStdcStructTypeUIEdgeInsets: {
                         UIEdgeInsets const value1 = ((UIEdgeInsets(*)(id,SEL))xz_objc_msgSend_stret)(model1, property1->_getter);
                         UIEdgeInsets const value2 = ((UIEdgeInsets(*)(id,SEL))xz_objc_msgSend_stret)(model1, property2->_getter);
                         if (!UIEdgeInsetsEqualToEdgeInsets(value1, value2)) {
@@ -583,7 +583,7 @@
                         }
                         continue;
                     }
-                    case XZStdcCocoaTypeUIOffset: {
+                    case XZStdcStructTypeUIOffset: {
                         UIOffset const value1 = ((UIOffset(*)(id,SEL))objc_msgSend)(model1, property1->_getter);
                         UIOffset const value2 = ((UIOffset(*)(id,SEL))objc_msgSend)(model1, property2->_getter);
                         if (!UIOffsetEqualToOffset(value1, value2)) {

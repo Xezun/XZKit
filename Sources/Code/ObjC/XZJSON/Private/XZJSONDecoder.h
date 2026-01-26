@@ -6,7 +6,7 @@
 //
 
 #import <Foundation/Foundation.h>
-#import "XZJSONType.h"
+#import "XZJSONPrivateDefines.h"
 
 NS_ASSUME_NONNULL_BEGIN
 

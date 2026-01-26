@@ -18,9 +18,12 @@ static XZObjcType __unsafe_unretained *_basicTypes[CHAR_MAX] = { NULL };
 - (instancetype)initWithType:(XZStdcType)type name:(NSString *)name encoding:(NSString *)encoding elementType:(XZObjcType *)elementType capacity:(NSInteger)capacity;
 @end
 
-/// 由成员组成的复合类型。
-@interface XZObjcCocoaType : XZObjcType
+@interface XZObjcUnionType : XZObjcType
 - (instancetype)initWithType:(XZStdcType)type name:(NSString *)name encoding:(NSString *)encoding members:(NSArray<XZObjcType *> *)members;
+@end
+
+/// 由成员组成的复合类型。
+@interface XZObjcStructType : XZObjcUnionType
 @end
 
 /// 对象类型。
@@ -242,7 +245,7 @@ static XZObjcType __unsafe_unretained *_basicTypes[CHAR_MAX] = { NULL };
             }
             
             NSString * const _encoding = [[NSString alloc] initWithBytes:encoding length:(i + 1) encoding:NSUTF8StringEncoding];
-            return [[XZObjcCocoaType alloc] initWithType:stdcType name:_name encoding:_encoding members:_members];
+            return [[XZObjcUnionType alloc] initWithType:stdcType name:_name encoding:_encoding members:_members];
         }
         case XZStdcTypeStruct: {
             // {name=type...}
@@ -284,7 +287,7 @@ static XZObjcType __unsafe_unretained *_basicTypes[CHAR_MAX] = { NULL };
             }
             
             NSString * const _encoding = [[NSString alloc] initWithBytes:encoding length:(i + 1) encoding:NSUTF8StringEncoding];
-            return [[XZObjcCocoaType alloc] initWithType:stdcType name:_name encoding:_encoding members:_members];
+            return [[XZObjcStructType alloc] initWithType:stdcType name:_name encoding:_encoding members:_members];
         }
         case XZStdcTypeObject: {
             // 对象类型的 type encoding 存在如下情形：
@@ -445,8 +448,8 @@ static XZObjcType __unsafe_unretained *_basicTypes[CHAR_MAX] = { NULL };
     return 0;
 }
 
-- (XZStdcCocoaType)cocoaType {
-    return XZStdcCocoaTypeUnknown;
+- (XZStdcStructType)structType {
+    return XZStdcStructTypeUnknown;
 }
 
 - (NSArray<XZObjcType *> *)members {
@@ -647,35 +650,35 @@ static id _Nullable withLock(id (^NS_NOESCAPE block)(CFMutableDictionaryRef cons
     return value;
 }
 
-XZStdcCocoaType XZStdcCocoaTypeFromString(NSString *name) {
+XZStdcStructType XZStdcStructTypeFromString(NSString *name) {
     if ([name isEqualToString:@"CGRect"]) {
-        return XZStdcCocoaTypeCGRect;
+        return XZStdcStructTypeCGRect;
     }
     if ([name isEqualToString:@"CGSize"]) {
-        return XZStdcCocoaTypeCGSize;
+        return XZStdcStructTypeCGSize;
     }
     if ([name isEqualToString:@"CGPoint"]) {
-        return XZStdcCocoaTypeCGPoint;
+        return XZStdcStructTypeCGPoint;
     }
     if ([name isEqualToString:@"CGVector"]) {
-        return XZStdcCocoaTypeCGVector;
+        return XZStdcStructTypeCGVector;
     }
     if ([name isEqualToString:@"CGAffineTransform"]) {
-        return XZStdcCocoaTypeCGAffineTransform;
+        return XZStdcStructTypeCGAffineTransform;
     }
     if ([name isEqualToString:@"NSDirectionalEdgeInsets"]) {
-        return XZStdcCocoaTypeNSDirectionalEdgeInsets;
+        return XZStdcStructTypeNSDirectionalEdgeInsets;
     }
     if ([name isEqualToString:@"NSRange"]) {
-        return XZStdcCocoaTypeNSRange;
+        return XZStdcStructTypeNSRange;
     }
     if ([name isEqualToString:@"UIEdgeInsets"]) {
-        return XZStdcCocoaTypeUIEdgeInsets;
+        return XZStdcStructTypeUIEdgeInsets;
     }
     if ([name isEqualToString:@"UIOffset"]) {
-        return XZStdcCocoaTypeUIOffset;
+        return XZStdcStructTypeUIOffset;
     }
-    return XZStdcCocoaTypeUnknown;
+    return XZStdcStructTypeUnknown;
 }
 
 @implementation XZObjcElementType {
@@ -702,15 +705,13 @@ XZStdcCocoaType XZStdcCocoaTypeFromString(NSString *name) {
 
 @end
 
-@implementation XZObjcCocoaType {
-    XZStdcCocoaType _cocoaType;
+@implementation XZObjcUnionType {
     NSArray<XZObjcType *> *_members;
 }
 
 - (instancetype)initWithType:(XZStdcType)type name:(NSString *)name encoding:(NSString *)encoding members:(NSArray<XZObjcType *> *)members {
     self = [super initWithType:type name:name encoding:encoding];
     if (self) {
-        _cocoaType = XZStdcCocoaTypeFromString(name);
         _members = members.copy;
     }
     return self;
@@ -720,8 +721,22 @@ XZStdcCocoaType XZStdcCocoaTypeFromString(NSString *name) {
     return _members;
 }
 
-- (XZStdcCocoaType)cocoaType {
-    return _cocoaType;
+@end
+
+@implementation XZObjcStructType {
+    XZStdcStructType _structType;
+}
+
+- (instancetype)initWithType:(XZStdcType)type name:(NSString *)name encoding:(NSString *)encoding members:(NSArray<XZObjcType *> *)members {
+    self = [super initWithType:type name:name encoding:encoding members:members];
+    if (self) {
+        _structType = XZStdcStructTypeFromString(name);
+    }
+    return self;
+}
+
+- (XZStdcStructType)structType {
+    return _structType;
 }
 
 @end

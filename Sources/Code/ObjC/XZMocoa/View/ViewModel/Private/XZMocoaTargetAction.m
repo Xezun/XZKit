@@ -84,7 +84,7 @@
                     break;
                 }
                 case XZStdcTypeStruct: {
-                    if (_valueArgumentType.cocoaType == XZStdcCocoaTypeUnknown) {
+                    if (_valueArgumentType.structType == XZStdcStructTypeUnknown) {
                         NSString *reason = NSLocalizedString(@"运行时不支持使用自定义 struct 类型作为参数，请使用 NSValue 代替。", @"");
                         @throw [NSException exceptionWithName:NSInvalidArgumentException reason:reason userInfo:nil];
                     }
@@ -467,10 +467,10 @@
                     break;
                 }
                 case XZStdcTypeStruct: {
-                    switch (_valueArgumentType.cocoaType) {
-                        case XZStdcCocoaTypeUnknown:
+                    switch (_valueArgumentType.structType) {
+                        case XZStdcStructTypeUnknown:
                             break;
-                        case XZStdcCocoaTypeCGRect: {
+                        case XZStdcStructTypeCGRect: {
                             CGRect structValue;
                             [(NSValue *)value getValue:&structValue size:sizeof(CGRect)];
                             switch (_numberOfArguments) {
@@ -488,7 +488,7 @@
                             }
                             break;
                         }
-                        case XZStdcCocoaTypeCGSize: {
+                        case XZStdcStructTypeCGSize: {
                             CGSize structValue;
                             [(NSValue *)value getValue:&structValue size:sizeof(CGSize)];
                             switch (_numberOfArguments) {
@@ -506,7 +506,7 @@
                             }
                             break;
                         }
-                        case XZStdcCocoaTypeCGPoint: {
+                        case XZStdcStructTypeCGPoint: {
                             CGPoint structValue;
                             [(NSValue *)value getValue:&structValue size:sizeof(CGPoint)];
                             switch (_numberOfArguments) {
@@ -524,7 +524,7 @@
                             }
                             break;
                         }
-                        case XZStdcCocoaTypeCGVector: {
+                        case XZStdcStructTypeCGVector: {
                             CGVector structValue;
                             [(NSValue *)value getValue:&structValue size:sizeof(CGVector)];
                             switch (_numberOfArguments) {
@@ -542,7 +542,7 @@
                             }
                             break;
                         }
-                        case XZStdcCocoaTypeCGAffineTransform: {
+                        case XZStdcStructTypeCGAffineTransform: {
                             CGAffineTransform structValue;
                             [(NSValue *)value getValue:&structValue size:sizeof(CGAffineTransform)];
                             switch (_numberOfArguments) {
@@ -560,7 +560,7 @@
                             }
                             break;
                         }
-                        case XZStdcCocoaTypeNSDirectionalEdgeInsets: {
+                        case XZStdcStructTypeNSDirectionalEdgeInsets: {
                             NSDirectionalEdgeInsets structValue;
                             [(NSValue *)value getValue:&structValue size:sizeof(NSDirectionalEdgeInsets)];
                             switch (_numberOfArguments) {
@@ -578,7 +578,7 @@
                             }
                             break;
                         }
-                        case XZStdcCocoaTypeNSRange: {
+                        case XZStdcStructTypeNSRange: {
                             NSRange structValue;
                             [(NSValue *)value getValue:&structValue size:sizeof(NSRange)];
                             switch (_numberOfArguments) {
@@ -596,7 +596,7 @@
                             }
                             break;
                         }
-                        case XZStdcCocoaTypeUIEdgeInsets: {
+                        case XZStdcStructTypeUIEdgeInsets: {
                             UIEdgeInsets structValue;
                             [(NSValue *)value getValue:&structValue size:sizeof(UIEdgeInsets)];
                             switch (_numberOfArguments) {
@@ -614,7 +614,7 @@
                             }
                             break;
                         }
-                        case XZStdcCocoaTypeUIOffset: {
+                        case XZStdcStructTypeUIOffset: {
                             UIOffset structValue;
                             [(NSValue *)value getValue:&structValue size:sizeof(UIOffset)];
                             switch (_numberOfArguments) {
