@@ -23,7 +23,8 @@ static XZObjcType __unsafe_unretained *_basicTypes[CHAR_MAX] = { NULL };
 @end
 
 /// 由成员组成的复合类型。
-@interface XZObjcStructType : XZObjcUnionType
+@interface XZObjcStructType : XZObjcType
+- (instancetype)initWithType:(XZStdcType)type name:(NSString *)name encoding:(NSString *)encoding members:(NSArray<XZObjcType *> *)members;
 @end
 
 /// 对象类型。
@@ -44,9 +45,40 @@ static XZObjcType __unsafe_unretained *_basicTypes[CHAR_MAX] = { NULL };
     return NO;
 }
 
-+ (XZObjcType *)typeForType:(XZStdcType)stdcType {
-    NSAssert((stdcType == (stdcType & XZStdcTypeMask)), @"");
-    return _basicTypes[(stdcType)] ?: _basicTypes[XZStdcTypeUnknown];
++ (XZObjcType *)typeForType:(XZStdcType)type {
+    switch (type) {
+        case XZStdcTypeUnknown:
+        case XZStdcTypeChar:
+        case XZStdcTypeUnsignedChar:
+        case XZStdcTypeInt:
+        case XZStdcTypeUnsignedInt:
+        case XZStdcTypeShort:
+        case XZStdcTypeUnsignedShort:
+        case XZStdcTypeLong:
+        case XZStdcTypeUnsignedLong:
+        case XZStdcTypeInt128:
+        case XZStdcTypeUnsignedInt128:
+        case XZStdcTypeLongLong:
+        case XZStdcTypeUnsignedLongLong:
+        case XZStdcTypeFloat:
+        case XZStdcTypeDouble:
+        case XZStdcTypeLongDouble:
+        case XZStdcTypeBool:
+        case XZStdcTypeVoid:
+        case XZStdcTypeString:
+        case XZStdcTypeSelector:
+        case XZStdcTypePointer:
+        case XZStdcTypeVector:
+        case XZStdcTypeArray:
+        case XZStdcTypeBitField:
+        case XZStdcTypeUnion:
+        case XZStdcTypeStruct:
+        case XZStdcTypeClass:
+        case XZStdcTypeObject:
+            return _basicTypes[type];
+    }
+    NSString *reason = [NSString stringWithFormat:@"参数 type 的值不正确，必须是 XZStdcType 枚举值。"];
+    @throw [NSException exceptionWithName:NSInvalidArgumentException reason:reason userInfo:nil];
 }
 
 + (XZObjcType *)typeForEncoding:(const char * const)encoding {
@@ -90,10 +122,10 @@ static XZObjcType __unsafe_unretained *_basicTypes[CHAR_MAX] = { NULL };
     }
     
     // 重新定位字符编码的起点
-    return [self typeForEncoding:(encoding + i) encodingLength:newLength];
+    return [self typeForEncoding:(encoding + i) length:newLength];
 }
 
-+ (XZObjcType *)typeForEncoding:(const char * const)encoding encodingLength:(NSInteger const)encodingLength {
++ (XZObjcType *)typeForEncoding:(const char * const)encoding length:(NSInteger const)length {
     // 首个字符即为 C 类型
     XZStdcType const stdcType = (XZStdcType)encoding[0];
     switch (stdcType) {
@@ -135,13 +167,13 @@ static XZObjcType __unsafe_unretained *_basicTypes[CHAR_MAX] = { NULL };
             // struct Foobar { int a:1; int b: 22 } => {Foobar=b1b22}
             // 从位域的编码中，只能获取占用内存的位数，而实际占用内存和对齐，跟声明位域的类型有关。
             // 比如 int a:1 占用 1 位 4 字节，long a:1 占用 1 位 8 字节。
-            if (encodingLength < 2) {
+            if (length < 2) {
                 return nil;
             }
             
             NSInteger numberOfBits = 0;
             NSInteger index = 1;
-            while (index < encodingLength) {
+            while (index < length) {
                 const char number = encoding[index];
                 // 遇到非数字，编码结束
                 if (number < '0' && number > '9') {
@@ -152,7 +184,7 @@ static XZObjcType __unsafe_unretained *_basicTypes[CHAR_MAX] = { NULL };
                 index += 1;
             }
             // 不合法的编码
-            if (index == 1 || numberOfBits == 0) {
+            if (numberOfBits == 0) {
                 return nil;
             }
             
@@ -163,7 +195,7 @@ static XZObjcType __unsafe_unretained *_basicTypes[CHAR_MAX] = { NULL };
         case XZStdcTypeArray: {
             // int[10]    => [10i]
             // int[10][2] => [10[2i]]
-            if (encodingLength < 4) {
+            if (length < 4) {
                 return nil;
             }
             
@@ -171,7 +203,7 @@ static XZObjcType __unsafe_unretained *_basicTypes[CHAR_MAX] = { NULL };
             
             // 元素数量
             NSInteger count = 0;
-            while (index < encodingLength) {
+            while (index < length) {
                 char const number = encoding[index];
                 if (number < '0' || number > '9') {
                     break;
@@ -191,7 +223,7 @@ static XZObjcType __unsafe_unretained *_basicTypes[CHAR_MAX] = { NULL };
             
             // 查找结尾字符
             index += _element.encoding.length; // 定位到 member 的下一个字符
-            if (index >= encodingLength) {
+            if (index >= length) {
                 return nil;
             }
             if (encoding[index] != ']') {
@@ -204,7 +236,7 @@ static XZObjcType __unsafe_unretained *_basicTypes[CHAR_MAX] = { NULL };
         }
         case XZStdcTypeUnion: {
             // (Foobar=icq)
-            if (encodingLength < 4) {
+            if (length < 4) {
                 return nil;
             }
             
@@ -212,7 +244,7 @@ static XZObjcType __unsafe_unretained *_basicTypes[CHAR_MAX] = { NULL };
             
             // 定位到 = 字符，获取共用体名字
             do {
-                if (i >= encodingLength) {
+                if (i >= length) {
                     return nil;
                 }
                 if (encoding[i] == '=') {
@@ -226,7 +258,7 @@ static XZObjcType __unsafe_unretained *_basicTypes[CHAR_MAX] = { NULL };
             while (YES) {
                 i += 1;
                 // 未匹配到结尾，编码不合法
-                if (i >= encodingLength) {
+                if (i >= length) {
                     return nil;
                 }
                 // 匹配结尾
@@ -249,13 +281,13 @@ static XZObjcType __unsafe_unretained *_basicTypes[CHAR_MAX] = { NULL };
         }
         case XZStdcTypeStruct: {
             // {name=type...}
-            if (encodingLength < 4) {
+            if (length < 4) {
                 return nil;
             }
             
             NSInteger i = 1;
             do {
-                if (i >= encodingLength) {
+                if (i >= length) {
                     return nil;
                 }
                 if (encoding[i] == '=') {
@@ -269,7 +301,7 @@ static XZObjcType __unsafe_unretained *_basicTypes[CHAR_MAX] = { NULL };
             while ( YES ) {
                 i += 1;
                 // 未匹配到结尾，编码不合法
-                if (i >= encodingLength) {
+                if (i >= length) {
                     return nil;
                 }
                 // 匹配到末尾
@@ -299,28 +331,49 @@ static XZObjcType __unsafe_unretained *_basicTypes[CHAR_MAX] = { NULL };
             // UIView<UITableViewDataSource, UITableViewDelegate> * => @"UIView<UITableViewDataSource><UITableViewDelegate>"
             
             // 长度 1
-            if (encodingLength == 1 || encoding[1] != '"') {
+            if (length == 1 || encoding[1] != '"') {
                 return _basicTypes[stdcType];
             }
             
             // 包含类名时，长度不能小于4，比如 @"A"
-            if (encodingLength < 4) {
+            if (length < 4) {
                 return nil;
             }
             
             // 查询缓存
-            XZObjcType *cache = withLock(^id(const CFMutableDictionaryRef storage) {
-                CFStringRef key = CFStringCreateWithBytesNoCopy(NULL, (const UInt8 *)encoding, encodingLength, kCFStringEncodingUTF8, NO, NULL);
+            XZObjcType *cachedType = withLock(^id(const CFMutableDictionaryRef storage) {
+                CFStringRef key = CFStringCreateWithBytesNoCopy(NULL, (const UInt8 *)encoding, length, kCFStringEncodingUTF8, NO, NULL);
                 CFTypeRef value = CFDictionaryGetValue(storage, key);
                 CFRelease(key);
                 return (__bridge id)value;
             });
-            if (cache) {
-                return cache;
+            if (cachedType) {
+                return cachedType;
             }
             
-            NSString       *_encoding  = nil;
-            NSMutableArray *_protocols = [NSMutableArray array];
+            // 重新确定类型编码，并再次查询缓存。
+            NSString *_encoding  = nil;
+            for (NSInteger i = 2; i < length; i++) {
+                // 类型编码的终止符号：第二个双引号
+                if (encoding[i] == '"') {
+                    _encoding = [[NSString alloc] initWithBytes:encoding length:(i + 1) encoding:NSUTF8StringEncoding];
+                    if (i < length - 1) {
+                        XZObjcType *cachedType = withLock(^id(const CFMutableDictionaryRef storage) {
+                            CFTypeRef value = CFDictionaryGetValue(storage, (__bridge CFStringRef)_encoding);
+                            return (__bridge id)value;
+                        });
+                        if (cachedType) {
+                            return cachedType;
+                        }
+                    }
+                    break;
+                }
+            }
+            
+            // 类型编码不合法
+            if (_encoding == nil) {
+                return nil;
+            }
             
             typedef enum : NSUInteger {
                 MatchModeNone,
@@ -334,7 +387,8 @@ static XZObjcType __unsafe_unretained *_basicTypes[CHAR_MAX] = { NULL };
             NSRange nameRange = NSMakeRange(2, 0);
             NSRange protocolRange = NSMakeRange(NSNotFound, 0);
             
-            for (NSInteger i = 2; i < encodingLength; i++) {
+            NSMutableArray *_protocols = [NSMutableArray array];
+            for (NSInteger i = 2; i < length; i++) {
                 switch (encoding[i]) {
                     case '<':
                         mode = MatchModeProtocol;
@@ -354,7 +408,6 @@ static XZObjcType __unsafe_unretained *_basicTypes[CHAR_MAX] = { NULL };
                         if (mode == MatchModeProtocol) {
                             return nil;
                         }
-                        _encoding = [[NSString alloc] initWithBytes:encoding length:(i + 1) encoding:NSUTF8StringEncoding];
                         break;
                     default:
                         switch (mode) {
@@ -370,21 +423,6 @@ static XZObjcType __unsafe_unretained *_basicTypes[CHAR_MAX] = { NULL };
                         continue;
                 }
                 break;
-            }
-            
-            if (_encoding == nil) {
-                return nil;
-            }
-            
-            // 用新的编码重新查询缓存
-            if (_encoding.length != encodingLength) {
-                XZObjcType *cache = withLock(^id(const CFMutableDictionaryRef storage) {
-                    CFTypeRef value = CFDictionaryGetValue(storage, (__bridge CFStringRef)_encoding);
-                    return (__bridge id)value;
-                });
-                if (cache) {
-                    return cache;
-                }
             }
             
             Class _classType = Nil;
@@ -469,7 +507,7 @@ static XZObjcType __unsafe_unretained *_basicTypes[CHAR_MAX] = { NULL };
     
     NSMutableString *description = [[NSMutableString alloc] init];
     [description appendFormat:@"%@<%@: %p, { \n", padding, [XZObjcType class], self];
-    [description appendFormat:@"%@    type: %ld, \n", padding, self.type];
+    [description appendFormat:@"%@    type: %@, \n", padding, NSStringFromXZStdcType(self.type)];
     [description appendFormat:@"%@    name: %@, \n", padding, self.name];
     [description appendFormat:@"%@    encoding: %@, \n", padding, self.encoding];
     
@@ -478,7 +516,7 @@ static XZObjcType __unsafe_unretained *_basicTypes[CHAR_MAX] = { NULL };
         case XZStdcTypeArray:
         case XZStdcTypeBitField:
             [description appendFormat:@"%@    elementType: %@, \n", padding, [self.elementType descriptionWithIndent:(indent + 1)]];
-            [description appendFormat:@"%@    capacity: %ld, \n", padding, self.capacity];
+            [description appendFormat:@"%@    capacity: %ld \n", padding, self.capacity];
             break;
             
         case XZStdcTypeUnion:
@@ -508,6 +546,7 @@ static XZObjcType __unsafe_unretained *_basicTypes[CHAR_MAX] = { NULL };
             }
             break;
         default:
+            [description deleteCharactersInRange:NSMakeRange(description.length - 3, 1)];
             break;
     }
     
@@ -712,6 +751,7 @@ XZStdcStructType XZStdcStructTypeFromString(NSString *name) {
 - (instancetype)initWithType:(XZStdcType)type name:(NSString *)name encoding:(NSString *)encoding members:(NSArray<XZObjcType *> *)members {
     self = [super initWithType:type name:name encoding:encoding];
     if (self) {
+        
         _members = members.copy;
     }
     return self;
@@ -725,18 +765,24 @@ XZStdcStructType XZStdcStructTypeFromString(NSString *name) {
 
 @implementation XZObjcStructType {
     XZStdcStructType _structType;
+    NSArray<XZObjcType *> *_members;
 }
 
 - (instancetype)initWithType:(XZStdcType)type name:(NSString *)name encoding:(NSString *)encoding members:(NSArray<XZObjcType *> *)members {
-    self = [super initWithType:type name:name encoding:encoding members:members];
+    self = [super initWithType:type name:name encoding:encoding];
     if (self) {
         _structType = XZStdcStructTypeFromString(name);
+        _members = members.copy;
     }
     return self;
 }
 
 - (XZStdcStructType)structType {
     return _structType;
+}
+
+- (NSArray<XZObjcType *> *)members {
+    return _members;
 }
 
 @end
@@ -764,3 +810,38 @@ XZStdcStructType XZStdcStructTypeFromString(NSString *name) {
 }
 
 @end
+
+NSString *NSStringFromXZStdcType(XZStdcType type) {
+#define CaseStdcType(aType) case aType: return @"" # aType
+    switch (type) {
+        CaseStdcType(XZStdcTypeUnknown);
+        CaseStdcType(XZStdcTypeChar);
+        CaseStdcType(XZStdcTypeUnsignedChar);
+        CaseStdcType(XZStdcTypeInt);
+        CaseStdcType(XZStdcTypeUnsignedInt);
+        CaseStdcType(XZStdcTypeShort);
+        CaseStdcType(XZStdcTypeUnsignedShort);
+        CaseStdcType(XZStdcTypeLong);
+        CaseStdcType(XZStdcTypeUnsignedLong);
+        CaseStdcType(XZStdcTypeInt128);
+        CaseStdcType(XZStdcTypeUnsignedInt128);
+        CaseStdcType(XZStdcTypeLongLong);
+        CaseStdcType(XZStdcTypeUnsignedLongLong);
+        CaseStdcType(XZStdcTypeFloat);
+        CaseStdcType(XZStdcTypeDouble);
+        CaseStdcType(XZStdcTypeLongDouble);
+        CaseStdcType(XZStdcTypeBool);
+        CaseStdcType(XZStdcTypeVoid);
+        CaseStdcType(XZStdcTypeString);
+        CaseStdcType(XZStdcTypeSelector);
+        CaseStdcType(XZStdcTypePointer);
+        CaseStdcType(XZStdcTypeVector);
+        CaseStdcType(XZStdcTypeArray);
+        CaseStdcType(XZStdcTypeBitField);
+        CaseStdcType(XZStdcTypeUnion);
+        CaseStdcType(XZStdcTypeStruct);
+        CaseStdcType(XZStdcTypeClass);
+        CaseStdcType(XZStdcTypeObject);
+    }
+#undef CaseStdcType
+}

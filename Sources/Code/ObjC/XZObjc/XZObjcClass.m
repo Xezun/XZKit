@@ -103,7 +103,7 @@ static id withLock(id (^NS_NOESCAPE block)(CFMutableDictionaryRef const storage)
     return self;
 }
 
-- (XZObjcClass *)superDescriptor {
+- (XZObjcClass *)superClass {
     return [XZObjcClass classForClass:[self->_raw superclass]];
 }
 
@@ -148,7 +148,7 @@ static id withLock(id (^NS_NOESCAPE block)(CFMutableDictionaryRef const storage)
 
 - (void)invalidate {
     // 基类不会失效
-    if (self.superDescriptor == nil) {
+    if (self.superClass == nil) {
         return;
     }
     

@@ -9,6 +9,14 @@
 @import XZKit;
 @import OSLog;
 
+@interface Human : NSObject
+
+@end
+
+@implementation Human
+
+@end
+
 @interface ExampleAppDelegate ()
 
 @end
@@ -34,9 +42,9 @@
     XZLog(@"int[0] => %s", @encode(int[0]));
     XZLog(@"Class => %s", @encode(Class));
     XZLog(@"NSObject => %s", @encode(NSObject));
-    XZLog(@"ExampleAppDelegate => %s", @encode(ExampleAppDelegate));
+    XZLog(@"ExampleAppDelegate => %s", @encode(Human));
     XZLog(@"NSObject * => %s", @encode(NSObject *));
-    XZLog(@"ExampleAppDelegate * => %s", @encode(ExampleAppDelegate *));
+    XZLog(@"ExampleAppDelegate * => %s", @encode(Human *));
     XZLog(@"id => %s", @encode(id));
     
     XZLog(@"char[1] => %s", @encode(char[1]));
@@ -50,11 +58,13 @@
     XZLog(@"struct Foobar => %s", @encode(struct Foobar));
     
     for (int i = 0; i < CHAR_MAX; i++) {
-        XZObjcType *type = [XZObjcType typeForType:(XZStdcType)i];
-        if (type) {
-            NSLog(@"%c => %@", i, type);
-        } else {
-            NSLog(@"%c is not a type", i);
+        @try {
+            XZObjcType *type = [XZObjcType typeForType:(XZStdcType)i];
+            NSLog(@"<%c> => %@", i, type);
+        } @catch (NSException *exception) {
+            NSLog(@"<%c> is not a type", i);
+        } @finally {
+            
         }
     }
     

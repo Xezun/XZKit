@@ -27,7 +27,7 @@ FOUNDATION_EXPORT NSNotificationName const XZObjcClassDidDidBecomeInvalidNotific
 @property (nonatomic, readonly) Class raw;
  
 /// 描述当前类的超类的对象。
-@property (readonly, nullable) XZObjcClass *superDescriptor;
+@property (readonly, nullable) XZObjcClass *superClass;
 
 /// 类名。class name
 @property (nonatomic, readonly) NSString *name;

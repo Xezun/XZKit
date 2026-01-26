@@ -91,6 +91,7 @@ typedef NS_ENUM(NSUInteger, XZStdcType) {
     /// id. An object (whether statically typed or typed id)
     XZStdcTypeObject           = _C_ID,
 };
+FOUNDATION_EXPORT NSString *NSStringFromXZStdcType(XZStdcType type);
 
 enum {
     /// 数据类型掩码。
@@ -161,6 +162,9 @@ typedef NS_ENUM(NSUInteger, XZStdcStructType) {
     XZStdcStructTypeUIEdgeInsets,
     XZStdcStructTypeUIOffset
 };
+
+/// 通过结构体的名称获取结构体的类型。
+/// - Parameter name: 结构体名。
 FOUNDATION_EXPORT XZStdcStructType XZStdcStructTypeFromString(NSString *name);
 
 /// 描述基本数据类型的对象。
@@ -195,7 +199,9 @@ FOUNDATION_EXPORT XZStdcStructType XZStdcStructTypeFromString(NSString *name);
 - (instancetype)init NS_UNAVAILABLE;
 + (instancetype)new NS_UNAVAILABLE;
 
-+ (XZObjcType *)typeForType:(XZStdcType)stdcType;
+/// 获取 C 类型的描述。
+/// - Parameter type: 标准 C 类型枚举，若参数值不合法，此方法将抛出异常。
++ (XZObjcType *)typeForType:(XZStdcType)type;
 
 /// 构造类型描述。
 ///

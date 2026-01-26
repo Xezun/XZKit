@@ -41,9 +41,9 @@ static id XZJSONKeyFromString(NSString *aString);
         } else {
             XZObjcClass *rawClass = self->_raw;
             
-            while (rawClass.superDescriptor) {
+            while (rawClass.superClass) {
                 [NSNotificationCenter.defaultCenter addObserver:self selector:@selector(classNeedsUpdateNotification:) name:XZObjcClassDidDidBecomeInvalidNotification object:rawClass];
-                rawClass = rawClass.superDescriptor;
+                rawClass = rawClass.superClass;
             }
             
             [self update];
@@ -171,7 +171,7 @@ static id XZJSONKeyFromString(NSString *aString);
                 }
                 allProperties[name] = descriptor;
             }];
-        } while ((class = class.superDescriptor));
+        } while ((class = class.superClass));
     }
     
     _numberOfProperties = allProperties.count;
