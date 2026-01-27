@@ -148,6 +148,7 @@ typedef NS_OPTIONS(NSUInteger, XZStdcModifiers) {
     /// dynamic
     XZStdcModifierDynamic     = 1 << (8 + 17),
 };
+FOUNDATION_EXPORT NSString *NSStringFromXZStdcModifiers(XZStdcModifiers modifiers);
 
 /// 常用 C 复合数据类型：结构体。
 typedef NS_ENUM(NSUInteger, XZStdcStructType) {

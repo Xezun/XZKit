@@ -40,6 +40,10 @@
         XZObjcIvar *descriptor = self.viewModel.model;
         self.textLabel.text = descriptor.name;
         self.detailTextLabel.text = descriptor.type.name;
+    } else if ([self.viewModel.model isKindOfClass:[XZObjcClass class]]) {
+        XZObjcClass *descriptor = self.viewModel.model;
+        self.textLabel.text = descriptor.name;
+        self.detailTextLabel.text = descriptor.type.name;
     }
     
 }

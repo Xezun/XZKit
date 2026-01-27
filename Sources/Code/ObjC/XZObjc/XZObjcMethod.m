@@ -67,19 +67,29 @@
 }
 
 - (NSString *)description {
-    NSString *type = [NSString stringWithFormat:@"<%p, %@>", self.type, ((id)self.type.classType ?: self.type.name)];
+    NSString *type = self.type.name;
     
-    NSString *argumentsTypes = nil;
+    NSString *arguments = nil;
     if (self.arguments.count > 0) {
-        NSMutableString *stringM = [[NSMutableString alloc] initWithString:@"[\n"];
+        NSMutableString *stringM = [[NSMutableString alloc] initWithString:@"("];
         [self.arguments enumerateObjectsUsingBlock:^(XZObjcType * _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
-            [stringM appendFormat:@"    <%p, %@>,\n", obj, ((id)obj.classType ?: obj.name)];
+            [stringM appendFormat:@"%@, ", obj.name];
         }];
-        [stringM deleteCharactersInRange:NSMakeRange(stringM.length - 2, 1)];
-        [stringM appendString:@"]"];
-        argumentsTypes = stringM;
+        [stringM deleteCharactersInRange:NSMakeRange(stringM.length - 2, 2)];
+        [stringM appendString:@")"];
+        arguments = stringM;
+    } else {
+        arguments = @"()";
     }
-    return [NSString stringWithFormat:@"<%@: %p, name: %@, type: %@, implementation: %p, typeEncoding: %@, argumentsTypes: %@>", NSStringFromClass(self.class), self, self.name, type, self.implementation, self.encoding, argumentsTypes];
+    
+    return [NSString stringWithFormat:@"<\n"
+            "    %@: %p, \n"
+            "    name: %@, \n"
+            "    type: %@, \n"
+            "    implementation: %p, \n"
+            "    encoding: %@, \n"
+            "    arguments: %@ \n"
+            ">", self.class, self, self.name, type, self.implementation, self.encoding, arguments];
 }
 
 @end

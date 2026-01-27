@@ -112,11 +112,11 @@ static id withLock(id (^NS_NOESCAPE block)(CFMutableDictionaryRef const storage)
     NSString *ivars = nil;
     if (self.ivars.count > 0) {
         NSMutableString *stringM = [[NSMutableString alloc] initWithString:@"[\n"];
-        [self.ivars enumerateKeysAndObjectsUsingBlock:^(NSString * _Nonnull key, XZObjcIvar * _Nonnull obj, BOOL * _Nonnull stop) {
-            [stringM appendFormat:@"    <%p, %@, %@>,\n", obj, obj.name, ((id)obj.type.classType ?: obj.type.name)];
+        [self.ivars enumerateKeysAndObjectsUsingBlock:^(NSString *key, XZObjcIvar *obj, BOOL *stop) {
+            [stringM appendFormat:@"        %@ %@, \n", obj.type.name, key];
         }];
-        [stringM deleteCharactersInRange:NSMakeRange(stringM.length - 2, 1)];
-        [stringM appendString:@"]"];
+        [stringM deleteCharactersInRange:NSMakeRange(stringM.length - 3, 1)];
+        [stringM appendString:@"    ]"];
         ivars = stringM;
     }
     
@@ -124,10 +124,10 @@ static id withLock(id (^NS_NOESCAPE block)(CFMutableDictionaryRef const storage)
     if (self.properties.count > 0) {
         NSMutableString *stringM = [[NSMutableString alloc] initWithString:@"[\n"];
         [self.properties enumerateKeysAndObjectsUsingBlock:^(NSString * _Nonnull key, XZObjcProperty * _Nonnull obj, BOOL * _Nonnull stop) {
-            [stringM appendFormat:@"    <%p, %@, %@>,\n", obj, obj.name, ((id)obj.type.classType ?: obj.type.name)];
+            [stringM appendFormat:@"        %@ %@, \n", obj.type.name, key];
         }];
-        [stringM deleteCharactersInRange:NSMakeRange(stringM.length - 2, 1)];
-        [stringM appendString:@"]"];
+        [stringM deleteCharactersInRange:NSMakeRange(stringM.length - 3, 1)];
+        [stringM appendString:@"    ]"];
         properties = stringM;
     }
     
@@ -135,16 +135,23 @@ static id withLock(id (^NS_NOESCAPE block)(CFMutableDictionaryRef const storage)
     if (self.methods.count > 0) {
         NSMutableString *stringM = [[NSMutableString alloc] initWithString:@"[\n"];
         [self.methods enumerateKeysAndObjectsUsingBlock:^(NSString * _Nonnull key, XZObjcMethod * _Nonnull obj, BOOL * _Nonnull stop) {
-            [stringM appendFormat:@"    <%p, %@, %@>,\n", obj, obj.name, ((id)obj.type.classType ?: obj.type.name)];
+            [stringM appendFormat:@"        -(%@)%@, \n", obj.type.name, key];
         }];
-        [stringM deleteCharactersInRange:NSMakeRange(stringM.length - 2, 1)];
-        [stringM appendString:@"]"];
+        [stringM deleteCharactersInRange:NSMakeRange(stringM.length - 3, 1)];
+        [stringM appendString:@"    ]"];
         methods = stringM;
     }
     
-    NSString *type = [NSString stringWithFormat:@"<%p, %@>", self.type, (id)self.type.classType ?: self.type.name];
+    NSString *type = self.type.name;
     
-    return [NSString stringWithFormat:@"<%@: %p, name: %@, type: %@, ivars: %@, properties: %@, methods: %@>", NSStringFromClass(self.class), self, self.name, type, ivars, properties, methods];
+    return [NSString stringWithFormat:@"<\n"
+            "    %@: %p, \n"
+            "    name: %@, \n"
+            "    type: %@, \n"
+            "    ivars: %@, \n"
+            "    properties: %@, \n"
+            "    methods: %@ \n"
+            ">", self.class, self, self.name, type, ivars, properties, methods];
 }
 
 - (void)invalidate {

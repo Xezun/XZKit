@@ -689,37 +689,6 @@ static id _Nullable withLock(id (^NS_NOESCAPE block)(CFMutableDictionaryRef cons
     return value;
 }
 
-XZStdcStructType XZStdcStructTypeFromString(NSString *name) {
-    if ([name isEqualToString:@"CGRect"]) {
-        return XZStdcStructTypeCGRect;
-    }
-    if ([name isEqualToString:@"CGSize"]) {
-        return XZStdcStructTypeCGSize;
-    }
-    if ([name isEqualToString:@"CGPoint"]) {
-        return XZStdcStructTypeCGPoint;
-    }
-    if ([name isEqualToString:@"CGVector"]) {
-        return XZStdcStructTypeCGVector;
-    }
-    if ([name isEqualToString:@"CGAffineTransform"]) {
-        return XZStdcStructTypeCGAffineTransform;
-    }
-    if ([name isEqualToString:@"NSDirectionalEdgeInsets"]) {
-        return XZStdcStructTypeNSDirectionalEdgeInsets;
-    }
-    if ([name isEqualToString:@"NSRange"]) {
-        return XZStdcStructTypeNSRange;
-    }
-    if ([name isEqualToString:@"UIEdgeInsets"]) {
-        return XZStdcStructTypeUIEdgeInsets;
-    }
-    if ([name isEqualToString:@"UIOffset"]) {
-        return XZStdcStructTypeUIOffset;
-    }
-    return XZStdcStructTypeUnknown;
-}
-
 @implementation XZObjcElementType {
     XZObjcType *_elementType;
     NSInteger _capacity;
@@ -844,4 +813,95 @@ NSString *NSStringFromXZStdcType(XZStdcType type) {
         CaseStdcType(XZStdcTypeObject);
     }
 #undef CaseStdcType
+}
+
+
+XZStdcStructType XZStdcStructTypeFromString(NSString *name) {
+    if ([name isEqualToString:@"CGRect"]) {
+        return XZStdcStructTypeCGRect;
+    }
+    if ([name isEqualToString:@"CGSize"]) {
+        return XZStdcStructTypeCGSize;
+    }
+    if ([name isEqualToString:@"CGPoint"]) {
+        return XZStdcStructTypeCGPoint;
+    }
+    if ([name isEqualToString:@"CGVector"]) {
+        return XZStdcStructTypeCGVector;
+    }
+    if ([name isEqualToString:@"CGAffineTransform"]) {
+        return XZStdcStructTypeCGAffineTransform;
+    }
+    if ([name isEqualToString:@"NSDirectionalEdgeInsets"]) {
+        return XZStdcStructTypeNSDirectionalEdgeInsets;
+    }
+    if ([name isEqualToString:@"NSRange"]) {
+        return XZStdcStructTypeNSRange;
+    }
+    if ([name isEqualToString:@"UIEdgeInsets"]) {
+        return XZStdcStructTypeUIEdgeInsets;
+    }
+    if ([name isEqualToString:@"UIOffset"]) {
+        return XZStdcStructTypeUIOffset;
+    }
+    return XZStdcStructTypeUnknown;
+}
+
+NSString *NSStringFromXZStdcModifiers(XZStdcModifiers modifiers) {
+    NSMutableArray *components = [NSMutableArray array];
+    if (modifiers & XZStdcModifierConst) {
+        [components addObject:@"const"];
+    }
+    if (modifiers & XZStdcModifierIn) {
+        [components addObject:@"in"];
+    }
+    if (modifiers & XZStdcModifierInout) {
+        [components addObject:@"inout"];
+    }
+    if (modifiers & XZStdcModifierOut) {
+        [components addObject:@"out"];
+    }
+    if (modifiers & XZStdcModifierByCopy) {
+        [components addObject:@"bycopy"];
+    }
+    if (modifiers & XZStdcModifierByRef) {
+        [components addObject:@"byref"];
+    }
+    if (modifiers & XZStdcModifierOneway) {
+        [components addObject:@"oneway"];
+    }
+    if (modifiers & XZStdcModifierComplex) {
+        [components addObject:@"complex"];
+    }
+    if (modifiers & XZStdcModifierAtomic) {
+        [components addObject:@"atomic"];
+    }
+    if (modifiers & XZStdcModifierGNURegister) {
+        [components addObject:@"register"];
+    }
+    if (modifiers & XZStdcModifierReadonly) {
+        [components addObject:@"readonly"];
+    }
+    if (modifiers & XZStdcModifierCopy) {
+        [components addObject:@"copy"];
+    }
+    if (modifiers & XZStdcModifierRetain) {
+        [components addObject:@"retain"];
+    }
+    if (modifiers & XZStdcModifierWeak) {
+        [components addObject:@"weak"];
+    }
+    if (modifiers & XZStdcModifierNonatomic) {
+        [components addObject:@"nonatomic"];
+    }
+    if (modifiers & XZStdcModifierGetter) {
+        [components addObject:@"getter"];
+    }
+    if (modifiers & XZStdcModifierSetter) {
+        [components addObject:@"setter"];
+    }
+    if (modifiers & XZStdcModifierDynamic) {
+        [components addObject:@"dynamic"];
+    }
+    return [NSString stringWithFormat:@"[%@]", [components componentsJoinedByString:@", "]];
 }

@@ -25,7 +25,7 @@
                             </label>
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" textAlignment="center" lineBreakMode="tailTruncation" numberOfLines="2" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Z7S-gM-B9p">
                                 <rect key="frame" x="75.333333333333329" y="734.33333333333337" width="242.33333333333337" height="33.666666666666629"/>
-                                <string key="text">Copyright © 2015, 2025
+                                <string key="text">Copyright © 2015, 2026
 Xezun Individual. All Rights Reserved. </string>
                                 <fontDescription key="fontDescription" type="system" pointSize="14"/>
                                 <color key="textColor" white="0.33333333333333331" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>

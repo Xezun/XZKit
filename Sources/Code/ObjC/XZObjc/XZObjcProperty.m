@@ -20,13 +20,12 @@
     if (name == nil || strlen(name) == 0) {
         return nil;
     }
-
-    XZStdcModifiers _modifiers = kNilOptions;
+    
+    XZObjcType *    _type = nil;
     XZObjcIvar *    _ivar = nil;
     SEL             _getter = NULL;
     SEL             _setter = NULL;
-    
-    const char * typeEncoding = NULL;
+    XZStdcModifiers _modifiers = kNilOptions;
     
     unsigned int attributeCount;
     objc_property_attribute_t *attributeLists = property_copyAttributeList(property, &attributeCount);
@@ -34,7 +33,7 @@
         objc_property_attribute_t const attribute = attributeLists[i];
         switch (attribute.name[0]) {
             case 'T': { // Type encoding
-                typeEncoding = attribute.value;
+                _type = [XZObjcType typeForEncoding:attribute.value];
                 break;
             }
 
@@ -103,17 +102,16 @@
     free(attributeLists);
     attributeLists = NULL;
     
+    if (_type == nil) {
+        return nil;
+    }
+    
     if (_getter == NULL) {
         _getter = sel_getUid(name);
 
         if (_getter == NULL || !class_respondsToSelector(aClass, _getter)) {
             return nil;
         }
-    }
-    
-    XZObjcType *_type = [XZObjcType typeForEncoding:typeEncoding];
-    if (_type == nil) {
-        return nil;
     }
     
     if (_setter == NULL) {
@@ -151,10 +149,19 @@
 
 - (NSString *)description {
     NSString * const className = NSStringFromClass(self.class);
-    NSString * const type   = [NSString stringWithFormat:@"<%p: %@>", self.type, ((id)self.type.classType ?: self.type.name)];
+    NSString * const type   = self.type.name;
     NSString * const getter = NSStringFromSelector(self.getter);
     NSString * const setter = (self.setter ? NSStringFromSelector(self.setter) : nil);
-    return [NSString stringWithFormat:@"<%@: %p, name: %@, type: %@, ivar: %p, getter: %@, setter: %@>", className, self, self.name, type, self.ivar, getter, setter];
+    NSString * const modifiers = NSStringFromXZStdcModifiers(self.modifiers);
+    return [NSString stringWithFormat:@"<\n"
+            "    %@: %p, \n"
+            "    name: %@, \n"
+            "    type: %@, \n"
+            "    ivar: %@, \n"
+            "    getter: %@, \n"
+            "    setter: %@, \n"
+            "    modifiers: %@ \n"
+            ">", className, self, self.name, type, self.ivar.name, getter, setter, modifiers];
 }
 
 @end
