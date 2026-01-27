@@ -8,11 +8,11 @@
 #import <UIKit/UIKit.h>
 #if __has_include(<XZKit/XZKit.h>)
 #import <XZKit/XZRefreshView.h>
-#import <XZKit/XZRuntime.h>
+#import <XZKit/XZObjcRuntime.h>
 #import <XZKit/XZMacros.h>
 #else
 #import "XZRefreshView.h"
-#import "XZRuntime.h"
+#import "XZObjcRuntime.h"
 #import "XZMacros.h"
 #endif
 

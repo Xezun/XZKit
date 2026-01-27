@@ -2819,7 +2819,7 @@
 				046CE6362D34C2A100B9389F /* 18-XZDataDigester */,
 				046CE6372D34C2BE00B9389F /* 19-XZDataCryptor */,
 				046C966F2D3782690060EEBE /* 20-XZKeychain */,
-				299FD3842D4B588F00427660 /* 21-XZObjcDescriptor */,
+				299FD3842D4B588F00427660 /* 21-XZObjc */,
 				29776A132D3240E70033AAF9 /* Main.storyboard */,
 				29648BEF2A72556E0090F445 /* Assets.xcassets */,
 				29648BF12A72556E0090F445 /* LaunchScreen.storyboard */,
@@ -2872,7 +2872,7 @@
 			path = "13-XZToast";
 			sourceTree = "<group>";
 		};
-		299FD3842D4B588F00427660 /* 21-XZObjcDescriptor */ = {
+		299FD3842D4B588F00427660 /* 21-XZObjc */ = {
 			isa = PBXGroup;
 			children = (
 				299FD3852D4B58B800427660 /* Example21.storyboard */,
@@ -2893,7 +2893,7 @@
 				299FD38F2D4B97BA00427660 /* Example21TableViewCell.h */,
 				299FD3902D4B97BA00427660 /* Example21TableViewCell.m */,
 			);
-			path = "21-XZObjcDescriptor";
+			path = "21-XZObjc";
 			sourceTree = "<group>";
 		};
 		7E99BE5B53B9AE8857F3D974 /* Pods */ = {
@@ -3122,9 +3122,13 @@
 			inputFileListPaths = (
 				"${PODS_ROOT}/Target Support Files/Pods-Example/Pods-Example-frameworks-${CONFIGURATION}-input-files.xcfilelist",
 			);
+			inputPaths = (
+			);
 			name = "[CP] Embed Pods Frameworks";
 			outputFileListPaths = (
 				"${PODS_ROOT}/Target Support Files/Pods-Example/Pods-Example-frameworks-${CONFIGURATION}-output-files.xcfilelist",
+			);
+			outputPaths = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;

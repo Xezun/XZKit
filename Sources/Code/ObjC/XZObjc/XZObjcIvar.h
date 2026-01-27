@@ -23,11 +23,11 @@ NS_ASSUME_NONNULL_BEGIN
 
 /// 成员变量原始值。 ivar opaque struct
 @property (nonatomic, readonly) Ivar raw;
-/// 变量类型。Ivar's type
+/// 实例变量的类型。Ivar's type
 @property (nonatomic, readonly) XZObjcType *type;
-/// 变量名。Ivar's name
+/// 实例变量名。Ivar's name
 @property (nonatomic, readonly) NSString *name;
-/// 成员变量偏移。Ivar's offset
+/// 实例变量偏移。Ivar's offset
 @property (nonatomic, readonly) ptrdiff_t offset;
 
 + (nullable instancetype)ivarWithIvar:(Ivar)ivar NS_SWIFT_NAME(init(_:));

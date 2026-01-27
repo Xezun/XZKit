@@ -9,7 +9,7 @@
 #import "XZPageViewContext.h"
 #import "XZPageViewExtension.h"
 #import "XZLog.h"
-#import "XZRuntime.h"
+#import "XZObjcRuntime.h"
 #import "XZMacros.h"
 
 @implementation XZPageViewContext {

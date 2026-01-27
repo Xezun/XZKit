@@ -46,7 +46,7 @@
         @"18. XZDataDigester",
         @"19. XZDataCryptor",
         @"20. XZKeychain",
-        @"21. XZObjcDescriptor",
+        @"21. XZObjc",
     ];
     XZMocoaTableViewModel *viewModel = [[XZMocoaTableViewModel alloc] initWithModel:@[data]];
     viewModel.module = XZMocoa(@"https://xzkit.xezun.com/examples");

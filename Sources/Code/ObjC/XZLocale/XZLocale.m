@@ -6,7 +6,7 @@
 //
 
 #import "XZLocale.h"
-#import "XZRuntime.h"
+#import "XZObjcRuntime.h"
 #import "XZMacros.h"
 #import "XZLog.h"
 #import "NSString+XZKit.h"

@@ -23,31 +23,24 @@
 
     XZStdcModifiers _modifiers = kNilOptions;
     XZObjcIvar *    _ivar = nil;
-    SEL             _getter = nil;
-    SEL             _setter = nil;
+    SEL             _getter = NULL;
+    SEL             _setter = NULL;
     
     const char * typeEncoding = NULL;
-    unsigned int attrCount;
-    objc_property_attribute_t *attrLists = property_copyAttributeList(property, &attrCount);
-
-    for (unsigned int i = 0; i < attrCount; i++) {
-        const char * const attrValue = attrLists[i].value;
-        if (attrValue == NULL) {
-            continue;
-        }
-        const char * const attrName  = attrLists[i].name;
-        if (attrName == NULL) {
-            continue;
-        }
-        switch (attrName[0]) {
+    
+    unsigned int attributeCount;
+    objc_property_attribute_t *attributeLists = property_copyAttributeList(property, &attributeCount);
+    for (unsigned int i = 0; i < attributeCount; i++) {
+        objc_property_attribute_t const attribute = attributeLists[i];
+        switch (attribute.name[0]) {
             case 'T': { // Type encoding
-                typeEncoding = attrValue;
+                typeEncoding = attribute.value;
                 break;
             }
 
             case 'V': { // Instance variable
-                if (attrValue) {
-                    Ivar ivar = class_getInstanceVariable(aClass, attrValue);
+                if (attribute.value) {
+                    Ivar ivar = class_getInstanceVariable(aClass, attribute.value);
                     if (ivar) {
                         _ivar = [XZObjcIvar ivarWithIvar:ivar];
                     }
@@ -88,8 +81,8 @@
             case 'G': {
                 _modifiers |= XZStdcModifierGetter;
 
-                if (attrValue) {
-                    _getter = sel_getUid(attrValue);
+                if (attribute.value) {
+                    _getter = sel_getUid(attribute.value);
                 }
                 break;
             }
@@ -97,8 +90,8 @@
             case 'S': {
                 _modifiers |= XZStdcModifierSetter;
 
-                if (attrValue) {
-                    _setter = sel_getUid(attrValue);
+                if (attribute.value) {
+                    _setter = sel_getUid(attribute.value);
                 }
                 break;
             }
@@ -107,28 +100,35 @@
                 break;
         }
     }
+    free(attributeLists);
+    attributeLists = NULL;
+    
+    if (_getter == NULL) {
+        _getter = sel_getUid(name);
+
+        if (_getter == NULL || !class_respondsToSelector(aClass, _getter)) {
+            return nil;
+        }
+    }
     
     XZObjcType *_type = [XZObjcType typeForEncoding:typeEncoding];
     if (_type == nil) {
         return nil;
     }
     
-    if (attrLists) {
-        free(attrLists);
-        attrLists = NULL;
-    }
-
-    if (!_getter) {
-        _getter = sel_getUid(name);
-
-        if (_getter == nil) {
-            return nil;
+    if (_setter == NULL) {
+        if ((_modifiers & XZStdcModifierReadonly)) {
+            // 只读属性
+        } else {
+            NSString *setterName = [NSString stringWithFormat:@"set%c%s:", toupper(name[0]), name + 1];
+            _setter = NSSelectorFromString(setterName);
+            if (_setter == NULL) {
+                _modifiers |= XZStdcModifierReadonly;
+            } else if (!class_respondsToSelector(aClass, _setter)) {
+                _setter = NULL;
+                _modifiers |= XZStdcModifierReadonly;
+            }
         }
-    }
-
-    if (!_setter && !(_modifiers & XZStdcModifierReadonly)) {
-        NSString *setterName = [NSString stringWithFormat:@"set%c%s:", toupper(name[0]), name + 1];
-        _setter = NSSelectorFromString(setterName);
     }
     
     NSString *_name = [NSString stringWithCString:name encoding:(NSASCIIStringEncoding)];

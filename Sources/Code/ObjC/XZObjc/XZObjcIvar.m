@@ -31,7 +31,7 @@
         return nil;
     }
 
-    NSString *_name = [NSString stringWithCString:name encoding:NSASCIIStringEncoding];
+    NSString *_name = [[NSString alloc] initWithCString:name encoding:NSUTF8StringEncoding];
     return [[self alloc] initWithIvar:ivar name:_name type:_type];
 }
 
@@ -40,14 +40,14 @@
     if (self) {
         _raw = ivar;
         _name = name;
-        _offset = ivar_getOffset(ivar);
         _type = type;
+        _offset = ivar_getOffset(ivar);
     }
     return self;
 }
 
 - (NSString *)description {
-    return [NSString stringWithFormat:@"<%@: %p, name: %@, type: <%p: %@>, offset: %ld>", NSStringFromClass(self.class), self, self.name, self.type, ((id)self.type.classType ?: self.type.name), self.offset];
+    return [NSString stringWithFormat:@"<%@: %p, name: %@, type: %@, offset: %ld>", NSStringFromClass(self.class), self, self.name, self.type, self.offset];
 }
 
 @end

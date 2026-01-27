@@ -10,7 +10,7 @@
 #import "XZMocoaTableViewCell.h"
 #import "XZMocoaModule.h"
 #import "XZMocoaDefines.h"
-#import "XZRuntime.h"
+#import "XZObjcRuntime.h"
 
 @implementation UITableViewCell (XZMocoaTableViewCell)
 

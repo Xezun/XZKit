@@ -19,40 +19,40 @@
         return nil;
     }
 
-    const char * const typeEncoding = method_getTypeEncoding(method);
-    if (typeEncoding == NULL) {
+    const char * const encoding = method_getTypeEncoding(method);
+    if (encoding == NULL) {
         return nil;
     }
-    NSString * const _encoding = [NSString stringWithUTF8String:typeEncoding];
+    NSString * const _encoding = [NSString stringWithUTF8String:encoding];
     
     IMP const _implementation = method_getImplementation(method);
     
     XZObjcType *_type = nil;
-    char * const type = method_copyReturnType(method);
-    if (type != nil) {
-        _type = [XZObjcType typeForEncoding:type];
-        free(type);
+    char * const typeEncoding = method_copyReturnType(method);
+    if (typeEncoding != nil) {
+        _type = [XZObjcType typeForEncoding:typeEncoding];
     } else {
         _type = [XZObjcType typeForEncoding:@encode(void)];
     }
+    free(typeEncoding);
     
     unsigned int const numberOfArguments = method_getNumberOfArguments(method);
     NSMutableArray * const _arguments = [NSMutableArray arrayWithCapacity:numberOfArguments];
     for (unsigned int i = 0; i < numberOfArguments; i++) {
-        char *argument = method_copyArgumentType(method, i);
-        if (argument) {
-            XZObjcType *type = [XZObjcType typeForEncoding:argument];
-            if (type) {
-                [_arguments addObject:type];
-            }
-            free(argument);
+        char * const argument = method_copyArgumentType(method, i);
+        XZObjcType * const argumentType = [XZObjcType typeForEncoding:argument];
+        if (argumentType) {
+            [_arguments addObject:argumentType];
+        } else {
+            [_arguments addObject:[XZObjcType typeForType:(XZStdcTypeUnknown)]];
         }
+        free(argument);
     }
 
-    return [[self alloc] initWithMethod:method selector:_selector encoding:_encoding type:_type arguments:_arguments implementation:_implementation];
+    return [[self alloc] initWithMethod:method selector:_selector implementation:_implementation arguments:_arguments type:_type encoding:_encoding];
 }
 
-- (instancetype)initWithMethod:(Method)method selector:(SEL)selector encoding:(NSString *)typeEncoding type:(XZObjcType *)type arguments:(NSArray *)arguments implementation:(IMP)implementation {
+- (instancetype)initWithMethod:(Method)method selector:(SEL)selector implementation:(IMP)implementation arguments:(NSArray *)arguments type:(XZObjcType *)type encoding:(NSString *)typeEncoding {
     self = [super init];
     if (self) {
         _raw = method;

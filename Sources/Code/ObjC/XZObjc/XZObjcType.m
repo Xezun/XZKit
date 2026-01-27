@@ -77,7 +77,7 @@ static XZObjcType __unsafe_unretained *_basicTypes[CHAR_MAX] = { NULL };
         case XZStdcTypeObject:
             return _basicTypes[type];
     }
-    NSString *reason = [NSString stringWithFormat:@"参数 type 的值不正确，必须是 XZStdcType 枚举值。"];
+    NSString *reason = [NSString stringWithFormat:@"参数 type = %lu 的值不正确，必须是 XZStdcType 枚举值。", (unsigned long)type];
     @throw [NSException exceptionWithName:NSInvalidArgumentException reason:reason userInfo:nil];
 }
 
@@ -154,7 +154,7 @@ static XZObjcType __unsafe_unretained *_basicTypes[CHAR_MAX] = { NULL };
             return _basicTypes[stdcType];
         }
         case XZStdcTypePointer: {
-            XZObjcType * const _element = [XZObjcType typeForEncoding:encoding];
+            XZObjcType * const _element = [XZObjcType typeForEncoding:(encoding + 1)];
             if (_element == nil) {
                 return nil;
             }
@@ -176,7 +176,7 @@ static XZObjcType __unsafe_unretained *_basicTypes[CHAR_MAX] = { NULL };
             while (index < length) {
                 const char number = encoding[index];
                 // 遇到非数字，编码结束
-                if (number < '0' && number > '9') {
+                if (number < '0' || number > '9') {
                     break;
                 }
                 // 位域编码中，是以十进制表示位域宽度的。
@@ -189,7 +189,7 @@ static XZObjcType __unsafe_unretained *_basicTypes[CHAR_MAX] = { NULL };
             }
             
             NSString * const _encoding = [[NSString alloc] initWithBytes:encoding length:index encoding:NSUTF8StringEncoding];
-            NSString * const _name     = [NSString stringWithFormat:@"bit_field_%ld", (long)numberOfBits];
+            NSString * const _name     = [NSString stringWithFormat:@"bitfield_%ld", (long)numberOfBits];
             return [[XZObjcElementType alloc] initWithType:stdcType name:_name encoding:_encoding elementType:_basicTypes[stdcType] capacity:numberOfBits];
         }
         case XZStdcTypeArray: {
@@ -273,18 +273,22 @@ static XZObjcType __unsafe_unretained *_basicTypes[CHAR_MAX] = { NULL };
                 [_members addObject:member];
                 
                 // 移动到下一个字符
-                i += member.encoding.length;
+                i += (member.encoding.length - 1);
             }
             
             NSString * const _encoding = [[NSString alloc] initWithBytes:encoding length:(i + 1) encoding:NSUTF8StringEncoding];
             return [[XZObjcUnionType alloc] initWithType:stdcType name:_name encoding:_encoding members:_members];
         }
         case XZStdcTypeStruct: {
-            // {name=type...}
+            // 结构体编码格式：{name=type...}
+            
+            // 结构体编码至少需要4个字符
             if (length < 4) {
                 return nil;
             }
             
+            // 从第二个字符开始遍历，找到等号 = 字符，确定结构体名称。
+            // 遍历结束时，i 指向等号字符的位置。
             NSInteger i = 1;
             do {
                 if (i >= length) {
@@ -297,6 +301,7 @@ static XZObjcType __unsafe_unretained *_basicTypes[CHAR_MAX] = { NULL };
             } while (YES);
             NSString * const _name = [[NSString alloc] initWithBytes:(encoding + 1) length:(i - 1) encoding:NSUTF8StringEncoding];
             
+            // 解析结构体成员
             NSMutableArray * const _members = [NSMutableArray array];
             while ( YES ) {
                 i += 1;
@@ -314,8 +319,8 @@ static XZObjcType __unsafe_unretained *_basicTypes[CHAR_MAX] = { NULL };
                     return nil;
                 }
                 [_members addObject:member];
-                
-                i += member.encoding.length;
+                // 将 i 定位到 member 的最后一个字符上
+                i += (member.encoding.length - 1);
             }
             
             NSString * const _encoding = [[NSString alloc] initWithBytes:encoding length:(i + 1) encoding:NSUTF8StringEncoding];
@@ -330,41 +335,34 @@ static XZObjcType __unsafe_unretained *_basicTypes[CHAR_MAX] = { NULL };
             // id<UITableViewDataSource, UITableViewDelegate>       => @"<UITableViewDataSource><UITableViewDelegate>"
             // UIView<UITableViewDataSource, UITableViewDelegate> * => @"UIView<UITableViewDataSource><UITableViewDelegate>"
             
-            // 长度 1
-            if (length == 1 || encoding[1] != '"') {
-                return _basicTypes[stdcType];
+            // 编码长度只有 1 说明是 id 类型
+            if (length == 1) {
+                return _basicTypes[XZStdcTypeObject];
             }
             
-            // 包含类名时，长度不能小于4，比如 @"A"
+            // 第二个字符不是引号，说明是 id 类型
+            if (encoding[1] != '"') {
+                return _basicTypes[XZStdcTypeObject];
+            }
+            
+            // 非 id 类型对象，编码长度不能小于4，比如 @"A"
             if (length < 4) {
                 return nil;
             }
             
-            // 查询缓存
-            XZObjcType *cachedType = withLock(^id(const CFMutableDictionaryRef storage) {
-                CFStringRef key = CFStringCreateWithBytesNoCopy(NULL, (const UInt8 *)encoding, length, kCFStringEncodingUTF8, NO, NULL);
-                CFTypeRef value = CFDictionaryGetValue(storage, key);
-                CFRelease(key);
-                return (__bridge id)value;
-            });
-            if (cachedType) {
-                return cachedType;
-            }
-            
-            // 重新确定类型编码，并再次查询缓存。
+            // 查缓存：重新确定类型编码，根据编码查缓存。
             NSString *_encoding  = nil;
             for (NSInteger i = 2; i < length; i++) {
                 // 类型编码的终止符号：第二个双引号
                 if (encoding[i] == '"') {
-                    _encoding = [[NSString alloc] initWithBytes:encoding length:(i + 1) encoding:NSUTF8StringEncoding];
-                    if (i < length - 1) {
-                        XZObjcType *cachedType = withLock(^id(const CFMutableDictionaryRef storage) {
-                            CFTypeRef value = CFDictionaryGetValue(storage, (__bridge CFStringRef)_encoding);
-                            return (__bridge id)value;
-                        });
-                        if (cachedType) {
-                            return cachedType;
-                        }
+                    NSInteger const newLength = (i + 1);
+                    _encoding = [[NSString alloc] initWithBytes:encoding length:newLength encoding:NSUTF8StringEncoding];
+                    XZObjcType *cachedType = withLock(^id(const CFMutableDictionaryRef storage) {
+                        CFTypeRef value = CFDictionaryGetValue(storage, (__bridge CFStringRef)_encoding);
+                        return (__bridge id)value;
+                    });
+                    if (cachedType) {
+                        return cachedType;
                     }
                     break;
                 }
@@ -375,6 +373,8 @@ static XZObjcType __unsafe_unretained *_basicTypes[CHAR_MAX] = { NULL };
                 return nil;
             }
             
+            // 遍历字符串，分别解析出对象类名、遵循的协议名。
+            //
             typedef enum : NSUInteger {
                 MatchModeNone,
                 /// 匹配名称模式
@@ -649,8 +649,8 @@ static XZObjcType __unsafe_unretained *_basicTypes[CHAR_MAX] = { NULL };
         { // bit field
             XZStdcType const stdcType = (XZStdcType)_C_BFLD;
             NSString * const encoding = [NSString stringWithFormat:@"%c", _C_BFLD];
-            NSString * const name = @"bit field";
-            _basicTypes[_C_VECTOR] = (__bridge id)(__bridge_retained CFTypeRef)[[XZObjcType alloc] initWithType:stdcType name:name encoding:encoding];
+            NSString * const name = @"bitfield";
+            _basicTypes[_C_BFLD] = (__bridge id)(__bridge_retained CFTypeRef)[[XZObjcType alloc] initWithType:stdcType name:name encoding:encoding];
         }
         { // union
             XZStdcType const stdcType = (XZStdcType)_C_UNION_B;

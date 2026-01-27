@@ -7,7 +7,7 @@
 
 #import "XZMocoaView.h"
 #import "XZMocoaDefines.h"
-#import "XZRuntime.h"
+#import "XZObjcRuntime.h"
 #import "NSArray+XZKit.h"
 #import "UIView+XZKit.h"
 #import "XZLog.h"

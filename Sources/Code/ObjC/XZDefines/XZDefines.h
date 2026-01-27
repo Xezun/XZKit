@@ -9,13 +9,13 @@
 #import <XZKit/XZMacros.h>
 #import <XZKit/XZDefer.h>
 #import <XZKit/XZEmpty.h>
-#import <XZKit/XZRuntime.h>
+#import <XZKit/XZObjcRuntime.h>
 #import <XZKit/XZUtils.h>
 #else
 #import "XZMacros.h"
 #import "XZDefer.h"
 #import "XZEmpty.h"
-#import "XZRuntime.h"
+#import "XZObjcRuntime.h"
 #import "XZUtils.h"
 #endif
 

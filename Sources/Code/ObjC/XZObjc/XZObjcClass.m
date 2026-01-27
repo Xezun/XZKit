@@ -26,73 +26,74 @@ static id withLock(id (^NS_NOESCAPE block)(CFMutableDictionaryRef const storage)
 
 @implementation XZObjcClass
 
-- (instancetype)initWithClass:(nonnull Class)class {
+- (instancetype)initWithClass:(nonnull Class)aClass {
     self = [super init];
     if (self) {
-        _raw = class;
+        _raw = aClass;
         _isValid = YES;
-        _name = NSStringFromClass(class);
-        _type = [XZObjcType typeForEncoding:@encode(Class)];
+        _name = NSStringFromClass(aClass);
+        _type = [XZObjcType typeForType:(XZStdcTypeClass)];
         
-        if ([XZObjcClass classForClass:[class superclass]]) {
+        // 不处理基类（没有超类的类）。
+        if (class_getSuperclass(aClass)) {
             {
+                NSDictionary *ivars = nil;
+                
                 unsigned int ivarCount = 0;
-                Ivar *list = class_copyIvarList(class, &ivarCount);
-                if (list && ivarCount > 0) {
-                    NSMutableDictionary * const descriptors = [NSMutableDictionary dictionaryWithCapacity:ivarCount];
+                Ivar *list = class_copyIvarList(aClass, &ivarCount);
+                if (ivarCount > 0) {
+                    ivars = [NSMutableDictionary dictionaryWithCapacity:ivarCount];
                     for (unsigned int i = 0; i < ivarCount; i++) {
-                        XZObjcIvar *descriptor = [XZObjcIvar ivarWithIvar:list[i]];
-                        if (descriptor) {
-                            descriptors[descriptor.name] = descriptor;
+                        XZObjcIvar *ivar = [XZObjcIvar ivarWithIvar:list[i]];
+                        if (ivar) {
+                            ((NSMutableDictionary *)ivars)[ivar.name] = ivar;
                         }
                     }
-                    free(list);
-                    list = NULL;
-                    
-                    _ivars = descriptors;
-                } else {
-                    _ivars = @{};
                 }
+                free(list);
+                list = NULL;
+                
+                _ivars = ivars ?: @{};
             }
             
             {
+                NSDictionary *methods = nil;
+                
                 unsigned int methodCount = 0;
-                Method *list = class_copyMethodList(class, &methodCount);
-                if (list && methodCount > 0) {
-                    NSMutableDictionary *descriptors = [NSMutableDictionary dictionaryWithCapacity:methodCount];
+                Method *list = class_copyMethodList(aClass, &methodCount);
+                if (methodCount > 0) {
+                    methods = [NSMutableDictionary dictionaryWithCapacity:methodCount];
                     for (unsigned int i = 0; i < methodCount; i++) {
-                        XZObjcMethod *descriptor = [XZObjcMethod methodWithMethod:list[i]];
-                        if (descriptor) {
-                            descriptors[descriptor.name] = descriptor;
+                        XZObjcMethod *method = [XZObjcMethod methodWithMethod:list[i]];
+                        if (method) {
+                            ((NSMutableDictionary *)methods)[method.name] = method;
                         }
                     }
-                    free(list);
-                    list = NULL;
-                    
-                    _methods = descriptors;
-                } else {
-                    _methods = @{};
                 }
+                free(list);
+                list = NULL;
+                
+                _methods = methods ?: @{};
             }
             
             {
+                NSDictionary *properties = nil;
+                
                 unsigned int propertyCount = 0;
-                objc_property_t *list = class_copyPropertyList(class, &propertyCount);
-                if (list && propertyCount > 0) {
-                    NSMutableDictionary *descriptors = [NSMutableDictionary dictionaryWithCapacity:propertyCount];
+                objc_property_t *list = class_copyPropertyList(aClass, &propertyCount);
+                if (propertyCount > 0) {
+                    properties = [NSMutableDictionary dictionaryWithCapacity:propertyCount];
                     for (unsigned int i = 0; i < propertyCount; i++) {
-                        XZObjcProperty *descriptor = [XZObjcProperty propertyWithProperty:list[i] class:class];
-                        if (descriptor) {
-                            descriptors[descriptor.name] = descriptor;
+                        XZObjcProperty *property = [XZObjcProperty propertyWithProperty:list[i] class:aClass];
+                        if (property) {
+                            ((NSMutableDictionary *)properties)[property.name] = property;
                         }
                     }
-                    free(list);
-                    list = NULL;
-                    
-                    _properties = descriptors;
-                } else {
-                    _properties = @{};
                 }
+                free(list);
+                list = NULL;
+                
+                _properties = properties ?: @{};
             }
         } else {
             _ivars = @{};
@@ -104,7 +105,7 @@ static id withLock(id (^NS_NOESCAPE block)(CFMutableDictionaryRef const storage)
 }
 
 - (XZObjcClass *)superClass {
-    return [XZObjcClass classForClass:[self->_raw superclass]];
+    return [XZObjcClass classForClass:class_getSuperclass(_raw)];
 }
 
 - (NSString *)description {

@@ -7,7 +7,7 @@
 //
 
 #import "XZMocoaGridModel.h"
-#import "XZRuntime.h"
+#import "XZObjcRuntime.h"
 @import ObjectiveC;
 
 @implementation NSObject (XZMocoaGridModel)

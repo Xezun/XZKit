@@ -6,14 +6,14 @@
 //
 
 #if __has_include(<XZKit/XZKit.h>)
-#import <XZKit/XZRuntime.h>
+#import <XZKit/XZObjcRuntime.h>
 #import <XZKit/XZObjcType.h>
 #import <XZKit/XZObjcIvar.h>
 #import <XZKit/XZObjcProperty.h>
 #import <XZKit/XZObjcMethod.h>
 #import <XZKit/XZObjcClass.h>
 #else
-#import "XZRuntime.h"
+#import "XZObjcRuntime.h"
 #import "XZObjcType.h"
 #import "XZObjcIvar.h"
 #import "XZObjcProperty.h"

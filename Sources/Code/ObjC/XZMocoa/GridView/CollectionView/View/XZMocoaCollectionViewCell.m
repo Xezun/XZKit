@@ -9,9 +9,9 @@
 #import "XZMocoaModule.h"
 #import "XZMocoaDefines.h"
 #if __has_include(<XZKit/XZKit.h>)
-#import <XZKit/XZRuntime.h>
+#import <XZKit/XZObjcRuntime.h>
 #else
-#import "XZRuntime.h"
+#import "XZObjcRuntime.h"
 #endif
 #import <objc/runtime.h>
 
