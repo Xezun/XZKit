@@ -404,10 +404,6 @@ void XZJSONModelEncodeProperty(id const _Unsafe model, XZJSONProperty * const _U
             break;
         }
         case XZStdcTypeObject: {
-            if (property->_isUnownedReference) {
-                break;
-            }
-            
             id const value = ((id (*)(id, SEL))(void *)objc_msgSend)((id)model, property->_getter);
             
             // 所有参与转换的属性，都将输出到 JSON 中

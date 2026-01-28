@@ -31,6 +31,8 @@ NS_ASSUME_NONNULL_BEGIN
 /// 方法参数和返回值类型编码。method's parameter and return types
 @property (nonatomic, copy, readonly) NSString *encoding;
 /// 参数类型编码。 array of arguments' type
+/// 
+/// 按照 objc 的规则，参数为 `(receiver, SEL, ...)`
 @property (nonatomic, readonly, nullable) NSArray<XZObjcType *> *arguments;
 
 + (nullable instancetype)methodWithMethod:(Method)method NS_SWIFT_NAME(init(_:));

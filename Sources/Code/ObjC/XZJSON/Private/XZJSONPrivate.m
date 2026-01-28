@@ -206,9 +206,7 @@ NSString * _Nonnull XZJSONModelDescription(NSObject *_Nonnull model, NSUInteger 
             }
             case XZStdcTypeObject: {
                 value = ((id (*)(id _Nonnull, SEL _Nonnull))objc_msgSend)((id)model, property->_getter);
-                if (property->_isUnownedReference) {
-                    value = [NSString stringWithFormat:@"<%@: %p>", value.class, value];
-                } else if (property->_cocoaClass) {
+                if (property->_cocoaClass) {
                     value = XZJSONModelDescriptionForCocoaClass(value, property->_cocoaClass, indent);
                 } else {
                     value = [XZJSON model:value descriptionWithIndent:indent];

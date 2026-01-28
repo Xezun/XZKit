@@ -270,27 +270,27 @@ FOUNDATION_EXPORT NSHashTable *xz_objc_class_getImplementedProtocolMethods(Class
 #ifndef XZ_OBJC_MESSAGE_BRIDGES
 #define XZ_OBJC_MESSAGE_BRIDGES 1
 
-// 由于在 Swift 中无法直接调用 objc_msgSend/objc_msgSendSuper 函数，因此写了一下桥接函数，方便在 Swift 中使用。
-// 以返回值区分函数类型：
+// 将 objc_msgSend/objc_msgSendSuper 桥接到 Swift 中使用的函数一些函数，这些函数以返回值进行区分：
 // _void   => void
 // _id     => id
 // _bool   => BOOL
 // _rect   => CGRect
-
-// 在 xz_objc_msgSendSuper 方法中，除非没有子类，否则参数 receiverClass 不可以通过 receiver.class 动态获取，而应该是确定类型，否则会造成死循环。
-// 比如像下面这样实现的话
+//
+// 向超类发送消息时，调用 xz_objc_msgSendSuper 方法，参数 receiverClass 应该是确定类型，不可以通过 receiver.class 动态获取，否则会造成死循环，比如。
+// 假如 Animal 自身没有实现，但它的超类有 -foobar 方法，我们现在给 Animal 动态添加这个方法，加入一些我们需要处理的逻辑。
 // @implementation Animal
 // - (void)foobar {
-//     xz_objc_msgSendSuper_void(self, self.class, @selector(foobar)); // 应该使用 [Human class] 而不是 self.class
+//     xz_objc_msgSendSuper_void(self, self.class, @selector(foobar)); // 应该使用 [Animal class] 而不是 self.class
+//    // do something more.
 // }
 // @end
+// 而 Human 是 Animal 子类。
 // @interface Human : Animal
 // @end
-// 那么子类在调用 -foobar 方法时，就会造成死循环。
-// Human *human = [[Human alloc] init];
+// 那么当子类 Human 在调用 -foobar 方法时，就会发生死循环。
 // [human foobar];
-// 原因是 self.class 返回值始终是 Human 类，因此获取的 superclass 始终是 Animal 类。
-// 即在调用方法 [human foobar] 中，调用 xz_objc_msgSendSuper 函数时，传入的 self.class 实际造成 Animal 调用自身。
+// 原因是 self.class 始终是 Human 类，在执行 -[Animal foobar] 时，它的值也是 Human 类，那么函数 xz_objc_msgSendSuper 的调用实际上就是调用自身。
+//
 
 FOUNDATION_EXPORT void xz_objc_msgSend_void(id receiver, SEL selector, id _Nullable param1) XZ_ATTR_OVERLOAD;
 FOUNDATION_EXPORT void xz_objc_msgSend_void(id receiver, SEL selector, id _Nullable param1, BOOL param2) XZ_ATTR_OVERLOAD;

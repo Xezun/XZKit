@@ -25,4 +25,8 @@
     return nil;
 }
 
+- (void)foo:(NSInteger)foo bar:(UIView *)bar {
+    
+}
+
 @end

@@ -936,10 +936,6 @@ void XZJSONModelDecodeProperty(id const _Unsafe model, XZJSONProperty * const _U
                 return;
             }
             
-            if (property->_isUnownedReference) {
-                break;
-            }
-            
             id value = nil;
             
             switch (property->_cocoaClass) {

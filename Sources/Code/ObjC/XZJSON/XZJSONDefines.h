@@ -54,15 +54,9 @@ NS_ASSUME_NONNULL_BEGIN
 /// > 在 keyPath 中，反斜杠为转义字符。例如 `@"foo.bar"` 会认为是 keyPath 而 `@"foo\\.bar"` 则认为是 key 。
 @property (class, readonly, nullable) NSDictionary<NSString *, id> *mappingJSONCodingKeys;
 
-/// 模型属性的类型不明确时，可通过此属性提供映射关系，比如属性是集合或者 id 类型。
+/// 无法推断类型的属性，比如属性为集合或 id 类型，可通过此方法，设置属性名与属性类型（或集合的元素类型）之间的映射关系。
 ///
-/// > 如果集合包含多种类型，建议使用“基类”，让集合中的元素具有相同的基类，然后在基类中 fowarding 子类。
-///
-/// The generic class mapper for container properties.
-///
-/// If the property is a container object, such as NSArray/NSSet/NSDictionary,
-/// implements this method and returns a property->class mapper, tells which kind of
-/// object will be add to the array/set/dictionary.
+/// 如果集合包含多种类型，可以指定一个类（比如基类），通过``-forwardingClassForJSONDictionary:``方法，转发模型化过程。
 ///
 /// ```swift
 /// import XZShadow, XZBorder;

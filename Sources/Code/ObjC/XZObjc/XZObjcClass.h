@@ -15,9 +15,6 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-/// 当 Class 发生更新时，会发送此通知。
-FOUNDATION_EXPORT NSNotificationName const XZObjcClassDidDidBecomeInvalidNotification;
-
 /// 描述类的对象。
 ///
 /// Class information for a class.
@@ -44,10 +41,6 @@ FOUNDATION_EXPORT NSNotificationName const XZObjcClassDidDidBecomeInvalidNotific
 /// 类属性。 properties
 @property (nonatomic, copy, readonly) NSDictionary<NSString *, XZObjcProperty *> *properties;
 
-- (void)invalidate;
-
-@property (atomic, readonly) BOOL isValid;
-
 - (instancetype)init NS_UNAVAILABLE;
 
 /// 获取描述`rawClass`的对象。
@@ -55,11 +48,7 @@ FOUNDATION_EXPORT NSNotificationName const XZObjcClassDidDidBecomeInvalidNotific
 /// 如果运行时修改了`Class`的信息，那么`XZObjcClass`对象可能会因失效而被释放，因此调用者需持有该对象。
 ///
 /// - Parameter rawClass: 类
-+ (nullable XZObjcClass *)classForClass:(nullable Class)rawClass NS_SWIFT_NAME(init(_:));
-
-/// 使`rawClass`当前的描述对象失效。
-/// - Parameter rawClass: 待失效描述对象
-+ (void)invalidate:(Class)rawClass;
++ (nullable XZObjcClass *)classWithClass:(nullable Class)rawClass NS_SWIFT_NAME(init(_:));
 
 @end
 

@@ -21,7 +21,7 @@ static id XZJSONKeyFromString(NSString *aString);
 - (instancetype)initWithClass:(nonnull Class)aClass {
     self = [super init];
     if (self) {
-        _raw = [XZObjcClass classForClass:aClass];
+        _raw = [XZObjcClass classWithClass:aClass];
         _cocoaClass = XZJSONCocoaClassFromClass(aClass);
         
         // 原生对象，不需要获取属性
@@ -39,13 +39,6 @@ static id XZJSONKeyFromString(NSString *aString);
             _usesPropertyJSONDecodingMethod = NO;
             _usesPropertyJSONEncodingMethod = NO;
         } else {
-            XZObjcClass *rawClass = self->_raw;
-            
-            while (rawClass.superClass) {
-                [NSNotificationCenter.defaultCenter addObserver:self selector:@selector(classNeedsUpdateNotification:) name:XZObjcClassDidDidBecomeInvalidNotification object:rawClass];
-                rawClass = rawClass.superClass;
-            }
-            
             [self update];
         }
     }
@@ -79,7 +72,7 @@ static id XZJSONKeyFromString(NSString *aString);
         }
     }
     
-    // 类映射
+    // 映射：属性名 <=> 属性类型
     NSDictionary *mappingClasses = nil;
     if ([rawClass respondsToSelector:@selector(mappingJSONCodingClasses)]) {
         mappingClasses = [rawClass mappingJSONCodingClasses];
@@ -112,63 +105,7 @@ static id XZJSONKeyFromString(NSString *aString);
                 if (allProperties[name]) {
                     return; // 已存在
                 }
-                if (!property.getter || !property.setter) {
-                    return; // 必须同时有 getter 和 setter
-                }
-                XZJSONProperty *descriptor = [XZJSONProperty descriptorWithProperty:property elementType:mappingClasses[property.name] ofClass:self];
-                switch (descriptor->_type) {
-                    case XZStdcTypeUnknown:
-                        return;
-                    case XZStdcTypeChar:
-                    case XZStdcTypeUnsignedChar:
-                    case XZStdcTypeInt:
-                    case XZStdcTypeUnsignedInt:
-                    case XZStdcTypeShort:
-                    case XZStdcTypeUnsignedShort:
-                    case XZStdcTypeLong:
-                    case XZStdcTypeUnsignedLong:
-                    case XZStdcTypeInt128:
-                    case XZStdcTypeUnsignedInt128:
-                    case XZStdcTypeLongLong:
-                    case XZStdcTypeUnsignedLongLong:
-                    case XZStdcTypeFloat:
-                    case XZStdcTypeDouble:
-                    case XZStdcTypeLongDouble:
-                    case XZStdcTypeBool:
-                        break;
-                    case XZStdcTypeVoid:
-                        return;
-                    case XZStdcTypeString:
-                        return;
-                    case XZStdcTypeSelector:
-                        break;
-                    case XZStdcTypePointer:
-                        return;
-                    case XZStdcTypeArray:
-                        return;
-                    case XZStdcTypeVector:
-                        return;
-                    case XZStdcTypeBitField:
-                        return;
-                    case XZStdcTypeUnion:
-                        return;
-                    case XZStdcTypeStruct:
-                        if (descriptor->_structType != XZStdcStructTypeUnknown) {
-                            break;
-                        }
-                        return;
-                    case XZStdcTypeClass:
-                        break;
-                    case XZStdcTypeObject:
-                        if (descriptor->_cocoaClass) {
-                            break;
-                        }
-                        // 弱引用
-                        if (descriptor->_isUnownedReference) {
-                            return;
-                        }
-                        break;
-                }
+                XZJSONProperty * const descriptor = [XZJSONProperty descriptorWithProperty:property mappingClass:mappingClasses[property.name] class:self];
                 allProperties[name] = descriptor;
             }];
         } while ((class = class.superClass));

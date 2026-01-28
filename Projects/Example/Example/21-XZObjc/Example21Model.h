@@ -22,6 +22,7 @@ NS_ASSUME_NONNULL_BEGIN
 - (void)method2:(NSInteger *)b;
 - (void)method3:(Example21Model *)model;
 - (Example21Model *)method4;
+- (void)foo:(NSInteger)foo bar:(UIView *)bar;
 
 @end
 

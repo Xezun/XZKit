@@ -350,7 +350,7 @@ static XZObjcType __unsafe_unretained *_basicTypes[CHAR_MAX] = { NULL };
                 return nil;
             }
             
-            // 查缓存：重新确定类型编码，根据编码查缓存。
+            // 查缓存：确定类型编码，根据类型编码查缓存。
             NSString *_encoding  = nil;
             for (NSInteger i = 2; i < length; i++) {
                 // 类型编码的终止符号：第二个双引号
@@ -374,7 +374,8 @@ static XZObjcType __unsafe_unretained *_basicTypes[CHAR_MAX] = { NULL };
             }
             
             // 遍历字符串，分别解析出对象类名、遵循的协议名。
-            //
+            
+            /// 遍历时对字符的匹配模式，判断字符是类名，还是协议名。
             typedef enum : NSUInteger {
                 MatchModeNone,
                 /// 匹配名称模式
@@ -386,7 +387,7 @@ static XZObjcType __unsafe_unretained *_basicTypes[CHAR_MAX] = { NULL };
             MatchMode mode = MatchModeName;
             NSRange nameRange = NSMakeRange(2, 0);
             NSRange protocolRange = NSMakeRange(NSNotFound, 0);
-            
+            // 遍历时存储的为协议名（字符串），遍历后处理为协议对象。
             NSMutableArray *_protocols = [NSMutableArray array];
             for (NSInteger i = 2; i < length; i++) {
                 switch (encoding[i]) {
@@ -561,112 +562,114 @@ static XZObjcType __unsafe_unretained *_basicTypes[CHAR_MAX] = { NULL };
 + (void)initialize {
     if (self == [XZObjcType class]) {
         
-#define XZObjcTypeInitialize(type) { \
+#define XZObjcRetain(object) (__bridge id)(__bridge_retained CFTypeRef)object
+#define XZObjcTypeMake(type) { \
     const char * const typeEncoding = @encode(type);\
     XZStdcType   const stdcType     = (XZStdcType)typeEncoding[0]; \
     NSString   * const encoding     = [NSString stringWithFormat:@"%s", typeEncoding]; \
     NSString   * const name         = @"" # type; \
-    _basicTypes[stdcType] = (__bridge id)(__bridge_retained CFTypeRef)[[XZObjcType alloc] initWithType:stdcType name:name encoding:encoding]; \
+    _basicTypes[stdcType] = XZObjcRetain([[XZObjcType alloc] initWithType:stdcType name:name encoding:encoding]); \
 }
         {
             typedef void (unknown)(void);
-            XZObjcTypeInitialize(unknown);
+            XZObjcTypeMake(unknown);
         }
-        XZObjcTypeInitialize(char);
-        XZObjcTypeInitialize(unsigned char);
-        XZObjcTypeInitialize(int);
-        XZObjcTypeInitialize(unsigned int);
-        XZObjcTypeInitialize(short);
-        XZObjcTypeInitialize(unsigned short);
-        XZObjcTypeInitialize(long);
-        XZObjcTypeInitialize(unsigned long);
+        XZObjcTypeMake(char);
+        XZObjcTypeMake(unsigned char);
+        XZObjcTypeMake(int);
+        XZObjcTypeMake(unsigned int);
+        XZObjcTypeMake(short);
+        XZObjcTypeMake(unsigned short);
+        XZObjcTypeMake(long);
+        XZObjcTypeMake(unsigned long);
         { // int_128
             XZStdcType const stdcType = (XZStdcType)_C_INT128;
             NSString * const encoding = [NSString stringWithFormat:@"%c", _C_INT128];
             NSString * const name = @"int128";
-            _basicTypes[_C_INT128] = (__bridge id)(__bridge_retained CFTypeRef)[[XZObjcType alloc] initWithType:stdcType name:name encoding:encoding];
+            _basicTypes[_C_INT128] = XZObjcRetain([[XZObjcType alloc] initWithType:stdcType name:name encoding:encoding]);
         }
         { // unsigned int_128
             XZStdcType const stdcType = (XZStdcType)_C_UINT128;
             NSString * const encoding = [NSString stringWithFormat:@"%c", _C_UINT128];
             NSString * const name = @"unsigned int128";
-            _basicTypes[_C_UINT128] = (__bridge id)(__bridge_retained CFTypeRef)[[XZObjcType alloc] initWithType:stdcType name:name encoding:encoding];
+            _basicTypes[_C_UINT128] = XZObjcRetain([[XZObjcType alloc] initWithType:stdcType name:name encoding:encoding]);
         }
 #if XZ_TYPE_LLONG_IS_LONG
         { // long long
             XZStdcType const stdcType = (XZStdcType)_C_LNG_LNG;
             NSString * const encoding = [NSString stringWithFormat:@"%c", _C_LNG_LNG];
             NSString * const name = @"long long";
-            _basicTypes[_C_LNG_LNG] = (__bridge id)(__bridge_retained CFTypeRef)[[XZObjcType alloc] initWithType:stdcType name:name encoding:encoding];
+            _basicTypes[_C_LNG_LNG] = XZObjcRetain([[XZObjcType alloc] initWithType:stdcType name:name encoding:encoding]);
         }
         { // unsigned long long
             XZStdcType const stdcType = (XZStdcType)_C_ULNG_LNG;
             NSString * const encoding = [NSString stringWithFormat:@"%c", _C_ULNG_LNG];
             NSString * const name = @"unsigned long long";
-            _basicTypes[_C_ULNG_LNG] = (__bridge id)(__bridge_retained CFTypeRef)[[XZObjcType alloc] initWithType:stdcType name:name encoding:encoding];
+            _basicTypes[_C_ULNG_LNG] = XZObjcRetain([[XZObjcType alloc] initWithType:stdcType name:name encoding:encoding]);
         }
 #else
-        XZObjcTypeInitialize(long long);
-        XZObjcTypeInitialize(unsigned long long);
+        XZObjcTypeMake(long long);
+        XZObjcTypeMake(unsigned long long);
 #endif
-        XZObjcTypeInitialize(float);
-        XZObjcTypeInitialize(double);
+        XZObjcTypeMake(float);
+        XZObjcTypeMake(double);
 #if TYPE_LONGDOUBLE_IS_DOUBLE
         { // long double
             XZStdcType const stdcType = (XZStdcType)_C_LNG_DBL;
             NSString * const encoding = [NSString stringWithFormat:@"%c", _C_LNG_DBL];
             NSString * const name = @"long double";
-            _basicTypes[_C_LNG_DBL] = (__bridge id)(__bridge_retained CFTypeRef)[[XZObjcType alloc] initWithType:stdcType name:name encoding:encoding];
+            _basicTypes[_C_LNG_DBL] = XZObjcRetain([[XZObjcType alloc] initWithType:stdcType name:name encoding:encoding]);
         }
 #else
-        XZObjcTypeInitialize(long double);
+        XZObjcTypeMake(long double);
 #endif
-        XZObjcTypeInitialize(bool);
-        XZObjcTypeInitialize(void);
+        XZObjcTypeMake(bool);
+        XZObjcTypeMake(void);
         { // c string
             typedef char *string;
-            XZObjcTypeInitialize(string);
+            XZObjcTypeMake(string);
         }
-        XZObjcTypeInitialize(SEL);
+        XZObjcTypeMake(SEL);
         { // pointer
             XZStdcType const stdcType = (XZStdcType)_C_PTR;
             NSString * const encoding = [NSString stringWithFormat:@"%c", _C_PTR];
             NSString * const name = @"pointer";
-            _basicTypes[_C_PTR] = (__bridge id)(__bridge_retained CFTypeRef)[[XZObjcType alloc] initWithType:stdcType name:name encoding:encoding];
+            _basicTypes[_C_PTR] = XZObjcRetain([[XZObjcType alloc] initWithType:stdcType name:name encoding:encoding]);
         }
         { // c array
             XZStdcType const stdcType = (XZStdcType)_C_ARY_B;
             NSString * const encoding = [NSString stringWithFormat:@"%c%c", _C_ARY_B, _C_ARY_E];
             NSString * const name = @"array";
-            _basicTypes[_C_ARY_B] = (__bridge id)(__bridge_retained CFTypeRef)[[XZObjcType alloc] initWithType:stdcType name:name encoding:encoding];
+            _basicTypes[_C_ARY_B] = XZObjcRetain([[XZObjcType alloc] initWithType:stdcType name:name encoding:encoding]);
         }
         { // c++ vector
             XZStdcType const stdcType = (XZStdcType)_C_VECTOR;
             NSString * const encoding = [NSString stringWithFormat:@"%c", _C_VECTOR];
             NSString * const name = @"vector";
-            _basicTypes[_C_VECTOR] = (__bridge id)(__bridge_retained CFTypeRef)[[XZObjcType alloc] initWithType:stdcType name:name encoding:encoding];
+            _basicTypes[_C_VECTOR] = XZObjcRetain([[XZObjcType alloc] initWithType:stdcType name:name encoding:encoding]);
         }
         { // bit field
             XZStdcType const stdcType = (XZStdcType)_C_BFLD;
             NSString * const encoding = [NSString stringWithFormat:@"%c", _C_BFLD];
             NSString * const name = @"bitfield";
-            _basicTypes[_C_BFLD] = (__bridge id)(__bridge_retained CFTypeRef)[[XZObjcType alloc] initWithType:stdcType name:name encoding:encoding];
+            _basicTypes[_C_BFLD] = XZObjcRetain([[XZObjcType alloc] initWithType:stdcType name:name encoding:encoding]);
         }
         { // union
             XZStdcType const stdcType = (XZStdcType)_C_UNION_B;
             NSString * const encoding = [NSString stringWithFormat:@"%c%c", _C_UNION_B, _C_UNION_E];
             NSString * const name = @"union";
-            _basicTypes[_C_UNION_B] = (__bridge id)(__bridge_retained CFTypeRef)[[XZObjcType alloc] initWithType:stdcType name:name encoding:encoding];
+            _basicTypes[_C_UNION_B] = XZObjcRetain([[XZObjcType alloc] initWithType:stdcType name:name encoding:encoding]);
         }
         { // union
             XZStdcType const stdcType = (XZStdcType)_C_STRUCT_B;
             NSString * const encoding = [NSString stringWithFormat:@"%c%c", _C_STRUCT_B, _C_STRUCT_E];
             NSString * const name = @"struct";
-            _basicTypes[_C_STRUCT_B] = (__bridge id)(__bridge_retained CFTypeRef)[[XZObjcType alloc] initWithType:stdcType name:name encoding:encoding];
+            _basicTypes[_C_STRUCT_B] = XZObjcRetain([[XZObjcType alloc] initWithType:stdcType name:name encoding:encoding]);
         }
-        XZObjcTypeInitialize(Class);
-        XZObjcTypeInitialize(id);
-#undef XZObjcTypeInitialize
+        XZObjcTypeMake(Class);
+        XZObjcTypeMake(id);
+#undef XZObjcTypeMake
+#undef XZObjcRetain
     }
 }
 

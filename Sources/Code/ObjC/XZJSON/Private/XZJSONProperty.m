@@ -11,42 +11,49 @@
 
 @implementation XZJSONProperty
 
-+ (XZJSONProperty *)descriptorWithProperty:(XZObjcProperty *)property elementType:(nullable Class)elementType ofClass:(XZJSONClass *)aClass {
++ (XZJSONProperty *)descriptorWithProperty:(XZObjcProperty *)property mappingClass:(nullable Class)mappingClass class:(XZJSONClass *)aClass {
+    XZStdcModifiers const modifiers = property.modifiers;
+    
     // 必须是读写属性才参与 JSON 处理
-    SEL const setter = property.setter;
-    if (setter == nil || ![aClass->_raw.raw instancesRespondToSelector:setter]) {
+    if (modifiers & XZStdcModifierReadonly) {
         return nil;
     }
     
-    SEL const getter = property.getter;
-    if (getter == nil || ![aClass->_raw.raw instancesRespondToSelector:getter]) {
-        return nil;
+    XZStdcType const _type = property.type.type;
+    Class _classType = Nil;
+    if (_type == XZStdcTypeObject) {
+        // 不处理是无主引用或弱引用的属性。
+        if ( (modifiers & XZStdcModifierWeak) || !(modifiers & (XZStdcModifierCopy | XZStdcModifierRetain)) ) {
+            return nil;
+        }
+        _classType = property.type.classType;
+        if (_classType == Nil) {
+            // 未知类型，使用映射值
+            _classType = mappingClass;
+            mappingClass = nil;
+        }
+    } else {
+        mappingClass = Nil;
     }
+    
+    SEL   const _setter    = property.setter;
+    
     
     XZJSONProperty * const descriptor = [self new];
     descriptor->_owner       = aClass;
     descriptor->_raw         = property;
     descriptor->_name        = property.name;
-    descriptor->_type        = property.type.type;
-    descriptor->_elementType = elementType;
-    descriptor->_getter      = getter;
-    descriptor->_setter      = setter;
+    descriptor->_type        = _type;
+    descriptor->_getter      = property.getter;
+    descriptor->_setter      = _setter;
+    descriptor->_classType   = _classType;
+    descriptor->_cocoaClass  = XZJSONCocoaClassFromClass(_classType);
+    descriptor->_elementType = mappingClass;
+    descriptor->_structType  = property.type.structType;
+    descriptor->_isKeyValueCodable = nil;
     
-    if (descriptor->_type == XZStdcTypeObject) {
-        descriptor->_classType = property.type.classType;
-        descriptor->_cocoaClass = XZJSONCocoaClassFromClass(descriptor->_classType);
-        descriptor->_structType = XZStdcStructTypeUnknown;
-        XZStdcModifiers const modifiers = property.modifiers;
-        descriptor->_isUnownedReference = (modifiers & XZStdcModifierWeak) || (!(modifiers & XZStdcModifierCopy) && !(modifiers & XZStdcModifierRetain));
-    } else {
-        descriptor->_classType = Nil;
-        descriptor->_cocoaClass = XZJSONCocoaClassUnknown;
-        descriptor->_structType = XZStdcStructTypeFromType(property.type);
-        descriptor->_isUnownedReference = NO;
-    }
-    
-    // 不是以 set 开头的 setter 无法被 KVC 找到。
-    NSString * const setterName = NSStringFromSelector(descriptor->_setter);
+    // 不是以 set 开头的 setter 无法被 KVC 找到，不能使用 KVC 赋值。
+    NSString * const setterName = NSStringFromSelector(_setter);
     if ([setterName hasPrefix:@"set"]) {
         if (setterName.length >= 5) {
             descriptor->_isKeyValueCodable = [setterName substringWithRange:NSMakeRange(3, setterName.length - 4)];
@@ -57,7 +64,7 @@
         }
     }
     
-    switch (property.type.type) {
+    switch (_type) {
         case XZStdcTypeUnknown:
             descriptor->_isCodable = NO;
             break;
@@ -110,7 +117,7 @@
             descriptor->_isCodable = YES;
             break;
         case XZStdcTypeObject:
-            descriptor->_isCodable = !descriptor->_isUnownedReference;
+            descriptor->_isCodable = YES;
             break;
     }
     

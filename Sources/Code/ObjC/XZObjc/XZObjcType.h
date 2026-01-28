@@ -29,43 +29,47 @@ typedef NS_ENUM(NSUInteger, XZStdcType) {
     /// unknown type (among other things, this code is used for function pointers)
     /// > 匿名的结构体、共用体也会被编码为此名字，如 {?=ics}。
     XZStdcTypeUnknown          = _C_UNDEF,
-    /// char
+    /// char，有符号单字符型。
     XZStdcTypeChar             = _C_CHR,
-    /// unsigned char
+    /// unsigned char，无符号单字符型。
     XZStdcTypeUnsignedChar     = _C_UCHR,
-    /// int
+    /// int，有符号整型。
     XZStdcTypeInt              = _C_INT,
-    /// unsigned int
+    /// unsigned int，无符号整型。
     XZStdcTypeUnsignedInt      = _C_UINT,
-    /// short
+    /// short，有符号短整型。
     XZStdcTypeShort            = _C_SHT,
-    /// unsigned short
+    /// unsigned short，无符号短整型。
     XZStdcTypeUnsignedShort    = _C_USHT,
-    /// long
-    /// > 64位编译器会将 long 当作 long long 处理，在代码中，可使用 `XZ_TYPE_LLONG_IS_LONG` 宏进行条件编译。
+    /// long，有符号长整型。
+    ///
+    /// 64位编译器会将 long 当作 long long 处理，在代码中，可使用 ``XZ_TYPE_LLONG_IS_LONG`` 宏进行条件编译。
     XZStdcTypeLong             = _C_LNG,
-    /// unsigned long
-    /// > 64位编译器会将 unsigned long 当作 unsigned long long 处理，在代码中，可使用 `XZ_TYPE_LLONG_IS_LONG` 宏进行条件编译。
+    /// unsigned long，无符号长整型。
+    ///
+    /// 64位编译器会将 unsigned long 当作 unsigned long long 处理，在代码中，可使用 ``XZ_TYPE_LLONG_IS_LONG`` 宏进行条件编译。
     XZStdcTypeUnsignedLong     = _C_ULNG,
+    /// 有符号 128 位整型。当前平台不支持。
     XZStdcTypeInt128           = _C_INT128,
+    /// 无符号 128 位整型。当前平台不支持。
     XZStdcTypeUnsignedInt128   = _C_UINT128,
-    /// long long
+    /// long long，有符号超长整型。
     XZStdcTypeLongLong         = _C_LNG_LNG,
-    /// unsigned long long
+    /// unsigned long long，无符号超长整型。
     XZStdcTypeUnsignedLongLong = _C_ULNG_LNG,
-    /// float
+    /// float，单精度浮点型。
     XZStdcTypeFloat            = _C_FLT,
-    /// double
+    /// double，双精度浮点型。
     XZStdcTypeDouble           = _C_DBL,
-    /// long double
+    /// long double，长双精度浮点型。
     XZStdcTypeLongDouble       = _C_LNG_DBL,
-    /// bool
+    /// bool，布尔型。
     XZStdcTypeBool             = _C_BOOL,
-    /// void
+    /// void，空型。
     XZStdcTypeVoid             = _C_VOID,
-    /// C 字符串 char *
+    /// char[n]，C 字符串。
     XZStdcTypeString           = _C_CHARPTR,
-    /// SEL
+    /// SEL，选择器。
     XZStdcTypeSelector         = _C_SEL,
     /// C 指针。pointer to type
     XZStdcTypePointer          = _C_PTR,

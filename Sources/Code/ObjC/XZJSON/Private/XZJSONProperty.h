@@ -23,17 +23,18 @@ typedef id _Nullable (^XZJSONValueDecoder)(NSDictionary *dictionary);
     /// 属性。 property's info
     XZObjcProperty *_raw;
     
-    /// 属性映射链表，“多属性-单一键”的映射链表。
+    /// 属性映射链表，“多属性vs单一键”的映射链表。
     XZJSONProperty *_next;
     
     /// 当前属性所属的 class 对象。
     XZJSONClass * __unsafe_unretained _owner;
     
-    // 当前属性是否支持 XZJSON 编码解码。
+    // 当前属性是否支持 XZJSON 编码解码。如果不能，可能需要转发编码解码。
     BOOL _isCodable;
     
     /// 属性名。
     NSString *_name;
+    
     /// 取值方法。必不为空。
     SEL _getter;
     /// 存值方法。必不为空。
@@ -51,8 +52,8 @@ typedef id _Nullable (^XZJSONValueDecoder)(NSDictionary *dictionary);
     XZStdcStructType _structType;
 
     /// 是否支持 kvc 键值编码。
-    /// 根据 Key-Value Coding Programming Guide 属性的 setter 方法必须以 `set` 或 `_set` 开头。
-    /// 值为调用 setter 方法可使用的 key 名（调用 getter 方法使用 `_name` 属性)。
+    /// - 根据 Key-Value Coding Programming Guide 属性的 setter 方法必须以 `set` 或 `_set` 开头。
+    /// - 值为调用 setter 方法可使用的 key 名（调用 getter 方法使用 `_name` 属性)。
     NSString *_isKeyValueCodable;
     
     /// 一对一映射：当前属性映射 JSON 键。
@@ -64,12 +65,9 @@ typedef id _Nullable (^XZJSONValueDecoder)(NSDictionary *dictionary);
     
     /// 当前属性从 JSON 数据中为取值的方法。
     XZJSONValueDecoder _valueDecoder;
-    
-    /// 是否为无主引用或弱引用的属性。 
-    BOOL _isUnownedReference;
 }
 
-+ (nullable instancetype)descriptorWithProperty:(XZObjcProperty *)property elementType:(nullable Class)elementType ofClass:(XZJSONClass *)aClass;
++ (nullable instancetype)descriptorWithProperty:(XZObjcProperty *)property mappingClass:(nullable Class)elementType class:(XZJSONClass *)aClass;
 
 @end
 
