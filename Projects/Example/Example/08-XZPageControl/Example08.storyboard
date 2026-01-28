@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="23504" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="r6P-PD-ra5">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="24506" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="r6P-PD-ra5">
     <device id="retina6_12" orientation="portrait" appearance="light"/>
     <dependencies>
         <deployment identifier="iOS"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="23506"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="24504"/>
         <capability name="System colors in document resources" minToolsVersion="11.0"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
@@ -60,7 +60,7 @@
                                                     <nil key="highlightedColor"/>
                                                 </label>
                                                 <segmentedControl opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="top" segmentControlStyle="plain" selectedSegmentIndex="1" translatesAutoresizingMaskIntoConstraints="NO" id="eH2-f2-4Hv">
-                                                    <rect key="frame" x="195" y="9.6666666666666643" width="182" height="32"/>
+                                                    <rect key="frame" x="197" y="9.6666666666666643" width="180" height="32"/>
                                                     <segments>
                                                         <segment title="" image="align.horizontal.left" catalog="system" width="60"/>
                                                         <segment title="" image="align.horizontal.center" catalog="system" width="60"/>
@@ -95,7 +95,7 @@
                                                     <nil key="highlightedColor"/>
                                                 </label>
                                                 <segmentedControl opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="top" segmentControlStyle="plain" selectedSegmentIndex="0" translatesAutoresizingMaskIntoConstraints="NO" id="Tm6-Ty-EXK">
-                                                    <rect key="frame" x="256" y="9.6666666666666643" width="121" height="32"/>
+                                                    <rect key="frame" x="257" y="9.6666666666666643" width="120" height="32"/>
                                                     <segments>
                                                         <segment title="" image="rectangle.bottomhalf.filled" catalog="system" width="60"/>
                                                         <segment title="" image="rectangle.righthalf.filled" catalog="system" width="60"/>
@@ -129,7 +129,7 @@
                                                     <nil key="highlightedColor"/>
                                                 </label>
                                                 <segmentedControl opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="top" segmentControlStyle="plain" selectedSegmentIndex="0" translatesAutoresizingMaskIntoConstraints="NO" id="XoA-pl-5Ef">
-                                                    <rect key="frame" x="195" y="9.6666666666666643" width="182" height="32"/>
+                                                    <rect key="frame" x="197" y="9.6666666666666643" width="180" height="32"/>
                                                     <segments>
                                                         <segment title="" image="circle.fill" catalog="system" width="60"/>
                                                         <segment title="" image="triangle.fill" catalog="system" width="60"/>
@@ -164,7 +164,7 @@
                                                     <nil key="highlightedColor"/>
                                                 </label>
                                                 <slider opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="249" horizontalCompressionResistancePriority="751" contentHorizontalAlignment="center" contentVerticalAlignment="center" value="30" minValue="0.0" maxValue="60" translatesAutoresizingMaskIntoConstraints="NO" id="CBz-7m-Xg6">
-                                                    <rect key="frame" x="191" y="11" width="184" height="31"/>
+                                                    <rect key="frame" x="193" y="9" width="180" height="34"/>
                                                     <constraints>
                                                         <constraint firstAttribute="width" constant="180" id="FHD-M9-nIx"/>
                                                     </constraints>
@@ -197,7 +197,7 @@
                                                     <nil key="highlightedColor"/>
                                                 </label>
                                                 <switch opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" contentHorizontalAlignment="center" contentVerticalAlignment="center" translatesAutoresizingMaskIntoConstraints="NO" id="IVh-oa-vOA">
-                                                    <rect key="frame" x="328" y="9.6666666666666643" width="51" height="31"/>
+                                                    <rect key="frame" x="316" y="11" width="63" height="28"/>
                                                     <connections>
                                                         <action selector="continuousInteractionSwitchValueChanged:" destination="cFN-ak-HqA" eventType="valueChanged" id="p9R-Bi-GsB"/>
                                                     </connections>
@@ -227,7 +227,7 @@
                                                     <nil key="highlightedColor"/>
                                                 </label>
                                                 <switch opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" contentHorizontalAlignment="center" contentVerticalAlignment="center" on="YES" translatesAutoresizingMaskIntoConstraints="NO" id="ubf-n9-ptK">
-                                                    <rect key="frame" x="328" y="9.6666666666666643" width="51" height="31"/>
+                                                    <rect key="frame" x="316" y="11" width="63" height="28"/>
                                                     <connections>
                                                         <action selector="loopSwitchValueChanged:" destination="cFN-ak-HqA" eventType="valueChanged" id="lQr-N6-hZw"/>
                                                     </connections>
@@ -252,7 +252,7 @@
                         </connections>
                     </tableView>
                     <navigationItem key="navigationItem" title="示例" id="gB0-sc-kuN">
-                        <barButtonItem key="leftBarButtonItem" title="Item" image="xmark" catalog="system" style="done" id="zbv-D4-zxC">
+                        <barButtonItem key="leftBarButtonItem" title="Item" image="xmark" catalog="system" id="zbv-D4-zxC">
                             <connections>
                                 <segue destination="5Ow-Oh-Lao" kind="unwind" unwindAction="unwindToMainPage:" id="qWj-2p-Pqq"/>
                             </connections>
@@ -274,7 +274,7 @@
                 <navigationController automaticallyAdjustsScrollViewInsets="NO" id="r6P-PD-ra5" sceneMemberID="viewController">
                     <toolbarItems/>
                     <navigationBar key="navigationBar" contentMode="scaleToFill" id="MdK-ce-uQH">
-                        <rect key="frame" x="0.0" y="59" width="393" height="44"/>
+                        <rect key="frame" x="0.0" y="118" width="393" height="54"/>
                         <autoresizingMask key="autoresizingMask"/>
                     </navigationBar>
                     <nil name="viewControllers"/>
@@ -298,13 +298,13 @@
         <image name="triangle.fill" catalog="system" width="128" height="109"/>
         <image name="xmark" catalog="system" width="128" height="113"/>
         <systemColor name="separatorColor">
-            <color red="0.23529411759999999" green="0.23529411759999999" blue="0.26274509800000001" alpha="0.28999999999999998" colorSpace="custom" customColorSpace="sRGB"/>
+            <color red="0.23529411764705882" green="0.23529411764705882" blue="0.2627450980392157" alpha="0.12" colorSpace="custom" customColorSpace="sRGB"/>
         </systemColor>
         <systemColor name="systemBackgroundColor">
             <color white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
         </systemColor>
         <systemColor name="systemGray6Color">
-            <color red="0.94901960780000005" green="0.94901960780000005" blue="0.96862745100000003" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+            <color red="0.94901960784313721" green="0.94901960784313721" blue="0.96862745098039216" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
         </systemColor>
     </resources>
 </document>

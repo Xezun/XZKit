@@ -91,7 +91,7 @@
                     </tableView>
                     <navigationItem key="navigationItem" title="XZPageView" id="2fE-0r-9rB">
                         <barButtonItem key="backBarButtonItem" title="返回" id="JEZ-Cr-9Kk"/>
-                        <barButtonItem key="leftBarButtonItem" title="Item" image="xmark" catalog="system" style="done" id="K5B-fW-sjR">
+                        <barButtonItem key="leftBarButtonItem" title="Item" image="xmark" catalog="system" id="K5B-fW-sjR">
                             <connections>
                                 <segue destination="PH2-eg-CFF" kind="unwind" unwindAction="unwindToMainPage:" id="OLh-Dr-8ET"/>
                             </connections>
@@ -143,7 +143,7 @@
                         </constraints>
                     </view>
                     <navigationItem key="navigationItem" title="示例二" id="Wsj-PE-Gil">
-                        <barButtonItem key="rightBarButtonItem" style="done" id="NUy-Rd-Rvj">
+                        <barButtonItem key="rightBarButtonItem" id="NUy-Rd-Rvj">
                             <switch key="customView" opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" contentHorizontalAlignment="center" contentVerticalAlignment="center" id="Va6-05-X32">
                                 <rect key="frame" x="310" y="8.0000000000000018" width="63" height="28"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>

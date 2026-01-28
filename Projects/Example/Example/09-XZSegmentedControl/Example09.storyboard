@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="23504" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="NR4-sY-QEw">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="24506" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="NR4-sY-QEw">
     <device id="retina6_12" orientation="portrait" appearance="light"/>
     <dependencies>
         <deployment identifier="iOS"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="23506"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="24504"/>
         <capability name="Safe area layout guides" minToolsVersion="9.0"/>
         <capability name="System colors in document resources" minToolsVersion="11.0"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
@@ -21,14 +21,14 @@
                             <tableViewSection id="JNV-6N-qyy">
                                 <cells>
                                     <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="none" accessoryType="disclosureIndicator" indentationWidth="10" textLabel="dFl-Sz-B1r" style="IBUITableViewCellStyleDefault" id="RHO-xO-0BW">
-                                        <rect key="frame" x="0.0" y="18" width="393" height="43.666667938232422"/>
+                                        <rect key="frame" x="0.0" y="18" width="393" height="52"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" preservesSuperviewLayoutMargins="YES" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="RHO-xO-0BW" id="R5V-nx-1Rt">
-                                            <rect key="frame" x="0.0" y="0.0" width="362.66666666666669" height="43.666667938232422"/>
+                                            <rect key="frame" x="0.0" y="0.0" width="362.66666666666669" height="52"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
                                                 <label opaque="NO" multipleTouchEnabled="YES" contentMode="left" insetsLayoutMarginsFromSafeArea="NO" text="示例一：水平" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="dFl-Sz-B1r">
-                                                    <rect key="frame" x="20" y="0.0" width="334.66666666666669" height="43.666667938232422"/>
+                                                    <rect key="frame" x="20" y="0.0" width="334.66666666666669" height="52"/>
                                                     <autoresizingMask key="autoresizingMask"/>
                                                     <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                                     <nil key="textColor"/>
@@ -41,14 +41,14 @@
                                         </connections>
                                     </tableViewCell>
                                     <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="none" accessoryType="disclosureIndicator" indentationWidth="10" textLabel="bu4-fU-gOF" style="IBUITableViewCellStyleDefault" id="rTY-Vy-jDg">
-                                        <rect key="frame" x="0.0" y="61.666667938232422" width="393" height="43.666667938232422"/>
+                                        <rect key="frame" x="0.0" y="70" width="393" height="52"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" preservesSuperviewLayoutMargins="YES" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="rTY-Vy-jDg" id="hpq-Gr-nQA">
-                                            <rect key="frame" x="0.0" y="0.0" width="362.66666666666669" height="43.666667938232422"/>
+                                            <rect key="frame" x="0.0" y="0.0" width="362.66666666666669" height="52"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
                                                 <label opaque="NO" multipleTouchEnabled="YES" contentMode="left" insetsLayoutMarginsFromSafeArea="NO" text="示例二：垂直" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="bu4-fU-gOF">
-                                                    <rect key="frame" x="20" y="0.0" width="334.66666666666669" height="43.666667938232422"/>
+                                                    <rect key="frame" x="20" y="0.0" width="334.66666666666669" height="52"/>
                                                     <autoresizingMask key="autoresizingMask"/>
                                                     <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                                     <nil key="textColor"/>
@@ -70,7 +70,7 @@
                     </tableView>
                     <navigationItem key="navigationItem" title="XZSegmentedControl" id="cba-d9-fET">
                         <barButtonItem key="backBarButtonItem" title="返回" id="kcD-gs-qyt"/>
-                        <barButtonItem key="leftBarButtonItem" title="Item" image="xmark" catalog="system" style="done" id="sUv-0m-SG5">
+                        <barButtonItem key="leftBarButtonItem" title="Item" image="xmark" catalog="system" id="sUv-0m-SG5">
                             <connections>
                                 <segue destination="45u-tg-WDh" kind="unwind" unwindAction="unwindToMainPage:" id="2wK-aL-RzG"/>
                             </connections>
@@ -91,7 +91,7 @@
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="XIZ-8I-t0P" customClass="XZSegmentedControl">
-                                <rect key="frame" x="0.0" y="103" width="80" height="715"/>
+                                <rect key="frame" x="0.0" y="172" width="80" height="612"/>
                                 <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                                 <constraints>
                                     <constraint firstAttribute="width" constant="80" id="O8h-LQ-hpf"/>
@@ -103,7 +103,7 @@
                                 </userDefinedRuntimeAttributes>
                             </view>
                             <scrollView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" pagingEnabled="YES" showsHorizontalScrollIndicator="NO" translatesAutoresizingMaskIntoConstraints="NO" id="5xu-hK-oOa">
-                                <rect key="frame" x="80" y="103" width="313" height="715"/>
+                                <rect key="frame" x="80" y="172" width="313" height="612"/>
                                 <connections>
                                     <outlet property="delegate" destination="ODM-Jo-xmF" id="KOU-nx-8Tp"/>
                                 </connections>
@@ -147,7 +147,7 @@
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="jJv-FL-2tO" customClass="XZSegmentedControl">
-                                <rect key="frame" x="0.0" y="103" width="393" height="50"/>
+                                <rect key="frame" x="0.0" y="172" width="393" height="50"/>
                                 <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                                 <constraints>
                                     <constraint firstAttribute="height" constant="50" id="2rd-vy-Nr4"/>
@@ -159,7 +159,7 @@
                                 </userDefinedRuntimeAttributes>
                             </view>
                             <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="LiD-mT-C8s" customClass="XZPageView">
-                                <rect key="frame" x="0.0" y="153" width="393" height="699"/>
+                                <rect key="frame" x="0.0" y="222" width="393" height="630"/>
                                 <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                             </view>
                         </subviews>
@@ -350,7 +350,7 @@
                                             <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
                                                 <segmentedControl opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="top" segmentControlStyle="plain" translatesAutoresizingMaskIntoConstraints="NO" id="ns7-le-ANp">
-                                                    <rect key="frame" x="241" y="6.6666666666666679" width="132" height="32"/>
+                                                    <rect key="frame" x="243" y="6.6666666666666679" width="130" height="32"/>
                                                     <segments>
                                                         <segment title="" image="minus" catalog="system" width="40"/>
                                                         <segment title="10" width="50"/>
@@ -362,7 +362,7 @@
                                                     </connections>
                                                 </segmentedControl>
                                                 <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="interitemSpacing" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="xXg-1o-paS">
-                                                    <rect key="frame" x="20" y="11" width="129" height="22"/>
+                                                    <rect key="frame" x="20" y="15" width="129" height="14"/>
                                                     <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                                     <nil key="textColor"/>
                                                     <nil key="highlightedColor"/>
@@ -390,13 +390,13 @@
                                             <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
                                                 <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="headerView" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="H7P-Qq-FMw">
-                                                    <rect key="frame" x="20" y="11" width="90" height="22"/>
+                                                    <rect key="frame" x="20" y="15" width="90" height="14"/>
                                                     <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                                     <nil key="textColor"/>
                                                     <nil key="highlightedColor"/>
                                                 </label>
                                                 <switch opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" contentHorizontalAlignment="center" contentVerticalAlignment="center" translatesAutoresizingMaskIntoConstraints="NO" id="QaR-5t-6jn">
-                                                    <rect key="frame" x="324" y="6.6666666666666679" width="51" height="31.000000000000004"/>
+                                                    <rect key="frame" x="312" y="8" width="63" height="28"/>
                                                     <connections>
                                                         <action selector="headerSwitchValueChanged:" destination="2lc-RY-WNo" eventType="valueChanged" id="6nj-RN-F0k"/>
                                                     </connections>
@@ -420,13 +420,13 @@
                                             <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
                                                 <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="footerView" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="ff2-MN-Efh">
-                                                    <rect key="frame" x="20" y="11" width="82.333333333333329" height="22"/>
+                                                    <rect key="frame" x="20" y="15" width="82.333333333333329" height="14"/>
                                                     <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                                     <nil key="textColor"/>
                                                     <nil key="highlightedColor"/>
                                                 </label>
                                                 <switch opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" contentHorizontalAlignment="center" contentVerticalAlignment="center" translatesAutoresizingMaskIntoConstraints="NO" id="ngO-jm-0Yc">
-                                                    <rect key="frame" x="324" y="6.6666666666666679" width="51" height="31.000000000000004"/>
+                                                    <rect key="frame" x="312" y="8" width="63" height="28"/>
                                                     <connections>
                                                         <action selector="footerSwitchValueChanged:" destination="2lc-RY-WNo" eventType="valueChanged" id="CVp-df-1RP"/>
                                                     </connections>
@@ -704,7 +704,7 @@
                                                     <nil key="highlightedColor"/>
                                                 </label>
                                                 <segmentedControl opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="top" segmentControlStyle="plain" translatesAutoresizingMaskIntoConstraints="NO" id="ShE-AX-XtT">
-                                                    <rect key="frame" x="241" y="6.6666666666666679" width="132" height="32"/>
+                                                    <rect key="frame" x="243" y="6.6666666666666679" width="130" height="32"/>
                                                     <segments>
                                                         <segment title="" image="minus" catalog="system" width="40"/>
                                                         <segment title="10" width="50"/>
@@ -740,7 +740,7 @@
                                                     <nil key="highlightedColor"/>
                                                 </label>
                                                 <segmentedControl opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="top" segmentControlStyle="plain" translatesAutoresizingMaskIntoConstraints="NO" id="uac-Tg-yhU">
-                                                    <rect key="frame" x="241" y="6.6666666666666679" width="132" height="32"/>
+                                                    <rect key="frame" x="243" y="6.6666666666666679" width="130" height="32"/>
                                                     <segments>
                                                         <segment title="" image="minus" catalog="system" width="40"/>
                                                         <segment title="10" width="50"/>
@@ -912,7 +912,7 @@
                                                     <nil key="highlightedColor"/>
                                                 </label>
                                                 <segmentedControl opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="top" segmentControlStyle="plain" translatesAutoresizingMaskIntoConstraints="NO" id="rez-hx-POK">
-                                                    <rect key="frame" x="241" y="6.6666666666666679" width="132" height="32"/>
+                                                    <rect key="frame" x="243" y="6.6666666666666679" width="130" height="32"/>
                                                     <segments>
                                                         <segment title="" image="minus" catalog="system" width="40"/>
                                                         <segment title="10" width="50"/>
@@ -948,7 +948,7 @@
                                                     <nil key="highlightedColor"/>
                                                 </label>
                                                 <segmentedControl opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="top" segmentControlStyle="plain" translatesAutoresizingMaskIntoConstraints="NO" id="eeg-fs-Fez">
-                                                    <rect key="frame" x="241" y="6.6666666666666679" width="132" height="32"/>
+                                                    <rect key="frame" x="243" y="6.6666666666666679" width="130" height="32"/>
                                                     <segments>
                                                         <segment title="" image="minus" catalog="system" width="40"/>
                                                         <segment title="10" width="50"/>
@@ -1001,7 +1001,7 @@
                 <navigationController automaticallyAdjustsScrollViewInsets="NO" id="NR4-sY-QEw" sceneMemberID="viewController">
                     <toolbarItems/>
                     <navigationBar key="navigationBar" contentMode="scaleToFill" id="VTa-oG-vAI">
-                        <rect key="frame" x="0.0" y="59" width="393" height="44"/>
+                        <rect key="frame" x="0.0" y="118" width="393" height="54"/>
                         <autoresizingMask key="autoresizingMask"/>
                     </navigationBar>
                     <nil name="viewControllers"/>
@@ -1030,7 +1030,7 @@
             <color white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
         </systemColor>
         <systemColor name="systemBlueColor">
-            <color red="0.0" green="0.47843137254901963" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+            <color red="0.0" green="0.53333333333333333" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
         </systemColor>
         <systemColor name="systemGray6Color">
             <color red="0.94901960784313721" green="0.94901960784313721" blue="0.96862745098039216" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
@@ -1039,7 +1039,7 @@
             <color red="0.20392156862745098" green="0.7803921568627451" blue="0.34901960784313724" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
         </systemColor>
         <systemColor name="systemRedColor">
-            <color red="1" green="0.23137254901960785" blue="0.18823529411764706" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+            <color red="1" green="0.2196078431372549" blue="0.23529411764705882" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
         </systemColor>
     </resources>
 </document>
