@@ -6,7 +6,6 @@
 //
 
 #import <Foundation/Foundation.h>
-#import <UIKit/UIKit.h>
 #import <objc/runtime.h>
 
 NS_ASSUME_NONNULL_BEGIN
@@ -73,7 +72,7 @@ typedef NS_ENUM(NSUInteger, XZStdcType) {
     XZStdcTypeSelector         = _C_SEL,
     /// C 指针。pointer to type
     XZStdcTypePointer          = _C_PTR,
-    /// C 动态数组，Vector 
+    /// C 动态数组，Vector
     XZStdcTypeVector           = _C_VECTOR,
     /// C 数组
     XZStdcTypeArray            = _C_ARY_B,
@@ -95,7 +94,6 @@ typedef NS_ENUM(NSUInteger, XZStdcType) {
     /// id. An object (whether statically typed or typed id)
     XZStdcTypeObject           = _C_ID,
 };
-FOUNDATION_EXPORT NSString *NSStringFromXZStdcType(XZStdcType type);
 
 enum {
     /// 数据类型掩码。
@@ -111,7 +109,7 @@ enum {
 /// 变量或属性的类型修饰符。
 ///
 /// 可使用 NSUInteger 将类型、修饰符融合在一起，通过掩码来获取指定部分的值。
-/// 
+///
 /// > 没有 assign/unsafe_unretained 修饰符，只能反向判断。
 typedef NS_OPTIONS(NSUInteger, XZStdcModifiers) {
     /// const
@@ -152,7 +150,7 @@ typedef NS_OPTIONS(NSUInteger, XZStdcModifiers) {
     /// dynamic
     XZStdcModifierDynamic     = 1 << (8 + 17),
 };
-FOUNDATION_EXPORT NSString *NSStringFromXZStdcModifiers(XZStdcModifiers modifiers);
+
 
 /// 常用 C 复合数据类型：结构体。
 typedef NS_ENUM(NSUInteger, XZStdcStructType) {
@@ -168,11 +166,7 @@ typedef NS_ENUM(NSUInteger, XZStdcStructType) {
     XZStdcStructTypeUIOffset
 };
 
-/// 通过结构体的名称获取结构体的类型。
-/// - Parameter name: 结构体名。
-FOUNDATION_EXPORT XZStdcStructType XZStdcStructTypeFromString(NSString *name);
-
-/// 描述基本数据类型的对象。
+/// 描述数据类型的对象。
 ///
 /// 数据类型，通常也称为变量类型。在 objc 中，数据类型包括 c 基础类型，比如 int、float 等，和 NSObject 等对象类型，可通过 `\@encoding(type)` 可将类型编码为字符串。
 @interface XZObjcType : NSObject
@@ -221,11 +215,27 @@ FOUNDATION_EXPORT XZStdcStructType XZStdcStructTypeFromString(NSString *name);
 
 @end
 
+/// 通过结构体的名称获取结构体的类型。
+/// - Parameter name: 结构体名。
+FOUNDATION_EXPORT XZStdcStructType XZStdcStructTypeFromString(NSString *name);
+
+/// 将 XZStdcType 枚举值转换为对应的字符串。
+/// - Parameter type: XZStdcType 枚举值
+FOUNDATION_EXPORT NSString *NSStringFromXZStdcType(XZStdcType type);
+
+/// 将 XZStdcModifiers 中包含的修饰符，以数组的形式，转化为字符串。
+/// - Parameter modifiers: XZStdcModifiers 修饰符
+FOUNDATION_EXPORT NSString *NSStringFromXZStdcModifiers(XZStdcModifiers modifiers);
+
+/// 如果 type 是已知结构体类型，返回其对应的类型，否则返回 XZStdcStructTypeUnknown 类型。
+/// - Parameter type: XZObjcType 类型对象
 FOUNDATION_STATIC_INLINE XZStdcStructType XZStdcStructTypeFromType(XZObjcType *type) {
     if (type.type == XZStdcTypeStruct) {
         return XZStdcStructTypeFromString(type.name);
     }
     return XZStdcStructTypeUnknown;
 }
+
+
 
 NS_ASSUME_NONNULL_END

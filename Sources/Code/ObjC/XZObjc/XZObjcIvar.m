@@ -6,6 +6,7 @@
 //
 
 #import "XZObjcIvar.h"
+#import "XZObjcType.h"
 
 @implementation XZObjcIvar
 

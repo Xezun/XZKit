@@ -5,12 +5,8 @@
 //  Created by 徐臻 on 2025/1/26.
 //
 
-#import <objc/message.h>
-#if __has_include(<XZKit/XZKit.h>)
-#import <XZKit/XZObjcType.h>
-#else
-#import "XZObjcType.h"
-#endif
+#import <Foundation/Foundation.h>
+#import <objc/runtime.h>
 
 @class XZObjcType;
 

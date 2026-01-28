@@ -92,7 +92,7 @@ Pod::Spec.new do |s|
 
   # 基础
   s.defineSubspec "XZLog",                      "mixed", false, [];
-  s.defineSubspec "XZObjc",                     "objc",  false, ["XZDefines"];
+  s.defineSubspec "XZObjc",                     "objc",  false, [];
   s.defineSubspec "XZDefines",                  "objc",  false, ["XZLog"];
   s.defineSubspec "XZExtensions",               "mixed", false, ["XZDefines"];
 

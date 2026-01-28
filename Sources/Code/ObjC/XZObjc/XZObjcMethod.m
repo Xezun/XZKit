@@ -6,6 +6,7 @@
 //
 
 #import "XZObjcMethod.h"
+#import "XZObjcType.h"
 
 @implementation XZObjcMethod
 

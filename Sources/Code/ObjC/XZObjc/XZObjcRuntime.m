@@ -5,9 +5,7 @@
 //  Created by Xezun on 2021/5/7.
 //
 
-@import ObjectiveC;
 #import "XZObjcRuntime.h"
-#import "XZMacros.h"
 
 Method xz_objc_class_getMethod(Class const cls, SEL const target) {
     Method __block result = NULL;
@@ -234,7 +232,7 @@ BOOL xz_objc_class_addMethodWithBlock(Class aClass, SEL selector, const char *en
 
 #pragma mark - 创建类
 
-Class xz_objc_createClassWithName(Class superClass, NSString *name, NS_NOESCAPE XZRuntimeCreateClassBlock _Nullable block) {
+Class xz_objc_createClassWithName(Class superClass, NSString *name, NS_NOESCAPE XZObjcCreateClassBlock _Nullable block) {
     NSCParameterAssert([name isKindOfClass:NSString.class] && name.length > 0);
     const char * const className = name.UTF8String;
     
@@ -254,7 +252,7 @@ Class xz_objc_createClassWithName(Class superClass, NSString *name, NS_NOESCAPE 
     return newClass;
 }
 
-Class xz_objc_createClass(Class superClass, NS_NOESCAPE XZRuntimeCreateClassBlock _Nullable block)  {
+Class xz_objc_createClass(Class superClass, NS_NOESCAPE XZObjcCreateClassBlock _Nullable block)  {
     NSCParameterAssert(superClass != Nil);
     NSString *name = NSStringFromClass(superClass);
     if (![name hasPrefix:@"XZKit."]) {
@@ -384,142 +382,142 @@ NSHashTable *xz_objc_class_getImplementedProtocolMethods(Class aClass, NSHashTab
 
 #pragma mark - 通用消息发送
 
-void xz_objc_msgSend_void(id receiver, SEL selector, id param1) XZ_ATTR_OVERLOAD {
+void xz_objc_msgSend_void(id receiver, SEL selector, id param1) XZ_OBJC_OVERLOAD {
     ((void (*)(id, SEL, id))objc_msgSend)(receiver, selector, param1);
 }
-void xz_objc_msgSend_void(id receiver, SEL selector, id param1, BOOL param2) XZ_ATTR_OVERLOAD {
+void xz_objc_msgSend_void(id receiver, SEL selector, id param1, BOOL param2) XZ_OBJC_OVERLOAD {
     ((void (*)(id, SEL, id, BOOL))objc_msgSend)(receiver, selector, param1, param2);
 }
-void xz_objc_msgSend_void(id receiver, SEL selector, BOOL param1) XZ_ATTR_OVERLOAD {
+void xz_objc_msgSend_void(id receiver, SEL selector, BOOL param1) XZ_OBJC_OVERLOAD {
     ((void (*)(id, SEL, BOOL))objc_msgSend)(receiver, selector, param1);
 }
-void xz_objc_msgSend_void(id receiver, SEL selector, CGRect param1) XZ_ATTR_OVERLOAD {
+void xz_objc_msgSend_void(id receiver, SEL selector, CGRect param1) XZ_OBJC_OVERLOAD {
     ((void (*)(id, SEL, CGRect))objc_msgSend)(receiver, selector, param1);
 }
-void xz_objc_msgSend_void(id receiver, SEL selector) XZ_ATTR_OVERLOAD {
+void xz_objc_msgSend_void(id receiver, SEL selector) XZ_OBJC_OVERLOAD {
     ((void (*)(id, SEL))objc_msgSend)(receiver, selector);
 }
-void xz_objc_msgSend_void(id receiver, SEL selector, id param1, NSInteger param2) XZ_ATTR_OVERLOAD {
+void xz_objc_msgSend_void(id receiver, SEL selector, id param1, NSInteger param2) XZ_OBJC_OVERLOAD {
     ((void(*)(id, SEL, id, NSInteger))objc_msgSend)(receiver, selector, param1, param2);
 }
-void xz_objc_msgSend_void(id receiver, SEL selector, id param1, id param2) XZ_ATTR_OVERLOAD {
+void xz_objc_msgSend_void(id receiver, SEL selector, id param1, id param2) XZ_OBJC_OVERLOAD {
     ((void (*)(id, SEL, id, id))objc_msgSend)(receiver, selector, param1, param2);
 }
-id xz_objc_msgSend_id(id receiver, SEL selector, BOOL param1) XZ_ATTR_OVERLOAD {
+id xz_objc_msgSend_id(id receiver, SEL selector, BOOL param1) XZ_OBJC_OVERLOAD {
     return ((id (*)(id, SEL, BOOL))objc_msgSend)(receiver, selector, param1);
 }
-id xz_objc_msgSend_id(id receiver, SEL selector, id param1, BOOL param2) XZ_ATTR_OVERLOAD {
+id xz_objc_msgSend_id(id receiver, SEL selector, id param1, BOOL param2) XZ_OBJC_OVERLOAD {
     return ((id (*)(id, SEL, id, BOOL))objc_msgSend)(receiver, selector, param1, param2);
 }
-id xz_objc_msgSend_id(id receiver, SEL selector, id param1, NSInteger param2, id param3, id param4) XZ_ATTR_OVERLOAD {
+id xz_objc_msgSend_id(id receiver, SEL selector, id param1, NSInteger param2, id param3, id param4) XZ_OBJC_OVERLOAD {
     return ((id(*)(id, SEL, id, NSInteger, id, id))objc_msgSend)(receiver, selector, param1, param2, param3, param4);
 }
-id xz_objc_msgSend_id(id receiver, SEL selector, id param1, id param2) XZ_ATTR_OVERLOAD {
+id xz_objc_msgSend_id(id receiver, SEL selector, id param1, id param2) XZ_OBJC_OVERLOAD {
     return ((id(*)(id,SEL,id,id))objc_msgSend)(receiver, selector, param1, param2);
 }
-id xz_objc_msgSend_id(id receiver, SEL selector) XZ_ATTR_OVERLOAD {
+id xz_objc_msgSend_id(id receiver, SEL selector) XZ_OBJC_OVERLOAD {
     return ((id (*)(id, SEL))xz_objc_msgSend_stret)(receiver, selector);
 }
-CGRect xz_objc_msgSend_rect(id receiver, SEL selector) XZ_ATTR_OVERLOAD {
+CGRect xz_objc_msgSend_rect(id receiver, SEL selector) XZ_OBJC_OVERLOAD {
     return ((CGRect(*)(id, SEL))xz_objc_msgSend_stret)(receiver, selector);
 }
-BOOL xz_objc_msgSend_bool(id receiver, SEL selector) XZ_ATTR_OVERLOAD {
+BOOL xz_objc_msgSend_bool(id receiver, SEL selector) XZ_OBJC_OVERLOAD {
     return ((BOOL (*)(id, SEL))objc_msgSend)(receiver, selector);
 }
 
 
-void xz_objc_msgSendSuper_void(id receiver, Class receiverClass, SEL selector, id param1) XZ_ATTR_OVERLOAD {
+void xz_objc_msgSendSuper_void(id receiver, Class receiverClass, SEL selector, id param1) XZ_OBJC_OVERLOAD {
     struct objc_super _super = {
         .receiver = receiver,
         .super_class = class_getSuperclass(receiverClass)
     };
     ((void (*)(struct objc_super *, SEL, id))objc_msgSendSuper)(&_super, selector, param1);
 }
-void xz_objc_msgSendSuper_void(id receiver, Class receiverClass, SEL selector, id param1, BOOL param2) XZ_ATTR_OVERLOAD {
+void xz_objc_msgSendSuper_void(id receiver, Class receiverClass, SEL selector, id param1, BOOL param2) XZ_OBJC_OVERLOAD {
     struct objc_super _super = {
         .receiver = receiver,
         .super_class = class_getSuperclass(receiverClass)
     };
     ((void (*)(struct objc_super *, SEL, id, BOOL))objc_msgSendSuper)(&_super, selector, param1, param2);
 }
-void xz_objc_msgSendSuper_void(id receiver, Class receiverClass, SEL selector, BOOL param1) XZ_ATTR_OVERLOAD {
+void xz_objc_msgSendSuper_void(id receiver, Class receiverClass, SEL selector, BOOL param1) XZ_OBJC_OVERLOAD {
     struct objc_super _super = {
         .receiver = receiver,
         .super_class = class_getSuperclass(receiverClass)
     };
     ((void (*)(struct objc_super *, SEL, BOOL))objc_msgSendSuper)(&_super, selector, param1);
 }
-void xz_objc_msgSendSuper_void(id receiver, Class receiverClass, SEL selector, id param1, id param2) XZ_ATTR_OVERLOAD {
+void xz_objc_msgSendSuper_void(id receiver, Class receiverClass, SEL selector, id param1, id param2) XZ_OBJC_OVERLOAD {
     struct objc_super _super = {
         .receiver = receiver,
         .super_class = class_getSuperclass(receiverClass)
     };
     ((void (*)(struct objc_super *, SEL, id, id))objc_msgSendSuper)(&_super, selector, param1, param2);
 }
-void xz_objc_msgSendSuper_void(id receiver, Class receiverClass, SEL selector, CGRect param1) XZ_ATTR_OVERLOAD {
+void xz_objc_msgSendSuper_void(id receiver, Class receiverClass, SEL selector, CGRect param1) XZ_OBJC_OVERLOAD {
     struct objc_super _super = {
         .receiver = receiver,
         .super_class = class_getSuperclass(receiverClass)
     };
     ((void (*)(struct objc_super *, SEL, CGRect))objc_msgSendSuper)(&_super, selector, param1);
 }
-void xz_objc_msgSendSuper_void(id receiver, Class receiverClass, SEL selector) XZ_ATTR_OVERLOAD {
+void xz_objc_msgSendSuper_void(id receiver, Class receiverClass, SEL selector) XZ_OBJC_OVERLOAD {
      struct objc_super _super = {
         .receiver = receiver,
         .super_class = class_getSuperclass(receiverClass)
     };
     ((void (*)(struct objc_super *, SEL))objc_msgSendSuper)(&_super, selector);
 }
-void xz_objc_msgSendSuper_void(id receiver, Class receiverClass, SEL selector, id param1, NSInteger param2) XZ_ATTR_OVERLOAD {
+void xz_objc_msgSendSuper_void(id receiver, Class receiverClass, SEL selector, id param1, NSInteger param2) XZ_OBJC_OVERLOAD {
     struct objc_super _super = {
         .receiver = receiver,
         .super_class = class_getSuperclass(receiverClass)
     };
     ((void (*)(struct objc_super *, SEL, id, NSInteger))objc_msgSendSuper)(&_super, selector, param1, param2);
 }
-_Nullable id xz_objc_msgSendSuper_id(id receiver, Class receiverClass, SEL selector) XZ_ATTR_OVERLOAD {
+_Nullable id xz_objc_msgSendSuper_id(id receiver, Class receiverClass, SEL selector) XZ_OBJC_OVERLOAD {
     struct objc_super _super = {
        .receiver = receiver,
        .super_class = class_getSuperclass(receiverClass)
    };
     return ((id (*)(struct objc_super *, SEL))objc_msgSendSuper)(&_super, selector);
 }
-id xz_objc_msgSendSuper_id(id receiver, Class receiverClass, SEL selector, BOOL param1) XZ_ATTR_OVERLOAD {
+id xz_objc_msgSendSuper_id(id receiver, Class receiverClass, SEL selector, BOOL param1) XZ_OBJC_OVERLOAD {
     struct objc_super _super = {
         .receiver = receiver,
         .super_class = class_getSuperclass(receiverClass)
     };
     return ((id (*)(struct objc_super *, SEL, BOOL))objc_msgSendSuper)(&_super, selector, param1);
 }
-id xz_objc_msgSendSuper_id(id receiver, Class receiverClass, SEL selector, id param1, BOOL param2) XZ_ATTR_OVERLOAD {
+id xz_objc_msgSendSuper_id(id receiver, Class receiverClass, SEL selector, id param1, BOOL param2) XZ_OBJC_OVERLOAD {
     struct objc_super _super = {
         .receiver = receiver,
         .super_class = class_getSuperclass(receiverClass)
     };
     return ((id (*)(struct objc_super *, SEL, id, BOOL))objc_msgSendSuper)(&_super, selector, param1, param2);
 }
-id xz_objc_msgSendSuper_id(id receiver, Class receiverClass, SEL selector, id param1, NSInteger param2, id param3, id param4) XZ_ATTR_OVERLOAD {
+id xz_objc_msgSendSuper_id(id receiver, Class receiverClass, SEL selector, id param1, NSInteger param2, id param3, id param4) XZ_OBJC_OVERLOAD {
     struct objc_super _super = {
         .receiver = receiver,
         .super_class = class_getSuperclass(receiverClass)
     };
     return ((id(*)(struct objc_super *, SEL, id, NSInteger, id, id))objc_msgSendSuper)(&_super, selector, param1, param2, param3, param4);
 }
-id xz_objc_msgSendSuper_id(id receiver, Class receiverClass, SEL selector, id param1, id param2) XZ_ATTR_OVERLOAD {
+id xz_objc_msgSendSuper_id(id receiver, Class receiverClass, SEL selector, id param1, id param2) XZ_OBJC_OVERLOAD {
     struct objc_super _super = {
         .receiver = receiver,
         .super_class = class_getSuperclass(receiverClass)
     };
     return ((id(*)(struct objc_super *,SEL,id,id))objc_msgSendSuper)(&_super, selector, param1, param2);
 }
-CGRect xz_objc_msgSendSuper_rect(id receiver, Class receiverClass, SEL selector) XZ_ATTR_OVERLOAD {
+CGRect xz_objc_msgSendSuper_rect(id receiver, Class receiverClass, SEL selector) XZ_OBJC_OVERLOAD {
     struct objc_super _super = {
         .receiver = receiver,
         .super_class = class_getSuperclass(receiverClass)
     };
     return ((CGRect(*)(struct objc_super *, SEL))xz_objc_msgSendSuper_stret)(&_super, selector);
 }
-BOOL xz_objc_msgSendSuper_bool(id receiver, Class receiverClass, SEL selector) XZ_ATTR_OVERLOAD {
+BOOL xz_objc_msgSendSuper_bool(id receiver, Class receiverClass, SEL selector) XZ_OBJC_OVERLOAD {
     struct objc_super _super = {
         .receiver = receiver,
         .super_class = class_getSuperclass(receiverClass)

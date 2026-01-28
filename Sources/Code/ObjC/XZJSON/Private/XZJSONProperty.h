@@ -6,7 +6,7 @@
 //
 
 #import <Foundation/Foundation.h>
-#import "XZObjc.h"
+#import "XZObjcRuntime.h"
 #import "XZJSONPrivateDefines.h"
 #import "XZMacros.h"
 

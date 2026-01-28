@@ -1,9 +1,9 @@
-# XZRumtime
+# XZObjc
 
 ## 安装
 
 ```ruby
-pod "XZRumtime"
+pod "XZObjc"
 ```
 
 ## 效果

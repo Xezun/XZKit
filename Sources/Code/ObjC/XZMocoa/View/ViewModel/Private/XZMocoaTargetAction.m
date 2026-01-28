@@ -6,7 +6,7 @@
 //
 
 #import "XZMocoaTargetAction.h"
-#import "XZObjcType.h"
+#import "XZObjc.h"
 #import "XZMocoaViewModel.h"
 @import ObjectiveC;
 

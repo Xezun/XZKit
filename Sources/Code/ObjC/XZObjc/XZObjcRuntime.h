@@ -7,11 +7,7 @@
 
 #import <Foundation/Foundation.h>
 #import <objc/runtime.h>
-#if __has_include(<XZKit/XZKit.h>)
-#import <XZKit/XZMacros.h>
-#else
-#import "XZMacros.h"
-#endif
+#import <objc/message.h>
 
 // 命名规则：
 // 所有函数默认作用于实例方法、属性、变量。
@@ -206,7 +202,7 @@ FOUNDATION_EXPORT BOOL xz_objc_class_addMethodWithBlock(Class aClass, SEL select
 /// 构造 Class 的块函数。
 /// - Parameters:
 ///   - newClass: 构造过程中的 Class 对象，只可用来添加变量、方法，不可直接实例化
-typedef void (^XZRuntimeCreateClassBlock)(Class newClass);
+typedef void (^XZObjcCreateClassBlock)(Class newClass);
 
 /// 派生子类或创建新类，如果已存在，则返回 Nil 。
 ///
@@ -214,7 +210,7 @@ typedef void (^XZRuntimeCreateClassBlock)(Class newClass);
 ///   - superClass: 新类的超类，如果为 Nil 则表示创建基类
 ///   - name: 新类的类名
 ///   - block: 给新类添加实例变量的操作必须在此block中执行
-FOUNDATION_EXPORT Class _Nullable xz_objc_createClassWithName(Class _Nullable superClass, NSString *name, NS_NOESCAPE XZRuntimeCreateClassBlock _Nullable block);
+FOUNDATION_EXPORT Class _Nullable xz_objc_createClassWithName(Class _Nullable superClass, NSString *name, NS_NOESCAPE XZObjcCreateClassBlock _Nullable block);
 
 /// 创建类，不指定名字。
 ///
@@ -223,7 +219,7 @@ FOUNDATION_EXPORT Class _Nullable xz_objc_createClassWithName(Class _Nullable su
 /// - Parameters:
 ///   - superClass: 新类的超类
 ///   - block: 给新类添加实例变量的操作必须在此block中执行
-FOUNDATION_EXPORT Class xz_objc_createClass(Class superClass, NS_NOESCAPE XZRuntimeCreateClassBlock _Nullable block);
+FOUNDATION_EXPORT Class xz_objc_createClass(Class superClass, NS_NOESCAPE XZObjcCreateClassBlock _Nullable block);
 
 
 
@@ -292,41 +288,86 @@ FOUNDATION_EXPORT NSHashTable *xz_objc_class_getImplementedProtocolMethods(Class
 // 原因是 self.class 始终是 Human 类，在执行 -[Animal foobar] 时，它的值也是 Human 类，那么函数 xz_objc_msgSendSuper 的调用实际上就是调用自身。
 //
 
-FOUNDATION_EXPORT void xz_objc_msgSend_void(id receiver, SEL selector, id _Nullable param1) XZ_ATTR_OVERLOAD;
-FOUNDATION_EXPORT void xz_objc_msgSend_void(id receiver, SEL selector, id _Nullable param1, BOOL param2) XZ_ATTR_OVERLOAD;
-FOUNDATION_EXPORT void xz_objc_msgSend_void(id receiver, SEL selector, BOOL param1) XZ_ATTR_OVERLOAD;
-FOUNDATION_EXPORT void xz_objc_msgSend_void(id receiver, SEL selector, CGRect param1) XZ_ATTR_OVERLOAD;
-FOUNDATION_EXPORT void xz_objc_msgSend_void(id receiver, SEL selector) XZ_ATTR_OVERLOAD;
-FOUNDATION_EXPORT void xz_objc_msgSend_void(id receiver, SEL selector, id _Nullable param1, NSInteger param2) XZ_ATTR_OVERLOAD;
-FOUNDATION_EXPORT void xz_objc_msgSend_void(id receiver, SEL selector, id _Nullable param1, id _Nullable param2) XZ_ATTR_OVERLOAD;
+#define XZ_OBJC_OVERLOAD __attribute__((overloadable))
 
-FOUNDATION_EXPORT id _Nullable xz_objc_msgSend_id(id receiver, SEL selector, BOOL param1) XZ_ATTR_OVERLOAD;
-FOUNDATION_EXPORT id _Nullable xz_objc_msgSend_id(id receiver, SEL selector, id _Nullable param1, BOOL param2) XZ_ATTR_OVERLOAD;
-FOUNDATION_EXPORT id _Nullable xz_objc_msgSend_id(id receiver, SEL selector, id _Nullable param1, NSInteger param2, id _Nullable param3, id _Nullable param4) XZ_ATTR_OVERLOAD;
-FOUNDATION_EXPORT id _Nullable xz_objc_msgSend_id(id receiver, SEL selector, id _Nullable param1, id _Nullable param2) XZ_ATTR_OVERLOAD;
-FOUNDATION_EXPORT id _Nullable xz_objc_msgSend_id(id receiver, SEL selector) XZ_ATTR_OVERLOAD;
+FOUNDATION_EXPORT void xz_objc_msgSend_void(id receiver, SEL selector, id _Nullable param1) XZ_OBJC_OVERLOAD;
+FOUNDATION_EXPORT void xz_objc_msgSend_void(id receiver, SEL selector, id _Nullable param1, BOOL param2) XZ_OBJC_OVERLOAD;
+FOUNDATION_EXPORT void xz_objc_msgSend_void(id receiver, SEL selector, BOOL param1) XZ_OBJC_OVERLOAD;
+FOUNDATION_EXPORT void xz_objc_msgSend_void(id receiver, SEL selector, CGRect param1) XZ_OBJC_OVERLOAD;
+FOUNDATION_EXPORT void xz_objc_msgSend_void(id receiver, SEL selector) XZ_OBJC_OVERLOAD;
+FOUNDATION_EXPORT void xz_objc_msgSend_void(id receiver, SEL selector, id _Nullable param1, NSInteger param2) XZ_OBJC_OVERLOAD;
+FOUNDATION_EXPORT void xz_objc_msgSend_void(id receiver, SEL selector, id _Nullable param1, id _Nullable param2) XZ_OBJC_OVERLOAD;
 
-FOUNDATION_EXPORT CGRect xz_objc_msgSend_rect(id receiver, SEL selector) XZ_ATTR_OVERLOAD;
+FOUNDATION_EXPORT id _Nullable xz_objc_msgSend_id(id receiver, SEL selector, BOOL param1) XZ_OBJC_OVERLOAD;
+FOUNDATION_EXPORT id _Nullable xz_objc_msgSend_id(id receiver, SEL selector, id _Nullable param1, BOOL param2) XZ_OBJC_OVERLOAD;
+FOUNDATION_EXPORT id _Nullable xz_objc_msgSend_id(id receiver, SEL selector, id _Nullable param1, NSInteger param2, id _Nullable param3, id _Nullable param4) XZ_OBJC_OVERLOAD;
+FOUNDATION_EXPORT id _Nullable xz_objc_msgSend_id(id receiver, SEL selector, id _Nullable param1, id _Nullable param2) XZ_OBJC_OVERLOAD;
+FOUNDATION_EXPORT id _Nullable xz_objc_msgSend_id(id receiver, SEL selector) XZ_OBJC_OVERLOAD;
 
-FOUNDATION_EXPORT BOOL xz_objc_msgSend_bool(id receiver, SEL selector) XZ_ATTR_OVERLOAD;
+FOUNDATION_EXPORT CGRect xz_objc_msgSend_rect(id receiver, SEL selector) XZ_OBJC_OVERLOAD;
 
-FOUNDATION_EXPORT void xz_objc_msgSendSuper_void(id receiver, Class receiverClass, SEL selector, id _Nullable param1) XZ_ATTR_OVERLOAD;
-FOUNDATION_EXPORT void xz_objc_msgSendSuper_void(id receiver, Class receiverClass, SEL selector, id _Nullable param1, BOOL param2) XZ_ATTR_OVERLOAD;
-FOUNDATION_EXPORT void xz_objc_msgSendSuper_void(id receiver, Class receiverClass, SEL selector, BOOL param1) XZ_ATTR_OVERLOAD;
-FOUNDATION_EXPORT void xz_objc_msgSendSuper_void(id receiver, Class receiverClass, SEL selector, CGRect param1) XZ_ATTR_OVERLOAD;
-FOUNDATION_EXPORT void xz_objc_msgSendSuper_void(id receiver, Class receiverClass, SEL selector) XZ_ATTR_OVERLOAD;
-FOUNDATION_EXPORT void xz_objc_msgSendSuper_void(id receiver, Class receiverClass, SEL selector, id _Nullable param1, NSInteger param2) XZ_ATTR_OVERLOAD;
-FOUNDATION_EXPORT void xz_objc_msgSendSuper_void(id receiver, Class receiverClass, SEL selector, id _Nullable param1, id _Nullable param2) XZ_ATTR_OVERLOAD;
+FOUNDATION_EXPORT BOOL xz_objc_msgSend_bool(id receiver, SEL selector) XZ_OBJC_OVERLOAD;
 
-FOUNDATION_EXPORT id _Nullable xz_objc_msgSendSuper_id(id receiver, Class receiverClass, SEL selector, BOOL param1) XZ_ATTR_OVERLOAD;
-FOUNDATION_EXPORT id _Nullable xz_objc_msgSendSuper_id(id receiver, Class receiverClass, SEL selector, id _Nullable param1, BOOL param2) XZ_ATTR_OVERLOAD;
-FOUNDATION_EXPORT id _Nullable xz_objc_msgSendSuper_id(id receiver, Class receiverClass, SEL selector, id _Nullable param1, NSInteger param2, id _Nullable param3, id _Nullable param4) XZ_ATTR_OVERLOAD;
-FOUNDATION_EXPORT id _Nullable xz_objc_msgSendSuper_id(id receiver, Class receiverClass, SEL selector, id _Nullable param1, id _Nullable param2) XZ_ATTR_OVERLOAD;
-FOUNDATION_EXPORT id _Nullable xz_objc_msgSendSuper_id(id receiver, Class receiverClass, SEL selector) XZ_ATTR_OVERLOAD;
+FOUNDATION_EXPORT void xz_objc_msgSendSuper_void(id receiver, Class receiverClass, SEL selector, id _Nullable param1) XZ_OBJC_OVERLOAD;
+FOUNDATION_EXPORT void xz_objc_msgSendSuper_void(id receiver, Class receiverClass, SEL selector, id _Nullable param1, BOOL param2) XZ_OBJC_OVERLOAD;
+FOUNDATION_EXPORT void xz_objc_msgSendSuper_void(id receiver, Class receiverClass, SEL selector, BOOL param1) XZ_OBJC_OVERLOAD;
+FOUNDATION_EXPORT void xz_objc_msgSendSuper_void(id receiver, Class receiverClass, SEL selector, CGRect param1) XZ_OBJC_OVERLOAD;
+FOUNDATION_EXPORT void xz_objc_msgSendSuper_void(id receiver, Class receiverClass, SEL selector) XZ_OBJC_OVERLOAD;
+FOUNDATION_EXPORT void xz_objc_msgSendSuper_void(id receiver, Class receiverClass, SEL selector, id _Nullable param1, NSInteger param2) XZ_OBJC_OVERLOAD;
+FOUNDATION_EXPORT void xz_objc_msgSendSuper_void(id receiver, Class receiverClass, SEL selector, id _Nullable param1, id _Nullable param2) XZ_OBJC_OVERLOAD;
 
-FOUNDATION_EXPORT CGRect xz_objc_msgSendSuper_rect(id receiver, Class receiverClass, SEL selector) XZ_ATTR_OVERLOAD;
+FOUNDATION_EXPORT id _Nullable xz_objc_msgSendSuper_id(id receiver, Class receiverClass, SEL selector, BOOL param1) XZ_OBJC_OVERLOAD;
+FOUNDATION_EXPORT id _Nullable xz_objc_msgSendSuper_id(id receiver, Class receiverClass, SEL selector, id _Nullable param1, BOOL param2) XZ_OBJC_OVERLOAD;
+FOUNDATION_EXPORT id _Nullable xz_objc_msgSendSuper_id(id receiver, Class receiverClass, SEL selector, id _Nullable param1, NSInteger param2, id _Nullable param3, id _Nullable param4) XZ_OBJC_OVERLOAD;
+FOUNDATION_EXPORT id _Nullable xz_objc_msgSendSuper_id(id receiver, Class receiverClass, SEL selector, id _Nullable param1, id _Nullable param2) XZ_OBJC_OVERLOAD;
+FOUNDATION_EXPORT id _Nullable xz_objc_msgSendSuper_id(id receiver, Class receiverClass, SEL selector) XZ_OBJC_OVERLOAD;
 
-FOUNDATION_EXPORT BOOL xz_objc_msgSendSuper_bool(id receiver, Class receiverClass, SEL selector) XZ_ATTR_OVERLOAD;
+FOUNDATION_EXPORT CGRect xz_objc_msgSendSuper_rect(id receiver, Class receiverClass, SEL selector) XZ_OBJC_OVERLOAD;
+
+FOUNDATION_EXPORT BOOL xz_objc_msgSendSuper_bool(id receiver, Class receiverClass, SEL selector) XZ_OBJC_OVERLOAD;
+
+#endif
+
+#ifndef XZ_OBJC_MESSAGE_MACROS
+#define XZ_OBJC_MESSAGE_MACROS 1
+
+/// 在 x86 架构上，返回值若为超过16字节的结构体，则必须使用 objc_msgSend_stret 函数来发送消息。
+FOUNDATION_EXPORT void xz_objc_msgSend_stret(void);
+/// 返回值为 float 类型的方法，需要调用此函数发送消息。
+FOUNDATION_EXPORT void xz_objc_msgSend_ftret(void);
+/// 返回值为 double 类型的方法，需要调用此函数发送消息。
+FOUNDATION_EXPORT void xz_objc_msgSend_dbret(void);
+/// 返回值为 long double 类型的方法，需要调用此函数发送消息。
+FOUNDATION_EXPORT void xz_objc_msgSend_ldret(void);
+
+#undef xz_objc_msgSend_stret
+#undef xz_objc_msgSend_ftret
+#undef xz_objc_msgSend_dbret
+#undef xz_objc_msgSend_ldret
+
+#if defined(__arm64__)
+    #define xz_objc_msgSend_stret       objc_msgSend
+    #define xz_objc_msgSendSuper_stret  objc_msgSendSuper
+    #define xz_objc_msgSend_ftret       objc_msgSend
+    #define xz_objc_msgSend_dbret       objc_msgSend
+    #define xz_objc_msgSend_ldret       objc_msgSend
+#elif defined(__x86_64__)
+    #define xz_objc_msgSend_stret       objc_msgSend_stret
+    #define xz_objc_msgSendSuper_stret  objc_msgSendSuper_stret
+    #define xz_objc_msgSend_ftret       objc_msgSend
+    #define xz_objc_msgSend_dbret       objc_msgSend
+    #if TYPE_LONGDOUBLE_IS_DOUBLE
+        #define xz_objc_msgSend_ldret   objc_msgSend
+    #else
+        #define xz_objc_msgSend_ldret   objc_msgSend_fpret
+    #endif
+#elif defined(__i386__)
+    #define xz_objc_msgSend_stret       objc_msgSend_stret
+    #define xz_objc_msgSendSuper_stret  objc_msgSendSuper_stret
+    #define xz_objc_msgSend_ftret       objc_msgSend_fpret
+    #define xz_objc_msgSend_dbret       objc_msgSend_fpret
+    #define xz_objc_msgSend_ldret       objc_msgSend_fpret
+#endif
 
 #endif
 

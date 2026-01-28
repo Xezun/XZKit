@@ -6,6 +6,7 @@
 //
 
 #import "XZObjcClass.h"
+#import "XZObjcType.h"
 #import "XZObjcIvar.h"
 #import "XZObjcProperty.h"
 #import "XZObjcMethod.h"

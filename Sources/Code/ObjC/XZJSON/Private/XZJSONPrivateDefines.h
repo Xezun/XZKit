@@ -6,7 +6,7 @@
 //
 
 #import <Foundation/Foundation.h>
-#import "XZObjcType.h"
+#import "XZObjc.h"
 
 #ifdef _Unsafe
 #undef _Unsafe
