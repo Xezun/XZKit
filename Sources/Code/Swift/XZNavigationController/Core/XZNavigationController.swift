@@ -28,6 +28,8 @@ extension XZNavigationController {
             return self.transitionController != nil
         }
         set {
+            // transitionController 是支持自定义的转场控制器，所以。
+            // 如果 transitionController 属性已经有值，说明已经支持自定义，否则不支持。
             if let transitionController = self.transitionController {
                 if !newValue {
                     self.transitionController = nil
@@ -182,7 +184,7 @@ extension XZNavigationController {
                     }
                 }
                 
-                // 栈内控制启用自定义功能
+                // 栈内控制器开启自定义功能
                 for viewController in viewControllers {
                     xz_navc_navigationController(self, customizeViewController: viewController)
                 }

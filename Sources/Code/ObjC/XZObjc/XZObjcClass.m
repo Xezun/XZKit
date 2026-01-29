@@ -77,7 +77,7 @@
     if (propertyCount > 0) {
         _properties = [NSMutableDictionary dictionaryWithCapacity:propertyCount];
         for (unsigned int i = 0; i < propertyCount; i++) {
-            XZObjcProperty *property = [XZObjcProperty propertyWithProperty:list[i] class:_raw];
+            XZObjcProperty *property = [XZObjcProperty propertyWithProperty:list[i] forClass:_raw];
             if (property) {
                 ((NSMutableDictionary *)_properties)[property.name] = property;
             }
@@ -139,17 +139,19 @@
         NSMutableString *stringM = [[NSMutableString alloc] initWithString:@"[\n"];
         [self.methods enumerateKeysAndObjectsUsingBlock:^(NSString *methodName, XZObjcMethod * _Nonnull obj, BOOL * _Nonnull stop) {
             NSRange range = NSMakeRange(0, methodName.length);
-            if (obj.arguments.count > 2) {
-                for (NSInteger i = 2; i < obj.arguments.count; i++) {
+            if (obj.arguments.count > 0) {
+                NSMutableString *methodNameM = [NSMutableString stringWithString:methodName];
+                for (NSInteger i = 0; i < obj.arguments.count; i++) {
                     range = [methodName rangeOfString:@":" options:kNilOptions range:range];
-                    NSString *argument = [NSString stringWithFormat:@":(%@) ", obj.arguments[i].name];
+                    NSString *argument = [NSString stringWithFormat:@":(%@)%c ", obj.arguments[i].name, (char)('a' + i)];
+                    [methodNameM replaceCharactersInRange:range withString:argument];
                     methodName = [methodName stringByReplacingCharactersInRange:range withString:argument];
                     range.location += 1;
                     range.length = methodName.length - range.location;
                 }
                 methodName = [methodName stringByTrimmingCharactersInSet:NSCharacterSet.whitespaceCharacterSet];
             }
-            [stringM appendFormat:@"        -(%@)%@, \n", obj.type.name, methodName];
+            [stringM appendFormat:@"        - (%@)%@, \n", obj.type.name, methodName];
         }];
         [stringM deleteCharactersInRange:NSMakeRange(stringM.length - 3, 1)];
         [stringM appendString:@"    ]"];

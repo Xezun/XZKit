@@ -12,9 +12,7 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-/// 描述方法的对象。
-///
-/// Method information.
+/// 对运行时结构体 `Method` 的封装。
 @interface XZObjcMethod : NSObject
 
 /// 方法原始值。 method opaque struct
@@ -29,9 +27,9 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic, assign, readonly) IMP implementation;
 /// 方法参数和返回值类型编码。method's parameter and return types
 @property (nonatomic, copy, readonly) NSString *encoding;
-/// 参数类型编码。 array of arguments' type
-/// 
-/// 按照 objc 的规则，参数为 `(receiver, SEL, ...)`
+/// 方法参数的类型。
+///
+/// 按照 objc 的规则，运行时会把方法编译为`method(receiver, SEL, ...)`的形式，即前两个参数是固定的，此属性不包含这两个参数。
 @property (nonatomic, readonly, nullable) NSArray<XZObjcType *> *arguments;
 
 + (nullable instancetype)methodWithMethod:(Method)method NS_SWIFT_NAME(init(_:));

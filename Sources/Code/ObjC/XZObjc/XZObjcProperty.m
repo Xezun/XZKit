@@ -11,7 +11,7 @@
 
 @implementation XZObjcProperty
 
-+ (instancetype)propertyWithProperty:(objc_property_t)property class:(Class)aClass {
++ (instancetype)propertyWithProperty:(objc_property_t)property forClass:(Class)class {
     if (!property) {
         return nil;
     }
@@ -40,7 +40,7 @@
 
             case 'V': { // Instance variable
                 if (attribute.value) {
-                    Ivar ivar = class_getInstanceVariable(aClass, attribute.value);
+                    Ivar ivar = class_getInstanceVariable(class, attribute.value);
                     if (ivar) {
                         _ivar = [XZObjcIvar ivarWithIvar:ivar];
                     }
@@ -110,7 +110,7 @@
     if (_getter == NULL) {
         _getter = sel_getUid(name);
 
-        if (_getter == NULL || !class_respondsToSelector(aClass, _getter)) {
+        if (_getter == NULL || !class_respondsToSelector(class, _getter)) {
             return nil;
         }
     }
@@ -123,7 +123,7 @@
             _setter = NSSelectorFromString(setterName);
             if (_setter == NULL) {
                 _modifiers |= XZStdcModifierReadonly;
-            } else if (!class_respondsToSelector(aClass, _setter)) {
+            } else if (!class_respondsToSelector(class, _setter)) {
                 _setter = NULL;
                 _modifiers |= XZStdcModifierReadonly;
             }

@@ -39,7 +39,7 @@
     
     unsigned int const numberOfArguments = method_getNumberOfArguments(method);
     NSMutableArray * const _arguments = [NSMutableArray arrayWithCapacity:numberOfArguments];
-    for (unsigned int i = 0; i < numberOfArguments; i++) {
+    for (unsigned int i = 2; i < numberOfArguments; i++) {
         char * const argument = method_copyArgumentType(method, i);
         XZObjcType * const argumentType = [XZObjcType typeForEncoding:argument];
         if (argumentType) {
@@ -58,11 +58,11 @@
     if (self) {
         _raw = method;
         _name = NSStringFromSelector(selector);
+        _type = type;
+        _encoding = typeEncoding;
         _selector = selector;
         _implementation = implementation;
-        _encoding = typeEncoding;
-        _type = type;
-        _arguments = arguments;
+        _arguments = arguments.copy;
     }
     return self;
 }

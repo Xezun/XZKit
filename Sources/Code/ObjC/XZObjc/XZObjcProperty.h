@@ -17,14 +17,12 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-/// 描述对象属性的对象。
-///
-/// Property information.
+/// 对运行时结构体 `objc_property_t` 的封装。
 @interface XZObjcProperty : NSObject
 
-/// 原始值。 property's opaque struct
+/// 原始的 `objc_property_t` 结构体。
 @property (nonatomic, readonly) objc_property_t raw;
-/// 属性名。 property's name
+/// 属性名。 
 @property (nonatomic, readonly) NSString *name;
 /// 属性值的类型。
 @property (nonatomic, readonly) XZObjcType *type;
@@ -32,14 +30,14 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic, readonly) XZStdcModifiers modifiers;
 /// 属性的实例变量。
 @property (nonatomic, strong, readonly, nullable) XZObjcIvar *ivar;
-/// 取值方法，非空。
+/// 取值方法，一定非空，且已验证可用。
 @property (nonatomic, readonly) SEL getter;
-/// 存值方法。可能为空。
+/// 存值方法。如果属性不是只读的，那么值一定为空，且已验证可用。
 @property (nonatomic, readonly, nullable) SEL setter;
 
 - (instancetype)init NS_UNAVAILABLE;
 
-+ (nullable instancetype)propertyWithProperty:(objc_property_t)rawProperty class:(Class)aClass NS_SWIFT_NAME(init(_:class:));
++ (nullable instancetype)propertyWithProperty:(objc_property_t)property forClass:(Class)class NS_SWIFT_NAME(init(_:for:));
 
 @end
 
