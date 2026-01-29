@@ -12,35 +12,26 @@ static const void * const _secureContentMode = &_secureContentMode;
 
 @implementation UIView (XZKit)
 
-- (void)xz_enumerateHierarchy:(NS_NOESCAPE XZViewHierarchyEnumerator)block {
-    BOOL stop = NO;
-    [self xz_enumerateHierarchy:block hierarchy:0 range:NSMakeRange(0, 0) stop:&stop];
+- (void)xz_enumerateSubviewsByUsingBlock:(NS_NOESCAPE XZViewHierarchyEnumerator)enumerator {
+    [self xz_enumerateSubviewsWithHierarchy:0 byUsingBlock:enumerator];
 }
 
-/// 返回值为是否终止遍历。
-- (BOOL)xz_enumerateHierarchy:(NS_NOESCAPE XZViewHierarchyEnumerator)block hierarchy:(NSInteger)hierarchy range:(NSRange)range stop:(BOOL *)stop {
-    // 将当前视图被遍历，并获取是否继续遍历子视图。
-    if (!block(hierarchy, self, range, stop)) {
-        return *stop;
-    }
-    
-    // 遍历终止了。
-    if (*stop) {
-        return YES;
-    }
-    
-    // 遍历子视图。
-    hierarchy += 1;
+- (BOOL)xz_enumerateSubviewsWithHierarchy:(NSInteger)hierarchy byUsingBlock:(NS_NOESCAPE XZViewHierarchyEnumerator)enumerator {
     NSArray * const subviews = self.subviews;
-    range.length = subviews.count;
-    for (range.location = 0; range.location < range.length; range.location++) {
-        UIView * const subview = subviews[range.location];
-        if ([subview xz_enumerateHierarchy:block hierarchy:hierarchy range:range stop:stop]) {
+    BOOL stop = NO;
+    for (NSRange indexPath = NSMakeRange(0, subviews.count); indexPath.location < indexPath.length; indexPath.location++) {
+        UIView * const subview = subviews[indexPath.location];
+        if (!enumerator(subview, hierarchy, indexPath, &stop)) {
+            break;
+        }
+        if (stop) {
+            return YES;
+        }
+        if ([subview xz_enumerateSubviewsWithHierarchy:(hierarchy + 1) byUsingBlock:enumerator]) {
             return YES;
         }
     }
-    
-    return NO;
+    return stop;
 }
 
 - (UIImage *)xz_snapshotImageAfterScreenUpdates:(BOOL)afterUpdates {
@@ -140,7 +131,7 @@ static const void * const _secureContentMode = &_secureContentMode;
 
 - (NSString *)xz_description {
     NSMutableArray  * const descriptionsM = [NSMutableArray array];
-    [self xz_enumerateHierarchy:^BOOL(NSInteger const hierarchy, UIView *subview, NSRange indexPath, BOOL *stop) {
+    [self xz_enumerateSubviewsByUsingBlock:^BOOL(UIView *subview, NSInteger const hierarchy, NSRange indexPath, BOOL *stop) {
         BOOL const isFirst = indexPath.location == 0;
         //BOOL const isLast  = indexPath.location == indexPath.length - 1;
         

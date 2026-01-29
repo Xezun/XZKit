@@ -30,25 +30,28 @@ enum {
 
 /// @define
 /// 遍历视图层级的块函数。
-/// @param subview 当前被遍历的视图
-/// @param hierarchy 当前被遍历的视图的层级
-/// @param indexPath 子视图在同级中的位置，location=排序，length=同级视图的总数量
-/// @param stop 控制是否终止遍历
-/// @returns 返回值“YES/NO”表示“是/否”继续遍历当前被遍历视图的子视图
-typedef BOOL (^XZViewHierarchyEnumerator)(NSInteger hierarchy, __kindof UIView *subview, NSRange indexPath, BOOL *stop);
+/// @param subview 当前被遍历的视图。
+/// @param hierarchy 当前被遍历的视图的层级。
+/// @param indexPath 子视图在同级中的位置，location=排序，length=同级视图的总数量。
+/// @param stop 控制是否终止整个遍历过程。
+/// @returns 是否继续遍历当前层级的其它子视图。
+typedef BOOL (^XZViewHierarchyEnumerator)(__kindof UIView *subview, NSInteger hierarchy, NSRange indexPath, BOOL *stop);
 
 @interface UIView (XZKit)
 
-/// 遍历当前视图的层级，包括自身。
-/// @code
+/// 遍历当前视图的子视图。
+/// ```objc
 /// // 遍历 self.view 的子视图，遍历深度 2 层。
-/// [self.view xz_enumerateHierarchy:^BOOL(UIView *subview, NSInteger hierarchy, BOOL *stop) {
-///     XZPrint(@"%ld: <%@, %p>", hierarchy, NSStringFromClass(subview.class), subview);
-///     return hierarchy < 2;
+/// [self.view xz_enumerateSubviewsByUsingBlock:^BOOL(UIView *subview, NSInteger hierarchy, NSRange indexPath, BOOL *stop) {
+///     if (hierarchy < 2) {
+///         XZLog(@"%ld: <%@, %p>", hierarchy, NSStringFromClass(subview.class), subview);
+///         return YES;
+///     }
+///     return NO;
 /// }];
-/// @endcode
-/// @param enumerator 遍历时执行的块函数
-- (void)xz_enumerateHierarchy:(NS_NOESCAPE XZViewHierarchyEnumerator)enumerator NS_SWIFT_NAME(enumerateHierarchy(_:));
+/// ```
+/// - Parameter enumerator: 遍历时执行的块函数
+- (void)xz_enumerateSubviewsByUsingBlock:(NS_NOESCAPE XZViewHierarchyEnumerator)enumerator NS_SWIFT_NAME(enumerateSubviews(using:));
 
 /// 获取当前视图的图片快照。
 ///
