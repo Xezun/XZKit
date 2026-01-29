@@ -11,7 +11,7 @@
 @import XZKit;
 
 @interface Example06ViewController () <XZRefreshDelegate, UITableViewDataSource> {
-    NSInteger _numberOfCells;
+    NSMutableArray<NSString *> *_dataArray;
     CGFloat _rowHeight;
     
     UIView *_top;
@@ -45,7 +45,7 @@
 //    }
 
     _rowHeight = 57.0;
-    _numberOfCells = 10;
+    _dataArray = [NSMutableArray arrayWithObjects:@"XZRefresh", @"下拉刷新组件", @"刷新组件背景为粉红色", @"安全区边距为兰色", nil];
     
     self.tableView.xz_headerRefreshView.backgroundColor = rgb(0xfeb5d7);
     self.tableView.xz_footerRefreshView.backgroundColor = rgb(0xfeb5d7);
@@ -71,10 +71,17 @@
 //    XZLog(@"%s", __PRETTY_FUNCTION__);
     NSTimeInterval time = arc4random_uniform(20) * 0.1 + 2.0;
     dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(time * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
-        self->_numberOfCells = arc4random_uniform(10) + 5;
+        [self->_dataArray removeAllObjects];
+        
+        NSInteger const count = arc4random_uniform(10) + 5;
+        for (NSInteger i = 0; i < count; i++) {
+            NSString *text = [NSString stringWithFormat:@"第 %ld 行", self->_dataArray.count];
+            [self->_dataArray addObject:text];
+        }
+        
         [self.tableView reloadData];
         [refreshView endRefreshing:YES];
-        [self xz_showToast:[XZToast sharedToast:(XZToastStyleMessage) text:@"刷新成功"]];
+        [self xz_showToast:[XZToast sharedToast:(XZToastStyleSuccess) text:@"刷新成功"]];
     });
 }
 
@@ -82,17 +89,22 @@
 //    XZLog(@"%s", __PRETTY_FUNCTION__);
     NSTimeInterval time = arc4random_uniform(20) * 0.1 + 2.0;
     dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(time * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
-        NSInteger old = self->_numberOfCells;
-        if (old < 20) {
-            NSInteger new = MIN(arc4random_uniform(5) + 4, 30 - old);
-            self->_numberOfCells = old + new;
-            NSMutableArray *rows = [NSMutableArray arrayWithCapacity:new];
-            for (NSInteger i = 0; i < new; i++) {
-                NSIndexPath *indexPath = [NSIndexPath indexPathForRow:old + i inSection:0];
+        if (self->_dataArray.count < 20) {
+            NSInteger const count = arc4random_uniform(5) + 4;
+            NSMutableArray *rows = [NSMutableArray arrayWithCapacity:count];
+            
+            for (NSInteger i = 0; i < count; i++) {
+                NSIndexPath *indexPath = [NSIndexPath indexPathForRow:self->_dataArray.count inSection:0];
                 [rows addObject:indexPath];
+                
+                NSString *text = [NSString stringWithFormat:@"第 %ld 行", self->_dataArray.count];
+                [self->_dataArray addObject:text];
             }
+            
             [self.tableView insertRowsAtIndexPaths:rows withRowAnimation:(UITableViewRowAnimationTop)];
-            [self xz_showToast:[XZToast sharedToast:(XZToastStyleMessage) text:[NSString stringWithFormat:@"新增 %ld 条数据", new]] position:(XZToastPositionBottom)];
+            
+            NSString *message = [NSString stringWithFormat:@"新增 %ld 条数据", count];
+            [self xz_showToast:[XZToast sharedToast:(XZToastStyleMessage) text:message] position:(XZToastPositionBottom)];
         } else {
             [self xz_showToast:[XZToast sharedToast:(XZToastStyleMessage) text:@"没有更多数据了"] position:(XZToastPositionBottom)];
         }
@@ -114,12 +126,12 @@
 }
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
-    return _numberOfCells;
+    return _dataArray.count;
 }
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
     UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:@"cell" forIndexPath:indexPath];
-    cell.textLabel.text = [NSString stringWithFormat:@"No.%02ld", indexPath.row];
+    cell.textLabel.text = _dataArray[indexPath.row];
     return cell;
 }
 
@@ -168,19 +180,21 @@
 
 - (IBAction)unwindFromInsertRowAction:(UIStoryboardSegue *)unwindSegue {
     dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.5 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
-        NSIndexPath *indexPath = [NSIndexPath indexPathForRow:self->_numberOfCells inSection:0];
-        self->_numberOfCells += 1;
+        NSString *text = [NSString stringWithFormat:@"第 %ld 行", self->_dataArray.count];
+        NSIndexPath *indexPath = [NSIndexPath indexPathForRow:self->_dataArray.count inSection:0];
+        [self->_dataArray addObject:text];
         [self.tableView insertRowsAtIndexPaths:@[indexPath] withRowAnimation:(UITableViewRowAnimationLeft)];
     });
 }
 
 - (IBAction)unwindFromDeleteRowAction:(UIStoryboardSegue *)unwindSegue {
     dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.5 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
-        if (self->_numberOfCells <= 0) {
+        if (self->_dataArray.count == 0) {
             return;
         }
-        self->_numberOfCells -= 1;
-        NSIndexPath *indexPath = [NSIndexPath indexPathForRow:self->_numberOfCells inSection:0];
+        [self->_dataArray removeLastObject];
+        
+        NSIndexPath *indexPath = [NSIndexPath indexPathForRow:self->_dataArray.count inSection:0];
         [self.tableView deleteRowsAtIndexPaths:@[indexPath] withRowAnimation:(UITableViewRowAnimationLeft)];
     });
 }
