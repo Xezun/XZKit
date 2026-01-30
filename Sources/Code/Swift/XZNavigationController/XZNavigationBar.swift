@@ -8,7 +8,7 @@
 import UIKit
 
 /// 自定义导航条可选基类。
-@MainActor @objc open class XZNavigationBar: UIView, AnyNavigationBar {
+@MainActor @objc open class XZNavigationBar: UIView, XZNavigationBarProtocol {
     
     open override var isHidden: Bool {
         didSet {

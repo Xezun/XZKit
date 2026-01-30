@@ -117,7 +117,7 @@ NSString * _Nonnull XZJSONModelDescription(NSObject *_Nonnull model, NSUInteger 
         return [NSString stringWithFormat:@"<%@: %p>", object_getClass(model), model];
     }
 
-    XZJSONClass * const modelClass = [XZJSONClass descriptorForClass:model.class];
+    XZJSONClass * const modelClass = [XZJSONClass classForClass:model.class];
 
     if (modelClass->_cocoaClass != XZJSONCocoaClassUnknown) {
         return XZJSONModelDescriptionForCocoaClass(model, modelClass->_cocoaClass, indent);
@@ -354,7 +354,7 @@ void XZJSONModelEncodeWithCoder(id model, NSCoder *aCoder) {
         return;
     }
     
-    XZJSONClass * const modelClass = [XZJSONClass descriptorForClass:[model class]];
+    XZJSONClass * const modelClass = [XZJSONClass classForClass:[model class]];
     
     switch (modelClass->_cocoaClass) {
         case XZJSONCocoaClassNSString:
@@ -653,7 +653,7 @@ id _Nullable XZJSONModelDecodeWithCoder(id model, NSCoder *aCoder) {
         return model;
     }
     
-    XZJSONClass * const modelClass = [XZJSONClass descriptorForClass:[model class]];
+    XZJSONClass * const modelClass = [XZJSONClass classForClass:[model class]];
     switch (modelClass->_cocoaClass) {
         case XZJSONCocoaClassNSString:
         case XZJSONCocoaClassNSMutableString:
@@ -787,7 +787,7 @@ id _Nullable XZJSONModelDecodeWithCoder(id model, NSCoder *aCoder) {
                         if (!aValue) {
                             break;
                         }
-                        if (XZJSONDecodeStructProperty(model, property, aValue)) {
+                        if (XZJSONModelDecodeStructProperty(model, property, aValue)) {
                             return;
                         }
                         break;

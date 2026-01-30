@@ -16,7 +16,7 @@ import XZKit
 extension XZNavigationBarCustomizable {
     
     // 在 extension 中实现协议，返回自定义的导航条，那么控制器在声明遵循协议时，就可以不用再实现这个方法。
-    public var navigationBarIfLoaded: AnyNavigationBar? {
+    public var navigationBarIfLoaded: XZNavigationBarProtocol? {
         // 这里也可以写
         // return objc_getAssociatedObject(self, &_navigationBar) as? Example17NavigationBar
         // 这样如果控制器声明遵循了协议，但是却没有使用自定义导航条，那么自定义导航条就不会被懒加载。

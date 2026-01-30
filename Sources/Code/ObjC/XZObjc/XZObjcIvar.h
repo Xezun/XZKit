@@ -12,9 +12,7 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-/// 描述实例的成员变量的对象。
-///
-/// Instance variable information.
+/// 对运行时结构体 `Ivar` 的封装。
 @interface XZObjcIvar : NSObject
 
 /// 成员变量原始值。 ivar opaque struct

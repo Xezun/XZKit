@@ -105,7 +105,7 @@ static id XZJSONKeyFromString(NSString *aString);
                 if (allProperties[name]) {
                     return; // 已存在
                 }
-                XZJSONProperty * const descriptor = [XZJSONProperty descriptorWithProperty:property mappingClass:mappingClasses[property.name] class:self];
+                XZJSONProperty * const descriptor = [XZJSONProperty descriptorWithProperty:property class:self mappingClass:mappingClasses[property.name]];
                 allProperties[name] = descriptor;
             }];
         } while ((class = class.superClass));
@@ -215,7 +215,7 @@ static id XZJSONKeyFromString(NSString *aString);
                     }
                 }
                 property->_valueDecoder = ^id(NSDictionary *dictionary) {
-                    for (XZJSONValueDecoder valueDecoder in valueDecoders) {
+                    for (XZJSONPropertyValueDecoder valueDecoder in valueDecoders) {
                         id const JSONValue = valueDecoder(dictionary);
                         if (JSONValue) {
                             return JSONValue;
@@ -257,7 +257,7 @@ static id XZJSONKeyFromString(NSString *aString);
 }
 
 
-+ (XZJSONClass *)descriptorForClass:(Class)aClass {
++ (XZJSONClass *)classForClass:(Class)aClass {
     if (aClass == Nil || !object_isClass(aClass) || [aClass superclass] == Nil || class_isMetaClass(aClass)) {
         return nil;
     }
@@ -272,24 +272,25 @@ static id XZJSONKeyFromString(NSString *aString);
     });
     
     dispatch_semaphore_wait(_lock, DISPATCH_TIME_FOREVER);
-    XZJSONClass *descriptor = CFDictionaryGetValue(_storage, (__bridge const void *)aClass);
+    XZJSONClass *cachedClass = CFDictionaryGetValue(_storage, (__bridge const void *)aClass);
     dispatch_semaphore_signal(_lock);
     
-    if (descriptor) {
-        return descriptor;
+    if (cachedClass) {
+        return cachedClass;
     }
-    descriptor = [[XZJSONClass alloc] initWithClass:aClass];
+    
+    XZJSONClass *newClass = [[XZJSONClass alloc] initWithClass:aClass];
     
     dispatch_semaphore_wait(_lock, DISPATCH_TIME_FOREVER);
-    XZJSONClass *descriptor2 = CFDictionaryGetValue(_storage, (__bridge const void *)aClass);
-    if (descriptor2 == nil) {
-        CFDictionarySetValue(_storage, (__bridge const void *)aClass, (__bridge const void *)descriptor);
+    XZJSONClass *oldClass = CFDictionaryGetValue(_storage, (__bridge const void *)aClass);
+    if (oldClass == nil) {
+        CFDictionarySetValue(_storage, (__bridge const void *)aClass, (__bridge const void *)newClass);
     } else {
-        descriptor = descriptor2;
+        newClass = oldClass;
     }
     dispatch_semaphore_signal(_lock);
     
-    return descriptor;
+    return newClass;
 }
 
 @end

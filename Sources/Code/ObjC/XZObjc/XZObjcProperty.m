@@ -154,15 +154,14 @@
     NSString * const getter = NSStringFromSelector(self.getter);
     NSString * const setter = (self.setter ? NSStringFromSelector(self.setter) : nil);
     NSString * const modifiers = NSStringFromXZStdcModifiers(self.modifiers);
-    return [NSString stringWithFormat:@"<\n"
-            "    %@: %p, \n"
+    return [NSString stringWithFormat:@"<%@: %p, { \n"
             "    name: %@, \n"
             "    type: %@, \n"
             "    ivar: %@, \n"
             "    getter: %@, \n"
             "    setter: %@, \n"
             "    modifiers: %@ \n"
-            ">", className, self, self.name, type, self.ivar.name, getter, setter, modifiers];
+            "}>", className, self, self.name, type, self.ivar.name, getter, setter, modifiers];
 }
 
 @end

@@ -1,5 +1,5 @@
 //
-//  UIKit.UINavigationBar.swift
+//  UINavigationBar.swift
 //  XZKit
 //
 //  Created by Xezun on 2017/7/11.
@@ -9,12 +9,12 @@
 import UIKit
 import ObjectiveC
 
-extension UIKit.UINavigationBar {
+extension UINavigationBar {
     
     /// 记录了当前正在显示的自定义的导航条。在控制器转场过程中，此属性为 nil 。
-    public internal(set) var navigationBar: AnyNavigationBar? {
+    public internal(set) var navigationBar: XZNavigationBarProtocol? {
         get {
-            return objc_getAssociatedObject(self, &_navigationBar) as? AnyNavigationBar
+            return objc_getAssociatedObject(self, &_navigationBar) as? XZNavigationBarProtocol
         }
         set {
             // 移除旧的
@@ -52,11 +52,11 @@ extension UIKit.UINavigationBar {
                 
                 let OldClass = type(of: self)
                 
-                if let NewClass = objc_getAssociatedObject(OldClass, &_customizableClass) as? UIKit.UINavigationBar.Type {
+                if let NewClass = objc_getAssociatedObject(OldClass, &_customizableClass) as? UINavigationBar.Type {
                     _ = object_setClass(self, NewClass)
                 } else if let NewClass = xz_objc_createClass(OldClass, { (NewClass) in
                     xz_objc_class_copyMethods(XZUINavigationBar.self, NewClass);
-                }) as? UIKit.UINavigationBar.Type {
+                }) as? UINavigationBar.Type {
                     objc_setAssociatedObject(OldClass, &_customizableClass, NewClass, .OBJC_ASSOCIATION_ASSIGN)
                     _ = object_setClass(self, NewClass)
                 } else {
@@ -71,7 +71,7 @@ extension UIKit.UINavigationBar {
     
 }
 
-private class XZUINavigationBar: UIKit.UINavigationBar {
+private class XZUINavigationBar: UINavigationBar {
     
     open override var isHidden: Bool {
         get {

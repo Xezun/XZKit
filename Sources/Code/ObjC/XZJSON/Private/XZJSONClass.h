@@ -55,7 +55,7 @@ NS_ASSUME_NONNULL_BEGIN
 }
 
 - (instancetype)init NS_UNAVAILABLE;
-+ (nullable XZJSONClass *)descriptorForClass:(nullable Class)aClass;
++ (nullable XZJSONClass *)classForClass:(nullable Class)aClass;
 
 @end
 

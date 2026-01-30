@@ -15,15 +15,16 @@ NS_ASSUME_NONNULL_BEGIN
 @class XZJSONClass;
 
 /// 从 JSON 数据中通过 KVC 取值的方法。
-typedef id _Nullable (^XZJSONValueDecoder)(NSDictionary *dictionary);
+typedef id _Nullable (^XZJSONPropertyValueDecoder)(NSDictionary *dictionary);
 
 /// A property info in object model.
 @interface XZJSONProperty : NSObject {
     @package
-    /// 属性。 property's info
+    /// 属性。
     XZObjcProperty *_raw;
     
-    /// 属性映射链表，“多属性vs单一键”的映射链表。
+    /// 当多个属性映射到同一个 JSONKey 时，将会创建此链表。
+    /// 在数据转模型时，将按照链表顺序，将 JSONKey 的值，逐一解析为对应的属性。
     XZJSONProperty *_next;
     
     /// 当前属性所属的 class 对象。
@@ -64,10 +65,10 @@ typedef id _Nullable (^XZJSONValueDecoder)(NSDictionary *dictionary);
     NSArray             * _Nullable _JSONKeyArray;
     
     /// 当前属性从 JSON 数据中为取值的方法。
-    XZJSONValueDecoder _valueDecoder;
+    XZJSONPropertyValueDecoder _valueDecoder;
 }
 
-+ (nullable instancetype)descriptorWithProperty:(XZObjcProperty *)property mappingClass:(nullable Class)elementType class:(XZJSONClass *)aClass;
++ (nullable instancetype)descriptorWithProperty:(XZObjcProperty *)property class:(XZJSONClass *)class mappingClass:(nullable Class)mappingClass;
 
 @end
 
@@ -78,7 +79,7 @@ typedef id _Nullable (^XZJSONValueDecoder)(NSDictionary *dictionary);
 ///   - property: 结构体属性
 ///   - JSONValue: 字符串
 /// - Returns: 是否成功写入
-FOUNDATION_STATIC_INLINE BOOL XZJSONDecodeStructProperty(id model, XZJSONProperty *property, id _Nonnull JSONValue) {
+FOUNDATION_STATIC_INLINE BOOL XZJSONModelDecodeStructProperty(id model, XZJSONProperty *property, id _Nonnull JSONValue) {
     if ([JSONValue isKindOfClass:NSString.class]) {
         switch (property->_structType) {
             case XZStdcStructTypeUnknown: {

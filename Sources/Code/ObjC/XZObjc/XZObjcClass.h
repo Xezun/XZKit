@@ -40,12 +40,10 @@ NS_ASSUME_NONNULL_BEGIN
 
 - (instancetype)init NS_UNAVAILABLE;
 
-/// 获取描述`rawClass`的对象。
+/// 对原生 `Class` 类对象的封装。
 ///
-/// 如果运行时修改了`Class`的信息，那么`XZObjcClass`对象可能会因失效而被释放，因此调用者需持有该对象。
-///
-/// - Parameter rawClass: 类
-+ (nullable XZObjcClass *)classWithClass:(nullable Class)rawClass NS_SWIFT_NAME(init(_:));
+/// - Parameter class: 原生 Class 类对象
++ (nullable XZObjcClass *)classWithClass:(nullable Class)class NS_SWIFT_NAME(init(_:));
 
 @end
 

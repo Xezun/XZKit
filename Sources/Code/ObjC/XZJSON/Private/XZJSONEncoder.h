@@ -27,7 +27,7 @@ NS_ASSUME_NONNULL_BEGIN
 ///   - dictionary: 如果是模型对象，提供此参数，模型的属性将合并到此字典中
 ///   - classType: 模型的 Class 类型
 /// - Returns: 可使用 NSJSONSerialization 序列化的对象
-FOUNDATION_EXPORT id XZJSONEncodeModelIntoDictionary(id const _Unsafe model, XZJSONClass * _Nullable _Unsafe descriptor, XZJSONCocoaClass classType, NSMutableDictionary * _Nullable dictionary);
+FOUNDATION_EXPORT id XZJSONObjectEncodeIntoDictionary(id const _Unsafe model, XZJSONClass * _Nullable _Unsafe descriptor, XZJSONCocoaClass classType, NSMutableDictionary * _Nullable dictionary);
 
 /// 将模型实例对象进行 JSON 序列化。调用此方法，表明已经判断 model 属于一般模型对象，而不是基础数据对象，特别是原生对象。
 /// - Parameters:

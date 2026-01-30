@@ -83,14 +83,13 @@
         arguments = @"()";
     }
     
-    return [NSString stringWithFormat:@"<\n"
-            "    %@: %p, \n"
+    return [NSString stringWithFormat:@"<%@: %p, { \n"
             "    name: %@, \n"
             "    type: %@, \n"
             "    implementation: %p, \n"
             "    encoding: %@, \n"
             "    arguments: %@ \n"
-            ">", self.class, self, self.name, type, self.implementation, self.encoding, arguments];
+            "}>", self.class, self, self.name, type, self.implementation, self.encoding, arguments];
 }
 
 @end

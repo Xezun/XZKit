@@ -18,7 +18,7 @@ NS_ASSUME_NONNULL_BEGIN
 ///
 /// ### 关于模型属性
 /// - 模型转换依赖于 `setter` 方法，所以只读属性会被忽略。
-/// - 通用逻辑无法处理弱引用关系，所以使用 `weak`、`unsafe_unretained` 或 `assign` 修饰的属性会被忽略。
+/// - 通用逻辑无法处理弱引用关系，所以使用 `weak`、`unsafe_unretained` 或 `assign` 修饰的对象属性会被忽略。
 ///
 /// ### 数据转换规则
 /// - 基础数据类型，如 int、float、double 等类型或 NSInteger、CGFloat 等类型别名。
@@ -54,8 +54,8 @@ NS_ASSUME_NONNULL_BEGIN
 ///
 /// ### 其它规则
 /// - 字面类型数据 NSData、NSDate、NSValue 支持多种格式，但 XZJSON 只支持其中固定的两种格式，所以在处理它们时，会通过 `XZJSONCoding` 协议，优先让模型处理，模型不处理，才会执行内置解析过程。
-/// - 数值类型 long double 只能转换为 JSONString 类型，但是 JSONNumber 可以转为 double long 类型。
-/// - NSDate 类型，默认转换为 JSONNumber 时间戳，转特定格式，需要自定义。
+/// - 数值类型 long double 只能转换为 JSONString 类型，但是 JSON 的 Number 可以转为 double long 类型。
+/// - NSDate 类型，默认转换为 JSON Number 类型，即时间戳，转特定格式，需要自定义。
 /// - 支持的结构体仅包括原生提供了 `NSStringFrom~` 和 `~FromString` 函数的结构体。
 ///
 /// ### 特殊情况
@@ -80,8 +80,9 @@ NS_ASSUME_NONNULL_BEGIN
 #pragma mark - 数据转模型
 
 enum {
-    /// NSJSONReadingOptions 的拓展。
-    /// 如果提供此标记，当转换由 JSON 数据组成的数组时，那么输出的数组将与输入保持相同大小，转换失败的数据将使用 kCFNull 占位。
+    /// 当同时解析多个 json 数据时，希望传入的数组和传出的数组数量一致，可提供此选项。
+    ///
+    /// NSJSONReadingOptions 的拓展，当转换失败的数据将使用 kCFNull 占位。
     ///
     /// 此标记不影响模型的转换过程，模型的集合属性，在转换时，是否保持大小，由模型决定。
     XZJSONReadingKeepCapacity = (1UL << 63)

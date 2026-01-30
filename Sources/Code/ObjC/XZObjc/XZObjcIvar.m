@@ -48,12 +48,11 @@
 }
 
 - (NSString *)description {
-    return [NSString stringWithFormat:@"< \n"
-            "    %@: %p, \n"
+    return [NSString stringWithFormat:@"<%@: %p, { \n"
             "    name: %@, \n"
             "    type: %@, \n"
             "    offset: %ld \n"
-            ">", NSStringFromClass(self.class), self, self.name, self.type.name, self.offset];
+            "}>", NSStringFromClass(self.class), self, self.name, self.type.name, self.offset];
 }
 
 @end

@@ -43,9 +43,10 @@ extension XZNavigationController {
                 let transitionController = XZNavigationControllerTransitionController.init(for: self)
                 self.transitionController = transitionController
                 
+                self.navigationBar.isCustomizable = true
+                
                 // 关于原生手势
                 // 即使重写属性 interactivePopGestureRecognizer 也不能保证原生的返回手势不会被创建，所以我们创建了新的手势，并设置了优先级。
-                self.navigationBar.isCustomizable = true
                 if let popGestureRecognizer = self.interactivePopGestureRecognizer {
                     popGestureRecognizer.isEnabled = false
                     popGestureRecognizer.require(toFail: transitionController.interactiveNavigationGestureRecognizer)

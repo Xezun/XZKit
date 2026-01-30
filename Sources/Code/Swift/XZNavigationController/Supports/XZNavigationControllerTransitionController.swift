@@ -12,7 +12,7 @@ import ObjectiveC
 @MainActor public final class XZNavigationControllerTransitionController: NSObject {
     
     /// 导航手势对象。
-    public let interactiveNavigationGestureRecognizer: UIKit.UIPanGestureRecognizer
+    public let interactiveNavigationGestureRecognizer: UIPanGestureRecognizer
     /// 导航控制器。
     public unowned let navigationController: XZNavigationController
     

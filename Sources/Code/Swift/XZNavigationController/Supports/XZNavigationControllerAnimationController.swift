@@ -385,15 +385,15 @@ public class XZNavigationControllerAnimationContext {
     public let from: View<UIView>
     public let to: View<UIView>
     
-    public let fromNavigationBar: View<AnyNavigationBar>?
-    public let toNavigationBar: View<AnyNavigationBar>?
+    public let fromNavigationBar: View<XZNavigationBarProtocol>?
+    public let toNavigationBar: View<XZNavigationBarProtocol>?
     
-    public let navigationBar: View<UIKit.UINavigationBar>?
+    public let navigationBar: View<UINavigationBar>?
     public let tabBar: View<UITabBar>?
     
     public let shadow: View<UIView>
     
-    init(transitionContext: UIViewControllerContextTransitioning, fromView: UIView, fromViewFrame: CGRect, toView: UIView, toViewFrame: CGRect, fromNavigationBar: AnyNavigationBar?, fromNavigationBarFrame: CGRect?, toNavigationBar: AnyNavigationBar?, toNavigationBarFrame: CGRect?, navigationBar: UIKit.UINavigationBar?, navigationBarFrame: CGRect?, tabBar: UITabBar?, tabBarFrame: CGRect?, shadowView: UIView, shadowViewFrame: CGRect) {
+    init(transitionContext: UIViewControllerContextTransitioning, fromView: UIView, fromViewFrame: CGRect, toView: UIView, toViewFrame: CGRect, fromNavigationBar: XZNavigationBarProtocol?, fromNavigationBarFrame: CGRect?, toNavigationBar: XZNavigationBarProtocol?, toNavigationBarFrame: CGRect?, navigationBar: UINavigationBar?, navigationBarFrame: CGRect?, tabBar: UITabBar?, tabBarFrame: CGRect?, shadowView: UIView, shadowViewFrame: CGRect) {
         
         self.transitionContext = transitionContext
         self.from              = View.init(view: fromView, frame: fromViewFrame)

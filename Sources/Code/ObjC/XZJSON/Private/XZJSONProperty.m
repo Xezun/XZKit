@@ -11,7 +11,7 @@
 
 @implementation XZJSONProperty
 
-+ (XZJSONProperty *)descriptorWithProperty:(XZObjcProperty *)property mappingClass:(nullable Class)mappingClass class:(XZJSONClass *)aClass {
++ (XZJSONProperty *)descriptorWithProperty:(XZObjcProperty *)property class:(XZJSONClass *)class mappingClass:(nullable Class)mappingClass {
     XZStdcModifiers const modifiers = property.modifiers;
     
     // 必须是读写属性才参与 JSON 处理
@@ -19,108 +19,112 @@
         return nil;
     }
     
-    XZStdcType const _type = property.type.type;
-    Class _classType = Nil;
-    if (_type == XZStdcTypeObject) {
+    Class classType    = Nil;
+    Class elementType = mappingClass;
+    
+    if (property.type.type == XZStdcTypeObject) {
         // 不处理是无主引用或弱引用的属性。
         if ( (modifiers & XZStdcModifierWeak) || !(modifiers & (XZStdcModifierCopy | XZStdcModifierRetain)) ) {
             return nil;
         }
-        _classType = property.type.classType;
-        if (_classType == Nil) {
-            // 未知类型，使用映射值
-            _classType = mappingClass;
-            mappingClass = nil;
+        classType = property.type.classType;
+        // 未知类型，使用映射值
+        if (classType == Nil) {
+            classType = mappingClass;
+            elementType = Nil;
         }
     } else {
-        mappingClass = Nil;
+        elementType = Nil;
     }
     
-    SEL   const _setter    = property.setter;
-    
-    
-    XZJSONProperty * const descriptor = [self new];
-    descriptor->_owner       = aClass;
-    descriptor->_raw         = property;
-    descriptor->_name        = property.name;
-    descriptor->_type        = _type;
-    descriptor->_getter      = property.getter;
-    descriptor->_setter      = _setter;
-    descriptor->_classType   = _classType;
-    descriptor->_cocoaClass  = XZJSONCocoaClassFromClass(_classType);
-    descriptor->_elementType = mappingClass;
-    descriptor->_structType  = property.type.structType;
-    descriptor->_isKeyValueCodable = nil;
-    
-    // 不是以 set 开头的 setter 无法被 KVC 找到，不能使用 KVC 赋值。
-    NSString * const setterName = NSStringFromSelector(_setter);
-    if ([setterName hasPrefix:@"set"]) {
-        if (setterName.length >= 5) {
-            descriptor->_isKeyValueCodable = [setterName substringWithRange:NSMakeRange(3, setterName.length - 4)];
-        }
-    } else if ([setterName hasPrefix:@"_set"]) {
-        if (setterName.length >= 6) {
-            descriptor->_isKeyValueCodable = [setterName substringWithRange:NSMakeRange(4, setterName.length - 5)];
-        }
-    }
-    
-    switch (_type) {
-        case XZStdcTypeUnknown:
-            descriptor->_isCodable = NO;
-            break;
-        case XZStdcTypeChar:
-        case XZStdcTypeUnsignedChar:
-        case XZStdcTypeInt:
-        case XZStdcTypeUnsignedInt:
-        case XZStdcTypeShort:
-        case XZStdcTypeUnsignedShort:
-        case XZStdcTypeLong:
-        case XZStdcTypeUnsignedLong:
-        case XZStdcTypeInt128:
-        case XZStdcTypeUnsignedInt128:
-        case XZStdcTypeLongLong:
-        case XZStdcTypeUnsignedLongLong:
-        case XZStdcTypeFloat:
-        case XZStdcTypeDouble:
-        case XZStdcTypeLongDouble:
-        case XZStdcTypeBool:
-            descriptor->_isCodable = YES;
-            break;
-        case XZStdcTypeVoid:
-            descriptor->_isCodable = NO;
-            break;
-        case XZStdcTypeString:
-            descriptor->_isCodable = NO;
-            break;
-        case XZStdcTypeSelector:
-            descriptor->_isCodable = YES;
-            break;
-        case XZStdcTypePointer:
-            descriptor->_isCodable = NO;
-            break;
-        case XZStdcTypeArray:
-            descriptor->_isCodable = NO;
-            break;
-        case XZStdcTypeVector:
-            descriptor->_isCodable = NO;
-            break;
-        case XZStdcTypeBitField:
-            descriptor->_isCodable = NO;
-            break;
-        case XZStdcTypeUnion:
-            descriptor->_isCodable = NO;
-            break;
-        case XZStdcTypeStruct:
-            descriptor->_isCodable = (descriptor->_structType != XZStdcStructTypeUnknown);
-            break;
-        case XZStdcTypeClass:
-            descriptor->_isCodable = YES;
-            break;
-        case XZStdcTypeObject:
-            descriptor->_isCodable = YES;
-            break;
-    }
-    
-    return descriptor;
+    return [[self alloc] initWithProperty:property class:class classType:classType elementType:elementType];
 }
+
+- (instancetype)initWithProperty:(XZObjcProperty *)property class:(XZJSONClass *)class classType:(Class)classType elementType:(Class)elementType {
+    self = [super init];
+    if (self) {
+        _owner       = class;
+        _raw         = property;
+        _name        = property.name;
+        _type        = property.type.type;
+        _getter      = property.getter;
+        _setter      = property.setter;
+        _classType   = classType;
+        _elementType = elementType;
+        _structType  = property.type.structType;
+        _cocoaClass  = XZJSONCocoaClassFromClass(_classType);
+        
+        // 不是以 set 开头的 setter 无法被 KVC 找到，不能使用 KVC 赋值。
+        _isKeyValueCodable = nil;
+        NSString * const setterName = NSStringFromSelector(_setter);
+        if ([setterName hasPrefix:@"set"]) {
+            if (setterName.length >= 5) {
+                _isKeyValueCodable = [setterName substringWithRange:NSMakeRange(3, setterName.length - 4)];
+            }
+        } else if ([setterName hasPrefix:@"_set"]) {
+            if (setterName.length >= 6) {
+                _isKeyValueCodable = [setterName substringWithRange:NSMakeRange(4, setterName.length - 5)];
+            }
+        }
+        
+        switch (_type) {
+            case XZStdcTypeUnknown:
+                _isCodable = NO;
+                break;
+            case XZStdcTypeChar:
+            case XZStdcTypeUnsignedChar:
+            case XZStdcTypeInt:
+            case XZStdcTypeUnsignedInt:
+            case XZStdcTypeShort:
+            case XZStdcTypeUnsignedShort:
+            case XZStdcTypeLong:
+            case XZStdcTypeUnsignedLong:
+            case XZStdcTypeInt128:
+            case XZStdcTypeUnsignedInt128:
+            case XZStdcTypeLongLong:
+            case XZStdcTypeUnsignedLongLong:
+            case XZStdcTypeFloat:
+            case XZStdcTypeDouble:
+            case XZStdcTypeLongDouble:
+            case XZStdcTypeBool:
+                _isCodable = YES;
+                break;
+            case XZStdcTypeVoid:
+                _isCodable = NO;
+                break;
+            case XZStdcTypeString:
+                _isCodable = NO;
+                break;
+            case XZStdcTypeSelector:
+                _isCodable = YES;
+                break;
+            case XZStdcTypePointer:
+                _isCodable = NO;
+                break;
+            case XZStdcTypeArray:
+                _isCodable = NO;
+                break;
+            case XZStdcTypeVector:
+                _isCodable = NO;
+                break;
+            case XZStdcTypeBitField:
+                _isCodable = NO;
+                break;
+            case XZStdcTypeUnion:
+                _isCodable = NO;
+                break;
+            case XZStdcTypeStruct:
+                _isCodable = (_structType != XZStdcStructTypeUnknown);
+                break;
+            case XZStdcTypeClass:
+                _isCodable = YES;
+                break;
+            case XZStdcTypeObject:
+                _isCodable = YES;
+                break;
+        }
+    }
+    return self;
+}
+
 @end

@@ -23,16 +23,16 @@
 
 @implementation XZObjcClass
 
-- (instancetype)initWithClass:(nonnull Class)aClass {
+- (instancetype)initWithClass:(nonnull Class)class {
     self = [super init];
     if (self) {
-        _raw = aClass;
+        _raw = class;
         _isValid = YES;
-        _name = NSStringFromClass(aClass);
+        _name = NSStringFromClass(class);
         _type = [XZObjcType typeForType:(XZStdcTypeClass)];
         
         // 不处理基类（没有超类的类）。
-        if (class_getSuperclass(aClass) == Nil) {
+        if (class_getSuperclass(class) == Nil) {
             _ivars = @{};
             _methods = @{};
             _properties = @{};
@@ -160,14 +160,13 @@
     
     NSString *type = self.type.name;
     
-    return [NSString stringWithFormat:@"<\n"
-            "    %@: %p, \n"
+    return [NSString stringWithFormat:@"<%@: %p, { \n"
             "    name: %@, \n"
             "    type: %@, \n"
             "    ivars: %@, \n"
             "    properties: %@, \n"
             "    methods: %@ \n"
-            ">", self.class, self, self.name, type, ivars, properties, methods];
+            "}>", self.class, self, self.name, type, ivars, properties, methods];
 }
 
 + (instancetype)classWithClass:(Class)class {

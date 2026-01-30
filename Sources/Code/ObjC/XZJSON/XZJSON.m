@@ -35,7 +35,7 @@
     }
     // 二进制流形式的 json 数据
     if ([json isKindOfClass:NSData.class]) {
-        return XZJSONDecodeJSONData((NSData *)json, options, modelClass);
+        return XZJSONDecodeData((NSData *)json, options, modelClass);
     }
     // 字符串形式的 json 数据
     if ([json isKindOfClass:NSString.class]) {
@@ -43,7 +43,7 @@
         if (data == nil) {
             return nil;
         }
-        return XZJSONDecodeJSONData(data, options, modelClass);
+        return XZJSONDecodeData(data, options, modelClass);
     }
     // 如果为数组，视为解析多个 json 数据
     if ([json isKindOfClass:NSArray.class]) {
@@ -62,12 +62,12 @@
         return models;
     }
     // 其它情况视为已解析好的 json
-    return XZJSONDecodeJSONObject(json, modelClass);
+    return XZJSONDecodeObject(json, modelClass);
 }
 
 + (void)model:(id)model decodeFromDictionary:(NSDictionary *)dictionary {
     Class const modelClass = object_getClass(model);
-    XZJSONClass * const descriptor = [XZJSONClass descriptorForClass:modelClass];
+    XZJSONClass * const descriptor = [XZJSONClass classForClass:modelClass];
     if (modelClass) {
         XZJSONModelDecodeFromDictionary(model, descriptor, dictionary);
     }
@@ -82,21 +82,24 @@
     if (model == nil) {
         return nil;
     }
-    Class const modelClass = object_getClass(model);
-    if (modelClass == Nil) {
+    Class const ModelClass = object_getClass(model);
+    if (ModelClass == Nil) {
         return nil;
     }
-    XZJSONClass * const descriptor = [XZJSONClass descriptorForClass:modelClass];
-    if (descriptor == nil) {
+    XZJSONClass * const JSONClass = [XZJSONClass classForClass:ModelClass];
+    if (JSONClass == nil) {
         return nil;
     }
-    id const dictionary = XZJSONEncodeModelIntoDictionary(model, descriptor, descriptor->_cocoaClass, nil);
+    id const dictionary = XZJSONObjectEncodeIntoDictionary(model, JSONClass, JSONClass->_cocoaClass, nil);
+    if (dictionary == nil) {
+        return nil;
+    }
     return [NSJSONSerialization dataWithJSONObject:dictionary options:options error:error];
 }
 
 + (void)model:(id)model encodeIntoDictionary:(NSMutableDictionary *)dictionary {
     Class const modelClass = object_getClass(model);
-    XZJSONClass * const descriptor = [XZJSONClass descriptorForClass:modelClass];
+    XZJSONClass * const descriptor = [XZJSONClass classForClass:modelClass];
     if (descriptor) {
         XZJSONModelEncodeIntoDictionary(model, descriptor, dictionary);
     }
@@ -136,7 +139,7 @@
     }
     
     Class const sourceClass = object_getClass(sourceModel);
-    XZJSONClass * const sourceDescriptor  = [XZJSONClass descriptorForClass:sourceClass];
+    XZJSONClass * const sourceDescriptor  = [XZJSONClass classForClass:sourceClass];
     
     // 不支持复制原生对象
     if (sourceDescriptor->_cocoaClass) {
@@ -160,7 +163,7 @@
     } else {
         // 模型复制，只复制同名属性
         Class const targetClass = object_getClass(targetModel);
-        XZJSONClass * const targetDescriptor = [XZJSONClass descriptorForClass:targetClass];
+        XZJSONClass * const targetDescriptor = [XZJSONClass classForClass:targetClass];
         properties = [NSMutableArray arrayWithCapacity:sourceDescriptor->_sortedProperties.count];
         for (XZJSONProperty *sourceProperty in sourceDescriptor->_sortedProperties) {
             XZJSONProperty *targetProperty = targetDescriptor->_namedProperties[sourceProperty->_name];
@@ -353,8 +356,8 @@
     Class const model1Class = object_getClass(model1);
     Class const model2Class = object_getClass(model2);
     
-    XZJSONClass * const model1Descriptor = [XZJSONClass descriptorForClass:model1Class];
-    XZJSONClass * const model2Descriptor = [XZJSONClass descriptorForClass:model2Class];
+    XZJSONClass * const model1Descriptor = [XZJSONClass classForClass:model1Class];
+    XZJSONClass * const model2Descriptor = [XZJSONClass classForClass:model2Class];
     
     // 原生类型之间的比较
     if ((model1Descriptor->_cocoaClass != XZJSONCocoaClassUnknown) && (model2Descriptor->_cocoaClass != XZJSONCocoaClassUnknown)) {
