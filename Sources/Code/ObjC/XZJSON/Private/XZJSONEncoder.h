@@ -7,9 +7,9 @@
 
 #import <Foundation/Foundation.h>
 #if __has_include(<XZKit/XZKit.h>)
-#import <XZKit/XZJSONPrivateDefines.h>
+#import <XZKit/XZJSONClass.h>
 #else
-#import "XZJSONPrivateDefines.h"
+#import "XZJSONClass.h"
 #endif
 
 @class XZJSONClass;

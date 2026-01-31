@@ -7,7 +7,6 @@
 
 #import "XZJSON.h"
 #import "XZJSONPrivate.h"
-#import "XZMacros.h"
 #import "XZLog.h"
 
 @implementation XZJSON
@@ -28,14 +27,14 @@
 
 @implementation XZJSON (XZJSONDecoder)
 
-+ (id)decode:(id)json options:(NSJSONReadingOptions)options class:(Class)modelClass {
++ (id)decode:(id)json options:(NSJSONReadingOptions)options class:(Class)ModelClass {
     // 判空
     if (json == nil || json == (id)kCFNull) {
         return nil;
     }
     // 二进制流形式的 json 数据
     if ([json isKindOfClass:NSData.class]) {
-        return XZJSONDecodeData((NSData *)json, options, modelClass);
+        return XZJSONDecodeData((NSData *)json, options, ModelClass);
     }
     // 字符串形式的 json 数据
     if ([json isKindOfClass:NSString.class]) {
@@ -43,7 +42,7 @@
         if (data == nil) {
             return nil;
         }
-        return XZJSONDecodeData(data, options, modelClass);
+        return XZJSONDecodeData(data, options, ModelClass);
     }
     // 如果为数组，视为解析多个 json 数据
     if ([json isKindOfClass:NSArray.class]) {
@@ -52,7 +51,7 @@
         }
         NSMutableArray * const models = [NSMutableArray arrayWithCapacity:((NSArray *)json).count];
         for (id item in ((NSArray *)json)) {
-            id const model = [self decode:item options:options class:modelClass];
+            id const model = [self decode:item options:options class:ModelClass];
             if (model) {
                 [models addObject:model];
             } else if (options & XZJSONReadingKeepCapacity) {
@@ -62,14 +61,14 @@
         return models;
     }
     // 其它情况视为已解析好的 json
-    return XZJSONDecodeObject(json, modelClass);
+    return XZJSONDecodeObject(json, ModelClass);
 }
 
 + (void)model:(id)model decodeFromDictionary:(NSDictionary *)dictionary {
-    Class const modelClass = object_getClass(model);
-    XZJSONClass * const descriptor = [XZJSONClass classForClass:modelClass];
-    if (modelClass) {
-        XZJSONModelDecodeFromDictionary(model, descriptor, dictionary);
+    Class const ModelClass = object_getClass(model);
+    XZJSONClass * const JSONClass = [XZJSONClass classForClass:ModelClass];
+    if (ModelClass && JSONClass) {
+        XZJSONModelDecodeFromDictionary(model, JSONClass, dictionary);
     }
 }
 
@@ -107,234 +106,10 @@
 
 @end
 
-
-@implementation XZJSON (NSCoding)
-
-+ (void)model:(id)model encodeWithCoder:(NSCoder *)aCoder {
-    XZJSONModelEncodeWithCoder(model, aCoder);
-}
-
-+ (id)model:(id)model decodeWithCoder:(NSCoder *)aCoder {
-    return XZJSONModelDecodeWithCoder(model, aCoder);
-}
-
-@end
-
-
 @implementation XZJSON (NSDescription)
 
 + (NSString *)model:(id)model descriptionWithIndent:(NSUInteger)indent {
-    return XZJSONModelDescription(model, indent);
-}
-
-@end
-
-
-@implementation XZJSON (NSCopying)
-
-+ (id)model:(id)sourceModel copy:(nullable id)targetModel {
-    // 判空
-    if (sourceModel == nil || sourceModel == (id)kCFNull) {
-        return sourceModel;
-    }
-    
-    Class const sourceClass = object_getClass(sourceModel);
-    XZJSONClass * const sourceDescriptor  = [XZJSONClass classForClass:sourceClass];
-    
-    // 不支持复制原生对象
-    if (sourceDescriptor->_cocoaClass) {
-        return targetModel ?: [sourceModel copy];
-    }
-    
-    // 没有属性可以复制
-    if (sourceDescriptor->_numberOfProperties == 0) {
-        return targetModel;
-    }
-    
-    NSArray<XZJSONProperty *> *properties = nil;
-    
-    if (targetModel == nil) {
-        // 创建新对象
-        targetModel = [sourceClass new];
-        properties = sourceDescriptor->_sortedProperties;
-    } else if ([targetModel isKindOfClass:sourceClass]) {
-        // 目标对象是同类或子类
-        properties = sourceDescriptor->_sortedProperties;
-    } else {
-        // 模型复制，只复制同名属性
-        Class const targetClass = object_getClass(targetModel);
-        XZJSONClass * const targetDescriptor = [XZJSONClass classForClass:targetClass];
-        properties = [NSMutableArray arrayWithCapacity:sourceDescriptor->_sortedProperties.count];
-        for (XZJSONProperty *sourceProperty in sourceDescriptor->_sortedProperties) {
-            XZJSONProperty *targetProperty = targetDescriptor->_namedProperties[sourceProperty->_name];
-            if (targetProperty->_raw.type == sourceProperty->_raw.type) {
-                [(NSMutableArray *)properties addObject:sourceProperty];
-            }
-        }
-    }
-    
-    [properties enumerateObjectsUsingBlock:^(XZJSONProperty * const property, NSUInteger idx, BOOL * _Nonnull stop) {
-        SEL const getter = property->_getter;
-        SEL const setter = property->_setter;
-        switch (property->_type) {
-            case XZStdcTypeChar: {
-                char const value = ((char (*)(id, SEL))objc_msgSend)(self, getter);
-                ((void (*)(id, SEL, char))objc_msgSend)(targetModel, setter, value);
-                return;
-            }
-            case XZStdcTypeUnsignedChar: {
-                unsigned char const value = ((unsigned char (*)(id, SEL))objc_msgSend)(self, getter);
-                ((void (*)(id, SEL, unsigned char))objc_msgSend)(targetModel, setter, value);
-                return;
-            }
-            case XZStdcTypeInt: {
-                int const value = ((int (*)(id, SEL))objc_msgSend)(self, getter);
-                ((void (*)(id, SEL, int))objc_msgSend)(targetModel, setter, value);
-                return;
-            }
-            case XZStdcTypeUnsignedInt: {
-                unsigned int const value = ((unsigned int (*)(id, SEL))objc_msgSend)(self, getter);
-                ((void (*)(id, SEL, unsigned int))objc_msgSend)(targetModel, setter, value);
-                return;
-            }
-            case XZStdcTypeShort: {
-                short const value = ((short (*)(id, SEL))objc_msgSend)(self, getter);
-                ((void (*)(id, SEL, short))objc_msgSend)(targetModel, setter, value);
-                return;
-            }
-            case XZStdcTypeUnsignedShort: {
-                unsigned short const value = ((unsigned short (*)(id, SEL))objc_msgSend)(self, getter);
-                ((void (*)(id, SEL, unsigned short))objc_msgSend)(targetModel, setter, value);
-                return;
-            }
-            case XZStdcTypeLong: {
-                long const value = ((long (*)(id, SEL))objc_msgSend)(self, getter);
-                ((void (*)(id, SEL, long))objc_msgSend)(targetModel, setter, value);
-                return;
-            }
-            case XZStdcTypeUnsignedLong: {
-                unsigned long const value = ((unsigned long (*)(id, SEL))objc_msgSend)(self, getter);
-                ((void (*)(id, SEL, unsigned long))objc_msgSend)(targetModel, setter, value);
-                return;
-            }
-            case XZStdcTypeLongLong: {
-                long long const value = ((long long (*)(id, SEL))objc_msgSend)(self, getter);
-                ((void (*)(id, SEL, long long))objc_msgSend)(targetModel, setter, value);
-                return;
-            }
-            case XZStdcTypeUnsignedLongLong: {
-                unsigned long long const value = ((unsigned long long (*)(id, SEL))objc_msgSend)(self, getter);
-                ((void (*)(id, SEL, unsigned long long))objc_msgSend)(targetModel, setter, value);
-                return;
-            }
-            case XZStdcTypeFloat: {
-                float const value = ((float (*)(id, SEL))xz_objc_msgSend_ftret)(self, getter);
-                ((void (*)(id, SEL, float))objc_msgSend)(targetModel, setter, value);
-                return;
-            }
-            case XZStdcTypeDouble: {
-                double const value = ((double (*)(id, SEL))xz_objc_msgSend_dbret)(self, getter);
-                ((void (*)(id, SEL, double))objc_msgSend)(targetModel, setter, value);
-                return;
-            }
-            case XZStdcTypeLongDouble: {
-                long double const value = ((long double (*)(id, SEL))xz_objc_msgSend_ldret)(self, getter);
-                ((void (*)(id, SEL, long double))objc_msgSend)(targetModel, setter, value);
-                return;
-            }
-            case XZStdcTypeBool: {
-                BOOL const value = ((BOOL (*)(id, SEL))objc_msgSend)(self, getter);
-                ((void (*)(id, SEL, BOOL))objc_msgSend)(targetModel, setter, value);
-                return;
-            }
-            case XZStdcTypeClass: {
-                Class const value = ((Class (*)(id, SEL))objc_msgSend)(self, getter);
-                ((void (*)(id, SEL, Class))objc_msgSend)(targetModel, setter, value);
-                return;
-            }
-            case XZStdcTypeSelector:  {
-                SEL const value = ((SEL (*)(id, SEL))objc_msgSend)(self, getter);
-                ((void (*)(id, SEL, SEL))objc_msgSend)(targetModel, setter, value);
-                return;
-            }
-            case XZStdcTypeObject:  {
-                id const value = ((id (*)(id, SEL))objc_msgSend)(self, getter);
-                ((void (*)(id, SEL, id))objc_msgSend)(targetModel, setter, value);
-                return;
-            }
-            case XZStdcTypeStruct: {
-                switch (property->_structType) {
-                    case XZStdcStructTypeUnknown: {
-                        break;
-                    }
-                    case XZStdcStructTypeCGRect: {
-                        CGRect const value = ((CGRect (*)(id, SEL))xz_objc_msgSend_stret)(self, getter);
-                        ((void (*)(id, SEL, CGRect))objc_msgSend)(targetModel, setter, value);
-                        return;
-                    }
-                    case XZStdcStructTypeCGSize: {
-                        CGSize const value = ((CGSize (*)(id, SEL))objc_msgSend)(self, getter);
-                        ((void (*)(id, SEL, CGSize))objc_msgSend)(targetModel, setter, value);
-                        return;
-                    }
-                    case XZStdcStructTypeCGPoint: {
-                        CGPoint const value = ((CGPoint (*)(id, SEL))objc_msgSend)(self, getter);
-                        ((void (*)(id, SEL, CGPoint))objc_msgSend)(targetModel, setter, value);
-                        return;
-                    }
-                    case XZStdcStructTypeCGVector: {
-                        CGVector const value = ((CGVector (*)(id, SEL))objc_msgSend)(self, getter);
-                        ((void (*)(id, SEL, CGVector))objc_msgSend)(targetModel, setter, value);
-                        return;
-                    }
-                    case XZStdcStructTypeCGAffineTransform: {
-                        CGAffineTransform const value = ((CGAffineTransform (*)(id, SEL))xz_objc_msgSend_stret)(self, getter);
-                        ((void (*)(id, SEL, CGAffineTransform))objc_msgSend)(targetModel, setter, value);
-                        return;
-                    }
-                    case XZStdcStructTypeNSDirectionalEdgeInsets: {
-                        NSDirectionalEdgeInsets const value = ((NSDirectionalEdgeInsets (*)(id, SEL))xz_objc_msgSend_stret)(self, getter);
-                        ((void (*)(id, SEL, NSDirectionalEdgeInsets))objc_msgSend)(targetModel, setter, value);
-                        return;
-                    }
-                    case XZStdcStructTypeNSRange: {
-                        NSRange const value = ((NSRange (*)(id, SEL))xz_objc_msgSend_stret)(self, getter);
-                        ((void (*)(id, SEL, NSRange))objc_msgSend)(targetModel, setter, value);
-                        return;
-                    }
-                    case XZStdcStructTypeUIEdgeInsets: {
-                        UIEdgeInsets const value = ((UIEdgeInsets (*)(id, SEL))xz_objc_msgSend_stret)(self, getter);
-                        ((void (*)(id, SEL, UIEdgeInsets))objc_msgSend)(targetModel, setter, value);
-                        return;
-                    }
-                    case XZStdcStructTypeUIOffset: {
-                        UIOffset const value = ((UIOffset (*)(id, SEL))objc_msgSend)(self, getter);
-                        ((void (*)(id, SEL, UIOffset))objc_msgSend)(targetModel, setter, value);
-                        return;
-                    }
-                }
-                break;
-            }
-            case XZStdcTypeUnion:
-            case XZStdcTypeBitField:
-            case XZStdcTypeVoid:
-            case XZStdcTypeString:
-            case XZStdcTypeArray:
-            case XZStdcTypePointer:
-            case XZStdcTypeUnknown: {
-                break;
-            }
-            case XZStdcTypeInt128:
-            case XZStdcTypeUnsignedInt128:
-            case XZStdcTypeVector:
-                XZLog(@"[XZJSON] 目前平台不支持该数据类型");
-                break;
-        }
-        // 无法复制的属性
-        XZLog(@"[XZJSON] 无法复制 <%p: %@> 对象的属性 %@ 的值", sourceModel, sourceDescriptor->_raw.raw, property->_name);
-    }];
-    
-    return targetModel;
+    return XZJSONObjectDescription(model, indent);
 }
 
 @end

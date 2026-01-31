@@ -60,7 +60,7 @@ NS_ASSUME_NONNULL_BEGIN
 ///
 /// ### 特殊情况
 /// - 数据不是数组，但是属性是数组类型，自动包装为 `@[data]` 形式的数组。
-/// - 数据是数组，但属性是字典，自动包装为 `@{ @"index": item }` 形式的字典。
+/// - 数据是数组，但属性是字典，自动包装为 `@{ @"${index}": item }` 形式的字典。
 /// - 数据不是字典，但是属性是自定义模型，自动包装为 `@{ @"rawValue": data }` 形式的字典。
 @interface XZJSON : NSObject
 
@@ -103,8 +103,8 @@ enum {
 /// - Parameters:
 ///   - json: JSON 数据
 ///   - options: 模型化 JSON 数据为模型的可选项；如果 JSON 已解析，则此参数忽略
-///   - modelClass: 模型的类对象
-+ (nullable id)decode:(nullable id)json options:(NSJSONReadingOptions)options class:(Class)modelClass;
+///   - ModelClass: 模型的类对象
++ (nullable id)decode:(nullable id)json options:(NSJSONReadingOptions)options class:(Class)ModelClass;
 
 /// 通用模型化过程，直接使用模型实例对象 model 对 JSON 字典数据进行模型化。
 ///
@@ -172,44 +172,6 @@ enum {
 
 @end
 
-#pragma mark - 归档解档
-
-@interface XZJSON (NSCoding)
-
-/// 辅助模型归档的方法。
-/// ```swift
-/// class Foobar: NSObject, NSCoding {
-///
-///     func encode(with coder: NSCoder) {
-///         XZJSON.model(self, encodeWith: coder)
-///     }
-///
-/// }
-/// ```
-/// - Parameters:
-///   - model: 模型
-///   - aCoder: 归档工具
-+ (void)model:(id)model encodeWithCoder:(NSCoder *)aCoder;
-
-/// 辅助模型解档的方法。
-/// ```swift
-/// class Foobar: NSObject, NSCoding {
-///
-///     required init?(coder: NSCoder) {
-///         super.init()
-///         XZJSON.model(self, decodeWith: coder)
-///     }
-///
-/// }
-/// ```
-/// - Parameters:
-///   - model: 模型
-///   - aCoder: 解档工具
-/// - Returns: 解档成功返回对象
-+ (nullable id)model:(id)model decodeWithCoder:(NSCoder *)aCoder;
-
-@end
-
 #pragma mark - 模型描述
 
 @interface XZJSON (NSDescription)
@@ -220,44 +182,6 @@ enum {
 + (NSString *)model:(id)model descriptionWithIndent:(NSUInteger)indent;
 
 @end
-
-#pragma mark - 模型复制
-
-@interface XZJSON (NSCopying)
-
-/// 模型复制。仅复制可 JSON 序列化、同名且数据类型相同的属性的。
-/// 
-/// 以下情形，需开发者先创建 targetModel 然后作为参数传入。
-/// - sourceModel 与 targetModel 的类型不同。
-/// - sourceModel 使用自定义的初始化方法。
-/// - sourceModel 有 JSON 无法序列化（即无法复制）的属性。
-/// 
-/// ```objc
-/// - (id)copyWithZone:(NSZone *)zone {
-///     // 使用了自定义初始化方法
-///     id const newModel = [[Foobar alloc] initWithName:self.name];
-/// 
-///     // 无法复制的属性
-///     if (self->_foobar) {
-///         size_t const count = strlen(self->_foobar);
-///         newModel->_foobar = calloc(count, sizeof(char));
-///         strcpy(newModel->_foobar, self->_foobar);
-///     }
-/// 
-///     // 调用 XZJSON 复制过程
-///     return [XZJSON model:self copy:newModel];
-/// }
-/// ```
-/// 
-/// - Parameters:
-///   - sourceModel: 被复制的模型对象。
-///   - targetModel: 复制到的目标对象，如果未提供，则使用 `+[sourceModel.class new]` 方法创建。
-/// - Returns: 复制后的模型对象，如果传入 targetModel 参数，则为该参数值。
-+ (id)model:(id)sourceModel copy:(nullable id)targetModel;
-
-@end
-
-#pragma mark - 模型比较
 
 @interface XZJSON (NSEquatable)
 

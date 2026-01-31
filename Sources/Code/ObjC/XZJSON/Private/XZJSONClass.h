@@ -6,10 +6,41 @@
 //
 
 #import <Foundation/Foundation.h>
+#if __has_include(<XZKit/XZKit.h>)
+#import <XZKit/XZObjc.h>
+#else
 #import "XZObjc.h"
-#import "XZJSONPrivateDefines.h"
+#endif
+
+#ifdef _Unsafe
+#undef _Unsafe
+#endif
+#define _Unsafe __unsafe_unretained
 
 NS_ASSUME_NONNULL_BEGIN
+
+/// 原生对象类型枚举。Foundation Class Type
+typedef NS_ENUM (NSUInteger, XZJSONCocoaClass) {
+    XZJSONCocoaClassUnknown = 0,
+    XZJSONCocoaClassNSString,
+    XZJSONCocoaClassNSMutableString,
+    XZJSONCocoaClassNSValue,
+    XZJSONCocoaClassNSNumber,
+    XZJSONCocoaClassNSDecimalNumber,
+    XZJSONCocoaClassNSData,
+    XZJSONCocoaClassNSMutableData,
+    XZJSONCocoaClassNSDate,
+    XZJSONCocoaClassNSURL,
+    XZJSONCocoaClassNSArray,
+    XZJSONCocoaClassNSMutableArray,
+    XZJSONCocoaClassNSSet,
+    XZJSONCocoaClassNSMutableSet,
+    XZJSONCocoaClassNSCountedSet,
+    XZJSONCocoaClassNSOrderedSet,
+    XZJSONCocoaClassNSMutableOrderedSet,
+    XZJSONCocoaClassNSDictionary,
+    XZJSONCocoaClassNSMutableDictionary,
+};
 
 @class XZJSONProperty;
 
@@ -58,5 +89,28 @@ NS_ASSUME_NONNULL_BEGIN
 + (nullable XZJSONClass *)classForClass:(nullable Class)aClass;
 
 @end
+
+FOUNDATION_STATIC_INLINE XZJSONCocoaClass XZJSONCocoaClassFromClass(Class aClass) {
+    if (aClass == Nil) return XZJSONCocoaClassUnknown;
+    if ([aClass isSubclassOfClass:[NSMutableString class]])        return XZJSONCocoaClassNSMutableString;
+    if ([aClass isSubclassOfClass:[NSString class]])               return XZJSONCocoaClassNSString;
+    if ([aClass isSubclassOfClass:[NSDecimalNumber class]])        return XZJSONCocoaClassNSDecimalNumber;
+    if ([aClass isSubclassOfClass:[NSNumber class]])               return XZJSONCocoaClassNSNumber;
+    if ([aClass isSubclassOfClass:[NSValue class]])                return XZJSONCocoaClassNSValue;
+    if ([aClass isSubclassOfClass:[NSMutableData class]])          return XZJSONCocoaClassNSMutableData;
+    if ([aClass isSubclassOfClass:[NSData class]])                 return XZJSONCocoaClassNSData;
+    if ([aClass isSubclassOfClass:[NSDate class]])                 return XZJSONCocoaClassNSDate;
+    if ([aClass isSubclassOfClass:[NSURL class]])                  return XZJSONCocoaClassNSURL;
+    if ([aClass isSubclassOfClass:[NSMutableArray class]])         return XZJSONCocoaClassNSMutableArray;
+    if ([aClass isSubclassOfClass:[NSArray class]])                return XZJSONCocoaClassNSArray;
+    if ([aClass isSubclassOfClass:[NSMutableDictionary class]])    return XZJSONCocoaClassNSMutableDictionary;
+    if ([aClass isSubclassOfClass:[NSDictionary class]])           return XZJSONCocoaClassNSDictionary;
+    if ([aClass isSubclassOfClass:[NSCountedSet class]])           return XZJSONCocoaClassNSCountedSet;
+    if ([aClass isSubclassOfClass:[NSMutableSet class]])           return XZJSONCocoaClassNSMutableSet;
+    if ([aClass isSubclassOfClass:[NSSet class]])                  return XZJSONCocoaClassNSSet;
+    if ([aClass isSubclassOfClass:[NSMutableOrderedSet class]])    return XZJSONCocoaClassNSMutableOrderedSet;
+    if ([aClass isSubclassOfClass:[NSOrderedSet class]])           return XZJSONCocoaClassNSOrderedSet;
+    return XZJSONCocoaClassUnknown;
+}
 
 NS_ASSUME_NONNULL_END
