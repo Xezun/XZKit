@@ -62,6 +62,8 @@ typedef id _Nullable (^XZJSONPropertyValueDecoder)(NSDictionary *dictionary);
     /// - 值为调用 setter 方法可使用的 key 名（调用 getter 方法使用 `_name` 属性)。
     NSString *_isKeyValueCodable;
     
+    BOOL _conformsNSCoding;
+    
     /// 一对一映射：当前属性映射 JSON 键。
     NSString            *_JSONKey;
     /// 一对一映射：当前属性映射 JSON 键路径。

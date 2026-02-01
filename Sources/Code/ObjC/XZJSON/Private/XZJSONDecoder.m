@@ -377,8 +377,9 @@ FOUNDATION_STATIC_INLINE NSNumber * _Nullable NSNumberFromJSONValue(id const _No
 FOUNDATION_STATIC_INLINE NSDecimalNumber * _Nullable NSDecimalNumberFromJSONValue(id const _Nonnull _Unsafe JSONValue) {
     if ([JSONValue isKindOfClass:[NSString class]]) {
         // TODO: 确定 local 参数的使用区别
-        NSDecimalNumber *const number = [NSDecimalNumber decimalNumberWithString:JSONValue locale:nil];
-        return number;
+        NSDecimalNumber *const numberValue = [NSDecimalNumber decimalNumberWithString:JSONValue locale:nil];
+        NSDecimal decimalValue = numberValue.decimalValue;
+        return NSDecimalIsNotANumber(&decimalValue) ? nil : numberValue;
     } else if ([JSONValue isKindOfClass:[NSNumber class]]) {
         NSNumber *number = JSONValue;
         return [NSDecimalNumber decimalNumberWithDecimal:[number decimalValue]];

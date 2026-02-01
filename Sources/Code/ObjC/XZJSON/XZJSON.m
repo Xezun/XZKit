@@ -110,11 +110,120 @@ static NSString * const XZJSON_NSCoding_KEY = @"XZJSON_NSCoding_KEY";
         return;
     }
     
-    NSAssert(JSONClass->_cocoaClass == XZJSONCocoaClassUnknown, @"此方法仅支持在自定义模型的 -initWithCoder: 方法中使用");
-    
-    NSDictionary * dictionary = [coder decodeObjectForKey:XZJSON_NSCoding_KEY];
-    if ([dictionary isKindOfClass:NSDictionary.class]) {
-        [XZJSON model:model decodeFromDictionary:dictionary];
+    switch (JSONClass->_cocoaClass) {
+        case XZJSONCocoaClassUnknown: {
+            [JSONClass->_namedProperties enumerateKeysAndObjectsUsingBlock:^(NSString * _Nonnull key, XZJSONProperty *property, BOOL * _Nonnull stop) {
+                switch (property->_type) {
+                    case XZStdcTypeUnknown:
+                        break;
+                    case XZStdcTypeChar:
+                    case XZStdcTypeUnsignedChar: {
+                        char const value = (char)[coder decodeIntForKey:key];
+                        ((void(*)(id,SEL,char))objc_msgSend)(model, property->_setter, value);
+                        break;
+                    }
+                    case XZStdcTypeInt:
+                    case XZStdcTypeUnsignedInt: {
+                        int const value = [coder decodeIntForKey:key];
+                        ((void(*)(id,SEL,int))objc_msgSend)(model, property->_setter, value);
+                        break;
+                    }
+                    case XZStdcTypeShort:
+                    case XZStdcTypeUnsignedShort: {
+                        short const value = (short)[coder decodeIntForKey:key];
+                        ((void(*)(id,SEL,short))objc_msgSend)(model, property->_setter, value);
+                        break;
+                    }
+                    case XZStdcTypeLong:
+                    case XZStdcTypeUnsignedLong: {
+                        long const value = (long)[coder decodeInt64ForKey:key];
+                        ((void(*)(id,SEL,long))objc_msgSend)(model, property->_setter, value);
+                        break;
+                    }
+                    case XZStdcTypeInt128:
+                    case XZStdcTypeUnsignedInt128:
+                        break;
+                    case XZStdcTypeLongLong:
+                    case XZStdcTypeUnsignedLongLong: {
+                        long long const value = (long long)[coder decodeInt64ForKey:key];
+                        ((void(*)(id,SEL,long long))objc_msgSend)(model, property->_setter, value);
+                        break;
+                    }
+                    case XZStdcTypeFloat: {
+                        float const value = [coder decodeFloatForKey:key];
+                        ((void(*)(id,SEL,float))objc_msgSend)(model, property->_setter, value);
+                        break;
+                    }
+                    case XZStdcTypeDouble: {
+                        double const value = [coder decodeDoubleForKey:key];
+                        ((void(*)(id,SEL,double))objc_msgSend)(model, property->_setter, value);
+                        break;
+                    }
+                    case XZStdcTypeLongDouble: {
+                        long double const value = (long double)[coder decodeDoubleForKey:key];
+                        ((void(*)(id,SEL,long double))objc_msgSend)(model, property->_setter, value);
+                        break;
+                    }
+                    case XZStdcTypeBool: {
+                        BOOL const value = [coder decodeBoolForKey:key];
+                        ((void(*)(id,SEL,BOOL))objc_msgSend)(model, property->_setter, value);
+                        break;
+                    }
+                    case XZStdcTypeVoid:
+                    case XZStdcTypeString:
+                    case XZStdcTypeSelector:
+                    case XZStdcTypePointer:
+                    case XZStdcTypeVector:
+                    case XZStdcTypeArray:
+                    case XZStdcTypeBitField:
+                    case XZStdcTypeUnion:
+                        break;
+                    case XZStdcTypeStruct: {
+                        id const value = [coder decodeObjectForKey:key];
+                        XZJSONModelDecodeStructProperty(model, property, value);
+                        break;
+                    }
+                    case XZStdcTypeClass: {
+                        NSString *const value = [coder decodeObjectForKey:key];
+                        if ([value isKindOfClass:NSString.class]) {
+                            Class aClass = NSClassFromString(value);
+                            if (aClass) {
+                                ((void(*)(id,SEL,Class))objc_msgSend)(model, property->_setter, aClass);
+                            }
+                        }
+                        break;
+                    }
+                    case XZStdcTypeObject: {
+                        id const value = [coder decodeObjectForKey:key];
+                        if (value) {
+                            ((void(*)(id,SEL, id))objc_msgSend)(model, property->_setter, value);
+                        }
+                        break;
+                    }
+                }
+            }];
+            break;
+        }
+        case XZJSONCocoaClassNSString:
+        case XZJSONCocoaClassNSMutableString:
+        case XZJSONCocoaClassNSValue:
+        case XZJSONCocoaClassNSNumber:
+        case XZJSONCocoaClassNSDecimalNumber:
+        case XZJSONCocoaClassNSData:
+        case XZJSONCocoaClassNSMutableData:
+        case XZJSONCocoaClassNSDate:
+        case XZJSONCocoaClassNSURL:
+        case XZJSONCocoaClassNSArray:
+        case XZJSONCocoaClassNSMutableArray:
+        case XZJSONCocoaClassNSSet:
+        case XZJSONCocoaClassNSMutableSet:
+        case XZJSONCocoaClassNSCountedSet:
+        case XZJSONCocoaClassNSOrderedSet:
+        case XZJSONCocoaClassNSMutableOrderedSet:
+        case XZJSONCocoaClassNSDictionary:
+        case XZJSONCocoaClassNSMutableDictionary: {
+            break;
+        }
     }
 }
 
@@ -124,11 +233,121 @@ static NSString * const XZJSON_NSCoding_KEY = @"XZJSON_NSCoding_KEY";
         return;
     }
     
-    NSAssert(JSONClass->_cocoaClass == XZJSONCocoaClassUnknown, @"此方法仅支持在自定义模型的 -encodeWithCoder: 方法中使用");
-    
-    NSMutableDictionary *dictionary = [NSMutableDictionary dictionaryWithCapacity:JSONClass->_numberOfProperties];
-    [XZJSON model:model encodeIntoDictionary:dictionary];
-    [coder encodeObject:dictionary forKey:XZJSON_NSCoding_KEY];
+    switch (JSONClass->_cocoaClass) {
+        case XZJSONCocoaClassUnknown: {
+            [JSONClass->_namedProperties enumerateKeysAndObjectsUsingBlock:^(NSString * _Nonnull key, XZJSONProperty *property, BOOL * _Nonnull stop) {
+                switch (property->_type) {
+                    case XZStdcTypeUnknown:
+                        break;
+                    case XZStdcTypeChar:
+                    case XZStdcTypeUnsignedChar: {
+                        char const value = ((char(*)(id,SEL))objc_msgSend)(model, property->_getter);
+                        [coder encodeInt:value forKey:key];
+                        break;
+                    }
+                    case XZStdcTypeInt:
+                    case XZStdcTypeUnsignedInt: {
+                        int const value = ((int(*)(id,SEL))objc_msgSend)(model, property->_getter);
+                        [coder encodeInt:value forKey:key];
+                        break;
+                    }
+                    case XZStdcTypeShort:
+                    case XZStdcTypeUnsignedShort: {
+                        short const value = ((short(*)(id,SEL))objc_msgSend)(model, property->_getter);
+                        [coder encodeInt:value forKey:key];
+                        break;
+                    }
+                    case XZStdcTypeLong:
+                    case XZStdcTypeUnsignedLong: {
+                        long const value = ((long(*)(id,SEL))objc_msgSend)(model, property->_getter);
+                        [coder encodeInt64:value forKey:key];
+                        break;
+                    }
+                    case XZStdcTypeInt128:
+                    case XZStdcTypeUnsignedInt128:
+                        break;
+                    case XZStdcTypeLongLong:
+                    case XZStdcTypeUnsignedLongLong: {
+                        long long const value = ((long long(*)(id,SEL))objc_msgSend)(model, property->_getter);
+                        [coder encodeInt64:value forKey:key];
+                        break;
+                    }
+                    case XZStdcTypeFloat: {
+                        float const value = ((float(*)(id,SEL))objc_msgSend)(model, property->_getter);
+                        [coder encodeFloat:value forKey:key];
+                        break;
+                    }
+                    case XZStdcTypeDouble: {
+                        double const value = ((double(*)(id,SEL))objc_msgSend)(model, property->_getter);
+                        [coder encodeDouble:value forKey:key];
+                        break;
+                    }
+                    case XZStdcTypeLongDouble: {
+                        long double const value = ((long double(*)(id,SEL))objc_msgSend)(model, property->_getter);
+                        [coder encodeDouble:value forKey:key];
+                        break;
+                    }
+                    case XZStdcTypeBool: {
+                        BOOL const value = ((BOOL(*)(id,SEL))objc_msgSend)(model, property->_getter);
+                        [coder encodeBool:value forKey:key];
+                        break;
+                    }
+                    case XZStdcTypeVoid:
+                    case XZStdcTypeString:
+                    case XZStdcTypeSelector:
+                    case XZStdcTypePointer:
+                    case XZStdcTypeVector:
+                    case XZStdcTypeArray:
+                    case XZStdcTypeBitField:
+                    case XZStdcTypeUnion:
+                        break;
+                    case XZStdcTypeStruct: {
+                        NSString *const value = XZJSONEncodeStructProperty(model, property);
+                        if (value) {
+                            [coder encodeObject:value forKey:key];
+                        }
+                        break;
+                    }
+                    case XZStdcTypeClass: {
+                        Class const value = ((Class(*)(id,SEL))objc_msgSend)(model, property->_getter);
+                        if (value) {
+                            [coder encodeObject:NSStringFromClass(value) forKey:key];
+                        }
+                        break;
+                    }
+                    case XZStdcTypeObject: {
+                        id const value = ((id(*)(id,SEL))objc_msgSend)(model, property->_getter);
+                        if (value && property->_conformsNSCoding) {
+                            [coder encodeObject:value forKey:key];
+                        }
+                        break;
+                    }
+                }
+            }];
+            break;
+        }
+        case XZJSONCocoaClassNSString:
+        case XZJSONCocoaClassNSMutableString:
+        case XZJSONCocoaClassNSValue:
+        case XZJSONCocoaClassNSNumber:
+        case XZJSONCocoaClassNSDecimalNumber:
+        case XZJSONCocoaClassNSData:
+        case XZJSONCocoaClassNSMutableData:
+        case XZJSONCocoaClassNSDate:
+        case XZJSONCocoaClassNSURL:
+        case XZJSONCocoaClassNSArray:
+        case XZJSONCocoaClassNSMutableArray:
+        case XZJSONCocoaClassNSSet:
+        case XZJSONCocoaClassNSMutableSet:
+        case XZJSONCocoaClassNSCountedSet:
+        case XZJSONCocoaClassNSOrderedSet:
+        case XZJSONCocoaClassNSMutableOrderedSet:
+        case XZJSONCocoaClassNSDictionary:
+        case XZJSONCocoaClassNSMutableDictionary: {
+            [(id<NSCoding>)model encodeWithCoder:coder];
+            break;
+        }
+    }
 }
 
 @end
