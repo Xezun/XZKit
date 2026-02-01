@@ -14,10 +14,12 @@
 #import <XZKit/XZJSONEncoder.h>
 #import <XZKit/XZJSONDecoder.h>
 #import <XZKit/XZJSONDescription.h>
+#import <XZKit/XZJSONCopying.h>
 #else
 #import "XZJSONClass.h"
 #import "XZJSONProperty.h"
 #import "XZJSONEncoder.h"
 #import "XZJSONDecoder.h"
 #import "XZJSONDescription.h"
+#import "XZJSONCopying.h"
 #endif

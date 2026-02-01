@@ -172,14 +172,23 @@ enum {
 
 @end
 
+@interface XZJSON (NSCoding)
++ (void)model:(nullable id)model initWithCoder:(NSCoder *)coder;
++ (void)model:(nullable id)model encodeWithCoder:(NSCoder *)coder;
+@end
+
+@interface XZJSON (NSCopying)
++ (nullable id)model:(nullable id)sourceModel copy:(nullable id)targetModel;
+@end
+
 #pragma mark - 模型描述
 
-@interface XZJSON (NSDescription)
+@interface XZJSON (NSDescribing)
 
-/// 生成模型的描述文本。
+/// 生成模型的描述文本。describing
 /// - Parameter model: 待描述的模型对象
 /// - Parameter indent: 输出模型时的缩进等级
-+ (NSString *)model:(id)model descriptionWithIndent:(NSUInteger)indent;
++ (NSString *)model:(id)model describeWithIndent:(NSUInteger)indent;
 
 @end
 

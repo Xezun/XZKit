@@ -413,7 +413,7 @@ FOUNDATION_EXPORT XZMocoaKey const XZMocoaKeyNone NS_SWIFT_NAME(XZMocoaKeyNone);
 /// ```objc
 /// - (void)controller:(NSFetchedResultsController *)controller didChangeObject:(NSManagedObject *)anObject atIndexPath:(NSIndexPath *)indexPath forChangeType:(NSFetchedResultsChangeType)type newIndexPath:(NSIndexPath *)newIndexPath {
 ///     NSDictionary<NSString *, id> * const changedValues = anObject.changedValuesForCurrentEvent;
-///     [viewModel model:anObject didUpdateValuesForKeys:[NSSet setWithArray:changedValues.allKeys]];
+///     [viewModel model:anObject didChangeValuesForKeys:[NSSet setWithArray:changedValues.allKeys]];
 /// }
 /// ```
 ///
@@ -424,7 +424,7 @@ FOUNDATION_EXPORT XZMocoaKey const XZMocoaKeyNone NS_SWIFT_NAME(XZMocoaKeyNone);
 /// - Parameters:
 ///   - model: 数据模型
 ///   - changedKeys: 值发生改变的属性
-- (void)model:(nullable id)model didUpdateValuesForKeys:(NSSet<XZMocoaKey> *)changedKeys;
+- (void)model:(nullable id)model didChangeValuesForKeys:(NSSet<XZMocoaKey> *)changedKeys;
 
 @end
 

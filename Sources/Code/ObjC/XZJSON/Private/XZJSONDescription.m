@@ -47,7 +47,7 @@ static NSString * _Nonnull XZJSONDictionaryDescription(NSDictionary * const _Uns
     [aDictionary enumerateKeysAndObjectsUsingBlock:^(id  _Nonnull key, id  _Nonnull obj, BOOL * _Nonnull stop) {
         NSString * const keyString = [key description];
         NSString * const objString = XZJSONObjectDescription(obj, indent + 1);
-        [descriptionM appendFormat:@"%@    %@: %@, \n", padding, key, obj];
+        [descriptionM appendFormat:@"%@    %@: %@, \n", padding, keyString, objString];
     }];
     [descriptionM deleteCharactersInRange:NSMakeRange(descriptionM.length - 3, 1)];
     [descriptionM appendFormat:@"%@}", padding];

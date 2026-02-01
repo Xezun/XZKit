@@ -65,9 +65,8 @@
 }
 
 + (void)model:(id)model decodeFromDictionary:(NSDictionary *)dictionary {
-    Class const ModelClass = object_getClass(model);
-    XZJSONClass * const JSONClass = [XZJSONClass classForClass:ModelClass];
-    if (ModelClass && JSONClass) {
+    XZJSONClass * const JSONClass = [XZJSONClass classForClass:object_getClass(model)];
+    if (JSONClass) {
         XZJSONModelDecodeFromDictionary(model, JSONClass, dictionary);
     }
 }
@@ -81,11 +80,7 @@
     if (model == nil) {
         return nil;
     }
-    Class const ModelClass = object_getClass(model);
-    if (ModelClass == Nil) {
-        return nil;
-    }
-    XZJSONClass * const JSONClass = [XZJSONClass classForClass:ModelClass];
+    XZJSONClass * const JSONClass = [XZJSONClass classForClass:object_getClass(model)];
     if (JSONClass == nil) {
         return nil;
     }
@@ -97,8 +92,7 @@
 }
 
 + (void)model:(id)model encodeIntoDictionary:(NSMutableDictionary *)dictionary {
-    Class const modelClass = object_getClass(model);
-    XZJSONClass * const descriptor = [XZJSONClass classForClass:modelClass];
+    XZJSONClass * const descriptor = [XZJSONClass classForClass:object_getClass(model)];
     if (descriptor) {
         XZJSONModelEncodeIntoDictionary(model, descriptor, dictionary);
     }
@@ -106,9 +100,50 @@
 
 @end
 
-@implementation XZJSON (NSDescription)
+static NSString * const XZJSON_NSCoding_KEY = @"XZJSON_NSCoding_KEY";
 
-+ (NSString *)model:(id)model descriptionWithIndent:(NSUInteger)indent {
+@implementation XZJSON (NSCoding)
+
++ (void)model:(id)model initWithCoder:(NSCoder *)coder {
+    XZJSONClass * const JSONClass = [XZJSONClass classForClass:object_getClass(model)];
+    if (JSONClass == nil) {
+        return;
+    }
+    
+    NSAssert(JSONClass->_cocoaClass == XZJSONCocoaClassUnknown, @"此方法仅支持在自定义模型的 -initWithCoder: 方法中使用");
+    
+    NSDictionary * dictionary = [coder decodeObjectForKey:XZJSON_NSCoding_KEY];
+    if ([dictionary isKindOfClass:NSDictionary.class]) {
+        [XZJSON model:model decodeFromDictionary:dictionary];
+    }
+}
+
++ (void)model:(id)model encodeWithCoder:(NSCoder *)coder {
+    XZJSONClass * const JSONClass = [XZJSONClass classForClass:object_getClass(model)];
+    if (JSONClass == nil) {
+        return;
+    }
+    
+    NSAssert(JSONClass->_cocoaClass == XZJSONCocoaClassUnknown, @"此方法仅支持在自定义模型的 -encodeWithCoder: 方法中使用");
+    
+    NSMutableDictionary *dictionary = [NSMutableDictionary dictionaryWithCapacity:JSONClass->_numberOfProperties];
+    [XZJSON model:model encodeIntoDictionary:dictionary];
+    [coder encodeObject:dictionary forKey:XZJSON_NSCoding_KEY];
+}
+
+@end
+
+@implementation XZJSON (NSCopying)
+
++ (id)model:(id)sourceModel copy:(id)targetModel {
+    return XZJSONObjectCopying(sourceModel, targetModel);
+}
+
+@end
+
+@implementation XZJSON (NSDescribing)
+
++ (NSString *)model:(id)model describeWithIndent:(NSUInteger)indent {
     return XZJSONObjectDescription(model, indent);
 }
 

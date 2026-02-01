@@ -8,15 +8,15 @@
 
 #import "XZMocoaViewModel.h"
 #import "XZMocoaView.h"
-#import "XZMocoaTargetActions.h"
-#import "XZMocoaKeysObserver.h"
-#import "XZMocoaKeysMapTable.h"
+#import "XZMocoaTargetActionTable.h"
+#import "XZMocoaModelObserver.h"
+#import "XZMocoaViewModelKeyMappingTable.h"
 #import "XZLog.h"
 #import "XZObjc.h"
 
 @implementation XZMocoaViewModel {
     @private
-    XZMocoaTargetActions  *                     _targetActions;
+    XZMocoaTargetActionTable  *                     _targetActions;
     NSMutableOrderedSet<XZMocoaViewModel *> *   _subViewModels;
     XZMocoaViewModel      * __unsafe_unretained _superViewModel;
 }
@@ -77,8 +77,8 @@
 
 - (void)prepare {
     if ([self _attachModelObserverIfNeeded:self.model]) {
-        NSArray * const allKeys = [[XZMocoaKeysMapTable mapTableForClass:self.class].keyToMethods allKeys];
-        [self model:_model didUpdateValuesForKeys:[NSSet setWithArray:allKeys]];
+        NSArray * const allKeys = [[XZMocoaViewModelKeyMappingTable tableForClass:self.class].keyToMethods allKeys];
+        [self model:_model didChangeValuesForKeys:[NSSet setWithArray:allKeys]];
     }
 }
 
@@ -99,11 +99,11 @@
         if (model == nil) {
             return NO;
         }
-        NSArray * const allKeys = [[XZMocoaKeysMapTable mapTableForClass:self.class].keyToMethods allKeys];
+        NSArray * const allKeys = [[XZMocoaViewModelKeyMappingTable tableForClass:self.class].keyToMethods allKeys];
         if (allKeys == nil) {
             return NO;
         }
-        [[XZMocoaKeysObserver observerForObject:model] attachReceiver:self forKeys:allKeys];
+        [[XZMocoaModelObserver observerForModel:model] attachReceiver:self forKeys:allKeys];
         return NO;
     }
     return YES;
@@ -113,7 +113,7 @@
     if (model == nil || ![self shouldObserveModelKeysActively]) {
         return;
     }
-    [[XZMocoaKeysObserver observerForObject:model] detachReceiver:self];
+    [[XZMocoaModelObserver observerForModel:model] detachReceiver:self];
 }
 
 @end
@@ -264,7 +264,7 @@ XZMocoaKey const XZMocoaKeyNone = @"";
     }
     
     if (_targetActions == nil) {
-        _targetActions = [[XZMocoaTargetActions alloc] initWithViewModel:self];
+        _targetActions = [[XZMocoaTargetActionTable alloc] initWithViewModel:self];
     }
     [_targetActions addTarget:target action:action forKey:(key ?: XZMocoaKeyNone)];
 }
@@ -351,29 +351,28 @@ XZMocoaKey const XZMocoaKeyNone = @"";
     return nil;
 }
 
-- (void)model:(id)model didUpdateValuesForKeys:(NSSet<XZMocoaKey> * const)changedKeys {
+- (void)model:(id)model didChangeValuesForKeys:(NSSet<XZMocoaKey> * const)changedKeys {
     if (model != self.model || changedKeys.count == 0) {
         return;
     }
     
-    XZMocoaKeysMapTable * const mapTable = [XZMocoaKeysMapTable mapTableForClass:self.class];
-    if (mapTable == nil) {
+    XZMocoaViewModelKeyMappingTable * const table = [XZMocoaViewModelKeyMappingTable tableForClass:self.class];
+    if (table == nil) {
         return;
     }
     
-    NSMutableSet                        * const invokedMethods = [NSMutableSet setWithCapacity:mapTable.methodToKeys.count];
-    NSMutableDictionary<NSString *, id> * const fetchedValues  = [NSMutableDictionary dictionaryWithCapacity:mapTable.keyToMethods.count];
+    NSMutableSet                        * const invokedMethods = [NSMutableSet setWithCapacity:table.methodToKeys.count];
+    NSMutableDictionary<NSString *, id> * const fetchedValues  = [NSMutableDictionary dictionaryWithCapacity:table.keyToMethods.count];
     
     for (NSString * const changeKey in changedKeys) {
-        // TODO: 检查 model 是否包含 key ？
-        for (NSString * const methodName in mapTable.keyToMethods[changeKey]) {
+        for (NSString * const methodName in table.keyToMethods[changeKey]) {
             if ([invokedMethods containsObject:methodName]) {
                 continue;
             }
             [invokedMethods addObject:methodName];
             
-            NSArray<NSString *> * const keys = mapTable.methodToKeys[methodName];
-            XZObjcMethod * const method = mapTable.namedMethods[methodName];
+            NSArray<NSString *> * const keys = table.methodToKeys[methodName];
+            XZObjcMethod * const method = table.namedMethods[methodName];
             
             if (method == nil || keys.count != method.arguments.count) {
                 continue;
@@ -390,8 +389,8 @@ XZMocoaKey const XZMocoaKeyNone = @"";
                 
                 id value = fetchedValues[key];
                 if (value == nil) {
-                    value = [model valueForKeyPath:key];
-                    fetchedValues[key] = value ?: (id)kCFNull;
+                    value = [model valueForKeyPath:key] ?: (id)kCFNull;
+                    fetchedValues[key] = value;
                 }
                 if (value == (id)kCFNull) {
                     value = nil;
@@ -540,14 +539,14 @@ XZMocoaKey const XZMocoaKeyNone = @"";
                         break;
                     }
                     case XZStdcTypeUnion: {
-                        NSString *reason = [NSString stringWithFormat:@"暂不支持 union 类型，请使用 NSValue 代替：%@", type.name];
+                        NSString *reason = [NSString stringWithFormat:@"运行时不支持 union 类型，请使用 NSValue 类型：%@", type.name];
                         @throw [NSException exceptionWithName:NSInvalidArgumentException reason:reason userInfo:nil];
                         break;
                     }
                     case XZStdcTypeStruct: {
                         switch (type.structType) {
                             case XZStdcStructTypeUnknown: {
-                                NSString *reason = [NSString stringWithFormat:@"暂不支持 struct 类型，请使用 NSValue 代替：%@", type.name];
+                                NSString *reason = [NSString stringWithFormat:@"运行时不支持 struct 类型，请使用 NSValue 类型：%@", type.name];
                                 @throw [NSException exceptionWithName:NSInvalidArgumentException reason:reason userInfo:nil];
                                 break;
                             }

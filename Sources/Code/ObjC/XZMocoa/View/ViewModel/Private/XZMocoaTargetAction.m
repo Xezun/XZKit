@@ -58,7 +58,8 @@
                 break;
             }
             default: {
-                _valueArgumentType = nil;
+                NSString *reason = NSLocalizedString(@"最多支持 3 个参数。", @"");
+                @throw [NSException exceptionWithName:NSInvalidArgumentException reason:reason userInfo:nil];
                 break;
             }
         }
@@ -79,22 +80,19 @@
         if (_valueArgumentType) {
             switch (_valueArgumentType.type) {
                 case XZStdcTypeUnion: {
-                    NSString *reason = NSLocalizedString(@"运行时不支持使用 union 类型作为参数，请使用 NSValue 代替。", @"");
+                    NSString *reason = NSLocalizedString(@"运行时不支持使用 union 类型作为参数，请将参数类型改为 NSValue 类型。", @"");
                     @throw [NSException exceptionWithName:NSInvalidArgumentException reason:reason userInfo:nil];
                     break;
                 }
                 case XZStdcTypeStruct: {
                     if (_valueArgumentType.structType == XZStdcStructTypeUnknown) {
-                        NSString *reason = NSLocalizedString(@"运行时不支持使用自定义 struct 类型作为参数，请使用 NSValue 代替。", @"");
+                        NSString *reason = NSLocalizedString(@"运行时不支持使用自定义 struct 类型作为参数，请将参数类型改为 NSValue 类型。", @"");
                         @throw [NSException exceptionWithName:NSInvalidArgumentException reason:reason userInfo:nil];
                     }
                     break;
                 }
                 default:
                     break;
-            }
-            if (_valueArgumentType.type == XZStdcTypeUnion) {
-                
             }
         }
     }

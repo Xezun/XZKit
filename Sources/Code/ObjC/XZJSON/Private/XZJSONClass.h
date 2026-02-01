@@ -86,7 +86,7 @@ typedef NS_ENUM (NSUInteger, XZJSONCocoaClass) {
 }
 
 - (instancetype)init NS_UNAVAILABLE;
-+ (nullable XZJSONClass *)classForClass:(nullable Class)aClass;
++ (nullable XZJSONClass *)classForClass:(nullable Class)class;
 
 @end
 

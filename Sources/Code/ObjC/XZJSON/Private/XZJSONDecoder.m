@@ -76,17 +76,17 @@ id _Nullable XZJSONDecodeData(NSData * const _Unsafe data, NSJSONReadingOptions 
     return nil;
 }
 
-id _Nullable XZJSONDecodeObject(id const _Unsafe object, Class const _Unsafe aClass) {
+id _Nullable XZJSONDecodeObject(id const _Unsafe object, Class const _Unsafe ModelClass) {
     if (object == (id)kCFNull) {
         return nil;
     }
     // 如果已经是目标类型，直接使用。
-    if ([object isKindOfClass:aClass]) {
+    if ([object isKindOfClass:ModelClass]) {
         return object;
     }
     // 如果为字典，则认为是模型数据。
     if ([object isKindOfClass:NSDictionary.class]) {
-        return XZJSONDecodeDictionary(aClass, nil, object, nil);
+        return XZJSONDecodeDictionary(ModelClass, nil, object, nil);
     }
     // 如果是数组，则数组元素是模型数据（也可能是模型数据数组）。
     if ([object isKindOfClass:NSArray.class]) {
@@ -97,7 +97,7 @@ id _Nullable XZJSONDecodeObject(id const _Unsafe object, Class const _Unsafe aCl
         
         NSMutableArray * const models = [NSMutableArray arrayWithCapacity:array.count];
         for (id item in array) {
-            id const model = XZJSONDecodeObject(item, aClass);
+            id const model = XZJSONDecodeObject(item, ModelClass);
             if (model) {
                 [models addObject:model];
             }

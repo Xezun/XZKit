@@ -256,8 +256,8 @@ static id XZJSONKeyFromString(NSString *aString);
 }
 
 
-+ (XZJSONClass *)classForClass:(Class)aClass {
-    if (aClass == Nil || !object_isClass(aClass) || [aClass superclass] == Nil || class_isMetaClass(aClass)) {
++ (XZJSONClass *)classForClass:(Class)class {
+    if (class == Nil || class == NSNull.class || !object_isClass(class) || [class superclass] == Nil || class_isMetaClass(class) ) {
         return nil;
     }
     
@@ -271,19 +271,19 @@ static id XZJSONKeyFromString(NSString *aString);
     });
     
     dispatch_semaphore_wait(_lock, DISPATCH_TIME_FOREVER);
-    XZJSONClass *cachedClass = CFDictionaryGetValue(_storage, (__bridge const void *)aClass);
+    XZJSONClass *cachedClass = CFDictionaryGetValue(_storage, (__bridge const void *)class);
     dispatch_semaphore_signal(_lock);
     
     if (cachedClass) {
         return cachedClass;
     }
     
-    XZJSONClass *newClass = [[XZJSONClass alloc] initWithClass:aClass];
+    XZJSONClass *newClass = [[XZJSONClass alloc] initWithClass:class];
     
     dispatch_semaphore_wait(_lock, DISPATCH_TIME_FOREVER);
-    XZJSONClass *oldClass = CFDictionaryGetValue(_storage, (__bridge const void *)aClass);
+    XZJSONClass *oldClass = CFDictionaryGetValue(_storage, (__bridge const void *)class);
     if (oldClass == nil) {
-        CFDictionarySetValue(_storage, (__bridge const void *)aClass, (__bridge const void *)newClass);
+        CFDictionarySetValue(_storage, (__bridge const void *)class, (__bridge const void *)newClass);
     } else {
         newClass = oldClass;
     }
