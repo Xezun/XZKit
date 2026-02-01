@@ -658,7 +658,7 @@
                             </connections>
                         </barButtonItem>
                         <rightBarButtonItems>
-                            <barButtonItem title="Item" image="gearshape" catalog="system" id="lof-2S-vzn">
+                            <barButtonItem title="Item" image="gear.circle" catalog="system" id="lof-2S-vzn">
                                 <connections>
                                     <segue destination="mcZ-gc-lQ6" kind="show" identifier="Settings" id="BdE-HJ-ej3"/>
                                 </connections>
@@ -1670,7 +1670,7 @@
         <segue reference="NUY-Cj-MvY"/>
     </inferredMetricsTieBreakers>
     <resources>
-        <image name="gearshape" catalog="system" width="128" height="123"/>
+        <image name="gear.circle" catalog="system" width="128" height="123"/>
         <image name="info.circle" catalog="system" width="128" height="123"/>
         <image name="xmark" catalog="system" width="128" height="113"/>
         <systemColor name="systemBackgroundColor">

@@ -32,13 +32,13 @@ class Example13ViewController: UITableViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        toastBackgroundColorPreviewr.layer.cornerRadius = 15.0;
+        toastBackgroundColorPreviewr.layer.cornerRadius = 12.0;
         toastBackgroundColorPreviewr.layer.borderWidth = 1.0;
-        toastBackgroundColorPreviewr.layer.borderColor = UIColor.lightGray.cgColor;
+        toastBackgroundColorPreviewr.layer.borderColor = UIColor.black.cgColor;
         
-        toastTextColorPreviewr.layer.cornerRadius = 15.0;
+        toastTextColorPreviewr.layer.cornerRadius = 12.0;
         toastTextColorPreviewr.layer.borderWidth = 1.0;
-        toastTextColorPreviewr.layer.borderColor = UIColor.lightGray.cgColor;
+        toastTextColorPreviewr.layer.borderColor = UIColor.black.cgColor;
         
         toastBackgroundColorPreviewr.backgroundColor = self.toastConfiguration.backgroundColor ?? XZToast.backgroundColor;
         toastTextColorPreviewr.backgroundColor = self.toastConfiguration.textColor ?? XZToast.textColor;

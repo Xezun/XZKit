@@ -460,7 +460,7 @@
                     </view>
                     <navigationItem key="navigationItem" title="效果展示" id="P5H-S9-Sia">
                         <barButtonItem key="backBarButtonItem" title="返回" id="7la-4k-Lux"/>
-                        <barButtonItem key="rightBarButtonItem" title="Item" image="gearshape" catalog="system" id="bqc-Kv-geo">
+                        <barButtonItem key="rightBarButtonItem" title="Item" image="gear.circle" catalog="system" id="bqc-Kv-geo">
                             <connections>
                                 <segue destination="USI-lT-rDJ" kind="show" id="BMR-iK-ZSs"/>
                             </connections>
@@ -696,7 +696,7 @@
         </scene>
     </scenes>
     <resources>
-        <image name="gearshape" catalog="system" width="128" height="123"/>
+        <image name="gear.circle" catalog="system" width="128" height="123"/>
         <image name="xmark" catalog="system" width="128" height="113"/>
         <systemColor name="labelColor">
             <color white="0.0" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>

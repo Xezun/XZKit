@@ -80,7 +80,7 @@
                                 <segue destination="q00-gh-NLV" kind="unwind" unwindAction="unwindToMainPage:" id="Vwd-7d-W4d"/>
                             </connections>
                         </barButtonItem>
-                        <barButtonItem key="rightBarButtonItem" title="Item" image="gearshape" catalog="system" id="m0j-01-SN9">
+                        <barButtonItem key="rightBarButtonItem" title="Item" image="gear.circle" catalog="system" id="m0j-01-SN9">
                             <connections>
                                 <segue destination="az9-yT-Hk4" kind="show" identifier="settings" id="aSt-sH-Ftm"/>
                             </connections>
@@ -524,7 +524,7 @@
         <segue reference="j2N-Nl-Yug"/>
     </inferredMetricsTieBreakers>
     <resources>
-        <image name="gearshape" catalog="system" width="128" height="123"/>
+        <image name="gear.circle" catalog="system" width="128" height="123"/>
         <image name="xmark" catalog="system" width="128" height="113"/>
         <systemColor name="systemBackgroundColor">
             <color white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>

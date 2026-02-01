@@ -62,9 +62,9 @@
                                                 <segmentedControl opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="top" segmentControlStyle="plain" selectedSegmentIndex="1" translatesAutoresizingMaskIntoConstraints="NO" id="eH2-f2-4Hv">
                                                     <rect key="frame" x="197" y="9.6666666666666643" width="180" height="32"/>
                                                     <segments>
-                                                        <segment title="" image="align.horizontal.left" catalog="system" width="60"/>
-                                                        <segment title="" image="align.horizontal.center" catalog="system" width="60"/>
-                                                        <segment title="" image="align.horizontal.right" catalog="system" width="60"/>
+                                                        <segment title="" image="text.alignleft" catalog="system" width="60"/>
+                                                        <segment title="" image="text.aligncenter" catalog="system" width="60"/>
+                                                        <segment title="" image="text.alignright" catalog="system" width="60"/>
                                                     </segments>
                                                     <connections>
                                                         <action selector="alignmentSegmentedControlValueChange:" destination="cFN-ak-HqA" eventType="valueChanged" id="Gyp-gQ-Wvr"/>
@@ -97,8 +97,8 @@
                                                 <segmentedControl opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="top" segmentControlStyle="plain" selectedSegmentIndex="0" translatesAutoresizingMaskIntoConstraints="NO" id="Tm6-Ty-EXK">
                                                     <rect key="frame" x="257" y="9.6666666666666643" width="120" height="32"/>
                                                     <segments>
-                                                        <segment title="" image="rectangle.bottomhalf.filled" catalog="system" width="60"/>
-                                                        <segment title="" image="rectangle.righthalf.filled" catalog="system" width="60"/>
+                                                        <segment title="" image="inset.filled.bottomthird.rectangle" catalog="system" width="60"/>
+                                                        <segment title="" image="inset.filled.rightthird.rectangle" catalog="system" width="60"/>
                                                     </segments>
                                                     <connections>
                                                         <action selector="orientationSwitchValueChanged:" destination="cFN-ak-HqA" eventType="valueChanged" id="JvC-ym-ags"/>
@@ -128,7 +128,7 @@
                                                     <nil key="textColor"/>
                                                     <nil key="highlightedColor"/>
                                                 </label>
-                                                <segmentedControl opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="top" segmentControlStyle="plain" selectedSegmentIndex="0" translatesAutoresizingMaskIntoConstraints="NO" id="XoA-pl-5Ef">
+                                                <segmentedControl opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="top" segmentControlStyle="plain" translatesAutoresizingMaskIntoConstraints="NO" id="XoA-pl-5Ef">
                                                     <rect key="frame" x="197" y="9.6666666666666643" width="180" height="32"/>
                                                     <segments>
                                                         <segment title="" image="circle.fill" catalog="system" width="60"/>
@@ -288,13 +288,13 @@
         </scene>
     </scenes>
     <resources>
-        <image name="align.horizontal.center" catalog="system" width="120" height="128"/>
-        <image name="align.horizontal.left" catalog="system" width="128" height="118"/>
-        <image name="align.horizontal.right" catalog="system" width="128" height="118"/>
         <image name="circle.fill" catalog="system" width="128" height="123"/>
-        <image name="rectangle.bottomhalf.filled" catalog="system" width="128" height="93"/>
-        <image name="rectangle.righthalf.filled" catalog="system" width="128" height="93"/>
+        <image name="inset.filled.bottomthird.rectangle" catalog="system" width="128" height="93"/>
+        <image name="inset.filled.rightthird.rectangle" catalog="system" width="128" height="93"/>
         <image name="star.fill" catalog="system" width="128" height="116"/>
+        <image name="text.aligncenter" catalog="system" width="128" height="101"/>
+        <image name="text.alignleft" catalog="system" width="128" height="101"/>
+        <image name="text.alignright" catalog="system" width="128" height="101"/>
         <image name="triangle.fill" catalog="system" width="128" height="109"/>
         <image name="xmark" catalog="system" width="128" height="113"/>
         <systemColor name="separatorColor">
