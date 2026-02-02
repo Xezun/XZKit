@@ -971,39 +971,39 @@ void XZJSONModelDecodeProperty(id const _Unsafe model, XZJSONProperty * const _U
                     break;
                 }
                 case XZJSONCocoaClassNSArray: {
-                    value = NSArrayFromJSONValue(JSONValue, property->_elementType, NO);
+                    value = NSArrayFromJSONValue(JSONValue, property->_elementClassType, NO);
                     break;
                 }
                 case XZJSONCocoaClassNSMutableArray: {
-                    value = NSArrayFromJSONValue(JSONValue, property->_elementType, YES);
+                    value = NSArrayFromJSONValue(JSONValue, property->_elementClassType, YES);
                     break;
                 }
                 case XZJSONCocoaClassNSSet: {
-                    value = NSSetFromJSONValue(JSONValue, property->_elementType, NSMutableSet.class);
+                    value = NSSetFromJSONValue(JSONValue, property->_elementClassType, NSMutableSet.class);
                     break;
                 }
                 case XZJSONCocoaClassNSMutableSet: {
-                    value = NSSetFromJSONValue(JSONValue, property->_elementType, NSMutableSet.class);
+                    value = NSSetFromJSONValue(JSONValue, property->_elementClassType, NSMutableSet.class);
                     break;
                 }
                 case XZJSONCocoaClassNSCountedSet: {
-                    value = NSSetFromJSONValue(JSONValue, property->_elementType, NSCountedSet.class);
+                    value = NSSetFromJSONValue(JSONValue, property->_elementClassType, NSCountedSet.class);
                     break;
                 }
                 case XZJSONCocoaClassNSOrderedSet: {
-                    value = NSOrderedSetFromJSONValue(JSONValue, property->_elementType);
+                    value = NSOrderedSetFromJSONValue(JSONValue, property->_elementClassType);
                     break;
                 }
                 case XZJSONCocoaClassNSMutableOrderedSet: {
-                    value = NSOrderedSetFromJSONValue(JSONValue, property->_elementType);
+                    value = NSOrderedSetFromJSONValue(JSONValue, property->_elementClassType);
                     break;
                 }
                 case XZJSONCocoaClassNSDictionary: {
-                    value = NSDictionaryFromJSONValue(JSONValue, property->_elementType, NO);
+                    value = NSDictionaryFromJSONValue(JSONValue, property->_elementClassType, NO);
                     break;
                 }
                 case XZJSONCocoaClassNSMutableDictionary: {
-                    value = NSDictionaryFromJSONValue(JSONValue, property->_elementType, YES);
+                    value = NSDictionaryFromJSONValue(JSONValue, property->_elementClassType, YES);
                     break;
                 }
                 case XZJSONCocoaClassUnknown: {

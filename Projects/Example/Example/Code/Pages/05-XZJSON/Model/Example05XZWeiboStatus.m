@@ -1,11 +1,11 @@
 //
-//  Example05XZWeiboModel.m
+//  Example05XZWeiboStatus.m
 //  Example
 //
 //  Created by 徐臻 on 2025/2/28.
 //
 
-#import "Example05XZWeiboModel.h"
+#import "Example05XZWeiboStatus.h"
 
 static NSDateFormatter *dateFormatter(void) {
     static NSDateFormatter *formatter;

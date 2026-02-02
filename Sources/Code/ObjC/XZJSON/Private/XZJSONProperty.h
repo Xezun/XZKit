@@ -51,13 +51,16 @@ typedef id _Nullable (^XZJSONPropertyValueDecoder)(NSDictionary *dictionary);
     
     /// 属性值为对象类型时，对象的 Class 类型。
     Class _Nullable _classType;
-    /// 属性值为对象类型时，其是否遵循 NSCoding 协议。
+    /// 属性为集合对象时，元素的类。
+    Class _Nullable _elementClassType;
+    
+    /// 属性值为对象类型时，其是否遵循 NSCoding 协议。如果 `_classType` 是集合，则表示集合中的元素。
     BOOL _conformsToNSCoding;
+    /// 属性值为对象类型时，其是否支持 NSSecureCoding 协议。如果 `_classType` 是集合，则表示集合中的元素。
+    BOOL _supportsSecureCoding;
+    
     /// 属性值为对象类型时，对象的 Class 类型的具体原生类型。
     XZJSONCocoaClass _cocoaClass;
-    
-    /// 属性为集合对象时，元素的类。
-    Class _Nullable _elementType;
     
     /// 属性值为结构体类型时，若结构体为已知的原生类型，此枚举表示具体类型。
     XZStdcStructType _structType;

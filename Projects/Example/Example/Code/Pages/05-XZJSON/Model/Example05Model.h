@@ -135,7 +135,7 @@ typedef union Example05Union {
 
 NS_ASSUME_NONNULL_END
 
-#import "Example05XZWeiboModel.h"
-#import "Example05YYWeiboModel.h"
-#import "Example05XZGHUser.h"
-#import "Example05YYGHUser.h"
+#import "Example05XZWeiboStatus.h"
+#import "Example05YYWeiboStatus.h"
+#import "Example05XZUser.h"
+#import "Example05YYUser.h"

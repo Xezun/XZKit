@@ -50,7 +50,7 @@
         _getter      = property.getter;
         _setter      = property.setter;
         _classType   = classType;
-        _elementType = elementType;
+        _elementClassType = elementType;
         _structType  = property.type.structType;
         _cocoaClass  = XZJSONCocoaClassFromClass(_classType);
         
@@ -121,7 +121,13 @@
                 break;
             case XZStdcTypeObject:
                 _isCodable = YES;
-                _conformsToNSCoding = [_classType conformsToProtocol:@protocol(NSCoding)];
+                if (_elementClassType) {
+                    _conformsToNSCoding = [_elementClassType conformsToProtocol:@protocol(NSCoding)];
+                    _supportsSecureCoding = [_elementClassType conformsToProtocol:@protocol(NSSecureCoding)] && [_classType supportsSecureCoding];
+                } else {
+                    _conformsToNSCoding = [_classType conformsToProtocol:@protocol(NSCoding)];
+                    _supportsSecureCoding = [_classType conformsToProtocol:@protocol(NSSecureCoding)] && [_classType supportsSecureCoding];
+                }
                 break;
         }
     }

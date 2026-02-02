@@ -59,7 +59,7 @@
         NSMutableArray *holder = [NSMutableArray arrayWithCapacity:count * 2];
         @autoreleasepool {
             for (int i = 0; i < count; i++) {
-                Example05YYGHUser *user = [Example05YYGHUser yy_modelWithJSON:json];
+                Example05YYUser *user = [Example05YYUser yy_modelWithJSON:json];
                 [holder addObject:user];
                 
                 // YYModel
@@ -73,7 +73,7 @@
         NSMutableArray *holder = [NSMutableArray arrayWithCapacity:count * 2];
         @autoreleasepool {
             for (int i = 0; i < count; i++) {
-                Example05XZGHUser *user = [XZJSON decode:json options:kNilOptions class:[Example05XZGHUser class]];
+                Example05XZUser *user = [XZJSON decode:json options:kNilOptions class:[Example05XZUser class]];
                 [holder addObject:user];
                 
                 NSMutableDictionary *json = [NSMutableDictionary dictionaryWithCapacity:64];
@@ -131,12 +131,12 @@
     
     [self addText:@"------------------------------------\n"];
     {
-        if ([self checkGHUser:(id)[Example05YYGHUser yy_modelWithJSON:json]]) {
+        if ([self checkGHUser:(id)[Example05YYUser yy_modelWithJSON:json]]) {
             [self addText:@"YYModel decode verify: pass\n"];
         } else {
             [self addText:@"YYModel decode verify: fail\n"];
         }
-        if ([self checkGHUser:[XZJSON decode:json options:kNilOptions class:[Example05XZGHUser class]]]) {
+        if ([self checkGHUser:[XZJSON decode:json options:kNilOptions class:[Example05XZUser class]]]) {
             [self addText:@"XZJSON  decode verify: pass\n"];
         } else {
             [self addText:@"XZJSON  decode verify: fail\n"];
@@ -154,10 +154,10 @@
     @autoreleasepool {
         for (int i = 0; i < count; i++) {
             // YYModel
-            [Example05YYGHUser yy_modelWithJSON:json];
+            [Example05YYUser yy_modelWithJSON:json];
             
             // XZJSON
-            [XZJSON decode:json options:kNilOptions class:[Example05XZGHUser class]];
+            [XZJSON decode:json options:kNilOptions class:[Example05XZUser class]];
         }
     }
     /// warm up holder
@@ -206,14 +206,14 @@
         begin = CACurrentMediaTime();
         @autoreleasepool {
             for (int i = 0; i < count; i++) {
-                Example05YYGHUser *user = [Example05YYGHUser yy_modelWithJSON:json];
+                Example05YYUser *user = [Example05YYUser yy_modelWithJSON:json];
                 [holder addObject:user];
             }
         }
         end = CACurrentMediaTime();
         duration1 = (end - begin) * 1000;
         
-        Example05YYGHUser *user = [Example05YYGHUser yy_modelWithJSON:json];
+        Example05YYUser *user = [Example05YYUser yy_modelWithJSON:json];
         if (user.userID == 0) NSLog(@"error!");
         if (!user.login) NSLog(@"error!");
         if (!user.htmlURL) NSLog(@"error");
@@ -249,14 +249,14 @@
         begin = CACurrentMediaTime();
         @autoreleasepool {
             for (int i = 0; i < count; i++) {
-                Example05XZGHUser *user = [XZJSON decode:json options:kNilOptions class:[Example05XZGHUser class]];
+                Example05XZUser *user = [XZJSON decode:json options:kNilOptions class:[Example05XZUser class]];
                 [holder addObject:user];
             }
         }
         end = CACurrentMediaTime();
         duration1 = (end - begin) * 1000;
         
-        Example05XZGHUser *user = [XZJSON decode:json options:kNilOptions class:[Example05XZGHUser class]];
+        Example05XZUser *user = [XZJSON decode:json options:kNilOptions class:[Example05XZUser class]];
         if (user.userID == 0) NSLog(@"error!");
         if (!user.login) NSLog(@"error!");
         if (!user.htmlURL) NSLog(@"error");
@@ -438,7 +438,7 @@
             if (!user) {
                 [self addText:@"⚠️ model is nil\n"];
             } else {
-                NSString *type = ((Example05YYGHUser *)user).type;
+                NSString *type = ((Example05YYUser *)user).type;
                 if (type == nil || type == (id)[NSNull null]) {
                     [self addText:@"⚠️ property is nil\n"];
                 } else if ([type isKindOfClass:[NSString class]]) {
@@ -450,11 +450,11 @@
         };
         
         // YYModel
-        Example05YYGHUser *yyUser = [Example05YYGHUser yy_modelWithJSON:json];
+        Example05YYUser *yyUser = [Example05YYUser yy_modelWithJSON:json];
         logError(@"YYModel:        ", yyUser);
         
         // XZJSON
-        Example05XZGHUser *xzUser = [XZJSON decode:json options:kNilOptions class:[Example05XZGHUser class]];
+        Example05XZUser *xzUser = [XZJSON decode:json options:kNilOptions class:[Example05XZUser class]];
         logError(@"XZJSON:         ", xzUser);
         
         [self addText:@"\n"];
@@ -471,7 +471,7 @@
             if (!user) {
                 [self addText:@"⚠️ model is nil\n"];
             } else {
-                UInt32 num = ((Example05YYGHUser *)user).followers;
+                UInt32 num = ((Example05YYUser *)user).followers;
                 if (num != 100) {
                     [self addText:[NSString stringWithFormat:@"🚫 property is %u\n",(unsigned int)num]];
                 } else {
@@ -481,11 +481,11 @@
         };
         
         // YYModel
-        Example05YYGHUser *yyUser = [Example05YYGHUser yy_modelWithJSON:json];
+        Example05YYUser *yyUser = [Example05YYUser yy_modelWithJSON:json];
         logError(@"YYModel:        ", yyUser);
         
         // XZJSON
-        Example05XZGHUser *xzUser = [XZJSON decode:json options:kNilOptions class:[Example05XZGHUser class]];
+        Example05XZUser *xzUser = [XZJSON decode:json options:kNilOptions class:[Example05XZUser class]];
         logError(@"XZJSON:         ", xzUser);
     }
     
@@ -501,7 +501,7 @@
             if (!user) {
                 [self addText:@"⚠️ model is nil\n"];
             } else {
-                NSDate *date = ((Example05YYGHUser *)user).updatedAt;
+                NSDate *date = ((Example05YYUser *)user).updatedAt;
                 if (date == nil || date == (id)[NSNull null]) {
                     [self addText:@"⚠️ property is nil\n"];
                 } else if ([date isKindOfClass:[NSDate class]]) {
@@ -513,11 +513,11 @@
         };
         
         // YYModel
-        Example05YYGHUser *yyUser = [Example05YYGHUser yy_modelWithJSON:json];
+        Example05YYUser *yyUser = [Example05YYUser yy_modelWithJSON:json];
         logError(@"YYModel:        ", yyUser);
         
         // XZJSON
-        Example05XZGHUser *xzUser = [XZJSON decode:json options:kNilOptions class:[Example05XZGHUser class]];
+        Example05XZUser *xzUser = [XZJSON decode:json options:kNilOptions class:[Example05XZUser class]];
         logError(@"XZJSON:         ", xzUser);
         [self addText:@"\n"];
     }
@@ -534,7 +534,7 @@
             if (!user) {
                 [self addText:@"⚠️ model is nil\n"];
             } else {
-                NSValue *valur = ((Example05YYGHUser *)user).test;
+                NSValue *valur = ((Example05YYUser *)user).test;
                 if (valur == nil || valur == (id)[NSNull null]) {
                     [self addText:@"✅ property is nil\n"];
                 } else if ([valur isKindOfClass:[NSURLRequest class]]) {
@@ -545,11 +545,11 @@
             }
         };
         // YYModel
-        Example05YYGHUser *yyUser = [Example05YYGHUser yy_modelWithJSON:json];
+        Example05YYUser *yyUser = [Example05YYUser yy_modelWithJSON:json];
         logError(@"YYModel:        ", yyUser);
         
         // XZJSON
-        Example05XZGHUser *xzUser = [XZJSON decode:json options:kNilOptions class:[Example05XZGHUser class]];
+        Example05XZUser *xzUser = [XZJSON decode:json options:kNilOptions class:[Example05XZUser class]];
         logError(@"XZJSON:         ", xzUser);
         [self addText:@"\n"];
     }
@@ -587,7 +587,7 @@ static BOOL CheckDateValue(NSDate *modelValue, id dictValue) {
     return NO;
 }
 
-- (BOOL)checkGHUser:(Example05XZGHUser *)model {
+- (BOOL)checkGHUser:(Example05XZUser *)model {
     NSInteger count = 0;
     
     NSString *path = [NSBundle.mainBundle pathForResource:@"Example05GHUser" ofType:@"json"];

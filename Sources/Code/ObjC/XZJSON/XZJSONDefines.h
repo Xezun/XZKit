@@ -94,6 +94,9 @@ NS_ASSUME_NONNULL_BEGIN
 
 @optional
 /// 转发数据到其它模型。
+///
+/// 转发模型一般用于集合属性，以支持不同类型的元素，推荐转发子类。假如转发到非子类类型，那么`NSCoding`相关支持方法可能无法正常使用。
+///
 /// - Parameter dictionary: 字典形式的 JSON 数据
 + (nullable Class)forwardingClassForJSONDictionary:(NSDictionary *)dictionary;
 

@@ -15,6 +15,7 @@
 #import <XZKit/XZJSONDecoder.h>
 #import <XZKit/XZJSONDescription.h>
 #import <XZKit/XZJSONCopying.h>
+#import <XZKit/XZJSONCoding.h>
 #else
 #import "XZJSONClass.h"
 #import "XZJSONProperty.h"
@@ -22,4 +23,5 @@
 #import "XZJSONDecoder.h"
 #import "XZJSONDescription.h"
 #import "XZJSONCopying.h"
+#import "XZJSONCoding.h"
 #endif

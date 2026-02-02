@@ -1,11 +1,11 @@
 //
-//  Example05YYWeiboModel.m
+//  Example05YYWeiboStatus.m
 //  Example
 //
 //  Created by 徐臻 on 2025/2/28.
 //
 
-#import "Example05YYWeiboModel.h"
+#import "Example05YYWeiboStatus.h"
 
 #define YYModelSynthCoderAndHash \
 - (void)encodeWithCoder:(NSCoder *)aCoder { [self yy_modelEncodeWithCoder:aCoder]; } \

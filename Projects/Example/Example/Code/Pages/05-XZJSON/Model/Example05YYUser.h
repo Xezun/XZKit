@@ -1,16 +1,16 @@
 //
-//  Example05XZGHUser.h
+//  Example05YYUser.h
 //  Example
 //
 //  Created by 徐臻 on 2025/2/28.
 //
 
 #import <Foundation/Foundation.h>
-@import XZKit;
+@import YYModel;
 
 NS_ASSUME_NONNULL_BEGIN
 
-@interface Example05XZGHUser : NSObject <XZJSONCoding, NSCoding>
+@interface Example05YYUser : NSObject <NSCoding>
 @property (nonatomic, strong) NSString *login;
 @property (nonatomic, assign) UInt64 userID;
 @property (nonatomic, strong) NSString *avatarURL;

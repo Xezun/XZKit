@@ -1,5 +1,5 @@
 //
-//  Example05XZWeiboModel.h
+//  Example05XZWeiboStatus.h
 //  Example
 //
 //  Created by 徐臻 on 2025/2/28.
@@ -9,6 +9,45 @@
 @import XZKit;
 
 NS_ASSUME_NONNULL_BEGIN
+
+@class Example05XZWeiboUser, Example05XZWeiboPictureMetadata, Example05XZWeiboPicture, Example05XZWeiboURL;
+
+@interface Example05XZWeiboStatus : NSObject <NSCoding, NSCopying, XZJSONCoding>
+@property (nonatomic, assign) uint64_t statusID;
+@property (nonatomic, strong) NSString *idstr;
+@property (nonatomic, strong) NSString *mid;
+@property (nonatomic, strong) NSString *rid;
+@property (nonatomic, strong) NSDate *createdAt;
+@property (nonatomic, strong) Example05XZWeiboUser *user;
+@property (nonatomic, assign) int32_t userType;
+@property (nonatomic, strong) NSString *text;
+@property (nonatomic, strong) NSArray *picIds;        /// Array<NSString>
+@property (nonatomic, strong) NSDictionary *picInfos; /// Dic<NSString, XZWeiboPicture>
+@property (nonatomic, strong) NSArray *urlStruct;     ///< Array<XZWeiboURL>
+@property (nonatomic, assign) BOOL favorited;
+@property (nonatomic, assign) BOOL truncated;
+@property (nonatomic, assign) int32_t repostsCount;
+@property (nonatomic, assign) int32_t commentsCount;
+@property (nonatomic, assign) int32_t attitudesCount;
+@property (nonatomic, assign) int32_t attitudesStatus;
+@property (nonatomic, assign) int32_t recomState;
+@property (nonatomic, strong) NSString *inReplyToScreenName;
+@property (nonatomic, strong) NSString *inReplyToStatusId;
+@property (nonatomic, strong) NSString *inReplyToUserId;
+@property (nonatomic, strong) NSString *source;
+@property (nonatomic, assign) int32_t sourceType;
+@property (nonatomic, assign) int32_t sourceAllowClick;
+@property (nonatomic, strong) NSString *geo;
+@property (nonatomic, strong) NSArray *annotations;
+@property (nonatomic, assign) int32_t bizFeature;
+@property (nonatomic, assign) int32_t mlevel;
+@property (nonatomic, strong) NSString *mblogid;
+@property (nonatomic, strong) NSString *mblogTypeName;
+@property (nonatomic, assign) int32_t mblogType;
+@property (nonatomic, strong) NSString *scheme;
+@property (nonatomic, strong) NSDictionary *visible;
+@property (nonatomic, strong) NSArray *darwinTags;
+@end
 
 @interface Example05XZWeiboPictureMetadata : NSObject <NSCoding, NSCopying>
 @property (nonatomic, strong) NSString *url;
@@ -109,43 +148,6 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic, strong) NSString *verifiedReason;
 @property (nonatomic, strong) NSString *verifiedReasonURL;
 @property (nonatomic, strong) NSString *verifiedReasonModified;
-@end
-
-@interface Example05XZWeiboStatus : NSObject <NSCoding, NSCopying, XZJSONCoding>
-@property (nonatomic, assign) uint64_t statusID;
-@property (nonatomic, strong) NSString *idstr;
-@property (nonatomic, strong) NSString *mid;
-@property (nonatomic, strong) NSString *rid;
-@property (nonatomic, strong) NSDate *createdAt;
-@property (nonatomic, strong) Example05XZWeiboUser *user;
-@property (nonatomic, assign) int32_t userType;
-@property (nonatomic, strong) NSString *text;
-@property (nonatomic, strong) NSArray *picIds;        /// Array<NSString>
-@property (nonatomic, strong) NSDictionary *picInfos; /// Dic<NSString, XZWeiboPicture>
-@property (nonatomic, strong) NSArray *urlStruct;     ///< Array<XZWeiboURL>
-@property (nonatomic, assign) BOOL favorited;
-@property (nonatomic, assign) BOOL truncated;
-@property (nonatomic, assign) int32_t repostsCount;
-@property (nonatomic, assign) int32_t commentsCount;
-@property (nonatomic, assign) int32_t attitudesCount;
-@property (nonatomic, assign) int32_t attitudesStatus;
-@property (nonatomic, assign) int32_t recomState;
-@property (nonatomic, strong) NSString *inReplyToScreenName;
-@property (nonatomic, strong) NSString *inReplyToStatusId;
-@property (nonatomic, strong) NSString *inReplyToUserId;
-@property (nonatomic, strong) NSString *source;
-@property (nonatomic, assign) int32_t sourceType;
-@property (nonatomic, assign) int32_t sourceAllowClick;
-@property (nonatomic, strong) NSString *geo;
-@property (nonatomic, strong) NSArray *annotations;
-@property (nonatomic, assign) int32_t bizFeature;
-@property (nonatomic, assign) int32_t mlevel;
-@property (nonatomic, strong) NSString *mblogid;
-@property (nonatomic, strong) NSString *mblogTypeName;
-@property (nonatomic, assign) int32_t mblogType;
-@property (nonatomic, strong) NSString *scheme;
-@property (nonatomic, strong) NSDictionary *visible;
-@property (nonatomic, strong) NSArray *darwinTags;
 @end
 
 NS_ASSUME_NONNULL_END

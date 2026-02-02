@@ -57,11 +57,11 @@ static NSString * _Nonnull XZJSONDictionaryDescription(NSDictionary * const _Uns
 
 static NSString * _Nonnull XZJSONModelDescription(id const _Unsafe model, XZJSONClass * const JSONClass, NSUInteger const indent) {
     if (JSONClass->_sortedProperties.count == 0) {
-        return [NSString stringWithFormat:@"<%@: %p>", JSONClass->_raw, model];
+        return [NSString stringWithFormat:@"<%@: %p>", JSONClass->_raw.raw, model];
     }
     NSString * const padding = [@"" stringByPaddingToLength:indent * 4 withString:@" " startingAtIndex:0];
     
-    NSMutableString * const descriptionM = [NSMutableString stringWithFormat:@"<%@: %p, { \n", JSONClass->_raw, model];
+    NSMutableString * const descriptionM = [NSMutableString stringWithFormat:@"<%@: %p, { \n", JSONClass->_raw.raw, model];
     [JSONClass->_sortedProperties enumerateObjectsUsingBlock:^(XZJSONProperty * _Nonnull property, NSUInteger idx, BOOL * _Nonnull stop) {
         NSString * const key = property->_name;
         NSString * value = nil;

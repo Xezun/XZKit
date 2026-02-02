@@ -1,13 +1,13 @@
 //
-//  Example05XZGHUser.m
+//  Example05XZUser.m
 //  Example
 //
 //  Created by 徐臻 on 2025/2/28.
 //
 
-#import "Example05XZGHUser.h"
+#import "Example05XZUser.h"
 
-@implementation Example05XZGHUser
+@implementation Example05XZUser
 + (NSDictionary<NSString *,id> *)mappingJSONCodingKeys {
     return @{
         @"userID" : @"id",

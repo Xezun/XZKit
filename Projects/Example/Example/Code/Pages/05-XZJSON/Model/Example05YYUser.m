@@ -1,13 +1,13 @@
 //
-//  Example05YYGHUser.m
+//  Example05YYUser.m
 //  Example
 //
 //  Created by 徐臻 on 2025/2/28.
 //
 
-#import "Example05YYGHUser.h"
+#import "Example05YYUser.h"
 
-@implementation Example05YYGHUser
+@implementation Example05YYUser
 + (NSDictionary *)modelCustomPropertyMapper {
     return @{
         @"userID" : @"id",
