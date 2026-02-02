@@ -31,6 +31,10 @@ NS_SWIFT_UI_ACTOR @protocol XZMocoaView <NSObject>
 /// 视图模型。
 ///
 /// 一般情况下，视图的 ViewModel 不应该改变，但是与 B 端不同，在 C 端利用“视图重用机制”可以有效提升性能，因此，此属性被设计为可写的。
+///
+/// 原生组件 UITableViewCell 或 UICollectionViewCell 在进入复用时，会清除原生组件上的数据。
+///
+/// 但是当视图再次复用时，可能并不会改变 viewModel 属性，也就不会触发数据刷新，从而导致原生控件不展示内容，此时需要在 -prepareForReuse 方法中清除 viewModel 属性。
 @property (nonatomic, strong, nullable) __kindof XZMocoaViewModel *viewModel;
 
 /// 由 Cocoa MVC 中的控制器分发过来的 Segue 转场事件。

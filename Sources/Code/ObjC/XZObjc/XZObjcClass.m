@@ -137,21 +137,26 @@
     NSString *methods = nil;
     if (self.methods.count > 0) {
         NSMutableString *stringM = [[NSMutableString alloc] initWithString:@"[\n"];
-        [self.methods enumerateKeysAndObjectsUsingBlock:^(NSString *methodName, XZObjcMethod * _Nonnull obj, BOOL * _Nonnull stop) {
-            NSRange range = NSMakeRange(0, methodName.length);
-            if (obj.arguments.count > 0) {
+        [self.methods enumerateKeysAndObjectsUsingBlock:^(NSString *methodName, XZObjcMethod *method, BOOL * _Nonnull stop) {
+            if (method.arguments.count > 0) {
+                NSRange range = NSMakeRange(0, methodName.length);
                 NSMutableString *methodNameM = [NSMutableString stringWithString:methodName];
-                for (NSInteger i = 0; i < obj.arguments.count; i++) {
-                    range = [methodName rangeOfString:@":" options:kNilOptions range:range];
-                    NSString *argument = [NSString stringWithFormat:@":(%@)%c ", obj.arguments[i].name, (char)('a' + i)];
-                    [methodNameM replaceCharactersInRange:range withString:argument];
-                    methodName = [methodName stringByReplacingCharactersInRange:range withString:argument];
-                    range.location += 1;
-                    range.length = methodName.length - range.location;
+                for (NSInteger i = 0; i < method.arguments.count; i++) {
+                    range = [methodNameM rangeOfString:@":" options:kNilOptions range:range];
+                    NSString *argument = method.arguments[i].name;
+                    if (i < method.arguments.count - 1) {
+                        argument = [NSString stringWithFormat:@":(%@) ", argument];
+                        [methodNameM replaceCharactersInRange:range withString:argument];
+                        range.location += argument.length;
+                        range.length = methodNameM.length - range.location;
+                    } else {
+                        argument = [NSString stringWithFormat:@":(%@)", argument];
+                        [methodNameM replaceCharactersInRange:range withString:argument];
+                    }
                 }
-                methodName = [methodName stringByTrimmingCharactersInSet:NSCharacterSet.whitespaceCharacterSet];
+                methodName = methodNameM;
             }
-            [stringM appendFormat:@"        - (%@)%@, \n", obj.type.name, methodName];
+            [stringM appendFormat:@"        - (%@)%@, \n", method.type.name, methodName];
         }];
         [stringM deleteCharactersInRange:NSMakeRange(stringM.length - 3, 1)];
         [stringM appendString:@"    ]"];

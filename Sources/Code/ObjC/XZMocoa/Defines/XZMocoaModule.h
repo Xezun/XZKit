@@ -100,7 +100,7 @@ NS_SWIFT_NAME(XZMocoaModule.SubmoduleCollection)
 /// MVVM 中 Model 的 class 对象。
 @property (nonatomic, strong, nullable) Class modelClass;
 
-
+/// 视图的实现形式。
 @property (nonatomic, readonly) XZMocoaModuleViewForm viewForm;
 // View by Class MVVM 中 View 的 class 对象。
 @property (nonatomic, strong, nullable) Class viewClass;

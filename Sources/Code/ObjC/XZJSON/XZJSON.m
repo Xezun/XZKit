@@ -17,7 +17,7 @@
     static dispatch_once_t onceToken;
     dispatch_once(&onceToken, ^{
         _dateFormatter = [[NSDateFormatter alloc] init];
-        _dateFormatter.dateFormat = @"yyyy-MM-dd hh:mm:ss";
+        _dateFormatter.dateFormat = @"yyyy-MM-dd HH:mm:ss";
     });
     
     return _dateFormatter;

@@ -508,7 +508,7 @@ static XZObjcType __unsafe_unretained *_basicTypes[CHAR_MAX] = { NULL };
     NSString *padding = [@"" stringByPaddingToLength:indent * 4 withString:@" " startingAtIndex:0];
     
     NSMutableString *description = [[NSMutableString alloc] init];
-    [description appendFormat:@"%@<%@: %p, { \n", padding, [XZObjcType class], self];
+    [description appendFormat:@"<%@: %p, { \n", [XZObjcType class], self];
     [description appendFormat:@"%@    type: %@, \n", padding, NSStringFromXZStdcType(self.type)];
     [description appendFormat:@"%@    name: %@, \n", padding, self.name];
     [description appendFormat:@"%@    encoding: %@, \n", padding, self.encoding];
@@ -526,10 +526,10 @@ static XZObjcType __unsafe_unretained *_basicTypes[CHAR_MAX] = { NULL };
             if (self.members.count > 0) {
                 [description appendFormat:@"%@    members: [ \n", padding];
                 [self.members enumerateObjectsUsingBlock:^(XZObjcType * _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
-                    [description appendFormat:@"%@        %@, \n", padding, [obj descriptionWithIndent:(indent + 1)]];
+                    [description appendFormat:@"%@        %@, \n", padding, [obj descriptionWithIndent:(indent + 2)]];
                 }];
-                [description deleteCharactersInRange:NSMakeRange(description.length - 2, 1)];
-                [description appendFormat:@"%@    ], \n", padding];
+                [description deleteCharactersInRange:NSMakeRange(description.length - 3, 1)];
+                [description appendFormat:@"%@    ] \n", padding];
             } else {
                 [description appendFormat:@"%@    members: [] \n", padding];
             }
@@ -627,8 +627,10 @@ static XZObjcType __unsafe_unretained *_basicTypes[CHAR_MAX] = { NULL };
         XZObjcTypeMake(bool);
         XZObjcTypeMake(void);
         { // c string
-            typedef char *string;
-            XZObjcTypeMake(string);
+            XZStdcType const stdcType = (XZStdcType)_C_CHARPTR;
+            NSString * const encoding = [NSString stringWithFormat:@"%c", _C_CHARPTR];
+            NSString * const name = @"char *";
+            _basicTypes[_C_CHARPTR] = XZObjcRetain([[XZObjcType alloc] initWithType:stdcType name:name encoding:encoding]);
         }
         XZObjcTypeMake(SEL);
         { // pointer

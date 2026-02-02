@@ -70,8 +70,8 @@
     return self;
 }
 
-- (void)viewModelDidChange:(nullable XZMocoaViewModel *)newValue {
-    [super viewModelDidChange:newValue];
+- (void)viewModelDidChange:(nullable XZMocoaViewModel *)oldValue {
+    [super viewModelDidChange:oldValue];
     
     XZMocoaTableViewModel * const _viewModel = self.viewModel;
     _viewModel.delegate = self;

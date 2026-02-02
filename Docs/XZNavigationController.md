@@ -40,7 +40,7 @@ pod 'XZNavigationController'
 > 自定义导航条会展示在原生导航条之上，而不是取代它，不影响原生导航条的功能和特性。
 
 ```swift
-class ExampleHomeViewController: UITableViewController, XZNavigationBarCustomizable {
+class ExampleMainHomeViewController: UITableViewController, XZNavigationBarCustomizable {
     
     var navigationBarIfLoaded = ExampleNavigationBar.init()
     
@@ -50,7 +50,7 @@ class ExampleHomeViewController: UITableViewController, XZNavigationBarCustomiza
 这个协议，只有一个属性需要实现，但是更推荐您使用下面的方式实现，在使用时可以避免类型转换。
 
 ```swift
-class ExampleHomeViewController: UITableViewController, XZNavigationBarCustomizable {
+class ExampleMainHomeViewController: UITableViewController, XZNavigationBarCustomizable {
     
     var navigationBarIfLoaded: XZNavigationBarProtocol? {
         return self.navigationBar

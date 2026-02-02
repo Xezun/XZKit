@@ -80,8 +80,8 @@
     collectionView.dataSource = self;
 }
 
-- (void)viewModelDidChange:(nullable XZMocoaViewModel *)newValue {
-    [super viewModelDidChange:newValue];
+- (void)viewModelDidChange:(nullable XZMocoaViewModel *)oldValue {
+    [super viewModelDidChange:oldValue];
     
     // 刷新视图。
     UICollectionView * const collectionView = self.contentView;

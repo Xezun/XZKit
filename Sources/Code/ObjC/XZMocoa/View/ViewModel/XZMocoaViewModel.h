@@ -60,9 +60,9 @@ NS_SWIFT_UI_ACTOR @interface XZMocoaViewModel : NSObject <XZMocoaViewModel>
 /// 视图模型事件的代理，通常为视图。
 @property (nonatomic, weak) id<XZMocoaViewModelDelegate> delegate;
 
-/// 当前视图模型所属的模块。一般情况下，此属性并非必须。
+/// 当前视图模型所属的模块。
 ///
-/// 对于像 UITableView 或 UICollectionView 等管理子视图的视图来说，管理下级元素需要通过设置此属性获取所属的模块。
+/// 一般情况下，此属性并非必须。但是对于具有管理功能的视图来说，比如 UITableView 或 UICollectionView 等，必须指定模块，才能自动管理子视图。
 @property (nonatomic, strong, nullable) XZMocoaModule *module;
 
 /// 数据。
