@@ -30,7 +30,7 @@
     [super layoutSubviews];
     
     CGRect bounds = self.contentView.bounds;
-    _titleLabel.frame = CGRectMake(20.0, 0, bounds.size.width - 40.0, bounds.size.height);
+    _titleLabel.frame = CGRectMake(16.0, 0, bounds.size.width - 40.0, bounds.size.height);
 }
 
 - (void)viewModelDidChange:(XZMocoaViewModel *)oldValue {

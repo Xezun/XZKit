@@ -48,21 +48,24 @@ typedef id _Nullable (^XZJSONPropertyValueDecoder)(NSDictionary *dictionary);
     
     /// 属性值类型。
     XZStdcType _type;
-    /// 属性值为对象时，对象的类。
+    
+    /// 属性值为对象类型时，对象的 Class 类型。
     Class _Nullable _classType;
+    /// 属性值为对象类型时，其是否遵循 NSCoding 协议。
+    BOOL _conformsToNSCoding;
+    /// 属性值为对象类型时，对象的 Class 类型的具体原生类型。
+    XZJSONCocoaClass _cocoaClass;
+    
     /// 属性为集合对象时，元素的类。
     Class _Nullable _elementType;
-    /// 如果属性值是对象，判断对象的类型是否为已知类型（原生已定义的对象类型）。
-    XZJSONCocoaClass _cocoaClass;
-    /// 如果属性是结构体，判断结构体是否为已知的类型（原生已定义的类型）。
+    
+    /// 属性值为结构体类型时，若结构体为已知的原生类型，此枚举表示具体类型。
     XZStdcStructType _structType;
 
-    /// 是否支持 kvc 键值编码。
+    /// 当前属性是否支持 kvc 键值编码。
     /// - 根据 Key-Value Coding Programming Guide 属性的 setter 方法必须以 `set` 或 `_set` 开头。
     /// - 值为调用 setter 方法可使用的 key 名（调用 getter 方法使用 `_name` 属性)。
     NSString *_isKeyValueCodable;
-    
-    BOOL _conformsNSCoding;
     
     /// 一对一映射：当前属性映射 JSON 键。
     NSString            *_JSONKey;

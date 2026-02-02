@@ -317,7 +317,7 @@ static NSString * const XZJSON_NSCoding_KEY = @"XZJSON_NSCoding_KEY";
                     }
                     case XZStdcTypeObject: {
                         id const value = ((id(*)(id,SEL))objc_msgSend)(model, property->_getter);
-                        if (value && property->_conformsNSCoding) {
+                        if (value && property->_conformsToNSCoding) {
                             [coder encodeObject:value forKey:key];
                         }
                         break;

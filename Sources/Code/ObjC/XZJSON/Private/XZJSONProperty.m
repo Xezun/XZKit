@@ -121,7 +121,7 @@
                 break;
             case XZStdcTypeObject:
                 _isCodable = YES;
-                _conformsNSCoding = [_classType conformsToProtocol:@protocol(NSCoding)];
+                _conformsToNSCoding = [_classType conformsToProtocol:@protocol(NSCoding)];
                 break;
         }
     }
