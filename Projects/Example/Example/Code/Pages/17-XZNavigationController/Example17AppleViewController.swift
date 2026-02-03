@@ -65,9 +65,9 @@ extension Example17AppleViewController: UINavigationControllerDelegate {
     }
 }
 
-class ExampleNativeCustomAnimationController : XZNavigationControllerAnimationController {
+class ExampleNativeCustomAnimationController : XZNavigationAnimationController {
     
-    override func commitAnimation(using context: XZNavigationControllerAnimationContext, completion: @escaping () -> Void) {
+    override func commitAnimation(using context: XZNavigationAnimationContext, completion: @escaping () -> Void) {
         switch self.operation {
         case .push:
             // 新页面入场动画：从底部向上运动

@@ -16,7 +16,7 @@ import ObjectiveC
 /// 2. 边缘返回手势默认开启，但可通过协议 `XZNavigationGestureDrivable` 控制手势导航行为，或开启全屏手势。
 /// 3. 导航控制器原生的自定义转场效果功能，虽然与原生开起来一样，但是如果开发者需自定义转场效果的话，需考虑自定义导航条的转场效果。
 @MainActor public protocol XZNavigationController: UINavigationController {
-
+    
 }
 
 extension XZNavigationController {
@@ -40,7 +40,7 @@ extension XZNavigationController {
                     self.navigationBar.navigationBar = nil
                 }
             } else if newValue {
-                let transitionController = XZNavigationControllerTransitionController.init(for: self)
+                let transitionController = XZNavigationTransitionController.init(for: self)
                 self.transitionController = transitionController
                 
                 self.navigationBar.isCustomizable = true
@@ -62,15 +62,15 @@ extension XZNavigationController {
                         // 在 push 方法调用的过程中，目标控制器没有任何生命周期函数被调用，所以可以在 super.push 之后再执行转场准备工作。
                         let selector = #selector(UINavigationController.pushViewController(_:animated:));
                         let override: MethodType = { `self`, viewController, animated in
-                            xz_navc_navigationController(self, customizeViewController: viewController)
-                            xz_objc_msgSendSuper_void(self, aClass, selector, viewController, animated)
-                            xz_navc_navigationController(self, prepareForTransitioning: animated)
+                            xz_navc_navigationController(self, customizeViewController: viewController);
+                            xz_objc_msgSendSuper_void(self, aClass, selector, viewController, animated);
+                            xz_navc_navigationController(self, prepareForTransitioning: animated);
                         }
                         let exchange = { (selector: Selector) in
                             let exchange: MethodType = { `self`, viewController, animated in
-                                xz_navc_navigationController(self, customizeViewController: viewController)
-                                xz_objc_msgSend_void(self, selector, viewController, animated)
-                                xz_navc_navigationController(self, prepareForTransitioning: animated)
+                                xz_navc_navigationController(self, customizeViewController: viewController);
+                                xz_objc_msgSend_void(self, selector, viewController, animated);
+                                xz_navc_navigationController(self, prepareForTransitioning: animated);
                             }
                             return exchange
                         }
@@ -203,9 +203,9 @@ extension XZNavigationController {
     }
     
     /// 自定义的转场效果：处理全屏手势和自定义导航条的转场。
-    public private(set) var transitionController: XZNavigationControllerTransitionController? {
+    public private(set) var transitionController: XZNavigationTransitionController? {
         get {
-            return objc_getAssociatedObject(self, &_transitionController) as? XZNavigationControllerTransitionController
+            return objc_getAssociatedObject(self, &_transitionController) as? XZNavigationTransitionController
         }
         set {
             objc_setAssociatedObject(self, &_transitionController, newValue, .OBJC_ASSOCIATION_RETAIN_NONATOMIC)

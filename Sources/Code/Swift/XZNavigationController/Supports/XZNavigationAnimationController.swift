@@ -1,5 +1,5 @@
 //
-//  XZNavigationControllerAnimationController.swift
+//  XZNavigationAnimationController.swift
 //  XZKit
 //
 //  Created by Xezun on 2017/7/11.
@@ -9,7 +9,7 @@
 import UIKit
 
 /// 动画控制器，处理了导航控制器的转场过程中的动画效果。
-@MainActor open class XZNavigationControllerAnimationController: NSObject {
+@MainActor open class XZNavigationAnimationController: NSObject {
     
     /// 导航控制器。
     public unowned let navigationController: XZNavigationController
@@ -43,7 +43,7 @@ import UIKit
     /// - Parameters:
     ///   - context: 所有参与转场的视图，以及视图的目标状态。
     ///   - completion: 转场动画完成必须执行的回调。
-    open func commitAnimation(using context: XZNavigationControllerAnimationContext, completion: @escaping () -> Void) {
+    open func commitAnimation(using context: XZNavigationAnimationContext, completion: @escaping () -> Void) {
         let duration = transitionDuration(using: context.transitionContext)
         let options  = animationOptions(using: context)
         
@@ -72,7 +72,7 @@ import UIKit
         })
     }
     
-    open func animationOptions(using context: XZNavigationControllerAnimationContext) -> UIView.AnimationOptions {
+    open func animationOptions(using context: XZNavigationAnimationContext) -> UIView.AnimationOptions {
         if interactiveTransition == nil {
             return .curveEaseInOut
         }
@@ -81,7 +81,7 @@ import UIKit
     
 }
 
-extension XZNavigationControllerAnimationController: UIViewControllerAnimatedTransitioning {
+extension XZNavigationAnimationController: UIViewControllerAnimatedTransitioning {
     
     open func transitionDuration(using transitionContext: UIViewControllerContextTransitioning?) -> TimeInterval {
         return 0.35
@@ -140,21 +140,21 @@ extension XZNavigationControllerAnimationController: UIViewControllerAnimatedTra
         // 阴影
         let shadowFrame2 = containerView.bounds // vc 可能要比 containerView 小，不能直接用 vc 的 frame
         let shadowFrame1 = shadowFrame2.offsetBy(dx: direction * shadowFrame2.width, dy: 0);
-        let shadowView = XZNavigationControllerShadowView.init(frame: shadowFrame1)
+        let shadowView = XZNavigationShadowView.init(frame: shadowFrame1)
         containerView.insertSubview(shadowView, belowSubview: toView)
         
         // 转场容器与导航条不在同一个层次上，坐标系需要转换。
-        let navigationBar = navigationController.navigationBar // 系统导航条。
-        let navBarRect = navigationBar.convert(navigationBar.bounds, to: containerView)
+        let systemNavigationBar = navigationController.navigationBar // 系统导航条。
+        let systemNavigationBarRect = systemNavigationBar.convert(systemNavigationBar.bounds, to: containerView)
         
         // 获取自定义导航条，并配置导航条。
         let fromNavBar = (fromVC as? XZNavigationBarCustomizable)?.navigationBarIfLoaded
         var fromNavBarFrame2: CGRect?
         if let navBar = fromNavBar, !navBar.isHidden {
             // from 导航条使用原始状态
-            let fromNavBarFrame1 = navigationBar.convert(navBar.frame, to: containerView)
+            let fromNavBarFrame1 = systemNavigationBar.convert(navBar.frame, to: containerView)
             navBar.frame = fromNavBarFrame1
-            fromNavBarFrame2 = fromNavBarFrame1.offsetBy(dx: direction * -navBarRect.width / 3.0, dy: 0)
+            fromNavBarFrame2 = fromNavBarFrame1.offsetBy(dx: direction * -systemNavigationBarRect.width / 3.0, dy: 0)
             containerView.insertSubview(navBar, aboveSubview: fromView)
             // 解决因为状态栏变化而造成的导航条布局问题：导航条 frame 没变，但是覆盖状态栏的背景，需要根据状态栏变化。
             navBar.setNeedsLayout()
@@ -163,8 +163,8 @@ extension XZNavigationControllerAnimationController: UIViewControllerAnimatedTra
         let toNavBar = (toVC as? XZNavigationBarCustomizable)?.navigationBarIfLoaded
         var toNavBarFrame2: CGRect?
         if let navBar = toNavBar, !navBar.isHidden {
-            navBar.frame = navBarRect.offsetBy(dx: direction * navBarRect.width, dy: 0)
-            toNavBarFrame2 = navBarRect
+            navBar.frame = systemNavigationBarRect.offsetBy(dx: direction * systemNavigationBarRect.width, dy: 0)
+            toNavBarFrame2 = systemNavigationBarRect
             containerView.insertSubview(navBar, aboveSubview: toView)
             navBar.setNeedsLayout()
         }
@@ -181,23 +181,23 @@ extension XZNavigationControllerAnimationController: UIViewControllerAnimatedTra
         // 原生导航条的位置，在转场结束时，恢复到原始位置。
         var navBarFrame2: CGRect?
         if fromNavBarFrame2 != nil && toNavBarFrame2 != nil {
-            navigationBar.frame = navBarRect.offsetBy(dx: 0, dy: -max(navBarRect.maxY, 200))
+//            systemNavigationBar.frame = systemNavigationBarRect.offsetBy(dx: 0, dy: -max(systemNavigationBarRect.maxY, 200))
         } else if fromNavBarFrame2 != nil {
             // 自定义导航条：显示 => 隐藏
             // 因为原生导航条在最顶层，随 from 退场，也会覆盖在 from 的自定义导航条之上，所以需要上移隐藏
             if navigationController.isNavigationBarHidden {
-                navigationBar.frame = navBarRect.offsetBy(dx: 0, dy: -max(navBarRect.maxY, 200))
+                systemNavigationBar.frame = systemNavigationBarRect.offsetBy(dx: 0, dy: -max(systemNavigationBarRect.maxY, 200))
             } else {
-                navigationBar.frame = navBarRect.offsetBy(dx: direction * navBarRect.width, dy: 0)
-                navBarFrame2 = navBarRect
+                systemNavigationBar.frame = systemNavigationBarRect.offsetBy(dx: direction * systemNavigationBarRect.width, dy: 0)
+                navBarFrame2 = systemNavigationBarRect
             }
         } else if toNavBarFrame2 != nil {
             // 自定义导航条：隐藏 => 显示
             // 因为原生导航条在最顶层，随 to 入场，也会覆盖在 to 的自定义导航条之上，所以需要上移隐藏
             if self.isNavigationBarHidden {
-                navigationBar.frame = navBarRect.offsetBy(dx: 0, dy: -max(navBarRect.maxY, 200))
+                systemNavigationBar.frame = systemNavigationBarRect.offsetBy(dx: 0, dy: -max(systemNavigationBarRect.maxY, 200))
             } else {
-                navBarFrame2 = navBarRect.offsetBy(dx: direction * -navBarRect.width, dy: 0)
+                navBarFrame2 = systemNavigationBarRect.offsetBy(dx: direction * -systemNavigationBarRect.width, dy: 0)
             }
         } else {
             // nav bar is hidden
@@ -217,14 +217,14 @@ extension XZNavigationControllerAnimationController: UIViewControllerAnimatedTra
             }
         }
         
-        let context = XZNavigationControllerAnimationContext.init(transitionContext: transitionContext, fromView: fromView, fromViewFrame: fromViewFrame2, toView: toView, toViewFrame: toViewFrame2, fromNavigationBar: fromNavBar, fromNavigationBarFrame: fromNavBarFrame2, toNavigationBar: toNavBar, toNavigationBarFrame: toNavBarFrame2, navigationBar: navigationBar, navigationBarFrame: navBarFrame2, tabBar: tabBar, tabBarFrame: tabBarFrame2, shadowView: shadowView, shadowViewFrame: shadowFrame2)
+        let context = XZNavigationAnimationContext.init(transitionContext: transitionContext, fromView: fromView, fromViewFrame: fromViewFrame2, toView: toView, toViewFrame: toViewFrame2, fromNavigationBar: fromNavBar, fromNavigationBarFrame: fromNavBarFrame2, toNavigationBar: toNavBar, toNavigationBarFrame: toNavBarFrame2, navigationBar: systemNavigationBar, navigationBarFrame: navBarFrame2, tabBar: tabBar, tabBarFrame: tabBarFrame2, shadowView: shadowView, shadowViewFrame: shadowFrame2)
         
         commitAnimation(using: context, completion: {
             // 删除阴影。
             shadowView.removeFromSuperview()
             
             // 自定义导航条在转场过程中，仅仅作为转场效果出现，将起放置到导航条上有导航控制器处理，所以这里要移除。
-            navigationBar.frame = containerView.convert(navBarRect, to: navigationBar.superview)
+            systemNavigationBar.frame = containerView.convert(systemNavigationBarRect, to: systemNavigationBar.superview)
             fromNavBar?.removeFromSuperview()
             toNavBar?.removeFromSuperview()
             
@@ -265,7 +265,7 @@ extension XZNavigationControllerAnimationController: UIViewControllerAnimatedTra
         // 阴影
         let shadowFrame1 = containerView.bounds
         let shadowFrame2 = shadowFrame1.offsetBy(dx: direction * shadowFrame1.width, dy: 0)
-        let shadowView = XZNavigationControllerShadowView.init(frame: shadowFrame1)
+        let shadowView = XZNavigationShadowView.init(frame: shadowFrame1)
         containerView.insertSubview(shadowView, belowSubview: fromView)
         
         // 转场容器与导航条不在同一个层次上，坐标系需要转换。
@@ -329,7 +329,7 @@ extension XZNavigationControllerAnimationController: UIViewControllerAnimatedTra
             }
         }
         
-        let context = XZNavigationControllerAnimationContext.init(transitionContext: transitionContext, fromView: fromView, fromViewFrame: fromViewFrame2, toView: toView, toViewFrame: toViewFrame2, fromNavigationBar: fromNavBar, fromNavigationBarFrame: fromNavBarFrame2, toNavigationBar: toNavBar, toNavigationBarFrame: toNavBarFrame2, navigationBar: navigationBar, navigationBarFrame: navBarFrame2, tabBar: tabBar, tabBarFrame: tabBarFrame2, shadowView: shadowView, shadowViewFrame: shadowFrame2)
+        let context = XZNavigationAnimationContext.init(transitionContext: transitionContext, fromView: fromView, fromViewFrame: fromViewFrame2, toView: toView, toViewFrame: toViewFrame2, fromNavigationBar: fromNavBar, fromNavigationBarFrame: fromNavBarFrame2, toNavigationBar: toNavBar, toNavigationBarFrame: toNavBarFrame2, navigationBar: navigationBar, navigationBarFrame: navBarFrame2, tabBar: tabBar, tabBarFrame: tabBarFrame2, shadowView: shadowView, shadowViewFrame: shadowFrame2)
         
         commitAnimation(using: context, completion: {
             // 删除阴影。
@@ -350,7 +350,7 @@ extension XZNavigationControllerAnimationController: UIViewControllerAnimatedTra
 }
 
 /// 转场过程中的阴影视图。
-fileprivate class XZNavigationControllerShadowView: UIView {
+fileprivate class XZNavigationShadowView: UIView {
     public override init(frame: CGRect) {
         super.init(frame: frame)
         self.backgroundColor     = UIColor.white
@@ -365,7 +365,7 @@ fileprivate class XZNavigationControllerShadowView: UIView {
 }
 
 
-public class XZNavigationControllerAnimationContext {
+public class XZNavigationAnimationContext {
     
     public class View<T> {
         public let view: T
@@ -385,15 +385,15 @@ public class XZNavigationControllerAnimationContext {
     public let from: View<UIView>
     public let to: View<UIView>
     
-    public let fromNavigationBar: View<XZNavigationBarProtocol>?
-    public let toNavigationBar: View<XZNavigationBarProtocol>?
+    public let fromNavigationBar: View<XZNavigationBar>?
+    public let toNavigationBar: View<XZNavigationBar>?
     
     public let navigationBar: View<UINavigationBar>?
     public let tabBar: View<UITabBar>?
     
     public let shadow: View<UIView>
     
-    init(transitionContext: UIViewControllerContextTransitioning, fromView: UIView, fromViewFrame: CGRect, toView: UIView, toViewFrame: CGRect, fromNavigationBar: XZNavigationBarProtocol?, fromNavigationBarFrame: CGRect?, toNavigationBar: XZNavigationBarProtocol?, toNavigationBarFrame: CGRect?, navigationBar: UINavigationBar?, navigationBarFrame: CGRect?, tabBar: UITabBar?, tabBarFrame: CGRect?, shadowView: UIView, shadowViewFrame: CGRect) {
+    init(transitionContext: UIViewControllerContextTransitioning, fromView: UIView, fromViewFrame: CGRect, toView: UIView, toViewFrame: CGRect, fromNavigationBar: XZNavigationBar?, fromNavigationBarFrame: CGRect?, toNavigationBar: XZNavigationBar?, toNavigationBarFrame: CGRect?, navigationBar: UINavigationBar?, navigationBarFrame: CGRect?, tabBar: UITabBar?, tabBarFrame: CGRect?, shadowView: UIView, shadowViewFrame: CGRect) {
         
         self.transitionContext = transitionContext
         self.from              = View.init(view: fromView, frame: fromViewFrame)
