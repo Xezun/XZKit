@@ -111,7 +111,7 @@ void XZJSONModelEncodeWithCoder(id model, NSCoder *coder) {
                     case XZStdcTypeInt128:
                     case XZStdcTypeUnsignedInt128: {
                         id value = nil;
-                        if (JSONClass->_usesPropertyJSONEncodingMethod) {
+                        if (JSONClass->_usesPropertyEncodingMethod) {
                             value = [model JSONEncodeValueForKey:key];
                         }
                         NSEncodeJSONValueForKey(coder, value, key);
@@ -152,7 +152,7 @@ void XZJSONModelEncodeWithCoder(id model, NSCoder *coder) {
                     case XZStdcTypeBitField:
                     case XZStdcTypeUnion: {
                         id value = nil;
-                        if (JSONClass->_usesPropertyJSONEncodingMethod) {
+                        if (JSONClass->_usesPropertyEncodingMethod) {
                             value = [model JSONEncodeValueForKey:key];
                         }
                         NSEncodeJSONValueForKey(coder, value, key);
@@ -160,7 +160,7 @@ void XZJSONModelEncodeWithCoder(id model, NSCoder *coder) {
                     }
                     case XZStdcTypeStruct: {
                         id<NSCoding> value = nil;
-                        if (JSONClass->_usesPropertyJSONEncodingMethod) {
+                        if (JSONClass->_usesPropertyEncodingMethod) {
                             value = [model JSONEncodeValueForKey:key];
                         }
                         if (value == nil) {
@@ -249,7 +249,7 @@ void XZJSONModelDecodeWithCoder(id model, NSCoder *coder) {
                     }
                     case XZStdcTypeInt128:
                     case XZStdcTypeUnsignedInt128: {
-                        if (!JSONClass->_usesPropertyJSONDecodingMethod) {
+                        if (!JSONClass->_usesPropertyDecodingMethod) {
                             break;
                         }
                         id value = NSDecodeJSONValueForKey(coder, key);
@@ -292,7 +292,7 @@ void XZJSONModelDecodeWithCoder(id model, NSCoder *coder) {
                     case XZStdcTypeArray:
                     case XZStdcTypeBitField:
                     case XZStdcTypeUnion: {
-                        if (!JSONClass->_usesPropertyJSONDecodingMethod) {
+                        if (!JSONClass->_usesPropertyDecodingMethod) {
                             break;
                         }
                         id value = NSDecodeJSONValueForKey(coder, key);
@@ -305,7 +305,7 @@ void XZJSONModelDecodeWithCoder(id model, NSCoder *coder) {
                         id value = NSDecodeJSONValueForKey(coder, key);
                         
                         if (value) {
-                            if (JSONClass->_usesPropertyJSONDecodingMethod) {
+                            if (JSONClass->_usesPropertyDecodingMethod) {
                                 if ([model JSONDecodeValue:value forKey:key]) {
                                     break;
                                 }

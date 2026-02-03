@@ -33,10 +33,10 @@ static id XZJSONKeyFromString(NSString *aString);
             _keyArrayProperties = @[];
             _forwardsDecodingClass = NO;
             _verifiesDecodingValue = NO;
-            _usesJSONDecodingMethod = NO;
-            _usesJSONEncodingMethod = NO;
-            _usesPropertyJSONDecodingMethod = NO;
-            _usesPropertyJSONEncodingMethod = NO;
+            _usesModelDecodingMethod = NO;
+            _usesModelEncodingMethod = NO;
+            _usesPropertyDecodingMethod = NO;
+            _usesPropertyEncodingMethod = NO;
         } else {
             [self update];
         }
@@ -182,7 +182,7 @@ static id XZJSONKeyFromString(NSString *aString);
             // 因为映射为 属性 => JSONKey 所以 property 在遍历过程中不会重复。
             if (JSONKey) {
                 property->_JSONKey = JSONKey;
-                property->_valueDecoder = ^id(NSDictionary *dictionary) {
+                property->_fetchValueFromDictionary = ^id(NSDictionary *dictionary) {
                     return [dictionary valueForKey:JSONKey];
                 };
                 // 如果 JSONKey 已有映射的属性，那么创建该 JSONKey 的映射链表
@@ -193,7 +193,7 @@ static id XZJSONKeyFromString(NSString *aString);
                 // 不与 key 放同一个集合，因为有可能 key 与 keyPath 相同
                 // 如果 JSONKeyPath 已有映射的属性，那么创建该 JSONKeyPath 的映射链表
                 NSString * const keyPath = [JSONKeyPath componentsJoinedByString:@"."];
-                property->_valueDecoder = ^id(NSDictionary *dictionary) {
+                property->_fetchValueFromDictionary = ^id(NSDictionary *dictionary) {
                     return [dictionary valueForKeyPath:keyPath];
                 };
                 [keyPathProperties addObject:property];
@@ -213,7 +213,7 @@ static id XZJSONKeyFromString(NSString *aString);
                         }];
                     }
                 }
-                property->_valueDecoder = ^id(NSDictionary *dictionary) {
+                property->_fetchValueFromDictionary = ^id(NSDictionary *dictionary) {
                     for (XZJSONPropertyValueDecoder valueDecoder in valueDecoders) {
                         id const JSONValue = valueDecoder(dictionary);
                         if (JSONValue) {
@@ -233,7 +233,7 @@ static id XZJSONKeyFromString(NSString *aString);
     // 属性名映射 JSON 键
     [allProperties enumerateKeysAndObjectsUsingBlock:^(NSString *name, XZJSONProperty *property, BOOL *stop) {
         property->_JSONKey = name;
-        property->_valueDecoder = ^id(NSDictionary *dictionary) {
+        property->_fetchValueFromDictionary = ^id(NSDictionary *dictionary) {
             return [dictionary valueForKey:name];
         };
         property->_next = keyProperties[name];
@@ -248,11 +248,11 @@ static id XZJSONKeyFromString(NSString *aString);
     _forwardsDecodingClass = (conformsToXZJSONCoding && [rawClass respondsToSelector:@selector(forwardingClassForJSONDictionary:)]);
     _verifiesDecodingValue = (conformsToXZJSONCoding && [rawClass respondsToSelector:@selector(canDecodeFromJSONDictionary:)]);
     
-    _usesJSONDecodingMethod = conformsToXZJSONCoding && [rawClass instancesRespondToSelector:@selector(decodeFromJSONDictionary:)];
-    _usesJSONEncodingMethod = conformsToXZJSONCoding && [rawClass instancesRespondToSelector:@selector(encodeIntoJSONDictionary:)];
+    _usesModelDecodingMethod = conformsToXZJSONCoding && [rawClass instancesRespondToSelector:@selector(decodeFromJSONDictionary:)];
+    _usesModelEncodingMethod = conformsToXZJSONCoding && [rawClass instancesRespondToSelector:@selector(encodeIntoJSONDictionary:)];
     
-    _usesPropertyJSONDecodingMethod = conformsToXZJSONCoding && [rawClass instancesRespondToSelector:@selector(JSONDecodeValue:forKey:)];
-    _usesPropertyJSONEncodingMethod = conformsToXZJSONCoding && [rawClass instancesRespondToSelector:@selector(JSONEncodeValueForKey:)];
+    _usesPropertyDecodingMethod = conformsToXZJSONCoding && [rawClass instancesRespondToSelector:@selector(JSONDecodeValue:forKey:)];
+    _usesPropertyEncodingMethod = conformsToXZJSONCoding && [rawClass instancesRespondToSelector:@selector(JSONEncodeValueForKey:)];
 }
 
 

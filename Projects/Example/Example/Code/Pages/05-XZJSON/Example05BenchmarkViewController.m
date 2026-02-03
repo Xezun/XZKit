@@ -11,97 +11,73 @@
 @import XZKit;
 @import YYModel;
 
-@interface Example05BenchmarkViewController ()
+@interface Example05BenchmarkOperation : NSOperation
++ (Example05BenchmarkOperation *)operationWithBlock:(dispatch_block_t)block message:(NSString *)message duration:(NSTimeInterval)duration delegate:(UIViewController *)delegate;
+@end
+
+@interface Example05BenchmarkViewController () {
+    NSOperationQueue *_queue;
+}
 @property (nonatomic, weak) IBOutlet UILabel *textLabel;
 @property (nonatomic, weak) IBOutlet UIButton *markButton;
-@property (nonatomic, weak) IBOutlet UIButton *timeButton;
+
 @end
 
 @implementation Example05BenchmarkViewController
 
 - (void)viewDidLoad {
     [super viewDidLoad];
+    
+    _queue = [[NSOperationQueue alloc] init];
+    _queue.qualityOfService = NSQualityOfServiceUserInteractive;
+    _queue.maxConcurrentOperationCount = 1;
+    
+    [self addText:[NSString stringWithFormat:@"Device: %@\n", UIDevice.currentDevice.xz_productName]];
+    [self addText:[NSString stringWithFormat:@"System: %@ %@\n", UIDevice.currentDevice.systemName, UIDevice.currentDevice.systemVersion]];
+    [self addLine];
+    
+    switch (_action) {
+        case Example05BenchmarkActionMark:
+            _textLabel.text = @"本功能移植自 YYModel\n";
+            break;
+        case Example05BenchmarkActionTime:
+            _textLabel.text = @"执行定量代码，利用Instruments查找耗时操作\n";
+            break;
+        default:
+            break;
+    }
+    [self addLine];
+}
+
+- (void)dispatchOperation:(dispatch_block_t)block message:(NSString *)message duration:(NSTimeInterval)duration {
+    [_queue addOperation:[Example05BenchmarkOperation operationWithBlock:block message:message duration:duration delegate:self]];
 }
 
 - (IBAction)markButtonAction:(UIButton *)sender {
     self.markButton.enabled = NO;
-    self.timeButton.enabled = NO;
-    _textLabel.text = [NSString stringWithFormat:@"Device: %@\n\n", UIDevice.currentDevice.xz_productName];
     
-    [self xz_showToast:[XZToast loadingToast:@"请稍后"] duration:0 completion:nil];
+    switch (self.action) {
+        case Example05BenchmarkActionMark:
+            [self benchmarkGithubUser];
+            [self benchmarkWeiboStatus];
+            break;
+        case Example05BenchmarkActionTime:
+            [self timeProfileUser];
+            break;
+        default:
+            break;
+    }
     
-    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(1.0 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
-        [self benchmarkGithubUser];
-        [self benchmarkWeiboStatus];
-        
-        [self testRobustness];
-        
-        dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(1.0 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
-            self.markButton.enabled = YES;
-            self.timeButton.enabled = YES;
-            
-            XZLog(@"%@", self.textLabel.text);
-        });
-    });
-}
-
-- (IBAction)timeButtonAction:(UIButton *)sender {
-    self.markButton.enabled = NO;
-    self.timeButton.enabled = NO;
-    _textLabel.text = @"请打开 Instruments Time Profiler 分析耗时操作！\n\n为避免干扰，本操作没有 Toast 提示。";
-    
-    NSString *path = [[NSBundle mainBundle] pathForResource:@"Example05GHUser" ofType:@"json"];
-    NSData *data = [NSData dataWithContentsOfFile:path];
-    NSDictionary *json = [NSJSONSerialization JSONObjectWithData:data options:0 error:nil];
-    
-    int count = 10000;
-    void (^yyTest)(void) = ^{
-        NSMutableArray *holder = [NSMutableArray arrayWithCapacity:count * 2];
-        @autoreleasepool {
-            for (int i = 0; i < count; i++) {
-                Example05YYUser *user = [Example05YYUser yy_modelWithJSON:json];
-                [holder addObject:user];
-                
-                // YYModel
-                NSDictionary *json = [user yy_modelToJSONObject];
-                [holder addObject:json];
-            }
-        }
-    };
-    
-    void (^xzTest)(void) = ^{
-        NSMutableArray *holder = [NSMutableArray arrayWithCapacity:count * 2];
-        @autoreleasepool {
-            for (int i = 0; i < count; i++) {
-                Example05XZUser *user = [XZJSON decode:json options:kNilOptions class:[Example05XZUser class]];
-                [holder addObject:user];
-                
-                NSMutableDictionary *json = [NSMutableDictionary dictionaryWithCapacity:64];
-                [XZJSON model:user encodeIntoDictionary:json];
-                [holder addObject:json];
-            }
-        }
-    };
-    
-    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(1.0 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
-        yyTest();
-        
-        dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(1.0 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
-            xzTest();
-            
-            dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(1.0 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
-                self.markButton.enabled = YES;
-                self.timeButton.enabled = YES;
-            });
-        });
-    });
+    [self dispatchOperation:^{
+        self.markButton.enabled = YES;
+    } message:nil duration:2.0];
 }
 
 - (void)addText:(NSString *)text {
     _textLabel.text = [_textLabel.text stringByAppendingString:text];
 }
 
-- (void)benchmarkHeader:(NSString *)name count:(NSInteger)count {
+- (void)addBenchmarkHeader:(NSString *)name count:(NSInteger)count {
     [self addText:@"------------------------------------\n"];
     [self addText:[NSString stringWithFormat:@"Benchmark: %@ (%ld times)  \n", name, count]];
     [self addText:@"------------------------------------\n"];
@@ -109,7 +85,7 @@
     [self addText:@"--------|--------|--------|---------\n"];
 }
 
-- (void)benchmarkResult:(NSString *)text decode:(NSTimeInterval)duration1 encode:(NSTimeInterval)duration2 archive:(NSTimeInterval)duration3 {
+- (void)addBenchmarkResult:(NSString *)text decode:(NSTimeInterval)duration1 encode:(NSTimeInterval)duration2 archive:(NSTimeInterval)duration3 {
     NSString *string1 = [NSString stringWithFormat:@"%-7s", text.UTF8String];
     NSString *string2 = duration1 <= 0 ? @"        " : [NSString stringWithFormat:@"%6.2f", duration1];
     NSString *string3 = duration2 <= 0 ? @"        " : [NSString stringWithFormat:@"%6.2f", duration2];
@@ -118,151 +94,328 @@
     [self addText:string];
 }
 
-- (void)benchMarkFooter {
+- (void)addBenchMarkFooter {
     [self addText:@"------------------------------------\n"];
     [self addText:@"\n"];
 }
 
-- (void)benchmarkGithubUser {
-    /// get json data
-    NSString *path = [[NSBundle mainBundle] pathForResource:@"Example05GHUser" ofType:@"json"];
+- (void)addLine {
+    [self addText:@"------------------------------------\n"];
+}
+
+- (void)checkXZUserEncode {
+    
+}
+
+- (void)checkXZUserDecode {
+    NSString *path = [[NSBundle mainBundle] pathForResource:@"Example05User" ofType:@"json"];
     NSData *data = [NSData dataWithContentsOfFile:path];
-    NSDictionary *json = [NSJSONSerialization JSONObjectWithData:data options:0 error:nil];
-    
-    [self addText:@"------------------------------------\n"];
-    {
-        if ([self checkGHUser:(id)[Example05YYUser yy_modelWithJSON:json]]) {
-            [self addText:@"YYModel decode verify: pass\n"];
-        } else {
-            [self addText:@"YYModel decode verify: fail\n"];
-        }
-        if ([self checkGHUser:[XZJSON decode:json options:kNilOptions class:[Example05XZUser class]]]) {
-            [self addText:@"XZJSON  decode verify: pass\n"];
-        } else {
-            [self addText:@"XZJSON  decode verify: fail\n"];
-        };
+    NSDictionary * const _userDictionary = [NSJSONSerialization JSONObjectWithData:data options:0 error:nil];
+    if ([self checkGHUser:(id)[Example05YYUser yy_modelWithJSON:_userDictionary]]) {
+        [self addText:@"YYModel decode verify: pass\n"];
+    } else {
+        [self addText:@"YYModel decode verify: fail\n"];
     }
-    [self addText:@"------------------------------------\n"];
+}
+
+- (void)checkYYUserEncode {
     
+}
+
+- (void)checkYYUserDecode {
+    NSString *path = [[NSBundle mainBundle] pathForResource:@"Example05User" ofType:@"json"];
+    NSData *data = [NSData dataWithContentsOfFile:path];
+    NSDictionary * const _userDictionary = [NSJSONSerialization JSONObjectWithData:data options:0 error:nil];
+    if ([self checkGHUser:[XZJSON decode:_userDictionary options:kNilOptions class:[Example05XZUser class]]]) {
+        [self addText:@"XZJSON  decode verify: pass\n"];
+    } else {
+        [self addText:@"XZJSON  decode verify: fail\n"];
+    }
+}
+
+- (void)benchmarkGithubUser {
     int const count = 10000;
-    [self benchmarkHeader:@"GHUser" count:count];
+    NSString *path = [[NSBundle mainBundle] pathForResource:@"Example05User" ofType:@"json"];
+    NSData *data = [NSData dataWithContentsOfFile:path];
+    NSDictionary * const _userDictionary = [NSJSONSerialization JSONObjectWithData:data options:0 error:nil];
     
-    /// Benchmark
-    NSTimeInterval begin, end;
-    
-    /// warm up (NSDictionary's hot cache, and JSON to model framework cache)
-    @autoreleasepool {
-        for (int i = 0; i < count; i++) {
+    [self dispatchOperation:^{
+        [self addBenchmarkHeader:@"User" count:count];
+        
+        /// warm up (NSDictionary's hot cache, and JSON to model framework cache)
+        @autoreleasepool {
             // YYModel
-            [Example05YYUser yy_modelWithJSON:json];
+            [Example05YYUser yy_modelWithJSON:_userDictionary];
             
             // XZJSON
-            [XZJSON decode:json options:kNilOptions class:[Example05XZUser class]];
+            [XZJSON decode:_userDictionary options:kNilOptions class:[Example05XZUser class]];
         }
-    }
-    /// warm up holder
-    NSMutableArray *holder = [NSMutableArray new];
-    for (int i = 0; i < 1800; i++) {
-        [holder addObject:[NSDate new]];
-    }
-    [holder removeAllObjects];
+    } message:@"测评开始" duration:0.0];
     
-    [self xz_hideToast:nil];
-    
-    NSTimeInterval duration1 = 0;
-    NSTimeInterval duration2 = 0;
-    NSTimeInterval duration3 = 0;
-    
-    /*------------------- JSON Serialization -------------------*/
-    {
-        [holder removeAllObjects];
-        begin = CACurrentMediaTime();
-        @autoreleasepool {
-            for (int i = 0; i < count; i++) {
-                NSDictionary *json = [NSJSONSerialization JSONObjectWithData:data options:0 error:nil];
-                [holder addObject:json];
-            }
-        }
-        end = CACurrentMediaTime();
-        duration1 = (end - begin) * 1000;
-        
-        [holder removeAllObjects];
-        begin = CACurrentMediaTime();
-        @autoreleasepool {
-            for (int i = 0; i < count; i++) {
-                NSData *data = [NSJSONSerialization dataWithJSONObject:json options:kNilOptions error:nil];
-                [holder addObject:data];
-            }
-        }
-        end = CACurrentMediaTime();
-        duration2 = (end - begin) * 1000;
-        
-        [self benchmarkResult:@"JSON" decode:duration1 encode:duration2 archive:0];
-    }
+    NSMutableArray * const holder = [NSMutableArray arrayWithCapacity:count];
+    NSTimeInterval __block duration1 = 0;
+    NSTimeInterval __block duration2 = 0;
+    NSTimeInterval __block duration3 = 0;
     
     /*------------------- YYModel -------------------*/
     {
-        [holder removeAllObjects];
-        begin = CACurrentMediaTime();
-        @autoreleasepool {
-            for (int i = 0; i < count; i++) {
-                Example05YYUser *user = [Example05YYUser yy_modelWithJSON:json];
-                [holder addObject:user];
+        [self dispatchOperation:^{
+            [holder removeAllObjects];
+            NSTimeInterval begin = CACurrentMediaTime();
+            @autoreleasepool {
+                for (int i = 0; i < count; i++) {
+                    Example05YYUser *user = [Example05YYUser yy_modelWithJSON:_userDictionary];
+                    [holder addObject:user];
+                }
             }
+            NSTimeInterval end = CACurrentMediaTime();
+            duration1 = (end - begin) * 1000;
+        } message:@"YYModel：数据转模型..." duration:0.0];
+        
+        Example05YYUser *user = [Example05YYUser yy_modelWithJSON:_userDictionary];
+        
+        [self dispatchOperation:^{
+            [holder removeAllObjects];
+            NSTimeInterval begin = CACurrentMediaTime();
+            @autoreleasepool {
+                for (int i = 0; i < count; i++) {
+                    NSDictionary *json = [user yy_modelToJSONObject];
+                    [holder addObject:json];
+                }
+            }
+            NSTimeInterval end = CACurrentMediaTime();
+            duration2 = (end - begin) * 1000;
+        } message:@"YYModel：模型转数据..." duration:0.0];
+        
+        [self dispatchOperation:^{
+            [holder removeAllObjects];
+            NSTimeInterval begin = CACurrentMediaTime();
+            @autoreleasepool {
+                for (int i = 0; i < count; i++) {
+                    NSData *data = [NSKeyedArchiver archivedDataWithRootObject:user requiringSecureCoding:NO error:nil];
+                    [holder addObject:data];
+                }
+            }
+            NSTimeInterval end = CACurrentMediaTime();
+            duration3 = (end - begin) * 1000;
+        } message:@"YYModel：模型归档..." duration:0.0];
+        
+        [self dispatchOperation:^{
+            [self addBenchmarkResult:@"YYModel" decode:duration1 encode:duration2 archive:duration3];
+        } message:@"YYModel：统计数据中..." duration:0];
+    }
+    
+    /*------------------- XZJSON -------------------*/
+    {
+        
+        [self dispatchOperation:^{
+            [holder removeAllObjects];
+            NSTimeInterval begin = CACurrentMediaTime();
+            @autoreleasepool {
+                for (int i = 0; i < count; i++) {
+                    Example05XZUser *user = [XZJSON decode:_userDictionary options:kNilOptions class:[Example05XZUser class]];
+                    [holder addObject:user];
+                }
+            }
+            NSTimeInterval end = CACurrentMediaTime();
+            duration1 = (end - begin) * 1000;
+        } message:@"XZJSON：数据转模型..." duration:0.0];
+        
+        Example05XZUser *user = [XZJSON decode:_userDictionary options:kNilOptions class:[Example05XZUser class]];
+        
+        [self dispatchOperation:^{
+            [holder removeAllObjects];
+            NSTimeInterval begin = CACurrentMediaTime();
+            @autoreleasepool {
+                for (int i = 0; i < count; i++) {
+                    NSMutableDictionary *json = [NSMutableDictionary dictionaryWithCapacity:64];
+                    [XZJSON model:user encodeIntoDictionary:json];
+                    [holder addObject:json];
+                }
+            }
+            NSTimeInterval end = CACurrentMediaTime();
+            duration2 = (end - begin) * 1000;
+        } message:@"XZJSON：模型转数据..." duration:0.0];
+        
+        [self dispatchOperation:^{
+            [holder removeAllObjects];
+            NSTimeInterval begin = CACurrentMediaTime();
+            @autoreleasepool {
+                for (int i = 0; i < count; i++) {
+                    NSData *data = [NSKeyedArchiver archivedDataWithRootObject:user requiringSecureCoding:NO error:nil];
+                    [holder addObject:data];
+                }
+            }
+            NSTimeInterval end = CACurrentMediaTime();
+            duration3 = (end - begin) * 1000;
+        } message:@"XZJSON：模型归档..." duration:0.0];
+        
+        [self dispatchOperation:^{
+            [self addBenchmarkResult:@"XZJSON" decode:duration1 encode:duration2 archive:duration3];
+        } message:@"XZJSON：数据统计中..." duration:2.0];
+    }
+    
+    [self dispatchOperation:^{
+        [self addBenchMarkFooter];
+    } message:@"测评完成" duration:2.0];
+}
+
+- (void)benchmarkWeiboStatus {
+    int const count = 1000;
+    
+    /// get json data
+    NSString *path = [[NSBundle mainBundle] pathForResource:@"Example05WeiboStatus" ofType:@"json"];
+    NSData *data = [NSData dataWithContentsOfFile:path];
+    NSDictionary *json = [NSJSONSerialization JSONObjectWithData:data options:0 error:nil];
+    
+    /// warm up holder
+    NSMutableArray * const holder = [NSMutableArray arrayWithCapacity:count];
+    
+    [self dispatchOperation:^{
+        [self addBenchmarkHeader:@"WeiboStatus" count:count];
+        @autoreleasepool {
+            [Example05YYWeiboStatus yy_modelWithJSON:json];
+            [XZJSON decode:json options:kNilOptions class:[Example05XZWeiboStatus class]];
         }
-        end = CACurrentMediaTime();
-        duration1 = (end - begin) * 1000;
+    } message:@"评测开始" duration:0];
+    
+    NSTimeInterval __block duration1 = 0;
+    NSTimeInterval __block duration2 = 0;
+    NSTimeInterval __block duration3 = 0;
+    
+    /*------------------- YYModel -------------------*/
+    {
+        [self dispatchOperation:^{
+            [holder removeAllObjects];
+            NSTimeInterval begin = CACurrentMediaTime();
+            @autoreleasepool {
+                for (int i = 0; i < count; i++) {
+                    Example05YYWeiboStatus *feed = [Example05YYWeiboStatus yy_modelWithJSON:json];
+                    [holder addObject:feed];
+                }
+            }
+            NSTimeInterval end = CACurrentMediaTime();
+            duration1 = (end - begin) * 1000;
+        } message:@"YYModel：数据转模型..." duration:0];
         
+        Example05YYWeiboStatus *feed = [Example05YYWeiboStatus yy_modelWithJSON:json];
+        
+        [self dispatchOperation:^{
+            [holder removeAllObjects];
+            NSTimeInterval begin = CACurrentMediaTime();
+            @autoreleasepool {
+                for (int i = 0; i < count; i++) {
+                    NSDictionary *json = [feed yy_modelToJSONObject];
+                    [holder addObject:json];
+                }
+            }
+            NSTimeInterval end = CACurrentMediaTime();
+            duration2 = (end - begin) * 1000;
+        } message:@"YYModel：模型转数据..." duration:0];
+        
+        [self dispatchOperation:^{
+            [holder removeAllObjects];
+            NSTimeInterval begin = CACurrentMediaTime();
+            @autoreleasepool {
+                for (int i = 0; i < count; i++) {
+                    NSData *data = [NSKeyedArchiver archivedDataWithRootObject:feed requiringSecureCoding:NO error:nil];
+                    [holder addObject:data];
+                }
+            }
+            NSTimeInterval end = CACurrentMediaTime();
+            duration3 = (end - begin) * 1000;
+        } message:@"YYModel：模型归档..." duration:0];
+        
+        [self dispatchOperation:^{
+            [self addBenchmarkResult:@"YYModel" decode:duration1 encode:duration2 archive:duration3];
+        } message:@"YYModel：数据统计中..." duration:0];
+    }
+
+    /*------------------- XZJSON -------------------*/
+    {
+        [self dispatchOperation:^{
+            [holder removeAllObjects];
+            NSTimeInterval begin = CACurrentMediaTime();
+            @autoreleasepool {
+                for (int i = 0; i < count; i++) {
+                    Example05XZWeiboStatus *feed = [XZJSON decode:json options:kNilOptions class:[Example05XZWeiboStatus class]];
+                    [holder addObject:feed];
+                }
+            }
+            NSTimeInterval end = CACurrentMediaTime();
+            duration1 = (end - begin) * 1000;
+        } message:@"XZJSON：数据转模型..." duration:0];
+        
+        Example05XZWeiboStatus *feed = [XZJSON decode:json options:kNilOptions class:[Example05XZWeiboStatus class]];
+        
+        [self dispatchOperation:^{
+            [holder removeAllObjects];
+            NSTimeInterval begin = CACurrentMediaTime();
+            @autoreleasepool {
+                for (int i = 0; i < count; i++) {
+                    NSMutableDictionary *json = [NSMutableDictionary dictionary];
+                    [XZJSON model:feed encodeIntoDictionary:json];
+                    [holder addObject:json];
+                }
+            }
+            NSTimeInterval end = CACurrentMediaTime();
+            duration2 = (end - begin) * 1000;
+        } message:@"XZJSON：模型转数据..." duration:0];
+        
+        [self dispatchOperation:^{
+            [holder removeAllObjects];
+            NSTimeInterval begin = CACurrentMediaTime();
+            @autoreleasepool {
+                for (int i = 0; i < count; i++) {
+                    NSData *data = [NSKeyedArchiver archivedDataWithRootObject:feed requiringSecureCoding:NO error:nil];
+                    [holder addObject:data];
+                }
+            }
+            NSTimeInterval end = CACurrentMediaTime();
+            duration3 = (end - begin) * 1000;
+        } message:@"XZJSON：模型归档..." duration:0];
+        
+        [self dispatchOperation:^{
+            [self addBenchmarkResult:@"XZJSON" decode:duration1 encode:duration2 archive:duration3];
+        } message:@"XZJSON：统计分析中..." duration:0];
+    }
+    
+    [self dispatchOperation:^{
+        [self addBenchMarkFooter];
+    } message:@"评测完成" duration:2.0];
+}
+
+- (void)timeProfileUser {
+    
+    NSString *path = [[NSBundle mainBundle] pathForResource:@"Example05User" ofType:@"json"];
+    NSData *data = [NSData dataWithContentsOfFile:path];
+    NSDictionary *json = [NSJSONSerialization JSONObjectWithData:data options:0 error:nil];
+    
+    int count = 10000;
+    void (^YYEncodingTest)(void) = ^{
+        NSMutableArray *holder = [NSMutableArray arrayWithCapacity:count * 2];
         Example05YYUser *user = [Example05YYUser yy_modelWithJSON:json];
-        if (user.userID == 0) NSLog(@"error!");
-        if (!user.login) NSLog(@"error!");
-        if (!user.htmlURL) NSLog(@"error");
-        
-        [holder removeAllObjects];
-        begin = CACurrentMediaTime();
         @autoreleasepool {
             for (int i = 0; i < count; i++) {
                 NSDictionary *json = [user yy_modelToJSONObject];
                 [holder addObject:json];
             }
         }
-        end = CACurrentMediaTime();
-        duration2 = (end - begin) * 1000;
-        
-        [holder removeAllObjects];
-        begin = CACurrentMediaTime();
-        @autoreleasepool {
-            for (int i = 0; i < count; i++) {
-                NSData *data = [NSKeyedArchiver archivedDataWithRootObject:user requiringSecureCoding:NO error:nil];
-                [holder addObject:data];
-            }
-        }
-        end = CACurrentMediaTime();
-        duration3 = (end - begin) * 1000;
-        
-        [self benchmarkResult:@"YYModel" decode:duration1 encode:duration2 archive:duration3];
-    }
+    };
     
-    /*------------------- XZJSON -------------------*/
-    {
-        [holder removeAllObjects];
-        begin = CACurrentMediaTime();
+    void (^YYDecodingTest)(void) = ^{
+        NSMutableArray *holder = [NSMutableArray arrayWithCapacity:count * 2];
         @autoreleasepool {
             for (int i = 0; i < count; i++) {
-                Example05XZUser *user = [XZJSON decode:json options:kNilOptions class:[Example05XZUser class]];
+                Example05YYUser *user = [Example05YYUser yy_modelWithJSON:json];
                 [holder addObject:user];
             }
         }
-        end = CACurrentMediaTime();
-        duration1 = (end - begin) * 1000;
-        
+    };
+    
+    void (^XZEncodingTest)(void) = ^{
+        NSMutableArray *holder = [NSMutableArray arrayWithCapacity:count * 2];
         Example05XZUser *user = [XZJSON decode:json options:kNilOptions class:[Example05XZUser class]];
-        if (user.userID == 0) NSLog(@"error!");
-        if (!user.login) NSLog(@"error!");
-        if (!user.htmlURL) NSLog(@"error");
-        
-        [holder removeAllObjects];
-        begin = CACurrentMediaTime();
         @autoreleasepool {
             for (int i = 0; i < count; i++) {
                 NSMutableDictionary *json = [NSMutableDictionary dictionaryWithCapacity:64];
@@ -270,159 +423,37 @@
                 [holder addObject:json];
             }
         }
-        end = CACurrentMediaTime();
-        
-        NSMutableDictionary *json = [NSMutableDictionary dictionary];
-        [XZJSON model:user encodeIntoDictionary:json];
-        if ([NSJSONSerialization isValidJSONObject:json]) {
-            duration2 = (end - begin) * 1000;
-        } else {
-            duration2 = 0;
-        }
-        
-        [holder removeAllObjects];
-        begin = CACurrentMediaTime();
+    };
+    
+    void (^XZDecodingTest)(void) = ^{
+        NSMutableArray *holder = [NSMutableArray arrayWithCapacity:count * 2];
         @autoreleasepool {
             for (int i = 0; i < count; i++) {
-                NSData *data = [NSKeyedArchiver archivedDataWithRootObject:user requiringSecureCoding:NO error:nil];
-                [holder addObject:data];
+                Example05XZUser *user = [XZJSON decode:json options:kNilOptions class:[Example05XZUser class]];
+                [holder addObject:user];
             }
         }
-        end = CACurrentMediaTime();
-        duration3 = (end - begin) * 1000;
-        
-        [self benchmarkResult:@"XZJSON" decode:duration1 encode:duration2 archive:duration3];
-    }
+    };
     
-    [self benchMarkFooter];
-}
-
-- (void)benchmarkWeiboStatus {
-    int const count = 1000;
-    [self benchmarkHeader:@"WeiboModel" count:count];
-    
-    /// get json data
-    NSString *path = [[NSBundle mainBundle] pathForResource:@"Example05Weibo" ofType:@"json"];
-    NSData *data = [NSData dataWithContentsOfFile:path];
-    NSDictionary *json = [NSJSONSerialization JSONObjectWithData:data options:0 error:nil];
-    
-    /// Benchmark
-    NSTimeInterval begin, end;
-    
-    /// warm up (NSDictionary's hot cache, and JSON to model framework cache)
-    @autoreleasepool {
-        for (int i = 0; i < count * 2; i++) {
-            // YYModel
-            [Example05YYWeiboStatus yy_modelWithJSON:json];
+    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(1.0 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+        YYDecodingTest();
         
-            // XZJSON
-            [XZJSON decode:json options:kNilOptions class:[Example05XZWeiboStatus class]];
-        }
-    }
-    
-    /// warm up holder
-    NSMutableArray *holder = [NSMutableArray new];
-    for (int i = 0; i < count; i++) {
-        [holder addObject:[NSData new]];
-    }
-    [holder removeAllObjects];
-    
-    NSTimeInterval duration1 = 0;
-    NSTimeInterval duration2 = 0;
-    NSTimeInterval duration3 = 0;
-    
-    /*------------------- YYModel -------------------*/
-    {
-        [holder removeAllObjects];
-        begin = CACurrentMediaTime();
-        @autoreleasepool {
-            for (int i = 0; i < count; i++) {
-                Example05YYWeiboStatus *feed = [Example05YYWeiboStatus yy_modelWithJSON:json];
-                [holder addObject:feed];
-            }
-        }
-        end = CACurrentMediaTime();
-        duration1 = (end - begin) * 1000;
-        
-        Example05YYWeiboStatus *feed = [Example05YYWeiboStatus yy_modelWithJSON:json];
-        [holder removeAllObjects];
-        begin = CACurrentMediaTime();
-        @autoreleasepool {
-            for (int i = 0; i < count; i++) {
-                NSDictionary *json = [feed yy_modelToJSONObject];
-                [holder addObject:json];
-            }
-        }
-        end = CACurrentMediaTime();
-        if ([NSJSONSerialization isValidJSONObject:[feed yy_modelToJSONObject]]) {
-            duration2 = (end - begin) * 1000;
-        } else {
-            duration2 = 0;
-        }
-        
-        [holder removeAllObjects];
-        begin = CACurrentMediaTime();
-        @autoreleasepool {
-            for (int i = 0; i < count; i++) {
-                NSData *data = [NSKeyedArchiver archivedDataWithRootObject:feed requiringSecureCoding:NO error:nil];
-                [holder addObject:data];
-            }
-        }
-        end = CACurrentMediaTime();
-        duration3 = (end - begin) * 1000;
-        
-        [self benchmarkResult:@"YYModel" decode:duration1 encode:duration2 archive:duration3];
-    }
-
-    /*------------------- XZJSON -------------------*/
-    {
-        [holder removeAllObjects];
-        begin = CACurrentMediaTime();
-        @autoreleasepool {
-            for (int i = 0; i < count; i++) {
-                Example05XZWeiboStatus *feed = [XZJSON decode:json options:kNilOptions class:[Example05XZWeiboStatus class]];
-                [holder addObject:feed];
-            }
-        }
-        end = CACurrentMediaTime();
-        duration1 = (end - begin) * 1000;
-        
-        Example05XZWeiboStatus *feed = [XZJSON decode:json options:kNilOptions class:[Example05XZWeiboStatus class]];
-        [holder removeAllObjects];
-        begin = CACurrentMediaTime();
-        @autoreleasepool {
-            for (int i = 0; i < count; i++) {
-                NSMutableDictionary *json = [NSMutableDictionary dictionary];
-                [XZJSON model:feed encodeIntoDictionary:json];
-                [holder addObject:json];
-            }
-        }
-        end = CACurrentMediaTime();
-        
-        NSMutableDictionary *json = [NSMutableDictionary dictionary];
-        [XZJSON model:feed encodeIntoDictionary:json];
-        if ([NSJSONSerialization isValidJSONObject:json]) {
-            duration2 = (end - begin) * 1000;
-        } else {
-            duration2 = 0;
-        }
-        
-        
-        [holder removeAllObjects];
-        begin = CACurrentMediaTime();
-        @autoreleasepool {
-            for (int i = 0; i < count; i++) {
-                NSData *data = [NSKeyedArchiver archivedDataWithRootObject:feed requiringSecureCoding:NO error:nil];
-                [holder addObject:data];
-            }
-        }
-        end = CACurrentMediaTime();
-        duration3 = (end - begin) * 1000;
-        
-        [self benchmarkResult:@"XZJSON" decode:duration1 encode:duration2 archive:duration3];
-    }
-    
-    [self benchMarkFooter];
+        dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(1.0 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+            YYEncodingTest();
+            
+            dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(1.0 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+                XZDecodingTest();
+                
+                dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(1.0 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+                    XZEncodingTest();
+                    
+                    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(1.0 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+                        self.markButton.enabled = YES;
+                    });
+                });
+            });
+        });
+    });
 }
 
 - (void)testRobustness {
@@ -590,7 +621,7 @@ static BOOL CheckDateValue(NSDate *modelValue, id dictValue) {
 - (BOOL)checkGHUser:(Example05XZUser *)model {
     NSInteger count = 0;
     
-    NSString *path = [NSBundle.mainBundle pathForResource:@"Example05GHUser" ofType:@"json"];
+    NSString *path = [NSBundle.mainBundle pathForResource:@"Example05User" ofType:@"json"];
     NSData *data = [NSData dataWithContentsOfFile:path];
     NSDictionary *dict = [NSJSONSerialization JSONObjectWithData:data options:kNilOptions error:nil];
     
@@ -688,6 +719,59 @@ static BOOL CheckDateValue(NSDate *modelValue, id dictValue) {
     }
     
     return count == dict.count;
+}
+
+@end
+
+@implementation Example05BenchmarkOperation {
+    NSString *_message;
+    dispatch_block_t _block;
+    BOOL _isExecuting;
+    BOOL _isFinished;
+    UIViewController * __weak _delegate;
+    NSTimeInterval _duration;
+}
+
++ (Example05BenchmarkOperation *)operationWithBlock:(dispatch_block_t)block message:(NSString *)message duration:(NSTimeInterval)duration delegate:(UIViewController *)delegate {
+    Example05BenchmarkOperation *operation = [[self alloc] init];
+    if (self) {
+        operation->_block = block;
+        operation->_message = message;
+        operation->_delegate = delegate;
+        operation->_duration = duration;
+    }
+    return operation;
+}
+
+- (void)start {
+    [self willChangeValueForKey:@"isExecuting"];
+    _isExecuting = YES;
+    [self didChangeValueForKey:@"isExecuting"];
+    
+    dispatch_async(dispatch_get_main_queue(), ^{
+        if (self->_message) {
+            [self->_delegate xz_showToast:[XZToast sharedToast:(XZToastStyleMessage) text:self->_message] duration:self->_duration];
+        }
+        
+        dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(1.5 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+            self->_block();
+            
+            [self willChangeValueForKey:@"isExecuting"];
+            [self willChangeValueForKey:@"isFinished"];
+            self->_isExecuting = NO;
+            self->_isFinished = YES;
+            [self didChangeValueForKey:@"isExecuting"];
+            [self didChangeValueForKey:@"isFinished"];
+        });
+    });
+}
+
+- (BOOL)isFinished {
+    return _isFinished;
+}
+
+- (BOOL)isExecuting {
+    return _isExecuting;
 }
 
 @end

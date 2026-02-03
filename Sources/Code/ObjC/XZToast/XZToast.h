@@ -41,7 +41,7 @@ typedef NS_ENUM(NSUInteger, XZToastStyle) {
     XZToastStyleWaiting,
 } NS_REFINED_FOR_SWIFT;
 
-/// 一种用于展示业务或逻辑状态的提示消息。
+/// 一种视图内，展示提示类型的消息的视图。
 ///
 /// 这是一个基类，业务可通过子类自定义提示消息的视图。
 NS_REFINED_FOR_SWIFT @interface XZToast : NSObject <XZToastView, NSCopying>

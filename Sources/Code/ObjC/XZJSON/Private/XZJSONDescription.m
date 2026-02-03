@@ -34,7 +34,7 @@ static NSString * _Nonnull XZJSONArrayDescription(id<NSFastEnumeration> const an
     return descriptionM;
 }
 
-static NSString * _Nonnull XZJSONDictionaryDescription(NSDictionary * const _Unsafe aDictionary, NSUInteger const indent) {
+static NSString * _Nonnull XZJSONDictionaryDescription(NSDictionary * const _Untain aDictionary, NSUInteger const indent) {
     // 空字典
     if (aDictionary.count == 0) {
         return @"{}";
@@ -55,7 +55,7 @@ static NSString * _Nonnull XZJSONDictionaryDescription(NSDictionary * const _Uns
     return descriptionM;
 }
 
-static NSString * _Nonnull XZJSONModelDescription(id const _Unsafe model, XZJSONClass * const JSONClass, NSUInteger const indent) {
+static NSString * _Nonnull XZJSONModelDescription(id const _Untain model, XZJSONClass * const JSONClass, NSUInteger const indent) {
     if (JSONClass->_sortedProperties.count == 0) {
         return [NSString stringWithFormat:@"<%@: %p>", JSONClass->_raw.raw, model];
     }
@@ -171,7 +171,7 @@ static NSString * _Nonnull XZJSONModelDescription(id const _Unsafe model, XZJSON
             case XZStdcTypeVector:
                 break;
         }
-        if (value == nil && JSONClass->_usesPropertyJSONEncodingMethod) {
+        if (value == nil && JSONClass->_usesPropertyEncodingMethod) {
             value = [NSString stringWithFormat:@"%@", [(id<XZJSONCoding>)model JSONEncodeValueForKey:key]];
         }
         if (value) {
@@ -184,7 +184,7 @@ static NSString * _Nonnull XZJSONModelDescription(id const _Unsafe model, XZJSON
     return descriptionM;
 }
 
-NSString * _Nonnull XZJSONObjectDescription(id const _Unsafe object, NSUInteger const indent) {
+NSString * _Nonnull XZJSONObjectDescription(id const _Untain object, NSUInteger const indent) {
     if (!object) {
         return @"<nil>";
     }

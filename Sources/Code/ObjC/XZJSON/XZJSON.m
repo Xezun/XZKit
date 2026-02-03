@@ -28,40 +28,7 @@
 @implementation XZJSON (XZJSONDecoder)
 
 + (id)decode:(id)json options:(NSJSONReadingOptions)options class:(Class)ModelClass {
-    // 判空
-    if (json == nil || json == (id)kCFNull) {
-        return nil;
-    }
-    // 二进制流形式的 json 数据
-    if ([json isKindOfClass:NSData.class]) {
-        return XZJSONDecodeData((NSData *)json, options, ModelClass);
-    }
-    // 字符串形式的 json 数据
-    if ([json isKindOfClass:NSString.class]) {
-        NSData * const data = [(NSString *)json dataUsingEncoding:NSUTF8StringEncoding];
-        if (data == nil) {
-            return nil;
-        }
-        return XZJSONDecodeData(data, options, ModelClass);
-    }
-    // 如果为数组，视为解析多个 json 数据
-    if ([json isKindOfClass:NSArray.class]) {
-        if (((NSArray *)json).count == 0) {
-            return json;
-        }
-        NSMutableArray * const models = [NSMutableArray arrayWithCapacity:((NSArray *)json).count];
-        for (id item in ((NSArray *)json)) {
-            id const model = [self decode:item options:options class:ModelClass];
-            if (model) {
-                [models addObject:model];
-            } else if (options & XZJSONReadingKeepCapacity) {
-                [models addObject:(id)kCFNull];
-            }
-        }
-        return models;
-    }
-    // 其它情况视为已解析好的 json
-    return XZJSONDecodeObject(json, ModelClass);
+    return XZJSONDecodeData(json, options, ModelClass);
 }
 
 + (void)model:(id)model decodeFromDictionary:(NSDictionary *)dictionary {

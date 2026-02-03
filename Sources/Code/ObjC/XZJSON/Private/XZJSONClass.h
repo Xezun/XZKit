@@ -12,10 +12,10 @@
 #import "XZObjc.h"
 #endif
 
-#ifdef _Unsafe
-#undef _Unsafe
+#ifdef _Untain
+#undef _Untain
 #endif
-#define _Unsafe __unsafe_unretained
+#define _Untain __unsafe_unretained
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -75,14 +75,14 @@ typedef NS_ENUM (NSUInteger, XZJSONCocoaClass) {
     BOOL _verifiesDecodingValue;
     
     /// 是否使用自定义模型化方法，即 -decodeFromJSONDictionary: 方法。
-    BOOL _usesJSONDecodingMethod;
+    BOOL _usesModelDecodingMethod;
     /// 是否使用自定义序列化方法，即 -encodeIntoJSONDictionary: 方法。
-    BOOL _usesJSONEncodingMethod;
+    BOOL _usesModelEncodingMethod;
     
     /// 是否使用自定义属性模型化方法，即 -JSONDecodeValue:forKey: 方法。
-    BOOL _usesPropertyJSONDecodingMethod;
+    BOOL _usesPropertyDecodingMethod;
     /// 是否使用自定义属性序列化方法，即 -JSONEncodeValueForKey: 方法。
-    BOOL _usesPropertyJSONEncodingMethod;
+    BOOL _usesPropertyEncodingMethod;
 }
 
 - (instancetype)init NS_UNAVAILABLE;

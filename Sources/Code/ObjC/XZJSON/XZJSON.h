@@ -104,7 +104,7 @@ enum {
 ///   - json: JSON 数据
 ///   - options: 模型化 JSON 数据为模型的可选项；如果 JSON 已解析，则此参数忽略
 ///   - ModelClass: 模型的类对象
-+ (nullable id)decode:(nullable id)json options:(NSJSONReadingOptions)options class:(Class)ModelClass;
++ (nullable id)decode:(nullable id)json options:(NSJSONReadingOptions)options class:(nullable Class)ModelClass;
 
 /// 通用模型化过程，直接使用模型实例对象 model 对 JSON 字典数据进行模型化。
 ///
@@ -151,7 +151,7 @@ enum {
 ///   - model: 模型对象，也可以是模型对象组成的数组
 ///   - options: 序列化模型为 JSON 数据的可选项
 ///   - error: 错误输出
-+ (nullable NSData *)encode:(nullable id)model options:(NSJSONWritingOptions)options error:(NSError **)error;
++ (nullable NSData *)encode:(nullable id)model options:(NSJSONWritingOptions)options error:(NSError * _Nullable *)error;
 
 /// 将模型实例对象 model 序列化进 JSON 字典。
 ///

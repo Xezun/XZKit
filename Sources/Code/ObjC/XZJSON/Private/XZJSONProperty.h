@@ -78,7 +78,7 @@ typedef id _Nullable (^XZJSONPropertyValueDecoder)(NSDictionary *dictionary);
     NSArray             * _Nullable _JSONKeyArray;
     
     /// 当前属性从 JSON 数据中为取值的方法。
-    XZJSONPropertyValueDecoder _valueDecoder;
+    XZJSONPropertyValueDecoder _fetchValueFromDictionary;
 }
 
 + (nullable instancetype)descriptorWithProperty:(XZObjcProperty *)property class:(XZJSONClass *)class mappingClass:(nullable Class)mappingClass;

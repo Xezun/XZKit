@@ -20,15 +20,6 @@
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
     XZLog(@"App (%@) was launched: %@", XZLogSystem.defaultLogSystem.domain, launchOptions);
     
-    NSSet *set = [NSSet setWithObjects:@"1", @"3", @"4", nil];
-    
-    NSData *data = [NSKeyedArchiver archivedDataWithRootObject:set requiringSecureCoding:YES error:nil];
-    
-    if ( data ) {
-        NSSet *set = [NSKeyedUnarchiver unarchivedObjectOfClasses:[NSSet setWithObjects:NSString.class, NSSet.class, NSArray.class, nil] fromData:data error:nil];//[NSKeyedUnarchiver unarchivedObjectOfClass:NSString.class fromData:data error:nil];
-        NSLog(@"%@ => %@", set.class, set);
-    }
-    
     [NSNotificationCenter.defaultCenter addObserver:self selector:@selector(didChangeLanguageNotification:) name:XZLocaleDidChangePreferredLanguageNotification object:nil];
     
     return YES;

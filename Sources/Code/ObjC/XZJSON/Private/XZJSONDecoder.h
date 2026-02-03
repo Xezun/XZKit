@@ -16,13 +16,11 @@ NS_ASSUME_NONNULL_BEGIN
 
 @class XZJSONClass;
 
-/// 解析 JSON 数据流。
-FOUNDATION_EXPORT id _Nullable XZJSONDecodeData(NSData * const _Unsafe data, NSJSONReadingOptions const options, Class const _Unsafe aClass);
-
-/// 解析 JSON 数据对象。
-FOUNDATION_EXPORT id _Nullable XZJSONDecodeObject(id const _Unsafe object, Class const _Unsafe ModelClass);
+/// 对任意对象，执行 JSON 解析。
+/// 在不确定 data 是否已经进行 JSON 解析时，用此方法。
+FOUNDATION_EXPORT id _Nullable XZJSONDecodeData(id const _Untain data, NSJSONReadingOptions const options, Class const _Untain ModelClass);
 
 /// 模型实例对象，解码 JSON 数据。
-FOUNDATION_EXPORT void XZJSONModelDecodeFromDictionary(id const _Unsafe model, XZJSONClass * const _Unsafe JSONClass, NSDictionary * const _Unsafe dictionary);
+FOUNDATION_EXPORT void XZJSONModelDecodeFromDictionary(id const _Untain model, XZJSONClass * const _Untain JSONClass, NSDictionary * const _Untain dictionary);
 
 NS_ASSUME_NONNULL_END
