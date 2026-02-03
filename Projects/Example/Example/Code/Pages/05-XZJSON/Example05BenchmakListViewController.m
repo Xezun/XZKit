@@ -1,18 +1,18 @@
 //
-//  Example05ActionViewController.m
+//  Example05BenchmakListViewController.m
 //  Example
 //
 //  Created by 徐臻 on 2026/2/3.
 //
 
-#import "Example05ActionViewController.h"
+#import "Example05BenchmakListViewController.h"
 #import "Example05BenchmarkViewController.h"
 
-@interface Example05ActionViewController ()
+@interface Example05BenchmakListViewController ()
 
 @end
 
-@implementation Example05ActionViewController
+@implementation Example05BenchmakListViewController
 
 - (void)viewDidLoad {
     [super viewDidLoad];

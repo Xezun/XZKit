@@ -1,5 +1,5 @@
 //
-//  Example05ActionViewController.h
+//  Example05BenchmakListViewController.h
 //  Example
 //
 //  Created by 徐臻 on 2026/2/3.
@@ -9,7 +9,7 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-@interface Example05ActionViewController : UITableViewController
+@interface Example05BenchmakListViewController : UITableViewController
 
 @end
 
