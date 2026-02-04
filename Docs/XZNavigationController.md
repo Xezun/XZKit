@@ -42,7 +42,7 @@ pod 'XZNavigationController'
 ```swift
 class ExampleMainHomeViewController: UITableViewController, XZNavigationBarCustomizable {
     
-    var navigationBarIfLoaded = ExampleNavigationBar.init()
+    var xzNavigationBar = ExampleNavigationBar.init()
     
 }
 ```
@@ -52,7 +52,7 @@ class ExampleMainHomeViewController: UITableViewController, XZNavigationBarCusto
 ```swift
 class ExampleMainHomeViewController: UITableViewController, XZNavigationBarCustomizable {
     
-    var navigationBarIfLoaded: XZNavigationBarProtocol? {
+    var xzNavigationBar: XZNavigationBarProtocol? {
         return self.navigationBar
     }
     
@@ -147,7 +147,7 @@ class ExampleNavigationController: UINavigationController, XZNavigationControlle
 ```
 // 页面若要自定义导航条，仅需遵循 XZNavigationBarCustomizable 协议即可。
 extension ExampleNextViewController: XZNavigationBarCustomizable {
-    var navigationBarIfLoaded: XZNavigationBarProtocol? {
+    var xzNavigationBar: XZNavigationBarProtocol? {
         // return your custom navigation bar
     }
 }
@@ -216,7 +216,7 @@ public class ExampleNavigationBar: XZNavigationBar {
 
 ```swift
 public protocol XZNavigationBarCustomizable: UIViewController {
-    var navigationBarIfLoaded: XZNavigationBarProtocol? { get }
+    var xzNavigationBar: XZNavigationBarProtocol? { get }
 }
 ```
 
@@ -227,7 +227,7 @@ public protocol XZNavigationBarCustomizable: UIViewController {
 ```swift
 extension XZNavigationBarCustomizable {
     
-    public var navigationBarIfLoaded: XZNavigationBarProtocol? {
+    public var xzNavigationBar: XZNavigationBarProtocol? {
         return self.navigationBar
     }
     
@@ -242,7 +242,7 @@ extension XZNavigationBarCustomizable {
 }
 ```
 
-通过示例，我们可以看到为什么协议中定义的是 `navigationBarIfLoaded` 属性，因为框架把 `navigationBar` 留给了开发者使用。
+通过示例，我们可以看到为什么协议中定义的是 `xzNavigationBar` 属性，因为框架把 `navigationBar` 留给了开发者使用。
 而且，通过这种类型的中转，这样项目中，我们就可以避免不必要的类型转换代码。
 
 当我们设立了统一自定义导航条后，我们就可以在控制器中使用了。

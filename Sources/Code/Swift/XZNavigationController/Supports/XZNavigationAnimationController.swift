@@ -148,7 +148,7 @@ extension XZNavigationAnimationController: UIViewControllerAnimatedTransitioning
         let systemNavigationBarRect = systemNavigationBar.convert(systemNavigationBar.bounds, to: containerView)
         
         // 获取自定义导航条，并配置导航条。
-        let fromNavBar = (fromVC as? XZNavigationBarCustomizable)?.navigationBarIfLoaded
+        let fromNavBar = (fromVC as? XZNavigationBarCustomizable)?.xzNavigationBar
         var fromNavBarFrame2: CGRect?
         if let navBar = fromNavBar, !navBar.isHidden {
             // from 导航条使用原始状态
@@ -160,7 +160,7 @@ extension XZNavigationAnimationController: UIViewControllerAnimatedTransitioning
             navBar.setNeedsLayout()
         }
         
-        let toNavBar = (toVC as? XZNavigationBarCustomizable)?.navigationBarIfLoaded
+        let toNavBar = (toVC as? XZNavigationBarCustomizable)?.xzNavigationBar
         var toNavBarFrame2: CGRect?
         if let navBar = toNavBar, !navBar.isHidden {
             navBar.frame = systemNavigationBarRect.offsetBy(dx: direction * systemNavigationBarRect.width, dy: 0)
@@ -273,7 +273,7 @@ extension XZNavigationAnimationController: UIViewControllerAnimatedTransitioning
         let navBarRect = navigationBar.convert(navigationBar.bounds, to: containerView)
         
         // 获取自定义导航条，并配置导航条。
-        let fromNavBar = (fromVC as? XZNavigationBarCustomizable)?.navigationBarIfLoaded
+        let fromNavBar = (fromVC as? XZNavigationBarCustomizable)?.xzNavigationBar
         var fromNavBarFrame2: CGRect?
         if let fromNavBar = fromNavBar, !fromNavBar.isHidden {
             let fromNavBarFrame1 = navigationBar.convert(fromNavBar.frame, to: containerView)
@@ -283,7 +283,7 @@ extension XZNavigationAnimationController: UIViewControllerAnimatedTransitioning
             fromNavBar.setNeedsLayout()
         }
         
-        let toNavBar = (toVC as? XZNavigationBarCustomizable)?.navigationBarIfLoaded
+        let toNavBar = (toVC as? XZNavigationBarCustomizable)?.xzNavigationBar
         var toNavBarFrame2: CGRect?
         if let toNavBar = toNavBar, !toNavBar.isHidden {
             toNavBar.frame = navBarRect.offsetBy(dx: direction * -navBarRect.width / 3.0, dy: 0)

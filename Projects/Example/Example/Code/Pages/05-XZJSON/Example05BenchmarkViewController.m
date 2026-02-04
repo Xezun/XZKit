@@ -6,6 +6,7 @@
 //
 
 #import "Example05BenchmarkViewController.h"
+#import "Example05BenchmarkActionViewController.h"
 #import "Example05Model.h"
 #import "XZLog.h"
 @import XZKit;
@@ -18,6 +19,8 @@
 @interface Example05BenchmarkViewController () {
     NSInteger _count;
     NSOperationQueue *_queue;
+    NSDictionary *_UserDict;
+    NSDictionary *_WeiboDict;
 }
 @property (nonatomic, weak) IBOutlet UILabel *textLabel;
 @property (nonatomic, weak) IBOutlet UIButton *markButton;
@@ -29,53 +32,91 @@
 - (void)viewDidLoad {
     [super viewDidLoad];
     
-    [self addLine];
     _count = 1;
     _textLabel.text = @"";
     _queue = [[NSOperationQueue alloc] init];
     _queue.qualityOfService = NSQualityOfServiceUserInteractive;
     _queue.maxConcurrentOperationCount = 1;
     
+    {
+        NSString *path = [[NSBundle mainBundle] pathForResource:@"Example05User" ofType:@"json"];
+        NSData *data = [NSData dataWithContentsOfFile:path];
+        _UserDict = [NSJSONSerialization JSONObjectWithData:data options:0 error:nil];
+    }
+    
+    {
+        NSString *path = [[NSBundle mainBundle] pathForResource:@"Example05User" ofType:@"json"];
+        NSData *data = [NSData dataWithContentsOfFile:path];
+        _UserDict = [NSJSONSerialization JSONObjectWithData:data options:0 error:nil];
+    }
+    
+    [self addLine];
     [self addText:[NSString stringWithFormat:@"Device: %@\n", UIDevice.currentDevice.xz_productName]];
     [self addText:[NSString stringWithFormat:@"System: %@ %@\n", UIDevice.currentDevice.systemName, UIDevice.currentDevice.systemVersion]];
     [self addLine];
-    
-    switch (_action) {
-        case Example05BenchmarkActionMark:
-            [self addText:@"本功能移植自 YYModel\n"];
-            break;
-        case Example05BenchmarkActionTime:
-            [self addText:@"执行定量代码，利用Instruments查找耗时操作\n"];
-            break;
-        default:
-            break;
-    }
-    [self addLine];
 }
 
-- (void)dispatchOperation:(dispatch_block_t)block message:(NSString *)message duration:(NSTimeInterval)duration {
-    [_queue addOperation:[Example05BenchmarkOperation operationWithBlock:block message:message duration:duration delegate:self]];
+- (IBAction)unwindToBenchmark:(UIStoryboardSegue *)unwindSegue {
+    Example05BenchmarkActionViewController *sourceViewController = unwindSegue.sourceViewController;
+    [self runAction:sourceViewController.action name:sourceViewController.name];
 }
 
-- (IBAction)markButtonAction:(UIButton *)sender {
+- (IBAction)runAction:(Example05BenchmarkAction)action name:(NSString *)name {
     self.markButton.enabled = NO;
     
-    [self addText:[NSString stringWithFormat:@"第 %ld 次测评\n", _count++]];
+    [self addText:[NSString stringWithFormat:@"第 %ld 次执行：%@ \n", _count++, name]];
+    [self addLine];
     
-    switch (self.action) {
+    [self xz_showToast:[XZToast messageToast:@"正在执行，请耐心等待"] duration:0.0];
+    
+    switch (action) {
         case Example05BenchmarkActionMark: {
-            [self xz_showToast:[XZToast messageToast:@"正在测评，请耐心等待"] duration:0.0];
+            [self addText:@"本功能移植自 YYModel\n"];
+            [self addLine];
             dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(2.0 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
                 [self benchmarkGithubUser];
                 [self benchmarkWeiboStatus];
                 self.markButton.enabled = YES;
-                [self xz_hideToast:nil];
+                [self xz_showToast:[XZToast messageToast:@"执行结束"] duration:1.5];
             });
             break;
         }
-        case Example05BenchmarkActionTime:
-            [self timeProfileUser];
+        case Example05BenchmarkActionTimeXZDecoding: {
+            dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(2.0 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+                [self timeProfileDecodeXZUser:^{
+                    [self xz_showToast:[XZToast messageToast:@"执行结束"] duration:1.5];
+                    self.markButton.enabled = YES;
+                }];
+            });
             break;
+        }
+        case Example05BenchmarkActionTimeXZEncoding: {
+            dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(2.0 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+                [self timeProfileEncodeXZUser:^{
+                    [self xz_showToast:[XZToast messageToast:@"执行结束"] duration:1.5];
+                    self.markButton.enabled = YES;
+                }];
+            });
+            break;
+        }
+        case Example05BenchmarkActionTimeYYDecoding: {
+            dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(2.0 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+                [self timeProfileDecodeYYUser:^{
+                    [self xz_showToast:[XZToast messageToast:@"执行结束"] duration:1.5];
+                    self.markButton.enabled = YES;
+                }];
+            });
+            break;
+        }
+        case Example05BenchmarkActionTimeYYEncoding: {
+            dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(2.0 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+                [self timeProfileEncodeYYUser:^{
+                    [self xz_showToast:[XZToast messageToast:@"执行结束"] duration:1.5];
+                    self.markButton.enabled = YES;
+                }];
+            });
+            break;
+        }
         default:
             break;
     }
@@ -86,7 +127,6 @@
 }
 
 - (void)addBenchmarkHeader:(NSString *)name count:(NSInteger)count {
-    [self addText:@"------------------------------------\n"];
     [self addText:[NSString stringWithFormat:@"Benchmark: %@ (%ld times)  \n", name, count]];
     [self addText:@"------------------------------------\n"];
     [self addText:@"Library | decode | encode | archive \n"];
@@ -103,8 +143,7 @@
 }
 
 - (void)addBenchMarkFooter {
-    [self addText:@"------------------------------------\n"];
-    [self addText:@"\n"];
+    [self addLine];
 }
 
 - (void)addLine {
@@ -148,7 +187,7 @@
     NSDictionary * const dict = [NSJSONSerialization JSONObjectWithData:data options:0 error:nil];
     NSMutableArray * const holder = [NSMutableArray arrayWithCapacity:count];
     
-    [self addBenchmarkHeader:@"User" count:count];
+    [self addBenchmarkHeader:@"GitHub User" count:count];
     
     NSTimeInterval duration1 = 0;
     NSTimeInterval duration2 = 0;
@@ -389,37 +428,52 @@
     [self addBenchMarkFooter];
 }
 
-- (void)timeProfileUser {
+- (void)timeProfileDecodeXZUser:(dispatch_block_t)completion {
+    NSDictionary * const json = _UserDict;
     
-    NSString *path = [[NSBundle mainBundle] pathForResource:@"Example05User" ofType:@"json"];
-    NSData *data = [NSData dataWithContentsOfFile:path];
-    NSDictionary *json = [NSJSONSerialization JSONObjectWithData:data options:0 error:nil];
+    NSInteger const count = 10000;
+    NSMutableArray * const holder = [NSMutableArray arrayWithCapacity:count];
     
-    int count = 10000;
-    void (^YYEncodingTest)(void) = ^{
-        NSMutableArray *holder = [NSMutableArray arrayWithCapacity:count * 2];
-        Example05YYUser *user = [Example05YYUser yy_modelWithJSON:json];
+    // 热身
+    for (NSInteger i = 0; i < count; i++) {
+        id const model = [XZJSON decode:json options:kNilOptions class:[Example05XZUser class]];
+        [holder addObject:model];
+    }
+    [holder removeAllObjects];
+    
+    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(2.0 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+        NSTimeInterval begin = CACurrentMediaTime();
         @autoreleasepool {
-            for (int i = 0; i < count; i++) {
-                NSDictionary *json = [user yy_modelToJSONObject];
-                [holder addObject:json];
-            }
-        }
-    };
-    
-    void (^YYDecodingTest)(void) = ^{
-        NSMutableArray *holder = [NSMutableArray arrayWithCapacity:count * 2];
-        @autoreleasepool {
-            for (int i = 0; i < count; i++) {
-                Example05YYUser *user = [Example05YYUser yy_modelWithJSON:json];
+            for (NSInteger i = 0; i < count; i++) {
+                Example05XZUser *user = [XZJSON decode:json options:kNilOptions class:[Example05XZUser class]];
                 [holder addObject:user];
             }
         }
-    };
+        NSTimeInterval end = CACurrentMediaTime();
+        dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(2.0 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+            [self addText:[NSString stringWithFormat:@"用时：%.2f ms\n", (end - begin) * 1000]];
+            [self addLine];
+            completion();
+        });
+    });
+}
+
+- (void)timeProfileEncodeXZUser:(dispatch_block_t)completion {
+    NSDictionary * const json = _UserDict;
     
-    void (^XZEncodingTest)(void) = ^{
-        NSMutableArray *holder = [NSMutableArray arrayWithCapacity:count * 2];
-        Example05XZUser *user = [XZJSON decode:json options:kNilOptions class:[Example05XZUser class]];
+    NSInteger         const count  = 10000;
+    NSMutableArray *  const holder = [NSMutableArray arrayWithCapacity:count];
+    Example05XZUser * const user   = [XZJSON decode:json options:kNilOptions class:[Example05XZUser class]];
+    
+    for (NSInteger i = 0; i < count; i++) {
+        NSMutableDictionary *dict = [NSMutableDictionary dictionaryWithCapacity:64];
+        [XZJSON model:user encodeIntoDictionary:dict];
+        [holder addObject:dict];
+    }
+    [holder removeAllObjects];
+    
+    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(2.0 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+        NSTimeInterval begin = CACurrentMediaTime();
         @autoreleasepool {
             for (int i = 0; i < count; i++) {
                 NSMutableDictionary *json = [NSMutableDictionary dictionaryWithCapacity:64];
@@ -427,41 +481,77 @@
                 [holder addObject:json];
             }
         }
-    };
+        NSTimeInterval end = CACurrentMediaTime();
+        dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(2.0 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+            [self addText:[NSString stringWithFormat:@"用时：%.2f ms\n", (end - begin) * 1000]];
+            [self addLine];
+            completion();
+        });
+    });
+}
+
+- (void)timeProfileDecodeYYUser:(dispatch_block_t)completion {
+    NSDictionary * const json = _UserDict;
     
-    void (^XZDecodingTest)(void) = ^{
-        NSMutableArray *holder = [NSMutableArray arrayWithCapacity:count * 2];
+    NSInteger const count = 10000;
+    NSMutableArray * const holder = [NSMutableArray arrayWithCapacity:count];
+    
+    // 热身
+    for (NSInteger i = 0; i < count; i++) {
+        id const model = [Example05YYUser yy_modelWithJSON:json];
+        [holder addObject:model];
+    }
+    [holder removeAllObjects];
+    
+    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(2.0 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+        NSTimeInterval begin = CACurrentMediaTime();
         @autoreleasepool {
             for (int i = 0; i < count; i++) {
-                Example05XZUser *user = [XZJSON decode:json options:kNilOptions class:[Example05XZUser class]];
+                Example05YYUser *user = [Example05YYUser yy_modelWithJSON:json];
                 [holder addObject:user];
             }
         }
-    };
+        NSTimeInterval end = CACurrentMediaTime();
+        dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(2.0 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+            [self addText:[NSString stringWithFormat:@"用时：%.2f ms\n", (end - begin) * 1000]];
+            [self addLine];
+            completion();
+        });
+    });
+}
+
+- (void)timeProfileEncodeYYUser:(dispatch_block_t)completion {
+    NSDictionary * const json = _UserDict;
     
-    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(1.0 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
-        YYDecodingTest();
-        
-        dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(1.0 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
-            YYEncodingTest();
-            
-            dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(1.0 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
-                XZDecodingTest();
-                
-                dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(1.0 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
-                    XZEncodingTest();
-                    
-                    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(1.0 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
-                        self.markButton.enabled = YES;
-                    });
-                });
-            });
+    NSInteger         const count  = 10000;
+    NSMutableArray *  const holder = [NSMutableArray arrayWithCapacity:count];
+    Example05YYUser * const user   = [Example05YYUser yy_modelWithJSON:json];
+    
+    for (NSInteger i = 0; i < count; i++) {
+        NSMutableDictionary *dict = [NSMutableDictionary dictionaryWithCapacity:64];
+        [user yy_modelToJSONObject];
+        [holder addObject:dict];
+    }
+    [holder removeAllObjects];
+    
+    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(2.0 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+        NSTimeInterval begin = CACurrentMediaTime();
+        @autoreleasepool {
+            for (int i = 0; i < count; i++) {
+                Example05YYUser *user = [Example05YYUser yy_modelWithJSON:json];
+                [holder addObject:user];
+            }
+        }
+        NSTimeInterval end = CACurrentMediaTime();
+        dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(2.0 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+            [self addText:[NSString stringWithFormat:@"用时：%.2f ms\n", (end - begin) * 1000]];
+            [self addLine];
+            completion();
         });
     });
 }
 
 - (void)testRobustness {
-    
     {
         [self addText:@"----------------------\n"];
         [self addText:@"The property is NSString, but the json value is number:\n"];

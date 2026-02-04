@@ -9,14 +9,7 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-typedef NS_ENUM(NSUInteger, Example05BenchmarkAction) {
-    Example05BenchmarkActionMark,
-    Example05BenchmarkActionTime
-};
-
 @interface Example05BenchmarkViewController : UIViewController
-
-@property (nonatomic) Example05BenchmarkAction action;
 
 @end
 

@@ -60,7 +60,7 @@ extension XZNavigationBar {
     /// 原生导航条。
     ///
     /// 此属性为 nil 时，表示自定义导航条未展示，或者处于转场的过程中。
-    public internal(set) var navigationBar: UINavigationBar? {
+    public internal(set) var uiNavigationBar: UINavigationBar? {
         get {
             return (objc_getAssociatedObject(self, &_navigationBar) as? WeakWrapper)?.value
         }
@@ -76,7 +76,7 @@ extension XZNavigationBar {
     
     /// 将状态同步给原生导航条。
     public func synchronizeAppearance(for style: UINavigtionBarAppearanceStyle) {
-        guard let navigationBar = self.navigationBar else { return }
+        guard let navigationBar = self.uiNavigationBar else { return }
 
         switch style {
         case .isHidden:
@@ -257,7 +257,7 @@ extension XZNavigationBar {
             height: shadowImageView.image?.size.height ?? 1.0 / UIScreen.main.scale
         )
 
-        if let navigationBar = self.navigationBar {
+        if let navigationBar = self.uiNavigationBar {
             let minY = navigationBar.frame.minY;
             backgroundImageView.frame = CGRect.init(x: bounds.minX, y: -minY, width: bounds.width, height: bounds.height + minY)
         } else {

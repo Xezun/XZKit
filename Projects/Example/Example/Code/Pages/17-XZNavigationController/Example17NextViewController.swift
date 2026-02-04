@@ -59,7 +59,7 @@ class Example17NextViewController: UITableViewController {
         guard segue.identifier == "next" else {
             return
         }
-        if let navigationBar = (segue.destination as? XZNavigationBarCustomizable)?.navigationBarIfLoaded {
+        if let navigationBar = (segue.destination as? XZNavigationBarCustomizable)?.xzNavigationBar {
             navigationBar.isHidden           = nextHiddenSwitch.isOn
             navigationBar.isTranslucent      = nextTranslucentSwitch.isOn
             navigationBar.prefersLargeTitles = nextPrefersLargeTitlesSwitch.isOn
@@ -79,7 +79,7 @@ extension Example17NextViewController: XZNavigationGestureDrivable {
         if operation == .push {
             let sb = UIStoryboard.init(name: "Example17", bundle: nil)
             let vc = sb.instantiateViewController(withIdentifier: "last")
-            if let navigationBar = (vc as? XZNavigationBarCustomizable)?.navigationBarIfLoaded {
+            if let navigationBar = (vc as? XZNavigationBarCustomizable)?.xzNavigationBar {
                 navigationBar.isHidden = nextHiddenSwitch.isOn
                 navigationBar.isTranslucent = nextTranslucentSwitch.isOn
                 navigationBar.prefersLargeTitles = nextPrefersLargeTitlesSwitch.isOn

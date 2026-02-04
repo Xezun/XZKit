@@ -12,72 +12,51 @@ import ObjectiveC
 extension UINavigationBar {
     
     /// 记录了当前正在显示的自定义的导航条。在控制器转场过程中，此属性为 nil 。
-    public internal(set) var navigationBar: XZNavigationBar? {
+    public internal(set) var xzNavigationBar: XZNavigationBar? {
         get {
             return objc_getAssociatedObject(self, &_navigationBar) as? XZNavigationBar
         }
         set {
-            // 移除旧的
-            if let oldValue = self.navigationBar {
-                oldValue.navigationBar = nil
-                oldValue.removeFromSuperview()
-            }
-            
-            // 记录新值
             objc_setAssociatedObject(self, &_navigationBar, newValue, .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
-            
-            // 添加新的
-            if let newValue = newValue {
-                newValue.frame = bounds
-                newValue.navigationBar = self
-                // 使用 autoresizing 布局，自定义导航条的 frame 会在父视图变化时改变，
-                // 而自定义导航条父视图，在转场时会发生改变。
-                superview?.addSubview(newValue)
-            }
         }
     }
     
     /// 导航条是否已开启自定义。
-    public internal(set) var isCustomizable: Bool {
+    public internal(set) var supportsXZNavigationBar: Bool {
         get {
-            return objc_getAssociatedObject(self, &_isCustomizable) != nil
+            return (objc_getAssociatedObject(self, &_supportsCustomization) as? Bool) ?? false
         }
         set {
-            if newValue == isCustomizable {
+            let oldValue = self.supportsXZNavigationBar
+            guard newValue != oldValue else {
                 return
             }
-            
             if newValue {
-                objc_setAssociatedObject(self, &_isCustomizable, true, .OBJC_ASSOCIATION_COPY_NONATOMIC)
-                
-                let OldClass = type(of: self)
-                
-                if let NewClass = objc_getAssociatedObject(OldClass, &_customizableClass) as? UINavigationBar.Type {
-                    _ = object_setClass(self, NewClass)
-                    return
+                let oldClass = type(of: self);
+                if let newClass = objc_getAssociatedObject(oldClass, &_navigationBarClass) as? AnyClass {
+                    object_setClass(self, newClass);
+                } else {
+                    let newClass = createNavigationBarClass(oldClass);
+                    objc_setAssociatedObject(oldClass, &_navigationBarClass, newClass, .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
+                    object_setClass(self, newClass);
                 }
-                
-                if let NewClass = xz_objc_createClass(OldClass, { xz_objc_class_copyMethods(XZUINavigationBar.self, $0) }) as? UINavigationBar.Type {
-                    objc_setAssociatedObject(OldClass, &_customizableClass, NewClass, .OBJC_ASSOCIATION_ASSIGN)
-                    _ = object_setClass(self, NewClass)
-                    return;
-                }
-                
-                fatalError("无法自定义\(OldClass)")
+                objc_setAssociatedObject(self, &_supportsCustomization, true, .OBJC_ASSOCIATION_COPY_NONATOMIC);
             } else {
-                objc_setAssociatedObject(self, &_isCustomizable, nil, .OBJC_ASSOCIATION_COPY_NONATOMIC)
-                object_setClass(self, self.superclass!)
+                object_setClass(self, type(of: self).superclass()!)
             }
         }
     }
     
 }
 
-private class XZUINavigationBar: UINavigationBar {
+
+
+/// 同步导航状态
+private class XZNavigationUINavigationBar: UINavigationBar {
     
     open override var frame: CGRect  {
         didSet {
-            if let navigationBar = navigationBar {
+            if let navigationBar = self.xzNavigationBar {
                 navigationBar.frame = frame;
             }
         }
@@ -85,7 +64,7 @@ private class XZUINavigationBar: UINavigationBar {
     
     open override var bounds: CGRect {
         didSet {
-            if let navigationBar = navigationBar {
+            if let navigationBar = self.xzNavigationBar {
                 navigationBar.bounds = bounds;
             }
         }
@@ -96,7 +75,7 @@ private class XZUINavigationBar: UINavigationBar {
             return xz_objc_msgSendSuper_bool(self, type(of: self), #selector(getter: self.isHidden))
         }
         set {
-            if let navigationBar = navigationBar {
+            if let navigationBar = self.xzNavigationBar {
                 navigationBar.isHidden = newValue
             } else {
                 xz_objc_msgSendSuper_void(self, type(of: self), #selector(setter: self.isHidden), newValue)
@@ -109,7 +88,7 @@ private class XZUINavigationBar: UINavigationBar {
             return xz_objc_msgSendSuper_bool(self, type(of: self), #selector(getter: self.isTranslucent))
         }
         set {
-            if let navigationBar = navigationBar {
+            if let navigationBar = self.xzNavigationBar {
                 navigationBar.isTranslucent = newValue
             } else {
                 xz_objc_msgSendSuper_void(self, type(of: self), #selector(setter: self.isTranslucent), newValue)
@@ -123,7 +102,7 @@ private class XZUINavigationBar: UINavigationBar {
             return xz_objc_msgSendSuper_bool(self, type(of: self), #selector(getter: self.prefersLargeTitles))
         }
         set {
-            if let navigationBar = navigationBar {
+            if let navigationBar = self.xzNavigationBar {
                 navigationBar.prefersLargeTitles = newValue
             } else {
                 xz_objc_msgSendSuper_void(self, type(of: self), #selector(setter: self.prefersLargeTitles), newValue)
@@ -134,7 +113,7 @@ private class XZUINavigationBar: UINavigationBar {
     open override func layoutSubviews() {
         xz_objc_msgSendSuper_void(self, type(of: self), #selector(layoutSubviews))
 
-        if let navigationBar = navigationBar {
+        if let navigationBar = self.xzNavigationBar {
             let bounds = self.bounds
             navigationBar.frame = bounds
         }
@@ -142,7 +121,7 @@ private class XZUINavigationBar: UINavigationBar {
     
     override func safeAreaInsetsDidChange() {
         xz_objc_msgSendSuper_void(self, type(of: self), #selector(safeAreaInsetsDidChange))
-        guard let navigationBar = navigationBar else {
+        guard let navigationBar = self.xzNavigationBar else {
             return
         }
         // 横屏时，状态栏不显示
@@ -153,50 +132,21 @@ private class XZUINavigationBar: UINavigationBar {
     }
 }
 
-// 当原生导航条添加子视图时，保证自定义导航条始终显示在最上面。
-private class UIViewForNavi: UIView {
-    
-    open override func addSubview(_ view: UIView) {
-        xz_objc_msgSendSuper_void(self, type(of: self), #selector(addSubview(_:)), view)
-        
-        guard let navigationBar = objc_getAssociatedObject(self, &_navigationBar) as? UIView else { return }
-        guard navigationBar != view, navigationBar.superview == self else { return }
-        xz_objc_msgSendSuper_void(self, type(of: self), #selector(bringSubviewToFront(_:)), navigationBar)
-    }
-
-    open override func bringSubviewToFront(_ view: UIView) {
-        xz_objc_msgSendSuper_void(self, type(of: self), #selector(bringSubviewToFront(_:)), view)
-        
-        if let navigationBar = objc_getAssociatedObject(self, &_navigationBar) as? UIView, navigationBar != view {
-            xz_objc_msgSendSuper_void(self, type(of: self), #selector(bringSubviewToFront(_:)), navigationBar)
-        }
-    }
-
-    open override func insertSubview(_ view: UIView, aboveSubview siblingSubview: UIView) {
-        xz_objc_msgSendSuper_void(self, type(of: self), #selector(insertSubview(_:aboveSubview:)), view, siblingSubview)
-        
-        if siblingSubview == objc_getAssociatedObject(self, &_navigationBar) as? UIView {
-            xz_objc_msgSendSuper_void(self, type(of: self), #selector(bringSubviewToFront(_:)), siblingSubview)
-        }
-    }
-
-    open override func insertSubview(_ view: UIView, at index: Int) {
-        xz_objc_msgSendSuper_void(self, type(of: self), #selector(insertSubview(_:at:)), view, index)
-
-        if let navigationBar = objc_getAssociatedObject(self, &_navigationBar) as? UIView {
-            xz_objc_msgSendSuper_void(self, type(of: self), #selector(bringSubviewToFront(_:)), navigationBar)
-        }
-    }
-
-    open override func insertSubview(_ view: UIView, belowSubview siblingSubview: UIView) {
-        xz_objc_msgSendSuper_void(self, type(of: self), #selector(insertSubview(_:belowSubview:)), view, siblingSubview)
-        
-        if let navigationBar = objc_getAssociatedObject(self, &_navigationBar) as? UIView, navigationBar == view {
-            xz_objc_msgSendSuper_void(self, type(of: self), #selector(bringSubviewToFront(_:)), view)
-        }
-    }
+/// 以
+private func createNavigationBarClass(_ superClass: UINavigationBar.Type) -> UINavigationBar.Type {
+    return xz_objc_createClass(superClass) { NewClass in
+        let SourceClass = XZNavigationUINavigationBar.self;
+        xz_objc_class_addMethod(NewClass, #selector(setter: UINavigationBar.frame), SourceClass, nil, nil, nil);
+        xz_objc_class_addMethod(NewClass, #selector(setter: UINavigationBar.bounds), SourceClass, nil, nil, nil);
+        xz_objc_class_addMethod(NewClass, #selector(getter: UINavigationBar.isHidden), SourceClass, nil, nil, nil);
+        xz_objc_class_addMethod(NewClass, #selector(setter: UINavigationBar.isHidden), SourceClass, nil, nil, nil);
+        xz_objc_class_addMethod(NewClass, #selector(getter: UINavigationBar.isTranslucent), SourceClass, nil, nil, nil);
+        xz_objc_class_addMethod(NewClass, #selector(setter: UINavigationBar.isTranslucent), SourceClass, nil, nil, nil);
+        xz_objc_class_addMethod(NewClass, #selector(getter: UINavigationBar.prefersLargeTitles), SourceClass, nil, nil, nil);
+        xz_objc_class_addMethod(NewClass, #selector(setter: UINavigationBar.prefersLargeTitles), SourceClass, nil, nil, nil);
+    } as! UINavigationBar.Type
 }
 
 @MainActor private var _navigationBar = 0
-@MainActor private var _customizableClass = 0;
-@MainActor private var _isCustomizable = 0;
+@MainActor private var _navigationBarClass = 0;
+@MainActor private var _supportsCustomization = 0;

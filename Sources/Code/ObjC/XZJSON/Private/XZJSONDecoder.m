@@ -445,8 +445,7 @@ FOUNDATION_STATIC_INLINE NSString * _Nullable NSStringFromJSONValue(id const _Un
         return number.stringValue;
     }
     
-    NSData *data = [NSJSONSerialization dataWithJSONObject:JSONValue options:(NSJSONWritingFragmentsAllowed) error:nil];
-    return [[NSString alloc] initWithData:data encoding:(NSUTF8StringEncoding)];
+    return nil;
 }
 
 FOUNDATION_STATIC_INLINE NSNumber * _Nullable NSNumberFromJSONValue(id const _Nonnull _Untain JSONValue) {
@@ -1021,6 +1020,22 @@ void XZJSONModelDecodeProperty(id const _Untain model, XZJSONProperty * const _U
                 return;
             }
             
+            // 在 M2 芯片模拟器中，XZJSON 与 YYModel 执行数据转模型的结果如下。
+            // GHUser:  31.67   30.93
+            // Weibo : 115.47  130.36
+            // 而在 iPhone SE 2、iPhone 11 中的测试结果，两种模型都是 XZJSON 更快。
+            // 经分析，当芯片性能足够强时，代码逻辑处理的执行时间就会非常短，值非常接近，在 M2 模拟器中情况就是如此。
+            // 由于 GHUser 的属性大多是 NSString 类型，实际代码流程仅涉及字符串的处理，其中
+            // - XZJSON 执行 NSStringFromJSONValue 耗时 11.00 毫秒。
+            // - YYModel 由于没有函数调用，仅需要执行 isKindOfClass 只消耗 6 毫秒。
+            // 这里 XZJSON 函数调用会额外增加耗时的原因是：
+            // 在 ARC 模式下，函数返回对象，会自动添加 autorelease 操作，而
+            // 在 NSStringFromJSONValue 函数内，执行 isKindOfClass 耗时 3 毫秒，执行 return 耗时 4 毫秒。
+            //
+            // 综上，虽然不用函数可以提供性能，但是为了维护的便利性，此处理逻辑保持不变。
+            // 另外，XZJSON 支持的按属性自定义解析，以及 fallback 逻辑，此处用函数也更好。
+            
+            // 由于数据处理，可能产生新的对象，因此需要强持有目标对象。
             id newValue = nil;
             
             switch (property->_cocoaClass) {

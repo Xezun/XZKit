@@ -50,7 +50,7 @@ class Example17HomeViewController: UITableViewController, XZNavigationBarCustomi
     @IBAction func isCustomizableValueChanged(_ sender: UISwitch) {
         guard let navigationController = self.navigationController as? XZNavigationController else { return }
         
-        navigationController.isCustomizable = sender.isOn
+        navigationController.supportsXZNavigationBar = sender.isOn
     }
     
     @IBAction func unwindToBack(_ unwindSegue: UIStoryboardSegue) {
@@ -62,7 +62,7 @@ class Example17HomeViewController: UITableViewController, XZNavigationBarCustomi
         if operation == .push {
             let sb = UIStoryboard.init(name: "Example17", bundle: nil)
             let vc = sb.instantiateViewController(withIdentifier: "next")
-            if let navigationBar = (vc as? XZNavigationBarCustomizable)?.navigationBarIfLoaded {
+            if let navigationBar = (vc as? XZNavigationBarCustomizable)?.xzNavigationBar {
                 navigationBar.isHidden = nextHiddenSwitch.isOn
                 navigationBar.isTranslucent = nextTranslucentSwitch.isOn
                 navigationBar.prefersLargeTitles = nextPrefersLargeTitlesSwitch.isOn
@@ -92,7 +92,7 @@ class Example17HomeViewController: UITableViewController, XZNavigationBarCustomi
         guard segue.identifier == "next" else {
             return
         }
-        if let navigationBar = (segue.destination as? XZNavigationBarCustomizable)?.navigationBarIfLoaded {
+        if let navigationBar = (segue.destination as? XZNavigationBarCustomizable)?.xzNavigationBar {
             navigationBar.isHidden           = nextHiddenSwitch.isOn
             navigationBar.isTranslucent      = nextTranslucentSwitch.isOn
             navigationBar.prefersLargeTitles = nextPrefersLargeTitlesSwitch.isOn
