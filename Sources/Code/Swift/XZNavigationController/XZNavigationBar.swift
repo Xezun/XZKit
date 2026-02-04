@@ -36,9 +36,9 @@ import UIKit
 ///
 /// ```swift
 /// // self is the custom navigation bar
-/// self.synchronizeAppearance(for: .isHidden)
-/// self.synchronizeAppearance(for: .prefersLargeTitles)
-/// self.synchronizeAppearance(for: .isTranslucent)
+/// self.synchronizeAppearance(.isHidden)
+/// self.synchronizeAppearance(.prefersLargeTitles)
+/// self.synchronizeAppearance(.isTranslucent)
 /// ```
 ///
 /// - Attention: 由于转场需要，自定义导航条并不总是在原生导航条之上，所以自定义导航条需要单独设置 tintColor 的值，以避免转场过程中，导航条颜色不一致的问题。
@@ -49,7 +49,7 @@ import UIKit
     var prefersLargeTitles: Bool { get set }
 }
 
-public enum UINavigtionBarAppearanceStyle {
+public enum UINavigtionBarAppearanceAttribute {
     case isHidden
     case isTranslucent
     case prefersLargeTitles
@@ -75,10 +75,10 @@ extension XZNavigationBar {
     }
     
     /// 将状态同步给原生导航条。
-    public func synchronizeAppearance(for style: UINavigtionBarAppearanceStyle) {
+    public func synchronizeAppearance(_ attribute: UINavigtionBarAppearanceAttribute) {
         guard let navigationBar = self.uiNavigationBar else { return }
 
-        switch style {
+        switch attribute {
         case .isHidden:
             xz_objc_msgSendSuper_void(navigationBar, type(of: navigationBar), #selector(setter: UINavigationBar.isHidden), self.isHidden)
         case .isTranslucent:
@@ -110,21 +110,21 @@ extension XZNavigationBar {
     
     open override var isHidden: Bool {
         didSet {
-            self.synchronizeAppearance(for: .isHidden)
+            self.synchronizeAppearance(.isHidden)
         }
     }
     
     /// 控制背景透明，默认 true 。
     open var isTranslucent = true {
         didSet {
-            self.synchronizeAppearance(for: .isTranslucent)
+            self.synchronizeAppearance(.isTranslucent)
         }
     }
     
     /// 默认 false 。
     open var prefersLargeTitles = false {
         didSet {
-            self.synchronizeAppearance(for: .prefersLargeTitles)
+            self.synchronizeAppearance(.prefersLargeTitles)
         }
     }
     

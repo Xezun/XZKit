@@ -107,25 +107,25 @@ public class Example17NavigationBar: XZStandardNavigationBar {
     
     public override var isHidden: Bool {
         didSet {
-            print("Example17NavigationBar(\(title ?? "<无标题>")).setHidden(\(isHidden))")
+            //print("Example17NavigationBar(\(title ?? "<无标题>")).setHidden(\(isHidden))")
         }
     }
     
     public override var isTranslucent: Bool {
         didSet {
-            print("Example17NavigationBar(\(title ?? "<无标题>")).setTranslucent(\(isTranslucent))")
+            //print("Example17NavigationBar(\(title ?? "<无标题>")).setTranslucent(\(isTranslucent))")
         }
     }
     
     public override var prefersLargeTitles: Bool {
         didSet {
-            print("Example17NavigationBar(\(title ?? "<无标题>")).setPrefersLargeTitles(\(prefersLargeTitles))")
+            //print("Example17NavigationBar(\(title ?? "<无标题>")).setPrefersLargeTitles(\(prefersLargeTitles))")
         }
     }
     
     public override var frame: CGRect {
         didSet {
-            print("Example17NavigationBar(\(title ?? "<无标题>")).setFrame(\(frame))")
+            //print("Example17NavigationBar(\(title ?? "<无标题>")).setFrame(\(frame))")
         }
     }
     

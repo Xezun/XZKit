@@ -55,18 +55,28 @@ extension UINavigationBar {
 private class XZNavigationUINavigationBar: UINavigationBar {
     
     open override var frame: CGRect  {
-        didSet {
+        get {
+            fatalError()
+        }
+        set {
+            xz_objc_msgSendSuper_void(self, type(of: self), #selector(setter: self.frame), newValue)
             if let navigationBar = self.xzNavigationBar {
-                navigationBar.frame = frame;
+                navigationBar.frame = newValue;
+                #XZLog("xzNavigationBar.frame = \(newValue)")
             }
         }
     }
     
     open override var bounds: CGRect {
-        didSet {
-            if let navigationBar = self.xzNavigationBar {
-                navigationBar.bounds = bounds;
-            }
+        get {
+            fatalError()
+        }
+        set {
+            xz_objc_msgSendSuper_void(self, type(of: self), #selector(setter: self.bounds), newValue)
+//            if let navigationBar = self.xzNavigationBar {
+//                navigationBar.bounds = newValue;
+//                #XZLog("xzNavigationBar.bounds = \(newValue)")
+//            }
         }
     }
     
@@ -136,14 +146,38 @@ private class XZNavigationUINavigationBar: UINavigationBar {
 private func createNavigationBarClass(_ superClass: UINavigationBar.Type) -> UINavigationBar.Type {
     return xz_objc_createClass(superClass) { NewClass in
         let SourceClass = XZNavigationUINavigationBar.self;
-        xz_objc_class_addMethod(NewClass, #selector(setter: UINavigationBar.frame), SourceClass, nil, nil, nil);
-        xz_objc_class_addMethod(NewClass, #selector(setter: UINavigationBar.bounds), SourceClass, nil, nil, nil);
-        xz_objc_class_addMethod(NewClass, #selector(getter: UINavigationBar.isHidden), SourceClass, nil, nil, nil);
-        xz_objc_class_addMethod(NewClass, #selector(setter: UINavigationBar.isHidden), SourceClass, nil, nil, nil);
-        xz_objc_class_addMethod(NewClass, #selector(getter: UINavigationBar.isTranslucent), SourceClass, nil, nil, nil);
-        xz_objc_class_addMethod(NewClass, #selector(setter: UINavigationBar.isTranslucent), SourceClass, nil, nil, nil);
-        xz_objc_class_addMethod(NewClass, #selector(getter: UINavigationBar.prefersLargeTitles), SourceClass, nil, nil, nil);
-        xz_objc_class_addMethod(NewClass, #selector(setter: UINavigationBar.prefersLargeTitles), SourceClass, nil, nil, nil);
+        xz_objc_class_addMethod(
+            NewClass, #selector(setter: UINavigationBar.frame),
+            SourceClass, nil, #selector(setter: UINavigationBar.frame), nil
+        );
+        xz_objc_class_addMethod(
+            NewClass, #selector(setter: UINavigationBar.bounds),
+            SourceClass, nil, #selector(setter: UINavigationBar.bounds), nil
+        );
+        xz_objc_class_addMethod(
+            NewClass, #selector(getter: UINavigationBar.isHidden),
+            SourceClass, nil, #selector(getter: UINavigationBar.isHidden), nil
+        );
+        xz_objc_class_addMethod(
+            NewClass, #selector(setter: UINavigationBar.isHidden),
+            SourceClass, nil, #selector(setter: UINavigationBar.isHidden), nil
+        );
+        xz_objc_class_addMethod(
+            NewClass, #selector(getter: UINavigationBar.isTranslucent),
+            SourceClass, nil, #selector(getter: UINavigationBar.isTranslucent), nil
+        );
+        xz_objc_class_addMethod(
+            NewClass, #selector(setter: UINavigationBar.isTranslucent),
+            SourceClass, nil, #selector(setter: UINavigationBar.isTranslucent), nil
+        );
+        xz_objc_class_addMethod(
+            NewClass, #selector(getter: UINavigationBar.prefersLargeTitles),
+            SourceClass, nil, #selector(getter: UINavigationBar.prefersLargeTitles), nil
+        );
+        xz_objc_class_addMethod(
+            NewClass, #selector(setter: UINavigationBar.prefersLargeTitles),
+            SourceClass, nil, #selector(setter: UINavigationBar.prefersLargeTitles), nil
+        );
     } as! UINavigationBar.Type
 }
 

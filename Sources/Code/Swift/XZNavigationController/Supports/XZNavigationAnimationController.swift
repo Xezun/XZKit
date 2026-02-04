@@ -144,27 +144,27 @@ extension XZNavigationAnimationController: UIViewControllerAnimatedTransitioning
         containerView.insertSubview(shadowView, belowSubview: toView)
         
         // 转场容器与导航条不在同一个层次上，坐标系需要转换。
-        let systemNavigationBar = navigationController.navigationBar // 系统导航条。
-        let systemNavigationBarRect = systemNavigationBar.convert(systemNavigationBar.bounds, to: containerView)
+        let uiNavigationBar = navigationController.navigationBar // 系统导航条。
+        let uiNavigationBarRect = uiNavigationBar.convert(uiNavigationBar.bounds, to: containerView)
         
         // 获取自定义导航条，并配置导航条。
-        let fromNavBar = (fromVC as? XZNavigationBarCustomizable)?.xzNavigationBar
-        var fromNavBarFrame2: CGRect?
-        if let navBar = fromNavBar, !navBar.isHidden {
+        let fromNavigationBar = (fromVC as? XZNavigationBarCustomizable)?.xzNavigationBar
+        var fromNavigationBarFrame2: CGRect?
+        if let xzNavigationBar = fromNavigationBar, !xzNavigationBar.isHidden {
             // from 导航条使用原始状态
-            let fromNavBarFrame1 = systemNavigationBar.convert(navBar.frame, to: containerView)
-            navBar.frame = fromNavBarFrame1
-            fromNavBarFrame2 = fromNavBarFrame1.offsetBy(dx: direction * -systemNavigationBarRect.width / 3.0, dy: 0)
-            containerView.insertSubview(navBar, aboveSubview: fromView)
+            xzNavigationBar.frame = uiNavigationBarRect;
+            fromNavigationBarFrame2 = uiNavigationBarRect.offsetBy(dx: direction * -uiNavigationBarRect.width / 3.0, dy: 0)
+            // 将导航条放入转场层级中，以避免新页面无法覆盖
+            containerView.insertSubview(xzNavigationBar, aboveSubview: fromView)
             // 解决因为状态栏变化而造成的导航条布局问题：导航条 frame 没变，但是覆盖状态栏的背景，需要根据状态栏变化。
-            navBar.setNeedsLayout()
+            xzNavigationBar.setNeedsLayout()
         }
         
         let toNavBar = (toVC as? XZNavigationBarCustomizable)?.xzNavigationBar
         var toNavBarFrame2: CGRect?
         if let navBar = toNavBar, !navBar.isHidden {
-            navBar.frame = systemNavigationBarRect.offsetBy(dx: direction * systemNavigationBarRect.width, dy: 0)
-            toNavBarFrame2 = systemNavigationBarRect
+            navBar.frame = uiNavigationBarRect.offsetBy(dx: direction * uiNavigationBarRect.width, dy: 0)
+            toNavBarFrame2 = uiNavigationBarRect
             containerView.insertSubview(navBar, aboveSubview: toView)
             navBar.setNeedsLayout()
         }
@@ -180,24 +180,24 @@ extension XZNavigationAnimationController: UIViewControllerAnimatedTransitioning
         // 所以最终采用将导航条向上偏移 200 点或导航条的高度，以避免转场的过程中，原生导航条覆盖自定义导航条的问题。
         // 原生导航条的位置，在转场结束时，恢复到原始位置。
         var navBarFrame2: CGRect?
-        if fromNavBarFrame2 != nil && toNavBarFrame2 != nil {
-//            systemNavigationBar.frame = systemNavigationBarRect.offsetBy(dx: 0, dy: -max(systemNavigationBarRect.maxY, 200))
-        } else if fromNavBarFrame2 != nil {
+        if fromNavigationBarFrame2 != nil && toNavBarFrame2 != nil {
+            uiNavigationBar.frame = uiNavigationBarRect.offsetBy(dx: 0, dy: -max(uiNavigationBarRect.maxY, 200))
+        } else if fromNavigationBarFrame2 != nil {
             // 自定义导航条：显示 => 隐藏
             // 因为原生导航条在最顶层，随 from 退场，也会覆盖在 from 的自定义导航条之上，所以需要上移隐藏
             if navigationController.isNavigationBarHidden {
-                systemNavigationBar.frame = systemNavigationBarRect.offsetBy(dx: 0, dy: -max(systemNavigationBarRect.maxY, 200))
+                uiNavigationBar.frame = uiNavigationBarRect.offsetBy(dx: 0, dy: -max(uiNavigationBarRect.maxY, 200))
             } else {
-                systemNavigationBar.frame = systemNavigationBarRect.offsetBy(dx: direction * systemNavigationBarRect.width, dy: 0)
-                navBarFrame2 = systemNavigationBarRect
+                uiNavigationBar.frame = uiNavigationBarRect.offsetBy(dx: direction * uiNavigationBarRect.width, dy: 0)
+                navBarFrame2 = uiNavigationBarRect
             }
         } else if toNavBarFrame2 != nil {
             // 自定义导航条：隐藏 => 显示
             // 因为原生导航条在最顶层，随 to 入场，也会覆盖在 to 的自定义导航条之上，所以需要上移隐藏
             if self.isNavigationBarHidden {
-                systemNavigationBar.frame = systemNavigationBarRect.offsetBy(dx: 0, dy: -max(systemNavigationBarRect.maxY, 200))
+                uiNavigationBar.frame = uiNavigationBarRect.offsetBy(dx: 0, dy: -max(uiNavigationBarRect.maxY, 200))
             } else {
-                navBarFrame2 = systemNavigationBarRect.offsetBy(dx: direction * -systemNavigationBarRect.width, dy: 0)
+                navBarFrame2 = uiNavigationBarRect.offsetBy(dx: direction * -uiNavigationBarRect.width, dy: 0)
             }
         } else {
             // nav bar is hidden
@@ -217,15 +217,15 @@ extension XZNavigationAnimationController: UIViewControllerAnimatedTransitioning
             }
         }
         
-        let context = XZNavigationAnimationContext.init(transitionContext: transitionContext, fromView: fromView, fromViewFrame: fromViewFrame2, toView: toView, toViewFrame: toViewFrame2, fromNavigationBar: fromNavBar, fromNavigationBarFrame: fromNavBarFrame2, toNavigationBar: toNavBar, toNavigationBarFrame: toNavBarFrame2, navigationBar: systemNavigationBar, navigationBarFrame: navBarFrame2, tabBar: tabBar, tabBarFrame: tabBarFrame2, shadowView: shadowView, shadowViewFrame: shadowFrame2)
+        let context = XZNavigationAnimationContext.init(transitionContext: transitionContext, fromView: fromView, fromViewFrame: fromViewFrame2, toView: toView, toViewFrame: toViewFrame2, fromNavigationBar: fromNavigationBar, fromNavigationBarFrame: fromNavigationBarFrame2, toNavigationBar: toNavBar, toNavigationBarFrame: toNavBarFrame2, navigationBar: uiNavigationBar, navigationBarFrame: navBarFrame2, tabBar: tabBar, tabBarFrame: tabBarFrame2, shadowView: shadowView, shadowViewFrame: shadowFrame2)
         
         commitAnimation(using: context, completion: {
             // 删除阴影。
             shadowView.removeFromSuperview()
             
             // 自定义导航条在转场过程中，仅仅作为转场效果出现，将起放置到导航条上有导航控制器处理，所以这里要移除。
-            systemNavigationBar.frame = containerView.convert(systemNavigationBarRect, to: systemNavigationBar.superview)
-            fromNavBar?.removeFromSuperview()
+            uiNavigationBar.frame = containerView.convert(uiNavigationBarRect, to: uiNavigationBar.superview)
+            fromNavigationBar?.removeFromSuperview()
             toNavBar?.removeFromSuperview()
             
             // 恢复 TabBar 。

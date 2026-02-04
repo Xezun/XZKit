@@ -21,7 +21,7 @@ import ObjectiveC
     /// // 给控制器基类拓展一个属性，自动创建导航条。
     /// extension UIViewController {
     ///     var navigationBar: XZNavigationBar {
-    ///         return <#custom navigation bar#>;
+    ///         return <custom navigation bar>;
     ///     }
     /// }
     ///
