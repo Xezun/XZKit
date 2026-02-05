@@ -25,7 +25,7 @@ class Example17NavigationController: UINavigationController, XZNavigationControl
         view.backgroundColor = .white
         
         // 打开了自定义开关，XZNavigationController 所提供的功能才会生效，除此之外，也不需要其它任何操作。
-        self.supportsXZNavigationBar = true
+        self.isNavigationCustomizable = true
     }
     
     // 以下为调试代码。

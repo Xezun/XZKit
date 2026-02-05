@@ -37,7 +37,23 @@ extension UITabBar {
             if let NewClass = objc_getAssociatedObject(OldClass, &_freezableTabBarClass) as? AnyClass {
                 _ = object_setClass(self, NewClass)
             } else if let NewClass = xz_objc_createClass(OldClass, { (NewClass) in
-                xz_objc_class_copyMethods(XZUITabBar.self, NewClass)
+                let SourceClass = XZUITabBar.self
+                xz_objc_class_addMethod(
+                    NewClass, #selector(setter: UITabBar.frame),
+                    SourceClass, nil, #selector(setter: UITabBar.frame), nil
+                );
+                xz_objc_class_addMethod(
+                    NewClass, #selector(setter: UITabBar.center),
+                    SourceClass, nil, #selector(setter: UITabBar.center), nil
+                );
+                xz_objc_class_addMethod(
+                    NewClass, #selector(setter: UITabBar.bounds),
+                    SourceClass, nil, #selector(setter: UITabBar.bounds), nil
+                );
+                xz_objc_class_addMethod(
+                    NewClass, #selector(setter: UITabBar.isHidden),
+                    SourceClass, nil, #selector(setter: UITabBar.isHidden), nil
+                );
             }) as? UITabBar.Type {
                 _ = object_setClass(self, NewClass)
                 objc_setAssociatedObject(OldClass, &_freezableTabBarClass, NewClass, .OBJC_ASSOCIATION_ASSIGN)
@@ -57,7 +73,7 @@ private class XZUITabBar: UITabBar {
     /// 自定义类的 frame 属性，在修改值时，先判断当前是否允许修改。
     open override var frame: CGRect {
         get {
-            return xz_objc_msgSendSuper_rect(self, type(of: self), #selector(getter: self.frame))
+            fatalError("此方法不会被调用")
         }
         set {
             if isFrozen {
@@ -66,10 +82,22 @@ private class XZUITabBar: UITabBar {
             xz_objc_msgSendSuper_void(self, type(of: self), #selector(setter: self.frame), newValue)
         }
     }
+    
+    override var center: CGPoint {
+        get {
+            fatalError("此方法不会被调用")
+        }
+        set {
+            if isFrozen {
+                return
+            }
+            xz_objc_msgSendSuper_void(self, type(of: self), #selector(setter: self.center), newValue)
+        }
+    }
 
     open override var bounds: CGRect {
         get {
-            return xz_objc_msgSendSuper_rect(self, type(of: self), #selector(getter: self.bounds))
+            fatalError("此方法不会被调用")
         }
         set {
             if isFrozen {
@@ -81,7 +109,7 @@ private class XZUITabBar: UITabBar {
 
     open override var isHidden: Bool {
         get {
-            return xz_objc_msgSendSuper_bool(self, type(of: self), #selector(getter: self.isHidden))
+            fatalError("此方法不会被调用")
         }
         set {
             if isFrozen {

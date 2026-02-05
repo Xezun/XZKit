@@ -67,32 +67,4 @@ extension Example17AppleViewController: UINavigationControllerDelegate {
 
 class ExampleNativeCustomAnimationController : XZNavigationAnimationController {
     
-    override func commitAnimation(using context: XZNavigationAnimationContext, completion: @escaping () -> Void) {
-        switch self.operation {
-        case .push:
-            // 新页面入场动画：从底部向上运动
-            context.to.view.frame = context.to.frame.offsetBy(dx: 0, dy: context.to.frame.height);
-            if let toNavigationBar = context.toNavigationBar {
-                toNavigationBar.view.frame = toNavigationBar.frame.offsetBy(dx: 0, dy: context.to.frame.height)
-            }
-            // 阴影跟随新页面
-            context.shadow.view.frame = context.shadow.frame.offsetBy(dx: 0, dy: context.to.frame.height)
-            // 旧页面保持不动
-            context.from.frame = context.from.view.frame;
-            // 旧自定义导航条保持不动
-            if let fromNavigationBar = context.fromNavigationBar {
-                fromNavigationBar.frame = fromNavigationBar.view.frame
-            }
-            // 原生导航条保持不动
-            if let navigationBar = context.navigationBar {
-                navigationBar.frame = navigationBar.view.frame
-            }
-            super.commitAnimation(using: context, completion: completion)
-        case .pop:
-            super.commitAnimation(using: context, completion: completion)
-        default:
-            fatalError()
-        }
-    }
-    
 }

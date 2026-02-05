@@ -50,7 +50,7 @@ class Example17HomeViewController: UITableViewController, XZNavigationBarCustomi
     @IBAction func isCustomizableValueChanged(_ sender: UISwitch) {
         guard let navigationController = self.navigationController as? XZNavigationController else { return }
         
-        navigationController.supportsXZNavigationBar = sender.isOn
+        navigationController.isNavigationCustomizable = sender.isOn
     }
     
     @IBAction func unwindToBack(_ unwindSegue: UIStoryboardSegue) {

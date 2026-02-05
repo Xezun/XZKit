@@ -13,10 +13,13 @@ import UIKit
     
     /// 导航控制器。
     public unowned let navigationController: XZNavigationController
+    
     /// 导航行为。
     public let operation: UINavigationController.Operation
+    
     /// 此属性存在时，表示当前是一个交互式转场。
     public let interactiveTransition: UIPercentDrivenInteractiveTransition?
+    
     /// 是否为交互性动画。
     public var isInteractive: Bool {
         return interactiveTransition != nil
@@ -34,49 +37,12 @@ import UIKit
         super.init()
     }
     
-    /// 提供子类重写，自定义转场动画。在此方法中，所有参与转场的视图，已经是动画前的准备状态，在 context 中的 frame 均为动画的目标状态。
-    ///
-    /// 此方法默操作为，在 `UIView.animate(...)` 方法中，应用所有视图的目标状态，所以一般情况下，重写自定义动画，不应该调用父类的实现。
-    ///
-    /// 在 `completion` 中，自定义动画仅需要关注动画相关的内容，转场相关的操作已默认实现。
+    /// 提供子类重写，自定义转场动画。
     ///
     /// - Parameters:
-    ///   - context: 所有参与转场的视图，以及视图的目标状态。
-    ///   - completion: 转场动画完成必须执行的回调。
-    open func commitAnimation(using context: XZNavigationAnimationContext, completion: @escaping () -> Void) {
-        let duration = transitionDuration(using: context.transitionContext)
-        let options  = animationOptions(using: context)
+    ///   - context: 参与转场的视图，以及视图的目标状态。
+    open func prepareTransitionAnimations(with context: XZNavigationAnimationContext) {
         
-        UIView.animate(withDuration: duration, delay: 0, options: options, animations: {
-            context.from.view.frame   = context.from.frame;
-            context.to.view.frame     = context.to.frame;
-            context.shadow.view.frame = context.shadow.frame
-            
-            if let navigationBar = context.fromNavigationBar {
-                navigationBar.view.frame = navigationBar.frame
-            }
-            if let navigationBar = context.toNavigationBar {
-                navigationBar.view.frame = navigationBar.frame
-            }
-            
-            if let navigationBar = context.navigationBar {
-                navigationBar.view.frame = navigationBar.frame
-            }
-            if let tabBar = context.tabBar {
-                tabBar.view.frame = tabBar.frame
-                tabBar.view.isFrozen = true
-            }
-        }, completion: { _ in
-            context.tabBar?.view.isFrozen = false
-            completion()
-        })
-    }
-    
-    open func animationOptions(using context: XZNavigationAnimationContext) -> UIView.AnimationOptions {
-        if interactiveTransition == nil {
-            return .curveEaseInOut
-        }
-        return .curveLinear
     }
     
 }
@@ -84,16 +50,16 @@ import UIKit
 extension XZNavigationAnimationController: UIViewControllerAnimatedTransitioning {
     
     open func transitionDuration(using transitionContext: UIViewControllerContextTransitioning?) -> TimeInterval {
-        return 3.35
+        return 0.35
     }
     
     /// 4. 配置转场动画。
     open func animateTransition(using transitionContext: UIViewControllerContextTransitioning) {
         switch operation {
         case .push:
-            animatePush(using: transitionContext)
+            animatePushTransition(using: transitionContext)
         case .pop:
-            animatePop(using: transitionContext)
+            animatePopTransition(using: transitionContext)
         default:
             break
         }
@@ -113,7 +79,7 @@ extension XZNavigationAnimationController: UIViewControllerAnimatedTransitioning
     /// 执行 Push 动画。
     ///
     /// - Parameter transitionContext: 转场信息。
-    public func animatePush(using transitionContext: UIViewControllerContextTransitioning) {
+    private func animatePushTransition(using transitionContext: UIViewControllerContextTransitioning) {
         guard let fromVC   = transitionContext.viewController(forKey: .from),
               let fromView = transitionContext.view(forKey: .from),
               let toVC     = transitionContext.viewController(forKey: .to),
@@ -143,36 +109,12 @@ extension XZNavigationAnimationController: UIViewControllerAnimatedTransitioning
         let shadowView = XZNavigationShadowView.init(frame: shadowFrame1)
         containerView.insertSubview(shadowView, belowSubview: toView)
         
-        // 转场容器与导航条不在同一个层次上，坐标系需要转换。
-        let uiNavigationBar = navigationController.navigationBar // 系统导航条。
-        let uiNavigationBarFrame1 = uiNavigationBar.frame; //uiNavigationBar.convert(uiNavigationBar.bounds, to: containerView)
-        
-        // 获取自定义导航条，并配置导航条。
-        let fromNavigationBar = (fromVC as? XZNavigationBarCustomizable)?.xzNavigationBar
-        var fromNavigationBarFrame2: CGRect?
-        if let fromNavigationBar = fromNavigationBar, !fromNavigationBar.isHidden {
-            // from 导航条使用原始状态
-            fromNavigationBar.frame = uiNavigationBarFrame1;
-            fromNavigationBarFrame2 = .zero
-            
-            uiNavigationBar.superview?.addSubview(fromNavigationBar);
-            // 解决因为状态栏变化而造成的导航条布局问题：导航条 frame 没变，但是覆盖状态栏的背景，需要根据状态栏变化。
-            fromNavigationBar.setNeedsLayout()
-        }
-        
-        let toNavigationBar = (toVC as? XZNavigationBarCustomizable)?.xzNavigationBar
-        var toNavigationBarFrame2: CGRect?
-        if let toNavigationBar = toNavigationBar, !toNavigationBar.isHidden {
-            toNavigationBar.frame = uiNavigationBarFrame1.offsetBy(dx: direction * uiNavigationBarFrame1.width, dy: 0)
-            toNavigationBarFrame2 = .zero
-            
-            uiNavigationBar.superview?.addSubview(toNavigationBar);
-            toNavigationBar.setNeedsLayout()
-        }
-        
-        // 处理原生导航条：
-        // 由于原生导航条，不参与转场过程，且其层级不在 containerView 中，无法控制层级关系，所以当不需要展示原生导航条时，
-        // 将原生导航条移动到屏幕外，从而避免原生导航条覆盖了自定义导航条（转场后，自定义导航条被移动到原生导航条上）。
+        // 处理原生导航条的转场动画效果：
+        // 1、转场容器与原生导航条不在同一个层次上，且原生导航条的层级更高，会覆盖在转场容器之上。
+        // 2、在 iOS 26 之前，可以通过将原生导航条移动到屏幕之外，来解决转场过程中，原生导航条覆盖自定义导航条的问题。
+        // 3、在 iOS 26 开始，将原生导航条移动到屏幕之外，它会在转场的过程中自己移动回来（也可能是玻璃效果），即使锁定 frame 也无法阻止。
+        //
+        // 虽然自定义导航条与控制器一同转场效果最好，但是很明显，苹果的原生导航条写的一塌糊涂，至少这个动画跟转场不对付，所以。
         //
         // 【备忘】尝试过将原生导航条 sendSubviewToBack 虽然转场过程中没有问题，但是下面的情形中，会发生问题：
         // 页面 A 导航条显示，页面 B 导航条隐藏，在 A => B 的手势转场中，如果取消了转场，那么在这个取消的转场
@@ -180,28 +122,71 @@ extension XZNavigationAnimationController: UIViewControllerAnimatedTransitioning
         //
         // 所以最终采用将导航条向上偏移 200 点或导航条的高度，以避免转场的过程中，原生导航条覆盖自定义导航条的问题。
         // 原生导航条的位置，在转场结束时，恢复到原始位置。
+        let uiNavigationBar = navigationController.navigationBar // 系统导航条。
+        let uiNavigationBarFrame1 = uiNavigationBar.convert(uiNavigationBar.bounds, to: containerView);
         var uiNavigationBarFrame2: CGRect?
+        
+        let fromNavigationBar = (fromVC as? XZNavigationBarCustomizable)?.xzNavigationBar
+        var fromNavigationBarFrame2: CGRect?
+        if let fromNavigationBar = fromNavigationBar, !fromNavigationBar.isHidden {
+            // 此处赋值用于判断导航条处于显示状态
+            fromNavigationBarFrame2 = .zero
+            // fromNavigationBar 层级在 fromView 之上
+            containerView.insertSubview(fromNavigationBar, aboveSubview: fromView)
+            // 解决因为状态栏变化而造成的导航条布局问题：导航条 frame 没变，但是覆盖状态栏的背景，需要根据状态栏变化。
+            fromNavigationBar.setNeedsLayout()
+        }
+        
+        let toNavigationBar = (toVC as? XZNavigationBarCustomizable)?.xzNavigationBar
+        var toNavigationBarFrame2: CGRect?
+        if let toNavigationBar = toNavigationBar, !toNavigationBar.isHidden {
+            // 此处赋值用于判断导航条处于显示状态
+            toNavigationBarFrame2 = .zero
+            // toNavigationBar 层级在 toView 之上
+            containerView.insertSubview(toNavigationBar, aboveSubview: toView)
+            // 解决因为状态栏变化而造成的导航条布局问题：导航条 frame 没变，但是覆盖状态栏的背景，需要根据状态栏变化。
+            toNavigationBar.setNeedsLayout()
+        }
+        
+        // 根据转场状态，配置原生导航条和自定义导航条的转场行为
         if fromNavigationBarFrame2 != nil && toNavigationBarFrame2 != nil {
-            // 导航条一直显示
-            fromNavigationBarFrame2 = uiNavigationBarFrame1.offsetBy(dx: -uiNavigationBarFrame1.width * 0.33 * direction, dy: 0);
-            toNavigationBarFrame2 = uiNavigationBarFrame1
+            // 导航条：一直显示
+            fromNavigationBar!.frame = uiNavigationBarFrame1
+            fromNavigationBarFrame2 = uiNavigationBarFrame1.offsetBy(dx: -uiNavigationBarFrame1.width * 0.34 * direction, dy: 0);
+            toNavigationBar!.frame = uiNavigationBarFrame1.offsetBy(dx: uiNavigationBarFrame1.width * direction, dy: 0)
+            toNavigationBarFrame2 = uiNavigationBarFrame1;
+            // 将原生导航条，上移至屏幕外
+            uiNavigationBarFrame2 = uiNavigationBarFrame1.offsetBy(dx: 0, dy: -abs(uiNavigationBarFrame1.maxY));
+            uiNavigationBar.frame = uiNavigationBarFrame2!
         } else if fromNavigationBarFrame2 != nil {
-            // 导航条：显示 => 隐藏
-            // 原生导航条随 from 退场，但是由于其在最顶层，覆盖在自定义导航条之上，所以需要上移隐藏
-            uiNavigationBarFrame2 = uiNavigationBarFrame1.offsetBy(dx: -uiNavigationBarFrame1.width * direction, dy: 0)
-            fromNavigationBarFrame2 = uiNavigationBarFrame2;
-//            if navigationController.isNavigationBarHidden {
-//                uiNavigationBar.frame = uiNavigationBarRect.offsetBy(dx: 0, dy: -uiNavigationBarRect.maxY)
-//            } else {
-
-//            }
+            // 自定义导航条：显示 => 隐藏
+            fromNavigationBar!.frame = uiNavigationBarFrame1
+            fromNavigationBarFrame2 = uiNavigationBarFrame1.offsetBy(dx: -uiNavigationBarFrame1.width * 0.34 * direction, dy: 0);
+            // 根据原生导航条的状态，判断 toView 是否显示原生导航条
+            if navigationController.isNavigationBarHidden {
+                // toView 不显示原生导航条，且没有自定义导航条或自定义导航条隐藏
+                // 因为原生导航条可能有隐藏动画，将原生导航条，上移至屏幕外，避免与遮挡自定义导航条
+                uiNavigationBarFrame2 = uiNavigationBarFrame1.offsetBy(dx: 0, dy: -abs(uiNavigationBarFrame1.maxY));
+                uiNavigationBar.frame = uiNavigationBarFrame2!
+            } else {
+                // toView 显示原生导航条，原生导航条随目标页面一起入场
+                uiNavigationBar.frame = uiNavigationBarFrame1.offsetBy(dx: uiNavigationBarFrame1.width * direction, dy: 0);
+                uiNavigationBarFrame2 = uiNavigationBarFrame1
+            }
         } else if toNavigationBarFrame2 != nil {
             // 自定义导航条：隐藏 => 显示
-            // 因为原生导航条在最顶层，随 to 入场，也会覆盖在 to 的自定义导航条之上，所以需要上移隐藏
-            uiNavigationBar.frame = uiNavigationBarFrame1.offsetBy(dx: +uiNavigationBarFrame1.width * direction, dy: 0)
-            toNavigationBar!.frame = uiNavigationBar.frame;
+            toNavigationBar!.frame = uiNavigationBarFrame1.offsetBy(dx: uiNavigationBarFrame1.width * direction, dy: 0)
             toNavigationBarFrame2 = uiNavigationBarFrame1;
-            uiNavigationBarFrame2 = uiNavigationBarFrame1;
+            // 根据导航条转场前的状态，判断from页面是否有自定义导航条
+            if self.isNavigationBarHidden {
+                // fromView 不显示原生导航条，且没有自定义导航条或自定义导航条隐藏
+                uiNavigationBarFrame2 = uiNavigationBarFrame1.offsetBy(dx: 0, dy: -abs(uiNavigationBarFrame1.maxY));
+                uiNavigationBar.frame = uiNavigationBarFrame2!
+            } else {
+                // fromView 显示原生导航条，原生导航条随 fromView 一起退场
+                // 原生导航条随 fromView 一起退场，由于 toView 无法覆盖原生导航条，原生导航条 100% 退场。
+                uiNavigationBarFrame2 = uiNavigationBarFrame1.offsetBy(dx: -uiNavigationBarFrame1.width * direction, dy: 0);
+            }
         } else {
             // nav bar is hidden
         }
@@ -220,28 +205,25 @@ extension XZNavigationAnimationController: UIViewControllerAnimatedTransitioning
             }
         }
         
-        let context = XZNavigationAnimationContext.init(transitionContext: transitionContext, fromView: fromView, fromViewFrame: fromViewFrame2, toView: toView, toViewFrame: toViewFrame2, fromNavigationBar: fromNavigationBar, fromNavigationBarFrame: fromNavigationBarFrame2, toNavigationBar: toNavigationBar, toNavigationBarFrame: toNavigationBarFrame2, navigationBar: uiNavigationBar, navigationBarFrame: uiNavigationBarFrame2, tabBar: tabBar, tabBarFrame: tabBarFrame2, shadowView: shadowView, shadowViewFrame: shadowFrame2)
+        let context = XZNavigationAnimationContext(
+            operation: .push,
+            containerView: containerView,
+            from: ((fromView, fromViewFrame2), (fromNavigationBar, fromNavigationBarFrame2)),
+            to: ((toView, toViewFrame2), (toNavigationBar, toNavigationBarFrame2)),
+            navigationBar: (uiNavigationBar, uiNavigationBarFrame2),
+            tabBar: (tabBar, tabBarFrame2),
+            shadow: (shadowView, shadowFrame2),
+            options: self.isInteractive ? .curveLinear : .curveEaseInOut
+        )
         
-        commitAnimation(using: context, completion: {
-            // 删除阴影。
-            shadowView.removeFromSuperview()
-            
-            // 自定义导航条在转场过程中，仅仅作为转场效果出现，将起放置到导航条上有导航控制器处理，所以这里要移除。
-            uiNavigationBar.frame = containerView.convert(uiNavigationBarFrame1, to: uiNavigationBar.superview)
-            fromNavigationBar?.removeFromSuperview()
-            toNavigationBar?.removeFromSuperview()
-            
-            // 恢复 TabBar 。
-            // tabBar?.isFrozen = false
-            
-            transitionContext.completeTransition(!transitionContext.transitionWasCancelled)
-        })
+        self.prepareTransitionAnimations(with: context)
+        self.executeTransitionAnimations(with: context, using: transitionContext);
     }
 
     /// 执行 pop 动画。
     ///
     /// - Parameter transitionContext: 转场信息。
-    public func animatePop(using transitionContext: UIViewControllerContextTransitioning) {
+    private func animatePopTransition(using transitionContext: UIViewControllerContextTransitioning) {
         guard let fromVC   = transitionContext.viewController(forKey: .from),
               let fromView = transitionContext.view(forKey: .from),
               let toVC     = transitionContext.viewController(forKey: .to),
@@ -273,52 +255,55 @@ extension XZNavigationAnimationController: UIViewControllerAnimatedTransitioning
         
         // 转场容器与导航条不在同一个层次上，坐标系需要转换。
         let uiNavigationBar = navigationController.navigationBar // 系统导航条。
-        let uiNavigationBarFrame1 = uiNavigationBar.frame;
+        let uiNavigationBarFrame1 = uiNavigationBar.convert(uiNavigationBar.bounds, to: containerView);
+        var uiNavigationBarFrame2: CGRect?
         
-        // 获取自定义导航条，并配置导航条。
         let fromNavigationBar = (fromVC as? XZNavigationBarCustomizable)?.xzNavigationBar
         var fromNavigationBarFrame2: CGRect?
         if let fromNavigationBar = fromNavigationBar, !fromNavigationBar.isHidden {
-            let fromNavBarFrame1 = uiNavigationBar.convert(fromNavigationBar.frame, to: containerView)
-            fromNavigationBar.frame = uiNavigationBarFrame1
             fromNavigationBarFrame2 = .zero;
-            uiNavigationBar.superview?.addSubview(fromNavigationBar)
+            containerView.insertSubview(fromNavigationBar, aboveSubview: fromView)
             fromNavigationBar.setNeedsLayout()
         }
         
         let toNavigationBar = (toVC as? XZNavigationBarCustomizable)?.xzNavigationBar
         var toNavigationBarFrame2: CGRect?
         if let toNavigationBar = toNavigationBar, !toNavigationBar.isHidden {
-            toNavigationBar.frame = uiNavigationBarFrame1.offsetBy(dx: -uiNavigationBarFrame1.width * 0.33 * direction, dy: 0)
             toNavigationBarFrame2 = .zero
-            uiNavigationBar.superview?.insertSubview(toNavigationBar, aboveSubview: uiNavigationBar)
+            containerView.insertSubview(toNavigationBar, aboveSubview: toView)
             toNavigationBar.setNeedsLayout()
         }
         
-        var uiNavigationBarFrame2: CGRect?
         if fromNavigationBarFrame2 != nil && toNavigationBarFrame2 != nil {
-            //uiNavigationBar.frame = uiNavigationBarFrame1.offsetBy(dx: 0, dy: -max(uiNavigationBarFrame1.maxY, 200))
+            fromNavigationBar!.frame = uiNavigationBarFrame1;
             fromNavigationBarFrame2 = uiNavigationBarFrame1.offsetBy(dx: uiNavigationBarFrame1.width * direction, dy: 0);
-            toNavigationBarFrame2 = uiNavigationBarFrame1;
+            
+            toNavigationBar!.frame = uiNavigationBarFrame1.offsetBy(dx: -uiNavigationBarFrame1.width * 0.34 * direction, dy: 0);
+            toNavigationBarFrame2 = uiNavigationBarFrame1
+            
+            uiNavigationBarFrame2 = uiNavigationBarFrame1.offsetBy(dx: 0, dy: -abs(uiNavigationBarFrame1.maxY));
+            uiNavigationBar.frame = uiNavigationBarFrame2!
         } else if fromNavigationBarFrame2 != nil {
-            fromNavigationBarFrame2 = uiNavigationBarFrame1.offsetBy(dx: uiNavigationBarFrame1.width * direction, dy: 0);
-            uiNavigationBarFrame2 = fromNavigationBarFrame2;
-//            if navigationController.isNavigationBarHidden {
-//                uiNavigationBar.frame = uiNavigationBarFrame1.offsetBy(dx: 0, dy: -max(uiNavigationBarFrame1.maxY, 200))
-//            } else {
-//                uiNavigationBar.frame = uiNavigationBarFrame1.offsetBy(dx: direction * -uiNavigationBarFrame1.width, dy: 0)
-//                uiNavigationBarFrame2 = uiNavigationBarFrame1
-//            }
+            fromNavigationBar!.frame = uiNavigationBarFrame1;
+            fromNavigationBarFrame2 = uiNavigationBarFrame1.offsetBy(dx: +uiNavigationBarFrame1.width * direction, dy: 0);
+            
+            if navigationController.isNavigationBarHidden {
+                uiNavigationBarFrame2 = uiNavigationBarFrame1.offsetBy(dx: 0, dy: -abs(uiNavigationBarFrame1.maxY));
+                uiNavigationBar.frame = uiNavigationBarFrame2!
+            } else {
+                uiNavigationBar.frame = uiNavigationBarFrame1.offsetBy(dx: -uiNavigationBarFrame1.width * direction, dy: 0);
+                uiNavigationBarFrame2 = uiNavigationBarFrame1;
+            }
         } else if toNavigationBarFrame2 != nil {
-            uiNavigationBar.frame = uiNavigationBarFrame1.offsetBy(dx: -uiNavigationBarFrame1.width * direction, dy: 0)
-            uiNavigationBarFrame2 = uiNavigationBarFrame1;
-            toNavigationBar?.frame = uiNavigationBarFrame1.offsetBy(dx: -uiNavigationBarFrame1.width * direction, dy: 0)
+            toNavigationBar!.frame = uiNavigationBarFrame1.offsetBy(dx: -uiNavigationBarFrame1.width * 0.34 * direction, dy: 0);
             toNavigationBarFrame2 = uiNavigationBarFrame1;
-//            if self.isNavigationBarHidden {
-//                uiNavigationBar.frame = uiNavigationBarFrame1.offsetBy(dx: 0, dy: -max(uiNavigationBarFrame1.maxY, 200))
-//            } else {
-//                uiNavigationBarFrame2 = uiNavigationBarFrame1.offsetBy(dx: direction * uiNavigationBarFrame1.width, dy: 0)
-//            }
+            
+            if self.isNavigationBarHidden {
+                uiNavigationBarFrame2 = uiNavigationBarFrame1.offsetBy(dx: 0, dy: -abs(uiNavigationBarFrame1.maxY));
+                uiNavigationBar.frame = uiNavigationBarFrame2!
+            } else {
+                uiNavigationBarFrame2 = uiNavigationBarFrame1.offsetBy(dx: +uiNavigationBarFrame1.width, dy: 0);
+            }
         } else {
             // nav bar is hidden
         }
@@ -340,19 +325,56 @@ extension XZNavigationAnimationController: UIViewControllerAnimatedTransitioning
             }
         }
         
-        let context = XZNavigationAnimationContext.init(transitionContext: transitionContext, fromView: fromView, fromViewFrame: fromViewFrame2, toView: toView, toViewFrame: toViewFrame2, fromNavigationBar: fromNavigationBar, fromNavigationBarFrame: fromNavigationBarFrame2, toNavigationBar: toNavigationBar, toNavigationBarFrame: toNavigationBarFrame2, navigationBar: uiNavigationBar, navigationBarFrame: uiNavigationBarFrame2, tabBar: tabBar, tabBarFrame: tabBarFrame2, shadowView: shadowView, shadowViewFrame: shadowFrame2)
+        let context = XZNavigationAnimationContext(
+            operation: .pop,
+            containerView: containerView,
+            from: ((fromView, fromViewFrame2), (fromNavigationBar, fromNavigationBarFrame2)),
+            to: ((toView, toViewFrame2), (toNavigationBar, toNavigationBarFrame2)),
+            navigationBar: (uiNavigationBar, uiNavigationBarFrame2),
+            tabBar: (tabBar, tabBarFrame2),
+            shadow: (shadowView, shadowFrame2)
+        )
         
-        commitAnimation(using: context, completion: {
+        prepareTransitionAnimations(with: context);
+        executeTransitionAnimations(with: context, using: transitionContext);
+    }
+    
+    private func executeTransitionAnimations(with context: XZNavigationAnimationContext, using transitionContext: UIViewControllerContextTransitioning) {
+        let options  = context.options
+        let delay    = context.delay;
+        let duration = self.transitionDuration(using: transitionContext)
+        
+        UIView.animate(withDuration: duration, delay: delay, options: options, animations: {
+            context.from.viewController.view.frame = context.from.viewController.finalFrame;
+            context.to.viewController.view.frame   = context.to.viewController.finalFrame;
+            context.shadow.view.frame              = context.shadow.finalFrame
+            
+            if let navigationBar = context.from.navigationBar {
+                navigationBar.view.frame = navigationBar.finalFrame
+            }
+            if let navigationBar = context.to.navigationBar {
+                navigationBar.view.frame = navigationBar.finalFrame
+            }
+            
+            if let navigationController = context.navigationController {
+                navigationController.navigationBar.frame = navigationController.finalFrame
+                navigationController.navigationBar.isFrozen = true
+            }
+            if let tabBarController = context.tabBarController {
+                tabBarController.tabBar.frame = tabBarController.finalFrame
+                tabBarController.tabBar.isFrozen = true
+            }
+        }, completion: { _ in
+            context.navigationController?.navigationBar.isFrozen = false
+            context.tabBarController?.tabBar.isFrozen = false
+            
             // 删除阴影。
-            shadowView.removeFromSuperview()
+            context.shadow.view.removeFromSuperview()
 
             // 自定义导航条在转场过程中，仅仅作为转场效果出现，将起放置到导航条上有导航控制器处理，所以这里要移除。
-            uiNavigationBar.frame = containerView.convert(uiNavigationBarFrame1, to: uiNavigationBar.superview)
-            fromNavigationBar?.removeFromSuperview()
-            toNavigationBar?.removeFromSuperview()
-            
-            // 恢复 TabBar 。
-            // tabBar?.isFrozen = false
+            // uiNavigationBar.frame = containerView.convert(uiNavigationBarFrame1, to: uiNavigationBar.superview)
+            context.from.navigationBar?.view.removeFromSuperview()
+            context.to.navigationBar?.view.removeFromSuperview()
             
             transitionContext.completeTransition(!transitionContext.transitionWasCancelled)
         })
@@ -378,42 +400,75 @@ fileprivate class XZNavigationShadowView: UIView {
 
 public class XZNavigationAnimationContext {
     
-    public class View<T> {
+    public class ViewControllerContext<T> {
         public let view: T
-        public var frame: CGRect
-        convenience init?(view: T?, frame: CGRect?) {
+        public var finalFrame: CGRect
+        convenience init?(_ view: T?, _ frame: CGRect?) {
             guard let view = view, let frame = frame else { return nil }
             self.init(view: view, frame: frame)
         }
         init(view: T, frame: CGRect) {
             self.view = view
-            self.frame = frame
+            self.finalFrame = frame
         }
     }
     
-    public let transitionContext: UIViewControllerContextTransitioning
+    public class NavigationControllerContext {
+        public let navigationBar: UINavigationBar
+        public var finalFrame: CGRect
+        init?(_ navigationBar: UINavigationBar?, _ finalFrame: CGRect?) {
+            guard let navigationBar = navigationBar, let finalFrame = finalFrame else { return nil }
+            self.navigationBar = navigationBar
+            self.finalFrame = finalFrame
+        }
+    }
     
-    public let from: View<UIView>
-    public let to: View<UIView>
+    public class TabBarControllerContext {
+        public let tabBar: UITabBar
+        public var finalFrame: CGRect
+        init?(_ tabBar: UITabBar?, _ finalFrame: CGRect?) {
+            guard let tabBar = tabBar, let finalFrame = finalFrame else { return nil }
+            self.tabBar = tabBar
+            self.finalFrame = finalFrame
+        }
+    }
     
-    public let fromNavigationBar: View<XZNavigationBar>?
-    public let toNavigationBar: View<XZNavigationBar>?
+    public let containerView: UIView
+    public let operation: UINavigationController.Operation
     
-    public let navigationBar: View<UINavigationBar>?
-    public let tabBar: View<UITabBar>?
+    public var from: (viewController: ViewControllerContext<UIView>, navigationBar: ViewControllerContext<XZNavigationBar>?)
+    public var to: (viewController: ViewControllerContext<UIView>, navigationBar: ViewControllerContext<XZNavigationBar>?)
+    public var navigationController: NavigationControllerContext?
+    public var tabBarController: TabBarControllerContext?
+    public var shadow: ViewControllerContext<UIView>
     
-    public let shadow: View<UIView>
+    public var options: UIView.AnimationOptions
+    public var delay: TimeInterval = 0
     
-    init(transitionContext: UIViewControllerContextTransitioning, fromView: UIView, fromViewFrame: CGRect, toView: UIView, toViewFrame: CGRect, fromNavigationBar: XZNavigationBar?, fromNavigationBarFrame: CGRect?, toNavigationBar: XZNavigationBar?, toNavigationBarFrame: CGRect?, navigationBar: UINavigationBar?, navigationBarFrame: CGRect?, tabBar: UITabBar?, tabBarFrame: CGRect?, shadowView: UIView, shadowViewFrame: CGRect) {
-        
-        self.transitionContext = transitionContext
-        self.from              = View.init(view: fromView, frame: fromViewFrame)
-        self.to                = View.init(view: toView, frame: toViewFrame)
-        self.navigationBar     = View.init(view: navigationBar, frame: navigationBarFrame)
-        self.fromNavigationBar = View.init(view: fromNavigationBar, frame: fromNavigationBarFrame)
-        self.toNavigationBar   = View.init(view: toNavigationBar, frame: toNavigationBarFrame)
-        self.tabBar            = View.init(view: tabBar, frame: tabBarFrame)
-        self.shadow            = View.init(view: shadowView, frame: shadowViewFrame)
+    init(
+        operation: UINavigationController.Operation,
+        containerView: UIView,
+        from: (view: (UIView, CGRect), navigationBar: (XZNavigationBar?, CGRect?)),
+        to: (view: (UIView, CGRect), navigationBar: (XZNavigationBar?, CGRect?)),
+        navigationBar: (UINavigationBar?, CGRect?),
+        tabBar: (UITabBar?, CGRect?),
+        shadow: (UIView, CGRect),
+        options: UIView.AnimationOptions = .curveLinear
+    ) {
+        self.operation = operation;
+        self.containerView = containerView;
+        self.from = (
+            ViewControllerContext(view: from.view.0, frame: from.view.1),
+            ViewControllerContext(from.navigationBar.0, from.navigationBar.1)
+        );
+        self.to = (
+            ViewControllerContext(view: to.view.0, frame: to.view.1),
+            ViewControllerContext(to.navigationBar.0, to.navigationBar.1)
+        );
+        self.navigationController = NavigationControllerContext(navigationBar.0, navigationBar.1);
+        self.tabBarController = TabBarControllerContext(tabBar.0, tabBar.1)
+        self.shadow = ViewControllerContext(view: shadow.0, frame: shadow.1);
+        self.options = options
     }
 }
 

@@ -9,11 +9,11 @@
 import UIKit
 import ObjectiveC
 
-/// 为导航控制器 UINavigationController 提供 自定义全屏手势 功能和 自定义导航条 功能的协议。
+/// 为导航控制器提供定制导航手势、导航条功能的协议。
 ///
-/// 当导航控制器开启自定义功能后：
-/// 1. 栈内控制器可通过协议 `XZNavigationBarCustomizable` 自定义导航条。
-/// 2. 边缘返回手势默认开启，但可通过协议 `XZNavigationGestureDrivable` 控制手势导航行为，或开启全屏手势。
+/// 遵循此协议的导航控制器，可获得``isNavigationCustomizable``属性，以开启导航定制化功能。
+/// 1. 栈内控制器可通过协议``XZNavigationBarCustomizable``定制导航条。
+/// 2. 栈内控制器可通过协议``XZNavigationGestureDrivable``定制导航手势，开启全屏手势，或区域手势导航，默认开启边缘手势返回导航。
 /// 3. 导航控制器原生的自定义转场效果功能，虽然与原生开起来一样，但是如果开发者需自定义转场效果的话，需考虑自定义导航条的转场效果。
 @MainActor public protocol XZNavigationController: UINavigationController {
     
@@ -21,9 +21,10 @@ import ObjectiveC
 
 extension XZNavigationController {
     
-    /// 开启自定义模式。
-    /// - Note: 因为会访问的控制器的 view 属性，请在 viewDidLoad 之后再设置此属性。
-    public var supportsXZNavigationBar: Bool {
+    /// 否支持导航条、导航手势定制化。
+    ///
+    /// 因为会访问的控制器的`view`属性，请在`viewDidLoad`之中或之后，再设置此属性。
+    public var isNavigationCustomizable: Bool {
         get {
             return self.transitionController != nil
         }
@@ -34,10 +35,13 @@ extension XZNavigationController {
                 if !newValue {
                     self.transitionController = nil
                     self.interactivePopGestureRecognizer?.isEnabled = true
+                    if #available(iOS 26.0, *) {
+                        self.interactiveContentPopGestureRecognizer?.isEnabled = true
+                    }
                     transitionController.interactiveNavigationGestureRecognizer.isEnabled = false
                     
-                    setViewSupportsXZNavigationBar(self.view, false);
-                    self.navigationBar.supportsXZNavigationBar = false;
+                    self.view.isNavigationCustomizable = false;
+                    self.navigationBar.isNavigationCustomizable = false;
                     
                     self.xzNavigationBar = nil;
                 }
@@ -46,14 +50,20 @@ extension XZNavigationController {
                 self.transitionController = transitionController
                 
                 // 让视图支持 XZNavigationBar
-                setViewSupportsXZNavigationBar(self.view, true);
-                self.navigationBar.supportsXZNavigationBar = true;
+                self.view.isNavigationCustomizable = true;
+                self.navigationBar.isNavigationCustomizable = true;
                 
                 // 关于原生手势
                 // 即使重写属性 interactivePopGestureRecognizer 也不能保证原生的返回手势不会被创建，所以我们创建了新的手势，并设置了优先级。
                 if let popGestureRecognizer = self.interactivePopGestureRecognizer {
                     popGestureRecognizer.isEnabled = false
                     popGestureRecognizer.require(toFail: transitionController.interactiveNavigationGestureRecognizer)
+                }
+                if #available(iOS 26.0, *) {
+                    if let interactiveContentPopGestureRecognizer = self.interactiveContentPopGestureRecognizer {
+                        interactiveContentPopGestureRecognizer.isEnabled = false;
+                        interactiveContentPopGestureRecognizer.require(toFail: transitionController.interactiveNavigationGestureRecognizer)
+                    }
                 }
                 
                 // 向导航入栈出栈的方法中注入代码：1，让入栈的控制器支持自定义导航条；2，让导航控制器进入执行转场准备操作。
@@ -258,7 +268,7 @@ extension UINavigationController {
     guard let navigationController = viewController.navigationController as? XZNavigationController else {
         return
     }
-    guard navigationController.supportsXZNavigationBar == true else {
+    guard navigationController.isNavigationCustomizable == true else {
         return
     }
     guard let viewController = viewController as? XZNavigationBarCustomizable else {
@@ -285,7 +295,7 @@ extension UINavigationController {
     guard let navigationController = viewController.navigationController as? XZNavigationController else {
         return
     }
-    guard navigationController.supportsXZNavigationBar else {
+    guard navigationController.isNavigationCustomizable else {
         return
     }
     let xzNavigationBar = (viewController as? XZNavigationBarCustomizable)?.xzNavigationBar;
@@ -299,9 +309,9 @@ extension UINavigationController {
     guard navigationController is XZNavigationController else {
         return
     }
-    let aClass = type(of: viewController)
-    guard objc_getAssociatedObject(aClass, &_viewController) == nil else { return }
-    objc_setAssociatedObject(aClass, &_viewController, true, .OBJC_ASSOCIATION_COPY_NONATOMIC)
+    let ViewControllerClass = type(of: viewController)
+    guard objc_getAssociatedObject(ViewControllerClass, &_viewController) == nil else { return }
+    objc_setAssociatedObject(ViewControllerClass, &_viewController, true, .OBJC_ASSOCIATION_COPY_NONATOMIC)
     guard viewController is XZNavigationBarCustomizable else { return }
     
     // 注入 viewWillAppear 用以更新导航条状态
@@ -310,7 +320,7 @@ extension UINavigationController {
         
         let selector = #selector(UIViewController.viewWillAppear(_:))
         let override: MethodType = { `self`, animated in
-            xz_objc_msgSendSuper_void(self, aClass, selector, animated)
+            xz_objc_msgSendSuper_void(self, ViewControllerClass, selector, animated)
             xz_navc_viewController(self, viewWillAppear: animated)
         }
         let exchange = { (selector: Selector) in
@@ -320,7 +330,7 @@ extension UINavigationController {
             }
             return exchange
         }
-        xz_objc_class_addMethodWithBlock(aClass, selector, nil, nil, override, exchange)
+        xz_objc_class_addMethodWithBlock(ViewControllerClass, selector, nil, nil, override, exchange)
     }
     
     do {
@@ -328,7 +338,7 @@ extension UINavigationController {
         
         let selector = #selector(UIViewController.viewDidAppear(_:))
         let override: MethodType = { `self`, animated in
-            xz_objc_msgSendSuper_void(self, aClass, selector, animated)
+            xz_objc_msgSendSuper_void(self, ViewControllerClass, selector, animated)
             xz_navc_viewController(self, viewDidAppear: animated)
         }
         let exchange = { (selector: Selector) in
@@ -338,7 +348,7 @@ extension UINavigationController {
             }
             return exchange
         }
-        xz_objc_class_addMethodWithBlock(aClass, selector, nil, nil, override, exchange)
+        xz_objc_class_addMethodWithBlock(ViewControllerClass, selector, nil, nil, override, exchange)
     }
 }
 
@@ -348,28 +358,80 @@ extension UINavigationController {
 }
 
 
-@MainActor func setViewSupportsXZNavigationBar(_ view: UIView, _ newValue: Bool) {
-    let oldValue = (objc_getAssociatedObject(view, &_supportsXZNavigationBar) as? Bool) ?? false;
-    guard newValue != oldValue else {
-        return
-    }
-    objc_setAssociatedObject(view, &_supportsXZNavigationBar, newValue, .OBJC_ASSOCIATION_COPY_NONATOMIC);
-    if newValue {
-        let oldClass = type(of: view);
-        if let newClass = objc_getAssociatedObject(oldClass, &_navigationViewClass) as? AnyClass {
-            object_setClass(view, newClass);
-        } else {
-            let newClass = createNavigationViewClass(oldClass);
-            objc_setAssociatedObject(oldClass, &_navigationViewClass, newClass, .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
-            object_setClass(view, newClass);
+extension UIView {
+    
+    fileprivate var isNavigationCustomizable: Bool {
+        get {
+            return (objc_getAssociatedObject(self, &_isNavigationCustomizable) as? Bool) ?? false;
         }
-    } else {
-        object_setClass(view, type(of: view).superclass()!)
+        set {
+            guard newValue != self.isNavigationCustomizable else {
+                return
+            }
+            
+            objc_setAssociatedObject(self, &_isNavigationCustomizable, newValue, .OBJC_ASSOCIATION_COPY_NONATOMIC);
+            
+            if newValue {
+                let oldClass = type(of: self);
+                if let newClass = objc_getAssociatedObject(oldClass, &_navigationCustomizableClass) as? AnyClass {
+                    object_setClass(self, newClass);
+                } else {
+                    let newClass: AnyClass = XZNavigationBarSupportedClass(oldClass);
+                    objc_setAssociatedObject(oldClass, &_navigationCustomizableClass, newClass, .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
+                    object_setClass(self, newClass);
+                }
+            } else {
+                object_setClass(self, self.superclass!)
+            }
+        }
     }
+    
 }
 
-
-private func createNavigationViewClass(_ superClass: UIView.Type) -> UIView.Type {
+/// 以
+private func XZNavigationBarSupportedClass(_ superClass: UIView.Type) -> AnyClass {
+    if let superClass = superClass as? UINavigationBar.Type {
+        return xz_objc_createClass(superClass) { NewClass in
+            let SourceClass = XZNavigationUINavigationBar.self;
+            xz_objc_class_addMethod(
+                NewClass, #selector(setter: UINavigationBar.center),
+                SourceClass, nil, #selector(setter: UINavigationBar.center), nil
+            );
+            xz_objc_class_addMethod(
+                NewClass, #selector(setter: UINavigationBar.frame),
+                SourceClass, nil, #selector(setter: UINavigationBar.frame), nil
+            );
+            xz_objc_class_addMethod(
+                NewClass, #selector(setter: UINavigationBar.bounds),
+                SourceClass, nil, #selector(setter: UINavigationBar.bounds), nil
+            );
+            xz_objc_class_addMethod(
+                NewClass, #selector(getter: UINavigationBar.isHidden),
+                SourceClass, nil, #selector(getter: UINavigationBar.isHidden), nil
+            );
+            xz_objc_class_addMethod(
+                NewClass, #selector(setter: UINavigationBar.isHidden),
+                SourceClass, nil, #selector(setter: UINavigationBar.isHidden), nil
+            );
+            xz_objc_class_addMethod(
+                NewClass, #selector(getter: UINavigationBar.isTranslucent),
+                SourceClass, nil, #selector(getter: UINavigationBar.isTranslucent), nil
+            );
+            xz_objc_class_addMethod(
+                NewClass, #selector(setter: UINavigationBar.isTranslucent),
+                SourceClass, nil, #selector(setter: UINavigationBar.isTranslucent), nil
+            );
+            xz_objc_class_addMethod(
+                NewClass, #selector(getter: UINavigationBar.prefersLargeTitles),
+                SourceClass, nil, #selector(getter: UINavigationBar.prefersLargeTitles), nil
+            );
+            xz_objc_class_addMethod(
+                NewClass, #selector(setter: UINavigationBar.prefersLargeTitles),
+                SourceClass, nil, #selector(setter: UINavigationBar.prefersLargeTitles), nil
+            );
+        } as! UINavigationBar.Type
+    }
+    
     return xz_objc_createClass(superClass) { NewClass in
         let SourceClass = XZNavigationUIView.self;
         xz_objc_class_addMethod(
@@ -443,6 +505,119 @@ private class XZNavigationUIView: UIView {
     }
 }
 
+/// 同步导航状态
+private class XZNavigationUINavigationBar: UINavigationBar {
+    
+    open override var center: CGPoint {
+        get {
+            fatalError()
+        }
+        set {
+            if self.isFrozen {
+                return
+            }
+            xz_objc_msgSendSuper_void(self, type(of: self), #selector(setter: self.center), newValue)
+            #XZLog("uiNavigationBar.center = \(newValue)")
+            if let navigationBar = self.xzNavigationBar {
+                navigationBar.center = newValue;
+                #XZLog("xzNavigationBar.center = \(newValue)")
+            }
+        }
+    }
+    
+    open override var frame: CGRect  {
+        get {
+            fatalError()
+        }
+        set {
+            if self.isFrozen {
+                return
+            }
+            #XZLog("uiNavigationBar.frame = \(newValue)")
+            xz_objc_msgSendSuper_void(self, type(of: self), #selector(setter: self.frame), newValue)
+            if let navigationBar = self.xzNavigationBar {
+                navigationBar.frame = newValue;
+                #XZLog("xzNavigationBar.frame = \(newValue)")
+            }
+        }
+    }
+    
+    open override var bounds: CGRect {
+        get {
+            fatalError()
+        }
+        set {
+            xz_objc_msgSendSuper_void(self, type(of: self), #selector(setter: self.bounds), newValue)
+//            if let navigationBar = self.xzNavigationBar {
+//                navigationBar.bounds = newValue;
+//                #XZLog("xzNavigationBar.bounds = \(newValue)")
+//            }
+        }
+    }
+    
+    open override var isHidden: Bool {
+        get {
+            return xz_objc_msgSendSuper_bool(self, type(of: self), #selector(getter: self.isHidden))
+        }
+        set {
+            if let navigationBar = self.xzNavigationBar {
+                navigationBar.isHidden = newValue
+            } else {
+                xz_objc_msgSendSuper_void(self, type(of: self), #selector(setter: self.isHidden), newValue)
+            }
+        }
+    }
+    
+    open override var isTranslucent: Bool {
+        get {
+            return xz_objc_msgSendSuper_bool(self, type(of: self), #selector(getter: self.isTranslucent))
+        }
+        set {
+            if let navigationBar = self.xzNavigationBar {
+                navigationBar.isTranslucent = newValue
+            } else {
+                xz_objc_msgSendSuper_void(self, type(of: self), #selector(setter: self.isTranslucent), newValue)
+            }
+        }
+    }
+    
+    @available(iOS 11.0, *)
+    open override var prefersLargeTitles: Bool {
+        get {
+            return xz_objc_msgSendSuper_bool(self, type(of: self), #selector(getter: self.prefersLargeTitles))
+        }
+        set {
+            if let navigationBar = self.xzNavigationBar {
+                navigationBar.prefersLargeTitles = newValue
+            } else {
+                xz_objc_msgSendSuper_void(self, type(of: self), #selector(setter: self.prefersLargeTitles), newValue)
+            }
+        }
+    }
+    
+    open override func layoutSubviews() {
+        xz_objc_msgSendSuper_void(self, type(of: self), #selector(layoutSubviews))
+
+        if let navigationBar = self.xzNavigationBar {
+            let bounds = self.bounds
+            navigationBar.frame = bounds
+        }
+    }
+    
+    override func safeAreaInsetsDidChange() {
+        xz_objc_msgSendSuper_void(self, type(of: self), #selector(safeAreaInsetsDidChange))
+        guard let navigationBar = self.xzNavigationBar else {
+            return
+        }
+        // 横屏时，状态栏不显示
+        // 从横屏恢复竖屏，原生导航条初始位置，可能还没有适配 safeArea 边距，
+        // 而后续原生导航条再调整位置，可能不会触发自定义导航条的 layoutSubviews 方法，
+        // 因为自定义导航条相对原生导航条，没有任何改变。
+        navigationBar.setNeedsLayout()
+    }
+}
+
+
 @MainActor private var _navigationBar = 0
 /// 记录控制器是否进行了自定义化
 @MainActor private var _viewController = 0
@@ -450,8 +625,8 @@ private class XZNavigationUIView: UIView {
 @MainActor private var _naviagtionController = 0
 /// 保存自定义转场控制。
 @MainActor private var _transitionController = 0
-@MainActor private var _navigationViewClass = 0;
-@MainActor private var _supportsXZNavigationBar = 0;
+@MainActor private var _navigationCustomizableClass = 0;
+@MainActor private var _isNavigationCustomizable = 0;
 
 // 【开发备忘】
 // 为了将更新导航条的操作放在 viewWillAppear 中：

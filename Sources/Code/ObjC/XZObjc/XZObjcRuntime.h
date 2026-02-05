@@ -312,6 +312,7 @@ FOUNDATION_EXPORT void xz_objc_msgSendSuper_void(id receiver, Class receiverClas
 FOUNDATION_EXPORT void xz_objc_msgSendSuper_void(id receiver, Class receiverClass, SEL selector, id _Nullable param1, BOOL param2) XZ_OBJC_OVERLOAD;
 FOUNDATION_EXPORT void xz_objc_msgSendSuper_void(id receiver, Class receiverClass, SEL selector, BOOL param1) XZ_OBJC_OVERLOAD;
 FOUNDATION_EXPORT void xz_objc_msgSendSuper_void(id receiver, Class receiverClass, SEL selector, CGRect param1) XZ_OBJC_OVERLOAD;
+FOUNDATION_EXPORT void xz_objc_msgSendSuper_void(id receiver, Class receiverClass, SEL selector, CGPoint param1) XZ_OBJC_OVERLOAD;
 FOUNDATION_EXPORT void xz_objc_msgSendSuper_void(id receiver, Class receiverClass, SEL selector) XZ_OBJC_OVERLOAD;
 FOUNDATION_EXPORT void xz_objc_msgSendSuper_void(id receiver, Class receiverClass, SEL selector, id _Nullable param1, NSInteger param2) XZ_OBJC_OVERLOAD;
 FOUNDATION_EXPORT void xz_objc_msgSendSuper_void(id receiver, Class receiverClass, SEL selector, id _Nullable param1, id _Nullable param2) XZ_OBJC_OVERLOAD;
@@ -323,6 +324,7 @@ FOUNDATION_EXPORT id _Nullable xz_objc_msgSendSuper_id(id receiver, Class receiv
 FOUNDATION_EXPORT id _Nullable xz_objc_msgSendSuper_id(id receiver, Class receiverClass, SEL selector) XZ_OBJC_OVERLOAD;
 
 FOUNDATION_EXPORT CGRect xz_objc_msgSendSuper_rect(id receiver, Class receiverClass, SEL selector) XZ_OBJC_OVERLOAD;
+FOUNDATION_EXPORT CGPoint xz_objc_msgSendSuper_point(id receiver, Class receiverClass, SEL selector) XZ_OBJC_OVERLOAD;
 
 FOUNDATION_EXPORT BOOL xz_objc_msgSendSuper_bool(id receiver, Class receiverClass, SEL selector) XZ_OBJC_OVERLOAD;
 

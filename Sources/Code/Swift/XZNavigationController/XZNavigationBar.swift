@@ -7,9 +7,11 @@
 
 import UIKit
 
-/// 原生导航条基本特征的协议，也是自定义导航条必须实现的协议。
+/// 控制器定制导航条须实现的属性，这些属性是为了与原生导航条保持一致所必须的。
 ///
-/// 因为本组件并非原生组件的完全替代品，而是原生组件的功能增强，因此必须实现一些方法或属性，以与原生保持的一致性。
+/// 本组件并非原生组件的完全替代品，而是原生组件的功能增强，因此必须实现一些方法或属性，以与原生保持的一致性。
+///
+/// 实现机制是使用定制导航条不可透明，若透明，因为原生的导航条在
 ///
 /// 组件提供了``XZStandardNavigationBar``基类，我们可以继承它，也可以使用其它遵循了``XZNavigationBar``协议的视图控件。
 ///
@@ -36,9 +38,9 @@ import UIKit
 ///
 /// ```swift
 /// // self is the custom navigation bar
-/// self.synchronizeAppearance(.isHidden)
-/// self.synchronizeAppearance(.prefersLargeTitles)
-/// self.synchronizeAppearance(.isTranslucent)
+/// self.synchronizeAppearance(for: .isHidden)
+/// self.synchronizeAppearance(for: .isTranslucent)
+/// self.synchronizeAppearance(for: .prefersLargeTitles)
 /// ```
 ///
 /// - Attention: 由于转场需要，自定义导航条并不总是在原生导航条之上，所以自定义导航条需要单独设置 tintColor 的值，以避免转场过程中，导航条颜色不一致的问题。
@@ -49,7 +51,7 @@ import UIKit
     var prefersLargeTitles: Bool { get set }
 }
 
-public enum UINavigtionBarAppearanceAttribute {
+public enum XZNavigtionBarAppearanceAttribute {
     case isHidden
     case isTranslucent
     case prefersLargeTitles
@@ -75,16 +77,16 @@ extension XZNavigationBar {
     }
     
     /// 将状态同步给原生导航条。
-    public func synchronizeAppearance(_ attribute: UINavigtionBarAppearanceAttribute) {
+    public func synchronizeAppearance(for attribute: XZNavigtionBarAppearanceAttribute) {
         guard let navigationBar = self.uiNavigationBar else { return }
 
         switch attribute {
         case .isHidden:
             xz_objc_msgSendSuper_void(navigationBar, type(of: navigationBar), #selector(setter: UINavigationBar.isHidden), self.isHidden)
         case .isTranslucent:
-            xz_objc_msgSendSuper_void(navigationBar, type(of: navigationBar), #selector(setter: UINavigationBar.prefersLargeTitles), self.prefersLargeTitles)
-        case .prefersLargeTitles:
             xz_objc_msgSendSuper_void(navigationBar, type(of: navigationBar), #selector(setter: UINavigationBar.isTranslucent), self.isTranslucent)
+        case .prefersLargeTitles:
+            xz_objc_msgSendSuper_void(navigationBar, type(of: navigationBar), #selector(setter: UINavigationBar.prefersLargeTitles), self.prefersLargeTitles)
         }
     }
     
@@ -110,21 +112,21 @@ extension XZNavigationBar {
     
     open override var isHidden: Bool {
         didSet {
-            self.synchronizeAppearance(.isHidden)
+            self.synchronizeAppearance(for: .isHidden)
         }
     }
     
     /// 控制背景透明，默认 true 。
     open var isTranslucent = true {
         didSet {
-            self.synchronizeAppearance(.isTranslucent)
+            self.synchronizeAppearance(for: .isTranslucent)
         }
     }
     
     /// 默认 false 。
     open var prefersLargeTitles = false {
         didSet {
-            self.synchronizeAppearance(.prefersLargeTitles)
+            self.synchronizeAppearance(for: .prefersLargeTitles)
         }
     }
     

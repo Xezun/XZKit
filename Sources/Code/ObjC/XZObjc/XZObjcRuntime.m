@@ -461,6 +461,13 @@ void xz_objc_msgSendSuper_void(id receiver, Class receiverClass, SEL selector, C
     };
     ((void (*)(struct objc_super *, SEL, CGRect))objc_msgSendSuper)(&_super, selector, param1);
 }
+void xz_objc_msgSendSuper_void(id receiver, Class receiverClass, SEL selector, CGPoint param1) XZ_OBJC_OVERLOAD {
+    struct objc_super _super = {
+        .receiver = receiver,
+        .super_class = class_getSuperclass(receiverClass)
+    };
+    ((void (*)(struct objc_super *, SEL, CGPoint))objc_msgSendSuper)(&_super, selector, param1);
+}
 void xz_objc_msgSendSuper_void(id receiver, Class receiverClass, SEL selector) XZ_OBJC_OVERLOAD {
      struct objc_super _super = {
         .receiver = receiver,
@@ -510,6 +517,7 @@ id xz_objc_msgSendSuper_id(id receiver, Class receiverClass, SEL selector, id pa
     };
     return ((id(*)(struct objc_super *,SEL,id,id))objc_msgSendSuper)(&_super, selector, param1, param2);
 }
+
 CGRect xz_objc_msgSendSuper_rect(id receiver, Class receiverClass, SEL selector) XZ_OBJC_OVERLOAD {
     struct objc_super _super = {
         .receiver = receiver,
@@ -517,6 +525,15 @@ CGRect xz_objc_msgSendSuper_rect(id receiver, Class receiverClass, SEL selector)
     };
     return ((CGRect(*)(struct objc_super *, SEL))xz_objc_msgSendSuper_stret)(&_super, selector);
 }
+
+CGPoint xz_objc_msgSendSuper_point(id receiver, Class receiverClass, SEL selector) XZ_OBJC_OVERLOAD {
+    struct objc_super _super = {
+        .receiver = receiver,
+        .super_class = class_getSuperclass(receiverClass)
+    };
+    return ((CGPoint(*)(struct objc_super *, SEL))xz_objc_msgSendSuper_stret)(&_super, selector);
+}
+
 BOOL xz_objc_msgSendSuper_bool(id receiver, Class receiverClass, SEL selector) XZ_OBJC_OVERLOAD {
     struct objc_super _super = {
         .receiver = receiver,
