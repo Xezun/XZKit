@@ -45,6 +45,7 @@
     _isPageLoaded       = NO;
     _isLooped      = YES;
     _currentPage   = NSNotFound;
+    _pendingPage   = NSNotFound;
     _reusingPage   = NSNotFound;
     _numberOfPages = 0;
     
@@ -269,7 +270,7 @@
     {
         _numberOfPages = [_dataSource numberOfPagesInPageView:self];
         
-        // 先确定 currentPage 然后再根据 _currentView 的情况处理及发送事件
+        // 确定 currentPage
         if (_numberOfPages == 0) {
             _currentPage = NSNotFound;
         } else if (_currentPage == NSNotFound) {
@@ -278,8 +279,10 @@
             _currentPage = _numberOfPages - 1;
         }
         
+        // 根据 _currentView 的情况处理及发送事件
         if (_currentView) {
             if (!_pendingView) {
+                // 没有 _pendingView 说明没有转场，没有发送 willHide 事件
                 [_context willHideView:_currentView animated:NO];
             }
             [_currentView removeFromSuperview];
@@ -318,31 +321,18 @@
             }
         }
         
+        // 由于是刷新，旧的 _pendingView 未必能用，所以直接将 pendingView 移除或放入重用池
         if (_pendingView) {
             [_context willHideView:_pendingView animated:NO];
             [_pendingView removeFromSuperview];
             [_context didHideView:_pendingView animated:NO];
             
-            _pendingPage = XZLoopPage(_currentPage, _pendingPageDirection, _numberOfPages - 1, _isLooped);
-            
-            if (_pendingPage != NSNotFound) {
-                if ([_dataSource pageView:self shouldReuseView:_pendingView]) {
-                    _pendingView = [_dataSource pageView:self viewForPageAtIndex:_pendingPage reusingView:_pendingView];
-                } else {
-                    _pendingView = [_dataSource pageView:self viewForPageAtIndex:_pendingPage reusingView:_reusingView];
-                    _reusingView = nil;
-                    _reusingPage = NSNotFound;
-                }
-                [_context willShowView:_pendingView animated:NO];
-                [self addSubview:_pendingView];
-            } else {
-                if ([_dataSource pageView:self shouldReuseView:_pendingView]) {
-                    _reusingView = _pendingView;
-                    _reusingPage = NSNotFound;
-                }
-                _pendingView = nil;
+            _pendingPage = NSNotFound;
+            if ([_dataSource pageView:self shouldReuseView:_pendingView]) {
+                _reusingView = _pendingView;
+                _reusingPage = NSNotFound;
             }
-            [_context layoutPendingView:bounds];
+            _pendingView = nil;
         }
         
         // 调整 contentInset 已适配当前状态，并重置页面位置

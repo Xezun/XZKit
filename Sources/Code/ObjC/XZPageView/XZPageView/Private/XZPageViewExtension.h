@@ -23,16 +23,22 @@
     BOOL                _isLooped;
     NSInteger           _numberOfPages;
     
+    /// 当前页。
     NSInteger           _currentPage;
+    /// 当前页对应的视图。
     UIView  * _Nullable _currentView;
     
+    /// 页面切换的目标页。
     NSInteger           _pendingPage;
+    /// 目标页对应的视图。
     UIView  * _Nullable _pendingView;
     /// YES 表示加载在正向滚动的方向上，NO 表示加载在反向滚动的方向上。
     BOOL                _pendingPageDirection;
     
-    UIView  * _Nullable _reusingView;
+    /// 可复用页。
     NSInteger           _reusingPage;
+    /// 可复用页对应的视图。
+    UIView  * _Nullable _reusingView;
     
     NSTimeInterval      _autoPagingInterval;
     /// 自动翻页定时器，请使用方法操作计时器，而非直接使用变量。
