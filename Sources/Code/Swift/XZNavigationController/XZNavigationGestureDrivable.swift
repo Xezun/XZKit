@@ -8,9 +8,9 @@
 
 import UIKit
 
-/// 本协议用于控制器，用于自定义手势导航行为。
-/// - Note: 控制器所在的导航控制器遵循 XZNavigationController 协议。
-/// - Note: 未遵循本协议，默认支持侧滑返回。
+/// 本协议用于导航栈内控制器，为控制器提供定制手势导航的能力。
+/// - 控制器所在的导航控制器遵循``XZNavigationController``协议。
+/// - 未遵循本协议，默认仅支持边缘侧滑返回。
 @MainActor public protocol XZNavigationGestureDrivable: UIViewController {
     
     /// 通过此方法，可限制手势导航触发的范围。

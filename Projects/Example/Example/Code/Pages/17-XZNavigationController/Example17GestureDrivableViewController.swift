@@ -1,5 +1,5 @@
 //
-//  Example17GestureViewController.swift
+//  Example17GestureDrivableViewController.swift
 //  Example
 //
 //  Created by Xezun on 2024/6/19.
@@ -8,7 +8,7 @@
 import UIKit
 import XZKit
 
-class Example17GestureViewController: UITableViewController, XZNavigationGestureDrivable {
+class Example17GestureDrivableViewController: UITableViewController, XZNavigationGestureDrivable {
     
     @IBOutlet weak var hiddenSwitch: UISwitch!
     @IBOutlet weak var translucentSwitch: UISwitch!
@@ -16,7 +16,10 @@ class Example17GestureViewController: UITableViewController, XZNavigationGesture
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        
+        //drivable
+        //customed
+//        GestureDrivable
+//        BarCustomizable
     }
     
     override func viewDidAppear(_ animated: Bool) {

@@ -1,5 +1,5 @@
 //
-//  Example17LastViewController.swift
+//  Example17BarCustomizableViewController.swift
 //  Example
 //
 //  Created by Xezun on 2024/6/18.
@@ -8,7 +8,7 @@
 import UIKit
 import XZKit
 
-class Example17LastViewController: UITableViewController {
+class Example17BarCustomizableViewController: UITableViewController {
 
     @IBOutlet weak var hiddenSwitch: UISwitch!
     @IBOutlet weak var translucentSwitch: UISwitch!
@@ -80,11 +80,11 @@ class Example17LastViewController: UITableViewController {
     
 }
 
-extension Example17LastViewController: XZNavigationBarCustomizable {
+extension Example17BarCustomizableViewController: XZNavigationBarCustomizable {
 
 }
 
-extension Example17LastViewController: XZNavigationGestureDrivable {
+extension Example17BarCustomizableViewController: XZNavigationGestureDrivable {
     
     func navigationController(_ navigationController: UINavigationController, viewControllerForGestureNavigation operation: UINavigationController.Operation) -> UIViewController? {
         if operation == .pop {

@@ -1,5 +1,5 @@
 //
-//  Example17AppleViewController.swift
+//  Example17NoneSupportedViewController.swift
 //  Example
 //
 //  Created by Xezun on 2024/6/21.
@@ -8,7 +8,7 @@
 import UIKit
 import XZKit
 
-class Example17AppleViewController: UITableViewController {
+class Example17NoneSupportedViewController: UITableViewController {
     
     @IBOutlet weak var hiddenSwitch: UISwitch!
     @IBOutlet weak var translucentSwitch: UISwitch!
@@ -57,7 +57,7 @@ class Example17AppleViewController: UITableViewController {
     }
 }
 
-extension Example17AppleViewController: UINavigationControllerDelegate {
+extension Example17NoneSupportedViewController: UINavigationControllerDelegate {
     
     func navigationController(_ navigationController: UINavigationController, animationControllerFor operation: UINavigationController.Operation, from fromVC: UIViewController, to toVC: UIViewController) -> UIViewControllerAnimatedTransitioning? {
         guard let navigationController = navigationController as? XZNavigationController else { return nil }

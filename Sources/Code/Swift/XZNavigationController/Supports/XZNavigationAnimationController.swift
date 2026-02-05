@@ -216,8 +216,8 @@ extension XZNavigationAnimationController: UIViewControllerAnimatedTransitioning
             options: self.isInteractive ? .curveLinear : .curveEaseInOut
         )
         
-        self.prepareTransitionAnimations(with: context)
-        self.executeTransitionAnimations(with: context, using: transitionContext);
+        prepareTransitionAnimations(with: context)
+        executeTransitionAnimations(with: context, using: transitionContext);
     }
 
     /// 执行 pop 动画。
@@ -332,7 +332,8 @@ extension XZNavigationAnimationController: UIViewControllerAnimatedTransitioning
             to: ((toView, toViewFrame2), (toNavigationBar, toNavigationBarFrame2)),
             navigationBar: (uiNavigationBar, uiNavigationBarFrame2),
             tabBar: (tabBar, tabBarFrame2),
-            shadow: (shadowView, shadowFrame2)
+            shadow: (shadowView, shadowFrame2),
+            options: self.isInteractive ? .curveLinear : .curveEaseInOut
         )
         
         prepareTransitionAnimations(with: context);
