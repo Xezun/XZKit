@@ -37,7 +37,7 @@ import UIKit
         super.init()
     }
     
-    /// 提供子类重写，自定义转场动画。
+    /// 子类可通过修改`context`中的`finalFrame`来自定义转场动画。
     ///
     /// - Parameters:
     ///   - context: 参与转场的视图，以及视图的目标状态。
@@ -398,7 +398,7 @@ fileprivate class XZNavigationShadowView: UIView {
     }
 }
 
-
+/// 转场动画效果信息。
 public class XZNavigationAnimationContext {
     
     public class ViewControllerContext<T> {
@@ -434,16 +434,27 @@ public class XZNavigationAnimationContext {
         }
     }
     
+    /// 转场容器。
     public let containerView: UIView
+    /// 导航操作类型。
     public let operation: UINavigationController.Operation
     
+    /// 转场原始页面的视图、定制化 navigationBar 的信息。
     public var from: (viewController: ViewControllerContext<UIView>, navigationBar: ViewControllerContext<XZNavigationBar>?)
+    /// 转场目标页面的视图、定制化 navigationBar 的信息。
     public var to: (viewController: ViewControllerContext<UIView>, navigationBar: ViewControllerContext<XZNavigationBar>?)
-    public var navigationController: NavigationControllerContext?
-    public var tabBarController: TabBarControllerContext?
+    /// 为转场提供阴影效果的视图的信息。
     public var shadow: ViewControllerContext<UIView>
     
+    /// 原生 navigationBar 的转场信息。原生 navigationBar 不在转场容器内。
+    public var navigationController: NavigationControllerContext?
+    /// 原生 tabBar 的转场信息。原生 navigationBar 不在转场容器内。
+    public var tabBarController: TabBarControllerContext?
+    
+    /// 转场动画选项。
     public var options: UIView.AnimationOptions
+    
+    /// 转场动画延时。效果未知。
     public var delay: TimeInterval = 0
     
     init(

@@ -262,8 +262,13 @@ extension UINavigationController {
     
 }
 
-/// 转场已开始，转场动画即将开始：更新导航条样式。
-/// - Attention: This method is private, do not use it directly.
+/// 在导航栈内控制器的 viewWillAppear 方法中注入的代码。
+///
+/// 当此方法执行时，表明转场已开始，但是转场动画还未执行。
+///
+/// 以在转场动画前，将自定义导航条的配置，同步到原生导航条，以保证在执行转场动画时，目标控制器的安全区设置正确。
+///
+/// 此方法在用户的代码之后执行，以覆盖用户对原生导航条的操作，保证原生导航条按照自定义导航条的设置运行。
 @MainActor fileprivate func xz_navc_viewController(_ viewController: UIViewController, viewWillAppear animated: Bool) {
     guard let navigationController = viewController.navigationController as? XZNavigationController else {
         return
@@ -290,6 +295,8 @@ extension UINavigationController {
     }
 }
 
+/// 在导航栈内控制器的 viewDidAppear 方法中注入的代码。
+///
 /// 转场完成，自定义导航条与原生导航条绑定。任何对原生导航条的操作，都会保存到自定义导航条上，并用于下一次转场。
 @MainActor fileprivate func xz_navc_viewController(_ viewController: UIViewController, viewDidAppear animated: Bool) {
     guard let navigationController = viewController.navigationController as? XZNavigationController else {
