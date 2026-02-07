@@ -30,7 +30,7 @@ class Example17BothSupportedViewController: UITableViewController, XZNavigationB
         navigationBar.isTranslucent = true
         
         navigationBar.backTitle = "返回"
-        navigationBar.addTarget(self, action: #selector(backButtonAction(_:)), for: .touchUpInside)
+        
     }
     
     override func viewDidAppear(_ animated: Bool) {

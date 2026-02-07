@@ -41,10 +41,62 @@ import UIKit
     ///
     /// - Parameters:
     ///   - context: 参与转场的视图，以及视图的目标状态。
-    open func prepareTransitionAnimations(with context: XZNavigationAnimationContext) {
+    open func prepareTransitionAnimations(with animationContext: XZNavigationAnimationContext) {
         
     }
     
+    /// 执行转场动画。
+    /// - Parameters:
+    ///   - animationContext: 转场动画信息
+    ///   - transitionContext: 转场信息
+    open func executeTransitionAnimations(with animationContext: XZNavigationAnimationContext, _ transitionContext: UIViewControllerContextTransitioning) {
+        let options  = animationContext.options
+        let delay    = animationContext.delay;
+        let duration = self.transitionDuration(using: transitionContext)
+        
+        UIView.animate(withDuration: duration, delay: delay, options: options, animations: {
+            animationContext.from.viewController.view.frame = animationContext.from.viewController.finalFrame;
+            animationContext.to.viewController.view.frame   = animationContext.to.viewController.finalFrame;
+            animationContext.shadow.view.frame              = animationContext.shadow.finalFrame
+            
+            if let navigationBar = animationContext.from.navigationBar {
+                navigationBar.view.frame = navigationBar.finalFrame
+            }
+            if let navigationBar = animationContext.to.navigationBar {
+                navigationBar.view.frame = navigationBar.finalFrame
+            }
+            
+            if let navigationController = animationContext.navigationController {
+                navigationController.navigationBar.frame = navigationController.finalFrame
+                navigationController.navigationBar.isFrozen = true
+            }
+            if let tabBarController = animationContext.tabBarController {
+                tabBarController.tabBar.frame = tabBarController.finalFrame
+                tabBarController.tabBar.isFrozen = true
+            }
+        }, completion: { _ in
+            self.cleanupTransitionAnimations(with: animationContext)
+            transitionContext.completeTransition(!transitionContext.transitionWasCancelled)
+        })
+    }
+    
+    /// 执行转场动画后的清理操作。
+    ///
+    /// 子类重写，应调用`super`以完成默认的清理操作。
+    ///
+    /// - Parameter animationContext: 转场信息
+    open func cleanupTransitionAnimations(with animationContext: XZNavigationAnimationContext) {
+        animationContext.navigationController?.navigationBar.isFrozen = false
+        animationContext.tabBarController?.tabBar.isFrozen = false
+        
+        // 删除阴影。
+        animationContext.shadow.view.removeFromSuperview()
+
+        // 自定义导航条在转场过程中，仅仅作为转场效果出现，将起放置到导航条上有导航控制器处理，所以这里要移除。
+        // uiNavigationBar.frame = containerView.convert(uiNavigationBarFrame1, to: uiNavigationBar.superview)
+        animationContext.from.navigationBar?.view.removeFromSuperview()
+        animationContext.to.navigationBar?.view.removeFromSuperview()
+    }
 }
 
 extension XZNavigationAnimationController: UIViewControllerAnimatedTransitioning {
@@ -217,7 +269,7 @@ extension XZNavigationAnimationController: UIViewControllerAnimatedTransitioning
         )
         
         prepareTransitionAnimations(with: context)
-        executeTransitionAnimations(with: context, using: transitionContext);
+        executeTransitionAnimations(with: context, transitionContext);
     }
 
     /// 执行 pop 动画。
@@ -337,48 +389,7 @@ extension XZNavigationAnimationController: UIViewControllerAnimatedTransitioning
         )
         
         prepareTransitionAnimations(with: context);
-        executeTransitionAnimations(with: context, using: transitionContext);
-    }
-    
-    private func executeTransitionAnimations(with context: XZNavigationAnimationContext, using transitionContext: UIViewControllerContextTransitioning) {
-        let options  = context.options
-        let delay    = context.delay;
-        let duration = self.transitionDuration(using: transitionContext)
-        
-        UIView.animate(withDuration: duration, delay: delay, options: options, animations: {
-            context.from.viewController.view.frame = context.from.viewController.finalFrame;
-            context.to.viewController.view.frame   = context.to.viewController.finalFrame;
-            context.shadow.view.frame              = context.shadow.finalFrame
-            
-            if let navigationBar = context.from.navigationBar {
-                navigationBar.view.frame = navigationBar.finalFrame
-            }
-            if let navigationBar = context.to.navigationBar {
-                navigationBar.view.frame = navigationBar.finalFrame
-            }
-            
-            if let navigationController = context.navigationController {
-                navigationController.navigationBar.frame = navigationController.finalFrame
-                navigationController.navigationBar.isFrozen = true
-            }
-            if let tabBarController = context.tabBarController {
-                tabBarController.tabBar.frame = tabBarController.finalFrame
-                tabBarController.tabBar.isFrozen = true
-            }
-        }, completion: { _ in
-            context.navigationController?.navigationBar.isFrozen = false
-            context.tabBarController?.tabBar.isFrozen = false
-            
-            // 删除阴影。
-            context.shadow.view.removeFromSuperview()
-
-            // 自定义导航条在转场过程中，仅仅作为转场效果出现，将起放置到导航条上有导航控制器处理，所以这里要移除。
-            // uiNavigationBar.frame = containerView.convert(uiNavigationBarFrame1, to: uiNavigationBar.superview)
-            context.from.navigationBar?.view.removeFromSuperview()
-            context.to.navigationBar?.view.removeFromSuperview()
-            
-            transitionContext.completeTransition(!transitionContext.transitionWasCancelled)
-        })
+        executeTransitionAnimations(with: context, transitionContext);
     }
     
 }

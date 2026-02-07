@@ -8,7 +8,7 @@
 #import "UIView+XZKit.h"
 @import ObjectiveC;
 
-static const void * const _secureContentMode = &_secureContentMode;
+static const void * const _secureContentDisplay = &_secureContentDisplay;
 
 @implementation UIView (XZKit)
 
@@ -43,7 +43,11 @@ static const void * const _secureContentMode = &_secureContentMode;
     return snapImage;
 }
 
-- (void)xz_setSecureContentCapture:(BOOL)xz_secureContentCapture {
+- (void)xz_setSecureContentDisplay:(BOOL)xz_secureContentDisplay {
+    if (self.xz_secureContentDisplay == xz_secureContentDisplay) {
+        return;
+    }
+    
     // 通过逆向 -[UITextField setSecureTextEntry:] 方法所知，实现防录屏、截屏功能最终是通过
     // 设置 [_textCanvasView.layer setDisableUpdateMask:0x12] 实现的。
     // https://sidorov.tech/en/all/mastering-screen-recording-detection-in-ios-apps/
@@ -71,7 +75,7 @@ static const void * const _secureContentMode = &_secureContentMode;
         }
     }
     
-    if (xz_secureContentCapture) {
+    if (xz_secureContentDisplay) {
         if (_canvasView) {
             CALayer * const textLayer = _canvasView.layer;
             _secureView.secureTextEntry = NO;
@@ -90,11 +94,11 @@ static const void * const _secureContentMode = &_secureContentMode;
         [_canvasView setValue:textLayer forKey:@"layer"];
     }
     
-    objc_setAssociatedObject(self, _secureContentMode, @(xz_secureContentCapture), OBJC_ASSOCIATION_COPY_NONATOMIC);
+    objc_setAssociatedObject(self, _secureContentDisplay, @(xz_secureContentDisplay), OBJC_ASSOCIATION_COPY_NONATOMIC);
 }
 
-- (BOOL)xz_secureContentCapture {
-    return [objc_getAssociatedObject(self, _secureContentMode) boolValue];
+- (BOOL)xz_secureContentDisplay {
+    return [objc_getAssociatedObject(self, _secureContentDisplay) boolValue];
 }
 
 - (UIViewController *)xz_viewController {
@@ -109,11 +113,19 @@ static const void * const _secureContentMode = &_secureContentMode;
 }
 
 - (UINavigationController *)xz_navigationController {
-    return [self xz_viewController].navigationController;
+    UIViewController * const viewController = self.xz_viewController;
+    if ([viewController isKindOfClass:UINavigationController.class]) {
+        return (UINavigationController *)viewController;
+    }
+    return viewController.navigationController;
 }
 
 - (UITabBarController *)xz_tabBarController {
-    return [self xz_viewController].tabBarController;
+    UIViewController * const viewController = self.xz_viewController;
+    if ([viewController isKindOfClass:UITabBarController.class]) {
+        return (UITabBarController *)viewController;
+    }
+    return viewController.tabBarController;
 }
 
 @end

@@ -22,6 +22,9 @@ class Example17SettingsViewController: UITableViewController {
             navigationCustomizationSwitch.isEnabled = false;
         }
         
+        guard let navigationBar = navigationController?.navigationBar else { return }
+        navigationBar.barTintColor = UIColor.red;
+        
     }
 
     @IBAction func navigationCustomizationSwitchValueChanged(_ sender: UISwitch) {

@@ -89,14 +89,15 @@ public class Example17NavigationBar: XZStandardNavigationBar {
                 backButton.setImage(UIImage(systemName: "chevron.backward"), for: .normal)
                 backButton.setTitleColor(.white, for: .normal)
                 backButton.tintColor = .white
+                backButton.addTarget(self, action: #selector(backButtonAction(_:)), for: .touchUpInside)
                 self.backView = backButton
             }
             backButton.setTitle(newValue, for: .normal)
         }
     }
     
-    func addTarget(_ target: Any?, action: Selector, for controlEvents: UIControl.Event) {
-        backButton.addTarget(target, action: action, for: controlEvents)
+    @objc private func backButtonAction(_ sender: UIButton) {
+        self.navigationController?.popViewController(animated: true)
     }
     
     private let titleLabel      = TitleLabel.init()

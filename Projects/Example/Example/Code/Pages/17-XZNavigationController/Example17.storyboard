@@ -372,11 +372,6 @@
                     </tableView>
                     <navigationItem key="navigationItem" title="首页" id="OKz-kh-muO">
                         <barButtonItem key="backBarButtonItem" title="返回" id="Jf5-VV-77u"/>
-                        <barButtonItem key="leftBarButtonItem" title="Item" image="xmark" catalog="system" id="KOk-p6-O07">
-                            <connections>
-                                <segue destination="lrP-Bo-kUm" kind="unwind" identifier="dismiss" unwindAction="unwindToMainPage:" id="6Fc-wo-YOn"/>
-                            </connections>
-                        </barButtonItem>
                     </navigationItem>
                     <connections>
                         <outlet property="hiddenSwitch" destination="Usi-IQ-i5O" id="9SJ-aw-sIB"/>
@@ -388,11 +383,10 @@
                     </connections>
                 </tableViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="MGR-Pb-aXj" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
-                <exit id="lrP-Bo-kUm" userLabel="Exit" sceneMemberID="exit"/>
             </objects>
-            <point key="canvasLocation" x="4239" y="-1613"/>
+            <point key="canvasLocation" x="4150" y="-1613"/>
         </scene>
-        <!--设置-->
+        <!--XZNavigationController-->
         <scene sceneID="K9W-OW-6l0">
             <objects>
                 <tableViewController id="hah-JJ-chW" customClass="Example17SettingsViewController" customModule="Example" customModuleProvider="target" sceneMemberID="viewController">
@@ -409,7 +403,7 @@
                                             <rect key="frame" x="0.0" y="0.0" width="353" height="52"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
-                                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="252" verticalHuggingPriority="251" horizontalCompressionResistancePriority="749" text="导航定制化" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="X2k-7N-69Z">
+                                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="252" verticalHuggingPriority="251" horizontalCompressionResistancePriority="749" text="开启定制化" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="X2k-7N-69Z">
                                                     <rect key="frame" x="16" y="15.666666666666664" width="85" height="21"/>
                                                     <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                                     <nil key="textColor"/>
@@ -433,20 +427,51 @@
                                     </tableViewCell>
                                 </cells>
                             </tableViewSection>
+                            <tableViewSection id="joa-aY-23h">
+                                <cells>
+                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="none" accessoryType="disclosureIndicator" indentationWidth="10" textLabel="nt8-8w-O9R" style="IBUITableViewCellStyleDefault" id="GqJ-nD-bVh">
+                                        <rect key="frame" x="20" y="106" width="353" height="52"/>
+                                        <autoresizingMask key="autoresizingMask"/>
+                                        <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" preservesSuperviewLayoutMargins="YES" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="GqJ-nD-bVh" id="X56-qj-hU5">
+                                            <rect key="frame" x="0.0" y="0.0" width="322.66666666666669" height="52"/>
+                                            <autoresizingMask key="autoresizingMask"/>
+                                            <subviews>
+                                                <label opaque="NO" multipleTouchEnabled="YES" contentMode="left" insetsLayoutMarginsFromSafeArea="NO" text="开始" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="nt8-8w-O9R">
+                                                    <rect key="frame" x="16" y="0.0" width="298.66666666666669" height="52"/>
+                                                    <autoresizingMask key="autoresizingMask"/>
+                                                    <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                                    <nil key="textColor"/>
+                                                    <nil key="highlightedColor"/>
+                                                </label>
+                                            </subviews>
+                                        </tableViewCellContentView>
+                                        <connections>
+                                            <segue destination="U8i-CN-1rk" kind="show" id="EPH-Mf-q6v"/>
+                                        </connections>
+                                    </tableViewCell>
+                                </cells>
+                            </tableViewSection>
                         </sections>
                         <connections>
                             <outlet property="dataSource" destination="hah-JJ-chW" id="qvW-bs-3n6"/>
                             <outlet property="delegate" destination="hah-JJ-chW" id="Wcx-pJ-ct5"/>
                         </connections>
                     </tableView>
-                    <navigationItem key="navigationItem" title="设置" id="RnU-uF-552"/>
+                    <navigationItem key="navigationItem" title="XZNavigationController" id="RnU-uF-552">
+                        <barButtonItem key="leftBarButtonItem" title="Item" image="xmark" catalog="system" id="Jtd-ck-sPy">
+                            <connections>
+                                <segue destination="WHz-3X-ce1" kind="unwind" unwindAction="unwindToMainPage:" id="jKJ-y6-DiX"/>
+                            </connections>
+                        </barButtonItem>
+                    </navigationItem>
                     <connections>
                         <outlet property="navigationCustomizationSwitch" destination="L3F-ce-iBP" id="Chl-HD-2BB"/>
                     </connections>
                 </tableViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="bO2-Ng-Py5" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
+                <exit id="WHz-3X-ce1" userLabel="Exit" sceneMemberID="exit"/>
             </objects>
-            <point key="canvasLocation" x="4239" y="-2434"/>
+            <point key="canvasLocation" x="3124" y="-1613"/>
         </scene>
         <!--首页-->
         <scene sceneID="4Ng-eJ-EW9">
@@ -462,12 +487,12 @@
                     </navigationBar>
                     <nil name="viewControllers"/>
                     <connections>
-                        <segue destination="U8i-CN-1rk" kind="relationship" relationship="rootViewController" id="6Ep-Dk-1b6"/>
+                        <segue destination="hah-JJ-chW" kind="relationship" relationship="rootViewController" id="d3g-L6-3m5"/>
                     </connections>
                 </navigationController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="usZ-Ef-222" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="2907.6335877862593" y="-1612.6760563380283"/>
+            <point key="canvasLocation" x="2062" y="-1613"/>
         </scene>
         <!--原生零定制-->
         <scene sceneID="Onk-VN-3HD">
@@ -1480,37 +1505,15 @@
                     </tabBar>
                     <connections>
                         <segue destination="5RO-f9-0zr" kind="relationship" relationship="viewControllers" id="GnX-2t-hym"/>
-                        <segue destination="JJn-fC-cis" kind="relationship" relationship="viewControllers" id="vbu-OL-lHm"/>
                     </connections>
                 </tabBarController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="wrp-qM-76H" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="1479" y="-1613"/>
-        </scene>
-        <!--设置-->
-        <scene sceneID="n6G-YB-rLh">
-            <objects>
-                <navigationController automaticallyAdjustsScrollViewInsets="NO" id="JJn-fC-cis" sceneMemberID="viewController">
-                    <tabBarItem key="tabBarItem" title="设置" image="gear.circle" catalog="system" selectedImage="gear.circle.fill" id="pyE-aT-uDw"/>
-                    <toolbarItems/>
-                    <navigationBar key="navigationBar" contentMode="scaleToFill" id="pUI-3B-n5g">
-                        <rect key="frame" x="0.0" y="118" width="393" height="54"/>
-                        <autoresizingMask key="autoresizingMask"/>
-                    </navigationBar>
-                    <nil name="viewControllers"/>
-                    <connections>
-                        <segue destination="hah-JJ-chW" kind="relationship" relationship="rootViewController" id="6Yo-vL-TNg"/>
-                    </connections>
-                </navigationController>
-                <placeholder placeholderIdentifier="IBFirstResponder" id="1Qp-mb-4kH" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
-            </objects>
-            <point key="canvasLocation" x="2907.6335877862593" y="-2433.0985915492961"/>
+            <point key="canvasLocation" x="990" y="-1613"/>
         </scene>
     </scenes>
     <resources>
         <image name="arkit" catalog="system" width="128" height="125"/>
-        <image name="gear.circle" catalog="system" width="128" height="123"/>
-        <image name="gear.circle.fill" catalog="system" width="128" height="123"/>
         <image name="xmark" catalog="system" width="128" height="113"/>
         <systemColor name="systemBackgroundColor">
             <color white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
