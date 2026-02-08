@@ -1,5 +1,5 @@
 //
-//  Example17BothSupportedViewController.swift
+//  Example17BothViewController.swift
 //  Example
 //
 //  Created by Xezun on 2024/6/12.
@@ -16,7 +16,7 @@ import XZKit
 //
 // 声明遵循 XZNavigationGestureDrivable 将自动获得全屏手势导航的能力，当然默认只有返回，前进需要实现协议中的方法，且通过协议中的方法，
 // 还可以控制手势返回的行为。
-class Example17BothSupportedViewController: UITableViewController, XZNavigationBarCustomizable, XZNavigationGestureDrivable {
+class Example17BothViewController: UITableViewController, XZNavigationBarCustomizable, XZNavigationGestureDrivable {
     
     @IBOutlet weak var hiddenSwitch: UISwitch!
     @IBOutlet weak var translucentSwitch: UISwitch!

@@ -2,7 +2,6 @@
 <document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="24506" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="A2W-jB-VZz">
     <device id="retina6_12" orientation="portrait" appearance="light"/>
     <dependencies>
-        <deployment identifier="iOS"/>
         <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="24504"/>
         <capability name="System colors in document resources" minToolsVersion="11.0"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
@@ -11,7 +10,7 @@
         <!--首页-->
         <scene sceneID="BPf-mY-Ylo">
             <objects>
-                <tableViewController id="U8i-CN-1rk" customClass="Example17BothSupportedViewController" customModule="Example" customModuleProvider="target" sceneMemberID="viewController">
+                <tableViewController id="U8i-CN-1rk" customClass="Example17BothViewController" customModule="Example" customModuleProvider="target" sceneMemberID="viewController">
                     <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="static" style="grouped" separatorStyle="default" rowHeight="44" estimatedRowHeight="-1" sectionHeaderHeight="18" estimatedSectionHeaderHeight="-1" sectionFooterHeight="18" estimatedSectionFooterHeight="-1" id="LtI-gd-XAW">
                         <rect key="frame" x="0.0" y="0.0" width="393" height="852"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -389,7 +388,7 @@
         <!--XZNavigationController-->
         <scene sceneID="K9W-OW-6l0">
             <objects>
-                <tableViewController id="hah-JJ-chW" customClass="Example17SettingsViewController" customModule="Example" customModuleProvider="target" sceneMemberID="viewController">
+                <tableViewController id="hah-JJ-chW" customClass="Example17HomeViewController" customModule="Example" customModuleProvider="target" sceneMemberID="viewController">
                     <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="static" style="insetGrouped" separatorStyle="default" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="18" estimatedSectionHeaderHeight="-1" sectionFooterHeight="18" estimatedSectionFooterHeight="-1" id="Kqa-4E-sRv">
                         <rect key="frame" x="0.0" y="0.0" width="393" height="852"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -497,7 +496,7 @@
         <!--原生零定制-->
         <scene sceneID="Onk-VN-3HD">
             <objects>
-                <tableViewController hidesBottomBarWhenPushed="YES" id="BMT-RL-Fp9" customClass="Example17NoneSupportedViewController" customModule="Example" customModuleProvider="target" sceneMemberID="viewController">
+                <tableViewController hidesBottomBarWhenPushed="YES" id="BMT-RL-Fp9" customClass="Example17NoneViewController" customModule="Example" customModuleProvider="target" sceneMemberID="viewController">
                     <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="static" style="grouped" separatorStyle="default" rowHeight="44" estimatedRowHeight="-1" sectionHeaderHeight="18" estimatedSectionHeaderHeight="-1" sectionFooterHeight="18" estimatedSectionFooterHeight="-1" id="up6-Ik-iny">
                         <rect key="frame" x="0.0" y="0.0" width="393" height="852"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -1005,7 +1004,7 @@
         <!--导航条定制-->
         <scene sceneID="jUJ-Cb-l38">
             <objects>
-                <tableViewController storyboardIdentifier="last" hidesBottomBarWhenPushed="YES" id="nfk-bN-NID" customClass="Example17BarCustomizableViewController" customModule="Example" customModuleProvider="target" sceneMemberID="viewController">
+                <tableViewController storyboardIdentifier="last" hidesBottomBarWhenPushed="YES" id="nfk-bN-NID" customClass="Example17LastViewController" customModule="Example" customModuleProvider="target" sceneMemberID="viewController">
                     <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="static" style="grouped" separatorStyle="default" rowHeight="44" estimatedRowHeight="-1" sectionHeaderHeight="18" estimatedSectionHeaderHeight="-1" sectionFooterHeight="18" estimatedSectionFooterHeight="-1" id="F4y-Z9-Wd3">
                         <rect key="frame" x="0.0" y="0.0" width="393" height="852"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -1312,7 +1311,7 @@
         <!--手势定制-->
         <scene sceneID="Abo-rl-6iC">
             <objects>
-                <tableViewController hidesBottomBarWhenPushed="YES" id="sWc-PO-RPw" customClass="Example17GestureDrivableViewController" customModule="Example" customModuleProvider="target" sceneMemberID="viewController">
+                <tableViewController hidesBottomBarWhenPushed="YES" id="sWc-PO-RPw" customClass="Example17OnlyViewController" customModule="Example" customModuleProvider="target" sceneMemberID="viewController">
                     <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="static" style="grouped" separatorStyle="default" rowHeight="44" estimatedRowHeight="-1" sectionHeaderHeight="18" estimatedSectionHeaderHeight="-1" sectionFooterHeight="18" estimatedSectionFooterHeight="-1" id="Icu-wh-7sX">
                         <rect key="frame" x="0.0" y="0.0" width="393" height="852"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>

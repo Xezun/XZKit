@@ -159,12 +159,8 @@ import UIKit
             height: shadowImageView.image?.size.height ?? 1.0 / UIScreen.main.scale
         )
 
-        if let navigationBar = self.uiNavigationBar {
-            let minY = navigationBar.frame.minY;
-            backgroundImageView.frame = CGRect.init(x: bounds.minX, y: -minY, width: bounds.width, height: bounds.height + minY)
-        } else {
-            let minY = self.frame.minY;
-            backgroundImageView.frame = CGRect.init(x: bounds.minY, y: -minY, width: bounds.width, height: bounds.height + minY)
+        if let top = self.superview?.safeAreaInsets.top {
+            backgroundImageView.frame = CGRect.init(x: bounds.minY, y: -top, width: bounds.width, height: bounds.height + top)
         }
     }
 

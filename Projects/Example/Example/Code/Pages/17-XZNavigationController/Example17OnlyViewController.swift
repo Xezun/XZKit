@@ -1,19 +1,18 @@
 //
-//  Example17NoneSupportedViewController.swift
+//  Example17OnlyViewController.swift
 //  Example
 //
-//  Created by Xezun on 2024/6/21.
+//  Created by Xezun on 2024/6/19.
 //
 
 import UIKit
 import XZKit
 
-class Example17NoneSupportedViewController: UITableViewController {
+class Example17OnlyViewController: UITableViewController, XZNavigationGestureDrivable {
     
     @IBOutlet weak var hiddenSwitch: UISwitch!
     @IBOutlet weak var translucentSwitch: UISwitch!
     @IBOutlet weak var prefersLargeTitlesSwitch: UISwitch!
-    @IBOutlet weak var customavigationTranstionSwitch: UISwitch!
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -27,15 +26,16 @@ class Example17NoneSupportedViewController: UITableViewController {
             translucentSwitch.isOn = navigationController.navigationBar.isTranslucent
             prefersLargeTitlesSwitch.isOn = navigationController.navigationBar.prefersLargeTitles
         }
-        customavigationTranstionSwitch.isOn = navigationController?.delegate?.isEqual(self) == true
     }
     
-    override func viewWillDisappear(_ animated: Bool) {
-        super.viewWillDisappear(animated)
-        
-        navigationController?.delegate = nil;
+    func navigationController(_ navigationController: UINavigationController, viewControllerForGestureNavigation operation: UINavigationController.Operation) -> UIViewController? {
+        if operation == .push {
+            let sb = UIStoryboard.init(name: "Example17", bundle: nil)
+            return sb.instantiateViewController(withIdentifier: "next")
+        }
+        return nil
     }
-    
+
     @IBAction func unwindToBack(_ unwindSegue: UIStoryboardSegue) {
         
     }
@@ -51,20 +51,4 @@ class Example17NoneSupportedViewController: UITableViewController {
     @IBAction func navigationBarPrefersLargeTitlesChanged(_ sender: UISwitch) {
         navigationController?.navigationBar.prefersLargeTitles = sender.isOn
     }
-
-    @IBAction func customNavigationTranstionChanged(_ sender: UISwitch) {
-        navigationController?.delegate = sender.isOn ? self : nil
-    }
-}
-
-extension Example17NoneSupportedViewController: UINavigationControllerDelegate {
-    
-    func navigationController(_ navigationController: UINavigationController, animationControllerFor operation: UINavigationController.Operation, from fromVC: UIViewController, to toVC: UIViewController) -> UIViewControllerAnimatedTransitioning? {
-        guard let navigationController = navigationController as? XZNavigationController else { return nil }
-        return ExampleNativeCustomAnimationController.init(for: navigationController, operation: operation, isInteractive: false)
-    }
-}
-
-class ExampleNativeCustomAnimationController : XZNavigationAnimationController {
-    
 }

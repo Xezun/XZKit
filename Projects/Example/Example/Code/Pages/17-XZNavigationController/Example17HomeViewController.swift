@@ -1,5 +1,5 @@
 //
-//  Example17SettingsViewController.swift
+//  Example17HomeViewController.swift
 //  Example
 //
 //  Created by 徐臻 on 2026/2/6.
@@ -8,7 +8,7 @@
 import UIKit
 import XZKit
 
-class Example17SettingsViewController: UITableViewController {
+class Example17HomeViewController: UITableViewController {
     
     @IBOutlet weak var navigationCustomizationSwitch: UISwitch!
 
@@ -21,10 +21,6 @@ class Example17SettingsViewController: UITableViewController {
             navigationCustomizationSwitch.isOn = false;
             navigationCustomizationSwitch.isEnabled = false;
         }
-        
-        guard let navigationBar = navigationController?.navigationBar else { return }
-        navigationBar.barTintColor = UIColor.red;
-        
     }
 
     @IBAction func navigationCustomizationSwitchValueChanged(_ sender: UISwitch) {

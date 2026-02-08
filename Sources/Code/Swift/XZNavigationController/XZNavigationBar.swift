@@ -51,6 +51,7 @@ import UIKit
     var prefersLargeTitles: Bool { get set }
 }
 
+/// 定制化的导航条外观变化时，需要向原生导航条同步的属性枚举。
 public enum XZNavigtionBarAppearanceAttribute {
     case isHidden
     case isTranslucent
@@ -59,27 +60,10 @@ public enum XZNavigtionBarAppearanceAttribute {
 
 extension XZNavigationBar {
     
-    /// 原生导航条。
-    ///
-    /// 此属性为 nil 时，表示自定义导航条未展示，或者处于转场的过程中。
-    public internal(set) var uiNavigationBar: UINavigationBar? {
-        get {
-            return (objc_getAssociatedObject(self, &_uiNavigationBar) as? WeakWrapper)?.value as? UINavigationBar
-        }
-        set {
-            if let wrapper = objc_getAssociatedObject(self, &_uiNavigationBar) as? WeakWrapper {
-                wrapper.value = newValue
-            } else {
-                let value = WeakWrapper.init(value: newValue)
-                objc_setAssociatedObject(self, &_uiNavigationBar, value, .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
-            }
-        }
-    }
-    
     /// 将状态同步给原生导航条。
     public func synchronizeAppearance(for attribute: XZNavigtionBarAppearanceAttribute) {
         guard let navigationBar = self.uiNavigationBar else { return }
-
+        
         switch attribute {
         case .isHidden:
             xz_objc_msgSendSuper_void(navigationBar, type(of: navigationBar), #selector(setter: UINavigationBar.isHidden), self.isHidden)
@@ -90,6 +74,7 @@ extension XZNavigationBar {
         }
     }
     
+    /// 定制化导航条所属控制器的导航控制器。
     public var navigationController: UINavigationController? {
         var next = self.next
         
@@ -109,65 +94,3 @@ extension XZNavigationBar {
     }
     
 }
-
-extension UINavigationBar {
-    
-    /// 记录了当前正在显示的自定义的导航条。在控制器转场过程中，此属性为 nil 。
-    public internal(set) var xzNavigationBar: XZNavigationBar? {
-        get {
-            return (objc_getAssociatedObject(self, &_xzNavigationBar) as? WeakWrapper)?.value as? XZNavigationBar
-        }
-        set {
-            if let weakWrapper = objc_getAssociatedObject(self, &_xzNavigationBar) as? WeakWrapper {
-                weakWrapper.value = newValue;
-            } else {
-                objc_setAssociatedObject(self, &_xzNavigationBar, WeakWrapper(value: newValue), .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
-            }
-        }
-    }
-    
-    /// 冻结时，不允许修改 frame 和 center 以解决转场过程中的动画效果问题。
-    internal var isFrozen: Bool {
-        get {
-            return (objc_getAssociatedObject(self, &_isFrozen) as? Bool) == true
-        }
-        set {
-            objc_setAssociatedObject(self, &_isFrozen, newValue, .OBJC_ASSOCIATION_COPY_NONATOMIC)
-        }
-    }
-    
-}
-
-// 在 right-to-left 布局的环境中，当导航控制器使用了自定义的转场动画后，
-// tabBar 在转场的过程中的动画效果，与 left-to-right 环境一样，不符合要求。
-// 但是在转场的过程中，将 tabBar 添加的转场动画，不能生效，因此利用运行时机制，
-// 在动画的过程中，让其它地方不能再修改 tabBar 的 frame 以避免这个问题。
-
-extension UITabBar {
-    
-    /// 是否冻结。此属性为 true 时，更改属性 *frame* 不会生效。
-    public var isFrozen: Bool {
-        get {
-            return (objc_getAssociatedObject(self, &_isFrozen) as? Bool) == true
-        }
-        set {
-            objc_setAssociatedObject(self, &_isFrozen, newValue, .OBJC_ASSOCIATION_COPY_NONATOMIC)
-        }
-    }
-
-}
-
-/// 避免循环引用。
-@MainActor private class WeakWrapper {
-    
-    weak var value: AnyObject?
-    
-    init(value: AnyObject? = nil) {
-        self.value = value
-    }
-    
-}
-
-@MainActor private var _isFrozen = 0
-@MainActor private var _uiNavigationBar = 0
-@MainActor private var _xzNavigationBar = 0
