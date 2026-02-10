@@ -169,7 +169,7 @@ let _ = NSAttributedString(XZML: "a <&bold> text", attributes: [
 
 ### [XZNavigationController](./Docs/XZNavigationController.md) 
 
-全屏手势导航、手势返回、自定义导航条
+全屏手势导航、手势返回、定制化导航栏
 
 ### [XZDataCryptor](./Docs/XZDataCryptor.md) 
 

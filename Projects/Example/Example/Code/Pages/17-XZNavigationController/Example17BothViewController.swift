@@ -8,19 +8,21 @@
 import UIKit
 import XZKit
 
-// 自定义功能的导航栈中，普通控制器与在普通的导航栈中没有任何区别的，但是对于声明遵循 XZNavigationBarCustomizable 自定义导航条协议的控制器：。
-// 1、导航栈自动根据自定义导航条，配置原生导航条状态。
-// 2、自定义导航条，将会覆盖在原生导航条之上。
-// 3、在转场完成之前，即 viewDidAppear 之前，直接对原生导航条的操作（hidden/translucent/largeTitles），会被自定义导航条配置的状态覆盖。
-// 4、在转场之后，不论是直接操作原生导航条，还是操作自定义导航条，其作用和效果都是一样的。
+class NavigationConfiguration {
+    var isHidden: Bool = false
+    var isTranslucent: Bool = true
+    var prefersLargeTitles: Bool = false
+}
+
+// 自定义功能的导航栈中，普通控制器与在普通的导航栈中没有任何区别的，但是对于声明遵循 XZNavigationBarCustomizable 定制化导航栏协议的控制器：。
+// 1、导航栈自动根据定制化导航栏，配置原生导航栏状态。
+// 2、定制化导航栏，将会覆盖在原生导航栏之上。
+// 3、在转场完成之前，即 viewDidAppear 之前，直接对原生导航栏的操作（hidden/translucent/largeTitles），会被定制化导航栏配置的状态覆盖。
+// 4、在转场之后，不论是直接操作原生导航栏，还是操作定制化导航栏，其作用和效果都是一样的。
 //
 // 声明遵循 XZNavigationGestureDrivable 将自动获得全屏手势导航的能力，当然默认只有返回，前进需要实现协议中的方法，且通过协议中的方法，
 // 还可以控制手势返回的行为。
-class Example17BothViewController: UITableViewController, XZNavigationBarCustomizable, XZNavigationGestureDrivable {
-    
-    @IBOutlet weak var hiddenSwitch: UISwitch!
-    @IBOutlet weak var translucentSwitch: UISwitch!
-    @IBOutlet weak var prefersLargeTitlesSwitch: UISwitch!
+class Example17BothViewController: Example17ViewController, XZNavigationBarCustomizable, XZNavigationGestureDrivable {
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -30,27 +32,20 @@ class Example17BothViewController: UITableViewController, XZNavigationBarCustomi
         navigationBar.isTranslucent = true
         
         navigationBar.backTitle = "返回"
-        
     }
     
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
         
-        if let navigationController = navigationController {
-            hiddenSwitch.isOn = navigationController.isNavigationBarHidden
-            translucentSwitch.isOn = navigationController.navigationBar.isTranslucent
-            prefersLargeTitlesSwitch.isOn = navigationController.navigationBar.prefersLargeTitles
+        if let navigationBar = navigationController?.navigationBar {
+            hiddenSwitch.isOn = navigationBar.isHidden
+            translucentSwitch.isOn = navigationBar.isTranslucent
+            largeTitlesSwitch.isOn = navigationBar.prefersLargeTitles
         }
     }
     
     @objc func backButtonAction(_ sender: UIButton) {
         performSegue(withIdentifier: "dismiss", sender: sender)
-    }
-    
-    @IBAction func isCustomizableValueChanged(_ sender: UISwitch) {
-        guard let navigationController = self.navigationController as? XZNavigationController else { return }
-        
-        navigationController.isNavigationCustomizable = sender.isOn
     }
     
     @IBAction func unwindToBack(_ unwindSegue: UIStoryboardSegue) {
@@ -61,41 +56,85 @@ class Example17BothViewController: UITableViewController, XZNavigationBarCustomi
     func navigationController(_ navigationController: UINavigationController, viewControllerForGestureNavigation operation: UINavigationController.Operation) -> UIViewController? {
         if operation == .push {
             let sb = UIStoryboard.init(name: "Example17", bundle: nil)
-            let vc = sb.instantiateViewController(withIdentifier: "next")
-            if let navigationBar = (vc as? XZNavigationBarCustomizable)?.xzNavigationBar {
-                navigationBar.isHidden = nextHiddenSwitch.isOn
-                navigationBar.isTranslucent = nextTranslucentSwitch.isOn
-                navigationBar.prefersLargeTitles = nextPrefersLargeTitlesSwitch.isOn
+            if let vc = sb.instantiateViewController(withIdentifier: "next") as? Example17ViewController {
+                vc.configuration = configuration;
+                return vc
             }
-            return vc
         }
         return nil
     }
     
-    @IBAction func navigationBarHiddenChanged(_ sender: UISwitch) {
-        navigationController?.setNavigationBarHidden(sender.isOn, animated: true)
-    }
-
-    @IBAction func navigationBarTranslucentChanged(_ sender: UISwitch) {
-        navigationController?.navigationBar.isTranslucent = sender.isOn
-    }
-
-    @IBAction func navigationBarPrefersLargeTitlesChanged(_ sender: UISwitch) {
-        navigationController?.navigationBar.prefersLargeTitles = sender.isOn
-    }
-    
-    @IBOutlet weak var nextHiddenSwitch: UISwitch!
-    @IBOutlet weak var nextTranslucentSwitch: UISwitch!
-    @IBOutlet weak var nextPrefersLargeTitlesSwitch: UISwitch!
     
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        guard segue.identifier == "next" else {
-            return
-        }
-        if let navigationBar = (segue.destination as? XZNavigationBarCustomizable)?.xzNavigationBar {
-            navigationBar.isHidden           = nextHiddenSwitch.isOn
-            navigationBar.isTranslucent      = nextTranslucentSwitch.isOn
-            navigationBar.prefersLargeTitles = nextPrefersLargeTitlesSwitch.isOn
+        super.prepare(for: segue, sender: sender)
+    }
+}
+
+
+class Example17ViewController: UITableViewController {
+    
+    @IBOutlet weak var hiddenSwitch: UISwitch!
+    @IBOutlet weak var translucentSwitch: UISwitch!
+    @IBOutlet weak var largeTitlesSwitch: UISwitch!
+    
+    var configuration = NavigationConfiguration.init()
+    
+    override func viewDidLoad() {
+        super.viewDidLoad()
+    }
+    
+    @IBAction func hiddenSwitchValueChanged(_ sender: UISwitch) {
+        if let navigationBar = (self as? XZNavigationBarCustomizable)?.xzNavigationBar {
+            navigationBar.isHidden = sender.isOn
+        } else if let navigationBar = self.navigationController?.navigationBar {
+            navigationBar.isHidden = sender.isOn
         }
     }
+    
+    @IBAction func translucentSwitchValueChanged(_ sender: UISwitch) {
+        if let navigationBar = (self as? XZNavigationBarCustomizable)?.xzNavigationBar {
+            navigationBar.isTranslucent = sender.isOn
+        } else if let navigationBar = self.navigationController?.navigationBar {
+            navigationBar.isTranslucent = sender.isOn
+        }
+    }
+    
+    @IBAction func largeTitlesSwitchValueChanged(_ sender: UISwitch) {
+        if let navigationBar = (self as? XZNavigationBarCustomizable)?.xzNavigationBar {
+            navigationBar.prefersLargeTitles = sender.isOn
+        } else if let navigationBar = self.navigationController?.navigationBar {
+            navigationBar.prefersLargeTitles = sender.isOn
+        }
+    }
+    
+    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+        if let destination = segue.destination as? Example17ConfigurationViewController {
+            destination.configuration = self.configuration;
+        }
+    }
+    
+}
+
+class Example17ConfigurationViewController: Example17ViewController {
+    
+    override func viewDidLoad() {
+        super.viewDidLoad()
+        
+        self.hiddenSwitch.isOn = configuration.isHidden
+        self.translucentSwitch.isOn = configuration.isTranslucent
+        self.largeTitlesSwitch.isOn = configuration.prefersLargeTitles
+    }
+    
+    @IBAction override func hiddenSwitchValueChanged(_ sender: UISwitch) {
+        configuration.isHidden = sender.isOn
+    }
+    
+    @IBAction override func translucentSwitchValueChanged(_ sender: UISwitch) {
+        configuration.isTranslucent = sender.isOn
+    }
+    
+    @IBAction override func largeTitlesSwitchValueChanged(_ sender: UISwitch) {
+        configuration.prefersLargeTitles = sender.isOn
+    }
+    
 }

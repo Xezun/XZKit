@@ -9,17 +9,17 @@
 import UIKit
 import ObjectiveC
 
-/// 此协议用于控制器，实现此协议的视图控制器，可以使用自定义导航条。
+/// 此协议用于控制器，实现此协议的视图控制器，可以使用定制化导航栏。
 @MainActor public protocol XZNavigationBarCustomizable: UIViewController {
     
-    /// 控制器定制化的导航条。
+    /// 控制器定制化的导航栏。
     ///
-    /// 控制器定制的导航条，会比控制器的 `viewDidLoad` 更早，因此，请避免在创建自定义导航条的过程中访问控制器的 `view` 属性，以免控制器生命周期提前。
+    /// 控制器定制的导航栏，会比控制器的 `viewDidLoad` 更早，因此，请避免在创建定制化导航栏的过程中访问控制器的 `view` 属性，以免控制器生命周期提前。
     ///
-    /// 在业务中，我们可以通过下面的方式，全局添加统一的导航条。
+    /// 在业务中，我们可以通过下面的方式，全局添加统一的导航栏。
     ///
     /// ```swift
-    /// // 给控制器基类拓展一个属性，自动创建导航条。
+    /// // 给控制器基类拓展一个属性，自动创建导航栏。
     /// extension UIViewController {
     ///     var navigationBar: XZNavigationBar {
     ///         return <lazy load a custom navigation bar>;
@@ -33,7 +33,7 @@ import ObjectiveC
     ///     }
     /// }
     ///
-    /// // 然后在控制器中，只需要声明遵循协议，就可以通过 navigationBar 直接使用自定义导航条。
+    /// // 然后在控制器中，只需要声明遵循协议，就可以通过 navigationBar 直接使用定制化导航栏。
     /// class ViewController: UIViewController, XZNavigationBarCustomizable {
     ///     override func viewDidLoad() {
     ///         super.viewDidLoad()
@@ -48,10 +48,10 @@ import ObjectiveC
 
 extension XZNavigationBar {
     
-    /// 原生导航条。
+    /// 原生导航栏。
     ///
-    /// 此属性为 nil 时，表示自定义导航条未展示，或者处于转场的过程中。
-    public internal(set) var uiNavigationBar: UINavigationBar? {
+    /// 此属性为 nil 时，表示定制化导航栏未展示，或者处于转场的过程中。
+    public fileprivate(set) var uiNavigationBar: UINavigationBar? {
         get {
             return (objc_getAssociatedObject(self, &_uiNavigationBar) as? WeakWrapper)?.value as? UINavigationBar
         }
@@ -69,7 +69,7 @@ extension XZNavigationBar {
 
 extension UINavigationController {
     
-    /// 当前的自定义导航条。
+    /// 当前的定制化导航栏。
     public internal(set) var xzNavigationBar: XZNavigationBar? {
         get {
             return objc_getAssociatedObject(self.view!, &_xzNavigationBar) as? XZNavigationBar
@@ -88,12 +88,12 @@ extension UINavigationController {
             if let newValue = newValue {
                 newValue.frame = self.navigationBar.frame;
                 newValue.uiNavigationBar = self.navigationBar;
-                // 使用 autoresizing 布局，自定义导航条的 frame 会在父视图变化时改变，
-                // 而自定义导航条父视图，在转场时会发生改变。
+                // 使用 autoresizing 布局，定制化导航栏的 frame 会在父视图变化时改变，
+                // 而定制化导航栏父视图，在转场时会发生改变。
                 self.view.addSubview(newValue)
             }
             
-            // 将值同步到原生导航条
+            // 将值同步到原生导航栏
             self.navigationBar.xzNavigationBar = newValue;
         }
     }
@@ -102,8 +102,8 @@ extension UINavigationController {
 
 extension UINavigationBar {
     
-    /// 记录了当前正在显示的自定义的导航条。在控制器转场过程中，此属性为 nil 。
-    public internal(set) var xzNavigationBar: XZNavigationBar? {
+    /// 记录了当前正在显示的自定义的导航栏。在控制器转场过程中，此属性为 nil 。
+    public fileprivate(set) var xzNavigationBar: XZNavigationBar? {
         get {
             return (objc_getAssociatedObject(self, &_xzNavigationBar) as? WeakWrapper)?.value as? XZNavigationBar
         }
@@ -129,7 +129,7 @@ extension UINavigationBar {
     
 }
 
-/// 给原生的导航控制器，添加自定义导航条属性。
+/// 给原生的导航控制器，添加定制化导航栏属性。
 @MainActor private var _xzNavigationBar = 0
 @MainActor private var _uiNavigationBar = 0
 

@@ -9,12 +9,12 @@
 import UIKit
 import ObjectiveC
 
-/// 为导航控制器提供定制导航手势、导航条功能的协议。
+/// 为导航控制器提供定制导航手势、导航栏功能的协议。
 ///
 /// 遵循此协议的导航控制器，可获得``isNavigationCustomizable``属性，以开启导航定制化功能。
-/// 1. 栈内控制器可通过协议``XZNavigationBarCustomizable``定制导航条。
+/// 1. 栈内控制器可通过协议``XZNavigationBarCustomizable``定制导航栏。
 /// 2. 栈内控制器可通过协议``XZNavigationGestureDrivable``定制导航手势，开启全屏手势，或区域手势导航，默认开启边缘手势返回导航。
-/// 3. 导航控制器原生的自定义转场效果功能，虽然与原生开起来一样，但是如果开发者需自定义转场效果的话，需考虑自定义导航条的转场效果。
+/// 3. 导航控制器原生的自定义转场效果功能，虽然与原生开起来一样，但是如果开发者需自定义转场效果的话，需考虑定制化导航栏的转场效果。
 @MainActor public protocol XZNavigationController: UINavigationController {
     
 }
@@ -23,7 +23,7 @@ extension XZNavigationController {
     
     /// 导航定制化是否已启用。
     ///
-    /// 开启导航定制化，栈内控制器可以自定义独属于控制器的导航条，自定义导航手势。
+    /// 开启导航定制化，栈内控制器可以自定义独属于控制器的导航栏，自定义导航手势。
     ///
     /// > 因为会访问的控制器的`view`属性，请在`viewDidLoad`之中或之后，再设置此属性。
     ///
@@ -88,7 +88,7 @@ extension XZNavigationController {
         }
     }
     
-    /// 自定义的转场效果：处理全屏手势和自定义导航条的转场。
+    /// 自定义的转场效果：处理全屏手势和定制化导航栏的转场。
     public private(set) var transitionController: XZNavigationTransitionController? {
         get {
             return objc_getAssociatedObject(self, &_transitionController) as? XZNavigationTransitionController
@@ -121,10 +121,10 @@ extension UIResponder {
 
 
 // 【开发备忘】
-// 为了将更新导航条的操作放在 viewWillAppear 中：
+// 为了将更新导航栏的操作放在 viewWillAppear 中：
 // 一、 用 Swift 方法交换，重写基类 UIViewController 的 viewWillAppear 方法，遇到以下问题：
 //      1. 某些页面，交换后的方法不执行，可能是因为 Swift 消息派发机制，没有把方法按 objc 消息派发造成的。
-//      2. 在基类中添加的代码，在自类用户的代码之前执行，所以页面导航条状态可以被用户修改，没有按照自定义导航条的配置来展示。
+//      2. 在基类中添加的代码，在自类用户的代码之前执行，所以页面导航栏状态可以被用户修改，没有按照定制化导航栏的配置来展示。
 //      3. 重写基类 UIViewController 影响会所有的控制器。
 // 二、重写 UINavigationController 的 addChildViewController 方法。
 //      1. 控制器入栈，不会调用这个方法，即栈内控制器不是导航控制器的子控制器。
@@ -135,7 +135,7 @@ extension UIResponder {
 // 在控制器入栈时，向控制器 viewWillAppear/viewDidAppear 注入代码，这样就只影响控制器本身。
 //
 // 【已知问题一】
-// 如下操作会导致自定义导航条丢失。
+// 如下操作会导致定制化导航栏丢失。
 // ```swift
 // if let navigationController = navigationController {
 //    let viewControllers = navigationController.viewControllers
@@ -143,9 +143,9 @@ extension UIResponder {
 //    navigationController.setViewControllers(viewControllers, animated: false)
 // }
 // ```
-// 因为 set 操作时，XZNavigationController 认为是转场开始而移除了自定义导航条，
+// 因为 set 操作时，XZNavigationController 认为是转场开始而移除了定制化导航栏，
 // 但是 UINavigationController 在处理这种情形时，认为没有转场发生，所以最终也没有 viewDidAppear 执行，
-// 自定义导航条没有机会展示。
+// 定制化导航栏没有机会展示。
 // 这说明，在 UINavigationController 中，方法 setViewControllers 实际是有延迟的。
 // 如果确实有这种逻辑需求，可以延迟第二次操作，来避免这个问题。
 //

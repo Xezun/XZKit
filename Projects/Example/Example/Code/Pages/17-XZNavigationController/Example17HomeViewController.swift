@@ -14,7 +14,7 @@ class Example17HomeViewController: UITableViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
-
+        
         if let navigationController = self.tabBarController?.viewControllers?.first as? XZNavigationController {
             navigationCustomizationSwitch.isOn = navigationController.isNavigationCustomizable
         } else {
@@ -24,7 +24,7 @@ class Example17HomeViewController: UITableViewController {
     }
 
     @IBAction func navigationCustomizationSwitchValueChanged(_ sender: UISwitch) {
-        if let navigationController = self.tabBarController?.viewControllers?.first as? XZNavigationController {
+        if let navigationController = self.navigationController as? XZNavigationController {
             navigationController.isNavigationCustomizable = sender.isOn
         }
     }

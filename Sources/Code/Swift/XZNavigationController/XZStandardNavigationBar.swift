@@ -7,7 +7,7 @@
 
 import UIKit
 
-/// 自定义导航条可选基类。
+/// 定制化导航栏可选基类。
 @MainActor @objc open class XZStandardNavigationBar: UIView, XZNavigationBar {
     
     open override var isHidden: Bool {
@@ -30,10 +30,10 @@ import UIKit
         }
     }
     
-    /// 导航条的背景视图。
+    /// 导航栏的背景视图。
     public let backgroundImageView: UIImageView
     
-    /// 导航条阴影视图。
+    /// 导航栏阴影视图。
     public let shadowImageView: UIImageView
     
     public override init(frame: CGRect) {
@@ -71,25 +71,25 @@ import UIKit
         aCoder.encode(prefersLargeTitles,  forKey: CodingKey.prefersLargeTitles.rawValue)
     }
 
-    /// 此属性直接修改的是导航条背景视图的背景色。
+    /// 此属性直接修改的是导航栏背景视图的背景色。
     open var barTintColor: UIColor? {
         get { return backgroundImageView.backgroundColor }
         set { backgroundImageView.backgroundColor = newValue }
     }
 
-    /// 导航条背景图片，默认情况下，背景图片将拉伸填充整个背景。
+    /// 导航栏背景图片，默认情况下，背景图片将拉伸填充整个背景。
     open var backgroundImage: UIImage? {
         get { return backgroundImageView.image }
         set { backgroundImageView.image = newValue }
     }
 
-    /// 导航条阴影图片。
+    /// 导航栏阴影图片。
     open var shadowImage: UIImage? {
         get { return shadowImageView.image }
         set { shadowImageView.image = newValue }
     }
 
-    /// 导航条阴影颜色，如果设置了阴影图片，则此属性可能不生效。
+    /// 导航栏阴影颜色，如果设置了阴影图片，则此属性可能不生效。
     /// - Note: 与系统默认一致，默认 0.3 半透明黑色。
     open var shadowColor: UIColor? {
         get { return shadowImageView.backgroundColor }
@@ -100,7 +100,7 @@ import UIKit
         
     }
 
-    /// 导航条将按照当前视图布局方向布局 titleView、infoView、backView、shadowImageView、backgroundImageView 。
+    /// 导航栏将按照当前视图布局方向布局 titleView、infoView、backView、shadowImageView、backgroundImageView 。
     override open func layoutSubviews() {
         super.layoutSubviews()
         
@@ -108,7 +108,7 @@ import UIKit
         let safeBounds = bounds.inset(by: self.safeAreaInsets)
 
         // titleView\backView\infoView 只在初次赋值时，检测是否有大小并尝试自动调整。
-        // 切在导航条整个生命周期中，不主动调整它们的大小，只是按照规则将它们放在左中右。
+        // 切在导航栏整个生命周期中，不主动调整它们的大小，只是按照规则将它们放在左中右。
         // 它们的大小完全由开发者控制，以避免强制调整而造成的不符合预期的情况。
         // 比如，当 title 比较宽的时候，如果自动缩短了 back/info 的长度，那么当 title 变短的时候，back/info 却不能变长，
         // 所以将它们的大小完全交给开发者处理。
@@ -119,7 +119,7 @@ import UIKit
         // 【导航控制器以堆叠样式被 present 呈现时】
         // 普通高度：56
         // 大标题高度：56 + 52 = 108
-        // 理论上，这种情形，应该使用 safeArea 而不是直接增加 navBar 高度，。
+        // 理论上，这种情形，应该使用 safeArea 而不是直接增加 navBar 高度，但遗憾的是 Apple 似乎采取了一个懒惰的方法，即直接修改导航栏高度。
         
         let navHeight = prefersLargeTitles ? min(44.0, bounds.height) : bounds.height;
         
@@ -164,8 +164,8 @@ import UIKit
         }
     }
 
-    /// 在导航条上居中显示的标题视图。
-    /// - Note: 标题视图显示在导航条中央。
+    /// 在导航栏上居中显示的标题视图。
+    /// - Note: 标题视图显示在导航栏中央。
     /// - Note: 如果设置值时，视图没有大小，则会自动尝试调用 sizeToFit() 方法。
     open var titleView: UIView? {
         get {
@@ -187,7 +187,7 @@ import UIKit
     private var _titleView: UIView?
     
     /// 大标题视图。
-    /// - Note: 正常的导航条高度为 44.0，当显示大标题视图时，导航条高度增加，增加的区域就是大标题视图的区域。
+    /// - Note: 正常的导航栏高度为 44.0，当显示大标题视图时，导航栏高度增加，增加的区域就是大标题视图的区域。
     open var largeTitleView: UIView? {
         get {
             return _largeTitleView
@@ -209,7 +209,7 @@ import UIKit
     }
     private var _largeTitleView: UIView?
 
-    /// 在导航条上的返回视图。
+    /// 在导航栏上的返回视图。
     /// - Note: 自适应布局方向，在水平方向上，leading 对齐。
     /// - Note: 如果设置值时，视图没有大小，则会自动尝试调用 sizeToFit() 方法。
     /// - Note: 不会与标题视图重叠，优先显示标题视图。
@@ -234,7 +234,7 @@ import UIKit
     }
     private var _backView: UIView?
 
-    /// 导航条上信息视图。
+    /// 导航栏上信息视图。
     /// - Note: 自适应布局方向，在水平方向上，trailing 对象。
     /// - Note: 如果设置值时，视图没有大小，则会自动尝试调用 sizeToFit() 方法。
     /// - Note: 不会与标题视图重叠，优先显示标题视图。

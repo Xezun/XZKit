@@ -5,7 +5,7 @@
 [![License](https://img.shields.io/cocoapods/l/XZNavigationController.svg?style=flat)](https://cocoapods.org/pods/XZNavigationController)
 [![Platform](https://img.shields.io/cocoapods/p/XZNavigationController.svg?style=flat)](https://cocoapods.org/pods/XZNavigationController)
 
-XZNavigationController 是一款使原生的 UINavigationController 支持自定义导航条、全屏手势导航功能的组件。
+XZNavigationController 是一款使原生的 UINavigationController 支持定制化导航栏、全屏手势导航功能的组件。
 
 XZNavigationController is a protocol oriented component that enables native UINavigationController to support custom navigation bars and full screen gesture navigation functions.
 
@@ -33,11 +33,11 @@ pod 'XZNavigationController'
 
 `XZNavigationController`是一款辅助类型的协议，增强原生`UINavigationController`的功能，并不需要去实现它。
 
-1. 自定义导航条
+1. 定制化导航栏
 
-当开启自定义功能后，导航栈内的控制器可通过`XZNavigationBarCustomizable`协议自定义控制器独立的导航条。
+当开启自定义功能后，导航栈内的控制器可通过`XZNavigationBarCustomizable`协议自定义控制器独立的导航栏。
 
-> 自定义导航条会展示在原生导航条之上，而不是取代它，不影响原生导航条的功能和特性。
+> 定制化导航栏会展示在原生导航栏之上，而不是取代它，不影响原生导航栏的功能和特性。
 
 ```swift
 class ExampleMainHomeViewController: UITableViewController, XZNavigationBarCustomizable {
@@ -68,9 +68,9 @@ class ExampleMainHomeViewController: UITableViewController, XZNavigationBarCusto
 }
 ```
 
-如果自定义导航条，大部分都有统一的样式，可以通过协议`extension`的方式实现，使用体验更好，详情参见"[使用自定义导航条](#三使用自定义导航条)"。
+如果定制化导航栏，大部分都有统一的样式，可以通过协议`extension`的方式实现，使用体验更好，详情参见"[使用定制化导航栏](#三使用定制化导航栏)"。
 
-控制器拥有自定义导航条，并不仅仅是有了自定义导航条，还能帮我们更好的维护导航条的状态。在某些情况下，如果我们可能需要在控制器退场时，恢复原来导航条的状态，这往往需要在`viewWillAppear`中记录，然后在`viewWillDisappear`中恢复，很明显不是很友好的处理方式，且也存在缺陷。但是如果我们使用`XZNavigationController`开启自定义，那么我们就仅仅需要像上例中这样，在`viewDidLoad`中，维护自身的导航条即可，而不必考虑之前或之后的状态。
+控制器拥有定制化导航栏，并不仅仅是有了定制化导航栏，还能帮我们更好的维护导航栏的状态。在某些情况下，如果我们可能需要在控制器退场时，恢复原来导航栏的状态，这往往需要在`viewWillAppear`中记录，然后在`viewWillDisappear`中恢复，很明显不是很友好的处理方式，且也存在缺陷。但是如果我们使用`XZNavigationController`开启自定义，那么我们就仅仅需要像上例中这样，在`viewDidLoad`中，维护自身的导航栏即可，而不必考虑之前或之后的状态。
 
 2. 全屏手势导航
 
@@ -82,7 +82,7 @@ class ExampleMainHomeViewController: UITableViewController, XZNavigationBarCusto
 
 3. 自定义转场效果
 
-为了处理自定义导航条的转场效果，`XZNavigationController` 已经自定义导航控制器效果，但是开发中依然可以按照原生的方法，自定义导航控制器的转场效果。
+为了处理定制化导航栏的转场效果，`XZNavigationController` 已经自定义导航控制器效果，但是开发中依然可以按照原生的方法，自定义导航控制器的转场效果。
 
 此外，组件开放了内部的转场动画控制器，即 `XZNavigationControllerAnimationController` 类，以此基类，自定义转场效果的开发将变得更简单。
 
@@ -128,7 +128,7 @@ func navigationController(_ navigationController: UINavigationController, animat
 
 ### 一、面向协议
 
-`XZNavigationController` 是一个 `protocol` 协议，仅需要遵循它，可以获得开启自定义导航条、全屏手势的功能。
+`XZNavigationController` 是一个 `protocol` 协议，仅需要遵循它，可以获得开启定制化导航栏、全屏手势的功能。
 
 ```swift
 class ExampleNavigationController: UINavigationController, XZNavigationController {
@@ -136,7 +136,7 @@ class ExampleNavigationController: UINavigationController, XZNavigationControlle
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        self.isCustomizable = true  // 打开自定义导航栏、全屏手势功能支持
+        self.isCustomizable = true  // 打开定制化导航栏、全屏手势功能支持
     }
     
 }
@@ -145,7 +145,7 @@ class ExampleNavigationController: UINavigationController, XZNavigationControlle
 `XZNavigationController` 几乎是一个零接入成本的接入框架，因为它不需要改变基类，不需要改变现有的代码逻辑，仅仅需要在用到它的页面配置功能即可。
 
 ```
-// 页面若要自定义导航条，仅需遵循 XZNavigationBarCustomizable 协议即可。
+// 页面若要定制化导航栏，仅需遵循 XZNavigationBarCustomizable 协议即可。
 extension ExampleNextViewController: XZNavigationBarCustomizable {
     var xzNavigationBar: XZNavigationBarProtocol? {
         // return your custom navigation bar
@@ -157,16 +157,16 @@ extension ExampleNextViewController: XZNavigationGestureDrivable {
 }
 ```
 
-如何自定义导航条及如何控制手势导航，请继续查看下文。
+如何定制化导航栏及如何控制手势导航，请继续查看下文。
 
-### 二、自定义导航条
+### 二、定制化导航栏
 
-`UIView` 视图遵循 `XZNavigationBarProtocol` 协议，就可作为控制器的自定义导航条。
+`UIView` 视图遵循 `XZNavigationBarProtocol` 协议，就可作为控制器的定制化导航栏。
 
-> 为了方面开发，框架内置了 `XZNavigationBar` 基类，以此进行开发，自定义导航条更简单。
-> 框架默认不会提供自定义导航条，基类 `XZNavigationBar` 只是一个开发选项，自定义导航条仅需要遵循协议即可，并非必须以它为基类。
+> 为了方面开发，框架内置了 `XZNavigationBar` 基类，以此进行开发，定制化导航栏更简单。
+> 框架默认不会提供定制化导航栏，基类 `XZNavigationBar` 只是一个开发选项，定制化导航栏仅需要遵循协议即可，并非必须以它为基类。
 
-`XZNavigationBarProtocol` 协议要求很简单，仅需两个会影响导航条外观属性即可。
+`XZNavigationBarProtocol` 协议要求很简单，仅需两个会影响导航栏外观属性即可。
 
 ```swift
 public protocol XZNavigationBarProtocol: UIView {
@@ -175,7 +175,7 @@ public protocol XZNavigationBarProtocol: UIView {
 }
 ```
 
-在示例项目中，利用 `XZNavigationBar` 作为基类，模拟了原生导航条，主要代码如下。
+在示例项目中，利用 `XZNavigationBar` 作为基类，模拟了原生导航栏，主要代码如下。
 
 ```swift
 public class ExampleNavigationBar: XZNavigationBar {
@@ -207,12 +207,12 @@ public class ExampleNavigationBar: XZNavigationBar {
 }
 ```
 
-示例中，自定义导航条添加展示标题和大标题的功能，利用 `XZNaviagtionBar` 基类，代码极其简单，甚至不用考虑布局。
+示例中，定制化导航栏添加展示标题和大标题的功能，利用 `XZNaviagtionBar` 基类，代码极其简单，甚至不用考虑布局。
 
 
-### 三、使用自定义导航条
+### 三、使用定制化导航栏
 
-在上面提到，在控制器中使用自定义导航条，需要控制器实现 `XZNavigationBarCustomizable` 协议。
+在上面提到，在控制器中使用定制化导航栏，需要控制器实现 `XZNavigationBarCustomizable` 协议。
 
 ```swift
 public protocol XZNavigationBarCustomizable: UIViewController {
@@ -220,9 +220,9 @@ public protocol XZNavigationBarCustomizable: UIViewController {
 }
 ```
 
-这个协议也很简单，因为它需要告诉 `XZNavigationController` 控制器如何它的自定义的导航条，也就是一个属性即可。
+这个协议也很简单，因为它需要告诉 `XZNavigationController` 控制器如何它的自定义的导航栏，也就是一个属性即可。
 
-如果有统一的导航条样式，那么我们利用 Swift 面向协议的特性，创建一个拓展，让遵循协议的控制器，自动获得统一的自定义导航条，就像示例项目中那样。
+如果有统一的导航栏样式，那么我们利用 Swift 面向协议的特性，创建一个拓展，让遵循协议的控制器，自动获得统一的定制化导航栏，就像示例项目中那样。
 
 ```swift
 extension XZNavigationBarCustomizable {
@@ -245,7 +245,7 @@ extension XZNavigationBarCustomizable {
 通过示例，我们可以看到为什么协议中定义的是 `xzNavigationBar` 属性，因为框架把 `navigationBar` 留给了开发者使用。
 而且，通过这种类型的中转，这样项目中，我们就可以避免不必要的类型转换代码。
 
-当我们设立了统一自定义导航条后，我们就可以在控制器中使用了。
+当我们设立了统一定制化导航栏后，我们就可以在控制器中使用了。
 
 ```swift
 class ExampleLastViewController: UITableViewController, XZNavigationBarCustomizable {
@@ -259,7 +259,7 @@ class ExampleLastViewController: UITableViewController, XZNavigationBarCustomiza
 }
 ```
 
-另外，我们还可以为页面单独去实现 `XZNavigationBarCustomizable` 协议，为页面使用独立样式的导航条。
+另外，我们还可以为页面单独去实现 `XZNavigationBarCustomizable` 协议，为页面使用独立样式的导航栏。
 
 ### 四、全屏手势导航
 

@@ -136,7 +136,7 @@
     CGFloat const PullHeight    = RefreshHeight * 1.5; // 进入下拉刷新的高度为刷新高度的 1.5 倍
     CGFloat const ViewHeight_2  = self.frame.size.height * 0.5;
     
-    // 大部分情况下，刷新视图位于屏幕外，或者导航条之下，所以在刷新视图漏出一半之前，动画实际是不可见的，
+    // 大部分情况下，刷新视图位于屏幕外，或者导航栏之下，所以在刷新视图漏出一半之前，动画实际是不可见的，
     // 因此，展示动画的环，从刷新视图漏出一半开始入场。
     if (distance <= ViewHeight_2) {
         // 等待进场：圆弧无限小，不可见
