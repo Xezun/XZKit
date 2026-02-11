@@ -8,7 +8,7 @@
 import UIKit
 import XZKit
 
-class NavigationConfiguration {
+class NavigationAppearance {
     var isHidden: Bool = false
     var isTranslucent: Bool = true
     var prefersLargeTitles: Bool = false
@@ -57,7 +57,7 @@ class Example17BothViewController: Example17ViewController, XZNavigationBarCusto
         if operation == .push {
             let sb = UIStoryboard.init(name: "Example17", bundle: nil)
             if let vc = sb.instantiateViewController(withIdentifier: "next") as? Example17ViewController {
-                vc.configuration = configuration;
+                vc.navigationAppearance = navigationAppearance;
                 return vc
             }
         }
@@ -77,18 +77,14 @@ class Example17ViewController: UITableViewController {
     @IBOutlet weak var translucentSwitch: UISwitch!
     @IBOutlet weak var largeTitlesSwitch: UISwitch!
     
-    var configuration = NavigationConfiguration.init()
+    var navigationAppearance = NavigationAppearance.init()
     
     override func viewDidLoad() {
         super.viewDidLoad()
     }
     
     @IBAction func hiddenSwitchValueChanged(_ sender: UISwitch) {
-        if let navigationBar = (self as? XZNavigationBarCustomizable)?.xzNavigationBar {
-            navigationBar.isHidden = sender.isOn
-        } else if let navigationBar = self.navigationController?.navigationBar {
-            navigationBar.isHidden = sender.isOn
-        }
+        self.navigationController?.setNavigationBarHidden(sender.isOn, animated: true)
     }
     
     @IBAction func translucentSwitchValueChanged(_ sender: UISwitch) {
@@ -108,33 +104,46 @@ class Example17ViewController: UITableViewController {
     }
     
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        if let destination = segue.destination as? Example17ConfigurationViewController {
-            destination.configuration = self.configuration;
+        if let destination = segue.destination as? Example17ViewController {
+            destination.navigationAppearance = self.navigationAppearance;
+        }
+    }
+    
+    override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        guard indexPath.section == 3 else {
+            return
+        }
+        
+        let identifiers = ["Both", "Last", "Only", "Next", "None"];
+        let storyboard = UIStoryboard(name: "Example17", bundle: nil)
+        if let nextVC = storyboard.instantiateViewController(withIdentifier: identifiers[indexPath.row]) as? Example17ViewController {
+            nextVC.navigationAppearance = navigationAppearance
+            navigationController?.pushViewController(nextVC, animated: true)
         }
     }
     
 }
 
-class Example17ConfigurationViewController: Example17ViewController {
+class Example17NavigationAppearanceViewController: Example17ViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        self.hiddenSwitch.isOn = configuration.isHidden
-        self.translucentSwitch.isOn = configuration.isTranslucent
-        self.largeTitlesSwitch.isOn = configuration.prefersLargeTitles
+        self.hiddenSwitch.isOn = navigationAppearance.isHidden
+        self.translucentSwitch.isOn = navigationAppearance.isTranslucent
+        self.largeTitlesSwitch.isOn = navigationAppearance.prefersLargeTitles
     }
     
     @IBAction override func hiddenSwitchValueChanged(_ sender: UISwitch) {
-        configuration.isHidden = sender.isOn
+        navigationAppearance.isHidden = sender.isOn
     }
     
     @IBAction override func translucentSwitchValueChanged(_ sender: UISwitch) {
-        configuration.isTranslucent = sender.isOn
+        navigationAppearance.isTranslucent = sender.isOn
     }
     
     @IBAction override func largeTitlesSwitchValueChanged(_ sender: UISwitch) {
-        configuration.prefersLargeTitles = sender.isOn
+        navigationAppearance.prefersLargeTitles = sender.isOn
     }
     
 }

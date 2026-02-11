@@ -914,6 +914,7 @@ extension UIViewController {
             uiNavigationBar.prefersLargeTitles = xzNavigationBar.prefersLargeTitles
         }
         if navigationController.isNavigationBarHidden != xzNavigationBar.isHidden {
+            // 需要使用 navigationController 提供的方法来更新原生导航条的显示或隐藏状态，否则导航控制器可能不会刷新当前所显示控制器的布局。
             navigationController.setNavigationBarHidden(xzNavigationBar.isHidden, animated: animated)
         }
     }

@@ -40,6 +40,10 @@
                 "name" : "XZPageView"
             },
             {
+                "id" : "17",
+                "name" : "XZNavigationController"
+            },
+            {
                 "id" : "13",
                 "name" : "XZToast"
             }
@@ -79,10 +83,6 @@
             {
                 "id" : "16",
                 "name" : "XZCollectionViewFlowLayout"
-            },
-            {
-                "id" : "17",
-                "name" : "XZNavigationController"
             },
             {
                 "id" : "18",

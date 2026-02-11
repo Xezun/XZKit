@@ -8,53 +8,16 @@
 import UIKit
 import XZKit
 
-class Example17NoneViewController: UITableViewController {
+class Example17NoneViewController: Example17ViewController {
     
-    @IBOutlet weak var hiddenSwitch: UISwitch!
-    @IBOutlet weak var translucentSwitch: UISwitch!
-    @IBOutlet weak var prefersLargeTitlesSwitch: UISwitch!
-    @IBOutlet weak var customavigationTranstionSwitch: UISwitch!
-
     override func viewDidLoad() {
         super.viewDidLoad()
-    }
-    
-    override func viewDidAppear(_ animated: Bool) {
-        super.viewDidAppear(animated)
-        
-        if let navigationController = navigationController {
-            hiddenSwitch.isOn = navigationController.isNavigationBarHidden
-            translucentSwitch.isOn = navigationController.navigationBar.isTranslucent
-            prefersLargeTitlesSwitch.isOn = navigationController.navigationBar.prefersLargeTitles
-        }
-        customavigationTranstionSwitch.isOn = navigationController?.delegate?.isEqual(self) == true
-    }
-    
-    override func viewWillDisappear(_ animated: Bool) {
-        super.viewWillDisappear(animated)
-        
-        navigationController?.delegate = nil;
     }
     
     @IBAction func unwindToBack(_ unwindSegue: UIStoryboardSegue) {
         
     }
     
-    @IBAction func navigationBarHiddenChanged(_ sender: UISwitch) {
-        navigationController?.setNavigationBarHidden(sender.isOn, animated: true)
-    }
-
-    @IBAction func navigationBarTranslucentChanged(_ sender: UISwitch) {
-        navigationController?.navigationBar.isTranslucent = sender.isOn
-    }
-
-    @IBAction func navigationBarPrefersLargeTitlesChanged(_ sender: UISwitch) {
-        navigationController?.navigationBar.prefersLargeTitles = sender.isOn
-    }
-
-    @IBAction func customNavigationTranstionChanged(_ sender: UISwitch) {
-        navigationController?.delegate = sender.isOn ? self : nil
-    }
 }
 
 extension Example17NoneViewController: UINavigationControllerDelegate {
