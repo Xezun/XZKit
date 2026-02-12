@@ -50,6 +50,10 @@ class Example17ViewController: UITableViewController {
     var currentAppearance = NavigationAppearance.init()
     var nextAppearance = NavigationAppearance.init()
     
+    override var preferredStatusBarStyle: UIStatusBarStyle {
+        return ( self is XZNavigationBarCustomizable ? .lightContent : .darkContent )
+    }
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         

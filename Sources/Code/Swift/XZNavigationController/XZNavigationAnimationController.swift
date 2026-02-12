@@ -194,8 +194,6 @@ extension XZNavigationAnimationController: UIViewControllerAnimatedTransitioning
             fromNavigationBarFrame2 = .zero
             // fromNavigationBar 层级在 fromView 之上
             containerView.insertSubview(fromNavigationBar, aboveSubview: fromView)
-            // 解决因为状态栏变化而造成的导航栏布局问题：导航栏 frame 没变，但是覆盖状态栏的背景，需要根据状态栏变化。
-            fromNavigationBar.setNeedsLayout()
         }
         
         let toNavigationBar = (toVC as? XZNavigationBarCustomizable)?.xzNavigationBar
@@ -205,15 +203,15 @@ extension XZNavigationAnimationController: UIViewControllerAnimatedTransitioning
             toNavigationBarFrame2 = .zero
             // toNavigationBar 层级在 toView 之上
             containerView.insertSubview(toNavigationBar, aboveSubview: toView)
-            // 解决因为状态栏变化而造成的导航栏布局问题：导航栏 frame 没变，但是覆盖状态栏的背景，需要根据状态栏变化。
-            toNavigationBar.setNeedsLayout()
         }
         
         // 根据转场状态，配置原生导航栏和定制化导航栏的转场行为
         if fromNavigationBarFrame2 != nil && toNavigationBarFrame2 != nil {
             // 导航栏：一直显示
-            fromNavigationBar!.frame = uiNavigationBarFrame1
-            fromNavigationBarFrame2 = uiNavigationBarFrame1.offsetBy(dx: -uiNavigationBarFrame1.width * 0.34 * direction, dy: 0);
+            // from 导航栏保持原始状态
+            let fromNavigationBarFrame1 = uiNavigationBar.superview!.convert(fromNavigationBar!.frame, to: containerView)
+            fromNavigationBar!.frame = fromNavigationBarFrame1
+            fromNavigationBarFrame2 = fromNavigationBarFrame1.offsetBy(dx: -uiNavigationBarFrame1.width * 0.34 * direction, dy: 0);
             toNavigationBar!.frame = uiNavigationBarFrame1.offsetBy(dx: uiNavigationBarFrame1.width * direction, dy: 0)
             toNavigationBarFrame2 = uiNavigationBarFrame1;
             // 将原生导航栏，上移至屏幕外
@@ -221,8 +219,9 @@ extension XZNavigationAnimationController: UIViewControllerAnimatedTransitioning
             uiNavigationBar.frame = uiNavigationBarFrame2!
         } else if fromNavigationBarFrame2 != nil {
             // 定制化导航栏：显示 => 隐藏
-            fromNavigationBar!.frame = uiNavigationBarFrame1
-            fromNavigationBarFrame2 = uiNavigationBarFrame1.offsetBy(dx: -uiNavigationBarFrame1.width * 0.34 * direction, dy: 0);
+            let fromNavigationBarFrame1 = uiNavigationBar.superview!.convert(fromNavigationBar!.frame, to: containerView)
+            fromNavigationBar!.frame = fromNavigationBarFrame1
+            fromNavigationBarFrame2 = fromNavigationBarFrame1.offsetBy(dx: -uiNavigationBarFrame1.width * 0.34 * direction, dy: 0);
             // 根据原生导航栏的状态，判断 toView 是否显示原生导航栏
             if navigationController.isNavigationBarHidden {
                 // toView 不显示原生导航栏，且没有定制化导航栏或定制化导航栏隐藏
@@ -251,6 +250,15 @@ extension XZNavigationAnimationController: UIViewControllerAnimatedTransitioning
         } else {
             // nav bar is hidden
         }
+        
+        // 解决因为状态栏变化而造成的导航栏布局问题：
+        // 导航栏 frame 没变，但是覆盖状态栏的背景，需要根据状态栏变化。
+        fromNavigationBar?.layoutIfNeeded()
+        toNavigationBar?.layoutIfNeeded()
+        // 解决原生导航条布局问题：
+        // 如果转场的两个定制化导航栏，其中一个是大标题模式，
+        // 原生的导航栏虽然向上移动到了屏幕之外，但是其内容，比如标题或按钮，还是会覆盖定制化导航条。
+        uiNavigationBar.layoutIfNeeded()
         
         // 由于 tabBar 在最顶层，所以平移一个屏宽，而非三分之一。
         // 定制页签栏的转场效果的原因：
@@ -328,7 +336,6 @@ extension XZNavigationAnimationController: UIViewControllerAnimatedTransitioning
         if let fromNavigationBar = fromNavigationBar, !fromNavigationBar.isHidden {
             fromNavigationBarFrame2 = .zero;
             containerView.insertSubview(fromNavigationBar, aboveSubview: fromView)
-            fromNavigationBar.setNeedsLayout()
         }
         
         let toNavigationBar = (toVC as? XZNavigationBarCustomizable)?.xzNavigationBar
@@ -336,12 +343,12 @@ extension XZNavigationAnimationController: UIViewControllerAnimatedTransitioning
         if let toNavigationBar = toNavigationBar, !toNavigationBar.isHidden {
             toNavigationBarFrame2 = .zero
             containerView.insertSubview(toNavigationBar, aboveSubview: toView)
-            toNavigationBar.setNeedsLayout()
         }
         
         if fromNavigationBarFrame2 != nil && toNavigationBarFrame2 != nil {
-            fromNavigationBar!.frame = uiNavigationBarFrame1;
-            fromNavigationBarFrame2 = uiNavigationBarFrame1.offsetBy(dx: uiNavigationBarFrame1.width * direction, dy: 0);
+            let fromNavigationBarFrame1 = uiNavigationBar.superview!.convert(fromNavigationBar!.frame, to: containerView)
+            fromNavigationBar!.frame = fromNavigationBarFrame1
+            fromNavigationBarFrame2 = fromNavigationBarFrame1.offsetBy(dx: uiNavigationBarFrame1.width * direction, dy: 0);
             
             toNavigationBar!.frame = uiNavigationBarFrame1.offsetBy(dx: -uiNavigationBarFrame1.width * 0.34 * direction, dy: 0);
             toNavigationBarFrame2 = uiNavigationBarFrame1
@@ -349,8 +356,9 @@ extension XZNavigationAnimationController: UIViewControllerAnimatedTransitioning
             uiNavigationBarFrame2 = uiNavigationBarFrame1.offsetBy(dx: 0, dy: -abs(uiNavigationBarFrame1.maxY));
             uiNavigationBar.frame = uiNavigationBarFrame2!
         } else if fromNavigationBarFrame2 != nil {
-            fromNavigationBar!.frame = uiNavigationBarFrame1;
-            fromNavigationBarFrame2 = uiNavigationBarFrame1.offsetBy(dx: +uiNavigationBarFrame1.width * direction, dy: 0);
+            let fromNavigationBarFrame1 = uiNavigationBar.superview!.convert(fromNavigationBar!.frame, to: containerView)
+            fromNavigationBar!.frame = fromNavigationBarFrame1
+            fromNavigationBarFrame2 = fromNavigationBarFrame1.offsetBy(dx: +uiNavigationBarFrame1.width * direction, dy: 0);
             
             if navigationController.isNavigationBarHidden {
                 uiNavigationBarFrame2 = uiNavigationBarFrame1.offsetBy(dx: 0, dy: -abs(uiNavigationBarFrame1.maxY));
@@ -372,7 +380,10 @@ extension XZNavigationAnimationController: UIViewControllerAnimatedTransitioning
         } else {
             // nav bar is hidden
         }
-         
+        fromNavigationBar?.layoutIfNeeded()
+        toNavigationBar?.layoutIfNeeded()
+        uiNavigationBar.layoutIfNeeded()
+        
         // 由于 tabBar 的层级比较高，且将 tabBar 添加到 containerView 上，会导致 tabBar 在动画时到显示不正确
         // 所以 tabBar 是平移一个宽度，而页面仅平移了三分之一
         var tabBar: UITabBar?

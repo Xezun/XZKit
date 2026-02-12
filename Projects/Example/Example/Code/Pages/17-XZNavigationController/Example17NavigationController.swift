@@ -18,6 +18,10 @@ class Example17NavigationController: UINavigationController, XZNavigationControl
     deinit {
         //print("\(type(of: self)) \(#function) successfully")
     }
+    
+    override var preferredStatusBarStyle: UIStatusBarStyle {
+        return topViewController?.preferredStatusBarStyle ?? .darkContent
+    }
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -29,10 +33,10 @@ class Example17NavigationController: UINavigationController, XZNavigationControl
         
         let appearance = UINavigationBarAppearance.init()
         appearance.configureWithTransparentBackground()
-        appearance.backgroundColor = UIColor.white;
-        appearance.titleTextAttributes = [NSAttributedString.Key.foregroundColor: UIColor.label]
-        appearance.largeTitleTextAttributes = [NSAttributedString.Key.foregroundColor: UIColor.label]
-        appearance.shadowColor = .clear
+        appearance.backgroundColor = .clear
+        appearance.titleTextAttributes = [NSAttributedString.Key.foregroundColor: UIColor.black]
+        appearance.largeTitleTextAttributes = [NSAttributedString.Key.foregroundColor: UIColor.black]
+        appearance.shadowColor = .lightGray
         appearance.backgroundEffect = nil
         navigationBar.standardAppearance = appearance
         navigationBar.scrollEdgeAppearance = appearance;

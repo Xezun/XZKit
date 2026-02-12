@@ -27,6 +27,7 @@ import UIKit
     open var prefersLargeTitles = false {
         didSet {
             self.synchronizeAppearance(for: .prefersLargeTitles)
+            setNeedsLayout()
         }
     }
     
@@ -38,7 +39,6 @@ import UIKit
     
     public override init(frame: CGRect) {
         backgroundImageView = UIImageView.init(frame: CGRect(x: 0, y: -20, width: frame.width, height: 64));
-        backgroundImageView.autoresizingMask = [.flexibleHeight, .flexibleWidth]
         backgroundImageView.backgroundColor  = UIColor.white
         
         shadowImageView = UIImageView.init(frame: CGRect.init(x: 0, y: 0, width: frame.width, height: 1.0 / UIScreen.main.scale))
@@ -121,37 +121,41 @@ import UIKit
         // 大标题高度：56 + 52 = 108
         // 理论上，这种情形，应该使用 safeArea 而不是直接增加 navBar 高度，但遗憾的是 Apple 似乎采取了一个懒惰的方法，即直接修改导航栏高度。
         
-        let navHeight = prefersLargeTitles ? min(44.0, bounds.height) : bounds.height;
+        let isLeftToRight = (self.effectiveUserInterfaceLayoutDirection == .leftToRight)
         
-        if let titleView = self.titleView {
-            titleView.isHidden = bounds.height > 64.0
-            let frame = titleView.frame
-            let x = (bounds.width - frame.width) * 0.5
-            let y = (navHeight - frame.height) * 0.5
-            titleView.frame = CGRect.init(x: x, y: y, width: frame.width, height: frame.height)
-        }
+        // 大标题模式，导航栏布局在顶部最高 44 点的区域
+        // 非大标题模式，导航栏布局在底部最高 44 点的区域
+        let layoutHeight = min(44.0, bounds.height)
+        let layoutMinY = bounds.minY + (prefersLargeTitles ? 0.0 : (bounds.height - layoutHeight))
         
         if let largeTitleView = self.largeTitleView {
-            largeTitleView.isHidden = !(bounds.height > 64.0 && prefersLargeTitles)
-            largeTitleView.frame = CGRect(x: bounds.minX, y: navHeight, width: bounds.width, height: bounds.height - navHeight)
+            largeTitleView.isHidden = prefersLargeTitles ? bounds.size.height <= 64.0 : true
+            let height = prefersLargeTitles ? (bounds.size.height - layoutHeight) : 0
+            largeTitleView.frame = CGRect(x: bounds.minX, y: bounds.maxY - height, width: bounds.width, height: height)
+        }
+        
+        if let titleView = self.titleView {
+            titleView.isHidden = prefersLargeTitles ? bounds.height > 64.0 : false;
+            let titleFrame = titleView.frame
+            let x = (bounds.width - titleFrame.width) * 0.5
+            let y = layoutMinY + (layoutHeight - titleFrame.height) * 0.5
+            titleView.frame = CGRect.init(x: x, y: y, width: titleFrame.width, height: titleFrame.height)
         }
 
-        let isLeftToRight = (self.effectiveUserInterfaceLayoutDirection == .leftToRight)
-
         if let infoView = self.infoView {
-            let oFrame = infoView.frame
-            let x = (isLeftToRight ? safeBounds.maxX - oFrame.width : safeBounds.minX)
-            let y = (navHeight - oFrame.height) * 0.5
-            infoView.frame = CGRect.init(x: x, y: y, width: oFrame.width, height: oFrame.height)
+            let infoFrame = infoView.frame
+            let x = (isLeftToRight ? safeBounds.maxX - infoFrame.width : safeBounds.minX)
+            let y = layoutMinY + (layoutHeight - infoFrame.height) * 0.5
+            infoView.frame = CGRect.init(x: x, y: y, width: infoFrame.width, height: infoFrame.height)
         }
 
         if let backView = self.backView {
-            let oFrame = backView.frame
-            let x = (isLeftToRight ? safeBounds.minX : safeBounds.maxX - oFrame.width)
-            let y = (navHeight - oFrame.height) * 0.5
-            backView.frame = CGRect.init(x: x, y: y, width: oFrame.width, height: oFrame.height)
+            let backFrame = backView.frame
+            let x = (isLeftToRight ? safeBounds.minX : safeBounds.maxX - backFrame.width)
+            let y = layoutMinY + (layoutHeight - backFrame.height) * 0.5
+            backView.frame = CGRect.init(x: x, y: y, width: backFrame.width, height: backFrame.height)
         }
-
+        
         shadowImageView.frame = CGRect.init(
             x: bounds.minX,
             y: bounds.maxY,
@@ -187,7 +191,8 @@ import UIKit
     private var _titleView: UIView?
     
     /// 大标题视图。
-    /// - Note: 正常的导航栏高度为 44.0，当显示大标题视图时，导航栏高度增加，增加的区域就是大标题视图的区域。
+    ///
+    /// 导航栏高度为 44.0 点，当开启大标题视图时，导航栏高度增加，增加的区域就是大标题视图的区域。
     open var largeTitleView: UIView? {
         get {
             return _largeTitleView
