@@ -22,128 +22,20 @@ class NavigationAppearance {
 //
 // 声明遵循 XZNavigationGestureDrivable 将自动获得全屏手势导航的能力，当然默认只有返回，前进需要实现协议中的方法，且通过协议中的方法，
 // 还可以控制手势返回的行为。
-class Example17BothViewController: Example17ViewController, XZNavigationBarCustomizable, XZNavigationGestureDrivable {
+class Example17BothViewController: Example17OnlyViewController, XZNavigationBarCustomizable {
     
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        navigationBar.title         = "首页"
+        navigationBar.title         = "定制页"
         navigationBar.barTintColor  = .brown
         navigationBar.isTranslucent = true
-        
-        navigationBar.backTitle = "返回"
+        navigationBar.backTitle     = "返回"
     }
     
-    override func viewDidAppear(_ animated: Bool) {
-        super.viewDidAppear(animated)
-        
-        if let navigationBar = navigationController?.navigationBar {
-            hiddenSwitch.isOn = navigationBar.isHidden
-            translucentSwitch.isOn = navigationBar.isTranslucent
-            largeTitlesSwitch.isOn = navigationBar.prefersLargeTitles
-        }
-    }
-    
-    @objc func backButtonAction(_ sender: UIButton) {
-        performSegue(withIdentifier: "dismiss", sender: sender)
-    }
-    
-    @IBAction func unwindToBack(_ unwindSegue: UIStoryboardSegue) {
-        
-    }
-    
-    // 自定义手势前进的页面。
-    func navigationController(_ navigationController: UINavigationController, viewControllerForGestureNavigation operation: UINavigationController.Operation) -> UIViewController? {
-        if operation == .push {
-            let sb = UIStoryboard.init(name: "Example17", bundle: nil)
-            if let vc = sb.instantiateViewController(withIdentifier: "next") as? Example17ViewController {
-                vc.navigationAppearance = navigationAppearance;
-                return vc
-            }
-        }
-        return nil
-    }
-    
-    
-    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        super.prepare(for: segue, sender: sender)
-    }
-}
-
-
-class Example17ViewController: UITableViewController {
-    
-    @IBOutlet weak var hiddenSwitch: UISwitch!
-    @IBOutlet weak var translucentSwitch: UISwitch!
-    @IBOutlet weak var largeTitlesSwitch: UISwitch!
-    
-    var navigationAppearance = NavigationAppearance.init()
-    
-    override func viewDidLoad() {
-        super.viewDidLoad()
-    }
-    
-    @IBAction func hiddenSwitchValueChanged(_ sender: UISwitch) {
-        self.navigationController?.setNavigationBarHidden(sender.isOn, animated: true)
-    }
-    
-    @IBAction func translucentSwitchValueChanged(_ sender: UISwitch) {
-        if let navigationBar = (self as? XZNavigationBarCustomizable)?.xzNavigationBar {
-            navigationBar.isTranslucent = sender.isOn
-        } else if let navigationBar = self.navigationController?.navigationBar {
-            navigationBar.isTranslucent = sender.isOn
-        }
-    }
-    
-    @IBAction func largeTitlesSwitchValueChanged(_ sender: UISwitch) {
-        if let navigationBar = (self as? XZNavigationBarCustomizable)?.xzNavigationBar {
-            navigationBar.prefersLargeTitles = sender.isOn
-        } else if let navigationBar = self.navigationController?.navigationBar {
-            navigationBar.prefersLargeTitles = sender.isOn
-        }
-    }
-    
-    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        if let destination = segue.destination as? Example17ViewController {
-            destination.navigationAppearance = self.navigationAppearance;
-        }
-    }
-    
-    override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        guard indexPath.section == 3 else {
-            return
-        }
-        
-        let identifiers = ["Both", "Last", "Only", "Next", "None"];
-        let storyboard = UIStoryboard(name: "Example17", bundle: nil)
-        if let nextVC = storyboard.instantiateViewController(withIdentifier: identifiers[indexPath.row]) as? Example17ViewController {
-            nextVC.navigationAppearance = navigationAppearance
-            navigationController?.pushViewController(nextVC, animated: true)
-        }
+    func navigationController(_ navigationController: UINavigationController, edgeInsetsForGestureNavigation operation: UINavigationController.Operation) -> NSDirectionalEdgeInsets? {
+        return operation == .push ? nil : .init(top: 0, leading: 15, bottom: 0, trailing: 15)
     }
     
 }
 
-class Example17NavigationAppearanceViewController: Example17ViewController {
-    
-    override func viewDidLoad() {
-        super.viewDidLoad()
-        
-        self.hiddenSwitch.isOn = navigationAppearance.isHidden
-        self.translucentSwitch.isOn = navigationAppearance.isTranslucent
-        self.largeTitlesSwitch.isOn = navigationAppearance.prefersLargeTitles
-    }
-    
-    @IBAction override func hiddenSwitchValueChanged(_ sender: UISwitch) {
-        navigationAppearance.isHidden = sender.isOn
-    }
-    
-    @IBAction override func translucentSwitchValueChanged(_ sender: UISwitch) {
-        navigationAppearance.isTranslucent = sender.isOn
-    }
-    
-    @IBAction override func largeTitlesSwitchValueChanged(_ sender: UISwitch) {
-        navigationAppearance.prefersLargeTitles = sender.isOn
-    }
-    
-}

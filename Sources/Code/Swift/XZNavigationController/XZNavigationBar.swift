@@ -75,6 +75,8 @@ extension XZNavigationBar {
         case .prefersLargeTitles:
             xz_objc_msgSendSuper_void(navigationBar, type(of: navigationBar), #selector(setter: UINavigationBar.prefersLargeTitles), self.prefersLargeTitles)
         }
+        
+        navigationBar.superview?.setNeedsLayout()
     }
     
     /// 定制化导航栏所属控制器的导航控制器。

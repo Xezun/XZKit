@@ -13,43 +13,8 @@ class Example17LastViewController: Example17ViewController, XZNavigationBarCusto
     override func viewDidLoad() {
         super.viewDidLoad()
 
-        navigationBar.title        = "导航栏定制页"
-        navigationBar.barTintColor = .systemBrown
-    }
-    
-    @IBAction func unwindToBack(_ unwindSegue: UIStoryboardSegue) {
-        
-    }
-    
-    override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        guard indexPath.section == 3 else {
-            return
-        }
-        guard let navigationController = navigationController else { return }
-        
-        switch indexPath.row {
-        case 0:
-            navigationController.show(ExampleTestViewController.init(), sender: nil)
-        case 1:
-            navigationController.pushViewController(ExampleTestViewController.init(), animated: true)
-        case 2:
-            var viewControllers = navigationController.viewControllers
-            viewControllers.append(ExampleTestViewController.init())
-            navigationController.setViewControllers(viewControllers, animated: true)
-        case 3:
-            var viewControllers = navigationController.viewControllers
-            viewControllers.append(ExampleTestViewController.init())
-            navigationController.viewControllers = viewControllers
-        case 4:
-            navigationController.popViewController(animated: true)
-        case 5:
-            let vc = navigationController.viewControllers[1]
-            navigationController.popToViewController(vc, animated: true)
-        case 6:
-            navigationController.popToRootViewController(animated: true)
-        default:
-            break
-        }
+        navigationBar.title        = "导航页"
+        navigationBar.barTintColor = .orange
     }
     
 }

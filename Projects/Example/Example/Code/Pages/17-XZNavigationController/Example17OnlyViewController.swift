@@ -8,22 +8,80 @@
 import UIKit
 import XZKit
 
+/// 手势页
 class Example17OnlyViewController: Example17ViewController, XZNavigationGestureDrivable {
+    
+    var nextPage = Example17Page.DING_ZHI
+    weak var backViewController: UIViewController? = nil
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        
+        if let viewControllers = self.navigationController?.viewControllers, viewControllers.count > 1 {
+            backViewController = viewControllers[viewControllers.count - 2]
+        }
+    }
+    
+    override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        let cell = super.tableView(tableView, cellForRowAt: indexPath)
+        switch indexPath.section {
+        case 4:
+            if indexPath.row == 0 {
+                cell.detailTextLabel?.text = nextPage.name
+            } else {
+                cell.detailTextLabel?.text = backViewController?.navigationItem.title ?? "无"
+            }
+        default:
+            break;
+        }
+        return cell
     }
     
     func navigationController(_ navigationController: UINavigationController, viewControllerForGestureNavigation operation: UINavigationController.Operation) -> UIViewController? {
-        if operation == .push {
-            let sb = UIStoryboard.init(name: "Example17", bundle: nil)
-            return sb.instantiateViewController(withIdentifier: "next")
+        switch operation {
+        case .none:
+            return nil
+        case .push:
+            let viewController = nextPage.viewController
+            viewController.currentAppearance = nextAppearance
+            return viewController
+        case .pop:
+            return backViewController
+        @unknown default:
+            fatalError("异常导航分支")
         }
-        return nil
-    }
-
-    @IBAction func unwindToBack(_ unwindSegue: UIStoryboardSegue) {
-        
     }
     
+    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+        super.prepare(for: segue, sender: sender)
+        
+        if let selectVC = segue.destination as? Example17SelectNextViewController {
+            selectVC.selectedPage = nextPage
+        } else if let selectVC = segue.destination as? Example17SelectBackViewController {
+            selectVC.selectedViewController = backViewController
+        }
+    }
+    
+    @IBAction func confirmSelectNextPage(_ unwindSegue: UIStoryboardSegue) {
+        let sourceViewController = unwindSegue.source as! Example17SelectNextViewController
+        nextPage = sourceViewController.selectedPage
+        let indexPath = IndexPath.init(row: 0, section: 4)
+        if #available(iOS 15.0, *) {
+            tableView.reconfigureRows(at: [indexPath])
+        } else {
+            tableView.reloadRows(at: [indexPath], with: .none)
+        }
+    }
+    
+    @IBAction func confirmSelectBackViewController(_ unwindSegue: UIStoryboardSegue) {
+        let sourceViewController = unwindSegue.source as! Example17SelectBackViewController
+        backViewController = sourceViewController.selectedViewController
+        let indexPath = IndexPath.init(row: 1, section: 4)
+        if #available(iOS 15.0, *) {
+            tableView.reconfigureRows(at: [indexPath])
+        } else {
+            tableView.reloadRows(at: [indexPath], with: .none)
+        }
+    }
+
 }

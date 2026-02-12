@@ -14,10 +14,6 @@ class Example17NoneViewController: Example17ViewController {
         super.viewDidLoad()
     }
     
-    @IBAction func unwindToBack(_ unwindSegue: UIStoryboardSegue) {
-        
-    }
-    
 }
 
 extension Example17NoneViewController: UINavigationControllerDelegate {
