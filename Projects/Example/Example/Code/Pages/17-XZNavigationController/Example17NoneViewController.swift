@@ -20,7 +20,7 @@ extension Example17NoneViewController: UINavigationControllerDelegate {
     
     func navigationController(_ navigationController: UINavigationController, animationControllerFor operation: UINavigationController.Operation, from fromVC: UIViewController, to toVC: UIViewController) -> UIViewControllerAnimatedTransitioning? {
         guard let navigationController = navigationController as? XZNavigationController else { return nil }
-        return ExampleNativeCustomAnimationController.init(for: navigationController, operation: operation, isInteractive: false)
+        return ExampleNativeCustomAnimationController.init(for: navigationController, operation: operation, isInteractive: false, delegate: nil)
     }
 }
 

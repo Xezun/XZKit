@@ -37,5 +37,33 @@ class Example17BothViewController: Example17OnlyViewController, XZNavigationBarC
         return operation == .push ? nil : .init(top: 0, leading: 15, bottom: 0, trailing: 15)
     }
     
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        
+        guard let navigationController = navigationController else { return }
+        #XZLog("\(self.navigationBar.title!): \(navigationController.viewControllers.count)")
+    }
+    
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+        
+        guard let navigationController = navigationController else { return }
+        #XZLog("\(self.navigationBar.title!): \(navigationController.viewControllers.count)")
+    }
+    
+    override func viewWillDisappear(_ animated: Bool) {
+        super.viewWillDisappear(animated)
+        
+        guard let navigationController = navigationController else { return }
+        #XZLog("\(self.navigationBar.title!): \(navigationController.viewControllers.count)")
+    }
+    
+    override func viewDidDisappear(_ animated: Bool) {
+        super.viewDidDisappear(animated)
+        
+        guard let navigationController = navigationController else { return }
+        #XZLog("\(self.navigationBar.title!): \(navigationController.viewControllers.count)")
+    }
+    
 }
 

@@ -8,6 +8,19 @@
 
 import UIKit
 
+@MainActor public protocol XZNavigationAnimationControllerDelegate: AnyObject {
+    
+    /// 转场动画结束事件回调。
+    ///
+    /// 如果转场没有结束，应避免发起新的转场，否则定制化导航条可能无法显示。
+    ///
+    /// - Parameters:
+    ///   - animationController: 转场动画控制器
+    ///   - transitionCompleted: 转场是否完成
+    func animationController(_ animationController: XZNavigationAnimationController, animationEnded transitionCompleted: Bool) -> Void
+    
+}
+
 /// 动画控制器，处理了导航控制器的转场过程中的动画效果。
 @MainActor open class XZNavigationAnimationController: NSObject {
     
@@ -27,13 +40,15 @@ import UIKit
     
     /// 在动画的过程中，只能拿到原生导航栏当前的状态，此属性记录了原生导航栏在转场前是否隐藏，以便控制转场效果。
     let isNavigationBarHidden: Bool
+    public var delegate: XZNavigationAnimationControllerDelegate?
     
-    public init?(for navigationController: XZNavigationController, operation: UINavigationController.Operation, isInteractive: Bool) {
+    public init?(for navigationController: XZNavigationController, operation: UINavigationController.Operation, isInteractive: Bool, delegate: XZNavigationAnimationControllerDelegate?) {
         guard operation != .none else { return nil }
         self.navigationController  = navigationController
         self.operation             = operation
         self.interactiveTransition = (isInteractive ? UIPercentDrivenInteractiveTransition() : nil)
         self.isNavigationBarHidden = navigationController.isNavigationBarHidden
+        self.delegate = delegate
         super.init()
     }
     
@@ -130,6 +145,7 @@ extension XZNavigationAnimationController: UIViewControllerAnimatedTransitioning
         // 在此取 navigationController.topViewController 可能并不准确，因为 viewDidAppear 比此方法先调用，
         // 如果在 viewDidAppear 中 push 了新的控制器，那么这里的获取到的 topViewController 就是新的控制器。
         // 因此在此方法中无法设置当前的定制化导航栏。
+        delegate?.animationController(self, animationEnded: transitionCompleted)
     }
     
     /// 执行 Push 动画。
@@ -215,7 +231,7 @@ extension XZNavigationAnimationController: UIViewControllerAnimatedTransitioning
             toNavigationBar!.frame = uiNavigationBarFrame1.offsetBy(dx: uiNavigationBarFrame1.width * direction, dy: 0)
             toNavigationBarFrame2 = uiNavigationBarFrame1;
             // 将原生导航栏，上移至屏幕外
-            uiNavigationBarFrame2 = uiNavigationBarFrame1.offsetBy(dx: 0, dy: -abs(uiNavigationBarFrame1.maxY));
+            uiNavigationBarFrame2 = uiNavigationBarFrame1.offsetBy(dx: 0, dy: -abs(uiNavigationBarFrame1.maxY) * 2.0);
             uiNavigationBar.frame = uiNavigationBarFrame2!
         } else if fromNavigationBarFrame2 != nil {
             // 定制化导航栏：显示 => 隐藏
@@ -226,7 +242,8 @@ extension XZNavigationAnimationController: UIViewControllerAnimatedTransitioning
             if navigationController.isNavigationBarHidden {
                 // toView 不显示原生导航栏，且没有定制化导航栏或定制化导航栏隐藏
                 // 因为原生导航栏可能有隐藏动画，将原生导航栏，上移至屏幕外，避免与遮挡定制化导航栏
-                uiNavigationBarFrame2 = uiNavigationBarFrame1.offsetBy(dx: 0, dy: -abs(uiNavigationBarFrame1.maxY));
+                // 如果只向上移一个单位，可能会有阴影或模糊效果会覆盖在定制化导航栏上
+                uiNavigationBarFrame2 = uiNavigationBarFrame1.offsetBy(dx: 0, dy: -abs(uiNavigationBarFrame1.maxY) * 2.0);
                 uiNavigationBar.frame = uiNavigationBarFrame2!
             } else {
                 // toView 显示原生导航栏，原生导航栏随目标页面一起入场
@@ -240,7 +257,7 @@ extension XZNavigationAnimationController: UIViewControllerAnimatedTransitioning
             // 根据导航栏转场前的状态，判断from页面是否有定制化导航栏
             if self.isNavigationBarHidden {
                 // fromView 不显示原生导航栏，且没有定制化导航栏或定制化导航栏隐藏
-                uiNavigationBarFrame2 = uiNavigationBarFrame1.offsetBy(dx: 0, dy: -abs(uiNavigationBarFrame1.maxY));
+                uiNavigationBarFrame2 = uiNavigationBarFrame1.offsetBy(dx: 0, dy: -abs(uiNavigationBarFrame1.maxY) * 2.0);
                 uiNavigationBar.frame = uiNavigationBarFrame2!
             } else {
                 // fromView 显示原生导航栏，原生导航栏随 fromView 一起退场
@@ -353,7 +370,7 @@ extension XZNavigationAnimationController: UIViewControllerAnimatedTransitioning
             toNavigationBar!.frame = uiNavigationBarFrame1.offsetBy(dx: -uiNavigationBarFrame1.width * 0.34 * direction, dy: 0);
             toNavigationBarFrame2 = uiNavigationBarFrame1
             
-            uiNavigationBarFrame2 = uiNavigationBarFrame1.offsetBy(dx: 0, dy: -abs(uiNavigationBarFrame1.maxY));
+            uiNavigationBarFrame2 = uiNavigationBarFrame1.offsetBy(dx: 0, dy: -abs(uiNavigationBarFrame1.maxY) * 2.0);
             uiNavigationBar.frame = uiNavigationBarFrame2!
         } else if fromNavigationBarFrame2 != nil {
             let fromNavigationBarFrame1 = uiNavigationBar.superview!.convert(fromNavigationBar!.frame, to: containerView)
@@ -361,7 +378,7 @@ extension XZNavigationAnimationController: UIViewControllerAnimatedTransitioning
             fromNavigationBarFrame2 = fromNavigationBarFrame1.offsetBy(dx: +uiNavigationBarFrame1.width * direction, dy: 0);
             
             if navigationController.isNavigationBarHidden {
-                uiNavigationBarFrame2 = uiNavigationBarFrame1.offsetBy(dx: 0, dy: -abs(uiNavigationBarFrame1.maxY));
+                uiNavigationBarFrame2 = uiNavigationBarFrame1.offsetBy(dx: 0, dy: -abs(uiNavigationBarFrame1.maxY) * 2.0);
                 uiNavigationBar.frame = uiNavigationBarFrame2!
             } else {
                 uiNavigationBar.frame = uiNavigationBarFrame1.offsetBy(dx: -uiNavigationBarFrame1.width * direction, dy: 0);
@@ -372,7 +389,7 @@ extension XZNavigationAnimationController: UIViewControllerAnimatedTransitioning
             toNavigationBarFrame2 = uiNavigationBarFrame1;
             
             if self.isNavigationBarHidden {
-                uiNavigationBarFrame2 = uiNavigationBarFrame1.offsetBy(dx: 0, dy: -abs(uiNavigationBarFrame1.maxY));
+                uiNavigationBarFrame2 = uiNavigationBarFrame1.offsetBy(dx: 0, dy: -abs(uiNavigationBarFrame1.maxY) * 2.0);
                 uiNavigationBar.frame = uiNavigationBarFrame2!
             } else {
                 uiNavigationBarFrame2 = uiNavigationBarFrame1.offsetBy(dx: +uiNavigationBarFrame1.width, dy: 0);

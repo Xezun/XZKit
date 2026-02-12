@@ -61,10 +61,12 @@ import ObjectiveC
         
     }
     
-    /// 交互式的转场控制器，只有在手势触发的转场过程中，此属性才有值。
-    public private(set) var interactiveAnimationController: XZNavigationAnimationController?
+    /// 转场动画控制器。
+    ///
+    /// 此属性有值时，表示正在进行转场，此时不会触发新的手势转场。
+    public private(set) var animationController: XZNavigationAnimationController?
     
-    /// 处理导航控制器的代理，使其支持 XZNavigationController 自定义。
+    /// 处理导航控制器的代理，使其支持 XZNavigationController 定制化。
     private func customizeNavigationControllerDelegate(_ delegate: UINavigationControllerDelegate?) {
         guard let delegate = delegate else {
             navigationController.delegate = self
@@ -155,17 +157,23 @@ extension XZNavigationTransitionController: UINavigationControllerDelegate {
     
     /// 1. 获取转场动画控制器。
     public func navigationController(_ navigationController: UINavigationController, animationControllerFor operation: UINavigationController.Operation, from fromVC: UIViewController, to toVC: UIViewController) -> UIViewControllerAnimatedTransitioning? {
-        // 交互性转场。
-        if let animationController = self.interactiveAnimationController {
-            return animationController
+        if animationController == nil {
+            animationController = XZNavigationAnimationController.init(for: self.navigationController, operation: operation, isInteractive: false, delegate: self)
         }
-        // 普通的动画转场。
-        return XZNavigationAnimationController.init(for: self.navigationController, operation: operation, isInteractive: false)
+        return animationController
     }
     
     /// 2. 动画控制器的交互控制器。
     public func navigationController(_ navigationController: UINavigationController, interactionControllerFor animationController: UIViewControllerAnimatedTransitioning) -> UIViewControllerInteractiveTransitioning? {
         return (animationController as? XZNavigationAnimationController)?.interactiveTransition
+    }
+    
+}
+
+extension XZNavigationTransitionController: XZNavigationAnimationControllerDelegate {
+    
+    public func animationController(_ animationController: XZNavigationAnimationController, animationEnded transitionCompleted: Bool) {
+        self.animationController = nil;
     }
     
 }
@@ -193,7 +201,7 @@ extension XZNavigationTransitionController {
     
     /// 手势开始。通过判断手势方向来确定手势的行为。
     private func interactiveNavigationGestureRecognizerDidBegin(_ panGestureRecognizer: UIPanGestureRecognizer) {
-        guard interactiveAnimationController == nil else { return }
+        guard animationController == nil else { return }
         
         switch navigationOperation(for: panGestureRecognizer) {
         case .push:
@@ -201,7 +209,7 @@ extension XZNavigationTransitionController {
             guard let viewController = navigationController.topViewController as? XZNavigationGestureDrivable else { return }
             guard let nextVC = viewController.navigationController(navigationController, viewControllerForGestureNavigation: .push) else { return }
             /// 手势开始的导航行为。
-            self.interactiveAnimationController = XZNavigationAnimationController.init(for: navigationController, operation: .push, isInteractive: true)
+            self.animationController = XZNavigationAnimationController.init(for: navigationController, operation: .push, isInteractive: true, delegate: self)
             navigationController.pushViewController(nextVC, animated: true)
             
         case .pop:
@@ -209,7 +217,7 @@ extension XZNavigationTransitionController {
             let viewControllers = navigationController.viewControllers
             guard viewControllers.count > 1 else { return }
             
-            self.interactiveAnimationController = XZNavigationAnimationController.init(for: navigationController, operation: .pop, isInteractive: true)
+            self.animationController = XZNavigationAnimationController.init(for: navigationController, operation: .pop, isInteractive: true, delegate: self)
             
             if let viewController = navigationController.topViewController as? XZNavigationGestureDrivable {
                 if let nextVC = viewController.navigationController(navigationController, viewControllerForGestureNavigation: .pop) {
@@ -225,7 +233,7 @@ extension XZNavigationTransitionController {
     
     /// 当手势状态发生改变是，更新动画。
     private func interactiveNavigationGestureRecognizerDidChange(_ panGestureRecognizer: UIPanGestureRecognizer) {
-        guard let animationController = self.interactiveAnimationController else { return }
+        guard let animationController = self.animationController else { return }
         guard let interactionController = animationController.interactiveTransition else { return }
         
         let t = panGestureRecognizer.translation(in: nil)
@@ -250,8 +258,7 @@ extension XZNavigationTransitionController {
     
     /// 手势结束了。
     private func interactiveNavigationGestureRecognizerDidEnd(_ panGestureRecognizer: UIPanGestureRecognizer) {
-        guard let animationController = self.interactiveAnimationController else { return }
-        self.interactiveAnimationController = nil
+        guard let animationController = self.animationController else { return }
         guard let interactiveTransition = animationController.interactiveTransition else { return }
         
         let velocity = panGestureRecognizer.velocity(in: nil).x
@@ -308,8 +315,10 @@ extension XZNavigationTransitionController: UIGestureRecognizerDelegate {
     
     /// 此方法返回 true 手势不一定能够识别成功，所以此方法不能决定导航行为。
     public func gestureRecognizerShouldBegin(_ navigationGestureRecognizer: UIGestureRecognizer) -> Bool {
+        guard animationController == nil else { return false }
         guard let navigationGestureRecognizer = navigationGestureRecognizer as? UIPanGestureRecognizer else { return false }
-        let operation   = navigationOperation(for: navigationGestureRecognizer) 
+        
+        let operation   = navigationOperation(for: navigationGestureRecognizer)
         
         let location    = navigationGestureRecognizer.location(in: nil)
         let translation = navigationGestureRecognizer.translation(in: nil)
