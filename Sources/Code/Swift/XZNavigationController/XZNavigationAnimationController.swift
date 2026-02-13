@@ -833,10 +833,6 @@ extension UITabBar {
                             NewClass, #selector(setter: UITabBar.bounds),
                             SourceClass, nil, #selector(setter: UITabBar.bounds), nil
                         );
-                        xz_objc_class_addMethod(
-                            NewClass, #selector(setter: UITabBar.isHidden),
-                            SourceClass, nil, #selector(setter: UITabBar.isHidden), nil
-                        );
                     };
                     objc_setAssociatedObject(oldClass, &_navigationCustomizableClass, newClass, .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
                     object_setClass(self, newClass);
@@ -1337,10 +1333,13 @@ private class XZNavigationCustomizableTabBar: UITabBar {
             fatalError("此方法不会被调用")
         }
         set {
+            // 不能拦截此方法，在 iOS 26 中，会导致 hidesBottomBarWhenPushed 无法生效。
+            // 在 iOS 26 中，拦截此方法后，第二个页面的 tabBar 还是隐藏的，但是从第三个开始 tabBar 就不隐藏了。
             if isFrozen {
                 return
             }
             xz_objc_msgSendSuper_void(self, type(of: self), #selector(setter: self.isHidden), newValue)
+            fatalError("此方法不会被调用")
         }
     }
 }

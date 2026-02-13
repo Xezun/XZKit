@@ -22,6 +22,10 @@ class Example17OnlyViewController: Example17ViewController, XZNavigationGestureD
         }
     }
     
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+    }
+    
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = super.tableView(tableView, cellForRowAt: indexPath)
         switch indexPath.section {
@@ -65,23 +69,19 @@ class Example17OnlyViewController: Example17ViewController, XZNavigationGestureD
     @IBAction func confirmSelectNextPage(_ unwindSegue: UIStoryboardSegue) {
         let sourceViewController = unwindSegue.source as! Example17SelectNextViewController
         nextPage = sourceViewController.selectedPage
+        
         let indexPath = IndexPath.init(row: 0, section: 4)
-        if #available(iOS 15.0, *) {
-            tableView.reconfigureRows(at: [indexPath])
-        } else {
-            tableView.reloadRows(at: [indexPath], with: .none)
-        }
+        guard let cell = tableView.cellForRow(at: indexPath) else { return }
+        cell.detailTextLabel?.text = nextPage.name
     }
     
     @IBAction func confirmSelectBackViewController(_ unwindSegue: UIStoryboardSegue) {
         let sourceViewController = unwindSegue.source as! Example17SelectBackViewController
         backViewController = sourceViewController.selectedViewController
+        
         let indexPath = IndexPath.init(row: 1, section: 4)
-        if #available(iOS 15.0, *) {
-            tableView.reconfigureRows(at: [indexPath])
-        } else {
-            tableView.reloadRows(at: [indexPath], with: .none)
-        }
+        guard let cell = tableView.cellForRow(at: indexPath) else { return }
+        cell.detailTextLabel?.text = backViewController?.navigationItem.title ?? "无"
     }
 
 }
