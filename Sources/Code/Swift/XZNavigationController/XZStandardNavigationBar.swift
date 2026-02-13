@@ -120,13 +120,13 @@ import UIKit
         // 普通高度：56
         // 大标题高度：56 + 52 = 108
         // 理论上，这种情形，应该使用 safeArea 而不是直接增加 navBar 高度，但遗憾的是 Apple 似乎采取了一个懒惰的方法，即直接修改导航栏高度。
-        
+        // 在 iOS 26 中，Apple 修复了这个问题。
         let isLeftToRight = (self.effectiveUserInterfaceLayoutDirection == .leftToRight)
         
         // 大标题模式，导航栏布局在顶部最高 44 点的区域
         // 非大标题模式，导航栏布局在底部最高 44 点的区域
         let layoutHeight = min(44.0, bounds.height)
-        let layoutMinY = bounds.minY + (prefersLargeTitles ? 0.0 : (bounds.height - layoutHeight))
+        let layoutMinY = bounds.minY
         
         if let largeTitleView = self.largeTitleView {
             largeTitleView.isHidden = prefersLargeTitles ? bounds.size.height <= 64.0 : true
@@ -163,8 +163,9 @@ import UIKit
             height: shadowImageView.image?.size.height ?? 1.0 / UIScreen.main.scale
         )
 
-        if let top = self.superview?.safeAreaInsets.top {
-            backgroundImageView.frame = CGRect.init(x: bounds.minY, y: -top, width: bounds.width, height: bounds.height + top)
+        let frameMinY = self.frame.minY
+        if frameMinY >= 0 {
+            backgroundImageView.frame = CGRect.init(x: bounds.minY, y: -frameMinY, width: bounds.width, height: bounds.height + frameMinY)
         }
     }
 

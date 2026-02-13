@@ -57,7 +57,7 @@ import UIKit
     /// - Parameters:
     ///   - context: 参与转场的视图，以及视图的目标状态。
     open func prepareTransitionAnimations(with animationContext: XZNavigationAnimationContext) {
-        
+        #XZLog("转场动画: \(animationContext)")
     }
     
     /// 执行转场动画。
@@ -84,13 +84,13 @@ import UIKit
                 navigationBar.view.frame = navigationBar.finalFrame
             }
             
-            if let navigationController = animationContext.navigationController {
-                navigationController.navigationBar.frame = navigationController.finalFrame
-                navigationController.navigationBar.isFrozen = true
+            if let navigationController = animationContext.navigationBar {
+                navigationController.view.frame = navigationController.finalFrame
+                navigationController.view.isFrozen = true
             }
-            if let tabBarController = animationContext.tabBarController {
-                tabBarController.tabBar.frame = tabBarController.finalFrame
-                tabBarController.tabBar.isFrozen = true
+            if let tabBarController = animationContext.tabBar {
+                tabBarController.view.frame = tabBarController.finalFrame
+                tabBarController.view.isFrozen = true
             }
         }, completion: { _ in
             self.cleanupTransitionAnimations(with: animationContext)
@@ -103,8 +103,8 @@ import UIKit
     ///
     /// - Parameter animationContext: 转场动画信息
     open func cleanupTransitionAnimations(with animationContext: XZNavigationAnimationContext) {
-        animationContext.navigationController?.navigationBar.isFrozen = false
-        animationContext.tabBarController?.tabBar.isFrozen = false
+        animationContext.navigationBar?.view.isFrozen = false
+        animationContext.tabBar?.view.isFrozen = false
         
         // 删除阴影。
         animationContext.shadow.view.removeFromSuperview()
@@ -302,7 +302,7 @@ extension XZNavigationAnimationController: UIViewControllerAnimatedTransitioning
             navigationBar: (uiNavigationBar, uiNavigationBarFrame2),
             tabBar: (tabBar, tabBarFrame2),
             shadow: (shadowView, shadowFrame2),
-            options: self.isInteractive ? .curveLinear : .curveEaseInOut,
+            options: [self.isInteractive ? .curveLinear : .curveEaseInOut, .layoutSubviews],
             duration: self.transitionDuration(using: transitionContext)
         )
         
@@ -426,7 +426,7 @@ extension XZNavigationAnimationController: UIViewControllerAnimatedTransitioning
             navigationBar: (uiNavigationBar, uiNavigationBarFrame2),
             tabBar: (tabBar, tabBarFrame2),
             shadow: (shadowView, shadowFrame2),
-            options: self.isInteractive ? .curveLinear : .curveEaseInOut,
+            options: [self.isInteractive ? .curveLinear : .curveEaseInOut, .layoutSubviews],
             duration: self.transitionDuration(using: transitionContext)
         )
         
@@ -437,7 +437,7 @@ extension XZNavigationAnimationController: UIViewControllerAnimatedTransitioning
 }
 
 /// 转场动画效果信息。
-public class XZNavigationAnimationContext {
+public class XZNavigationAnimationContext: CustomStringConvertible {
     
     /// 原生转场信息。
     private let context: UIViewControllerContextTransitioning
@@ -460,9 +460,9 @@ public class XZNavigationAnimationContext {
     public var shadow: ViewContext<UIView>
     
     /// 原生 navigationBar 的转场信息。原生 navigationBar 不在转场容器内。
-    public var navigationController: NavigationBarContext?
+    public var navigationBar: NavigationBarContext?
     /// 原生 tabBar 的转场信息。原生 navigationBar 不在转场容器内。
-    public var tabBarController: TabBarContext?
+    public var tabBar: TabBarContext?
     
     /// 转场动画选项。
     public var options: UIView.AnimationOptions
@@ -486,7 +486,7 @@ public class XZNavigationAnimationContext {
         navigationBar: (UINavigationBar?, CGRect?),
         tabBar: (UITabBar?, CGRect?),
         shadow: (UIView, CGRect),
-        options: UIView.AnimationOptions = .curveLinear,
+        options: UIView.AnimationOptions,
         duration: TimeInterval
     ) {
         self.context = context;
@@ -499,11 +499,33 @@ public class XZNavigationAnimationContext {
             ViewContext(view: to.view.0, frame: to.view.1),
             ViewContext(to.navigationBar.0, to.navigationBar.1)
         );
-        self.navigationController = NavigationBarContext(navigationBar.0, navigationBar.1);
-        self.tabBarController = TabBarContext(tabBar.0, tabBar.1)
+        self.navigationBar = NavigationBarContext(navigationBar.0, navigationBar.1);
+        self.tabBar = TabBarContext(tabBar.0, tabBar.1)
         self.shadow = ViewContext(view: shadow.0, frame: shadow.1);
         self.options = options
         self.duration = duration
+    }
+    
+    private func StringFromCGRect(_ rect: CGRect?) -> String {
+        if let rect = rect {
+            return String.init(describing: rect)
+        }
+        return "None"
+    }
+    
+    public var description: String {
+        return """
+            from: {
+                view: \(from.viewController.view.frame) => \(from.viewController.finalFrame),
+                navigationBar: \(StringFromCGRect(from.navigationBar?.view.frame)) => \(StringFromCGRect(from.navigationBar?.finalFrame))
+            },
+            to: {
+                view: \(to.viewController.view.frame) => \(to.viewController.finalFrame),
+                navigationBar: \(StringFromCGRect(to.navigationBar?.view.frame)) => \(StringFromCGRect(to.navigationBar?.finalFrame)),
+            },
+            navigationBar: \(StringFromCGRect(navigationBar?.view.frame)) => \(StringFromCGRect(navigationBar?.finalFrame))
+            tabBar: \(StringFromCGRect(tabBar?.view.frame)) => \(StringFromCGRect(tabBar?.finalFrame))
+            """
     }
     
     /// 普通视图转场信息。
@@ -521,25 +543,11 @@ public class XZNavigationAnimationContext {
     }
     
     /// 导航栏转场信息。
-    public class NavigationBarContext {
-        public let navigationBar: UINavigationBar
-        public var finalFrame: CGRect
-        init?(_ navigationBar: UINavigationBar?, _ finalFrame: CGRect?) {
-            guard let navigationBar = navigationBar, let finalFrame = finalFrame else { return nil }
-            self.navigationBar = navigationBar
-            self.finalFrame = finalFrame
-        }
+    public class NavigationBarContext: ViewContext<UINavigationBar> {
     }
     
     /// 页签栏转场信息。
-    public class TabBarContext {
-        public let tabBar: UITabBar
-        public var finalFrame: CGRect
-        init?(_ tabBar: UITabBar?, _ finalFrame: CGRect?) {
-            guard let tabBar = tabBar, let finalFrame = finalFrame else { return nil }
-            self.tabBar = tabBar
-            self.finalFrame = finalFrame
-        }
+    public class TabBarContext: ViewContext<UITabBar> {
     }
 }
 

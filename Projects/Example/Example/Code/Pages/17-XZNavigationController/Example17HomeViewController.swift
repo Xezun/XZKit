@@ -25,9 +25,6 @@ class Example17HomeViewController: UITableViewController {
     
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
-        
-        guard let navigationBar = self.navigationController?.navigationBar else { return }
-        #XZLog("UINavigationBar => safeAreaInsets: \(navigationBar.safeAreaInsets) bounds: \(navigationBar.bounds) frame: \(navigationBar.frame)")
     }
 
     @IBAction func navigationCustomizationSwitchValueChanged(_ sender: UISwitch) {
