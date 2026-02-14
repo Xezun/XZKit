@@ -506,7 +506,7 @@ public class XZNavigationAnimationContext: CustomStringConvertible {
         self.duration = duration
     }
     
-    private func StringFromCGRect(_ rect: CGRect?) -> String {
+    private func string(from rect: CGRect?) -> String {
         if let rect = rect {
             return String.init(describing: rect)
         }
@@ -517,14 +517,14 @@ public class XZNavigationAnimationContext: CustomStringConvertible {
         return """
             from: {
                 view: \(from.viewController.view.frame) => \(from.viewController.finalFrame),
-                navigationBar: \(StringFromCGRect(from.navigationBar?.view.frame)) => \(StringFromCGRect(from.navigationBar?.finalFrame))
+                navigationBar: \(string(from: from.navigationBar?.view.frame)) => \(string(from: from.navigationBar?.finalFrame))
             },
             to: {
                 view: \(to.viewController.view.frame) => \(to.viewController.finalFrame),
-                navigationBar: \(StringFromCGRect(to.navigationBar?.view.frame)) => \(StringFromCGRect(to.navigationBar?.finalFrame)),
+                navigationBar: \(string(from: to.navigationBar?.view.frame)) => \(string(from: to.navigationBar?.finalFrame)),
             },
-            navigationBar: \(StringFromCGRect(navigationBar?.view.frame)) => \(StringFromCGRect(navigationBar?.finalFrame))
-            tabBar: \(StringFromCGRect(tabBar?.view.frame)) => \(StringFromCGRect(tabBar?.finalFrame))
+            navigationBar: \(string(from: navigationBar?.view.frame)) => \(string(from: navigationBar?.finalFrame))
+            tabBar: \(string(from: tabBar?.view.frame)) => \(string(from: tabBar?.finalFrame))
             """
     }
     
