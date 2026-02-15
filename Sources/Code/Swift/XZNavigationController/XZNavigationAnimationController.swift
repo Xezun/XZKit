@@ -231,7 +231,9 @@ extension XZNavigationAnimationController: UIViewControllerAnimatedTransitioning
             toNavigationBar!.frame = uiNavigationBarFrame1.offsetBy(dx: uiNavigationBarFrame1.width * direction, dy: 0)
             toNavigationBarFrame2 = uiNavigationBarFrame1;
             // 将原生导航栏，上移至屏幕外
-            uiNavigationBarFrame2 = uiNavigationBarFrame1.offsetBy(dx: 0, dy: -abs(uiNavigationBarFrame1.maxY) * 2.0);
+            // 不能上移，否则会影响页面安全区，从而导致页面在转场的过程中，新页面发生抖动。
+            // 在 iOS 26 中，以默认的堆叠模式呈现的导航控制器，在 Push 新控制器时，上移导航条，会导致 safeAreaInsets 改变。
+            uiNavigationBarFrame2 = uiNavigationBarFrame1.offsetBy(dx: uiNavigationBarFrame1.width, dy: 0);
             uiNavigationBar.frame = uiNavigationBarFrame2!
         } else if fromNavigationBarFrame2 != nil {
             // 定制化导航栏：显示 => 隐藏
@@ -243,7 +245,7 @@ extension XZNavigationAnimationController: UIViewControllerAnimatedTransitioning
                 // toView 不显示原生导航栏，且没有定制化导航栏或定制化导航栏隐藏
                 // 因为原生导航栏可能有隐藏动画，将原生导航栏，上移至屏幕外，避免与遮挡定制化导航栏
                 // 如果只向上移一个单位，可能会有阴影或模糊效果会覆盖在定制化导航栏上
-                uiNavigationBarFrame2 = uiNavigationBarFrame1.offsetBy(dx: 0, dy: -abs(uiNavigationBarFrame1.maxY) * 2.0);
+                uiNavigationBarFrame2 = uiNavigationBarFrame1.offsetBy(dx: uiNavigationBarFrame1.width, dy: 0);
                 uiNavigationBar.frame = uiNavigationBarFrame2!
             } else {
                 // toView 显示原生导航栏，原生导航栏随目标页面一起入场
@@ -257,7 +259,7 @@ extension XZNavigationAnimationController: UIViewControllerAnimatedTransitioning
             // 根据导航栏转场前的状态，判断from页面是否有定制化导航栏
             if self.isNavigationBarHidden {
                 // fromView 不显示原生导航栏，且没有定制化导航栏或定制化导航栏隐藏
-                uiNavigationBarFrame2 = uiNavigationBarFrame1.offsetBy(dx: 0, dy: -abs(uiNavigationBarFrame1.maxY) * 2.0);
+                uiNavigationBarFrame2 = uiNavigationBarFrame1.offsetBy(dx: uiNavigationBarFrame1.width, dy: 0);
                 uiNavigationBar.frame = uiNavigationBarFrame2!
             } else {
                 // fromView 显示原生导航栏，原生导航栏随 fromView 一起退场
@@ -370,7 +372,7 @@ extension XZNavigationAnimationController: UIViewControllerAnimatedTransitioning
             toNavigationBar!.frame = uiNavigationBarFrame1.offsetBy(dx: -uiNavigationBarFrame1.width * 0.34 * direction, dy: 0);
             toNavigationBarFrame2 = uiNavigationBarFrame1
             
-            uiNavigationBarFrame2 = uiNavigationBarFrame1.offsetBy(dx: 0, dy: -abs(uiNavigationBarFrame1.maxY) * 2.0);
+            uiNavigationBarFrame2 = uiNavigationBarFrame1.offsetBy(dx: uiNavigationBarFrame1.width, dy: 0);
             uiNavigationBar.frame = uiNavigationBarFrame2!
         } else if fromNavigationBarFrame2 != nil {
             let fromNavigationBarFrame1 = uiNavigationBar.superview!.convert(fromNavigationBar!.frame, to: containerView)
@@ -378,7 +380,7 @@ extension XZNavigationAnimationController: UIViewControllerAnimatedTransitioning
             fromNavigationBarFrame2 = fromNavigationBarFrame1.offsetBy(dx: +uiNavigationBarFrame1.width * direction, dy: 0);
             
             if navigationController.isNavigationBarHidden {
-                uiNavigationBarFrame2 = uiNavigationBarFrame1.offsetBy(dx: 0, dy: -abs(uiNavigationBarFrame1.maxY) * 2.0);
+                uiNavigationBarFrame2 = uiNavigationBarFrame1.offsetBy(dx: uiNavigationBarFrame1.width, dy: 0);
                 uiNavigationBar.frame = uiNavigationBarFrame2!
             } else {
                 uiNavigationBar.frame = uiNavigationBarFrame1.offsetBy(dx: -uiNavigationBarFrame1.width * direction, dy: 0);
@@ -389,7 +391,7 @@ extension XZNavigationAnimationController: UIViewControllerAnimatedTransitioning
             toNavigationBarFrame2 = uiNavigationBarFrame1;
             
             if self.isNavigationBarHidden {
-                uiNavigationBarFrame2 = uiNavigationBarFrame1.offsetBy(dx: 0, dy: -abs(uiNavigationBarFrame1.maxY) * 2.0);
+                uiNavigationBarFrame2 = uiNavigationBarFrame1.offsetBy(dx: uiNavigationBarFrame1.width, dy: 0);
                 uiNavigationBar.frame = uiNavigationBarFrame2!
             } else {
                 uiNavigationBarFrame2 = uiNavigationBarFrame1.offsetBy(dx: +uiNavigationBarFrame1.width, dy: 0);
