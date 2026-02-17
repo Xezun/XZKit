@@ -31,6 +31,8 @@ class Example17NavigationController: UINavigationController, XZNavigationControl
         // 打开了自定义开关，XZNavigationController 所提供的功能才会生效，除此之外，也不需要其它任何操作。
         self.isNavigationCustomizable = true
         
+        let navigationBar = self.navigationBar;
+        
         let appearance = UINavigationBarAppearance.init()
         appearance.configureWithTransparentBackground()
         appearance.backgroundColor = .clear

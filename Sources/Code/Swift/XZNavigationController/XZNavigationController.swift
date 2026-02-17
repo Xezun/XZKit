@@ -37,11 +37,14 @@ extension XZNavigationController {
             // 如果 transitionController 属性已经有值，说明已经支持自定义，否则不支持。
             if let transitionController = self.transitionController {
                 if !newValue {
+                    
                     self.transitionController = nil
                     self.interactivePopGestureRecognizer?.isEnabled = true
+#if compiler(>=6.2) // Xcode 26 supports Swift 6.2
                     if #available(iOS 26.0, *) {
                         self.interactiveContentPopGestureRecognizer?.isEnabled = true
                     }
+#endif
                     transitionController.interactiveNavigationGestureRecognizer.isEnabled = false
                     
                     self.view.supportsNavigationCustomization = false;
@@ -60,12 +63,14 @@ extension XZNavigationController {
                     popGestureRecognizer.isEnabled = false
                     popGestureRecognizer.require(toFail: transitionController.interactiveNavigationGestureRecognizer)
                 }
+#if compiler(>=6.2)
                 if #available(iOS 26.0, *) {
                     if let interactiveContentPopGestureRecognizer = self.interactiveContentPopGestureRecognizer {
                         interactiveContentPopGestureRecognizer.isEnabled = false;
                         interactiveContentPopGestureRecognizer.require(toFail: transitionController.interactiveNavigationGestureRecognizer)
                     }
                 }
+#endif
                 
                 // 让各部件支持定制化导航。
                 self.supportsNavigationCustomization = true;

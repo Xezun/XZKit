@@ -29,8 +29,10 @@
     ExampleMainHomeCellModel *model = self.model;
     NSString *name = [NSString stringWithFormat:@"Example%@", model.identifier];
     UIViewController *viewController = [UIStoryboard storyboardWithName:name bundle:nil].instantiateInitialViewController;
-    viewController.modalPresentationStyle = UIModalPresentationFullScreen;
-    viewController.modalTransitionStyle = 0;
+    if (![NSUserDefaults.standardUserDefaults boolForKey:@"modalPresentationStyle"]) {
+        viewController.modalPresentationStyle = UIModalPresentationFullScreen;
+        viewController.modalTransitionStyle = 0;
+    }
     [self.viewController presentViewController:viewController animated:YES completion:nil];
 }
 

@@ -99,6 +99,49 @@ import UIKit
     deinit {
         
     }
+    
+    private func navigationController() -> UINavigationController? {
+        var responder = self.next;
+        repeat {
+            if let navigationController = responder as? UINavigationController {
+                return navigationController
+            }
+            if let viewController = responder as? UIViewController {
+                return viewController.navigationController
+            }
+            responder = responder?.next
+        } while (responder != nil)
+        return nil
+    }
+    
+    private func statusBarFrame() -> CGRect {
+        if let statusBarManager = self.window?.windowScene?.statusBarManager {
+            return statusBarManager.statusBarFrame
+        }
+        return CGRect(x: 0, y: 0, width: bounds.size.width, height: 0);
+    }
+    
+    private func layoutContext(_ bounds: CGRect, _ prefersLargeTitles: Bool) -> (height: CGFloat, minY: CGFloat) {
+        if self.traitCollection.userInterfaceIdiom == .pad {
+            if #available(iOS 18.0, *) {
+                return (54.0, bounds.maxY - 54.0)
+            }
+            return (44.0, bounds.maxY - 44.0)
+        }
+        
+        if #available(iOS 26.0, *) {
+            return (min(44.0, bounds.height), prefersLargeTitles ? 0 : bounds.maxY - 44.0 )
+        }
+        
+        if #available(iOS 13.0, *) {
+            if self.frame.minY <= 0 {
+                return (56.0, prefersLargeTitles ? 0.0 : bounds.maxY - 56.0)
+            }
+            return (44.0, prefersLargeTitles ? 0 : bounds.maxY - 44.0)
+        }
+        
+        return (44.0, 0)
+    }
 
     /// 导航栏将按照当前视图布局方向布局 titleView、infoView、backView、shadowImageView、backgroundImageView 。
     override open func layoutSubviews() {
@@ -106,7 +149,7 @@ import UIKit
         
         let bounds = self.bounds
         let safeBounds = bounds.inset(by: self.safeAreaInsets)
-
+        
         // titleView\backView\infoView 只在初次赋值时，检测是否有大小并尝试自动调整。
         // 切在导航栏整个生命周期中，不主动调整它们的大小，只是按照规则将它们放在左中右。
         // 它们的大小完全由开发者控制，以避免强制调整而造成的不符合预期的情况。
@@ -123,14 +166,12 @@ import UIKit
         // 在 iOS 26 中，Apple 修复了这个问题。
         let isLeftToRight = (self.effectiveUserInterfaceLayoutDirection == .leftToRight)
         
-        // 大标题模式，导航栏布局在顶部最高 44 点的区域
-        // 非大标题模式，导航栏布局在底部最高 44 点的区域
-        let layoutHeight = min(44.0, bounds.height)
-        let layoutMinY = bounds.minY
+        // 普通模式，导航栏布局在底部；大标题模式，导航栏布局在顶部。
+        let layoutContext = self.layoutContext(bounds, prefersLargeTitles)
         
         if let largeTitleView = self.largeTitleView {
             largeTitleView.isHidden = prefersLargeTitles ? bounds.size.height <= 64.0 : true
-            let height = prefersLargeTitles ? (bounds.size.height - layoutHeight) : 0
+            let height = prefersLargeTitles ? (bounds.size.height - layoutContext.height) : 0
             largeTitleView.frame = CGRect(x: bounds.minX, y: bounds.maxY - height, width: bounds.width, height: height)
         }
         
@@ -138,21 +179,21 @@ import UIKit
             titleView.isHidden = prefersLargeTitles ? bounds.height > 64.0 : false;
             let titleFrame = titleView.frame
             let x = (bounds.width - titleFrame.width) * 0.5
-            let y = layoutMinY + (layoutHeight - titleFrame.height) * 0.5
+            let y = layoutContext.minY + (layoutContext.height - titleFrame.height) * 0.5
             titleView.frame = CGRect.init(x: x, y: y, width: titleFrame.width, height: titleFrame.height)
         }
 
         if let infoView = self.infoView {
             let infoFrame = infoView.frame
             let x = (isLeftToRight ? safeBounds.maxX - infoFrame.width : safeBounds.minX)
-            let y = layoutMinY + (layoutHeight - infoFrame.height) * 0.5
+            let y = layoutContext.minY + (layoutContext.height - infoFrame.height) * 0.5
             infoView.frame = CGRect.init(x: x, y: y, width: infoFrame.width, height: infoFrame.height)
         }
 
         if let backView = self.backView {
             let backFrame = backView.frame
             let x = (isLeftToRight ? safeBounds.minX : safeBounds.maxX - backFrame.width)
-            let y = layoutMinY + (layoutHeight - backFrame.height) * 0.5
+            let y = layoutContext.minY + (layoutContext.height - backFrame.height) * 0.5
             backView.frame = CGRect.init(x: x, y: y, width: backFrame.width, height: backFrame.height)
         }
         
@@ -272,3 +313,5 @@ import UIKit
         case prefersLargeTitles  = "XZStandardNavigationBar.prefersLargeTitles"
     }
 }
+
+

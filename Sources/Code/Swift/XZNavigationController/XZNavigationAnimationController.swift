@@ -973,8 +973,6 @@ extension UIViewController {
     
 }
 
-
-
 extension UINavigationController {
     
     /// 转场开始，定制化导航栏与原生导航栏解除绑定。转场过程中的导航栏操作，最终会在 viewWillAppear 的注入逻辑覆盖。
@@ -1244,6 +1242,10 @@ private class XZNavigationCustomizableNavigationBar: UINavigationBar {
                 return
             }
             xz_objc_msgSendSuper_void(self, type(of: self), #selector(setter: self.bounds), newValue)
+            
+            guard let xzNavigationBar = self.xzNavigationBar else { return }
+            
+            xzNavigationBar.bounds = newValue;
         }
     }
     
