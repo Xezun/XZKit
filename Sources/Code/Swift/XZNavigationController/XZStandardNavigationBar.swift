@@ -121,7 +121,12 @@ import UIKit
         return CGRect(x: 0, y: 0, width: bounds.size.width, height: 0);
     }
     
+    /// 不同版本的iOS系统，导航栏高度不一样。导航控制器如果以堆叠样式呈现
     private func layoutContext(_ bounds: CGRect, _ prefersLargeTitles: Bool) -> (height: CGFloat, minY: CGFloat) {
+        guard let view = self.navigationController()?.viewIfLoaded else {
+            return (44.0, 0)
+        }
+        
         if self.traitCollection.userInterfaceIdiom == .pad {
             if #available(iOS 18.0, *) {
                 return (54.0, bounds.maxY - 54.0)
@@ -134,7 +139,7 @@ import UIKit
         }
         
         if #available(iOS 13.0, *) {
-            if self.frame.minY <= 0 {
+            if view.convert(view.frame, to: view.window).minY > 0 {
                 return (56.0, prefersLargeTitles ? 0.0 : bounds.maxY - 56.0)
             }
             return (44.0, prefersLargeTitles ? 0 : bounds.maxY - 44.0)

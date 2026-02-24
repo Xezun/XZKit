@@ -28,21 +28,19 @@ class Example17NavigationController: UINavigationController, XZNavigationControl
 
         view.backgroundColor = .white
         
-        // 打开了自定义开关，XZNavigationController 所提供的功能才会生效，除此之外，也不需要其它任何操作。
-        self.isNavigationCustomizable = true
-        
-        let navigationBar = self.navigationBar;
-        
         let appearance = UINavigationBarAppearance.init()
         appearance.configureWithTransparentBackground()
-        appearance.backgroundColor = .clear
-        appearance.titleTextAttributes = [NSAttributedString.Key.foregroundColor: UIColor.black]
-        appearance.largeTitleTextAttributes = [NSAttributedString.Key.foregroundColor: UIColor.black]
-        appearance.shadowColor = .lightGray
-        appearance.backgroundEffect = nil
+        appearance.backgroundColor = UIColor.init(white: 1.0, alpha: 0.7)
+        appearance.shadowColor = rgb(0xBCBCBC)
         navigationBar.standardAppearance = appearance
-        navigationBar.scrollEdgeAppearance = appearance;
-        navigationBar.compactAppearance = appearance;
+        navigationBar.compactAppearance = appearance
+        navigationBar.scrollEdgeAppearance = appearance
+        if #available(iOS 15.0, *) {
+            navigationBar.compactScrollEdgeAppearance = appearance
+        }
+        
+        // 开启导航定制化。
+        self.isNavigationCustomizable = true
     }
     
     // 以下为调试代码。
@@ -52,38 +50,38 @@ class Example17NavigationController: UINavigationController, XZNavigationControl
     }
     
     override func show(_ vc: UIViewController, sender: Any?) {
-        //print("\(#function) \(vc)")
+        #XZLog("\(#function) \(vc)")
         super.show(vc, sender: sender)
     }
     
     override func pushViewController(_ viewController: UIViewController, animated: Bool) {
-        //print("\(#function) \(viewController)")
+        #XZLog("\(#function) \(viewController)")
         super.pushViewController(viewController, animated: animated)
     }
     
     override func setViewControllers(_ viewControllers: [UIViewController], animated: Bool) {
-        //print("\(#function) \(viewControllers.count)")
+        #XZLog("\(#function) \(viewControllers.count)")
         super.setViewControllers(viewControllers, animated: animated)
     }
     
     override var viewControllers: [UIViewController] {
         willSet {
-            //print("\(#function).setter \(newValue.count)")
+            #XZLog("\(#function).setter \(newValue.count)")
         }
     }
     
     override func popViewController(animated: Bool) -> UIViewController? {
-        //print("\(#function) \(animated)")
+        #XZLog("\(#function) \(animated)")
         return super.popViewController(animated: animated)
     }
     
     override func popToViewController(_ viewController: UIViewController, animated: Bool) -> [UIViewController]? {
-        //print("\(#function) \(viewController)")
+        #XZLog("\(#function) \(viewController)")
         return super.popToViewController(viewController, animated: animated)
     }
     
     override func popToRootViewController(animated: Bool) -> [UIViewController]? {
-        //print("\(#function) \(animated)")
+        #XZLog("\(#function) \(animated)")
         return super.popToRootViewController(animated: animated)
     }
 

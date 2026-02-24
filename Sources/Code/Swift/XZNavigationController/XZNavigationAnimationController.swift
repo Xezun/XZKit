@@ -57,7 +57,7 @@ import UIKit
     /// - Parameters:
     ///   - context: 参与转场的视图，以及视图的目标状态。
     open func prepareTransitionAnimations(with animationContext: XZNavigationAnimationContext) {
-        #XZLog("转场动画: \(animationContext)")
+        #XZLog("\(animationContext)")
     }
     
     /// 执行转场动画。

@@ -87,6 +87,8 @@ class Example17ViewController: UITableViewController {
     
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
+        
+        #XZLog("isModalInPresentation: \(self.isModalInPresentation)")
     }
     
     @IBAction func currentHiddenSwitchValueChanged(_ sender: UISwitch) {
