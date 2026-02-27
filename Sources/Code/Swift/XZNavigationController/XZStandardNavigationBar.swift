@@ -135,6 +135,9 @@ import UIKit
         }
         
         if #available(iOS 26.0, *) {
+            if view.convert(view.frame, to: view.window).minY > 0 {
+                return (54.0, prefersLargeTitles ? 0.0 : bounds.maxY - 54.0)
+            }
             return (min(44.0, bounds.height), prefersLargeTitles ? 0 : bounds.maxY - 44.0 )
         }
         
