@@ -122,33 +122,33 @@ import UIKit
     }
     
     /// 不同版本的iOS系统，导航栏高度不一样。导航控制器如果以堆叠样式呈现
-    private func layoutContext(_ bounds: CGRect, _ prefersLargeTitles: Bool) -> (height: CGFloat, minY: CGFloat) {
+    private func layoutContext(_ bounds: CGRect, _ prefersLargeTitles: Bool) -> (barHeight: CGFloat, height: CGFloat, minY: CGFloat) {
         guard let view = self.navigationController()?.viewIfLoaded else {
-            return (44.0, 0)
+            return (44.0, 44.0, 0)
         }
         
         if self.traitCollection.userInterfaceIdiom == .pad {
             if #available(iOS 18.0, *) {
-                return (54.0, bounds.maxY - 54.0)
+                return (54.0, 54.0, bounds.maxY - 54.0)
             }
-            return (44.0, bounds.maxY - 44.0)
+            return (44.0, 44.0, bounds.maxY - 44.0)
         }
         
         if #available(iOS 26.0, *) {
-            if view.convert(view.frame, to: view.window).minY > 0 {
-                return (54.0, prefersLargeTitles ? 0.0 : bounds.maxY - 54.0)
-            }
-            return (min(44.0, bounds.height), prefersLargeTitles ? 0 : bounds.maxY - 44.0 )
+            // 从 iOS 26.0 开始，导航栏高度为 54.0 点。
+            // 但是标题、按钮等布局在导航栏顶部高度为 44.0 的区域。
+            return (54.0, 44.0, 0)
         }
         
         if #available(iOS 13.0, *) {
             if view.convert(view.frame, to: view.window).minY > 0 {
-                return (56.0, prefersLargeTitles ? 0.0 : bounds.maxY - 56.0)
+                // 从 iOS 13.0 开始，当导航控制器不是以全屏模式呈现时，导航条高度为 56.0
+                return (56.0, 56.0, prefersLargeTitles ? 0.0 : bounds.maxY - 56.0)
             }
-            return (44.0, prefersLargeTitles ? 0 : bounds.maxY - 44.0)
+            return (44.0, 44.0, prefersLargeTitles ? 0 : bounds.maxY - 44.0)
         }
         
-        return (44.0, 0)
+        return (44.0, 44.0, 0)
     }
 
     /// 导航栏将按照当前视图布局方向布局 titleView、infoView、backView、shadowImageView、backgroundImageView 。
@@ -179,7 +179,7 @@ import UIKit
         
         if let largeTitleView = self.largeTitleView {
             largeTitleView.isHidden = prefersLargeTitles ? bounds.size.height <= 64.0 : true
-            let height = prefersLargeTitles ? (bounds.size.height - layoutContext.height) : 0
+            let height = bounds.size.height - layoutContext.barHeight
             largeTitleView.frame = CGRect(x: bounds.minX, y: bounds.maxY - height, width: bounds.width, height: height)
         }
         
