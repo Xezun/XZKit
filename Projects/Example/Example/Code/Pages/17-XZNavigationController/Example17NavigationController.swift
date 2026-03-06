@@ -47,6 +47,9 @@ class Example17NavigationController: UINavigationController, XZNavigationControl
     
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
+        
+        guard let tabBarController = self.tabBarController else { return }
+        #XZLog("isBeingPresented: \(tabBarController.isBeingPresented), modalPresentationStyle: \(tabBarController.modalPresentationStyle)")
     }
     
     override func show(_ vc: UIViewController, sender: Any?) {

@@ -15,15 +15,15 @@ public struct XZMocoaModuleMacro: ExpressionMacro {
     
     public static func expansion(of node: some FreestandingMacroExpansionSyntax, in context: some MacroExpansionContext) throws -> ExprSyntax {
         guard node.arguments.count == 1, let argument = node.arguments.first else {
-            throw Message("仅支持“模块地址”作为参数")
+            throw XZMacroError(message: "仅支持“模块地址”作为参数")
         }
         
         if let exprSyntax = argument.expression.as(StringLiteralExprSyntax.self) {
             guard let string = exprSyntax.representedLiteralValue, string.count > 0 else {
-                throw Message("模块地址不能为空")
+                throw XZMacroError(message: "模块地址不能为空")
             }
             guard URL.init(string: string) != nil else {
-                throw Message("模块地址不是合法的 URL 字符串")
+                throw XZMacroError(message: "模块地址不是合法的 URL 字符串")
             }
             return "XZMocoaModule(for: URL(string: \(raw: exprSyntax.trimmedDescription)))!"
         }

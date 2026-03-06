@@ -23,7 +23,7 @@ public struct XZMocoaBindMacro {
     
     public static func type(forVariable variableDecl: VariableDeclSyntax) throws -> (name: String, optional: OptionalType) {
         guard let expression = variableDecl.bindings.first else {
-            throw Message("@bind: 没有找到属性类型")
+            throw XZMacroError(message: "@bind: 没有找到属性类型")
         }
         
         // 示例：var textLabel: UILabel!
@@ -41,14 +41,14 @@ public struct XZMocoaBindMacro {
         
         // 示例：var textLabel = UILabel.init()
         if expression.initializer != nil {
-            throw Message("@bind: 无法推断属性类型，请使用 var view: UIView = .init() 的形式初始化属性")
+            throw XZMacroError(message: "@bind: 无法推断属性类型，请使用 var view: UIView = .init() 的形式初始化属性")
             // 由于表达式的返回值值及返回值的可选性无法推断，因此如下获取获取类型，必准确
             //if let expression = initializer.value.as(FunctionCallExprSyntax.self)?.calledExpression.as(MemberAccessExprSyntax.self)?.base {
             //    return (expression.trimmedDescription, .unwrapped)
             //}
         }
         
-        throw Message("@bind: 无法解析属性类型")
+        throw XZMacroError(message: "@bind: 无法解析属性类型")
     }
     
     public static func arguments(forMacro macroNode: SwiftSyntax.AttributeSyntax, forVariable typeName: String) throws -> (selector: String, key: String) {
@@ -71,7 +71,7 @@ public struct XZMocoaBindMacro {
                 vmkey = ".image"
                 selector = "#selector(setter: UIImageView.image)"
             default:
-                throw Message("@bind: 暂未为 \(typeName) 类型提供默认支持")
+                throw XZMacroError(message: "@bind: 暂未为 \(typeName) 类型提供默认支持")
             }
             
         case 1:
@@ -86,7 +86,7 @@ public struct XZMocoaBindMacro {
                 case "UIImageView":
                     selector = "#selector(setter: UIImageView.image)"
                 default:
-                    throw Message("@bind: 暂未为 \(typeName) 类型提供默认支持")
+                    throw XZMacroError(message: "@bind: 暂未为 \(typeName) 类型提供默认支持")
                 }
             } else {
                 vmkey = macroArgument.value
@@ -107,7 +107,7 @@ public struct XZMocoaBindMacro {
             }
             
         default:
-            throw Message("@bind: 参数错误，仅支持两个个参数")
+            throw XZMacroError(message: "@bind: 参数错误，仅支持两个个参数")
         }
         
         return (selector, vmkey)
@@ -119,7 +119,7 @@ public struct XZMocoaBindMacro {
         }
         
         guard let propertyName = declaration.bindings.first?.pattern.as(IdentifierPatternSyntax.self)?.identifier.text else {
-            throw Message("@bind: 无法确定属性名")
+            throw XZMacroError(message: "@bind: 无法确定属性名")
         }
         
         let propertyType = try Self.type(forVariable: declaration)
@@ -150,7 +150,7 @@ public struct XZMocoaBindMacro {
         selector += "))"
         
         guard let vmKey = vmKey else {
-            throw Message("@bind: 无法确定要绑定的视图模型的键名")
+            throw XZMacroError(message: "@bind: 无法确定要绑定的视图模型的键名")
         }
         
         return (selector, vmKey)
@@ -164,12 +164,12 @@ public struct XZMocoaBindMacro {
     public static func isValid(forMacro node: SwiftSyntax.AttributeSyntax, forFunction declaration: FunctionDeclSyntax, for role: XZMocoaRole) throws {
         switch role {
         case .m:
-            throw Message("@bind: 暂不支持 .m 角色")
+            throw XZMacroError(message: "@bind: 暂不支持 .m 角色")
             
         case .v:
             let methodArgumentsCount = declaration.signature.parameterClause.parameters.count;
             guard methodArgumentsCount <= 3 else {
-                throw Message("@bind: 仅支持绑定 value、key-value、sender-key-value 三种参数形式的方法")
+                throw XZMacroError(message: "@bind: 仅支持绑定 value、key-value、sender-key-value 三种参数形式的方法")
             }
             
             // 宏参数
@@ -182,14 +182,14 @@ public struct XZMocoaBindMacro {
                     case 1:
                         let expression = macroArguments[macroArguments.startIndex].expression
                         if expression.as(StringLiteralExprSyntax.self) == nil && expression.as(MemberAccessExprSyntax.self) == nil {
-                            throw Message("@bind: 指定键名必须为 String 字面量或 XZMocoaKey 枚举值")
+                            throw XZMacroError(message: "@bind: 指定键名必须为 String 字面量或 XZMocoaKey 枚举值")
                         }
                     default:
-                        throw Message("@bind: 仅可指定 key 一个参数")
+                        throw XZMacroError(message: "@bind: 仅可指定 key 一个参数")
                     }
                     
                 default:
-                    throw Message("@bind: 不支持绑定当前的键类型")
+                    throw XZMacroError(message: "@bind: 不支持绑定当前的键类型")
                 }
             }
             
@@ -198,7 +198,7 @@ public struct XZMocoaBindMacro {
             
             // 函数参数的数量
             guard methodArgumentsCount > 0 else {
-                throw Message("@bind: 函数没有参数，无法接收被绑定的键值")
+                throw XZMacroError(message: "@bind: 函数没有参数，无法接收被绑定的键值")
             }
             
             // 宏参数
@@ -211,15 +211,15 @@ public struct XZMocoaBindMacro {
                     case methodArgumentsCount:
                         let expression = macroArguments[macroArguments.startIndex].expression
                         if expression.as(StringLiteralExprSyntax.self) == nil && expression.as(MemberAccessExprSyntax.self) == nil {
-                            throw Message("@bind: 指定键名必须为 String 字面量或 XZMocoaKey 枚举值")
+                            throw XZMacroError(message: "@bind: 指定键名必须为 String 字面量或 XZMocoaKey 枚举值")
                         }
                         break
                     default:
-                        throw Message("@bind: 函数的参数与绑定的键数量不一致")
+                        throw XZMacroError(message: "@bind: 函数的参数与绑定的键数量不一致")
                     }
 
                 default:
-                    throw Message("@bind: 不支持绑定当前的键类型")
+                    throw XZMacroError(message: "@bind: 不支持绑定当前的键类型")
                 }
             }
         }
@@ -228,7 +228,7 @@ public struct XZMocoaBindMacro {
     public static func isValid(forMacro node: SwiftSyntax.AttributeSyntax, forVariable declaration: VariableDeclSyntax, for role: XZMocoaRole) throws -> OptionalType {
         switch role {
         case .m:
-            throw Message("@bind: 暂不支持 .m 角色")
+            throw XZMacroError(message: "@bind: 暂不支持 .m 角色")
             
         case .v:
             
@@ -246,13 +246,13 @@ public struct XZMocoaBindMacro {
                         case "UIImageView":
                             break;
                         default:
-                            throw Message("@bind: 默认绑定还不支持 \(propertyType.name) 类型")
+                            throw XZMacroError(message: "@bind: 默认绑定还不支持 \(propertyType.name) 类型")
                         }
                     case 1:
                         let macroArgument = macroArguments[macroArguments.startIndex]
                         if let label = macroArgument.label?.trimmedDescription {
                             if label != "v" {
-                                throw Message("@bind: 单个参数仅支持 v 标签（指定 View 属性）")
+                                throw XZMacroError(message: "@bind: 单个参数仅支持 v 标签（指定 View 属性）")
                             }
                         } else {
                             switch propertyType.name {
@@ -261,34 +261,34 @@ public struct XZMocoaBindMacro {
                             case "UIImageView":
                                 break;
                             default:
-                                throw Message("@bind: 默认绑定还不支持 \(propertyType.name) 类型")
+                                throw XZMacroError(message: "@bind: 默认绑定还不支持 \(propertyType.name) 类型")
                             }
                         }
                     case 2:
                         let firstExpression = macroArguments[macroArguments.startIndex].expression
                         if let stringValue = firstExpression.as(StringLiteralExprSyntax.self)?.representedLiteralValue {
                             guard stringValue.count > 0 else {
-                                throw Message("@bind: 第一个参数不能为空，若仅指定 v 属性名，可使用 @bind(v:) 宏")
+                                throw XZMacroError(message: "@bind: 第一个参数不能为空，若仅指定 v 属性名，可使用 @bind(v:) 宏")
                             }
                         } else if firstExpression.as(MemberAccessExprSyntax.self) == nil {
-                            throw Message("@bind: 绑定 vm 键名必须是 String 字面量或 XZMocoaKey 枚举值")
+                            throw XZMacroError(message: "@bind: 绑定 vm 键名必须是 String 字面量或 XZMocoaKey 枚举值")
                         }
                         
                         let secondExpression = macroArguments[macroArguments.index(after: macroArguments.startIndex)].expression
                         if let stringValue = secondExpression.as(StringLiteralExprSyntax.self)?.representedLiteralValue {
                             guard stringValue.count > 0 else {
-                                throw Message("@bind: 绑定 v 键名不能为空；若 v 支持默认键名，请不要提供第二参数")
+                                throw XZMacroError(message: "@bind: 绑定 v 键名不能为空；若 v 支持默认键名，请不要提供第二参数")
                             }
                         } else if secondExpression.as(MemberAccessExprSyntax.self) == nil {
-                            throw Message("@bind: 绑定 v 键名必须是 String 字面量或 XZMocoaKey 枚举值")
+                            throw XZMacroError(message: "@bind: 绑定 v 键名必须是 String 字面量或 XZMocoaKey 枚举值")
                         }
                         
                     default:
-                        throw Message("@bind: 仅支持 (.vmKey)、(.vmKey, .vKey) 两种形式的参数")
+                        throw XZMacroError(message: "@bind: 仅支持 (.vmKey)、(.vmKey, .vKey) 两种形式的参数")
                     }
                     
                 default:
-                    throw Message("@bind: 不支持绑定当前的键类型")
+                    throw XZMacroError(message: "@bind: 不支持绑定当前的键类型")
                 }
             }
             
@@ -305,23 +305,23 @@ public struct XZMocoaBindMacro {
                     case 1:
                         let macroArgument = macroArguments[macroArguments.startIndex]
                         if let label = macroArgument.label, label.trimmedDescription.count > 0 {
-                            throw Message("@bind: 在 .vm 上不支持该绑定，请移除参数标签")
+                            throw XZMacroError(message: "@bind: 在 .vm 上不支持该绑定，请移除参数标签")
                         }
                         let expression = macroArgument.expression
                         if let stringValue = expression.as(StringLiteralExprSyntax.self)?.representedLiteralValue {
                             guard stringValue.count > 0 else {
-                                throw Message("@bind: 绑定 vm 键名不能为空，若 m 键与 vm 属性同名，可省略参数")
+                                throw XZMacroError(message: "@bind: 绑定 vm 键名不能为空，若 m 键与 vm 属性同名，可省略参数")
                             }
                         } else if expression.as(MemberAccessExprSyntax.self) == nil {
-                            throw Message("@bind: 绑定 vm 属性的键名必须为 String 字面量或 XZMocoaKey 枚举值")
+                            throw XZMacroError(message: "@bind: 绑定 vm 属性的键名必须为 String 字面量或 XZMocoaKey 枚举值")
                         }
                         break
                     default:
-                        throw Message("@bind: 绑定 vm 属性仅支持一个参数")
+                        throw XZMacroError(message: "@bind: 绑定 vm 属性仅支持一个参数")
                     }
 
                 default:
-                    throw Message("@bind: 不支持绑定当前的键类型")
+                    throw XZMacroError(message: "@bind: 不支持绑定当前的键类型")
                 }
             }
         }
@@ -348,7 +348,7 @@ extension XZMocoaBindViewMacro: AccessorMacro {
     
     public static func expansion(of node: SwiftSyntax.AttributeSyntax, providingAccessorsOf declaration: some SwiftSyntax.DeclSyntaxProtocol, in context: some SwiftSyntaxMacros.MacroExpansionContext) throws -> [SwiftSyntax.AccessorDeclSyntax] {
         guard let declaration = declaration.as(VariableDeclSyntax.self) else {
-            throw Message("@bind(v:) 仅支持属性")
+            throw XZMacroError(message: "@bind(v:) 仅支持属性")
         }
         
         let type = try XZMocoaBindMacro.type(forVariable: declaration);
@@ -360,7 +360,7 @@ extension XZMocoaBindViewMacro: AccessorMacro {
             switch accessorBlock.accessors {
             case .getter:
                 if type.optional == .wrapped {
-                    context.diagnose(.init(node: node, message: Message("@bind: 可选类型的只读计算属性，可能无法实时绑定，如果该属性不为 nil 请使用非可选或隐式可选类型，以消除此警告", severity: .warning)))
+                    XZMacroDiagnose(context, node: node, message: "@bind: 可选类型的只读计算属性，可能无法实时绑定，如果该属性不为 nil 请使用非可选或隐式可选类型，以消除此警告", severity: .warning)
                 }
                 return []
                 
@@ -368,7 +368,7 @@ extension XZMocoaBindViewMacro: AccessorMacro {
                 for accessor in accessors {
                     switch accessor.accessorSpecifier.text {
                     case "didSet":
-                        context.diagnose(.init(node: node, message: Message("@bind: 已自定义 didSet 无法绑定动态监听，若已自行处理，请使用 @bind(vmKey, vKey) 以消除此警告", severity: .warning)))
+                        XZMacroDiagnose(context, node: node, message: "@bind: 已自定义 didSet 无法绑定动态监听，若已自行处理，请使用 @bind(vmKey, vKey) 以消除此警告", severity: .warning)
                         return []
                     default:
                         break

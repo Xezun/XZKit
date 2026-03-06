@@ -36,25 +36,11 @@ public struct XZLogMacro: ExpressionMacro {
             XZLogs(\(raw: system.trimmedDescription), #file, #line, #function, \(raw: message.trimmedDescription))
             """
         default:
-            throw XZLogMacroError.message("#XZLog: 只支持一个参数")
+            throw XZMacroError.message("#XZLog: 只支持一个参数")
         }
 #else
         return "()"
 #endif
-    }
-    
-}
-
-
-private enum XZLogMacroError: Error, CustomStringConvertible {
-    
-    case message(String)
-    
-    public var description: String {
-        switch self {
-        case .message(let text):
-            return text
-        }
     }
     
 }

@@ -20,32 +20,32 @@ public struct XZMocoaKeyMacro {
     public static func isValid(forMacro node: SwiftSyntax.AttributeSyntax, forVariable declaration: some SwiftSyntax.DeclSyntaxProtocol, for role: XZMocoaRole) throws -> (expression: PatternBindingSyntax, accessors: [String]) {
         switch role {
         case .m:
-            throw Message("@key: 暂不支持 .m 角色");
+            throw XZMacroError(message: "@key: 暂不支持 .m 角色");
             
         case .v:
-            throw Message("@key: 暂不支持 .v 角色")
+            throw XZMacroError(message: "@key: 暂不支持 .v 角色")
             
         case .vm:
             guard let syntax = declaration.as(VariableDeclSyntax.self) else {
-                throw Message("@key: 只能应用于 var 属性");
+                throw XZMacroError(message: "@key: 只能应用于 var 属性");
             }
             
             guard syntax.bindingSpecifier.text == "var" else {
-                throw Message("@key: 只能应用于 var 属性")
+                throw XZMacroError(message: "@key: 只能应用于 var 属性")
             }
             
             guard syntax.bindings.count == 1 else {
-                throw Message("@key: 只适用于单个属性")
+                throw XZMacroError(message: "@key: 只适用于单个属性")
             }
             
             if syntax.attributes.attributes(forName: "key").count > 1 {
-                throw Message("@key: 标记重复，只可标记一次")
+                throw XZMacroError(message: "@key: 标记重复，只可标记一次")
             }
             
             let expression = syntax.bindings[syntax.bindings.startIndex]
             
             if expression.initializer != nil {
-                throw Message("@key: 被 @key 标记的属性，需通过 @key(value:) 或 @key(.akey, value:) 提供初始值")
+                throw XZMacroError(message: "@key: 被 @key 标记的属性，需通过 @key(value:) 或 @key(.akey, value:) 提供初始值")
             }
             
             var accessors = [String]()
@@ -58,7 +58,7 @@ public struct XZMocoaKeyMacro {
                     }
                     break
                 case .getter:
-                    throw Message("@key: 无法应用于“只读计算属性”");
+                    throw XZMacroError(message: "@key: 无法应用于“只读计算属性”");
                 }
             }
             
@@ -70,7 +70,7 @@ public struct XZMocoaKeyMacro {
     /// 解析 `@key` 宏的参数。供外部调用。
     public static func arguments(forMacro node: SwiftSyntax.AttributeSyntax, for declaration: VariableDeclSyntax) throws -> (name: String, initialValue: String?) {
         guard let expression = declaration.bindings.first else {
-            throw Message("@key: 无法确定属性名")
+            throw XZMacroError(message: "@key: 无法确定属性名")
         }
         return try arguments(forMacro: node, forVariable: expression)
     }
@@ -83,7 +83,7 @@ public struct XZMocoaKeyMacro {
     public static func arguments(forMacro node: SwiftSyntax.AttributeSyntax, forVariable expression: PatternBindingSyntax) throws -> (name: String, initialValue: String?) {
         guard let macroArguments = node.arguments else {
             guard let name = expression.pattern.as(IdentifierPatternSyntax.self)?.identifier.text, name.count > 0 else {
-                throw Message("@key: 无法确定属性名")
+                throw XZMacroError(message: "@key: 无法确定属性名")
             }
             return (name, nil)
         }
@@ -98,7 +98,7 @@ public struct XZMocoaKeyMacro {
             case 0:
                 // 没有参数，使用属性名
                 guard let name = expression.pattern.as(IdentifierPatternSyntax.self)?.identifier.text, name.count > 0 else {
-                    throw Message("@key: 无法确定属性名")
+                    throw XZMacroError(message: "@key: 无法确定属性名")
                 }
                 return (name, nil)
                 
@@ -108,11 +108,11 @@ public struct XZMocoaKeyMacro {
                 if let label = firstArgument.label?.trimmedDescription {
                     if label == "value" {
                         guard let name = expression.pattern.as(IdentifierPatternSyntax.self)?.identifier.text, name.count > 0 else {
-                            throw Message("@key: 无法确定属性名")
+                            throw XZMacroError(message: "@key: 无法确定属性名")
                         }
                         return (name, firstArgument.expression.trimmedDescription)
                     }
-                    throw Message("@key: 第一个参数必须是 value 标签，而不能是 \(label) 标签")
+                    throw XZMacroError(message: "@key: 第一个参数必须是 value 标签，而不能是 \(label) 标签")
                 }
                 
                 if let stringLiteral = firstArgument.expression.as(StringLiteralExprSyntax.self) {
@@ -124,7 +124,7 @@ public struct XZMocoaKeyMacro {
                     return (mocoaKey, nil)
                 }
                 
-                throw Message("@key: 第一个参数必须为 String 字面量或 XZMocoaKey 枚举，而不能是 \(firstArgument.expression) 值")
+                throw XZMacroError(message: "@key: 第一个参数必须为 String 字面量或 XZMocoaKey 枚举，而不能是 \(firstArgument.expression) 值")
                 
             case 2:
                 let value = arguments[arguments.index(after: arguments.startIndex)].expression.trimmedDescription
@@ -136,7 +136,7 @@ public struct XZMocoaKeyMacro {
                     if let stringValue = stringLiteral.representedLiteralValue, stringValue.count > 0 {
                         return (stringValue, value)
                     }
-                    throw Message("@key: 第一参数不能为空，若不想提供，请使用 value 标签直接提供第二个参数")
+                    throw XZMacroError(message: "@key: 第一参数不能为空，若不想提供，请使用 value 标签直接提供第二个参数")
                 }
                 
                 // 检查是否 .key 语法
@@ -145,50 +145,50 @@ public struct XZMocoaKeyMacro {
                     return (mocoaKey, value)
                 }
                 
-                throw Message("@key: 第一个参数必须为 String 字面量或 XZMocoaKey 枚举，而不能是 \(firstArgument.expression) 值")
+                throw XZMacroError(message: "@key: 第一个参数必须为 String 字面量或 XZMocoaKey 枚举，而不能是 \(firstArgument.expression) 值")
                 
             default:
-                throw Message("@key: 最多支持两个参数（name, initialValue)")
+                throw XZMacroError(message: "@key: 最多支持两个参数（name, initialValue)")
                 
             }
         case .token(_):
-            throw Message("@key: not support arguments .token")
+            throw XZMacroError(message: "@key: not support arguments .token")
         case .string(_):
-            throw Message("@key: not support arguments .string")
+            throw XZMacroError(message: "@key: not support arguments .string")
         case .availability(_):
-            throw Message("@key: not support arguments .availability")
+            throw XZMacroError(message: "@key: not support arguments .availability")
         case .specializeArguments(_):
-            throw Message("@key: not support arguments .specializeArguments")
+            throw XZMacroError(message: "@key: not support arguments .specializeArguments")
         case .objCName(_):
-            throw Message("@key: not support arguments .objCName")
+            throw XZMacroError(message: "@key: not support arguments .objCName")
         case .implementsArguments(_):
-            throw Message("@key: not support arguments .implementsArguments")
+            throw XZMacroError(message: "@key: not support arguments .implementsArguments")
         case .differentiableArguments(_):
-            throw Message("@key: not support arguments .differentiableArguments")
+            throw XZMacroError(message: "@key: not support arguments .differentiableArguments")
         case .derivativeRegistrationArguments(_):
-            throw Message("@key: not support arguments .derivativeRegistrationArguments")
+            throw XZMacroError(message: "@key: not support arguments .derivativeRegistrationArguments")
         case .backDeployedArguments(_):
-            throw Message("@key: not support arguments .backDeployedArguments")
+            throw XZMacroError(message: "@key: not support arguments .backDeployedArguments")
         case .conventionArguments(_):
-            throw Message("@key: not support arguments .conventionArguments")
+            throw XZMacroError(message: "@key: not support arguments .conventionArguments")
         case .conventionWitnessMethodArguments(_):
-            throw Message("@key: not support arguments .conventionWitnessMethodArguments")
+            throw XZMacroError(message: "@key: not support arguments .conventionWitnessMethodArguments")
         case .opaqueReturnTypeOfAttributeArguments(_):
-            throw Message("@key: not support arguments .opaqueReturnTypeOfAttributeArguments")
+            throw XZMacroError(message: "@key: not support arguments .opaqueReturnTypeOfAttributeArguments")
         case .exposeAttributeArguments(_):
-            throw Message("@key: not support arguments .exposeAttributeArguments")
+            throw XZMacroError(message: "@key: not support arguments .exposeAttributeArguments")
         case .originallyDefinedInArguments(_):
-            throw Message("@key: not support arguments .originallyDefinedInArguments")
+            throw XZMacroError(message: "@key: not support arguments .originallyDefinedInArguments")
         case .underscorePrivateAttributeArguments(_):
-            throw Message("@key: not support arguments .underscorePrivateAttributeArguments")
+            throw XZMacroError(message: "@key: not support arguments .underscorePrivateAttributeArguments")
         case .dynamicReplacementArguments(_):
-            throw Message("@key: not support arguments .dynamicReplacementArguments")
+            throw XZMacroError(message: "@key: not support arguments .dynamicReplacementArguments")
         case .unavailableFromAsyncArguments(_):
-            throw Message("@key: not support arguments .unavailableFromAsyncArguments")
+            throw XZMacroError(message: "@key: not support arguments .unavailableFromAsyncArguments")
         case .effectsArguments(_):
-            throw Message("@key: not support arguments .effectsArguments")
+            throw XZMacroError(message: "@key: not support arguments .effectsArguments")
         case .documentationArguments(_):
-            throw Message("@key: not support arguments .documentationArguments")
+            throw XZMacroError(message: "@key: not support arguments .documentationArguments")
         }
     }
     
@@ -201,7 +201,7 @@ extension XZMocoaKeyMacro: PeerMacro {
         let (expression, _) = try isValid(forMacro: node, forVariable: declaration, for: .vm)
         
         guard let type = expression.typeAnnotation?.type.trimmedDescription else {
-            throw Message("@key: 无法确定属性类型")
+            throw XZMacroError(message: "@key: 无法确定属性类型")
         }
         
         let (name, value) = try arguments(forMacro: node, forVariable: expression)

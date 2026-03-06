@@ -9,7 +9,7 @@
 #if __has_include(<XZKit/XZKit.h>)
 #import <XZKit/XZMocoaGridCellModel.h>
 #else
-#import "XZMocoaGridCellViewModel.h"
+#import "XZMocoaGridCellModel.h"
 #endif
 
 NS_ASSUME_NONNULL_BEGIN

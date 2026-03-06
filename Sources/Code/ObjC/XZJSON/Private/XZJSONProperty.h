@@ -5,7 +5,7 @@
 //  Created by Xezun on 2024/9/29.
 //
 
-#import <Foundation/Foundation.h>
+#import <UIKit/UIKit.h>
 #if __has_include(<XZKit/XZKit.h>)
 #import <XZKit/XZObjcRuntime.h>
 #import <XZKit/XZJSONClass.h>

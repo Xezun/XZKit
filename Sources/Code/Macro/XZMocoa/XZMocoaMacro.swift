@@ -30,15 +30,15 @@ public struct XZMocoaMacro {
                             return role
                         }
                     }
-                    throw Message("@mocoa: 参数 role 不是合法的枚举值")
+                    throw XZMacroError(message: "@mocoa: 参数 role 不是合法的枚举值")
                     
                 default:
-                    throw Message("@mocoa: 目前仅支持 role 参数")
+                    throw XZMacroError(message: "@mocoa: 目前仅支持 role 参数")
                     
                 }
                 
             default:
-                throw Message("@mocoa: 不支持的参数形式")
+                throw XZMacroError(message: "@mocoa: 不支持的参数形式")
             }
             
         }
@@ -57,7 +57,7 @@ public struct XZMocoaMacro {
             return .m
         }
         
-        throw Message("@mocoa: 无法确定 \(className) 的角色，请通过 role 参数指定")
+        throw XZMacroError(message: "@mocoa: 无法确定 \(className) 的角色，请通过 role 参数指定")
     }
     
     public static func keyPath(fromMacroArgument argument: LabeledExprSyntax) -> String? {
@@ -83,7 +83,7 @@ extension XZMocoaMacro: MemberAttributeMacro {
     
     public static func expansion(of node: SwiftSyntax.AttributeSyntax, attachedTo declaration: some SwiftSyntax.DeclGroupSyntax, providingAttributesFor member: some SwiftSyntax.DeclSyntaxProtocol, in context: some SwiftSyntaxMacros.MacroExpansionContext) throws -> [SwiftSyntax.AttributeSyntax] {
         guard let classDecl = declaration.as(ClassDeclSyntax.self) else {
-            throw Message("@mocoa: 仅可用于 class 的声明")
+            throw XZMacroError(message: "@mocoa: 仅可用于 class 的声明")
         }
         
         let role = try Self.role(forMacro: node, forClass: classDecl)
@@ -103,7 +103,7 @@ extension XZMocoaMacro: MemberAttributeMacro {
                             let name = try XZMocoaKeyMacro.arguments(forMacro: macroNode, forVariable: expression).name
                             objcAttributes = "@objc(\(name))"
                         } catch {
-                            context.diagnose(.init(node: macroNode, message: Message(error, severity: .warning)))
+                            XZMacroDiagnose(context, node: macroNode, error: error, severity: .warning);
                         }
                         
                     case "bind":
@@ -120,7 +120,7 @@ extension XZMocoaMacro: MemberAttributeMacro {
                                     }
                                 }) {
                                     let message = "@mocoa: 检测到该属性为可选类型，普通绑定可能失效，请使用 @bind(v:) 进行绑定；若该确定属性不为空，也可使用隐式可选类型，以消除此警告";
-                                    context.diagnose(.init(node: macroNode, message: Message(message, severity: .warning)))
+                                    XZMacroDiagnose(context, node: macroNode, message: message, severity: .warning)
                                 }
                             }
                             guard objcAttributes == nil else {
@@ -128,7 +128,7 @@ extension XZMocoaMacro: MemberAttributeMacro {
                             }
                             objcAttributes = "@objc"
                         }  catch {
-                            context.diagnose(.init(node: macroNode, message: Message(error, severity: .warning)))
+                            XZMacroDiagnose(context, node: macroNode, error: error, severity: .warning)
                         }
                         break
                         
@@ -159,7 +159,7 @@ extension XZMocoaMacro: MemberAttributeMacro {
                             try XZMocoaBindMacro.isValid(forMacro: macroNode, forFunction: methodNode, for: role)
                             objcAttributes = "@objc"
                         }  catch {
-                            context.diagnose(.init(node: methodNode, message: Message(error, severity: .warning)))
+                            XZMacroDiagnose(context, node: macroNode, error: error, severity: .warning)
                         }
                         
                     case "ready":
@@ -190,12 +190,12 @@ extension XZMocoaMacro: MemberMacro {
     
     public static func expansion(of node: AttributeSyntax, providingMembersOf declaration: some DeclGroupSyntax, in context: some MacroExpansionContext) throws -> [DeclSyntax] {
         guard let classDecl = declaration.as(ClassDeclSyntax.self) else {
-            throw Message("@mocoa: 只能应用于类")
+            throw XZMacroError(message: "@mocoa: 只能应用于类")
         }
         
         switch try role(forMacro: node, forClass: classDecl) {
         case .m:
-            throw Message("@mocoa: 暂未不支持 .m 角色")
+            throw XZMacroError(message: "@mocoa: 暂未不支持 .m 角色")
             
         case .v:
             // 判断是否自定义 viewModelDidChange 方法
@@ -203,7 +203,7 @@ extension XZMocoaMacro: MemberMacro {
                 if let methodDecl = member.decl.as(FunctionDeclSyntax.self) {
                     let methodName = methodDecl.name.trimmedDescription
                     if methodName == "__viewModelDidChange" {
-                        context.diagnose(.init(node: methodDecl, message: Message("@mocoa: 重写 __viewModelDidChange 将会绑定实效，请使用 @ready 标记初始化方法", severity: .warning)))
+                        XZMacroDiagnose(context, node: methodDecl, message: "@mocoa: 重写 __viewModelDidChange 将会绑定实效，请使用 @ready 标记初始化方法", severity: .warning)
                         return []
                     }
                 }
@@ -236,7 +236,7 @@ extension XZMocoaMacro: MemberMacro {
                         let string = try XZMocoaBindMacro.statements(forMacro: macroNodes, forVariable: variableDecl)
                         bindStatements.append(string)
                     } catch {
-                        context.diagnose(.init(node: macroNodes[0], message: Message(error, severity: .warning)))
+                        XZMacroDiagnose(context, node: macroNodes[0], error: error, severity: .warning)
                     }
                 }
                 
@@ -267,7 +267,7 @@ extension XZMocoaMacro: MemberMacro {
                             let string = try XZMocoaBindMacro.statement(forMacro: macroNode, forFunction: methodDecl)
                             bindStatements.append(string)
                         } catch {
-                            context.diagnose(.init(node: macroNode, message: Message(error, severity: .warning)))
+                            XZMacroDiagnose(context, node: macroNode, error: error, severity: .warning)
                         }
                     }
                 }
@@ -326,7 +326,7 @@ extension XZMocoaMacro: MemberMacro {
                         if propertyName == "mappingModelKeys" {
                             for modifier in member.modifiers {
                                 if modifier.name.trimmedDescription == "class" {
-                                    context.diagnose(.init(node: member, message: Message("@mocoa: 检测到已自定义 mappingModelKeys 属性，自动监听将不生效", severity: .warning)))
+                                    XZMacroDiagnose(context, node: member, message: "@mocoa: 检测到已自定义 mappingModelKeys 属性，自动监听将不生效", severity: .warning)
                                     return []
                                 }
                             }

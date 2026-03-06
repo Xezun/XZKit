@@ -9,6 +9,7 @@
 #import "XZMocoaGridSectionViewModel.h"
 #import "XZMocoaDefines.h"
 #import "XZMocoaGridViewModel.h"
+#import "XZMocoaGridCellModel.h"
 #import "XZLog.h"
 #import "XZDefines.h"
 #import "NSArray+XZKit.h"
