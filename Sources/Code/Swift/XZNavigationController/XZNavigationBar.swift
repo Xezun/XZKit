@@ -1,101 +1,325 @@
 //
 //  XZNavigationBar.swift
-//  XZNavigationController
+//  XZKit
 //
-//  Created by Xezun on 2024/7/7.
+//  Created by 徐臻 on 2026/2/7.
 //
 
 import UIKit
 
-/// 控制器定制导航栏须实现的属性，这些属性是为了与原生导航栏保持一致所必须的。
-///
-/// 本组件并非原生组件的完全替代品，而是原生组件的功能增强，因此必须实现一些方法或属性，以与原生保持的一致性。
-///
-/// 实现机制是使用定制导航栏不可透明，若透明，因为原生的导航栏在
-///
-/// 组件提供了``XZStandardNavigationBar``基类，我们可以继承它，也可以使用其它遵循了``XZNavigationBar``协议的视图控件。
-///
-/// ### 关于系统导航栏
-///
-/// 1. 如果 `isTranslucent == false` ，那么导航栏背景色 alpha 会被设置为 1.0，但是大标题模式背景色却是白色的。
-/// 2. 如果 `isTranslucent == true` ，设置透明色，则导航栏可以透明。
-///
-/// ### 如何设置原生导航栏透明
-///
-/// ```swift
-/// navigationBar.backgroundColor = UIColor.clear
-/// navigationBar.isHidden        = false
-/// navigationBar.barTintColor    = UIColor(white: 1.0, alpha: 0)
-/// navigationBar.shadowImage     = UIImage()
-/// navigationBar.isTranslucent   = true
-/// navigationBar.setBackgroundImage(UIImage(), for: .default)
-/// ```
-///
-/// 定制化导航栏，可以通过 `navigationBar` 属性获取原生导航栏。
-///
-/// 当原生导航栏的状态发生改变时，会自动将状态同步给定制化导航栏。
-/// 因此，为了避免**循环调用**，当定制化导航栏向原生导航栏同步状态时，需要调用以下方法，而不能直接同步。
-///
-/// ```swift
-/// // self is the custom navigation bar
-/// self.synchronizeAppearance(for: .isHidden)
-/// self.synchronizeAppearance(for: .isTranslucent)
-/// self.synchronizeAppearance(for: .prefersLargeTitles)
-/// ```
-///
-/// - Attention: 由于转场需要，定制化导航栏并不总是在原生导航栏之上，所以定制化导航栏需要单独设置 tintColor 的值，以避免转场过程中，导航栏颜色不一致的问题。
-@MainActor public protocol XZNavigationBar: UIView {
+/// 定制化导航栏可选基类。
+@MainActor @objc open class XZNavigationBar: UIView, XZNavigationBarProtocol {
     
-    /// 导航栏是否半透明。
-    var isTranslucent: Bool { get set }
-    
-    /// 导航栏是否显示大标题模式。
-    var prefersLargeTitles: Bool { get set }
-    
-}
-
-/// 定制化的导航栏外观变化时，需要向原生导航栏同步的属性枚举。
-public enum XZNavigtionBarAppearanceAttribute {
-    case isHidden
-    case isTranslucent
-    case prefersLargeTitles
-}
-
-extension XZNavigationBar {
-    
-    /// 将状态同步给原生导航栏。
-    public func synchronizeAppearance(for attribute: XZNavigtionBarAppearanceAttribute) {
-        guard let navigationBar = self.uiNavigationBar else { return }
-        
-        switch attribute {
-        case .isHidden:
-            xz_objc_msgSendSuper_void(navigationBar, type(of: navigationBar), #selector(setter: UINavigationBar.isHidden), self.isHidden)
-        case .isTranslucent:
-            xz_objc_msgSendSuper_void(navigationBar, type(of: navigationBar), #selector(setter: UINavigationBar.isTranslucent), self.isTranslucent)
-        case .prefersLargeTitles:
-            xz_objc_msgSendSuper_void(navigationBar, type(of: navigationBar), #selector(setter: UINavigationBar.prefersLargeTitles), self.prefersLargeTitles)
+    open override var isHidden: Bool {
+        didSet {
+            synchronizeHiddenAppearance()
         }
-        
-        navigationBar.superview?.setNeedsLayout()
     }
     
-    /// 定制化导航栏所属控制器的导航控制器。
-    public var navigationController: UINavigationController? {
-        var next = self.next
+    /// 控制背景透明，默认 true 。
+    open var isTranslucent = true {
+        didSet {
+            synchronizeTranslucentAppearance()
+        }
+    }
+    
+    /// 默认 false 。
+    open var prefersLargeTitles = false {
+        didSet {
+            synchronizeLargeTitlesAppearance()
+            setNeedsLayout()
+        }
+    }
+    
+    /// 导航栏的背景视图。
+    public let backgroundImageView: UIImageView
+    
+    /// 导航栏阴影视图。
+    public let shadowImageView: UIImageView
+    
+    public override init(frame: CGRect) {
+        backgroundImageView = UIImageView.init(frame: CGRect(x: 0, y: -20, width: frame.width, height: 64));
+        backgroundImageView.backgroundColor  = UIColor.white
         
+        shadowImageView = UIImageView.init(frame: CGRect.init(x: 0, y: 0, width: frame.width, height: 1.0 / UIScreen.main.scale))
+        shadowImageView.autoresizingMask = [.flexibleTopMargin, .flexibleWidth]
+        shadowImageView.backgroundColor = UIColor(white: 0, alpha: 0.3)
+        
+        super.init(frame: CGRect(x: 0, y: 0, width: frame.width, height: 44));
+        
+        self.addSubview(backgroundImageView)
+        self.addSubview(shadowImageView)
+    }
+    
+    public required init?(coder aDecoder: NSCoder) {
+        guard let backgroundImageView = aDecoder.decodeObject(forKey: CodingKey.backgroundImageView.rawValue) as? UIImageView else { return nil }
+        guard let shadowImageView     = aDecoder.decodeObject(forKey: CodingKey.shadowImageView.rawValue) as? UIImageView else { return nil }
+        self.backgroundImageView      = backgroundImageView
+        self.shadowImageView          = shadowImageView
+        self.isTranslucent            = aDecoder.decodeBool(forKey: CodingKey.isTranslucent.rawValue)
+        self.prefersLargeTitles       = aDecoder.decodeBool(forKey: CodingKey.prefersLargeTitles.rawValue)
+        super.init(coder: aDecoder)
+        self.addSubview(backgroundImageView)
+        self.addSubview(shadowImageView)
+    }
+    
+    open override func encode(with aCoder: NSCoder) {
+        super.encode(with: aCoder)
+        aCoder.encode(isTranslucent,       forKey: CodingKey.isTranslucent.rawValue)
+        aCoder.encode(backgroundImageView, forKey: CodingKey.backgroundImageView.rawValue)
+        aCoder.encode(shadowImageView,     forKey: CodingKey.shadowImageView.rawValue)
+        aCoder.encode(prefersLargeTitles,  forKey: CodingKey.prefersLargeTitles.rawValue)
+    }
+
+    /// 此属性直接修改的是导航栏背景视图的背景色。
+    open var barTintColor: UIColor? {
+        get { return backgroundImageView.backgroundColor }
+        set { backgroundImageView.backgroundColor = newValue }
+    }
+
+    /// 导航栏背景图片，默认情况下，背景图片将拉伸填充整个背景。
+    open var backgroundImage: UIImage? {
+        get { return backgroundImageView.image }
+        set { backgroundImageView.image = newValue }
+    }
+
+    /// 导航栏阴影图片。
+    open var shadowImage: UIImage? {
+        get { return shadowImageView.image }
+        set { shadowImageView.image = newValue }
+    }
+
+    /// 导航栏阴影颜色，如果设置了阴影图片，则此属性可能不生效。
+    /// - Note: 与系统默认一致，默认 0.3 半透明黑色。
+    open var shadowColor: UIColor? {
+        get { return shadowImageView.backgroundColor }
+        set { shadowImageView.backgroundColor = newValue }
+    }
+    
+    deinit {
+        
+    }
+    
+    private func navigationController() -> UINavigationController? {
+        var responder = self.next;
         repeat {
-            if let navigationController = next as? UINavigationController {
+            if let navigationController = responder as? UINavigationController {
                 return navigationController
             }
-            
-            if let viewController = next as? UIViewController {
+            if let viewController = responder as? UIViewController {
                 return viewController.navigationController
             }
-            
-            next = next?.next
-        } while next != nil
-        
+            responder = responder?.next
+        } while (responder != nil)
         return nil
     }
     
+    private func statusBarFrame() -> CGRect {
+        if let statusBarManager = self.window?.windowScene?.statusBarManager {
+            return statusBarManager.statusBarFrame
+        }
+        return CGRect(x: 0, y: 0, width: bounds.size.width, height: 0);
+    }
+    
+    /// 不同版本的iOS系统，导航栏高度不一样。导航控制器如果以堆叠样式呈现
+    private func layoutContext(_ bounds: CGRect, _ prefersLargeTitles: Bool) -> (barHeight: CGFloat, height: CGFloat, minY: CGFloat) {
+        guard let view = self.navigationController()?.viewIfLoaded else {
+            return (44.0, 44.0, 0)
+        }
+        
+        if self.traitCollection.userInterfaceIdiom == .pad {
+            if #available(iOS 18.0, *) {
+                return (54.0, 54.0, bounds.maxY - 54.0)
+            }
+            return (44.0, 44.0, bounds.maxY - 44.0)
+        }
+        
+        if #available(iOS 26.0, *) {
+            // 从 iOS 26.0 开始，导航栏高度为 54.0 点。
+            // 但是标题、按钮等布局在导航栏顶部高度为 44.0 的区域。
+            return (54.0, 44.0, 0)
+        }
+        
+        if #available(iOS 13.0, *) {
+            if view.convert(view.frame, to: view.window).minY > 0 {
+                // 从 iOS 13.0 开始，当导航控制器不是以全屏模式呈现时，导航条高度为 56.0
+                return (56.0, 56.0, prefersLargeTitles ? 0.0 : bounds.maxY - 56.0)
+            }
+            return (44.0, 44.0, prefersLargeTitles ? 0 : bounds.maxY - 44.0)
+        }
+        
+        return (44.0, 44.0, 0)
+    }
+
+    /// 导航栏将按照当前视图布局方向布局 titleView、infoView、backView、shadowImageView、backgroundImageView 。
+    override open func layoutSubviews() {
+        super.layoutSubviews()
+        
+        let bounds = self.bounds
+        let safeBounds = bounds.inset(by: self.safeAreaInsets)
+        
+        // titleView\backView\infoView 只在初次赋值时，检测是否有大小并尝试自动调整。
+        // 切在导航栏整个生命周期中，不主动调整它们的大小，只是按照规则将它们放在左中右。
+        // 它们的大小完全由开发者控制，以避免强制调整而造成的不符合预期的情况。
+        // 比如，当 title 比较宽的时候，如果自动缩短了 back/info 的长度，那么当 title 变短的时候，back/info 却不能变长，
+        // 所以将它们的大小完全交给开发者处理。
+        //【一般情形】
+        // 普通高度：44
+        // 横屏高度：32
+        // 大标题高度：44 + 52 = 96
+        // 【导航控制器以堆叠样式被 present 呈现时】
+        // 普通高度：56
+        // 大标题高度：56 + 52 = 108
+        // 理论上，这种情形，应该使用 safeArea 而不是直接增加 navBar 高度，但遗憾的是 Apple 似乎采取了一个懒惰的方法，即直接修改导航栏高度。
+        // 在 iOS 26 中，Apple 修复了这个问题。
+        let isLeftToRight = (self.effectiveUserInterfaceLayoutDirection == .leftToRight)
+        
+        // 普通模式，导航栏布局在底部；大标题模式，导航栏布局在顶部。
+        let layoutContext = self.layoutContext(bounds, prefersLargeTitles)
+        
+        if let largeTitleView = self.largeTitleView {
+            largeTitleView.isHidden = prefersLargeTitles ? bounds.size.height <= 64.0 : true
+            let height = bounds.size.height - layoutContext.barHeight
+            largeTitleView.frame = CGRect(x: bounds.minX, y: bounds.maxY - height, width: bounds.width, height: height)
+        }
+        
+        if let titleView = self.titleView {
+            titleView.isHidden = prefersLargeTitles ? bounds.height > 64.0 : false;
+            let titleFrame = titleView.frame
+            let x = (bounds.width - titleFrame.width) * 0.5
+            let y = layoutContext.minY + (layoutContext.height - titleFrame.height) * 0.5
+            titleView.frame = CGRect.init(x: x, y: y, width: titleFrame.width, height: titleFrame.height)
+        }
+
+        if let infoView = self.infoView {
+            let infoFrame = infoView.frame
+            let x = (isLeftToRight ? safeBounds.maxX - infoFrame.width : safeBounds.minX)
+            let y = layoutContext.minY + (layoutContext.height - infoFrame.height) * 0.5
+            infoView.frame = CGRect.init(x: x, y: y, width: infoFrame.width, height: infoFrame.height)
+        }
+
+        if let backView = self.backView {
+            let backFrame = backView.frame
+            let x = (isLeftToRight ? safeBounds.minX : safeBounds.maxX - backFrame.width)
+            let y = layoutContext.minY + (layoutContext.height - backFrame.height) * 0.5
+            backView.frame = CGRect.init(x: x, y: y, width: backFrame.width, height: backFrame.height)
+        }
+        
+        shadowImageView.frame = CGRect.init(
+            x: bounds.minX,
+            y: bounds.maxY,
+            width: bounds.width,
+            height: shadowImageView.image?.size.height ?? 1.0 / UIScreen.main.scale
+        )
+
+        let frameMinY = self.frame.minY
+        if frameMinY >= 0 {
+            backgroundImageView.frame = CGRect.init(x: bounds.minY, y: -frameMinY, width: bounds.width, height: bounds.height + frameMinY)
+        }
+    }
+
+    /// 在导航栏上居中显示的标题视图。
+    /// - Note: 标题视图显示在导航栏中央。
+    /// - Note: 如果设置值时，视图没有大小，则会自动尝试调用 sizeToFit() 方法。
+    open var titleView: UIView? {
+        get {
+            return _titleView
+        }
+        set {
+            _titleView?.removeFromSuperview()
+            
+            if let titleView = newValue {
+                if titleView.frame.isEmpty {
+                    titleView.sizeToFit()
+                }
+                self.addSubview(titleView)
+            }
+            
+            _titleView = newValue
+        }
+    }
+    private var _titleView: UIView?
+    
+    /// 大标题视图。
+    ///
+    /// 导航栏高度为 44.0 点，当开启大标题视图时，导航栏高度增加，增加的区域就是大标题视图的区域。
+    open var largeTitleView: UIView? {
+        get {
+            return _largeTitleView
+        }
+        set {
+            _largeTitleView?.removeFromSuperview()
+            if let largeTitleView = newValue {
+                if largeTitleView.frame.isEmpty {
+                    largeTitleView.sizeToFit()
+                }
+                if let titleView = titleView {
+                    insertSubview(largeTitleView, belowSubview: titleView)
+                } else {
+                    addSubview(largeTitleView)
+                }
+            }
+            _largeTitleView = newValue
+        }
+    }
+    private var _largeTitleView: UIView?
+
+    /// 在导航栏上的返回视图。
+    /// - Note: 自适应布局方向，在水平方向上，leading 对齐。
+    /// - Note: 如果设置值时，视图没有大小，则会自动尝试调用 sizeToFit() 方法。
+    /// - Note: 不会与标题视图重叠，优先显示标题视图。
+    open var backView: UIView? {
+        get {
+            return _backView
+        }
+        set {
+            _backView?.removeFromSuperview()
+            if let backView = newValue {
+                if backView.frame.isEmpty {
+                    backView.sizeToFit()
+                }
+                if let titleView = self.titleView {
+                    self.insertSubview(backView, belowSubview: titleView)
+                } else {
+                    self.addSubview(backView)
+                }
+            }
+            _backView = newValue
+        }
+    }
+    private var _backView: UIView?
+
+    /// 导航栏上信息视图。
+    /// - Note: 自适应布局方向，在水平方向上，trailing 对象。
+    /// - Note: 如果设置值时，视图没有大小，则会自动尝试调用 sizeToFit() 方法。
+    /// - Note: 不会与标题视图重叠，优先显示标题视图。
+    open var infoView: UIView? {
+        get {
+            return _infoView
+        }
+        set {
+            _infoView?.removeFromSuperview()
+            if let infoView = newValue {
+                if infoView.frame.isEmpty {
+                    infoView.sizeToFit()
+                }
+                if let titleView = self.titleView {
+                    self.insertSubview(infoView, belowSubview: titleView)
+                } else {
+                    self.addSubview(infoView)
+                }
+            }
+            _infoView = newValue
+        }
+    }
+    private var _infoView: UIView?
+    
+    private enum CodingKey: String {
+        case isTranslucent       = "XZNavigationBar.isTranslucent"
+        case backgroundImageView = "XZNavigationBar.backgroundImageView"
+        case shadowImageView     = "XZNavigationBar.shadowImageView"
+        case prefersLargeTitles  = "XZNavigationBar.prefersLargeTitles"
+    }
 }
+
+

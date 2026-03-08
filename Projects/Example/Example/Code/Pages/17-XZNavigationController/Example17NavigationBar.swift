@@ -16,7 +16,7 @@ import XZKit
 extension XZNavigationBarCustomizable {
     
     // 在 extension 中实现协议，返回自定义的导航栏，那么控制器在声明遵循协议时，就可以不用再实现这个方法。
-    public var xzNavigationBar: XZNavigationBar? {
+    public var xzNavigationBar: XZNavigationBarProtocol? {
         // 这里也可以写
         // return objc_getAssociatedObject(self, &_navigationBar) as? Example17NavigationBar
         // 这样如果控制器声明遵循了协议，但是却没有使用定制化导航栏，那么定制化导航栏就不会被懒加载。
@@ -37,10 +37,10 @@ extension XZNavigationBarCustomizable {
     }
 }
 
-// 定制化导航栏，只要是遵循 XZNavigationBar 的 UIView 就行。
-// 这里是为了展示，内置的 XZNavigationBar 是如何帮我们快速定制化导航栏的。
+// 定制化导航栏，只要是遵循 XZNavigationBarProtocol 的 UIView 就行。
+// 这里是为了展示，内置的 XZNavigationBarProtocol 是如何帮我们快速定制化导航栏的。
 // 比如，这里的定制化导航栏，通过少量代码，就实现了几乎和原生一样的，展示标题和大标题的功能。
-public class Example17NavigationBar: XZStandardNavigationBar {
+public class Example17NavigationBar: XZNavigationBar {
     
     public override var barTintColor: UIColor? {
         didSet {

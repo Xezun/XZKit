@@ -21,14 +21,14 @@ import ObjectiveC
     /// ```swift
     /// // 给控制器基类拓展一个属性，自动创建导航栏。
     /// extension UIViewController {
-    ///     var navigationBar: XZNavigationBar {
+    ///     var navigationBar: XZNavigationBarProtocol {
     ///         return <lazy load a custom navigation bar>;
     ///     }
     /// }
     ///
     /// // 给 XZNavigationBarCustomizable 添加拓展。
     /// extension XZNavigationBarCustomizable {
-    ///     var xzNavigationBar: XZNavigationBar? {
+    ///     var xzNavigationBar: XZNavigationBarProtocol? {
     ///         return self.navigationBar
     ///     }
     /// }
@@ -42,11 +42,11 @@ import ObjectiveC
     ///     }
     /// }
     /// ```
-    var xzNavigationBar: XZNavigationBar? { get }
+    var xzNavigationBar: XZNavigationBarProtocol? { get }
     
 }
 
-extension XZNavigationBar {
+extension XZNavigationBarProtocol {
     
     /// 原生导航栏。
     ///
@@ -70,9 +70,9 @@ extension XZNavigationBar {
 extension UINavigationController {
     
     /// 当前的定制化导航栏。
-    public internal(set) var xzNavigationBar: XZNavigationBar? {
+    public internal(set) var xzNavigationBar: XZNavigationBarProtocol? {
         get {
-            return objc_getAssociatedObject(self.view!, &_xzNavigationBar) as? XZNavigationBar
+            return objc_getAssociatedObject(self.view!, &_xzNavigationBar) as? XZNavigationBarProtocol
         }
         set {
             // 移除旧的
@@ -103,9 +103,9 @@ extension UINavigationController {
 extension UINavigationBar {
     
     /// 记录了当前正在显示的自定义的导航栏。在控制器转场过程中，此属性为 nil 。
-    public fileprivate(set) var xzNavigationBar: XZNavigationBar? {
+    public fileprivate(set) var xzNavigationBar: XZNavigationBarProtocol? {
         get {
-            return (objc_getAssociatedObject(self, &_xzNavigationBar) as? WeakWrapper)?.value as? XZNavigationBar
+            return (objc_getAssociatedObject(self, &_xzNavigationBar) as? WeakWrapper)?.value as? XZNavigationBarProtocol
         }
         set {
             if let weakWrapper = objc_getAssociatedObject(self, &_xzNavigationBar) as? WeakWrapper {

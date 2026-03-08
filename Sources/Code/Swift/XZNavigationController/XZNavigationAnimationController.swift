@@ -453,10 +453,10 @@ public class XZNavigationAnimationContext: CustomStringConvertible {
     public let operation: UINavigationController.Operation
     
     /// 转场原始页面的视图、定制化 navigationBar 的信息。
-    public var from: (viewController: ViewContext<UIView>, navigationBar: ViewContext<XZNavigationBar>?)
+    public var from: (viewController: ViewContext<UIView>, navigationBar: ViewContext<XZNavigationBarProtocol>?)
     
     /// 转场目标页面的视图、定制化 navigationBar 的信息。
-    public var to: (viewController: ViewContext<UIView>, navigationBar: ViewContext<XZNavigationBar>?)
+    public var to: (viewController: ViewContext<UIView>, navigationBar: ViewContext<XZNavigationBarProtocol>?)
     
     /// 为转场提供阴影效果的视图的信息。
     public var shadow: ViewContext<UIView>
@@ -483,8 +483,8 @@ public class XZNavigationAnimationContext: CustomStringConvertible {
     fileprivate init(
         context: UIViewControllerContextTransitioning,
         operation: UINavigationController.Operation,
-        from: (view: (UIView, CGRect), navigationBar: (XZNavigationBar?, CGRect?)),
-        to: (view: (UIView, CGRect), navigationBar: (XZNavigationBar?, CGRect?)),
+        from: (view: (UIView, CGRect), navigationBar: (XZNavigationBarProtocol?, CGRect?)),
+        to: (view: (UIView, CGRect), navigationBar: (XZNavigationBarProtocol?, CGRect?)),
         navigationBar: (UINavigationBar?, CGRect?),
         tabBar: (UITabBar?, CGRect?),
         shadow: (UIView, CGRect),
