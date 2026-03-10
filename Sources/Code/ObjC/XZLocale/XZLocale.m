@@ -12,10 +12,10 @@
 #import "NSString+XZKit.h"
 @import ObjectiveC;
 
-XZLocaleLanguage              const XZLocaleLanguageChinese               = @"zh-Hans";
-XZLocaleLanguage              const XZLocaleLanguageChineseTraditional    = @"zh-Hant";
-XZLocaleLanguage              const XZLocaleLanguageEnglish               = @"en";
-NSNotificationName            const XZLocaleDidChangePreferredLanguageNotification = @"XZLocaleDidChangePreferredLanguageNotification";
+XZLocaleLanguage   const XZLocaleLanguageChinese            = @"zh-Hans";
+XZLocaleLanguage   const XZLocaleLanguageChineseTraditional = @"zh-Hant";
+XZLocaleLanguage   const XZLocaleLanguageEnglish            = @"en";
+NSNotificationName const XZLocaleDidChangePreferredLanguageNotification = @"XZLocaleDidChangePreferredLanguageNotification";
 
 /// 语言偏好设置在 NSUserDefaults 中的键名。
 static NSString * const AppleLanguages = @"AppleLanguages";
@@ -122,15 +122,15 @@ static BOOL _isInAppLanguagePreferencesSupported  = NO;
     });
 }
 
-+ (NSString *)localizedString:(NSString *)stringToBeLocalized fromTable:(NSString *)table inBundle:(NSBundle *)bundle defaultValue:(NSString *)defaultValue arguments:(va_list)arguments {
-    stringToBeLocalized = NSLocalizedStringWithDefaultValue(stringToBeLocalized, table, bundle, defaultValue, @"");
-    return [NSString xz_stringWithMarkup:(XZStringMarkupBraces) format:stringToBeLocalized arguments:arguments];
++ (NSString *)localizedStringForKey:(NSString *)key value:(NSString *)value table:(NSString *)table bundle:(NSBundle *)bundle arguments:(va_list)arguments {
+    key = NSLocalizedStringWithDefaultValue(key, table, bundle, value, @"");
+    return [NSString xz_stringWithMarkup:(XZStringMarkupBraces) format:key arguments:arguments];
 }
 
-+ (NSString *)localizedString:(NSString *)stringToBeLocalized fromTable:(NSString *)table inBundle:(NSBundle *)bundle defaultValue:(NSString *)defaultValue, ... {
++ (NSString *)localizedStringForKey:(NSString *)key value:(NSString *)value table:(NSString *)table bundle:(NSBundle *)bundle, ... {
     va_list arguments;
-    va_start(arguments, defaultValue);
-    NSString *localizedString = [self localizedString:stringToBeLocalized fromTable:table inBundle:bundle defaultValue:defaultValue arguments:arguments];
+    va_start(arguments, bundle);
+    NSString *localizedString = [self localizedStringForKey:key value:value table:table bundle:bundle arguments:arguments];
     va_end(arguments);
     return localizedString;
 }
