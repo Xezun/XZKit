@@ -31,16 +31,16 @@ import UIKit
 /// navigationBar.setBackgroundImage(UIImage(), for: .default)
 /// ```
 ///
-/// 定制化导航栏，可以通过 `navigationBar` 属性获取原生导航栏。
+/// 定制化导航栏，可以通过 ``uiNavigationBar`` 属性获取原生导航栏。
 ///
 /// 当原生导航栏的状态发生改变时，会自动将状态同步给定制化导航栏。
 /// 因此，为了避免**循环调用**，当定制化导航栏向原生导航栏同步状态时，需要调用以下方法，而不能直接同步。
 ///
 /// ```swift
 /// // self is the custom navigation bar
-/// self.synchronizeAppearance(for: .isHidden)
-/// self.synchronizeAppearance(for: .isTranslucent)
-/// self.synchronizeAppearance(for: .prefersLargeTitles)
+/// self.synchronizeHiddenAppearance()
+/// self.synchronizeTranslucentAppearance()
+/// self.synchronizeLargeTitlesAppearance()
 /// ```
 ///
 /// - Attention: 由于转场需要，定制化导航栏并不总是在原生导航栏之上，所以定制化导航栏需要单独设置 tintColor 的值，以避免转场过程中，导航栏颜色不一致的问题。
@@ -52,13 +52,6 @@ import UIKit
     /// 导航栏是否显示大标题模式。
     var prefersLargeTitles: Bool { get set }
     
-}
-
-/// 定制化的导航栏外观变化时，需要向原生导航栏同步的属性枚举。
-public enum XZNavigtionBarAppearanceAttribute {
-    case isHidden
-    case isTranslucent
-    case prefersLargeTitles
 }
 
 extension XZNavigationBarProtocol {

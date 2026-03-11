@@ -93,7 +93,7 @@ extension UINavigationController {
                 self.view.addSubview(newValue)
             }
             
-            // 将值同步到原生导航栏
+            // 绑定定制化导航栏
             self.navigationBar.xzNavigationBar = newValue;
         }
     }

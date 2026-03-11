@@ -40,6 +40,7 @@ import UIKit
     
     /// 在动画的过程中，只能拿到原生导航栏当前的状态，此属性记录了原生导航栏在转场前是否隐藏，以便控制转场效果。
     let isNavigationBarHidden: Bool
+    
     public var delegate: XZNavigationAnimationControllerDelegate?
     
     public init?(for navigationController: XZNavigationController, operation: UINavigationController.Operation, isInteractive: Bool, delegate: XZNavigationAnimationControllerDelegate?) {
@@ -57,7 +58,7 @@ import UIKit
     /// - Parameters:
     ///   - context: 参与转场的视图，以及视图的目标状态。
     open func prepareTransitionAnimations(with animationContext: XZNavigationAnimationContext) {
-        #XZLog("\(animationContext)")
+        #XZLog("\(animationContext)", in: .XZKit)
     }
     
     /// 执行转场动画。
@@ -80,6 +81,7 @@ import UIKit
             if let navigationBar = animationContext.from.navigationBar {
                 navigationBar.view.frame = navigationBar.finalFrame
             }
+            
             if let navigationBar = animationContext.to.navigationBar {
                 navigationBar.view.frame = navigationBar.finalFrame
             }
@@ -88,6 +90,7 @@ import UIKit
                 navigationController.view.frame = navigationController.finalFrame
                 navigationController.view.isFrozen = true
             }
+            
             if let tabBarController = animationContext.tabBar {
                 tabBarController.view.frame = tabBarController.finalFrame
                 tabBarController.view.isFrozen = true
@@ -178,7 +181,7 @@ extension XZNavigationAnimationController: UIViewControllerAnimatedTransitioning
         // 阴影
         let shadowFrame2 = containerView.bounds // vc 可能要比 containerView 小，不能直接用 vc 的 frame
         let shadowFrame1 = shadowFrame2.offsetBy(dx: direction * shadowFrame2.width, dy: 0);
-        let shadowView = XZNavigationShadowView.init(frame: shadowFrame1)
+        let shadowView = XZNavigationTransitionShadowView.init(frame: shadowFrame1)
         containerView.insertSubview(shadowView, belowSubview: toView)
         
         // 处理原生导航栏的转场动画效果：
@@ -342,7 +345,7 @@ extension XZNavigationAnimationController: UIViewControllerAnimatedTransitioning
         // 阴影
         let shadowFrame1 = containerView.bounds
         let shadowFrame2 = shadowFrame1.offsetBy(dx: direction * shadowFrame1.width, dy: 0)
-        let shadowView = XZNavigationShadowView.init(frame: shadowFrame1)
+        let shadowView = XZNavigationTransitionShadowView.init(frame: shadowFrame1)
         containerView.insertSubview(shadowView, belowSubview: fromView)
         
         // 转场容器与导航栏不在同一个层次上，坐标系需要转换。
@@ -554,7 +557,7 @@ public class XZNavigationAnimationContext: CustomStringConvertible {
 }
 
 /// 转场过程中的阴影视图。
-fileprivate class XZNavigationShadowView: UIView {
+fileprivate class XZNavigationTransitionShadowView: UIView {
     public override init(frame: CGRect) {
         super.init(frame: frame)
         self.backgroundColor     = UIColor.white

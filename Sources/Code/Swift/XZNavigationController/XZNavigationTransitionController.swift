@@ -403,11 +403,10 @@ extension XZNavigationTransitionController: UIGestureRecognizerDelegate {
     
 }
 
-/// 导航控制器 delegate 的 KVO 标记。
-@MainActor private var _context = 0
 /// 记录导航控制器的 delegate 是否已经进行了自定义化。
 @MainActor private var _isCustomized = 0
 @MainActor private var _isObserved = 0
+
 // 转场方法调用顺序
 //
 // Push 成功时：
@@ -451,6 +450,7 @@ extension XZNavigationTransitionController: UIGestureRecognizerDelegate {
 //    toVC: viewDidAppear(_:)
 //    navigationController(_:didShow:animated:)
 //    animationEnded(_:)
+//
 // Pop 取消时：
 //    navigationController(_:animationControllerFor:from:to:)
 //    navigationController(_:interactionControllerFor:)

@@ -224,7 +224,6 @@ NS_REFINED_FOR_SWIFT @interface XZToastTask : XZToast
 /// 进度轨道颜色。
 @property (nonatomic, nullable) UIColor * trackColor;
 
-
 /// 设置 toast 相对默认位置的偏移值。
 ///
 /// 默认偏移值：
@@ -247,7 +246,6 @@ NS_REFINED_FOR_SWIFT @interface XZToastTask : XZToast
 ///
 /// 比如在容器视图为滚动视图时，可通过调用此方法刷新位置，让 toast 跟随滚动。
 - (void)setNeedsLayoutToasts;
-
 
 /// 如果当前已经标记了需要更新布局，那么调用此方法会立即更新布局。
 ///

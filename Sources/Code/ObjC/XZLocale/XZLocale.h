@@ -144,7 +144,7 @@ FOUNDATION_EXPORT NSNotificationName const XZLocaleDidChangePreferredLanguageNot
 
 #ifndef XZLocalizedString
         
-#define _XZLocalTranslate(key, table, bundle, value, ...) [XZLocale localizedStringForKey:(key) value:(value) table:(table) bundle:(bundle), ##__VA_ARGS__, nil]
+#define _XZLocalTranslate(_key_, _table_, _bundle_, _value_, ...) [XZLocale localizedStringForKey:(_key_) value:(_value_) table:(_table_) bundle:(_bundle_), ##__VA_ARGS__, nil]
 
 #define _XZLocalImplement(_00, \
 _01, _02, _03, _04, _05, _06, _07, _08, _09, _10, \
