@@ -17,12 +17,12 @@ import UIKit
     /// - Parameters:
     ///   - animationController: 转场动画控制器
     ///   - transitionCompleted: 转场是否完成
-    func animationController(_ animationController: XZNavigationAnimationController, animationEnded transitionCompleted: Bool) -> Void
+    func animationController(_ animationController: XZNavigationAnimationController, didEndTransitionAnimation transitionCompleted: Bool) -> Void
     
 }
 
 /// 动画控制器，处理了导航控制器的转场过程中的动画效果。
-@MainActor open class XZNavigationAnimationController: NSObject {
+@MainActor open class XZNavigationAnimationController: NSObject, UIViewControllerAnimatedTransitioning {
     
     /// 导航控制器。
     public unowned let navigationController: XZNavigationController
@@ -38,11 +38,20 @@ import UIKit
         return interactiveTransition != nil
     }
     
+    /// 在转场开始前，导航栏是否隐藏。
+    ///
     /// 在动画的过程中，只能拿到原生导航栏当前的状态，此属性记录了原生导航栏在转场前是否隐藏，以便控制转场效果。
-    let isNavigationBarHidden: Bool
+    public let isNavigationBarHidden: Bool
     
-    public var delegate: XZNavigationAnimationControllerDelegate?
+    /// 代理。
+    public weak var delegate: XZNavigationAnimationControllerDelegate?
     
+    /// 初始化。
+    /// - Parameters:
+    ///   - navigationController: 导航控制器
+    ///   - operation: 导航类型
+    ///   - isInteractive: 是否为交互式转场
+    ///   - delegate: 接收事件的对象
     public init?(for navigationController: XZNavigationController, operation: UINavigationController.Operation, isInteractive: Bool, delegate: XZNavigationAnimationControllerDelegate?) {
         guard operation != .none else { return nil }
         self.navigationController  = navigationController
@@ -53,26 +62,22 @@ import UIKit
         super.init()
     }
     
-    /// 子类可通过修改`animationContext`中的`finalFrame`来自定义转场动画。
-    ///
-    /// - Parameters:
-    ///   - context: 参与转场的视图，以及视图的目标状态。
-    open func prepareTransitionAnimations(with animationContext: XZNavigationAnimationContext) {
-        #XZLog("\(animationContext)", in: .XZKit)
+    // MARK: - UIViewControllerAnimatedTransitioning
+    
+    open func transitionDuration(using transitionContext: UIViewControllerContextTransitioning?) -> TimeInterval {
+        return 0.35
     }
     
-    /// 执行转场动画。
-    ///
-    /// 默认本方法使用`UIView.animate(...)`执行所有转场视图，从当前状态到`finalFrame`状态之间的动画。
-    ///
-    /// 子类重写此方法，必须在动画结束时调用``cleanupTransitionAnimations(with:)``方法。
-    ///
-    /// - Parameters:
-    ///   - animationContext: 转场动画信息
-    open func executeTransitionAnimations(with animationContext: XZNavigationAnimationContext) {
-        let options  = animationContext.options
-        let delay    = animationContext.delay;
-        let duration = animationContext.duration;
+    /// 4. 配置转场动画。
+    open func animateTransition(using transitionContext: UIViewControllerContextTransitioning) {
+        guard let animationContext = XZNavigationAnimationContext(for: navigationController, isNavigationBarHidden, operation, transitionContext) else {
+            return transitionContext.completeTransition(false)
+        }
+        
+        let options  : UIView.AnimationOptions = [self.isInteractive ? .curveLinear : .curveEaseInOut, .layoutSubviews]
+        let delay    : TimeInterval            = 0
+        let duration : TimeInterval            = self.transitionDuration(using: transitionContext)
+        
         UIView.animate(withDuration: duration, delay: delay, options: options, animations: {
             animationContext.from.viewController.view.frame = animationContext.from.viewController.finalFrame;
             animationContext.to.viewController.view.frame   = animationContext.to.viewController.finalFrame;
@@ -96,47 +101,19 @@ import UIKit
                 tabBarController.view.isFrozen = true
             }
         }, completion: { _ in
-            self.cleanupTransitionAnimations(with: animationContext)
+            animationContext.navigationBar?.view.isFrozen = false
+            animationContext.tabBar?.view.isFrozen = false
+            
+            // 删除阴影。
+            animationContext.shadow.view.removeFromSuperview()
+
+            // 定制化导航栏在转场过程中，仅仅作为转场效果出现。将放置到导航栏上有导航控制器处理，所以这里要移除。
+            // uiNavigationBar.frame = containerView.convert(uiNavigationBarFrame1, to: uiNavigationBar.superview)
+            animationContext.from.navigationBar?.view.removeFromSuperview()
+            animationContext.to.navigationBar?.view.removeFromSuperview()
+            
+            transitionContext.completeTransition(!transitionContext.transitionWasCancelled)
         })
-    }
-    
-    /// 执行转场动画后的清理操作。
-    ///
-    /// 子类重写，应调用`super`以完成默认的清理操作。
-    ///
-    /// - Parameter animationContext: 转场动画信息
-    open func cleanupTransitionAnimations(with animationContext: XZNavigationAnimationContext) {
-        animationContext.navigationBar?.view.isFrozen = false
-        animationContext.tabBar?.view.isFrozen = false
-        
-        // 删除阴影。
-        animationContext.shadow.view.removeFromSuperview()
-
-        // 定制化导航栏在转场过程中，仅仅作为转场效果出现。将放置到导航栏上有导航控制器处理，所以这里要移除。
-        // uiNavigationBar.frame = containerView.convert(uiNavigationBarFrame1, to: uiNavigationBar.superview)
-        animationContext.from.navigationBar?.view.removeFromSuperview()
-        animationContext.to.navigationBar?.view.removeFromSuperview()
-        
-        animationContext.completeTransition()
-    }
-}
-
-extension XZNavigationAnimationController: UIViewControllerAnimatedTransitioning {
-    
-    open func transitionDuration(using transitionContext: UIViewControllerContextTransitioning?) -> TimeInterval {
-        return 0.35
-    }
-    
-    /// 4. 配置转场动画。
-    open func animateTransition(using transitionContext: UIViewControllerContextTransitioning) {
-        switch operation {
-        case .push:
-            animatePushTransition(using: transitionContext)
-        case .pop:
-            animatePopTransition(using: transitionContext)
-        default:
-            break
-        }
     }
     
     /// 6. 转场结束。
@@ -148,19 +125,82 @@ extension XZNavigationAnimationController: UIViewControllerAnimatedTransitioning
         // 在此取 navigationController.topViewController 可能并不准确，因为 viewDidAppear 比此方法先调用，
         // 如果在 viewDidAppear 中 push 了新的控制器，那么这里的获取到的 topViewController 就是新的控制器。
         // 因此在此方法中无法设置当前的定制化导航栏。
-        delegate?.animationController(self, animationEnded: transitionCompleted)
+        delegate?.animationController(self, didEndTransitionAnimation: transitionCompleted)
     }
     
-    /// 执行 Push 动画。
-    ///
-    /// - Parameter transitionContext: 转场信息。
-    private func animatePushTransition(using transitionContext: UIViewControllerContextTransitioning) {
+}
+
+/// 转场动画效果信息。
+@MainActor public class XZNavigationAnimationContext: @MainActor CustomStringConvertible {
+    
+    /// 原生转场信息。
+    private let context: UIViewControllerContextTransitioning
+    
+    /// 转场容器。
+    public var containerView: UIView {
+        return self.context.containerView
+    }
+    
+    /// 导航操作类型。
+    public let operation: UINavigationController.Operation
+    
+    /// 转场原始页面的视图、定制化 navigationBar 的信息。
+    public var from: (viewController: ViewContext<UIView>, navigationBar: ViewContext<XZNavigationBarProtocol>?)
+    
+    /// 转场目标页面的视图、定制化 navigationBar 的信息。
+    public var to: (viewController: ViewContext<UIView>, navigationBar: ViewContext<XZNavigationBarProtocol>?)
+    
+    /// 为转场提供阴影效果的视图的信息。
+    public var shadow: ViewContext<UIView>
+    
+    /// 原生 navigationBar 的转场信息。原生 navigationBar 不在转场容器内。
+    public var navigationBar: NavigationBarContext?
+    
+    /// 原生 tabBar 的转场信息。原生 navigationBar 不在转场容器内。
+    public var tabBar: TabBarContext?
+    
+    fileprivate init(
+        context: UIViewControllerContextTransitioning,
+        operation: UINavigationController.Operation,
+        from: (view: (UIView, CGRect), navigationBar: (XZNavigationBarProtocol?, CGRect?)),
+        to: (view: (UIView, CGRect), navigationBar: (XZNavigationBarProtocol?, CGRect?)),
+        navigationBar: (UINavigationBar?, CGRect?),
+        tabBar: (UITabBar?, CGRect?),
+        shadow: (UIView, CGRect)
+    ) {
+        self.context = context;
+        self.operation = operation;
+        self.from = (
+            ViewContext(view: from.view.0, frame: from.view.1),
+            ViewContext(from.navigationBar.0, from.navigationBar.1)
+        );
+        self.to = (
+            ViewContext(view: to.view.0, frame: to.view.1),
+            ViewContext(to.navigationBar.0, to.navigationBar.1)
+        );
+        self.navigationBar = NavigationBarContext(navigationBar.0, navigationBar.1);
+        self.tabBar = TabBarContext(tabBar.0, tabBar.1)
+        self.shadow = ViewContext(view: shadow.0, frame: shadow.1);
+    }
+    
+    public convenience init?(for navigationController: XZNavigationController, _ isNavigationBarHidden: Bool, _ operation: UINavigationController.Operation, _ transitionContext: UIViewControllerContextTransitioning) {
+        switch operation {
+        case .push:
+            self.init(for: navigationController, isNavigationBarHidden: isNavigationBarHidden, push: transitionContext)
+        case .pop:
+            self.init(for: navigationController, isNavigationBarHidden: isNavigationBarHidden, pop: transitionContext)
+        default:
+            return nil
+        }
+    }
+    
+    private convenience init?(for navigationController: XZNavigationController, isNavigationBarHidden: Bool, push transitionContext: UIViewControllerContextTransitioning) {
         guard let fromVC   = transitionContext.viewController(forKey: .from),
               let fromView = transitionContext.view(forKey: .from),
               let toVC     = transitionContext.viewController(forKey: .to),
               let toView   = transitionContext.view(forKey: .to)
         else {
-            return transitionContext.completeTransition(false)
+            return nil
         }
         
         let containerView = transitionContext.containerView
@@ -260,7 +300,7 @@ extension XZNavigationAnimationController: UIViewControllerAnimatedTransitioning
             toNavigationBar!.frame = uiNavigationBarFrame1.offsetBy(dx: uiNavigationBarFrame1.width * direction, dy: 0)
             toNavigationBarFrame2 = uiNavigationBarFrame1;
             // 根据导航栏转场前的状态，判断from页面是否有定制化导航栏
-            if self.isNavigationBarHidden {
+            if isNavigationBarHidden {
                 // fromView 不显示原生导航栏，且没有定制化导航栏或定制化导航栏隐藏
                 uiNavigationBarFrame2 = uiNavigationBarFrame1.offsetBy(dx: uiNavigationBarFrame1.width, dy: 0);
                 uiNavigationBar.frame = uiNavigationBarFrame2!
@@ -299,32 +339,24 @@ extension XZNavigationAnimationController: UIViewControllerAnimatedTransitioning
             }
         }
         
-        let context = XZNavigationAnimationContext(
+        self.init(
             context: transitionContext,
             operation: .push,
             from: ((fromView, fromViewFrame2), (fromNavigationBar, fromNavigationBarFrame2)),
             to: ((toView, toViewFrame2), (toNavigationBar, toNavigationBarFrame2)),
             navigationBar: (uiNavigationBar, uiNavigationBarFrame2),
             tabBar: (tabBar, tabBarFrame2),
-            shadow: (shadowView, shadowFrame2),
-            options: [self.isInteractive ? .curveLinear : .curveEaseInOut, .layoutSubviews],
-            duration: self.transitionDuration(using: transitionContext)
+            shadow: (shadowView, shadowFrame2)
         )
-        
-        prepareTransitionAnimations(with: context)
-        executeTransitionAnimations(with: context);
     }
 
-    /// 执行 pop 动画。
-    ///
-    /// - Parameter transitionContext: 转场信息。
-    private func animatePopTransition(using transitionContext: UIViewControllerContextTransitioning) {
+    private convenience init?(for navigationController: XZNavigationController, isNavigationBarHidden: Bool, pop transitionContext: UIViewControllerContextTransitioning) {
         guard let fromVC   = transitionContext.viewController(forKey: .from),
               let fromView = transitionContext.view(forKey: .from),
               let toVC     = transitionContext.viewController(forKey: .to),
               let toView   = transitionContext.view(forKey: .to)
         else {
-            return transitionContext.completeTransition(false)
+            return nil
         }
         
         let containerView = transitionContext.containerView
@@ -393,7 +425,7 @@ extension XZNavigationAnimationController: UIViewControllerAnimatedTransitioning
             toNavigationBar!.frame = uiNavigationBarFrame1.offsetBy(dx: -uiNavigationBarFrame1.width * 0.34 * direction, dy: 0);
             toNavigationBarFrame2 = uiNavigationBarFrame1;
             
-            if self.isNavigationBarHidden {
+            if isNavigationBarHidden {
                 uiNavigationBarFrame2 = uiNavigationBarFrame1.offsetBy(dx: uiNavigationBarFrame1.width, dy: 0);
                 uiNavigationBar.frame = uiNavigationBarFrame2!
             } else {
@@ -423,92 +455,15 @@ extension XZNavigationAnimationController: UIViewControllerAnimatedTransitioning
             }
         }
         
-        let context = XZNavigationAnimationContext(
+        self.init(
             context: transitionContext,
             operation: .pop,
             from: ((fromView, fromViewFrame2), (fromNavigationBar, fromNavigationBarFrame2)),
             to: ((toView, toViewFrame2), (toNavigationBar, toNavigationBarFrame2)),
             navigationBar: (uiNavigationBar, uiNavigationBarFrame2),
             tabBar: (tabBar, tabBarFrame2),
-            shadow: (shadowView, shadowFrame2),
-            options: [self.isInteractive ? .curveLinear : .curveEaseInOut, .layoutSubviews],
-            duration: self.transitionDuration(using: transitionContext)
+            shadow: (shadowView, shadowFrame2)
         )
-        
-        prepareTransitionAnimations(with: context);
-        executeTransitionAnimations(with: context);
-    }
-    
-}
-
-/// 转场动画效果信息。
-public class XZNavigationAnimationContext: CustomStringConvertible {
-    
-    /// 原生转场信息。
-    private let context: UIViewControllerContextTransitioning
-    
-    /// 转场容器。
-    public var containerView: UIView {
-        return self.context.containerView
-    }
-    
-    /// 导航操作类型。
-    public let operation: UINavigationController.Operation
-    
-    /// 转场原始页面的视图、定制化 navigationBar 的信息。
-    public var from: (viewController: ViewContext<UIView>, navigationBar: ViewContext<XZNavigationBarProtocol>?)
-    
-    /// 转场目标页面的视图、定制化 navigationBar 的信息。
-    public var to: (viewController: ViewContext<UIView>, navigationBar: ViewContext<XZNavigationBarProtocol>?)
-    
-    /// 为转场提供阴影效果的视图的信息。
-    public var shadow: ViewContext<UIView>
-    
-    /// 原生 navigationBar 的转场信息。原生 navigationBar 不在转场容器内。
-    public var navigationBar: NavigationBarContext?
-    /// 原生 tabBar 的转场信息。原生 navigationBar 不在转场容器内。
-    public var tabBar: TabBarContext?
-    
-    /// 转场动画选项。
-    public var options: UIView.AnimationOptions
-    
-    /// 转场动画延时。效果未知。
-    public var delay: TimeInterval = 0
-    
-    /// 转场时长。
-    public let duration: TimeInterval
-    
-    /// 转场结束必须调用此方法。
-    public func completeTransition() {
-        context.completeTransition(!context.transitionWasCancelled)
-    }
-    
-    fileprivate init(
-        context: UIViewControllerContextTransitioning,
-        operation: UINavigationController.Operation,
-        from: (view: (UIView, CGRect), navigationBar: (XZNavigationBarProtocol?, CGRect?)),
-        to: (view: (UIView, CGRect), navigationBar: (XZNavigationBarProtocol?, CGRect?)),
-        navigationBar: (UINavigationBar?, CGRect?),
-        tabBar: (UITabBar?, CGRect?),
-        shadow: (UIView, CGRect),
-        options: UIView.AnimationOptions,
-        duration: TimeInterval
-    ) {
-        self.context = context;
-        self.operation = operation;
-        self.from = (
-            ViewContext(view: from.view.0, frame: from.view.1),
-            ViewContext(from.navigationBar.0, from.navigationBar.1)
-        );
-        self.to = (
-            ViewContext(view: to.view.0, frame: to.view.1),
-            ViewContext(to.navigationBar.0, to.navigationBar.1)
-        );
-        self.navigationBar = NavigationBarContext(navigationBar.0, navigationBar.1);
-        self.tabBar = TabBarContext(tabBar.0, tabBar.1)
-        self.shadow = ViewContext(view: shadow.0, frame: shadow.1);
-        self.options = options
-        self.duration = duration
     }
     
     private func string(from rect: CGRect?) -> String {

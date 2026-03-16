@@ -157,7 +157,7 @@ extension XZNavigationTransitionController: UINavigationControllerDelegate {
     
     /// 1. 获取转场动画控制器。
     public func navigationController(_ navigationController: UINavigationController, animationControllerFor operation: UINavigationController.Operation, from fromVC: UIViewController, to toVC: UIViewController) -> UIViewControllerAnimatedTransitioning? {
-        #XZLog("自定义转场开始: \(operation)")
+        #XZLog("自定义转场开始: \(operation)", in: .XZKit)
         if animationController == nil {
             animationController = XZNavigationAnimationController.init(for: self.navigationController, operation: operation, isInteractive: false, delegate: self)
         }
@@ -173,7 +173,7 @@ extension XZNavigationTransitionController: UINavigationControllerDelegate {
 
 extension XZNavigationTransitionController: XZNavigationAnimationControllerDelegate {
     
-    public func animationController(_ animationController: XZNavigationAnimationController, animationEnded transitionCompleted: Bool) {
+    public func animationController(_ animationController: XZNavigationAnimationController, didEndTransitionAnimation transitionCompleted: Bool) {
         self.animationController = nil;
     }
     
