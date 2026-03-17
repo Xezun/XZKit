@@ -43,6 +43,8 @@ import UIKit
     /// 在动画的过程中，只能拿到原生导航栏当前的状态，此属性记录了原生导航栏在转场前是否隐藏，以便控制转场效果。
     public let isNavigationBarHidden: Bool
     
+    public let initialContext: (navigationBar: (isHidden: Bool), tabBar: (isHidden: Bool))
+    
     /// 代理。
     public weak var delegate: XZNavigationAnimationControllerDelegate?
     
@@ -58,7 +60,7 @@ import UIKit
         self.operation             = operation
         self.interactiveTransition = (isInteractive ? UIPercentDrivenInteractiveTransition() : nil)
         self.isNavigationBarHidden = navigationController.isNavigationBarHidden
-        self.delegate = delegate
+        self.delegate              = delegate
         super.init()
     }
     

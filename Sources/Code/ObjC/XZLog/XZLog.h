@@ -23,17 +23,6 @@ NS_ASSUME_NONNULL_BEGIN
 /// 宏 `XZLog` 的用法与 `NSLog` 函数类似，但是宏 `XZLog` 在编译时会展开为此函数。
 /// 
 /// 通过 NSLog 输出到控制台，如果待输出内容过大，则分批次输出，避免输出内容不完整。
-/// 
-/// ```objc
-/// // 有大概 1017 的长度限制
-/// NSLog(@"The message is %@", message);
-/// // 似乎没有长度限制
-/// NSLog(@"%@", [NSString stringWithFormat:@"The message is %@", message]);
-/// ```
-/// 
-/// 此函数使用 `NSLog` 进行输出，而不是 `printf` 等函数，以避免控制台日志互相嵌套的问题。
-/// 
-/// > 自 iOS 10 之后，有迹象表明 NSLog 底层已由 ASL 切换为 OSLog 框架，或者使用了与 OSLog 相同的更底层框架，虽然官方没有明确说明。
 ///
 /// - Parameters:
 ///   - file: 日志语句所在的文件名
@@ -56,7 +45,55 @@ FOUNDATION_EXPORT void XZLogs(XZLogSystem *system, NSString *file, NSInteger lin
 /// - Parameter format: 日志内容
 FOUNDATION_EXTERN void XZLog(XZLogSystem *system, NSString *format, ...) XZ_LOG_ATTR(2, 3, "Use #XZLog instead");
 
-/// 宏，使用默认日志系统输出日志。
+/// 宏，使用 ``NSLog`` 输出日志。
+///
+/// #### 长度限制
+///
+/// 由于 `NSLog` 对输出日志内容长度有限制，所以 `XZLog` 会将超过 1017 个字符的日志内容分段输出。
+///
+/// ```objc
+/// // 有大概 1017 的长度限制
+/// NSLog(@"The message is %@", message);
+/// // 似乎没有长度限制
+/// NSLog(@"%@", [NSString stringWithFormat:@"The message is %@", message]);
+/// ```
+///
+/// #### 日志互嵌
+///
+/// 同时多个不同的函数输出日志，比如 `printf` 函数，即使文档表明这些函数是原子性的，还是可能会在控制台产生互嵌的日志，所以 `XZLog` 使用 `NSLog` 进行输出。
+///
+/// 通过溯源原代码，在 CF-1153.18 源文件 CFUtilities.c 中可以找到 `NSLog` 函数的源码：
+///
+/// ```objc
+/// // NSLog() => CFLog() => _CFLogvEx() => __CFLogCString() =>
+/// #if DEPLOYMENT_TARGET_MACOSX || DEPLOYMENT_TARGET_EMBEDDED || DEPLOYMENT_TARGET_EMBEDDED_MINI
+///     writev(STDERR_FILENO)
+/// #elif DEPLOYMENT_TARGET_WINDOWS
+///     fprintf_s(stderr)
+/// #else
+///     fprintf(stderr)
+/// #endif
+/// ```
+///
+/// 通过搜索 `DEPLOYMENT_TARGET_EMBEDDED` 宏，在 CFBundle\_Resources.c 的 320-321 行可以找到如下代码。
+///
+/// ```objc
+/// #elif DEPLOYMENT_TARGET_EMBEDDED || DEPLOYMENT_TARGET_EMBEDDED_MINI
+///     return CFSTR("iPhoneOS");
+/// ```
+///
+/// 所以可以确定，在 iOS 平台 `NSLog` 最终使用的是 `writev` 函数输出日志，并且使用了 `CFLock_t` 保证线程安全。
+/// 由于函数 `\__CFLogCString()` 是 static 私有函数，所以我们无法直接使用这个函数来输出日志。
+///
+/// > 自 iOS 10 之后，有迹象表明 NSLog 底层已由 ASL 切换为 OSLog 框架，或者使用了与 OSLog 相同的更底层框架，虽然官方没有明确说明。
+///
+/// #### 日志文件
+///
+/// 函数``fprintf``的第一个参数可指定日志文件，可使用如下几个值。
+///
+/// - stderr: 标准错误输出，立即输出到屏幕。
+/// - stdout: 标准输出，当遇到刷新标志（比如换行）或缓冲满时，才把缓冲的数据输出到设备中。
+/// - STDERR_FILENO: 与 stderr 相同
 ///
 /// - SeeAlso: ``XZLogv``
 /// - Parameter format: 日志内容
@@ -70,27 +107,5 @@ FOUNDATION_EXTERN void XZLog(NSString *format, ...) XZ_LOG_ATTR(1, 2, "Use #XZLo
 #else
 #define XZLog(...)
 #endif
-
-
-// 关于重写 NSLog 的一点笔记
-// stderr: 标准错误输出，立即输出到屏幕。
-// stdout: 标准输出，当遇到刷新标志（比如换行）或缓冲满时，才把缓冲的数据输出到设备中。
-// STDERR_FILENO: 与 stderr 相同
-//
-// 经过溯源原代码，在 CF-1153.18 源文件 CFUtilities.c 中可以找到 NSLog 函数的源码：
-//     NSLog() => CFLog() => _CFLogvEx() => __CFLogCString() =>
-//     #if DEPLOYMENT_TARGET_MACOSX || DEPLOYMENT_TARGET_EMBEDDED || DEPLOYMENT_TARGET_EMBEDDED_MINI
-//         => writev(STDERR_FILENO)
-//     #elif DEPLOYMENT_TARGET_WINDOWS
-//         => fprintf_s(stderr)
-//     #else
-//         => fprintf(stderr)
-//     #endif
-// 而在 CFBundle_Resources.c 文件的 320-321 行
-//     #elif DEPLOYMENT_TARGET_EMBEDDED || DEPLOYMENT_TARGET_EMBEDDED_MINI
-//         return CFSTR("iPhoneOS");
-// 所以在 iOS 平台，NSLog 最终使用的是 writev 函数输出日志，并且使用了 CFLock_t 保证线程安全。
-// 而且函数 __CFLogCString() 是 static 局部函数，保证 writev 线程安全的 CFLock_t 锁也是局部的，
-// 并不能被访问，而如果使用其它函数在控制台输出，就会不可避免出现与 NSLog 的输出内容互相嵌入的情况。
 
 NS_ASSUME_NONNULL_END
