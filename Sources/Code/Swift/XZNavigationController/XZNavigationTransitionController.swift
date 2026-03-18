@@ -13,6 +13,7 @@ import ObjectiveC
     
     /// 导航手势对象。
     public let interactiveNavigationGestureRecognizer: UIPanGestureRecognizer
+    
     /// 导航控制器。
     public unowned let navigationController: XZNavigationController
     
@@ -157,7 +158,7 @@ extension XZNavigationTransitionController: UINavigationControllerDelegate {
     
     /// 1. 获取转场动画控制器。
     public func navigationController(_ navigationController: UINavigationController, animationControllerFor operation: UINavigationController.Operation, from fromVC: UIViewController, to toVC: UIViewController) -> UIViewControllerAnimatedTransitioning? {
-        #XZLog("自定义转场开始: \(operation)", in: .XZKit)
+        #XZLog("[XZNavigationController] 转场开始: \(navigationController) \(operation)", in: .XZKit)
         if animationController == nil {
             animationController = XZNavigationAnimationController.init(for: self.navigationController, operation: operation, isInteractive: false, delegate: self)
         }
@@ -166,7 +167,8 @@ extension XZNavigationTransitionController: UINavigationControllerDelegate {
     
     /// 2. 动画控制器的交互控制器。
     public func navigationController(_ navigationController: UINavigationController, interactionControllerFor animationController: UIViewControllerAnimatedTransitioning) -> UIViewControllerInteractiveTransitioning? {
-        return (animationController as? XZNavigationAnimationController)?.interactiveTransition
+        #XZLog("[XZNavigationController] 交互式转场: \(navigationController) \(animationController)", in: .XZKit)
+        return (animationController as? XZNavigationAnimationController)?.interactionController
     }
     
 }
@@ -174,6 +176,7 @@ extension XZNavigationTransitionController: UINavigationControllerDelegate {
 extension XZNavigationTransitionController: XZNavigationAnimationControllerDelegate {
     
     public func animationController(_ animationController: XZNavigationAnimationController, didEndTransitionAnimation transitionCompleted: Bool) {
+        #XZLog("[XZNavigationController] 转场结束: \(animationController) \(transitionCompleted)", in: .XZKit)
         self.animationController = nil;
     }
     
@@ -235,7 +238,7 @@ extension XZNavigationTransitionController {
     /// 当手势状态发生改变是，更新动画。
     private func interactiveNavigationGestureRecognizerDidChange(_ panGestureRecognizer: UIPanGestureRecognizer) {
         guard let animationController = self.animationController else { return }
-        guard let interactionController = animationController.interactiveTransition else { return }
+        guard let interactionController = animationController.interactionController else { return }
         
         let t = panGestureRecognizer.translation(in: nil)
         let d = t.x / navigationController.view.bounds.width
@@ -260,7 +263,7 @@ extension XZNavigationTransitionController {
     /// 手势结束了。
     private func interactiveNavigationGestureRecognizerDidEnd(_ panGestureRecognizer: UIPanGestureRecognizer) {
         guard let animationController = self.animationController else { return }
-        guard let interactiveTransition = animationController.interactiveTransition else { return }
+        guard let interactiveTransition = animationController.interactionController else { return }
         
         let velocity = panGestureRecognizer.velocity(in: nil).x
         let PERCENT: CGFloat = 0.4

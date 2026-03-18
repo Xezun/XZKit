@@ -31,19 +31,12 @@ import UIKit
     public let operation: UINavigationController.Operation
     
     /// 此属性存在时，表示当前是一个交互式转场。
-    public let interactiveTransition: UIPercentDrivenInteractiveTransition?
+    public let interactionController: UIPercentDrivenInteractiveTransition?
     
     /// 是否为交互性动画。
     public var isInteractive: Bool {
-        return interactiveTransition != nil
+        return interactionController != nil
     }
-    
-    /// 在转场开始前，导航栏是否隐藏。
-    ///
-    /// 在动画的过程中，只能拿到原生导航栏当前的状态，此属性记录了原生导航栏在转场前是否隐藏，以便控制转场效果。
-    public let isNavigationBarHidden: Bool
-    
-    public let initialContext: (navigationBar: (isHidden: Bool), tabBar: (isHidden: Bool))
     
     /// 代理。
     public weak var delegate: XZNavigationAnimationControllerDelegate?
@@ -58,11 +51,16 @@ import UIKit
         guard operation != .none else { return nil }
         self.navigationController  = navigationController
         self.operation             = operation
-        self.interactiveTransition = (isInteractive ? UIPercentDrivenInteractiveTransition() : nil)
-        self.isNavigationBarHidden = navigationController.isNavigationBarHidden
+        self.interactionController = (isInteractive ? UIPercentDrivenInteractiveTransition() : nil)
+        self.navigationBar = (navigationController.isNavigationBarHidden, navigationController.navigationBar.frame)
         self.delegate              = delegate
         super.init()
     }
+    
+    /// 在转场开始前，导航栏是否隐藏。
+    ///
+    /// 在动画的过程中，只能拿到原生导航栏当前的状态，此属性记录了原生导航栏在转场前是否隐藏，以便控制转场效果。
+    fileprivate let navigationBar: (isHidden: Bool, frame: CGRect)
     
     // MARK: - UIViewControllerAnimatedTransitioning
     
@@ -72,9 +70,10 @@ import UIKit
     
     /// 4. 配置转场动画。
     open func animateTransition(using transitionContext: UIViewControllerContextTransitioning) {
-        guard let animationContext = XZNavigationAnimationContext(for: navigationController, isNavigationBarHidden, operation, transitionContext) else {
+        guard let animationContext = XZNavigationAnimationContext(for: self, operation, transitionContext) else {
             return transitionContext.completeTransition(false)
         }
+        #XZLog("[XZNavigationController] 配置转场动画 \(transitionContext) \n\(animationContext)", in: .XZKit)
         
         let options  : UIView.AnimationOptions = [self.isInteractive ? .curveLinear : .curveEaseInOut, .layoutSubviews]
         let delay    : TimeInterval            = 0
@@ -93,14 +92,14 @@ import UIKit
                 navigationBar.view.frame = navigationBar.finalFrame
             }
             
-            if let navigationController = animationContext.navigationBar {
-                navigationController.view.frame = navigationController.finalFrame
-                navigationController.view.isFrozen = true
+            if let navigationBar = animationContext.navigationBar {
+                navigationBar.view.frame = navigationBar.finalFrame
+                navigationBar.view.isFrozen = true
             }
             
-            if let tabBarController = animationContext.tabBar {
-                tabBarController.view.frame = tabBarController.finalFrame
-                tabBarController.view.isFrozen = true
+            if let tabBar = animationContext.tabBar {
+                tabBar.view.frame = tabBar.finalFrame
+                tabBar.view.isFrozen = true
             }
         }, completion: { _ in
             animationContext.navigationBar?.view.isFrozen = false
@@ -185,18 +184,18 @@ import UIKit
         self.shadow = ViewContext(view: shadow.0, frame: shadow.1);
     }
     
-    public convenience init?(for navigationController: XZNavigationController, _ isNavigationBarHidden: Bool, _ operation: UINavigationController.Operation, _ transitionContext: UIViewControllerContextTransitioning) {
+    public convenience init?(for animationController: XZNavigationAnimationController, _ operation: UINavigationController.Operation, _ transitionContext: UIViewControllerContextTransitioning) {
         switch operation {
         case .push:
-            self.init(for: navigationController, isNavigationBarHidden: isNavigationBarHidden, push: transitionContext)
+            self.init(for: animationController, pushContext: transitionContext)
         case .pop:
-            self.init(for: navigationController, isNavigationBarHidden: isNavigationBarHidden, pop: transitionContext)
+            self.init(for: animationController, popContext: transitionContext)
         default:
             return nil
         }
     }
     
-    private convenience init?(for navigationController: XZNavigationController, isNavigationBarHidden: Bool, push transitionContext: UIViewControllerContextTransitioning) {
+    private convenience init?(for animationController: XZNavigationAnimationController, pushContext transitionContext: UIViewControllerContextTransitioning) {
         guard let fromVC   = transitionContext.viewController(forKey: .from),
               let fromView = transitionContext.view(forKey: .from),
               let toVC     = transitionContext.viewController(forKey: .to),
@@ -205,6 +204,7 @@ import UIKit
             return nil
         }
         
+        let rootView = animationController.navigationController.view!
         let containerView = transitionContext.containerView
         let direction: CGFloat = containerView.effectiveUserInterfaceLayoutDirection == .leftToRight ? 1.0 : -1.0
         
@@ -244,9 +244,11 @@ import UIKit
         // 1、由于原生导航栏层级比转场视图高，所以从原生导航栏与定制化导航栏互相转场时，原生导航栏若不透明，则会遮挡住转场过程的阴影。
         //
         
-        let uiNavigationBar = navigationController.navigationBar // 系统导航栏。
-        let uiNavigationBarFrame1 = uiNavigationBar.convert(uiNavigationBar.bounds, to: containerView);
-        var uiNavigationBarFrame2: CGRect?
+        let uiNavigationBar = animationController.navigationController.navigationBar // 系统导航栏。
+        let uiNavigationBarFrame1 = animationController.navigationBar.frame;
+        var uiNavigationBarFrame2 = uiNavigationBar.frame
+        let uiNavigationBarRect1  = rootView.convert(uiNavigationBarFrame1, to: containerView);
+        let uiNavigationBarRect2  = rootView.convert(uiNavigationBarFrame2, to: containerView)
         
         let fromNavigationBar = (fromVC as? XZNavigationBarCustomizable)?.xzNavigationBar
         var fromNavigationBarFrame2: CGRect?
@@ -268,51 +270,63 @@ import UIKit
         
         // 根据转场状态，配置原生导航栏和定制化导航栏的转场行为
         if fromNavigationBarFrame2 != nil && toNavigationBarFrame2 != nil {
-            // 导航栏：一直显示
-            // from 导航栏保持原始状态
-            let fromNavigationBarFrame1 = uiNavigationBar.superview!.convert(fromNavigationBar!.frame, to: containerView)
+            // from 有定制化导航栏，大小保持不变
+            let fromNavigationBarFrame1 = rootView.convert(fromNavigationBar!.frame, to: containerView)
             fromNavigationBar!.frame = fromNavigationBarFrame1
-            fromNavigationBarFrame2 = fromNavigationBarFrame1.offsetBy(dx: -uiNavigationBarFrame1.width * 0.34 * direction, dy: 0);
-            toNavigationBar!.frame = uiNavigationBarFrame1.offsetBy(dx: uiNavigationBarFrame1.width * direction, dy: 0)
-            toNavigationBarFrame2 = uiNavigationBarFrame1;
-            // 将原生导航栏，上移至屏幕外
-            // 不能上移，否则会影响页面安全区，从而导致页面在转场的过程中，新页面发生抖动。
+            fromNavigationBarFrame2  = fromNavigationBarFrame1.offsetBy(dx: -fromNavigationBarFrame1.width * 0.34 * direction, dy: 0);
+            
+            // to 有定制化导航栏，以最终状态跟随 to 入场
+            toNavigationBarFrame2 = uiNavigationBarRect2
+            toNavigationBar!.frame = uiNavigationBarRect2.offsetBy(dx: +uiNavigationBarRect2.width * direction, dy: 0)
+            
+            // 将原生导航栏，移至屏幕外：不能上移，否则会影响页面安全区，从而导致页面在转场的过程中，新页面发生抖动。
             // 在 iOS 26 中，以默认的堆叠模式呈现的导航控制器，在 Push 新控制器时，上移导航条，会导致 safeAreaInsets 改变。
-            uiNavigationBarFrame2 = uiNavigationBarFrame1.offsetBy(dx: uiNavigationBarFrame1.width, dy: 0);
-            uiNavigationBar.frame = uiNavigationBarFrame2!
+            uiNavigationBarFrame2 = uiNavigationBarFrame2.offsetBy(dx: -uiNavigationBarFrame2.width, dy: 0);
+            uiNavigationBar.frame = uiNavigationBarFrame2
         } else if fromNavigationBarFrame2 != nil {
-            // 定制化导航栏：显示 => 隐藏
-            let fromNavigationBarFrame1 = uiNavigationBar.superview!.convert(fromNavigationBar!.frame, to: containerView)
+            // from 有定制化导航栏
+            let fromNavigationBarFrame1 = rootView.convert(fromNavigationBar!.frame, to: containerView)
             fromNavigationBar!.frame = fromNavigationBarFrame1
-            fromNavigationBarFrame2 = fromNavigationBarFrame1.offsetBy(dx: -uiNavigationBarFrame1.width * 0.34 * direction, dy: 0);
-            // 根据原生导航栏的状态，判断 toView 是否显示原生导航栏
-            if navigationController.isNavigationBarHidden {
-                // toView 不显示原生导航栏，且没有定制化导航栏或定制化导航栏隐藏
-                // 因为原生导航栏可能有隐藏动画，将原生导航栏，上移至屏幕外，避免与遮挡定制化导航栏
-                // 如果只向上移一个单位，可能会有阴影或模糊效果会覆盖在定制化导航栏上
-                uiNavigationBarFrame2 = uiNavigationBarFrame1.offsetBy(dx: uiNavigationBarFrame1.width, dy: 0);
-                uiNavigationBar.frame = uiNavigationBarFrame2!
+            fromNavigationBarFrame2  = fromNavigationBarFrame1.offsetBy(dx: -fromNavigationBarFrame1.width * 0.34 * direction, dy: 0);
+            
+            // to 无定制化导航栏
+            if animationController.navigationController.isNavigationBarHidden {
+                // to 无原生导航栏
+                uiNavigationBarFrame2 = uiNavigationBarFrame2.offsetBy(dx: -uiNavigationBarFrame2.width, dy: 0);
+                uiNavigationBar.frame = uiNavigationBarFrame2
             } else {
-                // toView 显示原生导航栏，原生导航栏随目标页面一起入场
-                uiNavigationBar.frame = uiNavigationBarFrame1.offsetBy(dx: uiNavigationBarFrame1.width * direction, dy: 0);
-                uiNavigationBarFrame2 = uiNavigationBarFrame1
+                // to 有原生导航栏，随 to 一起入场
+                uiNavigationBar.frame = uiNavigationBarFrame2.offsetBy(dx: +uiNavigationBarFrame2.width * direction, dy: 0)
             }
         } else if toNavigationBarFrame2 != nil {
-            // 定制化导航栏：隐藏 => 显示
-            toNavigationBar!.frame = uiNavigationBarFrame1.offsetBy(dx: uiNavigationBarFrame1.width * direction, dy: 0)
-            toNavigationBarFrame2 = uiNavigationBarFrame1;
-            // 根据导航栏转场前的状态，判断from页面是否有定制化导航栏
-            if isNavigationBarHidden {
-                // fromView 不显示原生导航栏，且没有定制化导航栏或定制化导航栏隐藏
-                uiNavigationBarFrame2 = uiNavigationBarFrame1.offsetBy(dx: uiNavigationBarFrame1.width, dy: 0);
-                uiNavigationBar.frame = uiNavigationBarFrame2!
+            // from 无定制化导航栏
+            if animationController.navigationBar.isHidden {
+                // from 无原生导航栏
+                uiNavigationBarFrame2 = uiNavigationBarFrame2.offsetBy(dx: -uiNavigationBarFrame2.width, dy: 0);
+                uiNavigationBar.frame = uiNavigationBarFrame2
             } else {
-                // fromView 显示原生导航栏，原生导航栏随 fromView 一起退场
-                // 原生导航栏随 fromView 一起退场，由于 toView 无法覆盖原生导航栏，原生导航栏 100% 退场。
-                uiNavigationBarFrame2 = uiNavigationBarFrame1.offsetBy(dx: -uiNavigationBarFrame1.width * direction, dy: 0);
+                // from 有原生导航栏，随 from 一起退场
+                // 由于 toView 无法覆盖原生导航栏，原生导航栏 100% 退场。
+                uiNavigationBar.frame = uiNavigationBarFrame1;
+                uiNavigationBarFrame2 = uiNavigationBarFrame2.offsetBy(dx: -uiNavigationBarFrame2.width * direction, dy: 0);
             }
+            
+            // to 有定制化导航栏，跟随入场
+            toNavigationBar!.frame = uiNavigationBarRect2.offsetBy(dx: uiNavigationBarRect2.width * direction, dy: 0)
+            toNavigationBarFrame2 = uiNavigationBarRect2;
         } else {
-            // nav bar is hidden
+            if animationController.navigationController.isNavigationBarHidden && animationController.navigationBar.isHidden {
+                // 原生导航条始终隐藏
+            } else if (animationController.navigationController.isNavigationBarHidden) {
+                // 原生导航条，从显示到隐藏
+                uiNavigationBar.frame = uiNavigationBarFrame1;
+                uiNavigationBarFrame2 = uiNavigationBarFrame2.offsetBy(dx: -uiNavigationBarFrame2.width * direction, dy: 0);
+            } else if (animationController.navigationBar.isHidden) {
+                // 原生导航条，从隐藏到显示
+                uiNavigationBar.frame = uiNavigationBarFrame2.offsetBy(dx: +uiNavigationBarFrame2.width * direction, dy: 0)
+            } else {
+                // 原生导航条始终显示
+            }
         }
         
         // 解决因为状态栏变化而造成的导航栏布局问题：
@@ -322,7 +336,7 @@ import UIKit
         // 解决原生导航条布局问题：
         // 如果转场的两个定制化导航栏，其中一个是大标题模式，
         // 原生的导航栏虽然向上移动到了屏幕之外，但是其内容，比如标题或按钮，还是会覆盖定制化导航条。
-        uiNavigationBar.layoutIfNeeded()
+//         uiNavigationBar.layoutIfNeeded()
         
         // 由于 tabBar 在最顶层，所以平移一个屏宽，而非三分之一。
         // 定制页签栏的转场效果的原因：
@@ -330,8 +344,8 @@ import UIKit
         // 2、页签栏透明时，转场没有平移效果。
         var tabBar: UITabBar?
         var tabBarFrame2 = CGRect.zero
-        if let tabBarController = navigationController.tabBarController {
-            let viewControllers = navigationController.viewControllers
+        if let tabBarController = animationController.navigationController.tabBarController {
+            let viewControllers = animationController.navigationController.viewControllers
             if toVC.hidesBottomBarWhenPushed {
                 if !viewControllers[0 ..< viewControllers.count - 1].contains(where: { $0.hidesBottomBarWhenPushed }) {
                     tabBar = tabBarController.tabBar
@@ -352,7 +366,7 @@ import UIKit
         )
     }
 
-    private convenience init?(for navigationController: XZNavigationController, isNavigationBarHidden: Bool, pop transitionContext: UIViewControllerContextTransitioning) {
+    private convenience init?(for animationController: XZNavigationAnimationController, popContext transitionContext: UIViewControllerContextTransitioning) {
         guard let fromVC   = transitionContext.viewController(forKey: .from),
               let fromView = transitionContext.view(forKey: .from),
               let toVC     = transitionContext.viewController(forKey: .to),
@@ -361,6 +375,7 @@ import UIKit
             return nil
         }
         
+        let rootView = animationController.navigationController.view!
         let containerView = transitionContext.containerView
         let direction: CGFloat = containerView.effectiveUserInterfaceLayoutDirection == .leftToRight ? 1.0 : -1.0
         
@@ -383,9 +398,9 @@ import UIKit
         containerView.insertSubview(shadowView, belowSubview: fromView)
         
         // 转场容器与导航栏不在同一个层次上，坐标系需要转换。
-        let uiNavigationBar = navigationController.navigationBar // 系统导航栏。
-        let uiNavigationBarFrame1 = uiNavigationBar.convert(uiNavigationBar.bounds, to: containerView);
-        var uiNavigationBarFrame2: CGRect?
+        let uiNavigationBar = animationController.navigationController.navigationBar // 系统导航栏。
+        let uiNavigationBarFrame1 = rootView.convert(animationController.navigationBar.frame, to: containerView);
+        var uiNavigationBarFrame2 = rootView.convert(uiNavigationBar.frame, to: containerView);
         
         let fromNavigationBar = (fromVC as? XZNavigationBarCustomizable)?.xzNavigationBar
         var fromNavigationBarFrame2: CGRect?
@@ -409,44 +424,55 @@ import UIKit
             toNavigationBar!.frame = uiNavigationBarFrame1.offsetBy(dx: -uiNavigationBarFrame1.width * 0.34 * direction, dy: 0);
             toNavigationBarFrame2 = uiNavigationBarFrame1
             
-            uiNavigationBarFrame2 = uiNavigationBarFrame1.offsetBy(dx: uiNavigationBarFrame1.width, dy: 0);
-            uiNavigationBar.frame = uiNavigationBarFrame2!
+            uiNavigationBar.frame = uiNavigationBarFrame1.offsetBy(dx: uiNavigationBarFrame1.width, dy: 0);
+            uiNavigationBarFrame2 = uiNavigationBarFrame2.offsetBy(dx: uiNavigationBarFrame2.width, dy: 0);
         } else if fromNavigationBarFrame2 != nil {
             let fromNavigationBarFrame1 = uiNavigationBar.superview!.convert(fromNavigationBar!.frame, to: containerView)
             fromNavigationBar!.frame = fromNavigationBarFrame1
             fromNavigationBarFrame2 = fromNavigationBarFrame1.offsetBy(dx: +uiNavigationBarFrame1.width * direction, dy: 0);
             
-            if navigationController.isNavigationBarHidden {
-                uiNavigationBarFrame2 = uiNavigationBarFrame1.offsetBy(dx: uiNavigationBarFrame1.width, dy: 0);
-                uiNavigationBar.frame = uiNavigationBarFrame2!
+            if animationController.navigationController.isNavigationBarHidden {
+                uiNavigationBar.frame = uiNavigationBarFrame1.offsetBy(dx: uiNavigationBarFrame1.width, dy: 0);
+                uiNavigationBarFrame2 = uiNavigationBarFrame2.offsetBy(dx: uiNavigationBarFrame2.width, dy: 0);
             } else {
                 uiNavigationBar.frame = uiNavigationBarFrame1.offsetBy(dx: -uiNavigationBarFrame1.width * direction, dy: 0);
                 uiNavigationBarFrame2 = uiNavigationBarFrame1;
             }
         } else if toNavigationBarFrame2 != nil {
-            toNavigationBar!.frame = uiNavigationBarFrame1.offsetBy(dx: -uiNavigationBarFrame1.width * 0.34 * direction, dy: 0);
-            toNavigationBarFrame2 = uiNavigationBarFrame1;
+            toNavigationBar!.frame = uiNavigationBarFrame2.offsetBy(dx: -uiNavigationBarFrame2.width * 0.34 * direction, dy: 0);
+            toNavigationBarFrame2 = uiNavigationBarFrame2;
             
-            if isNavigationBarHidden {
-                uiNavigationBarFrame2 = uiNavigationBarFrame1.offsetBy(dx: uiNavigationBarFrame1.width, dy: 0);
-                uiNavigationBar.frame = uiNavigationBarFrame2!
+            if animationController.navigationBar.isHidden {
+                uiNavigationBar.frame = uiNavigationBarFrame1.offsetBy(dx: uiNavigationBarFrame1.width, dy: 0);
+                uiNavigationBarFrame2 = uiNavigationBarFrame2.offsetBy(dx: uiNavigationBarFrame2.width, dy: 0);
             } else {
-                uiNavigationBarFrame2 = uiNavigationBarFrame1.offsetBy(dx: +uiNavigationBarFrame1.width, dy: 0);
+                uiNavigationBar.frame = uiNavigationBarFrame1;
+                uiNavigationBarFrame2 = uiNavigationBarFrame2.offsetBy(dx: +uiNavigationBarFrame2.width, dy: 0);
             }
         } else {
             // nav bar is hidden
         }
+        
+        // 强制布局，避免定制化导航栏在动画前，未更新子元素布局
         fromNavigationBar?.layoutIfNeeded()
         toNavigationBar?.layoutIfNeeded()
-        uiNavigationBar.layoutIfNeeded()
+        // 如果这里刷新原生导航栏，可能会导致原生导航栏 frame 发生改变，
+        // 应该是触发了导航控制器刷新布局导致，导致上面初始化的导航栏位置实效。
+        //
+        // 问题复现：
+        // iOS 26，A 页面原生导航栏，B 页面定制化导航栏，从 A 页面通过 push 进入 B 页面，然后在 B 页面触发导航返回手势。
+        // 理论上原生导航栏，应该跟随 A 页面一起入场，但是。
+        // 如果第一次返回手势中途取消，即保留在 B 页面，那么后续再进行手势返回时，原生导航栏的入场动画就会丢失。
+        //
+        // uiNavigationBar.layoutIfNeeded()
         
         // 由于 tabBar 的层级比较高，且将 tabBar 添加到 containerView 上，会导致 tabBar 在动画时到显示不正确
         // 所以 tabBar 是平移一个宽度，而页面仅平移了三分之一
         var tabBar: UITabBar?
         var tabBarFrame2 = CGRect.zero
-        if let tabBarController = navigationController.tabBarController {
+        if let tabBarController = animationController.navigationController.tabBarController {
             // 已知在 popTo 的过程中，viewControllers 可能包含 fromVC 所以这里需要过滤。
-            let viewControllers = navigationController.viewControllers.filter({ $0 != fromVC })
+            let viewControllers = animationController.navigationController.viewControllers.filter({ $0 != fromVC })
             if fromVC.hidesBottomBarWhenPushed {
                 if !viewControllers.contains(where: { $0.hidesBottomBarWhenPushed }) {
                     tabBar = tabBarController.tabBar
