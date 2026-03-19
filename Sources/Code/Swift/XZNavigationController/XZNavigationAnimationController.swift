@@ -269,53 +269,53 @@ import UIKit
         
         // 根据转场状态，配置原生导航栏和定制化导航栏的转场行为
         if fromNavigationBarFrame2 != nil && toNavigationBarFrame2 != nil {
-            // from 定制化导航栏
+            // from 有定制化导航栏
             let fromNavigationBarFrame1 = rootView.convert(fromNavigationBar!.frame, to: containerView)
             fromNavigationBar!.frame = fromNavigationBarFrame1
             fromNavigationBarFrame2  = fromNavigationBarFrame1.offsetBy(dx: -fromNavigationBarFrame1.width * 0.34 * direction, dy: 0);
             
-            // to 定制化导航栏
+            // to 有定制化导航栏
             toNavigationBarFrame2 = uiNavigationBarRect2
             toNavigationBar!.frame = uiNavigationBarRect2.offsetBy(dx: +uiNavigationBarRect2.width * direction, dy: 0)
             
             // 原生导航栏，移至屏幕外
             // 不能上移，否则会影响页面安全区，从而导致页面在转场的过程中，新页面发生抖动。
             // 在 iOS 26 中，以默认的堆叠模式呈现的导航控制器，在 Push 新控制器时，上移导航条，会导致 safeAreaInsets 改变。
-            uiNavigationBarFrame2 = uiNavigationBarFrame2.offsetBy(dx: -uiNavigationBarFrame2.width, dy: 0);
+            uiNavigationBarFrame2 = uiNavigationBarFrame2.offsetBy(dx: -uiNavigationBarFrame2.width * direction, dy: 0);
             uiNavigationBar.frame = uiNavigationBarFrame2
         } else if fromNavigationBarFrame2 != nil {
-            // from 定制化导航栏
+            // from 有定制化导航栏
             let fromNavigationBarFrame1 = rootView.convert(fromNavigationBar!.frame, to: containerView)
             fromNavigationBar!.frame = fromNavigationBarFrame1
             fromNavigationBarFrame2  = fromNavigationBarFrame1.offsetBy(dx: -fromNavigationBarFrame1.width * 0.34 * direction, dy: 0);
             
-            // to 定制化导航栏：无
+            // to 无定制化导航栏
             
             // 原生导航栏
             if animationController.navigationController.isNavigationBarHidden {
-                // to 无原生导航栏
-                uiNavigationBarFrame2 = uiNavigationBarFrame2.offsetBy(dx: -uiNavigationBarFrame2.width, dy: 0);
+                // 无原生导航栏
+                uiNavigationBarFrame2 = uiNavigationBarFrame2.offsetBy(dx: -uiNavigationBarFrame2.width * direction, dy: 0);
                 uiNavigationBar.frame = uiNavigationBarFrame2
             } else {
-                // to 有原生导航栏，随 to 一起入场
+                // 有原生导航栏，随 to 一起入场
                 uiNavigationBar.frame = uiNavigationBarFrame2.offsetBy(dx: +uiNavigationBarFrame2.width * direction, dy: 0)
             }
         } else if toNavigationBarFrame2 != nil {
-            // from 定制化导航栏：无
+            // from 无定制化导航栏
             
             // to 有定制化导航栏，跟随入场
             toNavigationBar!.frame = uiNavigationBarRect2.offsetBy(dx: uiNavigationBarRect2.width * direction, dy: 0)
             toNavigationBarFrame2 = uiNavigationBarRect2;
             
-            // from 无定制化导航栏
+            // 原生导航栏
             if animationController.navigationBar.isHidden {
-                // from 无原生导航栏
-                uiNavigationBarFrame2 = uiNavigationBarFrame2.offsetBy(dx: -uiNavigationBarFrame2.width, dy: 0);
+                // 无原生导航栏
+                uiNavigationBarFrame2 = uiNavigationBarFrame2.offsetBy(dx: -uiNavigationBarFrame2.width * direction, dy: 0);
                 uiNavigationBar.frame = uiNavigationBarFrame2
             } else {
-                // from 有原生导航栏，随 from 一起退场
+                // 有原生导航栏，随 from 一起退场
                 // 由于 toView 无法覆盖原生导航栏，原生导航栏 100% 退场。
-                uiNavigationBar.frame = uiNavigationBarFrame1;
+                uiNavigationBar.frame = uiNavigationBarFrame2;
                 uiNavigationBarFrame2 = uiNavigationBarFrame2.offsetBy(dx: -uiNavigationBarFrame2.width * direction, dy: 0);
             }
         } else {
@@ -323,7 +323,7 @@ import UIKit
                 // 原生导航条始终隐藏
             } else if (animationController.navigationController.isNavigationBarHidden) {
                 // 原生导航条，从显示到隐藏
-                uiNavigationBar.frame = uiNavigationBarFrame1;
+                uiNavigationBar.frame = uiNavigationBarFrame2;
                 uiNavigationBarFrame2 = uiNavigationBarFrame2.offsetBy(dx: -uiNavigationBarFrame2.width * direction, dy: 0);
             } else if (animationController.navigationBar.isHidden) {
                 // 原生导航条，从隐藏到显示
@@ -429,7 +429,7 @@ import UIKit
             toNavigationBar!.frame = uiNavigationBarRect2.offsetBy(dx: -uiNavigationBarRect2.width * 0.34 * direction, dy: 0);
             toNavigationBarFrame2 = uiNavigationBarRect2
             
-            uiNavigationBarFrame2 = uiNavigationBarFrame2.offsetBy(dx: +uiNavigationBarFrame2.width, dy: 0);
+            uiNavigationBarFrame2 = uiNavigationBarFrame2.offsetBy(dx: +uiNavigationBarFrame2.width * direction, dy: 0);
             uiNavigationBar.frame = uiNavigationBarFrame2;
         } else if fromNavigationBarFrame2 != nil {
             let fromNavigationBarFrame1 = rootView.convert(fromNavigationBar!.frame, to: containerView)
@@ -437,7 +437,7 @@ import UIKit
             fromNavigationBarFrame2 = fromNavigationBarFrame1.offsetBy(dx: +uiNavigationBarFrame1.width * direction, dy: 0);
             
             if animationController.navigationController.isNavigationBarHidden {
-                uiNavigationBarFrame2 = uiNavigationBarFrame2.offsetBy(dx: +uiNavigationBarFrame2.width, dy: 0);
+                uiNavigationBarFrame2 = uiNavigationBarFrame2.offsetBy(dx: +uiNavigationBarFrame2.width * direction, dy: 0);
                 uiNavigationBar.frame = uiNavigationBarFrame2;
             } else {
                 uiNavigationBar.frame = uiNavigationBarFrame2.offsetBy(dx: -uiNavigationBarFrame2.width * direction, dy: 0);
@@ -447,11 +447,11 @@ import UIKit
             toNavigationBarFrame2 = uiNavigationBarRect2;
             
             if animationController.navigationBar.isHidden {
-                uiNavigationBarFrame2 = uiNavigationBarFrame2.offsetBy(dx: +uiNavigationBarFrame2.width, dy: 0);
+                uiNavigationBarFrame2 = uiNavigationBarFrame2.offsetBy(dx: +uiNavigationBarFrame2.width * direction, dy: 0);
                 uiNavigationBar.frame = uiNavigationBarFrame2;
             } else {
                 uiNavigationBar.frame = uiNavigationBarFrame1;
-                uiNavigationBarFrame2 = uiNavigationBarFrame1.offsetBy(dx: +uiNavigationBarFrame1.width, dy: 0);
+                uiNavigationBarFrame2 = uiNavigationBarFrame1.offsetBy(dx: +uiNavigationBarFrame1.width * direction, dy: 0);
             }
         } else {
             if animationController.navigationController.isNavigationBarHidden && animationController.navigationBar.isHidden {
@@ -459,7 +459,7 @@ import UIKit
             } else if (animationController.navigationController.isNavigationBarHidden) {
                 // 原生导航条，从显示到隐藏
                 uiNavigationBar.frame = uiNavigationBarFrame1;
-                uiNavigationBarFrame2 = uiNavigationBarFrame1.offsetBy(dx: +uiNavigationBarFrame1.width, dy: 0);
+                uiNavigationBarFrame2 = uiNavigationBarFrame1.offsetBy(dx: +uiNavigationBarFrame1.width * direction, dy: 0);
             } else if (animationController.navigationBar.isHidden) {
                 // 原生导航条，从隐藏到显示
                 uiNavigationBar.frame = uiNavigationBarFrame2.offsetBy(dx: -uiNavigationBarFrame2.width * direction, dy: 0);
