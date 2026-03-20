@@ -45,6 +45,7 @@ static void * _context = &_context;
         _model       = model;
         _viewModels  = [NSMapTable weakToStrongObjectsMapTable];
         _changedKeys = [NSMutableSet set];
+        _observingKeys = [NSMutableDictionary dictionary];
         _needsNotification = NO;
     }
     return self;

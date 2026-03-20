@@ -71,7 +71,7 @@ public macro key(value: Any) = #externalMacro(module: "XZKitMacros", type: "XZMo
 /// 两个参数：第一个参数为键名，第二个参数为初始值。
 @attached(peer, names: arbitrary)
 @attached(accessor, names: arbitrary)
-public macro key(_ name: XZMocoaKey, _ value: Any) = #externalMacro(module: "XZKitMacros", type: "XZMocoaKeyMacro")
+public macro key(_ name: XZMocoaKey, value: Any) = #externalMacro(module: "XZKitMacros", type: "XZMocoaKeyMacro")
 
 /// 单向同步，用于标记 Mocoa 中的 .v 和 .vm 角色的绑定标记。
 ///

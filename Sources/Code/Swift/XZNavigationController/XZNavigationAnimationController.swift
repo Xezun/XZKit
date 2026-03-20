@@ -315,8 +315,8 @@ import UIKit
             } else {
                 // 有原生导航栏，随 from 一起退场
                 // 由于 toView 无法覆盖原生导航栏，原生导航栏 100% 退场。
-                uiNavigationBar.frame = uiNavigationBarFrame2;
-                uiNavigationBarFrame2 = uiNavigationBarFrame2.offsetBy(dx: -uiNavigationBarFrame2.width * direction, dy: 0);
+                uiNavigationBar.frame = uiNavigationBarFrame1;
+                uiNavigationBarFrame2 = uiNavigationBarFrame1.offsetBy(dx: -uiNavigationBarFrame1.width * direction, dy: 0);
             }
         } else {
             if animationController.navigationController.isNavigationBarHidden && animationController.navigationBar.isHidden {
@@ -478,7 +478,6 @@ import UIKit
         // iOS 26，A 页面原生导航栏，B 页面定制化导航栏，从 A 页面通过 push 进入 B 页面，然后在 B 页面触发导航返回手势。
         // 理论上原生导航栏，应该跟随 A 页面一起入场，但是。
         // 如果第一次返回手势中途取消，即保留在 B 页面，那么后续再进行手势返回时，原生导航栏的入场动画就会丢失。
-        //
         // uiNavigationBar.layoutIfNeeded()
         
         // 由于 tabBar 的层级比较高，且将 tabBar 添加到 containerView 上，会导致 tabBar 在动画时到显示不正确

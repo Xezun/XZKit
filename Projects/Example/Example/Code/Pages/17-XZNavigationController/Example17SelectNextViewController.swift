@@ -9,9 +9,9 @@ import UIKit
 
 class Example17SelectNextViewController: UITableViewController {
     
-    var selectedPage = Example17Page.DING_ZHI
+    var selectedPage = Example17PageType.DingZhi
     
-    private let pages = Example17Page.allCases
+    private let pages = Example17PageType.allCases
     
     override func viewDidLoad() {
         super.viewDidLoad()

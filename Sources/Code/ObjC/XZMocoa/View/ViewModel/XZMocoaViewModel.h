@@ -368,6 +368,7 @@ FOUNDATION_EXPORT XZMocoaKey const XZMocoaKeyNone NS_SWIFT_NAME(XZMocoaKeyNone);
 ///
 /// ```objc
 /// @{
+///     @"setName:": @"name",
 ///     @"setRangeMin:max:" : @[@"min", @"max"]
 /// }
 /// ```
@@ -398,7 +399,7 @@ FOUNDATION_EXPORT XZMocoaKey const XZMocoaKeyNone NS_SWIFT_NAME(XZMocoaKeyNone);
 ///
 /// 若要开启主动键值观察，重写此属性，并返回`YES`即可。
 ///
-/// 使用 `NSKeyValueObserving` 对 ``mappingModelKeys`` 中的键进行观察，
+/// 使用 `NSKeyValueObserving` 机制对 ``mappingModelKeys`` 中的键进行观察，
 /// 且单个 Runloop 内的键值事件，会合并统一处理，即在一个 Runloop 内，同一个 key 即使发生多次改变，绑定的方法只会执行一次。
 ///
 /// 在 Swift 中，使用 `@mocoa` 和 `@bind` 标记的绑定的键值事件，也属于此被动观察机制。
@@ -431,12 +432,17 @@ FOUNDATION_EXPORT XZMocoaKey const XZMocoaKeyNone NS_SWIFT_NAME(XZMocoaKeyNone);
 // 常用的 key 枚举
 @class UILabel, UIButton, UIImageView;
 
+
+
 FOUNDATION_EXPORT XZMocoaKey const XZMocoaKeyContentStatus;
 FOUNDATION_EXPORT XZMocoaKey const XZMocoaKeyStatus;
 FOUNDATION_EXPORT XZMocoaKey const XZMocoaKeyIsChecked;
 FOUNDATION_EXPORT XZMocoaKey const XZMocoaKeyIsEnabled;
 FOUNDATION_EXPORT XZMocoaKey const XZMocoaKeyValue;
 FOUNDATION_EXPORT XZMocoaKey const XZMocoaKeyName;
+
+@class UIView;
+FOUNDATION_EXPORT XZMocoaKey const XZMocoaKeyIsHidden;
 
 @class UILabel;
 FOUNDATION_EXPORT XZMocoaKey const XZMocoaKeyText;
@@ -465,5 +471,12 @@ FOUNDATION_EXPORT XZMocoaKey const XZMocoaKeyStopAnimating;
 FOUNDATION_EXPORT XZMocoaKey const XZMocoaKeyIsRefreshing;
 FOUNDATION_EXPORT XZMocoaKey const XZMocoaKeyIsRequesting;
 FOUNDATION_EXPORT XZMocoaKey const XZMocoaKeyIsLoading;
+
+@class UISwitch;
+FOUNDATION_EXPORT XZMocoaKey const XZMocoaKeyIsOn;
+
+@class UINavigationBar;
+FOUNDATION_EXPORT XZMocoaKey const XZMocoaKeyIsTranslucent;
+FOUNDATION_EXPORT XZMocoaKey const XZMocoaKeyPrefersLargeTitles;
 
 NS_ASSUME_NONNULL_END

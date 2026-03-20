@@ -11,7 +11,7 @@ import XZKit
 /// 手势页
 class Example17OnlyViewController: Example17ViewController, XZNavigationGestureDrivable {
     
-    var nextPage = Example17Page.DING_ZHI
+    var nextPage = Example17PageType.DingZhi
     weak var backViewController: UIViewController? = nil
     
     override func viewDidLoad() {
@@ -46,8 +46,11 @@ class Example17OnlyViewController: Example17ViewController, XZNavigationGestureD
         case .none:
             return nil
         case .push:
+            let viewModel = self.viewModel as! Example17ViewModel
             let viewController = nextPage.viewController
-            viewController.currentAppearance = nextAppearance
+            
+            viewController.viewModel = viewModel.next
+            
             return viewController
         case .pop:
             return backViewController

@@ -630,6 +630,8 @@ XZMocoaKey const XZMocoaKeyIsEnabled        = @"isEnabled";
 XZMocoaKey const XZMocoaKeyValue            = @"value";
 XZMocoaKey const XZMocoaKeyName             = @"name";
 
+XZMocoaKey const XZMocoaKeyIsHidden         = @"isHidden";
+
 XZMocoaKey const XZMocoaKeyText             = @"text";
 XZMocoaKey const XZMocoaKeyFont             = @"font";
 XZMocoaKey const XZMocoaKeyTextColor        = @"textColor";
@@ -653,3 +655,8 @@ XZMocoaKey const XZMocoaKeyStopAnimating    = @"stopAnimating";
 XZMocoaKey const XZMocoaKeyIsRefreshing     = @"isRefreshing";
 XZMocoaKey const XZMocoaKeyIsRequesting     = @"isRequesting";
 XZMocoaKey const XZMocoaKeyIsLoading        = @"isLoading";
+
+XZMocoaKey const XZMocoaKeyIsOn             = @"isOn";
+
+XZMocoaKey const XZMocoaKeyIsTranslucent      = @"isTranslucent";
+XZMocoaKey const XZMocoaKeyPrefersLargeTitles = @"prefersLargeTitles";

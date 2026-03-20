@@ -195,7 +195,8 @@ extension XZMocoaMacro: MemberMacro {
         
         switch try role(forMacro: node, forClass: classDecl) {
         case .m:
-            throw XZMacroError(message: "@mocoa: 暂未不支持 .m 角色")
+            // throw XZMacroError(message: "@mocoa: 暂未不支持 .m 角色")
+            return [];
             
         case .v:
             // 判断是否自定义 viewModelDidChange 方法
@@ -446,7 +447,24 @@ extension XZMocoaMacro: MemberMacro {
                 
             }
             
-            if mappingKeyValueStrings.count == 0 {
+            var syntaxes = [DeclSyntax]()
+            
+            if !mappingKeyValueStrings.isEmpty {
+                let mappingKeyValues = mappingKeyValueStrings.joined(separator: ", \n")
+                
+                let variableSyntax = try VariableDeclSyntax(
+                    """
+                    override class var mappingModelKeys: [String : Any]? {
+                        return [ 
+                            \(raw: mappingKeyValues)
+                        ]
+                    }
+                    """
+                )
+                syntaxes.append(DeclSyntax(variableSyntax))
+            }
+            
+            if !readyMethodNames.isEmpty {
                 let methodSyntax = try FunctionDeclSyntax(
                     """
                     override func __prepare() {
@@ -455,31 +473,10 @@ extension XZMocoaMacro: MemberMacro {
                     }
                     """
                 )
-                return [DeclSyntax(methodSyntax)]
+                syntaxes.append(DeclSyntax(methodSyntax))
             }
             
-            let mappingKeyValues = mappingKeyValueStrings.joined(separator: ", \n")
-            
-            let variableSyntax = try VariableDeclSyntax(
-                """
-                override class var mappingModelKeys: [String : Any]? {
-                    return [ 
-                        \(raw: mappingKeyValues)
-                    ]
-                }
-                """
-            )
-            
-            let methodSyntax = try FunctionDeclSyntax(
-                """
-                override func __prepare() {
-                    super.__prepare()
-                    \(raw: readyMethodNames.map({ "\($0)()" }).joined(separator: "\n"))
-                }
-                """
-            )
-            
-            return [DeclSyntax(methodSyntax), DeclSyntax(variableSyntax)]
+            return syntaxes
         }
         
     }

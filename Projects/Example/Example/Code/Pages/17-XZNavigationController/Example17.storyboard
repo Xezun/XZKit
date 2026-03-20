@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="23504" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="A2W-jB-VZz">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="24412" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="A2W-jB-VZz">
     <device id="retina6_12" orientation="portrait" appearance="light"/>
     <dependencies>
         <deployment identifier="iOS"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="23506"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="24405"/>
         <capability name="System colors in document resources" minToolsVersion="11.0"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
@@ -11,7 +11,7 @@
         <!--定制页-->
         <scene sceneID="BPf-mY-Ylo">
             <objects>
-                <tableViewController storyboardIdentifier="DING_ZHI" hidesBottomBarWhenPushed="YES" id="U8i-CN-1rk" customClass="Example17BothViewController" customModule="Example" customModuleProvider="target" sceneMemberID="viewController">
+                <tableViewController storyboardIdentifier="DingZhi" hidesBottomBarWhenPushed="YES" id="U8i-CN-1rk" customClass="Example17BothViewController" customModule="Example" customModuleProvider="target" sceneMemberID="viewController">
                     <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="static" style="grouped" separatorStyle="default" rowHeight="44" estimatedRowHeight="44" sectionHeaderHeight="18" estimatedSectionHeaderHeight="-1" sectionFooterHeight="18" estimatedSectionFooterHeight="-1" id="LtI-gd-XAW">
                         <rect key="frame" x="0.0" y="0.0" width="393" height="852"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -54,7 +54,7 @@
                                                     <nil key="highlightedColor"/>
                                                 </label>
                                                 <switch opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" contentHorizontalAlignment="center" contentVerticalAlignment="center" translatesAutoresizingMaskIntoConstraints="NO" id="Usi-IQ-i5O">
-                                                    <rect key="frame" x="324" y="6.6666666666666679" width="51" height="31.000000000000004"/>
+                                                    <rect key="frame" x="312" y="8" width="63" height="28"/>
                                                     <connections>
                                                         <action selector="currentHiddenSwitchValueChanged:" destination="U8i-CN-1rk" eventType="valueChanged" id="Kun-4d-Hl9"/>
                                                     </connections>
@@ -84,7 +84,7 @@
                                                     <nil key="highlightedColor"/>
                                                 </label>
                                                 <switch opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" contentHorizontalAlignment="center" contentVerticalAlignment="center" on="YES" translatesAutoresizingMaskIntoConstraints="NO" id="AgX-Wa-tXy">
-                                                    <rect key="frame" x="324" y="6.6666666666666679" width="51" height="31.000000000000004"/>
+                                                    <rect key="frame" x="312" y="8" width="63" height="28"/>
                                                     <connections>
                                                         <action selector="currentTranslucentSwitchValueChanged:" destination="U8i-CN-1rk" eventType="valueChanged" id="7Um-qr-v1e"/>
                                                     </connections>
@@ -114,7 +114,7 @@
                                                     <nil key="highlightedColor"/>
                                                 </label>
                                                 <switch opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" contentHorizontalAlignment="center" contentVerticalAlignment="center" translatesAutoresizingMaskIntoConstraints="NO" id="d3a-0h-jAP">
-                                                    <rect key="frame" x="324" y="6.6666666666666679" width="51" height="31.000000000000004"/>
+                                                    <rect key="frame" x="312" y="8" width="63" height="28"/>
                                                     <connections>
                                                         <action selector="currentLargeTitlesSwitchValueChanged:" destination="U8i-CN-1rk" eventType="valueChanged" id="KEp-ry-5Gy"/>
                                                     </connections>
@@ -148,7 +148,7 @@
                                                     <nil key="highlightedColor"/>
                                                 </label>
                                                 <switch opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" contentHorizontalAlignment="center" contentVerticalAlignment="center" translatesAutoresizingMaskIntoConstraints="NO" id="d5h-4N-vjQ">
-                                                    <rect key="frame" x="324" y="6.6666666666666679" width="51" height="31.000000000000004"/>
+                                                    <rect key="frame" x="312" y="8" width="63" height="28"/>
                                                     <connections>
                                                         <action selector="nextHiddenSwitchValueChanged:" destination="U8i-CN-1rk" eventType="valueChanged" id="FPS-EK-uU8"/>
                                                     </connections>
@@ -178,7 +178,7 @@
                                                     <nil key="highlightedColor"/>
                                                 </label>
                                                 <switch opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" contentHorizontalAlignment="center" contentVerticalAlignment="center" on="YES" translatesAutoresizingMaskIntoConstraints="NO" id="EQA-uq-3rA">
-                                                    <rect key="frame" x="324" y="6.6666666666666679" width="51" height="31.000000000000004"/>
+                                                    <rect key="frame" x="312" y="8" width="63" height="28"/>
                                                     <connections>
                                                         <action selector="nextTranslucentSwitchValueChanged:" destination="U8i-CN-1rk" eventType="valueChanged" id="6b0-U1-IYd"/>
                                                     </connections>
@@ -208,7 +208,7 @@
                                                     <nil key="highlightedColor"/>
                                                 </label>
                                                 <switch opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" contentHorizontalAlignment="center" contentVerticalAlignment="center" translatesAutoresizingMaskIntoConstraints="NO" id="mqU-PS-KUC">
-                                                    <rect key="frame" x="324" y="6.6666666666666679" width="51" height="31.000000000000004"/>
+                                                    <rect key="frame" x="312" y="8" width="63" height="28"/>
                                                     <connections>
                                                         <action selector="nextLargeTitlesSwitchValueChanged:" destination="U8i-CN-1rk" eventType="valueChanged" id="f1K-ud-IpI"/>
                                                     </connections>
@@ -331,18 +331,18 @@
                                         <rect key="frame" x="0.0" y="770" width="393" height="44"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" preservesSuperviewLayoutMargins="YES" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="aEt-f1-RAi" id="dqa-r2-xQE">
-                                            <rect key="frame" x="0.0" y="0.0" width="362.66666666666669" height="44"/>
+                                            <rect key="frame" x="0.0" y="0.0" width="374.66666666666669" height="44"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
-                                                <label opaque="NO" multipleTouchEnabled="YES" contentMode="left" insetsLayoutMarginsFromSafeArea="NO" text="后退" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="45a-53-rOq">
-                                                    <rect key="frame" x="20" y="11.999999999999998" width="34" height="20.333333333333332"/>
+                                                <label opaque="NO" multipleTouchEnabled="YES" contentMode="left" ambiguous="YES" insetsLayoutMarginsFromSafeArea="NO" text="后退" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="45a-53-rOq">
+                                                    <rect key="frame" x="8" y="11.999999999999998" width="34" height="20.333333333333332"/>
                                                     <autoresizingMask key="autoresizingMask"/>
                                                     <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                                     <nil key="textColor"/>
                                                     <nil key="highlightedColor"/>
                                                 </label>
-                                                <label opaque="NO" multipleTouchEnabled="YES" contentMode="left" insetsLayoutMarginsFromSafeArea="NO" text="定制页" textAlignment="right" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="nHJ-27-J9n">
-                                                    <rect key="frame" x="310" y="14" width="44.666666666666664" height="18"/>
+                                                <label opaque="NO" multipleTouchEnabled="YES" contentMode="left" ambiguous="YES" insetsLayoutMarginsFromSafeArea="NO" text="定制页" textAlignment="right" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="nHJ-27-J9n">
+                                                    <rect key="frame" x="322" y="14" width="44.666666666666664" height="18"/>
                                                     <autoresizingMask key="autoresizingMask"/>
                                                     <fontDescription key="fontDescription" type="system" pointSize="15"/>
                                                     <color key="textColor" systemColor="systemGrayColor"/>
@@ -399,13 +399,13 @@
                                             <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
                                                 <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="252" verticalHuggingPriority="251" horizontalCompressionResistancePriority="749" text="开启定制化" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="X2k-7N-69Z">
-                                                    <rect key="frame" x="20" y="11.666666666666664" width="85" height="21"/>
+                                                    <rect key="frame" x="16" y="11.666666666666664" width="85" height="21"/>
                                                     <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                                     <nil key="textColor"/>
                                                     <nil key="highlightedColor"/>
                                                 </label>
                                                 <switch opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" contentHorizontalAlignment="center" contentVerticalAlignment="center" on="YES" translatesAutoresizingMaskIntoConstraints="NO" id="L3F-ce-iBP">
-                                                    <rect key="frame" x="284" y="6.6666666666666679" width="51" height="31.000000000000004"/>
+                                                    <rect key="frame" x="276" y="8" width="63" height="28"/>
                                                     <connections>
                                                         <action selector="navigationCustomizationSwitchValueChanged:" destination="hah-JJ-chW" eventType="valueChanged" id="PAk-Xd-1Ms"/>
                                                     </connections>
@@ -432,7 +432,7 @@
                                             <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
                                                 <label opaque="NO" multipleTouchEnabled="YES" contentMode="left" insetsLayoutMarginsFromSafeArea="NO" text="开始" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="nt8-8w-O9R">
-                                                    <rect key="frame" x="20" y="0.0" width="294.66666666666669" height="44"/>
+                                                    <rect key="frame" x="16" y="0.0" width="298.66666666666669" height="44"/>
                                                     <autoresizingMask key="autoresizingMask"/>
                                                     <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                                     <nil key="textColor"/>
@@ -476,7 +476,7 @@
                     <toolbarItems/>
                     <navigationItem key="navigationItem" id="UC9-HP-rkp"/>
                     <navigationBar key="navigationBar" contentMode="scaleToFill" id="1DV-yf-Ffx">
-                        <rect key="frame" x="0.0" y="59" width="393" height="44"/>
+                        <rect key="frame" x="0.0" y="118" width="393" height="54"/>
                         <autoresizingMask key="autoresizingMask"/>
                         <navigationBarAppearance key="standardAppearance"/>
                     </navigationBar>
@@ -492,7 +492,7 @@
         <!--原生页-->
         <scene sceneID="Onk-VN-3HD">
             <objects>
-                <tableViewController storyboardIdentifier="YUAN_SEN" hidesBottomBarWhenPushed="YES" id="BMT-RL-Fp9" customClass="Example17NoneViewController" customModule="Example" customModuleProvider="target" sceneMemberID="viewController">
+                <tableViewController storyboardIdentifier="YuanSen" hidesBottomBarWhenPushed="YES" id="BMT-RL-Fp9" customClass="Example17NoneViewController" customModule="Example" customModuleProvider="target" sceneMemberID="viewController">
                     <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="static" style="grouped" separatorStyle="default" rowHeight="44" estimatedRowHeight="-1" sectionHeaderHeight="18" estimatedSectionHeaderHeight="-1" sectionFooterHeight="18" estimatedSectionFooterHeight="-1" id="up6-Ik-iny">
                         <rect key="frame" x="0.0" y="0.0" width="393" height="852"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -535,7 +535,7 @@
                                                     <nil key="highlightedColor"/>
                                                 </label>
                                                 <switch opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" contentHorizontalAlignment="center" contentVerticalAlignment="center" translatesAutoresizingMaskIntoConstraints="NO" id="2AH-5T-jxL">
-                                                    <rect key="frame" x="324" y="6.6666666666666679" width="51" height="31.000000000000004"/>
+                                                    <rect key="frame" x="312" y="8" width="63" height="28"/>
                                                     <connections>
                                                         <action selector="currentHiddenSwitchValueChanged:" destination="BMT-RL-Fp9" eventType="valueChanged" id="TBh-EM-crN"/>
                                                     </connections>
@@ -565,7 +565,7 @@
                                                     <nil key="highlightedColor"/>
                                                 </label>
                                                 <switch opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" contentHorizontalAlignment="center" contentVerticalAlignment="center" on="YES" translatesAutoresizingMaskIntoConstraints="NO" id="XN3-JR-KR3">
-                                                    <rect key="frame" x="324" y="6.6666666666666679" width="51" height="31.000000000000004"/>
+                                                    <rect key="frame" x="312" y="8" width="63" height="28"/>
                                                     <connections>
                                                         <action selector="currentTranslucentSwitchValueChanged:" destination="BMT-RL-Fp9" eventType="valueChanged" id="hMJ-dG-GzU"/>
                                                     </connections>
@@ -595,7 +595,7 @@
                                                     <nil key="highlightedColor"/>
                                                 </label>
                                                 <switch opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" contentHorizontalAlignment="center" contentVerticalAlignment="center" translatesAutoresizingMaskIntoConstraints="NO" id="g4o-AB-hgC">
-                                                    <rect key="frame" x="324" y="6.6666666666666679" width="51" height="31.000000000000004"/>
+                                                    <rect key="frame" x="312" y="8" width="63" height="28"/>
                                                     <connections>
                                                         <action selector="currentLargeTitlesSwitchValueChanged:" destination="BMT-RL-Fp9" eventType="valueChanged" id="adB-kr-Hkn"/>
                                                     </connections>
@@ -629,7 +629,7 @@
                                                     <nil key="highlightedColor"/>
                                                 </label>
                                                 <switch opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" contentHorizontalAlignment="center" contentVerticalAlignment="center" translatesAutoresizingMaskIntoConstraints="NO" id="TL3-ZG-T0x">
-                                                    <rect key="frame" x="324" y="6.6666666666666679" width="51" height="31.000000000000004"/>
+                                                    <rect key="frame" x="312" y="8" width="63" height="28"/>
                                                     <connections>
                                                         <action selector="nextHiddenSwitchValueChanged:" destination="BMT-RL-Fp9" eventType="valueChanged" id="nTw-KQ-4So"/>
                                                     </connections>
@@ -659,7 +659,7 @@
                                                     <nil key="highlightedColor"/>
                                                 </label>
                                                 <switch opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" contentHorizontalAlignment="center" contentVerticalAlignment="center" on="YES" translatesAutoresizingMaskIntoConstraints="NO" id="BYu-d5-1pA">
-                                                    <rect key="frame" x="324" y="6.6666666666666679" width="51" height="31.000000000000004"/>
+                                                    <rect key="frame" x="312" y="8" width="63" height="28"/>
                                                     <connections>
                                                         <action selector="nextTranslucentSwitchValueChanged:" destination="BMT-RL-Fp9" eventType="valueChanged" id="YjV-uZ-N7J"/>
                                                     </connections>
@@ -689,7 +689,7 @@
                                                     <nil key="highlightedColor"/>
                                                 </label>
                                                 <switch opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" contentHorizontalAlignment="center" contentVerticalAlignment="center" translatesAutoresizingMaskIntoConstraints="NO" id="z0p-QE-xJy">
-                                                    <rect key="frame" x="324" y="6.6666666666666679" width="51" height="31.000000000000004"/>
+                                                    <rect key="frame" x="312" y="8" width="63" height="28"/>
                                                     <connections>
                                                         <action selector="nextLargeTitlesSwitchValueChanged:" destination="BMT-RL-Fp9" eventType="valueChanged" id="IP1-TN-bQw"/>
                                                     </connections>
@@ -804,7 +804,7 @@
         <!--导航页-->
         <scene sceneID="jUJ-Cb-l38">
             <objects>
-                <tableViewController storyboardIdentifier="DAO_HANG" hidesBottomBarWhenPushed="YES" id="nfk-bN-NID" customClass="Example17LastViewController" customModule="Example" customModuleProvider="target" sceneMemberID="viewController">
+                <tableViewController storyboardIdentifier="DaoHang" hidesBottomBarWhenPushed="YES" id="nfk-bN-NID" customClass="Example17LastViewController" customModule="Example" customModuleProvider="target" sceneMemberID="viewController">
                     <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="static" style="grouped" separatorStyle="default" rowHeight="44" estimatedRowHeight="-1" sectionHeaderHeight="18" estimatedSectionHeaderHeight="-1" sectionFooterHeight="18" estimatedSectionFooterHeight="-1" id="F4y-Z9-Wd3">
                         <rect key="frame" x="0.0" y="0.0" width="393" height="852"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -847,7 +847,7 @@
                                                     <nil key="highlightedColor"/>
                                                 </label>
                                                 <switch opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" contentHorizontalAlignment="center" contentVerticalAlignment="center" translatesAutoresizingMaskIntoConstraints="NO" id="19G-uw-yvM">
-                                                    <rect key="frame" x="324" y="6.6666666666666679" width="51" height="31.000000000000004"/>
+                                                    <rect key="frame" x="312" y="8" width="63" height="28"/>
                                                     <connections>
                                                         <action selector="currentHiddenSwitchValueChanged:" destination="nfk-bN-NID" eventType="valueChanged" id="DSz-BU-rxD"/>
                                                     </connections>
@@ -877,7 +877,7 @@
                                                     <nil key="highlightedColor"/>
                                                 </label>
                                                 <switch opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" contentHorizontalAlignment="center" contentVerticalAlignment="center" on="YES" translatesAutoresizingMaskIntoConstraints="NO" id="OOe-lp-L5V">
-                                                    <rect key="frame" x="324" y="6.6666666666666679" width="51" height="31.000000000000004"/>
+                                                    <rect key="frame" x="312" y="8" width="63" height="28"/>
                                                     <connections>
                                                         <action selector="currentTranslucentSwitchValueChanged:" destination="nfk-bN-NID" eventType="valueChanged" id="J3C-qi-ed8"/>
                                                     </connections>
@@ -907,7 +907,7 @@
                                                     <nil key="highlightedColor"/>
                                                 </label>
                                                 <switch opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" contentHorizontalAlignment="center" contentVerticalAlignment="center" translatesAutoresizingMaskIntoConstraints="NO" id="qG0-oO-lZW">
-                                                    <rect key="frame" x="324" y="6.6666666666666679" width="51" height="31.000000000000004"/>
+                                                    <rect key="frame" x="312" y="8" width="63" height="28"/>
                                                     <connections>
                                                         <action selector="currentLargeTitlesSwitchValueChanged:" destination="nfk-bN-NID" eventType="valueChanged" id="CNl-uI-VBA"/>
                                                     </connections>
@@ -941,7 +941,7 @@
                                                     <nil key="highlightedColor"/>
                                                 </label>
                                                 <switch opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" contentHorizontalAlignment="center" contentVerticalAlignment="center" translatesAutoresizingMaskIntoConstraints="NO" id="gTG-Om-h9Y">
-                                                    <rect key="frame" x="324" y="6.6666666666666679" width="51" height="31.000000000000004"/>
+                                                    <rect key="frame" x="312" y="8" width="63" height="28"/>
                                                     <connections>
                                                         <action selector="nextHiddenSwitchValueChanged:" destination="nfk-bN-NID" eventType="valueChanged" id="7l3-D2-hjv"/>
                                                     </connections>
@@ -971,7 +971,7 @@
                                                     <nil key="highlightedColor"/>
                                                 </label>
                                                 <switch opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" contentHorizontalAlignment="center" contentVerticalAlignment="center" on="YES" translatesAutoresizingMaskIntoConstraints="NO" id="LlN-uN-9lv">
-                                                    <rect key="frame" x="324" y="6.6666666666666679" width="51" height="31.000000000000004"/>
+                                                    <rect key="frame" x="312" y="8" width="63" height="28"/>
                                                     <connections>
                                                         <action selector="nextTranslucentSwitchValueChanged:" destination="nfk-bN-NID" eventType="valueChanged" id="C94-CD-KxS"/>
                                                     </connections>
@@ -1001,7 +1001,7 @@
                                                     <nil key="highlightedColor"/>
                                                 </label>
                                                 <switch opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" contentHorizontalAlignment="center" contentVerticalAlignment="center" translatesAutoresizingMaskIntoConstraints="NO" id="cAb-E9-Akt">
-                                                    <rect key="frame" x="324" y="6.6666666666666679" width="51" height="31.000000000000004"/>
+                                                    <rect key="frame" x="312" y="8" width="63" height="28"/>
                                                     <connections>
                                                         <action selector="nextLargeTitlesSwitchValueChanged:" destination="nfk-bN-NID" eventType="valueChanged" id="2xU-j5-Uqa"/>
                                                     </connections>
@@ -1129,7 +1129,7 @@
                                     <autoresizingMask key="autoresizingMask"/>
                                     <subviews>
                                         <label opaque="NO" multipleTouchEnabled="YES" contentMode="left" insetsLayoutMarginsFromSafeArea="NO" text="定制页" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="p84-0P-oVj">
-                                            <rect key="frame" x="20" y="0.0" width="294.66666666666669" height="44"/>
+                                            <rect key="frame" x="16" y="0.0" width="298.66666666666669" height="44"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                             <nil key="textColor"/>
@@ -1158,7 +1158,7 @@
         <!--手势页-->
         <scene sceneID="Abo-rl-6iC">
             <objects>
-                <tableViewController storyboardIdentifier="SHOU_SHI" hidesBottomBarWhenPushed="YES" id="sWc-PO-RPw" customClass="Example17OnlyViewController" customModule="Example" customModuleProvider="target" sceneMemberID="viewController">
+                <tableViewController storyboardIdentifier="ShouShi" hidesBottomBarWhenPushed="YES" id="sWc-PO-RPw" customClass="Example17OnlyViewController" customModule="Example" customModuleProvider="target" sceneMemberID="viewController">
                     <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="static" style="grouped" separatorStyle="default" rowHeight="44" estimatedRowHeight="-1" sectionHeaderHeight="18" estimatedSectionHeaderHeight="-1" sectionFooterHeight="18" estimatedSectionFooterHeight="-1" id="Icu-wh-7sX">
                         <rect key="frame" x="0.0" y="0.0" width="393" height="852"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -1201,7 +1201,7 @@
                                                     <nil key="highlightedColor"/>
                                                 </label>
                                                 <switch opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" contentHorizontalAlignment="center" contentVerticalAlignment="center" translatesAutoresizingMaskIntoConstraints="NO" id="Nom-lA-Ci0">
-                                                    <rect key="frame" x="324" y="6.6666666666666679" width="51" height="31.000000000000004"/>
+                                                    <rect key="frame" x="312" y="8" width="63" height="28"/>
                                                     <connections>
                                                         <action selector="currentHiddenSwitchValueChanged:" destination="sWc-PO-RPw" eventType="valueChanged" id="fn5-lz-TPc"/>
                                                     </connections>
@@ -1231,7 +1231,7 @@
                                                     <nil key="highlightedColor"/>
                                                 </label>
                                                 <switch opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" contentHorizontalAlignment="center" contentVerticalAlignment="center" on="YES" translatesAutoresizingMaskIntoConstraints="NO" id="iHD-3U-FM1">
-                                                    <rect key="frame" x="324" y="6.6666666666666679" width="51" height="31.000000000000004"/>
+                                                    <rect key="frame" x="312" y="8" width="63" height="28"/>
                                                     <connections>
                                                         <action selector="currentTranslucentSwitchValueChanged:" destination="sWc-PO-RPw" eventType="valueChanged" id="n26-UT-A0C"/>
                                                     </connections>
@@ -1261,7 +1261,7 @@
                                                     <nil key="highlightedColor"/>
                                                 </label>
                                                 <switch opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" contentHorizontalAlignment="center" contentVerticalAlignment="center" translatesAutoresizingMaskIntoConstraints="NO" id="RGX-MT-kGW">
-                                                    <rect key="frame" x="324" y="6.6666666666666679" width="51" height="31.000000000000004"/>
+                                                    <rect key="frame" x="312" y="8" width="63" height="28"/>
                                                     <connections>
                                                         <action selector="currentLargeTitlesSwitchValueChanged:" destination="sWc-PO-RPw" eventType="valueChanged" id="bJH-UI-A33"/>
                                                     </connections>
@@ -1295,7 +1295,7 @@
                                                     <nil key="highlightedColor"/>
                                                 </label>
                                                 <switch opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" contentHorizontalAlignment="center" contentVerticalAlignment="center" translatesAutoresizingMaskIntoConstraints="NO" id="LpT-WD-1NH">
-                                                    <rect key="frame" x="324" y="6.6666666666666679" width="51" height="31.000000000000004"/>
+                                                    <rect key="frame" x="312" y="8" width="63" height="28"/>
                                                     <connections>
                                                         <action selector="nextHiddenSwitchValueChanged:" destination="sWc-PO-RPw" eventType="valueChanged" id="pjX-v4-D0u"/>
                                                     </connections>
@@ -1325,7 +1325,7 @@
                                                     <nil key="highlightedColor"/>
                                                 </label>
                                                 <switch opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" contentHorizontalAlignment="center" contentVerticalAlignment="center" on="YES" translatesAutoresizingMaskIntoConstraints="NO" id="ita-GZ-Byd">
-                                                    <rect key="frame" x="324" y="6.6666666666666679" width="51" height="31.000000000000004"/>
+                                                    <rect key="frame" x="312" y="8" width="63" height="28"/>
                                                     <connections>
                                                         <action selector="nextTranslucentSwitchValueChanged:" destination="sWc-PO-RPw" eventType="valueChanged" id="sil-SE-avo"/>
                                                     </connections>
@@ -1355,7 +1355,7 @@
                                                     <nil key="highlightedColor"/>
                                                 </label>
                                                 <switch opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" contentHorizontalAlignment="center" contentVerticalAlignment="center" translatesAutoresizingMaskIntoConstraints="NO" id="8Fz-Zt-rar">
-                                                    <rect key="frame" x="324" y="6.6666666666666679" width="51" height="31.000000000000004"/>
+                                                    <rect key="frame" x="312" y="8" width="63" height="28"/>
                                                     <connections>
                                                         <action selector="nextLargeTitlesSwitchValueChanged:" destination="sWc-PO-RPw" eventType="valueChanged" id="rkG-ZO-i4K"/>
                                                     </connections>
@@ -1478,18 +1478,18 @@
                                         <rect key="frame" x="0.0" y="770" width="393" height="44"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" preservesSuperviewLayoutMargins="YES" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="64m-tc-IxB" id="9UP-Gh-6pa">
-                                            <rect key="frame" x="0.0" y="0.0" width="362.66666666666669" height="44"/>
+                                            <rect key="frame" x="0.0" y="0.0" width="374.66666666666669" height="44"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
-                                                <label opaque="NO" multipleTouchEnabled="YES" contentMode="left" insetsLayoutMarginsFromSafeArea="NO" text="后退" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="a14-hr-OcS">
-                                                    <rect key="frame" x="20" y="11.999999999999998" width="34" height="20.333333333333332"/>
+                                                <label opaque="NO" multipleTouchEnabled="YES" contentMode="left" ambiguous="YES" insetsLayoutMarginsFromSafeArea="NO" text="后退" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="a14-hr-OcS">
+                                                    <rect key="frame" x="8" y="11.999999999999998" width="34" height="20.333333333333332"/>
                                                     <autoresizingMask key="autoresizingMask"/>
                                                     <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                                     <nil key="textColor"/>
                                                     <nil key="highlightedColor"/>
                                                 </label>
-                                                <label opaque="NO" multipleTouchEnabled="YES" contentMode="left" insetsLayoutMarginsFromSafeArea="NO" text="定制页" textAlignment="right" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="zqm-Dl-RTY">
-                                                    <rect key="frame" x="310" y="14" width="44.666666666666664" height="18"/>
+                                                <label opaque="NO" multipleTouchEnabled="YES" contentMode="left" ambiguous="YES" insetsLayoutMarginsFromSafeArea="NO" text="定制页" textAlignment="right" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="zqm-Dl-RTY">
+                                                    <rect key="frame" x="322" y="14" width="44.666666666666664" height="18"/>
                                                     <autoresizingMask key="autoresizingMask"/>
                                                     <fontDescription key="fontDescription" type="system" pointSize="15"/>
                                                     <color key="textColor" systemColor="systemGrayColor"/>
@@ -1559,7 +1559,7 @@
                                     <autoresizingMask key="autoresizingMask"/>
                                     <subviews>
                                         <label opaque="NO" multipleTouchEnabled="YES" contentMode="left" insetsLayoutMarginsFromSafeArea="NO" text="定制页" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="KNy-nh-P0H">
-                                            <rect key="frame" x="20" y="0.0" width="294.66666666666669" height="44"/>
+                                            <rect key="frame" x="16" y="0.0" width="298.66666666666669" height="44"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                             <nil key="textColor"/>
@@ -1597,7 +1597,7 @@
             <color white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
         </systemColor>
         <systemColor name="systemGrayColor">
-            <color red="0.55686274509803924" green="0.55686274509803924" blue="0.57647058823529407" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+            <color red="0.5568627451" green="0.5568627451" blue="0.57647058819999997" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
         </systemColor>
     </resources>
 </document>

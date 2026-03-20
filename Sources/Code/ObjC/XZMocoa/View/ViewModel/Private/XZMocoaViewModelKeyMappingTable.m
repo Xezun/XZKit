@@ -7,6 +7,9 @@
 
 #import "XZMocoaViewModelKeyMappingTable.h"
 #import "XZMocoaViewModel.h"
+#import "XZMocoaGridViewModel.h"
+#import "XZMocoaTableViewModel.h"
+#import "XZMocoaCollectionViewModel.h"
 @import ObjectiveC;
 #import "XZDefines.h"
 #import "XZObjc.h"
@@ -73,7 +76,12 @@ static inline void XZMocoaMappingModelKeys(Class const VMClass, NSMutableDiction
 }
 
 + (XZMocoaViewModelKeyMappingTable *)tableForClass:(Class)VMClass {
-    if (VMClass == nil || VMClass == [XZMocoaViewModel class]) {
+    if (VMClass == nil
+        || VMClass == [XZMocoaViewModel class]
+        || VMClass == [XZMocoaGridViewModel class]
+        || VMClass == [XZMocoaTableViewModel class]
+        || VMClass == [XZMocoaCollectionViewModel class]
+        ) {
         return nil;
     }
     

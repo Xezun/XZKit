@@ -8,12 +8,6 @@
 import UIKit
 import XZKit
 
-class NavigationAppearance {
-    var isHidden: Bool = false
-    var isTranslucent: Bool = true
-    var prefersLargeTitles: Bool = false
-}
-
 // 自定义功能的导航栈中，普通控制器与在普通的导航栈中没有任何区别的，但是对于声明遵循 XZNavigationBarCustomizable 定制化导航栏协议的控制器：。
 // 1、导航栈自动根据定制化导航栏，配置原生导航栏状态。
 // 2、定制化导航栏，将会覆盖在原生导航栏之上。

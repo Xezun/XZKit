@@ -116,7 +116,7 @@ public struct XZMocoaKeyMacro {
                 }
                 
                 if let stringLiteral = firstArgument.expression.as(StringLiteralExprSyntax.self) {
-                    if let stringValue = stringLiteral.representedLiteralValue, stringValue.count > 0 {
+                    if let stringValue = stringLiteral.representedLiteralValue?.replacingOccurrences(of: ".", with: "_"), stringValue.count > 0 {
                         return (stringValue, nil)
                     }
                 } else if let mocoaKeySyntax = firstArgument.expression.as(MemberAccessExprSyntax.self) {
@@ -133,7 +133,7 @@ public struct XZMocoaKeyMacro {
                 
                 // 检查是否为字面量
                 if let stringLiteral = firstArgument.expression.as(StringLiteralExprSyntax.self) {
-                    if let stringValue = stringLiteral.representedLiteralValue, stringValue.count > 0 {
+                    if let stringValue = stringLiteral.representedLiteralValue?.replacingOccurrences(of: ".", with: "_"), stringValue.count > 0 {
                         return (stringValue, value)
                     }
                     throw XZMacroError(message: "@key: 第一参数不能为空，若不想提供，请使用 value 标签直接提供第二个参数")
