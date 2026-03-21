@@ -102,21 +102,21 @@ XZMocoaOptionKey const XZMocoaOptionKeyName = @"name";
     if (self == [UIViewController class]) {
         {
             SEL const selT = @selector(shouldPerformSegueWithIdentifier:sender:);
-            SEL const selN = @selector(xz_mocoa_new_shouldPerformSegueWithIdentifier:sender:);
+            SEL const selN = @selector(xz_mocoa_override_shouldPerformSegueWithIdentifier:sender:);
             SEL const selE = @selector(xz_mocoa_exchange_shouldPerformSegueWithIdentifier:sender:);
             if (!xz_objc_class_addMethod(self, selT, nil, selN, NULL, selE)) {
                 XZLog(@"为 UIViewController 重载方法 %@ 失败，相关事件请手动处理", NSStringFromSelector(selT));
             }
         } {
             SEL const selT = @selector(prepareForSegue:sender:);
-            SEL const selN = @selector(xz_mocoa_new_prepareForSegue:sender:);
+            SEL const selN = @selector(xz_mocoa_override_prepareForSegue:sender:);
             SEL const selE = @selector(xz_mocoa_exchange_prepareForSegue:sender:);
             if (!xz_objc_class_addMethod(self, selT, nil, selN, NULL, selE)) {
                 XZLog(@"为 UIViewController 重载方法 %@ 失败，相关事件请手动处理", NSStringFromSelector(selT));
             }
         } {
             SEL const selT = @selector(viewDidLoad);
-            SEL const selN = @selector(xz_mocoa_new_viewDidLoad);
+            SEL const selN = @selector(xz_mocoa_override_viewDidLoad);
             SEL const selE = @selector(xz_mocoa_exchange_viewDidLoad);
             if (!xz_objc_class_addMethod(self, selT, nil, selN, NULL, selE)) {
                 XZLog(@"为 UIViewController 重载方法 %@ 失败，相关事件请手动处理", NSStringFromSelector(selT));
@@ -136,7 +136,7 @@ XZMocoaOptionKey const XZMocoaOptionKeyName = @"name";
     return self;
 }
 
-- (void)xz_mocoa_new_viewDidLoad {
+- (void)xz_mocoa_override_viewDidLoad {
     [self.viewModel ready];
 }
 
@@ -145,7 +145,7 @@ XZMocoaOptionKey const XZMocoaOptionKeyName = @"name";
     [self.viewModel ready];
 }
 
-- (BOOL)xz_mocoa_new_shouldPerformSegueWithIdentifier:(NSString *)identifier sender:(id)sender {
+- (BOOL)xz_mocoa_override_shouldPerformSegueWithIdentifier:(NSString *)identifier sender:(id)sender {
     if ([self conformsToProtocol:@protocol(XZMocoaView)]) {
         return [((id<XZMocoaView>)self).viewModel shouldPerformSegueWithIdentifier:identifier sender:sender];
     }
@@ -165,7 +165,7 @@ XZMocoaOptionKey const XZMocoaOptionKeyName = @"name";
     return [self xz_mocoa_exchange_shouldPerformSegueWithIdentifier:identifier sender:sender];;
 }
 
-- (void)xz_mocoa_new_prepareForSegue:(UIStoryboardSegue *)segue sender:(id<XZMocoaView>)sender {
+- (void)xz_mocoa_override_prepareForSegue:(UIStoryboardSegue *)segue sender:(id<XZMocoaView>)sender {
     if ([self conformsToProtocol:@protocol(XZMocoaView)]) {
         return [((id<XZMocoaView>)self).viewModel prepareForSegue:segue sender:sender];
     }

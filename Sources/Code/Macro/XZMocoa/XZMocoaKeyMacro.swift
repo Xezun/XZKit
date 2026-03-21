@@ -45,7 +45,7 @@ public struct XZMocoaKeyMacro {
             let expression = syntax.bindings[syntax.bindings.startIndex]
             
             if expression.initializer != nil {
-                throw XZMacroError(message: "@key: 被 @key 标记的属性，需通过 @key(value:) 或 @key(.akey, value:) 提供初始值")
+                throw XZMacroError(message: "@key: 作为 @key 使用的属性不支持设置初始值，请使用宏参数 @key(value:) 或 @key(.akey, value:) 提供初始值")
             }
             
             var accessors = [String]()

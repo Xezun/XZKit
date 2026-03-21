@@ -88,6 +88,24 @@ extension XZMocoaMacro: MemberAttributeMacro {
         
         let role = try Self.role(forMacro: node, forClass: classDecl)
         
+        switch role {
+        case .m:
+            guard let variableDecl = member.as(VariableDeclSyntax.self) else {
+                return []
+            }
+            if variableDecl.bindings.count != 1 || variableDecl.isReadyOnlyProperty {
+               return []
+            }
+            if variableDecl.contains(attribute: "objc") {
+                return []
+            }
+            return [AttributeSyntax(attributeName: IdentifierTypeSyntax(name: .identifier("objc")))]
+        default:
+            break
+        }
+        
+        var attributeSyntaxes = [SwiftSyntax.AttributeSyntax]()
+        
         if let variableDecl = member.as(VariableDeclSyntax.self) {
             var objcAttributes: String? = nil
             
@@ -138,11 +156,9 @@ extension XZMocoaMacro: MemberAttributeMacro {
                 }
             }
             
-            guard let objcAttributes = objcAttributes else {
-                return []
+            if let objcAttributes = objcAttributes {
+                attributeSyntaxes.append("\(raw: objcAttributes)")
             }
-            
-            return ["\(raw: objcAttributes)"]
         }
         
         if let methodNode = member.as(FunctionDeclSyntax.self) {
@@ -171,14 +187,12 @@ extension XZMocoaMacro: MemberAttributeMacro {
                 }
             }
             
-            guard let objcAttributes = objcAttributes else {
-                return []
+            if let objcAttributes = objcAttributes {
+                attributeSyntaxes.append("\(raw: objcAttributes)")
             }
-            
-            return ["\(raw: objcAttributes)"]
         }
-   
-        return []
+        
+        return attributeSyntaxes
     }
     
 }

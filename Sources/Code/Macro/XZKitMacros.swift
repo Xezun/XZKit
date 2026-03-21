@@ -145,3 +145,43 @@ extension SwiftSyntax.AttributeListSyntax {
     }
     
 }
+
+
+extension VariableDeclSyntax {
+    
+    var isReadyOnlyProperty: Bool {
+        if self.bindings.count != 1 {
+            return false
+        }
+        
+        let expression = self.bindings[self.bindings.startIndex]
+        
+        if let block = expression.accessorBlock {
+            switch block.accessors {
+            case .accessors(let list):
+                if list.count == 1 {
+                    // 只有一个 get 访问点
+                    return list.first!.accessorSpecifier.tokenKind == .keyword(.get)
+                }
+                return list.count == 1
+            case .getter:
+                return true
+            }
+        }
+        
+        return false
+    }
+    
+    func contains(modifier: Keyword) -> Bool {
+        return self.modifiers.contains(where: { $0.name.tokenKind == .keyword(modifier) })
+    }
+    
+    func contains(attribute name: String) -> Bool {
+        return self.attributes.contains { attribute in
+            if case let .attribute(macroNode) = attribute {
+                return macroNode.attributeName.trimmedDescription == name
+            }
+            return false
+        }
+    }
+}

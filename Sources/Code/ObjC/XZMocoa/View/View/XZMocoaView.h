@@ -63,6 +63,12 @@ NS_SWIFT_UI_ACTOR @protocol XZMocoaView <NSObject>
 
 /// 所有 UIResponder 是天然的 MVVM 中 View 角色，所以为 UIResponder 拓展了 viewModel 属性。
 @interface UIResponder (XZMocoaView) <XZMocoaViewModelDelegate>
+/// 视图模型。
+///
+/// ### 视图
+/// 设置此属性自动向视图模型发送`ready`消息。
+/// ### 视图控制器
+/// 如果控制器未进入生命周期，那么将在`super.viewDidLoad`中，自动发送`ready`消息。
 @property (nonatomic, strong, nullable) __kindof XZMocoaViewModel *viewModel;
 - (void)viewModelWillChange:(nullable XZMocoaViewModel *)newValue NS_REQUIRES_SUPER;
 - (void)viewModelDidChange:(nullable XZMocoaViewModel *)oldValue NS_REQUIRES_SUPER NS_REFINED_FOR_SWIFT;

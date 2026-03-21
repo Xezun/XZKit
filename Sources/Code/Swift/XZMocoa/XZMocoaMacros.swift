@@ -79,7 +79,17 @@ public macro key(_ name: XZMocoaKey, value: Any) = #externalMacro(module: "XZKit
 ///
 /// 标记 Mocoa 角色中，需要单向同步的属性。
 ///
-/// 1. ViewModel 绑定 Model 的属性
+/// 1. 在 Swift 中，需要使用 `dynamic` 修饰属性，否则无法使用 KVO
+///
+/// ```swift
+/// @mocoa(.m)
+/// class Model: NSObject {
+///     @objc dynamic var name: String?
+///     @objc dynamic var age: Int = 0
+/// }
+/// ```
+///
+/// 2. ViewModel 绑定 Model 的属性
 ///
 /// ```swift
 /// @mocoa(.vm)
@@ -90,8 +100,8 @@ public macro key(_ name: XZMocoaKey, value: Any) = #externalMacro(module: "XZKit
 ///     var name: String?
 ///
 ///     // 将 model.desc 绑定到 #selector(setter: Self.description) 方法
-///     @bind(.desc)
-///     var description: String?
+///     @bind("")
+///     var age: String?
 ///
 ///     // 将 model.min、model.max 绑定到当前方法
 ///     @bind
@@ -103,7 +113,7 @@ public macro key(_ name: XZMocoaKey, value: Any) = #externalMacro(module: "XZKit
 /// }
 /// ```
 ///
-/// 2. View 绑定 ViewModel 的属性
+/// 3. View 绑定 ViewModel 的属性
 ///
 /// ```swift
 /// @mocoa(.v)

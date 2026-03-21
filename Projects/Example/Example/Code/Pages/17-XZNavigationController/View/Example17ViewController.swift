@@ -35,101 +35,6 @@ enum Example17PageType: String, CaseIterable {
     
 }
 
-@objc class Example17Configuration: NSObject {
-    @objc var isHidden = false
-    @objc var isTranslucent = true
-    @objc var prefersLargeTitles = false
-}
-
-@mocoa(.m)
-@objc class Example17Model: NSObject, XZMocoaModel {
-    
-    @objc var current: Example17Configuration
-    @objc var next  = Example17Configuration.init()
-    
-    init(current: Example17Configuration = .init()) {
-        self.current = current
-        super.init()
-        
-        self.addObserver(self, forKeyPath: "current.isHidden", options: .new, context: nil)
-    }
-    
-    override func observeValue(forKeyPath keyPath: String?, of object: Any?, change: [NSKeyValueChangeKey : Any]?, context: UnsafeMutableRawPointer?) {
-        #XZLog("KVO: \(keyPath) => \(object)")
-    }
-    
-}
-
-@mocoa(.vm)
-class Example17ViewModel: XZMocoaViewModel {
-    
-    override var shouldObserveModelKeysActively: Bool {
-        return true
-    }
-    
-    @key(value: false)
-    @bind("current.isHidden")
-    var currentHidden: Bool
-    
-    @key(value: true)
-    @bind("current.isTranslucent")
-    var currentTranslucent: Bool
-    
-    @key(value: false)
-    @bind("current.prefersLargeTitles")
-    var currentLargeTitles: Bool
-    
-    @key(value: false)
-    @bind("next.isHidden")
-    var nextHidden: Bool
-    
-    @key(value: true)
-    @bind("next.isTranslucent")
-    var nextTranslucent: Bool
-    
-    @key(value: false)
-    @bind("next.prefersLargeTitles")
-    var nextLargeTitles: Bool
-    
-    var next: Example17ViewModel {
-        let model = Example17Model.init(current: (self.model as! Example17Model).next)
-        return .init(model: model)
-    }
-        
-    func currentHiddenChangeValue(_ newValue: Bool) {
-        let model = self.model as! Example17Model
-        model.current.isHidden = newValue
-    }
-    
-    func currentTranslucentChangeValue(_ newValue: Bool) {
-        let model = self.model as! Example17Model
-        model.current.isTranslucent = newValue
-    }
-    
-    func currentLargeTitlesChangeValue(_ newValue: Bool) {
-        let model = self.model as! Example17Model
-        model.current.prefersLargeTitles = newValue
-    }
-    
-    func nextHiddenChangeValue(_ newValue: Bool) {
-        let model = self.model as! Example17Model
-        model.next.isHidden = newValue
-    }
-    
-    func nextTranslucentChangeValue(_ newValue: Bool) {
-        let model = self.model as! Example17Model
-        model.next.isTranslucent = newValue
-    }
-    
-    func nextLargeTitlesChangeValue(_ newValue: Bool) {
-        let model = self.model as! Example17Model
-        model.next.prefersLargeTitles = newValue
-    }
-    
-}
-
-
-
 /// 基类。
 @mocoa(.v)
 class Example17ViewController: UITableViewController, XZMocoaView {
@@ -159,39 +64,24 @@ class Example17ViewController: UITableViewController, XZMocoaView {
     }
     
     override func viewDidLoad() {
-        super.viewDidLoad()
-        
+        // 在
         if self.viewModel == nil {
             self.viewModel = Example17ViewModel.init(model: Example17Model.init())
         }
         
+        super.viewDidLoad()
         
-//        // 设置当前页的导航栏样式
-//        if let navigationBar = (self as? XZNavigationBarCustomizable)?.navigationBar {
-//            navigationBar.isHidden = pageConfiguration.isHidden
-//            navigationBar.isTranslucent = pageConfiguration.isTranslucent
-//            navigationBar.prefersLargeTitles = pageConfiguration.prefersLargeTitles
-//        }
-//        
-//        // 同步数据
-//        self.nextHiddenSwitch.isOn = nextHiddenSwitch.isOn
-//        self.nextTranslucentSwitch.isOn = nextTranslucentSwitch.isOn
-//        self.nextLargeTitlesSwitch.isOn = nextLargeTitlesSwitch.isOn
+        // 设置当前页的导航栏样式
+        if let navigationBar = (self as? XZNavigationBarCustomizable)?.navigationBar {
+            let viewModel = self.viewModel as! Example17ViewModel
+            navigationBar.isHidden           = viewModel.currentHidden
+            navigationBar.isTranslucent      = viewModel.currentTranslucent
+            navigationBar.prefersLargeTitles = viewModel.currentLargeTitles
+        }
     }
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        
-        // 未定制导航栏的控制器设置导航栏样式
-        if self is XZNavigationBarCustomizable {
-            return
-        }
-//        if let navigationController = self.navigationController {
-//            let uiNavigationBar = navigationController.navigationBar;
-//            uiNavigationBar.isTranslucent = pageConfiguration.isTranslucent
-//            uiNavigationBar.prefersLargeTitles = pageConfiguration.prefersLargeTitles
-//            navigationController.setNavigationBarHidden(pageConfiguration.isHidden, animated: animated)
-//        }
     }
     
     override func viewDidAppear(_ animated: Bool) {
