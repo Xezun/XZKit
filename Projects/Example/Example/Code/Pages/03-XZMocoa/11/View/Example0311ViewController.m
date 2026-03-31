@@ -48,8 +48,8 @@
     self.viewModel = viewModel;
 }
 
-- (void)viewModelDidChange:(XZMocoaViewModel *)oldValue {
-    [super viewModelDidChange:oldValue];
+- (void)prepareForViewModel {
+    [super prepareForViewModel];
     
     Example0311ViewModel *viewModel = self.viewModel;
     self.nameLabel.text = viewModel.name;

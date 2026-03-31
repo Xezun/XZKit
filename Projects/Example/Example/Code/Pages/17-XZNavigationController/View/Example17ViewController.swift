@@ -8,35 +8,8 @@
 import UIKit
 import XZKit
 
-enum Example17PageType: String, CaseIterable {
-    
-    case DingZhi
-    case DaoHang
-    case ShouShi
-    case YuanSen
-    
-    var name: String {
-        switch self {
-        case .DingZhi:
-            return "定制页"
-        case .DaoHang:
-            return "导航页"
-        case .ShouShi:
-            return "手势页"
-        case .YuanSen:
-            return "原生页"
-        }
-    }
-    
-    var viewController: Example17ViewController {
-        let storyboard = UIStoryboard(name: "Example17", bundle: nil)
-        return storyboard.instantiateViewController(withIdentifier: self.rawValue) as! Example17ViewController
-    }
-    
-}
-
 /// 基类。
-@mocoa(.v)
+@mocoa
 class Example17ViewController: UITableViewController, XZMocoaView {
     
     @bind("currentHidden", v: .isOn)
@@ -64,12 +37,12 @@ class Example17ViewController: UITableViewController, XZMocoaView {
     }
     
     override func viewDidLoad() {
-        // 在
+        super.viewDidLoad()
+        
+        // 首个控制器需要自己创建视图模型。
         if self.viewModel == nil {
             self.viewModel = Example17ViewModel.init(model: Example17Model.init())
         }
-        
-        super.viewDidLoad()
         
         // 设置当前页的导航栏样式
         if let navigationBar = (self as? XZNavigationBarCustomizable)?.navigationBar {
@@ -92,38 +65,38 @@ class Example17ViewController: UITableViewController, XZMocoaView {
     
     @IBAction func currentHiddenSwitchValueChanged(_ sender: UISwitch) {
         let viewModel = self.viewModel as! Example17ViewModel
-        viewModel.currentHiddenChangeValue(sender.isOn)
+        viewModel.currentHidden = sender.isOn;
         
         self.navigationController?.setNavigationBarHidden(sender.isOn, animated: true)
     }
     
     @IBAction func currentTranslucentSwitchValueChanged(_ sender: UISwitch) {
         let viewModel = self.viewModel as! Example17ViewModel
-        viewModel.currentTranslucentChangeValue(sender.isOn)
+        viewModel.currentTranslucent = sender.isOn
         
         self.navigationController?.navigationBar.isTranslucent = sender.isOn
     }
     
     @IBAction func currentLargeTitlesSwitchValueChanged(_ sender: UISwitch) {
         let viewModel = self.viewModel as! Example17ViewModel
-        viewModel.currentLargeTitlesChangeValue(sender.isOn)
+        viewModel.currentLargeTitles = sender.isOn
         
         self.navigationController?.navigationBar.prefersLargeTitles = sender.isOn
     }
     
     @IBAction func nextHiddenSwitchValueChanged(_ sender: UISwitch) {
         let viewModel = self.viewModel as! Example17ViewModel
-        viewModel.nextHiddenChangeValue(sender.isOn)
+        viewModel.nextHidden = sender.isOn
     }
     
     @IBAction func nextTranslucentSwitchValueChanged(_ sender: UISwitch) {
         let viewModel = self.viewModel as! Example17ViewModel
-        viewModel.nextTranslucentChangeValue(sender.isOn)
+        viewModel.nextTranslucent = sender.isOn
     }
     
     @IBAction func nextLargeTitlesSwitchValueChanged(_ sender: UISwitch) {
         let viewModel = self.viewModel as! Example17ViewModel
-        viewModel.nextLargeTitlesChangeValue(sender.isOn)
+        viewModel.nextLargeTitles = sender.isOn
     }
     
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
@@ -149,6 +122,38 @@ class Example17ViewController: UITableViewController, XZMocoaView {
         default:
             break
         }
+    }
+    
+}
+
+
+enum Example17PageType: String, CaseIterable {
+    
+    /// 定制页
+    case DingZhi
+    /// 导航页
+    case DaoHang
+    /// 手势页
+    case ShouShi
+    /// 原生页
+    case YuanSen
+    
+    var name: String {
+        switch self {
+        case .DingZhi:
+            return "定制页"
+        case .DaoHang:
+            return "导航页"
+        case .ShouShi:
+            return "手势页"
+        case .YuanSen:
+            return "原生页"
+        }
+    }
+    
+    var viewController: Example17ViewController {
+        let storyboard = UIStoryboard(name: "Example17", bundle: nil)
+        return storyboard.instantiateViewController(withIdentifier: self.rawValue) as! Example17ViewController
     }
     
 }

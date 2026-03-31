@@ -23,8 +23,8 @@
     [self.viewModel removeTarget:self.detailTextLabel action:nil forKey:nil];
 }
 
-- (void)viewModelDidChange:(nullable XZMocoaViewModel *)oldValue {
-    [super viewModelDidChange:oldValue];
+- (void)prepareForViewModel {
+    [super prepareForViewModel];
     
     [self.viewModel addTarget:self.textLabel action:@selector(setText:) forKey:@"name" value:nil];
     [self.viewModel addTarget:self.detailTextLabel action:@selector(setText:) forKey:@"phone" value:nil];

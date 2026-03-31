@@ -54,8 +54,8 @@ Pod::Spec.new do |s|
   # 仅包含 XZKit.h 头文件，因为在 Xcode 自动生成的 XZKit-Swift.h 文件中，会引用到此头文件，
   # 而 CocoasPods 默认生成的是 XZKit-umbrella.h 文件，缺少 XZKit-Swift.h 会导致无法通过编译。
   s.subspec "Core" do |ss|
-    ss.public_header_files = 'Sources/Code/ObjC/XZKit.h'
-    ss.source_files        = 'Sources/Code/ObjC/XZKit.h'
+    ss.public_header_files = 'Sources/ObjC/Code/XZKit.h'
+    ss.source_files        = 'Sources/ObjC/Code/XZKit.h'
   end
   
   # 拓展一个定义子库的方法
@@ -68,18 +68,18 @@ Pod::Spec.new do |s|
       # 源代码
       case type
       when "objc"
-        ss.public_header_files  = "Sources/Code/ObjC/#{name}/**/*.h";
-        ss.source_files         = "Sources/Code/ObjC/#{name}/**/*.{h,m}";
+        ss.public_header_files  = "Sources/ObjC/Code/#{name}/**/*.h";
+        ss.source_files         = "Sources/ObjC/Code/#{name}/**/*.{h,m}";
       when "swift"
-        ss.source_files         = "Sources/Code/Swift/#{name}/**/*.swift";
+        ss.source_files         = "Sources/Swift/#{name}/**/*.swift";
       when "mixed"
-        ss.public_header_files  = "Sources/Code/ObjC/#{name}/**/*.h";
-        ss.source_files         = "Sources/Code/{ObjC,Swift}/#{name}/**/*.{h,m,swift}";
+        ss.public_header_files  = "Sources/ObjC/Code/#{name}/**/*.h";
+        ss.source_files         = "Sources/ObjC/Code/#{name}/**/*.{h,m}", "Sources/Swift/#{name}/**/*.swift";
       end
       
       # 私有文件
       if hasPrivates
-        ss.project_header_files = "Sources/Code/Objc/#{name}/**/Private/**/*.h"
+        ss.project_header_files = "Sources/Objc/Code/#{name}/**/Private/**/*.h"
       end
 
       # 依赖

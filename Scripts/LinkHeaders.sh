@@ -1,10 +1,10 @@
 #!/bin/bash
 #
-# 参数1：模块名
+# 参数：无
 # 执行目录：仓库根目录
-# 示例：sh Scripts/LinkHeaders.sh XZKit
+# 示例：sh Scripts/LinkHeaders.sh
 
-
+# 创建目录，包括子目录。
 CreatePath() {
     if [[ -d "$1" ]]; then
         echo "\033[34m🎉 目录 $1 检查通过\033[0m"
@@ -19,66 +19,49 @@ CreatePath() {
     fi
 }
 
-LinkModuleHeaders() {
-    local moduleName="$1";
-    local modulePath="$2";
-    local headerType="$3";
-    for path in "$modulePath"/*; do
-        # echo "path => $path"
+# 为模块的 .h 文件，创建软链接。
+# 参数一：头文件所在的目录
+# 参数二：当前目录下的头文件类型，公开 Public 或私有 Private
+CreateHeadersForType() {
+    local MODULE_PATH="$1";
+    local HEADER_TYPE="$2";
+    # 如果存放软链接的目录不存在，则先创建该目录
+    local HEADER_ROOT="Sources/ObjC/Headers/$HEADER_TYPE/XZKit"
+    if [[ ! -d "$HEADER_ROOT" ]]; then
+        CreatePath "$HEADER_ROOT"
+        # 创建软链接前，再次判断存放目录是否存在
+        if [[ ! -d "$HEADER_ROOT" ]]; then
+            echo "🚫 \033[33m目录 $HEADER_ROOT 不存在，且无法创建\033[0m"
+        fi
+    fi
+    # 遍历目录下的直接子目录或文件
+    for path in "$MODULE_PATH"/*; do
+        # 获得当前所遍历的子目录或文件的名字
         local name=$(basename "$path")
+        # 判断当前遍历的是否为文件
         if [[ -f $path ]]; then
+            # 判断当前遍历的文件是否为 .h 文件
             if [[ "$name" =~ ".h"$ ]]; then
-                if [[ ! -d "Sources/Headers/$headerType/$moduleName" ]]; then
-                    CreatePath "Sources/Headers/$headerType/$moduleName"
-                fi
-                if [[ -d "Sources/Headers/$headerType/$moduleName" ]]; then
-                    ln -s "../../../../$path" "Sources/Headers/$headerType/$moduleName/$name"
-                    echo "\033[32m[+] [$headerType] $path \033[0m"
-                else
-                    echo "🚫 \033[33m目录 $headerType/$moduleName 不存在，且无法创建\033[0m"
-                fi
+                # 源文件的相对路径。
+                local SOURCE_PATH="../../../Code/${path#*Sources/ObjC/Code/}"
+                # 软链接的存放路径
+                local HEADER_PATH="$HEADER_ROOT/$name"
+                # 创建软链接
+                ln -snf "$SOURCE_PATH" "$HEADER_PATH"
+                echo "\033[32m[+] [$HEADER_TYPE] $SOURCE_PATH => $HEADER_PATH \033[0m"
             fi
         elif [[ -d $path ]]; then
             if [[ "$name" == "Private" ]]; then
-                LinkModuleHeaders "$moduleName" "$path" "Private"
+                CreateHeadersForType "$path" "Private"
             else
-                LinkModuleHeaders "$moduleName" "$path" "$headerType"
+                CreateHeadersForType "$path" "$HEADER_TYPE"
             fi
         fi
     done
     return 0
 }
 
-LinkXZKitHeaders() {
-    local modulePath="$1";
-    local headerType="$2";
-    for path in "$modulePath"/*; do
-        # echo "path => $path"
-        local name=$(basename "$path")
-        if [[ -f $path ]]; then
-            if [[ "$name" =~ ".h"$ ]]; then
-                if [[ ! -d "Sources/Headers/$headerType/XZKit" ]]; then
-                    CreatePath "Sources/Headers/$headerType/XZKit"
-                fi
-                if [[ -d "Sources/Headers/$headerType/XZKit" ]]; then
-                    ln -s "../../../../$path" "Sources/Headers/$headerType/XZKit/$name"
-                    echo "\033[32m[+] [$headerType] $path \033[0m"
-                else
-                    echo "🚫 \033[33m目录 $headerType/XZKit 不存在，且无法创建\033[0m"
-                fi
-            fi
-        elif [[ -d $path ]]; then
-            if [[ "$name" == "Private" ]]; then
-                LinkXZKitHeaders "$path" "Private"
-            else
-                LinkXZKitHeaders "$path" "$headerType"
-            fi
-        fi
-    done
-    return 0
-}
-
-MODULE_NAME="$1"
+MODULE_NAME="XZKit"
 
 # 检查脚本参数
 if [[ -z "$MODULE_NAME" ]]; then
@@ -87,14 +70,14 @@ if [[ -z "$MODULE_NAME" ]]; then
 fi
 
 echo "☕️ \033[34m清理操作开始\033[0m"
-if [[ -d "Sources/Headers/Public/${MODULE_NAME}" ]]; then
-    for path in "Sources/Headers/Public/${MODULE_NAME}"/*; do
+if [[ -d "Sources/ObjC/Headers/Public/${MODULE_NAME}" ]]; then
+    for path in "Sources/ObjC/Headers/Public/${MODULE_NAME}"/*; do
         rm -rf "$path"
         echo "\033[31m[-]  $path \033[0m"
     done
 fi
-if [[ -d "Sources/Headers/Private/${MODULE_NAME}" ]]; then
-    for path in "Sources/Headers/Private/${MODULE_NAME}"/*; do
+if [[ -d "Sources/ObjC/Headers/Private/${MODULE_NAME}" ]]; then
+    for path in "Sources/ObjC/Headers/Private/${MODULE_NAME}"/*; do
         rm -rf "$path"
         echo "\033[31m[-]  $path \033[0m"
     done
@@ -102,22 +85,43 @@ fi
 echo "🎉 \033[34m清理操作结束\033[0m"
 
 # 进入目录
-CreatePath "Sources/Headers/Public"
-CreatePath "Sources/Headers/Private"
+CreatePath "Sources/ObjC/Headers/Public"
+CreatePath "Sources/ObjC/Headers/Private"
 
 echo "\033[34m☕️ 开始链接头文件\033[0m"
-if [[ "$MODULE_NAME" == "XZKit" ]]; then
-    LinkXZKitHeaders "Sources/Code/ObjC" "Public"
-else
-    # 检查 MODULE_PATH
-    if [[ ! -d "Sources/Code/ObjC/${MODULE_NAME}" ]]; then
-        echo "🚫 \033[33m模块 ${MODULE_NAME} 不存在！\033[0m"
-        exit 2;
-    fi
-    LinkModuleHeaders "$MODULE_NAME" "Sources/Code/ObjC/${MODULE_NAME}" "Public"
-fi
+CreateHeadersForType "Sources/ObjC/Code" "Public"
 echo "\033[34m🎉 链接头文件完成\033[0m"
 
 
+# 为指定模块创建头文件软链接。（暂未使用）
+CreateHeadersForModule() {
+    local MODULE_NAME="$1";
+    local MODULE_PATH="$2";
+    local HEADER_TYPE="$3";
+    for path in "$MODULE_PATH"/*; do
+        # echo "path => $path"
+        local name=$(basename "$path")
+        if [[ -f $path ]]; then
+            if [[ "$name" =~ ".h"$ ]]; then
+                if [[ ! -d "Sources/ObjC/Headers/$HEADER_TYPE/$MODULE_NAME" ]]; then
+                    CreatePath "Sources/ObjC/Headers/$HEADER_TYPE/$MODULE_NAME"
+                fi
+                if [[ -d "Sources/ObjC/Headers/$HEADER_TYPE/$MODULE_NAME" ]]; then
+                    ln -s "../../../Code/${path#*Sources/ObjC/Code/}" "Sources/ObjC/Headers/$HEADER_TYPE/$MODULE_NAME/$name"
+                    echo "\033[32m[+] [$HEADER_TYPE] $path \033[0m"
+                else
+                    echo "🚫 \033[33m目录 $HEADER_TYPE/$MODULE_NAME 不存在，且无法创建\033[0m"
+                fi
+            fi
+        elif [[ -d $path ]]; then
+            if [[ "$name" == "Private" ]]; then
+                CreateHeadersForModule "$MODULE_NAME" "$path" "Private"
+            else
+                CreateHeadersForModule "$MODULE_NAME" "$path" "$HEADER_TYPE"
+            fi
+        fi
+    done
+    return 0
+}
 
 

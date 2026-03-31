@@ -33,8 +33,8 @@
     _titleLabel.frame = CGRectMake(16.0, 0, bounds.size.width - 40.0, bounds.size.height);
 }
 
-- (void)viewModelDidChange:(XZMocoaViewModel *)oldValue {
-    [super viewModelDidChange:oldValue];
+- (void)prepareForViewModel {
+    [super prepareForViewModel];
     
     _titleLabel.text = self.viewModel.model;
 }

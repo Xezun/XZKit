@@ -8,70 +8,83 @@
 import UIKit
 import XZKit
 
-@mocoa(.vm)
+@mocoa
 class Example17ViewModel: XZMocoaViewModel {
     
     override var shouldObserveModelKeysActively: Bool {
         return true
     }
     
-    @key(value: false)
+    @key
     @bind("current.isHidden")
-    var currentHidden: Bool
+    var currentHidden: Bool = false {
+        didSet {
+            let model = self.model as! Example17Model
+            if model.current.isHidden != currentHidden {
+                model.current.isHidden = currentHidden
+            }
+        }
+    }
     
-    @key(value: true)
+    @key
     @bind("current.isTranslucent")
-    var currentTranslucent: Bool
+    var currentTranslucent: Bool = true {
+        didSet {
+            let model = self.model as! Example17Model
+            if model.current.isTranslucent != currentTranslucent {
+                model.current.isTranslucent = currentTranslucent
+            }
+        }
+    }
     
-    @key(value: false)
+    @key
     @bind("current.prefersLargeTitles")
-    var currentLargeTitles: Bool
+    var currentLargeTitles: Bool = false {
+        didSet {
+            let model = self.model as! Example17Model
+            if model.current.prefersLargeTitles != currentLargeTitles {
+                model.current.prefersLargeTitles = currentLargeTitles
+            }
+        }
+    }
     
-    @key(value: false)
+    @key
     @bind("next.isHidden")
-    var nextHidden: Bool
+    var nextHidden: Bool = false {
+        didSet {
+            let model = self.model as! Example17Model
+            if model.next.isHidden != nextHidden {
+                model.next.isHidden = nextHidden
+            }
+        }
+    }
     
-    @key(value: true)
+    @key
     @bind("next.isTranslucent")
-    var nextTranslucent: Bool
+    var nextTranslucent: Bool = true {
+        didSet {
+            let model = self.model as! Example17Model
+            if model.next.isTranslucent != nextTranslucent {
+                model.next.isTranslucent = nextTranslucent
+            }
+        }
+    }
     
-    @key(value: false)
+    @key
     @bind("next.prefersLargeTitles")
-    var nextLargeTitles: Bool
+    var nextLargeTitles: Bool = false {
+        didSet {
+            let model = self.model as! Example17Model
+            if model.next.prefersLargeTitles != nextLargeTitles {
+                model.next.prefersLargeTitles = nextLargeTitles
+            }
+                
+        }
+    }
     
     var next: Example17ViewModel {
         let model = Example17Model.init(current: (self.model as! Example17Model).next)
         return .init(model: model)
-    }
-        
-    func currentHiddenChangeValue(_ newValue: Bool) {
-        let model = self.model as! Example17Model
-        model.current.isHidden = newValue
-    }
-    
-    func currentTranslucentChangeValue(_ newValue: Bool) {
-        let model = self.model as! Example17Model
-        model.current.isTranslucent = newValue
-    }
-    
-    func currentLargeTitlesChangeValue(_ newValue: Bool) {
-        let model = self.model as! Example17Model
-        model.current.prefersLargeTitles = newValue
-    }
-    
-    func nextHiddenChangeValue(_ newValue: Bool) {
-        let model = self.model as! Example17Model
-        model.next.isHidden = newValue
-    }
-    
-    func nextTranslucentChangeValue(_ newValue: Bool) {
-        let model = self.model as! Example17Model
-        model.next.isTranslucent = newValue
-    }
-    
-    func nextLargeTitlesChangeValue(_ newValue: Bool) {
-        let model = self.model as! Example17Model
-        model.next.prefersLargeTitles = newValue
     }
     
 }

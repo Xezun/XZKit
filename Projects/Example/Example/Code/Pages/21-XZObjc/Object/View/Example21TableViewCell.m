@@ -25,23 +25,24 @@
     // Configure the view for the selected state
 }
 
-- (void)viewModelDidChange:(nullable XZMocoaViewModel *)oldValue {
-    [super viewModelDidChange:oldValue];
+- (void)prepareForViewModel {
+    [super prepareForViewModel];
     
-    if ([self.viewModel.model isKindOfClass:[XZObjcMethod class]]) {
-        XZObjcMethod *descriptor = self.viewModel.model;
+    XZMocoaViewModel *viewModel = self.viewModel;
+    if ([viewModel.model isKindOfClass:[XZObjcMethod class]]) {
+        XZObjcMethod *descriptor = viewModel.model;
         self.textLabel.text = descriptor.name;
         self.detailTextLabel.text = descriptor.type.name;
-    } else if ([self.viewModel.model isKindOfClass:[XZObjcProperty class]]) {
-        XZObjcProperty *descriptor = self.viewModel.model;
+    } else if ([viewModel.model isKindOfClass:[XZObjcProperty class]]) {
+        XZObjcProperty *descriptor = viewModel.model;
         self.textLabel.text = descriptor.name;
         self.detailTextLabel.text = descriptor.type.name;
-    } else if ([self.viewModel.model isKindOfClass:[XZObjcIvar class]]) {
-        XZObjcIvar *descriptor = self.viewModel.model;
+    } else if ([viewModel.model isKindOfClass:[XZObjcIvar class]]) {
+        XZObjcIvar *descriptor = viewModel.model;
         self.textLabel.text = descriptor.name;
         self.detailTextLabel.text = descriptor.type.name;
-    } else if ([self.viewModel.model isKindOfClass:[XZObjcClass class]]) {
-        XZObjcClass *descriptor = self.viewModel.model;
+    } else if ([viewModel.model isKindOfClass:[XZObjcClass class]]) {
+        XZObjcClass *descriptor = viewModel.model;
         self.textLabel.text = descriptor.name;
         self.detailTextLabel.text = descriptor.type.name;
     }

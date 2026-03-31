@@ -1,1 +1,0 @@
-../../../../Sources/Code/ObjC/XZRefresh/Private/XZRefreshManager.h

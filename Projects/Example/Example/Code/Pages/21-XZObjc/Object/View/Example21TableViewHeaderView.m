@@ -22,8 +22,8 @@
     self.viewModel = nil;
 }
 
-- (void)viewModelDidChange:(nullable XZMocoaViewModel *)oldValue {
-    [super viewModelDidChange:oldValue];
+- (void)prepareForViewModel {
+    [super prepareForViewModel];
     
     self.textLabel.text = self.viewModel.model;
 }

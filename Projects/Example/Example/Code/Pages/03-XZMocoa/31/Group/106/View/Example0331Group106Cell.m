@@ -41,8 +41,8 @@
     return self;
 }
 
-- (void)viewModelDidChange:(nullable XZMocoaViewModel *)oldValue {
-    [super viewModelDidChange:oldValue];
+- (void)prepareForViewModel {
+    [super prepareForViewModel];
     
     Example0331Group106CellViewModel *viewModel = self.viewModel;
     self.textLabel.text = @"Cell视图";

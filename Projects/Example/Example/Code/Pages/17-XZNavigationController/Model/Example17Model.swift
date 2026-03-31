@@ -8,7 +8,7 @@
 import UIKit
 import XZKit
 
-@mocoa(.m)
+@mocoa
 class Example17Model: NSObject, XZMocoaModel {
     
     var current: Example17Configuration

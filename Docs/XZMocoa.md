@@ -200,7 +200,7 @@ ViewModel向View提供稳定的API，这可以减少View层改动，同时也能
 
 ```objc
 @implementation ExampleCell
-- (void)viewModelDidChange {
+- (void)prepareForViewModel {
     ExampleViewModel *viewModel = self.viewModel;
     
     self.nameLabel.text = viewModel.name;
@@ -208,7 +208,7 @@ ViewModel向View提供稳定的API，这可以减少View层改动，同时也能
 @end
 ```
 
-方法`viewModelDidChange`是`MocoaView`协议提供的方法，声明该协议即可获得该方法。
+方法`prepareForViewModel`是`MocoaView`协议提供的方法，声明该协议即可获得该方法。
 
 ###### 3.4 注册模块
 
@@ -519,7 +519,7 @@ Mocoa 为独立的顶层模块，提供了进入的便利方法。
 #### 3、target-action
 
 在 MVVM 设计模式中，`View`通过监听`ViewModel`的属性来展示页面，但是实际上，大部分情况下，`View`并不需要一直监听，因为大多数的`View`只需要渲染一次。
-所以 Mocoa 没有设计如何实现监听的代码，因为大部分页面渲染在`viewModelDidChange`中就能完成了。
+所以 Mocoa 没有设计如何实现监听的代码，因为大部分页面渲染在`prepareForViewModel`中就能完成了。
 
 在剩下的小部分情况中，我们可以通过`delegate`的方式来实现，这比监听更直观，且易维护。
 不过，使用`delegate`由于需要定义协议，使用起来比较麻烦，所以了简化这些在少量事件的处理，Mocoa 设计了`target-action`机制。
