@@ -10,7 +10,7 @@ import Foundation
 /// 获取地址为 urlString 的 Mocoa 模块。
 ///
 /// ```swift
-/// #module("https://mocoa.xezun.com/main")
+/// #mocoa("https://mocoa.xezun.com/main")
 /// ```
 @freestanding(expression)
 public macro mocoa(_ urlString: String) -> XZMocoaModule = #externalMacro(module: "XZKitMacros", type: "XZMocoaModuleMacro")

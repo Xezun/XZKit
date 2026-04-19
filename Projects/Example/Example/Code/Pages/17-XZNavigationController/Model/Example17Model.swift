@@ -11,19 +11,19 @@ import XZKit
 @mocoa
 class Example17Model: NSObject, XZMocoaModel {
     
-    var current: Example17Configuration
-    dynamic var next  = Example17Configuration.init()
+    dynamic var current : Example17Configuration
+    dynamic var next    : Example17Configuration
     
     init(current: Example17Configuration = .init()) {
         self.current = current
+        self.next = Example17Configuration.init()
         super.init()
     }
     
 }
 
-@mocoa(.m)
-class Example17Configuration: NSObject {
-    dynamic var isHidden = false
-    dynamic var isTranslucent = true
-    dynamic var prefersLargeTitles = false
+@objc class Example17Configuration: NSObject {
+    @objc dynamic var isHidden = false
+    @objc dynamic var isTranslucent = true
+    @objc dynamic var prefersLargeTitles = false
 }

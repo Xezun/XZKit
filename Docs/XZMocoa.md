@@ -48,14 +48,14 @@ pod 'XZKit/Mocoa'
 @mocoa
 class FoobarViewModel : MocoaViewModel {
     
-    @key
-    @bind
+    @key  // 标识这是一个可被 View 绑定的属性，绑定的标识就是属性名。
+    @bind // 单向绑定：Model 的属性 name 发生改变，此属性的 setter 方法将被调用。
     var name: String?
     
     @key
     var detail: String?
     
-    @bind
+    @bind // 单向绑定：Model 的属性 min、max 中任一发生改变，都会调用此方法
     func setMin(_ min: Int, max: Int) {
         detail = "From \(min) to \(max)."
     }
@@ -64,12 +64,12 @@ class FoobarViewModel : MocoaViewModel {
 @mocoa
 class FoobarView: UIView, MocoaView {
     
-    @bind(.foo)
-    var textLabel: UILabel!
+    @bind("name") // 单向绑定：将 viewModel.name 绑定到 nameLabel.text 
+    var nameLabel: UILabel!
 
     var detailTextLabel: UILabel!
     
-    @bind(.detail)
+    @bind(.detail) // 单向绑定：将 viewModel.detail 绑定到
     func setDetail(_ detail: String?) {
         detailTextLabel.text = detail
         detailTextLabel.isHidden = detail != nil && detail!.count > 0
@@ -80,7 +80,7 @@ class FoobarView: UIView, MocoaView {
 
 - `@mocoa`: 标记 Mocoa 成员，只有拥有此标记，class 的属性或方法的`@bind`和`@key`标记才会生效。
 - `@key`: 标记的 ViewModel 属性，可以被 View 用`@bind`绑定。
-- `@bind`: ViewModel 绑定 Model 的属性，或 View 绑定 ViewModel 的 `@key` 属性。
+- `@bind`: 单向绑定 ViewModel 绑定 Model 的属性，或 View 绑定 ViewModel 的 `@key` 属性。
 
 ## 如何使用
 
