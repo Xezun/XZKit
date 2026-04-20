@@ -32,13 +32,72 @@ pod 'XZKit/Mocoa'
 
 ## 设计模式
 
-### 什么是 MVVM 设计模式
+### 设计模式
 
+Mocoa 是 MVVM Cocoa 的缩写，因为它基于 Cocoa 设计的，可以与 Cocoa 无缝融合，可以不改造代码，即可在任何现有项目中应用。
 
+接入 Mocoa 并不能将项目立即变为 MVVM 设计模式，但是 Mocoa 不影响现有代码，可以仅在新模块下使用 MVVM 设计模式。对于存量代码，推荐先套个壳，让它形式上符合 MVVM 设计模式，然后再渐进式的改造，最大限度的减少代码改动，以避免影响业务稳定。
 
-组件 Mocoa 是为 Cocoa 开发提供 MVVM 设计模式的组件，接入它不需要改造现有的任何代码，因为它是基于 Cocoa 设计的，与 Cocoa 的 MVC 设计模式可以无缝融合，可以零成本接入到任何项目中。当然，接入 Mocoa 不是意味着现有代码立即“变”为 MVVM 设计模式，Mocoa 不影响现有的代码，但是接入后，就可以渐进式的对现有代码进行改造，或者仅改造部分代码，或者不改造任何现有代码，只在新的代码使用 MVVM 设计模式。
+```swift
+import XZKit
 
+@objc
+class Model: NSObject {
 
+    var isVIP = false
+    var firstName: String?
+    var lastName: String?
+    var profile: String?
+
+}
+
+@mocoa
+class View: UIView, XZMocoaView {
+
+    @bind(.name)
+    @bind(v: .textColor)
+    var textLabel: UILabel!
+    
+    @bind(.detailText)
+    var detailLabel: UILabel!
+    
+}
+
+@mocoa
+class ViewModel: XZMocoaViewModel {
+    
+    @key
+    var name: String?
+    
+    @key(value: UIColor.black)
+    var textColor: UIColor
+    
+    @key
+    @bind("profile")
+    var detailText: String?
+    
+    @bind
+    func setName(firstName: String?, lastName: String?) {
+        if let firstName = firstName {
+            if let lastName = lastName {
+                name = "\(firstName)·\(lastName)"
+            } else {
+                name = firstName
+            }
+        } else if let lastName = lastName {
+            name = lastName
+        } else {
+            name = "Visitor"
+        }
+    }
+    
+    @bind
+    func setTextColor(isVip: Bool) {
+        textColor = isVip ? .red : .black
+    }
+    
+}
+```
 
 ## 特色
 

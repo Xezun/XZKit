@@ -8,7 +8,7 @@
 
 Pod::Spec.new do |s|
   s.name             = 'XZKit'
-  s.version          = '1.1.0'
+  s.version          = '1.1.1'
   s.summary          = '一款高效、轻量、强大的 iOS 开发库'
   s.description      = <<-DESC
   一款包含 iOS 开发中常用开发组件、高频方法拓展、高性能工具类的开发库，采用了组件最小化设计原则，可以按需最小化引用。
@@ -35,6 +35,7 @@ Pod::Spec.new do |s|
     sh "./Scripts/LinkMacros.sh" "${DEBUG_CONFIGURATIONS}" "${RELEASE_CONFIGURATIONS}";
   CMD
   
+  # XZKit 项目配置
   s.pod_target_xcconfig = {
     # 注入 OC 编译变量
     'GCC_PREPROCESSOR_DEFINITIONS' => 'XZ_FRAMEWORK=1',
@@ -42,6 +43,7 @@ Pod::Spec.new do |s|
     'OTHER_SWIFT_FLAGS' => "-D XZ_FRAMEWORK -load-plugin-executable ${PODS_ROOT}/XZKit/Products/XZKitMacros-${CONFIGURATION}#XZKitMacros",
   }
 
+  # 宿主项目配置
   # 在宿主项目中注入 Swift 宏插件
   # 无法单独为每一个子库导入宏插件，因为 CocoaPods 支持为子库设置不同 OTHER_SWIFT_FLAGS[config=Debug] 值（不带 [config=Debug] 的话支持）。
   s.user_target_xcconfig = {
