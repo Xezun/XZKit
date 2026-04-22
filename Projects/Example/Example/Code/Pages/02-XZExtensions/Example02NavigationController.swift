@@ -14,7 +14,6 @@ class Example02NavigationController: UINavigationController {
 
         // Do any additional setup after loading the view.
     }
-    
 
     override var childForStatusBarStyle: UIViewController? {
         return self.presentedViewController ?? self.topViewController

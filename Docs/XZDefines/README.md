@@ -25,7 +25,90 @@ pod 'XZDefines'
 
 ## 功能列表
 
-### 1、XZMacro - 高级宏定义
+### XZDefer - 延迟执行
+
+为 OC 提供类似 Swift 的 `defer` 的功能。
+
+```objc
+UIGraphicsBeginImageContext(CGSizeMake(100, 100));
+defer(^{
+    UIGraphicsEndImageContext();
+});
+
+// draw the image
+```
+
+### XZEmpty - 空值处理
+
+简化 OC 中字符串、数组、字典等类型的空值判断。
+
+- `isNonEmpty(value)` 判断字符串、数组、字典等变量的实际值，是否为其声明的类型且非空。
+
+```objc
+// 具体类型的变量，可以直接进行该类型的判断
+NSString *aString;
+if (isNonEmpty(aString)) {
+    NSLog(@"aString is a non-emtpy string");
+}
+NSArray *anArray;
+if (isNonEmpty(anArray)) {
+    NSLog(@"anArray is a non-emtpy array");
+}
+
+// id 类型的变量，需要用强转指明要检测的类型。
+id foo;
+if (isNonEmpty((NSString *)foo)) {
+    NSLog(@"foo is a non-emtpy string");
+}
+if (isNonEmpty((NSDictionary *)foo)) {
+    NSLog(@"foo is a non-emtpy NSDictionary");
+}
+if (isNonEmpty(foo)) {
+    NSLog(@"foo is a not nil and not NSNull value");
+}
+```
+
+- `asNonEmpty(value, defaultValue)` 如果字符串、数组、字典变量的实际值，为其声明的类型且非空，那么使用改值，否则使用默认值。
+
+在开发中，遇到空的或不合法的数据，我们常常希望使用默认值，以避免逻辑问题。
+
+```objc
+// 在字典中取值时，由于可能会取到空值，所以不得不进行非空判断，设计默认值。
+NSDictionary *dict;
+NSString *name = dict[@"name"];
+if (![name isKindOfClass:NSString.class] || name.length == 0) {
+    name = @"Visitor";
+}
+
+// 使用 asNonEmpty 可以简化上面的 if 语句。
+NSString *name = asNonEmpty(dict[@"name"], @"Visitor");
+```
+
+### XZRuntime - 运行时便利函数
+
+#### 1 通用方法
+
+- `xz_objc_class_getMethod` - 获取类自身的实例方法。
+- `xz_objc_class_enumerateMethods` - 遍历类自身的实例方法。
+- `xz_objc_class_enumerateVariables` - 遍历类自身的实例变量。
+- `xz_objc_class_getVariableNames` - 获取类自身实例变量名称。
+- `xz_objc_class_exchangeMethods` - 类交换自己方法的实现。
+- `xz_objc_class_addMethod` - 为类添加方法。
+- `xz_objc_class_addMethodWithBlock` - 为类添加方法。
+
+#### 2 动态创建类
+
+- `xz_objc_createClassWithName` - 派生新类。
+- `xz_objc_createClass` - 派生子类。
+- `xz_objc_class_copyMethod` - 复制单个方法。
+- `xz_objc_class_copyMethods` - 复制所有方法。
+
+### XZUtils - 常用工具函数
+
+- `XZVersionStringCompare` - 版本号比较函数，方便比较两个版本号的大小。
+- `XZTimestamp` - 获取当前时间戳，精确到微秒。
+
+### XZMacro - 高级宏定义
 
 - `xz_macro_keyize`：让宏变成类似于`@selector()`形式的关键字宏。
 
@@ -81,95 +164,13 @@ NSLog(@"%@", rgba(0xAA, 0xBB, 0xCC, 0xDD)); // UIExtendedSRGBColorSpace 0.666667
 - `enweak`、`deweak`：变量的弱引用化和强引用化，支持多个参数。
 
 ```objc
-enweak(self, foo, bar);
+@enweak(self, foo, bar);
 self.block = ^{
-    deweak(self, foo, bar);
+    @deweak(self, foo, bar);
     // from now, the block will not own the self foo bar
 };
 ```
 
-### 2、XZDefer - 延迟执行
-
-在使用需要成对搭配使用的方法时，使用 `defer` 可以将关闭语句写在前面，这样就可以避免忘记。
-
-```objc
-UIGraphicsBeginImageContext(CGSizeMake(100, 100));
-defer(^{
-    UIGraphicsEndImageContext();
-});
-
-// draw the image
-```
-
-### 3、XZEmpty - 空值处理
-
-- `isNonEmpty(value)` 非空判断
-
-在 OC 开发中，经常要用到非空判断，现在有了便利函数。
-
-```objc
-// 具体类型的变量，可以直接进行该类型的判断
-NSString *aString;
-if (isNonEmpty(aString)) {
-    NSLog(@"aString is a non-emtpy string");
-}
-NSArray *anArray;
-if (isNonEmpty(anArray)) {
-    NSLog(@"anArray is a non-emtpy array");
-}
-
-// id 类型的变量，需要使用强转指定要检测的数据类型。
-id foo;
-if (isNonEmpty((NSString *)foo)) {
-    NSLog(@"foo is a non-emtpy string");
-}
-if (isNonEmpty((NSDictionary *)foo)) {
-    NSLog(@"foo is a non-emtpy NSDictionary");
-}
-if (isNonEmpty(foo)) {
-    NSLog(@"foo is a not nil and not NSNull value");
-}
-```
-
-- `asNonEmpty(value, defaultValue)` 非空默认值
-
-在开发中，遇到空的或不合法的数据，我们常常希望使用默认值，以避免逻辑问题。
-
-```objc
-// 在字典中取值时，由于可能会取到空值，所以不得不进行非空判断，设计默认值。
-NSDictionary *dict;
-NSString *name = dict[@"name"];
-if (![name isKindOfClass:NSString.class] || name.length == 0) {
-    name = @"Visitor";
-}
-
-// 使用 asNonEmpty 可以简化上面的 if 语句。
-NSString *name = asNonEmpty(dict[@"name"], @"Visitor");
-```
-
-### 4、XZRuntime - 运行时便利函数
-
-#### 4.1 通用方法
-
-- `xz_objc_class_getMethod` - 获取类自身的实例方法。
-- `xz_objc_class_enumerateMethods` - 遍历类自身的实例方法。
-- `xz_objc_class_enumerateVariables` - 遍历类自身的实例变量。
-- `xz_objc_class_getVariableNames` - 获取类自身实例变量名称。
-- `xz_objc_class_exchangeMethods` - 类交换自己方法的实现。
-- `xz_objc_class_addMethod` - 为类添加方法。
-- `xz_objc_class_addMethodWithBlock` - 为类添加方法。
-
-#### 4.2 动态创建类
-
-- `xz_objc_createClassWithName` - 派生新类。
-- `xz_objc_createClass` - 派生子类。
-- `xz_objc_class_copyMethod` - 复制单个方法。
-- `xz_objc_class_copyMethods` - 复制所有方法。
-
-### 5、XZUtils - 常用工具函数
-
-- `XZVersionStringCompare` - 版本号比较函数，方便比较两个版本号的大小。
-- `XZTimestamp` - 获取当前时间戳，精确到微秒。
 
 ## Author
 

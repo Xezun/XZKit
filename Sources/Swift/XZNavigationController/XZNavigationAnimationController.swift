@@ -64,6 +64,7 @@ import UIKit
     
     // MARK: - UIViewControllerAnimatedTransitioning
     
+    /// 默认转场动画时长 0.35 秒。
     open func transitionDuration(using transitionContext: UIViewControllerContextTransitioning?) -> TimeInterval {
         return 0.35
     }
@@ -229,7 +230,7 @@ import UIKit
         // 处理原生导航栏的转场动画效果：
         // 1、转场容器与原生导航栏不在同一个层次上，且原生导航栏的层级更高，会覆盖在转场容器之上。
         // 2、在 iOS 26 之前，可以通过将原生导航栏移动到屏幕之外，来解决转场过程中，原生导航栏覆盖定制化导航栏的问题。
-        // 3、在 iOS 26 开始，将原生导航栏移动到屏幕之外，它会在转场的过程中自己移动回来（也可能是玻璃效果）。
+        // 3、从 iOS 26 开始，将原生导航栏移动到屏幕之外，它会在转场的过程中自己移动回来（也可能是玻璃效果）。
         // 4、通过锁定 frame 和 center 可以解决 iOS 26 导航栏自己移回来的问题。
         //
         // 【备忘】
@@ -239,9 +240,6 @@ import UIKit
         //
         // 所以最终采用将导航栏向上偏移到不可见范围，以避免转场的过程中，原生导航栏覆盖定制化导航栏的问题。
         // 原生导航栏的位置，在转场结束时，恢复到原始位置。
-        //
-        // 【已知问题】
-        // 1、由于原生导航栏层级比转场视图高，所以从原生导航栏与定制化导航栏互相转场时，原生导航栏若不透明，则会遮挡住转场过程的阴影。
         //
         
         let uiNavigationBar = animationController.navigationController.navigationBar // 系统导航栏。

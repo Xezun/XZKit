@@ -27,9 +27,6 @@
     } else {
         [self.navigationBar setBackgroundImage:image forBarMetrics:(UIBarMetricsDefault)];
     }
-    
-    [self didChangeValueForKey:@""];
-    [self willChangeValueForKey:@""];
 }
 
 - (UIViewController *)childViewControllerForStatusBarStyle {

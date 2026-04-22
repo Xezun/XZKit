@@ -7,11 +7,6 @@
 
 import UIKit
 
-enum Foobar {
-case foo
-    case bar
-}
-
 class Example10SelectViewController: UITableViewController {
     
     var value: UIView.ContentMode = .scaleToFill

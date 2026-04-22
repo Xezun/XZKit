@@ -9,17 +9,12 @@
 
 XZStringMarkup const XZStringMarkupBraces = { '{', '}' };
 
-static inline void AppendCStringWithLength(NSMutableString *mutableString, const char *string, NSInteger from, NSInteger length) {
+FOUNDATION_STATIC_INLINE void NSMutableStringAppendCString(NSMutableString *mutableString, const char *string, NSInteger from, NSInteger length) {
     if (length < 1) {
         return;
     }
     NSString * const substring = [[NSString alloc] initWithBytesNoCopy:(void *)(string + from) length:length encoding:NSUTF8StringEncoding freeWhenDone:NO];
     [mutableString appendString:substring];
-}
-
-static inline void AppendCStringWithRange(NSMutableString *mutableString, const char *string, NSInteger from, NSInteger to) {
-    NSInteger const length = to - from;
-    AppendCStringWithLength(mutableString, string, from, length);
 }
 
 @implementation NSString (XZMarkupReplacing)
@@ -65,7 +60,7 @@ static inline void AppendCStringWithRange(NSMutableString *mutableString, const 
         if (character == markup.end) {
             switch (state) {
                 case NotMatchStateText:
-                    AppendCStringWithRange(results, string, from, to);
+                    NSMutableStringAppendCString(results, string, from, to - from);
                     state = NotMatchStateEnd;
                     from = to;
                     to += 1;
@@ -73,7 +68,7 @@ static inline void AppendCStringWithRange(NSMutableString *mutableString, const 
                 case NotMatchStateStart: {
                     NSInteger const count = to - from;
                     
-                    AppendCStringWithLength(results, string, from, count / 2);
+                    NSMutableStringAppendCString(results, string, from, count / 2);
                     if (count % 2 == 0) {
                         // 偶数个开始字符，视为逃逸字符
                         state = NotMatchStateEnd;
@@ -87,7 +82,7 @@ static inline void AppendCStringWithRange(NSMutableString *mutableString, const 
                     continue;
                 }
                 case MatchingStateText:
-                    AppendCStringWithRange(matches, string, from, to);
+                    NSMutableStringAppendCString(matches, string, from, to - from);
                     state = MatchingStateEnd;
                     from = to;
                     to += 1;
@@ -96,12 +91,12 @@ static inline void AppendCStringWithRange(NSMutableString *mutableString, const 
                     NSInteger const count = to - from;
                     if (count % 2 == 0) {
                         // 偶数个开始字符，视为逃逸字符
-                        AppendCStringWithLength(matches, string, from, count / 2);
+                        NSMutableStringAppendCString(matches, string, from, count / 2);
                     } else {
                         // 匹配的过程中，遇到奇数个开始字符，那么匹配从新标记重新开始，前面匹配的作为普通字符加入结果
                         [results appendString:matches];
                         [matches setString:@""];
-                        AppendCStringWithLength(results, string, from, count / 2);
+                        NSMutableStringAppendCString(results, string, from, count / 2);
                     }
                     state = MatchingStateEnd;
                     from = to;
@@ -121,7 +116,7 @@ static inline void AppendCStringWithRange(NSMutableString *mutableString, const 
             switch (state) {
                 case NotMatchStateText:
                     // 遇到开始字符，标记状态
-                    AppendCStringWithRange(results, string, from, to);
+                    NSMutableStringAppendCString(results, string, from, to - from);
                     state = NotMatchStateStart;
                     from = to;
                     to += 1;
@@ -130,7 +125,7 @@ static inline void AppendCStringWithRange(NSMutableString *mutableString, const 
                     to += 1;
                     continue;
                 case MatchingStateText: {
-                    AppendCStringWithRange(matches, string, from, to);
+                    NSMutableStringAppendCString(matches, string, from, to - from);
                     state = MatchingStateStart;
                     from = to;
                     to += 1;
@@ -142,7 +137,7 @@ static inline void AppendCStringWithRange(NSMutableString *mutableString, const 
                 case MatchingStateEnd: {
                     NSInteger const count = to - from;
                     
-                    AppendCStringWithLength(matches, string, from, count / 2);
+                    NSMutableStringAppendCString(matches, string, from, count / 2);
                     if (count % 2 == 0) {
                         state = MatchingStateStart;
                     } else {
@@ -159,7 +154,7 @@ static inline void AppendCStringWithRange(NSMutableString *mutableString, const 
                 case NotMatchStateEnd: {
                     NSInteger const count = to - from;
                     
-                    AppendCStringWithLength(results, string, from, count / 2);
+                    NSMutableStringAppendCString(results, string, from, count / 2);
                     state = NotMatchStateStart;
                     
                     from = to;
@@ -176,7 +171,7 @@ static inline void AppendCStringWithRange(NSMutableString *mutableString, const 
             case NotMatchStateStart: {
                 NSInteger const count = to - from;
                 
-                AppendCStringWithLength(results, string, from, count / 2);
+                NSMutableStringAppendCString(results, string, from, count / 2);
                 if (count % 2 == 0) {
                     state = NotMatchStateText;
                 } else {
@@ -193,12 +188,12 @@ static inline void AppendCStringWithRange(NSMutableString *mutableString, const 
             case MatchingStateStart: {
                 NSInteger const count = to - from;
                 
-                AppendCStringWithLength(matches, string, from, count / 2);
+                NSMutableStringAppendCString(matches, string, from, count / 2);
                 if (count % 2 == 0) {
                     state = NotMatchStateText;
                 } else {
                     [results appendString:matches];
-                    AppendCStringWithLength(results, string, from, count / 2);
+                    NSMutableStringAppendCString(results, string, from, count / 2);
                     [matches setString:@""];
                     state = MatchingStateText;
                 }
@@ -211,12 +206,12 @@ static inline void AppendCStringWithRange(NSMutableString *mutableString, const 
                 NSInteger const count = to - from;
                 
                 if (count % 2 == 0) {
-                    AppendCStringWithLength(matches, string, from, count / 2);
+                    NSMutableStringAppendCString(matches, string, from, count / 2);
                     state = MatchingStateText;
                 } else {
                     [results appendString:transform(matches)];
                     [matches setString:@""];
-                    AppendCStringWithLength(results, string, from, count / 2);
+                    NSMutableStringAppendCString(results, string, from, count / 2);
                     state = NotMatchStateText;
                 }
                 
@@ -227,7 +222,7 @@ static inline void AppendCStringWithRange(NSMutableString *mutableString, const 
             case NotMatchStateEnd: {
                 NSInteger const count = to - from;
                 
-                AppendCStringWithLength(results, string, from, count / 2);
+                NSMutableStringAppendCString(results, string, from, count / 2);
                 state = NotMatchStateText;
                 
                 from = to;
@@ -239,32 +234,32 @@ static inline void AppendCStringWithRange(NSMutableString *mutableString, const 
     
     switch (state) {
         case NotMatchStateText:
-            AppendCStringWithRange(results, string, from, to);
+            NSMutableStringAppendCString(results, string, from, to - from);
             break;
         case NotMatchStateStart:
-            AppendCStringWithLength(results, string, from, (to - from) / 2);
+            NSMutableStringAppendCString(results, string, from, (to - from) / 2);
             break;
         case MatchingStateText:
             [results appendString:matches];
-            AppendCStringWithRange(results, string, from, to);
+            NSMutableStringAppendCString(results, string, from, to - from);
             break;
         case MatchingStateStart:
             [results appendString:matches];
-            AppendCStringWithLength(results, string, from, (to - from) / 2);
+            NSMutableStringAppendCString(results, string, from, (to - from) / 2);
             break;
         case MatchingStateEnd: {
             NSInteger const count = to - from;
             if (count % 2 == 0) {
                 [results appendString:matches];
-                AppendCStringWithLength(results, string, from, count / 2);
+                NSMutableStringAppendCString(results, string, from, count / 2);
             } else {
                 [results appendString:transform(matches)];
-                AppendCStringWithLength(results, string, from, count / 2);
+                NSMutableStringAppendCString(results, string, from, count / 2);
             }
             break;
         }
         case NotMatchStateEnd:
-            AppendCStringWithLength(results, string, from, (to - from) / 2);
+            NSMutableStringAppendCString(results, string, from, (to - from) / 2);
             break;
     }
     

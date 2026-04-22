@@ -71,7 +71,7 @@ static CCCryptorRef _Nullable XZDataCryptorContextMake(XZDataCryptorAlgorithm *a
     return YES;
 }
 
-- (NSData *)crypt:(void *)bytes length:(NSUInteger)length error:(NSError * _Nullable __autoreleasing *)error {
+- (NSData *)cryptBytes:(void *)bytes length:(NSUInteger)length error:(NSError * _Nullable __autoreleasing *)error {
     NSData * __block data = nil;
     
     [self update:bytes length:length receiver:^BOOL(void *buffer, size_t length) {
@@ -82,7 +82,7 @@ static CCCryptorRef _Nullable XZDataCryptorContextMake(XZDataCryptorAlgorithm *a
     return data;
 }
 
-- (NSData *)crypt:(NSData *)data error:(NSError * _Nullable __autoreleasing *)error {
+- (NSData *)cryptData:(NSData *)data error:(NSError * _Nullable __autoreleasing *)error {
     NSMutableData * __block dataM = nil;
     
     [data enumerateByteRangesUsingBlock:^(const void * _Nonnull bytes, NSRange byteRange, BOOL * _Nonnull stop) {

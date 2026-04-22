@@ -10,9 +10,9 @@
 
 @implementation NSAttributedString (XZKit)
 
-- (NSAttributedString *)xz_attributedStringByAddingFontAttribute:(UIFont *)font forCharactersInGlyphs:(BOOL)charactersInGlyphs {
+- (NSAttributedString *)xz_attributedStringByAddingAttributesForCharactersDesignedInFont:(UIFont *)font {
     NSMutableAttributedString *attributedStringM = [[NSMutableAttributedString alloc] initWithAttributedString:self];
-    [attributedStringM xz_addFontAttribute:font forCharactersInGlyphs:charactersInGlyphs];
+    [attributedStringM xz_addAttributesForCharactersDesignedInFont:font];
     return attributedStringM;
 }
 
@@ -21,17 +21,14 @@
 
 @implementation NSMutableAttributedString (XZKit)
 
-- (void)xz_addFontAttribute:(UIFont *)font forCharactersInGlyphs:(BOOL)charactersInGlyphs {
+- (void)xz_addAttributesForCharactersDesignedInFont:(UIFont *)font {
     if (font == nil) {
         return;
     }
-    if (charactersInGlyphs) {
-        [font xz_enumerateGlyphsInString:self.string usingBlock:^(NSRange range) {
-            [self addAttribute:NSFontAttributeName value:font range:range];
-        }];
-    } else {
-        [self addAttribute:NSFontAttributeName value:font range:NSMakeRange(0, self.length)];
-    }
+    
+    [self.string xz_enumerateSubstringsDesignedInFont:font usingBlock:^(NSRange range) {
+        [self addAttribute:NSFontAttributeName value:font range:range];
+    }];
 }
 
 @end

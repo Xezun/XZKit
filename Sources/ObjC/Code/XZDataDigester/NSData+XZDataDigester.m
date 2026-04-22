@@ -26,4 +26,20 @@
     return [XZDataDigester digest:self algorithm:(XZDataDigesterAlgorithmSHA1) hexEncoding:XZUppercaseHexEncoding];
 }
 
+- (NSString *)xz_sha256 {
+    return [XZDataDigester digest:self algorithm:(XZDataDigesterAlgorithmSHA256) hexEncoding:XZLowercaseHexEncoding];
+}
+
+- (NSString *)xz_SHA256 {
+    return [XZDataDigester digest:self algorithm:(XZDataDigesterAlgorithmSHA256) hexEncoding:XZUppercaseHexEncoding];
+}
+
+- (NSString *)xz_sha512 {
+    return [XZDataDigester digest:self algorithm:(XZDataDigesterAlgorithmSHA512) hexEncoding:XZLowercaseHexEncoding];
+}
+
+- (NSString *)xz_SHA512 {
+    return [XZDataDigester digest:self algorithm:(XZDataDigesterAlgorithmSHA512) hexEncoding:XZUppercaseHexEncoding];
+}
+
 @end

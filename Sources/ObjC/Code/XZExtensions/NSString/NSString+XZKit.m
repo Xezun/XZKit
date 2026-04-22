@@ -5,6 +5,7 @@
 //  Created by Xezun on 2021/6/23.
 //
 
+#undef XZ_STRING_TO_NUMBER_DISABLED
 #import <CoreText/CoreText.h>
 #import <objc/NSObjCRuntime.h>
 #import <CommonCrypto/CommonDigest.h>
@@ -14,43 +15,23 @@
 @implementation NSString (XZKit)
 
 - (CGFloat)xz_floatValue {
-    return [self xz_floatValue:0];
+    return CGFloatMake(self);
 }
 
 - (CGFloat)xz_floatValue:(CGFloat)defaultValue {
-    if (self.length == 0) {
-        return defaultValue;
-    }
-    const char *str = self.UTF8String;
-    char *ptr;
-#if CGFLOAT_IS_DOUBLE
-    CGFloat const value = strtod(str, &ptr);
-#else
-    CGFloat const value = strtof(str, &ptr);
-#endif
-    return ptr == NULL ? value : (ptr[0] == '\0' ? value : defaultValue);
+    return CGFloatMake(self, defaultValue);
 }
 
 - (NSInteger)xz_integerValue {
-    return [self xz_integerValue:0 base:10];
+    return NSIntegerMake(self);
 }
 
 - (NSInteger)xz_integerValue:(NSInteger)defaultValue base:(int)base {
-    if (self.length == 0) {
-        return defaultValue;
-    }
-    const char *str = self.UTF8String;
-    char *ptr;
-    long const value = strtol(str, &ptr, base);
-    return (NSInteger)(ptr == NULL ? value : (ptr[0] == '\0' ? value : defaultValue));
+    return NSIntegerMake(self, defaultValue);
 }
 
-+ (instancetype)xz_initWithBytesNoCopy:(void *)bytes from:(NSInteger)from to:(NSInteger)to encoding:(NSStringEncoding)encoding freeWhenDone:(BOOL)freeBuffer {
-    NSInteger const length = to - from;
-    if (length < 1) {
-        return nil;
-    }
-    return [[self alloc] initWithBytesNoCopy:(bytes + from) length:length encoding:encoding freeWhenDone:freeBuffer];
++ (instancetype)xz_initWithBytes:(void *)bytes range:(NSRange)range encoding:(NSStringEncoding)encoding {
+    return [[self alloc] initWithBytesNoCopy:(bytes + range.location) length:range.length encoding:encoding freeWhenDone:NO];
 }
 
 + (instancetype)xz_stringWithJSONObject:(id)object options:(NSJSONWritingOptions)options {

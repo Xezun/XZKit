@@ -68,6 +68,6 @@ FOUNDATION_EXPORT unsigned char XZHexEncoder(UInt8 byte, XZHexEncoding hexEncodi
 /// @param character 十六进制编码的字符
 /// @param byte 如果读取成功，二进制数据通过此参数输出，此参数不可为 NULL
 /// @return 返回 NO 表示读入的字符不是十六进制编码字符
-FOUNDATION_EXPORT BOOL XZHexDecoder(unichar character, UInt8 * const byte) __attribute__((enable_if(byte, "byte can not be NULL")));
+FOUNDATION_EXPORT BOOL XZHexDecoder(unichar character, UInt8 * const byte) __attribute__((enable_if(byte, "argument `byte` can not be NULL")));
 
 NS_ASSUME_NONNULL_END

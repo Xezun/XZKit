@@ -9,6 +9,5 @@
 
 @interface ExampleAppDelegate : UIResponder <UIApplicationDelegate>
 
-
 @end
 

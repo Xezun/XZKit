@@ -173,7 +173,7 @@ private class XZDateFormatter: DateFormatter, @unchecked Sendable {
             return super.dateFormat
         }
         set {
-            fatalError("Changing dateFormat property is not allowed for this date formatter.");
+            fatalError("[XZKit] Changing dateFormat property is not allowed for this date formatter.");
         }
     }
     

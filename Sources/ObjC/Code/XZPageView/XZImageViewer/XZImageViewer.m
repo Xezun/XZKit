@@ -95,8 +95,12 @@
     // 非交互式退场，目标控制器计算了状态栏高度，获取到 safeArea.top 的值为 20 点；
     // 在交互式退场，目标控制器未计算状态栏高度，获取到 safeArea.top 的值为 0  点。
     // 这导致在交互式转场时，获取 sourceView 位置不准确。
+    // 20260506: 经测试 iOS 26 修复了上述 BUG
     //
     // 所以，在交互式退场时，状态栏与目标控制器保持一致，以避免目标控制器布局不正确。
+    if (@available(iOS 26.0, *)) {
+        return self.presentingViewController.prefersStatusBarHidden;
+    }
     return _hideController ? self.presentingViewController.prefersStatusBarHidden : YES;
 }
 

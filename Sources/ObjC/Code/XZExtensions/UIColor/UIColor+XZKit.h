@@ -61,9 +61,7 @@ FOUNDATION_STATIC_INLINE NSInteger NSIntegerFromXZColor(XZColor rgba) {
     return (((NSInteger)rgba.red << 24) + ((NSInteger)rgba.green << 16) + ((NSInteger)rgba.blue << 8) + rgba.alpha);
 }
 
-
-
-/// 将 UIColor 转化成字符串形式。
+/// 将 UIColor 转化成 #RRGGBBAA 形式的十六进制字符串。
 /// @param color UIColor
 FOUNDATION_STATIC_INLINE NSString *NSStringFromUIColor(UIColor *color) {
     return NSStringFromXZColor(color.xzColor);

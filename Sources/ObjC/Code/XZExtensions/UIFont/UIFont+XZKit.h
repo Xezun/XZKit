@@ -19,14 +19,18 @@ NS_ASSUME_NONNULL_BEGIN
 /// 字体字符集。
 @property (nonatomic, readonly) NSCharacterSet *xz_characterSet NS_SWIFT_NAME(characterSet);
 
-/// 字体中的字形能否完全匹配字符串中的所有字符。
-/// @param aString 待匹配的字符串。
-- (BOOL)xz_containsGlyphsInString:(NSString *)aString NS_SWIFT_NAME(containsGlyphs(in:));
+@end
 
-/// 遍历字符串所有符合条件的子串：子串所有字符都在字体 font 存在字形。
-/// @param aString 字体
-/// @param block 符合条件的（最长）子串在字符串中的位置 range 将通过 block 的参数提供
-- (void)xz_enumerateGlyphsInString:(NSString *)aString usingBlock:(void (^)(NSRange range))block NS_SWIFT_NAME(enumerateGlyphsInString(of:using:));
+@interface NSString (XZGlyphsEnumeration)
+
+/// 检测字符串中的所有字符，是否能在字体中都找到字形。
+/// @param font 字体对象
+- (BOOL)xz_isDesignedInFont:(UIFont *)font NS_SWIFT_NAME(isDesigned(in:));
+
+/// 遍历字符串中，在字体中能找到字形的所有子串。
+/// @param font 字体对象
+/// @param block 遍历字符串所用的块函数，符合条件的子串在字符串中的位置 range 将通过 block 的参数提供
+- (void)xz_enumerateSubstringsDesignedInFont:(UIFont *)font usingBlock:(void (^NS_NOESCAPE)(NSRange range))block NS_SWIFT_NAME(enumerateSubstringsDesigned(in:using:));
 
 @end
 

@@ -24,7 +24,7 @@ typedef void (^__xz_defer_t__)(void) NS_SWIFT_UNAVAILABLE("Use Swift.defer inste
 FOUNDATION_EXPORT void __xz_defer_imp__(__strong __xz_defer_t__ _Nonnull * _Nonnull statements) NS_SWIFT_UNAVAILABLE("Use Swift.defer instead");
 
 /// @function defer
-/// 延迟到当前作用域结束后才执行的代码块。
+/// 延迟到当前作用域结束后才执行的代码块。同一个作用域内的 defer 代码块，按书写顺序倒序执行，及越靠前的代码块越后执行。
 /// @note 此函数仅仅是个声明，以解决宏参数不能自动补全类型的问题。
 /// @param statements 延迟执行的语句
 FOUNDATION_EXPORT void defer(__xz_defer_t__ statements) NS_SWIFT_UNAVAILABLE("Use Swift.defer instead");

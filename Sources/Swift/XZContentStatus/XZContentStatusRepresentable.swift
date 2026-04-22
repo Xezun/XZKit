@@ -21,7 +21,7 @@ import ObjectiveC
     /// > 不能为默认状态配置状态视图，所以不能通过此方法获取默认状态的配置对象。
     /// - Parameter contentStatus: 内容状态
     /// - Returns: 配置内容状态视图的对象
-    func configuration(for contentStatus: XZContentStatus) -> XZContentStatus.Configuration
+    func contentStatusConfiguration(for contentStatus: XZContentStatus) -> XZContentStatus.Configuration
     
 }
 
@@ -150,8 +150,8 @@ extension XZContentStatusRepresentable where Self: UIView {
         }
     }
     
-    public func configuration(for contentStatus: XZContentStatus) -> XZContentStatus.Configuration {
-        return manager.configuration(for: contentStatus)
+    public func contentStatusConfiguration(for contentStatus: XZContentStatus) -> XZContentStatus.Configuration {
+        return manager.contentStatusConfiguration(for: contentStatus)
     }
     
     private var managerIfLoaded: XZContentStatusManager? {
@@ -192,8 +192,8 @@ extension XZContentStatusRepresentable where Self: UIViewController {
         }
     }
     
-    public func configuration(for contentStatus: XZContentStatus) -> XZContentStatus.Configuration {
-        return manager.configuration(for: contentStatus)
+    public func contentStatusConfiguration(for contentStatus: XZContentStatus) -> XZContentStatus.Configuration {
+        return manager.contentStatusConfiguration(for: contentStatus)
     }
     
     private var managerIfLoaded: XZContentStatusManager? {
@@ -228,7 +228,7 @@ extension XZContentStatusRepresentable where Self: UIViewController {
             }
             
             if oldValue != .default {
-                configuration(for: oldValue).view.removeFromSuperview()
+                contentStatusConfiguration(for: oldValue).view.removeFromSuperview()
             }
             
             updateAppearance()
@@ -237,7 +237,7 @@ extension XZContentStatusRepresentable where Self: UIViewController {
     
     private var configurations = [XZContentStatus: XZContentStatus.Configuration]()
     
-    func configuration(for contentStatus: XZContentStatus) -> XZContentStatus.Configuration {
+    func contentStatusConfiguration(for contentStatus: XZContentStatus) -> XZContentStatus.Configuration {
         assert(contentStatus != .default, "Configuration for XZContentStatus.defalut is not available")
         if let configuration = configurations[contentStatus] {
             return configuration
@@ -263,7 +263,7 @@ extension XZContentStatusRepresentable where Self: UIViewController {
     }
     
     override func updateAppearance() {
-        let configuraion = configuration(for: contentStatus)
+        let configuraion = contentStatusConfiguration(for: contentStatus)
         configuraion.view.frame = view.bounds
         view.addSubview(configuraion.view)
     }
@@ -282,7 +282,7 @@ extension XZContentStatusRepresentable where Self: UIViewController {
         guard contentStatus != .default else {
             return
         }
-        let configuraion = configuration(for: contentStatus)
+        let configuraion = contentStatusConfiguration(for: contentStatus)
         configuraion.view.frame = viewController.view.bounds
         viewController.view.addSubview(configuraion.view)
     }

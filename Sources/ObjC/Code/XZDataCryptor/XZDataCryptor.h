@@ -40,12 +40,12 @@ NS_ASSUME_NONNULL_BEGIN
 /// @param algorithm 算法
 /// @param mode 模式
 /// @param padding 填充方式
-+ (XZDataCryptor *)cryptorWithOperation:(XZDataCryptorOperation)operation algorithm:(XZDataCryptorAlgorithm *)algorithm mode:(XZDataCryptorMode)mode padding:(XZDataCryptorPadding)padding NS_SWIFT_NAME(init(operation:algorithm:mode:padding:));
++ (instancetype)cryptorWithOperation:(XZDataCryptorOperation)operation algorithm:(XZDataCryptorAlgorithm *)algorithm mode:(XZDataCryptorMode)mode padding:(XZDataCryptorPadding)padding;
 
 /// 便利构造方法，使用 CBC/PKCS7 参数
 /// @param operation 加密或解密
 /// @param algorithm 算法
-+ (XZDataCryptor *)cryptorWithOperation:(XZDataCryptorOperation)operation algorithm:(XZDataCryptorAlgorithm *)algorithm NS_SWIFT_NAME(init(operation:algorithm:));
++ (instancetype)cryptorWithOperation:(XZDataCryptorOperation)operation algorithm:(XZDataCryptorAlgorithm *)algorithm;
 
 /// 对数据执行加密/解密操作。本方法可调用多次，比如将较大的数据分块读入内存，分别进行加密解密计算。
 ///
@@ -55,10 +55,10 @@ NS_ASSUME_NONNULL_BEGIN
 /// @param bytes 待加密/解密的数据
 /// @param error 执行加密或解密时发生发生的错误输出
 /// @return （已成功执行）已加密/解密后的数据
-- (nullable NSData *)crypt:(void *)bytes length:(NSUInteger)length error:(NSError * _Nullable __autoreleasing * _Nullable)error;
+- (nullable NSData *)cryptBytes:(void *)bytes length:(NSUInteger)length error:(NSError * _Nullable __autoreleasing * _Nullable)error NS_SWIFT_NAME(crypt(_:length:));
 
 /// 对数据执行加密/解密操作。
-- (nullable NSData *)crypt:(NSData *)data error:(NSError * _Nullable __autoreleasing * _Nullable)error;
+- (nullable NSData *)cryptData:(NSData *)data error:(NSError * _Nullable __autoreleasing * _Nullable)error NS_SWIFT_NAME(crypt(_:));
                      
 /// 结束加解密计算，并获取最终的补齐数据。
 /// @note Finish an encrypt or decrypt operation, and obtain the (possible) final data output.

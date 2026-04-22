@@ -32,12 +32,19 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic) CGFloat progress;
 @end
 
+/// XZToast 支持的提示消息样式。
 typedef NS_ENUM(NSUInteger, XZToastStyle) {
+    /// 用于展示文本类型的提示消息样式。该类型的消息，只有文本内容，默认自动消失。
     XZToastStyleMessage,
+    /// 用于展示加载类型的提示消息样式。该类型的消息，包含加载动画，文字可选，支持更新进度，须手动调用`-hideToast:`方法才会消失。
     XZToastStyleLoading,
+    /// 用于展示成功类型的提示消息样式。该类型的消息，包含成功图标，文字可选，默认自动消失。
     XZToastStyleSuccess,
+    /// 用于展示失败类型的提示消息样式。该类型的消息，包含失败图标，文字可选，默认自动消失。
     XZToastStyleFailure,
+    /// 用于展示警告类型的提示消息样式。该类型的消息，包含警告图标，文字可选，默认自动消息。
     XZToastStyleWarning,
+    /// 用于展示等待类型的提示消息样式。该类型的消息，包含等待图标，文字可选，默认自动消息。
     XZToastStyleWaiting,
 } NS_REFINED_FOR_SWIFT;
 

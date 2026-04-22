@@ -27,6 +27,22 @@
     return [[self dataUsingEncoding:(NSUTF8StringEncoding)] xz_SHA1];
 }
 
+- (NSString *)xz_sha256 {
+    return [[self dataUsingEncoding:(NSUTF8StringEncoding)] xz_sha256];
+}
+
+- (NSString *)xz_SHA256 {
+    return [[self dataUsingEncoding:(NSUTF8StringEncoding)] xz_SHA256];
+}
+
+- (NSString *)xz_sha512 {
+    return [[self dataUsingEncoding:(NSUTF8StringEncoding)] xz_sha512];
+}
+
+- (NSString *)xz_SHA512 {
+    return [[self dataUsingEncoding:(NSUTF8StringEncoding)] xz_SHA512];
+}
+
 @end
 
 

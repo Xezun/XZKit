@@ -70,6 +70,9 @@ public struct XZMocoaBindMacro {
             case "UIImageView":
                 vmkey = ".image"
                 selector = "#selector(setter: UIImageView.image)"
+            case "UISwitch":
+                vmkey = ".isOn"
+                selector = "#selector(setter: UISwitch.isOn)"
             default:
                 throw XZMacroError(message: "@bind: 暂未为 \(typeName) 类型提供默认支持")
             }
@@ -85,6 +88,8 @@ public struct XZMocoaBindMacro {
                     selector = "#selector(setter: UITextView.text)"
                 case "UIImageView":
                     selector = "#selector(setter: UIImageView.image)"
+                case "UISwitch":
+                    selector = "#selector(setter: UISwitch.isOn)"
                 default:
                     throw XZMacroError(message: "@bind: 暂未为 \(typeName) 类型提供默认支持")
                 }
@@ -243,8 +248,12 @@ public struct XZMocoaBindMacro {
                         switch propertyType.name {
                         case "UILabel":
                             break
+                        case "UITextView":
+                            break
                         case "UIImageView":
-                            break;
+                            break
+                        case "UISwitch":
+                            break
                         default:
                             throw XZMacroError(message: "@bind: 默认绑定还不支持 \(propertyType.name) 类型")
                         }
@@ -258,8 +267,12 @@ public struct XZMocoaBindMacro {
                             switch propertyType.name {
                             case "UILabel":
                                 break
+                            case "UITextView":
+                                break
                             case "UIImageView":
-                                break;
+                                break
+                            case "UISwitch":
+                                break
                             default:
                                 throw XZMacroError(message: "@bind: 默认绑定还不支持 \(propertyType.name) 类型")
                             }

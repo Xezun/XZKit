@@ -278,7 +278,16 @@ extension XZNavigationTransitionController {
                 if (percent > PERCENT && animationController.operation == .push) || (percent < -PERCENT && animationController.operation == .pop) {
                     interactiveTransition.finish()
                 } else {
-                    interactiveTransition.cancel()
+                    if #available(iOS 26.0, *) {
+                        // 由于 iOS 26 BUG 禁用取消功能
+                        if animationController.operation == .pop {
+                            interactiveTransition.finish()
+                        } else {
+                            interactiveTransition.cancel()
+                        }
+                    } else {
+                        interactiveTransition.cancel()
+                    }
                 }
             }
         case .leftToRight:
@@ -290,7 +299,16 @@ extension XZNavigationTransitionController {
                 if (percent < -PERCENT && animationController.operation == .push) || (percent > PERCENT && animationController.operation == .pop) {
                     interactiveTransition.finish()
                 } else {
-                    interactiveTransition.cancel()
+                    if #available(iOS 26.0, *) {
+                        // 由于 iOS 26 BUG 禁用取消功能
+                        if animationController.operation == .pop {
+                            interactiveTransition.finish()
+                        } else {
+                            interactiveTransition.cancel()
+                        }
+                    } else {
+                        interactiveTransition.cancel()
+                    }
                 }
             }
         default:

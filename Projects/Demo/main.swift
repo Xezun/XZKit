@@ -33,6 +33,11 @@ class FoobarViewModel : XZMocoaViewModel {
         }
     }
     
+    var detail: String?
     
+    @bind
+    func valueChanged(min: Int, max: Int) {
+        self.detail = "\(min) => \(max)"
+    }
     
 }

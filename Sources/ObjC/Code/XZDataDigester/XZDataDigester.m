@@ -79,6 +79,8 @@ NS_ASSUME_NONNULL_END
     self = [super init];
     if (self) {
         _context = XZDataDigesterContextCreate(algorithm);
+        _context.init(_context.context);
+        _context.isReady = YES;
     }
     return self;
 }
@@ -91,33 +93,37 @@ NS_ASSUME_NONNULL_END
     return _context.length;
 }
 
-- (void)addBytes:(const void *)bytes length:(NSUInteger)length {
+- (void)reset {
     if (!_context.isReady) {
         _context.init(_context.context);
         _context.isReady = YES;
     }
+}
+
+- (void)digestBytes:(const void *)bytes length:(NSUInteger)length {
+    NSAssert(_context.isReady, @"当前已有摘要结果，若要重新开始，须调先调用 -[XZDataDigester reset] 方法。");
     _context.update(_context.context, bytes, (CC_LONG)length);
 }
 
-- (void)addData:(NSData *)data {
+- (void)digestData:(NSData *)data {
     [data enumerateByteRangesUsingBlock:^(const void * _Nonnull bytes, NSRange byteRange, BOOL * _Nonnull stop) {
-        [self addBytes:bytes length:byteRange.length];
+        [self digestBytes:bytes length:byteRange.length];
     }];
 }
 
-- (void)addString:(NSString *)string encoding:(NSStringEncoding)encoding {
+- (void)digestString:(NSString *)string encoding:(NSStringEncoding)encoding {
     NSData *data = [string dataUsingEncoding:encoding];
     if (data == nil) {
         return;
     }
-    [self addData:data];
+    [self digestData:data];
 }
 
-- (void)addString:(NSString *)string {
-    [self addString:string encoding:NSUTF8StringEncoding];
+- (void)digestString:(NSString *)string {
+    [self digestString:string encoding:NSUTF8StringEncoding];
 }
 
-- (NSData *)digest {
+- (NSData *)final {
     if (_context.isReady) {
         _context.final(_context.buffer, _context.context);
         _context.isReady = NO;

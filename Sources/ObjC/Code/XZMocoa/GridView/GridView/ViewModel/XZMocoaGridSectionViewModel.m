@@ -428,7 +428,7 @@ typedef void(^XZMocoaGridDelayedUpdates)(XZMocoaGridSectionViewModel *self);
         [(NSMutableArray *)oldDataModels addObject:(oldDataModel ?: (id)kCFNull)];
     }
     
-    if (oldDataModels.xz_containsDuplicateObjects) {
+    if (oldDataModels.xz_containsEqualObjects) {
         XZLog(@"由于旧数据中包含重复元素，本次批量更新没有进行差异分析");
         [self reloadCellsAtIndexes:[NSIndexSet indexSetWithIndexesInRange:NSMakeRange(0, oldCount)]];
         return nil;
@@ -441,7 +441,7 @@ typedef void(^XZMocoaGridDelayedUpdates)(XZMocoaGridSectionViewModel *self);
         [(NSMutableArray *)newDataModels addObject:(newDataModel ?: (id)kCFNull)];
     }
     
-    if (newDataModels.xz_containsDuplicateObjects) {
+    if (newDataModels.xz_containsEqualObjects) {
         XZLog(@"由于新数据中包含重复元素，本次批量更新没有进行差异分析");
         [self reloadCellsAtIndexes:[NSIndexSet indexSetWithIndexesInRange:NSMakeRange(0, oldCount)]];
         return nil;

@@ -31,22 +31,23 @@
     return value;
 }
 
-- (BOOL)xz_containsGlyphsInString:(NSString *)aString {
-    if (![aString isKindOfClass:NSString.class]) {
-        return NO;
-    }
-    
-    NSInteger const length = aString.length;
+@end
+
+
+@implementation NSString (XZGlyphsEnumeration)
+
+- (BOOL)xz_isDesignedInFont:(UIFont *)font {
+    NSInteger const length = self.length;
     
     if (length == 0) {
         return NO;
     }
     
-    NSCharacterSet * const characterSet = self.xz_characterSet;
+    NSCharacterSet * const characterSet = font.xz_characterSet;
     
     for (NSInteger i = 0; i < length; ) {
         CFRange range = CFRangeMake(i, length - i);
-        if (CFStringFindCharacterFromSet((__bridge CFStringRef)aString, (__bridge CFCharacterSetRef)characterSet, range, 0, &range)) {
+        if (CFStringFindCharacterFromSet((__bridge CFStringRef)self, (__bridge CFCharacterSetRef)characterSet, range, 0, &range)) {
             if (range.location != i) {
                 return NO;
             }
@@ -60,25 +61,25 @@
     return YES;
 }
 
-- (void)xz_enumerateGlyphsInString:(NSString *)aString usingBlock:(void (^)(NSRange))block {
-    if (block == nil || aString == nil || aString.length == 0) {
+- (void)xz_enumerateSubstringsDesignedInFont:(UIFont *)font usingBlock:(void (^NS_NOESCAPE)(NSRange))block {
+    if (block == nil || self.length == 0) {
         return;
     }
     
-    NSInteger const length = aString.length;
+    NSInteger const length = self.length;
     
     if (length == 0) {
         return;
     }
     
     
-    NSCharacterSet * const characterSet = self.xz_characterSet;
+    NSCharacterSet * const characterSet = font.xz_characterSet;
     
     NSRange range = NSMakeRange(0, 0);
     do {
         NSInteger const i = range.location + range.length;
         CFRange temp = CFRangeMake(i, length - i);
-        if (CFStringFindCharacterFromSet((__bridge CFStringRef)aString, (__bridge CFCharacterSetRef)characterSet, temp, 0, &temp)) {
+        if (CFStringFindCharacterFromSet((__bridge CFStringRef)self, (__bridge CFCharacterSetRef)characterSet, temp, 0, &temp)) {
             if (temp.location == i) {
                 range.length += temp.length;
             } else {

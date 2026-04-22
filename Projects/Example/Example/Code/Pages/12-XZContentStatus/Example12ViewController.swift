@@ -21,14 +21,14 @@ class Example12ViewController: UIViewController, XZContentStatusRepresentable {
         
         self.view.backgroundColor = .white
         
-        let empty = self.configuration(for: .empty)
+        let empty = self.contentStatusConfiguration(for: .empty)
         empty.view.backgroundColor = .systemGray6
         empty.setText("暂无内容，请稍后查看", for: .normal)
         empty.setTextColor(.blue, for: .normal)
         empty.setImage(UIImage(named: "ex-12-empty"), for: .normal)
         empty.addTarget(self, action: #selector(didClickEmptyStatus(_:)), for: .touchUpInside)
         
-        let loading = self.configuration(for: .loading)
+        let loading = self.contentStatusConfiguration(for: .loading)
         let loadingView = Example12LoadingView.init()
         loadingView.backgroundColor = .systemGray6
         loadingView.successButton.addTarget(self, action: #selector(successButtonAction(_:)), for: .touchUpInside)
@@ -36,7 +36,7 @@ class Example12ViewController: UIViewController, XZContentStatusRepresentable {
         loadingView.failureButton.addTarget(self, action: #selector(failureButtonAction(_:)), for: .touchUpInside)
         loading.view = loadingView
         
-        let error = self.configuration(for: .error)
+        let error = self.contentStatusConfiguration(for: .error)
         error.view.backgroundColor = .systemGray6
         error.setText("网络不给力，请重试", for: .normal)
         error.setTextColor(.red, for: .normal)

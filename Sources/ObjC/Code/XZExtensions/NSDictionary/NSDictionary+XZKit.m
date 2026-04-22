@@ -29,19 +29,19 @@
 }
 
 - (NSInteger)xz_integerValueForKey:(id)aKey defaultValue:(NSInteger)defaultValue {
-    return NSIntegerFromValue([self objectForKey:aKey], defaultValue);
+    return NSIntegerMake([self objectForKey:aKey], 10, defaultValue);
 }
 
 - (NSInteger)xz_integerValueForKey:(id)aKey {
-    return NSIntegerFromValue([self objectForKey:aKey], 0);
+    return NSIntegerMake([self objectForKey:aKey], 10, 0);
 }
 
 - (CGFloat)xz_floatValueForKey:(id)aKey defaultValue:(NSInteger)defaultValue {
-    return CGFloatFromValue([self objectForKey:aKey], defaultValue);
+    return CGFloatMake([self objectForKey:aKey], defaultValue);
 }
 
 - (CGFloat)xz_floatValueForKey:(id)aKey {
-    return CGFloatFromValue([self objectForKey:aKey], 0);
+    return CGFloatMake([self objectForKey:aKey], 0);
 }
 
 + (instancetype)xz_dictionaryWithJSON:(id)json options:(NSJSONReadingOptions)options {
@@ -69,6 +69,25 @@
 
 + (instancetype)xz_dictionaryWithJSON:(id)json {
     return [self xz_dictionaryWithJSON:json options:(NSJSONReadingAllowFragments)];
+}
+
+- (NSMutableArray *)xz_map:(id (^NS_NOESCAPE)(id _Nonnull, id _Nonnull, BOOL * _Nonnull))transform {
+    NSMutableArray *results = [NSMutableArray arrayWithCapacity:self.count];
+    [self enumerateKeysAndObjectsUsingBlock:^(id  _Nonnull key, id  _Nonnull obj, BOOL * _Nonnull stop) {
+        [results addObject:transform(key, obj, stop)];
+    }];
+    return results;
+}
+
+- (NSMutableArray *)xz_compactMap:(id (^NS_NOESCAPE)(id _Nonnull, id _Nonnull, BOOL * _Nonnull))transform {
+    NSMutableArray *results = [NSMutableArray arrayWithCapacity:self.count];
+    [self enumerateKeysAndObjectsUsingBlock:^(id  _Nonnull key, id  _Nonnull obj, BOOL * _Nonnull stop) {
+        id const object = transform(key, obj, stop);
+        if (obj) {
+            [results addObject:object];
+        }
+    }];
+    return results;
 }
 
 @end

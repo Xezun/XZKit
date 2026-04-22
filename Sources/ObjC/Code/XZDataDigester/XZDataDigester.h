@@ -65,27 +65,32 @@ typedef NS_ENUM(NSInteger, XZDataDigesterAlgorithm) {
 /// @return XZDataDigester 对象。
 + (XZDataDigester *)digesterWithAlgorithm:(XZDataDigesterAlgorithm)algorithm NS_SWIFT_NAME(init(_:));
 
+/// 恢复摘要计算环境，以便开始新的摘要计算过程。此方法可重复调用。
+- (void)reset;
+
 /// 将二进制数据进行摘要计算。
 /// @param bytes 二进制数据
 /// @param length 数据的长度
-- (void)addBytes:(const void *)bytes length:(NSUInteger)length NS_SWIFT_NAME(add(_:length:));
+- (void)digestBytes:(const void *)bytes length:(NSUInteger)length NS_SWIFT_NAME(digest(_:length:));
 
 /// 将 NSData 二进制数据添加到摘要计算中。
 /// @note 此方法被调用多次。
 /// @param data NSData
-- (void)addData:(NSData *)data NS_SWIFT_NAME(add(_:));
+- (void)digestData:(NSData *)data NS_SWIFT_NAME(digest(_:));
+
 /// 将字符串指定编码的二进制形式，添加到摘要计算中。
 /// @note 此方法被调用多次。
 /// @param string 字符串
-- (void)addString:(NSString *)string encoding:(NSStringEncoding)encoding NS_SWIFT_NAME(add(_:encoding:));
+- (void)digestString:(NSString *)string encoding:(NSStringEncoding)encoding NS_SWIFT_NAME(digest(_:encoding:));
+
 /// 将字符串 UTF8 编码的二进制形式，添加到摘要计算中。
 /// @note 此方法被调用多次。
 /// @param string 字符串
-- (void)addString:(NSString *)string NS_SWIFT_NAME(add(_:));
+- (void)digestString:(NSString *)string NS_SWIFT_NAME(digest(_:));
 
 /// 获取已进行摘要计算的数据的摘要。
 /// @note 获取摘要数据，即表示当前摘要计算结束；再次开始摘要计算前，此方法可访问多次。
-- (NSData *)digest;
+- (NSData *)final;
 
 @end
 

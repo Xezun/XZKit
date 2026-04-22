@@ -29,6 +29,9 @@ NS_ASSUME_NONNULL_BEGIN
 /// @param json 待解析的 JSON 数据
 + (nullable instancetype)xz_dictionaryWithJSON:(nullable id)json NS_SWIFT_NAME(init(JSON:));
 
+- (NSMutableArray *)xz_map:(id _Nonnull (^NS_NOESCAPE)(KeyType key, ObjectType obj, BOOL *stop))transform OBJC_SWIFT_UNAVAILABLE("请直接使用 Swift 版本");
+- (NSMutableArray *)xz_compactMap:(id _Nullable (^NS_NOESCAPE)(KeyType key, ObjectType obj, BOOL * _Nonnull stop))transform OBJC_SWIFT_UNAVAILABLE("请直接使用 Swift 版本");
+
 @end
 
 @interface NSMutableDictionary<KeyType, ObjectType> (XZKit)

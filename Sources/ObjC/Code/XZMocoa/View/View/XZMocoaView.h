@@ -30,11 +30,15 @@ NS_SWIFT_UI_ACTOR @protocol XZMocoaView <NSObject>
 @optional
 /// 视图模型。
 ///
-/// 一般情况下，视图的 ViewModel 不应该改变，但是与 B 端不同，在 C 端利用“视图重用机制”可以有效提升性能，因此，此属性被设计为可写的。
+/// 在标准 MVVM 模型中，视图模型是绑定到视图上的，即这里 `viewModel` 属性应该是只读的。
 ///
-/// 原生组件 UITableViewCell 或 UICollectionViewCell 在进入复用时，会清除原生组件上的数据。
+/// 但是在 iOS 开发中，“视图重用机制”可以有效提升性能，所以此属性被设计为可写的，让视图可以渲染不同的视图模型。
 ///
-/// 但是当视图再次复用时，可能并不会改变 viewModel 属性，也就不会触发数据刷新，从而导致原生控件不展示内容，此时需要在 -prepareForReuse 方法中清除 viewModel 属性。
+/// 比如在 UITableView 中，同一个 UITableViewCell 视图在重用时，会被用来渲染不同的数据。。
+///
+/// > 注意原生控件的默认行为，比如 UITableViewCell 或 UICollectionViewCell 在进入复用时，会清除原生组件上的数据。
+/// > 但是当视图再次复用时，属性 viewModel 可能并不会改变，也就无法触发视图刷新，而视图内容又被清除了，从而导致内容丢失。
+/// > 此时，在 -prepareForReuse 方法中，同时清除 viewModel 属性即可。
 @property (nonatomic, strong, nullable) __kindof XZMocoaViewModel *viewModel;
 
 /// 由 Cocoa MVC 中的控制器分发过来的 Segue 转场事件。
@@ -82,7 +86,7 @@ NS_SWIFT_UI_ACTOR @protocol XZMocoaView <NSObject>
 @end
 
 @interface UIView (XZMocoaView)
-/// 当 viewModel 属性发生改变后，此方法会被调用。
+/// 当 `viewModel` 属性发生改变后，此方法会被调用。
 - (void)prepareForViewModel NS_REQUIRES_SUPER;
 
 - (BOOL)shouldPerformSegueWithIdentifier:(NSString *)identifier sender:(nullable id)sender NS_SWIFT_NAME(shouldPerformSegue(withIdentifier:sender:));

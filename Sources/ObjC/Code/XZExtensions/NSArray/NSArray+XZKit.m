@@ -9,7 +9,7 @@
 
 @implementation NSArray (XZKit)
 
-- (BOOL)xz_containsDuplicateObjects {
+- (BOOL)xz_containsEqualObjects {
     NSInteger const count = self.count;
     for (NSInteger i = 0; i < count - 1; i++) {
         NSObject * const obj = self[i];
@@ -71,6 +71,17 @@
     return ret;
 }
 
+- (NSInteger)xz_firstIndex:(BOOL (^NS_NOESCAPE)(id _Nonnull))predicate {
+    NSInteger index = 0;
+    for (id object in self) {
+        if (predicate(object)) {
+            return index;
+        }
+        index += 1;
+    }
+    return NSNotFound;
+}
+
 - (id)xz_last:(BOOL (^NS_NOESCAPE)(id _Nonnull, NSInteger))isIncluded {
     id __block ret = nil;
     [self enumerateObjectsWithOptions:(NSEnumerationReverse) usingBlock:^(id  _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
@@ -82,6 +93,17 @@
     return ret;
 }
 
+- (NSInteger)xz_lastIndex:(BOOL (^NS_NOESCAPE)(id _Nonnull))predicate {
+    NSInteger const count = self.count;
+    for (NSInteger i = count - 1; i >= 0; i--) {
+        id object = self[i];
+        if (predicate(object)) {
+            return i;
+        }
+    }
+    return NSNotFound;
+}
+
 - (BOOL)xz_contains:(BOOL (^NS_NOESCAPE)(id _Nonnull, NSInteger))isIncluded {
     NSInteger index = 0;
     for (id object in self) {
@@ -90,17 +112,6 @@
         }
     }
     return NO;
-}
-
-- (NSInteger)xz_firstIndex:(BOOL (^NS_NOESCAPE)(id _Nonnull))predicate {
-    NSInteger index = 0;
-    for (id object in self) {
-        if (predicate(object)) {
-            return index;
-        }
-        index += 1;
-    }
-    return NSNotFound;
 }
 
 - (void)xz_differenceFromArray:(NSArray * const)oldArray inserts:(NSMutableIndexSet * const)inserts deletes:(NSMutableIndexSet * const)deletes changes:(NSMutableDictionary<NSNumber *, NSNumber *> * const)changes remains:(NSMutableIndexSet * const)remains {
@@ -150,9 +161,23 @@
 
 @implementation NSMutableArray (XZKit)
 
+- (id)xz_removeFirstObject {
+    if (self.count == 0) {
+        return nil;
+    }
+    id const object = [self objectAtIndex:0];
+    [self removeObjectAtIndex:0];
+    return object;
+}
+
 - (id)xz_removeLastObject {
-    id const object = self.lastObject;
-    [self removeLastObject];
+    NSUInteger const count = self.count;
+    if (count == 0) {
+        return nil;
+    }
+    NSUInteger const index = count - 1;
+    id const object = [self objectAtIndex:index];
+    [self removeObjectAtIndex:index];
     return object;
 }
 
