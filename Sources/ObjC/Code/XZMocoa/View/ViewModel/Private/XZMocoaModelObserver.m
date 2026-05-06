@@ -19,9 +19,9 @@ static void * _context = &_context;
     /// 视图模型 => 被观察的键。
     NSMapTable<XZMocoaViewModel *, NSMutableSet<NSString *> *> *_viewModels;
     /// 所有被观察的键 => 被观察的次数
-    NSMutableDictionary<NSString *, NSNumber *>         *_observingKeys;
+    NSMutableDictionary<NSString *, NSNumber *>                *_observingKeys;
     /// 当前是否已经标记发生通知。
-    BOOL _needsNotification;
+    BOOL _needsPostNotification;
 }
 
 + (XZMocoaModelObserver *)observerForModel:(NSObject *)model {
@@ -42,11 +42,11 @@ static void * _context = &_context;
 - (instancetype)initWithModel:(NSObject *)model {
     self = [super init];
     if (self) {
-        _model       = model;
-        _viewModels  = [NSMapTable weakToStrongObjectsMapTable];
-        _changedKeys = [NSMutableSet set];
-        _observingKeys = [NSMutableDictionary dictionary];
-        _needsNotification = NO;
+        _model          = model;
+        _viewModels     = [NSMapTable weakToStrongObjectsMapTable];
+        _changedKeys    = [NSMutableSet set];
+        _observingKeys  = [NSMutableDictionary dictionary];
+        _needsPostNotification = NO;
     }
     return self;
 }
@@ -112,24 +112,24 @@ static void * _context = &_context;
         return;
     }
     [_changedKeys addObject:keyPath];
-    [self setNeedsNotification];
+    [self setNeedsPostNotification];
 }
 
-- (void)setNeedsNotification {
-    if (_needsNotification) {
+- (void)setNeedsPostNotification {
+    if (_needsPostNotification) {
         return;
     }
-    _needsNotification = YES;
+    _needsPostNotification = YES;
     [NSRunLoop.mainRunLoop performInModes:@[NSRunLoopCommonModes] block:^{
-        [self notificationIfNeeded];
+        [self postNotificationIfNeeded];
     }];
 }
 
-- (void)notificationIfNeeded {
-    if (!_needsNotification) {
+- (void)postNotificationIfNeeded {
+    if (!_needsPostNotification) {
         return;
     }
-    _needsNotification = NO;
+    _needsPostNotification = NO;
     
     NSSet * const changedKeys = _changedKeys.copy;
     [_changedKeys removeAllObjects];

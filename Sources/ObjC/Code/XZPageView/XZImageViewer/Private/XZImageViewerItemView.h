@@ -37,7 +37,7 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic, readonly) CGRect imageFrame;
 
 /// 在入场退场的过程中，imageView 可能会离开当前视图。
-/// 将 imageView 放回，调用 setter 方法即可。
+/// 若将 imageView 放回，需调用 setter 方法，不可使用 -addSubview: 方法，因为 imageView 可能不是当前视图的直接子视图。
 @property (nonatomic, strong) UIImageView *imageView;
 - (CGRect)imageRectForBounds:(CGRect)bounds;
 

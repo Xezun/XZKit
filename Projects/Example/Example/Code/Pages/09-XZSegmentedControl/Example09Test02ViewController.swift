@@ -74,8 +74,6 @@ class Example09Test02ViewController: UIViewController, UIScrollViewDelegate {
         segmentedControl.setSelectedIndex(newIndex, animated: false)
         print("\(#function) setTransition: \(transition)")
         segmentedControl.updateInteractiveTransition(transition)
-        
-        
     }
     
     func scrollViewDidEndDragging(_ scrollView: UIScrollView, willDecelerate decelerate: Bool) {
@@ -98,4 +96,7 @@ class Example09Test02ViewController: UIViewController, UIScrollViewDelegate {
             fatalError()
         }
     }
+    
+    
+    
 }

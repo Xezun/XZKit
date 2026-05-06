@@ -9,12 +9,11 @@
 #import "XZPageViewDefines.h"
 #import "XZPageView.h"
 #import "XZImageViewerItemView.h"
-#import "XZImageViewerShowAnimationController.h"
-#import "XZImageViewerHideAnimationController.h"
+#import "XZImageViewerAnimationController.h"
 #import "XZDefines.h"
 
 @interface XZImageViewer () <UIViewControllerTransitioningDelegate, XZPageViewDelegate, XZPageViewDataSource, UIGestureRecognizerDelegate> {
-    XZImageViewerHideInteractiveController *_hideController;
+    XZImageViewerInteractiveTransition *_interactiveTransition;
     UIPanGestureRecognizer *_panGestureRecognizer;
 }
 
@@ -51,6 +50,7 @@
 - (XZPageView *)pageView {
     if (_pageView == nil) {
         _pageView = [[XZPageView alloc] initWithFrame:CGRectMake(0, 0, 320, 480)];
+        _pageView.isPrefetchingEnabled = YES;
         _pageView.delegate = self;
         _pageView.dataSource = self;
     }
@@ -101,13 +101,13 @@
     if (@available(iOS 26.0, *)) {
         return self.presentingViewController.prefersStatusBarHidden;
     }
-    return _hideController ? self.presentingViewController.prefersStatusBarHidden : YES;
+    return _interactiveTransition ? self.presentingViewController.prefersStatusBarHidden : YES;
 }
 
 - (UIStatusBarStyle)preferredStatusBarStyle {
     // 【UIKit 可能存在 BUG 】
     // 当转场动画时长为 0.35 秒时，Viewer 退场后，状态栏的样式可能不正确，使用 0.3 秒正常，目前使用 0.5 秒也正常。
-    return _hideController ? self.presentingViewController.preferredStatusBarStyle : UIStatusBarStyleDarkContent;
+    return _interactiveTransition ? self.presentingViewController.preferredStatusBarStyle : UIStatusBarStyleDarkContent;
 }
 
 - (void)setSourceView:(UIView *)sourceView {
@@ -136,61 +136,61 @@
     [reusingView setMinimumZoomScale:_minimumZoomScale maximumZoomScale:_maximumZoomScale];
     reusingView.index = index;
     
-    BOOL __block didSetImage = NO;
+    // 是否需要展示动画。默认同步加载，无动画。
+    BOOL __block needsAnimation = NO;
     
     @enweak(self, reusingView);
-    UIImage *image = [_dataSource imageViewer:self loadImageForItemAtIndex:index completion:^(UIImage * _Nonnull image) {
+    [_dataSource imageViewer:self imageView:reusingView.imageView loadImageForItemAtIndex:index completion:^(BOOL success) {
         @deweak(self, reusingView);
         
-        if (!didSetImage) {
-            reusingView.imageView.image = image;
-            didSetImage = YES;
+        // 已经释放
+        if (self == nil || reusingView == nil || !success) {
             return;
         }
         
-        if (self == nil) {
+        // 图片同步加载的
+        if (!needsAnimation) {
             return;
         }
         
         XZPageView * const pageView = self.pageView;
-
-        XZImageViewerItemView *itemView = pageView.currentView;
-        if (itemView.index != index) {
-            itemView = pageView.pendingView;
-            if (itemView.index != index) {
-                return;
-            }
+        
+        // 图片处于未显示状态（在复用时预加载）
+        if (reusingView != pageView.currentView && reusingView != pageView.pendingView) {
+            [reusingView setNeedsLayout];
+            return;
         }
         
-        UIImageView * const imageView = itemView.imageView;
-        NSTimeInterval duration = XZPageViewAnimationDuration;
+        // 为显示中的图片，处理动画效果
+        UIImageView *  const imageView = reusingView.imageView;
+        NSTimeInterval const duration  = XZPageViewAnimationDuration;
         
         NSString * const animationKey = imageView.layer.animationKeys.firstObject;
-        if (animationKey == nil) {
-            itemView.imageView.image = image;
-        } else {
+        if (animationKey != nil) {
             // 接力转场的入场动画，获取图片当前的位置
-            CGRect const fromRect = [imageView.superview convertRect:imageView.layer.presentationLayer.frame toView:itemView];
+            CGRect const fromRect = [imageView.superview convertRect:imageView.layer.presentationLayer.frame toView:reusingView];
             [imageView.layer removeAllAnimations];
             
-            // 将 imageView 放回 itemView 中
-            imageView.image = image;
+            // 将 imageView 放回 reusingView 中
             imageView.frame = fromRect;
-            itemView.imageView = imageView;
+            reusingView.imageView = imageView;
         }
         
         [UIView animateWithDuration:duration animations:^{
-            [itemView setNeedsLayout];
-            [itemView layoutIfNeeded];
+            // 重置缩放
+            if (reusingView.isZoomed) {
+                [reusingView setZoomScale:1.0 animated:NO];
+            }
+            [reusingView setNeedsLayout];
+            [reusingView layoutIfNeeded];
         }];
     }];
     
-    if (!didSetImage) {
-        reusingView.imageView.image = image;
-        didSetImage = YES;
+    // 如果 block 是异步的，那么在 block 中就需要动画。
+    if (!needsAnimation) {
+        needsAnimation = YES;
+        [reusingView setNeedsLayout];
     }
-    
-    [reusingView setNeedsLayout];
     
     return reusingView;
 }
@@ -220,25 +220,22 @@
         return NO;
     }
     
-    // 拖动的目标是 imageView
-    if (!CGRectContainsPoint(itemView.imageView.bounds, [gestureRecognizer locationInView:itemView.imageView])) {
-        return NO;
-    }
-    
     CGPoint const translation = [_panGestureRecognizer translationInView:nil];
     
-    // 垂直向下拖动
-    if (translation.y <= 0 || ABS(translation.x / translation.y) > 0.1) {
-        return NO;
-    }
-    
-    return YES;
+    // 手势方向：垂直
+    return (translation.y > 1 || translation.y < -1) && ABS(translation.x / translation.y) < 0.1;
 }
 
 #pragma mark - 事件
 
 - (void)doubleTapGestureRecognizerAction:(UITapGestureRecognizer *)tap {
     XZImageViewerItemView *itemView = _pageView.currentView;
+    if (!itemView.imageView.image) {
+        return;
+    }
+    if (![itemView.imageView isDescendantOfView:itemView]) {
+        return;
+    }
     if (itemView.zoomScale != 1.0) {
         [itemView setZoomScale:1.0 animated:YES];
     } else {
@@ -263,30 +260,32 @@
         case UIGestureRecognizerStateBegan: {
             [_pageView suspendAutoPaging];
             XZImageViewerItemView * const itemView = _pageView.currentView;
-            _hideController = [[XZImageViewerHideInteractiveController alloc] initWithItemView:itemView];
+            _interactiveTransition = [[XZImageViewerInteractiveTransition alloc] initWithItemView:itemView];
             [self dismissViewControllerAnimated:YES completion:nil];
             break;
         }
         case UIGestureRecognizerStateChanged: {
             CGPoint const translation = [panGestureRecognizer translationInView:nil];
-            CGFloat const translationY = MAX(0, translation.y);
+            CGFloat const offset = ABS(translation.y);
             
-            // 目标控制器放大：只需要 40 的距离即可跑满进度，避免手势完成时，目标控制器还没有完成入场，进度突进到 100% 无动画效果。
-            [_hideController updateInteractiveTransition:MIN(40.0, translationY) / 40.0];
+            // 目标控制器放大：避免手势完成时（需要 80 的距离），目标控制器还没有完成入场，进度突进到 100% 无动画效果。
+            [_interactiveTransition updateInteractiveTransition:MIN(80.0, offset) / 80.0];
             
-            // 根据 sourceView 确定缩放
-            CGFloat const percent = MIN(160, translationY) / 160.0;
-            // 背景色透明
+            // 缩放进度
+            CGFloat const percent = MIN(160, offset) / 160.0;
+            // 背景色变透明
             self.view.backgroundColor = [UIColor colorWithWhite:0 alpha:(1.0 - percent)];
             
-            XZImageViewerItemView * const itemView  = _hideController.itemView;
+            XZImageViewerItemView * const itemView  = _interactiveTransition.itemView;
             UIImageView           * const imageView = itemView.imageView;
             
-            // 拖拽 imageView
-            CGRect frame = [itemView convertRect:_hideController.imageViewInitialFrame toView:imageView.superview];
+            CGRect frame = [itemView convertRect:_interactiveTransition.imageViewInitialRect toView:imageView.superview];
+            
+            // 拖拽 imageView 根据 sourceView 确定缩放
             if (_sourceView) {
-                CGFloat const deltaW = (frame.size.width - _sourceView.frame.size.width) * percent * 0.5;
-                CGFloat const deltaH = (frame.size.height - _sourceView.frame.size.height) * percent * 0.5;
+                CGRect  const sourceRect = _sourceView.frame;
+                CGFloat const deltaW = (frame.size.width - sourceRect.size.width) * percent * 0.5;
+                CGFloat const deltaH = (frame.size.height - sourceRect.size.height) * percent * 0.5;
                 frame = CGRectInset(frame, deltaW, deltaH);
             }
             frame.origin.x += translation.x;
@@ -298,8 +297,8 @@
         case UIGestureRecognizerStateEnded: {
             CGPoint const translation = [panGestureRecognizer translationInView:nil];
             CGPoint const velocity    = [panGestureRecognizer velocityInView:nil];
-            if ( velocity.y > 400 || (translation.y >= 80) ) {
-                XZImageViewerHideInteractiveController * const interactionController = _hideController;
+            if ( velocity.y > 400 || (translation.y >= 80) || (translation.y <= -80) ) {
+                XZImageViewerInteractiveTransition * const interactionController = _interactiveTransition;
 
                 UIView      * const sourceView    = _sourceView;
                 UIImageView * const imageView     = interactionController.itemView.imageView;
@@ -317,25 +316,25 @@
                     [interactionController finishInteractiveTransition];
                 }];
                 
-                _hideController = nil;
+                _interactiveTransition = nil;
                 return;
             }
         }
         case UIGestureRecognizerStateFailed: {
             [_pageView restartAutoPaging];
             
-            XZImageViewerHideInteractiveController * const interactionController = _hideController;
-            XZImageViewerItemView                  * const itemView              = interactionController.itemView;
-            UIImageView                            * const imageView             = itemView.imageView;
+            XZImageViewerInteractiveTransition * const interactionController = _interactiveTransition;
+            XZImageViewerItemView              * const itemView              = interactionController.itemView;
+            UIImageView                        * const imageView             = itemView.imageView;
             
             [UIView animateWithDuration:XZPageViewAnimationDuration animations:^{
-                imageView.frame = [itemView convertRect:interactionController.imageViewInitialFrame toView:imageView.superview];
+                imageView.frame = [itemView convertRect:interactionController.imageViewInitialRect toView:imageView.superview];
                 self.view.backgroundColor = UIColor.blackColor;
             } completion:^(BOOL finished) {
                 [interactionController cancelInteractiveTransition];
             }];
             
-            _hideController = nil;
+            _interactiveTransition = nil;
             [self setNeedsStatusBarAppearanceUpdate];
             break;
         }
@@ -364,12 +363,12 @@
 #pragma mark - UIViewControllerAnimatedTransitioning 代理
 
 - (nullable id <UIViewControllerAnimatedTransitioning>)animationControllerForPresentedController:(UIViewController *)presented presentingController:(UIViewController *)presenting sourceController:(UIViewController *)source {
-    return [XZImageViewerShowAnimationController animationControllerWithSourceView:self.sourceView];
+    return [XZImageViewerAnimationController animationControllerForType:(XZImageViewerTransitionTypeShow) sourceView:self.sourceView itemView:nil];
 }
 
 - (nullable id <UIViewControllerAnimatedTransitioning>)animationControllerForDismissedController:(UIViewController *)dismissed {
-    XZImageViewerItemView * const itemView = _hideController.itemView;
-    return [XZImageViewerHideAnimationController animationControllerWithItemView:itemView sourceView:self.sourceView];
+    XZImageViewerItemView * const itemView = _interactiveTransition.itemView;
+    return [XZImageViewerAnimationController animationControllerForType:(XZImageViewerTransitionTypeHide) sourceView:self.sourceView itemView:itemView];
 }
 
 - (nullable id <UIViewControllerInteractiveTransitioning>)interactionControllerForPresentation:(id <UIViewControllerAnimatedTransitioning>)animator {
@@ -377,7 +376,7 @@
 }
 
 - (nullable id <UIViewControllerInteractiveTransitioning>)interactionControllerForDismissal:(id <UIViewControllerAnimatedTransitioning>)animator {
-    return _hideController;
+    return _interactiveTransition;
 }
 
 - (nullable UIPresentationController *)presentationControllerForPresentedViewController:(UIViewController *)presented presentingViewController:(nullable UIViewController *)presenting sourceViewController:(UIViewController *)source {

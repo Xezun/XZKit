@@ -25,17 +25,17 @@
     
     _imageURLs = @[
         @{
-            @"cover": [UIImage imageNamed:@"icon_07_00"],
-            @"image": [NSURL URLWithString:@"https://img.ithome.com/newsuploadfiles/thumbnail/2023/8/710802_240.jpg?r=1691389332627"]
+            @"cover": [UIImage imageNamed:@"icon_07_00"], // 只有小图
+            // @"image": [NSURL URLWithString:@"https://img.ithome.com/newsuploadfiles/thumbnail/2023/8/710802_240.jpg?r=1691389332627"]
         },
         
         @{
-            @"cover": [UIImage imageNamed:@"icon_07_01"],
+            @"cover": [UIImage imageNamed:@"icon_07_01"], // 宽图
             @"image": [NSURL URLWithString:@"https://img.ithome.com/newsuploadfiles/2025/7/fefed262-fb66-4dbe-a6d7-15dad215fb5d.png"]
         },
         
         @{
-            @"cover": [UIImage imageNamed:@"icon_07_02"],
+            @"cover": [UIImage imageNamed:@"icon_07_02"], // 长图
             @"image": [NSURL URLWithString:@"https://b0.bdstatic.com/232753f3d58ff3295847f649e5b03fa5.jpg"],
         },
         
@@ -126,33 +126,12 @@
     return _imageViews.count;
 }
 
-- (UIImage *)imageViewer:(XZImageViewer *)imageViewer loadImageForItemAtIndex:(NSInteger)index completion:(void (^)(UIImage * _Nonnull))completion {
-    switch (index) {
-        case 0: {
-            // 只有小图
-            break;
-        }
-        case 1: {
-            // 小图 => 大图，宽图
-            [SDWebImageManager.sharedManager loadImageWithURL:_imageURLs[index][@"image"] options:0 progress:nil completed:^(UIImage * _Nullable image, NSData * _Nullable data, NSError * _Nullable error, SDImageCacheType cacheType, BOOL finished, NSURL * _Nullable imageURL) {
-                completion(image);
-            }];
-            break;
-        }
-        case 2: {
-            // 小图 => 大图，长图
-            [SDWebImageManager.sharedManager loadImageWithURL:_imageURLs[index][@"image"] options:0 progress:nil completed:^(UIImage * _Nullable image, NSData * _Nullable data, NSError * _Nullable error, SDImageCacheType cacheType, BOOL finished, NSURL * _Nullable imageURL) {
-                completion(image);
-            }];
-            break;
-        }
-        default:
-            [SDWebImageManager.sharedManager loadImageWithURL:_imageURLs[index][@"image"] options:0 progress:nil completed:^(UIImage * _Nullable image, NSData * _Nullable data, NSError * _Nullable error, SDImageCacheType cacheType, BOOL finished, NSURL * _Nullable imageURL) {
-                completion(image);
-            }];
-            break;
-    }
-    return _imageViews[index].image;
+- (void)imageViewer:(XZImageViewer *)imageViewer imageView:(UIImageView *)imageView loadImageForItemAtIndex:(NSInteger)index completion:(void (^)(BOOL))completion {
+    NSURL *url = _imageURLs[index][@"image"];
+    UIImage *placeholder = _imageViews[index].image;
+    [imageView sd_setImageWithURL:url placeholderImage:placeholder completed:^(UIImage * _Nullable image, NSError * _Nullable error, SDImageCacheType cacheType, NSURL * _Nullable imageURL) {
+        completion(image && (error == nil || error.code == noErr));
+    }];
 }
 
 #pragma mark - XZImageViewerDelegate

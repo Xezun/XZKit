@@ -75,9 +75,10 @@ extension Example09Test01ViewController: XZPageViewDelegate {
         segmentedControl.setSelectedIndex(index, animated: true)
     }
     
-    func pageView(_ pageView: XZPageView, didTurnPageIn transition: CGFloat) {
+    func pageView(_ pageView: XZPageView, didTurnPageWith transition: CGFloat) {
         segmentedControl.updateInteractiveTransition(transition)
     }
+    
 }
 
 extension Example09Test01ViewController: XZPageViewDataSource {

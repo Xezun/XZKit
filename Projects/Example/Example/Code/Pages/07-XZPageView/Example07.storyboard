@@ -90,7 +90,7 @@
                         </connections>
                     </tableView>
                     <navigationItem key="navigationItem" title="XZPageView" id="2fE-0r-9rB">
-                        <barButtonItem key="backBarButtonItem" title="返回" id="JEZ-Cr-9Kk"/>
+                        <barButtonItem key="backBarButtonItem" title="返回" id="7mX-CJ-ncl"/>
                         <barButtonItem key="leftBarButtonItem" title="Item" image="xmark" catalog="system" id="K5B-fW-sjR">
                             <connections>
                                 <segue destination="PH2-eg-CFF" kind="unwind" unwindAction="unwindToMainPage:" id="OLh-Dr-8ET"/>
@@ -674,9 +674,9 @@
                                     </view>
                                 </subviews>
                                 <constraints>
-                                    <constraint firstItem="SPG-wh-mXG" firstAttribute="bottom" secondItem="z0s-Na-gA0" secondAttribute="bottom" constant="366" id="LPa-vE-8ux"/>
+                                    <constraint firstItem="SPG-wh-mXG" firstAttribute="bottom" secondItem="z0s-Na-gA0" secondAttribute="bottom" id="LPa-vE-8ux"/>
                                     <constraint firstItem="SPG-wh-mXG" firstAttribute="width" secondItem="K5w-yz-Y7R" secondAttribute="width" id="Vdi-KP-SiD"/>
-                                    <constraint firstItem="SPG-wh-mXG" firstAttribute="trailing" secondItem="z0s-Na-gA0" secondAttribute="trailing" constant="393" id="XwK-4U-BPF"/>
+                                    <constraint firstItem="SPG-wh-mXG" firstAttribute="trailing" secondItem="z0s-Na-gA0" secondAttribute="trailing" id="XwK-4U-BPF"/>
                                     <constraint firstItem="SPG-wh-mXG" firstAttribute="leading" secondItem="z0s-Na-gA0" secondAttribute="leading" id="aXG-Wp-nDw"/>
                                     <constraint firstItem="SPG-wh-mXG" firstAttribute="top" secondItem="z0s-Na-gA0" secondAttribute="top" id="fZ0-Be-Man"/>
                                 </constraints>

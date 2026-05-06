@@ -91,6 +91,9 @@ NS_ASSUME_NONNULL_BEGIN
 /// 更换数据源必须调用``-reloadData``方法，除非页面不在``window``上。
 @property (nonatomic, weak) id<XZPageViewDataSource> dataSource;
 
+/// 是否允许按滚动方向，预加载下一个页面。
+@property (nonatomic, setter=setPrefetchingEnabled:) BOOL isPrefetchingEnabled;
+
 /// 刷新视图。
 ///
 /// 页面被添加到 window 时，会自动尝试调用此方法。

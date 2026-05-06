@@ -111,14 +111,11 @@
 }
 
 - (BOOL)isZoomed {
-    return _zoomingView.zoomScale != 1.0;
+    return (_zoomingView ? _zoomingView.zoomScale != 1.0 : NO);
 }
 
 - (CGFloat)zoomScale {
-    if (_zoomingView == nil) {
-        return 1.0;
-    }
-    return _zoomingView.zoomScale;
+    return (_zoomingView ? _zoomingView.zoomScale : 1.0);
 }
 
 - (CGFloat)minimumZoomScale {

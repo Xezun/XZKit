@@ -56,7 +56,7 @@
     [self layoutPendingView:bounds];
     // 重新配置 _scrollView
     _view.contentSize = bounds.size;
-    [self adaptContentInset:bounds];
+    [self adjustContentInsetsToFitBounds:bounds];
 }
 
 - (void)scheduleAutoPagingTimerIfNeeded {
@@ -76,7 +76,7 @@
 }
 
 - (void)autoPagingTimerAction:(NSTimer *)timer {
-    NSInteger const newPage = XZLoopPage(_view->_currentPage, YES, _view->_numberOfPages - 1, YES);
+    NSInteger const newPage = XZPageLoop(_view->_currentPage, YES, _view->_numberOfPages - 1, YES);
     [self setCurrentPage:newPage animated:YES];
     // 自动翻页，发送翻页事件
     [self didShowPageAtIndex:newPage];
@@ -251,7 +251,7 @@
     typedef void (*MethodType)(id<XZPageViewDelegate>, SEL, XZPageView *, CGFloat);
     _view->_didTurnPage = nil;
     
-    SEL const selector = @selector(pageView:didTurnPageInTransition:);
+    SEL const selector = @selector(pageView:didTurnPageWithTransition:);
     if (![aClass instancesRespondToSelector:selector]) {
         return;
     }
@@ -275,6 +275,20 @@
 
 - (BOOL)shouldReuseView:(UIView *)reusingView {
     return [_view.dataSource pageView:_view shouldReuseView:reusingView];
+}
+
+/// 将待显视图变为复用视图。
+- (void)sendPendingViewToReuse {
+    UIView *  const pendingView = _view->_pendingView;
+    NSInteger const pendingPage = _view->_pendingPage;
+    
+    _view->_pendingView = nil;
+    _view->_pendingPage = NSNotFound;
+    
+    if ([_view.dataSource pageView:_view shouldReuseView:pendingView]) {
+        _view->_reusingView = pendingView;
+        _view->_reusingPage = pendingPage;
+    }
 }
 
 - (void)willShowView:(UIView *)view animated:(BOOL)animated {
@@ -334,9 +348,7 @@
     }
 }
 
-/// 调整 contentInset 以适配 currentPage 和 isLooped 状态。
-/// @note 仅在需要调整 contentInset 的地方调用此方法。
-- (void)adaptContentInset:(CGRect const)bounds {
+- (void)adjustContentInsetsToFitBounds:(CGRect const)bounds {
     UIEdgeInsets newInsets = UIEdgeInsetsZero;
     if (_view->_numberOfPages <= 1) {
         // 只有一个 page 不可滚动。
@@ -383,79 +395,75 @@
     [_view setBounds:bounds];
 }
 
-/// 发生滚动
-- (void)didScroll:(BOOL)stopped {
-    CGRect  const bounds  = _view.bounds;
-    CGSize  const size    = bounds.size;
-    CGFloat const offsetX = bounds.origin.x;
+/// 发生滚动。
+/// - Parameter stopped: 滚动是否会停止
+- (void)didScroll:(BOOL const)stopped {
+    CGRect  const bounds = _view.bounds;
+    CGSize  const size   = bounds.size;
+    CGPoint const offset = bounds.origin;
     
-    // 只有一张图时，只有原点是合法位置
+    // 只有一张图时，不需要处理翻页。
     if (_view->_numberOfPages <= 1) {
-        if (stopped && offsetX != 0) {
+        if (stopped && offset.x != 0) {
+            // 若滚动要停止，只有原点是合法位置。
             [_view setContentOffset:CGPointZero animated:YES];
         }
         return;
     }
     
-    // 还在原点时，不需要处理
-    if (offsetX == 0) {
+    // 滚动到原点：没有翻页，或翻页中断，或翻页取消
+    if (offset.x == 0) {
         if (_view->_pendingView) {
             [self willHideView:_view->_pendingView animated:NO];
             [self willShowView:_view->_currentView animated:NO];
-            
             [_view->_pendingView removeFromSuperview];
             [self didHideView:_view->_pendingView animated:NO];
             [self didShowView:_view->_currentView animated:NO];
             
-            if ([self shouldReuseView:_view->_pendingView]) {
-                _view->_reusingView = _view->_pendingView;
-                _view->_reusingPage = _view->_pendingPage;
-            }
-            
-            _view->_pendingView = nil;
-            _view->_pendingPage = NSNotFound;
+            [self sendPendingViewToReuse];
         }
         return;
     }
     
     BOOL      const isLTR       = (_view.effectiveUserInterfaceLayoutDirection == UIUserInterfaceLayoutDirectionLeftToRight);
     NSInteger const maxPage     = _view->_numberOfPages - 1;
-    BOOL      const direction   = isLTR ? offsetX > 0 : offsetX < 0;
-    NSInteger const pendingPage = XZLoopPage(_view->_currentPage, direction, maxPage, _view->_isLooped);
+    BOOL      const direction   = isLTR ? offset.x > 0 : offset.x < 0;
+    NSInteger const pendingPage = XZPageLoop(_view->_currentPage, direction, maxPage, _view->_isLooped);
     
-    // 没有目标页面，就不需要处理加载及翻页了。
+    // 当前滚动状态，无需展示待显页面，比如非循环模式的首尾。
     if (pendingPage == NSNotFound) {
-        if (stopped) {
-            // 停止在非页面位置，自动归位
+        if (stopped && offset.x != 0) {
+            // 若停止在非页面位置，自动归位
             [_view setContentOffset:CGPointZero animated:YES];
         }
         if (_view->_pendingView) {
             [self willHideView:_view->_pendingView animated:NO];
+            [self willShowView:_view->_currentView animated:NO];
             [_view->_pendingView removeFromSuperview];
             [self didHideView:_view->_pendingView animated:NO];
+            [self didShowView:_view->_currentView animated:NO];
             
-            if ([self shouldReuseView:_view->_pendingView]) {
-                _view->_reusingView = _view->_pendingView;
-                _view->_reusingPage = _view->_pendingPage;
-            }
-            _view->_pendingView = nil;
-            _view->_pendingPage = NSNotFound;
+            [self sendPendingViewToReuse];
         }
         return;
     }
     
-    // 检查当前预加载的视图是否正确
+    // 当前滚动状态，需要展示待显视图。
     if (_view->_pendingPage != pendingPage) {
         [self willHideView:_view->_currentView animated:YES];
         
         if (_view->_pendingView) {
-            XZLog(@"待显视图：当前与目标不一致，%ld vs %ld", _view->_pendingPage, pendingPage);
+            XZLog(@"待显视图：已加载待显视图，但是与预期不一致，%ld vs %ld", _view->_pendingPage, pendingPage);
             [self willHideView:_view->_pendingView animated:NO];
             [_view->_pendingView removeFromSuperview];
             [self didHideView:_view->_pendingView animated:NO];
             
-            if ([self shouldReuseView:_view->_pendingView]) {
-                _view->_pendingView = [self viewForPageAtIndex:pendingPage reusingView:_view->_pendingView];
+            UIView * const oldPendingView = _view->_pendingView;
+            _view->_pendingView = nil;
+            _view->_pendingPage = NSNotFound;
+            
+            if ([self shouldReuseView:oldPendingView]) {
+                _view->_pendingView = [self viewForPageAtIndex:pendingPage reusingView:oldPendingView];
             } else if (_view->_reusingPage == pendingPage) {
                 _view->_pendingView = _view->_reusingView;
                 _view->_reusingView = nil;
@@ -465,29 +473,26 @@
                 _view->_reusingView = nil;
                 _view->_reusingPage = NSNotFound;
             }
-            
-            [self willShowView:_view->_pendingView animated:YES];
-            [_view addSubview:_view->_pendingView];
-            [self layoutPendingView:bounds];
         } else if (_view->_reusingPage == pendingPage) {
-            XZLog(@"待显视图：直接使用复用视图，%ld", pendingPage);
+            XZLog(@"待显视图：未加载待显视图，但是复用视图与预期相同，可以直接使用，%ld", pendingPage);
             _view->_pendingView = _view->_reusingView;
             _view->_reusingView = nil;
             _view->_reusingPage = NSNotFound;
         } else {
-            XZLog(@"待显视图：加载新的待显视图，%ld", pendingPage);
+            XZLog(@"待显视图：未加载待显视图，但是复用视图与预期不同，需加载新视图，%ld", pendingPage);
             _view->_pendingView = [self viewForPageAtIndex:pendingPage reusingView:_view->_reusingView];
             _view->_reusingView = nil;
             _view->_reusingPage = NSNotFound;
         }
         
-        [self willShowView:_view->_pendingView animated:YES];
-        [_view addSubview:_view->_pendingView];
         _view->_pendingPage = pendingPage;
         _view->_pendingPageDirection = direction;
+        
+        [self willShowView:_view->_pendingView animated:YES];
+        [_view addSubview:_view->_pendingView];
         [self layoutPendingView:bounds];
     } else if (direction != _view->_pendingPageDirection) {
-        XZLog(@"待显视图：与当前方向不一致，%d, %ld", direction, pendingPage);
+        XZLog(@"待显视图：已加载且与预期一致，但是翻页方向不一致，%d, %ld", direction, pendingPage);
         _view->_pendingPageDirection = direction;
         [self layoutPendingView:bounds];
     }
@@ -507,20 +512,23 @@
     CGFloat const PageWidth = size.width;
     
     // 滚动满足一页
-    if (offsetX <= -PageWidth || offsetX >= +PageWidth) {
+    if (offset.x <= -PageWidth || offset.x >= +PageWidth) {
         // 执行翻页：_currentPage 与 _reusingPage 交换
         [self didScrollToPendingPage:bounds maxPage:maxPage direction:direction];
         
         // 用户翻页，发送代理事件：中间已经展示的是当前页内容，但是 offset 未修改。
         // 此时已经完成翻页，直接发送了 show 事件，而没有转场进度 100% 的事件。
         // 1、即使发送进度 100% 的事件，事件也会被 show 事件所覆盖，因为这两个事件是串行的。
-        // 2、此时，新页面可能已经进入转场，旧页面应该属于退场状态。
+        // 2、此时，新页面可能已经进入转场，旧页面属于已退场状态。
         [self didShowPageAtIndex:_view->_currentPage];
         
         // 恢复翻页前的展示位置，如果 x 不为零，会加载下一页，并发送转场进度
-        CGFloat const x = fmod(offsetX, PageWidth);
         // 不能使用 setContentOffset:animated:NO 方法，会触发 scrollViewDidEndDecelerating 代理方法
+        CGFloat const x = fmod(offset.x, PageWidth);
         _view.contentOffset = CGPointMake(x, 0);
+        
+        // 翻页后，按滚动方向，预加载下一个页面。
+        [self prefetchNextPageWithDirection:direction maxPage:maxPage];
         return;
     }
     
@@ -530,7 +538,7 @@
     // @discussion
     // 在某些极端情况下，可能会发生，翻页停在中间的情况。
     if (stopped) {
-        if (PageWidth - offsetX < 1.0 || -PageWidth - offsetX > -1.0) {
+        if (PageWidth - offset.x < 1.0 || -PageWidth - offset.x > -1.0) {
             // 小于一个点，可能是因为 width 不是整数，翻页宽度与 width 不一致，认为翻页完成
             XZLog(@"翻页修复：停止滚动，距翻页不足一个点，%@", NSStringFromCGRect(bounds));
             [self didScrollToPendingPage:bounds maxPage:maxPage direction:direction];
@@ -538,15 +546,17 @@
             [self didShowPageAtIndex:_view->_currentPage];
             // 这里不取模，认为是正好完成翻页
             _view.contentOffset = CGPointZero;
+            // 预加载下一个页面。
+            [self prefetchNextPageWithDirection:direction maxPage:maxPage];
         } else {
             // 发送转场进度
-            XZCallBlock(_view->_didTurnPage, _view, offsetX, PageWidth);
+            XZPageCall(_view->_didTurnPage, _view, offset.x, PageWidth);
             // 滚动停止，滚动未过半，不执行翻页，退回原点，否则执行翻页
             CGFloat const halfPageWidth = PageWidth * 0.5;
-            if (offsetX >= +halfPageWidth) {
+            if (offset.x >= +halfPageWidth) {
                 XZLog(@"翻页修复：停止滚动，向右滚动距离超过一半，翻页，%@", NSStringFromCGRect(bounds));
                 [_view setContentOffset:CGPointMake(PageWidth, 0) animated:YES];
-            } else if (offsetX <= -halfPageWidth) {
+            } else if (offset.x <= -halfPageWidth) {
                 XZLog(@"翻页修复：停止滚动，向左滚动距离超过一半，翻页，%@", NSStringFromCGRect(bounds));
                 [_view setContentOffset:CGPointMake(-PageWidth, 0) animated:YES];
             } else {
@@ -557,7 +567,7 @@
         }
     } else {
         // 发送转场进度
-        XZCallBlock(_view->_didTurnPage, _view, offsetX, PageWidth);
+        XZPageCall(_view->_didTurnPage, _view, offset.x, PageWidth);
     }
 }
 
@@ -566,10 +576,15 @@
     [_view->_currentView removeFromSuperview];
     [self didHideView:_view->_currentView animated:YES];
     
+    UIView *  const currentView = _view->_currentView;
+    NSInteger const currentPage = _view->_currentPage;
+    _view->_currentView = nil;
+    _view->_currentPage = NSNotFound;
+    
     // 当前视图进入重用池
-    if ([self shouldReuseView:_view->_currentView]) {
-        _view->_reusingView = _view->_currentView;
-        _view->_reusingPage = _view->_currentPage;
+    if ([self shouldReuseView:currentView]) {
+        _view->_reusingView = currentView;
+        _view->_reusingPage = currentPage;
     }
     
     // 待显视图进入展示中
@@ -581,7 +596,27 @@
     [self didShowView:_view->_currentView animated:YES];
     
     // 调整 contentInset
-    [self adaptContentInset:bounds];
+    [self adjustContentInsetsToFitBounds:bounds];
+}
+
+- (void)prefetchNextPageWithDirection:(BOOL)direction maxPage:(const NSInteger)maxPage {
+    // 未开启预加载
+    if (!_view.isPrefetchingEnabled) {
+        return;
+    }
+    // 已有待显视图，不需要预加载
+    if (_view->_pendingView) {
+        return;
+    }
+    // 根据滚动方向，计算预加载的页面。
+    NSInteger const reusingPage = XZPageLoop(_view->_currentPage, direction, maxPage, _view->_isLoaded);
+    // 没有需要预加载的页面，或者页面已经预加载了。
+    if (reusingPage == NSNotFound || reusingPage == _view->_reusingPage) {
+        return;
+    }
+    // 预加载页面。
+    _view->_reusingView = [self viewForPageAtIndex:reusingPage reusingView:_view->_reusingView];
+    _view->_reusingPage = reusingPage;
 }
 
 - (void)setCurrentPage:(NSInteger const)newPage animated:(BOOL)animated {
@@ -642,16 +677,16 @@
         // 关于滚动方向
         // 从 A => B 的滚动方向，并不一定与 B => A 相反，所以为了保证滚动方向不变，
         // 使用从 current 到 reusing 的滚动方向的反向，而不是直接计算从 reusing 到 current 的方向。
-        _view->_pendingPageDirection = !XZScrollDirection(_view->_currentPage, _view->_pendingPage, maxPage, _view->_isLooped);
+        _view->_pendingPageDirection = !XZPageDirection(_view->_currentPage, _view->_pendingPage, maxPage, _view->_isLooped);
         
         // 交换值并布局
-        XZExchangeValue(_view->_currentPage, _view->_pendingPage);
-        XZExchangeValue(_view->_currentView, _view->_pendingView);
+        XZPageExchange(_view->_currentPage, _view->_pendingPage);
+        XZPageExchange(_view->_currentView, _view->_pendingView);
         [self layoutCurrentView:bounds];
         [self layoutPendingView:bounds];
         
         // 根据当前情况调整边距，因为可能会因此 didScroll 事件，所以先将位置重置到原点，这样即使触发事件，也不影响。
-        [self adaptContentInset:bounds];
+        [self adjustContentInsetsToFitBounds:bounds];
         
         // 如果需要展示动画的话，先恢复显示内容
         if (animated) {
@@ -769,7 +804,7 @@
 
 /// 调整 contentInset 以适配 currentPage 和 isLooped 状态。
 /// @note 仅在需要调整 contentInset 的地方调用此方法。
-- (void)adaptContentInset:(CGRect const)bounds {
+- (void)adjustContentInsetsToFitBounds:(CGRect const)bounds {
     UIEdgeInsets newInsets = UIEdgeInsetsZero;
     if (_view->_numberOfPages <= 1) {
         // 只有一个 page 不可滚动。
@@ -834,7 +869,7 @@
     
     NSInteger const maxPage     = _view->_numberOfPages - 1;
     BOOL      const direction   = offsetY > 0;
-    NSInteger const pendingPage = XZLoopPage(_view->_currentPage, direction, maxPage, _view->_isLooped);
+    NSInteger const pendingPage = XZPageLoop(_view->_currentPage, direction, maxPage, _view->_isLooped);
     
     // 没有目标页面，就不需要处理加载及翻页了。
     if (pendingPage == NSNotFound) {
@@ -955,7 +990,7 @@
             _view.contentOffset = CGPointZero;
         } else {
             // 发送转场进度
-            XZCallBlock(_view->_didTurnPage, _view, offsetY, PageHeight);
+            XZPageCall(_view->_didTurnPage, _view, offsetY, PageHeight);
             // 滚动停止，滚动未过半，不执行翻页，退回原点，否则执行翻页
             CGFloat const halfPageHeight = PageHeight * 0.5;
             if (offsetY >= +halfPageHeight) {
@@ -972,7 +1007,7 @@
         }
     } else {
         // 发送转场进度
-        XZCallBlock(_view->_didTurnPage, _view, offsetY, PageHeight);
+        XZPageCall(_view->_didTurnPage, _view, offsetY, PageHeight);
     }
 }
 
@@ -1034,16 +1069,16 @@
         // 关于滚动方向
         // 从 A => B 的滚动方向，并不一定与 B => A 相反，所以为了保证滚动方向不变，
         // 使用从 current 到 reusing 的滚动方向的反向，而不是直接计算从 reusing 到 current 的方向。
-        _view->_pendingPageDirection = !XZScrollDirection(_view->_currentPage, _view->_pendingPage, maxPage, _view->_isLooped);
+        _view->_pendingPageDirection = !XZPageDirection(_view->_currentPage, _view->_pendingPage, maxPage, _view->_isLooped);
         
         // 交换值并布局
-        XZExchangeValue(_view->_currentPage, _view->_pendingPage);
-        XZExchangeValue(_view->_currentView, _view->_pendingView);
+        XZPageExchange(_view->_currentPage, _view->_pendingPage);
+        XZPageExchange(_view->_currentView, _view->_pendingView);
         [self layoutCurrentView:bounds];
         [self layoutPendingView:bounds];
         
         // 根据当前情况调整边距，因为可能会因此 didScroll 事件，所以先将位置重置到原点，这样即使触发事件，也不影响。
-        [self adaptContentInset:bounds];
+        [self adjustContentInsetsToFitBounds:bounds];
         
         // 如果需要展示动画的话，先恢复显示内容
         if (animated) {

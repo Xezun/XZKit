@@ -15,12 +15,13 @@
 NS_ASSUME_NONNULL_BEGIN
 
 /// 计算 index 自增或子减后的值。
-/// 非循环模式时，不能增加或减小返回 NSNotFound 循环模式时最大值自增返回最小值，最小值自减返回最大值。
+/// @li 非循环模式时，若 index 已经最大或最小，返回 NSNotFound 值。
+/// @li 循环模式时，最大值增加返回最小值，最小值减少返回最大值。
 /// @param index 当前值
 /// @param increases YES自增，NO自减
 /// @param max 最大值
 /// @param isLooped 循环模式
-UIKIT_STATIC_INLINE NSInteger XZLoopPage(NSInteger index, BOOL increases, NSInteger max, BOOL isLooped) {
+UIKIT_STATIC_INLINE NSInteger XZPageLoop(NSInteger index, BOOL increases, NSInteger max, BOOL isLooped) {
     if (max <= 0) {
         return NSNotFound;
     }
@@ -30,16 +31,16 @@ UIKIT_STATIC_INLINE NSInteger XZLoopPage(NSInteger index, BOOL increases, NSInte
     return (increases ? ((index == max) ? NSNotFound : (index + 1)) : ((index == 0) ? NSNotFound : (index - 1)));
 }
 
-/// 判断 from => to 变化的应该执行的滚动方向，YES正向，NO反向。
+/// 根据 from => to 判断翻页方向，YES-正向翻页，NO-反向翻页。
 /// @discussion 非循环模式，或者数量2个以下，`from < to` 正向。
 /// @discussion 循环模式，且数量大于2个，`from < to` 或 `max => min` 正向。
-UIKIT_STATIC_INLINE BOOL XZScrollDirection(NSInteger from, NSInteger to, NSInteger max, BOOL isLooped) {
+UIKIT_STATIC_INLINE BOOL XZPageDirection(NSInteger from, NSInteger to, NSInteger max, BOOL isLooped) {
     return (!isLooped || max < 2) ? (from < to) : ( (from == max && to == 0) || ((from < to) && !(from == 0 && to == max)) );
 }
 
 /// 交换两个变量的值
-#define XZExchangeValue(var_1, var_2)   { typeof(var_1) temp = var_1; var_1 = var_2; var_2 = temp; }
-#define XZCallBlock(block, ...)         if (block != nil) { block(__VA_ARGS__); }
+#define XZPageExchange(var_1, var_2)   { typeof(var_1) temp = var_1; var_1 = var_2; var_2 = temp; }
+#define XZPageCall(block, ...)         if (block != nil) { block(__VA_ARGS__); }
 
 /// 由于属性 isDragging/isDecelerating 的更新在 contentOffset/bounds.origin 更新之后，
 /// 所以在无法判断 contentOffset/bounds.origin 变化时的滚动状态，继而无法判断翻页状态。
@@ -78,7 +79,7 @@ UIKIT_STATIC_INLINE BOOL XZScrollDirection(NSInteger from, NSInteger to, NSInteg
 // 调用代理方法
 
 - (UIView *)viewForPageAtIndex:(NSInteger)index reusingView:(nullable UIView *)reusingView;
-- (BOOL)shouldReuseView:(UIView *)reusingView;
+//- (BOOL)shouldReuseView:(UIView *)reusingView;
 
 - (void)willShowView:(UIView *)view animated:(BOOL)animated;
 - (void)didShowView:(UIView *)view animated:(BOOL)animated;
@@ -93,14 +94,16 @@ UIKIT_STATIC_INLINE BOOL XZScrollDirection(NSInteger from, NSInteger to, NSInteg
 - (void)layoutCurrentView:(CGRect const)bounds;
 /// 布局待显视图。
 - (void)layoutPendingView:(CGRect const)bounds;
-/// 适配调整边距。
-- (void)adaptContentInset:(CGRect const)bounds;
+/// 调整 contentInset 以适配 currentPage 和 isLooped 状态。
+/// @note 仅在需要调整 contentInset 的地方调用此方法。
+- (void)adjustContentInsetsToFitBounds:(CGRect const)bounds;
 
 - (void)didScroll:(BOOL)stopped;
 /// 滚动到待显视图：待显视图变为当前视图。
 /// 这个方法不需要重写。
 - (void)didScrollToPendingPage:(CGRect const)bounds maxPage:(NSInteger const)maxPage direction:(BOOL const)direction;
-
+/// 预加载下一页：YES-正向翻页，NO-反向翻页。
+- (void)prefetchNextPageWithDirection:(BOOL const)direction maxPage:(NSInteger const)maxPage;
 /// 不处理、发送事件。
 - (void)setCurrentPage:(NSInteger)newPage animated:(BOOL)animated;
 

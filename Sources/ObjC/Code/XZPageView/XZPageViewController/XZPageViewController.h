@@ -21,7 +21,7 @@ NS_ASSUME_NONNULL_BEGIN
 @protocol XZPageViewControllerDelegate <NSObject>
 @optional
 - (void)pageViewController:(XZPageViewController *)pageViewController didShowViewControllerAtIndex:(NSInteger)index;
-- (void)pageViewController:(XZPageViewController *)pageViewController didTurnViewControllerInTransition:(CGFloat)transition;
+- (void)pageViewController:(XZPageViewController *)pageViewController didTurnViewControllerWithTransition:(CGFloat)transition NS_SWIFT_NAME(pageViewController(_:didTurnViewControllerWith:));
 @end
 
 @protocol XZPageViewControllerDataSource <NSObject>

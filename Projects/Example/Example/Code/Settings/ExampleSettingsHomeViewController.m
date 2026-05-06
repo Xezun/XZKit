@@ -6,6 +6,7 @@
 //
 
 #import "ExampleSettingsHomeViewController.h"
+@import SDWebImage;
 @import XZKit;
 
 @interface ExampleSettingsHomeViewController ()
@@ -33,6 +34,31 @@
 
 - (IBAction)modalStyleSwitchAction:(UISwitch *)sender {
     [NSUserDefaults.standardUserDefaults setBool:sender.isOn forKey:@"modalPresentationStyle"];
+}
+
+- (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
+    switch (indexPath.section) {
+        case 0:
+            break;
+        case 1:
+            switch (indexPath.row) {
+                case 0:
+                    break;
+                case 1: {
+                    [self xz_showToast:[XZToast loadingToast:@"清理中，请稍后"]];
+                    [SDWebImageManager.sharedManager.imageCache clearWithCacheType:(SDImageCacheTypeAll) completion:^{
+                        [self xz_showToast:[XZToast successToast:@"清理完成"]];
+                    }];
+                    break;
+                }
+                default:
+                    break;
+            }
+            break;
+            
+        default:
+            break;
+    }
 }
 
 @end

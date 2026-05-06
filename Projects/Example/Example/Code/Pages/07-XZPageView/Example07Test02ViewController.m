@@ -84,7 +84,7 @@
     [self.segmentedControl setSelectedIndex:index animated:YES];
 }
 
-- (void)pageViewController:(XZPageViewController *)pageViewController didTurnViewControllerInTransition:(CGFloat)transition {
+- (void)pageViewController:(XZPageViewController *)pageViewController didTurnViewControllerWithTransition:(CGFloat)transition {
     [self.segmentedControl updateInteractiveTransition:transition];
 }
 

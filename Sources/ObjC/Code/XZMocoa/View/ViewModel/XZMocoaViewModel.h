@@ -408,10 +408,12 @@ FOUNDATION_EXPORT XZMocoaKey const XZMocoaKeyNone NS_SWIFT_NAME(None);
 /// 在 Swift 中，使用 `@mocoa` 和 `@bind` 标记的绑定的键值事件，也属于此被动观察机制。
 @property (nonatomic, readonly) BOOL shouldObserveModelKeysActively;
 
-/// 当视图模型更新了 其他视图模型 的 数据模型 后，可通过此方法通知目标视图模型。
-/// 
-/// 默认情况下，此方法按照 `mappingModelKeys` 调用相应的方法。子类可重写。
-/// 
+/// 视图模型接收数据更新的通用方法。
+///
+/// 此方法默认会根据 `key` 调用那些通过 ``mappingModelKeys`` 注册的数据监听方法。
+///
+/// > 当视图模型更新了 其他视图模型 的 数据模型 后，也可通过此方法通知目标视图模型。
+///
 /// 使用 ``NSFetchedResultsController`` 作为数据源时，可以在代理方法中，触发此方法以跟踪数据变化。
 /// 
 /// ```objc
@@ -421,7 +423,7 @@ FOUNDATION_EXPORT XZMocoaKey const XZMocoaKeyNone NS_SWIFT_NAME(None);
 /// }
 /// ```
 ///
-/// - Attention: 当 `NSFetchedResultsController` 作为视图模型 `XZMocoaTableView` 的数据源和代理时，会自动触发此方法。
+/// 当 ``NSFetchedResultsController`` 作为视图模型 ``XZMocoaTableView`` 的数据源和代理时，会自动触发此方法。
 ///
 /// - Note: 为了方便在 Swift 中使用枚举，参数 keys 集合元素使用了 XZMocoaKey 类型，理论上应该为 NSString 类型。
 ///

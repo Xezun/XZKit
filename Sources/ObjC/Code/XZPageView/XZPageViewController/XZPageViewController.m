@@ -234,9 +234,9 @@ static void SetTransitionStage(UIViewController * _Nonnull viewController, XZTra
     }
 }
 
-- (void)pageView:(XZPageView *)pageView didTurnPageInTransition:(CGFloat)transition {
-    if ([self.delegate respondsToSelector:@selector(pageViewController:didTurnViewControllerInTransition:)]) {
-        [self.delegate pageViewController:self didTurnViewControllerInTransition:transition];
+- (void)pageView:(XZPageView *)pageView didTurnPageWithTransition:(CGFloat)transition {
+    if ([self.delegate respondsToSelector:@selector(pageViewController:didTurnViewControllerWithTransition:)]) {
+        [self.delegate pageViewController:self didTurnViewControllerWithTransition:transition];
     }
 }
 

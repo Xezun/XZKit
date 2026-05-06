@@ -1,56 +1,144 @@
 //
-//  XZImageViewerHideAnimationController.m
+//  XZImageViewerAnimationController.m
 //  XZPageView
 //
 //  Created by 徐臻 on 2025/6/27.
 //
 
-#import "XZImageViewerHideAnimationController.h"
+#import "XZImageViewerAnimationController.h"
 #import "XZPageView.h"
 #import "XZImageViewer.h"
 #import "XZImageViewerItemView.h"
 
-typedef NS_ENUM(NSUInteger, XZImageViewerHideStyle) {
-    // 交互式退场
-    XZImageViewerHideStyleNone,
-    // 缩放退场
-    XZImageViewerHideStyleZoom,
-    // 向下退场
-    XZImageViewerHideStyleDown,
-    // 先缩放，后向下退场
-    XZImageViewerHideStyleZoomDown,
-};
+#define XZImageViewerAnimationDuration 0.35
 
-@implementation XZImageViewerHideAnimationController {
-    XZImageViewerHideStyle _style;
-    UIView *_sourceView;
-    UIImageView *_imageView;
+@interface XZImageViewerPresentAnimationController : XZImageViewerAnimationController <UIViewControllerAnimatedTransitioning>
+@end
+
+@interface XZImageViewerDismissAnimationController : XZImageViewerAnimationController <UIViewControllerAnimatedTransitioning>
+@end
+
+@implementation XZImageViewerAnimationController
+
+- (instancetype)initWithSourceView:(UIView *)sourceView itemView:(XZImageViewerItemView *)itemView {
+    return [super init];
 }
 
-+ (XZImageViewerHideAnimationController *)animationControllerWithItemView:(XZImageViewerItemView *)itemView sourceView:(UIView *)sourceView {
-    return [[self alloc] initWithSourceView:sourceView imageView:itemView.imageView isZoomed:itemView.isZoomed];
++ (id<UIViewControllerAnimatedTransitioning>)animationControllerForType:(XZImageViewerTransitionType)type sourceView:(UIView *)sourceView itemView:(XZImageViewerItemView *)itemView {
+    switch (type) {
+        case XZImageViewerTransitionTypeShow:
+            return [[XZImageViewerPresentAnimationController alloc] initWithSourceView:sourceView itemView:nil];
+        case XZImageViewerTransitionTypeHide:
+            return [[XZImageViewerDismissAnimationController alloc] initWithSourceView:sourceView itemView:itemView];
+    }
 }
 
-- (instancetype)initWithSourceView:(UIView *)sourceView imageView:(UIImageView *)imageView isZoomed:(BOOL)isZoomed {
-    self = [super init];
+@end
+
+
+@implementation XZImageViewerPresentAnimationController {
+    UIView * _Nullable _sourceView;
+}
+
+- (instancetype)initWithSourceView:(UIView *)sourceView itemView:(XZImageViewerItemView *)itemView {
+    self = [super initWithSourceView:sourceView itemView:itemView];
     if (self) {
-        if (imageView) {
-            _style = XZImageViewerHideStyleNone;
-        } else if (sourceView) {
-            _style = XZImageViewerHideStyleZoom;
-        } else if (isZoomed) {
-            _style = XZImageViewerHideStyleZoomDown;
-        } else {
-            _style = XZImageViewerHideStyleDown;
-        }
         _sourceView = sourceView;
-        _imageView  = imageView;
     }
     return self;
 }
 
 - (NSTimeInterval)transitionDuration:(id<UIViewControllerContextTransitioning>)transitionContext {
-    return 0.5;
+    return XZImageViewerAnimationDuration;
+}
+
+- (void)animateTransition:(id<UIViewControllerContextTransitioning>)transitionContext {
+    UIView * const containerView = transitionContext.containerView;
+    
+    // UIView * const fromView = [transitionContext viewForKey:UITransitionContextFromViewKey];
+    
+    XZImageViewer * const toVC   = [transitionContext viewControllerForKey:UITransitionContextToViewControllerKey];
+    UIView        * const toView = [transitionContext viewForKey:UITransitionContextToViewKey];
+    toView.backgroundColor = UIColor.clearColor;
+    toView.frame = [transitionContext finalFrameForViewController:toVC];
+    [containerView addSubview:toView];
+    [toView layoutIfNeeded];
+    
+    XZImageViewerItemView * const itemView = toVC.pageView.currentView;
+    [itemView layoutIfNeeded];
+    
+    UIImageView * const imageView   = itemView.imageView;
+    CGRect        const imageToRect = [itemView convertRect:itemView.imageFrame toView:containerView];
+    
+    [containerView addSubview:imageView];
+    
+    if (_sourceView) {
+        imageView.clipsToBounds = _sourceView.clipsToBounds;
+        imageView.contentMode   = _sourceView.contentMode;
+        imageView.frame = [_sourceView convertRect:_sourceView.bounds toView:containerView];
+    } else {
+        imageView.frame = CGRectOffset(imageToRect, 0, CGRectGetMaxY(containerView.bounds) - CGRectGetMinY(imageToRect));
+    }
+    
+    NSTimeInterval const duration = [self transitionDuration:transitionContext];
+    [UIView animateWithDuration:duration delay:0 options:UIViewAnimationOptionLayoutSubviews animations:^{
+        // fromView.transform = CGAffineTransformMakeScale(0.9, 0.9);
+        imageView.frame    = imageToRect;
+        toView.backgroundColor = UIColor.blackColor;
+    } completion:^(BOOL finished) {
+        itemView.imageView = imageView;
+        // fromView.transform = CGAffineTransformIdentity;
+        if (transitionContext.transitionWasCancelled) {
+            [toView removeFromSuperview];
+            [transitionContext completeTransition:NO];
+        } else {
+            [transitionContext completeTransition:YES];
+            toView.backgroundColor = UIColor.blackColor;
+        }
+    }];
+}
+
+@end
+
+/// 退场方式。
+typedef NS_ENUM(NSUInteger, XZImageViewerDismissStyle) {
+    // 交互式退场
+    XZImageViewerDismissStyleNone,
+    // 缩放退场
+    XZImageViewerDismissStyleZoom,
+    // 向下退场
+    XZImageViewerDismissStyleDown,
+    // 先缩放，后向下退场
+    XZImageViewerDismissStyleZoomDown,
+};
+
+@implementation XZImageViewerDismissAnimationController {
+    XZImageViewerDismissStyle _style;
+    UIView *_sourceView;
+    UIImageView *_imageView;
+}
+
+- (instancetype)initWithSourceView:(UIView *)sourceView itemView:(XZImageViewerItemView *)itemView {
+    self = [super initWithSourceView:nil itemView:nil];
+    if (self) {
+        _sourceView = sourceView;
+        _imageView  = itemView.imageView;
+        
+        if (_imageView) {
+            _style = XZImageViewerDismissStyleNone;
+        } else if (sourceView) {
+            _style = XZImageViewerDismissStyleZoom;
+        } else if (itemView.isZoomed) {
+            _style = XZImageViewerDismissStyleZoomDown;
+        } else {
+            _style = XZImageViewerDismissStyleDown;
+        }
+    }
+    return self;
+}
+
+- (NSTimeInterval)transitionDuration:(id<UIViewControllerContextTransitioning>)transitionContext {
+    return XZImageViewerAnimationDuration;
 }
 
 - (void)animateTransition:(id<UIViewControllerContextTransitioning>)transitionContext {
@@ -71,8 +159,6 @@ typedef NS_ENUM(NSUInteger, XZImageViewerHideStyle) {
     [toView layoutIfNeeded];
     // 在缩放前获取源的位置
     CGRect const sourceRect = [_sourceView convertRect:_sourceView.bounds toView:containerView];
-    // 缩放 toVC 的原因是：交互式退场的动画，由交互手势处理了，这里如果不添加动画，需要额外的逻辑去维护。
-    toView.transform = CGAffineTransformMakeScale(0.9, 0.9);
     
     XZImageViewerItemView * const itemView = fromVC.pageView.currentView;
     [itemView layoutIfNeeded];
@@ -104,41 +190,42 @@ typedef NS_ENUM(NSUInteger, XZImageViewerHideStyle) {
     NSTimeInterval const duration = [self transitionDuration:transitionContext];
     [UIView animateKeyframesWithDuration:duration delay:0 options:0 animations:^{
         switch (self->_style) {
-            case XZImageViewerHideStyleNone: {
-                // 交互式退场，imageView 的动画已由手势处理，这里仅处理背景（不能没有动画）。
+            case XZImageViewerDismissStyleNone: {
+                // 交互式退场，backgroundColor 和 imageView 的动画已由手势处理。
                 [UIView addKeyframeWithRelativeStartTime:0 relativeDuration:1.0 animations:^{
                     [toVC setNeedsStatusBarAppearanceUpdate];
-                    toView.transform = CGAffineTransformIdentity;
+                    // 需要添加这个动画，否则手势没有转场效果。
+                    imageView.alpha          = 0.9;
                 }];
                 break;
             }
-            case XZImageViewerHideStyleZoom: {
+            case XZImageViewerDismissStyleZoom: {
                 // 缩放到 sourceView 的位置
                 [UIView addKeyframeWithRelativeStartTime:0 relativeDuration:1.0 animations:^{
                     [toVC setNeedsStatusBarAppearanceUpdate];
-                    imageView.frame          = sourceRect;
                     fromView.backgroundColor = UIColor.clearColor;
-                    toView.transform         = CGAffineTransformIdentity;
+                    imageView.frame          = sourceRect;
+                    imageView.alpha          = 0.9;
                 }];
                 break;
             }
-            case XZImageViewerHideStyleDown: {
+            case XZImageViewerDismissStyleDown: {
                 // 直接向下平移退场，没有指定 sourceView
                 [UIView addKeyframeWithRelativeStartTime:0 relativeDuration:1.0 animations:^{
                     [toVC setNeedsStatusBarAppearanceUpdate];
                     fromView.backgroundColor = UIColor.clearColor;
-                    toView.transform         = CGAffineTransformIdentity;
+                    imageView.alpha          = 0.9;
                     imageView.frame          = imageRect2;
                 }];
                 break;
             }
-            case XZImageViewerHideStyleZoomDown: {
+            case XZImageViewerDismissStyleZoomDown: {
                 // 处于缩放状态，在离开显示区域前，先缩放到普通状态，然后再退场。
                 [UIView addKeyframeWithRelativeStartTime:0.0 relativeDuration:1.0 animations:^{
                     // 必须将下面的操作放一起，贯穿且为整个动画过程，否则 imageViewer 退场后，状态栏的样式可能会不正确。
                     [toVC setNeedsStatusBarAppearanceUpdate];
                     fromView.backgroundColor = UIColor.clearColor;
-                    toView.transform         = CGAffineTransformIdentity;
+                    imageView.alpha          = 0.9;
                 }];
                 [UIView addKeyframeWithRelativeStartTime:0.0 relativeDuration:0.7 animations:^{
                     imageView.frame = CGRectOffset(imageRect2, 0, -imageRect2.size.height);
@@ -153,7 +240,7 @@ typedef NS_ENUM(NSUInteger, XZImageViewerHideStyle) {
         itemView.imageView = imageView;
         if (transitionContext.transitionWasCancelled) {
             [transitionContext completeTransition:NO];
-            toView.transform = CGAffineTransformIdentity;
+            imageView.alpha = 1.0;
             [toView removeFromSuperview];
             fromView.backgroundColor = UIColor.blackColor;
         } else {
@@ -168,13 +255,13 @@ typedef NS_ENUM(NSUInteger, XZImageViewerHideStyle) {
 
 @end
 
-@implementation XZImageViewerHideInteractiveController
+@implementation XZImageViewerInteractiveTransition
 
 - (instancetype)initWithItemView:(XZImageViewerItemView *)itemView {
     self = [super init];
     if (self) {
         _itemView = itemView;
-        _imageViewInitialFrame = itemView.imageView.frame;
+        _imageViewInitialRect = [itemView.imageView convertRect:itemView.imageView.bounds toView:itemView];
     }
     return self;
 }

@@ -39,6 +39,7 @@
     
     self.pageView.isLooped = YES;
     // self.pageView.autoPagingInterval = 5.0;
+    self.pageView.isPrefetchingEnabled = YES;
     
     self.pageView.delegate = self;
     self.pageView.dataSource = self;
@@ -54,6 +55,7 @@
 }
 
 - (UIView *)pageView:(XZPageView *)pageView viewForPageAtIndex:(NSInteger)index reusingView:(UIImageView *)reusingView {
+    NSLog(@"%s, index: %ld", __PRETTY_FUNCTION__, index);
     if (reusingView == nil) {
         reusingView = [[UIImageView alloc] initWithFrame:pageView.bounds];
     }
@@ -63,6 +65,7 @@
 }
 
 - (BOOL)pageView:(XZPageView *)pageView shouldReuseView:(__kindof UIView *)reusingView {
+    NSLog(@"%s, reusingView: %p", __PRETTY_FUNCTION__, reusingView);
     return YES;
 }
 
@@ -72,7 +75,6 @@
 
 - (void)pageView:(XZPageView *)pageView didShowView:(UIView *)view animated:(BOOL)animated {
     NSLog(@"%s, view: %ld, animated: %@", __PRETTY_FUNCTION__, view.tag, animated ? @"true" : @"false");
-    self.pageControl.currentPage = pageView.currentPage;
 }
 
 - (void)pageView:(XZPageView *)pageView willHideView:(UIView *)view animated:(BOOL)animated {
@@ -83,8 +85,12 @@
     NSLog(@"%s, view: %ld, animated: %@", __PRETTY_FUNCTION__, view.tag, animated ? @"true" : @"false");
 }
 
-- (void)pageView:(XZPageView *)pageView didTurnPageInTransition:(CGFloat)transition {
-    // XZLog(@"didTurnPageInTransition: %f", transition);
+- (void)pageView:(XZPageView *)pageView didShowPageAtIndex:(NSInteger)index {
+    self.pageControl.currentPage = pageView.currentPage;
+}
+
+- (void)pageView:(XZPageView *)pageView didTurnPageWithTransition:(CGFloat)transition {
+    // XZLog(@"didTurnPageWithTransition: %f", transition);
 }
 
 - (void)pageControlDidChangeValue:(XZPageControl *)pageControl {

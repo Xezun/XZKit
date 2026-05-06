@@ -233,16 +233,10 @@
                     </tableView>
                     <navigationItem key="navigationItem" title="XZJSON" id="p8O-7Y-VqQ">
                         <barButtonItem key="backBarButtonItem" title="返回" id="Ise-qY-4ct"/>
-                        <barButtonItem key="leftBarButtonItem" id="dVz-Sk-Vjq">
-                            <button key="customView" opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" id="arD-Sp-cGc">
-                                <rect key="frame" x="20" y="11" width="36" height="22"/>
-                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                <inset key="imageEdgeInsets" minX="0.0" minY="0.0" maxX="2.2250738585072014e-308" maxY="0.0"/>
-                                <state key="normal" image="xmark" catalog="system"/>
-                                <connections>
-                                    <segue destination="ou9-p3-uNr" kind="unwind" unwindAction="unwindToMainPage:" id="DN7-k8-O5B"/>
-                                </connections>
-                            </button>
+                        <barButtonItem key="leftBarButtonItem" image="xmark" catalog="system" id="CCO-eI-kQe">
+                            <connections>
+                                <segue destination="ou9-p3-uNr" kind="unwind" unwindAction="unwindToMainPage:" id="x1N-Mg-EYa"/>
+                            </connections>
                         </barButtonItem>
                     </navigationItem>
                     <connections>

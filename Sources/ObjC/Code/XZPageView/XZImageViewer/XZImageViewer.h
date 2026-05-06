@@ -39,11 +39,14 @@ NS_ASSUME_NONNULL_BEGIN
 
 /// 加载图片。
 ///
+/// 如果是本地图片，可以直接在本方法中设置。
+///
+/// 如果是网络图片，那么在网络图片加载完成之后，必须要执行 completion 回调函数。
+///
 /// @param imageViewer 调用此方法的 XZImageViewer 对象
 /// @param index 图片的索引
-/// @param completion 如果是网络图片，图片加载完成后，通过此回调更新
-/// @returns 待展示的图片，或网络图片的占位图
-- (nullable UIImage *)imageViewer:(XZImageViewer *)imageViewer loadImageForItemAtIndex:(NSInteger)index completion:(void (^)(UIImage *image))completion;
+/// @param completion 网络图片加载完成，必须执行此回调函数，以通知 XZImageViewer 调整布局。
+- (void)imageViewer:(XZImageViewer *)imageViewer imageView:(UIImageView *)imageView loadImageForItemAtIndex:(NSInteger)index completion:(void (^)(BOOL success))completion;
 
 @end
 
