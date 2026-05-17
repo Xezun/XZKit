@@ -1,5 +1,5 @@
 //
-//  XZImageViewerItemViewZoomingView.h
+//  XZImageViewerZoomView.h
 //  XZPageView
 //
 //  Created by 徐臻 on 2025/6/27.
@@ -9,7 +9,7 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-@interface XZImageViewerItemViewZoomingView : UIScrollView
+@interface XZImageViewerZoomView : UIScrollView
 
 @end
 

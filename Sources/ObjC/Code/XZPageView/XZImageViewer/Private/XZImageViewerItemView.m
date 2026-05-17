@@ -7,18 +7,18 @@
 
 #import "XZImageViewerItemView.h"
 #import "XZImageViewer.h"
-#import "XZImageViewerItemViewZoomingView.h"
+#import "XZImageViewerZoomView.h"
 #import "XZGeometry.h"
 
 @interface XZImageViewerItemView ()
 /// 提供缩放功能的滚动视图。
-@property (nonatomic, readonly, nonnull) UIScrollView *zoomingView;
+@property (nonatomic, readonly, nonnull) UIScrollView *zoomView;
 @property (nonatomic, readonly, nonnull) UIActivityIndicatorView *activityIndicatorView;
 @end
 
 @implementation XZImageViewerItemView
 
-@synthesize zoomingView = _zoomingView; // 处理缩放的视图。
+@synthesize zoomView = _zoomView; // 处理缩放的视图。
 
 - (instancetype)initWithImageViewer:(XZImageViewer *)imageViewer {
     self = [super initWithFrame:CGRectMake(0, 0, 320, 480)];
@@ -33,31 +33,31 @@
     return self;
 }
 
-- (UIScrollView *)zoomingView {
-    if (_zoomingView != nil) {
-        return _zoomingView;
+- (UIScrollView *)zoomView {
+    if (_zoomView != nil) {
+        return _zoomView;
     }
-    _zoomingView = [[XZImageViewerItemViewZoomingView alloc] initWithFrame:self.bounds];
-    _zoomingView.bounces                = NO;
-    _zoomingView.bouncesZoom            = YES;
-    _zoomingView.clipsToBounds          = YES;
-    _zoomingView.alwaysBounceVertical   = YES;
-    _zoomingView.alwaysBounceHorizontal = YES;
-    _zoomingView.showsVerticalScrollIndicator   = NO;
-    _zoomingView.showsHorizontalScrollIndicator = NO;
-    _zoomingView.contentInsetAdjustmentBehavior = UIScrollViewContentInsetAdjustmentNever;
-    _zoomingView.delegate = self;
-    [self insertSubview:_zoomingView atIndex:0];
+    _zoomView = [[XZImageViewerZoomView alloc] initWithFrame:self.bounds];
+    _zoomView.bounces                = NO;
+    _zoomView.bouncesZoom            = YES;
+    _zoomView.clipsToBounds          = YES;
+    _zoomView.alwaysBounceVertical   = YES;
+    _zoomView.alwaysBounceHorizontal = YES;
+    _zoomView.showsVerticalScrollIndicator   = NO;
+    _zoomView.showsHorizontalScrollIndicator = NO;
+    _zoomView.contentInsetAdjustmentBehavior = UIScrollViewContentInsetAdjustmentNever;
+    _zoomView.delegate = self;
+    [self insertSubview:_zoomView atIndex:0];
     
-    [_zoomingView addSubview:_imageView];
-    [_zoomingView setDelegate:self];
-    return _zoomingView;
+    [_zoomView addSubview:_imageView];
+    [_zoomView setDelegate:self];
+    return _zoomView;
 }
 
 - (CGRect)imageFrame {
-    if (_zoomingView) {
+    if (_zoomView) {
         CGRect const bounds = self.bounds;
-        CGSize const contentSize = _zoomingView.contentSize;
+        CGSize const contentSize = _zoomView.contentSize;
         
         CGRect frame = _imageView.frame;
         if (contentSize.width < bounds.size.width) {
@@ -72,7 +72,7 @@
         }
         frame.size = contentSize;
 
-        CGPoint const contentOffset = _zoomingView.contentOffset;
+        CGPoint const contentOffset = _zoomView.contentOffset;
         frame.origin.x -= contentOffset.x;
         frame.origin.y -= contentOffset.y;
         return frame;
@@ -89,8 +89,8 @@
     if ([_imageView isDescendantOfView:self]) {
         return;
     }
-    if (_zoomingView) {
-        [_zoomingView addSubview:_imageView];
+    if (_zoomView) {
+        [_zoomView addSubview:_imageView];
         [self setNeedsLayout];
     } else {
         [self addSubview:_imageView];
@@ -103,43 +103,43 @@
 }
 
 - (BOOL)bouncesZoom {
-    return _zoomingView.bouncesZoom;
+    return _zoomView.bouncesZoom;
 }
 
 - (void)setBouncesZoom:(BOOL)bouncesZoom {
-    [self.zoomingView setBouncesZoom:bouncesZoom];
+    [self.zoomView setBouncesZoom:bouncesZoom];
 }
 
 - (BOOL)isZoomed {
-    return (_zoomingView ? _zoomingView.zoomScale != 1.0 : NO);
+    return (_zoomView ? _zoomView.zoomScale != 1.0 : NO);
 }
 
 - (CGFloat)zoomScale {
-    return (_zoomingView ? _zoomingView.zoomScale : 1.0);
+    return (_zoomView ? _zoomView.zoomScale : 1.0);
 }
 
 - (CGFloat)minimumZoomScale {
-    return (_zoomingView ? _zoomingView.minimumZoomScale : 1.0);
+    return (_zoomView ? _zoomView.minimumZoomScale : 1.0);
 }
 
 - (CGFloat)maximumZoomScale {
-    return (_zoomingView ? _zoomingView.maximumZoomScale : 1.0);
+    return (_zoomView ? _zoomView.maximumZoomScale : 1.0);
 }
 
 - (void)setMinimumZoomScale:(CGFloat)minimumZoomScale maximumZoomScale:(CGFloat)maximumZoomScale {
     if (minimumZoomScale != maximumZoomScale) {
-        UIScrollView * const zoomingView = self.zoomingView;
+        UIScrollView * const zoomingView = self.zoomView;
         zoomingView.minimumZoomScale = minimumZoomScale;
         zoomingView.maximumZoomScale = maximumZoomScale;
     }
 }
 
 - (void)zoomToRect:(CGRect)rect animated:(BOOL)animated {
-    [_zoomingView zoomToRect:rect animated:animated];
+    [_zoomView zoomToRect:rect animated:animated];
 }
 
 - (void)setZoomScale:(CGFloat)scale animated:(BOOL)animated {
-    [_zoomingView setZoomScale:scale animated:animated];
+    [_zoomView setZoomScale:scale animated:animated];
 }
 
 - (void)layoutSubviews {
@@ -148,10 +148,10 @@
     CGRect const bounds       = self.bounds;
     CGRect const contentFrame = [self imageRectForBounds:bounds];
     
-    if (_zoomingView) {
-        _zoomingView.frame = bounds;
-        if (_zoomingView.zoomScale == 1.0) {
-            _zoomingView.contentSize = contentFrame.size;
+    if (_zoomView) {
+        _zoomView.frame = bounds;
+        if (_zoomView.zoomScale == 1.0) {
+            _zoomView.contentSize = contentFrame.size;
         }
     }
     
@@ -211,7 +211,7 @@
 }
 
 - (void)scrollViewWillBeginZooming:(UIScrollView *)scrollView withView:(nullable UIView *)view {
-    _zoomingView.bounces = YES;
+    _zoomView.bounces = YES;
     
     if ([_imageViewer.delegate respondsToSelector:@selector(imageViewer:willBeginZoomingImageAtIndex:)]) {
         [_imageViewer.delegate imageViewer:_imageViewer willBeginZoomingImageAtIndex:_index];
@@ -220,7 +220,7 @@
 
 - (void)scrollViewDidZoom:(UIScrollView *)scrollView {
     CGRect const bounds = self.bounds;
-    CGSize const contentSize = _zoomingView.contentSize;
+    CGSize const contentSize = _zoomView.contentSize;
     
     CGRect frame = _imageView.frame;
     if (contentSize.width < bounds.size.width) {
@@ -241,7 +241,7 @@
 }
 
 - (void)scrollViewDidEndZooming:(UIScrollView *)scrollView withView:(nullable UIView *)view atScale:(CGFloat)scale {
-    _zoomingView.bounces = (scale != 1.0);
+    _zoomView.bounces = (scale != 1.0);
     
     if ([_imageViewer.delegate respondsToSelector:@selector(imageViewer:didEndZoomingImageAtIndex:atScale:)]) {
         [_imageViewer.delegate imageViewer:_imageViewer didEndZoomingImageAtIndex:_index atScale:scale];

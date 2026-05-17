@@ -1,13 +1,13 @@
 //
-//  XZImageViewerItemViewZoomingView.m
+//  XZImageViewerZoomView.m
 //  XZPageView
 //
 //  Created by 徐臻 on 2025/6/27.
 //
 
-#import "XZImageViewerItemViewZoomingView.h"
+#import "XZImageViewerZoomView.h"
 
-@implementation XZImageViewerItemViewZoomingView
+@implementation XZImageViewerZoomView
 
 /*
 // Only override drawRect: if you perform custom drawing.

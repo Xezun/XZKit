@@ -69,34 +69,34 @@
     XCTAssert(CGSizeEqualToSize(CGSizeScaleAspectRatioInside(size, CGSizeMake(25, 75)), CGSizeMake(25, 75)));
 }
 
-- (void)testCGRectMakeAspectRatioWithMode {
+- (void)testCGRectAdjustSizeWithMode {
     {
         CGRect const rect = CGRectMake(100, 100, 300, 100);
-        CGRect const newRect = CGRectMakeAspectRatioWithMode(rect, CGSizeMake(500, 500), UIViewContentModeScaleToFill);
+        CGRect const newRect = CGRectAdjustSizeWithMode(rect, CGSizeMake(500, 500), UIViewContentModeScaleToFill);
         XCTAssert(CGRectEqualToRect(newRect, CGRectMake(100, 100, 300, 100)));
     }
     
     {
         CGRect const rect = CGRectMake(100, 100, 0, 100);
-        CGRect const newRect = CGRectMakeAspectRatioWithMode(rect, CGSizeMake(500, 500), UIViewContentModeScaleAspectFit);
+        CGRect const newRect = CGRectAdjustSizeWithMode(rect, CGSizeMake(500, 500), UIViewContentModeScaleAspectFit);
         XCTAssert(CGRectEqualToRect(newRect, CGRectMake(100, 150, 0, 0)));
     }
     
     {
         CGRect const rect = CGRectMake(100, 100, 300, 0);
-        CGRect const newRect = CGRectMakeAspectRatioWithMode(rect, CGSizeMake(500, 500), UIViewContentModeScaleAspectFit);
+        CGRect const newRect = CGRectAdjustSizeWithMode(rect, CGSizeMake(500, 500), UIViewContentModeScaleAspectFit);
         XCTAssert(CGRectEqualToRect(newRect, CGRectMake(250, 100, 0, 0)));
     }
     
     {
         CGRect const rect = CGRectMake(100, 100, 300, 100);
-        CGRect const newRect = CGRectMakeAspectRatioWithMode(rect, CGSizeMake(500, 500), UIViewContentModeScaleAspectFit);
+        CGRect const newRect = CGRectAdjustSizeWithMode(rect, CGSizeMake(500, 500), UIViewContentModeScaleAspectFit);
         XCTAssert(CGRectEqualToRect(newRect, CGRectMake(200, 100, 100, 100)));
     }
     
     {
         CGRect const rect = CGRectMake(100, 100, 300, 100);
-        CGRect const newRect = CGRectMakeAspectRatioWithMode(rect, CGSizeMake(500, 500), UIViewContentModeScaleAspectFill);
+        CGRect const newRect = CGRectAdjustSizeWithMode(rect, CGSizeMake(500, 500), UIViewContentModeScaleAspectFill);
         XCTAssert(CGRectEqualToRect(newRect, CGRectMake(100, 0, 300, 300)));
     }
 }

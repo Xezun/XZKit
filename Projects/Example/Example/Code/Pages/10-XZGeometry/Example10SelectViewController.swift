@@ -12,19 +12,19 @@ class Example10SelectViewController: UITableViewController {
     var value: UIView.ContentMode = .scaleToFill
     
     var contentModes: [(name: String, value: UIView.ContentMode)] = [
-        ("scaleToFill", .scaleToFill),
-        ("scaleAspectFit", .scaleAspectFit),
-        ("scaleAspectFill", .scaleAspectFill),
-        ("redraw", .redraw),
-        ("center", .center),
-        ("left", .left),
-        ("right", .right),
-        ("top", .top),
-        ("bottom", .bottom),
-        ("topLeft", .topLeft),
-        ("topRight", .topRight),
-        ("bottomLeft", .bottomLeft),
-        ("bottomRight", .bottomRight),
+        (".scaleToFill", .scaleToFill),
+        (".scaleAspectFit", .scaleAspectFit),
+        (".scaleAspectFill", .scaleAspectFill),
+        (".redraw", .redraw),
+        (".center", .center),
+        (".left", .left),
+        (".right", .right),
+        (".top", .top),
+        (".bottom", .bottom),
+        (".topLeft", .topLeft),
+        (".topRight", .topRight),
+        (".bottomLeft", .bottomLeft),
+        (".bottomRight", .bottomRight),
     ]
 
     override func viewDidLoad() {

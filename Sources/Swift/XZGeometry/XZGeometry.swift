@@ -60,7 +60,7 @@ extension CGSize {
     /// - Parameters:
     ///   - size: 待创建 CGSize 的尺寸范围
     ///   - ratio: 待创建 CGSize 的宽高比
-    public init(inside size: CGSize, ratio: CGSize) {
+    public init(ratio: CGSize, inside size: CGSize) {
         self = __CGSizeMakeAspectRatioInside(size, ratio)
     }
     
@@ -78,52 +78,29 @@ extension CGSize {
         self = scalingAspectRatio(inside: size)
     }
     
-    /// 按 contentMode 模式，将当前大小的内容缩放到 rect 区域内。
-    ///
-    /// 根据 contentMode 模式适配规则，生成的 CGRect 可能与当前大小不同。
-    ///
-    /// - Parameters:
-    ///   - aspect: 待创建 CGRect 的大小或宽高比
-    ///   - contentMode: 适配模式
-    public func scalingAspectRatio(inside rect: CGRect, contentMode: UIView.ContentMode) -> CGRect {
-        return __CGRectScaleAspectRatioInsideWithMode(rect, self, contentMode)
+    /// 将当前区域，等比缩放到 rect 区域内，并按 contentMode 模式进行适配时的 CGRect 值。
+    public func scalingAspectRatio(inside rect: CGRect, with contentMode: UIView.ContentMode) -> CGRect {
+        return __CGRectScaleAspectRatioInsideWithMode(rect, self, contentMode);
     }
     
-    /// 按 contentModes 模式，依次将当前大小的内容缩放到 rect 区域内。
-    ///
-    /// 根据 contentMode 模式适配规则，生成的 CGRect 可能与当前大小不同。
-    ///
-    /// - Parameters:
-    ///   - rect: 缩放区域
-    ///   - contentModes: 适配模式
-    public func scalingAspectRatio(inside rect: CGRect, contentModes: [UIView.ContentMode]) -> CGRect {
-        return contentModes.reduce(CGRect.init(origin: rect.origin, size: self), { (aspect, contentMode) -> CGRect in
-            return aspect.size.scalingAspectRatio(inside: rect, contentMode: contentMode)
-        })
-    }
 }
 
 
 extension CGRect {
     
-    /// 在 rect 区域内，为大小为 aspect 的内容，创建一个按 contentMode 模式适配的 CGRect 结构体。
-    ///
-    /// - Parameters:
-    ///   - rect: 适配区域
-    ///   - aspect: 适配大小，根据 contentMode 模式，函数返回值结构体宽高值可能并非与此参数相同
-    ///   - contentMode: 适配模式
-    public init(inside rect: CGRect, aspect: CGSize, contentMode: UIView.ContentMode) {
-        self = __CGRectMakeAspectRatioWithMode(rect, aspect, contentMode)
+    // 按 contentMode 模式，将大小为 size 的范围，适配到当前区域时的 CGRect 值。
+    public func adjusting(_ size: CGSize, with contentMode: UIView.ContentMode) -> CGRect {
+        return __CGRectAdjustSizeWithMode(self, size, contentMode);
     }
     
-    /// 在 rect 区域内，为比例为 ratio 的内容，创建一个按 contentMode 模式适配的 CGRect 结构体。
-    ///
-    /// - Parameters:
-    ///   - rect: 待创建 CGRect 所在的区域
-    ///   - ratio: 待创建 CGRect 的宽高比，根据 contentMode 模式，函数返回值结构体宽高比可能并非与此参数相同
-    ///   - contentMode: 待创建 CGRect 在 aspect 区域中的适配模式
-    public init(inside rect: CGRect, ratio: CGSize, contentMode: UIView.ContentMode) {
+    /// 在当前区域内，按 contentMode 模式，创建宽高比为 ratio 区域的 CGRect 值。
+    public init(ratio: CGSize, inside rect: CGRect, with contentMode: UIView.ContentMode) {
         self = __CGRectMakeAspectRatioInsideWithMode(rect, ratio, contentMode);
+    }
+    
+    /// 将宽高为 aspect 的区域，等比缩放到 rect 区域内，并按 contentMode 模式进行适配时的 CGRect 值。
+    public init(aspect: CGSize, inside rect: CGRect, with contentMode: UIView.ContentMode) {
+        self = __CGRectScaleAspectRatioInsideWithMode(rect, aspect, contentMode);
     }
     
 }
