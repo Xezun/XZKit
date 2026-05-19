@@ -8,6 +8,8 @@
 #import "XZToastProgressView.h"
 #import "XZToast.h"
 
+#define kTrackWidth 4.0;
+
 @implementation XZToastProgressView {
     CAShapeLayer *_trackLayer;
     CAShapeLayer *_shapeLayer;
@@ -30,7 +32,7 @@
         
         _trackLayer = [[CAShapeLayer alloc] init];
         _trackLayer.frame = frame;
-        _trackLayer.lineWidth = 3.0;
+        _trackLayer.lineWidth = kTrackWidth;
         _trackLayer.strokeColor = _trackColor.CGColor;
         _trackLayer.fillColor   = UIColor.clearColor.CGColor;
         _trackLayer.strokeStart = 0;
@@ -40,7 +42,7 @@
         
         _shapeLayer = [[CAShapeLayer alloc] init];
         _shapeLayer.frame = frame;
-        _shapeLayer.lineWidth = 3.0;
+        _shapeLayer.lineWidth = kTrackWidth;
         _shapeLayer.lineCap = kCALineCapRound;
         _shapeLayer.strokeColor = _color.CGColor;
         _shapeLayer.fillColor   = UIColor.clearColor.CGColor;

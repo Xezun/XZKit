@@ -81,7 +81,7 @@
         
         [self.tableView reloadData];
         [refreshView endRefreshing:YES];
-        [self xz_showToast:[XZToast sharedToast:(XZToastStyleSuccess) text:@"刷新成功"]];
+        [self xz_showToast:[XZToast successToast:@"刷新成功"]];
     });
 }
 
@@ -104,9 +104,9 @@
             [self.tableView insertRowsAtIndexPaths:rows withRowAnimation:(UITableViewRowAnimationTop)];
             
             NSString *message = [NSString stringWithFormat:@"新增 %ld 条数据", count];
-            [self xz_showToast:[XZToast sharedToast:(XZToastStyleMessage) text:message] position:(XZToastPositionBottom)];
+            [self xz_showToast:[XZToast messageToast:message] position:(XZToastPositionBottom)];
         } else {
-            [self xz_showToast:[XZToast sharedToast:(XZToastStyleMessage) text:@"没有更多数据了"] position:(XZToastPositionBottom)];
+            [self xz_showToast:[XZToast messageToast:@"没有更多数据了"] position:(XZToastPositionBottom)];
         }
         [refreshView endRefreshing:YES];
     });

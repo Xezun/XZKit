@@ -10,172 +10,198 @@
 
 NSTimeInterval const XZToastAnimationDuration = 0.35;
 
-@implementation XZToast
+@implementation XZToast {
+    XZToastStyle _style;
+    NSString   * _text;
+    UIImage    * _image;
+    CGFloat      _progress;
+}
 
-@synthesize view = _view;
+- (XZToastStyle)style {
+    return _style;
+}
 
-- (instancetype)initWithView:(UIView *)view {
+- (__kindof UIView *)view {
+    return _view;
+}
+
+- (instancetype)initWithStyle:(XZToastStyle)style view:(nullable UIView *)view {
     self = [super init];
     if (self) {
-        _view = view;
+        _style = style;
+        _view  = view;
     }
     return self;
 }
 
-- (id)copyWithZone:(NSZone *)zone {
-    return [[self.class alloc] initWithView:_view];
-}
-
-+ (instancetype)viewToast:(UIView *)view {
-    return [[self alloc] initWithView:view];
-}
-
-#pragma mark - <XZToastView>
-
-- (NSString *)text {
-    UIView<XZToastView> * const view = self.view;
-    if ([view conformsToProtocol:@protocol(XZToastView)]) {
-        return view.text;
-    }
-    return nil;
-}
-
-- (void)setText:(NSString *)text {
-    UIView<XZToastView> * const view = self.view;
-    if ([view conformsToProtocol:@protocol(XZToastView)]) {
-        view.text = text;
-    }
-}
-
-- (void)willShowInViewController:(UIViewController *)viewController {
-    UIView<XZToastView> * const view = self.view;
-    if ([view conformsToProtocol:@protocol(XZToastView)]) {
-        [view willShowInViewController:viewController];
-    }
-}
-
-- (CGFloat)progress {
-    UIView<XZToastView> * const view = self.view;
-    if ([view conformsToProtocol:@protocol(XZToastView)]) {
-        return view.progress;
-    }
-    return 0;
-}
-
-- (void)setProgress:(CGFloat)progress {
-    UIView<XZToastView> * const view = self.view;
-    if ([view conformsToProtocol:@protocol(XZToastView)]) {
-        view.progress = progress;
-    }
-}
-
-#pragma mark - 一级便利构造器
-
 + (instancetype)toastWithStyle:(XZToastStyle)style text:(NSString *)text image:(UIImage *)image progress:(CGFloat)progress {
-    XZToastView *toastView = [[XZToastView alloc] init];
-    toastView.text = text;
-    if (image == nil) {
-        image = [XZToast imageForStyle:style];
-    }
-    [toastView setStyle:style image:image progress:-1.0];
-    return [[self alloc] initWithView:toastView];
+    XZToast * const toast = [[self alloc] initWithStyle:style view:nil];
+    toast->_text     = text.copy;
+    toast->_image    = image;
+    toast->_progress = progress;
+    return toast;
 }
-
-+ (XZToast *)sharedToast:(XZToastStyle const)style text:(NSString *)text image:(UIImage *)image progress:(CGFloat)progress {
-    static XZToastView * __weak _sharedToastView = nil;
-    
-    XZToastView *toastView = _sharedToastView;
-    
-    if (toastView == nil) {
-        toastView = [[XZToastView alloc] init];
-        _sharedToastView = toastView;
-    }
-    
-    if (image == nil) {
-        image = [XZToast imageForStyle:style];
-    }
-    
-    toastView.text = text;
-    [toastView setStyle:style image:image progress:progress];
-    
-    return [[self alloc] initWithView:toastView];
-}
-
-#pragma mark - 便利初始化方法
 
 + (instancetype)toastWithStyle:(XZToastStyle)style text:(NSString *)text image:(UIImage *)image {
     return [self toastWithStyle:style text:text image:image progress:-1.0];
 }
 
-+ (instancetype)toastWithStyle:(XZToastStyle)style text:(NSString *)text progress:(CGFloat)progress {
-    return [self toastWithStyle:style text:text image:nil progress:progress];
+- (id)copyWithZone:(NSZone *)zone {
+    XZToast * const toast = [[self.class alloc] initWithStyle:_style view:_view];
+    toast->_text     = _text.copy;
+    toast->_image    = _image;
+    toast->_progress = _progress;
+    return toast;
 }
 
+- (NSString *)description {
+    NSString *image = _image ? [NSString stringWithFormat:@"%p", _image] : @"nil";
+    NSString *style = NSStringFromXZToastStyle(_style);
+    return [NSString stringWithFormat:@"<%@: %p, style: %@, text: %@, image: %@, progress: %.2f>", self.class, self, style, self.text, image, self.progress];
+}
+
+#pragma mark - 便利初始化方法
+
 + (instancetype)messageToast:(NSString *)text {
-    return [self toastWithStyle:XZToastStyleMessage text:text image:nil];
+    UIImage * const image = [self imageForStyle:(XZToastStyleMessage)];
+    return [self toastWithStyle:XZToastStyleMessage text:text image:image];
+}
+
++ (instancetype)messageToast:(NSString *)text image:(UIImage *)image {
+    return [self toastWithStyle:XZToastStyleMessage text:text image:image];
 }
 
 + (instancetype)loadingToast:(NSString *)text {
-    return [self toastWithStyle:XZToastStyleLoading text:text image:nil];
+    UIImage * const image = [self imageForStyle:(XZToastStyleLoading)];
+    return [self toastWithStyle:XZToastStyleLoading text:text image:image];
+}
+
++ (instancetype)loadingToast:(NSString *)text image:(UIImage *)image {
+    return [self toastWithStyle:XZToastStyleLoading text:text image:image];
 }
 
 + (instancetype)loadingToast:(NSString *)text progress:(CGFloat)progress {
-    return [self toastWithStyle:XZToastStyleLoading text:text image:nil progress:progress];
+    UIImage * const image = [self imageForStyle:(XZToastStyleLoading)];
+    return [self toastWithStyle:XZToastStyleLoading text:text image:image progress:progress];
 }
 
 + (instancetype)successToast:(NSString *)text {
-    return [self toastWithStyle:XZToastStyleSuccess text:text image:nil];
+    UIImage * const image = [self imageForStyle:(XZToastStyleSuccess)];
+    return [self toastWithStyle:XZToastStyleSuccess text:text image:image];
+}
+
++ (instancetype)successToast:(NSString *)text image:(UIImage *)image {
+    return [self toastWithStyle:XZToastStyleSuccess text:text image:image];
 }
 
 + (instancetype)failureToast:(NSString *)text {
-    return [self toastWithStyle:XZToastStyleFailure text:text image:nil];
+    UIImage * const image = [self imageForStyle:(XZToastStyleFailure)];
+    return [self toastWithStyle:XZToastStyleFailure text:text image:image];
+}
+
++ (instancetype)failureToast:(NSString *)text image:(UIImage *)image {
+    return [self toastWithStyle:XZToastStyleFailure text:text image:image];
 }
 
 + (instancetype)warningToast:(NSString *)text {
-    return [self toastWithStyle:XZToastStyleWarning text:text image:nil];
+    UIImage * const image = [self imageForStyle:(XZToastStyleWarning)];
+    return [self toastWithStyle:XZToastStyleWarning text:text image:image];
+}
+
++ (instancetype)warningToast:(NSString *)text image:(UIImage *)image {
+    return [self toastWithStyle:XZToastStyleWarning text:text image:image];
 }
 
 + (instancetype)waitingToast:(NSString *)text {
-    return [self toastWithStyle:XZToastStyleWaiting text:text image:nil];
+    UIImage * const image = [self imageForStyle:(XZToastStyleWaiting)];
+    return [self toastWithStyle:XZToastStyleWaiting text:text image:image];
 }
 
-+ (XZToast *)sharedToast:(XZToastStyle const)style text:(NSString *)text image:(UIImage *)image {
-    return [self sharedToast:style text:text image:image progress:-1.0];
-}
-
-+ (instancetype)sharedToast:(XZToastStyle)style text:(NSString *)text progress:(CGFloat)progress {
-    return [self sharedToast:style text:text image:nil progress:progress];
-}
-
-+ (instancetype)sharedToast:(XZToastStyle)style text:(NSString *)text {
-    return [self sharedToast:style text:text image:nil];
-}
-
-+ (instancetype)sharedToast:(XZToastStyle)style image:(UIImage *)image {
-    return [self sharedToast:style text:nil image:image];
++ (instancetype)waitingToast:(NSString *)text image:(UIImage *)image {
+    return [self toastWithStyle:XZToastStyleWaiting text:text image:image];
 }
 
 @end
 
+@implementation XZToast (XZExtendedToast)
 
-static NSInteger _maximumNumberOfToasts  = 1;
-static CGFloat   _toastOffsets[3]        = {+20.0, 0.0, -20.0};
-static UIColor * _textColor              = nil;
-static UIFont  * _font                   = nil;
-static UIColor * _backgroundColor        = nil;
-static UIColor * _shadowColor            = nil;
-static UIColor * _color                  = nil;
-static UIColor * _trackColor             = nil;
+- (NSString *)text {
+    return _text;
+}
+
+- (void)setText:(NSString *)text {
+    if ((_text ? ![_text isEqualToString:text] : (text != nil))) {
+        _text = text.copy;
+        id<XZToastView> const view = self.view;
+        if ([view conformsToProtocol:@protocol(XZToastView)] && [view respondsToSelector:@selector(setText:)]) {
+            view.text = text;
+        }
+    }
+}
+
+- (UIImage *)image {
+    return _image;
+}
+
+- (void)setImage:(UIImage *)image {
+    if (_image != image) {
+        _image = image;
+        id<XZToastView> const view = self.view;
+        if ([view conformsToProtocol:@protocol(XZToastView)] && [view respondsToSelector:@selector(setImage:)]) {
+            view.image = image;
+        }
+    }
+}
+
+- (CGFloat)progress {
+    return _progress;
+}
+
+- (void)setProgress:(CGFloat)progress {
+    if (_progress != progress) {
+        _progress = MAX(0, MIN(1.0, progress));
+        id<XZToastView> const view = self.view;
+        if ([view conformsToProtocol:@protocol(XZToastView)] && [view respondsToSelector:@selector(setProgress:)]) {
+            view.progress = progress;
+        }
+    }
+}
+
+@end
+
+static Class          _viewClass             = Nil;
+static NSInteger      _maximumNumberOfToasts = 1;
+static CGFloat        _toastOffsets[3]       = {+20.0, 0.0, -20.0};
+static UIColor *      _textColor             = nil;
+static UIFont  *      _font                  = nil;
+static UIColor *      _backgroundColor       = nil;
+static UIColor *      _shadowColor           = nil;
+static UIColor *      _color                 = nil;
+static UIColor *      _trackColor            = nil;
+static NSTimeInterval _duration              = 1.0;
 static NSMutableDictionary<NSNumber *, UIImage *> *_styleImages = nil;
+static UIImage * _Nullable XZToastStyleImage(XZToastStyle style);
 
-@implementation XZToast (XZToastConfiguration)
+@implementation XZToast (XZToastAppearance)
+
++ (Class)viewClass {
+    if (_viewClass == nil) {
+        _viewClass = [XZToastView class];
+    }
+    return _viewClass;
+}
+
++ (void)setViewClass:(Class)viewClass {
+    NSParameterAssert([viewClass isKindOfClass:UIView.class]);
+    _viewClass = viewClass;
+}
 
 + (NSInteger)maximumNumberOfToasts {
     return _maximumNumberOfToasts;
 }
 
 + (void)setMaximumNumberOfToasts:(NSInteger)maximumNumberOfToasts {
-    _maximumNumberOfToasts = MAX(1, maximumNumberOfToasts);
+    _maximumNumberOfToasts = MAX(0, maximumNumberOfToasts);
 }
 
 + (CGFloat)offsetForPosition:(XZToastPosition)position {
@@ -187,40 +213,43 @@ static NSMutableDictionary<NSNumber *, UIImage *> *_styleImages = nil;
 }
 
 + (UIColor *)textColor {
-    if (_textColor) {
-        return _textColor;
+    if (!_textColor) {
+        _textColor = UIColor.whiteColor;
     }
-    return UIColor.whiteColor;
+    return _textColor;
 }
 
 + (void)setTextColor:(UIColor *)textColor {
+    NSParameterAssert([textColor isKindOfClass:UIColor.class]);
     _textColor = textColor;
 }
 
 + (UIColor *)backgroundColor {
-    if (_backgroundColor) {
-        return _backgroundColor;
+    if (!_backgroundColor) {
+        _backgroundColor = [UIColor colorWithDynamicProvider:^UIColor * _Nonnull(UITraitCollection * _Nonnull traitCollection) {
+            if (traitCollection.userInterfaceStyle == UIUserInterfaceStyleDark) {
+                return [UIColor colorWithWhite:0.2 alpha:0.95];
+            }
+            return [UIColor colorWithWhite:0.1 alpha:0.95];
+        }];
     }
-    return [UIColor colorWithDynamicProvider:^UIColor * _Nonnull(UITraitCollection * _Nonnull traitCollection) {
-        if (traitCollection.userInterfaceStyle == UIUserInterfaceStyleDark) {
-            return [UIColor colorWithWhite:0.2 alpha:0.95];
-        }
-        return [UIColor colorWithWhite:0.1 alpha:0.95];
-    }];
+    return _backgroundColor;
 }
 
 + (void)setBackgroundColor:(UIColor *)backgroundColor {
+    NSParameterAssert([backgroundColor isKindOfClass:UIColor.class]);
     _backgroundColor = backgroundColor;
 }
 
 + (UIFont *)font {
-    if (_font) {
-        return _font;
+    if (!_font) {
+        _font = [UIFont monospacedDigitSystemFontOfSize:17.0 weight:(UIFontWeightRegular)];
     }
-    return [UIFont monospacedDigitSystemFontOfSize:17.0 weight:(UIFontWeightRegular)];
+    return _font;
 }
 
 + (void)setFont:(UIFont *)font {
+    NSParameterAssert([font isKindOfClass:UIFont.class]);
     _font = font;
 }
 
@@ -237,6 +266,7 @@ static NSMutableDictionary<NSNumber *, UIImage *> *_styleImages = nil;
 }
 
 + (void)setShadowColor:(UIColor *)shadowColor {
+    NSParameterAssert([shadowColor isKindOfClass:UIColor.class]);
     _shadowColor = shadowColor;
 }
 
@@ -245,6 +275,7 @@ static NSMutableDictionary<NSNumber *, UIImage *> *_styleImages = nil;
 }
 
 + (void)setColor:(UIColor *)color {
+    NSParameterAssert([color isKindOfClass:UIColor.class]);
     _color = color;
 }
 
@@ -253,7 +284,16 @@ static NSMutableDictionary<NSNumber *, UIImage *> *_styleImages = nil;
 }
 
 + (void)setTrackColor:(UIColor *)trackColor {
+    NSParameterAssert([trackColor isKindOfClass:UIColor.class]);
     _trackColor = trackColor;
+}
+
++ (NSTimeInterval)duration {
+    return _duration;
+}
+
++ (void)setDuration:(NSTimeInterval)duration {
+    _duration = duration >= 0 ? duration : 1.0;
 }
 
 + (UIImage *)imageForStyle:(XZToastStyle)style {
@@ -272,3 +312,70 @@ static NSMutableDictionary<NSNumber *, UIImage *> *_styleImages = nil;
 }
 
 @end
+
+
+UIImage *XZToastStyleImage(XZToastStyle style) {
+    UIImage * image = nil;
+    switch (style) {
+        case XZToastStyleMessage:
+            return nil;
+            break;
+        case XZToastStyleLoading:
+            return nil;
+            break;
+        case XZToastStyleSuccess:
+            image = [UIImage systemImageNamed:@"checkmark.circle.fill"];
+            break;
+        case XZToastStyleFailure:
+            image = [UIImage systemImageNamed:@"xmark.circle.fill"];
+            break;
+        case XZToastStyleWarning: {
+            image = [UIImage systemImageNamed:@"exclamationmark.circle.fill"];
+            break;
+        }
+        case XZToastStyleWaiting:
+            if (@available(iOS 16.0, *)) {
+                image = [UIImage systemImageNamed:@"timer.circle.fill"];
+            } else {
+                image = [UIImage systemImageNamed:@"timer"];
+            }
+            break;
+    }
+    UIImageSymbolConfiguration *config = [UIImageSymbolConfiguration configurationWithPointSize:37.0];
+    image = [image imageByApplyingSymbolConfiguration:config];
+    return [image imageWithTintColor:UIColor.whiteColor renderingMode:(UIImageRenderingModeAlwaysOriginal)];
+}
+
+
+NSString *NSStringFromXZToastStyle(XZToastStyle style) {
+    switch (style) {
+        case XZToastStyleMessage:
+            return @"message";
+        case XZToastStyleLoading:
+            return @"loading";
+        case XZToastStyleSuccess:
+            return @"success";
+        case XZToastStyleFailure:
+            return @"failure";
+        case XZToastStyleWarning:
+            return @"warning";
+        case XZToastStyleWaiting:
+            return @"waiting";
+        default:
+            return @"unknown";
+    }
+}
+
+
+NSString *NSStringFromXZToastPosition(XZToastPosition position) {
+    switch (position) {
+        case XZToastPositionTop:
+            return @"top";
+        case XZToastPositionMiddle:
+            return @"middle";
+        case XZToastPositionBottom:
+            return @"bottom";
+        default:
+            return @"unknown";
+    }
+}

@@ -119,6 +119,11 @@
                                 <segue destination="EoW-Mv-x7S" kind="unwind" unwindAction="unwindToMainPage:" id="HBA-sO-Ohv"/>
                             </connections>
                         </barButtonItem>
+                        <barButtonItem key="rightBarButtonItem" title="Item" image="apple.terminal.circle" id="h1J-zR-iza">
+                            <connections>
+                                <action selector="testAnimation" destination="nBC-zV-lpc" id="McP-Eh-CZP"/>
+                            </connections>
+                        </barButtonItem>
                     </navigationItem>
                 </tableViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="CN8-n5-Y1Q" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
@@ -146,6 +151,7 @@
         </scene>
     </scenes>
     <resources>
+        <image name="apple.terminal.circle" width="27" height="27"/>
         <image name="xmark" catalog="system" width="128" height="113"/>
         <systemColor name="systemBackgroundColor">
             <color white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>

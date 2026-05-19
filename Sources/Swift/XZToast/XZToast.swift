@@ -10,7 +10,7 @@ import UIKit
 /// 由于无法在 Swift 中为 XZToast 拓展 ExpressibleByStringLiteral 协议而使用了子类。
 ///
 /// 不能将名字指定为 `__XZToast` 会触发 circular reference 编译错误。
-@objc(__XZ_SWIFT_TOAST__) open class XZToast: __XZToast, ExpressibleByStringLiteral {
+@objc(_XZToastSwift) open class XZToast: __XZToast, ExpressibleByStringLiteral {
     
     public typealias Position   = __XZToastPosition
     public typealias Completion = __XZToastCompletion
@@ -21,16 +21,12 @@ import UIKit
         return __XZToastAnimationDuration;
     }
     
-    public override required init(view: UIView) {
-        super.init(view: view)
-    }
-    
     // MARK: - ExpressibleByStringLiteral
     
     public typealias StringLiteralType = String
     
     public required convenience init(stringLiteral value: String) {
-        self.init(style: .message, text: value, image: nil)
+        self.init(style: .message, text: value, image: nil, progress: 0)
     }
     
 }
@@ -39,74 +35,26 @@ import UIKit
 extension XZToast.Position: @retroactive CustomStringConvertible {
     
     public var description: String {
-        switch self {
-        case .top:
-            return "top"
-        case .middle:
-            return "middle"
-        case .bottom:
-            return "bottom"
-        @unknown default:
-            return "unknown"
-        }
+        return __NSStringFromXZToastPosition(self)
     }
     
 }
 extension XZToast.Style: @retroactive CustomStringConvertible {
     public var description: String {
-        switch self {
-        case .message:
-            return "message"
-        case .loading:
-            return "loading"
-        case .success:
-            return "success"
-        case .failure:
-            return "failure"
-        case .warning:
-            return "warning"
-        case .waiting:
-            return "waiting"
-        @unknown default:
-            return "unknown"
-        }
+        return __NSStringFromXZToastStyle(self)
     }
 }
 #else
 extension XZToast.Position: CustomStringConvertible {
     
     public var description: String {
-        switch self {
-        case .top:
-            return "top"
-        case .middle:
-            return "middle"
-        case .bottom:
-            return "bottom"
-        @unknown default:
-            return "unknown"
-        }
+        return __NSStringFromXZToastPosition(self)
     }
     
 }
 extension XZToast.Style: CustomStringConvertible {
     public var description: String {
-        switch self {
-        case .message:
-            return "message"
-        case .loading:
-            return "loading"
-        case .success:
-            return "success"
-        case .failure:
-            return "failure"
-        case .warning:
-            return "warning"
-        case .waiting:
-            return "waiting"
-        @unknown default:
-            return "unknown"
-        }
+        return __NSStringFromXZToastStyle(self)
     }
 }
 #endif
@@ -122,7 +70,7 @@ extension UIResponder {
     ///   - completion: 提示消息结束展示后执行的回调
     /// - Returns: 控制展示提示消息的对象
     @discardableResult
-    public func showToast(_ toast: XZToast, duration: TimeInterval = 1.0, position: XZToast.Position = .middle, exclusive: Bool = false, completion: XZToast.Completion? = nil) -> XZToast.Task? {
+    public func showToast(_ toast: XZToast, duration: TimeInterval = 1.0, position: XZToast.Position = .middle, exclusive: Bool = false, completion: XZToast.Completion? = nil) -> XZToast.Task {
         return __showToast(toast, duration: duration, position: position, exclusive: exclusive, completion: completion)
     }
     
@@ -130,7 +78,7 @@ extension UIResponder {
     /// - Parameters:
     ///   - toast: 提示消息
     ///   - completion: 提示消息完成隐藏后执行的回调
-    public func hideToast(_ toast: XZToast.Task? = nil, completion: (()->Void)? = nil) {
+    public func hideToast(_ toast: XZToast? = nil, completion: (()->Void)? = nil) {
         __hideToast(toast, completion: completion)
     }
     

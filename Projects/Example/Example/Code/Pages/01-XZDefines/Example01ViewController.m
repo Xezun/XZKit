@@ -203,4 +203,27 @@
     NSLog(@"__IPHONE_OS_VERSION_MIN_REQUIRED => %d", __IPHONE_OS_VERSION_MIN_REQUIRED);
 }
 
+- (IBAction)testAnimation {
+//    UIImageSymbolConfiguration *config = [UIImageSymbolConfiguration configurationWithPointSize:100.0];
+//    UIImage *image = [UIImage systemImageNamed:@"checkmark.circle.fill"];
+//    image = [image imageByApplyingSymbolConfiguration:config];
+    UIImage *image = [UIImage imageNamed:@"ex-12-error"];
+//    image = [image imageWithTintColor:UIColor.redColor renderingMode:(UIImageRenderingModeAlwaysOriginal)];
+    
+    UIImageView *imageView = [[UIImageView alloc] initWithFrame:CGRectMake(100, 100, 100, 100)];
+    imageView.image = image;
+    imageView.clipsToBounds = YES;
+    imageView.contentMode = UIViewContentModeScaleAspectFit;
+    imageView.backgroundColor = UIColor.darkGrayColor;
+    [self.view addSubview:imageView];
+    
+    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(1.0 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+        [UIView animateWithDuration:3.0 animations:^{
+            imageView.frame = CGRectMake(150, 150, 1, 1);
+        } completion:^(BOOL finished) {
+            [imageView removeFromSuperview];
+        }];
+    });
+}
+
 @end

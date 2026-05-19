@@ -8,49 +8,29 @@
 #import "XZToastTask.h"
 #import "XZToastWrapperView.h"
 #import "XZToastManager.h"
+#import "XZToastView.h"
 
 @implementation XZToastTask {
     dispatch_block_t _timer;
     XZToastCompletion _completion;
-    XZToastWrapperView * _Nullable _wrapperView;
 }
 
-@dynamic view;
-
-- (instancetype)initWithManager:(XZToastManager *)manager view:(UIView<XZToastView> *)view duration:(NSTimeInterval)duration position:(XZToastPosition)position exclusive:(BOOL)exclusive completion:(XZToastCompletion)completion {
-    self = [super initWithView:view];
+- (instancetype)initWithManager:(XZToastManager *)manager toast:(XZToast *)toast duration:(NSTimeInterval)duration position:(XZToastPosition)position exclusive:(BOOL)exclusive completion:(XZToastCompletion)completion {
+    self = [super init];
     if (self) {
-        _manager       = manager;
-        _wrapperView   = nil;
-        _hideReason    = XZToastHideReasonNormal;
-        _moveDirection = XZToastMoveDirectionNone;
-        _duration      = duration;
-        _position      = position;
-        _isExclusive   = exclusive;
-        _completion    = completion;
-        _isCancelled   = NO;
-        _needsUpdateFrame = YES;
+        _hideReason     = XZToastHideReasonNormal;
+        _moveDirection  = XZToastMoveDirectionNone;
+        _isCancelled    = NO;
+        _isViewReused   = NO;
+        _isViewReusable = NO;
+        _manager        = manager;
+        _toast          = toast;
+        _duration       = duration;
+        _position       = position;
+        _isExclusive    = exclusive;
+        _completion     = completion;
     }
     return self;
-}
-
-- (void)hide:(void (^)(void))completion {
-    [_manager hideToast:self completion:completion];
-}
-
-#pragma mark - <XZToastView>
-
-- (void)setText:(NSString *)text {
-    [super setText:text];
-    [self setNeedsUpdateFrame];
-}
-
-- (XZToastWrapperView *)wrapperView {
-    if (_wrapperView == nil) {
-        _wrapperView = [[XZToastWrapperView alloc] initWithView:self.view];
-        _wrapperView.task = self;
-    }
-    return _wrapperView;
 }
 
 - (void)setWrapperView:(XZToastWrapperView *)wrapperView {
@@ -61,24 +41,21 @@
     }
 }
 
-- (void)resume:(void (^)(XZToastTask * _Nonnull))block {
-    typeof(self) __weak wtask = self;
-    _timer = dispatch_block_create(DISPATCH_BLOCK_NO_QOS_CLASS, ^{
-        XZToastTask * const otask = wtask;
-        if (otask == nil) {
-            return;
-        }
-        block(otask);
-    });
-    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)((XZToastAnimationDuration + self.duration) * NSEC_PER_SEC)), dispatch_get_main_queue(), _timer);
+- (void)hide:(void (^)(void))completion {
+    [_manager hideToastWithTask:self completion:completion];
 }
 
-- (void)finish {
-    _timer = nil;
-    if (_completion) {
-        _completion(!_isCancelled);
-        _completion = nil;
-    }
+- (void)resume:(void (^)(XZToastTask * _Nonnull))block {
+    typeof(self) __weak weakTask = self;
+    _timer = dispatch_block_create(DISPATCH_BLOCK_NO_QOS_CLASS, ^{
+        XZToastTask * const task = weakTask;
+        if (task == nil) {
+            return;
+        }
+        task->_timer = nil;
+        block(task);
+    });
+    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)((XZToastAnimationDuration + self.duration) * NSEC_PER_SEC)), dispatch_get_main_queue(), _timer);
 }
 
 - (void)cancel {
@@ -89,16 +66,21 @@
     _isCancelled = YES;
 }
 
-- (void)setNeedsUpdateFrame {
-    if (_needsUpdateFrame) {
-        return;
+- (void)finish {
+    if (_timer) {
+        dispatch_block_cancel(_timer);
+        _timer = nil;
     }
-    _needsUpdateFrame = YES;
-    [self.manager setNeedsLayoutToasts];
+    if (_completion) {
+        _completion(!_isCancelled);
+        _completion = nil;
+    }
 }
 
 - (NSString *)description {
-    return [NSString stringWithFormat:@"<%p: %@, wrapper: %@, view: %@>", self, self.class, _wrapperView, self.view];
+    NSString *position = NSStringFromXZToastPosition(_position);
+    NSString *duration = [NSString stringWithFormat:@"%.2f", _duration];
+    return [NSString stringWithFormat:@"<%p: %@, toast: %p, position: %@, duration: %@, isExclusive: %d, isCancelled: %d>", self, self.class, _toast, position, duration, _isExclusive, _isCancelled];
 }
 
 @end

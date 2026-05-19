@@ -44,7 +44,7 @@ class Example12ViewController: UIViewController, XZContentStatusRepresentable {
         error.addTarget(self, action: #selector(didClickErrorStatus(_:)), for: .touchUpInside)
         
         self.contentStatus = .empty
-        self.toastConfiguration.setOffset(100, for: .middle)
+        self.toastManager.setOffset(100, for: .middle)
     }
     
     @IBAction func resetButtonAction(_ sender: UIBarButtonItem) {
@@ -61,7 +61,7 @@ class Example12ViewController: UIViewController, XZContentStatusRepresentable {
     
     @objc func successButtonAction(_ sender: Any) {
         self.contentStatus = .default
-        showToast(.shared(.message, text: "页面加载成功"))
+        showToast(.message("页面加载成功"))
     }
     
     @objc func failureButtonAction(_ sender: Any) {

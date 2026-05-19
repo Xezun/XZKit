@@ -11,11 +11,12 @@
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Wunused-function"
 
-static void XZLog(const char *file, const int line, const char *function, XZLogSystem *system, NSString *message) __attribute__((overloadable)) {
+static void XZLog(const char *file, const int line, const char *function, XZLogSystem *system, NSString *format, va_list _Nullable arguments) __attribute__((overloadable)) {
     if (!system.isEnabled) {
         return;
     }
     
+    NSString * const message = arguments ? [[NSString alloc] initWithFormat:format arguments:arguments] : format;
     NSUInteger const length  = message.length;
     NSString * const metrics = [NSString stringWithFormat:@"⌘ %@ ⌘ %s(%d) ⌘ %s ⌘", system.name, file, line, function];
     
@@ -68,9 +69,8 @@ void XZLogv(const char *file, const int line, const char *function, XZLogSystem 
 #if DEBUG
     va_list arguments;
     va_start(arguments, format);
-    NSString * const message = [[NSString alloc] initWithFormat:format arguments:arguments];
+    XZLog(file, line, function, system, format, arguments);
     va_end(arguments);
-    XZLog(file, line, function, system, message);
 #endif
 }
 
@@ -78,9 +78,8 @@ void XZLogv(const char *file, const int line, const char *function, NSString *fo
 #if DEBUG
     va_list arguments;
     va_start(arguments, format);
-    NSString * const message = [[NSString alloc] initWithFormat:format arguments:arguments];
+    XZLog(file, line, function, XZLogSystem.defaultLogSystem, format, arguments);
     va_end(arguments);
-    XZLog(file, line, function, XZLogSystem.defaultLogSystem, message);
 #endif
 }
 
@@ -89,7 +88,7 @@ void XZLogs(XZLogSystem *system, NSString *file, NSInteger line, NSString *funct
     file = [file lastPathComponent];
     const char * cfile = [file cStringUsingEncoding:NSUTF8StringEncoding];
     const char * cfunc = [function cStringUsingEncoding:NSUTF8StringEncoding];
-    XZLog(cfile, (int)line, cfunc, system, message);
+    XZLog(cfile, (int)line, cfunc, system, message, nil);
 #endif
 }
 
@@ -97,9 +96,8 @@ void XZLog(XZLogSystem *system, NSString *format, ...) __attribute__((overloadab
 #if DEBUG
     va_list arguments;
     va_start(arguments, format);
-    NSString * const message = [[NSString alloc] initWithFormat:format arguments:arguments];
+    XZLog(__FILE_NAME__, __LINE__, __FUNCTION__, (XZLogSystem *)system, format, arguments);
     va_end(arguments);
-    XZLog(__FILE__, __LINE__, __FUNCTION__, (XZLogSystem *)system, message);
 #endif
 }
 
@@ -107,9 +105,8 @@ void XZLog(NSString *format, ...) __attribute__((overloadable)) {
 #if DEBUG
     va_list arguments;
     va_start(arguments, format);
-    NSString * const message = [[NSString alloc] initWithFormat:format arguments:arguments];
+    XZLog(__FILE_NAME__, __LINE__, __FUNCTION__, XZLogSystem.defaultLogSystem, format, arguments);
     va_end(arguments);
-    XZLog(__FILE__, __LINE__, __FUNCTION__, XZLogSystem.defaultLogSystem, message);
 #endif
 }
 

@@ -135,7 +135,7 @@ loadingToast?.hide()
 
 - 支持样式配置
 
-通过控制器的拓展属性`toastConfiguration`可以配置该控制器所展示的提示消息的样式，而通过`XZToast`的类属性和类方法，则可以配置提示消息的默认样式。
+通过控制器的拓展属性`toastManager`可以配置该控制器所展示的提示消息的样式，而通过`XZToast`的类属性和类方法，则可以配置提示消息的默认样式。
 
 - `maximumNumberOfToasts`: 数量控制
 - `textColor`: 文本颜色
@@ -158,7 +158,7 @@ XZToast.maximumNumberOfToasts = 3
 XZToast.setOffset(-2, for: .bottom)
 
 // 指定样式，生效范围：当前控制器
-let config = self.toastConfiguration
+let config = self.toastManager
 config.font                  = .systemFont(ofSize: 15)
 config.textColor             = .red
 config.shadowColor           = .red
@@ -170,7 +170,7 @@ config.setOffset(-50, for: .bottom)
 - 支持数量控制
 
 ```swift
-toastConfiguration.maximumNumberOfToasts = 3
+toastManager.maximumNumberOfToasts = 3
 ```
 
 <img src="./images/message-middle-max3.png" width="375" height="667" />

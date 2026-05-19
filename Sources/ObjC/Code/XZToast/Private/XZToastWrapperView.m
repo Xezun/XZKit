@@ -7,6 +7,7 @@
 
 #import "XZToastWrapperView.h"
 #import "XZToastTask.h"
+#import "XZToastView.h"
 
 /// toast 与 container 之间的边距，为了显示阴影。
 #define kPadding 5.0
@@ -16,9 +17,12 @@
     UIColor *_shadowColor;
 }
 
-- (instancetype)initWithView:(UIView *)view {
-    CGSize const size = view.frame.size;
-    self = [super initWithFrame:CGRectMake(0, 0, kPadding + size.width + kPadding, kPadding + size.height + kPadding)];
+- (instancetype)init {
+    return [self initWithFrame:CGRectMake(0, 0, 120.0, 120.0)];
+}
+
+- (instancetype)initWithFrame:(CGRect)frame {
+    self = [super initWithFrame:frame];
     if (self) {
         self.clipsToBounds = YES;
         // self.backgroundColor = UIColor.redColor;
@@ -28,10 +32,6 @@
         layer.shadowOffset  = CGSizeZero;
         layer.shadowOpacity = 0.3;
         layer.shadowRadius  = kPadding * 0.5;
-        
-        _view = view;
-        _view.frame = CGRectMake(kPadding, kPadding, size.width, size.height);
-        [self addSubview:_view];
     }
     return self;
 }
@@ -44,47 +44,15 @@
     }
 }
 
-#pragma mark - <XZToastView>
-
-- (NSString *)text {
-    UIView<XZToastView> * const view = (id)self.view;
-    if ([view conformsToProtocol:@protocol(XZToastView)]) {
-        return view.text;
+- (void)setView:(UIView *)view {
+    if (_view != view) {
+        [_view removeFromSuperview];
+        _view = view;
+        if (_view) {
+            _view.frame = CGRectInset(self.bounds, kPadding, kPadding);
+            [self addSubview:_view];
+        }
     }
-    return nil;
-}
-
-- (void)setText:(NSString *)text {
-    UIView<XZToastView> * const view = (id)self.view;
-    if ([view conformsToProtocol:@protocol(XZToastView)]) {
-        view.text = text;
-    }
-}
-
-- (void)willShowInViewController:(UIViewController *)viewController {
-    UIView<XZToastView> * const view = (id)self.view;
-    _shadowColor = viewController.xz_toastConfiguration.shadowColor;
-    if (_shadowColor) {
-        self.layer.shadowColor = [_shadowColor resolvedColorWithTraitCollection:self.traitCollection].CGColor;
-    }
-    if ([view conformsToProtocol:@protocol(XZToastView)]) {
-        [view willShowInViewController:viewController];
-    }
-}
-
-- (void)setProgress:(CGFloat)progress {
-    UIView<XZToastView> * const view = (id)self.view;
-    if ([view conformsToProtocol:@protocol(XZToastView)]) {
-        view.progress = progress;
-    }
-}
-
-- (CGFloat)progress {
-    UIView<XZToastView> * const view = (id)self.view;
-    if ([view conformsToProtocol:@protocol(XZToastView)]) {
-        return view.progress;
-    }
-    return 0;
 }
 
 #pragma mark - 重写继承的方法
@@ -111,7 +79,7 @@
 
 - (CGSize)sizeThatFits:(CGSize)size {
     CGFloat const maxToastWidth = size.width - kPadding * 2.0;
-    CGSize  const toastSize = [_view sizeThatFits:CGSizeMake(maxToastWidth, 0)];
+    CGSize  const toastSize = _view ? [_view sizeThatFits:CGSizeMake(maxToastWidth, 0)] : CGSizeMake(80, 80);
     CGFloat const width = MIN(size.width, toastSize.width + kPadding * 2.0);
     CGFloat const height = toastSize.height + kPadding * 2.0;
     return CGSizeMake(width, height);

@@ -9,6 +9,13 @@
 #import "XZGeometry.h"
 #import "XZToastProgressView.h"
 
+typedef NS_ENUM(NSUInteger, XZToastViewIconType) {
+    XZToastViewIconTypeNone,
+    XZToastViewIconTypeImage,
+    XZToastViewIconTypeProgress,
+    XZToastViewIconTypeActivity
+};
+
 #define kPaddingT 15.0
 #define kPaddingL 15.0
 #define kPaddingR 15.0
@@ -21,9 +28,10 @@
 @end
 
 @implementation XZToastView {
-    @package
+    BOOL _hasIcon;
+    BOOL _hasText;
     UILabel *_textLabel;
-    UIView *_iconView;
+    UIView  *_iconView;
 }
 
 - (instancetype)init {
@@ -39,6 +47,8 @@
         self.clipsToBounds      = true;
         
         _style = XZToastStyleMessage;
+        _hasIcon = NO;
+        _hasText = NO;
         
         _textLabel = [[UILabel alloc] init];
         _textLabel.textColor     = XZToast.textColor; // UIColor.whiteColor;
@@ -56,12 +66,22 @@
     
     CGRect const bounds = self.bounds;
     
-    if (_iconView) {
+    if (_hasIcon) {
+        _iconView.transform = CGAffineTransformIdentity;
         _iconView.frame = [self iconRectForBounds:bounds];
+    } else if (_iconView) {
+        // 使用 transform 处理 icon 的缩放动画：
+        // 1、UIActivityIndicatorView 无法通过 frame 控制大小。
+        // 2、使用 frame 缩小 System Symbol Image 动画的过程中，视图 UIImageView 有淡色的背景。
+        // 3、缩小动画不能直接到 0 否则没有动画效果，可能是因为大小为 0 视图不绘制了。
+        CGRect  const frame = _iconView.frame;
+        CGFloat const dx = CGRectGetMidX(bounds) - CGRectGetMidX(frame);
+        CGFloat const dy = kPaddingT - CGRectGetMidY(frame);
+        _iconView.transform = CGAffineTransformScale(CGAffineTransformMakeTranslation(dx, dy), 0.01, 0.01);
     }
     
     {
-        CGFloat const minY = _iconView ? (kPaddingT + kIconSize + kSpacing) : (kPaddingT);
+        CGFloat const minY = _hasIcon ? (kPaddingT + kIconSize + kSpacing) : (kPaddingT);
         CGFloat const maxH = bounds.size.height - minY - kPaddingB;
         CGSize  const textSize = [_textLabel sizeThatFits:CGSizeMake(bounds.size.width - kPaddingL - kPaddingR, 0)];
         CGFloat const w = MIN(bounds.size.width - kPaddingL - kPaddingR, textSize.width);
@@ -73,23 +93,19 @@
 }
 
 - (CGSize)sizeThatFits:(CGSize)size {
-    CGSize const iconSize = [_iconView sizeThatFits:CGSizeMake(kIconSize, kIconSize)];
     CGSize const textSize = [_textLabel sizeThatFits:CGSizeMake(size.width - kPaddingL - kPaddingR, 0)];
     
-    BOOL const hasIcon = (iconSize.width > 0 && iconSize.height > 0);
-    BOOL const hasText = (textSize.width > 0);
-    
-    if (hasIcon && hasText) {
+    if (_hasIcon && _hasText) {
         CGFloat const h = kPaddingT + kIconSize + kSpacing + MAX(textSize.height, kTextLine) + kPaddingB;
         CGFloat const w = MAX(h, MIN(size.width, kPaddingB + textSize.width + kPaddingR));
         return CGSizeMake(w, h);
     }
     
-    if (hasIcon) {
+    if (_hasIcon) {
         return CGSizeMake(kPaddingL + kIconSize + kPaddingR, kPaddingT + kIconSize + kPaddingB);
     }
     
-    if (hasText) {
+    if (_hasText) {
         CGFloat const h = kPaddingT + MAX(textSize.height, kTextLine) + kPaddingB;
         CGFloat const w = MAX(h, MIN(size.width, kPaddingB + textSize.width + kPaddingR));
         return CGSizeMake(w, h);
@@ -109,28 +125,32 @@
 
 #pragma mark - <XZToastView>
 
+@synthesize style = _style;
+
+- (XZToastStyle)style {
+    return _style;
+}
+
 - (NSString *)text {
     return _textLabel.text;
 }
 
 - (void)setText:(NSString *)text {
     _textLabel.text = text;
-    [self setNeedsLayout];
+    [self.xz_toastManager setNeedsLayoutToasts];
 }
 
-- (void)willShowInViewController:(UIViewController *)viewController {
-    id<XZToastConfiguration> const configuration = viewController.xz_toastConfiguration;
-    UIColor * const backgroundColor = configuration.backgroundColor;
-    if (backgroundColor) {
-        self.backgroundColor = backgroundColor;
+- (UIImage *)image {
+    if ([_iconView isKindOfClass:UIImageView.class]) {
+        return ((UIImageView *)_iconView).image;
     }
-    UIColor * const textColor = configuration.textColor;
-    if (textColor) {
-        _textLabel.textColor = textColor;
-    }
-    UIFont * const font = configuration.font;
-    if (font) {
-        _textLabel.font = font;
+    return nil;
+}
+
+- (void)setImage:(UIImage *)image {
+    if ([_iconView isKindOfClass:UIImageView.class]) {
+        ((UIImageView *)_iconView).image = image;
+        [self.xz_toastManager setNeedsLayoutToasts];
     }
 }
 
@@ -142,40 +162,54 @@
 }
 
 - (void)setProgress:(CGFloat)progress {
-    if (_style != XZToastStyleLoading) {
+    if ([_iconView isKindOfClass:[XZToastProgressView class]]) {
+        return [(XZToastProgressView *)_iconView setProgress:progress];
+    }
+    
+    if (_style != XZToastStyleLoading || progress < 0 || progress > 1.0) {
         return;
     }
-    if (![_iconView isKindOfClass:[XZToastProgressView class]]) {
-        [_iconView removeFromSuperview];
-        
-        XZToastProgressView *iconView = [[XZToastProgressView alloc] init];
-        iconView.frame = [self iconRectForBounds:self.bounds];
-        iconView.color = XZToast.color;
-        iconView.trackColor = XZToast.trackColor;
-        [self addSubview:iconView];
-        
-        _iconView = iconView;
-    }
-    [(XZToastProgressView *)_iconView setProgress:progress];
-}
-
-#pragma mark - 重写继承的方法
-
-- (NSString *)description {
-    return [NSString stringWithFormat:@"<%p: %@, text: %@, icon: %@>", self, self.class, self.text, _iconView];
-}
-
-- (UIImage *)image {
-    if ([_iconView isKindOfClass:UIImageView.class]) {
-        return ((UIImageView *)_iconView).image;
-    }
-    return nil;
-}
-
-- (void)setStyle:(XZToastStyle)style image:(UIImage *)image progress:(CGFloat)progress {
-    _style = style;
     
-    // 没有图片
+    [_iconView removeFromSuperview];
+    _iconView = [[XZToastProgressView alloc] init];
+    _iconView.frame = [self iconRectForBounds:self.bounds];
+    [self addSubview:_iconView];
+    [self.xz_toastManager setNeedsLayoutToasts];
+}
+
+- (void)toast:(XZToast *)toast willShowInViewController:(UIViewController *)viewController {
+    XZToastManager * const manager = viewController.xz_toastManager;
+    
+    // 配置样式
+    UIColor * const backgroundColor = manager.backgroundColor;
+    if (backgroundColor) {
+        self.backgroundColor = backgroundColor;
+    }
+    UIColor * const textColor = manager.textColor;
+    if (textColor) {
+        _textLabel.textColor = textColor;
+    }
+    UIFont * const font = manager.font;
+    if (font) {
+        _textLabel.font = font;
+    }
+    
+    CGRect const bounds = self.bounds;
+    
+    // 配置数据
+    _style = toast.style;
+    
+    // 文字
+    _textLabel.text = toast.text;
+    _hasText = (toast.text.length > 0);
+    if (_hasText) {
+        CGRect const frame = _textLabel.frame;
+        CGSize const size  = [_textLabel sizeThatFits:CGSizeMake(0, bounds.size.height)];
+        _textLabel.frame = CGRectAdjustSizeWithMode(frame, size, UIViewContentModeCenter);
+    }
+    
+    UIImage * const image    = toast.image;
+    CGFloat   const progress = toast.progress;
     switch (_style) {
         case XZToastStyleMessage:
         case XZToastStyleSuccess:
@@ -183,17 +217,23 @@
         case XZToastStyleWarning:
         case XZToastStyleWaiting: {
             if (image) {
-                // 有图片
+                _hasIcon = YES;
+                
                 if (![_iconView isKindOfClass:UIImageView.class]) {
                     [_iconView removeFromSuperview];
                     
-                    CGRect frame = CGRectMake((self.bounds.size.width - kIconSize) * 0.5, kPaddingT, kIconSize, kIconSize);
-                    frame = CGRectScaleAspectRatioInsideWithMode(frame, image.size, UIViewContentModeCenter);
+                    CGRect const frame = _iconView ? _iconView.frame : [self iconRectForBounds:bounds];
                     UIImageView *iconView = [[UIImageView alloc] initWithFrame:frame];
+                    iconView.clipsToBounds = YES;
                     iconView.animationRepeatCount = 0; // 动图无限循环
                     iconView.image = image;
                     [self addSubview:iconView];
                     
+                    if (!_iconView) {
+                        CGFloat const dx = CGRectGetMidX(bounds) - CGRectGetMidX(frame);
+                        CGFloat const dy = kPaddingT - CGRectGetMidY(frame);
+                        iconView.transform = CGAffineTransformScale(CGAffineTransformMakeTranslation(dx, dy), 0.01, 0.01);
+                    }
                     _iconView = iconView;
                 }
                 
@@ -204,27 +244,49 @@
                     [(UIImageView *)_iconView startAnimating];
                 }
             } else {
-                [_iconView removeFromSuperview];
-                _iconView = nil;
+                _hasIcon = NO;
             }
             break;
         }
         case XZToastStyleLoading: {
-            if (progress >= 0) {
+            _hasIcon = YES;
+            if (progress >= 0 && progress <= 1.0) {
                 // 使用进度条
-                [self setProgress:progress];
+                if (![_iconView isKindOfClass:[XZToastProgressView class]]) {
+                    [_iconView removeFromSuperview];
+                    
+                    CGRect const frame = _iconView ? _iconView.frame : [self iconRectForBounds:bounds];
+                    XZToastProgressView *iconView = [[XZToastProgressView alloc] initWithFrame:frame];
+                    iconView.color = XZToast.color;
+                    iconView.trackColor = XZToast.trackColor;
+                    [self addSubview:iconView];
+                    
+                    if (!_iconView) {
+                        CGFloat const dx = CGRectGetMidX(bounds) - CGRectGetMidX(frame);
+                        CGFloat const dy = kPaddingT - CGRectGetMidY(frame);
+                        iconView.transform = CGAffineTransformScale(CGAffineTransformMakeTranslation(dx, dy), 0.01, 0.01);
+                    }
+                    _iconView = iconView;
+                }
+                
+                [(XZToastProgressView *)_iconView setProgress:progress];
             } else if (image) {
                 // 使用图片
                 if (![_iconView isKindOfClass:UIImageView.class]) {
                     [_iconView removeFromSuperview];
                     
-                    CGRect frame = CGRectMake((self.bounds.size.width - kIconSize) * 0.5, kPaddingT, kIconSize, kIconSize);
-                    frame = CGRectScaleAspectRatioInsideWithMode(frame, image.size, UIViewContentModeCenter);
+                    CGRect const frame = _iconView ? _iconView.frame : [self iconRectForBounds:bounds];
                     UIImageView *iconView = [[UIImageView alloc] initWithFrame:frame];
+                    iconView.clipsToBounds = YES;
                     iconView.animationRepeatCount = 0; // 动图无限循环
                     iconView.image = image;
                     [self addSubview:iconView];
                     
+                    if (!_iconView) {
+                        CGFloat const dx = CGRectGetMidX(bounds) - CGRectGetMidX(frame);
+                        CGFloat const dy = kPaddingT - CGRectGetMidY(frame);
+                        iconView.transform = CGAffineTransformScale(CGAffineTransformMakeTranslation(dx, dy), 0.01, 0.01);
+                    }
                     _iconView = iconView;
                 }
                 
@@ -238,12 +300,19 @@
                 // 默认，使用 UIActivityIndicatorView
                 [_iconView removeFromSuperview];
                 
-                UIActivityIndicatorView *iconView = [[UIActivityIndicatorView alloc] initWithFrame:CGRectMake((self.bounds.size.width - kIconSize) * 0.5, kPaddingT, kIconSize, kIconSize)];
+                CGRect const frame = _iconView ? _iconView.frame : [self iconRectForBounds:bounds];
+                UIActivityIndicatorView *iconView = [[UIActivityIndicatorView alloc] initWithFrame:frame];
+                iconView.clipsToBounds = YES;
                 iconView.activityIndicatorViewStyle = UIActivityIndicatorViewStyleLarge;
                 iconView.color = UIColor.whiteColor;
                 [iconView startAnimating];
                 [self addSubview:iconView];
                 
+                if (!_iconView) {
+                    CGFloat const dx = CGRectGetMidX(bounds) - CGRectGetMidX(frame);
+                    CGFloat const dy = kPaddingT - CGRectGetMidY(frame);
+                    iconView.transform = CGAffineTransformScale(CGAffineTransformMakeTranslation(dx, dy), 0.01, 0.01);
+                }
                 _iconView = iconView;
             }
             break;
@@ -254,38 +323,19 @@
     }
 }
 
-@end
-
-UIImage *XZToastStyleImage(XZToastStyle style) {
-    UIImage * image = nil;
-    switch (style) {
-        case XZToastStyleMessage:
-            return nil;
-            break;
-        case XZToastStyleLoading:
-            return nil;
-            break;
-        case XZToastStyleSuccess:
-            image = [UIImage systemImageNamed:@"checkmark.circle.fill"];
-            break;
-        case XZToastStyleFailure:
-            image = [UIImage systemImageNamed:@"xmark.circle.fill"];
-            break;
-        case XZToastStyleWarning: {
-            image = [UIImage systemImageNamed:@"exclamationmark.circle.fill"];
-            break;
-        }
-        case XZToastStyleWaiting:
-            if (@available(iOS 16.0, *)) {
-                image = [UIImage systemImageNamed:@"timer.circle.fill"];
-            } else {
-                image = [UIImage systemImageNamed:@"timer"];
-            }
-            break;
+- (void)toast:(XZToast *)toast didShowInViewController:(UIViewController *)viewController {
+    if (!_hasIcon) {
+        [_iconView removeFromSuperview];
+        _iconView = nil;
     }
-    UIImageSymbolConfiguration *config = [UIImageSymbolConfiguration configurationWithPointSize:37.0];
-    image = [image imageByApplyingSymbolConfiguration:config];
-    return [image imageWithTintColor:UIColor.whiteColor renderingMode:(UIImageRenderingModeAlwaysOriginal)];
 }
+
+#pragma mark - 重写继承的方法
+
+- (NSString *)description {
+    return [NSString stringWithFormat:@"<%p: %@, text: %@, icon: %@>", self, self.class, self.text, _iconView];
+}
+
+@end
 
 
