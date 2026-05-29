@@ -58,18 +58,7 @@ class Example13ViewController: UITableViewController {
                 showMessage("消息C", duration: 3.0 - XZToast.animationDuration * 2.5);
                 
             case 3:
-                let toast1 = showMessage("消息1", duration: 1.0).toast;
-                DispatchQueue.main.asyncAfter(deadline: .now() + 1.0 + XZToast.animationDuration * 1.1) {
-                    let view1 = toast1.view;
-                    let toast2 = self.showMessage("消息2：检测视图复用中", duration: 3.0).toast;
-                    DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) {
-                        if toast2.view == view1 {
-                            toast2.text = "消息2：复用了消息1的视图"
-                        } else {
-                            toast2.text = "消息2：没有发生视图复用"
-                        }
-                    }
-                }
+                showToast("时长3秒的独占消息", duration: 3, exclusive: true)
                 
             case 4:
                 showMessage("字数特别多，分两行的信息\n长度特别长的超级长消息")
