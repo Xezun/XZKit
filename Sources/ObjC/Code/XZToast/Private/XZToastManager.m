@@ -78,6 +78,7 @@
     if (self) {
         _viewController = viewController;
         
+        _duration                       = 0.0; // 0.0 表示使用 XZToast.duration
         _viewClass                      = Nil; // nil 表示使用 XZToast.viewClass
         _maximumNumberOfToasts          = -1;  // -1  表示使用 XZToast.maximumNumberOfToasts
         _offsets[XZToastPositionTop]    = NAN; // NAN 表示使用 XZToast.offset
@@ -607,7 +608,7 @@
 }
 
 - (NSTimeInterval)duration {
-    return _duration >= 0 ? _duration : XZToast.duration;
+    return _duration > 0 ? _duration : XZToast.duration;
 }
 
 - (CGFloat)offsetForPosition:(XZToastPosition)position {

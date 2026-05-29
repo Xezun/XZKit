@@ -145,7 +145,7 @@ NS_REFINED_FOR_SWIFT
 @property (class, nonatomic) UIColor * color;
 /// 进度轨道默认的颜色。
 @property (class, nonatomic) UIColor * trackColor;
-/// 默认展示时长，默认 1.0 秒。
+/// 默认展示时长，默认 1.0 秒，值必须大于零。
 @property (class, nonatomic) NSTimeInterval duration;
 
 /// 设置默认位置偏移量。

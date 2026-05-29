@@ -20,7 +20,7 @@ typedef NS_ENUM(NSUInteger, XZToastStyle) {
     XZToastStyleMessage,
     /// 加载消息样式。
     ///
-    /// 该样式的消息，必须手动调用`-hideToast:`方法才会消失。
+    /// 默认情况下，该样式的消息，支持设置进度。
     XZToastStyleLoading,
     /// 成功消息样式。
     XZToastStyleSuccess,
@@ -90,7 +90,7 @@ typedef void (^XZToastCompletion)(BOOL finished) NS_REFINED_FOR_SWIFT NS_SWIFT_U
 /// 进度轨道颜色。
 @property (nonatomic, nullable) UIColor * trackColor;
 
-/// 默认展示时长。
+/// 默认展示时长。值 0 表示使用全局默认时长。
 @property (nonatomic) NSTimeInterval duration;
 
 /// 设置 toast 相对默认位置的偏移值。

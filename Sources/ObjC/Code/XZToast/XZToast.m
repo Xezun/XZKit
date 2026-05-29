@@ -293,7 +293,7 @@ static UIImage * _Nullable XZToastStyleImage(XZToastStyle style);
 }
 
 + (void)setDuration:(NSTimeInterval)duration {
-    _duration = duration >= 0 ? duration : 1.0;
+    _duration = duration > 0 ? duration : 1.0;
 }
 
 + (UIImage *)imageForStyle:(XZToastStyle)style {
