@@ -58,6 +58,8 @@ extension Date {
 /// - X: 时区 +08；+0800；+08:00
 public struct XZDateFormatStyle: RawRepresentable, FormatStyle, Sendable {
     
+    /// yyyy-MM-dd HH:mm:ss.SSS
+    public static let msecDateTime    = XZDateFormatStyle(rawValue: "yyyy-MM-dd HH:mm:ss.SSS")
     /// yyyy-MM-dd HH:mm:ss
     public static let dateTime        = XZDateFormatStyle(rawValue: "yyyy-MM-dd HH:mm:ss")
     /// y-M-d H:m:s
@@ -132,6 +134,11 @@ extension DateFormatter {
         self.init()
         self.dateFormat = dateFormat.rawValue
     }
+    
+    /// 格式 yyyy-MM-dd HH:mm:ss.SSS 且不允许修改。
+    ///
+    /// - Attention: 该格式化对象的时区、日历等属性，保持系统默认，因为是单例，不建议动态修改。
+    public static let msecDateTime   = XZDateFormatStyle.msecDateTime.dateFormatter
     
     /// 格式 yyyy-MM-dd HH:mm:ss 且不允许修改。
     ///

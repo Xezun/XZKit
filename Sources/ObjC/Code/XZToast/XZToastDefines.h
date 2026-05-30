@@ -17,18 +17,28 @@ FOUNDATION_EXPORT NSTimeInterval const XZToastAnimationDuration NS_REFINED_FOR_S
 /// 消息样式。
 typedef NS_ENUM(NSUInteger, XZToastStyle) {
     /// 文本消息样式。
+    ///
+    /// 一般性的提示性消息。
     XZToastStyleMessage,
     /// 加载消息样式。
     ///
     /// 默认情况下，该样式的消息，支持设置进度。
     XZToastStyleLoading,
     /// 成功消息样式。
+    ///
+    /// 表示成功的消息类型，比如操作成功、登录成功、添加成功等场景。
     XZToastStyleSuccess,
     /// 失败消息样式。
+    ///
+    /// 表示失败的消息类型，比如操作失败、登录失败、添加成功等场景。
     XZToastStyleFailure,
     /// 警告消息样式。
+    ///
+    /// 表示警告的消息类型，比如存在风险或不允许操作等场景。
     XZToastStyleWarning,
     /// 等待消息样式。
+    ///
+    /// 表示等待的消息类型，比如需要等待、倒计时未结束等场景。
     XZToastStyleWaiting,
 } NS_REFINED_FOR_SWIFT;
 
@@ -43,11 +53,11 @@ FOUNDATION_EXPORT NSString *NSStringFromXZToastStyle(XZToastStyle style) NS_REFI
 ///
 /// 备忘：会被用作数组的索引，枚举值需要从 0 开始且连续。
 typedef NS_ENUM(NSInteger, XZToastPosition) {
-    /// XZToast 显示在顶部。
+    /// 顶部。
     XZToastPositionTop = 0,
-    /// XZToast 显示在中部。
+    /// 中部。
     XZToastPositionMiddle,
-    /// XZToast 显示在底部。
+    /// 底部。
     XZToastPositionBottom,
 } NS_REFINED_FOR_SWIFT;
 

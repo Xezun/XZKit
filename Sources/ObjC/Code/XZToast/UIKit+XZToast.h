@@ -28,27 +28,47 @@ NS_ASSUME_NONNULL_BEGIN
 ///   - duration: 展示时长，值为 0 时，表示不限制时长，一直保持展示，除非调用 `hideToast` 方法，默认 1.0 秒
 ///   - position: 展示位置
 ///   - exclusive: 是否独占，独占的消息在展示时长结束前，其它 toast 消息会一直处于列队等待状态
-///   - completion: 消息展示完成时的回调，如果消息被提前结束，则回调参数为 NO 值
+///   - completion: 消息结束显示的回调，如果消息被提前结束，则回调参数为 NO 值
 /// - Returns: 返回值与参数 toast 不是同一对象，当需要隐藏特定 toast 时，需要使用该返回值
 - (XZToastTask *)xz_showToast:(XZToast *)toast duration:(NSTimeInterval)duration position:(XZToastPosition)position exclusive:(BOOL)exclusive completion:(nullable XZToastCompletion)completion NS_SWIFT_DISABLE_ASYNC NS_SWIFT_NAME(__showToast(_:duration:position:exclusive:completion:));
 
 /// 隐藏提示消息。
+///
+/// 由于 toast 可以复用，所以此方法会隐藏所有用同一个`XZToast`对象发起的消息。若要精确隐藏指定消息，需要使用`-showToast:`方法返回的`XZToastTask`对象。
+///
 /// - Parameters:
-///   - toast: 消息对象
+///   - toast: 消息对象，nil 则表示隐藏所有
 ///   - completion: 消息隐藏后的回调
 - (void)xz_hideToast:(nullable XZToast *)toast completion:(nullable void (^)(void))completion NS_REFINED_FOR_SWIFT NS_SWIFT_DISABLE_ASYNC NS_SWIFT_NAME(__hideToast(_:completion:));
 
-/// 管理和配置当前视图或视图控制器的 XZToast 消息的对象。
+/// 管理和配置的 XZToast 消息的对象。
 ///
 /// 视图的 toastManager 与其所在的视图控制器的 toastManager 相同。
 ///
-/// 通过此属性配置的外观样式仅应用于当前控制器，若要配置全局默认样式，可通过``XZToast``的类属性或类方法。
+/// 通过 toastManager 配置的外观样式，仅应用于当前控制器，若要配置全局默认样式，可使用``XZToast``相对应的的类属性或类方法。
 ///
-/// 视图控制器可通过重写此方法，将显示 XZToast 的操作转发给其他控制器，比如导航控制器或页签控制器。
+/// ```swift
+/// // 仅作用于当前控制器，优先级比 XZToast 高。
+/// toastManager.textColor = .red
+/// // 作用于全局，会被 toastManager 的配置覆盖。
+/// XZToast.textColor = .red
+/// ```
+///
+/// 视图控制器可通过重写此属性，返回其他控制器的 toastManager 以达到，比如导航控制器或页签控制器。
 ///
 /// ```swift
 /// override var toastManager: XZToastManager {
 ///     return navigationController?.toastManager ?? super.toastManager
+/// }
+/// ```
+///
+/// 若是通过 Category 为 UIViewController 重写这个方法，则可以对所有控制器生效。
+///
+/// ```swift
+/// extension UIViewController {
+///     open override var toastManager: XZToastManager {
+///         return (presentingViewController ?? tabBarController ?? navigationController)?.toastManager ?? super.toastManager
+///     }
 /// }
 /// ```
 @property (nonatomic, strong, readonly) XZToastManager *xz_toastManager NS_SWIFT_NAME(toastManager);

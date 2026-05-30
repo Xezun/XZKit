@@ -24,8 +24,12 @@
     [self.nextResponder xz_hideToast:toast completion:completion];
 }
 
+- (UIViewController *)XZToastViewController {
+    return [self.nextResponder XZToastViewController];
+}
+
 - (XZToastManager *)xz_toastManager {
-    return self.nextResponder.xz_toastManager;
+    return [XZToastManager managerForViewController:[self XZToastViewController]];
 }
 
 #pragma mark - 便利方法
@@ -86,8 +90,8 @@
     [self.xz_mainWindow xz_hideToast:toast completion:completion];
 }
 
-- (XZToastManager *)xz_toastManager {
-    return self.xz_mainWindow.xz_toastManager;
+- (UIViewController *)XZToastViewController {
+    return [self.xz_mainWindow XZToastViewController];
 }
 
 @end
@@ -103,8 +107,8 @@
     [self.rootViewController xz_hideToast:toast completion:completion];
 }
 
-- (XZToastManager *)xz_toastManager {
-    return self.rootViewController.xz_toastManager;
+- (UIViewController *)XZToastViewController {
+    return [self.rootViewController XZToastViewController];
 }
 
 @end
@@ -120,8 +124,8 @@
     [self.xz_toastManager hideToast:toast completion:completion];
 }
 
-- (XZToastManager *)xz_toastManager {
-    return [XZToastManager managerForViewController:self];
+- (UIViewController *)XZToastViewController {
+    return self;
 }
 
 @end

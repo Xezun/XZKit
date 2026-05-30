@@ -46,7 +46,7 @@ class Example13ViewController: UITableViewController {
             case 0:
                 let duration = TimeInterval(arc4random_uniform(300)) / 100 + 1.0;
                 let length = Int(arc4random_uniform(18)) + 2;
-                let message = "随机消息".padding(toLength: length, withPad: "消息", startingAt: 0);
+                let message = "消息".padding(toLength: length, withPad: "消息", startingAt: 0);
                 showMessage(message, duration: duration)
                 
             case 1:
@@ -58,7 +58,7 @@ class Example13ViewController: UITableViewController {
                 showMessage("消息C", duration: 3.0 - XZToast.animationDuration * 2.5);
                 
             case 3:
-                showToast("时长3秒的独占消息", duration: 3, exclusive: true)
+                showMessage("这个消息独占 3.0 秒时长", duration: 3, exclusive: true)
                 
             case 4:
                 showMessage("字数特别多，分两行的信息\n长度特别长的超级长消息")
@@ -70,19 +70,19 @@ class Example13ViewController: UITableViewController {
                 showMessage("短消息")
             
             case 7:
-                showMessage("操作成功", style: .success)
+                showMessage("登录成功", style: .success)
                 
             case 8:
-                showMessage("操作失败", style: .failure)
+                showMessage("登录失败", style: .failure)
             
             case 9:
-                showMessage("请耐心等待", style: .waiting)
+                showMessage("请30秒后再试", style: .waiting)
                 
             case 10:
                 showMessage("非法访问", style: .warning)
                 
             case 11:
-                showMessage("处理中", style: .loading)
+                showMessage("正在处理中", style: .loading)
                 
             default:
                 self.hideToast();
@@ -92,17 +92,14 @@ class Example13ViewController: UITableViewController {
             switch indexPath.row {
             case 0:
                 guard loadingToast == nil else { return }
-                loadingToast = showToast(.loading("请稍后"), duration: 0, position: position, exclusive: true) { [weak self] finished in
-                    #XZLog("加载 loading 类型的消息，展示完成：\(finished)")
-                    self?.loadingToast = nil;
-                }
+                loadingToast = showMessage("开始加载", style: .loading, duration: 0, exclusive: true);
             case 1:
                 break
             case 2:
                 guard let loadingToast = loadingToast else { return }
-                loadingToast.hide {
-                    #XZLog("隐藏 loading 类型的消息，操作完成：\(loadingToast)");
-                }
+                showMessage("加载成功", style: .success)
+                loadingToast.hide()
+                self.loadingToast = nil;
                 break
             default:
                 break
@@ -113,16 +110,18 @@ class Example13ViewController: UITableViewController {
     }
     
     @discardableResult
-    func showMessage(_ message: String, style: XZToast.Style = .message, duration: TimeInterval = 1.0) -> XZToast.Task {
+    func showMessage(_ message: String, style: XZToast.Style = .message, duration: TimeInterval = 1.0, exclusive: Bool? = nil) -> XZToast.Task {
         let start = timestamp()
         let index = self.index
         let completion: XZToast.Completion = { finished in
             let end = timestamp()
             let delta = String.init(format: "%.2f", end - start);
-            let format = XZDateFormatStyle.init(rawValue: "yyyy-MM-dd hh:mm:ss.SSS")
-            #XZLog("消息：\(index). \(message) \n状态：\(finished) \n定时：\(duration) \n耗时：\(delta) \n时间：\(Date().formatted(using: format.dateFormatter))")
+            let date = Date().formatted(using: .msecDateTime)
+            #XZLog("消息：\(index). \(message) \n状态：\(finished) \n定时：\(duration) \n耗时：\(delta) \n时间：\(date)")
         };
         self.index = index + 1;
+        
+        let isExclusive = exclusive ?? self.isExclusive
         
         switch style {
         case .message:
@@ -206,13 +205,7 @@ class Example13ViewController: UITableViewController {
     @IBAction func progressSliderValueChanged(_ sender: UISlider) {
         guard let loadingToast = self.loadingToast?.toast else { return }
         
-        if sender.value == 0 {
-            loadingToast.text = "请稍后";
-        } else if sender.value == 100.0 {
-            loadingToast.text = "加载成功"
-        } else {
-            loadingToast.text =  String.init(format: "已加载 %0.2f%%", sender.value);
-        }
+        loadingToast.text     = String.init(format: "已加载 %0.2f%%", sender.value);
         loadingToast.progress = CGFloat(sender.value / 100);
     }
     

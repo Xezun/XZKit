@@ -70,7 +70,7 @@ extension UIResponder {
     ///   - completion: 提示消息结束展示后执行的回调
     /// - Returns: 控制展示提示消息的对象
     @discardableResult
-    public func showToast(_ toast: XZToast, duration: TimeInterval = 1.0, position: XZToast.Position = .middle, exclusive: Bool = false, completion: XZToast.Completion? = nil) -> XZToast.Task {
+    public func showToast(_ toast: XZToast, duration: TimeInterval = -1.0, position: XZToast.Position = .middle, exclusive: Bool = false, completion: XZToast.Completion? = nil) -> XZToast.Task {
         return __showToast(toast, duration: duration, position: position, exclusive: exclusive, completion: completion)
     }
     
