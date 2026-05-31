@@ -223,8 +223,12 @@ typedef NS_ENUM(NSUInteger, XZToastViewIconType) {
     }
     
     { // 图片或进度
-        UIImage * const image    = toast.image;
-        CGFloat   const progress = toast.progress;
+        UIImage *image    = toast.image;
+        CGFloat  progress = toast.progress;
+        
+        if (image.renderingMode != UIImageRenderingModeAlwaysOriginal) {
+            image = [image imageWithTintColor:_color renderingMode:(UIImageRenderingModeAlwaysOriginal)];
+        }
         
         [self loadIconViewWithImage:image progress:progress bounds:bounds];
     }

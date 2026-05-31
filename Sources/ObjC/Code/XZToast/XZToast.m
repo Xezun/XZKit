@@ -358,8 +358,7 @@ UIImage *XZToastStyleImage(XZToastStyle style) {
             break;
     }
     UIImageSymbolConfiguration *config = [UIImageSymbolConfiguration configurationWithPointSize:37.0];
-    image = [image imageByApplyingSymbolConfiguration:config];
-    return [image imageWithTintColor:UIColor.whiteColor renderingMode:(UIImageRenderingModeAlwaysOriginal)];
+    return [image imageByApplyingSymbolConfiguration:config];
 }
 
 
