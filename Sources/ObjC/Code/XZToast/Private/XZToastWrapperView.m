@@ -12,10 +12,7 @@
 /// toast 与 container 之间的边距，为了显示阴影。
 #define kPadding 5.0
 
-@implementation XZToastWrapperView {
-    /// 由于投影是 CGColor 不能自动适配 Dark 模式切换，需要记录下来，以便在切换时使用。
-    UIColor *_shadowColor;
-}
+@implementation XZToastWrapperView
 
 - (instancetype)init {
     return [self initWithFrame:CGRectMake(0, 0, 120.0, 120.0)];
@@ -28,8 +25,10 @@
         self.clipsToBounds = YES;
         // self.backgroundColor = UIColor.redColor;
         
+        _shadowColor = XZToast.shadowColor;
+        
         CALayer * const layer = self.layer;
-        layer.shadowColor   = XZToast.shadowColor.CGColor;
+        layer.shadowColor   = _shadowColor.CGColor;
         layer.shadowOffset  = CGSizeZero;
         layer.shadowOpacity = 0.3;
         layer.shadowRadius  = kPadding * 0.5;
@@ -40,8 +39,14 @@
 - (void)traitCollectionDidChange:(UITraitCollection *)previousTraitCollection {
     [super traitCollectionDidChange:previousTraitCollection];
     if (self.traitCollection.userInterfaceStyle != previousTraitCollection.userInterfaceStyle) {
-        UIColor * const shadowColor = _shadowColor ?: XZToast.shadowColor;
-        self.layer.shadowColor = [shadowColor resolvedColorWithTraitCollection:self.traitCollection].CGColor;
+        self.layer.shadowColor = [_shadowColor resolvedColorWithTraitCollection:self.traitCollection].CGColor;
+    }
+}
+
+- (void)setShadowColor:(UIColor *)shadowColor {
+    if (_shadowColor != shadowColor) {
+        _shadowColor = shadowColor ?: XZToast.shadowColor;
+        self.layer.shadowColor = [_shadowColor resolvedColorWithTraitCollection:self.traitCollection].CGColor;
     }
 }
 

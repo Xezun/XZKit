@@ -24,6 +24,9 @@ NS_ASSUME_NONNULL_BEGIN
 /// 呈现内容的视图，若没有，自动创建默认视图。
 @property (nonatomic, strong, nullable) UIView *view;
 
+/// 由于投影是 CGColor 不能自动适配 Dark 模式切换，需要记录下来，以便在切换时使用。
+@property (nonatomic, strong) UIColor *shadowColor;
+
 - (nullable instancetype)initWithCoder:(NSCoder *)coder NS_UNAVAILABLE;
 
 @property (nonatomic, weak) XZToastTask *task;

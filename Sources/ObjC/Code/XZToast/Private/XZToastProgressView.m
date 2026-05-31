@@ -8,7 +8,8 @@
 #import "XZToastProgressView.h"
 #import "XZToast.h"
 
-#define kTrackWidth 4.0;
+#define kTrackWidth 4.0
+#define kShapeWidth 3.0
 
 @implementation XZToastProgressView {
     CAShapeLayer *_trackLayer;
@@ -24,15 +25,15 @@
     if (self) {
         CALayer * const layer = self.layer;
         
-        _color = XZToast.color;
-        _trackColor = XZToast.trackColor;
+        _color      = XZToast.tintColor;
+        _trackColor = XZToast.color;
         
         CGRect         const frame = CGRectMake(6.5, 6.5, 37.0, 37.0);
         UIBezierPath * const path  = [UIBezierPath bezierPathWithArcCenter:CGPointMake(18.5, 18.5) radius:16.5 startAngle:-M_PI_2 endAngle:M_PI * 1.5 clockwise:YES];
         
         _trackLayer = [[CAShapeLayer alloc] init];
         _trackLayer.frame = frame;
-        _trackLayer.lineWidth = kTrackWidth;
+        _trackLayer.lineWidth = (kTrackWidth + 1.0);
         _trackLayer.strokeColor = _trackColor.CGColor;
         _trackLayer.fillColor   = UIColor.clearColor.CGColor;
         _trackLayer.strokeStart = 0;
@@ -42,7 +43,7 @@
         
         _shapeLayer = [[CAShapeLayer alloc] init];
         _shapeLayer.frame = frame;
-        _shapeLayer.lineWidth = kTrackWidth;
+        _shapeLayer.lineWidth = kShapeWidth;
         _shapeLayer.lineCap = kCALineCapRound;
         _shapeLayer.strokeColor = _color.CGColor;
         _shapeLayer.fillColor   = UIColor.clearColor.CGColor;

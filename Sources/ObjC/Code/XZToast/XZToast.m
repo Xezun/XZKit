@@ -177,7 +177,7 @@ static UIFont  *      _font                  = nil;
 static UIColor *      _backgroundColor       = nil;
 static UIColor *      _shadowColor           = nil;
 static UIColor *      _color                 = nil;
-static UIColor *      _trackColor            = nil;
+static UIColor *      _tintColor            = nil;
 static NSTimeInterval _duration              = 1.0;
 static NSMutableDictionary<NSNumber *, UIImage *> *_styleImages = nil;
 static UIImage * _Nullable XZToastStyleImage(XZToastStyle style);
@@ -214,7 +214,12 @@ static UIImage * _Nullable XZToastStyleImage(XZToastStyle style);
 
 + (UIColor *)textColor {
     if (!_textColor) {
-        _textColor = UIColor.whiteColor;
+        _textColor = [UIColor colorWithDynamicProvider:^UIColor * _Nonnull(UITraitCollection * _Nonnull traitCollection) {
+            if (traitCollection.userInterfaceStyle == UIUserInterfaceStyleDark) {
+                return [UIColor colorWithWhite:0.90 alpha:1.0];
+            }
+            return UIColor.whiteColor;
+        }];
     }
     return _textColor;
 }
@@ -228,7 +233,7 @@ static UIImage * _Nullable XZToastStyleImage(XZToastStyle style);
     if (!_backgroundColor) {
         _backgroundColor = [UIColor colorWithDynamicProvider:^UIColor * _Nonnull(UITraitCollection * _Nonnull traitCollection) {
             if (traitCollection.userInterfaceStyle == UIUserInterfaceStyleDark) {
-                return [UIColor colorWithWhite:0.2 alpha:0.95];
+                return [UIColor colorWithWhite:0.3 alpha:0.95];
             }
             return [UIColor colorWithWhite:0.1 alpha:0.95];
         }];
@@ -257,7 +262,7 @@ static UIImage * _Nullable XZToastStyleImage(XZToastStyle style);
     if (_shadowColor == nil) {
         _shadowColor = [UIColor colorWithDynamicProvider:^UIColor * _Nonnull(UITraitCollection * _Nonnull traitCollection) {
             if (traitCollection.userInterfaceStyle == UIUserInterfaceStyleDark) {
-                return [UIColor colorWithWhite:0.10 alpha:1.0];
+                return [UIColor colorWithWhite:0.30 alpha:1.0];
             }
             return UIColor.blackColor;
         }];
@@ -271,7 +276,15 @@ static UIImage * _Nullable XZToastStyleImage(XZToastStyle style);
 }
 
 + (UIColor *)color {
-    return _color ?: UIColor.systemBlueColor;
+    if (_color == nil) {
+        _color = [UIColor colorWithDynamicProvider:^UIColor * _Nonnull(UITraitCollection * _Nonnull traitCollection) {
+            if (traitCollection.userInterfaceStyle == UIUserInterfaceStyleDark) {
+                return [UIColor colorWithWhite:0.80 alpha:1.0];
+            }
+            return UIColor.whiteColor;
+        }];
+    }
+    return _color;
 }
 
 + (void)setColor:(UIColor *)color {
@@ -279,13 +292,16 @@ static UIImage * _Nullable XZToastStyleImage(XZToastStyle style);
     _color = color;
 }
 
-+ (UIColor *)trackColor {
-    return _trackColor ?: UIColor.systemGray5Color;
++ (UIColor *)tintColor {
+    if (_tintColor == nil) {
+        _tintColor = UIColor.systemBlueColor;
+    }
+    return _tintColor;
 }
 
-+ (void)setTrackColor:(UIColor *)trackColor {
-    NSParameterAssert([trackColor isKindOfClass:UIColor.class]);
-    _trackColor = trackColor;
++ (void)setTintColor:(UIColor *)tintColor {
+    NSParameterAssert([tintColor isKindOfClass:UIColor.class]);
+    _tintColor = tintColor;
 }
 
 + (NSTimeInterval)duration {

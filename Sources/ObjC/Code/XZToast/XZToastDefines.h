@@ -83,22 +83,22 @@ typedef void (^XZToastCompletion)(BOOL finished) NS_REFINED_FOR_SWIFT NS_SWIFT_U
 @property (nonatomic) NSInteger maximumNumberOfToasts;
 
 /// 文本颜色。
-@property (nonatomic, nullable) UIColor * textColor;
+@property (nonatomic, null_resettable) UIColor * textColor;
 
 /// 文本字体。
-@property (nonatomic, nullable) UIFont  * font;
+@property (nonatomic, null_resettable) UIFont  * font;
 
 /// 背景色。
-@property (nonatomic, nullable) UIColor * backgroundColor;
+@property (nonatomic, null_resettable) UIColor * backgroundColor;
 
 /// 投影色。
-@property (nonatomic, nullable) UIColor * shadowColor;
+@property (nonatomic, null_resettable) UIColor * shadowColor;
 
-/// 进度颜色。
-@property (nonatomic, nullable) UIColor * color;
+/// 图标色。
+@property (nonatomic, null_resettable) UIColor * color;
 
-/// 进度轨道颜色。
-@property (nonatomic, nullable) UIColor * trackColor;
+/// 渲染色。
+@property (nonatomic, null_resettable) UIColor * tintColor;
 
 /// 默认展示时长。值 0 表示使用全局默认时长。
 @property (nonatomic) NSTimeInterval duration;

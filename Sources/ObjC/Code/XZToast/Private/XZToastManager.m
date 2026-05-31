@@ -247,6 +247,7 @@
             }
             
             // 向视图发送事件，配置视图
+            newTask.wrapperView.shadowColor = self.shadowColor;
             if ([toastView conformsToProtocol:@protocol(XZToastView)] && [toastView respondsToSelector:@selector(toast:willShowInViewController:)]) {
                 [(id<XZToastView>)toastView toast:newTask.toast willShowInViewController:_viewController];
             }
@@ -561,7 +562,7 @@
 @synthesize backgroundColor = _backgroundColor;
 @synthesize shadowColor = _shadowColor;
 @synthesize color = _color;
-@synthesize trackColor = _trackColor;
+@synthesize tintColor = _tintColor;
 
 - (Class)viewClass {
     return _viewClass ?: XZToast.viewClass;
@@ -603,8 +604,8 @@
     return _color ?: XZToast.color;
 }
 
-- (UIColor *)trackColor {
-    return _trackColor ?: XZToast.trackColor;
+- (UIColor *)tintColor {
+    return _tintColor ?: XZToast.tintColor;
 }
 
 - (NSTimeInterval)duration {

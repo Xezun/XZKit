@@ -17,12 +17,12 @@
 		28494E6D1BD724DF4C371A6F /* Pods_ExampleTests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CFB82C914562D79500EA142A /* Pods_ExampleTests.framework */; };
 		29635C0B2DE779FE00C552AF /* XZMocoaTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 29635C0A2DE779FE00C552AF /* XZMocoaTests.m */; };
 		29648BF02A72556E0090F445 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 29648BEF2A72556E0090F445 /* Assets.xcassets */; };
-		29648BF32A72556E0090F445 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 29648BF12A72556E0090F445 /* LaunchScreen.storyboard */; };
 		29648BF62A72556E0090F445 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 29648BF52A72556E0090F445 /* main.m */; };
 		29648C002A72556E0090F445 /* ExampleTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 29648BFF2A72556E0090F445 /* ExampleTests.m */; };
 		29648C0A2A72556E0090F445 /* ExampleUITests.m in Sources */ = {isa = PBXBuildFile; fileRef = 29648C092A72556E0090F445 /* ExampleUITests.m */; };
 		29648C0C2A72556E0090F445 /* ExampleUITestsLaunchTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 29648C0B2A72556E0090F445 /* ExampleUITestsLaunchTests.m */; };
 		29776A142D3240E70033AAF9 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 29776A132D3240E70033AAF9 /* Main.storyboard */; };
+		29DE44A12FCC32A200B5DDC1 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 29DE44A02FCC32A200B5DDC1 /* LaunchScreen.storyboard */; };
 		8DD376011DA7681AE83FBA63 /* Pods_ExampleUITests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 07969490099A2A504FF2286D /* Pods_ExampleUITests.framework */; };
 		D68C5EA773FA30B5D908649B /* Pods_Example.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3B8AC2A94D37A18F04582DB1 /* Pods_Example.framework */; };
 /* End PBXBuildFile section */
@@ -51,14 +51,11 @@
 		04A293292E176D6C009631C8 /* XZMocoaTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = XZMocoaTests.swift; sourceTree = "<group>"; };
 		04A583B62E25057C00254AF0 /* XZExtensions.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = XZExtensions.m; sourceTree = "<group>"; };
 		04C46AFF2DB6367B005EA389 /* XZObjcTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = XZObjcTests.m; sourceTree = "<group>"; };
-		04D06B032D2D46890056A53A /* zh-Hans */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "zh-Hans"; path = "zh-Hans.lproj/LaunchScreen.strings"; sourceTree = "<group>"; };
-		04D06B072D2D46F90056A53A /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/LaunchScreen.strings; sourceTree = "<group>"; };
 		04D06B082D2D47DF0056A53A /* Localizable.xcstrings */ = {isa = PBXFileReference; lastKnownFileType = text.json.xcstrings; path = Localizable.xcstrings; sourceTree = "<group>"; };
 		07969490099A2A504FF2286D /* Pods_ExampleUITests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_ExampleUITests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		29635C0A2DE779FE00C552AF /* XZMocoaTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = XZMocoaTests.m; sourceTree = "<group>"; };
 		29648BE02A72556C0090F445 /* Example.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Example.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		29648BEF2A72556E0090F445 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
-		29648BF22A72556E0090F445 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		29648BF42A72556E0090F445 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		29648BF52A72556E0090F445 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
 		29648BFB2A72556E0090F445 /* ExampleTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = ExampleTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -67,6 +64,7 @@
 		29648C092A72556E0090F445 /* ExampleUITests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ExampleUITests.m; sourceTree = "<group>"; };
 		29648C0B2A72556E0090F445 /* ExampleUITestsLaunchTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ExampleUITestsLaunchTests.m; sourceTree = "<group>"; };
 		29776A132D3240E70033AAF9 /* Main.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = Main.storyboard; sourceTree = "<group>"; };
+		29DE44A02FCC32A200B5DDC1 /* LaunchScreen.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = LaunchScreen.storyboard; sourceTree = "<group>"; };
 		3B8AC2A94D37A18F04582DB1 /* Pods_Example.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Example.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		64F87575A68BF024E1D1D16F /* Pods-ExampleTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ExampleTests.debug.xcconfig"; path = "Target Support Files/Pods-ExampleTests/Pods-ExampleTests.debug.xcconfig"; sourceTree = "<group>"; };
 		6F79FAF8773368CAB3C04BDF /* Pods-Example.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Example.release.xcconfig"; path = "Target Support Files/Pods-Example/Pods-Example.release.xcconfig"; sourceTree = "<group>"; };
@@ -78,7 +76,17 @@
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
-		04131D342F303401000D23BE /* Code */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = Code; sourceTree = "<group>"; };
+		04131D342F303401000D23BE /* Code */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			exceptions = (
+			);
+			explicitFileTypes = {
+			};
+			explicitFolders = (
+			);
+			path = Code;
+			sourceTree = "<group>";
+		};
 /* End PBXFileSystemSynchronizedRootGroup section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -179,7 +187,7 @@
 				04131D342F303401000D23BE /* Code */,
 				29776A132D3240E70033AAF9 /* Main.storyboard */,
 				29648BEF2A72556E0090F445 /* Assets.xcassets */,
-				29648BF12A72556E0090F445 /* LaunchScreen.storyboard */,
+				29DE44A02FCC32A200B5DDC1 /* LaunchScreen.storyboard */,
 				29648BF42A72556E0090F445 /* Info.plist */,
 				04D06B082D2D47DF0056A53A /* Localizable.xcstrings */,
 				29648BF52A72556E0090F445 /* main.m */,
@@ -347,7 +355,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				29648BF32A72556E0090F445 /* LaunchScreen.storyboard in Resources */,
+				29DE44A12FCC32A200B5DDC1 /* LaunchScreen.storyboard in Resources */,
 				29648BF02A72556E0090F445 /* Assets.xcassets in Resources */,
 				04D06B092D2D47DF0056A53A /* Localizable.xcstrings in Resources */,
 				29776A142D3240E70033AAF9 /* Main.storyboard in Resources */,
@@ -401,13 +409,9 @@
 			inputFileListPaths = (
 				"${PODS_ROOT}/Target Support Files/Pods-Example/Pods-Example-frameworks-${CONFIGURATION}-input-files.xcfilelist",
 			);
-			inputPaths = (
-			);
 			name = "[CP] Embed Pods Frameworks";
 			outputFileListPaths = (
 				"${PODS_ROOT}/Target Support Files/Pods-Example/Pods-Example-frameworks-${CONFIGURATION}-output-files.xcfilelist",
-			);
-			outputPaths = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
@@ -506,19 +510,6 @@
 			targetProxy = 29648C062A72556E0090F445 /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
-
-/* Begin PBXVariantGroup section */
-		29648BF12A72556E0090F445 /* LaunchScreen.storyboard */ = {
-			isa = PBXVariantGroup;
-			children = (
-				29648BF22A72556E0090F445 /* Base */,
-				04D06B032D2D46890056A53A /* zh-Hans */,
-				04D06B072D2D46F90056A53A /* en */,
-			);
-			name = LaunchScreen.storyboard;
-			sourceTree = "<group>";
-		};
-/* End PBXVariantGroup section */
 
 /* Begin XCBuildConfiguration section */
 		29648C0D2A72556E0090F445 /* Debug */ = {

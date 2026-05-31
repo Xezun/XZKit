@@ -58,13 +58,13 @@ class Example13ViewController: UITableViewController {
                 showMessage("消息C", duration: 3.0 - XZToast.animationDuration * 2.5);
                 
             case 3:
-                showMessage("这个消息独占 3.0 秒时长", duration: 3, exclusive: true)
+                showMessage("独占 3.0 秒时长", duration: 3, exclusive: true)
                 
             case 4:
-                showMessage("字数特别多，分两行的信息\n长度特别长的超级长消息")
+                showMessage("字数特别多、长度特别长的超级长消息")
                 
             case 5:
-                showMessage("字数特别多、长度特别长的超级长消息")
+                showMessage("字数特别多，分两行的信息\n长度特别长的超级长消息")
                 
             case 6:
                 showMessage("短消息")
@@ -79,7 +79,7 @@ class Example13ViewController: UITableViewController {
                 showMessage("请30秒后再试", style: .waiting)
                 
             case 10:
-                showMessage("非法访问", style: .warning)
+                showMessage("您无访问权限", style: .warning)
                 
             case 11:
                 showMessage("正在处理中", style: .loading)
@@ -93,17 +93,25 @@ class Example13ViewController: UITableViewController {
             case 0:
                 guard loadingToast == nil else { return }
                 loadingToast = showMessage("开始加载", style: .loading, duration: 0, exclusive: true);
+                
             case 1:
                 break
+                
             case 2:
                 guard let loadingToast = loadingToast else { return }
-                showMessage("加载成功", style: .success)
+                if loadingToast.toast.progress == 1.0 {
+                    showMessage("加载成功", style: .success)
+                } else {
+                    showMessage("加载失败", style: .failure)
+                }
                 loadingToast.hide()
                 self.loadingToast = nil;
                 break
+                
             default:
                 break
             }
+            
         default:
             break
         }
@@ -156,8 +164,8 @@ class Example13ViewController: UITableViewController {
         }
     }
     
-    @IBAction func hideButtonAction(_ sender: UIBarButtonItem) {
-        self.hideToast()
+    @IBAction func settingsButtonAction(_ sender: UIBarButtonItem) {
+        tableView.scrollToRow(at: .init(row: 0, section: 2), at: .top, animated: true)
     }
     
     @IBAction func unwindToBack(_ unwindSegue: UIStoryboardSegue) {

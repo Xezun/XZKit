@@ -141,10 +141,10 @@ NS_REFINED_FOR_SWIFT
 @property (class, nonatomic) UIColor * backgroundColor;
 /// 默认的阴影色。
 @property (class, nonatomic) UIColor * shadowColor;
-/// 进度的默认颜色。
+/// 图标色，比如进度条的轨道色、活动指示器的颜色，默认白色。
 @property (class, nonatomic) UIColor * color;
-/// 进度轨道默认的颜色。
-@property (class, nonatomic) UIColor * trackColor;
+/// 渲染色，比如进度条的进度色。
+@property (class, nonatomic) UIColor * tintColor;
 /// 默认展示时长，默认 1.0 秒，值必须大于零。
 @property (class, nonatomic) NSTimeInterval duration;
 

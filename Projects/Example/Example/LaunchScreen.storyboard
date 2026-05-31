@@ -18,16 +18,16 @@
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="center" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="XZKit" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="OIq-Kq-mhm">
-                                <rect key="frame" x="134" y="218" width="125" height="57.333333333333314"/>
-                                <fontDescription key="fontDescription" type="boldSystem" pointSize="48"/>
+                                <rect key="frame" x="136" y="218" width="121.33333333333331" height="57.333333333333314"/>
+                                <fontDescription key="fontDescription" type="system" weight="semibold" pointSize="48"/>
                                 <nil key="textColor"/>
                                 <nil key="highlightedColor"/>
                             </label>
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" textAlignment="center" lineBreakMode="tailTruncation" numberOfLines="2" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Z7S-gM-B9p">
-                                <rect key="frame" x="50.333333333333343" y="693.33333333333337" width="292.66666666666663" height="40.666666666666629"/>
+                                <rect key="frame" x="54.333333333333343" y="683.33333333333337" width="284.66666666666663" height="40.666666666666629"/>
                                 <string key="text">Copyright © 2015, 2026
-Xezun Individual. All Rights Reserved. </string>
-                                <fontDescription key="fontDescription" type="system" weight="medium" pointSize="17"/>
+Xezun Individual. All Rights Reserved.</string>
+                                <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                 <color key="textColor" white="0.33333333333333331" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                 <nil key="highlightedColor"/>
                             </label>
@@ -36,7 +36,7 @@ Xezun Individual. All Rights Reserved. </string>
                         <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                         <constraints>
                             <constraint firstItem="OIq-Kq-mhm" firstAttribute="top" secondItem="6Tk-OE-BBY" secondAttribute="top" constant="100" id="Jni-ZL-aaF"/>
-                            <constraint firstItem="6Tk-OE-BBY" firstAttribute="bottom" secondItem="Z7S-gM-B9p" secondAttribute="bottom" constant="50" id="d2v-tv-ElZ"/>
+                            <constraint firstItem="6Tk-OE-BBY" firstAttribute="bottom" secondItem="Z7S-gM-B9p" secondAttribute="bottom" constant="60" id="d2v-tv-ElZ"/>
                             <constraint firstItem="OIq-Kq-mhm" firstAttribute="centerX" secondItem="Ze5-6b-2t3" secondAttribute="centerX" id="peP-24-KCq"/>
                             <constraint firstItem="Z7S-gM-B9p" firstAttribute="centerX" secondItem="Ze5-6b-2t3" secondAttribute="centerX" id="w2p-Hw-RaH"/>
                         </constraints>
