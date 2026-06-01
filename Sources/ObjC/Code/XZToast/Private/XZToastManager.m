@@ -114,7 +114,9 @@
     // 标记进入刷新状态
     _needsUpdateToasts = YES;
     // 开始执行刷新周期
-    [self updateToastsIfNeeded];
+    [NSRunLoop.mainRunLoop performInModes:@[NSRunLoopCommonModes] block:^{
+        [self updateToastsIfNeeded];
+    }];
 }
 
 - (void)updateToastsIfNeeded {

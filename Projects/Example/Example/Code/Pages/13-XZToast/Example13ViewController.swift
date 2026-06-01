@@ -84,6 +84,34 @@ class Example13ViewController: UITableViewController {
             case 11:
                 showMessage("正在处理中", style: .loading)
                 
+            case 12:
+                showToast(.message("测试即将开始"), duration: 0.5, exclusive: true)
+                showToast(.loading("普通加载"), duration: 0.5, exclusive: true)
+                showToast(.success("添加书签成功"), duration: 0.5, exclusive: true)
+                showToast(.failure("删除文件夹失败"), duration: 0.5, exclusive: true)
+                showToast(.waiting("请等待倒计时结束"), duration: 0.5, exclusive: true)
+                showToast(.warning("无权访问"), duration: 0.5, exclusive: true)
+                showToast(.message("测试加载进度"), duration: 0.5, exclusive: true) { _ in
+                    let loading = self.showToast(.loading("开始下载"), duration: 0.0, exclusive: true)
+                    DispatchQueue.global().async {
+                        Thread.sleep(forTimeInterval: 1.0)
+                        for i in 1 ... 100 {
+                            Thread.sleep(forTimeInterval: 0.05)
+                            DispatchQueue.main.sync {
+                                let toast = loading.toast
+                                toast.progress = CGFloat(i) / 100.0;
+                                toast.text = String(format: "已下载 %.2f%%", CGFloat(i));
+                            }
+                        }
+                        Thread.sleep(forTimeInterval: 1.0)
+                        DispatchQueue.main.async {
+                            loading.hide()
+                            self.showToast(.success("下载成功"));
+                        }
+                    }
+                }
+                break
+                
             default:
                 self.hideToast();
                 
@@ -99,13 +127,13 @@ class Example13ViewController: UITableViewController {
                 
             case 2:
                 guard let loadingToast = loadingToast else { return }
+                self.loadingToast = nil;
+                loadingToast.hide()
                 if loadingToast.toast.progress == 1.0 {
                     showMessage("加载成功", style: .success)
                 } else {
                     showMessage("加载失败", style: .failure)
                 }
-                loadingToast.hide()
-                self.loadingToast = nil;
                 break
                 
             default:

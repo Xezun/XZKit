@@ -310,17 +310,18 @@ typedef NS_ENUM(NSUInteger, XZToastViewIconType) {
     }
     
     if (iconView) {
+        // 新的 icon 基于当前 bounds 进行布局。
         CGSize const size = [iconView sizeThatFits:bounds.size];
+        CGRect const frame = [self iconRectForSize:size forBounds:bounds];
+        iconView.frame = frame;
+        
         if (_hasIcon) {
-            // 当前有 icon 则新的 icon 默认保持大小和位置不变，在 layoutSubviews 时再调整到实际位置。
-            iconView.frame = CGRectScaleAspectRatioInsideWithMode(_iconView.frame, size, UIViewContentModeCenter);
+            iconView.frame = frame;
         } else {
-            // 当前无 icon 则新的 icon 展示从小到大的缩放过程。
+            // 从无 icon 到有 icon 展示从小到大的缩放过程。
             // 使用 transform 处理缩放，因为 frame 进行缩放的效果不理想，详见 layoutSubvies 方法中的备注。
-            CGRect const frame = [self iconRectForSize:size forBounds:bounds];
             CGFloat const dx = CGRectGetMidX(bounds) - CGRectGetMidX(frame);
             CGFloat const dy = kPaddingT - CGRectGetMidY(frame);
-            iconView.frame = frame;
             iconView.transform = CGAffineTransformScale(CGAffineTransformMakeTranslation(dx, dy), 0.01, 0.01);
         }
         

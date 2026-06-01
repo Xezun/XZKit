@@ -7,7 +7,9 @@
 
 #import "XZToastProgressView.h"
 #import "XZToast.h"
+#import "XZGeometry.h"
 
+#define kSize       ((CGSize){37.0, 37.0})
 #define kTrackWidth 4.0
 #define kShapeWidth 3.0
 
@@ -28,7 +30,7 @@
         _color      = XZToast.tintColor;
         _trackColor = XZToast.color;
         
-        CGRect         const frame = CGRectMake(6.5, 6.5, 37.0, 37.0);
+        CGRect         const frame = CGRectAdjustSizeWithMode(self.bounds, kSize, UIViewContentModeCenter);
         UIBezierPath * const path  = [UIBezierPath bezierPathWithArcCenter:CGPointMake(18.5, 18.5) radius:16.5 startAngle:-M_PI_2 endAngle:M_PI * 1.5 clockwise:YES];
         
         _trackLayer = [[CAShapeLayer alloc] init];
@@ -55,6 +57,17 @@
         [layer addSublayer:_shapeLayer];
     }
     return self;
+}
+
+- (void)layoutSubviews {
+    [super layoutSubviews];
+    
+    CGRect const bounds = self.bounds;
+    CGRect const frame  = CGRectAdjustSizeWithMode(bounds, kSize, UIViewContentModeCenter);
+    [UIView performWithoutAnimation:^{
+        _trackLayer.frame = frame;
+        _shapeLayer.frame = frame;
+    }];
 }
 
 - (CGSize)sizeThatFits:(CGSize)size {
