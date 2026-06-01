@@ -108,7 +108,7 @@ typedef void (^XZToastCompletion)(BOOL finished) NS_REFINED_FOR_SWIFT NS_SWIFT_U
 /// 默认偏移值：
 /// - top: 向下偏移 +20.0 点
 /// - middle: 不偏移 0.0 点
-/// - bottom: 向上偏移 -20.0 点
+/// - bottom: 向上偏移 -40.0 点
 ///
 /// - Parameters:
 ///   - offset: 偏移值，正数向下，负数向上

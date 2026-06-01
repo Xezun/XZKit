@@ -73,29 +73,24 @@ NS_ASSUME_NONNULL_BEGIN
 /// ```
 @property (nonatomic, strong, readonly) XZToastManager *xz_toastManager NS_SWIFT_NAME(toastManager);
 
-/// 显示提示消息。
-- (XZToastTask *)xz_showToast:(XZToast *)toast duration:(NSTimeInterval)duration position:(XZToastPosition)position completion:(nullable XZToastCompletion)completion NS_SWIFT_UNAVAILABLE("");
-/// 显示提示消息。
-- (XZToastTask *)xz_showToast:(XZToast *)toast duration:(NSTimeInterval)duration exclusive:(BOOL)exclusive completion:(nullable XZToastCompletion)completion NS_SWIFT_UNAVAILABLE("");
-/// 显示提示消息。
-- (XZToastTask *)xz_showToast:(XZToast *)toast duration:(NSTimeInterval)duration completion:(nullable XZToastCompletion)completion NS_SWIFT_UNAVAILABLE("");
+- (XZToastTask *)xz_showToast:(XZToast *)toast duration:(NSTimeInterval)duration exclusive:(BOOL)exclusive completion:(nullable XZToastCompletion)completion NS_SWIFT_NAME(__showToast(_:duration:exclusive:completion:));
+- (XZToastTask *)xz_showToast:(XZToast *)toast duration:(NSTimeInterval)duration exclusive:(BOOL)exclusive NS_SWIFT_NAME(__showToast(_:duration:exclusive:));
+- (XZToastTask *)xz_showToast:(XZToast *)toast duration:(NSTimeInterval)duration position:(XZToastPosition)position completion:(nullable XZToastCompletion)completion NS_SWIFT_NAME(__showToast(_:duration:position:completion:));
+- (XZToastTask *)xz_showToast:(XZToast *)toast duration:(NSTimeInterval)duration position:(XZToastPosition)position exclusive:(BOOL)exclusive NS_SWIFT_NAME(__showToast(_:duration:position:exclusive:));
+- (XZToastTask *)xz_showToast:(XZToast *)toast duration:(NSTimeInterval)duration position:(XZToastPosition)position NS_SWIFT_NAME(__showToast(_:duration:position:));
+- (XZToastTask *)xz_showToast:(XZToast *)toast duration:(NSTimeInterval)duration completion:(nullable XZToastCompletion)completion NS_SWIFT_NAME(__showToast(_:duration:completion:));
+- (XZToastTask *)xz_showToast:(XZToast *)toast duration:(NSTimeInterval)duration NS_SWIFT_NAME(__showToast(_:duration:));
 
-/// 显示提示消息。
-- (XZToastTask *)xz_showToast:(XZToast *)toast duration:(NSTimeInterval)duration NS_SWIFT_UNAVAILABLE("");
-/// 显示提示消息。
-- (XZToastTask *)xz_showToast:(XZToast *)toast completion:(nullable XZToastCompletion)completion NS_SWIFT_UNAVAILABLE("");
-/// 显示提示消息。
-- (XZToastTask *)xz_showToast:(XZToast *)toast NS_SWIFT_UNAVAILABLE("");
+- (XZToastTask *)xz_showToast:(XZToast *)toast position:(XZToastPosition)position exclusive:(BOOL)exclusive completion:(nullable XZToastCompletion)completion NS_SWIFT_NAME(__showToast(_:position:exclusive:completion:));
+- (XZToastTask *)xz_showToast:(XZToast *)toast position:(XZToastPosition)position exclusive:(BOOL)exclusive NS_SWIFT_NAME(__showToast(_:position:exclusive:));
+- (XZToastTask *)xz_showToast:(XZToast *)toast position:(XZToastPosition)position completion:(nullable XZToastCompletion)completion NS_SWIFT_NAME(__showToast(_:position:completion:));
+- (XZToastTask *)xz_showToast:(XZToast *)toast position:(XZToastPosition)position NS_SWIFT_NAME(__showToast(_:position:));
 
-/// 显示提示消息。
-- (XZToastTask *)xz_showToast:(XZToast *)toast position:(XZToastPosition)position NS_SWIFT_UNAVAILABLE("");
-/// 显示提示消息。
-- (XZToastTask *)xz_showToast:(XZToast *)toast position:(XZToastPosition)position completion:(nullable XZToastCompletion)completion NS_SWIFT_UNAVAILABLE("");
+- (XZToastTask *)xz_showToast:(XZToast *)toast exclusive:(BOOL)exclusive completion:(nullable XZToastCompletion)completion NS_SWIFT_NAME(__showToast(_:exclusive:completion:));
+- (XZToastTask *)xz_showToast:(XZToast *)toast exclusive:(BOOL)exclusive NS_SWIFT_NAME(__showToast(_:exclusive:));
 
-/// 显示提示消息。
-- (XZToastTask *)xz_showToast:(XZToast *)toast exclusive:(BOOL)exclusive completion:(nullable XZToastCompletion)completion NS_SWIFT_UNAVAILABLE("");
-/// 显示提示消息。
-- (XZToastTask *)xz_showToast:(XZToast *)toast exclusive:(BOOL)exclusive NS_SWIFT_UNAVAILABLE("");
+- (XZToastTask *)xz_showToast:(XZToast *)toast completion:(nullable XZToastCompletion)completion NS_SWIFT_NAME(__showToast(_:completion:));
+- (XZToastTask *)xz_showToast:(XZToast *)toast NS_SWIFT_NAME(__showToast(_:));
 
 /// 隐藏所有提示消息。
 - (void)xz_hideToast:(nullable void (^)(void))completion NS_SWIFT_UNAVAILABLE("");
@@ -109,6 +104,12 @@ NS_ASSUME_NONNULL_BEGIN
 @end
 
 @interface UIViewController (XZToastSupporting)
+@end
+
+@interface UINavigationController (XZToastSupporting)
+@end
+
+@interface UITabBarController (XZToastSupporting)
 @end
 
 NS_ASSUME_NONNULL_END

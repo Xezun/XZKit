@@ -551,10 +551,6 @@
 
 #pragma mark - 公开方法
 
-- (UIViewController *)viewController {
-    return _viewController;
-}
-
 @synthesize viewClass = _viewClass;
 @synthesize maximumNumberOfToasts = _maximumNumberOfToasts;
 @synthesize textColor = _textColor;
@@ -563,6 +559,10 @@
 @synthesize shadowColor = _shadowColor;
 @synthesize color = _color;
 @synthesize tintColor = _tintColor;
+
+- (UIViewController *)viewController {
+    return _viewController;
+}
 
 - (Class)viewClass {
     return _viewClass ?: XZToast.viewClass;

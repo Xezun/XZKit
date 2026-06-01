@@ -19,7 +19,7 @@ NS_ASSUME_NONNULL_BEGIN
 @interface XZToastManager ()
 
 /// 显示 XZToast 的控制器，默认为当前对象所属的控制器。
-@property (nonatomic, weak, readonly) UIViewController *viewController;
+@property (nonatomic, readonly) UIViewController *viewController;
 
 - (XZToastTask *)showToast:(XZToast *)toast duration:(NSTimeInterval)duration position:(XZToastPosition)position exclusive:(BOOL)exclusive completion:(nullable XZToastCompletion)completion;
 
