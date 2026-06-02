@@ -40,6 +40,7 @@ UIKIT_EXTERN CGSize CGSizeMakeAspectRatioInside(CGSize size, CGSize ratio) NS_RE
 ///   - aspect: 被缩的 CGSize 值
 UIKIT_EXTERN CGSize CGSizeScaleAspectRatioInside(CGSize size, CGSize aspect) NS_REFINED_FOR_SWIFT;
 
+/// 缩放，宽高分别乘以 scale 。
 FOUNDATION_STATIC_INLINE CGSize CGSizeApplyScale(CGSize size, CGFloat scale) NS_REFINED_FOR_SWIFT {
     return CGSizeMake(size.width * scale, size.height * scale);
 };
@@ -74,31 +75,37 @@ UIKIT_EXTERN CGRect CGRectMakeAspectRatioInsideWithMode(CGRect rect, CGSize rati
 ///   - contentMode: 适配模式
 UIKIT_EXTERN CGRect CGRectScaleAspectRatioInsideWithMode(CGRect rect, CGSize aspect, UIViewContentMode contentMode) NS_REFINED_FOR_SWIFT;
 
+/// 设置 rect 的 size 值。
 FOUNDATION_STATIC_INLINE CGRect CGRectSetSize(CGRect rect, CGSize size) {
     rect.size = size;
     return rect;
 }
 
-FOUNDATION_STATIC_INLINE CGRect CGRectSetPoint(CGRect rect, CGPoint point) {
-    rect.origin = point;
+/// 设置 rect 的 origin 值。
+FOUNDATION_STATIC_INLINE CGRect CGRectSetOrigin(CGRect rect, CGPoint origin) {
+    rect.origin = origin;
     return rect;
 }
 
+/// 设置 rect 的 origin.x 值。
 FOUNDATION_STATIC_INLINE CGRect CGRectSetX(CGRect rect, CGFloat x) {
     rect.origin.x = x;
     return rect;
 }
 
+/// 设置 rect 的 origin.y 值。
 FOUNDATION_STATIC_INLINE CGRect CGRectSetY(CGRect rect, CGFloat y) {
     rect.origin.y = y;
     return rect;
 }
 
+/// 设置 rect 的 size.width 值。
 FOUNDATION_STATIC_INLINE CGRect CGRectSetWidth(CGRect rect, CGFloat width) {
     rect.size.width = width;
     return rect;
 }
 
+/// 设置 rect 的 size.height 值。
 FOUNDATION_STATIC_INLINE CGRect CGRectSetHeight(CGRect rect, CGFloat height) {
     rect.size.height = height;
     return rect;
