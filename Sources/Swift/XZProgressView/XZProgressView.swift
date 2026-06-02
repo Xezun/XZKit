@@ -22,17 +22,17 @@ extension XZProgressView {
         case arc(startAngle: CGFloat, endAngle: CGFloat)
         
         /// 水平的从左到右的进度条样式。
-        public static let horizontalBar = Style.line(angle: CGFloat.pi)
+        public static let horizontalBar         = Style.line(angle: CGFloat.pi)
         /// 水平的从右到左的进度条样式。
         public static let horizontalInvertedBar = Style.line(angle: 0)
         /// 垂直自上而下的进度条样式。
-        public static let verticalBar = Style.line(angle: CGFloat.pi * 0.5)
+        public static let verticalBar           = Style.line(angle: CGFloat.pi * 0.5)
         /// 垂直自下而上的进度条样式。
-        public static let verticalInvertedBar = Style.line(angle: CGFloat.pi * 1.5)
+        public static let verticalInvertedBar   = Style.line(angle: CGFloat.pi * 1.5)
         /// 顺时针圆形样式进度条，起点在顶部。
-        public static let clockwiseCircle = Style.arc(startAngle: CGFloat.pi * 0.5, endAngle: -CGFloat.pi * 1.5)
+        public static let clockwiseCircle       = Style.arc(startAngle: CGFloat.pi * 0.5, endAngle: -CGFloat.pi * 1.5)
         /// 逆时针圆形样式进度条，起点在顶部。
-        public static let anticlockwiseCircle = Style.arc(startAngle: CGFloat.pi * 0.5, endAngle: CGFloat.pi * 2.5)
+        public static let anticlockwiseCircle   = Style.arc(startAngle: CGFloat.pi * 0.5, endAngle: CGFloat.pi * 2.5)
     }
     
 }
@@ -44,11 +44,15 @@ open class XZProgressView: UIView {
         return CAShapeLayer.self
     }
     
-    private var minimumTrackLayer: CAShapeLayer {
+    private var trackLayer: CAShapeLayer {
         return layer as! CAShapeLayer
     }
     
-    private let maximumTrackLayer = CAShapeLayer.init()
+    private let shapeView = XZShapeView.init()
+    
+    private var shapeLayer: CAShapeLayer {
+        return shapeView.layer
+    }
     
     public override init(frame: CGRect) {
         super.init(frame: frame)
@@ -62,43 +66,43 @@ open class XZProgressView: UIView {
     }
     
     private func didInitialize() {
-        minimumTrackLayer.fillRule = .evenOdd
-        minimumTrackLayer.fillColor = tintColor.cgColor
-        minimumTrackLayer.strokeColor = UIColor.systemGray6.cgColor
-        minimumTrackLayer.lineWidth = 2.0
-        minimumTrackLayer.strokeEnd = 1.0
-        minimumTrackLayer.lineCap = .round
+        shapeView.autoresizingMask = [.flexibleTopMargin, .flexibleLeftMargin, .flexibleBottomMargin, .flexibleRightMargin]
+        shapeView.frame = bounds
+        addSubview(shapeView);
         
-        maximumTrackLayer.frame = bounds
-        layer.insertSublayer(maximumTrackLayer, at: 0)
+        let trackLayer = self.trackLayer
+        trackLayer.fillRule = .evenOdd
+        trackLayer.fillColor = tintColor.cgColor
+        trackLayer.strokeColor = UIColor.systemGray6.cgColor
+        trackLayer.lineWidth = 2.0
+        trackLayer.strokeEnd = 1.0
+        trackLayer.lineCap = .round
         
-        maximumTrackLayer.lineCap = .round
-        maximumTrackLayer.fillRule = .evenOdd
-        maximumTrackLayer.fillColor = UIColor.clear.cgColor
-        maximumTrackLayer.strokeColor = UIColor(red: 0x0C / 255.0, green: 0x64 / 255.0, blue: 0xFF / 255.0, alpha: 1.0).cgColor
-        maximumTrackLayer.lineWidth = 2.0
-        maximumTrackLayer.strokeStart = 0.0
-        maximumTrackLayer.strokeEnd = 0.0
+        let shapeLayer = self.shapeLayer
+        shapeLayer.lineCap = .round
+        shapeLayer.fillRule = .evenOdd
+        shapeLayer.fillColor = UIColor.clear.cgColor
+        shapeLayer.strokeColor = UIColor(red: 0x0C / 255.0, green: 0x64 / 255.0, blue: 0xFF / 255.0, alpha: 1.0).cgColor
+        shapeLayer.lineWidth = 2.0
+        shapeLayer.strokeStart = 0.0
+        shapeLayer.strokeEnd = 0.0
     }
     
     open override func layoutSubviews() {
         super.layoutSubviews()
-        
-        let bounds = self.bounds
-        if bounds.equalTo(maximumTrackLayer.frame) {
-            return;
-        }
-        maximumTrackLayer.frame = bounds
-        
         // 更新路径
-        needsTrackPathUpdate = true
-        updateTrackPathIfNeeded()
+        updatePathIfNeeded()
+    }
+    
+    open override func setNeedsLayout() {
+        super.setNeedsLayout()
+        setNeedsUpdatePath()
     }
     
     /// 进度， 0 ～ 1.0 。
     open var progress: CGFloat {
         get {
-            return maximumTrackLayer.strokeEnd
+            return shapeLayer.strokeEnd
         }
         set {
             setProgress(newValue, animated: false)
@@ -108,102 +112,102 @@ open class XZProgressView: UIView {
     /// 设置进度以及是否动画展示进度变化过程，动画为 CALayer 默认的隐式动画。
     open func setProgress(_ progress: CGFloat, animated: Bool) {
         if animated {
-            maximumTrackLayer.strokeEnd = progress
+            shapeLayer.strokeEnd = progress
         } else {
-            CATransaction.setDisableActions(true)
-            maximumTrackLayer.strokeEnd = progress
-            CATransaction.setDisableActions(false)
+            UIView.performWithoutAnimation {
+                shapeLayer.strokeEnd = progress
+            }
         }
     }
     
     /// 进度条样式，默认 .clockwiseCircle 。
     open var style: XZProgressView.Style = .clockwiseCircle {
         didSet {
-            setNeedsTrackPathUpdate()
+            setNeedsUpdatePath()
         }
     }
     
     /// 线端样式。
     open var lineCap: CAShapeLayerLineCap {
         get {
-            return maximumTrackLayer.lineCap
+            return shapeLayer.lineCap
         }
         set {
-            minimumTrackLayer.lineCap = newValue
-            maximumTrackLayer.lineCap = newValue
-            setNeedsTrackPathUpdate()
+            trackLayer.lineCap = newValue
+            shapeLayer.lineCap = newValue
+            setNeedsUpdatePath()
         }
     }
     
     /// 进度条宽度。默认 2.0 Point 。
     open var trackWidth: CGFloat {
         get {
-            return maximumTrackLayer.lineWidth
+            return shapeLayer.lineWidth
         }
         set {
-            minimumTrackLayer.lineWidth = newValue
-            maximumTrackLayer.lineWidth = newValue
-            setNeedsTrackPathUpdate()
+            trackLayer.lineWidth = newValue
+            shapeLayer.lineWidth = newValue
+            setNeedsUpdatePath()
         }
     }
     
-    /// 最小值时，进度条颜色，即进度未完成区的颜色。默认 UIColor.groupTableViewBackground 。
-    open var minimumTrackTintColor: UIColor? {
+    /// 进度条轨道的颜色。最小值时，进度条颜色，即进度未完成区的颜色。默认 UIColor.groupTableViewBackground 。
+    open var trackColor: UIColor? {
         get {
-            guard let strokeColor = minimumTrackLayer.strokeColor else {
+            guard let strokeColor = trackLayer.strokeColor else {
                 return nil
             }
             return UIColor.init(cgColor: strokeColor)
         }
         set {
-            minimumTrackLayer.strokeColor = newValue?.cgColor
+            trackLayer.strokeColor = newValue?.cgColor
         }
     }
     
-    /// 最大值时，进度条颜色，即进度已完成区的颜色。默认 0x0C64FFFF 。
-    open var maximumTrackTintColor: UIColor? {
+    /// 进度条指示进度的颜色。最大值时，进度条颜色，即进度已完成区的颜色。默认 0x0C64FFFF 。
+    open var color: UIColor? {
         get {
-            guard let strokeColor = maximumTrackLayer.strokeColor else {
+            guard let strokeColor = shapeLayer.strokeColor else {
                 return nil
             }
             return UIColor.init(cgColor: strokeColor)
         }
         set {
-            maximumTrackLayer.strokeColor = newValue?.cgColor
+            shapeLayer.strokeColor = newValue?.cgColor
         }
     }
     
-    /// 如果进度条是封闭的图形，tintColor 可以改变封闭图形内部的颜色。可以改变进度条内部的颜色。
+    /// 填充色。如果进度条是封闭的图形，tintColor 可以改变封闭图形内部的颜色。
     open override var tintColor: UIColor! {
         get {
             return super.tintColor
         }
         set {
             super.tintColor = newValue
-            minimumTrackLayer.fillColor = newValue?.cgColor
+            trackLayer.fillColor = newValue?.cgColor
         }
     }
     
-    private var needsTrackPathUpdate = false
+    private var needsUpdatePath = false
     
-    private func setNeedsTrackPathUpdate() {
-        if needsTrackPathUpdate {
+    private func setNeedsUpdatePath() {
+        if needsUpdatePath {
             return
         }
-        needsTrackPathUpdate = true
-        DispatchQueue.main.async(execute: {
-            self.updateTrackPathIfNeeded()
-        })
+        needsUpdatePath = true
+        RunLoop.main.perform(inModes: [.common]) {
+            self.updatePathIfNeeded()
+        }
     }
     
-    private func updateTrackPathIfNeeded() {
-        guard needsTrackPathUpdate else {
+    private func updatePathIfNeeded() {
+        guard needsUpdatePath else {
             return
         }
-        needsTrackPathUpdate = false
+        needsUpdatePath = false
         let trackPath = shapeLayerPath(with: bounds)
-        minimumTrackLayer.path = trackPath
-        maximumTrackLayer.path = trackPath
+        trackLayer.path = trackPath
+        shapeLayer.path = trackPath
     }
     
     private func shapeLayerPath(with bounds: CGRect) -> CGPath? {
