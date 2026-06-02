@@ -20,6 +20,8 @@ https://github.com/Xezun/XZKit.git
 
 ```ruby
 pod "XZToast"
+# or
+pod "XZKit/XZToast"
 ```
 
 ## 二、如何使用

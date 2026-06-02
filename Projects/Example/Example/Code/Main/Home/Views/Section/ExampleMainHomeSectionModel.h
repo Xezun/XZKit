@@ -2,7 +2,7 @@
 //  ExampleMainHomeSectionModel.h
 //  Example
 //
-//  Created by 徐臻 on 2026/2/2.
+//  Created by Xezun on 2026/2/2.
 //
 
 #import <Foundation/Foundation.h>

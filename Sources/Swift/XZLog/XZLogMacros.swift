@@ -2,7 +2,7 @@
 //  XZLogMacros.swift
 //  XZKit
 //
-//  Created by 徐臻 on 2025/7/11.
+//  Created by Xezun on 2025/7/11.
 //
 
 import Foundation

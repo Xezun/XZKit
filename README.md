@@ -39,7 +39,7 @@ pod "XZKit"
 拓展与增强原生的 UIKit、Foundation 框架。
 
 ### [XZMocoa](./Docs/XZMocoa) 
-    
+
 一款轻量级的 MVVM 开发框架，降低组件化的改造成本。
 
 ### [XZML](./Docs/XZML) 
@@ -57,6 +57,10 @@ pod "XZKit"
 ### [XZRefresh](./Docs/XZRefresh) 
 
 一款按 UIScrollView 自然滚动打造的最流畅下拉刷新组件，且支持自定义任意下拉刷新样式。
+
+### [XZToast](./Docs/XZToast) [![Version](https://img.shields.io/cocoapods/v/XZToast.svg?style=flat)](https://cocoapods.org/pods/XZToast)
+
+一款基于列队机制的消息组件，支持数量控制，支持视图自定义、复用的高性能组件。
 
 ### [XZPageView](./Docs/XZPageView) 
 
@@ -81,10 +85,6 @@ pod "XZKit"
 ### [XZContentStatus](./Docs/XZContentStatus) 
 
 一款呈现页面状态的组件，比如数据为空、网络错误等。
-
-### [XZToast](./Docs/XZToast) 
-
-一款可高度自定义的即时提醒组件，支持数量控制，使用列队展示避免重叠。
 
 ### [XZURLQuery](./Docs/XZURLQuery) 
 

@@ -26,35 +26,35 @@ CreateHeadersForType() {
     local MODULE_PATH="$1";
     local HEADER_TYPE="$2";
     # 如果存放软链接的目录不存在，则先创建该目录
-    local HEADER_ROOT="Sources/ObjC/Headers/$HEADER_TYPE/XZKit"
-    if [[ ! -d "$HEADER_ROOT" ]]; then
-        CreatePath "$HEADER_ROOT"
+    local HEADER_ROOT="Sources/Header/XZKit/${HEADER_TYPE}"
+    if [[ ! -d "${HEADER_ROOT}" ]]; then
+        CreatePath "${HEADER_ROOT}"
         # 创建软链接前，再次判断存放目录是否存在
-        if [[ ! -d "$HEADER_ROOT" ]]; then
-            echo "🚫 \033[33m目录 $HEADER_ROOT 不存在，且无法创建\033[0m"
+        if [[ ! -d "${HEADER_ROOT}" ]]; then
+            echo "🚫 \033[33m目录 ${HEADER_ROOT} 不存在，且无法创建\033[0m"
         fi
     fi
     # 遍历目录下的直接子目录或文件
-    for path in "$MODULE_PATH"/*; do
+    for path in "${MODULE_PATH}"/*; do
         # 获得当前所遍历的子目录或文件的名字
         local name=$(basename "$path")
         # 判断当前遍历的是否为文件
         if [[ -f $path ]]; then
             # 判断当前遍历的文件是否为 .h 文件
-            if [[ "$name" =~ ".h"$ ]]; then
+            if [[ "${name}" =~ ".h"$ ]]; then
                 # 源文件的相对路径。
-                local SOURCE_PATH="../../../Code/${path#*Sources/ObjC/Code/}"
+                local SOURCE_PATH="../../../ObjC/${path#*Sources/ObjC/}"
                 # 软链接的存放路径
-                local HEADER_PATH="$HEADER_ROOT/$name"
+                local HEADER_PATH="${HEADER_ROOT}/${name}"
                 # 创建软链接
-                ln -snf "$SOURCE_PATH" "$HEADER_PATH"
-                echo "\033[32m[+] [$HEADER_TYPE] $SOURCE_PATH => $HEADER_PATH \033[0m"
+                ln -snf "${SOURCE_PATH}" "${HEADER_PATH}"
+                echo "\033[32m[+] [${HEADER_TYPE}] ${SOURCE_PATH} => ${HEADER_PATH} \033[0m"
             fi
-        elif [[ -d $path ]]; then
-            if [[ "$name" == "Private" ]]; then
-                CreateHeadersForType "$path" "Private"
+        elif [[ -d "${path}" ]]; then
+            if [[ "${name}" == "Private" ]]; then
+                CreateHeadersForType "${path}" "Private"
             else
-                CreateHeadersForType "$path" "$HEADER_TYPE"
+                CreateHeadersForType "${path}" "$HEADER_TYPE"
             fi
         fi
     done
@@ -64,20 +64,20 @@ CreateHeadersForType() {
 MODULE_NAME="XZKit"
 
 # 检查脚本参数
-if [[ -z "$MODULE_NAME" ]]; then
+if [[ -z "${MODULE_NAME}" ]]; then
     echo "🚫 \033[33m请在第一个参数指定子模块名！\033[0m"
     exit 1;
 fi
 
 echo "☕️ \033[34m清理操作开始\033[0m"
-if [[ -d "Sources/ObjC/Headers/Public/${MODULE_NAME}" ]]; then
-    for path in "Sources/ObjC/Headers/Public/${MODULE_NAME}"/*; do
+if [[ -d "Sources/Header/${MODULE_NAME}/Public" ]]; then
+    for path in "Sources/Header/${MODULE_NAME}/Public"/*; do
         rm -rf "$path"
-        echo "\033[31m[-]  $path \033[0m"
+        echo "\033[31m[-]  ${path} \033[0m"
     done
 fi
-if [[ -d "Sources/ObjC/Headers/Private/${MODULE_NAME}" ]]; then
-    for path in "Sources/ObjC/Headers/Private/${MODULE_NAME}"/*; do
+if [[ -d "Sources/Header/${MODULE_NAME}/Private" ]]; then
+    for path in "Sources/Header/${MODULE_NAME}/Private"/*; do
         rm -rf "$path"
         echo "\033[31m[-]  $path \033[0m"
     done
@@ -85,11 +85,11 @@ fi
 echo "🎉 \033[34m清理操作结束\033[0m"
 
 # 进入目录
-CreatePath "Sources/ObjC/Headers/Public"
-CreatePath "Sources/ObjC/Headers/Private"
+CreatePath "Sources/Header/${MODULE_NAME}/Public"
+CreatePath "Sources/Header/${MODULE_NAME}/Private"
 
 echo "\033[34m☕️ 开始链接头文件\033[0m"
-CreateHeadersForType "Sources/ObjC/Code" "Public"
+CreateHeadersForType "Sources/ObjC" "Public"
 echo "\033[34m🎉 链接头文件完成\033[0m"
 
 

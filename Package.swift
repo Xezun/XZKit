@@ -21,15 +21,17 @@ let package = Package(
         .target(
             name: "XZKit",
             dependencies: ["XZKitObjC", "XZKitMacros"],
-            path: "Sources/Swift",
+            path: "Sources",
+            sources: ["Swift"],
             swiftSettings: [.define("XZ_FRAMEWORK")]
         ),
         .target(
             name: "XZKitObjC",
-            path: "Sources/ObjC",
-            publicHeadersPath: "Headers/Public/XZKit",
+            path: "Sources",
+            sources: ["ObjC"],
+            publicHeadersPath: "Header/XZKit/Public",
             cSettings: [
-                .headerSearchPath("Headers/Private/XZKit")
+                .headerSearchPath("Header/XZKit/Private")
             ],
             cxxSettings: [.define("XZ_FRAMEWORK")]
         ),

@@ -2,7 +2,7 @@
 //  Example21TableViewSectionViewModel.m
 //  Example
 //
-//  Created by 徐臻 on 2025/1/31.
+//  Created by Xezun on 2025/1/31.
 //
 
 #import "Example21TableViewSectionViewModel.h"

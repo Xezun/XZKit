@@ -2,7 +2,7 @@
 //  Example21TableViewSectionModel.h
 //  Example
 //
-//  Created by 徐臻 on 2025/1/31.
+//  Created by Xezun on 2025/1/31.
 //
 
 @import XZKit;

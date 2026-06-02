@@ -2,7 +2,7 @@
 //  ExampleSceneDelegate.m
 //  Example
 //
-//  Created by 徐臻 on 2025/7/3.
+//  Created by Xezun on 2025/7/3.
 //
 
 #import "ExampleSceneDelegate.h"

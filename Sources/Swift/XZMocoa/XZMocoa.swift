@@ -2,7 +2,7 @@
 //  XZMocoa.swift
 //  XZKit
 //
-//  Created by 徐臻 on 2025/1/25.
+//  Created by Xezun on 2025/1/25.
 //
 
 #if SWIFT_PACKAGE

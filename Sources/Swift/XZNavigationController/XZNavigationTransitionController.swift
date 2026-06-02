@@ -158,7 +158,6 @@ extension XZNavigationTransitionController: UINavigationControllerDelegate {
     
     /// 1. 获取转场动画控制器。
     public func navigationController(_ navigationController: UINavigationController, animationControllerFor operation: UINavigationController.Operation, from fromVC: UIViewController, to toVC: UIViewController) -> UIViewControllerAnimatedTransitioning? {
-        #XZLog("[XZNavigationController] 转场开始: \(navigationController) \(operation)", in: .XZKit)
         if animationController == nil {
             animationController = XZNavigationAnimationController.init(for: self.navigationController, operation: operation, isInteractive: false, delegate: self)
         }
@@ -167,7 +166,6 @@ extension XZNavigationTransitionController: UINavigationControllerDelegate {
     
     /// 2. 动画控制器的交互控制器。
     public func navigationController(_ navigationController: UINavigationController, interactionControllerFor animationController: UIViewControllerAnimatedTransitioning) -> UIViewControllerInteractiveTransitioning? {
-        #XZLog("[XZNavigationController] 交互式转场: \(navigationController) \(animationController)", in: .XZKit)
         return (animationController as? XZNavigationAnimationController)?.interactionController
     }
     
@@ -176,7 +174,6 @@ extension XZNavigationTransitionController: UINavigationControllerDelegate {
 extension XZNavigationTransitionController: XZNavigationAnimationControllerDelegate {
     
     public func animationController(_ animationController: XZNavigationAnimationController, didEndTransitionAnimation transitionCompleted: Bool) {
-        #XZLog("[XZNavigationController] 转场结束: \(animationController) \(transitionCompleted)", in: .XZKit)
         self.animationController = nil;
     }
     

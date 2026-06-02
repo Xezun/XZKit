@@ -12,32 +12,12 @@ Pod::Spec.new do |s|
   s.author           = { 'Xezun' => 'xezun@icloud.com' }
   s.source           = { :git => 'https://github.com/Xezun/XZKit.git', :tag => s.version.to_s }
   # s.social_media_url = 'https://twitter.com/<TWITTER_USERNAME>'
-  s.readme           = "https://github.com/Xezun/XZKit/blob/main/README.md"
+  s.readme           = "https://github.com/Xezun/XZKit/blob/main/Docs/XZToast/README.md?raw=true"
 
   s.swift_version = '5.9'
   s.ios.deployment_target = '13.0'
   
-  # 项目配置
-  s.pod_target_xcconfig = {
-    # 注入 OC 编译变量
-    'GCC_PREPROCESSOR_DEFINITIONS' => 'XZ_FRAMEWORK=1'
-  }
-  
-  s.public_header_files  = "Sources/ObjC/Code/XZToast/*.h", 
-                           "Sources/ObjC/Code/XZLog/*.h",
-                           "Sources/ObjC/Code/XZGeometry/*.h",
-                           "Sources/ObjC/Code/XZExtensions/UIApplication/*.h",
-                           "Sources/ObjC/Code/XZExtensions/UIView/*.h",
-                           "Sources/ObjC/Code/XZExtensions/XZShapeView/*.h"
-
-  s.project_header_files = "Sources/ObjC/Code/XZToast/**/Private/**/*.h"
-
-  s.source_files         = "Sources/ObjC/Code/XZToast/**/*.{h,m}",
-                           "Sources/ObjC/Code/XZLog/**/*.{h,m}",
-                           "Sources/ObjC/Code/XZGeometry/**/*.{h,m}",
-                           "Sources/ObjC/Code/XZExtensions/UIApplication/**/*.{h,m}",
-                           "Sources/ObjC/Code/XZExtensions/UIView/**/*.{h,m}",
-                           "Sources/ObjC/Code/XZExtensions/XZShapeView/**/*.{h,m}"
+  s.dependency "XZKit/XZToast"
 
 end
 

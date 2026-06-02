@@ -2,7 +2,7 @@
 //  XZNavigationBar.swift
 //  XZKit
 //
-//  Created by 徐臻 on 2026/2/7.
+//  Created by Xezun on 2026/2/7.
 //
 
 import UIKit

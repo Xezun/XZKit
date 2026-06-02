@@ -74,7 +74,6 @@ import UIKit
         guard let animationContext = XZNavigationAnimationContext(for: self, operation, transitionContext) else {
             return transitionContext.completeTransition(false)
         }
-        #XZLog("[XZNavigationController] 配置转场动画 \(transitionContext) \n\(animationContext)", in: .XZKit)
         
         let options  : UIView.AnimationOptions = [self.isInteractive ? .curveLinear : .curveEaseInOut, .layoutSubviews]
         let delay    : TimeInterval            = 0

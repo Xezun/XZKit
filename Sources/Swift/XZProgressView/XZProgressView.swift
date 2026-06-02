@@ -38,6 +38,7 @@ extension XZProgressView {
 }
 
 /// XZProgressView 用于展示进度的视图。
+@MainActor
 open class XZProgressView: UIView {
     
     open override class var layerClass: AnyClass {
@@ -195,9 +196,11 @@ open class XZProgressView: UIView {
             return
         }
         needsUpdatePath = true
-        RunLoop.main.perform(inModes: [.common]) {
-            self.updatePathIfNeeded()
-        }
+        // 使用 Runloop 会有一个 main actor-isolated 警告
+        // RunLoop.main.perform(inModes: [.common])
+        DispatchQueue.main.async(execute: { [weak self] in
+            self?.updatePathIfNeeded()
+        })
     }
     
     private func updatePathIfNeeded() {
