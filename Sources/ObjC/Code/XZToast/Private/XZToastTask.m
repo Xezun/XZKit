@@ -80,7 +80,8 @@
 - (NSString *)description {
     NSString *position = NSStringFromXZToastPosition(_position);
     NSString *duration = [NSString stringWithFormat:@"%.2f", _duration];
-    return [NSString stringWithFormat:@"<%p: %@, toast: %p, position: %@, duration: %@, isExclusive: %d, isCancelled: %d>", self, self.class, _toast, position, duration, _isExclusive, _isCancelled];
+    NSString *wrapper  = _wrapperView ? [NSString stringWithFormat:@"%p", _wrapperView] : @"nil";
+    return [NSString stringWithFormat:@"<%p: %@, toast: %p, wrapperView: %@, position: %@, duration: %@, isExclusive: %d, isCancelled: %d>", self, self.class, _toast, wrapper, position, duration, _isExclusive, _isCancelled];
 }
 
 @end

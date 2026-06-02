@@ -132,6 +132,7 @@
         _needsUpdateToasts = NO;
         // 执行周期回调
         [self runUpdateCompletion];
+        XZLog(@"[XZToast] 周期结束");
         return;
     }
     
@@ -432,8 +433,11 @@
         }
     }
     
+    // 执行操作回调
+    [self runUpdateCompletion];
+    
     // 向移除的 toast 发送消息
-    for (NSInteger i = 0, j = 0; i < _hideingTasks.count; i++) {
+    for (NSInteger i = 0; i < _hideingTasks.count; i++) {
         XZToastTask * const hideingTask = _hideingTasks[i];
         // 完成周期
         [hideingTask finish];
@@ -446,8 +450,8 @@
         if (!hideingTask.isViewReusable) {
             continue;
         }
-        while (j < _waitingToShowTasks.count) {
-            XZToastTask * const waitingTask = _waitingToShowTasks[j++];
+        // 因为在 finish 回调中，可能会修改 _waitingToShowTasks 集合，所以每次都重新遍历。
+        for (XZToastTask * const waitingTask in _waitingToShowTasks) {
             if (waitingTask.wrapperView) {
                 continue;
             }
@@ -462,8 +466,6 @@
             break;
         }
     }
-    
-    [self runUpdateCompletion];
     
     [self updateToastsIfNeeded];
 }

@@ -25,16 +25,16 @@ NS_ASSUME_NONNULL_BEGIN
 ///
 /// - Parameters:
 ///   - toast: 消息
-///   - duration: 展示时长，值为 0 时，表示不限制时长，一直保持展示，除非调用 `hideToast` 方法，默认 1.0 秒
-///   - position: 展示位置
-///   - exclusive: 是否独占，独占的消息在展示时长结束前，其它 toast 消息会一直处于列队等待状态
-///   - completion: 消息结束显示的回调，如果消息被提前结束，则回调参数为 NO 值
-/// - Returns: 返回值与参数 toast 不是同一对象，当需要隐藏特定 toast 时，需要使用该返回值
+///   - duration: 展示时长，值为 0 时，表示不限制时长，一直保持展示，除非调用 `hideToast` 方法，默认 1.0 秒。
+///   - position: 展示位置，UITabBarController 默认顶部，UINavigationController 默认底部，其它控制器默认中部。
+///   - exclusive: 是否独占，独占的消息在展示时长结束前，其它 toast 消息会一直处于列队等待状态。
+///   - completion: 消息结束显示的回调，如果消息被提前结束，则回调参数为 NO 值。
+/// - Returns: 返回值与参数 toast 不是同一对象，当需要隐藏特定 toast 时，需要使用该返回值。
 - (XZToastTask *)xz_showToast:(XZToast *)toast duration:(NSTimeInterval)duration position:(XZToastPosition)position exclusive:(BOOL)exclusive completion:(nullable XZToastCompletion)completion NS_SWIFT_DISABLE_ASYNC NS_SWIFT_NAME(__showToast(_:duration:position:exclusive:completion:));
 
 /// 隐藏提示消息。
 ///
-/// 由于 toast 可以复用，所以此方法会隐藏所有用同一个`XZToast`对象发起的消息。若要精确隐藏指定消息，需要使用`-showToast:`方法返回的`XZToastTask`对象。
+/// 由于 toast 可以复用，所以此方法会隐藏所有用同一个`XZToast`对象发起的消息。若要精确隐藏指定消息，需要使用`-showToast:`方法返回的`XZToastTask`对象的`-hide:`方法。
 ///
 /// - Parameters:
 ///   - toast: 消息对象，nil 则表示隐藏所有

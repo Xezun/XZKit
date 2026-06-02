@@ -55,9 +55,11 @@ NSTimeInterval const XZToastAnimationDuration = 0.35;
 }
 
 - (NSString *)description {
+    NSString *view  = _view ? [NSString stringWithFormat:@"%p", _view] : @"nil";
+    NSString *text  = [self.text stringByReplacingOccurrencesOfString:@"\n" withString:@"\\n"];
     NSString *image = _image ? [NSString stringWithFormat:@"%p", _image] : @"nil";
     NSString *style = NSStringFromXZToastStyle(_style);
-    return [NSString stringWithFormat:@"<%@: %p, style: %@, text: %@, image: %@, progress: %.2f>", self.class, self, style, self.text, image, self.progress];
+    return [NSString stringWithFormat:@"<%@: %p, style: %@, view: %@, text: %@, image: %@, progress: %.2f>", self.class, self, style, view, text, image, self.progress];
 }
 
 #pragma mark - 便利初始化方法
@@ -248,7 +250,7 @@ static UIImage * _Nullable XZToastStyleImage(XZToastStyle style);
 
 + (UIFont *)font {
     if (!_font) {
-        _font = [UIFont monospacedDigitSystemFontOfSize:17.0 weight:(UIFontWeightRegular)];
+        _font = [UIFont monospacedSystemFontOfSize:17.0 weight:(UIFontWeightRegular)];
     }
     return _font;
 }
