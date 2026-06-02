@@ -8,14 +8,16 @@
 #import "XZToastProgressView.h"
 #import "XZToast.h"
 #import "XZGeometry.h"
+#import "XZShapeView.h"
+#import "UIView+XZKit.h"
 
 #define kSize       ((CGSize){37.0, 37.0})
 #define kTrackWidth 4.0
 #define kShapeWidth 3.0
 
 @implementation XZToastProgressView {
-    CAShapeLayer *_trackLayer;
-    CAShapeLayer *_shapeLayer;
+    XZShapeView *_trackView;
+    XZShapeView *_shapeView;
 }
 
 - (instancetype)init {
@@ -25,49 +27,36 @@
 - (instancetype)initWithFrame:(CGRect)frame {
     self = [super initWithFrame:frame];
     if (self) {
-        CALayer * const layer = self.layer;
-        
         _color      = XZToast.tintColor;
         _trackColor = XZToast.color;
         
         CGRect         const frame = CGRectAdjustSizeWithMode(self.bounds, kSize, UIViewContentModeCenter);
         UIBezierPath * const path  = [UIBezierPath bezierPathWithArcCenter:CGPointMake(18.5, 18.5) radius:16.5 startAngle:-M_PI_2 endAngle:M_PI * 1.5 clockwise:YES];
         
-        _trackLayer = [[CAShapeLayer alloc] init];
-        _trackLayer.frame = frame;
-        _trackLayer.lineWidth = (kTrackWidth + 1.0);
-        _trackLayer.strokeColor = _trackColor.CGColor;
-        _trackLayer.fillColor   = UIColor.clearColor.CGColor;
-        _trackLayer.strokeStart = 0;
-        _trackLayer.strokeEnd   = 1.0;
-        _trackLayer.path = path.CGPath;
-        [layer addSublayer:_trackLayer];
+        _trackView = [[XZShapeView alloc] initWithFrame:frame];
+        _trackView.autoresizingMask  = UIViewAutoresizingFlexibleMargin;
+        _trackView.lineWidth         = (kTrackWidth + 1.0);
+        _trackView.strokeColor       = _trackColor.CGColor;
+        _trackView.fillColor         = UIColor.clearColor.CGColor;
+        _trackView.layer.strokeStart = 0;
+        _trackView.layer.strokeEnd   = 1.0;
+        _trackView.layer.path        = path.CGPath;
+        [self addSubview:_trackView];
         
-        _shapeLayer = [[CAShapeLayer alloc] init];
-        _shapeLayer.frame = frame;
-        _shapeLayer.lineWidth = kShapeWidth;
-        _shapeLayer.lineCap = kCALineCapRound;
-        _shapeLayer.strokeColor = _color.CGColor;
-        _shapeLayer.fillColor   = UIColor.clearColor.CGColor;
-        _shapeLayer.strokeStart = 0;
-        _shapeLayer.strokeEnd   = 0;
-        _shapeLayer.repeatCount = FLT_MAX;
-        _shapeLayer.autoreverses = YES;
-        _shapeLayer.path = _trackLayer.path;
-        [layer addSublayer:_shapeLayer];
+        _shapeView = [[XZShapeView alloc] initWithFrame:frame];
+        _shapeView.autoresizingMask     = UIViewAutoresizingFlexibleMargin;
+        _shapeView.lineWidth            = kShapeWidth;
+        _shapeView.layer.lineCap        = kCALineCapRound;
+        _shapeView.strokeColor          = _color.CGColor;
+        _shapeView.fillColor            = UIColor.clearColor.CGColor;
+        _shapeView.layer.strokeStart    = 0;
+        _shapeView.layer.strokeEnd      = 0;
+        _shapeView.layer.repeatCount    = FLT_MAX;
+        _shapeView.layer.autoreverses   = YES;
+        _shapeView.layer.path           = path.CGPath;
+        [self addSubview:_shapeView];
     }
     return self;
-}
-
-- (void)layoutSubviews {
-    [super layoutSubviews];
-    
-    CGRect const bounds = self.bounds;
-    CGRect const frame  = CGRectAdjustSizeWithMode(bounds, kSize, UIViewContentModeCenter);
-    [UIView performWithoutAnimation:^{
-        _trackLayer.frame = frame;
-        _shapeLayer.frame = frame;
-    }];
 }
 
 - (CGSize)sizeThatFits:(CGSize)size {
@@ -78,29 +67,29 @@
     [super traitCollectionDidChange:previousTraitCollection];
     
     UITraitCollection * const traitCollection = self.traitCollection;
-    _trackLayer.strokeColor = [_trackColor resolvedColorWithTraitCollection:traitCollection].CGColor;
-    _shapeLayer.strokeColor = [_color resolvedColorWithTraitCollection:traitCollection].CGColor;
+    _trackView.strokeColor = [_trackColor resolvedColorWithTraitCollection:traitCollection].CGColor;
+    _shapeView.strokeColor = [_color resolvedColorWithTraitCollection:traitCollection].CGColor;
 }
 
 - (CGFloat)progress {
-    return _shapeLayer.strokeEnd;
+    return _shapeView.layer.strokeEnd;
 }
 
 - (void)setProgress:(CGFloat)progress {
-    _shapeLayer.strokeEnd = progress;
+    _shapeView.layer.strokeEnd = progress;
 }
 
 - (void)setColor:(UIColor *)color {
     if (_color != color) {
         _color = color ?: UIColor.systemBlueColor;
-        _shapeLayer.strokeColor = [_color resolvedColorWithTraitCollection:self.traitCollection].CGColor;
+        _shapeView.strokeColor = [_color resolvedColorWithTraitCollection:self.traitCollection].CGColor;
     }
 }
 
 - (void)setTrackColor:(UIColor *)trackColor {
     if (_trackColor != trackColor) {
         _trackColor = trackColor ?: UIColor.systemGray5Color;
-        _trackLayer.strokeColor = [_trackColor resolvedColorWithTraitCollection:self.traitCollection].CGColor;
+        _trackView.strokeColor = [_trackColor resolvedColorWithTraitCollection:self.traitCollection].CGColor;
     }
 }
 

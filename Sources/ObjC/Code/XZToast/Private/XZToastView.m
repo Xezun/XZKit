@@ -312,19 +312,22 @@ typedef NS_ENUM(NSUInteger, XZToastViewIconType) {
     if (iconView) {
         // 新的 icon 基于当前 bounds 进行布局。
         CGSize const size = [iconView sizeThatFits:bounds.size];
-        CGRect const frame = [self iconRectForSize:size forBounds:bounds];
-        iconView.frame = frame;
         
         if (_hasIcon) {
-            iconView.frame = frame;
+            // icon 前后都有：在现有位置直接显示。
+            iconView.frame = CGRectAdjustSizeWithMode(_iconView.frame, size, UIViewContentModeCenter);
         } else {
-            // 从无 icon 到有 icon 展示从小到大的缩放过程。
+            CGRect const frame = [self iconRectForSize:size forBounds:bounds];
+            iconView.frame = frame;
+            // icon 从无到有：展示从小到大的缩放效果。
             // 使用 transform 处理缩放，因为 frame 进行缩放的效果不理想，详见 layoutSubvies 方法中的备注。
             CGFloat const dx = CGRectGetMidX(bounds) - CGRectGetMidX(frame);
             CGFloat const dy = kPaddingT - CGRectGetMidY(frame);
             iconView.transform = CGAffineTransformScale(CGAffineTransformMakeTranslation(dx, dy), 0.01, 0.01);
         }
         
+        // 如果 icon 发生了改变，移除旧的
+        // 不使用 transition 动画，是因为动画效果会添加到整个 XZToastWrapperView 上，原因未知。
         if (_iconView != iconView) {
             [_iconView removeFromSuperview];
             _iconView = iconView;
