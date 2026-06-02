@@ -112,11 +112,11 @@ Pod::Spec.new do |s|
   
   # 自定义组件
   s.defineSubspec "XZPageView",                 "objc",  true,  ["XZDefines", "XZGeometry", "XZExtensions"];
-  s.defineSubspec "XZProgressView",             "swift", false, [];
+  s.defineSubspec "XZProgressView",             "swift", false, ["XZExtensions"];
   s.defineSubspec "XZPageControl",              "objc",  false, ["XZExtensions"];
   s.defineSubspec "XZSegmentedControl",         "objc",  true,  ["XZDefines"];
   s.defineSubspec "XZTextImageView",            "swift", false, ["XZGeometry"];
-  s.defineSubspec "XZNavigationController",     "swift", false, ["XZDefines"];
+  s.defineSubspec "XZNavigationController",     "swift", false, ["XZDefines", "XZLog"];
   s.defineSubspec "XZCollectionViewFlowLayout", "swift", false, [];
   
   # 工具类

@@ -650,7 +650,10 @@
         showingTask->_frame.size     = [wrapperView sizeThatFits:CGSizeMake(bounds.size.width, 0)];
         showingTask->_frame.origin.x = (bounds.size.width - showingTask->_frame.size.width) * 0.5 + bounds.origin.x;
     }
-    [self layoutToastsInBounds:bounds offset:offset];
+    
+    [UIView animateWithDuration:XZToastAnimationDuration delay:0 options:UIViewAnimationOptionLayoutSubviews animations:^{
+        [self layoutToastsInBounds:bounds offset:offset];
+    } completion:nil];
     
     _needsLayoutToasts = NO;
 }

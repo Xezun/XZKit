@@ -25,6 +25,7 @@ class Example13ViewController: UITableViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
+        
         toastBackgroundColorPreviewr.layer.cornerRadius = 12.0;
         toastBackgroundColorPreviewr.layer.borderWidth = 1.0;
         toastBackgroundColorPreviewr.layer.borderColor = UIColor.black.cgColor;
@@ -85,30 +86,48 @@ class Example13ViewController: UITableViewController {
                 showMessage("正在处理中", style: .loading)
                 
             case 12:
-                showToast(.message("测试即将开始"), duration: 0.5, exclusive: true)
-                showToast(.loading("普通加载"), duration: 0.5, exclusive: true)
-                showToast(.success("添加书签成功"), duration: 0.5, exclusive: true)
-                showToast(.failure("删除文件夹失败"), duration: 0.5, exclusive: true)
-                showToast(.waiting("请等待倒计时结束"), duration: 0.5, exclusive: true)
-                showToast(.warning("无权访问"), duration: 0.5, exclusive: true)
-                showToast(.message("测试加载进度"), duration: 0.5, exclusive: true) { _ in
-                    let loading = self.showToast(.loading("开始下载"), duration: 0.0, exclusive: true)
-                    DispatchQueue.global().async {
-                        Thread.sleep(forTimeInterval: 1.0)
-                        for i in 1 ... 100 {
-                            Thread.sleep(forTimeInterval: 0.05)
-                            DispatchQueue.main.sync {
-                                let toast = loading.toast
-                                toast.progress = CGFloat(i) / 100.0;
-                                toast.text = String(format: "已下载 %.2f%%", CGFloat(i));
-                            }
-                        }
-                        Thread.sleep(forTimeInterval: 1.0)
-                        DispatchQueue.main.async {
-                            loading.hide()
-                            self.showToast(.success("下载成功"));
+                showToast(.loading("请稍后"), duration: 1.3, exclusive: true)
+                showToast(.message("测试即将开始"), duration: 1.3, exclusive: true)
+                showToast(.success("添加成功"), duration: 1.3, exclusive: true)
+                showToast(.waiting("请等待倒计时结束"), duration: 1.3, exclusive: true)
+                showToast(.warning("无权访问"), duration: 1.3, exclusive: true)
+                showToast(.failure("网络不给力，请稍后再试"), duration: 1.3, exclusive: true)
+                showToast(.message("测试加载进度"), duration: 1.3, exclusive: true)
+                let loading = self.showToast(.loading("开始下载"), duration: 0.0, exclusive: true)
+                DispatchQueue.global().async {
+                    Thread.sleep(forTimeInterval: 15.0)
+                    for i in 1 ... 100 {
+                        Thread.sleep(forTimeInterval: 0.03)
+                        DispatchQueue.main.sync {
+                            let toast = loading.toast
+                            toast.progress = CGFloat(i) / 100.0;
+                            toast.text = String(format: "已下载 %.2f%%", CGFloat(i));
                         }
                     }
+                    Thread.sleep(forTimeInterval: 1.0)
+                    DispatchQueue.main.async {
+                        loading.hide()
+                        self.showToast(.success("下载成功"));
+                    }
+                }
+                break
+                
+            case 13:
+                let button = UIButton.init(type: .system)
+                button.backgroundColor = UIColor.orange
+                button.layer.cornerRadius = 8.0;
+                button.setTitleColor(.white, for: .normal)
+                button.setAttributedTitle(.init(string: "点击这里", attributes: [
+                    .font: UIFont.systemFont(ofSize: 17.0, weight: .bold)
+                ]), for: .normal)
+                button.contentEdgeInsets = .init(top: 20, left: 20, bottom: 20, right: 20)
+                button.addTarget(self, action: #selector(customToastViewAction(_:)), for: .touchUpInside)
+                self.showToast(.init(style: .message, view: button), duration: 0, position: .bottom)
+                break
+                
+            case 14:
+                self.showToast(.message("请打开日志查看消息是否复用")) { _ in
+                    self.showToast(.message("回调中的消息"))
                 }
                 break
                 
@@ -153,6 +172,7 @@ class Example13ViewController: UITableViewController {
             let end = timestamp()
             let delta = String.init(format: "%.2f", end - start);
             let date = Date().formatted(using: .msecDateTime)
+            let message = message.replacingOccurrences(of: "\n", with: "\\n")
             #XZLog("消息：\(index). \(message) \n状态：\(finished) \n定时：\(duration) \n耗时：\(delta) \n时间：\(date)")
         };
         self.index = index + 1;
@@ -247,6 +267,10 @@ class Example13ViewController: UITableViewController {
     
     @IBAction func toastControllerSwitchValueChanged(_ sender: UISwitch) {
         navigationController?.showToast(sender.isOn ? "基于“当前控制器”进行展示" : "基于“导航控制器”进行展示")
+    }
+    
+    @objc func customToastViewAction(_ sender: Any) {
+        self.showToast(.message("您点击了按钮"))
     }
     
     override var toastManager: XZToastManager {
