@@ -2,7 +2,7 @@
 //  NSDate.swift
 //  XZKit
 //
-//  Created by 徐臻 on 2025/6/23.
+//  Created by Xezun on 2025/6/23.
 //
 
 import Foundation

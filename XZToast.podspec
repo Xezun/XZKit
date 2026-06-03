@@ -1,6 +1,6 @@
 Pod::Spec.new do |s|
   s.name             = 'XZToast'
-  s.version          = '2.0.0'
+  s.version          = '3.0.0'
   s.summary          = '一种提示型消息展示组件'
   s.description      = <<-DESC
   按列队显示，支持上中下显示位置，支持自定义视图，支持进度的提示型消息展示组件。

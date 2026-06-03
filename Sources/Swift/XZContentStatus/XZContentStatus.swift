@@ -2,100 +2,286 @@
 //  XZContentStatus.swift
 //  XZKit
 //
-//  Created by Xezun on 2018/1/15.
-//  Copyright © 2018年 Xezun Individual. All rights reserved.
+//  Created by Xezun on 2017/7/21.
+//  Copyright © 2017年 Xezun Individual. All rights reserved.
 //
 
 import UIKit
 
 extension XZContentStatus {
 
-    /// 默认状态，没有 contentStatusView 的状态。
-    /// - Note: 特殊的，此状态表示视图的默认状态。
-    /// - Note: 一般情况下，请将此状态作为默认状态，不设置状态视图。
-    public static let `default` = XZContentStatus(rawValue: "default")
-
-    /// 默认的内容状态值，表示对象或视图控件的内容为空。
-    public static let empty     = XZContentStatus(rawValue: "empty")
-
-    /// 默认的内容状态值，表示对象或视图控件正在加载内容。
-    public static let loading   = XZContentStatus(rawValue: "loading")
-
-    /// 默认的内容状态值，表示对象或视图控件加载内容失败。
-    public static let error     = XZContentStatus(rawValue: "error")
-
+    /// 页面是空的。
+    public static let empty       = XZContentStatus.init(rawValue: "empty")
+    /// 服务器繁忙。
+    public static let error       = XZContentStatus.init(rawValue: "error")
+    /// 页面加载中。
+    public static let loading     = XZContentStatus.init(rawValue: "loading")
+    /// 网络不给力。
+    public static let unreachable = XZContentStatus.init(rawValue: "unreachable")
+    /// 服务不可用。
+    public static let unavailable = XZContentStatus.init(rawValue: "unavailable")
+    
+    public static func empty(text: String?, image: UIImage?) -> XZContentStatus {
+        return XZContentStatus(.empty, text: text, image: image)
+    }
+    
+    public static func empty(text: String?) -> XZContentStatus {
+        return XZContentStatus(.empty, text: text)
+    }
+    
+    public static func empty(text: String?, image: UIImage?, isInteractive: Bool) -> XZContentStatus {
+        return XZContentStatus(.empty, text: text, image: image, isInteractive: isInteractive)
+    }
+    
+    public static func empty(text: String?, isInteractive: Bool) -> XZContentStatus {
+        return XZContentStatus(.empty, text: text, isInteractive: isInteractive)
+    }
+    
+    public static func error(text: String?, image: UIImage?) -> XZContentStatus {
+        return XZContentStatus(.error, text: text, image: image)
+    }
+    
+    public static func error(text: String?) -> XZContentStatus {
+        return XZContentStatus(.error, text: text)
+    }
+    
+    public static func error(text: String?, image: UIImage?, isInteractive: Bool) -> XZContentStatus {
+        return XZContentStatus(.error, text: text, image: image, isInteractive: isInteractive)
+    }
+    
+    public static func error(text: String?, isInteractive: Bool) -> XZContentStatus {
+        return XZContentStatus(.error, text: text, isInteractive: isInteractive)
+    }
+    
+    public static func loading(text: String?, image: UIImage?) -> XZContentStatus {
+        return XZContentStatus(.loading, text: text, image: image)
+    }
+    
+    public static func loading(text: String?) -> XZContentStatus {
+        return XZContentStatus(.loading, text: text)
+    }
+    
+    public static func loading(text: String?, image: UIImage?, isInteractive: Bool) -> XZContentStatus {
+        return XZContentStatus(.loading, text: text, image: image, isInteractive: isInteractive)
+    }
+    
+    public static func loading(text: String?, isInteractive: Bool) -> XZContentStatus {
+        return XZContentStatus(.loading, text: text, isInteractive: isInteractive)
+    }
+    
+    public static func unreachable(text: String?, image: UIImage?) -> XZContentStatus {
+        return XZContentStatus(.unreachable, text: text, image: image)
+    }
+    
+    public static func unreachable(text: String?) -> XZContentStatus {
+        return XZContentStatus(.unreachable, text: text)
+    }
+    
+    public static func unreachable(text: String?, image: UIImage?, isInteractive: Bool) -> XZContentStatus {
+        return XZContentStatus(.unreachable, text: text, image: image, isInteractive: isInteractive)
+    }
+    
+    public static func unreachable(text: String?, isInteractive: Bool) -> XZContentStatus {
+        return XZContentStatus(.unreachable, text: text, isInteractive: isInteractive)
+    }
+    
+    public static func unavailable(text: String?, image: UIImage?) -> XZContentStatus {
+        return XZContentStatus(.unavailable, text: text, image: image)
+    }
+    
+    public static func unavailable(text: String?) -> XZContentStatus {
+        return XZContentStatus(.unavailable, text: text)
+    }
+    
+    public static func unavailable(text: String?, image: UIImage?, isInteractive: Bool) -> XZContentStatus {
+        return XZContentStatus(.unavailable, text: text, image: image, isInteractive: isInteractive)
+    }
+    
+    public static func unavailable(text: String?, isInteractive: Bool) -> XZContentStatus {
+        return XZContentStatus(.unavailable, text: text, isInteractive: isInteractive)
+    }
+    
+    public static func view(_ contentStatus: XZContentStatus, view: UIView) -> XZContentStatus {
+        let configuration = XZContentStatus.Configuration.init(view: view)
+        return XZContentStatus(rawValue: contentStatus.rawValue, configuration: configuration)
+    }
+    
+    public static func view(_ contentStatus: XZContentStatus, view: UIView, isInteractive: Bool) -> XZContentStatus {
+        let configuration = XZContentStatus.Configuration.init(view: view)
+        configuration.isInteractive = isInteractive
+        return XZContentStatus(rawValue: contentStatus.rawValue, configuration: configuration)
+    }
+    
 }
 
 /// 描述页面（视图或视图控制器）内容的状态的文本类型结构体。
 /// 
 /// - 判断内容状态是否相同唯一依据为 rawValue 属性。
-public struct XZContentStatus: RawRepresentable, CustomStringConvertible, Hashable, Equatable, Sendable {
-
+/// - 一般情况下，页面状态属于一次性视图，所以仅支持配置全局样式。
+@MainActor public struct XZContentStatus: @MainActor RawRepresentable, Equatable {
+    
     public typealias RawValue = String
-
-    /// 标识内容状态的文本。
+    
+    /// 标识内容状态的值，判断状态是否相同的标识。
     public let rawValue: String
-
-    /// 构造一个内容状态结构体。
-    ///
-    /// - Parameters:
-    ///   - rawValue: 内容状态的原始值。
-    public init(rawValue: String) {
+    
+    /// 是否支持点击事件。
+    public var isInteractive: Bool {
+        return configuration.isInteractive
+    }
+    
+    /// 当前配置的状态文案。可能并非当前显示的文案。
+    public var text: String? {
+        return configuration.text
+    }
+    
+    /// 当前配置的状态图片。可能并非当前显示的图片。
+    public var image: UIImage? {
+        return configuration.image
+    }
+    
+    /// 状态样式的配置。
+    public let configuration: XZContentStatus.Configuration
+    
+    /// 创建内容状态值。
+    public init(rawValue: String, configuration: XZContentStatus.Configuration) {
         self.rawValue = rawValue
-    }
-
-    /// 描述当前内容状态的文本信息。
-    public var description: String {
-        return rawValue
+        self.configuration = configuration
     }
     
-    /// 返回内容状态的原始值。
-    public var hashValue: Int {
-        return rawValue.hashValue
+    /// 创建内容状态值。
+    public init(rawValue: String, view: UIView) {
+        self.rawValue = rawValue
+        self.configuration = .init(view: view)
     }
     
-    /// 比较两个内容状态是否相同，根据内容状态的原始值 rawValue 来判断。
-    ///
-    /// - Parameters:
-    ///   - lhs: 待比较的状态。
-    ///   - rhs: 被比较的状态。
-    /// - Returns: 是否相同。
-    public static func == (lhs: XZContentStatus, rhs: XZContentStatus) -> Bool {
-        return lhs.rawValue == rhs.rawValue
+    /// 创建内容状态值。
+    public init(rawValue: String) {
+        let configuration = XZContentStatus.Configuration.init(view: nil)
+        configuration.setText(for: rawValue)
+        configuration.setImage(for: rawValue)
+        self.init(rawValue: rawValue, configuration: configuration)
+    }
+    
+    /// 创建内容状态值。
+    public init(rawValue: String, isInteractive: Bool) {
+        let configuration = XZContentStatus.Configuration.init(view: nil)
+        configuration.setText(for: rawValue)
+        configuration.setImage(for: rawValue)
+        configuration.isInteractive = isInteractive
+        self.init(rawValue: rawValue, configuration: configuration)
+    }
+    
+    /// 创建内容状态值。
+    public init(rawValue: String, text: String?) {
+        let configuration = XZContentStatus.Configuration.init(view: nil)
+        configuration.text = text
+        configuration.setImage(for: rawValue)
+        self.init(rawValue: rawValue, configuration: configuration)
+    }
+    
+    /// 创建内容状态值。
+    public init(rawValue: String, text: String?, isInteractive: Bool) {
+        let configuration = XZContentStatus.Configuration.init(view: nil)
+        configuration.text = text
+        configuration.setImage(for: rawValue)
+        configuration.isInteractive = isInteractive
+        self.init(rawValue: rawValue, configuration: configuration)
+    }
+    
+    /// 创建内容状态值。
+    public init(rawValue: String, image: UIImage?) {
+        let configuration = XZContentStatus.Configuration.init(view: nil)
+        configuration.setText(for: rawValue)
+        configuration.image = image
+        self.init(rawValue: rawValue, configuration: configuration)
+    }
+    
+    /// 创建内容状态值。
+    public init(rawValue: String, image: UIImage?, isInteractive: Bool) {
+        let configuration = XZContentStatus.Configuration.init(view: nil)
+        configuration.setText(for: rawValue)
+        configuration.image = image
+        configuration.isInteractive = isInteractive
+        self.init(rawValue: rawValue, configuration: configuration)
+    }
+    
+    /// 创建内容状态值。
+    public init(rawValue: String, text: String?, image: UIImage?) {
+        let configuration = XZContentStatus.Configuration.init(view: nil)
+        configuration.text  = text
+        configuration.image = image
+        self.init(rawValue: rawValue, configuration: configuration)
+    }
+    
+    /// 创建内容状态值。
+    public init(rawValue: String, text: String?, image: UIImage?, isInteractive: Bool) {
+        let configuration = XZContentStatus.Configuration.init(view: nil)
+        configuration.text  = text
+        configuration.image = image
+        configuration.isInteractive = isInteractive
+        self.init(rawValue: rawValue, configuration: configuration)
+    }
+    
+    /// 复制内容状态值。
+    public init(_ contentStatus: XZContentStatus, isInteractive: Bool = true) {
+        let configuration = Configuration.init(contentStatus.configuration)
+        self.init(rawValue: contentStatus.rawValue, configuration: configuration)
+    }
+    
+    /// 复制内容状态值。
+    public init(_ contentStatus: XZContentStatus, text: String?) {
+        let configuration = Configuration.init(contentStatus.configuration, text: text)
+        self.init(rawValue: contentStatus.rawValue, configuration: configuration)
+    }
+    
+    /// 复制内容状态值。
+    public init(_ contentStatus: XZContentStatus, text: String?, isInteractive: Bool) {
+        let configuration = Configuration.init(contentStatus.configuration, text: text, isInteractive: isInteractive)
+        self.init(rawValue: contentStatus.rawValue, configuration: configuration)
+    }
+    
+    /// 复制已有状态值。
+    public init(_ contentStatus: XZContentStatus, text: String?, image: UIImage?) {
+        let configuration = Configuration.init(contentStatus.configuration, text: text, image: image)
+        self.init(rawValue: contentStatus.rawValue, configuration: configuration)
+    }
+    
+    /// 复制内容状态值。
+    public init(_ contentStatus: XZContentStatus, text: String?, image: UIImage?, isInteractive: Bool) {
+        let configuration = Configuration.init(contentStatus.configuration, text: text, image: image, isInteractive: isInteractive)
+        self.init(rawValue: contentStatus.rawValue, configuration: configuration)
+    }
+    
+    /// 复制内容状态值。
+    public init(_ contentStatus: XZContentStatus, image: UIImage?) {
+        let configuration = Configuration.init(contentStatus.configuration, image: image)
+        self.init(rawValue: contentStatus.rawValue, configuration: configuration)
+    }
+    
+    /// 复制内容状态值。
+    public init(_ contentStatus: XZContentStatus, image: UIImage?, isInteractive: Bool) {
+        let configuration = Configuration.init(contentStatus.configuration, image: image, isInteractive: isInteractive)
+        self.init(rawValue: contentStatus.rawValue, configuration: configuration)
     }
     
 }
 
-extension XZContentStatus: ReferenceConvertible {
+extension XZContentStatus {
     
-    public typealias ReferenceType = NSString
-    
-    public typealias _ObjectiveCType = NSString
-    
-    public func _bridgeToObjectiveC() -> NSString {
-        return rawValue as NSString
-    }
-    
-    public static func _forceBridgeFromObjectiveC(_ source: NSString, result: inout XZContentStatus?) {
-        result = XZContentStatus.init(rawValue: source as String)
-    }
-    
-    public static func _conditionallyBridgeFromObjectiveC(_ source: NSString, result: inout XZContentStatus?) -> Bool {
-        _forceBridgeFromObjectiveC(source, result: &result)
-        return true
-    }
-    
-    public static func _unconditionallyBridgeFromObjectiveC(_ source: NSString?) -> XZContentStatus {
-        if let rawValue = source {
-            return XZContentStatus.init(rawValue: rawValue as String)
-        }
-        return XZContentStatus.default
-    }
-    
-    public var debugDescription: String {
-        return description
-    }
+    /// 默认状态视图。
+    public static var viewClass: any XZContentStatusView.Type = XZContentStatus.RepresentationView.self
+    /// 背景色
+    public static var backgroundColor: UIColor = .systemGray6
+    /// 状态文案文本颜色。
+    public static var textColor: UIColor  = .systemGray
+    /// 状态文案字体。
+    public static var font: UIFont   = .systemFont(ofSize: UIFont.labelFontSize, weight: .regular)
     
 }
+
+
+
+
 
 

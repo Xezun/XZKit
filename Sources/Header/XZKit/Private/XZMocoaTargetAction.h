@@ -1,1 +1,1 @@
-../../../ObjC/XZMocoa/View/ViewModel/Private/XZMocoaTargetAction.h
+../../../ObjC/XZMocoa/XZMocoaView/ViewModel/Private/XZMocoaTargetAction.h

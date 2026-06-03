@@ -162,7 +162,7 @@ extension XZMocoaKeyMacro: PeerMacro {
                     return ["private var _\(raw: propertyName) : \(raw: propertyType) = \(raw: initializer)"]
                 }
                 
-                return ["private var _\(raw: propertyName) : \(raw: propertyType)?"]
+                return ["private var _\(raw: propertyName) : \(raw: propertyType)"]
             }
             
             guard let initializer = propertyDecl.bindings.first?.initializer?.value.trimmedDescription else {

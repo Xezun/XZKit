@@ -1,1 +1,1 @@
-../../../ObjC/XZMocoa/GridView/TableView/Model/XZMocoaTableCellModel.h
+../../../ObjC/XZMocoa/XZMocoaTableView/Model/XZMocoaTableCellModel.h

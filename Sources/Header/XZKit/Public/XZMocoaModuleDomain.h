@@ -1,1 +1,1 @@
-../../../ObjC/XZMocoa/Defines/XZMocoaModuleDomain.h
+../../../ObjC/XZMocoa/XZMocoaDefines/XZMocoaModuleDomain.h

@@ -21,8 +21,6 @@
 
 @implementation Example0320ViewController
 
-@dynamic viewModel;
-
 + (void)load {
     XZMocoa(@"https://mocoa.xezun.com/examples/20").viewNibClass = self;
 }

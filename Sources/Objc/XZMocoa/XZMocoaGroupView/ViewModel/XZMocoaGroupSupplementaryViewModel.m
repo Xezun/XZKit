@@ -1,0 +1,21 @@
+//
+//  XZMocoaGroupSupplementaryViewModel.m
+//  XZMocoa
+//
+//  Created by Xezun on 2023/8/9.
+//
+
+#import "XZMocoaGroupSupplementaryViewModel.h"
+
+@implementation XZMocoaGroupSupplementaryViewModel
+
+- (instancetype)initWithModel:(id<NSObject>)model {
+    self = [super initWithModel:model];
+    if (self) {
+        _frame      = CGRectZero;
+        _identifier = @"";
+    }
+    return self;
+}
+
+@end
