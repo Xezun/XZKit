@@ -1,0 +1,16 @@
+//
+//  Example21TableViewHeaderView.h
+//  Example
+//
+//  Created by Xezun on 2025/1/31.
+//
+
+@import XZKit;
+
+NS_ASSUME_NONNULL_BEGIN
+
+@interface Example21TableViewHeaderView : UITableViewHeaderFooterView <XZMocoaTableHeaderFooterView>
+
+@end
+
+NS_ASSUME_NONNULL_END

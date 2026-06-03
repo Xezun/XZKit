@@ -1,4 +1,4 @@
-// swift-tools-version: 6.0
+// swift-tools-version: 5.9
 // The swift-tools-version declares the minimum version of Swift required to build this package.
 
 import PackageDescription
@@ -6,9 +6,13 @@ import CompilerPluginSupport
 
 let package = Package(
     name: "XZKit",
-    platforms: [.iOS(.v13), .macOS(.v15)],
+    platforms: [.iOS(.v13), .macOS(.v13)],
     products: [
-        .library(name: "XZKit", targets: ["XZKit"])
+        .library(name: "XZKit", targets: ["XZKit"]),
+        .executable(
+            name: "Demo",
+            targets: ["Demo"]
+        ),
     ],
     dependencies: [
         .package(url: "https://github.com/swiftlang/swift-syntax.git", from: "600.0.0-latest"),
@@ -16,18 +20,18 @@ let package = Package(
     targets: [
         .target(
             name: "XZKit",
-            dependencies: ["_XZKitObjC", "XZKitMacros"],
+            dependencies: ["XZKitObjC", "XZKitMacros"],
             path: "Sources",
-            sources: ["Code/Swift"],
+            sources: ["Swift"],
             swiftSettings: [.define("XZ_FRAMEWORK")]
         ),
         .target(
-            name: "_XZKitObjC",
+            name: "XZKitObjC",
             path: "Sources",
-            sources: ["Code/ObjC"],
-            publicHeadersPath: "Headers/Public/XZKit",
+            sources: ["ObjC"],
+            publicHeadersPath: "Header/XZKit/Public",
             cSettings: [
-                .headerSearchPath("Headers/Private/XZKit")
+                .headerSearchPath("Header/XZKit/Private")
             ],
             cxxSettings: [.define("XZ_FRAMEWORK")]
         ),
@@ -37,8 +41,20 @@ let package = Package(
                 .product(name: "SwiftSyntaxMacros", package: "swift-syntax"),
                 .product(name: "SwiftCompilerPlugin", package: "swift-syntax")
             ],
-            path: "Sources",
-            sources: ["Code/Macro"]
-        )
+            path: "Sources/Macro"
+        ),
+        .testTarget(
+            name: "MacroTests",
+            dependencies: [
+                "XZKitMacros",
+                .product(name: "SwiftSyntaxMacrosTestSupport", package: "swift-syntax"),
+            ],
+            path: "Tests"
+        ),
+        .executableTarget(
+            name: "Demo",
+            dependencies: ["XZKit"],
+            path: "Projects/Demo"
+        ),
     ]
 )

@@ -1,0 +1,1 @@
+../../../ObjC/XZExtensions/NSString/NSString+XZExtendedEncoding.h

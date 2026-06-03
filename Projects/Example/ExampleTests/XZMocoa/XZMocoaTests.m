@@ -2,7 +2,7 @@
 //  XZMocoaTests.m
 //  ExampleTests
 //
-//  Created by 徐臻 on 2025/5/29.
+//  Created by Xezun on 2025/5/29.
 //
 
 #import <XCTest/XCTest.h>
@@ -364,33 +364,33 @@ static void barFunction(void) { }
     [viewModel ready];
     NSLog(@"[viewModel ready]");
     
-    [viewModel model:model didUpdateValuesForKeys:[NSSet setWithObjects:@"name", nil]];
-    [viewModel model:model didUpdateValuesForKeys:[NSSet setWithObjects:@"age", nil]];
-    [viewModel model:model didUpdateValuesForKeys:[NSSet setWithObjects:@"from", nil]];
-    [viewModel model:model didUpdateValuesForKeys:[NSSet setWithObjects:@"to", nil]];
-    [viewModel model:model didUpdateValuesForKeys:[NSSet setWithObjects:@"rect", nil]];
-    [viewModel model:model didUpdateValuesForKeys:[NSSet setWithObjects:@"name", @"age", nil]];
-    [viewModel model:model didUpdateValuesForKeys:[NSSet setWithObjects:@"name", @"from", nil]];
-    [viewModel model:model didUpdateValuesForKeys:[NSSet setWithObjects:@"name", @"to", nil]];
-    [viewModel model:model didUpdateValuesForKeys:[NSSet setWithObjects:@"age", @"from", nil]];
-    [viewModel model:model didUpdateValuesForKeys:[NSSet setWithObjects:@"age", @"to", nil]];
-    [viewModel model:model didUpdateValuesForKeys:[NSSet setWithObjects:@"from", @"to", nil]];
-    [viewModel model:model didUpdateValuesForKeys:[NSSet setWithObjects:@"name", @"age", @"rect", nil]];
-    [viewModel model:model didUpdateValuesForKeys:[NSSet setWithObjects:@"name", @"from", @"rect", nil]];
-    [viewModel model:model didUpdateValuesForKeys:[NSSet setWithObjects:@"name", @"to", @"rect", nil]];
-    [viewModel model:model didUpdateValuesForKeys:[NSSet setWithObjects:@"age", @"from", @"rect", nil]];
-    [viewModel model:model didUpdateValuesForKeys:[NSSet setWithObjects:@"age", @"to", @"rect", nil]];
-    [viewModel model:model didUpdateValuesForKeys:[NSSet setWithObjects:@"from", @"to", @"rect", nil]];
-    [viewModel model:model didUpdateValuesForKeys:[NSSet setWithObjects:@"name", @"age", @"from", nil]];
-    [viewModel model:model didUpdateValuesForKeys:[NSSet setWithObjects:@"name", @"age", @"to", nil]];
-    [viewModel model:model didUpdateValuesForKeys:[NSSet setWithObjects:@"name", @"from", @"to", nil]];
-    [viewModel model:model didUpdateValuesForKeys:[NSSet setWithObjects:@"age", @"from", @"to", nil]];
-    [viewModel model:model didUpdateValuesForKeys:[NSSet setWithObjects:@"name", @"age", @"from", @"to", nil]];
-    [viewModel model:model didUpdateValuesForKeys:[NSSet setWithObjects:@"name", @"age", @"from", @"rect", nil]];
-    [viewModel model:model didUpdateValuesForKeys:[NSSet setWithObjects:@"name", @"age", @"to", @"rect", nil]];
-    [viewModel model:model didUpdateValuesForKeys:[NSSet setWithObjects:@"name", @"from", @"to", @"rect", nil]];
-    [viewModel model:model didUpdateValuesForKeys:[NSSet setWithObjects:@"age", @"from", @"to", @"rect", nil]];
-    [viewModel model:model didUpdateValuesForKeys:[NSSet setWithObjects:@"name", @"age", @"from", @"to", @"rect", nil]];
+    [viewModel model:model didChangeValuesForKeys:[NSSet setWithObjects:@"name", nil]];
+    [viewModel model:model didChangeValuesForKeys:[NSSet setWithObjects:@"age", nil]];
+    [viewModel model:model didChangeValuesForKeys:[NSSet setWithObjects:@"from", nil]];
+    [viewModel model:model didChangeValuesForKeys:[NSSet setWithObjects:@"to", nil]];
+    [viewModel model:model didChangeValuesForKeys:[NSSet setWithObjects:@"rect", nil]];
+    [viewModel model:model didChangeValuesForKeys:[NSSet setWithObjects:@"name", @"age", nil]];
+    [viewModel model:model didChangeValuesForKeys:[NSSet setWithObjects:@"name", @"from", nil]];
+    [viewModel model:model didChangeValuesForKeys:[NSSet setWithObjects:@"name", @"to", nil]];
+    [viewModel model:model didChangeValuesForKeys:[NSSet setWithObjects:@"age", @"from", nil]];
+    [viewModel model:model didChangeValuesForKeys:[NSSet setWithObjects:@"age", @"to", nil]];
+    [viewModel model:model didChangeValuesForKeys:[NSSet setWithObjects:@"from", @"to", nil]];
+    [viewModel model:model didChangeValuesForKeys:[NSSet setWithObjects:@"name", @"age", @"rect", nil]];
+    [viewModel model:model didChangeValuesForKeys:[NSSet setWithObjects:@"name", @"from", @"rect", nil]];
+    [viewModel model:model didChangeValuesForKeys:[NSSet setWithObjects:@"name", @"to", @"rect", nil]];
+    [viewModel model:model didChangeValuesForKeys:[NSSet setWithObjects:@"age", @"from", @"rect", nil]];
+    [viewModel model:model didChangeValuesForKeys:[NSSet setWithObjects:@"age", @"to", @"rect", nil]];
+    [viewModel model:model didChangeValuesForKeys:[NSSet setWithObjects:@"from", @"to", @"rect", nil]];
+    [viewModel model:model didChangeValuesForKeys:[NSSet setWithObjects:@"name", @"age", @"from", nil]];
+    [viewModel model:model didChangeValuesForKeys:[NSSet setWithObjects:@"name", @"age", @"to", nil]];
+    [viewModel model:model didChangeValuesForKeys:[NSSet setWithObjects:@"name", @"from", @"to", nil]];
+    [viewModel model:model didChangeValuesForKeys:[NSSet setWithObjects:@"age", @"from", @"to", nil]];
+    [viewModel model:model didChangeValuesForKeys:[NSSet setWithObjects:@"name", @"age", @"from", @"to", nil]];
+    [viewModel model:model didChangeValuesForKeys:[NSSet setWithObjects:@"name", @"age", @"from", @"rect", nil]];
+    [viewModel model:model didChangeValuesForKeys:[NSSet setWithObjects:@"name", @"age", @"to", @"rect", nil]];
+    [viewModel model:model didChangeValuesForKeys:[NSSet setWithObjects:@"name", @"from", @"to", @"rect", nil]];
+    [viewModel model:model didChangeValuesForKeys:[NSSet setWithObjects:@"age", @"from", @"to", @"rect", nil]];
+    [viewModel model:model didChangeValuesForKeys:[NSSet setWithObjects:@"name", @"age", @"from", @"to", @"rect", nil]];
 }
 
 @end

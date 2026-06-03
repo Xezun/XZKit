@@ -1,5 +1,7 @@
-// swift-tools-version: 6.1
+// swift-tools-version: 5.9
 // The swift-tools-version declares the minimum version of Swift required to build this package.
+//
+// 当前 Package 仅用于编译宏。
 
 import PackageDescription
 import CompilerPluginSupport
@@ -11,7 +13,7 @@ let package = Package(
         .library(
             name: "XZKit",
             targets: ["XZKit"]
-        )
+        ),
     ],
     dependencies: [
         .package(url: "https://github.com/swiftlang/swift-syntax.git", from: "600.0.0-latest"),
@@ -24,6 +26,9 @@ let package = Package(
                 .product(name: "SwiftCompilerPlugin", package: "swift-syntax")
             ]
         ),
-        .target(name: "XZKit", dependencies: ["XZKitMacros"])
+        .target(
+            name: "XZKit",
+            dependencies: ["XZKitMacros"]
+        ),
     ]
 )

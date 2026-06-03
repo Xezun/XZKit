@@ -2,7 +2,7 @@
 //  XZMocoaTests.swift
 //  Example
 //
-//  Created by 徐臻 on 2025/7/4.
+//  Created by Xezun on 2025/7/4.
 //
 
 import UIKit
@@ -34,12 +34,12 @@ class FooViewModel: XZMocoaViewModel {
     @key("fooBar", 20)
     var foobar : Int
 
-    @ready
+    @prepare
     private func prepare1() {
         
     }
     
-    @ready
+    @prepare
     private func prepare2() {
         
     }
@@ -101,8 +101,8 @@ class View: UIView, XZMocoaView {
         
     }
     
-    @ready
-    private func prepare() {
+    @prepare
+    private func setup() {
         
     }
     

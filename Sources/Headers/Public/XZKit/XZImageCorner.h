@@ -1,1 +1,0 @@
-../../../../Sources/Code/ObjC/XZImage/XZImageCorner.h

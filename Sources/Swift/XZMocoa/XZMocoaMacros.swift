@@ -1,0 +1,211 @@
+//
+//  XZMocoaMacros.swift
+//  XZKit
+//
+//  Created by Xezun on 2025/6/13.
+//
+
+import Foundation
+
+/// 获取地址为 urlString 的 Mocoa 模块。
+///
+/// ```swift
+/// #mocoa("https://mocoa.xezun.com/main")
+/// ```
+@freestanding(expression)
+public macro mocoa(_ urlString: String) -> XZMocoaModule = #externalMacro(module: "XZKitMacros", type: "XZMocoaModuleMacro")
+
+/// 获取地址为 URL 的 Mocoa 模块。
+@freestanding(expression)
+public macro mocoa(_ value: URL) -> XZMocoaModule = #externalMacro(module: "XZKitMacros", type: "XZMocoaModuleMacro")
+
+/// 被宏 `@mocoa` 修饰的对象，在 Mocoa 中的角色。
+public enum XZMocoaRole {
+    /// 被修饰的对象为 Model 数据模型。
+    case m
+    /// 被修饰的对象为 View 视图。
+    case v
+    /// 被修饰的对象为 ViewModel 视图模型。
+    case vm
+}
+
+/// 为 Mocoa 提供数据绑定机制的宏。
+///
+/// ### Model - 数据模型
+/// ```swift
+/// @mocoa(.m)
+/// class Model: NSObject {
+///     @key
+///     dynamic var name: String?
+/// }
+/// ```
+///
+/// ### View - 视图
+/// ```
+/// @mocoa(.v)
+/// class View: UIView, XZMocoaView {
+///     @bind
+///     var textLabel: UILabel!
+/// }
+/// ```
+///
+/// ### ViewModel - 视图模型
+/// ```swift
+/// @mocoa(.vm)
+/// class ViewModel: XZMocoaViewModel {
+///     @key
+///     var name: String?
+///
+///     @bind
+///     func didChange(_ text: String?) {
+///         name = text
+///     }
+/// }
+/// ```
+@attached(memberAttribute)
+@attached(member, names: arbitrary)
+public macro mocoa(_ role: XZMocoaRole? = nil) = #externalMacro(module: "XZKitMacros", type: "XZMocoaMacro")
+
+// MARK: - @key
+
+/// 标记 .vm 的属性，使其获得带下划线前缀的存储属性和自动发送 key-action 的能力。
+/// 单个参数且不带标签，参数为键名。
+@attached(peer, names: arbitrary)
+@attached(accessor)
+public macro key(_ name: XZMocoaKey? = nil) = #externalMacro(module: "XZKitMacros", type: "XZMocoaKeyMacro")
+
+/// 单向同步，用于标记 Mocoa 中的 .v 和 .vm 角色的绑定标记。
+///
+/// ### 属性绑定
+///
+/// 标记 Mocoa 角色中，需要单向同步的属性。
+///
+/// 1. 在 Swift 中，需要使用 `dynamic` 修饰属性，否则无法使用 KVO
+///
+/// ```swift
+/// @mocoa(.m)
+/// class Model: NSObject {
+///     @objc dynamic var name: String?
+///     @objc dynamic var age: Int = 0
+/// }
+/// ```
+///
+/// 2. ViewModel 绑定 Model 的属性
+///
+/// ```swift
+/// @mocoa(.vm)
+/// class ViewModel: XZMocoaViewModel {
+///
+///     // 将 model.name 绑定到 #selector(setter: Self.name) 方法
+///     @bind
+///     var name: String?
+///
+///     // 将 model.desc 绑定到 #selector(setter: Self.description) 方法
+///     @bind("")
+///     var age: String?
+///
+///     // 将 model.min、model.max 绑定到当前方法
+///     @bind
+///     func didChange(_ min: Int, max: Int) { }
+///
+///     // 将 model.var1、model.var2 绑定到当前方法
+///     @bind(.var1, .var2)
+///     func didChange(min: Int, max: Int) { }
+/// }
+/// ```
+///
+/// 3. View 绑定 ViewModel 的属性
+///
+/// ```swift
+/// @mocoa(.v)
+/// class View: UIView, XZMocoaView {
+///
+///     // 将 viewModel.text 绑定给 textLabel.text
+///     @bind
+///     var textLabel: UILabel!
+///
+///     // 将 viewModel.name  绑定给 textLabel.text
+///     @bind(.name)
+///     var textLabel: UILabel!
+///
+///     // 将 viewModel.textColor 绑定给 textLabel.textColor
+///     @bind(v: .textColor)
+///     var textLabel: UILabel!
+///
+///     // 将 viewModel.color 绑定给 textLabel.textColor
+///     @bind(.color, .textColor)
+///     var textLabel: UILabel!
+///
+///     // 将 viewModel.imageURL 绑定给 -[imageView setImageWithURL:] 方法
+///     @bind(.imageURL, selector: #selector(setImageWithURL:))
+///     var imageView: UIImageView!
+///
+///     // 将 viewModel.imageURL 绑定到此方法
+///     @bind
+///     func setAvatar(with imageURL: URL?) {
+///         avatarImageView.sd_setImage(with: imageURL)
+///     }
+///
+///     // 将 viewModel.backgroundURL 绑定到此方法
+///     @bind(.backgroundURL)
+///     func setBackgroundImage(with imageURL: URL?) {
+///         backgroundImageView.sd_setImage(with: imageURL)
+///     }
+///
+/// }
+/// ```
+@attached(peer, names: arbitrary)
+public macro bind() = #externalMacro(module: "XZKitMacros", type: "XZMocoaBindMacro")
+
+/// 将 Model 或 ViewModel 的属性 key 的值，绑定到 ViewModel 或 View 被标记的方法或属性。
+///
+/// - SeeAlso: ``bind()``
+///
+/// - Parameter key: Model 或 ViewModel 的属性
+@attached(peer, names: arbitrary)
+public macro bind(_ key: XZMocoaKey...) = #externalMacro(module: "XZKitMacros", type: "XZMocoaBindMacro")
+
+/// 将 ViewModel 的属性 vkey 值，绑定到 View 的 vkey 属性。
+///
+/// 专用于 .v 角色的绑定标记。如果属性为可选类型，将生成 `didSet` 以实现动态绑定。
+///
+/// - SeeAlso: ``bind()``
+///
+/// - Parameter vkey: ViewModel 和 View 的属性
+@attached(accessor, names: named(didSet))
+public macro bind(v vkey: XZMocoaKey) = #externalMacro(module: "XZKitMacros", type: "XZMocoaBindViewMacro")
+
+/// - SeeAlso: ``bind(v:)``
+///
+/// - Parameters:
+///   - vmkey: ViewModel 的属性
+///   - vkey: View 的属性
+@attached(accessor, names: named(didSet))
+public macro bind(_ vmKey: XZMocoaKey, v vkey: XZMocoaKey) = #externalMacro(module: "XZKitMacros", type: "XZMocoaBindViewMacro")
+
+/// - SeeAlso: ``bind(v:)``
+///
+/// - Parameters:
+///   - vmkey: ViewModel 的属性
+///   - selector: View 的方法
+@attached(accessor, names: named(didSet))
+public macro bind(_ vmKey: XZMocoaKey, selector: Selector) = #externalMacro(module: "XZKitMacros", type: "XZMocoaBindViewMacro")
+
+/// 标记方法为 View 或 ViewModel 的角色初始化方法（非对象的初始化方法）。
+///
+/// 此标记用以取代视图模型的`-[XZMocoaViewModel prepare]`基类方法。
+///
+/// 被标记的方法需要使用 `private` 标记，并且支持多个初始化方法，多个初始化方法将按书写顺序执行。
+///
+/// ```swift
+/// class ViewModel: XZMocoaViewModel {
+///
+///     @prepare
+///     private func setup() {
+///
+///     }
+///
+/// }
+/// ```
+@attached(body)
+public macro prepare() = #externalMacro(module: "XZKitMacros", type: "XZMocoaPrepareMacro")
