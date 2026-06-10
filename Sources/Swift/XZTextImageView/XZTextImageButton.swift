@@ -8,7 +8,9 @@
 import Foundation
 import UIKit
 
-@objc open class XZTextImageButton: UIControl, XZTextImageView.Layout, XZTextImageView.StatedAppearance {
+@MainActor
+@objc
+open class XZTextImageButton: UIControl, XZTextImageView.Layout, XZTextImageView.StatedAppearance {
     
     // MARK: - 重写
     

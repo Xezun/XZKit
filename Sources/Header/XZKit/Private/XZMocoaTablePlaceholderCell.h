@@ -1,1 +1,1 @@
-../../../ObjC/XZMocoa/GridView/TableView/View/Private/XZMocoaTablePlaceholderCell.h
+../../../ObjC/XZMocoa/XZMocoaTableView/View/Private/XZMocoaTablePlaceholderCell.h

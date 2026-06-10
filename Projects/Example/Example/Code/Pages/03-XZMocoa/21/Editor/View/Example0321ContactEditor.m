@@ -26,8 +26,6 @@
     XZMocoa(@"https://mocoa.xezun.com/examples/21/editor").viewNibClass = self;
 }
 
-@dynamic viewModel;
-
 - (void)dealloc {
     [self.viewModel removeFromSuperViewModel];
 }

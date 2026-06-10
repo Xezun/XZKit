@@ -1,1 +1,1 @@
-../../../ObjC/XZMocoa/View/ViewModel/Private/XZMocoaModelObserver.h
+../../../ObjC/XZMocoa/XZMocoaView/ViewModel/Private/XZMocoaModelObserver.h

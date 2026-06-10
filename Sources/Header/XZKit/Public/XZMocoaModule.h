@@ -1,1 +1,1 @@
-../../../ObjC/XZMocoa/Defines/XZMocoaModule.h
+../../../ObjC/XZMocoa/XZMocoaDefines/XZMocoaModule.h

@@ -3,7 +3,7 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 56;
+	objectVersion = 77;
 	objects = {
 
 /* Begin PBXBuildFile section */
@@ -79,10 +79,6 @@
 		04131D342F303401000D23BE /* Code */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
 			exceptions = (
-			);
-			explicitFileTypes = {
-			};
-			explicitFolders = (
 			);
 			path = Code;
 			sourceTree = "<group>";
@@ -330,7 +326,6 @@
 				};
 			};
 			buildConfigurationList = 29648BDB2A72556C0090F445 /* Build configuration list for PBXProject "Example" */;
-			compatibilityVersion = "Xcode 14.0";
 			developmentRegion = "zh-Hans";
 			hasScannedForEncodings = 0;
 			knownRegions = (
@@ -339,6 +334,7 @@
 				"zh-Hans",
 			);
 			mainGroup = 29648BD72A72556C0090F445;
+			preferredProjectObjectVersion = 77;
 			productRefGroup = 29648BE12A72556C0090F445 /* Products */;
 			projectDirPath = "";
 			projectRoot = "";

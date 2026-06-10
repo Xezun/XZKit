@@ -196,11 +196,11 @@ open class XZProgressView: UIView {
             return
         }
         needsUpdatePath = true
-        // 使用 Runloop 会有一个 main actor-isolated 警告
-        // RunLoop.main.perform(inModes: [.common])
-        DispatchQueue.main.async(execute: { [weak self] in
-            self?.updatePathIfNeeded()
-        })
+        RunLoop.main.perform(inModes: [.common]) { [weak self] in
+            MainActor.assumeIsolated {
+                self?.updatePathIfNeeded()
+            }
+        }
     }
     
     private func updatePathIfNeeded() {

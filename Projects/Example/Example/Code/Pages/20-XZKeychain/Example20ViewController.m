@@ -41,7 +41,7 @@
     NSString * const domain  = asNonEmpty(self.identifierLabel.text, @"XZKeychain.xezun.com");
     NSString * const account = asNonEmpty(self.accountTextField.text, (NSString *)nil);
     XZKeychain<XZKeychainInternetPasswordItem *> *keychain = [XZKeychain keychainWithAccount:account domain:domain];
-    [self xz_showToast:[XZToast loadingToast:@"处理中"] duration:0 completion:nil];
+    [self xz_showToast:[XZToast loadingToast:@"钥匙串读取中"] duration:0 completion:nil];
     
     NSError *error = nil;
     if ([keychain search:YES error:&error]) {
@@ -61,7 +61,7 @@
     
     NSString * const account = asNonEmpty(self.accountTextField.text, (NSString *)nil);
     if (account == nil) {
-        [self xz_showToast:[XZToast waitingToast:@"帐号不能为空"]];
+        [self xz_showToast:[XZToast warningToast:@"帐号不能为空"]];
         return;
     }
     
@@ -73,7 +73,7 @@
     
     XZKeychain<XZKeychainInternetPasswordItem *> *keychain = [XZKeychain keychainWithAccount:account domain:domain];
     keychain.item.password = self.passwordTextField.text;
-    [self xz_showToast:[XZToast loadingToast:@"处理中"] duration:0 completion:nil];
+    [self xz_showToast:[XZToast loadingToast:@"正在保存到钥匙串"] duration:0 completion:nil];
     
     NSError *error = nil;
     if ([keychain insert:&error]) {

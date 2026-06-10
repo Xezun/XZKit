@@ -1,1 +1,1 @@
-../../../ObjC/XZMocoa/GridView/TableView/ViewModel/Private/XZMocoaTablePlaceholderHeaderFooterViewModel.h
+../../../ObjC/XZMocoa/XZMocoaTableView/ViewModel/Private/XZMocoaTablePlaceholderHeaderFooterViewModel.h

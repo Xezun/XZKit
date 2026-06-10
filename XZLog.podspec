@@ -1,6 +1,6 @@
 Pod::Spec.new do |s|
   s.name             = 'XZLog'
-  s.version          = '2.0.0'
+  s.version          = '3.0.0'
   s.summary          = '控制台日志输出组件'
   s.description      = <<-DESC
   对 NSLog 的封装，支持按 XZLogSystem 对日志的输出进行控制。

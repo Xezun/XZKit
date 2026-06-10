@@ -1,1 +1,1 @@
-../../../ObjC/XZMocoa/GridView/CollectionView/View/XZMocoaCollectionViewController.h
+../../../ObjC/XZMocoa/XZMocoaCollectionView/View/XZMocoaCollectionViewController.h

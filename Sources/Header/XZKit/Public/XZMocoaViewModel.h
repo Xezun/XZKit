@@ -1,1 +1,1 @@
-../../../ObjC/XZMocoa/View/ViewModel/XZMocoaViewModel.h
+../../../ObjC/XZMocoa/XZMocoaView/ViewModel/XZMocoaViewModel.h

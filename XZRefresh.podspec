@@ -1,6 +1,6 @@
 Pod::Spec.new do |s|
   s.name             = 'XZRefresh'
-  s.version          = '2.0.0'
+  s.version          = '3.0.0'
   s.summary          = 'iOS史上最流畅的下拉刷新组件'
   s.description      = <<-DESC
   拓展 UIScrollView 支持下拉/上拉刷新功能，支持自定义刷新视图，支持控制刷新过程。

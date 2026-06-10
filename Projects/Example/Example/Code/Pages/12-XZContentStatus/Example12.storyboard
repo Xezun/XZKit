@@ -1,11 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="24506" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="bk4-Ks-s0I">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="24412" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="bk4-Ks-s0I">
     <device id="retina6_12" orientation="portrait" appearance="light"/>
     <dependencies>
         <deployment identifier="iOS"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="24504"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="24405"/>
         <capability name="Safe area layout guides" minToolsVersion="9.0"/>
-        <capability name="System colors in document resources" minToolsVersion="11.0"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <scenes>
@@ -16,30 +15,19 @@
                     <view key="view" contentMode="scaleToFill" id="dS2-65-0qT">
                         <rect key="frame" x="0.0" y="0.0" width="393" height="852"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
-                        <subviews>
-                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="sGh-Mr-7fN">
-                                <rect key="frame" x="108.66666666666669" y="409" width="176" height="34.333333333333314"/>
-                                <color key="backgroundColor" systemColor="systemBrownColor"/>
-                                <color key="tintColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
-                                <inset key="contentEdgeInsets" minX="20" minY="20" maxX="20" maxY="20"/>
-                                <state key="normal" title="Button"/>
-                                <buttonConfiguration key="configuration" style="plain" title="页面内容，点击刷新"/>
-                                <connections>
-                                    <action selector="resetButtonAction:" destination="GLb-Oj-YWn" eventType="touchUpInside" id="EIF-8Y-sfw"/>
-                                </connections>
-                            </button>
-                        </subviews>
                         <viewLayoutGuide key="safeArea" id="6fN-xQ-J1W"/>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
-                        <constraints>
-                            <constraint firstItem="sGh-Mr-7fN" firstAttribute="centerY" secondItem="dS2-65-0qT" secondAttribute="centerY" id="Sr4-M1-iBW"/>
-                            <constraint firstItem="sGh-Mr-7fN" firstAttribute="centerX" secondItem="dS2-65-0qT" secondAttribute="centerX" id="wrZ-vi-8z1"/>
-                        </constraints>
                     </view>
                     <navigationItem key="navigationItem" title="XZContentStatus" id="mmG-ui-ZND">
                         <barButtonItem key="leftBarButtonItem" title="Item" image="xmark" catalog="system" id="PHo-xM-az3">
                             <connections>
                                 <segue destination="C4R-FC-Pgf" kind="unwind" unwindAction="unwindToMainPage:" id="R90-cp-8eh"/>
+                            </connections>
+                        </barButtonItem>
+                        <barButtonItem key="rightBarButtonItem" style="done" systemItem="refresh" id="amB-dF-HFN">
+                            <color key="tintColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                            <connections>
+                                <action selector="refreshButtonAction:" destination="GLb-Oj-YWn" id="j0n-DX-J8m"/>
                             </connections>
                         </barButtonItem>
                     </navigationItem>
@@ -70,8 +58,5 @@
     </scenes>
     <resources>
         <image name="xmark" catalog="system" width="128" height="113"/>
-        <systemColor name="systemBrownColor">
-            <color red="0.67450980392156867" green="0.49803921568627452" blue="0.36862745098039218" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
-        </systemColor>
     </resources>
 </document>

@@ -83,6 +83,9 @@ extension CGSize {
         return __CGRectScaleAspectRatioInsideWithMode(rect, self, contentMode);
     }
     
+    public func insetBy(width: CGFloat, height: CGFloat) -> CGSize {
+        return CGSize(width: max(0, -width + self.width + -width), height: max(0, -height + self.height + -height))
+    }
 }
 
 
