@@ -14,17 +14,18 @@ extension String {
     /// - Parameters:
     ///   - format: 字符串格式
     ///   - arguments: 参数列表
-    public static func format(_ format: String, _ arguments: Any? ...) -> Self {
-        return self.format(format, arguments: arguments)
+    public init(formal format: String, _ arguments: Any? ...) {
+        self.init(formal: format, arguments: arguments)
     }
     
     /// 支持 `%@` 作为任意类型数据的格式化占位符的构造字符串方法，且不限制变量必须为 ``CVarArg`` 类型。
     /// - Parameters:
     ///   - format: 字符串格式
     ///   - arguments: 参数数组
-    public static func format(_ format: String, arguments: [Any?]) -> Self {
+    public init(formal format: String, arguments: [Any?]) {
         if arguments.isEmpty {
-            return format
+            self = format
+            return
         }
         
         var start = false // 是否遇到格式化占位符 % 标记
@@ -63,8 +64,9 @@ extension String {
             }
         }
         
-        return self.init(format: format, arguments: parameters)
+        self.init(format: format, arguments: parameters)
     }
+    
 }
 
 /// 字符的书写顺序控制字符枚举。
@@ -140,6 +142,92 @@ extension String {
     /// - Note: 当前字符串 URL 解码后的字符串。
     public var removingURIComponentEncoding: String? {
         return (self as NSString).removingURIComponentEncoding
+    }
+    
+}
+
+extension String {
+    
+    /// 使用标记符格式模版，创建字符串。
+    /// - Parameters:
+    ///   - markup: 格式模版中，用来标记参数的标记符
+    ///   - format: 格式模版
+    ///   - arguments: 参数
+    public init(markup: XZStringMarkup, format: String, arguments: [Any?]) {
+        // 将形如 {2%.2f} 的格式解析为 {index: 2, format: ".2f"} 元组
+        func markupFormatInfo(from matchedString: String) -> (index: Int, format: String?)? {
+            if let index = matchedString.firstIndex(of: "%") {
+                guard let n = Int(matchedString[..<index]) else {
+                    return nil
+                }
+                let index = matchedString.index(after: index)
+                let format = matchedString[index...]
+                if format.isEmpty {
+                    return (n, nil)
+                }
+                return (n, String(format))
+            }
+            if let n = Int(matchedString) {
+                return (n, nil)
+            }
+            return nil
+        }
+        
+        // 记录已经解析的格式，以供复用。key 为参数的 index
+        var cachedFormats = [Int: String]()
+        
+        // 将模版中形如 {2%.2f} 的标记格式，转换为形如 %2$.2f 的标准格式。
+        let format = (format as NSString).replacingOccurrences(with: markup, using: { matchedString in
+            // 不合法的参数占位，直接移除（保留的话，可能会影响下面使用标准格式创建字符串）
+            guard let info = markupFormatInfo(from: matchedString) else { return "" }
+            guard info.index > 0, info.index <= arguments.count else { return "" }
+            
+            let index = info.index
+            guard let format = (info.format ?? cachedFormats[index]) else {
+                return "%\(index)$@"
+            }
+            
+            guard arguments[index] is CVarArg else {
+                return "%\(index)$@"
+            }
+            
+            cachedFormats[index] = format
+            return "%\(index)$\(format)"
+        })
+        
+        // 将参数转换为 CVarArg 类型。
+        let arguments = arguments.map({ (value) -> CVarArg in
+            // 值为 nil 的参数，转换为空字符串
+            guard let value = value else {
+                return ""
+            }
+            // 非 C 类型的参数转换为字符串
+            guard let value = value as? CVarArg else {
+                return String(describing: value)
+            }
+            // 可以直接使用的 C 类型参数
+            return value
+        })
+        
+        // 使用标准格式模版函数创建字符串。
+        self.init(format: format, arguments: arguments)
+    }
+    
+    /// 使用标记符格式模版，创建字符串。
+    /// - Parameters:
+    ///   - markup: 格式模版中，用来标记参数的标记符
+    ///   - format: 格式模版
+    ///   - arguments: 参数
+    public init(markup: XZStringMarkup, format: String, _ arguments: Any? ...) {
+        self.init(markup: markup, format: format, arguments: arguments)
+    }
+    
+    /// 使用花括号格式模版，创建字符串。
+    /// - Parameters:
+    ///   - format: 使用花括号标记参数的格式模版
+    ///   - arguments: 参数
+    public init(braces format: String, _ arguments: Any? ...) {
+        self.init(markup: .braces, format: format, arguments: arguments)
     }
     
 }

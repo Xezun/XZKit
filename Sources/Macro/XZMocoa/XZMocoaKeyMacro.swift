@@ -2,7 +2,7 @@
 //  XZMocoaKeyMacro.swift
 //  XZKit
 //
-//  Created by 徐臻 on 2025/6/10.
+//  Created by Xezun on 2025/6/10.
 //
 
 import SwiftCompilerPlugin
@@ -238,7 +238,7 @@ extension XZMocoaKeyMacro: AccessorMacro {
             let keyName = self.keyName(from: node) ?? propertyName
             
             if let setAccessor = setAccessor {
-                if let setAccessor = setAccessor.body?.statements {
+                if let setAccessor = setAccessor.body?.statements.trimmedNewLines {
                     results.append(
                         """
                         set {
@@ -266,11 +266,13 @@ extension XZMocoaKeyMacro: AccessorMacro {
                     )
                 }
             } else {
-                if let willSetAccessor = willSetAccessor?.body?.statements {
-                    if let didSetAccessor = didSetAccessor?.body?.statements {
+                if let willSetAccessor = willSetAccessor?.body?.statements.trimmedNewLines {
+                    if let didSetAccessor = didSetAccessor?.body?.statements.trimmedNewLines {
                         results.append(
                             """
                             set {
+                                let oldValue = _\(raw: propertyName)
+                                
                                 ({ // willSet
                                     \(willSetAccessor)
                                 })()
@@ -280,9 +282,9 @@ extension XZMocoaKeyMacro: AccessorMacro {
                                     sendActions(forKey: "\(raw: keyName)", value: newValue)
                                 }
                                 
-                                ({ // didSet
+                                ({ _ in // didSet
                                     \(didSetAccessor)
-                                })()
+                                })(oldValue)
                             }
                             """
                         )
@@ -302,18 +304,20 @@ extension XZMocoaKeyMacro: AccessorMacro {
                             """
                         )
                     }
-                } else if let didSetAccessor = didSetAccessor?.body?.statements {
+                } else if let didSetAccessor = didSetAccessor?.body?.statements.trimmedNewLines {
                     results.append(
                         """
                         set {
+                            let oldValue = _\(raw: propertyName)
+                            
                             if _\(raw: propertyName) != newValue {
                                 _\(raw: propertyName) = newValue
                                 sendActions(forKey: "\(raw: keyName)", value: newValue)
                             }
                             
-                            ({ // didSet
+                            ({ _ in // didSet
                                 \(didSetAccessor)
-                            })()
+                            })(oldValue)
                         }
                         """
                     )

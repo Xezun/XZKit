@@ -9,6 +9,7 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
+/// 字符串 `\@encode(int)` 类型。
 @interface Example01ViewController : UITableViewController
 
 @end

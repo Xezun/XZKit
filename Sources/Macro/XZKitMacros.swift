@@ -2,7 +2,7 @@
 //  XZKitMacros.swift
 //  XZKit
 //
-//  Created by 徐臻 on 2025/7/11.
+//  Created by Xezun on 2025/7/11.
 //
 
 import SwiftCompilerPlugin
@@ -228,6 +228,22 @@ extension CodeBlockItemSyntax {
         let body = SwiftSyntax.CodeBlockSyntax.init(statements: body.statements);
         let doStmtSyntax = DoStmtSyntax.init(body: body)
         self.init(item: .stmt(.init(doStmtSyntax)))
+    }
+    
+}
+
+
+extension CodeBlockItemListSyntax {
+    
+    var trimmedNewLines: CodeBlockItemListSyntax {
+        return self.trimmed(matching: { item in
+            switch item {
+            case .newlines:
+                return true
+            default:
+                return false
+            }
+        })
     }
     
 }

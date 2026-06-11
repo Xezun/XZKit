@@ -113,14 +113,16 @@ class Example13ViewController: UITableViewController {
                 break
                 
             case 13:
-                let button = UIButton.init(type: .system)
+                var configuration = UIButton.Configuration.plain()
+                configuration.contentInsets = .init(top: 20, leading: 20, bottom: 20, trailing: 20)
+                
+                let button = UIButton.init(configuration: configuration)
                 button.backgroundColor = UIColor.orange
                 button.layer.cornerRadius = 8.0;
                 button.setTitleColor(.white, for: .normal)
                 button.setAttributedTitle(.init(string: "点击这里", attributes: [
                     .font: UIFont.systemFont(ofSize: 17.0, weight: .bold)
                 ]), for: .normal)
-                button.contentEdgeInsets = .init(top: 20, left: 20, bottom: 20, right: 20)
                 button.addTarget(self, action: #selector(customToastViewAction(_:)), for: .touchUpInside)
                 self.showToast(.init(style: .message, view: button), duration: 0, position: .bottom)
                 break
@@ -173,7 +175,7 @@ class Example13ViewController: UITableViewController {
             let delta = String.init(format: "%.2f", end - start);
             let date = Date().formatted(using: .msecDateTime)
             let message = message.replacingOccurrences(of: "\n", with: "\\n")
-            #XZLog("消息：\(index). \(message) \n状态：\(finished) \n定时：\(duration) \n耗时：\(delta) \n时间：\(date)")
+            #XZLog("消息：%@. %@ \n状态：%@ \n定时：%@ \n耗时：%@ \n时间：%@", index, message, finished, duration, delta, date)
         };
         self.index = index + 1;
         

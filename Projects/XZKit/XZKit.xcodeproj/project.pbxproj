@@ -173,8 +173,8 @@
 		040512FE2FCFD224001DC9D6 /* Swift */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
 			name = Swift;
-			path = ../../../../Sources/Swift;
-			sourceTree = "<group>";
+			path = ../../Sources/Swift;
+			sourceTree = SOURCE_ROOT;
 		};
 		040512FF2FCFD22F001DC9D6 /* ObjC */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
@@ -182,8 +182,8 @@
 				040516942FCFD6DA001DC9D6 /* Exceptions for "ObjC" folder in "XZKit" target */,
 			);
 			name = ObjC;
-			path = ../../../../Sources/ObjC;
-			sourceTree = "<group>";
+			path = ../../Sources/ObjC;
+			sourceTree = SOURCE_ROOT;
 		};
 		047FA0C72E1F8D8B00830368 /* XZKitTests */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
@@ -410,7 +410,6 @@
 				CODE_SIGN_IDENTITY = "";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
-				DEFINES_MODULE = YES;
 				DEVELOPMENT_TEAM = LWKDD4DJ6H;
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
@@ -447,7 +446,6 @@
 				CODE_SIGN_IDENTITY = "";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
-				DEFINES_MODULE = YES;
 				DEVELOPMENT_TEAM = LWKDD4DJ6H;
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
@@ -513,6 +511,7 @@
 				COPY_PHASE_STRIP = NO;
 				CURRENT_PROJECT_VERSION = 1;
 				DEBUG_INFORMATION_FORMAT = dwarf;
+				DEFINES_MODULE = YES;
 				DEVELOPMENT_TEAM = LWKDD4DJ6H;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				ENABLE_TESTABILITY = YES;
@@ -581,6 +580,7 @@
 				COPY_PHASE_STRIP = NO;
 				CURRENT_PROJECT_VERSION = 1;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				DEFINES_MODULE = YES;
 				DEVELOPMENT_TEAM = LWKDD4DJ6H;
 				ENABLE_NS_ASSERTIONS = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;

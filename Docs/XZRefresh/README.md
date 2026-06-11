@@ -1,10 +1,5 @@
 # XZRefresh
 
-[![CI Status](https://img.shields.io/badge/Build-pass-brightgreen.svg)](https://cocoapods.org/pods/XZRefresh)
-[![Version](https://img.shields.io/cocoapods/v/XZRefresh.svg?style=flat)](https://cocoapods.org/pods/XZRefresh)
-[![License](https://img.shields.io/cocoapods/l/XZRefresh.svg?style=flat)](https://cocoapods.org/pods/XZRefresh)
-[![Platform](https://img.shields.io/cocoapods/p/XZRefresh.svg?style=flat)](https://cocoapods.org/pods/XZRefresh)
-
 迄今为止 iOS 最流畅的下拉刷新、上拉加载组件。
 
 ## 设计背景
@@ -18,10 +13,6 @@
 要运行示例工程，请在拉取代码后，先在 `Pods` 目录下执行 `pod install` 命令。
 
 To run the example project, clone the repo, and run `pod install` from the `Pods` directory first.
-
-## 环境需求 Requirements
-
-iOS 12.0, Xcode 14.0
 
 ## 安装使用 Installation
 

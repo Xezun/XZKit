@@ -110,7 +110,7 @@
 typedef XZStringMarkup Predicate;
 
 static NSString *replace(NSString *self, Predicate predicate, NSString *(^transform)(NSString *)) {
-    return [self xz_stringByReplacingMatchesOfMarkup:predicate usingBlock:transform];
+    return [self xz_stringByReplacingOccurrencesWithMarkup:predicate usingBlock:transform];
 }
 
 // 1. **空字符串或长度不足**

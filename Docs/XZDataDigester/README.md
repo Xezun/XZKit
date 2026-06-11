@@ -1,17 +1,9 @@
 # XZDataDigester
 
-[![CI Status](https://img.shields.io/badge/Build-pass-brightgreen.svg)](https://cocoapods.org/pods/XZDataDigester)
-[![Version](https://img.shields.io/cocoapods/v/XZDataDigester.svg?style=flat)](https://cocoapods.org/pods/XZDataDigester)
-[![License](https://img.shields.io/cocoapods/l/XZDataDigester.svg?style=flat)](https://cocoapods.org/pods/XZDataDigester)
-[![Platform](https://img.shields.io/cocoapods/p/XZDataDigester.svg?style=flat)](https://cocoapods.org/pods/XZDataDigester)
-
 ## Example
 
 To run the example project, clone the repo, and run `pod install` from the Pods directory first.
 
-## Requirements
-
-iOS 11.0, Xcode 14.0
 
 ## Installation
 

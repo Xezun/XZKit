@@ -5,7 +5,7 @@
 //  Created by Xezun on 2026/2/2.
 //
 
-#import <XZKit/XZKit.h>
+@import XZKit;
 
 NS_ASSUME_NONNULL_BEGIN
 

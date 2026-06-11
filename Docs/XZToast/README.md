@@ -1,11 +1,5 @@
 # XZToast
 
-[![CI Status](https://img.shields.io/badge/Build-pass-brightgreen.svg)](https://cocoapods.org/pods/XZToast)
-[![Version](https://img.shields.io/cocoapods/v/XZToast.svg?style=flat)](https://cocoapods.org/pods/XZToast)
-[![License](https://img.shields.io/cocoapods/l/XZToast.svg?style=flat)](https://cocoapods.org/pods/XZToast)
-[![Platform](https://img.shields.io/cocoapods/p/XZToast.svg?style=flat)](https://cocoapods.org/pods/XZToast)
-[![SwiftPM](https://img.shields.io/badge/Swift-Package%20Manager-brightgreen.svg)](https://www.swift.org/package-manager)
-
 ## 一、安装
 
 #### 1、使用 Swift Package Manager 集成

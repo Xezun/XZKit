@@ -18,7 +18,7 @@
 @synthesize window = _window;
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
-    XZLog(@"App (%@) was launched: %@", XZLogSystem.defaultLogSystem.domain, launchOptions);
+    XZLog(@"App (%@) was launched: %@", XZLogSystem.defaultSystem.domain, launchOptions);
     
     [NSNotificationCenter.defaultCenter addObserver:self selector:@selector(didChangePreferredLanguageNotification:) name:XZLocaleDidChangePreferredLanguageNotification object:nil];
     
@@ -32,13 +32,13 @@
 }
 
 - (void)didChangePreferredLanguageNotification:(NSNotification *)notification {
-    UIWindow *window = _window;
+    UIWindow *window = _window ?: UIApplication.sharedApplication.xz_mainWindow;
     
     CGRect const bounds = UIScreen.mainScreen.bounds;
     
     UIViewController *rootVC = [UIStoryboard storyboardWithName:@"Main" bundle:nil].instantiateInitialViewController;
     
-    _window = [[UIWindow alloc] initWithFrame:bounds];
+    _window = [[UIWindow alloc] initWithWindowScene:window.windowScene];
     _window.backgroundColor = UIColor.whiteColor;
     _window.rootViewController = rootVC;
     [_window makeKeyAndVisible];

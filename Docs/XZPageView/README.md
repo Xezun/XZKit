@@ -1,19 +1,10 @@
 # XZPageView
 
-[![CI Status](https://img.shields.io/badge/Build-pass-brightgreen.svg)](https://cocoapods.org/pods/XZPageView)
-[![Version](https://img.shields.io/cocoapods/v/XZPageView.svg?style=flat)](https://cocoapods.org/pods/XZPageView)
-[![License](https://img.shields.io/cocoapods/l/XZPageView.svg?style=flat)](https://cocoapods.org/pods/XZPageView)
-[![Platform](https://img.shields.io/cocoapods/p/XZPageView.svg?style=flat)](https://cocoapods.org/pods/XZPageView)
-
 ## Example
 
 要运行示例项目，请在拉取代码后，先在 Pods 目录执行`pod install`命令。
 
 To run the example project, clone the repo, and run `pod install` from the Pods directory first.
-
-## Requirements
-
-iOS 11.0, Xcode 14.0
 
 ## Installation
 

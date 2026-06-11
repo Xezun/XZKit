@@ -6,13 +6,9 @@ import CompilerPluginSupport
 
 let package = Package(
     name: "XZKit",
-    platforms: [.iOS(.v13), .macOS(.v13)],
+    platforms: [.iOS(.v15), .macOS(.v12)],
     products: [
-        .library(name: "XZKit", targets: ["XZKit"]),
-        .executable(
-            name: "Demo",
-            targets: ["Demo"]
-        ),
+        .library(name: "XZKit", targets: ["XZKit"])
     ],
     dependencies: [
         .package(url: "https://github.com/swiftlang/swift-syntax.git", from: "600.0.0-latest"),
@@ -22,18 +18,25 @@ let package = Package(
             name: "XZKit",
             dependencies: ["XZKitObjC", "XZKitMacros"],
             path: "Sources",
+            exclude: ["ObjC", "Macro", "Header"],
             sources: ["Swift"],
-            swiftSettings: [.define("XZ_FRAMEWORK")]
+            swiftSettings: [
+                .define("XZ_FRAMEWORK")
+            ]
         ),
         .target(
             name: "XZKitObjC",
+            dependencies: [],
             path: "Sources",
+            exclude: ["Swift", "Macro", "Header"],
             sources: ["ObjC"],
             publicHeadersPath: "Header/XZKit/Public",
             cSettings: [
                 .headerSearchPath("Header/XZKit/Private")
             ],
-            cxxSettings: [.define("XZ_FRAMEWORK")]
+            cxxSettings: [
+                .define("XZ_FRAMEWORK")
+            ]
         ),
         .macro(
             name: "XZKitMacros",
@@ -55,6 +58,6 @@ let package = Package(
             name: "Demo",
             dependencies: ["XZKit"],
             path: "Projects/Demo"
-        ),
+        )
     ]
 )

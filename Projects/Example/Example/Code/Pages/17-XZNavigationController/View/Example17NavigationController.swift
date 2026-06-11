@@ -49,42 +49,42 @@ class Example17NavigationController: UINavigationController, XZNavigationControl
         super.viewDidAppear(animated)
         
         guard let tabBarController = self.tabBarController else { return }
-        #XZLog("isBeingPresented: \(tabBarController.isBeingPresented), modalPresentationStyle: \(tabBarController.modalPresentationStyle)")
+        #XZLog("isBeingPresented: %@, modalPresentationStyle: %@", tabBarController.isBeingPresented, tabBarController.modalPresentationStyle as! CVarArg)
     }
     
-    override func show(_ vc: UIViewController, sender: Any?) {
-        #XZLog("\(#function) \(vc)")
-        super.show(vc, sender: sender)
+    override func show(_ viewController: UIViewController, sender: Any?) {
+        #XZLog("viewController: %@", viewController)
+        super.show(viewController, sender: sender)
     }
     
     override func pushViewController(_ viewController: UIViewController, animated: Bool) {
-        #XZLog("\(#function) \(viewController)")
+        #XZLog("viewController: %@", viewController)
         super.pushViewController(viewController, animated: animated)
     }
     
     override func setViewControllers(_ viewControllers: [UIViewController], animated: Bool) {
-        #XZLog("\(#function) \(viewControllers.count)")
+        #XZLog("viewControllers: %@", viewControllers)
         super.setViewControllers(viewControllers, animated: animated)
     }
     
     override var viewControllers: [UIViewController] {
         willSet {
-            #XZLog("\(#function).setter \(newValue.count)")
+            #XZLog("viewControllers.setter: %ld", newValue.count)
         }
     }
     
     override func popViewController(animated: Bool) -> UIViewController? {
-        #XZLog("\(#function) \(animated)")
+        #XZLog("animated: %@", animated);
         return super.popViewController(animated: animated)
     }
     
     override func popToViewController(_ viewController: UIViewController, animated: Bool) -> [UIViewController]? {
-        #XZLog("\(#function) \(viewController)")
+        #XZLog("viewController: %@", viewController)
         return super.popToViewController(viewController, animated: animated)
     }
     
     override func popToRootViewController(animated: Bool) -> [UIViewController]? {
-        #XZLog("\(#function) \(animated)")
+        #XZLog("animated: %@", animated);
         return super.popToRootViewController(animated: animated)
     }
 

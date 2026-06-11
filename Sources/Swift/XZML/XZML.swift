@@ -7,25 +7,21 @@
 
 import Foundation
 
-#if SWIFT_PACKAGE
-@_exported import XZKitObjC
-#endif
-
 extension NSAttributedString.Key {
     
-    /// 拓展 XZML 支持的富文本属性。
+    /// XZML 支持的富文本属性。
     public static let XZML = (
-        /// ``XZMLFontAttributeName``
+        /// 字体。
         font: __XZMLFontAttributeName,
-        /// ``XZMLForegroundColorAttributeName``
+        /// 前景色。
         foregroundColor: __XZMLForegroundColorAttributeName,
-        /// ``XZMLDecorationAttributeName``
+        /// 文本修饰。
         decoration: __XZMLDecorationAttributeName,
-        /// ``XZMLSecurityModeAttributeName``
+        /// 安全模式。
         securityMode: __XZMLSecurityModeAttributeName,
-        /// ``XZMLLinkAttributeName``
+        /// 超链接。
         link: __XZMLLinkAttributeName,
-        /// ``XZMLLineHeightAttributeName``
+        /// 段落行高。
         lineHeight: __XZMLLineHeightAttributeName
     );
     

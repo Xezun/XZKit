@@ -25,11 +25,11 @@
 }
 
 - (IBAction)defaultLogSwitchAction:(UISwitch *)sender {
-    XZLogSystem.defaultLogSystem.isEnabled = sender.isOn;
+    XZLogSystem.defaultSystem.isEnabled = sender.isOn;
 }
 
 - (IBAction)libraryLogSwitchAction:(UISwitch *)sender {
-    XZLogSystem.XZKitLogSystem.isEnabled = sender.isOn;
+    XZLogSystem.XZKitSystem.isEnabled = sender.isOn;
 }
 
 - (IBAction)modalStyleSwitchAction:(UISwitch *)sender {

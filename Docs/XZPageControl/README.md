@@ -1,18 +1,10 @@
 # XZPageControl
 
-[![Version](https://img.shields.io/cocoapods/v/XZPageControl.svg?style=flat)](https://cocoapods.org/pods/XZPageControl)
-[![License](https://img.shields.io/cocoapods/l/XZPageControl.svg?style=flat)](https://cocoapods.org/pods/XZPageControl)
-[![Platform](https://img.shields.io/cocoapods/p/XZPageControl.svg?style=flat)](https://cocoapods.org/pods/XZPageControl)
-
 ## 示例
 
 运行示例项目，请在拉取代码后，先在 Pods 目录执行 `pod install` 命令。
 
 To run the example project, clone the repo, and run `pod install` from the Pods directory first.
-
-## Requirements
-
-iOS 11.0, Xcode 14.0
 
 ## Installation
 

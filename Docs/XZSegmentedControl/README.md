@@ -1,10 +1,5 @@
 # XZSegmentedControl
 
-[![CI Status](https://img.shields.io/badge/Build-pass-brightgreen.svg)](https://cocoapods.org/pods/XZSegmentedControl)
-[![Version](https://img.shields.io/cocoapods/v/XZSegmentedControl.svg?style=flat)](https://cocoapods.org/pods/XZSegmentedControl)
-[![License](https://img.shields.io/cocoapods/l/XZSegmentedControl.svg?style=flat)](https://cocoapods.org/pods/XZSegmentedControl)
-[![Platform](https://img.shields.io/cocoapods/p/XZSegmentedControl.svg?style=flat)](https://cocoapods.org/pods/XZSegmentedControl)
-
 一款支持高度自定义的分段式控件，基于 UICollectionView 打造，可用于横向或纵向的菜单视图。
 
 ```swift
@@ -21,10 +16,6 @@ control.addTarget(self, action: #selector(segmentedControlValueChanged(_:)), for
 ## Example
 
 To run the example project, clone the repo, and run `pod install` from the Pods directory first.
-
-## Requirements
-
-iOS 11.0, Xcode 14.0
 
 ## Installation
 

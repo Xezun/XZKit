@@ -1,15 +1,6 @@
 
 # Mocoa
 
-[![CI Status](https://img.shields.io/badge/Build-pass-brightgreen.svg)](https://cocoapods.org/pods/XZKit)
-[![Version](https://img.shields.io/cocoapods/v/XZKit.svg?style=flat)](https://cocoapods.org/pods/XZKit)
-[![License](https://img.shields.io/cocoapods/l/XZKit.svg?style=flat)](https://cocoapods.org/pods/XZKit)
-[![Platform](https://img.shields.io/cocoapods/p/XZKit.svg?style=flat)](https://cocoapods.org/pods/XZKit)
-
-## 版本需求
-
-iOS 13.0+, Xcode 16.0+, Swift 6.0
-
 ## 集成安装
 
 ### 使用 Swift Package Manager 集成

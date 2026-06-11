@@ -1,19 +1,10 @@
 # XZML
 
-[![CI Status](https://img.shields.io/badge/Build-pass-brightgreen.svg)](https://cocoapods.org/pods/XZML)
-[![Version](https://img.shields.io/cocoapods/v/XZML.svg?style=flat)](https://cocoapods.org/pods/XZML)
-[![License](https://img.shields.io/cocoapods/l/XZML.svg?style=flat)](https://cocoapods.org/pods/XZML)
-[![Platform](https://img.shields.io/cocoapods/p/XZML.svg?style=flat)](https://cocoapods.org/pods/XZML)
-
 ## 示例项目 Example
 
 要运行示例项目，需在拉取代码后，先在`Pods`目录执行`pod install`命令。
 
 To run the example project, clone the repo, and run `pod install` from the Pods directory first.
-
-## 版本需求 Requirements
-
-iOS 12.0, Xcode 14.0
 
 ## 安装使用 Installation
 

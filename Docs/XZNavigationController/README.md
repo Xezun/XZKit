@@ -1,10 +1,5 @@
 # XZNavigationController
 
-[![CI Status](https://img.shields.io/badge/Build-pass-brightgreen.svg)](https://cocoapods.org/pods/XZNavigationController)
-[![Version](https://img.shields.io/cocoapods/v/XZNavigationController.svg?style=flat)](https://cocoapods.org/pods/XZNavigationController)
-[![License](https://img.shields.io/cocoapods/l/XZNavigationController.svg?style=flat)](https://cocoapods.org/pods/XZNavigationController)
-[![Platform](https://img.shields.io/cocoapods/p/XZNavigationController.svg?style=flat)](https://cocoapods.org/pods/XZNavigationController)
-
 XZNavigationController 是一款使原生的 UINavigationController 支持定制化导航栏、全屏手势导航功能的组件。
 
 XZNavigationController is a protocol oriented component that enables native UINavigationController to support custom navigation bars and full screen gesture navigation functions.
@@ -14,10 +9,6 @@ XZNavigationController is a protocol oriented component that enables native UINa
 在拉取代码后，在示例项目中 `Pods` 目录下执行 `pod install` 命令后，就可以运行项目，体验所有功能效果。
 
 To run the example project, clone the repo, and run `pod install` from the Pods directory first.
-
-## 版本要求 Requirements
-
-iOS 12.0, Xcode 14.0
 
 ## 安装使用 Installation
 

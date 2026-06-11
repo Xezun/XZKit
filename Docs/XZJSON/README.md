@@ -11,10 +11,6 @@
 
 To run the example project, clone the repo, and run `pod install` from the Pods directory first.
 
-## 环境需求 Requirements
-
-iOS 11.0, Xcode 14.0
-
 ## 如何安装 Installation
 
 推荐使用 [CocoaPods](https://cocoapods.org) 安装 XZJSON 组件，在`Podfile`文件中添加下面这行代码即可。

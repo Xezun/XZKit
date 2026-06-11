@@ -23,16 +23,16 @@ class FooViewModel: XZMocoaViewModel {
     @key
     var name: String?
     
-    @key(value: 12)
+    @key
     @bind
-    var age: Int
+    var age: Int = 12
     
     @key(.detailText)
     @bind
     var detail: String?
     
-    @key("fooBar", 20)
-    var foobar : Int
+    @key("foobar")
+    var fooBar : Int = 20
 
     @prepare
     private func prepare1() {
@@ -64,11 +64,9 @@ class FooViewModel: XZMocoaViewModel {
         
     }
     
-    @key(value: 0)
+    @key
     @bind(.foo.bar.bar)
-    var keyPathValue2: Int
-    
-    
+    var keyPathValue2: Int = 0
     
 }
 

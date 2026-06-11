@@ -1,10 +1,5 @@
 # XZDataCryptor
 
-[![CI Status](https://img.shields.io/badge/Build-pass-brightgreen.svg)](https://cocoapods.org/pods/XZDataCryptor)
-[![Version](https://img.shields.io/cocoapods/v/XZDataCryptor.svg?style=flat)](https://cocoapods.org/pods/XZDataCryptor)
-[![License](https://img.shields.io/cocoapods/l/XZDataCryptor.svg?style=flat)](https://cocoapods.org/pods/XZDataCryptor)
-[![Platform](https://img.shields.io/cocoapods/p/XZDataCryptor.svg?style=flat)](https://cocoapods.org/pods/XZDataCryptor)
-
 基于原生 CommonCrypto 框架进行的二次封装，将 AES、DES、CAST 等对称加密函数，封装成易于使用的面向对象的版本。
 
 ## Example
@@ -12,10 +7,6 @@
 在示例项目中，提供了完整的使用示例，也可用来体验 XZDataCryptor 提供的对称加密功能。
 
 To run the example project, clone the repo, and run `pod install` from the Pods directory first.
-
-## Requirements
-
-iOS 11.0, Xcode 14.0
 
 ## Installation
 
