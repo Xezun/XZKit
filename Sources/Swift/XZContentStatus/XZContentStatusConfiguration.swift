@@ -199,22 +199,14 @@ extension XZContentStatus {
             
             switch rawValue {
             case "empty":
-                if #available(iOS 15, *) {
-                    self.image = UIImage(systemName: "rectangle.on.rectangle.slash.circle", color: color, pointSize: size, weight: weight, scale: scale)
-                } else if #available(iOS 14, *) {
-                    self.image = UIImage(systemName: "tray.circle", color: color, pointSize: size, weight: weight, scale: scale)
-                } else {
-                    self.image = UIImage(systemName: "magnifyingglass.circle", color: color, pointSize: size, weight: weight, scale: scale)
-                }
+                self.image = UIImage(systemName: "rectangle.on.rectangle.slash.circle", color: color, pointSize: size, weight: weight, scale: scale)
             case "error":
                 self.image = UIImage(systemName: "exclamationmark.circle", color: color, pointSize: size, weight: weight, scale: scale)
             case "loading":
                 if #available(iOS 18, *) {
                     self.image = UIImage(systemName: "arrow.trianglehead.2.clockwise.rotate.90.circle", color: color, pointSize: size, weight: weight, scale: scale)
-                } else if #available(iOS 14, *) {
-                    self.image = UIImage(systemName: "arrow.triangle.2.circlepath.circle", color: color, pointSize: size, weight: weight, scale: scale)
                 } else {
-                    self.image = UIImage(systemName: "arrow.2.circlepath.circle", color: color, pointSize: size, weight: weight, scale: scale)
+                    self.image = UIImage(systemName: "arrow.triangle.2.circlepath.circle", color: color, pointSize: size, weight: weight, scale: scale)
                 }
                 if #available(iOS 18.0, *) {
                     self.setSymbolEffect(.rotate, options: .repeat(.continuous))
@@ -222,10 +214,8 @@ extension XZContentStatus {
             case "unreachable":
                 if #available(iOS 17, *) {
                     self.image = UIImage(systemName: "wifi.exclamationmark.circle", color: color, pointSize: size, weight: weight, scale: scale)
-                } else if #available(iOS 15, *) {
-                    self.image = UIImage(systemName: "wifi.circle", color: color, pointSize: size, weight: weight, scale: scale)
                 } else {
-                    self.image = UIImage(systemName: "wifi.slash", color: color, pointSize: size, weight: weight, scale: scale)
+                    self.image = UIImage(systemName: "wifi.circle", color: color, pointSize: size, weight: weight, scale: scale)
                 }
             case "unavailable":
                 self.image = UIImage(systemName: "xmark.circle", color: color, pointSize: size, weight: weight, scale: scale)

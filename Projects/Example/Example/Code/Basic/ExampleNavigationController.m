@@ -27,10 +27,12 @@
     } else {
         [self.navigationBar setBackgroundImage:image forBarMetrics:(UIBarMetricsDefault)];
     }
-}
-
-- (UIViewController *)childViewControllerForStatusBarStyle {
-    return self.presentedViewController ?: self.topViewController;
+    
+    UITabBarAppearance *appearance = [[UITabBarAppearance alloc] init];
+    appearance.shadowImage = [UIImage xz_imageWithColor:UIColor.redColor];
+    appearance.shadowColor = UIColor.redColor;
+    self.tabBarController.tabBar.standardAppearance = appearance;
+    self.tabBarController.tabBar.scrollEdgeAppearance = appearance;
 }
 
 - (UIViewController *)childViewControllerForStatusBarHidden {

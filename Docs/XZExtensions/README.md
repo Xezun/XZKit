@@ -1,19 +1,10 @@
 # XZExtensions
 
-[![CI Status](https://img.shields.io/badge/Build-pass-brightgreen.svg)](https://cocoapods.org/pods/XZExtensions)
-[![Version](https://img.shields.io/cocoapods/v/XZExtensions.svg?style=flat)](https://cocoapods.org/pods/XZExtensions)
-[![License](https://img.shields.io/cocoapods/l/XZExtensions.svg?style=flat)](https://cocoapods.org/pods/XZExtensions)
-[![Platform](https://img.shields.io/cocoapods/p/XZExtensions.svg?style=flat)](https://cocoapods.org/pods/XZExtensions)
-
 本库是对原生框架的拓展，为原生类添加一些常用方法和属性，以降低代码重复，提高开发效率。
 
 ## Example
 
 To run the example project, clone the repo, and run `pod install` from the Pods directory first.
-
-## Requirements
-
-iOS 11.0, Xcode 14.0
 
 ## Installation
 

@@ -301,11 +301,11 @@
 }
 
 - (void)testXZUtils {
-    XCTAssert(XZVersionStringCompare(@"1.2.3", @"1.2.4") == NSOrderedAscending);
-    XCTAssert(XZVersionStringCompare(@"1.2.3", @"1.2") == NSOrderedDescending);
-    XCTAssert(XZVersionStringCompare(@"1.2.3", @"1.2.3") == NSOrderedSame);
-    XCTAssert(XZVersionStringCompare(@"1.2", @"1.2.3") == NSOrderedAscending);
-    XCTAssert(XZVersionStringCompare(@"2.2", @"1.2.3") == NSOrderedDescending);
+    XCTAssert(XZVersionCompare(@"1.2.3", @"1.2.4") == NSOrderedAscending);
+    XCTAssert(XZVersionCompare(@"1.2.3", @"1.2") == NSOrderedDescending);
+    XCTAssert(XZVersionCompare(@"1.2.3", @"1.2.3") == NSOrderedSame);
+    XCTAssert(XZVersionCompare(@"1.2", @"1.2.3") == NSOrderedAscending);
+    XCTAssert(XZVersionCompare(@"2.2", @"1.2.3") == NSOrderedDescending);
     NSLog(@"Timestamp: %f", XZTimestamp());
 }
 

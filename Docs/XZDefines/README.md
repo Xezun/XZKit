@@ -1,19 +1,10 @@
 # XZDefines
 
-[![CI Status](https://img.shields.io/badge/Build-pass-brightgreen.svg)](https://cocoapods.org/pods/XZDefines)
-[![Version](https://img.shields.io/cocoapods/v/XZDefines.svg?style=flat)](https://cocoapods.org/pods/XZDefines)
-[![License](https://img.shields.io/cocoapods/l/XZDefines.svg?style=flat)](https://cocoapods.org/pods/XZDefines)
-[![Platform](https://img.shields.io/cocoapods/p/XZDefines.svg?style=flat)](https://cocoapods.org/pods/XZDefines)
-
 XZDefines 是 XZKit 基础定义部分，包含一些开发常用的基础函数、宏定义和运行时基础函数等。
 
 ## Example
 
 To run the example project, clone the repo, and run `pod install` from the Pods directory first.
-
-## Requirements
-
-iOS 11.0, Xcode 14.0
 
 ## Installation
 
@@ -105,7 +96,7 @@ NSString *name = asNonEmpty(dict[@"name"], @"Visitor");
 
 ### XZUtils - 常用工具函数
 
-- `XZVersionStringCompare` - 版本号比较函数，方便比较两个版本号的大小。
+- `XZVersionCompare` - 版本号比较函数，方便比较两个版本号的大小。
 - `XZTimestamp` - 获取当前时间戳，精确到微秒。
 
 ### XZMacro - 高级宏定义

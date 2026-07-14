@@ -60,7 +60,7 @@ class Example17ViewController: UITableViewController, XZMocoaView {
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
         
-        #XZLog("isModalInPresentation: \(self.isModalInPresentation)")
+        #XZLog("isModalInPresentation: %@", self.isModalInPresentation)
     }
     
     @IBAction func currentHiddenSwitchValueChanged(_ sender: UISwitch) {

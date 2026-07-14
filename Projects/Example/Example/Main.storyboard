@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="24506" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="Nan-hp-3aN">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="25079.1" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="Nan-hp-3aN">
     <device id="retina6_12" orientation="portrait" appearance="light"/>
     <dependencies>
         <deployment identifier="iOS"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="24504"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="25059"/>
         <capability name="Image references" minToolsVersion="12.0"/>
         <capability name="Safe area layout guides" minToolsVersion="9.0"/>
         <capability name="System colors in document resources" minToolsVersion="11.0"/>
@@ -82,12 +82,12 @@
             </objects>
             <point key="canvasLocation" x="-333.58778625954199" y="2374.6478873239439"/>
         </scene>
-        <!--Tab Bar Controller-->
+        <!--Example Tab Bar Controller-->
         <scene sceneID="YsY-5o-hvK">
             <objects>
-                <tabBarController automaticallyAdjustsScrollViewInsets="NO" id="Nan-hp-3aN" sceneMemberID="viewController">
+                <tabBarController automaticallyAdjustsScrollViewInsets="NO" id="Nan-hp-3aN" customClass="ExampleTabBarController" customModule="Example" customModuleProvider="target" sceneMemberID="viewController">
                     <toolbarItems/>
-                    <tabBar key="tabBar" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" id="GX6-s9-Q7l">
+                    <tabBar key="tabBar" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" shadowImage="RGBA-535353FF" id="GX6-s9-Q7l">
                         <rect key="frame" x="0.0" y="0.0" width="1000" height="1000"/>
                         <autoresizingMask key="autoresizingMask"/>
                         <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
@@ -258,10 +258,11 @@
         </scene>
     </scenes>
     <resources>
-        <image name="apple.terminal.circle" catalog="system" width="128" height="123"/>
-        <image name="apple.terminal.circle.fill" catalog="system" width="128" height="123"/>
-        <image name="gear.circle" catalog="system" width="128" height="123"/>
-        <image name="gear.circle.fill" catalog="system" width="128" height="123"/>
+        <image name="RGBA-535353FF" width="3" height="3"/>
+        <image name="apple.terminal.circle" catalog="system" width="128" height="128"/>
+        <image name="apple.terminal.circle.fill" catalog="system" width="128" height="128"/>
+        <image name="gear.circle" catalog="system" width="128" height="128"/>
+        <image name="gear.circle.fill" catalog="system" width="128" height="128"/>
         <systemColor name="systemBackgroundColor">
             <color white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
         </systemColor>
