@@ -357,11 +357,7 @@ static const void * const _viewModel = &_viewModel;
     return [self presentMocoaURL:url options:nil animated:nil completion:completion];
 }
 
-- (__kindof UIViewController *)presentViewControllerWithMocoaURL:(NSURL *)url animated:(BOOL)animated completion:(void (^)(void))completion {
-    return [self presentMocoaURL:url animated:animated completion:completion];
-}
-
-- (__kindof UIViewController *)addChildMocoaURL:(NSURL *)url options:(nullable NSDictionary *)options {
+- (__kindof UIViewController *)addChildViewControllerWithMocoaURL:(NSURL *)url options:(nullable NSDictionary *)options {
     UIViewController *nextVC = [UIViewController viewControllerWithMocoaURL:url options:options];
     if (nextVC != nil) {
         [self addChildViewController:nextVC];
@@ -369,33 +365,13 @@ static const void * const _viewModel = &_viewModel;
     return nextVC;
 }
 
-- (__kindof UIViewController *)addChildMocoaURL:(NSURL *)url {
-    return [self addChildMocoaURL:url options:nil];
-}
-
 - (__kindof UIViewController *)addChildViewControllerWithMocoaURL:(NSURL *)url {
-    return [self addChildMocoaURL:url];
+    return [self addChildViewControllerWithMocoaURL:url options:nil];
 }
 
 @end
 
 @implementation UINavigationController (XZMocoaModuleSupporting)
-
-- (instancetype)initWithRootMocoaURL:(NSURL *)url options:(nullable NSDictionary *)options {
-    UIViewController *rootVC = [UIViewController viewControllerWithMocoaURL:url options:options];
-    if (rootVC == nil) {
-        return [self init];
-    }
-    return [self initWithRootViewController:rootVC];
-}
-
-- (instancetype)initWithRootMocoaURL:(NSURL *)url {
-    return [self initWithRootMocoaURL:url options:nil];
-}
-
-- (instancetype)initWithRootViewControllerWithMocoaURL:(NSURL *)url {
-    return [self initWithRootMocoaURL:url];
-}
 
 - (__kindof UIViewController *)pushMocoaURL:(NSURL *)url options:(nullable NSDictionary *)options animated:(BOOL)animated {
     UIViewController *nextVC = [UIViewController viewControllerWithMocoaURL:url options:options];
@@ -421,16 +397,12 @@ static const void * const _viewModel = &_viewModel;
 
 @implementation UITabBarController (XZMocoaModuleSupporting)
 
-- (NSArray<__kindof UIViewController *> *)setMocoaURLs:(NSArray<NSURL *> *)urls animated:(BOOL)animated {
+- (NSArray<__kindof UIViewController *> *)setViewControllersWithMocoaURLs:(NSArray<NSURL *> *)urls animated:(BOOL)animated {
     NSArray *viewControllers = [urls xz_compactMap:^id(NSURL *url, NSInteger idx, BOOL *stop) {
         return [UIViewController viewControllerWithMocoaURL:url];
     }];
     [self setViewControllers:viewControllers animated:animated];
     return viewControllers;
-}
-
-- (NSArray<__kindof UIViewController *> *)setViewControllersWithMocoaURLs:(NSArray<NSURL *> *)urls animated:(BOOL)animated {
-    return [self setMocoaURLs:urls animated:animated];
 }
 
 @end
