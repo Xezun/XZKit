@@ -347,6 +347,30 @@ FOUNDATION_STATIC_INLINE NSString *XZMocoaPathCreate(XZMocoaKind kind, XZMocoaNa
 
 @implementation XZMocoaModule (XZMocoaExtendedModule)
 
+- (XZMocoaModule *)main {
+    return [self submoduleForKind:XZMocoaKindDefault forName:XZMocoaNameMain];
+}
+
+- (void)setMain:(XZMocoaModule *)main {
+    [self setSubmodule:main forKind:XZMocoaKindDefault forName:XZMocoaNameMain];
+}
+
+- (XZMocoaModule *)home {
+    return [self submoduleForKind:XZMocoaKindDefault forName:XZMocoaNameHome];
+}
+
+- (void)setHome:(XZMocoaModule *)home {
+    [self setSubmodule:home forKind:XZMocoaKindDefault forName:XZMocoaNameHome];
+}
+
+- (XZMocoaModule *)user {
+    return [self submoduleForKind:XZMocoaKindDefault forName:XZMocoaNameUser];
+}
+
+- (void)setUser:(XZMocoaModule *)user {
+    [self setSubmodule:user forKind:XZMocoaKindDefault forName:XZMocoaNameUser];
+}
+
 - (XZMocoaModule *)list {
     return [self submoduleForKind:XZMocoaKindDefault forName:XZMocoaNameList];
 }

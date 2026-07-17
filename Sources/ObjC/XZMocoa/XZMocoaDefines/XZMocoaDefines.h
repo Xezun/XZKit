@@ -50,8 +50,15 @@ FOUNDATION_EXPORT XZMocoaKind const XZMocoaKindSection;
 /// 用于表示 Cell 的分类。
 FOUNDATION_EXPORT XZMocoaKind const XZMocoaKindCell;
 
-/// 用于表示页面的列表。
+/// 主要子模块名。
+FOUNDATION_EXPORT XZMocoaName const XZMocoaNameMain;
+/// 首页子模块名。
+FOUNDATION_EXPORT XZMocoaName const XZMocoaNameHome;
+/// 用户子模块名。
+FOUNDATION_EXPORT XZMocoaName const XZMocoaNameUser;
+/// 列表子模块名
 FOUNDATION_EXPORT XZMocoaName const XZMocoaNameList;
+
 /// 占位视图的名称。
 FOUNDATION_EXPORT XZMocoaName const XZMocoaNamePlaceholder;
 

@@ -18,7 +18,7 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-@class XZMocoaModule, NSDictionary, XZMocoaViewModel;
+@class XZMocoaModule, NSDictionary, XZMocoaViewModel, XZMocoaSubmoduleCollection;
 
 /// 实现视图的形式。
 typedef NS_ENUM(NSUInteger, XZMocoaModuleViewForm) {
@@ -33,23 +33,6 @@ typedef NS_ENUM(NSUInteger, XZMocoaModuleViewForm) {
     /// xib 可重用视图，可通过 viewReuseIdentifier 注册。
     XZMocoaModuleViewFormStoryboardReusableView,
 } NS_SWIFT_NAME(XZMocoaModule.ViewForm);
-
-/// 为 XZMocoaModule 提供下标式访问的协议。
-NS_SWIFT_NAME(XZMocoaModule.SubmoduleCollection)
-@interface XZMocoaSubmoduleCollection : NSObject
-- (instancetype)init NS_UNAVAILABLE;
-@property (nonatomic, readonly) XZMocoaKind kind;
-@property (nonatomic, readonly) XZMocoaModule *module;
-
-- (XZMocoaModule *)submoduleForName:(XZMocoaName)name;
-- (nullable XZMocoaModule *)submoduleIfLoadForName:(XZMocoaName)name;
-- (void)setSubmodule:(nullable XZMocoaModule *)submodule forName:(XZMocoaName)name;
-
-- (XZMocoaModule *)objectForKeyedSubscript:(XZMocoaName)name;
-- (void)setObject:(nullable XZMocoaModule *)submodule forKeyedSubscript:(XZMocoaName)name;
-
-- (void)enumerateKeysAndObjectsUsingBlock:(void (NS_NOESCAPE ^)(XZMocoaName name, XZMocoaModule *submodule, BOOL *stop))block;
-@end
 
 /// 记录了 Mocoa MVVM 模块信息的对象。
 /// @discussion
@@ -195,8 +178,14 @@ NS_SWIFT_NAME(XZMocoaModule.SubmoduleCollection)
 
 @interface XZMocoaModule (XZMocoaExtendedModule)
 
-/// 列表
-@property (nonatomic, strong, null_resettable) XZMocoaModule *list;
+/// 主要子模块。
+@property (nonatomic, strong) XZMocoaModule *main;
+/// 首页子模块。
+@property (nonatomic, strong) XZMocoaModule *home;
+/// 用户子模块。
+@property (nonatomic, strong) XZMocoaModule *user;
+/// 列表子模块。
+@property (nonatomic, strong) XZMocoaModule *list;
 
 #pragma mark - 为 tableView、collectionView 提供的便利方法
 
@@ -207,7 +196,7 @@ NS_SWIFT_NAME(XZMocoaModule.SubmoduleCollection)
 /// 此属性仅用于表示 UITableView 或 UICollectionView 模块的 XZMocoaModule 对象。
 /// @discussion
 /// 此属性等同于`[table submoduleForName:XZMocoaNameDefault forKind:XZMocoaKindDefault]`。
-@property (nonatomic, strong, null_resettable) XZMocoaModule *section;
+@property (nonatomic, strong) XZMocoaModule *section;
 
 /// 获取 UITableView 或 UICollectionView 模块的指定名称 section 模块。
 /// @discussion
@@ -237,7 +226,7 @@ NS_SWIFT_NAME(XZMocoaModule.SubmoduleCollection)
 /// 此属性仅用于表示 UITableView 或 UICollectionView 的 Section 模块的 XZMocoaModule 对象。
 /// @discussion
 /// 此属性等同于`[section submoduleForKind:XZMocoaKindHeader forName:XZMocoaNameDefault]`。
-@property (nonatomic, strong, null_resettable) XZMocoaModule *header;
+@property (nonatomic, strong) XZMocoaModule *header;
 
 /// 获取 UITableView 或 UICollectionView 的 Section 模块的指定名称的 Header 模块。
 /// @discussion
@@ -267,7 +256,7 @@ NS_SWIFT_NAME(XZMocoaModule.SubmoduleCollection)
 /// 此属性仅用于表示 UITableView 或 UICollectionView 的 Section 模块的 XZMocoaModule 对象。
 /// @discussion
 /// 此属性等同于`[section submoduleForKind:XZMocoaKindCell forName:XZMocoaNameDefault]`。
-@property (nonatomic, strong, null_resettable) XZMocoaModule *cell;
+@property (nonatomic, strong) XZMocoaModule *cell;
 
 /// 获取 UITableView 或 UICollectionView 的 Section 模块的指定名称的 Cell 模块。
 /// @discussion
@@ -295,7 +284,7 @@ NS_SWIFT_NAME(XZMocoaModule.SubmoduleCollection)
 /// @attention
 /// 此属性仅用于表示 UITableView 或 UICollectionView 的 Section 模块的 XZMocoaModule 对象。
 /// @discussion 此方法等同于`[section submoduleForKind:XZMocoaKindFooter forName:XZMocoaNameDefault]`。
-@property (nonatomic, strong, null_resettable) XZMocoaModule *footer;
+@property (nonatomic, strong) XZMocoaModule *footer;
 
 /// 获取 UITableView 或 UICollectionView 的 Section 模块的指定名称的 Footer 模块。
 /// @discussion
@@ -320,17 +309,32 @@ NS_SWIFT_NAME(XZMocoaModule.SubmoduleCollection)
 
 @end
 
+@interface XZMocoaModule (XZMocoaModuleProvider) <XZMocoaModuleProvider>
+@end
+
+/// 为 XZMocoaModule 提供下标式访问的协议。
+NS_SWIFT_NAME(XZMocoaModule.SubmoduleCollection)
+@interface XZMocoaSubmoduleCollection : NSObject
+- (instancetype)init NS_UNAVAILABLE;
+@property (nonatomic, readonly) XZMocoaKind kind;
+@property (nonatomic, readonly) XZMocoaModule *module;
+
+- (XZMocoaModule *)submoduleForName:(XZMocoaName)name;
+- (nullable XZMocoaModule *)submoduleIfLoadForName:(XZMocoaName)name;
+- (void)setSubmodule:(nullable XZMocoaModule *)submodule forName:(XZMocoaName)name;
+
+- (XZMocoaModule *)objectForKeyedSubscript:(XZMocoaName)name;
+- (void)setObject:(nullable XZMocoaModule *)submodule forKeyedSubscript:(XZMocoaName)name;
+
+- (void)enumerateKeysAndObjectsUsingBlock:(void (NS_NOESCAPE ^)(XZMocoaName name, XZMocoaModule *submodule, BOOL *stop))block;
+@end
+
 @interface NSURL (XZMocoaModule)
 /// 子类可以通过此方法构造统一格式的 URL 对象。
 /// - Parameters:
 ///   - domain: 域
 ///   - path: 路径，格式如 /path1/path2
 + (NSURL *)mocoaURLWithDomain:(XZMocoaModuleDomain *)domain path:(NSString *)path NS_SWIFT_NAME(init(_:path:));
-@end
-
-
-@interface XZMocoaModule (XZMocoaModuleProvider) <XZMocoaModuleProvider>
-
 @end
 
 /// 通过 URL 获取模块。
