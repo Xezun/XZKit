@@ -14,8 +14,19 @@ extension Date {
     ///   - string: 日期字符串
     ///   - dateFormat: 日期格式
     ///   - formatter: 格式化工具
-    public init?(from string: String, using formatter: DateFormatter = .dateTime) {
+    public init?(string: String, using formatter: DateFormatter = .dateTime) {
         guard let date = formatter.date(from: string) else {
+            return nil
+        }
+        self = date
+    }
+    
+    /// 通过格式化的日期字符串，构造 Date 对象。
+    /// - Parameters:
+    ///   - string: 日期字符
+    ///   - style: 日期格式
+    public init?(string: String, style: XZDateStyle) {
+        guard let date = style.dateFormatter.date(from: string) else {
             return nil
         }
         self = date
@@ -28,6 +39,13 @@ extension Date {
     /// - Returns: 格式化的日期字符串
     public func formatted(using formatter: DateFormatter = .dateTime) -> String {
         return formatter.string(from: self)
+    }
+    
+    /// 将日期格式为指定样式。
+    /// - Parameter style: 日期格式样式
+    /// - Returns: 指定格式样式的日期字符串
+    public func formatted(style style: XZDateStyle = .dateTime) -> String {
+        return style.dateFormatter.string(from: self)
     }
     
 }
@@ -56,30 +74,30 @@ extension Date {
 /// - Z：表示时区 +0800
 /// - z: 时区 PST GMT
 /// - X: 时区 +08；+0800；+08:00
-public struct XZDateFormatStyle: RawRepresentable, FormatStyle, Sendable {
+public struct XZDateStyle: RawRepresentable, FormatStyle, Sendable {
     
     /// yyyy-MM-dd HH:mm:ss.SSS
-    public static let msecDateTime    = XZDateFormatStyle(rawValue: "yyyy-MM-dd HH:mm:ss.SSS")
+    public static let msecDateTime    = XZDateStyle(rawValue: "yyyy-MM-dd HH:mm:ss.SSS")
     /// yyyy-MM-dd HH:mm:ss
-    public static let dateTime        = XZDateFormatStyle(rawValue: "yyyy-MM-dd HH:mm:ss")
+    public static let dateTime        = XZDateStyle(rawValue: "yyyy-MM-dd HH:mm:ss")
     /// y-M-d H:m:s
-    public static let shortDateTime   = XZDateFormatStyle(rawValue: "y-M-d H:m:s")
+    public static let shortDateTime   = XZDateStyle(rawValue: "y-M-d H:m:s")
     /// yyyy-MM-dd
-    public static let date            = XZDateFormatStyle(rawValue: "yyyy-MM-dd")
+    public static let date            = XZDateStyle(rawValue: "yyyy-MM-dd")
     /// y-M-d
-    public static let shortDate       = XZDateFormatStyle(rawValue: "y-M-d")
+    public static let shortDate       = XZDateStyle(rawValue: "y-M-d")
     /// MM-dd
-    public static let monthDay        = XZDateFormatStyle(rawValue: "MM-dd")
+    public static let monthDay        = XZDateStyle(rawValue: "MM-dd")
     /// M-d
-    public static let shortMonthDay   = XZDateFormatStyle(rawValue: "M-d")
+    public static let shortMonthDay   = XZDateStyle(rawValue: "M-d")
     /// HH:mm:ss
-    public static let time            = XZDateFormatStyle(rawValue: "HH:mm:ss")
+    public static let time            = XZDateStyle(rawValue: "HH:mm:ss")
     /// H:m:s
-    public static let shortTime       = XZDateFormatStyle(rawValue: "H:m:s")
+    public static let shortTime       = XZDateStyle(rawValue: "H:m:s")
     /// HH:mm
-    public static let hourMinute      = XZDateFormatStyle(rawValue: "HH:mm")
+    public static let hourMinute      = XZDateStyle(rawValue: "HH:mm")
     /// H:m
-    public static let shortHourMinute = XZDateFormatStyle(rawValue: "H:m")
+    public static let shortHourMinute = XZDateStyle(rawValue: "H:m")
     
     public let rawValue: String
     
@@ -97,13 +115,13 @@ public struct XZDateFormatStyle: RawRepresentable, FormatStyle, Sendable {
         return dateFormatter.string(from: value)
     }
     
-    public func locale(_ locale: Locale) -> XZDateFormatStyle {
+    public func locale(_ locale: Locale) -> XZDateStyle {
         return self
     }
     
 }
 
-extension XZDateFormatStyle: ExpressibleByStringLiteral, CustomStringConvertible {
+extension XZDateStyle: ExpressibleByStringLiteral, CustomStringConvertible {
     
     public typealias RawValue = String
     
@@ -130,7 +148,7 @@ extension DateFormatter {
     
     /// 使用 XZDateFormatStyle 枚举，创建日期格式化对象。
     /// - Parameter dateFormat: 日期格式枚举
-    public convenience init(_ dateFormat: XZDateFormatStyle) {
+    public convenience init(_ dateFormat: XZDateStyle) {
         self.init()
         self.dateFormat = dateFormat.rawValue
     }
@@ -138,57 +156,57 @@ extension DateFormatter {
     /// 格式 yyyy-MM-dd HH:mm:ss.SSS 且不允许修改。
     ///
     /// - Attention: 该格式化对象的时区、日历等属性，保持系统默认，因为是单例，不建议动态修改。
-    public static let msecDateTime   = XZDateFormatStyle.msecDateTime.dateFormatter
+    public static let msecDateTime   = XZDateStyle.msecDateTime.dateFormatter
     
     /// 格式 yyyy-MM-dd HH:mm:ss 且不允许修改。
     ///
     /// - Attention: 该格式化对象的时区、日历等属性，保持系统默认，因为是单例，不建议动态修改。
-    public static let dateTime        = XZDateFormatStyle.dateTime.dateFormatter
+    public static let dateTime        = XZDateStyle.dateTime.dateFormatter
     
     /// 格式 y-M-d H:m:s 且不允许修改。
     ///
     /// - Attention: 该格式化对象的时区、日历等属性，保持系统默认，因为是单例，不建议动态修改。
-    public static let shortDateTime   = XZDateFormatStyle.shortDateTime.dateFormatter
+    public static let shortDateTime   = XZDateStyle.shortDateTime.dateFormatter
     
     /// 格式 yyyy-MM-dd 且不允许修改。
     ///
     /// - Attention: 该格式化对象的时区、日历等属性，保持系统默认，因为是单例，不建议动态修改。
-    public static let date            = XZDateFormatStyle.date.dateFormatter
+    public static let date            = XZDateStyle.date.dateFormatter
     
     /// 格式 y-M-d 且不允许修改。
     ///
     /// - Attention: 该格式化对象的时区、日历等属性，保持系统默认，因为是单例，不建议动态修改。
-    public static let shortDate       = XZDateFormatStyle.shortDate.dateFormatter
+    public static let shortDate       = XZDateStyle.shortDate.dateFormatter
     
     /// 格式 MM-dd 且不允许修改。
     ///
     /// - Attention: 该格式化对象的时区、日历等属性，保持系统默认，因为是单例，不建议动态修改。
-    public static let monthDay        = XZDateFormatStyle.monthDay.dateFormatter
+    public static let monthDay        = XZDateStyle.monthDay.dateFormatter
     
     /// 格式 M-d 且不允许修改。
     ///
     /// - Attention: 该格式化对象的时区、日历等属性，保持系统默认，因为是单例，不建议动态修改。
-    public static let shortMonthDay   = XZDateFormatStyle.shortMonthDay.dateFormatter
+    public static let shortMonthDay   = XZDateStyle.shortMonthDay.dateFormatter
     
     /// 格式 HH:mm:ss 且不允许修改。
     ///
     /// - Attention: 该格式化对象的时区、日历等属性，保持系统默认，因为是单例，不建议动态修改。
-    public static let time            = XZDateFormatStyle.time.dateFormatter
+    public static let time            = XZDateStyle.time.dateFormatter
     
     /// 格式 H:m:s 且不允许修改。
     ///
     /// - Attention: 该格式化对象的时区、日历等属性，保持系统默认，因为是单例，不建议动态修改。
-    public static let shortTime       = XZDateFormatStyle.shortTime.dateFormatter
+    public static let shortTime       = XZDateStyle.shortTime.dateFormatter
     
     /// 格式 HH:mm 且不允许修改。
     ///
     /// - Attention: 该格式化对象的时区、日历等属性，保持系统默认，因为是单例，不建议动态修改。
-    public static let hourMinute      = XZDateFormatStyle.hourMinute.dateFormatter
+    public static let hourMinute      = XZDateStyle.hourMinute.dateFormatter
     
     /// 格式 H:m 且不允许修改。
     ///
     /// - Attention: 该格式化对象的时区、日历等属性，保持系统默认，因为是单例，不建议动态修改。
-    public static let shortHourMinute = XZDateFormatStyle.shortHourMinute.dateFormatter
+    public static let shortHourMinute = XZDateStyle.shortHourMinute.dateFormatter
     
     
 }
