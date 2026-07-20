@@ -90,13 +90,17 @@ extension XZContentStatus {
         }
         
         override public func sizeThatFits(_ size: CGSize) -> CGSize {
+            if size.width <= 40.0 || size.height <= 40.0 {
+                return CGSize.zero
+            }
+            
             // 可布局的区域：去 20 的边距，在剩下的区域内布局
             let layoutSize = size.insetBy(width: +20.0, height: +20.0)
             
             let hasIcon = !iconView.isHidden
             let hasText = !textView.isHidden
             
-            // 扩大热区
+            // 限制最小值，避免热区太小
             let minWidth  = layoutSize.width * 0.65
             let minHeight = layoutSize.height * 0.35
             
@@ -233,9 +237,6 @@ extension XZContentStatus {
                     tapGestureRecognizer.isEnabled = false
                 }
                 
-                let size = statusView.sizeThatFits(bounds.size)
-                statusView.autoresizingMask = [.flexibleTopMargin, .flexibleLeftMargin, .flexibleBottomMargin, .flexibleRightMargin]
-                statusView.frame = bounds.adjusting(size, with: .center)
                 addSubview(statusView)
                 
                 self.statusView = statusView
@@ -243,17 +244,31 @@ extension XZContentStatus {
         }
         
         init(for target: XZContentStatusRepresentable, view: UIView) {
-            self.target = target
-            self.targetView   = view
+            self.target     = target
+            self.targetView = view
             super.init(frame: view.bounds)
             
-            self.autoresizingMask = [.flexibleWidth, .flexibleHeight]
-            
+            // 改变 frame 不会触发 bounds 的 KVO 事件，所以需要设置 autoresizingMask 。
+            autoresizingMask = [.flexibleWidth, .flexibleHeight]
+            // 监听 bounds 改变，主要针对 UIScrollView
             view.addObserver(self, forKeyPath: "bounds", options: .new, context: &_context);
+        }
+        
+        deinit {
+            targetView?.removeObserver(self, forKeyPath: "bounds", context: &_context)
         }
         
         required init?(coder: NSCoder) {
             fatalError("init(coder:) has not been implemented")
+        }
+        
+        public override func layoutSubviews() {
+            super.layoutSubviews()
+            
+            guard let statusView = self.statusView else { return }
+            let bounds = self.bounds;
+            let size   = statusView.sizeThatFits(bounds.size)
+            statusView.frame = bounds.adjusting(size, with: .center)
         }
         
         @objc func tapGestureRecognizerAction(_ sender: UITapGestureRecognizer) {
@@ -272,7 +287,6 @@ extension XZContentStatus {
                 self.frame = bounds
             }
         }
-        
     }
     
 }
