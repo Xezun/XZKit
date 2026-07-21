@@ -27,24 +27,24 @@
     return [NSString stringWithFormat:@"<%@: %p, identifier = %@; height = %g>", self.class, self, self.identifier, self.height];
 }
 
-- (void)tableView:(id<XZMocoaTableView>)tableView didSelectCell:(UITableViewCell *)cell atIndexPath:(NSIndexPath *)indexPath {
+- (void)tableViewCell:(UITableViewCell *)cell wasSelectedAtIndexPath:(NSIndexPath *)indexPath {
     
 }
 
-- (void)tableView:(id<XZMocoaTableView>)tableView didDeselectCell:(UITableViewCell *)cell atIndexPath:(NSIndexPath *)indexPath {
+- (void)tableViewCell:(UITableViewCell *)cell wasDeselectedAtIndexPath:(NSIndexPath *)indexPath {
     
 }
 
-- (void)tableView:(id<XZMocoaTableView>)tableView willDisplayCell:(UITableViewCell *)cell atIndexPath:(NSIndexPath *)indexPath {
+- (void)tableViewCell:(UITableViewCell *)cell willBeDisplayedAtIndexPath:(NSIndexPath *)indexPath {
     
 }
 
-- (void)tableView:(id<XZMocoaTableView>)tableView didEndDisplayingCell:(UITableViewCell *)cell atIndexPath:(NSIndexPath *)indexPath {
+- (void)tableViewCell:(UITableViewCell *)cell wasEndedDisplayingAtIndexPath:(NSIndexPath *)indexPath {
     
 }
 
-- (void)tableView:(id<XZMocoaTableView>)tableView didEditCell:(UITableViewCell *)cell atIndexPath:(NSIndexPath *)indexPath forUpdatesKey:(XZMocoaEventsName)key completion:(void (^ _Nullable)(BOOL))completion {
-    [self sendEventsForName:key value:[NSArray arrayWithObjects:indexPath, completion, nil]];
+- (void)tableViewCell:(UITableViewCell *)cell wasEndedEditingAtIndexPath:(NSIndexPath *)indexPath withEventsName:(XZMocoaEventsName)name completion:(void (^)(BOOL))completion {
+    [self sendEventsForName:name value:[NSArray arrayWithObjects:indexPath, completion, nil]];
 }
 
 @end

@@ -30,15 +30,19 @@
     self.frame = frame;
 }
 
-- (void)collectionView:(id<XZMocoaCollectionView>)collectionView didSelectCell:(UICollectionViewCell *)cell atIndexPath:(NSIndexPath *)indexPath {
+- (void)collectionViewCell:(UICollectionViewCell *)cell wasSelectedAtIndexPath:(NSIndexPath *)indexPath {
     
 }
 
-- (void)collectionView:(id<XZMocoaCollectionView>)collectionView willDisplayCell:(UICollectionViewCell *)cell atIndexPath:(NSIndexPath *)indexPath {
+- (void)collectionViewCell:(UICollectionViewCell *)cell wasDeselectedAtIndexPath:(NSIndexPath *)indexPath {
     
 }
 
-- (void)collectionView:(id<XZMocoaCollectionView>)collectionView didEndDisplayingCell:(UICollectionViewCell *)cell atIndexPath:(NSIndexPath*)indexPath {
+- (void)collectionViewCell:(UICollectionViewCell *)cell willBeDisplayAtIndexPath:(NSIndexPath *)indexPath {
+    
+}
+
+- (void)collectionViewCell:(UICollectionViewCell *)cell wasEndedDisplayingAtIndexPath:(NSIndexPath *)indexPath {
     
 }
 

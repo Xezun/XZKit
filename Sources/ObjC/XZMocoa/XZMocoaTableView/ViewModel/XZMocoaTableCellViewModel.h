@@ -11,7 +11,7 @@
 #import "XZMocoaGroupCellViewModel.h"
 #endif
 
-@protocol XZMocoaTableView, XZMocoaTableCell;
+@protocol XZMocoaTableView, XZMocoaTableCell, UITableViewDelegate;
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -20,11 +20,11 @@ NS_SWIFT_UI_ACTOR @interface XZMocoaTableCellViewModel : XZMocoaGroupCellViewMod
 /// 视图高度。
 @property (nonatomic) CGFloat height;
 
-- (void)tableView:(id<XZMocoaTableView>)tableView didSelectCell:(UITableViewCell *)cell atIndexPath:(NSIndexPath *)indexPath;
-- (void)tableView:(id<XZMocoaTableView>)tableView didDeselectCell:(UITableViewCell *)cell atIndexPath:(NSIndexPath *)indexPath;
-- (void)tableView:(id<XZMocoaTableView>)tableView willDisplayCell:(UITableViewCell *)cell atIndexPath:(NSIndexPath *)indexPath;
-- (void)tableView:(id<XZMocoaTableView>)tableView didEndDisplayingCell:(UITableViewCell *)cell atIndexPath:(NSIndexPath *)indexPath;
-- (void)tableView:(id<XZMocoaTableView>)tableView didEditCell:(UITableViewCell *)cell atIndexPath:(NSIndexPath *)indexPath forUpdatesKey:(XZMocoaEventsName)key completion:(void (NS_SWIFT_NONSENDABLE ^ _Nullable)(BOOL))completion NS_SWIFT_NAME(tableView(_:didEdit:at:forUpdates:completion:));
+- (void)tableViewCell:(UITableViewCell *)cell wasSelectedAtIndexPath:(NSIndexPath *)indexPath;
+- (void)tableViewCell:(UITableViewCell *)cell wasDeselectedAtIndexPath:(NSIndexPath *)indexPath;
+- (void)tableViewCell:(UITableViewCell *)cell willBeDisplayedAtIndexPath:(NSIndexPath *)indexPath;
+- (void)tableViewCell:(UITableViewCell *)cell wasEndedDisplayingAtIndexPath:(NSIndexPath *)indexPath;
+- (void)tableViewCell:(UITableViewCell *)cell wasEndedEditingAtIndexPath:(NSIndexPath *)indexPath withEventsName:(XZMocoaEventsName)name completion:(void (NS_SWIFT_NONSENDABLE ^ _Nullable)(BOOL))completion;
 
 @end
 

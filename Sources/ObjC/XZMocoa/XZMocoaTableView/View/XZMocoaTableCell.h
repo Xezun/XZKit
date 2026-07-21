@@ -29,6 +29,9 @@ NS_SWIFT_UI_ACTOR @protocol XZMocoaTableCell <XZMocoaGroupCell>
 
 @interface UITableViewCell (XZMocoaTableCell)
 
+/// 当前 cell 所在的列表容器。
+@property (nonatomic, readonly, nullable) UITableView *xz_tableView NS_SWIFT_NAME(tableView);
+
 /// 视图模型。
 /// @attention 在 Cell 回归重用池时，此属性不会置空，所以如果执行清理操作，需要重写``-prepareForReuse``方法。
 @property (nonatomic, strong, nullable) __kindof XZMocoaTableCellViewModel *viewModel;
@@ -52,8 +55,9 @@ NS_SWIFT_UI_ACTOR @protocol XZMocoaTableCell <XZMocoaGroupCell>
 /// 当前 Cell 的更新事件，比如侧滑编辑、删除等事件。默认直接通过层级关系向上传递事件。
 /// @param tableView cell 所在的容器视图
 /// @param indexPath cell 在容器视图中的位置
-/// @param key 更新事件类型
-- (void)tableView:(id<XZMocoaTableView>)tableView didEditRowAtIndexPath:(NSIndexPath *)indexPath forUpdatesKey:(XZMocoaEventsName)key completion:(void (NS_SWIFT_NONSENDABLE ^ _Nullable)(BOOL succeed))completion NS_SWIFT_NAME(tableView(_:didEditRowAt:forUpdates:completion:));
+/// @param name 更新事件类型
+- (void)tableView:(id<XZMocoaTableView>)tableView didEditRowAtIndexPath:(NSIndexPath *)indexPath withEventsName:(XZMocoaEventsName)name completion:(void (NS_SWIFT_NONSENDABLE ^ _Nullable)(BOOL succeed))completion NS_SWIFT_NAME(tableView(_:didEditRowAt:forUpdates:completion:));
+
 @end
 
 NS_ASSUME_NONNULL_END

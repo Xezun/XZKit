@@ -25,21 +25,27 @@ NS_ASSUME_NONNULL_BEGIN
 ///   - collectionView: 视图所在的容器视图
 ///   - cell: 发送事件的视图
 ///   - indexPath: 视图在容器视图中的位置
-- (void)collectionView:(id<XZMocoaCollectionView>)collectionView didSelectCell:(UICollectionViewCell *)cell atIndexPath:(NSIndexPath *)indexPath;
+- (void)collectionViewCell:(UICollectionViewCell *)cell wasSelectedAtIndexPath:(NSIndexPath *)indexPath;
+
+/// 收到来自 Cell 视图的点击取消事件，默认不执行任何操作。
+/// - Parameters:
+///   - cell: 发送事件的视图
+///   - indexPath: 视图在容器视图中的位置
+- (void)collectionViewCell:(UICollectionViewCell *)cell wasDeselectedAtIndexPath:(NSIndexPath *)indexPath;
 
 /// 收到来自 Cell 视图的展示事件，默认不执行任何操作。
 /// - Parameters:
 ///   - collectionView: 视图所在的容器视图
 ///   - cell: 发送事件的视图
 ///   - indexPath: 视图在容器视图中的位置
-- (void)collectionView:(id<XZMocoaCollectionView>)collectionView willDisplayCell:(UICollectionViewCell *)cell atIndexPath:(NSIndexPath *)indexPath;
+- (void)collectionViewCell:(UICollectionViewCell *)cell willBeDisplayAtIndexPath:(NSIndexPath *)indexPath;
 
 /// 收到来自 Cell 视图的隐藏事件，默认不执行任何操作。
 /// - Parameters:
 ///   - collectionView: 视图所在的容器视图
 ///   - cell: 发送事件的视图
 ///   - indexPath: 视图在容器视图中的位置
-- (void)collectionView:(id<XZMocoaCollectionView>)collectionView didEndDisplayingCell:(UICollectionViewCell *)cell atIndexPath:(NSIndexPath*)indexPath;
+- (void)collectionViewCell:(UICollectionViewCell *)cell wasEndedDisplayingAtIndexPath:(NSIndexPath*)indexPath;
 
 @end
 
