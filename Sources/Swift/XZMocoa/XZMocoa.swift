@@ -18,7 +18,7 @@ extension XZMocoaName: @retroactive ExpressibleByStringLiteral {
         self.init(rawValue: value)
     }
 }
-extension XZMocoaViewModel.Updates.Key: @retroactive ExpressibleByStringLiteral {
+extension XZMocoaEvents.Name: @retroactive ExpressibleByStringLiteral {
     public typealias StringLiteralType = String
     public init(stringLiteral value: String) {
         self.init(rawValue: value)

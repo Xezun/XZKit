@@ -32,8 +32,8 @@ NS_ASSUME_NONNULL_BEGIN
 
 @property (nonatomic, readonly, nullable) __kindof XZMocoaGroupViewModel *superViewModel;
 
-/// 接收来自下级的 XZMocoaUpdatesKeyReload 事件，并刷新视图，如果在批量更新的过程中，视图刷新可能会延迟。
-- (void)didReceiveUpdates:(XZMocoaUpdates *)updates;
+/// 接收来自下级的 XZMocoaEventsNameReload 事件，并刷新视图，如果在批量更新的过程中，视图刷新可能会延迟。
+- (void)didReceiveEvents:(XZMocoaEvents *)events;
 
 /// 所有 cell 视图模型。这是一个计算属性，除非遍历所有 cell 对象，请尽量避免直接使用。
 - (nullable __kindof XZMocoaGroupSupplementaryViewModel *)viewModelForSupplementaryElementOfKind:(XZMocoaKind)kind atIndex:(NSInteger)index;

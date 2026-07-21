@@ -43,8 +43,8 @@
     
 }
 
-- (void)tableView:(id<XZMocoaTableView>)tableView didEditCell:(UITableViewCell *)cell atIndexPath:(NSIndexPath *)indexPath forUpdatesKey:(XZMocoaUpdatesKey)key completion:(void (^ _Nullable)(BOOL))completion {
-    [self emitUpdatesForKey:key value:[NSArray arrayWithObjects:indexPath, completion, nil]];
+- (void)tableView:(id<XZMocoaTableView>)tableView didEditCell:(UITableViewCell *)cell atIndexPath:(NSIndexPath *)indexPath forUpdatesKey:(XZMocoaEventsName)key completion:(void (^ _Nullable)(BOOL))completion {
+    [self sendEventsForName:key value:[NSArray arrayWithObjects:indexPath, completion, nil]];
 }
 
 @end

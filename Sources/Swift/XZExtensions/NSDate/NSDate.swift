@@ -44,7 +44,7 @@ extension Date {
     /// 将日期格式为指定样式。
     /// - Parameter style: 日期格式样式
     /// - Returns: 指定格式样式的日期字符串
-    public func formatted(style style: XZDateStyle = .dateTime) -> String {
+    public func formatted(style: XZDateStyle = .dateTime) -> String {
         return style.dateFormatter.string(from: self)
     }
     

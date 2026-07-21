@@ -480,10 +480,10 @@ Mocoa 与其说是框架，不如说是规范，通过协议规范 MVVM 的实�
 
 ```objc
 // send the emition
-- (void)sendUpdate:(NSString *)name value:(id)value;
+- (void)sendEventsForName:(NSString *)name value:(id)value;
 
 // handle the emition
-- (void)didReceiveUpdate:(MocoaUpdate *)updates;
+- (void)didReceiveEvents:(MocoaUpdate *)events;
 ```
 
 比如在`UITableView`列表中，`cell`模块改变了内容时，希望`UITableView`模块刷新页面时，可以像下面这样处理。
@@ -493,11 +493,11 @@ Mocoa 与其说是框架，不如说是规范，通过协议规范 MVVM 的实�
 - (void)handleUserAction {
     // change the data then
     self.height = 100; // a new height
-    [self sendUpdate:MocoaUpdatesKeyReload value:nil];
+    [self sendEventsForName:MocoaUpdatesKeyReload value:nil];
 }
 
 // 在 UITableView 模块中
-- (void)didReceiveUpdate:(MocoaUpdate *)updates {
+- (void)didReceiveUpdate:(MocoaUpdate *)events {
     if ([emition.name isEqualToString:MocoaUpdatesKeyReload]) {
         [self reloadData];
     }

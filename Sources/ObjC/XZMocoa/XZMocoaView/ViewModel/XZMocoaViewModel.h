@@ -151,71 +151,67 @@ NS_SWIFT_UI_ACTOR @interface XZMocoaViewModel : NSObject <XZMocoaViewModel> {
 @end
 
 
-// - Mocoa Hierarchy Updates -
-// 层级更新机制：在具有层级关系的业务模块中，下级模块向上级模块传递数据或事件，或者上级模块监听下级模块的数据或事件。
-//
-// 在 iOS 开发中，事件传递一般使用代理模式，因为代理协议可以让上下级的逻辑关系看起来更清晰。
-// 但是在使用 MVVM 设计模式开发时，因为模块的划分，原本在 MVC 模式下，可以直接交互的逻辑，变得不再直接。
-// 比如，如果将 UITableView 视为一个模块，那么这个模块就会过于臃肿；而如果将每个 Cell 视为一个模块，
-// 又导致 Cell 与 Cell 之间、Cell 与 TableView 之间的交互变得难以维护，因为需要额外的工作，来设计
-// 模块之间的交互，开发效率和开发体验必将受影响。
-// 所以 Mocoa 设计了基于层级关系的 Mocoa Hierarchy Updates 机制，来简化层级模块间的交互问题。
-//
-// 虽然视图 View 可以通过调用 -didReceiveUpdates: 方法来向视图模型 ViewModel 传递事件或数据，
-// 但正确的做法应是，直接调用视图模型 ViewModel 的方法，因为视图模型对视图来说是公开的。
-// 而视图模型 ViewModel 向视图 View 传递事件或数据，按 Apple Cocoa 的习惯，应使用 delegate 机制，
-// 但是也可以使用 Mocoa 提供的 target-action-value 机制。
-
-/// 更新方式。
-typedef NSString *XZMocoaUpdatesKey NS_EXTENSIBLE_STRING_ENUM NS_SWIFT_NAME(XZMocoaUpdates.Key);
+/// 事件标识符。
+///
+/// ## Mocoa 事件机制
+///
+/// 一种基于标识符的事件机制。
+///
+/// ### 1、视图层向视图模型层传递事件。
+///
+/// 一般情况下，View 向 ViewModel 传递事件，推荐 ViewModel 定义接收事件的方法，然后由 View 绑定或调用。
+/// 为了简化事件处理，Mocoa 为所有子类预先定义了一个接收事件的方法 ``-sendEventsForName:value:`` 以方便事件处理。
+///
+/// ### 2、自下而上的层事件。
+///
+/// 在具有层级关系的模块中，通过层级关系链，自下而上传递事件，比如`Cell`层将事件传递给`Table`层处理。
+typedef NSString *XZMocoaEventsName NS_EXTENSIBLE_STRING_ENUM NS_SWIFT_NAME(XZMocoaEvents.Name);
 
 /// 更新信息模型。
-NS_SWIFT_NAME(XZMocoaViewModel.Updates)
-@interface XZMocoaUpdates : NSObject
-/// 更新方式，或者用来区分更新的标记。
-@property (nonatomic, copy, readonly) XZMocoaUpdatesKey key;
+@interface XZMocoaEvents : NSObject
+/// 标记符，事件名。
+@property (nonatomic, copy, readonly) XZMocoaEventsName name;
 /// 事件值。
 @property (nonatomic, strong, readonly, nullable) id value;
-/// 发生当前事件的源对象。
+/// 创建事件的对象。
 @property (nonatomic, unsafe_unretained, readonly) __kindof XZMocoaViewModel *source;
-/// 传递当前事件的对象。
-@property (nonatomic, unsafe_unretained, XZ_READONLY) __kindof XZMocoaViewModel *target;
+/// 传递事件的对象。
+@property (nonatomic, unsafe_unretained, readonly) __kindof XZMocoaViewModel *target;
 - (instancetype)init NS_UNAVAILABLE;
-+ (instancetype)updatesWithKey:(XZMocoaUpdatesKey)key value:(nullable id)value source:(XZMocoaViewModel *)source NS_SWIFT_NAME(init(_:value:source:));
++ (instancetype)eventsWithName:(XZMocoaEventsName)key value:(nullable id)value source:(XZMocoaViewModel *)source NS_SWIFT_NAME(init(_:value:source:));
 @end
 
+@class UIButton;
+
 /// 通用事件。如果视图模型只有一个事件，或者没必要细分事件时，可以使用此名称。
-FOUNDATION_EXPORT XZMocoaUpdatesKey const XZMocoaUpdatesKeyNone;
+FOUNDATION_EXPORT XZMocoaEventsName const XZMocoaEventsNameNone;
 /// 重载事件。适用情形：通知上级，执行重载模块的操作（数据已经更新）。
-FOUNDATION_EXPORT XZMocoaUpdatesKey const XZMocoaUpdatesKeyReload;
+FOUNDATION_EXPORT XZMocoaEventsName const XZMocoaEventsNameReload;
 /// 更新操作。适用情形：通知上级，执行数据编辑的操作（数据还未编辑）。
-FOUNDATION_EXPORT XZMocoaUpdatesKey const XZMocoaUpdatesKeyModify;
+FOUNDATION_EXPORT XZMocoaEventsName const XZMocoaEventsNameModify;
 /// 插入操作。适用情形：通知上级，执行数据插入的操作（新数据未插入）。
-FOUNDATION_EXPORT XZMocoaUpdatesKey const XZMocoaUpdatesKeyInsert;
+FOUNDATION_EXPORT XZMocoaEventsName const XZMocoaEventsNameInsert;
 /// 删除操作。适用情形：通知上级，执行删除数据的操作（数据还未删除）。
-FOUNDATION_EXPORT XZMocoaUpdatesKey const XZMocoaUpdatesKeyDelete;
+FOUNDATION_EXPORT XZMocoaEventsName const XZMocoaEventsNameDelete;
 /// 选择操作。比如单选 cell 时，只能由上层控制单选。
-FOUNDATION_EXPORT XZMocoaUpdatesKey const XZMocoaUpdatesKeySelect;
+FOUNDATION_EXPORT XZMocoaEventsName const XZMocoaEventsNameSelect;
 /// 反选操作。
-FOUNDATION_EXPORT XZMocoaUpdatesKey const XZMocoaUpdatesKeyDeselect;
+FOUNDATION_EXPORT XZMocoaEventsName const XZMocoaEventsNameDeselect;
 
 @protocol XZMocoaView;
 
-@interface XZMocoaViewModel (XZMocoaViewModelHierarchyUpdates)
+@interface XZMocoaViewModel (XZMocoaViewModelHierarchyEvents)
 
-/// 接收下级模块的更新，或监听到下级模块的数据变化。
-/// @discussion
-/// 只有在 isReady 状态下，才会传递事件。
-/// @discussion
-/// 默认情况下，该方法直接将事件继续向上级模块传递，开发者可重写此方法，根据业务需要，控制事件是否向上传递。
-/// @param updates 事件信息
-- (void)didReceiveUpdates:(XZMocoaUpdates *)updates;
-
-/// 向上级模块发送更新，当前对象将作为事件源。
-/// @discussion 只有在 isReady 状态下，才会发送事件。
-/// @param key 事件名，如为 nil 则为默认名称 XZMocoaUpdatesKeyNone
+/// 创建 `XZMocoaEvents` 并调用 ``-didReceiveEvents:`` 方法，即事件会先发给自己，然后再向上传递。
+/// @param name 事件名，如为 nil 则为默认名称 XZMocoaEventsNameNone
 /// @param value 事件值
-- (void)emitUpdatesForKey:(XZMocoaUpdatesKey)key value:(nullable id)value;
+- (void)sendEventsForName:(nullable XZMocoaEventsName)name value:(nullable id)value;
+
+/// 收到事件。
+/// @discussion
+/// 默认情况下，如果在 isReady 状态下，事件会向上层传递，子类可重写此方法，控制事件是否向上传递。
+/// @param events 事件信息
+- (void)didReceiveEvents:(XZMocoaEvents *)events;
 
 @end
 

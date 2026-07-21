@@ -240,16 +240,19 @@
 @end
 
 
-@implementation XZMocoaUpdates
+@implementation XZMocoaEvents {
+    @package
+    __kindof XZMocoaViewModel * __unsafe_unretained _target;
+}
 
-+ (instancetype)updatesWithKey:(NSString *)key value:(id)value source:(XZMocoaViewModel *)source {
++ (instancetype)eventsWithName:(NSString *)key value:(id)value source:(XZMocoaViewModel *)source {
     return [[self alloc] initWithKey:key value:value source:source];
 }
 
 - (instancetype)initWithKey:(NSString *)key value:(id)value source:(XZMocoaViewModel *)source {
     self = [super init];
     if (self) {
-        _key = key.copy ?: XZMocoaUpdatesKeyNone;
+        _name = key.copy ?: XZMocoaEventsNameNone;
         _value = value;
         _source = source;
         _target = source;
@@ -260,26 +263,25 @@
 @end
 
 
-XZMocoaUpdatesKey const XZMocoaUpdatesKeyNone     = @"none";
-XZMocoaUpdatesKey const XZMocoaUpdatesKeyReload   = @"reload";
-XZMocoaUpdatesKey const XZMocoaUpdatesKeyModify   = @"modify";
-XZMocoaUpdatesKey const XZMocoaUpdatesKeyInsert   = @"insert";
-XZMocoaUpdatesKey const XZMocoaUpdatesKeyDelete   = @"delete";
-XZMocoaUpdatesKey const XZMocoaUpdatesKeySelect   = @"select";
-XZMocoaUpdatesKey const XZMocoaUpdatesKeyDeselect = @"deselect";
+XZMocoaEventsName const XZMocoaEventsNameNone     = @"none";
+XZMocoaEventsName const XZMocoaEventsNameReload   = @"reload";
+XZMocoaEventsName const XZMocoaEventsNameModify   = @"modify";
+XZMocoaEventsName const XZMocoaEventsNameInsert   = @"insert";
+XZMocoaEventsName const XZMocoaEventsNameDelete   = @"delete";
+XZMocoaEventsName const XZMocoaEventsNameSelect   = @"select";
+XZMocoaEventsName const XZMocoaEventsNameDeselect = @"deselect";
 
 @implementation XZMocoaViewModel (XZMocoaViewModelHierarchyEvents)
 
-- (void)didReceiveUpdates:(XZMocoaUpdates *)updates {
-    if (!self.isReady) return;
-    updates.target = self;
-    [self.superViewModel didReceiveUpdates:updates];
+- (void)sendEventsForName:(NSString *)key value:(id)value {
+    XZMocoaEvents * const events = [XZMocoaEvents eventsWithName:key value:value source:self];
+    [self didReceiveEvents:events];
 }
 
-- (void)emitUpdatesForKey:(NSString *)key value:(id)value {
+- (void)didReceiveEvents:(XZMocoaEvents *)events {
     if (!self.isReady) return;
-    XZMocoaUpdates * const updates = [XZMocoaUpdates updatesWithKey:key value:value source:self];
-    [self.superViewModel didReceiveUpdates:updates];
+    events->_target = self;
+    [self.superViewModel didReceiveEvents:events];
 }
 
 @end
