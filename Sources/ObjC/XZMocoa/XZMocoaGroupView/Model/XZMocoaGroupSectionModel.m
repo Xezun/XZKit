@@ -28,13 +28,14 @@
 }
 
 - (id)modelForSupplementaryElementOfKind:(XZMocoaKind)kind atIndex:(NSInteger)index {
-    if (index == 0) {
-        if ([kind isEqualToString:XZMocoaKindHeader]) {
-            return self.headerModel;
-        }
-        if ([kind isEqualToString:XZMocoaKindFooter]) {
-            return self.footerModel;
-        }
+    if (index != 0) {
+        return nil;
+    }
+    if ([kind isEqualToString:XZMocoaKindHeader]) {
+        return self.headerModel;
+    }
+    if ([kind isEqualToString:XZMocoaKindFooter]) {
+        return self.footerModel;
     }
     return nil;
 }

@@ -18,8 +18,10 @@ NS_ASSUME_NONNULL_BEGIN
 @protocol XZMocoaGroupSectionModel <XZMocoaModel>
 
 @optional
-/// cell 数量。
+
+/// Section 中 cell 数量，默认 1 个。如果是数组，则返回数组的数量。
 @property (nonatomic, readonly) NSInteger numberOfCellModels;
+
 /// cell 数据。
 /// @param index 在 section 中 cell 的位置
 - (nullable id)modelForCellAtIndex:(NSInteger)index;

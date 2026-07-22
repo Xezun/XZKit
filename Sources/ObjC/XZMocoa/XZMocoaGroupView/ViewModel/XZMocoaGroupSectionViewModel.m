@@ -49,7 +49,7 @@ typedef void(^XZMocoaGroupDelayedUpdates)(XZMocoaGroupSectionViewModel *self);
 
 - (void)prepare {
     [super prepare];
-    [self _loadDataWithoutEvents];
+    [self _loadSubViewModelsWithoutEvents];
 }
 
 - (void)didRemoveSubViewModel:(__kindof XZMocoaViewModel *)viewModel {
@@ -156,7 +156,7 @@ typedef void(^XZMocoaGroupDelayedUpdates)(XZMocoaGroupSectionViewModel *self);
         }
     }
     // 加载新数据
-    [self _loadDataWithoutEvents];
+    [self _loadSubViewModelsWithoutEvents];
     
     // 发送事件
     [self didReloadData];
@@ -192,7 +192,7 @@ typedef void(^XZMocoaGroupDelayedUpdates)(XZMocoaGroupSectionViewModel *self);
             [oldViewModel removeFromSuperViewModel];
             
             id const newDataModel = [self model:model modelForCellAtIndex:index];
-            id const newViewModel = [self makeViewModelWithModel:newDataModel forCellAtIndex:index];
+            id const newViewModel = [self createCellViewModelWithModel:newDataModel index:index];
             [self insertCellViewModel:newViewModel atIndex:index];
         }];
         [self didReloadCellsAtIndexes:oldIndexes];
@@ -202,7 +202,7 @@ typedef void(^XZMocoaGroupDelayedUpdates)(XZMocoaGroupSectionViewModel *self);
             [oldViewModel removeFromSuperViewModel]; // 由 -didRemoveSubViewModel: 执行清理
             
             id const newDataModel = [self model:model modelForCellAtIndex:index];
-            id const newViewModel = [self makeViewModelWithModel:newDataModel forCellAtIndex:index];
+            id const newViewModel = [self createCellViewModelWithModel:newDataModel index:index];
             [self insertCellViewModel:newViewModel atIndex:index];
         }];
         [self didReloadCellsAtIndexes:indexes];
@@ -220,7 +220,7 @@ typedef void(^XZMocoaGroupDelayedUpdates)(XZMocoaGroupSectionViewModel *self);
     
     [indexes enumerateIndexesUsingBlock:^(NSUInteger const index, BOOL * _Nonnull stop) {
         id const newDataModel = [self model:model modelForCellAtIndex:index];
-        id const newViewModel = [self makeViewModelWithModel:newDataModel forCellAtIndex:index];
+        id const newViewModel = [self createCellViewModelWithModel:newDataModel index:index];
         [self insertCellViewModel:newViewModel atIndex:index];
     }];
     
@@ -389,21 +389,26 @@ typedef void(^XZMocoaGroupDelayedUpdates)(XZMocoaGroupSectionViewModel *self);
         NSMutableArray<XZMocoaViewModel *> * viewModels = _supplementaryViewModels[kind];
         
         for (NSInteger index = 0; index < newCount; index++) {
-            id const newDataModel = [self model:model modelForSupplementaryElementOfKind:kind atIndex:index];
-            
+            id newDataModel = [self model:model modelForSupplementaryElementOfKind:kind atIndex:index];
+            // 提前转化 kCFNull 因为 vm 中的 model 提前转化了
+            if (newDataModel == (id)kCFNull) {
+                newDataModel = nil;
+            }
             if (index < viewModels.count) {
                 id const oldDataModel = viewModels[index].model;
+                // 数据未更新
                 if (newDataModel == oldDataModel || (newDataModel && [newDataModel isEqual:oldDataModel])) {
                     continue;
                 }
                 needsUpdateAll = YES;
-                viewModels[index] = [self makeViewModelWithModel:newDataModel forSupplementaryElementOfKind:kind atIndex:index];
+                viewModels[index] = [self createSupplementaryElementViewModelWithModel:newDataModel kind:kind index:index];
             } else {
                 needsUpdateAll = YES;
                 if (viewModels == nil) {
                     viewModels = [NSMutableArray arrayWithCapacity:newCount];
+                    _supplementaryViewModels[kind] = viewModels;
                 }
-                viewModels[index] = [self makeViewModelWithModel:newDataModel forSupplementaryElementOfKind:kind atIndex:index];
+                viewModels[index] = [self createSupplementaryElementViewModelWithModel:newDataModel kind:kind index:index];
             }
         }
     }
@@ -454,7 +459,7 @@ typedef void(^XZMocoaGroupDelayedUpdates)(XZMocoaGroupSectionViewModel *self);
     NSDictionary<NSNumber *, XZMocoaViewModel *> * const newViewModels = [NSMutableDictionary dictionaryWithCapacity:inserts.count];
     [inserts enumerateIndexesUsingBlock:^(NSUInteger const index, BOOL * _Nonnull stop) {
         id<XZMocoaGroupCellModel>   const newDataModel = newDataModels[index];
-        XZMocoaGroupCellViewModel * const newViewModel = [self makeViewModelWithModel:newDataModel forCellAtIndex:index];
+        XZMocoaGroupCellViewModel * const newViewModel = [self createCellViewModelWithModel:newDataModel index:index];
         [self insertCellViewModel:newViewModel atIndex:index];
         ((NSMutableDictionary *)newViewModels)[@(index)] = newViewModel;
     }];
@@ -516,7 +521,7 @@ typedef void(^XZMocoaGroupDelayedUpdates)(XZMocoaGroupSectionViewModel *self);
     [_cellViewModels insertObject:viewModel atIndex:newRow];
 }
 
-- (void)_loadDataWithoutEvents {
+- (void)_loadSubViewModelsWithoutEvents {
     NSAssert(_supplementaryViewModels.count == 0 && _cellViewModels.count == 0, @"调用此方法前要清除现有的数据");
     
     id const model = self.model;
@@ -525,7 +530,7 @@ typedef void(^XZMocoaGroupDelayedUpdates)(XZMocoaGroupSectionViewModel *self);
         NSInteger const count = [self model:model numberOfModelsForSupplementaryElementOfKind:kind];
         for (NSInteger index = 0; index < count; index++) {
             id const dataModel = [self model:model modelForSupplementaryElementOfKind:kind atIndex:index];
-            XZMocoaGroupSupplementaryViewModel * const viewModel = [self makeViewModelWithModel:dataModel forSupplementaryElementOfKind:kind atIndex:index];
+            XZMocoaGroupSupplementaryViewModel * const viewModel = [self createSupplementaryElementViewModelWithModel:dataModel kind:kind index:index];
             if (_supplementaryViewModels[kind]) {
                 [_supplementaryViewModels[kind] addObject:viewModel];
             } else {
@@ -538,7 +543,7 @@ typedef void(^XZMocoaGroupDelayedUpdates)(XZMocoaGroupSectionViewModel *self);
     NSInteger const count = [self model:model numberOfCellModels:NULL];
     for (NSInteger index = 0; index < count; index++) {
         id<XZMocoaGroupCellModel> const dataModel = [self model:model modelForCellAtIndex:index];
-        XZMocoaGroupCellViewModel *viewModel = [self makeViewModelWithModel:dataModel forCellAtIndex:index];
+        XZMocoaGroupCellViewModel *viewModel = [self createCellViewModelWithModel:dataModel index:index];
         [self _addCellViewModel:viewModel];
     }
 }
@@ -561,7 +566,7 @@ typedef void(^XZMocoaGroupDelayedUpdates)(XZMocoaGroupSectionViewModel *self);
     [self didMoveCellAtIndex:oldRow toIndex:newRow];
 }
 
-- (XZMocoaGroupCellViewModel *)makeViewModelWithModel:(id<XZMocoaGroupCellModel> const)nullableModel forCellAtIndex:(NSInteger)index {
+- (XZMocoaGroupCellViewModel *)createCellViewModelWithModel:(id<XZMocoaGroupCellModel> const)nullableModel index:(NSInteger)index {
     id<XZMocoaModel> const model   = (nullableModel == (id)kCFNull ? nil : nullableModel);
     XZMocoaName      const section = ((id<XZMocoaGroupSectionModel>)self.model).mocoaName;
     XZMocoaName      const name    = model.mocoaName;
@@ -584,14 +589,14 @@ typedef void(^XZMocoaGroupDelayedUpdates)(XZMocoaGroupSectionViewModel *self);
     return viewModel;
 }
 
-- (XZMocoaGroupSupplementaryViewModel *)makeViewModelWithModel:(id const)nullableModel forSupplementaryElementOfKind:(XZMocoaKind)kind atIndex:(NSInteger)index {
-    id<XZMocoaModel> const model  = (nullableModel == (id)kCFNull ? nil : nullableModel);
-    XZMocoaName     const section = ((id<XZMocoaGroupSectionModel>)self.model).mocoaName;
-    XZMocoaName     const name    = model.mocoaName;
-    XZMocoaModule * const module  = [self.module submoduleIfLoadedForKind:kind forName:name];
+- (XZMocoaGroupSupplementaryViewModel *)createSupplementaryElementViewModelWithModel:(id const)nullableModel kind:(XZMocoaKind)kind index:(NSInteger)index {
+    id<XZMocoaModel> const model   = (nullableModel == (id)kCFNull ? nil : nullableModel);
+    XZMocoaName      const section = ((id<XZMocoaGroupSectionModel>)self.model).mocoaName;
+    XZMocoaName      const name    = model.mocoaName;
+    XZMocoaModule *  const module  = [self.module submoduleIfLoadedForKind:kind forName:name];
     
-    Class     VMClass    = [self _loadSubViewModelClassWithModule:module name:name kind:kind section:section];
-    NSString *identifier = nil;
+    Class      VMClass    = [self _loadSubViewModelClassWithModule:module name:name kind:kind section:section];
+    NSString * identifier = nil;
     
     if (VMClass) {
         identifier = module.viewReuseIdentifier ?: XZMocoaReuseIdentifier(section, kind, name);

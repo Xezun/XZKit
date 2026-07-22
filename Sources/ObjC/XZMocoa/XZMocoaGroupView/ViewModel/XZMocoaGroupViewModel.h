@@ -27,7 +27,7 @@ NS_ASSUME_NONNULL_BEGIN
 /// @attention 由于需要管理列表 Cell 子视图，因此需要设置 `module` 属性才能正常工作。
 @interface XZMocoaGroupViewModel : XZMocoaViewModel <XZMocoaGroupViewModel>
 
-/// 所支持的附加视图的类型，默认为 @[XZMocoaKindHeader, XZMocoaKindFooter] 两种。
+/// 所支持的附加视图的类型，默认为 `@[XZMocoaKindHeader, XZMocoaKindFooter]` 两种。
 /// @discussion 请在使用 viewModel 前设置此属性。
 @property (nonatomic, copy) NSArray<XZMocoaKind> *supportedSupplementaryKinds;
 
