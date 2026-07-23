@@ -1,5 +1,5 @@
 //
-//  XZMocoaGroupSupplementaryViewModel.h
+//  XZMocoaGroupSectionSupplementaryViewModel.h
 //  XZMocoa
 //
 //  Created by Xezun on 2023/8/9.
@@ -13,7 +13,7 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-@interface XZMocoaGroupSupplementaryViewModel : XZMocoaViewModel
+@interface XZMocoaGroupSectionSupplementaryViewModel : XZMocoaViewModel
 /// 重用标识符。
 @property (nonatomic, copy, XZ_READONLY) NSString *identifier;
 @property (nonatomic) CGRect frame;

@@ -1,15 +1,15 @@
 //
-//  XZMocoaCollectionSupplementaryView.m
+//  XZMocoaCollectionSectionSupplementaryView.m
 //  XZMocoa
 //
 //  Created by Xezun on 2023/8/9.
 //
 
-#import "XZMocoaCollectionSupplementaryView.h"
+#import "XZMocoaCollectionSectionSupplementaryView.h"
 #import "XZRuntime.h"
 #import <objc/runtime.h>
 
-@implementation UICollectionReusableView (XZMocoaCollectionSupplementaryView)
+@implementation UICollectionReusableView (XZMocoaCollectionSectionSupplementaryView)
 
 @dynamic viewModel;
 

@@ -25,6 +25,10 @@ NS_ASSUME_NONNULL_BEGIN
 // XZMocoaTableCell
 // XZMocoaTableCellModel
 // XZMocoaTableCellViewModel
+// -
+// <XZMocoaTableSection> 虚拟层，无视图
+// XZMocoaTableSectionModel
+// XZMocoaTableSectionViewModel
 
 NS_SWIFT_UI_ACTOR @protocol XZMocoaTableView <XZMocoaGroupView>
 @required

@@ -8,12 +8,12 @@
 #if __has_include(<XZKit/XZKit.h>)
 #import <XZKit/XZMocoaGroupViewModel.h>
 #import <XZKit/XZMocoaTableSectionViewModel.h>
-#import <XZKit/XZMocoaTableHeaderFooterViewModel.h>
+#import <XZKit/XZMocoaTableSectionHeaderFooterViewModel.h>
 #import <XZKit/XZMocoaTableCellViewModel.h>
 #else
 #import "XZMocoaGroupViewModel.h"
 #import "XZMocoaTableSectionViewModel.h"
-#import "XZMocoaTableHeaderFooterViewModel.h"
+#import "XZMocoaTableSectionHeaderFooterViewModel.h"
 #import "XZMocoaTableCellViewModel.h"
 #endif
 

@@ -8,9 +8,9 @@
 @import ObjectiveC;
 #import "XZMocoaCollectionView.h"
 #import "XZMocoaCollectionCell.h"
-#import "XZMocoaCollectionSupplementaryView.h"
+#import "XZMocoaCollectionSectionSupplementaryView.h"
 #import "XZMocoaCollectionPlaceholderCell.h"
-#import "XZMocoaCollectionPlaceholderSupplementaryView.h"
+#import "XZMocoaCollectionPlaceholderSectionSupplementaryView.h"
 #import "XZMocoaCollectionViewProxy.h"
 
 @implementation XZMocoaCollectionView

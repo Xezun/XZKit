@@ -7,15 +7,15 @@
 
 #import "XZMocoaTableSectionViewModel.h"
 #import "XZMocoaTablePlaceholderCellViewModel.h"
-#import "XZMocoaTablePlaceholderHeaderFooterViewModel.h"
+#import "XZMocoaTablePlaceholderSectionHeaderFooterViewModel.h"
 
 @implementation XZMocoaTableSectionViewModel
 
-- (XZMocoaTableHeaderFooterViewModel *)headerViewModel {
+- (XZMocoaTableSectionHeaderFooterViewModel *)headerViewModel {
     return [self viewModelForSupplementaryElementOfKind:XZMocoaKindHeader atIndex:0];
 }
 
-- (XZMocoaTableHeaderFooterViewModel *)footerViewModel {
+- (XZMocoaTableSectionHeaderFooterViewModel *)footerViewModel {
     return [self viewModelForSupplementaryElementOfKind:XZMocoaKindFooter atIndex:0];
 }
 
@@ -34,7 +34,7 @@
 
 - (Class)placeholderViewModelClassForSupplementaryKind:(XZMocoaKind)kind atIndex:(NSInteger)index {
     NSAssert(index == 0, @"UITableView 仅支持一个 %@ 类型的附加视图", kind);
-    return [XZMocoaTablePlaceholderHeaderFooterViewModel class];
+    return [XZMocoaTablePlaceholderSectionHeaderFooterViewModel class];
 }
 
 @end

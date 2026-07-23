@@ -1,21 +1,21 @@
 //
-//  XZMocoaCollectionSupplementaryViewModel.h
+//  XZMocoaCollectionSectionSupplementaryViewModel.h
 //  XZMocoa
 //
 //  Created by Xezun on 2023/8/9.
 //
 
 #if __has_include(<XZKit/XZKit.h>)
-#import <XZKit/XZMocoaGroupSupplementaryViewModel.h>
+#import <XZKit/XZMocoaGroupSectionSupplementaryViewModel.h>
 #else
-#import "XZMocoaGroupSupplementaryViewModel.h"
+#import "XZMocoaGroupSectionSupplementaryViewModel.h"
 #endif
 
-@protocol XZMocoaCollectionView, XZMocoaCollectionSupplementaryView;
+@protocol XZMocoaCollectionView, XZMocoaCollectionSectionSupplementaryView;
 
 NS_ASSUME_NONNULL_BEGIN
 
-@interface XZMocoaCollectionSupplementaryViewModel : XZMocoaGroupSupplementaryViewModel
+@interface XZMocoaCollectionSectionSupplementaryViewModel : XZMocoaGroupSectionSupplementaryViewModel
 
 @property (nonatomic) CGSize size;
 - (void)collectionView:(id<XZMocoaCollectionView>)collectionView willDisplaySupplementaryView:(UICollectionReusableView *)supplementaryView atIndexPath:(NSIndexPath *)indexPath forElementOfKind:(NSString *)elementKind;
@@ -23,7 +23,7 @@ NS_ASSUME_NONNULL_BEGIN
 @end
 
 
-@interface XZMocoaCollectionHeaderFooterViewModel : XZMocoaCollectionSupplementaryViewModel
+@interface XZMocoaCollectionHeaderFooterViewModel : XZMocoaCollectionSectionSupplementaryViewModel
 @end
 
 @interface XZMocoaCollectionHeaderViewModel : XZMocoaCollectionHeaderFooterViewModel

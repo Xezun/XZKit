@@ -8,25 +8,25 @@
 #if __has_include(<XZKit/XZKit.h>)
 #import <XZKit/XZMocoaGroupSectionViewModel.h>
 #import <XZKit/XZMocoaTableCellViewModel.h>
-#import <XZKit/XZMocoaTableHeaderFooterViewModel.h>
+#import <XZKit/XZMocoaTableSectionHeaderFooterViewModel.h>
 #else
 #import "XZMocoaGroupSectionViewModel.h"
 #import "XZMocoaTableCellViewModel.h"
-#import "XZMocoaTableHeaderFooterViewModel.h"
+#import "XZMocoaTableSectionHeaderFooterViewModel.h"
 #endif
 
 NS_ASSUME_NONNULL_BEGIN
 
 @interface XZMocoaTableSectionViewModel : XZMocoaGroupSectionViewModel
 
-@property (nonatomic, readonly, nullable) XZMocoaTableHeaderFooterViewModel *headerViewModel;
-@property (nonatomic, readonly, nullable) XZMocoaTableHeaderFooterViewModel *footerViewModel;
+@property (nonatomic, readonly, nullable) XZMocoaTableSectionHeaderFooterViewModel *headerViewModel;
+@property (nonatomic, readonly, nullable) XZMocoaTableSectionHeaderFooterViewModel *footerViewModel;
 @property (nonatomic, readonly) CGFloat height;
 
 @end
 
 @interface XZMocoaTableSectionViewModel (XZMocoaTableSectionViewModel)
-@property (nonatomic, readonly) NSDictionary<XZMocoaKind, NSArray<__kindof XZMocoaTableHeaderFooterViewModel *> *> *supplementaryViewModels;
+@property (nonatomic, readonly) NSDictionary<XZMocoaKind, NSArray<__kindof XZMocoaTableSectionHeaderFooterViewModel *> *> *supplementaryViewModels;
 @property (nonatomic, copy, readonly) NSArray<__kindof XZMocoaTableCellViewModel *> *cellViewModels;
 - (__kindof XZMocoaTableCellViewModel *)cellViewModelAtIndex:(NSInteger)index;
 @end

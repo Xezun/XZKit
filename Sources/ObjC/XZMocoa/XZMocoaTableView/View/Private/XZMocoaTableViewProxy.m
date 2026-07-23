@@ -6,7 +6,7 @@
 //
 
 #import "XZMocoaTableViewProxy.h"
-#import "XZMocoaTablePlaceholderHeaderFooterView.h"
+#import "XZMocoaTablePlaceholderSectionHeaderFooterView.h"
 #import "XZMocoaTablePlaceholderCell.h"
 @import ObjectiveC;
 
@@ -20,10 +20,10 @@
         [tableView registerClass:[XZMocoaTablePlaceholderCell class] forCellReuseIdentifier:identifier];
         
         identifier = XZMocoaReuseIdentifier(XZMocoaNamePlaceholder, XZMocoaKindHeader, XZMocoaNamePlaceholder);
-        [tableView registerClass:[XZMocoaTablePlaceholderHeaderFooterView class] forHeaderFooterViewReuseIdentifier:identifier];
+        [tableView registerClass:[XZMocoaTablePlaceholderSectionHeaderFooterView class] forHeaderFooterViewReuseIdentifier:identifier];
         
         identifier = XZMocoaReuseIdentifier(XZMocoaNamePlaceholder, XZMocoaKindFooter, XZMocoaNamePlaceholder);
-        [tableView registerClass:[XZMocoaTablePlaceholderHeaderFooterView class] forHeaderFooterViewReuseIdentifier:identifier];
+        [tableView registerClass:[XZMocoaTablePlaceholderSectionHeaderFooterView class] forHeaderFooterViewReuseIdentifier:identifier];
     }
     
     [module enumerateSubmodulesUsingBlock:^(XZMocoaModule *submodule, XZMocoaKind kind, XZMocoaName section, BOOL *stop) {
@@ -75,7 +75,7 @@
                     }
                     default: {
                         NSString * const identifier = XZMocoaReuseIdentifier(section, kind, name);
-                        Class const aClass = [XZMocoaTablePlaceholderHeaderFooterView class];
+                        Class const aClass = [XZMocoaTablePlaceholderSectionHeaderFooterView class];
                         [tableView registerClass:aClass forHeaderFooterViewReuseIdentifier:identifier];
                         break;
                     }
@@ -118,18 +118,18 @@
 
 - (UIView *)tableView:(UITableView *)tableView viewForHeaderInSection:(NSInteger)section {
     XZMocoaTableSectionViewModel * const sectionViewModel = [self.viewModel sectionViewModelAtIndex:section];
-    XZMocoaTableHeaderFooterViewModel * const viewModel = sectionViewModel.headerViewModel;
+    XZMocoaTableSectionHeaderFooterViewModel * const viewModel = sectionViewModel.headerViewModel;
     if (viewModel == nil) {
         return nil;
     }
-    UITableViewHeaderFooterView<XZMocoaTableHeaderFooterView> *view = [tableView dequeueReusableHeaderFooterViewWithIdentifier:viewModel.identifier];
+    UITableViewHeaderFooterView<XZMocoaTableSectionHeaderFooterView> *view = [tableView dequeueReusableHeaderFooterViewWithIdentifier:viewModel.identifier];
     view.viewModel = viewModel;
     return view;
 }
 
 - (CGFloat)tableView:(UITableView *)tableView heightForHeaderInSection:(NSInteger)section {
     XZMocoaTableSectionViewModel * const sectionViewModel = [self.viewModel sectionViewModelAtIndex:section];
-    XZMocoaTableHeaderFooterViewModel * const viewModel = sectionViewModel.headerViewModel;
+    XZMocoaTableSectionHeaderFooterViewModel * const viewModel = sectionViewModel.headerViewModel;
     if (viewModel == nil) {
         return XZMocoaMinimumViewDimension;
     }
@@ -138,18 +138,18 @@
 
 - (UIView *)tableView:(UITableView *)tableView viewForFooterInSection:(NSInteger)section {
     XZMocoaTableSectionViewModel * const sectionViewModel = [self.viewModel sectionViewModelAtIndex:section];
-    XZMocoaTableHeaderFooterViewModel * const viewModel = sectionViewModel.footerViewModel;
+    XZMocoaTableSectionHeaderFooterViewModel * const viewModel = sectionViewModel.footerViewModel;
     if (viewModel == nil) {
         return nil;
     }
-    UITableViewHeaderFooterView<XZMocoaTableHeaderFooterView> *view = [tableView dequeueReusableHeaderFooterViewWithIdentifier:viewModel.identifier];
+    UITableViewHeaderFooterView<XZMocoaTableSectionHeaderFooterView> *view = [tableView dequeueReusableHeaderFooterViewWithIdentifier:viewModel.identifier];
     view.viewModel = viewModel;
     return view;
 }
 
 - (CGFloat)tableView:(UITableView *)tableView heightForFooterInSection:(NSInteger)section {
     XZMocoaTableSectionViewModel * const sectionViewModel = [self.viewModel sectionViewModelAtIndex:section];
-    XZMocoaTableHeaderFooterViewModel * const viewModel = sectionViewModel.footerViewModel;
+    XZMocoaTableSectionHeaderFooterViewModel * const viewModel = sectionViewModel.footerViewModel;
     if (viewModel == nil) {
         return XZMocoaMinimumViewDimension;
     }

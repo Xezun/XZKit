@@ -1,13 +1,13 @@
 //
-//  XZMocoaCollectionSupplementaryViewModel.m
+//  XZMocoaCollectionSectionSupplementaryViewModel.m
 //  XZMocoa
 //
 //  Created by Xezun on 2023/8/9.
 //
 
-#import "XZMocoaCollectionSupplementaryViewModel.h"
+#import "XZMocoaCollectionSectionSupplementaryViewModel.h"
 
-@implementation XZMocoaCollectionSupplementaryViewModel
+@implementation XZMocoaCollectionSectionSupplementaryViewModel
 
 - (CGSize)size {
     return self.frame.size;

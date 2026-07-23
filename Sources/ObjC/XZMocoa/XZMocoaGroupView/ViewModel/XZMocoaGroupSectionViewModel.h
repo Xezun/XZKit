@@ -11,7 +11,7 @@
 #import <XZKit/XZMocoaGroupViewModelDefines.h>
 #import <XZKit/XZMocoaGroupCellModel.h>
 #import <XZKit/XZMocoaGroupSectionModel.h>
-#import <XZKit/XZMocoaGroupSupplementaryViewModel.h>
+#import <XZKit/XZMocoaGroupSectionSupplementaryViewModel.h>
 #import <XZKit/XZMocoaGroupCellViewModel.h>
 #import <XZKit/XZMacros.h>
 #else
@@ -19,7 +19,7 @@
 #import "XZMocoaGroupViewModelDefines.h"
 #import "XZMocoaGroupCellViewModel.h"
 #import "XZMocoaGroupSectionModel.h"
-#import "XZMocoaGroupSupplementaryViewModel.h"
+#import "XZMocoaGroupSectionSupplementaryViewModel.h"
 #import "XZMocoaGroupCellViewModel.h"
 #import "XZMacros.h"
 #endif
@@ -36,9 +36,9 @@ NS_ASSUME_NONNULL_BEGIN
 - (void)didReceiveEvents:(XZMocoaEvents *)events;
 
 /// 所有 cell 视图模型。这是一个计算属性，除非遍历所有 cell 对象，请尽量避免直接使用。
-- (nullable __kindof XZMocoaGroupSupplementaryViewModel *)viewModelForSupplementaryElementOfKind:(XZMocoaKind)kind atIndex:(NSInteger)index;
+- (nullable __kindof XZMocoaGroupSectionSupplementaryViewModel *)viewModelForSupplementaryElementOfKind:(XZMocoaKind)kind atIndex:(NSInteger)index;
 /// 直接返回了内部对象，外部请勿修改，使用请自行 copy 。
-@property (nonatomic, readonly) NSDictionary<XZMocoaKind, NSArray<__kindof XZMocoaGroupSupplementaryViewModel *> *> *supplementaryViewModels;
+@property (nonatomic, readonly) NSDictionary<XZMocoaKind, NSArray<__kindof XZMocoaGroupSectionSupplementaryViewModel *> *> *supplementaryViewModels;
 
 @property (nonatomic, copy, readonly) NSArray<__kindof XZMocoaGroupCellViewModel *> *cellViewModels;
 

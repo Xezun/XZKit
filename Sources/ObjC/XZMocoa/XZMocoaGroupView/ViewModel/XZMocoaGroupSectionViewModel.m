@@ -85,7 +85,7 @@ typedef void(^XZMocoaGroupDelayedUpdates)(XZMocoaGroupSectionViewModel *self);
         }
         // 附加视图更新事件
         for (NSString *key in _supplementaryViewModels) {
-            for (XZMocoaGroupSupplementaryViewModel *vm in _supplementaryViewModels[key]) {
+            for (XZMocoaGroupSectionSupplementaryViewModel *vm in _supplementaryViewModels[key]) {
                 if (subViewModel == vm) {
                     [self didReloadData];
                     return;
@@ -530,7 +530,7 @@ typedef void(^XZMocoaGroupDelayedUpdates)(XZMocoaGroupSectionViewModel *self);
         NSInteger const count = [self model:model numberOfModelsForSupplementaryElementOfKind:kind];
         for (NSInteger index = 0; index < count; index++) {
             id const dataModel = [self model:model modelForSupplementaryElementOfKind:kind atIndex:index];
-            XZMocoaGroupSupplementaryViewModel * const viewModel = [self createSupplementaryElementViewModelWithModel:dataModel kind:kind index:index];
+            XZMocoaGroupSectionSupplementaryViewModel * const viewModel = [self createSupplementaryElementViewModelWithModel:dataModel kind:kind index:index];
             if (_supplementaryViewModels[kind]) {
                 [_supplementaryViewModels[kind] addObject:viewModel];
             } else {
@@ -589,7 +589,7 @@ typedef void(^XZMocoaGroupDelayedUpdates)(XZMocoaGroupSectionViewModel *self);
     return viewModel;
 }
 
-- (XZMocoaGroupSupplementaryViewModel *)createSupplementaryElementViewModelWithModel:(id const)nullableModel kind:(XZMocoaKind)kind index:(NSInteger)index {
+- (XZMocoaGroupSectionSupplementaryViewModel *)createSupplementaryElementViewModelWithModel:(id const)nullableModel kind:(XZMocoaKind)kind index:(NSInteger)index {
     id<XZMocoaModel> const model   = (nullableModel == (id)kCFNull ? nil : nullableModel);
     XZMocoaName      const section = ((id<XZMocoaGroupSectionModel>)self.model).mocoaName;
     XZMocoaName      const name    = model.mocoaName;
@@ -605,7 +605,7 @@ typedef void(^XZMocoaGroupDelayedUpdates)(XZMocoaGroupSectionViewModel *self);
         identifier = XZMocoaReuseIdentifier(XZMocoaNamePlaceholder, kind, XZMocoaNamePlaceholder);
     }
     
-    XZMocoaGroupSupplementaryViewModel *viewModel = [[VMClass alloc] initWithModel:model];
+    XZMocoaGroupSectionSupplementaryViewModel *viewModel = [[VMClass alloc] initWithModel:model];
     viewModel.index      = index;
     viewModel.module     = module;
     viewModel.identifier = identifier;

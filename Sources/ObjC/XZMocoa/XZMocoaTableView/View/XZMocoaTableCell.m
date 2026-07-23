@@ -21,7 +21,7 @@
         if ([tableView isKindOfClass:UITableView.class]) {
             break;
         }
-        tableView = tableView.nextResponder;
+        tableView = (id)tableView.nextResponder;
     }
     return tableView;
 }

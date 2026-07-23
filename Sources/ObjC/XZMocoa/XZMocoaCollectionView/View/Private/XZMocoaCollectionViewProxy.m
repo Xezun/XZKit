@@ -6,9 +6,9 @@
 //
 
 #import "XZMocoaCollectionViewProxy.h"
-#import "XZMocoaCollectionSupplementaryView.h"
+#import "XZMocoaCollectionSectionSupplementaryView.h"
 #import "XZMocoaCollectionPlaceholderCell.h"
-#import "XZMocoaCollectionPlaceholderSupplementaryView.h"
+#import "XZMocoaCollectionPlaceholderSectionSupplementaryView.h"
 
 static XZMocoaKind XZMocoaKindFromElementKind(NSString *kind) {
     if ([kind isEqualToString:UICollectionElementKindSectionHeader]) return XZMocoaKindHeader;
@@ -33,7 +33,7 @@ static NSString *UIElementKindFromMocoaKind(XZMocoaKind kind) {
         
         for (XZMocoaKind kind in self.viewModel.supportedSupplementaryKinds) {
             NSString * const elementKind = UIElementKindFromMocoaKind(kind);
-            Class      const aClass      = [XZMocoaCollectionPlaceholderSupplementaryView class];
+            Class      const aClass      = [XZMocoaCollectionPlaceholderSectionSupplementaryView class];
             NSString * const identifier  = XZMocoaReuseIdentifier(XZMocoaNamePlaceholder, kind, XZMocoaNamePlaceholder);
             [collectionView registerClass:aClass forSupplementaryViewOfKind:elementKind withReuseIdentifier:identifier];
         }
@@ -91,7 +91,7 @@ static NSString *UIElementKindFromMocoaKind(XZMocoaKind kind) {
                     default: {
                         NSString * const identifier = XZMocoaReuseIdentifier(section, kind, name);
                         NSString * const elementKind = UIElementKindFromMocoaKind(kind);
-                        Class const aClass = [XZMocoaCollectionPlaceholderSupplementaryView class];
+                        Class const aClass = [XZMocoaCollectionPlaceholderSectionSupplementaryView class];
                         [collectionView registerClass:aClass forSupplementaryViewOfKind:elementKind withReuseIdentifier:identifier];
                         break;
                     }
@@ -149,11 +149,11 @@ static NSString *UIElementKindFromMocoaKind(XZMocoaKind kind) {
 - (UICollectionReusableView *)collectionView:(UICollectionView *)collectionView viewForSupplementaryElementOfKind:(NSString *)kind atIndexPath:(NSIndexPath *)indexPath {
     XZMocoaKind const mocoaKind = XZMocoaKindFromElementKind(kind);
     
-    XZMocoaCollectionSupplementaryViewModel *viewModel = [[self.viewModel sectionViewModelAtIndex:indexPath.section] viewModelForSupplementaryElementOfKind:mocoaKind atIndex:indexPath.item];
+    XZMocoaCollectionSectionSupplementaryViewModel *viewModel = [[self.viewModel sectionViewModelAtIndex:indexPath.section] viewModelForSupplementaryElementOfKind:mocoaKind atIndex:indexPath.item];
     if (viewModel == nil) {
         return nil;
     }
-    UICollectionReusableView<XZMocoaCollectionSupplementaryView> *view = [collectionView dequeueReusableSupplementaryViewOfKind:kind withReuseIdentifier:viewModel.identifier forIndexPath:indexPath];
+    UICollectionReusableView<XZMocoaCollectionSectionSupplementaryView> *view = [collectionView dequeueReusableSupplementaryViewOfKind:kind withReuseIdentifier:viewModel.identifier forIndexPath:indexPath];
     view.viewModel = viewModel;
     return view;
 }
@@ -183,12 +183,12 @@ static NSString *UIElementKindFromMocoaKind(XZMocoaKind kind) {
 }
 
 - (CGSize)collectionView:(UICollectionView *)collectionView layout:(UICollectionViewLayout*)collectionViewLayout referenceSizeForHeaderInSection:(NSInteger)section {
-    XZMocoaCollectionSupplementaryViewModel *viewModel = [[self.viewModel sectionViewModelAtIndex:section] viewModelForSupplementaryElementOfKind:XZMocoaKindHeader atIndex:0];
+    XZMocoaCollectionSectionSupplementaryViewModel *viewModel = [[self.viewModel sectionViewModelAtIndex:section] viewModelForSupplementaryElementOfKind:XZMocoaKindHeader atIndex:0];
     return viewModel.size;
 }
 
 - (CGSize)collectionView:(UICollectionView *)collectionView layout:(UICollectionViewLayout*)collectionViewLayout referenceSizeForFooterInSection:(NSInteger)section {
-    XZMocoaCollectionSupplementaryViewModel *viewModel = [[self.viewModel sectionViewModelAtIndex:section] viewModelForSupplementaryElementOfKind:XZMocoaKindFooter atIndex:0];
+    XZMocoaCollectionSectionSupplementaryViewModel *viewModel = [[self.viewModel sectionViewModelAtIndex:section] viewModelForSupplementaryElementOfKind:XZMocoaKindFooter atIndex:0];
     return viewModel.size;
 }
 

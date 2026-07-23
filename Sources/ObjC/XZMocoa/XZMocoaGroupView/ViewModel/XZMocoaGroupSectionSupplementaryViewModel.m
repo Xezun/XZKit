@@ -1,13 +1,13 @@
 //
-//  XZMocoaGroupSupplementaryViewModel.m
+//  XZMocoaGroupSectionSupplementaryViewModel.m
 //  XZMocoa
 //
 //  Created by Xezun on 2023/8/9.
 //
 
-#import "XZMocoaGroupSupplementaryViewModel.h"
+#import "XZMocoaGroupSectionSupplementaryViewModel.h"
 
-@implementation XZMocoaGroupSupplementaryViewModel
+@implementation XZMocoaGroupSectionSupplementaryViewModel
 
 - (instancetype)initWithModel:(id<NSObject>)model {
     self = [super initWithModel:model];

@@ -7,11 +7,11 @@
 
 #import "XZMocoaCollectionSectionViewModel.h"
 #import "XZMocoaCollectionPlaceholderCellViewModel.h"
-#import "XZMocoaCollectionPlaceholderSupplementaryViewModel.h"
+#import "XZMocoaCollectionPlaceholderSectionSupplementaryViewModel.h"
 
 @implementation XZMocoaCollectionSectionViewModel
 
-- (__kindof XZMocoaCollectionSupplementaryViewModel *)viewModelForSupplementaryElementOfKind:(XZMocoaKind)kind atIndex:(NSInteger)index {
+- (__kindof XZMocoaCollectionSectionSupplementaryViewModel *)viewModelForSupplementaryElementOfKind:(XZMocoaKind)kind atIndex:(NSInteger)index {
     return [super viewModelForSupplementaryElementOfKind:kind atIndex:index];
 }
 
@@ -20,7 +20,7 @@
 }
 
 - (Class)placeholderViewModelClassForSupplementaryKind:(XZMocoaKind)kind atIndex:(NSInteger)index {
-    return [XZMocoaCollectionPlaceholderSupplementaryViewModel class];
+    return [XZMocoaCollectionPlaceholderSectionSupplementaryViewModel class];
 }
 
 @end
