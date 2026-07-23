@@ -270,11 +270,13 @@ XZMocoaEventsName const XZMocoaEventsNameInsert   = @"insert";
 XZMocoaEventsName const XZMocoaEventsNameDelete   = @"delete";
 XZMocoaEventsName const XZMocoaEventsNameSelect   = @"select";
 XZMocoaEventsName const XZMocoaEventsNameDeselect = @"deselect";
+XZMocoaEventsName const XZMocoaEventsNameConfirm  = @"confirm";
+XZMocoaEventsName const XZMocoaEventsNameSubmit   = @"submit";
 
 @implementation XZMocoaViewModel (XZMocoaViewModelHierarchyEvents)
 
-- (void)sendEventsForName:(NSString *)key value:(id)value {
-    XZMocoaEvents * const events = [XZMocoaEvents eventsWithName:key value:value source:self];
+- (void)didReceiveEvents:(XZMocoaEventsName)name value:(id)value {
+    XZMocoaEvents * const events = [XZMocoaEvents eventsWithName:name value:value source:self];
     [self didReceiveEvents:events];
 }
 

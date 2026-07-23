@@ -160,7 +160,7 @@ NS_SWIFT_UI_ACTOR @interface XZMocoaViewModel : NSObject <XZMocoaViewModel> {
 /// ### 1、视图层向视图模型层传递事件。
 ///
 /// 一般情况下，View 向 ViewModel 传递事件，推荐 ViewModel 定义接收事件的方法，然后由 View 绑定或调用。
-/// 为了简化事件处理，Mocoa 为所有子类预先定义了一个接收事件的方法 ``-sendEventsForName:value:`` 以方便事件处理。
+/// 为了简化事件处理，Mocoa 为所有子类预先定义了一个接收事件的方法 ``-didReceiveEvents:value:`` 以方便事件处理。
 ///
 /// ### 2、自下而上的层事件。
 ///
@@ -197,6 +197,8 @@ FOUNDATION_EXPORT XZMocoaEventsName const XZMocoaEventsNameDelete;
 FOUNDATION_EXPORT XZMocoaEventsName const XZMocoaEventsNameSelect;
 /// 反选操作。
 FOUNDATION_EXPORT XZMocoaEventsName const XZMocoaEventsNameDeselect;
+FOUNDATION_EXPORT XZMocoaEventsName const XZMocoaEventsNameConfirm;
+FOUNDATION_EXPORT XZMocoaEventsName const XZMocoaEventsNameSubmit;
 
 @protocol XZMocoaView;
 
@@ -205,7 +207,7 @@ FOUNDATION_EXPORT XZMocoaEventsName const XZMocoaEventsNameDeselect;
 /// 创建 `XZMocoaEvents` 并调用 ``-didReceiveEvents:`` 方法，即事件会先发给自己，然后再向上传递。
 /// @param name 事件名，如为 nil 则为默认名称 XZMocoaEventsNameNone
 /// @param value 事件值
-- (void)sendEventsForName:(nullable XZMocoaEventsName)name value:(nullable id)value;
+- (void)didReceiveEvents:(nullable XZMocoaEventsName)name value:(nullable id)value;
 
 /// 收到事件。
 /// @discussion

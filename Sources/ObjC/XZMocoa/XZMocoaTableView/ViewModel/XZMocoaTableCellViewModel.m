@@ -44,7 +44,7 @@
 }
 
 - (void)tableViewCell:(UITableViewCell *)cell wasEndedEditingAtIndexPath:(NSIndexPath *)indexPath withEventsName:(XZMocoaEventsName)name completion:(void (^)(BOOL))completion {
-    [self sendEventsForName:name value:[NSArray arrayWithObjects:indexPath, completion, nil]];
+    [self didReceiveEvents:name value:[NSArray arrayWithObjects:indexPath, completion, nil]];
 }
 
 @end
