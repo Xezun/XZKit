@@ -79,7 +79,10 @@ NS_SWIFT_UI_ACTOR @protocol XZMocoaView <NSObject>
 #pragma mark - XZMocoaModuleSupporting
 
 typedef NSString *XZMocoaOptionKey NS_EXTENSIBLE_STRING_ENUM NS_SWIFT_NAME(XZMocoaOptions.Key);
+
+/// 传递给目标页面的数据模型。
 FOUNDATION_EXPORT XZMocoaOptionKey const XZMocoaOptionKeyModel;
+/// 传递给目标页面参数中 name 字段。
 FOUNDATION_EXPORT XZMocoaOptionKey const XZMocoaOptionKeyName;
 
 /// 模块初始化参数。可像字典一样取值。
@@ -142,10 +145,12 @@ FOUNDATION_EXPORT XZMocoaOptionKey const XZMocoaOptionKeyName;
 /// 通过 Mocoa 创建控制器的额外初始化方法。
 ///
 /// 通过 Mocoa 提供的方法创建的控制器，一定会调用此方法。
-/// 且在 Swift 中，只能通过此方法接收 Mocoa 初始化参数。
+/// 在 Swift 中，不能重写便利初始化方法，只能通过此方法接收 Mocoa 初始化参数。
+///
+/// 默认情况下，此方法会尝试为控制器创建视图模型，子类可以在调用`super`之前，自行创建视图模型，以避免自动创建符合实际需求。
 ///
 /// @param options 初始化参数
-- (instancetype)didInitWithMocoaOptions:(XZMocoaOptions *)options;
+- (void)didInitWithMocoaOptions:(XZMocoaOptions *)options;
 
 /// 通过 XZMocoaURL 弹出层控制器。
 /// @discussion 如果 XZMocoaURL 没有对应的控制器，那么此方法将不产生任何效果。
