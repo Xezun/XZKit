@@ -273,7 +273,7 @@ XZMocoaEventsName const XZMocoaEventsNameDeselect = @"deselect";
 XZMocoaEventsName const XZMocoaEventsNameConfirm  = @"confirm";
 XZMocoaEventsName const XZMocoaEventsNameSubmit   = @"submit";
 
-@implementation XZMocoaViewModel (XZMocoaViewModelHierarchyEvents)
+@implementation XZMocoaViewModel (XZMocoaHierarchyEvents)
 
 - (void)didReceiveEvents:(XZMocoaEventsName)name value:(id)value {
     XZMocoaEvents * const events = [XZMocoaEvents eventsWithName:name value:value source:self];
@@ -291,7 +291,7 @@ XZMocoaEventsName const XZMocoaEventsNameSubmit   = @"submit";
 
 XZMocoaKey const XZMocoaKeyNone = @"";
 
-@implementation XZMocoaViewModel (XZMocoaViewModelTargetAction)
+@implementation XZMocoaViewModel (XZMocoaKeyTargetAction)
 
 - (void)addTarget:(id)target action:(SEL)action forKey:(XZMocoaKey)key {
     if (target == nil || action == nil) {

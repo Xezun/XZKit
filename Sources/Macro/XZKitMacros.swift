@@ -104,7 +104,7 @@ extension SwiftSyntax.AttributeSyntax.Arguments {
         return 0
     }
     
-    /// 宏参数列表的数组形式。
+    /// 宏参数列表的数组形式。标签，表达式，字符串值
     public var arrayRepresentation: [(label: String?, value: String, representedLiteralValue: String?)] {
         var macroArguments = [(String?, String, String?)]()
         
@@ -200,6 +200,41 @@ extension VariableDeclSyntax {
             }
             return false
         }
+    }
+    
+    public enum MatchMethod {
+        case or
+        case and
+    }
+    
+    public func contains(attributes names: Set<String>, _ method: MatchMethod) -> Bool {
+        if names.isEmpty {
+            return true
+        }
+        switch method {
+        case .or:
+            return self.attributes.contains { attribute in
+                if case let .attribute(macroNode) = attribute {
+                    let name = macroNode.attributeName.trimmedDescription
+                    return names.contains(name)
+                }
+                return false
+            }
+        case .and:
+            return self.attributes.reduce(names, { partialResult, attribute in
+                guard case let .attribute(macroNode) = attribute else {
+                    return partialResult
+                }
+                let name = macroNode.attributeName.trimmedDescription
+                guard let index = partialResult.firstIndex(of: name) else {
+                    return partialResult
+                }
+                var newNames = partialResult
+                newNames.remove(at: index)
+                return newNames
+            }).isEmpty
+        }
+        
     }
     
 }

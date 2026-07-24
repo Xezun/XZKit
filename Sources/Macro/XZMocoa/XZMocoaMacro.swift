@@ -11,12 +11,13 @@ import SwiftSyntax
 
 public struct XZMocoaMacro {
     
+    /// 点语法表达式 .key1.key2 转为字符串 "key1.key2"
     public static func keyPath(fromMacroArgument argument: LabeledExprSyntax) -> String? {
         guard var keyExpr = argument.expression.as(MemberAccessExprSyntax.self) else {
             return nil
         }
         
-        // declName 为去掉了点号的部分
+        // declName 为最后一个点，后面的部分
         var keyPath = keyExpr.declName.trimmedDescription;
         
         while let base = keyExpr.base?.as(MemberAccessExprSyntax.self) {
@@ -29,6 +30,7 @@ public struct XZMocoaMacro {
     
 }
 
+/// .m  => 检查被 `@mocoa` 标记的的类是否继承自 NSObject 并添加 `@objc` 标记。
 extension XZMocoaMacro: PeerMacro {
     
     public static func expansion(of node: AttributeSyntax, providingPeersOf declaration: some DeclSyntaxProtocol, in context: some MacroExpansionContext) throws -> [DeclSyntax] {
@@ -62,8 +64,10 @@ extension XZMocoaMacro: PeerMacro {
     
 }
 
-/// 宏 `@mocoa(role)` 的实现：为 `@key`、`@bind` 的成员添加 `@objc` 标记。
-/// Model：为 Model 的 @key 添加 @objc
+/// 宏 `@mocoa(role)` 的实现：
+/// .m  => 为 @key 标记的属性添加 @objc 标记；检查是否缺少 dynamic 标记
+/// .v  => 为 @bind 标记的方法，添加 @objc 标记
+/// .vm => 为 @key @bind 标记的属性和方法添加 @objc 标记
 extension XZMocoaMacro: MemberAttributeMacro {
     
     public static func expansion(of node: SwiftSyntax.AttributeSyntax, attachedTo declaration: some SwiftSyntax.DeclGroupSyntax, providingAttributesFor member: some SwiftSyntax.DeclSyntaxProtocol, in context: some SwiftSyntaxMacros.MacroExpansionContext) throws -> [SwiftSyntax.AttributeSyntax] {
@@ -75,102 +79,97 @@ extension XZMocoaMacro: MemberAttributeMacro {
         
         switch role {
         case .m:
-            guard let propertyDecl = member.as(VariableDeclSyntax.self) else {
+            guard let property = member.as(VariableDeclSyntax.self) else {
                 return []
             }
-            if propertyDecl.contains(attribute: "objc") {
+            guard property.contains(attribute: "key") else {
+                return []
+            }
+            if !property.contains(attributes: ["dynamic", "NSManaged"], .or) {
+                let message = "@mocoa: 缺少 dynamic 标记，该属性值可能无法被用作 key";
+                XZMacroDiagnose(context, node: node, message: message, severity: .warning)
+            }
+            if property.contains(attribute: "objc") {
                 return []
             }
             return ["@objc"]
             
         case .v:
-            fallthrough
+            // 视图属性不需要添加 @objc
+            guard let methodNode = member.as(FunctionDeclSyntax.self) else {
+                return []
+            }
+            
+            var containsBind = false
+            for attribute in methodNode.attributes {
+                if case let .attribute(macroNode) = attribute {
+                    switch macroNode.attributeName.trimmedDescription {
+                    case "objc", "IBAction":
+                        return []
+                    
+                    case "bind":
+                        containsBind = true
+                        
+                    case "prepare":
+                        break
+                        
+                    default:
+                        break
+                    }
+                }
+            }
+            return  containsBind ? ["@objc"] : []
+            
         case .vm:
             var attributeSyntaxes = [SwiftSyntax.AttributeSyntax]()
             
             if let variableDecl = member.as(VariableDeclSyntax.self) {
-                var objcAttributes: String? = nil
+                var containsObjc = false
+                var containsBind = false
                 
                 for attribute in variableDecl.attributes {
-                    if case let .attribute(macroNode) = attribute {
-                        switch macroNode.attributeName.trimmedDescription {
-                        case "objc", "IBOutlet":
-                            return []
-                            
-                        case "key":
-                            do {
-                                let expression = variableDecl.bindings[variableDecl.bindings.startIndex]
-                                let name = try XZMocoaKeyMacro.arguments(forMacro: macroNode, forVariable: expression).name
-                                objcAttributes = "@objc(\(name))"
-                            } catch {
-                                XZMacroDiagnose(context, node: macroNode, error: error, severity: .warning);
-                            }
-                            
-                        case "bind":
-                            do {
-                                // 如果是可选属性，检测是否包含 bind(v:) 调用，否则给出警告
-                                if try XZMocoaBindMacro.isValid(forMacro: macroNode, forVariable: variableDecl, for: role) == .wrapped {
-                                    if !variableDecl.attributes.attributes(forName: "bind").contains(where: { item -> Bool in
-                                        guard let arguments = item.arguments else { return false }
-                                        switch arguments {
-                                        case .argumentList(let labeledExprListSyntax):
-                                            return labeledExprListSyntax.contains(where: { $0.label?.text == "v" })
-                                        default:
-                                            return false
-                                        }
-                                    }) {
-                                        let message = "@mocoa: 检测到该属性为可选类型，普通绑定可能失效，请使用 @bind(v:) 进行绑定；若该确定属性不为空，也可使用隐式可选类型，以消除此警告";
-                                        XZMacroDiagnose(context, node: macroNode, message: message, severity: .warning)
-                                    }
-                                }
-                                guard objcAttributes == nil else {
-                                    break // 避免覆盖 @objc(key)
-                                }
-                                objcAttributes = "@objc"
-                            }  catch {
-                                XZMacroDiagnose(context, node: macroNode, error: error, severity: .warning)
-                            }
-                            break
-                            
-                        default:
-                            break
-                        }
+                    guard case let .attribute(macroNode) = attribute else {
+                        continue
+                    }
+                    switch macroNode.attributeName.trimmedDescription {
+                    case "objc", "IBOutlet":
+                        containsObjc = true
+                    case "key": // 需要用 kvc 取值，因此需要 @objc 标记
+                        containsBind = true
+                    case "bind":
+                        containsBind = true
+                    default:
+                        break
                     }
                 }
                 
-                if let objcAttributes = objcAttributes {
-                    attributeSyntaxes.append("\(raw: objcAttributes)")
+                if containsBind && !containsObjc {
+                    attributeSyntaxes.append("@objc")
                 }
             }
             
             if let methodNode = member.as(FunctionDeclSyntax.self) {
-                var objcAttributes: String? = nil
+                var containsObjc = false
+                var containsBind = false
                 
                 for attribute in methodNode.attributes {
-                    if case let .attribute(macroNode) = attribute {
-                        switch macroNode.attributeName.trimmedDescription {
-                        case "objc", "IBAction":
-                            return []
-                        
-                        case "bind":
-                            do {
-                                try XZMocoaBindMacro.isValid(forMacro: macroNode, forFunction: methodNode, for: role)
-                                objcAttributes = "@objc"
-                            }  catch {
-                                XZMacroDiagnose(context, node: macroNode, error: error, severity: .warning)
-                            }
-                            
-                        case "ready":
-                            objcAttributes = "@nonobjc"
-                            
-                        default:
-                            break
-                        }
+                    guard case let .attribute(macroNode) = attribute else {
+                        continue;
+                    }
+                    switch macroNode.attributeName.trimmedDescription {
+                    case "objc", "IBAction":
+                        containsObjc = true
+                    case "bind":
+                        containsBind = true
+                    case "prepare":
+                        break
+                    default:
+                        break
                     }
                 }
                 
-                if let objcAttributes = objcAttributes {
-                    attributeSyntaxes.append("\(raw: objcAttributes)")
+                if containsBind && !containsObjc {
+                    attributeSyntaxes.append("@objc")
                 }
             }
             
@@ -183,8 +182,9 @@ extension XZMocoaMacro: MemberAttributeMacro {
 }
 
 /// 宏 `@mocoa(role)` 的实现：
-/// 1. 为 .vm 中 @bind 的成员注册 mappingModelKeys 自动监听
-/// 2. 为 .v 中 @bind 成员生成 prepareForViewModel 自动绑定
+/// .vm => 为 @bind 的成员注册 mappingModelKeys 自动监听
+/// .v  => 为 @bind 成员生成 prepareForViewModel 自动绑定
+/// .m  => 暂不执行任何操作
 extension XZMocoaMacro: MemberMacro {
     
     public static func expansion(of node: AttributeSyntax, providingMembersOf declaration: some DeclGroupSyntax, in context: some MacroExpansionContext) throws -> [DeclSyntax] {
@@ -196,7 +196,6 @@ extension XZMocoaMacro: MemberMacro {
         
         switch role {
         case .m:
-            // throw XZMacroError(message: "@mocoa: 暂未不支持 .m 角色")
             return [];
             
         case .v:
@@ -216,8 +215,8 @@ extension XZMocoaMacro: MemberMacro {
             
             // 遍历 class 包体
             for member in classDecl.memberBlock.members {
-                // 处理属性绑定
                 
+                // 处理属性绑定
                 if let variableDecl = member.decl.as(VariableDeclSyntax.self) {
                     let macroNodes = variableDecl.attributes.compactMap({ attribute -> AttributeSyntax? in
                         // 找到宏属性
@@ -232,13 +231,12 @@ extension XZMocoaMacro: MemberMacro {
                         
                         return macroNode
                     });
-                        
-                    // 遍历属性
+                    
                     do {
-                        let string = try XZMocoaBindMacro.statements(forMacro: macroNodes, forVariable: variableDecl)
+                        let string = try XZMocoaBindMacro.viewBindStatements(forMacros: macroNodes, forVariable: variableDecl)
                         bindStatements.append(string)
                     } catch {
-                        XZMacroDiagnose(context, node: macroNodes[0], error: error, severity: .warning)
+                        XZMacroDiagnose(context, node: variableDecl, error: error, severity: .warning)
                     }
                 }
                 
@@ -252,24 +250,18 @@ extension XZMocoaMacro: MemberMacro {
                         }
                         
                         switch macroNode.attributeName.trimmedDescription {
-                        case "bind":
-                            break // 只处理带 @bind 标记的属性。
+                        case "bind": // 处理带 @bind 标记的属性。
+                            do {
+                                let string = try XZMocoaBindMacro.viewBindStatement(forMacro: macroNode, forFunction: methodDecl)
+                                bindStatements.append(string)
+                            } catch {
+                                XZMacroDiagnose(context, node: methodDecl, error: error, severity: .warning)
+                            }
                         case "prepare":
                             prepareMethodNames.append(methodDecl.name.text)
                             continue
                         default:
                             continue
-                        }
-                        
-                        guard macroNode.attributeName.trimmedDescription == "bind" else {
-                            continue
-                        }
-                        
-                        do {
-                            let string = try XZMocoaBindMacro.statement(forMacro: macroNode, forFunction: methodDecl)
-                            bindStatements.append(string)
-                        } catch {
-                            XZMacroDiagnose(context, node: macroNode, error: error, severity: .warning)
                         }
                     }
                 }
@@ -306,7 +298,7 @@ extension XZMocoaMacro: MemberMacro {
                 return [DeclSyntax(methodSyntax)]
             }
             
-            let readyStatementString = prepareMethodNames.map({ "\($0)()" }).joined(separator: "\n")
+            let prepareStatementsString = prepareMethodNames.map({ "\($0)()" }).joined(separator: "\n")
             
             let methodSyntax = try FunctionDeclSyntax(
                 """
@@ -314,7 +306,7 @@ extension XZMocoaMacro: MemberMacro {
                     super.prepareForViewModel()
                     guard let viewModel = self.viewModel else { return }
                     \(raw: bindStatementString)
-                    \(raw: readyStatementString)
+                    \(raw: prepareStatementsString)
                 }
                 """
             )
@@ -338,15 +330,15 @@ extension XZMocoaMacro: MemberMacro {
             }
             
             var mappingKeyValueStrings = [String]()
-            var readyMethodNames = [String]()
+            var prepareMethodNames = [String]()
             
             // 遍历 class 包体
             for member in classDecl.memberBlock.members {
                 // 处理属性
                 if let variableDecl = member.decl.as(VariableDeclSyntax.self) {
                     // 遍历方法属性，找到理带 @bind 标记的方法。
-                    for methodAttribute in variableDecl.attributes {
-                        guard case let .attribute(macroAttribute) = methodAttribute else {
+                    for variableAttribute in variableDecl.attributes {
+                        guard case let .attribute(macroAttribute) = variableAttribute else {
                             continue
                         }
                         guard macroAttribute.attributeName.trimmedDescription == "bind" else {
@@ -358,17 +350,20 @@ extension XZMocoaMacro: MemberMacro {
                         }
                         
                         // 获取宏参数
-                        var keysArray = [String]()
+                        var macroParameter: String? = nil
                         if let macroArguments = macroAttribute.arguments {
                             switch macroArguments {
                             case .argumentList(let arguments):
                                 for argument in arguments {
+                                    // 参数为字符串，去掉双引号
                                     if let key = argument.expression.as(StringLiteralExprSyntax.self)?.representedLiteralValue {
-                                        // 去掉了字面量双引号
-                                        keysArray.append(key)
-                                    } else if let keyPath = Self.keyPath(fromMacroArgument: argument) {
-                                        // 去掉了点号
-                                        keysArray.append(keyPath)
+                                        macroParameter = key
+                                        break
+                                    }
+                                    // 参数为点语法，去掉了点号，转化为 keyPath
+                                    if let keyPath = Self.keyPath(fromMacroArgument: argument) {
+                                        macroParameter = keyPath
+                                        break
                                     }
                                 }
                             default:
@@ -376,13 +371,12 @@ extension XZMocoaMacro: MemberMacro {
                             }
                         }
                         
-                        if keysArray.isEmpty {
-                            mappingKeyValueStrings.append("NSStringFromSelector(#selector(setter: Self.\(name))): [\"\(name)\"]")
+                        if let macroParameter = macroParameter {
+                            mappingKeyValueStrings.append("NSStringFromSelector(#selector(setter: Self.\(name))): [\"\(macroParameter)\"]")
                         } else {
-                            mappingKeyValueStrings.append("NSStringFromSelector(#selector(setter: Self.\(name))): [\"\(keysArray[0])\"]")
+                            mappingKeyValueStrings.append("NSStringFromSelector(#selector(setter: Self.\(name))): [\"\(name)\"]")
                         }
                     }
-                    
                 }
                 
                 // 处理方法
@@ -397,23 +391,22 @@ extension XZMocoaMacro: MemberMacro {
                         case "bind":
                             break
                         case "prepare":
-                            readyMethodNames.append(methodDecl.name.text)
+                            prepareMethodNames.append(methodDecl.name.text)
                             continue
                         default:
                             continue
                         }
                         
                         // 获取宏参数
-                        var keysArray = [String]()
+                        var macroParameters = [String]()
                         if let macroArguments = macroAttribute.arguments {
                             switch macroArguments {
                             case .argumentList(let arguments):
                                 for argument in arguments {
                                     if let key = argument.expression.as(StringLiteralExprSyntax.self)?.representedLiteralValue {
-                                        // 去掉了字面量双引号
-                                        keysArray.append(key)
+                                        macroParameters.append(key)
                                     } else if let keyPath = Self.keyPath(fromMacroArgument: argument) {
-                                        keysArray.append(keyPath)
+                                        macroParameters.append(keyPath)
                                     }
                                 }
                             default:
@@ -421,27 +414,29 @@ extension XZMocoaMacro: MemberMacro {
                             }
                         }
                         // 遍历方法参数，拼接方法名
-                        var selector = methodDecl.name.text + "("
-                        if keysArray.count == 0 {
+                        var bindSelector = methodDecl.name.text + "("
+                        
+                        // 宏没有参数，读取方法的参数
+                        if macroParameters.count == 0 {
                             for parameter in methodDecl.signature.parameterClause.parameters {
-                                selector += parameter.firstName.text + ":"
+                                bindSelector += parameter.firstName.text + ":"
                                 if let name = parameter.secondName {
-                                    keysArray.append(name.text)
+                                    macroParameters.append(name.text)
                                 } else {
-                                    keysArray.append(parameter.firstName.text)
+                                    macroParameters.append(parameter.firstName.text)
                                 }
                             }
                         } else {
                             for parameter in methodDecl.signature.parameterClause.parameters {
-                                selector += parameter.firstName.text + ":"
+                                bindSelector += parameter.firstName.text + ":"
                             }
                         }
-                        selector += ")"
+                        bindSelector += ")"
                         
                         
-                        let keysString = "\"" + keysArray.joined(separator: "\", \"") + "\""
+                        let bindKeys = "\"" + macroParameters.joined(separator: "\", \"") + "\""
                         
-                        mappingKeyValueStrings.append("NSStringFromSelector(#selector(Self.\(selector))): [\(keysString)]")
+                        mappingKeyValueStrings.append("NSStringFromSelector(#selector(Self.\(bindSelector))): [\(bindKeys)]")
                         break
                     }
                 }
@@ -465,12 +460,12 @@ extension XZMocoaMacro: MemberMacro {
                 syntaxes.append(DeclSyntax(variableSyntax))
             }
             
-            if !readyMethodNames.isEmpty {
+            if !prepareMethodNames.isEmpty {
                 let methodSyntax = try FunctionDeclSyntax(
                     """
                     override func prepare() {
                         super.prepare()
-                        \(raw: readyMethodNames.map({ "\($0)()" }).joined(separator: "\n"))
+                        \(raw: prepareMethodNames.map({ "\($0)()" }).joined(separator: "\n"))
                     }
                     """
                 )

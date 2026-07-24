@@ -153,7 +153,7 @@ NS_SWIFT_UI_ACTOR @interface XZMocoaViewModel : NSObject <XZMocoaViewModel> {
 
 /// 事件标识符。
 ///
-/// ## Mocoa 事件机制
+/// ## Mocoa Hierarchy Events 机制
 ///
 /// 一种基于标识符的事件机制。
 ///
@@ -202,7 +202,7 @@ FOUNDATION_EXPORT XZMocoaEventsName const XZMocoaEventsNameSubmit;
 
 @protocol XZMocoaView;
 
-@interface XZMocoaViewModel (XZMocoaViewModelHierarchyEvents)
+@interface XZMocoaViewModel (XZMocoaHierarchyEvents)
 
 /// 创建 `XZMocoaEvents` 并调用 ``-didReceiveEvents:`` 方法，即事件会先发给自己，然后再向上传递。
 /// @param name 事件名，如为 nil 则为默认名称 XZMocoaEventsNameNone
@@ -217,38 +217,30 @@ FOUNDATION_EXPORT XZMocoaEventsName const XZMocoaEventsNameSubmit;
 
 @end
 
-
-// - Mocoa Target Action Value -
-//
-// 设计背景：
-// 一种基于 target-action 方式的事件监听机制。这是一种被动机制，手动调用才会触发监听事件。
-// 在 iOS 开发中，不论采用何种方式进行“键-值”绑定，都有着不小的开发量。
-// “高级”的绑定，在形式上会减少一些代码量，但是其带来的维护成本，相对这些代码量并不是经济的。
-// 而在 iOS 开发中，UI展示才是主要部分，对于响应式要求其实并不高，不应该放在设计架构的首选。
-// 而 target-action 是 iOS 开发中的常用机制，与引入新机制相比，开发和维护成本都大大降低。
-// 设计目的：
-// ViewModel 的 target-action 机制，主要用于 ViewModel 向 View 发送事件。
-// 在开发中，如果 ViewModel 的事件较多且复杂，建议使用 delegate 发送事件。但是对于大多数
-// 业务场景中，ViewModel 事件不仅少而且单一，使用 target-action 机制就完全可以满足要求。
-//
-
-
-/// Mocoa Keyed Actions 事件名。
+/// Key Target Action 事件名。
 ///
-/// 在添加或发送 key-target-action 事件时，如果 key 参数使用了 nil 则会使用此键。
+/// # Mocoa Key Target Action (KTA) 机制
 ///
-/// 在 Swift 中，通 SPM 引用可通过 `@key` 标记属性，会生成发送 key 事件的 setter 中方法。
-/// ```swift
-/// @key
-/// var name: String?
+/// 一种基于 target-action 方式的事件监听机制。这是一种被动机制，手动调用才会触发监听事件。
 ///
-/// // 事件名与属性名不同
-/// @key("bar")
-/// var foo: String?
-/// ```
+/// ## 设计背景
+///
+/// 不论采用何种方式进行“键-值”绑定，都有着不小的开发量，“高级”的绑定，在形式上会减少一些代码量，
+/// 但是其带来的维护成本，相对这些代码量并不是经济的。在 iOS 实际开发中，UI 展示才是主要部分，
+/// 对于响应式要求其实并不高，不应该放在设计架构的首选，而 target-action 机制是 iOS 开发中的常用机制，
+/// 与引入新机制相比，学习成本更低。
+///
+/// ## 设计目的
+///
+/// 主要用于 View 监听 ViewModel 的值，也可以用于 ViewModel 向 View 发送事件。
+/// > 如果 ViewModel 的事件较多且复杂，建议使用 delegate 发送事件。
+///
+/// 在 Swift 中，可通过 `@key` 宏标记属性，自动发送事件。
 typedef NSString *XZMocoaKey NS_EXTENSIBLE_STRING_ENUM;
 
 /// 特殊 key 键，值为空字符串。
+///
+/// 在添加或发送 key-target-action 事件时，如果 key 参数使用了 nil 则会使用此键。
 FOUNDATION_EXPORT XZMocoaKey const XZMocoaKeyNone NS_SWIFT_NAME(None);
 
 /// 用于标记属性可以被添加 target-action 的属性或方法，仅起标记作用。
@@ -261,7 +253,7 @@ FOUNDATION_EXPORT XZMocoaKey const XZMocoaKeyNone NS_SWIFT_NAME(None);
 /// 编译器插件，在属性中添加 mocoa=key 标记，生成的 setter 中添加发送 key 事件的代码。
 #define XZ_MOCOA_KEY(key)
 
-@interface XZMocoaViewModel (XZMocoaViewModelTargetAction)
+@interface XZMocoaViewModel (XZMocoaKeyTargetAction)
 
 /// 添加 target-action 事件。调用此方法不会触发 action 方法。
 ///

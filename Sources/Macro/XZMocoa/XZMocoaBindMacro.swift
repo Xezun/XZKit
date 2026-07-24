@@ -41,7 +41,7 @@ public struct XZMocoaBindMacro {
         
         // 示例：var textLabel = UILabel.init()
         if expression.initializer != nil {
-            throw XZMacroError(message: "@bind: 无法推断属性类型，请使用 var view: UIView = .init() 的形式初始化属性")
+            throw XZMacroError(message: "@bind: 请使用 var view: UIView = .init() 的形式初始化属性")
             // 由于表达式的返回值值及返回值的可选性无法推断，因此如下获取获取类型，必准确
             //if let expression = initializer.value.as(FunctionCallExprSyntax.self)?.calledExpression.as(MemberAccessExprSyntax.self)?.base {
             //    return (expression.trimmedDescription, .unwrapped)
@@ -51,7 +51,7 @@ public struct XZMocoaBindMacro {
         throw XZMacroError(message: "@bind: 无法解析属性类型")
     }
     
-    public static func arguments(forMacro macroNode: SwiftSyntax.AttributeSyntax, forVariable typeName: String) throws -> (selector: String, key: String) {
+    public static func viewBindArguments(forMacro macroNode: SwiftSyntax.AttributeSyntax, forVariable typeName: String) throws -> (selector: String, key: String) {
         // 获取宏参数
         let macroArguments = macroNode.arguments?.arrayRepresentation ?? []
         
@@ -103,11 +103,11 @@ public struct XZMocoaBindMacro {
             }
         case 2:
             vmkey = macroArguments[0].value
-            if macroArguments[1].label == "selector" {
-                selector = macroArguments[1].value
-            } else if let key = macroArguments[1].representedLiteralValue {
+            if let key = macroArguments[1].representedLiteralValue {
                 selector = "#selector(setter: \(typeName).\(key))"
-            } else {
+            } else if macroArguments[1].value.hasPrefix("#selector") {
+                selector = macroArguments[1].value
+            } else  {
                 selector = "#selector(setter: \(typeName)\(macroArguments[1].value))"
             }
             
@@ -118,7 +118,8 @@ public struct XZMocoaBindMacro {
         return (selector, vmkey)
     }
     
-    public static func statements(forMacro macroNodes: [SwiftSyntax.AttributeSyntax], forVariable declaration: VariableDeclSyntax) throws -> String {
+    /// 为被 @bind 标记的属性，生成绑定代码
+    public static func viewBindStatements(forMacros macroNodes: [SwiftSyntax.AttributeSyntax], forVariable declaration: VariableDeclSyntax) throws -> String {
         if macroNodes.isEmpty {
             return ""
         }
@@ -130,7 +131,7 @@ public struct XZMocoaBindMacro {
         let propertyType = try Self.type(forVariable: declaration)
         
         let statements = try macroNodes.map({ macroNode throws -> String in
-            let arguments = try Self.arguments(forMacro: macroNode, forVariable: propertyType.name)
+            let arguments = try Self.viewBindArguments(forMacro: macroNode, forVariable: propertyType.name)
             return "viewModel.addTarget(\(propertyName), action: \(arguments.selector), forKey: \(arguments.key), value: nil)"
         }).joined(separator: "\n")
         
@@ -140,30 +141,41 @@ public struct XZMocoaBindMacro {
         return statements
     }
     
-    public static func arguments(forMacro macroNode: SwiftSyntax.AttributeSyntax, forFunction declaration: FunctionDeclSyntax) throws -> (selector: String, key: String) {
-        var vmKey = macroNode.arguments?.first?.value.expression.trimmedDescription
+    /// 获取被 @bind(key) 修饰的方法中，获取
+    /// selector:2、方法名
+    /// key: 宏参数key，或者方法的第一个参数名
+    public static func viewBindArguments(forMacro macroNode: SwiftSyntax.AttributeSyntax, forFunction declaration: FunctionDeclSyntax) throws -> (selector: String, keys: [String]) {
+        var keys = [String]()
+        
+        if case let .argumentList( arguments ) = macroNode.arguments {
+            for item in arguments {
+                keys.append(item.expression.trimmedDescription)
+            }
+        }
+        
+        let usesArgumentsAsKey = keys.isEmpty
         
         // 遍历方法参数，拼接方法名
         var selector = "#selector(Self.\(declaration.name.text)("
         for parameter in declaration.signature.parameterClause.parameters {
-            selector += parameter.firstName.text + ":"
-            
-            if vmKey == nil {
-                vmKey = "\"\(parameter.secondName?.text ?? parameter.firstName.text)\""
+            let argumentLabel = parameter.firstName.text;
+            selector += argumentLabel + ":"
+            if usesArgumentsAsKey {
+                keys.append("\"\(parameter.secondName?.text ?? argumentLabel)\"")
             }
         }
         selector += "))"
         
-        guard let vmKey = vmKey else {
-            throw XZMacroError(message: "@bind: 无法确定要绑定的视图模型的键名")
-        }
-        
-        return (selector, vmKey)
+        return (selector, keys)
     }
     
-    public static func statement(forMacro macroNode: SwiftSyntax.AttributeSyntax, forFunction declaration: FunctionDeclSyntax) throws -> String {
-        let arguments = try Self.arguments(forMacro: macroNode, forFunction: declaration)
-        return "viewModel.addTarget(self, action: \(arguments.selector), forKey: \(arguments.key), value: nil)"
+    // 为 View 绑定 ViewModel.key 生成绑定代码
+    public static func viewBindStatement(forMacro macroNode: SwiftSyntax.AttributeSyntax, forFunction declaration: FunctionDeclSyntax) throws -> String {
+        let arguments = try Self.viewBindArguments(forMacro: macroNode, forFunction: declaration)
+        guard arguments.keys.count == 1 else {
+            throw XZMacroError(message: "@bind: View 支持绑定一个 key")
+        }
+        return "viewModel.addTarget(self, action: \(arguments.selector), forKey: \(arguments.keys[0]), value: nil)"
     }
     
     public static func isValid(forMacro node: SwiftSyntax.AttributeSyntax, forFunction declaration: FunctionDeclSyntax, for role: XZMocoaRole) throws {
@@ -260,8 +272,8 @@ public struct XZMocoaBindMacro {
                     case 1:
                         let macroArgument = macroArguments[macroArguments.startIndex]
                         if let label = macroArgument.label?.trimmedDescription {
-                            if label != "v" {
-                                throw XZMacroError(message: "@bind: 单个参数仅支持 v 标签（指定 View 属性）")
+                            if label != "key" {
+                                throw XZMacroError(message: "@bind: 单个参数仅支持 key 标签（指定 View 属性）")
                             }
                         } else {
                             switch propertyType.name {
@@ -281,19 +293,19 @@ public struct XZMocoaBindMacro {
                         let firstExpression = macroArguments[macroArguments.startIndex].expression
                         if let stringValue = firstExpression.as(StringLiteralExprSyntax.self)?.representedLiteralValue {
                             guard stringValue.count > 0 else {
-                                throw XZMacroError(message: "@bind: 第一个参数不能为空，若仅指定 v 属性名，可使用 @bind(v:) 宏")
+                                throw XZMacroError(message: "@bind: 第一个参数不能为空，若仅指定 view 属性名，可使用 @bind(key:) 宏")
                             }
                         } else if firstExpression.as(MemberAccessExprSyntax.self) == nil {
-                            throw XZMacroError(message: "@bind: 绑定 vm 键名必须是 String 字面量或 XZMocoaKey 枚举值")
+                            throw XZMacroError(message: "@bind: 绑定 ViewModel 键名必须是 String 字面量或 XZMocoaKey 枚举值")
                         }
                         
                         let secondExpression = macroArguments[macroArguments.index(after: macroArguments.startIndex)].expression
                         if let stringValue = secondExpression.as(StringLiteralExprSyntax.self)?.representedLiteralValue {
                             guard stringValue.count > 0 else {
-                                throw XZMacroError(message: "@bind: 绑定 v 键名不能为空；若 v 支持默认键名，请不要提供第二参数")
+                                throw XZMacroError(message: "@bind: 绑定 View 键名不能为空；若 View 支持默认键名，请不要提供第二参数")
                             }
                         } else if secondExpression.as(MemberAccessExprSyntax.self) == nil {
-                            throw XZMacroError(message: "@bind: 绑定 v 键名必须是 String 字面量或 XZMocoaKey 枚举值")
+                            throw XZMacroError(message: "@bind: 绑定 View 键名必须是 String 字面量或 XZMocoaKey 枚举值")
                         }
                         
                     default:
@@ -318,19 +330,19 @@ public struct XZMocoaBindMacro {
                     case 1:
                         let macroArgument = macroArguments[macroArguments.startIndex]
                         if let label = macroArgument.label, label.trimmedDescription.count > 0 {
-                            throw XZMacroError(message: "@bind: 在 .vm 上不支持该绑定，请移除参数标签")
+                            throw XZMacroError(message: "@bind: 在 ViewModel 上不支持该绑定，请移除参数标签")
                         }
                         let expression = macroArgument.expression
                         if let stringValue = expression.as(StringLiteralExprSyntax.self)?.representedLiteralValue {
                             guard stringValue.count > 0 else {
-                                throw XZMacroError(message: "@bind: 绑定 vm 键名不能为空，若 m 键与 vm 属性同名，可省略参数")
+                                throw XZMacroError(message: "@bind: 绑定 ViewModel 键名不能为空，若 Model 键与 ViewModel 属性同名，可省略参数")
                             }
                         } else if expression.as(MemberAccessExprSyntax.self) == nil {
-                            throw XZMacroError(message: "@bind: 绑定 vm 属性的键名必须为 String 字面量或 XZMocoaKey 枚举值")
+                            throw XZMacroError(message: "@bind: 绑定 ViewModel 属性的键名必须为 String 字面量或 XZMocoaKey 枚举值")
                         }
                         break
                     default:
-                        throw XZMacroError(message: "@bind: 绑定 vm 属性仅支持一个参数")
+                        throw XZMacroError(message: "@bind: 绑定 ViewModel 属性仅支持一个参数")
                     }
 
                 default:
@@ -361,7 +373,7 @@ extension XZMocoaBindViewMacro: AccessorMacro {
     
     public static func expansion(of node: SwiftSyntax.AttributeSyntax, providingAccessorsOf declaration: some SwiftSyntax.DeclSyntaxProtocol, in context: some SwiftSyntaxMacros.MacroExpansionContext) throws -> [SwiftSyntax.AccessorDeclSyntax] {
         guard let declaration = declaration.as(VariableDeclSyntax.self) else {
-            throw XZMacroError(message: "@bind(v:) 仅支持属性")
+            throw XZMacroError(message: "@bind(key:) 仅支持属性")
         }
         
         let type = try XZMocoaBindMacro.type(forVariable: declaration);
@@ -394,7 +406,7 @@ extension XZMocoaBindViewMacro: AccessorMacro {
             return []
         }
         
-        let statements = try XZMocoaBindMacro.statements(forMacro: declaration.attributes.compactMap({ attribute in
+        let statements = try XZMocoaBindMacro.viewBindStatements(forMacros: declaration.attributes.compactMap({ attribute in
             switch attribute {
             case .attribute(let macroNode):
                 if macroNode.attributeName.trimmedDescription == "bind" {
