@@ -48,7 +48,7 @@
     [self sendActionsForKey:events.name value:nil];
 }
 
-- (void)tableView:(id<XZMocoaTableView>)tableView didSelectCell:(UITableViewCell *)cell atIndexPath:(NSIndexPath *)indexPath {
+- (void)tableViewCell:(UITableViewCell *)cell wasSelectedAtIndexPath:(NSIndexPath *)indexPath {
     NSURL *moduleURL = [NSURL URLWithString:@"https://mocoa.xezun.com/examples/21/editor"];
     UIViewController<XZMocoaView> *nextVC = [self.navigationController presentMocoaURL:moduleURL options:@{
         @"model": self.model

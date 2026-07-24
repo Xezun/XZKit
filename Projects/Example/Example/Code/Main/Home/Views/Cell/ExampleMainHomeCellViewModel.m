@@ -25,7 +25,7 @@
     self.title = [NSString stringWithFormat:@"%ld. %@", (self.index + 1), model.name];
 }
 
-- (void)tableView:(id<XZMocoaTableView>)tableView didSelectCell:(UITableViewCell *)cell atIndexPath:(NSIndexPath *)indexPath {
+- (void)tableViewCell:(UITableViewCell *)cell wasSelectedAtIndexPath:(NSIndexPath *)indexPath {
     ExampleMainHomeCellModel *model = self.model;
     NSString *name = [NSString stringWithFormat:@"Example%@", model.identifier];
     UIViewController *viewController = [UIStoryboard storyboardWithName:name bundle:nil].instantiateInitialViewController;

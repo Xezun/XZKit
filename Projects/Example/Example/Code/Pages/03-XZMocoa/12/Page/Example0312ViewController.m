@@ -18,10 +18,10 @@
     XZMocoa(@"https://mocoa.xezun.com/examples/12/").viewClass = self;
 }
 
-- (instancetype)didInitWithMocoaOptions:(XZMocoaOptions *)options {
+- (void)didInitWithMocoaOptions:(XZMocoaOptions *)options {
+    [super didInitWithMocoaOptions:options];
     self.title = @"Example 11";
     self.hidesBottomBarWhenPushed = YES;
-    return self;
 }
 
 - (void)viewDidLoad {

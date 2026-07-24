@@ -30,10 +30,10 @@
     [self.viewModel removeFromSuperViewModel];
 }
 
-- (instancetype)didInitWithMocoaOptions:(XZMocoaOptions *)options {
+- (void)didInitWithMocoaOptions:(XZMocoaOptions *)options {
     self.viewModel = [[Example0321ContactEditorViewModel alloc] initWithModel:options[@"model"]];
     self.modalPresentationStyle = UIModalPresentationOverFullScreen;
-    return self;
+    [super didInitWithMocoaOptions:options];
 }
 
 - (void)viewDidLoad {

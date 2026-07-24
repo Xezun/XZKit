@@ -45,12 +45,13 @@
     if (![firstName isEqualToString:model.firstName] || ![lastName isEqualToString:model.lastName]) {
         model.firstName = firstName;
         model.lastName  = lastName;
-        [self sendEventsForName:@"name" value:nil];
+        
+        [self sendEventsWithName:@"name" value:nil];
     }
 
     if (![phone isEqualToString:model.phone]) {
         model.phone = phone;
-        [self sendEventsForName:@"phone" value:nil];
+        [self sendEventsWithName:@"phone" value:nil];
     }
 }
 

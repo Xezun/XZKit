@@ -8,4 +8,4 @@
 import Foundation
 
 @freestanding(expression)
-public macro XZLog(system: XZLogSystem = .default, _ format: StaticString, _ arguments: any CVarArg...) = #externalMacro(module: "XZKitMacros", type: "XZLogMacro")
+public macro XZLog(system: XZLogSystem = .default, _ format: StaticString, _ arguments: (any CVarArg)?...) = #externalMacro(module: "XZKitMacros", type: "XZLogMacro")

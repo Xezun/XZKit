@@ -23,7 +23,7 @@
     self.name = [NSString stringWithFormat:@"%@ %@", data.firstName, data.lastName];
 }
 
-- (void)tableView:(id<XZMocoaTableView>)tableView didSelectCell:(UITableViewCell *)cell atIndexPath:(NSIndexPath *)indexPath {
+- (void)tableViewCell:(UITableViewCell *)cell wasSelectedAtIndexPath:(NSIndexPath *)indexPath {
     Example0312CellModel *data = self.model;
     NSString *title = @"温馨提示";
     NSString *message = [NSString stringWithFormat:@"打电话给“%@”？", self.name];

@@ -80,6 +80,11 @@ static const void * const _viewModel = &_viewModel;
     
 }
 
+- (void)xz_sendEventsWithName:(XZMocoaEventsName)name value:(id)value {
+    XZMocoaEvents * const events = [XZMocoaEvents eventsWithName:name value:value source:self];
+    [self.viewModel didReceiveEvents:events];
+}
+
 @end
 
 @implementation UIView (XZMocoaView)

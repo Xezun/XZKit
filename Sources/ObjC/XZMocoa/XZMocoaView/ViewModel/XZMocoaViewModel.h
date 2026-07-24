@@ -117,7 +117,7 @@ NS_SWIFT_UI_ACTOR @interface XZMocoaViewModel : NSObject <XZMocoaViewModel> {
 
 @end
 
-@interface XZMocoaViewModel (XZMocoaViewModelHierarchy)
+@interface XZMocoaViewModel (XZMocoaHierarchy)
 
 /// 所有下级视图模型。
 /// @note 属性值虽然为不可变数组，但并非拷贝，会跟随实际自动变化。
@@ -153,14 +153,14 @@ NS_SWIFT_UI_ACTOR @interface XZMocoaViewModel : NSObject <XZMocoaViewModel> {
 
 /// 事件标识符。
 ///
-/// ## Mocoa Hierarchy Events 机制
+/// ## Mocoa Events Channel
 ///
 /// 一种基于标识符的事件机制。
 ///
 /// ### 1、视图层向视图模型层传递事件。
 ///
 /// 一般情况下，View 向 ViewModel 传递事件，推荐 ViewModel 定义接收事件的方法，然后由 View 绑定或调用。
-/// 为了简化事件处理，Mocoa 为所有子类预先定义了一个接收事件的方法 ``-didReceiveEvents:value:`` 以方便事件处理。
+/// 为了简化事件处理，Mocoa 为所有子类预先定义了一个接收事件的方法 ``-didReceiveEvents:`` 以方便事件处理。
 ///
 /// ### 2、自下而上的层事件。
 ///
@@ -174,11 +174,11 @@ typedef NSString *XZMocoaEventsName NS_EXTENSIBLE_STRING_ENUM NS_SWIFT_NAME(XZMo
 /// 事件值。
 @property (nonatomic, strong, readonly, nullable) id value;
 /// 创建事件的对象。
-@property (nonatomic, unsafe_unretained, readonly) __kindof XZMocoaViewModel *source;
+@property (nonatomic, unsafe_unretained, readonly) id source;
 /// 传递事件的对象。
 @property (nonatomic, unsafe_unretained, readonly) __kindof XZMocoaViewModel *target;
 - (instancetype)init NS_UNAVAILABLE;
-+ (instancetype)eventsWithName:(XZMocoaEventsName)key value:(nullable id)value source:(XZMocoaViewModel *)source NS_SWIFT_NAME(init(_:value:source:));
++ (instancetype)eventsWithName:(nullable XZMocoaEventsName)key value:(nullable id)value source:(id)source NS_SWIFT_NAME(init(_:value:source:));
 @end
 
 @class UIButton;
@@ -202,16 +202,22 @@ FOUNDATION_EXPORT XZMocoaEventsName const XZMocoaEventsNameSubmit;
 
 @protocol XZMocoaView;
 
-@interface XZMocoaViewModel (XZMocoaHierarchyEvents)
+@interface XZMocoaViewModel (XZMocoaEventsChannel)
 
-/// 创建 `XZMocoaEvents` 并调用 ``-didReceiveEvents:`` 方法，即事件会先发给自己，然后再向上传递。
+/// 创建 `XZMocoaEvents` 并调用 ``-sendEvents:`` 方法。
 /// @param name 事件名，如为 nil 则为默认名称 XZMocoaEventsNameNone
 /// @param value 事件值
-- (void)didReceiveEvents:(nullable XZMocoaEventsName)name value:(nullable id)value;
+- (void)sendEventsWithName:(nullable XZMocoaEventsName)name value:(nullable id)value NS_SWIFT_NAME(sendEvents(_:value:));
 
-/// 收到事件。
-/// @discussion
-/// 默认情况下，如果在 isReady 状态下，事件会向上层传递，子类可重写此方法，控制事件是否向上传递。
+/// 默认直接向 `superViewModel` 转发事件，其中`events.target` 会变为当前对象。
+/// @param events 事件
+- (void)sendEvents:(XZMocoaEvents *)events;
+
+/// 收到下级或视图的事件。
+///
+/// 默认直接调用 ``-sendEvents:`` 方法将事件转发出去。
+///
+/// 子类重写应，先处理逻辑，然后再决定是否调用 `super` 方法。
 /// @param events 事件信息
 - (void)didReceiveEvents:(XZMocoaEvents *)events;
 

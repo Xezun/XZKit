@@ -25,11 +25,11 @@
     XZMocoa(@"https://mocoa.xezun.com/examples/20").viewNibClass = self;
 }
 
-- (instancetype)didInitWithMocoaOptions:(XZMocoaOptions *)options {
+- (void)didInitWithMocoaOptions:(XZMocoaOptions *)options {
+    [super didInitWithMocoaOptions:options];
     self.title = @"Example 20";
     self.hidesBottomBarWhenPushed = YES;
     self.navigationItem.backButtonTitle = @"返回";
-    return self;
 }
 
 - (void)viewDidLoad {

@@ -151,7 +151,7 @@
 @end
 
 
-@implementation XZMocoaViewModel (XZMocoaViewModelHierarchy)
+@implementation XZMocoaViewModel (XZMocoaHierarchy)
 
 - (NSArray<XZMocoaViewModel *> *)subViewModels {
     return _subViewModels.array;
@@ -245,15 +245,15 @@
     __kindof XZMocoaViewModel * __unsafe_unretained _target;
 }
 
-+ (instancetype)eventsWithName:(NSString *)key value:(id)value source:(XZMocoaViewModel *)source {
-    return [[self alloc] initWithKey:key value:value source:source];
++ (instancetype)eventsWithName:(NSString *)name value:(id)value source:(XZMocoaViewModel *)source {
+    return [[self alloc] initWithKey:name value:value source:source];
 }
 
-- (instancetype)initWithKey:(NSString *)key value:(id)value source:(XZMocoaViewModel *)source {
+- (instancetype)initWithKey:(NSString *)name value:(id)value source:(XZMocoaViewModel *)source {
     self = [super init];
     if (self) {
-        _name = key.copy ?: XZMocoaEventsNameNone;
-        _value = value;
+        _name   = name.copy ?: XZMocoaEventsNameNone;
+        _value  = value;
         _source = source;
         _target = source;
     }
@@ -273,17 +273,20 @@ XZMocoaEventsName const XZMocoaEventsNameDeselect = @"deselect";
 XZMocoaEventsName const XZMocoaEventsNameConfirm  = @"confirm";
 XZMocoaEventsName const XZMocoaEventsNameSubmit   = @"submit";
 
-@implementation XZMocoaViewModel (XZMocoaHierarchyEvents)
+@implementation XZMocoaViewModel (XZMocoaEventsChannel)
 
-- (void)didReceiveEvents:(XZMocoaEventsName)name value:(id)value {
+- (void)sendEvents:(XZMocoaEventsName)name value:(id)value {
     XZMocoaEvents * const events = [XZMocoaEvents eventsWithName:name value:value source:self];
-    [self didReceiveEvents:events];
+    [self sendEvents:events];
+}
+
+- (void)sendEvents:(XZMocoaEvents *)events {
+    events->_target = self;
+    [self.superViewModel didReceiveEvents:events];
 }
 
 - (void)didReceiveEvents:(XZMocoaEvents *)events {
-    if (!self.isReady) return;
-    events->_target = self;
-    [self.superViewModel didReceiveEvents:events];
+    [self sendEvents:events];
 }
 
 @end

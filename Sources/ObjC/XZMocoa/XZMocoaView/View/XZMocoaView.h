@@ -66,6 +66,9 @@ NS_SWIFT_UI_ACTOR @protocol XZMocoaView <NSObject>
 /// 1. 如果当前视图为 XZMocoaView 那么，事件将转发给 viewModel 处理。
 /// 2. 如果 sender 为 XZMocoaView 的话，就转发给 sender 处理。
 - (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(nullable id)sender NS_SWIFT_NAME(prepare(for:sender:));
+
+- (void)xz_sendEventsWithName:(XZMocoaEventsName)name value:(nullable id)value NS_SWIFT_NAME(sendEvents(_:value:));
+
 @end
 @interface UIView (XZMocoaView)
 @end

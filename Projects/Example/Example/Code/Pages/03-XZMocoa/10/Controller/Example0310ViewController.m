@@ -27,10 +27,10 @@
     XZLog(@"%s", __PRETTY_FUNCTION__);
 }
 
-- (instancetype)didInitWithMocoaOptions:(XZMocoaOptions *)options {
+- (void)didInitWithMocoaOptions:(XZMocoaOptions *)options {
+    [super didInitWithMocoaOptions:options];
     self.title = @"Example 10";
     self.hidesBottomBarWhenPushed = YES;
-    return self;
 }
 
 - (Example0310RootView *)rootView {

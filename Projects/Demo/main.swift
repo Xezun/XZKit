@@ -9,25 +9,21 @@ import Foundation
 import UIKit
 import XZKit
 
+
 @mocoa
-class FoobarView: UIView, XZMocoaView {
+class FooViewModel: XZMocoaViewModel {
+    /// 名称
+    @key var name: String?
     
+}
+
+@mocoa
+class FooView: UIView, XZMocoaView {
     
-    @bind(.name)            // 将 viewModel.name 单向绑定给 nameLabel.text
-    @bind(key: .textColor)    // 将 viewModel.textColor 单向绑定给 nameLabel.textColor
+    // 绑定
+    @bind(.name)
     var nameLabel: UILabel = .init()
-    
-    // 将 viewModel.isChecked 单向绑定到此方法
-    @bind
-    func checkStatusValueChanged(_ isChecked: Bool) {
-        self.nameLabel.backgroundColor = isChecked ? .red : .black
-    }
-    
-    
-    @objc func deleteButtonAction(_ sender: UIButton) {
-        self.viewModel?.didReceiveEvents(.delete, value: nil)
-    }
-    
+
     override init(frame: CGRect) {
         super.init(frame: frame)
         setupUI()
