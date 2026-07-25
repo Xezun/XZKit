@@ -275,7 +275,7 @@ XZMocoaEventsName const XZMocoaEventsNameSubmit   = @"submit";
 
 @implementation XZMocoaViewModel (XZMocoaEventsChannel)
 
-- (void)sendEvents:(XZMocoaEventsName)name value:(id)value {
+- (void)sendEventsWithName:(XZMocoaEventsName)name value:(id)value {
     XZMocoaEvents * const events = [XZMocoaEvents eventsWithName:name value:value source:self];
     [self sendEvents:events];
 }

@@ -14,6 +14,8 @@ import SwiftDiagnostics
 struct XZKitMacros: CompilerPlugin {
     
     let providingMacros: [Macro.Type] = [
+        // NSURL
+        NSURLMacro.self,
         // XZLog
         XZLogMacro.self,
         // XZMocoa

@@ -17,6 +17,12 @@ class FooViewModel: XZMocoaViewModel {
     
 }
 
+let model: Any = 1
+let viewController = UIViewController.init(mocoaURL: #URL("https://habit.xezun.com/pages/main/home"), options: [.model: model])
+
+let navigationController = UINavigationController.init()
+navigationController.pushMocoaURL(#URL("https://habit.xezun.com/pages/main/home"), options: [.model: model])
+
 @mocoa
 class FooView: UIView, XZMocoaView {
     
