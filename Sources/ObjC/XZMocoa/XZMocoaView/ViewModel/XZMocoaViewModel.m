@@ -272,6 +272,8 @@ XZMocoaEventsName const XZMocoaEventsNameSelect   = @"select";
 XZMocoaEventsName const XZMocoaEventsNameDeselect = @"deselect";
 XZMocoaEventsName const XZMocoaEventsNameConfirm  = @"confirm";
 XZMocoaEventsName const XZMocoaEventsNameSubmit   = @"submit";
+XZMocoaEventsName const XZMocoaEventsNameCancel   = @"cancel";
+XZMocoaEventsName const XZMocoaEventsNameValueChanged = @"valueChanged";
 
 @implementation XZMocoaViewModel (XZMocoaEventsChannel)
 
@@ -647,6 +649,7 @@ XZMocoaKey const XZMocoaKeyIsChecked        = @"isChecked";
 XZMocoaKey const XZMocoaKeyIsEnabled        = @"isEnabled";
 XZMocoaKey const XZMocoaKeyValue            = @"value";
 XZMocoaKey const XZMocoaKeyName             = @"name";
+XZMocoaKey const XZMocoaKeyIcon             = @"icon";
 
 XZMocoaKey const XZMocoaKeyIsHidden         = @"isHidden";
 
@@ -656,6 +659,8 @@ XZMocoaKey const XZMocoaKeyTextColor        = @"textColor";
 XZMocoaKey const XZMocoaKeyShadowColor      = @"shadowColor";
 XZMocoaKey const XZMocoaKeyAttributedText   = @"attributedText";
 XZMocoaKey const XZMocoaKeyHighlightedTextColor = @"highlightedTextColor";
+
+XZMocoaKey const XZMocoaKeyPlaceholder      = @"placeholder";
 
 XZMocoaKey const XZMocoaKeyImage            = @"image";
 XZMocoaKey const XZMocoaKeyHighlightedImage = @"highlightedImage";

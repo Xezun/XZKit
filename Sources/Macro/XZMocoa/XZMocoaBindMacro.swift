@@ -64,7 +64,7 @@ public struct XZMocoaBindMacro {
             case "UILabel":
                 vmkey = ".text"
                 selector = "#selector(setter: UILabel.text)"
-            case "UITextView":
+            case "UITextView", "UITextField":
                 vmkey = ".text"
                 selector = "#selector(setter: UITextView.text)"
             case "UIImageView":
@@ -84,7 +84,7 @@ public struct XZMocoaBindMacro {
                 switch typeName {
                 case "UILabel":
                     selector = "#selector(setter: UILabel.text)"
-                case "UITextView":
+                case "UITextView", "UITextField":
                     selector = "#selector(setter: UITextView.text)"
                 case "UIImageView":
                     selector = "#selector(setter: UIImageView.image)"
@@ -260,7 +260,7 @@ public struct XZMocoaBindMacro {
                         switch propertyType.name {
                         case "UILabel":
                             break
-                        case "UITextView":
+                        case "UITextView", "UITextField":
                             break
                         case "UIImageView":
                             break
@@ -279,7 +279,7 @@ public struct XZMocoaBindMacro {
                             switch propertyType.name {
                             case "UILabel":
                                 break
-                            case "UITextView":
+                            case "UITextView", "UITextField":
                                 break
                             case "UIImageView":
                                 break

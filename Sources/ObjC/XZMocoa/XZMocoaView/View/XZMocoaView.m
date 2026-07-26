@@ -12,9 +12,10 @@
 #import "UIView+XZKit.h"
 @import ObjectiveC;
 
-XZMocoaOptionKey const XZMocoaOptionKeyModel = @"model";
-XZMocoaOptionKey const XZMocoaOptionKeyName  = @"name";
-XZMocoaOptionKey const XZMocoaOptionKeyData  = @"data";
+XZMocoaOptionKey const XZMocoaOptionKeyModel     = @"model";
+XZMocoaOptionKey const XZMocoaOptionKeyViewModel = @"viewModel";
+XZMocoaOptionKey const XZMocoaOptionKeyName      = @"name";
+XZMocoaOptionKey const XZMocoaOptionKeyData      = @"data";
 
 static const void * const _viewModel = &_viewModel;
 
@@ -349,16 +350,9 @@ static const void * const _viewModel = &_viewModel;
     id model = options[XZMocoaOptionKeyModel];
     
     Class const ModelClass = module.modelClass;
-    if (model) {
-        if (ModelClass) {
-            if (![model isKindOfClass:ModelClass]) {
-                return;
-            }
-        }
-    } else if (ModelClass) {
-        model = [[ModelClass alloc] init];
-        if (!model) {
-            return;
+    if (ModelClass) {
+        if (![model isKindOfClass:ModelClass]) {
+            model = [[ModelClass alloc] init];
         }
     }
     

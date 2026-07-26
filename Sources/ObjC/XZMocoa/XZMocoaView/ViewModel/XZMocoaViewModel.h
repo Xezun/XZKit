@@ -199,6 +199,8 @@ FOUNDATION_EXPORT XZMocoaEventsName const XZMocoaEventsNameSelect;
 FOUNDATION_EXPORT XZMocoaEventsName const XZMocoaEventsNameDeselect;
 FOUNDATION_EXPORT XZMocoaEventsName const XZMocoaEventsNameConfirm;
 FOUNDATION_EXPORT XZMocoaEventsName const XZMocoaEventsNameSubmit;
+FOUNDATION_EXPORT XZMocoaEventsName const XZMocoaEventsNameCancel;
+FOUNDATION_EXPORT XZMocoaEventsName const XZMocoaEventsNameValueChanged;
 
 @protocol XZMocoaView;
 
@@ -429,6 +431,7 @@ FOUNDATION_EXPORT XZMocoaKey const XZMocoaKeyIsChecked;
 FOUNDATION_EXPORT XZMocoaKey const XZMocoaKeyIsEnabled;
 FOUNDATION_EXPORT XZMocoaKey const XZMocoaKeyValue;
 FOUNDATION_EXPORT XZMocoaKey const XZMocoaKeyName;
+FOUNDATION_EXPORT XZMocoaKey const XZMocoaKeyIcon;
 
 @class UIView;
 FOUNDATION_EXPORT XZMocoaKey const XZMocoaKeyIsHidden;
@@ -440,6 +443,9 @@ FOUNDATION_EXPORT XZMocoaKey const XZMocoaKeyTextColor;
 FOUNDATION_EXPORT XZMocoaKey const XZMocoaKeyShadowColor;
 FOUNDATION_EXPORT XZMocoaKey const XZMocoaKeyAttributedText;
 FOUNDATION_EXPORT XZMocoaKey const XZMocoaKeyHighlightedTextColor;
+
+@class UITextField;
+FOUNDATION_EXPORT XZMocoaKey const XZMocoaKeyPlaceholder;
 
 @class UIImageView;
 FOUNDATION_EXPORT XZMocoaKey const XZMocoaKeyImage;
