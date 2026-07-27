@@ -181,6 +181,7 @@ extension XZMocoaKeyMacro: AccessorMacro {
     public static func expansion(of node: SwiftSyntax.AttributeSyntax, providingAccessorsOf declaration: some SwiftSyntax.DeclSyntaxProtocol, in context: some SwiftSyntaxMacros.MacroExpansionContext) throws -> [SwiftSyntax.AccessorDeclSyntax] {
         switch try XZMocoaRole(node: node, context: context) {
         case .m:
+            // @key 必须生成存储属性和 setter/getter 否则会报错，暂不支持
             throw XZMacroError(message: "@key: 此宏暂不支持在 Model 角色中使用，若要观察该属性，请使用 dynamic 修饰符")
             
         case .v:

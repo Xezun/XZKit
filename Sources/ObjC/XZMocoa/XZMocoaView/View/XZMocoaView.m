@@ -12,10 +12,11 @@
 #import "UIView+XZKit.h"
 @import ObjectiveC;
 
-XZMocoaOptionKey const XZMocoaOptionKeyModel     = @"model";
-XZMocoaOptionKey const XZMocoaOptionKeyViewModel = @"viewModel";
-XZMocoaOptionKey const XZMocoaOptionKeyName      = @"name";
-XZMocoaOptionKey const XZMocoaOptionKeyData      = @"data";
+XZMocoaOptionKey const XZMocoaOptionKeyModel      = @"model";
+XZMocoaOptionKey const XZMocoaOptionKeyName       = @"name";
+XZMocoaOptionKey const XZMocoaOptionKeyData       = @"data";
+XZMocoaOptionKey const XZMocoaOptionKeyIdentifier = @"data";
+XZMocoaOptionKey const XZMocoaOptionKeyDelegate   = @"delegate";
 
 static const void * const _viewModel = &_viewModel;
 
@@ -82,7 +83,7 @@ static const void * const _viewModel = &_viewModel;
     
 }
 
-- (void)xz_sendEventsWithName:(XZMocoaEventsName)name value:(id)value {
+- (void)sendEventsWithName:(XZMocoaEventsName)name value:(id)value {
     XZMocoaEvents * const events = [XZMocoaEvents eventsWithName:name value:value source:self];
     [self.viewModel didReceiveEvents:events];
 }

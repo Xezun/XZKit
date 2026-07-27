@@ -119,95 +119,22 @@ public macro key(_ name: XZMocoaKey) = #externalMacro(module: "XZKitMacros", typ
 @attached(accessor)
 public macro key() = #externalMacro(module: "XZKitMacros", type: "XZMocoaKeyMacro")
 
-
-/// 单向同步，用于标记 Mocoa 中的 .v 和 .vm 角色的绑定标记。
-///
-/// ### 属性绑定
-///
-/// 标记 Mocoa 角色中，需要单向同步的属性。
-///
-/// 1. 在 Swift 中，需要使用 `dynamic` 修饰属性，否则无法使用 KVO
-///
-/// ```swift
-/// @mocoa(.m)
-/// class Model: NSObject {
-///     @objc dynamic var name: String?
-///     @objc dynamic var age: Int = 0
-/// }
-/// ```
-///
-/// 2. ViewModel 绑定 Model 的属性
-///
-/// ```swift
-/// @mocoa(.vm)
-/// class ViewModel: XZMocoaViewModel {
-///
-///     // 将 model.name 绑定到 #selector(setter: Self.name) 方法
-///     @bind
-///     var name: String?
-///
-
-///
-///     // 将 model.min、model.max 绑定到当前方法
-///     @bind
-///     func didChange(_ min: Int, max: Int) { }
-///
-///
-///     @bind(.var1, .var2)
-///     func didChange(min: Int, max: Int) { }
-/// }
-/// ```
-///
-/// 3. View 绑定 ViewModel 的属性
-///
-/// ```swift
-/// @mocoa(.v)
-/// class View: UIView, XZMocoaView {
-///
-///     // 将 viewModel.text 绑定给 textLabel.text
-///     @bind
-///     var textLabel: UILabel!
-///
-///     // 将 viewModel.name  绑定给 textLabel.text
-///     @bind(.name)
-///     var textLabel: UILabel!
-///
-///     // 将 viewModel.textColor 绑定给 textLabel.textColor
-///     @bind(v: .textColor)
-///     var textLabel: UILabel!
-///
-///     // 将 viewModel.color 绑定给 textLabel.textColor
-///     @bind(.color, .textColor)
-///     var textLabel: UILabel!
-///
-
-///
-///     // 将 viewModel.imageURL 绑定到此方法
-///     @bind
-///     func setAvatar(with imageURL: URL?) {
-///         avatarImageView.sd_setImage(with: imageURL)
-///     }
-///
-///
-///
-/// }
-/// ```
-
-
 /// 为 ViewModel 与 Model 之间，或 View 与 ViewModel 之间建立单向绑定。
 ///
 /// 属性所属的 class 需先用 `@mocoa` 标记。
 ///
-/// #### 在 ViewModel 中使用
+/// #### ViewModel 属性绑定 Model 属性
 ///
-/// - 将 ViewModel 的属性，与 Model 的同名属性进行绑定。
+/// - 将 ViewModel 的属性，与 Model 的**同名**属性进行绑定。
+///
 /// ```swift
-/// @bind var name: String = "Visitor" // model.name 绑定到此属性
+/// @bind
+/// var name: String = "Visitor" // model.name 绑定到此属性
 /// ```
-/// - 将 ViewModel 方法参数名，与 Model 的同名属性进行绑定。
 ///
+/// - 将 ViewModel 方法参数名，与 Model 的同名属性进行绑定。
+/// > 主要用于 model 的属性需要处理后才能使用的情形
 /// ```swift
-/// // 主要用于 model 的属性需要处理后才能使用的情形
 /// @key
 /// var detail: String = "Waiting"
 /// @bind
@@ -216,12 +143,14 @@ public macro key() = #externalMacro(module: "XZKitMacros", type: "XZMocoaKeyMacr
 ///     // 在此方法中更新 detail 间接实现将 model.status 绑定到 viewModel.detail
 ///     self.detail = status ? "Done" : "Waiting"
 /// }
-/// // 支持一个方法同时监听多个参数
+/// // 支持多个参数
 /// @bind
-/// func didChange(min: Int, max: Int) { }
+/// func didChange(min: Int, max: Int) {
+///     self.detail = "[\(min), \(max)]"
+/// }
 /// ```
 ///
-/// #### 在 View 中使用
+/// #### View 中使用
 ///
 /// 在 View 中，宏 `@bind` 绑定实际上是 ViewModel 的 KTA 事件值。
 /// 一般情况下，请遵循约定，使用 ViewModel 的属性名作为 KTA 的事件名，在以下的表述中，ViewModel 属性即，表示以属性名为事件名的 KTA 事件的事件值。
@@ -231,6 +160,7 @@ public macro key() = #externalMacro(module: "XZKitMacros", type: "XZMocoaKeyMacr
 ///     目前支持默认属性：
 ///     - UILabel.text
 ///     - UITextView.text
+///     - UITextField.text
 ///     - UIImageView.image
 ///     - UISwitch.isOn
 ///
@@ -308,7 +238,7 @@ public macro bind(_ key: XZMocoaKey) = #externalMacro(module: "XZKitMacros", typ
 ///
 /// - Parameter key: Model的属性
 @attached(peer, names: arbitrary)
-public macro bind(_ mkey1: XZMocoaKey, mkey2: XZMocoaKey...) = #externalMacro(module: "XZKitMacros", type: "XZMocoaBindMacro")
+public macro bind(_ mkey1: XZMocoaKey, _ mkey2: XZMocoaKey...) = #externalMacro(module: "XZKitMacros", type: "XZMocoaBindMacro")
 
 /// 为 View 与 ViewModel 之间建立单向绑定。
 ///

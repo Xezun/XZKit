@@ -80,52 +80,55 @@ typedef NS_ENUM(NSUInteger, XZMocoaModuleViewForm) {
 
 #pragma mark - MVVM 基本结构
 
-/// MVVM 中 Model 的 class 对象。
+/// 模块数据模型的类。
 @property (nonatomic, strong, nullable) Class modelClass;
 
-/// 视图的实现形式。
+/// 模块视图的实现形式。
 @property (nonatomic, readonly) XZMocoaModuleViewForm viewForm;
-// View by Class MVVM 中 View 的 class 对象。
+/// 使用纯代码实现的模块视图的类。
 @property (nonatomic, strong, nullable) Class viewClass;
-// View by Nib
+/// 使用 xib 实现的模块视图的类，且 xib 文件的名与类名一样。
 @property (nonatomic, setter=setViewNibWithClass:, nullable) Class viewNibClass;
+/// 使用 xib 实现的模块视图的 nib 名。
 @property (nonatomic, copy, setter=setViewNibWithName:) NSString *viewNibName;
+/// 使用 xib 实现的模块视图的 nib 文件所在的包。
 @property (nonatomic, strong, readonly) NSBundle *viewNibBundle;
-/// 仅可用来注册普通视图。
+/// 注册模块视图，使用 xib 实现的 UIView 视图。
 - (void)setViewNibWithName:(NSString *)nibName bundle:(NSBundle *)bundle;
-/// 仅可用来注册普通视图。
+/// 注册使用 xib 实现的 UIView 模块视图。
 - (void)setViewNibWithName:(NSString *)nibName;
-/// 注册视图控制器。类名与 nib 文件名相同时可使用此方法。
+/// 注册使用 xib 实现的 UIViewController 模块视图，类名与 nib 文件名相同时可使用此方法。
 - (void)setViewNibWithClass:(Class)viewClass;
-/// 注册视图控制器需提供 viewClass 参数。
+/// 注册使用 xib 实现的 UIView 或 UIViewController 模块视图，如果是视图控制器，则必须提供 viewClass 参数。
 - (void)setViewNibWithClass:(nullable Class)viewClass name:(NSString *)nibName bundle:(NSBundle *)bundle;
 // View by Storyboard
-/// 控制器标记符，值 nil 表示入口控制器。
+/// 使用 Storyboard 实现的 UIViewController 模块视图，在 Storyboard 中标识符，值 nil 表示入口控制器。
 @property (nonatomic, copy, setter=setViewStoryboardWithIdentifier:, nullable) NSString *viewStoryboardIdentifier;
-/// Storyboard 文件名。
+/// 使用 Storyboard 实现的 UIViewController 模块视图，所在 Storyboard 的名字。
 @property (nonatomic, copy, setter=setViewStoryboardWithName:) NSString *viewStoryboardName;
-/// Storyboard 文件所在包名。
+/// 使用 Storyboard 实现的 UIViewController 模块视图，所在包。
 @property (nonatomic, strong, setter=setViewStoryboardWithBundle:) NSBundle *viewStoryboardBundle;
 /// 在 mainBundle 的 Main.storyboard 中定义的指定控制器，可通过此方法注册。
 - (void)setViewStoryboardWithIdentifier:(NSString *)identifier;
-/// 在 mainBundle 的 Name.storyboard 中定义的入口控制器，可通过此方法注册。
+/// 在 mainBundle 的 {storyboardName}.storyboard 中定义的入口控制器，可通过此方法注册。
 - (void)setViewStoryboardWithName:(NSString *)storyboardName;
-/// 在 mainBundle 的 Name.storyboard 中定义的指定控制器，可通过此方法注册。
+/// 在 mainBundle 的 {storyboardName}.storyboard 中定义的指定标识符的控制器，可通过此方法注册。
 - (void)setViewStoryboardWithIdentifier:(NSString *)identifier name:(NSString *)storyboardName;
-/// 在 bundle 的 Main.storyboard 中定义的指定控制器，可通过此方法注册。
+/// 在 bundle 的 Main.storyboard 中定义的指定标识符的控制器，可通过此方法注册。
 - (void)setViewStoryboardWithIdentifier:(NSString *)identifier bundle:(NSBundle *)bundle;
-/// 在 bundle 的 Name.storyboard 中定义的入口控制器，可通过此方法注册。
+/// 在 bundle 的 {storyboardName}.storyboard 中定义的入口控制器，可通过此方法注册。
 - (void)setViewStoryboardWithName:(NSString *)storyboardName bundle:(NSBundle *)bundle;
 /// 在 bundle 的 Main.storyboard 中定义的入口控制器，可通过此方法注册。
 - (void)setViewStoryboardWithBundle:(NSBundle *)bundle;
-/// 在 bundle 的 Name.storyboard 中定义的指定控制器，可通过此方法注册。
+/// 在 bundle 的 {storyboardName}.storyboard 中定义的指定标识符的控制器，可通过此方法注册。
 - (void)setViewStoryboardWithIdentifier:(nullable NSString *)identifier name:(NSString *)storyboardName bundle:(NSBundle *)bundle;
-/// 通过重用标识符，注册模块的视图。
+
+/// 使用重用标识符，注册模块的视图。
 ///
-/// 在 storyboard 中，可以将 UITableViewCell、UICollectionViewCell 已经注册到了 UITableView、UICollectionView 中，可以通过此属性将视图与模块关联起来。
+/// 在 storyboard 中，可以将 UITableViewCell、UICollectionViewCell 已经注册到了 UITableView、UICollectionView 中，可以通过此属性在模块中注册它们。
 @property (nonatomic, copy, nullable) NSString *viewReuseIdentifier;
 
-/// MVVM 中 ViewModel 的 class 对象。
+/// 模块视图模型的类型。
 @property (nonatomic, strong, nullable) Class viewModelClass;
 
 /// 遍历所有子模块的 XZMocoaModule 对象。

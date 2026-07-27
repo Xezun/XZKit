@@ -87,7 +87,7 @@ extension XZMocoaMacro: MemberAttributeMacro {
             }
             if !property.contains(attributes: ["dynamic", "NSManaged"], .or) {
                 let message = "@mocoa: 缺少 dynamic 标记，该属性值可能无法被用作 key";
-                XZMacroDiagnose(context, node: node, message: message, severity: .warning)
+                XZMacroDiagnose(context, node: property, message: message, severity: .warning)
             }
             if property.contains(attribute: "objc") {
                 return []

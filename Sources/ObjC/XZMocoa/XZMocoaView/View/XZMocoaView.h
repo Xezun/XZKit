@@ -67,9 +67,10 @@ NS_SWIFT_UI_ACTOR @protocol XZMocoaView <NSObject>
 /// 2. 如果 sender 为 XZMocoaView 的话，就转发给 sender 处理。
 - (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(nullable id)sender NS_SWIFT_NAME(prepare(for:sender:));
 
-- (void)xz_sendEventsWithName:(XZMocoaEventsName)name value:(nullable id)value NS_SWIFT_NAME(sendEvents(_:value:));
+- (void)sendEventsWithName:(XZMocoaEventsName)name value:(nullable id)value NS_SWIFT_NAME(sendEvents(_:value:));
 
 @end
+
 @interface UIView (XZMocoaView)
 @end
 @interface UIViewController (XZMocoaView)
@@ -84,13 +85,19 @@ NS_SWIFT_UI_ACTOR @protocol XZMocoaView <NSObject>
 typedef NSString *XZMocoaOptionKey NS_EXTENSIBLE_STRING_ENUM NS_SWIFT_NAME(XZMocoaOptions.Key);
 
 /// 传递给目标页面的数据模型。
+///
+/// 比如在商品列表页，点击商品打开详情页时，可以将商品的数据模型传递给目标页面。
+///
+/// 在使用 Mocoa URL 打开目标页面时，如果目标页面注册了 `viewModelClass` 类型，
+/// 那么 Mocoa 会自动通过此 key 对应的 `model` 为目标页面创建视图模型。
 FOUNDATION_EXPORT XZMocoaOptionKey const XZMocoaOptionKeyModel;
-/// 视图模型
-FOUNDATION_EXPORT XZMocoaOptionKey const XZMocoaOptionKeyViewModel;
 /// 传递给目标页面参数中 name 字段。
 FOUNDATION_EXPORT XZMocoaOptionKey const XZMocoaOptionKeyName;
 /// 传递给目标页面参数中 data 字段。
 FOUNDATION_EXPORT XZMocoaOptionKey const XZMocoaOptionKeyData;
+/// 传递给目标页面参数中 identifier 字段。
+FOUNDATION_EXPORT XZMocoaOptionKey const XZMocoaOptionKeyIdentifier;
+FOUNDATION_EXPORT XZMocoaOptionKey const XZMocoaOptionKeyDelegate;
 
 /// 模块初始化参数。可像字典一样取值。
 /// @code
