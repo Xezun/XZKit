@@ -83,6 +83,7 @@ typedef NS_ENUM(NSUInteger, XZRefreshState) {
     BOOL _isAutomatic;
     CGFloat _automaticRefreshDistance;
     CGRect  _frame;
+    // 记录 header 或 footer 进入刷新状态要达到的临界值
     CGFloat _contentOffsetY;
     
     // MARK: - 布局时，记录所使用的刷新视图属性
