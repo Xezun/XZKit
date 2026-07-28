@@ -93,8 +93,8 @@ typedef NSString *XZMocoaOptionKey NS_EXTENSIBLE_STRING_ENUM NS_SWIFT_NAME(XZMoc
 FOUNDATION_EXPORT XZMocoaOptionKey const XZMocoaOptionKeyModel;
 /// 传递给目标页面参数中 name 字段。
 FOUNDATION_EXPORT XZMocoaOptionKey const XZMocoaOptionKeyName;
-/// 传递给目标页面参数中 data 字段。
-FOUNDATION_EXPORT XZMocoaOptionKey const XZMocoaOptionKeyData;
+/// 传递给目标页面参数中 value 字段。
+FOUNDATION_EXPORT XZMocoaOptionKey const XZMocoaOptionKeyValue;
 /// 传递给目标页面参数中 identifier 字段。
 FOUNDATION_EXPORT XZMocoaOptionKey const XZMocoaOptionKeyIdentifier;
 FOUNDATION_EXPORT XZMocoaOptionKey const XZMocoaOptionKeyDelegate;

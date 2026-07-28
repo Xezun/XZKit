@@ -14,8 +14,8 @@
 
 XZMocoaOptionKey const XZMocoaOptionKeyModel      = @"model";
 XZMocoaOptionKey const XZMocoaOptionKeyName       = @"name";
-XZMocoaOptionKey const XZMocoaOptionKeyData       = @"data";
-XZMocoaOptionKey const XZMocoaOptionKeyIdentifier = @"data";
+XZMocoaOptionKey const XZMocoaOptionKeyValue      = @"value";
+XZMocoaOptionKey const XZMocoaOptionKeyIdentifier = @"identifier";
 XZMocoaOptionKey const XZMocoaOptionKeyDelegate   = @"delegate";
 
 static const void * const _viewModel = &_viewModel;
