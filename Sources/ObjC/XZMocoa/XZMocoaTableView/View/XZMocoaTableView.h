@@ -55,8 +55,6 @@ NS_SWIFT_UI_ACTOR @protocol XZMocoaTableView <XZMocoaGroupView>
 /// 对 UITableView 进行了封装，以支持 MVVM 设计模式。
 NS_SWIFT_UI_ACTOR @interface XZMocoaTableView : XZMocoaGroupView
 
-
-
 /// 指定初始化方法，可以在初始化时，指定内部使用的`tableView`的类型及样式。
 /// @param tableViewClass 该参数决定属性`tableView`的实际类型
 /// @param style 属性`tableView`的样式

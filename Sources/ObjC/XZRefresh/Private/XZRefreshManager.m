@@ -878,7 +878,9 @@ static void const * const _context = &_context;
         case XZRefreshStateRefreshingDelayedEvents: {
             _header->_state = XZRefreshStateRefreshing;
             id<XZRefreshDelegate> const delegate = _header->_refreshView.delegate ?: (id)_scrollView.delegate;
-            [delegate scrollView:_scrollView headerDidBeginRefreshing:_header->_refreshView];
+            if ([delegate respondsToSelector:@selector(scrollView:headerDidBeginRefreshing:)]) {
+                [delegate scrollView:_scrollView headerDidBeginRefreshing:_header->_refreshView];
+            }
             break;
         }
         case XZRefreshStateRefreshing:
@@ -909,7 +911,9 @@ static void const * const _context = &_context;
         case XZRefreshStateRefreshingDelayedEvents: {
             _footer->_state = XZRefreshStateRefreshing;
             id<XZRefreshDelegate> const delegate = _footer->_refreshView.delegate ?: (id)_scrollView.delegate;
-            [delegate scrollView:_scrollView footerDidBeginRefreshing:_footer->_refreshView];
+            if ([delegate respondsToSelector:@selector(scrollView:footerDidBeginRefreshing:)]) {
+                [delegate scrollView:_scrollView footerDidBeginRefreshing:_footer->_refreshView];
+            }
             break;
         }
         case XZRefreshStateRefreshing:
@@ -1038,7 +1042,9 @@ static void const * const _context = &_context;
         case XZRefreshStateRefreshingDelayedEvents: {
             _header->_state = XZRefreshStateRefreshing;
             id<XZRefreshDelegate> const delegate = _header->_refreshView.delegate ?: (id)_scrollView.delegate;
-            [delegate scrollView:_scrollView headerDidBeginRefreshing:_header->_refreshView];
+            if ([delegate respondsToSelector:@selector(scrollView:headerDidBeginRefreshing:)]) {
+                [delegate scrollView:_scrollView headerDidBeginRefreshing:_header->_refreshView];
+            }
             break;
         }
         case XZRefreshStateRecovering:
@@ -1054,7 +1060,9 @@ static void const * const _context = &_context;
         case XZRefreshStateRefreshingDelayedEvents: {
             _footer->_state = XZRefreshStateRefreshing;
             id<XZRefreshDelegate> const delegate = _footer->_refreshView.delegate ?: (id)_scrollView.delegate;
-            [delegate scrollView:_scrollView footerDidBeginRefreshing:_footer->_refreshView];
+            if ([delegate respondsToSelector:@selector(scrollView:footerDidBeginRefreshing:)]) {
+                [delegate scrollView:_scrollView footerDidBeginRefreshing:_footer->_refreshView];
+            }
             break;
         }
         case XZRefreshStateRecovering:
@@ -1086,7 +1094,9 @@ static void const * const _context = &_context;
     } else {
         _header->_state = XZRefreshStateRefreshing;
         id<XZRefreshDelegate> const delegate = _header->_refreshView.delegate ?: (id)_scrollView.delegate;
-        [delegate scrollView:_scrollView headerDidBeginRefreshing:_header->_refreshView];
+        if ([delegate respondsToSelector:@selector(scrollView:headerDidBeginRefreshing:)]) {
+            [delegate scrollView:_scrollView headerDidBeginRefreshing:_header->_refreshView];
+        }
     }
 }
 
@@ -1113,7 +1123,9 @@ static void const * const _context = &_context;
     } else {
         _footer->_state = XZRefreshStateRefreshing;
         id<XZRefreshDelegate> const delegate = _footer->_refreshView.delegate ?: (id)_scrollView.delegate;
-        [delegate scrollView:_scrollView footerDidBeginRefreshing:_footer->_refreshView];
+        if ([delegate respondsToSelector:@selector(scrollView:footerDidBeginRefreshing:)]) {
+            [delegate scrollView:_scrollView footerDidBeginRefreshing:_footer->_refreshView];
+        }
     }
 }
 
