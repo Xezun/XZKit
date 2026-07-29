@@ -12,6 +12,7 @@
 #import "XZMacros.h"
 #import "NSArray+XZKit.h"
 #import "NSIndexSet+XZKit.h"
+#import "XZLog.h"
 
 /// 在批量更新的过程中，同一元素只能应用一个操作，但是在 MVVM 结构中，
 /// 数据变化也可能会引起刷新操作，为了避免多个更新操作，因此会将这些操作暂存并延迟执行。
@@ -852,33 +853,15 @@ typedef void(^XZMocoaGroupDelayedUpdates)(__kindof XZMocoaViewModel *self);
 //- (void)controller:(NSFetchedResultsController *)controller didChangeContentWithDifference:(NSOrderedCollectionDifference<NSManagedObjectID *> *)diff { }
 
 - (void)controllerWillChangeContent:(NSFetchedResultsController *)controller {
-    if (!self.isReady) return;
-
-    [self prepareBatchUpdates];
-    [self setNeedsDifferenceBatchUpdates];
+    XZLog(@"%s %@", __FUNCTION__, self);
 }
 
 - (void)controllerDidChangeContent:(NSFetchedResultsController *)controller {
+    XZLog(@"%s %@", __FUNCTION__, self);
     if (!self.isReady) return;
-    
-    NSAssert(_needsDifferenceBatchUpdates, @"在 CoreData 更新数据的期间，对 UITableView 数据源进行了修改，无法进行下一步差异性分析");
-    NSIndexSet * __block forwardIndexes = nil;
-    
-    [self didPerformBatchUpdates:^{
-        forwardIndexes = [self differenceBatchUpdatesIfNeeded];
-    } completion:nil];
-    
-    [self cleanupBatchUpdates];
-    
-    if (forwardIndexes.count > 0) {
-        [self didPerformBatchUpdates:^{
-            [forwardIndexes enumerateIndexesUsingBlock:^(NSUInteger idx, BOOL * _Nonnull stop) {
-                [[self sectionViewModelAtIndex:idx] performBatchUpdates:^{
-                    // section 内的更新数据已经在 batchUpdates() 执行了。
-                } completion:nil];
-            }];
-        } completion:nil];
-    }
+    // 调用 db.save() 会触发当前代理方法。
+    // 如果在 batchUpdates 中调用的 db.save() 方法，那么下面的批量更新会被拦截。
+    [self performBatchUpdates:^{ } completion:nil];
 }
 
 // 虽然 CoreData 提供了数据更新的步骤，但是更新事件似乎并是按更新的先后顺序发送，可能是由于排序或者什么原因，比如同时插入三条数据时，

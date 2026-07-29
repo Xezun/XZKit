@@ -379,13 +379,15 @@ FOUNDATION_EXPORT XZMocoaKey const XZMocoaKeyNone NS_SWIFT_NAME(None);
 
 /// 是否主动观察数据模型。默认 NO 否。
 ///
-/// ### 默认被动的观察机制
+/// ### 被动观察机制
 ///
-/// - 在 iOS 开发中，数据相关的逻辑，大多可以通过层级关系来处理。
+/// 由于以下原因，视图模型 ViewModel 对 Model 数据模型的观察，默认是被动的。
+///
+/// - 大多是业务展示类数据，不需要监听；
+/// - 下层模型可以直接通过 Mocoa Events Channel 层事件通道通知上层模型。
+/// - 上层模型可以直接调用下层模型``model:didChangeValuesForKeys:``的方法，被动触发监听。
 /// - 在某些情况下，数据不需要动态监听，比如当 `UITableViewCell` 需要刷新时，往往整个 Cell 视图的重载。
 /// - 数据管理框架，比如 CoreData 框架，自带数据监听机制。
-///
-/// 所以默认情况下，键值观察是被动的。
 ///
 /// 若要开启主动键值观察，重写此属性，并返回`YES`即可。
 ///
