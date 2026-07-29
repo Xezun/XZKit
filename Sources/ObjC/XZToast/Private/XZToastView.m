@@ -146,7 +146,27 @@ typedef NS_ENUM(NSUInteger, XZToastViewIconType) {
 }
 
 - (void)setText:(NSString *)text {
-    _textLabel.text = text;
+    if (text) {
+        NSAttributedString *attributedText = _textLabel.attributedText;
+        if (attributedText.length > 0) {
+            NSDictionary *attributes = [attributedText attributesAtIndex:0 effectiveRange:nil];
+            _textLabel.attributedText = [[NSAttributedString alloc] initWithString:text attributes:attributes];
+        } else {
+            XZToastManager *manager = self.xz_toastManager;
+            if (manager) {
+                NSMutableParagraphStyle *style = [[NSMutableParagraphStyle alloc] init];
+                style.lineSpacing = manager.lineSpacing;
+                style.alignment   = manager.textAlignment;
+                _textLabel.text = [[NSAttributedString alloc] initWithString:text attributes:@{
+                    NSParagraphStyleAttributeName: style
+                }];
+            } else {
+                _textLabel.text = text;
+            }
+        }
+    } else {
+        _textLabel.text = nil;
+    }
     [self.xz_toastManager setNeedsLayoutToasts];
 }
 
@@ -211,7 +231,16 @@ typedef NS_ENUM(NSUInteger, XZToastViewIconType) {
     
     { // 文字
         NSString * const text = toast.text;
-        _textLabel.text = text;
+        if (text) {
+            NSMutableParagraphStyle *style = [[NSMutableParagraphStyle alloc] init];
+            style.lineSpacing = manager.lineSpacing;
+            style.alignment   = manager.textAlignment;
+            _textLabel.attributedText = [[NSAttributedString alloc] initWithString:text attributes:@{
+                NSParagraphStyleAttributeName: style
+            }];
+        } else {
+            _textLabel.text = nil;
+        }
         if (text.length > 0) {
             _textLabel.hidden = NO;
             CGRect const frame = _textLabel.frame;

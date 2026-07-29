@@ -145,6 +145,11 @@ NS_REFINED_FOR_SWIFT
 @property (class, nonatomic) UIColor * color;
 /// 渲染色，比如进度条的进度色。
 @property (class, nonatomic) UIColor * tintColor;
+/// 多行文字的行间距，默认 10。
+@property (class, nonatomic) CGFloat lineSpacing;
+/// 文本对齐方式。
+@property (class, nonatomic) NSTextAlignment textAlignment;
+
 /// 默认展示时长，默认 1.0 秒，值必须大于零。
 @property (class, nonatomic) NSTimeInterval duration;
 

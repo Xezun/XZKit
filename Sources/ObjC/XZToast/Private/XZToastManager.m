@@ -16,6 +16,7 @@
 @implementation XZToastManager {
     UIViewController * __weak _viewController;
     
+    NSInteger _textAlignment;
     CGFloat _offsets[3];
     /// 展示位置。
     XZToastPosition _position;
@@ -77,6 +78,8 @@
     if (self) {
         _viewController = viewController;
         
+        _lineSpacing                    = -1;  // 负数表示使用 XZToast.lineSpacing
+        _textAlignment                  = -1;  // 负数表示使用 XZToast.textAlignment
         _duration                       = 0.0; // 0.0 表示使用 XZToast.duration
         _viewClass                      = Nil; // nil 表示使用 XZToast.viewClass
         _maximumNumberOfToasts          = -1;  // -1  表示使用 XZToast.maximumNumberOfToasts
@@ -597,6 +600,18 @@
 
 - (UIColor *)tintColor {
     return _tintColor ?: XZToast.tintColor;
+}
+
+- (CGFloat)lineSpacing {
+    return _lineSpacing >= 0 ? _lineSpacing : XZToast.lineSpacing;
+}
+
+- (NSTextAlignment)textAlignment {
+    return _textAlignment > 0 ? (NSTextAlignment)_textAlignment : XZToast.textAlignment;
+}
+
+- (void)setTextAlignment:(NSTextAlignment)textAlignment {
+    _textAlignment = textAlignment;
 }
 
 - (NSTimeInterval)duration {

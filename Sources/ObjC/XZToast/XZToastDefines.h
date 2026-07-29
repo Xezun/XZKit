@@ -100,6 +100,11 @@ typedef void (^XZToastCompletion)(BOOL finished) NS_REFINED_FOR_SWIFT NS_SWIFT_U
 /// 渲染色。
 @property (nonatomic, null_resettable) UIColor * tintColor;
 
+/// 行间距。
+@property (nonatomic) CGFloat         lineSpacing;
+/// 文本对齐方式。
+@property (nonatomic) NSTextAlignment textAlignment;
+
 /// 默认展示时长。值 0 表示使用全局默认时长。
 @property (nonatomic) NSTimeInterval duration;
 

@@ -171,16 +171,18 @@ NSTimeInterval const XZToastAnimationDuration = 0.35;
 
 @end
 
-static Class          _viewClass             = Nil;
-static NSInteger      _maximumNumberOfToasts = 1;
-static CGFloat        _toastOffsets[3]       = {+20.0, 0.0, -40.0};
-static UIColor *      _textColor             = nil;
-static UIFont  *      _font                  = nil;
-static UIColor *      _backgroundColor       = nil;
-static UIColor *      _shadowColor           = nil;
-static UIColor *      _color                 = nil;
-static UIColor *      _tintColor            = nil;
-static NSTimeInterval _duration              = 1.0;
+static Class           _viewClass             = Nil;
+static NSInteger       _maximumNumberOfToasts = 1;
+static CGFloat         _toastOffsets[3]       = {+20.0, 0.0, -40.0};
+static UIColor *       _textColor             = nil;
+static UIFont  *       _font                  = nil;
+static UIColor *       _backgroundColor       = nil;
+static UIColor *       _shadowColor           = nil;
+static UIColor *       _color                 = nil;
+static UIColor *       _tintColor             = nil;
+static CGFloat         _lineSpacing           = 10.0;
+static NSTextAlignment _textAlignment         = NSTextAlignmentCenter;
+static NSTimeInterval  _duration              = 1.0;
 static NSMutableDictionary<NSNumber *, UIImage *> *_styleImages = nil;
 static UIImage * _Nullable XZToastStyleImage(XZToastStyle style);
 
@@ -304,6 +306,22 @@ static UIImage * _Nullable XZToastStyleImage(XZToastStyle style);
 + (void)setTintColor:(UIColor *)tintColor {
     NSParameterAssert([tintColor isKindOfClass:UIColor.class]);
     _tintColor = tintColor;
+}
+
++ (CGFloat)lineSpacing {
+    return _lineSpacing;
+}
+
++ (void)setLineSpacing:(CGFloat)lineSpacing {
+    _lineSpacing = MAX(0, lineSpacing);
+}
+
++ (NSTextAlignment)textAlignment {
+    return _textAlignment;
+}
+
++ (void)setTextAlignment:(NSTextAlignment)textAlignment {
+    _textAlignment = textAlignment;
 }
 
 + (NSTimeInterval)duration {
