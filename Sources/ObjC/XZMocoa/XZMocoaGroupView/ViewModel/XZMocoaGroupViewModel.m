@@ -94,37 +94,40 @@ typedef void(^XZMocoaGroupDelayedUpdates)(__kindof XZMocoaViewModel *self);
 #pragma mark - 处理 SectionViewModel 的事件
 
 - (void)didReceiveEvents:(XZMocoaEvents *)events {
-    if ([events.name isEqualToString:XZMocoaEventsNameReload]) {
-        __kindof XZMocoaViewModel * const subViewModel = events.target;
-        if (self.isPerformingBatchUpdates) {
-            // 正在进行批量更新，刷新操作将被延迟到批量更新之后。
-            // 主要原因是：
-            // 1、不确定批量更新是否会与当前的刷新操作重复。
-            // 2、即使当前是操作与批量更新没有重复，可能依然会存在崩溃的可能。
-            // 3、批量更新之后，当前操作的对象，可能已经不存在了。
-            [_delayedBatchUpdates addObject:^void(XZMocoaGroupViewModel *self) {
-                [self didReceiveEvents:events];
-            }];
+    if (![events.name isEqualToString:XZMocoaEventsNameReload]) {
+        return [super didReceiveEvents:events];
+    }
+    
+    // 处理 section 的刷新请求。
+    XZMocoaGroupSectionViewModel * const subViewModel = events.target;
+    NSInteger const section = [self indexOfSectionViewModel:subViewModel];
+    
+    // 不是 section 的请求
+    if (section == NSNotFound) {
+        return [super didReceiveEvents:events];
+    }
+    
+    // 正在进行批量更新，刷新操作将被延迟到批量更新之后。
+    // 主要原因是：
+    // 1、不确定批量更新是否会与当前的刷新操作重复。
+    // 2、即使当前是操作与批量更新没有重复，可能依然会存在崩溃的可能。
+    // 3、批量更新之后，当前操作的对象，可能已经不存在了。
+    if (self.isPerformingBatchUpdates) {
+        [_delayedBatchUpdates addObject:^void(XZMocoaGroupViewModel *self) {
+            [self didReceiveEvents:events];
+        }];
+        return;
+    }
+    
+    if ([events.source isKindOfClass:[XZMocoaGroupCellViewModel class]]) {
+        NSInteger const row = [subViewModel indexOfCellViewModel:events.source];
+        if (row != NSNotFound) {
+            NSIndexPath *indexPath = [NSIndexPath indexPathForRow:row inSection:section];
+            [self didReloadCellsAtIndexPaths:@[indexPath]];
             return;
         }
-        if ([subViewModel isKindOfClass:[XZMocoaGroupSectionViewModel class]]) {
-            XZMocoaGroupSectionViewModel * const sectionVM = subViewModel;
-            NSInteger const section = [self indexOfSectionViewModel:sectionVM];
-            if (section != NSNotFound) {
-                if ([events.source isKindOfClass:[XZMocoaGroupCellViewModel class]]) {
-                    NSInteger const row = [sectionVM indexOfCellViewModel:events.source];
-                    if (row != NSNotFound) {
-                        NSIndexPath *indexPath = [NSIndexPath indexPathForRow:row inSection:section];
-                        [self didReloadCellsAtIndexPaths:@[indexPath]];
-                        return;
-                    }
-                }
-                [self didReloadSectionsAtIndexes:[NSIndexSet indexSetWithIndex:section]];
-                return;
-            }
-        }
     }
-    [super didReceiveEvents:events];
+    [self didReloadSectionsAtIndexes:[NSIndexSet indexSetWithIndex:section]];
 }
 
 #pragma mark - 局部更新

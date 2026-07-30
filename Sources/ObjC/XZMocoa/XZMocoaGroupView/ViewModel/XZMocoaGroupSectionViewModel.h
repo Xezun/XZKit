@@ -74,7 +74,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 /// 创建视图模型，并替换现有的视图模型。
 /// @note 执行此方法前，请确保相应的数据已更新。
-/// @param rows 数据发生更新的行
+/// @param rows 待刷新 cell 的 index 集合，index 为 cell 的实时位置
 - (void)reloadCellsAtIndexes:(nullable NSIndexSet *)rows;
 
 /// 创建视图模型，并插入到指定位置。

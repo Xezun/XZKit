@@ -74,16 +74,17 @@ typedef void(^XZMocoaGroupDelayedUpdates)(XZMocoaGroupSectionViewModel *self);
 }
 
 - (void)didReceiveEvents:(XZMocoaEvents *)events {
-    if ([events.name isEqualToString:XZMocoaEventsNameReload]) {
-        XZMocoaViewModel * const subViewModel = events.target;
-        // 正在批量更新，延迟事件（如果对象被销毁，事件则不会执行）
-        if (self.isPerformingBatchUpdates) {
-            [_delayedBatchUpdates addObject:^void(XZMocoaGroupSectionViewModel *self) {
-                [self didReceiveEvents:events];
-            }];
-            return;
-        }
-        // 附加视图更新事件
+    if (![events.name isEqualToString:XZMocoaEventsNameReload]) {
+        return [super didReceiveEvents:events];
+    }
+    
+    XZMocoaViewModel * const subViewModel = events.target;
+    
+    XZMocoaKind kind = nil;
+    NSInteger index = [self indexOfCellViewModel:subViewModel];
+    if (index != NSNotFound) {
+        kind = @"cell";
+    } else {
         for (NSString *key in _supplementaryViewModels) {
             for (XZMocoaGroupSectionSupplementaryViewModel *vm in _supplementaryViewModels[key]) {
                 if (subViewModel == vm) {
@@ -92,16 +93,36 @@ typedef void(^XZMocoaGroupDelayedUpdates)(XZMocoaGroupSectionViewModel *self);
                 }
             }
         }
-        // cell视图的更新事件
-        if ([subViewModel isKindOfClass:[XZMocoaGroupCellViewModel class]]) {
-            NSInteger const index = [self indexOfCellViewModel:(id)subViewModel];
-            if (index != NSNotFound) {
-                [self didReloadCellsAtIndexes:[NSIndexSet indexSetWithIndex:index]];
+    }
+    
+    // 正在批量更新，延迟事件（如果对象被销毁，事件则不会执行）
+    if (self.isPerformingBatchUpdates) {
+        [_delayedBatchUpdates addObject:^void(XZMocoaGroupSectionViewModel *self) {
+            [self didReceiveEvents:events];
+        }];
+        return;
+    }
+    
+    
+    
+    XZMocoaViewModel * const subViewModel = events.target;
+    
+    // 附加视图更新事件
+    for (NSString *key in _supplementaryViewModels) {
+        for (XZMocoaGroupSectionSupplementaryViewModel *vm in _supplementaryViewModels[key]) {
+            if (subViewModel == vm) {
+                [self didReloadData];
                 return;
             }
         }
     }
-    [super didReceiveEvents:events];
+    
+    // cell视图的更新事件
+    NSInteger const index = [self indexOfCellViewModel:(id)subViewModel];
+    if (index != NSNotFound) {
+        [self didReloadCellsAtIndexes:[NSIndexSet indexSetWithIndex:index]];
+        return;
+    }
 }
 
 #pragma mark - 公开方法
@@ -184,6 +205,7 @@ typedef void(^XZMocoaGroupDelayedUpdates)(XZMocoaGroupSectionViewModel *self);
     id const model = self.model;
     
     if (self.isPerformingBatchUpdates) {
+        // 在批量更新的操作中，其它的 cell 位置改变，可能会影响 reload 的 cell 改变位置，所以需要找到其原始位置。
         NSMutableIndexSet * const oldIndexes = [NSMutableIndexSet indexSet];
         [indexes enumerateIndexesUsingBlock:^(NSUInteger const index, BOOL * _Nonnull stop) {
             XZMocoaGroupCellViewModel * const oldViewModel = [self cellViewModelAtIndex:index];
@@ -226,6 +248,11 @@ typedef void(^XZMocoaGroupDelayedUpdates)(XZMocoaGroupSectionViewModel *self);
     
     [self didInsertCellsAtIndexes:indexes];
     
+    if (self.isPerformingBatchUpdates) {
+        return;
+    }
+    
+    // 更新 index
     NSInteger const count = self.numberOfCells;
     for (NSInteger index = indexes.firstIndex; index < count; index++) {
         if ([indexes containsIndex:index]) {
@@ -270,9 +297,9 @@ typedef void(^XZMocoaGroupDelayedUpdates)(XZMocoaGroupSectionViewModel *self);
     if (self.isPerformingBatchUpdates) {
         id const viewModel = [self cellViewModelAtIndex:index];
         NSInteger const oldIndex = [_viewModelsBeforeBatchUpdates indexOfObject:viewModel];
-        [self _moveCellAtIndex:index fromIndex:oldIndex toIndex:newIndex];
+        [self moveCellAtIndex:index fromIndex:oldIndex toIndex:newIndex];
     } else {
-        [self _moveCellAtIndex:index fromIndex:index toIndex:newIndex];
+        [self moveCellAtIndex:index fromIndex:index toIndex:newIndex];
         
         NSInteger const min = MIN(index, newIndex);
         NSInteger const max = MAX(index, newIndex);
@@ -282,9 +309,28 @@ typedef void(^XZMocoaGroupDelayedUpdates)(XZMocoaGroupSectionViewModel *self);
     }
 }
 
+/// 移动 Cell 位置。
+/// @param row 当前位置
+/// @param oldRow 原始位置（批量更新前的位置）
+/// @param newRow 目标位置
+- (void)moveCellAtIndex:(NSInteger)row fromIndex:(NSInteger)oldRow toIndex:(NSInteger)newRow {
+    _needsDifferenceBatchUpdates = NO;
+    
+    if (row != newRow) {
+        [self _moveCellViewModelFromIndex:row toIndex:newRow];
+    }
+    
+    if (oldRow == newRow) {
+        return;
+    }
+    
+    [self didMoveCellAtIndex:oldRow toIndex:newRow];
+}
+
 #pragma mark - 事件派发
 
 - (void)didReloadData {
+    // 初始化还未完成，视图还没渲染，纯数据更新，不需要通知上级，因为渲染时，拿到的就是更新后的内容。
     if (!self.isReady) return;
     [self.superViewModel sectionViewModel:self didReloadData:NULL];
 }
@@ -313,7 +359,7 @@ typedef void(^XZMocoaGroupDelayedUpdates)(XZMocoaGroupSectionViewModel *self);
     if (self.isReady) {
         [self.superViewModel sectionViewModel:self didPerformBatchUpdates:batchUpdates completion:completion];
     } else {
-        batchUpdates();
+        batchUpdates(); // 还在初始化的过程中，直接执行更新数据。
         if (completion) dispatch_async(dispatch_get_main_queue(), ^{ completion(YES); });
     }
 }
@@ -546,24 +592,6 @@ typedef void(^XZMocoaGroupDelayedUpdates)(XZMocoaGroupSectionViewModel *self);
         XZMocoaGroupCellViewModel *viewModel = [self createCellViewModelWithModel:dataModel index:index];
         [self _addCellViewModel:viewModel];
     }
-}
-
-/// 移动 Cell 位置。
-/// @param row 当前位置
-/// @param oldRow 原始位置（批量更新前的位置）
-/// @param newRow 目标位置
-- (void)_moveCellAtIndex:(NSInteger)row fromIndex:(NSInteger)oldRow toIndex:(NSInteger)newRow {
-    _needsDifferenceBatchUpdates = NO;
-    
-    if (row != newRow) {
-        [self _moveCellViewModelFromIndex:row toIndex:newRow];
-    }
-    
-    if (oldRow == newRow) {
-        return;
-    }
-    
-    [self didMoveCellAtIndex:oldRow toIndex:newRow];
 }
 
 - (XZMocoaGroupCellViewModel *)createCellViewModelWithModel:(id<XZMocoaGroupCellModel> const)nullableModel index:(NSInteger)index {
