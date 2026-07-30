@@ -24,12 +24,12 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic, readonly) BOOL isPerformingBatchUpdates;
 
 #if XZ_FRAMEWORK
-/// 私有方法。准备批量更新环境，必须搭配`-cleanupBatchUpdates`使用。
+/// 私有方法。准备批量更新环境，必须搭配`-cleanupForBatchUpdates`使用。
 /// @returns 是否可以开始批量更新
-- (BOOL)prepareBatchUpdates;
+- (BOOL)prepareForBatchUpdates;
 
 /// 私有方法。清理批量更新环境。
-- (void)cleanupBatchUpdates;
+- (void)cleanupForBatchUpdates;
 #endif
 
 /// 批量更新：将一组`reload/insert/delete/move`操作放在块函数`batchUpdates`统一执行。

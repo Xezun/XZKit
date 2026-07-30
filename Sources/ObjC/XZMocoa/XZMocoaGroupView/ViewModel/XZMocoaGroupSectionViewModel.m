@@ -12,6 +12,7 @@
 #import "XZMocoaGroupCellModel.h"
 #import "NSArray+XZKit.h"
 #import "NSIndexSet+XZKit.h"
+#import "NSDictionary+XZKit.h"
 
 /// 在批量更新的过程中，同一元素只能应用一个操作，但是在 MVVM 结构中，
 /// 数据变化也可能会引起刷新操作，为了避免多个更新操作，因此会将这些操作暂存并延迟执行。
@@ -21,7 +22,7 @@ typedef void(^XZMocoaGroupDelayedUpdates)(XZMocoaGroupSectionViewModel *self);
 @interface XZMocoaGroupSectionViewModel () {
     /// 批量更新前保存的 cell 视图模型。非 nil 时，表示当前正在批量更新。
     /// 没有直接更新 supplementary 的操作，所以 supplementary 视图模型在批量更新的过程中不会改变。
-    NSOrderedSet *_viewModelsBeforeBatchUpdates;
+    NSOrderedSet *_beforesBatchUpdates;
     /// 批量更新过程中产生的事件。
     NSMutableArray<XZMocoaGroupDelayedUpdates> *_delayedBatchUpdates;
     /// 是否需要执行批量更新的差异分析。
@@ -40,7 +41,7 @@ typedef void(^XZMocoaGroupDelayedUpdates)(XZMocoaGroupSectionViewModel *self);
 - (instancetype)initWithModel:(id)model {
     self = [super initWithModel:model];
     if (self) {
-        _viewModelsBeforeBatchUpdates = nil;
+        _beforesBatchUpdates = nil;
         _cellViewModels          = [NSMutableOrderedSet orderedSet];
         _supplementaryViewModels = [NSMutableDictionary dictionary];
     }
@@ -81,18 +82,21 @@ typedef void(^XZMocoaGroupDelayedUpdates)(XZMocoaGroupSectionViewModel *self);
     XZMocoaViewModel * const subViewModel = events.target;
     
     XZMocoaKind kind = nil;
-    NSInteger index = [self indexOfCellViewModel:subViewModel];
+    NSInteger const index = [self indexOfCellViewModel:subViewModel];
     if (index != NSNotFound) {
         kind = @"cell";
     } else {
-        for (NSString *key in _supplementaryViewModels) {
-            for (XZMocoaGroupSectionSupplementaryViewModel *vm in _supplementaryViewModels[key]) {
+        kind = [_supplementaryViewModels xz_first:^id _Nullable(XZMocoaKind key, NSMutableArray<XZMocoaViewModel *> *obj) {
+            for (XZMocoaGroupSectionSupplementaryViewModel *vm in obj) {
                 if (subViewModel == vm) {
-                    [self didReloadData];
-                    return;
+                    return key;
                 }
             }
-        }
+        }];
+    }
+    
+    if (kind == nil) {
+        return [super didReceiveEvents:events];
     }
     
     // 正在批量更新，延迟事件（如果对象被销毁，事件则不会执行）
@@ -103,26 +107,14 @@ typedef void(^XZMocoaGroupDelayedUpdates)(XZMocoaGroupSectionViewModel *self);
         return;
     }
     
-    
-    
-    XZMocoaViewModel * const subViewModel = events.target;
-    
-    // 附加视图更新事件
-    for (NSString *key in _supplementaryViewModels) {
-        for (XZMocoaGroupSectionSupplementaryViewModel *vm in _supplementaryViewModels[key]) {
-            if (subViewModel == vm) {
-                [self didReloadData];
-                return;
-            }
-        }
-    }
-    
     // cell视图的更新事件
-    NSInteger const index = [self indexOfCellViewModel:(id)subViewModel];
-    if (index != NSNotFound) {
+    if ([kind isKindOfClass:@"cell"]) {
         [self didReloadCellsAtIndexes:[NSIndexSet indexSetWithIndex:index]];
         return;
     }
+    
+    // 附加视图更新事件
+    [self didReloadData];
 }
 
 #pragma mark - 公开方法
@@ -209,7 +201,7 @@ typedef void(^XZMocoaGroupDelayedUpdates)(XZMocoaGroupSectionViewModel *self);
         NSMutableIndexSet * const oldIndexes = [NSMutableIndexSet indexSet];
         [indexes enumerateIndexesUsingBlock:^(NSUInteger const index, BOOL * _Nonnull stop) {
             XZMocoaGroupCellViewModel * const oldViewModel = [self cellViewModelAtIndex:index];
-            NSInteger const oldRow = [_viewModelsBeforeBatchUpdates indexOfObject:oldViewModel];
+            NSInteger const oldRow = [_beforesBatchUpdates indexOfObject:oldViewModel];
             [oldIndexes addIndex:oldRow];
             [oldViewModel removeFromSuperViewModel];
             
@@ -273,7 +265,7 @@ typedef void(^XZMocoaGroupDelayedUpdates)(XZMocoaGroupSectionViewModel *self);
         NSMutableIndexSet * const oldIndexes = [NSMutableIndexSet indexSet];
         [indexes enumerateIndexesWithOptions:NSEnumerationReverse usingBlock:^(NSUInteger const index, BOOL * _Nonnull stop) {
             XZMocoaGroupCellViewModel * const oldViewModel = [self cellViewModelAtIndex:index];
-            NSInteger const oldRow = [_viewModelsBeforeBatchUpdates indexOfObject:oldViewModel];
+            NSInteger const oldRow = [_beforesBatchUpdates indexOfObject:oldViewModel];
             [oldIndexes addIndex:oldRow];
             
             [oldViewModel removeFromSuperViewModel];
@@ -296,7 +288,7 @@ typedef void(^XZMocoaGroupDelayedUpdates)(XZMocoaGroupSectionViewModel *self);
 - (void)moveCellAtIndex:(NSInteger)index toIndex:(NSInteger)newIndex {
     if (self.isPerformingBatchUpdates) {
         id const viewModel = [self cellViewModelAtIndex:index];
-        NSInteger const oldIndex = [_viewModelsBeforeBatchUpdates indexOfObject:viewModel];
+        NSInteger const oldIndex = [_beforesBatchUpdates indexOfObject:viewModel];
         [self moveCellAtIndex:index fromIndex:oldIndex toIndex:newIndex];
     } else {
         [self moveCellAtIndex:index fromIndex:index toIndex:newIndex];
@@ -367,40 +359,36 @@ typedef void(^XZMocoaGroupDelayedUpdates)(XZMocoaGroupSectionViewModel *self);
 #pragma mark - 批量更新
 
 - (BOOL)isPerformingBatchUpdates {
-    return _viewModelsBeforeBatchUpdates != nil;
+    return _beforesBatchUpdates != nil;
 }
 
-- (BOOL)prepareBatchUpdates {
-    if (_viewModelsBeforeBatchUpdates) {
+- (BOOL)prepareForBatchUpdates {
+    if (_beforesBatchUpdates) {
         return NO;
     }
-    _viewModelsBeforeBatchUpdates = _cellViewModels.copy;
+    _beforesBatchUpdates = _cellViewModels.copy;
     _delayedBatchUpdates = [NSMutableArray array];
+    _needsDifferenceBatchUpdates = YES;
     return YES;
 }
 
-- (void)cleanupBatchUpdates {
-    _viewModelsBeforeBatchUpdates = nil;
-    
+- (void)cleanupForBatchUpdates {
+    _needsDifferenceBatchUpdates = NO;
     for (XZMocoaGroupDelayedUpdates batchUpdates in _delayedBatchUpdates) {
         batchUpdates(self);
     }
     _delayedBatchUpdates = nil;
-}
-
-- (void)setNeedsDifferenceBatchUpdates {
-    _needsDifferenceBatchUpdates = YES;
+    _beforesBatchUpdates = nil;
 }
 
 - (void)performBatchUpdates:(void (^NS_NOESCAPE)(void))batchUpdates completion:(void (^ _Nullable)(BOOL))completion {
     NSAssert(batchUpdates != nil, @"必须提供 batchUpdates 参数");
     
-    if (![self prepareBatchUpdates]) {
+    if (![self prepareForBatchUpdates]) {
         return;
     }
     
     void (^const tableViewBatchUpdates)(void) = ^{
-        [self setNeedsDifferenceBatchUpdates];
         batchUpdates();
         [self differenceBatchUpdatesIfNeeded];
     };
@@ -408,7 +396,7 @@ typedef void(^XZMocoaGroupDelayedUpdates)(XZMocoaGroupSectionViewModel *self);
     [self didPerformBatchUpdates:tableViewBatchUpdates completion:completion];
     
     // 清理批量更新环境，并执行延迟的事件
-    [self cleanupBatchUpdates];
+    [self cleanupForBatchUpdates];
     
     NSInteger const count = self.numberOfCells;
     for (NSInteger row = 0; row < count; row++) {
@@ -464,7 +452,7 @@ typedef void(^XZMocoaGroupDelayedUpdates)(XZMocoaGroupSectionViewModel *self);
         return nil;
     }
     
-    NSOrderedSet * const oldViewModels = _viewModelsBeforeBatchUpdates.copy;
+    NSOrderedSet * const oldViewModels = _beforesBatchUpdates.copy;
     NSInteger      const oldCount      = oldViewModels.count;
     NSArray      * const oldDataModels = [NSMutableArray arrayWithCapacity:oldCount];
     for (NSInteger i = 0; i < oldCount; i++) {

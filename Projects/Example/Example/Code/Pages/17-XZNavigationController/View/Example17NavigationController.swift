@@ -49,6 +49,7 @@ class Example17NavigationController: UINavigationController, XZNavigationControl
         super.viewDidAppear(animated)
         
         guard let tabBarController = self.tabBarController else { return }
+        os_log(.debug, log: XZLogSystem.default.oslog, "%{public}@ \nisBeingPresented: %@, modalPresentationStyle: %@", XZLogs(XZLogSystem.default, #file, #line, #function), tabBarController.isBeingPresented, tabBarController.modalPresentationStyle as! CVarArg)
         #XZLog("isBeingPresented: %@, modalPresentationStyle: %@", tabBarController.isBeingPresented, tabBarController.modalPresentationStyle as! CVarArg)
     }
     

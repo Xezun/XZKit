@@ -49,50 +49,42 @@ NS_ASSUME_NONNULL_BEGIN
 - (NSInteger)numberOfCellsInSection:(NSInteger)section;
 - (__kindof XZMocoaGroupCellViewModel *)cellViewModelAtIndexPath:(NSIndexPath *)indexPath;
 
+- (void)selectCellAtIndexPath:(NSIndexPath *)indexPath animated:(BOOL)animated scrollPosition:(NSInteger)scrollPosition;
+- (void)deselectCellAtIndexPath:(NSIndexPath *)indexPath animated:(BOOL)animated;
+
 // MARK: - 视图模型接收“数据更新”事件
 
 /// 数据更新后，调用此方法以重载所有受管理的子视图模型。
 - (void)reloadData;
 
-- (void)selectCellAtIndexPath:(NSIndexPath *)indexPath animated:(BOOL)animated scrollPosition:(NSInteger)scrollPosition;
-- (void)deselectCellAtIndexPath:(NSIndexPath *)indexPath animated:(BOOL)animated;
-
 /// 指定 section 的数据发生更新后，调用此方法以重载该 section 的视图模型。
 /// @param section 数据发生更新的行
 - (void)reloadSectionAtIndex:(NSInteger)section;
-- (void)reloadCellAtIndexPath:(NSIndexPath *)indexPath;
 
 /// 新增指定 section 的数据后，调用此方法以构造该 section 的视图模型。
 /// @param section 新增的行
 - (void)insertSectionAtIndex:(NSInteger)section;
-- (void)insertCellAtIndexPath:(NSIndexPath *)indexPath;
 
 /// 指定 section 的数据更新后，调用此方法以重载该 section 的视图模型。
 /// @param section 数据发生更新的行
 - (void)deleteSectionAtIndex:(NSInteger)section;
-- (void)deleteCellAtIndexPath:(NSIndexPath *)indexPath;
 
 /// 指定 sections 的数据更新后，调用此方法以重载该 sections 的视图模型。
 /// @param sections 数据发生更新的行
 - (void)reloadSectionsAtIndexes:(nullable NSIndexSet *)sections;
-- (void)reloadCellsAtIndexPaths:(nullable NSArray<NSIndexPath *> *)indexPaths;
 
 /// 新增指定 sections 的数据后，调用此方法以构造该 sections 的视图模型。
 /// @param sections 新增的行
 - (void)insertSectionsAtIndexes:(nullable NSIndexSet *)sections;
-- (void)insertCellsAtIndexPaths:(nullable NSArray<NSIndexPath *> *)indexPaths;
 
 /// 指定 sections 的数据更新后，调用此方法以重载该 sections 的视图模型。
 /// @param sections 数据发生更新的行
 - (void)deleteSectionsAtIndexes:(nullable NSIndexSet *)sections;
-- (void)deleteCellsAtIndexPaths:(nullable NSArray<NSIndexPath *> *)indexPaths;
 
 /// 移动行 section 到新行 newSection 处。
 /// @param section 移动前的位置
 /// @param newSection 移动后的位置
 - (void)moveSectionAtIndex:(NSInteger)section toIndex:(NSInteger)newSection;
-
-- (void)moveCellAtIndexPath:(NSIndexPath *)indexPath toIndexPath:(NSIndexPath *)newIndexPath;
 
 // MARK: - 视图模型的事件派发，子类必须重写并根据实际去实现
 

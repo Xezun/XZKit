@@ -32,6 +32,8 @@ NS_ASSUME_NONNULL_BEGIN
 - (NSMutableArray *)xz_map:(id _Nonnull (^NS_NOESCAPE)(KeyType key, ObjectType obj, BOOL *stop))transform OBJC_SWIFT_UNAVAILABLE("请直接使用 Swift 版本");
 - (NSMutableArray *)xz_compactMap:(id _Nullable (^NS_NOESCAPE)(KeyType key, ObjectType obj, BOOL * _Nonnull stop))transform OBJC_SWIFT_UNAVAILABLE("请直接使用 Swift 版本");
 
+- (nullable id)xz_first:(id _Nullable (^NS_NOESCAPE)(KeyType key, ObjectType obj))block;
+
 @end
 
 @interface NSMutableDictionary<KeyType, ObjectType> (XZKit)

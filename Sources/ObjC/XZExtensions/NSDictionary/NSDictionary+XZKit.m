@@ -90,6 +90,15 @@
     return results;
 }
 
+- (id)xz_first:(id  _Nullable (^)(id _Nonnull, id _Nonnull))block {
+    id __block result = nil;
+    [self enumerateKeysAndObjectsUsingBlock:^(id  _Nonnull key, id  _Nonnull obj, BOOL * _Nonnull stop) {
+        result = block(key, obj);
+        *stop  = (result != nil);
+    }];
+    return result;
+}
+
 @end
 
 @implementation NSMutableDictionary (XZKit)
