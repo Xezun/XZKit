@@ -87,3 +87,35 @@ NS_SWIFT_UI_ACTOR @interface XZMocoaTableView : XZMocoaGroupView
 @end
 
 NS_ASSUME_NONNULL_END
+
+#if __has_include(<XZKit/XZRefresh.h>)
+#import <XZKit/XZRefresh.h>
+#define XZ_MOCOA_TABLE_VIEW_REFRESH 1
+#elif __has_include("XZRefresh.h")
+#import "XZRefresh.h"
+#define XZ_MOCOA_TABLE_VIEW_REFRESH 1
+#endif
+
+NS_ASSUME_NONNULL_BEGIN
+
+#ifdef XZ_MOCOA_TABLE_VIEW_REFRESH
+/// 列表头部开始刷新，事件源 events.source 为 refreshView 对象。
+///
+/// 由于 XZMocoaTableView 是其所管理的 UITableView 的 delegate 代理，所以
+/// 当使用 XZRefresh 组件时，发生刷新事件后，视图会通过此事件名，通过事件通道传递给 viewModel 对象。
+FOUNDATION_EXPORT XZMocoaEventsName const XZMocoaEventsNameHeaderDidBeginRefreshing;
+
+/// 列表尾部开始刷新，事件源 events.source 为 refreshView 对象。
+///
+/// 由于 XZMocoaTableView 是其所管理的 UITableView 的 delegate 代理，所以
+/// 当使用 XZRefresh 组件时，发生刷新事件后，视图会通过此事件名，通过事件通道传递给 viewModel 对象。
+FOUNDATION_EXPORT XZMocoaEventsName const XZMocoaEventsNameFooterDidBeginRefreshing;
+
+@interface XZMocoaTableView (XZRefreshDelegate) <XZRefreshDelegate>
+- (void)scrollView:(UIScrollView *)scrollView headerDidBeginRefreshing:(XZRefreshView *)refreshView;
+- (void)scrollView:(UIScrollView *)scrollView footerDidBeginRefreshing:(XZRefreshView *)refreshView;
+@end
+#endif
+
+NS_ASSUME_NONNULL_END
+

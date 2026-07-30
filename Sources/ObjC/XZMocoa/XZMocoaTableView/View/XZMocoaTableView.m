@@ -108,3 +108,19 @@
 @end
 
 
+#ifdef XZ_MOCOA_TABLE_VIEW_REFRESH
+XZMocoaEventsName const XZMocoaEventsNameHeaderDidBeginRefreshing = @"headerDidBeginRefreshing";
+XZMocoaEventsName const XZMocoaEventsNameFooterDidBeginRefreshing = @"footerDidBeginRefreshing";
+
+@implementation XZMocoaTableView (XZRefreshDelegate)
+
+- (void)scrollView:(UIScrollView *)scrollView headerDidBeginRefreshing:(XZRefreshView *)refreshView {
+    [self sendEventsWithName:XZMocoaEventsNameHeaderDidBeginRefreshing value:refreshView];
+}
+
+- (void)scrollView:(UIScrollView *)scrollView footerDidBeginRefreshing:(XZRefreshView *)refreshView {
+    [self sendEventsWithName:XZMocoaEventsNameFooterDidBeginRefreshing value:refreshView];
+}
+
+@end
+#endif
