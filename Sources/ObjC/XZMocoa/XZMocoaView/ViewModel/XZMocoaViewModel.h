@@ -201,6 +201,14 @@ FOUNDATION_EXPORT XZMocoaEventsName const XZMocoaEventsNameConfirm;
 FOUNDATION_EXPORT XZMocoaEventsName const XZMocoaEventsNameSubmit;
 FOUNDATION_EXPORT XZMocoaEventsName const XZMocoaEventsNameCancel;
 FOUNDATION_EXPORT XZMocoaEventsName const XZMocoaEventsNameValueChanged;
+/// 导航左侧区事件。
+FOUNDATION_EXPORT XZMocoaEventsName const XZMocoaEventsNameNavigationBackAction;
+/// 导航右侧区事件。
+FOUNDATION_EXPORT XZMocoaEventsName const XZMocoaEventsNameNavigationMoreAction;
+FOUNDATION_EXPORT XZMocoaEventsName const XZMocoaEventsNameViewWillAppear;
+FOUNDATION_EXPORT XZMocoaEventsName const XZMocoaEventsNameViewDidAppear;
+FOUNDATION_EXPORT XZMocoaEventsName const XZMocoaEventsNameViewWillDisappear;
+FOUNDATION_EXPORT XZMocoaEventsName const XZMocoaEventsNameViewDidDisappear;
 
 @protocol XZMocoaView;
 

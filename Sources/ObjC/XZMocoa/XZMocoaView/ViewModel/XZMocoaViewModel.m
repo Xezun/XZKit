@@ -274,6 +274,12 @@ XZMocoaEventsName const XZMocoaEventsNameConfirm  = @"confirm";
 XZMocoaEventsName const XZMocoaEventsNameSubmit   = @"submit";
 XZMocoaEventsName const XZMocoaEventsNameCancel   = @"cancel";
 XZMocoaEventsName const XZMocoaEventsNameValueChanged = @"valueChanged";
+XZMocoaEventsName const XZMocoaEventsNameNavigationBackAction = @"navigationBackAction";
+XZMocoaEventsName const XZMocoaEventsNameNavigationMoreAction = @"navigationMoreAction";
+XZMocoaEventsName const XZMocoaEventsNameViewWillAppear    = @"viewWillAppear";
+XZMocoaEventsName const XZMocoaEventsNameViewDidAppear     = @"viewDidAppear";
+XZMocoaEventsName const XZMocoaEventsNameViewWillDisappear = @"viewWillDisappear";
+XZMocoaEventsName const XZMocoaEventsNameViewDidDisappear  = @"viewDidDisappear";
 
 @implementation XZMocoaViewModel (XZMocoaEventsChannel)
 

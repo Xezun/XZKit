@@ -90,7 +90,7 @@
     return results;
 }
 
-- (id)xz_first:(id  _Nullable (^)(id _Nonnull, id _Nonnull))block {
+- (id)xz_first:(id  _Nullable (^NS_NOESCAPE)(id _Nonnull, id _Nonnull))block {
     id __block result = nil;
     [self enumerateKeysAndObjectsUsingBlock:^(id  _Nonnull key, id  _Nonnull obj, BOOL * _Nonnull stop) {
         result = block(key, obj);

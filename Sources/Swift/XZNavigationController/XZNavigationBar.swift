@@ -151,17 +151,17 @@ import UIKit
         return (44.0, 44.0, 0)
     }
 
-    /// 导航栏将按照当前视图布局方向布局 titleView、infoView、backView、shadowImageView、backgroundImageView 。
+    /// 导航栏将按照当前视图布局方向布局 titleView、moreView、backView、shadowImageView、backgroundImageView 。
     override open func layoutSubviews() {
         super.layoutSubviews()
         
         let bounds = self.bounds
         let safeBounds = bounds.inset(by: self.safeAreaInsets)
         
-        // titleView\backView\infoView 只在初次赋值时，检测是否有大小并尝试自动调整。
+        // titleView\backView\moreView 只在初次赋值时，检测是否有大小并尝试自动调整。
         // 切在导航栏整个生命周期中，不主动调整它们的大小，只是按照规则将它们放在左中右。
         // 它们的大小完全由开发者控制，以避免强制调整而造成的不符合预期的情况。
-        // 比如，当 title 比较宽的时候，如果自动缩短了 back/info 的长度，那么当 title 变短的时候，back/info 却不能变长，
+        // 比如，当 title 比较宽的时候，如果自动缩短了 back/more 的长度，那么当 title 变短的时候，back/more 却不能变长，
         // 所以将它们的大小完全交给开发者处理。
         //【一般情形】
         // 普通高度：44
@@ -191,11 +191,11 @@ import UIKit
             titleView.frame = CGRect.init(x: x, y: y, width: titleFrame.width, height: titleFrame.height)
         }
 
-        if let infoView = self.infoView {
-            let infoFrame = infoView.frame
-            let x = (isLeftToRight ? safeBounds.maxX - infoFrame.width : safeBounds.minX)
-            let y = layoutContext.minY + (layoutContext.height - infoFrame.height) * 0.5
-            infoView.frame = CGRect.init(x: x, y: y, width: infoFrame.width, height: infoFrame.height)
+        if let moreView = self.moreView {
+            let moreFrame = moreView.frame
+            let x = (isLeftToRight ? safeBounds.maxX - moreFrame.width : safeBounds.minX)
+            let y = layoutContext.minY + (layoutContext.height - moreFrame.height) * 0.5
+            moreView.frame = CGRect.init(x: x, y: y, width: moreFrame.width, height: moreFrame.height)
         }
 
         if let backView = self.backView {
@@ -264,7 +264,7 @@ import UIKit
     }
     private var _largeTitleView: UIView?
 
-    /// 在导航栏上的返回视图。
+    /// 导航栏左侧视图。
     /// - Note: 自适应布局方向，在水平方向上，leading 对齐。
     /// - Note: 如果设置值时，视图没有大小，则会自动尝试调用 sizeToFit() 方法。
     /// - Note: 不会与标题视图重叠，优先显示标题视图。
@@ -289,30 +289,30 @@ import UIKit
     }
     private var _backView: UIView?
 
-    /// 导航栏上信息视图。
+    /// 导航栏右侧视图。
     /// - Note: 自适应布局方向，在水平方向上，trailing 对象。
     /// - Note: 如果设置值时，视图没有大小，则会自动尝试调用 sizeToFit() 方法。
     /// - Note: 不会与标题视图重叠，优先显示标题视图。
-    open var infoView: UIView? {
+    open var moreView: UIView? {
         get {
-            return _infoView
+            return _moreView
         }
         set {
-            _infoView?.removeFromSuperview()
-            if let infoView = newValue {
-                if infoView.frame.isEmpty {
-                    infoView.sizeToFit()
+            _moreView?.removeFromSuperview()
+            if let moreView = newValue {
+                if moreView.frame.isEmpty {
+                    moreView.sizeToFit()
                 }
                 if let titleView = self.titleView {
-                    self.insertSubview(infoView, belowSubview: titleView)
+                    self.insertSubview(moreView, belowSubview: titleView)
                 } else {
-                    self.addSubview(infoView)
+                    self.addSubview(moreView)
                 }
             }
-            _infoView = newValue
+            _moreView = newValue
         }
     }
-    private var _infoView: UIView?
+    private var _moreView: UIView?
     
     private enum CodingKey: String {
         case isTranslucent       = "XZNavigationBar.isTranslucent"

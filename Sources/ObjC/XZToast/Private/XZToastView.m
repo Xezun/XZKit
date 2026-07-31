@@ -157,7 +157,7 @@ typedef NS_ENUM(NSUInteger, XZToastViewIconType) {
                 NSMutableParagraphStyle *style = [[NSMutableParagraphStyle alloc] init];
                 style.lineSpacing = manager.lineSpacing;
                 style.alignment   = manager.textAlignment;
-                _textLabel.text = [[NSAttributedString alloc] initWithString:text attributes:@{
+                _textLabel.attributedText = [[NSAttributedString alloc] initWithString:text attributes:@{
                     NSParagraphStyleAttributeName: style
                 }];
             } else {

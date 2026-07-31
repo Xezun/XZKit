@@ -84,7 +84,7 @@ typedef void(^XZMocoaGroupDelayedUpdates)(XZMocoaGroupSectionViewModel *self);
     XZMocoaViewModel * const subViewModel = events.target;
     
     XZMocoaKind kind = nil;
-    NSInteger const index = [self indexOfCellViewModel:subViewModel];
+    NSInteger const index = [_cellViewModels indexOfObject:(id)subViewModel];
     if (index != NSNotFound) {
         kind = @"cell";
     } else {
@@ -94,6 +94,7 @@ typedef void(^XZMocoaGroupDelayedUpdates)(XZMocoaGroupSectionViewModel *self);
                     return key;
                 }
             }
+            return nil;
         }];
     }
     
@@ -110,7 +111,7 @@ typedef void(^XZMocoaGroupDelayedUpdates)(XZMocoaGroupSectionViewModel *self);
     }
     
     // cell视图的更新事件
-    if ([kind isKindOfClass:@"cell"]) {
+    if ([kind isEqualToString:@"cell"]) {
         [self didReloadCellsAtIndexes:[NSIndexSet indexSetWithIndex:index]];
         return;
     }
