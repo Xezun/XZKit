@@ -102,13 +102,13 @@ NS_ASSUME_NONNULL_BEGIN
 /// 列表头部开始刷新，事件源 events.source 为 refreshView 对象。
 ///
 /// 由于 XZMocoaTableView 是其所管理的 UITableView 的 delegate 代理，所以
-/// 当使用 XZRefresh 组件时，发生刷新事件后，视图会通过此事件名，通过事件通道传递给 viewModel 对象。
+/// 当使用 XZRefresh 组件时，发生刷新事件后，将通过事件通道，把刷新视图 refreshView 以此事件名，传递给 viewModel 对象。
 FOUNDATION_EXPORT XZMocoaEventsName const XZMocoaEventsNameHeaderDidBeginRefreshing;
 
 /// 列表尾部开始刷新，事件源 events.source 为 refreshView 对象。
 ///
 /// 由于 XZMocoaTableView 是其所管理的 UITableView 的 delegate 代理，所以
-/// 当使用 XZRefresh 组件时，发生刷新事件后，视图会通过此事件名，通过事件通道传递给 viewModel 对象。
+/// 当使用 XZRefresh 组件时，发生刷新事件后，将通过事件通道，把刷新视图 refreshView 以此事件名，传递给 viewModel 对象。
 FOUNDATION_EXPORT XZMocoaEventsName const XZMocoaEventsNameFooterDidBeginRefreshing;
 
 @interface XZMocoaTableView (XZRefreshDelegate) <XZRefreshDelegate>
