@@ -24,7 +24,7 @@ typedef void(^XZMocoaGroupDelayedUpdates)(__kindof XZMocoaViewModel *self);
 @interface XZMocoaGroupViewModel () {
     /// 记录了批量更新前的数据，如果不为空，则表示当前处于批量更新过程中。
     NSOrderedSet<XZMocoaGroupSectionViewModel *> *_beforesBatchUpdates;
-    NSMutableArray<BatchUpdatesCompletion>       *_handlerBatchUpdates;
+    NSMutableArray<void (^)(BOOL)>               *_handlerBatchUpdates;
     /// 批量更新时，被延迟的更新。
     NSMutableArray<XZMocoaGroupDelayedUpdates>   *_delayedBatchUpdates;
     /// 是否需要执行批量更新的差异分析。
@@ -336,6 +336,8 @@ typedef void(^XZMocoaGroupDelayedUpdates)(__kindof XZMocoaViewModel *self);
         }
     }
     
+    _handlerBatchUpdates = [NSMutableArray array];;
+    
     // 所有 section 进入批量状态
     for (XZMocoaGroupSectionViewModel *viewModel in _beforesBatchUpdates) {
         [viewModel prepareForBatchUpdates];
@@ -357,7 +359,10 @@ typedef void(^XZMocoaGroupDelayedUpdates)(__kindof XZMocoaViewModel *self);
 }
 
 - (void)cleanupForBatchUpdates {
+    // 批量更新结束，不再接收回调。
+    _handlerBatchUpdates = nil;
     _beforesBatchUpdates = nil;
+    
     for (XZMocoaGroupDelayedUpdates const batchUpdates in _delayedBatchUpdates) {
         batchUpdates(self);
     }
@@ -365,9 +370,9 @@ typedef void(^XZMocoaGroupDelayedUpdates)(__kindof XZMocoaViewModel *self);
     
     // 因为某些模块，可能会根据 index 来处理逻辑，所以在批量更新的过程设置 index 可能会造成视图刷新。
     // 所以将更新 index 的操作，放到了批量更新之后进行。
-    [_sectionViewModels enumerateObjectsUsingBlock:^(XZMocoaGroupSectionViewModel * _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
-        [obj cleanupForBatchUpdates];
-        obj.index = idx;
+    [_sectionViewModels enumerateObjectsUsingBlock:^(XZMocoaGroupSectionViewModel *viewModel, NSUInteger idx, BOOL * _Nonnull stop) {
+        [viewModel cleanupForBatchUpdates];
+        viewModel.index = idx;
     }];
 }
 
@@ -376,14 +381,19 @@ typedef void(^XZMocoaGroupDelayedUpdates)(__kindof XZMocoaViewModel *self);
     
     if (![self prepareForBatchUpdates]) {
         if (self.isPerformingBatchUpdates) {
+            XZLog(@"[XZMocoaGroupViewModel] 批量更新重入");
             batchUpdates();
             if (completion) [_handlerBatchUpdates addObject:completion];
         }
         return;
     }
     
-    NSMutableArray *_handlerBatchUpdates = [NSMutableArray array];
-    self->_handlerBatchUpdates = _handlerBatchUpdates;
+    XZLog(@"[XZMocoaGroupViewModel] 批量更新开始");
+    
+    // 记录批量更新过程中的回调，包括嵌套的回调。
+    if (completion) {
+        [_handlerBatchUpdates addObject:completion];
+    }
     
     // 批量更新的过程中，由于 section 内的局部更新可能并不会反馈到 section 的变化上来。
     // 比如对 section 数据进行了排序，这并不是 section 整体的更新，
@@ -401,6 +411,8 @@ typedef void(^XZMocoaGroupDelayedUpdates)(__kindof XZMocoaViewModel *self);
         // 执行差异分析，并返回
         forwardIndexes = [self differenceBatchUpdatesIfNeeded];
     };
+    
+    NSArray * const _handlerBatchUpdates = self->_handlerBatchUpdates;
     void (^const tableViewCompletion)(BOOL) = ^(BOOL finished){
         completionFlag -= 1;
         if (completionFlag > 0) return;
@@ -412,11 +424,10 @@ typedef void(^XZMocoaGroupDelayedUpdates)(__kindof XZMocoaViewModel *self);
     // 批量事件，block 会传递到 view 到 -[tableView performBatchUpdates:completion:] 方法中执行。
     [self didPerformBatchUpdates:tableViewBatchUpdates completion:tableViewCompletion];
     
-    // 批量更新结束。
-    self->_handlerBatchUpdates = nil;
-    
     // 当前的批量操作已完成，清理批量更新环境，并执行延迟的事件
     [self cleanupForBatchUpdates];
+    
+    XZLog(@"[XZMocoaGroupViewModel] 批量更新结束");
     
     // 在批量更新的过程中，前后保留的 section 的内部，可能发生了更新，向他们发送批量更新事件。
     // 当前批量更新的数据变化监测，只针对的是 section 层级，而 section 的 cells 也可能发生了更新。
@@ -456,9 +467,12 @@ typedef void(^XZMocoaGroupDelayedUpdates)(__kindof XZMocoaViewModel *self);
 /// @todo 实现二维数组的差异比较，解决跨 section 的更新问题。
 - (NSIndexSet *)differenceBatchUpdatesIfNeeded {
     if (!_needsDifferenceBatchUpdates) {
+        XZLog(@"[XZMocoaGroupViewModel] 差异分析：禁用");
         return nil;
     }
     _needsDifferenceBatchUpdates = NO;
+    
+    XZLog(@"[XZMocoaGroupViewModel] 差异分析：开始");
     
     // 记录更新前的数据。
     NSOrderedSet * const oldViewModels = _beforesBatchUpdates.copy;
@@ -471,6 +485,7 @@ typedef void(^XZMocoaGroupDelayedUpdates)(__kindof XZMocoaViewModel *self);
     }
     
     if (oldDataModels.xz_containsEqualObjects) {
+        XZLog(@"[XZMocoaGroupViewModel] 差异分析：停止，因为旧数据存在重复数据");
         [self reloadData];
         return nil;
     }
@@ -486,6 +501,7 @@ typedef void(^XZMocoaGroupDelayedUpdates)(__kindof XZMocoaViewModel *self);
     }
     
     if (newDataModels.xz_containsEqualObjects) {
+        XZLog(@"[XZMocoaGroupViewModel] 差异分析：停止，因为新数据存在重复数据");
         [self reloadData];
         return nil;
     }
@@ -509,6 +525,15 @@ typedef void(^XZMocoaGroupDelayedUpdates)(__kindof XZMocoaViewModel *self);
     }];
     [self didDeleteSectionsAtIndexes:deletes];
     
+    XZLog(@"[XZMocoaGroupViewModel] 差异分析：删除 [ %@ ]", [deletes xz_reduce:nil next:^id _Nullable(NSMutableString *result, NSInteger idx, BOOL * _Nonnull stop) {
+        if (result) {
+            [result appendFormat:@", %ld", idx];
+        } else {
+            result = [NSMutableString stringWithFormat:@"%ld", idx];
+        }
+        return result;
+    }]);
+    
     // 添加元素，正向遍历：按位置记录下新添加的元素，以便在后续排序时，查找该位置上的元素。
     NSMutableDictionary * const insertedViewModels = [NSMutableDictionary dictionaryWithCapacity:inserts.count];
     [inserts enumerateIndexesUsingBlock:^(NSUInteger index, BOOL * _Nonnull stop) {
@@ -518,6 +543,15 @@ typedef void(^XZMocoaGroupDelayedUpdates)(__kindof XZMocoaViewModel *self);
         insertedViewModels[@(index)] = newViewModel;
     }];
     [self didInsertSectionsAtIndexes:inserts];
+    
+    XZLog(@"[XZMocoaGroupViewModel] 差异分析：添加 [ %@ ]", [inserts xz_reduce:nil next:^id _Nullable(NSMutableString *result, NSInteger idx, BOOL * _Nonnull stop) {
+        if (result) {
+            [result appendFormat:@", %ld", idx];
+        } else {
+            result = [NSMutableString stringWithFormat:@"%ld", idx];
+        }
+        return result;
+    }]);
     
     NSMutableIndexSet * const forwardIndexes = [NSMutableIndexSet indexSet];
     
@@ -536,9 +570,6 @@ typedef void(^XZMocoaGroupDelayedUpdates)(__kindof XZMocoaViewModel *self);
             // 执行更新。在数据更新的过程中，由数据引发的更新已经在更新数据时被拦截下来，在这里差异分析时，不会再触发了。
             // 记录待更新的 section
             [forwardIndexes addIndex:to];
-//            [viewModel performBatchUpdates:^{
-//                // Model 已更新，ViewModel 未更新，直接发送事件即可。
-//            } completion:nil];;
         } else {
             // to 位置为被移动的元素，先找到它原来的位置，然后找到 viewModel 然后再移动位置。
             NSInteger const from = changes[@(to)].integerValue;
@@ -552,8 +583,11 @@ typedef void(^XZMocoaGroupDelayedUpdates)(__kindof XZMocoaViewModel *self);
             [self didMoveSectionAtIndex:from toIndex:to];
             // 记录待更新的 section
             [forwardIndexes addIndex:to];
+            XZLog(@"[XZMocoaGroupViewModel] 差异分析：移动 %ld => %ld", from, to);
         }
     }
+    
+    XZLog(@"[XZMocoaGroupViewModel] 差异分析：结束");
     
     return forwardIndexes;
 }

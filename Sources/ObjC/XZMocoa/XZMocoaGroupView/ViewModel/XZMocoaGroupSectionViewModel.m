@@ -13,6 +13,7 @@
 #import "NSArray+XZKit.h"
 #import "NSIndexSet+XZKit.h"
 #import "NSDictionary+XZKit.h"
+#import "XZLog.h"
 
 /// 在批量更新的过程中，同一元素只能应用一个操作，但是在 MVVM 结构中，
 /// 数据变化也可能会引起刷新操作，为了避免多个更新操作，因此会将这些操作暂存并延迟执行。
@@ -25,6 +26,7 @@ typedef void(^XZMocoaGroupDelayedUpdates)(XZMocoaGroupSectionViewModel *self);
     NSOrderedSet *_beforesBatchUpdates;
     /// 批量更新过程中产生的事件。
     NSMutableArray<XZMocoaGroupDelayedUpdates> *_delayedBatchUpdates;
+    NSMutableArray<void (^)(BOOL)>             *_handlerBatchUpdates;
     /// 是否需要执行批量更新的差异分析。
     /// @note 在批量更新时，任一更新操作被调用，都会标记此值为 NO
     BOOL _needsDifferenceBatchUpdates;
@@ -368,6 +370,7 @@ typedef void(^XZMocoaGroupDelayedUpdates)(XZMocoaGroupSectionViewModel *self);
     }
     _beforesBatchUpdates = _cellViewModels.copy;
     _delayedBatchUpdates = [NSMutableArray array];
+    _handlerBatchUpdates = [NSMutableArray array];
     _needsDifferenceBatchUpdates = YES;
     return YES;
 }
@@ -377,6 +380,7 @@ typedef void(^XZMocoaGroupDelayedUpdates)(XZMocoaGroupSectionViewModel *self);
     for (XZMocoaGroupDelayedUpdates batchUpdates in _delayedBatchUpdates) {
         batchUpdates(self);
     }
+    _handlerBatchUpdates = nil;
     _delayedBatchUpdates = nil;
     _beforesBatchUpdates = nil;
 }
@@ -385,18 +389,30 @@ typedef void(^XZMocoaGroupDelayedUpdates)(XZMocoaGroupSectionViewModel *self);
     NSAssert(batchUpdates != nil, @"必须提供 batchUpdates 参数");
     
     if (![self prepareForBatchUpdates]) {
+        XZLog(@"[XZMocoaGroupSectionViewModel] 批量更新重入");
+        batchUpdates();
+        if (completion) [_handlerBatchUpdates addObject:completion];
         return;
     }
+    
+    XZLog(@"[XZMocoaGroupSectionViewModel] 批量更新开始");
     
     void (^const tableViewBatchUpdates)(void) = ^{
         batchUpdates();
         [self differenceBatchUpdatesIfNeeded];
     };
     
-    [self didPerformBatchUpdates:tableViewBatchUpdates completion:completion];
+    NSArray * const _handlerBatchUpdates = self->_handlerBatchUpdates;
+    [self didPerformBatchUpdates:tableViewBatchUpdates completion:^(BOOL finished) {
+        for (void (^completion)(BOOL) in _handlerBatchUpdates) {
+            completion(finished);
+        }
+    }];
     
     // 清理批量更新环境，并执行延迟的事件
     [self cleanupForBatchUpdates];
+    
+    XZLog(@"[XZMocoaGroupSectionViewModel] 批量更新结束");
     
     NSInteger const count = self.numberOfCells;
     for (NSInteger row = 0; row < count; row++) {
@@ -406,9 +422,12 @@ typedef void(^XZMocoaGroupDelayedUpdates)(XZMocoaGroupSectionViewModel *self);
 
 - (NSIndexSet *)differenceBatchUpdatesIfNeeded {
     if (!_needsDifferenceBatchUpdates) {
+        XZLog(@"[XZMocoaGroupSectionViewModel] 差异分析：禁用");
         return nil;
     }
     _needsDifferenceBatchUpdates = NO;
+    
+    XZLog(@"[XZMocoaGroupSectionViewModel] 差异分析：开始");
     
     // 进入了差异性分析流程，说明当前视图模型数据没有发生修改
     
@@ -448,6 +467,7 @@ typedef void(^XZMocoaGroupDelayedUpdates)(XZMocoaGroupSectionViewModel *self);
     }
     
     if (needsUpdateAll) {
+        XZLog(@"[XZMocoaGroupSectionViewModel] 差异分析：停止，因 Supplementary 导致整体刷新");
         [self reloadCellsAtIndexes:[NSIndexSet indexSetWithIndexesInRange:NSMakeRange(0, _cellViewModels.count)]];
         return nil;
     }
@@ -462,6 +482,7 @@ typedef void(^XZMocoaGroupDelayedUpdates)(XZMocoaGroupSectionViewModel *self);
     }
     
     if (oldDataModels.xz_containsEqualObjects) {
+        XZLog(@"[XZMocoaGroupSectionViewModel] 差异分析：停止，因为旧数据存在重复数据");
         [self reloadCellsAtIndexes:[NSIndexSet indexSetWithIndexesInRange:NSMakeRange(0, oldCount)]];
         return nil;
     }
@@ -474,6 +495,7 @@ typedef void(^XZMocoaGroupDelayedUpdates)(XZMocoaGroupSectionViewModel *self);
     }
     
     if (newDataModels.xz_containsEqualObjects) {
+        XZLog(@"[XZMocoaGroupSectionViewModel] 差异分析：停止，因为新数据存在重复数据");
         [self reloadCellsAtIndexes:[NSIndexSet indexSetWithIndexesInRange:NSMakeRange(0, oldCount)]];
         return nil;
     }
@@ -490,6 +512,15 @@ typedef void(^XZMocoaGroupDelayedUpdates)(XZMocoaGroupSectionViewModel *self);
     }];
     [self didDeleteCellsAtIndexes:deletes];
     
+    XZLog(@"[XZMocoaGroupSectionViewModel] 差异分析：删除 [ %@ ]", [deletes xz_reduce:nil next:^id _Nullable(NSMutableString *result, NSInteger idx, BOOL * _Nonnull stop) {
+        if (result) {
+            [result appendFormat:@", %ld", idx];
+        } else {
+            result = [NSMutableString stringWithFormat:@"%ld", idx];
+        }
+        return result;
+    }]);
+    
     NSDictionary<NSNumber *, XZMocoaViewModel *> * const newViewModels = [NSMutableDictionary dictionaryWithCapacity:inserts.count];
     [inserts enumerateIndexesUsingBlock:^(NSUInteger const index, BOOL * _Nonnull stop) {
         id<XZMocoaGroupCellModel>   const newDataModel = newDataModels[index];
@@ -498,6 +529,15 @@ typedef void(^XZMocoaGroupDelayedUpdates)(XZMocoaGroupSectionViewModel *self);
         ((NSMutableDictionary *)newViewModels)[@(index)] = newViewModel;
     }];
     [self didInsertCellsAtIndexes:inserts];
+    
+    XZLog(@"[XZMocoaGroupSectionViewModel] 差异分析：添加 [ %@ ]", [inserts xz_reduce:nil next:^id _Nullable(NSMutableString *result, NSInteger idx, BOOL * _Nonnull stop) {
+        if (result) {
+            [result appendFormat:@", %ld", idx];
+        } else {
+            result = [NSMutableString stringWithFormat:@"%ld", idx];
+        }
+        return result;
+    }]);
     
     // 排序移动
     for (NSInteger to = 0; to < newCount; to++) {
@@ -523,8 +563,11 @@ typedef void(^XZMocoaGroupDelayedUpdates)(XZMocoaGroupSectionViewModel *self);
             NSInteger const index = [self indexOfCellViewModel:viewModel];
             [self _moveCellViewModelFromIndex:index toIndex:to];
             [self didMoveCellAtIndex:from toIndex:to];
+            XZLog(@"[XZMocoaGroupSectionViewModel] 差异分析：移动 %ld => %ld", from, to);
         }
     }
+    
+    XZLog(@"[XZMocoaGroupSectionViewModel] 差异分析：结束");
     
     return nil;
 }
