@@ -121,63 +121,82 @@ public macro key() = #externalMacro(module: "XZKitMacros", type: "XZMocoaKeyMacr
 
 /// 为 ViewModel 与 Model 之间，或 View 与 ViewModel 之间建立单向绑定。
 ///
-/// 属性所属的 class 需先用 `@mocoa` 标记。
+/// > 必须与 `@mocoa` 配合使用。
 ///
-/// #### ViewModel 属性绑定 Model 属性
+/// #### 一、用于 ViewModel 角色
 ///
-/// - 将 ViewModel 的属性，与 Model 的**同名**属性进行绑定。
+/// - 为 ViewModel 实现监听 Model 属性的能力。
+/// - 修饰 ViewModel 的属性时，若不指定参数，表示绑定同名属性。
+/// - 修饰 ViewModel 的方法时，若不指定参数，表示绑定与方法参数同名的属性。
 ///
 /// ```swift
+/// // 监听 Model.name 属性，监听的方法为 @bind 所修饰的 ViewModel.name 属性的 setter 方法。
 /// @bind
-/// var name: String = "Visitor" // model.name 绑定到此属性
+/// var name: String?
+///
+/// // 监听 Model.title 属性，监听的方法为 @bind 所修饰的 ViewModel.name 属性的 setter 方法。
+/// @bind("title")
+/// var name: String?
+///
+/// // 监听 Model.foobar 属性，监听的方法为 @bind 所修饰的 ViewModel.method(with:) 方法。
+/// @bind
+/// func method(with foobar: Int)
+///
+/// // 监听 Model.min 和 Model.max 属性，监听的方法为 @bind 所修饰的 ViewModel.method(min:max:) 方法。
+/// @bind
+/// func method(min: Int, max: Int)
+///
+/// // 监听 Model.foo 和 Model.bar 属性，监听的方法为 @bind 所修饰的 ViewModel.foobar(min:max:) 方法。
+/// @bind("foo", "bar")
+/// func foobar(min: Int, max: Int)
 /// ```
 ///
-/// - 将 ViewModel 方法参数名，与 Model 的同名属性进行绑定。
-/// > 主要用于 model 的属性需要处理后才能使用的情形
+/// #### 二、用于 View 角色
+///
+/// - 为 View 实现监听 ViewModel 的 Key-Target-Action （KTA）事件的能力。
+/// - 修饰 View 的属性时，监听事件的方法是 View 属性值（子视图）的方法。
+/// - 修饰 View 的属性时，若不指定监听的事件名，默认监听的事件名，与所修饰的属性类型有关：
+///     - UILabel 默认监听 text 事件
+///     - UITextView 默认监听 text 事件
+///     - UITextField 默认监听 text 事件
+///     - UIImageView 默认监听 image 事件
+///     - UISwitch 默认监听 isOn 事件
+/// - 修饰 View 的方法时，监听事件的方法是 View 的方法。
+/// - 修饰 View 的方法时，只支持一个参数，一个方法只能监听一个事件。
+/// - 用于 View 时，`@bind` 的第一个参数始终为 KTA 事件名，
+///
 /// ```swift
-/// @key
-/// var detail: String = "Waiting"
+/// // 1. 监听 ViewModel 名为 "text" 的 KTA 事件，监听的方法为 @bind 所修饰对象 nameLabel 的 text 属性的 setter 方法。
 /// @bind
-/// func statusValueChanged(_ status: Bool) {
-///     // model.status 绑定到此方法，方法的参数名或标签名就是 model 的属性名
-///     // 在此方法中更新 detail 间接实现将 model.status 绑定到 viewModel.detail
-///     self.detail = status ? "Done" : "Waiting"
-/// }
-/// // 支持多个参数
+/// let nameLabel: UILabel
+///
+/// // 2. 监听 ViewModel 名为 "name" 的 KTA 事件，监听的方法为 @bind 所修饰对象 nameLabel 的 text 属性的 setter 方法。
+/// @bind("name")
+/// let nameLabel: UILabel
+///
+/// // 3. 监听 ViewModel 名为 "color" 的 KTA 事件，监听的方法为 @bind 所修饰对象 nameLabel 的 textColor 属性的 setter 方法。
+/// @bind("color", "textColor")
+/// let nameLabel: UILabel
+///
+/// // 4. 监听 ViewModel 名为 "textColor" 的 KTA 事件，监听的方法为 @bind 所修饰对象 nameLabel 的 textColor 属性的 setter 方法。
+/// @bind(key: "textColor")
+/// let nameLabel: UILabel
+///
+/// // 5. 监听 ViewModel 名为 "color" 的 KTA 事件，监听的方法为 @bind 所修饰对象 nameLabel 的 textColor 属性的 setter 方法。
+/// @bind(key: "color", "textColor") // 与第三条相同
+/// let nameLabel: UILabel
+///
+/// // 6. 监听 ViewModel 名为 "imageURL" 的 KTA 事件，监听的方法为 @bind 所修饰对象 imageView 的 sd_setImageWithURL(_:) 方法。
+/// @bind(key: "imageURL", #selector(sd_setImageWithURL(_:))
+/// let imageView: UIImageView
+///
+/// // 7. 监听 ViewModel 名为 "imageURL" 的 KTA 事件，监听的方法为视图 View 的 setIconWithURL(_:) 方法。
 /// @bind
-/// func didChange(min: Int, max: Int) {
-///     self.detail = "[\(min), \(max)]"
-/// }
-/// ```
+/// func setIconWithURL(_ imageURL: URL)
 ///
-/// #### View 中使用
-///
-/// 在 View 中，宏 `@bind` 绑定实际上是 ViewModel 的 KTA 事件值。
-/// 一般情况下，请遵循约定，使用 ViewModel 的属性名作为 KTA 的事件名，在以下的表述中，ViewModel 属性即，表示以属性名为事件名的 KTA 事件的事件值。
-///
-/// - 将 View 的默认属性，与 ViewModel 同名属性绑定起来。
-///
-///     目前支持默认属性：
-///     - UILabel.text
-///     - UITextView.text
-///     - UITextField.text
-///     - UIImageView.image
-///     - UISwitch.isOn
-///
-/// ```swift
-/// @bind // 将 viewModel.text 绑定到 nameLabel.text
-/// var nameLabel: UILabel = .init()
-/// @bind // 将 viewModel.image 绑定到 iconImageView.image
-/// var iconImageView: UIImageView = .init()
-/// ```
-///
-/// - 将 View 方法的参数名，与 ViewModel 的同名属性绑定起来。
-///
-/// ```swift
-/// @bind // 将 viewModel.imageURL 绑定到此方法的参数
-/// func setBackgroundImage(with imageURL: URL?) {
-///     imageView.sd_setImage(with: imageURL)
-/// }
+/// // 8. 监听 ViewModel 名为 "imageURL" 的 KTA 事件，监听的方法为视图 View 的 setIconWithURL(_:) 方法。
+/// @bind("imageURL")
+/// func setIconWithURL(_ iconURL: URL)
 /// ```
 @attached(peer, names: arbitrary)
 public macro bind() = #externalMacro(module: "XZKitMacros", type: "XZMocoaBindMacro")

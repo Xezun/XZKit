@@ -64,12 +64,15 @@ public struct XZMocoaBindMacro {
             case "UILabel":
                 vmkey = ".text"
                 selector = "#selector(setter: UILabel.text)"
-            case "UITextView", "UITextField":
-                vmkey = ".text"
-                selector = "#selector(setter: UITextView.text)"
             case "UIImageView":
                 vmkey = ".image"
                 selector = "#selector(setter: UIImageView.image)"
+            case "UITextView":
+                vmkey = ".text"
+                selector = "#selector(setter: UITextView.text)"
+            case "UITextField":
+                vmkey = ".text"
+                selector = "#selector(setter: UITextField.text)"
             case "UISwitch":
                 vmkey = ".isOn"
                 selector = "#selector(setter: UISwitch.isOn)"
@@ -84,10 +87,12 @@ public struct XZMocoaBindMacro {
                 switch typeName {
                 case "UILabel":
                     selector = "#selector(setter: UILabel.text)"
-                case "UITextView", "UITextField":
-                    selector = "#selector(setter: UITextView.text)"
                 case "UIImageView":
                     selector = "#selector(setter: UIImageView.image)"
+                case "UITextView":
+                    selector = "#selector(setter: UITextView.text)"
+                case "UITextField":
+                    selector = "#selector(setter: UITextField.text)"
                 case "UISwitch":
                     selector = "#selector(setter: UISwitch.isOn)"
                 default:
@@ -260,7 +265,9 @@ public struct XZMocoaBindMacro {
                         switch propertyType.name {
                         case "UILabel":
                             break
-                        case "UITextView", "UITextField":
+                        case "UITextView":
+                            break
+                        case "UITextField":
                             break
                         case "UIImageView":
                             break
@@ -279,7 +286,9 @@ public struct XZMocoaBindMacro {
                             switch propertyType.name {
                             case "UILabel":
                                 break
-                            case "UITextView", "UITextField":
+                            case "UITextView":
+                                break
+                            case "UITextField":
                                 break
                             case "UIImageView":
                                 break

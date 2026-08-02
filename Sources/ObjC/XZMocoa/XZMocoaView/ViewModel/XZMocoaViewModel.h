@@ -273,6 +273,7 @@ FOUNDATION_EXPORT XZMocoaKey const XZMocoaKeyNone NS_SWIFT_NAME(None);
 
 /// 添加 target-action 事件。调用此方法不会触发 action 方法。
 ///
+/// @li 对 target 为 weak 弱引用。
 /// @li 方法 action 必须无返回值，因为没有针对返回值的内存管理，可能会引起泄漏。
 /// @li 方法 action 的 value 参数不建议为 union 类型，除非 union 类型的大小为 1/2/4/8/16/32/64/128 字节。
 /// @li 参数 action 方法形式如下：

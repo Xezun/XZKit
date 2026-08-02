@@ -94,9 +94,16 @@ FOUNDATION_EXPORT XZMocoaOptionKey const XZMocoaOptionKeyModel;
 /// 传递给目标页面参数中 name 字段。
 FOUNDATION_EXPORT XZMocoaOptionKey const XZMocoaOptionKeyName;
 /// 传递给目标页面参数中 value 字段。
+///
+/// 页面传值的通用字段。
 FOUNDATION_EXPORT XZMocoaOptionKey const XZMocoaOptionKeyValue;
 /// 传递给目标页面参数中 identifier 字段。
+///
+/// 通过标识符向页面传值当通用字段。
 FOUNDATION_EXPORT XZMocoaOptionKey const XZMocoaOptionKeyIdentifier;
+/// 传递给目标页面参数中 delegate 字段。
+///
+/// 向目标页面传递接收事件的对象。
 FOUNDATION_EXPORT XZMocoaOptionKey const XZMocoaOptionKeyDelegate;
 
 /// 模块初始化参数。可像字典一样取值。

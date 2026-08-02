@@ -41,8 +41,7 @@ static const void * const _viewModel = &_viewModel;
     
     // 解除 newValue 与其他视图的绑定关系
     if (newValue && newValue->_view) {
-        [(UIResponder *)newValue->_view setViewModel:nil];
-        newValue->_view = nil;
+        [(UIResponder *)(newValue->_view) setViewModel:nil];
     }
     
     [self viewModelWillChange:newValue];
@@ -53,11 +52,12 @@ static const void * const _viewModel = &_viewModel;
         [oldValue removeTarget:self action:nil forKey:nil];
     }
     
-    // 建立 newValue 与当前视图的绑定关系
+    // 保存 newValue
     objc_setAssociatedObject(self, _viewModel, newValue, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
+    
+    // view 与 viewModel 一对一关系
     if (newValue) {
         newValue->_view = (id)self;
-        // is it nessaray to add a default action handler?
     }
     
     [self viewModelDidChange:oldValue];

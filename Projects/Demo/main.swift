@@ -95,3 +95,33 @@ class FoobarViewModel : XZMocoaViewModel {
 }
 
 
+@mocoa
+class Model: NSObject, XZMocoaModel {
+    // 因为 Mocoa 使用 OBJC 的 KVO 实现监听机制，
+    // 所以在 Model 中，被监听的属性需添加 @objc dynamic 的标记。
+    // 注：CoreData 模型的 @NSManaged 标记，与 @objc dynamic 等价。
+    @objc dynamic var name: String?
+}
+
+@mocoa
+class ViewModel: XZMocoaViewModel {
+    // 被 @key 标记的属性，可以被 View 绑定。
+    // 默认情况下，属性名就是绑定的标识符，若要使用其它标识符，使用 @key("keyName") 即可。
+    @key var name: String?
+    
+}
+
+class View: UIView, XZMocoaView {
+    // 绑定 ViewModel 的带 @key 标记属性。
+    @bind(key: "name", "text")
+    let nameLabel: UILabel = .init()
+}
+
+
+let model = Model.init()
+let viewModel = ViewModel.init(model: model)
+let view = View.init()
+
+superview.addSubview(view)
+
+let  sel = #selector(UIButton.setTitle("", for: .normal));

@@ -118,7 +118,7 @@ extension XZMocoaMacro: MemberAttributeMacro {
                     }
                 }
             }
-            return  containsBind ? ["@objc"] : []
+            return containsBind ? ["@objc"] : []
             
         case .vm:
             var attributeSyntaxes = [SwiftSyntax.AttributeSyntax]()
