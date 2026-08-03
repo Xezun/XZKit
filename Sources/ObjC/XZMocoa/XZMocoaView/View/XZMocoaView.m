@@ -573,6 +573,10 @@ static const void * const _context = &_context;
     
     XZMocoaContext *lastContext = viewModel->_context;
     
+    if (lastContext == nil) {
+        return;
+    }
+    
     // 当前时链上最后一个，修改 viewModel 上的指向
     if (self == lastContext) {
         viewModel->_context = self->_next;

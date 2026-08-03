@@ -65,7 +65,7 @@ NS_SWIFT_UI_ACTOR @protocol XZMocoaViewModel <NSObject>
 NS_SWIFT_UI_ACTOR @interface XZMocoaViewModel : NSObject <XZMocoaViewModel> {
     @package
     /// 用于处理 MVC 与 MVVM 的兼容性问题，不要使用此属性来获取视图。
-    id<XZMocoaContext> _context;
+    id<XZMocoaContext> __unsafe_unretained _context;
 }
 
 @property (nonatomic, readonly, nullable) UIViewController       *viewController;
