@@ -42,7 +42,9 @@ NS_ASSUME_NONNULL_BEGIN
 - (CGSize)collectionView:(UICollectionView *)collectionView layout:(UICollectionViewLayout*)collectionViewLayout referenceSizeForFooterInSection:(NSInteger)section;
 @end
 
-@interface XZMocoaCollectionViewProxy (XZMocoaCollectionView) <XZMocoaCollectionView>
+@interface XZMocoaCollectionViewProxy (XZMocoaCollectionViewModelDelegate) <XZMocoaCollectionViewModelDelegate>
+@property (nonatomic, strong) IBOutlet UICollectionView *contentView;
+@property (nonatomic, strong, nullable) XZMocoaCollectionViewModel *viewModel;
 @end
 
 NS_ASSUME_NONNULL_END

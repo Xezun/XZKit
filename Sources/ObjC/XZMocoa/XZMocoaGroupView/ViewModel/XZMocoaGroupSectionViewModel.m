@@ -77,7 +77,7 @@ typedef void(^XZMocoaGroupDelayedUpdates)(XZMocoaGroupSectionViewModel *self);
 }
 
 - (void)didReceiveEvents:(XZMocoaEvents *)events {
-    if (![events.name isEqualToString:XZMocoaEventsNameReload]) {
+    if (![events.key isEqualToString:XZMocoaKeyReload]) {
         return [super didReceiveEvents:events];
     }
     

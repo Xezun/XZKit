@@ -1,5 +1,5 @@
 //
-//  XZMocoaViewModelKeyMappingTable.h
+//  XZMocoaKeyMappingTable.h
 //  XZMocoa
 //
 //  Created by Xezun on 2025/6/17.
@@ -12,7 +12,7 @@ NS_ASSUME_NONNULL_BEGIN
 @class XZObjcMethod;
 
 /// “视图模型”监听“数据模型”的映射关系表。
-@interface XZMocoaViewModelKeyMappingTable : NSObject
+@interface XZMocoaKeyMappingTable : NSObject
 
 /// 视图模型方法名 => 数据模型属性名
 /// - method -> [key1, key2]
@@ -24,7 +24,7 @@ NS_ASSUME_NONNULL_BEGIN
 /// 视图模型方法名 => XZObjcMethod
 @property (nonatomic, readonly) NSDictionary<NSString *, XZObjcMethod *>      *namedMethods;
 
-+ (nullable XZMocoaViewModelKeyMappingTable *)tableForClass:(Class)VMClass;
++ (nullable XZMocoaKeyMappingTable *)tableForClass:(Class)VMClass;
 
 @end
 

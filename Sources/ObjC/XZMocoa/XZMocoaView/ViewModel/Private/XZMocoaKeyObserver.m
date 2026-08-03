@@ -1,17 +1,17 @@
 //
-//  XZMocoaModelObserver.m
+//  XZMocoaKeyObserver.m
 //  XZMocoa
 //
 //  Created by Xezun on 2025/6/16.
 //
 
-#import "XZMocoaModelObserver.h"
+#import "XZMocoaKeyObserver.h"
 #import "XZMocoaViewModel.h"
 @import ObjectiveC;
 
 static void * _context = &_context;
 
-@implementation XZMocoaModelObserver {
+@implementation XZMocoaKeyObserver {
     /// 被观察的对象。
     NSObject * __unsafe_unretained _model;
     /// 记录一个 runloop 中发生变更的所有键。
@@ -24,17 +24,17 @@ static void * _context = &_context;
     BOOL _needsPostNotification;
 }
 
-+ (XZMocoaModelObserver *)observerForModel:(NSObject *)model {
++ (XZMocoaKeyObserver *)observerForModel:(NSObject *)model {
     if (model == nil || model == (id)kCFNull) {
         return nil;
     }
     
     static void * _observer = NULL;
-    XZMocoaModelObserver *observer = objc_getAssociatedObject(model, &_observer);
+    XZMocoaKeyObserver *observer = objc_getAssociatedObject(model, &_observer);
     if (observer) {
         return observer;
     }
-    observer = [[XZMocoaModelObserver alloc] initWithModel:model];
+    observer = [[XZMocoaKeyObserver alloc] initWithModel:model];
     objc_setAssociatedObject(model, &_observer, observer, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
     return observer;
 }

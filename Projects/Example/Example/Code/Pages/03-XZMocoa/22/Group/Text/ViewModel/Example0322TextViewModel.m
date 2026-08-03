@@ -46,7 +46,7 @@
 - (void)didReceiveUpdates:(XZMocoaEvents *)events {
     // 收到 editor 的 events 事件。作为唯一下级，这里省略了对 subViewModel 的身份判定。
     // 由于与 target-action 使用了一样的名称，因此这里用了 events.name 直接发送 target-action 事件。
-    [self sendActionsForKey:events.name value:nil];
+    [self sendActionsForKey:events.key value:nil];
 }
 
 - (void)collectionView:(XZMocoaCollectionView *)collectionView didSelectItemAtIndexPath:(NSIndexPath *)indexPath {

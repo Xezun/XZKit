@@ -40,7 +40,9 @@ NS_ASSUME_NONNULL_BEGIN
 @end
 
 /// 已实现了 XZMocoaTableViewModelDelegate 的全部方法
-@interface XZMocoaTableViewProxy (XZMocoaTableView) <XZMocoaTableView>
+@interface XZMocoaTableViewProxy (XZMocoaTableViewModelDelegate) <XZMocoaTableViewModelDelegate>
+@property (nonatomic, strong, nullable) XZMocoaTableViewModel *viewModel;
+@property (nonatomic, strong) IBOutlet UITableView *contentView;
 @end
 
 NS_ASSUME_NONNULL_END

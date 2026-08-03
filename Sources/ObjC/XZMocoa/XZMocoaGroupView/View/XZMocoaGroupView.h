@@ -19,21 +19,18 @@ NS_ASSUME_NONNULL_BEGIN
 
 @class UITableView, UICollectionView;
 
-/// 用以承载列表视图的容器视图的接口协议。
-@protocol XZMocoaGroupView <XZMocoaView>
-@optional
+/// XZMocoaGroupView 是 UITableView、UICollectionView 的抽象封装，不可直接使用。
+@interface XZMocoaGroupView : UIView <XZMocoaView>
+
 /// 视图模型。
 @property (nonatomic, strong, nullable) __kindof XZMocoaGroupViewModel *viewModel;
 /// 承载列表视图的可滚动的容器视图，一般为 UICollectionView 或 UITableView 视图。
 /// - 一般情况下，容器视图 contentView 的 delegate 和 dataSource 会被接管，请避免更改。
 /// - 由于标注了 IBOutlet 所以在 IB 中使用时，直接将视图关联到此属性即可。
 @property (nonatomic, strong) IBOutlet __kindof UIScrollView *contentView;
+
 /// 通过模块注册列表 Cell 视图。
 - (void)prepareForModule:(nullable XZMocoaModule *)module;
-@end
-
-/// XZMocoaGroupView 是 UITableView、UICollectionView 的抽象封装，不可直接使用。
-@interface XZMocoaGroupView : UIView <XZMocoaGroupView>
 
 /// 提供子类用于监听 contentView 发生改变的方法。
 /// > 默认该方法什么也不做。
@@ -74,14 +71,14 @@ NS_ASSUME_NONNULL_BEGIN
 /// 当使用 XZRefresh 组件时，发生刷新事件后，将通过事件通道，把刷新视图 refreshView 以此事件名，传递给 viewModel 对象。
 /// - events.source 为 XZMocoaGroupView 子类对象。
 /// - events.value 为 refreshView 对象。
-FOUNDATION_EXPORT XZMocoaEventsName const XZMocoaEventsNameHeaderDidBeginRefreshing;
+FOUNDATION_EXPORT XZMocoaKey const XZMocoaKeyHeaderDidBeginRefreshing;
 
 /// 列表尾部开始刷新。
 ///
 /// 当使用 XZRefresh 组件时，发生刷新事件后，将通过事件通道，把刷新视图 refreshView 以此事件名，传递给 viewModel 对象。
 /// - events.source 为 XZMocoaGroupView 子类对象。
 /// - events.value 为 refreshView 对象。
-FOUNDATION_EXPORT XZMocoaEventsName const XZMocoaEventsNameFooterDidBeginRefreshing;
+FOUNDATION_EXPORT XZMocoaKey const XZMocoaKeyFooterDidBeginRefreshing;
 
 @interface XZMocoaGroupView (XZRefreshDelegate) <XZRefreshDelegate>
 - (void)scrollView:(UIScrollView *)scrollView headerDidBeginRefreshing:(XZRefreshView *)refreshView;

@@ -17,7 +17,7 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-@protocol XZMocoaTableView, UITableViewDelegate;
+@class XZMocoaTableView;
 
 /// 使用 Mocoa 时，UITableViewCell 应遵循本协议。
 /// @note
@@ -39,24 +39,18 @@ NS_SWIFT_UI_ACTOR @protocol XZMocoaTableCell <XZMocoaGroupCell>
 /// 当前 Cell 的点击事件。默认不执行任何操作。
 /// @param tableView 当前 Cell 所属的 UITableView 对象
 /// @param indexPath 当前 Cell 的当前所在的位置
-- (void)tableView:(id<XZMocoaTableView>)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath;
-- (void)tableView:(id<XZMocoaTableView>)tableView didDeselectRowAtIndexPath:(NSIndexPath *)indexPath;
+- (void)tableView:(XZMocoaTableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath;
+- (void)tableView:(XZMocoaTableView *)tableView didDeselectRowAtIndexPath:(NSIndexPath *)indexPath;
 
 /// 当前 Cell 将要被展示在指定位置。默认不执行任何操作。
 /// @param tableView 当前 Cell 所属的 UITableView 对象
 /// @param indexPath 当前 Cell 的将要展示的位置
-- (void)tableView:(id<XZMocoaTableView>)tableView willDisplayRowAtIndexPath:(NSIndexPath *)indexPath;
+- (void)tableView:(XZMocoaTableView *)tableView willDisplayRowAtIndexPath:(NSIndexPath *)indexPath;
 
 /// 当前 Cell 已结束在指定位置的展示。默认不执行任何操作。
 /// @param tableView 当前 Cell 所属的 UITableView 对象
 /// @param indexPath 当前 Cell 的当前所在的位置
-- (void)tableView:(id<XZMocoaTableView>)tableView didEndDisplayingRowAtIndexPath:(NSIndexPath*)indexPath;
-
-/// 当前 Cell 的更新事件，比如侧滑编辑、删除等事件。默认直接通过层级关系向上传递事件。
-/// @param tableView cell 所在的容器视图
-/// @param indexPath cell 在容器视图中的位置
-/// @param name 更新事件类型
-- (void)tableView:(id<XZMocoaTableView>)tableView didEditRowAtIndexPath:(NSIndexPath *)indexPath withEventsName:(XZMocoaEventsName)name completion:(void (NS_SWIFT_NONSENDABLE ^ _Nullable)(BOOL succeed))completion NS_SWIFT_NAME(tableView(_:didEditRowAt:forUpdates:completion:));
+- (void)tableView:(XZMocoaTableView *)tableView didEndDisplayingRowAtIndexPath:(NSIndexPath*)indexPath;
 
 @end
 

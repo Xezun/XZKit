@@ -15,6 +15,9 @@
 
 @implementation XZMocoaCollectionView
 
+@dynamic contentView;
+@dynamic viewModel;
+
 + (void)initialize {
     if (self == [XZMocoaCollectionView class]) {
         unsigned int count = 0;
@@ -79,6 +82,8 @@
 
 - (void)prepareForViewModel {
     [super prepareForViewModel];
+    
+    self.viewModel.delegate = self;
     
     // 刷新视图。
     UICollectionView * const collectionView = self.contentView;

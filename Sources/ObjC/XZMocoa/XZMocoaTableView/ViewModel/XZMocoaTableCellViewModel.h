@@ -24,7 +24,6 @@ NS_SWIFT_UI_ACTOR @interface XZMocoaTableCellViewModel : XZMocoaGroupCellViewMod
 - (void)tableViewCell:(UITableViewCell *)cell wasDeselectedAtIndexPath:(NSIndexPath *)indexPath;
 - (void)tableViewCell:(UITableViewCell *)cell willBeDisplayedAtIndexPath:(NSIndexPath *)indexPath;
 - (void)tableViewCell:(UITableViewCell *)cell wasEndedDisplayingAtIndexPath:(NSIndexPath *)indexPath;
-- (void)tableViewCell:(UITableViewCell *)cell wasEndedEditingAtIndexPath:(NSIndexPath *)indexPath withEventsName:(XZMocoaEventsName)name completion:(void (NS_SWIFT_NONSENDABLE ^ _Nullable)(BOOL))completion;
 
 @end
 

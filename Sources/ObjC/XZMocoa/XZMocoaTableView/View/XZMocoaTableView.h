@@ -30,30 +30,11 @@ NS_ASSUME_NONNULL_BEGIN
 // XZMocoaTableSectionModel
 // XZMocoaTableSectionViewModel
 
-NS_SWIFT_UI_ACTOR @protocol XZMocoaTableView <XZMocoaGroupView>
-@required
-@property (nonatomic, strong, nullable) XZMocoaTableViewModel *viewModel;
-@property (nonatomic, strong) IBOutlet UITableView *contentView;
-- (void)tableViewModel:(XZMocoaTableViewModel *)tableViewModel didReloadData:(void * _Nullable)null;
-
-- (void)tableViewModel:(XZMocoaTableViewModel *)tableViewModel didSelectCellAtIndexPath:(NSIndexPath *)indexPath animated:(BOOL)animated scrollPosition:(UITableViewScrollPosition)scrollPosition;
-- (void)tableViewModel:(XZMocoaTableViewModel *)tableViewModel didDeselectCellAtIndexPath:(NSIndexPath *)indexPath animated:(BOOL)animated;
-
-- (void)tableViewModel:(XZMocoaTableViewModel *)tableViewModel didReloadCellsAtIndexPaths:(NSArray<NSIndexPath *> *)indexPaths;
-- (void)tableViewModel:(XZMocoaTableViewModel *)tableViewModel didInsertCellsAtIndexPaths:(NSArray<NSIndexPath *> *)indexPaths;
-- (void)tableViewModel:(XZMocoaTableViewModel *)tableViewModel didDeleteCellsAtIndexPaths:(NSArray<NSIndexPath *> *)indexPaths;
-- (void)tableViewModel:(XZMocoaTableViewModel *)tableViewModel didMoveCellAtIndexPath:(NSIndexPath *)indexPath toIndexPath:(NSIndexPath *)newIndexPath;
-
-- (void)tableViewModel:(XZMocoaTableViewModel *)tableViewModel didReloadSectionsAtIndexes:(NSIndexSet *)sections;
-- (void)tableViewModel:(XZMocoaTableViewModel *)tableViewModel didInsertSectionsAtIndexes:(NSIndexSet *)sections;
-- (void)tableViewModel:(XZMocoaTableViewModel *)tableViewModel didDeleteSectionsAtIndexes:(NSIndexSet *)sections;
-- (void)tableViewModel:(XZMocoaTableViewModel *)tableViewModel didMoveSectionAtIndex:(NSInteger)section toIndex:(NSInteger)newSection;
-
-- (void)tableViewModel:(XZMocoaTableViewModel *)tableViewModel didPerformBatchUpdates:(void (^NS_NOESCAPE)(void))batchUpdates completion:(void (^ _Nullable)(BOOL finished))completion;
-@end
-
 /// 对 UITableView 进行了封装，以支持 MVVM 设计模式。
 NS_SWIFT_UI_ACTOR @interface XZMocoaTableView : XZMocoaGroupView
+
+@property (nonatomic, strong, nullable) XZMocoaTableViewModel *viewModel;
+@property (nonatomic, strong) IBOutlet UITableView *contentView;
 
 /// 指定初始化方法，可以在初始化时，指定内部使用的`tableView`的类型及样式。
 /// @param tableViewClass 该参数决定属性`tableView`的实际类型
@@ -81,9 +62,7 @@ NS_SWIFT_UI_ACTOR @interface XZMocoaTableView : XZMocoaGroupView
 @end
 @interface XZMocoaTableView (UITableViewDelegate) <UITableViewDelegate>
 @end
-@interface XZMocoaTableView (XZMocoaTableView) <XZMocoaTableView>
-@property (nonatomic, strong, nullable) XZMocoaTableViewModel *viewModel;
-@property (nonatomic, strong) IBOutlet UITableView *contentView;
+@interface XZMocoaTableView (XZMocoaTableView) <XZMocoaTableViewModelDelegate>
 @end
 
 NS_ASSUME_NONNULL_END

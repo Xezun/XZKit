@@ -17,12 +17,13 @@ NS_ASSUME_NONNULL_BEGIN
 @interface XZMocoaCollectionViewController : UICollectionViewController
 @end
 
-@interface XZMocoaCollectionViewController (XZMocoaCollectionView) <XZMocoaCollectionView>
+@interface XZMocoaCollectionViewController (XZMocoaCollectionView)
 @property (nonatomic, strong, nullable) XZMocoaCollectionViewModel *viewModel;
 @property (nonatomic, strong) IBOutlet UICollectionView *contentView;
+- (void)prepareForModule:(nullable XZMocoaModule *)module;
 @end
 
-@interface XZMocoaCollectionViewController () <UICollectionViewDelegateFlowLayout>
+@interface XZMocoaCollectionViewController (UICollectionViewDelegateFlowLayout) <UICollectionViewDelegateFlowLayout>
 @end
 
 NS_ASSUME_NONNULL_END

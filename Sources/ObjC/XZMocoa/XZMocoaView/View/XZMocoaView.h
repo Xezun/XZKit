@@ -36,16 +36,20 @@ NS_SWIFT_UI_ACTOR @protocol XZMocoaView <NSObject>
 /// > 但是当视图再次复用时，属性 viewModel 可能并不会改变，也就无法触发视图刷新，而视图内容又被清除了，从而导致内容丢失。
 /// > 此时，在 -prepareForReuse 方法中，同时清除 viewModel 属性即可。
 @property (nonatomic, strong, nullable) __kindof XZMocoaViewModel *viewModel;
+
 /// 属性 viewModel 的 willSet 监听方法，默认不执行任何操作。
 /// - Parameter newValue: 目标视图模型
 - (void)viewModelWillChange:(nullable XZMocoaViewModel *)newValue;
+
 /// 属性 viewModel 的 didSet 监听方法，默认不执行任何操作。
 /// - Parameter newValue: 目标视图模型
 - (void)viewModelDidChange:(nullable XZMocoaViewModel *)oldValue;
+
 /// 视图使用 viewModel 进行初始化。
 ///
 /// 不使用 viewModelDidChange 方法的原因是，视图控制器在设置 viewModel 时，视图可能并没有初始化。
 - (void)prepareForViewModel NS_REQUIRES_SUPER;
+
 /// 由 Cocoa MVC 中的控制器分发过来的 Segue 转场事件。
 ///
 /// 在视图或视图控制器中，Segue 事件转发规则如下。
@@ -67,7 +71,11 @@ NS_SWIFT_UI_ACTOR @protocol XZMocoaView <NSObject>
 /// 2. 如果 sender 为 XZMocoaView 的话，就转发给 sender 处理。
 - (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(nullable id)sender NS_SWIFT_NAME(prepare(for:sender:));
 
-- (void)sendEventsWithName:(XZMocoaEventsName)name value:(nullable id)value NS_SWIFT_NAME(sendEvents(_:value:));
+/// 向 viewModel 发送事件或传值。
+/// - Parameters:
+///   - key: 事件标识符
+///   - value: 事件值
+- (void)sendEventsWithKey:(XZMocoaKey)key value:(nullable id)value NS_SWIFT_NAME(sendEvents(_:value:));
 
 @end
 
@@ -82,29 +90,27 @@ NS_SWIFT_UI_ACTOR @protocol XZMocoaView <NSObject>
 
 #pragma mark - XZMocoaModuleSupporting
 
-typedef NSString *XZMocoaOptionKey NS_EXTENSIBLE_STRING_ENUM NS_SWIFT_NAME(XZMocoaOptions.Key);
-
 /// 传递给目标页面的数据模型。
 ///
 /// 比如在商品列表页，点击商品打开详情页时，可以将商品的数据模型传递给目标页面。
 ///
 /// 在使用 Mocoa URL 打开目标页面时，如果目标页面注册了 `viewModelClass` 类型，
 /// 那么 Mocoa 会自动通过此 key 对应的 `model` 为目标页面创建视图模型。
-FOUNDATION_EXPORT XZMocoaOptionKey const XZMocoaOptionKeyModel;
+FOUNDATION_EXPORT XZMocoaKey const XZMocoaKeyModel;
 /// 传递给目标页面参数中 name 字段。
-FOUNDATION_EXPORT XZMocoaOptionKey const XZMocoaOptionKeyName;
+FOUNDATION_EXPORT XZMocoaKey const XZMocoaKeyName;
 /// 传递给目标页面参数中 value 字段。
 ///
 /// 页面传值的通用字段。
-FOUNDATION_EXPORT XZMocoaOptionKey const XZMocoaOptionKeyValue;
+FOUNDATION_EXPORT XZMocoaKey const XZMocoaKeyValue;
 /// 传递给目标页面参数中 identifier 字段。
 ///
 /// 通过标识符向页面传值当通用字段。
-FOUNDATION_EXPORT XZMocoaOptionKey const XZMocoaOptionKeyIdentifier;
+FOUNDATION_EXPORT XZMocoaKey const XZMocoaKeyIdentifier;
 /// 传递给目标页面参数中 delegate 字段。
 ///
 /// 向目标页面传递接收事件的对象。
-FOUNDATION_EXPORT XZMocoaOptionKey const XZMocoaOptionKeyDelegate;
+FOUNDATION_EXPORT XZMocoaKey const XZMocoaKeyDelegate;
 
 /// 模块初始化参数。可像字典一样取值。
 /// @code
@@ -118,10 +124,10 @@ FOUNDATION_EXPORT XZMocoaOptionKey const XZMocoaOptionKeyDelegate;
 /// 原始 URL
 @property (nonatomic, readonly) NSURL *url;
 /// 合并了 URL query 参数
-@property (nonatomic, readonly) NSDictionary<XZMocoaOptionKey, id> *options;
+@property (nonatomic, readonly) NSDictionary<XZMocoaKey, id> *options;
 
-- (nullable id)objectForKeyedSubscript:(XZMocoaOptionKey)key;
-- (BOOL)containsKey:(XZMocoaOptionKey)aKey;
+- (nullable id)objectForKeyedSubscript:(XZMocoaKey)key;
+- (BOOL)containsKey:(XZMocoaKey)aKey;
 
 @end
 
@@ -143,7 +149,7 @@ FOUNDATION_EXPORT XZMocoaOptionKey const XZMocoaOptionKeyDelegate;
 /// 参数 url 的 query 将作为 options 参数，调用 -viewControllerWithMocoaModule:options: 方法完成实例化控制器。
 /// @param url 模块地址
 /// @param options 额外参数
-+ (nullable __kindof UIViewController *)viewControllerWithMocoaURL:(NSURL *)url options:(nullable NSDictionary<XZMocoaOptionKey, id> *)options;
++ (nullable __kindof UIViewController *)viewControllerWithMocoaURL:(NSURL *)url options:(nullable NSDictionary<XZMocoaKey, id> *)options;
 
 /// 根据视图控制器的模块地址，构造视图控制器。
 + (nullable __kindof UIViewController *)viewControllerWithMocoaURL:(NSURL *)url;
@@ -178,9 +184,9 @@ FOUNDATION_EXPORT XZMocoaOptionKey const XZMocoaOptionKeyDelegate;
 /// @param url XZMocoaURL
 /// @param animated 是否动画
 /// @param completion 回调
-- (nullable __kindof UIViewController *)presentMocoaURL:(nullable NSURL *)url options:(nullable NSDictionary<XZMocoaOptionKey, id> *)options animated:(BOOL)animated completion:(void (^_Nullable)(void))completion;
-- (nullable __kindof UIViewController *)presentMocoaURL:(nullable NSURL *)url options:(nullable NSDictionary<XZMocoaOptionKey, id> *)options completion:(void (^_Nullable)(void))completion;
-- (nullable __kindof UIViewController *)presentMocoaURL:(nullable NSURL *)url options:(nullable NSDictionary<XZMocoaOptionKey, id> *)options animated:(BOOL)animated;
+- (nullable __kindof UIViewController *)presentMocoaURL:(nullable NSURL *)url options:(nullable NSDictionary<XZMocoaKey, id> *)options animated:(BOOL)animated completion:(void (^_Nullable)(void))completion;
+- (nullable __kindof UIViewController *)presentMocoaURL:(nullable NSURL *)url options:(nullable NSDictionary<XZMocoaKey, id> *)options completion:(void (^_Nullable)(void))completion;
+- (nullable __kindof UIViewController *)presentMocoaURL:(nullable NSURL *)url options:(nullable NSDictionary<XZMocoaKey, id> *)options animated:(BOOL)animated;
 - (nullable __kindof UIViewController *)presentMocoaURL:(nullable NSURL *)url animated:(BOOL)animated completion:(void (^_Nullable)(void))completion;
 - (nullable __kindof UIViewController *)presentMocoaURL:(nullable NSURL *)url animated:(BOOL)animated;
 - (nullable __kindof UIViewController *)presentMocoaURL:(nullable NSURL *)url completion:(void (^_Nullable)(void))completion;
@@ -188,7 +194,7 @@ FOUNDATION_EXPORT XZMocoaOptionKey const XZMocoaOptionKeyDelegate;
 /// 通过 XZMocoaURL 添加子控制器。
 /// @discussion 如果 XZMocoaURL 没有对应的控制器，那么此方法将不产生任何效果。
 /// @param url XZMocoaURL
-- (nullable __kindof UIViewController *)addChildViewControllerWithMocoaURL:(nullable NSURL *)url options:(nullable NSDictionary<XZMocoaOptionKey, id> *)options;
+- (nullable __kindof UIViewController *)addChildViewControllerWithMocoaURL:(nullable NSURL *)url options:(nullable NSDictionary<XZMocoaKey, id> *)options;
 - (nullable __kindof UIViewController *)addChildViewControllerWithMocoaURL:(nullable NSURL *)url;
 @end
 
@@ -201,9 +207,9 @@ FOUNDATION_EXPORT XZMocoaOptionKey const XZMocoaOptionKeyDelegate;
 /// @param url XZMocoaURL
 /// @param animated 是否动画。
 /// @param options 参数
-- (nullable __kindof UIViewController *)pushMocoaURL:(nullable NSURL *)url options:(nullable NSDictionary<XZMocoaOptionKey, id> *)options animated:(BOOL)animated;
+- (nullable __kindof UIViewController *)pushMocoaURL:(nullable NSURL *)url options:(nullable NSDictionary<XZMocoaKey, id> *)options animated:(BOOL)animated;
 - (nullable __kindof UIViewController *)pushMocoaURL:(nullable NSURL *)url animated:(BOOL)animated;
-- (nullable __kindof UIViewController *)pushMocoaURL:(nullable NSURL *)url options:(nullable NSDictionary<XZMocoaOptionKey, id> *)options;
+- (nullable __kindof UIViewController *)pushMocoaURL:(nullable NSURL *)url options:(nullable NSDictionary<XZMocoaKey, id> *)options;
 
 @end
 

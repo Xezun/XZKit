@@ -23,15 +23,20 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
+@protocol XZMocoaGroupViewModelDelegate <NSObject>
+@end
+
 /// 列表容器视图的视图模型。
 /// @attention 由于需要管理列表 Cell 子视图，因此需要设置 `module` 属性才能正常工作。
 @interface XZMocoaGroupViewModel : XZMocoaViewModel <XZMocoaGroupViewModel>
+
+@property (nonatomic, weak) id<XZMocoaGroupViewModelDelegate> delegate;
 
 /// 所支持的附加视图的类型，默认为 `@[XZMocoaKindHeader, XZMocoaKindFooter]` 两种。
 /// @discussion 请在使用 viewModel 前设置此属性。
 @property (nonatomic, copy) NSArray<XZMocoaKind> *supportedSupplementaryKinds;
 
-/// 接收来自下级的 XZMocoaEventsNameReload 事件，并刷新视图，如果在批量更新的过程中，视图刷新可能会延迟。
+/// 接收来自下级的 XZMocoaKeyReload 事件，并刷新视图，如果在批量更新的过程中，视图刷新可能会延迟。
 - (void)didReceiveEvents:(XZMocoaEvents *)events;
 
 /// 判断列表是否为空。

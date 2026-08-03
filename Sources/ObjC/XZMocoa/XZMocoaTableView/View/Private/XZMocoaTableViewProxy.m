@@ -157,27 +157,27 @@
 }
 
 - (void)tableView:(UITableView *)tableView willDisplayCell:(UITableViewCell<XZMocoaTableCell> *)cell forRowAtIndexPath:(NSIndexPath *)indexPath {
-    [cell tableView:self willDisplayRowAtIndexPath:indexPath];
+    [cell tableView:(id)self willDisplayRowAtIndexPath:indexPath];
 }
 
 - (void)tableView:(UITableView *)tableView didEndDisplayingCell:(UITableViewCell<XZMocoaTableCell> *)cell forRowAtIndexPath:(NSIndexPath*)indexPath {
-    [cell tableView:self didEndDisplayingRowAtIndexPath:indexPath];
+    [cell tableView:(id)self didEndDisplayingRowAtIndexPath:indexPath];
 }
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
     UITableViewCell<XZMocoaTableCell> *cell = (id)[tableView cellForRowAtIndexPath:indexPath];
-    [cell tableView:self didSelectRowAtIndexPath:indexPath];
+    [cell tableView:(id)self didSelectRowAtIndexPath:indexPath];
 }
 
 - (void)tableView:(UITableView *)tableView didDeselectRowAtIndexPath:(NSIndexPath *)indexPath {
     UITableViewCell<XZMocoaTableCell> *cell = (id)[tableView cellForRowAtIndexPath:indexPath];
-    [cell tableView:self didDeselectRowAtIndexPath:indexPath];
+    [cell tableView:(id)self didDeselectRowAtIndexPath:indexPath];
 }
 
 @end
 
 
-@implementation XZMocoaTableViewProxy (XZMocoaTableView)
+@implementation XZMocoaTableViewProxy (XZMocoaTableViewModelDelegate)
 
 @dynamic viewModel;
 @dynamic contentView;

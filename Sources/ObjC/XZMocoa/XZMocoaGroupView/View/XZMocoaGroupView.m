@@ -11,13 +11,13 @@
 
 #pragma mark - 属性
 
+@dynamic viewModel;
+@synthesize contentView = _contentView;
+
 - (void)prepareForViewModel {
     [super prepareForViewModel];
     [self prepareForModule:self.viewModel.module];
 }
-
-@dynamic viewModel;
-@synthesize contentView = _contentView;
 
 - (void)setContentView:(__kindof UIScrollView * const)newValue {
     UIScrollView * const oldValue = _contentView;
@@ -63,17 +63,17 @@
 @end
 
 #ifdef XZ_MOCOA_REFRESH_SUPPORTED
-XZMocoaEventsName const XZMocoaEventsNameHeaderDidBeginRefreshing = @"headerDidBeginRefreshing";
-XZMocoaEventsName const XZMocoaEventsNameFooterDidBeginRefreshing = @"footerDidBeginRefreshing";
+XZMocoaKey const XZMocoaKeyHeaderDidBeginRefreshing = @"headerDidBeginRefreshing";
+XZMocoaKey const XZMocoaKeyFooterDidBeginRefreshing = @"footerDidBeginRefreshing";
 
 @implementation XZMocoaGroupView (XZRefreshDelegate)
 
 - (void)scrollView:(UIScrollView *)scrollView headerDidBeginRefreshing:(XZRefreshView *)refreshView {
-    [self sendEventsWithName:XZMocoaEventsNameHeaderDidBeginRefreshing value:refreshView];
+    [self sendEventsWithKey:XZMocoaKeyHeaderDidBeginRefreshing value:refreshView];
 }
 
 - (void)scrollView:(UIScrollView *)scrollView footerDidBeginRefreshing:(XZRefreshView *)refreshView {
-    [self sendEventsWithName:XZMocoaEventsNameFooterDidBeginRefreshing value:refreshView];
+    [self sendEventsWithKey:XZMocoaKeyFooterDidBeginRefreshing value:refreshView];
 }
 
 @end

@@ -1,5 +1,5 @@
 //
-//  XZMocoaModelObserver.h
+//  XZMocoaKeyObserver.h
 //  XZMocoa
 //
 //  Created by Xezun on 2025/6/16.
@@ -12,9 +12,9 @@ NS_ASSUME_NONNULL_BEGIN
 @class XZMocoaViewModel;
 
 /// 将一个 Runloop 内的 KVO 事件合并收集起来，并统一发送给接收者。
-@interface XZMocoaModelObserver : NSObject
+@interface XZMocoaKeyObserver : NSObject
 
-+ (XZMocoaModelObserver *)observerForModel:(NSObject *)model;
++ (XZMocoaKeyObserver *)observerForModel:(NSObject *)model;
 
 /// 添加 keys 的事件接收者。
 ///

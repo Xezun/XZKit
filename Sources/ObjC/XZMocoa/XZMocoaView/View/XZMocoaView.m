@@ -12,55 +12,36 @@
 #import "UIView+XZKit.h"
 @import ObjectiveC;
 
-XZMocoaOptionKey const XZMocoaOptionKeyModel      = @"model";
-XZMocoaOptionKey const XZMocoaOptionKeyName       = @"name";
-XZMocoaOptionKey const XZMocoaOptionKeyValue      = @"value";
-XZMocoaOptionKey const XZMocoaOptionKeyIdentifier = @"identifier";
-XZMocoaOptionKey const XZMocoaOptionKeyDelegate   = @"delegate";
+XZMocoaKey const XZMocoaKeyModel      = @"model";
+XZMocoaKey const XZMocoaKeyName       = @"name";
+XZMocoaKey const XZMocoaKeyValue      = @"value";
+XZMocoaKey const XZMocoaKeyIdentifier = @"identifier";
+XZMocoaKey const XZMocoaKeyDelegate   = @"delegate";
 
 static const void * const _viewModel = &_viewModel;
+static const void * const _context = &_context;
 
 @interface XZMocoaOptions ()
 - (instancetype)initWithModule:(XZMocoaModule *)module url:(NSURL *)url options:(NSDictionary *)options;
 @end
 
+@interface XZMocoaContext : NSObject <XZMocoaContext>
+@property (nonatomic, strong, nullable) XZMocoaViewModel *viewModel;
++ (XZMocoaContext *)contextForView:(nonnull UIResponder *)view;
+- (void)detach:(nonnull XZMocoaViewModel *)viewModel;
+- (void)attach:(nonnull XZMocoaViewModel *)viewModel;
+@end
 
 #pragma mark - XZMocoaView
 
 @implementation UIResponder (XZMocoaView)
 
 - (__kindof XZMocoaViewModel *)viewModel {
-    return objc_getAssociatedObject(self, _viewModel);
+    return [XZMocoaContext contextForView:self].viewModel;
 }
 
 - (void)setViewModel:(__kindof XZMocoaViewModel * const )newValue {
-    XZMocoaViewModel * const oldValue = objc_getAssociatedObject(self, _viewModel);
-    if (newValue == oldValue) {
-        return;
-    }
-    
-    // 解除 newValue 与其他视图的绑定关系
-    if (newValue && newValue->_view) {
-        [(UIResponder *)(newValue->_view) setViewModel:nil];
-    }
-    
-    [self viewModelWillChange:newValue];
-    
-    // 解除 oldValue 与当前视图的绑定关系
-    if (oldValue) {
-        oldValue->_view = nil;
-        [oldValue removeTarget:self action:nil forKey:nil];
-    }
-    
-    // 保存 newValue
-    objc_setAssociatedObject(self, _viewModel, newValue, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
-    
-    // view 与 viewModel 一对一关系
-    if (newValue) {
-        newValue->_view = (id)self;
-    }
-    
-    [self viewModelDidChange:oldValue];
+    [XZMocoaContext contextForView:self].viewModel = newValue;
 }
 
 - (void)viewModelWillChange:(XZMocoaViewModel *)newValue {
@@ -83,7 +64,7 @@ static const void * const _viewModel = &_viewModel;
     
 }
 
-- (void)sendEventsWithName:(XZMocoaEventsName)name value:(id)value {
+- (void)sendEventsWithKey:(XZMocoaKey)name value:(id)value {
     XZMocoaEvents * const events = [XZMocoaEvents eventsWithName:name value:value source:self];
     [self.viewModel didReceiveEvents:events];
 }
@@ -348,7 +329,7 @@ static const void * const _viewModel = &_viewModel;
         return;
     }
     
-    id model = options[XZMocoaOptionKeyModel];
+    id model = options[XZMocoaKeyModel];
     
     Class const ModelClass = module.modelClass;
     if (ModelClass) {
@@ -519,6 +500,126 @@ static const void * const _viewModel = &_viewModel;
         }];
     }
     return NO;
+}
+
+@end
+
+@implementation XZMocoaContext {
+    UIResponder    * __unsafe_unretained _view;
+    XZMocoaContext * __unsafe_unretained _next;
+}
+
+- (void)dealloc {
+    [self detach:_viewModel];
+    [_viewModel removeTarget:_view action:nil forKey:nil];
+}
+
++ (XZMocoaContext *)contextForView:(UIResponder *)view {
+    XZMocoaContext *context = objc_getAssociatedObject(view, _context);
+    if (context) {
+        return context;
+    }
+    context = [[XZMocoaContext alloc] initWithView:view];
+    objc_setAssociatedObject(view, _context, context, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
+    return context;
+}
+
+- (instancetype)initWithView:(UIResponder *)view {
+    self = [super init];
+    if (self) {
+        _view = view;
+    }
+    return self;
+}
+
+- (void)setViewModel:(XZMocoaViewModel *)newValue {
+    XZMocoaViewModel * const oldValue = _viewModel;
+    
+    if (newValue == oldValue) {
+        return;
+    }
+    
+    [_view viewModelWillChange:newValue];
+    
+    // 解除 oldValue 与当前视图的绑定关系
+    [self detach:oldValue];
+    [oldValue removeTarget:_view action:nil forKey:nil];
+    
+    // 保存 newValue
+    _viewModel = newValue;
+    
+    // view 与 viewModel 一对一关系
+    [self attach:newValue];
+    
+    [_view viewModelDidChange:oldValue];
+}
+
+- (void)attach:(XZMocoaViewModel *)viewModel {
+    if (viewModel == nil) {
+        return;
+    }
+    
+    XZMocoaContext *lastContext = viewModel->_context;
+    self->_next = lastContext;
+    viewModel->_context = self;
+}
+
+- (void)detach:(XZMocoaViewModel *)viewModel {
+    if (viewModel == nil) {
+        return;
+    }
+    
+    XZMocoaContext *lastContext = viewModel->_context;
+    
+    // 当前时链上最后一个，修改 viewModel 上的指向
+    if (self == lastContext) {
+        viewModel->_context = self->_next;
+        return;
+    }
+    
+    // 在链表上找到当前对象
+    XZMocoaContext *nextContext = lastContext->_next;
+    while (nextContext) {
+        if (self == nextContext) {
+            break;
+        }
+        lastContext = nextContext;
+        nextContext = lastContext->_next;
+    }
+    
+    // 将当前对象从链表移除
+    if (nextContext) {
+        lastContext->_next = nextContext->_next;
+    } else {
+        lastContext->_next = nil;
+    }
+}
+
+- (UIViewController *)viewController {
+    UIViewController *viewController = (id)_view;
+    while (viewController) {
+        if ([viewController isKindOfClass:UIViewController.class]) {
+            return viewController;
+        }
+        viewController = (id)(viewController.nextResponder);
+    }
+    return _next.viewController;
+}
+
+- (UINavigationController *)navigationController {
+    UINavigationController *viewController = (id)self.viewController;
+    if ([viewController isKindOfClass:UINavigationController.class]) {
+        return viewController;
+    }
+    return viewController.navigationController;
+}
+
+- (UITabBarController *)tabBarController {
+    UITabBarController *viewController = (id)self.viewController;
+    if ([viewController isKindOfClass:UITabBarController.class]) {
+        return viewController;
+    }
+    return viewController.tabBarController;
 }
 
 @end

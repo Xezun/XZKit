@@ -31,13 +31,20 @@ NS_SWIFT_UI_ACTOR @protocol XZMocoaViewModel <NSObject>
 @class XZMocoaTargetActionTable;
 @protocol XZMocoaView;
 
-/// 为简化开发，Mocoa 提供的视图模型基类。
-///  
+@protocol XZMocoaContext <NSObject>
+@property (nonatomic, readonly, nullable) UIViewController       *viewController;
+@property (nonatomic, readonly, nullable) UINavigationController *navigationController;
+@property (nonatomic, readonly, nullable) UITabBarController     *tabBarController;
+@end
+
+/// 视图模型基类。
+///
+/// 基类为视图模型提供了以下基础能力：
 /// - 延迟初始化的 ready 机制。
 /// - 层级关系。
-/// - 下层模块 到 上层模块 的 Updates 事件机制。
-/// - 视图监听视图模型属性的 target-action 机制。
-///  
+/// - 基于层级的 Key Events 事件通道。
+/// - 视图监听视图模型属性的 Key Target Action 机制。
+///
 /// # 数据监听
 ///
 /// 对数据的监听是 MVVM 设计模式的特色之一，但在 iOS 实际开发中，数据在大部分情形下，都是单向流动的，类似从网络请求到页面展示的场景居多。
@@ -58,7 +65,7 @@ NS_SWIFT_UI_ACTOR @protocol XZMocoaViewModel <NSObject>
 NS_SWIFT_UI_ACTOR @interface XZMocoaViewModel : NSObject <XZMocoaViewModel> {
     @package
     /// 用于处理 MVC 与 MVVM 的兼容性问题，不要使用此属性来获取视图。
-    id<XZMocoaView> __weak _view;
+    id<XZMocoaContext> _context;
 }
 
 @property (nonatomic, readonly, nullable) UIViewController       *viewController;
@@ -87,6 +94,8 @@ NS_SWIFT_UI_ACTOR @interface XZMocoaViewModel : NSObject <XZMocoaViewModel> {
 /// @param model 数据模型
 + (nullable __kindof XZMocoaViewModel *)viewModelWithURL:(NSURL *)URL model:(nullable id)model NS_SWIFT_NAME(init(_:model:));
 
+// MARK: - Ready 机制
+
 /// 是否已完成初始化。
 ///
 /// 关于 ready 机制
@@ -106,8 +115,9 @@ NS_SWIFT_UI_ACTOR @interface XZMocoaViewModel : NSObject <XZMocoaViewModel> {
 /// - 向下层视图模型发送 `-ready` 消息。
 - (void)ready;
 
-/// 视图模型的初始化方法。
+/// 视图模型的延迟初始化方法。
 ///
+/// - 将视图模型的初始化，从创建时，延迟到使用前。
 /// - 一般情况下，请勿直接调用此方法，而是调用`-ready`方法，否则可能会重复初始化。
 /// - 子类重写应调用`super`实现。
 /// - 在此方法中，视图模型 isReady 始终为 NO 的状态。
@@ -116,6 +126,8 @@ NS_SWIFT_UI_ACTOR @interface XZMocoaViewModel : NSObject <XZMocoaViewModel> {
 - (void)prepare;
 
 @end
+
+// MARK: - 层级关系
 
 @interface XZMocoaViewModel (XZMocoaHierarchy)
 
@@ -150,27 +162,29 @@ NS_SWIFT_UI_ACTOR @interface XZMocoaViewModel : NSObject <XZMocoaViewModel> {
 
 @end
 
+/// 标识符，区分 Key Events 和 Target Action 事件的标识符。
+typedef NSString *XZMocoaKey NS_EXTENSIBLE_STRING_ENUM;
 
-/// 事件标识符。
-///
+// MARK: - Key Events Channel
+
 /// ## Mocoa Events Channel
 ///
-/// 一种基于标识符的事件机制。
+/// 基于层级关系的事件通道。
 ///
-/// ### 1、视图层向视图模型层传递事件。
+/// ### 1、视图 View 与视图模型 ViewModel 之间的事件通道。
 ///
-/// 一般情况下，View 向 ViewModel 传递事件，推荐 ViewModel 定义接收事件的方法，然后由 View 绑定或调用。
-/// 为了简化事件处理，Mocoa 为所有子类预先定义了一个接收事件的方法 ``-didReceiveEvents:`` 以方便事件处理。
+/// 简单的事件，视图可直接通过``-sendEventsWithKey:value``方法向 viewModel 发送事件。
+/// 复杂的事件，推荐 ViewModel 定义接收事件的方法，然后由 View 绑定或直接调用。
 ///
-/// ### 2、自下而上的层事件。
+/// ### 2、视图模型 ViewModel 自下而上的层事件通道。
 ///
-/// 在具有层级关系的模块中，通过层级关系链，自下而上传递事件，比如`Cell`层将事件传递给`Table`层处理。
-typedef NSString *XZMocoaEventsName NS_EXTENSIBLE_STRING_ENUM NS_SWIFT_NAME(XZMocoaEvents.Name);
+/// 下级视图模型，可通过调用``-sendEventsWithKey:value``方法，沿视图模型层级关系，自下向上传递事件。
 
-/// 更新信息模型。
+
+/// 通道事件。
 @interface XZMocoaEvents : NSObject
-/// 标记符，事件名。
-@property (nonatomic, copy, readonly) XZMocoaEventsName name;
+/// 标记符。
+@property (nonatomic, copy, readonly) XZMocoaKey key;
 /// 事件值。
 @property (nonatomic, strong, readonly, nullable) id value;
 /// 创建事件的对象。
@@ -178,46 +192,15 @@ typedef NSString *XZMocoaEventsName NS_EXTENSIBLE_STRING_ENUM NS_SWIFT_NAME(XZMo
 /// 传递事件的对象。
 @property (nonatomic, unsafe_unretained, readonly) __kindof XZMocoaViewModel *target;
 - (instancetype)init NS_UNAVAILABLE;
-+ (instancetype)eventsWithName:(nullable XZMocoaEventsName)key value:(nullable id)value source:(id)source NS_SWIFT_NAME(init(_:value:source:));
++ (instancetype)eventsWithName:(XZMocoaKey)key value:(nullable id)value source:(id)source NS_SWIFT_NAME(init(_:value:source:));
 @end
 
-@class UIButton;
-
-/// 通用事件。如果视图模型只有一个事件，或者没必要细分事件时，可以使用此名称。
-FOUNDATION_EXPORT XZMocoaEventsName const XZMocoaEventsNameNone;
-/// 重载事件。适用情形：通知上级，执行重载模块的操作（数据已经更新）。
-FOUNDATION_EXPORT XZMocoaEventsName const XZMocoaEventsNameReload;
-/// 更新操作。适用情形：通知上级，执行数据编辑的操作（数据还未编辑）。
-FOUNDATION_EXPORT XZMocoaEventsName const XZMocoaEventsNameModify;
-/// 插入操作。适用情形：通知上级，执行数据插入的操作（新数据未插入）。
-FOUNDATION_EXPORT XZMocoaEventsName const XZMocoaEventsNameInsert;
-/// 删除操作。适用情形：通知上级，执行删除数据的操作（数据还未删除）。
-FOUNDATION_EXPORT XZMocoaEventsName const XZMocoaEventsNameDelete;
-/// 选择操作。比如单选 cell 时，只能由上层控制单选。
-FOUNDATION_EXPORT XZMocoaEventsName const XZMocoaEventsNameSelect;
-/// 反选操作。
-FOUNDATION_EXPORT XZMocoaEventsName const XZMocoaEventsNameDeselect;
-FOUNDATION_EXPORT XZMocoaEventsName const XZMocoaEventsNameConfirm;
-FOUNDATION_EXPORT XZMocoaEventsName const XZMocoaEventsNameSubmit;
-FOUNDATION_EXPORT XZMocoaEventsName const XZMocoaEventsNameCancel;
-FOUNDATION_EXPORT XZMocoaEventsName const XZMocoaEventsNameValueChanged;
-/// 导航左侧区事件。
-FOUNDATION_EXPORT XZMocoaEventsName const XZMocoaEventsNameNavigationBackAction;
-/// 导航右侧区事件。
-FOUNDATION_EXPORT XZMocoaEventsName const XZMocoaEventsNameNavigationMoreAction;
-FOUNDATION_EXPORT XZMocoaEventsName const XZMocoaEventsNameViewWillAppear;
-FOUNDATION_EXPORT XZMocoaEventsName const XZMocoaEventsNameViewDidAppear;
-FOUNDATION_EXPORT XZMocoaEventsName const XZMocoaEventsNameViewWillDisappear;
-FOUNDATION_EXPORT XZMocoaEventsName const XZMocoaEventsNameViewDidDisappear;
-
-@protocol XZMocoaView;
-
-@interface XZMocoaViewModel (XZMocoaEventsChannel)
+@interface XZMocoaViewModel (XZMocoaKeyEventsChannel)
 
 /// 创建 `XZMocoaEvents` 并调用 ``-sendEvents:`` 方法。
-/// @param name 事件名，如为 nil 则为默认名称 XZMocoaEventsNameNone
+/// @param key 事件名，如为 nil 则为默认名称 XZMocoaKeyNone
 /// @param value 事件值
-- (void)sendEventsWithName:(nullable XZMocoaEventsName)name value:(nullable id)value NS_SWIFT_NAME(sendEvents(_:value:));
+- (void)sendEventsWithKey:(nullable XZMocoaKey)key value:(nullable id)value NS_SWIFT_NAME(sendEvents(_:value:));
 
 /// 默认直接向 `superViewModel` 转发事件，其中`events.target` 会变为当前对象。
 /// @param events 事件
@@ -232,6 +215,8 @@ FOUNDATION_EXPORT XZMocoaEventsName const XZMocoaEventsNameViewDidDisappear;
 - (void)didReceiveEvents:(XZMocoaEvents *)events;
 
 @end
+
+// MARK: - Key Target Action
 
 /// Key Target Action 事件名。
 ///
@@ -252,22 +237,6 @@ FOUNDATION_EXPORT XZMocoaEventsName const XZMocoaEventsNameViewDidDisappear;
 /// > 如果 ViewModel 的事件较多且复杂，建议使用 delegate 发送事件。
 ///
 /// 在 Swift 中，可通过 `@key` 宏标记属性，自动发送事件。
-typedef NSString *XZMocoaKey NS_EXTENSIBLE_STRING_ENUM;
-
-/// 特殊 key 键，值为空字符串。
-///
-/// 在添加或发送 key-target-action 事件时，如果 key 参数使用了 nil 则会使用此键。
-FOUNDATION_EXPORT XZMocoaKey const XZMocoaKeyNone NS_SWIFT_NAME(None);
-
-/// 用于标记属性可以被添加 target-action 的属性或方法，仅起标记作用。
-/// @code
-/// @property (nonatomic) BOOL isLoading XZ_MOCOA_KEY();          // The key is 'isLoading'
-/// @property (nonatomic) BOOL isLoading XZ_MOCOA_KEY("loading"); // The key is 'loading'
-/// - (void)startLoading XZ_MOCOA_KEY("isLoading");               // The key is 'isLoading'
-/// @endcode
-/// @todo
-/// 编译器插件，在属性中添加 mocoa=key 标记，生成的 setter 中添加发送 key 事件的代码。
-#define XZ_MOCOA_KEY(key)
 
 @interface XZMocoaViewModel (XZMocoaKeyTargetAction)
 
@@ -352,7 +321,7 @@ FOUNDATION_EXPORT XZMocoaKey const XZMocoaKeyNone NS_SWIFT_NAME(None);
 
 @end
 
-@interface XZMocoaViewModel (XZMocoaModelObserving)
+@interface XZMocoaViewModel (XZMocoaKeyObserver)
 
 /// “视图模型”观察“数据模型”的键值观察映射表。
 ///
@@ -431,5 +400,36 @@ FOUNDATION_EXPORT XZMocoaKey const XZMocoaKeyNone NS_SWIFT_NAME(None);
 - (void)model:(nullable id)model didChangeValuesForKeys:(NSSet<XZMocoaKey> *)changedKeys;
 
 @end
+
+
+
+@class UIButton;
+
+/// 通用事件。如果视图模型只有一个事件，或者没必要细分事件时，可以使用此名称。
+FOUNDATION_EXPORT XZMocoaKey const XZMocoaKeyNone NS_SWIFT_NAME(None);
+/// 重载事件。适用情形：通知上级，执行重载模块的操作（数据已经更新）。
+FOUNDATION_EXPORT XZMocoaKey const XZMocoaKeyReload;
+/// 更新操作。适用情形：通知上级，执行数据编辑的操作（数据还未编辑）。
+FOUNDATION_EXPORT XZMocoaKey const XZMocoaKeyModify;
+/// 插入操作。适用情形：通知上级，执行数据插入的操作（新数据未插入）。
+FOUNDATION_EXPORT XZMocoaKey const XZMocoaKeyInsert;
+/// 删除操作。适用情形：通知上级，执行删除数据的操作（数据还未删除）。
+FOUNDATION_EXPORT XZMocoaKey const XZMocoaKeyDelete;
+/// 选择操作。比如单选 cell 时，只能由上层控制单选。
+FOUNDATION_EXPORT XZMocoaKey const XZMocoaKeySelect;
+/// 反选操作。
+FOUNDATION_EXPORT XZMocoaKey const XZMocoaKeyDeselect;
+FOUNDATION_EXPORT XZMocoaKey const XZMocoaKeyConfirm;
+FOUNDATION_EXPORT XZMocoaKey const XZMocoaKeySubmit;
+FOUNDATION_EXPORT XZMocoaKey const XZMocoaKeyCancel;
+FOUNDATION_EXPORT XZMocoaKey const XZMocoaKeyValueChanged;
+/// 导航左侧区事件。
+FOUNDATION_EXPORT XZMocoaKey const XZMocoaKeyNavigationBackAction;
+/// 导航右侧区事件。
+FOUNDATION_EXPORT XZMocoaKey const XZMocoaKeyNavigationMoreAction;
+FOUNDATION_EXPORT XZMocoaKey const XZMocoaKeyViewWillAppear;
+FOUNDATION_EXPORT XZMocoaKey const XZMocoaKeyViewDidAppear;
+FOUNDATION_EXPORT XZMocoaKey const XZMocoaKeyViewWillDisappear;
+FOUNDATION_EXPORT XZMocoaKey const XZMocoaKeyViewDidDisappear;
 
 NS_ASSUME_NONNULL_END

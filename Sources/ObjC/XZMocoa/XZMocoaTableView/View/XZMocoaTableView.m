@@ -18,6 +18,9 @@
 
 @implementation XZMocoaTableView
 
+@dynamic viewModel;
+@dynamic contentView;
+
 + (void)initialize {
     if (self == [XZMocoaTableView class]) {
         unsigned int count = 0;
@@ -70,6 +73,8 @@
 - (void)prepareForViewModel {
     [super prepareForViewModel];
     
+    self.viewModel.delegate = self;
+    
     // 刷新视图。
     UITableView * const tableView = self.contentView;
     if (@available(iOS 11.0, *)) {
@@ -99,10 +104,6 @@
 
 - (void)reloadData {
     [self.viewModel reloadData];
-}
-
-- (void)performBatchUpdates:(void (NS_NOESCAPE ^)(void))updates completion:(void (^)(BOOL))completion {
-    [self.viewModel performBatchUpdates:updates completion:completion];
 }
 
 @end

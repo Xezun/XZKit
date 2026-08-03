@@ -15,29 +15,11 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-@protocol XZMocoaCollectionView <XZMocoaGroupView>
-@required
+@interface XZMocoaCollectionView : XZMocoaGroupView
+
 @property (nonatomic, strong) IBOutlet UICollectionView *contentView;
 @property (nonatomic, strong, nullable) XZMocoaCollectionViewModel *viewModel;
-- (void)collectionViewModel:(XZMocoaCollectionViewModel *)collectionViewModel didReloadData:(void * _Nullable)null;
 
-- (void)collectionViewModel:(XZMocoaCollectionViewModel *)tableViewModel didSelectCellAtIndexPath:(NSIndexPath *)indexPath animated:(BOOL)animated scrollPosition:(UICollectionViewScrollPosition)scrollPosition;
-- (void)collectionViewModel:(XZMocoaCollectionViewModel *)tableViewModel didDeselectCellAtIndexPath:(NSIndexPath *)indexPath animated:(BOOL)animated;
-
-- (void)collectionViewModel:(XZMocoaCollectionViewModel *)collectionViewModel didReloadCellsAtIndexPaths:(NSArray<NSIndexPath *> *)indexPaths;
-- (void)collectionViewModel:(XZMocoaCollectionViewModel *)collectionViewModel didInsertCellsAtIndexPaths:(NSArray<NSIndexPath *> *)indexPaths;
-- (void)collectionViewModel:(XZMocoaCollectionViewModel *)collectionViewModel didDeleteCellsAtIndexPaths:(NSArray<NSIndexPath *> *)indexPaths;
-- (void)collectionViewModel:(XZMocoaCollectionViewModel *)collectionViewModel didMoveCellAtIndexPath:(NSIndexPath *)indexPath toIndexPath:(NSIndexPath *)newIndexPath;
-
-- (void)collectionViewModel:(XZMocoaCollectionViewModel *)collectionViewModel didReloadSectionsAtIndexes:(NSIndexSet *)sections;
-- (void)collectionViewModel:(XZMocoaCollectionViewModel *)collectionViewModel didInsertSectionsAtIndexes:(NSIndexSet *)sections;
-- (void)collectionViewModel:(XZMocoaCollectionViewModel *)collectionViewModel didDeleteSectionsAtIndexes:(NSIndexSet *)sections;
-- (void)collectionViewModel:(XZMocoaCollectionViewModel *)collectionViewModel didMoveSectionAtIndex:(NSInteger)section toIndex:(NSInteger)newSection;
-
-- (void)collectionViewModel:(XZMocoaCollectionViewModel *)collectionViewModel didPerformBatchUpdates:(void (^NS_NOESCAPE)(void))batchUpdates completion:(void (^ _Nullable)(BOOL finished))completion;
-@end
-
-@interface XZMocoaCollectionView : XZMocoaGroupView
 - (instancetype)initWithCoder:(NSCoder *)coder NS_DESIGNATED_INITIALIZER;
 - (instancetype)initWithCollectionViewClass:(Class)collectionViewClass layout:(UICollectionViewLayout *)layout NS_DESIGNATED_INITIALIZER;
 - (instancetype)initWithLayout:(UICollectionViewLayout *)layout;
@@ -47,7 +29,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 // 以下由 XZMocoaCollectionViewProxy 动态实现。
 
-@interface XZMocoaCollectionView (XZMocoaCollectionView) <XZMocoaCollectionView>
+@interface XZMocoaCollectionView (XZMocoaCollectionView) <XZMocoaCollectionViewModelDelegate>
 @end
 @interface XZMocoaCollectionView (UICollectionViewDelegate) <UICollectionViewDelegate>
 @end

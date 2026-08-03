@@ -46,12 +46,12 @@
         model.firstName = firstName;
         model.lastName  = lastName;
         
-        [self sendEventsWithName:@"name" value:nil];
+        [self sendEventsWithKey:@"name" value:nil];
     }
 
     if (![phone isEqualToString:model.phone]) {
         model.phone = phone;
-        [self sendEventsWithName:@"phone" value:nil];
+        [self sendEventsWithKey:@"phone" value:nil];
     }
 }
 

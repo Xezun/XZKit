@@ -1,11 +1,11 @@
 //
-//  XZMocoaViewModelKeyMappingTable.m
+//  XZMocoaKeyMappingTable.m
 //  XZMocoa
 //
 //  Created by Xezun on 2025/6/17.
 //
 
-#import "XZMocoaViewModelKeyMappingTable.h"
+#import "XZMocoaKeyMappingTable.h"
 #import "XZMocoaViewModel.h"
 #import "XZMocoaGroupViewModel.h"
 #import "XZMocoaTableViewModel.h"
@@ -63,7 +63,7 @@ static inline void XZMocoaMappingModelKeys(Class const VMClass, NSMutableDiction
     }];
 }
 
-@implementation XZMocoaViewModelKeyMappingTable
+@implementation XZMocoaKeyMappingTable
 
 - (instancetype)initWithMethodToKeys:(NSDictionary *)methodToKeys keyToMethods:(NSDictionary *)keyToMethods namedMethods:(NSDictionary *)namedMethods {
     self = [super init];
@@ -75,7 +75,7 @@ static inline void XZMocoaMappingModelKeys(Class const VMClass, NSMutableDiction
     return self;
 }
 
-+ (XZMocoaViewModelKeyMappingTable *)tableForClass:(Class)VMClass {
++ (XZMocoaKeyMappingTable *)tableForClass:(Class)VMClass {
     if (VMClass == nil
         || VMClass == [XZMocoaViewModel class]
         || VMClass == [XZMocoaGroupViewModel class]
@@ -87,7 +87,7 @@ static inline void XZMocoaMappingModelKeys(Class const VMClass, NSMutableDiction
     
     static void * _mapTable = NULL;
     
-    XZMocoaViewModelKeyMappingTable *mapTable = objc_getAssociatedObject(VMClass, &_mapTable);
+    XZMocoaKeyMappingTable *mapTable = objc_getAssociatedObject(VMClass, &_mapTable);
     
     if (mapTable) {
         return ((mapTable == (id)kCFNull) ? nil : mapTable);
@@ -97,7 +97,7 @@ static inline void XZMocoaMappingModelKeys(Class const VMClass, NSMutableDiction
     NSMutableDictionary * const keyToMethods = [NSMutableDictionary dictionary];
     NSMutableDictionary * const namedMethods = [NSMutableDictionary dictionary];
     
-    XZMocoaViewModelKeyMappingTable * const superMapTable = [XZMocoaViewModelKeyMappingTable tableForClass:class_getSuperclass(VMClass)];
+    XZMocoaKeyMappingTable * const superMapTable = [XZMocoaKeyMappingTable tableForClass:class_getSuperclass(VMClass)];
     
     if ( superMapTable ) {
         [methodToKeys addEntriesFromDictionary:superMapTable.methodToKeys];
@@ -112,7 +112,7 @@ static inline void XZMocoaMappingModelKeys(Class const VMClass, NSMutableDiction
         return nil;
     }
     
-    mapTable = [[XZMocoaViewModelKeyMappingTable alloc] initWithMethodToKeys:methodToKeys keyToMethods:keyToMethods namedMethods:namedMethods];
+    mapTable = [[XZMocoaKeyMappingTable alloc] initWithMethodToKeys:methodToKeys keyToMethods:keyToMethods namedMethods:namedMethods];
     objc_setAssociatedObject(VMClass, &_mapTable, mapTable, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
     return mapTable;
 }

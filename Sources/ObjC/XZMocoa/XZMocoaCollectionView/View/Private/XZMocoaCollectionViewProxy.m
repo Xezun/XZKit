@@ -107,23 +107,23 @@ static NSString *UIElementKindFromMocoaKind(XZMocoaKind kind) {
 
 - (void)collectionView:(UICollectionView *)collectionView didSelectItemAtIndexPath:(NSIndexPath *)indexPath {
     UICollectionViewCell<XZMocoaCollectionCell> *cell = (id)[collectionView cellForItemAtIndexPath:indexPath];
-    [cell collectionView:self didSelectItemAtIndexPath:indexPath];
+    [cell collectionView:(id)self didSelectItemAtIndexPath:indexPath];
 }
 
 - (void)collectionView:(UICollectionView *)collectionView willDisplayCell:(UICollectionViewCell *)cell forItemAtIndexPath:(NSIndexPath *)indexPath {
-    [cell collectionView:self willDisplayItemAtIndexPath:indexPath];
+    [cell collectionView:(id)self willDisplayItemAtIndexPath:indexPath];
 }
 
 - (void)collectionView:(UICollectionView *)collectionView didEndDisplayingCell:(UICollectionViewCell *)cell forItemAtIndexPath:(NSIndexPath *)indexPath {
-    [cell collectionView:self didEndDisplayingItemAtIndexPath:indexPath];
+    [cell collectionView:(id)self didEndDisplayingItemAtIndexPath:indexPath];
 }
 
 - (void)collectionView:(UICollectionView *)collectionView willDisplaySupplementaryView:(UICollectionReusableView *)view forElementKind:(NSString *)elementKind atIndexPath:(NSIndexPath *)indexPath {
-    [view collectionView:self willDisplaySupplementaryViewAtIndexPath:indexPath forElementOfKind:elementKind];
+    [view collectionView:(id)self willDisplaySupplementaryViewAtIndexPath:indexPath forElementOfKind:elementKind];
 }
 
 - (void)collectionView:(UICollectionView *)collectionView didEndDisplayingSupplementaryView:(UICollectionReusableView *)view forElementOfKind:(NSString *)elementKind atIndexPath:(NSIndexPath *)indexPath {
-    [view collectionView:self didEndDisplayingSupplementaryViewAtIndexPath:indexPath forElementOfKind:elementKind];
+    [view collectionView:(id)self didEndDisplayingSupplementaryViewAtIndexPath:indexPath forElementOfKind:elementKind];
 }
 
 @end
@@ -195,7 +195,7 @@ static NSString *UIElementKindFromMocoaKind(XZMocoaKind kind) {
 @end
 
 
-@implementation XZMocoaCollectionViewProxy (XZMocoaCollectionView)
+@implementation XZMocoaCollectionViewProxy (XZMocoaCollectionViewModelDelegate)
 
 @dynamic viewModel;
 @dynamic contentView;

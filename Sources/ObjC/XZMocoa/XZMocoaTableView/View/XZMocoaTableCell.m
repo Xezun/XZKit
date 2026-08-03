@@ -11,6 +11,8 @@
 #import "XZMocoaModule.h"
 #import "XZMocoaDefines.h"
 
+@protocol UITableViewDelegate;
+
 @implementation UITableViewCell (XZMocoaTableCell)
 
 @dynamic viewModel;
@@ -26,24 +28,20 @@
     return tableView;
 }
 
-- (void)tableView:(id<XZMocoaTableView>)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
+- (void)tableView:(XZMocoaTableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
     [self.viewModel tableViewCell:self wasSelectedAtIndexPath:indexPath];
 }
 
-- (void)tableView:(id<XZMocoaTableView>)tableView didDeselectRowAtIndexPath:(NSIndexPath *)indexPath {
+- (void)tableView:(XZMocoaTableView *)tableView didDeselectRowAtIndexPath:(NSIndexPath *)indexPath {
     [self.viewModel tableViewCell:self wasDeselectedAtIndexPath:indexPath];
 }
 
-- (void)tableView:(id<XZMocoaTableView>)tableView willDisplayRowAtIndexPath:(NSIndexPath *)indexPath {
+- (void)tableView:(XZMocoaTableView *)tableView willDisplayRowAtIndexPath:(NSIndexPath *)indexPath {
     [self.viewModel tableViewCell:self willBeDisplayedAtIndexPath:indexPath];
 }
 
-- (void)tableView:(id<XZMocoaTableView>)tableView didEndDisplayingRowAtIndexPath:(NSIndexPath *)indexPath {
+- (void)tableView:(XZMocoaTableView *)tableView didEndDisplayingRowAtIndexPath:(NSIndexPath *)indexPath {
     [self.viewModel tableViewCell:self wasEndedDisplayingAtIndexPath:indexPath];
-}
-
-- (void)tableView:(id<XZMocoaTableView>)tableView didEditRowAtIndexPath:(NSIndexPath *)indexPath withEventsName:(XZMocoaEventsName)name completion:(void (^ _Nullable)(BOOL))completion {
-    [self.viewModel tableViewCell:self wasEndedEditingAtIndexPath:indexPath withEventsName:name completion:completion];
 }
 
 @end

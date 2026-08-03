@@ -9,8 +9,8 @@
 #import "XZMocoaViewModel.h"
 #import "XZMocoaView.h"
 #import "XZMocoaTargetActionTable.h"
-#import "XZMocoaModelObserver.h"
-#import "XZMocoaViewModelKeyMappingTable.h"
+#import "XZMocoaKeyObserver.h"
+#import "XZMocoaKeyMappingTable.h"
 #import "XZObjc.h"
 
 @implementation XZMocoaViewModel {
@@ -18,6 +18,7 @@
     XZMocoaTargetActionTable                * _targetActions;
     NSMutableOrderedSet<XZMocoaViewModel *> * _subViewModels;
     __unsafe_unretained XZMocoaViewModel    * _superViewModel;
+    NSOrderedSet *_set;
 }
 
 - (void)dealloc {
@@ -64,36 +65,27 @@
 }
 
 - (UIViewController *)viewController {
-    if ([_view isKindOfClass:UIWindow.class]) {
-        return [(UIWindow *)_view rootViewController];
-    }
-    if ([_view isKindOfClass:UIView.class]) {
-        UIViewController *viewController = (id)_view;
-        do {
-            viewController = (id)((UIView *)viewController).nextResponder;
-        } while (viewController && ![viewController isKindOfClass:UIViewController.class]);
+    UIViewController *viewController = _context.viewController;
+    if (viewController) {
         return viewController;
     }
-    if ([_view isKindOfClass:UIViewController.class]) {
-        return (UIViewController *)_view;
-    }
-    return nil;
+    return _superViewModel.viewController;
 }
 
 - (UINavigationController *)navigationController {
-    UIViewController *viewController = self.viewController;
-    if ([viewController isKindOfClass:UINavigationController.class]) {
-        return (UINavigationController *)viewController;
+    UINavigationController *viewController = _context.navigationController;
+    if (viewController) {
+        return viewController;
     }
-    return viewController.navigationController;
+    return _superViewModel.navigationController;
 }
 
 - (UITabBarController *)tabBarController {
-    UIViewController *viewController = self.viewController;
-    if ([viewController isKindOfClass:UITabBarController.class]) {
-        return (UITabBarController *)viewController;
+    UITabBarController *viewController = _context.tabBarController;
+    if (viewController) {
+        return viewController;
     }
-    return viewController.tabBarController;
+    return _superViewModel.tabBarController;
 }
 
 - (void)ready {
@@ -109,7 +101,7 @@
 
 - (void)prepare {
     if ([self _attachModelObserverIfNeeded:self.model]) {
-        NSArray * const allKeys = [[XZMocoaViewModelKeyMappingTable tableForClass:self.class].keyToMethods allKeys];
+        NSArray * const allKeys = [[XZMocoaKeyMappingTable tableForClass:self.class].keyToMethods allKeys];
         [self model:_model didChangeValuesForKeys:[NSSet setWithArray:allKeys]];
     }
 }
@@ -131,11 +123,11 @@
         if (model == nil) {
             return NO;
         }
-        NSArray * const allKeys = [[XZMocoaViewModelKeyMappingTable tableForClass:self.class].keyToMethods allKeys];
+        NSArray * const allKeys = [[XZMocoaKeyMappingTable tableForClass:self.class].keyToMethods allKeys];
         if (allKeys == nil) {
             return NO;
         }
-        [[XZMocoaModelObserver observerForModel:model] attachReceiver:self forKeys:allKeys];
+        [[XZMocoaKeyObserver observerForModel:model] attachReceiver:self forKeys:allKeys];
         return NO;
     }
     return YES;
@@ -145,7 +137,7 @@
     if (model == nil || ![self shouldObserveModelKeysActively]) {
         return;
     }
-    [[XZMocoaModelObserver observerForModel:model] detachReceiver:self];
+    [[XZMocoaKeyObserver observerForModel:model] detachReceiver:self];
 }
 
 @end
@@ -252,7 +244,7 @@
 - (instancetype)initWithKey:(NSString *)name value:(id)value source:(XZMocoaViewModel *)source {
     self = [super init];
     if (self) {
-        _name   = name.copy ?: XZMocoaEventsNameNone;
+        _key   = name.copy ?: XZMocoaKeyNone;
         _value  = value;
         _source = source;
         _target = source;
@@ -263,27 +255,9 @@
 @end
 
 
-XZMocoaEventsName const XZMocoaEventsNameNone     = @"none";
-XZMocoaEventsName const XZMocoaEventsNameReload   = @"reload";
-XZMocoaEventsName const XZMocoaEventsNameModify   = @"modify";
-XZMocoaEventsName const XZMocoaEventsNameInsert   = @"insert";
-XZMocoaEventsName const XZMocoaEventsNameDelete   = @"delete";
-XZMocoaEventsName const XZMocoaEventsNameSelect   = @"select";
-XZMocoaEventsName const XZMocoaEventsNameDeselect = @"deselect";
-XZMocoaEventsName const XZMocoaEventsNameConfirm  = @"confirm";
-XZMocoaEventsName const XZMocoaEventsNameSubmit   = @"submit";
-XZMocoaEventsName const XZMocoaEventsNameCancel   = @"cancel";
-XZMocoaEventsName const XZMocoaEventsNameValueChanged = @"valueChanged";
-XZMocoaEventsName const XZMocoaEventsNameNavigationBackAction = @"navigationBackAction";
-XZMocoaEventsName const XZMocoaEventsNameNavigationMoreAction = @"navigationMoreAction";
-XZMocoaEventsName const XZMocoaEventsNameViewWillAppear    = @"viewWillAppear";
-XZMocoaEventsName const XZMocoaEventsNameViewDidAppear     = @"viewDidAppear";
-XZMocoaEventsName const XZMocoaEventsNameViewWillDisappear = @"viewWillDisappear";
-XZMocoaEventsName const XZMocoaEventsNameViewDidDisappear  = @"viewDidDisappear";
+@implementation XZMocoaViewModel (XZMocoaKeyEventsChannel)
 
-@implementation XZMocoaViewModel (XZMocoaEventsChannel)
-
-- (void)sendEventsWithName:(XZMocoaEventsName)name value:(id)value {
+- (void)sendEventsWithKey:(XZMocoaKey)name value:(id)value {
     XZMocoaEvents * const events = [XZMocoaEvents eventsWithName:name value:value source:self];
     [self sendEvents:events];
 }
@@ -298,9 +272,6 @@ XZMocoaEventsName const XZMocoaEventsNameViewDidDisappear  = @"viewDidDisappear"
 }
 
 @end
-
-
-XZMocoaKey const XZMocoaKeyNone = @"";
 
 @implementation XZMocoaViewModel (XZMocoaKeyTargetAction)
 
@@ -365,9 +336,7 @@ XZMocoaKey const XZMocoaKeyNone = @"";
 
 @import CoreData;
 
-
-
-@implementation XZMocoaViewModel (XZMocoaModelObserving)
+@implementation XZMocoaViewModel (XZMocoaKeyObserver)
 
 - (BOOL)shouldObserveModelKeysActively {
     return NO;
@@ -382,7 +351,7 @@ XZMocoaKey const XZMocoaKeyNone = @"";
         return;
     }
     
-    XZMocoaViewModelKeyMappingTable * const table = [XZMocoaViewModelKeyMappingTable tableForClass:self.class];
+    XZMocoaKeyMappingTable * const table = [XZMocoaKeyMappingTable tableForClass:self.class];
     if (table == nil) {
         return;
     }
@@ -647,3 +616,21 @@ XZMocoaKey const XZMocoaKeyNone = @"";
 }
 
 @end
+
+XZMocoaKey const XZMocoaKeyNone     = @"XZMocoaKeyNone";
+XZMocoaKey const XZMocoaKeyReload   = @"reload";
+XZMocoaKey const XZMocoaKeyModify   = @"modify";
+XZMocoaKey const XZMocoaKeyInsert   = @"insert";
+XZMocoaKey const XZMocoaKeyDelete   = @"delete";
+XZMocoaKey const XZMocoaKeySelect   = @"select";
+XZMocoaKey const XZMocoaKeyDeselect = @"deselect";
+XZMocoaKey const XZMocoaKeyConfirm  = @"confirm";
+XZMocoaKey const XZMocoaKeySubmit   = @"submit";
+XZMocoaKey const XZMocoaKeyCancel   = @"cancel";
+XZMocoaKey const XZMocoaKeyValueChanged = @"valueChanged";
+XZMocoaKey const XZMocoaKeyNavigationBackAction = @"navigationBackAction";
+XZMocoaKey const XZMocoaKeyNavigationMoreAction = @"navigationMoreAction";
+XZMocoaKey const XZMocoaKeyViewWillAppear    = @"viewWillAppear";
+XZMocoaKey const XZMocoaKeyViewDidAppear     = @"viewDidAppear";
+XZMocoaKey const XZMocoaKeyViewWillDisappear = @"viewWillDisappear";
+XZMocoaKey const XZMocoaKeyViewDidDisappear  = @"viewDidDisappear";

@@ -97,7 +97,7 @@ typedef void(^XZMocoaGroupDelayedUpdates)(__kindof XZMocoaViewModel *self);
 #pragma mark - 处理 SectionViewModel 的事件
 
 - (void)didReceiveEvents:(XZMocoaEvents *)events {
-    if (![events.name isEqualToString:XZMocoaEventsNameReload]) {
+    if (![events.key isEqualToString:XZMocoaKeyReload]) {
         return [super didReceiveEvents:events];
     }
     
