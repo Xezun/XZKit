@@ -130,23 +130,28 @@ public macro key() = #externalMacro(module: "XZKitMacros", type: "XZMocoaKeyMacr
 /// - 修饰 ViewModel 的方法时，若不指定参数，表示绑定与方法参数同名的属性。
 ///
 /// ```swift
-/// // 监听 Model.name 属性，监听的方法为 @bind 所修饰的 ViewModel.name 属性的 setter 方法。
+/// // 监听属性：Model.name
+/// // 监听方法：setter: ViewModel.name
 /// @bind
 /// var name: String?
 ///
-/// // 监听 Model.title 属性，监听的方法为 @bind 所修饰的 ViewModel.name 属性的 setter 方法。
+/// // 监听属性：Model.title
+/// // 监听方法：setter: ViewModel.name
 /// @bind("title")
 /// var name: String?
 ///
-/// // 监听 Model.foobar 属性，监听的方法为 @bind 所修饰的 ViewModel.method(with:) 方法。
+/// // 监听属性：Model.foobar
+/// // 监听方法：ViewModel.method(with:)
 /// @bind
 /// func method(with foobar: Int)
 ///
-/// // 监听 Model.min 和 Model.max 属性，监听的方法为 @bind 所修饰的 ViewModel.method(min:max:) 方法。
+/// // 监听属性：Model.min & Model.max
+/// // 监听方法：ViewModel.method(min:max:)
 /// @bind
 /// func method(min: Int, max: Int)
 ///
-/// // 监听 Model.foo 和 Model.bar 属性，监听的方法为 @bind 所修饰的 ViewModel.foobar(min:max:) 方法。
+/// // 监听属性：Model.foo & Model.bar
+/// // 监听方法：ViewModel.foobar(min:max:)
 /// @bind("foo", "bar")
 /// func foobar(min: Int, max: Int)
 /// ```
@@ -166,35 +171,44 @@ public macro key() = #externalMacro(module: "XZKitMacros", type: "XZMocoaKeyMacr
 /// - 用于 View 时，`@bind` 的第一个参数始终为 KTA 事件名，
 ///
 /// ```swift
-/// // 1. 监听 ViewModel 名为 "text" 的 KTA 事件，监听的方法为 @bind 所修饰对象 nameLabel 的 text 属性的 setter 方法。
+/// // 监听事件：ViewModel 发送的 "text" 事件
+/// // 监听方法：nameLabel 的 #selector(setter: UILabel.text)  方法
 /// @bind
 /// let nameLabel: UILabel
 ///
-/// // 2. 监听 ViewModel 名为 "name" 的 KTA 事件，监听的方法为 @bind 所修饰对象 nameLabel 的 text 属性的 setter 方法。
+/// // 监听事件：ViewModel 发送的 "name" 事件
+/// // 监听方法：nameLabel 的 #selector(setter: UILabel.text)  方法
 /// @bind("name")
 /// let nameLabel: UILabel
 ///
-/// // 3. 监听 ViewModel 名为 "color" 的 KTA 事件，监听的方法为 @bind 所修饰对象 nameLabel 的 textColor 属性的 setter 方法。
+/// // 监听事件：ViewModel 发送的 "color" 事件
+/// // 监听方法：nameLabel 的 #selector(setter: UILabel.textColor)  方法
 /// @bind("color", "textColor")
 /// let nameLabel: UILabel
 ///
-/// // 4. 监听 ViewModel 名为 "textColor" 的 KTA 事件，监听的方法为 @bind 所修饰对象 nameLabel 的 textColor 属性的 setter 方法。
+/// // 监听事件：ViewModel 发送的 "textColor" 事件
+/// // 监听方法：nameLabel 的 #selector(setter: UILabel.textColor) 方法
 /// @bind(key: "textColor")
 /// let nameLabel: UILabel
 ///
-/// // 5. 监听 ViewModel 名为 "color" 的 KTA 事件，监听的方法为 @bind 所修饰对象 nameLabel 的 textColor 属性的 setter 方法。
-/// @bind(key: "color", "textColor") // 与第三条相同
+/// // 监听事件：ViewModel 发送的 "color" 事件
+/// // 监听方法：nameLabel 的 #selector(setter: UILabel.textColor) 方法
+/// @bind(key: "color", "textColor")
 /// let nameLabel: UILabel
 ///
-/// // 6. 监听 ViewModel 名为 "imageURL" 的 KTA 事件，监听的方法为 @bind 所修饰对象 imageView 的 sd_setImageWithURL(_:) 方法。
-/// @bind(key: "imageURL", #selector(sd_setImageWithURL(_:))
+/// // 监听事件：ViewModel 发送的 "imageURL" 事件
+/// // 监听方法：imageView 的 #selector(sd_setImageWithURL(_:) 方法
+/// @bind(key: "imageURL", selector: #selector(sd_setImageWithURL(_:))
 /// let imageView: UIImageView
 ///
-/// // 7. 监听 ViewModel 名为 "imageURL" 的 KTA 事件，监听的方法为视图 View 的 setIconWithURL(_:) 方法。
+/// // 监听事件：ViewModel 发送的 "iconURL" 事件
+/// // 监听方法：View 的 setIconWithURL(_:) 方法
 /// @bind
-/// func setIconWithURL(_ imageURL: URL)
+/// func setIconWithURL(_ iconURL: URL)
 ///
 /// // 8. 监听 ViewModel 名为 "imageURL" 的 KTA 事件，监听的方法为视图 View 的 setIconWithURL(_:) 方法。
+/// // 监听事件：ViewModel 发送的 "imageURL" 事件
+/// // 监听方法：View 的 setIconWithURL(_:) 方法
 /// @bind("imageURL")
 /// func setIconWithURL(_ iconURL: URL)
 /// ```
@@ -203,77 +217,21 @@ public macro bind() = #externalMacro(module: "XZKitMacros", type: "XZMocoaBindMa
 
 /// 为 ViewModel 与 Model 之间，或 View 与 ViewModel 之间建立单向绑定。
 ///
-/// 属性所属的 class 需先用 `@mocoa` 标记。
-///
-/// #### 在 ViewModel 中使用
-///
-/// - 将 Model 的属性 `key` 绑定到宏所标记的 ViewModel 属性或方法
-///
-/// ```swift
-/// // 将 model.desc 绑定到 age 属性方法
-/// @bind("desc")
-/// var age: String?
-/// // 将 model.var 属性，绑定此方法，对应 age 参数
-/// @bind(.var)
-/// func didChange(age: Int) { }
-/// ```
-///
-/// #### 在 View 中使用
-///
-/// - 将 ViewModel.key 属性，绑定到 View 的默认属性或方法
-///
-/// ```swift
-/// // 将 viewModel.name 绑定给 textLabel.text
-/// @bind(.name)
-/// var textLabel: UILabel!
-/// // 将 viewModel.backgroundURL 绑定到此方法
-/// @bind(.backgroundURL)
-/// func setBackgroundImage(with imageURL: URL?) {
-///     backgroundImageView.sd_setImage(with: imageURL)
-/// }
-/// ```
-///
-/// - SeeAlso: ``bind()``
-///
-/// - Parameter key: Model 或 ViewModel 的属性
-@attached(peer, names: arbitrary)
-public macro bind(_ key: XZMocoaKey) = #externalMacro(module: "XZKitMacros", type: "XZMocoaBindMacro")
-
-/// 为 ViewModel 与 Model 之间建立单向绑定。
-///
-/// 属性所属的 class 需先用 `@mocoa` 标记。
-///
-/// > 支持在 ViewModel 中使用，不支持在 View 中使用。
-///
-/// 将 Model 的多个属性，绑定给 ViewModel 的方法，方法参数与属性一一对应。
-///
-/// ```swift
-/// // 将 model 的 var1、var2 属性，绑定此当前方法，对应 min、max 参数
-/// @bind(.var1, .var2)
-/// func didChange(min: Int, max: Int) { }
-/// ```
-///
-/// - SeeAlso: 方法参数名与属性名相同时，可省略 `@bind` 中的参数，详见 ``@bind()`` 不带参数的宏。
+/// - SeeAlso: 详细用法见不带参数的 ``@bind()`` 宏。
 ///
 /// - Parameter key: Model的属性
 @attached(peer, names: arbitrary)
-public macro bind(_ mkey1: XZMocoaKey, _ mkey2: XZMocoaKey...) = #externalMacro(module: "XZKitMacros", type: "XZMocoaBindMacro")
+public macro bind(_ key: XZMocoaKey...) = #externalMacro(module: "XZKitMacros", type: "XZMocoaBindMacro")
 
 /// 为 View 与 ViewModel 之间建立单向绑定。
 ///
-/// 属性所属的 class 需先用 `@mocoa` 标记。
-///
-/// 将 View.key 属性与 ViewModel.key 属性的进行绑定。
-///
-/// - Parameter key: ViewModel 和 View 的属性
-@attached(accessor, names: named(didSet))
+/// - SeeAlso: 详细用法见不带参数的 ``@bind()`` 宏。
+@attached(peer, names: arbitrary)
 public macro bind(key: XZMocoaKey) = #externalMacro(module: "XZKitMacros", type: "XZMocoaBindViewMacro")
 
 /// 为 View 与 ViewModel 之间建立单向绑定。
 ///
-/// 属性所属的 class 需先用 `@mocoa` 标记。
-///
-/// 将 View.vkey 属性与 ViewModel.vmkey 属性进行绑定。
+/// - SeeAlso: 详细用法见不带参数的 ``@bind()`` 宏。
 ///
 /// - Parameters:
 ///   - vmkey: ViewModel 的属性
@@ -283,23 +241,13 @@ public macro bind(key vmKey: XZMocoaKey, _ vkey: XZMocoaKey) = #externalMacro(mo
 
 /// 为 View 与 ViewModel 之间建立单向绑定。
 ///
-/// 属性所属的 class 需先用 `@mocoa` 标记。
-///
-/// 将 View.selector() 方法与 ViewModel.vmkey 属性的进行绑定。
-///
-/// ```swift
-/// // 将 viewModel.imageURL 绑定给 -[imageView setImageWithURL:] 方法
-/// @bind(key: .imageURL, selector: #selector(setImageWithURL:))
-/// var imageView: UIImageView!
-/// ```
-///
-/// > 总结，在 View 中，宏 `@bind` 的第一个参数始终是 ViewModel 的属性，在同名时也是视图的属性。
+/// - SeeAlso: 详细用法见不带参数的 ``@bind()`` 宏。
 ///
 /// - Parameters:
 ///   - vmkey: ViewModel 的属性
 ///   - selector: View 的方法
 @attached(accessor, names: named(didSet))
-public macro bind(key vmKey: XZMocoaKey, _ selector: Selector) = #externalMacro(module: "XZKitMacros", type: "XZMocoaBindViewMacro")
+public macro bind(key vmKey: XZMocoaKey, selector: Selector) = #externalMacro(module: "XZKitMacros", type: "XZMocoaBindViewMacro")
 
 /// 标记方法为 View 或 ViewModel 的角色初始化方法（非对象的初始化方法）。
 ///

@@ -111,11 +111,14 @@ class ViewModel: XZMocoaViewModel {
     
 }
 
+@mocoa
 class View: UIView, XZMocoaView {
     // 绑定 ViewModel 的带 @key 标记属性。
-//    @bind(key: "name", "text")
+    @bind(key: "name", #selector(setter: UILabel.text))
     let nameLabel: UILabel = .init()
 }
+
+let sel: Selector = "setName(_:)"
 
 //
 //let model = Model.init()
