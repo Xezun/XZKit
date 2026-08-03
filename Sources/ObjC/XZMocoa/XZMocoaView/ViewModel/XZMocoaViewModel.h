@@ -37,15 +37,15 @@ NS_SWIFT_UI_ACTOR @protocol XZMocoaViewModel <NSObject>
 @end
 
 /// 视图模型基类。
-///
+///  
 /// 基类为视图模型提供了以下基础能力：
 /// - 延迟初始化的 ready 机制。
 /// - 层级关系。
 /// - 基于层级的 Key Events 事件通道。
 /// - 视图监听视图模型属性的 Key Target Action 机制。
-///
+///  
 /// # 数据监听
-///
+///  
 /// 对数据的监听是 MVVM 设计模式的特色之一，但在 iOS 实际开发中，数据在大部分情形下，都是单向流动的，类似从网络请求到页面展示的场景居多。
 /// 双向的数据流动的业务场景也有，但在开发中并不多。鉴于此，默认情况下 XZMocoa 不监听数据 Model 的变更。
 /// 而对于要监听数据的变化的少量情形，我们可以通过传统的方式处理，比如的 KVO 或通知。
@@ -92,6 +92,12 @@ NS_SWIFT_UI_ACTOR @interface XZMocoaViewModel : NSObject <XZMocoaViewModel> {
 /// @param URL 模块 URL
 /// @param model 数据模型
 + (nullable __kindof XZMocoaViewModel *)viewModelWithURL:(NSURL *)URL model:(nullable id)model NS_SWIFT_NAME(init(_:model:));
+
+/// 通过 XZMocoaModule 对象初始化视图模型。
+/// @param module 模块对象
+/// @param model 数据模型
++ (nullable __kindof XZMocoaViewModel *)viewModelWithModule:(XZMocoaModule *)module model:(nullable id)model NS_SWIFT_NAME(init(_:model:));
+
 
 // MARK: - Ready 机制
 

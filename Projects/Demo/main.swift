@@ -118,11 +118,52 @@ class View: UIView, XZMocoaView {
     let nameLabel: UILabel = .init()
 }
 
+do {
+    let module = #mocoa("https://domain.com/path/to/moudle")
+    module.modelClass = Model.self;
+    module.viewClass = View.self
+    module.viewModelClass = ViewModel.self;
+}
+
+func dataFromServer() -> [String: Any] {
+    return [:]
+}
+
+let superview = UIView()
+
+do {
+let model = Model()
+let viewModel = ViewModel(model: model)
+let view = View(frame: CGRect(x: 0, y: 0, width: 100, height: 100))
+view.viewModel = viewModel
+
+// use the view
+superview.addSubview(view)
+}
+do {
+let module = #mocoa("https://domain.com/path/to/moudle")
+
+// fetch data from server or database
+let data = dataFromServer()
+
+// decode raw data to model
+let model = XZJSON.decode(data, class: module.modelClass)
+
+// create vm
+    let viewModel = XZMocoaViewModel(module, model: model) // module.instantiateViewModel(withModel: model) // or .viewModelClass.init(model: model)
+
+    
 //
-//let model = Model.init()
-//let viewModel = ViewModel.init(model: model)
-//let view = View.init()
-//
-//superview.addSubview(view)
+let view = View.init()
+view.viewModel = viewModel;
+
+superview.addSubview(view)
+}
+
+do {
+    
+}
+
+
 //
 //let  sel = #selector(UIButton.setTitle("", for: .normal));

@@ -63,6 +63,10 @@
     return [module instantiateViewModelWithModel:model];
 }
 
++ (__kindof XZMocoaViewModel *)viewModelWithModule:(XZMocoaModule *)module model:(id)model {
+    return [module instantiateViewModelWithModel:model];
+}
+
 - (UIViewController *)viewController {
     UIViewController *viewController = _context.viewController;
     if (viewController) {
