@@ -66,20 +66,6 @@ NS_ASSUME_NONNULL_END
 NS_ASSUME_NONNULL_BEGIN
 
 #ifdef XZ_MOCOA_REFRESH_SUPPORTED
-/// 列表头部开始刷新。
-///
-/// 当使用 XZRefresh 组件时，发生刷新事件后，将通过事件通道，把刷新视图 refreshView 以此事件名，传递给 viewModel 对象。
-/// - events.source 为 XZMocoaGroupView 子类对象。
-/// - events.value 为 refreshView 对象。
-FOUNDATION_EXPORT XZMocoaKey const XZMocoaKeyHeaderDidBeginRefreshing;
-
-/// 列表尾部开始刷新。
-///
-/// 当使用 XZRefresh 组件时，发生刷新事件后，将通过事件通道，把刷新视图 refreshView 以此事件名，传递给 viewModel 对象。
-/// - events.source 为 XZMocoaGroupView 子类对象。
-/// - events.value 为 refreshView 对象。
-FOUNDATION_EXPORT XZMocoaKey const XZMocoaKeyFooterDidBeginRefreshing;
-
 @interface XZMocoaGroupView (XZRefreshDelegate) <XZRefreshDelegate>
 - (void)scrollView:(UIScrollView *)scrollView headerDidBeginRefreshing:(XZRefreshView *)refreshView;
 - (void)scrollView:(UIScrollView *)scrollView footerDidBeginRefreshing:(XZRefreshView *)refreshView;

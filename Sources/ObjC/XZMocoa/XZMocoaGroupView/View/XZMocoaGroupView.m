@@ -63,9 +63,6 @@
 @end
 
 #ifdef XZ_MOCOA_REFRESH_SUPPORTED
-XZMocoaKey const XZMocoaKeyHeaderDidBeginRefreshing = @"headerDidBeginRefreshing";
-XZMocoaKey const XZMocoaKeyFooterDidBeginRefreshing = @"footerDidBeginRefreshing";
-
 @implementation XZMocoaGroupView (XZRefreshDelegate)
 
 - (void)scrollView:(UIScrollView *)scrollView headerDidBeginRefreshing:(XZRefreshView *)refreshView {

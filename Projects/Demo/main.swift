@@ -113,15 +113,15 @@ class ViewModel: XZMocoaViewModel {
 
 class View: UIView, XZMocoaView {
     // 绑定 ViewModel 的带 @key 标记属性。
-    @bind(key: "name", "text")
+//    @bind(key: "name", "text")
     let nameLabel: UILabel = .init()
 }
 
-
-let model = Model.init()
-let viewModel = ViewModel.init(model: model)
-let view = View.init()
-
-superview.addSubview(view)
-
-let  sel = #selector(UIButton.setTitle("", for: .normal));
+//
+//let model = Model.init()
+//let viewModel = ViewModel.init(model: model)
+//let view = View.init()
+//
+//superview.addSubview(view)
+//
+//let  sel = #selector(UIButton.setTitle("", for: .normal));

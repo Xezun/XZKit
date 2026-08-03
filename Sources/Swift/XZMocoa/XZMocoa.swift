@@ -146,6 +146,78 @@ extension XZMocoaKey {
     public static var prefersLargeTitles: XZMocoaKey {
         return "prefersLargeTitles";
     }
+    
+    // for Key Events Channel
+    
+    public static var reload: XZMocoaKey {
+        return "reload";
+    }
+    public static var modify: XZMocoaKey {
+        return "modify";
+    }
+    public static var insert: XZMocoaKey {
+        return "insert";
+    }
+    public static var delete: XZMocoaKey {
+        return "delete";
+    }
+    public static var select: XZMocoaKey {
+        return "select";
+    }
+    public static var deselect: XZMocoaKey {
+        return "deselect";
+    }
+    public static var confirm: XZMocoaKey {
+        return "confirm";
+    }
+    public static var submit: XZMocoaKey {
+        return "submit";
+    }
+    public static var cancel: XZMocoaKey {
+        return "cancel";
+    }
+    public static var valueChanged: XZMocoaKey {
+        return "valueChanged";
+    }
+    public static var navigationBackAction: XZMocoaKey {
+        return "navigationBackAction";
+    }
+    public static var navigationMoreAction: XZMocoaKey {
+        return "navigationMoreAction";
+    }
+    public static var viewWillAppear: XZMocoaKey {
+        return "viewWillAppear";
+    }
+    public static var viewDidAppear: XZMocoaKey {
+        return "viewDidAppear";
+    }
+    public static var viewWillDisappear: XZMocoaKey {
+        return "viewWillDisappear";
+    }
+    public static var viewDidDisappear: XZMocoaKey {
+        return "viewDidDisappear";
+    }
+
+    // for XZMocoaView
+    
+    public static var model: XZMocoaKey {
+        return "model";
+    }
+    public static var identifier: XZMocoaKey {
+        return "identifier";
+    }
+    public static var viewModel: XZMocoaKey {
+        return "viewModel";
+    }
+    
+    // for XZMocoaGroupView
+    
+    public static var headerDidBeginRefreshing: XZMocoaKey {
+        return "headerDidBeginRefreshing";
+    }
+    public static var footerDidBeginRefreshing: XZMocoaKey {
+        return "footerDidBeginRefreshing";
+    }
 }
 
 extension XZMocoaKey {

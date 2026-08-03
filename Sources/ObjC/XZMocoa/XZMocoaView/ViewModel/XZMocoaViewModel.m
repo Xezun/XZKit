@@ -18,7 +18,6 @@
     XZMocoaTargetActionTable                * _targetActions;
     NSMutableOrderedSet<XZMocoaViewModel *> * _subViewModels;
     __unsafe_unretained XZMocoaViewModel    * _superViewModel;
-    NSOrderedSet *_set;
 }
 
 - (void)dealloc {
@@ -617,7 +616,7 @@
 
 @end
 
-XZMocoaKey const XZMocoaKeyNone     = @"XZMocoaKeyNone";
+XZMocoaKey const XZMocoaKeyNone     = @"";
 XZMocoaKey const XZMocoaKeyReload   = @"reload";
 XZMocoaKey const XZMocoaKeyModify   = @"modify";
 XZMocoaKey const XZMocoaKeyInsert   = @"insert";
@@ -634,3 +633,16 @@ XZMocoaKey const XZMocoaKeyViewWillAppear    = @"viewWillAppear";
 XZMocoaKey const XZMocoaKeyViewDidAppear     = @"viewDidAppear";
 XZMocoaKey const XZMocoaKeyViewWillDisappear = @"viewWillDisappear";
 XZMocoaKey const XZMocoaKeyViewDidDisappear  = @"viewDidDisappear";
+
+// for XZMocoaView
+
+XZMocoaKey const XZMocoaKeyModel      = @"model";
+XZMocoaKey const XZMocoaKeyName       = @"name";
+XZMocoaKey const XZMocoaKeyValue      = @"value";
+XZMocoaKey const XZMocoaKeyIdentifier = @"identifier";
+XZMocoaKey const XZMocoaKeyViewModel  = @"viewModel";
+
+// for XZMocoaGroupView
+
+XZMocoaKey const XZMocoaKeyHeaderDidBeginRefreshing = @"headerDidBeginRefreshing";
+XZMocoaKey const XZMocoaKeyFooterDidBeginRefreshing = @"footerDidBeginRefreshing";

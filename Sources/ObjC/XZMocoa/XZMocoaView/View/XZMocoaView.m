@@ -12,13 +12,6 @@
 #import "UIView+XZKit.h"
 @import ObjectiveC;
 
-XZMocoaKey const XZMocoaKeyModel      = @"model";
-XZMocoaKey const XZMocoaKeyName       = @"name";
-XZMocoaKey const XZMocoaKeyValue      = @"value";
-XZMocoaKey const XZMocoaKeyIdentifier = @"identifier";
-XZMocoaKey const XZMocoaKeyDelegate   = @"delegate";
-
-static const void * const _viewModel = &_viewModel;
 static const void * const _context = &_context;
 
 @interface XZMocoaOptions ()
@@ -322,10 +315,19 @@ static const void * const _context = &_context;
         return;
     }
     
-    XZMocoaModule * const module = options.module;
+    XZMocoaModule * const module         = options.module;
+    Class           const ViewModelClass = module.viewModelClass;
     
-    Class const ViewModelClass = module.viewModelClass;
-    if (!ViewModelClass) {
+    XZMocoaViewModel *viewModel = options[XZMocoaKeyViewModel];
+    if (ViewModelClass) {
+        // 指定了视图模型类型，且参数中的视图模型符合要求
+        if ([viewModel isKindOfClass:ViewModelClass]) {
+            self.viewModel = viewModel;
+            return;
+        }
+    } else if (viewModel) {
+        // 不限制视图模型类型
+        self.viewModel = viewModel;
         return;
     }
     
@@ -338,7 +340,7 @@ static const void * const _context = &_context;
         }
     }
     
-    XZMocoaViewModel *viewModel = [[ViewModelClass alloc] initWithModel:model];
+    viewModel = [[ViewModelClass alloc] initWithModel:model];
     viewModel.module = module;
     self.viewModel = viewModel;
 }

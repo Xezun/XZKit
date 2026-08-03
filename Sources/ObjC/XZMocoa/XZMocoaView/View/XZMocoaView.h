@@ -90,28 +90,6 @@ NS_SWIFT_UI_ACTOR @protocol XZMocoaView <NSObject>
 
 #pragma mark - XZMocoaModuleSupporting
 
-/// 传递给目标页面的数据模型。
-///
-/// 比如在商品列表页，点击商品打开详情页时，可以将商品的数据模型传递给目标页面。
-///
-/// 在使用 Mocoa URL 打开目标页面时，如果目标页面注册了 `viewModelClass` 类型，
-/// 那么 Mocoa 会自动通过此 key 对应的 `model` 为目标页面创建视图模型。
-FOUNDATION_EXPORT XZMocoaKey const XZMocoaKeyModel;
-/// 传递给目标页面参数中 name 字段。
-FOUNDATION_EXPORT XZMocoaKey const XZMocoaKeyName;
-/// 传递给目标页面参数中 value 字段。
-///
-/// 页面传值的通用字段。
-FOUNDATION_EXPORT XZMocoaKey const XZMocoaKeyValue;
-/// 传递给目标页面参数中 identifier 字段。
-///
-/// 通过标识符向页面传值当通用字段。
-FOUNDATION_EXPORT XZMocoaKey const XZMocoaKeyIdentifier;
-/// 传递给目标页面参数中 delegate 字段。
-///
-/// 向目标页面传递接收事件的对象。
-FOUNDATION_EXPORT XZMocoaKey const XZMocoaKeyDelegate;
-
 /// 模块初始化参数。可像字典一样取值。
 /// @code
 /// XZMocoaOptions options;
