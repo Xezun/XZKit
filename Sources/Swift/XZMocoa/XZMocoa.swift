@@ -5,7 +5,8 @@
 //  Created by Xezun on 2025/1/25.
 //
 
-#if SWIFT_PACKAGE
+import Foundation
+
 extension XZMocoaKind: @retroactive ExpressibleByStringLiteral {
     public typealias StringLiteralType = String
     public init(stringLiteral value: String) {
@@ -26,295 +27,184 @@ extension XZMocoaKey: @retroactive ExpressibleByStringLiteral {
         self.init(rawValue: value)
     }
 }
-#else
-extension XZMocoaKind: ExpressibleByStringLiteral {
-    public typealias StringLiteralType = String
-    public init(stringLiteral value: String) {
-        self.init(rawValue: value)
-    }
-}
-
-extension XZMocoaName: ExpressibleByStringLiteral {
-    public typealias StringLiteralType = String
-    public init(stringLiteral value: String) {
-        self.init(rawValue: value)
-    }
-}
-
-extension XZMocoaKey: ExpressibleByStringLiteral {
-    public typealias StringLiteralType = String
-    public init(stringLiteral value: String) {
-        self.init(rawValue: value)
-    }
-}
-#endif
 
 extension XZMocoaKey {
-    public static var `default`: XZMocoaKey {
-        return "default";
+    
+    public var `default`: XZMocoaKey {
+        return XZMocoaKey(self.rawValue + "." + XZMocoaKey.__default.rawValue)
     }
-    public static var contentStatus: XZMocoaKey {
-        return "contentStatus";
+    public var contentStatus: XZMocoaKey {
+        return XZMocoaKey(self.rawValue + "." + XZMocoaKey.__contentStatus.rawValue)
     }
-    public static var status: XZMocoaKey {
-        return "status";
+    public var status: XZMocoaKey {
+        return XZMocoaKey(self.rawValue + "." + XZMocoaKey.__status.rawValue)
     }
-    public static var isChecked: XZMocoaKey {
-        return "isChecked";
+    public var isChecked: XZMocoaKey {
+        return XZMocoaKey(self.rawValue + "." + XZMocoaKey.__isChecked.rawValue)
     }
-    public static var isEnabled: XZMocoaKey {
-        return "isEnabled";
+    public var isEnabled: XZMocoaKey {
+        return XZMocoaKey(self.rawValue + "." + XZMocoaKey.__isEnabled.rawValue)
     }
-    public static var value: XZMocoaKey {
-        return "value";
+    public var value: XZMocoaKey {
+        return XZMocoaKey(self.rawValue + "." + XZMocoaKey.__value.rawValue)
     }
-    public static var name: XZMocoaKey {
-        return "name";
+    public var name: XZMocoaKey {
+        return XZMocoaKey(self.rawValue + "." + XZMocoaKey.__name.rawValue)
     }
-    public static var icon: XZMocoaKey {
-        return "icon";
+    public var icon: XZMocoaKey {
+        return XZMocoaKey(self.rawValue + "." + XZMocoaKey.__icon.rawValue)
     }
-    public static var isHidden: XZMocoaKey {
-        return "isHidden";
+    
+    public var isHidden: XZMocoaKey {
+        return XZMocoaKey(self.rawValue + "." + XZMocoaKey.__isHidden.rawValue)
     }
-    public static var text: XZMocoaKey {
-        return "text";
+    
+    public var text: XZMocoaKey {
+        return XZMocoaKey(self.rawValue + "." + XZMocoaKey.__text.rawValue)
     }
-    public static var font: XZMocoaKey {
-        return "font";
+    public var font: XZMocoaKey {
+        return XZMocoaKey(self.rawValue + "." + XZMocoaKey.__font.rawValue)
     }
-    public static var textColor: XZMocoaKey {
-        return "textColor";
+    public var textColor: XZMocoaKey {
+        return XZMocoaKey(self.rawValue + "." + XZMocoaKey.__textColor.rawValue)
     }
-    public static var shadowColor: XZMocoaKey {
-        return "shadowColor";
+    public var shadowColor: XZMocoaKey {
+        return XZMocoaKey(self.rawValue + "." + XZMocoaKey.__shadowColor.rawValue)
     }
-    public static var attributedText: XZMocoaKey {
-        return "attributedText";
+    public var attributedText: XZMocoaKey {
+        return XZMocoaKey(self.rawValue + "." + XZMocoaKey.__attributedText.rawValue)
     }
-    public static var highlightedTextColor: XZMocoaKey {
-        return "highlightedTextColor";
+    public var highlightedTextColor: XZMocoaKey {
+        return XZMocoaKey(self.rawValue + "." + XZMocoaKey.__highlightedTextColor.rawValue)
     }
-    public static var placeholder: XZMocoaKey {
-        return "placeholder";
+    
+    public var placeholder: XZMocoaKey {
+        return XZMocoaKey(self.rawValue + "." + XZMocoaKey.__placeholder.rawValue)
     }
-    public static var image: XZMocoaKey {
-        return "image";
+    
+    public var image: XZMocoaKey {
+        return XZMocoaKey(self.rawValue + "." + XZMocoaKey.__image.rawValue)
     }
-    public static var highlightedImage: XZMocoaKey {
-        return "highlightedImage";
+    public var highlightedImage: XZMocoaKey {
+        return XZMocoaKey(self.rawValue + "." + XZMocoaKey.__highlightedImage.rawValue)
     }
-    public static var isAnimating: XZMocoaKey {
-        return "isAnimating";
+    public var isAnimating: XZMocoaKey {
+        return XZMocoaKey(self.rawValue + "." + XZMocoaKey.__isAnimating.rawValue)
     }
-    public static var imageURL: XZMocoaKey {
-        return "imageURL";
+    public var imageURL: XZMocoaKey {
+        return XZMocoaKey(self.rawValue + "." + XZMocoaKey.__imageURL.rawValue)
     }
-    public static var title: XZMocoaKey {
-        return "title";
+    
+    public var title: XZMocoaKey {
+        return XZMocoaKey(self.rawValue + "." + XZMocoaKey.__title.rawValue)
     }
-    public static var attributedTitle: XZMocoaKey {
-        return "attributedTitle";
+    public var attributedTitle: XZMocoaKey {
+        return XZMocoaKey(self.rawValue + "." + XZMocoaKey.__attributedTitle.rawValue)
     }
-    public static var subtitle: XZMocoaKey {
-        return "subtitle";
+    
+    public var subtitle: XZMocoaKey {
+        return XZMocoaKey(self.rawValue + "." + XZMocoaKey.__subtitle.rawValue)
     }
-    public static var detailText: XZMocoaKey {
-        return "detailText";
+    public var detailText: XZMocoaKey {
+        return XZMocoaKey(self.rawValue + "." + XZMocoaKey.__detailText.rawValue)
     }
-    public static var startAnimating: XZMocoaKey {
-        return "startAnimating";
+    
+    public var startAnimating: XZMocoaKey {
+        return XZMocoaKey(self.rawValue + "." + XZMocoaKey.__startAnimating.rawValue)
     }
-    public static var stopAnimating: XZMocoaKey {
-        return "stopAnimating";
+    public var stopAnimating: XZMocoaKey {
+        return XZMocoaKey(self.rawValue + "." + XZMocoaKey.__stopAnimating.rawValue)
     }
-    public static var isRefreshing: XZMocoaKey {
-        return "isRefreshing";
+    public var isRefreshing: XZMocoaKey {
+        return XZMocoaKey(self.rawValue + "." + XZMocoaKey.__isRefreshing.rawValue)
     }
-    public static var isRequesting: XZMocoaKey {
-        return "isRequesting";
+    public var isRequesting: XZMocoaKey {
+        return XZMocoaKey(self.rawValue + "." + XZMocoaKey.__isRequesting.rawValue)
     }
-    public static var isLoading: XZMocoaKey {
-        return "isLoading";
+    public var isLoading: XZMocoaKey {
+        return XZMocoaKey(self.rawValue + "." + XZMocoaKey.__isLoading.rawValue)
     }
-    public static var isOn: XZMocoaKey {
-        return "isOn";
+    
+    public var isOn: XZMocoaKey {
+        return XZMocoaKey(self.rawValue + "." + XZMocoaKey.__isOn.rawValue)
     }
-    public static var isTranslucent: XZMocoaKey {
-        return "isTranslucent";
+    
+    public var isTranslucent: XZMocoaKey {
+        return XZMocoaKey(self.rawValue + "." + XZMocoaKey.__isTranslucent.rawValue)
     }
-    public static var prefersLargeTitles: XZMocoaKey {
-        return "prefersLargeTitles";
+    public var prefersLargeTitles: XZMocoaKey {
+        return XZMocoaKey(self.rawValue + "." + XZMocoaKey.__prefersLargeTitles.rawValue)
     }
     
     // for Key Events Channel
     
-    public static var reload: XZMocoaKey {
-        return "reload";
+    public var reload: XZMocoaKey {
+        return XZMocoaKey(self.rawValue + "." + XZMocoaKey.__reload.rawValue)
     }
-    public static var modify: XZMocoaKey {
-        return "modify";
+    public var modify: XZMocoaKey {
+        return XZMocoaKey(self.rawValue + "." + XZMocoaKey.__modify.rawValue)
     }
-    public static var insert: XZMocoaKey {
-        return "insert";
+    public var insert: XZMocoaKey {
+        return XZMocoaKey(self.rawValue + "." + XZMocoaKey.__insert.rawValue)
     }
-    public static var delete: XZMocoaKey {
-        return "delete";
+    public var delete: XZMocoaKey {
+        return XZMocoaKey(self.rawValue + "." + XZMocoaKey.__delete.rawValue)
     }
-    public static var select: XZMocoaKey {
-        return "select";
+    public var select: XZMocoaKey {
+        return XZMocoaKey(self.rawValue + "." + XZMocoaKey.__select.rawValue)
     }
-    public static var deselect: XZMocoaKey {
-        return "deselect";
+    public var deselect: XZMocoaKey {
+        return XZMocoaKey(self.rawValue + "." + XZMocoaKey.__deselect.rawValue)
     }
-    public static var confirm: XZMocoaKey {
-        return "confirm";
+    public var confirm: XZMocoaKey {
+        return XZMocoaKey(self.rawValue + "." + XZMocoaKey.__confirm.rawValue)
     }
-    public static var submit: XZMocoaKey {
-        return "submit";
+    public var submit: XZMocoaKey {
+        return XZMocoaKey(self.rawValue + "." + XZMocoaKey.__submit.rawValue)
     }
-    public static var cancel: XZMocoaKey {
-        return "cancel";
+    public var cancel: XZMocoaKey {
+        return XZMocoaKey(self.rawValue + "." + XZMocoaKey.__cancel.rawValue)
     }
-    public static var valueChanged: XZMocoaKey {
-        return "valueChanged";
+    public var valueChanged: XZMocoaKey {
+        return XZMocoaKey(self.rawValue + "." + XZMocoaKey.__valueChanged.rawValue)
     }
-    public static var navigationBackAction: XZMocoaKey {
-        return "navigationBackAction";
+    public var navigationBackAction: XZMocoaKey {
+        return XZMocoaKey(self.rawValue + "." + XZMocoaKey.__navigationBackAction.rawValue)
     }
-    public static var navigationMoreAction: XZMocoaKey {
-        return "navigationMoreAction";
+    public var navigationMoreAction: XZMocoaKey {
+        return XZMocoaKey(self.rawValue + "." + XZMocoaKey.__navigationMoreAction.rawValue)
     }
-    public static var viewWillAppear: XZMocoaKey {
-        return "viewWillAppear";
+    public var viewWillAppear: XZMocoaKey {
+        return XZMocoaKey(self.rawValue + "." + XZMocoaKey.__viewWillAppear.rawValue)
     }
-    public static var viewDidAppear: XZMocoaKey {
-        return "viewDidAppear";
+    public var viewDidAppear: XZMocoaKey {
+        return XZMocoaKey(self.rawValue + "." + XZMocoaKey.__viewDidAppear.rawValue)
     }
-    public static var viewWillDisappear: XZMocoaKey {
-        return "viewWillDisappear";
+    public var viewWillDisappear: XZMocoaKey {
+        return XZMocoaKey(self.rawValue + "." + XZMocoaKey.__viewWillDisappear.rawValue)
     }
-    public static var viewDidDisappear: XZMocoaKey {
-        return "viewDidDisappear";
+    public var viewDidDisappear: XZMocoaKey {
+        return XZMocoaKey(self.rawValue + "." + XZMocoaKey.__viewDidDisappear.rawValue)
     }
-
+    
     // for XZMocoaView
     
-    public static var model: XZMocoaKey {
-        return "model";
+    public var model: XZMocoaKey {
+        return XZMocoaKey(self.rawValue + "." + XZMocoaKey.__model.rawValue)
     }
-    public static var identifier: XZMocoaKey {
-        return "identifier";
+    public var identifier: XZMocoaKey {
+        return XZMocoaKey(self.rawValue + "." + XZMocoaKey.__identifier.rawValue)
     }
-    public static var viewModel: XZMocoaKey {
-        return "viewModel";
+    public var viewModel: XZMocoaKey {
+        return XZMocoaKey(self.rawValue + "." + XZMocoaKey.__viewModel.rawValue)
     }
     
     // for XZMocoaGroupView
     
-    public static var headerDidBeginRefreshing: XZMocoaKey {
-        return "headerDidBeginRefreshing";
+    public var headerDidBeginRefreshing: XZMocoaKey {
+        return XZMocoaKey(self.rawValue + "." + XZMocoaKey.__headerDidBeginRefreshing.rawValue)
     }
-    public static var footerDidBeginRefreshing: XZMocoaKey {
-        return "footerDidBeginRefreshing";
-    }
-}
-
-extension XZMocoaKey {
-    public var `default`: XZMocoaKey {
-        return "default";
-    }
-    public var contentStatus: XZMocoaKey {
-        return "contentStatus";
-    }
-    public var status: XZMocoaKey {
-        return "status";
-    }
-    public var isChecked: XZMocoaKey {
-        return "isChecked";
-    }
-    public var isEnabled: XZMocoaKey {
-        return "isEnabled";
-    }
-    public var value: XZMocoaKey {
-        return "value";
-    }
-    public var name: XZMocoaKey {
-        return "name";
-    }
-    public var icon: XZMocoaKey {
-        return "icon";
-    }
-    public var isHidden: XZMocoaKey {
-        return "isHidden";
-    }
-    public var text: XZMocoaKey {
-        return "text";
-    }
-    public var font: XZMocoaKey {
-        return "font";
-    }
-    public var textColor: XZMocoaKey {
-        return "textColor";
-    }
-    public var shadowColor: XZMocoaKey {
-        return "shadowColor";
-    }
-    public var attributedText: XZMocoaKey {
-        return "attributedText";
-    }
-    public var highlightedTextColor: XZMocoaKey {
-        return "highlightedTextColor";
-    }
-    public var placeholder: XZMocoaKey {
-        return "placeholder";
-    }
-    public var image: XZMocoaKey {
-        return "image";
-    }
-    public var highlightedImage: XZMocoaKey {
-        return "highlightedImage";
-    }
-    public var isAnimating: XZMocoaKey {
-        return "isAnimating";
-    }
-    public var imageURL: XZMocoaKey {
-        return "imageURL";
-    }
-    public var title: XZMocoaKey {
-        return "title";
-    }
-    public var attributedTitle: XZMocoaKey {
-        return "attributedTitle";
-    }
-    public var subtitle: XZMocoaKey {
-        return "subtitle";
-    }
-    public var detailText: XZMocoaKey {
-        return "detailText";
-    }
-    public var startAnimating: XZMocoaKey {
-        return "startAnimating";
-    }
-    public var stopAnimating: XZMocoaKey {
-        return "stopAnimating";
-    }
-    public var isRefreshing: XZMocoaKey {
-        return "isRefreshing";
-    }
-    public var isRequesting: XZMocoaKey {
-        return "isRequesting";
-    }
-    public var isLoading: XZMocoaKey {
-        return "isLoading";
-    }
-    public var isOn: XZMocoaKey {
-        return "isOn";
-    }
-    public var isTranslucent: XZMocoaKey {
-        return "isTranslucent";
-    }
-    public var prefersLargeTitles: XZMocoaKey {
-        return "prefersLargeTitles";
+    public var footerDidBeginRefreshing: XZMocoaKey {
+        return XZMocoaKey(self.rawValue + "." + XZMocoaKey.__footerDidBeginRefreshing.rawValue)
     }
 }

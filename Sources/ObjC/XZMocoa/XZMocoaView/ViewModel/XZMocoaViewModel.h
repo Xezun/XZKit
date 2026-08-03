@@ -9,18 +9,17 @@
 #import <UIKit/UIKit.h>
 #if __has_include(<XZKit/XZKit.h>)
 #import <XZKit/XZMocoaDefines.h>
+#import <XZKit/XZMocoaKey.h>
 #import <XZKit/XZMocoaModule.h>
 #import <XZKit/XZMocoaModel.h>
 #else
 #import "XZMocoaDefines.h"
+#import "XZMocoaKey.h"
 #import "XZMocoaModule.h"
 #import "XZMocoaModel.h"
 #endif
 
 NS_ASSUME_NONNULL_BEGIN
-
-@protocol XZMocoaViewModelDelegate <NSObject>
-@end
 
 /// 作为 Mocoa MVVM 中的 ViewModel 元素，需要实现的协议。
 NS_SWIFT_UI_ACTOR @protocol XZMocoaViewModel <NSObject>
@@ -161,9 +160,6 @@ NS_SWIFT_UI_ACTOR @interface XZMocoaViewModel : NSObject <XZMocoaViewModel> {
 - (void)didRemoveSubViewModel:(__kindof XZMocoaViewModel *)viewModel;
 
 @end
-
-/// 标识符，区分 Key Events 和 Target Action 事件的标识符。
-typedef NSString *XZMocoaKey NS_EXTENSIBLE_STRING_ENUM;
 
 // MARK: - Key Events Channel
 
@@ -400,70 +396,5 @@ typedef NSString *XZMocoaKey NS_EXTENSIBLE_STRING_ENUM;
 - (void)model:(nullable id)model didChangeValuesForKeys:(NSSet<XZMocoaKey> *)changedKeys;
 
 @end
-
-/// 匿名事件，值为空字符串。如果视图模型只有一个事件，或者没必要细分事件时，可以使用此名称。
-FOUNDATION_EXPORT XZMocoaKey const XZMocoaKeyNone NS_SWIFT_NAME(XZMocoaKey.None) ;
-/// 重载事件。适用情形：通知上级，执行重载模块的操作（数据已经更新）。
-FOUNDATION_EXPORT XZMocoaKey const XZMocoaKeyReload  NS_SWIFT_UNAVAILABLE("");
-/// 更新操作。适用情形：通知上级，执行数据编辑的操作（数据还未编辑）。
-FOUNDATION_EXPORT XZMocoaKey const XZMocoaKeyModify NS_SWIFT_UNAVAILABLE("");
-/// 插入操作。适用情形：通知上级，执行数据插入的操作（新数据未插入）。
-FOUNDATION_EXPORT XZMocoaKey const XZMocoaKeyInsert NS_SWIFT_UNAVAILABLE("");
-/// 删除操作。适用情形：通知上级，执行删除数据的操作（数据还未删除）。
-FOUNDATION_EXPORT XZMocoaKey const XZMocoaKeyDelete NS_SWIFT_UNAVAILABLE("");
-/// 选择操作。比如单选 cell 时，只能由上层控制单选。
-FOUNDATION_EXPORT XZMocoaKey const XZMocoaKeySelect NS_SWIFT_UNAVAILABLE("");
-/// 反选操作。
-FOUNDATION_EXPORT XZMocoaKey const XZMocoaKeyDeselect NS_SWIFT_UNAVAILABLE("");
-FOUNDATION_EXPORT XZMocoaKey const XZMocoaKeyConfirm NS_SWIFT_UNAVAILABLE("");
-FOUNDATION_EXPORT XZMocoaKey const XZMocoaKeySubmit NS_SWIFT_UNAVAILABLE("");
-FOUNDATION_EXPORT XZMocoaKey const XZMocoaKeyCancel NS_SWIFT_UNAVAILABLE("");
-FOUNDATION_EXPORT XZMocoaKey const XZMocoaKeyValueChanged NS_SWIFT_UNAVAILABLE("");
-/// 导航左侧区事件。
-FOUNDATION_EXPORT XZMocoaKey const XZMocoaKeyNavigationBackAction NS_SWIFT_UNAVAILABLE("");
-/// 导航右侧区事件。
-FOUNDATION_EXPORT XZMocoaKey const XZMocoaKeyNavigationMoreAction NS_SWIFT_UNAVAILABLE("");
-FOUNDATION_EXPORT XZMocoaKey const XZMocoaKeyViewWillAppear NS_SWIFT_UNAVAILABLE("");
-FOUNDATION_EXPORT XZMocoaKey const XZMocoaKeyViewDidAppear NS_SWIFT_UNAVAILABLE("");
-FOUNDATION_EXPORT XZMocoaKey const XZMocoaKeyViewWillDisappear NS_SWIFT_UNAVAILABLE("");
-FOUNDATION_EXPORT XZMocoaKey const XZMocoaKeyViewDidDisappear NS_SWIFT_UNAVAILABLE("");
-
-
-/// 传递给目标页面的数据模型。
-///
-/// 比如在商品列表页，点击商品打开详情页时，可以将商品的数据模型传递给目标页面。
-///
-/// 在使用 Mocoa URL 打开目标页面时，如果目标页面注册了 `viewModelClass` 类型，
-/// 那么 Mocoa 会自动通过此 key 对应的 `model` 为目标页面创建视图模型。
-FOUNDATION_EXPORT XZMocoaKey const XZMocoaKeyModel NS_SWIFT_UNAVAILABLE("");
-/// 传递给目标页面参数中 name 字段。
-FOUNDATION_EXPORT XZMocoaKey const XZMocoaKeyName NS_SWIFT_UNAVAILABLE("");
-/// 传递给目标页面参数中 value 字段。
-///
-/// 页面传值的通用字段。
-FOUNDATION_EXPORT XZMocoaKey const XZMocoaKeyValue NS_SWIFT_UNAVAILABLE("");
-/// 传递给目标页面参数中 identifier 字段。
-///
-/// 通过标识符向页面传值当通用字段。
-FOUNDATION_EXPORT XZMocoaKey const XZMocoaKeyIdentifier NS_SWIFT_UNAVAILABLE("");
-/// 传递给目标页面参数中 delegate 字段。
-///
-/// 向目标页面传递接收事件的对象。
-FOUNDATION_EXPORT XZMocoaKey const XZMocoaKeyViewModel NS_SWIFT_UNAVAILABLE("");
-
-
-/// 列表头部开始刷新。
-///
-/// 当使用 XZRefresh 组件时，发生刷新事件后，将通过事件通道，把刷新视图 refreshView 以此事件名，传递给 viewModel 对象。
-/// - events.source 为 XZMocoaGroupView 子类对象。
-/// - events.value 为 refreshView 对象。
-FOUNDATION_EXPORT XZMocoaKey const XZMocoaKeyHeaderDidBeginRefreshing NS_SWIFT_UNAVAILABLE("");
-
-/// 列表尾部开始刷新。
-///
-/// 当使用 XZRefresh 组件时，发生刷新事件后，将通过事件通道，把刷新视图 refreshView 以此事件名，传递给 viewModel 对象。
-/// - events.source 为 XZMocoaGroupView 子类对象。
-/// - events.value 为 refreshView 对象。
-FOUNDATION_EXPORT XZMocoaKey const XZMocoaKeyFooterDidBeginRefreshing NS_SWIFT_UNAVAILABLE("");
 
 NS_ASSUME_NONNULL_END

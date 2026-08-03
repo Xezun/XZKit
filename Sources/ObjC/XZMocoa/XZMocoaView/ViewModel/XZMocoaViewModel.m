@@ -615,34 +615,3 @@
 }
 
 @end
-
-XZMocoaKey const XZMocoaKeyNone     = @"";
-XZMocoaKey const XZMocoaKeyReload   = @"reload";
-XZMocoaKey const XZMocoaKeyModify   = @"modify";
-XZMocoaKey const XZMocoaKeyInsert   = @"insert";
-XZMocoaKey const XZMocoaKeyDelete   = @"delete";
-XZMocoaKey const XZMocoaKeySelect   = @"select";
-XZMocoaKey const XZMocoaKeyDeselect = @"deselect";
-XZMocoaKey const XZMocoaKeyConfirm  = @"confirm";
-XZMocoaKey const XZMocoaKeySubmit   = @"submit";
-XZMocoaKey const XZMocoaKeyCancel   = @"cancel";
-XZMocoaKey const XZMocoaKeyValueChanged = @"valueChanged";
-XZMocoaKey const XZMocoaKeyNavigationBackAction = @"navigationBackAction";
-XZMocoaKey const XZMocoaKeyNavigationMoreAction = @"navigationMoreAction";
-XZMocoaKey const XZMocoaKeyViewWillAppear    = @"viewWillAppear";
-XZMocoaKey const XZMocoaKeyViewDidAppear     = @"viewDidAppear";
-XZMocoaKey const XZMocoaKeyViewWillDisappear = @"viewWillDisappear";
-XZMocoaKey const XZMocoaKeyViewDidDisappear  = @"viewDidDisappear";
-
-// for XZMocoaView
-
-XZMocoaKey const XZMocoaKeyModel      = @"model";
-XZMocoaKey const XZMocoaKeyName       = @"name";
-XZMocoaKey const XZMocoaKeyValue      = @"value";
-XZMocoaKey const XZMocoaKeyIdentifier = @"identifier";
-XZMocoaKey const XZMocoaKeyViewModel  = @"viewModel";
-
-// for XZMocoaGroupView
-
-XZMocoaKey const XZMocoaKeyHeaderDidBeginRefreshing = @"headerDidBeginRefreshing";
-XZMocoaKey const XZMocoaKeyFooterDidBeginRefreshing = @"footerDidBeginRefreshing";

@@ -16,6 +16,7 @@
 
 // XZMocoaDefines
 #import <XZKit/XZMocoaDefines.h>
+#import <XZKit/XZMocoaKey.h>
 #import <XZKit/XZMocoaModule.h>
 #import <XZKit/XZMocoaModuleDomain.h>
 
@@ -67,6 +68,7 @@
 
 // XZMocoaDefines
 #import "XZMocoaDefines.h"
+#import "XZMocoaKey.h"
 #import "XZMocoaModule.h"
 #import "XZMocoaModuleDomain.h"
 
