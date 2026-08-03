@@ -217,21 +217,21 @@ public macro bind() = #externalMacro(module: "XZKitMacros", type: "XZMocoaBindMa
 
 /// 为 ViewModel 与 Model 之间，或 View 与 ViewModel 之间建立单向绑定。
 ///
-/// - SeeAlso: 详细用法见不带参数的 ``@bind()`` 宏。
+/// - SeeAlso: 详细用法见不带参数的 ``bind()`` 宏。
 ///
 /// - Parameter key: Model的属性
 @attached(peer, names: arbitrary)
-public macro bind(_ key: XZMocoaKey...) = #externalMacro(module: "XZKitMacros", type: "XZMocoaBindMacro")
+public macro bind(_ key1: XZMocoaKey, _ key2: XZMocoaKey...) = #externalMacro(module: "XZKitMacros", type: "XZMocoaBindMacro")
 
 /// 为 View 与 ViewModel 之间建立单向绑定。
 ///
-/// - SeeAlso: 详细用法见不带参数的 ``@bind()`` 宏。
-@attached(peer, names: arbitrary)
+/// - SeeAlso: 详细用法见不带参数的 ``bind()`` 宏。
+@attached(accessor, names: named(didSet))
 public macro bind(key: XZMocoaKey) = #externalMacro(module: "XZKitMacros", type: "XZMocoaBindViewMacro")
 
 /// 为 View 与 ViewModel 之间建立单向绑定。
 ///
-/// - SeeAlso: 详细用法见不带参数的 ``@bind()`` 宏。
+/// - SeeAlso: 详细用法见不带参数的 ``bind()`` 宏。
 ///
 /// - Parameters:
 ///   - vmkey: ViewModel 的属性
@@ -241,7 +241,7 @@ public macro bind(key vmKey: XZMocoaKey, _ vkey: XZMocoaKey) = #externalMacro(mo
 
 /// 为 View 与 ViewModel 之间建立单向绑定。
 ///
-/// - SeeAlso: 详细用法见不带参数的 ``@bind()`` 宏。
+/// - SeeAlso: 详细用法见不带参数的 ``bind()`` 宏。
 ///
 /// - Parameters:
 ///   - vmkey: ViewModel 的属性

@@ -374,9 +374,11 @@ extension XZMocoaBindMacro: PeerMacro {
     
 }
 
+/// for @bind(key:)
 public struct XZMocoaBindViewMacro {
     
 }
+
 
 extension XZMocoaBindViewMacro: AccessorMacro {
     

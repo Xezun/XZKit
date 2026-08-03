@@ -30,6 +30,188 @@ extension XZMocoaKey: @retroactive ExpressibleByStringLiteral {
 
 extension XZMocoaKey {
     
+    public static var `default`: XZMocoaKey {
+        return XZMocoaKey.__default
+    }
+    public static var contentStatus: XZMocoaKey {
+        return XZMocoaKey.__contentStatus
+    }
+    public static var status: XZMocoaKey {
+        return XZMocoaKey.__status
+    }
+    public static var isChecked: XZMocoaKey {
+        return XZMocoaKey.__isChecked
+    }
+    public static var isEnabled: XZMocoaKey {
+        return XZMocoaKey.__isEnabled
+    }
+    public static var value: XZMocoaKey {
+        return XZMocoaKey.__value
+    }
+    public static var name: XZMocoaKey {
+        return XZMocoaKey.__name
+    }
+    public static var icon: XZMocoaKey {
+        return XZMocoaKey.__icon
+    }
+
+    public static var isHidden: XZMocoaKey {
+        return XZMocoaKey.__isHidden
+    }
+
+    public static var text: XZMocoaKey {
+        return XZMocoaKey.__text
+    }
+    public static var font: XZMocoaKey {
+        return XZMocoaKey.__font
+    }
+    public static var textColor: XZMocoaKey {
+        return XZMocoaKey.__textColor
+    }
+    public static var shadowColor: XZMocoaKey {
+        return XZMocoaKey.__shadowColor
+    }
+    public static var attributedText: XZMocoaKey {
+        return XZMocoaKey.__attributedText
+    }
+    public static var highlightedTextColor: XZMocoaKey {
+        return XZMocoaKey.__highlightedTextColor
+    }
+
+    public static var placeholder: XZMocoaKey {
+        return XZMocoaKey.__placeholder
+    }
+
+    public static var image: XZMocoaKey {
+        return XZMocoaKey.__image
+    }
+    public static var highlightedImage: XZMocoaKey {
+        return XZMocoaKey.__highlightedImage
+    }
+    public static var isAnimating: XZMocoaKey {
+        return XZMocoaKey.__isAnimating
+    }
+    public static var imageURL: XZMocoaKey {
+        return XZMocoaKey.__imageURL
+    }
+
+    public static var title: XZMocoaKey {
+        return XZMocoaKey.__title
+    }
+    public static var attributedTitle: XZMocoaKey {
+        return XZMocoaKey.__attributedTitle
+    }
+
+    public static var subtitle: XZMocoaKey {
+        return XZMocoaKey.__subtitle
+    }
+    public static var detailText: XZMocoaKey {
+        return XZMocoaKey.__detailText
+    }
+
+    public static var startAnimating: XZMocoaKey {
+        return XZMocoaKey.__startAnimating
+    }
+    public static var stopAnimating: XZMocoaKey {
+        return XZMocoaKey.__stopAnimating
+    }
+    public static var isRefreshing: XZMocoaKey {
+        return XZMocoaKey.__isRefreshing
+    }
+    public static var isRequesting: XZMocoaKey {
+        return XZMocoaKey.__isRequesting
+    }
+    public static var isLoading: XZMocoaKey {
+        return XZMocoaKey.__isLoading
+    }
+
+    public static var isOn: XZMocoaKey {
+        return XZMocoaKey.__isOn
+    }
+
+    public static var isTranslucent: XZMocoaKey {
+        return XZMocoaKey.__isTranslucent
+    }
+    public static var prefersLargeTitles: XZMocoaKey {
+        return XZMocoaKey.__prefersLargeTitles
+    }
+
+    // for Key Events Channel
+
+    public static var reload: XZMocoaKey {
+        return XZMocoaKey.__reload
+    }
+    public static var modify: XZMocoaKey {
+        return XZMocoaKey.__modify
+    }
+    public static var insert: XZMocoaKey {
+        return XZMocoaKey.__insert
+    }
+    public static var delete: XZMocoaKey {
+        return XZMocoaKey.__delete
+    }
+    public static var select: XZMocoaKey {
+        return XZMocoaKey.__select
+    }
+    public static var deselect: XZMocoaKey {
+        return XZMocoaKey.__deselect
+    }
+    public static var confirm: XZMocoaKey {
+        return XZMocoaKey.__confirm
+    }
+    public static var submit: XZMocoaKey {
+        return XZMocoaKey.__submit
+    }
+    public static var cancel: XZMocoaKey {
+        return XZMocoaKey.__cancel
+    }
+    public static var valueChanged: XZMocoaKey {
+        return XZMocoaKey.__valueChanged
+    }
+    public static var navigationBackAction: XZMocoaKey {
+        return XZMocoaKey.__navigationBackAction
+    }
+    public static var navigationMoreAction: XZMocoaKey {
+        return XZMocoaKey.__navigationMoreAction
+    }
+    public static var viewWillAppear: XZMocoaKey {
+        return XZMocoaKey.__viewWillAppear
+    }
+    public static var viewDidAppear: XZMocoaKey {
+        return XZMocoaKey.__viewDidAppear
+    }
+    public static var viewWillDisappear: XZMocoaKey {
+        return XZMocoaKey.__viewWillDisappear
+    }
+    public static var viewDidDisappear: XZMocoaKey {
+        return XZMocoaKey.__viewDidDisappear
+    }
+
+    // for XZMocoaView
+
+    public static var model: XZMocoaKey {
+        return XZMocoaKey.__model
+    }
+    public static var identifier: XZMocoaKey {
+        return XZMocoaKey.__identifier
+    }
+    public static var viewModel: XZMocoaKey {
+        return XZMocoaKey.__viewModel
+    }
+
+    // for XZMocoaGroupView
+
+    public static var headerDidBeginRefreshing: XZMocoaKey {
+        return XZMocoaKey.__headerDidBeginRefreshing
+    }
+    public static var footerDidBeginRefreshing: XZMocoaKey {
+        return XZMocoaKey.__footerDidBeginRefreshing
+    }
+    
+}
+
+extension XZMocoaKey {
+    
     public var `default`: XZMocoaKey {
         return XZMocoaKey(self.rawValue + "." + XZMocoaKey.__default.rawValue)
     }
