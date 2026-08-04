@@ -60,6 +60,7 @@ XZMocoaKey const XZMocoaKeyDeselect = @"deselect";
 XZMocoaKey const XZMocoaKeyConfirm  = @"confirm";
 XZMocoaKey const XZMocoaKeySubmit   = @"submit";
 XZMocoaKey const XZMocoaKeyCancel   = @"cancel";
+XZMocoaKey const XZMocoaKeyClick    = @"click";
 XZMocoaKey const XZMocoaKeyValueChanged = @"valueChanged";
 XZMocoaKey const XZMocoaKeyNavigationBackAction = @"navigationBackAction";
 XZMocoaKey const XZMocoaKeyNavigationMoreAction = @"navigationMoreAction";

@@ -23,6 +23,7 @@ static const void * const _context = &_context;
 + (XZMocoaContext *)contextForView:(nonnull UIResponder *)view;
 - (void)detach:(nonnull XZMocoaViewModel *)viewModel;
 - (void)attach:(nonnull XZMocoaViewModel *)viewModel;
+- (void)sendEventsWithKey:(XZMocoaKey)key value:(id)value;
 @end
 
 #pragma mark - XZMocoaView
@@ -57,9 +58,8 @@ static const void * const _context = &_context;
     
 }
 
-- (void)sendEventsWithKey:(XZMocoaKey)name value:(id)value {
-    XZMocoaEvents * const events = [XZMocoaEvents eventsWithName:name value:value source:self];
-    [self.viewModel didReceiveEvents:events];
+- (void)sendEventsWithKey:(XZMocoaKey)key value:(id)value {
+    [[XZMocoaContext contextForView:self] sendEventsWithKey:key value:value];
 }
 
 @end
@@ -599,6 +599,12 @@ static const void * const _context = &_context;
     } else {
         lastContext->_next = nil;
     }
+}
+
+- (void)sendEventsWithKey:(XZMocoaKey)key value:(id)value {
+    XZMocoaEvents * const events = [XZMocoaEvents eventsWithKey:key value:value source:_view];
+    events->_target = _viewModel;
+    [_viewModel didReceiveEvents:events];
 }
 
 - (UIViewController *)viewController {

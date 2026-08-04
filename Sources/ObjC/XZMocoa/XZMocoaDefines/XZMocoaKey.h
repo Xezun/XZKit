@@ -94,6 +94,7 @@ FOUNDATION_EXPORT XZMocoaKey const XZMocoaKeyDeselect     NS_REFINED_FOR_SWIFT;
 FOUNDATION_EXPORT XZMocoaKey const XZMocoaKeyConfirm      NS_REFINED_FOR_SWIFT;
 FOUNDATION_EXPORT XZMocoaKey const XZMocoaKeySubmit       NS_REFINED_FOR_SWIFT;
 FOUNDATION_EXPORT XZMocoaKey const XZMocoaKeyCancel       NS_REFINED_FOR_SWIFT;
+FOUNDATION_EXPORT XZMocoaKey const XZMocoaKeyClick        NS_REFINED_FOR_SWIFT;
 FOUNDATION_EXPORT XZMocoaKey const XZMocoaKeyValueChanged NS_REFINED_FOR_SWIFT;
 /// 导航左侧区事件。
 FOUNDATION_EXPORT XZMocoaKey const XZMocoaKeyNavigationBackAction NS_REFINED_FOR_SWIFT;

@@ -165,6 +165,9 @@ extension XZMocoaKey {
     public static var cancel: XZMocoaKey {
         return XZMocoaKey.__cancel
     }
+    public static var click: XZMocoaKey {
+        return XZMocoaKey.__click
+    }
     public static var valueChanged: XZMocoaKey {
         return XZMocoaKey.__valueChanged
     }
@@ -346,6 +349,9 @@ extension XZMocoaKey {
     }
     public var cancel: XZMocoaKey {
         return XZMocoaKey(self.rawValue + "." + XZMocoaKey.__cancel.rawValue)
+    }
+    public var click: XZMocoaKey {
+        return XZMocoaKey(self.rawValue + "." + XZMocoaKey.__click.rawValue)
     }
     public var valueChanged: XZMocoaKey {
         return XZMocoaKey(self.rawValue + "." + XZMocoaKey.__valueChanged.rawValue)

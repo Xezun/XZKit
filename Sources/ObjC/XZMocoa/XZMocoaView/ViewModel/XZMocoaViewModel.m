@@ -235,19 +235,16 @@
 @end
 
 
-@implementation XZMocoaEvents {
-    @package
-    __kindof XZMocoaViewModel * __unsafe_unretained _target;
+@implementation XZMocoaEvents
+
++ (instancetype)eventsWithKey:(NSString *)key value:(id)value source:(XZMocoaViewModel *)source {
+    return [[self alloc] initWithKey:key value:value source:source];
 }
 
-+ (instancetype)eventsWithName:(NSString *)name value:(id)value source:(XZMocoaViewModel *)source {
-    return [[self alloc] initWithKey:name value:value source:source];
-}
-
-- (instancetype)initWithKey:(NSString *)name value:(id)value source:(XZMocoaViewModel *)source {
+- (instancetype)initWithKey:(NSString *)key value:(id)value source:(XZMocoaViewModel *)source {
     self = [super init];
     if (self) {
-        _key   = name.copy ?: XZMocoaKeyNone;
+        _key    = key.copy ?: XZMocoaKeyNone;
         _value  = value;
         _source = source;
         _target = source;
@@ -260,8 +257,8 @@
 
 @implementation XZMocoaViewModel (XZMocoaKeyEventsChannel)
 
-- (void)sendEventsWithKey:(XZMocoaKey)name value:(id)value {
-    XZMocoaEvents * const events = [XZMocoaEvents eventsWithName:name value:value source:self];
+- (void)sendEventsWithKey:(XZMocoaKey)key value:(id)value {
+    XZMocoaEvents * const events = [XZMocoaEvents eventsWithKey:key value:value source:self];
     [self sendEvents:events];
 }
 

@@ -63,7 +63,6 @@ NS_SWIFT_UI_ACTOR @protocol XZMocoaViewModel <NSObject>
 /// 5. 数据更新后，也可通过 delegate 通知视图。
 NS_SWIFT_UI_ACTOR @interface XZMocoaViewModel : NSObject <XZMocoaViewModel> {
     @package
-    /// 用于处理 MVC 与 MVVM 的兼容性问题，不要使用此属性来获取视图。
     id<XZMocoaContext> __unsafe_unretained _context;
 }
 
@@ -184,17 +183,20 @@ NS_SWIFT_UI_ACTOR @interface XZMocoaViewModel : NSObject <XZMocoaViewModel> {
 
 
 /// 通道事件。
-@interface XZMocoaEvents : NSObject
+@interface XZMocoaEvents : NSObject {
+    @package
+    __kindof XZMocoaViewModel *_target;
+}
 /// 标记符。
 @property (nonatomic, copy, readonly) XZMocoaKey key;
 /// 事件值。
 @property (nonatomic, strong, readonly, nullable) id value;
-/// 创建事件的对象。
-@property (nonatomic, unsafe_unretained, readonly) id source;
-/// 传递事件的对象。
-@property (nonatomic, unsafe_unretained, readonly) __kindof XZMocoaViewModel *target;
+/// 创建事件的对象，视图或下层视图模型。
+@property (nonatomic, readonly) id source;
+/// 传递事件的对象。视图模型收到事件时，如果 targe == self 那么表示该事件，是视图模型的视图创建的事件。
+@property (nonatomic, readonly) __kindof XZMocoaViewModel *target;
 - (instancetype)init NS_UNAVAILABLE;
-+ (instancetype)eventsWithName:(XZMocoaKey)key value:(nullable id)value source:(id)source NS_SWIFT_NAME(init(_:value:source:));
++ (instancetype)eventsWithKey:(XZMocoaKey)key value:(nullable id)value source:(id)source NS_SWIFT_NAME(init(_:value:source:));
 @end
 
 @interface XZMocoaViewModel (XZMocoaKeyEventsChannel)
