@@ -116,9 +116,9 @@ FOUNDATION_EXPORT XZMocoaKey const XZMocoaKeyModel      NS_REFINED_FOR_SWIFT;
 ///
 /// 通过标识符向页面传值当通用字段。
 FOUNDATION_EXPORT XZMocoaKey const XZMocoaKeyIdentifier NS_REFINED_FOR_SWIFT;
-/// 传递给目标页面参数中 delegate 字段。
+/// 在 XZMocoaOptions 中，通过此键名指定目标模块的视图模型对象，或打开目标模块的源模块。
 ///
-/// 向目标页面传递接收事件的对象。
+/// 如果此键名指定的对象，是目标模块的视图模型类型，那么该对象将直接作为目标模块的视图模型使用。
 FOUNDATION_EXPORT XZMocoaKey const XZMocoaKeyViewModel  NS_REFINED_FOR_SWIFT;
 
 /// 列表头部开始刷新。

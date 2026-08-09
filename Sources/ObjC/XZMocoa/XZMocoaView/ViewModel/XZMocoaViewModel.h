@@ -27,13 +27,15 @@ NS_SWIFT_UI_ACTOR @protocol XZMocoaViewModel <NSObject>
 - (instancetype)initWithModel:(nullable id)model;
 @end
 
-@class XZMocoaTargetActionTable;
+@class XZMocoaTargetActionTable, XZMocoaEvents;
 @protocol XZMocoaView;
 
 @protocol XZMocoaContext <NSObject>
 @property (nonatomic, readonly, nullable) UIViewController       *viewController;
 @property (nonatomic, readonly, nullable) UINavigationController *navigationController;
 @property (nonatomic, readonly, nullable) UITabBarController     *tabBarController;
+/// 模块间传递事件的事件通道。
+- (void)didReceiveEvents:(XZMocoaEvents *)events;
 @end
 
 /// 视图模型基类。

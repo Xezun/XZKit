@@ -18,12 +18,22 @@ static const void * const _context = &_context;
 - (instancetype)initWithModule:(XZMocoaModule *)module url:(NSURL *)url options:(NSDictionary *)options;
 @end
 
+/// View 的替身，用来存储属性和转发事件。
 @interface XZMocoaContext : NSObject <XZMocoaContext>
+/// 所属 view 的视图模型。
 @property (nonatomic, strong, nullable) XZMocoaViewModel *viewModel;
-+ (XZMocoaContext *)contextForView:(nonnull UIResponder *)view;
-- (void)detach:(nonnull XZMocoaViewModel *)viewModel;
-- (void)attach:(nonnull XZMocoaViewModel *)viewModel;
+/// 事件通道。不属于层级关系，但是需要传递事件的两个模块之间。
+@property (nonatomic, weak) XZMocoaViewModel *source;
++ (nonnull XZMocoaContext *)contextForView:(nonnull UIResponder *)view;
++ (nullable XZMocoaContext *)contextIfLoaededForView:(nonnull UIResponder *)view;
+/// 视图关联视图模型。
+- (void)attach:(XZMocoaViewModel *)viewModel;
+/// 视图分离视图模型。
+- (void)detach:(XZMocoaViewModel *)viewModel;
+/// 视图发送事件，如果有视图模型，则事件发生给视图模型，否则发送给 source
 - (void)sendEventsWithKey:(XZMocoaKey)key value:(id)value;
+/// 将事件转发给 source
+- (void)didReceiveEvents:(XZMocoaEvents *)events;
 @end
 
 #pragma mark - XZMocoaView
@@ -31,7 +41,7 @@ static const void * const _context = &_context;
 @implementation UIResponder (XZMocoaView)
 
 - (__kindof XZMocoaViewModel *)viewModel {
-    return [XZMocoaContext contextForView:self].viewModel;
+    return [XZMocoaContext contextIfLoaededForView:self].viewModel;
 }
 
 - (void)setViewModel:(__kindof XZMocoaViewModel * const )newValue {
@@ -59,7 +69,7 @@ static const void * const _context = &_context;
 }
 
 - (void)sendEventsWithKey:(XZMocoaKey)key value:(id)value {
-    [[XZMocoaContext contextForView:self] sendEventsWithKey:key value:value];
+    [[XZMocoaContext contextIfLoaededForView:self] sendEventsWithKey:key value:value];
 }
 
 @end
@@ -315,34 +325,40 @@ static const void * const _context = &_context;
         return;
     }
     
-    XZMocoaModule * const module         = options.module;
-    Class           const ViewModelClass = module.viewModelClass;
+    XZMocoaModule    * const module          = options.module;
+    Class              const ViewModelClass  = module.viewModelClass;
+    XZMocoaViewModel * const sourceViewModel = options[XZMocoaKeyViewModel];
     
-    XZMocoaViewModel *viewModel = options[XZMocoaKeyViewModel];
     if (ViewModelClass) {
-        // 指定了视图模型类型，且参数中的视图模型符合要求
-        if ([viewModel isKindOfClass:ViewModelClass]) {
-            self.viewModel = viewModel;
+        // 视图模型类型与源相同，认为是共用视图模型，不需要建立事件通道
+        if ([sourceViewModel isKindOfClass:ViewModelClass]) {
+            self.viewModel = sourceViewModel;
             return;
         }
-    } else if (viewModel) {
-        // 不限制视图模型类型
-        self.viewModel = viewModel;
-        return;
-    }
-    
-    id model = options[XZMocoaKeyModel];
-    
-    Class const ModelClass = module.modelClass;
-    if (ModelClass) {
-        if (![model isKindOfClass:ModelClass]) {
-            model = [[ModelClass alloc] init];
+        
+        // 判断参数中是否提供了数据模型，且是否可用
+        id model = options[XZMocoaKeyModel];
+        Class const ModelClass = module.modelClass;
+        if (ModelClass) {
+            if ([model isKindOfClass:ModelClass]) {
+                // 数据模型是限定的类型，可以使用
+            } else {
+                // 数据模型不是限定的类型，忽略指定数据，尝试创建一个
+                model = [[ModelClass alloc] init];
+            }
         }
+        
+        // 创建视图模型
+        XZMocoaViewModel * const viewModel = [[ViewModelClass alloc] initWithModel:model];
+        viewModel.module = module;
+        self.viewModel = viewModel;
     }
     
-    viewModel = [[ViewModelClass alloc] initWithModel:model];
-    viewModel.module = module;
-    self.viewModel = viewModel;
+    // 建立事件通道
+    if ([sourceViewModel isKindOfClass:[XZMocoaViewModel class]]) {
+        XZMocoaContext * const context = [XZMocoaContext contextForView:self];
+        context.source = sourceViewModel;
+    }
 }
 
 - (__kindof UIViewController *)presentMocoaURL:(NSURL *)url options:(nullable NSDictionary *)options animated:(BOOL)flag completion:(void (^ _Nullable)(void))completion {
@@ -513,7 +529,6 @@ static const void * const _context = &_context;
 
 - (void)dealloc {
     [self detach:_viewModel];
-    [_viewModel removeTarget:_view action:nil forKey:nil];
 }
 
 + (XZMocoaContext *)contextForView:(UIResponder *)view {
@@ -524,6 +539,10 @@ static const void * const _context = &_context;
     context = [[XZMocoaContext alloc] initWithView:view];
     objc_setAssociatedObject(view, _context, context, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
     return context;
+}
+
++ (XZMocoaContext *)contextIfLoaededForView:(UIResponder *)view {
+    return objc_getAssociatedObject(view, _context);
 }
 
 - (instancetype)initWithView:(UIResponder *)view {
@@ -545,7 +564,6 @@ static const void * const _context = &_context;
     
     // 解除 oldValue 与当前视图的绑定关系
     [self detach:oldValue];
-    [oldValue removeTarget:_view action:nil forKey:nil];
     
     // 保存 newValue
     _viewModel = newValue;
@@ -570,6 +588,7 @@ static const void * const _context = &_context;
     if (viewModel == nil) {
         return;
     }
+    [viewModel removeTarget:_view action:nil forKey:nil];
     
     XZMocoaContext *lastContext = viewModel->_context;
     
@@ -603,8 +622,18 @@ static const void * const _context = &_context;
 
 - (void)sendEventsWithKey:(XZMocoaKey)key value:(id)value {
     XZMocoaEvents * const events = [XZMocoaEvents eventsWithKey:key value:value source:_view];
-    events->_target = _viewModel;
-    [_viewModel didReceiveEvents:events];
+    if (_viewModel) {
+        events->_target = _viewModel;
+        [_viewModel didReceiveEvents:events];
+    } else if (_source) {
+        events->_target = _source;
+        [_source didReceiveEvents:events];
+    }
+}
+
+- (void)didReceiveEvents:(XZMocoaEvents *)events {
+    // 视图模型，没有上层视图模型时，将事件通过事件通道传递。
+    [_source didReceiveEvents:events];
 }
 
 - (UIViewController *)viewController {

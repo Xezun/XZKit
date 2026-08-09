@@ -264,7 +264,8 @@
 
 - (void)sendEvents:(XZMocoaEvents *)events {
     events->_target = self;
-    [self.superViewModel didReceiveEvents:events];
+    id const receiver = self.superViewModel ?: _context;
+    [receiver didReceiveEvents:events];
 }
 
 - (void)didReceiveEvents:(XZMocoaEvents *)events {
