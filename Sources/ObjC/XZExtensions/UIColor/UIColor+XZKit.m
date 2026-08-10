@@ -22,7 +22,7 @@ XZColor const XZColorClear = (XZColor){0, 0, 0, 0};
 
 @end
 
-XZColor XZColorFromString(NSString * _Nullable string, int *error) {
+XZColor XZColorFromString(NSString * _Nullable string, OSStatus *error) {
     NSCParameterAssert(string == nil || [string isKindOfClass:NSString.class]);
     
     if (error) {

@@ -41,24 +41,31 @@ UIKIT_EXTERN XZColor const XZColorClear;
 /// @param string 任意字符串
 /// @param error 如果字符串不包含 3 ～ 8 位连续的十六进制数，那么此值将返回非 0 值
 /// @return XZColor
-UIKIT_EXTERN XZColor XZColorFromString(NSString * _Nullable string, int *error);
+UIKIT_EXTERN XZColor XZColorFromString(NSString * _Nullable string, OSStatus *error) NS_REFINED_FOR_SWIFT;
 
 /// 将 XZColor 转化成如 #AABBCCFF 的字符串形式。
 /// @param color XZColor
-FOUNDATION_STATIC_INLINE NSString *NSStringFromXZColor(XZColor color) {
+FOUNDATION_STATIC_INLINE NSString *NSStringFromXZColor(XZColor color) NS_REFINED_FOR_SWIFT {
     return [NSString stringWithFormat:@"#%02X%02X%02X%02X", color.red, color.green, color.blue, color.alpha];
 }
 
 /// 通过 [0, 255] 颜色通道值，构造 XZColor 结构体。
-FOUNDATION_STATIC_INLINE XZColor XZColorMake(UInt32 red, UInt32 green, UInt32 blue, UInt32 alpha) {
+FOUNDATION_STATIC_INLINE XZColor XZColorMake(UInt32 red, UInt32 green, UInt32 blue, UInt32 alpha) NS_REFINED_FOR_SWIFT {
     return (XZColor){red, green, blue, alpha};
 }
 
 /// 将 RGBA 转换成整数形式。
 /// @param rgba rgba 颜色
-FOUNDATION_STATIC_INLINE NSInteger NSIntegerFromXZColor(XZColor rgba) {
+FOUNDATION_STATIC_INLINE NSInteger NSIntegerFromXZColor(XZColor rgba) NS_REFINED_FOR_SWIFT {
     // 因为 UInt32 位数可能比 NSInteger 少。当 UInt32 首位为 1 时，会被当作负数转换为 NSInteger 导致结果与预期不一致，因此需要先提升位数再位移求和。
     return (((NSInteger)rgba.red << 24) + ((NSInteger)rgba.green << 16) + ((NSInteger)rgba.blue << 8) + rgba.alpha);
+}
+
+/// 将 RGBA 转换成整数形式。
+/// @param rgba rgba 颜色
+FOUNDATION_STATIC_INLINE UInt32 UInt32FromXZColor(XZColor rgba) NS_REFINED_FOR_SWIFT {
+    // 因为 UInt32 位数可能比 NSInteger 少。当 UInt32 首位为 1 时，会被当作负数转换为 NSInteger 导致结果与预期不一致，因此需要先提升位数再位移求和。
+    return ((rgba.red << 24) + (rgba.green << 16) + (rgba.blue << 8) + rgba.alpha);
 }
 
 /// 将 UIColor 转化成 #RRGGBBAA 形式的十六进制字符串。
