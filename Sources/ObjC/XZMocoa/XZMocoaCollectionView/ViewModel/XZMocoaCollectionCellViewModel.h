@@ -38,14 +38,14 @@ NS_ASSUME_NONNULL_BEGIN
 ///   - collectionView: 视图所在的容器视图
 ///   - cell: 发送事件的视图
 ///   - indexPath: 视图在容器视图中的位置
-- (void)collectionViewCell:(UICollectionViewCell *)cell willBeDisplayAtIndexPath:(NSIndexPath *)indexPath;
+- (void)collectionViewCell:(UICollectionViewCell *)cell willBeDisplayedAtIndexPath:(NSIndexPath *)indexPath;
 
 /// 收到来自 Cell 视图的隐藏事件，默认不执行任何操作。
 /// - Parameters:
 ///   - collectionView: 视图所在的容器视图
 ///   - cell: 发送事件的视图
 ///   - indexPath: 视图在容器视图中的位置
-- (void)collectionViewCell:(UICollectionViewCell *)cell wasEndedDisplayingAtIndexPath:(NSIndexPath*)indexPath;
+- (void)collectionViewCell:(UICollectionViewCell *)cell wasEndedDisplayingAtIndexPath:(NSIndexPath *)indexPath;
 
 @end
 

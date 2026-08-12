@@ -26,7 +26,7 @@ NS_SWIFT_NAME(XZMocoaModule.Domain) @interface XZMocoaModuleDomain : NSObject
 /// 获取指定域名下的模块管理对象。
 /// @note 该方法返回的是单例对象。
 /// - Parameter name: 域名
-+ (XZMocoaModuleDomain *)doaminNamed:(NSString *)name NS_SWIFT_NAME(init(named:));
++ (XZMocoaModuleDomain *)domainNamed:(NSString *)name NS_SWIFT_NAME(init(named:));
 
 /// 域名。
 @property (nonatomic, copy, readonly) NSString *name;

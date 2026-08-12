@@ -150,7 +150,7 @@ typedef NS_ENUM(NSUInteger, XZMocoaModuleViewForm) {
 /// @param name 名称
 - (void)setSubmodule:(XZMocoaModule *)newSubmodule forKind:(XZMocoaKind)kind forName:(XZMocoaName)name;
 
-/// 获取指定分类下的子模块的的 XZMocoaModule 对象，非懒加载。
+/// 获取指定分类下的子模块的 XZMocoaModule 对象，非懒加载。
 /// @param kind 分类
 /// @param name 名称
 - (nullable XZMocoaModule *)submoduleIfLoadedForKind:(XZMocoaKind)kind forName:(XZMocoaName)name;
@@ -198,7 +198,7 @@ typedef NS_ENUM(NSUInteger, XZMocoaModuleViewForm) {
 /// @attention
 /// 此属性仅用于表示 UITableView 或 UICollectionView 模块的 XZMocoaModule 对象。
 /// @discussion
-/// 此属性等同于`[table submoduleForName:XZMocoaNameDefault forKind:XZMocoaKindDefault]`。
+/// 此属性等同于`[table submoduleForKind:XZMocoaKindDefault forName:XZMocoaNameDefault]`。
 @property (nonatomic, strong) XZMocoaModule *section;
 
 /// 获取 UITableView 或 UICollectionView 模块的指定名称 section 模块。
@@ -207,7 +207,7 @@ typedef NS_ENUM(NSUInteger, XZMocoaModuleViewForm) {
 /// @attention
 /// 此方法仅用于表示 UITableView 或 UICollectionView 模块的 XZMocoaModule 对象。
 /// @discussion
-/// 此方法等同于`[table submoduleForName:name forKind:XZMocoaKindDefault]`。
+/// 此方法等同于`[table submoduleForKind:XZMocoaKindDefault forName:name]`。
 /// @param name 模块名称
 - (XZMocoaModule *)sectionForName:(XZMocoaName)name;
 

@@ -20,14 +20,14 @@ static NSMutableDictionary<NSString *, XZMocoaModuleDomain *> *_domainTable = ni
     if (path == nil || path.length == 0) {
         path = @"/";
     }
-    return [[self doaminNamed:url.host] moduleForPath:path];
+    return [[self domainNamed:url.host] moduleForPath:path];
 }
 
-+ (XZMocoaModuleDomain *)doaminForName:(NSString *)name {
-    return [self doaminNamed:name];
++ (XZMocoaModuleDomain *)domainForName:(NSString *)name {
+    return [self domainNamed:name];
 }
 
-+ (XZMocoaModuleDomain *)doaminNamed:(NSString *)name {
++ (XZMocoaModuleDomain *)domainNamed:(NSString *)name {
     NSParameterAssert(name && name.length > 0);
     
     static dispatch_once_t onceToken;

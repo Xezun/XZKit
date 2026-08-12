@@ -10,7 +10,7 @@ import SwiftSyntaxMacros
 import SwiftSyntax
 import Foundation
 
-/// 宏 `#module(URL)` 的实现。
+/// 宏 `#mocoa(URL)` 的实现。
 public struct XZMocoaModuleMacro: ExpressionMacro {
     
     public static func expansion(of node: some FreestandingMacroExpansionSyntax, in context: some MacroExpansionContext) throws -> ExprSyntax {

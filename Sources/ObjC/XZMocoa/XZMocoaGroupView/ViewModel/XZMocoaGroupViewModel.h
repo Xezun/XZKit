@@ -63,30 +63,30 @@ NS_ASSUME_NONNULL_BEGIN
 - (void)reloadData;
 
 /// 指定 section 的数据发生更新后，调用此方法以重载该 section 的视图模型。
-/// @param section 数据发生更新的行
+/// @param section 数据发生更新的位置
 - (void)reloadSectionAtIndex:(NSInteger)section;
 
 /// 新增指定 section 的数据后，调用此方法以构造该 section 的视图模型。
-/// @param section 新增的行
+/// @param section 新增的位置
 - (void)insertSectionAtIndex:(NSInteger)section;
 
-/// 指定 section 的数据更新后，调用此方法以重载该 section 的视图模型。
-/// @param section 数据发生更新的行
+/// 删除指定 section 的数据后，调用此方法以移除该 section 的视图模型。
+/// @param section 被删除的位置
 - (void)deleteSectionAtIndex:(NSInteger)section;
 
 /// 指定 sections 的数据更新后，调用此方法以重载该 sections 的视图模型。
-/// @param sections 数据发生更新的行
+/// @param sections 数据发生更新的位置
 - (void)reloadSectionsAtIndexes:(nullable NSIndexSet *)sections;
 
 /// 新增指定 sections 的数据后，调用此方法以构造该 sections 的视图模型。
-/// @param sections 新增的行
+/// @param sections 新增的位置
 - (void)insertSectionsAtIndexes:(nullable NSIndexSet *)sections;
 
-/// 指定 sections 的数据更新后，调用此方法以重载该 sections 的视图模型。
-/// @param sections 数据发生更新的行
+/// 删除指定 sections 的数据后，调用此方法以移除该 sections 的视图模型。
+/// @param sections 被删除的位置
 - (void)deleteSectionsAtIndexes:(nullable NSIndexSet *)sections;
 
-/// 移动行 section 到新行 newSection 处。
+/// 移动 section 到新位置 newSection 处。
 /// @param section 移动前的位置
 /// @param newSection 移动后的位置
 - (void)moveSectionAtIndex:(NSInteger)section toIndex:(NSInteger)newSection;
@@ -94,7 +94,7 @@ NS_ASSUME_NONNULL_BEGIN
 // MARK: - 视图模型的事件派发，子类必须重写并根据实际去实现
 
 // 如下 -did 方法，表示对应的事件已经发生，需要更新视图对应的视图了。
-// 子类应该重新下面的方法，并更新视图。
+// 子类应该重写下面的方法，并更新视图。
 
 - (void)didReloadData;
 - (void)didDeselectCellAtIndexPath:(NSIndexPath *)indexPath animated:(BOOL)animated;

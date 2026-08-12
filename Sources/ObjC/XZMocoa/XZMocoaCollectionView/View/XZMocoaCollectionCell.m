@@ -28,7 +28,7 @@
 }
 
 - (void)collectionView:(XZMocoaCollectionView *)collectionView willDisplayItemAtIndexPath:(NSIndexPath *)indexPath {
-    [self.viewModel collectionViewCell:self willBeDisplayAtIndexPath:indexPath];
+    [self.viewModel collectionViewCell:self willBeDisplayedAtIndexPath:indexPath];
 }
 
 - (void)collectionView:(XZMocoaCollectionView *)collectionView didEndDisplayingItemAtIndexPath:(NSIndexPath *)indexPath {

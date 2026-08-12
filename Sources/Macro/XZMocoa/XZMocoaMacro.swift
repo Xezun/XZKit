@@ -30,7 +30,7 @@ public struct XZMocoaMacro {
     
 }
 
-/// .m  => 检查被 `@mocoa` 标记的的类是否继承自 NSObject 并添加 `@objc` 标记。
+/// .m  => 检查被 `@mocoa` 标记的类是否继承自 NSObject 并添加 `@objc` 标记。
 extension XZMocoaMacro: PeerMacro {
     
     public static func expansion(of node: AttributeSyntax, providingPeersOf declaration: some DeclSyntaxProtocol, in context: some MacroExpansionContext) throws -> [DeclSyntax] {

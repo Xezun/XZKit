@@ -60,7 +60,7 @@ public macro mocoa(_ role: XZMocoaRole) = #externalMacro(module: "XZKitMacros", 
 /// 角色命名规范：
 /// - ViewModel 角色：继承自 XZMocoaViewModel 或以 ViewModel 结尾
 /// - Model 角色：继承自 XZMocoaModel 或以 Model 结尾
-/// - View 角色：继承自 UIView、UIViewController、XZMocoaView 或以 View/Controller/Cell/Bar 的结尾
+/// - View 角色：继承自 UIView、UIViewController、XZMocoaView 或以 View/Controller/Cell/Bar 结尾
 ///
 /// ```swift
 /// // 自动推断为 View 角色
@@ -81,7 +81,7 @@ public macro mocoa() = #externalMacro(module: "XZKitMacros", type: "XZMocoaMacro
 ///
 /// 属性所属的 class 需先用 `@mocoa` 标记。
 ///
-/// 被标记的属性，将变为计算属性，并同时生成带下划的同名属性来存储属性值。
+/// 被标记的属性，将变为计算属性，并同时生成带下划线的同名属性来存储属性值。
 /// ```swift
 /// @key
 /// var name: String = "John"
@@ -206,9 +206,6 @@ public macro key() = #externalMacro(module: "XZKitMacros", type: "XZMocoaKeyMacr
 /// @bind
 /// func setIconWithURL(_ iconURL: URL)
 ///
-/// // 8. 监听 ViewModel 名为 "imageURL" 的 KTA 事件，监听的方法为视图 View 的 setIconWithURL(_:) 方法。
-/// // 监听事件：ViewModel 发送的 "imageURL" 事件
-/// // 监听方法：View 的 setIconWithURL(_:) 方法
 /// @bind("imageURL")
 /// func setIconWithURL(_ iconURL: URL)
 /// ```
@@ -240,7 +237,7 @@ public macro bind(tintColor key: XZMocoaKey) = #externalMacro(module: "XZKitMacr
 @attached(accessor, names: named(didSet))
 public macro bind(backgroundColor key: XZMocoaKey) = #externalMacro(module: "XZKitMacros", type: "XZMocoaBindViewMacro")
 
-// MARK: - UILabel
+// MARK: - UIControl
 
 /// 建立从 ViewModel.{key} 到 View.isEnabled 的单向绑定关系。
 @attached(accessor, names: named(didSet))
@@ -254,7 +251,7 @@ public macro bind(isSelected key: XZMocoaKey) = #externalMacro(module: "XZKitMac
 @attached(accessor, names: named(didSet))
 public macro bind(isHighlighted key: XZMocoaKey) = #externalMacro(module: "XZKitMacros", type: "XZMocoaBindViewMacro")
 
-// MARK: - UIControl
+// MARK: - UILabel
 
 /// 建立从 ViewModel.{key} 到 View.text 的单向绑定关系。
 @attached(accessor, names: named(didSet))
@@ -308,6 +305,8 @@ public macro bind(isSelectable key: XZMocoaKey) = #externalMacro(module: "XZKitM
 @attached(accessor, names: named(didSet))
 public macro bind(value key: XZMocoaKey) = #externalMacro(module: "XZKitMacros", type: "XZMocoaBindViewMacro")
 
+// MARK: - UISwitch
+
 /// 建立从 ViewModel.{key} 到 View.isOn 的单向绑定关系。
 @attached(accessor, names: named(didSet))
 public macro bind(isOn key: XZMocoaKey) = #externalMacro(module: "XZKitMacros", type: "XZMocoaBindViewMacro")
@@ -324,11 +323,11 @@ public macro bind(attributedTitle key: XZMocoaKey, for state: UIControl.State) =
 
 /// 建立从 ViewModel.{key} 到 View.titleColor 的单向绑定关系。
 @attached(accessor, names: named(didSet))
-public macro bind(titleColor key: XZMocoaKey, for state: UIControl.State ) = #externalMacro(module: "XZKitMacros", type: "XZMocoaBindViewMacro")
+public macro bind(titleColor key: XZMocoaKey, for state: UIControl.State) = #externalMacro(module: "XZKitMacros", type: "XZMocoaBindViewMacro")
 
 /// 建立从 ViewModel.{key} 到 View.titleShadowColor 的单向绑定关系。
 @attached(accessor, names: named(didSet))
-public macro bind(titleShadowColor key: XZMocoaKey, for state: UIControl.State ) = #externalMacro(module: "XZKitMacros", type: "XZMocoaBindViewMacro")
+public macro bind(titleShadowColor key: XZMocoaKey, for state: UIControl.State) = #externalMacro(module: "XZKitMacros", type: "XZMocoaBindViewMacro")
 
 /// 建立从 ViewModel.{key} 到 View.image 的单向绑定关系。
 @attached(accessor, names: named(didSet))

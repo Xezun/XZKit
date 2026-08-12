@@ -62,7 +62,7 @@ NS_SWIFT_UI_ACTOR @protocol XZMocoaViewModel <NSObject>
 /// 3. 数据在上层视图模型更新后，通过协议定义监听方法，上层视图模型直接调用下层视图模型的协议方法，其实就是代理机制。
 /// 4. 数据在上层视图模型更新后，下层视图模型也可以通过 KVO 监听。
 /// 5. 数据更新后，视图模型通过 target-action 机制，通知视图渲染。
-/// 5. 数据更新后，也可通过 delegate 通知视图。
+/// 6. 数据更新后，也可通过 delegate 通知视图。
 NS_SWIFT_UI_ACTOR @interface XZMocoaViewModel : NSObject <XZMocoaViewModel> {
     @package
     id<XZMocoaContext> __unsafe_unretained _context;
@@ -128,7 +128,7 @@ NS_SWIFT_UI_ACTOR @interface XZMocoaViewModel : NSObject <XZMocoaViewModel> {
 /// - 子类重写应调用`super`实现。
 /// - 在此方法中，视图模型 isReady 始终为 NO 的状态。
 /// - 在此方法中创建添加下层视图模型，不需要发送`-ready`消息。
-/// - 此方法执行时，视图模型尚为与视图关联，即视图模型在初始化之后，才会被视图所使用。
+/// - 此方法执行时，视图模型尚未与视图关联，即视图模型在初始化之后，才会被视图所使用。
 - (void)prepare;
 
 @end
@@ -195,7 +195,7 @@ NS_SWIFT_UI_ACTOR @interface XZMocoaViewModel : NSObject <XZMocoaViewModel> {
 @property (nonatomic, strong, readonly, nullable) id value;
 /// 创建事件的对象，视图或下层视图模型。
 @property (nonatomic, readonly) id source;
-/// 传递事件的对象。视图模型收到事件时，如果 targe == self 那么表示该事件，是视图模型的视图创建的事件。
+/// 传递事件的对象。视图模型收到事件时，如果 target == self 那么表示该事件，是视图模型的视图创建的事件。
 @property (nonatomic, readonly) __kindof XZMocoaViewModel *target;
 - (instancetype)init NS_UNAVAILABLE;
 + (instancetype)eventsWithKey:(XZMocoaKey)key value:(nullable id)value source:(id)source NS_SWIFT_NAME(init(_:value:source:));
@@ -256,7 +256,7 @@ NS_SWIFT_UI_ACTOR @interface XZMocoaViewModel : NSObject <XZMocoaViewModel> {
 /// @code
 /// - (void)action;
 /// - (void)didChangeValue:(nullable id)value;
-/// - (void)key:(XZMocoaKey *)key didChangeValue:(nullable id)value;
+/// - (void)key:(XZMocoaKey)key didChangeValue:(nullable id)value;
 /// - (void)viewModel:(XZMocoaViewModel *)sender key:(XZMocoaKey)key didChangeValue:(nullable id)value;
 /// @endcode
 ///

@@ -131,7 +131,7 @@ public struct XZMocoaBindMacro {
             }
             
         default:
-            throw XZMacroError(message: "@bind: 参数错误，仅支持两个个参数")
+            throw XZMacroError(message: "@bind: 参数错误，仅支持两个参数")
         }
         
         return (selector, vmkey)
@@ -160,9 +160,10 @@ public struct XZMocoaBindMacro {
         return statements
     }
     
-    /// 获取被 @bind(key) 修饰的方法中，获取
-    /// selector:2、方法名
-    /// key: 宏参数key，或者方法的第一个参数名
+    /// 获取被 `@bind(key)` 修饰的方法的绑定参数。
+    /// - Returns:
+    ///   - selector: 方法选择器
+    ///   - keys: 宏参数 key 列表，若宏未指定参数，则为方法参数名列表
     public static func viewBindArguments(forMacro macroNode: SwiftSyntax.AttributeSyntax, forFunction declaration: FunctionDeclSyntax) throws -> (selector: String, keys: [String]) {
         var keys = [String]()
         

@@ -35,11 +35,11 @@ public struct XZMocoaKeyMacro {
             }
             return (name, nil)
         }
-        return try arguments(froMarco: macroArguments, forVariable: expression)
+        return try arguments(fromMacro: macroArguments, forVariable: expression)
     }
     
     /// 解析宏 `@key` 的参数。
-    private static func arguments(froMarco arguments: SwiftSyntax.AttributeSyntax.Arguments, forVariable expression: PatternBindingSyntax) throws -> (name: String, initialValue: String?) {
+    private static func arguments(fromMacro arguments: SwiftSyntax.AttributeSyntax.Arguments, forVariable expression: PatternBindingSyntax) throws -> (name: String, initialValue: String?) {
         switch arguments {
         case .argumentList(let arguments):
             switch arguments.count {

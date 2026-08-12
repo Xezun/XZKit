@@ -35,11 +35,12 @@ NS_ASSUME_NONNULL_BEGIN
 /// 接收来自下级的 XZMocoaKeyReload 事件，并刷新视图，如果在批量更新的过程中，视图刷新可能会延迟。
 - (void)didReceiveEvents:(XZMocoaEvents *)events;
 
-/// 所有 cell 视图模型。这是一个计算属性，除非遍历所有 cell 对象，请尽量避免直接使用。
+/// 返回指定 kind 类型、指定位置 index 的 supplementary 视图模型。
 - (nullable __kindof XZMocoaGroupSectionSupplementaryViewModel *)viewModelForSupplementaryElementOfKind:(XZMocoaKind)kind atIndex:(NSInteger)index;
 /// 直接返回了内部对象，外部请勿修改，使用请自行 copy 。
 @property (nonatomic, readonly) NSDictionary<XZMocoaKind, NSArray<__kindof XZMocoaGroupSectionSupplementaryViewModel *> *> *supplementaryViewModels;
 
+/// 所有 cell 视图模型。这是一个计算属性，每次访问都会构建新数组，除非需要遍历所有 cell 对象，请尽量避免直接使用。
 @property (nonatomic, copy, readonly) NSArray<__kindof XZMocoaGroupCellViewModel *> *cellViewModels;
 
 /// 返回 YES 表示 header/cell/footer 都没有。
@@ -87,7 +88,7 @@ NS_ASSUME_NONNULL_BEGIN
 /// @param rows 删除的行
 - (void)deleteCellsAtIndexes:(nullable NSIndexSet *)rows;
 
-/// 移动视图模型的位置。移动行 row 到新行 newRow 处。
+/// 移动视图模型的位置，将 row 位置的视图模型移动到 newRow 位置。
 /// @note 执行此方法前，请确保相应的数据已移动。
 /// @param row 移动前的位置
 /// @param newRow 移动后的位置

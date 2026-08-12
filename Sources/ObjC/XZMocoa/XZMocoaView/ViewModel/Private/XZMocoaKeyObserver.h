@@ -18,7 +18,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 /// 添加 keys 的事件接收者。
 ///
-/// 在此方法返回前，接收者会立即接收到新添加的 keys 的事件，不包含已经观察中的 keys 。
+/// 在此方法返回前，接收者会立即接收到新添加的 keys 的事件，不包含已在观察中的 keys 。
 - (void)attachReceiver:(XZMocoaViewModel *)viewModel forKeys:(NSArray<NSString *> *)keys;
 /// 移除接收者。
 - (void)detachReceiver:(XZMocoaViewModel *)viewModel;

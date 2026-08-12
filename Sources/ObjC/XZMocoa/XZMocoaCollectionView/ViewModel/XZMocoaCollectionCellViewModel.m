@@ -38,7 +38,7 @@
     
 }
 
-- (void)collectionViewCell:(UICollectionViewCell *)cell willBeDisplayAtIndexPath:(NSIndexPath *)indexPath {
+- (void)collectionViewCell:(UICollectionViewCell *)cell willBeDisplayedAtIndexPath:(NSIndexPath *)indexPath {
     
 }
 

@@ -1,5 +1,5 @@
 //
-//  XZMocoa.m
+//  XZMocoaModule.m
 //  XZMocoa
 //
 //  Created by Xezun on 2021/8/13.
@@ -55,7 +55,7 @@ FOUNDATION_STATIC_INLINE NSString *XZMocoaPathCreate(XZMocoaKind kind, XZMocoaNa
         return nil;
     }
     
-    XZMocoaModuleDomain * const domain = [XZMocoaModuleDomain doaminNamed:host];
+    XZMocoaModuleDomain * const domain = [XZMocoaModuleDomain domainNamed:host];
     if (!domain.provider) {
         domain.provider = (id)self;
     }
@@ -525,7 +525,7 @@ FOUNDATION_STATIC_INLINE NSString *XZMocoaPathCreate(XZMocoaKind kind, XZMocoaNa
         submodule = [[XZMocoaModule alloc] initWithURL:submoduleURL];
         _namedModules[name] = submodule;
         // 在 domain 中注册新创建的 module
-        XZMocoaModuleDomain *domain = [XZMocoaModuleDomain doaminNamed:submoduleURL.host];
+        XZMocoaModuleDomain *domain = [XZMocoaModuleDomain domainNamed:submoduleURL.host];
         [domain setModule:submodule forPath:submoduleURL.path];
     }
     return submodule;

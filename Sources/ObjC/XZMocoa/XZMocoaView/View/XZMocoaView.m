@@ -25,7 +25,7 @@ static const void * const _context = &_context;
 /// 事件通道。不属于层级关系，但是需要传递事件的两个模块之间。
 @property (nonatomic, weak) XZMocoaViewModel *source;
 + (nonnull XZMocoaContext *)contextForView:(nonnull UIResponder *)view;
-+ (nullable XZMocoaContext *)contextIfLoaededForView:(nonnull UIResponder *)view;
++ (nullable XZMocoaContext *)contextIfLoadedForView:(nonnull UIResponder *)view;
 /// 视图关联视图模型。
 - (void)attach:(XZMocoaViewModel *)viewModel;
 /// 视图分离视图模型。
@@ -41,7 +41,7 @@ static const void * const _context = &_context;
 @implementation UIResponder (XZMocoaView)
 
 - (__kindof XZMocoaViewModel *)viewModel {
-    return [XZMocoaContext contextIfLoaededForView:self].viewModel;
+    return [XZMocoaContext contextIfLoadedForView:self].viewModel;
 }
 
 - (void)setViewModel:(__kindof XZMocoaViewModel * const )newValue {
@@ -69,7 +69,7 @@ static const void * const _context = &_context;
 }
 
 - (void)sendEventsWithKey:(XZMocoaKey)key value:(id)value {
-    [[XZMocoaContext contextIfLoaededForView:self] sendEventsWithKey:key value:value];
+    [[XZMocoaContext contextIfLoadedForView:self] sendEventsWithKey:key value:value];
 }
 
 - (void)__xz_bind_title_normal:(NSString *)title { }
@@ -81,19 +81,19 @@ static const void * const _context = &_context;
 - (void)__xz_bind_title_selected:(NSString *)title { }
 - (void)__xz_bind_titleColor_selected:(UIColor *)color { }
 - (void)__xz_bind_titleShadowColor_selected:(UIColor *)color { }
-- (void)__xz_bind_image_selected:(UIImage *)title { }
+- (void)__xz_bind_image_selected:(UIImage *)image { }
 - (void)__xz_bind_attributedTitle_selected:(NSAttributedString *)attributedTitle { }
 - (void)__xz_bind_backgroundImage_selected:(UIImage *)image { }
 - (void)__xz_bind_title_disabled:(NSString *)title { }
 - (void)__xz_bind_titleColor_disabled:(UIColor *)color { }
 - (void)__xz_bind_titleShadowColor_disabled:(UIColor *)color { }
-- (void)__xz_bind_image_disabled:(UIImage *)title { }
+- (void)__xz_bind_image_disabled:(UIImage *)image { }
 - (void)__xz_bind_attributedTitle_disabled:(NSAttributedString *)attributedTitle { }
 - (void)__xz_bind_backgroundImage_disabled:(UIImage *)image { }
 - (void)__xz_bind_title_highlighted:(NSString *)title { }
 - (void)__xz_bind_titleColor_highlighted:(UIColor *)color { }
 - (void)__xz_bind_titleShadowColor_highlighted:(UIColor *)color { }
-- (void)__xz_bind_image_highlighted:(UIImage *)title { }
+- (void)__xz_bind_image_highlighted:(UIImage *)image { }
 - (void)__xz_bind_attributedTitle_highlighted:(NSAttributedString *)attributedTitle { }
 - (void)__xz_bind_backgroundImage_highlighted:(UIImage *)image { }
 
@@ -411,7 +411,7 @@ static const void * const _context = &_context;
 }
 
 - (nullable __kindof UIViewController *)presentMocoaURL:(nullable NSURL *)url completion:(void (^_Nullable)(void))completion {
-    return [self presentMocoaURL:url options:nil animated:nil completion:completion];
+    return [self presentMocoaURL:url options:nil animated:YES completion:completion];
 }
 
 - (__kindof UIViewController *)addChildViewControllerWithMocoaURL:(NSURL *)url options:(nullable NSDictionary *)options {
@@ -566,7 +566,7 @@ static const void * const _context = &_context;
     return context;
 }
 
-+ (XZMocoaContext *)contextIfLoaededForView:(UIResponder *)view {
++ (XZMocoaContext *)contextIfLoadedForView:(UIResponder *)view {
     return objc_getAssociatedObject(view, _context);
 }
 

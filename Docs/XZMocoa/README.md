@@ -1,5 +1,9 @@
 
-# Mocoa
+# XZMocoa
+
+XZMocoa 是 MVVM Cocoa 的缩写，是一套基于 Cocoa（UIKit/Foundation）设计的 MVVM 开发框架。它基于原生能力设计，可以与 Cocoa 无缝融合，不需要改造既有代码，即可在任何现有项目中应用。
+
+接入 XZMocoa 并不能将项目立即变为 MVVM 设计模式，但 XZMocoa 不影响现有代码，可以仅在新模块下使用 MVVM 设计模式。对于存量代码，推荐先套个壳，让它形式上符合 MVVM 设计模式，然后再渐进式改造，最大限度减少代码改动，以避免影响业务稳定。
 
 ## 集成安装
 
@@ -11,415 +15,295 @@
 https://github.com/Xezun/XZKit.git
 ```
 
-### 使用 CocoaPods 集成
+在需要使用的 Target 中，添加依赖库 `XZKit`，然后在代码中导入：
 
-Mocoa 组件也可以通过 [CocoaPods](https://cocoapods.org) 集成安装，只在`Podfile`文件中添加下面这行代码即可。
-
-Mocoa is available through [CocoaPods](https://cocoapods.org). To install it, simply add the following line to your Podfile:
-
-```ruby
-pod 'XZKit/Mocoa'
+```swift
+import XZKit
 ```
 
-## 设计模式
+## 快速开始
 
-### 设计模式
-
-Mocoa 是 MVVM Cocoa 的缩写，因为它基于 Cocoa 设计的，可以与 Cocoa 无缝融合，可以不改造代码，即可在任何现有项目中应用。
-
-接入 Mocoa 并不能将项目立即变为 MVVM 设计模式，但是 Mocoa 不影响现有代码，可以仅在新模块下使用 MVVM 设计模式。对于存量代码，推荐先套个壳，让它形式上符合 MVVM 设计模式，然后再渐进式的改造，最大限度的减少代码改动，以避免影响业务稳定。
+下面是一个完整的 MVVM 单元示例：`Model` 持有数据，`ViewModel` 将数据转换为视图所需的形式，`View` 负责展示。
 
 ```swift
 import XZKit
 
-@objc
+// 数据模型，任意 NSObject 子类都可以作为 Model。
+@mocoa(.m)
 class Model: NSObject {
-
     var isVIP = false
     var firstName: String?
     var lastName: String?
-    var profile: String?
-
 }
 
-@mocoa
-class View: UIView, XZMocoaView {
+// 视图，遵循 XZMocoaView 标记协议，表示其为 MVVM 中的 View 角色。
+@mocoa(.v)
+class UserView: UIView, XZMocoaView {
 
-    @bind(.name)
-    @bind(v: .textColor)
-    var textLabel: UILabel!
-    
-    @bind(.detailText)
-    var detailLabel: UILabel!
-    
+    // 监听 ViewModel 的 name 事件，绑定到 nameLabel.text
+    @bind("name")
+    var nameLabel: UILabel!
+
+    // 监听 ViewModel 的 textColor 事件，绑定到 nameLabel.textColor
+    @bind(textColor: "textColor")
+    var textColorLabel: UILabel!
 }
 
-@mocoa
-class ViewModel: XZMocoaViewModel {
-    
+// 视图模型。
+@mocoa(.vm)
+class UserViewModel: XZMocoaViewModel {
+
+    // @key 标记的属性，属性值改变时自动发送同名 KTA 事件。
     @key
     var name: String?
-    
-    @key(value: UIColor.black)
-    var textColor: UIColor
-    
+
     @key
-    @bind("profile")
-    var detailText: String?
-    
+    var textColor: UIColor = .black
+
+    // @bind 标记的方法，监听 Model 中同名属性的变化。
     @bind
     func setName(firstName: String?, lastName: String?) {
-        if let firstName = firstName {
-            if let lastName = lastName {
-                name = "\(firstName)·\(lastName)"
-            } else {
-                name = firstName
-            }
-        } else if let lastName = lastName {
-            name = lastName
-        } else {
-            name = "Visitor"
-        }
+        name = [firstName, lastName].compactMap { $0 }.joined(separator: " ")
     }
-    
-    @bind
+
+    @bind("isVIP")
     func setTextColor(isVip: Bool) {
         textColor = isVip ? .red : .black
     }
-    
 }
 ```
 
-## 特色
+## 核心概念
 
-### 数据绑定
+XZMocoa 中，一个完整的 MVVM 单元由三个元素组成：
 
-```swift
-@mocoa
-class FoobarViewModel : MocoaViewModel {
-    
-    @key  // 标识这是一个可被 View 绑定的属性，绑定的标识就是属性名。
-    @bind // 单向绑定：Model 的属性 name 发生改变，此属性的 setter 方法将被调用。
-    var name: String?
-    
-    @key
-    var detail: String?
-    
-    @bind // 单向绑定：Model 的属性 min、max 中任一发生改变，都会调用此方法
-    func setMin(_ min: Int, max: Int) {
-        detail = "From \(min) to \(max)."
-    }
-}
+- `XZMocoaModel` 协议：数据模型遵循此协议，以表明 Model 是 MVVM 中的 Model 元素。框架已在内部为 `NSObject` 实现了此协议，因此任何 `NSObject` 子类都可以作为数据模型。
+- `XZMocoaView` 协议：视图遵循此协议，以表明 View 是 MVVM 中的 View 元素。协议本身只起标记作用，具体能力由 `UIResponder` 的 `XZMocoaView` 分类提供，所有 `UIResponder` 都是天然的 View 角色。
+- `XZMocoaViewModel` 基类：ViewModel 提供的功能要复杂得多，无法通过协议呈现，因此提供了基类。
 
-@mocoa
-class FoobarView: UIView, MocoaView {
-    
-    @bind("name") // 单向绑定：将 viewModel.name 绑定到 nameLabel.text 
-    var nameLabel: UILabel!
+### 1、Ready 机制
 
-    var detailTextLabel: UILabel!
-    
-    @bind(.detail) // 单向绑定：将 viewModel.detail 绑定到
-    func setDetail(_ detail: String?) {
-        detailTextLabel.text = detail
-        detailTextLabel.isHidden = detail != nil && detail!.count > 0
-        setNeedsLayout()
-    }
-}
-```
+视图模型在创建时可能并不需要立即初始化，或需要额外的初始化参数（比如在 `UIViewController` 中，应该在 `viewDidLoad` 时初始化），因此 XZMocoa 设计了 `ready` 机制来延迟 ViewModel 的初始化时机。
 
-- `@mocoa`: 标记 Mocoa 成员，只有拥有此标记，class 的属性或方法的`@bind`和`@key`标记才会生效。
-- `@key`: 标记的 ViewModel 属性，可以被 View 用`@bind`绑定。
-- `@bind`: 单向绑定 ViewModel 绑定 Model 的属性，或 View 绑定 ViewModel 的 `@key` 属性。
-
-## 如何使用
-
-下面以 iOS 开发中的常用的`UITableView`组件为例，介绍如何使用 Mocoa 进行开发。
-
-由于原生`UITableView`原为 MVC 设计，在使用 MVVM 设计模式时，我们需要使用适配版本，即`MocoaTableView`。
-
-不过，需要注意的是，并不是不能直接使用`UITableView`，而是直接使用需要自行处理`dataSource`，而这一般是每次使用`UITableView`都会重复的代码。
-所以Mocoa直接将这部分重复的逻辑封装起来，即`MocoaTableView`仅接管了`delegate`和`dataSource`代理，未对`UITableView`做任何其它处理。
-
-##### 1、设计数据
-
-合理的数据结构，会大大的简化数据处理的过程，但实际开发过程中，数据可能并非总是我们期望的样子。
-因此，为了让所有列表数据都能够在`MocoaTableView`中使用，Mocoa设计了`MocoaTableModel`和`MocoaTableViewSectionModel`协议，来规范作为`MocoaTableView`数据的基本格式。而且任何数据只要实现这两个协议，就在`MocoaTableView`中使用。
-
-> 协议只是规范，并非强制要求。
-> 实际上，所有数据也都可以作为`MocoaTableView`的数据，但是如果不实现协议的话，Mocoa不会对数据进行`section` 或`cell`的区分，实际效果就可能并非预期效果。
+在 `ready` 机制下，开发者应在 ViewModel 的 `-prepare` 方法中进行初始化。
 
 ```objc
-@protocol MocoaTableModel <MocoaModel>
-@property (nonatomic, readonly) NSInteger numberOfSectionModels;
-- (nullable id<MocoaTableViewSectionModel>)modelForSectionAtIndex:(NSInteger)index;
-@end
-
-@protocol MocoaTableViewSectionModel <MocoaModel>
-@optional
-@property (nonatomic, readonly) NSInteger numberOfCellModels;
-- (nullable id)modelForCellAtIndex:(NSInteger)index;
-- (NSInteger)numberOfModelsForSupplementaryElementOfKind:(MocoaKind)kind;
-- (nullable id)modelForSupplementaryElementOfKind:(MocoaKind)kind atIndex:(NSInteger)index;
-@end
-```
-
-严格来讲，数据不应该承担业务逻辑。
-
-但是一般情况下，数据的结构，与数据类型是紧密相关的，即它们是一对一的关系，将它们一起处理，维护起来也是最方便的。
-
-上述这两个协议，其实本质就是Mocoa获取数据结构的一种方式而已，并非限定了数据的格式，通常情况下，可以在Category中实现这个协议，而不必影响数据本身。
-
-> 数组天然是符合`MocoaTableView`规范的数据，即数组一维中的元素，会作为`section`数据，数组二维中的元素，会作为`cell`数据。
-
-##### 2、创建列表
-
-`MocoaTableView`是标准的 Mocoa 模块，可以直接使用，可以通过`URL`的方式加载（参见“模块化”部分）。
-
-```objc
-// model, replace it with real data
-NSArray *dataArray;
-// viewModel
-MocoaTableViewModel *tableViewModel = [[MocoaTableViewModel alloc] initWithModel:dataArray];
-tableViewModel.module = XZModule(@"https://mocoa.xezun.com/table/");
-[tableViewModel ready];
-// view
-MocoaTableView *tableView = [[MocoaTableView alloc] initWithFrame:self.view.bounds style:(UITableViewStyleGrouped)];
-tableView.viewModel = tableViewModel;
-[self.view addSubview:tableView];
-```
-
-虽然目前我们并没有创建`cell`，但是仅仅需要上面这些代码，就可以渲染列表了，因为Mocoa会使用`PlaceholderCell`占位渲染。
-这可以帮我们提前验证数据基本格式问题，并解决原生组件关于`dataSource`的各种崩溃问题。
-
-> `PlaceholderCell`仅在`DEBUG`环境下显示，在`Release`环境下会自动隐藏。
-
-##### 3、开发`cell`模块
-
-使用 Mocoa 你可以将每一个`cell`都看作是完全独立的模块进行开发，然后注册到相应的`tableView`模块中即可展示。
-
-> 开发`cell`模块，与开发普通 MVVM 模块的过程基本一样，仅需要按照 MVVM 的基本要求编写即可。
-
-###### 3.1 定义 View、ViewModel、Model
-
-```objc
-@interface ExampleCell : UITableViewCell <MocoaTableViewCell>
-@property (weak, nonatomic) IBOutlet UILabel *nameLabel;
-@end
-
-@interface ExampleCellViewModel : MocoaTableViewCellViewModel
-@property (nonatomic, copy) NSString *name;
-@end
-
-@interface ExampleCellModel : NSObject <MocoaTableViewCellModel>
-@property (nonatomic, copy) NSString *firstName;
-@property (nonatomic, copy) NSString *lastName;
-@end
-```
-
-除了`ViewModel`需要使用 Mocoa 提供的基类外，`View`和`Model`是完全自由的。
-
-协议`MocoaTableViewCell`和`MocoaTableViewCellModel`是辅助协议，不需要实现，而是声明遵循后，即可使用协议方法的协议。
-
-###### 3.2 处理数据
-
-`ViewModel`将数据转化为`View`展示所需的类型，并处理事件。
-
-```objc
-@implementation ExampleCellViewModel
 - (void)prepare {
     [super prepare];
 
-    self.height = 44.0;
-    
-    ExampleModel *data = self.model;
-    self.name = [NSString stringWithFormat:@"%@ %@", data.firstName, data.lastName];
+    // 执行当前模块的初始化
 }
-
-- (void)tableView:(MocoaTableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
-    /// 处理 cell 的点击事件
-}
-@end
 ```
 
-ViewModel向View提供稳定的API，这可以减少View层改动，同时也能屏蔽数据的细节差异，帮助我们在实现View时，可以脱离具体的数据。
-
-###### 3.3 渲染视图
-
-`View`根据`ViewModel`提供的数据进行展示。
+视图模型在使用前，应调用 `-ready` 方法完成初始化。当视图或视图控制器设置 `viewModel` 属性时，`-ready` 方法会自动调用；`-ready` 方法可安全地重复调用，`-isReady` 属性表示当前是否已完成初始化。
 
 ```objc
-@implementation ExampleCell
-- (void)prepareForViewModel {
-    ExampleViewModel *viewModel = self.viewModel;
-    
-    self.nameLabel.text = viewModel.name;
+- (void)viewDidLoad {
+    [super viewDidLoad];
+
+    ExampleViewModel *viewModel = [[ExampleViewModel alloc] initWithModel:nil];
+    [viewModel ready];
+
+    self.viewModel = viewModel;
 }
-@end
 ```
 
-方法`prepareForViewModel`是`MocoaView`协议提供的方法，声明该协议即可获得该方法。
+### 2、层级关系
 
-###### 3.4 注册模块
-
-将`cell`模块注册到`tableView`模块中，就可以在`tableView`中展示了。在下面的例子中，`tableView`模块为`URL`为`https://mocoa.xezun.com/table/`的模块。
-
-> 在`UITableView`中`section`没有直接视图，但却是不可少的逻辑层，所以在Mocoa中，需要将`cell`是注册在`section`之下，而非直接在`tableView`之下。
+在页面模块中，子视图模块与父视图模块或控制器模块存在明显的上下级关系。充分利用这种层级关系，可以更方便地处理页面中的上下级交互逻辑，因此 XZMocoa 为 ViewModel 设计了层级关系。
 
 ```objc
-@implementation ExampleCellModel
-+ (void)load {
-    XZModule(@"https://mocoa.xezun.com/table/").section.cell.modelClass = self;
-}
-@end
-
-@implementation ExampleCell
-+ (void)load {
-    XZModule(@"https://mocoa.xezun.com/table/").section.cell.viewNibClass = self;
-}
-@end
-
-@implementation ExampleCellViewModel
-+ (void)load {
-    XZModule(@"https://mocoa.xezun.com/table/").section.cell.viewModelClass = self;
-}
-@end
+[superViewModel addSubViewModel:viewModel];
+[superViewModel insertSubViewModel:viewModel atIndex:1];
 ```
 
-至此，使用`MocoaTableView`渲染列表的一个简单示例就完成了，现在运行代码，就可以看到实际效果。
+通过 `subViewModels` 和 `superViewModel` 属性可以访问上下级，`removeFromSuperViewModel` 可将自身从上级移除，`didRemoveSubViewModel:` 在下级被移除时回调。
 
-在这个示例中，我们只有一种类型的`section`和`cell`，不需要具名，所以直接使用`.section.cell`注册，更多详细用法，可参考“Example”示例工程。
+### 3、事件通道
 
-###### 3.5 总结
+基于层级关系，XZMocoa 提供了一套自下而上的事件通道（Key Events Channel）。下级视图模型可通过 `-sendEventsWithKey:value:` 方法沿层级向上传递事件。
 
-使用 Mocoa 渲染列表，与使用原生的`UITableView`相比：
+```objc
+// 在下级中发送事件
+[self sendEventsWithKey:XZMocoaKeyReload value:nil];
+```
 
-- 不用编写`delegate`或`dataSource`方法。
-- 不用先编写`cell`，Mocoa 会先用占位视图替代，直到`cell`模块编写完成。
-- 模块`cell`完全独立，编写`cell`后，仅需注册模块，不需在`tableView`或`collectionView`中注册。
+上级通过 `-didReceiveEvents:` 方法接收事件，事件对象为 `XZMocoaEvents`，包含 `key`（事件标识）、`value`（事件值）、`source`（事件创建者）、`target`（事件传递者）等信息。
 
-还有，我们再也不用担心`dataSource`导致的Crash问题了。
+```objc
+- (void)didReceiveEvents:(XZMocoaEvents *)events {
+    if ([events.key isEqualToString:XZMocoaKeyReload]) {
+        [self reloadData];
+    }
+}
+```
+
+视图与视图模型之间同样通过该通道通信：视图可直接调用 `-sendEventsWithKey:value:` 方法向 viewModel 发送事件。
+
+在 MVC 中，解决此类问题一般通过 `delegate` 实现，上层模块与下层模块的 `delegate` 形成了耦合；利用层级关系处理，则能很好地避免这一点。
+
+### 4、Key Target Action（KTA）机制
+
+在 MVVM 设计模式中，View 通过监听 ViewModel 的属性来展示页面。实际上大部分情况下，View 并不需要一直监听，因为大多数 View 只需渲染一次，在 `-prepareForViewModel` 中即可完成。
+
+对于剩余少量需要监听的事件，使用 `delegate` 需要定义协议，比较繁琐，因此 XZMocoa 设计了 target-action 机制：以 `XZMocoaKey` 字符串作为事件名，View 绑定 key 之后，ViewModel 发送事件时，View 绑定的方法就会被触发。
+
+```objc
+// View 监听 viewModel 的 isRefreshing 属性
+[viewModel addTarget:self action:@selector(refreshingChanged:) forKey:@"isRefreshing"];
+
+- (void)refreshingChanged:(ExampleViewModel *)viewModel {
+    if (viewModel.isRefreshing) {
+        [self.indicator startAnimating];
+    } else {
+        [self.indicator stopAnimating];
+    }
+}
+
+// ViewModel 发送事件
+[self sendActionsForKey:@"isRefreshing"];
+```
+
+KTA 还支持值传递形式，将 ViewModel 中 key 对应的值，与 target 的 action 方法绑定：
+
+```objc
+// 绑定 text 属性，并赋初始值 initialValue
+[viewModel addTarget:label action:@selector(setText:) forKey:XZMocoaKeyText value:@"initialValue"];
+// 绑定 image 属性，不赋初始值
+[viewModel addTarget:imageView action:@selector(setImage:) forKey:XZMocoaKeyImage];
+```
+
+在 Swift 中，使用 `@key` 宏标记属性，即可在属性值改变时自动发送 KTA 事件；使用 `@bind` 宏，可自动建立 View 与 ViewModel 之间的绑定关系。
+
+### 5、数据监听
+
+对数据的监听是 MVVM 设计模式的特色之一，但在 iOS 实际开发中，数据在大部分情形下都是单向流动的（从网络请求到页面展示）。因此默认情况下，XZMocoa 不主动监听 Model 的变更。
+
+对于需要监听数据变化的情形，可以重写类属性 `mappingModelKeys`，注册“视图模型方法”与“数据模型属性”之间的映射关系：
+
+```objc
++ (NSDictionary<NSString *, id> *)mappingModelKeys {
+    return @{
+        @"setName:"        : @"name",
+        @"setRangeMin:max:": @[@"min", @"max"]
+    };
+}
+```
+
+映射关系中的属性发生改变时，对应的方法会被调用。在 Swift 中，使用 `@mocoa` 和 `@bind` 标记属性和方法，即可自动创建上述映射关系：
+
+```swift
+@mocoa(.vm)
+class ViewModel: XZMocoaViewModel {
+
+    @bind
+    func setRange(min: Int, max: Int) {
+        // Model 的 min、max 属性任一改变，此方法都会被调用
+    }
+}
+```
+
+> 单个 Runloop 内的键值事件会合并统一处理，即同一个 key 即使在一个 Runloop 内发生多次改变，绑定的方法也只会执行一次。
+
+当数据在视图模型外更新时，可通过 `-model:didChangeValuesForKeys:` 方法被动触发监听；当数据管理框架（如 CoreData 的 `NSFetchedResultsController`）自带监听机制时，可在其代理方法中调用此方法，XZMocoa 的列表视图模型已内置了对 `NSFetchedResultsController` 的支持。
 
 ## 模块化
 
-不论采用何种设计模式，都应该让你的代码模块化。这样在更新维护时，变动就可以控制在模块内，从而避免牵一发而动全身。
+不论采用何种设计模式，都应该让代码模块化，这样在更新维护时，变动就可以控制在模块内。XZMocoa 使用 MVVM 设计模式进行模块化：在 MVVM 设计模式下，视图通过自身的 ViewModel 管理逻辑，页面通过划分模块，将逻辑分散在各个子模块中，避免单个页面变得臃肿。
 
-Mocoa使用MVVM设计模式进行模块化，因为在MVVM设计模式下，视图可以通过自身的`ViewModel`管理逻辑，
-这样页面就可以通过划分模块的方式，将逻辑就可以分散在各个子模块中，从而避免单个页面变得臃肿。
+### 1、模块域
 
-> 即在MVVM模式下，页面从视图的集合，变成了模块的集合，页面从管理自视图的，变为管理子模块。
-
-###### 1、管理模块
-
-Mocoa为模块提供了基于`URL`的模块管理方案`MocoaDomain`，任何模块都可以通过`URL`在`MocoaDomain`中注册。
+XZMocoa 提供了基于 URL 的模块管理方案 `XZMocoaModuleDomain`，任何模块都可以通过 URL 在模块域中注册。
 
 ```objc
-[[MocoaDomain doaminNamed:@"mocoa.xezun.com"] setModule:yourModule forPath:@"your/module/path"];
+[[XZMocoaModuleDomain domainNamed:@"mocoa.xezun.com"] setModule:yourModule forPath:@"your/module/path"];
 ```
 
-上面例子中的模块地址为`https://mocoa.xezun.com/your/module/path/`，其中 URL 的`scheme`是任意的。
+上面例子中的模块地址为 `https://mocoa.xezun.com/your/module/path/`，其中 URL 的 scheme 是任意的。
 
 ```objc
-id yourModule = [MocoaDomain moduleForURL:@"https://mocoa.xezun.com/your/module/path/"];
+id yourModule = [XZMocoaModuleDomain moduleForURL:[NSURL URLWithString:@"https://mocoa.xezun.com/your/module/path/"]];
 ```
 
-`MocoaDomain`其实就是简单地使用`NSMutableDictionary`管理模块，所以你不必担心它的性能问题。
+`XZMocoaModuleDomain` 使用字典管理模块，无需担心性能问题。模块也可以由 `XZMocoaModuleProvider` 协议提供懒加载，比如读取配置文件。
 
-在实际开发中，有些提供了各种各样方法的“模块”，通过上面注册的方式拿到一个匿名的`id`类型，似乎显得多次一举。
-但是在Mocoa看来，这样的“模块”并不是真正的模块，而只是一个组件，或提供方法的工具类，因为真正的模块应该是能独自完成功能的，不需要或者仅需要少量基本数据作为参数。
-比如，每个App就可以看作是一个独立的模块，`void main(int, char *)`是它们统一入口函数。
+### 2、Mocoa 模块
 
-###### 2、Mocoa模块
+XZMocoa 将每一个 MVVM 单元（Model-View-ViewModel）都视为一个模块，称为 Mocoa 模块，用 `XZMocoaModule` 对象表示。在 Mocoa 模块中，有如下约定：
 
-Mocoa将每一个MVVM单元`Model-View-ViewModel`都视为一个模块，称为Mocoa模块，用`MocoaModule`对象表示。在Mocoa模块中，有如下约定。
+- `Model` 使用 `-init` 作为初始化方法，或者开发者自行约定统一的初始化方法。
+- `ViewModel` 使用 `-initWithModel:` 作为初始化方法。
+- `View` 中的 `UIViewController` 使用 `-initWithNibName:bundle:` 作为初始化方法。
+- `View` 中的 `UIView` 一般使用 `-initWithFrame:` 作为初始化方法，像 `UITableViewCell` 等被管理的视图，则由它们自身决定。
 
-- `Model`使用`-init`作为初始化方法，或者开发者自行约定统一的初始化方法。
-- `ViewModel`使用`-initWithModel:`作为初始化方法。
-- `View`中的`UIViewController`使用`-initWithNibName:bundle:`作为初始化方法
-- `View`中的`UIView`一般使用`-initWithFrame:`作为初始化方法，像`UITableViewCell`等被管理的视图，则它们自身决定。
+> 这些约定其实就是原生已有的方法，按照原生风格编码，基本不需要额外工作量。
 
-上面这些约定，其实就是原生已有的方法，如果我们按照原生风格进行编码，这些基本不需要额外工作量。
-
-> 推荐使用原生风格进行编码，可以有效降低维护成本、学习成本。
-
-在Mocoa中注册MVVM模块的`View`、`Model`、`ViewModel`三个部分。
+在模块中注册 MVVM 单元的 `Model`、`View`、`ViewModel` 三个部分：
 
 ```objc
-MocoaModule *module = XZModule(@"https://mocoa.xezun.com/module/");
+XZMocoaModule *module = XZMocoa(@"https://mocoa.xezun.com/module/");
 module.modelClass     = Model.class;
 module.viewClass      = View.class;
 module.viewModelClass = ViewModel.class;
 ```
 
-*注：函数`Mocoa(url)`是`+[MocoaModule moduleForURL:]`的便利写法。*
+*注：函数 `XZMocoa(url)` 是 `+[XZMocoaModule moduleForURL:]` 的便利写法。*
 
-模块在注册后，我们就可以按照约定好的基本规则使用它们了，比如对于一个普通的视图模块，我们在拿到数据后，可以像下面这样使用它。
+模块注册后，即可按照约定使用：
 
 ```objc
-// 拿到了模块的原始数据
+// 拿到模块的原始数据
 NSDictionary *data;
-// 获取到模块。 
-MocoaModule *module = XZModule(@"https://mocoa.xezun.com/view/");
-// 这里使用了 YYModel 组件处理模型化数据
-id<MocoaModel> model = [module.modelClass yy_modelWithDictionary:data]; 
+// 获取模块
+XZMocoaModule *module = XZMocoa(@"https://mocoa.xezun.com/view/");
+// 模型化数据（示例使用了 YYModel）
+id<XZMocoaModel> model = [module.modelClass yy_modelWithDictionary:data];
 // 创建 viewModel
-MocoaViewModel *viewModel = [[module.viewModelClass alloc] initWithModel:model];
+XZMocoaViewModel *viewModel = [[module.viewModelClass alloc] initWithModel:model];
 [viewModel ready];
 // 创建 view
-UIView<MocoaView> *view = [module instantiateViewWithFrame:CGRectMake(0, 0, 100, 100)];
+UIView<XZMocoaView> *view = [UIView viewWithMocoaURL:module.url frame:CGRectMake(0, 0, 100, 100)];
 view.viewModel = viewModel;
 [self.view addSubview:view];
 ```
 
-对于页面`UIViewController`模块，Mocoa认为它是一个独立模块，所以在启动页面时，提供了便利方法。
+### 3、模块注册方式
 
-```objc
-UIView<MocoaView> *view;
-NSURL *url = [NSURL URLWithString:@"https://mocoa.xezun.com/main"];
-[view.navigationController pushMocoaURL:url animated:YES];
-```
-
-即，我们可以通过页面模块的`URL`直接打开页面。
-
-> 使用`View`打开控制器，在MVC设计模式中是不合理的，但是在MVVM设计模式中，`UIViewController`仅仅是特殊的`View`而已。
-
-###### 3、模块注册方式
-
-模块应该在被使用前注册到`MocoaDomain`中，因此`+load`方法非常合适的注册时机。
+模块应在被使用前注册到模块域中，`+load` 方法是非常合适的注册时机。
 
 ```objc
 + (void)load {
-    XZModule(@"https://mocoa.xezun.com/examples/20/content/").viewNibClass = self;
+    XZMocoa(@"https://mocoa.xezun.com/examples/20/content/").viewNibClass = self;
 }
 ```
 
-如果项目组对`+load`方法使用有限制，可以通过`MocoaModuleProvider`协议自定义`MocoaDomain`的模块提供方式，比如读配置文件。
+如果项目组对 `+load` 方法的使用有限制，可以通过 `XZMocoaModuleProvider` 协议自定义模块域中模块的提供方式，比如读取配置文件。
 
 ```objc
-@protocol MocoaModuleProvider <NSObject>
-- (nullable id)domain:(MocoaDomain *)domain moduleForPath:(NSString *)path;
+@protocol XZMocoaModuleProvider <NSObject>
+- (nullable id)domain:(XZMocoaModuleDomain *)domain moduleForPath:(NSString *)path;
 @end
 ```
 
-###### 4、模块的层级
+### 4、模块的层级
 
-在层级关系中，子模块的路径，一般就是它的名字，比如：
+在层级关系中，子模块的路径一般就是它的名字，比如：
 
 | URL                                          | 说明                                                       |
 | -------------------------------------------- | ---------------------------------------------------------- |
 | `https://mocoa.xezun.com/`                   | 根模块                                                     |
-| `https://mocoa.xezun.com/table/`             | `table`模块                                                |
-| `https://mocoa.xezun.com/table/name1/`       | `name1`是`table`模块的子模块                               |
-| `https://mocoa.xezun.com/table/name1/name2/` | `name2`是`name1`模块的子模块，`name1`是`table`模块的子模块 |
+| `https://mocoa.xezun.com/table/`             | `table` 模块                                               |
+| `https://mocoa.xezun.com/table/name1/`       | `name1` 是 `table` 模块的子模块                            |
+| `https://mocoa.xezun.com/table/name1/name2/` | `name2` 是 `name1` 模块的子模块，`name1` 是 `table` 模块的子模块 |
 
-如果子模块有分类，使用`:`分隔，比如：
+如果子模块有分类，使用 `:` 分隔，比如：
 
 | URL                                                   | 说明                                   |
 | ----------------------------------------------------- | -------------------------------------- |
-| `https://mocoa.xezun.com/table/section/header:name1/` | `name1`是`section`模块的`header`子模块 |
-| `https://mocoa.xezun.com/table/section/footer:name2/` | `name2`是`section`模块的`footer`子模块 |
+| `https://mocoa.xezun.com/table/section/header:name1/` | `name1` 是 `section` 模块的 `header` 子模块 |
+| `https://mocoa.xezun.com/table/section/footer:name2/` | `name2` 是 `section` 模块的 `footer` 子模块 |
 
-模块也可以没有名字和分类，但是在路径中，没有分类可以省略`:`，没有名字不能省略`:`，比如：
+模块也可以没有名字和分类。路径中，没有分类可以省略 `:`，没有名字不能省略 `:`，比如：
 
 | URL                                        | 说明                                   |
 | ------------------------------------------ | -------------------------------------- |
@@ -427,231 +311,194 @@ NSURL *url = [NSURL URLWithString:@"https://mocoa.xezun.com/main"];
 | `https://mocoa.xezun.com/table/kind:name/` | 合法                                   |
 | `https://mocoa.xezun.com/table/kind:/`     | 合法                                   |
 | `https://mocoa.xezun.com/table/:/`         | 合法                                   |
-| `https://mocoa.xezun.com/table/kind/`      | 不合法。因为 kind 会被作为 name 使用。 |
+| `https://mocoa.xezun.com/table/kind/`      | 不合法。因为 `kind` 会被作为 `name` 使用 |
 
-###### 5、默认模块
-
-一般情况下，名称为`MocoaNameDefault`的模块，一般为同级模块中的默认模块，比如在`MocoaTableView`或`MocoaCollectionView`中。
-
-1、为名称为`name`的`section`模块创建`ViewModel`对象时，会按照以下顺序使用`viewModelClass`配置。
-
-- 当前`tableView`中名称为`name`的`section`模块的`viewModelClass`
-- 当前`tableView`中名称为`MocoaNameDefault`的`section`模块的`viewModelClass`
-- 使用`PlaceholderViewModelClass`
-
-2、为名称为`name`的`cell`模块创建`ViewModel`对象时，会按照以下顺序使用`viewModelClass`配置。
-
-- `tableView`中，当前`section`中名称为`name`的`cell`模块的`viewModelClass`
-
-- `tableView`中，当前`section`中名称为`MocoaNameDefault`的`cell`模块的`viewModelClass`
-
-- `tableView`中，默认`section`中名称为`name`的`cell`模块的`viewModelClass`
-
-- `tableView`中，默认`section`中名称为`MocoaNameDefault`的`cell`模块的`viewModelClass`
-
-- 使用`PlaceholderViewModelClass`
-
-  *默认`section`模块，即名称为`MocoaNameDefault`的`section`模块。*
-
-## Mocoa MVVM
-
-Mocoa 建议使用 MVVM 模式设计您的代码，包括控制器，而且列表页面中，每一个区块视图`cell`也应该设计为独立的 MVVM 模块。
-
-> 区块视图为业务视图，而非视图组件，因为视图组件没有业务逻辑，不需要使用 MVVM 设计模式。
-
-为更好地使用 MVVM 设计模式，Mocoa 为原生拓展了一些能力。
-
-- `MocoaModel`协议，Model 遵循此协议，以表明 Model 是 MVVM 中的 `Model` 元素。
-- `MocoaView`协议，View 遵循此协议，以表明 View 是 MVVM 中的 `View` 元素，同时获得`MocoaView`协议提供的能力。
-- `MocoaViewModel`基类，`ViewModel`提供的功能要复杂的多，无法通过协议的方式呈现，因此提供了基类。
-
-Mocoa 与其说是框架，不如说是规范，通过协议规范 MVVM 的实现方法。
-
-#### 1、层级机制
-
-在页面模块中，子视图模块，与父视图模块或控制器模块，存在明显的上下级关系。充分利用这种层级关系，可以更方便的处理页面中的一些上下级的交互逻辑，因此 Mocoa 设计了`ViewModel`的层级关系。
+访问下级模块，可以使用 `-submoduleForKind:forName:` 方法，或者直接使用下标方式：
 
 ```objc
-[superViewModel addSubViewModel:viewModel];
-[viewModel insertSubViewModel:viewModel atIndex:1]
+// 常规方式获取下级
+XZMocoaModule *submodule = [module submoduleForKind:@"header" forName:@"black"];
+// 下标方式获取下级
+XZMocoaModule *submodule = module[@"header"][@"black"];
 ```
 
-然后我们就可以通过层级关系，收发`emit`事件。
+对于列表模块，XZMocoa 提供了 `section`、`cell`、`header`、`footer` 等便利属性，以及对应的 `xxxForName:` 方法。
+
+### 5、默认模块
+
+一般情况下，名称为 `XZMocoaNameDefault` 的模块，为同级模块中的默认模块。
+
+1、为名称为 `name` 的 `section` 模块创建 ViewModel 对象时，会按照以下顺序使用 `viewModelClass` 配置：
+
+- 当前列表中名称为 `name` 的 `section` 模块的 `viewModelClass`
+- 当前列表中名称为 `XZMocoaNameDefault` 的 `section` 模块的 `viewModelClass`
+- 使用占位视图模型类
+
+2、为名称为 `name` 的 `cell` 模块创建 ViewModel 对象时，会按照以下顺序使用 `viewModelClass` 配置：
+
+- 当前列表中，当前 `section` 中名称为 `name` 的 `cell` 模块的 `viewModelClass`
+- 当前列表中，当前 `section` 中名称为 `XZMocoaNameDefault` 的 `cell` 模块的 `viewModelClass`
+- 当前列表中，默认 `section` 中名称为 `name` 的 `cell` 模块的 `viewModelClass`
+- 当前列表中，默认 `section` 中名称为 `XZMocoaNameDefault` 的 `cell` 模块的 `viewModelClass`
+- 使用占位视图模型类
+
+> 默认 `section` 模块，即名称为 `XZMocoaNameDefault` 的 `section` 模块。占位视图模型只在 `DEBUG` 环境下渲染占位视图，在 `Release` 环境下会自动隐藏。
+
+## 列表 MVVM
+
+下面以 iOS 开发中常用的 `UITableView` 组件为例，介绍如何使用 XZMocoa 开发列表页面。
+
+由于原生 `UITableView` 原为 MVC 设计，使用 MVVM 设计模式时，需要适配版本 `XZMocoaTableView`：它仅接管了 `delegate` 和 `dataSource` 代理，未对 `UITableView` 做任何其它处理，`UITableView` 本身以 `contentView` 属性暴露。
+
+### 1、数据协议
+
+为了让所有列表数据都能够在 `XZMocoaTableView` 中使用，XZMocoa 设计了 `XZMocoaTableModel` 和 `XZMocoaTableSectionModel` 协议，来规范作为列表数据的基本格式。任何数据只要实现这两个协议，就可以在 `XZMocoaTableView` 中使用。
 
 ```objc
-// send the emition
-- (void)sendEventsForName:(NSString *)name value:(id)value;
+@protocol XZMocoaTableModel <XZMocoaGroupModel>
+@property (nonatomic, readonly) NSInteger numberOfSectionModels;
+- (nullable id<XZMocoaTableSectionModel>)modelForSectionAtIndex:(NSInteger)index;
+@end
 
-// handle the emition
-- (void)didReceiveEvents:(MocoaUpdate *)events;
+@protocol XZMocoaTableSectionModel <XZMocoaGroupSectionModel>
+@optional
+@property (nonatomic, readonly) NSInteger numberOfCellModels;
+- (nullable id)modelForCellAtIndex:(NSInteger)index;
+- (NSInteger)numberOfModelsForSupplementaryElementOfKind:(XZMocoaKind)kind;
+- (nullable id)modelForSupplementaryElementOfKind:(XZMocoaKind)kind atIndex:(NSInteger)index;
+@end
 ```
 
-比如在`UITableView`列表中，`cell`模块改变了内容时，希望`UITableView`模块刷新页面时，可以像下面这样处理。
+> 协议只是规范，并非强制要求。实际上所有数据都可以作为列表的数据，但不实现协议的话，XZMocoa 不会对数据进行 `section` 或 `cell` 的区分，实际效果就可能并非预期。
+> 数组天然是符合规范的数据：数组一维中的元素会作为 `section` 数据，二维中的元素会作为 `cell` 数据。
+
+### 2、创建列表
+
+`XZMocoaTableView` 是标准的 Mocoa 模块，可以直接使用，也可以通过 URL 的方式加载。
 
 ```objc
-// 在 cell 中
-- (void)handleUserAction {
-    // change the data then
-    self.height = 100; // a new height
-    [self sendEventsForName:MocoaUpdatesKeyReload value:nil];
-}
-
-// 在 UITableView 模块中
-- (void)didReceiveUpdate:(MocoaUpdate *)events {
-    if ([emition.name isEqualToString:MocoaUpdatesKeyReload]) {
-        [self reloadData];
-    }
-}
+// model，替换为真实数据
+NSArray *dataArray;
+// viewModel
+XZMocoaTableViewModel *tableViewModel = [[XZMocoaTableViewModel alloc] initWithModel:dataArray];
+tableViewModel.module = XZMocoa(@"https://mocoa.xezun.com/table/");
+[tableViewModel ready];
+// view
+XZMocoaTableView *tableView = [[XZMocoaTableView alloc] initWithFrame:self.view.bounds style:UITableViewStyleGrouped];
+tableView.viewModel = tableViewModel;
+[self.view addSubview:tableView];
 ```
 
-当前这么做，需要一些默认的约定，比如将`MocoaUpdatesKeyReload`作为刷新视图的事件。
-在 MVC 中，解决上面的问题，一般是通过`delegate`实现，这明显或破坏模块的整体性，上层模块与下层模块的`delegate`形成了耦合，但是利用层级关系处理，就能很好的避免这一点。
+虽然目前并没有创建 cell，但仅需上面这些代码就可以渲染列表了，因为 XZMocoa 会使用占位 cell 渲染。这可以帮助提前验证数据的基本格式问题，并解决原生组件关于 `dataSource` 的各种崩溃问题。
 
-同时，层级关系事件的局限性也很明显，仅适合处理比较明确的事件，不过在模块封装完整的情况下，下层模块也不应该有其它事件需要传递给上级处理。
+### 3、开发 cell 模块
 
-#### 2、ready 机制
+使用 XZMocoa，你可以将每一个 cell 都看作完全独立的模块进行开发，然后注册到相应的列表模块中即可展示。
 
-在模块层级关系中，模块在创建时，可能并不需要立即初始化，或者模块需要额外的初始化参数，比如在`UIViewController`中，应该在`viewDidLoad`时初始化，因此 Mocoa 设计了`ready`机制来延迟`ViewModel`的初始化时机。
-
-在`ready`机制下，开发者应该在`ViewModel`的`-prepare`方法中进行初始化。
+###### 3.1 定义 View、ViewModel、Model
 
 ```objc
+@interface ExampleCell : UITableViewCell <XZMocoaTableCell>
+@property (weak, nonatomic) IBOutlet UILabel *nameLabel;
+@end
+
+@interface ExampleCellViewModel : XZMocoaTableCellViewModel
+@property (nonatomic, copy) NSString *name;
+@end
+
+@interface ExampleCellModel : NSObject <XZMocoaTableCellModel>
+@property (nonatomic, copy) NSString *firstName;
+@property (nonatomic, copy) NSString *lastName;
+@end
+```
+
+除了 ViewModel 需要使用 XZMocoa 提供的基类外，View 和 Model 是完全自由的。协议 `XZMocoaTableCell` 和 `XZMocoaTableCellModel` 是辅助协议，不需要实现，声明遵循后即可使用协议提供的方法。
+
+###### 3.2 处理数据
+
+ViewModel 将数据转化为 View 展示所需的类型，并处理事件。
+
+```objc
+@implementation ExampleCellViewModel
 
 - (void)prepare {
     [super prepare];
 
-    // 执行当前模块的初始化
+    self.height = 44.0;
+
+    ExampleCellModel *data = self.model;
+    self.name = [NSString stringWithFormat:@"%@ %@", data.firstName, data.lastName];
 }
 
-```
-
-如果是顶层模块，应该在合适的时机调用`ViewModel`的`-ready`方法。比如页面模块，一般是顶层模块，建议在`-viewDidLoad`中执行。
-
-```objc
-- (void)viewDidLoad {
-    [super viewDidLoad];
-
-    Example20ViewModel *viewModel = [[Example20ViewModel alloc] initWithModel:nil];
-    [viewModel ready];
-
-    self.viewModel = viewModel;
-    self.tableView.viewModel = viewModel.tableViewModel;
-}
-```
-
-因为控制器顶层模块，引用模块时不需要准备数据，它的数据是`ViewModel`自行处理的，所以初始化它的`model`是`nil`，在`View`中自己创建`ViewModel`也是合理的。
-同时 Mocoa 也约定：
-
-- 在顶层独立的`UIViewController`页面模块中，应由`View`（即`UIViewController`）在合适的时机自行创建`ViewModel`。
-
-由外部提供数据的不完全独立的页面模块，加载使用方式则与`UIView`基本一致。
-
-```objc
-MocoaModule *module = XZModule(@"https://mocoa.xezun.com/");
-
-id model;
-MocoaViewModel *viewModel = [[module.viewModelClass alloc] initWithModel:model];
-UIViewController<MocoaView> *nextVC = [module instantiateViewControllerWithOptions:nil];
-nextVC.viewModel = viewModel; // not ready here, and nextVC must call -ready in -viewDidLoad method before use it.
-[view.navigationController pushViewController:nextVC animated:YES];
-```
-
-Mocoa 为独立的顶层模块，提供了进入的便利方法。
-
-```objc
-// UIViewController
-- (void)presentMocoaURL:(nullable NSURL *)url animated:(BOOL)flag completion:(void (^_Nullable)(void))completion;
-- (void)addChildMocoaURL:(nullable NSURL *)url;
-// UINavigationController
-- (void)pushMocoaURL:(nullable NSURL *)url animated:(BOOL)animated;
-```
-
-#### 3、target-action
-
-在 MVVM 设计模式中，`View`通过监听`ViewModel`的属性来展示页面，但是实际上，大部分情况下，`View`并不需要一直监听，因为大多数的`View`只需要渲染一次。
-所以 Mocoa 没有设计如何实现监听的代码，因为大部分页面渲染在`prepareForViewModel`中就能完成了。
-
-在剩下的小部分情况中，我们可以通过`delegate`的方式来实现，这比监听更直观，且易维护。
-不过，使用`delegate`由于需要定义协议，使用起来比较麻烦，所以了简化这些在少量事件的处理，Mocoa 设计了`target-action`机制。
-
-这是一种半自动的机制，使用`NSString`作为`key`，`View`在绑定的`key`之后，`ViewModel`在调用`-sendActionsForKey:`方法时，`View`绑定的方法就会被触发。
-
-```objc
-// view 监听了 viewModel 的 isHeaderRefreshing 属性
-[viewModel addTarget:self action:@selector(headerRefreshingChanged:) forKey:@"isHeaderRefreshing"];
-
-- (void)headerRefreshingChanged:(Example20ViewModel *)viewModel {
-    if (viewModel.isHeaderRefreshing) {
-        [self.tableView.contentView.xz_headerRefreshingView beginAnimating];
-    } else {
-        [self.tableView.contentView.xz_headerRefreshingView endAnimating];
-    }
+- (void)tableViewCell:(UITableViewCell *)cell wasSelectedAtIndexPath:(NSIndexPath *)indexPath {
+    // 处理 cell 的点击事件
 }
 
-// viewModel 发送事件
-[self sendActionsForKey:@"isHeaderRefreshing"];
-```
-
-`target-action`机制，相当于使用`keysEvents`代替了`delegate`协议，处理一些简单的事件。
-
-#### 4、MVVM 化适配
-
-原生的大部分视图控件，在 MVVM 设计模式下使用，都是合适的，但某些特殊类型的视图，需要进行 MVVM 化之后，才适合在 MVVM 中使用。
-比如具有视图管理功能的`UITableView`和`UICollectionView`列表视图，Mocoa 将它们封装为更适合在 MVVM 设计模式中使用的`MocoaTableView`和`MocoaCollectionView`视图。
-
-###### 4.1、UIView 的适配化
-
-在 MVVM 中，`UIViewController`的角色是`View`，所以在 Mocoa 中，通过`View`可以直接获取对应的控制器。
-
-
-```objc
-@protocol MocoaView <NSObject>
-@property (nonatomic, readonly, nullable) __kindof UIViewController *viewController;
-@property (nonatomic, readonly, nullable) __kindof UINavigationController *navigationController;
-@property (nonatomic, readonly, nullable) __kindof UITabBarController *tabBarController;
 @end
 ```
 
-###### 4.2 UITableView/UICollectionView 的适配化
+ViewModel 向 View 提供稳定的 API，可以减少 View 层改动，同时也能屏蔽数据的细节差异，帮助在实现 View 时脱离具体的数据。
 
-`MocoaTableView`和`MocoaCollectionView`是适配化后的列表视图，仅对`UITableView`和`UICollectionView`进行了一次简单的封装。
+###### 3.3 渲染视图
 
-1. 通过`ViewModel`管理`cell`的高度。
+View 根据 ViewModel 提供的数据进行展示。
 
 ```objc
-@interface MocoaTableCellViewModel : MocoaListCellViewModel
-@optional
-@property (nonatomic) CGFloat height;
+@implementation ExampleCell
+
+- (void)prepareForViewModel {
+    ExampleCellViewModel *viewModel = self.viewModel;
+
+    self.nameLabel.text = viewModel.name;
+}
+
 @end
 ```
 
-2. 列表事件，重新转发给`cell`，并再转发给`ViewModel`处理。
+方法 `-prepareForViewModel` 由 `UIResponder` 的 `XZMocoaView` 分类提供，视图遵循 `XZMocoaView` 协议后即可使用。
+
+###### 3.4 注册模块
+
+将 cell 模块注册到列表模块中，就可以在列表中展示了。在下面的例子中，列表模块为 URL 为 `https://mocoa.xezun.com/table/` 的模块。
+
+> 在 `UITableView` 中 `section` 没有直接视图，但却是不可少的逻辑层，所以在 XZMocoa 中，cell 是注册在 `section` 之下，而非直接注册在 `tableView` 之下。
 
 ```objc
-@interface MocoaTableCellViewModel : MocoaListCellViewModel
-@optional
-- (void)tableView:(MocoaTableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath;
-- (void)tableView:(MocoaTableView *)tableView willDisplayRowAtIndexPath:(NSIndexPath *)indexPath;
-- (void)tableView:(MocoaTableView *)tableView didEndDisplayingRowAtIndexPath:(NSIndexPath*)indexPath;
+@implementation ExampleCellModel
++ (void)load {
+    XZMocoa(@"https://mocoa.xezun.com/table/").section.cell.modelClass = self;
+}
+@end
+
+@implementation ExampleCell
++ (void)load {
+    XZMocoa(@"https://mocoa.xezun.com/table/").section.cell.viewClass = self;
+}
+@end
+
+@implementation ExampleCellViewModel
++ (void)load {
+    XZMocoa(@"https://mocoa.xezun.com/table/").section.cell.viewModelClass = self;
+}
 @end
 ```
 
-Mocoa 目前默认只转发了基本的三个事件，如需要更多事件，需要开发者重写或在`Category`中自行实现。
+在此示例中，只有一种类型的 `section` 和 `cell`，不需要具名，所以直接使用 `.section.cell` 注册。更多详细用法，可参考“Example”示例工程。
 
-3. 同步更新视图。
+### 4、同步更新视图
 
-当数据变化后，调用`ViewModel`相应的方法，即可更新视图。
+数据变化后，调用 ViewModel 相应的方法，即可同步更新视图：
 
 ```objc
 [_dataArray removeObjectAtIndex:0];
 [_tableViewModel deleteSectionAtIndex:0];
 ```
 
-4. 局部刷新。
+### 5、局部刷新
 
-一般情况下，在列表页面中，直接使用`-reloadData`刷新整个页面，虽然可以达到目的，但是很明显，这是一种偷懒的做法。局部刷新，不仅可以节省系统资源，也可以增强用户交互，使用户很清楚的知道页面更新的部分，同时也提供了应用的档次。但是由于数据大部分情况下，都是从服务端请求的，进行局部刷新就需要分析数据变动，这可能会增加不少工作量，这也是我们很少使用局部刷新的主要原因。
+在列表页面中，直接使用 `-reloadData` 刷新整个页面是一种偷懒的做法。局部刷新不仅可以节省系统资源，也可以增强用户交互。但是由于数据大部分情况下都来自服务端请求，进行局部刷新需要分析数据变动，这可能会增加不少工作量。
 
-但是现在，使用`MocoaTableView`或`MocoaCollectionView`即可轻松实现局部刷新。
+而使用 `XZMocoaTableView` 或 `XZMocoaCollectionView` 可以轻松实现局部刷新：
 
 ```objc
 [_tableViewModel performBatchUpdates:^{
@@ -660,27 +507,79 @@ Mocoa 目前默认只转发了基本的三个事件，如需要更多事件，�
 } completion:nil];
 ```
 
-即，将更新数据的操作，放在`batchUpdates`块中，Mocoa 即会自动根据数据的`-isEqual:`方法，分析数据的变动，并进行局部刷新。
+将更新数据的操作放在 `batchUpdates` 块中，XZMocoa 会自动根据数据的 `-isEqual:` 方法分析数据变动，并进行局部刷新。
 
 ```objc
-- (BOOL)isEqual:(Example20Group102CellModel *)object {
+- (BOOL)isEqual:(ExampleCellModel *)object {
     if (object == self) return YES;
-    if (![object isKindOfClass:[Example20Group102CellModel class]]) return NO;
+    if (![object isKindOfClass:[ExampleCellModel class]]) return NO;
     return [self.nid isEqualToString:object.nid];
 }
 ```
 
-一般情况下，我们需要重写数据模型的`-isEqual:`方法，但是如果在数据层已经做了数据管理，比如从数据层获取的数据，同一数据始终是同一个对象，或已经做了`-isEqual:`处理，这一步就可以省略。
+一般情况下，需要重写数据模型的 `-isEqual:` 方法；但如果数据层已经做了数据管理（同一数据始终是同一个对象，或已经实现了 `-isEqual:`），这一步就可以省略。
 
-另外，在“示例工程”中，有使用 Mocoa 的完整的示例可以参考。
+## 页面模块
+
+XZMocoa 将 `UIViewController` 视为 MVVM 中特殊的 View，页面即模块。模块中注册 `viewModelClass` 后，即可通过模块 URL 直接创建或打开页面。
+
+```objc
+// 创建控制器
+UIViewController *nextVC = [UIViewController viewControllerWithMocoaURL:[NSURL URLWithString:@"https://mocoa.xezun.com/main"]];
+[self.navigationController pushViewController:nextVC animated:YES];
+
+// 或直接使用便利方法
+[self.navigationController pushMocoaURL:[NSURL URLWithString:@"https://mocoa.xezun.com/main"] animated:YES];
+```
+
+XZMocoa 为控制器提供了完整的模块化支持：
+
+- `+viewControllerWithMocoaURL:options:`：通过模块 URL 创建控制器，URL 的 query 将作为 options 参数。
+- `-initWithMocoaOptions:nibName:bundle:` / `-didInitWithMocoaOptions:`：模块化初始化方法，`options` 中包含模块、URL、参数等信息，可通过下标方式取值。
+- `-presentMocoaURL:...`：通过模块 URL 弹出控制器。
+- `-addChildViewControllerWithMocoaURL:`：通过模块 URL 添加子控制器。
+- `-pushMocoaURL:...`（`UINavigationController`）：通过模块 URL 压栈控制器。
+- `-setViewControllersWithMocoaURLs:animated:`（`UITabBarController`）：通过模块 URLs 设置子控制器。
+
+控制器也可通过模块 URL 实例化视图：
+
+```objc
+UIView *view = [UIView viewWithMocoaURL:[NSURL URLWithString:@"https://mocoa.xezun.com/header"] frame:CGRectZero];
+```
+
+## Swift 宏
+
+在 Swift 中，XZMocoa 提供了 `XZKitMacros` 宏库（随 `XZKit` 一起提供），用于简化 MVVM 开发：
+
+- `@mocoa(.m)` / `@mocoa(.v)` / `@mocoa(.vm)`：将 class 标记为 Mocoa 的 MVVM 角色。
+- `@mocoa`（无参数）：自动推断角色。命名以 `Model`、`View`、`ViewModel` 结尾，或继承自 `XZMocoaViewModel`、`XZMocoaModel`、`XZMocoaView`、`UIView`、`UIViewController` 的 class 均可被自动推断。
+- `@key` / `@key(_ name:)`：标记 ViewModel 的属性，表明该属性支持 key-target-action 机制。被标记的属性将变为计算属性，并生成带下划线的同名存储属性，属性值改变时自动发送 KTA 事件。
+- `@bind` / `@bind(_ key:)`：单向绑定。用于 ViewModel 时，监听 Model 属性的变化；用于 View 时，监听 ViewModel 的 KTA 事件。
+- `@bind(_ vmKey:selector:)` / `@bind(text key:)` 等：为常用视图属性（text、image、isEnabled 等）提供便捷绑定形式。
+- `@prepare`：标记 View 或 ViewModel 的角色初始化方法（非对象的初始化方法），以取代重写 `-prepare` 或 `-prepareForViewModel` 基类方法。被标记的方法需要使用 `private` 标记，支持多个初始化方法，将按书写顺序执行。
+- `#mocoa(URL)`：通过模块 URL 获取 `XZMocoaModule` 对象。
+
+```swift
+// 通过模块 URL 获取模块
+let module = #mocoa("https://mocoa.xezun.com/main")
+
+// 带角色的标记
+@mocoa(.vm)
+class ViewModel: XZMocoaViewModel {
+
+    @key(.name)
+    var name: String?
+
+    @bind
+    func setName(_ name: String?) {
+        self.name = name
+    }
+}
+```
 
 ## 调试模式
 
-调试模式下，控制台会输出一些信息，帮助我们调试检查代码。
-
-```ruby
-pod 'Mocoa/Debug'
-```
+调试模式下，控制台会输出一些信息，帮助调试检查代码。可在 `XZMocoaDefines.h` 中查看相关的调试开关配置。
 
 ## Author
 
@@ -688,5 +587,4 @@ Xezun, developer@xezun.com
 
 ## License
 
-Mocoa is available under the MIT license. See the LICENSE file for more info.
-
+XZMocoa is available under the MIT license. See the LICENSE file for more info.

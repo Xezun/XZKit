@@ -16,7 +16,7 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-/// 方格子视图的数据模型，例如 UITableView、UICollectionView 的 Cell 视图数据模型。
+/// 分组列表视图的数据模型，例如 UITableView、UICollectionView 的 Cell 视图数据模型。
 ///
 /// 视图 XZMocoaGroupView 是 UITableView、UICollectionView 抽象，并非实际视图，不能直接使用。
 @protocol XZMocoaGroupModel <XZMocoaModel>

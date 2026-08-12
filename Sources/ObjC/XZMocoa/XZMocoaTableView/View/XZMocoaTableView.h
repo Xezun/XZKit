@@ -37,21 +37,21 @@ NS_SWIFT_UI_ACTOR @interface XZMocoaTableView : XZMocoaGroupView
 @property (nonatomic, strong) IBOutlet UITableView *contentView;
 
 /// 指定初始化方法，可以在初始化时，指定内部使用的`tableView`的类型及样式。
-/// @param tableViewClass 该参数决定属性`tableView`的实际类型
-/// @param style 属性`tableView`的样式
+/// @param tableViewClass 该参数决定属性`contentView`的实际类型
+/// @param style 属性`contentView`的样式
 - (instancetype)initWithTableViewClass:(Class)tableViewClass style:(UITableViewStyle)style NS_DESIGNATED_INITIALIZER;
 
 /// 支持在 IB 中使用，添加 UITableView 作为子视图并 outlet 关联到 contentView 属性即可。
 - (instancetype)initWithCoder:(NSCoder *)coder NS_DESIGNATED_INITIALIZER;
 
 /// 便利方法，使用`UITableView`作为初始化类型。
-/// @param frame 当前试图的展示区域
-/// @param style 属性`tableView`的样式
+/// @param frame 当前视图的展示区域
+/// @param style 属性`contentView`的样式
 - (instancetype)initWithFrame:(CGRect)frame style:(UITableViewStyle)style;
 
 /// 便利方法，使用`UITableView`作为初始化类型。
 /// @note 默认创建的视图大小，与屏幕相同。
-/// @param style 属性`tableView`的样式
+/// @param style 属性`contentView`的样式
 - (instancetype)initWithStyle:(UITableViewStyle)style;
 
 @end

@@ -33,7 +33,7 @@ NS_SWIFT_UI_ACTOR @interface XZMocoaGroupCellViewModel : XZMocoaViewModel
 ///
 /// 修改属性不会发送事件，以避免发送事件太频繁。
 ///
-/// 如果视图的值受数据影响时，此职值将起作用，且不同的视图，可能其中仅部分值有效，比如在 UITableView 中，仅 height 值有效。
+/// 如果视图的值受数据影响时，此值将起作用，且不同的视图，可能其中仅部分值有效，比如在 UITableView 中，仅 height 值有效。
 @property (nonatomic) CGRect frame;
 
 @end

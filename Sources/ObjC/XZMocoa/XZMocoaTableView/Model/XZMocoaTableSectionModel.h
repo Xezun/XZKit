@@ -1,6 +1,6 @@
 //
 //  XZMocoaTableSectionModel.h
-//  Pods
+//  XZMocoa
 //
 //  Created by Xezun on 2023/7/23.
 //
