@@ -90,5 +90,12 @@ typedef BOOL (^XZViewHierarchyEnumerator)(__kindof UIView *subview, NSInteger hi
 @interface UIImageView (XZDescription)
 @end
 
+@interface UIButton (XZKit)
+@property (nonatomic, copy, setter=xz_setTitle:) NSString *xz_title NS_SWIFT_NAME(title);
+@property (nonatomic, copy, setter=xz_setAttributedTitle:) NSAttributedString *xz_attributedTitle NS_SWIFT_NAME(attributedTitle);
+@property (nonatomic, copy, setter=xz_setImage:) UIImage *xz_image NS_SWIFT_NAME(image);
+@property (nonatomic, copy, setter=xz_setBackgroundImage:) UIImage *xz_backgroundImage NS_SWIFT_NAME(backgroundImage);
+@end
+
 
 NS_ASSUME_NONNULL_END

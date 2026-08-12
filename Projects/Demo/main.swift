@@ -9,3 +9,12 @@ import Foundation
 import UIKit
 import XZKit
 
+@mocoa
+class TestView: UIView, XZMocoaView {
+    
+    @bind
+    let nameLabel: UILabel = .init()
+    
+    @bind(.icon)
+    let imageView: UIImageView = .init(image: nil)
+}

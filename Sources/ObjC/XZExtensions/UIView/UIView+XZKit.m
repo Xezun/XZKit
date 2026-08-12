@@ -201,3 +201,40 @@ static const void * const _secureContentDisplay = &_secureContentDisplay;
 }
 
 @end
+
+
+@implementation UIButton (XZKit)
+
+- (NSString *)xz_title {
+    return [self titleForState:(UIControlStateNormal)];
+}
+
+- (void)xz_setTitle:(NSString *)xz_title {
+    [self setTitle:xz_title forState:(UIControlStateNormal)];
+}
+
+- (NSAttributedString *)xz_attributedTitle {
+    return [self attributedTitleForState:(UIControlStateNormal)];
+}
+
+- (void)xz_setAttributedTitle:(NSAttributedString *)xz_attributedTitle {
+    [self setAttributedTitle:xz_attributedTitle forState:(UIControlStateNormal)];
+}
+
+- (UIImage *)xz_image {
+    return [self imageForState:(UIControlStateNormal)];
+}
+
+- (void)xz_setImage:(UIImage *)xz_image {
+    [self setImage:xz_image forState:(UIControlStateNormal)];
+}
+
+- (UIImage *)xz_backgroundImage {
+    return [self backgroundImageForState:(UIControlStateNormal)];
+}
+
+- (void)xz_setBackgroundImage:(UIImage *)image {
+    [self setBackgroundImage:image forState:(UIControlStateNormal)];
+}
+
+@end

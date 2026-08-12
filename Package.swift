@@ -6,7 +6,7 @@ import CompilerPluginSupport
 
 let package = Package(
     name: "XZKit",
-    platforms: [.iOS(.v15), .macOS(.v12)],
+    platforms: [.iOS(.v15), .macOS(.v14)],
     products: [
         .library(name: "XZKit", targets: ["XZKit"])
     ],

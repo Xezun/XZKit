@@ -8,7 +8,7 @@
 import UIKit
 import XZKitObjC
 
-extension XZColor: RawRepresentable {
+extension XZColor: @retroactive RawRepresentable {
     
     public typealias RawValue = UInt32
     
@@ -40,7 +40,7 @@ extension XZColor: RawRepresentable {
 }
 
 
-extension XZColor: CustomStringConvertible {
+extension XZColor: @retroactive CustomStringConvertible {
     
     public var description: String {
         return __NSStringFromXZColor(self)
