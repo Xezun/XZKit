@@ -77,9 +77,39 @@ NS_SWIFT_UI_ACTOR @protocol XZMocoaView <NSObject>
 ///   - value: 事件值
 - (void)sendEventsWithKey:(XZMocoaKey)key value:(nullable id)value NS_SWIFT_NAME(sendEvents(_:value:));
 
+- (void)__xz_bind_title_normal:(NSString *)title;
+- (void)__xz_bind_titleColor_normal:(UIColor *)titleColor;
+- (void)__xz_bind_titleShadowColor_normal:(UIColor *)titleShadowColor;
+- (void)__xz_bind_image_normal:(UIImage *)image;
+- (void)__xz_bind_attributedTitle_normal:(NSAttributedString *)attributedTitle;
+- (void)__xz_bind_backgroundImage_normal:(UIImage *)backgroundImage;
+
+- (void)__xz_bind_title_selected:(NSString *)title;
+- (void)__xz_bind_titleColor_selected:(UIColor *)titleColor;
+- (void)__xz_bind_titleShadowColor_selected:(UIColor *)titleShadowColor;
+- (void)__xz_bind_image_selected:(UIImage *)image;
+- (void)__xz_bind_attributedTitle_selected:(NSAttributedString *)attributedTitle;
+- (void)__xz_bind_backgroundImage_selected:(UIImage *)backgroundImage;
+
+- (void)__xz_bind_title_disabled:(NSString *)title;
+- (void)__xz_bind_titleColor_disabled:(UIColor *)titleColor;
+- (void)__xz_bind_titleShadowColor_disabled:(UIColor *)titleShadowColor;
+- (void)__xz_bind_image_disabled:(UIImage *)image;
+- (void)__xz_bind_attributedTitle_disabled:(NSAttributedString *)attributedTitle;
+- (void)__xz_bind_backgroundImage_disabled:(UIImage *)backgroundImage;
+
+- (void)__xz_bind_title_highlighted:(NSString *)title;
+- (void)__xz_bind_titleColor_highlighted:(UIColor *)titleColor;
+- (void)__xz_bind_titleShadowColor_highlighted:(UIColor *)titleShadowColor;
+- (void)__xz_bind_image_highlighted:(UIImage *)image;
+- (void)__xz_bind_attributedTitle_highlighted:(NSAttributedString *)attributedTitle;
+- (void)__xz_bind_backgroundImage_highlighted:(UIImage *)backgroundImage;
+
 @end
 
 @interface UIView (XZMocoaView)
+@end
+@interface UIButton (XZMocoaView)
 @end
 @interface UIViewController (XZMocoaView)
 @end

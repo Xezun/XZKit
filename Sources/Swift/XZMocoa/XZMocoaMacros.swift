@@ -316,19 +316,27 @@ public macro bind(isOn key: XZMocoaKey) = #externalMacro(module: "XZKitMacros", 
 
 /// 建立从 ViewModel.{key} 到 View.normalTitle 的单向绑定关系。
 @attached(accessor, names: named(didSet))
-public macro bind(normalTitle key: XZMocoaKey) = #externalMacro(module: "XZKitMacros", type: "XZMocoaBindViewMacro")
+public macro bind(title key: XZMocoaKey, for state: UIControl.State) = #externalMacro(module: "XZKitMacros", type: "XZMocoaBindViewMacro")
 
-/// 建立从 ViewModel.{key} 到 View.selectedTitle 的单向绑定关系。
+/// 建立从 ViewModel.{key} 到 View.attributedTitle 的单向绑定关系。
 @attached(accessor, names: named(didSet))
-public macro bind(selectedTitle key: XZMocoaKey) = #externalMacro(module: "XZKitMacros", type: "XZMocoaBindViewMacro")
+public macro bind(attributedTitle key: XZMocoaKey, for state: UIControl.State) = #externalMacro(module: "XZKitMacros", type: "XZMocoaBindViewMacro")
 
-/// 建立从 ViewModel.{key} 到 View.normalImage 的单向绑定关系。
+/// 建立从 ViewModel.{key} 到 View.titleColor 的单向绑定关系。
 @attached(accessor, names: named(didSet))
-public macro bind(normalImage key: XZMocoaKey) = #externalMacro(module: "XZKitMacros", type: "XZMocoaBindViewMacro")
+public macro bind(titleColor key: XZMocoaKey, for state: UIControl.State ) = #externalMacro(module: "XZKitMacros", type: "XZMocoaBindViewMacro")
 
-/// 建立从 ViewModel.{key} 到 View.selectedImage 的单向绑定关系。
+/// 建立从 ViewModel.{key} 到 View.titleShadowColor 的单向绑定关系。
 @attached(accessor, names: named(didSet))
-public macro bind(selectedImage key: XZMocoaKey) = #externalMacro(module: "XZKitMacros", type: "XZMocoaBindViewMacro")
+public macro bind(titleShadowColor key: XZMocoaKey, for state: UIControl.State ) = #externalMacro(module: "XZKitMacros", type: "XZMocoaBindViewMacro")
+
+/// 建立从 ViewModel.{key} 到 View.image 的单向绑定关系。
+@attached(accessor, names: named(didSet))
+public macro bind(image key: XZMocoaKey, for state: UIControl.State) = #externalMacro(module: "XZKitMacros", type: "XZMocoaBindViewMacro")
+
+/// 建立从 ViewModel.{key} 到 View.backgroundImage 的单向绑定关系。
+@attached(accessor, names: named(didSet))
+public macro bind(backgroundImage key: XZMocoaKey, for state: UIControl.State) = #externalMacro(module: "XZKitMacros", type: "XZMocoaBindViewMacro")
 
 // MARK: - Other
 

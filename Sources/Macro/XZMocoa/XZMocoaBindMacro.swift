@@ -61,110 +61,73 @@ public struct XZMocoaBindMacro {
         
         switch macroArguments.count {
         case 0:
-            // 1、根据属性名确定 vmKey，根据属性类型确定 vSelector
-            // 2、无法确定用 默认值
-            guard property.type.hasPrefix("UI") else {
-                throw XZMacroError(message: "@bind: 自定义类型，请使用 @bind(\"vmKey\", \"vkey\") 或 @bind(property:) 进行绑定")
-            }
-            
-            let typeName = String(property.type[property.type.index(property.type.startIndex, offsetBy: 2)...]);
-            if property.name.hasSuffix(typeName) {
-                vmkey = String(property.name[..<property.name.index(property.name.endIndex, offsetBy: -typeName.count)])
-            }
-            
-            switch property.type {
-            case "UILabel":
-                if vmkey.isEmpty {
-                    vmkey = "text"
-                }
-                selector = "#selector(setter: UILabel.text)"
-            case "UIImageView":
-                if vmkey.isEmpty {
-                    vmkey = "image"
-                }
-                selector = "#selector(setter: UIImageView.image)"
-            case "UITextView":
-                if vmkey.isEmpty {
-                    vmkey = "text"
-                }
-                selector = "#selector(setter: UITextView.text)"
-            case "UITextField":
-                if vmkey.isEmpty {
-                    vmkey = "text"
-                }
-                selector = "#selector(setter: UITextField.text)"
-            case "UISwitch":
-                if vmkey.isEmpty {
-                    vmkey = "isOn"
-                }
-                selector = "#selector(setter: UISwitch.isOn)"
-            case "UIButton":
-                if vmkey.isEmpty {
-                    vmkey = "title"
-                }
-                selector = "#selector(setter: UIButton.title)"
-            case "UIView":
-                if vmkey.isEmpty {
-                    vmkey = "backgroundColor"
-                }
-                selector = "#selector(setter: UIView.backgroundColor)"
-            default:
-                throw XZMacroError(message: "@bind: 请使用 @bind(\"vmKey\", \"vKey\") 的方式进行绑定")
-            }
+            throw XZMacroError(message: "@bind: 请通过参数 (viewModel, view) 指定待绑定的 XZMocoaKey 和属性")
             
         case 1:
-            let macroArgument = macroArguments[0]
+            // 只有一个参数
+            let argument0 = macroArguments[0]
             
-            // 只有一个参数，那么参数值为 ViewModel 属性
-            if let key = macroArgument.representedLiteralValue {
+            // 参数值 XZMocoaKey
+            if let key = argument0.representedLiteralValue {
                 vmkey = key;
             } else {
-                vmkey = String(macroArgument.value[macroArgument.value.index(after: macroArgument.value.startIndex)...])
+                vmkey = String(argument0.value.dropFirst())
             }
             
-            if let label = macroArgument.label {
-                // 有标签，标签为 View 属性
+            if let label = argument0.label {
+                // 有标签：标签为 View 属性
                 selector = "#selector(setter: \(property.type).\(label))"
             } else {
-                // 没有标签，查找默认值，否则使用参数
-                if property.type.hasPrefix("UI") {
-                    switch property.type {
-                    case "UILabel":
-                        selector = "#selector(setter: UILabel.text)"
-                    case "UIImageView":
-                        selector = "#selector(setter: UIImageView.image)"
-                    case "UITextView":
-                        selector = "#selector(setter: UITextView.text)"
-                    case "UITextField":
-                        selector = "#selector(setter: UITextField.text)"
-                    case "UISwitch":
-                        selector = "#selector(setter: UISwitch.isOn)"
-                    case "UIButton":
-                        selector = "#selector(setter: UIButton.title)"
-                    case "UIView":
-                        selector = "#selector(setter: UIView.backgroundColor)"
-                    default:
-                        selector = "#selector(setter: UIView.\(vmkey))"
-                    }
-                } else {
-                    selector = "#selector(setter: UIView.\(vmkey))"
+                // 无标签：查找 view 默认属性，或使用参数相同的属性
+                switch property.type {
+                case "UILabel":
+                    selector = "#selector(setter: UILabel.text)"
+                case "UIImageView":
+                    selector = "#selector(setter: UIImageView.image)"
+                case "UITextView":
+                    selector = "#selector(setter: UITextView.text)"
+                case "UITextField":
+                    selector = "#selector(setter: UITextField.text)"
+                case "UISwitch":
+                    selector = "#selector(setter: UISwitch.isOn)"
+                case "UIButton":
+                    selector = "#selector(setter: UIButton.title)"
+                case "UIView":
+                    selector = "#selector(setter: UIView.backgroundColor)"
+                default:
+                    selector = "#selector(setter: \(property.type).\(vmkey))"
                 }
             }
+            
         case 2:
-            let macroArgument0 = macroArguments[0]
-            if let key = macroArgument0.representedLiteralValue {
+            let argument0 = macroArguments[0]
+            // 解析第一个参数为 vmkey（XZMocoaKey 字符串字面量）
+            if let key = argument0.representedLiteralValue {
                 vmkey = key
             } else {
-                vmkey = String(macroArgument0.value[macroArgument0.value.index(after: macroArgument0.value.startIndex)...])
+                // XZMocoaKey 枚举：".title" → "title"
+                vmkey = String(argument0.value.dropFirst())
             }
-            
-            let macroArgument1 = macroArguments[1]
-            if macroArgument1.label == "selector" {
-                selector = macroArgument1.value;
-            } else if let key = macroArgument1.representedLiteralValue {
-                selector = "#selector(setter: \(property.type).\(key))"
-            } else  {
-                selector = "#selector(setter: \(property.type)\(macroArgument1.value))"
+
+            let argument1 = macroArguments[1]
+
+            // 形式 3: @bind(title:key, for:state) / @bind(image:key, for:state) / 等
+            // 第一参数标签作为 __xz_bind_<title>_<state> 的一部分（仅支持 UIButton）。
+            switch argument1.label {
+            case "for":
+                guard let title = argument0.label else {
+                    throw XZMacroError(message: "@bind: 与 for: 配套的第一参数必须带标签（如 title:、image:）")
+                }
+                let state = argument1.value.dropFirst()
+                selector = "#selector(\(property.type).__xz_bind_\(title)_\(state)(_:))"
+            case "selector":
+                selector = argument1.value
+            default:
+                if let vKey = argument1.representedLiteralValue {
+                    selector = "#selector(setter: \(property.type).\(vKey))"
+                } else {
+                    selector = "#selector(setter: \(property.type)\(argument1.value))"
+                }
             }
             
         default:
@@ -304,7 +267,6 @@ public struct XZMocoaBindMacro {
             throw XZMacroError(message: "@bind: 暂不支持 .m 角色")
             
         case .v:
-            
             let propertyType = try self.type(forVariable: declaration)
             
             // 宏参数
@@ -313,67 +275,36 @@ public struct XZMocoaBindMacro {
                 case .argumentList(let macroArguments):
                     switch macroArguments.count {
                     case 0:
-                        switch propertyType.name {
-                        case "UILabel":
-                            break
-                        case "UITextView":
-                            break
-                        case "UITextField":
-                            break
-                        case "UIImageView":
-                            break
-                        case "UISwitch":
-                            break
-                        default:
-                            throw XZMacroError(message: "@bind: 默认绑定还不支持 \(propertyType.name) 类型")
-                        }
+                        throw XZMacroError(message: "@bind: 为视图建立绑定需指定参数")
+                        
                     case 1:
-                        let macroArgument = macroArguments[macroArguments.startIndex]
-                        if let label = macroArgument.label?.trimmedDescription {
-                            if label != "key" {
-                                throw XZMacroError(message: "@bind: 单个参数仅支持 key 标签（指定 View 属性）")
-                            }
-                        } else {
-                            switch propertyType.name {
-                            case "UILabel":
-                                break
-                            case "UITextView":
-                                break
-                            case "UITextField":
-                                break
-                            case "UIImageView":
-                                break
-                            case "UISwitch":
-                                break
-                            default:
-                                throw XZMacroError(message: "@bind: 默认绑定还不支持 \(propertyType.name) 类型")
-                            }
-                        }
+                        break
+                        
                     case 2:
-                        let firstExpression = macroArguments[macroArguments.startIndex].expression
-                        if let stringValue = firstExpression.as(StringLiteralExprSyntax.self)?.representedLiteralValue {
-                            guard stringValue.count > 0 else {
-                                throw XZMacroError(message: "@bind: 第一个参数不能为空，若仅指定 view 属性名，可使用 @bind(key:) 宏")
-                            }
-                        } else if firstExpression.as(MemberAccessExprSyntax.self) == nil {
-                            throw XZMacroError(message: "@bind: 绑定 ViewModel 键名必须是 String 字面量或 XZMocoaKey 枚举值")
-                        }
+                        let firstArg = macroArguments[macroArguments.startIndex]
+                        let secondArg = macroArguments[macroArguments.index(after: macroArguments.startIndex)]
+                        let firstLabel  = firstArg.label?.text
+                        let secondLabel = secondArg.label?.text
                         
-                        let secondExpression = macroArguments[macroArguments.index(after: macroArguments.startIndex)].expression
-                        if let stringValue = secondExpression.as(StringLiteralExprSyntax.self)?.representedLiteralValue {
-                            guard stringValue.count > 0 else {
-                                throw XZMacroError(message: "@bind: 绑定 View 键名不能为空；若 View 支持默认键名，请不要提供第二参数")
+                        switch secondLabel {
+                        case "for":
+                            if firstLabel == nil {
+                                throw XZMacroError(message: "@bind: 第一个参数必须有标签")
                             }
-                        } else if secondExpression.as(MemberAccessExprSyntax.self) == nil {
-                            throw XZMacroError(message: "@bind: 绑定 View 键名必须是 String 字面量或 XZMocoaKey 枚举值")
+                        case "selector":
+                            if firstLabel != nil {
+                                throw XZMacroError(message: "@bind: 第一个参数必须无标签")
+                            }
+                        default:
+                            if firstLabel != nil || secondLabel != nil {
+                                throw XZMacroError(message: "@bind: 移除参数标签")
+                            }
                         }
-                        
                     default:
-                        throw XZMacroError(message: "@bind: 仅支持 (.vmKey)、(.vmKey, .vKey) 两种形式的参数")
+                        throw XZMacroError(message: "@bind: 两个参数仅支持 (vmKey, vKey) / (key, selector: aSelector) / (title:key, for:state) 三种形式")
                     }
-                    
                 default:
-                    throw XZMacroError(message: "@bind: 不支持绑定当前的键类型")
+                    throw XZMacroError(message: "@bind: 语法错误")
                 }
             }
             

@@ -72,6 +72,31 @@ static const void * const _context = &_context;
     [[XZMocoaContext contextIfLoaededForView:self] sendEventsWithKey:key value:value];
 }
 
+- (void)__xz_bind_title_normal:(NSString *)title { }
+- (void)__xz_bind_titleColor_normal:(UIColor *)color {}
+- (void)__xz_bind_titleShadowColor_normal:(UIColor *)color {}
+- (void)__xz_bind_image_normal:(UIImage *)image { }
+- (void)__xz_bind_attributedTitle_normal:(NSAttributedString *)attributedTitle { }
+- (void)__xz_bind_backgroundImage_normal:(UIImage *)image { }
+- (void)__xz_bind_title_selected:(NSString *)title { }
+- (void)__xz_bind_titleColor_selected:(UIColor *)color { }
+- (void)__xz_bind_titleShadowColor_selected:(UIColor *)color { }
+- (void)__xz_bind_image_selected:(UIImage *)title { }
+- (void)__xz_bind_attributedTitle_selected:(NSAttributedString *)attributedTitle { }
+- (void)__xz_bind_backgroundImage_selected:(UIImage *)image { }
+- (void)__xz_bind_title_disabled:(NSString *)title { }
+- (void)__xz_bind_titleColor_disabled:(UIColor *)color { }
+- (void)__xz_bind_titleShadowColor_disabled:(UIColor *)color { }
+- (void)__xz_bind_image_disabled:(UIImage *)title { }
+- (void)__xz_bind_attributedTitle_disabled:(NSAttributedString *)attributedTitle { }
+- (void)__xz_bind_backgroundImage_disabled:(UIImage *)image { }
+- (void)__xz_bind_title_highlighted:(NSString *)title { }
+- (void)__xz_bind_titleColor_highlighted:(UIColor *)color { }
+- (void)__xz_bind_titleShadowColor_highlighted:(UIColor *)color { }
+- (void)__xz_bind_image_highlighted:(UIImage *)title { }
+- (void)__xz_bind_attributedTitle_highlighted:(NSAttributedString *)attributedTitle { }
+- (void)__xz_bind_backgroundImage_highlighted:(UIImage *)image { }
+
 @end
 
 @implementation UIView (XZMocoaView)
@@ -661,6 +686,106 @@ static const void * const _context = &_context;
         return viewController;
     }
     return viewController.tabBarController;
+}
+
+@end
+
+@implementation UIButton (XZMocoaView)
+
+- (void)__xz_bind_title_normal:(NSString *)title {
+    [self setTitle:title forState:(UIControlStateNormal)];
+}
+
+- (void)__xz_bind_titleColor_normal:(UIColor *)color {
+    [self setTitleColor:color forState:(UIControlStateNormal)];
+}
+
+- (void)__xz_bind_titleShadowColor_normal:(UIColor *)color {
+    [self setTitleShadowColor:color forState:(UIControlStateNormal)];
+}
+
+- (void)__xz_bind_image_normal:(UIImage *)image {
+    [self setImage:image forState:UIControlStateNormal];
+}
+
+- (void)__xz_bind_attributedTitle_normal:(NSAttributedString *)attributedTitle {
+    [self setAttributedTitle:attributedTitle forState:UIControlStateNormal];
+}
+
+- (void)__xz_bind_backgroundImage_normal:(UIImage *)image {
+    [self setBackgroundImage:image forState:UIControlStateNormal];
+}
+
+- (void)__xz_bind_title_selected:(NSString *)title {
+    [self setTitle:title forState:UIControlStateSelected];
+}
+
+- (void)__xz_bind_titleColor_selected:(UIColor *)color {
+    [self setTitleColor:color forState:(UIControlStateSelected)];
+}
+
+- (void)__xz_bind_titleShadowColor_selected:(UIColor *)color {
+    [self setTitleShadowColor:color forState:(UIControlStateSelected)];
+}
+
+- (void)__xz_bind_image_selected:(UIImage *)title {
+    [self setImage:title forState:UIControlStateSelected];
+}
+
+- (void)__xz_bind_attributedTitle_selected:(NSAttributedString *)attributedTitle {
+    [self setAttributedTitle:attributedTitle forState:UIControlStateSelected];
+}
+
+- (void)__xz_bind_backgroundImage_selected:(UIImage *)image {
+    [self setBackgroundImage:image forState:UIControlStateSelected];
+}
+
+- (void)__xz_bind_title_disabled:(NSString *)title {
+    [self setTitle:title forState:UIControlStateDisabled];
+}
+
+- (void)__xz_bind_titleColor_disabled:(UIColor *)color {
+    [self setTitleColor:color forState:(UIControlStateDisabled)];
+}
+
+- (void)__xz_bind_titleShadowColor_disabled:(UIColor *)color {
+    [self setTitleShadowColor:color forState:(UIControlStateDisabled)];
+}
+
+- (void)__xz_bind_image_disabled:(UIImage *)title {
+    [self setImage:title forState:UIControlStateDisabled];
+}
+
+- (void)__xz_bind_attributedTitle_disabled:(NSAttributedString *)attributedTitle {
+    [self setAttributedTitle:attributedTitle forState:UIControlStateDisabled];
+}
+
+- (void)__xz_bind_backgroundImage_disabled:(UIImage *)image {
+    [self setBackgroundImage:image forState:UIControlStateDisabled];
+}
+
+- (void)__xz_bind_title_highlighted:(NSString *)title {
+    [self setTitle:title forState:UIControlStateHighlighted];
+}
+
+- (void)__xz_bind_titleColor_highlighted:(UIColor *)color {
+    [self setTitleColor:color forState:(UIControlStateHighlighted)];
+}
+
+- (void)__xz_bind_titleShadowColor_highlighted:(UIColor *)color {
+    [self setTitleShadowColor:color forState:(UIControlStateHighlighted)];
+}
+
+- (void)__xz_bind_image_highlighted:(UIImage *)title {
+    [self setImage:title forState:UIControlStateHighlighted];
+}
+
+- (void)__xz_bind_attributedTitle_highlighted:(NSAttributedString *)attributedTitle {
+    [self setAttributedTitle:attributedTitle forState:UIControlStateHighlighted];
+}
+
+- (void)__xz_bind_backgroundImage_highlighted:(UIImage *)image {
+    [self setBackgroundImage:image forState:UIControlStateHighlighted];
 }
 
 @end
