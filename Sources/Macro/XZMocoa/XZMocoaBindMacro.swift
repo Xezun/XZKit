@@ -8,6 +8,7 @@
 import SwiftCompilerPlugin
 import SwiftSyntaxMacros
 import SwiftSyntax
+import Foundation
 
 // 不带参数标签的 `@bind` 宏的实现。
 public struct XZMocoaBindMacro {
@@ -74,26 +75,68 @@ public struct XZMocoaBindMacro {
                 vmkey = String(argument0.value.dropFirst())
             }
             
+            // 测试字符串是否匹配正则。
+            func test(_ aString: String, pattern: String) -> Bool {
+                guard let regex = try? NSRegularExpression(pattern: pattern, options: .caseInsensitive) else { return false }
+                return regex.rangeOfFirstMatch(in: aString, range: NSMakeRange(0, (aString as NSString).length)).length > 0
+            }
+            
             if let label = argument0.label {
                 // 有标签：标签为 View 属性
                 selector = "#selector(setter: \(property.type).\(label))"
             } else {
                 // 无标签：查找 view 默认属性，或使用参数相同的属性
                 switch property.type {
+                case "UIView":
+                    if test(vmkey, pattern: "tintColor$") {
+                        selector = "#selector(setter: UIView.tintColor)"
+                    }  else {
+                        selector = "#selector(setter: UIView.backgroundColor)"
+                    }
                 case "UILabel":
-                    selector = "#selector(setter: UILabel.text)"
+                    if test(vmkey, pattern: "textColor$") {
+                        selector = "#selector(setter: UILabel.textColor)"
+                    } else if test(vmkey, pattern: "font$") {
+                        selector = "#selector(setter: UILabel.font)"
+                    } else if test(vmkey, pattern: "textAlignment$") {
+                        selector = "#selector(setter: UILabel.textAlignment)"
+                    } else if test(vmkey, pattern: "attributed") {
+                        selector = "#selector(setter: UILabel.attributedText)"
+                    } else if test(vmkey, pattern: "backgroundColor$") {
+                        selector = "#selector(setter: UILabel.backgroundColor)"
+                    } else if test(vmkey, pattern: "tintColor$") {
+                        selector = "#selector(setter: UILabel.tintColor)"
+                    } else {
+                        selector = "#selector(setter: UILabel.text)"
+                    }
                 case "UIImageView":
-                    selector = "#selector(setter: UIImageView.image)"
+                    if test(vmkey, pattern: "animationImages$") {
+                        selector = "#selector(setter: UIImageView.animationImages)"
+                    } else if test(vmkey, pattern: "backgroundColor$") {
+                        selector = "#selector(setter: UILabel.backgroundColor)"
+                    } else if test(vmkey, pattern: "tintColor$") {
+                        selector = "#selector(setter: UILabel.tintColor)"
+                    } else {
+                        selector = "#selector(setter: UIImageView.image)"
+                    }
                 case "UITextView":
                     selector = "#selector(setter: UITextView.text)"
                 case "UITextField":
-                    selector = "#selector(setter: UITextField.text)"
+                    if test(vmkey, pattern: "placeholder$") {
+                        if test(vmkey, pattern: "attributed") {
+                            selector = "#selector(setter: UITextField.attributedPlaceholder)"
+                        } else {
+                            selector = "#selector(setter: UITextField.placeholder)"
+                        }
+                    } else if test(vmkey, pattern: "attributed") {
+                        selector = "#selector(setter: UITextField.attributedText)"
+                    } else {
+                        selector = "#selector(setter: UITextField.text)"
+                    }
                 case "UISwitch":
                     selector = "#selector(setter: UISwitch.isOn)"
                 case "UIButton":
                     selector = "#selector(setter: UIButton.title)"
-                case "UIView":
-                    selector = "#selector(setter: UIView.backgroundColor)"
                 default:
                     selector = "#selector(setter: \(property.type).\(vmkey))"
                 }

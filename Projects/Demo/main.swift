@@ -13,7 +13,7 @@ import XZKit
 class TestView: UIView, XZMocoaView {
     
     @bind(.name)
-    @bind(textColor: .textColor)
+    @bind(.textColor)
     let nameLabel: UILabel = .init()
     
     @bind("icon")

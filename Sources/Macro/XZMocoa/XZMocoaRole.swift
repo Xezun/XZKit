@@ -18,9 +18,9 @@ public enum XZMocoaRole: String {
     
     case vm
     
-    /// 获取 class 角色。
+    /// 获取 `@mocoa` 宏所修饰的 class 的 MVVM 角色。
     /// - Parameters:
-    ///   - node: 附属于指定 class 的 `@mocoa(role)` 宏
+    ///   - node: 附属于 class 的 `@mocoa(role)` 宏
     ///   - declaration: 声明 class 的节点
     /// - Returns: class 的角色
     public init(node: SwiftSyntax.AttributeSyntax, declaration: SwiftSyntax.ClassDeclSyntax) throws {

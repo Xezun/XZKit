@@ -225,10 +225,6 @@ public macro bind(_ vmKey: XZMocoaKey, selector: Selector) = #externalMacro(modu
 
 // MARK: - UIView
 
-/// 建立从 ViewModel.{key} 到 View.color 的单向绑定关系。
-@attached(accessor, names: named(didSet))
-public macro bind(color key: XZMocoaKey) = #externalMacro(module: "XZKitMacros", type: "XZMocoaBindViewMacro")
-
 /// 建立从 ViewModel.{key} 到 View.tintColor 的单向绑定关系。
 @attached(accessor, names: named(didSet))
 public macro bind(tintColor key: XZMocoaKey) = #externalMacro(module: "XZKitMacros", type: "XZMocoaBindViewMacro")
@@ -278,6 +274,10 @@ public macro bind(textAlignment key: XZMocoaKey) = #externalMacro(module: "XZKit
 /// 建立从 ViewModel.{key} 到 View.image 的单向绑定关系。
 @attached(accessor, names: named(didSet))
 public macro bind(image key: XZMocoaKey) = #externalMacro(module: "XZKitMacros", type: "XZMocoaBindViewMacro")
+
+/// 建立从 ViewModel.{key} 到 View.animationImages 的单向绑定关系。
+@attached(accessor, names: named(didSet))
+public macro bind(animationImages key: XZMocoaKey) = #externalMacro(module: "XZKitMacros", type: "XZMocoaBindViewMacro")
 
 // MARK: - UITextField
 
@@ -338,6 +338,10 @@ public macro bind(image key: XZMocoaKey, for state: UIControl.State) = #external
 public macro bind(backgroundImage key: XZMocoaKey, for state: UIControl.State) = #externalMacro(module: "XZKitMacros", type: "XZMocoaBindViewMacro")
 
 // MARK: - Other
+
+/// 建立从 ViewModel.{key} 到 View.color 的单向绑定关系。
+@attached(accessor, names: named(didSet))
+public macro bind(color key: XZMocoaKey) = #externalMacro(module: "XZKitMacros", type: "XZMocoaBindViewMacro")
 
 /// 建立从 ViewModel.{key} 到 View.name 的单向绑定关系。
 @attached(accessor, names: named(didSet))
