@@ -173,12 +173,12 @@ public macro key() = #externalMacro(module: "XZKitMacros", type: "XZMocoaKeyMacr
 /// ```swift
 /// // 监听事件：ViewModel 发送的 "text" 事件
 /// // 监听方法：nameLabel 的 #selector(setter: UILabel.text)  方法
-/// @bind
+/// @bind(.text)
 /// let nameLabel: UILabel
 ///
 /// // 监听事件：ViewModel 发送的 "name" 事件
 /// // 监听方法：nameLabel 的 #selector(setter: UILabel.text)  方法
-/// @bind("name")
+/// @bind(.name)
 /// let nameLabel: UILabel
 ///
 /// // 监听事件：ViewModel 发送的 "color" 事件
@@ -313,7 +313,7 @@ public macro bind(isOn key: XZMocoaKey) = #externalMacro(module: "XZKitMacros", 
 
 // MARK: - UIButton
 
-/// 建立从 ViewModel.{key} 到 View.normalTitle 的单向绑定关系。
+/// 建立从 ViewModel.{key} 到 View.title 的单向绑定关系。
 @attached(accessor, names: named(didSet))
 public macro bind(title key: XZMocoaKey, for state: UIControl.State) = #externalMacro(module: "XZKitMacros", type: "XZMocoaBindViewMacro")
 

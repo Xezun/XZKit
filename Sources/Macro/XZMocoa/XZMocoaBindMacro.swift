@@ -90,7 +90,7 @@ public struct XZMocoaBindMacro {
                 case "UIView":
                     if test(vmkey, pattern: "tintColor$") {
                         selector = "#selector(setter: UIView.tintColor)"
-                    }  else {
+                    } else {
                         selector = "#selector(setter: UIView.backgroundColor)"
                     }
                 case "UILabel":
@@ -113,14 +113,28 @@ public struct XZMocoaBindMacro {
                     if test(vmkey, pattern: "animationImages$") {
                         selector = "#selector(setter: UIImageView.animationImages)"
                     } else if test(vmkey, pattern: "backgroundColor$") {
-                        selector = "#selector(setter: UILabel.backgroundColor)"
+                        selector = "#selector(setter: UIImageView.backgroundColor)"
                     } else if test(vmkey, pattern: "tintColor$") {
-                        selector = "#selector(setter: UILabel.tintColor)"
+                        selector = "#selector(setter: UIImageView.tintColor)"
                     } else {
                         selector = "#selector(setter: UIImageView.image)"
                     }
                 case "UITextView":
-                    selector = "#selector(setter: UITextView.text)"
+                    if test(vmkey, pattern: "textColor$") {
+                        selector = "#selector(setter: UITextView.textColor)"
+                    } else if test(vmkey, pattern: "font$") {
+                        selector = "#selector(setter: UITextView.font)"
+                    } else if test(vmkey, pattern: "textAlignment$") {
+                        selector = "#selector(setter: UITextView.textAlignment)"
+                    } else if test(vmkey, pattern: "attributed") {
+                        selector = "#selector(setter: UITextView.attributedText)"
+                    } else if test(vmkey, pattern: "backgroundColor$") {
+                        selector = "#selector(setter: UITextView.backgroundColor)"
+                    } else if test(vmkey, pattern: "tintColor$") {
+                        selector = "#selector(setter: UITextView.tintColor)"
+                    } else {
+                        selector = "#selector(setter: UITextView.text)"
+                    }
                 case "UITextField":
                     if test(vmkey, pattern: "placeholder$") {
                         if test(vmkey, pattern: "attributed") {
@@ -128,15 +142,53 @@ public struct XZMocoaBindMacro {
                         } else {
                             selector = "#selector(setter: UITextField.placeholder)"
                         }
+                    } else if test(vmkey, pattern: "textColor$") {
+                        selector = "#selector(setter: UITextField.textColor)"
+                    } else if test(vmkey, pattern: "font$") {
+                        selector = "#selector(setter: UITextField.font)"
+                    } else if test(vmkey, pattern: "textAlignment$") {
+                        selector = "#selector(setter: UITextField.textAlignment)"
                     } else if test(vmkey, pattern: "attributed") {
                         selector = "#selector(setter: UITextField.attributedText)"
+                    } else if test(vmkey, pattern: "backgroundColor$") {
+                        selector = "#selector(setter: UITextField.backgroundColor)"
+                    } else if test(vmkey, pattern: "tintColor$") {
+                        selector = "#selector(setter: UITextField.tintColor)"
                     } else {
                         selector = "#selector(setter: UITextField.text)"
                     }
                 case "UISwitch":
-                    selector = "#selector(setter: UISwitch.isOn)"
+                    if test(vmkey, pattern: "onTintColor$") {
+                        selector = "#selector(setter: UISwitch.onTintColor)"
+                    } else if test(vmkey, pattern: "thumbTintColor$") {
+                        selector = "#selector(setter: UISwitch.thumbTintColor)"
+                    } else if test(vmkey, pattern: "onImage$") {
+                        selector = "#selector(setter: UISwitch.onImage)"
+                    } else if test(vmkey, pattern: "offImage$") {
+                        selector = "#selector(setter: UISwitch.offImage)"
+                    } else {
+                        selector = "#selector(setter: UISwitch.isOn)"
+                    }
                 case "UIButton":
-                    selector = "#selector(setter: UIButton.title)"
+                    if test(vmkey, pattern: "color$") {
+                        if vmkey.contains("shadow") {
+                            selector = "#selector(UIButton.__xz_bind_titleShadowColor_normal(_:))"
+                        } else if vmkey.contains("tint") {
+                            selector = "#selector(UIButton.__xz_bind_tintColor_normal(_:))"
+                        } else if vmkey.contains("background") {
+                            selector = "#selector(UIButton.__xz_bind_backgroundColor_normal(_:))"
+                        } else {
+                            selector = "#selector(UIButton.__xz_bind_titleColor_normal(_:))"
+                        }
+                    } else if test(vmkey, pattern: "backgroundImage$") {
+                        selector = "#selector(UIButton.__xz_bind_backgroundImage_normal(_:))"
+                    } else if test(vmkey, pattern: "image$") {
+                        selector = "#selector(UIButton.__xz_bind_image_normal(_:))"
+                    } else if test(vmkey, pattern: "Attributed") {
+                        selector = "#selector(UIButton.__xz_bind_attributedTitle_normal(_:))"
+                    } else {
+                        selector = "#selector(UIButton.__xz_bind_title_normal(_:))"
+                    }
                 default:
                     selector = "#selector(setter: \(property.type).\(vmkey))"
                 }

@@ -20,6 +20,7 @@ class TestView: UIView, XZMocoaView {
     let imageView: UIImageView = .init(image: nil)
     
     @bind(title: "name", for: .normal)
+    @bind(.textColor)
     let button: UIButton = .init()
     
     @bind("name")
