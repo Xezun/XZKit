@@ -17,8 +17,16 @@ XZMocoaKey const XZMocoaKeyIsEnabled        = @"isEnabled";
 XZMocoaKey const XZMocoaKeyValue            = @"value";
 XZMocoaKey const XZMocoaKeyName             = @"name";
 XZMocoaKey const XZMocoaKeyIcon             = @"icon";
+XZMocoaKey const XZMocoaKeyColor            = @"color";
 
 XZMocoaKey const XZMocoaKeyIsHidden         = @"isHidden";
+XZMocoaKey const XZMocoaKeyAlpha            = @"alpha";
+XZMocoaKey const XZMocoaKeyFrame            = @"frame";
+XZMocoaKey const XZMocoaKeyBounds           = @"bounds";
+XZMocoaKey const XZMocoaKeyCenter           = @"center";
+XZMocoaKey const XZMocoaKeyTransform        = @"transform";
+XZMocoaKey const XZMocoaKeyTintColor        = @"tintColor";
+XZMocoaKey const XZMocoaKeyBackgroundColor  = @"backgroundColor";
 
 XZMocoaKey const XZMocoaKeyText             = @"text";
 XZMocoaKey const XZMocoaKeyFont             = @"font";

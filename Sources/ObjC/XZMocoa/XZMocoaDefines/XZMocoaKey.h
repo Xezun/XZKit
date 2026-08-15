@@ -38,9 +38,17 @@ FOUNDATION_EXPORT XZMocoaKey const XZMocoaKeyIsEnabled     NS_REFINED_FOR_SWIFT;
 FOUNDATION_EXPORT XZMocoaKey const XZMocoaKeyValue         NS_REFINED_FOR_SWIFT;
 FOUNDATION_EXPORT XZMocoaKey const XZMocoaKeyName          NS_REFINED_FOR_SWIFT;
 FOUNDATION_EXPORT XZMocoaKey const XZMocoaKeyIcon          NS_REFINED_FOR_SWIFT;
+FOUNDATION_EXPORT XZMocoaKey const XZMocoaKeyColor         NS_REFINED_FOR_SWIFT;
 
 @class UIView;
-FOUNDATION_EXPORT XZMocoaKey const XZMocoaKeyIsHidden      NS_REFINED_FOR_SWIFT;
+FOUNDATION_EXPORT XZMocoaKey const XZMocoaKeyIsHidden        NS_REFINED_FOR_SWIFT;
+FOUNDATION_EXPORT XZMocoaKey const XZMocoaKeyAlpha           NS_REFINED_FOR_SWIFT;
+FOUNDATION_EXPORT XZMocoaKey const XZMocoaKeyFrame           NS_REFINED_FOR_SWIFT;
+FOUNDATION_EXPORT XZMocoaKey const XZMocoaKeyBounds          NS_REFINED_FOR_SWIFT;
+FOUNDATION_EXPORT XZMocoaKey const XZMocoaKeyCenter          NS_REFINED_FOR_SWIFT;
+FOUNDATION_EXPORT XZMocoaKey const XZMocoaKeyTransform       NS_REFINED_FOR_SWIFT;
+FOUNDATION_EXPORT XZMocoaKey const XZMocoaKeyTintColor       NS_REFINED_FOR_SWIFT;
+FOUNDATION_EXPORT XZMocoaKey const XZMocoaKeyBackgroundColor NS_REFINED_FOR_SWIFT;
 
 @class UILabel;
 FOUNDATION_EXPORT XZMocoaKey const XZMocoaKeyText                 NS_REFINED_FOR_SWIFT;

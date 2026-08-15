@@ -13,7 +13,7 @@ import Foundation
 // 不带参数标签的 `@bind` 宏的实现。
 public struct XZMocoaBindMacro {
     
-    public enum OptionalType {
+    public enum WrappedType {
         /// 非可选
         case unwrapped
         /// 可选
@@ -22,7 +22,10 @@ public struct XZMocoaBindMacro {
         case autoUnwrapped
     }
     
-    public static func type(forVariable variableDecl: VariableDeclSyntax) throws -> (name: String, optional: OptionalType) {
+    /// 从属性的声明，获取属性的类型。
+    /// - Parameter variableDecl: 声明属性的语句
+    /// - Returns: 属性的类型名，属性的可选类型
+    public static func typeInfo(from variableDecl: VariableDeclSyntax) throws -> (typeName: String, wrappedType: WrappedType) {
         guard let expression = variableDecl.bindings.first else {
             throw XZMacroError(message: "@bind: 没有找到属性类型")
         }
@@ -75,11 +78,7 @@ public struct XZMocoaBindMacro {
                 vmkey = String(argument0.value.dropFirst())
             }
             
-            // 测试字符串是否匹配正则。
-            func test(_ aString: String, pattern: String) -> Bool {
-                guard let regex = try? NSRegularExpression(pattern: pattern, options: .caseInsensitive) else { return false }
-                return regex.rangeOfFirstMatch(in: aString, range: NSMakeRange(0, (aString as NSString).length)).length > 0
-            }
+            
             
             if let label = argument0.label {
                 // 有标签：标签为 View 属性
@@ -88,109 +87,21 @@ public struct XZMocoaBindMacro {
                 // 无标签：查找 view 默认属性，或使用参数相同的属性
                 switch property.type {
                 case "UIView":
-                    if test(vmkey, pattern: "tintColor$") {
-                        selector = "#selector(setter: UIView.tintColor)"
-                    } else {
-                        selector = "#selector(setter: UIView.backgroundColor)"
-                    }
+                    selector = try UIViewSelector(forBindingKey: vmkey)
                 case "UILabel":
-                    if test(vmkey, pattern: "textColor$") {
-                        selector = "#selector(setter: UILabel.textColor)"
-                    } else if test(vmkey, pattern: "font$") {
-                        selector = "#selector(setter: UILabel.font)"
-                    } else if test(vmkey, pattern: "textAlignment$") {
-                        selector = "#selector(setter: UILabel.textAlignment)"
-                    } else if test(vmkey, pattern: "attributed") {
-                        selector = "#selector(setter: UILabel.attributedText)"
-                    } else if test(vmkey, pattern: "backgroundColor$") {
-                        selector = "#selector(setter: UILabel.backgroundColor)"
-                    } else if test(vmkey, pattern: "tintColor$") {
-                        selector = "#selector(setter: UILabel.tintColor)"
-                    } else {
-                        selector = "#selector(setter: UILabel.text)"
-                    }
+                    selector = try UILabelSelector(forBindingKey: vmkey)
                 case "UIImageView":
-                    if test(vmkey, pattern: "animationImages$") {
-                        selector = "#selector(setter: UIImageView.animationImages)"
-                    } else if test(vmkey, pattern: "backgroundColor$") {
-                        selector = "#selector(setter: UIImageView.backgroundColor)"
-                    } else if test(vmkey, pattern: "tintColor$") {
-                        selector = "#selector(setter: UIImageView.tintColor)"
-                    } else {
-                        selector = "#selector(setter: UIImageView.image)"
-                    }
+                    selector = try UIImageViewSelector(forBindingKey: vmkey)
                 case "UITextView":
-                    if test(vmkey, pattern: "textColor$") {
-                        selector = "#selector(setter: UITextView.textColor)"
-                    } else if test(vmkey, pattern: "font$") {
-                        selector = "#selector(setter: UITextView.font)"
-                    } else if test(vmkey, pattern: "textAlignment$") {
-                        selector = "#selector(setter: UITextView.textAlignment)"
-                    } else if test(vmkey, pattern: "attributed") {
-                        selector = "#selector(setter: UITextView.attributedText)"
-                    } else if test(vmkey, pattern: "backgroundColor$") {
-                        selector = "#selector(setter: UITextView.backgroundColor)"
-                    } else if test(vmkey, pattern: "tintColor$") {
-                        selector = "#selector(setter: UITextView.tintColor)"
-                    } else {
-                        selector = "#selector(setter: UITextView.text)"
-                    }
+                    selector = try UITextViewSelector(forBindingKey: vmkey)
                 case "UITextField":
-                    if test(vmkey, pattern: "placeholder$") {
-                        if test(vmkey, pattern: "attributed") {
-                            selector = "#selector(setter: UITextField.attributedPlaceholder)"
-                        } else {
-                            selector = "#selector(setter: UITextField.placeholder)"
-                        }
-                    } else if test(vmkey, pattern: "textColor$") {
-                        selector = "#selector(setter: UITextField.textColor)"
-                    } else if test(vmkey, pattern: "font$") {
-                        selector = "#selector(setter: UITextField.font)"
-                    } else if test(vmkey, pattern: "textAlignment$") {
-                        selector = "#selector(setter: UITextField.textAlignment)"
-                    } else if test(vmkey, pattern: "attributed") {
-                        selector = "#selector(setter: UITextField.attributedText)"
-                    } else if test(vmkey, pattern: "backgroundColor$") {
-                        selector = "#selector(setter: UITextField.backgroundColor)"
-                    } else if test(vmkey, pattern: "tintColor$") {
-                        selector = "#selector(setter: UITextField.tintColor)"
-                    } else {
-                        selector = "#selector(setter: UITextField.text)"
-                    }
+                    selector = try UITextFieldSelector(forBindingKey: vmkey)
                 case "UISwitch":
-                    if test(vmkey, pattern: "onTintColor$") {
-                        selector = "#selector(setter: UISwitch.onTintColor)"
-                    } else if test(vmkey, pattern: "thumbTintColor$") {
-                        selector = "#selector(setter: UISwitch.thumbTintColor)"
-                    } else if test(vmkey, pattern: "onImage$") {
-                        selector = "#selector(setter: UISwitch.onImage)"
-                    } else if test(vmkey, pattern: "offImage$") {
-                        selector = "#selector(setter: UISwitch.offImage)"
-                    } else {
-                        selector = "#selector(setter: UISwitch.isOn)"
-                    }
+                    selector = try UISwitchSelector(forBindingKey: vmkey)
                 case "UIButton":
-                    if test(vmkey, pattern: "color$") {
-                        if vmkey.contains("shadow") {
-                            selector = "#selector(UIButton.__xz_bind_titleShadowColor_normal(_:))"
-                        } else if vmkey.contains("tint") {
-                            selector = "#selector(UIButton.__xz_bind_tintColor_normal(_:))"
-                        } else if vmkey.contains("background") {
-                            selector = "#selector(UIButton.__xz_bind_backgroundColor_normal(_:))"
-                        } else {
-                            selector = "#selector(UIButton.__xz_bind_titleColor_normal(_:))"
-                        }
-                    } else if test(vmkey, pattern: "backgroundImage$") {
-                        selector = "#selector(UIButton.__xz_bind_backgroundImage_normal(_:))"
-                    } else if test(vmkey, pattern: "image$") {
-                        selector = "#selector(UIButton.__xz_bind_image_normal(_:))"
-                    } else if test(vmkey, pattern: "Attributed") {
-                        selector = "#selector(UIButton.__xz_bind_attributedTitle_normal(_:))"
-                    } else {
-                        selector = "#selector(UIButton.__xz_bind_title_normal(_:))"
-                    }
+                    selector = try UIButtonSelector(forBindingKey: vmkey)
                 default:
-                    selector = "#selector(setter: \(property.type).\(vmkey))"
+                    selector = try UIViewSelector(forBindingKey: vmkey)
                 }
             }
             
@@ -242,14 +153,14 @@ public struct XZMocoaBindMacro {
             throw XZMacroError(message: "@bind: 无法确定属性名")
         }
         
-        let propertyType = try Self.type(forVariable: declaration)
+        let propertyType = try Self.typeInfo(from: declaration)
         
         let statements = try macroNodes.map({ macroNode throws -> String in
-            let arguments = try Self.viewBindArguments(forMacro: macroNode, forVariable: (propertyName, propertyType.name))
+            let arguments = try Self.viewBindArguments(forMacro: macroNode, forVariable: (propertyName, propertyType.typeName))
             return "viewModel.addTarget(\(propertyName), action: \(arguments.selector), forKey: \"\(arguments.key)\", value: nil)"
         }).joined(separator: "\n")
         
-        if propertyType.optional != .unwrapped {
+        if propertyType.wrappedType != .unwrapped {
             return "if let \(propertyName) = self.\(propertyName) { \(statements) }"
         }
         return statements
@@ -357,13 +268,13 @@ public struct XZMocoaBindMacro {
         }
     }
     
-    public static func isValid(forMacro node: SwiftSyntax.AttributeSyntax, forVariable declaration: VariableDeclSyntax, for role: XZMocoaRole) throws -> OptionalType {
+    public static func isValid(forMacro node: SwiftSyntax.AttributeSyntax, forVariable declaration: VariableDeclSyntax, for role: XZMocoaRole) throws -> WrappedType {
         switch role {
         case .m:
             throw XZMacroError(message: "@bind: 暂不支持 .m 角色")
             
         case .v:
-            let propertyType = try self.type(forVariable: declaration)
+            let propertyType = try self.typeInfo(from: declaration)
             
             // 宏参数
             if let macroArguments = node.arguments {
@@ -404,7 +315,7 @@ public struct XZMocoaBindMacro {
                 }
             }
             
-            return propertyType.optional
+            return propertyType.wrappedType
             
         case .vm:
             // 宏参数
@@ -465,7 +376,7 @@ extension XZMocoaBindViewMacro: AccessorMacro {
             throw XZMacroError(message: "@bind(key:) 仅支持属性")
         }
         
-        let type = try XZMocoaBindMacro.type(forVariable: declaration);
+        let type = try XZMocoaBindMacro.typeInfo(from: declaration);
         
         for binding in declaration.bindings {
             guard let accessorBlock = binding.accessorBlock else {
@@ -473,7 +384,7 @@ extension XZMocoaBindViewMacro: AccessorMacro {
             }
             switch accessorBlock.accessors {
             case .getter:
-                if type.optional == .wrapped {
+                if type.wrappedType == .wrapped {
                     XZMacroDiagnose(context, node: node, message: "@bind: 可选类型的只读计算属性，可能无法实时绑定，如果该属性不为 nil 请使用非可选或隐式可选类型，以消除此警告", severity: .warning)
                 }
                 return []
@@ -491,7 +402,7 @@ extension XZMocoaBindViewMacro: AccessorMacro {
             }
         }
         
-        guard type.optional == .wrapped else {
+        guard type.wrappedType == .wrapped else {
             return []
         }
         
@@ -519,3 +430,109 @@ extension XZMocoaBindViewMacro: AccessorMacro {
     
 }
 
+fileprivate func UIViewSelector(forBindingKey vmkey: String) throws -> String {
+    if regexTest(vmkey, pattern: "hidden$") {
+        return "#selector(setter: UIView.isHidden)"
+    } else if regexTest(vmkey, pattern: "alpha$") {
+        return "#selector(setter: UIView.alpha)"
+    } else if regexTest(vmkey, pattern: "frame$") {
+        return "#selector(setter: UIView.frame)"
+    } else if regexTest(vmkey, pattern: "bounds$") {
+        return "#selector(setter: UIView.bounds)"
+    } else if regexTest(vmkey, pattern: "center$") {
+        return "#selector(setter: UIView.center)"
+    } else if regexTest(vmkey, pattern: "transform$") {
+        return "#selector(setter: UIView.transform)"
+    } else if regexTest(vmkey, pattern: "tintColor$") {
+        return "#selector(setter: UIView.tintColor)"
+    } else if (regexTest(vmkey, pattern: "backgroundColor$")) {
+        return "#selector(setter: UIView.backgroundColor)"
+    } else {
+        throw XZMacroError(message: "@bind: 无法为 \(vmkey) 推断要绑定的视图属性或视图方法")
+    }
+}
+
+private let kGeneralTextKeys  = "text|title|name|description|detail|content|string"
+private let kGeneralImageKeys = "image|icon|avatar|photo|picture|thumbnail"
+
+fileprivate func UITextSelector(forBindingKey vmkey: String, forView view: String) throws -> String {
+    if regexTest(vmkey, pattern: "attributed(\(kGeneralTextKeys))$") {
+        return "#selector(setter: \(view).attributedText)"
+    } else if regexTest(vmkey, pattern: "textAlignment$") {
+        return "#selector(setter: \(view).textAlignment)"
+    } else if regexTest(vmkey, pattern: "(\(kGeneralTextKeys))$") {
+        return "#selector(setter: \(view).text)"
+    } else if regexTest(vmkey, pattern: "(\(kGeneralTextKeys))Color$") {
+        return "#selector(setter: \(view).textColor)"
+    } else if regexTest(vmkey, pattern: "font$") {
+        return "#selector(setter: \(view).font)"
+    } else {
+        return try UIViewSelector(forBindingKey: vmkey)
+    }
+}
+
+fileprivate func UILabelSelector(forBindingKey vmkey: String) throws -> String {
+    return try UITextSelector(forBindingKey: vmkey, forView: "UILabel")
+}
+
+fileprivate func UIImageViewSelector(forBindingKey vmkey: String) throws -> String {
+    if regexTest(vmkey, pattern: "(\(kGeneralImageKeys))$") {
+        return "#selector(setter: UIImageView.image)"
+    } else if regexTest(vmkey, pattern: "(\(kGeneralImageKeys))s$") {
+        return "#selector(setter: UIImageView.animationImages)"
+    } else {
+        return try UIViewSelector(forBindingKey: vmkey)
+    }
+}
+
+fileprivate func UITextViewSelector(forBindingKey vmkey: String) throws -> String {
+    return try UITextSelector(forBindingKey: vmkey, forView: "UITextView")
+}
+
+fileprivate func UITextFieldSelector(forBindingKey vmkey: String) throws -> String {
+    if regexTest(vmkey, pattern: "attributedPlaceholder$") {
+        return "#selector(setter: UITextField.attributedPlaceholder)"
+    } else if regexTest(vmkey, pattern: "placeholder$") {
+        return "#selector(setter: UITextField.placeholder)"
+    } else {
+        return try UITextSelector(forBindingKey: vmkey, forView: "UITextField")
+    }
+}
+
+fileprivate func UISwitchSelector(forBindingKey vmkey: String) throws -> String {
+    if regexTest(vmkey, pattern: "onTintColor$") {
+        return "#selector(setter: UISwitch.onTintColor)"
+    } else if regexTest(vmkey, pattern: "thumbTintColor$") {
+        return "#selector(setter: UISwitch.thumbTintColor)"
+    } else if regexTest(vmkey, pattern: "onImage$") {
+        return "#selector(setter: UISwitch.onImage)"
+    } else if regexTest(vmkey, pattern: "offImage$") {
+        return "#selector(setter: UISwitch.offImage)"
+    } else {
+        return try UIViewSelector(forBindingKey: vmkey)
+    }
+}
+
+fileprivate func UIButtonSelector(forBindingKey vmkey: String) throws -> String {
+    if regexTest(vmkey, pattern: "attributed(\(kGeneralTextKeys))$") {
+        return "#selector(UIButton.__xz_bind_attributedTitle_normal(_:))"
+    } else if regexTest(vmkey, pattern: "(\(kGeneralTextKeys))$"){
+        return "#selector(UIButton.__xz_bind_title_normal(_:))"
+    } else if regexTest(vmkey, pattern: "(\(kGeneralTextKeys))ShadowColor$") {
+        return "#selector(UIButton.__xz_bind_titleShadowColor_normal(_:))"
+    } else if regexTest(vmkey, pattern: "(\(kGeneralTextKeys))Color$") {
+        return "#selector(UIButton.__xz_bind_titleColor_normal(_:))"
+    } else if regexTest(vmkey, pattern: "backgroundImage$") {
+        return "#selector(UIButton.__xz_bind_backgroundImage_normal(_:))"
+    } else if regexTest(vmkey, pattern: "image$") {
+        return "#selector(UIButton.__xz_bind_image_normal(_:))"
+    } else {
+        return try UIViewSelector(forBindingKey: vmkey)
+    }
+}
+
+// 测试字符串是否匹配正则。
+fileprivate func regexTest(_ aString: String, pattern: String) -> Bool {
+    guard let regex = try? NSRegularExpression(pattern: pattern, options: .caseInsensitive) else { return false }
+    return regex.rangeOfFirstMatch(in: aString, range: NSMakeRange(0, (aString as NSString).length)).length > 0
+}

@@ -23,7 +23,7 @@ class TestView: UIView, XZMocoaView {
     @bind(.textColor)
     let button: UIButton = .init()
     
-    @bind("name")
+    @bind(.backgroundColor)
     let view: TestView = .init()
     
     @objc dynamic var name: String?
@@ -31,5 +31,8 @@ class TestView: UIView, XZMocoaView {
     @objc func foobar(_ name: String?) {
         
     }
+    
+    @bind(.reload, selector: #selector(UITableView.reloadData))
+    let tableView: UITableView = .init()
  
 }

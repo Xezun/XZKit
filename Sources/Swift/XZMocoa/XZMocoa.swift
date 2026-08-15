@@ -54,9 +54,33 @@ extension XZMocoaKey {
     public static var icon: XZMocoaKey {
         return XZMocoaKey.__icon
     }
+    public static var color: XZMocoaKey {
+        return XZMocoaKey.__color
+    }
 
     public static var isHidden: XZMocoaKey {
         return XZMocoaKey.__isHidden
+    }
+    public static var alpha: XZMocoaKey {
+        return XZMocoaKey.__alpha
+    }
+    public static var frame: XZMocoaKey {
+        return XZMocoaKey.__frame
+    }
+    public static var bounds: XZMocoaKey {
+        return XZMocoaKey.__bounds
+    }
+    public static var center: XZMocoaKey {
+        return XZMocoaKey.__center
+    }
+    public static var transform: XZMocoaKey {
+        return XZMocoaKey.__transform
+    }
+    public static var tintColor: XZMocoaKey {
+        return XZMocoaKey.__tintColor
+    }
+    public static var backgroundColor: XZMocoaKey {
+        return XZMocoaKey.__backgroundColor
     }
 
     public static var text: XZMocoaKey {
@@ -239,9 +263,33 @@ extension XZMocoaKey {
     public var icon: XZMocoaKey {
         return XZMocoaKey(self.rawValue + "." + XZMocoaKey.__icon.rawValue)
     }
+    public var color: XZMocoaKey {
+        return XZMocoaKey(self.rawValue + "." + XZMocoaKey.__color.rawValue)
+    }
     
     public var isHidden: XZMocoaKey {
         return XZMocoaKey(self.rawValue + "." + XZMocoaKey.__isHidden.rawValue)
+    }
+    public var alpha: XZMocoaKey {
+        return XZMocoaKey(self.rawValue + "." + XZMocoaKey.__alpha.rawValue)
+    }
+    public var frame: XZMocoaKey {
+        return XZMocoaKey(self.rawValue + "." + XZMocoaKey.__frame.rawValue)
+    }
+    public var bounds: XZMocoaKey {
+        return XZMocoaKey(self.rawValue + "." + XZMocoaKey.__bounds.rawValue)
+    }
+    public var center: XZMocoaKey {
+        return XZMocoaKey(self.rawValue + "." + XZMocoaKey.__center.rawValue)
+    }
+    public var transform: XZMocoaKey {
+        return XZMocoaKey(self.rawValue + "." + XZMocoaKey.__transform.rawValue)
+    }
+    public var tintColor: XZMocoaKey {
+        return XZMocoaKey(self.rawValue + "." + XZMocoaKey.__tintColor.rawValue)
+    }
+    public var backgroundColor: XZMocoaKey {
+        return XZMocoaKey(self.rawValue + "." + XZMocoaKey.__backgroundColor.rawValue)
     }
     
     public var text: XZMocoaKey {
