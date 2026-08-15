@@ -395,6 +395,10 @@ public macro bind(subtitle key: XZMocoaKey) = #externalMacro(module: "XZKitMacro
 @attached(accessor, names: named(didSet))
 public macro bind(detailText key: XZMocoaKey) = #externalMacro(module: "XZKitMacros", type: "XZMocoaBindViewMacro")
 
+/// 建立从 ViewModel.{key} 到 View.icon 的单向绑定关系。
+@attached(accessor, names: named(didSet))
+public macro bind(icon key: XZMocoaKey) = #externalMacro(module: "XZKitMacros", type: "XZMocoaBindViewMacro")
+
 /// 标记方法为 View 或 ViewModel 的角色初始化方法（非对象的初始化方法）。
 ///
 /// 此标记用以取代视图模型的`-[XZMocoaViewModel prepare]`基类方法。
