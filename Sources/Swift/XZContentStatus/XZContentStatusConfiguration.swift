@@ -17,26 +17,6 @@ extension XZContentStatus {
         /// 呈现当前状态配置的状态视图。
         public let view: UIView?
         
-        /// 配置。
-        /// - Parameter view: 自定义视图
-        public init(view: UIView?) {
-            self.view = view
-        }
-        
-        private init(text: String?, image: UIImage?, animated: Bool = false) {
-            self.view  = nil
-            self.text  = text
-            self.image = image
-            
-            guard animated else {
-                return
-            }
-            
-            if #available(iOS 18.0, *) {
-                self.setSymbolEffect(.rotate, options: .repeat(.continuous))
-            }
-        }
-        
         /// 背景色
         public var backgroundColor: UIColor = XZContentStatus.backgroundColor
         
@@ -76,163 +56,96 @@ extension XZContentStatus {
             addSymbolEffect = nil
         }
         
-        public convenience init(status rawValue: String, text: String?, image: UIImage?, isInteractive: Bool) {
-            switch rawValue {
+        public init(view: UIView?) {
+            self.view = view
+        }
+        
+        public init(text: String?, image: UIImage?) {
+            self.view  = nil
+            self.text  = text
+            self.image = image
+        }
+        
+        public convenience init(for contentStatus: String) {
+            switch contentStatus {
             case "empty":
-                self.init(.empty, text: text, image: image, isInteractive: isInteractive)
+                self.init(.empty)
             case "error":
-                self.init(.error, text: text, image: image, isInteractive: isInteractive)
+                self.init(.error)
             case "loading":
-                self.init(.loading, text: text, image: image, isInteractive: isInteractive)
+                self.init(.loading)
             case "unreachable":
-                self.init(.unreachable, text: text, image: image, isInteractive: isInteractive)
+                self.init(.unreachable)
             case "unavailable":
-                self.init(.unavailable, text: text, image: image, isInteractive: isInteractive)
+                self.init(.unavailable)
             default:
-                self.init(text: text, image: image, animated: false)
-            }
-        }
-        
-        public convenience init(_ configuration: Configuration, text: String?, image: UIImage?, isInteractive: Bool) {
-            if let view = configuration.view {
-                self.init(view: view)
-            } else {
                 self.init(view: nil)
-                self.text            = text
-                self.image           = image
-                self.isInteractive   = isInteractive
-                self.textColor       = configuration.textColor
-                self.font            = configuration.font
-                self.addSymbolEffect = configuration.addSymbolEffect
-            }
-        }
-        
-        public convenience init(_ configuration: Configuration, text: String?, image: UIImage?) {
-            if let view = configuration.view {
-                self.init(view: view)
-            } else {
-                self.init(view: nil)
-                self.text            = text
-                self.image           = image
-                self.isInteractive   = configuration.isInteractive
-                self.textColor       = configuration.textColor
-                self.font            = configuration.font
-                self.addSymbolEffect = configuration.addSymbolEffect
-            }
-        }
-        
-        public convenience init(_ configuration: Configuration, text: String?, isInteractive: Bool) {
-            if let view = configuration.view {
-                self.init(view: view)
-            } else {
-                self.init(view: nil)
-                self.text            = text
-                self.image           = configuration.image
-                self.isInteractive   = isInteractive
-                self.textColor       = configuration.textColor
-                self.font            = configuration.font
-                self.addSymbolEffect = configuration.addSymbolEffect
-            }
-        }
-        
-        public convenience init(_ configuration: Configuration, text: String?) {
-            if let view = configuration.view {
-                self.init(view: view)
-            } else {
-                self.init(view: nil)
-                self.text            = text
-                self.image           = configuration.image
-                self.isInteractive   = configuration.isInteractive
-                self.textColor       = configuration.textColor
-                self.font            = configuration.font
-                self.addSymbolEffect = configuration.addSymbolEffect
-            }
-        }
-        
-        public convenience init(_ configuration: Configuration, image: UIImage?, isInteractive: Bool) {
-            if let view = configuration.view {
-                self.init(view: view)
-            } else {
-                self.init(view: nil)
-                self.text            = configuration.text
-                self.image           = image
-                self.isInteractive   = isInteractive
-                self.textColor       = configuration.textColor
-                self.font            = configuration.font
-                self.addSymbolEffect = configuration.addSymbolEffect
-            }
-        }
-        
-        public convenience init(_ configuration: Configuration, image: UIImage?) {
-            if let view = configuration.view {
-                self.init(view: view)
-            } else {
-                self.init(view: nil)
-                self.text            = configuration.text
-                self.image           = image
-                self.isInteractive   = configuration.isInteractive
-                self.textColor       = configuration.textColor
-                self.font            = configuration.font
-                self.addSymbolEffect = configuration.addSymbolEffect
-            }
-        }
-        
-        public convenience init(_ configuration: Configuration, isInteractive: Bool) {
-            if let view = configuration.view {
-                self.init(view: view)
-            } else {
-                self.init(view: nil)
-                self.text            = configuration.text
-                self.image           = configuration.image
-                self.isInteractive   = isInteractive
-                self.textColor       = configuration.textColor
-                self.font            = configuration.font
-                self.addSymbolEffect = configuration.addSymbolEffect
             }
         }
         
         public convenience init(_ configuration: Configuration) {
-            if let view = configuration.view {
-                self.init(view: view)
-            } else {
-                self.init(view: nil)
-                self.text            = configuration.text
-                self.image           = configuration.image
-                self.isInteractive   = configuration.isInteractive
-                self.textColor       = configuration.textColor
-                self.font            = configuration.font
-                self.addSymbolEffect = configuration.addSymbolEffect
-            }
+            self.init(view: configuration.view)
+            self.text            = configuration.text
+            self.image           = configuration.image
+            self.isInteractive   = configuration.isInteractive
+            self.textColor       = configuration.textColor
+            self.font            = configuration.font
+            self.addSymbolEffect = configuration.addSymbolEffect
         }
         
-        public static let empty = Configuration.init(text: "页面是空的", image: ({ () -> UIImage? in
+        private static func symbol(_ name: String) -> UIImage? {
+            return UIImage(systemName: name, color: XZContentStatus.tintColor, pointSize: 60.0, weight: .light, scale: .medium)
+        }
+        
+        public static let empty = ({ () -> XZContentStatus.Configuration in
+            let configuration = XZContentStatus.Configuration.init(view: nil)
+            configuration.text = "页面是空的"
             if #available(iOS 18, *) {
-                return UIImage(systemName: "text.page.badge.magnifyingglass", color: .systemGray, pointSize: 60.0, weight: .light, scale: .medium)
+                configuration.image = XZContentStatus.Configuration.symbol("text.page.badge.magnifyingglass")
+            } else {
+                configuration.image = XZContentStatus.Configuration.symbol("rectangle.and.text.magnifyingglass")
             }
-            return UIImage(systemName: "rectangle.and.text.magnifyingglass", color: .systemGray, pointSize: 60.0, weight: .light, scale: .medium)
-        })())
+            return configuration
+        })()
         
-        public static let error = Configuration.init(text: "服务器繁忙", image: ({ () -> UIImage? in
-            return UIImage(systemName: "exclamationmark.circle", color: .systemGray, pointSize: 60.0, weight: .light, scale: .medium)
-        })())
+        public static let error = ({ () -> XZContentStatus.Configuration in
+            let configuration = XZContentStatus.Configuration.init(view: nil)
+            configuration.text  = "服务器繁忙"
+            configuration.image = XZContentStatus.Configuration.symbol("exclamationmark.circle")
+            return configuration
+        })()
         
-        public static let loading = Configuration.init(text: "页面加载中", image: ({ () -> UIImage? in
+        public static let loading = ({ () -> XZContentStatus.Configuration in
+            let configuration = XZContentStatus.Configuration.init(view: nil)
+            configuration.text = "页面加载中"
             if #available(iOS 18, *) {
-                return UIImage(systemName: "arrow.trianglehead.2.clockwise.rotate.90.circle", color: .systemGray, pointSize: 60.0, weight: .light, scale: .medium)
+                configuration.image = XZContentStatus.Configuration.symbol("arrow.trianglehead.2.clockwise.rotate.90.circle")
+            } else {
+                configuration.image = XZContentStatus.Configuration.symbol("arrow.triangle.2.circlepath.circle")
             }
-            return UIImage(systemName: "arrow.triangle.2.circlepath.circle", color: .systemGray, pointSize: 60.0, weight: .light, scale: .medium)
-        })(), animated: true)
+            if #available(iOS 18.0, *) {
+                configuration.setSymbolEffect(.rotate, options: .repeat(.continuous))
+            }
+            return configuration
+        })()
         
-        public static let unreachable = Configuration.init(text: "网络不给力", image: ({ () -> UIImage? in
+        public static let unreachable = ({ () -> XZContentStatus.Configuration in
+            let configuration = XZContentStatus.Configuration.init(view: nil)
+            configuration.text = "网络不给力"
             if #available(iOS 17, *) {
-                return UIImage(systemName: "wifi.exclamationmark.circle", color: .systemGray, pointSize: 60.0, weight: .light, scale: .medium)
+                configuration.image = XZContentStatus.Configuration.symbol("wifi.exclamationmark.circle")
+            } else {
+                configuration.image = XZContentStatus.Configuration.symbol("wifi.circle")
             }
-            return UIImage(systemName: "wifi.circle", color: .systemGray, pointSize: 60.0, weight: .light, scale: .medium)
-        })())
+            return configuration
+        })()
         
-        public static let unavailable = Configuration.init(text: "服务不可用", image: ({ () -> UIImage? in
-            return UIImage(systemName: "xmark.circle", color: .systemGray, pointSize: 60.0, weight: .light, scale: .medium)
-        })())
+        public static let unavailable = ({ () -> XZContentStatus.Configuration in
+            let configuration = XZContentStatus.Configuration.init(view: nil)
+            configuration.text  = "服务不可用"
+            configuration.image = XZContentStatus.Configuration.symbol("xmark.circle")
+            return configuration
+        })()
         
     }
 }

@@ -12,22 +12,22 @@ import XZKit
 @mocoa
 class Example17ViewController: UITableViewController, XZMocoaView {
     
-    @bind("currentHidden")
+    @bind(isOn: "currentHidden")
     @IBOutlet weak var hiddenSwitch: UISwitch!
     
-    @bind("currentTranslucent")
+    @bind(isOn: "currentTranslucent")
     @IBOutlet weak var translucentSwitch: UISwitch!
     
-    @bind("currentLargeTitles")
+    @bind(isOn: "currentLargeTitles")
     @IBOutlet weak var largeTitlesSwitch: UISwitch!
     
-    @bind("nextHidden")
+    @bind(isOn: "nextHidden")
     @IBOutlet weak var nextHiddenSwitch: UISwitch!
     
-    @bind("nextTranslucent")
+    @bind(isOn: "nextTranslucent")
     @IBOutlet weak var nextTranslucentSwitch: UISwitch!
     
-    @bind("nextLargeTitles")
+    @bind(isOn: "nextLargeTitles")
     @IBOutlet weak var nextLargeTitlesSwitch: UISwitch!
     
     /// 当前页面的导航栏外观样式。在 viewWillAppear 之后，表示预设的下一页导航栏样式。

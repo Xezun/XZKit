@@ -30,10 +30,10 @@ class Example17NavigationController: UINavigationController, XZNavigationControl
         
         let appearance = UINavigationBarAppearance.init()
         appearance.configureWithTransparentBackground()
-        appearance.backgroundColor = UIColor.init(white: 1.0, alpha: 0.7)
-        appearance.shadowColor = rgb(0xBCBCBC)
-        navigationBar.standardAppearance = appearance
-        navigationBar.compactAppearance = appearance
+        appearance.backgroundColor         = UIColor.init(white: 1.0, alpha: 0.7)
+        appearance.shadowColor             = rgb(0xBCBCBC)
+        navigationBar.standardAppearance   = appearance
+        navigationBar.compactAppearance    = appearance
         navigationBar.scrollEdgeAppearance = appearance
         if #available(iOS 15.0, *) {
             navigationBar.compactScrollEdgeAppearance = appearance

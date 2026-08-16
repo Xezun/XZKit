@@ -22,83 +22,143 @@ extension XZContentStatus {
     public static let unavailable = XZContentStatus.init(rawValue: "unavailable", configuration: .unavailable)
     
     public static func empty(text: String?, image: UIImage?) -> XZContentStatus {
-        return XZContentStatus(.empty, text: text, image: image)
+        let configuration = Configuration.init(.empty)
+        configuration.text  = text
+        configuration.image = image
+        return XZContentStatus.init(rawValue: XZContentStatus.empty.rawValue, configuration: configuration)
     }
     
     public static func empty(text: String?) -> XZContentStatus {
-        return XZContentStatus(.empty, text: text)
+        let configuration = Configuration.init(.empty)
+        configuration.text = text
+        return XZContentStatus.init(rawValue: XZContentStatus.empty.rawValue, configuration: configuration)
     }
     
     public static func empty(text: String?, image: UIImage?, isInteractive: Bool) -> XZContentStatus {
-        return XZContentStatus(.empty, text: text, image: image, isInteractive: isInteractive)
+        let configuration = Configuration.init(.empty)
+        configuration.text  = text
+        configuration.image = image
+        configuration.isInteractive = isInteractive
+        return XZContentStatus.init(rawValue: XZContentStatus.empty.rawValue, configuration: configuration)
     }
     
     public static func empty(text: String?, isInteractive: Bool) -> XZContentStatus {
-        return XZContentStatus(.empty, text: text, isInteractive: isInteractive)
+        let configuration = Configuration.init(.empty)
+        configuration.text  = text
+        configuration.isInteractive = isInteractive
+        return XZContentStatus.init(rawValue: XZContentStatus.empty.rawValue, configuration: configuration)
     }
     
     public static func error(text: String?, image: UIImage?) -> XZContentStatus {
-        return XZContentStatus(.error, text: text, image: image)
+        let configuration = Configuration.init(.error)
+        configuration.text  = text
+        configuration.image = image
+        return XZContentStatus.init(rawValue: XZContentStatus.error.rawValue, configuration: configuration)
     }
     
     public static func error(text: String?) -> XZContentStatus {
-        return XZContentStatus(.error, text: text)
+        let configuration = Configuration.init(.error)
+        configuration.text  = text
+        return XZContentStatus.init(rawValue: XZContentStatus.error.rawValue, configuration: configuration)
     }
     
     public static func error(text: String?, image: UIImage?, isInteractive: Bool) -> XZContentStatus {
-        return XZContentStatus(.error, text: text, image: image, isInteractive: isInteractive)
+        let configuration = Configuration.init(.error)
+        configuration.text  = text
+        configuration.image = image
+        configuration.isInteractive = isInteractive
+        return XZContentStatus.init(rawValue: XZContentStatus.error.rawValue, configuration: configuration)
     }
     
     public static func error(text: String?, isInteractive: Bool) -> XZContentStatus {
-        return XZContentStatus(.error, text: text, isInteractive: isInteractive)
+        let configuration = Configuration.init(.error)
+        configuration.text  = text
+        configuration.isInteractive = isInteractive
+        return XZContentStatus.init(rawValue: XZContentStatus.error.rawValue, configuration: configuration)
     }
     
     public static func loading(text: String?, image: UIImage?) -> XZContentStatus {
-        return XZContentStatus(.loading, text: text, image: image)
+        let configuration = Configuration.init(.loading)
+        configuration.text  = text
+        configuration.image = image
+        return XZContentStatus.init(rawValue: XZContentStatus.loading.rawValue, configuration: configuration)
     }
     
     public static func loading(text: String?) -> XZContentStatus {
-        return XZContentStatus(.loading, text: text)
+        let configuration = Configuration.init(.loading)
+        configuration.text  = text
+        return XZContentStatus.init(rawValue: XZContentStatus.loading.rawValue, configuration: configuration)
     }
     
     public static func loading(text: String?, image: UIImage?, isInteractive: Bool) -> XZContentStatus {
-        return XZContentStatus(.loading, text: text, image: image, isInteractive: isInteractive)
+        let configuration = Configuration.init(.loading)
+        configuration.text  = text
+        configuration.image = image
+        configuration.isInteractive = isInteractive
+        return XZContentStatus.init(rawValue: XZContentStatus.loading.rawValue, configuration: configuration)
     }
     
     public static func loading(text: String?, isInteractive: Bool) -> XZContentStatus {
-        return XZContentStatus(.loading, text: text, isInteractive: isInteractive)
+        let configuration = Configuration.init(.loading)
+        configuration.text  = text
+        configuration.isInteractive = isInteractive
+        return XZContentStatus.init(rawValue: XZContentStatus.loading.rawValue, configuration: configuration)
     }
     
     public static func unreachable(text: String?, image: UIImage?) -> XZContentStatus {
-        return XZContentStatus(.unreachable, text: text, image: image)
+        let configuration = Configuration.init(.unreachable)
+        configuration.text  = text
+        configuration.image = image
+        return XZContentStatus.init(rawValue: XZContentStatus.unreachable.rawValue, configuration: configuration)
     }
     
     public static func unreachable(text: String?) -> XZContentStatus {
-        return XZContentStatus(.unreachable, text: text)
+        let configuration = Configuration.init(.unreachable)
+        configuration.text  = text
+        return XZContentStatus.init(rawValue: XZContentStatus.unreachable.rawValue, configuration: configuration)
     }
     
     public static func unreachable(text: String?, image: UIImage?, isInteractive: Bool) -> XZContentStatus {
-        return XZContentStatus(.unreachable, text: text, image: image, isInteractive: isInteractive)
+        let configuration = Configuration.init(.unreachable)
+        configuration.text  = text
+        configuration.image = image
+        configuration.isInteractive = isInteractive
+        return XZContentStatus.init(rawValue: XZContentStatus.unreachable.rawValue, configuration: configuration)
     }
     
     public static func unreachable(text: String?, isInteractive: Bool) -> XZContentStatus {
-        return XZContentStatus(.unreachable, text: text, isInteractive: isInteractive)
+        let configuration = Configuration.init(.unreachable)
+        configuration.text  = text
+        configuration.isInteractive = isInteractive
+        return XZContentStatus.init(rawValue: XZContentStatus.unreachable.rawValue, configuration: configuration)
     }
     
     public static func unavailable(text: String?, image: UIImage?) -> XZContentStatus {
-        return XZContentStatus(.unavailable, text: text, image: image)
+        let configuration = Configuration.init(.unavailable)
+        configuration.text  = text
+        configuration.image = image
+        return XZContentStatus.init(rawValue: XZContentStatus.unavailable.rawValue, configuration: configuration)
     }
     
     public static func unavailable(text: String?) -> XZContentStatus {
-        return XZContentStatus(.unavailable, text: text)
+        let configuration = Configuration.init(.unavailable)
+        configuration.text  = text
+        return XZContentStatus.init(rawValue: XZContentStatus.unavailable.rawValue, configuration: configuration)
     }
     
     public static func unavailable(text: String?, image: UIImage?, isInteractive: Bool) -> XZContentStatus {
-        return XZContentStatus(.unavailable, text: text, image: image, isInteractive: isInteractive)
+        let configuration = Configuration.init(.unavailable)
+        configuration.text  = text
+        configuration.image = image
+        configuration.isInteractive = isInteractive
+        return XZContentStatus.init(rawValue: XZContentStatus.unavailable.rawValue, configuration: configuration)
     }
     
     public static func unavailable(text: String?, isInteractive: Bool) -> XZContentStatus {
-        return XZContentStatus(.unavailable, text: text, isInteractive: isInteractive)
+        let configuration = Configuration.init(.unavailable)
+        configuration.text  = text
+        configuration.isInteractive = isInteractive
+        return XZContentStatus.init(rawValue: XZContentStatus.unavailable.rawValue, configuration: configuration)
     }
     
     public static func view(_ contentStatus: XZContentStatus, view: UIView) -> XZContentStatus {
@@ -149,7 +209,10 @@ extension XZContentStatus {
         self.configuration = configuration
     }
     
-    /// 创建内容状态值。
+    /// 创建自定义视图的内容状态值。
+    /// - Parameters:
+    ///   - rawValue: 状态值
+    ///   - view: 自定义视图
     public init(rawValue: String, view: UIView) {
         self.rawValue = rawValue
         self.configuration = .init(view: view)
@@ -157,50 +220,42 @@ extension XZContentStatus {
     
     /// 创建内容状态值。
     public init(rawValue: String) {
-        let configuration = XZContentStatus.Configuration.init(status: rawValue, text: nil, image: nil, isInteractive: true)
-        configuration.text = //setDefaultText(forStatus: rawValue)
-        configuration.//setDefaultImage(forStatus: rawValue)
+        let configuration = XZContentStatus.Configuration.init(for: rawValue)
         self.init(rawValue: rawValue, configuration: configuration)
     }
     
     /// 创建内容状态值。
     public init(rawValue: String, isInteractive: Bool) {
-        let configuration = XZContentStatus.Configuration.init(view: nil)
-        configuration.setDefaultText(forStatus: rawValue)
-        configuration.setDefaultImage(forStatus: rawValue)
+        let configuration = XZContentStatus.Configuration.init(for: rawValue)
         configuration.isInteractive = isInteractive
         self.init(rawValue: rawValue, configuration: configuration)
     }
     
     /// 创建内容状态值。
     public init(rawValue: String, text: String?) {
-        let configuration = XZContentStatus.Configuration.init(view: nil)
+        let configuration = XZContentStatus.Configuration.init(for: rawValue)
         configuration.text = text
-        configuration.setDefaultImage(forStatus: rawValue)
         self.init(rawValue: rawValue, configuration: configuration)
     }
     
     /// 创建内容状态值。
     public init(rawValue: String, text: String?, isInteractive: Bool) {
-        let configuration = XZContentStatus.Configuration.init(view: nil)
+        let configuration = XZContentStatus.Configuration.init(for: rawValue)
         configuration.text = text
-        configuration.setDefaultImage(forStatus: rawValue)
         configuration.isInteractive = isInteractive
         self.init(rawValue: rawValue, configuration: configuration)
     }
     
     /// 创建内容状态值。
     public init(rawValue: String, image: UIImage?) {
-        let configuration = XZContentStatus.Configuration.init(view: nil)
-        configuration.setDefaultText(forStatus: rawValue)
+        let configuration = XZContentStatus.Configuration.init(for: rawValue)
         configuration.image = image
         self.init(rawValue: rawValue, configuration: configuration)
     }
     
     /// 创建内容状态值。
     public init(rawValue: String, image: UIImage?, isInteractive: Bool) {
-        let configuration = XZContentStatus.Configuration.init(view: nil)
-        configuration.setDefaultText(forStatus: rawValue)
+        let configuration = XZContentStatus.Configuration.init(for: rawValue)
         configuration.image = image
         configuration.isInteractive = isInteractive
         self.init(rawValue: rawValue, configuration: configuration)
@@ -208,7 +263,7 @@ extension XZContentStatus {
     
     /// 创建内容状态值。
     public init(rawValue: String, text: String?, image: UIImage?) {
-        let configuration = XZContentStatus.Configuration.init(view: nil)
+        let configuration = XZContentStatus.Configuration.init(for: rawValue)
         configuration.text  = text
         configuration.image = image
         self.init(rawValue: rawValue, configuration: configuration)
@@ -216,7 +271,7 @@ extension XZContentStatus {
     
     /// 创建内容状态值。
     public init(rawValue: String, text: String?, image: UIImage?, isInteractive: Bool) {
-        let configuration = XZContentStatus.Configuration.init(view: nil)
+        let configuration = XZContentStatus.Configuration.init(for: rawValue)
         configuration.text  = text
         configuration.image = image
         configuration.isInteractive = isInteractive
@@ -231,37 +286,48 @@ extension XZContentStatus {
     
     /// 复制内容状态值。
     public init(_ contentStatus: XZContentStatus, text: String?) {
-        let configuration = Configuration.init(contentStatus.configuration, text: text)
+        let configuration = Configuration.init(contentStatus.configuration)
+        configuration.text = text
         self.init(rawValue: contentStatus.rawValue, configuration: configuration)
     }
     
     /// 复制内容状态值。
     public init(_ contentStatus: XZContentStatus, text: String?, isInteractive: Bool) {
-        let configuration = Configuration.init(contentStatus.configuration, text: text, isInteractive: isInteractive)
+        let configuration = Configuration.init(contentStatus.configuration)
+        configuration.text = text
+        configuration.isInteractive = isInteractive
         self.init(rawValue: contentStatus.rawValue, configuration: configuration)
     }
     
     /// 复制已有状态值。
     public init(_ contentStatus: XZContentStatus, text: String?, image: UIImage?) {
-        let configuration = Configuration.init(contentStatus.configuration, text: text, image: image)
+        let configuration = Configuration.init(contentStatus.configuration)
+        configuration.text = text
+        configuration.image = image
         self.init(rawValue: contentStatus.rawValue, configuration: configuration)
     }
     
     /// 复制内容状态值。
     public init(_ contentStatus: XZContentStatus, text: String?, image: UIImage?, isInteractive: Bool) {
-        let configuration = Configuration.init(contentStatus.configuration, text: text, image: image, isInteractive: isInteractive)
+        let configuration = Configuration.init(contentStatus.configuration)
+        configuration.text = text
+        configuration.image = image
+        configuration.isInteractive = isInteractive
         self.init(rawValue: contentStatus.rawValue, configuration: configuration)
     }
     
     /// 复制内容状态值。
     public init(_ contentStatus: XZContentStatus, image: UIImage?) {
-        let configuration = Configuration.init(contentStatus.configuration, image: image)
+        let configuration = Configuration.init(contentStatus.configuration)
+        configuration.image = image
         self.init(rawValue: contentStatus.rawValue, configuration: configuration)
     }
     
     /// 复制内容状态值。
     public init(_ contentStatus: XZContentStatus, image: UIImage?, isInteractive: Bool) {
-        let configuration = Configuration.init(contentStatus.configuration, image: image, isInteractive: isInteractive)
+        let configuration = Configuration.init(contentStatus.configuration)
+        configuration.image = image
+        configuration.isInteractive = isInteractive
         self.init(rawValue: contentStatus.rawValue, configuration: configuration)
     }
     
@@ -274,9 +340,11 @@ extension XZContentStatus {
     /// 背景色
     public static var backgroundColor: UIColor = .systemGray6
     /// 状态文案文本颜色。
-    public static var textColor: UIColor  = .systemGray
+    public static var textColor: UIColor = .systemGray
     /// 状态文案字体。
-    public static var font: UIFont   = .systemFont(ofSize: UIFont.labelFontSize, weight: .regular)
+    public static var font: UIFont       = .systemFont(ofSize: UIFont.labelFontSize, weight: .regular)
+    /// 图片渲染色。
+    public static var tintColor: UIColor = .systemGray
     
 }
 
