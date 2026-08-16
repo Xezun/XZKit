@@ -126,6 +126,7 @@ extension XZContentStatus {
             if #available(iOS 18.0, *) {
                 configuration.setSymbolEffect(.rotate, options: .repeat(.continuous))
             }
+            configuration.isInteractive = false
             return configuration
         })()
         
