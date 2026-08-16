@@ -23,6 +23,20 @@ extension XZContentStatus {
             self.view = view
         }
         
+        private init(text: String?, image: UIImage?, animated: Bool = false) {
+            self.view  = nil
+            self.text  = text
+            self.image = image
+            
+            guard animated else {
+                return
+            }
+            
+            if #available(iOS 18.0, *) {
+                self.setSymbolEffect(.rotate, options: .repeat(.continuous))
+            }
+        }
+        
         /// 背景色
         public var backgroundColor: UIColor = XZContentStatus.backgroundColor
         
@@ -60,6 +74,23 @@ extension XZContentStatus {
         /// 在 ``setSymbolEffect(_:options:)`` 方法中，使用 Optional 参数，会造成无法使用点语法，所以用一个独立的方法来清除设置。
         public func removeSymbolEffect() {
             addSymbolEffect = nil
+        }
+        
+        public convenience init(status rawValue: String, text: String?, image: UIImage?, isInteractive: Bool) {
+            switch rawValue {
+            case "empty":
+                self.init(.empty, text: text, image: image, isInteractive: isInteractive)
+            case "error":
+                self.init(.error, text: text, image: image, isInteractive: isInteractive)
+            case "loading":
+                self.init(.loading, text: text, image: image, isInteractive: isInteractive)
+            case "unreachable":
+                self.init(.unreachable, text: text, image: image, isInteractive: isInteractive)
+            case "unavailable":
+                self.init(.unavailable, text: text, image: image, isInteractive: isInteractive)
+            default:
+                self.init(text: text, image: image, animated: false)
+            }
         }
         
         public convenience init(_ configuration: Configuration, text: String?, image: UIImage?, isInteractive: Bool) {
@@ -174,63 +205,34 @@ extension XZContentStatus {
             }
         }
         
-        internal func setDefaultText(forStatus rawValue: String) {
-            switch rawValue {
-            case "empty":
-                self.text = "页面是空的"
-            case "error":
-                self.text = "服务器繁忙"
-            case "loading":
-                self.text = "页面加载中"
-            case "unreachable":
-                self.text = "网络不给力"
-            case "unavailable":
-                self.text = "服务不可用"
-            default:
-                break
+        public static let empty = Configuration.init(text: "页面是空的", image: ({ () -> UIImage? in
+            if #available(iOS 18, *) {
+                return UIImage(systemName: "text.page.badge.magnifyingglass", color: .systemGray, pointSize: 60.0, weight: .light, scale: .medium)
             }
-        }
+            return UIImage(systemName: "rectangle.and.text.magnifyingglass", color: .systemGray, pointSize: 60.0, weight: .light, scale: .medium)
+        })())
         
-        internal func setDefaultImage(forStatus rawValue: String) {
-            let color  = UIColor.systemGray
-            let size   = CGFloat(60.0)
-            let weight = UIImage.SymbolWeight.light
-            let scale  = UIImage.SymbolScale.medium
-            
-            switch rawValue {
-            case "empty":
-                if #available(iOS 18, *) {
-                    self.image = UIImage(systemName: "text.page.badge.magnifyingglass", color: color, pointSize: size, weight: weight, scale: scale)
-                } else {
-                    self.image = UIImage(systemName: "rectangle.and.text.magnifyingglass", color: color, pointSize: size, weight: weight, scale: scale)
-                }
-                
-            case "error":
-                self.image = UIImage(systemName: "exclamationmark.circle", color: color, pointSize: size, weight: weight, scale: scale)
-                
-            case "loading":
-                if #available(iOS 18, *) {
-                    self.image = UIImage(systemName: "arrow.trianglehead.2.clockwise.rotate.90.circle", color: color, pointSize: size, weight: weight, scale: scale)
-                } else {
-                    self.image = UIImage(systemName: "arrow.triangle.2.circlepath.circle", color: color, pointSize: size, weight: weight, scale: scale)
-                }
-                if #available(iOS 18.0, *) {
-                    self.setSymbolEffect(.rotate, options: .repeat(.continuous))
-                }
-                
-            case "unreachable":
-                if #available(iOS 17, *) {
-                    self.image = UIImage(systemName: "wifi.exclamationmark.circle", color: color, pointSize: size, weight: weight, scale: scale)
-                } else {
-                    self.image = UIImage(systemName: "wifi.circle", color: color, pointSize: size, weight: weight, scale: scale)
-                }
-                
-            case "unavailable":
-                self.image = UIImage(systemName: "xmark.circle", color: color, pointSize: size, weight: weight, scale: scale)
-            default:
-                break
+        public static let error = Configuration.init(text: "服务器繁忙", image: ({ () -> UIImage? in
+            return UIImage(systemName: "exclamationmark.circle", color: .systemGray, pointSize: 60.0, weight: .light, scale: .medium)
+        })())
+        
+        public static let loading = Configuration.init(text: "页面加载中", image: ({ () -> UIImage? in
+            if #available(iOS 18, *) {
+                return UIImage(systemName: "arrow.trianglehead.2.clockwise.rotate.90.circle", color: .systemGray, pointSize: 60.0, weight: .light, scale: .medium)
             }
-        }
+            return UIImage(systemName: "arrow.triangle.2.circlepath.circle", color: .systemGray, pointSize: 60.0, weight: .light, scale: .medium)
+        })(), animated: true)
+        
+        public static let unreachable = Configuration.init(text: "网络不给力", image: ({ () -> UIImage? in
+            if #available(iOS 17, *) {
+                return UIImage(systemName: "wifi.exclamationmark.circle", color: .systemGray, pointSize: 60.0, weight: .light, scale: .medium)
+            }
+            return UIImage(systemName: "wifi.circle", color: .systemGray, pointSize: 60.0, weight: .light, scale: .medium)
+        })())
+        
+        public static let unavailable = Configuration.init(text: "服务不可用", image: ({ () -> UIImage? in
+            return UIImage(systemName: "xmark.circle", color: .systemGray, pointSize: 60.0, weight: .light, scale: .medium)
+        })())
         
     }
 }

@@ -11,15 +11,15 @@ import UIKit
 extension XZContentStatus {
 
     /// 页面是空的。
-    public static let empty       = XZContentStatus.init(rawValue: "empty")
+    public static let empty       = XZContentStatus.init(rawValue: "empty", configuration: .empty)
     /// 服务器繁忙。
-    public static let error       = XZContentStatus.init(rawValue: "error")
+    public static let error       = XZContentStatus.init(rawValue: "error", configuration: .error)
     /// 页面加载中。
-    public static let loading     = XZContentStatus.init(rawValue: "loading")
+    public static let loading     = XZContentStatus.init(rawValue: "loading", configuration: .loading)
     /// 网络不给力。
-    public static let unreachable = XZContentStatus.init(rawValue: "unreachable")
+    public static let unreachable = XZContentStatus.init(rawValue: "unreachable", configuration: .unreachable)
     /// 服务不可用。
-    public static let unavailable = XZContentStatus.init(rawValue: "unavailable")
+    public static let unavailable = XZContentStatus.init(rawValue: "unavailable", configuration: .unavailable)
     
     public static func empty(text: String?, image: UIImage?) -> XZContentStatus {
         return XZContentStatus(.empty, text: text, image: image)
@@ -157,9 +157,9 @@ extension XZContentStatus {
     
     /// 创建内容状态值。
     public init(rawValue: String) {
-        let configuration = XZContentStatus.Configuration.init(view: nil)
-        configuration.setDefaultText(forStatus: rawValue)
-        configuration.setDefaultImage(forStatus: rawValue)
+        let configuration = XZContentStatus.Configuration.init(status: rawValue, text: nil, image: nil, isInteractive: true)
+        configuration.text = //setDefaultText(forStatus: rawValue)
+        configuration.//setDefaultImage(forStatus: rawValue)
         self.init(rawValue: rawValue, configuration: configuration)
     }
     
