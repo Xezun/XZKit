@@ -195,6 +195,9 @@ extension XZMocoaKey {
     public static var valueChanged: XZMocoaKey {
         return XZMocoaKey.__valueChanged
     }
+    public static var contentChanged: XZMocoaKey {
+        return XZMocoaKey.__contentChanged
+    }
     public static var navigationBackAction: XZMocoaKey {
         return XZMocoaKey.__navigationBackAction
     }
@@ -403,6 +406,9 @@ extension XZMocoaKey {
     }
     public var valueChanged: XZMocoaKey {
         return XZMocoaKey(self.rawValue + "." + XZMocoaKey.__valueChanged.rawValue)
+    }
+    public var contentChanged: XZMocoaKey {
+        return XZMocoaKey(self.rawValue + "." + XZMocoaKey.__contentChanged.rawValue)
     }
     public var navigationBackAction: XZMocoaKey {
         return XZMocoaKey(self.rawValue + "." + XZMocoaKey.__navigationBackAction.rawValue)

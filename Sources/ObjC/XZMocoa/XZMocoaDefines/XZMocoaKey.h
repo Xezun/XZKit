@@ -98,12 +98,16 @@ FOUNDATION_EXPORT XZMocoaKey const XZMocoaKeyDelete NS_REFINED_FOR_SWIFT;
 /// 选择操作。比如单选 cell 时，只能由上层控制单选。
 FOUNDATION_EXPORT XZMocoaKey const XZMocoaKeySelect NS_REFINED_FOR_SWIFT;
 /// 反选操作。
-FOUNDATION_EXPORT XZMocoaKey const XZMocoaKeyDeselect     NS_REFINED_FOR_SWIFT;
-FOUNDATION_EXPORT XZMocoaKey const XZMocoaKeyConfirm      NS_REFINED_FOR_SWIFT;
-FOUNDATION_EXPORT XZMocoaKey const XZMocoaKeySubmit       NS_REFINED_FOR_SWIFT;
-FOUNDATION_EXPORT XZMocoaKey const XZMocoaKeyCancel       NS_REFINED_FOR_SWIFT;
-FOUNDATION_EXPORT XZMocoaKey const XZMocoaKeyClick        NS_REFINED_FOR_SWIFT;
-FOUNDATION_EXPORT XZMocoaKey const XZMocoaKeyValueChanged NS_REFINED_FOR_SWIFT;
+FOUNDATION_EXPORT XZMocoaKey const XZMocoaKeyDeselect             NS_REFINED_FOR_SWIFT;
+FOUNDATION_EXPORT XZMocoaKey const XZMocoaKeyConfirm              NS_REFINED_FOR_SWIFT;
+FOUNDATION_EXPORT XZMocoaKey const XZMocoaKeySubmit               NS_REFINED_FOR_SWIFT;
+FOUNDATION_EXPORT XZMocoaKey const XZMocoaKeyCancel               NS_REFINED_FOR_SWIFT;
+FOUNDATION_EXPORT XZMocoaKey const XZMocoaKeyClick                NS_REFINED_FOR_SWIFT;
+FOUNDATION_EXPORT XZMocoaKey const XZMocoaKeyValueChanged         NS_REFINED_FOR_SWIFT;
+/// 内容发生改变时，通知上层模块。
+///
+/// 当 Mocoa 接管 NSFetchedResultsController 事件之后，列表发生更新后，会向上层模块发送此事件。
+FOUNDATION_EXPORT XZMocoaKey const XZMocoaKeyContentChanged       NS_REFINED_FOR_SWIFT;
 /// 导航左侧区事件。
 FOUNDATION_EXPORT XZMocoaKey const XZMocoaKeyNavigationBackAction NS_REFINED_FOR_SWIFT;
 /// 导航右侧区事件。

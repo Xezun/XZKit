@@ -59,23 +59,24 @@ XZMocoaKey const XZMocoaKeyIsOn             = @"isOn";
 XZMocoaKey const XZMocoaKeyIsTranslucent      = @"isTranslucent";
 XZMocoaKey const XZMocoaKeyPrefersLargeTitles = @"prefersLargeTitles";
 
-XZMocoaKey const XZMocoaKeyReload   = @"reload";
-XZMocoaKey const XZMocoaKeyModify   = @"modify";
-XZMocoaKey const XZMocoaKeyInsert   = @"insert";
-XZMocoaKey const XZMocoaKeyDelete   = @"delete";
-XZMocoaKey const XZMocoaKeySelect   = @"select";
-XZMocoaKey const XZMocoaKeyDeselect = @"deselect";
-XZMocoaKey const XZMocoaKeyConfirm  = @"confirm";
-XZMocoaKey const XZMocoaKeySubmit   = @"submit";
-XZMocoaKey const XZMocoaKeyCancel   = @"cancel";
-XZMocoaKey const XZMocoaKeyClick    = @"click";
-XZMocoaKey const XZMocoaKeyValueChanged = @"valueChanged";
+XZMocoaKey const XZMocoaKeyReload               = @"reload";
+XZMocoaKey const XZMocoaKeyModify               = @"modify";
+XZMocoaKey const XZMocoaKeyInsert               = @"insert";
+XZMocoaKey const XZMocoaKeyDelete               = @"delete";
+XZMocoaKey const XZMocoaKeySelect               = @"select";
+XZMocoaKey const XZMocoaKeyDeselect             = @"deselect";
+XZMocoaKey const XZMocoaKeyConfirm              = @"confirm";
+XZMocoaKey const XZMocoaKeySubmit               = @"submit";
+XZMocoaKey const XZMocoaKeyCancel               = @"cancel";
+XZMocoaKey const XZMocoaKeyClick                = @"click";
+XZMocoaKey const XZMocoaKeyValueChanged         = @"valueChanged";
+XZMocoaKey const XZMocoaKeyContentChanged       = @"contentChanged";
 XZMocoaKey const XZMocoaKeyNavigationBackAction = @"navigationBackAction";
 XZMocoaKey const XZMocoaKeyNavigationMoreAction = @"navigationMoreAction";
-XZMocoaKey const XZMocoaKeyViewWillAppear    = @"viewWillAppear";
-XZMocoaKey const XZMocoaKeyViewDidAppear     = @"viewDidAppear";
-XZMocoaKey const XZMocoaKeyViewWillDisappear = @"viewWillDisappear";
-XZMocoaKey const XZMocoaKeyViewDidDisappear  = @"viewDidDisappear";
+XZMocoaKey const XZMocoaKeyViewWillAppear       = @"viewWillAppear";
+XZMocoaKey const XZMocoaKeyViewDidAppear        = @"viewDidAppear";
+XZMocoaKey const XZMocoaKeyViewWillDisappear    = @"viewWillDisappear";
+XZMocoaKey const XZMocoaKeyViewDidDisappear     = @"viewDidDisappear";
 
 // for XZMocoaView
 

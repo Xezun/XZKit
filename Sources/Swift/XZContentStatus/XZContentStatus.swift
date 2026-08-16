@@ -281,7 +281,41 @@ extension XZContentStatus {
 }
 
 
-
-
-
-
+extension XZContentStatus: ReferenceConvertible, CustomStringConvertible {
+    
+    public typealias ReferenceType = NSString
+    
+    public typealias _ObjectiveCType = NSString
+    
+    public func _bridgeToObjectiveC() -> NSString {
+        return rawValue as NSString
+    }
+    
+    public static func _forceBridgeFromObjectiveC(_ source: NSString, result: inout XZContentStatus?) {
+        result = XZContentStatus.init(rawValue: source as String)
+    }
+    
+    public static func _conditionallyBridgeFromObjectiveC(_ source: NSString, result: inout XZContentStatus?) -> Bool {
+        guard source.length > 0 else {
+            return false
+        }
+        result = XZContentStatus.init(rawValue: source as String)
+        return true
+    }
+    
+    public static func _unconditionallyBridgeFromObjectiveC(_ source: NSString?) -> XZContentStatus {
+        if let rawValue = source, rawValue.length > 0 {
+            return XZContentStatus.init(rawValue: rawValue as String)
+        }
+        return XZContentStatus.error
+    }
+    
+    public var debugDescription: String {
+        return description
+    }
+    
+    public var description: String {
+        return rawValue
+    }
+    
+}
