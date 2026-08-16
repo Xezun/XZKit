@@ -274,7 +274,7 @@ extension XZContentStatus {
         @objc func tapGestureRecognizerAction(_ sender: UITapGestureRecognizer) {
             guard let target = self.target else { return }
             guard let status = self.statusValue else { return }
-            target.contentStatus = target.shouldPerformUpdates(for: status)
+            target.didReceiveInteraction(from: status)
         }
         
         override public func observeValue(forKeyPath keyPath: String?, of object: Any?, change: [NSKeyValueChangeKey : Any]?, context: UnsafeMutableRawPointer?) {

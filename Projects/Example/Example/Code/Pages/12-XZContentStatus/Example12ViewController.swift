@@ -16,20 +16,20 @@ class Example12ViewController: UIViewController, XZContentStatusRepresentable, E
         self.contentStatus = .loading
     }
     
-    func shouldPerformUpdates(for contentStatus: XZContentStatus) -> XZContentStatus? {
+    func didReceiveInteraction(from contentStatus: XZKit.XZContentStatus) {
         switch contentStatus {
         case .loading:
-            return .error
+            self.contentStatus = .error
         case .error:
-            return .empty
+            self.contentStatus = .empty
         case .empty:
-            return .unavailable
+            self.contentStatus = .unavailable
         case .unavailable:
-            return .unreachable
+            self.contentStatus = .unreachable
         case .unreachable:
-            return nil
+            self.contentStatus = nil
         default:
-            return .loading;
+            self.contentStatus = .loading;
         }
     }
     

@@ -13,21 +13,23 @@ import UIKit
     /// 当前视图或视图控制器的内容状态，值 nil 表示默认状态。
     var contentStatus: XZContentStatus? { get set }
     
-    /// 当状态的属性 isInteractive 的值为 true 时，状态视图被点击时，此方法会被调用。
+    /// 收到 XZContentStatus 的交互事件。
+    ///
+    /// 当内容状态 XZContentStatus.isInteractive 的值为 true 时，如果状态视图被点击时，此方法会被调用。
+    ///
     /// ```swift
-    /// func performContentUpdates(for contentStatus: XZContentStatus) -> XZContentStatus? {
+    /// func didReceiveInteraction(from contentStatus: XZContentStatus) {
+    ///     // 页面进入加载状态
+    ///     self.contentStatus = .loading
     ///     // 重新加载页面数据
     ///     reloadData({ [weak self] error in
     ///         // 加载数据后，更新页面状态
     ///         self?.contentStatus = error ? .error : nil
     ///     })
-    ///     // 页面进入加载状态
-    ///     return .loading
     /// }
     /// ```
     /// - Parameter contentStatus: 此方法被调用时，页面的当前状态
-    /// - Returns: 在此方法调用后，页面将要呈现状态
-    func shouldPerformUpdates(for contentStatus: XZContentStatus) -> XZContentStatus?
+    func didReceiveInteraction(from contentStatus: XZContentStatus) -> Void
     
 }
 

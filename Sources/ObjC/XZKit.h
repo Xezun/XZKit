@@ -119,4 +119,10 @@ FOUNDATION_EXPORT const unsigned char XZKitVersionString[];
 #import "XZSegmentedControl.h"
 #endif
 
+#if __has_include(<XZKit/XZContentStatus.h>)
+#import <XZKit/XZContentStatus.h>
+#elif __has_include("XZContentStatus.h")
+#import "XZContentStatus.h"
+#endif
+
 #endif

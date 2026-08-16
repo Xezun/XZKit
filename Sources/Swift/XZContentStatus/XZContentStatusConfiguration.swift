@@ -12,7 +12,7 @@ extension XZContentStatus {
     /// 配置状态视图的外观属性的对象。
     ///
     /// 修改外观属性不会对显示中的的视图生效。
-    @MainActor open class Configuration: Copyable {
+    @MainActor open class Configuration {
         
         /// 呈现当前状态配置的状态视图。
         public let view: UIView?
@@ -174,7 +174,7 @@ extension XZContentStatus {
             }
         }
         
-        internal func setText(for rawValue: String) {
+        internal func setDefaultText(forStatus rawValue: String) {
             switch rawValue {
             case "empty":
                 self.text = "页面是空的"
@@ -191,7 +191,7 @@ extension XZContentStatus {
             }
         }
         
-        internal func setImage(for rawValue: String) {
+        internal func setDefaultImage(forStatus rawValue: String) {
             let color  = UIColor.systemGray
             let size   = CGFloat(60.0)
             let weight = UIImage.SymbolWeight.light
@@ -199,9 +199,15 @@ extension XZContentStatus {
             
             switch rawValue {
             case "empty":
-                self.image = UIImage(systemName: "rectangle.on.rectangle.slash.circle", color: color, pointSize: size, weight: weight, scale: scale)
+                if #available(iOS 18, *) {
+                    self.image = UIImage(systemName: "text.page.badge.magnifyingglass", color: color, pointSize: size, weight: weight, scale: scale)
+                } else {
+                    self.image = UIImage(systemName: "rectangle.and.text.magnifyingglass", color: color, pointSize: size, weight: weight, scale: scale)
+                }
+                
             case "error":
                 self.image = UIImage(systemName: "exclamationmark.circle", color: color, pointSize: size, weight: weight, scale: scale)
+                
             case "loading":
                 if #available(iOS 18, *) {
                     self.image = UIImage(systemName: "arrow.trianglehead.2.clockwise.rotate.90.circle", color: color, pointSize: size, weight: weight, scale: scale)
@@ -211,12 +217,14 @@ extension XZContentStatus {
                 if #available(iOS 18.0, *) {
                     self.setSymbolEffect(.rotate, options: .repeat(.continuous))
                 }
+                
             case "unreachable":
                 if #available(iOS 17, *) {
                     self.image = UIImage(systemName: "wifi.exclamationmark.circle", color: color, pointSize: size, weight: weight, scale: scale)
                 } else {
                     self.image = UIImage(systemName: "wifi.circle", color: color, pointSize: size, weight: weight, scale: scale)
                 }
+                
             case "unavailable":
                 self.image = UIImage(systemName: "xmark.circle", color: color, pointSize: size, weight: weight, scale: scale)
             default:

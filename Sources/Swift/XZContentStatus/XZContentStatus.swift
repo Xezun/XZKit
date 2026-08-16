@@ -158,16 +158,16 @@ extension XZContentStatus {
     /// 创建内容状态值。
     public init(rawValue: String) {
         let configuration = XZContentStatus.Configuration.init(view: nil)
-        configuration.setText(for: rawValue)
-        configuration.setImage(for: rawValue)
+        configuration.setDefaultText(forStatus: rawValue)
+        configuration.setDefaultImage(forStatus: rawValue)
         self.init(rawValue: rawValue, configuration: configuration)
     }
     
     /// 创建内容状态值。
     public init(rawValue: String, isInteractive: Bool) {
         let configuration = XZContentStatus.Configuration.init(view: nil)
-        configuration.setText(for: rawValue)
-        configuration.setImage(for: rawValue)
+        configuration.setDefaultText(forStatus: rawValue)
+        configuration.setDefaultImage(forStatus: rawValue)
         configuration.isInteractive = isInteractive
         self.init(rawValue: rawValue, configuration: configuration)
     }
@@ -176,7 +176,7 @@ extension XZContentStatus {
     public init(rawValue: String, text: String?) {
         let configuration = XZContentStatus.Configuration.init(view: nil)
         configuration.text = text
-        configuration.setImage(for: rawValue)
+        configuration.setDefaultImage(forStatus: rawValue)
         self.init(rawValue: rawValue, configuration: configuration)
     }
     
@@ -184,7 +184,7 @@ extension XZContentStatus {
     public init(rawValue: String, text: String?, isInteractive: Bool) {
         let configuration = XZContentStatus.Configuration.init(view: nil)
         configuration.text = text
-        configuration.setImage(for: rawValue)
+        configuration.setDefaultImage(forStatus: rawValue)
         configuration.isInteractive = isInteractive
         self.init(rawValue: rawValue, configuration: configuration)
     }
@@ -192,7 +192,7 @@ extension XZContentStatus {
     /// 创建内容状态值。
     public init(rawValue: String, image: UIImage?) {
         let configuration = XZContentStatus.Configuration.init(view: nil)
-        configuration.setText(for: rawValue)
+        configuration.setDefaultText(forStatus: rawValue)
         configuration.image = image
         self.init(rawValue: rawValue, configuration: configuration)
     }
@@ -200,7 +200,7 @@ extension XZContentStatus {
     /// 创建内容状态值。
     public init(rawValue: String, image: UIImage?, isInteractive: Bool) {
         let configuration = XZContentStatus.Configuration.init(view: nil)
-        configuration.setText(for: rawValue)
+        configuration.setDefaultText(forStatus: rawValue)
         configuration.image = image
         configuration.isInteractive = isInteractive
         self.init(rawValue: rawValue, configuration: configuration)
@@ -281,33 +281,40 @@ extension XZContentStatus {
 }
 
 
-extension XZContentStatus: ReferenceConvertible, CustomStringConvertible {
+extension XZContentStatus: @MainActor ReferenceConvertible, @MainActor CustomStringConvertible {
     
-    public typealias ReferenceType = NSString
+    public typealias ReferenceType = __XZContentStatus
     
-    public typealias _ObjectiveCType = NSString
+    public typealias _ObjectiveCType = __XZContentStatus
     
-    public func _bridgeToObjectiveC() -> NSString {
-        return rawValue as NSString
+    public func _bridgeToObjectiveC() -> __XZContentStatus {
+        return __XZContentStatus.init(rawValue: rawValue, configuration: configuration)
     }
     
-    public static func _forceBridgeFromObjectiveC(_ source: NSString, result: inout XZContentStatus?) {
-        result = XZContentStatus.init(rawValue: source as String)
+    public static func _forceBridgeFromObjectiveC(_ source: __XZContentStatus, result: inout XZContentStatus?) {
+        if let configuration = source.configuration as? Configuration {
+            result = XZContentStatus(rawValue: source.rawValue, configuration: configuration)
+        } else {
+            result = XZContentStatus.init(rawValue: source.rawValue)
+        }
     }
     
-    public static func _conditionallyBridgeFromObjectiveC(_ source: NSString, result: inout XZContentStatus?) -> Bool {
-        guard source.length > 0 else {
+    public static func _conditionallyBridgeFromObjectiveC(_ source: __XZContentStatus, result: inout XZContentStatus?) -> Bool {
+        guard source.rawValue.count > 0 else {
             return false
         }
-        result = XZContentStatus.init(rawValue: source as String)
+        _forceBridgeFromObjectiveC(source, result: &result)
         return true
     }
     
-    public static func _unconditionallyBridgeFromObjectiveC(_ source: NSString?) -> XZContentStatus {
-        if let rawValue = source, rawValue.length > 0 {
-            return XZContentStatus.init(rawValue: rawValue as String)
+    public static func _unconditionallyBridgeFromObjectiveC(_ source: __XZContentStatus?) -> XZContentStatus {
+        guard let source = source, source.rawValue.count > 0 else {
+            return .error
         }
-        return XZContentStatus.error
+        if let configuration = source.configuration as? Configuration {
+            return XZContentStatus(rawValue: source.rawValue, configuration: configuration)
+        }
+        return XZContentStatus.init(rawValue: source.rawValue)
     }
     
     public var debugDescription: String {
