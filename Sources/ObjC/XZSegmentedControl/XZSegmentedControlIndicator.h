@@ -30,27 +30,26 @@ typedef UICollectionViewLayout<XZSegmentedControlLayout> *XZSegmentedControlLayo
 @property (class, nonatomic, readonly) BOOL supportsInteractiveTransition;
 
 /// 自定义指示器，可以通过此方法实时调整指示器的布局。此方法默认不执行任何操作。
-/// @discussion
-/// 1、默认情况下，当控件的 `selectedIndex` 发生改变时，将调用此方法刷新指示器的布局。
-/// @discussion
-/// 2、当类属性 `supportsInteractiveTransition` 返回 YES 时，此方法会在转场进度发生改变时同步调用，通过参数 `layoutAttributes` 的 `interactiveTransition` 属性获取进度值。
-/// @discussion
-/// 3、值 `interactiveTransition` 的正负，对应转场向前向后，转场的目标为 `selectedIndex + interactiveTransition` 趋向的值。
-/// @discussion
-/// 4、通过 `zIndex` 可以改变指示器视图的层级位置，请在此方法中处理，在 `-preferredLayoutAttributesFittingAttributes:` 方法中无效，因为这个方法的参数为复制份，值不会同步到原始对象。
-/// @note
-/// 5、计算 indicator 的布局，应该通过 `layout` 可以获取 segment 的布局信息，而不能使用如下方法来获取。
-/// @code
-/// // not do this
+/// 
+/// 1. 默认情况下，当控件的 `selectedIndex` 发生改变时，将调用此方法刷新指示器的布局。
+/// 2. 当类属性 `supportsInteractiveTransition` 返回 YES 时，此方法会在转场进度发生改变时同步调用，通过参数 `layoutAttributes` 的 `interactiveTransition` 属性获取进度值。
+/// 3. 值 `interactiveTransition` 的正负，对应转场向前向后，转场的目标为 `selectedIndex + interactiveTransition` 趋向的值。
+/// 4. 通过 `zIndex` 可以改变指示器视图的层级位置，请在此方法中处理，在 `-preferredLayoutAttributesFittingAttributes:` 方法中无效，因为这个方法的参数为复制份，值不会同步到原始对象。
+/// 5. 计算 indicator 的布局，应该通过 `layout` 可以获取 segment 的布局信息，而不能使用如下方法来获取。
+/// 
+/// 不能在此方法中使用`-[UICollectionView layoutAttributesForItemAtIndexPath:]`方法获取布局信息，因为这个方法会强制 `layout` 立即计算布局，也包括 indicator 的布局，在控制台产生错误警告。
+/// 
+/// ```objc
+/// // ❌ not do this
 /// [_collectionView layoutAttributesForItemAtIndexPath:indexPath];
-/// @endcode
-/// 因为该方法，会强制 `layout` 立即计算布局，而 `layout` 在计算布局时，也会计算 indicator 布局，所以如果调用该方法，就会在 `layout` 计算布局时，触发强制计算布局，在控制台产生错误警告。
-/// @discussion
-/// An attempt to prepare a layout while a prepareLayout call was already in progress (i.e. reentrant call) has been ignored.
-///
-/// @param segmentedControl 指示器实例所属的控件
-/// @param layout 负责布局的对象
-/// @param layoutAttributes 指示器的布局信息
+/// ```
+/// 
+/// > An attempt to prepare a layout while a prepareLayout call was already in progress (i.e. reentrant call) has been ignored.
+/// 
+/// - Parameters:
+///   - segmentedControl: 指示器实例所属的控件
+///   - layout: 负责布局的对象
+///   - layoutAttributes: 指示器的布局信息
 + (void)segmentedControl:(XZSegmentedControl *)segmentedControl layout:(XZSegmentedControlLayout)layout prepareForLayoutAttributes:(XZSegmentedControlIndicatorLayoutAttributes *)layoutAttributes NS_SWIFT_NAME(segmentedControl(_:layout:prepareForLayoutAttributes:));
 
 /// 非交互式的转场时，原生为指示器布局变化只有一个淡出淡入的过渡效果，所以组件提供此方法，为指示器应用新布局前，提供了一个自定义转场动画的机会。

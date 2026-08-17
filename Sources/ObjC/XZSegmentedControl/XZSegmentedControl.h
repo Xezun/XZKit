@@ -22,9 +22,9 @@ NS_ASSUME_NONNULL_BEGIN
 /// 控件中 Segment 的布局方向。
 typedef NS_ENUM(NSUInteger, XZSegmentedControlDirection) {
     /// 控件中 segment 在水平方向上布局。
-    XZSegmentedControlDirectionHorizontal = 0,
+    XZSegmentedControlDirectionHorizontal = UICollectionViewScrollDirectionHorizontal,
     /// 控件中 segment 在垂直方向上布局。
-    XZSegmentedControlDirectionVertical = 1
+    XZSegmentedControlDirectionVertical = UICollectionViewScrollDirectionVertical
 };
 
 /// 指示器样式。
@@ -49,7 +49,7 @@ typedef NS_ENUM(NSUInteger, XZSegmentedControlIndicatorStyle) {
 
 /// 指示器方向。支持在 IB 中设置，使用 0 表示横向，使用 0 表示纵向。
 #if TARGET_INTERFACE_BUILDER
-@property (nonatomic) IBInspectable NSInteger direction;
+@property (nonatomic) IBInspectable UICollectionViewScrollDirection direction;
 #else
 @property (nonatomic) XZSegmentedControlDirection direction;
 #endif
@@ -134,7 +134,6 @@ typedef NS_ENUM(NSUInteger, XZSegmentedControlIndicatorStyle) {
 
 @end
 
-
 /// 使用自定义视图时的数据源协议。
 NS_SWIFT_UI_ACTOR @protocol XZSegmentedControlDataSource <NSObject>
 /// 获取 item 的数量。
@@ -152,10 +151,5 @@ NS_SWIFT_UI_ACTOR @protocol XZSegmentedControlDataSource <NSObject>
 ///   - index: item 的位置索引
 - (CGSize)segmentedControl:(XZSegmentedControl *)segmentedControl sizeForSegmentAtIndex:(NSInteger)index;
 @end
-
-
-
-
-
 
 NS_ASSUME_NONNULL_END
