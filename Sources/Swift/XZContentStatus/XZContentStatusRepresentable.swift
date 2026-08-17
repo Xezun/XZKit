@@ -20,7 +20,7 @@ import UIKit
     /// 默认情况下 `.loading` 状态视图，不可交互，不会调用此方法。
     ///
     /// ```swift
-    /// func didReceiveInteraction(from contentStatus: XZContentStatus) {
+    /// func contentStatus(_ contentStatus: XZContentStatus, performActionForInteraction: Any) {
     ///     // 页面进入加载状态
     ///     self.contentStatus = .loading
     ///     // 重新加载页面数据
@@ -31,11 +31,10 @@ import UIKit
     /// }
     /// ```
     /// - Parameter contentStatus: 此方法被调用时，页面的当前状态
-    func performAction(for contentStatus: XZContentStatus) -> Void
+    func contentStatus(_ contentStatus: XZContentStatus, performActionForInteraction: Any) -> Void
     
-    /// 状态视图是否避让安全区边距，默认 false 不避让。
-    var automaticallyAdjustsSafeAreaInsets: Bool { get }
-    
+    /// 状态视图避让安全区边距，默认 .zero 不避让。
+    func contentStatus(_ contentStatus: XZContentStatus, edgeInsetsForRepresentation: Any) -> UIEdgeInsets
 }
 
 
@@ -66,12 +65,13 @@ extension XZContentStatusRepresentable {
         }
     }
     
-    public var automaticallyAdjustsSafeAreaInsets: Bool {
-        return false
+    public func contentStatus(_ contentStatus: XZContentStatus, performActionForInteraction: Any) -> Void {
+        
     }
     
-    public func performAction(for contentStatus: XZContentStatus) -> Void {
-        
+    /// 状态视图是否避让安全区边距，默认 false 不避让。
+    public func contentStatus(_ contentStatus: XZContentStatus, edgeInsetsForRepresentation: Any) -> UIEdgeInsets {
+        return .zero
     }
     
 }

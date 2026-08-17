@@ -16,7 +16,7 @@ class Example12ViewController: UIViewController, XZContentStatusRepresentable, E
         self.contentStatus = .loading
     }
     
-    func performAction(for contentStatus: XZContentStatus) {
+    func contentStatus(_ contentStatus: XZContentStatus, performActionForInteraction: Any) {
         switch contentStatus {
         case .loading:
             self.contentStatus = .error

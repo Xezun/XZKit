@@ -201,14 +201,16 @@ extension XZContentStatus {
                     return
                 }
                 
+                guard let target = self.target else { return }
                 guard let targetView = self.targetView else { return }
-                guard let statusValue = self.statusValue else { return }
+                guard let contentStatus = self.statusValue else { return }
                 
-                self.backgroundColor = statusValue.configuration.backgroundColor
+                self.backgroundColor = contentStatus.configuration.backgroundColor
+                self.frame = targetView.bounds.inset(by: target.contentStatus(contentStatus, edgeInsetsForRepresentation: self))
                 targetView.addSubview(self)
                 
                 var statusView: UIView! = nil
-                if let view = statusValue.configuration.view {
+                if let view = contentStatus.configuration.view {
                     statusView = view
                 } else if let view = self.statusView, view.isKind(of: XZContentStatus.viewClass) {
                     statusView = view
@@ -221,10 +223,10 @@ extension XZContentStatus {
                 }
                 
                 if let newView = statusView as? XZContentStatusView {
-                    newView.updateAppearance(for: statusValue)
+                    newView.updateAppearance(for: contentStatus)
                 }
                 
-                if statusValue.isInteractive {
+                if contentStatus.isInteractive {
                     if let tapGestureRecognizer = self.tapGestureRecognizer {
                         tapGestureRecognizer.isEnabled = true
                         statusView.addGestureRecognizer(tapGestureRecognizer)
@@ -246,9 +248,7 @@ extension XZContentStatus {
         init(for target: XZContentStatusRepresentable, view: UIView) {
             self.target     = target
             self.targetView = view
-            
-            let frame = target.automaticallyAdjustsSafeAreaInsets ? view.bounds.inset(by: view.safeAreaInsets) : view.bounds
-            super.init(frame: frame)
+            super.init(frame: view.bounds)
             
             // 改变 frame 不会触发 bounds 的 KVO 事件，所以需要设置 autoresizingMask 。
             autoresizingMask = [.flexibleWidth, .flexibleHeight]
@@ -276,7 +276,7 @@ extension XZContentStatus {
         @objc func tapGestureRecognizerAction(_ sender: UITapGestureRecognizer) {
             guard let target = self.target else { return }
             guard let contentStatus = self.statusValue else { return }
-            target.performAction(for: contentStatus)
+            target.contentStatus(contentStatus, performActionForInteraction: self)
         }
         
         @preconcurrency
@@ -288,7 +288,9 @@ extension XZContentStatus {
             guard let bounds = (change?[.newKey] as? NSValue)?.cgRectValue else { return }
             guard let target = self.target else { return }
             guard let view = self.targetView else { return }
-            self.frame = target.automaticallyAdjustsSafeAreaInsets ? bounds.inset(by: view.safeAreaInsets) : bounds;
+            guard let contentStatus = self.statusValue else { return }
+            let edgeInsets = target.contentStatus(contentStatus, edgeInsetsForRepresentation: self)
+            self.frame = bounds.inset(by: edgeInsets)
         }
     }
     
