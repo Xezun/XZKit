@@ -9,6 +9,7 @@
 #import "XZMocoaCollectionSectionSupplementaryView.h"
 #import "XZMocoaCollectionPlaceholderCell.h"
 #import "XZMocoaCollectionPlaceholderSectionSupplementaryView.h"
+#import "XZGeometry.h"
 
 static XZMocoaKind XZMocoaKindFromElementKind(NSString *kind) {
     if ([kind isEqualToString:UICollectionElementKindSectionHeader]) return XZMocoaKindHeader;
@@ -162,34 +163,66 @@ static NSString *UIElementKindFromMocoaKind(XZMocoaKind kind) {
 
 @implementation XZMocoaCollectionViewProxy (UICollectionViewDelegateFlowLayout)
 
-- (CGSize)collectionView:(UICollectionView *)collectionView layout:(UICollectionViewLayout*)collectionViewLayout sizeForItemAtIndexPath:(NSIndexPath *)indexPath {
-    XZMocoaCollectionCellViewModel *viewModel = [self.viewModel cellViewModelAtIndexPath:indexPath];
-    return viewModel.size;
+- (CGSize)collectionView:(UICollectionView *)collectionView layout:(UICollectionViewFlowLayout *)collectionViewLayout sizeForItemAtIndexPath:(NSIndexPath *)indexPath {
+    id<UICollectionViewDelegateFlowLayout> const delegate = self.delegate;
+    if (delegate) {
+        return [delegate collectionView:collectionView layout:collectionViewLayout sizeForItemAtIndexPath:indexPath];
+    }
+    
+    XZMocoaCollectionCellViewModel * const viewModel = [self.viewModel cellViewModelAtIndexPath:indexPath];
+    CGSize const itemSize = viewModel.size;
+    return CGSizeIsNull(itemSize) ? collectionViewLayout.itemSize : itemSize;
 }
 
-- (UIEdgeInsets)collectionView:(UICollectionView *)collectionView layout:(UICollectionViewLayout*)collectionViewLayout insetForSectionAtIndex:(NSInteger)section {
-    XZMocoaCollectionSectionViewModel *viewModel = [self.viewModel sectionViewModelAtIndex:section];
-    return viewModel.insets;
+- (UIEdgeInsets)collectionView:(UICollectionView *)collectionView layout:(UICollectionViewFlowLayout *)collectionViewLayout insetForSectionAtIndex:(NSInteger)section {
+    id<UICollectionViewDelegateFlowLayout> const delegate = self.delegate;
+    if (delegate) {
+        return [delegate collectionView:collectionView layout:collectionViewLayout insetForSectionAtIndex:section];
+    }
+    
+    XZMocoaCollectionSectionViewModel * const viewModel = [self.viewModel sectionViewModelAtIndex:section];
+    UIEdgeInsets const insets = viewModel.insets;
+    return UIEdgeInsetsIsNull(insets) ? collectionViewLayout.sectionInset : insets;
 }
 
-- (CGFloat)collectionView:(UICollectionView *)collectionView layout:(UICollectionViewLayout*)collectionViewLayout minimumLineSpacingForSectionAtIndex:(NSInteger)section {
-    XZMocoaCollectionSectionViewModel *viewModel = [self.viewModel sectionViewModelAtIndex:section];
-    return viewModel.minimumLineSpacing;
+- (CGFloat)collectionView:(UICollectionView *)collectionView layout:(UICollectionViewFlowLayout *)collectionViewLayout minimumLineSpacingForSectionAtIndex:(NSInteger)section {
+    id<UICollectionViewDelegateFlowLayout> const delegate = self.delegate;
+    if (delegate) {
+        return [delegate collectionView:collectionView layout:collectionViewLayout minimumLineSpacingForSectionAtIndex:section];
+    }
+    XZMocoaCollectionSectionViewModel * const viewModel = [self.viewModel sectionViewModelAtIndex:section];
+    CGFloat const minimumLineSpacing = viewModel.minimumLineSpacing;
+    return CGFloatIsNull(minimumLineSpacing) ? collectionViewLayout.minimumLineSpacing : minimumLineSpacing;
 }
 
-- (CGFloat)collectionView:(UICollectionView *)collectionView layout:(UICollectionViewLayout*)collectionViewLayout minimumInteritemSpacingForSectionAtIndex:(NSInteger)section {
-    XZMocoaCollectionSectionViewModel *viewModel = [self.viewModel sectionViewModelAtIndex:section];
-    return viewModel.minimumInteritemSpacing;
+- (CGFloat)collectionView:(UICollectionView *)collectionView layout:(UICollectionViewFlowLayout *)collectionViewLayout minimumInteritemSpacingForSectionAtIndex:(NSInteger)section {
+    id<UICollectionViewDelegateFlowLayout> const delegate = self.delegate;
+    if (delegate) {
+        return [delegate collectionView:collectionView layout:collectionViewLayout minimumInteritemSpacingForSectionAtIndex:section];
+    }
+    XZMocoaCollectionSectionViewModel * const viewModel = [self.viewModel sectionViewModelAtIndex:section];
+    CGFloat const minimumInteritemSpacing = viewModel.minimumInteritemSpacing;
+    return CGFloatIsNull(minimumInteritemSpacing) ? collectionViewLayout.minimumInteritemSpacing : minimumInteritemSpacing;
 }
 
-- (CGSize)collectionView:(UICollectionView *)collectionView layout:(UICollectionViewLayout*)collectionViewLayout referenceSizeForHeaderInSection:(NSInteger)section {
-    XZMocoaCollectionSectionSupplementaryViewModel *viewModel = [[self.viewModel sectionViewModelAtIndex:section] viewModelForSupplementaryElementOfKind:XZMocoaKindHeader atIndex:0];
-    return viewModel.size;
+- (CGSize)collectionView:(UICollectionView *)collectionView layout:(UICollectionViewFlowLayout *)collectionViewLayout referenceSizeForHeaderInSection:(NSInteger)section {
+    id<UICollectionViewDelegateFlowLayout> const delegate = self.delegate;
+    if (delegate) {
+        return [delegate collectionView:collectionView layout:collectionViewLayout referenceSizeForHeaderInSection:section];
+    }
+    XZMocoaCollectionSectionSupplementaryViewModel * const viewModel = [[self.viewModel sectionViewModelAtIndex:section] viewModelForSupplementaryElementOfKind:XZMocoaKindHeader atIndex:0];
+    CGSize const headerReferenceSize = viewModel.size;
+    return CGSizeIsNull(headerReferenceSize) ? collectionViewLayout.headerReferenceSize : headerReferenceSize;
 }
 
-- (CGSize)collectionView:(UICollectionView *)collectionView layout:(UICollectionViewLayout*)collectionViewLayout referenceSizeForFooterInSection:(NSInteger)section {
-    XZMocoaCollectionSectionSupplementaryViewModel *viewModel = [[self.viewModel sectionViewModelAtIndex:section] viewModelForSupplementaryElementOfKind:XZMocoaKindFooter atIndex:0];
-    return viewModel.size;
+- (CGSize)collectionView:(UICollectionView *)collectionView layout:(UICollectionViewFlowLayout *)collectionViewLayout referenceSizeForFooterInSection:(NSInteger)section {
+    id<UICollectionViewDelegateFlowLayout> const delegate = self.delegate;
+    if (delegate) {
+        return [delegate collectionView:collectionView layout:collectionViewLayout referenceSizeForFooterInSection:section];
+    }
+    XZMocoaCollectionSectionSupplementaryViewModel * const viewModel = [[self.viewModel sectionViewModelAtIndex:section] viewModelForSupplementaryElementOfKind:XZMocoaKindFooter atIndex:0];
+    CGSize const footerReferenceSize = viewModel.size;
+    return CGSizeIsNull(footerReferenceSize) ? collectionViewLayout.footerReferenceSize : footerReferenceSize;
 }
 
 @end
@@ -199,6 +232,7 @@ static NSString *UIElementKindFromMocoaKind(XZMocoaKind kind) {
 
 @dynamic viewModel;
 @dynamic contentView;
+@dynamic delegate;
 
 - (void)collectionViewModel:(XZMocoaCollectionViewModel *)collectionViewModel didReloadData:(void *)null {
     [self.contentView reloadData];

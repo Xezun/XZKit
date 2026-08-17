@@ -6,13 +6,16 @@
 //
 
 #import "XZMocoaCollectionCellViewModel.h"
+#import "XZGeometry.h"
 
 @implementation XZMocoaCollectionCellViewModel
 
 - (instancetype)initWithModel:(id)model {
     self = [super initWithModel:model];
     if (self) {
-        [super setFrame:(CGRect){CGPointZero, XZMocoaMinimumViewSize}];
+        CGRect frame = CGRectNull;
+        frame.size = CGSizeNull;
+        [super setFrame:frame];
     }
     return self;
 }

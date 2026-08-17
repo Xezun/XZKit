@@ -6,8 +6,19 @@
 //
 
 #import "XZMocoaCollectionSectionSupplementaryViewModel.h"
+#import "XZGeometry.h"
 
 @implementation XZMocoaCollectionSectionSupplementaryViewModel
+
+- (instancetype)initWithModel:(id)model {
+    self = [super initWithModel:model];
+    if (self) {
+        CGRect frame = CGRectNull;
+        frame.size = CGSizeNull;
+        [super setFrame:frame];
+    }
+    return self;
+}
 
 - (CGSize)size {
     return self.frame.size;

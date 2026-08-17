@@ -33,6 +33,9 @@ import UIKit
     /// - Parameter contentStatus: 此方法被调用时，页面的当前状态
     func performAction(for contentStatus: XZContentStatus) -> Void
     
+    /// 状态视图是否避让安全区边距，默认 false 不避让。
+    var automaticallyAdjustsSafeAreaInsets: Bool { get }
+    
 }
 
 
@@ -61,6 +64,14 @@ extension XZContentStatusRepresentable {
                 objc_setAssociatedObject(self, &_wrapperView, nil, .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
             }
         }
+    }
+    
+    public var automaticallyAdjustsSafeAreaInsets: Bool {
+        return false
+    }
+    
+    public func performAction(for contentStatus: XZContentStatus) -> Void {
+        
     }
     
 }

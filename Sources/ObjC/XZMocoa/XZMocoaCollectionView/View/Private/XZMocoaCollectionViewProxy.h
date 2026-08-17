@@ -45,6 +45,7 @@ NS_ASSUME_NONNULL_BEGIN
 @interface XZMocoaCollectionViewProxy (XZMocoaCollectionViewModelDelegate) <XZMocoaCollectionViewModelDelegate>
 @property (nonatomic, strong) IBOutlet UICollectionView *contentView;
 @property (nonatomic, strong, nullable) XZMocoaCollectionViewModel *viewModel;
+@property (nonatomic, weak) id<UICollectionViewDelegateFlowLayout> delegate;
 @end
 
 NS_ASSUME_NONNULL_END

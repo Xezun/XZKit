@@ -7,6 +7,17 @@
 
 #import "XZGeometry.h"
 
+UIEdgeInsets const UIEdgeInsetsNull = (UIEdgeInsets){INFINITY, INFINITY, INFINITY, INFINITY};
+CGSize       const CGSizeNull       = (CGSize){INFINITY, INFINITY};
+
+BOOL UIEdgeInsetsIsNull(UIEdgeInsets insets) {
+    return isinf(insets.top) || isinf(insets.bottom) || isinf(insets.left) || isinf(insets.bottom);
+}
+
+BOOL CGSizeIsNull(CGSize size) {
+    return isinf(size.width) || isinf(size.height) || size.width < 0 || size.height < 0;
+}
+
 NSDirectionalEdgeInsets NSDirectionalEdgeInsetsFromUIEdgeInsets(UIEdgeInsets const edgeInsets, UIUserInterfaceLayoutDirection const layoutDirection) {
     switch (layoutDirection) {
         case UIUserInterfaceLayoutDirectionLeftToRight:

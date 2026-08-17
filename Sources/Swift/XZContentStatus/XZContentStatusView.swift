@@ -246,7 +246,9 @@ extension XZContentStatus {
         init(for target: XZContentStatusRepresentable, view: UIView) {
             self.target     = target
             self.targetView = view
-            super.init(frame: view.bounds)
+            
+            let frame = target.automaticallyAdjustsSafeAreaInsets ? view.bounds.inset(by: view.safeAreaInsets) : view.bounds
+            super.init(frame: frame)
             
             // 改变 frame 不会触发 bounds 的 KVO 事件，所以需要设置 autoresizingMask 。
             autoresizingMask = [.flexibleWidth, .flexibleHeight]
@@ -277,15 +279,16 @@ extension XZContentStatus {
             target.performAction(for: contentStatus)
         }
         
+        @preconcurrency
         override public func observeValue(forKeyPath keyPath: String?, of object: Any?, change: [NSKeyValueChangeKey : Any]?, context: UnsafeMutableRawPointer?) {
             guard context == &_context else {
                 super.observeValue(forKeyPath: keyPath, of: object, change: change, context: context)
                 return
             }
             guard let bounds = (change?[.newKey] as? NSValue)?.cgRectValue else { return }
-            MainActor.assumeIsolated {
-                self.frame = bounds
-            }
+            guard let target = self.target else { return }
+            guard let view = self.targetView else { return }
+            self.frame = target.automaticallyAdjustsSafeAreaInsets ? bounds.inset(by: view.safeAreaInsets) : bounds;
         }
     }
     

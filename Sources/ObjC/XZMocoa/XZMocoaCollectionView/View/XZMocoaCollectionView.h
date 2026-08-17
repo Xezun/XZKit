@@ -25,6 +25,8 @@ NS_ASSUME_NONNULL_BEGIN
 - (instancetype)initWithLayout:(UICollectionViewLayout *)layout;
 - (instancetype)initWithFrame:(CGRect)frame layout:(UICollectionViewLayout *)layout;
 - (instancetype)initWithFrame:(CGRect)frame;
+/// 布局代理。
+@property (nonatomic, weak) id<UICollectionViewDelegateFlowLayout> delegate;
 @end
 
 // 以下由 XZMocoaCollectionViewProxy 动态实现。

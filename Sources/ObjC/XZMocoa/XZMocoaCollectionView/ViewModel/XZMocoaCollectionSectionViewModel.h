@@ -18,8 +18,11 @@
 NS_ASSUME_NONNULL_BEGIN
 
 @interface XZMocoaCollectionSectionViewModel : XZMocoaGroupSectionViewModel
+/// 默认值 UIEdgeInsetsNull 标识符优先使用代理或 UICollectionViewLayout 的预设值。
 @property (nonatomic) UIEdgeInsets insets;
+/// 默认值 CGFloatNull 标识符优先使用代理或 UICollectionViewLayout 的预设值。
 @property (nonatomic) CGFloat minimumLineSpacing;
+/// 默认值 CGFloatNull 标识符优先使用代理或 UICollectionViewLayout 的预设值。
 @property (nonatomic) CGFloat minimumInteritemSpacing;
 - (__kindof XZMocoaCollectionSectionSupplementaryViewModel *)viewModelForSupplementaryElementOfKind:(XZMocoaKind)kind atIndex:(NSInteger)index;
 @end
