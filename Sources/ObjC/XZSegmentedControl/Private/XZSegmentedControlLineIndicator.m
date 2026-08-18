@@ -34,7 +34,8 @@
     NSInteger const count         = segmentedControl.numberOfSegments;
     NSInteger const selectedIndex = segmentedControl.selectedIndex;
     
-    layoutAttributes.frame = [self segmentedControl:segmentedControl layout:layout frameForIndicatorAtIndex:selectedIndex];
+    layoutAttributes.zIndex = -1;
+    layoutAttributes.frame  = [self segmentedControl:segmentedControl layout:layout frameForIndicatorAtIndex:selectedIndex];
     
     if (transition == 0) {
         return;

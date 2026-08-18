@@ -199,7 +199,7 @@
     }
 }
 
-- (__kindof XZSegmentedControlSegment *)segmentForItemAtIndex:(NSInteger)index {
+- (__kindof XZSegmentedControlSegment *)viewForSegmentAtIndex:(NSInteger)index {
     NSIndexPath *indexPath = [NSIndexPath indexPathForItem:index inSection:0];
     return (XZSegmentedControlSegment *)[_collectionView cellForItemAtIndexPath:indexPath];
 }
@@ -241,7 +241,7 @@
     CGFloat const transition = _flowLayout.selectedIndex == index ? 1.0 : 0;
     
     if (_dataSource) {
-        XZSegmentedControlSegment *segment = [_dataSource segmentedControl:self segmentForItemAtIndex:index];
+        XZSegmentedControlSegment *segment = [_dataSource segmentedControl:self viewForSegmentAtIndex:index];
         [segment updateInteractiveTransition:transition];
         return segment;
     }
@@ -355,23 +355,23 @@
     [self setSelectedIndex:selectedIndex animated:NO];
 }
 
-- (CGSize)itemSize {
+- (CGSize)segmentSize {
     return _flowLayout.itemSize;
 }
 
-- (void)setItemSize:(CGSize)itemSize {
+- (void)setSegmentSize:(CGSize)itemSize {
     _flowLayout.itemSize = itemSize;
     
     [self XZ_setNeedsUpdateTitleModels:NO];
 }
 
 
-- (CGFloat)interitemSpacing {
+- (CGFloat)segmentSpacing {
     return _flowLayout.minimumInteritemSpacing;
 }
 
-- (void)setInteritemSpacing:(CGFloat)interitemSpacing {
-    switch (_flowLayout.scrollDirection) {
+- (void)setSegmentSpacing:(CGFloat)interitemSpacing {
+    switch (_flowLayout.scrollDirection) { 
         case UICollectionViewScrollDirectionHorizontal:
             _flowLayout.minimumLineSpacing = interitemSpacing;
             _flowLayout.minimumInteritemSpacing = interitemSpacing;
@@ -390,7 +390,7 @@
     _flowLayout.interactiveTransition = interactiveTransition;
     
     NSInteger                   const selectedIndex        = _flowLayout.selectedIndex;
-    XZSegmentedControlSegment * const selectedSegment      = [self segmentForItemAtIndex:selectedIndex];
+    XZSegmentedControlSegment * const selectedSegment      = [self viewForSegmentAtIndex:selectedIndex];
     XZSegmentedControlSegment * const oldTransitionSegment = _transitionSegment;
     
     if (interactiveTransition > 0) {
@@ -402,7 +402,7 @@
         NSInteger const count = [_collectionView numberOfItemsInSection:0];
         NSInteger const transitionIndex = selectedIndex + intPart + 1;
         if (transitionIndex <= count - 1) {
-            XZSegmentedControlSegment * const newTransitionSegment = [self segmentForItemAtIndex:transitionIndex];
+            XZSegmentedControlSegment * const newTransitionSegment = [self viewForSegmentAtIndex:transitionIndex];
             if (oldTransitionSegment != newTransitionSegment) {
                 if (oldTransitionSegment != selectedSegment) {
                     [oldTransitionSegment updateInteractiveTransition:0];
@@ -422,7 +422,7 @@
         
         NSInteger const transitionIndex = selectedIndex + intPart - 1;
         if (transitionIndex >= 0) {
-            XZSegmentedControlSegment * const newTransitionSegment = [self segmentForItemAtIndex:transitionIndex];
+            XZSegmentedControlSegment * const newTransitionSegment = [self viewForSegmentAtIndex:transitionIndex];
             if (oldTransitionSegment != newTransitionSegment) {
                 if (oldTransitionSegment != selectedSegment) {
                     [oldTransitionSegment updateInteractiveTransition:0];
@@ -663,7 +663,7 @@
                 CGFloat const width2 = [item.text boundingRectWithSize:size options:options attributes:@{
                     NSFontAttributeName: self.selectedTitleFont
                 } context:nil].size.width;
-                item.size = CGSizeMake(MAX(ceil(MAX(width1, width2)) + 10.0, self.itemSize.width), bounds.size.height);
+                item.size = CGSizeMake(MAX(ceil(MAX(width1, width2)) + 10.0, self.segmentSize.width), bounds.size.height);
             }
             break;
         case XZSegmentedControlDirectionVertical:
@@ -677,7 +677,7 @@
                 CGFloat const height2 = [item.text boundingRectWithSize:size options:options attributes:@{
                     NSFontAttributeName: self.selectedTitleFont
                 } context:nil].size.height;
-                item.size = CGSizeMake(bounds.size.width, MAX(ceil(MAX(height1, height2)) + 10.0, self.itemSize.height));
+                item.size = CGSizeMake(bounds.size.width, MAX(ceil(MAX(height1, height2)) + 10.0, self.segmentSize.height));
             }
             break;
         default:

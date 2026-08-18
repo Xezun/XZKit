@@ -67,19 +67,21 @@ typedef UICollectionViewLayout<XZSegmentedControlLayout> *XZSegmentedControlLayo
 /// @param layoutAttributes 指示器布局信息。
 - (void)animateTransition:(XZSegmentedControlIndicatorLayoutAttributes *)layoutAttributes;
 
-/// 在此方法中，设置了 layoutAttributes 的 indicatorView 属性为当前视图。
+/// 子类应该在此方法中，根据 layoutAttributes 配置指示器的外观。
+///
+/// 子类应该先调用 super 再操作。在此方法中，设置了 layoutAttributes 的 indicatorView 属性为当前视图。
 /// @param layoutAttributes 指示器布局信息。
 - (void)applyLayoutAttributes:(XZSegmentedControlIndicatorLayoutAttributes *)layoutAttributes NS_REQUIRES_SUPER;
 
 @end
 
-
-
 /// 指示器的外观及布局信息。
 @interface XZSegmentedControlIndicatorLayoutAttributes : UICollectionViewLayoutAttributes
+
 @property (nonatomic, strong, nullable, XZ_READONLY) UIColor *color;
 @property (nonatomic, strong, nullable, XZ_READONLY) UIImage *image;
 @property (nonatomic, XZ_READONLY) CGFloat interactiveTransition;
+///
 /// 在未修改 UICollectionViewLayoutAttributes 的核心属性，例如 frame 或 size 的情况下，
 /// 不管是 invalidateIndicaotrLayout 还是 invalidateLayout 都无法重载视图，导致无法应用
 /// color 或 image 等样式，无法更新指示器，因此需要指示器视图在 `-applyLayoutAttributes:` 方法中填充此属性。

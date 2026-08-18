@@ -47,7 +47,7 @@ typedef NS_ENUM(NSUInteger, XZSegmentedControlIndicatorStyle) {
 /// 一种分段的控件，一般用于菜单。
 @interface XZSegmentedControl : UIControl
 
-/// 指示器方向。支持在 IB 中设置，使用 0 表示横向，使用 0 表示纵向。
+/// 指示器方向。支持在 IB 中设置。
 #if TARGET_INTERFACE_BUILDER
 @property (nonatomic) IBInspectable UICollectionViewScrollDirection direction;
 #else
@@ -62,20 +62,27 @@ typedef NS_ENUM(NSUInteger, XZSegmentedControlIndicatorStyle) {
 /// 横向时，展示在右侧的视图；纵向时，展示在底部的视图。
 @property (nonatomic, strong, nullable) __kindof UIView *footerView;
 
-/// item 的大小。优先使用代理方法返回的大小。
-/// @discussion 使用 titles 时 item 的大小会根据字体自动计算，此属性将作为最小值使用。
-@property (nonatomic) CGSize itemSize;
-/// item 间距。
-@property (nonatomic) CGFloat interitemSpacing;
+/// 交互式转场时，可通过此方法，通知控件当前的转场进度。
+/// @discussion
+/// 跨值转场时 `selectedIndex + interactiveTransition` 为趋向转场目标的值。
+/// @param interactiveTransition 转场进度
+- (void)updateInteractiveTransition:(CGFloat)interactiveTransition;
+
+@property (nonatomic, readonly) NSInteger numberOfSegments;
+
+@property (nonatomic) NSInteger selectedIndex;
+- (void)setSelectedIndex:(NSInteger)selectedIndex animated:(BOOL)animated;
+
+// MARK: - 指示器
 
 /// 指定长宽，若为零，则使用默认值。
-/// @li 横向滚动时，宽度默认为 item 的宽度，高度为 3.0 点。
-/// @li 纵向滚动时，高度默认为 item 的高度，宽度为 3.0 点。
+/// @li 横向滚动时，宽度默认为 segment 的宽度，高度为 3.0 点。
+/// @li 纵向滚动时，高度默认为 segment 的高度，宽度为 3.0 点。
 /// @li 正数表示使用值，负数表示与默认值的差。
 @property (nonatomic) CGSize indicatorSize;
 /// 指示器样式。
 @property (nonatomic) XZSegmentedControlIndicatorStyle indicatorStyle;
-/// 使用内置样式时，使用 `.blueColor` 色块作为指示器。
+/// 使用内置样式时，使用 `.tintColor` 色块作为指示器。
 /// @note 设置为 `nil` 表示没有颜色，适合设置图片。
 @property (nonatomic, strong, nullable) UIColor *indicatorColor;
 /// 使用内置式时，使用图片作为指示器。
@@ -90,16 +97,7 @@ typedef NS_ENUM(NSUInteger, XZSegmentedControlIndicatorStyle) {
 /// 自定义指示器，可以通过 `XZSegmentedControlIndicator` 提供的方法实现自定义布局及交互式转场。
 @property (nonatomic, null_resettable) Class indicatorClass;
 
-/// 交互式转场时，可通过此方法，通知控件当前的转场进度。
-/// @discussion
-/// 跨值转场时 `selectedIndex + interactiveTransition` 为趋向转场目标的值。
-/// @param interactiveTransition 转场进度
-- (void)updateInteractiveTransition:(CGFloat)interactiveTransition;
-
-@property (nonatomic, readonly) NSInteger numberOfSegments;
-
-@property (nonatomic) NSInteger selectedIndex;
-- (void)setSelectedIndex:(NSInteger)selectedIndex animated:(BOOL)animated;
+// MARK: - 自定义数据源
 
 @property (nonatomic, weak) id<XZSegmentedControlDataSource> dataSource;
 
@@ -110,11 +108,17 @@ typedef NS_ENUM(NSUInteger, XZSegmentedControlIndicatorStyle) {
 - (void)insertSegmentAtIndex:(NSInteger)index;
 - (void)removeSegmentAtIndex:(NSInteger)index;
 
-- (nullable __kindof XZSegmentedControlSegment *)segmentForItemAtIndex:(NSInteger)index;
+- (nullable __kindof XZSegmentedControlSegment *)viewForSegmentAtIndex:(NSInteger)index;
+
+- (void)registerClass:(nullable Class)segmentClass forSegmentWithReuseIdentifier:(NSString *)identifier;
+- (void)registerNib:(nullable UINib *)segmentNib forSegmentWithReuseIdentifier:(NSString *)identifier;
+- (__kindof UICollectionViewCell *)dequeueReusableSegmentWithReuseIdentifier:(NSString *)identifier forIndex:(NSInteger)index;
+
+// MARK: - 纯文本数据源
 
 /// 使用 item 标题文本作为数据源。
 /// @note 设置此属性，将取消 dataSource 的设置。
-/// @note 每个 item 的宽度，将根据字体自动计算，同时受 itemSize 属性约束。
+/// @note 每个 item 的宽度，将根据字体自动计算，同时受 segmentSize 属性约束。
 /// @note 设置此属性，并不会立即刷新视图，需要的话，请调用 `-reloadData:completion:` 方法，并在回调中处理。
 @property (nonatomic, copy, nullable) NSArray<NSString *> *titles;
 - (void)setTitles:(NSArray<NSString *> * _Nullable)titles animated:(BOOL)animated;
@@ -128,9 +132,13 @@ typedef NS_ENUM(NSUInteger, XZSegmentedControlIndicatorStyle) {
 /// 被选中的 item 文本字体。该属性仅在使用 titles 时生效。
 @property (nonatomic, strong, null_resettable) UIFont  *selectedTitleFont;
 
-- (void)registerClass:(nullable Class)segmentClass forSegmentWithReuseIdentifier:(NSString *)identifier;
-- (void)registerNib:(nullable UINib *)segmentNib forSegmentWithReuseIdentifier:(NSString *)identifier;
-- (__kindof UICollectionViewCell *)dequeueReusableSegmentWithReuseIdentifier:(NSString *)identifier forIndex:(NSInteger)index;
+/// 最小宽度或最小高度。
+/// @discussion 使用 titles 时 item 的大小会根据字体自动计算，此属性将作为最小值使用。
+@property (nonatomic) CGSize minimumItemSize;
+/// 最小间距间距。
+@property (nonatomic) CGFloat minimumItemSpacing;
+/// 最小内边距。
+@property (nonatomic) CGFloat minimumItemPadding;
 
 @end
 
@@ -144,7 +152,7 @@ NS_SWIFT_UI_ACTOR @protocol XZSegmentedControlDataSource <NSObject>
 ///   - segmentedControl: 调用此方法的对象
 ///   - index: item 的位置索引
 ///   - reusingView: 可供重用的视图
-- (__kindof UICollectionViewCell *)segmentedControl:(XZSegmentedControl *)segmentedControl segmentForItemAtIndex:(NSInteger)index;
+- (__kindof UICollectionViewCell *)segmentedControl:(XZSegmentedControl *)segmentedControl viewForSegmentAtIndex:(NSInteger)index;
 /// 返回 item 的大小。
 /// - Parameters:
 ///   - segmentedControl: 调用此方法的对象

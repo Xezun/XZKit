@@ -42,7 +42,7 @@
 - (instancetype)init {
     self = [super init];
     if (self) {
-        _color = UIColor.blueColor;
+        _color = UIColor.tintColor;
     }
     return self;
 }
