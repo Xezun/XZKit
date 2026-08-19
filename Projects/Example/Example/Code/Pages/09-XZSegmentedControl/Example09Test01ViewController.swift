@@ -35,13 +35,13 @@ class Example09Test01ViewController: UIViewController, UIScrollViewDelegate {
         pageView.delegate   = self
         pageView.dataSource = self
         
-        if segmentedControl.direction == .horizontal {
+        if segmentedControl.orientation == .horizontal {
             segmentedControl.indicatorSize  = CGSize.init(width: 20.0, height: 3.0)
         } else {
             segmentedControl.indicatorSize  = CGSize.init(width: 3.0, height: 20.0)
         }
         segmentedControl.indicatorColor    = .systemRed
-        segmentedControl.interitemSpacing  = 10;
+        segmentedControl.titleSpacing      = 10;
         segmentedControl.titleFont         = .systemFont(ofSize: 17.0)
         segmentedControl.selectedTitleFont = .systemFont(ofSize: 20.0, weight: .medium)
         segmentedControl.titles            = self.titles

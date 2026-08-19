@@ -21,7 +21,7 @@ class Example09SettingsViewController: UITableViewController {
         super.viewDidLoad()
  
         if let segmentedControl = segmentedControl {
-            interitemSpacingControl.setTitle("\(Int(segmentedControl.interitemSpacing ))", forSegmentAt: 1)
+            interitemSpacingControl.setTitle("\(Int(segmentedControl.titleSpacing ))", forSegmentAt: 1)
             headerSwitch.isOn = segmentedControl.headerView != nil
             footerSwitch.isOn = segmentedControl.footerView != nil
         }
@@ -73,9 +73,9 @@ class Example09SettingsViewController: UITableViewController {
         case 1:
             switch indexPath.row {
             case 0:
-                cell.detailTextLabel?.text = "\(segmentedControl?.itemSize ?? .zero)"
+                cell.detailTextLabel?.text = "\(segmentedControl?.titleSize ?? .zero)"
             case 1:
-                cell.detailTextLabel?.text = "\(segmentedControl?.interitemSpacing ?? 0)"
+                cell.detailTextLabel?.text = "\(segmentedControl?.titleSpacing ?? 0)"
             default:
                 fatalError()
             }
@@ -131,7 +131,7 @@ class Example09SettingsViewController: UITableViewController {
     
     @IBAction func unwindToSubmitItemSize(_ unwindSegue: UIStoryboardSegue) {
         guard let sourceViewController = unwindSegue.source as? Example09SettingsSizeViewController else { return }
-        segmentedControl?.itemSize = sourceViewController.value
+        segmentedControl?.titleSize = sourceViewController.value
         _ = tableView(tableView, cellForRowAt: .init(row: 0, section: 1))
     }
     
@@ -139,19 +139,19 @@ class Example09SettingsViewController: UITableViewController {
         guard let segmentedControl = segmentedControl else { return }
         switch sender.selectedSegmentIndex {
         case 0:
-            if segmentedControl.interitemSpacing > 0 {
-                segmentedControl.interitemSpacing -= 1
+            if segmentedControl.titleSpacing > 0 {
+                segmentedControl.titleSpacing -= 1
             }
         case 1:
             break
         case 2:
-            segmentedControl.interitemSpacing += 1;
+            segmentedControl.titleSpacing += 1;
         default:
             break
         }
         sender.selectedSegmentIndex = UISegmentedControl.noSegment
         
-        sender.setTitle("\(Int(segmentedControl.interitemSpacing))", forSegmentAt: 1)
+        sender.setTitle("\(Int(segmentedControl.titleSpacing))", forSegmentAt: 1)
     }
     
     @IBAction func headerSwitchValueChanged(_ sender: UISwitch) {
@@ -201,7 +201,7 @@ class Example09SettingsViewController: UITableViewController {
         case "indicatorColor":
             (segue.destination as? Example09SettingsColorSelectViewController)?.value = segmentedControl.indicatorColor
         case "itemSize":
-            (segue.destination as? Example09SettingsSizeViewController)?.value = segmentedControl.itemSize
+            (segue.destination as? Example09SettingsSizeViewController)?.value = segmentedControl.titleSize
         default:
             break
         }

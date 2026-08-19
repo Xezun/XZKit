@@ -1015,11 +1015,11 @@
         </scene>
     </scenes>
     <inferredMetricsTieBreakers>
-        <segue reference="ang-NB-7rv"/>
+        <segue reference="x7s-DO-E2b"/>
     </inferredMetricsTieBreakers>
     <resources>
-        <image name="gear.circle" width="84" height="84"/>
         <image name="gear.circle" catalog="system" width="128" height="123"/>
+        <image name="gear.circle" width="27" height="27"/>
         <image name="icon-arrow-down-20" width="20" height="8.6666669845581055"/>
         <image name="icon-arrow-left-20" width="8.6666669845581055" height="20"/>
         <image name="icon-arrow-right-20" width="8.6666669845581055" height="20"/>

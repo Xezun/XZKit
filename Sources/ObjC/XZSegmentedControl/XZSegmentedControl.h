@@ -11,7 +11,7 @@
 #import <XZKit/XZSegmentedControlSegment.h>
 #import <XZKit/XZSegmentedControlIndicator.h>
 #else
-#import "XZSegmentView.h"
+#import "XZSegmentItemView.h"
 #import "XZSegmentIndicatorView.h"
 #endif
 
@@ -25,7 +25,7 @@ typedef NS_ENUM(NSUInteger, XZSegmentOrientation) {
     XZSegmentOrientationHorizontal = UICollectionViewScrollDirectionHorizontal,
     /// 控件中 segment 在垂直方向上布局。
     XZSegmentOrientationVertical = UICollectionViewScrollDirectionVertical
-};
+} NS_SWIFT_NAME(XZSegmentedControl.Orientation);
 
 /// 指示器样式。
 typedef NS_ENUM(NSUInteger, XZSegmentIndicatorStyle) {
@@ -39,7 +39,7 @@ typedef NS_ENUM(NSUInteger, XZSegmentIndicatorStyle) {
     XZSegmentIndicatorStyleNoteLine,
     /// 使用自定义指示器。
     XZSegmentIndicatorStyleCustom,
-};
+} NS_SWIFT_NAME(XZSegmentedControl.IndicatorStyle);
 
 @protocol XZSegmentDataSource;
 @class UISegmentedControl, UIPageViewController;
@@ -49,7 +49,7 @@ typedef NS_ENUM(NSUInteger, XZSegmentIndicatorStyle) {
 
 /// 指示器方向。支持在 IB 中设置。
 #if TARGET_INTERFACE_BUILDER
-@property (nonatomic) IBInspectable UICollectionViewScrollDirection direction;
+@property (nonatomic) IBInspectable UICollectionViewScrollDirection orientation;
 #else
 @property (nonatomic) XZSegmentOrientation orientation;
 #endif
@@ -91,11 +91,9 @@ typedef NS_ENUM(NSUInteger, XZSegmentIndicatorStyle) {
 /// @note 本属性与 `indicatorColor` 是同时生效的，但是可以将 `indicatorColor` 置空。
 @property (nonatomic, strong, nullable) UIImage *indicatorImage;
 /// 注册自定义的指示器的类，必须是 `XZSegmentIndicatorView` 的子类。
-/// @note
-/// 必须先设置 `indicatorStyle` 属性为 `XZSegmentIndicatorStyleCustom` 才能设置此属性。
-/// @discussion
-/// 自定义指示器，可以通过 `XZSegmentIndicatorView` 提供的方法实现自定义布局及交互式转场。
-@property (nonatomic, null_resettable) Class indicatorClass;
+///
+/// 自定义指示器，配置 indicator 样式前，必须先设置 `indicatorClass` 否则配置的样式不生效。
+@property (nonatomic) Class indicatorClass;
 
 // MARK: - 自定义数据源
 
@@ -108,7 +106,7 @@ typedef NS_ENUM(NSUInteger, XZSegmentIndicatorStyle) {
 - (void)insertSegmentAtIndex:(NSInteger)index;
 - (void)removeSegmentAtIndex:(NSInteger)index;
 
-- (nullable __kindof XZSegmentView *)viewForSegmentAtIndex:(NSInteger)index;
+- (nullable __kindof XZSegmentItemView *)viewForSegmentAtIndex:(NSInteger)index;
 
 - (void)registerClass:(nullable Class)segmentClass forSegmentWithReuseIdentifier:(NSString *)identifier;
 - (void)registerNib:(nullable UINib *)segmentNib forSegmentWithReuseIdentifier:(NSString *)identifier;
@@ -132,13 +130,13 @@ typedef NS_ENUM(NSUInteger, XZSegmentIndicatorStyle) {
 /// 被选中的 item 文本字体。该属性仅在使用 titles 时生效。
 @property (nonatomic, strong, null_resettable) UIFont  *selectedTitleFont;
 
-/// 水平宽度或高度。
+/// 标题元素的水平宽度或高度。
 ///
 /// 值为0表示自动计算宽高。
 @property (nonatomic) CGSize  titleSize;
-/// 最小间距间距。
+/// 标题元素之间的间距。
 @property (nonatomic) CGFloat titleSpacing;
-/// 最小内边距。
+/// 标题元素的内边距。
 @property (nonatomic) NSDirectionalEdgeInsets titleEdgeInsets;
 
 @end

@@ -60,23 +60,25 @@
     layoutAttributes.frame = CGRectMake(x, y, w, h);
 }
 
-- (void)applyLayoutAttributes:(XZSegmentIndicatorLayoutAttributes *)layoutAttributes {
-    [super applyLayoutAttributes:layoutAttributes];
+
+
+- (void)willShowInSegmentedControl:(XZSegmentedControl *)segmentedControl {
+    [super willShowInSegmentedControl:segmentedControl];
     
-    if (layoutAttributes.image) {
+    if (segmentedControl.indicatorImage) {
         if (_imageView == nil) {
             _imageView = [[UIImageView alloc] initWithFrame:self.bounds];
             _imageView.contentMode = UIViewContentModeScaleAspectFit;
             _imageView.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
             [self addSubview:_imageView];
         }
-        _imageView.image = layoutAttributes.image;
+        _imageView.image = segmentedControl.indicatorImage;
     } else {
         [_imageView removeFromSuperview];
         _imageView = nil;
     }
     
-    self.backgroundColor = layoutAttributes.color;
+    self.backgroundColor = segmentedControl.indicatorColor;
 }
 
 @end
@@ -84,7 +86,7 @@
 @implementation XZSegmentMarkLineIndicatorView
 
 + (CGRect)segmentedControl:(XZSegmentedControl *)segmentedControl layout:(XZSegmentLayout *)layout frameForIndicatorAtIndex:(NSInteger)index {
-    CGRect const frame = [layout layoutAttributesForItemAtIndex:index].frame;
+    CGRect const frame = [layout layoutAttributesForSegmentAtIndex:index].frame;
     CGSize const indicatorSize = segmentedControl.indicatorSize;
     switch (segmentedControl.orientation) {
         case XZSegmentOrientationHorizontal: {
@@ -112,7 +114,7 @@
 @implementation XZSegmentNoteLineIndicatorView
 
 + (CGRect)segmentedControl:(XZSegmentedControl *)segmentedControl layout:(XZSegmentLayout *)layout frameForIndicatorAtIndex:(NSInteger)index {
-    CGRect const frame = [layout layoutAttributesForItemAtIndex:index].frame;
+    CGRect const frame = [layout layoutAttributesForSegmentAtIndex:index].frame;
     CGSize const indicatorSize = segmentedControl.indicatorSize;
     switch (segmentedControl.orientation) {
         case XZSegmentOrientationHorizontal: {

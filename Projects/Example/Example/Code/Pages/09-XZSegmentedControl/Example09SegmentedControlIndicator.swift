@@ -8,21 +8,21 @@
 import UIKit
 import XZKit
 
-class Example09SegmentedControlIndicator: XZSegmentedControlIndicator {
+class Example09SegmentedControlIndicator: XZSegmentedControl.IndicatorView {
     
     override class var supportsInteractiveTransition: Bool {
         return true
     }
 
-    override class func segmentedControl(_ segmentedControl: XZSegmentedControl, layout: XZSegmentLayout, prepareForLayoutAttributes layoutAttributes: XZSegmentIndicatorLayoutAttributes) {
+    override class func segmentedControl(_ segmentedControl: XZSegmentedControl, layout: XZSegmentedControl.Layout, prepareForLayoutAttributes layoutAttributes: XZSegmentedControl.IndicatorLayoutAttributes) {
         layoutAttributes.zIndex = -111
         
         let selectedIndex = segmentedControl.selectedIndex;
-        guard let frame = layout.layoutAttributesForItem(at: selectedIndex)?.frame else {
+        guard let frame = layout.layoutAttributesForSegment(at: selectedIndex)?.frame else {
             return
         }
         
-        if segmentedControl.direction == .horizontal {
+        if segmentedControl.orientation == .horizontal {
             layoutAttributes.frame = frame.insetBy(dx: 0, dy: 5)
         } else {
             layoutAttributes.frame = frame.insetBy(dx: 5, dy: 0)
@@ -43,11 +43,11 @@ class Example09SegmentedControlIndicator: XZSegmentedControlIndicator {
         }
         
         let from = layoutAttributes.frame;
-        guard var to = layout.layoutAttributesForItem(at: newIndex)?.frame else {
+        guard var to = layout.layoutAttributesForSegment(at: newIndex)?.frame else {
             return
         }
         
-        if segmentedControl.direction == .horizontal {
+        if segmentedControl.orientation == .horizontal {
             to = to.insetBy(dx: 0, dy: 5)
         } else {
             to = to.insetBy(dx: 5, dy: 0)

@@ -12,7 +12,6 @@
 #define kIndicatorWidth  3.0
 
 @implementation XZSegmentLayout {
-    XZSegmentIndicatorLayoutAttributes * _Nonnull _indicatorLayoutAttributes;
     BOOL _needsUpdateIndicatorLayout;
 }
 
@@ -21,14 +20,60 @@
     if (self != nil) {
         _needsUpdateIndicatorLayout = NO;
         _segmentedControl = segmentedControl;
+        _indicatorStyle = XZSegmentIndicatorStyleMarkLine;
         _indicatorClass = [XZSegmentMarkLineIndicatorView class];
-        [self registerClass:_indicatorClass forDecorationViewOfKind:NSStringFromClass(_indicatorClass)];
-        [self loadIndicatorLayoutAttributesIfNeeded];
+        [self loadIndicatorLayoutAttributes];
     }
     return self;
 }
 
-- (UICollectionViewLayoutAttributes *)layoutAttributesForItemAtIndex:(NSInteger)index {
+- (void)prepareLayout {
+    [super prepareLayout];
+    
+    // 自动调整 selectedIndex 到合理的范围
+    NSInteger const count = [self.collectionView numberOfItemsInSection:0];
+    if (count == 0) {
+        _selectedIndex = NSNotFound;
+    } else if (_selectedIndex == NSNotFound) {
+        _selectedIndex = 0;
+    } else {
+        _selectedIndex = MIN(count - 1, _selectedIndex);
+    }
+    
+    [self prepareIndicatorLayout];
+}
+
+- (NSArray<__kindof UICollectionViewLayoutAttributes *> *)layoutAttributesForElementsInRect:(CGRect)rect {
+    NSArray *items = [super layoutAttributesForElementsInRect:rect];
+    if (!CGRectIsEmpty(_indicatorLayoutAttributes.frame)) {
+        if (CGRectIntersectsRect(rect, _indicatorLayoutAttributes.frame)) {
+            items = [items arrayByAddingObject:_indicatorLayoutAttributes];
+        }
+    }
+    return items;
+}
+
+- (UICollectionViewLayoutAttributes *)layoutAttributesForDecorationViewOfKind:(NSString *)elementKind atIndexPath:(NSIndexPath *)indexPath {
+    if (indexPath.section != 0 || indexPath.item != 0) {
+        return nil;
+    }
+    if (![elementKind isEqualToString:_indicatorLayoutAttributes.representedElementKind]) {
+        return nil;
+    }
+    return _indicatorLayoutAttributes;
+}
+
+- (UIUserInterfaceLayoutDirection)developmentLayoutDirection {
+    return UIUserInterfaceLayoutDirectionLeftToRight;
+}
+
+- (BOOL)flipsHorizontallyInOppositeLayoutDirection {
+    return YES;
+}
+
+// MARK: - Open Methods
+
+- (UICollectionViewLayoutAttributes *)layoutAttributesForSegmentAtIndex:(NSInteger)index {
     NSIndexPath *indexPath = [NSIndexPath indexPathForItem:index inSection:0];
     return [self layoutAttributesForItemAtIndexPath:indexPath];
 }
@@ -76,32 +121,43 @@
 - (void)setIndicatorSize:(CGSize)indicatorSize {
     if (!CGSizeEqualToSize(_indicatorSize, indicatorSize)) {
         _indicatorSize = indicatorSize;
-        [self setNeedsUpdateIndicatorLayout:NO];
+        [self invalidateIndicatorLayout:NO];
     }
 }
 
-- (void)setIndicatorClass:(Class)indicatorClass {
-    if (![indicatorClass isSubclassOfClass:UICollectionReusableView.class]) {
+@synthesize indicatorClass = _indicatorClass;
+
+- (Class)indicatorClass {
+    if (_indicatorClass == nil) {
         switch (_indicatorStyle) {
             case XZSegmentIndicatorStyleMarkLine:
-                indicatorClass = [XZSegmentMarkLineIndicatorView class];
+                _indicatorClass = [XZSegmentMarkLineIndicatorView class];
                 break;
             case XZSegmentIndicatorStyleNoteLine:
-                indicatorClass = [XZSegmentNoteLineIndicatorView class];
+                _indicatorClass = [XZSegmentNoteLineIndicatorView class];
                 break;
             case XZSegmentIndicatorStyleCustom:
-                indicatorClass = [XZSegmentMarkLineIndicatorView class];
+                _indicatorStyle = XZSegmentIndicatorStyleMarkLine;
+                _indicatorClass = [XZSegmentMarkLineIndicatorView class];
                 break;
             default:
                 break;
         }
+        [self loadIndicatorLayoutAttributes];
     }
+    return _indicatorClass;
+}
+
+- (void)setIndicatorClass:(Class)indicatorClass {
     if (_indicatorClass != indicatorClass) {
-        [self registerClass:nil forDecorationViewOfKind:NSStringFromClass(_indicatorClass)];
-        _indicatorClass = indicatorClass;
-        [self registerClass:_indicatorClass forDecorationViewOfKind:NSStringFromClass(_indicatorClass)];
+        NSParameterAssert([indicatorClass isSubclassOfClass:[XZSegmentIndicatorView class]]);
+        _indicatorStyle = XZSegmentIndicatorStyleCustom;
         
-        // 这里仅仅刷新指示器的 attributes 存在问题：从 custom 变回内置样式，custom 的指示器会残留。
+        // [self registerClass:nil forDecorationViewOfKind:NSStringFromClass(_indicatorClass)];
+        _indicatorClass = indicatorClass;
+        [self loadIndicatorLayoutAttributes];
+        
+        // 不能仅刷新指示器，因为从 custom 变回内置样式，custom 的指示器会残留。
         [self invalidateLayout];
     }
 }
@@ -111,7 +167,7 @@
         _indicatorLayoutAttributes.interactiveTransition = interactiveTransition;
         
         if ([_indicatorClass supportsInteractiveTransition]) {
-            [self setNeedsUpdateIndicatorLayout:NO];
+            [self invalidateIndicatorLayout:NO];
         }
     }
 }
@@ -120,48 +176,8 @@
     return _indicatorLayoutAttributes.interactiveTransition;
 }
 
-- (void)setSelectedIndex:(NSInteger)selectedIndex animated:(BOOL)animated {
-    if (_selectedIndex != selectedIndex) {
-        _selectedIndex = selectedIndex;
-        // 指示器转场，默认进度为 0。
-        // 设置选中时，重置转场进度，因为转场到新的 index 后，转场进度为零。
-        _indicatorLayoutAttributes.interactiveTransition = 0;
-        // 更新布局
-        [self setNeedsUpdateIndicatorLayout:animated];
-    }
-}
-
-- (void)prepareLayout {
-    [super prepareLayout];
-    
-    // 自动调整 selectedIndex 到合理的范围
-    NSInteger const count = [self.collectionView numberOfItemsInSection:0];
-    if (count == 0) {
-        _selectedIndex = NSNotFound;
-    } else if (_selectedIndex == NSNotFound) {
-        _selectedIndex = 0;
-    } else {
-        _selectedIndex = MIN(count - 1, _selectedIndex);
-    }
-    
-    [self prepareIndicatorLayout];
-}
-
-- (void)setNeedsUpdateIndicatorLayout:(CGFloat)animated {
-    if (_needsUpdateIndicatorLayout) {
-        return;
-    }
-    _needsUpdateIndicatorLayout = YES;
-    [NSRunLoop.mainRunLoop performInModes:@[NSRunLoopCommonModes] block:^{
-        [self updateIndicaotrLayoutIfNeeded:animated];
-    }];
-}
-
-- (void)updateIndicaotrLayoutIfNeeded:(BOOL)animated {
-    if (!_needsUpdateIndicatorLayout) {
-        return;
-    }
-    _needsUpdateIndicatorLayout = NO;
+- (void)invalidateIndicatorLayout:(BOOL)animated {
+    _indicatorLayoutAttributes.animated = animated;
     
     UICollectionViewFlowLayoutInvalidationContext *context = [[UICollectionViewFlowLayoutInvalidationContext alloc] init];
     context.invalidateFlowLayoutAttributes      = NO;
@@ -169,24 +185,23 @@
     [context invalidateDecorationElementsOfKind:NSStringFromClass(_indicatorClass) atIndexPaths:@[
         [NSIndexPath indexPathForItem:0 inSection:0]
     ]];
-    
     [self invalidateLayoutWithContext:context];
-    [self prepareIndicatorLayout];
-
-    if (animated) {
-        [_indicatorLayoutAttributes.indicatorView animateTransition:_indicatorLayoutAttributes];
-    }
+    
+    
+//    if (animated) {
+//        [_indicatorLayoutAttributes.indicatorView animateTransition:_indicatorLayoutAttributes];
+//    }
 }
+
+// MARK: - Private Methods
 
 /// 更新 indicator 的布局。请不要直接调用此方法。
 - (void)prepareIndicatorLayout {
     NSInteger const count = [self.collectionView numberOfItemsInSection:0];
     
-    [self loadIndicatorLayoutAttributesIfNeeded];
-    
     switch (_indicatorStyle) {
         case XZSegmentIndicatorStyleMarkLine: {
-            _indicatorLayoutAttributes.zIndex = NSIntegerMax;
+            // TODO: 将如下逻辑移动到对应的 class 中
             if (count == 0) {
                 CGRect const bounds = self.collectionView.bounds;
                 switch (self.scrollDirection) {
@@ -205,7 +220,6 @@
             break;
         }
         case XZSegmentIndicatorStyleNoteLine: {
-            _indicatorLayoutAttributes.zIndex = NSIntegerMax;
             if (count == 0) {
                 CGRect const bounds = self.collectionView.bounds;
                 switch (self.scrollDirection) {
@@ -224,21 +238,7 @@
             break;
         }
         case XZSegmentIndicatorStyleCustom: {
-            if (count == 0) {
-                CGRect const bounds = self.collectionView.bounds;
-                switch (self.scrollDirection) {
-                    case UICollectionViewScrollDirectionHorizontal:
-                        _indicatorLayoutAttributes.frame = CGRectMake(CGRectGetMinX(bounds), CGRectGetMinY(bounds), 0, CGRectGetHeight(bounds));
-                        break;
-                    case UICollectionViewScrollDirectionVertical:
-                        _indicatorLayoutAttributes.frame = CGRectMake(CGRectGetMinX(bounds), CGRectGetMinY(bounds), CGRectGetWidth(bounds), 0);
-                        break;
-                    default:
-                        break;
-                }
-            } else {
-                [_indicatorClass segmentedControl:_segmentedControl layout:self prepareForLayoutAttributes:_indicatorLayoutAttributes];
-            }
+            [_indicatorClass segmentedControl:_segmentedControl layout:self prepareForLayoutAttributes:_indicatorLayoutAttributes];
             break;
         }
         default:
@@ -247,52 +247,14 @@
 }
 
 /// 加载指示器属性。
-- (void)loadIndicatorLayoutAttributesIfNeeded {
+- (void)loadIndicatorLayoutAttributes {
     NSString * const kind = NSStringFromClass(_indicatorClass);
     if ([_indicatorLayoutAttributes.representedElementKind isEqualToString:kind]) {
         return;
     }
-    
-    XZSegmentIndicatorLayoutAttributes * const oldValue = _indicatorLayoutAttributes;
-    
+    [self registerClass:_indicatorClass forDecorationViewOfKind:kind];
     NSIndexPath * const indexPath = [NSIndexPath indexPathForItem:0 inSection:0];
     _indicatorLayoutAttributes = [XZSegmentIndicatorLayoutAttributes layoutAttributesForDecorationViewOfKind:kind withIndexPath:indexPath];
-    
-    // 复制自定义属性
-    if (oldValue) {
-        _indicatorLayoutAttributes.indicatorView = oldValue.indicatorView;
-        _indicatorLayoutAttributes.image         = oldValue.image;
-        _indicatorLayoutAttributes.color         = oldValue.color;
-        _indicatorLayoutAttributes.interactiveTransition = oldValue.interactiveTransition;
-    }
-}
-
-- (NSArray<__kindof UICollectionViewLayoutAttributes *> *)layoutAttributesForElementsInRect:(CGRect)rect {
-    NSArray *items = [super layoutAttributesForElementsInRect:rect];
-    if (!CGRectIsEmpty(_indicatorLayoutAttributes.frame)) {
-        if (CGRectIntersectsRect(rect, _indicatorLayoutAttributes.frame)) {
-            items = [items arrayByAddingObject:_indicatorLayoutAttributes];
-        }
-    }
-    return items;
-}
-
-- (UICollectionViewLayoutAttributes *)layoutAttributesForDecorationViewOfKind:(NSString *)elementKind atIndexPath:(NSIndexPath *)indexPath {
-    if (indexPath.section != 0 || indexPath.item != 0) {
-        return nil;
-    }
-    if (![elementKind isEqualToString:_indicatorLayoutAttributes.representedElementKind]) {
-        return nil;
-    }
-    return _indicatorLayoutAttributes;
-}
-
-- (UIUserInterfaceLayoutDirection)developmentLayoutDirection {
-    return UIUserInterfaceLayoutDirectionLeftToRight;
-}
-
-- (BOOL)flipsHorizontallyInOppositeLayoutDirection {
-    return YES;
 }
 
 @end

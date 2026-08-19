@@ -17,10 +17,11 @@ NS_ASSUME_NONNULL_BEGIN
 @class XZSegmentedControl, XZSegmentIndicatorLayoutAttributes;
 
 NS_SWIFT_UI_ACTOR
+NS_SWIFT_NAME(XZSegmentedControl.Layout)
 @interface XZSegmentLayout : UICollectionViewFlowLayout
 - (instancetype)init NS_UNAVAILABLE;
 - (nullable instancetype)initWithCoder:(NSCoder *)coder NS_UNAVAILABLE;
-- (nullable UICollectionViewLayoutAttributes *)layoutAttributesForItemAtIndex:(NSInteger)index;
+- (nullable UICollectionViewLayoutAttributes *)layoutAttributesForSegmentAtIndex:(NSInteger)index;
 @end
 
 /// 指示器视图基类
@@ -53,35 +54,20 @@ NS_SWIFT_NAME(XZSegmentedControl.IndicatorView)
 ///   - layoutAttributes: 指示器的布局信息
 + (void)segmentedControl:(XZSegmentedControl *)segmentedControl layout:(XZSegmentLayout *)layout prepareForLayoutAttributes:(XZSegmentIndicatorLayoutAttributes *)layoutAttributes NS_SWIFT_NAME(segmentedControl(_:layout:prepareForLayoutAttributes:));
 
-/// 非交互式的转场时，原生为指示器布局变化只有一个淡出淡入的过渡效果，所以组件提供此方法，为指示器应用新布局前，提供了一个自定义转场动画的机会。
-/// @discussion
-/// 此动画效果应用于，用户点击 segment 或方法 `-setSelectedIndex:animated:` 被调用时。
-/// @discussion
-/// 默认情况下，该方法默认仅执行了一个平移动画，代码如下。
-/// @code
-/// [UIView animateWithDuration:0.35 animations:^{
-///     self.frame = layoutAttributes.frame;
-/// }];
-/// @endcode
-/// @discussion
-/// 一般情况下，子类重写此方法，不需要调用父类实现。
-/// @param layoutAttributes 指示器布局信息。
-- (void)animateTransition:(XZSegmentIndicatorLayoutAttributes *)layoutAttributes;
-
-/// 子类应该在此方法中，根据 layoutAttributes 配置指示器的外观。
-///
-/// 子类应该先调用 super 再操作。在此方法中，设置了 layoutAttributes 的 indicatorView 属性为当前视图。
-/// @param layoutAttributes 指示器布局信息。
-- (void)applyLayoutAttributes:(XZSegmentIndicatorLayoutAttributes *)layoutAttributes NS_REQUIRES_SUPER;
+- (void)willShowInSegmentedControl:(XZSegmentedControl *)segmentedControl;
 
 @end
 
 /// 指示器的外观及布局信息。
+NS_SWIFT_NAME(XZSegmentedControl.IndicatorLayoutAttributes)
 @interface XZSegmentIndicatorLayoutAttributes : UICollectionViewLayoutAttributes
 
 @property (nonatomic, strong, nullable, XZ_READONLY) UIColor *color;
 @property (nonatomic, strong, nullable, XZ_READONLY) UIImage *image;
 @property (nonatomic, XZ_READONLY) CGFloat interactiveTransition;
+
+@property (nonatomic, XZ_READONLY) BOOL animated;
+
 ///
 /// 在未修改 UICollectionViewLayoutAttributes 的核心属性，例如 frame 或 size 的情况下，
 /// 不管是 invalidateIndicaotrLayout 还是 invalidateLayout 都无法重载视图，导致无法应用

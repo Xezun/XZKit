@@ -14,7 +14,7 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-@interface XZTextSegmentView : XZSegmentView
+@interface XZTextSegmentView : XZSegmentItemView
 @property (nonatomic, weak) XZSegmentedControl *segmentedControl;
 @property (nonatomic, copy, nullable) NSString *text;
 @property (nonatomic) NSDirectionalEdgeInsets edgeInsets;
