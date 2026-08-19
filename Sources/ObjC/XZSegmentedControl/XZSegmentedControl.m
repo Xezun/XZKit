@@ -7,40 +7,39 @@
 //
 
 #import "XZSegmentedControl.h"
-#import "XZSegmentedControlContentView.h"
-#import "XZSegmentedControlFlowLayout.h"
-#import "XZSegmentedControlTextSegment.h"
+#import "XZSegmentContainerView.h"
+#import "XZSegmentLayout.h"
+#import "XZTextSegmentView.h"
 
 #define kReuseIdentifier @"XZSegmentedControlReuseIdentifier"
 
 @interface XZSegmentedControl () <UICollectionViewDataSource, UICollectionViewDelegateFlowLayout> {
-    XZSegmentedControlFlowLayout *_flowLayout;
+    XZSegmentLayout *_flowLayout;
     UICollectionView             *_collectionView;
-    NSMutableArray<XZSegmentedControlTextModel *> *_titleModels;
-    BOOL _needsUpdateTitleModels;
-    XZSegmentedControlSegment * __weak _transitionSegment;
+    NSMutableArray<XZTextSegmentItem *> *_textItems;
+    XZSegmentView * __weak _transitionSegment;
 }
 
 @end
 
 @implementation XZSegmentedControl
 
-- (instancetype)initWithFrame:(CGRect)frame direction:(XZSegmentedControlDirection)direction {
+- (instancetype)initWithFrame:(CGRect)frame orientation:(XZSegmentOrientation)orientation {
     self = [super initWithFrame:frame];
     if (self != nil) {
-        [self XZ_didInitialize:direction];
+        [self XZSegmentInitialize:orientation];
     }
     return self;
 }
 
 - (instancetype)initWithFrame:(CGRect)frame {
-    return [self initWithFrame:frame direction:(XZSegmentedControlDirectionHorizontal)];
+    return [self initWithFrame:frame orientation:(XZSegmentOrientationHorizontal)];
 }
 
 - (instancetype)initWithCoder:(NSCoder *)coder {
     self = [super initWithCoder:coder];
     if (self != nil) {
-        [self XZ_didInitialize:XZSegmentedControlDirectionHorizontal];
+        [self XZSegmentInitialize:XZSegmentOrientationHorizontal];
     }
     return self;
 }
@@ -60,8 +59,8 @@
     CGRect collectionFrame = _collectionView.frame;
     CGSize itemSize        = _flowLayout.itemSize;
     
-    switch (self.direction) {
-        case XZSegmentedControlDirectionHorizontal: {
+    switch (self.orientation) {
+        case XZSegmentOrientationHorizontal: {
             if (bounds.size.height != _flowLayout.itemSize.height) {
                 itemSize = CGSizeMake(_flowLayout.itemSize.width, bounds.size.height);
             }
@@ -82,7 +81,7 @@
             }
             break;
         }
-        case XZSegmentedControlDirectionVertical: {
+        case XZSegmentOrientationVertical: {
             if (bounds.size.width != _flowLayout.itemSize.width) {
                 itemSize = CGSizeMake(bounds.size.width, _flowLayout.itemSize.height);
             }
@@ -112,7 +111,7 @@
         needsUpdate = YES;
     }
     if (needsUpdate) {
-        [self XZ_setNeedsUpdateTitleModels:NO];
+        [self updateTextSegmentItems];
     }
 }
 
@@ -156,7 +155,7 @@
 }
 
 - (void)reloadData:(BOOL)animated completion:(void (^)(BOOL))completion {
-    [self XZ_updateTitleModelsIfNeeded];
+    [self updateTextSegmentItems];
     
     // 直接在 reloadData 后面 selectItem 操作无效，所以要使用 performBatchUpdates 方法
     typeof(self) __weak wself = self;
@@ -166,7 +165,7 @@
             [self->_collectionView reloadData];
         } completion:^(BOOL finished) {
             typeof(self) __strong const self = wself;
-            if (self == nil) return;
+            if (self == nil || self.numberOfSegments == 0) return;
             
             NSIndexPath *indexPath = [NSIndexPath indexPathForItem:self.selectedIndex inSection:0];
             [self->_collectionView selectItemAtIndexPath:indexPath animated:NO scrollPosition:(UICollectionViewScrollPositionNone)];
@@ -199,13 +198,13 @@
     }
 }
 
-- (__kindof XZSegmentedControlSegment *)viewForSegmentAtIndex:(NSInteger)index {
+- (__kindof XZSegmentView *)viewForSegmentAtIndex:(NSInteger)index {
     NSIndexPath *indexPath = [NSIndexPath indexPathForItem:index inSection:0];
-    return (XZSegmentedControlSegment *)[_collectionView cellForItemAtIndexPath:indexPath];
+    return (XZSegmentView *)[_collectionView cellForItemAtIndexPath:indexPath];
 }
 
 - (void)registerClass:(Class)segmentClass forSegmentWithReuseIdentifier:(NSString *)identifier {
-    NSParameterAssert([segmentClass isSubclassOfClass:[XZSegmentedControlSegment class]]);
+    NSParameterAssert([segmentClass isSubclassOfClass:[XZSegmentView class]]);
     NSParameterAssert(![identifier isEqualToString:kReuseIdentifier]);
     [_collectionView registerClass:segmentClass forCellWithReuseIdentifier:identifier];
 }
@@ -230,7 +229,7 @@
     if (_dataSource) {
         return [_dataSource numberOfSegmentsInSegmentedControl:self];
     }
-    return _titleModels.count;
+    return _textItems.count;
 }
 
 - (__kindof UICollectionViewCell *)collectionView:(UICollectionView *)collectionView cellForItemAtIndexPath:(NSIndexPath *)indexPath {
@@ -241,14 +240,14 @@
     CGFloat const transition = _flowLayout.selectedIndex == index ? 1.0 : 0;
     
     if (_dataSource) {
-        XZSegmentedControlSegment *segment = [_dataSource segmentedControl:self viewForSegmentAtIndex:index];
+        XZSegmentView *segment = [_dataSource segmentedControl:self viewForSegmentAtIndex:index];
         [segment updateInteractiveTransition:transition];
         return segment;
     }
     
-    XZSegmentedControlTextModel *model = _titleModels[index];
+    XZTextSegmentItem *model = _textItems[index];
 
-    XZSegmentedControlTextSegment *segment = [collectionView dequeueReusableCellWithReuseIdentifier:kReuseIdentifier forIndexPath:indexPath];
+    XZTextSegmentView *segment = [collectionView dequeueReusableCellWithReuseIdentifier:kReuseIdentifier forIndexPath:indexPath];
     segment.segmentedControl = self;
     segment.text             = model.text;
     [segment updateInteractiveTransition:transition];
@@ -276,8 +275,8 @@
     if (_dataSource) {
         return [_dataSource segmentedControl:self sizeForSegmentAtIndex:indexPath.item];
     }
-    if (_titleModels) {
-        return _titleModels[indexPath.item].size;
+    if (_textItems) {
+        return _textItems[indexPath.item].size;
     }
     return collectionViewLayout.itemSize;
 }
@@ -288,28 +287,19 @@
     return [_collectionView numberOfItemsInSection:0];
 }
 
-- (XZSegmentedControlDirection)direction {
-    switch (_flowLayout.scrollDirection) {
-        case UICollectionViewScrollDirectionVertical:
-            return XZSegmentedControlDirectionVertical;
-            
-        case UICollectionViewScrollDirectionHorizontal:
-            return XZSegmentedControlDirectionHorizontal;
-            
-        default:
-            @throw [NSException exceptionWithName:NSGenericException reason:nil userInfo:nil];
-    }
+- (XZSegmentOrientation)orientation {
+    return (XZSegmentOrientation)_flowLayout.scrollDirection;
 }
 
-- (void)setDirection:(XZSegmentedControlDirection)direction {
+- (void)setOrientation:(XZSegmentOrientation)direction {
     switch (direction) {
-        case XZSegmentedControlDirectionVertical:
+        case XZSegmentOrientationVertical:
             _flowLayout.scrollDirection = UICollectionViewScrollDirectionVertical;
             _collectionView.alwaysBounceHorizontal = NO;
             _collectionView.alwaysBounceVertical   = YES;
             break;
             
-        case XZSegmentedControlDirectionHorizontal:
+        case XZSegmentOrientationHorizontal:
             _flowLayout.scrollDirection = UICollectionViewScrollDirectionHorizontal;
             _collectionView.alwaysBounceHorizontal = YES;
             _collectionView.alwaysBounceVertical   = NO;
@@ -355,30 +345,29 @@
     [self setSelectedIndex:selectedIndex animated:NO];
 }
 
-- (CGSize)segmentSize {
+- (CGSize)titleSize {
     return _flowLayout.itemSize;
 }
 
-- (void)setSegmentSize:(CGSize)itemSize {
-    _flowLayout.itemSize = itemSize;
-    
-    [self XZ_setNeedsUpdateTitleModels:NO];
+- (void)setTitleSize:(CGSize)titleSize {
+    _flowLayout.itemSize = titleSize;
+    [self updateTextSegmentItems];
 }
 
 
-- (CGFloat)segmentSpacing {
+- (CGFloat)titleSpacing {
     return _flowLayout.minimumInteritemSpacing;
 }
 
-- (void)setSegmentSpacing:(CGFloat)interitemSpacing {
-    switch (_flowLayout.scrollDirection) { 
+- (void)setTitleSpacing:(CGFloat)titleSpacing {
+    switch (_flowLayout.scrollDirection) {
         case UICollectionViewScrollDirectionHorizontal:
-            _flowLayout.minimumLineSpacing = interitemSpacing;
-            _flowLayout.minimumInteritemSpacing = interitemSpacing;
+            _flowLayout.minimumLineSpacing = titleSpacing;
+            _flowLayout.minimumInteritemSpacing = titleSpacing;
             break;
         case UICollectionViewScrollDirectionVertical:
-            _flowLayout.minimumLineSpacing = interitemSpacing;
-            _flowLayout.minimumInteritemSpacing = interitemSpacing;
+            _flowLayout.minimumLineSpacing = titleSpacing;
+            _flowLayout.minimumInteritemSpacing = titleSpacing;
             break;
         default:
             @throw [NSException exceptionWithName:NSGenericException reason:nil userInfo:nil];
@@ -389,9 +378,9 @@
 - (void)updateInteractiveTransition:(CGFloat)interactiveTransition {
     _flowLayout.interactiveTransition = interactiveTransition;
     
-    NSInteger                   const selectedIndex        = _flowLayout.selectedIndex;
-    XZSegmentedControlSegment * const selectedSegment      = [self viewForSegmentAtIndex:selectedIndex];
-    XZSegmentedControlSegment * const oldTransitionSegment = _transitionSegment;
+    NSInteger       const selectedIndex        = _flowLayout.selectedIndex;
+    XZSegmentView * const selectedSegment      = [self viewForSegmentAtIndex:selectedIndex];
+    XZSegmentView * const oldTransitionSegment = _transitionSegment;
     
     if (interactiveTransition > 0) {
         CGFloat const intPart = floor(interactiveTransition);
@@ -402,7 +391,7 @@
         NSInteger const count = [_collectionView numberOfItemsInSection:0];
         NSInteger const transitionIndex = selectedIndex + intPart + 1;
         if (transitionIndex <= count - 1) {
-            XZSegmentedControlSegment * const newTransitionSegment = [self viewForSegmentAtIndex:transitionIndex];
+            XZSegmentView * const newTransitionSegment = [self viewForSegmentAtIndex:transitionIndex];
             if (oldTransitionSegment != newTransitionSegment) {
                 if (oldTransitionSegment != selectedSegment) {
                     [oldTransitionSegment updateInteractiveTransition:0];
@@ -422,7 +411,7 @@
         
         NSInteger const transitionIndex = selectedIndex + intPart - 1;
         if (transitionIndex >= 0) {
-            XZSegmentedControlSegment * const newTransitionSegment = [self viewForSegmentAtIndex:transitionIndex];
+            XZSegmentView * const newTransitionSegment = [self viewForSegmentAtIndex:transitionIndex];
             if (oldTransitionSegment != newTransitionSegment) {
                 if (oldTransitionSegment != selectedSegment) {
                     [oldTransitionSegment updateInteractiveTransition:0];
@@ -471,11 +460,11 @@
     _flowLayout.indicatorSize = indicatorSize;
 }
 
-- (XZSegmentedControlIndicatorStyle)indicatorStyle {
+- (XZSegmentIndicatorStyle)indicatorStyle {
     return _flowLayout.indicatorStyle;
 }
 
-- (void)setIndicatorStyle:(XZSegmentedControlIndicatorStyle)indicatorStyle {
+- (void)setIndicatorStyle:(XZSegmentIndicatorStyle)indicatorStyle {
     _flowLayout.indicatorStyle = indicatorStyle;
 }
 
@@ -487,15 +476,15 @@
     return _flowLayout.indicatorClass;
 }
 
-- (void)setDataSource:(id<XZSegmentedControlDataSource>)dataSource {
-    _titleModels = nil;
+- (void)setDataSource:(id<XZSegmentDataSource>)dataSource {
+    _textItems = nil;
     _dataSource = dataSource;
     [self reloadData];
 }
 
 - (NSArray<NSString *> *)titles {
-    NSMutableArray *items = [NSMutableArray arrayWithCapacity:_titleModels.count];
-    for (XZSegmentedControlTextModel *item in _titleModels) {
+    NSMutableArray *items = [NSMutableArray arrayWithCapacity:_textItems.count];
+    for (XZTextSegmentItem *item in _textItems) {
         [items addObject:item.text];
     }
     return items;
@@ -508,21 +497,21 @@
 - (void)setTitles:(NSArray<NSString *> *)titles animated:(BOOL)animated {
     _dataSource = nil;
     if (titles.count == 0) {
-        _titleModels = nil;
-    } else if (titles.count < _titleModels.count) {
-        [_titleModels removeObjectsInRange:NSMakeRange(titles.count, _titleModels.count - titles.count)];
-    } else if (titles.count > _titleModels.count) {
-        if (_titleModels == nil) {
-            _titleModels = [NSMutableArray arrayWithCapacity:titles.count];
+        _textItems = nil;
+    } else if (titles.count < _textItems.count) {
+        [_textItems removeObjectsInRange:NSMakeRange(titles.count, _textItems.count - titles.count)];
+    } else if (titles.count > _textItems.count) {
+        if (_textItems == nil) {
+            _textItems = [NSMutableArray arrayWithCapacity:titles.count];
         }
-        for (NSInteger i = _titleModels.count; i < titles.count; i++) {
-            [_titleModels addObject:[[XZSegmentedControlTextModel alloc] init]];
+        for (NSInteger i = _textItems.count; i < titles.count; i++) {
+            [_textItems addObject:[[XZTextSegmentItem alloc] init]];
         }
     }
-    for (NSInteger i = 0; i < _titleModels.count; i++) {
-        _titleModels[i].text = titles[i];
+    for (NSInteger i = 0; i < _textItems.count; i++) {
+        _textItems[i].text = titles[i];
     }
-    [self XZ_setNeedsUpdateTitleModels:animated];
+    [self updateTextSegmentItems];
 }
 
 @synthesize titleFont = _titleFont;
@@ -537,7 +526,7 @@
 - (void)setTitleFont:(UIFont *)titleFont {
     if (_titleFont != titleFont) {
         _titleFont = titleFont;
-        [self XZ_setNeedsUpdateTitleModels:NO];
+        [self updateTextSegmentItems];
     }
 }
 
@@ -556,7 +545,7 @@
 - (void)setSelectedTitleFont:(UIFont *)selectedTitleFont {
     if (_selectedTitleFont != selectedTitleFont) {
         _selectedTitleFont = selectedTitleFont;
-        [self XZ_setNeedsUpdateTitleModels:NO];
+        [self updateTextSegmentItems];
     }
 }
 
@@ -576,7 +565,7 @@
 
 #pragma mark - Private Methods
 
-- (void)XZ_didInitialize:(XZSegmentedControlDirection)direction {
+- (void)XZSegmentInitialize:(XZSegmentOrientation)orientation {
     self.clipsToBounds = YES;
     
     CGRect const bounds = self.bounds;
@@ -584,20 +573,16 @@
     _titleFont = [UIFont systemFontOfSize:17.0];
     _selectedTitleFont = [UIFont boldSystemFontOfSize:17.0];
     _titleColor = UIColor.labelColor;
-    if (@available(iOS 15.0, *)) {
-        _selectedTitleColor = UIColor.tintColor;
-    } else {
-        _selectedTitleColor = UIColor.systemBlueColor;
-    }
+    _selectedTitleColor = UIColor.tintColor;
     
-    _flowLayout = [[XZSegmentedControlFlowLayout alloc] initWithSegmentedControl:self];
+    _flowLayout = [[XZSegmentLayout alloc] initWithSegmentedControl:self];
     _flowLayout.minimumLineSpacing      = 0;
     _flowLayout.minimumInteritemSpacing = 0;
     _flowLayout.sectionHeadersPinToVisibleBounds = NO;
     _flowLayout.sectionFootersPinToVisibleBounds = NO;
     _flowLayout.itemSize = CGSizeMake(1.0, 1.0);
 
-    _collectionView = [[XZSegmentedControlContentView alloc] initWithFrame:bounds collectionViewLayout:_flowLayout];
+    _collectionView = [[XZSegmentContainerView alloc] initWithFrame:bounds collectionViewLayout:_flowLayout];
     _collectionView.autoresizingMask               = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
     _collectionView.backgroundColor                = [UIColor clearColor];
     _collectionView.prefetchingEnabled             = NO;
@@ -608,78 +593,80 @@
     _collectionView.showsVerticalScrollIndicator   = NO;
     [self addSubview:_collectionView];
     
-    switch (direction) {
-        case XZSegmentedControlDirectionHorizontal:
-            _flowLayout.scrollDirection             = UICollectionViewScrollDirectionHorizontal;
-            _collectionView.alwaysBounceVertical    = NO;
-            _collectionView.alwaysBounceHorizontal  = YES;
+    switch (orientation) {
+        case XZSegmentOrientationHorizontal:
+            _flowLayout.scrollDirection            = UICollectionViewScrollDirectionHorizontal;
+            _collectionView.alwaysBounceVertical   = NO;
+            _collectionView.alwaysBounceHorizontal = YES;
             break;
-        case XZSegmentedControlDirectionVertical:
-            _flowLayout.scrollDirection             = UICollectionViewScrollDirectionVertical;
-            _collectionView.alwaysBounceVertical    = YES;
-            _collectionView.alwaysBounceHorizontal  = NO;
+        case XZSegmentOrientationVertical:
+            _flowLayout.scrollDirection            = UICollectionViewScrollDirectionVertical;
+            _collectionView.alwaysBounceVertical   = YES;
+            _collectionView.alwaysBounceHorizontal = NO;
             break;
         default:
             break;
     }
     
-    [_collectionView registerClass:[XZSegmentedControlTextSegment class] forCellWithReuseIdentifier:kReuseIdentifier];
+    [_collectionView registerClass:[XZTextSegmentView class] forCellWithReuseIdentifier:kReuseIdentifier];
     _collectionView.delegate   = self;
     _collectionView.dataSource = self;
 }
 
-- (void)XZ_setNeedsUpdateTitleModels:(BOOL)animated {
-    if (_needsUpdateTitleModels || _titleModels.count == 0) {
-        return;
-    }
-    _needsUpdateTitleModels = YES;
-    [NSRunLoop.mainRunLoop performInModes:@[NSRunLoopCommonModes] block:^{
-        if ([self XZ_updateTitleModelsIfNeeded]) {
-            [self reloadData:animated completion:nil];
-        }
-    }];
-}
-
-- (BOOL)XZ_updateTitleModelsIfNeeded {
-    if (!_needsUpdateTitleModels) {
-        return NO;
-    }
-    _needsUpdateTitleModels = NO;
-    
+- (void)updateTextSegmentItems {
     CGRect    const bounds = self.bounds;
-    NSInteger const count  = _titleModels.count;
+    NSInteger const count  = _textItems.count;
     if (count == 0) {
         return YES;
     }
-    switch (self.direction) {
-        case XZSegmentedControlDirectionHorizontal:
-            for (NSInteger i = 0; i < _titleModels.count; i++) {
-                XZSegmentedControlTextModel *item = _titleModels[i];
-                CGSize                 const size    = CGSizeMake(0, bounds.size.height);
-                NSStringDrawingOptions const options = NSStringDrawingUsesLineFragmentOrigin;
-                CGFloat const width1 = [item.text boundingRectWithSize:size options:options attributes:@{
-                    NSFontAttributeName: self.titleFont
-                } context:nil].size.width;
-                CGFloat const width2 = [item.text boundingRectWithSize:size options:options attributes:@{
-                    NSFontAttributeName: self.selectedTitleFont
-                } context:nil].size.width;
-                item.size = CGSizeMake(MAX(ceil(MAX(width1, width2)) + 10.0, self.segmentSize.width), bounds.size.height);
+    CGSize const itemSize = _flowLayout.itemSize;
+    switch (self.orientation) {
+        case XZSegmentOrientationHorizontal: {
+            if (itemSize.width <= 0) {
+                for (NSInteger i = 0; i < _textItems.count; i++) {
+                    XZTextSegmentItem *    const item    = _textItems[i];
+                    CGSize                 const size    = CGSizeMake(0, bounds.size.height);
+                    NSStringDrawingOptions const options = NSStringDrawingUsesLineFragmentOrigin;
+                    CGFloat const width1 = [item.text boundingRectWithSize:size options:options attributes:@{
+                        NSFontAttributeName: self.titleFont
+                    } context:nil].size.width;
+                    CGFloat const width2 = [item.text boundingRectWithSize:size options:options attributes:@{
+                        NSFontAttributeName: self.selectedTitleFont
+                    } context:nil].size.width;
+                    CGFloat const width = ceil(_titleEdgeInsets.leading + MAX(width1, width2) + _titleEdgeInsets.trailing);
+                    item.size = CGSizeMake(width, bounds.size.height);
+                    item.edgeInsets = NSDirectionalEdgeInsetsMake(0, _titleEdgeInsets.leading, 0, _titleEdgeInsets.trailing);
+                }
+            } else {
+                for (XZTextSegmentItem * const item in _textItems) {
+                    item.size = CGSizeMake(itemSize.width, bounds.size.height);
+                }
             }
             break;
-        case XZSegmentedControlDirectionVertical:
-            for (NSInteger i = 0; i < _titleModels.count; i++) {
-                XZSegmentedControlTextModel *item = _titleModels[i];
-                CGSize                 const size    = CGSizeMake(bounds.size.width, 0);
-                NSStringDrawingOptions const options = NSStringDrawingUsesLineFragmentOrigin;
-                CGFloat const height1 = [item.text boundingRectWithSize:size options:options attributes:@{
-                    NSFontAttributeName: self.titleFont
-                } context:nil].size.height;
-                CGFloat const height2 = [item.text boundingRectWithSize:size options:options attributes:@{
-                    NSFontAttributeName: self.selectedTitleFont
-                } context:nil].size.height;
-                item.size = CGSizeMake(bounds.size.width, MAX(ceil(MAX(height1, height2)) + 10.0, self.segmentSize.height));
+        }
+        case XZSegmentOrientationVertical: {
+            if (itemSize.height <= 0) {
+                for (NSInteger i = 0; i < _textItems.count; i++) {
+                    XZTextSegmentItem *item = _textItems[i];
+                    CGSize                 const size    = CGSizeMake(bounds.size.width, 0);
+                    NSStringDrawingOptions const options = NSStringDrawingUsesLineFragmentOrigin;
+                    CGFloat const height1 = [item.text boundingRectWithSize:size options:options attributes:@{
+                        NSFontAttributeName: self.titleFont
+                    } context:nil].size.height;
+                    CGFloat const height2 = [item.text boundingRectWithSize:size options:options attributes:@{
+                        NSFontAttributeName: self.selectedTitleFont
+                    } context:nil].size.height;
+                    CGFloat const height = ceil(_titleEdgeInsets.top + MAX(height1, height2) + _titleEdgeInsets.bottom);
+                    item.size = CGSizeMake(bounds.size.width, height);
+                    item.edgeInsets = NSDirectionalEdgeInsetsMake(_titleEdgeInsets.top, 0, _titleEdgeInsets.bottom, 0);
+                }
+            } else {
+                for (XZTextSegmentItem * const item in _textItems) {
+                    item.size = CGSizeMake(bounds.size.width, itemSize.height);
+                }
             }
             break;
+        }
         default:
             break;
     }

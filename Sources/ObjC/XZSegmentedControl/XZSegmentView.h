@@ -1,5 +1,5 @@
 //
-//  XZSegmentedControlSegment.h
+//  XZSegmentView.h
 //  XZSegmentedControl
 //
 //  Created by Xezun on 2024/7/15.
@@ -17,7 +17,8 @@ NS_ASSUME_NONNULL_BEGIN
 @class XZSegmentedControl;
 
 /// 分段视图基类。
-@interface XZSegmentedControlSegment : UICollectionViewCell
+NS_SWIFT_NAME(XZSegmentedControl.SegmentView)
+@interface XZSegmentView : UICollectionViewCell
 
 /// 交互式转场通知转场进度。
 /// @discussion

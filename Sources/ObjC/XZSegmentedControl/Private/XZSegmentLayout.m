@@ -1,18 +1,18 @@
 //
-//  XZSegmentedControlFlowLayout.m
+//  XZSegmentLayout.m
 //  XZSegmentedControl
 //
 //  Created by Xezun on 2024/6/25.
 //
 
-#import "XZSegmentedControlFlowLayout.h"
-#import "XZSegmentedControlLineIndicator.h"
+#import "XZSegmentLayout.h"
+#import "XZSegmentLineIndicatorView.h"
 
 #define kIndicatorKind   @"Indicator"
 #define kIndicatorWidth  3.0
 
-@implementation XZSegmentedControlFlowLayout {
-    XZSegmentedControlIndicatorLayoutAttributes * _Nonnull _indicatorLayoutAttributes;
+@implementation XZSegmentLayout {
+    XZSegmentIndicatorLayoutAttributes * _Nonnull _indicatorLayoutAttributes;
     BOOL _needsUpdateIndicatorLayout;
 }
 
@@ -21,7 +21,7 @@
     if (self != nil) {
         _needsUpdateIndicatorLayout = NO;
         _segmentedControl = segmentedControl;
-        _indicatorClass = [XZSegmentedControlMarkLineIndicator class];
+        _indicatorClass = [XZSegmentMarkLineIndicatorView class];
         [self registerClass:_indicatorClass forDecorationViewOfKind:NSStringFromClass(_indicatorClass)];
         [self loadIndicatorLayoutAttributesIfNeeded];
     }
@@ -54,18 +54,18 @@
     [_indicatorLayoutAttributes.indicatorView applyLayoutAttributes:_indicatorLayoutAttributes];
 }
 
-- (void)setIndicatorStyle:(XZSegmentedControlIndicatorStyle)indicatorStyle {
+- (void)setIndicatorStyle:(XZSegmentIndicatorStyle)indicatorStyle {
     if (_indicatorStyle != indicatorStyle) {
         _indicatorStyle = indicatorStyle;
         
         switch (_indicatorStyle) {
-            case XZSegmentedControlIndicatorStyleMarkLine:
-                self.indicatorClass = [XZSegmentedControlMarkLineIndicator class];
+            case XZSegmentIndicatorStyleMarkLine:
+                self.indicatorClass = [XZSegmentMarkLineIndicatorView class];
                 break;
-            case XZSegmentedControlIndicatorStyleNoteLine:
-                self.indicatorClass = [XZSegmentedControlNoteLineIndicator class];
+            case XZSegmentIndicatorStyleNoteLine:
+                self.indicatorClass = [XZSegmentNoteLineIndicatorView class];
                 break;
-            case XZSegmentedControlIndicatorStyleCustom:
+            case XZSegmentIndicatorStyleCustom:
                 break;
             default:
                 break;
@@ -83,14 +83,14 @@
 - (void)setIndicatorClass:(Class)indicatorClass {
     if (![indicatorClass isSubclassOfClass:UICollectionReusableView.class]) {
         switch (_indicatorStyle) {
-            case XZSegmentedControlIndicatorStyleMarkLine:
-                indicatorClass = [XZSegmentedControlMarkLineIndicator class];
+            case XZSegmentIndicatorStyleMarkLine:
+                indicatorClass = [XZSegmentMarkLineIndicatorView class];
                 break;
-            case XZSegmentedControlIndicatorStyleNoteLine:
-                indicatorClass = [XZSegmentedControlNoteLineIndicator class];
+            case XZSegmentIndicatorStyleNoteLine:
+                indicatorClass = [XZSegmentNoteLineIndicatorView class];
                 break;
-            case XZSegmentedControlIndicatorStyleCustom:
-                indicatorClass = [XZSegmentedControlMarkLineIndicator class];
+            case XZSegmentIndicatorStyleCustom:
+                indicatorClass = [XZSegmentMarkLineIndicatorView class];
                 break;
             default:
                 break;
@@ -185,7 +185,7 @@
     [self loadIndicatorLayoutAttributesIfNeeded];
     
     switch (_indicatorStyle) {
-        case XZSegmentedControlIndicatorStyleMarkLine: {
+        case XZSegmentIndicatorStyleMarkLine: {
             _indicatorLayoutAttributes.zIndex = NSIntegerMax;
             if (count == 0) {
                 CGRect const bounds = self.collectionView.bounds;
@@ -204,7 +204,7 @@
             }
             break;
         }
-        case XZSegmentedControlIndicatorStyleNoteLine: {
+        case XZSegmentIndicatorStyleNoteLine: {
             _indicatorLayoutAttributes.zIndex = NSIntegerMax;
             if (count == 0) {
                 CGRect const bounds = self.collectionView.bounds;
@@ -223,7 +223,7 @@
             }
             break;
         }
-        case XZSegmentedControlIndicatorStyleCustom: {
+        case XZSegmentIndicatorStyleCustom: {
             if (count == 0) {
                 CGRect const bounds = self.collectionView.bounds;
                 switch (self.scrollDirection) {
@@ -253,10 +253,10 @@
         return;
     }
     
-    XZSegmentedControlIndicatorLayoutAttributes * const oldValue = _indicatorLayoutAttributes;
+    XZSegmentIndicatorLayoutAttributes * const oldValue = _indicatorLayoutAttributes;
     
     NSIndexPath * const indexPath = [NSIndexPath indexPathForItem:0 inSection:0];
-    _indicatorLayoutAttributes = [XZSegmentedControlIndicatorLayoutAttributes layoutAttributesForDecorationViewOfKind:kind withIndexPath:indexPath];
+    _indicatorLayoutAttributes = [XZSegmentIndicatorLayoutAttributes layoutAttributesForDecorationViewOfKind:kind withIndexPath:indexPath];
     
     // 复制自定义属性
     if (oldValue) {

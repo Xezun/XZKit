@@ -287,7 +287,6 @@ extension XZContentStatus {
             }
             guard let bounds = (change?[.newKey] as? NSValue)?.cgRectValue else { return }
             guard let target = self.target else { return }
-            guard let view = self.targetView else { return }
             guard let contentStatus = self.statusValue else { return }
             let edgeInsets = target.contentStatus(contentStatus, edgeInsetsForRepresentation: self)
             self.frame = bounds.inset(by: edgeInsets)

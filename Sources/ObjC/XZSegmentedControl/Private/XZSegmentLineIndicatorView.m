@@ -1,15 +1,15 @@
 //
-//  XZSegmentedControlLineIndicator.m
+//  XZSegmentLineIndicatorView.m
 //  XZSegmentedControl
 //
 //  Created by Xezun on 2024/6/25.
 //
 
-#import "XZSegmentedControlLineIndicator.h"
+#import "XZSegmentLineIndicatorView.h"
 
 #define kIndicatorWidth 3.0
 
-@implementation XZSegmentedControlLineIndicator {
+@implementation XZSegmentLineIndicatorView {
     UIImageView *_imageView;
 }
 
@@ -25,11 +25,11 @@
     return YES;
 }
 
-+ (CGRect)segmentedControl:(XZSegmentedControl *)segmentedControl layout:(XZSegmentedControlLayout)layout frameForIndicatorAtIndex:(NSInteger)index {
++ (CGRect)segmentedControl:(XZSegmentedControl *)segmentedControl layout:(XZSegmentLayout *)layout frameForIndicatorAtIndex:(NSInteger)index {
     return CGRectZero;
 }
 
-+ (void)segmentedControl:(XZSegmentedControl *)segmentedControl layout:(XZSegmentedControlLayout)layout prepareForLayoutAttributes:(XZSegmentedControlIndicatorLayoutAttributes *)layoutAttributes {
++ (void)segmentedControl:(XZSegmentedControl *)segmentedControl layout:(XZSegmentLayout *)layout prepareForLayoutAttributes:(XZSegmentIndicatorLayoutAttributes *)layoutAttributes {
     CGFloat   const transition    = layoutAttributes.interactiveTransition;
     NSInteger const count         = segmentedControl.numberOfSegments;
     NSInteger const selectedIndex = segmentedControl.selectedIndex;
@@ -60,7 +60,7 @@
     layoutAttributes.frame = CGRectMake(x, y, w, h);
 }
 
-- (void)applyLayoutAttributes:(XZSegmentedControlIndicatorLayoutAttributes *)layoutAttributes {
+- (void)applyLayoutAttributes:(XZSegmentIndicatorLayoutAttributes *)layoutAttributes {
     [super applyLayoutAttributes:layoutAttributes];
     
     if (layoutAttributes.image) {
@@ -81,20 +81,20 @@
 
 @end
 
-@implementation XZSegmentedControlMarkLineIndicator
+@implementation XZSegmentMarkLineIndicatorView
 
-+ (CGRect)segmentedControl:(XZSegmentedControl *)segmentedControl layout:(XZSegmentedControlLayout)layout frameForIndicatorAtIndex:(NSInteger)index {
++ (CGRect)segmentedControl:(XZSegmentedControl *)segmentedControl layout:(XZSegmentLayout *)layout frameForIndicatorAtIndex:(NSInteger)index {
     CGRect const frame = [layout layoutAttributesForItemAtIndex:index].frame;
     CGSize const indicatorSize = segmentedControl.indicatorSize;
-    switch (segmentedControl.direction) {
-        case XZSegmentedControlDirectionHorizontal: {
+    switch (segmentedControl.orientation) {
+        case XZSegmentOrientationHorizontal: {
             CGFloat const h = indicatorSize.height > 0 ? indicatorSize.height : kIndicatorWidth;
             CGFloat const w = indicatorSize.width > 0 ? indicatorSize.width : (indicatorSize.width + frame.size.width);
             CGFloat const x = frame.origin.x + (frame.size.width - w) * 0.5;
             CGFloat const y = CGRectGetMaxY(frame) - h;
             return CGRectMake(x, y, w, h);
         }
-        case XZSegmentedControlDirectionVertical: {
+        case XZSegmentOrientationVertical: {
             CGFloat const w = indicatorSize.width > 0 ? indicatorSize.width : kIndicatorWidth;
             CGFloat const h = indicatorSize.height > 0 ? indicatorSize.height : (indicatorSize.height + frame.size.height);
             CGFloat const y = frame.origin.y + (frame.size.height - h) * 0.5;
@@ -109,20 +109,20 @@
 
 @end
 
-@implementation XZSegmentedControlNoteLineIndicator
+@implementation XZSegmentNoteLineIndicatorView
 
-+ (CGRect)segmentedControl:(XZSegmentedControl *)segmentedControl layout:(XZSegmentedControlLayout)layout frameForIndicatorAtIndex:(NSInteger)index {
++ (CGRect)segmentedControl:(XZSegmentedControl *)segmentedControl layout:(XZSegmentLayout *)layout frameForIndicatorAtIndex:(NSInteger)index {
     CGRect const frame = [layout layoutAttributesForItemAtIndex:index].frame;
     CGSize const indicatorSize = segmentedControl.indicatorSize;
-    switch (segmentedControl.direction) {
-        case XZSegmentedControlDirectionHorizontal: {
+    switch (segmentedControl.orientation) {
+        case XZSegmentOrientationHorizontal: {
             CGFloat const h = indicatorSize.height > 0 ? indicatorSize.height : kIndicatorWidth;
             CGFloat const w = indicatorSize.width > 0 ? indicatorSize.width : (indicatorSize.width + frame.size.width);
             CGFloat const x = frame.origin.x + (frame.size.width - w) * 0.5;
             CGFloat const y = CGRectGetMinY(frame);
             return CGRectMake(x, y, w, h);
         }
-        case XZSegmentedControlDirectionVertical: {
+        case XZSegmentOrientationVertical: {
             CGFloat const w = indicatorSize.width > 0 ? indicatorSize.width : kIndicatorWidth;
             CGFloat const h = indicatorSize.height > 0 ? indicatorSize.height : (indicatorSize.height + frame.size.height);
             CGFloat const y = frame.origin.y + (frame.size.height - h) * 0.5;

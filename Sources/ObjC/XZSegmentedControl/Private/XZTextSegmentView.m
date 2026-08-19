@@ -1,14 +1,14 @@
 //
-//  XZSegmentedControlTextSegment.m
+//  XZTextSegmentView.m
 //  XZSegmentedControl
 //
 //  Created by Xezun on 2024/6/25.
 //
 
-#import "XZSegmentedControlTextSegment.h"
+#import "XZTextSegmentView.h"
 
-@implementation XZSegmentedControlTextSegment {
-    XZSegmentedControlTextLabel *_textLabel;
+@implementation XZTextSegmentView {
+    XZTextSegmentLabel *_textLabel;
     CGFloat _interactiveTransition;
 }
 
@@ -17,13 +17,24 @@
     if (self) {
         CGRect const bounds = self.bounds;
         
-        _textLabel = [[XZSegmentedControlTextLabel alloc] initWithFrame:bounds];
-        _textLabel.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
+        _textLabel = [[XZTextSegmentLabel alloc] initWithFrame:bounds];
         _textLabel.textAlignment = NSTextAlignmentCenter;
         _textLabel.numberOfLines = 2;
         [self.contentView addSubview:_textLabel];
     }
     return self;
+}
+
+- (void)layoutSubviews {
+    [super layoutSubviews];
+    
+    if (self.effectiveUserInterfaceLayoutDirection == UIUserInterfaceLayoutDirectionLeftToRight) {
+        UIEdgeInsets const edgeInsets = UIEdgeInsetsMake(_edgeInsets.top, _edgeInsets.leading, _edgeInsets.bottom, _edgeInsets.trailing);
+        _textLabel.frame = UIEdgeInsetsInsetRect(self.bounds, edgeInsets);
+    } else {
+        UIEdgeInsets const edgeInsets = UIEdgeInsetsMake(_edgeInsets.top, _edgeInsets.trailing, _edgeInsets.bottom, _edgeInsets.leading);
+        _textLabel.frame = UIEdgeInsetsInsetRect(self.bounds, edgeInsets);
+    }
 }
 
 - (void)darkModeChanged {
@@ -38,6 +49,13 @@
     return _textLabel.text;
 }
 
+- (void)setEdgeInsets:(NSDirectionalEdgeInsets)edgeInsets {
+    if (NSDirectionalEdgeInsetsEqualToDirectionalEdgeInsets(_edgeInsets, edgeInsets)) {
+        _edgeInsets = edgeInsets;
+        [self setNeedsLayout];
+    }
+}
+
 - (void)setSelected:(BOOL)selected {
     [super setSelected:selected];
 
@@ -46,6 +64,8 @@
 
 - (void)updateInteractiveTransition:(CGFloat)interactiveTransition {
     [super updateInteractiveTransition:interactiveTransition];
+    
+    _interactiveTransition = interactiveTransition;
     
     XZSegmentedControl * const segmentedControl = _segmentedControl;
 
@@ -103,16 +123,16 @@
     [super traitCollectionDidChange:previousTraitCollection];
     
     if (previousTraitCollection.userInterfaceStyle != self.traitCollection.userInterfaceStyle) {
-        [self updateInteractiveTransition:self.isSelected ? 1.0 : 0];
+        [self updateInteractiveTransition:_interactiveTransition];
     }
 }
 
 @end
 
-@implementation XZSegmentedControlTextLabel
+@implementation XZTextSegmentLabel
 
 @end
 
-@implementation XZSegmentedControlTextModel
+@implementation XZTextSegmentItem
 
 @end

@@ -11,8 +11,8 @@
 #import <XZKit/XZSegmentedControlSegment.h>
 #import <XZKit/XZSegmentedControlIndicator.h>
 #else
-#import "XZSegmentedControlSegment.h"
-#import "XZSegmentedControlIndicator.h"
+#import "XZSegmentView.h"
+#import "XZSegmentIndicatorView.h"
 #endif
 
 NS_ASSUME_NONNULL_BEGIN
@@ -20,29 +20,29 @@ NS_ASSUME_NONNULL_BEGIN
 @class UITableView, UISegmentedControl;
 
 /// 控件中 Segment 的布局方向。
-typedef NS_ENUM(NSUInteger, XZSegmentedControlDirection) {
+typedef NS_ENUM(NSUInteger, XZSegmentOrientation) {
     /// 控件中 segment 在水平方向上布局。
-    XZSegmentedControlDirectionHorizontal = UICollectionViewScrollDirectionHorizontal,
+    XZSegmentOrientationHorizontal = UICollectionViewScrollDirectionHorizontal,
     /// 控件中 segment 在垂直方向上布局。
-    XZSegmentedControlDirectionVertical = UICollectionViewScrollDirectionVertical
+    XZSegmentOrientationVertical = UICollectionViewScrollDirectionVertical
 };
 
 /// 指示器样式。
-typedef NS_ENUM(NSUInteger, XZSegmentedControlIndicatorStyle) {
+typedef NS_ENUM(NSUInteger, XZSegmentIndicatorStyle) {
     /// 线形色块指示器。
     /// 1. 横向滚动时，指示器在 segment 底部；
     /// 2. 纵向滚动时，指示器在 segment 右侧。
-    XZSegmentedControlIndicatorStyleMarkLine,
+    XZSegmentIndicatorStyleMarkLine,
     /// 线形色块指示器。
     /// 1. 横向滚动时，指示器在 segment 顶部；
     /// 2. 纵向滚动时，指示器在 segment 左侧。
-    XZSegmentedControlIndicatorStyleNoteLine,
+    XZSegmentIndicatorStyleNoteLine,
     /// 使用自定义指示器。
-    XZSegmentedControlIndicatorStyleCustom,
+    XZSegmentIndicatorStyleCustom,
 };
 
-@protocol XZSegmentedControlDataSource;
-@class UISegmentedControl, UINavigationController;
+@protocol XZSegmentDataSource;
+@class UISegmentedControl, UIPageViewController;
 
 /// 一种分段的控件，一般用于菜单。
 @interface XZSegmentedControl : UIControl
@@ -51,10 +51,10 @@ typedef NS_ENUM(NSUInteger, XZSegmentedControlIndicatorStyle) {
 #if TARGET_INTERFACE_BUILDER
 @property (nonatomic) IBInspectable UICollectionViewScrollDirection direction;
 #else
-@property (nonatomic) XZSegmentedControlDirection direction;
+@property (nonatomic) XZSegmentOrientation orientation;
 #endif
 
-- (instancetype)initWithFrame:(CGRect)frame direction:(XZSegmentedControlDirection)direction NS_DESIGNATED_INITIALIZER;
+- (instancetype)initWithFrame:(CGRect)frame orientation:(XZSegmentOrientation)orientation NS_DESIGNATED_INITIALIZER;
 - (instancetype)initWithCoder:(NSCoder *)coder NS_DESIGNATED_INITIALIZER;
 
 /// 横向时，展示在左侧的视图；纵向时，展示在顶部的视图。
@@ -81,7 +81,7 @@ typedef NS_ENUM(NSUInteger, XZSegmentedControlIndicatorStyle) {
 /// @li 正数表示使用值，负数表示与默认值的差。
 @property (nonatomic) CGSize indicatorSize;
 /// 指示器样式。
-@property (nonatomic) XZSegmentedControlIndicatorStyle indicatorStyle;
+@property (nonatomic) XZSegmentIndicatorStyle indicatorStyle;
 /// 使用内置样式时，使用 `.tintColor` 色块作为指示器。
 /// @note 设置为 `nil` 表示没有颜色，适合设置图片。
 @property (nonatomic, strong, nullable) UIColor *indicatorColor;
@@ -90,16 +90,16 @@ typedef NS_ENUM(NSUInteger, XZSegmentedControlIndicatorStyle) {
 /// @note 如果设置时 `indicatorSize` 为空，则将 `indicatorImage.size` 设置为 `indicatorSize` 的值。
 /// @note 本属性与 `indicatorColor` 是同时生效的，但是可以将 `indicatorColor` 置空。
 @property (nonatomic, strong, nullable) UIImage *indicatorImage;
-/// 注册自定义的指示器的类，必须是 `XZSegmentedControlIndicator` 的子类。
+/// 注册自定义的指示器的类，必须是 `XZSegmentIndicatorView` 的子类。
 /// @note
-/// 必须先设置 `indicatorStyle` 属性为 `XZSegmentedControlIndicatorStyleCustom` 才能设置此属性。
+/// 必须先设置 `indicatorStyle` 属性为 `XZSegmentIndicatorStyleCustom` 才能设置此属性。
 /// @discussion
-/// 自定义指示器，可以通过 `XZSegmentedControlIndicator` 提供的方法实现自定义布局及交互式转场。
+/// 自定义指示器，可以通过 `XZSegmentIndicatorView` 提供的方法实现自定义布局及交互式转场。
 @property (nonatomic, null_resettable) Class indicatorClass;
 
 // MARK: - 自定义数据源
 
-@property (nonatomic, weak) id<XZSegmentedControlDataSource> dataSource;
+@property (nonatomic, weak) id<XZSegmentDataSource> dataSource;
 
 /// 当使用数据源时，必须使用此方法更新视图。
 /// @note 刷新操作是异步的，如需在视图更新后执行操作，可使用 `reloadData:completion:` 方法。
@@ -108,7 +108,7 @@ typedef NS_ENUM(NSUInteger, XZSegmentedControlIndicatorStyle) {
 - (void)insertSegmentAtIndex:(NSInteger)index;
 - (void)removeSegmentAtIndex:(NSInteger)index;
 
-- (nullable __kindof XZSegmentedControlSegment *)viewForSegmentAtIndex:(NSInteger)index;
+- (nullable __kindof XZSegmentView *)viewForSegmentAtIndex:(NSInteger)index;
 
 - (void)registerClass:(nullable Class)segmentClass forSegmentWithReuseIdentifier:(NSString *)identifier;
 - (void)registerNib:(nullable UINib *)segmentNib forSegmentWithReuseIdentifier:(NSString *)identifier;
@@ -132,18 +132,19 @@ typedef NS_ENUM(NSUInteger, XZSegmentedControlIndicatorStyle) {
 /// 被选中的 item 文本字体。该属性仅在使用 titles 时生效。
 @property (nonatomic, strong, null_resettable) UIFont  *selectedTitleFont;
 
-/// 最小宽度或最小高度。
-/// @discussion 使用 titles 时 item 的大小会根据字体自动计算，此属性将作为最小值使用。
-@property (nonatomic) CGSize minimumItemSize;
+/// 水平宽度或高度。
+///
+/// 值为0表示自动计算宽高。
+@property (nonatomic) CGSize  titleSize;
 /// 最小间距间距。
-@property (nonatomic) CGFloat minimumItemSpacing;
+@property (nonatomic) CGFloat titleSpacing;
 /// 最小内边距。
-@property (nonatomic) CGFloat minimumItemPadding;
+@property (nonatomic) NSDirectionalEdgeInsets titleEdgeInsets;
 
 @end
 
 /// 使用自定义视图时的数据源协议。
-NS_SWIFT_UI_ACTOR @protocol XZSegmentedControlDataSource <NSObject>
+NS_SWIFT_UI_ACTOR @protocol XZSegmentDataSource <NSObject>
 /// 获取 item 的数量。
 /// - Parameter segmentedControl: 调用此方法的对象
 - (NSInteger)numberOfSegmentsInSegmentedControl:(XZSegmentedControl *)segmentedControl;

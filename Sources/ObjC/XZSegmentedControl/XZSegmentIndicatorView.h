@@ -1,5 +1,5 @@
 //
-//  XZSegmentedControlIndicator.h
+//  XZSegmentIndicatorView.h
 //  XZSegmentedControl
 //
 //  Created by Xezun on 2024/7/9.
@@ -14,17 +14,18 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-@class XZSegmentedControl, XZSegmentedControlIndicatorLayoutAttributes;
+@class XZSegmentedControl, XZSegmentIndicatorLayoutAttributes;
 
 NS_SWIFT_UI_ACTOR
-@protocol XZSegmentedControlLayout <NSObject>
+@interface XZSegmentLayout : UICollectionViewFlowLayout
+- (instancetype)init NS_UNAVAILABLE;
+- (nullable instancetype)initWithCoder:(NSCoder *)coder NS_UNAVAILABLE;
 - (nullable UICollectionViewLayoutAttributes *)layoutAttributesForItemAtIndex:(NSInteger)index;
 @end
 
-typedef UICollectionViewLayout<XZSegmentedControlLayout> *XZSegmentedControlLayout;
-
 /// 指示器视图基类
-@interface XZSegmentedControlIndicator : UICollectionReusableView
+NS_SWIFT_NAME(XZSegmentedControl.IndicatorView)
+@interface XZSegmentIndicatorView : UICollectionReusableView
 
 /// 是否支持交互式转场，默认否。
 @property (class, nonatomic, readonly) BOOL supportsInteractiveTransition;
@@ -50,7 +51,7 @@ typedef UICollectionViewLayout<XZSegmentedControlLayout> *XZSegmentedControlLayo
 ///   - segmentedControl: 指示器实例所属的控件
 ///   - layout: 负责布局的对象
 ///   - layoutAttributes: 指示器的布局信息
-+ (void)segmentedControl:(XZSegmentedControl *)segmentedControl layout:(XZSegmentedControlLayout)layout prepareForLayoutAttributes:(XZSegmentedControlIndicatorLayoutAttributes *)layoutAttributes NS_SWIFT_NAME(segmentedControl(_:layout:prepareForLayoutAttributes:));
++ (void)segmentedControl:(XZSegmentedControl *)segmentedControl layout:(XZSegmentLayout *)layout prepareForLayoutAttributes:(XZSegmentIndicatorLayoutAttributes *)layoutAttributes NS_SWIFT_NAME(segmentedControl(_:layout:prepareForLayoutAttributes:));
 
 /// 非交互式的转场时，原生为指示器布局变化只有一个淡出淡入的过渡效果，所以组件提供此方法，为指示器应用新布局前，提供了一个自定义转场动画的机会。
 /// @discussion
@@ -65,18 +66,18 @@ typedef UICollectionViewLayout<XZSegmentedControlLayout> *XZSegmentedControlLayo
 /// @discussion
 /// 一般情况下，子类重写此方法，不需要调用父类实现。
 /// @param layoutAttributes 指示器布局信息。
-- (void)animateTransition:(XZSegmentedControlIndicatorLayoutAttributes *)layoutAttributes;
+- (void)animateTransition:(XZSegmentIndicatorLayoutAttributes *)layoutAttributes;
 
 /// 子类应该在此方法中，根据 layoutAttributes 配置指示器的外观。
 ///
 /// 子类应该先调用 super 再操作。在此方法中，设置了 layoutAttributes 的 indicatorView 属性为当前视图。
 /// @param layoutAttributes 指示器布局信息。
-- (void)applyLayoutAttributes:(XZSegmentedControlIndicatorLayoutAttributes *)layoutAttributes NS_REQUIRES_SUPER;
+- (void)applyLayoutAttributes:(XZSegmentIndicatorLayoutAttributes *)layoutAttributes NS_REQUIRES_SUPER;
 
 @end
 
 /// 指示器的外观及布局信息。
-@interface XZSegmentedControlIndicatorLayoutAttributes : UICollectionViewLayoutAttributes
+@interface XZSegmentIndicatorLayoutAttributes : UICollectionViewLayoutAttributes
 
 @property (nonatomic, strong, nullable, XZ_READONLY) UIColor *color;
 @property (nonatomic, strong, nullable, XZ_READONLY) UIImage *image;
@@ -87,7 +88,7 @@ typedef UICollectionViewLayout<XZSegmentedControlLayout> *XZSegmentedControlLayo
 /// color 或 image 等样式，无法更新指示器，因此需要指示器视图在 `-applyLayoutAttributes:` 方法中填充此属性。
 ///
 /// 在 -setSelectedIndex:animated: 方法中，无法直接添加动画，也需要此属性执行动画。
-@property (nonatomic, weak, XZ_READONLY) XZSegmentedControlIndicator *indicatorView;
+@property (nonatomic, weak, XZ_READONLY) XZSegmentIndicatorView *indicatorView;
 @end
 
 NS_ASSUME_NONNULL_END

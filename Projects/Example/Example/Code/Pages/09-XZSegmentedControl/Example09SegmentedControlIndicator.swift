@@ -14,7 +14,7 @@ class Example09SegmentedControlIndicator: XZSegmentedControlIndicator {
         return true
     }
 
-    override class func segmentedControl(_ segmentedControl: XZSegmentedControl, layout: XZSegmentedControlLayout, prepareForLayoutAttributes layoutAttributes: XZSegmentedControlIndicatorLayoutAttributes) {
+    override class func segmentedControl(_ segmentedControl: XZSegmentedControl, layout: XZSegmentLayout, prepareForLayoutAttributes layoutAttributes: XZSegmentIndicatorLayoutAttributes) {
         layoutAttributes.zIndex = -111
         
         let selectedIndex = segmentedControl.selectedIndex;

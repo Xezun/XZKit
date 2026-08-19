@@ -1,14 +1,14 @@
 //
-//  XZSegmentedControlSegment.m
+//  XZSegmentView.m
 //  XZSegmentedControl
 //
 //  Created by Xezun on 2024/7/15.
 //
 
-#import "XZSegmentedControlSegment.h"
+#import "XZSegmentView.h"
 #import "XZSegmentedControl.h"
 
-@implementation XZSegmentedControlSegment
+@implementation XZSegmentView
 
 - (void)updateInteractiveTransition:(CGFloat)interactiveTransition {
     

@@ -1,5 +1,5 @@
 //
-//  XZSegmentedControlContentView.h
+//  XZSegmentContainerView.h
 //  XZSegmentedControl
 //
 //  Created by Xezun on 2024/6/26.
@@ -9,7 +9,7 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-@interface XZSegmentedControlContentView : UICollectionView
+@interface XZSegmentContainerView : UICollectionView
 
 @end
 
