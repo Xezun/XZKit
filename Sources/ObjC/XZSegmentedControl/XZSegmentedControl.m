@@ -104,12 +104,15 @@
     if (_selectedIndex == selectedIndex) {
         return;
     }
-    NSParameterAssert(_selectedIndex >= 0 && _selectedIndex < self.numberOfSegments);
+    // 运行时检查边界，避免 Release 模式下 NSParameterAssert 失效
+    if (_selectedIndex < 0 || _selectedIndex >= self.numberOfSegments) {
+        return;
+    }
     
     XZSegmentItemView *oldSelectedSegment = [self viewForSegmentAtIndex:_selectedIndex];
     [oldSelectedSegment updateInteractiveTransition:0];
     
-    _selectedIndex = MAX(0, MIN(selectedIndex, self.numberOfSegments));
+    _selectedIndex = MAX(0, MIN(selectedIndex, self.numberOfSegments - 1));
     
     XZSegmentItemView *newSelectedSegment = [self viewForSegmentAtIndex:_selectedIndex];
     [newSelectedSegment updateInteractiveTransition:1.0];

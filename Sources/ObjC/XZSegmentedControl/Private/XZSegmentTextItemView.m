@@ -50,7 +50,7 @@
 }
 
 - (void)setEdgeInsets:(NSDirectionalEdgeInsets)edgeInsets {
-    if (NSDirectionalEdgeInsetsEqualToDirectionalEdgeInsets(_edgeInsets, edgeInsets)) {
+    if (!NSDirectionalEdgeInsetsEqualToDirectionalEdgeInsets(_edgeInsets, edgeInsets)) {
         _edgeInsets = edgeInsets;
         [self setNeedsLayout];
     }

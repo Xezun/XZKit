@@ -58,7 +58,7 @@
     CGFloat x = from.origin.x + (to.origin.x - from.origin.x) * percent;
     CGFloat y = from.origin.y + (to.origin.y - from.origin.y) * percent;
     CGFloat w = from.size.width + (to.size.width - from.size.width) * percent;
-    CGFloat h = from.size.height + (to.size.height - to.size.height) * percent;
+    CGFloat h = from.size.height + (to.size.height - from.size.height) * percent;
     layoutAttributes.frame = CGRectMake(x, y, w, h);
 }
 

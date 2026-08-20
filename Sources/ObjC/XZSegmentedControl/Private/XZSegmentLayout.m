@@ -32,6 +32,10 @@
 
 - (NSArray<__kindof UICollectionViewLayoutAttributes *> *)layoutAttributesForElementsInRect:(CGRect)rect {
     NSArray *items = [super layoutAttributesForElementsInRect:rect];
+    // 如果没有元素，也不需要展示指示器
+    if (items.count == 0) {
+        return items;
+    }
     if (!CGRectIsEmpty(_indicatorLayoutAttributes.frame)) {
         if (CGRectIntersectsRect(rect, _indicatorLayoutAttributes.frame)) {
             items = [items arrayByAddingObject:_indicatorLayoutAttributes];
