@@ -46,9 +46,14 @@ CreateHeadersForType() {
                 local SOURCE_PATH="../../../ObjC/${path#*Sources/ObjC/}"
                 # 软链接的存放路径
                 local HEADER_PATH="${HEADER_ROOT}/${name}"
-                # 创建软链接
-                ln -snf "${SOURCE_PATH}" "${HEADER_PATH}"
-                echo "\033[32m[+] [${HEADER_TYPE}] ${SOURCE_PATH} => ${HEADER_PATH} \033[0m"
+                # 如果软链接已存在且指向正确，则跳过
+                if [[ -L "${HEADER_PATH}" && -e "${HEADER_PATH}" ]]; then
+                    echo "\033[33m[•]  跳过现有软链接：${HEADER_PATH}\033[0m"
+                else
+                    # 创建软链接
+                    ln -snf "${SOURCE_PATH}" "${HEADER_PATH}"
+                    echo "\033[32m[+] [${HEADER_TYPE}] ${SOURCE_PATH} => ${HEADER_PATH} \033[0m"
+                fi
             fi
         elif [[ -d "${path}" ]]; then
             if [[ "${name}" == "Private" ]]; then
@@ -72,14 +77,24 @@ fi
 echo "☕️ \033[34m清理操作开始\033[0m"
 if [[ -d "Sources/Header/${MODULE_NAME}/Public" ]]; then
     for path in "Sources/Header/${MODULE_NAME}/Public"/*; do
-        rm -rf "$path"
-        echo "\033[31m[-]  ${path} \033[0m"
+        # 只删除无效软链接（目标文件不存在）
+        if [[ -L "$path" && ! -e "$path" ]]; then
+            rm -f "$path"
+            echo "\033[31m[-]  移除无效软链接：$path\033[0m"
+        elif [[ -L "$path" ]]; then
+            echo "\033[33m[?]  保留有效软链接：$path\033[0m"
+        fi
     done
 fi
 if [[ -d "Sources/Header/${MODULE_NAME}/Private" ]]; then
     for path in "Sources/Header/${MODULE_NAME}/Private"/*; do
-        rm -rf "$path"
-        echo "\033[31m[-]  $path \033[0m"
+        # 只删除无效软链接（目标文件不存在）
+        if [[ -L "$path" && ! -e "$path" ]]; then
+            rm -f "$path"
+            echo "\033[31m[-]  移除无效软链接：$path\033[0m"
+        elif [[ -L "$path" ]]; then
+            echo "\033[33m[?]  保留有效软链接：$path\033[0m"
+        fi
     done
 fi
 echo "🎉 \033[34m清理操作结束\033[0m"

@@ -6,13 +6,8 @@
 //
 
 #import <UIKit/UIKit.h>
-#if __has_include(<XZKit/XZKit.h>)
-#import <XZKit/XZSegmentedControl.h>
-#import <XZKit/XZSegmentIndicatorView.h>
-#else
 #import "XZSegmentedControl.h"
 #import "XZSegmentIndicatorView.h"
-#endif
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -23,7 +18,7 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic) Class indicatorClass;
 @property (nonatomic, readonly) XZSegmentIndicatorLayoutAttributes *indicatorLayoutAttributes;
 
-- (void)invalidateIndicatorLayout:(CGFloat)interactiveTransition animated:(BOOL)animated;
+- (void)invalidateIndicatorLayout:(CGFloat)interactiveTransition;
 
 @end
 

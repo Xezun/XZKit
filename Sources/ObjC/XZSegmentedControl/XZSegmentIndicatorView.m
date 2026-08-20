@@ -22,6 +22,15 @@
     
 }
 
+- (void)applyLayoutAttributes:(XZSegmentIndicatorLayoutAttributes *)layoutAttributes {
+    // Indicator 的角色是 DecorationView 由 UIKit 创建，只能在此方法中获取实例对象。
+    XZSegmentedControl * const segmentedControl = layoutAttributes.layout.segmentedControl;
+    if (segmentedControl->_indicatorView != self) {
+        segmentedControl->_indicatorView = self;
+        [self prepareForSegmentedControl:segmentedControl];
+    }
+}
+
 @end
 
 
@@ -39,7 +48,6 @@
     XZSegmentIndicatorLayoutAttributes *new = [super copyWithZone:zone];
     new->_layout = _layout;
     new->_interactiveTransition = _interactiveTransition;
-    new->_animated = _animated;
     return new;
 }
 @end

@@ -1,5 +1,5 @@
 //
-//  XZSegmentedControlDefines.h
+//  XZSegmentDefines.h
 //  XZSegmentedControl
 //
 //  Created by Xezun on 2024/7/18.

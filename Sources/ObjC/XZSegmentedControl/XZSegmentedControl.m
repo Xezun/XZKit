@@ -21,7 +21,6 @@
     UICollectionView *_collectionView;
     NSMutableArray<XZSegmentTextItem *> *_titleItems;
     XZSegmentItemView * __weak _pendingSegment;
-    XZSegmentIndicatorView *_indicatorView;
 }
 
 @end
@@ -123,10 +122,10 @@
     // 刷新指示器布局
     if (animated) {
         [_collectionView performBatchUpdates:^{
-            [_flowLayout invalidateIndicatorLayout:0 animated:YES];
+            [_flowLayout invalidateIndicatorLayout:0];
         } completion:nil];
     } else {
-        [_flowLayout invalidateIndicatorLayout:0 animated:YES];
+        [_flowLayout invalidateIndicatorLayout:0];
     }
     
     // 将 selected 显示在中间
@@ -250,12 +249,6 @@
     return segment;
 }
 
-- (UICollectionReusableView *)collectionView:(UICollectionView *)collectionView viewForSupplementaryElementOfKind:(NSString *)kind atIndexPath:(NSIndexPath *)indexPath {
-    _indicatorView = [collectionView dequeueReusableSupplementaryViewOfKind:kind withReuseIdentifier:kind forIndexPath:indexPath];
-    [_indicatorView prepareForSegmentedControl:self];
-    return _indicatorView;
-}
-
 - (BOOL)beginTrackingWithTouch:(UITouch *)touch withEvent:(UIEvent *)event {
     return NO;
 }
@@ -376,7 +369,7 @@
 }
 
 - (void)updateInteractiveTransition:(CGFloat)interactiveTransition {
-    [_flowLayout invalidateIndicatorLayout:interactiveTransition animated:NO];
+    [_flowLayout invalidateIndicatorLayout:interactiveTransition];
     
     NSInteger           const selectedIndex   = _selectedIndex;
     XZSegmentItemView * const selectedSegment = [self viewForSegmentAtIndex:selectedIndex];
@@ -452,12 +445,12 @@
         return;
     }
     _indicatorSize = indicatorSize;
-    [_flowLayout invalidateIndicatorLayout:0 animated:YES];
+    [_flowLayout invalidateIndicatorLayout:0];
 }
 
 - (void)setIndicatorStyle:(XZSegmentIndicatorStyle)indicatorStyle {
     if (_indicatorStyle != indicatorStyle) {
-        switch (_indicatorStyle) {
+        switch (indicatorStyle) {
             case XZSegmentIndicatorStyleMarkLine:
                 _flowLayout.indicatorClass = [XZSegmentMarkLineIndicatorView class];
                 break;
@@ -503,6 +496,7 @@
 
 - (void)setTitles:(NSArray<NSString *> *)titles animated:(BOOL)animated {
     _dataSource = nil;
+    // 同步元素数量
     if (titles.count == 0) {
         _titleItems = nil;
     } else if (titles.count < _titleItems.count) {
@@ -515,9 +509,11 @@
             [_titleItems addObject:[[XZSegmentTextItem alloc] init]];
         }
     }
+    // 同步值
     for (NSInteger i = 0; i < _titleItems.count; i++) {
         _titleItems[i].text = titles[i];
     }
+    // 刷新视图
     [self XZSegmentUpdateTitleItems];
     [self reloadData:animated completion:nil];
 }

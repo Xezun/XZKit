@@ -8,8 +8,8 @@
 
 #import <UIKit/UIKit.h>
 #if __has_include(<XZKit/XZKit.h>)
-#import <XZKit/XZSegmentedControlSegment.h>
-#import <XZKit/XZSegmentedControlIndicator.h>
+#import <XZKit/XZSegmentItemView.h>
+#import <XZKit/XZSegmentIndicatorView.h>
 #else
 #import "XZSegmentItemView.h"
 #import "XZSegmentIndicatorView.h"
@@ -45,7 +45,10 @@ typedef NS_ENUM(NSUInteger, XZSegmentIndicatorStyle) {
 @class UISegmentedControl, UIPageViewController;
 
 /// 一种分段的控件，一般用于菜单。
-@interface XZSegmentedControl : UIControl
+@interface XZSegmentedControl : UIControl {
+    @package
+    XZSegmentIndicatorView *_indicatorView;
+}
 
 /// 指示器方向。支持在 IB 中设置。
 #if TARGET_INTERFACE_BUILDER
@@ -151,7 +154,7 @@ NS_SWIFT_UI_ACTOR @protocol XZSegmentDataSource <NSObject>
 ///   - segmentedControl: 调用此方法的对象
 ///   - index: item 的位置索引
 ///   - reusingView: 可供重用的视图
-- (__kindof UICollectionViewCell *)segmentedControl:(XZSegmentedControl *)segmentedControl viewForSegmentAtIndex:(NSInteger)index;
+- (__kindof XZSegmentItemView *)segmentedControl:(XZSegmentedControl *)segmentedControl viewForSegmentAtIndex:(NSInteger)index;
 /// 返回 item 的大小。
 /// - Parameters:
 ///   - segmentedControl: 调用此方法的对象

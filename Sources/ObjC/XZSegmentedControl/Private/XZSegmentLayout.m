@@ -74,9 +74,8 @@
     }
 }
 
-- (void)invalidateIndicatorLayout:(CGFloat)interactiveTransition animated:(BOOL)animated {
+- (void)invalidateIndicatorLayout:(CGFloat)interactiveTransition {
     _indicatorLayoutAttributes.interactiveTransition = interactiveTransition;
-    _indicatorLayoutAttributes.animated = animated;
     
     UICollectionViewFlowLayoutInvalidationContext *context = [[UICollectionViewFlowLayoutInvalidationContext alloc] init];
     context.invalidateFlowLayoutAttributes      = NO;

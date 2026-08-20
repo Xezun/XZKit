@@ -7,9 +7,9 @@
 
 #import <UIKit/UIKit.h>
 #if __has_include(<XZKit/XZKit.h>)
-#import <XZKit/XZSegmentedControlDefines.h>
+#import <XZKit/XZSegmentDefines.h>
 #else
-#import "XZSegmentedControlDefines.h"
+#import "XZSegmentDefines.h"
 #endif
 
 NS_ASSUME_NONNULL_BEGIN
@@ -63,7 +63,7 @@ NS_SWIFT_NAME(XZSegmentedControl.IndicatorLayoutAttributes)
 @interface XZSegmentIndicatorLayoutAttributes : UICollectionViewLayoutAttributes
 @property (nonatomic, weak, XZ_READONLY) XZSegmentLayout *layout;
 @property (nonatomic, XZ_READONLY) CGFloat interactiveTransition;
-@property (nonatomic, XZ_READONLY) BOOL animated;
+//@property (nonatomic, XZ_READONLY) BOOL animated;
 @end
 
 NS_ASSUME_NONNULL_END
