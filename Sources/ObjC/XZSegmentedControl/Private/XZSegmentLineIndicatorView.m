@@ -29,7 +29,9 @@
     return CGRectZero;
 }
 
-+ (void)segmentedControl:(XZSegmentedControl *)segmentedControl layout:(XZSegmentLayout *)layout prepareForLayoutAttributes:(XZSegmentIndicatorLayoutAttributes *)layoutAttributes {
++ (void)layout:(XZSegmentLayout *)layout prepareLayoutAttributes:(XZSegmentIndicatorLayoutAttributes *)layoutAttributes {
+    XZSegmentedControl * const segmentedControl = layout.segmentedControl;
+
     CGFloat   const transition    = layoutAttributes.interactiveTransition;
     NSInteger const count         = segmentedControl.numberOfSegments;
     NSInteger const selectedIndex = segmentedControl.selectedIndex;
@@ -60,25 +62,31 @@
     layoutAttributes.frame = CGRectMake(x, y, w, h);
 }
 
+- (void)prepareForSegmentedControl:(XZSegmentedControl *)segmentedControl {
+    self.color = segmentedControl.indicatorColor;
+    self.image = segmentedControl.indicatorImage;
+}
 
+- (UIImage *)image {
+    return _imageView.image;
+}
 
-- (void)willShowInSegmentedControl:(XZSegmentedControl *)segmentedControl {
-    [super willShowInSegmentedControl:segmentedControl];
-    
-    if (segmentedControl.indicatorImage) {
-        if (_imageView == nil) {
-            _imageView = [[UIImageView alloc] initWithFrame:self.bounds];
-            _imageView.contentMode = UIViewContentModeScaleAspectFit;
-            _imageView.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
-            [self addSubview:_imageView];
-        }
-        _imageView.image = segmentedControl.indicatorImage;
-    } else {
-        [_imageView removeFromSuperview];
-        _imageView = nil;
+- (void)setImage:(UIImage *)image {
+    if (_imageView == nil) {
+        _imageView = [[UIImageView alloc] initWithFrame:self.bounds];
+        _imageView.contentMode = UIViewContentModeScaleAspectFit;
+        _imageView.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
+        [self addSubview:_imageView];
     }
-    
-    self.backgroundColor = segmentedControl.indicatorColor;
+    _imageView.image = image;
+}
+
+- (UIColor *)color {
+    return self.backgroundColor;
+}
+
+- (void)setColor:(UIColor *)color {
+    self.backgroundColor = color;
 }
 
 @end

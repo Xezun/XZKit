@@ -1,14 +1,14 @@
 //
-//  XZTextSegmentView.m
+//  XZSegmentTextItemView.m
 //  XZSegmentedControl
 //
 //  Created by Xezun on 2024/6/25.
 //
 
-#import "XZTextSegmentView.h"
+#import "XZSegmentTextItemView.h"
 
-@implementation XZTextSegmentView {
-    XZTextSegmentLabel *_textLabel;
+@implementation XZSegmentTextItemView {
+    XZSegmentTextLabel *_textLabel;
     CGFloat _interactiveTransition;
 }
 
@@ -17,7 +17,7 @@
     if (self) {
         CGRect const bounds = self.bounds;
         
-        _textLabel = [[XZTextSegmentLabel alloc] initWithFrame:bounds];
+        _textLabel = [[XZSegmentTextLabel alloc] initWithFrame:bounds];
         _textLabel.textAlignment = NSTextAlignmentCenter;
         _textLabel.numberOfLines = 2;
         [self.contentView addSubview:_textLabel];
@@ -129,10 +129,10 @@
 
 @end
 
-@implementation XZTextSegmentLabel
+@implementation XZSegmentTextLabel
 
 @end
 
-@implementation XZTextSegmentItem
+@implementation XZSegmentTextItem
 
 @end

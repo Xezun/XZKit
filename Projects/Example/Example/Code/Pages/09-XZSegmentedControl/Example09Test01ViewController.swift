@@ -41,6 +41,7 @@ class Example09Test01ViewController: UIViewController, UIScrollViewDelegate {
             segmentedControl.indicatorSize  = CGSize.init(width: 3.0, height: 20.0)
         }
         segmentedControl.indicatorColor    = .systemRed
+        segmentedControl.titleEdgeInsets   = .init(top: 10, leading: 10, bottom: 10, trailing: 10)
         segmentedControl.titleSpacing      = 10;
         segmentedControl.titleFont         = .systemFont(ofSize: 17.0)
         segmentedControl.selectedTitleFont = .systemFont(ofSize: 20.0, weight: .medium)
@@ -76,6 +77,7 @@ extension Example09Test01ViewController: XZPageViewDelegate {
     }
     
     func pageView(_ pageView: XZPageView, didTurnPageWith transition: CGFloat) {
+        print("transition: \(transition)")
         segmentedControl.updateInteractiveTransition(transition)
     }
     

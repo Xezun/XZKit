@@ -30,7 +30,8 @@ class Example09Test02ViewController: UIViewController, UIScrollViewDelegate {
             
             scrollView.addSubview(view)
         }
-        
+        segmentedControl.orientation       = .vertical
+        segmentedControl.titleEdgeInsets   = .init(top: 10, leading: 10, bottom: 10, trailing: 10)
         segmentedControl.indicatorSize     = CGSize.init(width: 3.0, height: 20.0)
         segmentedControl.indicatorColor    = .systemRed
         segmentedControl.titles            = self.titles

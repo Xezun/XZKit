@@ -16,22 +16,15 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-@interface XZSegmentLayout () {
-    @package
-    NSInteger _selectedIndex;
-    XZSegmentIndicatorLayoutAttributes * _Nonnull _indicatorLayoutAttributes;
-}
-@property (nonatomic, weak, readonly) XZSegmentedControl *segmentedControl;
-- (instancetype)initWithSegmentedControl:(XZSegmentedControl *)segmentedControl NS_DESIGNATED_INITIALIZER;
+@interface XZSegmentLayout ()
 
-@property (nonatomic, strong, nullable) UIColor *indicatorColor;
-@property (nonatomic, strong, nullable) UIImage *indicatorImage;
-@property (nonatomic) CGSize indicatorSize;
-@property (nonatomic) CGFloat interactiveTransition;
-@property (nonatomic) XZSegmentIndicatorStyle indicatorStyle;
-@property (nonatomic, nullable) Class indicatorClass;
+- (instancetype)initWithSegmentedControl:(XZSegmentedControl *)segmentedControl indicatorClass:(Class)indicatorClass NS_DESIGNATED_INITIALIZER;
 
-- (void)invalidateIndicatorLayout:(BOOL)animated;
+@property (nonatomic) Class indicatorClass;
+@property (nonatomic, readonly) XZSegmentIndicatorLayoutAttributes *indicatorLayoutAttributes;
+
+- (void)invalidateIndicatorLayout:(CGFloat)interactiveTransition animated:(BOOL)animated;
+
 @end
 
 NS_ASSUME_NONNULL_END

@@ -14,22 +14,11 @@
     return NO;
 }
 
-+ (void)segmentedControl:(XZSegmentedControl *)segmentedControl layout:(XZSegmentLayout *)layout prepareForLayoutAttributes:(XZSegmentIndicatorLayoutAttributes *)layoutAttributes {
++ (void)layout:(XZSegmentLayout *)layout prepareLayoutAttributes:(XZSegmentIndicatorLayoutAttributes *)layoutAttributes {
     
 }
 
-- (void)applyLayoutAttributes:(XZSegmentIndicatorLayoutAttributes *)layoutAttributes {
-    [super applyLayoutAttributes:layoutAttributes];
-    if (layoutAttributes.animated) {
-        [UIView animateWithDuration:0.35 animations:^{
-            self.frame = layoutAttributes.frame;
-        }];
-    } else {
-        self.frame = layoutAttributes.frame;
-    }
-}
-
-- (void)willShowInSegmentedControl:(XZSegmentedControl *)segmentedControl {
+- (void)prepareForSegmentedControl:(XZSegmentedControl *)segmentedControl {
     
 }
 
@@ -38,23 +27,19 @@
 
 @implementation XZSegmentIndicatorLayoutAttributes
 
-@synthesize interactiveTransition = _interactiveTransition;
-
 - (instancetype)init {
     self = [super init];
     if (self) {
         self.zIndex = -1;
-        _color = UIColor.tintColor;
     }
     return self;
 }
 
 - (id)copyWithZone:(NSZone *)zone {
     XZSegmentIndicatorLayoutAttributes *new = [super copyWithZone:zone];
-    new->_image = _image;
-    new->_color = _color;
+    new->_layout = _layout;
     new->_interactiveTransition = _interactiveTransition;
-    new->_indicatorView = _indicatorView;
+    new->_animated = _animated;
     return new;
 }
 @end

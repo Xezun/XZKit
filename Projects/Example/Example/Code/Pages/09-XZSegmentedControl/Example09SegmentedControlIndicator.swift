@@ -13,8 +13,10 @@ class Example09SegmentedControlIndicator: XZSegmentedControl.IndicatorView {
     override class var supportsInteractiveTransition: Bool {
         return true
     }
-
-    override class func segmentedControl(_ segmentedControl: XZSegmentedControl, layout: XZSegmentedControl.Layout, prepareForLayoutAttributes layoutAttributes: XZSegmentedControl.IndicatorLayoutAttributes) {
+    
+    override class func layout(_ layout: XZSegmentedControl.Layout, prepare layoutAttributes: XZSegmentedControl.IndicatorLayoutAttributes) {
+        let segmentedControl = layout.segmentedControl;
+    
         layoutAttributes.zIndex = -111
         
         let selectedIndex = segmentedControl.selectedIndex;

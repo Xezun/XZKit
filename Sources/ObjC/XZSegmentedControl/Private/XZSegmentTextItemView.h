@@ -1,5 +1,5 @@
 //
-//  XZTextSegmentView.h
+//  XZSegmentTextItemView.h
 //  XZSegmentedControl
 //
 //  Created by Xezun on 2024/6/25.
@@ -14,16 +14,16 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-@interface XZTextSegmentView : XZSegmentItemView
+@interface XZSegmentTextItemView : XZSegmentItemView
 @property (nonatomic, weak) XZSegmentedControl *segmentedControl;
 @property (nonatomic, copy, nullable) NSString *text;
 @property (nonatomic) NSDirectionalEdgeInsets edgeInsets;
 @end
 
-@interface XZTextSegmentLabel : UILabel
+@interface XZSegmentTextLabel : UILabel
 @end
 
-@interface XZTextSegmentItem : NSObject
+@interface XZSegmentTextItem : NSObject
 @property (nonatomic, copy) NSString *text;
 @property (nonatomic) CGSize size;
 @property (nonatomic) NSDirectionalEdgeInsets edgeInsets;

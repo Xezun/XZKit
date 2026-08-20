@@ -16,6 +16,8 @@
 NS_ASSUME_NONNULL_BEGIN
 
 @interface XZSegmentLineIndicatorView : XZSegmentIndicatorView
+@property (nonatomic, strong, nullable) UIColor *color;
+@property (nonatomic, strong, nullable) UIImage *image;
 @end
 
 @interface XZSegmentMarkLineIndicatorView : XZSegmentLineIndicatorView

@@ -19,6 +19,7 @@ NS_ASSUME_NONNULL_BEGIN
 NS_SWIFT_UI_ACTOR
 NS_SWIFT_NAME(XZSegmentedControl.Layout)
 @interface XZSegmentLayout : UICollectionViewFlowLayout
+@property (nonatomic, unsafe_unretained, readonly) XZSegmentedControl *segmentedControl;
 - (instancetype)init NS_UNAVAILABLE;
 - (nullable instancetype)initWithCoder:(NSCoder *)coder NS_UNAVAILABLE;
 - (nullable UICollectionViewLayoutAttributes *)layoutAttributesForSegmentAtIndex:(NSInteger)index;
@@ -49,32 +50,20 @@ NS_SWIFT_NAME(XZSegmentedControl.IndicatorView)
 /// > An attempt to prepare a layout while a prepareLayout call was already in progress (i.e. reentrant call) has been ignored.
 /// 
 /// - Parameters:
-///   - segmentedControl: 指示器实例所属的控件
 ///   - layout: 负责布局的对象
 ///   - layoutAttributes: 指示器的布局信息
-+ (void)segmentedControl:(XZSegmentedControl *)segmentedControl layout:(XZSegmentLayout *)layout prepareForLayoutAttributes:(XZSegmentIndicatorLayoutAttributes *)layoutAttributes NS_SWIFT_NAME(segmentedControl(_:layout:prepareForLayoutAttributes:));
++ (void)layout:(XZSegmentLayout *)layout prepareLayoutAttributes:(XZSegmentIndicatorLayoutAttributes *)layoutAttributes;
 
-- (void)willShowInSegmentedControl:(XZSegmentedControl *)segmentedControl;
+- (void)prepareForSegmentedControl:(XZSegmentedControl *)segmentedControl;
 
 @end
 
 /// 指示器的外观及布局信息。
 NS_SWIFT_NAME(XZSegmentedControl.IndicatorLayoutAttributes)
 @interface XZSegmentIndicatorLayoutAttributes : UICollectionViewLayoutAttributes
-
-@property (nonatomic, strong, nullable, XZ_READONLY) UIColor *color;
-@property (nonatomic, strong, nullable, XZ_READONLY) UIImage *image;
+@property (nonatomic, weak, XZ_READONLY) XZSegmentLayout *layout;
 @property (nonatomic, XZ_READONLY) CGFloat interactiveTransition;
-
 @property (nonatomic, XZ_READONLY) BOOL animated;
-
-///
-/// 在未修改 UICollectionViewLayoutAttributes 的核心属性，例如 frame 或 size 的情况下，
-/// 不管是 invalidateIndicaotrLayout 还是 invalidateLayout 都无法重载视图，导致无法应用
-/// color 或 image 等样式，无法更新指示器，因此需要指示器视图在 `-applyLayoutAttributes:` 方法中填充此属性。
-///
-/// 在 -setSelectedIndex:animated: 方法中，无法直接添加动画，也需要此属性执行动画。
-@property (nonatomic, weak, XZ_READONLY) XZSegmentIndicatorView *indicatorView;
 @end
 
 NS_ASSUME_NONNULL_END
