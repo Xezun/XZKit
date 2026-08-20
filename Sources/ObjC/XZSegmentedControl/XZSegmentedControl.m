@@ -21,6 +21,7 @@
     UICollectionView *_collectionView;
     NSMutableArray<XZSegmentTextItem *> *_titleItems;
     XZSegmentItemView * __weak _pendingSegment;
+    BOOL _needsUpdateTitleItems;
 }
 
 @end
@@ -95,8 +96,8 @@
     }
     
     if (!CGRectEqualToRect(_collectionView.frame, collectionFrame)) {
+        [self setNeedsUpdateTitleItems];
         _collectionView.frame = collectionFrame;
-        [self XZSegmentUpdateTitleItems];
     }
 }
 
@@ -152,8 +153,6 @@
 }
 
 - (void)reloadData:(BOOL)animated completion:(void (^)(BOOL))completion {
-    [self XZSegmentUpdateTitleItems];
-    
     // 自动调整 selectedIndex 到合理的范围
     NSInteger const count = self.numberOfSegments;
     if (count == 0) {
@@ -346,10 +345,12 @@
 }
 
 - (void)setTitleSize:(CGSize)titleSize {
+    if (CGSizeEqualToSize(_flowLayout.itemSize, titleSize)) {
+        return;
+    }
     _flowLayout.itemSize = titleSize;
-    [self XZSegmentUpdateTitleItems];
+    [self setNeedsUpdateTitleItems];
 }
-
 
 - (CGFloat)titleSpacing {
     return _flowLayout.minimumInteritemSpacing;
@@ -517,8 +518,7 @@
         _titleItems[i].text = titles[i];
     }
     // 刷新视图
-    [self XZSegmentUpdateTitleItems];
-    [self reloadData:animated completion:nil];
+    [self setNeedsUpdateTitleItems];
 }
 
 @synthesize titleFont = _titleFont;
@@ -533,7 +533,7 @@
 - (void)setTitleFont:(UIFont *)titleFont {
     if (_titleFont != titleFont) {
         _titleFont = titleFont;
-        [self XZSegmentUpdateTitleItems];
+        [self setNeedsUpdateTitleItems];
     }
 }
 
@@ -552,7 +552,7 @@
 - (void)setSelectedTitleFont:(UIFont *)selectedTitleFont {
     if (_selectedTitleFont != selectedTitleFont) {
         _selectedTitleFont = selectedTitleFont;
-        [self XZSegmentUpdateTitleItems];
+        [self setNeedsUpdateTitleItems];
     }
 }
 
@@ -593,7 +593,6 @@
     _flowLayout.itemSize = CGSizeNull; // 实际不会使用此值，使用 CGSizeZero 会产生控制台警告
 
     _collectionView = [[XZSegmentContainerView alloc] initWithFrame:bounds collectionViewLayout:_flowLayout];
-    _collectionView.autoresizingMask               = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
     _collectionView.backgroundColor                = [UIColor clearColor];
     _collectionView.prefetchingEnabled             = NO;
     _collectionView.allowsSelection                = YES;
@@ -623,11 +622,25 @@
     _collectionView.dataSource = self;
 }
 
-- (void)XZSegmentUpdateTitleItems {
+- (void)setNeedsUpdateTitleItems {
+    if (_needsUpdateTitleItems) {
+        return;
+    }
+    _needsUpdateTitleItems = YES;
+    [NSRunLoop.mainRunLoop performInModes:@[NSRunLoopCommonModes] block:^{
+        [self updateTitleItemsIfNeeded];
+    }];
+}
+- (void)updateTitleItemsIfNeeded {
+    if (!_needsUpdateTitleItems) {
+        return;
+    }
+    _needsUpdateTitleItems = NO;
+    
     CGRect    const bounds = self.bounds;
     NSInteger const count  = _titleItems.count;
     if (count == 0) {
-        return YES;
+        return;
     }
     CGSize const itemSize = _flowLayout.itemSize;
     switch (self.orientation) {
@@ -680,7 +693,8 @@
         default:
             break;
     }
-    return YES;
+    
+    [_flowLayout invalidateLayout];
 }
 
 @end
