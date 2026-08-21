@@ -35,8 +35,11 @@ FOUNDATION_EXPORT XZMocoaKey const XZMocoaKeyContentStatus NS_REFINED_FOR_SWIFT;
 FOUNDATION_EXPORT XZMocoaKey const XZMocoaKeyStatus        NS_REFINED_FOR_SWIFT;
 FOUNDATION_EXPORT XZMocoaKey const XZMocoaKeyIsChecked     NS_REFINED_FOR_SWIFT;
 FOUNDATION_EXPORT XZMocoaKey const XZMocoaKeyIsEnabled     NS_REFINED_FOR_SWIFT;
+FOUNDATION_EXPORT XZMocoaKey const XZMocoaKeyIsEmpty       NS_REFINED_FOR_SWIFT;
 FOUNDATION_EXPORT XZMocoaKey const XZMocoaKeyValue         NS_REFINED_FOR_SWIFT;
 FOUNDATION_EXPORT XZMocoaKey const XZMocoaKeyName          NS_REFINED_FOR_SWIFT;
+FOUNDATION_EXPORT XZMocoaKey const XZMocoaKeyType          NS_REFINED_FOR_SWIFT;
+FOUNDATION_EXPORT XZMocoaKey const XZMocoaKeyList          NS_REFINED_FOR_SWIFT;
 FOUNDATION_EXPORT XZMocoaKey const XZMocoaKeyIcon          NS_REFINED_FOR_SWIFT;
 FOUNDATION_EXPORT XZMocoaKey const XZMocoaKeyColor         NS_REFINED_FOR_SWIFT;
 
@@ -103,11 +106,13 @@ FOUNDATION_EXPORT XZMocoaKey const XZMocoaKeyConfirm              NS_REFINED_FOR
 FOUNDATION_EXPORT XZMocoaKey const XZMocoaKeySubmit               NS_REFINED_FOR_SWIFT;
 FOUNDATION_EXPORT XZMocoaKey const XZMocoaKeyCancel               NS_REFINED_FOR_SWIFT;
 FOUNDATION_EXPORT XZMocoaKey const XZMocoaKeyClick                NS_REFINED_FOR_SWIFT;
-FOUNDATION_EXPORT XZMocoaKey const XZMocoaKeyValueChanged         NS_REFINED_FOR_SWIFT;
+
+FOUNDATION_EXPORT XZMocoaKey const XZMocoaKeyValueDidChange       NS_REFINED_FOR_SWIFT;
 /// 内容发生改变时，通知上层模块。
 ///
 /// 当 Mocoa 接管 NSFetchedResultsController 事件之后，列表发生更新后，会向上层模块发送此事件。
-FOUNDATION_EXPORT XZMocoaKey const XZMocoaKeyContentChanged       NS_REFINED_FOR_SWIFT;
+FOUNDATION_EXPORT XZMocoaKey const XZMocoaKeyContentDidChange     NS_REFINED_FOR_SWIFT;
+
 /// 导航左侧区事件。
 FOUNDATION_EXPORT XZMocoaKey const XZMocoaKeyNavigationBackAction NS_REFINED_FOR_SWIFT;
 /// 导航右侧区事件。

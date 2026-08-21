@@ -15,18 +15,27 @@
 
 #define kReuseIdentifier @"XZSegmentedControlReuseIdentifier"
 
-@interface XZSegmentedControl () <UICollectionViewDataSource, UICollectionViewDelegateFlowLayout> {
+typedef NS_ENUM(NSUInteger, XZSegmentSizeDelegate) {
+    XZSegmentSizeDelegateTitle,
+    XZSegmentSizeDelegateDataSource,
+    XZSegmentSizeDelegateFlowLayout,
+};
+
+@interface XZSegmentedControl () <UICollectionViewDataSource, UICollectionViewDelegateFlowLayout, XZSegmentDataSource>
+
+@end
+
+@implementation XZSegmentedControl {
+    @package
     NSInteger _selectedIndex;
     XZSegmentLayout  *_flowLayout;
     UICollectionView *_collectionView;
     NSMutableArray<XZSegmentTextItem *> *_titleItems;
     XZSegmentItemView * __weak _pendingSegment;
     BOOL _needsUpdateTitleItems;
+    XZSegmentSizeDelegate _sizeDelegate;
+    XZSegmentIndicatorView * __weak _indicatorView;
 }
-
-@end
-
-@implementation XZSegmentedControl
 
 - (instancetype)initWithFrame:(CGRect)frame orientation:(XZSegmentOrientation)orientation {
     self = [super initWithFrame:frame];
@@ -101,6 +110,128 @@
     }
 }
 
+#pragma mark - <UICollectionViewDataSource>
+
+- (NSInteger)numberOfSectionsInCollectionView:(UICollectionView *)collectionView {
+    return 1;
+}
+
+- (NSInteger)collectionView:(UICollectionView *)collectionView numberOfItemsInSection:(NSInteger)section {
+    if (_dataSource) {
+        return [_dataSource numberOfSegmentsInSegmentedControl:self];
+    }
+    return _titleItems.count;
+}
+
+- (__kindof UICollectionViewCell *)collectionView:(UICollectionView *)collectionView cellForItemAtIndexPath:(NSIndexPath *)indexPath {
+    NSInteger const index = indexPath.item;
+    
+    // 重置 transition 。
+    CGFloat const transition = (_selectedIndex == index ? 1.0 : 0.0);
+    
+    XZSegmentItemView *segment = nil;
+    if (_dataSource) {
+        segment = [_dataSource segmentedControl:self viewForSegmentAtIndex:index];
+    } else {
+        segment = [self segmentedControl:self viewForSegmentAtIndex:index];
+    }
+    segment.segmentedControl = self;
+    [segment updateInteractiveTransition:transition];
+    
+    return segment;
+}
+
+- (BOOL)beginTrackingWithTouch:(UITouch *)touch withEvent:(UIEvent *)event {
+    return NO;
+}
+
+#pragma mark - <UICollectionViewDelegate>
+
+- (BOOL)scrollViewShouldScrollToTop:(UIScrollView *)scrollView {
+    return NO;
+}
+
+- (void)collectionView:(UICollectionView *)collectionView didSelectItemAtIndexPath:(NSIndexPath *)indexPath {
+    if (!self.isEnabled) return;
+    [self setSelectedIndex:indexPath.item animated:YES];
+    [self sendActionsForControlEvents:(UIControlEventValueChanged)];
+}
+
+- (CGSize)collectionView:(UICollectionView *)collectionView layout:(UICollectionViewFlowLayout *)collectionViewLayout sizeForItemAtIndexPath:(NSIndexPath *)indexPath {
+    NSInteger const index = indexPath.item;
+    switch (_sizeDelegate) {
+        case XZSegmentSizeDelegateTitle:
+            return [self segmentedControl:self sizeForSegmentAtIndex:index];
+        case XZSegmentSizeDelegateDataSource:
+            return [_dataSource segmentedControl:self sizeForSegmentAtIndex:index];
+        case XZSegmentSizeDelegateFlowLayout:
+            return collectionViewLayout.itemSize;
+    }
+}
+
+#pragma mark - 属性
+
+- (XZSegmentOrientation)orientation {
+    return (XZSegmentOrientation)_flowLayout.scrollDirection;
+}
+
+- (void)setOrientation:(XZSegmentOrientation)direction {
+    switch (direction) {
+        case XZSegmentOrientationVertical:
+            _flowLayout.scrollDirection = UICollectionViewScrollDirectionVertical;
+            _collectionView.alwaysBounceHorizontal = NO;
+            _collectionView.alwaysBounceVertical   = YES;
+            break;
+            
+        case XZSegmentOrientationHorizontal:
+            _flowLayout.scrollDirection = UICollectionViewScrollDirectionHorizontal;
+            _collectionView.alwaysBounceHorizontal = YES;
+            _collectionView.alwaysBounceVertical   = NO;
+            break;
+            
+        default:
+            @throw [NSException exceptionWithName:NSGenericException reason:nil userInfo:nil];
+    }
+}
+
+- (void)setHeaderView:(UIView *)headerView {
+    if (_headerView != headerView) {
+        [_headerView removeFromSuperview];
+        _headerView = headerView;
+        if (_headerView != nil) {
+            if (CGRectIsEmpty(_headerView.frame)) {
+                [_headerView sizeToFit];
+            }
+            [self addSubview:_headerView];
+        }
+    }
+}
+
+- (void)setFooterView:(UIView *)footerView {
+    if (_footerView != footerView) {
+        [_footerView removeFromSuperview];
+        _footerView = footerView;
+        if (_footerView != nil) {
+            if (CGRectIsEmpty(_footerView.frame)) {
+                [_footerView sizeToFit];
+            }
+            [self addSubview:_footerView];
+        }
+    }
+}
+
+- (NSInteger)numberOfSegments {
+    return [_collectionView numberOfItemsInSection:0];
+}
+
+- (NSInteger)selectedIndex {
+    return _selectedIndex;
+}
+
+- (void)setSelectedIndex:(NSInteger)selectedIndex {
+    [self setSelectedIndex:selectedIndex animated:NO];
+}
+
 - (void)setSelectedIndex:(NSInteger)selectedIndex animated:(BOOL)animated {
     if (_selectedIndex == selectedIndex) {
         return;
@@ -148,13 +279,154 @@
     [_collectionView selectItemAtIndexPath:newIndexPath animated:animated scrollPosition:scrollPosition];
 }
 
+// MARK: - 元素样式
+
+- (CGSize)itemSize {
+    return _flowLayout.itemSize;
+}
+
+- (void)setItemSize:(CGSize)itemSize {
+    if (CGSizeEqualToSize(_flowLayout.itemSize, itemSize)) {
+        return;
+    }
+    _flowLayout.itemSize = itemSize;
+    [self setNeedsUpdateTitleItems];
+}
+
+- (CGFloat)itemSpacing {
+    return _flowLayout.minimumInteritemSpacing;
+}
+
+- (void)setItemSpacing:(CGFloat)itemSpacing {
+    switch (_flowLayout.scrollDirection) {
+        case UICollectionViewScrollDirectionHorizontal:
+            _flowLayout.minimumLineSpacing = itemSpacing;
+            _flowLayout.minimumInteritemSpacing = itemSpacing;
+            break;
+        case UICollectionViewScrollDirectionVertical:
+            _flowLayout.minimumLineSpacing = itemSpacing;
+            _flowLayout.minimumInteritemSpacing = itemSpacing;
+            break;
+        default:
+            @throw [NSException exceptionWithName:NSGenericException reason:nil userInfo:nil];
+            break;
+    }
+}
+
+// MARK: - 交互式转场
+
+- (void)updateInteractiveTransition:(CGFloat)interactiveTransition {
+    [_flowLayout invalidateIndicatorLayout:interactiveTransition];
+    
+    NSInteger           const selectedIndex   = _selectedIndex;
+    XZSegmentItemView * const selectedSegment = [self viewForSegmentAtIndex:selectedIndex];
+    
+    if (interactiveTransition == 0) {
+        [selectedSegment updateInteractiveTransition:1.0];
+        [_pendingSegment updateInteractiveTransition:0.0];
+        _pendingSegment = nil;
+        return;
+    }
+    
+    CGFloat progress = 0;
+    NSInteger pendingIndex = 0;
+    
+    if (interactiveTransition > 0) {
+        progress = interactiveTransition - floor(interactiveTransition);
+        pendingIndex = selectedIndex + ceil(interactiveTransition);
+    } else {
+        progress = -interactiveTransition - floor(-interactiveTransition);
+        pendingIndex = selectedIndex + floor(interactiveTransition);
+    }
+    
+    [selectedSegment updateInteractiveTransition:(1.0 - progress)];
+    if (pendingIndex >= 0 && pendingIndex < self.numberOfSegments) {
+        XZSegmentItemView * const pendingSegment = [self viewForSegmentAtIndex:pendingIndex];
+        if (_pendingSegment != pendingSegment) {
+            [_pendingSegment updateInteractiveTransition:0];
+            _pendingSegment = pendingSegment;
+        }
+        [_pendingSegment updateInteractiveTransition:progress];
+    } else if (_pendingSegment) {
+        [_pendingSegment updateInteractiveTransition:0];
+        _pendingSegment = nil;
+    }
+}
+
+// MARK: - 指示器
+
+- (void)setIndicatorStyle:(XZSegmentIndicatorStyle)indicatorStyle {
+    if (_indicatorStyle != indicatorStyle) {
+        switch (indicatorStyle) {
+            case XZSegmentIndicatorStyleMarkLine:
+                _flowLayout.indicatorClass = [XZSegmentMarkLineIndicatorView class];
+                break;
+            case XZSegmentIndicatorStyleNoteLine:
+                _flowLayout.indicatorClass = [XZSegmentNoteLineIndicatorView class];
+                break;
+            case XZSegmentIndicatorStyleCustom:
+                break;
+            default:
+                return;
+        }
+        _indicatorStyle = indicatorStyle;
+    }
+}
+
+- (void)setIndicatorSize:(CGSize)indicatorSize {
+    if (CGSizeEqualToSize(_indicatorSize, indicatorSize)) {
+        return;
+    }
+    _indicatorSize = indicatorSize;
+    [_flowLayout invalidateIndicatorLayout:0];
+}
+
+- (void)setIndicatorColor:(UIColor *)indicatorColor {
+    if ([_indicatorColor isEqual:indicatorColor]) {
+        return;
+    }
+    _indicatorColor = indicatorColor;
+    [_indicatorView prepareForSegmentedControl:self];
+}
+
+- (void)setIndicatorImage:(UIImage *)indicatorImage {
+    if ([_indicatorImage isEqual:indicatorImage]) {
+        return;
+    }
+    _indicatorImage = indicatorImage;
+    [_indicatorView prepareForSegmentedControl:self];
+}
+
+- (void)setIndicatorClass:(Class)indicatorClass {
+    NSParameterAssert([indicatorClass isSubclassOfClass:[XZSegmentIndicatorView class]]);
+    _indicatorStyle = XZSegmentIndicatorStyleCustom;
+    _flowLayout.indicatorClass = indicatorClass;
+}
+
+- (Class)indicatorClass {
+    return _flowLayout.indicatorClass;
+}
+
+// MARK: - 自定义数据源
+
+- (void)setDataSource:(id<XZSegmentDataSource>)dataSource {
+    _titleItems = nil;
+    _dataSource = dataSource;
+    if ([_dataSource respondsToSelector:@selector(segmentedControl:sizeForSegmentAtIndex:)]) {
+        _sizeDelegate = XZSegmentSizeDelegateDataSource;
+    } else {
+        _sizeDelegate = XZSegmentSizeDelegateFlowLayout;
+    }
+    [self reloadData];
+}
+
 - (void)reloadData {
     [self reloadData:NO completion:nil];
 }
 
 - (void)reloadData:(BOOL)animated completion:(void (^)(BOOL))completion {
     // 自动调整 selectedIndex 到合理的范围
-    NSInteger const count = self.numberOfSegments;
+    NSInteger const count = [(_dataSource ?: self) numberOfSegmentsInSegmentedControl:self];
     if (count == 0) {
         _selectedIndex = NSNotFound;
     } else if (_selectedIndex == NSNotFound) {
@@ -216,275 +488,7 @@
     return [_collectionView dequeueReusableCellWithReuseIdentifier:identifier forIndexPath:indexPath];
 }
 
-#pragma mark - <UICollectionViewDataSource>
-
-- (NSInteger)numberOfSectionsInCollectionView:(UICollectionView *)collectionView {
-    return 1;
-}
-
-- (NSInteger)collectionView:(UICollectionView *)collectionView numberOfItemsInSection:(NSInteger)section {
-    if (_dataSource) {
-        return [_dataSource numberOfSegmentsInSegmentedControl:self];
-    }
-    return _titleItems.count;
-}
-
-- (__kindof UICollectionViewCell *)collectionView:(UICollectionView *)collectionView cellForItemAtIndexPath:(NSIndexPath *)indexPath {
-    NSInteger const index = indexPath.item;
-    
-    // 重置 transition 。
-    CGFloat const transition = (_selectedIndex == index ? 1.0 : 0.0);
-    
-    if (_dataSource) {
-        XZSegmentItemView *segment = [_dataSource segmentedControl:self viewForSegmentAtIndex:index];
-        [segment updateInteractiveTransition:transition];
-        return segment;
-    }
-    
-    XZSegmentTextItem *model = _titleItems[index];
-
-    XZSegmentTextItemView *segment = [collectionView dequeueReusableCellWithReuseIdentifier:kReuseIdentifier forIndexPath:indexPath];
-    segment.segmentedControl = self;
-    segment.text             = model.text;
-    [segment updateInteractiveTransition:transition];
-    
-    return segment;
-}
-
-- (BOOL)beginTrackingWithTouch:(UITouch *)touch withEvent:(UIEvent *)event {
-    return NO;
-}
-
-#pragma mark - <UICollectionViewDelegate>
-
-- (BOOL)scrollViewShouldScrollToTop:(UIScrollView *)scrollView {
-    return NO;
-}
-
-- (void)collectionView:(UICollectionView *)collectionView didSelectItemAtIndexPath:(NSIndexPath *)indexPath {
-    if (!self.isEnabled) return;
-    [self setSelectedIndex:indexPath.item animated:YES];
-    [self sendActionsForControlEvents:(UIControlEventValueChanged)];
-}
-
-- (CGSize)collectionView:(UICollectionView *)collectionView layout:(UICollectionViewFlowLayout *)collectionViewLayout sizeForItemAtIndexPath:(NSIndexPath *)indexPath {
-    if (_dataSource) {
-        return [_dataSource segmentedControl:self sizeForSegmentAtIndex:indexPath.item];
-    }
-    if (_titleItems) {
-        return _titleItems[indexPath.item].size;
-    }
-    return collectionViewLayout.itemSize;
-}
-
-#pragma mark - 属性
-
-- (NSInteger)numberOfSegments {
-    return [_collectionView numberOfItemsInSection:0];
-}
-
-- (XZSegmentOrientation)orientation {
-    return (XZSegmentOrientation)_flowLayout.scrollDirection;
-}
-
-- (void)setOrientation:(XZSegmentOrientation)direction {
-    switch (direction) {
-        case XZSegmentOrientationVertical:
-            _flowLayout.scrollDirection = UICollectionViewScrollDirectionVertical;
-            _collectionView.alwaysBounceHorizontal = NO;
-            _collectionView.alwaysBounceVertical   = YES;
-            break;
-            
-        case XZSegmentOrientationHorizontal:
-            _flowLayout.scrollDirection = UICollectionViewScrollDirectionHorizontal;
-            _collectionView.alwaysBounceHorizontal = YES;
-            _collectionView.alwaysBounceVertical   = NO;
-            break;
-            
-        default:
-            @throw [NSException exceptionWithName:NSGenericException reason:nil userInfo:nil];
-    }
-}
-
-- (void)setHeaderView:(UIView *)headerView {
-    if (_headerView != headerView) {
-        [_headerView removeFromSuperview];
-        _headerView = headerView;
-        if (_headerView != nil) {
-            if (CGRectIsEmpty(_headerView.frame)) {
-                [_headerView sizeToFit];
-            }
-            [self addSubview:_headerView];
-        }
-    }
-}
-
-- (void)setFooterView:(UIView *)footerView {
-    if (_footerView != footerView) {
-        [_footerView removeFromSuperview];
-        _footerView = footerView;
-        if (_footerView != nil) {
-            if (CGRectIsEmpty(_footerView.frame)) {
-                [_footerView sizeToFit];
-            }
-            [self addSubview:_footerView];
-        }
-    }
-}
-
-- (NSInteger)selectedIndex {
-    return _selectedIndex;
-}
-
-- (void)setSelectedIndex:(NSInteger)selectedIndex {
-    [self setSelectedIndex:selectedIndex animated:NO];
-}
-
-- (CGSize)titleSize {
-    return _flowLayout.itemSize;
-}
-
-- (void)setTitleSize:(CGSize)titleSize {
-    if (CGSizeEqualToSize(_flowLayout.itemSize, titleSize)) {
-        return;
-    }
-    _flowLayout.itemSize = titleSize;
-    [self setNeedsUpdateTitleItems];
-}
-
-- (CGFloat)titleSpacing {
-    return _flowLayout.minimumInteritemSpacing;
-}
-
-- (void)setTitleSpacing:(CGFloat)titleSpacing {
-    switch (_flowLayout.scrollDirection) {
-        case UICollectionViewScrollDirectionHorizontal:
-            _flowLayout.minimumLineSpacing = titleSpacing;
-            _flowLayout.minimumInteritemSpacing = titleSpacing;
-            break;
-        case UICollectionViewScrollDirectionVertical:
-            _flowLayout.minimumLineSpacing = titleSpacing;
-            _flowLayout.minimumInteritemSpacing = titleSpacing;
-            break;
-        default:
-            @throw [NSException exceptionWithName:NSGenericException reason:nil userInfo:nil];
-            break;
-    }
-}
-
-- (void)updateInteractiveTransition:(CGFloat)interactiveTransition {
-    [_flowLayout invalidateIndicatorLayout:interactiveTransition];
-    
-    NSInteger           const selectedIndex   = _selectedIndex;
-    XZSegmentItemView * const selectedSegment = [self viewForSegmentAtIndex:selectedIndex];
-    
-    if (interactiveTransition == 0) {
-        [selectedSegment updateInteractiveTransition:1.0];
-        [_pendingSegment updateInteractiveTransition:0.0];
-        _pendingSegment = nil;
-        return;
-    }
-    
-    CGFloat progress = 0;
-    NSInteger pendingIndex = 0;
-    
-    if (interactiveTransition > 0) {
-        progress = interactiveTransition - floor(interactiveTransition);
-        pendingIndex = selectedIndex + ceil(interactiveTransition);
-    } else {
-        progress = -interactiveTransition - floor(-interactiveTransition);
-        pendingIndex = selectedIndex + floor(interactiveTransition);
-    }
-    
-    [selectedSegment updateInteractiveTransition:(1.0 - progress)];
-    if (pendingIndex >= 0 && pendingIndex < self.numberOfSegments) {
-        XZSegmentItemView * const pendingSegment = [self viewForSegmentAtIndex:pendingIndex];
-        if (_pendingSegment != pendingSegment) {
-            [_pendingSegment updateInteractiveTransition:0];
-            _pendingSegment = pendingSegment;
-        }
-        [_pendingSegment updateInteractiveTransition:progress];
-    } else if (_pendingSegment) {
-        [_pendingSegment updateInteractiveTransition:0];
-        _pendingSegment = nil;
-    }
-}
-
-- (void)setIndicatorColor:(UIColor *)indicatorColor {
-    if ([_indicatorColor isEqual:indicatorColor]) {
-        return;
-    }
-    _indicatorColor = indicatorColor;
-    switch (_indicatorStyle) {
-        case XZSegmentIndicatorStyleMarkLine:
-        case XZSegmentIndicatorStyleNoteLine: {
-            XZSegmentLineIndicatorView *indicatorView = (id)self->_indicatorView;
-            indicatorView.color = _indicatorColor;
-            break;
-        }
-        default:
-            break;
-    }
-}
-
-- (void)setIndicatorImage:(UIImage *)indicatorImage {
-    if ([_indicatorImage isEqual:indicatorImage]) {
-        return;
-    }
-    _indicatorImage = indicatorImage;
-    switch (_indicatorStyle) {
-        case XZSegmentIndicatorStyleMarkLine:
-        case XZSegmentIndicatorStyleNoteLine: {
-            XZSegmentLineIndicatorView *indicatorView = (id)self->_indicatorView;
-            indicatorView.image = _indicatorImage;
-            break;
-        }
-        default:
-            break;
-    }
-}
-
-- (void)setIndicatorSize:(CGSize)indicatorSize {
-    if (CGSizeEqualToSize(_indicatorSize, indicatorSize)) {
-        return;
-    }
-    _indicatorSize = indicatorSize;
-    [_flowLayout invalidateIndicatorLayout:0];
-}
-
-- (void)setIndicatorStyle:(XZSegmentIndicatorStyle)indicatorStyle {
-    if (_indicatorStyle != indicatorStyle) {
-        switch (indicatorStyle) {
-            case XZSegmentIndicatorStyleMarkLine:
-                _flowLayout.indicatorClass = [XZSegmentMarkLineIndicatorView class];
-                break;
-            case XZSegmentIndicatorStyleNoteLine:
-                _flowLayout.indicatorClass = [XZSegmentNoteLineIndicatorView class];
-                break;
-            case XZSegmentIndicatorStyleCustom:
-                break;
-            default:
-                return;
-        }
-        _indicatorStyle = indicatorStyle;
-    }
-}
-
-- (void)setIndicatorClass:(Class)indicatorClass {
-    NSParameterAssert([indicatorClass isSubclassOfClass:[XZSegmentIndicatorView class]]);
-    _indicatorStyle = XZSegmentIndicatorStyleCustom;
-    _flowLayout.indicatorClass = indicatorClass;
-}
-
-- (Class)indicatorClass {
-    return _flowLayout.indicatorClass;
-}
-
-- (void)setDataSource:(id<XZSegmentDataSource>)dataSource {
-    _titleItems = nil;
-    _dataSource = dataSource;
-    [self reloadData];
-}
+// MARK: - 纯文本数据源
 
 - (NSArray<NSString *> *)titles {
     NSMutableArray *items = [NSMutableArray arrayWithCapacity:_titleItems.count];
@@ -500,6 +504,7 @@
 
 - (void)setTitles:(NSArray<NSString *> *)titles animated:(BOOL)animated {
     _dataSource = nil;
+    _sizeDelegate = XZSegmentSizeDelegateTitle;
     // 同步元素数量
     if (titles.count == 0) {
         _titleItems = nil;
@@ -517,8 +522,34 @@
     for (NSInteger i = 0; i < _titleItems.count; i++) {
         _titleItems[i].text = titles[i];
     }
-    // 刷新视图
+    // 刷新布局
     [self setNeedsUpdateTitleItems];
+    [self setNeedsUpdateTitleItems];
+    // 刷新数据
+    [self reloadData:animated completion:nil];
+}
+
+- (void)setTitle:(NSString *)title forSegmentAtIndex:(NSUInteger)segment {
+    _titleItems[segment].text = title;
+    [_collectionView reloadItemsAtIndexPaths:@[[NSIndexPath indexPathForItem:segment inSection:0]]];
+}
+
+- (NSString *)titleForSegmentAtIndex:(NSInteger)segment {
+    return _titleItems[segment].text;
+}
+
+- (UIColor *)titleColor {
+    if (_titleColor != nil) {
+        return _titleColor;
+    }
+    return UIColor.labelColor;
+}
+
+- (UIColor *)selectedTitleColor {
+    if (_selectedTitleColor != nil) {
+        return _selectedTitleColor;
+    }
+    return UIColor.tintColor;
 }
 
 @synthesize titleFont = _titleFont;
@@ -556,18 +587,12 @@
     }
 }
 
-- (UIColor *)titleColor {
-    if (_titleColor != nil) {
-        return _titleColor;
+- (void)setTitleEdgeInsets:(NSDirectionalEdgeInsets)titleEdgeInsets {
+    if (NSDirectionalEdgeInsetsEqualToDirectionalEdgeInsets(_titleEdgeInsets, titleEdgeInsets)) {
+        return;
     }
-    return UIColor.labelColor;
-}
-
-- (UIColor *)selectedTitleColor {
-    if (_selectedTitleColor != nil) {
-        return _selectedTitleColor;
-    }
-    return UIColor.systemBlueColor;
+    _titleEdgeInsets = titleEdgeInsets;
+    [self setNeedsUpdateTitleItems];
 }
 
 #pragma mark - Private Methods
@@ -695,6 +720,38 @@
     }
     
     [_flowLayout invalidateLayout];
+}
+
+// MARK: - XZSegmentDataSource
+
+- (NSInteger)numberOfSegmentsInSegmentedControl:(XZSegmentedControl *)segmentedControl {
+    return _titleItems.count;
+}
+
+- (__kindof XZSegmentItemView *)segmentedControl:(XZSegmentedControl *)segmentedControl viewForSegmentAtIndex:(NSInteger)index {
+    XZSegmentTextItemView *segment = [segmentedControl dequeueReusableSegmentWithReuseIdentifier:kReuseIdentifier forIndex:index];
+    
+    XZSegmentTextItem *model = _titleItems[index];
+    segment.text             = model.text;
+    segment.edgeInsets       = model.edgeInsets;
+    
+    return segment;
+}
+
+- (CGSize)segmentedControl:(XZSegmentedControl *)segmentedControl sizeForSegmentAtIndex:(NSInteger)index {
+    return _titleItems[index].size;
+}
+
+@end
+
+
+@implementation XZSegmentedControl (XZSegmentIndicatorView)
+
+- (void)setIndicatorView:(XZSegmentIndicatorView *)indicatorView {
+    if (_indicatorView != indicatorView) {
+        _indicatorView = indicatorView;
+        [_indicatorView prepareForSegmentedControl:self];
+    }
 }
 
 @end

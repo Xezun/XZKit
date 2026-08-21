@@ -420,6 +420,8 @@
             [self didShowView:_view->_currentView animated:NO];
             
             [self sendPendingViewToReuse];
+            
+            XZPageCall(_view->_didTurnPage, _view, 0, size.width);
         }
         return;
     }
@@ -854,6 +856,8 @@
             
             _view->_pendingView = nil;
             _view->_pendingPage = NSNotFound;
+            
+            XZPageCall(_view->_didTurnPage, _view, 0, size.height);
         }
         return;
     }

@@ -7,6 +7,7 @@
 
 #import "XZSegmentIndicatorView.h"
 #import "XZSegmentedControl.h"
+#import "XZSegmentLineIndicatorView.h"
 
 @implementation XZSegmentIndicatorView
 
@@ -23,12 +24,10 @@
 }
 
 - (void)applyLayoutAttributes:(XZSegmentIndicatorLayoutAttributes *)layoutAttributes {
-    // Indicator 的角色是 DecorationView 由 UIKit 创建，只能在此方法中获取实例对象。
-    XZSegmentedControl * const segmentedControl = layoutAttributes.layout.segmentedControl;
-    if (segmentedControl->_indicatorView != self) {
-        segmentedControl->_indicatorView = self;
-        [self prepareForSegmentedControl:segmentedControl];
-    }
+    [super applyLayoutAttributes:layoutAttributes];
+    // 获取指示器实例对象，以在更新指示器样式时，能直接修改指示器。
+    // Indicator 的角色是 DecorationView 由 UIKit 创建，无法直接获取。
+    [layoutAttributes.layout.segmentedControl setIndicatorView:self];
 }
 
 @end

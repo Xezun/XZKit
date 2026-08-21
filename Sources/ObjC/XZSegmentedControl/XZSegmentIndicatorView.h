@@ -54,7 +54,10 @@ NS_SWIFT_NAME(XZSegmentedControl.IndicatorView)
 ///   - layoutAttributes: 指示器的布局信息
 + (void)layout:(XZSegmentLayout *)layout prepareLayoutAttributes:(XZSegmentIndicatorLayoutAttributes *)layoutAttributes;
 
+/// 在此方法中配置指示器外观。
 - (void)prepareForSegmentedControl:(XZSegmentedControl *)segmentedControl;
+
+- (void)applyLayoutAttributes:(UICollectionViewLayoutAttributes *)layoutAttributes NS_REQUIRES_SUPER;
 
 @end
 
@@ -63,7 +66,6 @@ NS_SWIFT_NAME(XZSegmentedControl.IndicatorLayoutAttributes)
 @interface XZSegmentIndicatorLayoutAttributes : UICollectionViewLayoutAttributes
 @property (nonatomic, weak, XZ_READONLY) XZSegmentLayout *layout;
 @property (nonatomic, XZ_READONLY) CGFloat interactiveTransition;
-//@property (nonatomic, XZ_READONLY) BOOL animated;
 @end
 
 NS_ASSUME_NONNULL_END

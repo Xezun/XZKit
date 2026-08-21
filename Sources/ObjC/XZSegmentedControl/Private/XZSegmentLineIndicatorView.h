@@ -21,4 +21,8 @@ NS_ASSUME_NONNULL_BEGIN
 @interface XZSegmentNoteLineIndicatorView : XZSegmentLineIndicatorView
 @end
 
+@interface XZSegmentedControl (XZSegmentIndicatorView)
+- (void)setIndicatorView:(XZSegmentIndicatorView *)indicatorView;
+@end
+
 NS_ASSUME_NONNULL_END

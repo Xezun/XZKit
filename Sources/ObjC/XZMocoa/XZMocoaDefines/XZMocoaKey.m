@@ -14,8 +14,11 @@ XZMocoaKey const XZMocoaKeyContentStatus    = @"contentStatus";
 XZMocoaKey const XZMocoaKeyStatus           = @"status";
 XZMocoaKey const XZMocoaKeyIsChecked        = @"isChecked";
 XZMocoaKey const XZMocoaKeyIsEnabled        = @"isEnabled";
+XZMocoaKey const XZMocoaKeyIsEmpty          = @"isEmpty";
 XZMocoaKey const XZMocoaKeyValue            = @"value";
 XZMocoaKey const XZMocoaKeyName             = @"name";
+XZMocoaKey const XZMocoaKeyType             = @"type";
+XZMocoaKey const XZMocoaKeyList             = @"list";
 XZMocoaKey const XZMocoaKeyIcon             = @"icon";
 XZMocoaKey const XZMocoaKeyColor            = @"color";
 
@@ -69,8 +72,9 @@ XZMocoaKey const XZMocoaKeyConfirm              = @"confirm";
 XZMocoaKey const XZMocoaKeySubmit               = @"submit";
 XZMocoaKey const XZMocoaKeyCancel               = @"cancel";
 XZMocoaKey const XZMocoaKeyClick                = @"click";
-XZMocoaKey const XZMocoaKeyValueChanged         = @"valueChanged";
-XZMocoaKey const XZMocoaKeyContentChanged       = @"contentChanged";
+
+XZMocoaKey const XZMocoaKeyValueDidChange       = @"valueDidChange";
+XZMocoaKey const XZMocoaKeyContentDidChange     = @"contentDidChange";
 XZMocoaKey const XZMocoaKeyNavigationBackAction = @"navigationBackAction";
 XZMocoaKey const XZMocoaKeyNavigationMoreAction = @"navigationMoreAction";
 XZMocoaKey const XZMocoaKeyViewWillAppear       = @"viewWillAppear";

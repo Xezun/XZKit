@@ -37,10 +37,6 @@
     }
 }
 
-- (void)darkModeChanged {
-    [self updateInteractiveTransition:self.isSelected ? 1.0 : 0];
-}
-
 - (void)setText:(NSString *)text {
     _textLabel.text = text;
 }
@@ -56,18 +52,12 @@
     }
 }
 
-- (void)setSelected:(BOOL)selected {
-    [super setSelected:selected];
-
-    [self updateInteractiveTransition:selected ? 1.0 : 0];
-}
-
 - (void)updateInteractiveTransition:(CGFloat)interactiveTransition {
     [super updateInteractiveTransition:interactiveTransition];
     
     _interactiveTransition = interactiveTransition;
     
-    XZSegmentedControl * const segmentedControl = _segmentedControl;
+    XZSegmentedControl * const segmentedControl = self.segmentedControl;
 
     [UIView performWithoutAnimation:^{
         if (interactiveTransition == 0) {
@@ -80,7 +70,7 @@
             _textLabel.font = segmentedControl.selectedTitleFont;
         } else {
             // 文本颜色动画
-            UITraitCollection * const traitCollection = self.traitCollection;
+            UITraitCollection * const traitCollection    = self.traitCollection;
             UIColor           * const titleColor         = [segmentedControl.titleColor resolvedColorWithTraitCollection:traitCollection];
             UIColor           * const selectedTitleColor = [segmentedControl.selectedTitleColor resolvedColorWithTraitCollection:traitCollection];
             
@@ -95,25 +85,7 @@
             CGFloat const alpha = alpha0 + (alpha1 - alpha0) * interactiveTransition;
             _textLabel.textColor = [UIColor colorWithRed:red green:green blue:blue alpha:alpha];
             
-            // 文本大小动画
-            UIFont *titleFont = segmentedControl.titleFont;
-            UIFont *selectedTitleFont = segmentedControl.selectedTitleFont;
-            
-            CGFloat const pointSize0 = titleFont.pointSize;
-            CGFloat const pointSize1 = selectedTitleFont.pointSize;
-            
-            if (pointSize0 != pointSize1) {
-                // 以最大字体为基准做缩放动画。
-                if (_textLabel.font.pointSize != pointSize1) {
-                    _textLabel.font = [_textLabel.font fontWithSize:pointSize1];
-                }
-                
-                if ([titleFont.familyName isEqualToString:selectedTitleFont.familyName]) {
-                    CGFloat const pointSize = (pointSize0 + (pointSize1 - pointSize0) * interactiveTransition);
-                    CGFloat const scale = pointSize / pointSize1;
-                    _textLabel.transform = CGAffineTransformMakeScale(scale, scale);
-                }
-            }
+            // 文本字体大小缩放效果不理想
         }
     }];
 

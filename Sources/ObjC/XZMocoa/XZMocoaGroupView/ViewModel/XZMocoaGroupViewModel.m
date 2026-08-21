@@ -921,7 +921,7 @@ typedef void(^XZMocoaGroupDelayedUpdates)(__kindof XZMocoaViewModel *self);
     // 调用 db.save() 会触发当前代理方法。
     // 如果在 batchUpdates 中调用的 db.save() 方法，那么下面的批量更新会被拦截。
     [self performBatchUpdates:^{ } completion:^(BOOL finished) {
-        [self sendEventsWithKey:XZMocoaKeyContentChanged value:nil];
+        [self sendEventsWithKey:XZMocoaKeyContentDidChange value:nil];
     }];
 }
 

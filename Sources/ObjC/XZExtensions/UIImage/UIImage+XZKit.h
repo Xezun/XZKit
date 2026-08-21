@@ -47,7 +47,10 @@ NS_ASSUME_NONNULL_BEGIN
 
 @property (nonatomic, readonly) NSInteger xz_repeatCount NS_SWIFT_NAME(repeatCount);
 
-+ (nullable instancetype)xz_systemImageNamed:(NSString *)name color:(UIColor *)color pointSize:(CGFloat)pointSize weight:(UIImageSymbolWeight)weight scale:(UIImageSymbolScale)scale NS_SWIFT_NAME(init(systemName:color:pointSize:weight:scale:));
++ (nullable instancetype)xz_systemImageNamed:(NSString *)name color:(nullable UIColor *)color pointSize:(CGFloat)pointSize weight:(UIImageSymbolWeight)weight scale:(UIImageSymbolScale)scale NS_SWIFT_NAME(init(systemName:color:pointSize:weight:scale:));
++ (nullable instancetype)xz_systemImageNamed:(NSString *)name color:(nullable UIColor *)color pointSize:(CGFloat)pointSize NS_SWIFT_NAME(init(systemName:color:pointSize:));
++ (nullable instancetype)xz_systemImageNamed:(NSString *)name color:(nullable UIColor *)color NS_SWIFT_NAME(init(systemName:color:));
++ (nullable instancetype)xz_systemImageNamed:(NSString *)name pointSize:(CGFloat)pointSize NS_SWIFT_NAME(init(systemName:pointSize:));
 
 @end
 

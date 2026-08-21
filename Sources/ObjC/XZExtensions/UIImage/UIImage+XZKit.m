@@ -209,12 +209,38 @@ static const void * const _repeatCount = &_repeatCount;
 }
 
 + (instancetype)xz_systemImageNamed:(NSString *)name color:(UIColor *)color pointSize:(CGFloat)pointSize weight:(UIImageSymbolWeight)weight scale:(UIImageSymbolScale)scale {
-    UIImageSymbolConfiguration *configuration1 = [UIImageSymbolConfiguration configurationWithPointSize:pointSize weight:weight scale:scale];
+    UIImageSymbolConfiguration *configuration1 = nil;
+    if (pointSize > 0) {
+        configuration1 = [UIImageSymbolConfiguration configurationWithPointSize:pointSize weight:weight scale:scale];
+    } else {
+        configuration1 = [UIImageSymbolConfiguration configurationWithWeight:weight];
+        configuration1 = [configuration1 configurationByApplyingConfiguration:[UIImageSymbolConfiguration configurationWithScale:scale]];
+    }
+    
     if (@available(iOS 15.0, *)) {
+        if (color == nil) {
+            return [UIImage systemImageNamed:name withConfiguration:configuration1];
+        }
         UIImageSymbolConfiguration *configuration2 = [UIImageSymbolConfiguration configurationWithHierarchicalColor:color];
         return [UIImage systemImageNamed:name withConfiguration:[configuration1 configurationByApplyingConfiguration:configuration2]];
     }
+    
+    if (color == nil) {
+        return [UIImage systemImageNamed:name];
+    }
     return [[UIImage systemImageNamed:name] imageWithTintColor:color renderingMode:(UIImageRenderingModeAlwaysOriginal)];
+}
+
++ (instancetype)xz_systemImageNamed:(NSString *)name color:(UIColor *)color pointSize:(CGFloat)pointSize {
+    return [self xz_systemImageNamed:name color:color pointSize:pointSize weight:(UIImageSymbolWeightRegular) scale:(UIImageSymbolScaleDefault)];
+}
+
++ (instancetype)xz_systemImageNamed:(NSString *)name pointSize:(CGFloat)pointSize {
+    return [self xz_systemImageNamed:name color:nil pointSize:pointSize weight:(UIImageSymbolWeightRegular) scale:(UIImageSymbolScaleDefault)];
+}
+
++ (instancetype)xz_systemImageNamed:(NSString *)name color:(UIColor *)color {
+    return [self xz_systemImageNamed:name color:color pointSize:0 weight:(UIImageSymbolWeightRegular) scale:(UIImageSymbolScaleDefault)];
 }
 
 @end

@@ -20,6 +20,8 @@ NS_ASSUME_NONNULL_BEGIN
 NS_SWIFT_NAME(XZSegmentedControl.ItemView)
 @interface XZSegmentItemView : UICollectionViewCell
 
+@property (nonatomic, weak, XZ_READONLY) XZSegmentedControl *segmentedControl;
+
 /// 交互式转场通知转场进度。
 /// @discussion
 /// 进度值范围为 [0, 1] 之间，其中 0 表示未选中，值 1 表示已选中。

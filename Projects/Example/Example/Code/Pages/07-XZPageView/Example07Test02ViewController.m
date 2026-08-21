@@ -39,7 +39,7 @@
     self.segmentedControl.backgroundColor = UIColor.systemBackgroundColor;
     self.segmentedControl.indicatorSize   = CGSizeMake(20, 4.0);
     self.segmentedControl.indicatorColor  = UIColor.systemRedColor;
-    self.segmentedControl.titleSpacing    = 10;
+    self.segmentedControl.itemSpacing     = 10;
     self.segmentedControl.headerView      = [[UIView alloc] initWithFrame:CGRectMake(0, 0, 10, 10)];
     self.segmentedControl.footerView      = [[UIView alloc] initWithFrame:CGRectMake(0, 0, 10, 10)];
     self.segmentedControl.titles          = self.titles;

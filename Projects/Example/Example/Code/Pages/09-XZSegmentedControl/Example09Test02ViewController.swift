@@ -32,12 +32,12 @@ class Example09Test02ViewController: UIViewController, UIScrollViewDelegate {
         }
         segmentedControl.orientation       = .vertical
         segmentedControl.titleEdgeInsets   = .init(top: 10, leading: 10, bottom: 10, trailing: 10)
+        segmentedControl.itemSpacing      = 10;
         segmentedControl.indicatorSize     = CGSize.init(width: 3.0, height: 20.0)
-        segmentedControl.indicatorColor    = .systemRed
-        segmentedControl.titles            = self.titles
-        segmentedControl.titleSpacing      = 10;
         segmentedControl.titleFont         = .systemFont(ofSize: 17.0)
         segmentedControl.selectedTitleFont = .boldSystemFont(ofSize: 18.0)
+        segmentedControl.indicatorColor    = .systemRed
+        segmentedControl.titles            = self.titles
         segmentedControl.addTarget(self, action: #selector(segmentedControlValueChanged(_:)), for: .valueChanged)
     }
     

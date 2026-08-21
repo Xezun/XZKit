@@ -45,11 +45,20 @@ extension XZMocoaKey {
     public static var isEnabled: XZMocoaKey {
         return XZMocoaKey.__isEnabled
     }
+    public static var isEmpty: XZMocoaKey {
+        return XZMocoaKey.__isEmpty
+    }
     public static var value: XZMocoaKey {
         return XZMocoaKey.__value
     }
     public static var name: XZMocoaKey {
         return XZMocoaKey.__name
+    }
+    public static var type: XZMocoaKey {
+        return XZMocoaKey.__type
+    }
+    public static var list: XZMocoaKey {
+        return XZMocoaKey.__list
     }
     public static var icon: XZMocoaKey {
         return XZMocoaKey.__icon
@@ -192,11 +201,11 @@ extension XZMocoaKey {
     public static var click: XZMocoaKey {
         return XZMocoaKey.__click
     }
-    public static var valueChanged: XZMocoaKey {
-        return XZMocoaKey.__valueChanged
+    public static var valueDidChange: XZMocoaKey {
+        return XZMocoaKey.__valueDidChange
     }
-    public static var contentChanged: XZMocoaKey {
-        return XZMocoaKey.__contentChanged
+    public static var contentDidChange: XZMocoaKey {
+        return XZMocoaKey.__contentDidChange
     }
     public static var navigationBackAction: XZMocoaKey {
         return XZMocoaKey.__navigationBackAction
@@ -257,11 +266,20 @@ extension XZMocoaKey {
     public var isEnabled: XZMocoaKey {
         return XZMocoaKey(self.rawValue + "." + XZMocoaKey.__isEnabled.rawValue)
     }
+    public var isEmpty: XZMocoaKey {
+        return XZMocoaKey(self.rawValue + "." + XZMocoaKey.__isEmpty.rawValue)
+    }
     public var value: XZMocoaKey {
         return XZMocoaKey(self.rawValue + "." + XZMocoaKey.__value.rawValue)
     }
     public var name: XZMocoaKey {
         return XZMocoaKey(self.rawValue + "." + XZMocoaKey.__name.rawValue)
+    }
+    public var type: XZMocoaKey {
+        return XZMocoaKey(self.rawValue + "." + XZMocoaKey.__type.rawValue)
+    }
+    public var list: XZMocoaKey {
+        return XZMocoaKey(self.rawValue + "." + XZMocoaKey.__list.rawValue)
     }
     public var icon: XZMocoaKey {
         return XZMocoaKey(self.rawValue + "." + XZMocoaKey.__icon.rawValue)
@@ -404,11 +422,11 @@ extension XZMocoaKey {
     public var click: XZMocoaKey {
         return XZMocoaKey(self.rawValue + "." + XZMocoaKey.__click.rawValue)
     }
-    public var valueChanged: XZMocoaKey {
-        return XZMocoaKey(self.rawValue + "." + XZMocoaKey.__valueChanged.rawValue)
+    public var valueDidChange: XZMocoaKey {
+        return XZMocoaKey(self.rawValue + "." + XZMocoaKey.__valueDidChange.rawValue)
     }
-    public var contentChanged: XZMocoaKey {
-        return XZMocoaKey(self.rawValue + "." + XZMocoaKey.__contentChanged.rawValue)
+    public var contentDidChange: XZMocoaKey {
+        return XZMocoaKey(self.rawValue + "." + XZMocoaKey.__contentDidChange.rawValue)
     }
     public var navigationBackAction: XZMocoaKey {
         return XZMocoaKey(self.rawValue + "." + XZMocoaKey.__navigationBackAction.rawValue)
