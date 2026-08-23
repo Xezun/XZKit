@@ -28,6 +28,8 @@ XZMocoaKey const XZMocoaKeyStopAnimating    = @"stopAnimating";
 XZMocoaKey const XZMocoaKeyIsRefreshing     = @"isRefreshing";
 XZMocoaKey const XZMocoaKeyIsRequesting     = @"isRequesting";
 XZMocoaKey const XZMocoaKeyIsLoading        = @"isLoading";
+XZMocoaKey const XZMocoaKeyDate             = @"date";
+XZMocoaKey const XZMocoaKeyTime             = @"time";
 
 XZMocoaKey const XZMocoaKeyIsHidden         = @"isHidden";
 XZMocoaKey const XZMocoaKeyAlpha            = @"alpha";
@@ -70,6 +72,8 @@ XZMocoaKey const XZMocoaKeyConfirm              = @"confirm";
 XZMocoaKey const XZMocoaKeySubmit               = @"submit";
 XZMocoaKey const XZMocoaKeyCancel               = @"cancel";
 XZMocoaKey const XZMocoaKeyClick                = @"click";
+XZMocoaKey const XZMocoaKeyFrom                 = @"from";
+XZMocoaKey const XZMocoaKeyTo                   = @"to";
 
 XZMocoaKey const XZMocoaKeyValueDidChange           = @"valueDidChange";
 XZMocoaKey const XZMocoaKeyContentDidChange         = @"contentDidChange";

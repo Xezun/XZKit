@@ -51,6 +51,8 @@ FOUNDATION_EXPORT XZMocoaKey const XZMocoaKeyStopAnimating  NS_REFINED_FOR_SWIFT
 FOUNDATION_EXPORT XZMocoaKey const XZMocoaKeyIsRefreshing   NS_REFINED_FOR_SWIFT;
 FOUNDATION_EXPORT XZMocoaKey const XZMocoaKeyIsRequesting   NS_REFINED_FOR_SWIFT;
 FOUNDATION_EXPORT XZMocoaKey const XZMocoaKeyIsLoading      NS_REFINED_FOR_SWIFT;
+FOUNDATION_EXPORT XZMocoaKey const XZMocoaKeyDate           NS_REFINED_FOR_SWIFT;
+FOUNDATION_EXPORT XZMocoaKey const XZMocoaKeyTime           NS_REFINED_FOR_SWIFT;
 
 // MARK: - UIView
 
@@ -122,6 +124,10 @@ FOUNDATION_EXPORT XZMocoaKey const XZMocoaKeyConfirm              NS_REFINED_FOR
 FOUNDATION_EXPORT XZMocoaKey const XZMocoaKeySubmit               NS_REFINED_FOR_SWIFT;
 FOUNDATION_EXPORT XZMocoaKey const XZMocoaKeyCancel               NS_REFINED_FOR_SWIFT;
 FOUNDATION_EXPORT XZMocoaKey const XZMocoaKeyClick                NS_REFINED_FOR_SWIFT;
+/// 起始时间选择操作。比如时间区间选择器的开始时间。
+FOUNDATION_EXPORT XZMocoaKey const XZMocoaKeyFrom                 NS_REFINED_FOR_SWIFT;
+/// 结束时间选择操作。比如时间区间选择器的结束时间。
+FOUNDATION_EXPORT XZMocoaKey const XZMocoaKeyTo                   NS_REFINED_FOR_SWIFT;
 
 // MARK: - 事件
 

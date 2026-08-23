@@ -137,6 +137,12 @@ extension XZMocoaKey {
     public static var isLoading: XZMocoaKey {
         return XZMocoaKey.__isLoading
     }
+    public static var date: XZMocoaKey {
+        return XZMocoaKey.__date
+    }
+    public static var time: XZMocoaKey {
+        return XZMocoaKey.__time
+    }
 
     public static var isOn: XZMocoaKey {
         return XZMocoaKey.__isOn
@@ -180,6 +186,12 @@ extension XZMocoaKey {
     }
     public static var click: XZMocoaKey {
         return XZMocoaKey.__click
+    }
+    public static var from: XZMocoaKey {
+        return XZMocoaKey.__from
+    }
+    public static var to: XZMocoaKey {
+        return XZMocoaKey.__to
     }
     public static var valueDidChange: XZMocoaKey {
         return XZMocoaKey.__valueDidChange
@@ -358,6 +370,12 @@ extension XZMocoaKey {
     public var isLoading: XZMocoaKey {
         return XZMocoaKey(self.rawValue + "." + XZMocoaKey.__isLoading.rawValue)
     }
+    public var date: XZMocoaKey {
+        return XZMocoaKey(self.rawValue + "." + XZMocoaKey.__date.rawValue)
+    }
+    public var time: XZMocoaKey {
+        return XZMocoaKey(self.rawValue + "." + XZMocoaKey.__time.rawValue)
+    }
     
     public var isOn: XZMocoaKey {
         return XZMocoaKey(self.rawValue + "." + XZMocoaKey.__isOn.rawValue)
@@ -401,6 +419,12 @@ extension XZMocoaKey {
     }
     public var click: XZMocoaKey {
         return XZMocoaKey(self.rawValue + "." + XZMocoaKey.__click.rawValue)
+    }
+    public var from: XZMocoaKey {
+        return XZMocoaKey(self.rawValue + "." + XZMocoaKey.__from.rawValue)
+    }
+    public var to: XZMocoaKey {
+        return XZMocoaKey(self.rawValue + "." + XZMocoaKey.__to.rawValue)
     }
     public var valueDidChange: XZMocoaKey {
         return XZMocoaKey(self.rawValue + "." + XZMocoaKey.__valueDidChange.rawValue)
