@@ -128,9 +128,9 @@
                     break;
                 }
                 case XZStdcTypeChar: {
-                    char charValue = 0;
-                    // 使用 getValue:size: 而不是 charValue 取值，是为了避免没有使用 NSNumber 而是直接使用 NSValue 封装的标量值
-                    [(NSValue *)value getValue:&charValue size:sizeof(char)];
+                    // 使用 NSNumber 来处理标量值。
+                    // 不再兼容 NSValue 象，因为在 Swift 中 4 字节 UInt32 类型的属性，通过 KVC 取值，是按 8 字节存储的。
+                    char const charValue = [(NSNumber *)value charValue];
                     switch (_numberOfArguments) {
                         case 1:
                             ((void (*)(id, SEL, char))objc_msgSend)(_target, _action, charValue);
@@ -147,8 +147,7 @@
                     break;
                 }
                 case XZStdcTypeUnsignedChar: {
-                    unsigned char ucharValue = 0;
-                    [(NSValue *)value getValue:&ucharValue size:sizeof(unsigned char)];
+                    unsigned char const ucharValue = [(NSNumber *)value unsignedCharValue];
                     switch (_numberOfArguments) {
                         case 1:
                             ((void (*)(id, SEL, unsigned char))objc_msgSend)(_target, _action, ucharValue);
@@ -165,8 +164,7 @@
                     break;
                 }
                 case XZStdcTypeInt: {
-                    int intValue = 0;
-                    [(NSValue *)value getValue:&intValue size:sizeof(int)];
+                    int const intValue = [(NSNumber *)value intValue];
                     switch (_numberOfArguments) {
                         case 1:
                             ((void (*)(id, SEL, int))objc_msgSend)(_target, _action, intValue);
@@ -183,8 +181,7 @@
                     break;
                 }
                 case XZStdcTypeUnsignedInt: {
-                    unsigned int uintValue = 0;
-                    [(NSValue *)value getValue:&uintValue size:sizeof(unsigned int)];
+                    unsigned int const uintValue = [(NSNumber *)value unsignedIntValue];
                     switch (_numberOfArguments) {
                         case 1:
                             ((void (*)(id, SEL, unsigned int))objc_msgSend)(_target, _action, uintValue);
@@ -201,8 +198,7 @@
                     break;
                 }
                 case XZStdcTypeShort: {
-                    short shortValue = 0;
-                    [(NSValue *)value getValue:&shortValue size:sizeof(short)];
+                    short const shortValue = [(NSNumber *)value shortValue];
                     switch (_numberOfArguments) {
                         case 1:
                             ((void (*)(id, SEL, short))objc_msgSend)(_target, _action, shortValue);
@@ -219,8 +215,7 @@
                     break;
                 }
                 case XZStdcTypeUnsignedShort: {
-                    unsigned short ushortValue = 0;
-                    [(NSValue *)value getValue:&ushortValue size:sizeof(unsigned short)];
+                    unsigned short const ushortValue = [(NSNumber *)value unsignedShortValue];
                     switch (_numberOfArguments) {
                         case 1:
                             ((void (*)(id, SEL, unsigned short))objc_msgSend)(_target, _action, ushortValue);
@@ -237,8 +232,7 @@
                     break;
                 }
                 case XZStdcTypeLong: {
-                    long longValue = 0;
-                    [(NSValue *)value getValue:&longValue size:sizeof(long)];
+                    long const longValue = [(NSNumber *)value longValue];
                     switch (_numberOfArguments) {
                         case 1:
                             ((void (*)(id, SEL, long))objc_msgSend)(_target, _action, longValue);
@@ -255,8 +249,7 @@
                     break;
                 }
                 case XZStdcTypeUnsignedLong: {
-                    unsigned long ulongValue = 0;
-                    [(NSValue *)value getValue:&ulongValue size:sizeof(unsigned long)];
+                    unsigned long const ulongValue = [(NSNumber *)value unsignedLongValue];
                     switch (_numberOfArguments) {
                         case 1:
                             ((void (*)(id, SEL, unsigned long))objc_msgSend)(_target, _action, ulongValue);
@@ -273,8 +266,7 @@
                     break;
                 }
                 case XZStdcTypeLongLong: {
-                    long long longlongValue = 0;
-                    [(NSValue *)value getValue:&longlongValue size:sizeof(long long)];
+                    long long const longlongValue = [(NSNumber *)value longLongValue];
                     switch (_numberOfArguments) {
                         case 1:
                             ((void (*)(id, SEL, long long))objc_msgSend)(_target, _action, longlongValue);
@@ -291,8 +283,7 @@
                     break;
                 }
                 case XZStdcTypeUnsignedLongLong: {
-                    unsigned long long ulonglongValue = 0;
-                    [(NSValue *)value getValue:&ulonglongValue size:sizeof(unsigned long long)];
+                    unsigned long long const ulonglongValue = [(NSNumber *)value unsignedLongLongValue];
                     switch (_numberOfArguments) {
                         case 1:
                             ((void (*)(id, SEL, unsigned long long))objc_msgSend)(_target, _action, ulonglongValue);
@@ -309,8 +300,7 @@
                     break;
                 }
                 case XZStdcTypeFloat: {
-                    float floatValue = 0;
-                    [(NSValue *)value getValue:&floatValue size:sizeof(float)];
+                    float const floatValue = [(NSNumber *)value floatValue];
                     switch (_numberOfArguments) {
                         case 1:
                             ((void (*)(id, SEL, float))objc_msgSend)(_target, _action, floatValue);
@@ -327,8 +317,7 @@
                     break;
                 }
                 case XZStdcTypeDouble: {
-                    double doubleValue = 0;
-                    [(NSValue *)value getValue:&doubleValue size:sizeof(double)];
+                    double const doubleValue = [(NSNumber *)value doubleValue];
                     switch (_numberOfArguments) {
                         case 1:
                             ((void (*)(id, SEL, double))objc_msgSend)(_target, _action, doubleValue);
@@ -345,8 +334,7 @@
                     break;
                 }
                 case XZStdcTypeLongDouble: {
-                    long double longDoubleValue = 0;
-                    [(NSValue *)value getValue:&longDoubleValue size:sizeof(long double)];
+                    long double const longDoubleValue = [(NSNumber *)value doubleValue];
                     switch (_numberOfArguments) {
                         case 1:
                             ((void (*)(id, SEL, long double))objc_msgSend)(_target, _action, longDoubleValue);
@@ -363,8 +351,7 @@
                     break;
                 }
                 case XZStdcTypeBool: {
-                    BOOL boolValue = 0;
-                    [(NSValue *)value getValue:&boolValue size:sizeof(BOOL)];
+                    BOOL const boolValue = [(NSNumber *)value boolValue];
                     switch (_numberOfArguments) {
                         case 1:
                             ((void (*)(id, SEL, BOOL))objc_msgSend)(_target, _action, boolValue);

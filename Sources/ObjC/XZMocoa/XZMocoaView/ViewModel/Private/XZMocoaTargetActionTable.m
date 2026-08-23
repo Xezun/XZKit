@@ -136,11 +136,7 @@
             [targetActions removeObjectAtIndex:idx]; // 删除 target 已销毁的监听
             return;
         }
-        @try {
-            [targetAction sender:sender sendActionForKey:key value:value];
-        } @catch (NSException *exception) {
-            NSLog(@"[XZMocoa][sendActionForKey] target=%@, key=%@, value=%@, %@", object_getClass(target), key, value, exception);
-        }
+        [targetAction sender:sender sendActionForKey:key value:value];
     }];
 }
 
