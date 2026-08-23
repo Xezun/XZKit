@@ -134,8 +134,12 @@
         id  const target = targetAction.target;
         if (target == nil) {
             [targetActions removeObjectAtIndex:idx]; // 删除 target 已销毁的监听
-        } else {
+            return;
+        }
+        @try {
             [targetAction sender:sender sendActionForKey:key value:value];
+        } @catch (NSException *exception) {
+            NSLog(@"[XZMocoa][sendActionForKey] target=%@, key=%@, value=%@, %@", object_getClass(target), key, value, exception);
         }
     }];
 }

@@ -21,6 +21,13 @@ XZMocoaKey const XZMocoaKeyType             = @"type";
 XZMocoaKey const XZMocoaKeyList             = @"list";
 XZMocoaKey const XZMocoaKeyIcon             = @"icon";
 XZMocoaKey const XZMocoaKeyColor            = @"color";
+XZMocoaKey const XZMocoaKeySubtitle         = @"subtitle";
+XZMocoaKey const XZMocoaKeyDetailText       = @"detailText";
+XZMocoaKey const XZMocoaKeyStartAnimating   = @"startAnimating";
+XZMocoaKey const XZMocoaKeyStopAnimating    = @"stopAnimating";
+XZMocoaKey const XZMocoaKeyIsRefreshing     = @"isRefreshing";
+XZMocoaKey const XZMocoaKeyIsRequesting     = @"isRequesting";
+XZMocoaKey const XZMocoaKeyIsLoading        = @"isLoading";
 
 XZMocoaKey const XZMocoaKeyIsHidden         = @"isHidden";
 XZMocoaKey const XZMocoaKeyAlpha            = @"alpha";
@@ -48,15 +55,6 @@ XZMocoaKey const XZMocoaKeyImageURL         = @"imageURL";
 XZMocoaKey const XZMocoaKeyTitle            = @"title";
 XZMocoaKey const XZMocoaKeyAttributedTitle  = @"attributedTitle";
 
-XZMocoaKey const XZMocoaKeySubtitle         = @"subtitle";
-XZMocoaKey const XZMocoaKeyDetailText       = @"detailText";
-
-XZMocoaKey const XZMocoaKeyStartAnimating   = @"startAnimating";
-XZMocoaKey const XZMocoaKeyStopAnimating    = @"stopAnimating";
-XZMocoaKey const XZMocoaKeyIsRefreshing     = @"isRefreshing";
-XZMocoaKey const XZMocoaKeyIsRequesting     = @"isRequesting";
-XZMocoaKey const XZMocoaKeyIsLoading        = @"isLoading";
-
 XZMocoaKey const XZMocoaKeyIsOn             = @"isOn";
 
 XZMocoaKey const XZMocoaKeyIsTranslucent      = @"isTranslucent";
@@ -73,22 +71,17 @@ XZMocoaKey const XZMocoaKeySubmit               = @"submit";
 XZMocoaKey const XZMocoaKeyCancel               = @"cancel";
 XZMocoaKey const XZMocoaKeyClick                = @"click";
 
-XZMocoaKey const XZMocoaKeyValueDidChange       = @"valueDidChange";
-XZMocoaKey const XZMocoaKeyContentDidChange     = @"contentDidChange";
-XZMocoaKey const XZMocoaKeyNavigationBackAction = @"navigationBackAction";
-XZMocoaKey const XZMocoaKeyNavigationMoreAction = @"navigationMoreAction";
-XZMocoaKey const XZMocoaKeyViewWillAppear       = @"viewWillAppear";
-XZMocoaKey const XZMocoaKeyViewDidAppear        = @"viewDidAppear";
-XZMocoaKey const XZMocoaKeyViewWillDisappear    = @"viewWillDisappear";
-XZMocoaKey const XZMocoaKeyViewDidDisappear     = @"viewDidDisappear";
-
-// for XZMocoaView
+XZMocoaKey const XZMocoaKeyValueDidChange           = @"valueDidChange";
+XZMocoaKey const XZMocoaKeyContentDidChange         = @"contentDidChange";
+XZMocoaKey const XZMocoaKeyNavigationBackAction     = @"navigationBackAction";
+XZMocoaKey const XZMocoaKeyNavigationMoreAction     = @"navigationMoreAction";
+XZMocoaKey const XZMocoaKeyViewWillAppear           = @"viewWillAppear";
+XZMocoaKey const XZMocoaKeyViewDidAppear            = @"viewDidAppear";
+XZMocoaKey const XZMocoaKeyViewWillDisappear        = @"viewWillDisappear";
+XZMocoaKey const XZMocoaKeyViewDidDisappear         = @"viewDidDisappear";
+XZMocoaKey const XZMocoaKeyHeaderDidBeginRefreshing = @"headerDidBeginRefreshing";
+XZMocoaKey const XZMocoaKeyFooterDidBeginRefreshing = @"footerDidBeginRefreshing";
 
 XZMocoaKey const XZMocoaKeyModel      = @"model";
 XZMocoaKey const XZMocoaKeyIdentifier = @"identifier";
 XZMocoaKey const XZMocoaKeyViewModel  = @"viewModel";
-
-// for XZMocoaGroupView
-
-XZMocoaKey const XZMocoaKeyHeaderDidBeginRefreshing = @"headerDidBeginRefreshing";
-XZMocoaKey const XZMocoaKeyFooterDidBeginRefreshing = @"footerDidBeginRefreshing";
