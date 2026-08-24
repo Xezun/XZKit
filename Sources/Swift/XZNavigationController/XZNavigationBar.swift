@@ -214,7 +214,7 @@ import UIKit
 
         let frameMinY = self.frame.minY
         if frameMinY >= 0 {
-            backgroundImageView.frame = CGRect.init(x: bounds.minY, y: -frameMinY, width: bounds.width, height: bounds.height + frameMinY)
+            backgroundImageView.frame = CGRect.init(x: bounds.minX, y: -frameMinY, width: bounds.width, height: bounds.height + frameMinY)
         }
     }
 
