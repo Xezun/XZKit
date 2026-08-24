@@ -35,21 +35,17 @@ NSComparisonResult XZVersionCompare(NSString *version1, NSString *version2) {
     }
     NSArray<NSString *> * const subversions1 = [version1 componentsSeparatedByString:@"."];
     NSArray<NSString *> * const subversions2 = [version2 componentsSeparatedByString:@"."];
-    for (NSInteger i = 0; i < subversions1.count; i++) {
-        if (i < subversions2.count) {
-            switch ([subversions1[0] compare:subversions2[0]]) {
-                case NSOrderedSame:
-                    continue;
-                case NSOrderedAscending:
-                    return NSOrderedAscending;
-                case NSOrderedDescending:
-                    return NSOrderedDescending;
-            }
-        } else {
-            return NSOrderedDescending;
+    NSInteger const count = MAX(subversions1.count, subversions2.count);
+    for (NSInteger i = 0; i < count; i++) {
+        // 缺失的版本段按 0 处理，例如 1.0 与 1.0.0 相等。
+        NSString * const subversion1 = (i < subversions1.count ? subversions1[i] : @"0");
+        NSString * const subversion2 = (i < subversions2.count ? subversions2[i] : @"0");
+        NSComparisonResult const result = [subversion1 compare:subversion2 options:NSNumericSearch];
+        if (result != NSOrderedSame) {
+            return result;
         }
     }
-    return NSOrderedAscending;
+    return NSOrderedSame;
 }
 
 NSTimeInterval XZTimestamp(void) {
