@@ -153,7 +153,7 @@ static const void * const _secureContentDisplay = &_secureContentDisplay;
         
         NSString * const padding = [@"" stringByPaddingToLength:(hierarchy * 4) withString:@"┃   " startingAtIndex:0];
         
-        NSString *description = [NSString stringWithFormat:@"%@%@ %@<%p, %@>", padding, mark, clsName, self, content];;
+        NSString *description = [NSString stringWithFormat:@"%@%@ %@<%p, %@>", padding, mark, clsName, subview, content];
         [descriptionsM addObject:description];
         
         return YES;
