@@ -164,7 +164,7 @@ extension SwiftSyntax.AttributeListSyntax {
 extension VariableDeclSyntax {
     
     /// 是否为只读属性。
-   public var isReadyOnlyProperty: Bool {
+   public var isReadOnlyProperty: Bool {
         if self.bindings.count != 1 {
             return false
         }
@@ -174,11 +174,8 @@ extension VariableDeclSyntax {
         if let block = expression.accessorBlock {
             switch block.accessors {
             case .accessors(let list):
-                if list.count == 1 {
-                    // 只有一个 get 访问点
-                    return list.first!.accessorSpecifier.tokenKind == .keyword(.get)
-                }
-                return list.count == 1
+                // 只有一个 get 访问点，才认为是只读属性。
+                return list.count == 1 && list.first!.accessorSpecifier.tokenKind == .keyword(.get)
             case .getter:
                 return true
             }
