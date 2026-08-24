@@ -194,7 +194,7 @@ static const void * const _secureContentDisplay = &_secureContentDisplay;
 - (NSString *)xz_contentForDescription {
     UIImage * const image = self.image;
     if (image == nil) {
-        [NSString stringWithFormat:@"%@, image(nil)", super.xz_contentForDescription];
+        return [NSString stringWithFormat:@"%@, image(nil)", super.xz_contentForDescription];
     }
     CGSize const size = image.size;
     return [NSString stringWithFormat:@"%@, image(%.2f, %.2f, @%.0fx)", super.xz_contentForDescription,  size.width, size.height, image.scale];
