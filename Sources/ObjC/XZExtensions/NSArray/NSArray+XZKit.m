@@ -125,6 +125,12 @@
         return;
     }
     
+    // 如果新旧数组为同一对象，那么所有元素的位置保持不变。
+    if (oldArray == self) {
+        [remains addIndexesInRange:NSMakeRange(0, oldCount)];
+        return;
+    }
+    
     // 先假定旧数组中的元素都被删除了，然后在遍历时去掉还保留着的。
     [deletes addIndexesInRange:NSMakeRange(0, oldCount)];
     
@@ -133,19 +139,32 @@
         return;
     }
     
-    // 遍历新数组的元素，然后在旧数组中查找该元素：
+    // 构建「旧数组元素 -> 首次出现的索引」查找表，将逐元素查找从 O(n) 线性搜索降为 O(1)。
+    // 使用 NSMapTable：只 retain 不 copy 键对象，且按 -hash/-isEqual: 匹配，与 -indexOfObject: 语义一致；
+    // 重复元素仅记录首个索引，与 -indexOfObject: 返回首个匹配位置的行为保持一致。
+    NSMapTable<id, NSNumber *> * const oldIndexes = [[NSMapTable alloc] initWithKeyOptions:(NSMapTableStrongMemory) valueOptions:(NSMapTableStrongMemory) capacity:oldCount];
+    for (NSInteger oldIndex = 0; oldIndex < oldCount; oldIndex++) {
+        id const oldItem = oldArray[oldIndex];
+        if ([oldIndexes objectForKey:oldItem] == nil) {
+            [oldIndexes setObject:@(oldIndex) forKey:oldItem];
+        }
+    }
+    
+    // 遍历新数组的元素，然后通过查找表获取其在旧数组中的索引：
     // 1、找到了，比较元素在新旧数组的中索引，添加到 remains 或 changes 集合中；
     // 2、没找到，则表示该元素为新添加的，添加到 inserts 集合中。
+    NSMutableIndexSet * const matchedIndexes = [NSMutableIndexSet indexSet];
     for (NSInteger newIndex = 0; newIndex < newCount; newIndex++) {
-        id        const newItem  = self[newIndex];
-        NSInteger const oldIndex = [oldArray indexOfObject:newItem];
-
-        if (oldIndex == NSNotFound) {
+        id         const newItem = self[newIndex];
+        NSNumber * const number  = [oldIndexes objectForKey:newItem];
+        
+        if (number == nil) {
             // 在 oldArray 中没有，说明是新添加的。
             [inserts addIndex:newIndex];
         } else {
-            // 元素没有被删除，从 deletes 中移除。
-            [deletes removeIndex:oldIndex];
+            NSInteger const oldIndex = number.integerValue;
+            // 元素没有被删除，先记录，最后统一从 deletes 中移除。
+            [matchedIndexes addIndex:oldIndex];
             // 比较索引是否发生了变化
             if (newIndex == oldIndex) {
                 [remains addIndex:oldIndex];
@@ -154,6 +173,7 @@
             }
         }
     }
+    [deletes removeIndexes:matchedIndexes];
 }
 
 @end

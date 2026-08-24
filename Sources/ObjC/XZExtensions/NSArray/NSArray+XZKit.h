@@ -70,7 +70,8 @@ NS_ASSUME_NONNULL_BEGIN
 
 /// 将当前数组与另一数组进行比较，分析当前数组与目标数组之间的差异。
 /// @discussion 原生提供了`-differenceFromArray:`差异分析方法，但是本方法并非原生方法的间接调用。
-/// @discussion 使用 `-isEqual:` 方法判断元素是否相同。
+/// @discussion 使用 `-isEqual:` 方法判断元素是否相同，元素需正确实现 `-hash`/`-isEqual:` 方法（相等的元素必须有相同的哈希值）。
+/// @note 内部通过哈希表索引旧数组元素，时间复杂度为 O(n + m)。
 /// @param oldArray 被比较的数组，原始数组
 /// @param inserts 新添加的元素在@b当前数组@c中的`index`
 /// @param deletes 被删除的元素在@b原始数组@c中的`index`
