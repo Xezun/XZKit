@@ -281,6 +281,7 @@ extension XZContentStatus {
     /// 复制内容状态值。
     public init(_ contentStatus: XZContentStatus, isInteractive: Bool = true) {
         let configuration = Configuration.init(contentStatus.configuration)
+        configuration.isInteractive = isInteractive
         self.init(rawValue: contentStatus.rawValue, configuration: configuration)
     }
     
