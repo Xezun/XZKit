@@ -21,8 +21,9 @@
 // 最大公约数。GreatestCommonDivisor
 static inline NSInteger GreatestCommonDivisor(NSInteger a, NSInteger b) {
     while (a != 0) {
+        NSInteger const temp = a;
         a = b % a;
-        b = a;
+        b = temp;
     }
     return b;
 };
