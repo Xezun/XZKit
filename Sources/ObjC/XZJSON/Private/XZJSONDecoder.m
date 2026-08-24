@@ -827,7 +827,7 @@ FOUNDATION_STATIC_INLINE BOOL XZJSONModelDecodePropertyFallback(id const _Untain
                     return YES;
                 }
             }
-            break;
+            return NO;
         }
         case XZJSONCocoaClassNSDate: {
             NSDate *date = NSDateFromJSONValue(JSONValue);
@@ -854,6 +854,8 @@ FOUNDATION_STATIC_INLINE BOOL XZJSONModelDecodePropertyFallback(id const _Untain
             return NO;
         }
     }
+    
+    return NO;
 }
 
 void XZJSONModelDecodeProperty(id const _Untain model, XZJSONProperty * const _Untain property, id _Nonnull _Untain rawValue) {
