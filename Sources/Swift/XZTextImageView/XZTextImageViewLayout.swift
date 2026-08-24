@@ -247,8 +247,8 @@ extension XZTextImageView.Layout {
             textView.frame = CGRect(
                 x: layoutRect.minX + (layoutRect.width - textWidth) * 0.5 + textInsets.leading,
                 y: layoutRect.minY + (layoutRect.height - textHeight) * 0.5 + textInsets.top,
-                width: textSize.width - textInsets.trailing - textInsets.leading,
-                height: textSize.height - textInsets.top - textInsets.bottom
+                width: textWidth - textInsets.trailing - textInsets.leading,
+                height: textHeight - textInsets.top - textInsets.bottom
             )
         }
     }
