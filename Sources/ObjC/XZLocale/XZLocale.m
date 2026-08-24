@@ -33,10 +33,12 @@ static BOOL _isInAppLanguagePreferencesSupported  = NO;
 }
 
 + (XZLocaleLanguage)preferredLanguage {
-    if (_preferredLanguage == nil) {
-        _preferredLanguage = self.effectiveLanguage;
+    @synchronized (self) {
+        if (_preferredLanguage == nil) {
+            _preferredLanguage = self.effectiveLanguage;
+        }
+        return _preferredLanguage;
     }
-    return _preferredLanguage;
 }
 
 + (void)setPreferredLanguage:(XZLocaleLanguage)newValue {
@@ -45,16 +47,18 @@ static BOOL _isInAppLanguagePreferencesSupported  = NO;
         return;
     }
     
-    // 新旧值比较
-    if ([_preferredLanguage isEqualToString:newValue]) {
-        return;
+    @synchronized (self) {
+        // 新旧值比较
+        if ([_preferredLanguage isEqualToString:newValue]) {
+            return;
+        }
+        
+        // 判断是否支持目标语言
+        if (![self.supportedLanguages containsObject:newValue]) {
+            return;
+        }
+        _preferredLanguage = newValue.copy;
     }
-    
-    // 判断是否支持目标语言
-    if (![self.supportedLanguages containsObject:newValue]) {
-        return;
-    }
-    _preferredLanguage = newValue.copy;
     
     // 如果没有开启应用内语言设置，不保存值。
     if (self.supportsInAppLanguagePreferences) {
