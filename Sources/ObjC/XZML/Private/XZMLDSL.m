@@ -21,7 +21,7 @@ typedef struct XZMLDSLContext {
 static inline NSUInteger XZMLDSLContextSearchASCII(XZMLDSLContext *context) {
     NSUInteger index = context->index;
     // 在 UTF-8 编码中 ASCII 字符是首位为 0 的字节
-    while (context->UTF8String[index] & 0b10000000) {
+    while (index < context->length && (context->UTF8String[index] & 0b10000000)) {
         index += 1;
     }
     return index;
