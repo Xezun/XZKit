@@ -710,7 +710,7 @@ FOUNDATION_STATIC_INLINE id NSDataFromJSONValue(id const _Nonnull _Untain JSONVa
         NSString *data = ((NSDictionary *)JSONValue)[@"data"];
         if ([encoding isKindOfClass:NSString.class] && [data isKindOfClass:NSString.class]) {
             if ([encoding isEqualToString:@"base64"]) {
-                return [[NSMutableData alloc] initWithBase64EncodedString:JSONValue options:(NSDataBase64DecodingIgnoreUnknownCharacters)];
+                return [[NSMutableData alloc] initWithBase64EncodedString:data options:(NSDataBase64DecodingIgnoreUnknownCharacters)];
             }
             if ([encoding isEqualToString:@"hex"]) {
                 return [NSMutableData xz_dataWithHexEncodedString:data];
