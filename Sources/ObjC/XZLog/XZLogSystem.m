@@ -49,12 +49,16 @@
     if (!_isEnabled) {
         return OS_LOG_DISABLED;
     }
-    if (_oslog == nil) {
-        const char * const subsystem = [_domain cStringUsingEncoding:NSISOLatin1StringEncoding];
-        const char * const category = [_name cStringUsingEncoding:NSISOLatin1StringEncoding];
-        _oslog = os_log_create(subsystem, category);
+    // 避免多线程并发时重复创建。
+    @synchronized (self) {
+        if (_oslog == nil) {
+            // 使用 UTF8 编码，Latin1 编码在包含非 Latin1 字符时会返回 NULL。
+            const char * const subsystem = [_domain UTF8String];
+            const char * const category = [_name UTF8String];
+            _oslog = os_log_create(subsystem, category);
+        }
+        return _oslog;
     }
-    return _oslog;
 }
 
 @end
