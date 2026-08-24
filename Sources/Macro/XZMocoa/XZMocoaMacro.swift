@@ -435,6 +435,12 @@ extension XZMocoaMacro: MemberMacro {
                                 }
                             }
                         } else {
+                            // 校验宏指定的 key 数量与方法参数数量一致，否则监听映射不正确。
+                            let parameterCount = methodDecl.signature.parameterClause.parameters.count
+                            guard macroParameters.count == parameterCount else {
+                                XZMacroDiagnose(context, node: macroAttribute, message: "@mocoa: @bind 指定的 key 数量（\(macroParameters.count)）与方法参数数量（\(parameterCount)）不一致", severity: .warning)
+                                break
+                            }
                             for parameter in methodDecl.signature.parameterClause.parameters {
                                 bindSelector += parameter.firstName.text + ":"
                             }
