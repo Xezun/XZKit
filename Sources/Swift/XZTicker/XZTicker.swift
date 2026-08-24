@@ -193,7 +193,7 @@ extension XZTickable {
     
     public var currentTime: TimeInterval {
         get { return ticker.currentTime }
-        set { ticker.currentTime = currentTime }
+        set { ticker.currentTime = newValue }
     }
     
     public var isPaused: Bool {
