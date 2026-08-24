@@ -449,7 +449,7 @@ FOUNDATION_STATIC_INLINE id XZURLMakeQueryValueWithSet(NSSet *aSet) {
 #if CGFLOAT_IS_DOUBLE
     return [[self stringValueForQueryField:name] doubleValue];
 #else
-    return [[self stringValueForName:name] floatValue];
+    return [[self stringValueForQueryField:name] floatValue];
 #endif
 }
 
