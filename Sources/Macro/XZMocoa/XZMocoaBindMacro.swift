@@ -55,6 +55,18 @@ public struct XZMocoaBindMacro {
         throw XZMacroError(message: "@bind: 无法解析属性类型")
     }
     
+    /// 解析形如 `.title` 或 `XZMocoaKey.title` 的成员访问表达式字符串，返回末段成员名。
+    fileprivate static func memberName(from value: String) throws -> String {
+        if let index = value.lastIndex(of: ".") {
+            let name = String(value[value.index(after: index)...])
+            guard !name.isEmpty else {
+                throw XZMacroError(message: "@bind: 无法解析键名表达式 \(value)")
+            }
+            return name
+        }
+        throw XZMacroError(message: "@bind: 无法解析键名表达式 \(value)")
+    }
+    
     /// 解析视图中的 @bind 宏，返回待绑定的键和方法。
     public static func viewBindArguments(forMacro macroNode: SwiftSyntax.AttributeSyntax, forVariable property: (name: String, type: String)) throws -> (selector: String, key: String) {
         // 获取宏参数
@@ -75,7 +87,7 @@ public struct XZMocoaBindMacro {
             if let key = argument0.representedLiteralValue {
                 vmkey = key;
             } else {
-                vmkey = String(argument0.value.dropFirst())
+                vmkey = try Self.memberName(from: argument0.value)
             }
             
             
@@ -111,8 +123,8 @@ public struct XZMocoaBindMacro {
             if let key = argument0.representedLiteralValue {
                 vmkey = key
             } else {
-                // XZMocoaKey 枚举：".title" → "title"
-                vmkey = String(argument0.value.dropFirst())
+                // XZMocoaKey 枚举：".title" / "XZMocoaKey.title" → "title"
+                vmkey = try Self.memberName(from: argument0.value)
             }
 
             let argument1 = macroArguments[1]
@@ -124,7 +136,7 @@ public struct XZMocoaBindMacro {
                 guard let title = argument0.label else {
                     throw XZMacroError(message: "@bind: 与 for: 配套的第一参数必须带标签（如 title:、image:）")
                 }
-                let state = argument1.value.dropFirst()
+                let state = try Self.memberName(from: argument1.value)
                 selector = "#selector(\(property.type).__xz_bind_\(title)_\(state)(_:))"
             case "selector":
                 selector = argument1.value
