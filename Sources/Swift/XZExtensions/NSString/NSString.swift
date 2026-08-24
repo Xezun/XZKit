@@ -187,7 +187,7 @@ extension String {
                 return "%\(index)$@"
             }
             
-            guard arguments[index] is CVarArg else {
+            guard arguments[index - 1] is CVarArg else {
                 return "%\(index)$@"
             }
             
