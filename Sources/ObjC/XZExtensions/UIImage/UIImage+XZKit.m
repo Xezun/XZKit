@@ -143,16 +143,16 @@ static const void * const _repeatCount = &_repeatCount;
     NSTimeInterval duration = 0; // GIF 时长。
     for (NSInteger i = 0; i < imageCount; i++) {
         @autoreleasepool {
-            XZGIFImageFrame * const frame = (^XZGIFImageFrame *(NSArray *frames, CGImageSourceRef imageSource, NSInteger i){
+            XZGIFImageFrame * const frame = (^XZGIFImageFrame *(CGImageSourceRef imageSource, NSInteger i){
                 CGImageRef frameImageRef = CGImageSourceCreateImageAtIndex(imageSource, i, NULL);
-                if (frameImageRef) {
-                    XZGIFImageFrame *frame = [[XZGIFImageFrame alloc] init];
-                    frame.image = [UIImage imageWithCGImage:frameImageRef];
-                    CFRelease(frameImageRef);
-                    frameImageRef = nil;
+                if (frameImageRef == NULL) {
+                    return nil;
                 }
-                return frames.lastObject;
-            })(frames, imageSource, i);
+                XZGIFImageFrame *frame = [[XZGIFImageFrame alloc] init];
+                frame.image = [UIImage imageWithCGImage:frameImageRef];
+                CFRelease(frameImageRef);
+                return frame;
+            })(imageSource, i);
             
             if (frame == nil) {
                 continue;
@@ -187,8 +187,7 @@ static const void * const _repeatCount = &_repeatCount;
     
     NSMutableArray<UIImage *> * const images = [NSMutableArray arrayWithCapacity:(NSUInteger)(duration * 40)];
 
-    for (NSInteger i = 0; i < imageCount; i++) {
-        XZGIFImageFrame * const frame = frames[i];
+    for (XZGIFImageFrame * const frame in frames) {
         NSInteger const count = frame.delay / divisor;
         for (NSInteger j = 0; j < count; j++) {
             [images addObject:frame.image];
