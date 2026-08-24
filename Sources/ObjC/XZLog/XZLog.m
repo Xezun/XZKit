@@ -82,6 +82,8 @@ NSArray<NSString *> *XZLogv(const char *file, const int line, const char *functi
     NSArray * const messages = XZLog(file, line, function, system, format, arguments);
     va_end(arguments);
     return messages;
+#else
+    return nil;
 #endif
 }
 
@@ -92,6 +94,8 @@ NSArray<NSString *> *XZLogv(const char *file, const int line, const char *functi
     NSArray * const messages = XZLog(file, line, function, XZLogSystem.defaultSystem, format, arguments);
     va_end(arguments);
     return messages;
+#else
+    return nil;
 #endif
 }
 
@@ -102,6 +106,8 @@ NSString *XZLogs(XZLogSystem *system, NSString *file, NSInteger line, NSString *
     }
     file = [file lastPathComponent];
     return [NSString stringWithFormat:@"⌘ %@ ⌘ %@(%ld) ⌘ %@ ⌘", system.name, file, (long)line, function];
+#else
+    return @"";
 #endif
 }
 
