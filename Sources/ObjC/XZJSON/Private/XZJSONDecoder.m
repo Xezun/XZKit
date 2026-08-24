@@ -610,7 +610,10 @@ FOUNDATION_STATIC_INLINE NSDictionary * _Nullable NSDictionaryFromJSONValue(id c
         if ([JSONValue isKindOfClass:NSDictionary.class]) {
             NSMutableDictionary *dictM = [NSMutableDictionary new];
             [((NSDictionary *)JSONValue) enumerateKeysAndObjectsUsingBlock:^(NSString *oneKey, id oneValue, BOOL *stop) {
-                dictM[oneKey] = XZJSONDecodeObject(oneValue, elementClass);
+                id const model = XZJSONDecodeObject(oneValue, elementClass);
+                if (model) {
+                    dictM[oneKey] = model;
+                }
             }];
             return dictM;
         }
@@ -619,7 +622,10 @@ FOUNDATION_STATIC_INLINE NSDictionary * _Nullable NSDictionaryFromJSONValue(id c
             NSMutableDictionary *dictM = [NSMutableDictionary dictionary];
             [(NSArray *)JSONValue enumerateObjectsUsingBlock:^(id  _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
                 NSString *key = [NSString stringWithFormat:@"%ld", (long)idx];
-                dictM[key] = XZJSONDecodeObject(obj, elementClass);
+                id const model = XZJSONDecodeObject(obj, elementClass);
+                if (model) {
+                    dictM[key] = model;
+                }
             }];
             return dictM;
         }
