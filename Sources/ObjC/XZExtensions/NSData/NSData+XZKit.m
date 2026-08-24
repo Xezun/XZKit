@@ -21,7 +21,8 @@ static unsigned char const XZHexEncodingTable[2][16] = {
     
     NSRange range;
     UInt8 bit1 = 0, bit2 = 0;
-    for (NSInteger i = 0, index = 0; index < length; i += 2, index += 1) {
+    NSUInteger index = 0;
+    for (NSInteger i = 0; index < length; i += 2, index += 1) {
         range = [hexEncodedString rangeOfComposedCharacterSequenceAtIndex:i];
         if (range.length > 1) {
             break; // 单个字符超过2字节，肯定不是十六进制字符
@@ -39,7 +40,7 @@ static unsigned char const XZHexEncodingTable[2][16] = {
         buffer[index] = (bit1 << 4) + bit2;
     }
     
-    return [[self alloc] initWithBytesNoCopy:buffer length:length];
+    return [[self alloc] initWithBytesNoCopy:buffer length:index];
 }
 
 - (NSString *)xz_hexEncodedString {
