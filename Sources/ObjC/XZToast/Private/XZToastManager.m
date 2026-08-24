@@ -513,7 +513,7 @@
             }
         }
         
-        for (NSInteger index = _waitingToShowTasks.count - 1; index > 0; index--) {
+        for (NSInteger index = _waitingToShowTasks.count - 1; index >= 0; index--) {
             XZToastTask * const waitingTask = _waitingToShowTasks[index];
             if (waitingTask.toast == toast) {
                 [waitingTask cancel];
