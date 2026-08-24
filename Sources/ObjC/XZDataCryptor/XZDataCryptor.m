@@ -160,6 +160,9 @@ static inline CCOptions CCOptionsMake(XZDataCryptorPadding padding, XZDataCrypto
     size_t bufferSize = data.length + algorithm.blockSize;
     CCOptions  const options = CCOptionsMake(padding, mode);
     NSString * const vector  = algorithm.vector;
+    // 密钥长度应以 UTF8 编码后的字节数为准，而非 UTF16 编码单元数。
+    char const * const keyBytes  = algorithm.key.UTF8String;
+    size_t     const keyLength = (keyBytes == NULL ? 0 : strlen(keyBytes));
     
     CCCryptorStatus status = kCCBufferTooSmall;
     while (status == kCCBufferTooSmall) {
@@ -167,8 +170,8 @@ static inline CCOptions CCOptionsMake(XZDataCryptorPadding padding, XZDataCrypto
         status = CCCrypt((operation), // 加密/解密
                          (CCAlgorithm)algorithm.rawValue,            // 算法
                          options,                        // 模式与填充方式，只支持 ECB 、CBC（noPadding/PKCS7Padding）。
-                         algorithm.key.UTF8String,       // 密钥
-                         algorithm.key.length,           // 密钥长度
+                         keyBytes,                       // 密钥
+                         keyLength,                      // 密钥长度
                          vector.UTF8String,              // 初始化向量
                          data.bytes,                     // 输入的数据
                          data.length,                    // 数据长度
@@ -245,7 +248,7 @@ static CCCryptorRef XZDataCryptorContextMake(XZDataCryptorAlgorithm *algorithm, 
     CCPadding   const pad = padding;
     const char *const vet = vector.UTF8String;
     const char *const key = algorithm.key.UTF8String;
-    size_t      const kel = (size_t)algorithm.key.length;
+    size_t      const kel = (key == NULL ? 0 : strlen(key));
     const char *const twk = tweak.UTF8String;
     size_t      const twl = tweak.length;
     int         const rnd = (int)algorithm.rounds;
