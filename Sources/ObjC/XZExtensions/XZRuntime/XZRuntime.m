@@ -547,5 +547,5 @@ BOOL xz_objc_msgSendSuper_bool(id receiver, Class receiverClass, SEL selector, i
         .receiver = receiver,
         .super_class = class_getSuperclass(receiverClass)
     };
-    return ((BOOL (*)(struct objc_super *, SEL, id, id))objc_msgSendSuper)(&_super, selector, param1, param1);
+    return ((BOOL (*)(struct objc_super *, SEL, id, id))objc_msgSendSuper)(&_super, selector, param1, param2);
 }
