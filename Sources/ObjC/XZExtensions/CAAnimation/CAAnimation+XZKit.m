@@ -20,11 +20,10 @@
         [NSValue valueWithCATransform3D:CATransform3DMakeTranslation(+x, y, z)],
         [NSValue valueWithCATransform3D:CATransform3DIdentity]
     ];
-    animation.keyTimes = @[@(0.25), @(0.75), @(1.0)];
+    animation.keyTimes = @[@(0.0), @(0.75), @(1.0)];
     animation.timingFunctions = @[
         [CAMediaTimingFunction functionWithName:kCAMediaTimingFunctionEaseOut],
-        [CAMediaTimingFunction functionWithName:kCAMediaTimingFunctionEaseInEaseOut],
-        [CAMediaTimingFunction functionWithName:kCAMediaTimingFunctionEaseIn]
+        [CAMediaTimingFunction functionWithName:kCAMediaTimingFunctionEaseInEaseOut]
     ];
     animation.repeatCount = 3;
     animation.duration = 0.2;
