@@ -959,7 +959,7 @@ void XZJSONModelDecodeProperty(id const _Untain model, XZJSONProperty * const _U
         case XZStdcTypeDouble: {
             double newValue = 0;
             if (NSDoubleFromJSONValue(rawValue, &newValue)) {
-                ((void (*)(id, SEL, long long))objc_msgSend)((id)model, property->_setter, newValue);
+                ((void (*)(id, SEL, double))objc_msgSend)((id)model, property->_setter, newValue);
                 return;
             }
             break;
