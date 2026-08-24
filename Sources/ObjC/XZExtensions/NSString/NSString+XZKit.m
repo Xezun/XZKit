@@ -26,7 +26,7 @@
 }
 
 - (NSInteger)xz_integerValue:(NSInteger)defaultValue base:(int)base {
-    return NSIntegerMake(self, defaultValue);
+    return NSIntegerMake(self, base, defaultValue);
 }
 
 + (instancetype)xz_initWithBytes:(void *)bytes range:(NSRange)range encoding:(NSStringEncoding)encoding {
