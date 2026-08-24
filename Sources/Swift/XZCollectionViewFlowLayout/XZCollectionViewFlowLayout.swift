@@ -205,7 +205,7 @@ private class XZCollectionViewSectionAttributes {
         didSet { invalidateLayout() }
     }
     
-    /// 行对齐方式，默认 .leading ，代理方法的返回值优先。
+    /// 行对齐方式，默认 .justified ，代理方法的返回值优先。
     @objc open var lineAlignment: LineAlignment = .justified {
         didSet { invalidateLayout() }
     }
