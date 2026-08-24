@@ -1354,8 +1354,8 @@ private class XZNavigationCustomizableTabBar: UITabBar {
 }
 
 /// 记录 navigationBar 或 tabBar 是否锁定 frame/center/bounds
-@MainActor private var _isFrozen = 0
+nonisolated(unsafe) private var _isFrozen = 0
 /// 记录视图使用子类实现“定制化导航”支持功能的类的定制化子类。
-@MainActor private var _navigationCustomizableClass = 0;
+nonisolated(unsafe) private var _navigationCustomizableClass = 0;
 /// 记录导航控制器或控制器是否已经通过“方法交换”实现“定制化导航”支持功能的标记
-@MainActor private var _supportsNavigationCustomization = 0;
+nonisolated(unsafe) private var _supportsNavigationCustomization = 0;

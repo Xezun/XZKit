@@ -127,7 +127,7 @@ extension UIResponder {
 }
 
 /// 保存定制化转场控制器的标记。
-@MainActor private var _transitionController = 0
+nonisolated(unsafe) private var _transitionController = 0
 
 
 // 【开发备忘】

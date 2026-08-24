@@ -130,8 +130,8 @@ extension UINavigationBar {
 }
 
 /// 给原生的导航控制器，添加定制化导航栏属性。
-@MainActor private var _xzNavigationBar = 0
-@MainActor private var _uiNavigationBar = 0
+nonisolated(unsafe) private var _xzNavigationBar = 0
+nonisolated(unsafe) private var _uiNavigationBar = 0
 
 
 

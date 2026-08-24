@@ -404,8 +404,8 @@ extension XZNavigationTransitionController: UIGestureRecognizerDelegate {
 }
 
 /// 记录导航控制器的 delegate 是否已经进行了自定义化。
-@MainActor private var _isCustomized = 0
-@MainActor private var _isObserved = 0
+nonisolated(unsafe) private var _isCustomized = 0
+nonisolated(unsafe) private var _isObserved = 0
 
 // 转场方法调用顺序
 //
