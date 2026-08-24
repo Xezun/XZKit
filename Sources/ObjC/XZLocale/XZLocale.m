@@ -60,7 +60,7 @@ static BOOL _isInAppLanguagePreferencesSupported  = NO;
         _preferredLanguage = newValue.copy;
     }
     
-    // 如果没有开启应用内语言设置，不保存值。
+    // 开启应用内语言设置时，发送语言变更通知。
     if (self.supportsInAppLanguagePreferences) {
         [NSNotificationCenter.defaultCenter postNotificationName:XZLocaleDidChangePreferredLanguageNotification object:self];
     }
