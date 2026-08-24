@@ -48,8 +48,8 @@
     self.viewModel = viewModel;
 }
 
-- (void)prepareForViewModel {
-    [super prepareForViewModel];
+- (void)viewModelDidChange {
+    [super viewModelDidChange];
     
     Example0311ViewModel *viewModel = self.viewModel;
     self.nameLabel.text = viewModel.name;

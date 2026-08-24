@@ -14,8 +14,8 @@
 @dynamic viewModel;
 @synthesize contentView = _contentView;
 
-- (void)prepareForViewModel {
-    [super prepareForViewModel];
+- (void)viewModelDidChange {
+    [super viewModelDidChange];
     [self prepareForModule:self.viewModel.module];
 }
 

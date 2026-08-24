@@ -22,8 +22,8 @@
     self.viewModel = nil;
 }
 
-- (void)prepareForViewModel {
-    [super prepareForViewModel];
+- (void)viewModelDidChange {
+    [super viewModelDidChange];
     
     self.textLabel.text = self.viewModel.model;
 }

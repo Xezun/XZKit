@@ -41,8 +41,8 @@
     return self;
 }
 
-- (void)prepareForViewModel {
-    [super prepareForViewModel];
+- (void)viewModelDidChange {
+    [super viewModelDidChange];
     
     self.textLabel.text = @"Header视图";
     self.detailTextLabel.text = self.viewModel.model;

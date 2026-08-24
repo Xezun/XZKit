@@ -183,7 +183,7 @@ extension XZMocoaMacro: MemberAttributeMacro {
 
 /// 宏 `@mocoa(role)` 的实现：
 /// .vm => 为 @bind 的成员注册 mappingModelKeys 自动监听
-/// .v  => 为 @bind 成员生成 prepareForViewModel 自动绑定
+/// .v  => 为 @bind 成员生成 viewModelDidChange 自动绑定
 /// .m  => 暂不执行任何操作
 extension XZMocoaMacro: MemberMacro {
     
@@ -199,12 +199,12 @@ extension XZMocoaMacro: MemberMacro {
             return [];
             
         case .v:
-            // 判断是否自定义 prepareForViewModel 方法
+            // 判断是否自定义 viewModelDidChange 方法
             for member in classDecl.memberBlock.members {
                 if let methodDecl = member.decl.as(FunctionDeclSyntax.self) {
                     let methodName = methodDecl.name.trimmedDescription
-                    if methodName == "prepareForViewModel" {
-                        XZMacroDiagnose(context, node: methodDecl, message: "@mocoa: 重写 prepareForViewModel 将会绑定实效，请使用 @prepare 标记初始化方法", severity: .warning)
+                    if methodName == "viewModelDidChange" {
+                        XZMacroDiagnose(context, node: methodDecl, message: "@mocoa: 重写 viewModelDidChange 将会绑定实效，请使用 @prepare 标记初始化方法", severity: .warning)
                         return []
                     }
                 }
@@ -231,6 +231,10 @@ extension XZMocoaMacro: MemberMacro {
                         
                         return macroNode
                     });
+                    
+                    if macroNodes.isEmpty {
+                        continue
+                    }
                     
                     do {
                         let string = try XZMocoaBindMacro.viewBindStatements(forMacros: macroNodes, forVariable: variableDecl)
@@ -273,9 +277,10 @@ extension XZMocoaMacro: MemberMacro {
                 }
                 let methodSyntax = try FunctionDeclSyntax(
                     """
-                    override func prepareForViewModel() {
-                        super.prepareForViewModel()
+                    override func viewModelDidChange() {
+                        super.viewModelDidChange()
                         guard let viewModel = self.viewModel else { return }
+                        // prepare
                         \(raw: prepareMethodNames.map({ "\($0)()" }).joined(separator: "\n"))
                     }
                     """
@@ -288,9 +293,10 @@ extension XZMocoaMacro: MemberMacro {
             if prepareMethodNames.isEmpty {
                 let methodSyntax = try FunctionDeclSyntax(
                     """
-                    override func prepareForViewModel() {
-                        super.prepareForViewModel()
+                    override func viewModelDidChange() {
+                        super.viewModelDidChange()
                         guard let viewModel = self.viewModel else { return }
+                        // bind
                         \(raw: bindStatementString)
                     }
                     """
@@ -302,10 +308,12 @@ extension XZMocoaMacro: MemberMacro {
             
             let methodSyntax = try FunctionDeclSyntax(
                 """
-                override func prepareForViewModel() {
-                    super.prepareForViewModel()
+                override func viewModelDidChange() {
+                    super.viewModelDidChange()
                     guard let viewModel = self.viewModel else { return }
+                    // bind
                     \(raw: bindStatementString)
+                    // prepare
                     \(raw: prepareStatementsString)
                 }
                 """

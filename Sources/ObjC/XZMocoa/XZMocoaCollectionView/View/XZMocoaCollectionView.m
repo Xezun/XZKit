@@ -80,8 +80,8 @@
     collectionView.dataSource = self;
 }
 
-- (void)prepareForViewModel {
-    [super prepareForViewModel];
+- (void)viewModelDidChange {
+    [super viewModelDidChange];
     
     self.viewModel.delegate = self;
     

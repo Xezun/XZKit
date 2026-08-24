@@ -37,8 +37,8 @@
     return self;
 }
 
-- (void)prepareForViewModel {
-    [super prepareForViewModel];
+- (void)viewModelDidChange {
+    [super viewModelDidChange];
     
     Example0331Group104CellViewModel *viewModel = self.viewModel;
     self.textLabel.text = @"Cell视图";

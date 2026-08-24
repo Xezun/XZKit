@@ -33,8 +33,8 @@
     // Configure the view for the selected state
 }
 
-- (void)prepareForViewModel {
-    [super prepareForViewModel];
+- (void)viewModelDidChange {
+    [super viewModelDidChange];
     
     Example0330Group102CellViewModel *viewModel = self.viewModel;
     self.textLabel.text = @"Cell视图";

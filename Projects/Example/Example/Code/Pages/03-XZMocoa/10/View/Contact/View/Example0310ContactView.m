@@ -27,8 +27,8 @@
     [super layoutSubviews];
 }
 
-- (void)prepareForViewModel {
-    [super prepareForViewModel];
+- (void)viewModelDidChange {
+    [super viewModelDidChange];
     
     Example0310ContactViewModel *viewModel = self.viewModel;
     

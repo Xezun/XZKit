@@ -37,18 +37,28 @@ NS_SWIFT_UI_ACTOR @protocol XZMocoaView <NSObject>
 /// > 此时，在 -prepareForReuse 方法中，同时清除 viewModel 属性即可。
 @property (nonatomic, strong, nullable) __kindof XZMocoaViewModel *viewModel;
 
-/// 属性 viewModel 的 willSet 监听方法，默认不执行任何操作。
-/// - Parameter newValue: 目标视图模型
-- (void)viewModelWillChange:(nullable XZMocoaViewModel *)newValue;
-
-/// 属性 viewModel 的 didSet 监听方法，默认不执行任何操作。
-/// - Parameter newValue: 目标视图模型
-- (void)viewModelDidChange:(nullable XZMocoaViewModel *)oldValue;
-
-/// 视图使用 viewModel 进行初始化。
+/// 属性 viewModel 的监听方法，默认不执行任何操作。
 ///
-/// 不使用 viewModelDidChange 方法的原因是，视图控制器在设置 viewModel 时，视图可能并没有初始化。
-- (void)prepareForViewModel NS_REQUIRES_SUPER;
+/// 与 willSet 不同，如果视图模型不变，此方法不会被调用。
+///
+/// - Parameter newValue: 目标视图模型
+- (void)willChangeViewModel:(nullable XZMocoaViewModel *)newValue;
+
+/// 属性 viewModel 的监听方法，默认不执行任何操作。
+///
+/// 与 didSet 不同，如果视图模型不变，此方法不会被调用。
+///
+/// 子类重写，应先调用 super 实现。
+/// - 作为 UIView 子类，此方法默认向视图模型发送 ready 消息，以初始化视图模型。
+/// - 作为 UIViewController 子类，如果 view 已经加载，则会立即发送 ready 消息，否则会延迟到 viewDidLoad 时再发送。
+///
+/// - Parameter oldValue: 旧视图模型
+- (void)didChangeViewModel:(nullable XZMocoaViewModel *)oldValue;
+
+/// 视图可在此方法中，使用 viewModel 配置视图。
+///
+/// 给控制器装配视图模型时，此返回会延迟到 viewDidLoad 时再调用，避免影响 view 的生命周期。
+- (void)viewModelDidChange NS_REQUIRES_SUPER;
 
 /// 由 Cocoa MVC 中的控制器分发过来的 Segue 转场事件。
 ///

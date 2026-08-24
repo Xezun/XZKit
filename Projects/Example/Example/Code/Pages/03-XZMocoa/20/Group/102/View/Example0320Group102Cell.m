@@ -42,8 +42,8 @@
     // Configure the view for the selected state
 }
 
-- (void)prepareForViewModel {
-    [super prepareForViewModel];
+- (void)viewModelDidChange {
+    [super viewModelDidChange];
     
     Example0320Group102CellViewModel *viewModel = self.viewModel;
     if (viewModel == nil) {

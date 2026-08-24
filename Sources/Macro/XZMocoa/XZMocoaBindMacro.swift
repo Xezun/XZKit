@@ -146,7 +146,7 @@ public struct XZMocoaBindMacro {
     /// 为被 @bind 标记的属性，生成绑定代码
     public static func viewBindStatements(forMacros macroNodes: [SwiftSyntax.AttributeSyntax], forVariable declaration: VariableDeclSyntax) throws -> String {
         if macroNodes.isEmpty {
-            return ""
+            throw XZMacroError(message: "@bind: 参数错误")
         }
         
         guard let propertyName = declaration.bindings.first?.pattern.as(IdentifierPatternSyntax.self)?.identifier.text else {

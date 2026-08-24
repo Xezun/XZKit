@@ -74,8 +74,8 @@
     _detailBackgroundView.frame = CGRectMake(10.0, 55.0, bounds.size.width - 20.0, 60.0);
 }
 
-- (void)prepareForViewModel {
-    [super prepareForViewModel];
+- (void)viewModelDidChange {
+    [super viewModelDidChange];
     
     XZMocoaGroupPlaceholderViewModel *viewModel = self.viewModel;
     _reasonLabel.text = viewModel.reason;

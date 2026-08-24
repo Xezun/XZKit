@@ -14,15 +14,15 @@
     XZMocoa(@"https://mocoa.xezun.com/examples/22/").section.cell.viewNibClass = self;
 }
 
-- (void)viewModelWillChange:(nullable XZMocoaViewModel *)newValue {
-    [super viewModelWillChange:newValue];
+- (void)willChangeViewModel:(nullable XZMocoaViewModel *)newValue {
+    [super willChangeViewModel:newValue];
     
     [self.viewModel removeTarget:self.textLabel action:nil forKey:nil];
     [self.viewModel removeTarget:self.detailTextLabel action:nil forKey:nil];
 }
 
-- (void)prepareForViewModel {
-    [super prepareForViewModel];
+- (void)viewModelDidChange {
+    [super viewModelDidChange];
     
     [self.viewModel addTarget:self.textLabel action:@selector(setText:) forKey:@"name" value:nil];
     [self.viewModel addTarget:self.detailTextLabel action:@selector(setText:) forKey:@"phone" value:nil];

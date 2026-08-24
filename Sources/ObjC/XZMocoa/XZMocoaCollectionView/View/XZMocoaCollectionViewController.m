@@ -39,8 +39,8 @@
     self.collectionView = contentView;
 }
 
-- (void)prepareForViewModel {
-    [super prepareForViewModel];
+- (void)viewModelDidChange {
+    [super viewModelDidChange];
     
     XZMocoaCollectionViewModel *viewModel = self.viewModel;
     

@@ -144,7 +144,7 @@ XZMocoa 中，一个完整的 MVVM 单元由三个元素组成：
 
 ### 4、Key Target Action（KTA）机制
 
-在 MVVM 设计模式中，View 通过监听 ViewModel 的属性来展示页面。实际上大部分情况下，View 并不需要一直监听，因为大多数 View 只需渲染一次，在 `-prepareForViewModel` 中即可完成。
+在 MVVM 设计模式中，View 通过监听 ViewModel 的属性来展示页面。实际上大部分情况下，View 并不需要一直监听，因为大多数 View 只需渲染一次，在 `-viewModelDidChange` 中即可完成。
 
 对于剩余少量需要监听的事件，使用 `delegate` 需要定义协议，比较繁琐，因此 XZMocoa 设计了 target-action 机制：以 `XZMocoaKey` 字符串作为事件名，View 绑定 key 之后，ViewModel 发送事件时，View 绑定的方法就会被触发。
 
@@ -446,7 +446,7 @@ View 根据 ViewModel 提供的数据进行展示。
 ```objc
 @implementation ExampleCell
 
-- (void)prepareForViewModel {
+- (void)viewModelDidChange {
     ExampleCellViewModel *viewModel = self.viewModel;
 
     self.nameLabel.text = viewModel.name;
@@ -455,7 +455,7 @@ View 根据 ViewModel 提供的数据进行展示。
 @end
 ```
 
-方法 `-prepareForViewModel` 由 `UIResponder` 的 `XZMocoaView` 分类提供，视图遵循 `XZMocoaView` 协议后即可使用。
+方法 `-viewModelDidChange` 由 `UIResponder` 的 `XZMocoaView` 分类提供，视图遵循 `XZMocoaView` 协议后即可使用。
 
 ###### 3.4 注册模块
 
@@ -556,7 +556,7 @@ UIView *view = [UIView viewWithMocoaURL:[NSURL URLWithString:@"https://mocoa.xez
 - `@key` / `@key(_ name:)`：标记 ViewModel 的属性，表明该属性支持 key-target-action 机制。被标记的属性将变为计算属性，并生成带下划线的同名存储属性，属性值改变时自动发送 KTA 事件。
 - `@bind` / `@bind(_ key:)`：单向绑定。用于 ViewModel 时，监听 Model 属性的变化；用于 View 时，监听 ViewModel 的 KTA 事件。
 - `@bind(_ vmKey:selector:)` / `@bind(text key:)` 等：为常用视图属性（text、image、isEnabled 等）提供便捷绑定形式。
-- `@prepare`：标记 View 或 ViewModel 的角色初始化方法（非对象的初始化方法），以取代重写 `-prepare` 或 `-prepareForViewModel` 基类方法。被标记的方法需要使用 `private` 标记，支持多个初始化方法，将按书写顺序执行。
+- `@prepare`：标记 View 或 ViewModel 的角色初始化方法（非对象的初始化方法），以取代重写 `-prepare` 或 `-viewModelDidChange` 基类方法。被标记的方法需要使用 `private` 标记，支持多个初始化方法，将按书写顺序执行。
 - `#mocoa(URL)`：通过模块 URL 获取 `XZMocoaModule` 对象。
 
 ```swift

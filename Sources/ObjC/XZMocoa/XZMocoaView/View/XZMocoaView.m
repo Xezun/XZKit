@@ -48,15 +48,15 @@ static const void * const _context = &_context;
     [XZMocoaContext contextForView:self].viewModel = newValue;
 }
 
-- (void)viewModelWillChange:(XZMocoaViewModel *)newValue {
+- (void)willChangeViewModel:(XZMocoaViewModel *)newValue {
     
 }
 
-- (void)viewModelDidChange:(XZMocoaViewModel *)oldValue {
+- (void)didChangeViewModel:(XZMocoaViewModel *)oldValue {
     
 }
 
-- (void)prepareForViewModel {
+- (void)viewModelDidChange {
     
 }
 
@@ -109,13 +109,12 @@ static const void * const _context = &_context;
     [self.viewModel prepareForSegue:segue sender:sender];
 }
 
-- (void)viewModelDidChange:(XZMocoaViewModel *)oldValue {
-    [super viewModelDidChange:oldValue];
-    [self prepareForViewModel];
+- (void)didChangeViewModel:(XZMocoaViewModel *)oldValue {
+    [self viewModelDidChange];
 }
 
-- (void)prepareForViewModel {
-    [super prepareForViewModel];
+- (void)viewModelDidChange {
+    [super viewModelDidChange];
     [self.viewModel ready];
 }
 
@@ -153,15 +152,15 @@ static const void * const _context = &_context;
     }
 }
 
-- (void)viewModelDidChange:(XZMocoaViewModel *)oldValue {
-    [super viewModelDidChange:oldValue];
+- (void)didChangeViewModel:(XZMocoaViewModel *)oldValue {
+    [super didChangeViewModel:oldValue];
     if (self.isViewLoaded) {
-        [self prepareForViewModel];
+        [self viewModelDidChange];
     }
 }
 
-- (void)prepareForViewModel {
-    [super prepareForViewModel];
+- (void)viewModelDidChange {
+    [super viewModelDidChange];
     [self.viewModel ready];
 }
 
@@ -170,12 +169,12 @@ static const void * const _context = &_context;
 }
 
 - (void)xz_mocoa_override_viewDidLoad {
-    [self prepareForViewModel];
+    [self viewModelDidChange];
 }
 
 - (void)xz_mocoa_exchange_viewDidLoad {
     [self xz_mocoa_exchange_viewDidLoad];
-    [self prepareForViewModel];
+    [self viewModelDidChange];
 }
 
 // 不太可能
@@ -585,7 +584,7 @@ static const void * const _context = &_context;
         return;
     }
     
-    [_view viewModelWillChange:newValue];
+    [_view willChangeViewModel:newValue];
     
     // 解除 oldValue 与当前视图的绑定关系
     [self detach:oldValue];
@@ -596,7 +595,7 @@ static const void * const _context = &_context;
     // view 与 viewModel 一对一关系
     [self attach:newValue];
     
-    [_view viewModelDidChange:oldValue];
+    [_view didChangeViewModel:oldValue];
 }
 
 - (void)attach:(XZMocoaViewModel *)viewModel {
