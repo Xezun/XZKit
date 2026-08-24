@@ -342,7 +342,7 @@ FOUNDATION_STATIC_INLINE id XZURLMakeQueryValueWithSet(NSSet *aSet) {
         } else if ([value isKindOfClass:NSSet.class]) {
             self.queryValues[field] = XZURLMakeQueryValueWithSet(value);
         } else {
-            self.queryValues[field] = value;
+            self.queryValues[field] = XZURLMakeQueryValue(value);
         }
     } else if ([oldValue isKindOfClass:NSMutableArray.class]) {
         if (value == nil) {
@@ -356,7 +356,7 @@ FOUNDATION_STATIC_INLINE id XZURLMakeQueryValueWithSet(NSSet *aSet) {
                 [oldValue addObject:XZURLMakeQueryValue(object)];
             }
         } else {
-            [oldValue addObject:value];
+            [oldValue addObject:XZURLMakeQueryValue(value)];
         }
     } else {
         if (value == nil) {
@@ -382,7 +382,7 @@ FOUNDATION_STATIC_INLINE id XZURLMakeQueryValueWithSet(NSSet *aSet) {
                 self.queryValues[field] = items;
             }
         } else {
-            self.queryValues[field] = [NSMutableArray arrayWithObjects:oldValue, value, nil];
+            self.queryValues[field] = [NSMutableArray arrayWithObjects:XZURLMakeQueryValue(oldValue), XZURLMakeQueryValue(value), nil];
         }
     }
     
