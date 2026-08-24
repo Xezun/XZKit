@@ -431,7 +431,7 @@ XZMLReadingOptions XZMLAttributeSecurityParser(const XZMLParserContext context, 
             NSInteger  const repeat = values[1].integerValue;
             
             // 重复次数默认值：替换符为单字符，默认重复次数与文本长度相同；替换符为多字符，默认重复次数为 1 次
-            if (isnan(repeat) || repeat <= 0) {
+            if (repeat <= 0) {
                 switch (mark.length) {
                     case 0:
                         context.elementAttributes[XZMLSecurityMarkAttributeName] = @"*";
