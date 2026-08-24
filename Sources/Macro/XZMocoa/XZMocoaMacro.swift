@@ -204,7 +204,7 @@ extension XZMocoaMacro: MemberMacro {
                 if let methodDecl = member.decl.as(FunctionDeclSyntax.self) {
                     let methodName = methodDecl.name.trimmedDescription
                     if methodName == "viewModelDidChange" {
-                        XZMacroDiagnose(context, node: methodDecl, message: "@mocoa: 重写 viewModelDidChange 将会绑定实效，请使用 @prepare 标记初始化方法", severity: .warning)
+                        XZMacroDiagnose(context, node: methodDecl, message: "@mocoa: 重写 viewModelDidChange 将会绑定失效，请使用 @prepare 标记初始化方法", severity: .warning)
                         return []
                     }
                 }
