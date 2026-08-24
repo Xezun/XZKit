@@ -11,7 +11,7 @@ UIEdgeInsets const UIEdgeInsetsNull = (UIEdgeInsets){INFINITY, INFINITY, INFINIT
 CGSize       const CGSizeNull       = (CGSize){INFINITY, INFINITY};
 
 BOOL UIEdgeInsetsIsNull(UIEdgeInsets insets) {
-    return isinf(insets.top) || isinf(insets.bottom) || isinf(insets.left) || isinf(insets.bottom);
+    return isinf(insets.top) || isinf(insets.bottom) || isinf(insets.left) || isinf(insets.right);
 }
 
 BOOL CGSizeIsNull(CGSize size) {
