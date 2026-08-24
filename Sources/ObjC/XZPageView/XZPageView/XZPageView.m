@@ -13,6 +13,8 @@
 @implementation XZPageView
 
 - (void)dealloc {
+    // 定时器由 runloop 持有，如果不主动停止，会持续访问已释放的对象。
+    [_autoPagingTimer invalidate];
     if (_isLoaded) {
         [self XZPageViewCleanUpItemViews];
     }
