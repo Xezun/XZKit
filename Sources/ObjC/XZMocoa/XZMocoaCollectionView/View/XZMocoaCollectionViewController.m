@@ -28,6 +28,7 @@
                 NSLog(@"为 %@ 添加方法 %@ 失败", self, NSStringFromSelector(selector));
             }
         }
+        free(list);
     }
 }
 
