@@ -83,7 +83,7 @@
     NSMutableArray *results = [NSMutableArray arrayWithCapacity:self.count];
     [self enumerateKeysAndObjectsUsingBlock:^(id  _Nonnull key, id  _Nonnull obj, BOOL * _Nonnull stop) {
         id const object = transform(key, obj, stop);
-        if (obj) {
+        if (object) {
             [results addObject:object];
         }
     }];
