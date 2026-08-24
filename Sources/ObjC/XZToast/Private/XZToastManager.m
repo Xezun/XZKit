@@ -607,7 +607,7 @@
 }
 
 - (NSTextAlignment)textAlignment {
-    return _textAlignment > 0 ? (NSTextAlignment)_textAlignment : XZToast.textAlignment;
+    return _textAlignment >= 0 ? (NSTextAlignment)_textAlignment : XZToast.textAlignment;
 }
 
 - (void)setTextAlignment:(NSTextAlignment)textAlignment {
