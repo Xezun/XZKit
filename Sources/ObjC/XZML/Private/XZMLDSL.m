@@ -21,7 +21,9 @@ typedef struct XZMLDSLContext {
 static inline NSUInteger XZMLDSLContextSearchASCII(XZMLDSLContext *context) {
     NSUInteger index = context->index;
     // 在 UTF-8 编码中 ASCII 字符是首位为 0 的字节
-    while (index < context->length && (context->UTF8String[index] & 0b10000000)) {
+    // 只有 index 在安全范围内时，才会调用到此函数，而此循环扫描到字符串结尾 \0 时，也会结束循环，
+    // 所以不需要判断 index 是否在合法范围内
+    while (context->UTF8String[index] & 0b10000000) {
         index += 1;
     }
     return index;

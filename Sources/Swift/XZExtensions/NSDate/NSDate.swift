@@ -220,9 +220,6 @@ extension DateFormatter {
     
     private class XZFrozenDateFormatter: DateFormatter, @unchecked Sendable {
         
-        /// DateFormatter 并非线程安全，作为单例使用时，需要串行化访问。
-        private let lock = NSLock()
-        
         public init(frozen dateFormat: String) {
             super.init();
             super.dateFormat = dateFormat
@@ -230,18 +227,6 @@ extension DateFormatter {
         
         required init?(coder: NSCoder) {
             fatalError("init(coder:) has not been implemented")
-        }
-        
-        override func string(from date: Date) -> String {
-            lock.lock()
-            defer { lock.unlock() }
-            return super.string(from: date)
-        }
-        
-        override func date(from string: String) -> Date? {
-            lock.lock()
-            defer { lock.unlock() }
-            return super.date(from: string)
         }
         
         override var dateFormat: String! {

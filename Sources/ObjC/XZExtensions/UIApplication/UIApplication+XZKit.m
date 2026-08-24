@@ -13,6 +13,9 @@ static const void * const _mainWindow = &_mainWindow;
 @implementation UIApplication (XZKit)
 
 + (BOOL)xz_isViewControllerBasedStatusBarAppearance {
+    if (@available(iOS 27.0, *)) {
+        return YES;
+    }
     NSNumber *setting = NSBundle.mainBundle.infoDictionary[@"UIViewControllerBasedStatusBarAppearance"];
     if (setting != nil) {
         return setting.boolValue;

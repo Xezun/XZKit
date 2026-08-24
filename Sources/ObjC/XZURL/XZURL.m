@@ -382,7 +382,7 @@ FOUNDATION_STATIC_INLINE id XZURLMakeQueryValueWithSet(NSSet *aSet) {
                 self.queryValues[field] = items;
             }
         } else {
-            self.queryValues[field] = [NSMutableArray arrayWithObjects:XZURLMakeQueryValue(oldValue), XZURLMakeQueryValue(value), nil];
+            self.queryValues[field] = [NSMutableArray arrayWithObjects:oldValue, XZURLMakeQueryValue(value), nil];
         }
     }
     

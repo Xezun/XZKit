@@ -6,7 +6,6 @@
 //
 
 import Foundation
-
 import SwiftCompilerPlugin
 import SwiftSyntaxMacros
 import SwiftSyntax
