@@ -11,7 +11,6 @@ import SwiftCompilerPlugin
 import SwiftSyntaxMacros
 import SwiftSyntax
 import SwiftDiagnostics
-import Foundation
 
 /// 宏 `XZLog(message)` 的实现。
 public struct NSURLMacro: ExpressionMacro {
