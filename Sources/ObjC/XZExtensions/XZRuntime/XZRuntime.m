@@ -344,12 +344,14 @@ NSHashTable *xz_objc_protocol_getInstanceMethods(Protocol *aProtocol) {
             for (unsigned int i = 0; i < count; i++) {
                 NSHashInsert(table, list[i].name);
             }
+            free(list);
             
             count = 0;
             list = protocol_copyMethodDescriptionList(aProtocol, NO, YES, &count);
             for (unsigned int i = 0; i < count; i++) {
                 NSHashInsert(table, list[i].name);
             }
+            free(list);
         }
         i += 1;
         if (i >= count) {
@@ -357,6 +359,7 @@ NSHashTable *xz_objc_protocol_getInstanceMethods(Protocol *aProtocol) {
         }
         aProtocol = list[i];
     }
+    free(list);
     
     return table;
 }
@@ -371,6 +374,7 @@ NSHashTable *xz_objc_class_getImplementedProtocolMethods(Class aClass, NSHashTab
             NSHashInsert(table, method_getName(list[i]));
         }
     }
+    free(list);
     
     aClass = [aClass superclass];
     if (aClass && aClass != [NSObject class]) {
