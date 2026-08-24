@@ -284,7 +284,7 @@ extension DispatchTimeInterval: @retroactive ExpressibleByFloatLiteral {
         case .microseconds(let value):
             return TimeInterval(value) * 1.0e-6 - rhs
         case .nanoseconds(let value):
-            return TimeInterval(value) * 1.0e-6 - rhs
+            return TimeInterval(value) * 1.0e-9 - rhs
         @unknown default:
             return 0
         }
