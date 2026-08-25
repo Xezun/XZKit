@@ -21,11 +21,9 @@ NS_ASSUME_NONNULL_BEGIN
 /// 视图 XZMocoaGroupView 是 UITableView、UICollectionView 抽象，并非实际视图，不能直接使用。
 @protocol XZMocoaGroupModel <XZMocoaModel>
 @optional
-/// section 的数量。
-@property (nonatomic, readonly) NSInteger numberOfSectionModels;
-/// section 的数据。
-/// - Parameter index: section 的位置
-- (nullable id)modelForSectionAtIndex:(NSInteger)index;
+- (NSInteger)numberOfSections;
+- (NSInteger)numberOfCellsInSection:(NSInteger)section;
+- (nullable id)modelForCellAtIndex:(NSInteger)index inSection:(NSInteger)section;
 @end
 
 @interface NSObject (XZMocoaGroupModel)

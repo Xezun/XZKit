@@ -31,7 +31,12 @@ typedef void(^XZMocoaGroupDelayedUpdates)(__kindof XZMocoaViewModel *self);
     /// @note 在批量更新时，由于同一对象不能重复操作，因此任一独立更新操作被调用时，都会标记此值为NO，以关闭差异分析，避免重复操作。
     BOOL _needsDifferenceBatchUpdates;
     /// 保存所有 section 视图模型。
-    NSMutableOrderedSet<XZMocoaGroupSectionViewModel *> *_sectionViewModels;
+//    NSMutableOrderedSet<XZMocoaGroupSectionViewModel *> *_sectionViewModels;
+    
+    NSMutableArray *_models;
+    NSMutableArray<NSMutableArray<XZMocoaGroupCellViewModel *> *> *_dataArray;
+    NSMutableArray *_headerViewModels;
+    NSMutableArray *_footerViewModels;
 }
 
 @end
@@ -42,7 +47,8 @@ typedef void(^XZMocoaGroupDelayedUpdates)(__kindof XZMocoaViewModel *self);
     self = [super initWithModel:model];
     if (self) {
         _beforesBatchUpdates = nil;
-        _sectionViewModels = [NSMutableOrderedSet orderedSet];
+//        _sectionViewModels = [NSMutableOrderedSet orderedSet];
+        _dataArray = [NSMutableArray array];
         _supportedSupplementaryKinds = @[XZMocoaKindHeader, XZMocoaKindFooter];
     }
     return self;
@@ -53,45 +59,28 @@ typedef void(^XZMocoaGroupDelayedUpdates)(__kindof XZMocoaViewModel *self);
     [self _loadSubViewModelsWithoutEvents];
 }
 
-- (void)didRemoveSubViewModel:(__kindof XZMocoaViewModel *)viewModel {
-    [_sectionViewModels removeObject:viewModel];
-}
-
-- (NSArray<XZMocoaGroupSectionViewModel *> *)sectionViewModels {
-    return _sectionViewModels.array;
-}
+//- (void)didRemoveSubViewModel:(__kindof XZMocoaViewModel *)viewModel {
+//    [_sectionViewModels removeObject:viewModel];
+//}
+//
+//- (NSArray<XZMocoaGroupSectionViewModel *> *)sectionViewModels {
+//    return _sectionViewModels.array;
+//}
 
 - (BOOL)isEmpty {
-    if (_sectionViewModels.count == 0) {
-        return YES;
-    }
-    for (XZMocoaGroupSectionViewModel *section in _sectionViewModels) {
-        if (section.isEmpty) {
-            continue;
-        }
-        return NO;
-    }
-    return YES;
+    return _models.count == 0;
 }
 
 - (NSInteger)numberOfSections {
-    return _sectionViewModels.count;
+    return _dataArray.count;
 }
 
 - (NSInteger)numberOfCellsInSection:(NSInteger)section {
-    return _sectionViewModels[section].numberOfCells;
+    return _dataArray[section].count;
 }
 
-- (__kindof XZMocoaGroupSectionViewModel *)sectionViewModelAtIndex:(NSInteger)index {
-    return _sectionViewModels[index];
-}
-
-- (__kindof XZMocoaGroupCellViewModel *)cellViewModelAtIndexPath:(NSIndexPath *)indexPath {
-    return [_sectionViewModels[indexPath.section] cellViewModelAtIndex:indexPath.row];
-}
-
-- (NSInteger)indexOfSectionViewModel:(XZMocoaGroupSectionViewModel *)sectionModel {
-    return [_sectionViewModels indexOfObject:sectionModel];
+- (__kindof XZMocoaGroupCellViewModel *)viewModelForCellAtIndexPath:(NSIndexPath *)indexPath {
+    return _dataArray[indexPath.section][indexPath.item];
 }
 
 #pragma mark - 处理 SectionViewModel 的事件
@@ -103,7 +92,7 @@ typedef void(^XZMocoaGroupDelayedUpdates)(__kindof XZMocoaViewModel *self);
     
     // 处理 section 的刷新请求。
     XZMocoaGroupSectionViewModel * const subViewModel = events.target;
-    NSInteger const section = [self indexOfSectionViewModel:subViewModel];
+    NSInteger const section = 0; // [self indexOfSectionViewModel:subViewModel];
     
     // 不是 section 的请求
     if (section == NSNotFound) {

@@ -45,14 +45,14 @@ NS_ASSUME_NONNULL_BEGIN
 /// 列表子视图模型。
 ///
 /// 在 UITableView 或 UICollectionView 中，Section 是逻辑上的子视图，而视图模型就是处理逻辑的。
-@property (nonatomic, readonly) NSArray<__kindof XZMocoaGroupSectionViewModel *> *sectionViewModels;
+//@property (nonatomic, readonly) NSArray<__kindof XZMocoaGroupSectionViewModel *> *sectionViewModels;
 
-- (__kindof XZMocoaGroupSectionViewModel *)sectionViewModelAtIndex:(NSInteger)index;
-- (NSInteger)indexOfSectionViewModel:(__kindof XZMocoaGroupSectionViewModel *)sectionViewModel;
+//- (__kindof XZMocoaGroupSectionViewModel *)sectionViewModelAtIndex:(NSInteger)index;
+//- (NSInteger)indexOfSectionViewModel:(__kindof XZMocoaGroupSectionViewModel *)sectionViewModel;
 
 @property (nonatomic, readonly) NSInteger numberOfSections;
 - (NSInteger)numberOfCellsInSection:(NSInteger)section;
-- (__kindof XZMocoaGroupCellViewModel *)cellViewModelAtIndexPath:(NSIndexPath *)indexPath;
+- (__kindof XZMocoaGroupCellViewModel *)viewModelForCellAtIndexPath:(NSIndexPath *)indexPath;
 
 - (void)selectCellAtIndexPath:(NSIndexPath *)indexPath animated:(BOOL)animated scrollPosition:(NSInteger)scrollPosition;
 - (void)deselectCellAtIndexPath:(NSIndexPath *)indexPath animated:(BOOL)animated;
@@ -135,12 +135,9 @@ NS_ASSUME_NONNULL_BEGIN
 @end
 
 @interface XZMocoaGroupViewModel (XZMocoaGroupModelTransformer)
-- (NSInteger)model:(id)model numberOfSectionModels:(void * _Nullable)null;
-/// 获取 Section 的模型数据。
-/// 子类可以重写此方法，以自定义数据源的转换过程。
-/// @param model 数据模型
-/// @param index Section 的位置
-- (nullable id)model:(id)model modelForSectionAtIndex:(NSInteger)index;
+- (NSInteger)model:(id)model numberOfSections:(void * _Nullable)null;
+- (NSInteger)model:(id)model numberOfCellsInSection:(NSInteger)section;
+- (nullable id)model:(id)model modelForCellAtIndex:(NSInteger)index inSection:(NSInteger)section;
 @end
 
 /// 支持直接使用 NSFetchedResultsController 作为数据源，且支持作为 NSFetchedResultsController 的代理。
