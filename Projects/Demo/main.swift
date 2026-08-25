@@ -16,6 +16,9 @@ class TestView: UIView, XZMocoaView {
     @bind(.textColor)
     let nameLabel: UILabel = .init()
     
+    @bind(.name.detailText)
+    let pathLabel: UILabel = .init()
+    
     @bind("icon")
     let imageView: UIImageView = .init(image: nil)
     
