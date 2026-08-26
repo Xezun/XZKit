@@ -113,7 +113,8 @@ NS_ASSUME_NONNULL_BEGIN
 // MARK: - 防崩溃设计的占位视图
 
 /// 子类应该重写此方法，并返回所需的 SectionViewModel 对象。
-- (Class)placeholderViewModelClassForSectionAtIndex:(NSInteger)index;
+//- (Class)placeholderViewModelClassForSectionAtIndex:(NSInteger)index;
+- (Class)viewModelClassForPlaceholderForKind:(XZMocoaKind)kind;
 
 @end
 
@@ -137,7 +138,9 @@ NS_ASSUME_NONNULL_BEGIN
 @interface XZMocoaGroupViewModel (XZMocoaGroupModelTransformer)
 - (NSInteger)model:(id)model numberOfSections:(void * _Nullable)null;
 - (NSInteger)model:(id)model numberOfCellsInSection:(NSInteger)section;
-- (nullable id)model:(id)model modelForCellAtIndex:(NSInteger)index inSection:(NSInteger)section;
+- (nullable id)model:(id)model modelForCellAtIndexPath:(NSIndexPath *)indexPath;
+- (NSInteger)model:(id)model numberOfSupplementaryElementsOfKind:(XZMocoaKind)kind inSection:(NSInteger)section;
+- (nullable id)model:(id)model modelForSupplementaryElementOfKind:(XZMocoaKind)kind atIndexPath:(NSIndexPath *)indexPath;
 @end
 
 /// 支持直接使用 NSFetchedResultsController 作为数据源，且支持作为 NSFetchedResultsController 的代理。

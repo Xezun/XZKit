@@ -17,8 +17,8 @@ XZMocoaName const XZMocoaNameDefault = @"";
 XZMocoaKind const XZMocoaKindDefault = @"";
 XZMocoaKind const XZMocoaKindHeader  = @"header";
 XZMocoaKind const XZMocoaKindFooter  = @"footer";
-XZMocoaKind const XZMocoaKindSection = @"";
-XZMocoaKind const XZMocoaKindCell    = @"";
+//XZMocoaKind const XZMocoaKindSection = @"section";
+XZMocoaKind const XZMocoaKindCell    = @"cell";
 
 XZMocoaName const XZMocoaNameMain        = @"main";
 XZMocoaName const XZMocoaNameHome        = @"home";

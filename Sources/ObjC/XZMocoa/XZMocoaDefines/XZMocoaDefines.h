@@ -46,7 +46,7 @@ FOUNDATION_EXPORT XZMocoaKind const XZMocoaKindHeader;
 /// 用于表示 Footer 的分类。
 FOUNDATION_EXPORT XZMocoaKind const XZMocoaKindFooter;
 /// 用于表示 Section 的分类。
-FOUNDATION_EXPORT XZMocoaKind const XZMocoaKindSection;
+FOUNDATION_EXPORT XZMocoaKind const XZMocoaKindSection XZ_DEPRECATED("", ios(1.0, 1.0));
 /// 用于表示 Cell 的分类。
 FOUNDATION_EXPORT XZMocoaKind const XZMocoaKindCell;
 
