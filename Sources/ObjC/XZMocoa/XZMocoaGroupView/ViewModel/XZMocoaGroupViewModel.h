@@ -53,6 +53,7 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic, readonly) NSInteger numberOfSections;
 - (NSInteger)numberOfCellsInSection:(NSInteger)section;
 - (__kindof XZMocoaGroupCellViewModel *)viewModelForCellAtIndexPath:(NSIndexPath *)indexPath;
+- (__kindof XZMocoaGroupSectionSupplementaryViewModel *)viewModelForSupplementaryElementofKind:(XZMocoaKind)kind atIndexPath:(NSIndexPath *)indexPath;
 
 - (void)selectCellAtIndexPath:(NSIndexPath *)indexPath animated:(BOOL)animated scrollPosition:(NSInteger)scrollPosition;
 - (void)deselectCellAtIndexPath:(NSIndexPath *)indexPath animated:(BOOL)animated;
@@ -114,7 +115,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 /// 子类应该重写此方法，并返回所需的 SectionViewModel 对象。
 //- (Class)placeholderViewModelClassForSectionAtIndex:(NSInteger)index;
-- (Class)viewModelClassForPlaceholderForKind:(XZMocoaKind)kind;
+- (Class)viewModelClassForPlaceholderOfKind:(XZMocoaKind)kind;
 
 @end
 
