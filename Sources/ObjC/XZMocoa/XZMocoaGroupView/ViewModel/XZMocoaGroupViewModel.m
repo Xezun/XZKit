@@ -15,10 +15,12 @@
 #import "XZLog.h"
 
 @interface XZMocoaGroupSectionInfo : NSObject
-@property (nonatomic, readonly) NSMutableArray *cellViewModels;
-@property (nonatomic, readonly) NSMutableArray *cellViewModelsIfLoaded;
-@property (nonatomic, readonly) NSMutableDictionary<XZMocoaKind, NSMutableArray *> *supplementaryViewModels;
-@property (nonatomic, readonly) NSMutableDictionary<XZMocoaKind, NSMutableArray *> *supplementaryViewModelsIfLoaded;
+@property (nonatomic, readonly, nonnull) NSMutableArray *cells;
+@property (nonatomic, readonly, nullable) NSMutableArray *cellsIfLoaded;
+@property (nonatomic, readonly, nonnull) NSMutableDictionary<XZMocoaKind, NSMutableArray *> *supplementaries;
+@property (nonatomic, readonly, nullable) NSMutableDictionary<XZMocoaKind, NSMutableArray *> *supplementariesIfLoaded;
+@property (nonatomic, readonly, nonnull) NSMutableArray *(^supplementariesForKind)(XZMocoaKind kind);
+@property (nonatomic, readonly, nonnull) NSMutableArray * _Nullable (^supplementariesIfLoadedForKind)(XZMocoaKind kind);
 @end
 
 
@@ -39,6 +41,7 @@ typedef void(^XZMocoaGroupDelayedUpdates)(__kindof XZMocoaViewModel *self);
     /// 是否需要执行批量更新的差异分析。
     /// @note 在批量更新时，由于同一对象不能重复操作，因此任一独立更新操作被调用时，都会标记此值为NO，以关闭差异分析，避免重复操作。
     BOOL _needsDifferenceBatchUpdates;
+    
     /// 保存所有 section 视图模型。
     NSMutableOrderedSet<XZMocoaGroupSectionInfo *> *_dataArray;
     
@@ -79,15 +82,15 @@ typedef void(^XZMocoaGroupDelayedUpdates)(__kindof XZMocoaViewModel *self);
 }
 
 - (NSInteger)numberOfCellsInSection:(NSInteger)section {
-    return _dataArray[section].cellViewModelsIfLoaded.count;
+    return _dataArray[section].cellsIfLoaded.count;
 }
 
 - (__kindof XZMocoaGroupCellViewModel *)viewModelForCellAtIndexPath:(NSIndexPath *)indexPath {
-    return _dataArray[indexPath.section].cellViewModelsIfLoaded[indexPath.item];
+    return _dataArray[indexPath.section].cellsIfLoaded[indexPath.item];
 }
 
 - (__kindof XZMocoaGroupSectionSupplementaryViewModel *)viewModelForSupplementaryElementofKind:(XZMocoaKind)kind atIndexPath:(NSIndexPath *)indexPath {
-    return _dataArray[indexPath.section].supplementaryViewModelsIfLoaded[kind][indexPath.item];
+    return _dataArray[indexPath.section].supplementariesIfLoadedForKind(kind)[indexPath.item];
 }
 
 #pragma mark - 处理 SectionViewModel 的事件
@@ -145,13 +148,13 @@ typedef void(^XZMocoaGroupDelayedUpdates)(__kindof XZMocoaViewModel *self);
     {
         // 清理旧数据
         NSOrderedSet *_dataArray = self->_dataArray;
-        _dataArray = [NSMutableOrderedSet orderedSet];
+        self->_dataArray = [NSMutableOrderedSet orderedSet];
         
         for (XZMocoaGroupSectionInfo *info in _dataArray) {
-            for (XZMocoaViewModel *viewModel in info.cellViewModelsIfLoaded) {
+            for (XZMocoaViewModel *viewModel in info.cellsIfLoaded) {
                 [viewModel removeFromSuperViewModel];
             }
-            [info.supplementaryViewModelsIfLoaded enumerateKeysAndObjectsUsingBlock:^(XZMocoaKind  _Nonnull key, NSMutableArray * _Nonnull obj, BOOL * _Nonnull stop) {
+            [info.supplementariesIfLoaded enumerateKeysAndObjectsUsingBlock:^(XZMocoaKind  _Nonnull key, NSMutableArray * _Nonnull obj, BOOL * _Nonnull stop) {
                 for (XZMocoaViewModel *viewModel in obj) {
                     [viewModel removeFromSuperViewModel];
                 }
@@ -183,13 +186,13 @@ typedef void(^XZMocoaGroupDelayedUpdates)(__kindof XZMocoaViewModel *self);
 //    if (sections.count == 0) {
 //        return;
 //    }
-//    
+//
 //    // 在批量操作时，同一个元素只能进行一种操作，包括被动的操作（比如减少一个元素，后面的元素自动向前移动一个位置）。
 //    // 并且在 -[UITableView reloadSections:withRowAnimation:] 的接口文档中，reload 行为与 delete 类似。
 //    // 所以即使在批量更新过程中，也只能对未进行任何操作的元素，即还保持在原始位置的元素，执行 reload 操作。
-//    
+//
 //    id const model = self.model;
-//    
+//
 //    if (self.isPerformingBatchUpdates) {
 //        // 在批量更新的过程中，由于操作的先后顺序的随机性，元素的实时排序，可能并非最终排序，
 //        // 所以需要根据当前位置找到对应元素的原始位置，对原始位置执行 reload 操作。
@@ -199,49 +202,49 @@ typedef void(^XZMocoaGroupDelayedUpdates)(__kindof XZMocoaViewModel *self);
 //            NSInteger const oldSection = [_beforesBatchUpdates indexOfObject:oldViewModel];
 //            [oldSections addIndex:oldSection];
 //            [oldViewModel removeFromSuperViewModel];
-//            
+//
 //            id const newDataModel = [self model:model modelForSectionAtIndex:index];
 //            id const newViewModel = [self createSectionViewModelWithModel:newDataModel index:index];
 //            [self _insertSectionViewModel:newViewModel atIndex:index];
 //        }];
-//        
+//
 //        [self didReloadSectionsAtIndexes:oldSections];
 //    } else {
 //        [sections enumerateIndexesUsingBlock:^(NSUInteger const index, BOOL * _Nonnull stop) {
 //            XZMocoaGroupSectionViewModel * const oldViewModel = [self sectionViewModelAtIndex:index];
 //            [oldViewModel removeFromSuperViewModel];
-//            
+//
 //            id const newDataModel = [self model:model modelForSectionAtIndex:index];
 //            XZMocoaGroupSectionViewModel *newViewModel = [self createSectionViewModelWithModel:newDataModel index:index];
 //            [self _insertSectionViewModel:newViewModel atIndex:index];
 //        }];
-//        
+//
 //        [self didReloadSectionsAtIndexes:sections];
 //    }
 }
 
 - (void)insertSectionsAtIndexes:(NSIndexSet *)sections {
 //    _needsDifferenceBatchUpdates = NO;
-//    
+//
 //    if (sections.count == 0) {
 //        return;
 //    }
-//    
+//
 //    id const model = self.model;
-//    
+//
 //    // 添加元素，正向遍历：只有前面的元素正确了，后面的才能正确。
 //    [sections enumerateIndexesUsingBlock:^(NSUInteger const index, BOOL * _Nonnull stop) {
 //        id const newDataModel = [self model:model modelForSectionAtIndex:index];
 //        id const newViewModel = [self createSectionViewModelWithModel:newDataModel index:index];
 //        [self _insertSectionViewModel:newViewModel atIndex:index];
 //    }];
-//    
+//
 //    [self didInsertSectionsAtIndexes:sections];
-//    
+//
 //    if (self.isPerformingBatchUpdates) {
 //        return;
 //    }
-//    
+//
 //    // 后更新 index 以避免因 index 改变而发生视图刷新时，当前的事件还没有派发。
 //    NSInteger const count = self.numberOfSections;
 //    for (NSInteger section = sections.firstIndex; section < count; section++) {
@@ -251,11 +254,11 @@ typedef void(^XZMocoaGroupDelayedUpdates)(__kindof XZMocoaViewModel *self);
 
 - (void)deleteSectionsAtIndexes:(NSIndexSet *)sections {
 //    _needsDifferenceBatchUpdates = NO;
-//    
+//
 //    if (sections.count == 0) {
 //        return;
 //    }
-//    
+//
 //    // 删除元素，反向遍历：从后面开始删除，不会影响前面的
 //    if (self.isPerformingBatchUpdates) {
 //        NSMutableIndexSet * const oldSections = [NSMutableIndexSet indexSet];
@@ -271,9 +274,9 @@ typedef void(^XZMocoaGroupDelayedUpdates)(__kindof XZMocoaViewModel *self);
 //            XZMocoaGroupSectionViewModel * const oldViewModel = [self sectionViewModelAtIndex:index];
 //            [oldViewModel removeFromSuperViewModel];
 //        }];
-//        
+//
 //        [self didDeleteSectionsAtIndexes:sections];
-//        
+//
 //        // 后更新 index 以避免因 index 改变而发生视图刷新时，当前的事件还没有派发。
 //        NSInteger const count = self.numberOfSections;
 //        for (NSInteger section = sections.firstIndex; section < count; section++) {
@@ -290,7 +293,7 @@ typedef void(^XZMocoaGroupDelayedUpdates)(__kindof XZMocoaViewModel *self);
 //        [self moveSectionAtIndex:section fromIndex:oldSection toIndex:newSection];
 //    } else {
 //        [self moveSectionAtIndex:section fromIndex:section toIndex:newSection];
-//        
+//
 //        // 先刷型视图，后更新 index 的原因：
 //        // 因为 index 改变，可能会导致视图再次发生刷新，那么就会导致
 //        // 后续的刷新先应用到视图，从而发生问题。
@@ -310,15 +313,15 @@ typedef void(^XZMocoaGroupDelayedUpdates)(__kindof XZMocoaViewModel *self);
 /// @param newSection 目标位置
 - (void)moveSectionAtIndex:(NSInteger)section fromIndex:(NSInteger)oldSection toIndex:(NSInteger)newSection {
 //    _needsDifferenceBatchUpdates = NO;
-//    
+//
 //    // 更新数据
 //    [self _moveSectionViewModelFromIndex:section toIndex:newSection];
-//    
+//
 //    // 新旧位置无变化，不需要发送事件。
 //    if (oldSection == newSection) {
 //        return;
 //    }
-//    
+//
 //    [self didMoveSectionAtIndex:oldSection toIndex:newSection];
 }
 
@@ -480,26 +483,192 @@ typedef void(^XZMocoaGroupDelayedUpdates)(__kindof XZMocoaViewModel *self);
     XZLog(@"[XZMocoaGroupViewModel] 差异分析：开始");
     
     if (_models == nil) {
-        XZLog(@"[XZMocoaGroupViewModel] 差异分析：存在重复数据，差异分析结束");
+        XZLog(@"[XZMocoaGroupViewModel] 差异分析：旧数据存在重复，差异分析结束");
         return nil;
     }
     
-    id const newModel = self.model;
+    id const model = self.model;
+    NSInteger const newSectionCount = [self model:model numberOfSections:NULL];
     
-    NSInteger const newSectionCount = [self model:newModel numberOfSections:NULL];
-    
+    NSMutableDictionary<XZMocoaKind, NSMapTable *> *_newModelMap = [NSMutableDictionary dictionary];
+    NSMutableArray *_newModelInfos = [NSMutableArray arrayWithCapacity:newSectionCount];
     for (NSInteger newSection = 0; newSection < newSectionCount; newSection++) {
+        
+        XZMocoaGroupSectionInfo *_newSectionInfo = [[XZMocoaGroupSectionInfo alloc] init];
+        [_newModelInfos addObject:_newSectionInfo];
+        
         for (XZMocoaKind const kind in self.supportedSupplementaryKinds) {
-            NSInteger const supplementaryCount = [self model:newModel numberOfSupplementaryElementsOfKind:kind inSection:newSection];
+            NSInteger const supplementaryCount = [self model:model numberOfSupplementaryElementsOfKind:kind inSection:newSection];
+            
+            NSMapTable *_newSupplementaryModels = _newModelMap[kind];
+            if (_newSupplementaryModels == nil) {
+                _newSupplementaryModels = [NSMapTable strongToStrongObjectsMapTable];
+                _newModelMap[kind] = _newSupplementaryModels;
+            }
+            
             for (NSInteger newItem = 0; newItem < supplementaryCount; newItem++) {
                 NSIndexPath *indexPath = [NSIndexPath indexPathForItem:newItem inSection:newSection];
-                id const newSupplemenaryModel = [self model:newModel modelForSupplementaryElementOfKind:kind atIndexPath:indexPath];
+                id const newSupplemenaryModel = [self model:model modelForSupplementaryElementOfKind:kind atIndexPath:indexPath];
                 
+                [_newSectionInfo.supplementariesForKind(kind) addObject:(newSupplemenaryModel ?: (id)kCFNull)];
+                
+                if (_newModelMap == nil) {
+                    continue;
+                }
+                if (newSupplemenaryModel == nil || [_newSupplementaryModels objectForKey:newSupplemenaryModel]) {
+                    _newSupplementaryModels = nil;
+                    _newModelMap = nil;
+                    continue;
+                }
+                [_newSupplementaryModels setObject:indexPath forKey:newSupplemenaryModel];
+            }
+        }
+        
+        NSMapTable *_newCellModels = nil;
+        if (_newModelMap) {
+            _newCellModels = _newModelMap[XZMocoaKindCell];
+            if (_newCellModels == nil) {
+                _newCellModels = [NSMapTable strongToStrongObjectsMapTable];
+                _newModelMap[XZMocoaKindCell] = _newCellModels;
+            }
+        }
+        
+        NSInteger const cellCount = [self model:model numberOfCellsInSection:newSection];
+        for (NSInteger item = 0; item < cellCount; item++) {
+            NSIndexPath *    const indexPath = [NSIndexPath indexPathForItem:item inSection:newSection];
+            id<XZMocoaModel> const newCellModel = [self model:model modelForCellAtIndexPath:indexPath];
+            
+            [_newSectionInfo.cells addObject:newCellModel];
+            
+            if (_newModelMap == nil) {
+                continue;
+            }
+            if (_newCellModels == nil || [_newCellModels objectForKey:newCellModel]) {
+                _newCellModels = nil;
+                _newModelMap = nil;
+                continue;
+            }
+            [_newCellModels setObject:indexPath forKey:newCellModel];
+        }
+    }
+    
+    if (_newModelMap == nil) {
+        XZLog(@"[XZMocoaGroupViewModel] 差异分析：新数据存在重复，差异分析结束");
+        return nil;
+    }
+    
+    // 更新 supplementaries
+    [self didPerformBatchUpdates:^{
+        NSMutableIndexSet *sections = [NSMutableIndexSet indexSet];
+        for (NSInteger newSection = 0; newSection < newSectionCount; newSection++) {
+            for (XZMocoaKind const kind in self.supportedSupplementaryKinds) {
+                NSMapTable *oldMap = _models[kind];
+                NSMapTable *newMap = _newModelMap[kind];
+                
+                if (oldMap.count != newMap.count) {
+                    [sections addIndex:newSection];
+                    continue;
+                }
                 
                 
             }
         }
+    } completion:^(BOOL finished) {
+        
+    }];
+    
+    // 更新 cells
+    [self didPerformBatchUpdates:^{
+        NSMapTable *oldCellTables = _models[XZMocoaKindCell];
+        NSMapTable *newCellTables = _newModelMap[XZMocoaKindCell];
+        // 删除
+        NSMutableArray<NSIndexPath *> *deletes = [NSMutableArray array];
+        NSMutableArray<NSDictionary<NSString *, NSIndexPath *> *> *changes = [NSMutableArray array];
+        NSMutableArray<NSIndexPath *> *inserts = [NSMutableArray array];
+        for (id const oldModel in oldCellTables.keyEnumerator) {
+            NSIndexPath *oldIndexPath = [oldCellTables objectForKey:oldModel];
+            NSIndexPath *newIndexPath = [newCellTables objectForKey:oldModel];
+            
+            if (newIndexPath == nil) {
+                [deletes addObject:oldIndexPath];
+                // TODO: delete cell vm
+                continue;
+            }
+            
+            if (oldIndexPath.section != newIndexPath.section || oldIndexPath.item != newIndexPath.item) {
+                [changes addObject:@{ @"from": oldIndexPath, @"to": newIndexPath }];
+                // TODO: move cell vm
+                continue;
+            }
+        }
+        for (id const newModel in newCellTables.keyEnumerator) {
+            NSIndexPath *newIndexPath = [newCellTables objectForKey:newModel];
+            NSIndexPath *oldIndexPath = [oldCellTables objectForKey:newModel];
+            
+            if (oldIndexPath == nil) {
+                [inserts addObject:newIndexPath];
+                // TODO: insert cell vm
+                continue;
+            }
+        }
+        // 删除
+        [self didDeleteCellsAtIndexPaths:deletes];
+        // 新增
+        [self didInsertCellsAtIndexPaths:inserts];
+        // 移动
+        for (NSDictionary *info in changes) {
+            NSIndexPath *oldIndexPath = info[@"from"];
+            NSIndexPath *newIndexPath = info[@"to"];
+            [self didMoveCellAtIndexPath:oldIndexPath toIndexPath:newIndexPath];
+        }
+    } completion:^(BOOL finished) {
+        
+    }];
+    
+    for (NSInteger newSection = 0; newSection < newSectionCount; newSection++) {
+        XZMocoaGroupSectionInfo * const newSectionInfo = _newModelInfos[newSection];
+        
+        NSInteger __block oldSection = -1;
+        [newSectionInfo.supplementariesIfLoaded enumerateKeysAndObjectsUsingBlock:^(XZMocoaKind const kind, NSMutableArray * const supplementaries, BOOL * _Nonnull stop) {
+            for (id const newModel in supplementaries) {
+                NSIndexPath *newIndexPath = [_newModelMap[kind] objectForKey:newModel];
+                NSIndexPath *oldIndexPath = [_models[kind] objectForKey:newModel];
+                
+                if (oldIndexPath == nil) {
+                    if (oldSection == -1) {
+                        oldSection = NSNotFound;
+                        return;
+                    }
+                    
+                    if (oldSection != NSNotFound) {
+                        oldSection = -2;
+                        *stop = YES;
+                        return;
+                    }
+                }
+                
+                if (oldIndexPath) {
+                    if (oldSection == -1) {
+                        oldSection = oldIndexPath.section;
+                    }
+                }
+                
+            }
+        }];
+        
+        for (XZMocoaKind const kind in self.supportedSupplementaryKinds) {
+            NSInteger const supplementaryCount = [self model:model numberOfSupplementaryElementsOfKind:kind inSection:newSection];
+            for (NSInteger newItem = 0; newItem < supplementaryCount; newItem++) {
+                NSIndexPath *indexPath = [NSIndexPath indexPathForItem:newItem inSection:newSection];
+            }
+        }
+        
+        NSInteger const cellCount = [self model:model numberOfCellsInSection:newSection];
+        for (NSInteger item = 0; item < cellCount; item++) {
+            NSIndexPath *    const indexPath = [NSIndexPath indexPathForItem:item inSection:newSection];
+        }
     }
+    
     
     // 记录更新前的数据。
     NSOrderedSet * const oldViewModels = _beforesBatchUpdates.copy;
@@ -517,106 +686,108 @@ typedef void(^XZMocoaGroupDelayedUpdates)(__kindof XZMocoaViewModel *self);
         return nil;
     }
     
-    id const model = self.model;
+    return nil;
     
-    // 获取更新后的数据。
-    NSInteger const newCount      = [self model:model numberOfSectionModels:NULL];
-    NSArray * const newDataModels = [NSMutableArray arrayWithCapacity:newCount];
-    for (NSInteger i = 0; i < newCount; i++) {
-        id const newDataModel = [self model:model modelForSectionAtIndex:i];
-        [(NSMutableArray *)newDataModels addObject:(newDataModel ?: (id)kCFNull)];
-    }
+//    id const model = self.model;
+//
+//    // 获取更新后的数据。
+//    NSInteger const newCount      = [self model:model numberOfSectionModels:NULL];
+//    NSArray * const newDataModels = [NSMutableArray arrayWithCapacity:newCount];
+//    for (NSInteger i = 0; i < newCount; i++) {
+//        id const newDataModel = [self model:model modelForSectionAtIndex:i];
+//        [(NSMutableArray *)newDataModels addObject:(newDataModel ?: (id)kCFNull)];
+//    }
+//
+//    if (newDataModels.xz_containsEqualObjects) {
+//        XZLog(@"[XZMocoaGroupViewModel] 差异分析：停止，因为新数据存在重复数据");
+//        [self reloadData];
+//        return nil;
+//    }
+//
+//    // 差异分析及更新算法：
+//    // 对于更新后的所有元素，只可能属于 remain/updates/changes/inserts 中的一个。
+//    // 在执行删除、插入操作后，列表数量就与预期的一致了，即仅需要排序即可，但是由于删除或插入操作，
+//    // 也可能会改变 remain、changes 中的元素，且排序的过程中，也可能会改变其他元素的位置，
+//    // 因此在处理排序时，应从低位 0 开始遍历，逐个查找该位置上预期元素，然后将其移动到该位置上。
+//
+//    NSIndexSet                           * const inserts = [NSMutableIndexSet indexSet];
+//    NSIndexSet                           * const deletes = [NSMutableIndexSet indexSet];
+//    NSIndexSet                           * const remains = [NSMutableIndexSet indexSet];
+//    NSDictionary<NSNumber *, NSNumber *> * const changes = [NSMutableDictionary dictionaryWithCapacity:oldCount];
+//    [newDataModels xz_differenceFromArray:oldDataModels inserts:(id)inserts deletes:(id)deletes changes:(id)changes remains:(id)remains];
+//
+//    // 删除元素，反向遍历：从后面开始删除，不会影响前面的
+//    [deletes enumerateIndexesWithOptions:NSEnumerationReverse usingBlock:^(NSUInteger section, BOOL *stop) {
+//        XZMocoaGroupSectionViewModel * const oldViewModel = [self sectionViewModelAtIndex:section];
+//        [oldViewModel removeFromSuperViewModel];
+//    }];
+//    [self didDeleteSectionsAtIndexes:deletes];
+//
+//    XZLog(@"[XZMocoaGroupViewModel] 差异分析：删除 [ %@ ]", [deletes xz_reduce:nil next:^id _Nullable(NSMutableString *result, NSInteger idx, BOOL * _Nonnull stop) {
+//        if (result) {
+//            [result appendFormat:@", %ld", idx];
+//        } else {
+//            result = [NSMutableString stringWithFormat:@"%ld", idx];
+//        }
+//        return result;
+//    }]);
+//
+//    // 添加元素，正向遍历：按位置记录下新添加的元素，以便在后续排序时，查找该位置上的元素。
+//    NSMutableDictionary * const insertedViewModels = [NSMutableDictionary dictionaryWithCapacity:inserts.count];
+//    [inserts enumerateIndexesUsingBlock:^(NSUInteger index, BOOL * _Nonnull stop) {
+//        id const newDataModel = newDataModels[index];
+//        XZMocoaGroupSectionViewModel * const newViewModel = [self createSectionViewModelWithModel:newDataModel index:index];
+//        [self _insertSectionViewModel:newViewModel atIndex:index];
+//        insertedViewModels[@(index)] = newViewModel;
+//    }];
+//    [self didInsertSectionsAtIndexes:inserts];
+//
+//    XZLog(@"[XZMocoaGroupViewModel] 差异分析：添加 [ %@ ]", [inserts xz_reduce:nil next:^id _Nullable(NSMutableString *result, NSInteger idx, BOOL * _Nonnull stop) {
+//        if (result) {
+//            [result appendFormat:@", %ld", idx];
+//        } else {
+//            result = [NSMutableString stringWithFormat:@"%ld", idx];
+//        }
+//        return result;
+//    }]);
+//
+//    NSMutableIndexSet * const forwardIndexes = [NSMutableIndexSet indexSet];
+//
+//    // 排序元素：从低位开始遍历，每一个位置，都应该能根据 inserts/remains/changes 中找到对应的元素。
+//    for (NSInteger to = 0; to < newCount; to++) {
+//        if ([inserts containsIndex:to]) {
+//            NSInteger const index = [self indexOfSectionViewModel:insertedViewModels[@(to)]];
+//            [self _moveSectionViewModelFromIndex:index toIndex:to];
+//        } else if ([remains containsIndex:to]) {
+//            // to 位置为保持不变的元素，在 old 中找到 viewModel 然后将其移动到 to 位置上。
+//            XZMocoaGroupSectionViewModel *viewModel = oldViewModels[to];
+//            // 数据模型 isEqual 结果可能相同，但是内容可能发生改变
+//            viewModel.model = newDataModels[to];
+//            NSInteger const index = [self indexOfSectionViewModel:viewModel];
+//            [self moveSubViewModelAtIndex:index toIndex:to];
+//            // 执行更新。在数据更新的过程中，由数据引发的更新已经在更新数据时被拦截下来，在这里差异分析时，不会再触发了。
+//            // 记录待更新的 section
+//            [forwardIndexes addIndex:to];
+//        } else {
+//            // to 位置为被移动的元素，先找到它原来的位置，然后找到 viewModel 然后再移动位置。
+//            NSInteger const from = changes[@(to)].integerValue;
+//            // 根据原来的位置，找到 viewModel 即其当前的位置，并更新数据
+//            XZMocoaGroupSectionViewModel * const viewModel = oldViewModels[from];
+//            viewModel.model = newDataModels[to];
+//            NSInteger const index = [self indexOfSectionViewModel:viewModel];
+//            // 移动 section
+//            [self _moveSectionViewModelFromIndex:index toIndex:to];
+//            // 更新 UI
+//            [self didMoveSectionAtIndex:from toIndex:to];
+//            // 记录待更新的 section
+//            [forwardIndexes addIndex:to];
+//            XZLog(@"[XZMocoaGroupViewModel] 差异分析：移动 %ld => %ld", from, to);
+//        }
+//    }
+//
+//    XZLog(@"[XZMocoaGroupViewModel] 差异分析：结束");
     
-    if (newDataModels.xz_containsEqualObjects) {
-        XZLog(@"[XZMocoaGroupViewModel] 差异分析：停止，因为新数据存在重复数据");
-        [self reloadData];
-        return nil;
-    }
-    
-    // 差异分析及更新算法：
-    // 对于更新后的所有元素，只可能属于 remain/updates/changes/inserts 中的一个。
-    // 在执行删除、插入操作后，列表数量就与预期的一致了，即仅需要排序即可，但是由于删除或插入操作，
-    // 也可能会改变 remain、changes 中的元素，且排序的过程中，也可能会改变其他元素的位置，
-    // 因此在处理排序时，应从低位 0 开始遍历，逐个查找该位置上预期元素，然后将其移动到该位置上。
-
-    NSIndexSet                           * const inserts = [NSMutableIndexSet indexSet];
-    NSIndexSet                           * const deletes = [NSMutableIndexSet indexSet];
-    NSIndexSet                           * const remains = [NSMutableIndexSet indexSet];
-    NSDictionary<NSNumber *, NSNumber *> * const changes = [NSMutableDictionary dictionaryWithCapacity:oldCount];
-    [newDataModels xz_differenceFromArray:oldDataModels inserts:(id)inserts deletes:(id)deletes changes:(id)changes remains:(id)remains];
-
-    // 删除元素，反向遍历：从后面开始删除，不会影响前面的
-    [deletes enumerateIndexesWithOptions:NSEnumerationReverse usingBlock:^(NSUInteger section, BOOL *stop) {
-        XZMocoaGroupSectionViewModel * const oldViewModel = [self sectionViewModelAtIndex:section];
-        [oldViewModel removeFromSuperViewModel];
-    }];
-    [self didDeleteSectionsAtIndexes:deletes];
-    
-    XZLog(@"[XZMocoaGroupViewModel] 差异分析：删除 [ %@ ]", [deletes xz_reduce:nil next:^id _Nullable(NSMutableString *result, NSInteger idx, BOOL * _Nonnull stop) {
-        if (result) {
-            [result appendFormat:@", %ld", idx];
-        } else {
-            result = [NSMutableString stringWithFormat:@"%ld", idx];
-        }
-        return result;
-    }]);
-    
-    // 添加元素，正向遍历：按位置记录下新添加的元素，以便在后续排序时，查找该位置上的元素。
-    NSMutableDictionary * const insertedViewModels = [NSMutableDictionary dictionaryWithCapacity:inserts.count];
-    [inserts enumerateIndexesUsingBlock:^(NSUInteger index, BOOL * _Nonnull stop) {
-        id const newDataModel = newDataModels[index];
-        XZMocoaGroupSectionViewModel * const newViewModel = [self createSectionViewModelWithModel:newDataModel index:index];
-        [self _insertSectionViewModel:newViewModel atIndex:index];
-        insertedViewModels[@(index)] = newViewModel;
-    }];
-    [self didInsertSectionsAtIndexes:inserts];
-    
-    XZLog(@"[XZMocoaGroupViewModel] 差异分析：添加 [ %@ ]", [inserts xz_reduce:nil next:^id _Nullable(NSMutableString *result, NSInteger idx, BOOL * _Nonnull stop) {
-        if (result) {
-            [result appendFormat:@", %ld", idx];
-        } else {
-            result = [NSMutableString stringWithFormat:@"%ld", idx];
-        }
-        return result;
-    }]);
-    
-    NSMutableIndexSet * const forwardIndexes = [NSMutableIndexSet indexSet];
-    
-    // 排序元素：从低位开始遍历，每一个位置，都应该能根据 inserts/remains/changes 中找到对应的元素。
-    for (NSInteger to = 0; to < newCount; to++) {
-        if ([inserts containsIndex:to]) {
-            NSInteger const index = [self indexOfSectionViewModel:insertedViewModels[@(to)]];
-            [self _moveSectionViewModelFromIndex:index toIndex:to];
-        } else if ([remains containsIndex:to]) {
-            // to 位置为保持不变的元素，在 old 中找到 viewModel 然后将其移动到 to 位置上。
-            XZMocoaGroupSectionViewModel *viewModel = oldViewModels[to];
-            // 数据模型 isEqual 结果可能相同，但是内容可能发生改变
-            viewModel.model = newDataModels[to];
-            NSInteger const index = [self indexOfSectionViewModel:viewModel];
-            [self moveSubViewModelAtIndex:index toIndex:to];
-            // 执行更新。在数据更新的过程中，由数据引发的更新已经在更新数据时被拦截下来，在这里差异分析时，不会再触发了。
-            // 记录待更新的 section
-            [forwardIndexes addIndex:to];
-        } else {
-            // to 位置为被移动的元素，先找到它原来的位置，然后找到 viewModel 然后再移动位置。
-            NSInteger const from = changes[@(to)].integerValue;
-            // 根据原来的位置，找到 viewModel 即其当前的位置，并更新数据
-            XZMocoaGroupSectionViewModel * const viewModel = oldViewModels[from];
-            viewModel.model = newDataModels[to];
-            NSInteger const index = [self indexOfSectionViewModel:viewModel];
-            // 移动 section
-            [self _moveSectionViewModelFromIndex:index toIndex:to];
-            // 更新 UI
-            [self didMoveSectionAtIndex:from toIndex:to];
-            // 记录待更新的 section
-            [forwardIndexes addIndex:to];
-            XZLog(@"[XZMocoaGroupViewModel] 差异分析：移动 %ld => %ld", from, to);
-        }
-    }
-    
-    XZLog(@"[XZMocoaGroupViewModel] 差异分析：结束");
-    
-    return forwardIndexes;
+//    return forwardIndexes;
 }
 
 #pragma mark - 私有方法
@@ -674,11 +845,7 @@ typedef void(^XZMocoaGroupDelayedUpdates)(__kindof XZMocoaViewModel *self);
                 XZMocoaGroupSectionSupplementaryViewModel * const viewModel = [self createViewModelWithModel:supplementaryModel forKind:kind];
                 viewModel.indexPath = indexPath;
                 
-                NSMutableArray *viewModels = info.supplementaryViewModels[kind];
-                if (viewModels == nil) {
-                    viewModels = [NSMutableArray array];
-                    info.supplementaryViewModels[kind] = viewModels;
-                }
+                NSMutableArray *viewModels = info.supplementariesForKind(kind);
                 [viewModels addObject:viewModel];
                 
                 [self addSubViewModel:viewModel];
@@ -686,7 +853,7 @@ typedef void(^XZMocoaGroupDelayedUpdates)(__kindof XZMocoaViewModel *self);
                 if (_supplementaryModels == nil) {
                     continue;
                 }
-                if ([_supplementaryModels objectForKey:supplementaryModel]) {
+                if (supplementaryModel == nil || [_supplementaryModels objectForKey:supplementaryModel]) {
                     _supplementaryModels = nil;
                     _models = nil;
                     continue;
@@ -713,13 +880,13 @@ typedef void(^XZMocoaGroupDelayedUpdates)(__kindof XZMocoaViewModel *self);
                 XZMocoaGroupCellViewModel * const viewModel = [self createViewModelWithModel:cellModel forKind:(XZMocoaKindCell)];
                 viewModel.indexPath = indexPath;
                 
-                [info.cellViewModels addObject:viewModel];
+                [info.cells addObject:viewModel];
                 [self addSubViewModel:viewModel];
                 
                 if (_cellModels == nil) {
                     continue;
                 }
-                if ([_cellModels objectForKey:cellModel]) {
+                if (cellModel == nil || [_cellModels objectForKey:cellModel]) {
                     _cellModels = nil;
                     _models = nil;
                     continue;
@@ -822,12 +989,12 @@ typedef void(^XZMocoaGroupDelayedUpdates)(__kindof XZMocoaViewModel *self);
 
 - (void)sectionViewModel:(XZMocoaGroupSectionViewModel *)viewModel didReloadData:(void * _Nullable)null {
 //    if (!self.isReady) return;
-//    
+//
 //    if (self.isPerformingBatchUpdates) {
 //        if (viewModel.isPerformingBatchUpdates) {
 //            NSInteger const index = [_beforesBatchUpdates indexOfObject:viewModel];
 //            if (index == NSNotFound) return;
-//            
+//
 //            NSIndexSet *indexSet = [NSIndexSet indexSetWithIndex:index];
 //            [self didReloadSectionsAtIndexes:indexSet];
 //        } else {
@@ -836,7 +1003,7 @@ typedef void(^XZMocoaGroupDelayedUpdates)(__kindof XZMocoaViewModel *self);
 //    } else {
 //        NSInteger const index = [_sectionViewModels indexOfObject:viewModel];
 //        if (index == NSNotFound) return;
-//        
+//
 //        NSIndexSet *indexSet = [NSIndexSet indexSetWithIndex:index];
 //        [self didReloadSectionsAtIndexes:indexSet];
 //    }
@@ -844,12 +1011,12 @@ typedef void(^XZMocoaGroupDelayedUpdates)(__kindof XZMocoaViewModel *self);
 
 - (void)sectionViewModel:(XZMocoaGroupSectionViewModel *)viewModel didReloadCellsAtIndexes:(NSIndexSet *)rows {
 //    if (!self.isReady) return;
-//    
+//
 //    if (self.isPerformingBatchUpdates) {
 //        if (viewModel.isPerformingBatchUpdates) {
 //            NSInteger const index = [_beforesBatchUpdates indexOfObject:viewModel];
 //            if (index == NSNotFound) return;
-//            
+//
 //            NSArray * const indexPaths = [rows xz_map:^id(NSInteger idx, BOOL *stop) {
 //                return [NSIndexPath indexPathForRow:idx inSection:index];
 //            }];
@@ -860,7 +1027,7 @@ typedef void(^XZMocoaGroupDelayedUpdates)(__kindof XZMocoaViewModel *self);
 //    } else {
 //        NSInteger const index = [_sectionViewModels indexOfObject:viewModel];
 //        if (index == NSNotFound) return;
-//        
+//
 //        NSArray * const indexPaths = [rows xz_map:^id(NSInteger idx, BOOL *stop) {
 //            return [NSIndexPath indexPathForRow:idx inSection:index];
 //        }];
@@ -870,12 +1037,12 @@ typedef void(^XZMocoaGroupDelayedUpdates)(__kindof XZMocoaViewModel *self);
 
 - (void)sectionViewModel:(XZMocoaGroupSectionViewModel *)viewModel didInsertCellsAtIndexes:(NSIndexSet *)rows {
 //    if (!self.isReady) return;
-//    
+//
 //    if (self.isPerformingBatchUpdates) {
 //        if (viewModel.isPerformingBatchUpdates) {
 //            NSInteger const index = [_beforesBatchUpdates indexOfObject:viewModel];
 //            if (index == NSNotFound) return;
-//            
+//
 //            NSArray * const indexPaths = [rows xz_map:^id(NSInteger idx, BOOL *stop) {
 //                return [NSIndexPath indexPathForRow:idx inSection:index];
 //            }];
@@ -886,7 +1053,7 @@ typedef void(^XZMocoaGroupDelayedUpdates)(__kindof XZMocoaViewModel *self);
 //    } else {
 //        NSInteger const index = [_sectionViewModels indexOfObject:viewModel];
 //        if (index == NSNotFound) return;
-//        
+//
 //        NSArray * const indexPaths = [rows xz_map:^id(NSInteger idx, BOOL *stop) {
 //            return [NSIndexPath indexPathForRow:idx inSection:index];
 //        }];
@@ -896,12 +1063,12 @@ typedef void(^XZMocoaGroupDelayedUpdates)(__kindof XZMocoaViewModel *self);
 
 - (void)sectionViewModel:(XZMocoaGroupSectionViewModel *)viewModel didDeleteCellsAtIndexes:(NSIndexSet *)rows {
 //    if (!self.isReady) return;
-//    
+//
 //    if (self.isPerformingBatchUpdates) {
 //        if (viewModel.isPerformingBatchUpdates) {
 //            NSInteger const index = [_beforesBatchUpdates indexOfObject:viewModel];
 //            if (index == NSNotFound) return;
-//            
+//
 //            NSArray * const indexPaths = [rows xz_map:^id(NSInteger idx, BOOL *stop) {
 //                return [NSIndexPath indexPathForRow:idx inSection:index];
 //            }];
@@ -912,7 +1079,7 @@ typedef void(^XZMocoaGroupDelayedUpdates)(__kindof XZMocoaViewModel *self);
 //    } else {
 //        NSInteger const index = [_sectionViewModels indexOfObject:viewModel];
 //        if (index == NSNotFound) return;
-//        
+//
 //        NSArray * const indexPaths = [rows xz_map:^id(NSInteger idx, BOOL *stop) {
 //            return [NSIndexPath indexPathForRow:idx inSection:index];
 //        }];
@@ -922,12 +1089,12 @@ typedef void(^XZMocoaGroupDelayedUpdates)(__kindof XZMocoaViewModel *self);
 
 - (void)sectionViewModel:(XZMocoaGroupSectionViewModel *)viewModel didMoveCellAtIndex:(NSInteger)row toIndex:(NSInteger)newRow {
 //    if (!self.isReady) return;
-//    
+//
 //    if (self.isPerformingBatchUpdates) {
 //        if (viewModel.isPerformingBatchUpdates) {
 //            NSInteger const index = [_beforesBatchUpdates indexOfObject:viewModel];
 //            if (index == NSNotFound) return;
-//            
+//
 //            NSIndexPath *from = [NSIndexPath indexPathForRow:row inSection:index];
 //            NSIndexPath *to   = [NSIndexPath indexPathForRow:newRow inSection:index];
 //            [self didMoveCellAtIndexPath:from toIndexPath:to];
@@ -937,7 +1104,7 @@ typedef void(^XZMocoaGroupDelayedUpdates)(__kindof XZMocoaViewModel *self);
 //    } else {
 //        NSInteger const index = [_sectionViewModels indexOfObject:viewModel];
 //        if (index == NSNotFound) return;
-//        
+//
 //        NSIndexPath *from = [NSIndexPath indexPathForRow:row inSection:index];
 //        NSIndexPath *to   = [NSIndexPath indexPathForRow:newRow inSection:index];
 //        [self didMoveCellAtIndexPath:from toIndexPath:to];
@@ -946,7 +1113,7 @@ typedef void(^XZMocoaGroupDelayedUpdates)(__kindof XZMocoaViewModel *self);
 
 - (void)sectionViewModel:(XZMocoaGroupSectionViewModel *)viewModel didPerformBatchUpdates:(void (^NS_NOESCAPE)(void))batchUpdates completion:(void (^ _Nullable)(BOOL))completion {
 //    if (!self.isReady) return;
-//    
+//
 //    if (self.isPerformingBatchUpdates) {
 //        if (viewModel.isPerformingBatchUpdates) {
 //            NSInteger const index = [_beforesBatchUpdates indexOfObject:viewModel];
@@ -961,7 +1128,7 @@ typedef void(^XZMocoaGroupDelayedUpdates)(__kindof XZMocoaViewModel *self);
 //    } else {
 //        NSInteger const index = [_sectionViewModels indexOfObject:viewModel];
 //        if (index == NSNotFound) return;
-//        
+//
 //        [self didPerformBatchUpdates:batchUpdates completion:completion];
 //    }
 }
@@ -1066,7 +1233,7 @@ typedef void(^XZMocoaGroupDelayedUpdates)(__kindof XZMocoaViewModel *self);
 //                if (viewModel.shouldObserveModelKeysActively) {
 //                    break;
 //                }
-//                NSDictionary<NSString *, id> * const changedValues = anObject.changedValuesForCurrentEvent;                
+//                NSDictionary<NSString *, id> * const changedValues = anObject.changedValuesForCurrentEvent;
 //                [viewModel model:anObject didChangeValuesForKeys:[NSSet setWithArray:changedValues.allKeys]];
 //            }
 //            break;
@@ -1077,33 +1244,55 @@ typedef void(^XZMocoaGroupDelayedUpdates)(__kindof XZMocoaViewModel *self);
 @end
 
 
-@implementation XZMocoaGroupSectionInfo
+@implementation XZMocoaGroupSectionInfo {
+    NSMutableArray *_cells;
+    NSMutableDictionary *_supplementaries;
+}
 
-@synthesize cellViewModels = _cellViewModels;
-@synthesize supplementaryViewModels = _supplementaryViewModels;
-
-- (NSMutableArray *)cellViewModels {
-    if (_cellViewModels) {
-        return _cellViewModels;
+- (instancetype)init {
+    self = [super init];
+    if (self) {
+        XZMocoaGroupSectionInfo * __unsafe_unretained info = self;
+        
+        _supplementariesForKind = ^NSMutableArray *(XZMocoaKind kind) {
+            NSMutableDictionary *dictM = info.supplementaries;
+            NSMutableArray *arrayM = dictM[kind];
+            if (arrayM == nil) {
+                arrayM = [NSMutableArray array];
+                dictM[kind] = arrayM;
+            }
+            return arrayM;
+        };
+        
+        _supplementariesIfLoadedForKind = ^id (XZMocoaKind kind) {
+            NSMutableDictionary *dictM = info.supplementariesIfLoaded;
+            return dictM[kind];
+        };
     }
-    _cellViewModels = [[NSMutableArray alloc] init];
-    return _cellViewModels;
 }
 
-- (NSMutableArray *)cellViewModelsIfLoaded {
-    return _cellViewModels;
-}
-
-- (NSMutableDictionary<XZMocoaKind,NSMutableArray *> *)supplementaryViewModels {
-    if (_supplementaryViewModels) {
-        return _supplementaryViewModels;
+- (NSMutableArray *)cells {
+    if (_cells) {
+        return _cells;
     }
-    _supplementaryViewModels = [[NSMutableDictionary alloc] init];
-    return _supplementaryViewModels;
+    _cells = [[NSMutableArray alloc] init];
+    return _cells;
 }
 
-- (NSMutableDictionary<XZMocoaKind,NSMutableArray *> *)supplementaryViewModelsIfLoaded {
-    return _supplementaryViewModels;
+- (NSMutableArray *)cellsIfLoaded {
+    return _cells;
+}
+
+- (NSMutableDictionary<XZMocoaKind,NSMutableArray *> *)supplementaries {
+    if (_supplementaries) {
+        return _supplementaries;
+    }
+    _supplementaries = [[NSMutableDictionary alloc] init];
+    return _supplementaries;
+}
+
+- (NSMutableDictionary<XZMocoaKind,NSMutableArray *> *)supplementariesIfLoaded {
+    return _supplementaries;
 }
 
 @end
