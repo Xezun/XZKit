@@ -9,7 +9,6 @@
 #import "XZMocoaGroupCellViewModel.h"
 #import "XZMocoaDefines.h"
 #import "XZMocoaModule.h"
-#import "XZMocoaGroupSectionViewModel.h"
 
 @interface XZMocoaGroupCellViewModel ()
 @end
@@ -20,7 +19,7 @@
     self = [super initWithModel:model];
     if (self) {
         _frame      = CGRectZero;
-        _identifier = XZMocoaReuseIdentifier(XZMocoaNameDefault, XZMocoaKindCell, XZMocoaNameDefault);
+        _identifier = XZMocoaReuseIdentifier(XZMocoaKindCell, XZMocoaNameDefault);
     }
     return self;
 }

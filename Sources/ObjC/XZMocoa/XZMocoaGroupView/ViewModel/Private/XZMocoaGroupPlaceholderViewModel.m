@@ -6,9 +6,10 @@
 //
 
 #import "XZMocoaGroupPlaceholderViewModel.h"
-#import "XZMocoaGroupSectionViewModel.h"
+#import "XZMocoaGroupCellViewModel.h"
 
 #if DEBUG
+
 @implementation XZMocoaGroupPlaceholderViewModel
 
 - (instancetype)initWithModel:(XZMocoaGroupCellViewModel *)model {
@@ -18,8 +19,8 @@
 - (void)prepare {
     [super prepare];
     
-    XZMocoaViewModel * const viewModel = self.model;
-    XZMocoaGroupSectionViewModel * const superViewModel = viewModel.superViewModel;
+    XZMocoaViewModel          * const viewModel      = self.model;
+    XZMocoaGroupCellViewModel * const superViewModel = viewModel.superViewModel;
     
     _reason = [self reasonByCheckingModule:viewModel.module];
     
@@ -28,16 +29,17 @@
     if (name1.length == 0) name1 = @"<None>";
     if (name2.length == 0) name2 = @"<None>";
     
-    if ([superViewModel indexOfCellViewModel:(id)viewModel] != NSNotFound) {
-        _detail = [NSString stringWithFormat:@"Name: section=%@, cell=%@ \nData: %@", name1, name2, viewModel.model];
-    } else {
-        [superViewModel.supplementaryViewModels enumerateKeysAndObjectsUsingBlock:^(XZMocoaKind kind, NSArray<XZMocoaViewModel *> *obj, BOOL * _Nonnull stop) {
-            if ([obj containsObject:viewModel]) {
-                _detail = [NSString stringWithFormat:@"Name: section=%@, %@=%@ \nData: %@", name1, kind, name2, viewModel.model];
-                *stop = YES;
-            }
-        }];
-    }
+    // TODO: -  重构调试信息
+//    if ([superViewModel indexOfCellViewModel:(id)viewModel] != NSNotFound) {
+//        _detail = [NSString stringWithFormat:@"Name: section=%@, cell=%@ \nData: %@", name1, name2, viewModel.model];
+//    } else {
+//        [superViewModel.supplementaryViewModels enumerateKeysAndObjectsUsingBlock:^(XZMocoaKind kind, NSArray<XZMocoaViewModel *> *obj, BOOL * _Nonnull stop) {
+//            if ([obj containsObject:viewModel]) {
+//                _detail = [NSString stringWithFormat:@"Name: section=%@, %@=%@ \nData: %@", name1, kind, name2, viewModel.model];
+//                *stop = YES;
+//            }
+//        }];
+//    }
 }
 
 - (NSString *)reasonByCheckingModule:(XZMocoaModule *)module {

@@ -7,12 +7,10 @@
 
 #if __has_include(<XZKit/XZKit.h>)
 #import <XZKit/XZMocoaGroupViewModel.h>
-#import <XZKit/XZMocoaTableSectionViewModel.h>
 #import <XZKit/XZMocoaTableSectionHeaderFooterViewModel.h>
 #import <XZKit/XZMocoaTableCellViewModel.h>
 #else
 #import "XZMocoaGroupViewModel.h"
-#import "XZMocoaTableSectionViewModel.h"
 #import "XZMocoaTableSectionHeaderFooterViewModel.h"
 #import "XZMocoaTableCellViewModel.h"
 #endif
@@ -56,14 +54,15 @@ NS_ASSUME_NONNULL_BEGIN
 @end
 
 @interface XZMocoaTableViewModel (XZMocoaTableViewModel)
-/// section 视图模型集合。
-@property (nonatomic, readonly) NSArray<__kindof XZMocoaTableSectionViewModel *> *sectionViewModels;
-/// 获取 section 视图模型。
-/// - Parameter index: 位置
-- (__kindof XZMocoaTableSectionViewModel *)sectionViewModelAtIndex:(NSInteger)index;
-/// 获取 cell 视图模型。
-/// - Parameter indexPath: 位置
-- (__kindof XZMocoaTableCellViewModel *)cellViewModelAtIndexPath:(NSIndexPath *)indexPath;
+///// section 视图模型集合。
+//@property (nonatomic, readonly) NSArray<__kindof XZMocoaTableSectionViewModel *> *sectionViewModels;
+///// 获取 section 视图模型。
+///// - Parameter index: 位置
+//- (__kindof XZMocoaTableSectionViewModel *)sectionViewModelAtIndex:(NSInteger)index;
+///// 获取 cell 视图模型。
+///// - Parameter indexPath: 位置
+//- (__kindof XZMocoaTableCellViewModel *)cellViewModelAtIndexPath:(NSIndexPath *)indexPath;
+
 @end
 
 NS_ASSUME_NONNULL_END

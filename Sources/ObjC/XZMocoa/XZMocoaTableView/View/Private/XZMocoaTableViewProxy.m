@@ -16,72 +16,66 @@
     UITableView * const tableView = self.contentView;
     
     { // 注册默认视图
-        NSString *identifier = XZMocoaReuseIdentifier(XZMocoaNamePlaceholder, XZMocoaKindCell, XZMocoaNamePlaceholder);
+        NSString *identifier = XZMocoaReuseIdentifier(XZMocoaKindCell, XZMocoaNamePlaceholder);
         [tableView registerClass:[XZMocoaTablePlaceholderCell class] forCellReuseIdentifier:identifier];
         
-        identifier = XZMocoaReuseIdentifier(XZMocoaNamePlaceholder, XZMocoaKindHeader, XZMocoaNamePlaceholder);
+        identifier = XZMocoaReuseIdentifier(XZMocoaKindHeader, XZMocoaNamePlaceholder);
         [tableView registerClass:[XZMocoaTablePlaceholderSectionHeaderFooterView class] forHeaderFooterViewReuseIdentifier:identifier];
         
-        identifier = XZMocoaReuseIdentifier(XZMocoaNamePlaceholder, XZMocoaKindFooter, XZMocoaNamePlaceholder);
+        identifier = XZMocoaReuseIdentifier(XZMocoaKindFooter, XZMocoaNamePlaceholder);
         [tableView registerClass:[XZMocoaTablePlaceholderSectionHeaderFooterView class] forHeaderFooterViewReuseIdentifier:identifier];
     }
     
-    [module enumerateSubmodulesUsingBlock:^(XZMocoaModule *submodule, XZMocoaKind kind, XZMocoaName section, BOOL *stop) {
-        if (![kind isEqualToString:XZMocoaKindSection]) {
-            return; // 不是 section 的 module 不需要处理
-        }
-
-        [submodule enumerateSubmodulesUsingBlock:^(XZMocoaModule *submodule, XZMocoaKind kind, XZMocoaName name, BOOL *stop) {
-            if ([kind isEqualToString:XZMocoaKindCell]) {
-                switch (submodule.viewForm) {
-                    case XZMocoaModuleViewFormClass: {
-                        NSString * const identifier = XZMocoaReuseIdentifier(section, XZMocoaKindCell, name);
-                        [tableView registerClass:submodule.viewClass forCellReuseIdentifier:identifier];
-                        break;
-                    }
-                    case XZMocoaModuleViewFormNib: {
-                        NSString * const identifier = XZMocoaReuseIdentifier(section, XZMocoaKindCell, name);
-                        UINib *viewNib = [UINib nibWithNibName:submodule.viewNibName bundle:submodule.viewNibBundle];
-                        [tableView registerNib:viewNib forCellReuseIdentifier:identifier];
-                        break;
-                    }
-                    case XZMocoaModuleViewFormStoryboardReusableView: {
-                        // 在 Storyboard 中 cell 已经注册
-                        break;
-                    }
-                    default: {
-                        NSString * const identifier = XZMocoaReuseIdentifier(section, XZMocoaKindCell, name);
-                        // 未注册 View 的模块，获得一个占位视图
-                        Class const aClass = [XZMocoaTablePlaceholderCell class];
-                        [tableView registerClass:aClass forCellReuseIdentifier:identifier];
-                        break;
-                    }
+    [module enumerateSubmodulesUsingBlock:^(XZMocoaModule *submodule, XZMocoaKind kind, XZMocoaName name, BOOL *stop) {
+        if ([kind isEqualToString:XZMocoaKindCell]) {
+            switch (submodule.viewForm) {
+                case XZMocoaModuleViewFormClass: {
+                    NSString * const identifier = XZMocoaReuseIdentifier(XZMocoaKindCell, name);
+                    [tableView registerClass:submodule.viewClass forCellReuseIdentifier:identifier];
+                    break;
                 }
-            } else if ([kind isEqualToString:XZMocoaKindHeader] || [kind isEqualToString:XZMocoaKindFooter]) {
-                switch (submodule.viewForm) {
-                    case XZMocoaModuleViewFormClass: {
-                        NSString * const identifier = XZMocoaReuseIdentifier(section, kind, name);
-                        [tableView registerClass:submodule.viewClass forHeaderFooterViewReuseIdentifier:identifier];
-                        break;
-                    }
-                    case XZMocoaModuleViewFormNib: {
-                        NSString * const identifier = XZMocoaReuseIdentifier(section, kind, name);
-                        UINib *viewNib = [UINib nibWithNibName:submodule.viewNibName bundle:submodule.viewNibBundle];
-                        [tableView registerNib:viewNib forHeaderFooterViewReuseIdentifier:identifier];
-                        break;
-                    }
-                    case XZMocoaModuleViewFormStoryboardReusableView: {
-                        break;
-                    }
-                    default: {
-                        NSString * const identifier = XZMocoaReuseIdentifier(section, kind, name);
-                        Class const aClass = [XZMocoaTablePlaceholderSectionHeaderFooterView class];
-                        [tableView registerClass:aClass forHeaderFooterViewReuseIdentifier:identifier];
-                        break;
-                    }
+                case XZMocoaModuleViewFormNib: {
+                    NSString * const identifier = XZMocoaReuseIdentifier(XZMocoaKindCell, name);
+                    UINib *viewNib = [UINib nibWithNibName:submodule.viewNibName bundle:submodule.viewNibBundle];
+                    [tableView registerNib:viewNib forCellReuseIdentifier:identifier];
+                    break;
+                }
+                case XZMocoaModuleViewFormStoryboardReusableView: {
+                    // 在 Storyboard 中 cell 已经注册
+                    break;
+                }
+                default: {
+                    NSString * const identifier = XZMocoaReuseIdentifier(XZMocoaKindCell, name);
+                    // 未注册 View 的模块，获得一个占位视图
+                    Class const aClass = [XZMocoaTablePlaceholderCell class];
+                    [tableView registerClass:aClass forCellReuseIdentifier:identifier];
+                    break;
                 }
             }
-        }];
+        } else if ([kind isEqualToString:XZMocoaKindHeader] || [kind isEqualToString:XZMocoaKindFooter]) {
+            switch (submodule.viewForm) {
+                case XZMocoaModuleViewFormClass: {
+                    NSString * const identifier = XZMocoaReuseIdentifier(kind, name);
+                    [tableView registerClass:submodule.viewClass forHeaderFooterViewReuseIdentifier:identifier];
+                    break;
+                }
+                case XZMocoaModuleViewFormNib: {
+                    NSString * const identifier = XZMocoaReuseIdentifier(kind, name);
+                    UINib *viewNib = [UINib nibWithNibName:submodule.viewNibName bundle:submodule.viewNibBundle];
+                    [tableView registerNib:viewNib forHeaderFooterViewReuseIdentifier:identifier];
+                    break;
+                }
+                case XZMocoaModuleViewFormStoryboardReusableView: {
+                    break;
+                }
+                default: {
+                    NSString * const identifier = XZMocoaReuseIdentifier(kind, name);
+                    Class const aClass = [XZMocoaTablePlaceholderSectionHeaderFooterView class];
+                    [tableView registerClass:aClass forHeaderFooterViewReuseIdentifier:identifier];
+                    break;
+                }
+            }
+        }
     }];
 }
 
@@ -98,7 +92,7 @@
 }
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
-    XZMocoaTableCellViewModel * const viewModel = [self.viewModel cellViewModelAtIndexPath:indexPath];
+    XZMocoaTableCellViewModel * const viewModel = [self.viewModel viewModelForCellAtIndexPath:indexPath];
     
     UITableViewCell<XZMocoaTableCell> *cell = [tableView dequeueReusableCellWithIdentifier:viewModel.identifier forIndexPath:indexPath];
     cell.viewModel = viewModel;
@@ -112,13 +106,13 @@
 @implementation XZMocoaTableViewProxy (UITableViewDelegate)
 
 - (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath {
-    XZMocoaTableCellViewModel * const viewModel = [self.viewModel cellViewModelAtIndexPath:indexPath];
+    XZMocoaTableCellViewModel * const viewModel = [self.viewModel viewModelForCellAtIndexPath:indexPath];
     return viewModel.height;
 }
 
 - (UIView *)tableView:(UITableView *)tableView viewForHeaderInSection:(NSInteger)section {
-    XZMocoaTableSectionViewModel * const sectionViewModel = [self.viewModel sectionViewModelAtIndex:section];
-    XZMocoaTableSectionHeaderFooterViewModel * const viewModel = sectionViewModel.headerViewModel;
+    
+    XZMocoaTableSectionHeaderFooterViewModel * const viewModel = [self.viewModel viewModelForHeaderInSection:section];
     if (viewModel == nil) {
         return nil;
     }
@@ -128,8 +122,7 @@
 }
 
 - (CGFloat)tableView:(UITableView *)tableView heightForHeaderInSection:(NSInteger)section {
-    XZMocoaTableSectionViewModel * const sectionViewModel = [self.viewModel sectionViewModelAtIndex:section];
-    XZMocoaTableSectionHeaderFooterViewModel * const viewModel = sectionViewModel.headerViewModel;
+    XZMocoaTableSectionHeaderFooterViewModel * const viewModel = [self.viewModel viewModelForHeaderInSection:section];
     if (viewModel == nil) {
         return XZMocoaMinimumViewDimension;
     }
@@ -137,8 +130,7 @@
 }
 
 - (UIView *)tableView:(UITableView *)tableView viewForFooterInSection:(NSInteger)section {
-    XZMocoaTableSectionViewModel * const sectionViewModel = [self.viewModel sectionViewModelAtIndex:section];
-    XZMocoaTableSectionHeaderFooterViewModel * const viewModel = sectionViewModel.footerViewModel;
+    XZMocoaTableSectionHeaderFooterViewModel * const viewModel = [self.viewModel viewModelForFooterInSection:section];
     if (viewModel == nil) {
         return nil;
     }
@@ -148,8 +140,7 @@
 }
 
 - (CGFloat)tableView:(UITableView *)tableView heightForFooterInSection:(NSInteger)section {
-    XZMocoaTableSectionViewModel * const sectionViewModel = [self.viewModel sectionViewModelAtIndex:section];
-    XZMocoaTableSectionHeaderFooterViewModel * const viewModel = sectionViewModel.footerViewModel;
+    XZMocoaTableSectionHeaderFooterViewModel * const viewModel = [self.viewModel viewModelForFooterInSection:section];
     if (viewModel == nil) {
         return XZMocoaMinimumViewDimension;
     }

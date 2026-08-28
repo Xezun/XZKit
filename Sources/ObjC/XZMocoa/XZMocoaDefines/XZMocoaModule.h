@@ -199,7 +199,7 @@ typedef NS_ENUM(NSUInteger, XZMocoaModuleViewForm) {
 /// 此属性仅用于表示 UITableView 或 UICollectionView 模块的 XZMocoaModule 对象。
 /// @discussion
 /// 此属性等同于`[table submoduleForKind:XZMocoaKindDefault forName:XZMocoaNameDefault]`。
-@property (nonatomic, strong) XZMocoaModule *section;
+//@property (nonatomic, strong) XZMocoaModule *section;
 
 /// 获取 UITableView 或 UICollectionView 模块的指定名称 section 模块。
 /// @discussion
@@ -209,7 +209,7 @@ typedef NS_ENUM(NSUInteger, XZMocoaModuleViewForm) {
 /// @discussion
 /// 此方法等同于`[table submoduleForKind:XZMocoaKindDefault forName:name]`。
 /// @param name 模块名称
-- (XZMocoaModule *)sectionForName:(XZMocoaName)name;
+//- (XZMocoaModule *)sectionForName:(XZMocoaName)name;
 
 /// 设置 section 模块为 UITableView 或 UICollectionView 模块的下级模块。
 /// @discussion
@@ -220,7 +220,7 @@ typedef NS_ENUM(NSUInteger, XZMocoaModuleViewForm) {
 /// 此方法等同于`[table setSubmodule:section forKind:XZMocoaKindDefault forName:name]`。
 /// @param section 模块对象
 /// @param name 模块名称
-- (void)setSection:(nullable XZMocoaModule *)section forName:(XZMocoaName)name;
+//- (void)setSection:(nullable XZMocoaModule *)section forName:(XZMocoaName)name;
 
 /// UITableView 或 UICollectionView 的 Section 模块的默认的 Header 模块。
 /// @discussion

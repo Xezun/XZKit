@@ -90,8 +90,9 @@
     }
 }
 
-- (Class)placeholderViewModelClassForSectionAtIndex:(NSInteger)index {
-    return [XZMocoaTableSectionViewModel class];
+- (Class)viewModelClassForPlaceholderOfKind:(XZMocoaKind)kind {
+    // TODO: - placeholder
+    return nil;
 }
 
 @end

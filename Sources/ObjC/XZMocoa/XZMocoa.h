@@ -33,7 +33,6 @@
 #import <XZKit/XZMocoaGroupSectionSupplementaryView.h>
 #import <XZKit/XZMocoaGroupView.h>
 #import <XZKit/XZMocoaGroupCellViewModel.h>
-#import <XZKit/XZMocoaGroupSectionViewModel.h>
 #import <XZKit/XZMocoaGroupSectionSupplementaryViewModel.h>
 #import <XZKit/XZMocoaGroupViewModel.h>
 #import <XZKit/XZMocoaGroupViewModelDefines.h>
@@ -85,7 +84,6 @@
 #import "XZMocoaGroupSectionSupplementaryView.h"
 #import "XZMocoaGroupView.h"
 #import "XZMocoaGroupCellViewModel.h"
-#import "XZMocoaGroupSectionViewModel.h"
 #import "XZMocoaGroupSectionSupplementaryViewModel.h"
 #import "XZMocoaGroupViewModel.h"
 #import "XZMocoaGroupViewModelDefines.h"

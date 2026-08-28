@@ -160,6 +160,9 @@ extension XZMocoaKey {
     public static var reload: XZMocoaKey {
         return XZMocoaKey.__reload
     }
+    public static var reloadData: XZMocoaKey {
+        return XZMocoaKey.__reloadData
+    }
     public static var modify: XZMocoaKey {
         return XZMocoaKey.__modify
     }
@@ -392,6 +395,9 @@ extension XZMocoaKey {
     
     public var reload: XZMocoaKey {
         return XZMocoaKey(self.rawValue + "." + XZMocoaKey.__reload.rawValue)
+    }
+    public var reloadData: XZMocoaKey {
+        return XZMocoaKey(self.rawValue + "." + XZMocoaKey.__reloadData.rawValue)
     }
     public var modify: XZMocoaKey {
         return XZMocoaKey(self.rawValue + "." + XZMocoaKey.__modify.rawValue)

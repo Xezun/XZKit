@@ -46,7 +46,7 @@ FOUNDATION_EXPORT XZMocoaKind const XZMocoaKindHeader;
 /// 用于表示 Footer 的分类。
 FOUNDATION_EXPORT XZMocoaKind const XZMocoaKindFooter;
 /// 用于表示 Section 的分类。
-FOUNDATION_EXPORT XZMocoaKind const XZMocoaKindSection XZ_DEPRECATED("", ios(1.0, 1.0));
+//FOUNDATION_EXPORT XZMocoaKind const XZMocoaKindSection XZ_DEPRECATED("", ios(1.0, 1.0));
 /// 用于表示 Cell 的分类。
 FOUNDATION_EXPORT XZMocoaKind const XZMocoaKindCell;
 
@@ -64,11 +64,10 @@ FOUNDATION_EXPORT XZMocoaName const XZMocoaNamePlaceholder;
 
 /// 构造重用标识符。
 /// - Parameters:
-///   - section: 要构造标识符对象的上级
 ///   - kind: 要构造标识符对象的分类
 ///   - name: 要构造标识符对象的名字
-FOUNDATION_STATIC_INLINE NSString *XZMocoaReuseIdentifier(XZMocoaName _Nullable section, XZMocoaKind _Nullable kind, XZMocoaName _Nullable name) {
-    return [NSString stringWithFormat:@"%@:%@:%@", (section ?: XZMocoaNameDefault), (kind ?: XZMocoaKindDefault), (name ?: XZMocoaNameDefault)];
+FOUNDATION_STATIC_INLINE NSString *XZMocoaReuseIdentifier(XZMocoaKind _Nullable kind, XZMocoaName _Nullable name) {
+    return [NSString stringWithFormat:@"%@:%@", (kind ?: XZMocoaKindDefault), (name ?: XZMocoaNameDefault)];
 }
 
 NS_ASSUME_NONNULL_END

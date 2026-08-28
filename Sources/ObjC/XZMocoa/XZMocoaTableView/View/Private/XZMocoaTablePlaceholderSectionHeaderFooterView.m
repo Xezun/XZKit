@@ -6,7 +6,6 @@
 //
 
 #import "XZMocoaTablePlaceholderSectionHeaderFooterView.h"
-#import "XZMocoaTableSectionViewModel.h"
 #import "XZMocoaGroupPlaceholderView.h"
 
 #if DEBUG

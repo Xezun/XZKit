@@ -63,6 +63,7 @@ XZMocoaKey const XZMocoaKeyIsTranslucent      = @"isTranslucent";
 XZMocoaKey const XZMocoaKeyPrefersLargeTitles = @"prefersLargeTitles";
 
 XZMocoaKey const XZMocoaKeyReload               = @"reload";
+XZMocoaKey const XZMocoaKeyReloadData           = @"reloadData";
 XZMocoaKey const XZMocoaKeyModify               = @"modify";
 XZMocoaKey const XZMocoaKeyInsert               = @"insert";
 XZMocoaKey const XZMocoaKeyDelete               = @"delete";
