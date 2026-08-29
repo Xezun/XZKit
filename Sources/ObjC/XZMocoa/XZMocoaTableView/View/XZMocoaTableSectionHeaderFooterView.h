@@ -7,16 +7,16 @@
 
 #import <UIKit/UIKit.h>
 #if __has_include(<XZKit/XZKit.h>)
-#import <XZKit/XZMocoaGroupSectionSupplementaryView.h>
+#import <XZKit/XZMocoaGroupSupplementView.h>
 #import <XZKit/XZMocoaTableSectionHeaderFooterViewModel.h>
 #else
-#import "XZMocoaGroupSectionSupplementaryView.h"
+#import "XZMocoaGroupSupplementView.h"
 #import "XZMocoaTableSectionHeaderFooterViewModel.h"
 #endif
 
 NS_ASSUME_NONNULL_BEGIN
 
-@protocol XZMocoaTableSectionHeaderFooterView <XZMocoaGroupSectionSupplementaryView>
+@protocol XZMocoaTableSectionHeaderFooterView <XZMocoaGroupSupplementView>
 @optional
 @property (nonatomic, strong, nullable) __kindof XZMocoaTableSectionHeaderFooterViewModel *viewModel;
 @end

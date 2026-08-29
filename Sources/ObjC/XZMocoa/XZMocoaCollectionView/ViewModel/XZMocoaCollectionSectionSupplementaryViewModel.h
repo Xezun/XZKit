@@ -6,16 +6,16 @@
 //
 
 #if __has_include(<XZKit/XZKit.h>)
-#import <XZKit/XZMocoaGroupSectionSupplementaryViewModel.h>
+#import <XZKit/XZMocoaGroupSupplementViewModel.h>
 #else
-#import "XZMocoaGroupSectionSupplementaryViewModel.h"
+#import "XZMocoaGroupSupplementViewModel.h"
 #endif
 
 @protocol XZMocoaCollectionView, XZMocoaCollectionSectionSupplementaryView;
 
 NS_ASSUME_NONNULL_BEGIN
 
-@interface XZMocoaCollectionSectionSupplementaryViewModel : XZMocoaGroupSectionSupplementaryViewModel
+@interface XZMocoaCollectionSectionSupplementaryViewModel : XZMocoaGroupSupplementViewModel
 
 @property (nonatomic) CGSize size;
 - (void)collectionView:(id<XZMocoaCollectionView>)collectionView willDisplaySupplementaryView:(UICollectionReusableView *)supplementaryView atIndexPath:(NSIndexPath *)indexPath forElementOfKind:(NSString *)elementKind;

@@ -41,6 +41,12 @@ NS_ASSUME_NONNULL_BEGIN
 
 @property (nonatomic, weak) id<XZMocoaCollectionViewModelDelegate> delegate;
 
+@property (nonatomic) UIEdgeInsets sectionInsets;
+@property (nonatomic) CGFloat minimumLineSpacing;
+@property (nonatomic) CGFloat minimumInteritemSpacing;
+@property (nonatomic) CGSize headerReferenceSize;
+@property (nonatomic) CGSize footerReferenceSize;
+
 @end
 
 /// 重申明

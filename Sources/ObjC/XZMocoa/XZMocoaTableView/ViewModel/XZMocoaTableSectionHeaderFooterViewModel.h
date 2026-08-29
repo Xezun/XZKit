@@ -6,14 +6,14 @@
 //
 
 #if __has_include(<XZKit/XZKit.h>)
-#import <XZKit/XZMocoaGroupSectionSupplementaryViewModel.h>
+#import <XZKit/XZMocoaGroupSupplementViewModel.h>
 #else
-#import "XZMocoaGroupSectionSupplementaryViewModel.h"
+#import "XZMocoaGroupSupplementViewModel.h"
 #endif
 
 NS_ASSUME_NONNULL_BEGIN
 
-@interface XZMocoaTableSectionHeaderFooterViewModel : XZMocoaGroupSectionSupplementaryViewModel
+@interface XZMocoaTableSectionHeaderFooterViewModel : XZMocoaGroupSupplementViewModel
 @property (nonatomic) CGFloat height;
 @end
 

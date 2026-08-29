@@ -7,10 +7,10 @@
 
 #import <UIKit/UIKit.h>
 #if __has_include(<XZKit/XZKit.h>)
-#import <XZKit/XZMocoaGroupSectionSupplementaryView.h>
+#import <XZKit/XZMocoaGroupSupplementView.h>
 #import <XZKit/XZMocoaCollectionSectionSupplementaryViewModel.h>
 #else
-#import "XZMocoaGroupSectionSupplementaryView.h"
+#import "XZMocoaGroupSupplementView.h"
 #import "XZMocoaCollectionSectionSupplementaryViewModel.h"
 #endif
 
@@ -18,7 +18,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 @protocol XZMocoaCollectionView;
 
-@protocol XZMocoaCollectionSectionSupplementaryView <XZMocoaGroupSectionSupplementaryView>
+@protocol XZMocoaCollectionSectionSupplementaryView <XZMocoaGroupSupplementView>
 @optional
 @property (nonatomic, strong, nullable) __kindof XZMocoaCollectionSectionSupplementaryViewModel *viewModel;
 @end

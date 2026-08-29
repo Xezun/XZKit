@@ -1,1 +1,0 @@
-../../../ObjC/XZMocoa/XZMocoaCollectionView/Model/XZMocoaCollectionSectionModel.h

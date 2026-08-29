@@ -20,13 +20,13 @@
     return self;
 }
 
-- (CGFloat)height {
-    CGFloat height = 0;
-    for (XZMocoaTableSectionViewModel *section in self.sectionViewModels) {
-        height += section.height;
-    }
-    return height;
-}
+//- (CGFloat)height {
+//    CGFloat height = 0;
+//    for (XZMocoaTableSectionViewModel *section in self.sectionViewModels) {
+//        height += section.height;
+//    }
+//    return height;
+//}
 
 - (void)didReloadData {
     if (!self.isReady) return;

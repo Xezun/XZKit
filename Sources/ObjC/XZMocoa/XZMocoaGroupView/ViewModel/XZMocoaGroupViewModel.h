@@ -12,13 +12,13 @@
 #import <XZKit/XZMocoaGroupCellViewModel.h>
 #import <XZKit/XZMocoaGroupModel.h>
 #import <XZKit/XZMocoaGroupViewModelDefines.h>
-#import <XZKit/XZMocoaGroupSectionSupplementaryViewModel.h>
+#import <XZKit/XZMocoaGroupSupplementViewModel.h>
 #else
 #import "XZMocoaViewModel.h"
 #import "XZMocoaGroupCellViewModel.h"
 #import "XZMocoaGroupModel.h"
 #import "XZMocoaGroupViewModelDefines.h"
-#import "XZMocoaGroupSectionSupplementaryViewModel.h"
+#import "XZMocoaGroupSupplementViewModel.h"
 #endif
 
 NS_ASSUME_NONNULL_BEGIN
@@ -34,7 +34,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 /// 所支持的附加视图的类型，默认为 `@[XZMocoaKindHeader, XZMocoaKindFooter]` 两种。
 /// @discussion 请在使用 viewModel 前设置此属性。
-@property (nonatomic, copy) NSArray<XZMocoaKind> *supportedSupplementaryKinds;
+@property (nonatomic, copy) NSArray<XZMocoaKind> *supportedSupplementKinds;
 
 /// 接收来自下级的 XZMocoaKeyReload 事件，并刷新视图，如果在批量更新的过程中，视图刷新可能会延迟。
 - (void)didReceiveEvents:(XZMocoaEvents *)events;
@@ -53,9 +53,9 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic, readonly) NSInteger numberOfSections;
 - (NSInteger)numberOfCellsInSection:(NSInteger)section;
 - (__kindof XZMocoaGroupCellViewModel *)viewModelForCellAtIndexPath:(NSIndexPath *)indexPath;
-- (__kindof XZMocoaGroupSectionSupplementaryViewModel *)viewModelForSupplementaryElementofKind:(XZMocoaKind)kind atIndexPath:(NSIndexPath *)indexPath;
-- (__kindof XZMocoaGroupSectionSupplementaryViewModel *)viewModelForHeaderInSection:(NSInteger)section;
-- (__kindof XZMocoaGroupSectionSupplementaryViewModel *)viewModelForFooterInSection:(NSInteger)section;
+- (__kindof XZMocoaGroupSupplementViewModel *)viewModelForSupplementOfKind:(XZMocoaKind)kind atIndexPath:(NSIndexPath *)indexPath;
+- (__kindof XZMocoaGroupSupplementViewModel *)viewModelForHeaderInSection:(NSInteger)section;
+- (__kindof XZMocoaGroupSupplementViewModel *)viewModelForFooterInSection:(NSInteger)section;
 
 - (void)selectCellAtIndexPath:(NSIndexPath *)indexPath animated:(BOOL)animated scrollPosition:(NSInteger)scrollPosition;
 - (void)deselectCellAtIndexPath:(NSIndexPath *)indexPath animated:(BOOL)animated;
@@ -138,11 +138,11 @@ NS_ASSUME_NONNULL_BEGIN
 //- (void)sectionViewModel:(__kindof XZMocoaGroupSectionViewModel *)viewModel didPerformBatchUpdates:(void (^NS_NOESCAPE)(void))batchUpdates completion:(void (^ _Nullable)(BOOL))completion;
 @end
 
-@interface XZMocoaGroupViewModel (XZMocoaGroupModelTransformer)
+@interface XZMocoaGroupViewModel (XZMocoaGroupModel)
 - (NSInteger)model:(id)model numberOfSections:(void * _Nullable)null;
 - (NSInteger)model:(id)model numberOfCellsInSection:(NSInteger)section;
 - (nullable id)model:(id)model modelForCellAtIndexPath:(NSIndexPath *)indexPath;
-- (NSInteger)model:(id)model numberOfSupplementaryElementsOfKind:(XZMocoaKind)kind inSection:(NSInteger)section;
+- (NSInteger)model:(id)model numberOfSupplementsOfKind:(XZMocoaKind)kind inSection:(NSInteger)section;
 - (nullable id)model:(id)model modelForSupplementaryElementOfKind:(XZMocoaKind)kind atIndexPath:(NSIndexPath *)indexPath;
 @end
 

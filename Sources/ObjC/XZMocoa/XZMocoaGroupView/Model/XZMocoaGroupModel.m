@@ -12,23 +12,73 @@
 
 @implementation NSObject (XZMocoaGroupModel)
 
-- (NSInteger)numberOfSectionModels {
++ (void)load {
+    if (self == [NSObject class]) {
+        // 已经实现 XZMocoaGroupModel 就不添加默认实现。
+        if ([self conformsToProtocol:@protocol(XZMocoaGroupModel)]) {
+            return;
+        }
+        xz_objc_class_copyMethod(self, @selector(__xz_mocoa_numberOfSections),
+                                 self, @selector(numberOfSections));
+        xz_objc_class_copyMethod(self, @selector(__xz_mocoa_numberOfCellsInSection:),
+                                 self, @selector(numberOfCellsInSection:));
+        xz_objc_class_copyMethod(self, @selector(__xz_mocoa_modelForCellAtIndexPath:),
+                                 self, @selector(modelForCellAtIndexPath:));
+        xz_objc_class_copyMethod(self, @selector(__xz_mocoa_numberOfSupplementsOfKind:inSection:),
+                                 self, @selector(numberOfSupplementsOfKind:inSection:));
+        xz_objc_class_copyMethod(self, @selector(__xz_mocoa_modelForSupplementOfKind:atIndexPath:),
+                                 self, @selector(modelForSupplementOfKind:atIndexPath:));
+    }
+}
+
+- (NSInteger)xz_numberOfElements {
     return 1;
 }
 
-- (id<XZMocoaGroupSectionModel>)modelForSectionAtIndex:(NSInteger)index {
-    return (id)self;
+- (nullable id)xz_modelForElementAtIndex:(NSInteger)index {
+    return self;
+}
+
+- (NSInteger)xz_numberOfSupplementsOfKind:(XZMocoaKind)kind {
+    return 0;
+}
+
+- (nullable id)xz_modelForSupplementOfKind:(XZMocoaKind)kind atIndex:(NSInteger)index {
+    return nil;
+}
+
+- (NSInteger)__xz_mocoa_numberOfSections {
+    return [self xz_numberOfElements];
+}
+
+- (NSInteger)__xz_mocoa_numberOfCellsInSection:(NSInteger)section {
+    return [[self xz_modelForElementAtIndex:section] xz_numberOfElements];
+}
+
+- (nullable id)__xz_mocoa_modelForCellAtIndexPath:(NSIndexPath *)indexPath {
+    NSObject * const element = [self xz_modelForElementAtIndex:indexPath.section];
+    return [element xz_modelForElementAtIndex:indexPath.item];
+}
+
+- (NSInteger)__xz_mocoa_numberOfSupplementsOfKind:(XZMocoaKind)kind inSection:(NSInteger)section {
+    NSObject * const element = [self xz_modelForElementAtIndex:section];
+    return [element xz_numberOfSupplementsOfKind:kind];
+}
+
+- (nullable id)__xz_mocoa_modelForSupplementOfKind:(XZMocoaKind)kind atIndexPath:(NSIndexPath *)indexPath {
+    NSObject * const element = [self xz_modelForElementAtIndex:indexPath.section];
+    return [element xz_modelForSupplementOfKind:kind atIndex:indexPath.item];
 }
 
 @end
 
 @implementation NSArray (XZMocoaGroupModel)
 
-- (NSInteger)numberOfSectionModels {
+- (NSInteger)xz_numberOfElements {
     return self.count;
 }
 
-- (id<XZMocoaGroupSectionModel>)modelForSectionAtIndex:(NSInteger)index {
+- (id)xz_modelForElementAtIndex:(NSInteger)index {
     return [self objectAtIndex:index];
 }
 
@@ -36,72 +86,34 @@
 
 @implementation NSFetchedResultsController (XZMocoaGroupModel)
 
-- (NSInteger)numberOfSectionModels {
+- (NSInteger)xz_numberOfElements {
     return self.sections.count;
 }
 
-- (id<XZMocoaGroupSectionModel>)modelForSectionAtIndex:(NSInteger)index {
-    id<XZMocoaGroupSectionModel> model = (id)self.sections[index];
+- (nullable id)xz_modelForElementAtIndex:(NSInteger)index {
+    id const model = (id)self.sections[index];
     
-    Class const modelClass = object_getClass(model);
-    if (class_addProtocol(modelClass, @protocol(XZMocoaGroupSectionModel))) {
+    Class const ModelClass = object_getClass(model);
+    static const void * const _supports = &_supports;
+    
+    if (objc_getAssociatedObject(ModelClass, _supports) == nil) {
+        objc_setAssociatedObject(ModelClass, _supports, @(YES), OBJC_ASSOCIATION_COPY_NONATOMIC);
         {
-            SEL const selector = @selector(numberOfCellModels);
+            SEL const selector = @selector(xz_numberOfElements);
             const char * const encoding = xz_objc_class_getMethodTypeEncoding([NSObject class], selector);
             id const block = ^NSInteger(id<NSFetchedResultsSectionInfo> const self) {
                 return self.numberOfObjects;
             };
-            xz_objc_class_addMethodWithBlock(modelClass, selector, encoding, block, block, nil);
+            xz_objc_class_addMethodWithBlock(ModelClass, selector, encoding, block, block, nil);
         }
         
         {
-            SEL const selector = @selector(modelForCellAtIndex:);
+            SEL const selector = @selector(xz_modelForElementAtIndex:);
             const char * const encoding = xz_objc_class_getMethodTypeEncoding([NSObject class], selector);
             id const block = ^id(id<NSFetchedResultsSectionInfo> const self, NSInteger index) {
                 return self.objects[index];
             };
-            xz_objc_class_addMethodWithBlock(modelClass, selector, encoding, block, block, nil);
-        }
-        
-        {
-            SEL const selector = @selector(numberOfModelsForSupplementaryElementOfKind:);
-            const char * const encoding = xz_objc_class_getMethodTypeEncoding([NSObject class], selector);
-            id const block = ^NSInteger(id<NSFetchedResultsSectionInfo> const self, XZMocoaKind kind) {
-                return 0;
-            };
-            xz_objc_class_addMethodWithBlock(modelClass, selector, encoding, block, block, nil);
-        }
-        
-        {
-            SEL const selector = @selector(modelForSupplementaryElementOfKind:atIndex:);
-            const char * const encoding = xz_objc_class_getMethodTypeEncoding([NSObject class], selector);
-            id const block = ^id(id<NSFetchedResultsSectionInfo> const self, NSInteger index) {
-                return nil;
-            };
-            xz_objc_class_addMethodWithBlock(modelClass, selector, encoding, block, block, nil);
-        }
-        
-        {
-            SEL const selector = @selector(isEqual:);
-            const char * const encoding = xz_objc_class_getMethodTypeEncoding([NSObject class], selector);
-            id const block = ^BOOL(id<NSFetchedResultsSectionInfo> const self, id<NSFetchedResultsSectionInfo> const that) {
-                if (self == that) {
-                    return YES;
-                }
-                NSString * const thisName = self.name;
-                NSString * const thatName = that.name;
-                if (thisName == nil) {
-                    if (thatName != nil) {
-                        return NO;
-                    }
-                } else if (thatName == nil) {
-                    return NO;
-                } else if (![thisName isEqualToString:thatName]) {
-                    return NO;
-                }
-                return YES;
-            };
-            xz_objc_class_addMethodWithBlock(modelClass, selector, encoding, block, block, nil);
+            xz_objc_class_addMethodWithBlock(ModelClass, selector, encoding, block, block, nil);
         }
     }
     
