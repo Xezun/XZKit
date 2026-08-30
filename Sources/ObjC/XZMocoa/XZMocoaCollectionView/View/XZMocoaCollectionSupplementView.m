@@ -1,11 +1,11 @@
 //
-//  XZMocoaCollectionSectionSupplementaryView.m
+//  XZMocoaCollectionSupplementView.m
 //  XZMocoa
 //
 //  Created by Xezun on 2023/8/9.
 //
 
-#import "XZMocoaCollectionSectionSupplementaryView.h"
+#import "XZMocoaCollectionSupplementView.h"
 #import "XZRuntime.h"
 #import <objc/runtime.h>
 

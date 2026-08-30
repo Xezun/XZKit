@@ -11,7 +11,7 @@
 #import "XZMocoaGroupSupplementViewModel.h"
 #endif
 
-@protocol XZMocoaCollectionView, XZMocoaCollectionSectionSupplementaryView;
+@protocol XZMocoaCollectionView, XZMocoaCollectionSupplementView;
 
 NS_ASSUME_NONNULL_BEGIN
 

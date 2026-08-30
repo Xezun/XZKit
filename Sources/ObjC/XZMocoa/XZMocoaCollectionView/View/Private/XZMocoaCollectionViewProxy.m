@@ -6,7 +6,7 @@
 //
 
 #import "XZMocoaCollectionViewProxy.h"
-#import "XZMocoaCollectionSectionSupplementaryView.h"
+#import "XZMocoaCollectionSupplementView.h"
 #import "XZMocoaCollectionPlaceholderCell.h"
 #import "XZMocoaCollectionPlaceholderSectionSupplementaryView.h"
 #import "XZGeometry.h"
@@ -148,7 +148,7 @@ static NSString *UIElementKindFromMocoaKind(XZMocoaKind kind) {
     if (viewModel == nil) {
         return nil;
     }
-    UICollectionReusableView<XZMocoaCollectionSectionSupplementaryView> *view = [collectionView dequeueReusableSupplementaryViewOfKind:kind withReuseIdentifier:viewModel.identifier forIndexPath:indexPath];
+    UICollectionReusableView<XZMocoaCollectionSupplementView> *view = [collectionView dequeueReusableSupplementaryViewOfKind:kind withReuseIdentifier:viewModel.identifier forIndexPath:indexPath];
     view.viewModel = viewModel;
     return view;
 }

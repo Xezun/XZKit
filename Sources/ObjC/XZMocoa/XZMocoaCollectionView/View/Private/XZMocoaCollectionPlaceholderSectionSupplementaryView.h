@@ -8,13 +8,13 @@
 #if __has_include(<XZKit/XZKit.h>)
 #import <XZKit/XZMocoaCollectionSectionSupplementaryView.h>
 #else
-#import "XZMocoaCollectionSectionSupplementaryView.h"
+#import "XZMocoaCollectionSupplementView.h"
 #endif
 
 NS_ASSUME_NONNULL_BEGIN
 
 #if DEBUG
-@interface XZMocoaCollectionPlaceholderSectionSupplementaryView : UICollectionReusableView <XZMocoaCollectionSectionSupplementaryView>
+@interface XZMocoaCollectionPlaceholderSectionSupplementaryView : UICollectionReusableView <XZMocoaCollectionSupplementView>
 @end
 #else
 typedef UICollectionReusableView XZMocoaCollectionPlaceholderSectionSupplementaryView;

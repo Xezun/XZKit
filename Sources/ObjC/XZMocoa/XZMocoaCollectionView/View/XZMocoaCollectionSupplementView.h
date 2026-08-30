@@ -1,5 +1,5 @@
 //
-//  XZMocoaCollectionSectionSupplementaryView.h
+//  XZMocoaCollectionSupplementView.h
 //  XZMocoa
 //
 //  Created by Xezun on 2023/8/9.
@@ -18,7 +18,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 @protocol XZMocoaCollectionView;
 
-@protocol XZMocoaCollectionSectionSupplementaryView <XZMocoaGroupSupplementView>
+@protocol XZMocoaCollectionSupplementView <XZMocoaGroupSupplementView>
 @optional
 @property (nonatomic, strong, nullable) __kindof XZMocoaCollectionSectionSupplementaryViewModel *viewModel;
 @end
