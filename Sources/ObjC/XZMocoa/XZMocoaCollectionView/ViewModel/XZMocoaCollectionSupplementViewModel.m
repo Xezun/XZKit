@@ -1,14 +1,14 @@
 //
-//  XZMocoaCollectionSectionSupplementaryViewModel.m
+//  XZMocoaCollectionSupplementViewModel.m
 //  XZMocoa
 //
 //  Created by Xezun on 2023/8/9.
 //
 
-#import "XZMocoaCollectionSectionSupplementaryViewModel.h"
+#import "XZMocoaCollectionSupplementViewModel.h"
 #import "XZGeometry.h"
 
-@implementation XZMocoaCollectionSectionSupplementaryViewModel
+@implementation XZMocoaCollectionSupplementViewModel
 
 - (instancetype)initWithModel:(id)model {
     self = [super initWithModel:model];

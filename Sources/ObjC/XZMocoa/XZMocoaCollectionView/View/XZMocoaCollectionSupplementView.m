@@ -9,7 +9,7 @@
 #import "XZRuntime.h"
 #import <objc/runtime.h>
 
-@implementation UICollectionReusableView (XZMocoaCollectionSectionSupplementaryView)
+@implementation UICollectionReusableView (XZMocoaCollectionSupplementView)
 
 @dynamic viewModel;
 

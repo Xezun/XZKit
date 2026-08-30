@@ -9,7 +9,7 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-@interface Example0331Group109FooterViewModel : XZMocoaCollectionSectionSupplementaryViewModel
+@interface Example0331Group109FooterViewModel : XZMocoaCollectionSupplementViewModel
 
 @end
 

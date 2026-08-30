@@ -8,7 +8,7 @@
 #import "XZMocoaCollectionViewModel.h"
 #import "XZMocoaCollectionView.h"
 #import "XZMocoaTablePlaceholderCell.h"
-#import "XZMocoaTablePlaceholderSectionHeaderFooterView.h"
+#import "XZMocoaTablePlaceholderSupplementView.h"
 
 @implementation XZMocoaCollectionViewModel
 
@@ -80,7 +80,7 @@
     if (kind == XZMocoaKindCell) {
         return [XZMocoaTablePlaceholderCell class];
     }
-    return [XZMocoaTablePlaceholderSectionHeaderFooterView class];
+    return [XZMocoaTablePlaceholderSupplementView class];
 }
 
 @end

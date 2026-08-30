@@ -6,7 +6,7 @@
 //
 
 #import "XZMocoaTableViewProxy.h"
-#import "XZMocoaTablePlaceholderSectionHeaderFooterView.h"
+#import "XZMocoaTablePlaceholderSupplementView.h"
 #import "XZMocoaTablePlaceholderCell.h"
 @import ObjectiveC;
 
@@ -20,10 +20,10 @@
         [tableView registerClass:[XZMocoaTablePlaceholderCell class] forCellReuseIdentifier:identifier];
         
         identifier = XZMocoaReuseIdentifier(XZMocoaKindHeader, XZMocoaNamePlaceholder);
-        [tableView registerClass:[XZMocoaTablePlaceholderSectionHeaderFooterView class] forHeaderFooterViewReuseIdentifier:identifier];
+        [tableView registerClass:[XZMocoaTablePlaceholderSupplementView class] forHeaderFooterViewReuseIdentifier:identifier];
         
         identifier = XZMocoaReuseIdentifier(XZMocoaKindFooter, XZMocoaNamePlaceholder);
-        [tableView registerClass:[XZMocoaTablePlaceholderSectionHeaderFooterView class] forHeaderFooterViewReuseIdentifier:identifier];
+        [tableView registerClass:[XZMocoaTablePlaceholderSupplementView class] forHeaderFooterViewReuseIdentifier:identifier];
     }
     
     [module enumerateSubmodulesUsingBlock:^(XZMocoaModule *submodule, XZMocoaKind kind, XZMocoaName name, BOOL *stop) {
@@ -70,7 +70,7 @@
                 }
                 default: {
                     NSString * const identifier = XZMocoaReuseIdentifier(kind, name);
-                    Class const aClass = [XZMocoaTablePlaceholderSectionHeaderFooterView class];
+                    Class const aClass = [XZMocoaTablePlaceholderSupplementView class];
                     [tableView registerClass:aClass forHeaderFooterViewReuseIdentifier:identifier];
                     break;
                 }
@@ -112,17 +112,17 @@
 
 - (UIView *)tableView:(UITableView *)tableView viewForHeaderInSection:(NSInteger)section {
     
-    XZMocoaTableSectionHeaderFooterViewModel * const viewModel = [self.viewModel viewModelForHeaderInSection:section];
+    XZMocoaTableSupplementViewModel * const viewModel = [self.viewModel viewModelForHeaderInSection:section];
     if (viewModel == nil) {
         return nil;
     }
-    UITableViewHeaderFooterView<XZMocoaTableSectionHeaderFooterView> *view = [tableView dequeueReusableHeaderFooterViewWithIdentifier:viewModel.identifier];
+    UITableViewHeaderFooterView<XZMocoaTableSupplementView> *view = [tableView dequeueReusableHeaderFooterViewWithIdentifier:viewModel.identifier];
     view.viewModel = viewModel;
     return view;
 }
 
 - (CGFloat)tableView:(UITableView *)tableView heightForHeaderInSection:(NSInteger)section {
-    XZMocoaTableSectionHeaderFooterViewModel * const viewModel = [self.viewModel viewModelForHeaderInSection:section];
+    XZMocoaTableSupplementViewModel * const viewModel = [self.viewModel viewModelForHeaderInSection:section];
     if (viewModel == nil) {
         return XZMocoaMinimumViewDimension;
     }
@@ -130,17 +130,17 @@
 }
 
 - (UIView *)tableView:(UITableView *)tableView viewForFooterInSection:(NSInteger)section {
-    XZMocoaTableSectionHeaderFooterViewModel * const viewModel = [self.viewModel viewModelForFooterInSection:section];
+    XZMocoaTableSupplementViewModel * const viewModel = [self.viewModel viewModelForFooterInSection:section];
     if (viewModel == nil) {
         return nil;
     }
-    UITableViewHeaderFooterView<XZMocoaTableSectionHeaderFooterView> *view = [tableView dequeueReusableHeaderFooterViewWithIdentifier:viewModel.identifier];
+    UITableViewHeaderFooterView<XZMocoaTableSupplementView> *view = [tableView dequeueReusableHeaderFooterViewWithIdentifier:viewModel.identifier];
     view.viewModel = viewModel;
     return view;
 }
 
 - (CGFloat)tableView:(UITableView *)tableView heightForFooterInSection:(NSInteger)section {
-    XZMocoaTableSectionHeaderFooterViewModel * const viewModel = [self.viewModel viewModelForFooterInSection:section];
+    XZMocoaTableSupplementViewModel * const viewModel = [self.viewModel viewModelForFooterInSection:section];
     if (viewModel == nil) {
         return XZMocoaMinimumViewDimension;
     }

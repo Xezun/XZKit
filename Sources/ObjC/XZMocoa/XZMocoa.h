@@ -40,22 +40,22 @@
 #import <XZKit/XZMocoaTableCellModel.h>
 #import <XZKit/XZMocoaTableModel.h>
 #import <XZKit/XZMocoaTableCell.h>
-#import <XZKit/XZMocoaTableSectionHeaderFooterView.h>
+#import <XZKit/XZMocoaTableSupplementView.h>
 #import <XZKit/XZMocoaTableView.h>
 #import <XZKit/XZMocoaTableViewController.h>
 #import <XZKit/XZMocoaTableCellViewModel.h>
-#import <XZKit/XZMocoaTableSectionHeaderFooterViewModel.h>
+#import <XZKit/XZMocoaTableSupplementViewModel.h>
 #import <XZKit/XZMocoaTableViewModel.h>
 
 // XZMocoaCollectionView
 #import <XZKit/XZMocoaCollectionCellModel.h>
 #import <XZKit/XZMocoaCollectionModel.h>
 #import <XZKit/XZMocoaCollectionCell.h>
-#import <XZKit/XZMocoaCollectionSectionSupplementaryView.h>
+#import <XZKit/XZMocoaCollectionSupplementView.h>
 #import <XZKit/XZMocoaCollectionView.h>
 #import <XZKit/XZMocoaCollectionViewController.h>
 #import <XZKit/XZMocoaCollectionCellViewModel.h>
-#import <XZKit/XZMocoaCollectionSectionSupplementaryViewModel.h>
+#import <XZKit/XZMocoaCollectionSupplementViewModel.h>
 #import <XZKit/XZMocoaCollectionViewModel.h>
 
 #else
@@ -86,22 +86,22 @@
 #import "XZMocoaTableCellModel.h"
 #import "XZMocoaTableModel.h"
 #import "XZMocoaTableCell.h"
-#import "XZMocoaTableSectionHeaderFooterView.h"
+#import "XZMocoaTableSupplementView.h"
 #import "XZMocoaTableView.h"
 #import "XZMocoaTableViewController.h"
 #import "XZMocoaTableCellViewModel.h"
-#import "XZMocoaTableSectionHeaderFooterViewModel.h"
+#import "XZMocoaTableSupplementViewModel.h"
 #import "XZMocoaTableViewModel.h"
 
 // XZMocoaCollectionView
 #import "XZMocoaCollectionCellModel.h"
 #import "XZMocoaCollectionModel.h"
 #import "XZMocoaCollectionCell.h"
-#import "XZMocoaCollectionSectionSupplementaryView.h"
+#import "XZMocoaCollectionSupplementView.h"
 #import "XZMocoaCollectionView.h"
 #import "XZMocoaCollectionViewController.h"
 #import "XZMocoaCollectionCellViewModel.h"
-#import "XZMocoaCollectionSectionSupplementaryViewModel.h"
+#import "XZMocoaCollectionSupplementViewModel.h"
 #import "XZMocoaCollectionViewModel.h"
 
 #endif

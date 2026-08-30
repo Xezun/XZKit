@@ -1,14 +1,14 @@
 //
-//  XZMocoaCollectionPlaceholderSectionSupplementaryViewModel.m
+//  XZMocoaCollectionPlaceholderSupplementViewModel.m
 //  XZMocoa
 //
 //  Created by Xezun on 2023/8/28.
 //
 
-#import "XZMocoaCollectionPlaceholderSectionSupplementaryViewModel.h"
+#import "XZMocoaCollectionPlaceholderSupplementViewModel.h"
 
 #if DEBUG
-@implementation XZMocoaCollectionPlaceholderSectionSupplementaryViewModel
+@implementation XZMocoaCollectionPlaceholderSupplementViewModel
 
 - (instancetype)initWithModel:(id)model {
     self = [super initWithModel:model];

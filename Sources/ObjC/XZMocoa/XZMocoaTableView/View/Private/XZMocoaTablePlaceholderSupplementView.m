@@ -1,15 +1,15 @@
 //
-//  XZMocoaTablePlaceholderSectionHeaderFooterView.m
+//  XZMocoaTablePlaceholderSupplementView.m
 //  XZMocoa
 //
 //  Created by Xezun on 2023/8/19.
 //
 
-#import "XZMocoaTablePlaceholderSectionHeaderFooterView.h"
+#import "XZMocoaTablePlaceholderSupplementView.h"
 #import "XZMocoaGroupPlaceholderView.h"
 
 #if DEBUG
-@implementation XZMocoaTablePlaceholderSectionHeaderFooterView {
+@implementation XZMocoaTablePlaceholderSupplementView {
     XZMocoaGroupPlaceholderView *_view;
 }
 

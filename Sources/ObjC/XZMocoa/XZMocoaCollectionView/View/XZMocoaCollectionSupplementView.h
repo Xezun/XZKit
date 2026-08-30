@@ -8,10 +8,10 @@
 #import <UIKit/UIKit.h>
 #if __has_include(<XZKit/XZKit.h>)
 #import <XZKit/XZMocoaGroupSupplementView.h>
-#import <XZKit/XZMocoaCollectionSectionSupplementaryViewModel.h>
+#import <XZKit/XZMocoaCollectionSupplementViewModel.h>
 #else
 #import "XZMocoaGroupSupplementView.h"
-#import "XZMocoaCollectionSectionSupplementaryViewModel.h"
+#import "XZMocoaCollectionSupplementViewModel.h"
 #endif
 
 NS_ASSUME_NONNULL_BEGIN
@@ -20,16 +20,16 @@ NS_ASSUME_NONNULL_BEGIN
 
 @protocol XZMocoaCollectionSupplementView <XZMocoaGroupSupplementView>
 @optional
-@property (nonatomic, strong, nullable) __kindof XZMocoaCollectionSectionSupplementaryViewModel *viewModel;
+@property (nonatomic, strong, nullable) __kindof XZMocoaCollectionSupplementViewModel *viewModel;
 @end
 
-@interface UICollectionReusableView (XZMocoaCollectionSectionSupplementaryView)
-@property (nonatomic, strong, nullable) __kindof XZMocoaCollectionSectionSupplementaryViewModel *viewModel;
+@interface UICollectionReusableView (XZMocoaCollectionSupplementView)
+@property (nonatomic, strong, nullable) __kindof XZMocoaCollectionSupplementViewModel *viewModel;
 - (void)collectionView:(id<XZMocoaCollectionView>)collectionView willDisplaySupplementaryViewAtIndexPath:(NSIndexPath *)indexPath forElementOfKind:(NSString *)elementKind;
 - (void)collectionView:(id<XZMocoaCollectionView>)collectionView didEndDisplayingSupplementaryViewAtIndexPath:(NSIndexPath *)indexPath forElementOfKind:(NSString *)elementKind;
 @end
 
-@interface UICollectionViewCell (XZMocoaCollectionSectionSupplementaryView)
+@interface UICollectionViewCell (XZMocoaCollectionSupplementView)
 - (void)collectionView:(id<XZMocoaCollectionView>)collectionView willDisplaySupplementaryViewAtIndexPath:(NSIndexPath *)indexPath forElementOfKind:(NSString *)elementKind NS_UNAVAILABLE;
 - (void)collectionView:(id<XZMocoaCollectionView>)collectionView didEndDisplayingSupplementaryViewAtIndexPath:(NSIndexPath *)indexPath forElementOfKind:(NSString *)elementKind NS_UNAVAILABLE;
 @end

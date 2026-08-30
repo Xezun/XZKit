@@ -8,7 +8,7 @@
 #import "XZMocoaCollectionViewProxy.h"
 #import "XZMocoaCollectionSupplementView.h"
 #import "XZMocoaCollectionPlaceholderCell.h"
-#import "XZMocoaCollectionPlaceholderSectionSupplementaryView.h"
+#import "XZMocoaCollectionPlaceholderSupplementView.h"
 #import "XZGeometry.h"
 
 static XZMocoaKind XZMocoaKindFromElementKind(NSString *kind) {
@@ -34,7 +34,7 @@ static NSString *UIElementKindFromMocoaKind(XZMocoaKind kind) {
         
         for (XZMocoaKind kind in self.viewModel.supportedSupplementKinds) {
             NSString * const elementKind = UIElementKindFromMocoaKind(kind);
-            Class      const aClass      = [XZMocoaCollectionPlaceholderSectionSupplementaryView class];
+            Class      const aClass      = [XZMocoaCollectionPlaceholderSupplementView class];
             NSString * const identifier  = XZMocoaReuseIdentifier(kind, XZMocoaNamePlaceholder);
             [collectionView registerClass:aClass forSupplementaryViewOfKind:elementKind withReuseIdentifier:identifier];
         }
@@ -87,7 +87,7 @@ static NSString *UIElementKindFromMocoaKind(XZMocoaKind kind) {
                 default: {
                     NSString * const identifier = XZMocoaReuseIdentifier(kind, name);
                     NSString * const elementKind = UIElementKindFromMocoaKind(kind);
-                    Class const aClass = [XZMocoaCollectionPlaceholderSectionSupplementaryView class];
+                    Class const aClass = [XZMocoaCollectionPlaceholderSupplementView class];
                     [collectionView registerClass:aClass forSupplementaryViewOfKind:elementKind withReuseIdentifier:identifier];
                     break;
                 }
@@ -144,7 +144,7 @@ static NSString *UIElementKindFromMocoaKind(XZMocoaKind kind) {
 - (UICollectionReusableView *)collectionView:(UICollectionView *)collectionView viewForSupplementaryElementOfKind:(NSString *)kind atIndexPath:(NSIndexPath *)indexPath {
     XZMocoaKind const mocoaKind = XZMocoaKindFromElementKind(kind);
     
-    XZMocoaCollectionSectionSupplementaryViewModel *viewModel = [self.viewModel viewModelForSupplementOfKind:mocoaKind atIndexPath:indexPath];
+    XZMocoaCollectionSupplementViewModel *viewModel = [self.viewModel viewModelForSupplementOfKind:mocoaKind atIndexPath:indexPath];
     if (viewModel == nil) {
         return nil;
     }

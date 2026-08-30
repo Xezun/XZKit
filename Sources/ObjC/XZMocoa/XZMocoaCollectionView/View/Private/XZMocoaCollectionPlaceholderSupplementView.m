@@ -1,15 +1,15 @@
 //
-//  XZMocoaCollectionPlaceholderSectionSupplementaryView.m
+//  XZMocoaCollectionPlaceholderSupplementView.m
 //  XZMocoa
 //
 //  Created by Xezun on 2023/8/19.
 //
 
-#import "XZMocoaCollectionPlaceholderSectionSupplementaryView.h"
+#import "XZMocoaCollectionPlaceholderSupplementView.h"
 #import "XZMocoaGroupPlaceholderView.h"
 
 #if DEBUG
-@implementation XZMocoaCollectionPlaceholderSectionSupplementaryView {
+@implementation XZMocoaCollectionPlaceholderSupplementView {
     XZMocoaGroupPlaceholderView *_view;
 }
 

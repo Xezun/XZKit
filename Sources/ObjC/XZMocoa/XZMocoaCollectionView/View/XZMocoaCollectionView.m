@@ -10,7 +10,7 @@
 #import "XZMocoaCollectionCell.h"
 #import "XZMocoaCollectionSupplementView.h"
 #import "XZMocoaCollectionPlaceholderCell.h"
-#import "XZMocoaCollectionPlaceholderSectionSupplementaryView.h"
+#import "XZMocoaCollectionPlaceholderSupplementView.h"
 #import "XZMocoaCollectionViewProxy.h"
 
 @implementation XZMocoaCollectionView
