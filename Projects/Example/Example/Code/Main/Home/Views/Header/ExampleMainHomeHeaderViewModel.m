@@ -15,7 +15,8 @@
 
 - (void)prepare {
     [super prepare];
-    self.height = 40;
+    
+    self.height = 50;
 }
 
 @end

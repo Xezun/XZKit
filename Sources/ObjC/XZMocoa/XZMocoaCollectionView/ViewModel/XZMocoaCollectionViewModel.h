@@ -44,15 +44,9 @@ NS_ASSUME_NONNULL_BEGIN
 
 @end
 
-/// 重申明
 @interface XZMocoaCollectionViewModel (XZMocoaCollectionViewModel)
-//@property (nonatomic, readonly) NSArray<__kindof XZMocoaCollectionSectionViewModel *> *sectionViewModels;
-//- (__kindof XZMocoaCollectionSectionViewModel *)sectionViewModelAtIndex:(NSInteger)index;
-//- (__kindof XZMocoaCollectionCellViewModel *)cellViewModelAtIndexPath:(NSIndexPath *)indexPath;
-
 - (void)selectCellAtIndexPath:(NSIndexPath *)indexPath animated:(BOOL)animated scrollPosition:(UICollectionViewScrollPosition)scrollPosition;
 - (void)didSelectCellAtIndexPath:(NSIndexPath *)indexPath animated:(BOOL)animated scrollPosition:(UICollectionViewScrollPosition)scrollPosition;
-
 @end
 
 NS_ASSUME_NONNULL_END

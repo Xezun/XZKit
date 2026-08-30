@@ -6,7 +6,7 @@
 //
 
 #import "ExampleMainHomeViewController.h"
-#import "ExampleMainHomeSectionModel.h"
+#import "ExampleMainHomeModel.h"
 @import XZKit;
 
 @interface ExampleMainHomeViewController ()
@@ -24,12 +24,9 @@
 - (void)viewDidLoad {
     [super viewDidLoad];
     
-    NSURL *url = [NSBundle.mainBundle URLForResource:@"ExampleMainHome" withExtension:@"json"];
-    NSData *data = [NSData dataWithContentsOfURL:url];
+    ExampleMainHomeModel *model = [[ExampleMainHomeModel alloc] init];
     
-    NSArray *models = [XZJSON decode:data options:kNilOptions class:[ExampleMainHomeSectionModel class]];
-    
-    XZMocoaTableViewModel *viewModel = [[XZMocoaTableViewModel alloc] initWithModel:models];
+    XZMocoaTableViewModel *viewModel = [[XZMocoaTableViewModel alloc] initWithModel:model];
     viewModel.module = XZMocoa(@"https://xzkit.xezun.com/examples");
     self.tableView.viewModel = viewModel;
 }

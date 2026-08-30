@@ -128,7 +128,7 @@
         for (NSDictionary *dict in array) {
             XZMocoaName name = dict[@"group"];
             if (!name) continue;
-            XZMocoaModule *submodule = [module sectionForName:name];
+            XZMocoaModule *submodule = [module cellForName:name];
             id item = [XZJSON decode:dict options:0 class:submodule.modelClass];
             if (item) {
                 [list addObject:item];

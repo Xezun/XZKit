@@ -21,7 +21,6 @@
     self.address = data.address;
 }
 
-
 - (NSString *)formatPhoneNumber:(NSString *)phone {
     if (phone.length <= 3) {
         return phone;

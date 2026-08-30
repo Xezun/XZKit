@@ -27,7 +27,7 @@
     [super layoutSubviews];
 }
 
-- (void)viewModelDidChange {
+- (void)didChangeViewModel:(XZMocoaViewModel *)oldValue {
     [super viewModelDidChange];
     
     Example0310ContactViewModel *viewModel = self.viewModel;

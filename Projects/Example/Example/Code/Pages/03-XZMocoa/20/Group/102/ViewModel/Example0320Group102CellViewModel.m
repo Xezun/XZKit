@@ -10,6 +10,7 @@
 @import XZKit;
 
 @implementation Example0320Group102CellViewModel
+
 + (void)load {
     XZMocoa(@"https://mocoa.xezun.com/examples/20/table/102/:/").viewModelClass = self;
 }

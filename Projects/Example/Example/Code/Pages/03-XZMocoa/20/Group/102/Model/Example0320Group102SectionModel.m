@@ -10,10 +10,6 @@
 
 @implementation Example0320Group102SectionModel
 
-+ (void)load {
-    XZMocoa(@"https://mocoa.xezun.com/examples/20/table/102/").modelClass = self;
-}
-
 - (BOOL)isEqual:(Example0320Group102SectionModel *)object {
     if (self == object) return YES;
     if (![object isKindOfClass:[Example0320Group102SectionModel class]]) return NO;
