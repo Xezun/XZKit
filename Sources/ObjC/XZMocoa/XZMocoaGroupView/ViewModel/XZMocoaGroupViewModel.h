@@ -18,6 +18,8 @@ NS_ASSUME_NONNULL_BEGIN
 @protocol XZMocoaGroupViewModelDelegate <NSObject>
 @end
 
+@class UITableView, UICollectionView;
+
 /// 列表容器视图的视图模型。
 /// @attention 由于需要管理列表 Cell 子视图，因此需要设置 `module` 属性才能正常工作。
 @interface XZMocoaGroupViewModel : XZMocoaViewModel <XZMocoaGroupViewModel>
@@ -48,6 +50,8 @@ NS_ASSUME_NONNULL_BEGIN
 - (__kindof XZMocoaGroupSupplementViewModel *)viewModelForSupplementOfKind:(XZMocoaKind)kind atIndexPath:(NSIndexPath *)indexPath;
 - (__kindof XZMocoaGroupSupplementViewModel *)viewModelForHeaderInSection:(NSInteger)section;
 - (__kindof XZMocoaGroupSupplementViewModel *)viewModelForFooterInSection:(NSInteger)section;
+
+- (nullable NSIndexPath *)indexPathForViewModel:(XZMocoaViewModel *)viewModel;
 
 - (void)selectCellAtIndexPath:(NSIndexPath *)indexPath animated:(BOOL)animated scrollPosition:(NSInteger)scrollPosition;
 - (void)deselectCellAtIndexPath:(NSIndexPath *)indexPath animated:(BOOL)animated;

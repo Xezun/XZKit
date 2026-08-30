@@ -31,9 +31,9 @@ import XZKit
 // 数据模型，任意 NSObject 子类都可以作为 Model。
 @mocoa(.m)
 class Model: NSObject {
-    var isVIP = false
-    var firstName: String?
-    var lastName: String?
+    @objc dynamic var isVIP = false
+    @objc dynamic var firstName: String?
+    @objc dynamic var lastName: String?
 }
 
 // 视图，遵循 XZMocoaView 标记协议，表示其为 MVVM 中的 View 角色。
@@ -83,7 +83,7 @@ XZMocoa 中，一个完整的 MVVM 单元由三个元素组成：
 
 ### 1、Ready 机制
 
-视图模型在创建时可能并不需要立即初始化，或需要额外的初始化参数（比如在 `UIViewController` 中，应该在 `viewDidLoad` 时初始化），因此 XZMocoa 设计了 `ready` 机制来延迟 ViewModel 的初始化时机。
+视图模型在创建时可能并不需要立即初始化，比如在 `UIViewController` 中，应该在 `viewDidLoad` 时初始化，或需要额外的初始化参数，因此 XZMocoa 设计了 `ready` 机制来延迟 ViewModel 的初始化时机。
 
 在 `ready` 机制下，开发者应在 ViewModel 的 `-prepare` 方法中进行初始化。
 
@@ -144,9 +144,11 @@ XZMocoa 中，一个完整的 MVVM 单元由三个元素组成：
 
 ### 4、Key Target Action（KTA）机制
 
-在 MVVM 设计模式中，View 通过监听 ViewModel 的属性来展示页面。实际上大部分情况下，View 并不需要一直监听，因为大多数 View 只需渲染一次，在 `-viewModelDidChange` 中即可完成。
+在 MVVM 设计模式中，View 通过监听 ViewModel 的属性来展示页面。实际上大部分情况下，View 并不需要一直监听，因为大多数 View 只需渲染一次，在 `-didChangeViewModel:` 中即可完成。
 
 对于剩余少量需要监听的事件，使用 `delegate` 需要定义协议，比较繁琐，因此 XZMocoa 设计了 target-action 机制：以 `XZMocoaKey` 字符串作为事件名，View 绑定 key 之后，ViewModel 发送事件时，View 绑定的方法就会被触发。
+
+> 使用`Key`绑定可以解决 View 与 ViewModel 之间的类型依赖，缺点就是编译器无法在编译阶段检查类型错误。
 
 ```objc
 // View 监听 viewModel 的 isRefreshing 属性
@@ -296,21 +298,21 @@ view.viewModel = viewModel;
 | `https://mocoa.xezun.com/table/name1/`       | `name1` 是 `table` 模块的子模块                            |
 | `https://mocoa.xezun.com/table/name1/name2/` | `name2` 是 `name1` 模块的子模块，`name1` 是 `table` 模块的子模块 |
 
-如果子模块有分类，使用 `:` 分隔，比如：
+可以对子模块按分类管理，使用 `:` 分隔，比如：
 
-| URL                                                   | 说明                                   |
-| ----------------------------------------------------- | -------------------------------------- |
-| `https://mocoa.xezun.com/table/section/header:name1/` | `name1` 是 `section` 模块的 `header` 子模块 |
-| `https://mocoa.xezun.com/table/section/footer:name2/` | `name2` 是 `section` 模块的 `footer` 子模块 |
+| URL                                           | 说明                                      |
+| --------------------------------------------- | ----------------------------------------- |
+| `https://mocoa.xezun.com/table/header:name1/` | `name1` 是 `table` 模块的 `header` 子模块 |
+| `https://mocoa.xezun.com/table/footer:name2/` | `name2` 是 `table` 模块的 `footer` 子模块 |
 
 模块也可以没有名字和分类。路径中，没有分类可以省略 `:`，没有名字不能省略 `:`，比如：
 
 | URL                                        | 说明                                   |
 | ------------------------------------------ | -------------------------------------- |
-| `https://mocoa.xezun.com/table/name/`      | 合法                                   |
-| `https://mocoa.xezun.com/table/kind:name/` | 合法                                   |
-| `https://mocoa.xezun.com/table/kind:/`     | 合法                                   |
-| `https://mocoa.xezun.com/table/:/`         | 合法                                   |
+| `https://mocoa.xezun.com/table/name/`      | 合法，模块名为 name 分类默认                |
+| `https://mocoa.xezun.com/table/kind:name/` | 合法，模块名为 name 分类为 kind                |
+| `https://mocoa.xezun.com/table/kind:/`     | 合法，模块名为默认，分类为 kind                   |
+| `https://mocoa.xezun.com/table/:/`         | 合法，模块名、分类都为默认                      |
 | `https://mocoa.xezun.com/table/kind/`      | 不合法。因为 `kind` 会被作为 `name` 使用 |
 
 访问下级模块，可以使用 `-submoduleForKind:forName:` 方法，或者直接使用下标方式：
@@ -319,30 +321,16 @@ view.viewModel = viewModel;
 // 常规方式获取下级
 XZMocoaModule *submodule = [module submoduleForKind:@"header" forName:@"black"];
 // 下标方式获取下级
-XZMocoaModule *submodule = module[@"header"][@"black"];
+XZMocoaModule *submodule = module[@"header:black"];
 ```
 
-对于列表模块，XZMocoa 提供了 `section`、`cell`、`header`、`footer` 等便利属性，以及对应的 `xxxForName:` 方法。
+对于列表模块，XZMocoa 提供了`cell`、`header`、`footer` 等便利属性，以及对应的 `xxxForName:` 方法。
 
 ### 5、默认模块
 
-一般情况下，名称为 `XZMocoaNameDefault` 的模块，为同级模块中的默认模块。
-
-1、为名称为 `name` 的 `section` 模块创建 ViewModel 对象时，会按照以下顺序使用 `viewModelClass` 配置：
-
-- 当前列表中名称为 `name` 的 `section` 模块的 `viewModelClass`
-- 当前列表中名称为 `XZMocoaNameDefault` 的 `section` 模块的 `viewModelClass`
-- 使用占位视图模型类
-
-2、为名称为 `name` 的 `cell` 模块创建 ViewModel 对象时，会按照以下顺序使用 `viewModelClass` 配置：
-
-- 当前列表中，当前 `section` 中名称为 `name` 的 `cell` 模块的 `viewModelClass`
-- 当前列表中，当前 `section` 中名称为 `XZMocoaNameDefault` 的 `cell` 模块的 `viewModelClass`
-- 当前列表中，默认 `section` 中名称为 `name` 的 `cell` 模块的 `viewModelClass`
-- 当前列表中，默认 `section` 中名称为 `XZMocoaNameDefault` 的 `cell` 模块的 `viewModelClass`
-- 使用占位视图模型类
-
-> 默认 `section` 模块，即名称为 `XZMocoaNameDefault` 的 `section` 模块。占位视图模型只在 `DEBUG` 环境下渲染占位视图，在 `Release` 环境下会自动隐藏。
+- 子模块中分类为`XZMocoaKindDefault` （空字符串）的模块，为默认模块的分类。
+- 子模块中名称为`XZMocoaNameDefault` （空字符串）的模块，为默认模块的名称。
+- 在`Table`或`Collection`列表中，默认分类的子模块为`Cell`模块。
 
 ## 列表 MVVM
 
@@ -352,25 +340,18 @@ XZMocoaModule *submodule = module[@"header"][@"black"];
 
 ### 1、数据协议
 
-为了让所有列表数据都能够在 `XZMocoaTableView` 中使用，XZMocoa 设计了 `XZMocoaTableModel` 和 `XZMocoaTableSectionModel` 协议，来规范作为列表数据的基本格式。任何数据只要实现这两个协议，就可以在 `XZMocoaTableView` 中使用。
+所有`NSObject`子类都可以作为列表数据模型，特别的可以直接将`NSArray`二维数组元素映射为列表`Cell`的数据模型。对于自定义模型，需要遵循`XZMocoaGroupModel`协议，才能在 Mocoa 中使用。
 
 ```objc
-@protocol XZMocoaTableModel <XZMocoaGroupModel>
-@property (nonatomic, readonly) NSInteger numberOfSectionModels;
-- (nullable id<XZMocoaTableSectionModel>)modelForSectionAtIndex:(NSInteger)index;
-@end
-
-@protocol XZMocoaTableSectionModel <XZMocoaGroupSectionModel>
+@protocol XZMocoaGroupModel <XZMocoaModel>
 @optional
-@property (nonatomic, readonly) NSInteger numberOfCellModels;
-- (nullable id)modelForCellAtIndex:(NSInteger)index;
-- (NSInteger)numberOfModelsForSupplementaryElementOfKind:(XZMocoaKind)kind;
-- (nullable id)modelForSupplementaryElementOfKind:(XZMocoaKind)kind atIndex:(NSInteger)index;
+@property (nonatomic, readonly) NSInteger numberOfSections;
+- (NSInteger)numberOfCellsInSection:(NSInteger)section;
+- (nullable id)modelForCellAtIndexPath:(NSIndexPath *)indexPath;
+- (NSInteger)numberOfSupplementsOfKind:(XZMocoaKind)kind inSection:(NSInteger)section;
+- (nullable id)modelForSupplementOfKind:(XZMocoaKind)kind atIndexPath:(NSIndexPath *)indexPath;
 @end
 ```
-
-> 协议只是规范，并非强制要求。实际上所有数据都可以作为列表的数据，但不实现协议的话，XZMocoa 不会对数据进行 `section` 或 `cell` 的区分，实际效果就可能并非预期。
-> 数组天然是符合规范的数据：数组一维中的元素会作为 `section` 数据，二维中的元素会作为 `cell` 数据。
 
 ### 2、创建列表
 
@@ -382,18 +363,17 @@ NSArray *dataArray;
 // viewModel
 XZMocoaTableViewModel *tableViewModel = [[XZMocoaTableViewModel alloc] initWithModel:dataArray];
 tableViewModel.module = XZMocoa(@"https://mocoa.xezun.com/table/");
-[tableViewModel ready];
 // view
 XZMocoaTableView *tableView = [[XZMocoaTableView alloc] initWithFrame:self.view.bounds style:UITableViewStyleGrouped];
 tableView.viewModel = tableViewModel;
 [self.view addSubview:tableView];
 ```
 
-虽然目前并没有创建 cell，但仅需上面这些代码就可以渲染列表了，因为 XZMocoa 会使用占位 cell 渲染。这可以帮助提前验证数据的基本格式问题，并解决原生组件关于 `dataSource` 的各种崩溃问题。
+虽然目前并没有创建 cell，但仅需上面这些代码就可以渲染列表了，因为 XZMocoa 会使用占位 cell 渲染。这可以帮助提前验证数据的基本格式问题，并屏蔽原生组件关于 `dataSource` 的各种崩溃问题。
 
 ### 3、开发 cell 模块
 
-使用 XZMocoa，你可以将每一个 cell 都看作完全独立的模块进行开发，然后注册到相应的列表模块中即可展示。
+将每一个 cell 都看作完全独立的模块进行开发，然后注册到相应的列表模块中即可展示。
 
 ###### 3.1 定义 View、ViewModel、Model
 
@@ -446,7 +426,7 @@ View 根据 ViewModel 提供的数据进行展示。
 ```objc
 @implementation ExampleCell
 
-- (void)viewModelDidChange {
+- (void)didChangeViewModel:(XZMocoaViewModel *)oldViewModel {
     ExampleCellViewModel *viewModel = self.viewModel;
 
     self.nameLabel.text = viewModel.name;
@@ -455,13 +435,11 @@ View 根据 ViewModel 提供的数据进行展示。
 @end
 ```
 
-方法 `-viewModelDidChange` 由 `UIResponder` 的 `XZMocoaView` 分类提供，视图遵循 `XZMocoaView` 协议后即可使用。
+方法 `-didChangeViewModel:` 由 `UIResponder` 的 `XZMocoaView` 分类提供，视图遵循 `XZMocoaView` 协议后即可使用。
 
 ###### 3.4 注册模块
 
 将 cell 模块注册到列表模块中，就可以在列表中展示了。在下面的例子中，列表模块为 URL 为 `https://mocoa.xezun.com/table/` 的模块。
-
-> 在 `UITableView` 中 `section` 没有直接视图，但却是不可少的逻辑层，所以在 XZMocoa 中，cell 是注册在 `section` 之下，而非直接注册在 `tableView` 之下。
 
 ```objc
 @implementation ExampleCellModel
@@ -483,7 +461,7 @@ View 根据 ViewModel 提供的数据进行展示。
 @end
 ```
 
-在此示例中，只有一种类型的 `section` 和 `cell`，不需要具名，所以直接使用 `.section.cell` 注册。更多详细用法，可参考“Example”示例工程。
+在此示例中，只有一种类型的 `cell`，不需要具名，所以直接使用 `.section.cell` 注册。更多详细用法，可参考“Example”示例工程。
 
 ### 4、同步更新视图
 
@@ -491,6 +469,7 @@ View 根据 ViewModel 提供的数据进行展示。
 
 ```objc
 [_dataArray removeObjectAtIndex:0];
+// Mocoa 默认不监听数据变化，下面方法的作用就是告诉 ViewModel 数据改变了。
 [_tableViewModel deleteSectionAtIndex:0];
 ```
 
@@ -513,7 +492,7 @@ View 根据 ViewModel 提供的数据进行展示。
 - (BOOL)isEqual:(ExampleCellModel *)object {
     if (object == self) return YES;
     if (![object isKindOfClass:[ExampleCellModel class]]) return NO;
-    return [self.nid isEqualToString:object.nid];
+    return [self.dataID isEqualToString:object.dataID];
 }
 ```
 
@@ -566,10 +545,12 @@ let module = #mocoa("https://mocoa.xezun.com/main")
 // 带角色的标记
 @mocoa(.vm)
 class ViewModel: XZMocoaViewModel {
-
+		
+    // 声明此属性可以通过 KTA 机制监听，监听的键为 name 字符串。
     @key(.name)
     var name: String?
 
+    // 将 model.name 绑定到此方法
     @bind
     func setName(_ name: String?) {
         self.name = name

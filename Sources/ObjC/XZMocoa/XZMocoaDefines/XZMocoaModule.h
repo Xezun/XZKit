@@ -12,7 +12,7 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-@class XZMocoaModule, NSDictionary, XZMocoaViewModel, XZMocoaSubmoduleCollection;
+@class XZMocoaModule, NSDictionary, XZMocoaViewModel;
 
 /// 实现视图的形式。
 typedef NS_ENUM(NSUInteger, XZMocoaModuleViewForm) {
@@ -163,9 +163,14 @@ typedef NS_ENUM(NSUInteger, XZMocoaModuleViewForm) {
 /// // 常规方式获取下级
 /// XZMocoaModule *submodule = [module submoduleForKind:@"header" forName:@"black"];
 /// // 下标方式来获取下级
-/// XZMocoaModule *submodule = module[@"header"][@"black"];
+/// XZMocoaModule *submodule = module[@"header:black"];
+/// // 如果没有冒号分隔符
+/// XZMocoaModule *submodule = module[@"name"]
+/// // 等价于
+/// XZMocoaModule *submodule = [module submoduleForKind:XZMocoaKindDefault forName:@"name"];
 /// @endcode
-- (XZMocoaSubmoduleCollection *)objectForKeyedSubscript:(XZMocoaKind)kind;
+/// @param key 由 `XZMocoaKind` 和 `XZMocoaName` 组成的键
+- (XZMocoaModule *)objectForKeyedSubscript:(XZMocoaKey)key;
 
 /// 获取指定路径的子模块，这是一个懒加载方法。
 /// @param path 子模块的路径
@@ -185,36 +190,6 @@ typedef NS_ENUM(NSUInteger, XZMocoaModuleViewForm) {
 @property (nonatomic, strong) XZMocoaModule *list;
 
 #pragma mark - 为 tableView、collectionView 提供的便利方法
-
-/// UITableView 或 UICollectionView 模块的默认的 section 模块。
-/// @discussion
-/// Section 是 UITableView 或 UICollectionView 的直接下级，Header/Cell/Footer 是 Section 的直接下级。
-/// @attention
-/// 此属性仅用于表示 UITableView 或 UICollectionView 模块的 XZMocoaModule 对象。
-/// @discussion
-/// 此属性等同于`[table submoduleForKind:XZMocoaKindDefault forName:XZMocoaNameDefault]`。
-//@property (nonatomic, strong) XZMocoaModule *section;
-
-/// 获取 UITableView 或 UICollectionView 模块的指定名称 section 模块。
-/// @discussion
-/// Section 是 UITableView 或 UICollectionView 的直接下级，Header/Cell/Footer 是 Section 的直接下级。
-/// @attention
-/// 此方法仅用于表示 UITableView 或 UICollectionView 模块的 XZMocoaModule 对象。
-/// @discussion
-/// 此方法等同于`[table submoduleForKind:XZMocoaKindDefault forName:name]`。
-/// @param name 模块名称
-//- (XZMocoaModule *)sectionForName:(XZMocoaName)name;
-
-/// 设置 section 模块为 UITableView 或 UICollectionView 模块的下级模块。
-/// @discussion
-/// Section 是 UITableView 或 UICollectionView 的直接下级，Header/Cell/Footer 是 Section 的直接下级。
-/// @attention
-/// 此方法仅用于表示 UITableView 或 UICollectionView 模块的 XZMocoaModule 对象。
-/// @discussion
-/// 此方法等同于`[table setSubmodule:section forKind:XZMocoaKindDefault forName:name]`。
-/// @param section 模块对象
-/// @param name 模块名称
-//- (void)setSection:(nullable XZMocoaModule *)section forName:(XZMocoaName)name;
 
 /// UITableView 或 UICollectionView 的 Section 模块的默认的 Header 模块。
 /// @discussion
@@ -252,7 +227,7 @@ typedef NS_ENUM(NSUInteger, XZMocoaModuleViewForm) {
 /// @attention
 /// 此属性仅用于表示 UITableView 或 UICollectionView 的 Section 模块的 XZMocoaModule 对象。
 /// @discussion
-/// 此属性等同于`[section submoduleForKind:XZMocoaKindCell forName:XZMocoaNameDefault]`。
+/// 此属性等同于`[section submoduleForKind:XZMocoaKindDefault forName:XZMocoaNameDefault]`。
 @property (nonatomic, strong) XZMocoaModule *cell;
 
 /// 获取 UITableView 或 UICollectionView 的 Section 模块的指定名称的 Cell 模块。
@@ -261,7 +236,7 @@ typedef NS_ENUM(NSUInteger, XZMocoaModuleViewForm) {
 /// @attention
 /// 此属性仅用于表示 UITableView 或 UICollectionView 的 Section 模块的 XZMocoaModule 对象。
 /// @discussion
-/// 此属性等同于`[section submoduleForKind:XZMocoaKindCell forName:name]`。
+/// 此属性等同于`[section submoduleForKind:XZMocoaKindDefault forName:name]`。
 /// @param name 模块名称
 - (XZMocoaModule *)cellForName:(XZMocoaName)name;
 
@@ -271,7 +246,7 @@ typedef NS_ENUM(NSUInteger, XZMocoaModuleViewForm) {
 /// @attention
 /// 此属性仅用于表示 UITableView 或 UICollectionView 的 Section 模块的 XZMocoaModule 对象。
 /// @discussion
-/// 此属性等同于`[section setSubmodule:cell forKind:XZMocoaKindCell forName:name]`。
+/// 此属性等同于`[section setSubmodule:cell forKind:XZMocoaKindDefault forName:name]`。
 /// @param name 模块名称
 - (void)setCell:(nullable XZMocoaModule *)cell forName:(XZMocoaName)name;
 
@@ -307,23 +282,6 @@ typedef NS_ENUM(NSUInteger, XZMocoaModuleViewForm) {
 @end
 
 @interface XZMocoaModule (XZMocoaModuleProvider) <XZMocoaModuleProvider>
-@end
-
-/// 为 XZMocoaModule 提供下标式访问的协议。
-NS_SWIFT_NAME(XZMocoaModule.SubmoduleCollection)
-@interface XZMocoaSubmoduleCollection : NSObject
-- (instancetype)init NS_UNAVAILABLE;
-@property (nonatomic, readonly) XZMocoaKind kind;
-@property (nonatomic, readonly) XZMocoaModule *module;
-
-- (XZMocoaModule *)submoduleForName:(XZMocoaName)name;
-- (nullable XZMocoaModule *)submoduleIfLoadForName:(XZMocoaName)name;
-- (void)setSubmodule:(nullable XZMocoaModule *)submodule forName:(XZMocoaName)name;
-
-- (XZMocoaModule *)objectForKeyedSubscript:(XZMocoaName)name;
-- (void)setObject:(nullable XZMocoaModule *)submodule forKeyedSubscript:(XZMocoaName)name;
-
-- (void)enumerateKeysAndObjectsUsingBlock:(void (NS_NOESCAPE ^)(XZMocoaName name, XZMocoaModule *submodule, BOOL *stop))block;
 @end
 
 @interface NSURL (XZMocoaModule)

@@ -16,7 +16,7 @@
     UITableView * const tableView = self.contentView;
     
     { // 注册默认视图
-        NSString *identifier = XZMocoaReuseIdentifier(XZMocoaKindCell, XZMocoaNamePlaceholder);
+        NSString *identifier = XZMocoaReuseIdentifier(XZMocoaKindDefault, XZMocoaNamePlaceholder);
         [tableView registerClass:[XZMocoaTablePlaceholderCell class] forCellReuseIdentifier:identifier];
         
         identifier = XZMocoaReuseIdentifier(XZMocoaKindHeader, XZMocoaNamePlaceholder);
@@ -27,15 +27,15 @@
     }
     
     [module enumerateSubmodulesUsingBlock:^(XZMocoaModule *submodule, XZMocoaKind kind, XZMocoaName name, BOOL *stop) {
-        if ([kind isEqualToString:XZMocoaKindCell]) {
+        if ([kind isEqualToString:XZMocoaKindDefault]) {
             switch (submodule.viewForm) {
                 case XZMocoaModuleViewFormClass: {
-                    NSString * const identifier = XZMocoaReuseIdentifier(XZMocoaKindCell, name);
+                    NSString * const identifier = XZMocoaReuseIdentifier(XZMocoaKindDefault, name);
                     [tableView registerClass:submodule.viewClass forCellReuseIdentifier:identifier];
                     break;
                 }
                 case XZMocoaModuleViewFormNib: {
-                    NSString * const identifier = XZMocoaReuseIdentifier(XZMocoaKindCell, name);
+                    NSString * const identifier = XZMocoaReuseIdentifier(XZMocoaKindDefault, name);
                     UINib *viewNib = [UINib nibWithNibName:submodule.viewNibName bundle:submodule.viewNibBundle];
                     [tableView registerNib:viewNib forCellReuseIdentifier:identifier];
                     break;
@@ -45,7 +45,7 @@
                     break;
                 }
                 default: {
-                    NSString * const identifier = XZMocoaReuseIdentifier(XZMocoaKindCell, name);
+                    NSString * const identifier = XZMocoaReuseIdentifier(XZMocoaKindDefault, name);
                     // 未注册 View 的模块，获得一个占位视图
                     Class const aClass = [XZMocoaTablePlaceholderCell class];
                     [tableView registerClass:aClass forCellReuseIdentifier:identifier];

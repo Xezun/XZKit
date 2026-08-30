@@ -33,8 +33,28 @@ FOUNDATION_STATIC_INLINE NSString *XZMocoaPathCreate(XZMocoaKind kind, XZMocoaNa
     return (kind.length ? [NSString stringWithFormat:@"%@:%@", kind, name] : (name.length ? name : @":"));
 }
 
-@interface XZMocoaSubmoduleCollection ()
+/// 为 XZMocoaModule 提供下标式访问的协议。
+@interface XZMocoaSubmoduleCollection : NSObject
+
+@property (nonatomic, readonly) XZMocoaKind kind;
+@property (nonatomic, readonly) XZMocoaModule *module;
+
+- (instancetype)init NS_UNAVAILABLE;
 - (instancetype)initWithKind:(XZMocoaKind)kind module:(XZMocoaModule *)module NS_DESIGNATED_INITIALIZER;
+
+- (XZMocoaModule *)submoduleForName:(XZMocoaName)name;
+- (nullable XZMocoaModule *)submoduleIfLoadForName:(XZMocoaName)name;
+- (void)setSubmodule:(nullable XZMocoaModule *)submodule forName:(XZMocoaName)name;
+
+- (XZMocoaModule *)objectForKeyedSubscript:(XZMocoaName)name;
+- (void)setObject:(nullable XZMocoaModule *)submodule forKeyedSubscript:(XZMocoaName)name;
+
+- (void)enumerateKeysAndObjectsUsingBlock:(void (NS_NOESCAPE ^)(XZMocoaName name, XZMocoaModule *submodule, BOOL *stop))block;
+
+@end
+
+@interface XZMocoaSubmoduleCollection ()
+
 @end
 
 @interface XZMocoaModule () {
@@ -275,17 +295,14 @@ FOUNDATION_STATIC_INLINE NSString *XZMocoaPathCreate(XZMocoaKind kind, XZMocoaNa
 
 #pragma mark - 下标存储方法
 
-- (XZMocoaSubmoduleCollection *)objectForKeyedSubscript:(XZMocoaKind)kind {
-    if (kind == nil) kind = XZMocoaKindDefault;
-    if (_submodules == nil) {
-        _submodules = [NSMutableDictionary dictionary];
+- (XZMocoaModule *)objectForKeyedSubscript:(XZMocoaKey const)key {
+    NSRange const range = [key rangeOfString:@":"];
+    if (range.location == NSNotFound) {
+        return [self submoduleForKind:XZMocoaKindDefault forName:key];
     }
-    XZMocoaSubmoduleCollection *namedModules = _submodules[kind];
-    if (namedModules == nil) {
-        namedModules = [[XZMocoaSubmoduleCollection alloc] initWithKind:kind module:self];
-        _submodules[kind] = namedModules;
-    }
-    return namedModules;
+    XZMocoaKind const kind = [key substringToIndex:range.location];
+    XZMocoaName const name = [key substringFromIndex:range.location + 2];
+    return [self submoduleForKind:kind forName:name];
 }
 
 - (XZMocoaModule *)submoduleForPath:(NSString *)path {
@@ -381,22 +398,6 @@ FOUNDATION_STATIC_INLINE NSString *XZMocoaPathCreate(XZMocoaKind kind, XZMocoaNa
 
 #pragma mark - 为 tableView、collectionView 提供的便利方法
 
-//- (XZMocoaModule *)section {
-//    return [self submoduleForKind:XZMocoaKindSection forName:XZMocoaNameDefault];
-//}
-//
-//- (void)setSection:(XZMocoaModule *)section {
-//    [self setSubmodule:section forKind:XZMocoaKindSection forName:XZMocoaNameDefault];
-//}
-//
-//- (XZMocoaModule *)sectionForName:(XZMocoaName)name {
-//    return [self submoduleForKind:XZMocoaKindSection forName:name];
-//}
-//
-//- (void)setSection:(XZMocoaModule *)section forName:(XZMocoaName)name {
-//    [self setSubmodule:section forKind:XZMocoaKindSection forName:name];
-//}
-
 - (XZMocoaModule *)header {
     return [self submoduleForKind:XZMocoaKindHeader forName:XZMocoaNameDefault];
 }
@@ -414,19 +415,19 @@ FOUNDATION_STATIC_INLINE NSString *XZMocoaPathCreate(XZMocoaKind kind, XZMocoaNa
 }
 
 - (XZMocoaModule *)cell {
-    return [self submoduleForKind:XZMocoaKindCell forName:XZMocoaNameDefault];
+    return [self submoduleForKind:XZMocoaKindDefault forName:XZMocoaNameDefault];
 }
 
 - (void)setCell:(XZMocoaModule *)cell {
-    [self setSubmodule:cell forKind:XZMocoaKindCell forName:XZMocoaNameDefault];
+    [self setSubmodule:cell forKind:XZMocoaKindDefault forName:XZMocoaNameDefault];
 }
 
 - (XZMocoaModule *)cellForName:(XZMocoaName)name {
-    return [self submoduleForKind:XZMocoaKindCell forName:name];
+    return [self submoduleForKind:XZMocoaKindDefault forName:name];
 }
 
 - (void)setCell:(XZMocoaModule *)cell forName:(XZMocoaName)name {
-    [self setSubmodule:cell forKind:XZMocoaKindCell forName:name];
+    [self setSubmodule:cell forKind:XZMocoaKindDefault forName:name];
 }
 
 - (XZMocoaModule *)footer {

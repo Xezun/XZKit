@@ -77,7 +77,7 @@
 }
 
 - (Class)viewModelClassForPlaceholderOfKind:(XZMocoaKind)kind {
-    if (kind == XZMocoaKindCell) {
+    if (kind == XZMocoaKindDefault) {
         return [XZMocoaTablePlaceholderCell class];
     }
     return [XZMocoaTablePlaceholderSupplementView class];

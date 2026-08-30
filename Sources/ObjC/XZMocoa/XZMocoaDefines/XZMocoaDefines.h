@@ -7,6 +7,7 @@
 
 #import <UIKit/UIKit.h>
 #import "XZMacros.h"
+#import "XZMocoaKey.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -16,12 +17,12 @@ NS_ASSUME_NONNULL_BEGIN
 /// @code
 /// [tableView reloadSections:indexes withRowAnimation:(UITableViewRowAnimationTop)]
 /// @endcode
-UIKIT_EXTERN CGFloat const XZMocoaMinimumViewDimension NS_SWIFT_NAME(minimumViewDimension);
+UIKIT_EXTERN CGFloat const XZMocoaMinimumViewDimension NS_SWIFT_NAME(viewMinimumDimension);
 
 /// 合法的最小视图大小。
 /// @discussion
 /// 在某些情形中，直接设置大小为 0 会显示不正常。比如在 UICollectionView 中，Cell 的宽度或高度为 0 或 `CGFLOAT_MIN` 值，会造成普通的 cell 不能正常展示。
-UIKIT_EXTERN CGSize  const XZMocoaMinimumViewSize NS_SWIFT_NAME(minimumViewSize);
+UIKIT_EXTERN CGSize  const XZMocoaMinimumViewSize NS_SWIFT_NAME(viewMinimumSize);
 
 /// 模块的名称。
 /// @attention 字符`:`、`/`为保留字符，不可在 XZMocoaName 中使用。
@@ -41,10 +42,6 @@ FOUNDATION_EXPORT XZMocoaKind const XZMocoaKindDefault;
 FOUNDATION_EXPORT XZMocoaKind const XZMocoaKindHeader;
 /// 用于表示 Footer 的分类。
 FOUNDATION_EXPORT XZMocoaKind const XZMocoaKindFooter;
-/// 用于表示 Section 的分类。
-//FOUNDATION_EXPORT XZMocoaKind const XZMocoaKindSection XZ_DEPRECATED("", ios(1.0, 1.0));
-/// 用于表示 Cell 的分类。
-FOUNDATION_EXPORT XZMocoaKind const XZMocoaKindCell;
 
 /// 主要子模块名。
 FOUNDATION_EXPORT XZMocoaName const XZMocoaNameMain;
