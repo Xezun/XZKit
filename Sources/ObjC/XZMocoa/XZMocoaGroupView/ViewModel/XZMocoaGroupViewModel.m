@@ -423,7 +423,7 @@ typedef void(^XZMocoaGroupDelayedUpdates)(__kindof XZMocoaViewModel *self);
     NSArray * const supportedSupplementKinds = self.supportedSupplementKinds;
     
     NSMutableDictionary<XZMocoaKind, NSMapTable *> *_newModelsMap = [NSMutableDictionary dictionary];
-    NSMutableArray<XZMocoaGroupSection *>      *_newModels    = [NSMutableArray arrayWithCapacity:newSectionCount];
+    NSMutableArray<XZMocoaGroupSection *>          *_newModels    = [NSMutableArray arrayWithCapacity:newSectionCount];
     for (NSInteger newSection = 0; newSection < newSectionCount; newSection++) {
         
         XZMocoaGroupSection *_newSectionInfo = [[XZMocoaGroupSection alloc] init];
