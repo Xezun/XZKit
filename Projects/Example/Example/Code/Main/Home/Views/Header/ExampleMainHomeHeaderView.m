@@ -12,7 +12,7 @@
 }
 
 + (void)load {
-    XZMocoa(@"https://xzkit.xezun.com/examples").section.header.viewClass = self;
+    XZMocoa(@"https://xzkit.xezun.com/examples").header.viewClass = self;
 }
 
 - (instancetype)initWithReuseIdentifier:(NSString *)reuseIdentifier {

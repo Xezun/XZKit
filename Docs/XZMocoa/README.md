@@ -466,19 +466,19 @@ View 根据 ViewModel 提供的数据进行展示。
 ```objc
 @implementation ExampleCellModel
 + (void)load {
-    XZMocoa(@"https://mocoa.xezun.com/table/").section.cell.modelClass = self;
+    XZMocoa(@"https://mocoa.xezun.com/table/").cell.modelClass = self;
 }
 @end
 
 @implementation ExampleCell
 + (void)load {
-    XZMocoa(@"https://mocoa.xezun.com/table/").section.cell.viewClass = self;
+    XZMocoa(@"https://mocoa.xezun.com/table/").cell.viewClass = self;
 }
 @end
 
 @implementation ExampleCellViewModel
 + (void)load {
-    XZMocoa(@"https://mocoa.xezun.com/table/").section.cell.viewModelClass = self;
+    XZMocoa(@"https://mocoa.xezun.com/table/").cell.viewModelClass = self;
 }
 @end
 ```

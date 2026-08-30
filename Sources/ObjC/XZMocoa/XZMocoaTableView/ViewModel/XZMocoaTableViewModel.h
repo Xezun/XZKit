@@ -19,6 +19,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 @class XZMocoaTableViewModel;
 
+/// 为 XZMocoaTableView 提供监听 ViewModel 事件的协议。
 @protocol XZMocoaTableViewModelDelegate <XZMocoaGroupViewModelDelegate>
 @required
 - (void)tableViewModel:(XZMocoaTableViewModel *)tableViewModel didReloadData:(void * _Nullable)null;

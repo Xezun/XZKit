@@ -10,7 +10,7 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-@interface Example0331Group100SectionModel : NSObject <XZMocoaCollectionSectionModel>
+@interface Example0331Group100SectionModel : NSObject
 @property (nonatomic, strong) Example0331Group100CellModel *model;
 @end
 

@@ -10,7 +10,7 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-@interface ExampleMainHomeSectionModel : NSObject <XZMocoaTableSectionModel, XZJSONCoding>
+@interface ExampleMainHomeSectionModel : NSObject <XZJSONCoding>
 
 @property (nonatomic, copy) NSString *name;
 @property (nonatomic, copy) NSArray *items;

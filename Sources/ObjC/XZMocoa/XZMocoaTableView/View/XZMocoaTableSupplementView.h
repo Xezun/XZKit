@@ -28,10 +28,10 @@ NS_ASSUME_NONNULL_BEGIN
 @interface XZMocoaTableSupplementView : UITableViewHeaderFooterView <XZMocoaTableSupplementView>
 @end
 
-@interface XZMocoaTableSectionHeaderView : XZMocoaTableSupplementView <XZMocoaTableSupplementView>
+@interface XZMocoaTableHeaderView : XZMocoaTableSupplementView
 @end
 
-@interface XZMocoaTableSectionFooterView : XZMocoaTableSupplementView <XZMocoaTableSupplementView>
+@interface XZMocoaTableFooterView : XZMocoaTableSupplementView 
 @end
 
 NS_ASSUME_NONNULL_END

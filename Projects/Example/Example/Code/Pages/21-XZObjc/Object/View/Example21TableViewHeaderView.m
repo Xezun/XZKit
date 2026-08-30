@@ -12,7 +12,7 @@
 }
 
 + (void)load {
-    XZMocoa(@"https://xzkit.xezun.com/examples/21").section.header.viewClass = self;
+    XZMocoa(@"https://xzkit.xezun.com/examples/21").header.viewClass = self;
 }
 
 - (void)prepareForReuse {

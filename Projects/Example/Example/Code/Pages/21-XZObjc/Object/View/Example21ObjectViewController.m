@@ -80,7 +80,7 @@
     if ([sender isKindOfClass:UITableViewCell.class]) {
         NSIndexPath *indexPath = [self.tableView indexPathForCell:sender];
         if (indexPath) {
-            nextVC.text = [[self.viewModel cellViewModelAtIndexPath:indexPath].model description];
+            nextVC.text = [[self.viewModel viewModelForCellAtIndexPath:indexPath].model description];
         }
     }
 }

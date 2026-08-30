@@ -11,7 +11,7 @@
 @implementation ExampleMainHomeCellViewModel
 
 + (void)load {
-    XZMocoa(@"https://xzkit.xezun.com/examples").section.cell.viewModelClass = self;
+    XZMocoa(@"https://xzkit.xezun.com/examples").cell.viewModelClass = self;
 }
 
 - (CGFloat)height {

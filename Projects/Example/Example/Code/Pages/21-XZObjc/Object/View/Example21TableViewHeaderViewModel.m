@@ -10,7 +10,7 @@
 @implementation Example21TableViewHeaderViewModel
 
 + (void)load {
-    XZMocoa(@"https://xzkit.xezun.com/examples/21").section.header.viewModelClass = self;
+    XZMocoa(@"https://xzkit.xezun.com/examples/21").header.viewModelClass = self;
 }
 
 - (void)prepare {

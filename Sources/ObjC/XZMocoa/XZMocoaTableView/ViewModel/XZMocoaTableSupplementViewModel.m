@@ -33,8 +33,8 @@
 @end
 
 
-@implementation XZMocoaTableSectionHeaderViewModel
+@implementation XZMocoaTableHeaderViewModel
 @end
 
-@implementation XZMocoaTableSectionFooterViewModel
+@implementation XZMocoaTableFooterViewModel
 @end

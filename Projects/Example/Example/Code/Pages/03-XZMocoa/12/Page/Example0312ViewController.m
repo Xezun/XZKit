@@ -42,7 +42,7 @@
     
     // Model
     NSArray *dataArray = [data xz_map:^id _Nonnull(id  _Nonnull obj, NSInteger idx, BOOL * _Nonnull stop) {
-        return [XZJSON decode:obj options:0 class:module.section.cell.modelClass];
+        return [XZJSON decode:obj options:0 class:module.cell.modelClass];
     }];
     
     // viewModel

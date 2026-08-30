@@ -17,8 +17,8 @@
 @implementation XZMocoaTableSupplementView
 @end
 
-@implementation XZMocoaTableSectionHeaderView
+@implementation XZMocoaTableHeaderView
 @end
 
-@implementation XZMocoaTableSectionFooterView
+@implementation XZMocoaTableFooterView
 @end

@@ -13,7 +13,7 @@
 @dynamic viewModel;
 
 + (void)load {
-    XZMocoa(@"https://mocoa.xezun.com/examples/21/").section.cell.viewNibClass = self;
+    XZMocoa(@"https://mocoa.xezun.com/examples/21/").cell.viewNibClass = self;
 }
 
 - (void)willChangeViewModel:(XZMocoaViewModel *)newValue {

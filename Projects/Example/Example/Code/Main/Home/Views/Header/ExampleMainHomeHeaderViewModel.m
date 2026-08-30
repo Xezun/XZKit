@@ -10,7 +10,7 @@
 @implementation ExampleMainHomeHeaderViewModel
 
 + (void)load {
-    XZMocoa(@"https://xzkit.xezun.com/examples").section.header.viewModelClass = self;
+    XZMocoa(@"https://xzkit.xezun.com/examples").header.viewModelClass = self;
 }
 
 - (void)prepare {
