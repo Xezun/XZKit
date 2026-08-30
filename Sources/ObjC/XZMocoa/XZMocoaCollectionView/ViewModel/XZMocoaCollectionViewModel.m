@@ -6,9 +6,8 @@
 //
 
 #import "XZMocoaCollectionViewModel.h"
-#import "XZMocoaCollectionView.h"
-#import "XZMocoaTablePlaceholderCell.h"
-#import "XZMocoaTablePlaceholderSupplementView.h"
+#import "XZMocoaCollectionPlaceholderCellViewModel.h"
+#import "XZMocoaCollectionPlaceholderSupplementViewModel.h"
 
 @implementation XZMocoaCollectionViewModel
 
@@ -77,10 +76,10 @@
 }
 
 - (Class)viewModelClassForPlaceholderOfKind:(XZMocoaKind)kind {
-    if (kind == XZMocoaKindDefault) {
-        return [XZMocoaTablePlaceholderCell class];
+    if (kind == XZMocoaKindHeader || kind == XZMocoaKindFooter) {
+        return [XZMocoaCollectionPlaceholderSupplementViewModel class];
     }
-    return [XZMocoaTablePlaceholderSupplementView class];
+    return [XZMocoaCollectionPlaceholderCellViewModel class];
 }
 
 @end

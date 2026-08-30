@@ -6,7 +6,8 @@
 //
 
 #import "XZMocoaTableViewModel.h"
-#import "XZMocoaTableView.h"
+#import "XZMocoaTablePlaceholderCellViewModel.h"
+#import "XZMocoaTablePlaceholderSupplementViewModel.h"
 
 @implementation XZMocoaTableViewModel
 
@@ -91,8 +92,10 @@
 }
 
 - (Class)viewModelClassForPlaceholderOfKind:(XZMocoaKind)kind {
-    // TODO: - placeholder
-    return nil;
+    if (kind == XZMocoaKindHeader || kind == XZMocoaKindFooter) {
+        return [XZMocoaTablePlaceholderSupplementViewModel class];
+    }
+    return [XZMocoaTablePlaceholderCellViewModel class];
 }
 
 @end
