@@ -6,11 +6,7 @@
 //
 
 #import <Foundation/Foundation.h>
-#if __has_include(<XZKit/XZKit.h>)
-#import <XZKit/XZJSONClass.h>
-#else
 #import "XZJSONClass.h"
-#endif
 
 @class XZJSONClass;
 

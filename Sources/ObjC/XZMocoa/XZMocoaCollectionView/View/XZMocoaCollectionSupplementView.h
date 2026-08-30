@@ -6,13 +6,8 @@
 //
 
 #import <UIKit/UIKit.h>
-#if __has_include(<XZKit/XZKit.h>)
-#import <XZKit/XZMocoaGroupSupplementView.h>
-#import <XZKit/XZMocoaCollectionSupplementViewModel.h>
-#else
 #import "XZMocoaGroupSupplementView.h"
 #import "XZMocoaCollectionSupplementViewModel.h"
-#endif
 
 NS_ASSUME_NONNULL_BEGIN
 

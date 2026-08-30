@@ -9,11 +9,7 @@
 #import <MobileCoreServices/MobileCoreServices.h>
 #import <objc/runtime.h>
 #import "UIImage+XZKit.h"
-#if __has_include(<XZKit/XZKit.h>)
-#import <XZKit/XZDefer.h>
-#else
 #import "XZDefer.h"
-#endif
 @import CoreGraphics;
 @import CoreImage;
 @import UniformTypeIdentifiers;

@@ -7,11 +7,7 @@
 
 #import <sys/sysctl.h>
 #import "UIDevice+XZKit.h"
-#if __has_include(<XZKit/XZKit.h>)
-#import <XZKit/XZDefer.h>
-#else
 #import "XZDefer.h"
-#endif
 
 @implementation UIDevice (XZKit)
 

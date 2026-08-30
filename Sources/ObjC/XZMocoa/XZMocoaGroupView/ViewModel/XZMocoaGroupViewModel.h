@@ -7,19 +7,11 @@
 //
 
 #import <CoreData/CoreData.h>
-#if __has_include(<XZKit/XZKit.h>)
-#import <XZKit/XZMocoaViewModel.h>
-#import <XZKit/XZMocoaGroupCellViewModel.h>
-#import <XZKit/XZMocoaGroupModel.h>
-#import <XZKit/XZMocoaGroupViewModelDefines.h>
-#import <XZKit/XZMocoaGroupSupplementViewModel.h>
-#else
 #import "XZMocoaViewModel.h"
 #import "XZMocoaGroupCellViewModel.h"
 #import "XZMocoaGroupModel.h"
 #import "XZMocoaGroupViewModelDefines.h"
 #import "XZMocoaGroupSupplementViewModel.h"
-#endif
 
 NS_ASSUME_NONNULL_BEGIN
 
