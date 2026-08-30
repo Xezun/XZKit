@@ -51,7 +51,8 @@ NS_ASSUME_NONNULL_BEGIN
 - (__kindof XZMocoaGroupSupplementViewModel *)viewModelForHeaderInSection:(NSInteger)section;
 - (__kindof XZMocoaGroupSupplementViewModel *)viewModelForFooterInSection:(NSInteger)section;
 
-- (nullable NSIndexPath *)indexPathForViewModel:(XZMocoaViewModel *)viewModel;
+- (nullable NSIndexPath *)indexPathForCellForViewModel:(XZMocoaGroupCellViewModel *)viewModel;
+- (nullable NSIndexPath *)indexPathForSupplementForViewModel:(XZMocoaGroupSupplementViewModel *)viewModel;
 
 - (void)selectCellAtIndexPath:(NSIndexPath *)indexPath animated:(BOOL)animated scrollPosition:(NSInteger)scrollPosition;
 - (void)deselectCellAtIndexPath:(NSIndexPath *)indexPath animated:(BOOL)animated;
