@@ -140,7 +140,7 @@ NS_ASSUME_NONNULL_BEGIN
 - (NSInteger)model:(id)model numberOfCellsInSection:(NSInteger)section;
 - (nullable id)model:(id)model modelForCellAtIndexPath:(NSIndexPath *)indexPath;
 - (NSInteger)model:(id)model numberOfSupplementsOfKind:(XZMocoaKind)kind inSection:(NSInteger)section;
-- (nullable id)model:(id)model modelForSupplementaryElementOfKind:(XZMocoaKind)kind atIndexPath:(NSIndexPath *)indexPath;
+- (nullable id)model:(id)model modelForSupplementOfKind:(XZMocoaKind)kind atIndexPath:(NSIndexPath *)indexPath;
 @end
 
 /// 支持直接使用 NSFetchedResultsController 作为数据源，且支持作为 NSFetchedResultsController 的代理。
