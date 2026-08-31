@@ -36,14 +36,6 @@ NS_ASSUME_NONNULL_BEGIN
 /// 判断列表是否为空。
 @property (nonatomic, readonly) BOOL isEmpty;
 
-/// 列表子视图模型。
-///
-/// 在 UITableView 或 UICollectionView 中，Section 是逻辑上的子视图，而视图模型就是处理逻辑的。
-//@property (nonatomic, readonly) NSArray<__kindof XZMocoaGroupSectionViewModel *> *sectionViewModels;
-
-//- (__kindof XZMocoaGroupSectionViewModel *)sectionViewModelAtIndex:(NSInteger)index;
-//- (NSInteger)indexOfSectionViewModel:(__kindof XZMocoaGroupSectionViewModel *)sectionViewModel;
-
 @property (nonatomic, readonly) NSInteger numberOfSections;
 - (NSInteger)numberOfCellsInSection:(NSInteger)section;
 - (__kindof XZMocoaGroupCellViewModel *)viewModelForCellAtIndexPath:(NSIndexPath *)indexPath;
