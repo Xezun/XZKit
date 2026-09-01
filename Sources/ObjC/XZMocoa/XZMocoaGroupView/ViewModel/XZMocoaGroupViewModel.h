@@ -10,7 +10,6 @@
 #import "XZMocoaViewModel.h"
 #import "XZMocoaGroupCellViewModel.h"
 #import "XZMocoaGroupModel.h"
-#import "XZMocoaGroupViewModelDefines.h"
 #import "XZMocoaGroupSupplementViewModel.h"
 
 NS_ASSUME_NONNULL_BEGIN
@@ -22,7 +21,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 /// 列表容器视图的视图模型。
 /// @attention 由于需要管理列表 Cell 子视图，因此需要设置 `module` 属性才能正常工作。
-@interface XZMocoaGroupViewModel : XZMocoaViewModel <XZMocoaGroupViewModel>
+@interface XZMocoaGroupViewModel : XZMocoaViewModel
 
 @property (nonatomic, weak) id<XZMocoaGroupViewModelDelegate> delegate;
 
@@ -43,8 +42,8 @@ NS_ASSUME_NONNULL_BEGIN
 - (__kindof XZMocoaGroupSupplementViewModel *)viewModelForHeaderInSection:(NSInteger)section;
 - (__kindof XZMocoaGroupSupplementViewModel *)viewModelForFooterInSection:(NSInteger)section;
 
-- (nullable NSIndexPath *)indexPathForCellForViewModel:(XZMocoaGroupCellViewModel *)viewModel;
-- (nullable NSIndexPath *)indexPathForSupplementForViewModel:(XZMocoaGroupSupplementViewModel *)viewModel;
+- (nullable NSIndexPath *)indexPathForCellViewModel:(XZMocoaGroupCellViewModel *)viewModel;
+- (nullable NSIndexPath *)indexPathForSupplementViewModel:(XZMocoaGroupSupplementViewModel *)viewModel;
 
 - (void)selectCellAtIndexPath:(NSIndexPath *)indexPath animated:(BOOL)animated scrollPosition:(NSInteger)scrollPosition;
 - (void)deselectCellAtIndexPath:(NSIndexPath *)indexPath animated:(BOOL)animated;
@@ -83,6 +82,8 @@ NS_ASSUME_NONNULL_BEGIN
 /// @param newSection 移动后的位置
 - (void)moveSection:(NSInteger)section toSection:(NSInteger)newSection;
 
+- (void)performBatchUpdates:(void (^NS_NOESCAPE)(void))batchUpdates completion:(void (^ _Nullable)(BOOL))completion;
+
 // MARK: - 视图模型的事件派发，子类必须重写并根据实际去实现
 
 // 如下 -did 方法，表示对应的事件已经发生，需要更新视图对应的视图了。
@@ -110,29 +111,12 @@ NS_ASSUME_NONNULL_BEGIN
 
 @end
 
-// MARK: - 下级 section 不能独自完成的事件，需要上级处理的事件
-
-@interface XZMocoaGroupViewModel (XZMocoaGroupSectionViewModelUpdates)
-///// section 发送的 Section 重载事件，以刷新视图。
-//- (void)sectionViewModel:(__kindof XZMocoaGroupSectionViewModel *)viewModel didReloadData:(void * _Nullable)null;
-///// section 发送的 Cell 重载事件，以刷新视图。
-//- (void)sectionViewModel:(__kindof XZMocoaGroupSectionViewModel *)viewModel didReloadCellsAtIndexes:(NSIndexSet *)rows;
-///// section 发送的 Cell 插入事件，以刷新视图。
-//- (void)sectionViewModel:(__kindof XZMocoaGroupSectionViewModel *)viewModel didInsertCellsAtIndexes:(NSIndexSet *)rows;
-///// section 发送的 Cell 删除事件，以刷新视图。
-//- (void)sectionViewModel:(__kindof XZMocoaGroupSectionViewModel *)viewModel didDeleteCellsAtIndexes:(NSIndexSet *)rows;
-///// section 发送的 Cell 移动事件，以刷新视图。
-//- (void)sectionViewModel:(__kindof XZMocoaGroupSectionViewModel *)viewModel didMoveCellAtIndex:(NSInteger)row toIndex:(NSInteger)newRow;
-///// section 发送的批量更新事件，以刷新视图。
-//- (void)sectionViewModel:(__kindof XZMocoaGroupSectionViewModel *)viewModel didPerformBatchUpdates:(void (^NS_NOESCAPE)(void))batchUpdates completion:(void (^ _Nullable)(BOOL))completion;
-@end
-
 @interface XZMocoaGroupViewModel (XZMocoaGroupModel)
-- (NSInteger)model:(id)model numberOfSections:(void * _Nullable)null;
-- (NSInteger)model:(id)model numberOfCellsInSection:(NSInteger)section;
-- (nullable id)model:(id)model modelForCellAtIndexPath:(NSIndexPath *)indexPath;
-- (NSInteger)model:(id)model numberOfSupplementsOfKind:(XZMocoaKind)kind inSection:(NSInteger)section;
-- (nullable id)model:(id)model modelForSupplementOfKind:(XZMocoaKind)kind atIndexPath:(NSIndexPath *)indexPath;
++ (NSInteger)model:(id)model numberOfSections:(void * _Nullable)null;
++ (NSInteger)model:(id)model numberOfCellsInSection:(NSInteger)section;
++ (nullable id)model:(id)model modelForCellAtIndexPath:(NSIndexPath *)indexPath;
++ (NSInteger)model:(id)model numberOfSupplementsOfKind:(XZMocoaKind)kind inSection:(NSInteger)section;
++ (nullable id)model:(id)model modelForSupplementOfKind:(XZMocoaKind)kind atIndexPath:(NSIndexPath *)indexPath;
 @end
 
 /// 支持直接使用 NSFetchedResultsController 作为数据源，且支持作为 NSFetchedResultsController 的代理。

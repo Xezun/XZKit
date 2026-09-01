@@ -33,7 +33,6 @@
 #import "XZMocoaGroupCellViewModel.h"
 #import "XZMocoaGroupSupplementViewModel.h"
 #import "XZMocoaGroupViewModel.h"
-#import "XZMocoaGroupViewModelDefines.h"
 
 // XZMocoaTableView
 #import "XZMocoaTableCellModel.h"
