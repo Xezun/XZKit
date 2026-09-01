@@ -228,6 +228,8 @@
                     </tableView>
                     <navigationItem key="navigationItem" title="Settings" id="07Y-Bd-nFP"/>
                     <connections>
+                        <outlet property="XZKitLogSwitch" destination="kjJ-fO-LTw" id="gVH-V2-9nP"/>
+                        <outlet property="defaultLogSwitch" destination="mcB-Q0-iPr" id="NYs-ML-z5y"/>
                         <outlet property="styleSwitch" destination="V9p-Mf-03k" id="ZV8-nd-erB"/>
                     </connections>
                 </tableViewController>

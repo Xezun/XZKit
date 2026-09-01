@@ -12,6 +12,8 @@
 @interface ExampleSettingsHomeViewController ()
 
 @property (nonatomic, weak) IBOutlet UISwitch *styleSwitch;
+@property (nonatomic, weak) IBOutlet UISwitch *defaultLogSwitch;
+@property (nonatomic, weak) IBOutlet UISwitch *XZKitLogSwitch;
 
 @end
 
@@ -21,15 +23,19 @@
     [super viewDidLoad];
     // Do any additional setup after loading the view.
     
+    self.defaultLogSwitch.on = XZLogSystem.defaultSystem.isEnabled;
+    self.XZKitLogSwitch.on = XZLogSystem.XZKitSystem.isEnabled;
     self.styleSwitch.on = [NSUserDefaults.standardUserDefaults boolForKey:@"modalPresentationStyle"];
 }
 
 - (IBAction)defaultLogSwitchAction:(UISwitch *)sender {
     XZLogSystem.defaultSystem.isEnabled = sender.isOn;
+    [NSUserDefaults.standardUserDefaults setBool:sender.isOn forKey:@"XZLogSystem.defaultSystem.isEnabled"];
 }
 
 - (IBAction)libraryLogSwitchAction:(UISwitch *)sender {
     XZLogSystem.XZKitSystem.isEnabled = sender.isOn;
+    [NSUserDefaults.standardUserDefaults setBool:sender.isOn forKey:@"XZLogSystem.XZKitSystem.isEnabled"];
 }
 
 - (IBAction)modalStyleSwitchAction:(UISwitch *)sender {
