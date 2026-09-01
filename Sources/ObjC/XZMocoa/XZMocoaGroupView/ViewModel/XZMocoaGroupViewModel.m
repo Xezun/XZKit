@@ -9,6 +9,7 @@
 #import "XZMocoaGroupViewModel.h"
 #import "XZMocoaDefines.h"
 #import "XZMocoaModule.h"
+#import "XZMocoaDiff.h"
 #import "XZMacros.h"
 #import "NSArray+XZKit.h"
 #import "NSIndexSet+XZKit.h"
@@ -47,6 +48,71 @@ typedef NS_OPTIONS(NSUInteger, XZMocoaGroupModelMapMode) {
 @property (nonatomic, readonly, nullable) ObjectType cell;
 @property (nonatomic, readonly, nullable) ObjectType supplement;
 @property (nonatomic, readonly, nullable) XZMocoaKind supplementKind;
+@end
+
+/// 同一个 XZMocoaKind 内的标识与位置的映射。
+/// @discussion 标识在同一个 kind 内必须唯一，重复意味着数据不符合约定，无法进行差异分析。
+@interface XZMocoaIdentifierMap : NSObject
+/// 字符串标识符 -> NSIndexPath。
+@property (nonatomic, strong, readonly) NSMutableDictionary<NSString *, NSIndexPath *> *identifierIndexPaths;
+/// 无标识符的模型（对象身份） -> NSIndexPath，同一个模型对象只能出现一次。
+@property (nonatomic, strong, readonly) NSMapTable *objectIndexPaths;
+@end
+
+@implementation XZMocoaIdentifierMap
+- (instancetype)init {
+    self = [super init];
+    if (self) {
+        _identifierIndexPaths = [NSMutableDictionary dictionary];
+        _objectIndexPaths     = [[NSMapTable alloc] initWithKeyOptions:(NSPointerFunctionsObjectPersonality | NSPointerFunctionsOpaqueMemory) valueOptions:NSPointerFunctionsStrongMemory capacity:0];
+    }
+    return self;
+}
+@end
+
+/// 一对匹配的 section。
+typedef struct {
+    NSInteger oldIndex;
+    NSInteger newIndex;
+} XZMocoaSectionPair;
+
+/// 一对匹配的 section，及其 cell 级别的差异分析结果。
+/// @discussion 坐标约定：删除 = 旧状态坐标；插入与移动的目标 = 新状态（最终）坐标。
+@interface XZMocoaCellDiff : NSObject
+@property (nonatomic, assign) XZMocoaSectionPair pair;
+@property (nonatomic, copy) NSArray<NSIndexPath *> *deletes;
+@property (nonatomic, copy) NSArray<NSIndexPath *> *inserts;
+/// 匹配成功的元素（含移动），@[@[旧位置, 新位置], ...]，按新位置升序。
+@property (nonatomic, copy) NSArray<NSArray<NSIndexPath *> *> *matches;
+/// 标识相同但模型实例发生变化的元素，@[@[旧位置, 新位置], ...]。
+/// 视图模型不支持重绑定模型，因此以删除+插入代替刷新（其新位置已包含在 inserts 中）。
+@property (nonatomic, copy) NSArray<NSArray<NSIndexPath *> *> *replaces;
+/// 需要移动的元素，@[@[旧位置, 新位置], ...]，是 matches 中不在 LIS 内的子集。
+@property (nonatomic, copy) NSArray<NSArray<NSIndexPath *> *> *moves;
+@end
+
+@implementation XZMocoaCellDiff
+@end
+
+/// 一次批量更新的完整差异分析结果。
+@interface XZMocoaGroupDiffResult : NSObject
+/// 只存在于旧数据中的 section。
+@property (nonatomic, copy) NSIndexSet *deletedSections;
+/// 只存在于新数据中的 section。
+@property (nonatomic, copy) NSIndexSet *insertedSections;
+/// 匹配成功但是 supplements 发生变化的 section（新索引），整体重载。
+@property (nonatomic, copy) NSIndexSet *reloadedSections;
+/// 需要移动行为的 section，@[@[旧索引, 新索引], ...]。
+@property (nonatomic, copy) NSArray<NSArray<NSNumber *> *> *sectionMoves;
+/// 匹配成功且 supplements 未变化的 section 对，及其 cell 差异。
+@property (nonatomic, copy) NSArray<XZMocoaCellDiff *> *fineGrainedCellDiffs;
+/// 新的数据模型。
+@property (nonatomic, copy) NSArray<XZMocoaGroupSection *> *modelSections;
+/// 匹配关系：新 section 索引 -> 旧 section 索引，包含重载与移动的 section。
+@property (nonatomic, copy) NSDictionary<NSNumber *, NSNumber *> *sectionIndexChanges;
+@end
+
+@implementation XZMocoaGroupDiffResult
 @end
 
 typedef void (^BatchUpdatesCompletion)(BOOL);
@@ -282,8 +348,45 @@ typedef void(^XZMocoaGroupDelayedUpdates)(__kindof XZMocoaViewModel *self);
 
 #pragma mark - 批量更新
 
-- (NSMutableDictionary<XZMocoaKind, NSMapTable *> *)modelMapsForModelSections:(NSArray<XZMocoaGroupSection *> * const)modelSections mode:(XZMocoaGroupModelMapMode)mode {
-    NSMutableDictionary<XZMocoaKind, NSMapTable *> * const modelMaps = [NSMutableDictionary dictionary];
+/// 获取模型的差异分析标识：优先使用 mocoaIdentifier，未提供时以模型对象自身作为标识。
+static id XZMocoaDiffKeyForModel(id const model) {
+    NSString * const identifier = [model mocoaIdentifier];
+    if (identifier.length > 0) {
+        return identifier;
+    }
+    return [NSString stringWithFormat:@"<%s: %p>", object_getClassName(model), model];
+}
+
+/// 向映射中添加一个模型的位置。如果标识已存在（数据不符合唯一性约定），返回 NO。
+static BOOL XZMocoaIdentifierMapInsert(XZMocoaIdentifierMap * const map, id const model, NSIndexPath * const indexPath) {
+    id const key = XZMocoaDiffKeyForModel(model);
+    if ([key isKindOfClass:[NSString class]]) {
+        if (map.identifierIndexPaths[key] != nil) {
+            return NO;
+        }
+        map.identifierIndexPaths[key] = indexPath;
+        return YES;
+    }
+    if ([map.objectIndexPaths objectForKey:key] != nil) {
+        return NO;
+    }
+    [map.objectIndexPaths setObject:indexPath forKey:key];
+    return YES;
+}
+
+/// 从映射中查找模型的位置。
+static NSIndexPath * _Nullable XZMocoaIdentifierMapLookup(XZMocoaIdentifierMap * const map, id const model) {
+    id const key = XZMocoaDiffKeyForModel(model);
+    if ([key isKindOfClass:[NSString class]]) {
+        return map.identifierIndexPaths[key];
+    }
+    return [map.objectIndexPaths objectForKey:key];
+}
+
+/// 构建模型与位置的映射关系。
+/// @discussion 如果同一 kind 内出现重复标识，说明数据不符合约定，返回 nil。
+- (NSDictionary<XZMocoaKind, XZMocoaIdentifierMap *> *)_identifierMapsForModelSections:(NSArray<XZMocoaGroupSection *> * const)modelSections mode:(XZMocoaGroupModelMapMode const)mode {
+    NSMutableDictionary<XZMocoaKind, XZMocoaIdentifierMap *> * const maps = [NSMutableDictionary dictionary];
     
     NSInteger const sectionCount = modelSections.count;
     for (NSInteger sectionIndex = 0; sectionIndex < sectionCount; sectionIndex++) {
@@ -291,49 +394,98 @@ typedef void(^XZMocoaGroupDelayedUpdates)(__kindof XZMocoaViewModel *self);
         
         if (mode & XZMocoaGroupModelMapModeSupplements) {
             for (XZMocoaKind const kind in modelSection.supplements) {
-                NSMapTable *supplementModelMap = modelMaps[kind];
-                if (supplementModelMap == nil) {
-                    supplementModelMap = [NSMapTable strongToStrongObjectsMapTable];
-                    modelMaps[kind] = supplementModelMap;
+                XZMocoaIdentifierMap *map = maps[kind];
+                if (map == nil) {
+                    map = [[XZMocoaIdentifierMap alloc] init];
+                    maps[kind] = map;
                 }
                 
                 NSArray * const supplementModels = [modelSection supplementsForKind:kind];
                 NSInteger const supplementCount = supplementModels.count;
-                
                 for (NSInteger supplementIndex = 0; supplementIndex < supplementCount; supplementIndex++) {
-                    NSIndexPath *indexPath = [NSIndexPath indexPathForItem:supplementIndex inSection:sectionIndex];
-                    id const newSupplementModel = supplementModels[supplementIndex];
+                    NSIndexPath * const indexPath = [NSIndexPath indexPathForItem:supplementIndex inSection:sectionIndex];
+                    id const supplementModel = supplementModels[supplementIndex];
                     
-                    if (newSupplementModel == nil || [supplementModelMap objectForKey:newSupplementModel]) {
+                    if (supplementModel == nil || !XZMocoaIdentifierMapInsert(map, supplementModel, indexPath)) {
                         return nil;
                     }
-                    [supplementModelMap setObject:indexPath forKey:newSupplementModel];
                 }
             }
         }
         
         if (mode & XZMocoaGroupModelMapModeCells) {
-            NSMapTable *cellModelMap = modelMaps[XZMocoaKindDefault];
-            if (cellModelMap == nil) {
-                cellModelMap = [NSMapTable strongToStrongObjectsMapTable];
-                modelMaps[XZMocoaKindDefault] = cellModelMap;
+            XZMocoaIdentifierMap *map = maps[XZMocoaKindDefault];
+            if (map == nil) {
+                map = [[XZMocoaIdentifierMap alloc] init];
+                maps[XZMocoaKindDefault] = map;
             }
             
             NSArray * const cellModels = modelSection.cells;
             NSInteger const cellCount = cellModels.count;
             for (NSInteger cellIndex = 0; cellIndex < cellCount; cellIndex++) {
-                NSIndexPath *    const indexPath = [NSIndexPath indexPathForItem:cellIndex inSection:sectionIndex];
-                id<XZMocoaModel> const cellModel = cellModels[cellIndex];
+                NSIndexPath * const indexPath = [NSIndexPath indexPathForItem:cellIndex inSection:sectionIndex];
+                id const cellModel = cellModels[cellIndex];
                 
-                if (cellModel == nil || [cellModelMap objectForKey:cellModel]) {
+                if (cellModel == nil || !XZMocoaIdentifierMapInsert(map, cellModel, indexPath)) {
                     return nil;
                 }
-                [cellModelMap setObject:indexPath forKey:cellModel];
             }
         }
     }
     
-    return modelMaps;
+    return maps;
+}
+
+/// 计算 section 的 supplements 指纹，用于判定 section 的身份。
+/// @discussion 指纹只关心 supplements 的身份（标识符），不关心内容；
+/// kind 按字典序排序，保证指纹的确定性。没有 supplements 的 section 返回 nil。
+- (NSString *)_fingerprintForModelSection:(XZMocoaGroupSection * const)modelSection {
+    NSDictionary<XZMocoaKind, NSArray *> * const supplements = modelSection.supplements;
+    if (supplements.count == 0) {
+        return nil;
+    }
+    
+    NSArray<XZMocoaKind> * const kinds = [supplements.allKeys sortedArrayUsingSelector:@selector(compare:)];
+    NSMutableString * const fingerprint = [NSMutableString string];
+    for (XZMocoaKind const kind in kinds) {
+        [fingerprint appendFormat:@"%@:", kind];
+        for (id const model in supplements[kind]) {
+            id const key = XZMocoaDiffKeyForModel(model);
+            if ([key isKindOfClass:[NSString class]]) {
+                [fingerprint appendFormat:@"s(%@),", key];
+            } else {
+                [fingerprint appendFormat:@"o(%p),", key];
+            }
+        }
+        [fingerprint appendString:@";"];
+    }
+    return fingerprint;
+}
+
+/// 判断两个 section 的 supplements 是否完全相同（同一位置是同一个模型实例）。
+- (BOOL)_isSupplementsIdenticalOfSection:(XZMocoaGroupSection * const)section toSection:(XZMocoaGroupSection * const)otherSection {
+    NSDictionary<XZMocoaKind, NSArray *> * const supplements = section.supplements;
+    NSDictionary<XZMocoaKind, NSArray *> * const otherSupplements = otherSection.supplements;
+    
+    if (supplements.count == 0 && otherSupplements.count == 0) {
+        return YES;
+    }
+    if (![[NSSet setWithArray:supplements.allKeys] isEqualToSet:[NSSet setWithArray:otherSupplements.allKeys]]) {
+        return NO;
+    }
+    for (XZMocoaKind const kind in supplements) {
+        NSArray * const models = supplements[kind];
+        NSArray * const otherModels = otherSupplements[kind];
+        if (models.count != otherModels.count) {
+            return NO;
+        }
+        for (NSInteger index = 0; index < (NSInteger)models.count; index++) {
+            if (models[index] != otherModels[index]) {
+                return NO;
+            }
+        }
+    }
+    return YES;
 }
 
 - (void)performBatchUpdates:(void (^NS_NOESCAPE const)(void))batchUpdates completion:(void (^ _Nullable)(BOOL))completion {
@@ -351,8 +503,11 @@ typedef void(^XZMocoaGroupDelayedUpdates)(__kindof XZMocoaViewModel *self);
         return completion(YES);
     }
     
-    NSMutableDictionary<XZMocoaKind, NSMapTable *> * const oldModelMaps = [self modelMapsForModelSections:_modelSections mode:XZMocoaGroupModelMapModeAll];
-    if (oldModelMaps == nil) {
+    // 差异分析以标识符判定元素身份：相同 mocoaIdentifier 的模型，视为同一元素；
+    // 没有 mocoaIdentifier 的模型，以模型对象自身作为标识，业务应保证模型唯一。
+    // 同一个 kind 内出现重复标识时，说明数据不符合约定，放弃差异分析。
+    NSDictionary<XZMocoaKind, XZMocoaIdentifierMap *> * const oldIdentifierMaps = [self _identifierMapsForModelSections:_modelSections mode:XZMocoaGroupModelMapModeAll];
+    if (oldIdentifierMaps == nil) {
         XZLog(@"[XZMocoaGroupViewModel][batchUpdates] 旧数据存在重复，无差异分析");
         [self reloadData];
         XZLog(@"[XZMocoaGroupViewModel][batchUpdates] 结束");
@@ -361,283 +516,424 @@ typedef void(^XZMocoaGroupDelayedUpdates)(__kindof XZMocoaViewModel *self);
     
     batchUpdates();
     
-    id        const model                    = self.model;
-    NSArray * const supportedSupplementKinds = self.supportedSupplementKinds;
-    
     // 新数据
     NSMutableArray<XZMocoaGroupSection<id<XZMocoaModel>> *> * const newModelSections = [NSMutableArray array];
-    [self.class model:model standardizeToModelSections:newModelSections supportedSupplementKinds:supportedSupplementKinds];
+    [self.class model:self.model standardizeToModelSections:newModelSections supportedSupplementKinds:self.supportedSupplementKinds];
     
-    // 新数据 与 indexPath 的映射关系
-    NSDictionary<XZMocoaKind, NSMapTable *> * const newModelMaps = [self modelMapsForModelSections:newModelSections mode:XZMocoaGroupModelMapModeAll];
-    
-    if (newModelMaps == nil) {
+    NSDictionary<XZMocoaKind, XZMocoaIdentifierMap *> * const newIdentifierMaps = [self _identifierMapsForModelSections:newModelSections mode:XZMocoaGroupModelMapModeAll];
+    if (newIdentifierMaps == nil) {
         XZLog(@"[XZMocoaGroupViewModel][batchUpdates] 新数据存在重复，无差异分析");
-        // TODO: 利用已经生成的 newModelSections 刷新数据
         [self reloadData];
         XZLog(@"[XZMocoaGroupViewModel][batchUpdates] 结束");
         return completion(YES);
     }
     
     XZLog(@"[XZMocoaGroupViewModel][batchUpdates] 差异分析开始");
-    NSInteger const newSectionCount = newModelSections.count;
     
-    // 在批量更新时，同一个元素只能有一种更新行为。
-    // 不论是 tableView 还是 collectionView 都没有直接刷新 supplement 视图的方法，
-    // 所以只要 supplements 发生改变，都需要重新创建 section 中的所有元素。
-    // 因此，首先将 supplements 发生改变的删除。
-    NSMutableIndexSet * const deleteSectionIndexes = [NSMutableIndexSet indexSet];
-    // 从 oldSectionIndex 到 newSectionIndex 的映射
-    NSMutableDictionary<NSNumber *, NSNumber *> * const sectionIndexChanges = [NSMutableDictionary dictionary];
-    // 位置发生移动元素的新位置，用于回填到数组中
-    NSMutableIndexSet * const newSectionIndexes = [NSMutableIndexSet indexSet];
-    // 位置发生移动元素的旧位置，用于从数组中移除
-    NSMutableIndexSet * const oldSectionIndexes = [NSMutableIndexSet indexSet];
-    // 新位置 newSectionIndex 与 model、viewModel 的映射
-    NSMutableDictionary<NSNumber *, NSArray<XZMocoaGroupSection *> *> * const newSectionIndexToModelViewModelDict = [NSMutableDictionary dictionary];
-    
-    // 遍历旧 supplements 看是否能在新的中找到
-    for (NSInteger oldSectionIndex = _modelSections.count - 1; oldSectionIndex >= 0; oldSectionIndex--) {
-        XZMocoaGroupSection * const oldModelSection = _modelSections[oldSectionIndex];
-        
-        // 没有 supplements 保留，cell 可能复用
-        if (oldModelSection.supplementKind == nil) {
-            continue;
-        }
-        
-        NSIndexPath * const newIndexPath = [newModelMaps[oldModelSection.supplementKind] objectForKey:oldModelSection.supplement];
-        
-        // 在新数据中，没有找到对应的 supplements
-        if (newIndexPath == nil) {
-            [deleteSectionIndexes addIndex:oldSectionIndex];
-            continue;
-        }
-        
-        NSInteger const newSectionIndex = newIndexPath.section;
-        XZMocoaGroupSection * const newModelSection = newModelSections[newSectionIndex];
-        
-        // 旧的 supplements 在同一个新的 section 中都能找到，数量一致且一一对应
-        if ([oldModelSection isSupplementsEqualToSupplementsOfSection:newModelSection]) {
-            sectionIndexChanges[@(oldSectionIndex)] = @(newSectionIndex);
-            [newSectionIndexes addIndex:newSectionIndex];
-            [oldSectionIndexes addIndex:oldSectionIndex];
-            newSectionIndexToModelViewModelDict[@(newSectionIndex)] = @[_modelSections[oldSectionIndex], _viewModelSections[oldSectionIndex]];
-            continue;
-        }
-        
-        // 不相等，移除
-        [deleteSectionIndexes addIndex:oldSectionIndex];
+    // section 层：以 supplements 指纹判定 section 身份，LIS 之外的 section 产生移动行为；
+    // cell 层：以标识符配对，LIS 之外的 cell 产生移动行为，保证移动次数最少。
+    XZMocoaGroupDiffResult * const diff = [self _computeDiffWithNewModelSections:newModelSections];
+    if (diff == nil) {
+        XZLog(@"[XZMocoaGroupViewModel][batchUpdates] 差异分析结果异常，全量刷新");
+        [self reloadData];
+        XZLog(@"[XZMocoaGroupViewModel][batchUpdates] 结束");
+        return completion(YES);
     }
     
-    if (deleteSectionIndexes.count > 0) {
-        completionLock++;
-        [self didPerformBatchUpdates:^{
-            // 以删除 supplements 代替删除整个 section 以复用 cell
-            [deleteSectionIndexes enumerateIndexesUsingBlock:^(NSUInteger idx, BOOL * _Nonnull stop) {
-                XZMocoaGroupSection<XZMocoaViewModel *> *viewModelSection = _viewModelSections[idx];
-                [viewModelSection.supplements enumerateKeysAndObjectsUsingBlock:^(XZMocoaKind  _Nonnull key, NSArray<XZMocoaViewModel *> * _Nonnull obj, BOOL * _Nonnull stop) {
-                    [obj enumerateObjectsUsingBlock:^(XZMocoaViewModel * _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
-                        [obj removeFromSuperViewModel];
-                    }];
-                }];
-                [viewModelSection removeAllSupplements];
-                
-                XZMocoaGroupSection *modelSection = _modelSections[idx];
-                [modelSection.supplements enumerateKeysAndObjectsUsingBlock:^(XZMocoaKind const kind, NSArray * models, BOOL * _Nonnull stop) {
-                    for (id const model in models) {
-                        [oldModelMaps[kind] removeObjectForKey:model];
+    // 所有变更在同一次批量更新中应用并一次性派发，避免多次动画与中间状态。
+    completionLock++;
+    [self _applyDiff:diff completion:completion];
+    
+    XZLog(@"[XZMocoaGroupViewModel][batchUpdates] 结束");
+}
+
+/// 判断两个 section 的 cells 是否完全相同（同一位置的标识相同，且为同一模型实例）。
+- (BOOL)_areCellsIdenticalOfSection:(XZMocoaGroupSection * const)section toSection:(XZMocoaGroupSection * const)otherSection {
+    NSArray * const cellModels = section.cells;
+    NSArray * const otherCellModels = otherSection.cells;
+    if (cellModels.count != otherCellModels.count) {
+        return NO;
+    }
+    for (NSInteger index = 0; index < (NSInteger)cellModels.count; index++) {
+        id const model = cellModels[index];
+        id const otherModel = otherCellModels[index];
+        if (model == otherModel) {
+            continue;
+        }
+        id const key = XZMocoaDiffKeyForModel(model);
+        if (![key isEqual:XZMocoaDiffKeyForModel(otherModel)]) {
+            return NO;
+        }
+    }
+    return YES;
+}
+
+/// 计算一对存活 section 之间的 cell 差异。
+/// @discussion 只允许匹配同一个旧 section 中的元素：
+/// 1. 其它存活 section 的元素，会在其所属的配对中处理；
+/// 2. 被删除、插入、重载或移动的 section 中的元素是密闭的，不能产生 cell 级事件。
+- (XZMocoaCellDiff *)_computeCellDiffForPairWithOldSection:(NSInteger const)oldSectionIndex newSection:(NSInteger const)newSectionIndex newModelSections:(NSArray<XZMocoaGroupSection *> * const)newModelSections {
+    XZMocoaCellDiff * const cellDiff = [[XZMocoaCellDiff alloc] init];
+    cellDiff.pair = (XZMocoaSectionPair){oldSectionIndex, newSectionIndex};
+    
+    NSArray * const oldCellModels = _modelSections[oldSectionIndex].cells;
+    NSArray * const newCellModels = newModelSections[newSectionIndex].cells;
+    
+    // 旧 cell 的标识 -> 旧索引（同一个 kind 内标识唯一，已前置校验）。
+    NSMutableDictionary<id, NSNumber *> * const oldCellIndexes = [NSMutableDictionary dictionaryWithCapacity:oldCellModels.count];
+    for (NSInteger oldCellIndex = 0; oldCellIndex < (NSInteger)oldCellModels.count; oldCellIndex++) {
+        oldCellIndexes[XZMocoaDiffKeyForModel(oldCellModels[oldCellIndex])] = @(oldCellIndex);
+    }
+    
+    NSMutableArray<NSIndexPath *> * const deletes = [NSMutableArray array];
+    NSMutableArray<NSIndexPath *> * const inserts = [NSMutableArray array];
+    NSMutableArray<NSArray<NSIndexPath *> *> * const matches  = [NSMutableArray array];
+    NSMutableArray<NSArray<NSIndexPath *> *> * const replaces = [NSMutableArray array];
+    NSMutableArray<NSNumber *> * const pairedOldIndexes = [NSMutableArray array];
+    NSMutableIndexSet * const consumedOldIndexes = [NSMutableIndexSet indexSet];
+    
+    for (NSInteger newCellIndex = 0; newCellIndex < (NSInteger)newCellModels.count; newCellIndex++) {
+        NSIndexPath * const newIndexPath = [NSIndexPath indexPathForItem:newCellIndex inSection:newSectionIndex];
+        id const newCellModel = newCellModels[newCellIndex];
+        NSNumber * const oldCellIndex = oldCellIndexes[XZMocoaDiffKeyForModel(newCellModel)];
+        
+        // 标识在旧数据中不存在，或已被消费，视为新增。
+        if (oldCellIndex == nil || [consumedOldIndexes containsIndex:oldCellIndex.unsignedIntegerValue]) {
+            [inserts addObject:newIndexPath];
+            continue;
+        }
+        
+        NSIndexPath * const oldIndexPath = [NSIndexPath indexPathForItem:oldCellIndex.integerValue inSection:oldSectionIndex];
+        [consumedOldIndexes addIndex:oldCellIndex.unsignedIntegerValue];
+        
+        // 标识相同但模型实例变化：视图模型无法重绑定模型，以删除+插入代替刷新。
+        if (oldCellModels[oldCellIndex.integerValue] != newCellModel) {
+            [replaces addObject:@[oldIndexPath, newIndexPath]];
+            [inserts addObject:newIndexPath];
+            continue;
+        }
+        
+        [matches addObject:@[oldIndexPath, newIndexPath]];
+        [pairedOldIndexes addObject:oldCellIndex];
+    }
+    
+    // 旧数据中未被配对（或实例已变化）的元素，即为删除。
+    for (NSInteger oldCellIndex = 0; oldCellIndex < (NSInteger)oldCellModels.count; oldCellIndex++) {
+        if (![consumedOldIndexes containsIndex:oldCellIndex]) {
+            [deletes addObject:[NSIndexPath indexPathForItem:oldCellIndex inSection:oldSectionIndex]];
+        }
+    }
+    
+    // 配对元素中，旧索引构成最长递增子序列的保持相对顺序，其余产生移动行为。
+    NSIndexSet * const stablePositions = XZMocoaDiffLongestIncreasingSubsequenceIndexes(pairedOldIndexes);
+    NSMutableArray<NSArray<NSIndexPath *> *> * const moves = [NSMutableArray array];
+    for (NSInteger position = 0; position < (NSInteger)pairedOldIndexes.count; position++) {
+        if ([stablePositions containsIndex:position]) {
+            continue;
+        }
+        [moves addObject:matches[position]];
+    }
+    
+    cellDiff.deletes  = deletes;
+    cellDiff.inserts  = inserts;
+    cellDiff.matches  = matches;
+    cellDiff.replaces = replaces;
+    cellDiff.moves    = moves;
+    return cellDiff;
+}
+
+/// 计算新旧数据的完整差异。
+/// @discussion
+/// section 层：以 supplements 指纹判定身份；没有 supplements 的匿名 section 按序配对。
+/// 配对成功的 section 中，旧索引处于 LIS 内的保持相对顺序（原地存活），做细粒度分析；
+/// LIS 外的产生移动行为。为避免 UIKit 组合更新的不稳定行为（动画异常、堆损坏等），
+/// 发生移动的 section 不做细粒度分析：内容完全相同时仅移动，否则以删除+插入代替移动。
+- (nullable XZMocoaGroupDiffResult *)_computeDiffWithNewModelSections:(NSArray<XZMocoaGroupSection *> * const)newModelSections {
+    NSInteger const oldSectionCount = (NSInteger)_modelSections.count;
+    NSInteger const newSectionCount = (NSInteger)newModelSections.count;
+    
+    // 以 supplements 指纹配对。标识符在同一 kind 内唯一，因此指纹也唯一，可直接映射。
+    // 没有 supplements 的匿名 section 无指纹，无法判定身份，按序配对。
+    NSMutableDictionary<NSString *, NSNumber *> * const fingerprintToOldIndex = [NSMutableDictionary dictionary];
+    for (NSInteger oldIndex = 0; oldIndex < oldSectionCount; oldIndex++) {
+        NSString * const fingerprint = [self _fingerprintForModelSection:_modelSections[oldIndex]];
+        if (fingerprint != nil) {
+            fingerprintToOldIndex[fingerprint] = @(oldIndex);
+        }
+    }
+    
+    NSMutableArray<NSNumber *> * const pairOldIndexes = [NSMutableArray array];
+    NSMutableArray<NSNumber *> * const pairNewIndexes = [NSMutableArray array];
+    NSMutableIndexSet * const matchedOldSections = [NSMutableIndexSet indexSet];
+    
+    for (NSInteger newIndex = 0; newIndex < newSectionCount; newIndex++) {
+        XZMocoaGroupSection * const newSection = newModelSections[newIndex];
+        NSString * const fingerprint = [self _fingerprintForModelSection:newSection];
+        
+        NSNumber *oldIndex = nil;
+        if (fingerprint != nil) {
+            oldIndex = fingerprintToOldIndex[fingerprint];
+        } else {
+            // 匿名 section：按序匹配第一个未配对的匿名旧 section。
+            for (NSInteger candidate = 0; candidate < oldSectionCount; candidate++) {
+                if ([matchedOldSections containsIndex:candidate]) {
+                    continue;
+                }
+                if ([self _fingerprintForModelSection:_modelSections[candidate]] == nil) {
+                    oldIndex = @(candidate);
+                    break;
+                }
+            }
+        }
+        
+        if (oldIndex == nil || [matchedOldSections containsIndex:oldIndex.unsignedIntegerValue]) {
+            continue;
+        }
+        
+        [matchedOldSections addIndex:oldIndex.unsignedIntegerValue];
+        if (fingerprint != nil) {
+            [fingerprintToOldIndex removeObjectForKey:fingerprint];
+        }
+        [pairOldIndexes addObject:oldIndex];
+        [pairNewIndexes addObject:@(newIndex)];
+    }
+    
+    // 配对元素按新顺序排列，旧索引处于 LIS 内的保持相对顺序，不产生移动行为。
+    NSIndexSet * const stablePositions = XZMocoaDiffLongestIncreasingSubsequenceIndexes(pairOldIndexes);
+    
+    NSMutableIndexSet * const deletedSections  = [NSMutableIndexSet indexSet];
+    NSMutableIndexSet * const insertedSections = [NSMutableIndexSet indexSet];
+    NSMutableIndexSet * const reloadedSections = [NSMutableIndexSet indexSet];
+    NSMutableArray<NSArray<NSNumber *> *> * const sectionMoves = [NSMutableArray array];
+    NSMutableArray<XZMocoaCellDiff *> * const fineGrainedCellDiffs = [NSMutableArray array];
+    NSMutableDictionary<NSNumber *, NSNumber *> * const newToOldSectionIndexes = [NSMutableDictionary dictionary];
+    
+    for (NSInteger position = 0; position < (NSInteger)pairOldIndexes.count; position++) {
+        NSInteger const oldIndex = pairOldIndexes[position].integerValue;
+        NSInteger const newIndex = pairNewIndexes[position].integerValue;
+        XZMocoaGroupSection * const oldSection = _modelSections[oldIndex];
+        XZMocoaGroupSection * const newSection = newModelSections[newIndex];
+        
+        newToOldSectionIndexes[@(newIndex)] = @(oldIndex);
+        
+        // supplements 发生变化：整体重载。重载的 section 是密闭的，不产生 cell 级事件。
+        if (![self _isSupplementsIdenticalOfSection:oldSection toSection:newSection]) {
+            [reloadedSections addIndex:newIndex];
+            continue;
+        }
+        
+        // 发生移动的 section：内容完全相同时仅移动；否则以删除+插入代替移动（整段重建）。
+        if (![stablePositions containsIndex:position]) {
+            if ([self _areCellsIdenticalOfSection:oldSection toSection:newSection]) {
+                [sectionMoves addObject:@[@(oldIndex), @(newIndex)]];
+            } else {
+                [deletedSections addIndex:oldIndex];
+                [insertedSections addIndex:newIndex];
+                [newToOldSectionIndexes removeObjectForKey:@(newIndex)];
+            }
+            continue;
+        }
+        
+        // 原地存活的 section：细粒度分析。
+        XZMocoaCellDiff * const cellDiff = [self _computeCellDiffForPairWithOldSection:oldIndex newSection:newIndex newModelSections:newModelSections];
+        [fineGrainedCellDiffs addObject:cellDiff];
+    }
+    
+    // 未匹配的 section：旧数据独有 => 删除；新数据独有 => 插入。
+    for (NSInteger oldIndex = 0; oldIndex < oldSectionCount; oldIndex++) {
+        if (![matchedOldSections containsIndex:oldIndex]) {
+            [deletedSections addIndex:oldIndex];
+        }
+    }
+    for (NSInteger newIndex = 0; newIndex < newSectionCount; newIndex++) {
+        if (newToOldSectionIndexes[@(newIndex)] == nil) {
+            [insertedSections addIndex:newIndex];
+        }
+    }
+    
+    XZMocoaGroupDiffResult * const result = [[XZMocoaGroupDiffResult alloc] init];
+    result.deletedSections       = deletedSections;
+    result.insertedSections      = insertedSections;
+    result.reloadedSections      = reloadedSections;
+    result.sectionMoves          = sectionMoves;
+    result.fineGrainedCellDiffs  = fineGrainedCellDiffs;
+    result.modelSections      = newModelSections;
+    result.sectionIndexChanges = newToOldSectionIndexes;
+    return result;
+}
+
+/// 应用差异分析结果：先将数据与视图模型更新至最终状态，然后在同一次批量更新中一次性派发所有事件。
+/// @discussion 坐标约定（已实机验证，UITableView 与 UICollectionView 行为一致）：
+/// 删除 = 旧状态坐标；插入、重载与移动的目标 = 新状态（最终）坐标。
+/// 提交前做守恒校验，不通过则放弃差异分析，防止更新过程中崩溃。
+- (void)_applyDiff:(XZMocoaGroupDiffResult * const)diff completion:(void (^ _Nullable const)(BOOL))completion {
+    NSInteger const oldSectionCount = (NSInteger)_modelSections.count;
+    NSInteger const newSectionCount = (NSInteger)diff.modelSections.count;
+    
+    // 守恒校验：section 数量。
+    if (oldSectionCount - (NSInteger)diff.deletedSections.count + (NSInteger)diff.insertedSections.count != newSectionCount) {
+        XZLog(@"[XZMocoaGroupViewModel][batchUpdates] 差异分析不守恒（section），全量刷新");
+        [self reloadData];
+        return completion(YES);
+    }
+    
+    // 守恒校验：存活 section 的 cell 数量。
+    for (XZMocoaCellDiff * const cellDiff in diff.fineGrainedCellDiffs) {
+        NSInteger const oldCellCount = (NSInteger)_modelSections[cellDiff.pair.oldIndex].cells.count;
+        NSInteger const newCellCount = (NSInteger)diff.modelSections[cellDiff.pair.newIndex].cells.count;
+        NSInteger const changedCount = oldCellCount - (NSInteger)cellDiff.deletes.count - (NSInteger)cellDiff.replaces.count + (NSInteger)cellDiff.inserts.count;
+        if (changedCount != newCellCount) {
+            XZLog(@"[XZMocoaGroupViewModel][batchUpdates] 差异分析不守恒（cell），全量刷新");
+            [self reloadData];
+            return completion(YES);
+        }
+    }
+    
+    NSArray<XZMocoaGroupSection<__kindof XZMocoaViewModel *> *> * const oldViewModelSections = _viewModelSections;
+    NSArray<XZMocoaKind> * const supportedSupplementKinds = self.supportedSupplementKinds;
+    
+    [self didPerformBatchUpdates:^{
+        NSMutableArray<XZMocoaGroupSection *> * const newModelSections = [NSMutableArray arrayWithCapacity:newSectionCount];
+        NSMutableArray<XZMocoaGroupSection *> * const newViewModelSections = [NSMutableArray arrayWithCapacity:newSectionCount];
+        
+        for (NSInteger newIndex = 0; newIndex < newSectionCount; newIndex++) {
+            XZMocoaGroupSection * const newModelSection = diff.modelSections[newIndex];
+            NSNumber * const oldIndexNumber = diff.sectionIndexChanges[@(newIndex)];
+            
+            // 新增的、以及以删除+插入代替移动的 section：从模型加载全部元素。
+            if (oldIndexNumber == nil) {
+                XZMocoaGroupSection * const viewModelSection = [[XZMocoaGroupSection alloc] initWithIndex:newIndex];
+                [self section:viewModelSection loadSubViewModelsWithModel:newModelSection supportedSupplementKinds:supportedSupplementKinds];
+                [newModelSections addObject:newModelSection];
+                [newViewModelSections addObject:viewModelSection];
+                continue;
+            }
+            
+            NSInteger const oldIndex = oldIndexNumber.integerValue;
+            XZMocoaGroupSection * const oldViewModelSection = oldViewModelSections[oldIndex];
+            
+            // 重载的、或以删除+插入代替移动的 section：清理旧元素，重建新元素。
+            if ([diff.reloadedSections containsIndex:newIndex] || [diff.deletedSections containsIndex:oldIndex]) {
+                for (XZMocoaViewModel * const viewModel in oldViewModelSection.cells) {
+                    [viewModel removeFromSuperViewModel];
+                }
+                [oldViewModelSection.supplements enumerateKeysAndObjectsUsingBlock:^(XZMocoaKind _Nonnull kind, NSArray<XZMocoaViewModel *> * _Nonnull viewModels, BOOL * _Nonnull stop) {
+                    for (XZMocoaViewModel *viewModel in viewModels) {
+                        [viewModel removeFromSuperViewModel];
                     }
                 }];
-                [modelSection removeAllSupplements];
                 
-                XZLog(@"[XZMocoaGroupViewModel][batchUpdates] 删除附加视图 %ld", idx);
-            }];
-            [self didReloadSectionsAtIndexes:deleteSectionIndexes];
-        } completion:completion];
-    }
-    
-    // 插入空 section 补足数量。
-    if (newSectionCount > _viewModelSections.count) {
-        completionLock++;
-        [self didPerformBatchUpdates:^{
-            NSMutableIndexSet * const sections = [NSMutableIndexSet indexSet];
-            for (NSInteger newSectionIndex = _viewModelSections.count; newSectionIndex < newSectionCount; newSectionIndex++) {
-                XZMocoaGroupSection *viewModelSection = [[XZMocoaGroupSection alloc] initWithIndex:newSectionIndex];
-                [_viewModelSections addObject:viewModelSection];
-                
-                XZMocoaGroupSection *modelSection = [[XZMocoaGroupSection alloc] initWithIndex:newSectionIndex];
-                [_modelSections addObject:modelSection];
-                [sections addIndex:newSectionIndex];
-                
-                XZLog(@"[XZMocoaGroupViewModel][batchUpdates] 添加占位区块 %ld", newSectionIndex);
+                XZMocoaGroupSection * const viewModelSection = [[XZMocoaGroupSection alloc] initWithIndex:newIndex];
+                [self section:viewModelSection loadSubViewModelsWithModel:newModelSection supportedSupplementKinds:supportedSupplementKinds];
+                [newModelSections addObject:newModelSection];
+                [newViewModelSections addObject:viewModelSection];
+                continue;
             }
-            [self didInsertSectionsAtIndexes:sections];
-        } completion:completion];
-    }
-    
-    // 排序
-    if (oldSectionIndexes.count > 0) {
-        completionLock++;
-        [self didPerformBatchUpdates:^{
-            // 先把有映射关系的先移除，然后再按新顺序插入回去
-            [_viewModelSections removeObjectsAtIndexes:oldSectionIndexes];
-            [_modelSections removeObjectsAtIndexes:oldSectionIndexes];
-            [newSectionIndexes enumerateIndexesUsingBlock:^(NSUInteger newSectionIndex, BOOL * _Nonnull stop) {
-                NSArray *elements = newSectionIndexToModelViewModelDict[@(newSectionIndex)];
-                id const viewModel = elements[1];
-                [_viewModelSections insertObject:viewModel atIndex:newSectionIndex];
-                id const model = elements[0];
-                [_modelSections insertObject:model atIndex:newSectionIndex];
-            }];
             
-            // 更新 indexPath
-            NSInteger from = MIN(oldSectionIndexes.firstIndex, newSectionIndexes.firstIndex);
-            NSInteger to   = MAX(oldSectionIndexes.lastIndex, newSectionIndexes.lastIndex);
-            [self _updateIndexPathsForSubViewModelsInSectionsFromIndex:from toIndex:to excludeSections:nil modelMaps:oldModelMaps];
-            
-            // 发送事件
-            [sectionIndexChanges enumerateKeysAndObjectsUsingBlock:^(NSNumber * _Nonnull fromValue, NSNumber * _Nonnull toValue, BOOL * _Nonnull stop) {
-                NSInteger const from = fromValue.integerValue;
-                NSInteger const to   = toValue.integerValue;
-                if (from == to) {
-                    return;
+            // 移动的 section（内容完全相同）：整体复用。
+            XZMocoaCellDiff *cellDiff = nil;
+            for (XZMocoaCellDiff * const diffItem in diff.fineGrainedCellDiffs) {
+                if (diffItem.pair.newIndex == newIndex) {
+                    cellDiff = diffItem;
+                    break;
                 }
-                [self didMoveSectionAtIndex:from toIndex:to];
-                
-                XZLog(@"[XZMocoaGroupViewModel][batchUpdates] 排序原始区块 %ld => %ld", from, to);
-            }];
-        } completion:completion];
-    }
-    
-    // 更新 cells
-    completionLock++;
-    [self didPerformBatchUpdates:^{
-        NSMapTable * const oldCellMap = oldModelMaps[XZMocoaKindDefault];
-        
-        NSMutableArray<NSIndexPath *> *deletes = [NSMutableArray array];
-        NSMutableArray<NSDictionary<NSString *, NSIndexPath *> *> *changes = [NSMutableArray array];
-        NSMutableArray<NSIndexPath *> *inserts = [NSMutableArray array];
-        
-        NSMutableArray<XZMocoaGroupSection<XZMocoaViewModel *> *> * const newViewModelSections = [NSMutableArray arrayWithCapacity:newSectionCount];
-        
-        for (NSInteger newSectionIndex = 0; newSectionIndex < newSectionCount; newSectionIndex++) {
-            XZMocoaGroupSection * const newViewModelSection = [[XZMocoaGroupSection alloc] initWithIndex:newSectionIndex];
-            [newViewModelSections addObject:newViewModelSection];
+            }
+            if (cellDiff == nil) {
+                XZMocoaGroupSection * const viewModelSection = [[XZMocoaGroupSection alloc] initWithIndex:newIndex];
+                [viewModelSection shareSupplementsFromSection:oldViewModelSection];
+                for (NSInteger item = 0; item < (NSInteger)oldViewModelSection.cells.count; item++) {
+                    XZMocoaViewModel * const viewModel = oldViewModelSection.cells[item];
+                    viewModel.indexPath = [NSIndexPath indexPathForItem:item inSection:newIndex];
+                    [viewModelSection addCell:viewModel];
+                }
+                [newModelSections addObject:newModelSection];
+                [newViewModelSections addObject:viewModelSection];
+                continue;
+            }
             
-            // 复制 supplements
-            [newViewModelSection shareSupplementsFromSection:_viewModelSections[newSectionIndex]];
-            XZMocoaGroupSection * const newModelSection = newModelSections[newSectionIndex];
+            // 原地存活的 section：复用 supplements，按差异结果重建 cells。
+            NSMutableSet<NSIndexPath *> * const removedCells = [NSMutableSet setWithArray:cellDiff.deletes];
+            for (NSArray<NSIndexPath *> * const replace in cellDiff.replaces) {
+                [removedCells addObject:replace.firstObject];
+            }
+            for (NSIndexPath * const indexPath in removedCells) {
+                XZMocoaViewModel * const viewModel = oldViewModelSection.cells[indexPath.item];
+                [viewModel removeFromSuperViewModel];
+            }
             
-            // 刷新 cells
-            [newModelSection.cells enumerateObjectsUsingBlock:^(id  _Nonnull newCellModel, NSUInteger newCellIndex, BOOL * _Nonnull stop) {
-                NSIndexPath *indexPath = [oldCellMap objectForKey:newCellModel];
+            // 按新顺序重建 cells：匹配的复用旧视图模型，新增的创建新视图模型。
+            XZMocoaGroupSection * const viewModelSection = [[XZMocoaGroupSection alloc] initWithIndex:newIndex];
+            [viewModelSection shareSupplementsFromSection:oldViewModelSection];
+            
+            NSSet<NSIndexPath *> * const insertedCells = [NSSet setWithArray:cellDiff.inserts];
+            NSArray * const newCellModels = newModelSection.cells;
+            NSInteger matchPosition = 0;
+            for (NSInteger newCellIndex = 0; newCellIndex < (NSInteger)newCellModels.count; newCellIndex++) {
+                NSIndexPath * const newIndexPath = [NSIndexPath indexPathForItem:newCellIndex inSection:newIndex];
                 
-                // 新增
-                if (indexPath == nil) {
-                    indexPath = [NSIndexPath indexPathForItem:newCellIndex inSection:newSectionIndex];
-                    [inserts addObject:indexPath];
-                    XZMocoaViewModel *viewModel = [self createViewModelWithModel:newCellModel forKind:(XZMocoaKindDefault)];
+                if ([insertedCells containsObject:newIndexPath]) {
+                    XZMocoaGroupCellViewModel * const viewModel = [self createViewModelWithModel:newCellModels[newCellIndex] forKind:XZMocoaKindDefault];
+                    viewModel.indexPath = newIndexPath;
                     [self addSubViewModel:viewModel];
-                    [newViewModelSection addCell:viewModel];
-                    
-                    XZLog(@"[XZMocoaGroupViewModel][batchUpdates] 添加单元视图 %ld, %ld", indexPath.section, indexPath.item);
-                    return;
+                    [viewModelSection addCell:viewModel];
+                    continue;
                 }
                 
-                // 移除匹配成功的元素
-                [oldCellMap removeObjectForKey:newCellModel];
-                
-                // 保持
-                if (indexPath.section == newSectionIndex && indexPath.item == newCellIndex) {
-                    XZMocoaViewModel *viewModel = [_viewModelSections[newSectionIndex] cellAtIndex:newCellIndex];
-                    [newViewModelSection addCell:viewModel];
-                    return;
-                }
-                
-                // 移动
-                XZMocoaViewModel *viewModel = [_viewModelSections[indexPath.section] cellAtIndex:indexPath.item];
-                [newViewModelSection addCell:viewModel];
-                [changes addObject:@{ @"from": indexPath, @"to": [NSIndexPath indexPathForItem:newCellIndex inSection:newSectionIndex] }];
-            }];
-        }
-        
-        for (NSInteger oldSectionIndex = newSectionCount; oldSectionIndex < _viewModelSections.count; oldSectionIndex++) {
-            XZMocoaGroupSection * const newViewModelSection = [[XZMocoaGroupSection alloc] initWithIndex:oldSectionIndex];
-            [newViewModelSections addObject:newViewModelSection];
-            [newViewModelSection shareSupplementsFromSection:_viewModelSections[oldSectionIndex]];
-        }
-        
-        for (id oldCellModel in oldCellMap.keyEnumerator) {
-            NSIndexPath *indexPath = [oldCellMap objectForKey:oldCellModel];
-            [deletes addObject:indexPath];
+                // 匹配的元素按新位置升序排列（守恒校验保证不会越界）。
+                XZMocoaViewModel * const viewModel = oldViewModelSection.cells[cellDiff.matches[matchPosition].firstObject.item];
+                matchPosition++;
+                viewModel.indexPath = newIndexPath;
+                [viewModelSection addCell:viewModel];
+            }
             
-            XZMocoaViewModel *viewModel = [_viewModelSections[indexPath.section] cellAtIndex:indexPath.item];
-            [viewModel removeFromSuperViewModel];
-            
-            XZLog(@"[XZMocoaGroupViewModel][batchUpdates] 删除单元视图 %ld, %ld", indexPath.section, indexPath.item);
+            [newModelSections addObject:newModelSection];
+            [newViewModelSections addObject:viewModelSection];
         }
         
         self->_modelSections = newModelSections;
         self->_viewModelSections = newViewModelSections;
         
-        // 删除
-        [self didDeleteCellsAtIndexPaths:deletes];
-        // 新增
-        [self didInsertCellsAtIndexPaths:inserts];
-        // 移动
-        for (NSDictionary *info in changes) {
-            NSIndexPath *oldIndexPath = info[@"from"];
-            NSIndexPath *newIndexPath = info[@"to"];
-            [self didMoveCellAtIndexPath:oldIndexPath toIndexPath:newIndexPath];
-            
-            XZLog(@"[XZMocoaGroupViewModel][batchUpdates] 移动单元视图 %ld, %ld => %ld, %ld", oldIndexPath.section, oldIndexPath.item, newIndexPath.section, newIndexPath.item);
+        // 更新所有存活视图模型的 indexPath。
+        if (newSectionCount > 0) {
+            [self _updateIndexPathsForSubViewModelsInSectionsFromIndex:0 toIndex:(newSectionCount - 1) excludeSections:nil modelMaps:nil];
+        }
+        
+        // 派发 section 级事件：删除（旧坐标）、插入（新坐标）、移动（旧=>新）、重载（新坐标）。
+        if (diff.deletedSections.count > 0) {
+            [self didDeleteSectionsAtIndexes:diff.deletedSections];
+        }
+        if (diff.insertedSections.count > 0) {
+            [self didInsertSectionsAtIndexes:diff.insertedSections];
+        }
+        for (NSArray<NSNumber *> * const move in diff.sectionMoves) {
+            [self didMoveSectionAtIndex:move.firstObject.integerValue toIndex:move.lastObject.integerValue];
+        }
+        if (diff.reloadedSections.count > 0) {
+            [self didReloadSectionsAtIndexes:diff.reloadedSections];
+        }
+        
+        // 派发 cell 级事件：删除（旧坐标）、插入（新坐标）、移动（旧=>新）。
+        NSMutableArray<NSIndexPath *> * const cellDeletes = [NSMutableArray array];
+        NSMutableArray<NSIndexPath *> * const cellInserts = [NSMutableArray array];
+        for (XZMocoaCellDiff * const cellDiff in diff.fineGrainedCellDiffs) {
+            [cellDeletes addObjectsFromArray:cellDiff.deletes];
+            [cellInserts addObjectsFromArray:cellDiff.inserts];
+            for (NSArray<NSIndexPath *> * const replace in cellDiff.replaces) {
+                [cellDeletes addObject:replace.firstObject];
+            }
+        }
+        if (cellDeletes.count > 0) {
+            [self didDeleteCellsAtIndexPaths:cellDeletes];
+        }
+        if (cellInserts.count > 0) {
+            [self didInsertCellsAtIndexPaths:cellInserts];
+        }
+        for (XZMocoaCellDiff * const cellDiff in diff.fineGrainedCellDiffs) {
+            for (NSArray<NSIndexPath *> * const move in cellDiff.moves) {
+                [self didMoveCellAtIndexPath:move.firstObject toIndexPath:move.lastObject];
+            }
         }
     } completion:completion];
-    
-    // 移除多余的 section
-    if (_viewModelSections.count > newSectionCount) {
-        completionLock++;
-        [self didPerformBatchUpdates:^{
-            NSRange const range = NSMakeRange(newSectionCount, _viewModelSections.count - newSectionCount);
-            [_viewModelSections removeObjectsInRange:range];
-            [self didDeleteSectionsAtIndexes:[NSIndexSet indexSetWithIndexesInRange:range]];
-        } completion:completion];
-    }
-    
-    // 更新 supplemts
-    NSMutableIndexSet *updates = [NSMutableIndexSet indexSet];
-    for (NSInteger newSectionIndex = 0; newSectionIndex < newSectionCount; newSectionIndex++) {
-        if ([newSectionIndexes containsIndex:newSectionIndex]) {
-            continue;
-        }
-
-        NSDictionary<XZMocoaKind, NSArray *> * const supplements = newModelSections[newSectionIndex].supplements;
-        if (supplements.count == 0) {
-            continue;
-        }
-        
-        XZMocoaGroupSection *viewModelSection = _viewModelSections[newSectionIndex];
-        
-        [supplements enumerateKeysAndObjectsUsingBlock:^(XZMocoaKind const kind, NSArray * const supplementModels, BOOL * _Nonnull stop) {
-            [supplementModels enumerateObjectsUsingBlock:^(id const supplementModel, NSUInteger idx, BOOL * _Nonnull stop) {
-                XZMocoaViewModel *viewModel = [self createViewModelWithModel:supplementModel forKind:kind];
-                [viewModelSection addSupplement:viewModel forKind:kind];
-                [self addSubViewModel:viewModel];
-            }];
-        }];
-        
-        [updates addIndex:newSectionIndex];
-        
-        XZLog(@"[XZMocoaGroupViewModel][batchUpdates] 更新辅助视图 %ld", newSectionIndex);
-    }
-    if (updates.count > 0) {
-        completionLock++;
-        [self didPerformBatchUpdates:^{
-            [self didReloadSectionsAtIndexes:updates];
-        } completion:completion];
-    }
-    
-    XZLog(@"[XZMocoaGroupViewModel][batchUpdates] 结束");
 }
 
 #pragma mark - 私有方法
@@ -1053,20 +1349,25 @@ typedef void(^XZMocoaGroupDelayedUpdates)(__kindof XZMocoaViewModel *self);
     if (_kindedSupplements == nil || section->_kindedSupplements == nil) {
         return NO;
     }
-    NSArray<XZMocoaKind> * const kinds = _kindedSupplements.allKeys;
-    if (![kinds isEqualToArray:section->_kindedSupplements.allKeys]) {
+    // kind 集合比较，避免 allKeys 顺序不同导致误判。
+    if (![[NSSet setWithArray:_kindedSupplements.allKeys] isEqualToSet:[NSSet setWithArray:section->_kindedSupplements.allKeys]]) {
         return NO;
     }
-    for (XZMocoaKind const kind in kinds) {
+    for (XZMocoaKind const kind in _kindedSupplements) {
         NSArray *supplements1 = _kindedSupplements[kind];
         NSArray *supplements2 = section->_kindedSupplements[kind];
         if (supplements2 == nil) {
             return NO;
         }
-        if ([supplements1 isEqualToArray:supplements2]) {
-            continue;
+        if (supplements1.count != supplements2.count) {
+            return NO;
         }
-        return NO;
+        // 同一位置必须是同一个模型实例。
+        for (NSInteger index = 0; index < (NSInteger)supplements1.count; index++) {
+            if (supplements1[index] != supplements2[index]) {
+                return NO;
+            }
+        }
     }
     return YES;
 }

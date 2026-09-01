@@ -20,6 +20,10 @@ static const void * const _mocoaName = &_mocoaName;
     objc_setAssociatedObject(self, _mocoaName, mocoaName, OBJC_ASSOCIATION_COPY_NONATOMIC);
 }
 
+- (NSString *)mocoaIdentifier {
+    return [NSString stringWithFormat:@"<%s: %p>", object_getClassName(self), self];
+}
+
 @end
 
 #import "XZMocoaViewModel.h"

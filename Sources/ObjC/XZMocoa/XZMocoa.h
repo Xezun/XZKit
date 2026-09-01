@@ -24,6 +24,9 @@
 #import "XZMocoaView.h"
 #import "XZMocoaViewModel.h"
 
+// XZMocoaDiff
+#import "XZMocoaDiff.h"
+
 // XZMocoaGroupView
 #import "XZMocoaGroupCellModel.h"
 #import "XZMocoaGroupModel.h"

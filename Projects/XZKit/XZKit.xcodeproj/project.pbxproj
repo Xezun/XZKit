@@ -112,6 +112,7 @@
 				XZMocoa/XZMocoaDefines/XZMocoaDefines.h,
 				XZMocoa/XZMocoaDefines/XZMocoaModule.h,
 				XZMocoa/XZMocoaDefines/XZMocoaModuleDomain.h,
+				XZMocoa/XZMocoaDiff/XZMocoaDiff.h,
 				XZMocoa/XZMocoaGroupView/Model/XZMocoaGroupCellModel.h,
 				XZMocoa/XZMocoaGroupView/Model/XZMocoaGroupModel.h,
 				XZMocoa/XZMocoaGroupView/Model/XZMocoaGroupSectionModel.h,

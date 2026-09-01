@@ -33,6 +33,10 @@
     return self.gid.hash;
 }
 
+- (NSString *)mocoaIdentifier {
+    return self.gid;
+}
+
 @end
 
 @implementation Example0320Group102CellModelItem

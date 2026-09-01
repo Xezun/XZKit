@@ -27,4 +27,8 @@
     return self.nid.hash;
 }
 
+- (NSString *)mocoaIdentifier {
+    return self.nid;
+}
+
 @end
