@@ -277,7 +277,7 @@ typedef void(^XZMocoaGroupDelayedUpdates)(__kindof XZMocoaViewModel *self);
     
     NSInteger const sectionCount = modelSections.count;
     for (NSInteger sectionIndex = 0; sectionIndex < sectionCount; sectionIndex++) {
-        XZMocoaGroupSection * const modelSection = [[XZMocoaGroupSection alloc] initWithIndex:sectionIndex];
+        XZMocoaGroupSection * const modelSection = modelSections[sectionIndex];
         
         if (mode & XZMocoaGroupModelMapModeSupplements) {
             for (XZMocoaKind const kind in modelSection.supplements) {
@@ -326,18 +326,26 @@ typedef void(^XZMocoaGroupDelayedUpdates)(__kindof XZMocoaViewModel *self);
     return modelMaps;
 }
 
-- (void)performBatchUpdates:(void (^NS_NOESCAPE)(void))batchUpdates completion:(void (^ _Nullable)(BOOL))completion {
+- (void)performBatchUpdates:(void (^NS_NOESCAPE const)(void))batchUpdates completion:(void (^ _Nullable)(BOOL))completion {
     XZLog(@"[XZMocoaGroupViewModel][batchUpdates] 开始");
     if (batchUpdates == nil) {
         return;
     }
     
-    NSMutableDictionary<XZMocoaKind, NSMapTable *> *oldModelMaps = [self modelMapsForModelSections:_modelSections mode:XZMocoaGroupModelMapModeAll];
+    NSInteger __block flag = 0;
+    completion = ^(BOOL finished) {
+        if ((--flag) > 0) {
+            return;
+        }
+        if (completion) completion(finished);
+    };
+    
+    NSMutableDictionary<XZMocoaKind, NSMapTable *> * const oldModelMaps = [self modelMapsForModelSections:_modelSections mode:XZMocoaGroupModelMapModeAll];
     if (oldModelMaps == nil) {
         XZLog(@"[XZMocoaGroupViewModel][batchUpdates] 旧数据存在重复，无差异分析");
         [self reloadData];
         XZLog(@"[XZMocoaGroupViewModel][batchUpdates] 结束");
-        return;
+        return completion(YES);
     }
     
     batchUpdates();
@@ -357,7 +365,7 @@ typedef void(^XZMocoaGroupDelayedUpdates)(__kindof XZMocoaViewModel *self);
         // TODO: 利用已经生成的 newModelSections 刷新数据
         [self reloadData];
         XZLog(@"[XZMocoaGroupViewModel][batchUpdates] 结束");
-        return nil;
+        return completion(YES);
     }
     
     XZLog(@"[XZMocoaGroupViewModel][batchUpdates] 差异分析开始");
@@ -411,6 +419,7 @@ typedef void(^XZMocoaGroupDelayedUpdates)(__kindof XZMocoaViewModel *self);
     }
     
     if (deleteSectionIndexes.count > 0) {
+        flag++;
         [self didPerformBatchUpdates:^{
             // 以删除 supplements 代替删除整个 section 以复用 cell
             [deleteSectionIndexes enumerateIndexesUsingBlock:^(NSUInteger idx, BOOL * _Nonnull stop) {
@@ -424,13 +433,16 @@ typedef void(^XZMocoaGroupDelayedUpdates)(__kindof XZMocoaViewModel *self);
                     }
                 }];
                 [modelSection removeAllSupplements];
+                
+                XZLog(@"[XZMocoaGroupViewModel][batchUpdates] 删除附加视图 %ld", idx);
             }];
             [self didReloadSectionsAtIndexes:deleteSectionIndexes];
-        } completion:nil];
+        } completion:completion];
     }
     
     // 插入空 section 补足数量。
     if (newSectionCount > _viewModelSections.count) {
+        flag++;
         [self didPerformBatchUpdates:^{
             NSMutableIndexSet * const sections = [NSMutableIndexSet indexSet];
             for (NSInteger newSectionIndex = _viewModelSections.count; newSectionIndex < newSectionCount; newSectionIndex++) {
@@ -440,13 +452,16 @@ typedef void(^XZMocoaGroupDelayedUpdates)(__kindof XZMocoaViewModel *self);
                 XZMocoaGroupSection *modelSection = [[XZMocoaGroupSection alloc] initWithIndex:newSectionIndex];
                 [_modelSections addObject:modelSection];
                 [sections addIndex:newSectionIndex];
+                
+                XZLog(@"[XZMocoaGroupViewModel][batchUpdates] 添加占位区块 %ld", newSectionIndex);
             }
             [self didInsertSectionsAtIndexes:sections];
-        } completion:nil];
+        } completion:completion];
     }
     
     // 排序
     if (oldSectionIndexes.count > 0) {
+        flag++;
         [self didPerformBatchUpdates:^{
             // 先把有映射关系的先移除，然后再按新顺序插入回去
             [_viewModelSections removeObjectsAtIndexes:oldSectionIndexes];
@@ -472,11 +487,14 @@ typedef void(^XZMocoaGroupDelayedUpdates)(__kindof XZMocoaViewModel *self);
                     return;
                 }
                 [self didMoveSectionAtIndex:from toIndex:to];
+                
+                XZLog(@"[XZMocoaGroupViewModel][batchUpdates] 排序原始区块 %ld => %ld", from, to);
             }];
-        } completion:nil];
+        } completion:completion];
     }
     
     // 更新 cells
+    flag++;
     [self didPerformBatchUpdates:^{
         NSMapTable * const oldCellMap = oldModelMaps[XZMocoaKindDefault];
         
@@ -504,6 +522,8 @@ typedef void(^XZMocoaGroupDelayedUpdates)(__kindof XZMocoaViewModel *self);
                     [inserts addObject:indexPath];
                     XZMocoaViewModel *viewModel = [self createViewModelWithModel:newCellModel forKind:(XZMocoaKindDefault)];
                     [newViewModelSection addCell:viewModel];
+                    
+                    XZLog(@"[XZMocoaGroupViewModel][batchUpdates] 添加单元视图 %ld, %ld", indexPath.section, indexPath.item);
                     return;
                 }
                 
@@ -533,6 +553,8 @@ typedef void(^XZMocoaGroupDelayedUpdates)(__kindof XZMocoaViewModel *self);
         for (id oldCellModel in oldCellMap.keyEnumerator) {
             NSIndexPath *indexPath = [oldCellMap objectForKey:oldCellModel];
             [deletes addObject:indexPath];
+            
+            XZLog(@"[XZMocoaGroupViewModel][batchUpdates] 删除单元视图 %ld, %ld", indexPath.section, indexPath.item);
         }
         
         self->_modelSections = newModelSections;
@@ -547,16 +569,19 @@ typedef void(^XZMocoaGroupDelayedUpdates)(__kindof XZMocoaViewModel *self);
             NSIndexPath *oldIndexPath = info[@"from"];
             NSIndexPath *newIndexPath = info[@"to"];
             [self didMoveCellAtIndexPath:oldIndexPath toIndexPath:newIndexPath];
+            
+            XZLog(@"[XZMocoaGroupViewModel][batchUpdates] 移动单元视图 %ld, %ld => %ld, %ld", oldIndexPath.section, oldIndexPath.item, newIndexPath.section, newIndexPath.item);
         }
-    } completion:nil];
+    } completion:completion];
     
     // 移除多余的 section
     if (_viewModelSections.count > newSectionCount) {
+        flag++;
         [self didPerformBatchUpdates:^{
             NSRange const range = NSMakeRange(newSectionCount, _viewModelSections.count - newSectionCount);
             [_viewModelSections removeObjectsInRange:range];
             [self didDeleteSectionsAtIndexes:[NSIndexSet indexSetWithIndexesInRange:range]];
-        } completion:nil];
+        } completion:completion];
     }
     
     // 更新 supplemts
@@ -581,8 +606,11 @@ typedef void(^XZMocoaGroupDelayedUpdates)(__kindof XZMocoaViewModel *self);
         }];
         
         [updates addIndex:newSectionIndex];
+        
+        XZLog(@"[XZMocoaGroupViewModel][batchUpdates] 更新辅助视图 %ld", newSectionIndex);
     }
     if (updates.count > 0) {
+        flag++;
         [self didPerformBatchUpdates:^{
             [self didReloadSectionsAtIndexes:updates];
         } completion:completion];

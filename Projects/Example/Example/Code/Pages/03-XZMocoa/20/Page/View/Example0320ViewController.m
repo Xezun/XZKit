@@ -39,7 +39,6 @@
     self.tableView.contentView.xz_footerRefreshView.delegate = self;
     
     Example0320ViewModel *viewModel = [[Example0320ViewModel alloc] initWithModel:nil];
-    [viewModel ready];
     self.viewModel = viewModel;
     self.tableView.viewModel = viewModel.tableViewModel;
     
@@ -48,18 +47,21 @@
     [viewModel addTarget:self.tableView.contentView.xz_footerRefreshView action:@selector(setRefreshing:) forKey:@"isFooterRefreshing" value:nil];
 }
 
+- (void)viewDidAppear:(BOOL)animated {
+    [super viewDidAppear:animated];
+    [self sendEventsWithKey:XZMocoaKeyViewDidAppear value:nil];
+}
+
 - (void)scrollViewDidScroll:(UIScrollView *)scrollView {
     XZLog(@"%@ => %@", scrollView, NSStringFromCGPoint(scrollView.contentOffset));
 }
 
 - (void)scrollView:(UIScrollView *)scrollView headerDidBeginRefreshing:(XZRefreshView *)refreshView {
-    Example0320ViewModel *viewModel = self.viewModel;
-    [viewModel refreshingHeaderDidBeginAnimating];
+    [self sendEventsWithKey:XZMocoaKeyHeaderDidBeginRefreshing value:nil];
 }
 
 - (void)scrollView:(UIScrollView *)scrollView footerDidBeginRefreshing:(XZRefreshView *)refreshView {
-    Example0320ViewModel *viewModel = self.viewModel;
-    [viewModel refreshingFooterDidBeginAnimating];
+    [self sendEventsWithKey:XZMocoaKeyFooterDidBeginRefreshing value:nil];
 }
 
 @end

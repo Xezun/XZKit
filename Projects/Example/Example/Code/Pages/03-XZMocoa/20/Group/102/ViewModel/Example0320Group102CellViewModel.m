@@ -12,7 +12,7 @@
 @implementation Example0320Group102CellViewModel
 
 + (void)load {
-    XZMocoa(@"https://mocoa.xezun.com/examples/20/table/102/:/").viewModelClass = self;
+    XZMocoa(@"https://mocoa.xezun.com/examples/20/table/102/").viewModelClass = self;
 }
 
 - (void)prepare {
@@ -20,19 +20,20 @@
     
     self.height = 156.0;
     
-    NSArray<Example0320Group102CellModel *> *models = self.model;
+    Example0320Group102CellModel *model = self.model;
+    
     NSMutableArray *array = [NSMutableArray array];
-    for (Example0320Group102CellModel *obj in models) {
+    for (Example0320Group102CellModelItem *obj in model.items) {
         [array addObject:obj.image];
     }
     self.images = array;
 }
 
 - (void)tableViewCell:(UITableViewCell *)cell wasSelectedAtIndexPath:(NSIndexPath *)indexPath {
-    NSArray<Example0320Group102CellModel *> *models = self.model;
-    Example0320Group102CellModel *model = models[self.currentIndex];
+    Example0320Group102CellModel *model = self.model;
+    Example0320Group102CellModelItem *item = model.items[self.currentIndex];
     NSURL *url = [NSURL URLWithString:@"https://mocoa.xezun.com/examples/20/content/"];
-    [self.navigationController pushMocoaURL:url options:@{ @"url": model.url }];
+    [self.navigationController pushMocoaURL:url options:@{ @"url": item.url }];
 }
 
 @end

@@ -20,8 +20,8 @@ typedef NS_ENUM(NSUInteger, Example0320State) {
 @property (nonatomic, strong) XZMocoaTableViewModel *tableViewModel;
 
 @property (nonatomic) Example0320State state;
-@property (nonatomic, setter=setHeaderRefreshing:) BOOL isHeaderRefreshing;
-@property (nonatomic, setter=setFooterRefreshing:) BOOL isFooterRefreshing;
+@property (nonatomic, setter=setHeaderRefreshing:) BOOL isHeaderRefreshing; // key
+@property (nonatomic, setter=setFooterRefreshing:) BOOL isFooterRefreshing; // key
 
 - (void)refreshingHeaderDidBeginAnimating;
 - (void)refreshingFooterDidBeginAnimating;
