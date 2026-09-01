@@ -23,7 +23,7 @@
     _dataArray = [NSMutableArray array];
     
     XZMocoaModule *module = XZMocoa(@"https://mocoa.xezun.com/examples/20/table/");
-    _tableViewModel = [[XZMocoaTableViewModel alloc] initWithModel:@[_dataArray]];
+    _tableViewModel = [[XZMocoaTableViewModel alloc] initWithModel:_dataArray];
     _tableViewModel.rowAnimation = UITableViewRowAnimationTop;
     _tableViewModel.module = module;
     [self addSubViewModel:_tableViewModel];

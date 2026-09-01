@@ -44,6 +44,18 @@ NS_ASSUME_NONNULL_BEGIN
 /// 总高度。
 @property (nonatomic, readonly) CGFloat height;
 
+- (void)reloadSection:(NSInteger)section withRowAnimation:(UITableViewRowAnimation)animation;
+- (void)insertSection:(NSInteger)section withRowAnimation:(UITableViewRowAnimation)animation;
+- (void)deleteSection:(NSInteger)section withRowAnimation:(UITableViewRowAnimation)animation;
+
+- (void)reloadSections:(nullable NSIndexSet *)sections withRowAnimation:(UITableViewRowAnimation)animation;
+- (void)insertSections:(nullable NSIndexSet *)sections withRowAnimation:(UITableViewRowAnimation)animation;
+- (void)deleteSections:(nullable NSIndexSet *)sections withRowAnimation:(UITableViewRowAnimation)animation;
+
+- (void)reloadCellsAtIndexPaths:(NSArray<NSIndexPath *> *)indexPaths withRowAnimation:(UITableViewRowAnimation)animation;
+- (void)insertCellsAtIndexPaths:(NSArray<NSIndexPath *> *)indexPaths withRowAnimation:(UITableViewRowAnimation)animation;
+- (void)deleteCellsAtIndexPaths:(NSArray<NSIndexPath *> *)indexPaths withRowAnimation:(UITableViewRowAnimation)animation;
+
 - (void)didSelectCellAtIndexPath:(NSIndexPath *)indexPath animated:(BOOL)animated scrollPosition:(UITableViewScrollPosition)scrollPosition;
 
 @end

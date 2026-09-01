@@ -82,6 +82,11 @@ NS_ASSUME_NONNULL_BEGIN
 /// @param newSection 移动后的位置
 - (void)moveSection:(NSInteger)section toSection:(NSInteger)newSection;
 
+- (void)reloadCellsAtIndexPaths:(NSArray<NSIndexPath *> *)indexPaths;
+- (void)insertCellsAtIndexPaths:(NSArray<NSIndexPath *> *)indexPaths;
+- (void)deleteCellsAtIndexPaths:(NSArray<NSIndexPath *> *)indexPaths;
+- (void)moveCellAtIndexPath:(NSIndexPath *)indexPath toIndexPath:(NSIndexPath *)newIndexPath;
+
 - (void)performBatchUpdates:(void (^NS_NOESCAPE)(void))batchUpdates completion:(void (^ _Nullable)(BOOL))completion;
 
 // MARK: - 视图模型的事件派发，子类必须重写并根据实际去实现
@@ -115,8 +120,8 @@ NS_ASSUME_NONNULL_BEGIN
 + (NSInteger)model:(id)model numberOfSections:(void * _Nullable)null;
 + (NSInteger)model:(id)model numberOfCellsInSection:(NSInteger)section;
 + (nullable id)model:(id)model modelForCellAtIndexPath:(NSIndexPath *)indexPath;
-+ (NSInteger)model:(id)model numberOfSupplementsOfKind:(XZMocoaKind)kind inSection:(NSInteger)section;
-+ (nullable id)model:(id)model modelForSupplementOfKind:(XZMocoaKind)kind atIndexPath:(NSIndexPath *)indexPath;
++ (NSInteger)model:(id)model kind:(XZMocoaKind)kind numberOfSupplementsInSection:(NSInteger)section;
++ (nullable id)model:(id)model kind:(XZMocoaKind)kind modelForSupplementAtIndexPath:(NSIndexPath *)indexPath;
 @end
 
 /// 支持直接使用 NSFetchedResultsController 作为数据源，且支持作为 NSFetchedResultsController 的代理。

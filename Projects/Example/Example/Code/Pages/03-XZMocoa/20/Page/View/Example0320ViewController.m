@@ -29,7 +29,6 @@
     [super didInitWithMocoaOptions:options];
     self.title = @"Example 20";
     self.hidesBottomBarWhenPushed = YES;
-    self.navigationItem.backButtonTitle = @"返回";
 }
 
 - (void)viewDidLoad {

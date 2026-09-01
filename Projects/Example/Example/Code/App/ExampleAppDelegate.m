@@ -18,10 +18,10 @@
 @synthesize window = _window;
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
-    XZLog(@"App (%@) was launched: %@", XZLogSystem.defaultSystem.domain, launchOptions);
-    
     XZLogSystem.defaultSystem.isEnabled = [NSUserDefaults.standardUserDefaults boolForKey:@"XZLogSystem.defaultSystem.isEnabled"];
     XZLogSystem.XZKitSystem.isEnabled = [NSUserDefaults.standardUserDefaults boolForKey:@"XZLogSystem.XZKitSystem.isEnabled"];
+    XZLog(@"App (%@) was launched: %@", XZLogSystem.defaultSystem.domain, launchOptions);
+    
     
     [NSNotificationCenter.defaultCenter addObserver:self selector:@selector(didChangePreferredLanguageNotification:) name:XZLocaleDidChangePreferredLanguageNotification object:nil];
     

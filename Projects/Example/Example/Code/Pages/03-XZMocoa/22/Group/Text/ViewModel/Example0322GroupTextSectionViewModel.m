@@ -14,8 +14,6 @@
 - (void)prepare {
     [super prepare];
     
-//    self.minimumLineSpacing = 10;
-//    self.minimumInteritemSpacing = 10;
-//    self.insets = UIEdgeInsetsMake(10, 10, 10, 10);
+
 }
 @end

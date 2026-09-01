@@ -18,67 +18,67 @@
         if ([self conformsToProtocol:@protocol(XZMocoaGroupModel)]) {
             return;
         }
-        xz_objc_class_copyMethod(self, @selector(__xz_mocoa_numberOfSections),
-                                 self, @selector(numberOfSections));
-        xz_objc_class_copyMethod(self, @selector(__xz_mocoa_numberOfCellsInSection:),
-                                 self, @selector(numberOfCellsInSection:));
-        xz_objc_class_copyMethod(self, @selector(__xz_mocoa_modelForCellAtIndexPath:),
-                                 self, @selector(modelForCellAtIndexPath:));
-        xz_objc_class_copyMethod(self, @selector(__xz_mocoa_numberOfSupplementsOfKind:inSection:),
-                                 self, @selector(numberOfSupplementsOfKind:inSection:));
-        xz_objc_class_copyMethod(self, @selector(__xz_mocoa_modelForSupplementOfKind:atIndexPath:),
-                                 self, @selector(modelForSupplementOfKind:atIndexPath:));
+        xz_objc_class_copyMethod(self, @selector(__xz_numberOfSectionsInMocoa:),
+                                 self, @selector(numberOfSectionsInMocoa:));
+        xz_objc_class_copyMethod(self, @selector(__xz_mocoa:numberOfCellsInSection:),
+                                 self, @selector(mocoa:numberOfCellsInSection:));
+        xz_objc_class_copyMethod(self, @selector(__xz_mocoa:modelForCellAtIndexPath:),
+                                 self, @selector(mocoa:modelForCellAtIndexPath:));
+        xz_objc_class_copyMethod(self, @selector(__xz_mocoa:numberOfSupplementsOfKind:inSection:),
+                                 self, @selector(mocoa:kind:numberOfSupplementsInSection:));
+        xz_objc_class_copyMethod(self, @selector(__xz_mocoa:modelForSupplementOfKind:atIndexPath:),
+                                 self, @selector(mocoa:kind:modelForSupplementAtIndexPath:));
     }
 }
 
-- (NSInteger)xz_numberOfElements {
+- (NSInteger)__xz_numberOfSectionsInMocoa:(void *)context {
+    return [self __xz_numberOfElements];
+}
+
+- (NSInteger)__xz_mocoa:(void *)context numberOfCellsInSection:(NSInteger)section {
+    return [[self __xz_modelForElementAtIndex:section] __xz_numberOfElements];
+}
+
+- (nullable id)__xz_mocoa:(void *)context modelForCellAtIndexPath:(NSIndexPath *)indexPath {
+    NSObject * const element = [self __xz_modelForElementAtIndex:indexPath.section];
+    return [element __xz_modelForElementAtIndex:indexPath.item];
+}
+
+- (NSInteger)__xz_mocoa:(void *)context numberOfSupplementsOfKind:(XZMocoaKind)kind inSection:(NSInteger)section {
+    NSObject * const element = [self __xz_modelForElementAtIndex:section];
+    return [element __xz_numberOfSupplementsOfKind:kind];
+}
+
+- (nullable id)__xz_mocoa:(void *)context modelForSupplementOfKind:(XZMocoaKind)kind atIndexPath:(NSIndexPath *)indexPath {
+    NSObject * const element = [self __xz_modelForElementAtIndex:indexPath.section];
+    return [element __xz_modelForSupplementOfKind:kind atIndex:indexPath.item];
+}
+
+- (NSInteger)__xz_numberOfElements {
     return 1;
 }
 
-- (nullable id)xz_modelForElementAtIndex:(NSInteger)index {
+- (nullable id)__xz_modelForElementAtIndex:(NSInteger)index {
     return self;
 }
 
-- (NSInteger)xz_numberOfSupplementsOfKind:(XZMocoaKind)kind {
+- (NSInteger)__xz_numberOfSupplementsOfKind:(XZMocoaKind)kind {
     return 0;
 }
 
-- (nullable id)xz_modelForSupplementOfKind:(XZMocoaKind)kind atIndex:(NSInteger)index {
+- (nullable id)__xz_modelForSupplementOfKind:(XZMocoaKind)kind atIndex:(NSInteger)index {
     return nil;
-}
-
-- (NSInteger)__xz_mocoa_numberOfSections {
-    return [self xz_numberOfElements];
-}
-
-- (NSInteger)__xz_mocoa_numberOfCellsInSection:(NSInteger)section {
-    return [[self xz_modelForElementAtIndex:section] xz_numberOfElements];
-}
-
-- (nullable id)__xz_mocoa_modelForCellAtIndexPath:(NSIndexPath *)indexPath {
-    NSObject * const element = [self xz_modelForElementAtIndex:indexPath.section];
-    return [element xz_modelForElementAtIndex:indexPath.item];
-}
-
-- (NSInteger)__xz_mocoa_numberOfSupplementsOfKind:(XZMocoaKind)kind inSection:(NSInteger)section {
-    NSObject * const element = [self xz_modelForElementAtIndex:section];
-    return [element xz_numberOfSupplementsOfKind:kind];
-}
-
-- (nullable id)__xz_mocoa_modelForSupplementOfKind:(XZMocoaKind)kind atIndexPath:(NSIndexPath *)indexPath {
-    NSObject * const element = [self xz_modelForElementAtIndex:indexPath.section];
-    return [element xz_modelForSupplementOfKind:kind atIndex:indexPath.item];
 }
 
 @end
 
 @implementation NSArray (XZMocoaGroupModel)
 
-- (NSInteger)xz_numberOfElements {
+- (NSInteger)__xz_numberOfElements {
     return self.count;
 }
 
-- (id)xz_modelForElementAtIndex:(NSInteger)index {
+- (id)__xz_modelForElementAtIndex:(NSInteger)index {
     return [self objectAtIndex:index];
 }
 
@@ -86,11 +86,11 @@
 
 @implementation NSFetchedResultsController (XZMocoaGroupModel)
 
-- (NSInteger)xz_numberOfElements {
+- (NSInteger)__xz_numberOfElements {
     return self.sections.count;
 }
 
-- (nullable id)xz_modelForElementAtIndex:(NSInteger)index {
+- (nullable id)__xz_modelForElementAtIndex:(NSInteger)index {
     id const model = (id)self.sections[index];
     
     Class const ModelClass = object_getClass(model);
@@ -99,7 +99,7 @@
     if (objc_getAssociatedObject(ModelClass, _supports) == nil) {
         objc_setAssociatedObject(ModelClass, _supports, @(YES), OBJC_ASSOCIATION_COPY_NONATOMIC);
         {
-            SEL const selector = @selector(xz_numberOfElements);
+            SEL const selector = @selector(__xz_numberOfElements);
             const char * const encoding = xz_objc_class_getMethodTypeEncoding([NSObject class], selector);
             id const block = ^NSInteger(id<NSFetchedResultsSectionInfo> const self) {
                 return self.numberOfObjects;
@@ -108,7 +108,7 @@
         }
         
         {
-            SEL const selector = @selector(xz_modelForElementAtIndex:);
+            SEL const selector = @selector(__xz_modelForElementAtIndex:);
             const char * const encoding = xz_objc_class_getMethodTypeEncoding([NSObject class], selector);
             id const block = ^id(id<NSFetchedResultsSectionInfo> const self, NSInteger index) {
                 return self.objects[index];

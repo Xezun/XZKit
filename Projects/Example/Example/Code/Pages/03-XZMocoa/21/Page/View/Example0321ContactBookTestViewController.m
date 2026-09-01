@@ -17,7 +17,7 @@
 @implementation Example0321ContactBookTestViewController
 
 - (instancetype)initWithTestActions:(NSArray<NSString *> *)testActions {
-    self = [self initWithStyle:(UITableViewStyleGrouped)];
+    self = [self initWithStyle:(UITableViewStyleInsetGrouped)];
     if (self) {
         _dataArray = testActions.copy;
         self.title = @"请选择操作";

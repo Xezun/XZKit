@@ -27,23 +27,23 @@
     return self;
 }
 
-- (NSInteger)numberOfSections {
+- (NSInteger)numberOfSectionsInMocoa:(void *)context {
     return _dataArray.count;
 }
 
-- (NSInteger)numberOfCellsInSection:(NSInteger)section {
+- (NSInteger)mocoa:(void *)context numberOfCellsInSection:(NSInteger)section {
     return _dataArray[section].items.count;
 }
 
-- (id)modelForCellAtIndexPath:(NSIndexPath *)indexPath {
+- (id)mocoa:(void *)context modelForCellAtIndexPath:(NSIndexPath *)indexPath {
     return _dataArray[indexPath.section].items[indexPath.item];
 }
 
-- (NSInteger)numberOfSupplementsOfKind:(XZMocoaKind)kind inSection:(NSInteger)section {
+- (NSInteger)mocoa:(void *)context kind:(XZMocoaKind)kind numberOfSupplementsInSection:(NSInteger)section {
     return kind == XZMocoaKindHeader ? 1 : 0;
 }
 
-- (id)modelForSupplementOfKind:(XZMocoaKind)kind atIndexPath:(NSIndexPath *)indexPath {
+- (id)mocoa:(void *)context kind:(XZMocoaKind)kind modelForSupplementAtIndexPath:(NSIndexPath *)indexPath {
     return kind == XZMocoaKindHeader ? _dataArray[indexPath.section].name : nil;
 }
 

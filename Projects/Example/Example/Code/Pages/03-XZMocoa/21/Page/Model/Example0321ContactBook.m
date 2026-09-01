@@ -25,33 +25,23 @@
 
 #pragma mark - XZMocoaTableModel
 
-- (NSInteger)numberOfSections {
+- (NSInteger)numberOfSectionsInMocoa:(void *)context {
     return 1;
 }
 
-- (NSInteger)numberOfCellsInSection:(NSInteger)section {
+- (NSInteger)mocoa:(void *)context numberOfCellsInSection:(NSInteger)section {
     return _contacts.count;
 }
 
-- (id)modelForCellAtIndexPath:(NSIndexPath *)indexPath {
-    return self;
+- (id)mocoa:(void *)context modelForCellAtIndexPath:(NSIndexPath *)indexPath {
+    return _contacts[indexPath.item];
 }
 
-- (NSInteger)numberOfSupplementsOfKind:(XZMocoaKind)kind inSection:(NSInteger)section {
+- (NSInteger)mocoa:(void *)context kind:(XZMocoaKind)kind numberOfSupplementsInSection:(NSInteger)section {
     return 0;
 }
 
-- (id)modelForSupplementOfKind:(XZMocoaKind)kind atIndexPath:(NSIndexPath *)indexPath {
-    return nil;
-}
-
-#pragma mark - XZMocoaTableSectionModel
-
-- (id)headerModel {
-    return nil;
-}
-
-- (id)footerModel {
+- (id)mocoa:(void *)context kind:(XZMocoaKind)kind modelForSupplementAtIndexPath:(NSIndexPath *)indexPath {
     return nil;
 }
 

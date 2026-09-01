@@ -29,7 +29,6 @@
     if (self) {
         self.title = @"Example 22";
         self.hidesBottomBarWhenPushed = YES;
-        self.navigationItem.backButtonTitle = @"返回";
     }
     return self;
 }
@@ -37,8 +36,8 @@
 - (void)viewDidLoad {
     [super viewDidLoad];
     
-    UIBarButtonItem *item1 = [[UIBarButtonItem alloc] initWithTitle:@"刷新" style:(UIBarButtonItemStylePlain) target:self action:@selector(navigationBarButton1Action:)];
-    UIBarButtonItem *item2 = [[UIBarButtonItem alloc] initWithTitle:@"更多" style:(UIBarButtonItemStylePlain) target:self action:@selector(navigationBarButton2Action:)];
+    UIBarButtonItem *item1 = [[UIBarButtonItem alloc] initWithImage:[UIImage systemImageNamed:@"arrow.counterclockwise.circle"] style:(UIBarButtonItemStylePlain) target:self action:@selector(navigationBarButton1Action:)];
+    UIBarButtonItem *item2 = [[UIBarButtonItem alloc] initWithImage:[UIImage systemImageNamed:@"gear.circle"] style:(UIBarButtonItemStylePlain) target:self action:@selector(navigationBarButton2Action:)];
     self.navigationItem.rightBarButtonItems = @[item2, item1];
     
     self.viewModel = [[Example0322ViewModel alloc] init];
