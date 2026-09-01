@@ -302,7 +302,7 @@ typedef void(^XZMocoaGroupDelayedUpdates)(__kindof XZMocoaViewModel *self);
                 
                 for (NSInteger supplementIndex = 0; supplementIndex < supplementCount; supplementIndex++) {
                     NSIndexPath *indexPath = [NSIndexPath indexPathForItem:supplementIndex inSection:sectionIndex];
-                    id const newSupplementModel = supplementModels[sectionIndex];
+                    id const newSupplementModel = supplementModels[supplementIndex];
                     
                     if (newSupplementModel == nil || [supplementModelMap objectForKey:newSupplementModel]) {
                         return nil;
@@ -325,7 +325,7 @@ typedef void(^XZMocoaGroupDelayedUpdates)(__kindof XZMocoaViewModel *self);
                 NSIndexPath *    const indexPath = [NSIndexPath indexPathForItem:cellIndex inSection:sectionIndex];
                 id<XZMocoaModel> const cellModel = cellModels[cellIndex];
                 
-                if (cellModelMap == nil || [cellModelMap objectForKey:cellModel]) {
+                if (cellModel == nil || [cellModelMap objectForKey:cellModel]) {
                     return nil;
                 }
                 [cellModelMap setObject:indexPath forKey:cellModel];
