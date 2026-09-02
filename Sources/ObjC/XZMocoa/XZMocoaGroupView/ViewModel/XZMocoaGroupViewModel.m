@@ -226,9 +226,11 @@ typedef void(^XZMocoaGroupDelayedUpdates)(__kindof XZMocoaViewModel *self);
         // 加载新数据模型
         XZMocoaGroupSection * const modelSection = [[XZMocoaGroupSection alloc] init];
         [self.class model:model section:index standardize:modelSection supportedSupplementKinds:supportedSupplementKinds];
+        [_modelSections insertObject:modelSection atIndex:index];
         // 加载新视图模型
         XZMocoaGroupSection * const viewModelSection = [[XZMocoaGroupSection alloc] init];
         [self section:index loadSubViewModelsWithModel:modelSection viewModelSection:viewModelSection supportedSupplementKinds:supportedSupplementKinds];
+        [_viewModelSections insertObject:viewModelSection atIndex:index];
     }];
     
     // 更新 UI
