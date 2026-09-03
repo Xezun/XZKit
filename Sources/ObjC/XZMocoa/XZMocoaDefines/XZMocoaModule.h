@@ -164,7 +164,7 @@ typedef NS_ENUM(NSUInteger, XZMocoaModuleViewForm) {
 /// XZMocoaModule *submodule = [module submoduleForKind:@"header" forName:@"black"];
 /// // 下标方式来获取下级
 /// XZMocoaModule *submodule = module[@"header:black"];
-/// // 如果没有冒号分隔符
+/// // 如果没有冒号分隔符，表示默认 XZMocoaKindDefault 分类。
 /// XZMocoaModule *submodule = module[@"name"]
 /// // 等价于
 /// XZMocoaModule *submodule = [module submoduleForKind:XZMocoaKindDefault forName:@"name"];
