@@ -6,7 +6,8 @@
 //
 
 #import "XZMocoaTableViewModel.h"
-#import "XZMocoaTableView.h"
+#import "XZMocoaTablePlaceholderCellViewModel.h"
+#import "XZMocoaTablePlaceholderSupplementViewModel.h"
 
 @implementation XZMocoaTableViewModel
 
@@ -21,12 +22,99 @@
 }
 
 - (CGFloat)height {
+    [self ready];
     CGFloat height = 0;
-    for (XZMocoaTableSectionViewModel *section in self.sectionViewModels) {
-        height += section.height;
+    NSInteger const sectionCount = self.numberOfSections;
+    for (NSInteger sectionIndex = 0; sectionIndex < sectionCount; sectionIndex++) {
+        height += [self viewModelForHeaderInSection:sectionIndex].frame.size.height;
+        NSInteger const rowCount = [self numberOfCellsInSection:sectionIndex];
+        for (NSInteger rowIndex = 0; rowIndex < rowCount; rowIndex++) {
+            NSIndexPath *indexPath = [NSIndexPath indexPathForRow:rowIndex inSection:sectionIndex];
+            height += [self viewModelForCellAtIndexPath:indexPath].frame.size.height;
+        }
+        height += [self viewModelForFooterInSection:sectionIndex].frame.size.height;
     }
     return height;
 }
+
+- (void)reloadSection:(NSInteger)section withRowAnimation:(UITableViewRowAnimation)animation {
+    _rowAnimation = animation;
+    [super reloadSections:[NSIndexSet indexSetWithIndex:section]];
+}
+
+- (void)insertSection:(NSInteger)section withRowAnimation:(UITableViewRowAnimation)animation {
+    _rowAnimation = animation;
+    [super insertSections:[NSIndexSet indexSetWithIndex:section]];
+}
+
+- (void)deleteSection:(NSInteger)section withRowAnimation:(UITableViewRowAnimation)animation {
+    _rowAnimation = animation;
+    [super deleteSections:[NSIndexSet indexSetWithIndex:section]];
+}
+
+- (void)reloadSections:(nullable NSIndexSet *)sections withRowAnimation:(UITableViewRowAnimation)animation {
+    _rowAnimation = animation;
+    [super reloadSections:sections];
+}
+
+- (void)insertSections:(nullable NSIndexSet *)sections withRowAnimation:(UITableViewRowAnimation)animation {
+    _rowAnimation = animation;
+    [super insertSections:sections];
+}
+
+- (void)deleteSections:(nullable NSIndexSet *)sections withRowAnimation:(UITableViewRowAnimation)animation {
+    _rowAnimation = animation;
+    [super deleteSections:sections];
+}
+
+- (void)reloadCellsAtIndexPaths:(NSArray<NSIndexPath *> *)indexPaths withRowAnimation:(UITableViewRowAnimation)animation {
+    _rowAnimation = animation;
+    [super reloadCellsAtIndexPaths:indexPaths];
+}
+
+- (void)insertCellsAtIndexPaths:(NSArray<NSIndexPath *> *)indexPaths withRowAnimation:(UITableViewRowAnimation)animation {
+    _rowAnimation = animation;
+    [super insertCellsAtIndexPaths:indexPaths];
+}
+
+- (void)deleteCellsAtIndexPaths:(NSArray<NSIndexPath *> *)indexPaths withRowAnimation:(UITableViewRowAnimation)animation {
+    _rowAnimation = animation;
+    [super deleteCellsAtIndexPaths:indexPaths];
+}
+
+// MARK: - 重写方法
+
+- (void)reloadSections:(NSIndexSet *)sections {
+    _rowAnimation = UITableViewRowAnimationAutomatic;
+    [super reloadSections:sections];
+}
+
+- (void)insertSections:(NSIndexSet *)sections {
+    _rowAnimation = UITableViewRowAnimationAutomatic;
+    [super insertSections:sections];
+}
+
+- (void)deleteSections:(NSIndexSet *)sections {
+    _rowAnimation = UITableViewRowAnimationAutomatic;
+    [super deleteSections:sections];
+}
+
+- (void)reloadCellsAtIndexPaths:(NSArray<NSIndexPath *> *)indexPaths {
+    _rowAnimation = UITableViewRowAnimationAutomatic;
+    [super reloadCellsAtIndexPaths:indexPaths];
+}
+
+- (void)insertCellsAtIndexPaths:(NSArray<NSIndexPath *> *)indexPaths {
+    _rowAnimation = UITableViewRowAnimationAutomatic;
+    [super insertCellsAtIndexPaths:indexPaths];
+}
+
+- (void)deleteCellsAtIndexPaths:(NSArray<NSIndexPath *> *)indexPaths {
+    _rowAnimation = UITableViewRowAnimationAutomatic;
+    [super deleteCellsAtIndexPaths:indexPaths];
+}
+
+// MARK: - 子类必须实现的方法
 
 - (void)didReloadData {
     if (!self.isReady) return;
@@ -90,8 +178,11 @@
     }
 }
 
-- (Class)placeholderViewModelClassForSectionAtIndex:(NSInteger)index {
-    return [XZMocoaTableSectionViewModel class];
+- (Class)viewModelClassForPlaceholderOfKind:(XZMocoaKind)kind {
+    if (kind == XZMocoaKindHeader || kind == XZMocoaKindFooter) {
+        return [XZMocoaTablePlaceholderSupplementViewModel class];
+    }
+    return [XZMocoaTablePlaceholderCellViewModel class];
 }
 
 @end

@@ -6,9 +6,9 @@
 //
 
 #import "XZMocoaCollectionViewProxy.h"
-#import "XZMocoaCollectionSectionSupplementaryView.h"
+#import "XZMocoaCollectionSupplementView.h"
 #import "XZMocoaCollectionPlaceholderCell.h"
-#import "XZMocoaCollectionPlaceholderSectionSupplementaryView.h"
+#import "XZMocoaCollectionPlaceholderSupplementView.h"
 #import "XZGeometry.h"
 
 static XZMocoaKind XZMocoaKindFromElementKind(NSString *kind) {
@@ -29,76 +29,70 @@ static NSString *UIElementKindFromMocoaKind(XZMocoaKind kind) {
     UICollectionView * const collectionView = self.contentView;
     
     { // 注册一个默认的视图
-        NSString * const identifier = XZMocoaReuseIdentifier(XZMocoaNamePlaceholder, XZMocoaKindCell, XZMocoaNamePlaceholder);
+        NSString * const identifier = XZMocoaReuseIdentifier(XZMocoaKindDefault, XZMocoaNamePlaceholder);
         [collectionView registerClass:[XZMocoaCollectionPlaceholderCell class] forCellWithReuseIdentifier:identifier];
         
-        for (XZMocoaKind kind in self.viewModel.supportedSupplementaryKinds) {
+        for (XZMocoaKind kind in self.viewModel.supportedSupplementKinds) {
             NSString * const elementKind = UIElementKindFromMocoaKind(kind);
-            Class      const aClass      = [XZMocoaCollectionPlaceholderSectionSupplementaryView class];
-            NSString * const identifier  = XZMocoaReuseIdentifier(XZMocoaNamePlaceholder, kind, XZMocoaNamePlaceholder);
+            Class      const aClass      = [XZMocoaCollectionPlaceholderSupplementView class];
+            NSString * const identifier  = XZMocoaReuseIdentifier(kind, XZMocoaNamePlaceholder);
             [collectionView registerClass:aClass forSupplementaryViewOfKind:elementKind withReuseIdentifier:identifier];
         }
     }
     
-    [module enumerateSubmodulesUsingBlock:^(XZMocoaModule *submodule, XZMocoaKind kind, XZMocoaName section, BOOL *stop) {
-        if (![kind isEqualToString:XZMocoaKindSection]) {
-            return; // 不是 section 的 module 不需要处理
-        }
-        
-        [submodule enumerateSubmodulesUsingBlock:^(XZMocoaModule *submodule, XZMocoaKind kind, XZMocoaName name, BOOL *stop) {
-            if ([kind isEqualToString:XZMocoaKindCell]) {
-                switch (submodule.viewForm) {
-                    case XZMocoaModuleViewFormClass: {
-                        NSString * const identifier = XZMocoaReuseIdentifier(section, kind, name);
-                        [collectionView registerClass:submodule.viewClass forCellWithReuseIdentifier:identifier];
-                        break;
-                    }
-                    case XZMocoaModuleViewFormNib: {
-                        NSString * const identifier = XZMocoaReuseIdentifier(section, kind, name);
-                        UINib *viewNib = [UINib nibWithNibName:submodule.viewNibName bundle:submodule.viewNibBundle];
-                        [collectionView registerNib:viewNib forCellWithReuseIdentifier:identifier];
-                        break;
-                    }
-                    case XZMocoaModuleViewFormStoryboardReusableView: {
-                        // 已通过 Storyboard 注册
-                        break;
-                    }
-                    default: {
-                        NSString * const identifier = XZMocoaReuseIdentifier(section, kind, name);
-                        Class const aClass = [XZMocoaCollectionPlaceholderCell class];
-                        [collectionView registerClass:aClass forCellWithReuseIdentifier:identifier];
-                        break;
-                    }
+    [module enumerateSubmodulesUsingBlock:^(XZMocoaModule *submodule, XZMocoaKind kind, XZMocoaName name, BOOL *stop) {
+        if ([kind isEqualToString:XZMocoaKindDefault]) {
+            switch (submodule.viewForm) {
+                case XZMocoaModuleViewFormClass: {
+                    NSString * const identifier = XZMocoaReuseIdentifier(kind, name);
+                    [collectionView registerClass:submodule.viewClass forCellWithReuseIdentifier:identifier];
+                    break;
                 }
-            } else {
-                switch (submodule.viewForm) {
-                    case XZMocoaModuleViewFormClass: {
-                        NSString * const identifier = XZMocoaReuseIdentifier(section, kind, name);
-                        NSString * const elementKind = UIElementKindFromMocoaKind(kind);
-                        [collectionView registerClass:submodule.viewClass forSupplementaryViewOfKind:elementKind withReuseIdentifier:identifier];
-                        break;
-                    }
-                    case XZMocoaModuleViewFormNib: {
-                        NSString * const identifier = XZMocoaReuseIdentifier(section, kind, name);
-                        NSString * const elementKind = UIElementKindFromMocoaKind(kind);
-                        UINib *viewNib = [UINib nibWithNibName:submodule.viewNibName bundle:submodule.viewNibBundle];
-                        [collectionView registerNib:viewNib forSupplementaryViewOfKind:elementKind withReuseIdentifier:identifier];
-                        break;
-                    }
-                    case XZMocoaModuleViewFormStoryboardReusableView: {
-                        // 已通过 Storyboard 注册
-                        break;
-                    }
-                    default: {
-                        NSString * const identifier = XZMocoaReuseIdentifier(section, kind, name);
-                        NSString * const elementKind = UIElementKindFromMocoaKind(kind);
-                        Class const aClass = [XZMocoaCollectionPlaceholderSectionSupplementaryView class];
-                        [collectionView registerClass:aClass forSupplementaryViewOfKind:elementKind withReuseIdentifier:identifier];
-                        break;
-                    }
+                case XZMocoaModuleViewFormNib: {
+                    NSString * const identifier = XZMocoaReuseIdentifier(kind, name);
+                    UINib *viewNib = [UINib nibWithNibName:submodule.viewNibName bundle:submodule.viewNibBundle];
+                    [collectionView registerNib:viewNib forCellWithReuseIdentifier:identifier];
+                    break;
+                }
+                case XZMocoaModuleViewFormStoryboardReusableView: {
+                    // 已通过 Storyboard 注册
+                    break;
+                }
+                default: {
+                    NSString * const identifier = XZMocoaReuseIdentifier(kind, name);
+                    Class const aClass = [XZMocoaCollectionPlaceholderCell class];
+                    [collectionView registerClass:aClass forCellWithReuseIdentifier:identifier];
+                    break;
                 }
             }
-        }];
+        } else {
+            switch (submodule.viewForm) {
+                case XZMocoaModuleViewFormClass: {
+                    NSString * const identifier = XZMocoaReuseIdentifier(kind, name);
+                    NSString * const elementKind = UIElementKindFromMocoaKind(kind);
+                    [collectionView registerClass:submodule.viewClass forSupplementaryViewOfKind:elementKind withReuseIdentifier:identifier];
+                    break;
+                }
+                case XZMocoaModuleViewFormNib: {
+                    NSString * const identifier = XZMocoaReuseIdentifier(kind, name);
+                    NSString * const elementKind = UIElementKindFromMocoaKind(kind);
+                    UINib *viewNib = [UINib nibWithNibName:submodule.viewNibName bundle:submodule.viewNibBundle];
+                    [collectionView registerNib:viewNib forSupplementaryViewOfKind:elementKind withReuseIdentifier:identifier];
+                    break;
+                }
+                case XZMocoaModuleViewFormStoryboardReusableView: {
+                    // 已通过 Storyboard 注册
+                    break;
+                }
+                default: {
+                    NSString * const identifier = XZMocoaReuseIdentifier(kind, name);
+                    NSString * const elementKind = UIElementKindFromMocoaKind(kind);
+                    Class const aClass = [XZMocoaCollectionPlaceholderSupplementView class];
+                    [collectionView registerClass:aClass forSupplementaryViewOfKind:elementKind withReuseIdentifier:identifier];
+                    break;
+                }
+            }
+        }
     }];
 }
 
@@ -141,7 +135,7 @@ static NSString *UIElementKindFromMocoaKind(XZMocoaKind kind) {
 }
 
 - (__kindof UICollectionViewCell *)collectionView:(UICollectionView *)collectionView cellForItemAtIndexPath:(NSIndexPath *)indexPath {
-    XZMocoaCollectionCellViewModel *viewModel = [self.viewModel cellViewModelAtIndexPath:indexPath];
+    XZMocoaCollectionCellViewModel *viewModel = [self.viewModel viewModelForCellAtIndexPath:indexPath];
     UICollectionViewCell<XZMocoaCollectionCell> *cell = [collectionView dequeueReusableCellWithReuseIdentifier:viewModel.identifier forIndexPath:indexPath];
     cell.viewModel = viewModel;
     return cell;
@@ -150,11 +144,11 @@ static NSString *UIElementKindFromMocoaKind(XZMocoaKind kind) {
 - (UICollectionReusableView *)collectionView:(UICollectionView *)collectionView viewForSupplementaryElementOfKind:(NSString *)kind atIndexPath:(NSIndexPath *)indexPath {
     XZMocoaKind const mocoaKind = XZMocoaKindFromElementKind(kind);
     
-    XZMocoaCollectionSectionSupplementaryViewModel *viewModel = [[self.viewModel sectionViewModelAtIndex:indexPath.section] viewModelForSupplementaryElementOfKind:mocoaKind atIndex:indexPath.item];
+    XZMocoaCollectionSupplementViewModel *viewModel = [self.viewModel viewModelForSupplementOfKind:mocoaKind atIndexPath:indexPath];
     if (viewModel == nil) {
         return nil;
     }
-    UICollectionReusableView<XZMocoaCollectionSectionSupplementaryView> *view = [collectionView dequeueReusableSupplementaryViewOfKind:kind withReuseIdentifier:viewModel.identifier forIndexPath:indexPath];
+    UICollectionReusableView<XZMocoaCollectionSupplementView> *view = [collectionView dequeueReusableSupplementaryViewOfKind:kind withReuseIdentifier:viewModel.identifier forIndexPath:indexPath];
     view.viewModel = viewModel;
     return view;
 }
@@ -169,7 +163,7 @@ static NSString *UIElementKindFromMocoaKind(XZMocoaKind kind) {
         return [delegate collectionView:collectionView layout:collectionViewLayout sizeForItemAtIndexPath:indexPath];
     }
     
-    XZMocoaCollectionCellViewModel * const viewModel = [self.viewModel cellViewModelAtIndexPath:indexPath];
+    XZMocoaCollectionCellViewModel * const viewModel = [self.viewModel viewModelForCellAtIndexPath:indexPath];
     CGSize const itemSize = viewModel.size;
     return CGSizeIsNull(itemSize) ? collectionViewLayout.itemSize : itemSize;
 }
@@ -180,9 +174,8 @@ static NSString *UIElementKindFromMocoaKind(XZMocoaKind kind) {
         return [delegate collectionView:collectionView layout:collectionViewLayout insetForSectionAtIndex:section];
     }
     
-    XZMocoaCollectionSectionViewModel * const viewModel = [self.viewModel sectionViewModelAtIndex:section];
-    UIEdgeInsets const insets = viewModel.insets;
-    return UIEdgeInsetsIsNull(insets) ? collectionViewLayout.sectionInset : insets;
+    UIEdgeInsets const sectionInsets = self.viewModel.sectionInsets;
+    return UIEdgeInsetsIsNull(sectionInsets) ? collectionViewLayout.sectionInset : sectionInsets;
 }
 
 - (CGFloat)collectionView:(UICollectionView *)collectionView layout:(UICollectionViewFlowLayout *)collectionViewLayout minimumLineSpacingForSectionAtIndex:(NSInteger)section {
@@ -190,8 +183,8 @@ static NSString *UIElementKindFromMocoaKind(XZMocoaKind kind) {
     if (delegate) {
         return [delegate collectionView:collectionView layout:collectionViewLayout minimumLineSpacingForSectionAtIndex:section];
     }
-    XZMocoaCollectionSectionViewModel * const viewModel = [self.viewModel sectionViewModelAtIndex:section];
-    CGFloat const minimumLineSpacing = viewModel.minimumLineSpacing;
+    
+    CGFloat const minimumLineSpacing = self.viewModel.minimumLineSpacing;
     return CGFloatIsNull(minimumLineSpacing) ? collectionViewLayout.minimumLineSpacing : minimumLineSpacing;
 }
 
@@ -200,8 +193,8 @@ static NSString *UIElementKindFromMocoaKind(XZMocoaKind kind) {
     if (delegate) {
         return [delegate collectionView:collectionView layout:collectionViewLayout minimumInteritemSpacingForSectionAtIndex:section];
     }
-    XZMocoaCollectionSectionViewModel * const viewModel = [self.viewModel sectionViewModelAtIndex:section];
-    CGFloat const minimumInteritemSpacing = viewModel.minimumInteritemSpacing;
+    
+    CGFloat const minimumInteritemSpacing = self.viewModel.minimumInteritemSpacing;
     return CGFloatIsNull(minimumInteritemSpacing) ? collectionViewLayout.minimumInteritemSpacing : minimumInteritemSpacing;
 }
 
@@ -210,8 +203,8 @@ static NSString *UIElementKindFromMocoaKind(XZMocoaKind kind) {
     if (delegate) {
         return [delegate collectionView:collectionView layout:collectionViewLayout referenceSizeForHeaderInSection:section];
     }
-    XZMocoaCollectionSectionSupplementaryViewModel * const viewModel = [[self.viewModel sectionViewModelAtIndex:section] viewModelForSupplementaryElementOfKind:XZMocoaKindHeader atIndex:0];
-    CGSize const headerReferenceSize = viewModel.size;
+    
+    CGSize const headerReferenceSize = self.viewModel.headerReferenceSize;
     return CGSizeIsNull(headerReferenceSize) ? collectionViewLayout.headerReferenceSize : headerReferenceSize;
 }
 
@@ -220,8 +213,8 @@ static NSString *UIElementKindFromMocoaKind(XZMocoaKind kind) {
     if (delegate) {
         return [delegate collectionView:collectionView layout:collectionViewLayout referenceSizeForFooterInSection:section];
     }
-    XZMocoaCollectionSectionSupplementaryViewModel * const viewModel = [[self.viewModel sectionViewModelAtIndex:section] viewModelForSupplementaryElementOfKind:XZMocoaKindFooter atIndex:0];
-    CGSize const footerReferenceSize = viewModel.size;
+    
+    CGSize const footerReferenceSize = self.viewModel.footerReferenceSize;
     return CGSizeIsNull(footerReferenceSize) ? collectionViewLayout.footerReferenceSize : footerReferenceSize;
 }
 

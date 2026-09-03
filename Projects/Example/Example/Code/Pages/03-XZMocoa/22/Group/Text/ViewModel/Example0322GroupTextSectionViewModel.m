@@ -9,13 +9,11 @@
 
 @implementation Example0322GroupTextSectionViewModel
 + (void)load {
-    XZMocoa(@"https://mocoa.xezun.com/examples/22/").section.viewModelClass = self;
+//    XZMocoa(@"https://mocoa.xezun.com/examples/22/").section.viewModelClass = self;
 }
 - (void)prepare {
     [super prepare];
     
-    self.minimumLineSpacing = 10;
-    self.minimumInteritemSpacing = 10;
-    self.insets = UIEdgeInsetsMake(10, 10, 10, 10);
+
 }
 @end

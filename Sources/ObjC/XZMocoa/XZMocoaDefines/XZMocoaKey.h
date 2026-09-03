@@ -110,6 +110,7 @@ FOUNDATION_EXPORT XZMocoaKey const XZMocoaKeyPrefersLargeTitles NS_REFINED_FOR_S
 
 /// 重载事件。适用情形：通知上级，执行重载模块的操作（数据已经更新）。
 FOUNDATION_EXPORT XZMocoaKey const XZMocoaKeyReload NS_REFINED_FOR_SWIFT;
+FOUNDATION_EXPORT XZMocoaKey const XZMocoaKeyReloadData NS_REFINED_FOR_SWIFT;
 /// 更新操作。适用情形：通知上级，执行数据编辑的操作（数据还未编辑）。
 FOUNDATION_EXPORT XZMocoaKey const XZMocoaKeyModify NS_REFINED_FOR_SWIFT;
 /// 插入操作。适用情形：通知上级，执行数据插入的操作（新数据未插入）。

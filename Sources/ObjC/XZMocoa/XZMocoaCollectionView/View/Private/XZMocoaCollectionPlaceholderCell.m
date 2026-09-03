@@ -7,7 +7,6 @@
 
 #import "XZMocoaCollectionPlaceholderCell.h"
 #import "XZMocoaGroupPlaceholderView.h"
-#import "XZMocoaCollectionSectionViewModel.h"
 #import "XZMocoaCollectionView.h"
 
 #if DEBUG

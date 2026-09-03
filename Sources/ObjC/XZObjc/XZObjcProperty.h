@@ -7,11 +7,7 @@
 
 #import <Foundation/Foundation.h>
 #import <objc/runtime.h>
-#if __has_include(<XZKit/XZKit.h>)
-#import <XZKit/XZObjcType.h>
-#else
 #import "XZObjcType.h"
-#endif
 
 @class XZObjcIvar, XZObjcType;
 

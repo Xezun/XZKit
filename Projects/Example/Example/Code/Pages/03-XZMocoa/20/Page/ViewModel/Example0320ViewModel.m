@@ -24,32 +24,50 @@
     
     XZMocoaModule *module = XZMocoa(@"https://mocoa.xezun.com/examples/20/table/");
     _tableViewModel = [[XZMocoaTableViewModel alloc] initWithModel:_dataArray];
-    _tableViewModel.rowAnimation = UITableViewRowAnimationFade;
+    _tableViewModel.rowAnimation = UITableViewRowAnimationTop;
     _tableViewModel.module = module;
     [self addSubViewModel:_tableViewModel];
-    
-    [self refreshingHeaderDidBeginAnimating];
+}
+
+- (void)didReceiveEvents:(XZMocoaEvents *)events {
+    if (events.key == XZMocoaKeyHeaderDidBeginRefreshing) {
+        [self refreshingHeaderDidBeginAnimating];
+    } else if (events.key == XZMocoaKeyFooterDidBeginRefreshing) {
+        [self refreshingFooterDidBeginAnimating];
+    } else if (events.key == XZMocoaKeyViewDidAppear) {
+        if (_tableViewModel.isEmpty && !_isFooterRefreshing && !_isFooterRefreshing) {
+            [self refreshingHeaderDidBeginAnimating];
+        }
+    } else {
+        [super didReceiveEvents:events];
+    }
 }
 
 - (void)setHeaderRefreshing:(BOOL)isHeaderRefreshing {
+    if (_isHeaderRefreshing == isHeaderRefreshing) {
+        return;
+    }
     _isHeaderRefreshing = isHeaderRefreshing;
     [self sendActionsForKey:@"isHeaderRefreshing" value:nil];
 }
 
 - (void)setFooterRefreshing:(BOOL)isFooterRefreshing {
+    if (_isFooterRefreshing == isFooterRefreshing) {
+        return;
+    }
     _isFooterRefreshing = isFooterRefreshing;
     [self sendActionsForKey:@"isFooterRefreshing" value:nil];
 }
 
 - (void)refreshingHeaderDidBeginAnimating {
-    if (_isFooterRefreshing) {
+    if (self.isFooterRefreshing) {
         self.isHeaderRefreshing = NO;
         return;
     }
-    if (_isHeaderRefreshing) {
+    if (self.isHeaderRefreshing) {
         return;
     }
-    _isHeaderRefreshing = YES;
+    self.isHeaderRefreshing = YES;
     [self loadData:0 completion:^(NSArray *data) {
         if (data.count > 0) {
             self->_tableViewModel.rowAnimation = UITableViewRowAnimationFade;
@@ -68,14 +86,14 @@
 }
 
 - (void)refreshingFooterDidBeginAnimating {
-    if (_isHeaderRefreshing) {
+    if (self.isHeaderRefreshing) {
         self.isFooterRefreshing = NO;
         return;
     }
-    if (_isFooterRefreshing) {
+    if (self.isFooterRefreshing) {
         return;
     }
-    _isFooterRefreshing = YES;
+    self.isFooterRefreshing = YES;
     [self loadData:_dataArray.count completion:^(NSArray *data) {
         if (data.count > 0) {
             self->_tableViewModel.rowAnimation = UITableViewRowAnimationTop;
@@ -128,7 +146,7 @@
         for (NSDictionary *dict in array) {
             XZMocoaName name = dict[@"group"];
             if (!name) continue;
-            XZMocoaModule *submodule = [module sectionForName:name];
+            XZMocoaModule *submodule = [module cellForName:name];
             id item = [XZJSON decode:dict options:0 class:submodule.modelClass];
             if (item) {
                 [list addObject:item];

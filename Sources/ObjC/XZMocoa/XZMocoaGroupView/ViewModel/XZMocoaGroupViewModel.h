@@ -7,34 +7,27 @@
 //
 
 #import <CoreData/CoreData.h>
-#if __has_include(<XZKit/XZKit.h>)
-#import <XZKit/XZMocoaViewModel.h>
-#import <XZKit/XZMocoaGroupSectionViewModel.h>
-#import <XZKit/XZMocoaGroupCellViewModel.h>
-#import <XZKit/XZMocoaGroupModel.h>
-#import <XZKit/XZMocoaGroupViewModelDefines.h>
-#else
 #import "XZMocoaViewModel.h"
-#import "XZMocoaGroupSectionViewModel.h"
 #import "XZMocoaGroupCellViewModel.h"
 #import "XZMocoaGroupModel.h"
-#import "XZMocoaGroupViewModelDefines.h"
-#endif
+#import "XZMocoaGroupSupplementViewModel.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
 @protocol XZMocoaGroupViewModelDelegate <NSObject>
 @end
 
+@class UITableView, UICollectionView;
+
 /// 列表容器视图的视图模型。
 /// @attention 由于需要管理列表 Cell 子视图，因此需要设置 `module` 属性才能正常工作。
-@interface XZMocoaGroupViewModel : XZMocoaViewModel <XZMocoaGroupViewModel>
+@interface XZMocoaGroupViewModel : XZMocoaViewModel
 
 @property (nonatomic, weak) id<XZMocoaGroupViewModelDelegate> delegate;
 
 /// 所支持的附加视图的类型，默认为 `@[XZMocoaKindHeader, XZMocoaKindFooter]` 两种。
 /// @discussion 请在使用 viewModel 前设置此属性。
-@property (nonatomic, copy) NSArray<XZMocoaKind> *supportedSupplementaryKinds;
+@property (nonatomic, copy) NSArray<XZMocoaKind> *supportedSupplementKinds;
 
 /// 接收来自下级的 XZMocoaKeyReload 事件，并刷新视图，如果在批量更新的过程中，视图刷新可能会延迟。
 - (void)didReceiveEvents:(XZMocoaEvents *)events;
@@ -42,17 +35,15 @@ NS_ASSUME_NONNULL_BEGIN
 /// 判断列表是否为空。
 @property (nonatomic, readonly) BOOL isEmpty;
 
-/// 列表子视图模型。
-///
-/// 在 UITableView 或 UICollectionView 中，Section 是逻辑上的子视图，而视图模型就是处理逻辑的。
-@property (nonatomic, readonly) NSArray<__kindof XZMocoaGroupSectionViewModel *> *sectionViewModels;
-
-- (__kindof XZMocoaGroupSectionViewModel *)sectionViewModelAtIndex:(NSInteger)index;
-- (NSInteger)indexOfSectionViewModel:(__kindof XZMocoaGroupSectionViewModel *)sectionViewModel;
-
 @property (nonatomic, readonly) NSInteger numberOfSections;
 - (NSInteger)numberOfCellsInSection:(NSInteger)section;
-- (__kindof XZMocoaGroupCellViewModel *)cellViewModelAtIndexPath:(NSIndexPath *)indexPath;
+- (__kindof XZMocoaGroupCellViewModel *)viewModelForCellAtIndexPath:(NSIndexPath *)indexPath;
+- (__kindof XZMocoaGroupSupplementViewModel *)viewModelForSupplementOfKind:(XZMocoaKind)kind atIndexPath:(NSIndexPath *)indexPath;
+- (__kindof XZMocoaGroupSupplementViewModel *)viewModelForHeaderInSection:(NSInteger)section;
+- (__kindof XZMocoaGroupSupplementViewModel *)viewModelForFooterInSection:(NSInteger)section;
+
+- (nullable NSIndexPath *)indexPathForCellViewModel:(XZMocoaGroupCellViewModel *)viewModel;
+- (nullable NSIndexPath *)indexPathForSupplementViewModel:(XZMocoaGroupSupplementViewModel *)viewModel;
 
 - (void)selectCellAtIndexPath:(NSIndexPath *)indexPath animated:(BOOL)animated scrollPosition:(NSInteger)scrollPosition;
 - (void)deselectCellAtIndexPath:(NSIndexPath *)indexPath animated:(BOOL)animated;
@@ -64,32 +55,39 @@ NS_ASSUME_NONNULL_BEGIN
 
 /// 指定 section 的数据发生更新后，调用此方法以重载该 section 的视图模型。
 /// @param section 数据发生更新的位置
-- (void)reloadSectionAtIndex:(NSInteger)section;
+- (void)reloadSection:(NSInteger)section;
 
 /// 新增指定 section 的数据后，调用此方法以构造该 section 的视图模型。
 /// @param section 新增的位置
-- (void)insertSectionAtIndex:(NSInteger)section;
+- (void)insertSection:(NSInteger)section;
 
 /// 删除指定 section 的数据后，调用此方法以移除该 section 的视图模型。
 /// @param section 被删除的位置
-- (void)deleteSectionAtIndex:(NSInteger)section;
+- (void)deleteSection:(NSInteger)section;
 
 /// 指定 sections 的数据更新后，调用此方法以重载该 sections 的视图模型。
 /// @param sections 数据发生更新的位置
-- (void)reloadSectionsAtIndexes:(nullable NSIndexSet *)sections;
+- (void)reloadSections:(nullable NSIndexSet *)sections;
 
 /// 新增指定 sections 的数据后，调用此方法以构造该 sections 的视图模型。
 /// @param sections 新增的位置
-- (void)insertSectionsAtIndexes:(nullable NSIndexSet *)sections;
+- (void)insertSections:(nullable NSIndexSet *)sections;
 
 /// 删除指定 sections 的数据后，调用此方法以移除该 sections 的视图模型。
 /// @param sections 被删除的位置
-- (void)deleteSectionsAtIndexes:(nullable NSIndexSet *)sections;
+- (void)deleteSections:(nullable NSIndexSet *)sections;
 
 /// 移动 section 到新位置 newSection 处。
 /// @param section 移动前的位置
 /// @param newSection 移动后的位置
-- (void)moveSectionAtIndex:(NSInteger)section toIndex:(NSInteger)newSection;
+- (void)moveSection:(NSInteger)section toSection:(NSInteger)newSection;
+
+- (void)reloadCellsAtIndexPaths:(NSArray<NSIndexPath *> *)indexPaths;
+- (void)insertCellsAtIndexPaths:(NSArray<NSIndexPath *> *)indexPaths;
+- (void)deleteCellsAtIndexPaths:(NSArray<NSIndexPath *> *)indexPaths;
+- (void)moveCellAtIndexPath:(NSIndexPath *)indexPath toIndexPath:(NSIndexPath *)newIndexPath;
+
+- (void)performBatchUpdates:(void (^NS_NOESCAPE)(void))batchUpdates completion:(void (^ _Nullable)(BOOL))completion;
 
 // MARK: - 视图模型的事件派发，子类必须重写并根据实际去实现
 
@@ -113,34 +111,17 @@ NS_ASSUME_NONNULL_BEGIN
 // MARK: - 防崩溃设计的占位视图
 
 /// 子类应该重写此方法，并返回所需的 SectionViewModel 对象。
-- (Class)placeholderViewModelClassForSectionAtIndex:(NSInteger)index;
+//- (Class)placeholderViewModelClassForSectionAtIndex:(NSInteger)index;
+- (Class)viewModelClassForPlaceholderOfKind:(XZMocoaKind)kind;
 
 @end
 
-// MARK: - 下级 section 不能独自完成的事件，需要上级处理的事件
-
-@interface XZMocoaGroupViewModel (XZMocoaGroupSectionViewModelUpdates)
-/// section 发送的 Section 重载事件，以刷新视图。
-- (void)sectionViewModel:(__kindof XZMocoaGroupSectionViewModel *)viewModel didReloadData:(void * _Nullable)null;
-/// section 发送的 Cell 重载事件，以刷新视图。
-- (void)sectionViewModel:(__kindof XZMocoaGroupSectionViewModel *)viewModel didReloadCellsAtIndexes:(NSIndexSet *)rows;
-/// section 发送的 Cell 插入事件，以刷新视图。
-- (void)sectionViewModel:(__kindof XZMocoaGroupSectionViewModel *)viewModel didInsertCellsAtIndexes:(NSIndexSet *)rows;
-/// section 发送的 Cell 删除事件，以刷新视图。
-- (void)sectionViewModel:(__kindof XZMocoaGroupSectionViewModel *)viewModel didDeleteCellsAtIndexes:(NSIndexSet *)rows;
-/// section 发送的 Cell 移动事件，以刷新视图。
-- (void)sectionViewModel:(__kindof XZMocoaGroupSectionViewModel *)viewModel didMoveCellAtIndex:(NSInteger)row toIndex:(NSInteger)newRow;
-/// section 发送的批量更新事件，以刷新视图。
-- (void)sectionViewModel:(__kindof XZMocoaGroupSectionViewModel *)viewModel didPerformBatchUpdates:(void (^NS_NOESCAPE)(void))batchUpdates completion:(void (^ _Nullable)(BOOL))completion;
-@end
-
-@interface XZMocoaGroupViewModel (XZMocoaGroupModelTransformer)
-- (NSInteger)model:(id)model numberOfSectionModels:(void * _Nullable)null;
-/// 获取 Section 的模型数据。
-/// 子类可以重写此方法，以自定义数据源的转换过程。
-/// @param model 数据模型
-/// @param index Section 的位置
-- (nullable id)model:(id)model modelForSectionAtIndex:(NSInteger)index;
+@interface XZMocoaGroupViewModel (XZMocoaGroupModel)
++ (NSInteger)model:(id)model numberOfSections:(void * _Nullable)null;
++ (NSInteger)model:(id)model numberOfCellsInSection:(NSInteger)section;
++ (nullable id)model:(id)model modelForCellAtIndexPath:(NSIndexPath *)indexPath;
++ (NSInteger)model:(id)model kind:(XZMocoaKind)kind numberOfSupplementsInSection:(NSInteger)section;
++ (nullable id)model:(id)model kind:(XZMocoaKind)kind modelForSupplementAtIndexPath:(NSIndexPath *)indexPath;
 @end
 
 /// 支持直接使用 NSFetchedResultsController 作为数据源，且支持作为 NSFetchedResultsController 的代理。

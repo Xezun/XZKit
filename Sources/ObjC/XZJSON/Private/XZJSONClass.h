@@ -6,11 +6,7 @@
 //
 
 #import <Foundation/Foundation.h>
-#if __has_include(<XZKit/XZKit.h>)
-#import <XZKit/XZObjc.h>
-#else
 #import "XZObjc.h"
-#endif
 
 #ifdef _Untain
 #undef _Untain

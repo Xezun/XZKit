@@ -9,7 +9,7 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-@interface ExampleMainHomeHeaderView : XZMocoaTableSectionHeaderView
+@interface ExampleMainHomeHeaderView : XZMocoaTableHeaderView
 @property (nonatomic, readonly) UILabel *titleLabel;
 - (UILabel *)textLabel NS_UNAVAILABLE;
 @end

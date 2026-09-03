@@ -48,7 +48,7 @@
     self.viewModel = viewModel;
 }
 
-- (void)viewModelDidChange {
+- (void)didChangeViewModel:(XZMocoaViewModel *)oldValue {
     [super viewModelDidChange];
     
     Example0311ViewModel *viewModel = self.viewModel;

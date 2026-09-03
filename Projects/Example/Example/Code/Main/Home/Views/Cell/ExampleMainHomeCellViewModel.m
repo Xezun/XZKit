@@ -11,15 +11,13 @@
 @implementation ExampleMainHomeCellViewModel
 
 + (void)load {
-    XZMocoa(@"https://xzkit.xezun.com/examples").section.cell.viewModelClass = self;
-}
-
-- (CGFloat)height {
-    return 44.0;
+    XZMocoa(@"https://xzkit.xezun.com/examples").cell.viewModelClass = self;
 }
 
 - (void)prepare {
     [super prepare];
+    
+    self.height = 50.0;
     
     ExampleMainHomeCellModel *model = self.model;
     self.title = [NSString stringWithFormat:@"%ld. %@", (self.index + 1), model.name];

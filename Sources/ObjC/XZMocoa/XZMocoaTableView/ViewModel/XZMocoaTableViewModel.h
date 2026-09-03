@@ -5,22 +5,15 @@
 //  Created by Xezun on 2023/7/22.
 //
 
-#if __has_include(<XZKit/XZKit.h>)
-#import <XZKit/XZMocoaGroupViewModel.h>
-#import <XZKit/XZMocoaTableSectionViewModel.h>
-#import <XZKit/XZMocoaTableSectionHeaderFooterViewModel.h>
-#import <XZKit/XZMocoaTableCellViewModel.h>
-#else
 #import "XZMocoaGroupViewModel.h"
-#import "XZMocoaTableSectionViewModel.h"
-#import "XZMocoaTableSectionHeaderFooterViewModel.h"
+#import "XZMocoaTableSupplementViewModel.h"
 #import "XZMocoaTableCellViewModel.h"
-#endif
 
 NS_ASSUME_NONNULL_BEGIN
 
 @class XZMocoaTableViewModel;
 
+/// 为 XZMocoaTableView 提供监听 ViewModel 事件的协议。
 @protocol XZMocoaTableViewModelDelegate <XZMocoaGroupViewModelDelegate>
 @required
 - (void)tableViewModel:(XZMocoaTableViewModel *)tableViewModel didReloadData:(void * _Nullable)null;
@@ -51,19 +44,32 @@ NS_ASSUME_NONNULL_BEGIN
 /// 总高度。
 @property (nonatomic, readonly) CGFloat height;
 
+- (void)reloadSection:(NSInteger)section withRowAnimation:(UITableViewRowAnimation)animation;
+- (void)insertSection:(NSInteger)section withRowAnimation:(UITableViewRowAnimation)animation;
+- (void)deleteSection:(NSInteger)section withRowAnimation:(UITableViewRowAnimation)animation;
+
+- (void)reloadSections:(nullable NSIndexSet *)sections withRowAnimation:(UITableViewRowAnimation)animation;
+- (void)insertSections:(nullable NSIndexSet *)sections withRowAnimation:(UITableViewRowAnimation)animation;
+- (void)deleteSections:(nullable NSIndexSet *)sections withRowAnimation:(UITableViewRowAnimation)animation;
+
+- (void)reloadCellsAtIndexPaths:(NSArray<NSIndexPath *> *)indexPaths withRowAnimation:(UITableViewRowAnimation)animation;
+- (void)insertCellsAtIndexPaths:(NSArray<NSIndexPath *> *)indexPaths withRowAnimation:(UITableViewRowAnimation)animation;
+- (void)deleteCellsAtIndexPaths:(NSArray<NSIndexPath *> *)indexPaths withRowAnimation:(UITableViewRowAnimation)animation;
+
 - (void)didSelectCellAtIndexPath:(NSIndexPath *)indexPath animated:(BOOL)animated scrollPosition:(UITableViewScrollPosition)scrollPosition;
 
 @end
 
 @interface XZMocoaTableViewModel (XZMocoaTableViewModel)
-/// section 视图模型集合。
-@property (nonatomic, readonly) NSArray<__kindof XZMocoaTableSectionViewModel *> *sectionViewModels;
-/// 获取 section 视图模型。
-/// - Parameter index: 位置
-- (__kindof XZMocoaTableSectionViewModel *)sectionViewModelAtIndex:(NSInteger)index;
-/// 获取 cell 视图模型。
-/// - Parameter indexPath: 位置
-- (__kindof XZMocoaTableCellViewModel *)cellViewModelAtIndexPath:(NSIndexPath *)indexPath;
+///// section 视图模型集合。
+//@property (nonatomic, readonly) NSArray<__kindof XZMocoaTableSectionViewModel *> *sectionViewModels;
+///// 获取 section 视图模型。
+///// - Parameter index: 位置
+//- (__kindof XZMocoaTableSectionViewModel *)sectionViewModelAtIndex:(NSInteger)index;
+///// 获取 cell 视图模型。
+///// - Parameter indexPath: 位置
+//- (__kindof XZMocoaTableCellViewModel *)cellViewModelAtIndexPath:(NSIndexPath *)indexPath;
+
 @end
 
 NS_ASSUME_NONNULL_END

@@ -8,15 +8,9 @@
 //  Requires XZKitDefines
 
 #import <Foundation/Foundation.h>
-#if __has_include(<XZKit/XZKit.h>)
-#import <XZKit/NSData+XZKit.h>
-#import <XZKit/NSData+XZDataDigester.h>
-#import <XZKit/NSString+XZDataDigester.h>
-#else
 #import "NSData+XZKit.h"
 #import "NSData+XZDataDigester.h"
 #import "NSString+XZDataDigester.h"
-#endif
 
 NS_ASSUME_NONNULL_BEGIN
 

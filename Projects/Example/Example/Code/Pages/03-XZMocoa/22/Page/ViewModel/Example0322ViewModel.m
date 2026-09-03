@@ -35,6 +35,9 @@ typedef NS_ENUM(NSUInteger, Example0321ContactBookTestAction) {
     _contactBook = [[Example0321ContactBook alloc] init];
     
     _collectionViewModel = [[XZMocoaCollectionViewModel alloc] initWithModel:_contactBook];
+    _collectionViewModel.minimumLineSpacing = 10;
+    _collectionViewModel.minimumInteritemSpacing = 10;
+    _collectionViewModel.sectionInsets = UIEdgeInsetsMake(10, 10, 10, 10);
     _collectionViewModel.module = XZMocoa(@"https://mocoa.xezun.com/examples/22/");
     [self addSubViewModel:_collectionViewModel];
 }

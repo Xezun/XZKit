@@ -12,10 +12,12 @@
 
 @end
 
-@implementation Example0321Contact
+@implementation Example0321Contact {
+    NSString *_description;
+}
 
 + (void)load {
-    XZMocoa(@"https://mocoa.xezun.com/examples/21/").section.cell.modelClass = self;
+    XZMocoa(@"https://mocoa.xezun.com/examples/21/").cell.modelClass = self;
 }
 
 + (Example0321Contact *)contactWithFirstName:(NSString *)firstName lastName:(NSString *)lastName phone:(NSString *)phone {
@@ -28,25 +30,24 @@
         _firstName = firstName.copy;
         _lastName = lastName.copy;
         _phone = phone;
+        _description = [NSString stringWithFormat:@"%@-%@-%@", self.firstName, self.lastName, self.phone];
     }
     return self;
 }
 
 - (NSString *)description {
-    return [NSString stringWithFormat:@"%@: %@ %@", self.phone, self.firstName, self.lastName];
+    return _description;
 }
 
 - (BOOL)isEqual:(Example0321Contact *)object {
     if ([object isKindOfClass:[Example0321Contact class]]) {
-        if ([self.firstName isEqual:object.firstName]) {
-            if ([self.lastName isEqual:object.lastName]) {
-                if ([self.phone isEqual:object.phone]) {
-                    return YES;
-                }
-            }
-        }
+        return [_description isEqualToString:object->_description];
     }
     return NO;
+}
+
+- (NSUInteger)hash {
+    return _description.hash;
 }
 
 + (Example0321Contact *)contactForIndex:(NSInteger)index {

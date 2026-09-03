@@ -10,7 +10,7 @@
 @implementation Example21TableViewSectionViewModel
 
 + (void)load {
-    XZMocoa(@"https://xzkit.xezun.com/examples/21").section.viewModelClass = self;
+    XZMocoa(@"https://xzkit.xezun.com/examples/21").viewModelClass = self;
 }
 
 @end

@@ -20,7 +20,7 @@
 
 - (void)didInitWithMocoaOptions:(XZMocoaOptions *)options {
     [super didInitWithMocoaOptions:options];
-    self.title = @"Example 11";
+    self.title = @"Example 12";
     self.hidesBottomBarWhenPushed = YES;
 }
 
@@ -42,16 +42,16 @@
     
     // Model
     NSArray *dataArray = [data xz_map:^id _Nonnull(id  _Nonnull obj, NSInteger idx, BOOL * _Nonnull stop) {
-        return [XZJSON decode:obj options:0 class:module.section.cell.modelClass];
+        return [XZJSON decode:obj options:0 class:module.cell.modelClass];
     }];
     
     // viewModel
-    XZMocoaTableViewModel *tableViewModel = [[XZMocoaTableViewModel alloc] initWithModel:dataArray];
+    XZMocoaTableViewModel *tableViewModel = [[XZMocoaTableViewModel alloc] initWithModel:@[dataArray]];
     tableViewModel.module = module;
     [tableViewModel ready];
     
     // view
-    XZMocoaTableView *tableView = [[XZMocoaTableView alloc] initWithFrame:self.view.bounds style:(UITableViewStyleGrouped)];
+    XZMocoaTableView *tableView = [[XZMocoaTableView alloc] initWithFrame:self.view.bounds style:(UITableViewStyleInsetGrouped)];
     tableView.contentView.separatorStyle = UITableViewCellSeparatorStyleSingleLine;
     tableView.viewModel = tableViewModel;
     [self.view addSubview:tableView];

@@ -6,7 +6,8 @@
 //
 
 #import "XZMocoaCollectionViewModel.h"
-#import "XZMocoaCollectionView.h"
+#import "XZMocoaCollectionPlaceholderCellViewModel.h"
+#import "XZMocoaCollectionPlaceholderSupplementViewModel.h"
 
 @implementation XZMocoaCollectionViewModel
 
@@ -74,8 +75,11 @@
     }
 }
 
-- (Class)placeholderViewModelClassForSectionAtIndex:(NSInteger)index {
-    return [XZMocoaCollectionSectionViewModel class];
+- (Class)viewModelClassForPlaceholderOfKind:(XZMocoaKind)kind {
+    if (kind == XZMocoaKindHeader || kind == XZMocoaKindFooter) {
+        return [XZMocoaCollectionPlaceholderSupplementViewModel class];
+    }
+    return [XZMocoaCollectionPlaceholderCellViewModel class];
 }
 
 @end

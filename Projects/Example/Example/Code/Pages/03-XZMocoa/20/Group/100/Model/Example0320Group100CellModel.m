@@ -10,13 +10,21 @@
 @implementation Example0320Group100CellModel
 
 + (void)load {
-    XZMocoa(@"https://mocoa.xezun.com/examples/20/table/100/:/").modelClass = self;
+    XZMocoa(@"https://mocoa.xezun.com/examples/20/table/100/").modelClass = self;
+}
+
+- (XZMocoaName)mocoaName {
+    return @"100";
 }
 
 - (BOOL)isEqual:(Example0320Group100CellModel *)object {
     if (object == self) return YES;
     if (![object isKindOfClass:[Example0320Group100CellModel class]]) return NO;
     return [self.nid isEqualToString:object.nid];
+}
+
+- (NSUInteger)hash {
+    return self.nid.hash;
 }
 
 @end

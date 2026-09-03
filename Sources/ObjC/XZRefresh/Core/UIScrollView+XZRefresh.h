@@ -7,11 +7,7 @@
 //
 
 #import <UIKit/UIKit.h>
-#if __has_include(<XZKit/XZKit.h>)
-#import <XZKit/XZRefreshDefines.h>
-#else
 #import "XZRefreshDefines.h"
-#endif
 
 NS_ASSUME_NONNULL_BEGIN
 

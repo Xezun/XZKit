@@ -6,9 +6,11 @@
 //
 
 #import "XZMocoaGroupPlaceholderViewModel.h"
-#import "XZMocoaGroupSectionViewModel.h"
+#import "XZMocoaGroupCellViewModel.h"
+#import "XZMocoaGroupViewModel.h"
 
 #if DEBUG
+
 @implementation XZMocoaGroupPlaceholderViewModel
 
 - (instancetype)initWithModel:(XZMocoaGroupCellViewModel *)model {
@@ -18,26 +20,15 @@
 - (void)prepare {
     [super prepare];
     
-    XZMocoaViewModel * const viewModel = self.model;
-    XZMocoaGroupSectionViewModel * const superViewModel = viewModel.superViewModel;
+    XZMocoaGroupCellViewModel * const cellViewModel  = self.model;
     
-    _reason = [self reasonByCheckingModule:viewModel.module];
-    
-    XZMocoaName name1 = ((id<XZMocoaModel>)superViewModel.model).mocoaName;
-    XZMocoaName name2 = ((id<XZMocoaModel>)viewModel.model).mocoaName;
-    if (name1.length == 0) name1 = @"<None>";
-    if (name2.length == 0) name2 = @"<None>";
-    
-    if ([superViewModel indexOfCellViewModel:(id)viewModel] != NSNotFound) {
-        _detail = [NSString stringWithFormat:@"Name: section=%@, cell=%@ \nData: %@", name1, name2, viewModel.model];
-    } else {
-        [superViewModel.supplementaryViewModels enumerateKeysAndObjectsUsingBlock:^(XZMocoaKind kind, NSArray<XZMocoaViewModel *> *obj, BOOL * _Nonnull stop) {
-            if ([obj containsObject:viewModel]) {
-                _detail = [NSString stringWithFormat:@"Name: section=%@, %@=%@ \nData: %@", name1, kind, name2, viewModel.model];
-                *stop = YES;
-            }
-        }];
+    XZMocoaName cellName = ((id<XZMocoaModel>)cellViewModel.model).mocoaName;
+    if (cellName.length == 0) {
+        cellName = @"<None>";
     }
+    
+    _reason = [self reasonByCheckingModule:cellViewModel.module];
+    _detail = [NSString stringWithFormat:@"Name: cell=%@", cellName];
 }
 
 - (NSString *)reasonByCheckingModule:(XZMocoaModule *)module {

@@ -7,17 +7,10 @@
 //
 
 #import <UIKit/UIKit.h>
-#if __has_include(<XZKit/XZKit.h>)
-#import <XZKit/XZMocoaDefines.h>
-#import <XZKit/XZMocoaKey.h>
-#import <XZKit/XZMocoaModule.h>
-#import <XZKit/XZMocoaModel.h>
-#else
 #import "XZMocoaDefines.h"
 #import "XZMocoaKey.h"
 #import "XZMocoaModule.h"
 #import "XZMocoaModel.h"
-#endif
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -84,6 +77,7 @@ NS_SWIFT_UI_ACTOR @interface XZMocoaViewModel : NSObject <XZMocoaViewModel> {
 
 /// 视图在列表中的排序。
 @property (nonatomic) NSInteger index;
+@property (nonatomic) NSIndexPath *indexPath;
 
 /// 标准初始化方法。一般情况下，子类应尽量避免添加新的初始化方法，保证接口统一。
 /// @param model 数据

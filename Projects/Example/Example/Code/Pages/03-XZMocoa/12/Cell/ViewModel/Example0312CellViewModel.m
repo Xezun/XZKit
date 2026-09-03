@@ -11,13 +11,13 @@
 @implementation Example0312CellViewModel
 
 + (void)load {
-    XZMocoa(@"https://mocoa.xezun.com/examples/12/table/").section.cell.viewModelClass = self;
+    XZMocoa(@"https://mocoa.xezun.com/examples/12/table/").cell.viewModelClass = self;
 }
 
 - (void)prepare {
     [super prepare];
     
-    self.height = 44.0;
+    self.height = 50.0;
     
     Example0312CellModel *data = self.model;
     self.name = [NSString stringWithFormat:@"%@ %@", data.firstName, data.lastName];
