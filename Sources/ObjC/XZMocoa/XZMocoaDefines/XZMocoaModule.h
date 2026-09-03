@@ -16,15 +16,15 @@ NS_ASSUME_NONNULL_BEGIN
 
 /// 实现视图的形式。
 typedef NS_ENUM(NSUInteger, XZMocoaModuleViewForm) {
-    /// 未提供视图，或不支持的视图形式
+    /// 未提供视图，或不支持的视图形式。
     XZMocoaModuleViewFormUnknown = 0,
-    /// 纯代码视图
+    /// 纯代码视图。
     XZMocoaModuleViewFormClass,
-    /// xib 视图
+    /// 通过 xib 绘制的视图或视图控制器。
     XZMocoaModuleViewFormNib,
-    /// xib 视图控制器，可通过 mocoa url 加载。
+    /// 通过 Storyboard 绘制的视图控制器，除非是入口控制器，否则需要提供标识符，支持通过 XZMocoaURL 加载。
     XZMocoaModuleViewFormStoryboard,
-    /// xib 可重用视图，可通过 viewReuseIdentifier 注册。
+    /// 通过 Storyboard 绘制的可复用视图，可通过 viewReuseIdentifier 注册。
     XZMocoaModuleViewFormStoryboardReusableView,
 } NS_SWIFT_NAME(XZMocoaModule.ViewForm);
 
@@ -148,15 +148,6 @@ typedef NS_ENUM(NSUInteger, XZMocoaModuleViewForm) {
 /// @param kind 分类
 /// @param name 名称
 - (nullable XZMocoaModule *)submoduleIfLoadedForKind:(XZMocoaKind)kind forName:(XZMocoaName)name;
-
-/// 获取默认分类的子模块的 XZMocoaModule 对象。
-/// @param name 子模块名称
-- (XZMocoaModule *)submoduleForName:(XZMocoaName)name;
-
-/// 设置或删除默认分类下的子模块的 XZMocoaModule 对象。
-/// @param newSubmodule 子模块的 XZMocoaModule 对象
-/// @param name 名称
-- (void)setSubmodule:(XZMocoaModule *)newSubmodule forName:(XZMocoaName)name;
 
 /// 为 XZMocoaModule 提供下标式访问的协议。
 /// @code

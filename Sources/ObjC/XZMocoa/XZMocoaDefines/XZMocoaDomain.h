@@ -12,7 +12,7 @@ NS_ASSUME_NONNULL_BEGIN
 @class XZMocoaDomain;
 
 /// 提供模块的对象，需要实现的协议。
-NS_SWIFT_NAME(XZMocoa.Provider) @protocol XZMocoaProvider <NSObject>
+@protocol XZMocoaProvider <NSObject>
 /// 获取指定路径的模块。
 /// - Parameters:
 ///   - domain: 调用此方法的模块管理对象，即模块所在的域
@@ -21,7 +21,7 @@ NS_SWIFT_NAME(XZMocoa.Provider) @protocol XZMocoaProvider <NSObject>
 @end
 
 /// 模块所在的域，一种基于 URL 的模块管理方式。
-NS_SWIFT_NAME(XZMocoa.Domain) @interface XZMocoaDomain : NSObject
+@interface XZMocoaDomain : NSObject
 
 /// 获取指定域名下的模块管理对象。
 /// @note 该方法返回的是单例对象。

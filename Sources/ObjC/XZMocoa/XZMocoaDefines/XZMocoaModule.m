@@ -14,15 +14,17 @@
 ///   - path: 单个 path 值
 ///   - kind: 输出值，MocoaKind 值
 ///   - name: 输出值，MocoaName 值
-FOUNDATION_STATIC_INLINE void XZMocoaPathParser(NSString *path, XZMocoaKind *kind, XZMocoaName *name) {
+/// - Returns: 参数 path 是否包含冒号
+FOUNDATION_STATIC_INLINE BOOL XZMocoaPathParser(NSString *path, XZMocoaKind *kind, XZMocoaName *name) {
     NSRange const range = [path rangeOfString:@":"];
     if (range.location == NSNotFound) {
         *kind = XZMocoaKindDefault;
         *name = path;
-    } else {
-        *kind = [path substringToIndex:range.location];
-        *name = [path substringFromIndex:range.location + 1];
+        return NO;
     }
+    *kind = [path substringToIndex:range.location];
+    *name = [path substringFromIndex:range.location + 1];
+    return YES;
 }
 
 /// 将 MVVM 模块的 kind 和 name 合成 MocoaURL 中的 path 部分。
@@ -212,8 +214,9 @@ FOUNDATION_STATIC_INLINE NSString *XZMocoaPathCreate(XZMocoaKind kind, XZMocoaNa
     [_submodules enumerateKeysAndObjectsUsingBlock:^(NSString *key, XZMocoaModule *submodule, BOOL *stop) {
         XZMocoaKind kind = nil;
         XZMocoaName name = nil;
-        XZMocoaPathParser(key, &kind, &name);
-        block(submodule, kind, name, stop);
+        if (XZMocoaPathParser(key, &kind, &name)) {
+            block(submodule, kind, name, stop);
+        }
     }];
 }
 
@@ -223,33 +226,27 @@ FOUNDATION_STATIC_INLINE NSString *XZMocoaPathCreate(XZMocoaKind kind, XZMocoaNa
 - (XZMocoaModule *)submoduleForKind:(XZMocoaKind)kind forName:(XZMocoaName)name {
     if (kind == nil) kind = XZMocoaKindDefault;
     if (name == nil) name = XZMocoaNameDefault;
-    NSString * const key = XZMocoaPathCreate(kind, name);
-    if (_submodules == nil) {
-        _submodules = [NSMutableDictionary dictionary];
-    }
-    XZMocoaModule *submodule = _submodules[key];
-    if (submodule == nil) {
-        NSURL * const submoduleURL = [self.url URLByAppendingPathComponent:key];
-        // 创建新的模块
-        submodule = [[XZMocoaModule alloc] initWithURL:submoduleURL];
-        _submodules[key] = submodule;
-        // 在 domain 中注册新创建的 module
-        XZMocoaDomain *domain = [XZMocoaDomain domainNamed:submoduleURL.host];
-        [domain setModule:submodule forPath:submoduleURL.path];
-    }
-    return submodule;
+    return [self objectForKeyedSubscript:XZMocoaPathCreate(kind, name)];
 }
 
 - (void)setSubmodule:(XZMocoaModule *)newSubmodule forKind:(XZMocoaKind)kind forName:(XZMocoaName)name {
     if (kind == nil) kind = XZMocoaKindDefault;
     if (name == nil) name = XZMocoaNameDefault;
-    NSString * const key = XZMocoaPathCreate(kind, name);
+    NSString * const key = [NSString stringWithFormat:@"%@:%@", kind, name];
     if (newSubmodule == nil) {
+        // 双移除
+        if ([kind isEqualToString:XZMocoaKindDefault]) {
+            [_submodules removeObjectForKey:name];
+        }
         [_submodules removeObjectForKey:key];
         return;
     }
     if (_submodules == nil) {
         _submodules = [NSMutableDictionary dictionary];
+    }
+    // 双注册
+    if ([kind isEqualToString:XZMocoaKindDefault]) {
+        _submodules[name] = newSubmodule;
     }
     _submodules[key] = newSubmodule;
 }
@@ -260,22 +257,44 @@ FOUNDATION_STATIC_INLINE NSString *XZMocoaPathCreate(XZMocoaKind kind, XZMocoaNa
     return _submodules[XZMocoaPathCreate(kind, name)];
 }
 
-- (XZMocoaModule *)submoduleForName:(XZMocoaName)name {
-    return [self submoduleForKind:XZMocoaKindDefault forName:name];
-}
-
-- (void)setSubmodule:(XZMocoaModule *)newSubmodule forName:(XZMocoaName)name {
-    [self setSubmodule:newSubmodule forKind:XZMocoaKindDefault forName:name];
-}
-
-
 #pragma mark - 下标存储方法
 
-- (XZMocoaModule *)objectForKeyedSubscript:(XZMocoaKey const)key {
-    XZMocoaKind kind = nil;
-    XZMocoaName name = nil;
-    XZMocoaPathParser(key, &kind, &name);
-    return [self submoduleForKind:kind forName:name];
+/// 以规范化的键获取子模块，键不存在时懒加载创建并注册到 Domain。
+/// - path 是合法的 key 但 key 不一定是合法的 path
+/// @param key 键
+- (XZMocoaModule *)objectForKeyedSubscript:(XZMocoaKey)key {
+    if (key == nil) key = XZMocoaNameDefault;
+    if (_submodules == nil) {
+        _submodules = [NSMutableDictionary dictionary];
+    }
+    XZMocoaModule *submodule = _submodules[key];
+    if (submodule == nil) {
+        XZMocoaName name = nil;
+        XZMocoaKind kind = nil;
+        
+        // 没有冒号，不是标准 key
+        if (!XZMocoaPathParser(key, &kind, &name)) {
+            key = [NSString stringWithFormat:@"%@:%@", kind, name];
+        }
+        
+        // 构造合法的 path
+        NSString *path = XZMocoaPathCreate(kind, name);
+        NSURL * const submoduleURL = [self.url URLByAppendingPathComponent:path];
+        
+        // 创建新的模块
+        submodule = [[XZMocoaModule alloc] initWithURL:submoduleURL];
+        
+        // 双注册：同时为 kind:name 标准键和不带 kind 的简化键
+        if ([kind isEqualToString:XZMocoaKindDefault]) {
+            _submodules[name] = submodule;
+        }
+        _submodules[key] = submodule;
+        
+        // 在 domain 中注册新创建的 module
+        XZMocoaDomain *domain = [XZMocoaDomain domainNamed:submoduleURL.host];
+        [domain setModule:submodule forPath:submoduleURL.path];
+    }
+    return submodule;
 }
 
 - (XZMocoaModule *)submoduleForPath:(NSString *)path {
@@ -284,10 +303,7 @@ FOUNDATION_STATIC_INLINE NSString *XZMocoaPathCreate(XZMocoaKind kind, XZMocoaNa
         if (subpath.length == 0) {
             continue; // 忽略空白的
         }
-        XZMocoaKind kind = nil;
-        XZMocoaName name = nil;
-        XZMocoaPathParser(subpath, &kind, &name);
-        submodule = [submodule submoduleForKind:kind forName:name];
+        submodule = [submodule objectForKeyedSubscript:subpath];
     }
     return submodule;
 }
