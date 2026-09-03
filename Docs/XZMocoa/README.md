@@ -227,7 +227,7 @@ XZMocoa 提供了基于 URL 的模块管理方案 `XZMocoaModuleDomain`，任何
 id yourModule = [XZMocoaModuleDomain moduleForURL:[NSURL URLWithString:@"https://mocoa.xezun.com/your/module/path/"]];
 ```
 
-`XZMocoaModuleDomain` 使用字典管理模块，无需担心性能问题。模块也可以由 `XZMocoaModuleProvider` 协议提供懒加载，比如读取配置文件。
+`XZMocoaModuleDomain` 使用字典管理模块，无需担心性能问题。模块也可以由 `XZMocoaProvider` 协议提供懒加载，比如读取配置文件。
 
 ### 2、Mocoa 模块
 
@@ -279,10 +279,10 @@ view.viewModel = viewModel;
 }
 ```
 
-如果项目组对 `+load` 方法的使用有限制，可以通过 `XZMocoaModuleProvider` 协议自定义模块域中模块的提供方式，比如读取配置文件。
+如果项目组对 `+load` 方法的使用有限制，可以通过 `XZMocoaProvider` 协议自定义模块域中模块的提供方式，比如读取配置文件。
 
 ```objc
-@protocol XZMocoaModuleProvider <NSObject>
+@protocol XZMocoaProvider <NSObject>
 - (nullable id)domain:(XZMocoaModuleDomain *)domain moduleForPath:(NSString *)path;
 @end
 ```

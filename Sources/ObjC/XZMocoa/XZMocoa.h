@@ -17,7 +17,7 @@
 #import "XZMocoaDefines.h"
 #import "XZMocoaKey.h"
 #import "XZMocoaModule.h"
-#import "XZMocoaModuleDomain.h"
+#import "XZMocoaDomain.h"
 
 // XZMocoaView
 #import "XZMocoaModel.h"

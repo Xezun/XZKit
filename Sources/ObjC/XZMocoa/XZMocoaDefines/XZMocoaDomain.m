@@ -1,16 +1,16 @@
 //
-//  XZMocoaModuleDomain.m
+//  XZMocoaDomain.m
 //  XZMocoa
 //
 //  Created by Xezun on 2023/7/29.
 //
 
-#import "XZMocoaModuleDomain.h"
+#import "XZMocoaDomain.h"
 #import "XZMocoaDefines.h"
 
-static NSMutableDictionary<NSString *, XZMocoaModuleDomain *> *_domainTable = nil;
+static NSMutableDictionary<NSString *, XZMocoaDomain *> *_domainTable = nil;
 
-@implementation XZMocoaModuleDomain {
+@implementation XZMocoaDomain {
     // TODO: 缓存过期功能
     NSMutableDictionary<NSString *, id> *_keyedModules;
 }
@@ -23,11 +23,11 @@ static NSMutableDictionary<NSString *, XZMocoaModuleDomain *> *_domainTable = ni
     return [[self domainNamed:url.host] moduleForPath:path];
 }
 
-+ (XZMocoaModuleDomain *)domainForName:(NSString *)name {
++ (XZMocoaDomain *)domainForName:(NSString *)name {
     return [self domainNamed:name];
 }
 
-+ (XZMocoaModuleDomain *)domainNamed:(NSString *)name {
++ (XZMocoaDomain *)domainNamed:(NSString *)name {
     NSParameterAssert(name && name.length > 0);
     
     static dispatch_once_t onceToken;
@@ -35,9 +35,9 @@ static NSMutableDictionary<NSString *, XZMocoaModuleDomain *> *_domainTable = ni
         _domainTable = [NSMutableDictionary dictionary];
     });
     
-    XZMocoaModuleDomain *domain = _domainTable[name];
+    XZMocoaDomain *domain = _domainTable[name];
     if (domain == nil) {
-        domain = [[XZMocoaModuleDomain alloc] initWithName:name];
+        domain = [[XZMocoaDomain alloc] initWithName:name];
         _domainTable[name] = domain;
     }
     return domain;
@@ -53,14 +53,14 @@ static NSMutableDictionary<NSString *, XZMocoaModuleDomain *> *_domainTable = ni
 }
 
 - (id)moduleForPath:(NSString *)path {
-    NSAssert([XZMocoaModuleDomain isValidPath:path], @"参数 path 不合法或不规范：%@", path);
+    NSAssert([XZMocoaDomain isValidPath:path], @"参数 path 不合法或不规范：%@", path);
     
     id module = _keyedModules[path];
     if (module != nil) {
         return module;
     }
     
-    id<XZMocoaModuleProvider> const provider = self.provider;
+    id<XZMocoaProvider> const provider = self.provider;
     if (provider == nil) {
         return nil;
     }
@@ -71,7 +71,7 @@ static NSMutableDictionary<NSString *, XZMocoaModuleDomain *> *_domainTable = ni
 }
 
 - (void)setModule:(id)module forPath:(NSString *)path {
-    NSAssert([XZMocoaModuleDomain isValidPath:path], @"参数 path 不合法或不规范：%@", path);
+    NSAssert([XZMocoaDomain isValidPath:path], @"参数 path 不合法或不规范：%@", path);
     _keyedModules[path] = module;
 }
 

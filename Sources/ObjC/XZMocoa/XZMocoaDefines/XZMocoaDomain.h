@@ -1,5 +1,5 @@
 //
-//  XZMocoaModuleDomain.h
+//  XZMocoaDomain.h
 //  XZMocoa
 //
 //  Created by Xezun on 2023/7/29.
@@ -9,24 +9,24 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-@class XZMocoaModuleDomain;
+@class XZMocoaDomain;
 
 /// 提供模块的对象，需要实现的协议。
-NS_SWIFT_NAME(XZMocoaModule.Provider) @protocol XZMocoaModuleProvider <NSObject>
+NS_SWIFT_NAME(XZMocoa.Provider) @protocol XZMocoaProvider <NSObject>
 /// 获取指定路径的模块。
 /// - Parameters:
 ///   - domain: 调用此方法的模块管理对象，即模块所在的域
 ///   - path: 模块的路径，一定是合法的。
-- (nullable id)domain:(XZMocoaModuleDomain *)domain moduleForPath:(NSString *)path;
+- (nullable id)domain:(XZMocoaDomain *)domain moduleForPath:(NSString *)path;
 @end
 
 /// 模块所在的域，一种基于 URL 的模块管理方式。
-NS_SWIFT_NAME(XZMocoaModule.Domain) @interface XZMocoaModuleDomain : NSObject
+NS_SWIFT_NAME(XZMocoa.Domain) @interface XZMocoaDomain : NSObject
 
 /// 获取指定域名下的模块管理对象。
 /// @note 该方法返回的是单例对象。
 /// - Parameter name: 域名
-+ (XZMocoaModuleDomain *)domainNamed:(NSString *)name NS_SWIFT_NAME(init(named:));
++ (XZMocoaDomain *)domainNamed:(NSString *)name NS_SWIFT_NAME(init(named:));
 
 /// 域名。
 @property (nonatomic, copy, readonly) NSString *name;
@@ -48,7 +48,7 @@ NS_SWIFT_NAME(XZMocoaModule.Domain) @interface XZMocoaModuleDomain : NSObject
 - (void)setModule:(nullable id)newModule forPath:(NSString *)path;
 
 /// 模块由外部提供懒加载，强引用。
-@property (nonatomic, strong, nullable) id<XZMocoaModuleProvider> provider;
+@property (nonatomic, strong, nullable) id<XZMocoaProvider> provider;
 
 @end
 

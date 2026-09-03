@@ -52,7 +52,7 @@ FOUNDATION_STATIC_INLINE NSString *XZMocoaPathCreate(XZMocoaKind kind, XZMocoaNa
         return nil;
     }
     
-    XZMocoaModuleDomain * const domain = [XZMocoaModuleDomain domainNamed:host];
+    XZMocoaDomain * const domain = [XZMocoaDomain domainNamed:host];
     if (!domain.provider) {
         domain.provider = (id)self;
     }
@@ -234,7 +234,7 @@ FOUNDATION_STATIC_INLINE NSString *XZMocoaPathCreate(XZMocoaKind kind, XZMocoaNa
         submodule = [[XZMocoaModule alloc] initWithURL:submoduleURL];
         _submodules[key] = submodule;
         // 在 domain 中注册新创建的 module
-        XZMocoaModuleDomain *domain = [XZMocoaModuleDomain domainNamed:submoduleURL.host];
+        XZMocoaDomain *domain = [XZMocoaDomain domainNamed:submoduleURL.host];
         [domain setModule:submodule forPath:submoduleURL.path];
     }
     return submodule;
@@ -424,7 +424,7 @@ FOUNDATION_STATIC_INLINE NSString *XZMocoaPathCreate(XZMocoaKind kind, XZMocoaNa
 
 @implementation NSURL (XZMocoaModule)
 
-+ (NSURL *)mocoaURLWithDomain:(XZMocoaModuleDomain *)domain path:(NSString *)path {
++ (NSURL *)mocoaURLWithDomain:(XZMocoaDomain *)domain path:(NSString *)path {
     NSString * const name   = domain.name;
     NSString * const string = [NSString stringWithFormat:@"mocoa://%@%@", name, path];
     NSURL    * const url    = [NSURL URLWithString:string];
@@ -434,9 +434,9 @@ FOUNDATION_STATIC_INLINE NSString *XZMocoaPathCreate(XZMocoaKind kind, XZMocoaNa
 
 @end
 
-@implementation XZMocoaModule (XZMocoaModuleProvider)
+@implementation XZMocoaModule (XZMocoaProvider)
 
-+ (id)domain:(XZMocoaModuleDomain *)domain moduleForPath:(nonnull NSString *)path {
++ (id)domain:(XZMocoaDomain *)domain moduleForPath:(nonnull NSString *)path {
     // 创建模块
     NSURL * const url = [NSURL mocoaURLWithDomain:domain path:path];
     
@@ -464,7 +464,7 @@ FOUNDATION_STATIC_INLINE NSString *XZMocoaPathCreate(XZMocoaKind kind, XZMocoaNa
     return module;
 }
 
-- (id)domain:(XZMocoaModuleDomain *)domain moduleForPath:(nonnull NSString *)path {
+- (id)domain:(XZMocoaDomain *)domain moduleForPath:(nonnull NSString *)path {
     return [XZMocoaModule domain:domain moduleForPath:path];
 }
 

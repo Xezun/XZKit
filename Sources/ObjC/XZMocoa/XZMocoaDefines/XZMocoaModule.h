@@ -7,7 +7,7 @@
 //
 
 #import "XZMocoaDefines.h"
-#import "XZMocoaModuleDomain.h"
+#import "XZMocoaDomain.h"
 #import "XZMacros.h"
 
 NS_ASSUME_NONNULL_BEGIN
@@ -281,7 +281,7 @@ typedef NS_ENUM(NSUInteger, XZMocoaModuleViewForm) {
 
 @end
 
-@interface XZMocoaModule (XZMocoaModuleProvider) <XZMocoaModuleProvider>
+@interface XZMocoaModule (XZMocoaProvider) <XZMocoaProvider>
 @end
 
 @interface NSURL (XZMocoaModule)
@@ -289,7 +289,7 @@ typedef NS_ENUM(NSUInteger, XZMocoaModuleViewForm) {
 /// - Parameters:
 ///   - domain: 域
 ///   - path: 路径，格式如 /path1/path2
-+ (NSURL *)mocoaURLWithDomain:(XZMocoaModuleDomain *)domain path:(NSString *)path NS_SWIFT_NAME(init(_:path:));
++ (NSURL *)mocoaURLWithDomain:(XZMocoaDomain *)domain path:(NSString *)path NS_SWIFT_NAME(init(_:path:));
 @end
 
 /// 通过 URL 获取模块。
