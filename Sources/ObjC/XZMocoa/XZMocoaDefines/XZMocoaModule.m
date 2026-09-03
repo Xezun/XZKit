@@ -367,7 +367,7 @@ FOUNDATION_STATIC_INLINE NSString *XZMocoaStandardKey(XZMocoaKind kind, XZMocoaN
 @implementation XZMocoaModule (XZMocoaExtendedModule)
 
 - (XZMocoaModule *)main {
-    return [self submoduleForKind:XZMocoaKindDefault forName:XZMocoaNameMain];
+    return [self objectForKeyedSubscript:XZMocoaNameMain];
 }
 
 - (void)setMain:(XZMocoaModule *)main {
@@ -375,7 +375,7 @@ FOUNDATION_STATIC_INLINE NSString *XZMocoaStandardKey(XZMocoaKind kind, XZMocoaN
 }
 
 - (XZMocoaModule *)home {
-    return [self submoduleForKind:XZMocoaKindDefault forName:XZMocoaNameHome];
+    return [self objectForKeyedSubscript:XZMocoaNameHome];
 }
 
 - (void)setHome:(XZMocoaModule *)home {
@@ -383,7 +383,7 @@ FOUNDATION_STATIC_INLINE NSString *XZMocoaStandardKey(XZMocoaKind kind, XZMocoaN
 }
 
 - (XZMocoaModule *)user {
-    return [self submoduleForKind:XZMocoaKindDefault forName:XZMocoaNameUser];
+    return [self objectForKeyedSubscript:XZMocoaNameUser];
 }
 
 - (void)setUser:(XZMocoaModule *)user {
@@ -391,7 +391,7 @@ FOUNDATION_STATIC_INLINE NSString *XZMocoaStandardKey(XZMocoaKind kind, XZMocoaN
 }
 
 - (XZMocoaModule *)list {
-    return [self submoduleForKind:XZMocoaKindDefault forName:XZMocoaNameList];
+    return [self objectForKeyedSubscript:XZMocoaNameList];
 }
 
 - (void)setList:(XZMocoaModule *)list {
@@ -401,7 +401,8 @@ FOUNDATION_STATIC_INLINE NSString *XZMocoaStandardKey(XZMocoaKind kind, XZMocoaN
 #pragma mark - 为 tableView、collectionView 提供的便利方法
 
 - (XZMocoaModule *)header {
-    return [self submoduleForKind:XZMocoaKindHeader forName:XZMocoaNameDefault];
+    // 键等价于 XZMocoaStandardKey(XZMocoaKindHeader, XZMocoaNameDefault)
+    return [self objectForKeyedSubscript:@"header:"];
 }
 
 - (void)setHeader:(XZMocoaModule *)header {
@@ -409,7 +410,7 @@ FOUNDATION_STATIC_INLINE NSString *XZMocoaStandardKey(XZMocoaKind kind, XZMocoaN
 }
 
 - (XZMocoaModule *)headerForName:(XZMocoaName)name {
-    return [self submoduleForKind:XZMocoaKindHeader forName:name];
+    return [self objectForKeyedSubscript:XZMocoaStandardKey(XZMocoaKindHeader, name ?: XZMocoaNameDefault)];
 }
 
 - (void)setHeader:(XZMocoaModule *)header forName:(XZMocoaName)name {
@@ -417,7 +418,8 @@ FOUNDATION_STATIC_INLINE NSString *XZMocoaStandardKey(XZMocoaKind kind, XZMocoaN
 }
 
 - (XZMocoaModule *)cell {
-    return [self submoduleForKind:XZMocoaKindDefault forName:XZMocoaNameDefault];
+    // 键等价于 XZMocoaStandardKey(XZMocoaKindDefault, XZMocoaNameDefault)
+    return [self objectForKeyedSubscript:@":"];
 }
 
 - (void)setCell:(XZMocoaModule *)cell {
@@ -425,7 +427,8 @@ FOUNDATION_STATIC_INLINE NSString *XZMocoaStandardKey(XZMocoaKind kind, XZMocoaN
 }
 
 - (XZMocoaModule *)cellForName:(XZMocoaName)name {
-    return [self submoduleForKind:XZMocoaKindDefault forName:name];
+    // 默认分类的键即 name 本身；name 为 nil 时由 objectForKeyedSubscript: 内部回落为默认键
+    return [self objectForKeyedSubscript:name];
 }
 
 - (void)setCell:(XZMocoaModule *)cell forName:(XZMocoaName)name {
@@ -433,7 +436,8 @@ FOUNDATION_STATIC_INLINE NSString *XZMocoaStandardKey(XZMocoaKind kind, XZMocoaN
 }
 
 - (XZMocoaModule *)footer {
-    return [self submoduleForKind:XZMocoaKindFooter forName:XZMocoaNameDefault];
+    // 键等价于 XZMocoaStandardKey(XZMocoaKindFooter, XZMocoaNameDefault)
+    return [self objectForKeyedSubscript:@"footer:"];
 }
 
 - (void)setFooter:(XZMocoaModule *)footer {
@@ -441,7 +445,7 @@ FOUNDATION_STATIC_INLINE NSString *XZMocoaStandardKey(XZMocoaKind kind, XZMocoaN
 }
 
 - (XZMocoaModule *)footerForName:(XZMocoaName)name {
-    return [self submoduleForKind:XZMocoaKindFooter forName:name];
+    return [self objectForKeyedSubscript:XZMocoaStandardKey(XZMocoaKindFooter, name ?: XZMocoaNameDefault)];
 }
 
 - (void)setFooter:(XZMocoaModule *)footer forName:(XZMocoaName)name {
