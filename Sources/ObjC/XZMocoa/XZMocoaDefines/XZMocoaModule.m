@@ -35,6 +35,17 @@ FOUNDATION_STATIC_INLINE NSString *XZMocoaPathCreate(XZMocoaKind kind, XZMocoaNa
     return (kind.length ? [NSString stringWithFormat:@"%@:%@", kind, name] : (name.length ? name : @":"));
 }
 
+/// 生成子模块字典的标准键，格式恒为 "kind:name"；当 kind 为默认空字符串时即 ":name"。
+/// @discussion
+/// 与 XZMocoaPathCreate 的区别：后者用于 URL path，默认分类会省略冒号；此函数用于字典键，恒保留冒号，
+/// 以便与「简化键 name」区分，支撑默认分类子模块的双注册。
+/// - Parameters:
+///   - kind: MocoaKind
+///   - name: MocoaName
+FOUNDATION_STATIC_INLINE NSString *XZMocoaStandardKey(XZMocoaKind kind, XZMocoaName name) {
+    return [NSString stringWithFormat:@"%@:%@", kind, name];
+}
+
 @interface XZMocoaModule () {
     Class _viewClass;
     NSString *_viewName;
@@ -232,7 +243,7 @@ FOUNDATION_STATIC_INLINE NSString *XZMocoaPathCreate(XZMocoaKind kind, XZMocoaNa
 - (void)setSubmodule:(XZMocoaModule *)newSubmodule forKind:(XZMocoaKind)kind forName:(XZMocoaName)name {
     if (kind == nil) kind = XZMocoaKindDefault;
     if (name == nil) name = XZMocoaNameDefault;
-    NSString * const key = [NSString stringWithFormat:@"%@:%@", kind, name];
+    NSString * const key = XZMocoaStandardKey(kind, name);
     if (newSubmodule == nil) {
         // 双移除
         if ([kind isEqualToString:XZMocoaKindDefault]) {
@@ -259,9 +270,11 @@ FOUNDATION_STATIC_INLINE NSString *XZMocoaPathCreate(XZMocoaKind kind, XZMocoaNa
 
 #pragma mark - 下标存储方法
 
-/// 以规范化的键获取子模块，键不存在时懒加载创建并注册到 Domain。
-/// - path 是合法的 key 但 key 不一定是合法的 path
-/// @param key 键
+/// 获取指定键的子模块，键不存在时懒加载创建并注册到 Domain。
+/// @discussion
+/// 键支持 "name"、":name"、"kind:name" 形式；当 kind 为默认空字符串时，"name" 与 ":name" 等价。
+/// 为此默认分类的子模块以「简化键 name」与「标准键 :name」双注册，保证两种写法命中同一对象。
+/// @param key 子模块的键
 - (XZMocoaModule *)objectForKeyedSubscript:(XZMocoaKey)key {
     if (key == nil) key = XZMocoaNameDefault;
     if (_submodules == nil) {
@@ -274,7 +287,7 @@ FOUNDATION_STATIC_INLINE NSString *XZMocoaPathCreate(XZMocoaKind kind, XZMocoaNa
         
         // 没有冒号，不是标准 key
         if (!XZMocoaPathParser(key, &kind, &name)) {
-            key = [NSString stringWithFormat:@"%@:%@", kind, name];
+            key = XZMocoaStandardKey(kind, name);
         }
         
         // 构造合法的 path
