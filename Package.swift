@@ -52,7 +52,12 @@ let package = Package(
                 "XZKitMacros",
                 .product(name: "SwiftSyntaxMacrosTestSupport", package: "swift-syntax"),
             ],
-            path: "Tests"
+            path: "Tests/Macro"
+        ),
+        .testTarget(
+            name: "XZMocoaModuleTests",
+            dependencies: ["XZKit"],
+            path: "Tests/XZMocoa"
         ),
         .executableTarget(
             name: "Demo",

@@ -215,19 +215,19 @@ class ViewModel: XZMocoaViewModel {
 
 ### 1、模块域
 
-XZMocoa 提供了基于 URL 的模块管理方案 `XZMocoaModuleDomain`，任何模块都可以通过 URL 在模块域中注册。
+XZMocoa 提供了基于 URL 的模块管理方案 `XZMocoaDomain`，任何模块都可以通过 URL 在模块域中注册。
 
 ```objc
-[[XZMocoaModuleDomain domainNamed:@"mocoa.xezun.com"] setModule:yourModule forPath:@"your/module/path"];
+[[XZMocoaDomain domainNamed:@"mocoa.xezun.com"] setModule:yourModule forPath:@"your/module/path"];
 ```
 
 上面例子中的模块地址为 `https://mocoa.xezun.com/your/module/path/`，其中 URL 的 scheme 是任意的。
 
 ```objc
-id yourModule = [XZMocoaModuleDomain moduleForURL:[NSURL URLWithString:@"https://mocoa.xezun.com/your/module/path/"]];
+id yourModule = [XZMocoaDomain moduleForURL:[NSURL URLWithString:@"https://mocoa.xezun.com/your/module/path/"]];
 ```
 
-`XZMocoaModuleDomain` 使用字典管理模块，无需担心性能问题。模块也可以由 `XZMocoaProvider` 协议提供懒加载，比如读取配置文件。
+`XZMocoaDomain` 使用字典管理模块，无需担心性能问题。模块也可以由 `XZMocoaProvider` 协议提供懒加载，比如读取配置文件。
 
 ### 2、Mocoa 模块
 
@@ -262,8 +262,7 @@ XZMocoaModule *module = XZMocoa(@"https://mocoa.xezun.com/view/");
 id<XZMocoaModel> model = [module.modelClass yy_modelWithDictionary:data];
 // 创建 viewModel
 XZMocoaViewModel *viewModel = [[module.viewModelClass alloc] initWithModel:model];
-[viewModel ready];
-// 创建 view
+// 创建 view 并关联视图模型
 UIView<XZMocoaView> *view = [UIView viewWithMocoaURL:module.url frame:CGRectMake(0, 0, 100, 100)];
 view.viewModel = viewModel;
 [self.view addSubview:view];
@@ -283,7 +282,7 @@ view.viewModel = viewModel;
 
 ```objc
 @protocol XZMocoaProvider <NSObject>
-- (nullable id)domain:(XZMocoaModuleDomain *)domain moduleForPath:(NSString *)path;
+- (nullable id)domain:(XZMocoaDomain *)domain moduleForPath:(NSString *)path;
 @end
 ```
 
@@ -496,7 +495,7 @@ View 根据 ViewModel 提供的数据进行展示。
 }
 ```
 
-一般情况下，需要重写数据模型的 `-isEqual:` 方法；但如果数据层已经做了数据管理（同一数据始终是同一个对象，或已经实现了 `-isEqual:`），这一步就可以省略。
+一般情况下，需要重写数据模型的 `-isEqual:/-hash` 方法；但如果数据层已经做了数据管理（同一数据始终是同一个对象，或已经实现了 `-isEqual:`），这一步就可以省略。
 
 ## 页面模块
 
