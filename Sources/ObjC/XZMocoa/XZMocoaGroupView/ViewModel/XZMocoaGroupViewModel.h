@@ -7,10 +7,8 @@
 //
 
 #import <CoreData/CoreData.h>
-#import "XZMocoaViewModel.h"
-#import "XZMocoaGroupCellViewModel.h"
+#import "XZMocoaGroupReusableViewModel.h"
 #import "XZMocoaGroupModel.h"
-#import "XZMocoaGroupSupplementViewModel.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -37,13 +35,13 @@ NS_ASSUME_NONNULL_BEGIN
 
 @property (nonatomic, readonly) NSInteger numberOfSections;
 - (NSInteger)numberOfCellsInSection:(NSInteger)section;
-- (__kindof XZMocoaGroupCellViewModel *)viewModelForCellAtIndexPath:(NSIndexPath *)indexPath;
-- (__kindof XZMocoaGroupSupplementViewModel *)viewModelForSupplementOfKind:(XZMocoaKind)kind atIndexPath:(NSIndexPath *)indexPath;
-- (__kindof XZMocoaGroupSupplementViewModel *)viewModelForHeaderInSection:(NSInteger)section;
-- (__kindof XZMocoaGroupSupplementViewModel *)viewModelForFooterInSection:(NSInteger)section;
+- (__kindof XZMocoaGroupReusableViewModel *)viewModelForCellAtIndexPath:(NSIndexPath *)indexPath;
+- (__kindof XZMocoaGroupReusableViewModel *)viewModelForSupplementOfKind:(XZMocoaKind)kind atIndexPath:(NSIndexPath *)indexPath;
+- (__kindof XZMocoaGroupReusableViewModel *)viewModelForHeaderInSection:(NSInteger)section;
+- (__kindof XZMocoaGroupReusableViewModel *)viewModelForFooterInSection:(NSInteger)section;
 
-- (nullable NSIndexPath *)indexPathForCellViewModel:(XZMocoaGroupCellViewModel *)viewModel;
-- (nullable NSIndexPath *)indexPathForSupplementViewModel:(XZMocoaGroupSupplementViewModel *)viewModel;
+- (nullable NSIndexPath *)indexPathForCellViewModel:(XZMocoaGroupReusableViewModel *)viewModel;
+- (nullable NSIndexPath *)indexPathForSupplementViewModel:(XZMocoaGroupReusableViewModel *)viewModel;
 
 - (void)selectCellAtIndexPath:(NSIndexPath *)indexPath animated:(BOOL)animated scrollPosition:(NSInteger)scrollPosition;
 - (void)deselectCellAtIndexPath:(NSIndexPath *)indexPath animated:(BOOL)animated;
@@ -111,8 +109,7 @@ NS_ASSUME_NONNULL_BEGIN
 // MARK: - 防崩溃设计的占位视图
 
 /// 子类应该重写此方法，并返回所需的 SectionViewModel 对象。
-//- (Class)placeholderViewModelClassForSectionAtIndex:(NSInteger)index;
-- (Class)viewModelClassForPlaceholderOfKind:(XZMocoaKind)kind;
+- (Class)viewModelClassForPlaceholderForKind:(XZMocoaKind)kind;
 
 @end
 

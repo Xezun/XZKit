@@ -25,34 +25,34 @@
 #import "XZMocoaViewModel.h"
 
 // XZMocoaGroupView
-#import "XZMocoaGroupCellModel.h"
 #import "XZMocoaGroupModel.h"
-#import "XZMocoaGroupCell.h"
-#import "XZMocoaGroupSupplementView.h"
 #import "XZMocoaGroupView.h"
-#import "XZMocoaGroupCellViewModel.h"
-#import "XZMocoaGroupSupplementViewModel.h"
 #import "XZMocoaGroupViewModel.h"
 
+#import "XZMocoaGroupReusableViewModel.h"
+#import "XZMocoaGroupReusableView.h"
+
 // XZMocoaTableView
-#import "XZMocoaTableCellModel.h"
 #import "XZMocoaTableModel.h"
-#import "XZMocoaTableCell.h"
-#import "XZMocoaTableSupplementView.h"
 #import "XZMocoaTableView.h"
 #import "XZMocoaTableViewController.h"
-#import "XZMocoaTableCellViewModel.h"
-#import "XZMocoaTableSupplementViewModel.h"
 #import "XZMocoaTableViewModel.h"
 
+#import "XZMocoaTableCell.h"
+#import "XZMocoaTableCellViewModel.h"
+
+#import "XZMocoaTableHeaderFooterView.h"
+#import "XZMocoaTableHeaderFooterViewModel.h"
+
 // XZMocoaCollectionView
-#import "XZMocoaCollectionCellModel.h"
 #import "XZMocoaCollectionModel.h"
-#import "XZMocoaCollectionCell.h"
-#import "XZMocoaCollectionSupplementView.h"
 #import "XZMocoaCollectionView.h"
 #import "XZMocoaCollectionViewController.h"
-#import "XZMocoaCollectionCellViewModel.h"
-#import "XZMocoaCollectionSupplementViewModel.h"
 #import "XZMocoaCollectionViewModel.h"
+
+#import "XZMocoaCollectionCell.h"
+#import "XZMocoaCollectionCellViewModel.h"
+
+#import "XZMocoaCollectionSupplementView.h"
+#import "XZMocoaCollectionSupplementViewModel.h"
 

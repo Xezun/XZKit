@@ -9,7 +9,7 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-@interface Example0331Group108Cell : UICollectionViewCell <XZMocoaCollectionCell>
+@interface Example0331Group108Cell : UICollectionViewCell 
 
 @end
 

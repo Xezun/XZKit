@@ -9,7 +9,7 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-@interface Example21TableViewCell : UITableViewCell <XZMocoaTableCell>
+@interface Example21TableViewCell : UITableViewCell 
 
 @end
 

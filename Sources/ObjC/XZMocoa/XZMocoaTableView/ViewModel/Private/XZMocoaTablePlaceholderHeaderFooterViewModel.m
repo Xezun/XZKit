@@ -1,15 +1,14 @@
 //
-//  XZMocoaTablePlaceholderSupplementViewModel.m
+//  XZMocoaTablePlaceholderHeaderFooterViewModel.m
 //  XZMocoa
 //
 //  Created by Xezun on 2023/8/28.
 //
 
-#import "XZMocoaTablePlaceholderSupplementViewModel.h"
+#import "XZMocoaTablePlaceholderHeaderFooterViewModel.h"
 
 #if DEBUG
-@implementation XZMocoaTablePlaceholderSupplementViewModel
-
+@implementation XZMocoaTablePlaceholderHeaderFooterViewModel
 - (instancetype)initWithModel:(id)model {
     self = [super initWithModel:model];
     if (self) {
@@ -17,6 +16,5 @@
     }
     return self;
 }
-
 @end
 #endif

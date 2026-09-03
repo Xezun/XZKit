@@ -75,9 +75,12 @@ NS_SWIFT_UI_ACTOR @interface XZMocoaViewModel : NSObject <XZMocoaViewModel> {
 /// > 属性可写是为兼容 Swift 结构体数据类型，默认情况下，修改属性除修改数据外，不执行任何操作。
 @property (nonatomic, strong, nullable) id model;
 
-/// 视图在列表中的排序。
-@property (nonatomic) NSInteger index;
-@property (nonatomic) NSIndexPath *indexPath;
+/// 视图的 frame 值。
+///
+/// 修改属性不会发送事件，以避免发送事件太频繁。
+///
+/// 如果视图的值受数据影响时，此值将起作用，且不同的视图，可能其中仅部分值有效，比如在 UITableView 中，仅 height 值有效。
+@property (nonatomic) CGRect frame;
 
 /// 标准初始化方法。一般情况下，子类应尽量避免添加新的初始化方法，保证接口统一。
 /// @param model 数据

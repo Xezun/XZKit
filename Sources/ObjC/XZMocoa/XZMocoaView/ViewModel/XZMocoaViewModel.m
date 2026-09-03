@@ -51,9 +51,9 @@
 - (instancetype)initWithModel:(id)model {
     self = [super init];
     if (self) {
-        _indexPath = [NSIndexPath indexPathForItem:0 inSection:0];
-        _isReady   = NO;
-        _model     = model;
+        _frame   = CGRectZero;
+        _isReady = NO;
+        _model   = model;
     }
     return self;
 }
@@ -89,14 +89,6 @@
         return viewController;
     }
     return _superViewModel.tabBarController;
-}
-
-- (NSInteger)index {
-    return _indexPath.item;
-}
-
-- (void)setIndex:(NSInteger)index {
-    _indexPath = [NSIndexPath indexPathForItem:index inSection:_indexPath.section];
 }
 
 - (void)ready {

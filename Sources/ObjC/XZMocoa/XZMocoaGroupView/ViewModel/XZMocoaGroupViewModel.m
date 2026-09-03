@@ -98,23 +98,23 @@
     return _viewModelSections[section].cells.count;
 }
 
-- (__kindof XZMocoaGroupCellViewModel *)viewModelForCellAtIndexPath:(NSIndexPath *)indexPath {
+- (__kindof XZMocoaGroupReusableViewModel *)viewModelForCellAtIndexPath:(NSIndexPath *)indexPath {
     return _viewModelSections[indexPath.section].cells[indexPath.item];
 }
 
-- (__kindof XZMocoaGroupSupplementViewModel *)viewModelForSupplementOfKind:(XZMocoaKind)kind atIndexPath:(NSIndexPath *)indexPath {
+- (__kindof XZMocoaGroupReusableViewModel *)viewModelForSupplementOfKind:(XZMocoaKind)kind atIndexPath:(NSIndexPath *)indexPath {
     return [_viewModelSections[indexPath.section] supplementForKind:kind atIndex:indexPath.item];
 }
 
-- (XZMocoaGroupSupplementViewModel *)viewModelForHeaderInSection:(NSInteger)section {
+- (XZMocoaGroupReusableViewModel *)viewModelForHeaderInSection:(NSInteger)section {
     return [_viewModelSections[section] supplementsForKind:XZMocoaKindHeader].firstObject;
 }
 
-- (XZMocoaGroupSupplementViewModel *)viewModelForFooterInSection:(NSInteger)section {
+- (XZMocoaGroupReusableViewModel *)viewModelForFooterInSection:(NSInteger)section {
     return [_viewModelSections[section] supplementsForKind:XZMocoaKindFooter].firstObject;
 }
 
-- (NSIndexPath *)indexPathForCellViewModel:(XZMocoaGroupCellViewModel *)viewModel {
+- (NSIndexPath *)indexPathForCellViewModel:(XZMocoaGroupReusableViewModel *)viewModel {
     for (NSInteger sectionIndex = 0; sectionIndex < _viewModelSections.count; sectionIndex++) {
         NSArray * const cellViewModels = _viewModelSections[sectionIndex].cells;
         for (NSInteger itemIndex = 0; itemIndex < cellViewModels.count; itemIndex++) {
@@ -126,7 +126,7 @@
     return nil;
 }
 
-- (NSIndexPath *)indexPathForSupplementViewModel:(XZMocoaGroupSupplementViewModel *)viewModel {
+- (NSIndexPath *)indexPathForSupplementViewModel:(XZMocoaGroupReusableViewModel *)viewModel {
     NSIndexPath * __block indexPath = nil;
     for (NSInteger sectionIndex = 0; sectionIndex < _viewModelSections.count; sectionIndex++) {
         [_viewModelSections[sectionIndex].supplements enumerateKeysAndObjectsUsingBlock:^(XZMocoaKind key, NSArray<__kindof XZMocoaViewModel *> *supplementViewModels, BOOL *stop) {
@@ -312,7 +312,7 @@
         [modelSection replaceCellAtIndex:item withCell:newCellModel];
         
         // 加载新视图模型
-        XZMocoaGroupCellViewModel * const viewModel = [self createViewModelWithModel:newCellModel forKind:XZMocoaKindDefault];
+        XZMocoaGroupReusableViewModel * const viewModel = [self createViewModelWithModel:newCellModel forKind:XZMocoaKindDefault];
         viewModel.indexPath = indexPath;
         [self addSubViewModel:viewModel];
         [viewModelSection replaceCellAtIndex:item withCell:viewModel];
@@ -343,7 +343,7 @@
         
         // 加载新视图模型
         XZMocoaGroupSection * const viewModelSection = _viewModelSections[section];
-        XZMocoaGroupCellViewModel * const viewModel = [self createViewModelWithModel:newCellModel forKind:XZMocoaKindDefault];
+        XZMocoaGroupReusableViewModel * const viewModel = [self createViewModelWithModel:newCellModel forKind:XZMocoaKindDefault];
         viewModel.indexPath = indexPath;
         [self addSubViewModel:viewModel];
         [viewModelSection insertCell:viewModel atIndex:item];
@@ -779,11 +779,10 @@
         
         [[modelSection supplementsForKind:kind] enumerateObjectsUsingBlock:^(id const supplementModel, NSUInteger supplementIndex, BOOL * _Nonnull stop) {
             NSIndexPath * const indexPath = [NSIndexPath indexPathForItem:supplementIndex inSection:sectionIndex];
-            XZMocoaGroupSupplementViewModel * const viewModel = [self createViewModelWithModel:supplementModel forKind:kind];
+            XZMocoaGroupReusableViewModel * const viewModel = [self createViewModelWithModel:supplementModel forKind:kind];
             viewModel.indexPath = indexPath;
             [self addSubViewModel:viewModel];
             [viewModelSection addSupplement:viewModel forKind:kind];
-            // [viewModelSection insertSupplement:viewModel atIndex:supplementIndex forKind:kind];
         }];
     }
     
@@ -793,11 +792,10 @@
             NSIndexPath *    const indexPath = [NSIndexPath indexPathForItem:cellIndex inSection:sectionIndex];
             id<XZMocoaModel> const cellModel = cellModels[cellIndex];
             
-            XZMocoaGroupCellViewModel * const viewModel = [self createViewModelWithModel:cellModel forKind:(XZMocoaKindDefault)];
+            XZMocoaGroupReusableViewModel * const viewModel = [self createViewModelWithModel:cellModel forKind:(XZMocoaKindDefault)];
             viewModel.indexPath = indexPath;
             [self addSubViewModel:viewModel];
             [viewModelSection addCell:viewModel];
-            //[viewModelSection insertCell:viewModel atIndex:cellIndex];
         }
     }
 }
@@ -810,12 +808,12 @@
     XZMocoaName     const name   = model.mocoaName ?: XZMocoaNameDefault;
     XZMocoaModule * const module = [self.module submoduleIfLoadedForKind:kind forName:name];
     
-    Class      const VMClass    = module.viewModelClass      ?: [self viewModelClassForPlaceholderOfKind:kind];
+    Class      const VMClass    = module.viewModelClass      ?: [self viewModelClassForPlaceholderForKind:kind];
     NSString * const identifier = module.viewReuseIdentifier ?: XZMocoaReuseIdentifier(kind, name);
     
-    XZMocoaGroupCellViewModel * const viewModel = [[VMClass alloc] initWithModel:model];
-    viewModel.module     = module;
-    viewModel.identifier = identifier;
+    XZMocoaGroupReusableViewModel * const viewModel = [[VMClass alloc] initWithModel:model];
+    viewModel.module          = module;
+    viewModel.reuseIdentifier = identifier; // 避免子类重写初始化方法，对 model 进行脱壳后，导致丢失 identifier
     return viewModel;
 }
 
@@ -874,7 +872,7 @@
         }
         XZMocoaGroupSection * const viewModelSection = viewModelSections[sectionIndex];
         
-        [viewModelSection.cells enumerateObjectsUsingBlock:^(XZMocoaViewModel *viewModel, NSUInteger idx, BOOL * _Nonnull stop) {
+        [viewModelSection.cells enumerateObjectsUsingBlock:^(XZMocoaGroupReusableViewModel *viewModel, NSUInteger idx, BOOL * _Nonnull stop) {
             NSIndexPath *indexPath = viewModel.indexPath;
             if (indexPath && indexPath.section == sectionIndex && indexPath.item == idx) {
                 return;
@@ -883,8 +881,8 @@
             viewModel.indexPath = indexPath;
         }];
         
-        [viewModelSection.supplements enumerateKeysAndObjectsUsingBlock:^(XZMocoaKind const kind, NSArray<XZMocoaViewModel *> * _Nonnull viewModels, BOOL * _Nonnull stop) {
-            [viewModels enumerateObjectsUsingBlock:^(XZMocoaViewModel * _Nonnull viewModel, NSUInteger idx, BOOL * _Nonnull stop) {
+        [viewModelSection.supplements enumerateKeysAndObjectsUsingBlock:^(XZMocoaKind const kind, NSArray<XZMocoaGroupReusableViewModel *> * _Nonnull viewModels, BOOL * _Nonnull stop) {
+            [viewModels enumerateObjectsUsingBlock:^(XZMocoaGroupReusableViewModel * _Nonnull viewModel, NSUInteger idx, BOOL * _Nonnull stop) {
                 NSIndexPath *indexPath = viewModel.indexPath;
                 if (indexPath && indexPath.section == sectionIndex && indexPath.item == idx) {
                     return;
@@ -991,7 +989,7 @@
     @throw [NSException exceptionWithName:NSGenericException reason:reason userInfo:nil];
 }
 
-- (Class)viewModelClassForPlaceholderOfKind:(XZMocoaKind)kind {
+- (Class)viewModelClassForPlaceholderForKind:(XZMocoaKind)kind {
     NSString *reason = [NSString stringWithFormat:@"必须使用子类，并重写 %s 方法", __PRETTY_FUNCTION__];
     @throw [NSException exceptionWithName:NSGenericException reason:reason userInfo:nil];
 }
@@ -1079,7 +1077,7 @@
         }
         case NSFetchedResultsChangeMove: {
             if ([anObject hasPersistentChangedValues]) {
-                XZMocoaGroupCellViewModel * const viewModel = [self viewModelForCellAtIndexPath:indexPath];
+                XZMocoaGroupReusableViewModel * const viewModel = [self viewModelForCellAtIndexPath:indexPath];
                 if (viewModel.shouldObserveModelKeysActively) {
                     break;
                 }
@@ -1095,7 +1093,7 @@
             // 如果同时发生了 move 事件，则不会调用此方法
             // changedValuesForCurrentEvent 中仅包含持久存储属性变更，先使用 hasPersistentChangedValues 判断是否有更新以优化性能
             if ([anObject hasPersistentChangedValues]) {
-                XZMocoaGroupCellViewModel * const viewModel = [self viewModelForCellAtIndexPath:indexPath];
+                XZMocoaGroupReusableViewModel * const viewModel = [self viewModelForCellAtIndexPath:indexPath];
                 if (viewModel.shouldObserveModelKeysActively) {
                     break;
                 }

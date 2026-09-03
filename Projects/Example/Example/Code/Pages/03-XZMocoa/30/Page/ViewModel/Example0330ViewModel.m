@@ -56,7 +56,8 @@
         @"notes": @"110. 测试 Footer 模块未注册 Model"
     }];
     NSArray *groups = [data xz_map:^id(NSDictionary *dict, NSInteger idx, BOOL * _Nonnull stop) {
-        XZMocoaModule *submodule = [module submoduleForName:dict[@"group"]];
+        NSString *name = dict[@"group"];
+        XZMocoaModule *submodule = module[name];
         return [XZJSON decode:dict options:0 class:submodule.modelClass];
     }];
     

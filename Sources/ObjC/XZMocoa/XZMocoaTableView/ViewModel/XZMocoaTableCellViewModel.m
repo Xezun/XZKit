@@ -24,7 +24,7 @@
 }
 
 - (NSString *)description {
-    return [NSString stringWithFormat:@"<%@: %p, identifier = %@; height = %g>", self.class, self, self.identifier, self.height];
+    return [NSString stringWithFormat:@"<%@: %p, identifier = %@; height = %g>", self.class, self, self.reuseIdentifier, self.height];
 }
 
 - (void)tableViewCell:(UITableViewCell *)cell wasSelectedAtIndexPath:(NSIndexPath *)indexPath {

@@ -20,7 +20,7 @@
     self.height = 50.0;
     
     ExampleMainHomeCellModel *model = self.model;
-    self.title = [NSString stringWithFormat:@"%ld. %@", (self.index + 1), model.name];
+    self.title = [NSString stringWithFormat:@"%ld. %@", (self.indexPath.item + 1), model.name];
 }
 
 - (void)tableViewCell:(UITableViewCell *)cell wasSelectedAtIndexPath:(NSIndexPath *)indexPath {

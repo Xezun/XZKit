@@ -19,8 +19,6 @@
     XZMocoa(@"https://mocoa.xezun.com/examples/20/table/102/").viewNibClass = self;
 }
 
-@dynamic viewModel;
-
 - (void)awakeFromNib {
     [super awakeFromNib];
     

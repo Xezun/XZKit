@@ -1,13 +1,13 @@
 //
-//  XZMocoaTableSupplementViewModel.m
-//  XZMocoa
+//  XZMocoaTableHeaderFooterViewModel.m
+//  XZKit
 //
-//  Created by Xezun on 2023/8/9.
+//  Created by Xezun on 2026/9/3.
 //
 
-#import "XZMocoaTableSupplementViewModel.h"
+#import "XZMocoaTableHeaderFooterViewModel.h"
 
-@implementation XZMocoaTableSupplementViewModel
+@implementation XZMocoaTableHeaderFooterViewModel
 
 - (instancetype)initWithModel:(id)model {
     self = [super initWithModel:model];
@@ -30,11 +30,4 @@
     self.frame = frame;
 }
 
-@end
-
-
-@implementation XZMocoaTableHeaderViewModel
-@end
-
-@implementation XZMocoaTableFooterViewModel
 @end

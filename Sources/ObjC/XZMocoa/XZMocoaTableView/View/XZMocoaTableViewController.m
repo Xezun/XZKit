@@ -7,7 +7,7 @@
 
 #import "XZMocoaTableViewController.h"
 #import "XZMocoaTableCell.h"
-#import "XZMocoaTableSupplementView.h"
+#import "XZMocoaTableHeaderFooterView.h"
 #import "XZMocoaTableViewProxy.h"
 @import ObjectiveC;
 

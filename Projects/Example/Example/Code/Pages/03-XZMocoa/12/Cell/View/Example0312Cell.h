@@ -10,7 +10,7 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-@interface Example0312Cell : UITableViewCell <XZMocoaTableCell>
+@interface Example0312Cell : UITableViewCell 
 @property (weak, nonatomic) IBOutlet UILabel *nameLabel;
 @end
 

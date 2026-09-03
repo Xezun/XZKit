@@ -12,7 +12,7 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-@interface Example0320Group102Cell : UITableViewCell <XZMocoaTableCell>
+@interface Example0320Group102Cell : UITableViewCell 
 @property (weak, nonatomic) IBOutlet XZPageView *pageView;
 @property (weak, nonatomic) IBOutlet XZPageControl *pageControl;
 @end

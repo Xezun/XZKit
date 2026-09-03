@@ -6,8 +6,9 @@
 //
 
 #import "XZMocoaTableViewProxy.h"
-#import "XZMocoaTablePlaceholderSupplementView.h"
+#import "XZMocoaTablePlaceholderHeaderFooterView.h"
 #import "XZMocoaTablePlaceholderCell.h"
+#import "XZMocoaTableHeaderFooterViewModel.h"
 @import ObjectiveC;
 
 @implementation XZMocoaTableViewProxy
@@ -20,10 +21,10 @@
         [tableView registerClass:[XZMocoaTablePlaceholderCell class] forCellReuseIdentifier:identifier];
         
         identifier = XZMocoaReuseIdentifier(XZMocoaKindHeader, XZMocoaNamePlaceholder);
-        [tableView registerClass:[XZMocoaTablePlaceholderSupplementView class] forHeaderFooterViewReuseIdentifier:identifier];
+        [tableView registerClass:[XZMocoaTablePlaceholderHeaderFooterView class] forHeaderFooterViewReuseIdentifier:identifier];
         
         identifier = XZMocoaReuseIdentifier(XZMocoaKindFooter, XZMocoaNamePlaceholder);
-        [tableView registerClass:[XZMocoaTablePlaceholderSupplementView class] forHeaderFooterViewReuseIdentifier:identifier];
+        [tableView registerClass:[XZMocoaTablePlaceholderHeaderFooterView class] forHeaderFooterViewReuseIdentifier:identifier];
     }
     
     [module enumerateSubmodulesUsingBlock:^(XZMocoaModule *submodule, XZMocoaKind kind, XZMocoaName name, BOOL *stop) {
@@ -70,7 +71,7 @@
                 }
                 default: {
                     NSString * const identifier = XZMocoaReuseIdentifier(kind, name);
-                    Class const aClass = [XZMocoaTablePlaceholderSupplementView class];
+                    Class const aClass = [XZMocoaTablePlaceholderHeaderFooterView class];
                     [tableView registerClass:aClass forHeaderFooterViewReuseIdentifier:identifier];
                     break;
                 }
@@ -94,7 +95,7 @@
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
     XZMocoaTableCellViewModel * const viewModel = [self.viewModel viewModelForCellAtIndexPath:indexPath];
     
-    UITableViewCell<XZMocoaTableCell> *cell = [tableView dequeueReusableCellWithIdentifier:viewModel.identifier forIndexPath:indexPath];
+    UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:viewModel.reuseIdentifier forIndexPath:indexPath];
     cell.viewModel = viewModel;
     
     return cell;
@@ -111,18 +112,17 @@
 }
 
 - (UIView *)tableView:(UITableView *)tableView viewForHeaderInSection:(NSInteger)section {
-    
-    XZMocoaTableSupplementViewModel * const viewModel = [self.viewModel viewModelForHeaderInSection:section];
+    XZMocoaTableHeaderFooterViewModel * const viewModel = [self.viewModel viewModelForHeaderInSection:section];
     if (viewModel == nil) {
         return nil;
     }
-    UITableViewHeaderFooterView<XZMocoaTableSupplementView> *view = [tableView dequeueReusableHeaderFooterViewWithIdentifier:viewModel.identifier];
+    UITableViewHeaderFooterView * const view = [tableView dequeueReusableHeaderFooterViewWithIdentifier:viewModel.reuseIdentifier];
     view.viewModel = viewModel;
     return view;
 }
 
 - (CGFloat)tableView:(UITableView *)tableView heightForHeaderInSection:(NSInteger)section {
-    XZMocoaTableSupplementViewModel * const viewModel = [self.viewModel viewModelForHeaderInSection:section];
+    XZMocoaTableHeaderFooterViewModel * const viewModel = [self.viewModel viewModelForHeaderInSection:section];
     if (viewModel == nil) {
         return XZMocoaMinimumViewDimension;
     }
@@ -130,39 +130,39 @@
 }
 
 - (UIView *)tableView:(UITableView *)tableView viewForFooterInSection:(NSInteger)section {
-    XZMocoaTableSupplementViewModel * const viewModel = [self.viewModel viewModelForFooterInSection:section];
+    XZMocoaTableHeaderFooterViewModel * const viewModel = [self.viewModel viewModelForFooterInSection:section];
     if (viewModel == nil) {
         return nil;
     }
-    UITableViewHeaderFooterView<XZMocoaTableSupplementView> *view = [tableView dequeueReusableHeaderFooterViewWithIdentifier:viewModel.identifier];
+    UITableViewHeaderFooterView<XZMocoaGroupReusableView> * const view = [tableView dequeueReusableHeaderFooterViewWithIdentifier:viewModel.reuseIdentifier];
     view.viewModel = viewModel;
     return view;
 }
 
 - (CGFloat)tableView:(UITableView *)tableView heightForFooterInSection:(NSInteger)section {
-    XZMocoaTableSupplementViewModel * const viewModel = [self.viewModel viewModelForFooterInSection:section];
+    XZMocoaTableHeaderFooterViewModel * const viewModel = [self.viewModel viewModelForFooterInSection:section];
     if (viewModel == nil) {
         return XZMocoaMinimumViewDimension;
     }
     return viewModel.height;
 }
 
-- (void)tableView:(UITableView *)tableView willDisplayCell:(UITableViewCell<XZMocoaTableCell> *)cell forRowAtIndexPath:(NSIndexPath *)indexPath {
-    [cell tableView:(id)self willDisplayRowAtIndexPath:indexPath];
+- (void)tableView:(UITableView *)tableView willDisplayCell:(UITableViewCell *)cell forRowAtIndexPath:(NSIndexPath *)indexPath {
+    [cell tableView:tableView willDisplayRowAtIndexPath:indexPath];
 }
 
-- (void)tableView:(UITableView *)tableView didEndDisplayingCell:(UITableViewCell<XZMocoaTableCell> *)cell forRowAtIndexPath:(NSIndexPath*)indexPath {
-    [cell tableView:(id)self didEndDisplayingRowAtIndexPath:indexPath];
+- (void)tableView:(UITableView *)tableView didEndDisplayingCell:(UITableViewCell *)cell forRowAtIndexPath:(NSIndexPath*)indexPath {
+    [cell tableView:tableView didEndDisplayingRowAtIndexPath:indexPath];
 }
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
-    UITableViewCell<XZMocoaTableCell> *cell = (id)[tableView cellForRowAtIndexPath:indexPath];
-    [cell tableView:(id)self didSelectRowAtIndexPath:indexPath];
+    UITableViewCell *cell = (id)[tableView cellForRowAtIndexPath:indexPath];
+    [cell tableView:tableView didSelectRowAtIndexPath:indexPath];
 }
 
 - (void)tableView:(UITableView *)tableView didDeselectRowAtIndexPath:(NSIndexPath *)indexPath {
-    UITableViewCell<XZMocoaTableCell> *cell = (id)[tableView cellForRowAtIndexPath:indexPath];
-    [cell tableView:(id)self didDeselectRowAtIndexPath:indexPath];
+    UITableViewCell *cell = (id)[tableView cellForRowAtIndexPath:indexPath];
+    [cell tableView:tableView didDeselectRowAtIndexPath:indexPath];
 }
 
 @end

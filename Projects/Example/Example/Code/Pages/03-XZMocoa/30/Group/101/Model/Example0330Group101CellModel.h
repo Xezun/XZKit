@@ -9,7 +9,7 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-@interface Example0330Group101CellModel : NSObject <XZMocoaTableCellModel>
+@interface Example0330Group101CellModel : NSObject <XZMocoaModel>
 @property (nonatomic, copy, nullable) NSString *text;
 @end
 

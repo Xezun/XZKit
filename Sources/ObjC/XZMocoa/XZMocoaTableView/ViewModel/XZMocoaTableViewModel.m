@@ -7,7 +7,7 @@
 
 #import "XZMocoaTableViewModel.h"
 #import "XZMocoaTablePlaceholderCellViewModel.h"
-#import "XZMocoaTablePlaceholderSupplementViewModel.h"
+#import "XZMocoaTablePlaceholderHeaderFooterViewModel.h"
 
 @implementation XZMocoaTableViewModel
 
@@ -178,9 +178,12 @@
     }
 }
 
-- (Class)viewModelClassForPlaceholderOfKind:(XZMocoaKind)kind {
-    if (kind == XZMocoaKindHeader || kind == XZMocoaKindFooter) {
-        return [XZMocoaTablePlaceholderSupplementViewModel class];
+- (Class)viewModelClassForPlaceholderForKind:(XZMocoaKind)kind {
+    if (kind == XZMocoaKindHeader) {
+        return [XZMocoaTablePlaceholderHeaderFooterViewModel class];
+    }
+    if (kind == XZMocoaKindFooter) {
+        return [XZMocoaTablePlaceholderHeaderFooterViewModel class];
     }
     return [XZMocoaTablePlaceholderCellViewModel class];
 }

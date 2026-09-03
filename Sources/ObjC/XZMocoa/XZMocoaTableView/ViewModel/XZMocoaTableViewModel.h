@@ -6,8 +6,6 @@
 //
 
 #import "XZMocoaGroupViewModel.h"
-#import "XZMocoaTableSupplementViewModel.h"
-#import "XZMocoaTableCellViewModel.h"
 
 NS_ASSUME_NONNULL_BEGIN
 

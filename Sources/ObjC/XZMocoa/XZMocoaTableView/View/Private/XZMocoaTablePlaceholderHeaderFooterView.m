@@ -5,11 +5,12 @@
 //  Created by Xezun on 2023/8/19.
 //
 
-#import "XZMocoaTablePlaceholderSupplementView.h"
+#import "XZMocoaTablePlaceholderHeaderFooterView.h"
 #import "XZMocoaGroupPlaceholderView.h"
 
 #if DEBUG
-@implementation XZMocoaTablePlaceholderSupplementView {
+
+@implementation XZMocoaTablePlaceholderHeaderFooterView {
     XZMocoaGroupPlaceholderView *_view;
 }
 
@@ -30,4 +31,5 @@
 }
 
 @end
+
 #endif

@@ -28,19 +28,19 @@
     return tableView;
 }
 
-- (void)tableView:(XZMocoaTableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
+- (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
     [self.viewModel tableViewCell:self wasSelectedAtIndexPath:indexPath];
 }
 
-- (void)tableView:(XZMocoaTableView *)tableView didDeselectRowAtIndexPath:(NSIndexPath *)indexPath {
+- (void)tableView:(UITableView *)tableView didDeselectRowAtIndexPath:(NSIndexPath *)indexPath {
     [self.viewModel tableViewCell:self wasDeselectedAtIndexPath:indexPath];
 }
 
-- (void)tableView:(XZMocoaTableView *)tableView willDisplayRowAtIndexPath:(NSIndexPath *)indexPath {
+- (void)tableView:(UITableView *)tableView willDisplayRowAtIndexPath:(NSIndexPath *)indexPath {
     [self.viewModel tableViewCell:self willBeDisplayedAtIndexPath:indexPath];
 }
 
-- (void)tableView:(XZMocoaTableView *)tableView didEndDisplayingRowAtIndexPath:(NSIndexPath *)indexPath {
+- (void)tableView:(UITableView *)tableView didEndDisplayingRowAtIndexPath:(NSIndexPath *)indexPath {
     [self.viewModel tableViewCell:self wasEndedDisplayingAtIndexPath:indexPath];
 }
 

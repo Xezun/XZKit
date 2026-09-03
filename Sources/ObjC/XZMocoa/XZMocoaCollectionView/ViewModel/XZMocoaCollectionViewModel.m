@@ -75,7 +75,7 @@
     }
 }
 
-- (Class)viewModelClassForPlaceholderOfKind:(XZMocoaKind)kind {
+- (Class)viewModelClassForPlaceholderForKind:(XZMocoaKind)kind {
     if (kind == XZMocoaKindHeader || kind == XZMocoaKindFooter) {
         return [XZMocoaCollectionPlaceholderSupplementViewModel class];
     }

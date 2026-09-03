@@ -5,14 +5,14 @@
 //  Created by Xezun on 2023/7/22.
 //
 
-#import "XZMocoaGroupCellViewModel.h"
+#import "XZMocoaGroupReusableViewModel.h"
 
 @protocol XZMocoaCollectionView, XZMocoaCollectionCell;
 
 NS_ASSUME_NONNULL_BEGIN
 
 /// UICollectionViewCell 视图模型基类。
-@interface XZMocoaCollectionCellViewModel : XZMocoaGroupCellViewModel
+@interface XZMocoaCollectionCellViewModel : XZMocoaGroupReusableViewModel
 
 @property (nonatomic) CGSize size;
 

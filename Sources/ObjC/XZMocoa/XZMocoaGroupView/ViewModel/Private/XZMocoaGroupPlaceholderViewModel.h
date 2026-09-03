@@ -10,7 +10,7 @@
 NS_ASSUME_NONNULL_BEGIN
 
 #if DEBUG
-@class XZMocoaGroupCellViewModel;
+@class XZMocoaGroupReusableViewModel;
 @interface XZMocoaGroupPlaceholderViewModel : XZMocoaViewModel
 @property (nonatomic, copy) NSString *reason;
 @property (nonatomic, copy) NSString *detail;

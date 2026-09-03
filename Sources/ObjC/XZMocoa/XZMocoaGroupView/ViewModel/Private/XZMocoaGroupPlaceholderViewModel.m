@@ -6,21 +6,21 @@
 //
 
 #import "XZMocoaGroupPlaceholderViewModel.h"
-#import "XZMocoaGroupCellViewModel.h"
+#import "XZMocoaGroupReusableViewModel.h"
 #import "XZMocoaGroupViewModel.h"
 
 #if DEBUG
 
 @implementation XZMocoaGroupPlaceholderViewModel
 
-- (instancetype)initWithModel:(XZMocoaGroupCellViewModel *)model {
+- (instancetype)initWithModel:(XZMocoaGroupReusableViewModel *)model {
     return [super initWithModel:model];
 }
 
 - (void)prepare {
     [super prepare];
     
-    XZMocoaGroupCellViewModel * const cellViewModel  = self.model;
+    XZMocoaGroupReusableViewModel * const cellViewModel  = self.model;
     
     XZMocoaName cellName = ((id<XZMocoaModel>)cellViewModel.model).mocoaName;
     if (cellName.length == 0) {

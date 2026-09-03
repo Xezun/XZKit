@@ -1,1 +1,0 @@
-../../../ObjC/XZMocoa/XZMocoaTableView/Model/XZMocoaTableCellModel.h

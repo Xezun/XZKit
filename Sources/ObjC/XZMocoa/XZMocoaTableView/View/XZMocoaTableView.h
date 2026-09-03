@@ -18,13 +18,12 @@ NS_ASSUME_NONNULL_BEGIN
 // XZMocoaTableViewModel
 // -
 // XZMocoaTableCell
-// XZMocoaTableCellModel
 // XZMocoaTableCellViewModel
 // -
-// XZMocoaTableSupplementModel
-// XZMocoaTableSupplementView
-// XZMocoaTableSupplementViewModel
-// XZMocoaTableSectionViewModel
+// XZMocoaTableHeaderView
+// XZMocoaTableHeaderViewModel
+// XZMocoaTableFooterView
+// XZMocoaTableFooterViewModel
 //
 // 在 IB 中，IBInspectable 值在 -initWithCoder: 中并没有被赋值，一般需要在 -awakeFromNib 方法中才能获取。
 //

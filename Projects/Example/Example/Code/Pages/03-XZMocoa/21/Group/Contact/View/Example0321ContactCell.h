@@ -11,7 +11,7 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-@interface Example0321ContactCell : UITableViewCell <XZMocoaTableCell>
+@interface Example0321ContactCell : UITableViewCell 
 
 @property (nonatomic, strong, nullable) Example0321ContactCellViewModel *viewModel;
 

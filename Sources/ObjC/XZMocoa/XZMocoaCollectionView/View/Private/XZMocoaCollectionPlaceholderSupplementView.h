@@ -10,7 +10,7 @@
 NS_ASSUME_NONNULL_BEGIN
 
 #if DEBUG
-@interface XZMocoaCollectionPlaceholderSupplementView : UICollectionReusableView <XZMocoaCollectionSupplementView>
+@interface XZMocoaCollectionPlaceholderSupplementView : UICollectionReusableView
 @end
 #else
 typedef UICollectionReusableView XZMocoaCollectionPlaceholderSupplementView;

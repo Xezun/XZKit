@@ -40,7 +40,7 @@ static NSString *UIElementKindFromMocoaKind(XZMocoaKind kind) {
         }
     }
     
-    [module enumerateSubmodulesUsingBlock:^(XZMocoaModule *submodule, XZMocoaKind kind, XZMocoaName name, BOOL *stop) {
+    [module enumerateSubmodulesUsingBlock:^(XZMocoaModule * const submodule, XZMocoaKind const kind, XZMocoaName const name, BOOL *stop) {
         if ([kind isEqualToString:XZMocoaKindDefault]) {
             switch (submodule.viewForm) {
                 case XZMocoaModuleViewFormClass: {
@@ -136,7 +136,7 @@ static NSString *UIElementKindFromMocoaKind(XZMocoaKind kind) {
 
 - (__kindof UICollectionViewCell *)collectionView:(UICollectionView *)collectionView cellForItemAtIndexPath:(NSIndexPath *)indexPath {
     XZMocoaCollectionCellViewModel *viewModel = [self.viewModel viewModelForCellAtIndexPath:indexPath];
-    UICollectionViewCell<XZMocoaCollectionCell> *cell = [collectionView dequeueReusableCellWithReuseIdentifier:viewModel.identifier forIndexPath:indexPath];
+    UICollectionViewCell<XZMocoaCollectionCell> *cell = [collectionView dequeueReusableCellWithReuseIdentifier:viewModel.reuseIdentifier forIndexPath:indexPath];
     cell.viewModel = viewModel;
     return cell;
 }
@@ -148,7 +148,7 @@ static NSString *UIElementKindFromMocoaKind(XZMocoaKind kind) {
     if (viewModel == nil) {
         return nil;
     }
-    UICollectionReusableView<XZMocoaCollectionSupplementView> *view = [collectionView dequeueReusableSupplementaryViewOfKind:kind withReuseIdentifier:viewModel.identifier forIndexPath:indexPath];
+    UICollectionReusableView *view = [collectionView dequeueReusableSupplementaryViewOfKind:kind withReuseIdentifier:viewModel.reuseIdentifier forIndexPath:indexPath];
     view.viewModel = viewModel;
     return view;
 }

@@ -9,7 +9,7 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-@interface Example21TableViewHeaderViewModel : XZMocoaTableSupplementViewModel
+@interface Example21TableViewHeaderViewModel : XZMocoaTableHeaderFooterViewModel
 
 @end
 

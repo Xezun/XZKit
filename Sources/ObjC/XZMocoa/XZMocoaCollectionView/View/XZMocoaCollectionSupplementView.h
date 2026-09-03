@@ -6,17 +6,15 @@
 //
 
 #import <UIKit/UIKit.h>
-#import "XZMocoaGroupSupplementView.h"
+#import "XZMocoaGroupReusableView.h"
+#import "XZMocoaCollectionCellViewModel.h"
 #import "XZMocoaCollectionSupplementViewModel.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
 @protocol XZMocoaCollectionView;
 
-@protocol XZMocoaCollectionSupplementView <XZMocoaGroupSupplementView>
-@optional
-@property (nonatomic, strong, nullable) __kindof XZMocoaCollectionSupplementViewModel *viewModel;
-@end
+typedef UICollectionReusableView XZMocoaCollectionSupplementView;
 
 @interface UICollectionReusableView (XZMocoaCollectionSupplementView)
 @property (nonatomic, strong, nullable) __kindof XZMocoaCollectionSupplementViewModel *viewModel;
@@ -24,6 +22,7 @@ NS_ASSUME_NONNULL_BEGIN
 - (void)collectionView:(id<XZMocoaCollectionView>)collectionView didEndDisplayingSupplementaryViewAtIndexPath:(NSIndexPath *)indexPath forElementOfKind:(NSString *)elementKind;
 @end
 
+/// 为 Cell 禁用属于 supplement 的方法。
 @interface UICollectionViewCell (XZMocoaCollectionSupplementView)
 - (void)collectionView:(id<XZMocoaCollectionView>)collectionView willDisplaySupplementaryViewAtIndexPath:(NSIndexPath *)indexPath forElementOfKind:(NSString *)elementKind NS_UNAVAILABLE;
 - (void)collectionView:(id<XZMocoaCollectionView>)collectionView didEndDisplayingSupplementaryViewAtIndexPath:(NSIndexPath *)indexPath forElementOfKind:(NSString *)elementKind NS_UNAVAILABLE;

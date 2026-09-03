@@ -10,7 +10,7 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-@interface Example0322TextCell : UICollectionViewCell <XZMocoaCollectionCell>
+@interface Example0322TextCell : UICollectionViewCell 
 @property (nonatomic, strong, nullable) Example0322TextViewModel *viewModel;
 @property (weak, nonatomic) IBOutlet UILabel *textLabel;
 @property (weak, nonatomic) IBOutlet UILabel *detailTextLabel;

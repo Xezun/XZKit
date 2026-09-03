@@ -377,7 +377,7 @@ tableView.viewModel = tableViewModel;
 ###### 3.1 定义 View、ViewModel、Model
 
 ```objc
-@interface ExampleCell : UITableViewCell <XZMocoaTableCell>
+@interface ExampleCell : UITableViewCell 
 @property (weak, nonatomic) IBOutlet UILabel *nameLabel;
 @end
 
@@ -385,13 +385,13 @@ tableView.viewModel = tableViewModel;
 @property (nonatomic, copy) NSString *name;
 @end
 
-@interface ExampleCellModel : NSObject <XZMocoaTableCellModel>
+@interface ExampleCellModel : NSObject <XZMocoaModel>
 @property (nonatomic, copy) NSString *firstName;
 @property (nonatomic, copy) NSString *lastName;
 @end
 ```
 
-除了 ViewModel 需要使用 XZMocoa 提供的基类外，View 和 Model 是完全自由的。协议 `XZMocoaTableCell` 和 `XZMocoaTableCellModel` 是辅助协议，不需要实现，声明遵循后即可使用协议提供的方法。
+除了 ViewModel 需要使用 XZMocoa 提供的基类外，View 和 Model 是完全自由的。协议 `XZMocoaTableCell` 和 `XZMocoaModel` 是辅助协议，不需要实现，声明遵循后即可使用协议提供的方法。
 
 ###### 3.2 处理数据
 

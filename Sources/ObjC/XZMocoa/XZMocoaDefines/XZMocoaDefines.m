@@ -22,4 +22,4 @@ XZMocoaName const XZMocoaNameMain        = @"main";
 XZMocoaName const XZMocoaNameHome        = @"home";
 XZMocoaName const XZMocoaNameUser        = @"user";
 XZMocoaName const XZMocoaNameList        = @"list";
-XZMocoaName const XZMocoaNamePlaceholder = @"XZMocoaNamePlaceholder";
+XZMocoaName const XZMocoaNamePlaceholder = @"placeholder";
