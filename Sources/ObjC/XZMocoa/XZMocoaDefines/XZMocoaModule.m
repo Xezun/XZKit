@@ -260,23 +260,18 @@ FOUNDATION_STATIC_INLINE NSString *XZMocoaPathCreate(XZMocoaKind kind, XZMocoaNa
 - (void)setSubmodule:(XZMocoaModule *)newSubmodule forKind:(XZMocoaKind)kind forName:(XZMocoaName)name {
     if (kind == nil) kind = XZMocoaKindDefault;
     if (newSubmodule == nil) {
-        if (_submodules == nil) {
-            return;
-        }
-        [_submodules[kind] setSubmodule:newSubmodule forName:name];
-    } else if (_submodules == nil) {
-        _submodules = [NSMutableDictionary dictionary];
-        XZMocoaSubmoduleCollection *namedModules = [[XZMocoaSubmoduleCollection alloc] initWithKind:kind module:self];
-        _submodules[kind] = namedModules;
-        [namedModules setSubmodule:newSubmodule forName:name];
-    } else {
-        XZMocoaSubmoduleCollection *namedModules = _submodules[kind];
-        if (namedModules == nil) {
-            namedModules = [[XZMocoaSubmoduleCollection alloc] initWithKind:kind module:self];
-            _submodules[kind] = namedModules;
-        }
-        [namedModules setSubmodule:newSubmodule forName:name];
+        [_submodules[kind] setSubmodule:nil forName:name];
+        return;
     }
+    if (_submodules == nil) {
+        _submodules = [NSMutableDictionary dictionary];
+    }
+    XZMocoaSubmoduleCollection *namedModules = _submodules[kind];
+    if (namedModules == nil) {
+        namedModules = [[XZMocoaSubmoduleCollection alloc] initWithKind:kind module:self];
+        _submodules[kind] = namedModules;
+    }
+    [namedModules setSubmodule:newSubmodule forName:name];
 }
 
 - (XZMocoaModule *)submoduleIfLoadedForKind:(XZMocoaKind)kind forName:(XZMocoaName)name {
@@ -296,12 +291,9 @@ FOUNDATION_STATIC_INLINE NSString *XZMocoaPathCreate(XZMocoaKind kind, XZMocoaNa
 #pragma mark - 下标存储方法
 
 - (XZMocoaModule *)objectForKeyedSubscript:(XZMocoaKey const)key {
-    NSRange const range = [key rangeOfString:@":"];
-    if (range.location == NSNotFound) {
-        return [self submoduleForKind:XZMocoaKindDefault forName:key];
-    }
-    XZMocoaKind const kind = [key substringToIndex:range.location];
-    XZMocoaName const name = [key substringFromIndex:range.location + 2];
+    XZMocoaKind kind = nil;
+    XZMocoaName name = nil;
+    XZMocoaPathParser(key, &kind, &name);
     return [self submoduleForKind:kind forName:name];
 }
 
@@ -344,7 +336,7 @@ FOUNDATION_STATIC_INLINE NSString *XZMocoaPathCreate(XZMocoaKind kind, XZMocoaNa
         [stringsM addObject:[NSString stringWithFormat:@"%@    submodules: [", TAB]];
         
         NSMutableArray *items = [NSMutableArray arrayWithCapacity:_submodules.count];
-        [self enumerateSubmodulesUsingBlock:^(XZMocoaModule *submodule, XZMocoaName kind, XZMocoaKind name, BOOL *stop) {
+        [self enumerateSubmodulesUsingBlock:^(XZMocoaModule *submodule, XZMocoaKind kind, XZMocoaName name, BOOL *stop) {
             NSString *string = [submodule descriptionWithPadding:padding + 2 kind:kind name:name];
             [items addObject:string];
         }];
