@@ -7,15 +7,15 @@
 
 #import "XZGeometry.h"
 
-UIEdgeInsets const UIEdgeInsetsNull = (UIEdgeInsets){INFINITY, INFINITY, INFINITY, INFINITY};
-CGSize       const CGSizeNull       = (CGSize){INFINITY, INFINITY};
+UIEdgeInsets const UIEdgeInsetsNil = (UIEdgeInsets){NAN, NAN, NAN, NAN};
+CGSize       const CGSizeNil       = (CGSize){NAN, NAN};
 
-BOOL UIEdgeInsetsIsNull(UIEdgeInsets insets) {
-    return isinf(insets.top) || isinf(insets.bottom) || isinf(insets.left) || isinf(insets.right);
+BOOL UIEdgeInsetsIsNil(UIEdgeInsets insets) {
+    return isnan(insets.top) || isnan(insets.bottom) || isnan(insets.left) || isnan(insets.right);
 }
 
-BOOL CGSizeIsNull(CGSize size) {
-    return isinf(size.width) || isinf(size.height) || size.width < 0 || size.height < 0;
+BOOL CGSizeIsNil(CGSize size) {
+    return isnan(size.width) || isnan(size.height) || size.width < 0 || size.height < 0;
 }
 
 NSDirectionalEdgeInsets NSDirectionalEdgeInsetsFromUIEdgeInsets(UIEdgeInsets const edgeInsets, UIUserInterfaceLayoutDirection const layoutDirection) {

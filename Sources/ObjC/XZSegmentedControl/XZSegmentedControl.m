@@ -615,7 +615,7 @@ typedef NS_ENUM(NSUInteger, XZSegmentSizeDelegate) {
     _flowLayout.minimumInteritemSpacing = 0;
     _flowLayout.sectionHeadersPinToVisibleBounds = NO;
     _flowLayout.sectionFootersPinToVisibleBounds = NO;
-    _flowLayout.itemSize = CGSizeNull; // 实际不会使用此值，使用 CGSizeZero 会产生控制台警告
+    _flowLayout.itemSize = CGSizeNil; // 实际不会使用此值，使用 CGSizeZero 会产生控制台警告
 
     _collectionView = [[XZSegmentContainerView alloc] initWithFrame:bounds collectionViewLayout:_flowLayout];
     _collectionView.backgroundColor                = [UIColor clearColor];
@@ -670,7 +670,7 @@ typedef NS_ENUM(NSUInteger, XZSegmentSizeDelegate) {
     CGSize const itemSize = _flowLayout.itemSize;
     switch (self.orientation) {
         case XZSegmentOrientationHorizontal: {
-            if (CGSizeIsNull(itemSize)) {
+            if (CGSizeIsNil(itemSize)) {
                 for (NSInteger i = 0; i < _titleItems.count; i++) {
                     XZSegmentTextItem *    const item    = _titleItems[i];
                     CGSize                 const size    = CGSizeMake(0, bounds.size.height);
@@ -693,7 +693,7 @@ typedef NS_ENUM(NSUInteger, XZSegmentSizeDelegate) {
             break;
         }
         case XZSegmentOrientationVertical: {
-            if (CGSizeIsNull(itemSize)) {
+            if (CGSizeIsNil(itemSize)) {
                 for (NSInteger i = 0; i < _titleItems.count; i++) {
                     XZSegmentTextItem *item = _titleItems[i];
                     CGSize                 const size    = CGSizeMake(bounds.size.width, 0);

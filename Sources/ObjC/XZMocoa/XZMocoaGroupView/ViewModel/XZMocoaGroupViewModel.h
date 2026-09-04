@@ -113,12 +113,14 @@ NS_ASSUME_NONNULL_BEGIN
 
 @end
 
+/// 默认如下方法，直接返回`XZMocoaGroupModel`协议方法的返回值。
+/// - 可通过子类重写如下方法，定制数据解析过程。
 @interface XZMocoaGroupViewModel (XZMocoaGroupModel)
-+ (NSInteger)model:(id)model numberOfSections:(void * _Nullable)null;
-+ (NSInteger)model:(id)model numberOfCellsInSection:(NSInteger)section;
-+ (nullable id)model:(id)model modelForCellAtIndexPath:(NSIndexPath *)indexPath;
-+ (NSInteger)model:(id)model kind:(XZMocoaKind)kind numberOfSupplementsInSection:(NSInteger)section;
-+ (nullable id)model:(id)model kind:(XZMocoaKind)kind modelForSupplementAtIndexPath:(NSIndexPath *)indexPath;
+- (NSInteger)model:(nullable id<XZMocoaGroupModel>)model numberOfSections:(nullable id)null;
+- (NSInteger)model:(nullable id<XZMocoaGroupModel>)model numberOfCellsInSection:(NSInteger)section;
+- (nullable id)model:(nullable id<XZMocoaGroupModel>)model modelForCellAtIndexPath:(NSIndexPath *)indexPath;
+- (NSInteger)model:(nullable id<XZMocoaGroupModel>)model kind:(XZMocoaKind)kind numberOfSupplementsInSection:(NSInteger)section;
+- (nullable id)model:(nullable id<XZMocoaGroupModel>)model kind:(XZMocoaKind)kind modelForSupplementAtIndexPath:(NSIndexPath *)indexPath;
 @end
 
 /// 支持直接使用 NSFetchedResultsController 作为数据源，且支持作为 NSFetchedResultsController 的代理。

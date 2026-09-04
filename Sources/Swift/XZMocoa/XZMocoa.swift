@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import XZKitObjC
 
 extension XZMocoaKind: @retroactive ExpressibleByStringLiteral {
     public typealias StringLiteralType = String
@@ -27,3 +28,19 @@ extension XZMocoaKey: @retroactive ExpressibleByStringLiteral {
         self.init(rawValue: value)
     }
 }
+
+public typealias XZMocoaTableHeaderFooterView = UITableViewHeaderFooterView
+public typealias XZMocoaTableHeaderView = XZMocoaTableHeaderFooterView
+public typealias XZMocoaTableFooterView = XZMocoaTableHeaderFooterView
+
+public typealias XZMocoaTableHeaderViewModel = XZMocoaTableHeaderFooterViewModel
+public typealias XZMocoaTableFooterViewModel = XZMocoaTableHeaderFooterViewModel
+
+public typealias XZMocoaTableCell = UITableViewCell;
+
+
+public typealias XZMocoaCollectionCell = UICollectionViewCell;
+public typealias XZMocoaCollectionSupplementView = UICollectionReusableView;
+
+public typealias XZMocoaCollectionHeaderViewModel = XZMocoaCollectionSupplementViewModel
+public typealias XZMocoaCollectionFooterViewModel = XZMocoaCollectionSupplementViewModel

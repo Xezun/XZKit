@@ -14,7 +14,7 @@
     self = [super initWithModel:model];
     if (self) {
         CGRect frame = CGRectNull;
-        frame.size = CGSizeNull;
+        frame.size = CGSizeNil;
         [super setFrame:frame];
     }
     return self;

@@ -44,6 +44,9 @@ static NSString *UIElementKindFromMocoaKind(XZMocoaKind kind) {
         if ([kind isEqualToString:XZMocoaKindDefault]) {
             switch (submodule.viewForm) {
                 case XZMocoaModuleViewFormClass: {
+                    if (![submodule.viewClass isSubclassOfClass:UICollectionViewCell.class]) {
+                        return;
+                    }
                     NSString * const identifier = XZMocoaReuseIdentifier(kind, name);
                     [collectionView registerClass:submodule.viewClass forCellWithReuseIdentifier:identifier];
                     break;
@@ -68,6 +71,9 @@ static NSString *UIElementKindFromMocoaKind(XZMocoaKind kind) {
         } else {
             switch (submodule.viewForm) {
                 case XZMocoaModuleViewFormClass: {
+                    if (![submodule.viewClass isSubclassOfClass:UICollectionReusableView.class]) {
+                        return;
+                    }
                     NSString * const identifier = XZMocoaReuseIdentifier(kind, name);
                     NSString * const elementKind = UIElementKindFromMocoaKind(kind);
                     [collectionView registerClass:submodule.viewClass forSupplementaryViewOfKind:elementKind withReuseIdentifier:identifier];
@@ -101,24 +107,24 @@ static NSString *UIElementKindFromMocoaKind(XZMocoaKind kind) {
 @implementation XZMocoaCollectionViewProxy (UICollectionViewDelegate)
 
 - (void)collectionView:(UICollectionView *)collectionView didSelectItemAtIndexPath:(NSIndexPath *)indexPath {
-    UICollectionViewCell<XZMocoaCollectionCell> *cell = (id)[collectionView cellForItemAtIndexPath:indexPath];
-    [cell collectionView:(id)self didSelectItemAtIndexPath:indexPath];
+    UICollectionViewCell *cell = (id)[collectionView cellForItemAtIndexPath:indexPath];
+    [cell collectionView:collectionView didSelectItemAtIndexPath:indexPath];
 }
 
 - (void)collectionView:(UICollectionView *)collectionView willDisplayCell:(UICollectionViewCell *)cell forItemAtIndexPath:(NSIndexPath *)indexPath {
-    [cell collectionView:(id)self willDisplayItemAtIndexPath:indexPath];
+    [cell collectionView:collectionView willDisplayItemAtIndexPath:indexPath];
 }
 
 - (void)collectionView:(UICollectionView *)collectionView didEndDisplayingCell:(UICollectionViewCell *)cell forItemAtIndexPath:(NSIndexPath *)indexPath {
-    [cell collectionView:(id)self didEndDisplayingItemAtIndexPath:indexPath];
+    [cell collectionView:collectionView didEndDisplayingItemAtIndexPath:indexPath];
 }
 
 - (void)collectionView:(UICollectionView *)collectionView willDisplaySupplementaryView:(UICollectionReusableView *)view forElementKind:(NSString *)elementKind atIndexPath:(NSIndexPath *)indexPath {
-    [view collectionView:(id)self willDisplaySupplementaryViewAtIndexPath:indexPath forElementOfKind:elementKind];
+    [view collectionView:collectionView willDisplaySupplementaryViewAtIndexPath:indexPath forElementOfKind:elementKind];
 }
 
 - (void)collectionView:(UICollectionView *)collectionView didEndDisplayingSupplementaryView:(UICollectionReusableView *)view forElementOfKind:(NSString *)elementKind atIndexPath:(NSIndexPath *)indexPath {
-    [view collectionView:(id)self didEndDisplayingSupplementaryViewAtIndexPath:indexPath forElementOfKind:elementKind];
+    [view collectionView:collectionView didEndDisplayingSupplementaryViewAtIndexPath:indexPath forElementOfKind:elementKind];
 }
 
 @end
@@ -136,7 +142,7 @@ static NSString *UIElementKindFromMocoaKind(XZMocoaKind kind) {
 
 - (__kindof UICollectionViewCell *)collectionView:(UICollectionView *)collectionView cellForItemAtIndexPath:(NSIndexPath *)indexPath {
     XZMocoaCollectionCellViewModel *viewModel = [self.viewModel viewModelForCellAtIndexPath:indexPath];
-    UICollectionViewCell<XZMocoaCollectionCell> *cell = [collectionView dequeueReusableCellWithReuseIdentifier:viewModel.reuseIdentifier forIndexPath:indexPath];
+    UICollectionViewCell *cell = [collectionView dequeueReusableCellWithReuseIdentifier:viewModel.reuseIdentifier forIndexPath:indexPath];
     cell.viewModel = viewModel;
     return cell;
 }
@@ -165,7 +171,7 @@ static NSString *UIElementKindFromMocoaKind(XZMocoaKind kind) {
     
     XZMocoaCollectionCellViewModel * const viewModel = [self.viewModel viewModelForCellAtIndexPath:indexPath];
     CGSize const itemSize = viewModel.size;
-    return CGSizeIsNull(itemSize) ? collectionViewLayout.itemSize : itemSize;
+    return CGSizeIsNil(itemSize) ? collectionViewLayout.itemSize : itemSize;
 }
 
 - (UIEdgeInsets)collectionView:(UICollectionView *)collectionView layout:(UICollectionViewFlowLayout *)collectionViewLayout insetForSectionAtIndex:(NSInteger)section {
@@ -175,7 +181,7 @@ static NSString *UIElementKindFromMocoaKind(XZMocoaKind kind) {
     }
     
     UIEdgeInsets const sectionInsets = self.viewModel.sectionInsets;
-    return UIEdgeInsetsIsNull(sectionInsets) ? collectionViewLayout.sectionInset : sectionInsets;
+    return UIEdgeInsetsIsNil(sectionInsets) ? collectionViewLayout.sectionInset : sectionInsets;
 }
 
 - (CGFloat)collectionView:(UICollectionView *)collectionView layout:(UICollectionViewFlowLayout *)collectionViewLayout minimumLineSpacingForSectionAtIndex:(NSInteger)section {
@@ -193,7 +199,6 @@ static NSString *UIElementKindFromMocoaKind(XZMocoaKind kind) {
     if (delegate) {
         return [delegate collectionView:collectionView layout:collectionViewLayout minimumInteritemSpacingForSectionAtIndex:section];
     }
-    
     CGFloat const minimumInteritemSpacing = self.viewModel.minimumInteritemSpacing;
     return CGFloatIsNull(minimumInteritemSpacing) ? collectionViewLayout.minimumInteritemSpacing : minimumInteritemSpacing;
 }
@@ -205,7 +210,7 @@ static NSString *UIElementKindFromMocoaKind(XZMocoaKind kind) {
     }
     
     CGSize const headerReferenceSize = self.viewModel.headerReferenceSize;
-    return CGSizeIsNull(headerReferenceSize) ? collectionViewLayout.headerReferenceSize : headerReferenceSize;
+    return CGSizeIsNil(headerReferenceSize) ? collectionViewLayout.headerReferenceSize : headerReferenceSize;
 }
 
 - (CGSize)collectionView:(UICollectionView *)collectionView layout:(UICollectionViewFlowLayout *)collectionViewLayout referenceSizeForFooterInSection:(NSInteger)section {
@@ -215,7 +220,7 @@ static NSString *UIElementKindFromMocoaKind(XZMocoaKind kind) {
     }
     
     CGSize const footerReferenceSize = self.viewModel.footerReferenceSize;
-    return CGSizeIsNull(footerReferenceSize) ? collectionViewLayout.footerReferenceSize : footerReferenceSize;
+    return CGSizeIsNil(footerReferenceSize) ? collectionViewLayout.footerReferenceSize : footerReferenceSize;
 }
 
 @end

@@ -58,16 +58,4 @@ NS_ASSUME_NONNULL_BEGIN
 
 @end
 
-@interface XZMocoaTableViewModel (XZMocoaTableViewModel)
-///// section 视图模型集合。
-//@property (nonatomic, readonly) NSArray<__kindof XZMocoaTableSectionViewModel *> *sectionViewModels;
-///// 获取 section 视图模型。
-///// - Parameter index: 位置
-//- (__kindof XZMocoaTableSectionViewModel *)sectionViewModelAtIndex:(NSInteger)index;
-///// 获取 cell 视图模型。
-///// - Parameter indexPath: 位置
-//- (__kindof XZMocoaTableCellViewModel *)cellViewModelAtIndexPath:(NSIndexPath *)indexPath;
-
-@end
-
 NS_ASSUME_NONNULL_END

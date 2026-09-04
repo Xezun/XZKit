@@ -12,20 +12,12 @@
 NS_ASSUME_NONNULL_BEGIN
 
 @interface XZMocoaCollectionSupplementViewModel : XZMocoaGroupReusableViewModel
-
 @property (nonatomic) CGSize size;
-- (void)collectionView:(id<XZMocoaCollectionView>)collectionView willDisplaySupplementaryView:(UICollectionReusableView *)supplementaryView atIndexPath:(NSIndexPath *)indexPath forElementOfKind:(NSString *)elementKind;
-- (void)collectionView:(id<XZMocoaCollectionView>)collectionView didEndDisplayingSupplementaryView:(UICollectionReusableView *)supplementaryView atIndexPath:(NSIndexPath *)indexPath forElementOfKind:(NSString *)elementKind;
+- (void)collectionView:(UICollectionView *)collectionView willDisplaySupplementaryView:(UICollectionReusableView *)supplementaryView atIndexPath:(NSIndexPath *)indexPath forElementOfKind:(NSString *)elementKind;
+- (void)collectionView:(UICollectionView *)collectionView didEndDisplayingSupplementaryView:(UICollectionReusableView *)supplementaryView atIndexPath:(NSIndexPath *)indexPath forElementOfKind:(NSString *)elementKind;
 @end
 
-
-@interface XZMocoaCollectionHeaderFooterViewModel : XZMocoaCollectionSupplementViewModel
-@end
-
-@interface XZMocoaCollectionHeaderViewModel : XZMocoaCollectionHeaderFooterViewModel
-@end
-
-@interface XZMocoaCollectionFooterViewModel : XZMocoaCollectionHeaderFooterViewModel
-@end
+typedef XZMocoaCollectionSupplementViewModel XZMocoaCollectionHeaderViewModel;
+typedef XZMocoaCollectionSupplementViewModel XZMocoaCollectionFooterViewModel;
 
 NS_ASSUME_NONNULL_END

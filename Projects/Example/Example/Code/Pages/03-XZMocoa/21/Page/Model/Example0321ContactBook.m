@@ -25,23 +25,23 @@
 
 #pragma mark - XZMocoaTableModel
 
-- (NSInteger)numberOfSectionsInMocoa:(void *)context {
+- (NSInteger)numberOfSectionsInMocoa:(id)context {
     return 1;
 }
 
-- (NSInteger)mocoa:(void *)context numberOfCellsInSection:(NSInteger)section {
+- (NSInteger)mocoa:(id)context numberOfCellsInSection:(NSInteger)section {
     return _contacts.count;
 }
 
-- (id)mocoa:(void *)context modelForCellAtIndexPath:(NSIndexPath *)indexPath {
+- (id)mocoa:(id)context modelForCellAtIndexPath:(NSIndexPath *)indexPath {
     return _contacts[indexPath.item];
 }
 
-- (NSInteger)mocoa:(void *)context kind:(XZMocoaKind)kind numberOfSupplementsInSection:(NSInteger)section {
+- (NSInteger)mocoa:(id)context kind:(XZMocoaKind)kind numberOfSupplementsInSection:(NSInteger)section {
     return 0;
 }
 
-- (id)mocoa:(void *)context kind:(XZMocoaKind)kind modelForSupplementAtIndexPath:(NSIndexPath *)indexPath {
+- (id)mocoa:(id)context kind:(XZMocoaKind)kind modelForSupplementAtIndexPath:(NSIndexPath *)indexPath {
     return nil;
 }
 

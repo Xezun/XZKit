@@ -31,11 +31,15 @@
         if ([kind isEqualToString:XZMocoaKindDefault]) {
             switch (submodule.viewForm) {
                 case XZMocoaModuleViewFormClass: {
+                    if (![submodule.viewClass isSubclassOfClass:UITableViewCell.class]) {
+                        return;
+                    }
                     NSString * const identifier = XZMocoaReuseIdentifier(XZMocoaKindDefault, name);
                     [tableView registerClass:submodule.viewClass forCellReuseIdentifier:identifier];
                     break;
                 }
                 case XZMocoaModuleViewFormNib: {
+                    // nib 暂不检查类型
                     NSString * const identifier = XZMocoaReuseIdentifier(XZMocoaKindDefault, name);
                     UINib *viewNib = [UINib nibWithNibName:submodule.viewNibName bundle:submodule.viewNibBundle];
                     [tableView registerNib:viewNib forCellReuseIdentifier:identifier];
@@ -56,6 +60,9 @@
         } else if ([kind isEqualToString:XZMocoaKindHeader] || [kind isEqualToString:XZMocoaKindFooter]) {
             switch (submodule.viewForm) {
                 case XZMocoaModuleViewFormClass: {
+                    if (![submodule.viewClass isSubclassOfClass:UITableViewHeaderFooterView.class]) {
+                        return;
+                    }
                     NSString * const identifier = XZMocoaReuseIdentifier(kind, name);
                     [tableView registerClass:submodule.viewClass forHeaderFooterViewReuseIdentifier:identifier];
                     break;

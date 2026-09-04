@@ -18,8 +18,8 @@
         if ([self conformsToProtocol:@protocol(XZMocoaGroupModel)]) {
             return;
         }
-        xz_objc_class_copyMethod(self, @selector(__xz_numberOfSectionsInMocoa:),
-                                 self, @selector(numberOfSectionsInMocoa:));
+        xz_objc_class_copyMethod(self, @selector(__xz_mocoa:numberOfSections:),
+                                 self, @selector(mocoa:numberOfSections:));
         xz_objc_class_copyMethod(self, @selector(__xz_mocoa:numberOfCellsInSection:),
                                  self, @selector(mocoa:numberOfCellsInSection:));
         xz_objc_class_copyMethod(self, @selector(__xz_mocoa:modelForCellAtIndexPath:),
@@ -31,25 +31,25 @@
     }
 }
 
-- (NSInteger)__xz_numberOfSectionsInMocoa:(void *)context {
+- (NSInteger)__xz_mocoa:(id)context numberOfSections:(id)null {
     return [self __xz_numberOfElements];
 }
 
-- (NSInteger)__xz_mocoa:(void *)context numberOfCellsInSection:(NSInteger)section {
+- (NSInteger)__xz_mocoa:(id)context numberOfCellsInSection:(NSInteger)section {
     return [[self __xz_modelForElementAtIndex:section] __xz_numberOfElements];
 }
 
-- (nullable id)__xz_mocoa:(void *)context modelForCellAtIndexPath:(NSIndexPath *)indexPath {
+- (nullable id)__xz_mocoa:(id)context modelForCellAtIndexPath:(NSIndexPath *)indexPath {
     NSObject * const element = [self __xz_modelForElementAtIndex:indexPath.section];
     return [element __xz_modelForElementAtIndex:indexPath.item];
 }
 
-- (NSInteger)__xz_mocoa:(void *)context numberOfSupplementsOfKind:(XZMocoaKind)kind inSection:(NSInteger)section {
+- (NSInteger)__xz_mocoa:(id)context numberOfSupplementsOfKind:(XZMocoaKind)kind inSection:(NSInteger)section {
     NSObject * const element = [self __xz_modelForElementAtIndex:section];
     return [element __xz_numberOfSupplementsOfKind:kind];
 }
 
-- (nullable id)__xz_mocoa:(void *)context modelForSupplementOfKind:(XZMocoaKind)kind atIndexPath:(NSIndexPath *)indexPath {
+- (nullable id)__xz_mocoa:(id)context modelForSupplementOfKind:(XZMocoaKind)kind atIndexPath:(NSIndexPath *)indexPath {
     NSObject * const element = [self __xz_modelForElementAtIndex:indexPath.section];
     return [element __xz_modelForSupplementOfKind:kind atIndex:indexPath.item];
 }

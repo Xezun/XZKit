@@ -15,7 +15,7 @@ static const void * const _mocoaName = &_mocoaName;
 
 + (void)load {
     if (self == [NSObject class]) {
-        // 已经实现 XZMocoaGroupModel 就不添加默认实现。
+        // 已经实现 XZMocoaModel 就不添加默认实现。
         if ([self conformsToProtocol:@protocol(XZMocoaModel)]) {
             return;
         }

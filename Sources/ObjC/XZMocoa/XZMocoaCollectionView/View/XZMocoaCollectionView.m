@@ -91,13 +91,5 @@
     [collectionView reloadData];
 }
 
-- (void)reloadData {
-    [self.viewModel reloadData];
-}
-
-- (void)performBatchUpdates:(void (NS_NOESCAPE ^)(void))updates completion:(void (^)(BOOL))completion {
-    [self.viewModel performBatchUpdates:updates completion:completion];
-}
-
 @end
 

@@ -97,8 +97,4 @@
     tableView.dataSource = self;
 }
 
-- (void)reloadData {
-    [self.viewModel reloadData];
-}
-
 @end

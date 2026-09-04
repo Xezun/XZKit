@@ -14,7 +14,7 @@
     self = [super initWithModel:model];
     if (self) {
         CGRect frame = CGRectNull;
-        frame.size = CGSizeNull;
+        frame.size = CGSizeNil;
         [super setFrame:frame];
     }
     return self;
@@ -33,22 +33,12 @@
     self.frame = frame;
 }
 
-- (void)collectionView:(id<XZMocoaCollectionView>)collectionView willDisplaySupplementaryView:(UICollectionReusableView *)supplementaryView atIndexPath:(NSIndexPath *)indexPath forElementOfKind:(NSString *)elementKind {
+- (void)collectionView:(UICollectionView *)collectionView willDisplaySupplementaryView:(UICollectionReusableView *)supplementaryView atIndexPath:(NSIndexPath *)indexPath forElementOfKind:(NSString *)elementKind {
     
 }
 
-- (void)collectionView:(id<XZMocoaCollectionView>)collectionView didEndDisplayingSupplementaryView:(UICollectionReusableView *)supplementaryView atIndexPath:(NSIndexPath *)indexPath forElementOfKind:(NSString *)elementKind {
+- (void)collectionView:(UICollectionView *)collectionView didEndDisplayingSupplementaryView:(UICollectionReusableView *)supplementaryView atIndexPath:(NSIndexPath *)indexPath forElementOfKind:(NSString *)elementKind {
     
 }
 
-@end
-
-
-@implementation XZMocoaCollectionHeaderFooterViewModel
-@end
-
-@implementation XZMocoaCollectionHeaderViewModel
-@end
-
-@implementation XZMocoaCollectionFooterViewModel
 @end

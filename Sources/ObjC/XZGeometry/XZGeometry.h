@@ -9,14 +9,14 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-#define CGFloatNull INFINITY
-#define CGFloatIsNull(number) isinf(number)
+#define CGFloatNull NAN
+#define CGFloatIsNull(number) isnan(number)
 
-UIKIT_EXTERN CGSize const CGSizeNull;
-UIKIT_EXTERN UIEdgeInsets const UIEdgeInsetsNull;
+UIKIT_EXTERN CGSize const CGSizeNil;
+UIKIT_EXTERN UIEdgeInsets const UIEdgeInsetsNil;
 
-UIKIT_EXTERN BOOL CGSizeIsNull(CGSize size);
-UIKIT_EXTERN BOOL UIEdgeInsetsIsNull(UIEdgeInsets insets);
+UIKIT_EXTERN BOOL CGSizeIsNil(CGSize size);
+UIKIT_EXTERN BOOL UIEdgeInsetsIsNil(UIEdgeInsets insets);
 
 /// 将 UIEdgeInsets 结构体转换为 NSDirectionalEdgeInsets 结构体。
 /// - Parameters:
