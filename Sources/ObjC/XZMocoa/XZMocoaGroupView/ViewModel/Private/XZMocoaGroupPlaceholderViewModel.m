@@ -29,7 +29,7 @@
     if (module) {
         _reason = [NSString stringWithFormat:@"模块：%@", module.url];
         
-        _detail = [NSString stringWithFormat:@"[M] %@\n", module.modelClass ?: @"<None>"];
+        _detail = [NSString stringWithFormat:@"[M] %@\n", ((id)module.modelClass) ?: @"<None>"];
         switch (module.viewForm) {
             case XZMocoaModuleViewFormUnknown:
                 _detail = [_detail stringByAppendingFormat:@"[V] <None>\n"];
@@ -47,13 +47,13 @@
                 }
                 break;
             case XZMocoaModuleViewFormStoryboard:
-                _detail = [_detail stringByAppendingFormat:@"[V] storyboardName = %@ <注册错误，不支持>\n", module.viewStoryboardName, module.viewNibName];
+                _detail = [_detail stringByAppendingFormat:@"[V] storyboardName = %@ <注册错误，不支持>\n", module.viewStoryboardName];
                 break;
             case XZMocoaModuleViewFormStoryboardReusableView:
-                _detail = [_detail stringByAppendingFormat:@"[V] reuseIdentifier = %@\n", module.viewReuseIdentifier, module.viewNibName];
+                _detail = [_detail stringByAppendingFormat:@"[V] reuseIdentifier = %@\n", module.viewReuseIdentifier];
                 break;
         }
-        _detail = [_detail stringByAppendingFormat:@"[VM] %@\n--------------\n", module.viewModelClass ?: @"<None>"];
+        _detail = [_detail stringByAppendingFormat:@"[VM] %@\n--------------\n", ((id)module.viewModelClass) ?: @"<None>"];
     } else {
         _reason = @"模块：未注册";
         _detail = @"";

@@ -22,36 +22,37 @@ NS_ASSUME_NONNULL_BEGIN
 /// - 还可通过重写`XZMocoaGroupViewModel`的数据解析方法，来实现对数据的定制解析。
 @protocol XZMocoaGroupModel <XZMocoaModel>
 
-@optional
 /// 列表分区数量。默认 1 只有一个分区。
-/// - Parameter context: 作为数据模型时，此参数为调用此方法的视图模型；作为数据源时，此参数为视图模型的数据模型。
-- (NSInteger)mocoa:(nullable id)context numberOfSections:(nullable id)null;
+/// - Parameters:
+///   - context: 作为数据模型时，此参数为调用此方法的视图模型；作为数据源时，此参数为视图模型的数据模型。
+///   - null: 无意义，仅占位
+- (NSInteger)mocoa:(id)context numberOfSections:(nullable id)null;
 
 /// 列表指定分区内单元视图的数量。默认 1 只有一个元素。
 /// - Parameters:
-///   - context: 作为数据模型时，此参数为调用此方法的视图模型；作为数据源时，此参数为视图模型的数据模型（可能为 nil 值）。
+///   - context: 自定义参数，默认情况下，此参数为调用此方法的视图模型
 ///   - section: 分组区域
-- (NSInteger)mocoa:(nullable id)context numberOfCellsInSection:(NSInteger)section;
+- (NSInteger)mocoa:(id)context numberOfCellsInSection:(NSInteger)section;
 
 /// 获取列表指定单元视图的数据模型。默认返回自身。
 /// - Parameters:
-///   - context: 作为数据模型时，此参数为调用此方法的视图模型；作为数据源时，此参数为视图模型的数据模型（可能为 nil 值）。
+///   - context: 自定义参数，默认情况下，此参数为调用此方法的视图模型
 ///   - indexPath: 单元视图的位置
-- (nullable id)mocoa:(nullable id)context modelForCellAtIndexPath:(NSIndexPath *)indexPath;
+- (nullable id)mocoa:(id)context modelForCellAtIndexPath:(NSIndexPath *)indexPath;
 
 /// 区域内附加视图的数量。默认返回 0 附加视图。
 /// - Parameters:
-///   - context: 作为数据模型时，此参数为调用此方法的视图模型；作为数据源时，此参数为视图模型的数据模型（可能为 nil 值）。
+///   - context: 自定义参数，默认情况下，此参数为调用此方法的视图模型
 ///   - kind: 附加视图的类型
 ///   - section: 分组区域的次序
-- (NSInteger)mocoa:(nullable id)context kind:(XZMocoaKind)kind numberOfSupplementsInSection:(NSInteger)section;
+- (NSInteger)mocoa:(id)context kind:(XZMocoaKind)kind numberOfSupplementsInSection:(NSInteger)section;
 
 /// 获取指定位置的附加视图的数据模型。默认 0 无附加视图的数据模型。
 /// - Parameters:
-///   - context: 作为数据模型时，此参数为调用此方法的视图模型；作为数据源时，此参数为视图模型的数据模型（可能为 nil 值）。
+///   - context: 自定义参数，默认情况下，此参数为调用此方法的视图模型
 ///   - kind: 附加视图的类型
 ///   - indexPath: 附加视图的位置
-- (nullable id)mocoa:(nullable id)context kind:(XZMocoaKind)kind modelForSupplementAtIndexPath:(NSIndexPath *)indexPath;
+- (nullable id)mocoa:(id)context kind:(XZMocoaKind)kind modelForSupplementAtIndexPath:(NSIndexPath *)indexPath;
 
 @end
 
