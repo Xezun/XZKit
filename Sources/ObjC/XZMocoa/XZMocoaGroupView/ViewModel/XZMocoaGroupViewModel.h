@@ -21,7 +21,10 @@ NS_ASSUME_NONNULL_BEGIN
 /// @attention 由于需要管理列表 Cell 子视图，因此需要设置 `module` 属性才能正常工作。
 @interface XZMocoaGroupViewModel : XZMocoaViewModel
 
+/// 处理事件的对象，一般为视图。
 @property (nonatomic, weak) id<XZMocoaGroupViewModelDelegate> delegate;
+/// 处理数据的对象，默认为自身的数据模型。
+@property (nonatomic, weak) id<XZMocoaGroupModel> dataSource;
 
 /// 所支持的附加视图的类型，默认为 `@[XZMocoaKindHeader, XZMocoaKindFooter]` 两种。
 /// @discussion 请在使用 viewModel 前设置此属性。
@@ -113,8 +116,10 @@ NS_ASSUME_NONNULL_BEGIN
 
 @end
 
-/// 默认如下方法，直接返回`XZMocoaGroupModel`协议方法的返回值。
-/// - 可通过子类重写如下方法，定制数据解析过程。
+/// 视图模型处理数据的方法。
+/// - 建议优先通过为数据拓展实现`XZMocoaGroupModel`协议，来解决数据格式标准化的问题。
+/// - 默认情况下，如下方法按优先`_dataSource`其次`model`的优先级，返回`XZMocoaGroupModel`协议中对应方法。
+/// - 也可通过子类重写如下方法，定制数据解析过程。
 @interface XZMocoaGroupViewModel (XZMocoaGroupModel)
 - (NSInteger)model:(nullable id<XZMocoaGroupModel>)model numberOfSections:(nullable id)null;
 - (NSInteger)model:(nullable id<XZMocoaGroupModel>)model numberOfCellsInSection:(NSInteger)section;

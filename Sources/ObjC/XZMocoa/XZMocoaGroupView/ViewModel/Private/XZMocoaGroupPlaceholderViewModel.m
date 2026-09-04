@@ -8,6 +8,8 @@
 #import "XZMocoaGroupPlaceholderViewModel.h"
 #import "XZMocoaGroupReusableViewModel.h"
 #import "XZMocoaGroupViewModel.h"
+#import "XZJSON.h"
+#import "NSString+XZKit.h"
 
 #if DEBUG
 
@@ -20,15 +22,43 @@
 - (void)prepare {
     [super prepare];
     
-    XZMocoaGroupReusableViewModel * const cellViewModel  = self.model;
+    XZMocoaGroupReusableViewModel * const viewModel  = self.model;
+    id<XZMocoaModel>                const model      = viewModel.model;
+    XZMocoaModule                 * const module     = viewModel.module;
     
-    XZMocoaName cellName = ((id<XZMocoaModel>)cellViewModel.model).mocoaName;
-    if (cellName.length == 0) {
-        cellName = @"<None>";
+    if (module) {
+        _reason = [NSString stringWithFormat:@"模块：%@", module.url];
+        
+        _detail = [NSString stringWithFormat:@"[M] %@\n", module.modelClass ?: @"<None>"];
+        switch (module.viewForm) {
+            case XZMocoaModuleViewFormUnknown:
+                _detail = [_detail stringByAppendingFormat:@"[V] <None>\n"];
+                break;
+            case XZMocoaModuleViewFormClass:
+                _detail = [_detail stringByAppendingFormat:@"[V] class = %@\n", module.viewClass];
+                break;
+            case XZMocoaModuleViewFormNib:
+                if (module.viewNibClass) {
+                    _detail = [_detail stringByAppendingFormat:@"[V] nibClass = %@, nibName = %@\n", module.viewNibClass, module.viewNibName];
+                } else if (module.viewNibBundle) {
+                    _detail = [_detail stringByAppendingFormat:@"[V] nibName = %@, nibBundle = %@\n", module.viewNibName, module.viewNibBundle.bundleIdentifier];
+                } else {
+                    _detail = [_detail stringByAppendingFormat:@"[V] nibName = %@\n", module.viewNibName];
+                }
+                break;
+            case XZMocoaModuleViewFormStoryboard:
+                _detail = [_detail stringByAppendingFormat:@"[V] storyboardName = %@ <注册错误，不支持>\n", module.viewStoryboardName, module.viewNibName];
+                break;
+            case XZMocoaModuleViewFormStoryboardReusableView:
+                _detail = [_detail stringByAppendingFormat:@"[V] reuseIdentifier = %@\n", module.viewReuseIdentifier, module.viewNibName];
+                break;
+        }
+        _detail = [_detail stringByAppendingFormat:@"[VM] %@\n--------------\n", module.viewModelClass ?: @"<None>"];
+    } else {
+        _reason = @"模块：未注册";
+        _detail = @"";
     }
-    
-    _reason = [self reasonByCheckingModule:cellViewModel.module];
-    _detail = [NSString stringWithFormat:@"Name: cell=%@", cellName];
+    _detail = [_detail stringByAppendingFormat:@"name: %@, \ndata: %@", model.mocoaName, [NSString xz_stringWithJSON:[XZJSON encode:model options:(NSJSONWritingPrettyPrinted) error:nil]]];
 }
 
 - (NSString *)reasonByCheckingModule:(XZMocoaModule *)module {

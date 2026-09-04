@@ -25,7 +25,7 @@
 
 #pragma mark - XZMocoaTableModel
 
-- (NSInteger)numberOfSectionsInMocoa:(id)context {
+- (NSInteger)mocoa:(id)context numberOfSections:(id)null {
     return 1;
 }
 

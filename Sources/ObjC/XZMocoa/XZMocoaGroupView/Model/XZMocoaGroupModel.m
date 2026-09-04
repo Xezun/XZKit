@@ -63,11 +63,11 @@
 }
 
 - (NSInteger)__xz_numberOfSupplementsOfKind:(XZMocoaKind)kind {
-    return 0;
+    return 1;
 }
 
 - (nullable id)__xz_modelForSupplementOfKind:(XZMocoaKind)kind atIndex:(NSInteger)index {
-    return nil;
+    return self;
 }
 
 @end

@@ -12,6 +12,12 @@ class ExampleTabBarController: UITabBarController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
+        
+        let appearance = UITabBarAppearance.init()
+        appearance.backgroundImage = UIImage(named: "icon-nav-background");
+        appearance.shadowColor = .systemGray3
+        self.tabBar.standardAppearance = appearance
+        self.tabBar.scrollEdgeAppearance = appearance
     }
     
 

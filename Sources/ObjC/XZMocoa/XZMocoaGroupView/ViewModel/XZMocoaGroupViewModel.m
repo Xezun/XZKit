@@ -813,7 +813,7 @@
     
     if (VMClass) {
         // 模块注册了，且也注册了视图模型
-        reuseIdentifier = XZMocoaReuseIdentifier(kind, name);
+        reuseIdentifier = module.viewReuseIdentifier ?: XZMocoaReuseIdentifier(kind, name);
     } else {
         // 模块未注册，或者未注册视图模型
         if ([name isEqualToString:XZMocoaNameDefault]) {
@@ -832,7 +832,7 @@
                 VMClass = defaultModule.viewModelClass;
                 if (VMClass) {
                     // 默认模块注册了视图模型
-                    reuseIdentifier = XZMocoaReuseIdentifier(kind, XZMocoaNameDefault);
+                    reuseIdentifier = defaultModule.viewReuseIdentifier ?: XZMocoaReuseIdentifier(kind, XZMocoaNameDefault);
                 } else {
                     // 默认模块未注册视图模型
                     VMClass = [self viewModelClassForPlaceholderForKind:kind];
@@ -1030,22 +1030,37 @@
 @implementation XZMocoaGroupViewModel (XZMocoaGroupModel)
 
 - (NSInteger)model:(id<XZMocoaGroupModel>)model numberOfSections:(id)null {
+    if (_dataSource) {
+        return [_dataSource mocoa:model numberOfSections:null];
+    }
     return [model mocoa:self numberOfSections:null];
 }
 
 - (NSInteger)model:(id<XZMocoaGroupModel>)model numberOfCellsInSection:(NSInteger)section {
+    if (_dataSource) {
+        return [_dataSource mocoa:model numberOfCellsInSection:section];
+    }
     return [model mocoa:self numberOfCellsInSection:section];
 }
 
 - (id)model:(id<XZMocoaGroupModel>)model modelForCellAtIndexPath:(NSIndexPath *)indexPath {
+    if (_dataSource) {
+        return [_dataSource mocoa:model modelForCellAtIndexPath:indexPath];
+    }
     return [model mocoa:self modelForCellAtIndexPath:indexPath];
 }
 
 - (NSInteger)model:(id<XZMocoaGroupModel>)model kind:(XZMocoaKind)kind numberOfSupplementsInSection:(NSInteger)section {
+    if (_dataSource) {
+        return [_dataSource mocoa:model kind:kind numberOfSupplementsInSection:section];
+    }
     return [model mocoa:self kind:kind numberOfSupplementsInSection:section];
 }
 
 - (id)model:(id<XZMocoaGroupModel>)model kind:(XZMocoaKind)kind modelForSupplementAtIndexPath:(NSIndexPath *)indexPath {
+    if (_dataSource) {
+        return [_dataSource mocoa:model kind:kind modelForSupplementAtIndexPath:indexPath];
+    }
     return [model mocoa:self kind:kind modelForSupplementAtIndexPath:indexPath];
 }
 

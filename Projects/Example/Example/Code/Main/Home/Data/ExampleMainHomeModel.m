@@ -27,7 +27,7 @@
     return self;
 }
 
-- (NSInteger)numberOfSectionsInMocoa:(id)context {
+- (NSInteger)mocoa:(id)context numberOfSections:(id)null {
     return _dataArray.count;
 }
 

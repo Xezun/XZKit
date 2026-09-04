@@ -20,6 +20,8 @@
 - (void)viewDidLoad {
     [super viewDidLoad];
     
+    self.navigationItem.backButtonTitle = @"";
+    
     self.dataArray = @[
         @[
             @{

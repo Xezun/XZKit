@@ -10,15 +10,15 @@
 NS_ASSUME_NONNULL_BEGIN
 
 /// 数据模型遵循的协议。
-/// > 已在内部为`NSObject`实现此协议，因此，任何 NSObject 子类都可以作为数据模型。
-/// > 但是为避免被非 Mocoa 之外的功能使用，协议的实现未公开，需显式声明才可使用。
-NS_SWIFT_UI_ACTOR @protocol XZMocoaModel <NSObject>
+///
+/// 已为`NSObject`拓展`mocoaName`属性，因此任何`NSObject`子类只需声明遵循协议即可使用。
+NS_SWIFT_UI_ACTOR @protocol XZMocoaModel
 @optional
 @property (nonatomic, copy, readonly, nullable) XZMocoaName mocoaName;
 @end
 
 @interface NSObject (XZMocoaModel)
-@property (nonatomic, copy, nullable) XZMocoaName mocoaName;
+
 @end
 
 NS_ASSUME_NONNULL_END

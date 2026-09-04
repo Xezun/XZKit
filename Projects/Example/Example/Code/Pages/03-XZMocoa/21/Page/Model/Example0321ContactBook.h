@@ -13,7 +13,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 @class Example0321ContactBook;
 
-@interface Example0321ContactBook : NSObject <XZMocoaModel, XZMocoaTableModel>
+@interface Example0321ContactBook : NSObject <XZMocoaTableModel>
 
 @property (nonatomic, copy) NSArray *contacts;
 
