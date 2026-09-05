@@ -87,6 +87,7 @@ FOUNDATION_EXPORT XZMocoaKey const XZMocoaKeyPlaceholder NS_REFINED_FOR_SWIFT;
 FOUNDATION_EXPORT XZMocoaKey const XZMocoaKeyImage            NS_REFINED_FOR_SWIFT;
 FOUNDATION_EXPORT XZMocoaKey const XZMocoaKeyHighlightedImage NS_REFINED_FOR_SWIFT;
 FOUNDATION_EXPORT XZMocoaKey const XZMocoaKeyIsAnimating      NS_REFINED_FOR_SWIFT;
+FOUNDATION_EXPORT XZMocoaKey const XZMocoaKeyURL              NS_REFINED_FOR_SWIFT;
 FOUNDATION_EXPORT XZMocoaKey const XZMocoaKeyImageURL         NS_REFINED_FOR_SWIFT;
 
 // MARK: - UIButton

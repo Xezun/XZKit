@@ -22,10 +22,11 @@ NS_ASSUME_NONNULL_BEGIN
 /// - 还可通过重写`XZMocoaGroupViewModel`的数据解析方法，来实现对数据的定制解析。
 @protocol XZMocoaGroupModel <XZMocoaModel>
 
+@optional
 /// 列表分区数量。默认 1 只有一个分区。
 /// - Parameters:
-///   - context: 作为数据模型时，此参数为调用此方法的视图模型；作为数据源时，此参数为视图模型的数据模型。
-///   - null: 无意义，仅占位
+///   - context: 自定义参数，默认情况下，此参数为调用此方法的视图模型
+///   - null: 仅占位用
 - (NSInteger)mocoa:(id)context numberOfSections:(nullable id)null;
 
 /// 列表指定分区内单元视图的数量。默认 1 只有一个元素。

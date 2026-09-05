@@ -52,6 +52,7 @@ XZMocoaKey const XZMocoaKeyPlaceholder      = @"placeholder";
 XZMocoaKey const XZMocoaKeyImage            = @"image";
 XZMocoaKey const XZMocoaKeyHighlightedImage = @"highlightedImage";
 XZMocoaKey const XZMocoaKeyIsAnimating      = @"isAnimating";
+XZMocoaKey const XZMocoaKeyURL              = @"URL";
 XZMocoaKey const XZMocoaKeyImageURL         = @"imageURL";
 
 XZMocoaKey const XZMocoaKeyTitle            = @"title";

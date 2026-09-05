@@ -52,10 +52,10 @@
             </objects>
             <point key="canvasLocation" x="2089.3129770992364" y="822.53521126760563"/>
         </scene>
-        <!--Navigation Controller-->
+        <!--Example Navigation Controller-->
         <scene sceneID="tsQ-5G-TkD">
             <objects>
-                <navigationController automaticallyAdjustsScrollViewInsets="NO" id="cdB-ad-bO2" sceneMemberID="viewController">
+                <navigationController automaticallyAdjustsScrollViewInsets="NO" id="cdB-ad-bO2" customClass="ExampleNavigationController" sceneMemberID="viewController">
                     <toolbarItems/>
                     <navigationBar key="navigationBar" contentMode="scaleToFill" id="IG9-au-0Wh">
                         <rect key="frame" x="0.0" y="118" width="393" height="54"/>

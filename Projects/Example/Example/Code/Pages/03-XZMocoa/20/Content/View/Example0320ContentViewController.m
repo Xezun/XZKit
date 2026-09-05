@@ -21,11 +21,10 @@
     XZMocoa(@"https://mocoa.xezun.com/examples/20/content/").viewNibClass = self;
 }
 
-- (instancetype)didInitializeWithMocoaOptions:(XZMocoaOptions *)options {
-    self.title = @"WebView";
-    _url = [NSURL URLWithString:options[@"url"]];
+- (void)didInitWithMocoaOptions:(XZMocoaOptions *)options {
+    self.title = options[XZMocoaKeyTitle] ?: @"WebView";
+    _url = [NSURL URLWithString:options[XZMocoaKeyURL]];
     XZLog(@"url: %@", _url);
-    return self;
 }
 
 - (void)viewDidLoad {

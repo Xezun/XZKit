@@ -27,7 +27,7 @@
     XZMocoaModule                 * const module     = viewModel.module;
     
     if (module) {
-        _reason = [NSString stringWithFormat:@"模块：%@", module.url];
+        _reason = [NSString stringWithFormat:@"%@", module.url];
         
         _detail = [NSString stringWithFormat:@"[M] %@\n", ((id)module.modelClass) ?: @"<None>"];
         switch (module.viewForm) {
@@ -55,7 +55,7 @@
         }
         _detail = [_detail stringByAppendingFormat:@"[VM] %@\n--------------\n", ((id)module.viewModelClass) ?: @"<None>"];
     } else {
-        _reason = @"模块：未注册";
+        _reason = @"模块未注册";
         _detail = @"";
     }
     _detail = [_detail stringByAppendingFormat:@"name: %@, \ndata: %@", model.mocoaName, [NSString xz_stringWithJSON:[XZJSON encode:model options:(NSJSONWritingPrettyPrinted) error:nil]]];
