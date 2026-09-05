@@ -400,7 +400,7 @@ NS_SWIFT_UI_ACTOR @interface XZMocoaViewModel : NSObject <XZMocoaViewModel> {
 /// - Parameters:
 ///   - model: 数据模型
 ///   - changedKeys: 值发生改变的属性
-- (void)model:(nullable id)model didChangeValuesForKeys:(NSSet<XZMocoaKey> *)changedKeys;
+- (void)model:(id)model didChangeValuesForKeys:(NSSet<XZMocoaKey> *)changedKeys;
 
 @end
 

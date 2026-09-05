@@ -41,14 +41,14 @@ NS_ASSUME_NONNULL_BEGIN
 ///   - indexPath: 单元视图的位置
 - (nullable id)mocoa:(id)context modelForCellAtIndexPath:(NSIndexPath *)indexPath;
 
-/// 区域内附加视图的数量。默认返回 0 附加视图。
+/// 区域内附加视图的数量。默认返回 1 附加视图。
 /// - Parameters:
 ///   - context: 自定义参数，默认情况下，此参数为调用此方法的视图模型
 ///   - kind: 附加视图的类型
 ///   - section: 分组区域的次序
 - (NSInteger)mocoa:(id)context kind:(XZMocoaKind)kind numberOfSupplementsInSection:(NSInteger)section;
 
-/// 获取指定位置的附加视图的数据模型。默认 0 无附加视图的数据模型。
+/// 获取指定位置的附加视图的数据模型。默认返回自身作为附加视图的数据模型。
 /// - Parameters:
 ///   - context: 自定义参数，默认情况下，此参数为调用此方法的视图模型
 ///   - kind: 附加视图的类型

@@ -482,19 +482,9 @@ FOUNDATION_STATIC_INLINE NSString *XZMocoaStandardKey(XZMocoaKind kind, XZMocoaN
     NSString      * const superPath   = path.stringByDeletingLastPathComponent;
     XZMocoaModule * const superModule = [domain moduleForPath:superPath];
     
-    // 解析 name kind
-    XZMocoaKind subKind = nil;
-    XZMocoaName subName = nil;
-    XZMocoaPathParser(path.lastPathComponent, &subKind, &subName);
-    
-    // 查找子模块，否则创建并关联
-    XZMocoaModule *module = [superModule submoduleIfLoadedForKind:subKind forName:subName];
-    if (module == nil) {
-        module = [[XZMocoaModule alloc] initWithURL:url];
-        [superModule setSubmodule:module forKind:subKind forName:subName];
-    }
-    
-    return module;
+    // 懒加载子模块
+    NSString * const key = path.lastPathComponent;
+    return [superModule objectForKeyedSubscript:key];
 }
 
 - (id)domain:(XZMocoaDomain *)domain moduleForPath:(nonnull NSString *)path {

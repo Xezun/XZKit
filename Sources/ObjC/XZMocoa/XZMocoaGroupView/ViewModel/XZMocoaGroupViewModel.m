@@ -716,7 +716,7 @@
                     [self addSubViewModel:viewModel];
                 }];
             }];
-            XZLog(@"[XZMocoaGroupViewModel][batchUpdates] 更新辅助视图 %ld", newSectionIndex);
+            XZLog(@"[XZMocoaGroupViewModel][batchUpdates] 更新附加视图 %ld", newSectionIndex);
         }];
         [_viewModelSections removeObjectsAtIndexes:deletes];
         
@@ -1030,37 +1030,22 @@
 @implementation XZMocoaGroupViewModel (XZMocoaGroupModel)
 
 - (NSInteger)model:(id<XZMocoaGroupModel>)model numberOfSections:(id)null {
-    if (_dataSource) {
-        return [_dataSource mocoa:self numberOfSections:null];
-    }
     return [model mocoa:self numberOfSections:null];
 }
 
 - (NSInteger)model:(id<XZMocoaGroupModel>)model numberOfCellsInSection:(NSInteger)section {
-    if (_dataSource) {
-        return [_dataSource mocoa:self numberOfCellsInSection:section];
-    }
     return [model mocoa:self numberOfCellsInSection:section];
 }
 
 - (id)model:(id<XZMocoaGroupModel>)model modelForCellAtIndexPath:(NSIndexPath *)indexPath {
-    if (_dataSource) {
-        return [_dataSource mocoa:self modelForCellAtIndexPath:indexPath];
-    }
     return [model mocoa:self modelForCellAtIndexPath:indexPath];
 }
 
 - (NSInteger)model:(id<XZMocoaGroupModel>)model kind:(XZMocoaKind)kind numberOfSupplementsInSection:(NSInteger)section {
-    if (_dataSource) {
-        return [_dataSource mocoa:self kind:kind numberOfSupplementsInSection:section];
-    }
     return [model mocoa:self kind:kind numberOfSupplementsInSection:section];
 }
 
 - (id)model:(id<XZMocoaGroupModel>)model kind:(XZMocoaKind)kind modelForSupplementAtIndexPath:(NSIndexPath *)indexPath {
-    if (_dataSource) {
-        return [_dataSource mocoa:self kind:kind modelForSupplementAtIndexPath:indexPath];
-    }
     return [model mocoa:self kind:kind modelForSupplementAtIndexPath:indexPath];
 }
 

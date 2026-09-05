@@ -105,7 +105,7 @@
 - (void)prepare {
     if ([self _attachModelObserverIfNeeded:self.model]) {
         NSArray * const allKeys = [[XZMocoaKeyMappingTable tableForClass:self.class].keyToMethods allKeys];
-        [self model:_model didChangeValuesForKeys:[NSSet setWithArray:allKeys]];
+        [self model:self.model didChangeValuesForKeys:[NSSet setWithArray:allKeys]];
     }
 }
 
