@@ -58,7 +58,9 @@
         _reason = @"模块未注册";
         _detail = @"";
     }
-    _detail = [_detail stringByAppendingFormat:@"name: %@, \ndata: %@", model.mocoaName, [NSString xz_stringWithJSON:[XZJSON encode:model options:(NSJSONWritingPrettyPrinted) error:nil]]];
+    NSData   *data   = [XZJSON encode:model options:(NSJSONWritingPrettyPrinted | NSJSONWritingFragmentsAllowed) error:nil];
+    NSString *string = [NSString xz_stringWithJSON:data];
+    _detail = [_detail stringByAppendingFormat:@"name: %@, \ndata: %@", model.mocoaName, string];
 }
 
 - (NSString *)reasonByCheckingModule:(XZMocoaModule *)module {
