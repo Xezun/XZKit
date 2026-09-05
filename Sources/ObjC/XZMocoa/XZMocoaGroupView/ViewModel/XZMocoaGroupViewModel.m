@@ -460,7 +460,7 @@
 - (void)setNeedsDifferenceBatchUpdates:(BOOL)needsDifferenceBatchUpdates {
     if (needsDifferenceBatchUpdates) {
         [_needsDifferenceBatchUpdates addObject:@(YES)];
-    } else {
+    } else if (_needsDifferenceBatchUpdates.count > 0) {
         NSInteger const lastIndex = _needsDifferenceBatchUpdates.count - 1;
         _needsDifferenceBatchUpdates[lastIndex] = @(NO);
     }
