@@ -12,6 +12,7 @@
 #import "XZMacros.h"
 #import "NSArray+XZKit.h"
 #import "NSIndexSet+XZKit.h"
+#import "NSString+XZDataDigester.h"
 #import "XZLog.h"
 #import "XZDefer.h"
 
@@ -1139,6 +1140,7 @@
 @end
 
 
+
 @implementation XZMocoaGroupSection {
     NSString *_identifier;
     NSMutableArray *_cells;
@@ -1160,14 +1162,14 @@
                 [identifier appendFormat:@"-%lu", (unsigned long)model.hash];
             }
         };
-        _identifier = identifier.copy;
+        _identifier = identifier.xz_sha1.copy;
     } else {
         // cells:cell-hash0-hash1-hash2-hashN
         NSMutableString *identifier = [NSMutableString stringWithString:@"cells:cell"];
         for (NSObject *model in _cells) {
             [identifier appendFormat:@"-%lu", (unsigned long)model.hash];
         }
-        _identifier = identifier.copy;
+        _identifier = identifier.xz_sha1.copy;
     }
     return _identifier;
 }

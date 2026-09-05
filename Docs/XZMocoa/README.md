@@ -5,7 +5,7 @@ XZMocoa 是 MVVM Cocoa 的缩写，是一套基于 Cocoa（UIKit/Foundation）�
 
 接入 XZMocoa 并不能将项目立即变为 MVVM 设计模式，但 XZMocoa 不影响现有代码，可以仅在新模块下使用 MVVM 设计模式。对于存量代码，推荐先套个壳，让它形式上符合 MVVM 设计模式，然后再渐进式改造，最大限度减少代码改动，以避免影响业务稳定。
 
-## 集成安装
+## 一、集成安装
 
 ### 使用 Swift Package Manager 集成
 
@@ -21,7 +21,7 @@ https://github.com/Xezun/XZKit.git
 import XZKit
 ```
 
-## 快速开始
+## 二、快速开始
 
 下面是一个完整的 MVVM 单元示例：`Model` 持有数据，`ViewModel` 将数据转换为视图所需的形式，`View` 负责展示。
 
@@ -39,9 +39,11 @@ class UserModel: NSObject {
 // 视图，遵循 XZMocoaView 标记协议，表示其为 MVVM 中的 View 角色。
 @mocoa(.v)
 class UserView: UIView, XZMocoaView {
-
-    @bind(text: "name")           // 监听 ViewModel 的 name 事件值，绑定到 nameLabel.text
-    @bind(textColor: "textColor") // 监听 ViewModel 的 textColor 事件，绑定到 nameLabel.textColor
+  
+    // 监听 ViewModel 的 name 事件值，绑定到 nameLabel.text
+    @bind(text: .name)
+    // 监听 ViewModel 的 textColor 事件，绑定到 nameLabel.textColor
+    @bind(textColor: .textColor) 
     var nameLabel: UILabel!
 
 }
@@ -71,7 +73,7 @@ class UserViewModel: XZMocoaViewModel {
 }
 ```
 
-## 核心概念
+## 三、核心概念
 
 XZMocoa 中，一个完整的 MVVM 单元由三个元素组成：
 
@@ -222,7 +224,7 @@ override var shouldObserveModelKeysActively: Bool {
 
 当数据在视图模型外更新时，可通过 `-model:didChangeValuesForKeys:` 方法被动触发监听；当数据管理框架（如 CoreData 的 `NSFetchedResultsController`）自带监听机制时，可在其代理方法中调用此方法，XZMocoa 的列表视图模型已内置了对 `NSFetchedResultsController` 的支持。
 
-## 模块化
+## 四、模块化
 
 不论采用何种设计模式，都应该让代码模块化，这样在更新维护时，变动就可以控制在模块内。XZMocoa 使用 MVVM 设计模式进行模块化：在 MVVM 设计模式下，视图通过自身的 ViewModel 管理逻辑，页面通过划分模块，将逻辑分散在各个子模块中，避免单个页面变得臃肿。
 
@@ -237,7 +239,8 @@ XZMocoa 提供了基于 URL 的模块管理方案 `XZMocoaDomain`，任何模块
 上面例子中的模块地址为 `https://mocoa.xezun.com/your/module/path/`，其中 URL 的 scheme 是任意的。
 
 ```objc
-id yourModule = [XZMocoaDomain moduleForURL:[NSURL URLWithString:@"https://mocoa.xezun.com/your/module/path/"]];
+NSURL *url = [NSURL URLWithString:@"https://mocoa.xezun.com/your/module/path/"];
+id yourModule = [XZMocoaDomain moduleForURL:url];
 ```
 
 `XZMocoaDomain` 使用字典管理模块，无需担心性能问题。模块也可以由 `XZMocoaProvider` 协议提供懒加载，比如读取配置文件。
@@ -344,7 +347,7 @@ XZMocoaModule *submodule = module[@"header:black"];
 - 子模块中名称为`XZMocoaNameDefault` （空字符串）的模块，为默认模块的名称。
 - 在`Table`或`Collection`列表中，默认分类的子模块为`Cell`模块。
 
-## 列表 MVVM
+## 五、列表渲染
 
 下面以 iOS 开发中常用的 `UITableView` 组件为例，介绍如何使用 XZMocoa 开发列表页面。
 
@@ -352,16 +355,16 @@ XZMocoaModule *submodule = module[@"header:black"];
 
 ### 1、数据协议
 
-所有`NSObject`子类都可以作为列表数据模型，特别的可以直接将`NSArray`二维数组元素映射为列表`Cell`的数据模型。对于自定义模型，需要遵循`XZMocoaGroupModel`协议，才能在 Mocoa 中使用。
+所有`NSObject`子类都可以作为列表数据模型，特别的可以直接将`NSArray`二维数组元素映射为列表`Cell`的数据模型。对于自定义数据模型，可通过`XZMocoaGroupModel`协议，将数据转换为 Mocoa 可用的标准数据。
 
 ```objc
 @protocol XZMocoaGroupModel <XZMocoaModel>
 @optional
-@property (nonatomic, readonly) NSInteger numberOfSections;
-- (NSInteger)numberOfCellsInSection:(NSInteger)section;
-- (nullable id)modelForCellAtIndexPath:(NSIndexPath *)indexPath;
-- (NSInteger)numberOfSupplementsOfKind:(XZMocoaKind)kind inSection:(NSInteger)section;
-- (nullable id)modelForSupplementOfKind:(XZMocoaKind)kind atIndexPath:(NSIndexPath *)indexPath;
+- (NSInteger)mocoa:(id)context numberOfSections:(nullable id)null;
+- (NSInteger)mocoa:(id)context numberOfCellsInSection:(NSInteger)section;
+- (nullable id)mocoa:(id)context modelForCellAtIndexPath:(NSIndexPath *)indexPath;
+- (NSInteger)mocoa:(id)context kind:(XZMocoaKind)kind numberOfSupplementsInSection:(NSInteger)section;
+- (nullable id)mocoa:(id)context kind:(XZMocoaKind)kind modelForSupplementAtIndexPath:(NSIndexPath *)indexPath;
 @end
 ```
 
@@ -404,7 +407,7 @@ tableView.viewModel = tableViewModel;
 @end
 ```
 
-除了 ViewModel 需要使用 XZMocoa 提供的基类外，View 和 Model 是完全自由的。协议 `XZMocoaTableCell` 和 `XZMocoaModel` 是辅助协议，不需要实现，声明遵循后即可使用协议提供的方法。
+除了 ViewModel 需要使用 XZMocoa 提供的基类外，View 和 Model 是完全自由的。
 
 ###### 3.2 处理数据
 
@@ -451,29 +454,47 @@ View 根据 ViewModel 提供的数据进行展示。
 
 ###### 3.4 注册模块
 
-将 cell 模块注册到列表模块中，就可以在列表中展示了。在下面的例子中，列表模块为 URL 为 `https://mocoa.xezun.com/table/` 的模块。
+将 cell 模块注册到列表模块中，就可以在列表中展示了。在下面的例子中，列表模块为 URL 为 `https://mocoa.xezun.com/table` 的模块。
 
 ```objc
 @implementation ExampleCellModel
 + (void)load {
-    XZMocoa(@"https://mocoa.xezun.com/table/").cell.modelClass = self;
+    XZMocoa(@"https://mocoa.xezun.com/table").cell.modelClass = self;
 }
 @end
 
 @implementation ExampleCell
 + (void)load {
-    XZMocoa(@"https://mocoa.xezun.com/table/").cell.viewClass = self;
+    XZMocoa(@"https://mocoa.xezun.com/table").cell.viewClass = self;
 }
 @end
 
 @implementation ExampleCellViewModel
 + (void)load {
-    XZMocoa(@"https://mocoa.xezun.com/table/").cell.viewModelClass = self;
+    XZMocoa(@"https://mocoa.xezun.com/table").cell.viewModelClass = self;
 }
 @end
 ```
 
-在此示例中，只有一种类型的 `cell`，不需要具名，所以直接使用 `.section.cell` 注册。更多详细用法，可参考“Example”示例工程。
+在 Swift 中，无法使用 `+load` 方法，可以在统一的方法中注册，然后在使用前调用。
+
+```swift
+func loadModules() {
+    let cell = #mocoa("https://mocoa.xezun.com/table").cell
+
+    let cell = Groups["100"];
+    cell.modelClass     = ExampleCellModel.self
+    cell.viewClass      = ExampleCell.self
+    cell.viewModelClass = ExampleCellViewModel.self
+}
+
+func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
+    // 在模块使用前注册
+    loadModules()
+}
+```
+
+在此示例中，只有一种类型的 `cell`，不需要具名，若要所以直接使用 `.section.cell` 注册。更多详细用法，可参考“Example”示例工程。
 
 ### 4、同步更新视图
 
@@ -487,9 +508,7 @@ View 根据 ViewModel 提供的数据进行展示。
 
 ### 5、局部刷新
 
-在列表页面中，直接使用 `-reloadData` 刷新整个页面是一种偷懒的做法。局部刷新不仅可以节省系统资源，也可以增强用户交互。但是由于数据大部分情况下都来自服务端请求，进行局部刷新需要分析数据变动，这可能会增加不少工作量。
-
-而使用 `XZMocoaTableView` 或 `XZMocoaCollectionView` 可以轻松实现局部刷新：
+使用 `-performBatchUpdates:completion:` 方法，默认会检查所有数据的`hash`值，如果满足条件，将开启差异分析，进行局部刷新。
 
 ```objc
 [_tableViewModel performBatchUpdates:^{
@@ -498,19 +517,17 @@ View 根据 ViewModel 提供的数据进行展示。
 } completion:nil];
 ```
 
-将更新数据的操作放在 `batchUpdates` 块中，XZMocoa 会自动根据数据的 `-isEqual:` 方法分析数据变动，并进行局部刷新。
+差异分析依赖数据的`hash`值，在 iOS 中，如果使用字符串的`hash`值，字符串的长度须限制在96字节以下。
 
 ```objc
-- (BOOL)isEqual:(ExampleCellModel *)object {
-    if (object == self) return YES;
-    if (![object isKindOfClass:[ExampleCellModel class]]) return NO;
-    return [self.dataID isEqualToString:object.dataID];
+let identifier: String
+
+override var hash: Int {
+    return identifier.hash
 }
 ```
 
-一般情况下，需要重写数据模型的 `-isEqual:/-hash` 方法；但如果数据层已经做了数据管理（同一数据始终是同一个对象，或已经实现了 `-isEqual:`），这一步就可以省略。
-
-## 页面模块
+## 六、页面模块
 
 XZMocoa 将 `UIViewController` 视为 MVVM 中特殊的 View，页面即模块。模块中注册 `viewModelClass` 后，即可通过模块 URL 直接创建或打开页面。
 
@@ -538,7 +555,7 @@ XZMocoa 为控制器提供了完整的模块化支持：
 UIView *view = [UIView viewWithMocoaURL:[NSURL URLWithString:@"https://mocoa.xezun.com/header"] frame:CGRectZero];
 ```
 
-## Swift 宏
+## 七、Swift 宏
 
 在 Swift 中，XZMocoa 提供了 `XZKitMacros` 宏库（随 `XZKit` 一起提供），用于简化 MVVM 开发：
 
@@ -570,7 +587,7 @@ class ViewModel: XZMocoaViewModel {
 }
 ```
 
-## 调试模式
+## 八、调试模式
 
 调试模式下，控制台会输出一些信息，帮助调试检查代码。可在 `XZMocoaDefines.h` 中查看相关的调试开关配置。
 

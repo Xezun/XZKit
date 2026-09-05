@@ -46,6 +46,12 @@ class TestViewModel: XZMocoaViewModel {
     override var shouldObserveModelKeysActively: Bool {
         return true
     }
+    
+let identifier: String
+
+override var hash: Int {
+    return (identifier as NSString).hash
+}
 }
 
 extension NSFetchedResultsController: @retroactive XZMocoaGroupModel {}
@@ -103,5 +109,6 @@ public func loadGroups() {
     let Groups = #mocoa("https://mocoa.xzkit.com/groups/")
     
     let card100 = Groups["100"]
+    card100
 }
 
