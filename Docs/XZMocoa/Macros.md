@@ -205,10 +205,9 @@ public macro key() = #externalMacro(module: "XZKitMacros", type: "XZMocoaKeyMacr
 | `@key` | 属性名 | 使用属性名作为 KTA 事件名 |
 | `@key(.name)` | `name` | 使用 `XZMocoaKey` 点语法枚举值 |
 | `@key("user.name")` | `user_name` | 字符串字面量；其中的 `.` 会被替换为 `_` |
-| `@key(value: 0)` | 属性名 | `value` 标签用于指定初始值，键名仍取属性名 |
 
-- 第一个参数只能是 `String` 字面量或 `XZMocoaKey` 枚举值，否则报错。
-- 参数数量超过限制（`@key` 最多用于指定名称）时报错。
+- `@key` 最多接受一个用于指定键名的参数，只能是 `String` 字面量或 `XZMocoaKey` 枚举值，且不带参数标签，否则报错。
+- 属性的初始值直接由属性声明自身的初始化表达式提供（如 `@key var isVIP = false`），宏会将其转移到生成的私有存储属性 `_isVIP` 上，无需再通过宏参数指定初始值。
 
 ### 4.2 Model 角色展开（`.m`）
 

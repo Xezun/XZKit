@@ -15,7 +15,7 @@ import SwiftSyntax
 public struct XZMocoaKeyMacro {
     
     /// 解析 `@key` 宏的参数。供外部调用。
-    public static func arguments(from node: SwiftSyntax.AttributeSyntax, for declaration: VariableDeclSyntax) throws -> (name: String, initialValue: String?) {
+    public static func arguments(from node: SwiftSyntax.AttributeSyntax, for declaration: VariableDeclSyntax) throws -> String {
         guard let expression = declaration.bindings.first else {
             throw XZMacroError(message: "@key: 无法确定属性名")
         }
@@ -26,19 +26,19 @@ public struct XZMocoaKeyMacro {
     /// - Parameters:
     ///   - node: 宏节点
     ///   - expression: 属性表达式
-    /// - Returns: 表示键名的 name 和初始值 value 的元组
-    public static func arguments(forMacro node: SwiftSyntax.AttributeSyntax, forVariable expression: PatternBindingSyntax) throws -> (name: String, initialValue: String?) {
+    /// - Returns: 键名 name
+    public static func arguments(forMacro node: SwiftSyntax.AttributeSyntax, forVariable expression: PatternBindingSyntax) throws -> String {
         guard let macroArguments = node.arguments else {
             guard let name = expression.pattern.as(IdentifierPatternSyntax.self)?.identifier.text, name.count > 0 else {
                 throw XZMacroError(message: "@key: 无法确定属性名")
             }
-            return (name, nil)
+            return name
         }
         return try arguments(fromMacro: macroArguments, forVariable: expression)
     }
     
     /// 解析宏 `@key` 的参数。
-    private static func arguments(fromMacro arguments: SwiftSyntax.AttributeSyntax.Arguments, forVariable expression: PatternBindingSyntax) throws -> (name: String, initialValue: String?) {
+    private static func arguments(fromMacro arguments: SwiftSyntax.AttributeSyntax.Arguments, forVariable expression: PatternBindingSyntax) throws -> String {
         switch arguments {
         case .argumentList(let arguments):
             switch arguments.count {
@@ -47,55 +47,29 @@ public struct XZMocoaKeyMacro {
                 guard let name = expression.pattern.as(IdentifierPatternSyntax.self)?.identifier.text, name.count > 0 else {
                     throw XZMacroError(message: "@key: 无法确定属性名")
                 }
-                return (name, nil)
+                return name
                 
             case 1:
                 let firstArgument = arguments[arguments.startIndex]
                 
+                // 仅支持无标签的键名参数，初始值由属性自身的初始化表达式提供。
                 if let label = firstArgument.label?.trimmedDescription {
-                    if label == "value" {
-                        guard let name = expression.pattern.as(IdentifierPatternSyntax.self)?.identifier.text, name.count > 0 else {
-                            throw XZMacroError(message: "@key: 无法确定属性名")
-                        }
-                        return (name, firstArgument.expression.trimmedDescription)
-                    }
-                    throw XZMacroError(message: "@key: 第一个参数必须是 value 标签，而不能是 \(label) 标签")
+                    throw XZMacroError(message: "@key: 不支持 \(label) 标签参数，仅支持指定键名")
                 }
                 
                 if let stringLiteral = firstArgument.expression.as(StringLiteralExprSyntax.self) {
                     if let stringValue = stringLiteral.representedLiteralValue?.replacingOccurrences(of: ".", with: "_"), stringValue.count > 0 {
-                        return (stringValue, nil)
+                        return stringValue
                     }
                 } else if let mocoaKeySyntax = firstArgument.expression.as(MemberAccessExprSyntax.self) {
                     let mocoaKey = mocoaKeySyntax.declName.trimmedDescription
-                    return (mocoaKey, nil)
-                }
-                
-                throw XZMacroError(message: "@key: 第一个参数必须为 String 字面量或 XZMocoaKey 枚举，而不能是 \(firstArgument.expression) 值")
-                
-            case 2:
-                let value = arguments[arguments.index(after: arguments.startIndex)].expression.trimmedDescription
-                
-                let firstArgument = arguments[arguments.startIndex]
-                
-                // 检查是否为字面量
-                if let stringLiteral = firstArgument.expression.as(StringLiteralExprSyntax.self) {
-                    if let stringValue = stringLiteral.representedLiteralValue?.replacingOccurrences(of: ".", with: "_"), stringValue.count > 0 {
-                        return (stringValue, value)
-                    }
-                    throw XZMacroError(message: "@key: 第一参数不能为空，若不想提供，请使用 value 标签直接提供第二个参数")
-                }
-                
-                // 检查是否 .key 语法
-                if let mocoaKeySyntax = firstArgument.expression.as(MemberAccessExprSyntax.self) {
-                    let mocoaKey = mocoaKeySyntax.declName.trimmedDescription
-                    return (mocoaKey, value)
+                    return mocoaKey
                 }
                 
                 throw XZMacroError(message: "@key: 第一个参数必须为 String 字面量或 XZMocoaKey 枚举，而不能是 \(firstArgument.expression) 值")
                 
             default:
-                throw XZMacroError(message: "@key: 最多支持两个参数（name, initialValue)")
+                throw XZMacroError(message: "@key: 最多支持一个参数（name）")
                 
             }
         default:
