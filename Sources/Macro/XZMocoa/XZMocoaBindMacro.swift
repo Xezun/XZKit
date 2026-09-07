@@ -78,8 +78,6 @@ public struct XZMocoaBindMacro {
                 vmkey = String(argument0.value.dropFirst())
             }
             
-            
-            
             if let label = argument0.label {
                 // 有标签：标签为 View 属性
                 selector = "#selector(setter: \(property.type).\(label))"

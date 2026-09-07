@@ -30,10 +30,8 @@
 - (void)removeCellAtIndex:(NSInteger)index;
 - (void)replaceCellAtIndex:(NSInteger)index withCell:(ObjectType)cell;
 - (void)addSupplement:(ObjectType)object forKind:(XZMocoaKind)kind;
-- (void)insertSupplement:(ObjectType)object atIndex:(NSInteger)index forKind:(XZMocoaKind)kind;
 - (nullable NSMutableArray<ObjectType> *)supplementsForKind:(XZMocoaKind)kind;
 - (nullable ObjectType)supplementForKind:(XZMocoaKind)kind atIndex:(NSInteger)index;
-- (BOOL)isSupplementsEqualToSupplementsOfSection:(XZMocoaGroupSection *)section;
 
 - (void)removeAllSupplements;
 - (void)removeAllCells;
@@ -244,9 +242,7 @@
 
 - (void)deleteSections:(NSIndexSet *)sections {
     [self setNeedsDifferenceBatchUpdates:NO];
-    
-    id const model = self.model;
-    NSArray<XZMocoaKind> * const supportedSupplementKinds = self.supportedSupplementKinds;
+    _modelIndexPathTable = nil;
     
     [sections enumerateIndexesWithOptions:NSEnumerationReverse usingBlock:^(NSUInteger const index, BOOL *stop) {
         XZMocoaGroupSection *viewModelSection = _viewModelSections[index];
@@ -272,6 +268,7 @@
 
 - (void)moveSection:(NSInteger)section toSection:(NSInteger)newSection {
     [self setNeedsDifferenceBatchUpdates:NO];
+    _modelIndexPathTable = nil;
     
     {
         XZMocoaGroupSection * const viewModelSection = _viewModelSections[section];
@@ -363,6 +360,7 @@
 
 - (void)deleteCellsAtIndexPaths:(NSArray<NSIndexPath *> *)indexPaths {
     [self setNeedsDifferenceBatchUpdates:NO];
+    _modelIndexPathTable = nil;
     
     // 删除元素，降序遍历：先删除靠后的元素，靠前元素的索引才不受影响。
     NSArray<NSIndexPath *> * const sortedIndexPaths = [indexPaths sortedArrayUsingSelector:@selector(compare:)];
@@ -396,6 +394,7 @@
 
 - (void)moveCellAtIndexPath:(NSIndexPath *)indexPath toIndexPath:(NSIndexPath *)newIndexPath {
     [self setNeedsDifferenceBatchUpdates:NO];
+    _modelIndexPathTable = nil;
     
     NSInteger const fromSection = indexPath.section;
     NSInteger const fromItem    = indexPath.item;
@@ -591,9 +590,6 @@
         NSInteger const deletesCount = deletes.count;
         if (deletesCount > 0) {
             [deletes enumerateIndexesUsingBlock:^(NSUInteger const oldSectionIndex, BOOL * _Nonnull stop) {
-                // 记录需要删除
-                [deletes addIndex:_modelSections.count];
-                
                 XZMocoaGroupSection *modelSection = self->_modelSections[oldSectionIndex];
                 [_modelSections addObject:modelSection];
                 
@@ -778,7 +774,7 @@
     for (XZMocoaKind const kind in supportedSupplementKinds) {
         NSMutableArray * const supplementModels = [modelSection supplementsForKind:kind];
         
-        [[modelSection supplementsForKind:kind] enumerateObjectsUsingBlock:^(id const supplementModel, NSUInteger supplementIndex, BOOL * _Nonnull stop) {
+        [supplementModels enumerateObjectsUsingBlock:^(id const supplementModel, NSUInteger supplementIndex, BOOL * _Nonnull stop) {
             NSIndexPath * const indexPath = [NSIndexPath indexPathForItem:supplementIndex inSection:sectionIndex];
             XZMocoaGroupReusableViewModel * const viewModel = [self _createViewModelWithModel:supplementModel forKind:kind];
             viewModel.indexPath = indexPath;
@@ -880,7 +876,7 @@
             id<XZMocoaModel> const cellModel = cellModels[cellIndex];
             
             NSIndexPath *indexPath = [modelIndexPathMap objectForKey:cellModel];
-            if (indexPath.section != sectionIndex || indexPath.item != cellIndex) {
+            if (indexPath == nil || indexPath.section != sectionIndex || indexPath.item != cellIndex) {
                 indexPath = [NSIndexPath indexPathForItem:cellIndex inSection:sectionIndex];
                 [modelIndexPathMap setObject:indexPath forKey:cellModel];
             }
@@ -1226,21 +1222,6 @@
     return _kindedSupplements;
 }
 
-- (void)insertSupplement:(id)supplement atIndex:(NSInteger)index forKind:(XZMocoaKind)kind {
-    _identifier = nil;
-    _supplementKind = kind;
-    _supplement = supplement;
-    if (_kindedSupplements == nil) {
-        _kindedSupplements = [NSMutableDictionary dictionary];
-    }
-    NSMutableArray *arrayM = _kindedSupplements[kind];
-    if (arrayM == nil) {
-        arrayM = [NSMutableArray array];
-        _kindedSupplements[kind] = arrayM;
-    }
-    [arrayM insertObject:supplement atIndex:index];
-}
-
 - (void)addSupplement:(id)supplement forKind:(XZMocoaKind)kind {
     _identifier = nil;
     _supplementKind = kind;
@@ -1263,16 +1244,6 @@
 - (id)supplementForKind:(XZMocoaKind)kind atIndex:(NSInteger)index {
     NSMutableArray *arrayM = _kindedSupplements[kind];
     return arrayM[index];
-}
-
-- (BOOL)isSupplementsEqualToSupplementsOfSection:(XZMocoaGroupSection *)section {
-    if (_kindedSupplements == nil && section->_kindedSupplements == nil) {
-        return YES;
-    }
-    if (_kindedSupplements == nil || section->_kindedSupplements == nil) {
-        return NO;
-    }
-    return [_kindedSupplements isEqualToDictionary:section->_kindedSupplements];
 }
 
 - (void)copySupplementsFromSection:(XZMocoaGroupSection *)otherSection {
