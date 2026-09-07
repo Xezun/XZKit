@@ -71,8 +71,8 @@
     return self;
 }
 
-- (void)viewModelDidChange {
-    [super viewModelDidChange];
+- (void)prepareForViewModel {
+    [super prepareForViewModel];
     
     self.viewModel.delegate = self;
     

@@ -30,40 +30,6 @@ public struct XZMocoaMacro {
     
 }
 
-/// .m  => 检查被 `@mocoa` 标记的类是否继承自 NSObject 并添加 `@objc` 标记。
-extension XZMocoaMacro: PeerMacro {
-    
-    public static func expansion(of node: AttributeSyntax, providingPeersOf declaration: some DeclSyntaxProtocol, in context: some MacroExpansionContext) throws -> [DeclSyntax] {
-        
-        guard let classDecl = declaration.as(ClassDeclSyntax.self) else {
-            throw XZMacroError(message: "@mocoa: 仅可用于 class 的声明")
-        }
-        
-        let role = try XZMocoaRole.init(node: node, declaration: classDecl)
-        
-        switch role {
-        case .m:
-            // 为 Model 添加 @objc 标记
-            guard classDecl.inheritedTypes.contains("NSObject") else {
-                throw XZMacroError(message: "@mocoa: 仅可修饰继承自 NSObject 的 class 的声明")
-            }
-            
-            var newAttributes = classDecl.attributes
-            newAttributes.append(
-                .init(AttributeSyntax(attributeName: IdentifierTypeSyntax(name: .identifier("objc"))))
-            )
-            
-            return [DeclSyntax(classDecl.with(\.attributes, newAttributes))]
-        case .v:
-            return []
-        case .vm:
-            return []
-        }
-        
-    }
-    
-}
-
 /// 宏 `@mocoa(role)` 的实现：
 /// .m  => 为 @key 标记的属性添加 @objc 标记；检查是否缺少 dynamic 标记
 /// .v  => 为 @bind 标记的方法，添加 @objc 标记
@@ -79,15 +45,14 @@ extension XZMocoaMacro: MemberAttributeMacro {
         
         switch role {
         case .m:
+            guard classDecl.inheritedTypes.contains("NSObject") else {
+                throw XZMacroError(message: "@mocoa: 仅可修饰继承自 NSObject 的 class 的声明")
+            }
             guard let property = member.as(VariableDeclSyntax.self) else {
                 return []
             }
             guard property.contains(attribute: "key") else {
                 return []
-            }
-            if !property.contains(attributes: ["dynamic", "NSManaged"], .or) {
-                let message = "@mocoa: 缺少 dynamic 标记，该属性值可能无法被用作 key";
-                XZMacroDiagnose(context, node: property, message: message, severity: .warning)
             }
             if property.contains(attribute: "objc") {
                 return []
@@ -109,10 +74,7 @@ extension XZMocoaMacro: MemberAttributeMacro {
                     
                     case "bind":
                         containsBind = true
-                        
-                    case "prepare":
-                        break
-                        
+                                                
                     default:
                         break
                     }
@@ -161,8 +123,6 @@ extension XZMocoaMacro: MemberAttributeMacro {
                         containsObjc = true
                     case "bind":
                         containsBind = true
-                    case "prepare":
-                        break
                     default:
                         break
                     }
@@ -182,14 +142,14 @@ extension XZMocoaMacro: MemberAttributeMacro {
 }
 
 /// 宏 `@mocoa(role)` 的实现：
-/// .vm => 为 @bind 的成员注册 mappingModelKeys 自动监听
-/// .v  => 为 @bind 成员生成 viewModelDidChange 自动绑定
+/// .vm => 为 @bind 的成员注册 `mappingModelKeys` 自动监听
+/// .v  => 为 @bind 成员生成 `__xz_bind_prepare` 自动绑定
 /// .m  => 暂不执行任何操作
 extension XZMocoaMacro: MemberMacro {
     
     public static func expansion(of node: AttributeSyntax, providingMembersOf declaration: some DeclGroupSyntax, in context: some MacroExpansionContext) throws -> [DeclSyntax] {
         guard let classDecl = declaration.as(ClassDeclSyntax.self) else {
-            throw XZMacroError(message: "@mocoa: 只能应用于类")
+            throw XZMacroError(message: "@mocoa: 只能应用于 class 类")
         }
         
         let role = try XZMocoaRole.init(node: node, declaration: classDecl)
@@ -199,19 +159,17 @@ extension XZMocoaMacro: MemberMacro {
             return [];
             
         case .v:
-            // 判断是否自定义 viewModelDidChange 方法
+            // 判断是否自定义 __xz_bind_prepare 方法
             for member in classDecl.memberBlock.members {
                 if let methodDecl = member.decl.as(FunctionDeclSyntax.self) {
                     let methodName = methodDecl.name.trimmedDescription
-                    if methodName == "viewModelDidChange" {
-                        XZMacroDiagnose(context, node: methodDecl, message: "@mocoa: 重写 viewModelDidChange 将会绑定失效，请使用 @prepare 标记初始化方法", severity: .warning)
-                        return []
+                    if methodName == "__xz_bind_prepare" {
+                        throw XZMacroError(message: "@mocoa: 重写私有方法 __xz_bind_prepare 方法会导致绑定失效，请使用 prepareForViewModel 方法代替")
                     }
                 }
             }
             
-            var bindStatements = [String]()
-            var prepareMethodNames = [String]()
+            var bindStatementStrings = [String]()
             
             // 遍历 class 包体
             for member in classDecl.memberBlock.members {
@@ -238,7 +196,7 @@ extension XZMocoaMacro: MemberMacro {
                     
                     do {
                         let string = try XZMocoaBindMacro.viewBindStatements(forMacros: macroNodes, forVariable: variableDecl)
-                        bindStatements.append(string)
+                        bindStatementStrings.append(string)
                     } catch {
                         XZMacroDiagnose(context, node: variableDecl, error: error, severity: .warning)
                     }
@@ -257,13 +215,10 @@ extension XZMocoaMacro: MemberMacro {
                         case "bind": // 处理带 @bind 标记的属性。
                             do {
                                 let string = try XZMocoaBindMacro.viewBindStatement(forMacro: macroNode, forFunction: methodDecl)
-                                bindStatements.append(string)
+                                bindStatementStrings.append(string)
                             } catch {
                                 XZMacroDiagnose(context, node: methodDecl, error: error, severity: .warning)
                             }
-                        case "prepare":
-                            prepareMethodNames.append(methodDecl.name.text)
-                            continue
                         default:
                             continue
                         }
@@ -271,50 +226,18 @@ extension XZMocoaMacro: MemberMacro {
                 }
             }
             
-            if bindStatements.isEmpty {
-                if prepareMethodNames.isEmpty {
-                    return []
-                }
-                let methodSyntax = try FunctionDeclSyntax(
-                    """
-                    override func viewModelDidChange() {
-                        super.viewModelDidChange()
-                        guard let viewModel = self.viewModel else { return }
-                        // prepare
-                        \(raw: prepareMethodNames.map({ "\($0)()" }).joined(separator: "\n"))
-                    }
-                    """
-                )
-                return [DeclSyntax(methodSyntax)]
+            if bindStatementStrings.isEmpty {
+                return []
             }
             
-            let bindStatementString = bindStatements.joined(separator: "\n")
-            
-            if prepareMethodNames.isEmpty {
-                let methodSyntax = try FunctionDeclSyntax(
-                    """
-                    override func viewModelDidChange() {
-                        super.viewModelDidChange()
-                        guard let viewModel = self.viewModel else { return }
-                        // bind
-                        \(raw: bindStatementString)
-                    }
-                    """
-                )
-                return [DeclSyntax(methodSyntax)]
-            }
-            
-            let prepareStatementsString = prepareMethodNames.map({ "\($0)()" }).joined(separator: "\n")
+            let bindStatementsString = bindStatementStrings.joined(separator: "\n    ")
             
             let methodSyntax = try FunctionDeclSyntax(
                 """
-                override func viewModelDidChange() {
-                    super.viewModelDidChange()
+                override func __xz_bind_prepare() {
+                    super.__xz_bind_prepare()
                     guard let viewModel = self.viewModel else { return }
-                    // bind
-                    \(raw: bindStatementString)
-                    // prepare
-                    \(raw: prepareStatementsString)
+                    \(raw: bindStatementsString)
                 }
                 """
             )
@@ -338,7 +261,6 @@ extension XZMocoaMacro: MemberMacro {
             }
             
             var mappingKeyValueStrings = [String]()
-            var prepareMethodNames = [String]()
             
             // 遍历 class 包体
             for member in classDecl.memberBlock.members {
@@ -398,9 +320,6 @@ extension XZMocoaMacro: MemberMacro {
                         switch macroAttribute.attributeName.trimmedDescription {
                         case "bind":
                             break
-                        case "prepare":
-                            prepareMethodNames.append(methodDecl.name.text)
-                            continue
                         default:
                             continue
                         }
@@ -457,36 +376,25 @@ extension XZMocoaMacro: MemberMacro {
                 
             }
             
-            var syntaxes = [DeclSyntax]()
             
-            if !mappingKeyValueStrings.isEmpty {
-                let mappingKeyValues = mappingKeyValueStrings.joined(separator: ", \n")
-                
-                let variableSyntax = try VariableDeclSyntax(
-                    """
+            
+            if mappingKeyValueStrings.isEmpty {
+                return []
+            }
+            
+            let mappingKeyValues = mappingKeyValueStrings.joined(separator: ", \n            ")
+            
+            let variableSyntax = try VariableDeclSyntax(
+                """
                     override class var mappingModelKeys: [String : Any]? {
                         return [ 
                             \(raw: mappingKeyValues)
                         ]
                     }
-                    """
-                )
-                syntaxes.append(DeclSyntax(variableSyntax))
-            }
+                """
+            )
             
-            if !prepareMethodNames.isEmpty {
-                let methodSyntax = try FunctionDeclSyntax(
-                    """
-                    override func prepare() {
-                        super.prepare()
-                        \(raw: prepareMethodNames.map({ "\($0)()" }).joined(separator: "\n"))
-                    }
-                    """
-                )
-                syntaxes.append(DeclSyntax(methodSyntax))
-            }
-            
-            return syntaxes
+            return [DeclSyntax(variableSyntax)]
         }
         
     }

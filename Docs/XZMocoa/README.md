@@ -31,21 +31,9 @@ import XZKit
 // 数据模型，任意 NSObject 子类都可以作为 Model。
 @mocoa(.m)
 class UserModel: NSObject {
-    @objc dynamic var isVIP = false
-    @objc dynamic var firstName: String?
-    @objc dynamic var lastName: String?
-}
-
-// 视图，遵循 XZMocoaView 标记协议，表示其为 MVVM 中的 View 角色。
-@mocoa(.v)
-class UserView: UIView, XZMocoaView {
-  
-    // 监听 ViewModel 的 name 事件值，绑定到 nameLabel.text
-    @bind(text: .name)
-    // 监听 ViewModel 的 textColor 事件，绑定到 nameLabel.textColor
-    @bind(textColor: .textColor) 
-    var nameLabel: UILabel!
-
+    @key var isVIP = false
+    @key var firstName: String?
+    @key var lastName: String?
 }
 
 // 视图模型。
@@ -71,6 +59,18 @@ class UserViewModel: XZMocoaViewModel {
         textColor = isVip ? .red : .black
     }
 }
+
+// 视图，遵循 XZMocoaView 标记协议，表示其为 MVVM 中的 View 角色。
+@mocoa(.v)
+class UserView: UIView, XZMocoaView {
+  
+    // 监听 ViewModel 的 name 事件值，绑定到 nameLabel.text
+    @bind(text: .name)
+    // 监听 ViewModel 的 textColor 事件，绑定到 nameLabel.textColor
+    @bind(textColor: .textColor) 
+    var nameLabel: UILabel!
+
+}
 ```
 
 ## 三、核心概念
@@ -87,142 +87,145 @@ XZMocoa 中，一个完整的 MVVM 单元由三个元素组成：
 
 在 `ready` 机制下，开发者应在 ViewModel 的 `-prepare` 方法中进行初始化。
 
-```objc
-- (void)prepare {
-    [super prepare];
-
-    // 执行当前模块的初始化
-}
-```
-
-在 Swift 中，应使用 `@prepare` 修饰来指定初始化方法。
-
 ```swift
-@prepare
-private func setup() {
+override func prepare() {
+    super.prepare()
+    
     // 执行初始化
 }
 ```
 
-调用 `-ready` 方法，可强制视图模型执行初始化，该方法一般情况下会自动调用，比如当视图或视图控制器设置 `viewModel` 属性时，`-ready` 方法会自动调用。
+若要视图模型立即执行初始化，可直接调用 `-ready` 方法。
 
-> `-ready` 方法可安全地重复调用，`-isReady` 属性表示当前是否已完成初始化。
-
-```objc
-ExampleViewModel *viewModel = [[ExampleViewModel alloc] initWithModel:nil];
-// 如果子类重写了 viewModel 属性，或使用非 UIResponder 子类作为视图时，需要自行调用 ready 方法。
-[viewModel ready];
-self.viewModel = viewModel;
-```
+> 一般情况下，该方法会自动调用，且有防重复机制，属性`-isReady`即表示视图模型当前是否已完成初始化。
 
 ### 2、层级关系
 
 在页面模块中，子视图模块与父视图模块或控制器模块存在明显的上下级关系。充分利用这种层级关系，可以更方便地处理页面中的上下级交互逻辑，因此 XZMocoa 为 ViewModel 设计了层级关系。
 
-```objc
-[superViewModel addSubViewModel:viewModel];
-[superViewModel insertSubViewModel:viewModel atIndex:1];
+```swift
+self.addSubViewModel(viewModel)
+// 支持指定位置，子类可根据自身需要使用。
+self.insertSubViewModel(viewModel, at: 0)
 ```
 
 通过 `subViewModels` 和 `superViewModel` 属性可以访问上下级，`removeFromSuperViewModel` 可将自身从上级移除，`didRemoveSubViewModel:` 在下级被移除时回调。
 
 ### 3、事件通道
 
+以字符串（XZMocoaKey）为标识符，处理模块之间的事件和传值，以解决对`delegate`对协议的依赖。
+
+> 事件通道的代价，是无法在编译阶段排查类型或参数错误，因此事件参数在使用前必须做好类型检查。
+
 基于层级关系，XZMocoa 提供了一套自下而上的事件通道（Key Events Channel）。下级视图模型可通过 `-sendEventsWithKey:value:` 方法沿层级向上传递事件。
 
-```objc
+```swift
 // 在下级中发送事件
-[self sendEventsWithKey:XZMocoaKeyReload value:nil];
+self.sendEvents(.reloadData, value: nil)
 ```
 
 上级通过 `-didReceiveEvents:` 方法接收事件，事件对象为 `XZMocoaEvents`，包含 `key`（事件标识）、`value`（事件值）、`source`（事件创建者）、`target`（事件传递者）等信息。
 
-```objc
-- (void)didReceiveEvents:(XZMocoaEvents *)events {
-    if ([events.key isEqualToString:XZMocoaKeyReload]) {
-        [self reloadData];
+```swift
+override func didReceive(_ events: XZMocoaEvents) {
+    switch events.key {
+    case .reloadData:
+        self.reloadData()
+    default:
+        super.didReceive(events)
     }
 }
 ```
 
 视图与视图模型之间同样通过该通道通信：视图可直接调用 `-sendEventsWithKey:value:` 方法向 viewModel 发送事件。
 
-在 MVC 中，解决此类问题一般通过 `delegate` 实现，上层模块与下层模块的 `delegate` 形成了耦合；利用层级关系处理，则能很好地避免这一点。
+```swift
+@objc func buttonAction() {
+    self.sendEvents(.click, value: "reloadButton")
+}
+```
 
 ### 4、Key Target Action（KTA）机制
 
-在 MVVM 设计模式中，View 通过监听 ViewModel 的属性来展示页面。实际上大部分情况下，View 并不需要一直监听，因为大多数 View 只需渲染一次，在 `-viewModelDidChange` 中即可完成。
+以字符串（XZMocoaKey）为标识符，解决 View 与 ViewModel 之间的 API 依赖。
 
-对于剩余少量需要监听的事件，使用 `delegate` 需要定义协议，比较繁琐，因此 XZMocoa 设计了 target-action 机制：以 `XZMocoaKey` 字符串作为事件名，View 绑定 key 之后，ViewModel 发送事件时，View 绑定的方法就会被触发。
+> 与事件通道一样，编译器也无法在编译阶为 KTA 机制检查类型错误。
 
-> 使用`Key`绑定可以解决 View 与 ViewModel 之间的类型依赖，缺点就是编译器无法在编译阶段检查类型错误。
+```swift
+// 使用 @bind 宏绑定 KTA 事件值
+@bind(text: .name)
+var nameLabel: UILabel!
 
-```objc
-// View 监听 viewModel 的 isRefreshing 属性
-[viewModel addTarget:self action:@selector(refreshingChanged:) forKey:@"isRefreshing"];
+// 上面的 @bind 宏的展开后
+viewModel.addTarget(nameLabel, action: #selector(setter: UILabel.text), forKey: .name, value: nil)
+```
 
-- (void)refreshingChanged:(ExampleViewModel *)viewModel {
-    if (viewModel.isRefreshing) {
-        [self.indicator startAnimating];
-    } else {
-        [self.indicator stopAnimating];
-    }
+KTA 机制也可用于处理事件。
+
+```swift
+// View
+viewModel.addTarget(self, action: #selector(beginRefreshing), forKey: "beginRefreshing")
+@objc func beginRefreshing() {
+
 }
 
-// ViewModel 发送事件
-[self sendActionsForKey:@"isRefreshing"];
+// ViewModel
+self.sendActions(forKey: "beginRefreshing", value: kCFNull)
 ```
-
-KTA 还支持值传递形式，将 ViewModel 中 key 对应的值，与 target 的 action 方法绑定：
-
-```objc
-// 绑定 text 属性，并赋初始值 initialValue ，若为 nil 表示绑定视图模型当前值。
-[viewModel addTarget:label action:@selector(setText:) forKey:XZMocoaKeyText value:@"initialValue"];
-// 绑定 image 属性，不赋初始值
-[viewModel addTarget:imageView action:@selector(setImage:) forKey:XZMocoaKeyImage];
-```
-
-在 Swift 中，使用 `@key` 宏标记属性，即可在属性值改变时自动发送 KTA 事件；使用 `@bind` 宏，可自动建立 View 与 ViewModel 之间的绑定关系。
 
 ### 5、数据监听
 
-对数据的监听是 MVVM 设计模式的特色之一，但在 iOS 实际开发中，数据在大部分情形下都是单向流动的（从网络请求到页面展示）。因此默认情况下，XZMocoa 不主动监听 Model 的变更。
+监听数据模型属性，可以通过 `mappingModelKeys` 注册“监听方法”与“数据模型属性”之间的映射关系：
 
-对于需要监听数据变化的情形，可以重写类属性 `mappingModelKeys`，注册“视图模型方法”与“数据模型属性”之间的映射关系：
+```swift
+// 监听方法和被监听的模型属性的映射关系
+override class var mappingModelKeys: [String : Any]? {
+    return [
+        NSStringFromSelector(#selector(self.rangeDidChange(_:_:))): ["min", "max"]
+    ]
+}
 
-```objc
-+ (NSDictionary<NSString *, id> *)mappingModelKeys {
-    return @{
-        @"setName:"        : @"name",
-        @"setRangeMin:max:": @[@"min", @"max"]
-    };
+@objc func rangeDidChange(_ min: Int, _ max: Int) {
+    
 }
 ```
 
-映射关系中的属性发生改变时，对应的方法会被调用。在 Swift 中，使用 `@mocoa` 和 `@bind` 标记属性和方法，即可自动创建上述映射关系：
+使用 `@mocoa` 和 `@bind` 宏，可自动创建上述映射关系。
 
 ```swift
-@mocoa(.vm)
+@mocoa
 class ViewModel: XZMocoaViewModel {
 
     @bind
-    func setRange(min: Int, max: Int) {
+    func rangeDidChange(_ min: Int, _ max: Int) {
         // Model 的 min、max 属性任一改变，此方法都会被调用
     }
 }
 ```
 
-> 单个 Runloop 内的键值事件会合并统一处理，即同一个 key 即使在一个 Runloop 内发生多次改变，绑定的方法也只会执行一次。
+默认情况下，因为以下原因，数据监听是被动的，仅在初始化时触发一次。
 
-监听是被动的，除非开启主动监听。
+    - 在实际开发中，数据在大部分情形下都是单向流动的，比如从网络请求到页面展示，没有数据监听需求。
+    - 当数据管理框架可能自带监听机制时，比如 CoreData 的 `NSFetchedResultsController` 就原生支持。
+    
+    > 列表视图`XZMocoaTableView/XZMocoaColletionView`已内置了对 `NSFetchedResultsController` 的支持。
+
+若要触发监听方法，调用视图模型 `-model:didChangeValuesForKeys:` 方法即可。
+    
+```swift
+viewModel.model(model, didChangeValuesForKeys: ["name"])
+```
+
+另外，也可以开启主动监听。
 
 ```swift
+/// 开启主动监听。
 override var shouldObserveModelKeysActively: Bool {
     return true
 }
 ```
 
-当数据在视图模型外更新时，可通过 `-model:didChangeValuesForKeys:` 方法被动触发监听；当数据管理框架（如 CoreData 的 `NSFetchedResultsController`）自带监听机制时，可在其代理方法中调用此方法，XZMocoa 的列表视图模型已内置了对 `NSFetchedResultsController` 的支持。
+监听基于 KVO 机制，且单个 Runloop 内的键值事件会合并统一处理，同一个 key 在同一个 Runloop 内发生多次改变，绑定的方法只会执行一次。
 
 ## 四、模块化
 
@@ -441,16 +444,16 @@ View 根据 ViewModel 提供的数据进行展示。
 ```objc
 @implementation ExampleCell
 
-- (void)didChangeViewModel:(XZMocoaViewModel *)oldViewModel {
+- (void)prepareForViewModel {
+    [super prepareForViewModel];
+    
+    // 在 Swift 中，推荐使用 @bind 宏
     ExampleCellViewModel *viewModel = self.viewModel;
-
     self.nameLabel.text = viewModel.name;
 }
 
 @end
 ```
-
-方法 `-didChangeViewModel:` 由 `UIResponder` 的 `XZMocoaView` 分类提供，视图遵循 `XZMocoaView` 协议后即可使用。
 
 ###### 3.4 注册模块
 
@@ -564,7 +567,6 @@ UIView *view = [UIView viewWithMocoaURL:[NSURL URLWithString:@"https://mocoa.xez
 - `@key` / `@key(_ name:)`：标记 ViewModel 的属性，表明该属性支持 key-target-action 机制。被标记的属性将变为计算属性，并生成带下划线的同名存储属性，属性值改变时自动发送 KTA 事件。
 - `@bind` / `@bind(_ key:)`：单向绑定。用于 ViewModel 时，监听 Model 属性的变化；用于 View 时，监听 ViewModel 的 KTA 事件。
 - `@bind(_ vmKey:selector:)` / `@bind(text key:)` 等：为常用视图属性（text、image、isEnabled 等）提供便捷绑定形式。
-- `@prepare`：标记 View 或 ViewModel 的角色初始化方法（非对象的初始化方法），以取代重写 `-prepare` 或 `-viewModelDidChange` 基类方法。被标记的方法需要使用 `private` 标记，支持多个初始化方法，将按书写顺序执行。
 - `#mocoa(URL)`：通过模块 URL 获取 `XZMocoaModule` 对象。
 
 ```swift
@@ -579,10 +581,10 @@ class ViewModel: XZMocoaViewModel {
     @key(.name)
     var name: String?
 
-    // 将 model.name 绑定到此方法
+    // 同时监听多个数据模型的属性，或者数据模型的属性，需要“加工”才能转化为视图模型的属性，可以使用@bind绑定方法。
     @bind
-    func setName(_ name: String?) {
-        self.name = name
+    func nameDidChange(_ firstName: String, _ lastName: String) {
+        self.name = firstName + " " + lastName
     }
 }
 ```

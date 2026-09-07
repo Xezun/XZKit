@@ -41,8 +41,8 @@
     return self;
 }
 
-- (void)viewModelDidChange {
-    [super viewModelDidChange];
+- (void)prepareForViewModel {
+    [super prepareForViewModel];
     
     _textLabel.text = @"Footer视图";
     _detailTextLabel.text = self.viewModel.model;

@@ -33,16 +33,6 @@ class FooViewModel: XZMocoaViewModel {
     
     @key("foobar")
     var fooBar : Int = 20
-
-    @prepare
-    private func prepare1() {
-        
-    }
-    
-    @prepare
-    private func prepare2() {
-        
-    }
     
     @bind("foo", "bar")
     func foobar(foo arg1: Int, bar arg2: Int) {
@@ -99,8 +89,8 @@ class View: UIView, XZMocoaView {
         
     }
     
-    @prepare
-    private func setup() {
+    override func prepare() {
+        super.prepare()
         
     }
     

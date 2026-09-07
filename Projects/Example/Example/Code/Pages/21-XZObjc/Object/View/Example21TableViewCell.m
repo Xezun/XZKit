@@ -25,8 +25,8 @@
     // Configure the view for the selected state
 }
 
-- (void)viewModelDidChange {
-    [super viewModelDidChange];
+- (void)prepareForViewModel {
+    [super prepareForViewModel];
     
     XZMocoaViewModel *viewModel = self.viewModel;
     if ([viewModel.model isKindOfClass:[XZObjcMethod class]]) {

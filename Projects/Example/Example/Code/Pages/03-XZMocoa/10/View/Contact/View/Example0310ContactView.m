@@ -28,7 +28,7 @@
 }
 
 - (void)didChangeViewModel:(XZMocoaViewModel *)oldValue {
-    [super viewModelDidChange];
+    [super prepareForViewModel];
     
     Example0310ContactViewModel *viewModel = self.viewModel;
     

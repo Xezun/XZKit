@@ -111,11 +111,10 @@ NS_SWIFT_UI_ACTOR @interface XZMocoaViewModel : NSObject <XZMocoaViewModel> {
 ///
 /// 视图模型在使用前，应调用此方法，以初始化视图模型。
 ///
-/// 当视图或视图控制器设置 `viewModel` 属性时，此方法会自动调用。
+/// > 默认情况下`UIResponder`子类，设置 `viewModel` 属性时，会自动调用此方法。
 ///
-/// 此方法：
-/// - 标记已初始，避免重复初始化，即此方法可安全的重复调用。
-/// - 向下层视图模型发送 `-ready` 消息。
+/// - 此方法会标记视图模型已经初始化，因此，方法可安全的重复调用。
+/// - 此方法会向下层视图模型发送 `-ready` 消息。
 - (void)ready;
 
 /// 视图模型的延迟初始化方法。
@@ -123,7 +122,7 @@ NS_SWIFT_UI_ACTOR @interface XZMocoaViewModel : NSObject <XZMocoaViewModel> {
 /// - 将视图模型的初始化，从创建时，延迟到使用前。
 /// - 一般情况下，请勿直接调用此方法，而是调用`-ready`方法，否则可能会重复初始化。
 /// - 子类重写应调用`super`实现。
-/// - 在此方法中，视图模型 isReady 始终为 NO 的状态。
+/// - 在此方法中，视图模型 isReady 始终为 NO 的状态，调用`super`不会改变此状态。
 /// - 在此方法中创建添加下层视图模型，不需要发送`-ready`消息。
 /// - 此方法执行时，视图模型尚未与视图关联，即视图模型在初始化之后，才会被视图所使用。
 - (void)prepare;
@@ -134,34 +133,34 @@ NS_SWIFT_UI_ACTOR @interface XZMocoaViewModel : NSObject <XZMocoaViewModel> {
 
 @interface XZMocoaViewModel (XZMocoaHierarchy)
 
-/// 所有下级视图模型。
-/// @note 属性值虽然为不可变数组，但并非拷贝，会跟随实际自动变化。
+/// 所有下层视图模型。
+///
+/// 属性值虽然为不可变数组，但并非拷贝，元素数量会跟随实际情况自动变化。
 @property (nonatomic, strong, readonly) NSArray<__kindof XZMocoaViewModel *> *subViewModels;
 
-/// 上级视图模型。
+/// 上层视图模型。
 @property (nonatomic, readonly, nullable) __kindof XZMocoaViewModel *superViewModel;
 
-/// 添加下级。
-/// @note 会从其现有的上级移除。
+/// 添加下层视图模型。如果视图模型`subViewModel`当前有上层视图模型，那么会先从其上层移除。
 - (void)addSubViewModel:(nullable XZMocoaViewModel *)subViewModel;
 
-/// 将下级添加到指定位置。
-/// @param subViewModel 下级
+/// 将下层添加到指定位置。
+/// @param subViewModel 下层
 /// @param index 位置
 - (void)insertSubViewModel:(nullable XZMocoaViewModel *)subViewModel atIndex:(NSInteger)index;
 
-/// 移动原来在 index 位置的下级，到 newIndex 位置。
+/// 移动原来在 index 位置的下层，到 newIndex 位置。
 /// @param index 原始位置
 /// @param newIndex 新位置，移动后所在的位置
 - (void)moveSubViewModelAtIndex:(NSInteger)index toIndex:(NSInteger)newIndex;
 
-/// 从上级中移除。
+/// 从上层中移除。
 - (void)removeFromSuperViewModel;
 
-/// 如果某一个下级被移除，那么此方法会被调用。
+/// 如果某一个下层被移除，那么此方法会被调用。
 /// @note 默认不执行任何操作。
-/// @param viewModel 已被移除的下级
-- (void)didRemoveSubViewModel:(__kindof XZMocoaViewModel *)viewModel;
+/// @param viewModel 已被移除的下层
+- (void)didRemoveSubViewModel:(__kindof XZMocoaViewModel *)subViewModel;
 
 @end
 
@@ -178,7 +177,7 @@ NS_SWIFT_UI_ACTOR @interface XZMocoaViewModel : NSObject <XZMocoaViewModel> {
 ///
 /// ### 2、视图模型 ViewModel 自下而上的层事件通道。
 ///
-/// 下级视图模型，可通过调用``-sendEventsWithKey:value``方法，沿视图模型层级关系，自下向上传递事件。
+/// 下层视图模型，可通过调用``-sendEventsWithKey:value``方法，沿视图模型层级关系，自下向上传递事件。
 
 
 /// 通道事件。
@@ -209,7 +208,7 @@ NS_SWIFT_UI_ACTOR @interface XZMocoaViewModel : NSObject <XZMocoaViewModel> {
 /// @param events 事件
 - (void)sendEvents:(XZMocoaEvents *)events;
 
-/// 收到下级或视图的事件。
+/// 收到下层或视图的事件。
 ///
 /// 默认直接调用 ``-sendEvents:`` 方法将事件转发出去。
 ///

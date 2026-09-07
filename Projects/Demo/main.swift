@@ -10,6 +10,13 @@ import UIKit
 import XZKit
 
 @mocoa
+class TestModel: NSObject, XZMocoaModel {
+    
+    @key
+    var name = "John"
+}
+
+@mocoa
 class TestView: UIView, XZMocoaView {
     
     @bind(.name)
@@ -32,26 +39,79 @@ class TestView: UIView, XZMocoaView {
     @objc dynamic var name: String?
     
     @objc func foobar(_ name: String?) {
+        guard let viewModel = self.viewModel else { return }
+        
+        viewModel.addTarget(nameLabel, action: #selector(setter: UILabel.text), forKey: .text, value: nil)
+        viewModel.addTarget(self, action: #selector(beginRefreshing), forKey: "beginRefreshing")
+    }
+    
+    @objc func beginRefreshing() {
         
     }
     
     @bind(.reload, selector: #selector(UITableView.reloadData))
     let tableView: UITableView = .init()
+    
+    @objc func buttonAction() {
+        sendEvents(.click, value: "reloadButton")
+    }
+    
+    @bind(.image)
+    @bind(.backgroundColor)
+    var iconImageView: UIImageView!
+    
+    @bind(image: .image)
+    var iconImageView2: UIImageView?
  
 }
 
 @mocoa
-class TestViewModel: XZMocoaViewModel {
+class TestViewModel: XZMocoaTableViewModel {
+    
+    required init(model: Any?) {
+        self.identifier = String(describing: model)
+        super.init(model: model)
+    }
     
     override var shouldObserveModelKeysActively: Bool {
         return true
     }
     
-let identifier: String
-
-override var hash: Int {
-    return (identifier as NSString).hash
-}
+    let identifier: String
+    
+    override var hash: Int {
+        return (identifier as NSString).hash
+    }
+    
+    override func prepare() {
+        super.prepare()
+        
+        let viewModel = XZMocoaViewModel.init(model: nil)
+        addSubViewModel(viewModel)
+        
+        self.sendEvents(.reloadData, value: nil)
+        
+        self.sendActions(forKey: "beginRefreshing", value: kCFNull)
+        
+    }
+    
+    override func didReceive(_ events: XZMocoaEvents) {
+        switch events.key {
+        case .reloadData:
+            self.reloadData()
+        default:
+            super.didReceive(events)
+        }
+    }
+    
+    @key
+    var name: String = "John"
+    
+    @bind
+    @objc func rangeDidChange(_ min: Int, _ max: Int) {
+        
+    }
+    
 }
 
 extension NSFetchedResultsController: @retroactive XZMocoaGroupModel {}
@@ -109,6 +169,10 @@ public func loadGroups() {
     let Groups = #mocoa("https://mocoa.xzkit.com/groups/")
     
     let card100 = Groups["100"]
-    card100
+    card100.modelClass = TestModel.self;
+    card100.viewClass = TestView.self
+    card100.viewModelClass = TestViewModel.self
 }
+
+
 

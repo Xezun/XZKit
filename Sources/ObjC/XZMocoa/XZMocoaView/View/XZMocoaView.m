@@ -56,8 +56,8 @@ static const void * const _context = &_context;
     
 }
 
-- (void)viewModelDidChange {
-    
+- (void)prepareForViewModel {
+    [self __xz_bind_prepare];
 }
 
 - (BOOL)shouldPerformSegueWithIdentifier:(NSString *)identifier sender:(id)sender {
@@ -71,6 +71,8 @@ static const void * const _context = &_context;
 - (void)sendEventsWithKey:(XZMocoaKey)key value:(id)value {
     [[XZMocoaContext contextIfLoadedForView:self] sendEventsWithKey:key value:value];
 }
+
+- (void)__xz_bind_prepare { }
 
 - (void)__xz_bind_title_normal:(NSString *)title { }
 - (void)__xz_bind_titleColor_normal:(UIColor *)color {}
@@ -110,11 +112,11 @@ static const void * const _context = &_context;
 }
 
 - (void)didChangeViewModel:(XZMocoaViewModel *)oldValue {
-    [self viewModelDidChange];
+    [self prepareForViewModel];
 }
 
-- (void)viewModelDidChange {
-    [super viewModelDidChange];
+- (void)prepareForViewModel {
+    [super prepareForViewModel];
     [self.viewModel ready];
 }
 
@@ -155,12 +157,12 @@ static const void * const _context = &_context;
 - (void)didChangeViewModel:(XZMocoaViewModel *)oldValue {
     [super didChangeViewModel:oldValue];
     if (self.isViewLoaded) {
-        [self viewModelDidChange];
+        [self prepareForViewModel];
     }
 }
 
-- (void)viewModelDidChange {
-    [super viewModelDidChange];
+- (void)prepareForViewModel {
+    [super prepareForViewModel];
     [self.viewModel ready];
 }
 
@@ -169,12 +171,12 @@ static const void * const _context = &_context;
 }
 
 - (void)xz_mocoa_override_viewDidLoad {
-    [self viewModelDidChange];
+    [self prepareForViewModel];
 }
 
 - (void)xz_mocoa_exchange_viewDidLoad {
     [self xz_mocoa_exchange_viewDidLoad];
-    [self viewModelDidChange];
+    [self prepareForViewModel];
 }
 
 // 不太可能

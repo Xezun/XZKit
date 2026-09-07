@@ -23,8 +23,7 @@ struct XZKitMacros: CompilerPlugin {
         XZMocoaModuleMacro.self,
         XZMocoaKeyMacro.self,
         XZMocoaBindMacro.self,
-        XZMocoaBindViewMacro.self,
-        XZMocoaPrepareMacro.self
+        XZMocoaBindViewMacro.self
     ]
     
 }

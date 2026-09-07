@@ -402,22 +402,3 @@ public macro bind(icon key: XZMocoaKey) = #externalMacro(module: "XZKitMacros", 
 /// 建立从 ViewModel.{key} 到 View.viewModel 的单向绑定关系。
 @attached(accessor, names: named(didSet))
 public macro bind(viewModel key: XZMocoaKey) = #externalMacro(module: "XZKitMacros", type: "XZMocoaBindViewMacro")
-
-/// 标记方法为 View 或 ViewModel 的角色初始化方法（非对象的初始化方法）。
-///
-/// 此标记用以取代视图模型的`-[XZMocoaViewModel prepare]`基类方法。
-///
-/// 被标记的方法需要使用 `private` 标记，并且支持多个初始化方法，多个初始化方法将按书写顺序执行。
-///
-/// ```swift
-/// class ViewModel: XZMocoaViewModel {
-///
-///     @prepare
-///     private func setup() {
-///
-///     }
-///
-/// }
-/// ```
-@attached(body)
-public macro prepare() = #externalMacro(module: "XZKitMacros", type: "XZMocoaPrepareMacro")

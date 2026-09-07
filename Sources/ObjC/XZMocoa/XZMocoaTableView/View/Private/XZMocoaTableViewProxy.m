@@ -9,6 +9,7 @@
 #import "XZMocoaTablePlaceholderHeaderFooterView.h"
 #import "XZMocoaTablePlaceholderCell.h"
 #import "XZMocoaTableHeaderFooterViewModel.h"
+#import "XZLog.h"
 @import ObjectiveC;
 
 @implementation XZMocoaTableViewProxy
@@ -39,7 +40,9 @@
                     break;
                 }
                 case XZMocoaModuleViewFormNib: {
-                    // nib 暂不检查类型
+                    if (submodule.viewNibClass && ![submodule.viewClass isSubclassOfClass:UITableViewCell.class]) {
+                        return;
+                    }
                     NSString * const identifier = XZMocoaReuseIdentifier(XZMocoaKindDefault, name);
                     UINib *viewNib = [UINib nibWithNibName:submodule.viewNibName bundle:submodule.viewNibBundle];
                     [tableView registerNib:viewNib forCellReuseIdentifier:identifier];
@@ -50,10 +53,7 @@
                     break;
                 }
                 default: {
-                    NSString * const identifier = XZMocoaReuseIdentifier(XZMocoaKindDefault, name);
-                    // 未注册 View 的模块，获得一个占位视图
-                    Class const aClass = [XZMocoaTablePlaceholderCell class];
-                    [tableView registerClass:aClass forCellReuseIdentifier:identifier];
+                    XZLog(@"[XZMocoa] 模块视图不支持在 UITableView 中使用：%@", submodule.url);
                     break;
                 }
             }
@@ -68,6 +68,9 @@
                     break;
                 }
                 case XZMocoaModuleViewFormNib: {
+                    if (submodule.viewNibClass && ![submodule.viewNibClass isSubclassOfClass:UITableViewHeaderFooterView.class]) {
+                        return;
+                    }
                     NSString * const identifier = XZMocoaReuseIdentifier(kind, name);
                     UINib *viewNib = [UINib nibWithNibName:submodule.viewNibName bundle:submodule.viewNibBundle];
                     [tableView registerNib:viewNib forHeaderFooterViewReuseIdentifier:identifier];
@@ -77,9 +80,7 @@
                     break;
                 }
                 default: {
-                    NSString * const identifier = XZMocoaReuseIdentifier(kind, name);
-                    Class const aClass = [XZMocoaTablePlaceholderHeaderFooterView class];
-                    [tableView registerClass:aClass forHeaderFooterViewReuseIdentifier:identifier];
+                    XZLog(@"[XZMocoa] 模块视图不支持在 UITableView 中使用：%@", submodule.url);
                     break;
                 }
             }

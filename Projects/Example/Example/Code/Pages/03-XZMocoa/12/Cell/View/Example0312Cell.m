@@ -14,8 +14,8 @@
     XZMocoa(@"https://mocoa.xezun.com/examples/12/table/").cell.viewNibClass = self;
 }
 
-- (void)viewModelDidChange {
-    [super viewModelDidChange];
+- (void)prepareForViewModel {
+    [super prepareForViewModel];
     
     Example0312CellViewModel *viewModel = self.viewModel;
     

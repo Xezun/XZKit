@@ -158,12 +158,16 @@ public struct XZMocoaBindMacro {
         let statements = try macroNodes.map({ macroNode throws -> String in
             let arguments = try Self.viewBindArguments(forMacro: macroNode, forVariable: (propertyName, propertyType.typeName))
             return "viewModel.addTarget(\(propertyName), action: \(arguments.selector), forKey: \"\(arguments.key)\", value: nil)"
-        }).joined(separator: "\n")
+        })//
         
         if propertyType.wrappedType != .unwrapped {
-            return "if let \(propertyName) = self.\(propertyName) { \(statements) }"
+            return """
+            if let \(propertyName) = self.\(propertyName) { 
+                    \(statements.joined(separator: "\n        "))
+            }
+            """
         }
-        return statements
+        return statements.joined(separator: "\n    ")
     }
     
     /// 获取被 `@bind(key)` 修饰的方法的绑定参数。

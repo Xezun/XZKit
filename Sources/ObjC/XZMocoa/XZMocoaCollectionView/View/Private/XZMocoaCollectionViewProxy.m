@@ -10,6 +10,7 @@
 #import "XZMocoaCollectionPlaceholderCell.h"
 #import "XZMocoaCollectionPlaceholderSupplementView.h"
 #import "XZGeometry.h"
+#import "XZLog.h"
 
 static XZMocoaKind XZMocoaKindFromElementKind(NSString *kind) {
     if ([kind isEqualToString:UICollectionElementKindSectionHeader]) return XZMocoaKindHeader;
@@ -52,6 +53,9 @@ static NSString *UIElementKindFromMocoaKind(XZMocoaKind kind) {
                     break;
                 }
                 case XZMocoaModuleViewFormNib: {
+                    if (submodule.viewNibClass && ![submodule.viewNibClass isSubclassOfClass:UICollectionViewCell.class]) {
+                        return;
+                    }
                     NSString * const identifier = XZMocoaReuseIdentifier(kind, name);
                     UINib *viewNib = [UINib nibWithNibName:submodule.viewNibName bundle:submodule.viewNibBundle];
                     [collectionView registerNib:viewNib forCellWithReuseIdentifier:identifier];
@@ -62,9 +66,7 @@ static NSString *UIElementKindFromMocoaKind(XZMocoaKind kind) {
                     break;
                 }
                 default: {
-                    NSString * const identifier = XZMocoaReuseIdentifier(kind, name);
-                    Class const aClass = [XZMocoaCollectionPlaceholderCell class];
-                    [collectionView registerClass:aClass forCellWithReuseIdentifier:identifier];
+                    XZLog(@"[XZMocoa] 模块视图不支持在 UICollectionView 中使用：%@", submodule.url);
                     break;
                 }
             }
@@ -80,6 +82,9 @@ static NSString *UIElementKindFromMocoaKind(XZMocoaKind kind) {
                     break;
                 }
                 case XZMocoaModuleViewFormNib: {
+                    if (submodule.viewNibClass && ![submodule.viewNibClass isSubclassOfClass:UICollectionReusableView.class]) {
+                        return;
+                    }
                     NSString * const identifier = XZMocoaReuseIdentifier(kind, name);
                     NSString * const elementKind = UIElementKindFromMocoaKind(kind);
                     UINib *viewNib = [UINib nibWithNibName:submodule.viewNibName bundle:submodule.viewNibBundle];
@@ -91,10 +96,7 @@ static NSString *UIElementKindFromMocoaKind(XZMocoaKind kind) {
                     break;
                 }
                 default: {
-                    NSString * const identifier = XZMocoaReuseIdentifier(kind, name);
-                    NSString * const elementKind = UIElementKindFromMocoaKind(kind);
-                    Class const aClass = [XZMocoaCollectionPlaceholderSupplementView class];
-                    [collectionView registerClass:aClass forSupplementaryViewOfKind:elementKind withReuseIdentifier:identifier];
+                    XZLog(@"[XZMocoa] 模块视图不支持在 UICollectionView 中使用：%@", submodule.url);
                     break;
                 }
             }

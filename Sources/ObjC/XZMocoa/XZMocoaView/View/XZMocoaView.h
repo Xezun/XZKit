@@ -53,7 +53,9 @@ NS_SWIFT_UI_ACTOR @protocol XZMocoaView <NSObject>
 /// 视图可在此方法中，使用 viewModel 配置视图。
 ///
 /// 给控制器装配视图模型时，此返回会延迟到 viewDidLoad 时再调用，避免影响 view 的生命周期。
-- (void)viewModelDidChange NS_REQUIRES_SUPER;
+///
+/// 在 Swift 中，此方法调用时，视图已经完成 viewModel 绑定。
+- (void)prepareForViewModel NS_REQUIRES_SUPER;
 
 /// 由 Cocoa MVC 中的控制器分发过来的 Segue 转场事件。
 ///
@@ -81,6 +83,11 @@ NS_SWIFT_UI_ACTOR @protocol XZMocoaView <NSObject>
 ///   - key: 事件标识符
 ///   - value: 事件值
 - (void)sendEventsWithKey:(XZMocoaKey)key value:(nullable id)value NS_SWIFT_NAME(sendEvents(_:value:));
+
+// 以下方法为供 Swift 绑定 KTA 事件值使用，请勿直接调用。
+
+/// 若子类完全重写了`viewModel`属性，则需在合适的时机调用此方法，否则 @bind 宏无法生效。
+- (void)__xz_bind_prepare;
 
 - (void)__xz_bind_title_normal:(NSString *)title;
 - (void)__xz_bind_titleColor_normal:(UIColor *)titleColor;

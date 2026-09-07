@@ -15,8 +15,8 @@
     XZMocoa(@"https://xzkit.xezun.com/examples").cell.viewReuseIdentifier = @"cell";
 }
 
-- (void)viewModelDidChange {
-    [super viewModelDidChange];
+- (void)prepareForViewModel {
+    [super prepareForViewModel];
     
     ExampleMainHomeCellViewModel *viewModel = self.viewModel;
     self.textLabel.text = viewModel.title;

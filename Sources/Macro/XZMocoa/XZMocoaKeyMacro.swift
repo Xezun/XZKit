@@ -11,7 +11,6 @@ import SwiftSyntax
 
 // @key
 // @key("name")
-// @key("name", value: "123")
 
 public struct XZMocoaKeyMacro {
     
@@ -130,13 +129,13 @@ extension XZMocoaKeyMacro: PeerMacro {
     /// 校验属性和宏，并生成存储属性。
     public static func expansion(of node: SwiftSyntax.AttributeSyntax, providingPeersOf declaration: some SwiftSyntax.DeclSyntaxProtocol, in context: some SwiftSyntaxMacros.MacroExpansionContext) throws -> [SwiftSyntax.DeclSyntax] {
         switch try XZMocoaRole.init(node: node, context: context) {
-        case .m:
-            return []
-            
         case .v:
-            return []
+            throw XZMacroError(message: "@key: 只能用于 Model 或 ViewModel 角色")
             
-        default:
+        case .m:
+            fallthrough
+            
+        case .vm:
             guard let propertyDecl = declaration.as(VariableDeclSyntax.self) else {
                 throw XZMacroError(message: "@key: 此宏只能附加到 var 属性");
             }
@@ -181,8 +180,29 @@ extension XZMocoaKeyMacro: AccessorMacro {
     public static func expansion(of node: SwiftSyntax.AttributeSyntax, providingAccessorsOf declaration: some SwiftSyntax.DeclSyntaxProtocol, in context: some SwiftSyntaxMacros.MacroExpansionContext) throws -> [SwiftSyntax.AccessorDeclSyntax] {
         switch try XZMocoaRole(node: node, context: context) {
         case .m:
-            // @key 必须生成存储属性和 setter/getter 否则会报错，暂不支持
-            throw XZMacroError(message: "@key: 此宏暂不支持在 Model 角色中使用，若要观察该属性，请使用 dynamic 修饰符")
+            guard let propertyDecl = declaration.as(VariableDeclSyntax.self) else {
+                throw XZMacroError.init(message: "@key: 只支持属性")
+            }
+            let binding = propertyDecl.bindings[propertyDecl.bindings.startIndex]
+            guard let propertyName = binding.pattern.as(IdentifierPatternSyntax.self)?.identifier.text else {
+                throw XZMacroError(message: "@key: 宏无法确定属性名")
+            }
+            let keyName = self.keyName(from: node) ?? propertyName
+            return [
+                """
+                get {
+                    return _\(raw: propertyName)
+                }
+                """,
+                """
+                set {
+                    if _\(raw: propertyName) != newValue {
+                        _\(raw: propertyName) = newValue
+                        didChangeValue(forKey: "\(raw: keyName)")
+                    }
+                }
+                """
+            ]
             
         case .v:
             throw XZMacroError(message: "@key: 此宏暂不支持在 View 角色中使用")
