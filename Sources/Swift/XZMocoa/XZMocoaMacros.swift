@@ -104,8 +104,8 @@ public macro mocoa() = #externalMacro(module: "XZKitMacros", type: "XZMocoaMacro
 ///
 /// - SeeAlso: 事件名与属性名同名时，可不用指定 name 参数，参见不带参数的 `@key` 宏。
 /// - Parameter name: 该属性变化时，发送 KTA 事件的事件名
-@attached(peer, names: arbitrary)
-@attached(accessor)
+@attached(peer, names: prefixed(_))
+@attached(accessor, names: arbitrary)
 public macro key(_ name: XZMocoaKey) = #externalMacro(module: "XZKitMacros", type: "XZMocoaKeyMacro")
 
 /// 标记 ViewModel 的属性，表明该属性支持 key-target-action 机制，支持在 View 中使用该属性名进行绑定。
@@ -115,8 +115,8 @@ public macro key(_ name: XZMocoaKey) = #externalMacro(module: "XZKitMacros", typ
 /// 使用属性名作为 KTA 事件的事件名。
 ///
 /// - SeeAlso: 更多使用规则见带参数的 `@key(_:)` 宏。
-@attached(peer, names: arbitrary)
-@attached(accessor)
+@attached(peer, names: prefixed(_))
+@attached(accessor, names: arbitrary)
 public macro key() = #externalMacro(module: "XZKitMacros", type: "XZMocoaKeyMacro")
 
 /// 为 ViewModel 与 Model 之间，或 View 与 ViewModel 之间建立单向绑定。
