@@ -171,7 +171,8 @@ NS_SWIFT_UI_ACTOR @protocol XZMocoaView <NSObject>
 /// 参数 url 的 query 将作为 options 参数，调用 -viewControllerWithMocoaModule:options: 方法完成实例化控制器。
 /// @param url 模块地址
 /// @param options 额外参数
-+ (nullable __kindof UIViewController *)viewControllerWithMocoaURL:(NSURL *)url options:(nullable NSDictionary<XZMocoaKey, id> *)options;
++ (nullable __kindof UIViewController *)viewControllerWithMocoaURL:(NSURL *)url options:(nullable NSDictionary<XZMocoaKey, id> *)options NS_SWIFT_NAME(init(mocoaURL:options:));
++ (nullable __kindof UIViewController *)viewControllerWithMocoaURLString:(NSString *)URLString options:(nullable NSDictionary<XZMocoaKey, id> *)options NS_SWIFT_NAME(init(mocoaURL:options:));
 
 /// 根据视图控制器的模块地址，构造视图控制器。
 + (nullable __kindof UIViewController *)viewControllerWithMocoaURL:(NSURL *)url;

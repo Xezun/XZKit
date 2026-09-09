@@ -336,6 +336,17 @@ static const void * const _context = &_context;
     }
 }
 
++ (__kindof UIViewController *)viewControllerWithMocoaURLString:(NSString *)URLString options:(NSDictionary<XZMocoaKey,id> *)options {
+    if (URLString == nil) {
+        return nil;
+    }
+    NSURL * const url = [NSURL URLWithString:URLString];
+    if (url == nil) {
+        return nil;
+    }
+    return [self viewControllerWithMocoaURL:url options:options];
+}
+
 + (__kindof UIViewController *)viewControllerWithMocoaURL:(NSURL *)url {
     return [self viewControllerWithMocoaURL:url options:nil];
 }
