@@ -54,7 +54,9 @@ NS_SWIFT_UI_ACTOR @protocol XZMocoaView <NSObject>
 ///
 /// 给控制器装配视图模型时，此返回会延迟到 viewDidLoad 时再调用，避免影响 view 的生命周期。
 ///
-/// 在 Swift 中，此方法调用时，视图已经完成 viewModel 绑定。
+/// 子类重写应先调用 super 实现，以完成以下操作：
+/// - 初始化视图模型。
+/// - 视图绑定 KTA 事件。
 - (void)prepareForViewModel NS_REQUIRES_SUPER;
 
 /// 由 Cocoa MVC 中的控制器分发过来的 Segue 转场事件。

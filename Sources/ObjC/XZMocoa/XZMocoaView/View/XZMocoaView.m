@@ -116,8 +116,8 @@ static const void * const _context = &_context;
 }
 
 - (void)prepareForViewModel {
-    [super prepareForViewModel];
     [self.viewModel ready];
+    [super prepareForViewModel];
 }
 
 @end
@@ -162,8 +162,8 @@ static const void * const _context = &_context;
 }
 
 - (void)prepareForViewModel {
-    [super prepareForViewModel];
     [self.viewModel ready];
+    [super prepareForViewModel];
 }
 
 - (UIViewController *)viewModel:(id<XZMocoaViewModel>)viewModel viewController:(void *)null {
