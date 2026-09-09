@@ -68,20 +68,11 @@ class TestView: UIView, XZMocoaView {
 @mocoa
 class TestViewModel: XZMocoaTableViewModel {
     
-    required init(model: Any?) {
-        self.identifier = String(describing: model)
-        super.init(model: model)
-    }
-    
     override var shouldObserveModelKeysActively: Bool {
         return true
     }
     
-    let identifier: String
-    
-    override var hash: Int {
-        return (identifier as NSString).hash
-    }
+    dynamic let identifier: XZMocoaViewModel = .init(model: nil)
     
     override func prepare() {
         super.prepare()

@@ -339,3 +339,54 @@ extension XZMocoaKeyMacro: AccessorMacro {
 }
 
 
+public struct XZMocoaReadonlyKeyMacro: PeerMacro {
+
+    /// 校验属性和宏，并生成存储属性。
+    public static func expansion(of node: SwiftSyntax.AttributeSyntax, providingPeersOf declaration: some SwiftSyntax.DeclSyntaxProtocol, in context: some SwiftSyntaxMacros.MacroExpansionContext) throws -> [SwiftSyntax.DeclSyntax] {
+        return []
+        switch try XZMocoaRole.init(node: node, context: context) {
+        case .v:
+            fallthrough
+        case .m:
+            throw XZMacroError(message: "@key: 只能用于 ViewModel 角色")
+            
+        case .vm:
+            guard let propertyDecl = declaration.as(VariableDeclSyntax.self) else {
+                throw XZMacroError(message: "@key: 此宏只能附加到 var 属性");
+            }
+            
+            guard propertyDecl.bindingSpecifier.text == "let" || propertyDecl.isReadOnlyProperty else {
+                throw XZMacroError(message: "@key: 仅支持只读属性");
+            }
+            
+            guard propertyDecl.contains(modifier: .dynamic) else {
+                throw XZMacroError(message: "@key: 仅支持 dynamic 类型的只读属性");
+            }
+            
+            guard let arguments = node.arguments else {
+                throw XZMacroError(message: "@key: 请使用 @key(readonly:) 宏");
+            }
+            
+            switch arguments {
+            case .argumentList(let arguments):
+                guard arguments.count == 1 else {
+                    throw XZMacroError(message: "@key: 请使用 @key(readonly:) 宏");
+                }
+                let parameter = arguments[arguments.startIndex]
+                guard parameter.label?.trimmedDescription == "readonly" else {
+                    throw XZMacroError(message: "@key: 请使用 @key(readonly:) 宏");
+                }
+                if let boolExpr = parameter.expression.as(BooleanLiteralExprSyntax.self) {
+                    guard boolExpr.literal.text == "true" else {
+                        throw XZMacroError(message: "@key: 请使用 @key(readonly: true) 宏");
+                    }
+                }
+                return []
+            default:
+                throw XZMacroError(message: "@key: 请使用 @key(readonly: true) 宏");
+            }
+            
+        }
+    }
+    
+}

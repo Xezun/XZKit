@@ -120,11 +120,12 @@ public macro key(_ name: XZMocoaKey) = #externalMacro(module: "XZKitMacros", typ
 public macro key() = #externalMacro(module: "XZKitMacros", type: "XZMocoaKeyMacro")
 
 /// 标记只读属性和计算属性为 KTA 事件名。
-@attached(peer)
-public macro key(readonly: XZMocoaKey) = #externalMacro(module: "XZKitMacros", type: "XZMocoaKeyMacro")
+//@attached(peer, names: arbitrary)
+//public macro key(readonly: XZMocoaKey) = #externalMacro(module: "XZKitMacros", type: "XZMocoaReadonlyKeyMacro")
 
-@attached(peer)
-public macro key(readonly: Bool) = #externalMacro(module: "XZKitMacros", type: "XZMocoaKeyMacro")
+/// 参数必须为 true
+//@attached(peer, names: arbitrary)
+//public macro key(readonly: Bool) = #externalMacro(module: "XZKitMacros", type: "XZMocoaReadonlyKeyMacro")
 
 /// 为 ViewModel 与 Model 之间，或 View 与 ViewModel 之间建立单向绑定。
 ///
