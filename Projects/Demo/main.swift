@@ -166,7 +166,7 @@ extension NSFetchedResultsController: @retroactive XZMocoaTableModel {
 
 
 public func loadGroups() {
-    let Groups = #mocoa("https://mocoa.xzkit.com/groups/")
+    let Groups = #module("https://mocoa.xzkit.com/groups/")
     
     let card100 = Groups["100"]
     card100.modelClass = TestModel.self;

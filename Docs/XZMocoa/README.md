@@ -483,7 +483,7 @@ View 根据 ViewModel 提供的数据进行展示。
 
 ```swift
 func loadModules() {
-    let cell = #mocoa("https://mocoa.xezun.com/table").cell
+    let cell = #module("https://mocoa.xezun.com/table").cell
 
     let cell = Groups["100"];
     cell.modelClass     = ExampleCellModel.self
@@ -567,11 +567,11 @@ UIView *view = [UIView viewWithMocoaURL:[NSURL URLWithString:@"https://mocoa.xez
 - `@key` / `@key(_ name:)`：标记 ViewModel 的属性，表明该属性支持 key-target-action 机制。被标记的属性将变为计算属性，并生成带下划线的同名存储属性，属性值改变时自动发送 KTA 事件。
 - `@bind` / `@bind(_ key:)`：单向绑定。用于 ViewModel 时，监听 Model 属性的变化；用于 View 时，监听 ViewModel 的 KTA 事件。
 - `@bind(_ vmKey:selector:)` / `@bind(text key:)` 等：为常用视图属性（text、image、isEnabled 等）提供便捷绑定形式。
-- `#mocoa(URL)`：通过模块 URL 获取 `XZMocoaModule` 对象。
+- `#module(URL)`：通过模块 URL 获取 `XZMocoaModule` 对象。
 
 ```swift
 // 通过模块 URL 获取模块
-let module = #mocoa("https://mocoa.xezun.com/main")
+let module = #module("https://mocoa.xezun.com/main")
 
 // 带角色的标记
 @mocoa(.vm)

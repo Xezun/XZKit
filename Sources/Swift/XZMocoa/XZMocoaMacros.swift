@@ -7,18 +7,6 @@
 
 import Foundation
 
-/// 获取地址为 urlString 的 Mocoa 模块。
-///
-/// ```swift
-/// #mocoa("https://mocoa.xezun.com/main")
-/// ```
-@freestanding(expression)
-public macro mocoa(_ urlString: String) -> XZMocoaModule = #externalMacro(module: "XZKitMacros", type: "XZMocoaModuleMacro")
-
-/// 获取地址为 URL 的 Mocoa 模块。
-@freestanding(expression)
-public macro mocoa(_ value: URL) -> XZMocoaModule = #externalMacro(module: "XZKitMacros", type: "XZMocoaModuleMacro")
-
 /// 被宏 `@mocoa` 修饰的对象，在 Mocoa 中的角色。
 public enum XZMocoaRole {
     /// 被修饰的对象为 Model 数据模型。
@@ -28,6 +16,18 @@ public enum XZMocoaRole {
     /// 被修饰的对象为 ViewModel 视图模型。
     case vm
 }
+
+/// 获取地址为 urlString 的 Mocoa 模块。
+///
+/// ```swift
+/// #module("https://mocoa.xezun.com/main")
+/// ```
+@freestanding(expression)
+public macro module(_ urlString: String) -> XZMocoaModule = #externalMacro(module: "XZKitMacros", type: "XZMocoaModuleMacro")
+
+/// 获取地址为 URL 的 Mocoa 模块。
+@freestanding(expression)
+public macro module(_ value: URL) -> XZMocoaModule = #externalMacro(module: "XZKitMacros", type: "XZMocoaModuleMacro")
 
 /// 将 class 标记为 Mocoa 的 MVVM 角色。
 ///
@@ -118,6 +118,13 @@ public macro key(_ name: XZMocoaKey) = #externalMacro(module: "XZKitMacros", typ
 @attached(peer, names: prefixed(_))
 @attached(accessor, names: arbitrary)
 public macro key() = #externalMacro(module: "XZKitMacros", type: "XZMocoaKeyMacro")
+
+/// 标记只读属性和计算属性为 KTA 事件名。
+@attached(peer)
+public macro key(readonly: XZMocoaKey) = #externalMacro(module: "XZKitMacros", type: "XZMocoaKeyMacro")
+
+@attached(peer)
+public macro key(readonly: Bool) = #externalMacro(module: "XZKitMacros", type: "XZMocoaKeyMacro")
 
 /// 为 ViewModel 与 Model 之间，或 View 与 ViewModel 之间建立单向绑定。
 ///

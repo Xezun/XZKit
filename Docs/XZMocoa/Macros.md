@@ -21,7 +21,7 @@ XZMocoa 共提供 4 个宏（含多种重载形式），分别对应 MVVM 的不
 | `@mocoa` | `@mocoa` / `@mocoa(.m/.v/.vm)` | 将 class 标记为 MVVM 角色，织入 `@objc`、绑定注册、数据监听映射 | 类声明 |
 | `@key` | `@key` / `@key(.name)` / `@key("name")` | 将属性改造为可发送 KTA 事件的计算属性 | Model、ViewModel |
 | `@bind` | `@bind` / `@bind(.key)` / `@bind(text: .key)` … | 建立单向绑定（监听 Model 属性 / 监听 ViewModel 事件） | View、ViewModel |
-| `#mocoa` | `#mocoa("url")` / `#mocoa(url)` | 通过模块 URL 获取 `XZMocoaModule` 对象 | 表达式 |
+| `#module` | `#module("url")` / `#module(url)` | 通过模块 URL 获取 `XZMocoaModule` 对象 | 表达式 |
 
 ### 源码文件构成
 
@@ -30,7 +30,7 @@ XZMocoa 共提供 4 个宏（含多种重载形式），分别对应 MVVM 的不
 | [`XZMocoaMacro.swift`](../../Sources/Macro/XZMocoa/XZMocoaMacro.swift) | `@mocoa` 宏实现（`MemberAttributeMacro` + `MemberMacro`），以及点语法转 keyPath 的公共工具 |
 | [`XZMocoaKeyMacro.swift`](../../Sources/Macro/XZMocoa/XZMocoaKeyMacro.swift) | `@key` 宏实现（`PeerMacro` + `AccessorMacro`） |
 | [`XZMocoaBindMacro.swift`](../../Sources/Macro/XZMocoa/XZMocoaBindMacro.swift) | `@bind` 宏实现（`XZMocoaBindMacro` 为 `PeerMacro`，`XZMocoaBindViewMacro` 为 `AccessorMacro`），含视图属性推断规则 |
-| [`XZMocoaModuleMacro.swift`](../../Sources/Macro/XZMocoa/XZMocoaModuleMacro.swift) | `#mocoa` 宏实现（`ExpressionMacro`） |
+| [`XZMocoaModuleMacro.swift`](../../Sources/Macro/XZMocoa/XZMocoaModuleMacro.swift) | `#module` 宏实现（`ExpressionMacro`） |
 | [`XZMocoaRole.swift`](../../Sources/Macro/XZMocoa/XZMocoaRole.swift) | `XZMocoaRole` 角色枚举与角色推断逻辑 |
 
 所有宏通过 `XZKitMacros` 编译插件（[`XZKitMacros.swift`](../../Sources/Macro/XZKitMacros.swift)）注册：
@@ -474,9 +474,9 @@ var nameLabel: UILabel? {
 
 ---
 
-## 六、`#mocoa` 宏
+## 六、`#module` 宏
 
-`#mocoa` 是一个自由宏（`ExpressionMacro`），用于通过模块 URL 获取 `XZMocoaModule` 对象，等价于 `XZMocoaModule(for:)!`。
+`#module` 是一个自由宏（`ExpressionMacro`），用于通过模块 URL 获取 `XZMocoaModule` 对象，等价于 `XZMocoaModule(for:)!`。
 
 ### 声明
 
@@ -492,10 +492,10 @@ public macro mocoa(_ value: URL) -> XZMocoaModule = #externalMacro(module: "XZKi
 
 ```swift
 // 字符串形式：编译期校验 URL 合法性
-let module = #mocoa("https://mocoa.xezun.com/main")
+let module = #module("https://mocoa.xezun.com/main")
 
 // URL 形式
-let module = #mocoa(URL(string: "https://mocoa.xezun.com/main")!)
+let module = #module(URL(string: "https://mocoa.xezun.com/main")!)
 ```
 
 展开结果：
@@ -545,7 +545,7 @@ XZMocoaModule(for: someURLExpression)!                             // URL 参数
 | 无法推断视图属性 | 错误 | 无法为 `key` 推断要绑定的视图属性或视图方法 |
 | 可选只读计算属性绑定 | 警告 | 可能无法实时绑定，建议使用非可选或隐式可选类型 |
 | 自定义 `didSet` 后绑定 | 警告 | 已自定义 didSet 无法绑定动态监听，请使用 `@bind(vmKey, vKey)` |
-| `#mocoa` URL 非法 / 为空 | 错误 | 模块地址不是合法的 URL 字符串 / 不能为空 |
+| `#module` URL 非法 / 为空 | 错误 | 模块地址不是合法的 URL 字符串 / 不能为空 |
 
 ---
 
