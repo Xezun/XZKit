@@ -55,7 +55,7 @@ let package = Package(
             path: "Tests/Macro"
         ),
         .testTarget(
-            name: "XZMocoaModuleTests",
+            name: "XZMocoaTests",
             dependencies: ["XZKit"],
             path: "Tests/XZMocoa"
         ),
