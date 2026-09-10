@@ -1,5 +1,5 @@
 //
-//  XZMocoaBindMacro.swift
+//  BindMacro.swift
 //  XZKit
 //
 //  Created by Xezun on 2025/6/10.
@@ -11,7 +11,7 @@ import SwiftSyntax
 import Foundation
 
 // 不带参数标签的 `@bind` 宏的实现。
-public struct XZMocoaBindMacro {
+public struct BindMacro {
     
     public enum WrappedType {
         /// 非可选
@@ -206,7 +206,7 @@ public struct XZMocoaBindMacro {
         return "viewModel.addTarget(self, action: \(arguments.selector), forKey: \(arguments.keys[0]), value: nil)"
     }
     
-    public static func isValid(forMacro node: SwiftSyntax.AttributeSyntax, forFunction declaration: FunctionDeclSyntax, for role: XZMocoaRole) throws {
+    public static func isValid(forMacro node: SwiftSyntax.AttributeSyntax, forFunction declaration: FunctionDeclSyntax, for role: MocoaRole) throws {
         switch role {
         case .m:
             throw XZMacroError(message: "@bind: 暂不支持 .m 角色")
@@ -270,7 +270,7 @@ public struct XZMocoaBindMacro {
         }
     }
     
-    public static func isValid(forMacro node: SwiftSyntax.AttributeSyntax, forVariable declaration: VariableDeclSyntax, for role: XZMocoaRole) throws -> WrappedType {
+    public static func isValid(forMacro node: SwiftSyntax.AttributeSyntax, forVariable declaration: VariableDeclSyntax, for role: MocoaRole) throws -> WrappedType {
         switch role {
         case .m:
             throw XZMacroError(message: "@bind: 暂不支持 .m 角色")
@@ -356,7 +356,7 @@ public struct XZMocoaBindMacro {
     
 }
 
-extension XZMocoaBindMacro: PeerMacro {
+extension BindMacro: PeerMacro {
     
     public static func expansion(of node: SwiftSyntax.AttributeSyntax, providingPeersOf declaration: some SwiftSyntax.DeclSyntaxProtocol, in context: some SwiftSyntaxMacros.MacroExpansionContext) throws -> [SwiftSyntax.DeclSyntax] {
         // 无法通过 node 或 method 的 declaration 属性找到上级，无法确定 role 所以无法验证
@@ -366,19 +366,19 @@ extension XZMocoaBindMacro: PeerMacro {
 }
 
 /// for @bind(key:)
-public struct XZMocoaBindViewMacro {
+public struct ViewBindMacro {
     
 }
 
 
-extension XZMocoaBindViewMacro: AccessorMacro {
+extension ViewBindMacro: AccessorMacro {
     
     public static func expansion(of node: SwiftSyntax.AttributeSyntax, providingAccessorsOf declaration: some SwiftSyntax.DeclSyntaxProtocol, in context: some SwiftSyntaxMacros.MacroExpansionContext) throws -> [SwiftSyntax.AccessorDeclSyntax] {
         guard let declaration = declaration.as(VariableDeclSyntax.self) else {
             throw XZMacroError(message: "@bind(key:) 仅支持属性")
         }
         
-        let type = try XZMocoaBindMacro.typeInfo(from: declaration);
+        let type = try BindMacro.typeInfo(from: declaration);
         
         for binding in declaration.bindings {
             guard let accessorBlock = binding.accessorBlock else {
@@ -408,7 +408,7 @@ extension XZMocoaBindViewMacro: AccessorMacro {
             return []
         }
         
-        let statements = try XZMocoaBindMacro.viewBindStatements(forMacros: declaration.attributes.compactMap({ attribute in
+        let statements = try BindMacro.viewBindStatements(forMacros: declaration.attributes.compactMap({ attribute in
             switch attribute {
             case .attribute(let macroNode):
                 if macroNode.attributeName.trimmedDescription == "bind" {

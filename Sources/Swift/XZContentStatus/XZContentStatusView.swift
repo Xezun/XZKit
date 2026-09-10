@@ -24,7 +24,7 @@ import UIKit
 extension XZContentStatus {
     
     /// 呈现视图内容状态的视图。
-    @MainActor @objc(XZContentStatusRepresentationView) public class RepresentationView: UIView, XZContentStatusView {
+    @objc(XZContentStatusRepresentationView) public class RepresentationView: UIView, XZContentStatusView {
         
         let iconView = UIImageView.init()
         let textView = UILabel.init()
@@ -188,7 +188,7 @@ extension XZContentStatus {
     }
 
     // 容器。
-    @MainActor @objc(XZContentStatusWrapperView) public class WrapperView: UIView {
+    @objc(XZContentStatusWrapperView) public class WrapperView: UIView {
         
         private weak var target: XZContentStatusRepresentable?
         private weak var targetView: UIView?

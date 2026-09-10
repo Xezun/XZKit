@@ -72,7 +72,8 @@ class TestViewModel: XZMocoaTableViewModel {
         return true
     }
     
-    dynamic let identifier: XZMocoaViewModel = .init(model: nil)
+    @readonlyKey
+    @objc dynamic let identifier: XZMocoaViewModel = .init(model: nil)
     
     override func prepare() {
         super.prepare()

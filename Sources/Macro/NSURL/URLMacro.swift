@@ -1,5 +1,5 @@
 //
-//  NSURLMacro.swift
+//  URLMacro.swift
 //  XZKit
 //
 //  Created by 徐臻 on 2026/7/25.
@@ -12,7 +12,7 @@ import SwiftSyntax
 import SwiftDiagnostics
 
 /// 宏 `URL(_:)` 的实现。
-public struct NSURLMacro: ExpressionMacro {
+public struct URLMacro: ExpressionMacro {
     
     public static func expansion(of node: some SwiftSyntax.FreestandingMacroExpansionSyntax, in context: some SwiftSyntaxMacros.MacroExpansionContext) throws -> SwiftSyntax.ExprSyntax {
         guard let expression = node.arguments.first?.expression else {

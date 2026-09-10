@@ -1,5 +1,5 @@
 //
-//  XZMocoaMacro.swift
+//  MocoaMacro.swift
 //  XZKit
 //
 //  Created by Xezun on 2025/6/10.
@@ -9,7 +9,7 @@ import SwiftCompilerPlugin
 import SwiftSyntaxMacros
 import SwiftSyntax
 
-public struct XZMocoaMacro {
+public struct MocoaMacro {
     
     /// 点语法表达式 .key1.key2 转为字符串 "key1.key2"
     public static func keyPath(fromMacroArgument argument: LabeledExprSyntax) -> String? {
@@ -34,14 +34,14 @@ public struct XZMocoaMacro {
 /// .m  => 为 @key 标记的属性添加 @objc 标记；检查是否缺少 dynamic 标记
 /// .v  => 为 @bind 标记的方法，添加 @objc 标记
 /// .vm => 为 @key @bind 标记的属性和方法添加 @objc 标记
-extension XZMocoaMacro: MemberAttributeMacro {
+extension MocoaMacro: MemberAttributeMacro {
     
     public static func expansion(of node: SwiftSyntax.AttributeSyntax, attachedTo declaration: some SwiftSyntax.DeclGroupSyntax, providingAttributesFor member: some SwiftSyntax.DeclSyntaxProtocol, in context: some SwiftSyntaxMacros.MacroExpansionContext) throws -> [SwiftSyntax.AttributeSyntax] {
         guard let classDecl = declaration.as(ClassDeclSyntax.self) else {
             throw XZMacroError(message: "@mocoa: 仅可用于 class 的声明")
         }
         
-        let role = try XZMocoaRole.init(node: node, declaration: classDecl)
+        let role = try MocoaRole.init(node: node, declaration: classDecl)
         
         switch role {
         case .m:
@@ -51,12 +51,16 @@ extension XZMocoaMacro: MemberAttributeMacro {
             guard let property = member.as(VariableDeclSyntax.self) else {
                 return []
             }
-            guard property.contains(attribute: "key") else {
+            guard let attribute = property.attribute(forName: "key") else {
                 return []
+            }
+            if let arguments = attribute.arguments, arguments.count > 0 {
+                throw XZMacroError(message: "@key: 暂不支持指定键名")
             }
             if property.contains(attribute: "objc") {
                 return []
             }
+            
             return ["@objc"]
             
         case .v:
@@ -97,7 +101,7 @@ extension XZMocoaMacro: MemberAttributeMacro {
                     case "objc", "IBOutlet":
                         containsObjc = true
                     case "key": // 需要用 kvc 取值，因此需要 @objc 标记
-                        containsBind = true
+                        containsBind = !variableDecl.isReadOnlyProperty
                     case "bind":
                         containsBind = true
                     default:
@@ -145,14 +149,14 @@ extension XZMocoaMacro: MemberAttributeMacro {
 /// .vm => 为 @bind 的成员注册 `mappingModelKeys` 自动监听
 /// .v  => 为 @bind 成员生成 `__xz_bind_prepare` 自动绑定
 /// .m  => 暂不执行任何操作
-extension XZMocoaMacro: MemberMacro {
+extension MocoaMacro: MemberMacro {
     
     public static func expansion(of node: AttributeSyntax, providingMembersOf declaration: some DeclGroupSyntax, in context: some MacroExpansionContext) throws -> [DeclSyntax] {
         guard let classDecl = declaration.as(ClassDeclSyntax.self) else {
             throw XZMacroError(message: "@mocoa: 只能应用于 class 类")
         }
         
-        let role = try XZMocoaRole.init(node: node, declaration: classDecl)
+        let role = try MocoaRole.init(node: node, declaration: classDecl)
         
         switch role {
         case .m:
@@ -195,7 +199,7 @@ extension XZMocoaMacro: MemberMacro {
                     }
                     
                     do {
-                        let string = try XZMocoaBindMacro.viewBindStatements(forMacros: macroNodes, forVariable: variableDecl)
+                        let string = try BindMacro.viewBindStatements(forMacros: macroNodes, forVariable: variableDecl)
                         bindStatementStrings.append(string)
                     } catch {
                         XZMacroDiagnose(context, node: variableDecl, error: error, severity: .warning)
@@ -214,7 +218,7 @@ extension XZMocoaMacro: MemberMacro {
                         switch macroNode.attributeName.trimmedDescription {
                         case "bind": // 处理带 @bind 标记的属性。
                             do {
-                                let string = try XZMocoaBindMacro.viewBindStatement(forMacro: macroNode, forFunction: methodDecl)
+                                let string = try BindMacro.viewBindStatement(forMacro: macroNode, forFunction: methodDecl)
                                 bindStatementStrings.append(string)
                             } catch {
                                 XZMacroDiagnose(context, node: methodDecl, error: error, severity: .warning)
@@ -404,3 +408,111 @@ extension XZMocoaMacro: MemberMacro {
     }
     
 }
+
+public enum MocoaRole: String {
+    
+    case m
+    
+    case v
+    
+    case vm
+    
+    /// 获取 `@mocoa` 宏所修饰的 class 的 MVVM 角色。
+    /// - Parameters:
+    ///   - node: 附属于 class 的 `@mocoa(role)` 宏
+    ///   - declaration: 声明 class 的节点
+    /// - Returns: class 的角色
+    public init(node: SwiftSyntax.AttributeSyntax, declaration: SwiftSyntax.ClassDeclSyntax) throws {
+        if let arguments = node.arguments {
+            switch arguments {
+            case .argumentList(let arguments):
+                switch arguments.count {
+                case 0:
+                    break
+                    
+                case 1:
+                    if let roleValue = arguments[arguments.startIndex].expression.as(MemberAccessExprSyntax.self)?.declName.trimmedDescription {
+                        if let role = MocoaRole.init(rawValue: roleValue) {
+                            self = role
+                            return
+                        }
+                    }
+                    throw XZMacroError(message: "@mocoa: 参数 role 不是合法的枚举值")
+                    
+                default:
+                    throw XZMacroError(message: "@mocoa: 目前仅支持 role 参数")
+                    
+                }
+                
+            default:
+                throw XZMacroError(message: "@mocoa: 不支持的参数形式")
+            }
+            
+        }
+        
+        let inheritedTypes = declaration.inheritedTypes
+        
+        if inheritedTypes.contains("XZMocoaModel") {
+            self = .m
+            return
+        }
+        
+        if inheritedTypes.contains("XZMocoaViewModel") {
+            self = .vm
+            return
+        }
+        
+        if inheritedTypes.contains("UIView") || inheritedTypes.contains("XZMocoaView") || inheritedTypes.contains("UIViewController") {
+            self = .v
+            return
+        }
+        
+        let className = declaration.name.text
+        
+        if className.hasSuffix("ViewModel") {
+            self = .vm
+            return
+        }
+
+        if className.hasSuffix("View") || className.hasSuffix("Cell") || className.hasSuffix("Controller") || className.hasSuffix("Bar") {
+            self = .v
+            return
+        }
+
+        if className.hasSuffix("Model") {
+            self = .m
+            return
+        }
+        
+        throw XZMacroError(message: "@mocoa: 无法确定 \(className) 的角色，请通过 role 参数指定")
+    }
+    
+    /// 获取宏所属的 class 的角色。
+    /// - Parameters:
+    ///   - node: 宏节点，必须是修饰 class 属性或方法的宏
+    ///   - context: 宏节点的上下文
+    /// - Returns: 角色
+    public init(node: SwiftSyntax.AttributeSyntax, context: some SwiftSyntaxMacros.MacroExpansionContext) throws {
+        for lexicalContext in context.lexicalContext {
+            if let classDecl = lexicalContext.as(ClassDeclSyntax.self) {
+                for attribute in classDecl.attributes {
+                    
+                    switch attribute {
+                    case .attribute(let node):
+                        guard node.attributeName.trimmedDescription == "mocoa" else {
+                            break;
+                        }
+                        self = try MocoaRole.init(node: node, declaration: classDecl)
+                        return
+                    case .ifConfigDecl:
+                        break
+                    }
+                }
+            }
+        }
+        throw XZMacroError(message: "@mocoa: 无法确定 \(node.attributeName.trimmedDescription) 所属的角色")
+    }
+}
+
+
+

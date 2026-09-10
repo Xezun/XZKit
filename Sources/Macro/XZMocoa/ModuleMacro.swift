@@ -1,5 +1,5 @@
 //
-//  XZMocoaModuleMacro.swift
+//  ModuleMacro.swift
 //  XZKit
 //
 //  Created by Xezun on 2025/6/10.
@@ -11,7 +11,7 @@ import SwiftSyntax
 import Foundation
 
 /// 宏 `#module(URL)` 的实现。
-public struct XZMocoaModuleMacro: ExpressionMacro {
+public struct ModuleMacro: ExpressionMacro {
     
     public static func expansion(of node: some FreestandingMacroExpansionSyntax, in context: some MacroExpansionContext) throws -> ExprSyntax {
         guard node.arguments.count == 1, let argument = node.arguments.first else {

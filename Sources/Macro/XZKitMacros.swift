@@ -15,16 +15,16 @@ struct XZKitMacros: CompilerPlugin {
     
     let providingMacros: [Macro.Type] = [
         // NSURL
-        NSURLMacro.self,
+        URLMacro.self,
         // XZLog
         XZLogMacro.self,
         // XZMocoa
-        XZMocoaMacro.self,
-        XZMocoaModuleMacro.self,
-        XZMocoaKeyMacro.self,
-        XZMocoaBindMacro.self,
-        XZMocoaBindViewMacro.self,
-        XZMocoaReadonlyKeyMacro.self
+        MocoaMacro.self,
+        ModuleMacro.self,
+        KeyMacro.self,
+        BindMacro.self,
+        ViewBindMacro.self,
+        ReadonlyKeyMacro.self
     ]
     
 }
@@ -164,7 +164,11 @@ extension SwiftSyntax.AttributeListSyntax {
 extension VariableDeclSyntax {
     
     /// 是否为只读属性。
-   public var isReadOnlyProperty: Bool {
+    public var isReadOnlyProperty: Bool {
+        if self.bindingSpecifier.text == "let" {
+            return true
+        }
+        
         if self.bindings.count != 1 {
             return false
         }
@@ -187,6 +191,19 @@ extension VariableDeclSyntax {
     /// 判断属性是否包含指定修饰符。
     public func contains(modifier: Keyword) -> Bool {
         return self.modifiers.contains(where: { $0.name.tokenKind == .keyword(modifier) })
+    }
+    
+    /// 获取指定名字的属性。
+    public func attribute(forName name: String) -> SwiftSyntax.AttributeSyntax? {
+        for attribute in self.attributes {
+            guard case let .attribute(macroNode) = attribute else {
+                continue
+            }
+            if macroNode.attributeName.trimmedDescription == name {
+                return macroNode
+            }
+        }
+        return nil
     }
     
     /// 判断属性是否包含指定属性。

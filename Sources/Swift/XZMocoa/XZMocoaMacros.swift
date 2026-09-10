@@ -23,11 +23,11 @@ public enum XZMocoaRole {
 /// #module("https://mocoa.xezun.com/main")
 /// ```
 @freestanding(expression)
-public macro module(_ urlString: String) -> XZMocoaModule = #externalMacro(module: "XZKitMacros", type: "XZMocoaModuleMacro")
+public macro module(_ urlString: String) -> XZMocoaModule = #externalMacro(module: "XZKitMacros", type: "ModuleMacro")
 
 /// 获取地址为 URL 的 Mocoa 模块。
 @freestanding(expression)
-public macro module(_ value: URL) -> XZMocoaModule = #externalMacro(module: "XZKitMacros", type: "XZMocoaModuleMacro")
+public macro module(_ value: URL) -> XZMocoaModule = #externalMacro(module: "XZKitMacros", type: "ModuleMacro")
 
 /// 将 class 标记为 Mocoa 的 MVVM 角色。
 ///
@@ -53,7 +53,7 @@ public macro module(_ value: URL) -> XZMocoaModule = #externalMacro(module: "XZK
 /// - SeeAlso: 如果 class 的命名符合规范，那么可省略 role 参数，参见无参数的 `@mocoa` 宏。
 @attached(memberAttribute)
 @attached(member, names: arbitrary)
-public macro mocoa(_ role: XZMocoaRole) = #externalMacro(module: "XZKitMacros", type: "XZMocoaMacro")
+public macro mocoa(_ role: XZMocoaRole) = #externalMacro(module: "XZKitMacros", type: "MocoaMacro")
 
 /// 将 class 标记为 Mocoa 的 MVVM 角色，并自动推断其角色类型。
 ///
@@ -73,7 +73,7 @@ public macro mocoa(_ role: XZMocoaRole) = #externalMacro(module: "XZKitMacros", 
 /// - SeeAlso: 更多使用规则见带参数的 `@mocoa(_:)` 宏。
 @attached(memberAttribute)
 @attached(member, names: arbitrary)
-public macro mocoa() = #externalMacro(module: "XZKitMacros", type: "XZMocoaMacro")
+public macro mocoa() = #externalMacro(module: "XZKitMacros", type: "MocoaMacro")
 
 // MARK: - @key
 
@@ -106,7 +106,7 @@ public macro mocoa() = #externalMacro(module: "XZKitMacros", type: "XZMocoaMacro
 /// - Parameter name: 该属性变化时，发送 KTA 事件的事件名
 @attached(peer, names: prefixed(_))
 @attached(accessor, names: arbitrary)
-public macro key(_ name: XZMocoaKey) = #externalMacro(module: "XZKitMacros", type: "XZMocoaKeyMacro")
+public macro key(_ name: XZMocoaKey) = #externalMacro(module: "XZKitMacros", type: "KeyMacro")
 
 /// 标记 ViewModel 的属性，表明该属性支持 key-target-action 机制，支持在 View 中使用该属性名进行绑定。
 ///
@@ -117,15 +117,16 @@ public macro key(_ name: XZMocoaKey) = #externalMacro(module: "XZKitMacros", typ
 /// - SeeAlso: 更多使用规则见带参数的 `@key(_:)` 宏。
 @attached(peer, names: prefixed(_))
 @attached(accessor, names: arbitrary)
-public macro key() = #externalMacro(module: "XZKitMacros", type: "XZMocoaKeyMacro")
+public macro key() = #externalMacro(module: "XZKitMacros", type: "KeyMacro")
 
-/// 标记只读属性和计算属性为 KTA 事件名。
-//@attached(peer, names: arbitrary)
-//public macro key(readonly: XZMocoaKey) = #externalMacro(module: "XZKitMacros", type: "XZMocoaReadonlyKeyMacro")
-
-/// 参数必须为 true
-//@attached(peer, names: arbitrary)
-//public macro key(readonly: Bool) = #externalMacro(module: "XZKitMacros", type: "XZMocoaReadonlyKeyMacro")
+/// 标记只读属性或计算属性为 KTA 事件名。
+///
+/// 使用 @key(readonly:) 重载宏函数，编译会报错，应该是编译器 BUG 所致，若后期 BUG 修复，恢复使用以下宏函数。
+/// ```swift
+/// public macro key(readonly: Bool)
+/// ```
+@attached(peer, names: arbitrary)
+public macro readonlyKey() = #externalMacro(module: "XZKitMacros", type: "ReadonlyKeyMacro")
 
 /// 为 ViewModel 与 Model 之间，或 View 与 ViewModel 之间建立单向绑定。
 ///
@@ -205,7 +206,7 @@ public macro key() = #externalMacro(module: "XZKitMacros", type: "XZMocoaKeyMacr
 /// func setIconWithURL(_ iconURL: URL)
 /// ```
 @attached(peer, names: arbitrary)
-public macro bind(_ key: XZMocoaKey...) = #externalMacro(module: "XZKitMacros", type: "XZMocoaBindMacro")
+public macro bind(_ key: XZMocoaKey...) = #externalMacro(module: "XZKitMacros", type: "BindMacro")
 
 // 以下带参数标签的 bind 宏，只可以在 View 中修饰属性使用。
 
@@ -217,196 +218,196 @@ public macro bind(_ key: XZMocoaKey...) = #externalMacro(module: "XZKitMacros", 
 /// let tableView: UITableView = .init()
 /// ```
 @attached(accessor, names: named(didSet))
-public macro bind(_ key: XZMocoaKey, selector: Selector) = #externalMacro(module: "XZKitMacros", type: "XZMocoaBindViewMacro")
+public macro bind(_ key: XZMocoaKey, selector: Selector) = #externalMacro(module: "XZKitMacros", type: "ViewBindMacro")
 
 // MARK: - UIView
 
 /// 建立从 ViewModel.{key} 到 View.isHidden 的单向绑定关系。
 @attached(accessor, names: named(didSet))
-public macro bind(isHidden key: XZMocoaKey) = #externalMacro(module: "XZKitMacros", type: "XZMocoaBindViewMacro")
+public macro bind(isHidden key: XZMocoaKey) = #externalMacro(module: "XZKitMacros", type: "ViewBindMacro")
 
 /// 建立从 ViewModel.{key} 到 View.alpha 的单向绑定关系。
 @attached(accessor, names: named(didSet))
-public macro bind(alpha key: XZMocoaKey) = #externalMacro(module: "XZKitMacros", type: "XZMocoaBindViewMacro")
+public macro bind(alpha key: XZMocoaKey) = #externalMacro(module: "XZKitMacros", type: "ViewBindMacro")
 
 /// 建立从 ViewModel.{key} 到 View.frame 的单向绑定关系。
 @attached(accessor, names: named(didSet))
-public macro bind(frame key: XZMocoaKey) = #externalMacro(module: "XZKitMacros", type: "XZMocoaBindViewMacro")
+public macro bind(frame key: XZMocoaKey) = #externalMacro(module: "XZKitMacros", type: "ViewBindMacro")
 
 /// 建立从 ViewModel.{key} 到 View.bounds 的单向绑定关系。
 @attached(accessor, names: named(didSet))
-public macro bind(bounds key: XZMocoaKey) = #externalMacro(module: "XZKitMacros", type: "XZMocoaBindViewMacro")
+public macro bind(bounds key: XZMocoaKey) = #externalMacro(module: "XZKitMacros", type: "ViewBindMacro")
 
 /// 建立从 ViewModel.{key} 到 View.transform 的单向绑定关系。
 @attached(accessor, names: named(didSet))
-public macro bind(transform key: XZMocoaKey) = #externalMacro(module: "XZKitMacros", type: "XZMocoaBindViewMacro")
+public macro bind(transform key: XZMocoaKey) = #externalMacro(module: "XZKitMacros", type: "ViewBindMacro")
 
 /// 建立从 ViewModel.{key} 到 View.tintColor 的单向绑定关系。
 @attached(accessor, names: named(didSet))
-public macro bind(tintColor key: XZMocoaKey) = #externalMacro(module: "XZKitMacros", type: "XZMocoaBindViewMacro")
+public macro bind(tintColor key: XZMocoaKey) = #externalMacro(module: "XZKitMacros", type: "ViewBindMacro")
 
 /// 建立从 ViewModel.{key} 到 View.backgroundColor 的单向绑定关系。
 @attached(accessor, names: named(didSet))
-public macro bind(backgroundColor key: XZMocoaKey) = #externalMacro(module: "XZKitMacros", type: "XZMocoaBindViewMacro")
+public macro bind(backgroundColor key: XZMocoaKey) = #externalMacro(module: "XZKitMacros", type: "ViewBindMacro")
 
 // MARK: - UIControl
 
 /// 建立从 ViewModel.{key} 到 View.isEnabled 的单向绑定关系。
 @attached(accessor, names: named(didSet))
-public macro bind(isEnabled key: XZMocoaKey) = #externalMacro(module: "XZKitMacros", type: "XZMocoaBindViewMacro")
+public macro bind(isEnabled key: XZMocoaKey) = #externalMacro(module: "XZKitMacros", type: "ViewBindMacro")
 
 /// 建立从 ViewModel.{key} 到 View.isSelected 的单向绑定关系。
 @attached(accessor, names: named(didSet))
-public macro bind(isSelected key: XZMocoaKey) = #externalMacro(module: "XZKitMacros", type: "XZMocoaBindViewMacro")
+public macro bind(isSelected key: XZMocoaKey) = #externalMacro(module: "XZKitMacros", type: "ViewBindMacro")
 
 /// 建立从 ViewModel.{key} 到 View.isHighlighted 的单向绑定关系。
 @attached(accessor, names: named(didSet))
-public macro bind(isHighlighted key: XZMocoaKey) = #externalMacro(module: "XZKitMacros", type: "XZMocoaBindViewMacro")
+public macro bind(isHighlighted key: XZMocoaKey) = #externalMacro(module: "XZKitMacros", type: "ViewBindMacro")
 
 // MARK: - UILabel
 
 /// 建立从 ViewModel.{key} 到 View.text 的单向绑定关系。
 @attached(accessor, names: named(didSet))
-public macro bind(text key: XZMocoaKey) = #externalMacro(module: "XZKitMacros", type: "XZMocoaBindViewMacro")
+public macro bind(text key: XZMocoaKey) = #externalMacro(module: "XZKitMacros", type: "ViewBindMacro")
 
 /// 建立从 ViewModel.{key} 到 View.attributedText 的单向绑定关系。
 @attached(accessor, names: named(didSet))
-public macro bind(attributedText key: XZMocoaKey) = #externalMacro(module: "XZKitMacros", type: "XZMocoaBindViewMacro")
+public macro bind(attributedText key: XZMocoaKey) = #externalMacro(module: "XZKitMacros", type: "ViewBindMacro")
 
 /// 建立从 ViewModel.{key} 到 View.font 的单向绑定关系。
 @attached(accessor, names: named(didSet))
-public macro bind(font key: XZMocoaKey) = #externalMacro(module: "XZKitMacros", type: "XZMocoaBindViewMacro")
+public macro bind(font key: XZMocoaKey) = #externalMacro(module: "XZKitMacros", type: "ViewBindMacro")
 
 /// 建立从 ViewModel.{key} 到 View.textColor 的单向绑定关系。
 @attached(accessor, names: named(didSet))
-public macro bind(textColor key: XZMocoaKey) = #externalMacro(module: "XZKitMacros", type: "XZMocoaBindViewMacro")
+public macro bind(textColor key: XZMocoaKey) = #externalMacro(module: "XZKitMacros", type: "ViewBindMacro")
 
 /// 建立从 ViewModel.{key} 到 View.textAlignment 的单向绑定关系。
 @attached(accessor, names: named(didSet))
-public macro bind(textAlignment key: XZMocoaKey) = #externalMacro(module: "XZKitMacros", type: "XZMocoaBindViewMacro")
+public macro bind(textAlignment key: XZMocoaKey) = #externalMacro(module: "XZKitMacros", type: "ViewBindMacro")
 
 // MARK: - UIImageView
 
 /// 建立从 ViewModel.{key} 到 View.image 的单向绑定关系。
 @attached(accessor, names: named(didSet))
-public macro bind(image key: XZMocoaKey) = #externalMacro(module: "XZKitMacros", type: "XZMocoaBindViewMacro")
+public macro bind(image key: XZMocoaKey) = #externalMacro(module: "XZKitMacros", type: "ViewBindMacro")
 
 /// 建立从 ViewModel.{key} 到 View.animationImages 的单向绑定关系。
 @attached(accessor, names: named(didSet))
-public macro bind(animationImages key: XZMocoaKey) = #externalMacro(module: "XZKitMacros", type: "XZMocoaBindViewMacro")
+public macro bind(animationImages key: XZMocoaKey) = #externalMacro(module: "XZKitMacros", type: "ViewBindMacro")
 
 // MARK: - UITextField
 
 /// 建立从 ViewModel.{key} 到 View.placeholder 的单向绑定关系。
 @attached(accessor, names: named(didSet))
-public macro bind(placeholder key: XZMocoaKey) = #externalMacro(module: "XZKitMacros", type: "XZMocoaBindViewMacro")
+public macro bind(placeholder key: XZMocoaKey) = #externalMacro(module: "XZKitMacros", type: "ViewBindMacro")
 
 /// 建立从 ViewModel.{key} 到 View.attributedPlaceholder 的单向绑定关系。
 @attached(accessor, names: named(didSet))
-public macro bind(attributedPlaceholder key: XZMocoaKey) = #externalMacro(module: "XZKitMacros", type: "XZMocoaBindViewMacro")
+public macro bind(attributedPlaceholder key: XZMocoaKey) = #externalMacro(module: "XZKitMacros", type: "ViewBindMacro")
 
 // MARK: - UITextView
 
 /// 建立从 ViewModel.{key} 到 View.isEditable 的单向绑定关系。
 @attached(accessor, names: named(didSet))
-public macro bind(isEditable key: XZMocoaKey) = #externalMacro(module: "XZKitMacros", type: "XZMocoaBindViewMacro")
+public macro bind(isEditable key: XZMocoaKey) = #externalMacro(module: "XZKitMacros", type: "ViewBindMacro")
 
 /// 建立从 ViewModel.{key} 到 View.isSelectable 的单向绑定关系。
 @attached(accessor, names: named(didSet))
-public macro bind(isSelectable key: XZMocoaKey) = #externalMacro(module: "XZKitMacros", type: "XZMocoaBindViewMacro")
+public macro bind(isSelectable key: XZMocoaKey) = #externalMacro(module: "XZKitMacros", type: "ViewBindMacro")
 
 // MARK: - UISlider
 
 /// 建立从 ViewModel.{key} 到 View.value 的单向绑定关系。
 @attached(accessor, names: named(didSet))
-public macro bind(value key: XZMocoaKey) = #externalMacro(module: "XZKitMacros", type: "XZMocoaBindViewMacro")
+public macro bind(value key: XZMocoaKey) = #externalMacro(module: "XZKitMacros", type: "ViewBindMacro")
 
 // MARK: - UISwitch
 
 /// 建立从 ViewModel.{key} 到 View.isOn 的单向绑定关系。
 @attached(accessor, names: named(didSet))
-public macro bind(isOn key: XZMocoaKey) = #externalMacro(module: "XZKitMacros", type: "XZMocoaBindViewMacro")
+public macro bind(isOn key: XZMocoaKey) = #externalMacro(module: "XZKitMacros", type: "ViewBindMacro")
 
 // MARK: - UIButton
 
 /// 建立从 ViewModel.{key} 到 View.title 的单向绑定关系。
 @attached(accessor, names: named(didSet))
-public macro bind(title key: XZMocoaKey, for state: UIControl.State) = #externalMacro(module: "XZKitMacros", type: "XZMocoaBindViewMacro")
+public macro bind(title key: XZMocoaKey, for state: UIControl.State) = #externalMacro(module: "XZKitMacros", type: "ViewBindMacro")
 
 /// 建立从 ViewModel.{key} 到 View.attributedTitle 的单向绑定关系。
 @attached(accessor, names: named(didSet))
-public macro bind(attributedTitle key: XZMocoaKey, for state: UIControl.State) = #externalMacro(module: "XZKitMacros", type: "XZMocoaBindViewMacro")
+public macro bind(attributedTitle key: XZMocoaKey, for state: UIControl.State) = #externalMacro(module: "XZKitMacros", type: "ViewBindMacro")
 
 /// 建立从 ViewModel.{key} 到 View.titleColor 的单向绑定关系。
 @attached(accessor, names: named(didSet))
-public macro bind(titleColor key: XZMocoaKey, for state: UIControl.State) = #externalMacro(module: "XZKitMacros", type: "XZMocoaBindViewMacro")
+public macro bind(titleColor key: XZMocoaKey, for state: UIControl.State) = #externalMacro(module: "XZKitMacros", type: "ViewBindMacro")
 
 /// 建立从 ViewModel.{key} 到 View.titleShadowColor 的单向绑定关系。
 @attached(accessor, names: named(didSet))
-public macro bind(titleShadowColor key: XZMocoaKey, for state: UIControl.State) = #externalMacro(module: "XZKitMacros", type: "XZMocoaBindViewMacro")
+public macro bind(titleShadowColor key: XZMocoaKey, for state: UIControl.State) = #externalMacro(module: "XZKitMacros", type: "ViewBindMacro")
 
 /// 建立从 ViewModel.{key} 到 View.image 的单向绑定关系。
 @attached(accessor, names: named(didSet))
-public macro bind(image key: XZMocoaKey, for state: UIControl.State) = #externalMacro(module: "XZKitMacros", type: "XZMocoaBindViewMacro")
+public macro bind(image key: XZMocoaKey, for state: UIControl.State) = #externalMacro(module: "XZKitMacros", type: "ViewBindMacro")
 
 /// 建立从 ViewModel.{key} 到 View.backgroundImage 的单向绑定关系。
 @attached(accessor, names: named(didSet))
-public macro bind(backgroundImage key: XZMocoaKey, for state: UIControl.State) = #externalMacro(module: "XZKitMacros", type: "XZMocoaBindViewMacro")
+public macro bind(backgroundImage key: XZMocoaKey, for state: UIControl.State) = #externalMacro(module: "XZKitMacros", type: "ViewBindMacro")
 
 // MARK: - Other
 
 /// 建立从 ViewModel.{key} 到 View.color 的单向绑定关系。
 @attached(accessor, names: named(didSet))
-public macro bind(color key: XZMocoaKey) = #externalMacro(module: "XZKitMacros", type: "XZMocoaBindViewMacro")
+public macro bind(color key: XZMocoaKey) = #externalMacro(module: "XZKitMacros", type: "ViewBindMacro")
 
 /// 建立从 ViewModel.{key} 到 View.name 的单向绑定关系。
 @attached(accessor, names: named(didSet))
-public macro bind(name key: XZMocoaKey) = #externalMacro(module: "XZKitMacros", type: "XZMocoaBindViewMacro")
+public macro bind(name key: XZMocoaKey) = #externalMacro(module: "XZKitMacros", type: "ViewBindMacro")
 
 /// 建立从 ViewModel.{key} 到 View.barTintColor 的单向绑定关系。
 @attached(accessor, names: named(didSet))
-public macro bind(barTintColor key: XZMocoaKey) = #externalMacro(module: "XZKitMacros", type: "XZMocoaBindViewMacro")
+public macro bind(barTintColor key: XZMocoaKey) = #externalMacro(module: "XZKitMacros", type: "ViewBindMacro")
 
 /// 建立从 ViewModel.{key} 到 View.backgroundImage 的单向绑定关系。
 @attached(accessor, names: named(didSet))
-public macro bind(backgroundImage key: XZMocoaKey) = #externalMacro(module: "XZKitMacros", type: "XZMocoaBindViewMacro")
+public macro bind(backgroundImage key: XZMocoaKey) = #externalMacro(module: "XZKitMacros", type: "ViewBindMacro")
 
 /// 建立从 ViewModel.{key} 到 View.isTranslucent 的单向绑定关系。
 @attached(accessor, names: named(didSet))
-public macro bind(isTranslucent key: XZMocoaKey) = #externalMacro(module: "XZKitMacros", type: "XZMocoaBindViewMacro")
+public macro bind(isTranslucent key: XZMocoaKey) = #externalMacro(module: "XZKitMacros", type: "ViewBindMacro")
 
 /// 建立从 ViewModel.{key} 到 View.style 的单向绑定关系。
 @attached(accessor, names: named(didSet))
-public macro bind(style key: XZMocoaKey) = #externalMacro(module: "XZKitMacros", type: "XZMocoaBindViewMacro")
+public macro bind(style key: XZMocoaKey) = #externalMacro(module: "XZKitMacros", type: "ViewBindMacro")
 
 /// 建立从 ViewModel.{key} 到 View.state 的单向绑定关系。
 @attached(accessor, names: named(didSet))
-public macro bind(state key: XZMocoaKey) = #externalMacro(module: "XZKitMacros", type: "XZMocoaBindViewMacro")
+public macro bind(state key: XZMocoaKey) = #externalMacro(module: "XZKitMacros", type: "ViewBindMacro")
 
 /// 建立从 ViewModel.{key} 到 View.status 的单向绑定关系。
 @attached(accessor, names: named(didSet))
-public macro bind(status key: XZMocoaKey) = #externalMacro(module: "XZKitMacros", type: "XZMocoaBindViewMacro")
+public macro bind(status key: XZMocoaKey) = #externalMacro(module: "XZKitMacros", type: "ViewBindMacro")
 
 /// 建立从 ViewModel.{key} 到 View.title 的单向绑定关系。
 @attached(accessor, names: named(didSet))
-public macro bind(title key: XZMocoaKey) = #externalMacro(module: "XZKitMacros", type: "XZMocoaBindViewMacro")
+public macro bind(title key: XZMocoaKey) = #externalMacro(module: "XZKitMacros", type: "ViewBindMacro")
 
 /// 建立从 ViewModel.{key} 到 View.attributedTitle 的单向绑定关系。
 @attached(accessor, names: named(didSet))
-public macro bind(attributedTitle key: XZMocoaKey) = #externalMacro(module: "XZKitMacros", type: "XZMocoaBindViewMacro")
+public macro bind(attributedTitle key: XZMocoaKey) = #externalMacro(module: "XZKitMacros", type: "ViewBindMacro")
 
 /// 建立从 ViewModel.{key} 到 View.subtitle 的单向绑定关系。
 @attached(accessor, names: named(didSet))
-public macro bind(subtitle key: XZMocoaKey) = #externalMacro(module: "XZKitMacros", type: "XZMocoaBindViewMacro")
+public macro bind(subtitle key: XZMocoaKey) = #externalMacro(module: "XZKitMacros", type: "ViewBindMacro")
 
 /// 建立从 ViewModel.{key} 到 View.detailText 的单向绑定关系。
 @attached(accessor, names: named(didSet))
-public macro bind(detailText key: XZMocoaKey) = #externalMacro(module: "XZKitMacros", type: "XZMocoaBindViewMacro")
+public macro bind(detailText key: XZMocoaKey) = #externalMacro(module: "XZKitMacros", type: "ViewBindMacro")
 
 /// 建立从 ViewModel.{key} 到 View.icon 的单向绑定关系。
 @attached(accessor, names: named(didSet))
-public macro bind(icon key: XZMocoaKey) = #externalMacro(module: "XZKitMacros", type: "XZMocoaBindViewMacro")
+public macro bind(icon key: XZMocoaKey) = #externalMacro(module: "XZKitMacros", type: "ViewBindMacro")
 
 /// 建立从 ViewModel.{key} 到 View.viewModel 的单向绑定关系。
 @attached(accessor, names: named(didSet))
-public macro bind(viewModel key: XZMocoaKey) = #externalMacro(module: "XZKitMacros", type: "XZMocoaBindViewMacro")
+public macro bind(viewModel key: XZMocoaKey) = #externalMacro(module: "XZKitMacros", type: "ViewBindMacro")

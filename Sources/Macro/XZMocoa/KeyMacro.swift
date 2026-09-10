@@ -1,5 +1,5 @@
 //
-//  XZMocoaKeyMacro.swift
+//  KeyMacro.swift
 //  XZKit
 //
 //  Created by Xezun on 2025/6/10.
@@ -12,7 +12,7 @@ import SwiftSyntax
 // @key
 // @key("name")
 
-public struct XZMocoaKeyMacro {
+public struct KeyMacro {
     
     /// 解析 `@key` 宏的参数。供外部调用。
     public static func arguments(from node: SwiftSyntax.AttributeSyntax, for declaration: VariableDeclSyntax) throws -> String {
@@ -98,11 +98,11 @@ public struct XZMocoaKeyMacro {
     }
 }
 
-extension XZMocoaKeyMacro: PeerMacro {
+extension KeyMacro: PeerMacro {
     
     /// 校验属性和宏，并生成存储属性。
     public static func expansion(of node: SwiftSyntax.AttributeSyntax, providingPeersOf declaration: some SwiftSyntax.DeclSyntaxProtocol, in context: some SwiftSyntaxMacros.MacroExpansionContext) throws -> [SwiftSyntax.DeclSyntax] {
-        switch try XZMocoaRole.init(node: node, context: context) {
+        switch try MocoaRole.init(node: node, context: context) {
         case .v:
             throw XZMacroError(message: "@key: 只能用于 Model 或 ViewModel 角色")
             
@@ -132,27 +132,27 @@ extension XZMocoaKeyMacro: PeerMacro {
             
             if let propertyType = binding.typeAnnotation?.type.trimmedDescription {
                 if let initializer = propertyDecl.bindings.first?.initializer?.value.trimmedDescription {
-                    return ["private var _\(raw: propertyName) : \(raw: propertyType) = \(raw: initializer)"]
+                    return ["fileprivate var _\(raw: propertyName) : \(raw: propertyType) = \(raw: initializer)"]
                 }
                 
-                return ["private var _\(raw: propertyName) : \(raw: propertyType)"]
+                return ["fileprivate var _\(raw: propertyName) : \(raw: propertyType)"]
             }
             
             guard let initializer = propertyDecl.bindings.first?.initializer?.value.trimmedDescription else {
                 throw XZMacroError(message: "@key: 宏无法确定属性值类型")
             }
             
-            return ["private var _\(raw: propertyName) = \(raw: initializer)"]
+            return ["fileprivate var _\(raw: propertyName) = \(raw: initializer)"]
         }
     }
     
 }
 
 /// 宏 `@key("key")` 的实现： 生成 setter/getter 方法。
-extension XZMocoaKeyMacro: AccessorMacro {
+extension KeyMacro: AccessorMacro {
     
     public static func expansion(of node: SwiftSyntax.AttributeSyntax, providingAccessorsOf declaration: some SwiftSyntax.DeclSyntaxProtocol, in context: some SwiftSyntaxMacros.MacroExpansionContext) throws -> [SwiftSyntax.AccessorDeclSyntax] {
-        switch try XZMocoaRole(node: node, context: context) {
+        switch try MocoaRole(node: node, context: context) {
         case .m:
             guard let propertyDecl = declaration.as(VariableDeclSyntax.self) else {
                 throw XZMacroError.init(message: "@key: 只支持属性")
@@ -338,54 +338,52 @@ extension XZMocoaKeyMacro: AccessorMacro {
     
 }
 
+public struct ReadonlyKeyMacro: PeerMacro {
 
-public struct XZMocoaReadonlyKeyMacro: PeerMacro {
-
-    /// 校验属性和宏，并生成存储属性。
+    /// 仅校验属性和宏参数
     public static func expansion(of node: SwiftSyntax.AttributeSyntax, providingPeersOf declaration: some SwiftSyntax.DeclSyntaxProtocol, in context: some SwiftSyntaxMacros.MacroExpansionContext) throws -> [SwiftSyntax.DeclSyntax] {
-        return []
-        switch try XZMocoaRole.init(node: node, context: context) {
+        switch try MocoaRole.init(node: node, context: context) {
         case .v:
-            fallthrough
+            throw XZMacroError(message: "@key(readonly:): 不支持 View 视图")
+            
         case .m:
-            throw XZMacroError(message: "@key: 只能用于 ViewModel 角色")
+            throw XZMacroError(message: "@key(readonly:): 不支持 Model 数据模型")
             
         case .vm:
             guard let propertyDecl = declaration.as(VariableDeclSyntax.self) else {
-                throw XZMacroError(message: "@key: 此宏只能附加到 var 属性");
+                throw XZMacroError(message: "@key(readonly:): 仅支持修饰属性");
             }
             
-            guard propertyDecl.bindingSpecifier.text == "let" || propertyDecl.isReadOnlyProperty else {
-                throw XZMacroError(message: "@key: 仅支持只读属性");
+            guard propertyDecl.isReadOnlyProperty else {
+                throw XZMacroError(message: "@key(readonly:): 仅支持只读属性或计算属性");
             }
             
             guard propertyDecl.contains(modifier: .dynamic) else {
-                throw XZMacroError(message: "@key: 仅支持 dynamic 类型的只读属性");
+                throw XZMacroError(message: "@key(readonly:): 请添加 dynamic 修饰符");
             }
             
+            guard propertyDecl.contains(attribute: "objc") else {
+                throw XZMacroError(message: "@key(readonly:): 请添加 @objc 修饰属性");
+            }
+            
+            #if MACRO_OVERLOAED_BUG_FIXED
             guard let arguments = node.arguments else {
-                throw XZMacroError(message: "@key: 请使用 @key(readonly:) 宏");
+                throw XZMacroError(message: "@key(readonly:): 必须包含 readonly 参数");
             }
             
-            switch arguments {
-            case .argumentList(let arguments):
-                guard arguments.count == 1 else {
-                    throw XZMacroError(message: "@key: 请使用 @key(readonly:) 宏");
-                }
-                let parameter = arguments[arguments.startIndex]
-                guard parameter.label?.trimmedDescription == "readonly" else {
-                    throw XZMacroError(message: "@key: 请使用 @key(readonly:) 宏");
-                }
-                if let boolExpr = parameter.expression.as(BooleanLiteralExprSyntax.self) {
-                    guard boolExpr.literal.text == "true" else {
-                        throw XZMacroError(message: "@key: 请使用 @key(readonly: true) 宏");
-                    }
-                }
-                return []
-            default:
-                throw XZMacroError(message: "@key: 请使用 @key(readonly: true) 宏");
+            guard case .argumentList(let labeledExprListSyntax) = arguments, let parameter = labeledExprListSyntax.first else {
+                throw XZMacroError(message: "@key(readonly:): 必须包含 readonly 参数");
             }
             
+            guard parameter.label?.trimmedDescription == "readonly" else {
+                throw XZMacroError(message: "@key(readonly:): 必须使用 readonly 参数标签");
+            }
+            
+            guard let value = parameter.expression.as(BooleanLiteralExprSyntax.self), value.literal.text == "true" else {
+                throw XZMacroError(message: "@key(readonly:): 参数 readonly 值必须为 true 真值");
+            }
+            #endif
+            return []
         }
     }
     
