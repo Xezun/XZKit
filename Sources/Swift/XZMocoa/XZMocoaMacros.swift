@@ -126,7 +126,7 @@ public macro key() = #externalMacro(module: "XZKitMacros", type: "KeyMacro")
 /// public macro key(readonly: Bool)
 /// ```
 @attached(peer, names: arbitrary)
-public macro readonlyKey() = #externalMacro(module: "XZKitMacros", type: "ReadonlyKeyMacro")
+public macro Key(readonly: Bool) = #externalMacro(module: "XZKitMacros", type: "ReadonlyKeyMacro")
 
 /// 为 ViewModel 与 Model 之间，或 View 与 ViewModel 之间建立单向绑定。
 ///

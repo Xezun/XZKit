@@ -71,8 +71,8 @@ class TestViewModel: XZMocoaTableViewModel {
     override var shouldObserveModelKeysActively: Bool {
         return true
     }
-    
-    @readonlyKey
+
+    @Key(readonly: true)
     @objc dynamic let identifier: XZMocoaViewModel = .init(model: nil)
     
     override func prepare() {
