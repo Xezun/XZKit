@@ -31,9 +31,9 @@
 }
 
 - (void)didInitWithMocoaOptions:(XZMocoaOptions *)options {
-    self.viewModel = [[Example0321ContactEditorViewModel alloc] initWithModel:options[@"model"]];
-    self.modalPresentationStyle = UIModalPresentationOverFullScreen;
     [super didInitWithMocoaOptions:options];
+//    self.viewModel = [[Example0321ContactEditorViewModel alloc] initWithModel:options[@"model"]];
+    self.modalPresentationStyle = UIModalPresentationOverFullScreen;
 }
 
 - (void)viewDidLoad {
@@ -49,7 +49,6 @@
     self.formView.layer.masksToBounds = YES;
     
     Example0321ContactEditorViewModel *viewModel = self.viewModel;
-    [viewModel ready];
     self.firstNameView.textField.text   = viewModel.firstName;
     self.lastNameView.textField.text    = viewModel.lastName;
     self.phoneNumberView.textField.text = viewModel.phone;

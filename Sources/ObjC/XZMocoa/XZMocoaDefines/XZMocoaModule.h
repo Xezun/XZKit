@@ -290,7 +290,7 @@ typedef NS_ENUM(NSUInteger, XZMocoaModuleViewForm) {
 /// - mocoa://xzkit.xezun.com/example
 ///
 /// @param moduleURLString 模块地址
-FOUNDATION_STATIC_INLINE XZMocoaModule * _Nullable XZMocoa(NSString *moduleURLString) XZ_ATTR_OVERLOAD NS_REFINED_FOR_SWIFT {
+FOUNDATION_STATIC_INLINE XZMocoaModule * _Nullable __xz_mocoa_module_for_str__(NSString *moduleURLString) NS_SWIFT_UNAVAILABLE("") {
     return [XZMocoaModule moduleForURLString:moduleURLString];
 }
 
@@ -301,8 +301,14 @@ FOUNDATION_STATIC_INLINE XZMocoaModule * _Nullable XZMocoa(NSString *moduleURLSt
 /// - mocoa://xzkit.xezun.com/example
 ///
 /// @param moduleURL 模块地址
-FOUNDATION_STATIC_INLINE XZMocoaModule * _Nullable XZMocoa(NSURL *moduleURL) XZ_ATTR_OVERLOAD NS_REFINED_FOR_SWIFT {
+FOUNDATION_STATIC_INLINE XZMocoaModule * _Nullable __xz_mocoa_module_for_url__(NSURL *moduleURL) NS_SWIFT_UNAVAILABLE("") {
     return [XZMocoaModule moduleForURL:moduleURL];
 }
+
+#define XZMocoa(stringOrURL) _Generic( \
+    (stringOrURL), \
+    NSString * : __xz_mocoa_module_for_str__, \
+    NSURL    * : __xz_mocoa_module_for_url__ \
+)((stringOrURL))
 
 NS_ASSUME_NONNULL_END

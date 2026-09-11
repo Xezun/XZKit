@@ -18,12 +18,16 @@ static const void * const _context = &_context;
 - (instancetype)initWithModule:(XZMocoaModule *)module url:(NSURL *)url options:(NSDictionary *)options;
 @end
 
-/// View 的替身，用来存储属性和转发事件。
+/// View 的替身，用来存储属性值和转发通道事件。
 @interface XZMocoaContext : NSObject <XZMocoaContext>
 /// 所属 view 的视图模型。
 @property (nonatomic, strong, nullable) XZMocoaViewModel *viewModel;
-/// 事件通道。不属于层级关系，但是需要传递事件的两个模块之间。
-@property (nonatomic, weak) XZMocoaViewModel *source;
+/// 事件通道的源。
+///
+/// 用于不属于层级关系，但是需要传递事件的两个模块之间。
+///
+/// 如果 A 页面通过 MocoaURL 打开 B 页面，那么 A 页面就是 sourceViewModel 成为建立通道的源。
+@property (nonatomic, weak) XZMocoaViewModel *sourceViewModel;
 + (nonnull XZMocoaContext *)contextForView:(nonnull UIResponder *)view;
 + (nullable XZMocoaContext *)contextIfLoadedForView:(nonnull UIResponder *)view;
 /// 视图关联视图模型。
@@ -394,7 +398,7 @@ static const void * const _context = &_context;
     // 建立事件通道
     if ([sourceViewModel isKindOfClass:[XZMocoaViewModel class]]) {
         XZMocoaContext * const context = [XZMocoaContext contextForView:self];
-        context.source = sourceViewModel;
+        context.sourceViewModel = sourceViewModel;
     }
 }
 
@@ -660,17 +664,19 @@ static const void * const _context = &_context;
 - (void)sendEventsWithKey:(XZMocoaKey)key value:(id)value {
     XZMocoaEvents * const events = [XZMocoaEvents eventsWithKey:key value:value source:_view];
     if (_viewModel) {
+        // 当前视图，有视图模型，将事件发送给视图模型。
         events->_target = _viewModel;
         [_viewModel didReceiveEvents:events];
-    } else if (_source) {
-        events->_target = _source;
-        [_source didReceiveEvents:events];
+    } else if (_sourceViewModel) {
+        // 当前视图没有视图模型，但是事件通道有源，将事件发送给源。
+        events->_target = _sourceViewModel;
+        [_sourceViewModel didReceiveEvents:events];
     }
 }
 
 - (void)didReceiveEvents:(XZMocoaEvents *)events {
     // 视图模型，没有上层视图模型时，将事件通过事件通道传递。
-    [_source didReceiveEvents:events];
+    [_sourceViewModel didReceiveEvents:events];
 }
 
 - (UIViewController *)viewController {

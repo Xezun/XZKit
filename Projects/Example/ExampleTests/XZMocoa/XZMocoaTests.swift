@@ -72,14 +72,14 @@ extension XZMocoaKey {
 @mocoa(.v)
 class View: UIView, XZMocoaView {
     
-    @bind
+    @bind(image: .image)
     var imageView: UIImageView!
     
-    @bind(.name)
+    @bind(text: .name)
     @IBOutlet var nameLabel: UILabel!
     
     @bind(.detailText)
-    @bind(v: "textColor")
+    @bind(textColor: "textColor")
     var detailLabel: UILabel?
     
     @bind
@@ -89,12 +89,12 @@ class View: UIView, XZMocoaView {
         
     }
     
-    override func prepare() {
-        super.prepare()
+    override func prepareForViewModel() {
+        super.prepareForViewModel()
         
     }
     
-    @bind
+    @bind(text: .text)
     let label: UILabel = UILabel.init()
     
 }

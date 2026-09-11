@@ -43,17 +43,18 @@
     return model.phone;
 }
 
-- (void)didReceiveUpdates:(XZMocoaEvents *)events {
+- (void)didReceiveEvents:(XZMocoaEvents *)events {
     // 收到 editor 的 events 事件。作为唯一下级，这里省略了对 subViewModel 的身份判定。
     // 由于与 target-action 使用了一样的名称，因此这里用了 events.key 直接发送 target-action 事件。
     [self sendActionsForKey:events.key value:nil];
 }
 
-- (void)collectionView:(XZMocoaCollectionView *)collectionView didSelectItemAtIndexPath:(NSIndexPath *)indexPath {
+- (void)collectionViewCell:(UICollectionViewCell *)cell wasSelectedAtIndexPath:(NSIndexPath *)indexPath {
     NSURL *moduleURL = [NSURL URLWithString:@"https://mocoa.xezun.com/examples/21/editor"];
-    UIViewController<XZMocoaView> *nextVC = [collectionView.xz_navigationController presentMocoaURL:moduleURL options:@{
-        @"model": self.model
+    [cell.xz_navigationController presentMocoaURL:moduleURL options:@{
+        XZMocoaKeyModel: self.model,
+        XZMocoaKeyViewModel: self
     } animated:YES];
-    [self addSubViewModel:nextVC.viewModel]; // 添加为子模块，使用 emit 机制监听 name/phone 的变化
 }
+
 @end

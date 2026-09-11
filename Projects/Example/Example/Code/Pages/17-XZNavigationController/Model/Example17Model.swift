@@ -11,12 +11,12 @@ import XZKit
 @mocoa
 class Example17Model: NSObject, XZMocoaModel {
     
-    dynamic var current : Example17Configuration
-    dynamic var next    : Example17Configuration
+    @key dynamic var current : Example17Configuration
+    @key dynamic var next    : Example17Configuration
     
     init(current: Example17Configuration = .init()) {
-        self.current = current
-        self.next = Example17Configuration.init()
+        _current = current
+        _next    = Example17Configuration.init()
         super.init()
     }
     

@@ -191,7 +191,7 @@ NS_SWIFT_UI_ACTOR @interface XZMocoaViewModel : NSObject <XZMocoaViewModel> {
 @property (nonatomic, strong, readonly, nullable) id value;
 /// 创建事件的对象，视图或下层视图模型。
 @property (nonatomic, readonly) id source;
-/// 传递事件的对象。视图模型收到事件时，如果 target == self 那么表示该事件，是视图模型的视图创建的事件。
+/// 传递事件的对象。
 @property (nonatomic, readonly) __kindof XZMocoaViewModel *target;
 - (instancetype)init NS_UNAVAILABLE;
 + (instancetype)eventsWithKey:(XZMocoaKey)key value:(nullable id)value source:(id)source NS_SWIFT_NAME(init(_:value:source:));
@@ -200,9 +200,14 @@ NS_SWIFT_UI_ACTOR @interface XZMocoaViewModel : NSObject <XZMocoaViewModel> {
 @interface XZMocoaViewModel (XZMocoaKeyEventsChannel)
 
 /// 创建 `XZMocoaEvents` 并调用 ``-sendEvents:`` 方法。
+///
+/// 在 KTA 机制中，`XZMocoaKey`是“事件”，而在这里是事件的事件名。
+/// - `sendEventsWithKey` 是转发事件。
+/// - `sendActionsForKey` 是调用方法。
+///
 /// @param key 事件名，如为 nil 则为默认名称 XZMocoaKeyNone
 /// @param value 事件值
-- (void)sendEventsWithKey:(nullable XZMocoaKey)key value:(nullable id)value NS_SWIFT_NAME(sendEvents(_:value:));
+- (void)sendEventsWithKey:(nullable XZMocoaKey)key value:(nullable id)value NS_SWIFT_NAME(sendEvents(for:value:));
 
 /// 默认直接向 `superViewModel` 转发事件，其中`events.target` 会变为当前对象。
 /// @param events 事件
@@ -224,27 +229,25 @@ NS_SWIFT_UI_ACTOR @interface XZMocoaViewModel : NSObject <XZMocoaViewModel> {
 ///
 /// # Mocoa Key Target Action (KTA) 机制
 ///
-/// 一种基于 target-action 方式的事件监听机制。这是一种被动机制，手动调用才会触发监听事件。
+/// 一种基于 target-action 方式的“键-值”绑定机制，但是被动的，手动调用才会触发监听事件。
 ///
 /// ## 设计背景
 ///
-/// 不论采用何种方式进行“键-值”绑定，都有着不小的开发量，“高级”的绑定，在形式上会减少一些代码量，
-/// 但是其带来的维护成本，相对这些代码量并不是经济的。在 iOS 实际开发中，UI 展示才是主要部分，
-/// 对于响应式要求其实并不高，不应该放在设计架构的首选，而 target-action 机制是 iOS 开发中的常用机制，
-/// 与引入新机制相比，学习成本更低。
+/// iOS 原生的 KVO 机制，在实现上不够直观，而三方框架的又往往太复杂，而 target-action 机制是 iOS 开发中的常用机制，相对更方便且学习成本低。
 ///
 /// ## 设计目的
 ///
 /// 主要用于 View 监听 ViewModel 的值，也可以用于 ViewModel 向 View 发送事件。
+///
 /// > 如果 ViewModel 的事件较多且复杂，建议使用 delegate 发送事件。
 ///
 /// 在 Swift 中，可通过 `@key` 宏标记属性，自动发送事件。
 
 @interface XZMocoaViewModel (XZMocoaKeyTargetAction)
 
-/// 添加 target-action 事件。调用此方法不会触发 action 方法。
+/// 将 key 绑定到 target 的 action 方法。仅绑定，不触发方法。
 ///
-/// @li 对 target 为 weak 弱引用。
+/// @li 视图模型对 target 为 weak 弱引用。
 /// @li 方法 action 必须无返回值，因为没有针对返回值的内存管理，可能会引起泄漏。
 /// @li 方法 action 的 value 参数不建议为 union 类型，除非 union 类型的大小为 1/2/4/8/16/32/64/128 字节。
 /// @li 参数 action 方法形式如下：
@@ -267,41 +270,44 @@ NS_SWIFT_UI_ACTOR @interface XZMocoaViewModel : NSObject <XZMocoaViewModel> {
 /// [viewModel addTarget:imageView action:@selector(setImage:) forKey:XZMocoaKeyImage];
 /// @endcode
 ///
-/// @param target 接收事件的对象
-/// @param action 执行事件的方法
-/// @param key 事件，nil 表示添加默认事件
+/// @param target 绑定事件的对象
+/// @param action 绑定事件的方法
+/// @param key 绑定的事件，可使用 nil 或 XZMocoaKeyNone 或空字符串添加默认事件
 - (void)addTarget:(id)target action:(SEL)action forKey:(nullable XZMocoaKey)key;
 
-/// 移除 target-action 事件。
+/// 将事件 key 从 target 上移除指定绑定方法。
 /// @discussion
 /// 移除所有匹配 target、action、key 的事件，值 nil 表示匹配所有，例如都为 nil 会移除所有事件。
-/// @param target 接收事件的对象
-/// @param action 执行事件的方法
+/// @param target 绑定事件的对象
+/// @param action 绑定事件的方法
 /// @param key 绑定的事件
 - (void)removeTarget:(nullable id)target action:(nullable SEL)action forKey:(nullable XZMocoaKey)key;
 
-/// 发送 target-action 事件。
-/// @param key 事件值
+/// 执行 key 事件绑定的所有方法，参数为 nil 值。
+/// @param key 绑定的事件
 - (void)sendActionsForKey:(nullable XZMocoaKey)key;
 
-/// 添加 target-action-value 事件，将视图模型的 key 键对应的值与 target 的 action 方法绑定。
-/// 调用此方法会使用 initialValue 触发一次 action 方法。
+/// 将 key 绑定到 target 的 action 方法，并立即触发一次绑定方法。
 ///
-/// 如果通过 KVC 不能取到 key 对应的值，应当将初始值通过 initialValue 参数传入；如果初始值为 nil 请传入 kCFNull 对象。
+/// 调用此方法会使用 initialValue 作为参数，触发一次 action 方法，使用 nil 表示取当前值作为参数。
+///
+/// 如果参数值为 nil 请传入 `(id)kCFNull` 对象。
+///
+/// 事件参数值，是以 key 为键，通过的 KVC 从视图模型取到的值，一般情况下，指的是视图模型的属性值。
 ///
 /// @seealso 更多信息，请参考 `-addTarget:action:forKey:` 方法说明。
 ///
-/// @param target 接收值的对象
-/// @param action 接收值的方法，比如属性的 setter 方法
-/// @param key 视图模型的事件键
+/// @param target 绑定事件的对象
+/// @param action 绑定事件的方法
+/// @param key 绑定的事件
 /// @param initialValue 事件初始值，值 nil 表示使用`-valueForKey:`获取视图模型当前值，值 kCFNull 表示 nil 值
 - (void)addTarget:(id)target action:(SEL)action forKey:(nullable XZMocoaKey)key value:(nullable id)initialValue;
 
-/// 发送 target-action-value 事件。
+/// 执行 key 事件绑定的所有方法，并传递参数 value 值。
 ///
 /// 如果通过 KVC 不能取到 key 对应的值，应当将初始值通过 value 参数传入；如果值为 nil 请传入 kCFNull 对象。
 ///
-/// @param key 事件，nil 表示发送默认事件
+/// @param key 绑定的事件，nil 表示发送默认事件
 /// @param value 事件值，标量值需用 NSValue 包装，值 nil 表示使用`-valueForKey:`获取视图模型当前值，值 NSNull 表示 nil 值
 - (void)sendActionsForKey:(nullable XZMocoaKey)key value:(nullable id)value;
 

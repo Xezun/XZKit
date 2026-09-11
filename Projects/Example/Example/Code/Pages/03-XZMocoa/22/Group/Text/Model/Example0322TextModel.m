@@ -7,7 +7,9 @@
 
 #import "Example0322TextModel.h"
 
-@implementation Example0322TextModel
+@implementation Example0322TextModel {
+    NSString *_identifier;
+}
 
 + (void)load {
     XZMocoa(@"https://mocoa.xezun.com/examples/22/").cell.viewModelClass = self;
@@ -23,6 +25,8 @@
         _firstName = firstName.copy;
         _lastName = lastName.copy;
         _phone = phone;
+        
+        _identifier = [NSString stringWithFormat:@"%@-%@-%@", _firstName, _lastName, _phone].xz_sha1;
     }
     return self;
 }
@@ -33,15 +37,13 @@
 
 - (BOOL)isEqual:(Example0322TextModel *)object {
     if ([object isKindOfClass:[Example0322TextModel class]]) {
-        if ([self.firstName isEqual:object.firstName]) {
-            if ([self.lastName isEqual:object.lastName]) {
-                if ([self.phone isEqual:object.phone]) {
-                    return YES;
-                }
-            }
-        }
+        return [_identifier isEqualToString:object->_identifier];
     }
     return NO;
+}
+
+- (NSUInteger)hash {
+    return _identifier.hash;
 }
 
 + (Example0322TextModel *)contactForIndex:(NSInteger)index {

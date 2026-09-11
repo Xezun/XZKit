@@ -14,13 +14,6 @@
     XZMocoa(@"https://mocoa.xezun.com/examples/22/").cell.viewNibClass = self;
 }
 
-- (void)willChangeViewModel:(nullable XZMocoaViewModel *)newValue {
-    [super willChangeViewModel:newValue];
-    
-    [self.viewModel removeTarget:self.textLabel action:nil forKey:nil];
-    [self.viewModel removeTarget:self.detailTextLabel action:nil forKey:nil];
-}
-
 - (void)prepareForViewModel {
     [super prepareForViewModel];
     
