@@ -207,7 +207,7 @@ NS_SWIFT_UI_ACTOR @interface XZMocoaViewModel : NSObject <XZMocoaViewModel> {
 ///
 /// @param key 事件名，如为 nil 则为默认名称 XZMocoaKeyNone
 /// @param value 事件值
-- (void)sendEventsWithKey:(nullable XZMocoaKey)key value:(nullable id)value NS_SWIFT_NAME(sendEvents(for:value:));
+- (void)sendEventsWithKey:(nullable XZMocoaKey)key value:(nullable id)value NS_SWIFT_NAME(sendEvents(_:value:));
 
 /// 默认直接向 `superViewModel` 转发事件，其中`events.target` 会变为当前对象。
 /// @param events 事件
@@ -254,7 +254,7 @@ NS_SWIFT_UI_ACTOR @interface XZMocoaViewModel : NSObject <XZMocoaViewModel> {
 ///
 /// @code
 /// - (void)action;
-/// - (void)didChangeValue:(nullable id)value;
+/// - (void)keyDidChangeValue:(nullable id)value;
 /// - (void)key:(XZMocoaKey)key didChangeValue:(nullable id)value;
 /// - (void)viewModel:(XZMocoaViewModel *)sender key:(XZMocoaKey)key didChangeValue:(nullable id)value;
 /// @endcode

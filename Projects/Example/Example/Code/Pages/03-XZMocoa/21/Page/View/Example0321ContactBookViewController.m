@@ -23,7 +23,7 @@
 @dynamic view;
 
 + (void)load {
-    XZMocoa(@"https://mocoa.xezun.com/examples/21/").viewClass = self;
+    XZMocoa(@"https://mocoa.xezun.com/examples/03/21").viewClass = self;
 }
 
 - (instancetype)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil {
@@ -50,15 +50,13 @@
     UIBarButtonItem *item2 = [[UIBarButtonItem alloc] initWithImage:[UIImage systemImageNamed:@"gear.circle"] style:(UIBarButtonItemStylePlain) target:self action:@selector(navigationBarButton2Action:)];
     self.navigationItem.rightBarButtonItems = @[item2, item1];
     
-    self.viewModel = [[Example0321ContactBookViewModel alloc] init];
-    [self.viewModel ready];
-    
     self.view.contentView.contentInsetAdjustmentBehavior = UIScrollViewContentInsetAdjustmentAutomatic;
     self.view.contentView.separatorStyle = UITableViewCellSeparatorStyleSingleLine;
     self.view.contentView.separatorInset = UIEdgeInsetsMake(0, 20, 0, 20);
     self.view.contentView.sectionHeaderHeight = 20.0;
     
-    self.view.viewModel = self.viewModel.tableViewModel;
+    Example0321ContactBookViewModel *viewModel = self.viewModel;
+    self.view.viewModel = viewModel.tableViewModel;
 }
 
 - (void)viewDidAppear:(BOOL)animated {

@@ -18,9 +18,15 @@
     [super viewDidLoad];
     
     UINavigationBarAppearance *appearance = [[UINavigationBarAppearance alloc] init];
-    appearance.backgroundImage = [UIImage imageNamed:@"icon-nav-background"];
-    appearance.titleTextAttributes = @{ NSForegroundColorAttributeName: UIColor.labelColor };
-    appearance.shadowColor = UIColor.systemGray3Color;
+    appearance.titleTextAttributes = @{
+        NSForegroundColorAttributeName: UIColor.labelColor
+    };
+    if (@available(iOS 26.0, *)) {
+        [appearance configureWithTransparentBackground];
+    } else {
+        appearance.backgroundColor = UIColor.systemBackgroundColor;
+        appearance.shadowColor = UIColor.systemGray3Color;
+    }
     self.navigationBar.standardAppearance = appearance;
     self.navigationBar.scrollEdgeAppearance = appearance;
 }

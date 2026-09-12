@@ -29,6 +29,10 @@ typedef NS_ENUM(NSUInteger, Example0321ContactBookTestAction) {
     Example0321ContactBook *_contactBook;
 }
 
++ (void)load {
+    XZMocoa(@"https://mocoa.xezun.com/examples/03/22").viewModelClass = self;
+}
+
 - (void)prepare {
     [super prepare];
     
@@ -38,7 +42,7 @@ typedef NS_ENUM(NSUInteger, Example0321ContactBookTestAction) {
     _collectionViewModel.minimumLineSpacing = 10;
     _collectionViewModel.minimumInteritemSpacing = 10;
     _collectionViewModel.sectionInsets = UIEdgeInsetsMake(10, 10, 10, 10);
-    _collectionViewModel.module = XZMocoa(@"https://mocoa.xezun.com/examples/22/");
+    _collectionViewModel.module = XZMocoa(@"https://mocoa.xezun.com/examples/03/22/collection");
     [self addSubViewModel:_collectionViewModel];
 }
 

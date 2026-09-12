@@ -18,10 +18,11 @@
 @implementation Example0320ContentViewController
 
 + (void)load {
-    XZMocoa(@"https://mocoa.xezun.com/examples/20/content/").viewNibClass = self;
+    XZMocoa(@"https://mocoa.xezun.com/examples/30/20/content").viewNibClass = self;
 }
 
 - (void)didInitWithMocoaOptions:(XZMocoaOptions *)options {
+    [super didInitWithMocoaOptions:options];
     self.title = options[XZMocoaKeyTitle] ?: @"WebView";
     _url = [NSURL URLWithString:options[XZMocoaKeyURL]];
     XZLog(@"url: %@", _url);

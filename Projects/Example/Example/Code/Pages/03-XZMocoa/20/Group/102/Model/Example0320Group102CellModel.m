@@ -16,7 +16,7 @@
 }
 
 + (void)load {
-    XZMocoa(@"https://mocoa.xezun.com/examples/20/table/102/").modelClass = self;
+    XZMocoa(@"https://mocoa.xezun.com/examples/30/20/table/102").modelClass = self;
 }
 
 - (XZMocoaName)mocoaName {

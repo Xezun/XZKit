@@ -810,7 +810,18 @@
     
     if (VMClass) {
         // 模块注册了，且也注册了视图模型
-        reuseIdentifier = module.viewReuseIdentifier ?: XZMocoaReuseIdentifier(kind, name);
+        switch (module.viewForm) {
+            case XZMocoaModuleViewFormClass:
+            case XZMocoaModuleViewFormNib:
+            case XZMocoaModuleViewFormStoryboardReusableView:
+                reuseIdentifier = module.viewReuseIdentifier ?: XZMocoaReuseIdentifier(kind, name);
+                break;
+            default:
+                // 没有注册视图，使用占位
+                VMClass = [self viewModelClassForPlaceholderForKind:kind];
+                reuseIdentifier = XZMocoaReuseIdentifier(kind, XZMocoaNamePlaceholder);
+                break;
+        }
     } else {
         // 模块未注册，或者未注册视图模型
         if ([name isEqualToString:XZMocoaNameDefault]) {

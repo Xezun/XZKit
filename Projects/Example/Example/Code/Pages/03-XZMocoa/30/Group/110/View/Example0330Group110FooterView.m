@@ -14,7 +14,7 @@
 }
 
 + (void)load {
-    XZMocoa(@"https://mocoa.xezun.com/examples/30/table/110/footer:/").viewClass = self;
+    XZMocoa(@"https://mocoa.xezun.com/examples/03/30/table/footer:110").viewClass = self;
 }
 
 - (instancetype)initWithReuseIdentifier:(NSString *)reuseIdentifier {
@@ -45,7 +45,7 @@
     [super prepareForViewModel];
     
     _textLabel.text = @"Footer视图";
-    _detailTextLabel.text = self.viewModel.model;
+    _detailTextLabel.text = [self.viewModel.model text];
 }
 
 @end

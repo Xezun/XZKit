@@ -15,7 +15,7 @@
 @synthesize phone = _phone;
 
 + (void)load {
-    XZMocoa(@"https://mocoa.xezun.com/examples/22/").cell.viewModelClass = self;
+    XZMocoa(@"https://mocoa.xezun.com/examples/03/22/collection").cell.viewModelClass = self;
 }
 
 - (void)prepare {
@@ -23,34 +23,35 @@
     
     CGFloat width = floor((UIScreen.mainScreen.bounds.size.width - 30.0) / 2.0);
     self.size = CGSizeMake(width , 60.0);
-    
-    [self loadData];
 }
 
-- (void)loadData {
-    Example0322TextModel *model = self.model;
-    _name  = [NSString stringWithFormat:@"%@ %@", model.firstName, model.lastName];
-    _phone = model.phone;
+// 注册监听 model 属性的方法。
++ (NSDictionary<NSString *,id> *)mappingModelKeys {
+    return @{
+        NSStringFromSelector(@selector(nameDidChangeWithFirstName:lastName:)): @[@"firstName", @"lastName"],
+        NSStringFromSelector(@selector(phoneDidChangeWithValue:)): @"phone"
+    };
 }
 
-- (NSString *)name {
-    Example0322TextModel *model = self.model;
-    return [NSString stringWithFormat:@"%@ %@", model.firstName, model.lastName];
+// 开启主动监听
+- (BOOL)shouldObserveModelKeysActively {
+    return YES;
 }
 
-- (NSString *)phone {
-    Example0322TextModel *model = self.model;
-    return model.phone;
+// 监听 firstName lastName
+- (void)nameDidChangeWithFirstName:(NSString *)firstName lastName:(NSString *)lastName {
+    _name = [NSString stringWithFormat:@"%@ %@", firstName, lastName];
+    [self sendActionsForKey:XZMocoaKeyName value:_name];
 }
 
-- (void)didReceiveEvents:(XZMocoaEvents *)events {
-    // 收到 editor 的 events 事件。作为唯一下级，这里省略了对 subViewModel 的身份判定。
-    // 由于与 target-action 使用了一样的名称，因此这里用了 events.key 直接发送 target-action 事件。
-    [self sendActionsForKey:events.key value:nil];
+// 监听 phone
+- (void)phoneDidChangeWithValue:(NSString *)phone {
+    _phone = phone.copy;
+    [self sendActionsForKey:@"phone" value:_phone];
 }
 
 - (void)collectionViewCell:(UICollectionViewCell *)cell wasSelectedAtIndexPath:(NSIndexPath *)indexPath {
-    NSURL *moduleURL = [NSURL URLWithString:@"https://mocoa.xezun.com/examples/21/editor"];
+    NSURL *moduleURL = [NSURL URLWithString:@"https://mocoa.xezun.com/examples/03/21/editor"];
     [cell.xz_navigationController presentMocoaURL:moduleURL options:@{
         XZMocoaKeyModel: self.model,
         XZMocoaKeyViewModel: self

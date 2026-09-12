@@ -8,8 +8,9 @@
 #import "Example0330Group109CellModel.h"
 
 @implementation Example0330Group109CellModel
+
 + (void)load {
-    XZMocoa(@"https://mocoa.xezun.com/examples/30/table/109/:/").modelClass = self;
+    XZMocoa(@"https://mocoa.xezun.com/examples/03/30/table/109").modelClass = self;
 }
 
 - (NSString *)description {

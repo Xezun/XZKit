@@ -84,7 +84,7 @@ NS_SWIFT_UI_ACTOR @protocol XZMocoaView <NSObject>
 /// - Parameters:
 ///   - key: 事件标识符
 ///   - value: 事件值
-- (void)sendEventsWithKey:(XZMocoaKey)key value:(nullable id)value NS_SWIFT_NAME(sendEvents(for:value:));
+- (void)sendEventsWithKey:(XZMocoaKey)key value:(nullable id)value NS_SWIFT_NAME(sendEvents(_:value:));
 
 // 以下方法为供 Swift 绑定 KTA 事件值使用，请勿直接调用。
 

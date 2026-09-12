@@ -15,7 +15,8 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic, readonly) NSString *firstName;
 @property (nonatomic, readonly) NSString *lastName;
 @property (nonatomic, readonly) NSString *phone;
-- (void)setFirstName:(NSString *)firstName lastName:(NSString *)lastName phone:(NSString *)phone;
+
+- (void)submitWithFirstName:(NSString *)firstName lastName:(NSString *)lastName phone:(NSString *)phone;
 
 @end
 

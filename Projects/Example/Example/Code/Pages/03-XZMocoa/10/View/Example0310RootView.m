@@ -40,7 +40,7 @@
             [_contactView.leadingAnchor constraintEqualToAnchor:wrapperView.leadingAnchor],
             [_contactView.trailingAnchor constraintEqualToAnchor:wrapperView.trailingAnchor],
             
-            [_contentView.topAnchor constraintEqualToAnchor:_contactView.bottomAnchor constant:20],
+            [_contentView.topAnchor constraintEqualToAnchor:_contactView.bottomAnchor],
             
             [_contentView.leadingAnchor constraintEqualToAnchor:wrapperView.leadingAnchor],
             [_contentView.trailingAnchor constraintEqualToAnchor:wrapperView.trailingAnchor],

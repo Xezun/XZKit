@@ -9,6 +9,8 @@
 
 #if DEBUG
 @implementation XZMocoaGroupPlaceholderView {
+    UILabel *_debugLabel;
+    UILabel *_nameLabel;
     UILabel *_reasonLabel;
     UILabel *_detailLabel;
     UIView *_detailBackgroundView;
@@ -18,28 +20,29 @@
     self = [super initWithFrame:frame];
     if (self) {
         self.clipsToBounds = YES;
-        self.backgroundColor = [UIColor colorWithWhite:0x1f / 255.0 alpha:1.0];
+        
+        _name = @"DEBUG";
         
         UIView *separatorView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, frame.size.width, 1.0)];
         separatorView.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleBottomMargin;
         separatorView.backgroundColor = [UIColor colorWithWhite:0.9 alpha:1.0];
         [self addSubview:separatorView];
         
-        UILabel *debugLabel = [[UILabel alloc] initWithFrame:CGRectMake(10.0, 10.0, 40.0, 15.0)];
-        debugLabel.backgroundColor = UIColor.redColor;
-        debugLabel.font = [UIFont boldSystemFontOfSize:10.0];
-        debugLabel.textColor = UIColor.whiteColor;
-        debugLabel.textAlignment = NSTextAlignmentCenter;
-        debugLabel.text = @"DEBUG";
-        [self addSubview:debugLabel];
+        _debugLabel = [[UILabel alloc] initWithFrame:CGRectMake(10.0, 10.0, 25.0, 15.0)];
+        _debugLabel.backgroundColor = UIColor.redColor;
+        _debugLabel.font = [UIFont boldSystemFontOfSize:10.0];
+        _debugLabel.textColor = UIColor.whiteColor;
+        _debugLabel.textAlignment = NSTextAlignmentCenter;
+        _debugLabel.text = @"占位";
+        [self addSubview:_debugLabel];
         
-        UILabel *titleLabel = [[UILabel alloc] initWithFrame:CGRectMake(50.0, 10.0, 45.0, 15.0)];
-        titleLabel.font = [UIFont boldSystemFontOfSize:10.0];
-        titleLabel.textColor = UIColor.whiteColor;
-        titleLabel.backgroundColor = UIColor.orangeColor;
-        titleLabel.textAlignment = NSTextAlignmentCenter;
-        titleLabel.text = @"占位视图";
-        [self addSubview:titleLabel];
+        _nameLabel = [[UILabel alloc] initWithFrame:CGRectMake(35.0, 10.0, 45.0, 15.0)];
+        _nameLabel.font = [UIFont boldSystemFontOfSize:10.0];
+        _nameLabel.textColor = UIColor.whiteColor;
+        _nameLabel.backgroundColor = UIColor.orangeColor;
+        _nameLabel.textAlignment = NSTextAlignmentCenter;
+        _nameLabel.text = _name;
+        [self addSubview:_nameLabel];
         
         _reasonLabel = [[UILabel alloc] initWithFrame:CGRectMake(10.0, 30.0, 100.0, 20.0)];
         _reasonLabel.font = [UIFont systemFontOfSize:14.0];
@@ -64,6 +67,13 @@
         [self addGestureRecognizer:tap];
     }
     return self;
+}
+
+- (void)setName:(NSString *)name {
+    if (![_name isEqualToString:name]) {
+        _name = name.copy;
+        _nameLabel.text = _name;
+    }
 }
 
 - (void)layoutSubviews {

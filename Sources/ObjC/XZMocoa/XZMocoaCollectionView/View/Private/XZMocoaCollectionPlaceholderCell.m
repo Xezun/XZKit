@@ -18,6 +18,7 @@
     self = [super initWithFrame:frame];
     if (self) {
         _view = [[XZMocoaGroupPlaceholderView alloc] initWithFrame:self.bounds];
+        _view.backgroundColor = UIColor.systemGrayColor;
         _view.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
         [self.contentView addSubview:_view];
     }
@@ -27,7 +28,8 @@
 - (void)prepareForViewModel {
     [super prepareForViewModel];
     
-    _view.viewModel = [[XZMocoaGroupPlaceholderViewModel alloc] initWithModel:self.viewModel];;
+    _view.viewModel = [[XZMocoaGroupPlaceholderViewModel alloc] initWithModel:self.viewModel];
+    _view.name = @"Cell";
 }
 
 @end

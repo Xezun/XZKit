@@ -13,4 +13,21 @@ NS_ASSUME_NONNULL_BEGIN
 
 @end
 
+@interface Example0330TextModel : NSObject <XZMocoaModel, XZJSONCoding>
+@property (nonatomic, copy, nullable) NSString *text;
+@property (nonatomic, copy, nullable) NSString *mocoaName;
+@end
+
+@interface Example0330GroupSectionModel : NSObject <XZMocoaModel, XZJSONCoding>
+@property (nonatomic, copy, nullable) NSString *mocoaName;
+@property (nonatomic, strong, nullable) Example0330TextModel *header;
+@property (nonatomic, copy, nullable) NSArray *cells;
+@property (nonatomic, strong, nullable) Example0330TextModel *footer;
+@end
+
+@interface Example0330GroupModel : NSObject <XZMocoaGroupModel>
+@property (nonatomic, copy, nullable) NSArray<Example0330GroupSectionModel *> *sections;
++ (instancetype)modelWithSections:(NSArray<Example0330GroupSectionModel *> *)sections;
+@end
+
 NS_ASSUME_NONNULL_END

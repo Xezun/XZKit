@@ -12,7 +12,7 @@
 @implementation Example0320Group100CellViewModel
 
 + (void)load {
-    XZMocoa(@"https://mocoa.xezun.com/examples/20/table/100/").viewModelClass = self;
+    XZMocoa(@"https://mocoa.xezun.com/examples/30/20/table/100").viewModelClass = self;
 }
 
 - (void)prepare {
@@ -33,7 +33,7 @@
 - (void)tableViewCell:(UITableViewCell *)cell wasSelectedAtIndexPath:(NSIndexPath *)indexPath {
     // 通过 url 参数传值
     Example0320Group100CellModel *model = self.model;
-    NSURL *url = [NSURL URLWithString:@"https://mocoa.xezun.com/examples/20/content/"];
+    NSURL *url = [NSURL URLWithString:@"https://mocoa.xezun.com/examples/30/20/content"];
     [self.navigationController pushMocoaURL:url options:@{
         XZMocoaKeyTitle: @"新闻详情",
         XZMocoaKeyURL: model.url

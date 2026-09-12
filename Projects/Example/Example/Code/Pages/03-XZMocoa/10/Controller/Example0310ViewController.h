@@ -9,6 +9,7 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
+/// 在基于 MVC 模式的控制器中，使用 MVVM 模块。
 @interface Example0310ViewController : UIViewController
 
 @end

@@ -15,30 +15,24 @@
 
 @implementation Example0331ViewController
 
-- (instancetype)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil {
-    self = [super initWithNibName:nibNameOrNil bundle:nibBundleOrNil];
-    if (self) {
-        self.title = @"Example 31";
-        self.hidesBottomBarWhenPushed = YES;
-    }
-    return self;
+- (void)didInitWithMocoaOptions:(XZMocoaOptions *)options {
+    [super didInitWithMocoaOptions:options];
+    self.title = @"Example 31";
+    self.hidesBottomBarWhenPushed = YES;
 }
 
 + (void)load {
-    XZMocoa(@"https://mocoa.xezun.com/examples/31/").viewClass = self;
+    XZMocoa(@"https://mocoa.xezun.com/examples/03/31").viewClass = self;
 }
 
 - (void)viewDidLoad {
     [super viewDidLoad];
     
-    Example0331ViewModel *viewModel = [[Example0331ViewModel alloc] init];
-    self.viewModel = viewModel;
-
     _collectionView = [[XZMocoaCollectionView alloc] initWithFrame:self.view.bounds];
     _collectionView.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
     [self.view addSubview:_collectionView];
     
-    [viewModel ready];
+    Example0331ViewModel *viewModel = self.viewModel;
     _collectionView.viewModel = viewModel.collectionViewModel;
 }
 

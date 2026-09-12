@@ -15,7 +15,7 @@
 @implementation Example0312ViewController
 
 + (void)load {
-    XZMocoa(@"https://mocoa.xezun.com/examples/12/").viewClass = self;
+    XZMocoa(@"https://mocoa.xezun.com/examples/03/12").viewClass = self;
 }
 
 - (void)didInitWithMocoaOptions:(XZMocoaOptions *)options {
@@ -38,12 +38,10 @@
     // 即它是一个普通视图模块，不属于任何模块，所以我们需要通过 URL 获取这个模块的 XZMocoaModule 对象，即下面的 module 对象，
     // 然后将这个一般模块，设置为 module 模块。
     
-    XZMocoaModule *module = XZMocoa(@"https://mocoa.xezun.com/examples/12/table/");
+    XZMocoaModule *module = XZMocoa(@"https://mocoa.xezun.com/examples/03/12/table");
     
     // Model
-    NSArray *dataArray = [data xz_map:^id _Nonnull(id  _Nonnull obj, NSInteger idx, BOOL * _Nonnull stop) {
-        return [XZJSON decode:obj options:0 class:module.cell.modelClass];
-    }];
+    NSArray *dataArray = [XZJSON decode:data options:(kNilOptions) class:module.cell.modelClass];
     
     // viewModel
     XZMocoaTableViewModel *tableViewModel = [[XZMocoaTableViewModel alloc] initWithModel:@[dataArray]];
@@ -51,7 +49,7 @@
     [tableViewModel ready];
     
     // view
-    XZMocoaTableView *tableView = [[XZMocoaTableView alloc] initWithFrame:self.view.bounds style:(UITableViewStyleInsetGrouped)];
+    XZMocoaTableView *tableView = [[XZMocoaTableView alloc] initWithFrame:self.view.bounds style:(UITableViewStyleGrouped)];
     tableView.contentView.separatorStyle = UITableViewCellSeparatorStyleSingleLine;
     tableView.viewModel = tableViewModel;
     [self.view addSubview:tableView];

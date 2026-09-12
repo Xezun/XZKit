@@ -41,10 +41,10 @@
             [_titleLabel.leadingAnchor constraintEqualToAnchor:self.leadingAnchor constant:+20],
             [_titleLabel.trailingAnchor constraintEqualToAnchor:self.trailingAnchor constant:-20],
             
-            [_contentLabel.topAnchor constraintEqualToAnchor:_titleLabel.bottomAnchor constant:20],
+            [_contentLabel.topAnchor constraintEqualToAnchor:_titleLabel.bottomAnchor constant:5],
             
-            [_contentLabel.leadingAnchor constraintEqualToAnchor:self.leadingAnchor constant:+20],
-            [_contentLabel.trailingAnchor constraintEqualToAnchor:self.trailingAnchor constant:-20],
+            [_contentLabel.leadingAnchor constraintEqualToAnchor:self.leadingAnchor constant:+30],
+            [_contentLabel.trailingAnchor constraintEqualToAnchor:self.trailingAnchor constant:-30],
             [_contentLabel.bottomAnchor constraintEqualToAnchor:self.bottomAnchor constant:-20],
         ]];
     }
@@ -64,7 +64,8 @@
 }
 
 - (void)setContent:(NSString *)content {
-    NSString *xzml = [NSString stringWithFormat:@"<30H3A^%@>", content];
+    // 首行缩进 28 行高25 两端对齐
+    NSString *xzml = [NSString stringWithFormat:@"<28F25H3A^%@>", content];
     [_contentLabel setXZML:xzml];
 }
 

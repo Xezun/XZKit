@@ -11,7 +11,10 @@
 @implementation Example0312Cell
 
 + (void)load {
-    XZMocoa(@"https://mocoa.xezun.com/examples/12/table/").cell.viewNibClass = self;
+    XZMocoaModule *module = XZMocoa(@"https://mocoa.xezun.com/examples/03/12/table");
+    module.header.viewClass = UITableViewHeaderFooterView.class;
+    module.cell.viewNibClass = self;
+    module.footer.viewClass = UITableViewHeaderFooterView.class;
 }
 
 - (void)prepareForViewModel {

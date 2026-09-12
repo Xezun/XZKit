@@ -26,7 +26,7 @@
 @implementation Example0311ViewController
 
 + (void)load {
-    XZMocoa(@"https://mocoa.xezun.com/examples/11/").viewNibClass = self;
+    XZMocoa(@"https://mocoa.xezun.com/examples/03/11").viewNibClass = self;
 }
 
 - (void)didInitWithMocoaOptions:(XZMocoaOptions *)options {
@@ -44,19 +44,17 @@
     // 基于控制器的 MVVM 模块，控制器是模块的入口，所以 ViewModel 是由控制器创建的。
     // 1、可以避免影响控制器生命周期，或者控制器生命周期影响 ViewModel 的逻辑处理。
     // 2、控制器作为独立入口，方便与外部引用、交互。
-    Example0311ViewModel *viewModel = [[Example0311ViewModel alloc] init];
-    self.viewModel = viewModel;
 }
 
-- (void)didChangeViewModel:(XZMocoaViewModel *)oldValue {
+- (void)prepareForViewModel {
     [super prepareForViewModel];
     
     Example0311ViewModel *viewModel = self.viewModel;
-    self.nameLabel.text = viewModel.name;
     [self.photoImageView sd_setImageWithURL:viewModel.photo];
-    self.phoneLabel.text = viewModel.phone;
-    self.addressLabel.text = viewModel.address;
-    self.titleLabel.text = viewModel.title;
+    self.nameLabel.text              = viewModel.name;
+    self.phoneLabel.text             = viewModel.phone;
+    self.addressLabel.text           = viewModel.address;
+    self.titleLabel.text             = viewModel.title;
     self.contentLabel.attributedText = viewModel.content;
 }
 

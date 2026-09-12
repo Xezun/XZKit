@@ -16,44 +16,48 @@
 @synthesize phone = _phone;
 
 + (void)load {
-    XZMocoa(@"https://mocoa.xezun.com/examples/21/").cell.viewModelClass = self;
+    XZMocoa(@"https://mocoa.xezun.com/examples/03/21/table").cell.viewModelClass = self;
 }
 
+// 视图模型初始化
 - (void)prepare {
     [super prepare];
     
-    [self loadData];
     self.height = 44.0;
 }
 
-- (void)loadData {
-    Example0321Contact *model = self.model;
-    _name  = [NSString stringWithFormat:@"%@ %@", model.firstName, model.lastName];
-    _phone = model.phone;
+// 注册监听 model 属性的方法。
++ (NSDictionary<NSString *,id> *)mappingModelKeys {
+    return @{
+        NSStringFromSelector(@selector(nameDidChangeWithFirstName:lastName:)): @[@"firstName", @"lastName"],
+        NSStringFromSelector(@selector(phoneDidChangeWithValue:)): @"phone"
+    };
 }
 
-- (NSString *)name {
-    Example0321Contact *model = self.model;
-    return [NSString stringWithFormat:@"%@ %@", model.firstName, model.lastName];
+// 开启主动监听
+- (BOOL)shouldObserveModelKeysActively {
+    return YES;
 }
 
-- (NSString *)phone {
-    Example0321Contact *model = self.model;
-    return model.phone;
+// 监听 firstName lastName
+- (void)nameDidChangeWithFirstName:(NSString *)firstName lastName:(NSString *)lastName {
+    _name = [NSString stringWithFormat:@"%@ %@", firstName, lastName];
+    [self sendActionsForKey:XZMocoaKeyName value:_name];
 }
 
-- (void)didReceiveUpdates:(XZMocoaEvents *)events {
-    // 收到 editor 的 events 事件。作为唯一下级，这里省略了对 subViewModel 的身份判定。
-    // 由于与 target-action 使用了一样的名称，因此这里用了 events.key 直接发送 target-action 事件。
-    [self sendActionsForKey:events.key value:nil];
+// 监听 phone
+- (void)phoneDidChangeWithValue:(NSString *)phone {
+    _phone = phone.copy;
+    [self sendActionsForKey:@"phone" value:_phone];
 }
 
+// 点击事件
 - (void)tableViewCell:(UITableViewCell *)cell wasSelectedAtIndexPath:(NSIndexPath *)indexPath {
-    NSURL *moduleURL = [NSURL URLWithString:@"https://mocoa.xezun.com/examples/21/editor"];
-    UIViewController<XZMocoaView> *nextVC = [self.navigationController presentMocoaURL:moduleURL options:@{
-        @"model": self.model
+    NSURL *moduleURL = [NSURL URLWithString:@"https://mocoa.xezun.com/examples/03/21/editor"];
+    [self.navigationController presentMocoaURL:moduleURL options:@{
+        XZMocoaKeyModel: self.model,
+        XZMocoaKeyViewModel: self
     } animated:YES];
-    [self addSubViewModel:nextVC.viewModel]; // 添加为子模块，使用 emit 机制监听 name/phone 的变化
 }
 
 @end

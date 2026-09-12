@@ -6,7 +6,12 @@
 //
 
 #import "Example0311Model.h"
+@import XZKit;
 
 @implementation Example0311Model
+
++ (void)load {
+    XZMocoa(@"https://mocoa.xezun.com/examples/03/11").modelClass = self;
+}
 
 @end

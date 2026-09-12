@@ -16,7 +16,7 @@
 @implementation Example0331Group106Cell
 
 + (void)load {
-    XZMocoa(@"https://mocoa.xezun.com/examples/31/collection/106/:/").viewClass = self;
+    XZMocoa(@"https://mocoa.xezun.com/examples/03/31/collection/106").viewClass = self;
 }
 
 - (instancetype)initWithFrame:(CGRect)frame {

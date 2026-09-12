@@ -30,13 +30,17 @@ typedef NS_ENUM(NSUInteger, Example0321ContactBookTestAction) {
     Example0321ContactBook *_contactBook;
 }
 
++ (void)load {
+    XZMocoa(@"https://mocoa.xezun.com/examples/03/21").viewModelClass = self;
+}
+
 - (void)prepare {
     [super prepare];
     
     _contactBook = [[Example0321ContactBook alloc] init];
     
     _tableViewModel = [[XZMocoaTableViewModel alloc] initWithModel:_contactBook];
-    _tableViewModel.module = XZMocoa(@"https://mocoa.xezun.com/examples/21/");
+    _tableViewModel.module = XZMocoa(@"https://mocoa.xezun.com/examples/03/21/table");
     _tableViewModel.rowAnimation = UITableViewRowAnimationFade;
     [self addSubViewModel:_tableViewModel];
 }

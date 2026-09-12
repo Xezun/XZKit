@@ -11,6 +11,10 @@
 
 @implementation Example0321ContactBook
 
++ (void)load {
+    XZMocoa(@"https://mocoa.xezun.com/examples/03/21").modelClass = self;
+}
+
 - (instancetype)init {
     self = [super init];
     if (self) {

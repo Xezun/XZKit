@@ -10,7 +10,7 @@
 @implementation Example0320HeaderFooterView
 
 + (void)load {
-    XZMocoaModule *module = XZMocoa(@"https://mocoa.xezun.com/examples/20/table/");
+    XZMocoaModule *module = XZMocoa(@"https://mocoa.xezun.com/examples/30/20/table");
     module.header.viewClass = self;
     module.footer.viewClass = self;
 }

@@ -11,6 +11,10 @@
 
 @implementation Example0311ViewModel
 
++ (void)load {
+    XZMocoa(@"https://mocoa.xezun.com/examples/03/11").viewModelClass = self;
+}
+
 - (void)dealloc {
     XZLog(@"%s", __PRETTY_FUNCTION__);
 }
@@ -53,10 +57,9 @@
     self.address = data.address;
     self.title   = data.title;
     NSMutableParagraphStyle *style = [[NSMutableParagraphStyle alloc] init];
-    style.minimumLineHeight = 20.0;
-    style.firstLineHeadIndent = 30.0;
-    style.paragraphSpacingBefore = 10.0;
-    style.paragraphSpacing = 10.0;
+    style.minimumLineHeight   = 25.0;
+    style.firstLineHeadIndent = 28.0;
+    style.paragraphSpacing    = 5.0;
     self.content = [[NSAttributedString alloc] initWithString:data.content attributes:@{
         NSParagraphStyleAttributeName: style
     }];

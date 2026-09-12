@@ -14,7 +14,7 @@
 }
 
 + (void)load {
-    XZMocoa(@"https://mocoa.xezun.com/examples/30/table/110/header:/").viewClass = self;
+    XZMocoa(@"https://mocoa.xezun.com/examples/03/30/table/header:110").viewClass = self;
 }
 
 - (instancetype)initWithReuseIdentifier:(NSString *)reuseIdentifier {
@@ -46,7 +46,7 @@
     [super prepareForViewModel];
     
     _textLabel.text = @"Header视图";
-    _detailTextLabel.text = self.viewModel.model;
+    _detailTextLabel.text = [self.viewModel.model text];
 }
 
 @end

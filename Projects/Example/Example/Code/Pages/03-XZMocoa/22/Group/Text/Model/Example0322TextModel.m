@@ -12,7 +12,7 @@
 }
 
 + (void)load {
-    XZMocoa(@"https://mocoa.xezun.com/examples/22/").cell.viewModelClass = self;
+    XZMocoa(@"https://mocoa.xezun.com/examples/03/22/collection").cell.viewModelClass = self;
 }
 
 + (Example0322TextModel *)contactWithFirstName:(NSString *)firstName lastName:(NSString *)lastName phone:(NSString *)phone {

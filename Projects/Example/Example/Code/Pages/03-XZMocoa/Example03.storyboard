@@ -11,19 +11,20 @@
         <scene sceneID="Ghl-u6-d7g">
             <objects>
                 <tableViewController id="7fH-os-LK0" customClass="Example03ViewController" sceneMemberID="viewController">
-                    <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="insetGrouped" separatorStyle="default" rowHeight="50" estimatedRowHeight="50" sectionHeaderHeight="20" estimatedSectionHeaderHeight="20" sectionFooterHeight="20" estimatedSectionFooterHeight="20" id="XMF-um-3Ed">
+                    <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="grouped" separatorStyle="default" rowHeight="50" estimatedRowHeight="50" sectionHeaderHeight="10" estimatedSectionHeaderHeight="10" sectionFooterHeight="10" estimatedSectionFooterHeight="10" id="XMF-um-3Ed">
                         <rect key="frame" x="0.0" y="0.0" width="393" height="852"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <color key="backgroundColor" red="0.94901960784313721" green="0.94901960784313721" blue="0.96862745098039216" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                         <prototypes>
                             <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="none" accessoryType="disclosureIndicator" indentationWidth="10" reuseIdentifier="cell" textLabel="Iq6-VK-iHV" style="IBUITableViewCellStyleDefault" id="mfV-4M-gfH">
-                                <rect key="frame" x="20" y="55.333332061767578" width="353" height="50"/>
+                                <rect key="frame" x="0.0" y="55.333332061767578" width="393" height="50"/>
                                 <autoresizingMask key="autoresizingMask"/>
                                 <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" preservesSuperviewLayoutMargins="YES" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="mfV-4M-gfH" id="QHO-Jr-1sS">
-                                    <rect key="frame" x="0.0" y="0.0" width="322.66666666666669" height="50"/>
+                                    <rect key="frame" x="0.0" y="0.0" width="362.66666666666669" height="50"/>
                                     <autoresizingMask key="autoresizingMask"/>
                                     <subviews>
                                         <label opaque="NO" multipleTouchEnabled="YES" contentMode="left" insetsLayoutMarginsFromSafeArea="NO" text="Title" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="Iq6-VK-iHV">
-                                            <rect key="frame" x="16" y="0.0" width="298.66666666666669" height="50"/>
+                                            <rect key="frame" x="20" y="0.0" width="334.66666666666669" height="50"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                             <nil key="textColor"/>

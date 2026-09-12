@@ -20,7 +20,7 @@
 @dynamic view, viewModel;
 
 + (void)load {
-    XZMocoa(@"https://mocoa.xezun.com/examples/22/").viewNibClass = self;
+    XZMocoa(@"https://mocoa.xezun.com/examples/03/22").viewNibClass = self;
 }
 
 
@@ -39,9 +39,6 @@
     UIBarButtonItem *item1 = [[UIBarButtonItem alloc] initWithImage:[UIImage systemImageNamed:@"arrow.counterclockwise.circle"] style:(UIBarButtonItemStylePlain) target:self action:@selector(navigationBarButton1Action:)];
     UIBarButtonItem *item2 = [[UIBarButtonItem alloc] initWithImage:[UIImage systemImageNamed:@"gear.circle"] style:(UIBarButtonItemStylePlain) target:self action:@selector(navigationBarButton2Action:)];
     self.navigationItem.rightBarButtonItems = @[item2, item1];
-    
-    self.viewModel = [[Example0322ViewModel alloc] init];
-    [self.viewModel ready];
     
     self.view.contentView.contentInsetAdjustmentBehavior = UIScrollViewContentInsetAdjustmentAutomatic;
 //    self.view.contentView.separatorStyle = UITableViewCellSeparatorStyleSingleLine;

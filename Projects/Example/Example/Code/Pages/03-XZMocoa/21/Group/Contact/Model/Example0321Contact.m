@@ -17,7 +17,7 @@
 }
 
 + (void)load {
-    XZMocoa(@"https://mocoa.xezun.com/examples/21/").cell.modelClass = self;
+    XZMocoa(@"https://mocoa.xezun.com/examples/03/21/table").cell.modelClass = self;
 }
 
 + (Example0321Contact *)contactWithFirstName:(NSString *)firstName lastName:(NSString *)lastName phone:(NSString *)phone {

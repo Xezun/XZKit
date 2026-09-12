@@ -11,7 +11,7 @@
 @implementation Example0320Group101CellViewModel
 
 + (void)load {
-    XZMocoa(@"https://mocoa.xezun.com/examples/20/table/101/").viewModelClass = self;
+    XZMocoa(@"https://mocoa.xezun.com/examples/30/20/table/101").viewModelClass = self;
 }
 
 - (void)prepare {
@@ -39,7 +39,7 @@
 - (void)tableViewCell:(UITableViewCell *)cell wasSelectedAtIndexPath:(NSIndexPath *)indexPath {
     // 通过模块初始化传递参数
     Example0320Group101CellModel *model = self.model;
-    NSURL *url = [NSURL URLWithString:@"https://mocoa.xezun.com/examples/20/content/"];
+    NSURL *url = [NSURL URLWithString:@"https://mocoa.xezun.com/examples/30/20/content"];
     [self.navigationController pushMocoaURL:url options:@{ @"url": model.url } animated:YES];
 }
 

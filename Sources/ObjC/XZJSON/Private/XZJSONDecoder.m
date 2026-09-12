@@ -20,7 +20,12 @@ static void XZJSONModelDecodeProperty(id const _Untain model, XZJSONProperty * c
 NS_ASSUME_NONNULL_END
 
 /// 字典转模型。
-FOUNDATION_STATIC_INLINE id _Nullable XZJSONDecodeDictionary(Class _Untain ModelClass, XZJSONClass * _Nullable _Untain JSONClass, NSDictionary * _Untain dictionary, id _Nullable model) {
+/// - Parameters:
+///   - ModelClass: 模型类
+///   - JSONClass: 模型类信息
+///   - model: 模型对象，如果提供表示更新此对象
+///   - dictionary: 数据
+FOUNDATION_STATIC_INLINE id _Nullable XZJSONDecodeDictionary(Class _Untain ModelClass, XZJSONClass * _Nullable _Untain JSONClass, id _Nullable model, NSDictionary * _Untain dictionary) {
     // 获取模型描述
     if (JSONClass == nil) {
         JSONClass = [XZJSONClass classForClass:ModelClass]; // 单例，不需要强持有
@@ -88,7 +93,7 @@ FOUNDATION_STATIC_INLINE id XZJSONSerialization(NSData *data, NSJSONReadingOptio
 FOUNDATION_STATIC_INLINE id _Nullable XZJSONDecodeObject(id const _Untain object, Class const _Untain ModelClass) {
     // 如果为字典，则认为是模型数据。
     if ([object isKindOfClass:NSDictionary.class]) {
-        return XZJSONDecodeDictionary(ModelClass, nil, (NSDictionary *)object, nil);
+        return XZJSONDecodeDictionary(ModelClass, nil, nil, (NSDictionary *)object);
     }
     // 如果是数组，则数组元素是模型数据（也可能是模型数据数组）。
     if ([object isKindOfClass:NSArray.class]) {
@@ -185,7 +190,7 @@ static void XZJSONModelDecodePropertiesEnumerator(const void * const propertyRef
 
 void XZJSONModelDecodeFromDictionary(id const _Untain model, XZJSONClass * const _Untain JSONClass, NSDictionary * const _Untain JSONDictionary) {
     // 没有可用的属性
-    if (JSONClass->_numberOfProperties == 0) {
+    if (JSONClass->_numberOfProperties == 0 || JSONDictionary == nil) {
         return;
     }
     
@@ -194,7 +199,7 @@ void XZJSONModelDecodeFromDictionary(id const _Untain model, XZJSONClass * const
         (__bridge void *)JSONClass,
         (__bridge void *)JSONDictionary
     };
-   
+    
     // 遍历数量少的集合，可以提高通用模型的解析效率。
     if (JSONClass->_numberOfProperties >= CFDictionaryGetCount((CFDictionaryRef)JSONDictionary)) {
         // 遍历 key 映射的属性
@@ -1144,11 +1149,12 @@ void XZJSONModelDecodeProperty(id const _Untain model, XZJSONProperty * const _U
                         }
                         // JSON 数据模型化为指定的自定义对象类型
                         if (![rawValue isKindOfClass:[NSDictionary class]]) {
-                            rawValue = @{ @"rawValue": rawValue }; // 非字典数据，包装为字典
+                            newValue = @{ @"rawValue": rawValue }; // 非字典数据，包装为字典
                         }
-                        // 如果属性已有值，直接更新它，否则创建新的。
-                        newValue = ((id (*)(id, SEL))(void *) objc_msgSend)((id)model, property->_getter);
-                        newValue = XZJSONDecodeDictionary(property->_classType, JSONClass, rawValue, newValue);
+                        // 如果属性值是模型，且已有值，直接更新它，否则创建新的。
+                        id const oldValue = ((id (*)(id, SEL))(void *) objc_msgSend)((id)model, property->_getter);
+                        // 因为可能产生新的对象，所以后面再使用一次 setter
+                        newValue = XZJSONDecodeDictionary(property->_classType, JSONClass, oldValue, newValue);
                     }
                     break;
                 }

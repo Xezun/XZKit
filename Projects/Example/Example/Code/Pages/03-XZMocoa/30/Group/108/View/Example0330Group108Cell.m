@@ -11,7 +11,7 @@
 @implementation Example0330Group108Cell
 
 + (void)load {
-    XZMocoa(@"https://mocoa.xezun.com/examples/30/table/108/:/").viewClass = self;
+    XZMocoa(@"https://mocoa.xezun.com/examples/03/30/table/108").viewClass = self;
 }
 
 - (instancetype)initWithStyle:(UITableViewCellStyle)style reuseIdentifier:(NSString *)reuseIdentifier {

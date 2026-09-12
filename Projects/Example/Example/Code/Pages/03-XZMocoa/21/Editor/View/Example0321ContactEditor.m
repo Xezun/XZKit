@@ -23,16 +23,11 @@
 @implementation Example0321ContactEditor
 
 + (void)load {
-    XZMocoa(@"https://mocoa.xezun.com/examples/21/editor").viewNibClass = self;
-}
-
-- (void)dealloc {
-    [self.viewModel removeFromSuperViewModel];
+    XZMocoa(@"https://mocoa.xezun.com/examples/03/21/editor").viewNibClass = self;
 }
 
 - (void)didInitWithMocoaOptions:(XZMocoaOptions *)options {
     [super didInitWithMocoaOptions:options];
-//    self.viewModel = [[Example0321ContactEditorViewModel alloc] initWithModel:options[@"model"]];
     self.modalPresentationStyle = UIModalPresentationOverFullScreen;
 }
 
@@ -58,8 +53,7 @@
     NSString *firstName = self.firstNameView.textField.text;
     NSString *lastName  = self.lastNameView.textField.text;
     NSString *phone     = self.phoneNumberView.textField.text;
-    [self.viewModel setFirstName:firstName lastName:lastName phone:phone];
-    [self dismissViewControllerAnimated:YES completion:nil];
+    [self.viewModel submitWithFirstName:firstName lastName:lastName phone:phone];
 }
 
 - (IBAction)cancelButtonAction:(UIButton *)sender {

@@ -10,7 +10,7 @@
 
 #if DEBUG
 
-@implementation XZMocoaTablePlaceholderHeaderFooterView {
+@implementation XZMocoaTablePlaceholderHeaderView {
     XZMocoaGroupPlaceholderView *_view;
 }
 
@@ -18,6 +18,7 @@
     self = [super initWithReuseIdentifier:reuseIdentifier];
     if (self) {
         _view = [[XZMocoaGroupPlaceholderView alloc] initWithFrame:self.bounds];
+        _view.backgroundColor = UIColor.systemBrownColor;
         _view.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
         [self.contentView addSubview:_view];
     }
@@ -28,6 +29,31 @@
     [super prepareForViewModel];
     
     _view.viewModel = [[XZMocoaGroupPlaceholderViewModel alloc] initWithModel:self.viewModel];
+    _view.name = @"Header";
+}
+
+@end
+
+@implementation XZMocoaTablePlaceholderFooterView {
+    XZMocoaGroupPlaceholderView *_view;
+}
+
+- (instancetype)initWithReuseIdentifier:(NSString *)reuseIdentifier {
+    self = [super initWithReuseIdentifier:reuseIdentifier];
+    if (self) {
+        _view = [[XZMocoaGroupPlaceholderView alloc] initWithFrame:self.bounds];
+        _view.backgroundColor = UIColor.systemBrownColor;
+        _view.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
+        [self.contentView addSubview:_view];
+    }
+    return self;
+}
+
+- (void)prepareForViewModel {
+    [super prepareForViewModel];
+    
+    _view.viewModel = [[XZMocoaGroupPlaceholderViewModel alloc] initWithModel:self.viewModel];
+    _view.name = @"Footer";
 }
 
 @end

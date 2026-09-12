@@ -12,7 +12,7 @@
 @implementation Example0320Group102CellViewModel
 
 + (void)load {
-    XZMocoa(@"https://mocoa.xezun.com/examples/20/table/102/").viewModelClass = self;
+    XZMocoa(@"https://mocoa.xezun.com/examples/30/20/table/102").viewModelClass = self;
 }
 
 - (void)prepare {
@@ -32,7 +32,7 @@
 - (void)tableViewCell:(UITableViewCell *)cell wasSelectedAtIndexPath:(NSIndexPath *)indexPath {
     Example0320Group102CellModel *model = self.model;
     Example0320Group102CellModelItem *item = model.items[self.currentIndex];
-    NSURL *url = [NSURL URLWithString:@"https://mocoa.xezun.com/examples/20/content/"];
+    NSURL *url = [NSURL URLWithString:@"https://mocoa.xezun.com/examples/30/20/content"];
     [self.navigationController pushMocoaURL:url options:@{ @"url": item.url }];
 }
 

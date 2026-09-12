@@ -20,39 +20,53 @@
 - (void)viewDidLoad {
     [super viewDidLoad];
     
-    self.navigationItem.backButtonTitle = @"";
+    if (@available(iOS 26.0, *)) {
+        self.navigationItem.backButtonTitle = @"";
+    } else {
+        self.navigationItem.backButtonTitle = @"返回";
+    }
+    
+    self.tableView.tableHeaderView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, 375, 20)];
+    self.tableView.contentInset = UIEdgeInsetsZero;
     
     self.dataArray = @[
         @[
             @{
                 @"title": @"10. 普通模块",
-                @"url": [NSURL URLWithString:@"https://mocoa.xezun.com/examples/10/"]
-            }, @{
+                @"url": [NSURL URLWithString:@"https://mocoa.xezun.com/examples/03/10"]
+            },
+            @{
                 @"title": @"11. 控制器模块",
-                @"url": [NSURL URLWithString:@"https://mocoa.xezun.com/examples/11/"]
-            }, @{
+                @"url": [NSURL URLWithString:@"https://mocoa.xezun.com/examples/03/11"]
+            },
+            @{
                 @"title": @"12. 简单列表",
-                @"url": [NSURL URLWithString:@"https://mocoa.xezun.com/examples/12/"]
+                @"url": [NSURL URLWithString:@"https://mocoa.xezun.com/examples/03/12"]
             }
-        ], @[
+        ],
+        @[
             @{
                 @"title": @"20. UITableView 展示",
-                @"url": [NSURL URLWithString:@"https://mocoa.xezun.com/examples/20/"],
-            }, @{
+                @"url": [NSURL URLWithString:@"https://mocoa.xezun.com/examples/30/20"],
+            },
+            @{
                 @"title": @"21. UITableView 差异分析与局部刷新",
-                @"url": [NSURL URLWithString:@"https://mocoa.xezun.com/examples/21/"],
+                @"url": [NSURL URLWithString:@"https://mocoa.xezun.com/examples/03/21"],
                 
-            }, @{
+            },
+            @{
                 @"title": @"22. UICollectionView 差异分析与局部刷新",
-                @"url": [NSURL URLWithString:@"https://mocoa.xezun.com/examples/22/"]
+                @"url": [NSURL URLWithString:@"https://mocoa.xezun.com/examples/03/22"]
             }
-        ], @[
+        ],
+        @[
             @{
                 @"title": @"30. UITableView 防崩溃测试",
-                @"url": [NSURL URLWithString:@"https://mocoa.xezun.com/examples/30/"],
-            }, @{
+                @"url": [NSURL URLWithString:@"https://mocoa.xezun.com/examples/03/30"],
+            },
+            @{
                 @"title": @"31. UICollectionView 防崩溃测试",
-                @"url": [NSURL URLWithString:@"https://mocoa.xezun.com/examples/31/"],
+                @"url": [NSURL URLWithString:@"https://mocoa.xezun.com/examples/03/31"],
             }
         ]
     ];

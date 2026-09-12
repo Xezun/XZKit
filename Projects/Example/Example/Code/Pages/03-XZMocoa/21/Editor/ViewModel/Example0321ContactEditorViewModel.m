@@ -13,7 +13,7 @@
 @implementation Example0321ContactEditorViewModel
 
 + (void)load {
-    XZMocoa(@"https://mocoa.xezun.com/examples/21/editor").viewModelClass = self;
+    XZMocoa(@"https://mocoa.xezun.com/examples/03/21/editor").viewModelClass = self;
 }
 
 - (void)dealloc {
@@ -35,24 +35,25 @@
     return model.phone;
 }
 
-- (void)setFirstName:(NSString *)firstName lastName:(NSString *)lastName phone:(NSString *)phone {
-    if (firstName.length == 0 || lastName.length == 0 || phone.length == 0) {
+- (void)submitWithFirstName:(NSString *)firstName lastName:(NSString *)lastName phone:(NSString *)phone {
+    if (firstName.length == 0) {
+        [self.viewController xz_showToast:[XZToast messageToast:@"请输入用户名"]];
+        return;
+    }
+    if (lastName.length == 0) {
+        [self.viewController xz_showToast:[XZToast messageToast:@"请输入用户名"]];
+        return;
+    }
+    if (phone.length == 0) {
+        [self.viewController xz_showToast:[XZToast messageToast:@"请输入手机号"]];
         return;
     }
     
     Example0321Contact *model = self.model;
-    
-    if (![firstName isEqualToString:model.firstName] || ![lastName isEqualToString:model.lastName]) {
-        model.firstName = firstName;
-        model.lastName  = lastName;
-        
-        [self sendEventsWithKey:@"name" value:nil];
-    }
-
-    if (![phone isEqualToString:model.phone]) {
-        model.phone = phone;
-        [self sendEventsWithKey:@"phone" value:nil];
-    }
+    model.firstName = firstName;
+    model.lastName  = lastName;
+    model.phone = phone;
+    [self.viewController dismissViewControllerAnimated:YES completion:nil];
 }
 
 @end

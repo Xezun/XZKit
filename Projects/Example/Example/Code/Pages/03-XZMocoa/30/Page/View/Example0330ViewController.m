@@ -15,24 +15,18 @@
 
 @implementation Example0330ViewController
 
-- (instancetype)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil {
-    self = [super initWithNibName:nibNameOrNil bundle:nibBundleOrNil];
-    if (self) {
-        self.title = @"Example 30";
-        self.hidesBottomBarWhenPushed = YES;
-    }
-    return self;
+- (void)didInitWithMocoaOptions:(XZMocoaOptions *)options {
+    [super didInitWithMocoaOptions:options];
+    self.title = @"Example 30";
+    self.hidesBottomBarWhenPushed = YES;
 }
 
 + (void)load {
-    XZMocoa(@"https://mocoa.xezun.com/examples/30/").viewClass = self;
+    XZMocoa(@"https://mocoa.xezun.com/examples/03/30").viewClass = self;
 }
 
 - (void)viewDidLoad {
     [super viewDidLoad];
-    
-    Example0330ViewModel *viewModel = [[Example0330ViewModel alloc] init];
-    self.viewModel = viewModel;
 
     _tableView = [[XZMocoaTableView alloc] initWithFrame:self.view.bounds style:(UITableViewStyleGrouped)];
     _tableView.contentView.separatorStyle = UITableViewCellSeparatorStyleNone;
@@ -41,7 +35,7 @@
     _tableView.contentView.tableFooterView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, 0, CGFLOAT_MIN)];
     [self.view addSubview:_tableView];
     
-    [viewModel ready];
+    Example0330ViewModel *viewModel = self.viewModel;
     _tableView.viewModel = viewModel.tableViewModel;
 }
 

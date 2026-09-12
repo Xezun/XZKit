@@ -11,7 +11,7 @@
 @dynamic viewModel;
 
 + (void)load {
-    XZMocoa(@"https://mocoa.xezun.com/examples/22/").cell.viewNibClass = self;
+    XZMocoa(@"https://mocoa.xezun.com/examples/03/22/collection").cell.viewNibClass = self;
 }
 
 - (void)prepareForViewModel {
