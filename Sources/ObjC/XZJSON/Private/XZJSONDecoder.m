@@ -1148,7 +1148,9 @@ void XZJSONModelDecodeProperty(id const _Untain model, XZJSONProperty * const _U
                             break;
                         }
                         // JSON 数据模型化为指定的自定义对象类型
-                        if (![rawValue isKindOfClass:[NSDictionary class]]) {
+                        if ([rawValue isKindOfClass:[NSDictionary class]]) {
+                            newValue = rawValue;
+                        } else {
                             newValue = @{ @"rawValue": rawValue }; // 非字典数据，包装为字典
                         }
                         // 如果属性值是模型，且已有值，直接更新它，否则创建新的。
@@ -1160,6 +1162,7 @@ void XZJSONModelDecodeProperty(id const _Untain model, XZJSONProperty * const _U
                 }
             }
             
+            // rawValue 被转化为符合预期的值
             if (newValue) {
                 ((XZJSONSetter)objc_msgSend)(model, property->_setter, newValue);
                 return;
@@ -1174,7 +1177,9 @@ void XZJSONModelDecodeProperty(id const _Untain model, XZJSONProperty * const _U
         }
     }
     
-    // JSONValue 无法解析为目标属性值
+    // rawValue 无法解析为 property 的值
+    
+    // 尝试自定义模型化过程
     if (property->_owner->_usesPropertyDecodingMethod) {
         if ([(id<XZJSONCoding>)model JSONDecodeValue:rawValue forKey:property->_name]) {
             return;
