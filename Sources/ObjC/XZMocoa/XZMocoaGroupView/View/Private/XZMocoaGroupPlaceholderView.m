@@ -9,11 +9,9 @@
 
 #if DEBUG
 @implementation XZMocoaGroupPlaceholderView {
-    UILabel *_debugLabel;
-    UILabel *_nameLabel;
-    UILabel *_reasonLabel;
+    UILabel *_kindLabel;
+    UILabel *_moduleLabel;
     UILabel *_detailLabel;
-    UIView *_detailBackgroundView;
 }
 
 - (instancetype)initWithFrame:(CGRect)frame {
@@ -21,47 +19,111 @@
     if (self) {
         self.clipsToBounds = YES;
         
-        _name = @"DEBUG";
-        
         UIView *separatorView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, frame.size.width, 1.0)];
         separatorView.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleBottomMargin;
-        separatorView.backgroundColor = [UIColor colorWithWhite:0.9 alpha:1.0];
+        separatorView.backgroundColor = UIColor.systemBackgroundColor;
         [self addSubview:separatorView];
         
-        _debugLabel = [[UILabel alloc] initWithFrame:CGRectMake(10.0, 10.0, 25.0, 15.0)];
-        _debugLabel.backgroundColor = UIColor.redColor;
-        _debugLabel.font = [UIFont boldSystemFontOfSize:10.0];
-        _debugLabel.textColor = UIColor.whiteColor;
-        _debugLabel.textAlignment = NSTextAlignmentCenter;
-        _debugLabel.text = @"占位";
-        [self addSubview:_debugLabel];
+        UIView *debugView = [[UIView alloc] init];
+        debugView.translatesAutoresizingMaskIntoConstraints = NO;
+        debugView.backgroundColor = UIColor.redColor;
+        {
+            UILabel *_debugLabel = [[UILabel alloc] initWithFrame:CGRectMake(10.0, 10.0, 25.0, 15.0)];
+            _debugLabel.font = [UIFont boldSystemFontOfSize:10.0];
+            _debugLabel.textColor = UIColor.whiteColor;
+            _debugLabel.textAlignment = NSTextAlignmentCenter;
+            _debugLabel.text = @"占位";
+            _debugLabel.translatesAutoresizingMaskIntoConstraints = NO;
+            [debugView addSubview:_debugLabel];
+            
+            [NSLayoutConstraint activateConstraints:@[
+                [_debugLabel.leadingAnchor constraintEqualToAnchor:debugView.leadingAnchor constant:+5.0],
+                [_debugLabel.trailingAnchor constraintEqualToAnchor:debugView.trailingAnchor constant:-5.0],
+                [_debugLabel.topAnchor constraintEqualToAnchor:debugView.topAnchor],
+                [_debugLabel.bottomAnchor constraintEqualToAnchor:debugView.bottomAnchor]
+            ]];
+        }
+        [self addSubview:debugView];
         
-        _nameLabel = [[UILabel alloc] initWithFrame:CGRectMake(35.0, 10.0, 45.0, 15.0)];
-        _nameLabel.font = [UIFont boldSystemFontOfSize:10.0];
-        _nameLabel.textColor = UIColor.whiteColor;
-        _nameLabel.backgroundColor = UIColor.orangeColor;
-        _nameLabel.textAlignment = NSTextAlignmentCenter;
-        _nameLabel.text = _name;
-        [self addSubview:_nameLabel];
+        UIView *kindView = [[UIView alloc] init];
+        kindView.translatesAutoresizingMaskIntoConstraints = NO;
+        kindView.backgroundColor = UIColor.orangeColor;
+        {
+            _kindLabel = [[UILabel alloc] initWithFrame:CGRectMake(35.0, 10.0, 45.0, 15.0)];
+            _kindLabel.translatesAutoresizingMaskIntoConstraints = NO;
+            _kindLabel.font = [UIFont boldSystemFontOfSize:10.0];
+            _kindLabel.textColor = UIColor.whiteColor;
+            _kindLabel.textAlignment = NSTextAlignmentCenter;
+            _kindLabel.text = @"DEBUG";
+            [kindView addSubview:_kindLabel];
+            
+            [NSLayoutConstraint activateConstraints:@[
+                [_kindLabel.leadingAnchor constraintEqualToAnchor:kindView.leadingAnchor constant:+5.0],
+                [_kindLabel.trailingAnchor constraintEqualToAnchor:kindView.trailingAnchor constant:-5.0],
+                [_kindLabel.topAnchor constraintEqualToAnchor:kindView.topAnchor],
+                [_kindLabel.bottomAnchor constraintEqualToAnchor:kindView.bottomAnchor]
+            ]];
+        }
+        [self addSubview:kindView];
         
-        _reasonLabel = [[UILabel alloc] initWithFrame:CGRectMake(10.0, 30.0, 100.0, 20.0)];
-        _reasonLabel.font = [UIFont systemFontOfSize:14.0];
-        _reasonLabel.textColor = UIColor.whiteColor;
-        [self addSubview:_reasonLabel];
+        UIView *moduleView = [[UIView alloc] init];
+        moduleView.translatesAutoresizingMaskIntoConstraints = NO;
+        moduleView.backgroundColor = UIColor.blackColor;
+        {
+            _moduleLabel = [[UILabel alloc] initWithFrame:CGRectMake(10.0, 30.0, 100.0, 20.0)];
+            _moduleLabel.translatesAutoresizingMaskIntoConstraints = NO;
+            _moduleLabel.font = [UIFont systemFontOfSize:14.0];
+            _moduleLabel.textColor = UIColor.whiteColor;
+            [moduleView addSubview:_moduleLabel];
+            
+            [NSLayoutConstraint activateConstraints:@[
+                [_moduleLabel.leadingAnchor constraintEqualToAnchor:moduleView.leadingAnchor constant:+3.0],
+                [_moduleLabel.trailingAnchor constraintEqualToAnchor:moduleView.trailingAnchor constant:-3.0],
+                [_moduleLabel.topAnchor constraintEqualToAnchor:moduleView.topAnchor],
+                [_moduleLabel.bottomAnchor constraintEqualToAnchor:moduleView.bottomAnchor]
+            ]];
+        }
+        [self addSubview:moduleView];
         
-        _detailBackgroundView = [[UIView alloc] initWithFrame:CGRectMake(10.0, 55.0, 100.0, 60.0)];
-        _detailBackgroundView.backgroundColor = [UIColor colorWithWhite:0.3 alpha:1.0];
-        [self addSubview:_detailBackgroundView];
+        UIView *detailView = [[UIView alloc] initWithFrame:CGRectMake(10.0, 55.0, 100.0, 60.0)];
+        detailView.translatesAutoresizingMaskIntoConstraints = NO;
+        detailView.backgroundColor = UIColor.blackColor;
+        {
+            _detailLabel = [[UILabel alloc] init];
+            _detailLabel.translatesAutoresizingMaskIntoConstraints = NO;
+            _detailLabel.font = [UIFont monospacedSystemFontOfSize:12.0 weight:(UIFontWeightRegular)];
+            _detailLabel.textColor = UIColor.whiteColor;
+            _detailLabel.numberOfLines = 4;
+            [detailView addSubview:_detailLabel];
+            
+            [NSLayoutConstraint activateConstraints:@[
+                [_detailLabel.leadingAnchor constraintEqualToAnchor:detailView.leadingAnchor constant:+3.0],
+                [_detailLabel.trailingAnchor constraintEqualToAnchor:detailView.trailingAnchor constant:-3.0],
+                [_detailLabel.topAnchor constraintEqualToAnchor:detailView.topAnchor],
+                [_detailLabel.bottomAnchor constraintEqualToAnchor:detailView.bottomAnchor]
+            ]];
+        }
+        [self addSubview:detailView];
         
-        _detailLabel = [[UILabel alloc] init];
-        _detailLabel.font = [UIFont fontWithName:@".AppleSystemUIFontMonospaced-Regular" size:12.0];
-        _detailLabel.textColor = UIColor.whiteColor;
-        _detailLabel.numberOfLines = 4;
-        [_detailBackgroundView addSubview:_detailLabel];
-        
-        _detailLabel.translatesAutoresizingMaskIntoConstraints = NO;
-        [_detailBackgroundView addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|-3-[_detailLabel]-3-|" options:(NSLayoutFormatDirectionLeadingToTrailing) metrics:nil views:NSDictionaryOfVariableBindings(_detailLabel)]];
-        [_detailBackgroundView addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|-3-[_detailLabel]-(>=3@751)-|" options:(NSLayoutFormatDirectionLeadingToTrailing) metrics:nil views:NSDictionaryOfVariableBindings(_detailLabel)]];
+        [NSLayoutConstraint activateConstraints:@[
+            [debugView.leadingAnchor constraintEqualToAnchor:self.leadingAnchor constant:+5.0],
+            [debugView.topAnchor constraintEqualToAnchor:self.topAnchor constant:+5.0],
+            [debugView.heightAnchor constraintEqualToConstant:15.0],
+            
+            [kindView.leadingAnchor constraintEqualToAnchor:debugView.trailingAnchor constant:0.0],
+            [kindView.topAnchor constraintEqualToAnchor:debugView.topAnchor],
+            [kindView.heightAnchor constraintEqualToConstant:15.0],
+            
+            [moduleView.leadingAnchor constraintEqualToAnchor:self.leadingAnchor constant:+5.0],
+            [moduleView.trailingAnchor constraintEqualToAnchor:self.trailingAnchor constant:-5.0],
+            [moduleView.topAnchor constraintEqualToAnchor:debugView.bottomAnchor constant:+5.0],
+            [moduleView.heightAnchor constraintEqualToConstant:20.0],
+            
+            [detailView.leadingAnchor constraintEqualToAnchor:self.leadingAnchor constant:+5.0],
+            [detailView.trailingAnchor constraintEqualToAnchor:self.trailingAnchor constant:-5.0],
+            [detailView.topAnchor constraintEqualToAnchor:moduleView.bottomAnchor constant:+5.0],
+            [detailView.bottomAnchor constraintEqualToAnchor:self.bottomAnchor constant:-5.0],
+        ]];
         
         UITapGestureRecognizer *tap = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(tapAction:)];
         [self addGestureRecognizer:tap];
@@ -69,26 +131,12 @@
     return self;
 }
 
-- (void)setName:(NSString *)name {
-    if (![_name isEqualToString:name]) {
-        _name = name.copy;
-        _nameLabel.text = _name;
-    }
-}
-
-- (void)layoutSubviews {
-    [super layoutSubviews];
-    
-    CGRect const bounds = self.bounds;
-    _reasonLabel.frame = CGRectMake(10.0, 30.0, bounds.size.width - 20.0, 20.0);
-    _detailBackgroundView.frame = CGRectMake(10.0, 55.0, bounds.size.width - 20.0, 60.0);
-}
-
 - (void)prepareForViewModel {
     [super prepareForViewModel];
     
     XZMocoaGroupPlaceholderViewModel *viewModel = self.viewModel;
-    _reasonLabel.text = viewModel.reason;
+    _moduleLabel.text = viewModel.moduleURLString;
+    _kindLabel.text = viewModel.kind;
     
     NSMutableParagraphStyle *style = [NSMutableParagraphStyle new];
     style.minimumLineHeight = 17.0;
@@ -108,7 +156,7 @@
     [alertVC addAction:[UIAlertAction actionWithTitle:@"确定" style:(UIAlertActionStyleDefault) handler:nil]];
     [self.xz_viewController presentViewController:alertVC animated:YES completion:nil];
     
-    NSLog(@"[XZMocoa] [DEBUG] \n%@\n--------------\n%@", _reasonLabel.text, _detailLabel.text);
+    NSLog(@"[XZMocoa] [DEBUG] \n%@\n--------------\n%@", _moduleLabel.text, _detailLabel.text);
 }
 
 @end

@@ -17,7 +17,7 @@
     self = [super initWithFrame:frame];
     if (self) {
         _view = [[XZMocoaGroupPlaceholderView alloc] initWithFrame:self.bounds];
-        _view.backgroundColor = UIColor.systemBrownColor;
+        _view.backgroundColor = UIColor.brownColor;
         _view.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
         [self addSubview:_view];
     }
@@ -28,7 +28,6 @@
     [super prepareForViewModel];
     
     _view.viewModel = [[XZMocoaGroupPlaceholderViewModel alloc] initWithModel:self.viewModel];
-    _view.name = @"Supplement";
 }
 
 @end

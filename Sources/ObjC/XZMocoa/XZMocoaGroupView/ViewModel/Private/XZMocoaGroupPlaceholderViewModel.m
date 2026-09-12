@@ -26,8 +26,12 @@
     id<XZMocoaModel>                const model      = viewModel.model;
     XZMocoaModule                 * const module     = viewModel.module;
     
+    NSString *reuseIdentifier = viewModel.reuseIdentifier;
+    _kind = [reuseIdentifier substringToIndex:[reuseIdentifier rangeOfString:@":"].location];
+    _kind = _kind.length ? _kind : @"cell";
+    
     if (module) {
-        _reason = [NSString stringWithFormat:@"%@", module.url];
+        _moduleURLString = [NSString stringWithFormat:@"%@", module.url];
         
         _detail = [NSString stringWithFormat:@"[M] %@\n", ((id)module.modelClass) ?: @"<None>"];
         switch (module.viewForm) {
@@ -55,7 +59,7 @@
         }
         _detail = [_detail stringByAppendingFormat:@"[VM] %@\n--------------\n", ((id)module.viewModelClass) ?: @"<None>"];
     } else {
-        _reason = @"模块未注册";
+        _moduleURLString = @"模块未注册";
         _detail = @"";
     }
     NSData   *data   = [XZJSON encode:model options:(NSJSONWritingPrettyPrinted | NSJSONWritingFragmentsAllowed) error:nil];

@@ -29,8 +29,16 @@
     [super viewDidLoad];
 
     _tableView = [[XZMocoaTableView alloc] initWithFrame:self.view.bounds style:(UITableViewStyleGrouped)];
-    _tableView.contentView.separatorStyle = UITableViewCellSeparatorStyleNone;
-    _tableView.contentView.estimatedRowHeight = 0;
+    {
+        UITableView *tableView = _tableView.contentView;
+        tableView.separatorStyle = UITableViewCellSeparatorStyleNone;
+        tableView.rowHeight = 0;
+        tableView.sectionHeaderHeight = 0;
+        tableView.sectionFooterHeight = 0;
+        tableView.estimatedRowHeight = 0;
+        tableView.estimatedSectionHeaderHeight = 0;
+        tableView.estimatedSectionFooterHeight = 0;
+    }
     _tableView.contentView.tableHeaderView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, 0, CGFLOAT_MIN)];
     _tableView.contentView.tableFooterView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, 0, CGFLOAT_MIN)];
     [self.view addSubview:_tableView];

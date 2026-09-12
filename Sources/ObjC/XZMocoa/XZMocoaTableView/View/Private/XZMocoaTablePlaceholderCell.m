@@ -21,7 +21,7 @@
         self.selectionStyle = UITableViewCellSelectionStyleNone;
         
         _view = [[XZMocoaGroupPlaceholderView alloc] initWithFrame:self.bounds];
-        _view.backgroundColor = UIColor.systemGrayColor;
+        _view.backgroundColor = [UIColor colorWithWhite:0x1f / 255.0 alpha:1.0];
         _view.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
         [self.contentView addSubview:_view];
     }
@@ -32,7 +32,6 @@
     [super prepareForViewModel];
     
     _view.viewModel = [[XZMocoaGroupPlaceholderViewModel alloc] initWithModel:self.viewModel];;
-    _view.name = @"Cell";
 }
 
 @end

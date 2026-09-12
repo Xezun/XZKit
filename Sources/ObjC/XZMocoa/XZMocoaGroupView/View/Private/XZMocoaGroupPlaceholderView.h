@@ -13,7 +13,6 @@ NS_ASSUME_NONNULL_BEGIN
 
 #if DEBUG
 @interface XZMocoaGroupPlaceholderView : UIView <XZMocoaView>
-@property (nonatomic, copy) NSString *name;
 @end
 #endif
 

@@ -12,7 +12,8 @@ NS_ASSUME_NONNULL_BEGIN
 #if DEBUG
 @class XZMocoaGroupReusableViewModel;
 @interface XZMocoaGroupPlaceholderViewModel : XZMocoaViewModel
-@property (nonatomic, copy) NSString *reason;
+@property (nonatomic, copy) NSString *kind;
+@property (nonatomic, copy) NSString *moduleURLString;
 @property (nonatomic, copy) NSString *detail;
 - (instancetype)initWithModel:(nullable XZMocoaViewModel *)model;
 @end

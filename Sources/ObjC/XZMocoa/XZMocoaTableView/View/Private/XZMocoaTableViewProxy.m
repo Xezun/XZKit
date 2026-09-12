@@ -22,10 +22,10 @@
         [tableView registerClass:[XZMocoaTablePlaceholderCell class] forCellReuseIdentifier:identifier];
         
         identifier = XZMocoaReuseIdentifier(XZMocoaKindHeader, XZMocoaNamePlaceholder);
-        [tableView registerClass:[XZMocoaTablePlaceholderHeaderView class] forHeaderFooterViewReuseIdentifier:identifier];
+        [tableView registerClass:[XZMocoaTablePlaceholderHeaderFooterView class] forHeaderFooterViewReuseIdentifier:identifier];
         
         identifier = XZMocoaReuseIdentifier(XZMocoaKindFooter, XZMocoaNamePlaceholder);
-        [tableView registerClass:[XZMocoaTablePlaceholderFooterView class] forHeaderFooterViewReuseIdentifier:identifier];
+        [tableView registerClass:[XZMocoaTablePlaceholderHeaderFooterView class] forHeaderFooterViewReuseIdentifier:identifier];
     }
     
     [module enumerateSubmodulesUsingBlock:^(XZMocoaModule *submodule, XZMocoaKind kind, XZMocoaName name, BOOL *stop) {

@@ -34,9 +34,9 @@ static NSString *UIElementKindFromMocoaKind(XZMocoaKind kind) {
         [collectionView registerClass:[XZMocoaCollectionPlaceholderCell class] forCellWithReuseIdentifier:identifier];
         
         for (XZMocoaKind kind in self.viewModel.supportedSupplementKinds) {
-            NSString * const elementKind = UIElementKindFromMocoaKind(kind);
-            Class      const aClass      = [XZMocoaCollectionPlaceholderSupplementView class];
             NSString * const identifier  = XZMocoaReuseIdentifier(kind, XZMocoaNamePlaceholder);
+            Class      const aClass      = [XZMocoaCollectionPlaceholderSupplementView class];
+            NSString * const elementKind = UIElementKindFromMocoaKind(kind);
             [collectionView registerClass:aClass forSupplementaryViewOfKind:elementKind withReuseIdentifier:identifier];
         }
     }
