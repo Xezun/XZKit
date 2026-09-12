@@ -7,14 +7,14 @@
 
 #import "XZGeometry.h"
 
-UIEdgeInsets const UIEdgeInsetsNil = (UIEdgeInsets){NAN, NAN, NAN, NAN};
-CGSize       const CGSizeNil       = (CGSize){NAN, NAN};
+UIEdgeInsets const UIEdgeInsetsNull = (UIEdgeInsets){NAN, NAN, NAN, NAN};
+CGSize       const CGSizeNull       = (CGSize){NAN, NAN};
 
-BOOL UIEdgeInsetsIsNil(UIEdgeInsets insets) {
+BOOL UIEdgeInsetsIsNull(UIEdgeInsets insets) {
     return isnan(insets.top) || isnan(insets.bottom) || isnan(insets.left) || isnan(insets.right);
 }
 
-BOOL CGSizeIsNil(CGSize size) {
+BOOL CGSizeIsNull(CGSize size) {
     return isnan(size.width) || isnan(size.height) || size.width < 0 || size.height < 0;
 }
 

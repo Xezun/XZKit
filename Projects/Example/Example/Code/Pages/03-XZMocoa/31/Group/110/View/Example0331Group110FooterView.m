@@ -45,7 +45,7 @@
     [super prepareForViewModel];
     
     self.textLabel.text = @"Footer视图";
-    self.detailTextLabel.text = self.viewModel.model;
+    self.detailTextLabel.text = [self.viewModel.model text];
 }
 
 @end

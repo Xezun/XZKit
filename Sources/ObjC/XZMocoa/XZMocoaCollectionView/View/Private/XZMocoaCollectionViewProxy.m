@@ -173,7 +173,7 @@ static NSString *UIElementKindFromMocoaKind(XZMocoaKind kind) {
     
     XZMocoaCollectionCellViewModel * const viewModel = [self.viewModel viewModelForCellAtIndexPath:indexPath];
     CGSize const itemSize = viewModel.size;
-    return CGSizeIsNil(itemSize) ? collectionViewLayout.itemSize : itemSize;
+    return CGSizeIsNull(itemSize) ? collectionViewLayout.itemSize : itemSize;
 }
 
 - (UIEdgeInsets)collectionView:(UICollectionView *)collectionView layout:(UICollectionViewFlowLayout *)collectionViewLayout insetForSectionAtIndex:(NSInteger)section {
@@ -183,7 +183,7 @@ static NSString *UIElementKindFromMocoaKind(XZMocoaKind kind) {
     }
     
     UIEdgeInsets const sectionInsets = self.viewModel.sectionInsets;
-    return UIEdgeInsetsIsNil(sectionInsets) ? collectionViewLayout.sectionInset : sectionInsets;
+    return UIEdgeInsetsIsNull(sectionInsets) ? collectionViewLayout.sectionInset : sectionInsets;
 }
 
 - (CGFloat)collectionView:(UICollectionView *)collectionView layout:(UICollectionViewFlowLayout *)collectionViewLayout minimumLineSpacingForSectionAtIndex:(NSInteger)section {
@@ -211,18 +211,48 @@ static NSString *UIElementKindFromMocoaKind(XZMocoaKind kind) {
         return [delegate collectionView:collectionView layout:collectionViewLayout referenceSizeForHeaderInSection:section];
     }
     
+    XZMocoaCollectionViewModel * const collectionViewModel = self.viewModel;
+    
+    XZMocoaCollectionSupplementViewModel * const viewModel = [collectionViewModel viewModelForHeaderInSection:section];
+    if (viewModel) {
+        CGSize const headerSize = viewModel.size;
+        if (!CGSizeIsNull(headerSize)) {
+            return headerSize;
+        }
+    }
+    
     CGSize const headerReferenceSize = self.viewModel.headerReferenceSize;
-    return CGSizeIsNil(headerReferenceSize) ? collectionViewLayout.headerReferenceSize : headerReferenceSize;
+    if (!CGSizeIsNull(headerReferenceSize)) {
+        return headerReferenceSize;
+    }
+    
+    return collectionViewLayout.headerReferenceSize;
 }
 
 - (CGSize)collectionView:(UICollectionView *)collectionView layout:(UICollectionViewFlowLayout *)collectionViewLayout referenceSizeForFooterInSection:(NSInteger)section {
+    // 优先代理
     id<UICollectionViewDelegateFlowLayout> const delegate = self.delegate;
     if (delegate) {
         return [delegate collectionView:collectionView layout:collectionViewLayout referenceSizeForFooterInSection:section];
     }
     
-    CGSize const footerReferenceSize = self.viewModel.footerReferenceSize;
-    return CGSizeIsNil(footerReferenceSize) ? collectionViewLayout.footerReferenceSize : footerReferenceSize;
+    XZMocoaCollectionViewModel * const collectionViewModel = self.viewModel;
+    
+    // 其次视图模型
+    XZMocoaCollectionSupplementViewModel * const viewModel = [collectionViewModel viewModelForFooterInSection:section];
+    if (viewModel) {
+        CGSize const footerSize = viewModel.size;
+        if (!CGSizeIsNull(footerSize)) {
+            return footerSize;
+        }
+    }
+    
+    CGSize const footerReferenceSize = collectionViewModel.footerReferenceSize;
+    if (!CGSizeIsNull(footerReferenceSize)) {
+        return footerReferenceSize;
+    }
+    
+    return collectionViewLayout.footerReferenceSize;
 }
 
 @end

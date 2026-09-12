@@ -132,7 +132,7 @@
 - (CGFloat)tableView:(UITableView *)tableView heightForHeaderInSection:(NSInteger)section {
     XZMocoaTableHeaderFooterViewModel * const viewModel = [self.viewModel viewModelForHeaderInSection:section];
     if (viewModel == nil) {
-        return XZMocoaMinimumViewDimension;
+        return tableView.sectionFooterHeight ?: XZMocoaMinimumViewDimension;
     }
     return viewModel.height;
 }
@@ -150,7 +150,7 @@
 - (CGFloat)tableView:(UITableView *)tableView heightForFooterInSection:(NSInteger)section {
     XZMocoaTableHeaderFooterViewModel * const viewModel = [self.viewModel viewModelForFooterInSection:section];
     if (viewModel == nil) {
-        return XZMocoaMinimumViewDimension;
+        return tableView.sectionHeaderHeight ?: XZMocoaMinimumViewDimension;
     }
     return viewModel.height;
 }

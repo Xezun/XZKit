@@ -13,8 +13,8 @@
 - (instancetype)initWithModel:(id)model {
     self = [super initWithModel:model];
     if (self) {
-        CGRect frame = CGRectNull;
-        frame.size = CGSizeNil;
+        CGRect frame = CGRectZero;
+        frame.size = CGSizeNull;
         [super setFrame:frame];
     }
     return self;
