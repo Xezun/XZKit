@@ -8,10 +8,24 @@
 #import "XZMocoaCollectionViewModel.h"
 #import "XZMocoaCollectionPlaceholderCellViewModel.h"
 #import "XZMocoaCollectionPlaceholderSupplementViewModel.h"
+#import "XZGeometry.h"
 
 @implementation XZMocoaCollectionViewModel
 
 @dynamic delegate;
+
+- (instancetype)initWithModel:(id)model {
+    self = [super initWithModel:model];
+    if (self) {
+        _itemSize = CGSizeNull;
+        _sectionInsets = UIEdgeInsetsNull;
+        _minimumLineSpacing = CGFloatNull;
+        _minimumInteritemSpacing = CGFloatNull;
+        _headerReferenceSize = CGSizeNull;
+        _footerReferenceSize = CGSizeNull;
+    }
+    return self;
+}
 
 - (void)didReloadData {
     if (!self.isReady) return;

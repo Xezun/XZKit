@@ -36,6 +36,15 @@ NS_ASSUME_NONNULL_BEGIN
 
 @property (nonatomic, weak) id<XZMocoaCollectionViewModelDelegate> delegate;
 
+// 布局优先级：
+// 1. XZMocoaCollectionView.delegate
+// 2. XZMocoaCollectionCellViewModel.size、XZMocoaCollectionSupplementViewModel.size
+// 3. XZMocoaCollectionViewModel 的如下属性。
+// 4. UICollectionViewFlowLayout 的属性。
+//
+// 如下属性的初始值为对应类型的 Null 值，比如 CGFloatNull、CGSizeNull 等。
+
+@property (nonatomic) CGSize itemSize;
 @property (nonatomic) UIEdgeInsets sectionInsets;
 @property (nonatomic) CGFloat minimumLineSpacing;
 @property (nonatomic) CGFloat minimumInteritemSpacing;
