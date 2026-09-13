@@ -344,7 +344,6 @@ NS_SWIFT_UI_ACTOR @interface XZMocoaViewModel : NSObject <XZMocoaViewModel> {
 ///
 /// ```objc
 /// @{
-///     @"setName:": @"name",
 ///     @"setRangeMin:max:" : @[@"min", @"max"]
 /// }
 /// ```
@@ -360,7 +359,7 @@ NS_SWIFT_UI_ACTOR @interface XZMocoaViewModel : NSObject <XZMocoaViewModel> {
 /// }
 /// ```
 ///
-/// - SeeAlso: ``shouldObserveModelKeysActively`` 属性
+/// - SeeAlso: 键值观察是被动的，开启主动观察，请参考``shouldObserveModelKeysActively`` 属性。
 @property (class, nullable, readonly) NSDictionary<NSString *, id> *mappingModelKeys;
 
 /// 是否主动观察数据模型。默认 NO 否。
