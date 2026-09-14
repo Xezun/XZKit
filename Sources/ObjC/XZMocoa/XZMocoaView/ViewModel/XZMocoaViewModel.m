@@ -312,6 +312,18 @@
     [_targetActions sendActionsForKey:(key ?: XZMocoaKeyNone) value:value];
 }
 
+- (void)linkTarget:(id)target action:(SEL)action forKey:(XZMocoaKey)key {
+    id const value = [self valueForKey:key];
+    XZMocoaTargetAction *targetAction = [[XZMocoaTargetAction alloc] initWithTarget:target action:action];
+    [targetAction sender:self sendActionForKey:key value:value];
+}
+
+- (void)bindTarget:(id)target action:(SEL)action forKey:(XZMocoaKey)key {
+    [self addTarget:target action:action forKey:key];
+    id value = [self valueForKey:key];
+    [self sendActionsForKey:key value:value];
+}
+
 - (id)valueForUndefinedKey:(NSString *)key {
     return nil;
 }

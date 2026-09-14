@@ -318,7 +318,13 @@ NS_SWIFT_UI_ACTOR @interface XZMocoaViewModel : NSObject <XZMocoaViewModel> {
 /// @param value 事件值，标量值需用 NSValue 包装，值 nil 表示使用`-valueForKey:`获取视图模型当前值，值 NSNull 表示 nil 值
 - (void)sendActionsForKey:(nullable XZMocoaKey)key value:(nullable id)value;
 
+/// 单次绑定。
+- (void)linkTarget:(id)target action:(SEL)action forKey:(nullable XZMocoaKey)key;
+/// 单向绑定
+- (void)bindTarget:(id)target action:(SEL)action forKey:(nullable XZMocoaKey)key;
 @end
+
+#define linkText(view, key) [viewModel __link__target:view action:@selector(setText:) forKey:key]
 
 @class UIControl;
 
