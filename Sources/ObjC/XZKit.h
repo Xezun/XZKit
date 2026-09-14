@@ -13,35 +13,7 @@ FOUNDATION_EXPORT double XZKitVersionNumber;
 //! Project version string for XZKit.
 FOUNDATION_EXPORT const unsigned char XZKitVersionString[];
 
-#if __has_include("XZKit.h")
-
-#import "XZLog.h"
-#import "XZObjc.h"
-#import "XZDefines.h"
-#import "XZExtensions.h"
-
-#import "XZURL.h"
-#import "XZGeometry.h"
-#import "XZImage.h"
-
-#import "XZJSON.h"
-#import "XZLocale.h"
-#import "XZDataCryptor.h"
-#import "XZDataDigester.h"
-#import "XZKeychain.h"
-
-#import "XZML.h"
-#import "XZMocoa.h"
-#import "XZToast.h"
-#import "XZRefresh.h"
-
-#import "XZPageView.h"
-#import "XZPageControl.h"
-#import "XZSegmentedControl.h"
-
-#import "XZContentStatus.h"
-
-#else
+#if __has_include(<XZKit/XZKit.h>)
 
 #import <XZKit/XZLog.h>
 #import <XZKit/XZObjc.h>
@@ -68,5 +40,33 @@ FOUNDATION_EXPORT const unsigned char XZKitVersionString[];
 #import <XZKit/XZSegmentedControl.h>
 
 #import <XZKit/XZContentStatus.h>
+
+#else
+
+#import "XZLog.h"
+#import "XZObjc.h"
+#import "XZDefines.h"
+#import "XZExtensions.h"
+
+#import "XZURL.h"
+#import "XZGeometry.h"
+#import "XZImage.h"
+
+#import "XZJSON.h"
+#import "XZLocale.h"
+#import "XZDataCryptor.h"
+#import "XZDataDigester.h"
+#import "XZKeychain.h"
+
+#import "XZML.h"
+#import "XZMocoa.h"
+#import "XZToast.h"
+#import "XZRefresh.h"
+
+#import "XZPageView.h"
+#import "XZPageControl.h"
+#import "XZSegmentedControl.h"
+
+#import "XZContentStatus.h"
 
 #endif

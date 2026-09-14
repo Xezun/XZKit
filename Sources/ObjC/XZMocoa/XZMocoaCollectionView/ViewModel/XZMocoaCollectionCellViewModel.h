@@ -5,10 +5,10 @@
 //  Created by Xezun on 2023/7/22.
 //
 
-#if __has_include("XZKit.h")
-#import "XZMocoaGroupReusableViewModel.h"
-#else
+#if __has_include(<XZKit/XZKit.h>)
 #import <XZKit/XZMocoaGroupReusableViewModel.h>
+#else
+#import "XZMocoaGroupReusableViewModel.h"
 #endif
 
 @protocol XZMocoaCollectionView, XZMocoaCollectionCell;

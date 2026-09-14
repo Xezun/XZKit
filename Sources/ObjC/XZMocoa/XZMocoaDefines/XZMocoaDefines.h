@@ -6,12 +6,12 @@
 //
 
 #import <UIKit/UIKit.h>
-#if __has_include("XZKit.h")
-#import "XZMacros.h"
-#import "XZMocoaKey.h"
-#else
+#if __has_include(<XZKit/XZKit.h>)
 #import <XZKit/XZMacros.h>
 #import <XZKit/XZMocoaKey.h>
+#else
+#import "XZMacros.h"
+#import "XZMocoaKey.h"
 #endif
 
 NS_ASSUME_NONNULL_BEGIN

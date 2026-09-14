@@ -6,12 +6,12 @@
 //
 
 #import <UIKit/UIKit.h>
-#if __has_include("XZKit.h")
-#import "XZRuntime.h"
-#import "XZJSONClass.h"
-#else
+#if __has_include(<XZKit/XZKit.h>)
 #import <XZKit/XZRuntime.h>
 #import <XZKit/XZJSONClass.h>
+#else
+#import "XZRuntime.h"
+#import "XZJSONClass.h"
 #endif
 
 

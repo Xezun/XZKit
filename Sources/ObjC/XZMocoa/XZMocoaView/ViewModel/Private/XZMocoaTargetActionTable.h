@@ -6,10 +6,10 @@
 //
 
 #import <Foundation/Foundation.h>
-#if __has_include("XZKit.h")
-#import "XZMocoaTargetAction.h"
-#else
+#if __has_include(<XZKit/XZKit.h>)
 #import <XZKit/XZMocoaTargetAction.h>
+#else
+#import "XZMocoaTargetAction.h"
 #endif
 
 NS_ASSUME_NONNULL_BEGIN

@@ -6,10 +6,10 @@
 //
 
 #import <Foundation/Foundation.h>
-#if __has_include("XZKit.h")
-#import "XZToast.h"
-#else
+#if __has_include(<XZKit/XZKit.h>)
 #import <XZKit/XZToast.h>
+#else
+#import "XZToast.h"
 #endif
 
 NS_ASSUME_NONNULL_BEGIN

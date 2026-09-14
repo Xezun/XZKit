@@ -5,14 +5,14 @@
 //  Created by Xezun on 2023/7/22.
 //
 
-#if __has_include("XZKit.h")
-#import "XZMocoaView.h"
-#import "XZMocoaDefines.h"
-#import "XZMocoaGroupViewModel.h"
-#else
+#if __has_include(<XZKit/XZKit.h>)
 #import <XZKit/XZMocoaView.h>
 #import <XZKit/XZMocoaDefines.h>
 #import <XZKit/XZMocoaGroupViewModel.h>
+#else
+#import "XZMocoaView.h"
+#import "XZMocoaDefines.h"
+#import "XZMocoaGroupViewModel.h"
 #endif
 
 NS_ASSUME_NONNULL_BEGIN
@@ -45,17 +45,17 @@ NS_ASSUME_NONNULL_BEGIN
 NS_ASSUME_NONNULL_END
 
 #if __has_include(<XZKit/XZRefresh.h>)
-#if __has_include("XZKit.h")
-#import "XZRefresh.h"
-#else
+#if __has_include(<XZKit/XZKit.h>)
 #import <XZKit/XZRefresh.h>
+#else
+#import "XZRefresh.h"
 #endif
 #define XZ_MOCOA_REFRESH_SUPPORTED 1
 #elif __has_include("XZRefresh.h")
-#if __has_include("XZKit.h")
-#import "XZRefresh.h"
-#else
+#if __has_include(<XZKit/XZKit.h>)
 #import <XZKit/XZRefresh.h>
+#else
+#import "XZRefresh.h"
 #endif
 #define XZ_MOCOA_REFRESH_SUPPORTED 1
 #endif

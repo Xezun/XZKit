@@ -7,12 +7,12 @@
 //
 
 #import <UIKit/UIKit.h>
-#if __has_include("XZKit.h")
-#import "XZMocoaGroupReusableView.h"
-#import "XZMocoaTableCellViewModel.h"
-#else
+#if __has_include(<XZKit/XZKit.h>)
 #import <XZKit/XZMocoaGroupReusableView.h>
 #import <XZKit/XZMocoaTableCellViewModel.h>
+#else
+#import "XZMocoaGroupReusableView.h"
+#import "XZMocoaTableCellViewModel.h"
 #endif
 
 NS_ASSUME_NONNULL_BEGIN

@@ -5,14 +5,14 @@
 //  Created by Xezun on 2021/2/21.
 //
 
-#if __has_include("XZKit.h")
-#import "XZImageCorner.h"
-#import "XZImageLine+Extension.h"
-#import "XZImageCorners+Extension.h"
-#else
+#if __has_include(<XZKit/XZKit.h>)
 #import <XZKit/XZImageCorner.h>
 #import <XZKit/XZImageLine+Extension.h>
 #import <XZKit/XZImageCorners+Extension.h>
+#else
+#import "XZImageCorner.h"
+#import "XZImageLine+Extension.h"
+#import "XZImageCorners+Extension.h"
 #endif
 
 NS_ASSUME_NONNULL_BEGIN

@@ -6,14 +6,14 @@
 //
 
 #import <UIKit/UIKit.h>
-#if __has_include("XZKit.h")
-#import "XZMocoaGroupReusableView.h"
-#import "XZMocoaCollectionCellViewModel.h"
-#import "XZMocoaCollectionSupplementViewModel.h"
-#else
+#if __has_include(<XZKit/XZKit.h>)
 #import <XZKit/XZMocoaGroupReusableView.h>
 #import <XZKit/XZMocoaCollectionCellViewModel.h>
 #import <XZKit/XZMocoaCollectionSupplementViewModel.h>
+#else
+#import "XZMocoaGroupReusableView.h"
+#import "XZMocoaCollectionCellViewModel.h"
+#import "XZMocoaCollectionSupplementViewModel.h"
 #endif
 
 NS_ASSUME_NONNULL_BEGIN

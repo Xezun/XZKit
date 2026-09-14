@@ -5,10 +5,10 @@
 //  Created by Xezun on 2021/2/17.
 //
 
-#if __has_include("XZKit.h")
-#import "XZImageBorder.h"
-#else
+#if __has_include(<XZKit/XZKit.h>)
 #import <XZKit/XZImageBorder.h>
+#else
+#import "XZImageBorder.h"
 #endif
 
 NS_ASSUME_NONNULL_BEGIN

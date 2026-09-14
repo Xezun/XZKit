@@ -5,10 +5,10 @@
 //  Created by Xezun on 2021/2/21.
 //
 
-#if __has_include("XZKit.h")
-#import "XZImageAttribute.h"
-#else
+#if __has_include(<XZKit/XZKit.h>)
 #import <XZKit/XZImageAttribute.h>
+#else
+#import "XZImageAttribute.h"
 #endif
 
 NS_ASSUME_NONNULL_BEGIN

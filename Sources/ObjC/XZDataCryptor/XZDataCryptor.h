@@ -7,10 +7,10 @@
 //
 
 #import <Foundation/Foundation.h>
-#if __has_include("XZKit.h")
-#import "XZDataCryptorDefines.h"
-#else
+#if __has_include(<XZKit/XZKit.h>)
 #import <XZKit/XZDataCryptorDefines.h>
+#else
+#import "XZDataCryptorDefines.h"
 #endif
 
 // 因为对称加解密属于复杂且耗时的操作，应交由专门的对象处理。

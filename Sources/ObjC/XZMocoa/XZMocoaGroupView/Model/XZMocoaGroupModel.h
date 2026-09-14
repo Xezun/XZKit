@@ -6,10 +6,10 @@
 //
 
 #import <CoreData/CoreData.h>
-#if __has_include("XZKit.h")
-#import "XZMocoaModel.h"
-#else
+#if __has_include(<XZKit/XZKit.h>)
 #import <XZKit/XZMocoaModel.h>
+#else
+#import "XZMocoaModel.h"
 #endif
 
 NS_ASSUME_NONNULL_BEGIN

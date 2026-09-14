@@ -5,16 +5,16 @@
 //  Created by Xezun on 2021/2/22.
 //
 
-#if __has_include("XZKit.h")
-#import "XZDefer.h"
-#import "XZEmpty.h"
-#import "XZMacros.h"
-#import "XZUtils.h"
-#else
+#if __has_include(<XZKit/XZKit.h>)
 #import <XZKit/XZDefer.h>
 #import <XZKit/XZEmpty.h>
 #import <XZKit/XZMacros.h>
 #import <XZKit/XZUtils.h>
+#else
+#import "XZDefer.h"
+#import "XZEmpty.h"
+#import "XZMacros.h"
+#import "XZUtils.h"
 #endif
 
 /**

@@ -6,10 +6,10 @@
 //
 
 #import <Foundation/Foundation.h>
-#if __has_include("XZKit.h")
-#import "XZPageViewDefines.h"
-#else
+#if __has_include(<XZKit/XZKit.h>)
 #import <XZKit/XZPageViewDefines.h>
+#else
+#import "XZPageViewDefines.h"
 #endif
 
 NS_ASSUME_NONNULL_BEGIN
