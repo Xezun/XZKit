@@ -6,7 +6,11 @@
 //
 
 #import <Foundation/Foundation.h>
+#if __has_include("XZKit.h")
 #import "NSData+XZKit.h"
+#else
+#import <XZKit/NSData+XZKit.h>
+#endif
 
 NS_ASSUME_NONNULL_BEGIN
 

@@ -7,10 +7,17 @@
 //
 
 #import <UIKit/UIKit.h>
+#if __has_include("XZKit.h")
 #import "XZMocoaDefines.h"
 #import "XZMocoaKey.h"
 #import "XZMocoaModule.h"
 #import "XZMocoaModel.h"
+#else
+#import <XZKit/XZMocoaDefines.h>
+#import <XZKit/XZMocoaKey.h>
+#import <XZKit/XZMocoaModule.h>
+#import <XZKit/XZMocoaModel.h>
+#endif
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -159,7 +166,7 @@ NS_SWIFT_UI_ACTOR @interface XZMocoaViewModel : NSObject <XZMocoaViewModel> {
 
 /// 如果某一个下层被移除，那么此方法会被调用。
 /// @note 默认不执行任何操作。
-/// @param viewModel 已被移除的下层
+/// @param subViewModel 已被移除的下层
 - (void)didRemoveSubViewModel:(__kindof XZMocoaViewModel *)subViewModel;
 
 @end
@@ -329,6 +336,8 @@ NS_SWIFT_UI_ACTOR @interface XZMocoaViewModel : NSObject <XZMocoaViewModel> {
 
 @end
 
+@class NSNotificationCenter;
+
 @interface XZMocoaViewModel (XZMocoaKeyObserver)
 
 /// “视图模型”观察“数据模型”的键值观察映射表。
@@ -360,7 +369,7 @@ NS_SWIFT_UI_ACTOR @interface XZMocoaViewModel : NSObject <XZMocoaViewModel> {
 /// ```
 ///
 /// - SeeAlso: 键值观察是被动的，开启主动观察，请参考``shouldObserveModelKeysActively`` 属性。
-@property (class, nullable, readonly) NSDictionary<NSString *, id> *mappingModelKeys;
+@property (class, nullable, readonly) NSDictionary<NSString *, id> *mappingMethodsForObservingModelKeys;
 
 /// 是否主动观察数据模型。默认 NO 否。
 ///
@@ -376,7 +385,7 @@ NS_SWIFT_UI_ACTOR @interface XZMocoaViewModel : NSObject <XZMocoaViewModel> {
 ///
 /// 若要开启主动键值观察，重写此属性，并返回`YES`即可。
 ///
-/// 使用 `NSKeyValueObserving` 机制对 ``mappingModelKeys`` 中的键进行观察，
+/// 使用 `NSKeyValueObserving` 机制对 ``mappingMethodsForObservingModelKeys`` 中的键进行观察，
 /// 且单个 Runloop 内的键值事件，会合并统一处理，即在一个 Runloop 内，同一个 key 即使发生多次改变，绑定的方法只会执行一次。
 ///
 /// 在 Swift 中，使用 `@mocoa` 和 `@bind` 标记的绑定的键值事件，也属于此被动观察机制。
@@ -384,7 +393,7 @@ NS_SWIFT_UI_ACTOR @interface XZMocoaViewModel : NSObject <XZMocoaViewModel> {
 
 /// 视图模型接收数据更新的通用方法。
 ///
-/// 此方法默认会根据 `key` 调用那些通过 ``mappingModelKeys`` 注册的数据监听方法。
+/// 此方法默认会根据 `key` 调用那些通过 ``mappingMethodsForObservingModelKeys`` 注册的数据监听方法。
 ///
 /// > 当视图模型更新了 其他视图模型 的 数据模型 后，也可通过此方法通知目标视图模型。
 ///

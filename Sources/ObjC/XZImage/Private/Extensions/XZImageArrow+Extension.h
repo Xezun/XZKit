@@ -6,8 +6,13 @@
 //
 
 #import <UIKit/UIKit.h>
+#if __has_include("XZKit.h")
 #import "XZImageBorder.h"
 #import "XZImageAttribute+Extension.h"
+#else
+#import <XZKit/XZImageBorder.h>
+#import <XZKit/XZImageAttribute+Extension.h>
+#endif
 
 NS_ASSUME_NONNULL_BEGIN
 

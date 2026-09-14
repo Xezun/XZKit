@@ -5,7 +5,11 @@
 //  Created by Xezun on 2021/2/17.
 //
 
+#if __has_include("XZKit.h")
 #import "XZImageBorder.h"
+#else
+#import <XZKit/XZImageBorder.h>
+#endif
 
 NS_ASSUME_NONNULL_BEGIN
 

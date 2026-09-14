@@ -6,8 +6,13 @@
 //
 
 #import <UIKit/UIKit.h>
+#if __has_include("XZKit.h")
 #import "XZMocoaViewModel.h"
 #import "UIView+XZKit.h"
+#else
+#import <XZKit/XZMocoaViewModel.h>
+#import <XZKit/UIView+XZKit.h>
+#endif
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -155,12 +160,11 @@ NS_SWIFT_UI_ACTOR @protocol XZMocoaView <NSObject>
 
 
 @interface UIView (XZMocoaModuleSupporting)
-+ (nullable __kindof UIView *)viewWithMocoaURL:(NSURL *)url options:(nullable NSDictionary *)options frame:(CGRect)frame;
-+ (nullable __kindof UIView *)viewWithMocoaURL:(NSURL *)url options:(nullable NSDictionary *)options;
-+ (nullable __kindof UIView *)viewWithMocoaURL:(NSURL *)url frame:(CGRect)frame;
-+ (nullable __kindof UIView *)viewWithMocoaURL:(NSURL *)url;
-- (instancetype)initWithMocoaOptions:(XZMocoaOptions *)options frame:(CGRect)frame;
-- (void)awakeFromNibWithMocoaOptions:(XZMocoaOptions *)options frame:(CGRect)frame;
++ (nullable __kindof UIView *)viewWithMocoaURL:(NSURL *)url options:(nullable NSDictionary *)options frame:(CGRect)frame NS_SWIFT_NAME(init(_:options:frame:));
++ (nullable __kindof UIView *)viewWithMocoaURL:(NSURL *)url options:(nullable NSDictionary *)options NS_SWIFT_NAME(init(_:options:));
++ (nullable __kindof UIView *)viewWithMocoaURL:(NSURL *)url frame:(CGRect)frame NS_SWIFT_NAME(init(_:frame:));
++ (nullable __kindof UIView *)viewWithMocoaURL:(NSURL *)url NS_SWIFT_NAME(init(_:));
+- (void)didInitWithMocoaOptions:(XZMocoaOptions *)options NS_SWIFT_NAME(didInit(with:));
 @end
 
 
@@ -171,11 +175,11 @@ NS_SWIFT_UI_ACTOR @protocol XZMocoaView <NSObject>
 /// 参数 url 的 query 将作为 options 参数，调用 -viewControllerWithMocoaModule:options: 方法完成实例化控制器。
 /// @param url 模块地址
 /// @param options 额外参数
-+ (nullable __kindof UIViewController *)viewControllerWithMocoaURL:(NSURL *)url options:(nullable NSDictionary<XZMocoaKey, id> *)options NS_SWIFT_NAME(init(mocoaURL:options:));
-+ (nullable __kindof UIViewController *)viewControllerWithMocoaURLString:(NSString *)URLString options:(nullable NSDictionary<XZMocoaKey, id> *)options NS_SWIFT_NAME(init(mocoaURL:options:));
++ (nullable __kindof UIViewController *)viewControllerWithMocoaURL:(NSURL *)url options:(nullable NSDictionary<XZMocoaKey, id> *)options NS_SWIFT_NAME(init(_:options:));
++ (nullable __kindof UIViewController *)viewControllerWithMocoaURLString:(NSString *)URLString options:(nullable NSDictionary<XZMocoaKey, id> *)options NS_SWIFT_NAME(init(_:options:));
 
 /// 根据视图控制器的模块地址，构造视图控制器。
-+ (nullable __kindof UIViewController *)viewControllerWithMocoaURL:(NSURL *)url;
++ (nullable __kindof UIViewController *)viewControllerWithMocoaURL:(NSURL *)url NS_SWIFT_NAME(init(_:));
 
 /// Mocoa 使用此方法初始化控制器。
 /// @discussion
@@ -190,7 +194,7 @@ NS_SWIFT_UI_ACTOR @protocol XZMocoaView <NSObject>
 /// 在 Category 中定义的初始化方法，无法用`NS_DESIGNATED_INITIALIZER`标记，也无法桥接到 Swift 中。
 ///
 /// @param options 初始化参数
-- (instancetype)initWithMocoaOptions:(XZMocoaOptions *)options nibName:(nullable NSString *)nibName bundle:(nullable NSBundle *)bundle;
+- (instancetype)initWithMocoaOptions:(XZMocoaOptions *)options nibName:(nullable NSString *)nibName bundle:(nullable NSBundle *)bundle NS_SWIFT_NAME(init(_:nibName:bundle:));
 
 /// 通过 Mocoa 创建控制器的额外初始化方法。
 ///
@@ -200,25 +204,23 @@ NS_SWIFT_UI_ACTOR @protocol XZMocoaView <NSObject>
 /// 默认情况下，此方法会尝试为控制器创建视图模型，子类可以在调用`super`之前，自行创建视图模型，以避免自动创建符合实际需求。
 ///
 /// @param options 初始化参数
-- (void)didInitWithMocoaOptions:(XZMocoaOptions *)options;
+- (void)didInitWithMocoaOptions:(XZMocoaOptions *)options NS_SWIFT_NAME(didInit(with:));
 
 /// 通过 XZMocoaURL 弹出层控制器。
 /// @discussion 如果 XZMocoaURL 没有对应的控制器，那么此方法将不产生任何效果。
 /// @param url XZMocoaURL
 /// @param animated 是否动画
 /// @param completion 回调
-- (nullable __kindof UIViewController *)presentMocoaURL:(nullable NSURL *)url options:(nullable NSDictionary<XZMocoaKey, id> *)options animated:(BOOL)animated completion:(void (^_Nullable)(void))completion;
-- (nullable __kindof UIViewController *)presentMocoaURL:(nullable NSURL *)url options:(nullable NSDictionary<XZMocoaKey, id> *)options completion:(void (^_Nullable)(void))completion;
-- (nullable __kindof UIViewController *)presentMocoaURL:(nullable NSURL *)url options:(nullable NSDictionary<XZMocoaKey, id> *)options animated:(BOOL)animated;
-- (nullable __kindof UIViewController *)presentMocoaURL:(nullable NSURL *)url animated:(BOOL)animated completion:(void (^_Nullable)(void))completion;
-- (nullable __kindof UIViewController *)presentMocoaURL:(nullable NSURL *)url animated:(BOOL)animated;
-- (nullable __kindof UIViewController *)presentMocoaURL:(nullable NSURL *)url completion:(void (^_Nullable)(void))completion;
+- (nullable __kindof UIViewController *)presentViewControllerWithMocoaURL:(nullable NSURL *)url options:(nullable NSDictionary<XZMocoaKey, id> *)options animated:(BOOL)animated completion:(void (^_Nullable)(void))completion NS_SWIFT_NAME(presentViewController(with:options:animated:completion:));
+- (nullable __kindof UIViewController *)presentViewControllerWithMocoaURL:(nullable NSURL *)url options:(nullable NSDictionary<XZMocoaKey, id> *)options animated:(BOOL)animated NS_SWIFT_NAME(presentViewController(with:options:animated:));
+- (nullable __kindof UIViewController *)presentViewControllerWithMocoaURL:(nullable NSURL *)url animated:(BOOL)animated completion:(void (^_Nullable)(void))completion NS_SWIFT_NAME(presentViewController(with:animated:completion:));
+- (nullable __kindof UIViewController *)presentViewControllerWithMocoaURL:(nullable NSURL *)url animated:(BOOL)animated NS_SWIFT_NAME(presentViewController(with:animated:));
 
 /// 通过 XZMocoaURL 添加子控制器。
 /// @discussion 如果 XZMocoaURL 没有对应的控制器，那么此方法将不产生任何效果。
 /// @param url XZMocoaURL
-- (nullable __kindof UIViewController *)addChildViewControllerWithMocoaURL:(nullable NSURL *)url options:(nullable NSDictionary<XZMocoaKey, id> *)options;
-- (nullable __kindof UIViewController *)addChildViewControllerWithMocoaURL:(nullable NSURL *)url;
+- (nullable __kindof UIViewController *)addChildViewControllerWithMocoaURL:(nullable NSURL *)url options:(nullable NSDictionary<XZMocoaKey, id> *)options NS_SWIFT_NAME(addChildViewController(with:options:));
+- (nullable __kindof UIViewController *)addChildViewControllerWithMocoaURL:(nullable NSURL *)url NS_SWIFT_NAME(addChildViewController(with:));
 @end
 
 @class CADisplayLink;
@@ -230,9 +232,9 @@ NS_SWIFT_UI_ACTOR @protocol XZMocoaView <NSObject>
 /// @param url XZMocoaURL
 /// @param animated 是否动画。
 /// @param options 参数
-- (nullable __kindof UIViewController *)pushMocoaURL:(nullable NSURL *)url options:(nullable NSDictionary<XZMocoaKey, id> *)options animated:(BOOL)animated;
-- (nullable __kindof UIViewController *)pushMocoaURL:(nullable NSURL *)url animated:(BOOL)animated;
-- (nullable __kindof UIViewController *)pushMocoaURL:(nullable NSURL *)url options:(nullable NSDictionary<XZMocoaKey, id> *)options;
+- (nullable __kindof UIViewController *)pushViewControllerWithMocoaURL:(nullable NSURL *)url options:(nullable NSDictionary<XZMocoaKey, id> *)options animated:(BOOL)animated NS_SWIFT_NAME(pushViewController(with:options:animated:));
+- (nullable __kindof UIViewController *)pushViewControllerWithMocoaURL:(nullable NSURL *)url animated:(BOOL)animated NS_SWIFT_NAME(pushViewController(with:animated:));
+- (nullable __kindof UIViewController *)pushViewControllerWithMocoaURL:(nullable NSURL *)url options:(nullable NSDictionary<XZMocoaKey, id> *)options NS_SWIFT_NAME(pushViewController(with:options:));
 
 @end
 
@@ -242,7 +244,7 @@ NS_SWIFT_UI_ACTOR @protocol XZMocoaView <NSObject>
 /// @discussion 如果某个 XZMocoaURL 没有对应的控制器，那么该 XZMocoaURL 会被忽略。
 /// @param urls XZMocoaURLs
 /// @param animated 是否动画
-- (nullable NSArray<__kindof UIViewController *> *)setViewControllersWithMocoaURLs:(nullable NSArray<NSURL *> *)urls animated:(BOOL)animated;
+- (nullable NSArray<__kindof UIViewController *> *)setViewControllersWithMocoaURLs:(nullable NSArray<NSURL *> *)urls animated:(BOOL)animated NS_SWIFT_NAME(setViewControllers(with:animated:));
 @end
 
 NS_ASSUME_NONNULL_END

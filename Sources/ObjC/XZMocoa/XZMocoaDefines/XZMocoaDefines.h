@@ -6,8 +6,13 @@
 //
 
 #import <UIKit/UIKit.h>
+#if __has_include("XZKit.h")
 #import "XZMacros.h"
 #import "XZMocoaKey.h"
+#else
+#import <XZKit/XZMacros.h>
+#import <XZKit/XZMocoaKey.h>
+#endif
 
 NS_ASSUME_NONNULL_BEGIN
 

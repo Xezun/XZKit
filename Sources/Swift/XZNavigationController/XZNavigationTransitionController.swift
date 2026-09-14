@@ -7,6 +7,9 @@
 
 import UIKit
 import ObjectiveC
+#if SWIFT_PACKAGE
+import XZKitObjC
+#endif
 
 /// 转场控制器，接管了导航控制的代理。
 @MainActor public final class XZNavigationTransitionController: NSObject {

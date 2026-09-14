@@ -6,8 +6,13 @@
 //
 
 #import <UIKit/UIKit.h>
+#if __has_include("XZKit.h")
 #import "XZPageControlDefines.h"
 #import "XZPageControlAttributes.h"
+#else
+#import <XZKit/XZPageControlDefines.h>
+#import <XZKit/XZPageControlAttributes.h>
+#endif
 
 @class XZPageControl;
 

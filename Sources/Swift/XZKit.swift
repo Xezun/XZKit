@@ -6,7 +6,6 @@
 //
 
 import Foundation
-
 #if SWIFT_PACKAGE
 @_exported import XZKitObjC
 #endif

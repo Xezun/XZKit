@@ -5,8 +5,13 @@
 //  Created by Xezun on 2024/6/25.
 //
 
+#if __has_include("XZKit.h")
 #import "XZSegmentedControl.h"
 #import "XZSegmentIndicatorView.h"
+#else
+#import <XZKit/XZSegmentedControl.h>
+#import <XZKit/XZSegmentIndicatorView.h>
+#endif
 
 NS_ASSUME_NONNULL_BEGIN
 

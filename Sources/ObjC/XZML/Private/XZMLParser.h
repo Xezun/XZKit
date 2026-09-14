@@ -6,7 +6,11 @@
 //
 
 #import <Foundation/Foundation.h>
+#if __has_include("XZKit.h")
 #import "XZMLDSL.h"
+#else
+#import <XZKit/XZMLDSL.h>
+#endif
 
 NS_ASSUME_NONNULL_BEGIN
 

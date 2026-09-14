@@ -32,15 +32,21 @@
         layer.shadowOffset  = CGSizeZero;
         layer.shadowOpacity = 0.3;
         layer.shadowRadius  = kPadding * 0.5;
+        
+        if (@available(iOS 17.0, *)) {
+            [self registerForTraitChanges:@[UITraitUserInterfaceStyle.class] withAction:@selector(userInterfaceStyleDidChange)];
+        }
     }
     return self;
 }
 
+- (void)userInterfaceStyleDidChange {
+    self.layer.shadowColor = _shadowColor.CGColor;
+}
+
 - (void)traitCollectionDidChange:(UITraitCollection *)previousTraitCollection {
     [super traitCollectionDidChange:previousTraitCollection];
-    if (self.traitCollection.userInterfaceStyle != previousTraitCollection.userInterfaceStyle) {
-        self.layer.shadowColor = [_shadowColor resolvedColorWithTraitCollection:self.traitCollection].CGColor;
-    }
+    [self userInterfaceStyleDidChange];
 }
 
 - (void)setShadowColor:(UIColor *)shadowColor {

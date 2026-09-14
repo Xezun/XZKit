@@ -343,7 +343,7 @@
     return NO;
 }
 
-+ (NSDictionary<NSString *,id> *)mappingModelKeys {
++ (NSDictionary<NSString *,id> *)mappingMethodsForObservingModelKeys {
     return nil;
 }
 

@@ -5,7 +5,11 @@
 //  Created by Xezun on 2021/2/17.
 //
 
+#if __has_include("XZKit.h")
 #import "XZImageCorner.h"
+#else
+#import <XZKit/XZImageCorner.h>
+#endif
 
 NS_ASSUME_NONNULL_BEGIN
 

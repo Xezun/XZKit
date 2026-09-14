@@ -279,17 +279,18 @@ extension XZContentStatus {
             target.contentStatus(contentStatus, performActionForInteraction: self)
         }
         
-        @preconcurrency
         override public func observeValue(forKeyPath keyPath: String?, of object: Any?, change: [NSKeyValueChangeKey : Any]?, context: UnsafeMutableRawPointer?) {
             guard context == &_context else {
                 super.observeValue(forKeyPath: keyPath, of: object, change: change, context: context)
                 return
             }
             guard let bounds = (change?[.newKey] as? NSValue)?.cgRectValue else { return }
-            guard let target = self.target else { return }
-            guard let contentStatus = self.statusValue else { return }
-            let edgeInsets = target.contentStatus(contentStatus, edgeInsetsForRepresentation: self)
-            self.frame = bounds.inset(by: edgeInsets)
+            MainActor.assumeIsolated {
+                guard let target = self.target else { return }
+                guard let contentStatus = self.statusValue else { return }
+                let edgeInsets = target.contentStatus(contentStatus, edgeInsetsForRepresentation: self)
+                self.frame = bounds.inset(by: edgeInsets)
+            }
         }
     }
     

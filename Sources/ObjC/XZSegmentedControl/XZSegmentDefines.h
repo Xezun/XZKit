@@ -6,7 +6,11 @@
 //
 
 #import <UIKit/UIKit.h>
+#if __has_include("XZKit.h")
 #import "XZMacros.h"
+#else
+#import <XZKit/XZMacros.h>
+#endif
 
 
 /// 控件中 Segment 的布局方向。

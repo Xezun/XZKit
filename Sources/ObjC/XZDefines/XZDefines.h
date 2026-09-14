@@ -5,28 +5,16 @@
 //  Created by Xezun on 2021/2/22.
 //
 
-#if __has_include(<XZKit/XZDefer.h>)
-#import <XZKit/XZDefer.h>
-#elif __has_include("XZDefer.h")
+#if __has_include("XZKit.h")
 #import "XZDefer.h"
-#endif
-
-#if __has_include(<XZKit/XZEmpty.h>)
-#import <XZKit/XZEmpty.h>
-#elif __has_include("XZEmpty.h")
 #import "XZEmpty.h"
-#endif
-
-#if __has_include(<XZKit/XZMacros.h>)
-#import <XZKit/XZMacros.h>
-#elif __has_include("XZMacros.h")
 #import "XZMacros.h"
-#endif
-
-#if __has_include(<XZKit/XZUtils.h>)
-#import <XZKit/XZUtils.h>
-#elif __has_include("XZUtils.h")
 #import "XZUtils.h"
+#else
+#import <XZKit/XZDefer.h>
+#import <XZKit/XZEmpty.h>
+#import <XZKit/XZMacros.h>
+#import <XZKit/XZUtils.h>
 #endif
 
 /**

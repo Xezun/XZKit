@@ -6,6 +6,9 @@
 //
 
 import Foundation
+#if SWIFT_PACKAGE
+import XZKitObjC
+#endif
 
 extension String {
     

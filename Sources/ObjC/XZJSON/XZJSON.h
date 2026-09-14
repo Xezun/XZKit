@@ -6,7 +6,11 @@
 //
 
 #import <Foundation/Foundation.h>
+#if __has_include("XZKit.h")
 #import "XZJSONDefines.h"
+#else
+#import <XZKit/XZJSONDefines.h>
+#endif
 
 NS_ASSUME_NONNULL_BEGIN
 

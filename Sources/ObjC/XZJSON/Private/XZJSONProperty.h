@@ -6,8 +6,13 @@
 //
 
 #import <UIKit/UIKit.h>
+#if __has_include("XZKit.h")
 #import "XZRuntime.h"
 #import "XZJSONClass.h"
+#else
+#import <XZKit/XZRuntime.h>
+#import <XZKit/XZJSONClass.h>
+#endif
 
 
 NS_ASSUME_NONNULL_BEGIN

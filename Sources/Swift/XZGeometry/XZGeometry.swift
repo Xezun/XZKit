@@ -8,10 +8,9 @@
 
 import Foundation
 import UIKit
-
-//#if SWIFT_PACKAGE
-//@_exported import XZGeometryCore
-//#endif
+#if SWIFT_PACKAGE
+import XZKitObjC
+#endif
 
 // MARK: CGGeometry
 // AVFoundation.AVMakeRectWithAspectRatioInsideRect

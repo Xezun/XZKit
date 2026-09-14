@@ -22,7 +22,7 @@ static const void * const _mocoaName = &_mocoaName;
         xz_objc_class_copyMethod(self, @selector(__xz_mocoa_mocoaName),
                                  self, @selector(mocoaName));
         xz_objc_class_copyMethod(self, @selector(__xz_mocoa_setMocoaName:),
-                                 self, @selector(setMocoaName:));
+                                 self, sel_registerName("setMocoaName:"));
     }
 }
 

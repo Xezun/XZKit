@@ -7,6 +7,9 @@
 //
 
 import UIKit
+#if SWIFT_PACKAGE
+import XZKitObjC
+#endif
 
 extension XZContentStatus {
 

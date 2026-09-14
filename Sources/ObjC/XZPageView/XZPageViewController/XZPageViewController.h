@@ -7,7 +7,11 @@
 //
 
 #import <UIKit/UIKit.h>
+#if __has_include("XZKit.h")
 #import "XZPageViewDefines.h"
+#else
+#import <XZKit/XZPageViewDefines.h>
+#endif
 
 NS_ASSUME_NONNULL_BEGIN
 

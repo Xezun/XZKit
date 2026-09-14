@@ -24,16 +24,16 @@ static inline void XZMocoaMappingKeyToMethod(NSMutableDictionary * const keyToMe
 }
 
 static inline void XZMocoaMappingModelKeys(Class const VMClass, NSMutableDictionary * const methodToKeys, NSMutableDictionary * const keyToMethods, NSMutableDictionary * const namedMethods) {
-    Method const method = xz_objc_class_getMethod(object_getClass(VMClass), @selector(mappingModelKeys));
+    Method const method = xz_objc_class_getMethod(object_getClass(VMClass), @selector(mappingMethodsForObservingModelKeys));
     if (method == nil) {
         return;
     }
-    NSDictionary<NSString *, id> * const mappingModelKeys = [VMClass mappingModelKeys];
-    if (mappingModelKeys.count == 0) {
+    NSDictionary<NSString *, id> * const mappingMethodsForObservingModelKeys = [VMClass mappingMethodsForObservingModelKeys];
+    if (mappingMethodsForObservingModelKeys.count == 0) {
         return;
     }
     
-    [mappingModelKeys enumerateKeysAndObjectsUsingBlock:^(NSString * const methodName, id keyOrKeys, BOOL * _Nonnull stop) {
+    [mappingMethodsForObservingModelKeys enumerateKeysAndObjectsUsingBlock:^(NSString * const methodName, id keyOrKeys, BOOL * _Nonnull stop) {
         SEL const selector = NSSelectorFromString(methodName);
         if (selector == NULL) {
             return;

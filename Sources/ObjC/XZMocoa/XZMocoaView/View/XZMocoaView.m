@@ -249,15 +249,18 @@ static const void * const _context = &_context;
     switch (module.viewForm) {
         case XZMocoaModuleViewFormClass: {
             XZMocoaOptions * const mocoaOptions = [[XZMocoaOptions alloc] initWithModule:module url:url options:options];
-            return [[module.viewClass alloc] initWithMocoaOptions:mocoaOptions frame:frame];
+            UIView *view = [[module.viewClass alloc] initWithFrame:frame];
+            [view didInitWithMocoaOptions:mocoaOptions];
+            return view;
         }
         case XZMocoaModuleViewFormNib: {
             UINib *nib = [UINib nibWithNibName:module.viewNibName bundle:module.viewNibBundle];
             Class const ViewClass = module.viewNibClass ?: self.class;
             for (UIView *object in [nib instantiateWithOwner:nil options:nil]) {
                 if ([object isKindOfClass:ViewClass]) {
+                    object.frame = frame;
                     XZMocoaOptions * const mocoaOptions = [[XZMocoaOptions alloc] initWithModule:module url:url options:options];
-                    [object awakeFromNibWithMocoaOptions:mocoaOptions frame:frame];
+                    [object didInitWithMocoaOptions:mocoaOptions];
                     return object;
                 }
             }
@@ -280,12 +283,8 @@ static const void * const _context = &_context;
     return [self viewWithMocoaURL:url options:nil frame:CGRectZero];
 }
 
-- (instancetype)initWithMocoaOptions:(XZMocoaOptions *)options frame:(CGRect)frame {
-    return [self initWithFrame:frame];
-}
-
-- (void)awakeFromNibWithMocoaOptions:(XZMocoaOptions *)options frame:(CGRect)frame {
-    self.frame = frame;
+- (void)didInitWithMocoaOptions:(XZMocoaOptions *)options {
+    
 }
 
 @end
@@ -402,7 +401,7 @@ static const void * const _context = &_context;
     }
 }
 
-- (__kindof UIViewController *)presentMocoaURL:(NSURL *)url options:(nullable NSDictionary *)options animated:(BOOL)flag completion:(void (^ _Nullable)(void))completion {
+- (__kindof UIViewController *)presentViewControllerWithMocoaURL:(NSURL *)url options:(nullable NSDictionary *)options animated:(BOOL)flag completion:(void (^ _Nullable)(void))completion {
     UIViewController *nextVC = [UIViewController viewControllerWithMocoaURL:url options:options];
     if (nextVC != nil) {
         [self presentViewController:nextVC animated:flag completion:completion];
@@ -410,24 +409,16 @@ static const void * const _context = &_context;
     return nextVC;
 }
 
-- (nullable __kindof UIViewController *)presentMocoaURL:(nullable NSURL *)url options:(nullable NSDictionary *)options completion:(void (^_Nullable)(void))completion {
-    return [self presentMocoaURL:url options:options animated:YES completion:completion];
+- (nullable __kindof UIViewController *)presentViewControllerWithMocoaURL:(nullable NSURL *)url options:(nullable NSDictionary *)options animated:(BOOL)animated {
+    return [self presentViewControllerWithMocoaURL:url options:options animated:animated completion:nil];
 }
 
-- (nullable __kindof UIViewController *)presentMocoaURL:(nullable NSURL *)url options:(nullable NSDictionary *)options animated:(BOOL)animated {
-    return [self presentMocoaURL:url options:options animated:animated completion:nil];
+- (nullable __kindof UIViewController *)presentViewControllerWithMocoaURL:(nullable NSURL *)url animated:(BOOL)animated completion:(void (^_Nullable)(void))completion {
+    return [self presentViewControllerWithMocoaURL:url options:nil animated:animated completion:completion];
 }
 
-- (nullable __kindof UIViewController *)presentMocoaURL:(nullable NSURL *)url animated:(BOOL)animated completion:(void (^_Nullable)(void))completion {
-    return [self presentMocoaURL:url options:nil animated:animated completion:completion];
-}
-
-- (nullable __kindof UIViewController *)presentMocoaURL:(nullable NSURL *)url animated:(BOOL)animated {
-    return [self presentMocoaURL:url options:nil animated:animated completion:nil];
-}
-
-- (nullable __kindof UIViewController *)presentMocoaURL:(nullable NSURL *)url completion:(void (^_Nullable)(void))completion {
-    return [self presentMocoaURL:url options:nil animated:YES completion:completion];
+- (nullable __kindof UIViewController *)presentViewControllerWithMocoaURL:(nullable NSURL *)url animated:(BOOL)animated {
+    return [self presentViewControllerWithMocoaURL:url options:nil animated:animated completion:nil];
 }
 
 - (__kindof UIViewController *)addChildViewControllerWithMocoaURL:(NSURL *)url options:(nullable NSDictionary *)options {
@@ -446,7 +437,7 @@ static const void * const _context = &_context;
 
 @implementation UINavigationController (XZMocoaModuleSupporting)
 
-- (__kindof UIViewController *)pushMocoaURL:(NSURL *)url options:(nullable NSDictionary *)options animated:(BOOL)animated {
+- (__kindof UIViewController *)pushViewControllerWithMocoaURL:(NSURL *)url options:(nullable NSDictionary *)options animated:(BOOL)animated {
     UIViewController *nextVC = [UIViewController viewControllerWithMocoaURL:url options:options];
     if (nextVC != nil) {
         [self pushViewController:nextVC animated:animated];
@@ -454,16 +445,12 @@ static const void * const _context = &_context;
     return nextVC;
 }
 
-- (__kindof UIViewController *)pushMocoaURL:(NSURL *)url options:(NSDictionary *)options {
-    return [self pushMocoaURL:url options:options animated:YES];
-}
-
-- (__kindof UIViewController *)pushMocoaURL:(NSURL *)url animated:(BOOL)animated {
-    return [self pushMocoaURL:url options:nil animated:animated];
+- (__kindof UIViewController *)pushViewControllerWithMocoaURL:(NSURL *)url options:(NSDictionary *)options {
+    return [self pushViewControllerWithMocoaURL:url options:options animated:YES];
 }
 
 - (__kindof UIViewController *)pushViewControllerWithMocoaURL:(NSURL *)url animated:(BOOL)animated {
-    return [self pushMocoaURL:url animated:animated];
+    return [self pushViewControllerWithMocoaURL:url options:nil animated:animated];
 }
 
 @end

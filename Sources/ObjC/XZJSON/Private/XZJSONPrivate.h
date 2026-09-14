@@ -8,6 +8,7 @@
 #import <Foundation/Foundation.h>
 #import <UIKit/UIKit.h>
 
+#if __has_include("XZKit.h")
 #import "XZJSONClass.h"
 #import "XZJSONProperty.h"
 #import "XZJSONEncoder.h"
@@ -15,3 +16,12 @@
 #import "XZJSONDescription.h"
 #import "XZJSONCopying.h"
 #import "XZJSONCoding.h"
+#else
+#import <XZKit/XZJSONClass.h>
+#import <XZKit/XZJSONProperty.h>
+#import <XZKit/XZJSONEncoder.h>
+#import <XZKit/XZJSONDecoder.h>
+#import <XZKit/XZJSONDescription.h>
+#import <XZKit/XZJSONCopying.h>
+#import <XZKit/XZJSONCoding.h>
+#endif

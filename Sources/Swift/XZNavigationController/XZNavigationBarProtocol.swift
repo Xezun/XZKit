@@ -6,6 +6,9 @@
 //
 
 import UIKit
+#if SWIFT_PACKAGE
+import XZKitObjC
+#endif
 
 /// 控制器定制导航栏须实现的属性，这些属性是为了与原生导航栏保持一致所必须的。
 ///

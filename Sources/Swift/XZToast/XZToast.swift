@@ -6,33 +6,8 @@
 //
 
 import UIKit
-
-/// 由于无法在 Swift 中为 XZToast 拓展 ExpressibleByStringLiteral 协议而使用了子类。
-///
-/// 不能将名字指定为 `__XZToast` 会触发 circular reference 编译错误。
-@objc(_Swift_XZToast) open class XZToast: __XZToast, ExpressibleByStringLiteral {
-    
-    public typealias Position   = __XZToastPosition
-    public typealias Completion = __XZToastCompletion
-    public typealias Style      = __XZToastStyle
-    public typealias Task       = __XZToastTask
-    
-    /// 转场动画时长。
-    public static var animationDuration: TimeInterval {
-        return __XZToastAnimationDuration;
-    }
-    
-    // MARK: - ExpressibleByStringLiteral
-    
-    public typealias StringLiteralType = String
-    
-    public required convenience init(stringLiteral value: String) {
-        self.init(style: .message, text: value, image: nil)
-    }
-    
-}
-
 #if SWIFT_PACKAGE
+import XZKitObjC
 extension XZToast.Position: @retroactive CustomStringConvertible {
     
     public var description: String {
@@ -59,6 +34,31 @@ extension XZToast.Style: CustomStringConvertible {
     }
 }
 #endif
+
+/// 由于无法在 Swift 中为 XZToast 拓展 ExpressibleByStringLiteral 协议而使用了子类。
+///
+/// 不能将名字指定为 `__XZToast` 会触发 circular reference 编译错误。
+@objc(_Swift_XZToast) open class XZToast: __XZToast, ExpressibleByStringLiteral {
+    
+    public typealias Position   = __XZToastPosition
+    public typealias Completion = __XZToastCompletion
+    public typealias Style      = __XZToastStyle
+    public typealias Task       = __XZToastTask
+    
+    /// 转场动画时长。
+    public static var animationDuration: TimeInterval {
+        return __XZToastAnimationDuration;
+    }
+    
+    // MARK: - ExpressibleByStringLiteral
+    
+    public typealias StringLiteralType = String
+    
+    public required convenience init(stringLiteral value: String) {
+        self.init(style: .message, text: value, image: nil)
+    }
+    
+}
 
 extension UIResponder {
     

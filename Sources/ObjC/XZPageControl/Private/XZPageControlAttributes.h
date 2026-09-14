@@ -6,7 +6,11 @@
 //
 
 #import <Foundation/Foundation.h>
+#if __has_include("XZKit.h")
 #import "XZPageControlDefines.h"
+#else
+#import <XZKit/XZPageControlDefines.h>
+#endif
 
 NS_ASSUME_NONNULL_BEGIN
 

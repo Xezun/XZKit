@@ -5,10 +5,17 @@
 //  Created by Xezun on 2021/2/21.
 //
 
+#if __has_include("XZKit.h")
 #import "XZImage.h"
 #import "XZImageBorders+Extension.h"
 #import "XZImageCorners+Extension.h"
 #import "XZImageLinePath.h"
+#else
+#import <XZKit/XZImage.h>
+#import <XZKit/XZImageBorders+Extension.h>
+#import <XZKit/XZImageCorners+Extension.h>
+#import <XZKit/XZImageLinePath.h>
+#endif
 
 NS_ASSUME_NONNULL_BEGIN
 

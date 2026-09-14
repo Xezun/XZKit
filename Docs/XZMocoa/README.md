@@ -175,11 +175,11 @@ self.sendActions(forKey: "beginRefreshing", value: kCFNull)
 
 ### 5、数据监听
 
-监听数据模型属性，可以通过 `mappingModelKeys` 注册“监听方法”与“数据模型属性”之间的映射关系：
+监听数据模型属性，可以通过 `mappingMethodsForObservingModelKeys` 注册“监听方法”与“数据模型属性”之间的映射关系：
 
 ```swift
 // 监听方法和被监听的模型属性的映射关系
-override class var mappingModelKeys: [String : Any]? {
+override class var mappingMethodsForObservingModelKeys: [String : Any]? {
     return [
         NSStringFromSelector(#selector(self.rangeDidChange(_:_:))): ["min", "max"]
     ]

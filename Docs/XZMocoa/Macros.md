@@ -133,19 +133,19 @@ override func __xz_bind_prepare() {
 - 若类中已自定义 `__xz_bind_prepare`，宏报错，提示改用 `prepareForViewModel`。
 - 若没有任何 `@bind` 成员，则不生成该方法。
 
-#### `.vm`（ViewModel）：生成 `mappingModelKeys`
+#### `.vm`（ViewModel）：生成 `mappingMethodsForObservingModelKeys`
 
 遍历类中所有 `@bind` 标记的属性与方法，生成 Model 监听映射表：
 
 ```swift
-override class var mappingModelKeys: [String : Any]? {
+override class var mappingMethodsForObservingModelKeys: [String : Any]? {
     return [
         // ……此处展开 “监听方法选择器 → 被监听的 Model 键” 的映射
     ]
 }
 ```
 
-- 若类中已自定义 `class var mappingModelKeys`，宏发出警告并放弃生成（自动监听不生效）。
+- 若类中已自定义 `class var mappingMethodsForObservingModelKeys`，宏发出警告并放弃生成（自动监听不生效）。
 - 若没有任何 `@bind` 成员，则不生成该属性。
 
 #### `.m`（Model）：不织入成员
@@ -168,7 +168,7 @@ class UserViewModel: XZMocoaViewModel {
 class UserViewModel: XZMocoaViewModel {
     @objc func userNameDidChange(firstName: String?, lastName: String?) { }
 
-    override class var mappingModelKeys: [String : Any]? {
+    override class var mappingMethodsForObservingModelKeys: [String : Any]? {
         return [
             NSStringFromSelector(#selector(Self.userNameDidChange(firstName:lastName:))): ["firstName", "lastName"]
         ]
@@ -281,7 +281,7 @@ class UserViewModel: XZMocoaViewModel {
 
 绑定方向取决于角色：
 
-- **ViewModel 角色**：监听 Model 的属性变化（生成 `mappingModelKeys`）。
+- **ViewModel 角色**：监听 Model 的属性变化（生成 `mappingMethodsForObservingModelKeys`）。
 - **View 角色**：监听 ViewModel 的 KTA 事件（生成 `__xz_bind_prepare`）。
 
 ### 5.1 声明族
@@ -318,7 +318,7 @@ class UserViewModel: XZMocoaViewModel {
 }
 ```
 
-生成的 `mappingModelKeys` 条目形如：
+生成的 `mappingMethodsForObservingModelKeys` 条目形如：
 
 ```swift
 NSStringFromSelector(#selector(setter: Self.name)): ["name"]   // @bind
@@ -537,7 +537,7 @@ XZMocoaModule(for: someURLExpression)!                             // URL 参数
 | `.m` 角色未继承 `NSObject` | 错误 | 仅可修饰继承自 NSObject 的 class |
 | 无法确定角色 | 错误 | 无法确定 `Xxx` 的角色，请通过 role 参数指定 |
 | View 自定义 `__xz_bind_prepare` | 错误 | 重写私有方法会导致绑定失效，请使用 `prepareForViewModel` |
-| ViewModel 自定义 `mappingModelKeys` | 警告 | 检测到已自定义，自动监听将不生效 |
+| ViewModel 自定义 `mappingMethodsForObservingModelKeys` | 警告 | 检测到已自定义，自动监听将不生效 |
 | `@bind` 指定 key 数量与方法参数不一致 | 警告 | `@bind` 指定的 key 数量（n）与方法参数数量（m）不一致 |
 | `@key` 用于只读属性 | 错误 | 只读属性无法作为 key 使用 |
 | `@key` 用于 View 角色 | 错误 | 只能用于 Model 或 ViewModel 角色 |
@@ -616,7 +616,7 @@ var firstName: String? {
 private var _firstName: String?
 
 // UserViewModel：@mocoa 生成数据监听映射
-override class var mappingModelKeys: [String : Any]? {
+override class var mappingMethodsForObservingModelKeys: [String : Any]? {
     return [
         NSStringFromSelector(#selector(Self.userNameDidChange(firstName:lastName:))): ["firstName", "lastName"],
         NSStringFromSelector(#selector(Self.userVipDidChange(isVip:))): ["isVIP"]

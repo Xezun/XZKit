@@ -6,7 +6,11 @@
 //
 
 #import <Foundation/Foundation.h>
-#import  "XZLogSystem.h"
+#if __has_include("XZKit.h")
+#import "XZLogSystem.h"
+#else
+#import <XZKit/XZLogSystem.h>
+#endif
 
 NS_ASSUME_NONNULL_BEGIN
 

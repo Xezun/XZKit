@@ -7,6 +7,9 @@
 //
 
 import UIKit
+#if SWIFT_PACKAGE
+import XZKitObjC
+#endif
 
 @MainActor public protocol XZNavigationAnimationControllerDelegate: AnyObject {
     

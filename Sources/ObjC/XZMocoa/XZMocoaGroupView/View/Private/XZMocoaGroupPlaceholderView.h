@@ -6,8 +6,13 @@
 //
 
 #import <UIKit/UIKit.h>
+#if __has_include("XZKit.h")
 #import "XZMocoaView.h"
 #import "XZMocoaGroupPlaceholderViewModel.h"
+#else
+#import <XZKit/XZMocoaView.h>
+#import <XZKit/XZMocoaGroupPlaceholderViewModel.h>
+#endif
 
 NS_ASSUME_NONNULL_BEGIN
 

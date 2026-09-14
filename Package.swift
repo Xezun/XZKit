@@ -62,7 +62,7 @@ let package = Package(
         .executableTarget(
             name: "Demo",
             dependencies: ["XZKit"],
-            path: "Projects/Demo"
+            path: "Sources/Demo"
         )
     ]
 )

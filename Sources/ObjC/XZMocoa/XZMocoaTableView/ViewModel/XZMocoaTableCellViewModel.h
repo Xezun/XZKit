@@ -5,7 +5,11 @@
 //  Created by Xezun on 2023/7/22.
 //
 
+#if __has_include("XZKit.h")
 #import "XZMocoaGroupReusableViewModel.h"
+#else
+#import <XZKit/XZMocoaGroupReusableViewModel.h>
+#endif
 
 @protocol XZMocoaTableView, XZMocoaTableCell, UITableViewDelegate;
 

@@ -6,6 +6,10 @@
 //
 
 import Foundation
+#if SWIFT_PACKAGE
+import XZKitObjC
 
 @freestanding(expression)
 public macro XZLog(system: XZLogSystem = .default, _ format: StaticString, _ arguments: (any CVarArg)?...) = #externalMacro(module: "XZKitMacros", type: "XZLogMacro")
+
+#endif

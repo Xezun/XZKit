@@ -6,7 +6,11 @@
 //  Copyright © 2019 Xezun. All rights reserved.
 //
 
+#if __has_include("XZKit.h")
 #import "XZRefreshView.h"
+#else
+#import <XZKit/XZRefreshView.h>
+#endif
 
 NS_ASSUME_NONNULL_BEGIN
 

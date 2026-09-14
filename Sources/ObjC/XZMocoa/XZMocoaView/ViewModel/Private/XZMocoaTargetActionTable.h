@@ -6,7 +6,11 @@
 //
 
 #import <Foundation/Foundation.h>
+#if __has_include("XZKit.h")
 #import "XZMocoaTargetAction.h"
+#else
+#import <XZKit/XZMocoaTargetAction.h>
+#endif
 
 NS_ASSUME_NONNULL_BEGIN
 

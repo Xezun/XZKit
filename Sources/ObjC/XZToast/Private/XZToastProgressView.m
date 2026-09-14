@@ -55,6 +55,10 @@
         _shapeView.layer.autoreverses   = YES;
         _shapeView.layer.path           = path.CGPath;
         [self addSubview:_shapeView];
+        
+        if (@available(iOS 17.0, *)) {
+            [self registerForTraitChanges:@[UITraitUserInterfaceStyle.class] withAction:@selector(userInterfaceStyleDidChange)];
+        }
     }
     return self;
 }
@@ -63,12 +67,14 @@
     return CGSizeMake(50.0, 50.0);
 }
 
+- (void)userInterfaceStyleDidChange {
+    _trackView.strokeColor = _trackColor.CGColor;
+    _shapeView.strokeColor = _color.CGColor;
+}
+
 - (void)traitCollectionDidChange:(UITraitCollection *)previousTraitCollection {
     [super traitCollectionDidChange:previousTraitCollection];
-    
-    UITraitCollection * const traitCollection = self.traitCollection;
-    _trackView.strokeColor = [_trackColor resolvedColorWithTraitCollection:traitCollection].CGColor;
-    _shapeView.strokeColor = [_color resolvedColorWithTraitCollection:traitCollection].CGColor;
+    [self userInterfaceStyleDidChange];
 }
 
 - (CGFloat)progress {

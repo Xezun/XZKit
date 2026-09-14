@@ -6,9 +6,15 @@
 //
 
 #import <UIKit/UIKit.h>
+#if __has_include("XZKit.h")
 #import "XZMocoaGroupReusableView.h"
 #import "XZMocoaCollectionCellViewModel.h"
 #import "XZMocoaCollectionSupplementViewModel.h"
+#else
+#import <XZKit/XZMocoaGroupReusableView.h>
+#import <XZKit/XZMocoaCollectionCellViewModel.h>
+#import <XZKit/XZMocoaCollectionSupplementViewModel.h>
+#endif
 
 NS_ASSUME_NONNULL_BEGIN
 

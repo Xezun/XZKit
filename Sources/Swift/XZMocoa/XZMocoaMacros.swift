@@ -6,6 +6,8 @@
 //
 
 import Foundation
+#if SWIFT_PACKAGE
+import XZKitObjC
 
 /// 被宏 `@mocoa` 修饰的对象，在 Mocoa 中的角色。
 public enum XZMocoaRole {
@@ -411,3 +413,5 @@ public macro bind(icon key: XZMocoaKey) = #externalMacro(module: "XZKitMacros", 
 /// 建立从 ViewModel.{key} 到 View.viewModel 的单向绑定关系。
 @attached(accessor, names: named(didSet))
 public macro bind(viewModel key: XZMocoaKey) = #externalMacro(module: "XZKitMacros", type: "ViewBindMacro")
+
+#endif

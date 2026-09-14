@@ -6,8 +6,13 @@
 //  Copyright © 2021 Xezun. All rights reserved.
 //
 
+#if __has_include("XZKit.h")
 #import "XZMocoaGroupView.h"
 #import "XZMocoaTableViewModel.h"
+#else
+#import <XZKit/XZMocoaGroupView.h>
+#import <XZKit/XZMocoaTableViewModel.h>
+#endif
 
 NS_ASSUME_NONNULL_BEGIN
 

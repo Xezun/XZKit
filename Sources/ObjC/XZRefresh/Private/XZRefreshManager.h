@@ -6,7 +6,11 @@
 //
 
 #import <Foundation/Foundation.h>
+#if __has_include("XZKit.h")
 #import "XZRefreshView.h"
+#else
+#import <XZKit/XZRefreshView.h>
+#endif
 
 NS_ASSUME_NONNULL_BEGIN
 

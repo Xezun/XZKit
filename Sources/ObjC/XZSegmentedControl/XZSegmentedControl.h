@@ -7,9 +7,15 @@
 //
 
 #import <UIKit/UIKit.h>
+#if __has_include("XZKit.h")
 #import "XZSegmentDefines.h"
 #import "XZSegmentItemView.h"
 #import "XZSegmentIndicatorView.h"
+#else
+#import <XZKit/XZSegmentDefines.h>
+#import <XZKit/XZSegmentItemView.h>
+#import <XZKit/XZSegmentIndicatorView.h>
+#endif
 
 NS_ASSUME_NONNULL_BEGIN
 

@@ -6,9 +6,15 @@
 //  Copyright © 2021 Xezun. All rights reserved.
 //
 
+#if __has_include("XZKit.h")
 #import "XZMocoaDefines.h"
 #import "XZMocoaDomain.h"
 #import "XZMacros.h"
+#else
+#import <XZKit/XZMocoaDefines.h>
+#import <XZKit/XZMocoaDomain.h>
+#import <XZKit/XZMacros.h>
+#endif
 
 NS_ASSUME_NONNULL_BEGIN
 

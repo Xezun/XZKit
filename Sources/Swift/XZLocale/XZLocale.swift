@@ -6,7 +6,8 @@
 //
 
 import Foundation
-
+#if SWIFT_PACKAGE
+import XZKitObjC
 extension XZLocale.Language: @retroactive CustomStringConvertible {
     
     public var description: String {
@@ -14,6 +15,17 @@ extension XZLocale.Language: @retroactive CustomStringConvertible {
     }
     
 }
+#else
+extension XZLocale.Language: CustomStringConvertible {
+    
+    public var description: String {
+        return rawValue
+    }
+    
+}
+#endif
+
+
 
 /// 通过键查找本地化字符串。
 public func XZLocalizedString(_ key: String, table: String? = nil, bundle: Bundle = .main, defaultValue: String = "", comment: String) -> String {

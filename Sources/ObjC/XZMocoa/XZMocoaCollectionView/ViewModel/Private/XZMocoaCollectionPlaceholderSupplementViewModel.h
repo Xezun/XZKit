@@ -5,7 +5,11 @@
 //  Created by Xezun on 2023/8/28.
 //
 
+#if __has_include("XZKit.h")
 #import "XZMocoaCollectionSupplementViewModel.h"
+#else
+#import <XZKit/XZMocoaCollectionSupplementViewModel.h>
+#endif
 
 NS_ASSUME_NONNULL_BEGIN
 #if DEBUG
