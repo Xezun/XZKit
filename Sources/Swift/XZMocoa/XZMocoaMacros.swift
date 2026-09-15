@@ -133,6 +133,7 @@ public macro Key(readonly: Bool) = #externalMacro(module: "XZKitMacros", type: "
 /// 为 ViewModel 与 Model 之间，或 View 与 ViewModel 之间建立单向绑定。
 ///
 /// > 必须与 `@mocoa` 配合使用。
+/// > 为了让语义更明确，视图绑定优先使用带参数标签的宏，比如`@bind(text:)`、`@bind(textColor:)`等。
 ///
 /// #### 一、用于 ViewModel 角色
 ///

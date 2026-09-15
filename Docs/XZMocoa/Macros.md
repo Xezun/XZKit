@@ -21,6 +21,7 @@ XZMocoa 共提供 4 个宏（含多种重载形式），分别对应 MVVM 的不
 | `@mocoa` | `@mocoa` / `@mocoa(.m/.v/.vm)` | 将 class 标记为 MVVM 角色，织入 `@objc`、绑定注册、数据监听映射 | 类声明 |
 | `@key` | `@key` / `@key(.name)` / `@key("name")` | 将属性改造为可发送 KTA 事件的计算属性 | Model、ViewModel |
 | `@bind` | `@bind` / `@bind(.key)` / `@bind(text: .key)` … | 建立单向绑定（监听 Model 属性 / 监听 ViewModel 事件） | View、ViewModel |
+| `@link` | `@link` / `@link(.key)` / `@link(text: .key)` … | 建立单次绑定（监听 ViewModel 事件） | View |
 | `#module` | `#module("url")` / `#module(url)` | 通过模块 URL 获取 `XZMocoaModule` 对象 | 表达式 |
 
 ### 源码文件构成
@@ -374,9 +375,9 @@ class UserView: UIView, XZMocoaView {
 在 `__xz_bind_prepare()` 中展开为：
 
 ```swift
-viewModel.addTarget(nameLabel, action: #selector(setter: UILabel.text), forKey: "name", value: nil)
-viewModel.addTarget(nameLabel, action: #selector(setter: UILabel.textColor), forKey: "color", value: nil)
-viewModel.addTarget(tableView, action: #selector(UITableView.reloadData), forKey: "reload", value: nil)
+viewModel.bindTarget(nameLabel, action: #selector(setter: UILabel.text), forKey: "name")
+viewModel.bindTarget(nameLabel, action: #selector(setter: UILabel.textColor), forKey: "color")
+viewModel.bindTarget(tableView, action: #selector(UITableView.reloadData), forKey: "reload")
 ```
 
 - **可选属性**（`?`）的绑定语句会被包裹在 `if let … { }` 中，避免空值绑定。
@@ -398,7 +399,7 @@ class UserView: UIView, XZMocoaView {
 展开为：
 
 ```swift
-viewModel.addTarget(self, action: #selector(Self.setIconWithURL(_:)), forKey: "imageURL", value: nil)
+viewModel.bindTarget(self, action: #selector(Self.setIconWithURL(_:)), forKey: "imageURL")
 ```
 
 ### 5.4 视图属性自动推断
@@ -461,7 +462,7 @@ var nameLabel: UILabel? {
     didSet {
         guard let viewModel = self.viewModel else { return }
         if let nameLabel = self.nameLabel {
-            viewModel.addTarget(nameLabel, action: #selector(setter: UILabel.text), forKey: "name", value: nil)
+            viewModel.bindTarget(nameLabel, action: #selector(setter: UILabel.text), forKey: "name")
         }
     }
 }
@@ -627,8 +628,8 @@ override class var mappingObserverMethodsForModelKeys: [String : Any]? {
 override func __xz_bind_prepare() {
     super.__xz_bind_prepare()
     guard let viewModel = self.viewModel else { return }
-    viewModel.addTarget(nameLabel, action: #selector(setter: UILabel.text), forKey: "name", value: nil)
-    viewModel.addTarget(nameLabel, action: #selector(setter: UILabel.textColor), forKey: "textColor", value: nil)
+    viewModel.bindTarget(nameLabel, action: #selector(setter: UILabel.text), forKey: "name")
+    viewModel.bindTarget(nameLabel, action: #selector(setter: UILabel.textColor), forKey: "textColor")
 }
 ```
 
