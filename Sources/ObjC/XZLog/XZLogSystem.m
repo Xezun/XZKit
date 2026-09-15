@@ -17,7 +17,7 @@
     static dispatch_once_t onceToken;
     dispatch_once(&onceToken, ^{
         NSBundle * const mainBundle = NSBundle.mainBundle;
-        NSString * const identifier = asNonEmpty(mainBundle.bundleIdentifier, @"com.xezun.xzkit");
+        NSString * const identifier = asNonEmpty(mainBundle.bundleIdentifier, @"com.xezun.XZKit.App");
         NSString * const name       = asNonEmpty(mainBundle.infoDictionary[@"CFBundleExecutable"], @"App");
         _system = [[XZLogSystem alloc] initWithName:name domain:identifier];
         _system->_oslog = OS_LOG_DEFAULT;
