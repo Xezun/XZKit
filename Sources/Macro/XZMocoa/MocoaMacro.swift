@@ -146,7 +146,7 @@ extension MocoaMacro: MemberAttributeMacro {
 }
 
 /// 宏 `@mocoa(role)` 的实现：
-/// .vm => 为 @bind 的成员注册 `mappingMethodsForObservingModelKeys` 自动监听
+/// .vm => 为 @bind 的成员注册 `mappingObserverMethodsForModelKeys` 自动监听
 /// .v  => 为 @bind 成员生成 `__xz_bind_prepare` 自动绑定
 /// .m  => 暂不执行任何操作
 extension MocoaMacro: MemberMacro {
@@ -253,14 +253,14 @@ extension MocoaMacro: MemberMacro {
             return [DeclSyntax(methodSyntax)]
             
         case .vm:
-            // 判断是否自定义 mappingMethodsForObservingModelKeys 属性
+            // 判断是否自定义 mappingObserverMethodsForModelKeys 属性
             for member in classDecl.memberBlock.members {
                 if let member = member.decl.as(VariableDeclSyntax.self) {
                     if let propertyName = member.bindings.first?.pattern.as(IdentifierPatternSyntax.self)?.identifier.text {
-                        if propertyName == "mappingMethodsForObservingModelKeys" {
+                        if propertyName == "mappingObserverMethodsForModelKeys" {
                             for modifier in member.modifiers {
                                 if modifier.name.tokenKind == .keyword(.class) {
-                                    XZMacroDiagnose(context, node: member, message: "@mocoa: 检测到已自定义 mappingMethodsForObservingModelKeys 属性，自动监听将不生效", severity: .warning)
+                                    XZMacroDiagnose(context, node: member, message: "@mocoa: 检测到已自定义 mappingObserverMethodsForModelKeys 属性，自动监听将不生效", severity: .warning)
                                     return []
                                 }
                             }
@@ -395,7 +395,7 @@ extension MocoaMacro: MemberMacro {
             
             let variableSyntax = try VariableDeclSyntax(
                 """
-                    override class var mappingMethodsForObservingModelKeys: [String : Any]? {
+                    override class var mappingObserverMethodsForModelKeys: [String : Any]? {
                         return [ 
                             \(raw: mappingKeyValues)
                         ]

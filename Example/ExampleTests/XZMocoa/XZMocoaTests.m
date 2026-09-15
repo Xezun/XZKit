@@ -398,7 +398,7 @@ static void barFunction(void) { }
 
 @implementation XZMocoaTestsViewModel
 
-+ (NSDictionary<NSString *,id> *)mappingMethodsForObservingModelKeys {
++ (NSDictionary<NSString *,id> *)mappingObserverMethodsForModelKeys {
     return @{
         NSStringFromSelector(@selector(setName:)): @"name",
         NSStringFromSelector(@selector(setAge:)): @"age",

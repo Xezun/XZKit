@@ -5,8 +5,13 @@
 //  Created by Xezun on 2023/7/23.
 //
 
+// 使用绑定机制，解藕 M-V-VM 之间的接口依赖。
+#define UsesMocoaBind YES
+
 #import "Example0310ContactViewModel.h"
+#ifndef UsesMocoaBind
 #import "Example0310Contact.h"
+#endif
 
 @implementation Example0310ContactViewModel
 
@@ -14,24 +19,36 @@
     XZMocoa(@"https://mocoa.xezun.com/examples/03/10/contactView").viewModelClass = self;
 }
 
-+ (NSDictionary<NSString *,id> *)mappingMethodsForObservingModelKeys {
+#ifdef UsesMocoaBind
++ (NSDictionary<NSString *,id> *)mappingObserverMethodsForModelKeys {
     return @{
         NSStringFromSelector(@selector(setAddress:)): @"address",
-        NSStringFromSelector(@selector(setNameWithFirstName:lastName:)): @[@"firstName", @"lastName"],
-        NSStringFromSelector(@selector(setPhotoWithURLString:)): @"photo",
-        NSStringFromSelector(@selector(setPhoneWithPhoneNumber:)): @"phone",
+        NSStringFromSelector(@selector(setupNameWithFirstName:lastName:)): @[@"firstName", @"lastName"],
+        NSStringFromSelector(@selector(setupPhotoWithURLString:)): @"photo",
+        NSStringFromSelector(@selector(setupPhoneWithPhoneNumber:)): @"phone",
     };
 }
+#else
+- (void)prepare {
+    [super prepare];
+    
+    Example0310Contact *model = self.model;
+    [self setAddress:model.address];
+    [self setupNameWithFirstName:model.firstName lastName:model.lastName];
+    [self setupPhotoWithURLString:model.photo];
+    [self setupPhoneWithPhoneNumber:model.phone];
+}
+#endif
 
-- (void)setNameWithFirstName:(NSString *)firstName lastName:(NSString *)lastName {
+- (void)setupNameWithFirstName:(NSString *)firstName lastName:(NSString *)lastName {
     self.name = [NSString stringWithFormat:@"%@ %@", firstName, lastName];
 }
 
-- (void)setPhotoWithURLString:(NSString *)photo {
+- (void)setupPhotoWithURLString:(NSString *)photo {
     self.photo = [NSURL URLWithString:photo];
 }
 
-- (void)setPhoneWithPhoneNumber:(NSString *)phone {
+- (void)setupPhoneWithPhoneNumber:(NSString *)phone {
     if (phone.length <= 3) {
         self.phone = phone;
         return;

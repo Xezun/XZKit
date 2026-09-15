@@ -9,7 +9,9 @@
 #import "XZMocoaViewModel.h"
 #import "XZMocoaGroupViewModel.h"
 #import "XZMocoaTableViewModel.h"
+#import "XZMocoaTableCellViewModel.h"
 #import "XZMocoaCollectionViewModel.h"
+#import "XZMocoaCollectionCellViewModel.h"
 @import ObjectiveC;
 #import "XZRuntime.h"
 #import "XZObjc.h"
@@ -24,16 +26,16 @@ static inline void XZMocoaMappingKeyToMethod(NSMutableDictionary * const keyToMe
 }
 
 static inline void XZMocoaMappingModelKeys(Class const VMClass, NSMutableDictionary * const methodToKeys, NSMutableDictionary * const keyToMethods, NSMutableDictionary * const namedMethods) {
-    Method const method = xz_objc_class_getMethod(object_getClass(VMClass), @selector(mappingMethodsForObservingModelKeys));
+    Method const method = xz_objc_class_getMethod(object_getClass(VMClass), @selector(mappingObserverMethodsForModelKeys));
     if (method == nil) {
         return;
     }
-    NSDictionary<NSString *, id> * const mappingMethodsForObservingModelKeys = [VMClass mappingMethodsForObservingModelKeys];
-    if (mappingMethodsForObservingModelKeys.count == 0) {
+    NSDictionary<NSString *, id> * const kViewModelObservationDict = [VMClass mappingObserverMethodsForModelKeys];
+    if (kViewModelObservationDict.count == 0) {
         return;
     }
     
-    [mappingMethodsForObservingModelKeys enumerateKeysAndObjectsUsingBlock:^(NSString * const methodName, id keyOrKeys, BOOL * _Nonnull stop) {
+    [kViewModelObservationDict enumerateKeysAndObjectsUsingBlock:^(NSString * const methodName, id keyOrKeys, BOOL * _Nonnull stop) {
         SEL const selector = NSSelectorFromString(methodName);
         if (selector == NULL) {
             return;
@@ -80,7 +82,9 @@ static inline void XZMocoaMappingModelKeys(Class const VMClass, NSMutableDiction
         || VMClass == [XZMocoaViewModel class]
         || VMClass == [XZMocoaGroupViewModel class]
         || VMClass == [XZMocoaTableViewModel class]
+        || VMClass == [XZMocoaTableCellViewModel class]
         || VMClass == [XZMocoaCollectionViewModel class]
+        || VMClass == [XZMocoaCollectionCellViewModel class]
         ) {
         return nil;
     }

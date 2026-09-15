@@ -5,8 +5,12 @@
 //  Created by Xezun on 2023/7/23.
 //
 
+#define UsesMocoaBind YES
+
 #import "Example0310ContactView.h"
+#ifndef UsesMocoaBind
 #import "Example0310ContactViewModel.h"
+#endif
 @import SDWebImage;
 
 @implementation Example0310ContactView
@@ -34,14 +38,25 @@
 - (void)prepareForViewModel {
     [super prepareForViewModel];
     
+#ifdef UsesMocoaBind
+    XZMocoaViewModel *viewModel = self.viewModel;
+    if (viewModel == nil) {
+        return;
+    }
+    [viewModel linkTarget:self.nameLabel action:@selector(setText:) forKey:@"name"];
+    [viewModel linkTarget:self.photoImageView action:@selector(sd_setImageWithURL:) forKey:@"photo"];
+    [viewModel linkTarget:self.phoneLabel action:@selector(setText:) forKey:@"phone"];
+    [viewModel linkTarget:self.addressLabel action:@selector(setText:) forKey:@"address"];
+#else
     Example0310ContactViewModel *viewModel = self.viewModel;
-    
+    if (viewModel == nil) {
+        return;
+    }
     self.nameLabel.text = viewModel.name;
     [self.photoImageView sd_setImageWithURL:viewModel.photo];
     self.phoneLabel.text = viewModel.phone;
     self.addressLabel.text = viewModel.address;
-    
-    [self invalidateIntrinsicContentSize];
+#endif
 }
 
 @end

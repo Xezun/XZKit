@@ -1,6 +1,6 @@
 # XZKit
 
-XZKit 是一套面向 iOS 的模块化开发工具库，涵盖 MVVM 框架、UI 组件、数据处理、安全加密与基础扩展等能力。各组件相互独立、可按需引入，帮助开发者快速构建高质量应用。
+XZKit 是一套面向 iOS 的模块化开发工具库，涵盖 MVVM 框架、UI 组件、数据处理、安全加密等iOS开发常用功能，帮力开发者快速构建高质量应用。
 
 ![Version](https://img.shields.io/badge/Version-4.0.0-blue.svg)
 ![SPM](https://img.shields.io/badge/SPM-compatible-brightgreen.svg)
@@ -9,7 +9,7 @@ XZKit 是一套面向 iOS 的模块化开发工具库，涵盖 MVVM 框架、UI 
 
 ## 环境需求 Requirements
 
-iOS 15.0, Swift 5.9, Xcode 16.0.
+iOS 15.0, Swift 5.9, Xcode 26.0
 
 ## 安装集成 Installation
 
@@ -21,13 +21,17 @@ iOS 15.0, Swift 5.9, Xcode 16.0.
 https://github.com/Xezun/XZKit.git
 ```
 
-- 使用 [CocoaPods](http://cocoapods.org) 集成
-
-```ruby
-pod "XZKit"
-```
-
 执行命令的过程中，会编译 Swift 宏插件，需要的时间可能比较长，请保持网络通畅。
+
+## 项目结构
+
+- `/`：SPM 根目录、仓库根目录
+  - `Sources`： SPM源代码根目录
+  - `Tests`：SPM单元测试代码根目录
+  - `XZKit`：构建 `XZKit.framework`工程
+  - `Example`：iOS演示、测试工程
+  - `Scripts`：脚本
+  - `Docs`：文档
 
 ## 组件 Components
 

@@ -260,7 +260,7 @@ NS_SWIFT_UI_ACTOR @interface XZMocoaViewModel : NSObject <XZMocoaViewModel> {
 /// @li 参数 action 方法形式如下：
 ///
 /// @code
-/// - (void)action;
+/// - (void)keyAction;
 /// - (void)keyDidChangeValue:(nullable id)value;
 /// - (void)key:(XZMocoaKey)key didChangeValue:(nullable id)value;
 /// - (void)viewModel:(XZMocoaViewModel *)sender key:(XZMocoaKey)key didChangeValue:(nullable id)value;
@@ -270,11 +270,11 @@ NS_SWIFT_UI_ACTOR @interface XZMocoaViewModel : NSObject <XZMocoaViewModel> {
 ///
 /// @code
 /// // 绑定 startAnimating 事件
-/// [viewModel addTarget:indicator action:@selector(startAnimating) forKey:XZMocoaKeyStartAnimating value:nil];
-/// // 绑定 text 属性，并赋初始值 initialValue
-/// [viewModel addTarget:label action:@selector(setText:) forKey:XZMocoaKeyText value:@"initialValue"];
-/// // 绑定 image 属性，不赋初始值
-/// [viewModel addTarget:imageView action:@selector(setImage:) forKey:XZMocoaKeyImage];
+/// [viewModel addTarget:indicator action:@selector(startAnimating) forKey:XZMocoaKeyStartAnimating];
+/// // 绑定 text 属性
+/// [viewModel bindTarget:label action:@selector(setText:) forKey:XZMocoaKeyText];
+/// // 赋值 text 属性，不绑定
+/// [viewModel linkTarget:label action:@selector(setText:) forKey:XZMocoaKeyText];
 /// @endcode
 ///
 /// @param target 绑定事件的对象
@@ -302,9 +302,9 @@ NS_SWIFT_UI_ACTOR @interface XZMocoaViewModel : NSObject <XZMocoaViewModel> {
 /// @param key 绑定的事件
 - (void)removeTarget:(nullable id)target action:(nullable SEL)action forKey:(nullable XZMocoaKey)key;
 
-/// 单向绑定：将 key 绑定到 target 的 action 方法，并立即触发一次绑定方法。
+/// 单向绑定：将 key 绑定到 target 的 action 方法，并立即触发一次 action 方法。
 ///
-/// 调用此方法将对当前视图模型调用`-valueForKey:`方法取值，并使用该值作为参数，触发一次 action 方法。
+/// 对视图模型调用`-valueForKey:`方法取值，并将值作为 action 方法的 value 参数。
 ///
 /// @seealso 更多信息，请参考 `-addTarget:action:forKey:` 方法说明。
 ///
@@ -367,7 +367,7 @@ NS_SWIFT_UI_ACTOR @interface XZMocoaViewModel : NSObject <XZMocoaViewModel> {
 /// ```
 ///
 /// - SeeAlso: 键值观察是被动的，开启主动观察，请参考``shouldObserveModelKeysActively`` 属性。
-@property (class, nullable, readonly) NSDictionary<NSString *, id> *mappingMethodsForObservingModelKeys;
+@property (class, nullable, readonly) NSDictionary<NSString *, id> *mappingObserverMethodsForModelKeys;
 
 /// 是否主动观察数据模型。默认 NO 否。
 ///
@@ -383,7 +383,7 @@ NS_SWIFT_UI_ACTOR @interface XZMocoaViewModel : NSObject <XZMocoaViewModel> {
 ///
 /// 若要开启主动键值观察，重写此属性，并返回`YES`即可。
 ///
-/// 使用 `NSKeyValueObserving` 机制对 ``mappingMethodsForObservingModelKeys`` 中的键进行观察，
+/// 使用 `NSKeyValueObserving` 机制对 ``mappingObserverMethodsForModelKeys`` 中的键进行观察，
 /// 且单个 Runloop 内的键值事件，会合并统一处理，即在一个 Runloop 内，同一个 key 即使发生多次改变，绑定的方法只会执行一次。
 ///
 /// 在 Swift 中，使用 `@mocoa` 和 `@bind` 标记的绑定的键值事件，也属于此被动观察机制。
@@ -391,7 +391,7 @@ NS_SWIFT_UI_ACTOR @interface XZMocoaViewModel : NSObject <XZMocoaViewModel> {
 
 /// 视图模型接收数据更新的通用方法。
 ///
-/// 此方法默认会根据 `key` 调用那些通过 ``mappingMethodsForObservingModelKeys`` 注册的数据监听方法。
+/// 此方法默认会根据 `key` 调用那些通过 ``mappingObserverMethodsForModelKeys`` 注册的数据监听方法。
 ///
 /// > 当视图模型更新了 其他视图模型 的 数据模型 后，也可通过此方法通知目标视图模型。
 ///

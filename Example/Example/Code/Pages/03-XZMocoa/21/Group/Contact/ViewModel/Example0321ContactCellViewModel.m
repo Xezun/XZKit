@@ -27,7 +27,7 @@
 }
 
 // 注册监听 model 属性的方法。
-+ (NSDictionary<NSString *,id> *)mappingMethodsForObservingModelKeys {
++ (NSDictionary<NSString *,id> *)mappingObserverMethodsForModelKeys {
     return @{
         NSStringFromSelector(@selector(nameDidChangeWithFirstName:lastName:)): @[@"firstName", @"lastName"],
         NSStringFromSelector(@selector(phoneDidChangeWithValue:)): @"phone"
