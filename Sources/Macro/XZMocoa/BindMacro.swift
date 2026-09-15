@@ -154,8 +154,9 @@ public struct BindMacro {
         let propertyType = try Self.typeInfo(from: declaration)
         
         let statements = try macroNodes.map({ macroNode throws -> String in
+            let type = macroNode.attributeName.trimmedDescription
             let arguments = try Self.viewBindArguments(forMacro: macroNode, forVariable: (propertyName, propertyType.typeName))
-            return "viewModel.addTarget(\(propertyName), action: \(arguments.selector), forKey: \"\(arguments.key)\", value: nil)"
+            return "viewModel.\(type)Target(\(propertyName), action: \(arguments.selector), forKey: \"\(arguments.key)\")"
         })//
         
         if propertyType.wrappedType != .unwrapped {
@@ -203,7 +204,8 @@ public struct BindMacro {
         guard arguments.keys.count == 1 else {
             throw XZMacroError(message: "@bind: View 支持绑定一个 key")
         }
-        return "viewModel.addTarget(self, action: \(arguments.selector), forKey: \(arguments.keys[0]), value: nil)"
+        let type = macroNode.attributeName.trimmedDescription
+        return "viewModel.\(type)Target(self, action: \(arguments.selector), forKey: \(arguments.keys[0]))"
     }
     
     public static func isValid(forMacro node: SwiftSyntax.AttributeSyntax, forFunction declaration: FunctionDeclSyntax, for role: MocoaRole) throws {
@@ -359,8 +361,17 @@ public struct BindMacro {
 extension BindMacro: PeerMacro {
     
     public static func expansion(of node: SwiftSyntax.AttributeSyntax, providingPeersOf declaration: some SwiftSyntax.DeclSyntaxProtocol, in context: some SwiftSyntaxMacros.MacroExpansionContext) throws -> [SwiftSyntax.DeclSyntax] {
-        // 无法通过 node 或 method 的 declaration 属性找到上级，无法确定 role 所以无法验证
-        return []
+        switch try MocoaRole.init(node: node, context: context) {
+        case .m:
+            throw XZMacroError(message: "@\(node.attributeName.trimmedDescription): 不支持 Model 角色")
+        case .v:
+            return []
+        case .vm:
+            if node.attributeName.trimmedDescription == "link" {
+                throw XZMacroError(message: "@link: 仅支持 View 角色")
+            }
+            return []
+        }
     }
     
 }
@@ -369,7 +380,6 @@ extension BindMacro: PeerMacro {
 public struct ViewBindMacro {
     
 }
-
 
 extension ViewBindMacro: AccessorMacro {
     
@@ -411,10 +421,14 @@ extension ViewBindMacro: AccessorMacro {
         let statements = try BindMacro.viewBindStatements(forMacros: declaration.attributes.compactMap({ attribute in
             switch attribute {
             case .attribute(let macroNode):
-                if macroNode.attributeName.trimmedDescription == "bind" {
+                switch macroNode.attributeName.trimmedDescription {
+                case "bind":
+                    fallthrough
+                case "link":
                     return macroNode
+                default:
+                    return nil
                 }
-                return nil
             case .ifConfigDecl:
                 return nil
             }

@@ -17,8 +17,8 @@
 - (void)prepareForViewModel {
     [super prepareForViewModel];
     
-    [self.viewModel addTarget:self.textLabel action:@selector(setText:) forKey:@"name" value:nil];
-    [self.viewModel addTarget:self.detailTextLabel action:@selector(setText:) forKey:@"phone" value:nil];
+    [self.viewModel bindTarget:self.textLabel action:@selector(setText:) forKey:@"name"];
+    [self.viewModel bindTarget:self.detailTextLabel action:@selector(setText:) forKey:@"phone"];
 }
 
 @end

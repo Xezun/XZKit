@@ -281,25 +281,10 @@
         NSLog(@"为 target=%@ action=%@ 添加事件失败，参数不能为 nil", target, NSStringFromSelector(action));
         return;
     }
-    
     if (_targetActions == nil) {
         _targetActions = [[XZMocoaTargetActionTable alloc] initWithViewModel:self];
     }
     [_targetActions addTarget:target action:action forKey:(key ?: XZMocoaKeyNone)];
-}
-
-- (void)removeTarget:(id)target action:(SEL)action forKey:(XZMocoaKey)key {
-    [_targetActions removeTarget:target action:action forKey:key];
-}
-
-- (void)sendActionsForKey:(XZMocoaKey)key {
-    if (!self.isReady) return;
-    [_targetActions sendActionsForKey:(key ?: XZMocoaKeyNone) value:nil];
-}
-
-- (void)addTarget:(id)target action:(SEL)action forKey:(XZMocoaKey)key value:(nullable id)initialValue {
-    [self addTarget:target action:action forKey:key];
-    [self sendActionsForKey:key value:initialValue];
 }
 
 - (void)sendActionsForKey:(XZMocoaKey)key value:(id)value {
@@ -312,9 +297,18 @@
     [_targetActions sendActionsForKey:(key ?: XZMocoaKeyNone) value:value];
 }
 
+- (void)sendActionsForKey:(XZMocoaKey)key {
+    if (!self.isReady) return;
+    [_targetActions sendActionsForKey:(key ?: XZMocoaKeyNone) value:nil];
+}
+
+- (void)removeTarget:(id)target action:(SEL)action forKey:(XZMocoaKey)key {
+    [_targetActions removeTarget:target action:action forKey:key];
+}
+
 - (void)linkTarget:(id)target action:(SEL)action forKey:(XZMocoaKey)key {
     id const value = [self valueForKey:key];
-    XZMocoaTargetAction *targetAction = [[XZMocoaTargetAction alloc] initWithTarget:target action:action];
+    XZMocoaTargetAction * const targetAction = [[XZMocoaTargetAction alloc] initWithTarget:target action:action];
     [targetAction sender:self sendActionForKey:key value:value];
 }
 

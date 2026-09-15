@@ -282,6 +282,18 @@ NS_SWIFT_UI_ACTOR @interface XZMocoaViewModel : NSObject <XZMocoaViewModel> {
 /// @param key 绑定的事件，可使用 nil 或 XZMocoaKeyNone 或空字符串添加默认事件
 - (void)addTarget:(id)target action:(SEL)action forKey:(nullable XZMocoaKey)key;
 
+/// 执行 key 事件绑定的所有方法，并传递参数 value 值。
+///
+/// 如果通过 KVC 不能取到 key 对应的值，应当将初始值通过 value 参数传入；如果值为 nil 请传入 kCFNull 对象。
+///
+/// @param key 绑定的事件，nil 表示发送默认事件
+/// @param value 事件值，标量值需用 NSValue 包装，值 nil 表示使用`-valueForKey:`获取视图模型当前值，值 NSNull 表示使用 nil 值
+- (void)sendActionsForKey:(nullable XZMocoaKey)key value:(nullable id)value;
+
+/// 执行 key 事件绑定的所有方法，参数为 nil 值。
+/// @param key 绑定的事件
+- (void)sendActionsForKey:(nullable XZMocoaKey)key;
+
 /// 将事件 key 从 target 上移除指定绑定方法。
 /// @discussion
 /// 移除所有匹配 target、action、key 的事件，值 nil 表示匹配所有，例如都为 nil 会移除所有事件。
@@ -290,41 +302,21 @@ NS_SWIFT_UI_ACTOR @interface XZMocoaViewModel : NSObject <XZMocoaViewModel> {
 /// @param key 绑定的事件
 - (void)removeTarget:(nullable id)target action:(nullable SEL)action forKey:(nullable XZMocoaKey)key;
 
-/// 执行 key 事件绑定的所有方法，参数为 nil 值。
-/// @param key 绑定的事件
-- (void)sendActionsForKey:(nullable XZMocoaKey)key;
-
-/// 将 key 绑定到 target 的 action 方法，并立即触发一次绑定方法。
+/// 单向绑定：将 key 绑定到 target 的 action 方法，并立即触发一次绑定方法。
 ///
-/// 调用此方法会使用 initialValue 作为参数，触发一次 action 方法，使用 nil 表示取当前值作为参数。
-///
-/// 如果参数值为 nil 请传入 `(id)kCFNull` 对象。
-///
-/// 事件参数值，是以 key 为键，通过的 KVC 从视图模型取到的值，一般情况下，指的是视图模型的属性值。
+/// 调用此方法将对当前视图模型调用`-valueForKey:`方法取值，并使用该值作为参数，触发一次 action 方法。
 ///
 /// @seealso 更多信息，请参考 `-addTarget:action:forKey:` 方法说明。
 ///
 /// @param target 绑定事件的对象
 /// @param action 绑定事件的方法
 /// @param key 绑定的事件
-/// @param initialValue 事件初始值，值 nil 表示使用`-valueForKey:`获取视图模型当前值，值 kCFNull 表示 nil 值
-- (void)addTarget:(id)target action:(SEL)action forKey:(nullable XZMocoaKey)key value:(nullable id)initialValue;
-
-/// 执行 key 事件绑定的所有方法，并传递参数 value 值。
-///
-/// 如果通过 KVC 不能取到 key 对应的值，应当将初始值通过 value 参数传入；如果值为 nil 请传入 kCFNull 对象。
-///
-/// @param key 绑定的事件，nil 表示发送默认事件
-/// @param value 事件值，标量值需用 NSValue 包装，值 nil 表示使用`-valueForKey:`获取视图模型当前值，值 NSNull 表示 nil 值
-- (void)sendActionsForKey:(nullable XZMocoaKey)key value:(nullable id)value;
-
-/// 单次绑定。
-- (void)linkTarget:(id)target action:(SEL)action forKey:(nullable XZMocoaKey)key;
-/// 单向绑定
 - (void)bindTarget:(id)target action:(SEL)action forKey:(nullable XZMocoaKey)key;
-@end
 
-#define linkText(view, key) [viewModel __link__target:view action:@selector(setText:) forKey:key]
+/// 单次绑定：仅在视图模型与视图关联时，进行一次 key 的值链接，不与 key 绑定。
+- (void)linkTarget:(id)target action:(SEL)action forKey:(nullable XZMocoaKey)key;
+
+@end
 
 @class UIControl;
 

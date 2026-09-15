@@ -210,6 +210,9 @@ public macro Key(readonly: Bool) = #externalMacro(module: "XZKitMacros", type: "
 @attached(peer, names: arbitrary)
 public macro bind(_ key: XZMocoaKey...) = #externalMacro(module: "XZKitMacros", type: "BindMacro")
 
+
+// MARK: - @BIND MACROS
+
 // 以下带参数标签的 bind 宏，只可以在 View 中修饰属性使用。
 
 /// 建立从 ViewModel.{key} 到 View.selector 的单向绑定关系。
@@ -413,5 +416,215 @@ public macro bind(icon key: XZMocoaKey) = #externalMacro(module: "XZKitMacros", 
 /// 建立从 ViewModel.{key} 到 View.viewModel 的单向绑定关系。
 @attached(accessor, names: named(didSet))
 public macro bind(viewModel key: XZMocoaKey) = #externalMacro(module: "XZKitMacros", type: "ViewBindMacro")
+
+// MARK: - @LINK MACROS
+
+@attached(peer, names: arbitrary)
+public macro link(_ key: XZMocoaKey) = #externalMacro(module: "XZKitMacros", type: "BindMacro")
+
+@attached(peer, names: arbitrary)
+public macro link() = #externalMacro(module: "XZKitMacros", type: "BindMacro")
+
+/// 建立从 ViewModel.{key} 到 View.selector 的单次值同步。
+///
+/// ```swift
+/// // 将 viewModel.reload 绑定到 tableView.reloadData 方法。
+/// @bind(.reload, selector: #selector(UITableView.reloadData))
+/// let tableView: UITableView = .init()
+/// ```
+@attached(accessor, names: named(didSet))
+public macro link(_ key: XZMocoaKey, selector: Selector) = #externalMacro(module: "XZKitMacros", type: "ViewBindMacro")
+
+// MARK: - UIView
+
+/// 建立从 ViewModel.{key} 到 View.isHidden 的单次值同步。
+@attached(accessor, names: named(didSet))
+public macro link(isHidden key: XZMocoaKey) = #externalMacro(module: "XZKitMacros", type: "ViewBindMacro")
+
+/// 建立从 ViewModel.{key} 到 View.alpha 的单次值同步。
+@attached(accessor, names: named(didSet))
+public macro link(alpha key: XZMocoaKey) = #externalMacro(module: "XZKitMacros", type: "ViewBindMacro")
+
+/// 建立从 ViewModel.{key} 到 View.frame 的单次值同步。
+@attached(accessor, names: named(didSet))
+public macro link(frame key: XZMocoaKey) = #externalMacro(module: "XZKitMacros", type: "ViewBindMacro")
+
+/// 建立从 ViewModel.{key} 到 View.bounds 的单次值同步。
+@attached(accessor, names: named(didSet))
+public macro link(bounds key: XZMocoaKey) = #externalMacro(module: "XZKitMacros", type: "ViewBindMacro")
+
+/// 建立从 ViewModel.{key} 到 View.transform 的单次值同步。
+@attached(accessor, names: named(didSet))
+public macro link(transform key: XZMocoaKey) = #externalMacro(module: "XZKitMacros", type: "ViewBindMacro")
+
+/// 建立从 ViewModel.{key} 到 View.tintColor 的单次值同步。
+@attached(accessor, names: named(didSet))
+public macro link(tintColor key: XZMocoaKey) = #externalMacro(module: "XZKitMacros", type: "ViewBindMacro")
+
+/// 建立从 ViewModel.{key} 到 View.backgroundColor 的单次值同步。
+@attached(accessor, names: named(didSet))
+public macro link(backgroundColor key: XZMocoaKey) = #externalMacro(module: "XZKitMacros", type: "ViewBindMacro")
+
+// MARK: - UIControl
+
+/// 建立从 ViewModel.{key} 到 View.isEnabled 的单次值同步。
+@attached(accessor, names: named(didSet))
+public macro link(isEnabled key: XZMocoaKey) = #externalMacro(module: "XZKitMacros", type: "ViewBindMacro")
+
+/// 建立从 ViewModel.{key} 到 View.isSelected 的单次值同步。
+@attached(accessor, names: named(didSet))
+public macro link(isSelected key: XZMocoaKey) = #externalMacro(module: "XZKitMacros", type: "ViewBindMacro")
+
+/// 建立从 ViewModel.{key} 到 View.isHighlighted 的单次值同步。
+@attached(accessor, names: named(didSet))
+public macro link(isHighlighted key: XZMocoaKey) = #externalMacro(module: "XZKitMacros", type: "ViewBindMacro")
+
+// MARK: - UILabel
+
+/// 建立从 ViewModel.{key} 到 View.text 的单次值同步。
+@attached(accessor, names: named(didSet))
+public macro link(text key: XZMocoaKey) = #externalMacro(module: "XZKitMacros", type: "ViewBindMacro")
+
+/// 建立从 ViewModel.{key} 到 View.attributedText 的单次值同步。
+@attached(accessor, names: named(didSet))
+public macro link(attributedText key: XZMocoaKey) = #externalMacro(module: "XZKitMacros", type: "ViewBindMacro")
+
+/// 建立从 ViewModel.{key} 到 View.font 的单次值同步。
+@attached(accessor, names: named(didSet))
+public macro link(font key: XZMocoaKey) = #externalMacro(module: "XZKitMacros", type: "ViewBindMacro")
+
+/// 建立从 ViewModel.{key} 到 View.textColor 的单次值同步。
+@attached(accessor, names: named(didSet))
+public macro link(textColor key: XZMocoaKey) = #externalMacro(module: "XZKitMacros", type: "ViewBindMacro")
+
+/// 建立从 ViewModel.{key} 到 View.textAlignment 的单次值同步。
+@attached(accessor, names: named(didSet))
+public macro link(textAlignment key: XZMocoaKey) = #externalMacro(module: "XZKitMacros", type: "ViewBindMacro")
+
+// MARK: - UIImageView
+
+/// 建立从 ViewModel.{key} 到 View.image 的单次值同步。
+@attached(accessor, names: named(didSet))
+public macro link(image key: XZMocoaKey) = #externalMacro(module: "XZKitMacros", type: "ViewBindMacro")
+
+/// 建立从 ViewModel.{key} 到 View.animationImages 的单次值同步。
+@attached(accessor, names: named(didSet))
+public macro link(animationImages key: XZMocoaKey) = #externalMacro(module: "XZKitMacros", type: "ViewBindMacro")
+
+// MARK: - UITextField
+
+/// 建立从 ViewModel.{key} 到 View.placeholder 的单次值同步。
+@attached(accessor, names: named(didSet))
+public macro link(placeholder key: XZMocoaKey) = #externalMacro(module: "XZKitMacros", type: "ViewBindMacro")
+
+/// 建立从 ViewModel.{key} 到 View.attributedPlaceholder 的单次值同步。
+@attached(accessor, names: named(didSet))
+public macro link(attributedPlaceholder key: XZMocoaKey) = #externalMacro(module: "XZKitMacros", type: "ViewBindMacro")
+
+// MARK: - UITextView
+
+/// 建立从 ViewModel.{key} 到 View.isEditable 的单次值同步。
+@attached(accessor, names: named(didSet))
+public macro link(isEditable key: XZMocoaKey) = #externalMacro(module: "XZKitMacros", type: "ViewBindMacro")
+
+/// 建立从 ViewModel.{key} 到 View.isSelectable 的单次值同步。
+@attached(accessor, names: named(didSet))
+public macro link(isSelectable key: XZMocoaKey) = #externalMacro(module: "XZKitMacros", type: "ViewBindMacro")
+
+// MARK: - UISlider
+
+/// 建立从 ViewModel.{key} 到 View.value 的单次值同步。
+@attached(accessor, names: named(didSet))
+public macro link(value key: XZMocoaKey) = #externalMacro(module: "XZKitMacros", type: "ViewBindMacro")
+
+// MARK: - UISwitch
+
+/// 建立从 ViewModel.{key} 到 View.isOn 的单次值同步。
+@attached(accessor, names: named(didSet))
+public macro link(isOn key: XZMocoaKey) = #externalMacro(module: "XZKitMacros", type: "ViewBindMacro")
+
+// MARK: - UIButton
+
+/// 建立从 ViewModel.{key} 到 View.title 的单次值同步。
+@attached(accessor, names: named(didSet))
+public macro link(title key: XZMocoaKey, for state: UIControl.State) = #externalMacro(module: "XZKitMacros", type: "ViewBindMacro")
+
+/// 建立从 ViewModel.{key} 到 View.attributedTitle 的单次值同步。
+@attached(accessor, names: named(didSet))
+public macro link(attributedTitle key: XZMocoaKey, for state: UIControl.State) = #externalMacro(module: "XZKitMacros", type: "ViewBindMacro")
+
+/// 建立从 ViewModel.{key} 到 View.titleColor 的单次值同步。
+@attached(accessor, names: named(didSet))
+public macro link(titleColor key: XZMocoaKey, for state: UIControl.State) = #externalMacro(module: "XZKitMacros", type: "ViewBindMacro")
+
+/// 建立从 ViewModel.{key} 到 View.titleShadowColor 的单次值同步。
+@attached(accessor, names: named(didSet))
+public macro link(titleShadowColor key: XZMocoaKey, for state: UIControl.State) = #externalMacro(module: "XZKitMacros", type: "ViewBindMacro")
+
+/// 建立从 ViewModel.{key} 到 View.image 的单次值同步。
+@attached(accessor, names: named(didSet))
+public macro link(image key: XZMocoaKey, for state: UIControl.State) = #externalMacro(module: "XZKitMacros", type: "ViewBindMacro")
+
+/// 建立从 ViewModel.{key} 到 View.backgroundImage 的单次值同步。
+@attached(accessor, names: named(didSet))
+public macro link(backgroundImage key: XZMocoaKey, for state: UIControl.State) = #externalMacro(module: "XZKitMacros", type: "ViewBindMacro")
+
+// MARK: - Other
+
+/// 建立从 ViewModel.{key} 到 View.color 的单次值同步。
+@attached(accessor, names: named(didSet))
+public macro link(color key: XZMocoaKey) = #externalMacro(module: "XZKitMacros", type: "ViewBindMacro")
+
+/// 建立从 ViewModel.{key} 到 View.name 的单次值同步。
+@attached(accessor, names: named(didSet))
+public macro link(name key: XZMocoaKey) = #externalMacro(module: "XZKitMacros", type: "ViewBindMacro")
+
+/// 建立从 ViewModel.{key} 到 View.barTintColor 的单次值同步。
+@attached(accessor, names: named(didSet))
+public macro link(barTintColor key: XZMocoaKey) = #externalMacro(module: "XZKitMacros", type: "ViewBindMacro")
+
+/// 建立从 ViewModel.{key} 到 View.backgroundImage 的单次值同步。
+@attached(accessor, names: named(didSet))
+public macro link(backgroundImage key: XZMocoaKey) = #externalMacro(module: "XZKitMacros", type: "ViewBindMacro")
+
+/// 建立从 ViewModel.{key} 到 View.isTranslucent 的单次值同步。
+@attached(accessor, names: named(didSet))
+public macro link(isTranslucent key: XZMocoaKey) = #externalMacro(module: "XZKitMacros", type: "ViewBindMacro")
+
+/// 建立从 ViewModel.{key} 到 View.style 的单次值同步。
+@attached(accessor, names: named(didSet))
+public macro link(style key: XZMocoaKey) = #externalMacro(module: "XZKitMacros", type: "ViewBindMacro")
+
+/// 建立从 ViewModel.{key} 到 View.state 的单次值同步。
+@attached(accessor, names: named(didSet))
+public macro link(state key: XZMocoaKey) = #externalMacro(module: "XZKitMacros", type: "ViewBindMacro")
+
+/// 建立从 ViewModel.{key} 到 View.status 的单次值同步。
+@attached(accessor, names: named(didSet))
+public macro link(status key: XZMocoaKey) = #externalMacro(module: "XZKitMacros", type: "ViewBindMacro")
+
+/// 建立从 ViewModel.{key} 到 View.title 的单次值同步。
+@attached(accessor, names: named(didSet))
+public macro link(title key: XZMocoaKey) = #externalMacro(module: "XZKitMacros", type: "ViewBindMacro")
+
+/// 建立从 ViewModel.{key} 到 View.attributedTitle 的单次值同步。
+@attached(accessor, names: named(didSet))
+public macro link(attributedTitle key: XZMocoaKey) = #externalMacro(module: "XZKitMacros", type: "ViewBindMacro")
+
+/// 建立从 ViewModel.{key} 到 View.subtitle 的单次值同步。
+@attached(accessor, names: named(didSet))
+public macro link(subtitle key: XZMocoaKey) = #externalMacro(module: "XZKitMacros", type: "ViewBindMacro")
+
+/// 建立从 ViewModel.{key} 到 View.detailText 的单次值同步。
+@attached(accessor, names: named(didSet))
+public macro link(detailText key: XZMocoaKey) = #externalMacro(module: "XZKitMacros", type: "ViewBindMacro")
+
+/// 建立从 ViewModel.{key} 到 View.icon 的单次值同步。
+@attached(accessor, names: named(didSet))
+public macro link(icon key: XZMocoaKey) = #externalMacro(module: "XZKitMacros", type: "ViewBindMacro")
+
+/// 建立从 ViewModel.{key} 到 View.viewModel 的单次值同步。
+@attached(accessor, names: named(didSet))
+public macro link(viewModel key: XZMocoaKey) = #externalMacro(module: "XZKitMacros", type: "ViewBindMacro")
 
 #endif

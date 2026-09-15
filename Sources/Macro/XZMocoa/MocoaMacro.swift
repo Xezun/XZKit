@@ -187,11 +187,14 @@ extension MocoaMacro: MemberMacro {
                         }
                         
                         // 只处理带 @bind 标记的属性。
-                        guard macroNode.attributeName.trimmedDescription == "bind" else {
+                        switch macroNode.attributeName.trimmedDescription {
+                        case "bind":
+                            return macroNode
+                        case "link":
+                            return macroNode
+                        default:
                             return nil
                         }
-                        
-                        return macroNode
                     });
                     
                     if macroNodes.isEmpty {
@@ -216,6 +219,8 @@ extension MocoaMacro: MemberMacro {
                         }
                         
                         switch macroNode.attributeName.trimmedDescription {
+                        case "link":
+                            fallthrough
                         case "bind": // 处理带 @bind 标记的属性。
                             do {
                                 let string = try BindMacro.viewBindStatement(forMacro: macroNode, forFunction: methodDecl)

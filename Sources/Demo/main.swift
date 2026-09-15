@@ -19,11 +19,11 @@ class TestModel: NSObject, XZMocoaModel {
 @mocoa
 class TestView: UIView, XZMocoaView {
     
-    @bind(.name)
+    @link(text: .name)
     @bind(.textColor)
     let nameLabel: UILabel = .init()
     
-    @bind(.name.detailText)
+    @link(text: .name.detailText)
     let pathLabel: UILabel = .init()
     
     @bind("icon")
@@ -41,11 +41,12 @@ class TestView: UIView, XZMocoaView {
     @objc func foobar(_ name: String?) {
         guard let viewModel = self.viewModel else { return }
         
-        viewModel.addTarget(nameLabel, action: #selector(setter: UILabel.text), forKey: .text, value: nil)
-        viewModel.addTarget(self, action: #selector(beginRefreshing), forKey: "beginRefreshing")
+        viewModel.linkTarget(nameLabel, action: #selector(setter: UILabel.text), forKey: .text)
+        viewModel.bindTarget(self, action: #selector(beginRefreshing(_:)), forKey: "beginRefreshing")
     }
     
-    @objc func beginRefreshing() {
+    @link
+    @objc func beginRefreshing(_ isRefreshing: Bool) {
         
     }
     
