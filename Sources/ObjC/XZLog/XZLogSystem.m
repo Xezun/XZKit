@@ -6,6 +6,7 @@
 //
 
 #import "XZLogSystem.h"
+#import "XZEmpty.h"
 
 @implementation XZLogSystem {
     os_log_t _oslog;
@@ -16,8 +17,8 @@
     static dispatch_once_t onceToken;
     dispatch_once(&onceToken, ^{
         NSBundle * const mainBundle = NSBundle.mainBundle;
-        NSString * const identifier = mainBundle.bundleIdentifier ?: @"com.unknown.App";
-        NSString * const name = mainBundle.infoDictionary[@"CFBundleExecutable"] ?: @"App";
+        NSString * const identifier = asNonEmpty(mainBundle.bundleIdentifier, @"com.xezun.xzkit");
+        NSString * const name       = asNonEmpty(mainBundle.infoDictionary[@"CFBundleExecutable"], @"App");
         _system = [[XZLogSystem alloc] initWithName:name domain:identifier];
         _system->_oslog = OS_LOG_DEFAULT;
         _system.isEnabled = YES;
@@ -49,7 +50,9 @@
     if (!_isEnabled) {
         return OS_LOG_DISABLED;
     }
-    // 避免多线程并发时重复创建。
+    if (_oslog) {
+        return _oslog;
+    }
     @synchronized (self) {
         if (_oslog == nil) {
             // 使用 UTF8 编码，Latin1 编码在包含非 Latin1 字符时会返回 NULL。
@@ -57,8 +60,8 @@
             const char * const category = [_name UTF8String];
             _oslog = os_log_create(subsystem, category);
         }
-        return _oslog;
     }
+    return _oslog;
 }
 
 @end

@@ -6,7 +6,7 @@
 //
 
 #import "Example21ObjectViewController.h"
-#import "Example21TableViewSectionModel.h"
+#import "Example21TableModel.h"
 #import "Example05TextViewController.h"
 @import XZKit;
 
@@ -62,13 +62,15 @@
     
     XZObjcClass *descriptor = [XZObjcClass classWithClass:objc_getClass("Example21Object")];
     
-    XZMocoaTableViewModel *viewModel = [[XZMocoaTableViewModel alloc] initWithModel:@[
-        [Example21TableViewSectionModel modelWithName:@"模型" descriptors:@[descriptor]],
-        [Example21TableViewSectionModel modelWithName:@"实例变量" descriptors:descriptor.ivars.allValues],
-        [Example21TableViewSectionModel modelWithName:@"属性" descriptors:descriptor.properties.allValues],
-        [Example21TableViewSectionModel modelWithName:@"方法" descriptors:descriptor.methods.allValues]
+    Example21TableModel *model = [[Example21TableModel alloc] initWithSectionModels:@[
+        [Example21TableSectionModel modelWithName:@"模型" descriptors:@[descriptor]],
+        [Example21TableSectionModel modelWithName:@"实例变量" descriptors:descriptor.ivars.allValues],
+        [Example21TableSectionModel modelWithName:@"属性" descriptors:descriptor.properties.allValues],
+        [Example21TableSectionModel modelWithName:@"方法" descriptors:descriptor.methods.allValues]
     ]];
-    viewModel.module = XZMocoa(@"https://xzkit.xezun.com/examples/21");
+    
+    XZMocoaTableViewModel *viewModel = [[XZMocoaTableViewModel alloc] initWithModel:model];
+    viewModel.module = XZMocoa(@"https://xzkit.xezun.com/examples/21/table");
     self.viewModel = viewModel;
 }
 

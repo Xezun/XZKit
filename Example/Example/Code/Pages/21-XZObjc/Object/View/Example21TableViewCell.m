@@ -11,7 +11,7 @@
 @implementation Example21TableViewCell
 
 + (void)load {
-    XZMocoa(@"https://xzkit.xezun.com/examples/21").cell.viewReuseIdentifier = @"cell";
+    XZMocoa(@"https://xzkit.xezun.com/examples/21/table").cell.viewReuseIdentifier = @"cell";
 }
 
 - (void)awakeFromNib {

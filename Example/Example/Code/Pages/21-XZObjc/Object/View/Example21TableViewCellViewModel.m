@@ -10,7 +10,7 @@
 @implementation Example21TableViewCellViewModel
 
 + (void)load {
-    XZMocoa(@"https://xzkit.xezun.com/examples/21").cell.viewModelClass = self;
+    XZMocoa(@"https://xzkit.xezun.com/examples/21/table").cell.viewModelClass = self;
 }
 
 - (void)prepare {

@@ -31,43 +31,121 @@ extension String {
             return
         }
         
-        var start = false // 是否遇到格式化占位符 % 标记
-        var index = 0;    // 当前处理的参数
+        enum MatchStatus {
+            // 普通字符
+            case plain
+            // 匹配到 %
+            case start
+            // 已经匹配到 % 但是没匹配到类型符
+            case match
+        }
+        
+        var status = MatchStatus.plain
+        var percentIndex = 0;
+        var dollarIndex = 0;
+        var formatIndex = 0;
+        
         var parameters = [CVarArg]() // 替换后的参数
+        var formal = format
                 
         // 遍历所有格式占位符：
-        // 1. 占位符 %@ 对应的参数替换为对应的字符串；
-        // 2. 占位符对应的参数不是 CVarArg 类型，替换为对应的字符串；
+        // 1. 占位符 %@ 对应的参数替换为字符串；
+        // 2. 占位符不是 %@ 且对应的参数不是 CVarArg 类型，替换为对应的字符串；
         // 3. nil 替换为字符串 "nil"。
-        for charactor in format {
+        for (i, charactor) in format.enumerated() {
             // 占位符开始符号
             if charactor == "%" {
-                start = !start
-            } else if start { // 当前字符是格式化占位符
-                start = false
-                
-                if let value = arguments[index] {
-                    if charactor == "@" {
-                        parameters.append(String(describing: value))
-                    } else if let cValue = value as? CVarArg {
-                        parameters.append(cValue)
-                    } else {
-                        parameters.append(String(describing: value))
-                    }
-                } else {
-                    parameters.append("nil")
+                switch status {
+                case .plain:
+                    status = .start;
+                    percentIndex = i;
+                    dollarIndex = 0;
+                case .start:
+                    status = .plain;
+                    percentIndex = 0;
+                    dollarIndex = 0;
+                case .match:
+                    status = .start;
+                    percentIndex = i;
+                    dollarIndex = 0;
                 }
-                
-                // 下一个参数，如果已经匹配所有参数，则结束循环。
-                index += 1
-                
-                if index >= arguments.count {
-                    break
+            } else {
+                switch status {
+                case .plain:
+                    continue
+                case .start:
+                    status = .match
+                    fallthrough
+                case .match:
+                    // 根据 IEEE printf specification 格式化占位类型符前，可能包含以下字符
+                    // https://pubs.opengroup.org/onlinepubs/009695399/functions/printf.html
+                    switch charactor {
+                    case "0"..."9":
+                        continue
+                    case "$":
+                        dollarIndex = i;
+                        continue
+                    case "-", "+":
+                        continue
+                    case ".":
+                        continue
+                    case "#":
+                        continue
+                    case "'":
+                        continue
+                    case " ":
+                        continue
+                    case "h", "l", "j", "z", "t", "L":
+                        continue
+                    default:
+                        status = .plain
+                    
+                        var argumentIndex = Swift.min(formatIndex, arguments.count - 1)
+                        if dollarIndex > 0 {
+                            let startIndex = format.startIndex;
+                            let minIndex = format.index(startIndex, offsetBy: percentIndex + 1)
+                            let maxIndex = format.index(startIndex, offsetBy: dollarIndex)
+                            if let value = Int(format[minIndex ..< maxIndex]) {
+                                argumentIndex = Swift.max(0, Swift.min(value - 1, arguments.count - 1))
+                            }
+                        }
+                        
+                        if charactor == "@" {
+                            // %@ 接收所有类型值
+                            if let value = arguments[argumentIndex] {
+                                parameters.append(String(describing: value))
+                            } else {
+                                parameters.append("nil")
+                            }
+                        } else if let cValue = arguments[argumentIndex] as? CVarArg {
+                            // CVarArg 类型的值不用转换
+                            parameters.append(cValue)
+                        } else {
+                            // 非 CVarArg 类型的值，占位格式不为 %@
+                            // 值转 String
+                            if let value = arguments[argumentIndex] {
+                                parameters.append(String(describing: value))
+                            } else {
+                                parameters.append("nil")
+                            }
+                            // 占位格式转换为 %@
+                            let index = format.index(format.startIndex, offsetBy: i)
+                            formal.remove(at: index)
+                            formal.insert("@", at: index)
+                        }
+                        
+                        // 下一个参数，如果已经匹配所有参数，则结束循环。
+                        formatIndex += 1
+                        
+                        if formatIndex >= arguments.count {
+                            break
+                        }
+                    }
                 }
             }
         }
         
-        self.init(format: format, arguments: parameters)
+        self.init(format: formal, arguments: parameters)
     }
     
 }

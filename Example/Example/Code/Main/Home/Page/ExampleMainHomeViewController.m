@@ -27,7 +27,7 @@
     ExampleMainHomeModel *model = [[ExampleMainHomeModel alloc] init];
     
     XZMocoaTableViewModel *viewModel = [[XZMocoaTableViewModel alloc] initWithModel:model];
-    viewModel.module = XZMocoa(@"https://xzkit.xezun.com/examples");
+    viewModel.module = XZMocoa(@"https://xzkit.xezun.com/examples/table");
     self.tableView.viewModel = viewModel;
 }
 

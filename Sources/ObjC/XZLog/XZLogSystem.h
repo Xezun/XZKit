@@ -29,6 +29,9 @@ NS_ASSUME_NONNULL_BEGIN
 /// 是否允许日志输出。
 @property (nonatomic, setter=setEnabled:) BOOL isEnabled;
 
+/// 日志是否附带一些元信息，默认否。
+@property (nonatomic) BOOL allowsMetadata;
+
 /// 构造日志输出系统。
 /// - Parameters:
 ///   - name: 名称

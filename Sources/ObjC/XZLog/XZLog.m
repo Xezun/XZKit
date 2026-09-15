@@ -11,30 +11,38 @@
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Wunused-function"
 
-static NSArray *XZLog(const char *file, const int line, const char *function, XZLogSystem *system, NSString *format, va_list _Nullable arguments) __attribute__((overloadable)) {
+static NSArray *XZLog(NSString * const fileName, const int line, NSString * const funcName, XZLogSystem * const system, NSString *format, va_list _Nullable arguments) __attribute__((overloadable)) {
     if (!system.isEnabled) {
         return @[];
     }
     
-    NSString * const message  = arguments ? [[NSString alloc] initWithFormat:format arguments:arguments] : format;
-    NSString * const metadata = [NSString stringWithFormat:@"⌘ %@ ⌘ %s(%d) ⌘ %s ⌘", system.name, file, line, function];
-    
-    NSUInteger const length  = message.length;
-    if (length == 0) {
-        return @[metadata];
-    }
-    
-    // 总长度小于 1015 直接输出，超过 1015 则分批输出
-    if (length + metadata.length <= 1015) {
-        return @[[NSString stringWithFormat:@"%@ \n%@", metadata, message]];
-    }
+    NSString * const logString = arguments ? [[NSString alloc] initWithFormat:format arguments:arguments] : format;
+    NSUInteger const logLength = logString.length;
     
     NSMutableArray * const messages = [NSMutableArray arrayWithCapacity:sizeof(NSInteger)];
     
-    // 输出杂项
-    [messages addObject:metadata];
+    if (system.allowsMetadata) {
+        // 允许输出元信息
+        NSString * const metadata = [NSString stringWithFormat:@"⌘ %@ ⌘ %@(%d) ⌘ %@ ⌘", system.name, fileName, line, funcName];
+        
+        // 无日志，仅输出元信息
+        if (logLength == 0) {
+            return @[metadata];
+        }
+        
+        // 总长度小于 1015 直接输出
+        if (logLength + metadata.length <= 1015) {
+            return @[[NSString stringWithFormat:@"%@ \n%@", metadata, logString]];
+        }
+        
+        // 超过 1015 则分批，单独输出元信息
+        [messages addObject:metadata];
+    } else if (logLength <= 1017) {
+        // 不允许输出元信息，日志长度 1017 以下直接输出
+        return @[logString];
+    }
     
-    // 输出日志内容，分批规则：
+    // 日志内容超过 1017 长度，分批输出，规则：
     // 1、单次最多输出 1000 长度的字符，且避免切割自然字符。
     // 2、尽量以换行符进行切割，除非没有换行符。
     // 3、强制切割的位置后，不是换行符，避免出现连续的空行。
@@ -42,27 +50,27 @@ static NSArray *XZLog(const char *file, const int line, const char *function, XZ
     NSUInteger location = 0;
     do {
         // 待输出长度不超过 1017 直接输出
-        if (length - location <= 1017) {
-            [messages addObject:[message substringFromIndex:location]];
+        if (logLength - location <= 1017) {
+            [messages addObject:[logString substringFromIndex:location]];
             return messages;
         }
         
         // 在前 1001 个长度的字符中，反向查找换行符：
         // 1、找到换行符，则输出换行符之前的内容，并跳过换行符输出剩下的部分。
         // 2、没有找到换行符，则输出第 1001 个位置所在的自然字符之前的字符，因为第 1001 字符一定不是换行符，后续输出一定不是换行符。
-        NSRange range = [message rangeOfString:@"\n" options:NSBackwardsSearch range:NSMakeRange(location, 1001)];
+        NSRange range = [logString rangeOfString:@"\n" options:NSBackwardsSearch range:NSMakeRange(location, 1001)];
         if (range.location == NSNotFound) {
-            range = [message rangeOfComposedCharacterSequenceAtIndex:location + 1000];
+            range = [logString rangeOfComposedCharacterSequenceAtIndex:location + 1000];
             // 下次输出的起点：因为第 1001 字符不是换行符，不跳过
             range.length = 0;
         }
         
         // 输出日志：
-        [messages addObject:[message substringWithRange:NSMakeRange(location, range.location - location)]];
+        [messages addObject:[logString substringWithRange:NSMakeRange(location, range.location - location)]];
         
         // 下次输出的起点。如果是换行符，则会跳过换行符，因为 NSLog 已经包含一个换行符
         location = range.location + range.length;
-    } while (location < length);
+    } while (location < logLength);
     
     return messages;
 }
@@ -79,7 +87,9 @@ NSArray<NSString *> *XZLogv(const char *file, const int line, const char *functi
 #if DEBUG
     va_list arguments;
     va_start(arguments, format);
-    NSArray * const messages = XZLog(file, line, function, system, format, arguments);
+    NSString * const fileName = [NSString stringWithCString:file encoding:NSUTF8StringEncoding];
+    NSString * const funcName = [NSString stringWithCString:function encoding:NSUTF8StringEncoding];
+    NSArray * const messages = XZLog(fileName, line, funcName, system, format, arguments);
     va_end(arguments);
     return messages;
 #else
@@ -91,7 +101,9 @@ NSArray<NSString *> *XZLogv(const char *file, const int line, const char *functi
 #if DEBUG
     va_list arguments;
     va_start(arguments, format);
-    NSArray * const messages = XZLog(file, line, function, XZLogSystem.defaultSystem, format, arguments);
+    NSString *fileName = [NSString stringWithCString:file encoding:NSUTF8StringEncoding];
+    NSString *funcName = [NSString stringWithCString:function encoding:NSUTF8StringEncoding];
+    NSArray * const messages = XZLog(fileName, line, funcName, XZLogSystem.defaultSystem, format, arguments);
     va_end(arguments);
     return messages;
 #else
@@ -99,15 +111,15 @@ NSArray<NSString *> *XZLogv(const char *file, const int line, const char *functi
 #endif
 }
 
-NSString *XZLogs(XZLogSystem *system, NSString *file, NSInteger line, NSString *function) {
+NSArray<NSString *> * XZLogs(XZLogSystem *system, NSString *file, NSInteger line, NSString *function, NSString *message) {
 #if DEBUG
     if (!system.isEnabled) {
-        return @"";
+        return @[];
     }
-    file = [file lastPathComponent];
-    return [NSString stringWithFormat:@"⌘ %@ ⌘ %@(%ld) ⌘ %@ ⌘", system.name, file, (long)line, function];
+    NSString * const fileName = [file lastPathComponent];
+    return XZLog(fileName, (int)line, function, system, message, NULL);
 #else
-    return @"";
+    return @[];
 #endif
 }
 

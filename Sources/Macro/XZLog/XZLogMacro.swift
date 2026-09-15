@@ -16,19 +16,21 @@ public struct XZLogMacro: ExpressionMacro {
     
     public static func expansion(of node: some SwiftSyntax.FreestandingMacroExpansionSyntax, in context: some SwiftSyntaxMacros.MacroExpansionContext) throws -> SwiftSyntax.ExprSyntax {
 #if DEBUG
-        var system = "XZLogSystem.default";
+        var system = ".default";
+        var type   = ".debug"
         
         var arguments = node.arguments;
-        if arguments[arguments.startIndex].label?.text == "system" {
-            if let expression = arguments[arguments.startIndex].expression.as(MemberAccessExprSyntax.self) {
-                if expression.base == nil {
-                    system = "XZLogSystem" + expression.trimmedDescription;
-                } else {
-                    system = expression.trimmedDescription
-                }
-            } else {
-                system = arguments[arguments.startIndex].trimmedDescription
+        
+        if arguments[arguments.startIndex].label?.text == "type" {
+            type = arguments[arguments.startIndex].expression.trimmedDescription;
+            arguments.remove(at: arguments.startIndex)
+            
+            if arguments[arguments.startIndex].label?.text == "system" {
+                system = arguments[arguments.startIndex].expression.trimmedDescription
+                arguments.remove(at: arguments.startIndex)
             }
+        } else if arguments[arguments.startIndex].label?.text == "system" {
+            system = arguments[arguments.startIndex].expression.trimmedDescription
             arguments.remove(at: arguments.startIndex)
         }
         
@@ -36,9 +38,27 @@ public struct XZLogMacro: ExpressionMacro {
         arguments.remove(at: arguments.startIndex)
         
         if arguments.isEmpty {
-            return "os_log(.debug, log: \(raw: system).oslog, \"%{public}@ \\n\(raw: format)\", XZLogs(\(raw: system), #file, #line, #function))"
+            return """
+            ({ 
+                let __xz_log_system__ : XZLogSystem = \(raw: system)
+                guard __xz_log_system__.isEnabled else { return }
+                for message in XZLogs(__xz_log_system__, #file, #line, #function, "\(raw: format)") { 
+                    os_log(\(raw: type), log: __xz_log_system__.oslog, "%@", message) 
+                } 
+            })()
+            """
         }
-        return "os_log(.debug, log: \(raw: system).oslog, \"%{public}@ \\n\(raw: format)\", XZLogs(\(raw: system), #file, #line, #function), \(raw: arguments))"
+        
+        return """
+        ({ 
+            let __xz_log_system__ : XZLogSystem = \(raw: system)
+            guard __xz_log_system__.isEnabled else { return }
+            let __xz_log_message__ = String(formal: "\(raw: format)", \(raw: arguments))
+            for __xz_log_text__ in XZLogs(__xz_log_system__, #file, #line, #function, __xz_log_message__) { 
+                os_log(\(raw: type), log: __xz_log_system__.oslog, "%@", __xz_log_text__) 
+            } 
+        })()
+        """
 #else
         return "os_log(.debug, log: .disabled, \"\")"
 #endif

@@ -18,8 +18,7 @@ let package = Package(
             name: "XZKit",
             dependencies: ["XZKitObjC", "XZKitMacros"],
             path: "Sources",
-            exclude: ["ObjC", "Macro", "Header"],
-            sources: ["Swift"],
+            sources: ["Swift"], 
             swiftSettings: [
                 .define("XZ_FRAMEWORK")
             ]
@@ -28,7 +27,6 @@ let package = Package(
             name: "XZKitObjC",
             dependencies: [],
             path: "Sources",
-            exclude: ["Swift", "Macro", "Header"],
             sources: ["ObjC"],
             publicHeadersPath: "Header/XZKit/Public",
             cSettings: [
@@ -44,25 +42,23 @@ let package = Package(
                 .product(name: "SwiftSyntaxMacros", package: "swift-syntax"),
                 .product(name: "SwiftCompilerPlugin", package: "swift-syntax")
             ],
-            path: "Sources/Macro"
+            path: "Sources",
+            sources: ["Macro"]
         ),
         .testTarget(
-            name: "MacroTests",
+            name: "XZKitMacrosTests",
             dependencies: [
                 "XZKitMacros",
                 .product(name: "SwiftSyntaxMacrosTestSupport", package: "swift-syntax"),
-            ],
-            path: "Tests/Macro"
+            ]
         ),
         .testTarget(
-            name: "XZMocoaTests",
-            dependencies: ["XZKit"],
-            path: "Tests/XZMocoa"
+            name: "XZKitTests",
+            dependencies: ["XZKit"]
         ),
         .executableTarget(
             name: "Demo",
-            dependencies: ["XZKit"],
-            path: "Sources/Demo"
+            dependencies: ["XZKit"]
         )
     ]
 )

@@ -12,7 +12,7 @@
 @implementation ExampleMainHomeCell
 
 + (void)load {
-    XZMocoa(@"https://xzkit.xezun.com/examples").cell.viewReuseIdentifier = @"cell";
+    XZMocoa(@"https://xzkit.xezun.com/examples/table").cell.viewReuseIdentifier = @"cell";
 }
 
 - (void)prepareForViewModel {

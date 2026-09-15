@@ -8,8 +8,9 @@
 import Foundation
 #if SWIFT_PACKAGE
 import XZKitObjC
+import OSLog
 
 @freestanding(expression)
-public macro XZLog(system: XZLogSystem = .default, _ format: StaticString, _ arguments: (any CVarArg)?...) = #externalMacro(module: "XZKitMacros", type: "XZLogMacro")
+public macro XZLog(type: OSLogType = .debug, system: XZLogSystem = .default, _ format: StaticString, _ arguments: Any?...) = #externalMacro(module: "XZKitMacros", type: "XZLogMacro")
 
 #endif

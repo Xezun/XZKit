@@ -12,23 +12,26 @@ import SwiftSyntaxMacrosTestSupport
 import XCTest
 
 // Macro implementations build for the host, so the corresponding module is not available when cross-compiling. Cross-compiled tests may still make use of the macro itself in end-to-end tests.
-#if canImport(XZMocoaMacros)
-import XZKit
+#if canImport(XZKitMacros)
+import XZKitMacros
 
 let testMacros: [String: Macro.Type] = [
-    "stringify": StringifyMacro.self,
+    "URL": URLMacro.self,
+    "XZLog": XZLogMacro.self
 ]
+
 #endif
 
 final class XZMocoaMacrosTests: XCTestCase {
+    
     func testMacro() throws {
-        #if canImport(XZMocoaMacros)
+        #if canImport(XZKitMacros)
         assertMacroExpansion(
             """
-            #stringify(a + b)
+            #URL("https://xzkit.xezun.com")
             """,
             expandedSource: """
-            (a + b, "a + b")
+            URL(string: "https://xzkit.xezun.com")!
             """,
             macros: testMacros
         )
@@ -38,13 +41,13 @@ final class XZMocoaMacrosTests: XCTestCase {
     }
 
     func testMacroWithStringLiteral() throws {
-        #if canImport(XZMocoaMacros)
+        #if canImport(XZKitMacros)
         assertMacroExpansion(
             #"""
-            #stringify("Hello, \(name)")
+            #XZLog("message")
             """#,
             expandedSource: #"""
-            ("Hello, \(name)", #""Hello, \(name)""#)
+            "message"
             """#,
             macros: testMacros
         )
