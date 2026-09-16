@@ -13,7 +13,21 @@ import XZKit
 class TestModel: NSObject, XZMocoaModel {
     
     @key
-    dynamic var name = "John"
+    let id = UUID()
+    
+    @key
+    var name: String?
+    
+    @key
+    var age = 12
+    
+    @key
+    var detail: String? {
+        didSet {
+            print("didSet")
+            didChangeValue(forKey: "detail")
+        }
+    }
 }
 
 @mocoa

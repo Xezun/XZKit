@@ -52,17 +52,17 @@ extension MocoaMacro: MemberAttributeMacro {
             guard let property = member.as(VariableDeclSyntax.self) else {
                 return []
             }
-            guard let attribute = property.attribute(forName: "key") else {
+            guard let attribute = property.attributeForName("key") else {
                 return []
             }
             
             // 已有 @objc 标记
-            if property.contains(attribute: "objc") {
+            if property.containsAttribute("objc") {
                 return []
             }
             
             // 指定了键名
-            if let key = try KeyMacro.keyName(from: attribute) {
+            if let key = try KeyMacro.nameForKeyMacro(attribute) {
                 return ["@objc(\(raw: key))"]
             }
             
@@ -95,8 +95,8 @@ extension MocoaMacro: MemberAttributeMacro {
             var attributeSyntaxes = [SwiftSyntax.AttributeSyntax]()
             
             if let variableDecl = member.as(VariableDeclSyntax.self) {
-                if variableDecl.contains(attributes: ["key", "bind"], .or) {
-                    if !variableDecl.contains(attribute: "objc") {
+                if variableDecl.containsAttributes(["key", "bind"], .or) {
+                    if !variableDecl.containsAttribute("objc") {
                         // TODO: 单独处理 @key 宏，以实现自定义名称
                         attributeSyntaxes.append("@objc")
                     }

@@ -193,12 +193,12 @@ extension VariableDeclSyntax {
     }
     
     /// 判断属性是否包含指定修饰符。
-    public func contains(modifier: Keyword) -> Bool {
+    public func containsModifier(_ modifier: Keyword) -> Bool {
         return self.modifiers.contains(where: { $0.name.tokenKind == .keyword(modifier) })
     }
     
     /// 获取指定名字的属性。
-    public func attribute(forName name: String) -> SwiftSyntax.AttributeSyntax? {
+    public func attributeForName(_ name: String) -> SwiftSyntax.AttributeSyntax? {
         for attribute in self.attributes {
             guard case let .attribute(macroNode) = attribute else {
                 continue
@@ -213,7 +213,7 @@ extension VariableDeclSyntax {
     /// 判断属性是否包含指定属性。
     ///
     /// 比如`@objc`属性，使用`objc`作为参数。
-    public func contains(attribute name: String) -> Bool {
+    public func containsAttribute(_ name: String) -> Bool {
         return self.attributes.contains { attribute in
             if case let .attribute(macroNode) = attribute {
                 return macroNode.attributeName.trimmedDescription == name
@@ -227,7 +227,7 @@ extension VariableDeclSyntax {
         case and
     }
     
-    public func contains(attributes names: Set<String>, _ method: MatchMethod) -> Bool {
+    public func containsAttributes(_ names: Set<String>, _ method: MatchMethod) -> Bool {
         if names.isEmpty {
             return true
         }
@@ -255,6 +255,27 @@ extension VariableDeclSyntax {
             }).isEmpty
         }
         
+    }
+    
+    /// 包含 accessors 中的任意一个就返回 true
+    public func containsAccessors(_ accessors: Set<String>) -> Bool {
+        for binding in self.bindings {
+            guard let accessorBlock = binding.accessorBlock else { continue }
+            switch accessorBlock.accessors {
+            case .accessors(let list):
+                for item in list {
+                    // accessorSpecifier => get set didSet willSet
+                    if accessors.contains(item.accessorSpecifier.text) {
+                        return true
+                    }
+                }
+            case .getter:
+                if accessors.contains("get") {
+                    return true
+                }
+            }
+        }
+        return false
     }
     
 }

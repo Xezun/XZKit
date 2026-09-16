@@ -77,8 +77,8 @@ public struct KeyMacro {
         }
     }
     
-    
-    public static func keyName(from node: SwiftSyntax.AttributeSyntax) throws -> String? {
+    /// 返回 @key 宏通过参数指定的键名，返回 nil 表示没有提供参数。返回值也可能是 keyPath 形式。
+    public static func nameForKeyMacro(_ node: SwiftSyntax.AttributeSyntax) throws -> String? {
         guard let firstArgument = node.arguments?.first?.value else {
             return nil
         }
@@ -105,66 +105,94 @@ public struct KeyMacro {
         
         return keyPath
     }
+    
+    /// 为 @key 宏标记的属性，添加 @objc 标记。
+    /// - Parameters:
+    ///   - node: `@key` 宏
+    ///   - declaration: 宏所修饰的属性
+    ///   - context: 上下文
+    /// - Returns: 属性
+    public static func expansion(of node: AttributeSyntax, providingAttributesFor declaration: VariableDeclSyntax, in context: some SwiftSyntaxMacros.MacroExpansionContext) throws -> [SwiftSyntax.AttributeSyntax] {
+        // 已包含 @objc
+        if declaration.containsAttribute("objc") {
+            return []
+        }
+        
+        if let key = try self.nameForKeyMacro(node) {
+            return ["@objc(\(raw: key))"]
+        }
+        
+        return ["@objc"]
+    }
 }
 
 /// 宏 `@key("key")` 的实现： 生成 setter/getter 方法。
 extension KeyMacro: AccessorMacro {
     
     public static func expansion(of node: SwiftSyntax.AttributeSyntax, providingAccessorsOf declaration: some SwiftSyntax.DeclSyntaxProtocol, in context: some SwiftSyntaxMacros.MacroExpansionContext) throws -> [SwiftSyntax.AccessorDeclSyntax] {
+        // 属性
+        guard let propertyDecl = declaration.as(VariableDeclSyntax.self) else {
+            throw XZMacroError.init(message: "@key: 仅支持属性")
+        }
+        
+        // 只读属性
+        if propertyDecl.isReadOnlyProperty {
+            return []
+        }
+        
+        // 获取属性名
+        guard let propertyName = propertyDecl.name else {
+            throw XZMacroError(message: "@key: 宏无法确定属性名")
+        }
+        
         switch try MocoaRole(node: node, context: context) {
         case .m:
-            guard let propertyDecl = declaration.as(VariableDeclSyntax.self) else {
-                throw XZMacroError.init(message: "@key: 仅支持属性")
+            // 包含 set 或 didSet 就无法重写
+            if propertyDecl.containsAccessors(["set", "didSet"]) {
+                // 检测属性是否包含 didChangeValue 方法调用，以是否包含 didChangeValue 简单判断，不实质判断。
+                if !propertyDecl.trimmedDescription.contains("didChangeValue") {
+                    XZMacroDiagnose(context, node: node, message: "@key: 无法添加 didSet 方法，请自行调用 didChangeValue(forKey:) 方法触发监听", severity: .warning)
+                }
+                return []
             }
-            guard propertyDecl.contains(modifier: .dynamic) else {
-                throw XZMacroError.init(message: "@key: 属性需添加 dynamic 修饰符")
-            }
+            
             // 由 @mocoa 宏添加 @objc 标记 + dynamic 标记，以支持 KVO
-            return []
+            let key = try self.nameForKeyMacro(node) ?? propertyName
+            
+            return [
+                """
+                didSet {
+                    if \(raw: propertyName) == oldValue {
+                        return
+                    }
+                    didChangeValue(forKey: "\(raw: key)")
+                }
+                """
+            ]
             
         case .v:
             throw XZMacroError(message: "@key: 不支持在 View 角色中使用")
             
         case .vm:
-            guard let propertyDecl = declaration.as(VariableDeclSyntax.self) else {
-                throw XZMacroError.init(message: "@key: 仅支持属性")
-            }
-            
-            // 只读属性，不添加 didSet 方法
-            if propertyDecl.isReadOnlyProperty {
+            // 包含 set 或 didSet 就无法重写
+            if propertyDecl.containsAccessors(["set", "didSet"]) {
+                // 检测属性是否包含 didChangeValue 方法调用，以是否包含 sendActions 简单判断，不实质判断。
+                if !propertyDecl.trimmedDescription.contains("sendActions") {
+                    XZMacroDiagnose(context, node: node, message: "@key: 无法添加 didSet 方法，请自行调用 sendActions(forKey:) 方法触发监听", severity: .warning)
+                }
                 return []
             }
             
-            // 获取属性声明
-            guard let expression = propertyDecl.bindings.first else {
-                throw XZMacroError(message: "@key: 宏无法确定属性名")
-            }
-            
-            // 获取属性名
-            guard let propertyName = expression.pattern.as(IdentifierPatternSyntax.self)?.identifier.text else {
-                throw XZMacroError(message: "@key: 宏无法确定属性名")
-            }
-            
-            // 获取属性类型
-            guard let type = expression.typeAnnotation?.type else {
-                throw XZMacroError(message: "@key: 宏无法确定属性类型，请用 var name: Type 的形式声明属性")
-            }
-            
             // key 名
-            let key = try self.keyName(from: node) ?? propertyName
-            
-            var keyValue = "newValue"
-            if type.is(OptionalTypeSyntax.self) || type.is(ImplicitlyUnwrappedOptionalTypeSyntax.self) {
-                keyValue = "newValue ?? kCFNull"
-            }
+            let key = try self.nameForKeyMacro(node) ?? propertyName
             
             return [
                 """
                 didSet {
-                    let newValue = \(raw: propertyName)
-                    if newValue != oldValue {
-                        sendActions(forKey: "\(raw: key)", value: \(raw: keyValue))
+                    if \(raw: propertyName) == oldValue {
+                        return
                     }
+                    sendActions(forKey: "\(raw: key)")
                 }
                 """
             ]
