@@ -30,6 +30,7 @@ public struct MocoaMacro {
     
 }
 
+/// 为成员添加`@`修饰属性。
 /// 宏 `@mocoa(role)` 的实现：
 /// .m  => 为 @key 标记的属性添加 @objc 标记；检查是否缺少 dynamic 标记
 /// .v  => 为 @bind 标记的方法，添加 @objc 标记
@@ -54,15 +55,19 @@ extension MocoaMacro: MemberAttributeMacro {
             guard let attribute = property.attribute(forName: "key") else {
                 return []
             }
-            if let arguments = attribute.arguments, arguments.count > 0 {
-                throw XZMacroError(message: "@key: 暂不支持指定键名")
-            }
+            
+            // 已有 @objc 标记
             if property.contains(attribute: "objc") {
                 return []
             }
             
-            return ["@objc"]
+            // 指定了键名
+            if let key = try KeyMacro.keyName(from: attribute) {
+                return ["@objc(\(raw: key))"]
+            }
             
+            // 默认键名
+            return ["@objc"]
         case .v:
             // 视图属性不需要添加 @objc
             guard let methodNode = member.as(FunctionDeclSyntax.self) else {
@@ -90,27 +95,11 @@ extension MocoaMacro: MemberAttributeMacro {
             var attributeSyntaxes = [SwiftSyntax.AttributeSyntax]()
             
             if let variableDecl = member.as(VariableDeclSyntax.self) {
-                var containsObjc = false
-                var containsBind = false
-                
-                for attribute in variableDecl.attributes {
-                    guard case let .attribute(macroNode) = attribute else {
-                        continue
+                if variableDecl.contains(attributes: ["key", "bind"], .or) {
+                    if !variableDecl.contains(attribute: "objc") {
+                        // TODO: 单独处理 @key 宏，以实现自定义名称
+                        attributeSyntaxes.append("@objc")
                     }
-                    switch macroNode.attributeName.trimmedDescription {
-                    case "objc", "IBOutlet":
-                        containsObjc = true
-                    case "key": // 需要用 kvc 取值，因此需要 @objc 标记
-                        containsBind = !variableDecl.isReadOnlyProperty
-                    case "bind":
-                        containsBind = true
-                    default:
-                        break
-                    }
-                }
-                
-                if containsBind && !containsObjc {
-                    attributeSyntaxes.append("@objc")
                 }
             }
             
@@ -123,7 +112,7 @@ extension MocoaMacro: MemberAttributeMacro {
                         continue;
                     }
                     switch macroNode.attributeName.trimmedDescription {
-                    case "objc", "IBAction":
+                    case "objc":
                         containsObjc = true
                     case "bind":
                         containsBind = true

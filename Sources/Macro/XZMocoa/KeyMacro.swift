@@ -78,74 +78,33 @@ public struct KeyMacro {
     }
     
     
-    public static func keyName(from node: SwiftSyntax.AttributeSyntax) -> String? {
+    public static func keyName(from node: SwiftSyntax.AttributeSyntax) throws -> String? {
         guard let firstArgument = node.arguments?.first?.value else {
             return nil
         }
             
         if let stringLiteral = firstArgument.expression.as(StringLiteralExprSyntax.self) {
-            if let stringValue = stringLiteral.representedLiteralValue?.replacingOccurrences(of: ".", with: "_"), stringValue.count > 0 {
-                return stringValue
+            // 字符串有插值时 representedLiteralValue 返回 nil
+            guard let key = stringLiteral.representedLiteralValue else {
+                throw XZMacroError(message: "@key: 仅支持静态字符串")
             }
+            return key
+        }
+        
+        guard var memberSyntax = firstArgument.expression.as(MemberAccessExprSyntax.self) else {
             return nil
         }
         
-        if let memberSyntax = firstArgument.expression.as(MemberAccessExprSyntax.self) {
-            return memberSyntax.declName.trimmedDescription
+        // declName 为最后一个点，后面的部分
+        var keyPath = memberSyntax.declName.trimmedDescription;
+        
+        while let base = memberSyntax.base?.as(MemberAccessExprSyntax.self) {
+            keyPath = "\(base.declName.trimmedDescription).\(keyPath)"
+            memberSyntax = base
         }
         
-        return nil
+        return keyPath
     }
-}
-
-extension KeyMacro: PeerMacro {
-    
-    /// 校验属性和宏，并生成存储属性。
-    public static func expansion(of node: SwiftSyntax.AttributeSyntax, providingPeersOf declaration: some SwiftSyntax.DeclSyntaxProtocol, in context: some SwiftSyntaxMacros.MacroExpansionContext) throws -> [SwiftSyntax.DeclSyntax] {
-        switch try MocoaRole.init(node: node, context: context) {
-        case .v:
-            throw XZMacroError(message: "@key: 只能用于 Model 或 ViewModel 角色")
-            
-        case .m:
-            fallthrough
-            
-        case .vm:
-            guard let propertyDecl = declaration.as(VariableDeclSyntax.self) else {
-                throw XZMacroError(message: "@key: 此宏只能附加到 var 属性");
-            }
-            
-            guard propertyDecl.bindingSpecifier.text == "var" else {
-                throw XZMacroError(message: "@key: 此宏只能附加到 var 属性")
-            }
-            
-            guard propertyDecl.bindings.count == 1, let binding = propertyDecl.bindings.first else {
-                throw XZMacroError(message: "@key: 此宏无法同时附加给多个属性")
-            }
-            
-            if let arguments = node.arguments, arguments.count > 1 {
-                throw XZMacroError(message: "@key: 此宏的参数仅支持指定名称，不支持其它参数")
-            }
-            
-            guard let propertyName = binding.pattern.as(IdentifierPatternSyntax.self)?.identifier.text else {
-                throw XZMacroError(message: "@key: 宏无法确定属性名")
-            }
-            
-            if let propertyType = binding.typeAnnotation?.type.trimmedDescription {
-                if let initializer = propertyDecl.bindings.first?.initializer?.value.trimmedDescription {
-                    return ["fileprivate var _\(raw: propertyName) : \(raw: propertyType) = \(raw: initializer)"]
-                }
-                
-                return ["fileprivate var _\(raw: propertyName) : \(raw: propertyType)"]
-            }
-            
-            guard let initializer = propertyDecl.bindings.first?.initializer?.value.trimmedDescription else {
-                throw XZMacroError(message: "@key: 宏无法确定属性值类型")
-            }
-            
-            return ["fileprivate var _\(raw: propertyName) = \(raw: initializer)"]
-        }
-    }
-    
 }
 
 /// 宏 `@key("key")` 的实现： 生成 setter/getter 方法。
@@ -155,235 +114,61 @@ extension KeyMacro: AccessorMacro {
         switch try MocoaRole(node: node, context: context) {
         case .m:
             guard let propertyDecl = declaration.as(VariableDeclSyntax.self) else {
-                throw XZMacroError.init(message: "@key: 只支持属性")
+                throw XZMacroError.init(message: "@key: 仅支持属性")
             }
-            let binding = propertyDecl.bindings[propertyDecl.bindings.startIndex]
-            guard let propertyName = binding.pattern.as(IdentifierPatternSyntax.self)?.identifier.text else {
+            guard propertyDecl.contains(modifier: .dynamic) else {
+                throw XZMacroError.init(message: "@key: 属性需添加 dynamic 修饰符")
+            }
+            // 由 @mocoa 宏添加 @objc 标记 + dynamic 标记，以支持 KVO
+            return []
+            
+        case .v:
+            throw XZMacroError(message: "@key: 不支持在 View 角色中使用")
+            
+        case .vm:
+            guard let propertyDecl = declaration.as(VariableDeclSyntax.self) else {
+                throw XZMacroError.init(message: "@key: 仅支持属性")
+            }
+            
+            // 只读属性，不添加 didSet 方法
+            if propertyDecl.isReadOnlyProperty {
+                return []
+            }
+            
+            // 获取属性声明
+            guard let expression = propertyDecl.bindings.first else {
                 throw XZMacroError(message: "@key: 宏无法确定属性名")
             }
-            let keyName = self.keyName(from: node) ?? propertyName
+            
+            // 获取属性名
+            guard let propertyName = expression.pattern.as(IdentifierPatternSyntax.self)?.identifier.text else {
+                throw XZMacroError(message: "@key: 宏无法确定属性名")
+            }
+            
+            // 获取属性类型
+            guard let type = expression.typeAnnotation?.type else {
+                throw XZMacroError(message: "@key: 宏无法确定属性类型，请用 var name: Type 的形式声明属性")
+            }
+            
+            // key 名
+            let key = try self.keyName(from: node) ?? propertyName
+            
+            var keyValue = "newValue"
+            if type.is(OptionalTypeSyntax.self) || type.is(ImplicitlyUnwrappedOptionalTypeSyntax.self) {
+                keyValue = "newValue ?? kCFNull"
+            }
+            
             return [
                 """
-                get {
-                    return _\(raw: propertyName)
-                }
-                """,
-                """
-                set {
-                    if _\(raw: propertyName) != newValue {
-                        _\(raw: propertyName) = newValue
-                        didChangeValue(forKey: "\(raw: keyName)")
+                didSet {
+                    let newValue = \(raw: propertyName)
+                    if newValue != oldValue {
+                        sendActions(forKey: "\(raw: key)", value: \(raw: keyValue))
                     }
                 }
                 """
             ]
             
-        case .v:
-            throw XZMacroError(message: "@key: 此宏暂不支持在 View 角色中使用")
-            
-        case .vm:
-            guard let propertyDecl = declaration.as(VariableDeclSyntax.self) else {
-                throw XZMacroError.init(message: "@key: 只支持属性")
-            }
-            
-            let binding = propertyDecl.bindings[propertyDecl.bindings.startIndex]
-            
-            var setAccessor : SwiftSyntax.AccessorDeclSyntax? = nil;
-            var getAccessor : SwiftSyntax.AccessorDeclSyntax? = nil;
-            var didSetAccessor: SwiftSyntax.AccessorDeclSyntax? = nil;
-            var willSetAccessor: SwiftSyntax.AccessorDeclSyntax? = nil;
-            
-            if let block = binding.accessorBlock {
-                switch block.accessors {
-                case .accessors(let list):
-                    for item in list {
-                        switch item.accessorSpecifier.text {
-                        case "get":
-                            getAccessor = item
-                        case "set":
-                            setAccessor = item;
-                        case "didSet":
-                            didSetAccessor = item;
-                        case "willSet":
-                            willSetAccessor = item;
-                        default:
-                            break
-                        }
-                    }
-                    break
-                case .getter:
-                    throw XZMacroError(message: "@key: 只读属性无法作为 key 使用");
-                }
-            }
-            
-            guard let propertyName = binding.pattern.as(IdentifierPatternSyntax.self)?.identifier.text else {
-                throw XZMacroError(message: "@key: 宏无法确定属性名")
-            }
-            
-            var results = [AccessorDeclSyntax]()
-            
-            if getAccessor == nil {
-                results.append("""
-                get { 
-                    return _\(raw: propertyName) 
-                }
-                """)
-            }
-            
-            let keyName = self.keyName(from: node) ?? propertyName
-            
-            if let setAccessor = setAccessor {
-                if let setAccessor = setAccessor.body?.statements.trimmedNewLines {
-                    results.append(
-                        """
-                        set {
-                            defer {
-                                \(setAccessor)
-                            }
-                            
-                            if _\(raw: propertyName) != newValue {
-                                _\(raw: propertyName) = newValue
-                                sendActions(forKey: "\(raw: keyName)", value: newValue)
-                            }
-                        }
-                        """
-                    )
-                } else {
-                    results.append(
-                        """
-                        set {
-                            if _\(raw: propertyName) != newValue {
-                                _\(raw: propertyName) = newValue
-                                sendActions(forKey: "\(raw: keyName)", value: newValue)
-                            }
-                        }
-                        """
-                    )
-                }
-            } else {
-                if let willSetAccessor = willSetAccessor?.body?.statements.trimmedNewLines {
-                    if let didSetAccessor = didSetAccessor?.body?.statements.trimmedNewLines {
-                        results.append(
-                            """
-                            set {
-                                let oldValue = _\(raw: propertyName)
-                                
-                                ({ // willSet
-                                    \(willSetAccessor)
-                                })()
-                            
-                                if _\(raw: propertyName) != newValue {
-                                    _\(raw: propertyName) = newValue
-                                    sendActions(forKey: "\(raw: keyName)", value: newValue)
-                                }
-                                
-                                ({ _ in // didSet
-                                    \(didSetAccessor)
-                                })(oldValue)
-                            }
-                            """
-                        )
-                    } else {
-                        results.append(
-                            """
-                            set {
-                                ({ // willSet
-                                    \(willSetAccessor)
-                                })()
-                            
-                                if _\(raw: propertyName) != newValue {
-                                    _\(raw: propertyName) = newValue
-                                    sendActions(forKey: "\(raw: keyName)", value: newValue)
-                                }
-                            }
-                            """
-                        )
-                    }
-                } else if let didSetAccessor = didSetAccessor?.body?.statements.trimmedNewLines {
-                    results.append(
-                        """
-                        set {
-                            let oldValue = _\(raw: propertyName)
-                            
-                            if _\(raw: propertyName) != newValue {
-                                _\(raw: propertyName) = newValue
-                                sendActions(forKey: "\(raw: keyName)", value: newValue)
-                            }
-                            
-                            ({ _ in // didSet
-                                \(didSetAccessor)
-                            })(oldValue)
-                        }
-                        """
-                    )
-                } else {
-                    results.append(
-                        """
-                        set {
-                            if _\(raw: propertyName) != newValue {
-                                _\(raw: propertyName) = newValue
-                                sendActions(forKey: "\(raw: keyName)", value: newValue)
-                            }
-                        }
-                        """
-                    )
-                }
-            }
-            
-            return results
-        }
-        
-        
-    }
-    
-}
-
-public struct ReadonlyKeyMacro: PeerMacro {
-
-    /// 仅校验属性和宏参数
-    public static func expansion(of node: SwiftSyntax.AttributeSyntax, providingPeersOf declaration: some SwiftSyntax.DeclSyntaxProtocol, in context: some SwiftSyntaxMacros.MacroExpansionContext) throws -> [SwiftSyntax.DeclSyntax] {
-        switch try MocoaRole.init(node: node, context: context) {
-        case .v:
-            throw XZMacroError(message: "@key(readonly:): 不支持 View 视图")
-            
-        case .m:
-            throw XZMacroError(message: "@key(readonly:): 不支持 Model 数据模型")
-            
-        case .vm:
-            guard let propertyDecl = declaration.as(VariableDeclSyntax.self) else {
-                throw XZMacroError(message: "@key(readonly:): 仅支持修饰属性");
-            }
-            
-            guard propertyDecl.isReadOnlyProperty else {
-                throw XZMacroError(message: "@key(readonly:): 仅支持只读属性或计算属性");
-            }
-            
-            guard propertyDecl.contains(modifier: .dynamic) else {
-                throw XZMacroError(message: "@key(readonly:): 请添加 dynamic 修饰符");
-            }
-            
-            guard propertyDecl.contains(attribute: "objc") else {
-                throw XZMacroError(message: "@key(readonly:): 请添加 @objc 修饰属性");
-            }
-            
-            #if MACRO_OVERLOAED_BUG_FIXED
-            guard let arguments = node.arguments else {
-                throw XZMacroError(message: "@key(readonly:): 必须包含 readonly 参数");
-            }
-            
-            guard case .argumentList(let labeledExprListSyntax) = arguments, let parameter = labeledExprListSyntax.first else {
-                throw XZMacroError(message: "@key(readonly:): 必须包含 readonly 参数");
-            }
-            
-            guard parameter.label?.trimmedDescription == "readonly" else {
-                throw XZMacroError(message: "@key(readonly:): 必须使用 readonly 参数标签");
-            }
-            
-            guard let value = parameter.expression.as(BooleanLiteralExprSyntax.self), value.literal.text == "true" else {
-                throw XZMacroError(message: "@key(readonly:): 参数 readonly 值必须为 true 真值");
-            }
-            #endif
-            return []
         }
     }
     

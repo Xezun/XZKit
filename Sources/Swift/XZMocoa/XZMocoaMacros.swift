@@ -9,6 +9,30 @@ import Foundation
 #if SWIFT_PACKAGE
 import XZKitObjC
 
+
+// KVC: @objc
+// KVO: @objc + dynamic
+//
+// # @key 宏
+// - Model
+//   - 仅修饰属性
+//   - 检查并提示用户手动添加 dynamic 标记
+//   - 支持一个参数，直接转变为 @objc() 的参数（由 @mocoa 宏实现）
+// - ViewModel
+//   - 仅修饰属性
+//   - 生成 didSet 方法，只读属性除外，不检测用户是否实现，直接让编译器报错处理。
+//   - 支持一个参数，直接转变为 @objc() 的参数（由 @mocoa 宏实现）
+// - View 不支持
+//
+//
+//
+//
+//
+//
+//
+//
+//
+
 /// 被宏 `@mocoa` 修饰的对象，在 Mocoa 中的角色。
 public enum XZMocoaRole {
     /// 被修饰的对象为 Model 数据模型。
@@ -18,6 +42,11 @@ public enum XZMocoaRole {
     /// 被修饰的对象为 ViewModel 视图模型。
     case vm
 }
+
+
+// ------------------------------------------------------------
+// MARK: - #module 宏
+// ------------------------------------------------------------
 
 /// 获取地址为 urlString 的 Mocoa 模块。
 ///
@@ -30,6 +59,11 @@ public macro module(_ urlString: String) -> XZMocoaModule = #externalMacro(modul
 /// 获取地址为 URL 的 Mocoa 模块。
 @freestanding(expression)
 public macro module(_ value: URL) -> XZMocoaModule = #externalMacro(module: "XZKitMacros", type: "ModuleMacro")
+
+
+// ------------------------------------------------------------
+// MARK: - @mocoa 宏
+// ------------------------------------------------------------
 
 /// 将 class 标记为 Mocoa 的 MVVM 角色。
 ///
@@ -77,7 +111,10 @@ public macro mocoa(_ role: XZMocoaRole) = #externalMacro(module: "XZKitMacros", 
 @attached(member, names: arbitrary)
 public macro mocoa() = #externalMacro(module: "XZKitMacros", type: "MocoaMacro")
 
-// MARK: - @key
+
+// ------------------------------------------------------------
+// MARK: - @key 宏
+// ------------------------------------------------------------
 
 /// 标记 ViewModel 的属性，表明该属性支持 key-target-action 机制，支持在 View 中使用参数指定的 `name` 进行绑定。
 ///
@@ -106,8 +143,7 @@ public macro mocoa() = #externalMacro(module: "XZKitMacros", type: "MocoaMacro")
 ///
 /// - SeeAlso: 事件名与属性名同名时，可不用指定 name 参数，参见不带参数的 `@key` 宏。
 /// - Parameter name: 该属性变化时，发送 KTA 事件的事件名
-@attached(peer, names: prefixed(_))
-@attached(accessor, names: arbitrary)
+@attached(accessor, names: named(didSet))
 public macro key(_ name: XZMocoaKey) = #externalMacro(module: "XZKitMacros", type: "KeyMacro")
 
 /// 标记 ViewModel 的属性，表明该属性支持 key-target-action 机制，支持在 View 中使用该属性名进行绑定。
@@ -117,18 +153,12 @@ public macro key(_ name: XZMocoaKey) = #externalMacro(module: "XZKitMacros", typ
 /// 使用属性名作为 KTA 事件的事件名。
 ///
 /// - SeeAlso: 更多使用规则见带参数的 `@key(_:)` 宏。
-@attached(peer, names: prefixed(_))
-@attached(accessor, names: arbitrary)
+@attached(accessor, names: named(didSet))
 public macro key() = #externalMacro(module: "XZKitMacros", type: "KeyMacro")
 
-/// 标记只读属性或计算属性为 KTA 事件名。
-///
-/// 使用 @key(readonly:) 重载宏函数，编译会报错，应该是编译器 BUG 所致，若后期 BUG 修复，恢复使用以下宏函数。
-/// ```swift
-/// public macro key(readonly: Bool)
-/// ```
-@attached(peer, names: arbitrary)
-public macro Key(readonly: Bool) = #externalMacro(module: "XZKitMacros", type: "ReadonlyKeyMacro")
+// ------------------------------------------------------------
+// MARK: @bind 宏
+// ------------------------------------------------------------
 
 /// 为 ViewModel 与 Model 之间，或 View 与 ViewModel 之间建立单向绑定。
 ///
@@ -208,11 +238,8 @@ public macro Key(readonly: Bool) = #externalMacro(module: "XZKitMacros", type: "
 /// @bind("imageURL")
 /// func setIconWithURL(_ iconURL: URL)
 /// ```
-@attached(peer, names: arbitrary)
+@attached(peer, names: prefixed(_))
 public macro bind(_ key: XZMocoaKey...) = #externalMacro(module: "XZKitMacros", type: "BindMacro")
-
-
-// MARK: - @BIND MACROS
 
 // 以下带参数标签的 bind 宏，只可以在 View 中修饰属性使用。
 
@@ -420,11 +447,14 @@ public macro bind(viewModel key: XZMocoaKey) = #externalMacro(module: "XZKitMacr
 
 // MARK: - @LINK MACROS
 
-@attached(peer, names: arbitrary)
-public macro link(_ key: XZMocoaKey) = #externalMacro(module: "XZKitMacros", type: "BindMacro")
-
-@attached(peer, names: arbitrary)
+/// 用于修饰 View 的方法。
+///
+/// > 宏 names 不能使用 arbitrary 编译器无法推断类型，就认为生成所有类型，导致无法用来修饰只读属性。
+@attached(peer, names: prefixed(_))
 public macro link() = #externalMacro(module: "XZKitMacros", type: "BindMacro")
+
+@attached(peer, names: prefixed(_))
+public macro link(_ key: XZMocoaKey) = #externalMacro(module: "XZKitMacros", type: "BindMacro")
 
 /// 建立从 ViewModel.{key} 到 View.selector 的单次值同步。
 ///

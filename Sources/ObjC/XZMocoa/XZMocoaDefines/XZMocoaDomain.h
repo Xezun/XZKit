@@ -38,7 +38,7 @@ NS_ASSUME_NONNULL_BEGIN
 + (nullable id)moduleForURL:(NSURL *)url NS_SWIFT_NAME(init(for:));
 
 /// 获取模块。
-/// - Parameter path: 模块在域中的路径
+/// - Parameter path: 模块在域中的路径，域名之后的完整路径，以“/”开头
 - (nullable id)moduleForPath:(NSString *)path;
 
 /// 注册或删除模块。

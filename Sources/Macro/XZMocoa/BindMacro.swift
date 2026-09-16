@@ -17,9 +17,19 @@ public struct BindMacro {
         /// 非可选
         case unwrapped
         /// 可选
-        case wrapped
+        case optional
         /// 隐式可选
         case autoUnwrapped
+        
+        init(_ type: TypeSyntax) {
+            if let _ = type.as(OptionalTypeSyntax.self) {
+                self = .optional
+            } else if let _ = type.as(ImplicitlyUnwrappedOptionalTypeSyntax.self) {
+                self = .autoUnwrapped
+            } else {
+                self = .unwrapped
+            }
+        }
     }
     
     /// 从属性的声明，获取属性的类型。
@@ -33,7 +43,7 @@ public struct BindMacro {
         // 示例：var textLabel: UILabel!
         if let type = expression.typeAnnotation?.type {
             if let op = type.as(OptionalTypeSyntax.self) {
-                return (op.wrappedType.trimmedDescription, .wrapped)
+                return (op.wrappedType.trimmedDescription, .optional)
             }
             
             if let op = type.as(ImplicitlyUnwrappedOptionalTypeSyntax.self) {
@@ -396,7 +406,7 @@ extension ViewBindMacro: AccessorMacro {
             }
             switch accessorBlock.accessors {
             case .getter:
-                if type.wrappedType == .wrapped {
+                if type.wrappedType == .optional {
                     XZMacroDiagnose(context, node: node, message: "@bind: 可选类型的只读计算属性，可能无法实时绑定，如果该属性不为 nil 请使用非可选或隐式可选类型，以消除此警告", severity: .warning)
                 }
                 return []
@@ -414,7 +424,7 @@ extension ViewBindMacro: AccessorMacro {
             }
         }
         
-        guard type.wrappedType == .wrapped else {
+        guard type.wrappedType == .optional else {
             return []
         }
         

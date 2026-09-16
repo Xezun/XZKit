@@ -23,8 +23,7 @@ struct XZKitMacros: CompilerPlugin {
         ModuleMacro.self,
         KeyMacro.self,
         BindMacro.self,
-        ViewBindMacro.self,
-        ReadonlyKeyMacro.self
+        ViewBindMacro.self
     ]
     
 }
@@ -162,6 +161,11 @@ extension SwiftSyntax.AttributeListSyntax {
 }
 
 extension VariableDeclSyntax {
+    
+    /// 属性名
+    public var name: String? {
+        return self.bindings.first?.pattern.as(IdentifierPatternSyntax.self)?.identifier.text
+    }
     
     /// 是否为只读属性。
     public var isReadOnlyProperty: Bool {

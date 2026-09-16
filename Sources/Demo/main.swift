@@ -13,56 +13,43 @@ import XZKit
 class TestModel: NSObject, XZMocoaModel {
     
     @key
-    var name = "John"
+    dynamic var name = "John"
 }
 
 @mocoa
 class TestView: UIView, XZMocoaView {
     
-    @link(text: .name)
-    @bind(.textColor)
-    let nameLabel: UILabel = .init()
+    @objc var name: String?
     
-    @link(text: .name.detailText)
-    let pathLabel: UILabel = .init()
+    @link(text: .title)
+    @link(textColor: .textColor)
+    let titleLabel: UILabel = .init()
     
-    @bind("icon")
+    @link(text: .detailText)
+    @link(textColor: .textColor)
+    let detailLabel: UILabel = .init()
+    
+    @link(image: "icon")
     let imageView: UIImageView = .init(image: nil)
     
-    @bind(title: "name", for: .normal)
-    @bind(.textColor)
+    @link(title: "button", for: .normal)
+    @link(titleColor: .textColor, for: .normal)
     let button: UIButton = .init()
     
-    @bind(.backgroundColor)
+    @link("name", selector: #selector(setter: TestView.name))
     let view: TestView = .init()
-    
-    @objc dynamic var name: String?
-    
-    @objc func foobar(_ name: String?) {
-        guard let viewModel = self.viewModel else { return }
-        
-        viewModel.linkTarget(nameLabel, action: #selector(setter: UILabel.text), forKey: .text)
-        viewModel.bindTarget(self, action: #selector(beginRefreshing(_:)), forKey: "beginRefreshing")
-    }
     
     @link
     @objc func beginRefreshing(_ isRefreshing: Bool) {
         
     }
     
-    @bind(.reload, selector: #selector(UITableView.reloadData))
+    @link(.reload, selector: #selector(UITableView.reloadData))
     let tableView: UITableView = .init()
     
     @objc func buttonAction() {
         sendEvents(.click, value: "reloadButton")
     }
-    
-    @bind(.image)
-    @bind(.backgroundColor)
-    var iconImageView: UIImageView!
-    
-    @bind(image: .image)
-    var iconImageView2: UIImageView?
  
 }
 
@@ -72,9 +59,18 @@ class TestViewModel: XZMocoaTableViewModel {
     override var shouldObserveModelKeysActively: Bool {
         return true
     }
-
-    @Key(readonly: true)
-    @objc dynamic let identifier: XZMocoaViewModel = .init(model: nil)
+    
+    @key
+    var name: String?
+    
+    @key
+    var age: Int = 20
+    
+    @key("foobar1")
+    var foobar: Float = 0.0
+    
+    @key
+    let identifier: XZMocoaViewModel = .init(model: nil)
     
     override func prepare() {
         super.prepare()
@@ -97,8 +93,7 @@ class TestViewModel: XZMocoaTableViewModel {
         }
     }
     
-    @key
-    var name: String = "John"
+    
     
     @bind
     @objc func rangeDidChange(_ min: Int, _ max: Int) {
@@ -159,13 +154,11 @@ extension NSFetchedResultsController: @retroactive XZMocoaTableModel {
 
 
 public func loadGroups() {
-    let Groups = #module("https://mocoa.xzkit.com/groups/")
+    let Groups = #module("https://mocoa.xzkit.com/groups")
     
     let card100 = Groups["100"]
     card100.modelClass = TestModel.self;
     card100.viewClass = TestView.self
     card100.viewModelClass = TestViewModel.self
 }
-
-
 

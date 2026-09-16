@@ -94,8 +94,8 @@ static NSMutableDictionary<NSString *, XZMocoaDomain *> *_domainTable = nil;
     
     static dispatch_once_t onceToken;
     dispatch_once(&onceToken, ^{
-        // /kind:name | /kind: | /name | /:
-        NSString *pattern = @"^((/\\w+\\:\\w*)|(/\\w+)|(/\\:))+$";
+        // /kind:name 或 /kind: 或 /name 或 /:
+        NSString *pattern = @"^(/(([\\w\\-\\.]+:{0,1}[\\w\\-\\.]*)|(:)))+$";
         _regularExpression = [NSRegularExpression regularExpressionWithPattern:pattern options:0 error:nil];
     });
     
