@@ -22,12 +22,8 @@ class TestModel: NSObject, XZMocoaModel {
     var age = 12
     
     @key
-    var detail: String? {
-        didSet {
-            print("didSet")
-            didChangeValue(forKey: "detail")
-        }
-    }
+    var detail: String?
+    
 }
 
 @mocoa

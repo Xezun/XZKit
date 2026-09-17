@@ -32,8 +32,8 @@ public struct MocoaMacro {
 
 /// 为成员添加`@`修饰属性。
 /// 宏 `@mocoa(role)` 的实现：
-/// .m  => 为 @key 标记的属性添加 @objc 标记；检查是否缺少 dynamic 标记
-/// .v  => 为 @bind 标记的方法，添加 @objc 标记
+/// .m  => 为 @key 标记的属性添加 @objc 标记，以支持 KVC 取值
+/// .v  => 为 @key / @bind 标记的方法，添加 @objc 标记，以支持 KVC 取值
 /// .vm => 为 @key @bind 标记的属性和方法添加 @objc 标记
 extension MocoaMacro: MemberAttributeMacro {
     
@@ -46,90 +46,60 @@ extension MocoaMacro: MemberAttributeMacro {
         
         switch role {
         case .m:
-            guard classDecl.inheritedTypes.contains("NSObject") else {
-                throw XZMacroError(message: "@mocoa: 仅可修饰继承自 NSObject 的 class 的声明")
-            }
-            guard let property = member.as(VariableDeclSyntax.self) else {
+            guard let propertyDecl = member.as(VariableDeclSyntax.self) else {
                 return []
             }
-            guard let attribute = property.attributeForName("key") else {
+            guard let attributeNode = propertyDecl.attributeForName("key") else {
                 return []
             }
-            
-            // 已有 @objc 标记
-            if property.containsAttribute("objc") {
-                return []
-            }
-            
-            // 指定了键名
-            if let key = try KeyMacro.nameForKeyMacro(attribute) {
-                return ["@objc(\(raw: key))"]
-            }
-            
-            // 默认键名
-            return ["@objc"]
+            return try KeyMacro.expansion(of: attributeNode, providingAttributesFor: propertyDecl, in: context)
+                                      
         case .v:
             // 视图属性不需要添加 @objc
-            guard let methodNode = member.as(FunctionDeclSyntax.self) else {
+            guard let methodDecl = member.as(FunctionDeclSyntax.self) else {
+                return []
+            }
+            if let attributeNode = methodDecl.attributeForName("bind") {
+                return try BindMacro.expansion(of: attributeNode, providingAttributesFor: methodDecl, in: context, for: .v)
+            }
+            if let attributeNode = methodDecl.attributeForName("link") {
+                return try BindMacro.expansion(of: attributeNode, providingAttributesFor: methodDecl, in: context, for: .v)
+            }
+            return []
+            
+        case .vm:
+            // 为 class 的属性附加宏
+            if let propertyDecl = member.as(VariableDeclSyntax.self) {
+                // 为 @key 宏生成 @objc 标记
+                if let attributeNode = propertyDecl.attributeForName("key") {
+                    return try KeyMacro.expansion(of: attributeNode, providingAttributesFor: propertyDecl, in: context)
+                }
+                // 为 @bind 宏生成 @objc 标记
+                if let attributeNode = propertyDecl.attributeForName("bind") {
+                    return try BindMacro.expansion(of: attributeNode, providingAttributesFor: propertyDecl, in: context, for: .vm)
+                }
+                // 为 @link 宏生成 @objc 标记
+                if let attributeNode = propertyDecl.attributeForName("link") {
+                    return try BindMacro.expansion(of: attributeNode, providingAttributesFor: propertyDecl, in: context, for: .vm)
+                }
                 return []
             }
             
-            var containsBind = false
-            for attribute in methodNode.attributes {
-                if case let .attribute(macroNode) = attribute {
-                    switch macroNode.attributeName.trimmedDescription {
-                    case "objc", "IBAction":
-                        return []
-                    
-                    case "bind":
-                        containsBind = true
-                                                
-                    default:
-                        break
-                    }
+            // 为 class 的方法附加宏
+            if let methodDecl = member.as(FunctionDeclSyntax.self) {
+                // 为 @bind 宏生成 @objc 标记
+                if let attributeNode = methodDecl.attributeForName("bind") {
+                    return try BindMacro.expansion(of: attributeNode, providingAttributesFor: methodDecl, in: context, for: .vm)
                 }
-            }
-            return containsBind ? ["@objc"] : []
-            
-        case .vm:
-            var attributeSyntaxes = [SwiftSyntax.AttributeSyntax]()
-            
-            if let variableDecl = member.as(VariableDeclSyntax.self) {
-                if variableDecl.containsAttributes(["key", "bind"], .or) {
-                    if !variableDecl.containsAttribute("objc") {
-                        // TODO: 单独处理 @key 宏，以实现自定义名称
-                        attributeSyntaxes.append("@objc")
-                    }
+                // 为 @link 宏生成 @objc 标记
+                if let attributeNode = methodDecl.attributeForName("link") {
+                    return try BindMacro.expansion(of: attributeNode, providingAttributesFor: methodDecl, in: context, for: .vm)
                 }
+                return []
             }
             
-            if let methodNode = member.as(FunctionDeclSyntax.self) {
-                var containsObjc = false
-                var containsBind = false
-                
-                for attribute in methodNode.attributes {
-                    guard case let .attribute(macroNode) = attribute else {
-                        continue;
-                    }
-                    switch macroNode.attributeName.trimmedDescription {
-                    case "objc":
-                        containsObjc = true
-                    case "bind":
-                        containsBind = true
-                    default:
-                        break
-                    }
-                }
-                
-                if containsBind && !containsObjc {
-                    attributeSyntaxes.append("@objc")
-                }
-            }
-            
-            return attributeSyntaxes
+            return []
         }
-        
-        
     }
     
 }
@@ -145,78 +115,44 @@ extension MocoaMacro: MemberMacro {
             throw XZMacroError(message: "@mocoa: 只能应用于 class 类")
         }
         
-        let role = try MocoaRole.init(node: node, declaration: classDecl)
-        
-        switch role {
+        switch try MocoaRole.init(node: node, declaration: classDecl) {
         case .m:
             return [];
             
         case .v:
             // 判断是否自定义 __xz_bind_prepare 方法
-            for member in classDecl.memberBlock.members {
-                if let methodDecl = member.decl.as(FunctionDeclSyntax.self) {
-                    let methodName = methodDecl.name.trimmedDescription
-                    if methodName == "__xz_bind_prepare" {
-                        throw XZMacroError(message: "@mocoa: 重写私有方法 __xz_bind_prepare 方法会导致绑定失效，请使用 prepareForViewModel 方法代替")
-                    }
-                }
+            if classDecl.containsMethod("__xz_bind_prepare") {
+                throw XZMacroError(node, message: "重写私有方法 __xz_bind_prepare 方法会导致绑定失效，请使用 prepareForViewModel 方法代替")
             }
             
-            var bindStatementStrings = [String]()
+            var statements = [String]()
             
-            // 遍历 class 包体
             for member in classDecl.memberBlock.members {
-                
-                // 处理属性绑定
-                if let variableDecl = member.decl.as(VariableDeclSyntax.self) {
-                    let macroNodes = variableDecl.attributes.compactMap({ attribute -> AttributeSyntax? in
-                        // 找到宏属性
-                        guard case let .attribute(macroNode) = attribute else {
-                            return nil
+                if let propertyDecl = member.decl.as(VariableDeclSyntax.self) {
+                    for attribute in propertyDecl.attributes {
+                        guard case let .attribute(node) = attribute else {
+                            continue
                         }
-                        
-                        // 只处理带 @bind 标记的属性。
-                        switch macroNode.attributeName.trimmedDescription {
+                        switch node.attributeName.trimmedDescription {
                         case "bind":
-                            return macroNode
+                            fallthrough
                         case "link":
-                            return macroNode
+                            statements.append(contentsOf: try BindMacro.expansion(of: node, providingStatementsOf: propertyDecl, in: context, for: .v))
                         default:
-                            return nil
-                        }
-                    });
-                    
-                    if macroNodes.isEmpty {
-                        continue
-                    }
-                    
-                    do {
-                        let string = try BindMacro.viewBindStatements(forMacros: macroNodes, forVariable: variableDecl)
-                        bindStatementStrings.append(string)
-                    } catch {
-                        XZMacroDiagnose(context, node: variableDecl, error: error, severity: .warning)
-                    }
-                }
-                
-                // 处理方法绑定
-                if let methodDecl = member.decl.as(FunctionDeclSyntax.self) {
-                    // 遍历属性
-                    for attribute in methodDecl.attributes {
-                        // 找到宏属性
-                        guard case let .attribute(macroNode) = attribute else {
                             continue
                         }
-                        
-                        switch macroNode.attributeName.trimmedDescription {
-                        case "link":
+                    }
+                }
+                if let methodDecl = member.decl.as(FunctionDeclSyntax.self) {
+                    for attribute in methodDecl.attributes {
+                        guard case let .attribute(node) = attribute else {
+                            continue
+                        }
+                        switch node.attributeName.trimmedDescription {
+                        case "bind":
                             fallthrough
-                        case "bind": // 处理带 @bind 标记的属性。
-                            do {
-                                let string = try BindMacro.viewBindStatement(forMacro: macroNode, forFunction: methodDecl)
-                                bindStatementStrings.append(string)
-                            } catch {
-                                XZMacroDiagnose(context, node: methodDecl, error: error, severity: .warning)
-                            }
+                        case "link":
+                            statements.append(contentsOf: try BindMacro.expansion(of: node, providingStatementsOf: methodDecl, in: context, for: .vm))
                         default:
                             continue
                         }
@@ -224,18 +160,18 @@ extension MocoaMacro: MemberMacro {
                 }
             }
             
-            if bindStatementStrings.isEmpty {
+            if statements.isEmpty {
                 return []
             }
             
-            let bindStatementsString = bindStatementStrings.joined(separator: "\n    ")
+            let bindcodes = statements.joined(separator: "\n    ")
             
             let methodSyntax = try FunctionDeclSyntax(
                 """
                 override func __xz_bind_prepare() {
                     super.__xz_bind_prepare()
                     guard let viewModel = self.viewModel else { return }
-                    \(raw: bindStatementsString)
+                    \(raw: bindcodes)
                 }
                 """
             )
@@ -243,20 +179,72 @@ extension MocoaMacro: MemberMacro {
             
         case .vm:
             // 判断是否自定义 mappingObserverMethodsForModelKeys 属性
+            if classDecl.containsMethod("mappingObserverMethodsForModelKeys") {
+                for member in classDecl.memberBlock.members {
+                    if let variableDecl = member.decl.as(VariableDeclSyntax.self), let node = variableDecl.attributeForName("bind") {
+                        XZMacroDiagnose(context, node: node, message: "由于已重写 mappingObserverMethodsForModelKeys 属性，宏 @bind 监听将不生效", severity: .warning)
+                    }
+                    if let methodDecl = member.decl.as(FunctionDeclSyntax.self), let node = methodDecl.attributeForName("bind") {
+                        XZMacroDiagnose(context, node: node, message: "由于已重写 mappingObserverMethodsForModelKeys 属性，宏 @bind 监听将不生效", severity: .warning)
+                    }
+                }
+                return []
+            }
+            
+            var statements = [String]()
+            
             for member in classDecl.memberBlock.members {
-                if let member = member.decl.as(VariableDeclSyntax.self) {
-                    if let propertyName = member.bindings.first?.pattern.as(IdentifierPatternSyntax.self)?.identifier.text {
-                        if propertyName == "mappingObserverMethodsForModelKeys" {
-                            for modifier in member.modifiers {
-                                if modifier.name.tokenKind == .keyword(.class) {
-                                    XZMacroDiagnose(context, node: member, message: "@mocoa: 检测到已自定义 mappingObserverMethodsForModelKeys 属性，自动监听将不生效", severity: .warning)
-                                    return []
-                                }
-                            }
+                if let propertyDecl = member.decl.as(VariableDeclSyntax.self) {
+                    for attribute in propertyDecl.attributes {
+                        guard case let .attribute(node) = attribute else {
+                            continue
+                        }
+                        switch node.attributeName.trimmedDescription {
+                        case "bind":
+                            fallthrough
+                        case "link":
+                            statements.append(contentsOf: try BindMacro.expansion(of: node, providingStatementsOf: propertyDecl, in: context, for: .v))
+                        default:
+                            continue
+                        }
+                    }
+                }
+                if let methodDecl = member.decl.as(FunctionDeclSyntax.self) {
+                    for attribute in methodDecl.attributes {
+                        guard case let .attribute(node) = attribute else {
+                            continue
+                        }
+                        switch node.attributeName.trimmedDescription {
+                        case "bind":
+                            fallthrough
+                        case "link":
+                            statements.append(contentsOf: try BindMacro.expansion(of: node, providingStatementsOf: methodDecl, in: context, for: .vm))
+                        default:
+                            continue
                         }
                     }
                 }
             }
+            
+            if statements.isEmpty {
+                return []
+            }
+            
+            let bindcodes = statements.joined(separator: ", \n            ")
+            
+            let variableSyntax = try VariableDeclSyntax(
+                """
+                    override class var mappingObserverMethodsForModelKeys: [String : Any]? {
+                        return [ 
+                            \(raw: bindcodes)
+                        ]
+                    }
+                """
+            )
+            
+            return [DeclSyntax(variableSyntax)]
+            
+            // old
             
             var mappingKeyValueStrings = [String]()
             

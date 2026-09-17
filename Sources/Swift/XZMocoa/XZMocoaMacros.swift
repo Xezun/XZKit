@@ -13,25 +13,8 @@ import XZKitObjC
 // KVC: @objc
 // KVO: @objc + dynamic
 //
-// # @key 宏
-// - Model
-//   - 仅修饰属性
-//   - 检查并提示用户手动添加 dynamic 标记
-//   - 支持一个参数，直接转变为 @objc() 的参数（由 @mocoa 宏实现）
-// - ViewModel
-//   - 仅修饰属性
-//   - 生成 didSet 方法，只读属性除外，不检测用户是否实现，直接让编译器报错处理。
-//   - 支持一个参数，直接转变为 @objc() 的参数（由 @mocoa 宏实现）
-// - View 不支持
-//
-//
-//
-//
-//
-//
-//
-//
-//
+// 宏 names 的作用：辅助编译器检查语法。
+// - accessor 宏，若指定 names 为 arbitrary 则编译器会认为宏会生成 setter 和 getter 从而导致无法修饰只读属性。
 
 /// 被宏 `@mocoa` 修饰的对象，在 Mocoa 中的角色。
 public enum XZMocoaRole {
@@ -116,43 +99,50 @@ public macro mocoa() = #externalMacro(module: "XZKitMacros", type: "MocoaMacro")
 // MARK: - @key 宏
 // ------------------------------------------------------------
 
-/// 标记 ViewModel 的属性，表明该属性支持 key-target-action 机制，支持在 View 中使用参数指定的 `name` 进行绑定。
+/// 标记 Model 属性为 KVO 键，或标记 ViewModel 的属性为 KTA 键。
 ///
-/// 属性所属的 class 需先用 `@mocoa` 标记。
+/// 标记 Model 的属性，表明该属性支持 KVO 机制，其中宏参数为 KVO 的键，且键支持被 ViewModel 通过 @bind 宏绑定，通过 KVC 取值。
 ///
-/// 被标记的属性，将变为计算属性，并同时生成带下划线的同名属性来存储属性值。
+/// 标记 ViewModel 的属性，表明该属性支持 KTA 机制，其中宏参数为 KTA 的键，且键支持被 View 通过 @bind 宏绑定，通过 KVC 取值，以 KTA 事件值，传递给被绑定的方法。
+///
+/// > 属性所属的 class 需先用 `@mocoa` 标记。
+///
 /// ```swift
 /// @key
-/// var name: String = "John"
-/// // 等价于
-/// var name: String {
-///     get { return _name }
-///     set { _name = newValue } // setter 还包括发送 key-action 事件的代码
+/// var name: String?
+/// // 宏展开后如下，其中 @objc 标记由 @mocoa 宏生成
+/// @objc var name: String? {
+///     didSet {
+///         // 发送 KVO 或 KTA 事件的代码
+///     }
 /// }
-/// var _name: String = "John"
 /// ```
 ///
-/// 设置属性自动发送 KTA 事件，值会同步到已绑定的视图，若不需要同步视图，可直接访问其带下划线的存储属性。
-///
-/// 框架为预置了一些通用的 key 名，方便直接使用点语法。
+/// 若属性已实现 set 或 didSet 方法，那么宏不会再生成 didSet 方法，但是会检测是否包含发送 KVO 或 KTA 事件调用，如果不包含调用，会产生警告。
+/// 如果事件不在 set 或 didSet 方法中触发，可在方法中添加注释以屏蔽警告。
 ///
 /// ```swift
-/// @key(.name)
-/// var desc: String?
+/// @key
+/// var name: String? {
+///     didSet {
+///         // 下面这行含 didChangeValue 的注释可屏蔽 @key 宏产生的警告
+///         // KVO 事件发送 didChangeValue(forKey:) 在其它方法中处理
+///     }
+/// }
 /// ```
 ///
-/// - SeeAlso: 事件名与属性名同名时，可不用指定 name 参数，参见不带参数的 `@key` 宏。
-/// - Parameter name: 该属性变化时，发送 KTA 事件的事件名
+/// 宏参数为 XZMocoaKey 类型，支持支持使用字符串字面量，即`@key(.name)`等价于`@key("name")`。
+///
+/// - SeeAlso: 键名与属性名同名时，可不用指定 name 参数，详见不带参数的 ``key()`` 宏。
+/// - Parameter name: KVO 键名或 KTA 键名
 @attached(accessor, names: named(didSet))
 public macro key(_ name: XZMocoaKey) = #externalMacro(module: "XZKitMacros", type: "KeyMacro")
 
-/// 标记 ViewModel 的属性，表明该属性支持 key-target-action 机制，支持在 View 中使用该属性名进行绑定。
+/// 标记 Model 属性为 KVO 键，或标记 ViewModel 的属性为 KTA 键。
 ///
-/// 属性所属的 class 需先用 `@mocoa` 标记。
+/// 使用属性名作为 KTA 或 KVO 的键名。
 ///
-/// 使用属性名作为 KTA 事件的事件名。
-///
-/// - SeeAlso: 更多使用规则见带参数的 `@key(_:)` 宏。
+/// - SeeAlso: 更多使用规则，详见带参数的 ``key(_:)`` 宏。
 @attached(accessor, names: named(didSet))
 public macro key() = #externalMacro(module: "XZKitMacros", type: "KeyMacro")
 

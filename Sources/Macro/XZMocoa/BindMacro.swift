@@ -10,32 +10,225 @@ import SwiftSyntaxMacros
 import SwiftSyntax
 import Foundation
 
-// 不带参数标签的 `@bind` 宏的实现。
-public struct BindMacro {
+/// 类型的包装形式。
+public enum TypeWrapation {
+    /// 非可选
+    case unwrapped
+    /// 可选
+    case optional
+    /// 隐式可选
+    case autoUnwrapped
     
-    public enum WrappedType {
-        /// 非可选
-        case unwrapped
-        /// 可选
-        case optional
-        /// 隐式可选
-        case autoUnwrapped
-        
-        init(_ type: TypeSyntax) {
-            if let _ = type.as(OptionalTypeSyntax.self) {
-                self = .optional
-            } else if let _ = type.as(ImplicitlyUnwrappedOptionalTypeSyntax.self) {
-                self = .autoUnwrapped
-            } else {
-                self = .unwrapped
-            }
+    init?(_ type: TypeSyntax?) {
+        guard let type = type else { return nil }
+        if let _ = type.as(OptionalTypeSyntax.self) {
+            self = .optional
+        } else if let _ = type.as(ImplicitlyUnwrappedOptionalTypeSyntax.self) {
+            self = .autoUnwrapped
+        } else {
+            self = .unwrapped
         }
     }
+}
+
+
+
+public struct ViewBindMacro {
+    
+}
+
+/// 绑定代码由 @mocoa 宏实现。
+///
+/// - 协议 PeerMacro 让宏支持修饰属性和方法，协议实现仅做合法性校验。
+/// - 协议 AccessorMacro 添加 didSet 让可选类型的在改变值之后，依然可以绑定事件。
+/// - 绑定代码由 @mocoa 宏实现。
+///
+/// | Macro                  | Role      | For              | Description                        |
+/// |:-----------------------|:----------|:-----------------|:-----------------------------------|
+/// | `@bind`, `@bind(key)`  | View      | Property, Method | key => setProperty:, key => Method |
+/// | `@bind(prop: key)`     | View      | Property         | key => Property.setProp:           |
+/// | `@bind(key, selector)` | View      | Property         | key => Property.selector           |
+/// | `@bind`, `@bind(key)`  | ViewModel | Property, Method | key => setProperty:, key => Method |
+/// | `@bind(key, ...)`      | ViewModel | Method           | key => Method                      |
+public struct BindMacro: PeerMacro, AccessorMacro {
+    
+    // PeerMacro 协议
+    public static func expansion(of node: SwiftSyntax.AttributeSyntax, providingPeersOf declaration: some SwiftSyntax.DeclSyntaxProtocol, in context: some SwiftSyntaxMacros.MacroExpansionContext) throws -> [SwiftSyntax.DeclSyntax] {
+        switch try MocoaRole.init(node: node, context: context) {
+        case .m:
+            throw XZMacroError(node, message: "不支持 Model 角色")
+            
+        case .v:
+            if let propertyDecl = declaration.as(VariableDeclSyntax.self) {
+                if case let .argumentList(arguments) = node.arguments, arguments.count > 0 {
+                    // @bind 带参数
+                    switch arguments.count {
+                    case 1:
+                        let first = arguments[arguments.startIndex]
+                        if first.label == nil {
+                            // 无标签，绑定属性的 setter，必须可写
+                            if propertyDecl.isReadOnlyProperty {
+                                throw XZMacroError(node, message: "无法将视图模型 \(first.expression.trimmedDescription) 的值绑定到只读属性")
+                            }
+                        } else {
+                            // 有标签，绑定属性值属性的 setter 方法。
+                        }
+                    case 2:
+                        let keyArgument = arguments[arguments.startIndex]
+                        let selArgument = arguments[arguments.index(after: arguments.startIndex)]
+                        if keyArgument.label != nil || selArgument.label?.text != "selector" {
+                            throw XZMacroError(node, message: "两个参数仅支持 (key, selector:) 这一种形式")
+                        }
+                    default:
+                        throw XZMacroError(node, message: "参数数量超出限制，仅支持 (key)、(text: key)、(key, selector:) 三种形式")
+                    }
+                } else {
+                    // @key 不带参数，绑定属性的setter，必须可写
+                    if propertyDecl.isReadOnlyProperty {
+                        throw XZMacroError(node, message: "只读属性不支持绑定")
+                    }
+                }
+                break
+            }
+            
+            if let methodDecl = declaration.as(FunctionDeclSyntax.self) {
+                // 根据 KTA 机制，方法最多支持三个参数 (XZMocoaViewModel, XZMocoaKey, value)
+                if methodDecl.signature.parameterClause.parameters.count > 3 {
+                    throw XZMacroError(node, message: "仅支持绑定一个参数的方法")
+                }
+                // 修饰视图的方法，仅支持一个参数，不带标签
+                if case let .argumentList(arguments) = node.arguments, arguments.count > 0 {
+                    if arguments.count > 1 {
+                        throw XZMacroError(node, message: "仅支持绑定一个键到方法")
+                    }
+                    if let label = arguments[arguments.startIndex].label?.text {
+                        throw XZMacroError(node, message: "请移除 \(label) 参数标签")
+                    }
+                }
+            }
+            
+            throw XZMacroError(node, message: "不支持此成员")
+            
+        case .vm:
+            if let propertyDecl = declaration.as(VariableDeclSyntax.self) {
+                if case let .argumentList(arguments) = node.arguments, arguments.count > 0 {
+                    if arguments.count > 1 {
+                        throw XZMacroError(node, message: "仅支持将一个键绑定到属性")
+                    }
+                    let keyArgument = arguments[arguments.startIndex]
+                } else if let name = propertyDecl.name {
+                    if propertyDecl.isReadOnlyProperty {
+                        throw XZMacroError(node, message: "无法将数据模型的 \(name) 的值绑定到只读属性")
+                    }
+                } else {
+                    throw XZMacroError(node, message: "无法确定属性名")
+                }
+            }
+            
+            if let methodDecl = declaration.as(FunctionDeclSyntax.self) {
+                let count = methodDecl.signature.parameterClause.parameters.count
+                if case let .argumentList(arguments) = node.arguments, arguments.count > 0 {
+                    if arguments.count > count {
+                        throw XZMacroError(node, message: "绑定的键不能比方法参数多")
+                    }
+                    for argument in arguments {
+                        if let label = argument.label?.text {
+                            throw XZMacroError(node, message: "请移除 \(label) 参数标签")
+                        }
+                    }
+                } else {
+                    // 没有参数，使用方法参数名作为键
+                }
+            }
+            
+            throw XZMacroError(node, message: "不支持此成员")
+        }
+        
+        return []
+    }
+    
+    // AccessorMacro 协议
+    public static func expansion(of node: SwiftSyntax.AttributeSyntax, providingAccessorsOf declaration: some SwiftSyntax.DeclSyntaxProtocol, in context: some SwiftSyntaxMacros.MacroExpansionContext) throws -> [SwiftSyntax.AccessorDeclSyntax] {
+        guard let propertyDecl = declaration.as(VariableDeclSyntax.self) else {
+            throw XZMacroError(node, message: "仅支持属性")
+        }
+        
+        switch try MocoaRole.init(node: node, context: context) {
+        case .m:
+            return []
+        
+        case .v:
+            switch TypeWrapation(propertyDecl.bindings.first?.typeAnnotation?.type) {
+            case .optional:
+                fallthrough
+            case .autoUnwrapped:
+                let macroName = node.attributeName.trimmedDescription
+                
+                if propertyDecl.isReadOnlyProperty {
+                    if !propertyDecl.trimmedDescription.contains("\(macroName)Target") {
+                        XZMacroDiagnose(context, node: node, message: "可选类型的只读属性，绑定可能实效，请自行调用 \(macroName)Target(_:action:forKey:) 方法实现绑定", severity: .warning)
+                    }
+                    return []
+                }
+                
+                if propertyDecl.containsAccessors(["set", "didSet"]) {
+                    if !propertyDecl.trimmedDescription.contains("\(macroName)Target") {
+                        XZMacroDiagnose(context, node: node, message: "无法为可选类型的属性，添加 didSet 方法，绑定可能实现，请自行调用 \(macroName)Target(_:action:forKey:) 方法实现绑定", severity: .warning)
+                    }
+                    return []
+                }
+                
+                let statements = try self.viewBindStatements(forMacros: propertyDecl.attributes.compactMap({ attribute in
+                    switch attribute {
+                    case .attribute(let macroNode):
+                        switch macroNode.attributeName.trimmedDescription {
+                        case "bind":
+                            fallthrough
+                        case "link":
+                            return macroNode
+                        default:
+                            return nil
+                        }
+                    case .ifConfigDecl:
+                        return nil
+                    }
+                }), forVariable: propertyDecl)
+                
+                return [
+                    """
+                    didSet {
+                        guard let viewModel = self.viewModel else { return }
+                        \(raw: statements)
+                    }
+                    """
+                ]
+                
+            default:
+                return []
+            }
+            
+        case .vm:
+            return []
+        }
+    }
+    
+    
+    // 为 @mocoa 宏提供 @bind 语句
+    public static func expansion(of node: AttributeSyntax, providingStatementsOf propertyDecl: VariableDeclSyntax, in context: some MacroExpansionContext, for role: MocoaRole) throws -> [String] {
+        return []
+    }
+    
+    // 为 @mocoa 宏提供 @bind 语句
+    public static func expansion(of node: AttributeSyntax, providingStatementsOf methodDecl: FunctionDeclSyntax, in context: some MacroExpansionContext, for role: MocoaRole) throws -> [String] {
+        return []
+    }
+    
+    // - old methods
     
     /// 从属性的声明，获取属性的类型。
     /// - Parameter variableDecl: 声明属性的语句
     /// - Returns: 属性的类型名，属性的可选类型
-    public static func typeInfo(from variableDecl: VariableDeclSyntax) throws -> (typeName: String, wrappedType: WrappedType) {
+    public static func typeInfo(from variableDecl: VariableDeclSyntax) throws -> (typeName: String, wrappedType: TypeWrapation) {
         guard let expression = variableDecl.bindings.first else {
             throw XZMacroError(message: "@bind: 没有找到属性类型")
         }
@@ -282,7 +475,7 @@ public struct BindMacro {
         }
     }
     
-    public static func isValid(forMacro node: SwiftSyntax.AttributeSyntax, forVariable declaration: VariableDeclSyntax, for role: MocoaRole) throws -> WrappedType {
+    public static func isValid(forMacro node: SwiftSyntax.AttributeSyntax, forVariable declaration: VariableDeclSyntax, for role: MocoaRole) throws -> TypeWrapation {
         switch role {
         case .m:
             throw XZMacroError(message: "@bind: 暂不支持 .m 角色")
@@ -368,93 +561,64 @@ public struct BindMacro {
     
 }
 
-extension BindMacro: PeerMacro {
+extension BindMacro {
     
-    public static func expansion(of node: SwiftSyntax.AttributeSyntax, providingPeersOf declaration: some SwiftSyntax.DeclSyntaxProtocol, in context: some SwiftSyntaxMacros.MacroExpansionContext) throws -> [SwiftSyntax.DeclSyntax] {
-        switch try MocoaRole.init(node: node, context: context) {
+    /// 供 @mooca 宏调用，为 @bind 或 @link 宏标记的属性，添加 @objc 标记。
+    ///
+    /// 调用此方法前 @mocoa 宏已确定所有参数类型。
+    /// - Parameters:
+    ///   - node: `@bind` 宏
+    ///   - declaration: 被 @bind 宏修饰的属性
+    ///   - context: @mocoa 宏的上下文
+    /// - Returns: 属性
+    public static func expansion(of node: AttributeSyntax, providingAttributesFor propertyDecl: VariableDeclSyntax, in context: some SwiftSyntaxMacros.MacroExpansionContext, for role: MocoaRole) throws -> [SwiftSyntax.AttributeSyntax] {
+        switch role {
         case .m:
-            throw XZMacroError(message: "@\(node.attributeName.trimmedDescription): 不支持 Model 角色")
+            throw XZMacroError(message: "@\(node.attributeName): 不支持 Model 角色")
+            
         case .v:
-            return []
-        case .vm:
-            if node.attributeName.trimmedDescription == "link" {
-                throw XZMacroError(message: "@link: 仅支持 View 角色")
-            }
-            return []
-        }
-    }
-    
-}
-
-/// for @bind(key:)
-public struct ViewBindMacro {
-    
-}
-
-extension ViewBindMacro: AccessorMacro {
-    
-    public static func expansion(of node: SwiftSyntax.AttributeSyntax, providingAccessorsOf declaration: some SwiftSyntax.DeclSyntaxProtocol, in context: some SwiftSyntaxMacros.MacroExpansionContext) throws -> [SwiftSyntax.AccessorDeclSyntax] {
-        guard let declaration = declaration.as(VariableDeclSyntax.self) else {
-            throw XZMacroError(message: "@bind(key:) 仅支持属性")
-        }
-        
-        let type = try BindMacro.typeInfo(from: declaration);
-        
-        for binding in declaration.bindings {
-            guard let accessorBlock = binding.accessorBlock else {
-                continue
-            }
-            switch accessorBlock.accessors {
-            case .getter:
-                if type.wrappedType == .optional {
-                    XZMacroDiagnose(context, node: node, message: "@bind: 可选类型的只读计算属性，可能无法实时绑定，如果该属性不为 nil 请使用非可选或隐式可选类型，以消除此警告", severity: .warning)
-                }
+            // @bind 宏的合法性由自身校验，此方法为 @mocoa 宏调用，不校验合法性
+            // 已有 @objc 标记
+            if propertyDecl.containsAttributes(["objc", "key", "IBOutlet"], .or) {
                 return []
-                
-            case .accessors(let accessors):
-                for accessor in accessors {
-                    switch accessor.accessorSpecifier.text {
-                    case "didSet":
-                        XZMacroDiagnose(context, node: node, message: "@bind: 已自定义 didSet 无法绑定动态监听，若已自行处理，请使用 @bind(vmKey, vKey) 以消除此警告", severity: .warning)
-                        return []
-                    default:
-                        break
-                    }
-                }
             }
+            return ["@objc"]
+        case .vm:
+            // 已包含 @objc
+            if propertyDecl.containsAttributes(["objc", "key", "NSManaged"], .or) {
+                return []
+            }
+            return ["@objc"]
         }
-        
-        guard type.wrappedType == .optional else {
-            return []
+    }
+    
+    /// 供 @mooca 宏调用，为 @bind 宏标记的方法，添加 @objc 标记。
+    ///
+    /// 调用此方法前 @mocoa 宏已确定所有参数类型。
+    /// - Parameters:
+    ///   - node: `@bind` 宏
+    ///   - declaration: 被 @bind 宏修饰的方法
+    ///   - context: @mocoa 宏的上下文
+    /// - Returns: 属性
+    public static func expansion(of node: AttributeSyntax, providingAttributesFor methodDecl: FunctionDeclSyntax, in context: some SwiftSyntaxMacros.MacroExpansionContext, for role: MocoaRole) throws -> [SwiftSyntax.AttributeSyntax] {
+        switch role {
+        case .m:
+            throw XZMacroError(message: "@\(node.attributeName): 不支持 Model 角色")
+        case .v:
+            if methodDecl.containsAttributes(["objc", "IBAction"], .or) {
+                return []
+            }
+            return ["@objc"]
+        case .vm:
+            if methodDecl.containsAttributes(["objc", "IBAction"], .or) {
+                return []
+            }
+            return ["@objc"]
         }
-        
-        let statements = try BindMacro.viewBindStatements(forMacros: declaration.attributes.compactMap({ attribute in
-            switch attribute {
-            case .attribute(let macroNode):
-                switch macroNode.attributeName.trimmedDescription {
-                case "bind":
-                    fallthrough
-                case "link":
-                    return macroNode
-                default:
-                    return nil
-                }
-            case .ifConfigDecl:
-                return nil
-            }
-        }), forVariable: declaration)
-        
-        return [
-            """
-            didSet {
-                guard let viewModel = self.viewModel else { return }
-                \(raw: statements)
-            }
-            """
-        ]
     }
     
 }
+
 
 fileprivate func UIViewSelector(forBindingKey vmkey: String) throws -> String {
     if regexTest(vmkey, pattern: "hidden$") {

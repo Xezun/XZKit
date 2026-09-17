@@ -44,6 +44,10 @@ public enum XZMacroError: Error, CustomStringConvertible {
         self = .message(message)
     }
     
+    public init(_ node: AttributeSyntax, message: String) {
+        self = .message("@\(node.attributeName.trimmedDescription): \(message)")
+    }
+    
 }
 
 /// XZKitMacros 诊断消息。
@@ -57,24 +61,24 @@ public struct XZMacroDiagnosticMessage: DiagnosticMessage {
     
     public let severity: SwiftDiagnostics.DiagnosticSeverity
     
-    public init(message: String, severity: SwiftDiagnostics.DiagnosticSeverity) {
-        self.message = message
+    public init(_ node: AttributeSyntax, message: String, severity: SwiftDiagnostics.DiagnosticSeverity) {
+        self.message = "@\(node.attributeName.trimmedDescription): \(message)"
         self.severity = severity
     }
     
-    public init(error: Error, severity: SwiftDiagnostics.DiagnosticSeverity) {
+    public init(_ node: AttributeSyntax, error: Error, severity: SwiftDiagnostics.DiagnosticSeverity) {
         if case let .message(message) = (error as? XZMacroError) {
-            self.init(message: message, severity: severity)
+            self.init(node, message: message, severity: severity)
         } else {
-            self.init(message: "未知错误", severity: .error)
+            self.init(node, message: "未知错误", severity: .error)
         }
     }
     
 }
 
 /// 输出普通诊断信息。
-public func XZMacroDiagnose(_ context: some SwiftSyntaxMacros.MacroExpansionContext, node: some SwiftSyntax.SyntaxProtocol, message: String, severity: SwiftDiagnostics.DiagnosticSeverity, fixIt: FixIt? = nil) {
-    let diagnosticMessage = XZMacroDiagnosticMessage.init(message: message, severity: severity);
+public func XZMacroDiagnose(_ context: some SwiftSyntaxMacros.MacroExpansionContext, node: AttributeSyntax, message: String, severity: SwiftDiagnostics.DiagnosticSeverity, fixIt: FixIt? = nil) {
+    let diagnosticMessage = XZMacroDiagnosticMessage.init(node, message: message, severity: severity);
     if let fixIt = fixIt {
         context.diagnose(.init(node: node, message: diagnosticMessage, fixIt: fixIt))
     } else {
@@ -83,8 +87,8 @@ public func XZMacroDiagnose(_ context: some SwiftSyntaxMacros.MacroExpansionCont
 }
 
 /// 输出错误诊断信息。
-public func XZMacroDiagnose(_ context: some SwiftSyntaxMacros.MacroExpansionContext, node: some SwiftSyntax.SyntaxProtocol, error: Error, severity: SwiftDiagnostics.DiagnosticSeverity, fixIt: FixIt? = nil) {
-    let diagnosticMessage = XZMacroDiagnosticMessage.init(error: error, severity: severity);
+public func XZMacroDiagnose(_ context: some SwiftSyntaxMacros.MacroExpansionContext, node: AttributeSyntax, error: Error, severity: SwiftDiagnostics.DiagnosticSeverity, fixIt: FixIt? = nil) {
+    let diagnosticMessage = XZMacroDiagnosticMessage.init(node, error: error, severity: severity);
     if let fixIt = fixIt {
         context.diagnose(.init(node: node, message: diagnosticMessage, fixIt: fixIt))
     } else {
@@ -160,6 +164,11 @@ extension SwiftSyntax.AttributeListSyntax {
     
 }
 
+public enum XZMocoaSearchMatchMethod {
+    case or
+    case and
+}
+
 extension VariableDeclSyntax {
     
     /// 属性名
@@ -222,12 +231,7 @@ extension VariableDeclSyntax {
         }
     }
     
-    public enum MatchMethod {
-        case or
-        case and
-    }
-    
-    public func containsAttributes(_ names: Set<String>, _ method: MatchMethod) -> Bool {
+    public func containsAttributes(_ names: Set<String>, _ method: XZMocoaSearchMatchMethod) -> Bool {
         if names.isEmpty {
             return true
         }
@@ -280,6 +284,51 @@ extension VariableDeclSyntax {
     
 }
 
+extension FunctionDeclSyntax {
+    
+    /// 获取指定名字的属性。
+    public func attributeForName(_ name: String) -> SwiftSyntax.AttributeSyntax? {
+        for attribute in self.attributes {
+            guard case let .attribute(macroNode) = attribute else {
+                continue
+            }
+            if macroNode.attributeName.trimmedDescription == name {
+                return macroNode
+            }
+        }
+        return nil
+    }
+    
+    public func containsAttributes(_ names: Set<String>, _ method: XZMocoaSearchMatchMethod) -> Bool {
+        if names.isEmpty {
+            return true
+        }
+        switch method {
+        case .or:
+            return self.attributes.contains { attribute in
+                if case let .attribute(macroNode) = attribute {
+                    let name = macroNode.attributeName.trimmedDescription
+                    return names.contains(name)
+                }
+                return false
+            }
+        case .and:
+            return self.attributes.reduce(names, { partialResult, attribute in
+                guard case let .attribute(macroNode) = attribute else {
+                    return partialResult
+                }
+                let name = macroNode.attributeName.trimmedDescription
+                guard let index = partialResult.firstIndex(of: name) else {
+                    return partialResult
+                }
+                var newNames = partialResult
+                newNames.remove(at: index)
+                return newNames
+            }).isEmpty
+        }
+    }
+}
+
 extension ClassDeclSyntax {
     
     /// class 继承的类型。
@@ -293,6 +342,18 @@ extension ClassDeclSyntax {
             }
             return nil
         }
+    }
+    
+    public func containsMethod(_ methodName: String) -> Bool {
+        for member in self.memberBlock.members {
+            guard let methodDecl = member.decl.as(FunctionDeclSyntax.self) else {
+                continue
+            }
+            if methodDecl.name.text == methodName {
+                return true
+            }
+        }
+        return false
     }
     
 }
@@ -322,4 +383,44 @@ extension CodeBlockItemListSyntax {
         })
     }
     
+}
+
+
+extension AttributeSyntax {
+    
+    // 返回当前宏的第 index 个参数的 XZMocoaKey 值。
+    // 如果参数不是字符串或点语法，就返回 nil
+    func mocoaKeyFromArgument(at index: Int) throws -> String? {
+        guard let arguments = self.arguments else { return nil }
+        
+        switch arguments {
+        case .argumentList(let arguments):
+            guard index < arguments.count else { break }
+            let argument = arguments[arguments.index(arguments.startIndex, offsetBy: index)]
+            // 参数为字符串
+            if let stringLiteral = argument.expression.as(StringLiteralExprSyntax.self) {
+                // 字符串有插值时 representedLiteralValue 返回 nil
+                guard let key = stringLiteral.representedLiteralValue else {
+                    throw XZMacroError(message: "\(self.attributeName): 仅支持静态字符串")
+                }
+                return key
+            }
+            // 参数为点语法
+            guard var memberSyntax = argument.expression.as(MemberAccessExprSyntax.self) else {
+                throw XZMacroError(message: "\(self.attributeName): 不是合法的 XZMocoaKey 值")
+            }
+            // 拼接 declName 为最后一个点，后面的部分
+            var keyPath = memberSyntax.declName.trimmedDescription;
+            while let base = memberSyntax.base?.as(MemberAccessExprSyntax.self) {
+                keyPath = "\(base.declName.trimmedDescription).\(keyPath)"
+                memberSyntax = base
+            }
+            return keyPath
+            
+        default:
+            break
+        }
+    
+        throw XZMacroError(message: "@\(self.attributeName): 缺少第 \(index) 参数")
+    }
 }
