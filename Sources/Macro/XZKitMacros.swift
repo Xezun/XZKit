@@ -424,3 +424,25 @@ extension AttributeSyntax {
         throw XZMacroError(message: "@\(self.attributeName): 缺少第 \(index) 参数")
     }
 }
+
+
+extension LabeledExprSyntax {
+    
+    var mocoaKeyRepresentation: String? {
+        // 参数为字符串
+        if let stringLiteral = self.expression.as(StringLiteralExprSyntax.self) {
+            return stringLiteral.representedLiteralValue
+        }
+        // 参数为点语法
+        guard var memberSyntax = self.expression.as(MemberAccessExprSyntax.self) else {
+            return nil
+        }
+        // 拼接 declName 为最后一个点，后面的部分
+        var keyPath = memberSyntax.declName.trimmedDescription;
+        while let base = memberSyntax.base?.as(MemberAccessExprSyntax.self) {
+            keyPath = "\(base.declName.trimmedDescription).\(keyPath)"
+            memberSyntax = base
+        }
+        return keyPath
+    }
+}

@@ -212,14 +212,61 @@ public struct BindMacro: PeerMacro, AccessorMacro {
         }
     }
     
-    
-    // 为 @mocoa 宏提供 @bind 语句
+    // 供 @mocoa 宏使用，为 @bind 修饰的属性，生成绑定语句。
     public static func expansion(of node: AttributeSyntax, providingStatementsOf propertyDecl: VariableDeclSyntax, in context: some MacroExpansionContext, for role: MocoaRole) throws -> [String] {
+        let macro = node.attributeName.trimmedDescription
+        switch role {
+        case .m:
+            throw XZMacroError(node, message: "不支持在 Model 中使用")
+        
+        case .v:
+            if let arguments = node.arguments {
+                guard case let .argumentList(arguments) = arguments else {
+                    throw XZMacroError(node, message: "参数不合法")
+                }
+                switch arguments.count {
+                case 0:
+                    if let name = propertyDecl.name {
+                        return ["viewModel.\(macro)Target(self, action:#selector(setter: Self.\(name), forKey:\"\(name)\")"]
+                    } else {
+                        throw XZMacroError(node, message: "无法确定属性名")
+                    }
+                case 1:
+                    if let key = arguments[arguments.startIndex].mocoaKeyRepresentation {
+                        if let label = arguments[arguments.startIndex].label?.text {
+                            return []
+                        } else {
+                            
+                        }
+                    }
+                    
+                case 2:
+                default:
+                    throw XZMacroError(node, message: "参数不合法")
+                }
+            } else if let name = propertyDecl.name {
+                return ["viewModel.\(macro)Target(self, action:#selector(setter: Self.\(name), forKey:\"\(name)\")"]
+            } else {
+                throw XZMacroError(node, message: "无法确定属性名")
+            }
+            
+        case .vm:
+            
+        }
         return []
     }
     
     // 为 @mocoa 宏提供 @bind 语句
     public static func expansion(of node: AttributeSyntax, providingStatementsOf methodDecl: FunctionDeclSyntax, in context: some MacroExpansionContext, for role: MocoaRole) throws -> [String] {
+        switch role {
+        case .m:
+            throw XZMacroError(node, message: "不支持在 Model 中使用")
+        
+        case .v:
+            
+        case .vm:
+            
+        }
         return []
     }
     
