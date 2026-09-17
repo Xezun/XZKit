@@ -10,6 +10,8 @@
 #import "XZMocoaViewModel.h"
 @import ObjectiveC;
 
+static NSMapTable<Class, NSMapTable<id, XZMocoaTargetAction *> *> *_classTargetActionTable = nil;
+
 @implementation XZMocoaTargetAction {
     /// action 的参数数量，不包括 self 和 SEL
     NSInteger _numberOfArguments;
@@ -17,11 +19,40 @@
     XZObjcType *_valueArgumentType;
 }
 
++ (XZMocoaTargetAction *)targetActionForTarget:(id)target action:(SEL)action {
+    if (target == nil || action == nil) {
+        return nil;
+    }
+    
+    Class const TargetClass = object_getClass(target);
+    if (TargetClass == Nil) {
+        return nil;
+    }
+    
+    if (_classTargetActionTable == nil) {
+        _classTargetActionTable = [[NSMapTable alloc] initWithKeyOptions:NSPointerFunctionsOpaqueMemory valueOptions:NSPointerFunctionsStrongMemory capacity:0];
+    }
+    
+    NSMapTable *targetActionTable = [_classTargetActionTable objectForKey:TargetClass];
+    if (targetActionTable == nil) {
+        targetActionTable = [[NSMapTable alloc] initWithKeyOptions:NSPointerFunctionsOpaqueMemory valueOptions:NSPointerFunctionsStrongMemory capacity:0];
+        [_classTargetActionTable setObject:targetActionTable forKey:TargetClass];
+    }
+    
+    XZMocoaTargetAction *targetAction = (__bridge id)NSMapGet(targetActionTable, action);
+    if (targetAction == nil) {
+        targetAction = [[XZMocoaTargetAction alloc] initWithTarget:target action:action];
+        NSMapInsert(targetActionTable, action, (__bridge void *)targetAction);
+    }
+    
+    return targetAction;
+}
+
 - (instancetype)initWithTarget:(id)target action:(SEL)action {
     self = [super init];
     if (self) {
-        _target  = target;
-        _action  = action;
+        _target = target;
+        _action = action;
         
         Method const method = class_getInstanceMethod(object_getClass(target), action);
         

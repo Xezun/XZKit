@@ -22,7 +22,7 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic, readonly, nullable) SEL action;
 
 - (instancetype)init NS_UNAVAILABLE;
-- (instancetype)initWithTarget:(id)target action:(SEL)action NS_DESIGNATED_INITIALIZER;
++ (XZMocoaTargetAction *)targetActionForTarget:(id)target action:(SEL)action;
 
 - (void)sender:(id)sender sendActionForKey:(XZMocoaKey)key value:(id)value;
 

@@ -27,7 +27,7 @@
         targetActions = [NSMutableArray array];
         _table[key] = targetActions;
     }
-    XZMocoaTargetAction *targetAction = [[XZMocoaTargetAction alloc] initWithTarget:target action:action];
+    XZMocoaTargetAction *targetAction = [XZMocoaTargetAction targetActionForTarget:target action:action];
     [targetActions addObject:targetAction];
 }
 

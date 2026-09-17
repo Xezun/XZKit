@@ -120,6 +120,7 @@ static void * _context = &_context;
         return;
     }
     _needsPostNotification = YES;
+    // todo: 该将合并计算的过程，放到数据从 vm => v 的过程，让 vm 可以实时感知数据的变化
     [NSRunLoop.mainRunLoop performInModes:@[NSRunLoopCommonModes] block:^{
         [self postNotificationIfNeeded];
     }];
