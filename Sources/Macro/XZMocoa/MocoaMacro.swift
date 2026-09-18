@@ -129,10 +129,10 @@ extension MocoaMacro: MemberMacro {
             
             for member in classDecl.memberBlock.members {
                 if let propertyDecl = member.decl.as(VariableDeclSyntax.self) {
-                    statements.append(contentsOf: try BindMacro.expansion(of: .v, providingStatementsOf: propertyDecl, in: context))
+//                    statements.append(contentsOf: try BindMacro.expansion(of: .v, providingStatementsOf: propertyDecl, in: context))
                 }
                 if let methodDecl = member.decl.as(FunctionDeclSyntax.self) {
-                    statements.append(contentsOf: try BindMacro.expansion(of: .v, providingStatementsOf: methodDecl, in: context))
+//                    statements.append(contentsOf: try BindMacro.expansion(of: .v, providingStatementsOf: methodDecl, in: context))
                 }
             }
             
@@ -171,11 +171,11 @@ extension MocoaMacro: MemberMacro {
             
             for member in classDecl.memberBlock.members {
                 if let propertyDecl = member.decl.as(VariableDeclSyntax.self) {
-                    statements.append(contentsOf: try BindMacro.expansion(of: .vm, providingStatementsOf: propertyDecl, in: context))
+//                    statements.append(contentsOf: try BindMacro.expansion(of: .vm, providingStatementsOf: propertyDecl, in: context))
                     continue
                 }
                 if let methodDecl = member.decl.as(FunctionDeclSyntax.self) {
-                    statements.append(contentsOf: try BindMacro.expansion(of: .vm, providingStatementsOf: methodDecl, in: context))
+//                    statements.append(contentsOf: try BindMacro.expansion(of: .vm, providingStatementsOf: methodDecl, in: context))
                     continue
                 }
             }
@@ -324,7 +324,7 @@ extension MocoaMacro: MemberMacro {
             
             let mappingKeyValues = mappingKeyValueStrings.joined(separator: ", \n            ")
             
-            let variableSyntax = try VariableDeclSyntax(
+            let variableSyntax1 = try VariableDeclSyntax(
                 """
                     override class var mappingObserverMethodsForModelKeys: [String : Any]? {
                         return [ 
@@ -334,7 +334,7 @@ extension MocoaMacro: MemberMacro {
                 """
             )
             
-            return [DeclSyntax(variableSyntax)]
+            return [DeclSyntax(variableSyntax1)]
         }
         
     }

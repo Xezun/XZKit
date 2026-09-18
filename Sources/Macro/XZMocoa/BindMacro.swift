@@ -150,105 +150,129 @@ public struct BindMacro: PeerMacro, AccessorMacro {
             return []
             
         case .v:
+            // 找到符合条件的宏：只有绑定属性值（子视图）的可选属性宏，才需要
+            var bindNodes = [(method: String, node: AttributeSyntax, arguments: LabeledExprListSyntax)]()
+            // 只有 node 是第一个符合条件的宏，才生成 didSet
+            var shouldProvideAccessor: Bool? = nil
+            for bindNode in propertyDecl.attributes {
+                guard case let .attribute(bindNode) = bindNode else {
+                    continue
+                }
+                guard let method = bindNode.attributeName.as(IdentifierTypeSyntax.self)?.name.text else {
+                    continue
+                }
+                guard method == "bind" || method == "link" else {
+                    continue
+                }
+                guard case let .argumentList(arguments) = bindNode.arguments else {
+                    continue
+                }
+                switch arguments.count {
+                case 1:
+                    guard arguments[arguments.startIndex].label?.text != nil else {
+                        continue
+                    }
+                case 2:
+                    guard arguments[arguments.startIndex].label?.text == nil else {
+                        continue
+                    }
+                    guard let label = arguments[arguments.index(after: arguments.startIndex)].label?.text else {
+                        continue
+                    }
+                    guard label == "selector" else {
+                        continue
+                    }
+                default:
+                    continue
+                }
+                
+                if shouldProvideAccessor == nil {
+                    shouldProvideAccessor = (bindNode.description == node.description)
+                }
+                
+                guard shouldProvideAccessor! else {
+                    return []
+                }
+                bindNodes.append((method, bindNode, arguments))
+            }
+            
+            if bindNodes.isEmpty {
+                return []
+            }
+            
             let property = try PropertyInfomation(node, propertyDecl);
-            switch property.type.wrapation {
-            case .optional:
-                fallthrough
-            case .autoUnwrapped:
-                let method = "\(node.attributeName.trimmedDescription)Target"
+            
+            switch property.readability {
+            case .readonly:
+                // let 只读属性
+                return []
                 
-                // 无参数，绑定的是属性的 setter
+            case .computed:
+                for (method, _, _) in bindNodes {
+                    let method = "\(method)Target"
+                    if propertyDecl.trimmedDescription.contains(method) {
+                        continue
+                    }
+                    XZMacroDiagnose(context, node: node, message: "计算属性，需自行调用 \(method)(_:action:forKey:) 方法实现绑定", severity: .warning)
+                }
+                return []
                 
-                var statements = [String]()
+            case .variable:
+                var bindStatements = [String]()
+                var removeStatements = [String]()
                 
-                var shouldProvideAccessor = false
-                for attribute in propertyDecl.attributes {
-                    guard case let .attribute(macroNode) = attribute else {
-                        continue
-                    }
-                    guard let method = macroNode.attributeName.as(IdentifierTypeSyntax.self)?.name.text else {
-                        continue
-                    }
-                    guard method == "bind" || method == "link" else {
-                        continue
-                    }
-                    guard case let .argumentList(arguments) = macroNode.arguments, arguments.count > 0 else {
-                        continue
-                    }
-                    
+                for (method, node, arguments) in bindNodes {
                     switch arguments.count {
                     case 1:
-                        let keyArgument = arguments[arguments.startIndex]
-                        guard let label = keyArgument.label?.text else { return [] }
+                        let argument = arguments[arguments.startIndex]
+                        let label = argument.label!.text
+                        let key   = try XZMocoaKey(from: argument, of: node)
+                        bindStatements.append("viewModel.\(method)Target(newValue, action: #selector(setter: \(property.type.name).\(label)), forKey: \"\(key)\")")
+                        removeStatements.append("viewModel.removeTarget(oldValue, action: #selector(setter: \(property.type.name).\(label)), forKey: \"\(key)\")")
                         
                     case 2:
-                    }
-                    
-                    if !shouldProvideAccessor {
-                        shouldProvideAccessor = macroNode == node
-                    }
-                    guard shouldProvideAccessor else {
+                        let keyArgument = arguments[arguments.startIndex]
+                        let key = try XZMocoaKey(from: keyArgument, of: node)
+                        let selArgument = arguments[arguments.index(after: arguments.startIndex)]
+                        let selector = selArgument.expression.trimmedDescription
+                        bindStatements.append("viewModel.\(method)Target(newValue, action: \(selector), forKey: \"\(key)\")")
+                        removeStatements.append("viewModel.removeTarget(oldValue, action: \(selector), forKey: \"\(key)\")")
+                        
+                    default:
                         continue
                     }
-                    
-                    let macroNode =
-                    
-                    
-                    statements.append("viewModel.\(method)Target(\(property.name), action: #selector(setter: \()), forKey: )")
-                    
-                    
-                    statements.append("viewModel.\(method)Target(\(property.name), action: #selector(setter: ), forKey: )")
-                    
-                    
-                    return []
                 }
                 
-                
-                
-                
-                
-                if propertyDecl.isReadOnlyProperty {
-                    if !propertyDecl.trimmedDescription.contains(method) {
-                        XZMacroDiagnose(context, node: node, message: "可选类型的只读属性，绑定可能实效，请自行调用 \(method)(_:action:forKey:) 方法实现绑定", severity: .warning)
-                    }
-                    return []
-                }
-                
-                if propertyDecl.containsAccessors(["set", "didSet"]) {
-                    if !propertyDecl.trimmedDescription.contains(method) {
-                        XZMacroDiagnose(context, node: node, message: "无法为可选类型的属性，添加 didSet 方法，绑定可能实现，请自行调用 \(method)(_:action:forKey:) 方法实现绑定", severity: .warning)
-                    }
-                    return []
-                }
-                
-                let statements = try self.viewBindStatements(forMacros: propertyDecl.attributes.compactMap({ attribute in
-                    switch attribute {
-                    case .attribute(let macroNode):
-                        switch macroNode.attributeName.trimmedDescription {
-                        case "bind":
-                            fallthrough
-                        case "link":
-                            return macroNode
-                        default:
-                            return nil
+                switch property.type.wrapation {
+                case .unwrapped:
+                    return [
+                        """
+                        didSet {
+                            guard let viewModel = self.viewModel else { return }
+                            \(raw: removeStatements.joined(separator: "\n"))
+                            let newValue = self.\(raw: property.name)
+                            \(raw: bindStatements.joined(separator: "\n"))
                         }
-                    case .ifConfigDecl:
-                        return nil
-                    }
-                }), forVariable: propertyDecl)
-                
-                return [
-                    """
-                    didSet {
-                        guard let \(raw: property.name) = self.\(raw: property.name) else { return }
-                        guard let viewModel = self.viewModel else { return }
-                        \(raw: statements)
-                    }
-                    """
-                ]
-                
-            default:
-                return []
+                        """
+                    ]
+                    
+                case .autoUnwrapped:
+                    fallthrough
+                case .optional:
+                    return [
+                        """
+                        didSet {
+                            guard let viewModel = self.viewModel else { return }
+                            if let oldValue = oldValue {
+                                \(raw: removeStatements.joined(separator: "\n"))
+                            }
+                            if let newValue = self.\(raw: property.name) { 
+                                \(raw: bindStatements.joined(separator: "\n"))
+                            }
+                        }
+                        """
+                    ]
+                }
             }
             
         case .vm:
@@ -263,104 +287,9 @@ struct ViewBindMacro {
     
 }
 
+
+
 extension BindMacro {
-    
-    
-    
-    
-    // 供 @mocoa 宏使用，为 @bind 修饰的属性，生成绑定语句。
-    public static func role(_ role: MocoaRole, expansionOf node: AttributeSyntax, providingStatementsOf propertyDecl: VariableDeclSyntax, in context: some MacroExpansionContext) throws -> [String] {
-//        let macro = node.attributeName.trimmedDescription
-        switch role {
-        case .m:
-            return []
-        
-        case .v:
-            let property = try PropertyInfomation.init(node, propertyDecl)
-            
-            var statements = [String]()
-            // 遍历附加到 property 的所有宏
-            for attribute in propertyDecl.attributes {
-                guard case let .attribute(node) = attribute else {
-                    continue
-                }
-                
-                let macro = node.attributeName.trimmedDescription
-                
-                switch macro {
-                case "bind", "link":
-                    if case let .argumentList(arguments) = node.arguments, arguments.count > 1 {
-                        switch arguments.count {
-                        case 1:
-                            let keyArgument = arguments[arguments.startIndex]
-                            let MocoaKey = try XZMocoaKey(from: keyArgument, of: node)
-                            
-                            if let label = keyArgument.label?.text {
-                                statements.append("viewModel.\(macro)Target(self.\(property.name), action:#selector(setter: \(property.type.name).\(label)), forKey:\"\(MocoaKey)\")")
-                            } else {
-                                statements.append("viewModel.\(macro)Target(self, action:#selector(setter: Self.\(property.name)), forKey:\"\(MocoaKey)\")")
-                            }
-                        case 2:
-                            
-                            
-                            
-                        default:
-                            
-                        }
-                    } else if let name = propertyDecl.name {
-                        // 宏无参数，使用属性名作为 key
-                        statements.append("viewModel.\(method)Target(self, action:#selector(setter: Self.\(name)), forKey:\"\(name)\")")
-                    } else {
-                        throw XZMacroError(node, message: "参数不合法")
-                    }
-                    
-                    if let arguments = node.arguments {
-                        guard case let .argumentList(arguments) = node.arguments else {
-                            throw XZMacroError(node, message: "参数不合法")
-                        }
-                        switch arguments.count {
-                        case 0:
-                            //
-                            
-                        case 1:
-                            
-                            
-                        case 2:
-                        default:
-                            throw XZMacroError(node, message: "参数不合法")
-                        }
-                    } else if let name = propertyDecl.name {
-                        return ["viewModel.\(macro)Target(self, action:#selector(setter: Self.\(name), forKey:\"\(name)\")"]
-                    } else {
-                        throw XZMacroError(node, message: "无法确定属性名")
-                    }
-                    
-                default:
-                    continue
-                }
-            }
-            return statements
-            
-            
-        case .vm:
-            
-        }
-        return []
-    }
-    
-    // 为 @mocoa 宏提供 @bind 语句
-    public static func expansion(of role: MocoaRole, providingStatementsOf methodDecl: FunctionDeclSyntax, in context: some MacroExpansionContext) throws -> [String] {
-        switch role {
-        case .m:
-            throw XZMacroError(node, message: "不支持在 Model 中使用")
-        
-        case .v:
-            
-        case .vm:
-            
-        }
-        return []
-    }
     
     // - old methods
     
@@ -921,9 +850,23 @@ public struct TypeInfomation {
     }
 }
 
+public enum PropertyReadability {
+    /// let 只读属性
+    case readonly
+    /// var 计算属性
+    case computed
+    /// var 可写属性
+    case variable
+}
+
 public struct PropertyInfomation {
+    
+    /// 属性名
     let name: String
+    /// 属性数据类型
     let type: TypeInfomation
+    /// 属性的可读性
+    let readability: PropertyReadability
     
     init(_ node: AttributeSyntax, _ variableDecl: VariableDeclSyntax) throws {
         guard let name = variableDecl.name else {
@@ -931,6 +874,28 @@ public struct PropertyInfomation {
         }
         self.name = name
         self.type = try TypeInfomation.init(node, variableDecl)
+        
+        switch variableDecl.bindingSpecifier.text {
+        case "let":
+            self.readability = .readonly
+        case "var":
+            guard let expression = variableDecl.bindings.first else {
+                throw XZMacroError(node, message: "")
+            }
+            
+            if let accessors = expression.accessorBlock?.accessors {
+                switch accessors {
+                case .getter:
+                    self.readability = .computed
+                case .accessors(let accessors):
+                    self.readability = accessors.count > 1 ? .variable : .computed
+                }
+            } else {
+                self.readability = .variable
+            }
+        default:
+            throw XZMacroError(node, message: "无法确定属性内存属性")
+        }
     }
 }
 

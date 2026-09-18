@@ -308,7 +308,7 @@
 
 - (void)linkTarget:(id)target action:(SEL)action forKey:(XZMocoaKey)key {
     id const value = [self valueForKey:key];
-    XZMocoaTargetAction * const targetAction = [[XZMocoaTargetAction alloc] initWithTarget:target action:action];
+    XZMocoaTargetAction * const targetAction = [XZMocoaTargetAction targetActionForTarget:target action:action];
     [targetAction sender:self sendActionForKey:key value:value];
 }
 

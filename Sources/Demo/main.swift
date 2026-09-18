@@ -31,6 +31,15 @@ class TestView: UIView, XZMocoaView {
     
     @objc var name: String?
     
+    @bind(text: .name)
+    var nameLabel: UILabel = .init()
+    
+    @bind(image: .icon)
+    var iconImageView: UIImageView?
+    
+    @link("name", selector: #selector(setter: TestView.name))
+    var view: TestView = .init()
+    
     @link(text: .title)
     @link(textColor: .textColor)
     let titleLabel: UILabel = .init()
@@ -46,8 +55,7 @@ class TestView: UIView, XZMocoaView {
     @link(titleColor: .textColor, for: .normal)
     let button: UIButton = .init()
     
-    @link("name", selector: #selector(setter: TestView.name))
-    let view: TestView = .init()
+    
     
     @link
     @objc func beginRefreshing(_ isRefreshing: Bool) {

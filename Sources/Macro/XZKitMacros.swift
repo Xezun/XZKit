@@ -22,8 +22,7 @@ struct XZKitMacros: CompilerPlugin {
         MocoaMacro.self,
         ModuleMacro.self,
         KeyMacro.self,
-        BindMacro.self,
-        ViewBindMacro.self
+        BindMacro.self
     ]
     
 }
@@ -173,15 +172,7 @@ extension VariableDeclSyntax {
     
     /// 属性名
     public var name: String? {
-        
-        if let binding = self.bindings.first {
-            binding.typeAnnotation?.type.as(ide)
-        }
         return self.bindings.first?.pattern.as(IdentifierPatternSyntax.self)?.identifier.text
-    }
-    
-    public var type: String? {
-        
     }
     
     /// 是否为只读属性。

@@ -155,7 +155,7 @@ public macro key() = #externalMacro(module: "XZKitMacros", type: "KeyMacro")
 /// - 使用范围：视图、视图模型。
 /// - 绑定键名：与“属性名”或“方法参数名”同名的键。
 /// - 绑定目标：被宏修饰的属性或方法。
-@attached(peer, names: arbitrary)
+@attached(peer, names: prefixed(_))
 public macro bind() = #externalMacro(module: "XZKitMacros", type: "BindMacro")
 
 /// 将指定键**单次绑定**到宏所修饰的属性或方法。
@@ -163,7 +163,7 @@ public macro bind() = #externalMacro(module: "XZKitMacros", type: "BindMacro")
 /// - 使用范围：视图。
 /// - 绑定键名：与“属性名”同名的键。
 /// - 绑定目标：被宏修饰的属性或方法。
-@attached(peer, names: arbitrary)
+@attached(peer, names: prefixed(_))
 public macro link() = #externalMacro(module: "XZKitMacros", type: "BindMacro")
 
 /// 将 key 键**单向绑定**到宏所修饰的属性或方法。
@@ -171,7 +171,7 @@ public macro link() = #externalMacro(module: "XZKitMacros", type: "BindMacro")
 /// - 使用范围：视图、视图模型。
 /// - 绑定键名：宏参数指定键名。
 /// - 绑定目标：被宏修饰的属性或方法。
-@attached(peer, names: arbitrary)
+@attached(peer, names: prefixed(_))
 public macro bind(_ key: XZMocoaKey) = #externalMacro(module: "XZKitMacros", type: "BindMacro")
 
 /// 将 key 键**单次绑定**到宏所修饰的属性或方法。
@@ -179,7 +179,7 @@ public macro bind(_ key: XZMocoaKey) = #externalMacro(module: "XZKitMacros", typ
 /// - 使用范围：视图。
 /// - 绑定键名：宏参数指定键名。
 /// - 绑定目标：被宏修饰的属性或方法。
-@attached(peer, names: arbitrary)
+@attached(peer, names: prefixed(_))
 public macro link(_ key: XZMocoaKey) = #externalMacro(module: "XZKitMacros", type: "BindMacro")
 
 /// 将 key1、key2、keyN 键**单向绑定**到宏所修饰的方法。
@@ -187,7 +187,7 @@ public macro link(_ key: XZMocoaKey) = #externalMacro(module: "XZKitMacros", typ
 /// - 使用范围：视图模型。
 /// - 绑定键名：宏参数指定键名。
 /// - 绑定目标：被宏修饰的方法。
-@attached(peer, names: arbitrary)
+@attached(peer, names: prefixed(_))
 public macro bind(_ key1: XZMocoaKey, _ key2: XZMocoaKey, _ keyN: XZMocoaKey...) = #externalMacro(module: "XZKitMacros", type: "BindMacro")
 
 /// 将 key 键**单向绑定**到宏所修饰的属性。
