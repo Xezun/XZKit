@@ -173,7 +173,15 @@ extension VariableDeclSyntax {
     
     /// 属性名
     public var name: String? {
+        
+        if let binding = self.bindings.first {
+            binding.typeAnnotation?.type.as(ide)
+        }
         return self.bindings.first?.pattern.as(IdentifierPatternSyntax.self)?.identifier.text
+    }
+    
+    public var type: String? {
+        
     }
     
     /// 是否为只读属性。
@@ -425,24 +433,23 @@ extension AttributeSyntax {
     }
 }
 
-
-extension LabeledExprSyntax {
-    
-    var mocoaKeyRepresentation: String? {
-        // 参数为字符串
-        if let stringLiteral = self.expression.as(StringLiteralExprSyntax.self) {
-            return stringLiteral.representedLiteralValue
+public func XZMocoaKey(from argument: LabeledExprSyntax, of node: AttributeSyntax) throws -> String {
+    // 参数为字符串
+    if let stringLiteral = argument.expression.as(StringLiteralExprSyntax.self) {
+        if let key = stringLiteral.representedLiteralValue {
+            return key
         }
-        // 参数为点语法
-        guard var memberSyntax = self.expression.as(MemberAccessExprSyntax.self) else {
-            return nil
-        }
-        // 拼接 declName 为最后一个点，后面的部分
-        var keyPath = memberSyntax.declName.trimmedDescription;
-        while let base = memberSyntax.base?.as(MemberAccessExprSyntax.self) {
-            keyPath = "\(base.declName.trimmedDescription).\(keyPath)"
-            memberSyntax = base
-        }
-        return keyPath
+        throw XZMacroError(node, message: "仅支持静态字符串")
     }
+    // 参数为点语法
+    guard var memberSyntax = argument.expression.as(MemberAccessExprSyntax.self) else {
+        throw XZMacroError(node, message: "不是合法的 XZMocoaKey 值")
+    }
+    // 拼接 declName 为最后一个点，后面的部分
+    var keyPath = memberSyntax.declName.trimmedDescription;
+    while let base = memberSyntax.base?.as(MemberAccessExprSyntax.self) {
+        keyPath = "\(base.declName.trimmedDescription).\(keyPath)"
+        memberSyntax = base
+    }
+    return keyPath
 }

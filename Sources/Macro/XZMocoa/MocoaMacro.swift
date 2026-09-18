@@ -129,34 +129,10 @@ extension MocoaMacro: MemberMacro {
             
             for member in classDecl.memberBlock.members {
                 if let propertyDecl = member.decl.as(VariableDeclSyntax.self) {
-                    for attribute in propertyDecl.attributes {
-                        guard case let .attribute(node) = attribute else {
-                            continue
-                        }
-                        switch node.attributeName.trimmedDescription {
-                        case "bind":
-                            fallthrough
-                        case "link":
-                            statements.append(contentsOf: try BindMacro.expansion(of: node, providingStatementsOf: propertyDecl, in: context, for: .v))
-                        default:
-                            continue
-                        }
-                    }
+                    statements.append(contentsOf: try BindMacro.expansion(of: .v, providingStatementsOf: propertyDecl, in: context))
                 }
                 if let methodDecl = member.decl.as(FunctionDeclSyntax.self) {
-                    for attribute in methodDecl.attributes {
-                        guard case let .attribute(node) = attribute else {
-                            continue
-                        }
-                        switch node.attributeName.trimmedDescription {
-                        case "bind":
-                            fallthrough
-                        case "link":
-                            statements.append(contentsOf: try BindMacro.expansion(of: node, providingStatementsOf: methodDecl, in: context, for: .vm))
-                        default:
-                            continue
-                        }
-                    }
+                    statements.append(contentsOf: try BindMacro.expansion(of: .v, providingStatementsOf: methodDecl, in: context))
                 }
             }
             
@@ -195,34 +171,12 @@ extension MocoaMacro: MemberMacro {
             
             for member in classDecl.memberBlock.members {
                 if let propertyDecl = member.decl.as(VariableDeclSyntax.self) {
-                    for attribute in propertyDecl.attributes {
-                        guard case let .attribute(node) = attribute else {
-                            continue
-                        }
-                        switch node.attributeName.trimmedDescription {
-                        case "bind":
-                            fallthrough
-                        case "link":
-                            statements.append(contentsOf: try BindMacro.expansion(of: node, providingStatementsOf: propertyDecl, in: context, for: .v))
-                        default:
-                            continue
-                        }
-                    }
+                    statements.append(contentsOf: try BindMacro.expansion(of: .vm, providingStatementsOf: propertyDecl, in: context))
+                    continue
                 }
                 if let methodDecl = member.decl.as(FunctionDeclSyntax.self) {
-                    for attribute in methodDecl.attributes {
-                        guard case let .attribute(node) = attribute else {
-                            continue
-                        }
-                        switch node.attributeName.trimmedDescription {
-                        case "bind":
-                            fallthrough
-                        case "link":
-                            statements.append(contentsOf: try BindMacro.expansion(of: node, providingStatementsOf: methodDecl, in: context, for: .vm))
-                        default:
-                            continue
-                        }
-                    }
+                    statements.append(contentsOf: try BindMacro.expansion(of: .vm, providingStatementsOf: methodDecl, in: context))
+                    continue
                 }
             }
             
@@ -234,11 +188,11 @@ extension MocoaMacro: MemberMacro {
             
             let variableSyntax = try VariableDeclSyntax(
                 """
-                    override class var mappingObserverMethodsForModelKeys: [String : Any]? {
-                        return [ 
-                            \(raw: bindcodes)
-                        ]
-                    }
+                override class var mappingObserverMethodsForModelKeys: [String : Any]? {
+                    return [ 
+                        \(raw: bindcodes)
+                    ]
+                }
                 """
             )
             

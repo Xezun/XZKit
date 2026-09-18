@@ -150,502 +150,727 @@ public macro key() = #externalMacro(module: "XZKitMacros", type: "KeyMacro")
 // MARK: @bind 宏
 // ------------------------------------------------------------
 
-/// 为 ViewModel 与 Model 之间，或 View 与 ViewModel 之间建立单向绑定。
+/// 将指定键**单向绑定**到宏所修饰的属性或方法。
 ///
-/// > 必须与 `@mocoa` 配合使用。
-/// > 为了让语义更明确，视图绑定优先使用带参数标签的宏，比如`@bind(text:)`、`@bind(textColor:)`等。
+/// - 使用范围：视图、视图模型。
+/// - 绑定键名：与“属性名”或“方法参数名”同名的键。
+/// - 绑定目标：被宏修饰的属性或方法。
+@attached(peer, names: arbitrary)
+public macro bind() = #externalMacro(module: "XZKitMacros", type: "BindMacro")
+
+/// 将指定键**单次绑定**到宏所修饰的属性或方法。
 ///
-/// #### 一、用于 ViewModel 角色
-///
-/// - 为 ViewModel 实现监听 Model 的属性的能力。
-/// - 修饰属性时，若不指定参数，表示绑定同名属性。
-/// - 修饰方法时，若不指定参数，表示绑定与方法参数同名的属性。
-///
-/// ```swift
-/// // 监听属性：Model.name
-/// // 监听方法：setter: ViewModel.name
-/// @bind
-/// var name: String?
-///
-/// // 监听属性：Model.title
-/// // 监听方法：setter: ViewModel.name
-/// @bind("title")
-/// var name: String?
-///
-/// // 监听属性：Model.foobar
-/// // 监听方法：ViewModel.method(with:)
-/// @bind
-/// func method(with foobar: Int)
-///
-/// // 监听属性：Model.min & Model.max
-/// // 监听方法：ViewModel.method(min:max:)
-/// @bind
-/// func method(min: Int, max: Int)
-///
-/// // 监听属性：Model.foo & Model.bar
-/// // 监听方法：ViewModel.foobar(min:max:)
-/// @bind("foo", "bar")
-/// func foobar(min: Int, max: Int)
-/// ```
-///
-/// #### 二、用于 View 角色
-///
-/// 为 View 实现监听 ViewModel 的 Key-Target-Action （KTA）事件的能力。
-///
-/// ##### 修饰属性
-///
-/// - 修饰属性最多支持两个参数，且至少需提供一个参数；修饰方法，仅支持一个参数，且被修饰的方法名，需符合 KTA 事件方法命名规则。
-/// - 第一个参数，为视图模型的 KTA 事件名；第二个参数，为视图的属性名。
-/// - 支持通过 KTA 事件名（第一个参数）的后缀名，推断待绑定的属性的能力，但目前仅支持以下视图类型：
-///     - UIView: isHidden/alpha/frame/bounds/center/transform/tintColor/backgroundColor
-///     - UILabel: attributedText/text/textColor/font/textAlignment
-///     - UIImageView: image/animationImages
-///     - UITextView: attributedText/text/textColor/font/textAlignment
-///     - UITextField: attributedText/text/textColor/font/textAlignment/attributedPlaceholder/placeholder
-///     - UISwitch: onTintColor/thumbTintColor/onImage/offImage
-///     - UIButton: attributedTitle/title/titleShadowColor/titleColor/backgroundImage/image
-/// - 推荐使用带参数标签的方法，明确指定绑定的属性。
-/// - 自定义视图默认当作 UIView 类型处理。
-///
-/// ```swift
-/// // 将 `viewModel.name` 绑定给 `label.text` 。
-/// @bind(.name)
-/// let label: UILabel
-///
-/// // 将 `viewModel.nameColor` 绑定给 `label.textColor` 。
-/// @bind("nameColor")
-/// let label: UILabel
-///
-/// // 将 `viewModel.color` 绑定给 `label.textColor` 。
-/// @bind("color", "textColor")
-/// let label: UILabel
-///
-/// // 将 `viewModel.iconURL` 绑定到 `setIconWithURL(_:)` 方法。
-/// @bind
-/// func setIconWithURL(_ iconURL: URL)
-///
-/// // 将 `viewModel.imageURL` 绑定到 `setIconWithURL(_:)` 方法。
-/// @bind("imageURL")
-/// func setIconWithURL(_ iconURL: URL)
-/// ```
-@attached(peer, names: prefixed(_))
-public macro bind(_ key: XZMocoaKey...) = #externalMacro(module: "XZKitMacros", type: "BindMacro")
-
-// 以下带参数标签的 bind 宏，只可以在 View 中修饰属性使用。
-
-/// 建立从 ViewModel.{key} 到 View.selector 的单向绑定关系。
-///
-/// ```swift
-/// // 将 viewModel.reload 绑定到 tableView.reloadData 方法。
-/// @bind(.reload, selector: #selector(UITableView.reloadData))
-/// let tableView: UITableView = .init()
-/// ```
-@attached(accessor, names: named(didSet))
-public macro bind(_ key: XZMocoaKey, selector: Selector) = #externalMacro(module: "XZKitMacros", type: "ViewBindMacro")
-
-// MARK: - UIView
-
-/// 建立从 ViewModel.{key} 到 View.isHidden 的单向绑定关系。
-@attached(accessor, names: named(didSet))
-public macro bind(isHidden key: XZMocoaKey) = #externalMacro(module: "XZKitMacros", type: "ViewBindMacro")
-
-/// 建立从 ViewModel.{key} 到 View.alpha 的单向绑定关系。
-@attached(accessor, names: named(didSet))
-public macro bind(alpha key: XZMocoaKey) = #externalMacro(module: "XZKitMacros", type: "ViewBindMacro")
-
-/// 建立从 ViewModel.{key} 到 View.frame 的单向绑定关系。
-@attached(accessor, names: named(didSet))
-public macro bind(frame key: XZMocoaKey) = #externalMacro(module: "XZKitMacros", type: "ViewBindMacro")
-
-/// 建立从 ViewModel.{key} 到 View.bounds 的单向绑定关系。
-@attached(accessor, names: named(didSet))
-public macro bind(bounds key: XZMocoaKey) = #externalMacro(module: "XZKitMacros", type: "ViewBindMacro")
-
-/// 建立从 ViewModel.{key} 到 View.transform 的单向绑定关系。
-@attached(accessor, names: named(didSet))
-public macro bind(transform key: XZMocoaKey) = #externalMacro(module: "XZKitMacros", type: "ViewBindMacro")
-
-/// 建立从 ViewModel.{key} 到 View.tintColor 的单向绑定关系。
-@attached(accessor, names: named(didSet))
-public macro bind(tintColor key: XZMocoaKey) = #externalMacro(module: "XZKitMacros", type: "ViewBindMacro")
-
-/// 建立从 ViewModel.{key} 到 View.backgroundColor 的单向绑定关系。
-@attached(accessor, names: named(didSet))
-public macro bind(backgroundColor key: XZMocoaKey) = #externalMacro(module: "XZKitMacros", type: "ViewBindMacro")
-
-// MARK: - UIControl
-
-/// 建立从 ViewModel.{key} 到 View.isEnabled 的单向绑定关系。
-@attached(accessor, names: named(didSet))
-public macro bind(isEnabled key: XZMocoaKey) = #externalMacro(module: "XZKitMacros", type: "ViewBindMacro")
-
-/// 建立从 ViewModel.{key} 到 View.isSelected 的单向绑定关系。
-@attached(accessor, names: named(didSet))
-public macro bind(isSelected key: XZMocoaKey) = #externalMacro(module: "XZKitMacros", type: "ViewBindMacro")
-
-/// 建立从 ViewModel.{key} 到 View.isHighlighted 的单向绑定关系。
-@attached(accessor, names: named(didSet))
-public macro bind(isHighlighted key: XZMocoaKey) = #externalMacro(module: "XZKitMacros", type: "ViewBindMacro")
-
-// MARK: - UILabel
-
-/// 建立从 ViewModel.{key} 到 View.text 的单向绑定关系。
-@attached(accessor, names: named(didSet))
-public macro bind(text key: XZMocoaKey) = #externalMacro(module: "XZKitMacros", type: "ViewBindMacro")
-
-/// 建立从 ViewModel.{key} 到 View.attributedText 的单向绑定关系。
-@attached(accessor, names: named(didSet))
-public macro bind(attributedText key: XZMocoaKey) = #externalMacro(module: "XZKitMacros", type: "ViewBindMacro")
-
-/// 建立从 ViewModel.{key} 到 View.font 的单向绑定关系。
-@attached(accessor, names: named(didSet))
-public macro bind(font key: XZMocoaKey) = #externalMacro(module: "XZKitMacros", type: "ViewBindMacro")
-
-/// 建立从 ViewModel.{key} 到 View.textColor 的单向绑定关系。
-@attached(accessor, names: named(didSet))
-public macro bind(textColor key: XZMocoaKey) = #externalMacro(module: "XZKitMacros", type: "ViewBindMacro")
-
-/// 建立从 ViewModel.{key} 到 View.textAlignment 的单向绑定关系。
-@attached(accessor, names: named(didSet))
-public macro bind(textAlignment key: XZMocoaKey) = #externalMacro(module: "XZKitMacros", type: "ViewBindMacro")
-
-// MARK: - UIImageView
-
-/// 建立从 ViewModel.{key} 到 View.image 的单向绑定关系。
-@attached(accessor, names: named(didSet))
-public macro bind(image key: XZMocoaKey) = #externalMacro(module: "XZKitMacros", type: "ViewBindMacro")
-
-/// 建立从 ViewModel.{key} 到 View.animationImages 的单向绑定关系。
-@attached(accessor, names: named(didSet))
-public macro bind(animationImages key: XZMocoaKey) = #externalMacro(module: "XZKitMacros", type: "ViewBindMacro")
-
-// MARK: - UITextField
-
-/// 建立从 ViewModel.{key} 到 View.placeholder 的单向绑定关系。
-@attached(accessor, names: named(didSet))
-public macro bind(placeholder key: XZMocoaKey) = #externalMacro(module: "XZKitMacros", type: "ViewBindMacro")
-
-/// 建立从 ViewModel.{key} 到 View.attributedPlaceholder 的单向绑定关系。
-@attached(accessor, names: named(didSet))
-public macro bind(attributedPlaceholder key: XZMocoaKey) = #externalMacro(module: "XZKitMacros", type: "ViewBindMacro")
-
-// MARK: - UITextView
-
-/// 建立从 ViewModel.{key} 到 View.isEditable 的单向绑定关系。
-@attached(accessor, names: named(didSet))
-public macro bind(isEditable key: XZMocoaKey) = #externalMacro(module: "XZKitMacros", type: "ViewBindMacro")
-
-/// 建立从 ViewModel.{key} 到 View.isSelectable 的单向绑定关系。
-@attached(accessor, names: named(didSet))
-public macro bind(isSelectable key: XZMocoaKey) = #externalMacro(module: "XZKitMacros", type: "ViewBindMacro")
-
-// MARK: - UISlider
-
-/// 建立从 ViewModel.{key} 到 View.value 的单向绑定关系。
-@attached(accessor, names: named(didSet))
-public macro bind(value key: XZMocoaKey) = #externalMacro(module: "XZKitMacros", type: "ViewBindMacro")
-
-// MARK: - UISwitch
-
-/// 建立从 ViewModel.{key} 到 View.isOn 的单向绑定关系。
-@attached(accessor, names: named(didSet))
-public macro bind(isOn key: XZMocoaKey) = #externalMacro(module: "XZKitMacros", type: "ViewBindMacro")
-
-// MARK: - UIButton
-
-/// 建立从 ViewModel.{key} 到 View.title 的单向绑定关系。
-@attached(accessor, names: named(didSet))
-public macro bind(title key: XZMocoaKey, for state: UIControl.State) = #externalMacro(module: "XZKitMacros", type: "ViewBindMacro")
-
-/// 建立从 ViewModel.{key} 到 View.attributedTitle 的单向绑定关系。
-@attached(accessor, names: named(didSet))
-public macro bind(attributedTitle key: XZMocoaKey, for state: UIControl.State) = #externalMacro(module: "XZKitMacros", type: "ViewBindMacro")
-
-/// 建立从 ViewModel.{key} 到 View.titleColor 的单向绑定关系。
-@attached(accessor, names: named(didSet))
-public macro bind(titleColor key: XZMocoaKey, for state: UIControl.State) = #externalMacro(module: "XZKitMacros", type: "ViewBindMacro")
-
-/// 建立从 ViewModel.{key} 到 View.titleShadowColor 的单向绑定关系。
-@attached(accessor, names: named(didSet))
-public macro bind(titleShadowColor key: XZMocoaKey, for state: UIControl.State) = #externalMacro(module: "XZKitMacros", type: "ViewBindMacro")
-
-/// 建立从 ViewModel.{key} 到 View.image 的单向绑定关系。
-@attached(accessor, names: named(didSet))
-public macro bind(image key: XZMocoaKey, for state: UIControl.State) = #externalMacro(module: "XZKitMacros", type: "ViewBindMacro")
-
-/// 建立从 ViewModel.{key} 到 View.backgroundImage 的单向绑定关系。
-@attached(accessor, names: named(didSet))
-public macro bind(backgroundImage key: XZMocoaKey, for state: UIControl.State) = #externalMacro(module: "XZKitMacros", type: "ViewBindMacro")
-
-// MARK: - Other
-
-/// 建立从 ViewModel.{key} 到 View.color 的单向绑定关系。
-@attached(accessor, names: named(didSet))
-public macro bind(color key: XZMocoaKey) = #externalMacro(module: "XZKitMacros", type: "ViewBindMacro")
-
-/// 建立从 ViewModel.{key} 到 View.name 的单向绑定关系。
-@attached(accessor, names: named(didSet))
-public macro bind(name key: XZMocoaKey) = #externalMacro(module: "XZKitMacros", type: "ViewBindMacro")
-
-/// 建立从 ViewModel.{key} 到 View.barTintColor 的单向绑定关系。
-@attached(accessor, names: named(didSet))
-public macro bind(barTintColor key: XZMocoaKey) = #externalMacro(module: "XZKitMacros", type: "ViewBindMacro")
-
-/// 建立从 ViewModel.{key} 到 View.backgroundImage 的单向绑定关系。
-@attached(accessor, names: named(didSet))
-public macro bind(backgroundImage key: XZMocoaKey) = #externalMacro(module: "XZKitMacros", type: "ViewBindMacro")
-
-/// 建立从 ViewModel.{key} 到 View.isTranslucent 的单向绑定关系。
-@attached(accessor, names: named(didSet))
-public macro bind(isTranslucent key: XZMocoaKey) = #externalMacro(module: "XZKitMacros", type: "ViewBindMacro")
-
-/// 建立从 ViewModel.{key} 到 View.style 的单向绑定关系。
-@attached(accessor, names: named(didSet))
-public macro bind(style key: XZMocoaKey) = #externalMacro(module: "XZKitMacros", type: "ViewBindMacro")
-
-/// 建立从 ViewModel.{key} 到 View.state 的单向绑定关系。
-@attached(accessor, names: named(didSet))
-public macro bind(state key: XZMocoaKey) = #externalMacro(module: "XZKitMacros", type: "ViewBindMacro")
-
-/// 建立从 ViewModel.{key} 到 View.status 的单向绑定关系。
-@attached(accessor, names: named(didSet))
-public macro bind(status key: XZMocoaKey) = #externalMacro(module: "XZKitMacros", type: "ViewBindMacro")
-
-/// 建立从 ViewModel.{key} 到 View.title 的单向绑定关系。
-@attached(accessor, names: named(didSet))
-public macro bind(title key: XZMocoaKey) = #externalMacro(module: "XZKitMacros", type: "ViewBindMacro")
-
-/// 建立从 ViewModel.{key} 到 View.attributedTitle 的单向绑定关系。
-@attached(accessor, names: named(didSet))
-public macro bind(attributedTitle key: XZMocoaKey) = #externalMacro(module: "XZKitMacros", type: "ViewBindMacro")
-
-/// 建立从 ViewModel.{key} 到 View.subtitle 的单向绑定关系。
-@attached(accessor, names: named(didSet))
-public macro bind(subtitle key: XZMocoaKey) = #externalMacro(module: "XZKitMacros", type: "ViewBindMacro")
-
-/// 建立从 ViewModel.{key} 到 View.detailText 的单向绑定关系。
-@attached(accessor, names: named(didSet))
-public macro bind(detailText key: XZMocoaKey) = #externalMacro(module: "XZKitMacros", type: "ViewBindMacro")
-
-/// 建立从 ViewModel.{key} 到 View.icon 的单向绑定关系。
-@attached(accessor, names: named(didSet))
-public macro bind(icon key: XZMocoaKey) = #externalMacro(module: "XZKitMacros", type: "ViewBindMacro")
-
-/// 建立从 ViewModel.{key} 到 View.viewModel 的单向绑定关系。
-@attached(accessor, names: named(didSet))
-public macro bind(viewModel key: XZMocoaKey) = #externalMacro(module: "XZKitMacros", type: "ViewBindMacro")
-
-// MARK: - @LINK MACROS
-
-/// 用于修饰 View 的方法。
-///
-/// > 宏 names 不能使用 arbitrary 编译器无法推断类型，就认为生成所有类型，导致无法用来修饰只读属性。
-@attached(peer, names: prefixed(_))
+/// - 使用范围：视图。
+/// - 绑定键名：与“属性名”同名的键。
+/// - 绑定目标：被宏修饰的属性或方法。
+@attached(peer, names: arbitrary)
 public macro link() = #externalMacro(module: "XZKitMacros", type: "BindMacro")
 
-@attached(peer, names: prefixed(_))
+/// 将 key 键**单向绑定**到宏所修饰的属性或方法。
+///
+/// - 使用范围：视图、视图模型。
+/// - 绑定键名：宏参数指定键名。
+/// - 绑定目标：被宏修饰的属性或方法。
+@attached(peer, names: arbitrary)
+public macro bind(_ key: XZMocoaKey) = #externalMacro(module: "XZKitMacros", type: "BindMacro")
+
+/// 将 key 键**单次绑定**到宏所修饰的属性或方法。
+///
+/// - 使用范围：视图。
+/// - 绑定键名：宏参数指定键名。
+/// - 绑定目标：被宏修饰的属性或方法。
+@attached(peer, names: arbitrary)
 public macro link(_ key: XZMocoaKey) = #externalMacro(module: "XZKitMacros", type: "BindMacro")
 
-/// 建立从 ViewModel.{key} 到 View.selector 的单次值同步。
+/// 将 key1、key2、keyN 键**单向绑定**到宏所修饰的方法。
 ///
-/// ```swift
-/// // 将 viewModel.reload 绑定到 tableView.reloadData 方法。
-/// @bind(.reload, selector: #selector(UITableView.reloadData))
-/// let tableView: UITableView = .init()
-/// ```
+/// - 使用范围：视图模型。
+/// - 绑定键名：宏参数指定键名。
+/// - 绑定目标：被宏修饰的方法。
+@attached(peer, names: arbitrary)
+public macro bind(_ key1: XZMocoaKey, _ key2: XZMocoaKey, _ keyN: XZMocoaKey...) = #externalMacro(module: "XZKitMacros", type: "BindMacro")
+
+/// 将 key 键**单向绑定**到宏所修饰的属性。
+///
+/// - 使用范围：视图。
+/// - 绑定键名：宏第一个参数指定键名。
+/// - 绑定目标：被宏修饰属性的值对象的方法，方法名为宏第二个参数。
 @attached(accessor, names: named(didSet))
-public macro link(_ key: XZMocoaKey, selector: Selector) = #externalMacro(module: "XZKitMacros", type: "ViewBindMacro")
+public macro bind(_ key: XZMocoaKey, selector: Selector) = #externalMacro(module: "XZKitMacros", type: "BindMacro")
+/// 将 key 键**单次绑定**到宏所修饰的属性。
+///
+/// - 使用范围：视图。
+/// - 绑定键名：宏第一个参数指定键名。
+/// - 绑定目标：被宏修饰属性的值对象的方法，方法名为宏第二个参数。
+@attached(accessor, names: named(didSet))
+public macro link(_ key: XZMocoaKey, selector: Selector) = #externalMacro(module: "XZKitMacros", type: "BindMacro")
+
 
 // MARK: - UIView
 
-/// 建立从 ViewModel.{key} 到 View.isHidden 的单次值同步。
+/// 将 key 键**单向绑定**到宏所修饰的属性的值的属性。
+///
+/// - 使用范围：视图。
+/// - 绑定键名：宏参数 key 的值。
+/// - 绑定目标：被宏修饰属性的值对象的 (isHidden 属性。
 @attached(accessor, names: named(didSet))
-public macro link(isHidden key: XZMocoaKey) = #externalMacro(module: "XZKitMacros", type: "ViewBindMacro")
+public macro bind(isHidden key: XZMocoaKey) = #externalMacro(module: "XZKitMacros", type: "BindMacro")
+/// 将 key 键**单次绑定**到宏所修饰的属性的值的属性。
+///
+/// - 使用范围：视图。
+/// - 绑定键名：宏参数 key 的值。
+/// - 绑定目标：被宏修饰属性的值对象的 (isHidden 属性。
+@attached(accessor, names: named(didSet))
+public macro link(isHidden key: XZMocoaKey) = #externalMacro(module: "XZKitMacros", type: "BindMacro")
 
-/// 建立从 ViewModel.{key} 到 View.alpha 的单次值同步。
+/// 将 key 键**单向绑定**到宏所修饰的属性的值的属性。
+///
+/// - 使用范围：视图。
+/// - 绑定键名：宏参数 key 的值。
+/// - 绑定目标：被宏修饰属性的值对象的 (alpha 属性。
 @attached(accessor, names: named(didSet))
-public macro link(alpha key: XZMocoaKey) = #externalMacro(module: "XZKitMacros", type: "ViewBindMacro")
+public macro bind(alpha key: XZMocoaKey) = #externalMacro(module: "XZKitMacros", type: "BindMacro")
+/// 将 key 键**单次绑定**到宏所修饰的属性的值的属性。
+///
+/// - 使用范围：视图。
+/// - 绑定键名：宏参数 key 的值。
+/// - 绑定目标：被宏修饰属性的值对象的 (alpha 属性。
+@attached(accessor, names: named(didSet))
+public macro link(alpha key: XZMocoaKey) = #externalMacro(module: "XZKitMacros", type: "BindMacro")
 
-/// 建立从 ViewModel.{key} 到 View.frame 的单次值同步。
+/// 将 key 键**单向绑定**到宏所修饰的属性的值的属性。
+///
+/// - 使用范围：视图。
+/// - 绑定键名：宏参数 key 的值。
+/// - 绑定目标：被宏修饰属性的值对象的 (frame 属性。
 @attached(accessor, names: named(didSet))
-public macro link(frame key: XZMocoaKey) = #externalMacro(module: "XZKitMacros", type: "ViewBindMacro")
+public macro bind(frame key: XZMocoaKey) = #externalMacro(module: "XZKitMacros", type: "BindMacro")
+/// 将 key 键**单次绑定**到宏所修饰的属性的值的属性。
+///
+/// - 使用范围：视图。
+/// - 绑定键名：宏参数 key 的值。
+/// - 绑定目标：被宏修饰属性的值对象的 (frame 属性。
+@attached(accessor, names: named(didSet))
+public macro link(frame key: XZMocoaKey) = #externalMacro(module: "XZKitMacros", type: "BindMacro")
 
-/// 建立从 ViewModel.{key} 到 View.bounds 的单次值同步。
+/// 将 key 键**单向绑定**到宏所修饰的属性的值的属性。
+///
+/// - 使用范围：视图。
+/// - 绑定键名：宏参数 key 的值。
+/// - 绑定目标：被宏修饰属性的值对象的 (bounds 属性。
 @attached(accessor, names: named(didSet))
-public macro link(bounds key: XZMocoaKey) = #externalMacro(module: "XZKitMacros", type: "ViewBindMacro")
+public macro bind(bounds key: XZMocoaKey) = #externalMacro(module: "XZKitMacros", type: "BindMacro")
+/// 将 key 键**单次绑定**到宏所修饰的属性的值的属性。
+///
+/// - 使用范围：视图。
+/// - 绑定键名：宏参数 key 的值。
+/// - 绑定目标：被宏修饰属性的值对象的 (bounds 属性。
+@attached(accessor, names: named(didSet))
+public macro link(bounds key: XZMocoaKey) = #externalMacro(module: "XZKitMacros", type: "BindMacro")
 
-/// 建立从 ViewModel.{key} 到 View.transform 的单次值同步。
+/// 将 key 键**单向绑定**到宏所修饰的属性的值的属性。
+///
+/// - 使用范围：视图。
+/// - 绑定键名：宏参数 key 的值。
+/// - 绑定目标：被宏修饰属性的值对象的 (transform 属性。
 @attached(accessor, names: named(didSet))
-public macro link(transform key: XZMocoaKey) = #externalMacro(module: "XZKitMacros", type: "ViewBindMacro")
+public macro bind(transform key: XZMocoaKey) = #externalMacro(module: "XZKitMacros", type: "BindMacro")
+/// 将 key 键**单次绑定**到宏所修饰的属性的值的属性。
+///
+/// - 使用范围：视图。
+/// - 绑定键名：宏参数 key 的值。
+/// - 绑定目标：被宏修饰属性的值对象的 (transform 属性。
+@attached(accessor, names: named(didSet))
+public macro link(transform key: XZMocoaKey) = #externalMacro(module: "XZKitMacros", type: "BindMacro")
 
-/// 建立从 ViewModel.{key} 到 View.tintColor 的单次值同步。
+/// 将 key 键**单向绑定**到宏所修饰的属性的值的属性。
+///
+/// - 使用范围：视图。
+/// - 绑定键名：宏参数 key 的值。
+/// - 绑定目标：被宏修饰属性的值对象的 (tintColor 属性。
 @attached(accessor, names: named(didSet))
-public macro link(tintColor key: XZMocoaKey) = #externalMacro(module: "XZKitMacros", type: "ViewBindMacro")
+public macro bind(tintColor key: XZMocoaKey) = #externalMacro(module: "XZKitMacros", type: "BindMacro")
+/// 将 key 键**单次绑定**到宏所修饰的属性的值的属性。
+///
+/// - 使用范围：视图。
+/// - 绑定键名：宏参数 key 的值。
+/// - 绑定目标：被宏修饰属性的值对象的 (tintColor 属性。
+@attached(accessor, names: named(didSet))
+public macro link(tintColor key: XZMocoaKey) = #externalMacro(module: "XZKitMacros", type: "BindMacro")
 
-/// 建立从 ViewModel.{key} 到 View.backgroundColor 的单次值同步。
+/// 将 key 键**单向绑定**到宏所修饰的属性的值的属性。
+///
+/// - 使用范围：视图。
+/// - 绑定键名：宏参数 key 的值。
+/// - 绑定目标：被宏修饰属性的值对象的 (backgroundColor 属性。
 @attached(accessor, names: named(didSet))
-public macro link(backgroundColor key: XZMocoaKey) = #externalMacro(module: "XZKitMacros", type: "ViewBindMacro")
+public macro bind(backgroundColor key: XZMocoaKey) = #externalMacro(module: "XZKitMacros", type: "BindMacro")
+/// 将 key 键**单次绑定**到宏所修饰的属性的值的属性。
+///
+/// - 使用范围：视图。
+/// - 绑定键名：宏参数 key 的值。
+/// - 绑定目标：被宏修饰属性的值对象的 (backgroundColor 属性。
+@attached(accessor, names: named(didSet))
+public macro link(backgroundColor key: XZMocoaKey) = #externalMacro(module: "XZKitMacros", type: "BindMacro")
 
 // MARK: - UIControl
 
-/// 建立从 ViewModel.{key} 到 View.isEnabled 的单次值同步。
+/// 将 key 键**单向绑定**到宏所修饰的属性的值的属性。
+///
+/// - 使用范围：视图。
+/// - 绑定键名：宏参数 key 的值。
+/// - 绑定目标：被宏修饰属性的值对象的 (isEnabled 属性。
 @attached(accessor, names: named(didSet))
-public macro link(isEnabled key: XZMocoaKey) = #externalMacro(module: "XZKitMacros", type: "ViewBindMacro")
+public macro bind(isEnabled key: XZMocoaKey) = #externalMacro(module: "XZKitMacros", type: "BindMacro")
+/// 将 key 键**单次绑定**到宏所修饰的属性的值的属性。
+///
+/// - 使用范围：视图。
+/// - 绑定键名：宏参数 key 的值。
+/// - 绑定目标：被宏修饰属性的值对象的 (isEnabled 属性。
+@attached(accessor, names: named(didSet))
+public macro link(isEnabled key: XZMocoaKey) = #externalMacro(module: "XZKitMacros", type: "BindMacro")
 
-/// 建立从 ViewModel.{key} 到 View.isSelected 的单次值同步。
+/// 将 key 键**单向绑定**到宏所修饰的属性的值的属性。
+///
+/// - 使用范围：视图。
+/// - 绑定键名：宏参数 key 的值。
+/// - 绑定目标：被宏修饰属性的值对象的 (isSelected 属性。
 @attached(accessor, names: named(didSet))
-public macro link(isSelected key: XZMocoaKey) = #externalMacro(module: "XZKitMacros", type: "ViewBindMacro")
+public macro bind(isSelected key: XZMocoaKey) = #externalMacro(module: "XZKitMacros", type: "BindMacro")
+/// 将 key 键**单次绑定**到宏所修饰的属性的值的属性。
+///
+/// - 使用范围：视图。
+/// - 绑定键名：宏参数 key 的值。
+/// - 绑定目标：被宏修饰属性的值对象的 (isSelected 属性。
+@attached(accessor, names: named(didSet))
+public macro link(isSelected key: XZMocoaKey) = #externalMacro(module: "XZKitMacros", type: "BindMacro")
 
-/// 建立从 ViewModel.{key} 到 View.isHighlighted 的单次值同步。
+/// 将 key 键**单向绑定**到宏所修饰的属性的值的属性。
+///
+/// - 使用范围：视图。
+/// - 绑定键名：宏参数 key 的值。
+/// - 绑定目标：被宏修饰属性的值对象的 (isHighlighted 属性。
 @attached(accessor, names: named(didSet))
-public macro link(isHighlighted key: XZMocoaKey) = #externalMacro(module: "XZKitMacros", type: "ViewBindMacro")
+public macro bind(isHighlighted key: XZMocoaKey) = #externalMacro(module: "XZKitMacros", type: "BindMacro")
+/// 将 key 键**单次绑定**到宏所修饰的属性的值的属性。
+///
+/// - 使用范围：视图。
+/// - 绑定键名：宏参数 key 的值。
+/// - 绑定目标：被宏修饰属性的值对象的 (isHighlighted 属性。
+@attached(accessor, names: named(didSet))
+public macro link(isHighlighted key: XZMocoaKey) = #externalMacro(module: "XZKitMacros", type: "BindMacro")
 
 // MARK: - UILabel
 
-/// 建立从 ViewModel.{key} 到 View.text 的单次值同步。
+/// 将 key 键**单向绑定**到宏所修饰的属性的值的属性。
+///
+/// - 使用范围：视图。
+/// - 绑定键名：宏参数 key 的值。
+/// - 绑定目标：被宏修饰属性的值对象的 (text 属性。
 @attached(accessor, names: named(didSet))
-public macro link(text key: XZMocoaKey) = #externalMacro(module: "XZKitMacros", type: "ViewBindMacro")
+public macro bind(text key: XZMocoaKey) = #externalMacro(module: "XZKitMacros", type: "BindMacro")
+/// 将 key 键**单次绑定**到宏所修饰的属性的值的属性。
+///
+/// - 使用范围：视图。
+/// - 绑定键名：宏参数 key 的值。
+/// - 绑定目标：被宏修饰属性的值对象的 (text 属性。
+@attached(accessor, names: named(didSet))
+public macro link(text key: XZMocoaKey) = #externalMacro(module: "XZKitMacros", type: "BindMacro")
 
-/// 建立从 ViewModel.{key} 到 View.attributedText 的单次值同步。
+/// 将 key 键**单向绑定**到宏所修饰的属性的值的属性。
+///
+/// - 使用范围：视图。
+/// - 绑定键名：宏参数 key 的值。
+/// - 绑定目标：被宏修饰属性的值对象的 (attributedText 属性。
 @attached(accessor, names: named(didSet))
-public macro link(attributedText key: XZMocoaKey) = #externalMacro(module: "XZKitMacros", type: "ViewBindMacro")
+public macro bind(attributedText key: XZMocoaKey) = #externalMacro(module: "XZKitMacros", type: "BindMacro")
+/// 将 key 键**单次绑定**到宏所修饰的属性的值的属性。
+///
+/// - 使用范围：视图。
+/// - 绑定键名：宏参数 key 的值。
+/// - 绑定目标：被宏修饰属性的值对象的 (attributedText 属性。
+@attached(accessor, names: named(didSet))
+public macro link(attributedText key: XZMocoaKey) = #externalMacro(module: "XZKitMacros", type: "BindMacro")
 
-/// 建立从 ViewModel.{key} 到 View.font 的单次值同步。
+/// 将 key 键**单向绑定**到宏所修饰的属性的值的属性。
+///
+/// - 使用范围：视图。
+/// - 绑定键名：宏参数 key 的值。
+/// - 绑定目标：被宏修饰属性的值对象的 (font 属性。
 @attached(accessor, names: named(didSet))
-public macro link(font key: XZMocoaKey) = #externalMacro(module: "XZKitMacros", type: "ViewBindMacro")
+public macro bind(font key: XZMocoaKey) = #externalMacro(module: "XZKitMacros", type: "BindMacro")
+/// 将 key 键**单次绑定**到宏所修饰的属性的值的属性。
+///
+/// - 使用范围：视图。
+/// - 绑定键名：宏参数 key 的值。
+/// - 绑定目标：被宏修饰属性的值对象的 (font 属性。
+@attached(accessor, names: named(didSet))
+public macro link(font key: XZMocoaKey) = #externalMacro(module: "XZKitMacros", type: "BindMacro")
 
-/// 建立从 ViewModel.{key} 到 View.textColor 的单次值同步。
+/// 将 key 键**单向绑定**到宏所修饰的属性的值的属性。
+///
+/// - 使用范围：视图。
+/// - 绑定键名：宏参数 key 的值。
+/// - 绑定目标：被宏修饰属性的值对象的 (textColor 属性。
 @attached(accessor, names: named(didSet))
-public macro link(textColor key: XZMocoaKey) = #externalMacro(module: "XZKitMacros", type: "ViewBindMacro")
+public macro bind(textColor key: XZMocoaKey) = #externalMacro(module: "XZKitMacros", type: "BindMacro")
+/// 将 key 键**单次绑定**到宏所修饰的属性的值的属性。
+///
+/// - 使用范围：视图。
+/// - 绑定键名：宏参数 key 的值。
+/// - 绑定目标：被宏修饰属性的值对象的 (textColor 属性。
+@attached(accessor, names: named(didSet))
+public macro link(textColor key: XZMocoaKey) = #externalMacro(module: "XZKitMacros", type: "BindMacro")
 
-/// 建立从 ViewModel.{key} 到 View.textAlignment 的单次值同步。
+/// 将 key 键**单向绑定**到宏所修饰的属性的值的属性。
+///
+/// - 使用范围：视图。
+/// - 绑定键名：宏参数 key 的值。
+/// - 绑定目标：被宏修饰属性的值对象的 (textAlignment 属性。
 @attached(accessor, names: named(didSet))
-public macro link(textAlignment key: XZMocoaKey) = #externalMacro(module: "XZKitMacros", type: "ViewBindMacro")
+public macro bind(textAlignment key: XZMocoaKey) = #externalMacro(module: "XZKitMacros", type: "BindMacro")
+/// 将 key 键**单次绑定**到宏所修饰的属性的值的属性。
+///
+/// - 使用范围：视图。
+/// - 绑定键名：宏参数 key 的值。
+/// - 绑定目标：被宏修饰属性的值对象的 (textAlignment 属性。
+@attached(accessor, names: named(didSet))
+public macro link(textAlignment key: XZMocoaKey) = #externalMacro(module: "XZKitMacros", type: "BindMacro")
 
 // MARK: - UIImageView
 
-/// 建立从 ViewModel.{key} 到 View.image 的单次值同步。
+/// 将 key 键**单向绑定**到宏所修饰的属性的值的属性。
+///
+/// - 使用范围：视图。
+/// - 绑定键名：宏参数 key 的值。
+/// - 绑定目标：被宏修饰属性的值对象的 (image 属性。
 @attached(accessor, names: named(didSet))
-public macro link(image key: XZMocoaKey) = #externalMacro(module: "XZKitMacros", type: "ViewBindMacro")
+public macro bind(image key: XZMocoaKey) = #externalMacro(module: "XZKitMacros", type: "BindMacro")
+/// 将 key 键**单次绑定**到宏所修饰的属性的值的属性。
+///
+/// - 使用范围：视图。
+/// - 绑定键名：宏参数 key 的值。
+/// - 绑定目标：被宏修饰属性的值对象的 (image 属性。
+@attached(accessor, names: named(didSet))
+public macro link(image key: XZMocoaKey) = #externalMacro(module: "XZKitMacros", type: "BindMacro")
 
-/// 建立从 ViewModel.{key} 到 View.animationImages 的单次值同步。
+/// 将 key 键**单向绑定**到宏所修饰的属性的值的属性。
+///
+/// - 使用范围：视图。
+/// - 绑定键名：宏参数 key 的值。
+/// - 绑定目标：被宏修饰属性的值对象的 (animationImages 属性。
 @attached(accessor, names: named(didSet))
-public macro link(animationImages key: XZMocoaKey) = #externalMacro(module: "XZKitMacros", type: "ViewBindMacro")
+public macro bind(animationImages key: XZMocoaKey) = #externalMacro(module: "XZKitMacros", type: "BindMacro")
+/// 将 key 键**单次绑定**到宏所修饰的属性的值的属性。
+///
+/// - 使用范围：视图。
+/// - 绑定键名：宏参数 key 的值。
+/// - 绑定目标：被宏修饰属性的值对象的 (animationImages 属性。
+@attached(accessor, names: named(didSet))
+public macro link(animationImages key: XZMocoaKey) = #externalMacro(module: "XZKitMacros", type: "BindMacro")
 
 // MARK: - UITextField
 
-/// 建立从 ViewModel.{key} 到 View.placeholder 的单次值同步。
+/// 将 key 键**单向绑定**到宏所修饰的属性的值的属性。
+///
+/// - 使用范围：视图。
+/// - 绑定键名：宏参数 key 的值。
+/// - 绑定目标：被宏修饰属性的值对象的 (placeholder 属性。
 @attached(accessor, names: named(didSet))
-public macro link(placeholder key: XZMocoaKey) = #externalMacro(module: "XZKitMacros", type: "ViewBindMacro")
+public macro bind(placeholder key: XZMocoaKey) = #externalMacro(module: "XZKitMacros", type: "BindMacro")
+/// 将 key 键**单次绑定**到宏所修饰的属性的值的属性。
+///
+/// - 使用范围：视图。
+/// - 绑定键名：宏参数 key 的值。
+/// - 绑定目标：被宏修饰属性的值对象的 (placeholder 属性。
+@attached(accessor, names: named(didSet))
+public macro link(placeholder key: XZMocoaKey) = #externalMacro(module: "XZKitMacros", type: "BindMacro")
 
-/// 建立从 ViewModel.{key} 到 View.attributedPlaceholder 的单次值同步。
+/// 将 key 键**单向绑定**到宏所修饰的属性的值的属性。
+///
+/// - 使用范围：视图。
+/// - 绑定键名：宏参数 key 的值。
+/// - 绑定目标：被宏修饰属性的值对象的 (attributedPlaceholder 属性。
 @attached(accessor, names: named(didSet))
-public macro link(attributedPlaceholder key: XZMocoaKey) = #externalMacro(module: "XZKitMacros", type: "ViewBindMacro")
+public macro bind(attributedPlaceholder key: XZMocoaKey) = #externalMacro(module: "XZKitMacros", type: "BindMacro")
+/// 将 key 键**单次绑定**到宏所修饰的属性的值的属性。
+///
+/// - 使用范围：视图。
+/// - 绑定键名：宏参数 key 的值。
+/// - 绑定目标：被宏修饰属性的值对象的 (attributedPlaceholder 属性。
+@attached(accessor, names: named(didSet))
+public macro link(attributedPlaceholder key: XZMocoaKey) = #externalMacro(module: "XZKitMacros", type: "BindMacro")
 
 // MARK: - UITextView
 
-/// 建立从 ViewModel.{key} 到 View.isEditable 的单次值同步。
+/// 将 key 键**单向绑定**到宏所修饰的属性的值的属性。
+///
+/// - 使用范围：视图。
+/// - 绑定键名：宏参数 key 的值。
+/// - 绑定目标：被宏修饰属性的值对象的 (isEditable 属性。
 @attached(accessor, names: named(didSet))
-public macro link(isEditable key: XZMocoaKey) = #externalMacro(module: "XZKitMacros", type: "ViewBindMacro")
+public macro bind(isEditable key: XZMocoaKey) = #externalMacro(module: "XZKitMacros", type: "BindMacro")
+/// 将 key 键**单次绑定**到宏所修饰的属性的值的属性。
+///
+/// - 使用范围：视图。
+/// - 绑定键名：宏参数 key 的值。
+/// - 绑定目标：被宏修饰属性的值对象的 (isEditable 属性。
+@attached(accessor, names: named(didSet))
+public macro link(isEditable key: XZMocoaKey) = #externalMacro(module: "XZKitMacros", type: "BindMacro")
 
-/// 建立从 ViewModel.{key} 到 View.isSelectable 的单次值同步。
+/// 将 key 键**单向绑定**到宏所修饰的属性的值的属性。
+///
+/// - 使用范围：视图。
+/// - 绑定键名：宏参数 key 的值。
+/// - 绑定目标：被宏修饰属性的值对象的 (isSelectable 属性。
 @attached(accessor, names: named(didSet))
-public macro link(isSelectable key: XZMocoaKey) = #externalMacro(module: "XZKitMacros", type: "ViewBindMacro")
+public macro bind(isSelectable key: XZMocoaKey) = #externalMacro(module: "XZKitMacros", type: "BindMacro")
+/// 将 key 键**单次绑定**到宏所修饰的属性的值的属性。
+///
+/// - 使用范围：视图。
+/// - 绑定键名：宏参数 key 的值。
+/// - 绑定目标：被宏修饰属性的值对象的 (isSelectable 属性。
+@attached(accessor, names: named(didSet))
+public macro link(isSelectable key: XZMocoaKey) = #externalMacro(module: "XZKitMacros", type: "BindMacro")
 
 // MARK: - UISlider
 
-/// 建立从 ViewModel.{key} 到 View.value 的单次值同步。
+/// 将 key 键**单向绑定**到宏所修饰的属性的值的属性。
+///
+/// - 使用范围：视图。
+/// - 绑定键名：宏参数 key 的值。
+/// - 绑定目标：被宏修饰属性的值对象的 (value 属性。
 @attached(accessor, names: named(didSet))
-public macro link(value key: XZMocoaKey) = #externalMacro(module: "XZKitMacros", type: "ViewBindMacro")
+public macro bind(value key: XZMocoaKey) = #externalMacro(module: "XZKitMacros", type: "BindMacro")
+/// 将 key 键**单次绑定**到宏所修饰的属性的值的属性。
+///
+/// - 使用范围：视图。
+/// - 绑定键名：宏参数 key 的值。
+/// - 绑定目标：被宏修饰属性的值对象的 (value 属性。
+@attached(accessor, names: named(didSet))
+public macro link(value key: XZMocoaKey) = #externalMacro(module: "XZKitMacros", type: "BindMacro")
 
 // MARK: - UISwitch
 
-/// 建立从 ViewModel.{key} 到 View.isOn 的单次值同步。
+/// 将 key 键**单向绑定**到宏所修饰的属性的值的属性。
+///
+/// - 使用范围：视图。
+/// - 绑定键名：宏参数 key 的值。
+/// - 绑定目标：被宏修饰属性的值对象的 (isOn 属性。
 @attached(accessor, names: named(didSet))
-public macro link(isOn key: XZMocoaKey) = #externalMacro(module: "XZKitMacros", type: "ViewBindMacro")
+public macro bind(isOn key: XZMocoaKey) = #externalMacro(module: "XZKitMacros", type: "BindMacro")
+/// 将 key 键**单次绑定**到宏所修饰的属性的值的属性。
+///
+/// - 使用范围：视图。
+/// - 绑定键名：宏参数 key 的值。
+/// - 绑定目标：被宏修饰属性的值对象的 (isOn 属性。
+@attached(accessor, names: named(didSet))
+public macro link(isOn key: XZMocoaKey) = #externalMacro(module: "XZKitMacros", type: "BindMacro")
 
 // MARK: - UIButton
 
-/// 建立从 ViewModel.{key} 到 View.title 的单次值同步。
+/// 将 key 键**单向绑定**到宏所修饰的属性的值的属性。
+///
+/// - 使用范围：视图。
+/// - 绑定键名：宏参数 key 的值。
+/// - 绑定目标：被宏修饰属性的值对象的 (title 属性。
 @attached(accessor, names: named(didSet))
-public macro link(title key: XZMocoaKey, for state: UIControl.State) = #externalMacro(module: "XZKitMacros", type: "ViewBindMacro")
+public macro bind(title key: XZMocoaKey, for state: UIControl.State) = #externalMacro(module: "XZKitMacros", type: "BindMacro")
+/// 将 key 键**单次绑定**到宏所修饰的属性的值的属性。
+///
+/// - 使用范围：视图。
+/// - 绑定键名：宏参数 key 的值。
+/// - 绑定目标：被宏修饰属性的值对象的 (title 属性。
+@attached(accessor, names: named(didSet))
+public macro link(title key: XZMocoaKey, for state: UIControl.State) = #externalMacro(module: "XZKitMacros", type: "BindMacro")
 
-/// 建立从 ViewModel.{key} 到 View.attributedTitle 的单次值同步。
+/// 将 key 键**单向绑定**到宏所修饰的属性的值的属性。
+///
+/// - 使用范围：视图。
+/// - 绑定键名：宏参数 key 的值。
+/// - 绑定目标：被宏修饰属性的值对象的 (attributedTitle 属性。
 @attached(accessor, names: named(didSet))
-public macro link(attributedTitle key: XZMocoaKey, for state: UIControl.State) = #externalMacro(module: "XZKitMacros", type: "ViewBindMacro")
+public macro bind(attributedTitle key: XZMocoaKey, for state: UIControl.State) = #externalMacro(module: "XZKitMacros", type: "BindMacro")
+/// 将 key 键**单次绑定**到宏所修饰的属性的值的属性。
+///
+/// - 使用范围：视图。
+/// - 绑定键名：宏参数 key 的值。
+/// - 绑定目标：被宏修饰属性的值对象的 (attributedTitle 属性。
+@attached(accessor, names: named(didSet))
+public macro link(attributedTitle key: XZMocoaKey, for state: UIControl.State) = #externalMacro(module: "XZKitMacros", type: "BindMacro")
 
-/// 建立从 ViewModel.{key} 到 View.titleColor 的单次值同步。
+/// 将 key 键**单向绑定**到宏所修饰的属性的值的属性。
+///
+/// - 使用范围：视图。
+/// - 绑定键名：宏参数 key 的值。
+/// - 绑定目标：被宏修饰属性的值对象的 (titleColor 属性。
 @attached(accessor, names: named(didSet))
-public macro link(titleColor key: XZMocoaKey, for state: UIControl.State) = #externalMacro(module: "XZKitMacros", type: "ViewBindMacro")
+public macro bind(titleColor key: XZMocoaKey, for state: UIControl.State) = #externalMacro(module: "XZKitMacros", type: "BindMacro")
+/// 将 key 键**单次绑定**到宏所修饰的属性的值的属性。
+///
+/// - 使用范围：视图。
+/// - 绑定键名：宏参数 key 的值。
+/// - 绑定目标：被宏修饰属性的值对象的 (titleColor 属性。
+@attached(accessor, names: named(didSet))
+public macro link(titleColor key: XZMocoaKey, for state: UIControl.State) = #externalMacro(module: "XZKitMacros", type: "BindMacro")
 
-/// 建立从 ViewModel.{key} 到 View.titleShadowColor 的单次值同步。
+/// 将 key 键**单向绑定**到宏所修饰的属性的值的属性。
+///
+/// - 使用范围：视图。
+/// - 绑定键名：宏参数 key 的值。
+/// - 绑定目标：被宏修饰属性的值对象的 (titleShadowColor 属性。
 @attached(accessor, names: named(didSet))
-public macro link(titleShadowColor key: XZMocoaKey, for state: UIControl.State) = #externalMacro(module: "XZKitMacros", type: "ViewBindMacro")
+public macro bind(titleShadowColor key: XZMocoaKey, for state: UIControl.State) = #externalMacro(module: "XZKitMacros", type: "BindMacro")
+/// 将 key 键**单次绑定**到宏所修饰的属性的值的属性。
+///
+/// - 使用范围：视图。
+/// - 绑定键名：宏参数 key 的值。
+/// - 绑定目标：被宏修饰属性的值对象的 (titleShadowColor 属性。
+@attached(accessor, names: named(didSet))
+public macro link(titleShadowColor key: XZMocoaKey, for state: UIControl.State) = #externalMacro(module: "XZKitMacros", type: "BindMacro")
 
-/// 建立从 ViewModel.{key} 到 View.image 的单次值同步。
+/// 将 key 键**单向绑定**到宏所修饰的属性的值的属性。
+///
+/// - 使用范围：视图。
+/// - 绑定键名：宏参数 key 的值。
+/// - 绑定目标：被宏修饰属性的值对象的 (image 属性。
 @attached(accessor, names: named(didSet))
-public macro link(image key: XZMocoaKey, for state: UIControl.State) = #externalMacro(module: "XZKitMacros", type: "ViewBindMacro")
+public macro bind(image key: XZMocoaKey, for state: UIControl.State) = #externalMacro(module: "XZKitMacros", type: "BindMacro")
+/// 将 key 键**单次绑定**到宏所修饰的属性的值的属性。
+///
+/// - 使用范围：视图。
+/// - 绑定键名：宏参数 key 的值。
+/// - 绑定目标：被宏修饰属性的值对象的 (image 属性。
+@attached(accessor, names: named(didSet))
+public macro link(image key: XZMocoaKey, for state: UIControl.State) = #externalMacro(module: "XZKitMacros", type: "BindMacro")
 
-/// 建立从 ViewModel.{key} 到 View.backgroundImage 的单次值同步。
+/// 将 key 键**单向绑定**到宏所修饰的属性的值的属性。
+///
+/// - 使用范围：视图。
+/// - 绑定键名：宏参数 key 的值。
+/// - 绑定目标：被宏修饰属性的值对象的 (backgroundImage 属性。
 @attached(accessor, names: named(didSet))
-public macro link(backgroundImage key: XZMocoaKey, for state: UIControl.State) = #externalMacro(module: "XZKitMacros", type: "ViewBindMacro")
+public macro bind(backgroundImage key: XZMocoaKey, for state: UIControl.State) = #externalMacro(module: "XZKitMacros", type: "BindMacro")
+/// 将 key 键**单次绑定**到宏所修饰的属性的值的属性。
+///
+/// - 使用范围：视图。
+/// - 绑定键名：宏参数 key 的值。
+/// - 绑定目标：被宏修饰属性的值对象的 (backgroundImage 属性。
+@attached(accessor, names: named(didSet))
+public macro link(backgroundImage key: XZMocoaKey, for state: UIControl.State) = #externalMacro(module: "XZKitMacros", type: "BindMacro")
 
 // MARK: - Other
 
-/// 建立从 ViewModel.{key} 到 View.color 的单次值同步。
+/// 将 key 键**单向绑定**到宏所修饰的属性的值的属性。
+///
+/// - 使用范围：视图。
+/// - 绑定键名：宏参数 key 的值。
+/// - 绑定目标：被宏修饰属性的值对象的 (color 属性。
 @attached(accessor, names: named(didSet))
-public macro link(color key: XZMocoaKey) = #externalMacro(module: "XZKitMacros", type: "ViewBindMacro")
+public macro bind(color key: XZMocoaKey) = #externalMacro(module: "XZKitMacros", type: "BindMacro")
+/// 将 key 键**单次绑定**到宏所修饰的属性的值的属性。
+///
+/// - 使用范围：视图。
+/// - 绑定键名：宏参数 key 的值。
+/// - 绑定目标：被宏修饰属性的值对象的 (color 属性。
+@attached(accessor, names: named(didSet))
+public macro link(color key: XZMocoaKey) = #externalMacro(module: "XZKitMacros", type: "BindMacro")
 
-/// 建立从 ViewModel.{key} 到 View.name 的单次值同步。
+/// 将 key 键**单向绑定**到宏所修饰的属性的值的属性。
+///
+/// - 使用范围：视图。
+/// - 绑定键名：宏参数 key 的值。
+/// - 绑定目标：被宏修饰属性的值对象的 (name 属性。
 @attached(accessor, names: named(didSet))
-public macro link(name key: XZMocoaKey) = #externalMacro(module: "XZKitMacros", type: "ViewBindMacro")
+public macro bind(name key: XZMocoaKey) = #externalMacro(module: "XZKitMacros", type: "BindMacro")
+/// 将 key 键**单次绑定**到宏所修饰的属性的值的属性。
+///
+/// - 使用范围：视图。
+/// - 绑定键名：宏参数 key 的值。
+/// - 绑定目标：被宏修饰属性的值对象的 (name 属性。
+@attached(accessor, names: named(didSet))
+public macro link(name key: XZMocoaKey) = #externalMacro(module: "XZKitMacros", type: "BindMacro")
 
-/// 建立从 ViewModel.{key} 到 View.barTintColor 的单次值同步。
+/// 将 key 键**单向绑定**到宏所修饰的属性的值的属性。
+///
+/// - 使用范围：视图。
+/// - 绑定键名：宏参数 key 的值。
+/// - 绑定目标：被宏修饰属性的值对象的 (barTintColor 属性。
 @attached(accessor, names: named(didSet))
-public macro link(barTintColor key: XZMocoaKey) = #externalMacro(module: "XZKitMacros", type: "ViewBindMacro")
+public macro bind(barTintColor key: XZMocoaKey) = #externalMacro(module: "XZKitMacros", type: "BindMacro")
+/// 将 key 键**单次绑定**到宏所修饰的属性的值的属性。
+///
+/// - 使用范围：视图。
+/// - 绑定键名：宏参数 key 的值。
+/// - 绑定目标：被宏修饰属性的值对象的 (barTintColor 属性。
+@attached(accessor, names: named(didSet))
+public macro link(barTintColor key: XZMocoaKey) = #externalMacro(module: "XZKitMacros", type: "BindMacro")
 
-/// 建立从 ViewModel.{key} 到 View.backgroundImage 的单次值同步。
+/// 将 key 键**单向绑定**到宏所修饰的属性的值的属性。
+///
+/// - 使用范围：视图。
+/// - 绑定键名：宏参数 key 的值。
+/// - 绑定目标：被宏修饰属性的值对象的 (backgroundImage 属性。
 @attached(accessor, names: named(didSet))
-public macro link(backgroundImage key: XZMocoaKey) = #externalMacro(module: "XZKitMacros", type: "ViewBindMacro")
+public macro bind(backgroundImage key: XZMocoaKey) = #externalMacro(module: "XZKitMacros", type: "BindMacro")
+/// 将 key 键**单次绑定**到宏所修饰的属性的值的属性。
+///
+/// - 使用范围：视图。
+/// - 绑定键名：宏参数 key 的值。
+/// - 绑定目标：被宏修饰属性的值对象的 (backgroundImage 属性。
+@attached(accessor, names: named(didSet))
+public macro link(backgroundImage key: XZMocoaKey) = #externalMacro(module: "XZKitMacros", type: "BindMacro")
 
-/// 建立从 ViewModel.{key} 到 View.isTranslucent 的单次值同步。
+/// 将 key 键**单向绑定**到宏所修饰的属性的值的属性。
+///
+/// - 使用范围：视图。
+/// - 绑定键名：宏参数 key 的值。
+/// - 绑定目标：被宏修饰属性的值对象的 (isTranslucent 属性。
 @attached(accessor, names: named(didSet))
-public macro link(isTranslucent key: XZMocoaKey) = #externalMacro(module: "XZKitMacros", type: "ViewBindMacro")
+public macro bind(isTranslucent key: XZMocoaKey) = #externalMacro(module: "XZKitMacros", type: "BindMacro")
+/// 将 key 键**单次绑定**到宏所修饰的属性的值的属性。
+///
+/// - 使用范围：视图。
+/// - 绑定键名：宏参数 key 的值。
+/// - 绑定目标：被宏修饰属性的值对象的 (isTranslucent 属性。
+@attached(accessor, names: named(didSet))
+public macro link(isTranslucent key: XZMocoaKey) = #externalMacro(module: "XZKitMacros", type: "BindMacro")
 
-/// 建立从 ViewModel.{key} 到 View.style 的单次值同步。
+/// 将 key 键**单向绑定**到宏所修饰的属性的值的属性。
+///
+/// - 使用范围：视图。
+/// - 绑定键名：宏参数 key 的值。
+/// - 绑定目标：被宏修饰属性的值对象的 (style 属性。
 @attached(accessor, names: named(didSet))
-public macro link(style key: XZMocoaKey) = #externalMacro(module: "XZKitMacros", type: "ViewBindMacro")
+public macro bind(style key: XZMocoaKey) = #externalMacro(module: "XZKitMacros", type: "BindMacro")
+/// 将 key 键**单次绑定**到宏所修饰的属性的值的属性。
+///
+/// - 使用范围：视图。
+/// - 绑定键名：宏参数 key 的值。
+/// - 绑定目标：被宏修饰属性的值对象的 (style 属性。
+@attached(accessor, names: named(didSet))
+public macro link(style key: XZMocoaKey) = #externalMacro(module: "XZKitMacros", type: "BindMacro")
 
-/// 建立从 ViewModel.{key} 到 View.state 的单次值同步。
+/// 将 key 键**单向绑定**到宏所修饰的属性的值的属性。
+///
+/// - 使用范围：视图。
+/// - 绑定键名：宏参数 key 的值。
+/// - 绑定目标：被宏修饰属性的值对象的 (state 属性。
 @attached(accessor, names: named(didSet))
-public macro link(state key: XZMocoaKey) = #externalMacro(module: "XZKitMacros", type: "ViewBindMacro")
+public macro bind(state key: XZMocoaKey) = #externalMacro(module: "XZKitMacros", type: "BindMacro")
+/// 将 key 键**单次绑定**到宏所修饰的属性的值的属性。
+///
+/// - 使用范围：视图。
+/// - 绑定键名：宏参数 key 的值。
+/// - 绑定目标：被宏修饰属性的值对象的 (state 属性。
+@attached(accessor, names: named(didSet))
+public macro link(state key: XZMocoaKey) = #externalMacro(module: "XZKitMacros", type: "BindMacro")
 
-/// 建立从 ViewModel.{key} 到 View.status 的单次值同步。
+/// 将 key 键**单向绑定**到宏所修饰的属性的值的属性。
+///
+/// - 使用范围：视图。
+/// - 绑定键名：宏参数 key 的值。
+/// - 绑定目标：被宏修饰属性的值对象的 (status 属性。
 @attached(accessor, names: named(didSet))
-public macro link(status key: XZMocoaKey) = #externalMacro(module: "XZKitMacros", type: "ViewBindMacro")
+public macro bind(status key: XZMocoaKey) = #externalMacro(module: "XZKitMacros", type: "BindMacro")
+/// 将 key 键**单次绑定**到宏所修饰的属性的值的属性。
+///
+/// - 使用范围：视图。
+/// - 绑定键名：宏参数 key 的值。
+/// - 绑定目标：被宏修饰属性的值对象的 (status 属性。
+@attached(accessor, names: named(didSet))
+public macro link(status key: XZMocoaKey) = #externalMacro(module: "XZKitMacros", type: "BindMacro")
 
-/// 建立从 ViewModel.{key} 到 View.title 的单次值同步。
+/// 将 key 键**单向绑定**到宏所修饰的属性的值的属性。
+///
+/// - 使用范围：视图。
+/// - 绑定键名：宏参数 key 的值。
+/// - 绑定目标：被宏修饰属性的值对象的 (title 属性。
 @attached(accessor, names: named(didSet))
-public macro link(title key: XZMocoaKey) = #externalMacro(module: "XZKitMacros", type: "ViewBindMacro")
+public macro bind(title key: XZMocoaKey) = #externalMacro(module: "XZKitMacros", type: "BindMacro")
+/// 将 key 键**单次绑定**到宏所修饰的属性的值的属性。
+///
+/// - 使用范围：视图。
+/// - 绑定键名：宏参数 key 的值。
+/// - 绑定目标：被宏修饰属性的值对象的 (title 属性。
+@attached(accessor, names: named(didSet))
+public macro link(title key: XZMocoaKey) = #externalMacro(module: "XZKitMacros", type: "BindMacro")
 
-/// 建立从 ViewModel.{key} 到 View.attributedTitle 的单次值同步。
+/// 将 key 键**单向绑定**到宏所修饰的属性的值的属性。
+///
+/// - 使用范围：视图。
+/// - 绑定键名：宏参数 key 的值。
+/// - 绑定目标：被宏修饰属性的值对象的 (attributedTitle 属性。
 @attached(accessor, names: named(didSet))
-public macro link(attributedTitle key: XZMocoaKey) = #externalMacro(module: "XZKitMacros", type: "ViewBindMacro")
+public macro bind(attributedTitle key: XZMocoaKey) = #externalMacro(module: "XZKitMacros", type: "BindMacro")
+/// 将 key 键**单次绑定**到宏所修饰的属性的值的属性。
+///
+/// - 使用范围：视图。
+/// - 绑定键名：宏参数 key 的值。
+/// - 绑定目标：被宏修饰属性的值对象的 (attributedTitle 属性。
+@attached(accessor, names: named(didSet))
+public macro link(attributedTitle key: XZMocoaKey) = #externalMacro(module: "XZKitMacros", type: "BindMacro")
 
-/// 建立从 ViewModel.{key} 到 View.subtitle 的单次值同步。
+/// 将 key 键**单向绑定**到宏所修饰的属性的值的属性。
+///
+/// - 使用范围：视图。
+/// - 绑定键名：宏参数 key 的值。
+/// - 绑定目标：被宏修饰属性的值对象的 (subtitle 属性。
 @attached(accessor, names: named(didSet))
-public macro link(subtitle key: XZMocoaKey) = #externalMacro(module: "XZKitMacros", type: "ViewBindMacro")
+public macro bind(subtitle key: XZMocoaKey) = #externalMacro(module: "XZKitMacros", type: "BindMacro")
+/// 将 key 键**单次绑定**到宏所修饰的属性的值的属性。
+///
+/// - 使用范围：视图。
+/// - 绑定键名：宏参数 key 的值。
+/// - 绑定目标：被宏修饰属性的值对象的 (subtitle 属性。
+@attached(accessor, names: named(didSet))
+public macro link(subtitle key: XZMocoaKey) = #externalMacro(module: "XZKitMacros", type: "BindMacro")
 
-/// 建立从 ViewModel.{key} 到 View.detailText 的单次值同步。
+/// 将 key 键**单向绑定**到宏所修饰的属性的值的属性。
+///
+/// - 使用范围：视图。
+/// - 绑定键名：宏参数 key 的值。
+/// - 绑定目标：被宏修饰属性的值对象的 (detailText 属性。
 @attached(accessor, names: named(didSet))
-public macro link(detailText key: XZMocoaKey) = #externalMacro(module: "XZKitMacros", type: "ViewBindMacro")
+public macro bind(detailText key: XZMocoaKey) = #externalMacro(module: "XZKitMacros", type: "BindMacro")
+/// 将 key 键**单次绑定**到宏所修饰的属性的值的属性。
+///
+/// - 使用范围：视图。
+/// - 绑定键名：宏参数 key 的值。
+/// - 绑定目标：被宏修饰属性的值对象的 (detailText 属性。
+@attached(accessor, names: named(didSet))
+public macro link(detailText key: XZMocoaKey) = #externalMacro(module: "XZKitMacros", type: "BindMacro")
 
-/// 建立从 ViewModel.{key} 到 View.icon 的单次值同步。
+/// 将 key 键**单向绑定**到宏所修饰的属性的值的属性。
+///
+/// - 使用范围：视图。
+/// - 绑定键名：宏参数 key 的值。
+/// - 绑定目标：被宏修饰属性的值对象的 (icon 属性。
 @attached(accessor, names: named(didSet))
-public macro link(icon key: XZMocoaKey) = #externalMacro(module: "XZKitMacros", type: "ViewBindMacro")
+public macro bind(icon key: XZMocoaKey) = #externalMacro(module: "XZKitMacros", type: "BindMacro")
+/// 将 key 键**单次绑定**到宏所修饰的属性的值的属性。
+///
+/// - 使用范围：视图。
+/// - 绑定键名：宏参数 key 的值。
+/// - 绑定目标：被宏修饰属性的值对象的 (icon 属性。
+@attached(accessor, names: named(didSet))
+public macro link(icon key: XZMocoaKey) = #externalMacro(module: "XZKitMacros", type: "BindMacro")
 
-/// 建立从 ViewModel.{key} 到 View.viewModel 的单次值同步。
+/// 将 key 键**单向绑定**到宏所修饰的属性的值的属性。
+///
+/// - 使用范围：视图。
+/// - 绑定键名：宏参数 key 的值。
+/// - 绑定目标：被宏修饰属性的值对象的 (viewModel 属性。
 @attached(accessor, names: named(didSet))
-public macro link(viewModel key: XZMocoaKey) = #externalMacro(module: "XZKitMacros", type: "ViewBindMacro")
+public macro bind(viewModel key: XZMocoaKey) = #externalMacro(module: "XZKitMacros", type: "BindMacro")
+/// 将 key 键**单次绑定**到宏所修饰的属性的值的属性。
+///
+/// - 使用范围：视图。
+/// - 绑定键名：宏参数 key 的值。
+/// - 绑定目标：被宏修饰属性的值对象的 (viewModel 属性。
+@attached(accessor, names: named(didSet))
+public macro link(viewModel key: XZMocoaKey) = #externalMacro(module: "XZKitMacros", type: "BindMacro")
+
+
 
 #endif
