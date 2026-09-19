@@ -27,7 +27,7 @@
         targetActions = [NSMutableArray array];
         _table[key] = targetActions;
     }
-    XZMocoaTargetAction *targetAction = [XZMocoaTargetAction targetActionForTarget:target action:action];
+    XZMocoaTargetAction *targetAction = [XZMocoaTargetAction targetActionWithTarget:target action:action];
     [targetActions addObject:targetAction];
 }
 
@@ -78,7 +78,7 @@
     NSMutableArray<XZMocoaTargetAction *> * const targetActions = _table[key];
     [targetActions enumerateObjectsWithOptions:NSEnumerationReverse usingBlock:^(XZMocoaTargetAction *obj, NSUInteger idx, BOOL *stop) {
         id const target1 = obj.target;
-        if (target1 == nil || obj.action == action) {
+        if (target1 == nil || obj.action.action == action) {
             [targetActions removeObjectAtIndex:idx];
         }
     }];
@@ -114,7 +114,7 @@
     NSMutableArray<XZMocoaTargetAction *> * const targetActions = _table[key];
     [targetActions enumerateObjectsWithOptions:NSEnumerationReverse usingBlock:^(XZMocoaTargetAction *obj, NSUInteger idx, BOOL *stop) {
         id const target1 = obj.target;
-        if (target1 == nil || (target1 == target && obj.action == action)) {
+        if (target1 == nil || (target1 == target && obj.action.action == action)) {
             [targetActions removeObjectAtIndex:idx];
         }
     }];
@@ -131,7 +131,7 @@
     NSMutableArray<XZMocoaTargetAction *> *targetActions = _table[key];
     id const sender = self.viewModel;
     [targetActions enumerateObjectsWithOptions:NSEnumerationReverse usingBlock:^(XZMocoaTargetAction *targetAction, NSUInteger idx, BOOL *stop) {
-        id  const target = targetAction.target;
+        id const target = targetAction.target;
         if (target == nil) {
             [targetActions removeObjectAtIndex:idx]; // 删除 target 已销毁的监听
             return;

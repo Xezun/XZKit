@@ -298,24 +298,32 @@
 }
 
 - (void)sendActionsForKey:(XZMocoaKey)key {
-    if (!self.isReady) return;
-    [_targetActions sendActionsForKey:(key ?: XZMocoaKeyNone) value:nil];
+    [_targetActions sendActionsForKey:key value:nil];
 }
 
 - (void)removeTarget:(id)target action:(SEL)action forKey:(XZMocoaKey)key {
     [_targetActions removeTarget:target action:action forKey:key];
 }
 
-- (void)linkTarget:(id)target action:(SEL)action forKey:(XZMocoaKey)key {
-    id const value = [self valueForKey:key];
-    XZMocoaTargetAction * const targetAction = [[XZMocoaTargetAction alloc] initWithTarget:target action:action];
-    [targetAction sender:self sendActionForKey:key value:value];
-}
-
 - (void)bindTarget:(id)target action:(SEL)action forKey:(XZMocoaKey)key {
     [self addTarget:target action:action forKey:key];
-    id value = [self valueForKey:key];
-    [self sendActionsForKey:key value:value];
+    [self sendActionsForKey:key value:nil];
+}
+
+- (void)linkTarget:(id)target action:(SEL)action forKey:(XZMocoaKey)key {
+    if (target == nil) {
+        return;
+    }
+    Class const TargetClass = object_getClass(target);
+    if (TargetClass == Nil) {
+        return;
+    }
+    if (key == nil) {
+        key = XZMocoaKeyNone;
+    }
+    id const value = (key == XZMocoaKeyNone ? nil : [self valueForKey:key]);
+    XZMocoaAction * const actionObject = [XZMocoaAction actionForClass:TargetClass action:action];
+    [actionObject sender:self sendActionForTarget:target forKey:key value:value];
 }
 
 - (id)valueForUndefinedKey:(NSString *)key {

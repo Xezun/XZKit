@@ -10,51 +10,72 @@
 #import "XZMocoaViewModel.h"
 @import ObjectiveC;
 
-static NSMapTable<Class, NSMapTable<id, XZMocoaTargetAction *> *> *_classTargetActionTable = nil;
+@implementation XZMocoaTargetAction
 
-@implementation XZMocoaTargetAction {
++ (XZMocoaTargetAction *)targetActionWithTarget:(id)target action:(SEL)action {
+    Class const TargetClass = object_getClass(target);
+    if (TargetClass == Nil || action == nil) {
+        return nil;
+    }
+    XZMocoaAction *actionObject = [XZMocoaAction actionForClass:TargetClass action:action];
+    return [[self alloc] initWithTarget:target action:actionObject];
+}
+
+- (XZMocoaTargetAction *)initWithTarget:(id)target action:(XZMocoaAction *)action {
+    self = [super init];
+    if (self) {
+        _target = target;
+        _action = action;
+    }
+    return self;
+}
+
+- (void)sender:(id)sender sendActionForKey:(XZMocoaKey)key value:(id)value {
+    [_action sender:sender sendActionForTarget:_target forKey:key value:value];
+}
+
+@end
+
+
+static NSMapTable<Class, NSMapTable<id, XZMocoaAction *> *> *_classActionTable = nil;
+
+@implementation XZMocoaAction  {
     /// action 的参数数量，不包括 self 和 SEL
     NSInteger _numberOfArguments;
     /// value 参数的值类型。
     XZObjcType *_valueArgumentType;
 }
 
-+ (XZMocoaTargetAction *)targetActionForTarget:(id)target action:(SEL)action {
-    if (target == nil || action == nil) {
-        return nil;
-    }
-    
-    Class const TargetClass = object_getClass(target);
++ (XZMocoaAction *)actionForClass:(Class)TargetClass action:(SEL)action {
     if (TargetClass == Nil) {
         return nil;
     }
     
-    if (_classTargetActionTable == nil) {
-        _classTargetActionTable = [[NSMapTable alloc] initWithKeyOptions:NSPointerFunctionsOpaqueMemory valueOptions:NSPointerFunctionsStrongMemory capacity:0];
+    if (_classActionTable == nil) {
+        _classActionTable = [[NSMapTable alloc] initWithKeyOptions:NSPointerFunctionsOpaquePersonality valueOptions:NSPointerFunctionsStrongMemory capacity:0];
     }
     
-    NSMapTable *targetActionTable = [_classTargetActionTable objectForKey:TargetClass];
-    if (targetActionTable == nil) {
-        targetActionTable = [[NSMapTable alloc] initWithKeyOptions:NSPointerFunctionsOpaqueMemory valueOptions:NSPointerFunctionsStrongMemory capacity:0];
-        [_classTargetActionTable setObject:targetActionTable forKey:TargetClass];
+    NSMapTable *actionTable = [_classActionTable objectForKey:TargetClass];
+    if (actionTable == nil) {
+        actionTable = [[NSMapTable alloc] initWithKeyOptions:NSPointerFunctionsOpaquePersonality valueOptions:NSPointerFunctionsStrongMemory capacity:0];
+        [_classActionTable setObject:actionTable forKey:TargetClass];
     }
     
-    XZMocoaTargetAction *targetAction = (__bridge id)NSMapGet(targetActionTable, action);
-    if (targetAction == nil) {
-        targetAction = [[XZMocoaTargetAction alloc] initWithTarget:target action:action];
-        NSMapInsert(targetActionTable, action, (__bridge void *)targetAction);
+    XZMocoaAction *actionObject = (__bridge id)NSMapGet(actionTable, action);
+    if (actionObject == nil) {
+        actionObject = [[XZMocoaAction alloc] initWithClass:TargetClass action:action];
+        NSMapInsert(actionTable, action, (__bridge void *)actionObject);
     }
     
-    return targetAction;
+    return actionObject;
 }
 
-- (instancetype)initWithTarget:(id)target action:(SEL)action {
+- (instancetype)initWithClass:(Class)aClass action:(SEL)action {
     self = [super init];
     if (self) {
-        _target = target;
         _action = action;
         
-        Method const method = class_getInstanceMethod(object_getClass(target), action);
+        Method const method = class_getInstanceMethod(aClass, action);
         
         _numberOfArguments = method_getNumberOfArguments(method);
         if (_numberOfArguments < 2) {
@@ -130,10 +151,10 @@ static NSMapTable<Class, NSMapTable<id, XZMocoaTargetAction *> *> *_classTargetA
     return self;
 }
 
-- (void)sender:(id)sender sendActionForKey:(XZMocoaKey)key value:(id)value {
+- (void)sender:(const id)sender sendActionForTarget:(const id)target forKey:(XZMocoaKey const)key value:(const id)value {
     switch (_numberOfArguments) {
         case 0: {
-            ((void (*)(id, SEL))objc_msgSend)(_target, _action);
+            ((void (*)(id, SEL))objc_msgSend)(target, _action);
             break;
         }
         case 1:
@@ -145,13 +166,13 @@ static NSMapTable<Class, NSMapTable<id, XZMocoaTargetAction *> *> *_classTargetA
                     [(NSValue *)value getValue:&pointerValue size:sizeof(void *)];
                     switch (_numberOfArguments) {
                         case 1:
-                            ((void (*)(id, SEL, void *))objc_msgSend)(_target, _action, pointerValue);
+                            ((void (*)(id, SEL, void *))objc_msgSend)(target, _action, pointerValue);
                             break;
                         case 2:
-                            ((void (*)(id, SEL, XZMocoaKey, void *))objc_msgSend)(_target, _action, key, pointerValue);
+                            ((void (*)(id, SEL, XZMocoaKey, void *))objc_msgSend)(target, _action, key, pointerValue);
                             break;
                         case 3:
-                            ((void (*)(id, SEL, id, XZMocoaKey, void *))objc_msgSend)(_target, _action, sender, key, pointerValue);
+                            ((void (*)(id, SEL, id, XZMocoaKey, void *))objc_msgSend)(target, _action, sender, key, pointerValue);
                             break;
                         default:
                             break;
@@ -164,13 +185,13 @@ static NSMapTable<Class, NSMapTable<id, XZMocoaTargetAction *> *> *_classTargetA
                     char const charValue = [(NSNumber *)value charValue];
                     switch (_numberOfArguments) {
                         case 1:
-                            ((void (*)(id, SEL, char))objc_msgSend)(_target, _action, charValue);
+                            ((void (*)(id, SEL, char))objc_msgSend)(target, _action, charValue);
                             break;
                         case 2:
-                            ((void (*)(id, SEL, XZMocoaKey, char))objc_msgSend)(_target, _action, key, charValue);
+                            ((void (*)(id, SEL, XZMocoaKey, char))objc_msgSend)(target, _action, key, charValue);
                             break;
                         case 3:
-                            ((void (*)(id, SEL, id, XZMocoaKey, char))objc_msgSend)(_target, _action, sender, key, charValue);
+                            ((void (*)(id, SEL, id, XZMocoaKey, char))objc_msgSend)(target, _action, sender, key, charValue);
                             break;
                         default:
                             break;
@@ -181,13 +202,13 @@ static NSMapTable<Class, NSMapTable<id, XZMocoaTargetAction *> *> *_classTargetA
                     unsigned char const ucharValue = [(NSNumber *)value unsignedCharValue];
                     switch (_numberOfArguments) {
                         case 1:
-                            ((void (*)(id, SEL, unsigned char))objc_msgSend)(_target, _action, ucharValue);
+                            ((void (*)(id, SEL, unsigned char))objc_msgSend)(target, _action, ucharValue);
                             break;
                         case 2:
-                            ((void (*)(id, SEL, XZMocoaKey, unsigned char))objc_msgSend)(_target, _action, key, ucharValue);
+                            ((void (*)(id, SEL, XZMocoaKey, unsigned char))objc_msgSend)(target, _action, key, ucharValue);
                             break;
                         case 3:
-                            ((void (*)(id, SEL, id, XZMocoaKey, unsigned char))objc_msgSend)(_target, _action, sender, key, ucharValue);
+                            ((void (*)(id, SEL, id, XZMocoaKey, unsigned char))objc_msgSend)(target, _action, sender, key, ucharValue);
                             break;
                         default:
                             break;
@@ -198,13 +219,13 @@ static NSMapTable<Class, NSMapTable<id, XZMocoaTargetAction *> *> *_classTargetA
                     int const intValue = [(NSNumber *)value intValue];
                     switch (_numberOfArguments) {
                         case 1:
-                            ((void (*)(id, SEL, int))objc_msgSend)(_target, _action, intValue);
+                            ((void (*)(id, SEL, int))objc_msgSend)(target, _action, intValue);
                             break;
                         case 2:
-                            ((void (*)(id, SEL, XZMocoaKey, int))objc_msgSend)(_target, _action, key, intValue);
+                            ((void (*)(id, SEL, XZMocoaKey, int))objc_msgSend)(target, _action, key, intValue);
                             break;
                         case 3:
-                            ((void (*)(id, SEL, id, XZMocoaKey, int))objc_msgSend)(_target, _action, sender, key, intValue);
+                            ((void (*)(id, SEL, id, XZMocoaKey, int))objc_msgSend)(target, _action, sender, key, intValue);
                             break;
                         default:
                             break;
@@ -215,13 +236,13 @@ static NSMapTable<Class, NSMapTable<id, XZMocoaTargetAction *> *> *_classTargetA
                     unsigned int const uintValue = [(NSNumber *)value unsignedIntValue];
                     switch (_numberOfArguments) {
                         case 1:
-                            ((void (*)(id, SEL, unsigned int))objc_msgSend)(_target, _action, uintValue);
+                            ((void (*)(id, SEL, unsigned int))objc_msgSend)(target, _action, uintValue);
                             break;
                         case 2:
-                            ((void (*)(id, SEL, XZMocoaKey, unsigned int))objc_msgSend)(_target, _action, key, uintValue);
+                            ((void (*)(id, SEL, XZMocoaKey, unsigned int))objc_msgSend)(target, _action, key, uintValue);
                             break;
                         case 3:
-                            ((void (*)(id, SEL, id, XZMocoaKey, unsigned int))objc_msgSend)(_target, _action, sender, key, uintValue);
+                            ((void (*)(id, SEL, id, XZMocoaKey, unsigned int))objc_msgSend)(target, _action, sender, key, uintValue);
                             break;
                         default:
                             break;
@@ -232,13 +253,13 @@ static NSMapTable<Class, NSMapTable<id, XZMocoaTargetAction *> *> *_classTargetA
                     short const shortValue = [(NSNumber *)value shortValue];
                     switch (_numberOfArguments) {
                         case 1:
-                            ((void (*)(id, SEL, short))objc_msgSend)(_target, _action, shortValue);
+                            ((void (*)(id, SEL, short))objc_msgSend)(target, _action, shortValue);
                             break;
                         case 2:
-                            ((void (*)(id, SEL, XZMocoaKey, short))objc_msgSend)(_target, _action, key, shortValue);
+                            ((void (*)(id, SEL, XZMocoaKey, short))objc_msgSend)(target, _action, key, shortValue);
                             break;
                         case 3:
-                            ((void (*)(id, SEL, id, XZMocoaKey, short))objc_msgSend)(_target, _action, sender, key, shortValue);
+                            ((void (*)(id, SEL, id, XZMocoaKey, short))objc_msgSend)(target, _action, sender, key, shortValue);
                             break;
                         default:
                             break;
@@ -249,13 +270,13 @@ static NSMapTable<Class, NSMapTable<id, XZMocoaTargetAction *> *> *_classTargetA
                     unsigned short const ushortValue = [(NSNumber *)value unsignedShortValue];
                     switch (_numberOfArguments) {
                         case 1:
-                            ((void (*)(id, SEL, unsigned short))objc_msgSend)(_target, _action, ushortValue);
+                            ((void (*)(id, SEL, unsigned short))objc_msgSend)(target, _action, ushortValue);
                             break;
                         case 2:
-                            ((void (*)(id, SEL, XZMocoaKey, unsigned short))objc_msgSend)(_target, _action, key, ushortValue);
+                            ((void (*)(id, SEL, XZMocoaKey, unsigned short))objc_msgSend)(target, _action, key, ushortValue);
                             break;
                         case 3:
-                            ((void (*)(id, SEL, id, XZMocoaKey, unsigned short))objc_msgSend)(_target, _action, sender, key, ushortValue);
+                            ((void (*)(id, SEL, id, XZMocoaKey, unsigned short))objc_msgSend)(target, _action, sender, key, ushortValue);
                             break;
                         default:
                             break;
@@ -266,13 +287,13 @@ static NSMapTable<Class, NSMapTable<id, XZMocoaTargetAction *> *> *_classTargetA
                     long const longValue = [(NSNumber *)value longValue];
                     switch (_numberOfArguments) {
                         case 1:
-                            ((void (*)(id, SEL, long))objc_msgSend)(_target, _action, longValue);
+                            ((void (*)(id, SEL, long))objc_msgSend)(target, _action, longValue);
                             break;
                         case 2:
-                            ((void (*)(id, SEL, XZMocoaKey, long))objc_msgSend)(_target, _action, key, longValue);
+                            ((void (*)(id, SEL, XZMocoaKey, long))objc_msgSend)(target, _action, key, longValue);
                             break;
                         case 3:
-                            ((void (*)(id, SEL, id, XZMocoaKey, long))objc_msgSend)(_target, _action, sender, key, longValue);
+                            ((void (*)(id, SEL, id, XZMocoaKey, long))objc_msgSend)(target, _action, sender, key, longValue);
                             break;
                         default:
                             break;
@@ -283,13 +304,13 @@ static NSMapTable<Class, NSMapTable<id, XZMocoaTargetAction *> *> *_classTargetA
                     unsigned long const ulongValue = [(NSNumber *)value unsignedLongValue];
                     switch (_numberOfArguments) {
                         case 1:
-                            ((void (*)(id, SEL, unsigned long))objc_msgSend)(_target, _action, ulongValue);
+                            ((void (*)(id, SEL, unsigned long))objc_msgSend)(target, _action, ulongValue);
                             break;
                         case 2:
-                            ((void (*)(id, SEL, XZMocoaKey, unsigned long))objc_msgSend)(_target, _action, key, ulongValue);
+                            ((void (*)(id, SEL, XZMocoaKey, unsigned long))objc_msgSend)(target, _action, key, ulongValue);
                             break;
                         case 3:
-                            ((void (*)(id, SEL, id, XZMocoaKey, unsigned long))objc_msgSend)(_target, _action, sender, key, ulongValue);
+                            ((void (*)(id, SEL, id, XZMocoaKey, unsigned long))objc_msgSend)(target, _action, sender, key, ulongValue);
                             break;
                         default:
                             break;
@@ -300,13 +321,13 @@ static NSMapTable<Class, NSMapTable<id, XZMocoaTargetAction *> *> *_classTargetA
                     long long const longlongValue = [(NSNumber *)value longLongValue];
                     switch (_numberOfArguments) {
                         case 1:
-                            ((void (*)(id, SEL, long long))objc_msgSend)(_target, _action, longlongValue);
+                            ((void (*)(id, SEL, long long))objc_msgSend)(target, _action, longlongValue);
                             break;
                         case 2:
-                            ((void (*)(id, SEL, XZMocoaKey, long long))objc_msgSend)(_target, _action, key, longlongValue);
+                            ((void (*)(id, SEL, XZMocoaKey, long long))objc_msgSend)(target, _action, key, longlongValue);
                             break;
                         case 3:
-                            ((void (*)(id, SEL, id, XZMocoaKey, long long))objc_msgSend)(_target, _action, sender, key, longlongValue);
+                            ((void (*)(id, SEL, id, XZMocoaKey, long long))objc_msgSend)(target, _action, sender, key, longlongValue);
                             break;
                         default:
                             break;
@@ -317,13 +338,13 @@ static NSMapTable<Class, NSMapTable<id, XZMocoaTargetAction *> *> *_classTargetA
                     unsigned long long const ulonglongValue = [(NSNumber *)value unsignedLongLongValue];
                     switch (_numberOfArguments) {
                         case 1:
-                            ((void (*)(id, SEL, unsigned long long))objc_msgSend)(_target, _action, ulonglongValue);
+                            ((void (*)(id, SEL, unsigned long long))objc_msgSend)(target, _action, ulonglongValue);
                             break;
                         case 2:
-                            ((void (*)(id, SEL, XZMocoaKey, unsigned long long))objc_msgSend)(_target, _action, key, ulonglongValue);
+                            ((void (*)(id, SEL, XZMocoaKey, unsigned long long))objc_msgSend)(target, _action, key, ulonglongValue);
                             break;
                         case 3:
-                            ((void (*)(id, SEL, id, XZMocoaKey, unsigned long long))objc_msgSend)(_target, _action, sender, key, ulonglongValue);
+                            ((void (*)(id, SEL, id, XZMocoaKey, unsigned long long))objc_msgSend)(target, _action, sender, key, ulonglongValue);
                             break;
                         default:
                             break;
@@ -334,13 +355,13 @@ static NSMapTable<Class, NSMapTable<id, XZMocoaTargetAction *> *> *_classTargetA
                     float const floatValue = [(NSNumber *)value floatValue];
                     switch (_numberOfArguments) {
                         case 1:
-                            ((void (*)(id, SEL, float))objc_msgSend)(_target, _action, floatValue);
+                            ((void (*)(id, SEL, float))objc_msgSend)(target, _action, floatValue);
                             break;
                         case 2:
-                            ((void (*)(id, SEL, XZMocoaKey, float))objc_msgSend)(_target, _action, key, floatValue);
+                            ((void (*)(id, SEL, XZMocoaKey, float))objc_msgSend)(target, _action, key, floatValue);
                             break;
                         case 3:
-                            ((void (*)(id, SEL, id, XZMocoaKey, float))objc_msgSend)(_target, _action, sender, key, floatValue);
+                            ((void (*)(id, SEL, id, XZMocoaKey, float))objc_msgSend)(target, _action, sender, key, floatValue);
                             break;
                         default:
                             break;
@@ -351,13 +372,13 @@ static NSMapTable<Class, NSMapTable<id, XZMocoaTargetAction *> *> *_classTargetA
                     double const doubleValue = [(NSNumber *)value doubleValue];
                     switch (_numberOfArguments) {
                         case 1:
-                            ((void (*)(id, SEL, double))objc_msgSend)(_target, _action, doubleValue);
+                            ((void (*)(id, SEL, double))objc_msgSend)(target, _action, doubleValue);
                             break;
                         case 2:
-                            ((void (*)(id, SEL, XZMocoaKey, double))objc_msgSend)(_target, _action, key, doubleValue);
+                            ((void (*)(id, SEL, XZMocoaKey, double))objc_msgSend)(target, _action, key, doubleValue);
                             break;
                         case 3:
-                            ((void (*)(id, SEL, id, XZMocoaKey, double))objc_msgSend)(_target, _action, sender, key, doubleValue);
+                            ((void (*)(id, SEL, id, XZMocoaKey, double))objc_msgSend)(target, _action, sender, key, doubleValue);
                             break;
                         default:
                             break;
@@ -368,13 +389,13 @@ static NSMapTable<Class, NSMapTable<id, XZMocoaTargetAction *> *> *_classTargetA
                     long double const longDoubleValue = [(NSNumber *)value doubleValue];
                     switch (_numberOfArguments) {
                         case 1:
-                            ((void (*)(id, SEL, long double))objc_msgSend)(_target, _action, longDoubleValue);
+                            ((void (*)(id, SEL, long double))objc_msgSend)(target, _action, longDoubleValue);
                             break;
                         case 2:
-                            ((void (*)(id, SEL, XZMocoaKey, long double))objc_msgSend)(_target, _action, key, longDoubleValue);
+                            ((void (*)(id, SEL, XZMocoaKey, long double))objc_msgSend)(target, _action, key, longDoubleValue);
                             break;
                         case 3:
-                            ((void (*)(id, SEL, id, XZMocoaKey, long double))objc_msgSend)(_target, _action, sender, key, longDoubleValue);
+                            ((void (*)(id, SEL, id, XZMocoaKey, long double))objc_msgSend)(target, _action, sender, key, longDoubleValue);
                             break;
                         default:
                             break;
@@ -385,13 +406,13 @@ static NSMapTable<Class, NSMapTable<id, XZMocoaTargetAction *> *> *_classTargetA
                     BOOL const boolValue = [(NSNumber *)value boolValue];
                     switch (_numberOfArguments) {
                         case 1:
-                            ((void (*)(id, SEL, BOOL))objc_msgSend)(_target, _action, boolValue);
+                            ((void (*)(id, SEL, BOOL))objc_msgSend)(target, _action, boolValue);
                             break;
                         case 2:
-                            ((void (*)(id, SEL, XZMocoaKey, BOOL))objc_msgSend)(_target, _action, key, boolValue);
+                            ((void (*)(id, SEL, XZMocoaKey, BOOL))objc_msgSend)(target, _action, key, boolValue);
                             break;
                         case 3:
-                            ((void (*)(id, SEL, id, XZMocoaKey, BOOL))objc_msgSend)(_target, _action, sender, key, boolValue);
+                            ((void (*)(id, SEL, id, XZMocoaKey, BOOL))objc_msgSend)(target, _action, sender, key, boolValue);
                             break;
                         default:
                             break;
@@ -407,13 +428,13 @@ static NSMapTable<Class, NSMapTable<id, XZMocoaTargetAction *> *> *_classTargetA
                     [(NSValue *)value getValue:&stringValue size:sizeof(char *)];
                     switch (_numberOfArguments) {
                         case 1:
-                            ((void (*)(id, SEL, char *))objc_msgSend)(_target, _action, stringValue);
+                            ((void (*)(id, SEL, char *))objc_msgSend)(target, _action, stringValue);
                             break;
                         case 2:
-                            ((void (*)(id, SEL, XZMocoaKey, char *))objc_msgSend)(_target, _action, key, stringValue);
+                            ((void (*)(id, SEL, XZMocoaKey, char *))objc_msgSend)(target, _action, key, stringValue);
                             break;
                         case 3:
-                            ((void (*)(id, SEL, id, XZMocoaKey, char *))objc_msgSend)(_target, _action, sender, key, stringValue);
+                            ((void (*)(id, SEL, id, XZMocoaKey, char *))objc_msgSend)(target, _action, sender, key, stringValue);
                             break;
                         default:
                             break;
@@ -425,13 +446,13 @@ static NSMapTable<Class, NSMapTable<id, XZMocoaTargetAction *> *> *_classTargetA
                     [(NSValue *)value getValue:&selectorValue size:sizeof(SEL)];
                     switch (_numberOfArguments) {
                         case 1:
-                            ((void (*)(id, SEL, SEL))objc_msgSend)(_target, _action, selectorValue);
+                            ((void (*)(id, SEL, SEL))objc_msgSend)(target, _action, selectorValue);
                             break;
                         case 2:
-                            ((void (*)(id, SEL, XZMocoaKey, SEL))objc_msgSend)(_target, _action, key, selectorValue);
+                            ((void (*)(id, SEL, XZMocoaKey, SEL))objc_msgSend)(target, _action, key, selectorValue);
                             break;
                         case 3:
-                            ((void (*)(id, SEL, id, XZMocoaKey, SEL))objc_msgSend)(_target, _action, sender, key, selectorValue);
+                            ((void (*)(id, SEL, id, XZMocoaKey, SEL))objc_msgSend)(target, _action, sender, key, selectorValue);
                             break;
                         default:
                             break;
@@ -443,13 +464,13 @@ static NSMapTable<Class, NSMapTable<id, XZMocoaTargetAction *> *> *_classTargetA
                     [(NSValue *)value getValue:&pointerValue size:sizeof(void *)];
                     switch (_numberOfArguments) {
                         case 1:
-                            ((void (*)(id, SEL, void *))objc_msgSend)(_target, _action, pointerValue);
+                            ((void (*)(id, SEL, void *))objc_msgSend)(target, _action, pointerValue);
                             break;
                         case 2:
-                            ((void (*)(id, SEL, XZMocoaKey, void *))objc_msgSend)(_target, _action, key, pointerValue);
+                            ((void (*)(id, SEL, XZMocoaKey, void *))objc_msgSend)(target, _action, key, pointerValue);
                             break;
                         case 3:
-                            ((void (*)(id, SEL, id, XZMocoaKey, void *))objc_msgSend)(_target, _action, sender, key, pointerValue);
+                            ((void (*)(id, SEL, id, XZMocoaKey, void *))objc_msgSend)(target, _action, sender, key, pointerValue);
                             break;
                         default:
                             break;
@@ -461,13 +482,13 @@ static NSMapTable<Class, NSMapTable<id, XZMocoaTargetAction *> *> *_classTargetA
                     [(NSValue *)value getValue:&arrayValue size:sizeof(void *)];
                     switch (_numberOfArguments) {
                         case 1:
-                            ((void (*)(id, SEL, void *))objc_msgSend)(_target, _action, arrayValue);
+                            ((void (*)(id, SEL, void *))objc_msgSend)(target, _action, arrayValue);
                             break;
                         case 2:
-                            ((void (*)(id, SEL, XZMocoaKey, void *))objc_msgSend)(_target, _action, key, arrayValue);
+                            ((void (*)(id, SEL, XZMocoaKey, void *))objc_msgSend)(target, _action, key, arrayValue);
                             break;
                         case 3:
-                            ((void (*)(id, SEL, id, XZMocoaKey, void *))objc_msgSend)(_target, _action, sender, key, arrayValue);
+                            ((void (*)(id, SEL, id, XZMocoaKey, void *))objc_msgSend)(target, _action, sender, key, arrayValue);
                             break;
                         default:
                             break;
@@ -491,13 +512,13 @@ static NSMapTable<Class, NSMapTable<id, XZMocoaTargetAction *> *> *_classTargetA
                             [(NSValue *)value getValue:&structValue size:sizeof(CGRect)];
                             switch (_numberOfArguments) {
                                 case 1:
-                                    ((void (*)(id, SEL, CGRect))objc_msgSend)(_target, _action, structValue);
+                                    ((void (*)(id, SEL, CGRect))objc_msgSend)(target, _action, structValue);
                                     break;
                                 case 2:
-                                    ((void (*)(id, SEL, XZMocoaKey, CGRect))objc_msgSend)(_target, _action, key, structValue);
+                                    ((void (*)(id, SEL, XZMocoaKey, CGRect))objc_msgSend)(target, _action, key, structValue);
                                     break;
                                 case 3:
-                                    ((void (*)(id, SEL, id, XZMocoaKey, CGRect))objc_msgSend)(_target, _action, sender, key, structValue);
+                                    ((void (*)(id, SEL, id, XZMocoaKey, CGRect))objc_msgSend)(target, _action, sender, key, structValue);
                                     break;
                                 default:
                                     break;
@@ -509,13 +530,13 @@ static NSMapTable<Class, NSMapTable<id, XZMocoaTargetAction *> *> *_classTargetA
                             [(NSValue *)value getValue:&structValue size:sizeof(CGSize)];
                             switch (_numberOfArguments) {
                                 case 1:
-                                    ((void (*)(id, SEL, CGSize))objc_msgSend)(_target, _action, structValue);
+                                    ((void (*)(id, SEL, CGSize))objc_msgSend)(target, _action, structValue);
                                     break;
                                 case 2:
-                                    ((void (*)(id, SEL, XZMocoaKey, CGSize))objc_msgSend)(_target, _action, key, structValue);
+                                    ((void (*)(id, SEL, XZMocoaKey, CGSize))objc_msgSend)(target, _action, key, structValue);
                                     break;
                                 case 3:
-                                    ((void (*)(id, SEL, id, XZMocoaKey, CGSize))objc_msgSend)(_target, _action, sender, key, structValue);
+                                    ((void (*)(id, SEL, id, XZMocoaKey, CGSize))objc_msgSend)(target, _action, sender, key, structValue);
                                     break;
                                 default:
                                     break;
@@ -527,13 +548,13 @@ static NSMapTable<Class, NSMapTable<id, XZMocoaTargetAction *> *> *_classTargetA
                             [(NSValue *)value getValue:&structValue size:sizeof(CGPoint)];
                             switch (_numberOfArguments) {
                                 case 1:
-                                    ((void (*)(id, SEL, CGPoint))objc_msgSend)(_target, _action, structValue);
+                                    ((void (*)(id, SEL, CGPoint))objc_msgSend)(target, _action, structValue);
                                     break;
                                 case 2:
-                                    ((void (*)(id, SEL, XZMocoaKey, CGPoint))objc_msgSend)(_target, _action, key, structValue);
+                                    ((void (*)(id, SEL, XZMocoaKey, CGPoint))objc_msgSend)(target, _action, key, structValue);
                                     break;
                                 case 3:
-                                    ((void (*)(id, SEL, id, XZMocoaKey, CGPoint))objc_msgSend)(_target, _action, sender, key, structValue);
+                                    ((void (*)(id, SEL, id, XZMocoaKey, CGPoint))objc_msgSend)(target, _action, sender, key, structValue);
                                     break;
                                 default:
                                     break;
@@ -545,13 +566,13 @@ static NSMapTable<Class, NSMapTable<id, XZMocoaTargetAction *> *> *_classTargetA
                             [(NSValue *)value getValue:&structValue size:sizeof(CGVector)];
                             switch (_numberOfArguments) {
                                 case 1:
-                                    ((void (*)(id, SEL, CGVector))objc_msgSend)(_target, _action, structValue);
+                                    ((void (*)(id, SEL, CGVector))objc_msgSend)(target, _action, structValue);
                                     break;
                                 case 2:
-                                    ((void (*)(id, SEL, XZMocoaKey, CGVector))objc_msgSend)(_target, _action, key, structValue);
+                                    ((void (*)(id, SEL, XZMocoaKey, CGVector))objc_msgSend)(target, _action, key, structValue);
                                     break;
                                 case 3:
-                                    ((void (*)(id, SEL, id, XZMocoaKey, CGVector))objc_msgSend)(_target, _action, sender, key, structValue);
+                                    ((void (*)(id, SEL, id, XZMocoaKey, CGVector))objc_msgSend)(target, _action, sender, key, structValue);
                                     break;
                                 default:
                                     break;
@@ -563,13 +584,13 @@ static NSMapTable<Class, NSMapTable<id, XZMocoaTargetAction *> *> *_classTargetA
                             [(NSValue *)value getValue:&structValue size:sizeof(CGAffineTransform)];
                             switch (_numberOfArguments) {
                                 case 1:
-                                    ((void (*)(id, SEL, CGAffineTransform))objc_msgSend)(_target, _action, structValue);
+                                    ((void (*)(id, SEL, CGAffineTransform))objc_msgSend)(target, _action, structValue);
                                     break;
                                 case 2:
-                                    ((void (*)(id, SEL, XZMocoaKey, CGAffineTransform))objc_msgSend)(_target, _action, key, structValue);
+                                    ((void (*)(id, SEL, XZMocoaKey, CGAffineTransform))objc_msgSend)(target, _action, key, structValue);
                                     break;
                                 case 3:
-                                    ((void (*)(id, SEL, id, XZMocoaKey, CGAffineTransform))objc_msgSend)(_target, _action, sender, key, structValue);
+                                    ((void (*)(id, SEL, id, XZMocoaKey, CGAffineTransform))objc_msgSend)(target, _action, sender, key, structValue);
                                     break;
                                 default:
                                     break;
@@ -581,13 +602,13 @@ static NSMapTable<Class, NSMapTable<id, XZMocoaTargetAction *> *> *_classTargetA
                             [(NSValue *)value getValue:&structValue size:sizeof(NSDirectionalEdgeInsets)];
                             switch (_numberOfArguments) {
                                 case 1:
-                                    ((void (*)(id, SEL, NSDirectionalEdgeInsets))objc_msgSend)(_target, _action, structValue);
+                                    ((void (*)(id, SEL, NSDirectionalEdgeInsets))objc_msgSend)(target, _action, structValue);
                                     break;
                                 case 2:
-                                    ((void (*)(id, SEL, XZMocoaKey, NSDirectionalEdgeInsets))objc_msgSend)(_target, _action, key, structValue);
+                                    ((void (*)(id, SEL, XZMocoaKey, NSDirectionalEdgeInsets))objc_msgSend)(target, _action, key, structValue);
                                     break;
                                 case 3:
-                                    ((void (*)(id, SEL, id, XZMocoaKey, NSDirectionalEdgeInsets))objc_msgSend)(_target, _action, sender, key, structValue);
+                                    ((void (*)(id, SEL, id, XZMocoaKey, NSDirectionalEdgeInsets))objc_msgSend)(target, _action, sender, key, structValue);
                                     break;
                                 default:
                                     break;
@@ -599,13 +620,13 @@ static NSMapTable<Class, NSMapTable<id, XZMocoaTargetAction *> *> *_classTargetA
                             [(NSValue *)value getValue:&structValue size:sizeof(NSRange)];
                             switch (_numberOfArguments) {
                                 case 1:
-                                    ((void (*)(id, SEL, NSRange))objc_msgSend)(_target, _action, structValue);
+                                    ((void (*)(id, SEL, NSRange))objc_msgSend)(target, _action, structValue);
                                     break;
                                 case 2:
-                                    ((void (*)(id, SEL, XZMocoaKey, NSRange))objc_msgSend)(_target, _action, key, structValue);
+                                    ((void (*)(id, SEL, XZMocoaKey, NSRange))objc_msgSend)(target, _action, key, structValue);
                                     break;
                                 case 3:
-                                    ((void (*)(id, SEL, id, XZMocoaKey, NSRange))objc_msgSend)(_target, _action, sender, key, structValue);
+                                    ((void (*)(id, SEL, id, XZMocoaKey, NSRange))objc_msgSend)(target, _action, sender, key, structValue);
                                     break;
                                 default:
                                     break;
@@ -617,13 +638,13 @@ static NSMapTable<Class, NSMapTable<id, XZMocoaTargetAction *> *> *_classTargetA
                             [(NSValue *)value getValue:&structValue size:sizeof(UIEdgeInsets)];
                             switch (_numberOfArguments) {
                                 case 1:
-                                    ((void (*)(id, SEL, UIEdgeInsets))objc_msgSend)(_target, _action, structValue);
+                                    ((void (*)(id, SEL, UIEdgeInsets))objc_msgSend)(target, _action, structValue);
                                     break;
                                 case 2:
-                                    ((void (*)(id, SEL, XZMocoaKey, UIEdgeInsets))objc_msgSend)(_target, _action, key, structValue);
+                                    ((void (*)(id, SEL, XZMocoaKey, UIEdgeInsets))objc_msgSend)(target, _action, key, structValue);
                                     break;
                                 case 3:
-                                    ((void (*)(id, SEL, id, XZMocoaKey, UIEdgeInsets))objc_msgSend)(_target, _action, sender, key, structValue);
+                                    ((void (*)(id, SEL, id, XZMocoaKey, UIEdgeInsets))objc_msgSend)(target, _action, sender, key, structValue);
                                     break;
                                 default:
                                     break;
@@ -635,13 +656,13 @@ static NSMapTable<Class, NSMapTable<id, XZMocoaTargetAction *> *> *_classTargetA
                             [(NSValue *)value getValue:&structValue size:sizeof(UIOffset)];
                             switch (_numberOfArguments) {
                                 case 1:
-                                    ((void (*)(id, SEL, UIOffset))objc_msgSend)(_target, _action, structValue);
+                                    ((void (*)(id, SEL, UIOffset))objc_msgSend)(target, _action, structValue);
                                     break;
                                 case 2:
-                                    ((void (*)(id, SEL, XZMocoaKey, UIOffset))objc_msgSend)(_target, _action, key, structValue);
+                                    ((void (*)(id, SEL, XZMocoaKey, UIOffset))objc_msgSend)(target, _action, key, structValue);
                                     break;
                                 case 3:
-                                    ((void (*)(id, SEL, id, XZMocoaKey, UIOffset))objc_msgSend)(_target, _action, sender, key, structValue);
+                                    ((void (*)(id, SEL, id, XZMocoaKey, UIOffset))objc_msgSend)(target, _action, sender, key, structValue);
                                     break;
                                 default:
                                     break;
@@ -656,13 +677,13 @@ static NSMapTable<Class, NSMapTable<id, XZMocoaTargetAction *> *> *_classTargetA
                 default: {
                     switch (_numberOfArguments) {
                         case 1:
-                            ((void (*)(id, SEL, id))objc_msgSend)(_target, _action, value);
+                            ((void (*)(id, SEL, id))objc_msgSend)(target, _action, value);
                             break;
                         case 2:
-                            ((void (*)(id, SEL, XZMocoaKey, id))objc_msgSend)(_target, _action, key, value);
+                            ((void (*)(id, SEL, XZMocoaKey, id))objc_msgSend)(target, _action, key, value);
                             break;
                         case 3:
-                            ((void (*)(id, SEL, id, XZMocoaKey, id))objc_msgSend)(_target, _action, sender, key, value);
+                            ((void (*)(id, SEL, id, XZMocoaKey, id))objc_msgSend)(target, _action, sender, key, value);
                             break;
                         default:
                             break;

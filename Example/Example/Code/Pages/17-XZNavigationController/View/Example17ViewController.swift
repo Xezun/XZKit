@@ -36,6 +36,11 @@ class Example17ViewController: UITableViewController, XZMocoaView {
         return ( self is XZNavigationBarCustomizable ? .lightContent : .darkContent )
     }
     
+    override func didInit(with options: XZMocoaOptions) {
+        super.didInit(with: options)
+        
+    }
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         
@@ -43,6 +48,10 @@ class Example17ViewController: UITableViewController, XZMocoaView {
         if self.viewModel == nil {
             self.viewModel = Example17ViewModel.init(model: Example17Model.init())
         }
+        
+        let viewModel = self.viewModel as! Example17ViewModel
+        
+        #XZLog("currentHidden = %@, currentTranslucent = %@, currentLargeTitles = %@", viewModel.currentHidden, viewModel.currentTranslucent, viewModel.currentLargeTitles)
         
         // 设置当前页的导航栏样式
         if let navigationBar = (self as? XZNavigationBarCustomizable)?.navigationBar {
@@ -64,39 +73,30 @@ class Example17ViewController: UITableViewController, XZMocoaView {
     }
     
     @IBAction func currentHiddenSwitchValueChanged(_ sender: UISwitch) {
-        let viewModel = self.viewModel as! Example17ViewModel
-        viewModel.currentHidden = sender.isOn;
-        
+        sendEvents("currentHidden", value: sender.isOn)
         self.navigationController?.setNavigationBarHidden(sender.isOn, animated: true)
     }
     
     @IBAction func currentTranslucentSwitchValueChanged(_ sender: UISwitch) {
-        let viewModel = self.viewModel as! Example17ViewModel
-        viewModel.currentTranslucent = sender.isOn
-        
+        sendEvents("currentTranslucent", value: sender.isOn)
         self.navigationController?.navigationBar.isTranslucent = sender.isOn
     }
     
     @IBAction func currentLargeTitlesSwitchValueChanged(_ sender: UISwitch) {
-        let viewModel = self.viewModel as! Example17ViewModel
-        viewModel.currentLargeTitles = sender.isOn
-        
+        sendEvents("currentLargeTitles", value: sender.isOn)
         self.navigationController?.navigationBar.prefersLargeTitles = sender.isOn
     }
     
     @IBAction func nextHiddenSwitchValueChanged(_ sender: UISwitch) {
-        let viewModel = self.viewModel as! Example17ViewModel
-        viewModel.nextHidden = sender.isOn
+        sendEvents("nextHidden", value: sender.isOn)
     }
     
     @IBAction func nextTranslucentSwitchValueChanged(_ sender: UISwitch) {
-        let viewModel = self.viewModel as! Example17ViewModel
-        viewModel.nextTranslucent = sender.isOn
+        sendEvents("nextTranslucent", value: sender.isOn)
     }
     
     @IBAction func nextLargeTitlesSwitchValueChanged(_ sender: UISwitch) {
-        let viewModel = self.viewModel as! Example17ViewModel
-        viewModel.nextLargeTitles = sender.isOn
+        sendEvents("nextLargeTitles", value: sender.isOn)
     }
     
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {

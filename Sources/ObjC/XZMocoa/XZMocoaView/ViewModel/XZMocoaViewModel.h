@@ -311,10 +311,10 @@ NS_SWIFT_UI_ACTOR @interface XZMocoaViewModel : NSObject <XZMocoaViewModel> {
 /// @param target 绑定事件的对象
 /// @param action 绑定事件的方法
 /// @param key 绑定的事件
-- (void)bindTarget:(id)target action:(SEL)action forKey:(nullable XZMocoaKey)key;
+- (void)bindTarget:(nullable id)target action:(SEL)action forKey:(nullable XZMocoaKey)key;
 
 /// 单次绑定：仅在视图模型与视图关联时，进行一次 key 的值链接，不与 key 绑定。
-- (void)linkTarget:(id)target action:(SEL)action forKey:(nullable XZMocoaKey)key;
+- (void)linkTarget:(nullable id)target action:(SEL)action forKey:(nullable XZMocoaKey)key;
 
 @end
 

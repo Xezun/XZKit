@@ -14,17 +14,27 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-@class XZMocoaViewModel;
+@class XZMocoaViewModel, XZMocoaAction;
 
 @interface XZMocoaTargetAction : NSObject
 
 @property (nonatomic, weak, readonly) id target;
-@property (nonatomic, readonly, nullable) SEL action;
+@property (nonatomic, readonly) XZMocoaAction *action;
 
 - (instancetype)init NS_UNAVAILABLE;
-+ (XZMocoaTargetAction *)targetActionForTarget:(id)target action:(SEL)action;
++ (nullable instancetype)targetActionWithTarget:(id)target action:(SEL)action;
 
 - (void)sender:(id)sender sendActionForKey:(XZMocoaKey)key value:(id)value;
+
+@end
+
+@interface XZMocoaAction : NSObject
+
+@property (nonatomic, readonly) SEL action;
+
++ (XZMocoaTargetAction *)actionForClass:(Class)aClass action:(SEL)action;
+
+- (void)sender:(id const)sender sendActionForTarget:(id const)target forKey:(XZMocoaKey)key value:(id const)value;
 
 @end
 

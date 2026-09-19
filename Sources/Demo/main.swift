@@ -13,13 +13,13 @@ import XZKit
 class TestModel: NSObject, XZMocoaModel {
     
     @key
-    let id = UUID()
+    let id: UUID = UUID()
     
     @key
     var name: String?
     
     @key
-    var age = 12
+    var age: Int = 12
     
     @key
     var detail: String?
@@ -31,9 +31,26 @@ class TestView: UIView, XZMocoaView {
     
     @objc var name: String?
     
+    // 不可选读写属性
+    @bind(text: .name)
+    var nameLabel: UILabel = .init()
+    
+    // 可选读写属性
+    @bind(image: .icon)
+    @link(backgroundColor: .color)
+    var iconImageView: UIImageView? {
+        didSet {
+            viewModel?.bindTarget(iconImageView, action: #selector(setter: UIImageView.image), forKey: .icon)
+            viewModel?.linkTarget(iconImageView, action: #selector(setter: UIImageView.backgroundColor), forKey: .color)
+        }
+    }
+    
+    @link(.isRefreshing, selector: #selector(TestView.beginRefreshing(_:)))
+    var view: TestView = .init()
+    
     @link(text: .title)
     @link(textColor: .textColor)
-    let titleLabel: UILabel = .init()
+    var titleLabel: UILabel! = .init()
     
     @link(text: .detailText)
     @link(textColor: .textColor)
@@ -46,8 +63,7 @@ class TestView: UIView, XZMocoaView {
     @link(titleColor: .textColor, for: .normal)
     let button: UIButton = .init()
     
-    @link("name", selector: #selector(setter: TestView.name))
-    let view: TestView = .init()
+    
     
     @link
     @objc func beginRefreshing(_ isRefreshing: Bool) {
@@ -71,6 +87,7 @@ class TestViewModel: XZMocoaTableViewModel {
     }
     
     @key
+    @bind
     var name: String?
     
     @key

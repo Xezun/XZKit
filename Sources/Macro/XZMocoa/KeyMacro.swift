@@ -18,17 +18,14 @@ public struct KeyMacro: AccessorMacro {
             throw XZMacroError.init(message: "@key: 仅支持属性")
         }
         
+        let property = try XZMacroPropertyInfomation(node, propertyDecl)
+        
         // 只读属性
-        if propertyDecl.isReadOnlyProperty {
+        if property.readability.isReadonly {
             return []
         }
         
-        // 获取属性名
-        guard let propertyName = propertyDecl.name else {
-            throw XZMacroError(message: "@key: 宏无法确定属性名")
-        }
-        
-        switch try MocoaRole(node: node, context: context) {
+        switch try XZMacroMocoaRole(node: node, context: context) {
         case .m:
             // 包含 set 或 didSet 就无法重写
             if propertyDecl.containsAccessors(["set", "didSet"]) {
@@ -40,12 +37,12 @@ public struct KeyMacro: AccessorMacro {
             }
             
             // 由 @mocoa 宏添加 @objc 标记 + dynamic 标记，以支持 KVO
-            let key = try node.mocoaKeyFromArgument(at: 0) ?? propertyName
+            let key = try XZMocoaKey(firstArgumentOf: node) ?? property.name
             
             return [
                 """
                 didSet {
-                    if \(raw: propertyName) == oldValue {
+                    if \(raw: property.name) == oldValue {
                         return
                     }
                     didChangeValue(forKey: "\(raw: key)")
@@ -67,12 +64,12 @@ public struct KeyMacro: AccessorMacro {
             }
             
             // key 名
-            let key = try node.mocoaKeyFromArgument(at: 0) ?? propertyName
+            let key = try XZMocoaKey(firstArgumentOf: node) ?? property.name
             
             return [
                 """
                 didSet {
-                    if \(raw: propertyName) == oldValue {
+                    if \(raw: property.name) == oldValue {
                         return
                     }
                     sendActions(forKey: "\(raw: key)")
@@ -100,7 +97,7 @@ extension KeyMacro {
             return []
         }
         
-        if let key = try node.mocoaKeyFromArgument(at: 0) {
+        if let key = try XZMocoaKey(firstArgumentOf: node) {
             return ["@objc(\(raw: key))"]
         }
         
