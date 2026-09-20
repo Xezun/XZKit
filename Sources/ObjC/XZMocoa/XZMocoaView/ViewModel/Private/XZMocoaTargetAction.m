@@ -191,7 +191,7 @@ static NSMapTable<Class, NSMapTable<id, XZMocoaAction *> *> *_classActionTable =
                 }
                 case XZStdcTypeChar: {
                     // 使用 NSNumber 来处理标量值。
-                    // 不再兼容 NSValue 象，因为在 Swift 中 4 字节 UInt32 类型的属性，通过 KVC 取值，是按 8 字节存储的。
+                    // 不再兼容 NSValue 对象，因为在 Swift 中 4 字节 UInt32 类型的属性，通过 KVC 取值，是按 8 字节存储的。
                     char const charValue = [(NSNumber *)value charValue];
                     switch (_numberOfArguments) {
                         case 1:

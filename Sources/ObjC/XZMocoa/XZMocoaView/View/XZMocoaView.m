@@ -76,6 +76,47 @@ static const void * const _context = &_context;
     [[XZMocoaContext contextIfLoadedForView:self] sendEventsWithKey:key value:value];
 }
 
+- (void)didInitWithMocoaOptions:(XZMocoaOptions *)options {
+    if (self.viewModel) {
+        return;
+    }
+    
+    XZMocoaModule    * const module          = options.module;
+    Class              const ViewModelClass  = module.viewModelClass;
+    XZMocoaViewModel * const sourceViewModel = options[XZMocoaKeyViewModel];
+    
+    if (ViewModelClass) {
+        // 视图模型类型与源相同，认为是共用视图模型，不需要建立事件通道
+        if ([sourceViewModel isKindOfClass:ViewModelClass]) {
+            self.viewModel = sourceViewModel;
+            return;
+        }
+        
+        // 判断参数中是否提供了数据模型，且是否可用
+        id model = options[XZMocoaKeyModel];
+        Class const ModelClass = module.modelClass;
+        if (ModelClass) {
+            if ([model isKindOfClass:ModelClass]) {
+                // 数据模型是限定的类型，可以使用
+            } else {
+                // 数据模型不是限定的类型，忽略指定数据，尝试创建一个
+                model = [[ModelClass alloc] init];
+            }
+        }
+        
+        // 创建视图模型
+        XZMocoaViewModel * const viewModel = [[ViewModelClass alloc] initWithModel:model];
+        viewModel.module = module;
+        self.viewModel = viewModel;
+    }
+    
+    // 建立事件通道
+    if ([sourceViewModel isKindOfClass:[XZMocoaViewModel class]]) {
+        XZMocoaContext * const context = [XZMocoaContext contextForView:self];
+        context.sourceViewModel = sourceViewModel;
+    }
+}
+
 - (void)__mocoa_bind_prepare { }
 
 - (void)__mocoa_bind_title_normal:(NSString *)title { }
@@ -239,104 +280,16 @@ static const void * const _context = &_context;
 
 #pragma mark - XZMocoaModuleSupporting
 
-@implementation UIView (XZMocoaModuleSupporting)
-
-+ (__kindof UIView *)viewWithMocoaURL:(NSURL *)url options:(NSDictionary *)options frame:(CGRect)frame {
-    XZMocoaModule * const module = [XZMocoaModule moduleForURL:url];
-    if (module == nil) {
-        return nil;
-    }
-    switch (module.viewForm) {
-        case XZMocoaModuleViewFormClass: {
-            XZMocoaOptions * const mocoaOptions = [[XZMocoaOptions alloc] initWithModule:module url:url options:options];
-            UIView *view = [[module.viewClass alloc] initWithFrame:frame];
-            [view didInitWithMocoaOptions:mocoaOptions];
-            return view;
-        }
-        case XZMocoaModuleViewFormNib: {
-            UINib *nib = [UINib nibWithNibName:module.viewNibName bundle:module.viewNibBundle];
-            Class const ViewClass = module.viewNibClass ?: self.class;
-            for (UIView *object in [nib instantiateWithOwner:nil options:nil]) {
-                if ([object isKindOfClass:ViewClass]) {
-                    object.frame = frame;
-                    XZMocoaOptions * const mocoaOptions = [[XZMocoaOptions alloc] initWithModule:module url:url options:options];
-                    [object didInitWithMocoaOptions:mocoaOptions];
-                    return object;
-                }
-            }
-            return nil;
-        }
-        default:
-            return nil;
-    }
-}
-
-+ (nullable __kindof UIView *)viewWithMocoaURL:(NSURL *)url options:(nullable NSDictionary *)options {
-    return [self viewWithMocoaURL:url options:options frame:CGRectZero];
-}
-
-+ (nullable __kindof UIView *)viewWithMocoaURL:(NSURL *)url frame:(CGRect)frame {
-    return [self viewWithMocoaURL:url options:nil frame:frame];
-}
-
-+ (nullable __kindof UIView *)viewWithMocoaURL:(NSURL *)url {
-    return [self viewWithMocoaURL:url options:nil frame:CGRectZero];
-}
-
-- (void)didInitWithMocoaOptions:(XZMocoaOptions *)options {
-    
-}
-
-@end
-
 @implementation UIViewController (XZMocoaModuleSupporting)
 
+- (instancetype)initWithNibName:(NSString *)nibName bundle:(NSBundle *)bundle options:(XZMocoaOptions *)options {
+    UIViewController * const viewController = [self initWithNibName:nibName bundle:bundle];
+    [viewController didInitWithMocoaOptions:options];
+    return viewController;
+}
+
 + (__kindof UIViewController *)viewControllerWithMocoaURL:(NSURL *)url options:(nullable NSDictionary *)options {
-    XZMocoaModule *module = [XZMocoaModule moduleForURL:url];
-    if (module == nil) {
-        return nil;
-    }
-    
-    switch (module.viewForm) {
-        case XZMocoaModuleViewFormClass: {
-            Class const ViewController = module.viewClass;
-            if (![ViewController isSubclassOfClass:UIViewController.class]) {
-                NSLog(@"模块 %@ 不是 UIViewController 模块，无法构造视图控制器", module);
-                return nil;
-            }
-            XZMocoaOptions * const mocoaOptions = [[XZMocoaOptions alloc] initWithModule:module url:url options:options];
-            return [[ViewController alloc] initWithMocoaOptions:mocoaOptions nibName:nil bundle:nil];
-        }
-        case XZMocoaModuleViewFormNib: {
-            Class const ViewController = module.viewNibClass;
-            if (![ViewController isSubclassOfClass:UIViewController.class]) {
-                NSLog(@"模块 %@ 不是 UIViewController 模块，无法构造视图控制器", module);
-                return nil;
-            }
-            NSString *nibName = module.viewNibName;
-            NSBundle *bundle  = module.viewNibBundle;
-            XZMocoaOptions * const mocoaOptions = [[XZMocoaOptions alloc] initWithModule:module url:url options:options];
-            return [[ViewController alloc] initWithMocoaOptions:mocoaOptions nibName:nibName bundle:bundle];
-        }
-        case XZMocoaModuleViewFormStoryboard: {
-            UIStoryboard *storyboard = [UIStoryboard storyboardWithName:module.viewStoryboardName bundle:module.viewStoryboardBundle];
-            UIViewController *viewController = nil;
-            if (module.viewStoryboardIdentifier) {
-                viewController = [storyboard instantiateViewControllerWithIdentifier:module.viewStoryboardIdentifier];
-            } else {
-                viewController = [storyboard instantiateInitialViewController];
-            }
-            if (![viewController isKindOfClass:self]) {
-                return nil;
-            }
-            XZMocoaOptions * const mocoaOptions = [[XZMocoaOptions alloc] initWithModule:module url:url options:options];
-            [viewController didInitWithMocoaOptions:mocoaOptions];
-            return viewController;
-        }
-        default:
-            NSLog(@"模块 %@ 不是 UIViewController 模块，无法构造视图控制器", module);
-            return nil;
-    }
+    return [[XZMocoaModule moduleForURL:url] instantiateViewControllerWithOptions:options];
 }
 
 + (__kindof UIViewController *)viewControllerWithMocoaURLString:(NSString *)URLString options:(NSDictionary<XZMocoaKey,id> *)options {
@@ -352,53 +305,6 @@ static const void * const _context = &_context;
 
 + (__kindof UIViewController *)viewControllerWithMocoaURL:(NSURL *)url {
     return [self viewControllerWithMocoaURL:url options:nil];
-}
-
-- (instancetype)initWithMocoaOptions:(XZMocoaOptions *)options nibName:(NSString *)nibName bundle:(NSBundle *)bundle {
-    UIViewController * const viewController = [self initWithNibName:nibName bundle:bundle];
-    [viewController didInitWithMocoaOptions:options];
-    return viewController;
-}
-
-- (void)didInitWithMocoaOptions:(XZMocoaOptions *)options {
-    if (self.viewModel) {
-        return;
-    }
-    
-    XZMocoaModule    * const module          = options.module;
-    Class              const ViewModelClass  = module.viewModelClass;
-    XZMocoaViewModel * const sourceViewModel = options[XZMocoaKeyViewModel];
-    
-    if (ViewModelClass) {
-        // 视图模型类型与源相同，认为是共用视图模型，不需要建立事件通道
-        if ([sourceViewModel isKindOfClass:ViewModelClass]) {
-            self.viewModel = sourceViewModel;
-            return;
-        }
-        
-        // 判断参数中是否提供了数据模型，且是否可用
-        id model = options[XZMocoaKeyModel];
-        Class const ModelClass = module.modelClass;
-        if (ModelClass) {
-            if ([model isKindOfClass:ModelClass]) {
-                // 数据模型是限定的类型，可以使用
-            } else {
-                // 数据模型不是限定的类型，忽略指定数据，尝试创建一个
-                model = [[ModelClass alloc] init];
-            }
-        }
-        
-        // 创建视图模型
-        XZMocoaViewModel * const viewModel = [[ViewModelClass alloc] initWithModel:model];
-        viewModel.module = module;
-        self.viewModel = viewModel;
-    }
-    
-    // 建立事件通道
-    if ([sourceViewModel isKindOfClass:[XZMocoaViewModel class]]) {
-        XZMocoaContext * const context = [XZMocoaContext contextForView:self];
-        context.sourceViewModel = sourceViewModel;
-    }
 }
 
 - (__kindof UIViewController *)presentViewControllerWithMocoaURL:(NSURL *)url options:(nullable NSDictionary *)options animated:(BOOL)flag completion:(void (^ _Nullable)(void))completion {

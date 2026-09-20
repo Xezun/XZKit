@@ -22,8 +22,7 @@
 }
 
 - (void)dealloc {
-    // 移除 kvo
-    // [_observer removeAllTargets];
+    // 移除对数据模型的 KVO 观察（见下方 _removeModelObserverIfNeeded:）。
     
     // 不能像下面这样使用 for-in 语句。
     // for (XZMocoaViewModel *viewModel in subViewModels) {
@@ -111,7 +110,7 @@
 }
 
 - (NSString *)description {
-    return [NSString stringWithFormat:@"<%@: %p, isReady = %@; subViewModels = (%ld objects)>", self.class, self, @(self.isReady), self.subViewModels.count];
+    return [NSString stringWithFormat:@"<%@: %p, isReady = %@; subViewModels = (%lu objects)>", self.class, self, @(self.isReady), (unsigned long)self.subViewModels.count];
 }
 
 - (void)setModel:(id)model {

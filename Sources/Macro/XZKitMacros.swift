@@ -41,17 +41,33 @@ public struct XZMacroError: Error, DiagnosticMessage, CustomStringConvertible {
         return message
     }
     
+    /// 构造用于 `throw` 的错误，severity 固定为 `.error`。
     public init(message: String) {
         self.message = message
-        self.severity = .error // 必须为 error 类型，否则无法抛出
+        // throw 意味着宏展开失败，而 SwiftSyntax 要求失败时至少产生一条 .error 级诊断，
+        // 否则会再补一条通用错误 "macro expansion failed without generating an error"，
+        // 掩盖这里自定义的消息，所以用于抛出的 severity 必须是 .error。
+        //
+        // 宏实现抛出的 error 会被 SwiftSyntax 捕获，并优先尝试作为 DiagnosticMessage 使用。
+        // ```swift
+        // } else if let message = error as? DiagnosticMessage {
+        //     diagnostics = [Diagnostic(node: Syntax(node), message: message)]   // 直接用你的 message + severity
+        // }
+        // ```
+        self.severity = .error
     }
     
+    /// 构造用于 `throw` 的错误，消息以宏名称为前缀，severity 固定为 `.error`。
     public init(_ node: AttributeSyntax, message: String) {
         self.init(node, message: message, severity: .error)
     }
     
-    /// 如果 severity 不是 .error 类型，无法作为 Error 抛出
-    public init(_ node: AttributeSyntax, message: String, severity: SwiftDiagnostics.DiagnosticSeverity) {
+    /// 构造任意 severity 的诊断消息，仅供 `XZMacroDiagnose` 通过 `context.diagnose`
+    /// 输出警告/提示（不中止展开）时使用。
+    /// - Important: 不可用此方法构造的对象去 `throw`：抛出非 `.error` 的诊断会被 SwiftSyntax
+    ///   追加的通用错误 "macro expansion failed without generating an error" 掩盖。
+    ///   为避免误用，限定为 fileprivate，不对外暴露。
+    fileprivate init(_ node: AttributeSyntax, message: String, severity: SwiftDiagnostics.DiagnosticSeverity) {
         self.message = "@\(node.attributeName.trimmedDescription): \(message)"
         self.severity = severity
     }

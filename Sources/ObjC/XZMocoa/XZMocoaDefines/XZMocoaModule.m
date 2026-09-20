@@ -8,6 +8,7 @@
 
 #import "XZMocoaModule.h"
 #import "XZMocoaViewModel.h"
+#import "XZMocoaView.h"
 
 /// 将 MocoaURL 中的单个 path 部分解析成 MVVM 模块的 kind 和 name 值。
 /// - Parameters:
@@ -104,12 +105,94 @@ FOUNDATION_STATIC_INLINE NSString *XZMocoaStandardKey(XZMocoaKind kind, XZMocoaN
     return self;
 }
 
++ (XZMocoaModule *)moduleWithDomain:(NSString *)urlDomain path:(NSString *)urlPath {
+    NSString * const string = [NSString stringWithFormat:@"mocoa://%@%@", urlDomain, urlPath];
+    NSURL    * const url    = [NSURL URLWithString:string];
+    if (url == nil) {
+        return nil;
+    }
+    return [[self alloc] initWithURL:url];
+}
+
 // - 实例
 
 - (__kindof XZMocoaViewModel *)instantiateViewModelWithModel:(id)model {
     XZMocoaViewModel * const viewModel = [[self.viewModelClass alloc] initWithModel:model];
     viewModel.module = self;
     return viewModel;
+}
+
+- (__kindof UIView *)instantiateViewWithFrame:(CGRect)frame options:(NSDictionary<XZMocoaKey, id> *)options {
+    NSURL * const url = self.url;
+    switch (self.viewForm) {
+        case XZMocoaModuleViewFormClass: {
+            XZMocoaOptions * const mocoaOptions = [[XZMocoaOptions alloc] initWithModule:self url:url options:options];
+            UIView *view = [[self.viewClass alloc] initWithFrame:frame];
+            [view didInitWithMocoaOptions:mocoaOptions];
+            return view;
+        }
+        case XZMocoaModuleViewFormNib: {
+            UINib *nib = [UINib nibWithNibName:self.viewNibName bundle:self.viewNibBundle];
+            Class const ViewClass = self.viewNibClass ?: self.class;
+            for (UIView *object in [nib instantiateWithOwner:nil options:nil]) {
+                if ([object isKindOfClass:ViewClass]) {
+                    object.frame = frame;
+                    XZMocoaOptions * const mocoaOptions = [[XZMocoaOptions alloc] initWithModule:self url:url options:options];
+                    [object didInitWithMocoaOptions:mocoaOptions];
+                    return object;
+                }
+            }
+            return nil;
+        }
+        default: {
+            return nil;
+        }
+    }
+}
+
+- (__kindof UIViewController *)instantiateViewControllerWithOptions:(NSDictionary<XZMocoaKey,id> *)options {
+    NSURL * const url = self.url;
+    switch (self.viewForm) {
+        case XZMocoaModuleViewFormClass: {
+            Class const ViewController = self.viewClass;
+            if (![ViewController isSubclassOfClass:UIViewController.class]) {
+                NSLog(@"模块 %@ 不是 UIViewController 模块，无法构造视图控制器", self);
+                return nil;
+            }
+            XZMocoaOptions * const mocoaOptions = [[XZMocoaOptions alloc] initWithModule:self url:url options:options];
+            return [[ViewController alloc] initWithNibName:nil bundle:nil options:mocoaOptions];
+        }
+        case XZMocoaModuleViewFormNib: {
+            Class const ViewController = self.viewNibClass;
+            if (![ViewController isSubclassOfClass:UIViewController.class]) {
+                NSLog(@"模块 %@ 不是 UIViewController 模块，无法构造视图控制器", self);
+                return nil;
+            }
+            NSString *nibName = self.viewNibName;
+            NSBundle *bundle  = self.viewNibBundle;
+            XZMocoaOptions * const mocoaOptions = [[XZMocoaOptions alloc] initWithModule:self url:url options:options];
+            return [[ViewController alloc] initWithNibName:nibName bundle:bundle options:mocoaOptions];
+        }
+        case XZMocoaModuleViewFormStoryboard: {
+            UIStoryboard *storyboard = [UIStoryboard storyboardWithName:self.viewStoryboardName bundle:self.viewStoryboardBundle];
+            UIViewController *viewController = nil;
+            if (self.viewStoryboardIdentifier) {
+                viewController = [storyboard instantiateViewControllerWithIdentifier:self.viewStoryboardIdentifier];
+            } else {
+                viewController = [storyboard instantiateInitialViewController];
+            }
+            if (![viewController isKindOfClass:UIViewController.class]) {
+                return nil;
+            }
+            XZMocoaOptions * const mocoaOptions = [[XZMocoaOptions alloc] initWithModule:self url:url options:options];
+            [viewController didInitWithMocoaOptions:mocoaOptions];
+            return viewController;
+        }
+        default: {
+            NSLog(@"模块 %@ 不是 UIViewController 模块，无法构造视图控制器", self);
+            return nil;
+        }
+    }
 }
 
 // view class
@@ -454,28 +537,12 @@ FOUNDATION_STATIC_INLINE NSString *XZMocoaStandardKey(XZMocoaKind kind, XZMocoaN
 
 @end
 
-
-@implementation NSURL (XZMocoaModule)
-
-+ (NSURL *)mocoaURLWithDomain:(XZMocoaDomain *)domain path:(NSString *)path {
-    NSString * const name   = domain.name;
-    NSString * const string = [NSString stringWithFormat:@"mocoa://%@%@", name, path];
-    NSURL    * const url    = [NSURL URLWithString:string];
-    NSAssert(url, @"参数 name=%@ 和 path=%@ 不是合法的 URL 部分", name, path);
-    return url;
-}
-
-@end
-
 @implementation XZMocoaModule (XZMocoaProvider)
 
 + (id)domain:(XZMocoaDomain *)domain moduleForPath:(nonnull NSString *)path {
-    // 创建模块
-    NSURL * const url = [NSURL mocoaURLWithDomain:domain path:path];
-    
     // 根模块
     if ([path isEqualToString:@"/"]) {
-        return [[XZMocoaModule alloc] initWithURL:url];
+        return [XZMocoaModule moduleWithDomain:domain.name path:path];
     }
     
     // 先查找上级模块

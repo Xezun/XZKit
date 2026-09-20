@@ -518,7 +518,7 @@
     // 使用 reloadSections 时，可以将其它 cell 移动到 section 中。
     // 使用 deleteSections 时，可以将被删除的 cell 移动到其它 section 中。
     // 使用 insertSections 时，可以将其它 cell 移动到新添加的 section 中。
-    // 使用 deleteSections 时，可将内部的 cell 移动到别的 section 中，如果时部分移动，剩余的 cell 默认移除
+    // 使用 deleteSections 时，可将内部的 cell 移动到别的 section 中，如果是部分移动，剩余的 cell 默认移除
     
     // 最终需要刷新 supplements 的 sections
     NSMutableIndexSet * const reloads = [NSMutableIndexSet indexSet];
@@ -1086,8 +1086,8 @@
     }];
 }
 
-// 虽然 CoreData 提供了数据更新的步骤，但是更新事件似乎并是按更新的先后顺序发送，可能是由于排序或者什么原因，比如同时插入三条数据时，
-// 触发代理的顺序可能时 0 2 1，这显然没办法直接操作数组。
+// 虽然 CoreData 提供了数据更新的步骤，但是更新事件似乎并不是按更新的先后顺序发送，可能是由于排序或者什么原因，比如同时插入三条数据时，
+// 触发代理的顺序可能是 0 2 1，这显然没办法直接操作数组。
 // 因为先收到插入数据 2 而这个时候 1 还没有插入，无法在数组中插入不连续的值。
 // 而且似乎 section/cell 没有分离，比如没有 section=5 时，会直接触发插入 {section=5,row=0} 从而导致更新问题，直接批量操作有风险。
 

@@ -24,6 +24,28 @@ NS_ASSUME_NONNULL_BEGIN
 NS_SWIFT_UI_ACTOR @protocol XZMocoaView <NSObject>
 @end
 
+/// 模块初始化参数。可像字典一样取值。
+/// @code
+/// XZMocoaOptions options;
+/// id value = options[@"value"];
+/// @endcode
+@interface XZMocoaOptions : NSObject
+
+/// 模块。
+@property (nonatomic, readonly) XZMocoaModule *module;
+/// 原始 URL
+@property (nonatomic, readonly) NSURL *url;
+/// 合并了 URL query 参数
+@property (nonatomic, readonly) NSDictionary<XZMocoaKey, id> *options;
+
+- (nullable id)objectForKeyedSubscript:(XZMocoaKey)key;
+- (BOOL)containsKey:(XZMocoaKey)aKey;
+
+- (instancetype)init NS_UNAVAILABLE;
+- (instancetype)initWithModule:(XZMocoaModule *)module url:(NSURL *)url options:(NSDictionary *)options NS_DESIGNATED_INITIALIZER;
+
+@end
+
 /// 所有 UIResponder 是天然的 MVVM 中 View 角色，所以为 UIResponder 拓展了 viewModel 属性。
 @interface UIResponder (XZMocoaView)
 /// 视图模型。
@@ -91,9 +113,20 @@ NS_SWIFT_UI_ACTOR @protocol XZMocoaView <NSObject>
 ///   - value: 事件值
 - (void)sendEventsWithKey:(XZMocoaKey)key value:(nullable id)value NS_SWIFT_NAME(sendEvents(_:value:));
 
+/// 通过 Mocoa 视图的额外初始化方法。
+///
+/// 通过 Mocoa 提供的方法创建的视图或视图控制器，一定会调用此方法。
+///
+/// 在 Swift 中，由于不能重写便利初始化方法，所以只能通过此方法接收 Mocoa 初始化参数。
+///
+/// 默认情况下，此方法会尝试为视图或视图控制器创建视图模型，子类可以在调用`super`之前，自行创建视图模型，以避免自动创建的视图模型不符合实际需求。
+///
+/// @param options 初始化参数
+- (void)didInitWithMocoaOptions:(XZMocoaOptions *)options NS_SWIFT_NAME(didInit(with:));
+
 // 以下方法为供 Swift 绑定 KTA 事件值使用，请勿直接调用。
 
-/// 若子类完全重写了`viewModel`属性，则需在合适的时机调用此方法，否则 @bind 宏无法生效。
+/// 若子类完全重写了`viewModel`属性，则需在合适的时机调用此方法，否则 @bind / @link 宏无法生效。
 - (void)__mocoa_bind_prepare;
 
 - (void)__mocoa_bind_title_normal:(NSString *)title;
@@ -139,47 +172,7 @@ NS_SWIFT_UI_ACTOR @protocol XZMocoaView <NSObject>
 
 #pragma mark - XZMocoaModuleSupporting
 
-/// 模块初始化参数。可像字典一样取值。
-/// @code
-/// XZMocoaOptions options;
-/// id value = options[@"value"];
-/// @endcode
-@interface XZMocoaOptions : NSObject
-
-/// 模块。
-@property (nonatomic, readonly) XZMocoaModule *module;
-/// 原始 URL
-@property (nonatomic, readonly) NSURL *url;
-/// 合并了 URL query 参数
-@property (nonatomic, readonly) NSDictionary<XZMocoaKey, id> *options;
-
-- (nullable id)objectForKeyedSubscript:(XZMocoaKey)key;
-- (BOOL)containsKey:(XZMocoaKey)aKey;
-
-@end
-
-
-@interface UIView (XZMocoaModuleSupporting)
-+ (nullable __kindof UIView *)viewWithMocoaURL:(NSURL *)url options:(nullable NSDictionary *)options frame:(CGRect)frame NS_SWIFT_NAME(init(_:options:frame:));
-+ (nullable __kindof UIView *)viewWithMocoaURL:(NSURL *)url options:(nullable NSDictionary *)options NS_SWIFT_NAME(init(_:options:));
-+ (nullable __kindof UIView *)viewWithMocoaURL:(NSURL *)url frame:(CGRect)frame NS_SWIFT_NAME(init(_:frame:));
-+ (nullable __kindof UIView *)viewWithMocoaURL:(NSURL *)url NS_SWIFT_NAME(init(_:));
-- (void)didInitWithMocoaOptions:(XZMocoaOptions *)options NS_SWIFT_NAME(didInit(with:));
-@end
-
-
 @interface UIViewController (XZMocoaModuleSupporting)
-
-/// 根据视图控制器的模块地址，构造视图控制器。
-/// @discussion
-/// 参数 url 的 query 将作为 options 参数，调用 -viewControllerWithMocoaModule:options: 方法完成实例化控制器。
-/// @param url 模块地址
-/// @param options 额外参数
-+ (nullable __kindof UIViewController *)viewControllerWithMocoaURL:(NSURL *)url options:(nullable NSDictionary<XZMocoaKey, id> *)options NS_SWIFT_NAME(init(_:options:));
-+ (nullable __kindof UIViewController *)viewControllerWithMocoaURLString:(NSString *)URLString options:(nullable NSDictionary<XZMocoaKey, id> *)options NS_SWIFT_NAME(init(_:options:));
-
-/// 根据视图控制器的模块地址，构造视图控制器。
-+ (nullable __kindof UIViewController *)viewControllerWithMocoaURL:(NSURL *)url NS_SWIFT_NAME(init(_:));
 
 /// Mocoa 使用此方法初始化控制器。
 /// @discussion
@@ -194,17 +187,18 @@ NS_SWIFT_UI_ACTOR @protocol XZMocoaView <NSObject>
 /// 在 Category 中定义的初始化方法，无法用`NS_DESIGNATED_INITIALIZER`标记，也无法桥接到 Swift 中。
 ///
 /// @param options 初始化参数
-- (instancetype)initWithMocoaOptions:(XZMocoaOptions *)options nibName:(nullable NSString *)nibName bundle:(nullable NSBundle *)bundle NS_SWIFT_NAME(init(_:nibName:bundle:));
+- (instancetype)initWithNibName:(nullable NSString *)nibName bundle:(nullable NSBundle *)bundle options:(XZMocoaOptions *)options NS_SWIFT_NAME(init(nibName:bundle:options:));
 
-/// 通过 Mocoa 创建控制器的额外初始化方法。
-///
-/// 通过 Mocoa 提供的方法创建的控制器，一定会调用此方法。
-/// 在 Swift 中，不能重写便利初始化方法，只能通过此方法接收 Mocoa 初始化参数。
-///
-/// 默认情况下，此方法会尝试为控制器创建视图模型，子类可以在调用`super`之前，自行创建视图模型，以避免自动创建符合实际需求。
-///
-/// @param options 初始化参数
-- (void)didInitWithMocoaOptions:(XZMocoaOptions *)options NS_SWIFT_NAME(didInit(with:));
+/// 根据视图控制器的模块地址，构造视图控制器。
+/// @discussion
+/// 参数 url 的 query 将作为 options 参数，调用 -viewControllerWithMocoaModule:options: 方法完成实例化控制器。
+/// @param url 模块地址
+/// @param options 额外参数
++ (nullable __kindof UIViewController *)viewControllerWithMocoaURL:(NSURL *)url options:(nullable NSDictionary<XZMocoaKey, id> *)options NS_SWIFT_NAME(init(_:options:));
++ (nullable __kindof UIViewController *)viewControllerWithMocoaURLString:(NSString *)URLString options:(nullable NSDictionary<XZMocoaKey, id> *)options NS_SWIFT_NAME(init(_:options:));
+
+/// 根据视图控制器的模块地址，构造视图控制器。
++ (nullable __kindof UIViewController *)viewControllerWithMocoaURL:(NSURL *)url NS_SWIFT_NAME(init(_:));
 
 /// 通过 XZMocoaURL 弹出层控制器。
 /// @discussion 如果 XZMocoaURL 没有对应的控制器，那么此方法将不产生任何效果。

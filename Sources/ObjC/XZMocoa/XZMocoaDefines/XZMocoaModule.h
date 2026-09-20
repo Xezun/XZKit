@@ -61,12 +61,14 @@ typedef NS_ENUM(NSUInteger, XZMocoaModuleViewForm) {
 /// 请使用 +moduleForURL: 来创建对象。
 - (instancetype)init NS_UNAVAILABLE;
 - (instancetype)initWithURL:(NSURL *)url NS_DESIGNATED_INITIALIZER;
++ (nullable instancetype)moduleWithDomain:(NSString *)urlDomain path:(NSString *)urlPath NS_SWIFT_NAME(init(domain:path:));
 
 /// 获取指定 url 对应的模块的 XZMocoaModule 对象。
 /// @discussion
 /// 推荐使用 XZMocoa(stringOrURL) 函数，获取模块对象。
 /// @param url 模块地址
 + (nullable XZMocoaModule *)moduleForURL:(nullable NSURL *)url NS_SWIFT_NAME(init(for:));
+
 
 /// 获取指定 url 字符串对应的模块的 XZMocoaModule 对象。
 /// @discussion
@@ -76,7 +78,9 @@ typedef NS_ENUM(NSUInteger, XZMocoaModuleViewForm) {
 
 #pragma mark - 构造实例
 
-- (nullable __kindof XZMocoaViewModel *)instantiateViewModelWithModel:(nullable id)model;
+- (nullable __kindof XZMocoaViewModel *)instantiateViewModelWithModel:(nullable id)model NS_SWIFT_NAME(instantiateViewModel(model:));
+- (nullable __kindof UIView *)instantiateViewWithFrame:(CGRect)frame options:(nullable NSDictionary<XZMocoaKey, id> *)options NS_SWIFT_NAME(instantiateView(frame:options:));
+- (nullable __kindof UIViewController *)instantiateViewControllerWithOptions:(nullable NSDictionary<XZMocoaKey, id> *)options NS_SWIFT_NAME(instantiateViewController(options:));
 
 #pragma mark - MVVM 基本结构
 
@@ -279,14 +283,6 @@ typedef NS_ENUM(NSUInteger, XZMocoaModuleViewForm) {
 @end
 
 @interface XZMocoaModule (XZMocoaProvider) <XZMocoaProvider>
-@end
-
-@interface NSURL (XZMocoaModule)
-/// 子类可以通过此方法构造统一格式的 URL 对象。
-/// - Parameters:
-///   - domain: 域
-///   - path: 路径，格式如 /path1/path2
-+ (NSURL *)mocoaURLWithDomain:(XZMocoaDomain *)domain path:(NSString *)path NS_SWIFT_NAME(init(_:path:));
 @end
 
 /// 通过 URL 获取模块。

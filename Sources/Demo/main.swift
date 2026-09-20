@@ -191,3 +191,79 @@ public func loadGroups() {
     card100.viewModelClass = TestViewModel.self
 }
 
+@mocoa
+class ExampleCellModel: NSObject, XZMocoaModel {
+    
+    var mocoaName: XZMocoaName? {
+        return "example"
+    }
+    
+    @key var firstName: String?
+    @key var lastName: String?
+}
+
+@mocoa
+class ExampleCellViewModel: XZMocoaTableCellViewModel {
+    
+    @key
+    var name: String?
+    
+    
+    @bind
+    func setupName(firstName: String?, lastName: String?) {
+        name = [firstName, lastName].compactMap({ $0 }).joined(separator: " ")
+        
+        
+    }
+    
+    
+}
+
+@mocoa
+class ExampleCell: UITableViewCell {
+    
+    @bind(text: .name)
+    let nameLabel: UILabel = .init()
+    
+    override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
+        super.init(style: .default, reuseIdentifier: reuseIdentifier)
+        self.setupUI()
+    }
+    
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+    
+    private func setupUI() {
+        addSubview(nameLabel)
+    }
+}
+
+
+
+class TableModel: XZMocoaTableModel {
+    
+    func mocoa(_ context: Any, numberOfSections null: Any?) -> Int {
+        return 0;
+    }
+    
+    func mocoa(_ context: Any, modelForCellAt indexPath: IndexPath) -> Any? {
+        return nil
+    }
+    
+    func mocoa(_ context: Any, numberOfCellsInSection section: Int) -> Int {
+        return 0;
+    }
+    
+    func mocoa(_ context: Any, kind: XZMocoaKind, numberOfSupplementsInSection section: Int) -> Int {
+        return 0
+    }
+    
+    func mocoa(_ context: Any, kind: XZMocoaKind, modelForSupplementAt indexPath: IndexPath) -> Any? {
+        return nil
+    }
+}
+
+
+
+

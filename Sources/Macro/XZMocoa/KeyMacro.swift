@@ -36,7 +36,7 @@ public struct KeyMacro: AccessorMacro {
                 return []
             }
             
-            // 由 @mocoa 宏添加 @objc 标记 + dynamic 标记，以支持 KVO
+            // 由 @mocoa 宏添加 @objc 标记，以支持 KVO
             let key = try XZMocoaKey(firstArgumentOf: node) ?? property.name
             
             return [
@@ -56,7 +56,7 @@ public struct KeyMacro: AccessorMacro {
         case .vm:
             // 包含 set 或 didSet 就无法重写
             if propertyDecl.containsAccessors(["set", "didSet"]) {
-                // 检测属性是否包含 didChangeValue 方法调用，以是否包含 sendActions 简单判断，不实质判断。
+                // 检测属性是否包含 sendActions 方法调用，以是否包含 sendActions 简单判断，不实质判断。
                 if !propertyDecl.trimmedDescription.contains("sendActions") {
                     XZMacroDiagnose(context, node: node, message: "无法添加 didSet 方法，请自行调用 sendActions(forKey:) 方法触发监听", severity: .warning)
                 }

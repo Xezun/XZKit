@@ -50,7 +50,7 @@ NS_SWIFT_UI_ACTOR @protocol XZMocoaViewModel <NSObject>
 ///  
 /// 对数据的监听是 MVVM 设计模式的特色之一，但在 iOS 实际开发中，数据在大部分情形下，都是单向流动的，类似从网络请求到页面展示的场景居多。
 /// 双向的数据流动的业务场景也有，但在开发中并不多。鉴于此，默认情况下 XZMocoa 不监听数据 Model 的变更。
-/// 而对于要监听数据的变化的少量情形，我们可以通过传统的方式处理，比如的 KVO 或通知。
+/// 而对于要监听数据的变化的少量情形，我们可以通过传统的方式处理，比如 KVO 或通知。
 ///  
 /// ## 一、数据在视图模型外更新
 /// 1. 通过 Cocoa 传统的 KVO、通知、代理等机制监听。
@@ -224,7 +224,7 @@ NS_SWIFT_UI_ACTOR @interface XZMocoaViewModel : NSObject <XZMocoaViewModel> {
 ///
 /// 默认直接调用 ``-sendEvents:`` 方法将事件转发出去。
 ///
-/// 子类重写应，先处理逻辑，然后再决定是否调用 `super` 方法。
+/// 子类重写时应先处理逻辑，然后再决定是否调用 `super` 方法。
 /// @param events 事件信息
 - (void)didReceiveEvents:(XZMocoaEvents *)events;
 
@@ -365,7 +365,7 @@ NS_SWIFT_UI_ACTOR @interface XZMocoaViewModel : NSObject <XZMocoaViewModel> {
 ///
 /// ```swift
 /// @mocoa
-/// ViewModel: XZMocoaViewModel {
+/// class ViewModel: XZMocoaViewModel {
 ///     @bind
 ///     func setRange(min: Int, max: Int) {
 ///     }

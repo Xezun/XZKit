@@ -44,7 +44,7 @@ NS_ASSUME_NONNULL_BEGIN
 /// 注册或删除模块。
 /// - Parameters:
 ///   - newModule: 模块对象
-///   - path: 模块路径
+///   - path: 模块路径，域名之后的完整路径，以“/”开头
 - (void)setModule:(nullable id)newModule forPath:(NSString *)path;
 
 /// 模块由外部提供懒加载，强引用。

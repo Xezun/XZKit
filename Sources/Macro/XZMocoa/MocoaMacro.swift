@@ -9,11 +9,11 @@ import SwiftCompilerPlugin
 import SwiftSyntaxMacros
 import SwiftSyntax
 
-/// 为成员添加`@`修饰属性。
+/// 为成员添加 `@objc` 修饰属性。
 /// 宏 `@mocoa(role)` 的实现：
-/// .m  => 为 @key 标记的属性添加 @objc 标记，以支持 KVC 取值
-/// .v  => 为 @key / @bind 标记的方法，添加 @objc 标记，以支持 KVC 取值
-/// .vm => 为 @key @bind 标记的属性和方法添加 @objc 标记
+/// .m  => 为 @key 标记的属性添加 @objc 标记，以支持 KVO 通知
+/// .v  => 为 @bind / @link 标记的方法添加 @objc 标记，以支持 KTA 绑定（视图属性通过 setter 选择器绑定，无需 @objc）
+/// .vm => 为 @key / @bind / @link 标记的属性和方法添加 @objc 标记
 public struct MocoaMacro: MemberAttributeMacro {
     
     public static func expansion(of node: SwiftSyntax.AttributeSyntax, attachedTo declaration: some SwiftSyntax.DeclGroupSyntax, providingAttributesFor member: some SwiftSyntax.DeclSyntaxProtocol, in context: some SwiftSyntaxMacros.MacroExpansionContext) throws -> [SwiftSyntax.AttributeSyntax] {
@@ -84,8 +84,8 @@ public struct MocoaMacro: MemberAttributeMacro {
 }
 
 /// 宏 `@mocoa(role)` 的实现：
-/// .vm => 为 @bind 的成员注册 `mappingObserverMethodsForModelKeys` 自动监听
-/// .v  => 为 @bind 成员生成 `__mocoa_bind_prepare` 自动绑定
+/// .vm => 为 @bind / @link 的成员注册 `mappingObserverMethodsForModelKeys` 自动监听
+/// .v  => 为 @bind / @link 成员生成 `__mocoa_bind_prepare` 自动绑定
 /// .m  => 暂不执行任何操作
 extension MocoaMacro: MemberMacro {
     

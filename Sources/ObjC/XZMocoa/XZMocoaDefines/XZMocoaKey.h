@@ -76,7 +76,7 @@ FOUNDATION_EXPORT XZMocoaKey const XZMocoaKeyShadowColor          NS_REFINED_FOR
 FOUNDATION_EXPORT XZMocoaKey const XZMocoaKeyAttributedText       NS_REFINED_FOR_SWIFT;
 FOUNDATION_EXPORT XZMocoaKey const XZMocoaKeyHighlightedTextColor NS_REFINED_FOR_SWIFT;
 
-// MARK: - UILabel
+// MARK: - UITextField
 
 @class UITextField;
 FOUNDATION_EXPORT XZMocoaKey const XZMocoaKeyPlaceholder NS_REFINED_FOR_SWIFT;
@@ -170,7 +170,7 @@ FOUNDATION_EXPORT XZMocoaKey const XZMocoaKeyFooterDidBeginRefreshing NS_REFINED
 FOUNDATION_EXPORT XZMocoaKey const XZMocoaKeyModel      NS_REFINED_FOR_SWIFT;
 /// 传递给目标页面参数中 identifier 字段。
 ///
-/// 通过标识符向页面传值当通用字段。
+/// 通过标识符向页面传值的通用字段。
 FOUNDATION_EXPORT XZMocoaKey const XZMocoaKeyIdentifier NS_REFINED_FOR_SWIFT;
 /// 在 XZMocoaOptions 中，通过此键名指定目标模块的视图模型对象，或打开目标模块的源模块。
 ///

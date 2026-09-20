@@ -11,7 +11,7 @@ import XZKitObjC
 
 
 // KVC: @objc
-// KVO: @objc + dynamic
+// KVO: @objc（XZMocoa 通过手动调用 didChangeValue(forKey:) 发送通知，无需 dynamic）
 //
 // 宏 names 的作用：辅助编译器检查语法。
 // - accessor 宏，若指定 names 为 arbitrary 则编译器会认为宏会生成 setter 和 getter 从而导致无法修饰只读属性。
@@ -78,16 +78,16 @@ public macro mocoa(_ role: XZMocoaRole) = #externalMacro(module: "XZKitMacros", 
 ///
 /// #### 角色推断规则
 /// - `.vm` 角色：继承自 XZMocoaViewModel 或以 ViewModel 结尾。
-/// - `.m ` 角色：继承自 XZMocoaModel 或以 Model 结尾（如果以 ViewModel 结尾，会优先判断为 ViewModel 角色）。
-/// - `.v ` 角色：继承自 UIView、UIViewController、XZMocoaView 或以 View/Controller/Cell/Bar 结尾。
+/// - `.m` 角色：继承自 XZMocoaModel 或以 Model 结尾（如果以 ViewModel 结尾，会优先判断为 ViewModel 角色）。
+/// - `.v` 角色：继承自 UIView、UIViewController、XZMocoaView 或以 View/Controller/Cell/Bar 结尾。
 ///
 /// ```swift
 /// // 自动推断为 View 角色
-/// @mocoa FooView: UIView { }
+/// @mocoa class FooView: UIView { }
 /// // 自动推断为 ViewModel 角色
-/// @mocoa FooViewModel: XZMocoaViewModel { }
+/// @mocoa class FooViewModel: XZMocoaViewModel { }
 /// // 自动推断为 Model 角色
-/// @mocoa FooModel: NSObject { }
+/// @mocoa class FooModel: NSObject { }
 /// ```
 /// - SeeAlso: 更多使用规则见带参数的 `@mocoa(_:)` 宏。
 @attached(memberAttribute)
@@ -136,7 +136,7 @@ public macro mocoa() = #externalMacro(module: "XZKitMacros", type: "MocoaMacro")
 /// }
 /// ```
 ///
-/// 宏参数为 XZMocoaKey 类型，支持支持使用字符串字面量，即`@key(.name)`等价于`@key("name")`。
+/// 宏参数为 XZMocoaKey 类型，支持使用字符串字面量，即`@key(.name)`等价于`@key("name")`。
 ///
 /// - SeeAlso: 键名与属性名同名时，可不用指定 name 参数，详见不带参数的 ``key()`` 宏。
 /// - Parameter name: KVO 键名或 KTA 键名
@@ -238,7 +238,7 @@ public macro key() = #externalMacro(module: "XZKitMacros", type: "KeyMacro")
 ///
 /// #### 拓展 @bind 宏
 ///
-/// 框架内置了一些通用控件通用属性的的宏绑定函数，通过下面的方法，可以拓展绑定视图的宏函数。
+/// 框架内置了一些通用控件通用属性的宏绑定函数，通过下面的方法，可以拓展绑定视图的宏函数。
 ///
 /// > 少量自定义场景，可使用`@bind(_:selector:)`或`@bind(_:key:)`绑定。
 ///
@@ -263,7 +263,7 @@ public macro key() = #externalMacro(module: "XZKitMacros", type: "KeyMacro")
 ///
 /// #### 编码推荐
 ///
-/// 推荐使用使用`let`而不是`var`来定义子视图，因为宏会为`var`属性生成`didSet`方法来保证绑定关系。
+/// 推荐使用`let`而不是`var`来定义子视图，因为宏会为`var`属性生成`didSet`方法来保证绑定关系。
 ///
 /// 如果属性重写了`set`或`didSet`方法，那么属性值变更，需要自行添加绑定，以保证绑定关系。
 @attached(peer, names: prefixed(_))
