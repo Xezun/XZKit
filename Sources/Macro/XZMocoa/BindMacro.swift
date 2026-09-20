@@ -33,38 +33,53 @@ public struct BindMacro: PeerMacro, AccessorMacro {
                 case 0:
                     // 无参数，绑定属性的 setter
                     if property.readability.isReadonly {
-                        // 只读属性没有 setter 无法绑定
+                        // ❌ 只读属性没有 setter 无法绑定
                         throw XZMacroError(node, message: "只读属性不支持绑定，若要绑定属性值的属性，请使用带参数标签的宏")
                     } else {
-                        // 无参数，属性可写
+                        // ✅ 属性可写，可正常绑定
                     }
                     
                 case 1:
+                    // 一个参数的情形：
+                    // @bind(.key)
+                    // @bind(title: .key)
                     if let _ = arguments[0].label {
-                        // 有标签，绑定属性的属性
+                        // ✅ 有标签，绑定属性的属性，宏无法检查“属性的属性”是否可写，不处理
                     } else {
                         // 无标签，绑定属性的 setter
                         if property.readability.isReadonly {
-                            // 只读属性无法绑定
+                            // ❌ 只读属性无法绑定
                             throw XZMacroError(node, message: "无法将键绑定给只读属性，若要绑定属性值的属性，请使用带参数标签的宏")
                         } else {
-                            // 无标签，可写属性
+                            // ✅ 可写属性，可正常绑定
                         }
                     }
                     
                 case 2:
-                    // 宏两个参数，
-                    // @bind(key, selector:)
-                    // @bind(label:key, for:state)
+                    // 两个参数的情形：
+                    // @bind(.vmkey, key: .viewKey)
+                    // @bind(.vmkey, selector: viewSelector)
+                    // @bind(title: .vmkey, for: .selected)
                     if let _ = arguments[0].label {
-                        guard arguments[1].label == "for" else {
+                        // 第一个参数有标签，第二参数也必须有标签
+                        // 不校验必须为 for 标签，增加拓展性
+                        guard let _ = arguments[1].label else {
                             throw XZMacroError(node, message: "宏不支持此属性")
                         }
-                    } else if arguments[1].label != "selector" {
-                        throw XZMacroError(node, message: "宏不支持此属性，")
+                    } else if let label = arguments[1].label {
+                        // 第一个参数无标签，第二个参数标签必须为 key 或 selector
+                        switch label {
+                        case "key", "selector":
+                            break;
+                        default:
+                            throw XZMacroError(node, message: "宏不支持此属性")
+                        }
+                    } else {
+                        throw XZMacroError(node, message: "宏不支持此属性")
                     }
                     
                 default:
+                    // 不支持更多参数
                     throw XZMacroError(node, message: "宏不支持此属性，参数超出限制")
                 }
                 
@@ -77,13 +92,13 @@ public struct BindMacro: PeerMacro, AccessorMacro {
                 
                 // 根据 KTA 机制，方法最多支持三个参数 (XZMocoaViewModel, XZMocoaKey, value)
                 if method.parameters.count > 3 {
-                    throw XZMacroError(node, message: "仅支持绑定一个参数的方法")
+                    throw XZMacroError(node, message: "根据 KTA 机制，绑定方法最多支持三个参数")
                 }
                 
                 // 修饰视图的方法，仅支持一个参数，不带标签
                 let nodeArguments = node.representedArrayArguments
                 if nodeArguments.count > 1 {
-                    throw XZMacroError(node, message: "仅支持绑定一个键到方法")
+                    throw XZMacroError(node, message: "根据 KTA 机制，仅支持绑定单个 XZMocoaKey 到方法")
                 }
                 if let label = nodeArguments.first?.label {
                     throw XZMacroError(node, message: "请移除 \(label) 参数标签")
@@ -102,13 +117,14 @@ public struct BindMacro: PeerMacro, AccessorMacro {
                     throw XZMacroError(node, message: "仅支持一个参数，若要绑定多个键，可添加多个宏")
                 }
                 
+                // 绑定视图模型属性，不支持标签
                 if let label = nodeArguments.first?.label {
                     throw XZMacroError(node, message: "请移除 \(label) 参数标签")
                 }
                 
                 let property = try XZMacroPropertyInfomation(node, propertyDecl)
                 
-                // 无参数
+                // 只读属性没有 setter 无法绑定
                 if property.readability.isReadonly {
                     throw XZMacroError(node, message: "只读属性不支持绑定")
                 }
@@ -124,6 +140,7 @@ public struct BindMacro: PeerMacro, AccessorMacro {
                     throw XZMacroError(node, message: "绑定的键数量，超出了方法参数个数")
                 }
                 
+                // 每个参数都不能带标签
                 for nodeArgument in nodeArguments {
                     if let label = nodeArgument.label {
                         throw XZMacroError(node, message: "请移除 \(label) 参数标签")
@@ -148,50 +165,56 @@ public struct BindMacro: PeerMacro, AccessorMacro {
             return []
             
         case .v:
-            // 找到符合条件的宏：只有绑定属性值（子视图）的可选属性宏，才需要
-            var bindNodes = [(method: String, node: AttributeSyntax, arguments: LabeledExprListSyntax)]()
-            // 只有 node 是第一个符合条件的宏，才生成 didSet
+            // 找到符合条件的宏：只有绑定属性值（子视图）的属性，才需要添加 didSet 方法
+            var bindNodes = [(method: String, node: AttributeSyntax, arguments: [(expression: LabeledExprSyntax, label: String?)])]()
+            // 只需要为第一个符合条件的宏生成 didSet 方法
             var shouldProvideAccessor: Bool? = nil
             for bindNode in propertyDecl.attributes {
                 guard case let .attribute(bindNode) = bindNode else {
                     continue
                 }
-                guard let method = bindNode.attributeName.as(IdentifierTypeSyntax.self)?.name.text else {
+                guard let bindMethod = bindNode.attributeName.as(IdentifierTypeSyntax.self)?.name.text else {
                     continue
                 }
-                guard method == "bind" || method == "link" else {
+                guard bindMethod == "bind" || bindMethod == "link" else {
                     continue
                 }
-                guard case let .argumentList(arguments) = bindNode.arguments else {
-                    continue
-                }
+                
+                let arguments = node.representedArrayArguments;
+                
                 switch arguments.count {
+                case 0:
+                    // 绑定 setter 不需要 didSet
+                    continue
                 case 1:
-                    guard arguments[arguments.startIndex].label?.text != nil else {
+                    // 单个参数
+                    // @bind(title:)
+                    guard arguments[0].label != nil else {
                         continue
                     }
                 case 2:
-                    guard arguments[arguments.startIndex].label?.text == nil else {
-                        continue
-                    }
-                    guard let label = arguments[arguments.index(after: arguments.startIndex)].label?.text else {
-                        continue
-                    }
-                    guard label == "selector" else {
+                    // @bind(_:selector:)
+                    // @bind(_:key:)
+                    // @bind(title:for:)
+                    guard arguments[1].label != nil else {
                         continue
                     }
                 default:
                     continue
                 }
                 
+                // 没赋值表示遇到第一个符合条件的 bind/link 宏
                 if shouldProvideAccessor == nil {
+                    // 直接比较 node 无法确认第一个，始终是 false
                     shouldProvideAccessor = (bindNode.description == node.description)
                 }
                 
+                // 为 false 表示 node 不是第一个 bind/link 宏，不需要继续处理（因为第一个已经处理了）。
                 guard shouldProvideAccessor! else {
                     return []
                 }
-                bindNodes.append((method, bindNode, arguments))
+                
+                bindNodes.append((bindMethod, bindNode, arguments))
             }
             
             if bindNodes.isEmpty {
@@ -233,19 +256,40 @@ public struct BindMacro: PeerMacro, AccessorMacro {
                 for (method, node, arguments) in bindNodes {
                     switch arguments.count {
                     case 1:
-                        let argument = arguments[arguments.startIndex]
-                        let label = argument.label!.text
-                        let key   = try XZMocoaKey(node, argument: argument)
+                        let argument = arguments[0]
+                        let label = argument.label!
+                        let key   = try XZMocoaKey(node, argument: argument.expression)
                         bindStatements.append("viewModel.\(method)Target(newValue, action: #selector(setter: \(property.type.name).\(label)), forKey: \"\(key)\")")
                         removeStatements.append("viewModel.removeTarget(oldValue, action: #selector(setter: \(property.type.name).\(label)), forKey: \"\(key)\")")
                         
                     case 2:
-                        let keyArgument = arguments[arguments.startIndex]
-                        let key = try XZMocoaKey(node, argument: keyArgument)
-                        let selArgument = arguments[arguments.index(after: arguments.startIndex)]
-                        let selector = selArgument.expression.trimmedDescription
-                        bindStatements.append("viewModel.\(method)Target(newValue, action: \(selector), forKey: \"\(key)\")")
-                        removeStatements.append("viewModel.removeTarget(oldValue, action: \(selector), forKey: \"\(key)\")")
+                        let argument0 = arguments[0]
+                        let argument1 = arguments[1]
+                        
+                        let vmKey = try XZMocoaKey(node, argument: argument0.expression)
+                        
+                        if let viewKey = argument0.label {
+                            // bind(title: .vmKey, for: .normal)
+                            let stateKey = try XZMocoaKey(node, argument: argument1.expression)
+                            let selector = "__mocoa_bind_\(viewKey)_\(stateKey)(_:)"
+                            bindStatements.append("viewModel.\(method)Target(newValue, action: #selector(\(property.type.name).\(selector)), forKey: \"\(vmKey)\")")
+                            removeStatements.append("viewModel.removeTarget(oldValue, action: #selector(\(property.type.name).\(selector)), forKey: \"\(vmKey)\")")
+                        } else if let viewKeyType = argument1.label {
+                            switch viewKeyType {
+                            case "key":
+                                let viewKey = try XZMocoaKey(node, argument: argument1.expression)
+                                bindStatements.append("viewModel.\(method)Target(newValue, action: #selector(setter: \(property.type.name).\(viewKey)), forKey: \"\(vmKey)\")")
+                                removeStatements.append("viewModel.removeTarget(oldValue, action: #selector(setter: \(property.type.name).\(viewKey)), forKey: \"\(vmKey)\")")
+                            case "selector":
+                                let selector = argument1.expression.expression.trimmedDescription
+                                bindStatements.append("viewModel.\(method)Target(newValue, action: \(selector), forKey: \"\(vmKey)\")")
+                                removeStatements.append("viewModel.removeTarget(oldValue, action: \(selector), forKey: \"\(vmKey)\")")
+                            default:
+                                continue
+                            }
+                        } else {
+                            continue
+                        }
                         
                     default:
                         continue
@@ -361,25 +405,31 @@ extension BindMacro {
                 }
                 
             case 2:
-                let keyArgument = bindArguments[0]
-                let key = try XZMocoaKey(bindNode, argument: keyArgument.expression)
-                if let viewKey = keyArgument.label {
-                    // @bind(title:for:.normal)
-                    let stateArgument = bindArguments[1]
-                    let stateKey = try XZMocoaKey(bindNode, argument: stateArgument.expression)
-                    let selector = "__xz_bind_\(viewKey)_\(stateKey)(_:)"
-                    statements.append("viewModel.\(bindMethod)Target(\(property.name), action: #selector(\(property.type.name).\(selector)), forKey: \"\(key)\")")
-                } else {
-                    let viewArgument = bindArguments[1]
-                    if let _ = viewArgument.label {
-                        // @bind(key, selector:)
-                        let selector = viewArgument.expression.expression.trimmedDescription
-                        statements.append("viewModel.\(bindMethod)Target(\(property.name), action: \(selector), forKey: \"\(key)\")")
-                    } else {
-                        // @bind(vmKey, vKey)
-                        let valuePropertyName = try XZMocoaKey(bindNode, argument: viewArgument.expression)
-                        statements.append("viewModel.\(bindMethod)Target(\(property.name), action: #selector(setter: \(property.type.name).\(valuePropertyName)), forKey: \"\(key)\")")
+                let argument0 = bindArguments[0]
+                let argument1 = bindArguments[1]
+                
+                let vmKey = try XZMocoaKey(bindNode, argument: argument0.expression)
+                
+                if let viewKey = argument0.label {
+                    // @bind(title: .vmKey, for: .normal)
+                    let stateKey = try XZMocoaKey(bindNode, argument: argument1.expression)
+                    let selector = "__mocoa_bind_\(viewKey)_\(stateKey)(_:)"
+                    statements.append("viewModel.\(bindMethod)Target(\(property.name), action: #selector(\(property.type.name).\(selector)), forKey: \"\(vmKey)\")")
+                } else if let viewKeyType = argument1.label {
+                    switch viewKeyType {
+                    case "key":
+                        // @bind(.vmKey, key: vKey)
+                        let viewKey = try XZMocoaKey(bindNode, argument: argument1.expression)
+                        statements.append("viewModel.\(bindMethod)Target(\(property.name), action: #selector(setter: \(property.type.name).\(viewKey)), forKey: \"\(vmKey)\")")
+                    case "selector":
+                        // @bind(.vmkey, selector: vSEL)
+                        let viewSEL = argument1.expression.expression.trimmedDescription
+                        statements.append("viewModel.\(bindMethod)Target(\(property.name), action: \(viewSEL), forKey: \"\(vmKey)\")")
+                    default:
+                        continue
                     }
+                } else {
+                    continue
                 }
                 
             default:

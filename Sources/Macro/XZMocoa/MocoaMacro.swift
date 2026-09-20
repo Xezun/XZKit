@@ -85,7 +85,7 @@ public struct MocoaMacro: MemberAttributeMacro {
 
 /// 宏 `@mocoa(role)` 的实现：
 /// .vm => 为 @bind 的成员注册 `mappingObserverMethodsForModelKeys` 自动监听
-/// .v  => 为 @bind 成员生成 `__xz_bind_prepare` 自动绑定
+/// .v  => 为 @bind 成员生成 `__mocoa_bind_prepare` 自动绑定
 /// .m  => 暂不执行任何操作
 extension MocoaMacro: MemberMacro {
     
@@ -99,9 +99,9 @@ extension MocoaMacro: MemberMacro {
             return [];
             
         case .v:
-            // 判断是否自定义 __xz_bind_prepare 方法
-            if classDecl.containsMethod("__xz_bind_prepare") {
-                throw XZMacroError(node, message: "重写私有方法 __xz_bind_prepare 方法会导致绑定失效，请使用 prepareForViewModel 方法代替")
+            // 判断是否自定义 __mocoa_bind_prepare 方法
+            if classDecl.containsMethod("__mocoa_bind_prepare") {
+                throw XZMacroError(node, message: "重写私有方法 __mocoa_bind_prepare 方法会导致绑定失效，请使用 prepareForViewModel 方法代替")
             }
             
             var statements = [String]()
@@ -132,8 +132,8 @@ extension MocoaMacro: MemberMacro {
             
             let methodSyntax = try FunctionDeclSyntax(
                 """
-                override func __xz_bind_prepare() {
-                    super.__xz_bind_prepare()
+                override func __mocoa_bind_prepare() {
+                    super.__mocoa_bind_prepare()
                     guard let viewModel = self.viewModel else { return }
                     \(raw: statements.joined(separator: "\n    "))
                 }

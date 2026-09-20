@@ -63,7 +63,9 @@ class TestView: UIView, XZMocoaView {
     @link(titleColor: .textColor, for: .normal)
     let button: UIButton = .init()
     
-    
+    @link(title: "button", for: .normal)
+    @link(titleColor: .textColor, for: .normal)
+    var saveButton: UIButton = .init()
     
     @link
     @objc func beginRefreshing(_ isRefreshing: Bool) {

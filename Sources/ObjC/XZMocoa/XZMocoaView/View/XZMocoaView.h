@@ -94,35 +94,35 @@ NS_SWIFT_UI_ACTOR @protocol XZMocoaView <NSObject>
 // 以下方法为供 Swift 绑定 KTA 事件值使用，请勿直接调用。
 
 /// 若子类完全重写了`viewModel`属性，则需在合适的时机调用此方法，否则 @bind 宏无法生效。
-- (void)__xz_bind_prepare;
+- (void)__mocoa_bind_prepare;
 
-- (void)__xz_bind_title_normal:(NSString *)title;
-- (void)__xz_bind_titleColor_normal:(UIColor *)titleColor;
-- (void)__xz_bind_titleShadowColor_normal:(UIColor *)titleShadowColor;
-- (void)__xz_bind_image_normal:(UIImage *)image;
-- (void)__xz_bind_attributedTitle_normal:(NSAttributedString *)attributedTitle;
-- (void)__xz_bind_backgroundImage_normal:(UIImage *)backgroundImage;
+- (void)__mocoa_bind_title_normal:(NSString *)title;
+- (void)__mocoa_bind_titleColor_normal:(UIColor *)titleColor;
+- (void)__mocoa_bind_titleShadowColor_normal:(UIColor *)titleShadowColor;
+- (void)__mocoa_bind_image_normal:(UIImage *)image;
+- (void)__mocoa_bind_attributedTitle_normal:(NSAttributedString *)attributedTitle;
+- (void)__mocoa_bind_backgroundImage_normal:(UIImage *)backgroundImage;
 
-- (void)__xz_bind_title_selected:(NSString *)title;
-- (void)__xz_bind_titleColor_selected:(UIColor *)titleColor;
-- (void)__xz_bind_titleShadowColor_selected:(UIColor *)titleShadowColor;
-- (void)__xz_bind_image_selected:(UIImage *)image;
-- (void)__xz_bind_attributedTitle_selected:(NSAttributedString *)attributedTitle;
-- (void)__xz_bind_backgroundImage_selected:(UIImage *)backgroundImage;
+- (void)__mocoa_bind_title_selected:(NSString *)title;
+- (void)__mocoa_bind_titleColor_selected:(UIColor *)titleColor;
+- (void)__mocoa_bind_titleShadowColor_selected:(UIColor *)titleShadowColor;
+- (void)__mocoa_bind_image_selected:(UIImage *)image;
+- (void)__mocoa_bind_attributedTitle_selected:(NSAttributedString *)attributedTitle;
+- (void)__mocoa_bind_backgroundImage_selected:(UIImage *)backgroundImage;
 
-- (void)__xz_bind_title_disabled:(NSString *)title;
-- (void)__xz_bind_titleColor_disabled:(UIColor *)titleColor;
-- (void)__xz_bind_titleShadowColor_disabled:(UIColor *)titleShadowColor;
-- (void)__xz_bind_image_disabled:(UIImage *)image;
-- (void)__xz_bind_attributedTitle_disabled:(NSAttributedString *)attributedTitle;
-- (void)__xz_bind_backgroundImage_disabled:(UIImage *)backgroundImage;
+- (void)__mocoa_bind_title_disabled:(NSString *)title;
+- (void)__mocoa_bind_titleColor_disabled:(UIColor *)titleColor;
+- (void)__mocoa_bind_titleShadowColor_disabled:(UIColor *)titleShadowColor;
+- (void)__mocoa_bind_image_disabled:(UIImage *)image;
+- (void)__mocoa_bind_attributedTitle_disabled:(NSAttributedString *)attributedTitle;
+- (void)__mocoa_bind_backgroundImage_disabled:(UIImage *)backgroundImage;
 
-- (void)__xz_bind_title_highlighted:(NSString *)title;
-- (void)__xz_bind_titleColor_highlighted:(UIColor *)titleColor;
-- (void)__xz_bind_titleShadowColor_highlighted:(UIColor *)titleShadowColor;
-- (void)__xz_bind_image_highlighted:(UIImage *)image;
-- (void)__xz_bind_attributedTitle_highlighted:(NSAttributedString *)attributedTitle;
-- (void)__xz_bind_backgroundImage_highlighted:(UIImage *)backgroundImage;
+- (void)__mocoa_bind_title_highlighted:(NSString *)title;
+- (void)__mocoa_bind_titleColor_highlighted:(UIColor *)titleColor;
+- (void)__mocoa_bind_titleShadowColor_highlighted:(UIColor *)titleShadowColor;
+- (void)__mocoa_bind_image_highlighted:(UIImage *)image;
+- (void)__mocoa_bind_attributedTitle_highlighted:(NSAttributedString *)attributedTitle;
+- (void)__mocoa_bind_backgroundImage_highlighted:(UIImage *)backgroundImage;
 
 @end
 

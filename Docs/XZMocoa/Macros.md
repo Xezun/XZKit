@@ -119,19 +119,19 @@ public macro mocoa() = #externalMacro(module: "XZKitMacros", type: "XZMocoaMacro
 
 ### 3.2 织入成员（Member）
 
-#### `.v`（View）：生成 `__xz_bind_prepare()`
+#### `.v`（View）：生成 `__mocoa_bind_prepare()`
 
 遍历类中所有 `@bind` 标记的属性与方法，生成绑定注册方法：
 
 ```swift
-override func __xz_bind_prepare() {
-    super.__xz_bind_prepare()
+override func __mocoa_bind_prepare() {
+    super.__mocoa_bind_prepare()
     guard let viewModel = self.viewModel else { return }
     // ……此处展开每个 @bind 成员的 viewModel.addTarget(...) 语句
 }
 ```
 
-- 若类中已自定义 `__xz_bind_prepare`，宏报错，提示改用 `prepareForViewModel`。
+- 若类中已自定义 `__mocoa_bind_prepare`，宏报错，提示改用 `prepareForViewModel`。
 - 若没有任何 `@bind` 成员，则不生成该方法。
 
 #### `.vm`（ViewModel）：生成 `mappingObserverMethodsForModelKeys`
@@ -283,7 +283,7 @@ class UserViewModel: XZMocoaViewModel {
 绑定方向取决于角色：
 
 - **ViewModel 角色**：监听 Model 的属性变化（生成 `mappingObserverMethodsForModelKeys`）。
-- **View 角色**：监听 ViewModel 的 KTA 事件（生成 `__xz_bind_prepare`）。
+- **View 角色**：监听 ViewModel 的 KTA 事件（生成 `__mocoa_bind_prepare`）。
 
 ### 5.1 声明族
 
@@ -372,7 +372,7 @@ class UserView: UIView, XZMocoaView {
 }
 ```
 
-在 `__xz_bind_prepare()` 中展开为：
+在 `__mocoa_bind_prepare()` 中展开为：
 
 ```swift
 viewModel.bindTarget(nameLabel, action: #selector(setter: UILabel.text), forKey: "name")
@@ -381,7 +381,7 @@ viewModel.bindTarget(tableView, action: #selector(UITableView.reloadData), forKe
 ```
 
 - **可选属性**（`?`）的绑定语句会被包裹在 `if let … { }` 中，避免空值绑定。
-- 两参数形式支持三种组合：`(vmKey, vKey)`、`(key, selector: aSelector)`、`(title: key, for: state)`（后者仅用于 `UIButton`，展开为 `__xz_bind_<title>_<state>(_:)`）。
+- 两参数形式支持三种组合：`(vmKey, vKey)`、`(key, selector: aSelector)`、`(title: key, for: state)`（后者仅用于 `UIButton`，展开为 `__mocoa_bind_<title>_<state>(_:)`）。
 
 #### 修饰方法
 
@@ -415,7 +415,7 @@ viewModel.bindTarget(self, action: #selector(Self.setIconWithURL(_:)), forKey: "
 | `UITextField` | `attributedPlaceholder`→`attributedPlaceholder`、`placeholder`→`placeholder`；否则回退文本控件规则 |
 | `UIImageView` | `<图像键>`→`image`、`<图像键>s`→`animationImages`；否则回退 `UIView` 规则 |
 | `UISwitch` | `onTintColor`/`thumbTintColor`/`onImage`/`offImage`→对应属性；否则回退 `UIView` 规则 |
-| `UIButton` | `attributed<文本键>`→`__xz_bind_attributedTitle_normal(_:)`、`<文本键>`→`__xz_bind_title_normal(_:)`、`<文本键>ShadowColor`→`__xz_bind_titleShadowColor_normal(_:)`、`<文本键>Color`→`__xz_bind_titleColor_normal(_:)`、`backgroundImage`→`__xz_bind_backgroundImage_normal(_:)`、`image`→`__xz_bind_image_normal(_:)`；否则回退 `UIView` 规则 |
+| `UIButton` | `attributed<文本键>`→`__mocoa_bind_attributedTitle_normal(_:)`、`<文本键>`→`__mocoa_bind_title_normal(_:)`、`<文本键>ShadowColor`→`__mocoa_bind_titleShadowColor_normal(_:)`、`<文本键>Color`→`__mocoa_bind_titleColor_normal(_:)`、`backgroundImage`→`__mocoa_bind_backgroundImage_normal(_:)`、`image`→`__mocoa_bind_image_normal(_:)`；否则回退 `UIView` 规则 |
 
 其中：
 
@@ -537,7 +537,7 @@ XZMocoaModule(for: someURLExpression)!                             // URL 参数
 | `@mocoa` 用于非 class | 错误 | 仅可用于 class 的声明 |
 | `.m` 角色未继承 `NSObject` | 错误 | 仅可修饰继承自 NSObject 的 class |
 | 无法确定角色 | 错误 | 无法确定 `Xxx` 的角色，请通过 role 参数指定 |
-| View 自定义 `__xz_bind_prepare` | 错误 | 重写私有方法会导致绑定失效，请使用 `prepareForViewModel` |
+| View 自定义 `__mocoa_bind_prepare` | 错误 | 重写私有方法会导致绑定失效，请使用 `prepareForViewModel` |
 | ViewModel 自定义 `mappingObserverMethodsForModelKeys` | 警告 | 检测到已自定义，自动监听将不生效 |
 | `@bind` 指定 key 数量与方法参数不一致 | 警告 | `@bind` 指定的 key 数量（n）与方法参数数量（m）不一致 |
 | `@key` 用于只读属性 | 错误 | 只读属性无法作为 key 使用 |
@@ -625,8 +625,8 @@ override class var mappingObserverMethodsForModelKeys: [String : Any]? {
 }
 
 // UserView：@mocoa 生成绑定注册
-override func __xz_bind_prepare() {
-    super.__xz_bind_prepare()
+override func __mocoa_bind_prepare() {
+    super.__mocoa_bind_prepare()
     guard let viewModel = self.viewModel else { return }
     viewModel.bindTarget(nameLabel, action: #selector(setter: UILabel.text), forKey: "name")
     viewModel.bindTarget(nameLabel, action: #selector(setter: UILabel.textColor), forKey: "textColor")
