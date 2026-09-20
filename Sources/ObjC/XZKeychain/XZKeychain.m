@@ -11,6 +11,9 @@
 #import "XZKeychainPasswordItem.h"
 
 static BOOL XZKeychainHandleOSStatus(OSStatus statusCode, NSError *__autoreleasing  _Nullable *error);
+/// 过滤属性字典中作为“显式 nil”占位的 kCFNull（SecItemAdd/SecItemCopyMatching/SecItemDelete 不接受 kCFNull 作为查询参数，否则返回 errSecParam）。
+/// @note SecItemUpdate 中 kCFNull 具有“删除属性”语义，因此更新字典不能调用本方法。
+static NSDictionary *XZKeychainAttributesForQuery(NSDictionary *attributes);
 
 @interface XZKeychain () {
     // 查询条件
@@ -31,7 +34,7 @@ static BOOL XZKeychainHandleOSStatus(OSStatus statusCode, NSError *__autoreleasi
     self = [super init];
     if (self) {
         _item = item;
-        NSMutableDictionary *query = [item->_attributes mutableCopy];
+        NSMutableDictionary *query = [XZKeychainAttributesForQuery(item->_attributes) mutableCopy];
         query[(id)kSecClass] = item.securityClass;
         _query = [query copy];
         _attributes = nil;
@@ -52,7 +55,10 @@ static BOOL XZKeychainHandleOSStatus(OSStatus statusCode, NSError *__autoreleasi
     CFTypeRef result = NULL;
     OSStatus const code = SecItemCopyMatching((__bridge CFDictionaryRef)query, &result);
     if (XZKeychainHandleOSStatus(code, error)) {
-        _attributes = (__bridge id)(result) ?: @{};
+        // SecItemCopyMatching 返回的 CFTypeRef 遵循 Create Rule，需使用 CFBridgingRelease 将所有权转移给 ARC，否则会造成内存泄漏。
+        _attributes = CFBridgingRelease(result) ?: @{};
+    } else if (result != NULL) {
+        CFRelease(result);
     }
     return _attributes;
 }
@@ -68,8 +74,9 @@ static BOOL XZKeychainHandleOSStatus(OSStatus statusCode, NSError *__autoreleasi
     [_item->_attributes addEntriesFromDictionary:attributes];
     
     if (secure) {
-        NSData *data = _item->_attributes[(id)kSecValueData];
-        if (data == nil) {
+        id data = _item->_attributes[(id)kSecValueData];
+        // data 为 nil 或 kCFNull（setData:nil 设置的占位）时，需要重新从钥匙串获取二进制数据。
+        if (data == nil || data == (id)kCFNull) {
             // 查询密码：密码并不是随属性一起返回的，需要重新在钥匙串中查询。
             NSMutableDictionary *query = [_query mutableCopy];
             [query addEntriesFromDictionary:attributes];
@@ -78,9 +85,12 @@ static BOOL XZKeychainHandleOSStatus(OSStatus statusCode, NSError *__autoreleasi
             CFTypeRef result = NULL;
             OSStatus const code = SecItemCopyMatching((__bridge CFDictionaryRef)query, &result);
             if (XZKeychainHandleOSStatus(code, error)) {
-                data = (__bridge id)result ?: (id)kCFNull;
-                _item->_attributes[(id)kSecValueData] = data;
+                // 同 searchAttributesIfNeeded: 中的 CF 内存管理说明。
+                NSData *valueData = CFBridgingRelease(result);
+                _item->_attributes[(id)kSecValueData] = valueData ?: (id)kCFNull;
                 return YES;
+            } else if (result != NULL) {
+                CFRelease(result);
             }
             return NO;
         }
@@ -92,21 +102,23 @@ static BOOL XZKeychainHandleOSStatus(OSStatus statusCode, NSError *__autoreleasi
 #pragma mark - 增
 
 - (BOOL)insert:(NSError * _Nullable * _Nullable)error {
-    // 新添加条目，直接使用 item 数据
-    NSMutableDictionary * const query = [_item->_attributes mutableCopy];
+    // 新添加条目，直接使用 item 数据（需过滤 kCFNull 占位，SecItemAdd 不接受）。
+    NSMutableDictionary * const query = [XZKeychainAttributesForQuery(_item->_attributes) mutableCopy];
     query[(id)kSecClass] = _item.securityClass;
     query[(id)kSecReturnAttributes] = (id)kCFBooleanTrue;
     CFTypeRef result = NULL;
     OSStatus const code = SecItemAdd((__bridge CFDictionaryRef)query, &result);
     if (XZKeychainHandleOSStatus(code, error)) {
-        // 保存数据到 item 中
+        // 保存数据到 item 中（同样需遵循 Create Rule）。
         if (result) {
-            _attributes = (__bridge id)result;
+            _attributes = CFBridgingRelease(result);
             [_item->_attributes addEntriesFromDictionary:_attributes];
         } else {
             _attributes = nil;
         }
         return YES;
+    } else if (result != NULL) {
+        CFRelease(result);
     }
     return NO;
 }
@@ -115,9 +127,20 @@ static BOOL XZKeychainHandleOSStatus(OSStatus statusCode, NSError *__autoreleasi
 
 - (BOOL)delete:(NSError * _Nullable * _Nullable)error {
     // 先根据已有条件查寻（第一条）原始数据，然后根据这个去删除
-    NSDictionary * const attributes = [self searchAttributesIfNeeded:error];
+    NSError *searchError = nil;
+    NSDictionary * const attributes = [self searchAttributesIfNeeded:&searchError];
     if (attributes == nil) {
-        return YES;
+        // 仅当“钥匙串本身不存在”时才视为删除成功；其他错误（如权限、参数）仍应返回 NO。
+        if (searchError.code == errSecItemNotFound && [searchError.domain isEqualToString:NSOSStatusErrorDomain]) {
+            if (error != NULL) {
+                *error = nil;
+            }
+            return YES;
+        }
+        if (error != NULL) {
+            *error = searchError;
+        }
+        return NO;
     }
     NSMutableDictionary *query = [_query mutableCopy];
     [query addEntriesFromDictionary:attributes];
@@ -161,7 +184,6 @@ static BOOL XZKeychainHandleOSStatus(OSStatus statusCode, NSError *__autoreleasi
 + (XZKeychain<XZKeychainInternetPasswordItem *> *)keychainWithAccount:(NSString *)account domain:(NSString *)domain accessGroup:(NSString *)accessGroup {
     XZKeychainInternetPasswordItem *item = [[XZKeychainInternetPasswordItem alloc] init];
     item.account = account;
-    item.accessGroup = accessGroup;
     item.server = domain;
     item.accessGroup = accessGroup;
     
@@ -177,31 +199,42 @@ static BOOL XZKeychainHandleOSStatus(OSStatus statusCode, NSError *__autoreleasi
 }
 
 + (NSString *)UDIDForGroup:(NSString *)accessGroup {
-    NSString * const UDID = [NSUserDefaults.standardUserDefaults stringForKey:XZKeychainKeyUDID];
-    if (UDID) {
-        return UDID;
+    NSString * const cachedUDID = [NSUserDefaults.standardUserDefaults stringForKey:XZKeychainKeyUDID];
+    if (cachedUDID.length > 0) {
+        return cachedUDID;
     }
     
     XZKeychainGenericPasswordItem *item = [[XZKeychainGenericPasswordItem alloc] init];
     item.accessGroup = accessGroup;
     item.account     = XZKeychainKeyUDID;
+    item.service     = XZKeychainKeyUDID;
     item.userInfo    = [XZKeychainKeyUDID dataUsingEncoding:NSUTF8StringEncoding];
     
     XZKeychain<XZKeychainGenericPasswordItem *> *keychain = [XZKeychain keychainForItem:item];
 
     NSError *error = nil;
     if ([keychain search:NO error:&error]) {
-        return item.description;
+        NSString *const storedUDID = item.annotation;
+        if (storedUDID.length > 0) {
+            // 同步到 NSUserDefaults 以加速下次读取。
+            [NSUserDefaults.standardUserDefaults setValue:storedUDID forKey:XZKeychainKeyUDID];
+            return storedUDID;
+        }
     }
     
     NSString * const newUDID = NSUUID.UUID.UUIDString;
+    item.annotation = newUDID;
+    // kSecValueData 是 kSecClassGenericPassword 类型钥匙串的必需属性，缺失时 SecItemAdd 会返回 errSecParam。
+    item.password   = newUDID;
     
-    [NSUserDefaults.standardUserDefaults setValue:newUDID forKey:XZKeychainKeyUDID];
-    item.description = newUDID;
-    
-    [keychain insert:&error];
+    if ([keychain insert:&error]) {
+        // 插入成功后再写入本地缓存，避免将未能持久化的 UDID 归入长期缓存。
+        [NSUserDefaults.standardUserDefaults setValue:newUDID forKey:XZKeychainKeyUDID];
+    }
 #if DEBUG
-    NSLog(@"[XZKeychain] 存储 UDID 到在钥匙串中：%@", error);
+    else {
+        NSLog(@"[XZKeychain] 存储 UDID 到钥匙串失败：%@", error);
+    }
 #endif
     
     return newUDID;
@@ -222,4 +255,17 @@ static BOOL XZKeychainHandleOSStatus(OSStatus statusCode, NSError *__autoreleasi
         *error = [NSError errorWithDomain:NSOSStatusErrorDomain code:statusCode userInfo:nil];
     }
     return NO;
+}
+
+static NSDictionary *XZKeychainAttributesForQuery(NSDictionary *attributes) {
+    if (attributes.count == 0) {
+        return @{};
+    }
+    NSMutableDictionary *result = [NSMutableDictionary dictionaryWithCapacity:attributes.count];
+    [attributes enumerateKeysAndObjectsUsingBlock:^(id key, id value, BOOL *stop) {
+        if (value != (id)kCFNull) {
+            result[key] = value;
+        }
+    }];
+    return result;
 }

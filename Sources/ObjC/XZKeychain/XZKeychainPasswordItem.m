@@ -13,11 +13,14 @@
 
 - (NSString *)password {
     NSData *data = self.data;
+    if (data == nil) {
+        return nil;
+    }
     return [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding];
 }
 
 - (void)setPassword:(NSString *)password {
-    self.data = [password dataUsingEncoding:NSUTF8StringEncoding];
+    self.data = password ? [password dataUsingEncoding:NSUTF8StringEncoding] : nil;
 }
 
 - (NSDate *)creationDate {
@@ -36,12 +39,12 @@
     _attributes[(id)kSecAttrModificationDate] = modificationDate;
 }
 
-- (NSString *)description {
+- (NSString *)annotation {
     return _attributes[(id)kSecAttrDescription];
 }
 
-- (void)setDescription:(NSString *)description {
-    _attributes[(id)kSecAttrDescription] = description;
+- (void)setAnnotation:(NSString *)annotation {
+    _attributes[(id)kSecAttrDescription] = annotation;
 }
 
 - (NSString *)comment {
@@ -69,7 +72,7 @@
 }
 
 - (BOOL)isInvisible {
-    return _attributes[(id)kSecAttrIsInvisible];
+    return [_attributes[(id)kSecAttrIsInvisible] boolValue];
 }
 
 - (void)setInvisible:(BOOL)isInvisible {
@@ -77,7 +80,7 @@
 }
 
 - (BOOL)isNegative {
-    return _attributes[(id)kSecAttrIsNegative];
+    return [_attributes[(id)kSecAttrIsNegative] boolValue];
 }
 
 - (void)setNegative:(BOOL)isNegative {

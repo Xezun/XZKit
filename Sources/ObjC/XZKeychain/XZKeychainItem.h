@@ -18,6 +18,7 @@ NS_ASSUME_NONNULL_BEGIN
 #endif
 
 typedef NS_ENUM(NSUInteger, XZKeychainAccessibility) {
+    /// 未设置 kSecAttrAccessible 属性，由系统采用默认行为（等价于 kSecAttrAccessibleWhenUnlocked）。
     XZKeychainAccessibilityNone,
     XZKeychainAccessibilityWhenPasscodeSetThisDeviceOnly,
     XZKeychainAccessibilityWhenUnlockedThisDeviceOnly,
@@ -41,6 +42,15 @@ typedef NS_ENUM(NSUInteger, XZKeychainSynchronizability) {
     XZKeychainSynchronizabilityBoth,
 };
 
+/// XZKeychainItem 是所有钥匙串条目模型的抽象基类，封装了各类 kSecClass 共有的属性。
+///
+/// ## 核心属性
+/// - **保存必需**：`data`（kSecValueData）——所有类型的钥匙串在调用 SecItemAdd 时均必须提供二进制数据；子类可基于该属性提供更便利的封装（如 XZKeychainPasswordItem.password）。
+/// - **查询匹配**：由具体子类定义，详见各子类文档中的“主键属性”列表。XZKeychain 会将 item 的全部非空属性拼接为查询字典，属性越完整匹配越精准。
+/// - **可选属性**：`accessible`、`accessControl`、`accessGroup`、`label`、`synchronizable` 均为访问控制与展示属性，不作为主键匹配依据（`accessGroup` 例外：在共享钥匙串场景下会参与匹配）。
+///
+/// ## 子类化
+/// 子类必须重写 `-securityClass` 返回对应的 kSecClass 常量，否则调用时抛出 NSGenericException。
 @interface XZKeychainItem : NSObject {
     @package
     NSMutableDictionary *_attributes;
@@ -50,7 +60,8 @@ typedef NS_ENUM(NSUInteger, XZKeychainSynchronizability) {
 /// kSecAttrAccessible
 @property (nonatomic) XZKeychainAccessibility accessible;
 /// kSecAttrAccessControl
-@property (nonatomic, copy, nullable) XZKeychainAccessControl *accessControl;
+/// @note XZKeychainAccessControl 未实现 NSCopying，故使用 strong 而非 copy；如需避免外部修改，请传入新创建的实例。
+@property (nonatomic, strong, nullable) XZKeychainAccessControl *accessControl;
 /// 共享钥匙串的组标识。
 ///
 /// 关于 AccessGroup 钥匙串共享的两种设置方法：

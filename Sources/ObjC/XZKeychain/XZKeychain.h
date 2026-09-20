@@ -22,6 +22,7 @@ NS_ASSUME_NONNULL_BEGIN
 @class NSArray;
 
 /// XZKeychain 类封装了系统“钥匙串”API的“增删改查”的操作，XZKeychain 所保存的信息只是钥匙串属性信息的一个拷贝，对钥匙串的属性的操作，在调用相应的方法前，并不影响“钥匙串”实际的信息。
+/// @note 本类及其持有的 XZKeychainItem 均非线程安全：内部使用 NSMutableDictionary 缓存属性，且 -searchAttributesIfNeeded: 存在 check-then-act 竞态。如需多线程访问同一实例，请自行加锁或将实例限定在同一串行队列/线程中。
 @interface XZKeychain<__covariant Item: __kindof XZKeychainItem *> : NSObject
 
 @property (nonatomic, readonly) Item item;
@@ -30,16 +31,16 @@ NS_ASSUME_NONNULL_BEGIN
 - (instancetype)init NS_UNAVAILABLE;
 
 /// 读取钥匙串，并钥匙串信息同步到 item 的属性中。
-/// @param data 是否同时读取二进制数据
+/// @param secure 是否同时读取二进制数据（kSecValueData）。
 /// @param error 错误输出
-- (BOOL)search:(BOOL)data error:(NSError * _Nullable * _Nullable)error;
+- (BOOL)search:(BOOL)secure error:(NSError * _Nullable * _Nullable)error;
 
 /// 更新钥匙串。若钥匙串中，有多条与 item 相匹配的条目，那么只会更新第一条，更新后 item 将指向被更新的对象。
 /// @param error 如果发生错误，可用此参数输出。
 /// @return YES 更新成功；NO 更新失败。
 - (BOOL)update:(NSError * _Nullable * _Nullable)error;
 
-/// 根据当前的属性，匹配删除第一个符合条件的钥匙串。如果钥匙串本身不存在，则也返回删除成功。
+/// 根据当前的属性，匹配删除第一个符合条件的钥匙串。如果钥匙串本身不存在（errSecItemNotFound），则也返回删除成功；其他错误（如权限、参数）仍会返回 NO。
 /// @param error 如果发生错误，可用此参数输出。
 /// @return YES 删除成功；NO 删除失败。
 - (BOOL)delete:(NSError * _Nullable * _Nullable)error;

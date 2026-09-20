@@ -96,16 +96,41 @@ typedef NS_ENUM(NSUInteger, XZKeychainKeyType) {
 @property (nonatomic) BOOL canUnwrap;
 @end
 
+/// 证书钥匙串，对应 kSecClassCertificate。用于存储 X.509 证书。
+///
+/// ## 核心属性
+/// - **保存必需**：
+///   - `data`（kSecValueData）——DER 编码的证书二进制数据，缺失时 SecItemAdd 返回 errSecParam。
+///   - `certificateType`（kSecAttrCertificateType）——证书类型（CSSM_CERT_X_509v3 等）。
+///   - `certificateEncoding`（kSecAttrCertificateEncoding）——证书编码格式。
+/// - **查询主键**：`certificateType` + `certificateEncoding` + `subject` + `issuer` + `serialNumber` + `subjectKeyID` + `publicKeyHash`；实际使用中常以 `subjectKeyID` 或 `serialNumber` + `issuer` 定位。
 @interface XZKeychainCertificateItem : XZKeychainItem <XZKeychainCertificateItem>
 - (instancetype)init NS_DESIGNATED_INITIALIZER;
 @end
 
+/// 密钥钥匙串，对应 kSecClassKey。用于存储对称密钥、公钥或私钥。
+///
+/// ## 核心属性
+/// - **保存必需**：
+///   - `data`（kSecValueData）——密钥的二进制表示，缺失时 SecItemAdd 返回 errSecParam。
+///   - `keyClass`（kSecAttrKeyClass）——密钥类别（Public / Private / Symmetric）。
+///   - `keyType`（kSecAttrKeyType）——密钥算法（RSA / EC / ECSECPrimeRandom 等）。
+///   - `keySizeInBits`（kSecAttrKeySizeInBits）——密钥位长。
+/// - **查询主键**：`keyClass` + `applicationLabel` + `isPermanent` + `applicationTag` + `keyType` + `keySizeInBits` + `effectiveKeySize` + `canEncrypt` + `canDecrypt` + `canDerive` + `canSign` + `canVerify` + `canWrap` + `canUnwrap`；实际使用中常以 `applicationTag` + `keyClass` 定位。
+/// - **推荐**：一般使用 SecKeyGeneratePair / SecKeyCreateRandomKey 生成密钥对，而非手工 SecItemAdd。
 @interface XZKeychainKeyItem : XZKeychainItem <XZKeychainKeyItem>
 - (instancetype)init NS_DESIGNATED_INITIALIZER;
 @end
 
-/// 由于 XZKeychainIdentity 钥匙串同时包含“私钥”和“证书”，
-/// 所以它同时具有 XZKeychainKey 和 XZKeychainCertificate 两种钥匙串的属性。
+/// 身份钥匙串，对应 kSecClassIdentity。同时包含“私钥”与“证书”，因此兼具 XZKeychainKeyItem 和 XZKeychainCertificateItem 两种属性。
+///
+/// ## 核心属性
+/// - **保存必需**：
+///   - `data`（kSecValueData）——PKCS#12 或其他包含私钥+证书的数据。
+///   - 证书侧：`certificateType`、`certificateEncoding`。
+///   - 密钥侧：`keyClass`（必为 Private）、`keyType`、`keySizeInBits`。
+/// - **查询主键**：Certificate + Key 两侧主键属性的并集；实际使用中常以证书的 `subjectKeyID` 或 `serialNumber` + `issuer` 定位。
+/// - **推荐**：Identity 一般由系统导入 PKCS#12（SecPKCS12Import）或 SecIdentityCreateFromCertificate 创建，不推荐直接 SecItemAdd。
 @interface XZKeychainIdentityItem : XZKeychainItem <XZKeychainCertificateItem, XZKeychainKeyItem>
 - (instancetype)init NS_DESIGNATED_INITIALIZER;
 @end

@@ -221,28 +221,28 @@
             break;
 #if SEC_OS_OSX_INCLUDES
         case XZKeychainKeyTypeDSA:
-            _attributes[(id)kSecAttrKeyType] = (id)kSecAttrKeyType;
+            _attributes[(id)kSecAttrKeyType] = (id)kSecAttrKeyTypeDSA;
             break;
         case XZKeychainKeyTypeAES:
-            _attributes[(id)kSecAttrKeyType] = (id)kSecAttrKeyType;
+            _attributes[(id)kSecAttrKeyType] = (id)kSecAttrKeyTypeAES;
             break;
         case XZKeychainKeyTypeDES:
-            _attributes[(id)kSecAttrKeyType] = (id)kSecAttrKeyType;
+            _attributes[(id)kSecAttrKeyType] = (id)kSecAttrKeyTypeDES;
             break;
         case XZKeychainKeyType3DES:
-            _attributes[(id)kSecAttrKeyType] = (id)kSecAttrKeyType;
+            _attributes[(id)kSecAttrKeyType] = (id)kSecAttrKeyType3DES;
             break;
         case XZKeychainKeyTypeRC4:
-            _attributes[(id)kSecAttrKeyType] = (id)kSecAttrKeyType;
+            _attributes[(id)kSecAttrKeyType] = (id)kSecAttrKeyTypeRC4;
             break;
         case XZKeychainKeyTypeRC2:
-            _attributes[(id)kSecAttrKeyType] = (id)kSecAttrKeyType;
+            _attributes[(id)kSecAttrKeyType] = (id)kSecAttrKeyTypeRC2;
             break;
         case XZKeychainKeyTypeCAST:
-            _attributes[(id)kSecAttrKeyType] = (id)kSecAttrKeyType;
+            _attributes[(id)kSecAttrKeyType] = (id)kSecAttrKeyTypeCAST;
             break;
         case XZKeychainKeyTypeECDSA:
-            _attributes[(id)kSecAttrKeyType] = (id)kSecAttrKeyType;
+            _attributes[(id)kSecAttrKeyType] = (id)kSecAttrKeyTypeECDSA;
             break;
 #endif
         case XZKeychainKeyTypeEC:
