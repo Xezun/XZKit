@@ -9,6 +9,7 @@
 #import "XZMocoaViewModel.h"
 #import "XZMocoaView.h"
 #import "XZMocoaTargetActionTable.h"
+#import "XZMocoaTargetAction.h"
 #import "XZMocoaKeyObserver.h"
 #import "XZMocoaKeyMappingTable.h"
 #import "XZObjc.h"
@@ -305,25 +306,21 @@
     [_targetActions removeTarget:target action:action forKey:key];
 }
 
-- (void)bindTarget:(id)target action:(SEL)action forKey:(XZMocoaKey)key {
-    [self addTarget:target action:action forKey:key];
-    [self sendActionsForKey:key value:nil];
-}
-
 - (void)linkTarget:(id)target action:(SEL)action forKey:(XZMocoaKey)key {
-    if (target == nil) {
-        return;
-    }
-    Class const TargetClass = object_getClass(target);
-    if (TargetClass == Nil) {
+    if (!self.isReady) return;
+    if (target == nil || action == nil) {
         return;
     }
     if (key == nil) {
         key = XZMocoaKeyNone;
     }
     id const value = (key == XZMocoaKeyNone ? nil : [self valueForKey:key]);
-    XZMocoaAction * const actionObject = [XZMocoaAction actionForClass:TargetClass action:action];
-    [actionObject sender:self sendActionForTarget:target forKey:key value:value];
+    [XZMocoaAction sender:self target:target sendAction:action forKey:key value:value];
+}
+
+- (void)bindTarget:(id)target action:(SEL)action forKey:(XZMocoaKey)key {
+    [self addTarget:target action:action forKey:key];
+    [self linkTarget:target action:action forKey:key];
 }
 
 - (id)valueForUndefinedKey:(NSString *)key {

@@ -6,29 +6,30 @@
 //
 
 #import "XZMocoaTargetActionTable.h"
+#import "XZMocoaTargetAction.h"
 @import ObjectiveC;
 
 @implementation XZMocoaTargetActionTable {
-    NSMutableDictionary<XZMocoaKey, NSMutableArray<XZMocoaTargetAction *> *> *_table;
+    NSMutableDictionary<XZMocoaKey, NSMutableArray<XZMocoaTarget *> *> *_keyedTargetTable;
 }
 
 - (instancetype)initWithViewModel:(XZMocoaViewModel *)viewModel {
     self = [super init];
     if (self) {
         _viewModel = viewModel;
-        _table = [NSMutableDictionary dictionary];
+        _keyedTargetTable = [NSMutableDictionary dictionary];
     }
     return self;
 }
 
 - (void)addTarget:(id)target action:(SEL)action forKey:(XZMocoaKey)key {
-    NSMutableArray<XZMocoaTargetAction *> *targetActions = _table[key];
-    if (targetActions == nil) {
-        targetActions = [NSMutableArray array];
-        _table[key] = targetActions;
+    NSMutableArray<XZMocoaTarget *> *targetTable = _keyedTargetTable[key];
+    if (targetTable == nil) {
+        targetTable = [NSMutableArray array];
+        _keyedTargetTable[key] = targetTable;
     }
-    XZMocoaTargetAction *targetAction = [XZMocoaTargetAction targetActionWithTarget:target action:action];
-    [targetActions addObject:targetAction];
+    XZMocoaTarget *targetObject = [XZMocoaTarget targetActionWithTarget:target selector:action];
+    [targetTable addObject:targetObject];
 }
 
 - (void)removeTarget:(nullable id)target action:(nullable SEL)action forKey:(nullable XZMocoaKey)key {
@@ -65,78 +66,78 @@
 
 /// 移除 key 事件的所有行为
 - (void)_removeForKeyEvents:(XZMocoaKey)key {
-    [_table[key] removeAllObjects];
+    [_keyedTargetTable[key] removeAllObjects];
 }
 
 /// 移除所有事件和行为
 - (void)_removeAll {
-    [_table removeAllObjects];
+    [_keyedTargetTable removeAllObjects];
 }
 
 /// 移除 key 事件的 action 行为
 - (void)_removeAction:(SEL)action forKey:(XZMocoaKey)key {
-    NSMutableArray<XZMocoaTargetAction *> * const targetActions = _table[key];
-    [targetActions enumerateObjectsWithOptions:NSEnumerationReverse usingBlock:^(XZMocoaTargetAction *obj, NSUInteger idx, BOOL *stop) {
-        id const target1 = obj.target;
-        if (target1 == nil || obj.action.action == action) {
-            [targetActions removeObjectAtIndex:idx];
+    NSMutableArray<XZMocoaTarget *> * const targetTable = _keyedTargetTable[key];
+    [targetTable enumerateObjectsWithOptions:NSEnumerationReverse usingBlock:^(XZMocoaTarget *targetObject, NSUInteger idx, BOOL *stop) {
+        id const target = targetObject.target;
+        if (target == nil || targetObject.action.selector == action) {
+            [targetTable removeObjectAtIndex:idx];
         }
     }];
 }
 
 /// 移除所有事件的 action 行为
 - (void)_removeAction:(SEL)action {
-    for (XZMocoaKey key in _table) {
+    for (XZMocoaKey key in _keyedTargetTable) {
         [self _removeAction:action forKey:key];
     }
 }
 
 /// 移除 key 事件的 target 目标
 - (void)_removeTarget:(id)target forKey:(XZMocoaKey)key {
-    NSMutableArray<XZMocoaTargetAction *> * const targetActions = _table[key];
-    [targetActions enumerateObjectsWithOptions:NSEnumerationReverse usingBlock:^(XZMocoaTargetAction *obj, NSUInteger idx, BOOL *stop) {
-        id const target1 = obj.target;
-        if (target1 == nil || target1 == target) {
-            [targetActions removeObjectAtIndex:idx];
+    NSMutableArray<XZMocoaTarget *> * const targetTable = _keyedTargetTable[key];
+    [targetTable enumerateObjectsWithOptions:NSEnumerationReverse usingBlock:^(XZMocoaTarget *targetObject, NSUInteger idx, BOOL *stop) {
+        id const _target = targetObject.target;
+        if (_target == nil || _target == target) {
+            [targetTable removeObjectAtIndex:idx];
         }
     }];
 }
 
 /// 移除所有事件的 target 目标
 - (void)_removeTarget:(id)target {
-    for (XZMocoaKey key in _table) {
+    for (XZMocoaKey key in _keyedTargetTable) {
         [self _removeTarget:target forKey:key];
     }
 }
 
 /// 移除 key 事件的 target 目标的 action 行为
 - (void)_removeTarget:(id)target action:(SEL)action forKey:(XZMocoaKey)key {
-    NSMutableArray<XZMocoaTargetAction *> * const targetActions = _table[key];
-    [targetActions enumerateObjectsWithOptions:NSEnumerationReverse usingBlock:^(XZMocoaTargetAction *obj, NSUInteger idx, BOOL *stop) {
-        id const target1 = obj.target;
-        if (target1 == nil || (target1 == target && obj.action.action == action)) {
-            [targetActions removeObjectAtIndex:idx];
+    NSMutableArray<XZMocoaTarget *> * const targetTable = _keyedTargetTable[key];
+    [targetTable enumerateObjectsWithOptions:NSEnumerationReverse usingBlock:^(XZMocoaTarget *targetObject, NSUInteger idx, BOOL *stop) {
+        id const _target = targetObject.target;
+        if (_target == nil || (_target == target && targetObject.action.selector == action)) {
+            [targetTable removeObjectAtIndex:idx];
         }
     }];
 }
 
 /// 移除所有事件的 target 目标的 action 行为
 - (void)_removeTarget:(id)target action:(SEL)action {
-    for (XZMocoaKey key in _table) {
+    for (XZMocoaKey key in _keyedTargetTable) {
         [self _removeTarget:target action:action forKey:key];
     }
 }
 
 - (void)sendActionsForKey:(XZMocoaKey)key value:(nullable)value {
-    NSMutableArray<XZMocoaTargetAction *> *targetActions = _table[key];
+    NSMutableArray<XZMocoaTarget *> * const targetTable = _keyedTargetTable[key];
     id const sender = self.viewModel;
-    [targetActions enumerateObjectsWithOptions:NSEnumerationReverse usingBlock:^(XZMocoaTargetAction *targetAction, NSUInteger idx, BOOL *stop) {
-        id const target = targetAction.target;
+    [targetTable enumerateObjectsWithOptions:NSEnumerationReverse usingBlock:^(XZMocoaTarget *targetObject, NSUInteger idx, BOOL *stop) {
+        id const target = targetObject.target;
         if (target == nil) {
-            [targetActions removeObjectAtIndex:idx]; // 删除 target 已销毁的监听
+            [targetTable removeObjectAtIndex:idx]; // 删除 target 已销毁的监听
             return;
         }
-        [targetAction sender:sender sendActionForKey:key value:value];
+        [targetObject.action sender:sender target:target sendActionForKey:key value:value];
     }];
 }
 
