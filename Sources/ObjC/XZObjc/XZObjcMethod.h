@@ -6,6 +6,7 @@
 //
 
 #import <Foundation/Foundation.h>
+#import <UIKit/UIKit.h>
 #import <objc/runtime.h>
 
 @class XZObjcType;
@@ -34,6 +35,12 @@ NS_ASSUME_NONNULL_BEGIN
 
 + (nullable instancetype)methodWithMethod:(Method)method NS_SWIFT_NAME(init(_:));
 - (instancetype)init NS_UNAVAILABLE;
+
+/// 执行方法
+/// - Parameters:
+///   - target: 执行方法的对象
+///   - parameters: 参数，使用 kCFNull 表示 nil 值
+- (void)call:(id)target parameters:(NSArray *)parameters;
 
 @end
 
