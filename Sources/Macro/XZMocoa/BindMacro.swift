@@ -347,7 +347,7 @@ extension BindMacro {
             return try self.view(role, providingStatementsOf: property, in: context)
             
         case .vm:
-            return try self.viewModel(role, providingStatementsOf: property, in: context)
+            return try self.viewModel(role, providingStatementsOf: property, in: context)?.statements
         }
     }
     
@@ -361,7 +361,7 @@ extension BindMacro {
             return try self.view(role, providingStatementsOf: method, in: context)
             
         case .vm:
-            return try self.viewModel(role, providingStatementsOf: method, in: context)
+            return try self.viewModel(role, providingStatementsOf: method, in: context)?.statements
         }
     }
     
@@ -509,17 +509,19 @@ extension BindMacro {
         
         return statements.joined(separator: "\n")
     }
-    /// 为 ViewModel 的属性，生成绑定代码。
-    private static func viewModel(_ viewModel: Any, providingStatementsOf property: XZMacroPropertyInfomation, in context: some MacroExpansionContext) throws -> String? {
+    
+    /// 为 ViewModel 的属性，生成绑定代码。keys 为带引号的字符串。
+    public static func viewModel(_ viewModel: Any, providingStatementsOf property: XZMacroPropertyInfomation, in context: some MacroExpansionContext) throws -> (statements: String, linkKeys: Set<String>, bindKeys: Set<String>)? {
         var statements = [String]()
-        for bindNode in property.declaration.attributes {
-            guard case let .attribute(bindNode) = bindNode else {
+        var allKeys = ["link": Set<String>(), "bind": Set<String>()]
+        for anyNode in property.declaration.attributes {
+            guard case let .attribute(node) = anyNode else {
                 continue
             }
-            guard let method = bindNode.attributeName.as(IdentifierTypeSyntax.self)?.name.text else {
+            guard let nodeMethod = node.attributeName.as(IdentifierTypeSyntax.self)?.name.text else {
                 continue
             }
-            guard method == "bind" || method == "link" else {
+            guard nodeMethod == "bind" || nodeMethod == "link" else {
                 continue
             }
             
@@ -528,17 +530,20 @@ extension BindMacro {
                 continue
             }
             
-            let bindArguments = bindNode.representedArrayArguments;
-            switch bindArguments.count {
+            let nodeArguments = node.representedArrayArguments;
+            switch nodeArguments.count {
             case 0:
-                statements.append("NSStringFromSelector(#selector(setter: Self.\(property.name))): \"\(property.name)\"")
+                let key = "\"\(property.name)\""
+                statements.append("NSStringFromSelector(#selector(setter: Self.\(property.name))): \(key)")
+                allKeys[nodeMethod]!.insert(key)
                 
             case 1:
-                let key = try XZMocoaKey(bindNode, argument: bindArguments[0].expression)
-                statements.append("NSStringFromSelector(#selector(setter: Self.\(property.name))): \"\(key)\"")
+                let key = "\"\(try XZMocoaKey(node, argument: nodeArguments[0].expression))\""
+                statements.append("NSStringFromSelector(#selector(setter: Self.\(property.name))): \(key)")
+                allKeys[nodeMethod]!.insert(key)
                 
             default:
-                throw XZMacroError(bindNode, message: "参数错误")
+                throw XZMacroError(node, message: "参数错误")
             }
         }
         
@@ -546,56 +551,60 @@ extension BindMacro {
             return nil
         }
         
-        return statements.joined(separator: ", \n")
+        return (statements.joined(separator: ", \n"), allKeys["link"]!, allKeys["bind"]!)
     }
     
-    private static func viewModel(_ viewModel: Any, providingStatementsOf method: XZMacroMethodInformation, in context: some MacroExpansionContext) throws -> String? {
+    ///  为 ViewModel 的方法，生成绑定代码。keys 为带引号的字符串。
+    public static func viewModel(_ viewModel: Any, providingStatementsOf method: XZMacroMethodInformation, in context: some MacroExpansionContext) throws -> (statements: String, linkKeys: Set<String>, bindKeys: Set<String>)? {
         var statements = [String]()
-        for bindNode in method.declaration.attributes {
-            guard case let .attribute(bindNode) = bindNode else {
+        var allKeys = ["link": Set<String>(), "bind": Set<String>()]
+        for anyNode in method.declaration.attributes {
+            guard case let .attribute(node) = anyNode else {
                 continue
             }
-            guard let bindMethod = bindNode.attributeName.as(IdentifierTypeSyntax.self)?.name.text else {
+            guard let nodeMethod = node.attributeName.as(IdentifierTypeSyntax.self)?.name.text else {
                 continue
             }
-            guard bindMethod == "bind" || bindMethod == "link" else {
+            guard nodeMethod == "bind" || nodeMethod == "link" else {
                 continue
             }
             
-            let bindArguments = bindNode.representedArrayArguments;
-            switch bindArguments.count {
+            let nodeArguments = node.representedArrayArguments;
+            switch nodeArguments.count {
             case 0:
                 switch method.parameters.count {
                 case 0:
                     continue
                 case 1:
-                    statements.append("NSStringFromSelector(#selector(Self.\(method.selector))): \"\(method.parameters[0])\"")
+                    let key = "\"\(method.parameters[0])\""
+                    statements.append("NSStringFromSelector(#selector(Self.\(method.selector))): \(key)")
+                    allKeys[nodeMethod]!.insert(key)
                 default:
-                    let keys = method.parameters.map({ argument in
+                    let nodeKeys = method.parameters.map({ argument in
                         return "\"\(argument)\""
-                    }).joined(separator: ", ")
-                    statements.append("NSStringFromSelector(#selector(Self.\(method.selector))): [\(keys)]")
+                    })
+                    statements.append("NSStringFromSelector(#selector(Self.\(method.selector))): [\(nodeKeys.joined(separator: ", "))]")
+                    allKeys[nodeMethod]!.formUnion(nodeKeys)
                 }
                 
             default:
-                if bindArguments.count > method.parameters.count {
+                if nodeArguments.count > method.parameters.count {
                     // 绑定的键，不能比方法参数多
                     continue
                 }
-                var keys = try bindArguments.map({ (expression: LabeledExprSyntax, label: String?) in
-                    return try XZMocoaKey(bindNode, argument: expression)
+                var nodeKeys = try nodeArguments.map({ (expression: LabeledExprSyntax, label: String?) in
+                    return try XZMocoaKey(node, argument: expression)
                 });
-                if bindArguments.count < method.parameters.count {
-                    for index in bindArguments.count ..< method.parameters.count {
-                        keys.append(method.parameters[index])
+                if nodeArguments.count < method.parameters.count {
+                    for index in nodeArguments.count ..< method.parameters.count {
+                        nodeKeys.append(method.parameters[index])
                     }
                 }
-                
-                let keyString = keys.map({ argument in
+                nodeKeys = nodeKeys.map({ argument in
                     return "\"\(argument)\""
-                }).joined(separator: ", ")
-                
-                statements.append("NSStringFromSelector(#selector(Self.\(method.selector))): [\(keyString)]")
+                })
+                statements.append("NSStringFromSelector(#selector(Self.\(method.selector))): [\(nodeKeys.joined(separator: ", "))]")
+                allKeys[nodeMethod]!.formUnion(nodeKeys)
             }
         }
         
@@ -603,7 +612,7 @@ extension BindMacro {
             return nil
         }
         
-        return statements.joined(separator: ", \n")
+        return (statements.joined(separator: ", \n"), allKeys["link"]!, allKeys["bind"]!)
     }
 }
 

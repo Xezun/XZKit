@@ -143,52 +143,110 @@ extension MocoaMacro: MemberMacro {
             
         case .vm:
             // 判断是否自定义 mappingObserverMethodsForModelKeys 属性
-            if classDecl.containsMethod("mappingObserverMethodsForModelKeys") {
+            if classDecl.containsProperty("mappingObserverMethodsForModelKeys") {
                 for member in classDecl.memberBlock.members {
-                    if let variableDecl = member.decl.as(VariableDeclSyntax.self), let node = variableDecl.attributeForName("bind") {
-                        XZMacroDiagnose(context, node: node, message: "由于已重写 mappingObserverMethodsForModelKeys 属性，宏 @bind 监听将不生效", severity: .warning)
+                    if let variableDecl = member.decl.as(VariableDeclSyntax.self) {
+                        if let node = variableDecl.attributeForName("bind") {
+                            XZMacroDiagnose(context, node: node, message: "由于已重写 mappingObserverMethodsForModelKeys 属性，宏 @bind 监听将不生效", severity: .warning)
+                        }
+                        if let node = variableDecl.attributeForName("link") {
+                            XZMacroDiagnose(context, node: node, message: "由于已重写 mappingObserverMethodsForModelKeys 属性，宏 @link 绑定将不生效", severity: .warning)
+                        }
                     }
-                    if let methodDecl = member.decl.as(FunctionDeclSyntax.self), let node = methodDecl.attributeForName("bind") {
-                        XZMacroDiagnose(context, node: node, message: "由于已重写 mappingObserverMethodsForModelKeys 属性，宏 @bind 监听将不生效", severity: .warning)
+                    if let methodDecl = member.decl.as(FunctionDeclSyntax.self) {
+                        if let node = methodDecl.attributeForName("bind") {
+                            XZMacroDiagnose(context, node: node, message: "由于已重写 mappingObserverMethodsForModelKeys 属性，宏 @bind 监听将不生效", severity: .warning)
+                        }
+                        if let node = methodDecl.attributeForName("link") {
+                            XZMacroDiagnose(context, node: node, message: "由于已重写 mappingObserverMethodsForModelKeys 属性，宏 @link 绑定将不生效", severity: .warning)
+                        }
                     }
                 }
                 return []
             }
             
-            var statements = [String]()
+            if classDecl.containsProperty("activelyObservedModelKeys") {
+                for member in classDecl.memberBlock.members {
+                    if let variableDecl = member.decl.as(VariableDeclSyntax.self) {
+                        if let node = variableDecl.attributeForName("bind") {
+                            XZMacroDiagnose(context, node: node, message: "由于已重写 activelyObservedModelKeys 属性，宏 @bind 监听将不生效", severity: .warning)
+                        }
+                        if let node = variableDecl.attributeForName("link") {
+                            XZMacroDiagnose(context, node: node, message: "由于已重写 activelyObservedModelKeys 属性，宏 @link 绑定将不生效", severity: .warning)
+                        }
+                    }
+                    if let methodDecl = member.decl.as(FunctionDeclSyntax.self) {
+                        if let node = methodDecl.attributeForName("bind") {
+                            XZMacroDiagnose(context, node: node, message: "由于已重写 activelyObservedModelKeys 属性，宏 @bind 监听将不生效", severity: .warning)
+                        }
+                        if let node = methodDecl.attributeForName("link") {
+                            XZMacroDiagnose(context, node: node, message: "由于已重写 activelyObservedModelKeys 属性，宏 @link 绑定将不生效", severity: .warning)
+                        }
+                    }
+                }
+                return []
+            }
+            
+            var mappingStatements = [String]()  // mappingObserverMethodsForModelKeys 的语句
+            var bindKeys = Set<String>()  // @bind 标记的 key，用于 activelyObservedModelKeys
+            var linkKeys = Set<String>()  // @link 标记的 key，排除出 activelyObservedModelKeys
             
             for member in classDecl.memberBlock.members {
                 if let propertyDecl = member.decl.as(VariableDeclSyntax.self) {
                     let property = try XZMacroPropertyInfomation(node, propertyDecl)
-                    if let statement = try BindMacro.expansion(of: .vm, providingStatementsOf: property, in: context) {
-                        statements.append(statement)
+                    if let result = try BindMacro.viewModel(node, providingStatementsOf: property, in: context) {
+                        mappingStatements.append(result.statements)
+                        bindKeys.formUnion(result.bindKeys)
+                        linkKeys.formUnion(result.linkKeys)
                     }
                     continue
                 }
+                
                 if let methodDecl = member.decl.as(FunctionDeclSyntax.self) {
                     let method = XZMacroMethodInformation(node, methodDecl)
-                    if let statement = try BindMacro.expansion(of: .vm, providingStatementsOf: method, in: context) {
-                        statements.append(statement)
+                    if let result = try BindMacro.viewModel(node, providingStatementsOf: method, in: context) {
+                        mappingStatements.append(result.statements)
+                        bindKeys.formUnion(result.bindKeys)
+                        linkKeys.formUnion(result.linkKeys)
                     }
                     continue
                 }
             }
             
-            if statements.isEmpty {
-                return []
+            // 生成 mappingObserverMethodsForModelKeys
+            let mappingStatementsStr = mappingStatements.joined(separator: ", \n")
+            var generatedDecls: [DeclSyntax] = []
+            
+            if !mappingStatements.isEmpty {
+                let variableSyntax = try VariableDeclSyntax(
+                    """
+                    override class var mappingObserverMethodsForModelKeys: [String : Any]? {
+                        return [ 
+                            \(raw: mappingStatementsStr)
+                        ]
+                    }
+                    """
+                )
+                generatedDecls.append(DeclSyntax(variableSyntax))
             }
             
-            let variableSyntax = try VariableDeclSyntax(
-                """
-                override class var mappingObserverMethodsForModelKeys: [String : Any]? {
-                    return [ 
-                        \(raw: statements.joined(separator: ", \n"))
-                    ]
-                }
-                """
-            )
+            // 生成 activelyObservedModelKeys：只包含 @bind 标记的键，排除 @link 标记的键
+            let observedKeys = bindKeys.subtracting(linkKeys)
+            if !observedKeys.isEmpty {
+                // 生成数组元素
+                let arrayElements = observedKeys.joined(separator: ", ")
+                
+                let observedVariableSyntax = try VariableDeclSyntax(
+                    """
+                    override var activelyObservedModelKeys: [String]? {
+                        return [\(raw: arrayElements)]
+                    }
+                    """
+                )
+                generatedDecls.append(DeclSyntax(observedVariableSyntax))
+            }
             
-            return [DeclSyntax(variableSyntax)]
+            return generatedDecls
         }
         
     }

@@ -1117,7 +1117,7 @@
         case NSFetchedResultsChangeMove: {
             if ([anObject hasPersistentChangedValues]) {
                 XZMocoaGroupReusableViewModel * const viewModel = [self viewModelForCellAtIndexPath:indexPath];
-                if (viewModel.shouldObserveModelKeysActively) {
+                if (viewModel.isModelKeysObservedActively) {
                     break;
                 }
                 NSDictionary<NSString *, id> * const changedValues = anObject.changedValuesForCurrentEvent;
@@ -1133,7 +1133,8 @@
             // changedValuesForCurrentEvent 中仅包含持久存储属性变更，先使用 hasPersistentChangedValues 判断是否有更新以优化性能
             if ([anObject hasPersistentChangedValues]) {
                 XZMocoaGroupReusableViewModel * const viewModel = [self viewModelForCellAtIndexPath:indexPath];
-                if (viewModel.shouldObserveModelKeysActively) {
+                // 如果 activelyObservedModelKeys 不为 nil，说明这些 key 已经被 KVO 处理了
+                if (viewModel.activelyObservedModelKeys != nil) {
                     break;
                 }
                 NSDictionary<NSString *, id> * const changedValues = anObject.changedValuesForCurrentEvent;

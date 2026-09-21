@@ -84,12 +84,8 @@ class TestView: UIView, XZMocoaView {
 @mocoa
 class TestViewModel: XZMocoaTableViewModel {
     
-    override var shouldObserveModelKeysActively: Bool {
-        return true
-    }
-    
     @key
-    @bind
+    @link
     var name: String?
     
     @key

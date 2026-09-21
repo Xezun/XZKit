@@ -344,6 +344,11 @@ NS_SWIFT_UI_ACTOR @interface XZMocoaViewModel : NSObject <XZMocoaViewModel> {
 
 @interface XZMocoaViewModel (XZMocoaKeyObserver)
 
+/// 当前视图模型是否主动观察了数据模型，用于判断状态。
+///
+/// 子类不可重写此属性，重写此属性，也无法影响观察的主被动性。
+@property (nonatomic, readonly) BOOL isModelKeysObservedActively;
+
 /// “视图模型”观察“数据模型”的键值观察映射表。
 ///
 /// 注册 视图模型方法 与 数据模型属性 之间映射关系的字典。
@@ -372,28 +377,35 @@ NS_SWIFT_UI_ACTOR @interface XZMocoaViewModel : NSObject <XZMocoaViewModel> {
 /// }
 /// ```
 ///
-/// - SeeAlso: 键值观察是被动的，开启主动观察，请参考``shouldObserveModelKeysActively`` 属性。
+/// - SeeAlso: 键值观察是被动的，开启主动观察，请参考 ``activelyObservedModelKeys`` 属性。
 @property (class, nullable, readonly) NSDictionary<NSString *, id> *mappingObserverMethodsForModelKeys;
 
-/// 是否主动观察数据模型。默认 NO 否。
+/// 主动观察的数据模型键的集合。
 ///
-/// ### 被动观察机制
+/// - `nil` 表示不主动观察。
+/// - `@[]` 表示主动观察 ``mappingObserverMethodsForModelKeys`` 中的所有键（排除 `@link` 绑定的键）。
+/// - 具体字符串数组：仅观察指定的键。
 ///
-/// 由于以下原因，视图模型 ViewModel 对 Model 数据模型的观察，默认是被动的。
+/// ## 宏绑定机制说明
 ///
-/// - 大多是业务展示类数据，不需要监听；
-/// - 下层模型可以直接通过 Mocoa Events Channel 层事件通道通知上层模型。
-/// - 上层模型可以直接调用下层模型``model:didChangeValuesForKeys:``的方法，被动触发监听。
-/// - 在某些情况下，数据不需要动态监听，比如当 `UITableViewCell` 需要刷新时，往往整个 Cell 视图的重载。
-/// - 数据管理框架，比如 CoreData 框架，自带数据监听机制。
+/// 使用 `@mocoa` 宏时：
+/// - `@bind` 标记的属性和方法会自动加入映射表，并根据此属性决定是否监听。
+/// - `@link` 标记的属性和方法只会建立单次绑定映射，不会加入主动观察。
+/// - 如果在子类中返回具体键列表，将覆盖自动推断的结果。
 ///
-/// 若要开启主动键值观察，重写此属性，并返回`YES`即可。
+/// ## 示例
 ///
-/// 使用 `NSKeyValueObserving` 机制对 ``mappingObserverMethodsForModelKeys`` 中的键进行观察，
-/// 且单个 Runloop 内的键值事件，会合并统一处理，即在一个 Runloop 内，同一个 key 即使发生多次改变，绑定的方法只会执行一次。
-///
-/// 在 Swift 中，使用 `@mocoa` 和 `@bind` 标记的绑定的键值事件，也属于此被动观察机制。
-@property (nonatomic, readonly) BOOL shouldObserveModelKeysActively;
+/// ```objc
+/// // 完全不主动观察
+/// - (NSArray *)activelyObservedModelKeys { return nil; }
+/// 
+/// // 主动观察 mapping 中的所有键
+/// - (NSArray *)activelyObservedModelKeys { return @[]; }
+/// 
+/// // 仅观察指定键（排除 @link 绑定的键）
+/// - (NSArray *)activelyObservedModelKeys { return @[@"name"]; }
+/// ```
+@property (nonatomic, readonly, nullable) NSArray<NSString *> *activelyObservedModelKeys;
 
 /// 视图模型接收数据更新的通用方法。
 ///

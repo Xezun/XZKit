@@ -17,7 +17,7 @@ static void * _context = &_context;
     /// 记录一个 runloop 中发生变更的所有键。
     NSMutableSet *_changedKeys;
     /// 视图模型 => 被观察的键。
-    NSMapTable<XZMocoaViewModel *, NSMutableSet<NSString *> *> *_viewModels;
+    NSMapTable<XZMocoaViewModel *, NSMutableSet<NSString *> *> *_viewModelTable;
     /// 所有被观察的键 => 被观察的次数
     NSMutableDictionary<NSString *, NSNumber *>                *_observingKeys;
     /// 当前是否已经标记发生通知。
@@ -43,7 +43,7 @@ static void * _context = &_context;
     self = [super init];
     if (self) {
         _model          = model;
-        _viewModels     = [NSMapTable weakToStrongObjectsMapTable];
+        _viewModelTable = [NSMapTable weakToStrongObjectsMapTable];
         _changedKeys    = [NSMutableSet set];
         _observingKeys  = [NSMutableDictionary dictionary];
         _needsPostNotification = NO;
@@ -56,7 +56,7 @@ static void * _context = &_context;
         return;
     }
     
-    NSMutableSet *observedKeys = (id)[_viewModels objectForKey:viewModel];
+    NSMutableSet *observedKeys = (id)[_viewModelTable objectForKey:viewModel];
     
     if (observedKeys) {
         NSSet * const newKeys = [NSMutableSet setWithArray:keys];
@@ -69,15 +69,11 @@ static void * _context = &_context;
         
         [self addObservingKeys:newKeys];
         [observedKeys unionSet:newKeys];
-        
-        [viewModel model:_model didChangeValuesForKeys:newKeys];
     } else {
         observedKeys = [NSMutableSet setWithArray:keys];
         
         [self addObservingKeys:observedKeys];
-        [_viewModels setObject:observedKeys forKey:viewModel];
-        
-        [viewModel model:_model didChangeValuesForKeys:[NSSet setWithSet:observedKeys]];
+        [_viewModelTable setObject:observedKeys forKey:viewModel];
     }
 }
 
@@ -94,7 +90,7 @@ static void * _context = &_context;
 }
 
 - (void)detachReceiver:(XZMocoaViewModel *)viewModel {
-    NSSet * const keys = [_viewModels objectForKey:viewModel];
+    NSSet * const keys = [_viewModelTable objectForKey:viewModel];
     for (NSString * const key in keys) {
         NSInteger const count = _observingKeys[key].integerValue;
         if (count > 1) {
@@ -104,7 +100,7 @@ static void * _context = &_context;
             [_model removeObserver:self forKeyPath:key context:&_context];
         }
     }
-    [_viewModels removeObjectForKey:viewModel];
+    [_viewModelTable removeObjectForKey:viewModel];
 }
 
 - (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary<NSKeyValueChangeKey,id> *)change context:(void *)context {
@@ -135,8 +131,8 @@ static void * _context = &_context;
     NSSet * const changedKeys = _changedKeys.copy;
     [_changedKeys removeAllObjects];
     
-    for (XZMocoaViewModel * const viewModel in _viewModels) {
-        NSSet *observedKeys = [_viewModels objectForKey:viewModel];
+    for (XZMocoaViewModel * const viewModel in _viewModelTable) {
+        NSSet *observedKeys = [_viewModelTable objectForKey:viewModel];
         
         if ([observedKeys intersectsSet:changedKeys]) {
             NSMutableSet *set = [NSMutableSet setWithSet:changedKeys];

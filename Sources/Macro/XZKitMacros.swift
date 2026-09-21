@@ -494,7 +494,19 @@ extension ClassDeclSyntax {
             guard let methodDecl = member.decl.as(FunctionDeclSyntax.self) else {
                 continue
             }
-            if methodDecl.name.text == methodName {
+            if methodDecl.name.trimmedDescription == methodName {
+                return true
+            }
+        }
+        return false
+    }
+    
+    public func containsProperty(_ propertyName: String) -> Bool {
+        for member in self.memberBlock.members {
+            guard let property = member.decl.as(VariableDeclSyntax.self) else {
+                continue
+            }
+            if property.bindings.first?.pattern.as(IdentifierPatternSyntax.self)?.identifier.text == propertyName {
                 return true
             }
         }

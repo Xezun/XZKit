@@ -34,8 +34,8 @@
 }
 
 // 开启主动监听
-- (BOOL)shouldObserveModelKeysActively {
-    return YES;
+- (NSArray<NSString *> *)activelyObservedModelKeys {
+    return @[];
 }
 
 // 监听 firstName lastName

@@ -16,13 +16,14 @@
 
 @implementation XZMocoaViewModel {
     @private
+    BOOL _isModelKeysObservedActively;
     XZMocoaTargetActionTable                * _targetActions;
     NSMutableOrderedSet<XZMocoaViewModel *> * _subViewModels;
     __unsafe_unretained XZMocoaViewModel    * _superViewModel;
 }
 
 - (void)dealloc {
-    // 移除对数据模型的 KVO 观察（见下方 _removeModelObserverIfNeeded:）。
+    // 移除对数据模型的 KVO 观察（见下方 _detachModelObserverIfNeeded:）。
     
     // 不能像下面这样使用 for-in 语句。
     // for (XZMocoaViewModel *viewModel in subViewModels) {
@@ -41,7 +42,7 @@
         viewModel = _subViewModels.lastObject;
     }
     
-    [self _removeModelObserverIfNeeded:_model];
+    [self _detachModelObserverIfNeeded:_model];
 }
 
 - (instancetype)init {
@@ -54,6 +55,7 @@
         _frame   = CGRectZero;
         _isReady = NO;
         _model   = model;
+        _isModelKeysObservedActively = NO;
     }
     return self;
 }
@@ -103,10 +105,13 @@
 }
 
 - (void)prepare {
-    if ([self _attachModelObserverIfNeeded:self.model]) {
-        NSArray * const allKeys = [[XZMocoaKeyMappingTable tableForClass:self.class].keyToMethods allKeys];
-        [self model:self.model didChangeValuesForKeys:[NSSet setWithArray:allKeys]];
+    // 注册观察者。仅注册，不触发绑定事件。
+    NSArray * const allKeys = [self _attachModelObserverIfNeeded:self.model];
+    if (allKeys == nil || allKeys.count == 0) {
+        return;
     }
+    // 初始化时，手动触发一次所有绑定。
+    [self model:self.model didChangeValuesForKeys:[NSSet setWithArray:allKeys]];
 }
 
 - (NSString *)description {
@@ -115,29 +120,49 @@
 
 - (void)setModel:(id)model {
     if (_model != model) {
-        [self _removeModelObserverIfNeeded:_model];
+        [self _detachModelObserverIfNeeded:_model];
         _model = model;
         [self _attachModelObserverIfNeeded:_model];
     }
 }
 
-- (BOOL)_attachModelObserverIfNeeded:(id)model {
-    if ([self shouldObserveModelKeysActively]) {
-        if (model == nil) {
-            return NO;
-        }
-        NSArray * const allKeys = [[XZMocoaKeyMappingTable tableForClass:self.class].keyToMethods allKeys];
-        if (allKeys == nil) {
-            return NO;
-        }
-        [[XZMocoaKeyObserver observerForModel:model] attachReceiver:self forKeys:allKeys];
-        return NO;
+/// 返回所有拥有映射关系的键。
+- (nullable NSArray<NSString *> *)_attachModelObserverIfNeeded:(id)model {
+    if (model == nil) {
+        return nil;
     }
-    return YES;
+    
+    // 使用新 API：activelyObservedModelKeys
+    NSArray<NSString *> * const observedKeys = [self activelyObservedModelKeys];
+    
+    // 情况 A: 不需要主动观察 → 不附加 KVO
+    if (observedKeys == nil) {
+        return nil;
+    }
+    
+    // 没有映射关系，无法绑定
+    XZMocoaKeyMappingTable * const table = [XZMocoaKeyMappingTable tableForClass:self.class];
+    if (table == nil || table.keyToMethods.count == 0) {
+        return nil;
+    }
+    
+    _isModelKeysObservedActively = YES;
+    
+    // 半量绑定：只附加指定的键（ @link 绑定的键会自动排除 ）
+    if (observedKeys.count > 0) {
+        [[XZMocoaKeyObserver observerForModel:model] attachReceiver:self forKeys:observedKeys];
+        return table.keyToMethods.allKeys;
+    }
+    
+    // 全量绑定：附加 mappingObserverMethodsForModelKeys 中的所有键
+    NSArray * const allKeys = table.keyToMethods.allKeys;
+    [[XZMocoaKeyObserver observerForModel:model] attachReceiver:self forKeys:allKeys];
+    return allKeys;
 }
          
-- (void)_removeModelObserverIfNeeded:(id)model {
-    if (model == nil || ![self shouldObserveModelKeysActively]) {
+- (void)_detachModelObserverIfNeeded:(id)model {
+    _isModelKeysObservedActively = NO;
+    if (model == nil) {
         return;
     }
     [[XZMocoaKeyObserver observerForModel:model] detachReceiver:self];
@@ -349,8 +374,12 @@
 
 @implementation XZMocoaViewModel (XZMocoaKeyObserver)
 
-- (BOOL)shouldObserveModelKeysActively {
-    return NO;
+- (BOOL)isModelKeysObservedActively {
+    return _isModelKeysObservedActively;
+}
+
+- (NSArray<NSString *> *)activelyObservedModelKeys {
+    return nil;
 }
 
 + (NSDictionary<NSString *,id> *)mappingObserverMethodsForModelKeys {
