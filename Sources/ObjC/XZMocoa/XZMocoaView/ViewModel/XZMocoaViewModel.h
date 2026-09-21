@@ -132,7 +132,7 @@ NS_SWIFT_UI_ACTOR @interface XZMocoaViewModel : NSObject <XZMocoaViewModel> {
 /// - 在此方法中，视图模型 isReady 始终为 NO 的状态，调用`super`不会改变此状态。
 /// - 在此方法中创建添加下层视图模型，不需要发送`-ready`消息。
 /// - 此方法执行时，视图模型尚未与视图关联，即视图模型在初始化之后，才会被视图所使用。
-- (void)prepare;
+- (void)prepare NS_REQUIRES_SUPER;
 
 @end
 
