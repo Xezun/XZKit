@@ -186,7 +186,23 @@ self.sendActions(forKey: "beginRefreshing")
 
 ### 5、数据监听
 
-监听数据模型属性，可以通过 `mappingObserverMethodsForModelKeys` 注册“监听方法”与“数据模型属性”之间的映射关系：
+#### 被动监听（默认）
+
+默认情况下，数据监听是被动的，仅在初始化时触发一次。
+
+原因如下：
+- 在实际开发中，数据在大部分情形下都是单向流动的，比如从网络请求到页面展示，没有数据监听需求。
+- 当数据管理框架可能自带监听机制时，比如 CoreData 的 `NSFetchedResultsController` 就原生支持。
+
+> 列表视图`XZMocoaTableView/XZMocoaColletionView`已内置了对 `NSFetchedResultsController` 的支持。
+
+若要触发监听方法，调用视图模型 `-model:didChangeValuesForKeys:` 方法即可。
+
+```swift
+viewModel.model(model, didChangeValuesForKeys: ["name"])
+```
+
+使用 `@mocoa` 和 `@bind` 宏，可自动创建映射关系。
 
 ```swift
 // 监听方法和被监听的模型属性的映射关系
@@ -221,20 +237,54 @@ class ViewModel: XZMocoaViewModel {
     
     > 列表视图`XZMocoaTableView/XZMocoaColletionView`已内置了对 `NSFetchedResultsController` 的支持。
 
-若要触发监听方法，调用视图模型 `-model:didChangeValuesForKeys:` 方法即可。
-    
-```swift
-viewModel.model(model, didChangeValuesForKeys: ["name"])
-```
+#### 主动监听
 
-另外，也可以开启主动监听。
+通过重写 `activelyObservedModelKeys` 属性，控制哪些键需要 KVO 主动监听。
 
 ```swift
-/// 开启主动监听。
-override var shouldObserveModelKeysActively: Bool {
-    return true
+/// 开启主动监听，观察 mappingObserverMethodsForModelKeys 中的所有键。
+override var activelyObservedModelKeys: [String]? {
+    return []  // @[]表示观察所有映射的键
+}
+
+// 或
+
+/// 仅观察指定键，排除@link 绑定的键。
+override var activelyObservedModelKeys: [String]? {
+    return ["name", "age"]  // 具体数组，仅观察这些键
+}
+
+// 或不启用主动监听
+override var activelyObservedModelKeys: [String]? {
+    return nil  // nil 表示不启用 KVO 主动监听
 }
 ```
+
+**绑定模式说明：**
+
+- `nil`：**无绑定模式** → 不附加 KVO → 全部被动绑定（prepare 时手动触发）
+- `@[]`：**全量绑定模式** → 附加 mapping 中的所有键 → 无被动绑定
+- `["key1", "key2"]`：**半量绑定模式** → 仅附加指定键 → 其余键被动绑定
+
+**注意：`@link` 标记的键自动排除在主动观察之外**
+
+```swift
+@mocoa
+@objc
+class ViewModel: XZMocoaViewModel {
+    
+    @bind var name: String?      // ✅ 加入映射 + 可能进入 activeObservedList
+    
+    @link var avatarUrl: String? // ⚠️ 只加入映射，绝不进入 activelyObservedModelKeys
+    
+    override var activelyObservedModelKeys: [String]? {
+        // 若返回 []，则 name 会被 KVO 监听，avatarUrl 不会被 KVO 监听
+        return []
+    }
+}
+```
+
+**KVO 事件处理：**
 
 监听基于 KVO 机制，且单个 Runloop 内的键值事件会合并统一处理，同一个 key 在同一个 Runloop 内发生多次改变，绑定的方法只会执行一次。
 

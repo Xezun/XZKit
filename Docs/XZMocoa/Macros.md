@@ -264,7 +264,7 @@ class UserViewModel: XZMocoaViewModel {
 
 ---
 
-## 五、`@bind` 与 `@link` 宏
+## 五、`@bind`与 `@link` 宏
 
 `@bind` 用于建立**单向绑定**，`@link` 用于建立**单次绑定**（仅赋值一次，不建立持续监听）。两者语法相同，区别在于生成的代码调用 `bindTarget` 还是 `linkTarget`。
 
@@ -277,7 +277,30 @@ class UserViewModel: XZMocoaViewModel {
 
 > 下文以 `@bind` 为例说明，`@link` 的用法完全相同，仅生成的方法名不同（`linkTarget` vs `bindTarget`）。
 
-### 5.1 声明族
+### 5.0 `@link` 与主动观察机制
+
+**关键区别：**
+
+- `@bind` 标记的成员会被包含在宏自动生成的 `activelyObservedModelKeys` 中（如果启用了主动观察）。
+- `@link` 标记的成员**只加入映射关系，绝不进入** `activelyObservedModelKeys`。
+
+这意味着：
+
+```swift
+@mocoa
+class ViewModel: XZMocoaViewModel {
+    
+    @bind var name: String?           // ✅ 加入 mapping + 可能被 KVO 监听
+    
+    @link var avatarUrl: String?      // ⚠️ 只加入 mapping，绝对不被 KVO 监听
+    
+    override var activelyObservedModelKeys: [String]? {
+        return []  // name 会被 KVO，avatarUrl 不会被 KVO
+    }
+}
+```
+
+这种设计使得 `@link` 非常适合静态数据绑定，避免不必要的 KVO 开销。
 
 ```swift
 // 无参数形式，View / ViewModel 均可
@@ -308,7 +331,7 @@ public macro bind(text key: XZMocoaKey) = #externalMacro(module: "XZKitMacros", 
 
 `@link` 的声明族与 `@bind` 基本对称（无参数、单参数、`selector:`/`key:` 以及带标签的便捷形式），仅宏名不同；但 `@link` 只用于 View，因此**没有** ViewModel 专用的可变参数形式 `@link(_:_:…)`。
 
-### 5.2 用于 ViewModel（监听 Model）
+### 5.1 用于 ViewModel（监听 Model）
 
 #### 修饰属性
 
@@ -358,7 +381,7 @@ NSStringFromSelector(#selector(Self.foobar(min:max:))): ["foo", "bar"]
 
 > 参数既支持字符串字面量 `"foo"`，也支持点语法 `.foo`（会被转换为 keyPath 字符串）。ViewModel 上绑定属性只允许一个无标签参数，方法参数至少一个（否则无法接收被绑定值）。
 
-### 5.3 用于 View（监听 ViewModel）
+### 5.2 用于 View（监听 ViewModel）
 
 #### 修饰属性
 
@@ -435,7 +458,7 @@ viewModel.bindTarget(self, action: #selector(Self.setIconWithURL(_:)), forKey: "
 
 > 方法参数形式支持：`()`、`(value)`、`(key, value)`、`(viewModel, key, value)`，无参数宏时分别绑定 `.None`、第一个参数名、第二个参数名、第三个参数名。
 
-### 5.4 便捷绑定标签一览
+### 5.3 便捷绑定标签一览
 
 带属性名标签的 `@bind` / `@link` 只在 View 中修饰属性使用，可显式指定绑定的视图属性。可用标签如下：
 
@@ -456,7 +479,7 @@ viewModel.bindTarget(self, action: #selector(Self.setIconWithURL(_:)), forKey: "
 @bind(title: .confirm, for: .normal) var confirmButton: UIButton!
 ```
 
-### 5.5 可选视图属性与 `didSet`
+### 5.4 可选视图属性与 `didSet`
 
 对于带标签的 `@bind` / `@link` 修饰**可选类型**（`?`）或**隐式可选类型**（`!`）视图属性时，宏会额外生成 `didSet` 访问器，使得视图实例在 viewModel 已就绪之后才被赋值时，也能重新建立绑定：
 
@@ -488,7 +511,7 @@ var nameLabel: UILabel? {
 - 若属性已自定义 `set` 或 `didSet`，无法再织入动态监听，宏发出警告，提示自行调用 `bindTarget`/`linkTarget(_:action:forKey:)` 方法实现绑定。
 - 上述警告可通过在属性中添加包含方法名（如 `bindTarget`）的注释来消除。
 
-### 5.6 `@link` 单次绑定
+### 5.5 `@link` 单次绑定
 
 `@link` 与 `@bind` 语法完全相同，区别在于：
 
