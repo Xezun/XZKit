@@ -21,17 +21,11 @@ static const void * const _mocoaName = &_mocoaName;
         }
         xz_objc_class_copyMethod(self, @selector(__xz_mocoa_mocoaName),
                                  self, @selector(mocoaName));
-        xz_objc_class_copyMethod(self, @selector(__xz_mocoa_setMocoaName:),
-                                 self, sel_registerName("setMocoaName:"));
     }
 }
 
 - (XZMocoaName)__xz_mocoa_mocoaName {
-    return objc_getAssociatedObject(self, _mocoaName);
-}
-
-- (void)__xz_mocoa_setMocoaName:(XZMocoaName)mocoaName {
-    objc_setAssociatedObject(self, _mocoaName, mocoaName, OBJC_ASSOCIATION_COPY_NONATOMIC);
+    return XZMocoaNameDefault;
 }
 
 @end
