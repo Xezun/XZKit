@@ -20,8 +20,8 @@ XZMocoa 共提供 4 个宏（含多种重载形式），分别对应 MVVM 的不
 | --- | --- | --- | --- |
 | `@mocoa` | `@mocoa` / `@mocoa(.m/.v/.vm)` | 将 class 标记为 MVVM 角色，织入 `@objc`、绑定注册、数据监听映射 | 类声明 |
 | `@key` | `@key` / `@key(.name)` / `@key("name")` | 将属性改造为可发送 KVO 或 KTA 事件的属性 | Model、ViewModel |
-| `@bind` | `@bind` / `@bind(.key)` / `@bind(text: .key)` … | 建立单向绑定（监听 Model 属性 / 监听 ViewModel 事件） | View、ViewModel |
-| `@link` | `@link` / `@link(.key)` / `@link(text: .key)` … | 建立单次绑定（监听 ViewModel 事件） | View |
+| `@bind` | `@bind` / `@bind(.key)` / `@bind(text: .key)` … | 建立单向绑定（ViewModel 监听 Model 属性并主动观察 / View 监听 ViewModel 事件） | View、ViewModel |
+| `@link` | `@link` / `@link(.key)` / `@link(text: .key)` … | 建立单次绑定（ViewModel 监听 Model 属性但不主动观察 / View 监听 ViewModel 事件） | View、ViewModel |
 | `#module` | `#module("url")` / `#module(url)` | 通过模块 URL 获取 `XZMocoaModule` 对象 | 表达式 |
 
 ### 源码文件构成
@@ -110,9 +110,9 @@ public macro mocoa() = #externalMacro(module: "XZKitMacros", type: "MocoaMacro")
 | 角色 | 目标成员 | 注入条件 |
 | --- | --- | --- |
 | `.m` | `@key` 属性 | 未标记 `@objc` 时注入 `@objc` |
-| `.v` | `@bind` 方法 | 未标记 `@objc` / `@IBAction` 时注入 `@objc` |
-| `.vm` | `@key` 或 `@bind` 属性 | 未标记 `@objc` / `@IBOutlet` 时注入 `@objc` |
-| `.vm` | `@bind` 方法 | 未标记 `@objc` / `@IBAction` 时注入 `@objc` |
+| `.v` | `@bind` / `@link` 方法 | 未标记 `@objc` / `@IBAction` 时注入 `@objc` |
+| `.vm` | `@key`、`@bind` 或 `@link` 属性 | 未标记 `@objc` / `@key` / `@NSManaged` 时注入 `@objc` |
+| `.vm` | `@bind` / `@link` 方法 | 未标记 `@objc` / `@IBAction` 时注入 `@objc` |
 
 > View 角色的属性不需要 `@objc`（视图属性通过 setter 选择器绑定），因此 `.v` 只处理方法。
 
@@ -133,20 +133,29 @@ override func __mocoa_bind_prepare() {
 - 若类中已自定义 `__mocoa_bind_prepare`，宏报错，提示改用 `prepareForViewModel`。
 - 若没有任何 `@bind` 成员，则不生成该方法。
 
-#### `.vm`（ViewModel）：生成 `mappingObserverMethodsForModelKeys`
+#### `.vm`（ViewModel）：生成 `mappingObserverMethodsForModelKeys` 与 `activelyObservedModelKeys`
 
-遍历类中所有 `@bind` 标记的属性与方法，生成 Model 监听映射表：
+遍历类中所有 `@bind` / `@link` 标记的属性与方法，生成 Model 监听映射表和主动观察键集合：
 
 ```swift
 override class var mappingObserverMethodsForModelKeys: [String : Any]? {
     return [
-        // ……此处展开 “监听方法选择器 → 被监听的 Model 键” 的映射
+        // ……此处展开 “监听方法选择器 → 被监听的 Model 键” 的映射（@bind 与 @link 均参与）
+    ]
+}
+
+override class var activelyObservedModelKeys: [String]? {
+    return [
+        // ……此处展开 @bind 标记的键（不含仅被 @link 标记的键）
     ]
 }
 ```
 
-- 若类中已自定义 `class var mappingObserverMethodsForModelKeys`，宏发出警告并放弃生成（自动监听不生效）。
-- 若没有任何 `@bind` 成员，则不生成该属性。
+- `@bind` 标记的成员：生成映射关系，且其键进入 `activelyObservedModelKeys`，开启 KVO 主动观察。
+- `@link` 标记的成员：仅生成映射关系，其键不进入 `activelyObservedModelKeys`，仅在 `prepare` 初始化时触发一次。
+- 若 `@link` 标记的键同时被 `@bind` 标记，该键因 `@bind` 成为主动观察键，宏在 `@link` 处发出警告，提示改为 `@bind`。
+- 若类中已自定义 `class var mappingObserverMethodsForModelKeys` 或 `class var activelyObservedModelKeys`，宏发出警告并放弃生成（自动监听 / 自动绑定不生效）。
+- 若没有任何 `@bind` / `@link` 成员，则两个属性均不生成；仅有 `@link` 成员时，只生成映射表。
 
 #### `.m`（Model）：不织入成员
 
@@ -172,6 +181,10 @@ class UserViewModel: XZMocoaViewModel {
         return [
             NSStringFromSelector(#selector(Self.userNameDidChange(firstName:lastName:))): ["firstName", "lastName"]
         ]
+    }
+
+    override class var activelyObservedModelKeys: [String]? {
+        return ["firstName", "lastName"]
     }
 }
 ```
@@ -266,39 +279,55 @@ class UserViewModel: XZMocoaViewModel {
 
 ## 五、`@bind`与 `@link` 宏
 
-`@bind` 用于建立**单向绑定**，`@link` 用于建立**单次绑定**（仅赋值一次，不建立持续监听）。两者语法相同，区别在于生成的代码调用 `bindTarget` 还是 `linkTarget`。
+`@bind` 用于建立**单向绑定**，`@link` 用于建立**单次绑定**（仅触发一次，不建立持续监听）。两者语法相同，区别取决于角色：
+
+- **View 角色**：`@bind` 生成 `bindTarget` 持续监听；`@link` 生成 `linkTarget` 仅赋值一次。
+- **ViewModel 角色**：两者都生成 Model 监听映射，区别在于 `@bind` 的键会进入 `activelyObservedModelKeys`（KVO 主动观察），而 `@link` 的键不会（仅在初始化时触发一次）。
 
 它们本身不直接生成绑定代码（`PeerMacro` 展开为空），而是由类上的 `@mocoa` 读取标记后统一织入绑定逻辑，因此**必须与 `@mocoa` 配合使用**。
 
 绑定方向取决于角色：
 
-- **ViewModel 角色**：监听 Model 的属性变化（生成 `mappingObserverMethodsForModelKeys`）。
+- **ViewModel 角色**：监听 Model 的属性变化（生成 `mappingObserverMethodsForModelKeys`，`@bind` 键另生成 `activelyObservedModelKeys`）。
 - **View 角色**：监听 ViewModel 的 KTA 事件（生成 `__mocoa_bind_prepare`）。
 
-> 下文以 `@bind` 为例说明，`@link` 的用法完全相同，仅生成的方法名不同（`linkTarget` vs `bindTarget`）。
+> 下文以 `@bind` 为例说明，`@link` 的用法完全相同，区别见上文及 5.5 节。
 
-### 5.0 `@link` 与主动观察机制
+### 5.0 `@bind` / `@link` 与主动观察机制
 
-**关键区别：**
+**关键区别（ViewModel 角色）：**
 
-- `@bind` 标记的成员会被包含在宏自动生成的 `activelyObservedModelKeys` 中（如果启用了主动观察）。
-- `@link` 标记的成员**会加入映射关系，不主动添加到** `activelyObservedModelKeys`。
-
-这意味着：
+- `@bind` 标记的成员：加入映射表，且其键自动进入宏生成的 `activelyObservedModelKeys`，开启 KVO 主动观察。
+- `@link` 标记的成员：仅加入映射表，其键**不进入** `activelyObservedModelKeys`，仅在 `prepare` 初始化时触发一次。
 
 ```swift
 @mocoa
 class ViewModel: XZMocoaViewModel {
-    
-    @bind var name: String?           // ✅ 加入 mapping + 可能被 KVO 监听
-    
-    @link var avatarUrl: String?      // ⚠️ 只加入 mapping，绝对不被 KVO 监听
-    
-    override class var activelyObservedModelKeys: [String]? {
-        return []  // name 会被 KVO，avatarUrl 不会被 KVO
-    }
+
+    @bind var name: String?           // ✅ 加入映射，并进入主动观察键（KVO 监听）
+
+    @link var avatarUrl: String?      // ⚠️ 只加入映射，不被 KVO 监听
 }
 ```
+
+宏自动生成（示意）：
+
+```swift
+override class var mappingObserverMethodsForModelKeys: [String : Any]? {
+    return [
+        NSStringFromSelector(#selector(setter: Self.name)): ["name"],
+        NSStringFromSelector(#selector(setter: Self.avatarUrl)): ["avatarUrl"]
+    ]
+}
+
+override class var activelyObservedModelKeys: [String]? {
+    return ["name"]   // 不含 avatarUrl
+}
+```
+
+> 若 `@link` 标记的键同时被 `@bind` 标记，该键因 `@bind` 成为主动观察键，宏在 `@link` 处发出编译警告，提示改为 `@bind`。
+>
+> 若类中已手动重写 `mappingObserverMethodsForModelKeys` 或 `activelyObservedModelKeys`，宏发出警告并放弃生成，以手动实现为准。
 
 这种设计使得 `@link` 非常适合静态数据绑定，避免不必要的 KVO 开销。
 
@@ -329,7 +358,7 @@ public macro bind(text key: XZMocoaKey) = #externalMacro(module: "XZKitMacros", 
 // ……其余同类重载见下文“便捷绑定标签一览”
 ```
 
-`@link` 的声明族与 `@bind` 基本对称（无参数、单参数、`selector:`/`key:` 以及带标签的便捷形式），仅宏名不同；但 `@link` 只用于 View，因此**没有** ViewModel 专用的可变参数形式 `@link(_:_:…)`。
+`@link` 的声明族与 `@bind` 完全对称（无参数、单参数、可变参数形式 `@link(_:_:…)`、`selector:`/`key:` 以及带标签的便捷形式），仅宏名不同。其中可变参数形式仅用于 ViewModel 方法，带标签的便捷形式仅用于 View 属性。
 
 ### 5.1 用于 ViewModel（监听 Model）
 
@@ -380,6 +409,8 @@ NSStringFromSelector(#selector(Self.foobar(min:max:))): ["foo", "bar"]
 ```
 
 > 参数既支持字符串字面量 `"foo"`，也支持点语法 `.foo`（会被转换为 keyPath 字符串）。ViewModel 上绑定属性只允许一个无标签参数，方法参数至少一个（否则无法接收被绑定值）。
+>
+> `@link` 在 ViewModel 上的用法与 `@bind` 完全相同（含可变参数形式），区别仅在于其键不会进入 `activelyObservedModelKeys`，参见 5.0 节。
 
 ### 5.2 用于 View（监听 ViewModel）
 
@@ -515,8 +546,8 @@ var nameLabel: UILabel? {
 
 `@link` 与 `@bind` 语法完全相同，区别在于：
 
-- `@bind` 生成 `viewModel.bindTarget(…)`，建立持续监听，ViewModel 值变化时自动更新 View。
-- `@link` 生成 `viewModel.linkTarget(…)`，仅执行一次赋值，不建立持续监听。
+- **View 角色**：`@bind` 生成 `viewModel.bindTarget(…)`，建立持续监听，ViewModel 值变化时自动更新 View；`@link` 生成 `viewModel.linkTarget(…)`，仅执行一次赋值，不建立持续监听。
+- **ViewModel 角色**：两者都生成 `mappingObserverMethodsForModelKeys` 映射关系；`@bind` 的键还会进入 `activelyObservedModelKeys`（KVO 主动观察），`@link` 的键不会，仅在 `prepare` 初始化时触发一次。
 
 适用场景：
 
@@ -602,7 +633,9 @@ XZMocoaModule(for: someURLExpression)!                             // URL 参数
 | 无法确定 class 的角色 | 错误 | @mocoa: 无法确定 `Xxx` 的角色，请通过 role 参数指定 |
 | 成员宏找不到所属 `@mocoa` | 错误 | @mocoa: 无法确定 `@key`/`@bind` 所属的角色 |
 | View 自定义 `__mocoa_bind_prepare` | 错误 | 重写私有方法 `__mocoa_bind_prepare` 会导致绑定失效，请使用 `prepareForViewModel` 方法代替 |
-| ViewModel 自定义 `mappingObserverMethodsForModelKeys` | 警告 | 由于已重写 `mappingObserverMethodsForModelKeys` 属性，宏 @bind 监听将不生效 |
+| ViewModel 自定义 `mappingObserverMethodsForModelKeys` | 警告 | 由于已重写 `mappingObserverMethodsForModelKeys` 属性，宏 @bind 监听 / @link 绑定将不生效 |
+| ViewModel 自定义 `activelyObservedModelKeys` | 警告 | 由于已重写 `activelyObservedModelKeys` 属性，宏 @bind 监听 / @link 绑定将不生效 |
+| `@link` 标记的键同时被 `@bind` 标记 | 警告 | 由于键被 @bind 绑定，键已成为主动观察键，请修改为 @bind 以消除警告 |
 | `@key` 用于 View 角色 | 错误 | @key: 不支持在 View 角色中使用 |
 | `@key` 用于非属性 | 错误 | @key: 仅支持属性 |
 | `@key` 属性已自定义 set/didSet（Model） | 警告 | 无法添加 didSet 方法，请自行调用 `didChangeValue(forKey:)` 方法触发监听 |
@@ -698,12 +731,16 @@ class UserView: UIView, XZMocoaView {
     }
 }
 
-// UserViewModel：@mocoa 生成数据监听映射
+// UserViewModel：@mocoa 生成数据监听映射与主动观察键
 override class var mappingObserverMethodsForModelKeys: [String : Any]? {
     return [
         NSStringFromSelector(#selector(Self.userNameDidChange(firstName:lastName:))): ["firstName", "lastName"],
         NSStringFromSelector(#selector(Self.userVipDidChange(isVip:))): ["isVIP"]
     ]
+}
+
+override class var activelyObservedModelKeys: [String]? {
+    return ["firstName", "lastName", "isVIP"]
 }
 
 // UserView：@mocoa 生成绑定注册
@@ -716,7 +753,7 @@ override func __mocoa_bind_prepare() {
 }
 ```
 
-数据流：修改 `UserModel.firstName` → KVO 通知 → `UserViewModel.userNameDidChange` 被调用 → 更新 `name` → `sendActions` 发送 KTA 事件 → `UserView.nameLabel.text` 自动刷新。
+数据流：修改 `UserModel.firstName` → KVO 通知（`firstName` 为宏生成的主动观察键） → `UserViewModel.userNameDidChange` 被调用 → 更新 `name` → `sendActions` 发送 KTA 事件 → `UserView.nameLabel.text` 自动刷新。
 
 ---
 

@@ -188,7 +188,7 @@ self.sendActions(forKey: "beginRefreshing")
 
 #### 被动监听（默认）
 
-默认情况下，数据监听是被动的，仅在初始化时触发一次。
+默认情况下（`activelyObservedModelKeys` 返回 `nil`），数据监听是被动的：不附加 KVO 观察，监听方法仅在数据变化被外部通知时触发。
 
 原因如下：
 - 在实际开发中，数据在大部分情形下都是单向流动的，比如从网络请求到页面展示，没有数据监听需求。
@@ -230,16 +230,9 @@ class ViewModel: XZMocoaViewModel {
 }
 ```
 
-默认情况下，因为以下原因，数据监听是被动的，仅在初始化时触发一次。
-
-    - 在实际开发中，数据在大部分情形下都是单向流动的，比如从网络请求到页面展示，没有数据监听需求。
-    - 当数据管理框架可能自带监听机制时，比如 CoreData 的 `NSFetchedResultsController` 就原生支持。
-    
-    > 列表视图`XZMocoaTableView/XZMocoaColletionView`已内置了对 `NSFetchedResultsController` 的支持。
-
 #### 主动监听
 
-通过重写 `activelyObservedModelKeys` 属性，控制哪些键需要 KVO 主动监听。
+通过重写类属性 `activelyObservedModelKeys`，控制哪些键需要 KVO 主动监听。开启主动监听后，初始化（`prepare`）时会触发一次所有映射的键，此后由 KVO 持续观察。
 
 ```swift
 /// 开启主动监听，观察 mappingObserverMethodsForModelKeys 中的所有键。
@@ -262,26 +255,30 @@ override class var activelyObservedModelKeys: [String]? {
 
 **绑定模式说明：**
 
-- `nil`：**无绑定模式** → 不附加 KVO → 全部被动绑定（prepare 时手动触发）
+- `nil`：**无绑定模式** → 不附加 KVO → 全部被动绑定，需手动调用 `-model:didChangeValuesForKeys:` 触发
 - `@[]`：**全量绑定模式** → 附加 mapping 中的所有键 → 无被动绑定
 - `["key1", "key2"]`：**半量绑定模式** → 仅附加指定键 → 其余键被动绑定
 
-**注意：`@link` 标记的键自动排除在主动观察之外**
+可通过实例属性 `isActivelyObservingModelKeys` 判断视图模型是否已开启主动观察（仅用于状态判断，重写不影响观察行为）。
+
+**使用 `@mocoa` + `@bind` / `@link` 宏时，主动观察键自动生成：**
+
+- `@bind` 标记的键自动加入映射表，并进入 `activelyObservedModelKeys`（KVO 主动观察）。
+- `@link` 标记的键只加入映射表，不进入 `activelyObservedModelKeys`，仅在 `prepare` 初始化时触发一次。
+- 若 `@link` 标记的键同时被 `@bind` 标记，该键升级为主动观察键，宏会发出编译警告。
+- 手动重写 `mappingObserverMethodsForModelKeys` 或 `activelyObservedModelKeys` 将覆盖宏的自动生成（宏发出警告并放弃生成）。
 
 ```swift
 @mocoa
-@objc
 class ViewModel: XZMocoaViewModel {
     
-    @bind var name: String?      // ✅ 加入映射 + 可能进入 activeObservedList
+    @bind var name: String?      // ✅ 加入映射，并进入 activelyObservedModelKeys（KVO 监听）
     
-    @link var avatarUrl: String? // ⚠️ 只加入映射，绝不进入 activelyObservedModelKeys
-    
-    override var activelyObservedModelKeys: [String]? {
-        // 若返回 []，则 name 会被 KVO 监听，avatarUrl 不会被 KVO 监听
-        return []
-    }
+    @link var avatarUrl: String? // ⚠️ 只加入映射，不被 KVO 监听，仅初始化时触发一次
 }
+
+// 宏自动生成（示意）：name 会被 KVO 监听，avatarUrl 不会被 KVO 监听
+// override class var activelyObservedModelKeys: [String]? { return ["name"] }
 ```
 
 **KVO 事件处理：**
@@ -316,7 +313,7 @@ module.viewModelClass = ViewModel.self
 
 模块注册后，即可按照约定使用：
 
-```objc
+```swift
 let module = #module("https://mocoa.xzkit.com/module/to/path")
 
 let model = XZJSON.decode(data, class: TestModel.self)!
@@ -411,7 +408,6 @@ XZMocoaModule *submodule = module[@"header:black"];
 | `https://mocoa.xezun.com/table/header:name1/` | `name1` 是 `table` 模块的 `header` 子模块 |
 | `https://mocoa.xezun.com/table/footer:name2/` | `name2` 是 `table` 模块的 `footer` 子模块 |
 
-
 - 子模块中分类为`XZMocoaKindDefault` （空字符串）的模块，为模块的默认分类。
 - 子模块中名称为`XZMocoaNameDefault` （空字符串）的模块，为模块的默认名称。
 - 在路径中，没有分类可以省略 `:`，没有名字不能省略 `:`。
@@ -424,18 +420,19 @@ XZMocoaModule *submodule = module[@"header:black"];
 | `https://mocoa.xezun.com/table/:/`         | 合法，默认分类中名为 空 的模块                |
 | `https://mocoa.xezun.com/table/kind/`      | 不合法。因为 `kind` 会被作为 `name` 使用  |
 
-
 ## 五、列表渲染
 
 下面以 iOS 开发中常用的 `UITableView` 组件为例，介绍如何使用 XZMocoa 开发列表页面。
 
-由于原生 `UITableView` 原为 MVC 设计，使用 MVVM 设计模式时，需要适配版本 `XZMocoaTableView`：它仅接管了 `delegate` 和 `dataSource` 代理，未对 `UITableView` 做任何其它处理，`UITableView` 本身以 `contentView` 属性暴露。
+> 由于原生 `UITableView` 原为 MVC 设计，使用 MVVM 设计模式时，需要对其进行改造。
+> 框架内置的 `XZMocoaTableView` 就是 `UITableView` 的适配版本，它仅接管了 `delegate` 和 `dataSource` 代理，未做任何其它处理，`UITableView` 本身以 `contentView` 属性对外暴露。
+> 由于 `XZMocoaTableView` 并没接管所有 `delegate` 方法，用到某些特定代理方法时，需要用 `XZMocoaTableView` 的子类来实现。
 
 ### 1、数据协议
 
-所有`NSObject`子类都可以作为列表数据模型，特别的可以直接将`NSArray`二维数组元素映射为列表`Cell`的数据模型。对于自定义数据模型，可通过`XZMocoaGroupModel`协议，将数据转换为 Mocoa 可用的标准数据。
+所有`NSObject`子类都可以作为列表数据模型，特别的，二维数组`NSArray`元素可以直接映射为列表`Cell`的数据模型。对于自定义数据模型，可通过`XZMocoaGroupModel`协议，将数据转换为 Mocoa 可用的标准数据。
 
-```objc
+```swift
 /// 列表中 section 的数量。
 func mocoa(_ context: Any, numberOfSections null: Any?) -> Int
 /// 列表中 section 中 cell 的数量。
@@ -520,7 +517,7 @@ module.viewModelClass = ExampleCellViewModel.self
 
 ### 4、列表更新
 
-数据变化后，调用 ViewModel 相应的方法，即可同步更新视图：
+数据变化后，调用 ViewModel 相应的方法，即可同步更新视图。
 
 ```objc
 [_dataArray removeObjectAtIndex:0];
@@ -567,9 +564,9 @@ self.navigationController?.pushViewController(with: #URL("https://domain.com/pat
 - `@mocoa(.m)` / `@mocoa(.v)` / `@mocoa(.vm)`：将 class 标记为 Mocoa 的 MVVM 角色。
 - `@mocoa`（无参数）：自动推断角色。命名以 `Model`、`View`、`ViewModel` 结尾，或继承自 `XZMocoaViewModel`、`XZMocoaModel`、`XZMocoaView`、`UIView`、`UIViewController` 的 class 均可被自动推断。
 - `@key` / `@key(_ name:)`：标记属性支持`@bind`绑定，Model 自动发送 KVO 事件，ViewModel 自动发送 KTA 事件。
-- `@bind` / `@bind(_ key:)`：单向绑定。用于 ViewModel 时，监听 Model 属性的变化；用于 View 时，监听 ViewModel 的 KTA 事件。
+- `@bind` / `@bind(_ key:)`：单向绑定。用于 ViewModel 时，监听 Model 属性的变化，键自动进入主动观察；用于 View 时，监听 ViewModel 的 KTA 事件。
 - `@bind(_ vmKey:selector:)` / `@bind(text key:)` 等：为常用视图属性（text、image、isEnabled 等）提供便捷绑定形式。
-- `@link` / `@link(text key:)` 等：单次绑定，语法与 `@bind` 一致，仅用于 View，只赋值一次而不建立持续监听。
+- `@link` / `@link(text key:)` 等：单次绑定，语法与 `@bind` 一致。用于 ViewModel 时，只建立监听映射、不进入主动观察；用于 View 时，只赋值一次而不建立持续监听。
 - `#module(URL)`：通过模块 URL 获取 `XZMocoaModule` 对象。
 
 > 宏的完整语法、展开结果与实现原理，参见 [XZMocoa 宏](./Macros.md)。
