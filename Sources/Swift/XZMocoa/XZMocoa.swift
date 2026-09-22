@@ -20,12 +20,6 @@ extension XZMocoaName: @retroactive ExpressibleByStringLiteral {
         self.init(rawValue: value)
     }
 }
-extension XZMocoaKey: @retroactive ExpressibleByStringLiteral {
-    public typealias StringLiteralType = String
-    public init(stringLiteral value: String) {
-        self.init(rawValue: value)
-    }
-}
 #else
 extension XZMocoaKind: ExpressibleByStringLiteral {
     public typealias StringLiteralType = String
@@ -39,15 +33,7 @@ extension XZMocoaName: ExpressibleByStringLiteral {
         self.init(rawValue: value)
     }
 }
-extension XZMocoaKey: ExpressibleByStringLiteral {
-    public typealias StringLiteralType = String
-    public init(stringLiteral value: String) {
-        self.init(rawValue: value)
-    }
-}
 #endif
-
-
 
 public typealias XZMocoaTableHeaderFooterView = UITableViewHeaderFooterView
 public typealias XZMocoaTableHeaderView = XZMocoaTableHeaderFooterView

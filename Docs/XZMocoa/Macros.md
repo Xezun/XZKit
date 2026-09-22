@@ -607,7 +607,7 @@ XZMocoaModule(for: someURLExpression)!                             // URL 参数
 
 ## 七、`XZMocoaKey` 类型
 
-`@key`、`@bind` 的键参数类型为 `XZMocoaKey`。在 Objective-C 中它是一个可扩展字符串枚举（`typedef NSString *XZMocoaKey NS_EXTENSIBLE_STRING_ENUM`），在 Swift 中表现为支持点语法的结构体，框架预置了大量通用键（见 [`XZMocoaKey.h`](../../Sources/ObjC/XZMocoa/XZMocoaDefines/XZMocoaKey.h)），例如：
+`@key`、`@bind` 的键参数类型为 `XZMocoaKey`。在 Objective-C 中它是一个可扩展字符串枚举（`typedef NSString *XZMocoaKey NS_TYPED_EXTENSIBLE_ENUM`），在 Swift 中表现为支持点语法的结构体，框架预置了大量通用键（见 [`XZMocoaKey.h`](../../Sources/ObjC/XZMocoa/XZMocoaDefines/XZMocoaKey.h)），例如：
 
 - 通用：`.name`、`.title`、`.subtitle`、`.detailText`、`.icon`、`.image`、`.value`、`.color`、`.status` …
 - 视图属性：`.isHidden`、`.alpha`、`.text`、`.textColor`、`.font`、`.placeholder` …

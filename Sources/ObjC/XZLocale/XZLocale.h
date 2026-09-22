@@ -10,7 +10,7 @@
 NS_ASSUME_NONNULL_BEGIN
 
 /// App 语言，如 cn、en、ar 等。
-typedef NSString *XZLocaleLanguage NS_EXTENSIBLE_STRING_ENUM NS_SWIFT_NAME(XZLocale.Language);
+typedef NSString *XZLocaleLanguage NS_TYPED_EXTENSIBLE_ENUM NS_SWIFT_NAME(XZLocale.Language);
 
 /// 简体中文，符号为 zh-Hans 字符串。
 ///

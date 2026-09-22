@@ -31,11 +31,11 @@ UIKIT_EXTERN CGSize  const XZMocoaMinimumViewSize NS_SWIFT_NAME(viewMinimumSize)
 
 /// 模块的名称。
 /// @attention 字符`:`、`/`为保留字符，不可在 XZMocoaName 中使用。
-typedef NSString *XZMocoaName NS_EXTENSIBLE_STRING_ENUM;
+typedef NSString *XZMocoaName NS_TYPED_EXTENSIBLE_ENUM;
 
 /// 模块的分类。
 /// @attention 字符`:`、`/`为保留字符，不可在 XZMocoaKind 中使用。
-typedef NSString *XZMocoaKind NS_EXTENSIBLE_STRING_ENUM;
+typedef NSString *XZMocoaKind NS_TYPED_EXTENSIBLE_ENUM;
 
 /// 默认名称，或者没有名称。
 /// @discussion

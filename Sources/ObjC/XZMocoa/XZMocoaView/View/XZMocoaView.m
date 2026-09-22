@@ -8,6 +8,7 @@
 #import "XZMocoaView.h"
 #import "XZMocoaDefines.h"
 #import "XZRuntime.h"
+#import "XZEmpty.h"
 #import "NSArray+XZKit.h"
 #import "UIView+XZKit.h"
 @import ObjectiveC;
@@ -197,6 +198,19 @@ static const void * const _context = &_context;
             }
         }
     }
+}
+
+- (void)didInitWithMocoaOptions:(XZMocoaOptions *)options {
+    [super didInitWithMocoaOptions:options];
+    
+    if (self.title) {
+        return;
+    }
+    NSString * const title = asNonEmpty(options[XZMocoaKeyTitle], (NSString *)nil);
+    if (title == nil) {
+        return;
+    }
+    self.title = title;
 }
 
 - (void)didChangeViewModel:(XZMocoaViewModel *)oldValue {

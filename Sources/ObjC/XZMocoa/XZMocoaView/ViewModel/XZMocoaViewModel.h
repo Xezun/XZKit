@@ -212,7 +212,7 @@ NS_SWIFT_UI_ACTOR @interface XZMocoaViewModel : NSObject <XZMocoaViewModel> {
 /// - `sendEventsWithKey` 是转发事件。
 /// - `sendActionsForKey` 是调用方法。
 ///
-/// @param key 事件名，如为 nil 则为默认名称 XZMocoaKeyNone
+/// @param key 事件名，如为 nil 则为默认名称 kNilKey
 /// @param value 事件值
 - (void)sendEventsWithKey:(nullable XZMocoaKey)key value:(nullable id)value NS_SWIFT_NAME(sendEvents(_:value:));
 
@@ -279,7 +279,7 @@ NS_SWIFT_UI_ACTOR @interface XZMocoaViewModel : NSObject <XZMocoaViewModel> {
 ///
 /// @param target 绑定事件的对象
 /// @param action 绑定事件的方法
-/// @param key 绑定的事件，可使用 nil 或 XZMocoaKeyNone 或空字符串添加默认事件
+/// @param key 绑定的事件，可使用 nil 或 kNilKey 或空字符串添加默认事件
 - (void)addTarget:(id)target action:(SEL)action forKey:(nullable XZMocoaKey)key;
 
 /// 执行 key 事件绑定的所有方法，并传递参数 value 值。
@@ -309,7 +309,7 @@ NS_SWIFT_UI_ACTOR @interface XZMocoaViewModel : NSObject <XZMocoaViewModel> {
 /// @param target 接收值的对象
 /// @param action 接收值的方法
 /// @param key 获取值的键
-- (void)linkTarget:(nullable id)target action:(SEL)action forKey:(nullable XZMocoaKey)key;
+- (void)linkTarget:(id)target action:(SEL)action forKey:(nullable XZMocoaKey)key;
 
 /// 单向绑定：将 key 绑定到 target 的 action 方法，并立即触发一次 action 方法。
 /// 
@@ -320,7 +320,7 @@ NS_SWIFT_UI_ACTOR @interface XZMocoaViewModel : NSObject <XZMocoaViewModel> {
 /// @param target 绑定事件的对象
 /// @param action 绑定事件的方法
 /// @param key 绑定的事件
-- (void)bindTarget:(nullable id)target action:(SEL)action forKey:(nullable XZMocoaKey)key;
+- (void)bindTarget:(id)target action:(SEL)action forKey:(nullable XZMocoaKey)key;
 
 @end
 
