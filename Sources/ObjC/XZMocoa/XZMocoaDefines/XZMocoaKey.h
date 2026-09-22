@@ -28,7 +28,9 @@ NS_ASSUME_NONNULL_BEGIN
 typedef NSString *XZMocoaKey NS_TYPED_EXTENSIBLE_ENUM;
 
 /// XZMocoaKey 中的 nil 值，实际值为空字符串。
-FOUNDATION_EXPORT XZMocoaKey const kNilKey NS_SWIFT_NAME(None);
+///
+/// 与其它 Key 命名风格不一致，避免占位一个命名。
+FOUNDATION_EXPORT XZMocoaKey const kMocoaNilKey NS_REFINED_FOR_SWIFT NS_SWIFT_NAME(__kMocoaNilKey);
 
 // MARK: - 通用
 

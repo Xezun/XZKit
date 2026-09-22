@@ -259,7 +259,7 @@
 - (instancetype)initWithKey:(NSString *)key value:(id)value source:(XZMocoaViewModel *)source {
     self = [super init];
     if (self) {
-        _key    = key.copy ?: kNilKey;
+        _key    = key.copy ?: kMocoaNilKey;
         _value  = value;
         _source = source;
         _target = source;
@@ -299,17 +299,17 @@
     if (_targetActions == nil) {
         _targetActions = [[XZMocoaTargetActionTable alloc] initWithViewModel:self];
     }
-    [_targetActions addTarget:target action:action forKey:(key ?: kNilKey)];
+    [_targetActions addTarget:target action:action forKey:(key ?: kMocoaNilKey)];
 }
 
 - (void)sendActionsForKey:(XZMocoaKey)key value:(id)value {
     if (!self.isReady) return;
     if (value == nil) {
-        value = (key == kNilKey ? nil : [self valueForKey:key]);
+        value = (key == kMocoaNilKey ? nil : [self valueForKey:key]);
     } else if (value == (id)kCFNull) {
         value = nil;
     }
-    [_targetActions sendActionsForKey:(key ?: kNilKey) value:value];
+    [_targetActions sendActionsForKey:(key ?: kMocoaNilKey) value:value];
 }
 
 - (void)sendActionsForKey:(XZMocoaKey)key {
@@ -326,9 +326,9 @@
         return;
     }
     if (key == nil) {
-        key = kNilKey;
+        key = kMocoaNilKey;
     }
-    id const value = (key == kNilKey ? nil : [self valueForKey:key]);
+    id const value = (key == kMocoaNilKey ? nil : [self valueForKey:key]);
     [XZMocoaAction sender:self target:target sendAction:action forKey:key value:value];
 }
 

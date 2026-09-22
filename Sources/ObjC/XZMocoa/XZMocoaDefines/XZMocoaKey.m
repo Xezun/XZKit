@@ -7,7 +7,7 @@
 
 #import "XZMocoaKey.h"
 
-XZMocoaKey const kNilKey = @"";
+XZMocoaKey const kMocoaNilKey = @"";
 
 XZMocoaKey const XZMocoaKeyDefault          = @"default";
 XZMocoaKey const XZMocoaKeyContentStatus    = @"contentStatus";

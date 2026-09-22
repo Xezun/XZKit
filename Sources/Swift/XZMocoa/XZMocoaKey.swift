@@ -23,6 +23,9 @@ extension XZMocoaKey: ExpressibleByStringLiteral {
 }
 #endif
 
+/// XZMocoaKey 中的 nil 值，实际值为空字符串。
+public let kMocoaNilKey = XZMocoaKey.__kMocoaNilKey;
+
 #if USES_SWIFT_MOCOA_KEY
 @dynamicMemberLookup
 public struct XZMocoaKey: Hashable, RawRepresentable, ExpressibleByStringLiteral, @unchecked Sendable {
