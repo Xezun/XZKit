@@ -23,25 +23,13 @@
 }
 
 - (void)dealloc {
-    // 移除对数据模型的 KVO 观察（见下方 _detachModelObserverIfNeeded:）。
-    
-    // 不能像下面这样使用 for-in 语句。
-    // for (XZMocoaViewModel *viewModel in subViewModels) {
-    //     [viewModel removeFromSuperViewModel];
-    // }
-    // 1. 调用 removeFromSuperViewModel 方法会修改 _subViewModels 集合，
-    //    虽然实测并没有崩溃，但是也不应该这样做。
-    // 2. 在 for-in 中，被遍历的对象没有被强引用，所以被遍历的对象 viewModel
-    //    可能会因为在 removeFromSuperViewModel 方法中被移除而释放，从而导
-    //    致在将 viewModel 作为参数调用 -didRemoveSubViewModel: 方法时，
-    //    因访问已经释放 viewModel 对象而发生崩溃。
-    
-    XZMocoaViewModel *viewModel = _subViewModels.lastObject;
-    while (viewModel != nil) {
-        [viewModel removeFromSuperViewModel]; 
-        viewModel = _subViewModels.lastObject;
+    // 移除子视图模型
+    for (NSInteger i = _subViewModels.count - 1; i >= 0; i--) {
+        XZMocoaViewModel * const subViewModel = _subViewModels[i];
+        [subViewModel removeFromSuperViewModel];
     }
     
+    // 移除对数据模型的 KVO 观察
     [self _detachModelObserverIfNeeded:_model];
 }
 
@@ -249,8 +237,10 @@
     }
     _superViewModel = nil;
     
-    [superViewModel->_subViewModels removeObject:self];
-    [superViewModel didRemoveSubViewModel:self];
+    // 避免 self 从集合中移除就立即被释放了。
+    XZMocoaViewModel * const subViewModel = self;
+    [superViewModel->_subViewModels removeObject:subViewModel];
+    [superViewModel didRemoveSubViewModel:subViewModel];
 }
 
 - (void)didRemoveSubViewModel:(__kindof XZMocoaViewModel *)viewModel {
