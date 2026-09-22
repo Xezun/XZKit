@@ -407,7 +407,7 @@ static void barFunction(void) { }
     };
 }
 
-- (NSArray<NSString *> *)activelyObservedModelKeys {
++ (NSArray<NSString *> *)activelyObservedModelKeys {
     return @[];  // 观察 mapping 中的所有键
 }
 

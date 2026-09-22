@@ -344,11 +344,6 @@ NS_SWIFT_UI_ACTOR @interface XZMocoaViewModel : NSObject <XZMocoaViewModel> {
 
 @interface XZMocoaViewModel (XZMocoaKeyObserver)
 
-/// 当前视图模型是否主动观察了数据模型，用于判断状态。
-///
-/// 子类不可重写此属性，重写此属性，也无法影响观察的主被动性。
-@property (nonatomic, readonly) BOOL isModelKeysObservedActively;
-
 /// “视图模型”观察“数据模型”的键值观察映射表。
 ///
 /// 注册 视图模型方法 与 数据模型属性 之间映射关系的字典。
@@ -383,14 +378,15 @@ NS_SWIFT_UI_ACTOR @interface XZMocoaViewModel : NSObject <XZMocoaViewModel> {
 /// 主动观察的数据模型键的集合。
 ///
 /// - `nil` 表示不主动观察。
-/// - `@[]` 表示主动观察 ``mappingObserverMethodsForModelKeys`` 中的所有键（排除 `@link` 绑定的键）。
-/// - 具体字符串数组：仅观察指定的键。
+/// - `@[]` 表示主动观察 ``mappingObserverMethodsForModelKeys`` 中的所有键。
+/// - 具体字符串数组：主动观察数组中指定的键。
 ///
 /// ## 宏绑定机制说明
 ///
 /// 使用 `@mocoa` 宏时：
 /// - `@bind` 标记的属性和方法会自动加入映射表，并根据此属性决定是否监听。
-/// - `@link` 标记的属性和方法只会建立单次绑定映射，不会加入主动观察。
+/// - `@link` 标记的属性和方法只会建立绑定映射，仅在`-prepare`初始化时执行一次，不加入主动观察。
+/// - 如果 `@link` 标记的键，也被 `@bind` 标记，那么 `@link` 也会升级为主动观察。
 /// - 如果在子类中返回具体键列表，将覆盖自动推断的结果。
 ///
 /// ## 示例
@@ -405,7 +401,16 @@ NS_SWIFT_UI_ACTOR @interface XZMocoaViewModel : NSObject <XZMocoaViewModel> {
 /// // 仅观察指定键（排除 @link 绑定的键）
 /// - (NSArray *)activelyObservedModelKeys { return @[@"name"]; }
 /// ```
-@property (nonatomic, readonly, nullable) NSArray<NSString *> *activelyObservedModelKeys;
+@property (class, nonatomic, readonly, nullable) NSArray<NSString *> *activelyObservedModelKeys;
+
+/// 主动观察了数据模型的能力是否开启。。
+///
+/// 开启主动观察，请重写 ``activelyObservedModelKeys`` 静态属性。
+///
+/// 此属性仅用于判断状态，重写此属性不影响观察行为的主动性和被动性。
+///
+/// 此属性为 YES 时，表示视图模型已开启主动观察，不论实际是否有主动观察的键。
+@property (nonatomic, readonly) BOOL isActivelyObservingModelKeys;
 
 /// 视图模型接收数据更新的通用方法。
 ///

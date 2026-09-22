@@ -337,36 +337,8 @@ public struct BindMacro: PeerMacro, AccessorMacro {
 
 extension BindMacro {
     
-    /// 供 @mocoa 宏调用，为属性生成绑定代码。
-    public static func expansion(of role: XZMacroMocoaRole, providingStatementsOf property: XZMacroPropertyInfomation, in context: some MacroExpansionContext) throws -> String? {
-        switch role {
-        case .m:
-            throw XZMacroError(message: "@bind: 数据模型 Model 不支持绑定")
-            
-        case .v:
-            return try self.view(role, providingStatementsOf: property, in: context)
-            
-        case .vm:
-            return try self.viewModel(role, providingStatementsOf: property, in: context)?.statements
-        }
-    }
-    
-    /// 供 @mocoa 宏调用，为方法生成绑定代码。
-    public static func expansion(of role: XZMacroMocoaRole, providingStatementsOf method: XZMacroMethodInformation, in context: some MacroExpansionContext) throws -> String? {
-        switch role {
-        case .m:
-            throw XZMacroError(message: "@bind: 数据模型 Model 不支持绑定")
-            
-        case .v:
-            return try self.view(role, providingStatementsOf: method, in: context)
-            
-        case .vm:
-            return try self.viewModel(role, providingStatementsOf: method, in: context)?.statements
-        }
-    }
-    
-    /// 为 View 的属性生成绑定代码。
-    private static func view(_ view: Any, providingStatementsOf property: XZMacroPropertyInfomation, in context: some MacroExpansionContext) throws -> String? {
+    /// 供 @mocoa 宏调用，为 View 的属性生成绑定代码。
+    public static func expansion(view: Any, providingStatementsOf property: XZMacroPropertyInfomation, in context: some MacroExpansionContext) throws -> String? {
         var statements = [String]()
         for bindNode in property.declaration.attributes {
             guard case let .attribute(bindNode) = bindNode else {
@@ -455,8 +427,8 @@ extension BindMacro {
         }
     }
     
-    /// 为 View 的方法生成绑定代码。
-    private static func view(_ view: Any, providingStatementsOf method: XZMacroMethodInformation, in context: some MacroExpansionContext) throws -> String? {
+    /// 供 @mocoa 宏调用，为 View 的方法生成绑定代码。
+    public static func expansion(view: Any, providingStatementsOf method: XZMacroMethodInformation, in context: some MacroExpansionContext) throws -> String? {
         var statements = [String]()
         for bindNode in method.declaration.attributes {
             guard case let .attribute(bindNode) = bindNode else {
@@ -510,10 +482,12 @@ extension BindMacro {
         return statements.joined(separator: "\n")
     }
     
-    /// 为 ViewModel 的属性，生成绑定代码。keys 为带引号的字符串。
-    public static func viewModel(_ viewModel: Any, providingStatementsOf property: XZMacroPropertyInfomation, in context: some MacroExpansionContext) throws -> (statements: String, linkKeys: Set<String>, bindKeys: Set<String>)? {
+    /// 供 @mocoa 宏调用，为 ViewModel 的属性，生成绑定代码。keys 为带引号的字符串。
+    public static func expansion(viewModel: Any, providingStatementsOf property: XZMacroPropertyInfomation, in context: some MacroExpansionContext) throws -> (statements: String, bindKeys: Set<String>, linkNodes: [(node: AttributeSyntax, keys: [String])])? {
         var statements = [String]()
-        var allKeys = ["link": Set<String>(), "bind": Set<String>()]
+        var bindKeys = Set<String>()
+        var linkNodes = [(AttributeSyntax, [String])]()
+        
         for anyNode in property.declaration.attributes {
             guard case let .attribute(node) = anyNode else {
                 continue
@@ -521,7 +495,8 @@ extension BindMacro {
             guard let nodeMethod = node.attributeName.as(IdentifierTypeSyntax.self)?.name.text else {
                 continue
             }
-            guard nodeMethod == "bind" || nodeMethod == "link" else {
+            let isBindMethod = nodeMethod == "bind"
+            guard isBindMethod || nodeMethod == "link" else {
                 continue
             }
             
@@ -535,12 +510,12 @@ extension BindMacro {
             case 0:
                 let key = "\"\(property.name)\""
                 statements.append("NSStringFromSelector(#selector(setter: Self.\(property.name))): \(key)")
-                allKeys[nodeMethod]!.insert(key)
+                if isBindMethod { bindKeys.insert(key) } else { linkNodes.append((node, [key])) }
                 
             case 1:
                 let key = "\"\(try XZMocoaKey(node, argument: nodeArguments[0].expression))\""
                 statements.append("NSStringFromSelector(#selector(setter: Self.\(property.name))): \(key)")
-                allKeys[nodeMethod]!.insert(key)
+                if isBindMethod { bindKeys.insert(key) } else { linkNodes.append((node, [key])) }
                 
             default:
                 throw XZMacroError(node, message: "参数错误")
@@ -551,13 +526,15 @@ extension BindMacro {
             return nil
         }
         
-        return (statements.joined(separator: ", \n"), allKeys["link"]!, allKeys["bind"]!)
+        return (statements.joined(separator: ", \n"), bindKeys, linkNodes)
     }
     
-    ///  为 ViewModel 的方法，生成绑定代码。keys 为带引号的字符串。
-    public static func viewModel(_ viewModel: Any, providingStatementsOf method: XZMacroMethodInformation, in context: some MacroExpansionContext) throws -> (statements: String, linkKeys: Set<String>, bindKeys: Set<String>)? {
+    /// 供 @mocoa 宏调用，为 ViewModel 的方法，生成绑定代码。keys 为带引号的字符串。
+    public static func expansion(viewModel: Any, providingStatementsOf method: XZMacroMethodInformation, in context: some MacroExpansionContext) throws -> (statements: String, bindKeys: Set<String>, linkNodes: [(node: AttributeSyntax, keys: [String])])? {
         var statements = [String]()
-        var allKeys = ["link": Set<String>(), "bind": Set<String>()]
+        var bindKeys = Set<String>()
+        var linkNodes = [(node: AttributeSyntax, keys: [String])]()
+        
         for anyNode in method.declaration.attributes {
             guard case let .attribute(node) = anyNode else {
                 continue
@@ -565,6 +542,7 @@ extension BindMacro {
             guard let nodeMethod = node.attributeName.as(IdentifierTypeSyntax.self)?.name.text else {
                 continue
             }
+            let isBindMethod = nodeMethod == "bind"
             guard nodeMethod == "bind" || nodeMethod == "link" else {
                 continue
             }
@@ -578,13 +556,15 @@ extension BindMacro {
                 case 1:
                     let key = "\"\(method.parameters[0])\""
                     statements.append("NSStringFromSelector(#selector(Self.\(method.selector))): \(key)")
-                    allKeys[nodeMethod]!.insert(key)
+                    if isBindMethod { bindKeys.insert(key) } else { linkNodes.append((node, [key])) }
+                    
                 default:
                     let nodeKeys = method.parameters.map({ argument in
                         return "\"\(argument)\""
                     })
                     statements.append("NSStringFromSelector(#selector(Self.\(method.selector))): [\(nodeKeys.joined(separator: ", "))]")
-                    allKeys[nodeMethod]!.formUnion(nodeKeys)
+                    if isBindMethod { bindKeys.formUnion(nodeKeys) } else { linkNodes.append((node, nodeKeys)) }
+                    
                 }
                 
             default:
@@ -604,7 +584,7 @@ extension BindMacro {
                     return "\"\(argument)\""
                 })
                 statements.append("NSStringFromSelector(#selector(Self.\(method.selector))): [\(nodeKeys.joined(separator: ", "))]")
-                allKeys[nodeMethod]!.formUnion(nodeKeys)
+                if isBindMethod { bindKeys.formUnion(nodeKeys) } else { linkNodes.append((node, nodeKeys)) }
             }
         }
         
@@ -612,7 +592,7 @@ extension BindMacro {
             return nil
         }
         
-        return (statements.joined(separator: ", \n"), allKeys["link"]!, allKeys["bind"]!)
+        return (statements.joined(separator: ", \n"), bindKeys, linkNodes)
     }
 }
 

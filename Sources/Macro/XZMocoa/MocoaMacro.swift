@@ -109,13 +109,13 @@ extension MocoaMacro: MemberMacro {
             for member in classDecl.memberBlock.members {
                 if let propertyDecl = member.decl.as(VariableDeclSyntax.self) {
                     let property = try XZMacroPropertyInfomation(node, propertyDecl)
-                    if let statement = try BindMacro.expansion(of: .v, providingStatementsOf: property, in: context) {
+                    if let statement = try BindMacro.expansion(view: node, providingStatementsOf: property, in: context) {
                         statements.append(statement)
                     }
                 }
                 if let methodDecl = member.decl.as(FunctionDeclSyntax.self) {
                     let method = XZMacroMethodInformation(node, methodDecl)
-                    if let statement = try BindMacro.expansion(of: .v, providingStatementsOf: method, in: context) {
+                    if let statement = try BindMacro.expansion(view: node, providingStatementsOf: method, in: context) {
                         statements.append(statement)
                     }
                 }
@@ -189,40 +189,48 @@ extension MocoaMacro: MemberMacro {
             
             var mappingStatements = [String]()  // mappingObserverMethodsForModelKeys 的语句
             var bindKeys = Set<String>()  // @bind 标记的 key，用于 activelyObservedModelKeys
-            var linkKeys = Set<String>()  // @link 标记的 key，排除出 activelyObservedModelKeys
+            var linkNodes = [(node: AttributeSyntax, keys: [String])]()  // @link 标记的 key，排除出 activelyObservedModelKeys
             
             for member in classDecl.memberBlock.members {
                 if let propertyDecl = member.decl.as(VariableDeclSyntax.self) {
                     let property = try XZMacroPropertyInfomation(node, propertyDecl)
-                    if let result = try BindMacro.viewModel(node, providingStatementsOf: property, in: context) {
+                    if let result = try BindMacro.expansion(viewModel: node, providingStatementsOf: property, in: context) {
                         mappingStatements.append(result.statements)
                         bindKeys.formUnion(result.bindKeys)
-                        linkKeys.formUnion(result.linkKeys)
+                        linkNodes.append(contentsOf: result.linkNodes)
                     }
                     continue
                 }
                 
                 if let methodDecl = member.decl.as(FunctionDeclSyntax.self) {
                     let method = XZMacroMethodInformation(node, methodDecl)
-                    if let result = try BindMacro.viewModel(node, providingStatementsOf: method, in: context) {
+                    if let result = try BindMacro.expansion(viewModel: node, providingStatementsOf: method, in: context) {
                         mappingStatements.append(result.statements)
                         bindKeys.formUnion(result.bindKeys)
-                        linkKeys.formUnion(result.linkKeys)
+                        linkNodes.append(contentsOf: result.linkNodes)
                     }
                     continue
                 }
             }
             
-            // 生成 mappingObserverMethodsForModelKeys
-            let mappingStatementsStr = mappingStatements.joined(separator: ", \n")
+            // 发送 @link 隐式升级为 @bind 警告
+            for linkNode in linkNodes {
+                if bindKeys.isDisjoint(with: linkNode.keys) {
+                    continue
+                }
+                XZMacroDiagnose(context, node: linkNode.node, message: "由于键被 @bind 绑定，键已成为主动观察键，请修改为 @bind 以消除警告", severity: .warning)
+            }
+            
             var generatedDecls: [DeclSyntax] = []
             
+            // 生成 mappingObserverMethodsForModelKeys
             if !mappingStatements.isEmpty {
+                let dictionaryElements = mappingStatements.joined(separator: ", \n")
                 let variableSyntax = try VariableDeclSyntax(
                     """
-                    override class var mappingObserverMethodsForModelKeys: [String : Any]? {
+                    public override class var mappingObserverMethodsForModelKeys: [String : Any]? {
                         return [ 
-                            \(raw: mappingStatementsStr)
+                            \(raw: dictionaryElements)
                         ]
                     }
                     """
@@ -231,14 +239,12 @@ extension MocoaMacro: MemberMacro {
             }
             
             // 生成 activelyObservedModelKeys：只包含 @bind 标记的键，排除 @link 标记的键
-            let observedKeys = bindKeys.subtracting(linkKeys)
-            if !observedKeys.isEmpty {
+            if !bindKeys.isEmpty {
                 // 生成数组元素
-                let arrayElements = observedKeys.joined(separator: ", ")
-                
+                let arrayElements = bindKeys.joined(separator: ", ")
                 let observedVariableSyntax = try VariableDeclSyntax(
                     """
-                    override var activelyObservedModelKeys: [String]? {
+                    public override class var activelyObservedModelKeys: [String]? {
                         return [\(raw: arrayElements)]
                     }
                     """

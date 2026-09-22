@@ -88,6 +88,9 @@ class TestViewModel: XZMocoaTableViewModel {
     @link
     var name: String?
     
+    @link
+    var min: Int = 1
+    
     @key
     var age: Int = 20
     
@@ -117,8 +120,6 @@ class TestViewModel: XZMocoaTableViewModel {
             super.didReceive(events)
         }
     }
-    
-    
     
     @bind
     @objc func rangeDidChange(_ min: Int, _ max: Int) {

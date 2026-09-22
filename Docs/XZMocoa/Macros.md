@@ -282,7 +282,7 @@ class UserViewModel: XZMocoaViewModel {
 **关键区别：**
 
 - `@bind` 标记的成员会被包含在宏自动生成的 `activelyObservedModelKeys` 中（如果启用了主动观察）。
-- `@link` 标记的成员**只加入映射关系，绝不进入** `activelyObservedModelKeys`。
+- `@link` 标记的成员**会加入映射关系，不主动添加到** `activelyObservedModelKeys`。
 
 这意味着：
 
@@ -294,7 +294,7 @@ class ViewModel: XZMocoaViewModel {
     
     @link var avatarUrl: String?      // ⚠️ 只加入 mapping，绝对不被 KVO 监听
     
-    override var activelyObservedModelKeys: [String]? {
+    override class var activelyObservedModelKeys: [String]? {
         return []  // name 会被 KVO，avatarUrl 不会被 KVO
     }
 }

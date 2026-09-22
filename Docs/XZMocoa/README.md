@@ -243,19 +243,19 @@ class ViewModel: XZMocoaViewModel {
 
 ```swift
 /// 开启主动监听，观察 mappingObserverMethodsForModelKeys 中的所有键。
-override var activelyObservedModelKeys: [String]? {
+override class var activelyObservedModelKeys: [String]? {
     return []  // @[]表示观察所有映射的键
 }
 
 // 或
 
-/// 仅观察指定键，排除@link 绑定的键。
-override var activelyObservedModelKeys: [String]? {
+/// 仅观察指定键，排除 @link 绑定的键。
+override class var activelyObservedModelKeys: [String]? {
     return ["name", "age"]  // 具体数组，仅观察这些键
 }
 
 // 或不启用主动监听
-override var activelyObservedModelKeys: [String]? {
+override class var activelyObservedModelKeys: [String]? {
     return nil  // nil 表示不启用 KVO 主动监听
 }
 ```

@@ -11,9 +11,6 @@ import XZKit
 @mocoa
 class Example17ViewModel: XZMocoaViewModel {
     
-    override var activelyObservedModelKeys: [String]? {
-        return []  // 主动观察 mapping 中的所有键
-    
     @key
     @bind("current.isHidden")
     var currentHidden: Bool = false

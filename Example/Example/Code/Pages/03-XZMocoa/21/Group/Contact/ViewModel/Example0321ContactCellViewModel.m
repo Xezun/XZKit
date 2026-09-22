@@ -35,7 +35,7 @@
 }
 
 // 开启主动监听
-- (NSArray<NSString *> *)activelyObservedModelKeys {
++ (NSArray<NSString *> *)activelyObservedModelKeys {
     return @[];
 }
 

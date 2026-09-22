@@ -78,7 +78,7 @@ class View: UIView, XZMocoaView {
     @bind(text: .name)
     @IBOutlet var nameLabel: UILabel!
     
-    @bind(.detailText)
+    @bind(text: .detailText)
     @bind(textColor: "textColor")
     var detailLabel: UILabel?
     

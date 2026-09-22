@@ -16,7 +16,7 @@
 
 @implementation XZMocoaViewModel {
     @private
-    BOOL _isModelKeysObservedActively;
+    BOOL _isActivelyObservingModelKeys;
     XZMocoaTargetActionTable                * _targetActions;
     NSMutableOrderedSet<XZMocoaViewModel *> * _subViewModels;
     __unsafe_unretained XZMocoaViewModel    * _superViewModel;
@@ -55,7 +55,7 @@
         _frame   = CGRectZero;
         _isReady = NO;
         _model   = model;
-        _isModelKeysObservedActively = NO;
+        _isActivelyObservingModelKeys = NO;
     }
     return self;
 }
@@ -133,20 +133,20 @@
     }
     
     // 使用新 API：activelyObservedModelKeys
-    NSArray<NSString *> * const observedKeys = [self activelyObservedModelKeys];
+    NSArray<NSString *> * const observedKeys = [self.class activelyObservedModelKeys];
     
     // 情况 A: 不需要主动观察 → 不附加 KVO
     if (observedKeys == nil) {
         return nil;
     }
     
+    _isActivelyObservingModelKeys = YES;
+    
     // 没有映射关系，无法绑定
     XZMocoaKeyMappingTable * const table = [XZMocoaKeyMappingTable tableForClass:self.class];
     if (table == nil || table.keyToMethods.count == 0) {
         return nil;
     }
-    
-    _isModelKeysObservedActively = YES;
     
     // 半量绑定：只附加指定的键（ @link 绑定的键会自动排除 ）
     if (observedKeys.count > 0) {
@@ -161,7 +161,7 @@
 }
          
 - (void)_detachModelObserverIfNeeded:(id)model {
-    _isModelKeysObservedActively = NO;
+    _isActivelyObservingModelKeys = NO;
     if (model == nil) {
         return;
     }
@@ -374,16 +374,16 @@
 
 @implementation XZMocoaViewModel (XZMocoaKeyObserver)
 
-- (BOOL)isModelKeysObservedActively {
-    return _isModelKeysObservedActively;
-}
-
-- (NSArray<NSString *> *)activelyObservedModelKeys {
++ (NSArray<NSString *> *)activelyObservedModelKeys {
     return nil;
 }
 
 + (NSDictionary<NSString *,id> *)mappingObserverMethodsForModelKeys {
     return nil;
+}
+
+- (BOOL)isActivelyObservingModelKeys {
+    return _isActivelyObservingModelKeys;
 }
 
 - (void)model:(id)model didChangeValuesForKeys:(NSSet<XZMocoaKey> * const)changedKeys {
