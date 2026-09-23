@@ -103,6 +103,14 @@
     for (NSInteger i = 0; i < _arguments.count; i++) {
         id const value = asNonEmpty(parameters[i], (id)nil);
         
+        // 假如属性 foobar 是 UInt32 类型。
+        // @property (nonatomic) UInt32 foobar;
+        // 通过 KVC 取出的 NSNumber 实际按 8 字节存储，而不是 UInt32 存储。
+        // NSValue *value = [self valueForKey:@"foobar"];
+        // UInt32 number = 0;
+        // 按 UInt32 取值发生崩溃：Cannot get value with size 4. The type encoded as q is expected to be 8 bytes
+        // [value getValue:&number size:sizeof(UInt32)];
+        
         XZObjcType * const type = _arguments[i];
         switch (type.type) {
             case XZStdcTypeUnknown: {
@@ -112,98 +120,82 @@
                 break;
             }
             case XZStdcTypeChar: {
-                char argumentValue;
-                [(NSValue *)value getValue:&argumentValue size:sizeof(char)];
+                char const argumentValue = [(NSNumber *)value charValue];
                 [invocation setArgument:&argumentValue atIndex:(i + 2)];
                 break;
             }
             case XZStdcTypeUnsignedChar: {
-                unsigned char argumentValue;
-                [(NSValue *)value getValue:&argumentValue size:sizeof(unsigned char)];
+                unsigned char const argumentValue = [(NSNumber *)value unsignedCharValue];
                 [invocation setArgument:&argumentValue atIndex:(i + 2)];
                 break;
             }
             case XZStdcTypeInt: {
-                int argumentValue;
-                [(NSValue *)value getValue:&argumentValue size:sizeof(int)];
+                int const argumentValue = [(NSNumber *)value intValue];
                 [invocation setArgument:&argumentValue atIndex:(i + 2)];
                 break;
             }
             case XZStdcTypeUnsignedInt: {
-                unsigned int argumentValue;
-                [(NSValue *)value getValue:&argumentValue size:sizeof(unsigned int)];
+                unsigned int const argumentValue = [(NSNumber *)value unsignedIntValue];
                 [invocation setArgument:&argumentValue atIndex:(i + 2)];
                 break;
             }
             case XZStdcTypeShort: {
-                short argumentValue;
-                [(NSValue *)value getValue:&argumentValue size:sizeof(short)];
+                short const argumentValue = [(NSNumber *)value shortValue];
                 [invocation setArgument:&argumentValue atIndex:(i + 2)];
                 break;
             }
             case XZStdcTypeUnsignedShort: {
-                unsigned short argumentValue;
-                [(NSValue *)value getValue:&argumentValue size:sizeof(unsigned short)];
+                unsigned short const argumentValue = [(NSNumber *)value unsignedShortValue];
                 [invocation setArgument:&argumentValue atIndex:(i + 2)];
                 break;
             }
             case XZStdcTypeLong: {
-                long argumentValue;
-                [(NSValue *)value getValue:&argumentValue size:sizeof(long)];
+                long const argumentValue = [(NSNumber *)value longValue];
                 [invocation setArgument:&argumentValue atIndex:(i + 2)];
                 break;
             }
             case XZStdcTypeUnsignedLong: {
-                unsigned long argumentValue;
-                [(NSValue *)value getValue:&argumentValue size:sizeof(unsigned long)];
+                unsigned long const argumentValue = [(NSNumber *)value unsignedLongValue];
                 [invocation setArgument:&argumentValue atIndex:(i + 2)];
                 break;
             }
-            case XZStdcTypeInt128: {
-                SInt64 argumentValue;
-                [(NSValue *)value getValue:&argumentValue size:sizeof(SInt64)];
+            case XZStdcTypeInt128: { // 暂无 Int128 类，用 long long 代替
+                SInt64 const argumentValue = [(NSNumber *)value longLongValue];
                 [invocation setArgument:&argumentValue atIndex:(i + 2)];
                 break;
             }
             case XZStdcTypeUnsignedInt128: {
-                UInt64 argumentValue;
-                [(NSValue *)value getValue:&argumentValue size:sizeof(UInt64)];
+                UInt64 const argumentValue = [(NSNumber *)value unsignedLongLongValue];
                 [invocation setArgument:&argumentValue atIndex:(i + 2)];
                 break;
             }
             case XZStdcTypeLongLong: {
-                long long argumentValue;
-                [(NSValue *)value getValue:&argumentValue size:sizeof(long long)];
+                long long const argumentValue = [(NSNumber *)value longLongValue];
                 [invocation setArgument:&argumentValue atIndex:(i + 2)];
                 break;
             }
             case XZStdcTypeUnsignedLongLong: {
-                unsigned long long argumentValue;
-                [(NSValue *)value getValue:&argumentValue size:sizeof(unsigned long long)];
+                unsigned long long const argumentValue = [(NSNumber *)value unsignedLongLongValue];
                 [invocation setArgument:&argumentValue atIndex:(i + 2)];
                 break;
             }
             case XZStdcTypeFloat: {
-                float argumentValue;
-                [(NSValue *)value getValue:&argumentValue size:sizeof(float)];
+                float const argumentValue = [(NSNumber *)value floatValue];
                 [invocation setArgument:&argumentValue atIndex:(i + 2)];
                 break;
             }
             case XZStdcTypeDouble: {
-                double argumentValue;
-                [(NSValue *)value getValue:&argumentValue size:sizeof(double)];
+                double const argumentValue = [(NSNumber *)value doubleValue];
                 [invocation setArgument:&argumentValue atIndex:(i + 2)];
                 break;
             }
             case XZStdcTypeLongDouble: {
-                long double argumentValue;
-                [(NSValue *)value getValue:&argumentValue size:sizeof(long double)];
+                long double const argumentValue = [(NSNumber *)value doubleValue];
                 [invocation setArgument:&argumentValue atIndex:(i + 2)];
                 break;
             }
             case XZStdcTypeBool: {
-                BOOL argumentValue;
-                [(NSValue *)value getValue:&argumentValue size:sizeof(BOOL)];
+                BOOL const argumentValue = [(NSNumber *)value boolValue];
                 [invocation setArgument:&argumentValue atIndex:(i + 2)];
                 break;
             }
@@ -218,7 +210,7 @@
                 break;
             }
             case XZStdcTypeSelector: {
-                SEL argumentValue;
+                SEL const argumentValue;
                 [(NSValue *)value getValue:&argumentValue size:sizeof(SEL)];
                 [invocation setArgument:&argumentValue atIndex:(i + 2)];
                 break;
@@ -258,55 +250,55 @@
                         break;
                     }
                     case XZStdcStructTypeCGRect: {
-                        CGRect argumentValue;
+                        CGRect const argumentValue;
                         [(NSValue *)value getValue:&argumentValue size:sizeof(CGRect)];
                         [invocation setArgument:&argumentValue atIndex:(i + 2)];
                         break;
                     }
                     case XZStdcStructTypeCGSize: {
-                        CGSize argumentValue;
+                        CGSize const argumentValue;
                         [(NSValue *)value getValue:&argumentValue size:sizeof(CGSize)];
                         [invocation setArgument:&argumentValue atIndex:(i + 2)];
                         break;
                     }
                     case XZStdcStructTypeCGPoint: {
-                        CGPoint argumentValue;
+                        CGPoint const argumentValue;
                         [(NSValue *)value getValue:&argumentValue size:sizeof(CGPoint)];
                         [invocation setArgument:&argumentValue atIndex:(i + 2)];
                         break;
                     }
                     case XZStdcStructTypeCGVector: {
-                        CGVector argumentValue;
+                        CGVector const argumentValue;
                         [(NSValue *)value getValue:&argumentValue size:sizeof(CGVector)];
                         [invocation setArgument:&argumentValue atIndex:(i + 2)];
                         break;
                     }
                     case XZStdcStructTypeCGAffineTransform: {
-                        CGAffineTransform argumentValue;
+                        CGAffineTransform const argumentValue;
                         [(NSValue *)value getValue:&argumentValue size:sizeof(CGAffineTransform)];
                         [invocation setArgument:&argumentValue atIndex:(i + 2)];
                         break;
                     }
                     case XZStdcStructTypeNSDirectionalEdgeInsets: {
-                        NSDirectionalEdgeInsets argumentValue;
+                        NSDirectionalEdgeInsets const argumentValue;
                         [(NSValue *)value getValue:&argumentValue size:sizeof(NSDirectionalEdgeInsets)];
                         [invocation setArgument:&argumentValue atIndex:(i + 2)];
                         break;
                     }
                     case XZStdcStructTypeNSRange: {
-                        NSRange argumentValue;
+                        NSRange const argumentValue;
                         [(NSValue *)value getValue:&argumentValue size:sizeof(NSRange)];
                         [invocation setArgument:&argumentValue atIndex:(i + 2)];
                         break;
                     }
                     case XZStdcStructTypeUIEdgeInsets: {
-                        UIEdgeInsets argumentValue;
+                        UIEdgeInsets const argumentValue;
                         [(NSValue *)value getValue:&argumentValue size:sizeof(UIEdgeInsets)];
                         [invocation setArgument:&argumentValue atIndex:(i + 2)];
                         break;
                     }
                     case XZStdcStructTypeUIOffset: {
-                        UIOffset argumentValue;
+                        UIOffset const argumentValue;
                         [(NSValue *)value getValue:&argumentValue size:sizeof(UIOffset)];
                         [invocation setArgument:&argumentValue atIndex:(i + 2)];
                         break;
