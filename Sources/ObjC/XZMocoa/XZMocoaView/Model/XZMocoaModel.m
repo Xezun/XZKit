@@ -25,7 +25,7 @@ static const void * const _mocoaName = &_mocoaName;
 }
 
 - (XZMocoaName)__xz_mocoa_mocoaName {
-    return XZMocoaNameDefault;
+    return kMocoaNilName;
 }
 
 @end

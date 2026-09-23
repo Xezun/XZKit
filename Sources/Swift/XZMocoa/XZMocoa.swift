@@ -35,6 +35,11 @@ extension XZMocoaName: ExpressibleByStringLiteral {
 }
 #endif
 
+/// `XZMocoaName` 中的 `nil` 值，实际值为空字符串。
+public let kMocoaNilName = XZMocoaName.__kMocoaNilName
+/// `XZMocoaKind` 中的 `nil` 值，实际值为空字符串。
+public let kMocoaNilKind = XZMocoaKind.__kMocoaNilKind
+
 public typealias XZMocoaTableHeaderFooterView = UITableViewHeaderFooterView
 public typealias XZMocoaTableHeaderView = XZMocoaTableHeaderFooterView
 public typealias XZMocoaTableFooterView = XZMocoaTableHeaderFooterView

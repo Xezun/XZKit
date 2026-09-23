@@ -334,7 +334,7 @@ self.addSubview(view)
 
 ```objc
 + (void)load {
-    XZMocoa(@"https://mocoa.xezun.com/examples/20/content/").viewNibClass = self;
+    XZMocoa(@"https://mocoa.xezun.com/examples/20/content").viewNibClass = self;
 }
 ```
 
@@ -396,29 +396,34 @@ XZMocoaModule *submodule = module[@"header:black"];
 
 | URL                                          | 说明                          |
 | -------------------------------------------- | ----------------------------- |
-| `https://mocoa.xezun.com/`                   | 根模块                         |
-| `https://mocoa.xezun.com/table/`             | `table` 模块是根模块的子模块     |
-| `https://mocoa.xezun.com/table/name1/`       | `name1` 是 `table` 模块的子模块 |
-| `https://mocoa.xezun.com/table/name1/name2/` | `name2` 是 `name1` 模块的子模块 |
+| `https://mocoa.xezun.com`                   | 根模块                         |
+| `https://mocoa.xezun.com/table`             | `table` 模块是根模块的子模块     |
+| `https://mocoa.xezun.com/table/name1`       | `name1` 是 `table` 模块的子模块 |
+| `https://mocoa.xezun.com/table/name1/name2` | `name2` 是 `name1` 模块的子模块 |
 
 同一层级的模块，支持按`kind`分类管理，在路径中使用 `:` 分隔，比如：
 
 | URL                                           | 说明                                      |
 | --------------------------------------------- | ----------------------------------------- |
-| `https://mocoa.xezun.com/table/header:name1/` | `name1` 是 `table` 模块的 `header` 子模块 |
-| `https://mocoa.xezun.com/table/footer:name2/` | `name2` 是 `table` 模块的 `footer` 子模块 |
+| `https://mocoa.xezun.com/table/header:name1` | `name1` 是 `table` 模块的 `header` 子模块 |
+| `https://mocoa.xezun.com/table/footer:name2` | `name2` 是 `table` 模块的 `footer` 子模块 |
 
-- 子模块中分类为`XZMocoaKindDefault` （空字符串）的模块，为模块的默认分类。
-- 子模块中名称为`XZMocoaNameDefault` （空字符串）的模块，为模块的默认名称。
+- 子模块中分类为 `kMocoaNilKind` （空字符串）的模块，为模块的默认分类。
+- 子模块中名称为 `kMocoaNilName` （空字符串）的模块，为模块的默认名称。
 - 在路径中，没有分类可以省略 `:`，没有名字不能省略 `:`。
 
 | URL                                        | 说明                                   |
 | ------------------------------------------ | -------------------------------------- |
-| `https://mocoa.xezun.com/table/name/`      | 合法，默认分类中名为 name 的模块            |
-| `https://mocoa.xezun.com/table/kind:name/` | 合法，分类 kind 中名为 name 的模块          |
-| `https://mocoa.xezun.com/table/kind:/`     | 合法，分类 kind 中名为 空 的模块          |
-| `https://mocoa.xezun.com/table/:/`         | 合法，默认分类中名为 空 的模块                |
-| `https://mocoa.xezun.com/table/kind/`      | 不合法。因为 `kind` 会被作为 `name` 使用  |
+| `https://mocoa.xezun.com/table/name`      | 合法，默认分类中名为 `name` 的模块            |
+| `https://mocoa.xezun.com/table/kind:name` | 合法，分类 `kind` 中名为 `name` 的模块          |
+| `https://mocoa.xezun.com/table/kind:`     | 合法，分类 `kind` 中名为 空 的模块          |
+| `https://mocoa.xezun.com/table/:`         | 合法，分类和名称都为 空 的模块                |
+| `https://mocoa.xezun.com/table/kind`      | 不合法。因为 `kind` 会被作为 `name` 使用  |
+
+> 按照规则，模块 `table` 的地址的标准形式是 `https://mocoa.xezun.com/table` 。
+> 由于 `NSURL` 的 `path` 属性，会过滤末尾的 `/` 字符，所以 `https://mocoa.xezun.com/table/` 也是 `table` 模块自身。
+> 所以表示 `table` 模块中，默认分类、默认名字的子模块，需要在末尾添加 `:` 符号，即 `https://mocoa.xezun.com/table/:` 地址。
+
 
 ## 五、列表渲染
 
@@ -454,7 +459,7 @@ func mocoa(_ context: Any, kind: XZMocoaKind, modelForSupplementAt indexPath: In
 NSArray *dataArray;
 // viewModel
 XZMocoaTableViewModel *tableViewModel = [[XZMocoaTableViewModel alloc] initWithModel:dataArray];
-tableViewModel.module = XZMocoa(@"https://mocoa.xezun.com/table/");
+tableViewModel.module = XZMocoa(@"https://mocoa.xezun.com/table");
 // view
 XZMocoaTableView *tableView = [[XZMocoaTableView alloc] initWithFrame:self.view.bounds style:UITableViewStyleGrouped];
 tableView.viewModel = tableViewModel;

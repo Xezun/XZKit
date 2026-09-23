@@ -38,12 +38,7 @@ class TestView: UIView, XZMocoaView {
     // 可选读写属性
     @bind(image: .icon)
     @link(backgroundColor: .color)
-    var iconImageView: UIImageView? {
-        didSet {
-            viewModel?.bindTarget(iconImageView, action: #selector(setter: UIImageView.image), forKey: .icon)
-            viewModel?.linkTarget(iconImageView, action: #selector(setter: UIImageView.backgroundColor), forKey: .color)
-        }
-    }
+    var iconImageView: UIImageView? 
     
     @link(.isRefreshing, selector: #selector(TestView.beginRefreshing(_:)))
     var view: TestView = .init()

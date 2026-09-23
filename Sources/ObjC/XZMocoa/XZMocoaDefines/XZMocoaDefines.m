@@ -13,13 +13,13 @@ CGSize  const XZMocoaMinimumViewSize      = (CGSize){XZMocoaMinimumViewDimension
 CGFloat const XZMocoaTableViewHeaderFooterHeight = XZMocoaMinimumViewDimension;
 CGSize  const XZMocoaCollectionViewItemSize      = XZMocoaMinimumViewSize;
 
-XZMocoaName const XZMocoaNameDefault = @"";
-XZMocoaKind const XZMocoaKindDefault = @"";
-XZMocoaKind const XZMocoaKindHeader  = @"header";
-XZMocoaKind const XZMocoaKindFooter  = @"footer";
-
+XZMocoaName const kMocoaNilName = @"";
 XZMocoaName const XZMocoaNameMain        = @"main";
 XZMocoaName const XZMocoaNameHome        = @"home";
 XZMocoaName const XZMocoaNameUser        = @"user";
 XZMocoaName const XZMocoaNameList        = @"list";
 XZMocoaName const XZMocoaNamePlaceholder = @"placeholder";
+
+XZMocoaKind const kMocoaNilKind = @"";
+XZMocoaKind const XZMocoaKindHeader  = @"header";
+XZMocoaKind const XZMocoaKindFooter  = @"footer";

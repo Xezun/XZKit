@@ -29,8 +29,8 @@ static NSString *UIElementKindFromMocoaKind(XZMocoaKind kind) {
 - (void)prepareForModule:(XZMocoaModule *)module {
     UICollectionView * const collectionView = self.contentView;
     
-    { // 注册一个默认的视图
-        NSString * const identifier = XZMocoaReuseIdentifier(XZMocoaKindDefault, XZMocoaNamePlaceholder);
+    { // 注册占位视图
+        NSString * const identifier = XZMocoaReuseIdentifier(kMocoaNilKind, XZMocoaNamePlaceholder);
         [collectionView registerClass:[XZMocoaCollectionPlaceholderCell class] forCellWithReuseIdentifier:identifier];
         
         for (XZMocoaKind kind in self.viewModel.supportedSupplementKinds) {
@@ -42,7 +42,7 @@ static NSString *UIElementKindFromMocoaKind(XZMocoaKind kind) {
     }
     
     [module enumerateSubmodulesUsingBlock:^(XZMocoaModule * const submodule, XZMocoaKind const kind, XZMocoaName const name, BOOL *stop) {
-        if ([kind isEqualToString:XZMocoaKindDefault]) {
+        if ([kind isEqualToString:kMocoaNilKind]) {
             switch (submodule.viewForm) {
                 case XZMocoaModuleViewFormClass: {
                     if (![submodule.viewClass isSubclassOfClass:UICollectionViewCell.class]) {

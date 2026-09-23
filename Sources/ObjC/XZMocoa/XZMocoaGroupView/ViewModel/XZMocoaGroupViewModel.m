@@ -310,7 +310,7 @@
         [modelSection replaceCellAtIndex:item withCell:newCellModel];
         
         // 加载新视图模型
-        XZMocoaGroupReusableViewModel * const viewModel = [self _createViewModelWithModel:newCellModel forKind:XZMocoaKindDefault];
+        XZMocoaGroupReusableViewModel * const viewModel = [self _createViewModelWithModel:newCellModel forKind:kMocoaNilKind];
         viewModel.indexPath = indexPath;
         [self addSubViewModel:viewModel];
         [viewModelSection replaceCellAtIndex:item withCell:viewModel];
@@ -341,7 +341,7 @@
         
         // 加载新视图模型
         XZMocoaGroupSection * const viewModelSection = _viewModelSections[section];
-        XZMocoaGroupReusableViewModel * const viewModel = [self _createViewModelWithModel:newCellModel forKind:XZMocoaKindDefault];
+        XZMocoaGroupReusableViewModel * const viewModel = [self _createViewModelWithModel:newCellModel forKind:kMocoaNilKind];
         viewModel.indexPath = indexPath;
         [self addSubViewModel:viewModel];
         [viewModelSection insertCell:viewModel atIndex:item];
@@ -641,7 +641,7 @@
                 if (indexPath == nil) {
                     indexPath = [NSIndexPath indexPathForItem:newCellIndex inSection:newSectionIndex];
                     [inserts addObject:indexPath];
-                    XZMocoaViewModel *viewModel = [self _createViewModelWithModel:newCellModel forKind:(XZMocoaKindDefault)];
+                    XZMocoaViewModel *viewModel = [self _createViewModelWithModel:newCellModel forKind:(kMocoaNilKind)];
                     [self addSubViewModel:viewModel];
                     [newViewModelSection addCell:viewModel];
                     
@@ -789,7 +789,7 @@
             NSIndexPath *    const indexPath = [NSIndexPath indexPathForItem:cellIndex inSection:sectionIndex];
             id<XZMocoaModel> const cellModel = cellModels[cellIndex];
             
-            XZMocoaGroupReusableViewModel * const viewModel = [self _createViewModelWithModel:cellModel forKind:(XZMocoaKindDefault)];
+            XZMocoaGroupReusableViewModel * const viewModel = [self _createViewModelWithModel:cellModel forKind:(kMocoaNilKind)];
             viewModel.indexPath = indexPath;
             [self addSubViewModel:viewModel];
             [viewModelSection addCell:viewModel];
@@ -802,7 +802,7 @@
         model = nil;
     }
     
-    XZMocoaName     const name   = model.mocoaName ?: XZMocoaNameDefault;
+    XZMocoaName     const name   = model.mocoaName ?: kMocoaNilName;
     XZMocoaModule * const module = [self.module submoduleIfLoadedForKind:kind forName:name];
     
     Class     VMClass         = module.viewModelClass;
@@ -824,13 +824,13 @@
         }
     } else {
         // 模块未注册，或者未注册视图模型
-        if ([name isEqualToString:XZMocoaNameDefault]) {
+        if ([name isEqualToString:kMocoaNilName]) {
             // 当前是默认模块，兜底占位模块
             VMClass = [self viewModelClassForPlaceholderForKind:kind];
             reuseIdentifier = XZMocoaReuseIdentifier(kind, XZMocoaNamePlaceholder);
         } else {
             // 当前是定制模块，尝试默认模块
-            XZMocoaModule *defaultModule = [self.module submoduleIfLoadedForKind:kind forName:XZMocoaNameDefault];
+            XZMocoaModule *defaultModule = [self.module submoduleIfLoadedForKind:kind forName:kMocoaNilName];
             if (defaultModule == nil) {
                 // 无默认模块，兜底占位模块
                 VMClass = [self viewModelClassForPlaceholderForKind:kind];
@@ -840,7 +840,7 @@
                 VMClass = defaultModule.viewModelClass;
                 if (VMClass) {
                     // 默认模块注册了视图模型
-                    reuseIdentifier = defaultModule.viewReuseIdentifier ?: XZMocoaReuseIdentifier(kind, XZMocoaNameDefault);
+                    reuseIdentifier = defaultModule.viewReuseIdentifier ?: XZMocoaReuseIdentifier(kind, kMocoaNilName);
                 } else {
                     // 默认模块未注册视图模型
                     VMClass = [self viewModelClassForPlaceholderForKind:kind];

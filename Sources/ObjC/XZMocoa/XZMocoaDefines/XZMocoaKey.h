@@ -11,6 +11,16 @@ NS_ASSUME_NONNULL_BEGIN
 
 /// 标识符，区分 Key Events 和 Key Target Action 事件的标识符。
 ///
+///
+/// 关于 `XZMocoaKey` 特殊值的解释：
+/// - `nil` 因为没有设置而没有键。
+/// - `kMocoaNilKey` 没有键，或键为空，或以空为键。
+/// - 非空字符串，具体键。
+///
+/// 当前文件中的标识符是通用的，分类只表明标识符的初始来源，并不表示限制其应用范围。
+///
+/// 纯 Swift 类型可以使用 `@dynamicMemberLookup` 注解，让类型支持点任意键的语法，后续可以考虑。
+///
 /// 桥接到 Swift 中的 XZMocoaKey 类型，如果定义了同名的实例属性，会导致在 Objc 中定义的静态属性无法使用。
 /// ```swift
 /// // 假如有此拓展，定义实例属性，目的是想实现通过链式点语法表示 keyPath 比如 .list.name
@@ -19,17 +29,12 @@ NS_ASSUME_NONNULL_BEGIN
 /// }
 /// // 应该是编译器问题，上面的做法会导致，桥接到 Swift 中的 name 静态属性无法使用。
 /// let key = XZMocoaKey.name // 编译报错：Instance member 'name' cannot be used on type 'XZMocoaKey'
-
 /// ```
-///
-/// 当前文件中的标识符是通用的，分类只表明标识符的初始来源，并不表示限制其应用范围。
-///
-/// 纯 Swift 类型可以使用 `@dynamicMemberLookup` 注解，让类型支持点任意键的语法。
 typedef NSString *XZMocoaKey NS_TYPED_EXTENSIBLE_ENUM;
 
-/// XZMocoaKey 中的 nil 值，实际值为空字符串。
+/// `XZMocoaKey` 中的 `nil` 值，实际值为空字符串。
 ///
-/// 与其它 Key 命名风格不一致，避免占位一个命名。
+/// 与其它 Key 命名风格不一致，避免占位命名，且在 Swift 中使用名称不变。
 FOUNDATION_EXPORT XZMocoaKey const kMocoaNilKey NS_REFINED_FOR_SWIFT NS_SWIFT_NAME(__kMocoaNilKey);
 
 // MARK: - 通用

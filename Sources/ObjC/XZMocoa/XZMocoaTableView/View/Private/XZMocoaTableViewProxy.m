@@ -17,8 +17,8 @@
 - (void)prepareForModule:(XZMocoaModule *)module {
     UITableView * const tableView = self.contentView;
     
-    { // 注册默认视图
-        NSString *identifier = XZMocoaReuseIdentifier(XZMocoaKindDefault, XZMocoaNamePlaceholder);
+    { // 注册占位视图
+        NSString *identifier = XZMocoaReuseIdentifier(kMocoaNilKind, XZMocoaNamePlaceholder);
         [tableView registerClass:[XZMocoaTablePlaceholderCell class] forCellReuseIdentifier:identifier];
         
         identifier = XZMocoaReuseIdentifier(XZMocoaKindHeader, XZMocoaNamePlaceholder);
@@ -29,13 +29,13 @@
     }
     
     [module enumerateSubmodulesUsingBlock:^(XZMocoaModule *submodule, XZMocoaKind kind, XZMocoaName name, BOOL *stop) {
-        if ([kind isEqualToString:XZMocoaKindDefault]) {
+        if ([kind isEqualToString:kMocoaNilKind]) {
             switch (submodule.viewForm) {
                 case XZMocoaModuleViewFormClass: {
                     if (![submodule.viewClass isSubclassOfClass:UITableViewCell.class]) {
                         return;
                     }
-                    NSString * const identifier = XZMocoaReuseIdentifier(XZMocoaKindDefault, name);
+                    NSString * const identifier = XZMocoaReuseIdentifier(kMocoaNilKind, name);
                     [tableView registerClass:submodule.viewClass forCellReuseIdentifier:identifier];
                     break;
                 }
@@ -43,7 +43,7 @@
                     if (submodule.viewNibClass && ![submodule.viewNibClass isSubclassOfClass:UITableViewCell.class]) {
                         return;
                     }
-                    NSString * const identifier = XZMocoaReuseIdentifier(XZMocoaKindDefault, name);
+                    NSString * const identifier = XZMocoaReuseIdentifier(kMocoaNilKind, name);
                     UINib *viewNib = [UINib nibWithNibName:submodule.viewNibName bundle:submodule.viewNibBundle];
                     [tableView registerNib:viewNib forCellReuseIdentifier:identifier];
                     break;

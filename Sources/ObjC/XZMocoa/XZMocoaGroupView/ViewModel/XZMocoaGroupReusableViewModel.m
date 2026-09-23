@@ -12,7 +12,7 @@
 - (instancetype)initWithModel:(NSObject<XZMocoaModel> *)model {
     self = [super initWithModel:model];
     if (self) {
-        _reuseIdentifier = XZMocoaReuseIdentifier(XZMocoaKindDefault, model.mocoaName);
+        _reuseIdentifier = XZMocoaReuseIdentifier(kMocoaNilKind, model.mocoaName);
         _indexPath = [NSIndexPath indexPathForItem:0 inSection:0];
     }
     return self;

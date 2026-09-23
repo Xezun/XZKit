@@ -19,7 +19,7 @@
 FOUNDATION_STATIC_INLINE BOOL XZMocoaPathParser(NSString *path, XZMocoaKind *kind, XZMocoaName *name) {
     NSRange const range = [path rangeOfString:@":"];
     if (range.location == NSNotFound) {
-        *kind = XZMocoaKindDefault;
+        *kind = kMocoaNilKind;
         *name = path;
         return NO;
     }
@@ -318,18 +318,18 @@ FOUNDATION_STATIC_INLINE NSString *XZMocoaStandardKey(XZMocoaKind kind, XZMocoaN
 #pragma mark - 访问下级的基础方法
 
 - (XZMocoaModule *)submoduleForKind:(XZMocoaKind)kind forName:(XZMocoaName)name {
-    if (kind == nil) kind = XZMocoaKindDefault;
-    if (name == nil) name = XZMocoaNameDefault;
+    if (kind == nil) kind = kMocoaNilKind;
+    if (name == nil) name = kMocoaNilName;
     return [self objectForKeyedSubscript:XZMocoaPathCreate(kind, name)];
 }
 
 - (void)setSubmodule:(XZMocoaModule *)newSubmodule forKind:(XZMocoaKind)kind forName:(XZMocoaName)name {
-    if (kind == nil) kind = XZMocoaKindDefault;
-    if (name == nil) name = XZMocoaNameDefault;
+    if (kind == nil) kind = kMocoaNilKind;
+    if (name == nil) name = kMocoaNilName;
     NSString * const key = XZMocoaStandardKey(kind, name);
     if (newSubmodule == nil) {
         // 双移除
-        if ([kind isEqualToString:XZMocoaKindDefault]) {
+        if ([kind isEqualToString:kMocoaNilKind]) {
             [_submodules removeObjectForKey:name];
         }
         [_submodules removeObjectForKey:key];
@@ -339,15 +339,15 @@ FOUNDATION_STATIC_INLINE NSString *XZMocoaStandardKey(XZMocoaKind kind, XZMocoaN
         _submodules = [NSMutableDictionary dictionary];
     }
     // 双注册
-    if ([kind isEqualToString:XZMocoaKindDefault]) {
+    if ([kind isEqualToString:kMocoaNilKind]) {
         _submodules[name] = newSubmodule;
     }
     _submodules[key] = newSubmodule;
 }
 
 - (XZMocoaModule *)submoduleIfLoadedForKind:(XZMocoaKind)kind forName:(XZMocoaName)name {
-    if (kind == nil) kind = XZMocoaKindDefault;
-    if (name == nil) name = XZMocoaNameDefault;
+    if (kind == nil) kind = kMocoaNilKind;
+    if (name == nil) name = kMocoaNilName;
     return _submodules[XZMocoaPathCreate(kind, name)];
 }
 
@@ -359,7 +359,7 @@ FOUNDATION_STATIC_INLINE NSString *XZMocoaStandardKey(XZMocoaKind kind, XZMocoaN
 /// 为此默认分类的子模块以「简化键 name」与「标准键 :name」双注册，保证两种写法命中同一对象。
 /// @param key 子模块的键
 - (XZMocoaModule *)objectForKeyedSubscript:(XZMocoaKey)key {
-    if (key == nil) key = XZMocoaNameDefault;
+    if (key == nil) key = kMocoaNilName;
     if (_submodules == nil) {
         _submodules = [NSMutableDictionary dictionary];
     }
@@ -381,7 +381,7 @@ FOUNDATION_STATIC_INLINE NSString *XZMocoaStandardKey(XZMocoaKind kind, XZMocoaN
         submodule = [[XZMocoaModule alloc] initWithURL:submoduleURL];
         
         // 双注册：同时为 kind:name 标准键和不带 kind 的简化键
-        if ([kind isEqualToString:XZMocoaKindDefault]) {
+        if ([kind isEqualToString:kMocoaNilKind]) {
             _submodules[name] = submodule;
         }
         _submodules[key] = submodule;
@@ -454,7 +454,7 @@ FOUNDATION_STATIC_INLINE NSString *XZMocoaStandardKey(XZMocoaKind kind, XZMocoaN
 }
 
 - (void)setMain:(XZMocoaModule *)main {
-    [self setSubmodule:main forKind:XZMocoaKindDefault forName:XZMocoaNameMain];
+    [self setSubmodule:main forKind:kMocoaNilKind forName:XZMocoaNameMain];
 }
 
 - (XZMocoaModule *)home {
@@ -462,7 +462,7 @@ FOUNDATION_STATIC_INLINE NSString *XZMocoaStandardKey(XZMocoaKind kind, XZMocoaN
 }
 
 - (void)setHome:(XZMocoaModule *)home {
-    [self setSubmodule:home forKind:XZMocoaKindDefault forName:XZMocoaNameHome];
+    [self setSubmodule:home forKind:kMocoaNilKind forName:XZMocoaNameHome];
 }
 
 - (XZMocoaModule *)user {
@@ -470,7 +470,7 @@ FOUNDATION_STATIC_INLINE NSString *XZMocoaStandardKey(XZMocoaKind kind, XZMocoaN
 }
 
 - (void)setUser:(XZMocoaModule *)user {
-    [self setSubmodule:user forKind:XZMocoaKindDefault forName:XZMocoaNameUser];
+    [self setSubmodule:user forKind:kMocoaNilKind forName:XZMocoaNameUser];
 }
 
 - (XZMocoaModule *)list {
@@ -478,22 +478,22 @@ FOUNDATION_STATIC_INLINE NSString *XZMocoaStandardKey(XZMocoaKind kind, XZMocoaN
 }
 
 - (void)setList:(XZMocoaModule *)list {
-    [self setSubmodule:list forKind:XZMocoaKindDefault forName:XZMocoaNameList];
+    [self setSubmodule:list forKind:kMocoaNilKind forName:XZMocoaNameList];
 }
 
 #pragma mark - 为 tableView、collectionView 提供的便利方法
 
 - (XZMocoaModule *)header {
-    // 键等价于 XZMocoaStandardKey(XZMocoaKindHeader, XZMocoaNameDefault)
+    // 键等价于 XZMocoaStandardKey(XZMocoaKindHeader, kMocoaNilName)
     return [self objectForKeyedSubscript:@"header:"];
 }
 
 - (void)setHeader:(XZMocoaModule *)header {
-    [self setSubmodule:header forKind:XZMocoaKindHeader forName:XZMocoaNameDefault];
+    [self setSubmodule:header forKind:XZMocoaKindHeader forName:kMocoaNilName];
 }
 
 - (XZMocoaModule *)headerForName:(XZMocoaName)name {
-    return [self objectForKeyedSubscript:XZMocoaStandardKey(XZMocoaKindHeader, name ?: XZMocoaNameDefault)];
+    return [self objectForKeyedSubscript:XZMocoaStandardKey(XZMocoaKindHeader, name ?: kMocoaNilName)];
 }
 
 - (void)setHeader:(XZMocoaModule *)header forName:(XZMocoaName)name {
@@ -501,12 +501,12 @@ FOUNDATION_STATIC_INLINE NSString *XZMocoaStandardKey(XZMocoaKind kind, XZMocoaN
 }
 
 - (XZMocoaModule *)cell {
-    // 键等价于 XZMocoaStandardKey(XZMocoaKindDefault, XZMocoaNameDefault)
+    // 键等价于 XZMocoaStandardKey(kMocoaNilKind, kMocoaNilName)
     return [self objectForKeyedSubscript:@":"];
 }
 
 - (void)setCell:(XZMocoaModule *)cell {
-    [self setSubmodule:cell forKind:XZMocoaKindDefault forName:XZMocoaNameDefault];
+    [self setSubmodule:cell forKind:kMocoaNilKind forName:kMocoaNilName];
 }
 
 - (XZMocoaModule *)cellForName:(XZMocoaName)name {
@@ -515,20 +515,20 @@ FOUNDATION_STATIC_INLINE NSString *XZMocoaStandardKey(XZMocoaKind kind, XZMocoaN
 }
 
 - (void)setCell:(XZMocoaModule *)cell forName:(XZMocoaName)name {
-    [self setSubmodule:cell forKind:XZMocoaKindDefault forName:name];
+    [self setSubmodule:cell forKind:kMocoaNilKind forName:name];
 }
 
 - (XZMocoaModule *)footer {
-    // 键等价于 XZMocoaStandardKey(XZMocoaKindFooter, XZMocoaNameDefault)
+    // 键等价于 XZMocoaStandardKey(XZMocoaKindFooter, kMocoaNilName)
     return [self objectForKeyedSubscript:@"footer:"];
 }
 
 - (void)setFooter:(XZMocoaModule *)footer {
-    [self setSubmodule:footer forKind:XZMocoaKindFooter forName:XZMocoaNameDefault];
+    [self setSubmodule:footer forKind:XZMocoaKindFooter forName:kMocoaNilName];
 }
 
 - (XZMocoaModule *)footerForName:(XZMocoaName)name {
-    return [self objectForKeyedSubscript:XZMocoaStandardKey(XZMocoaKindFooter, name ?: XZMocoaNameDefault)];
+    return [self objectForKeyedSubscript:XZMocoaStandardKey(XZMocoaKindFooter, name ?: kMocoaNilName)];
 }
 
 - (void)setFooter:(XZMocoaModule *)footer forName:(XZMocoaName)name {
