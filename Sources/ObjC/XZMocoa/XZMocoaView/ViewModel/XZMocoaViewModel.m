@@ -120,23 +120,23 @@
         return nil;
     }
     
-    // 使用新 API：activelyObservedModelKeys
-    NSArray<NSString *> * const observedKeys = [self.class activelyObservedModelKeys];
-    
-    // 情况 A: 不需要主动观察 → 不附加 KVO
-    if (observedKeys == nil) {
-        return nil;
-    }
-    
-    _isActivelyObservingModelKeys = YES;
-    
     // 没有映射关系，无法绑定
     XZMocoaKeyMappingTable * const table = [XZMocoaKeyMappingTable tableForClass:self.class];
     if (table == nil || table.keyToMethods.count == 0) {
         return nil;
     }
     
-    // 半量绑定：只附加指定的键（ @link 绑定的键会自动排除 ）
+    // 使用新 API：activelyObservedModelKeys
+    NSArray<NSString *> * const observedKeys = [self.class activelyObservedModelKeys];
+    
+    // 情况 A: 不需要主动观察 → 不附加 KVO
+    if (observedKeys == nil) {
+        return table.keyToMethods.allKeys;
+    }
+    
+    _isActivelyObservingModelKeys = YES;
+    
+    // 半量绑定：只附加指定的键
     if (observedKeys.count > 0) {
         [[XZMocoaKeyObserver observerForModel:model] attachReceiver:self forKeys:observedKeys];
         return table.keyToMethods.allKeys;

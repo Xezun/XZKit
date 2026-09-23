@@ -41,10 +41,10 @@
     [self setTableView:contentView];
 }
 
-- (void)prepareForViewModel {
-    [super prepareForViewModel];
+- (void)prepareForViewModel:(XZMocoaTableViewModel *)viewModel {
+    [super prepareForViewModel:viewModel];
     
-    [self prepareForModule:self.viewModel.module];
+    [self prepareForModule:viewModel.module];
     
     // 刷新视图。
     UITableView * const tableView = self.contentView;

@@ -17,10 +17,8 @@
     module.footer.viewClass = UITableViewHeaderFooterView.class;
 }
 
-- (void)prepareForViewModel {
-    [super prepareForViewModel];
-    
-    Example0312CellViewModel *viewModel = self.viewModel;
+- (void)prepareForViewModel:(Example0312CellViewModel *)viewModel {
+    [super prepareForViewModel:viewModel];
     
     self.nameLabel.text = viewModel.name;
 }

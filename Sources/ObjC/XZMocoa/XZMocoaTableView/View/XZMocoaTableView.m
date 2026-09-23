@@ -71,10 +71,10 @@
     return self;
 }
 
-- (void)prepareForViewModel {
-    [super prepareForViewModel];
+- (void)prepareForViewModel:(XZMocoaTableViewModel *)viewModel {
+    [super prepareForViewModel:viewModel];
     
-    self.viewModel.delegate = self;
+    viewModel.delegate = self;
     
     // 刷新视图。
     UITableView * const tableView = self.contentView;

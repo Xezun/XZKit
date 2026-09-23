@@ -59,32 +59,25 @@ NS_SWIFT_UI_ACTOR @protocol XZMocoaView <NSObject>
 /// > 此时，在 -prepareForReuse 方法中，同时清除 viewModel 属性即可。
 @property (nonatomic, strong, nullable) __kindof XZMocoaViewModel *viewModel;
 
-/// 属性 viewModel 的监听方法，默认不执行任何操作。
-///
-/// 与 willSet 不同，如果视图模型不变，此方法不会被调用。
-///
-/// - Parameter newValue: 目标视图模型
-- (void)willChangeViewModel:(nullable XZMocoaViewModel *)newValue;
-
-/// 属性 viewModel 的监听方法，默认不执行任何操作。
+/// 视图模型发生改变。
 ///
 /// 与 didSet 不同，如果视图模型不变，此方法不会被调用。
 ///
 /// 子类重写，应先调用 super 实现。
 /// - 作为 UIView 子类，此方法默认向视图模型发送 ready 消息，以初始化视图模型。
 /// - 作为 UIViewController 子类，如果 view 已经加载，则会立即发送 ready 消息，否则会延迟到 viewDidLoad 时再发送。
-///
-/// - Parameter oldValue: 旧视图模型
-- (void)didChangeViewModel:(nullable XZMocoaViewModel *)oldValue;
+- (void)viewModelDidChange;
 
-/// 视图可在此方法中，使用 viewModel 配置视图。
-///
+/// 视图可在此方法中，使用 viewModel 配置视图。当且仅当视图模型已配置，此方法才会被调用。
+/// 
 /// 给控制器装配视图模型时，此返回会延迟到 viewDidLoad 时再调用，避免影响 view 的生命周期。
-///
+/// 
 /// 子类重写应先调用 super 实现，以完成以下操作：
 /// - 初始化视图模型。
 /// - 视图绑定 KTA 事件。
-- (void)prepareForViewModel NS_REQUIRES_SUPER;
+///
+/// - Parameter viewModel: 视图当前视图模型
+- (void)prepareForViewModel:(__kindof XZMocoaViewModel *)viewModel NS_REQUIRES_SUPER;
 
 /// 由 Cocoa MVC 中的控制器分发过来的 Segue 转场事件。
 ///
@@ -127,7 +120,7 @@ NS_SWIFT_UI_ACTOR @protocol XZMocoaView <NSObject>
 // 以下方法为供 Swift 绑定 KTA 事件值使用，请勿直接调用。
 
 /// 若子类完全重写了`viewModel`属性，则需在合适的时机调用此方法，否则 @bind / @link 宏无法生效。
-- (void)__mocoa_bind_prepare;
+- (void)__mocoa_bind_prepare:(__kindof XZMocoaViewModel *)viewModel;
 
 - (void)__mocoa_bind_title_normal:(NSString *)title;
 - (void)__mocoa_bind_titleColor_normal:(UIColor *)titleColor;

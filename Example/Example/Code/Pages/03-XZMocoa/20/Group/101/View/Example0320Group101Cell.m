@@ -26,10 +26,8 @@
     // Configure the view for the selected state
 }
 
-- (void)prepareForViewModel {
-    [super prepareForViewModel];
-    
-    Example0320Group101CellViewModel *viewModel = self.viewModel;
+- (void)prepareForViewModel:(Example0320Group101CellViewModel *)viewModel {
+    [super prepareForViewModel:viewModel];
     
     self.titleLabel.text = viewModel.title;
     self.detailsLabel.text = viewModel.details;

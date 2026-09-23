@@ -25,10 +25,9 @@
     // Configure the view for the selected state
 }
 
-- (void)prepareForViewModel {
-    [super prepareForViewModel];
+- (void)prepareForViewModel:(__kindof XZMocoaViewModel *)viewModel {
+    [super prepareForViewModel:viewModel];
     
-    XZMocoaViewModel *viewModel = self.viewModel;
     if ([viewModel.model isKindOfClass:[XZObjcMethod class]]) {
         XZObjcMethod *descriptor = viewModel.model;
         self.textLabel.text = descriptor.name;

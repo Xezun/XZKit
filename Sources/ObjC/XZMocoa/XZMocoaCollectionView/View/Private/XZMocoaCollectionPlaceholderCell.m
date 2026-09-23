@@ -25,10 +25,10 @@
     return self;
 }
 
-- (void)prepareForViewModel {
-    [super prepareForViewModel];
+- (void)prepareForViewModel:(__kindof XZMocoaViewModel *)viewModel {
+    [super prepareForViewModel:viewModel];
     
-    _view.viewModel = [[XZMocoaGroupPlaceholderViewModel alloc] initWithModel:self.viewModel];
+    _view.viewModel = [[XZMocoaGroupPlaceholderViewModel alloc] initWithModel:viewModel];
 }
 
 @end

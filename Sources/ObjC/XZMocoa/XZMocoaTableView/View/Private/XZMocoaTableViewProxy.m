@@ -37,7 +37,7 @@
                     }
                     NSString * const identifier = XZMocoaReuseIdentifier(kMocoaNilKind, name);
                     [tableView registerClass:submodule.viewClass forCellReuseIdentifier:identifier];
-                    break;
+                    return;
                 }
                 case XZMocoaModuleViewFormNib: {
                     if (submodule.viewNibClass && ![submodule.viewNibClass isSubclassOfClass:UITableViewCell.class]) {
@@ -46,15 +46,19 @@
                     NSString * const identifier = XZMocoaReuseIdentifier(kMocoaNilKind, name);
                     UINib *viewNib = [UINib nibWithNibName:submodule.viewNibName bundle:submodule.viewNibBundle];
                     [tableView registerNib:viewNib forCellReuseIdentifier:identifier];
-                    break;
+                    return;
                 }
                 case XZMocoaModuleViewFormStoryboardReusableView: {
                     // 在 Storyboard 中 cell 已经注册
-                    break;
+                    return;
+                }
+                case XZMocoaModuleViewFormUnknown: {
+                    XZLog(@"[XZMocoa] 模块的视图角色未注册，或不支持：%@", submodule.url);
+                    return;
                 }
                 default: {
                     XZLog(@"[XZMocoa] 模块视图不支持在 UITableView 中使用：%@", submodule.url);
-                    break;
+                    return;
                 }
             }
         } else if ([kind isEqualToString:XZMocoaKindHeader] || [kind isEqualToString:XZMocoaKindFooter]) {
@@ -65,7 +69,7 @@
                     }
                     NSString * const identifier = XZMocoaReuseIdentifier(kind, name);
                     [tableView registerClass:submodule.viewClass forHeaderFooterViewReuseIdentifier:identifier];
-                    break;
+                    return;
                 }
                 case XZMocoaModuleViewFormNib: {
                     if (submodule.viewNibClass && ![submodule.viewNibClass isSubclassOfClass:UITableViewHeaderFooterView.class]) {
@@ -74,14 +78,18 @@
                     NSString * const identifier = XZMocoaReuseIdentifier(kind, name);
                     UINib *viewNib = [UINib nibWithNibName:submodule.viewNibName bundle:submodule.viewNibBundle];
                     [tableView registerNib:viewNib forHeaderFooterViewReuseIdentifier:identifier];
-                    break;
+                    return;
                 }
                 case XZMocoaModuleViewFormStoryboardReusableView: {
-                    break;
+                    return;
+                }
+                case XZMocoaModuleViewFormUnknown: {
+                    XZLog(@"[XZMocoa] 模块的视图角色未注册，或不支持：%@", submodule.url);
+                    return;
                 }
                 default: {
                     XZLog(@"[XZMocoa] 模块视图不支持在 UITableView 中使用：%@", submodule.url);
-                    break;
+                    return;
                 }
             }
         }

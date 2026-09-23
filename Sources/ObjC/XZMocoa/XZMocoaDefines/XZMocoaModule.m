@@ -114,7 +114,7 @@ FOUNDATION_STATIC_INLINE NSString *XZMocoaStandardKey(XZMocoaKind kind, XZMocoaN
     return [[self alloc] initWithURL:url];
 }
 
-// - 实例
+// - 实例化
 
 - (__kindof XZMocoaViewModel *)instantiateViewModelWithModel:(id)model {
     XZMocoaViewModel * const viewModel = [[self.viewModelClass alloc] initWithModel:model];

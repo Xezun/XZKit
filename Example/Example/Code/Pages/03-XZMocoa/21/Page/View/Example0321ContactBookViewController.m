@@ -20,19 +20,16 @@
 
 @implementation Example0321ContactBookViewController
 
-@dynamic view;
+@dynamic view, viewModel;
 
 + (void)load {
     XZMocoa(@"https://mocoa.xezun.com/examples/03/21").viewClass = self;
 }
 
-- (instancetype)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil {
-    self = [super initWithNibName:nibNameOrNil bundle:nibBundleOrNil];
-    if (self) {
-        self.title = @"Example 21";
-        self.hidesBottomBarWhenPushed = YES;
-    }
-    return self;
+- (void)didInitWithMocoaOptions:(XZMocoaOptions *)options {
+    [super didInitWithMocoaOptions:options];
+    self.title = @"Example 21";
+    self.hidesBottomBarWhenPushed = YES;
 }
 
 - (void)dealloc {

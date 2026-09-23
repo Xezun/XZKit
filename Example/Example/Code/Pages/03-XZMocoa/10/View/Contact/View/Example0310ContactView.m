@@ -35,28 +35,23 @@
     [super layoutSubviews];
 }
 
-- (void)prepareForViewModel {
-    [super prepareForViewModel];
-    
 #ifdef UsesMocoaBind
-    XZMocoaViewModel *viewModel = self.viewModel;
-    if (viewModel == nil) {
-        return;
-    }
+- (void)prepareForViewModel:(__kindof XZMocoaViewModel *)viewModel {
+    [super prepareForViewModel:viewModel];
     [viewModel linkTarget:self.nameLabel action:@selector(setText:) forKey:@"name"];
     [viewModel linkTarget:self.photoImageView action:@selector(sd_setImageWithURL:) forKey:@"photo"];
     [viewModel linkTarget:self.phoneLabel action:@selector(setText:) forKey:@"phone"];
     [viewModel linkTarget:self.addressLabel action:@selector(setText:) forKey:@"address"];
+}
 #else
-    Example0310ContactViewModel *viewModel = self.viewModel;
-    if (viewModel == nil) {
-        return;
-    }
+- (void)prepareForViewModel:(Example0310ContactViewModel *)viewModel {
+    [super prepareForViewModel:viewModel];
+    
     self.nameLabel.text = viewModel.name;
     [self.photoImageView sd_setImageWithURL:viewModel.photo];
     self.phoneLabel.text = viewModel.phone;
     self.addressLabel.text = viewModel.address;
-#endif
 }
+#endif
 
 @end

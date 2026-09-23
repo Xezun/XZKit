@@ -101,7 +101,7 @@ extension MocoaMacro: MemberMacro {
         case .v:
             // 判断是否自定义 __mocoa_bind_prepare 方法
             if classDecl.containsMethod("__mocoa_bind_prepare") {
-                throw XZMacroError(node, message: "重写私有方法 __mocoa_bind_prepare 方法会导致绑定失效，请使用 prepareForViewModel 方法代替")
+                throw XZMacroError(node, message: "重写私有方法 __mocoa_bind_prepare 方法会导致绑定失效，请使用 prepare(for:viewModel) 方法代替")
             }
             
             var statements = [String]()
@@ -132,9 +132,8 @@ extension MocoaMacro: MemberMacro {
             
             let methodSyntax = try FunctionDeclSyntax(
                 """
-                override func __mocoa_bind_prepare() {
-                    super.__mocoa_bind_prepare()
-                    guard let viewModel = self.viewModel else { return }
+                override func __mocoa_bind_prepare(_ viewModel: XZMocoaViewModel) {
+                    super.__mocoa_bind_prepare(viewModel)
                     \(raw: statements.joined(separator: "\n    "))
                 }
                 """

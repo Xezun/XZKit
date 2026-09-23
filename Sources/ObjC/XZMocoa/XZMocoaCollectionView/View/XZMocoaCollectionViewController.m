@@ -40,11 +40,9 @@
     self.collectionView = contentView;
 }
 
-- (void)prepareForViewModel {
-    [super prepareForViewModel];
-    
-    XZMocoaCollectionViewModel *viewModel = self.viewModel;
-    
+- (void)prepareForViewModel:(XZMocoaCollectionViewModel *)viewModel {
+    [super prepareForViewModel:viewModel];
+        
     [self prepareForModule:viewModel.module];
     
     // 刷新视图。

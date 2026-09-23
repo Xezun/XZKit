@@ -37,10 +37,9 @@
     return self;
 }
 
-- (void)prepareForViewModel {
-    [super prepareForViewModel];
+- (void)prepareForViewModel:(Example0331Group101CellViewModel *)viewModel {
+    [super prepareForViewModel:viewModel];
     
-    Example0331Group101CellViewModel *viewModel = self.viewModel;
     self.textLabel.text = @"Cell视图";
     self.detailTextLabel.text = viewModel.text;
 }

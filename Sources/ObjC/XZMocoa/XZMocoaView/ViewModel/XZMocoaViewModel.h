@@ -403,7 +403,7 @@ NS_SWIFT_UI_ACTOR @interface XZMocoaViewModel : NSObject <XZMocoaViewModel> {
 /// ```
 @property (class, nonatomic, readonly, nullable) NSArray<NSString *> *activelyObservedModelKeys;
 
-/// 主动观察了数据模型的能力是否开启。。
+/// 主动观察了数据模型的能力是否开启。
 ///
 /// 开启主动观察，请重写 ``activelyObservedModelKeys`` 静态属性。
 ///

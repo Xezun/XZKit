@@ -81,10 +81,10 @@
     collectionView.dataSource = self;
 }
 
-- (void)prepareForViewModel {
-    [super prepareForViewModel];
+- (void)prepareForViewModel:(XZMocoaCollectionViewModel *)viewModel {
+    [super prepareForViewModel:viewModel];
     
-    self.viewModel.delegate = self;
+    viewModel.delegate = self;
     
     // 刷新视图。
     UICollectionView * const collectionView = self.contentView;

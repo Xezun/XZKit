@@ -14,9 +14,9 @@
 @dynamic viewModel;
 @synthesize contentView = _contentView;
 
-- (void)prepareForViewModel {
-    [super prepareForViewModel];
-    [self prepareForModule:self.viewModel.module];
+- (void)prepareForViewModel:(XZMocoaGroupViewModel *)viewModel {
+    [super prepareForViewModel:viewModel];
+    [self prepareForModule:viewModel.module];
 }
 
 - (void)setContentView:(__kindof UIScrollView * const)newValue {

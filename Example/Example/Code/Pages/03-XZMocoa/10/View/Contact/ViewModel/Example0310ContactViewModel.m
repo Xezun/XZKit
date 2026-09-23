@@ -28,6 +28,9 @@
         NSStringFromSelector(@selector(setupPhoneWithPhoneNumber:)): @"phone",
     };
 }
+- (void)prepare {
+    [super prepare];
+}
 #else
 - (void)prepare {
     [super prepare];

@@ -79,18 +79,10 @@ BOOL xz_objc_class_addMethod(Class aClass, SEL selector, Class _Nullable source,
         return NO;
     }
     
-    if (source == Nil) {
-        if (creation == nil) {
-            return NO;
-        }
+    if (source == nil) {
         source = aClass;
-    } else if (creation == Nil) {
-        if (aClass == source) {
-            return NO;
-        }
-        creation = selector;
     }
-    
+        
     // 方法已实现
     if ([aClass instancesRespondToSelector:selector]) {
         Method const oldMethod = xz_objc_class_getMethod(aClass, selector);
@@ -138,6 +130,9 @@ BOOL xz_objc_class_addMethod(Class aClass, SEL selector, Class _Nullable source,
     }
     
     // 方法未实现，添加新方法
+    if (creation == NULL) {
+        return NO;
+    }
     Method      const mtd = class_getInstanceMethod(source, creation);
     IMP         const imp = method_getImplementation(mtd);
     const char *const enc = method_getTypeEncoding(mtd);

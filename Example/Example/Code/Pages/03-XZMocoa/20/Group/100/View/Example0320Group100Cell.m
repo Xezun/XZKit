@@ -28,10 +28,9 @@
     // Configure the view for the selected state
 }
 
-- (void)prepareForViewModel {
-    [super prepareForViewModel];
+- (void)prepareForViewModel:(Example0320Group100CellViewModel *)viewModel {
+    [super prepareForViewModel:viewModel];
     
-    Example0320Group100CellViewModel *viewModel = self.viewModel;
     self.titleLabel.text = viewModel.title;
     [self.imageView sd_setImageWithURL:viewModel.image];
     self.detailsLabel.text = viewModel.details;

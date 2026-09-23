@@ -40,13 +40,9 @@
     // Configure the view for the selected state
 }
 
-- (void)prepareForViewModel {
-    [super prepareForViewModel];
+- (void)prepareForViewModel:(Example0320Group102CellViewModel *)viewModel {
+    [super prepareForViewModel:viewModel];
     
-    Example0320Group102CellViewModel *viewModel = self.viewModel;
-    if (viewModel == nil) {
-        return;
-    }
     self.pageControl.numberOfPages = viewModel.images.count;
     self.pageControl.currentPage = 0;
     [self.pageView reloadData];

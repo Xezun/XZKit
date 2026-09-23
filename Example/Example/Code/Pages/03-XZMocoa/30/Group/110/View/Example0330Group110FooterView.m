@@ -41,11 +41,11 @@
     return self;
 }
 
-- (void)prepareForViewModel {
-    [super prepareForViewModel];
+- (void)prepareForViewModel:(__kindof XZMocoaViewModel *)viewModel {
+    [super prepareForViewModel:viewModel];
     
     _textLabel.text = @"Footer视图";
-    _detailTextLabel.text = [self.viewModel.model text];
+    _detailTextLabel.text = [viewModel.model text];
 }
 
 @end

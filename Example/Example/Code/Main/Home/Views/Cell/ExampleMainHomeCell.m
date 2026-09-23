@@ -15,10 +15,9 @@
     XZMocoa(@"https://xzkit.xezun.com/examples/table").cell.viewReuseIdentifier = @"cell";
 }
 
-- (void)prepareForViewModel {
-    [super prepareForViewModel];
+- (void)prepareForViewModel:(ExampleMainHomeCellViewModel *)viewModel {
+    [super prepareForViewModel:viewModel];
     
-    ExampleMainHomeCellViewModel *viewModel = self.viewModel;
     self.textLabel.text = viewModel.title;
 }
 

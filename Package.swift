@@ -27,6 +27,7 @@ let package = Package(
             name: "XZKitObjC",
             dependencies: [],
             path: "Sources",
+            exclude: ["Header"],
             sources: ["ObjC"],
             publicHeadersPath: "Header/XZKit/Public",
             cSettings: [

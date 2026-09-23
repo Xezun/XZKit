@@ -50,7 +50,7 @@ static NSString *UIElementKindFromMocoaKind(XZMocoaKind kind) {
                     }
                     NSString * const identifier = XZMocoaReuseIdentifier(kind, name);
                     [collectionView registerClass:submodule.viewClass forCellWithReuseIdentifier:identifier];
-                    break;
+                    return;
                 }
                 case XZMocoaModuleViewFormNib: {
                     if (submodule.viewNibClass && ![submodule.viewNibClass isSubclassOfClass:UICollectionViewCell.class]) {
@@ -59,15 +59,19 @@ static NSString *UIElementKindFromMocoaKind(XZMocoaKind kind) {
                     NSString * const identifier = XZMocoaReuseIdentifier(kind, name);
                     UINib *viewNib = [UINib nibWithNibName:submodule.viewNibName bundle:submodule.viewNibBundle];
                     [collectionView registerNib:viewNib forCellWithReuseIdentifier:identifier];
-                    break;
+                    return;
                 }
                 case XZMocoaModuleViewFormStoryboardReusableView: {
                     // 已通过 Storyboard 注册
-                    break;
+                    return;
+                }
+                case XZMocoaModuleViewFormUnknown: {
+                    XZLog(@"[XZMocoa] 模块的视图角色未注册，或不支持：%@", submodule.url);
+                    return;
                 }
                 default: {
                     XZLog(@"[XZMocoa] 模块视图不支持在 UICollectionView 中使用：%@", submodule.url);
-                    break;
+                    return;
                 }
             }
         } else {
@@ -79,7 +83,7 @@ static NSString *UIElementKindFromMocoaKind(XZMocoaKind kind) {
                     NSString * const identifier = XZMocoaReuseIdentifier(kind, name);
                     NSString * const elementKind = UIElementKindFromMocoaKind(kind);
                     [collectionView registerClass:submodule.viewClass forSupplementaryViewOfKind:elementKind withReuseIdentifier:identifier];
-                    break;
+                    return;
                 }
                 case XZMocoaModuleViewFormNib: {
                     if (submodule.viewNibClass && ![submodule.viewNibClass isSubclassOfClass:UICollectionReusableView.class]) {
@@ -89,15 +93,19 @@ static NSString *UIElementKindFromMocoaKind(XZMocoaKind kind) {
                     NSString * const elementKind = UIElementKindFromMocoaKind(kind);
                     UINib *viewNib = [UINib nibWithNibName:submodule.viewNibName bundle:submodule.viewNibBundle];
                     [collectionView registerNib:viewNib forSupplementaryViewOfKind:elementKind withReuseIdentifier:identifier];
-                    break;
+                    return;
                 }
                 case XZMocoaModuleViewFormStoryboardReusableView: {
                     // 已通过 Storyboard 注册
-                    break;
+                    return;
+                }
+                case XZMocoaModuleViewFormUnknown: {
+                    XZLog(@"[XZMocoa] 模块的视图角色未注册，或不支持：%@", submodule.url);
+                    return;
                 }
                 default: {
                     XZLog(@"[XZMocoa] 模块视图不支持在 UICollectionView 中使用：%@", submodule.url);
-                    break;
+                    return;
                 }
             }
         }

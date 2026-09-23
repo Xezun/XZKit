@@ -131,10 +131,9 @@
     return self;
 }
 
-- (void)prepareForViewModel {
-    [super prepareForViewModel];
+- (void)prepareForViewModel:(XZMocoaGroupPlaceholderViewModel *)viewModel {
+    [super prepareForViewModel:viewModel];
     
-    XZMocoaGroupPlaceholderViewModel *viewModel = self.viewModel;
     _moduleLabel.text = viewModel.moduleURLString;
     _kindLabel.text = viewModel.kind;
     

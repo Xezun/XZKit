@@ -46,10 +46,9 @@
     // 2、控制器作为独立入口，方便与外部引用、交互。
 }
 
-- (void)prepareForViewModel {
-    [super prepareForViewModel];
+- (void)prepareForViewModel:(Example0311ViewModel *)viewModel {
+    [super prepareForViewModel:viewModel];
     
-    Example0311ViewModel *viewModel = self.viewModel;
     [self.photoImageView sd_setImageWithURL:viewModel.photo];
     self.nameLabel.text              = viewModel.name;
     self.phoneLabel.text             = viewModel.phone;

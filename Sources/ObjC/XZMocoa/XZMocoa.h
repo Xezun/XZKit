@@ -11,6 +11,8 @@
 // 1、模型、视图、视图模型的类命名，分别以 Model、View、ViewModel 结尾。
 // 2、其中以 Cell、Bar、Button、Slider、Control 结尾的视图，命名不用额外加 View 后缀，但是模型、视图模型须使用 Model、ViewModel 结尾。
 // 3、基于上述两条规则，UITableViewCell 适配后命名为 XZMocoaTableCell
+//
+// 私有方法以 __xz_mocoa_ 为前缀，理论上应该私有，但是又必须对外暴露的方法以 __mocoa_ 为前缀。
 
 #if __has_include(<XZKit/XZKit.h>)
 // XZMocoaDefines

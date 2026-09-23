@@ -53,16 +53,21 @@ static const void * const _context = &_context;
     [XZMocoaContext contextForView:self].viewModel = newValue;
 }
 
-- (void)willChangeViewModel:(XZMocoaViewModel *)newValue {
+- (void)__xz_mocoa_viewModelDidChange {
+    XZMocoaViewModel * const viewModel = self.viewModel;
+    if (viewModel == nil) {
+        return;
+    }
+    [viewModel ready];
+    [self prepareForViewModel:viewModel];
+}
+
+- (void)viewModelDidChange {
     
 }
 
-- (void)didChangeViewModel:(XZMocoaViewModel *)oldValue {
-    
-}
-
-- (void)prepareForViewModel {
-    [self __mocoa_bind_prepare];
+- (void)prepareForViewModel:(__kindof XZMocoaViewModel *)viewModel {
+    [self __mocoa_bind_prepare:viewModel];
 }
 
 - (BOOL)shouldPerformSegueWithIdentifier:(NSString *)identifier sender:(id)sender {
@@ -118,7 +123,7 @@ static const void * const _context = &_context;
     }
 }
 
-- (void)__mocoa_bind_prepare { }
+- (void)__mocoa_bind_prepare:(__kindof XZMocoaViewModel *)viewModel { }
 
 - (void)__mocoa_bind_title_normal:(NSString *)title { }
 - (void)__mocoa_bind_titleColor_normal:(UIColor *)color {}
@@ -157,13 +162,8 @@ static const void * const _context = &_context;
     [self.viewModel prepareForSegue:segue sender:sender];
 }
 
-- (void)didChangeViewModel:(XZMocoaViewModel *)oldValue {
-    [self prepareForViewModel];
-}
-
-- (void)prepareForViewModel {
-    [self.viewModel ready];
-    [super prepareForViewModel];
+- (void)viewModelDidChange {
+    [self __xz_mocoa_viewModelDidChange];
 }
 
 @end
@@ -176,25 +176,22 @@ static const void * const _context = &_context;
 + (void)load {
     if (self == [UIViewController class]) {
         {
-            SEL const selT = @selector(shouldPerformSegueWithIdentifier:sender:);
-            SEL const selN = @selector(xz_mocoa_override_shouldPerformSegueWithIdentifier:sender:);
-            SEL const selE = @selector(xz_mocoa_exchange_shouldPerformSegueWithIdentifier:sender:);
-            if (!xz_objc_class_addMethod(self, selT, nil, selN, NULL, selE)) {
-                NSLog(@"为 UIViewController 重载方法 %@ 失败，相关事件请手动处理", NSStringFromSelector(selT));
+            SEL const selector = @selector(shouldPerformSegueWithIdentifier:sender:);
+            SEL const exchange = @selector(xz_mocoa_exchange_shouldPerformSegueWithIdentifier:sender:);
+            if (!xz_objc_class_addMethod(self, selector, nil, NULL, NULL, exchange)) {
+                NSLog(@"为 UIViewController 重载方法 %@ 失败，相关事件请手动处理", NSStringFromSelector(selector));
             }
         } {
-            SEL const selT = @selector(prepareForSegue:sender:);
-            SEL const selN = @selector(xz_mocoa_override_prepareForSegue:sender:);
-            SEL const selE = @selector(xz_mocoa_exchange_prepareForSegue:sender:);
-            if (!xz_objc_class_addMethod(self, selT, nil, selN, NULL, selE)) {
-                NSLog(@"为 UIViewController 重载方法 %@ 失败，相关事件请手动处理", NSStringFromSelector(selT));
+            SEL const selector = @selector(prepareForSegue:sender:);
+            SEL const exchange = @selector(xz_mocoa_exchange_prepareForSegue:sender:);
+            if (!xz_objc_class_addMethod(self, selector, nil, NULL, NULL, exchange)) {
+                NSLog(@"为 UIViewController 重载方法 %@ 失败，相关事件请手动处理", NSStringFromSelector(selector));
             }
         } {
-            SEL const selT = @selector(viewDidLoad);
-            SEL const selN = @selector(xz_mocoa_override_viewDidLoad);
-            SEL const selE = @selector(xz_mocoa_exchange_viewDidLoad);
-            if (!xz_objc_class_addMethod(self, selT, nil, selN, NULL, selE)) {
-                NSLog(@"为 UIViewController 重载方法 %@ 失败，相关事件请手动处理", NSStringFromSelector(selT));
+            SEL const selector = @selector(viewDidLoad);
+            SEL const exchange = @selector(xz_mocoa_exchange_viewDidLoad);
+            if (!xz_objc_class_addMethod(self, selector, nil, NULL, NULL, exchange)) {
+                NSLog(@"为 UIViewController 重载方法 %@ 失败，相关事件请手动处理", NSStringFromSelector(selector));
             }
         }
     }
@@ -213,40 +210,15 @@ static const void * const _context = &_context;
     self.title = title;
 }
 
-- (void)didChangeViewModel:(XZMocoaViewModel *)oldValue {
-    [super didChangeViewModel:oldValue];
+- (void)viewModelDidChange {
     if (self.isViewLoaded) {
-        [self prepareForViewModel];
+        [self __xz_mocoa_viewModelDidChange];
     }
-}
-
-- (void)prepareForViewModel {
-    [self.viewModel ready];
-    [super prepareForViewModel];
-}
-
-- (UIViewController *)viewModel:(id<XZMocoaViewModel>)viewModel viewController:(void *)null {
-    return self;
-}
-
-- (void)xz_mocoa_override_viewDidLoad {
-    [self prepareForViewModel];
 }
 
 - (void)xz_mocoa_exchange_viewDidLoad {
     [self xz_mocoa_exchange_viewDidLoad];
-    [self prepareForViewModel];
-}
-
-// 不太可能
-- (BOOL)xz_mocoa_override_shouldPerformSegueWithIdentifier:(NSString *)identifier sender:(id)sender {
-    if (sender && (id)sender != self && [sender conformsToProtocol:@protocol(XZMocoaView)]) {
-        return [sender shouldPerformSegueWithIdentifier:identifier sender:sender];
-    }
-    if ([self conformsToProtocol:@protocol(XZMocoaView)]) {
-        return [self.viewModel shouldPerformSegueWithIdentifier:identifier sender:sender];
-    }
-    return xz_objc_msgSendSuper_bool(self, UIViewController.class, @selector(shouldPerformSegueWithIdentifier:sender:), identifier, sender);
+    [self __xz_mocoa_viewModelDidChange];
 }
 
 - (BOOL)xz_mocoa_exchange_shouldPerformSegueWithIdentifier:(NSString *)identifier sender:(id)sender {
@@ -260,17 +232,6 @@ static const void * const _context = &_context;
     }
     // 默认
     return [self xz_mocoa_exchange_shouldPerformSegueWithIdentifier:identifier sender:sender];;
-}
-
-// 不太可能
-- (void)xz_mocoa_override_prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {
-    if (sender && (id)sender != self && [sender conformsToProtocol:@protocol(XZMocoaView)]) {
-        return [sender prepareForSegue:segue sender:sender];
-    }
-    if ([self conformsToProtocol:@protocol(XZMocoaView)]) {
-        return [self.viewModel prepareForSegue:segue sender:sender];
-    }
-    return xz_objc_msgSendSuper_void(self, UIViewController.class, @selector(prepareForSegue:sender:), segue, sender);
 }
 
 - (void)xz_mocoa_exchange_prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {
@@ -508,8 +469,6 @@ static const void * const _context = &_context;
         return;
     }
     
-    [_view willChangeViewModel:newValue];
-    
     // 解除 oldValue 与当前视图的绑定关系
     [self detach:oldValue];
     
@@ -519,7 +478,7 @@ static const void * const _context = &_context;
     // view 与 viewModel 一对一关系
     [self attach:newValue];
     
-    [_view didChangeViewModel:oldValue];
+    [_view viewModelDidChange];
 }
 
 - (void)attach:(XZMocoaViewModel *)viewModel {

@@ -25,9 +25,9 @@
     return self;
 }
 
-- (void)prepareForViewModel {
-    [super prepareForViewModel];
-    _view.viewModel = [[XZMocoaGroupPlaceholderViewModel alloc] initWithModel:self.viewModel];
+- (void)prepareForViewModel:(__kindof XZMocoaViewModel *)viewModel {
+    [super prepareForViewModel:viewModel];
+    _view.viewModel = [[XZMocoaGroupPlaceholderViewModel alloc] initWithModel:viewModel];
 }
 
 @end

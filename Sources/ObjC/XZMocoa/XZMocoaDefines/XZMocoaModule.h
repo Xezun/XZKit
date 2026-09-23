@@ -40,22 +40,17 @@ typedef NS_ENUM(NSUInteger, XZMocoaModuleViewForm) {
 @interface XZMocoaModule : NSObject
 
 /// 模块地址，每个模块都应该有唯一的地址。
-/// @note
-/// 在开发中，根据业务的分类和分层，将模块设计成 URL 的管理方式很常见，所以 Mocoa 也采取了这种方式。
-/// @discussion
-/// @b domain @c 不同类型的业务模块，使用 domain 进行区分。
-/// @discussion
-/// @b path   @c 相同类型的业务模块，使用 path 表示模块的层级关系。
-/// @discussion
-/// @b query  @c 模块传值。
-/// @discussion
-/// 模块在 path 中的名称，由模块的 kind 和 name 组成，格式如下：
-/// @discussion
-/// @b kind:name @c 表示模块的 Mocoa Kind 和 Mocoa Name 都不为空。
-/// @discussion
-/// @b kind:     @c 表示模块的 Mocoa Name 为空。
-/// @discussion
-/// @b name      @c 表示模块的 Mocoa Kind 为空。
+///
+/// 模块层级与 URL 部件的说明。
+/// - `domain`: 不同类型的业务模块，使用 domain 进行区分。
+/// - `path  `: 相同类型的业务模块，使用 path 表示模块的层级关系。
+/// - `query `: 模块传值。
+///
+/// 地址中的 path 由模块的 kind 和 name 组成，支持如下格式：
+/// - `kind:name` 表示模块的 Kind 和 Name 都不为空。
+/// - `kind:    ` 表示模块的 Name 为空，符号 `:` 不可省略。
+/// - `name     ` 表示模块的 Kind 为空。
+/// - `:`         表示模块的 Name 与 Kind 都为空。
 @property (nonatomic, copy, readonly) NSURL *url;
 
 /// 请使用 +moduleForURL: 来创建对象。
@@ -78,8 +73,11 @@ typedef NS_ENUM(NSUInteger, XZMocoaModuleViewForm) {
 
 #pragma mark - 构造实例
 
+/// 实例化视图模型。
 - (nullable __kindof XZMocoaViewModel *)instantiateViewModelWithModel:(nullable id)model NS_SWIFT_NAME(instantiateViewModel(model:));
+/// 实例化视图。
 - (nullable __kindof UIView *)instantiateViewWithFrame:(CGRect)frame options:(nullable NSDictionary<XZMocoaKey, id> *)options NS_SWIFT_NAME(instantiateView(frame:options:));
+/// 实例化视图控制器。
 - (nullable __kindof UIViewController *)instantiateViewControllerWithOptions:(nullable NSDictionary<XZMocoaKey, id> *)options NS_SWIFT_NAME(instantiateViewController(options:));
 
 #pragma mark - MVVM 基本结构
