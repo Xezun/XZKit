@@ -20,8 +20,6 @@
 
 - (void)prepare {
     [super prepare];
-    _isHeaderRefreshing = NO;
-    _isFooterRefreshing = NO;
     
     _cursor = 100;
     _dataArray = [NSMutableArray array];
@@ -31,6 +29,12 @@
     _tableViewModel.rowAnimation = UITableViewRowAnimationTop;
     _tableViewModel.module = module;
     [self addSubViewModel:_tableViewModel];
+    
+    _isHeaderRefreshing = YES;
+    _isFooterRefreshing = NO;
+    [self refreshData:^(BOOL hasMoreData) {
+        self.isHeaderRefreshing = NO;
+    }];
 }
 
 - (void)didReceiveEvents:(XZMocoaEvents *)events {
@@ -52,7 +56,7 @@
         return;
     }
     _isHeaderRefreshing = isHeaderRefreshing;
-    [self sendActionsForKey:@"isHeaderRefreshing" value:nil];
+    [self sendActionsForKey:@"isHeaderRefreshing"];
 }
 
 - (void)setFooterRefreshing:(BOOL)isFooterRefreshing {
@@ -60,7 +64,43 @@
         return;
     }
     _isFooterRefreshing = isFooterRefreshing;
-    [self sendActionsForKey:@"isFooterRefreshing" value:nil];
+    [self sendActionsForKey:@"isFooterRefreshing"];
+}
+
+- (void)refreshData:(void (^)(BOOL hasMoreData))completion {
+    [self loadData:0 completion:^(NSArray *data) {
+        if (data.count > 0) {
+            self->_tableViewModel.rowAnimation = UITableViewRowAnimationFade;
+            [self->_tableViewModel performBatchUpdates:^{
+                [self->_dataArray removeAllObjects];
+                [self->_dataArray addObjectsFromArray:data];
+            } completion:^(BOOL finished) {
+                [self.viewController xz_showToast:[XZToast successToast:@"刷新成功"]];
+                completion(YES);
+            }];
+        } else {
+            [self.viewController xz_showToast:[XZToast warningToast:@"暂无更新"]];
+            completion(NO);
+        }
+    }];
+}
+
+- (void)loadMoreData:(void (^)(BOOL hasMoreData))completion {
+    [self loadData:_dataArray.count completion:^(NSArray *data) {
+        if (data.count > 0) {
+            self->_tableViewModel.rowAnimation = UITableViewRowAnimationTop;
+            [self->_tableViewModel performBatchUpdates:^{
+                [self->_dataArray addObjectsFromArray:data];
+            } completion:^(BOOL finished) {
+                completion(YES);
+                NSString *message = [NSString stringWithFormat:@"加载了 %ld 条数据", data.count];
+                [self.viewController xz_showToast:[XZToast successToast:message] position:(XZToastPositionBottom)];
+            }];
+        } else {
+            completion(NO);
+            [self.viewController xz_showToast:[XZToast warningToast:@"暂无更多数据"] position:(XZToastPositionBottom)];
+        }
+    }];
 }
 
 - (void)refreshingHeaderDidBeginAnimating {
@@ -72,20 +112,8 @@
         return;
     }
     self.isHeaderRefreshing = YES;
-    [self loadData:0 completion:^(NSArray *data) {
-        if (data.count > 0) {
-            self->_tableViewModel.rowAnimation = UITableViewRowAnimationFade;
-            [self->_tableViewModel performBatchUpdates:^{
-                [self->_dataArray removeAllObjects];
-                [self->_dataArray addObjectsFromArray:data];
-            } completion:^(BOOL finished) {
-                self.isHeaderRefreshing = NO;
-                [self.viewController xz_showToast:[XZToast successToast:@"刷新成功"]];
-            }];
-        } else {
-            self.isHeaderRefreshing = NO;
-            [self.viewController xz_showToast:[XZToast warningToast:@"暂无更新"]];
-        }
+    [self refreshData:^(BOOL hasMoreData) {
+        self.isHeaderRefreshing = NO;
     }];
 }
 
@@ -98,20 +126,8 @@
         return;
     }
     self.isFooterRefreshing = YES;
-    [self loadData:_dataArray.count completion:^(NSArray *data) {
-        if (data.count > 0) {
-            self->_tableViewModel.rowAnimation = UITableViewRowAnimationTop;
-            [self->_tableViewModel performBatchUpdates:^{
-                [self->_dataArray addObjectsFromArray:data];
-            } completion:^(BOOL finished) {
-                self.isFooterRefreshing = NO;
-                NSString *message = [NSString stringWithFormat:@"加载了 %ld 条数据", data.count];
-                [self.viewController xz_showToast:[XZToast successToast:message] position:(XZToastPositionBottom)];
-            }];
-        } else {
-            self.isFooterRefreshing = NO;
-            [self.viewController xz_showToast:[XZToast warningToast:@"暂无更多数据"] position:(XZToastPositionBottom)];
-        }
+    [self loadMoreData:^(BOOL hasMoreData) {
+        self.isFooterRefreshing = NO;
     }];
 }
 
@@ -163,6 +179,5 @@
         });
     });
 }
-
 
 @end

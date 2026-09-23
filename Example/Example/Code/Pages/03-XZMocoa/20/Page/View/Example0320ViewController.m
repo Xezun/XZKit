@@ -47,13 +47,21 @@
     self.tableView.viewModel = viewModel.tableViewModel;
     
     // 刷新状态，通过监听 isHeaderRefreshing/isFooterRefreshing 来更新。
-    [viewModel bindTarget:self.tableView.contentView.xz_headerRefreshView action:@selector(setRefreshing:) forKey:@"isHeaderRefreshing"];
-    [viewModel bindTarget:self.tableView.contentView.xz_footerRefreshView action:@selector(setRefreshing:) forKey:@"isFooterRefreshing"];
+    [viewModel bindTarget:self action:@selector(setHeaderRefreshing:) forKey:@"isHeaderRefreshing"];
+    [viewModel bindTarget:self action:@selector(setFooterRefreshing:) forKey:@"isFooterRefreshing"];
 }
 
 - (void)viewDidAppear:(BOOL)animated {
     [super viewDidAppear:animated];
     [self sendEventsWithKey:XZMocoaKeyViewDidAppear value:nil];
+}
+
+- (void)setHeaderRefreshing:(BOOL)isRefreshing {
+    self.tableView.contentView.xz_headerRefreshView.isRefreshing = isRefreshing;
+}
+
+- (void)setFooterRefreshing:(BOOL)isRefreshing {
+    self.tableView.contentView.xz_footerRefreshView.isRefreshing = isRefreshing;
 }
 
 - (void)scrollViewDidScroll:(UIScrollView *)scrollView {

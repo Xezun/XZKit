@@ -63,7 +63,7 @@
     self.content = [[NSAttributedString alloc] initWithString:data.content attributes:@{
         NSParagraphStyleAttributeName: style
     }];
-    [self sendActionsForKey:kMocoaNilKey];
+    [self sendActionsForKey:kMocoaNilKey value:nil];
 }
 
 - (NSString *)formatPhoneNumber:(NSString *)phone {
