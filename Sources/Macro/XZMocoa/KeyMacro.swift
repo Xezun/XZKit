@@ -69,10 +69,11 @@ public struct KeyMacro: AccessorMacro {
             return [
                 """
                 didSet {
-                    if \(raw: property.name) == oldValue {
+                    let newValue = self.\(raw: property.name)
+                    if newValue == oldValue {
                         return
                     }
-                    sendActions(forKey: "\(raw: key)")
+                    sendActions(forKey: "\(raw: key)", value: newValue)
                 }
                 """
             ]

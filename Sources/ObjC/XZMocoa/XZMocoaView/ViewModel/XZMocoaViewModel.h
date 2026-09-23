@@ -284,13 +284,14 @@ NS_SWIFT_UI_ACTOR @interface XZMocoaViewModel : NSObject <XZMocoaViewModel> {
 
 /// 执行 key 事件绑定的所有方法，并传递参数 value 值。
 ///
-/// 如果通过 KVC 不能取到 key 对应的值，应当将初始值通过 value 参数传入；如果值为 nil 请传入 kCFNull 对象。
+/// 没有属性关联的纯事件，必须使用此方法发送事件。
 ///
 /// @param key 绑定的事件，nil 表示发送默认事件
-/// @param value 事件值，标量值需用 NSValue 包装，值 nil 表示使用`-valueForKey:`获取视图模型当前值，值 NSNull 表示使用 nil 值
+/// @param value 事件值
 - (void)sendActionsForKey:(nullable XZMocoaKey)key value:(nullable id)value;
 
-/// 执行 key 事件绑定的所有方法，参数为 nil 值。
+/// 执行 key 事件绑定的所有方法，事件值为视图模型以 key 为键，通过 KVC 取到的值。
+/// 
 /// @param key 绑定的事件
 - (void)sendActionsForKey:(nullable XZMocoaKey)key;
 

@@ -7,10 +7,11 @@
 
 #import "XZMocoaTargetActionTable.h"
 #import "XZMocoaTargetAction.h"
+#import "XZObjc.h"
 @import ObjectiveC;
 
 @implementation XZMocoaTargetActionTable {
-    NSMutableDictionary<XZMocoaKey, NSMutableArray<XZMocoaTarget *> *> *_keyedTargetTable;
+    NSMutableDictionary<XZMocoaKey, NSMutableArray<XZMocoaTargetAction *> *> *_keyedTargetTable;
 }
 
 - (instancetype)initWithViewModel:(XZMocoaViewModel *)viewModel {
@@ -23,12 +24,12 @@
 }
 
 - (void)addTarget:(id)target action:(SEL)action forKey:(XZMocoaKey)key {
-    NSMutableArray<XZMocoaTarget *> *targetTable = _keyedTargetTable[key];
+    NSMutableArray<XZMocoaTargetAction *> *targetTable = _keyedTargetTable[key];
     if (targetTable == nil) {
         targetTable = [NSMutableArray array];
         _keyedTargetTable[key] = targetTable;
     }
-    XZMocoaTarget *targetObject = [XZMocoaTarget targetActionWithTarget:target selector:action];
+    XZMocoaTargetAction *targetObject = [XZMocoaTargetAction targetActionWithTarget:target selector:action];
     [targetTable addObject:targetObject];
 }
 
@@ -76,8 +77,8 @@
 
 /// 移除 key 事件的 action 行为
 - (void)_removeAction:(SEL)action forKey:(XZMocoaKey)key {
-    NSMutableArray<XZMocoaTarget *> * const targetTable = _keyedTargetTable[key];
-    [targetTable enumerateObjectsWithOptions:NSEnumerationReverse usingBlock:^(XZMocoaTarget *targetObject, NSUInteger idx, BOOL *stop) {
+    NSMutableArray<XZMocoaTargetAction *> * const targetTable = _keyedTargetTable[key];
+    [targetTable enumerateObjectsWithOptions:NSEnumerationReverse usingBlock:^(XZMocoaTargetAction *targetObject, NSUInteger idx, BOOL *stop) {
         id const target = targetObject.target;
         if (target == nil || targetObject.action.selector == action) {
             [targetTable removeObjectAtIndex:idx];
@@ -94,8 +95,8 @@
 
 /// 移除 key 事件的 target 目标
 - (void)_removeTarget:(id)target forKey:(XZMocoaKey)key {
-    NSMutableArray<XZMocoaTarget *> * const targetTable = _keyedTargetTable[key];
-    [targetTable enumerateObjectsWithOptions:NSEnumerationReverse usingBlock:^(XZMocoaTarget *targetObject, NSUInteger idx, BOOL *stop) {
+    NSMutableArray<XZMocoaTargetAction *> * const targetTable = _keyedTargetTable[key];
+    [targetTable enumerateObjectsWithOptions:NSEnumerationReverse usingBlock:^(XZMocoaTargetAction *targetObject, NSUInteger idx, BOOL *stop) {
         id const _target = targetObject.target;
         if (_target == nil || _target == target) {
             [targetTable removeObjectAtIndex:idx];
@@ -112,8 +113,8 @@
 
 /// 移除 key 事件的 target 目标的 action 行为
 - (void)_removeTarget:(id)target action:(SEL)action forKey:(XZMocoaKey)key {
-    NSMutableArray<XZMocoaTarget *> * const targetTable = _keyedTargetTable[key];
-    [targetTable enumerateObjectsWithOptions:NSEnumerationReverse usingBlock:^(XZMocoaTarget *targetObject, NSUInteger idx, BOOL *stop) {
+    NSMutableArray<XZMocoaTargetAction *> * const targetTable = _keyedTargetTable[key];
+    [targetTable enumerateObjectsWithOptions:NSEnumerationReverse usingBlock:^(XZMocoaTargetAction *targetObject, NSUInteger idx, BOOL *stop) {
         id const _target = targetObject.target;
         if (_target == nil || (_target == target && targetObject.action.selector == action)) {
             [targetTable removeObjectAtIndex:idx];
@@ -129,15 +130,15 @@
 }
 
 - (void)sendActionsForKey:(XZMocoaKey)key value:(nullable)value {
-    NSMutableArray<XZMocoaTarget *> * const targetTable = _keyedTargetTable[key];
-    id const sender = self.viewModel;
-    [targetTable enumerateObjectsWithOptions:NSEnumerationReverse usingBlock:^(XZMocoaTarget *targetObject, NSUInteger idx, BOOL *stop) {
-        id const target = targetObject.target;
+    NSMutableArray<XZMocoaTargetAction *> * const targetTable = _keyedTargetTable[key];
+    id const viewModel = self.viewModel;
+    [targetTable enumerateObjectsWithOptions:NSEnumerationReverse usingBlock:^(XZMocoaTargetAction * const targetAction, NSUInteger idx, BOOL *stop) {
+        id const target = targetAction.target;
         if (target == nil) {
             [targetTable removeObjectAtIndex:idx]; // 删除 target 已销毁的监听
             return;
         }
-        [targetObject.action sender:sender target:target sendActionForKey:key value:value];
+        [targetAction viewModel:viewModel target:target sendActionForKey:key value:value];
     }];
 }
 

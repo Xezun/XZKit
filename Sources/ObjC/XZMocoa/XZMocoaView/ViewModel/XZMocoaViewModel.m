@@ -304,16 +304,12 @@
 
 - (void)sendActionsForKey:(XZMocoaKey)key value:(id)value {
     if (!self.isReady) return;
-    if (value == nil) {
-        value = (key == kMocoaNilKey ? nil : [self valueForKey:key]);
-    } else if (value == (id)kCFNull) {
-        value = nil;
-    }
     [_targetActions sendActionsForKey:(key ?: kMocoaNilKey) value:value];
 }
 
 - (void)sendActionsForKey:(XZMocoaKey)key {
-    [_targetActions sendActionsForKey:key value:nil];
+    id const value = (key ? [self valueForKey:key] : nil);
+    [_targetActions sendActionsForKey:key value:value];
 }
 
 - (void)removeTarget:(id)target action:(SEL)action forKey:(XZMocoaKey)key {
@@ -329,7 +325,7 @@
         key = kMocoaNilKey;
     }
     id const value = (key == kMocoaNilKey ? nil : [self valueForKey:key]);
-    [XZMocoaAction sender:self target:target sendAction:action forKey:key value:value];
+    [XZMocoaTargetAction viewModel:self target:target sendAction:action forKey:key value:value];
 }
 
 - (void)bindTarget:(id)target action:(SEL)action forKey:(XZMocoaKey)key {

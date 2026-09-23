@@ -249,7 +249,7 @@ class UserModel: NSObject {
 
 ### 4.3 ViewModel 角色展开（`.vm`）
 
-ViewModel 通过 `sendActions(forKey:)` 向已绑定的视图发送 KTA 事件：
+ViewModel 通过 `sendActions(forKey:value:)` 向已绑定的视图发送 KTA 事件：
 
 ```swift
 @mocoa(.vm)
@@ -264,16 +264,17 @@ class UserViewModel: XZMocoaViewModel {
 class UserViewModel: XZMocoaViewModel {
     @objc var name: String? {
         didSet {
-            if name == oldValue {
+            let newValue = self.name
+            if newValue == oldValue {
                 return
             }
-            sendActions(forKey: "name")
+            sendActions(forKey: "name", value: newValue)
         }
     }
 }
 ```
 
-> 若属性已自定义 `set` 或 `didSet`，需自行调用 `sendActions(forKey:)` 触发监听。
+> 若属性已自定义 `set` 或 `didSet`，需自行调用 `sendActions(forKey:value:)` 触发监听。
 
 ---
 
@@ -639,7 +640,7 @@ XZMocoaModule(for: someURLExpression)!                             // URL 参数
 | `@key` 用于 View 角色 | 错误 | @key: 不支持在 View 角色中使用 |
 | `@key` 用于非属性 | 错误 | @key: 仅支持属性 |
 | `@key` 属性已自定义 set/didSet（Model） | 警告 | 无法添加 didSet 方法，请自行调用 `didChangeValue(forKey:)` 方法触发监听 |
-| `@key` 属性已自定义 set/didSet（ViewModel） | 警告 | 无法添加 didSet 方法，请自行调用 `sendActions(forKey:)` 方法触发监听 |
+| `@key` 属性已自定义 set/didSet（ViewModel） | 警告 | 无法添加 didSet 方法，请自行调用 `sendActions(forKey:value:)` 方法触发监听 |
 | `@bind`/`@link` 用于 Model 角色 | 错误 | @bind: 数据模型 Model 不支持绑定 |
 | `@bind` 绑定键数量超出方法参数个数 | 错误 | 绑定的键数量，超出了方法参数个数 |
 | `@bind` 修饰 View 方法且参数超限 | 错误 | 根据 KTA 机制，绑定方法最多支持三个参数 / 仅支持绑定单个 XZMocoaKey 到方法 |
@@ -724,10 +725,11 @@ class UserView: UIView, XZMocoaView {
 // UserViewModel：@key 生成 didSet + KTA 通知
 @objc var name: String? {
     didSet {
-        if name == oldValue {
+        let newValue = self.name
+        if newValue == oldValue {
             return
         }
-        sendActions(forKey: "name")
+        sendActions(forKey: "name", value:newValue)
     }
 }
 
