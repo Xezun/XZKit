@@ -181,7 +181,7 @@ viewModel.addTarget(self, action: #selector(beginRefreshing), forKey: "beginRefr
 }
 
 // ViewModel
-self.sendActions(forKey: "beginRefreshing")
+self.sendActions(forKey: "beginRefreshing", value: nil)
 ```
 
 ### 5、数据监听
