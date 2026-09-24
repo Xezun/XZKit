@@ -32,14 +32,19 @@ NS_ASSUME_NONNULL_BEGIN
 ///
 /// 按照 objc 的规则，运行时会把方法编译为`method(receiver, SEL, ...)`的形式，即前两个参数是固定的，此属性不包含这两个参数。
 @property (nonatomic, readonly, nullable) NSArray<XZObjcType *> *arguments;
+/// 懒加载，调用 `-call:parameters` 方法也会自动生成。
+@property (nonatomic, readonly) NSInvocation *invocation;
 
 + (nullable instancetype)methodWithMethod:(Method)method NS_SWIFT_NAME(init(_:));
 - (instancetype)init NS_UNAVAILABLE;
 
-/// 执行方法
+/// 执行方法，请自行保证数组个数与参数数量一致。
+///
+/// 由于没有处理方法的返回值，有返回值的方法，不应使用此方法调用。
+///
 /// - Parameters:
 ///   - target: 执行方法的对象
-///   - parameters: 参数，使用 kCFNull 表示 nil 值
+///   - parameters: 参数，数组中的 kCFNull 将作为 nil 使用
 - (void)call:(id)target parameters:(nullable NSArray *)parameters;
 
 @end
