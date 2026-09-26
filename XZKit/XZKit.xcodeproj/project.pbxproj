@@ -13,6 +13,7 @@
 		04A392132E1FA09F00A48BC0 /* UniformTypeIdentifiers.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 04A392122E1FA09F00A48BC0 /* UniformTypeIdentifiers.framework */; };
 		04D5238930580C4900C88AAB /* XZKit.docc in Sources */ = {isa = PBXBuildFile; fileRef = 04D5238730580C4900C88AAB /* XZKit.docc */; };
 		04D5238C30580C4F00C88AAB /* XZKitTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 04D5238A30580C4F00C88AAB /* XZKitTests.m */; };
+		297152263066919B00AB08CC /* XZDataDigesterTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 297152253066919B00AB08CC /* XZDataDigesterTests.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -34,6 +35,7 @@
 		04A392122E1FA09F00A48BC0 /* UniformTypeIdentifiers.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UniformTypeIdentifiers.framework; path = Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.5.sdk/System/Library/Frameworks/UniformTypeIdentifiers.framework; sourceTree = DEVELOPER_DIR; };
 		04D5238730580C4900C88AAB /* XZKit.docc */ = {isa = PBXFileReference; lastKnownFileType = folder.documentationcatalog; path = XZKit.docc; sourceTree = "<group>"; };
 		04D5238A30580C4F00C88AAB /* XZKitTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = XZKitTests.m; sourceTree = "<group>"; };
+		297152253066919B00AB08CC /* XZDataDigesterTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = XZDataDigesterTests.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
@@ -252,6 +254,7 @@
 			isa = PBXGroup;
 			children = (
 				04D5238A30580C4F00C88AAB /* XZKitTests.m */,
+				297152253066919B00AB08CC /* XZDataDigesterTests.swift */,
 			);
 			path = XZKitTests;
 			sourceTree = "<group>";
@@ -327,6 +330,7 @@
 					};
 					047FA0C22E1F8D8B00830368 = {
 						CreatedOnToolsVersion = 16.4;
+						LastSwiftMigration = 2630;
 					};
 				};
 			};
@@ -380,6 +384,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				297152263066919B00AB08CC /* XZDataDigesterTests.swift in Sources */,
 				04D5238C30580C4F00C88AAB /* XZKitTests.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -605,6 +610,7 @@
 		047FA0D12E1F8D8B00830368 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = LWKDD4DJ6H;
@@ -613,6 +619,8 @@
 				PRODUCT_BUNDLE_IDENTIFIER = com.xezun.XZKitTests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 6.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Debug;
@@ -620,6 +628,7 @@
 		047FA0D22E1F8D8B00830368 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = LWKDD4DJ6H;
@@ -628,6 +637,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = com.xezun.XZKitTests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_VERSION = 6.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Release;
