@@ -43,8 +43,8 @@ static const void * const _secureContentDisplay = &_secureContentDisplay;
     return snapImage;
 }
 
-- (void)xz_setSecureContentDisplay:(BOOL)xz_secureContentDisplay {
-    if (self.xz_secureContentDisplay == xz_secureContentDisplay) {
+- (void)xz_setDisplaysSecureContent:(BOOL)xz_displaysSecureContent {
+    if (self.xz_displaysSecureContent == xz_displaysSecureContent) {
         return;
     }
     
@@ -75,7 +75,7 @@ static const void * const _secureContentDisplay = &_secureContentDisplay;
         }
     }
     
-    if (xz_secureContentDisplay) {
+    if (xz_displaysSecureContent) {
         if (_canvasView) {
             CALayer * const textLayer = _canvasView.layer;
             _secureView.secureTextEntry = NO;
@@ -94,10 +94,10 @@ static const void * const _secureContentDisplay = &_secureContentDisplay;
         [_canvasView setValue:textLayer forKey:@"layer"];
     }
     
-    objc_setAssociatedObject(self, _secureContentDisplay, @(xz_secureContentDisplay), OBJC_ASSOCIATION_COPY_NONATOMIC);
+    objc_setAssociatedObject(self, _secureContentDisplay, @(xz_displaysSecureContent), OBJC_ASSOCIATION_COPY_NONATOMIC);
 }
 
-- (BOOL)xz_secureContentDisplay {
+- (BOOL)xz_displaysSecureContent {
     return [objc_getAssociatedObject(self, _secureContentDisplay) boolValue];
 }
 
