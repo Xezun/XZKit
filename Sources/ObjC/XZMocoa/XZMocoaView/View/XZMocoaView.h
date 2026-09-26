@@ -101,6 +101,9 @@ NS_SWIFT_UI_ACTOR @protocol XZMocoaView <NSObject>
 - (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(nullable id)sender NS_SWIFT_NAME(prepare(for:sender:));
 
 /// 向 viewModel 发送事件或传值。
+///
+/// 传值基于事件通道，如果视图没有视图模型，即没有事件通道，那么则事件将交给响应者链上的下一响应者`nextResponder`发送。
+///
 /// - Parameters:
 ///   - key: 事件标识符
 ///   - value: 事件值

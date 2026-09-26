@@ -79,7 +79,11 @@ static const void * const _context = &_context;
 }
 
 - (void)sendEventsWithKey:(XZMocoaKey)key value:(id)value {
-    [[XZMocoaContext contextIfLoadedForView:self] sendEventsWithKey:key value:value];
+    XZMocoaContext * const mocoaContext = [XZMocoaContext contextIfLoadedForView:self];
+    if (mocoaContext) {
+        return [mocoaContext sendEventsWithKey:key value:value];
+    }
+    return [self.nextResponder sendEventsWithKey:key value:value];
 }
 
 - (void)didInitWithMocoaOptions:(XZMocoaOptions *)options {
