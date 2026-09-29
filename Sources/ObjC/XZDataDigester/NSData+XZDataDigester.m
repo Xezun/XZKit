@@ -11,35 +11,35 @@
 @implementation NSData (XZDataDigester)
 
 - (NSString *)xz_md5 {
-    return [XZDataDigester digest:self algorithm:(XZDataDigesterAlgorithmMD5) hexEncoding:XZLowercaseHexEncoding];
+    return [XZDataDigester digest:self algorithm:(XZDataDigesterAlgorithmMD5) hexEncoding:XZLowercaseHexEncoding error:NULL];
 }
 
 - (NSString *)xz_MD5 {
-    return [XZDataDigester digest:self algorithm:(XZDataDigesterAlgorithmMD5) hexEncoding:XZUppercaseHexEncoding];
+    return [XZDataDigester digest:self algorithm:(XZDataDigesterAlgorithmMD5) hexEncoding:XZUppercaseHexEncoding error:NULL];
 }
 
 - (NSString *)xz_sha1 {
-    return [XZDataDigester digest:self algorithm:(XZDataDigesterAlgorithmSHA1) hexEncoding:XZLowercaseHexEncoding];
+    return [XZDataDigester digest:self algorithm:(XZDataDigesterAlgorithmSHA1) hexEncoding:XZLowercaseHexEncoding error:NULL];
 }
 
 - (NSString *)xz_SHA1 {
-    return [XZDataDigester digest:self algorithm:(XZDataDigesterAlgorithmSHA1) hexEncoding:XZUppercaseHexEncoding];
+    return [XZDataDigester digest:self algorithm:(XZDataDigesterAlgorithmSHA1) hexEncoding:XZUppercaseHexEncoding error:NULL];
 }
 
 - (NSString *)xz_sha256 {
-    return [XZDataDigester digest:self algorithm:(XZDataDigesterAlgorithmSHA256) hexEncoding:XZLowercaseHexEncoding];
+    return [XZDataDigester digest:self algorithm:(XZDataDigesterAlgorithmSHA256) hexEncoding:XZLowercaseHexEncoding error:NULL];
 }
 
 - (NSString *)xz_SHA256 {
-    return [XZDataDigester digest:self algorithm:(XZDataDigesterAlgorithmSHA256) hexEncoding:XZUppercaseHexEncoding];
+    return [XZDataDigester digest:self algorithm:(XZDataDigesterAlgorithmSHA256) hexEncoding:XZUppercaseHexEncoding error:NULL];
 }
 
 - (NSString *)xz_sha512 {
-    return [XZDataDigester digest:self algorithm:(XZDataDigesterAlgorithmSHA512) hexEncoding:XZLowercaseHexEncoding];
+    return [XZDataDigester digest:self algorithm:(XZDataDigesterAlgorithmSHA512) hexEncoding:XZLowercaseHexEncoding error:NULL];
 }
 
 - (NSString *)xz_SHA512 {
-    return [XZDataDigester digest:self algorithm:(XZDataDigesterAlgorithmSHA512) hexEncoding:XZUppercaseHexEncoding];
+    return [XZDataDigester digest:self algorithm:(XZDataDigesterAlgorithmSHA512) hexEncoding:XZUppercaseHexEncoding error:NULL];
 }
 
 @end
