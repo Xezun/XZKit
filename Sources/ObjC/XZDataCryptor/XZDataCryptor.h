@@ -26,7 +26,7 @@ NS_ASSUME_NONNULL_BEGIN
 /// 加密或解密。
 @property (nonatomic, readonly) XZDataCryptorOperation operation;
 /// 执行加密或解密的算法。
-/// @note 这是一个 copy 属性，修改 `algorithm` 的属性，不会影响到 XZDataCryptor 对象。
+/// @note 构造时会持有 algorithm 的副本，外部再修改传入的 XZDataCryptorAlgorithm 不会影响本对象。
 @property (nonatomic, copy, readonly) XZDataCryptorAlgorithm *algorithm;
 /// 执行加密或解密的模式。
 @property (nonatomic, readonly) XZDataCryptorMode mode;
@@ -37,16 +37,22 @@ NS_ASSUME_NONNULL_BEGIN
 + (instancetype)new NS_UNAVAILABLE;
 
 /// 构造 XZDataCryptor 对象。
-/// @param operation 加密/解密
+/// @note 密钥与向量的长度由 XZDataCryptorAlgorithm 保证合法，只有在内存不足或算法与模式的组合不受支持时才返回 nil。
 /// @param algorithm 算法
+/// @param operation 加密/解密
 /// @param mode 模式
 /// @param padding 填充方式
-+ (instancetype)cryptorWithOperation:(XZDataCryptorOperation)operation algorithm:(XZDataCryptorAlgorithm *)algorithm mode:(XZDataCryptorMode)mode padding:(XZDataCryptorPadding)padding;
+/// @param error 错误输出，错误域为 XZDataCryptorErrorDomain
+/// @return 构造好的加密器对象。
++ (nullable instancetype)cryptorWithAlgorithm:(XZDataCryptorAlgorithm *)algorithm operation:(XZDataCryptorOperation)operation mode:(XZDataCryptorMode)mode padding:(XZDataCryptorPadding)padding error:(NSError * _Nullable __autoreleasing * _Nullable)error;
 
-/// 便利构造方法，使用 CBC/PKCS7 参数
-/// @param operation 加密或解密
+/// 便利构造方法，使用 CBC/PKCS7 参数。
+/// @note 密钥与向量的长度由 XZDataCryptorAlgorithm 保证合法，只有在内存不足或算法与模式的组合不受支持时才返回 nil。
 /// @param algorithm 算法
-+ (instancetype)cryptorWithOperation:(XZDataCryptorOperation)operation algorithm:(XZDataCryptorAlgorithm *)algorithm;
+/// @param operation 加密或解密
+/// @param error 错误输出，错误域为 XZDataCryptorErrorDomain
+/// @return 构造好的加密器对象。
++ (nullable instancetype)cryptorWithAlgorithm:(XZDataCryptorAlgorithm *)algorithm operation:(XZDataCryptorOperation)operation error:(NSError * _Nullable __autoreleasing * _Nullable)error;
 
 /// 对数据执行加密/解密操作。本方法可调用多次，比如将较大的数据分块读入内存，分别进行加密解密计算。
 ///
@@ -54,9 +60,9 @@ NS_ASSUME_NONNULL_BEGIN
 /// @note 对于分组密码及块加密算法，需要调用 -final: 方法补齐块数据才能最终完成加密计算。
 ///
 /// @param bytes 待加密/解密的数据
-/// @param error 执行加密或解密时发生发生的错误输出
+/// @param error 执行加密或解密时发生的错误输出，错误域为 XZDataCryptorErrorDomain
 /// @return （已成功执行）已加密/解密后的数据
-- (nullable NSData *)cryptBytes:(void *)bytes length:(NSUInteger)length error:(NSError * _Nullable __autoreleasing * _Nullable)error NS_SWIFT_NAME(crypt(_:length:));
+- (nullable NSData *)cryptBytes:(const void *)bytes length:(NSUInteger)length error:(NSError * _Nullable __autoreleasing * _Nullable)error NS_SWIFT_NAME(crypt(_:length:));
 
 /// 对数据执行加密/解密操作。
 - (nullable NSData *)cryptData:(NSData *)data error:(NSError * _Nullable __autoreleasing * _Nullable)error NS_SWIFT_NAME(crypt(_:));
@@ -66,27 +72,47 @@ NS_ASSUME_NONNULL_BEGIN
 /// @note 对于流密码、无补齐模式的加解密来说，不需要调用此方法。
 ///
 /// @param error 错误输出。
-- (nullable NSData *)final:(NSError *__autoreleasing  _Nullable *)error;
+- (nullable NSData *)final:(NSError * _Nullable __autoreleasing * _Nullable)error;
 
-/// 以新的初始化向量重置当前对象，以开始新的加解密。
-/// @note CCCryptor 只有 CBC 模式支持重置，对于非 CBC 模式，本方法会重新构造上下文以实现重置。
-/// @param key 密钥
-/// @param vector 初始化向量
-- (void)resetWithKey:(NSString *)key vector:(nullable NSString *)vector;
+/// 以新的密钥和初始化向量重置当前对象，以开始新的加解密。
+/// @note CommonCrypto 的 CCCryptorReset 不能更换密钥，因此本方法通过重建上下文实现重置。
+/// @note 尚未凑满一块而被缓冲的数据将被丢弃。
+/// @param key 密钥。传 nil 得到全 `\0` 的合法密钥。
+/// @param vector 初始化向量。传 nil 得到全 `\0` 的合法向量；不使用向量的算法会忽略其值。
+/// @param error 错误输出，错误域为 XZDataCryptorErrorDomain
+- (BOOL)resetWithKey:(nullable NSData *)key vector:(nullable NSData *)vector error:(NSError * _Nullable __autoreleasing * _Nullable)error;
+
+/// 只重置初始化向量。
+/// @param vector 初始化向量。
+/// @param error 错误输出，错误域为 XZDataCryptorErrorDomain
+- (BOOL)resetWithVector:(nullable NSData *)vector error:(NSError * _Nullable __autoreleasing * _Nullable)error;
 
 @end
+
 
 @interface XZDataCryptor (XZExtendedDataCryptor)
 
 /// 加密的便利方法。
 /// @note 当数据较小可以单独处理时，使用此方法要比使用实例化 XZDataCryptor 对象效率更高。
-/// @note 此方法只支持使用 ECB 、CBC（noPadding/PKCS7Padding）模式。
-+ (nullable NSData *)encrypt:(NSData *)data algorithm:(XZDataCryptorAlgorithm *)algorithm mode:(XZDataCryptorMode)mode padding:(XZDataCryptorPadding)padding error:(NSError **)error;
+/// @note 此方法只支持 ECB 、CBC（noPadding/PKCS7Padding）、RC4 模式，传入其他模式会返回 kCCUnimplemented 错误。
+/// @param data 待加密的数据
+/// @param algorithm 算法
+/// @param mode 模式
+/// @param padding 填充方式
+/// @param error 错误输出，错误域为 XZDataCryptorErrorDomain
+/// @return 已加密后的数据
++ (nullable NSData *)encrypt:(NSData *)data algorithm:(XZDataCryptorAlgorithm *)algorithm mode:(XZDataCryptorMode)mode padding:(XZDataCryptorPadding)padding error:(NSError * _Nullable __autoreleasing * _Nullable)error;
 
 /// 解密的便利方法。
 /// @note 当数据较小，且可以单独处理时，使用此方法要比使用实例化 XZDataCryptor 对象效率更高。
-/// @note 此方法只支持使用 ECB 、CBC（noPadding/PKCS7Padding）模式。
-+ (nullable NSData *)decrypt:(NSData *)data algorithm:(XZDataCryptorAlgorithm *)algorithm mode:(XZDataCryptorMode)mode padding:(XZDataCryptorPadding)padding error:(NSError **)error;
+/// @note 此方法只支持 ECB 、CBC（noPadding/PKCS7Padding）、RC4 模式，传入其他模式会返回 kCCUnimplemented 错误。
+/// @param data 待解密的数据
+/// @param algorithm 算法
+/// @param mode 模式
+/// @param padding 填充方式
+/// @param error 错误输出，错误域为 XZDataCryptorErrorDomain
+/// @return 已解密后的数据
++ (nullable NSData *)decrypt:(NSData *)data algorithm:(XZDataCryptorAlgorithm *)algorithm mode:(XZDataCryptorMode)mode padding:(XZDataCryptorPadding)padding error:(NSError * _Nullable __autoreleasing * _Nullable)error;
 
 @end
 
@@ -94,38 +120,43 @@ NS_ASSUME_NONNULL_BEGIN
 @interface XZDataCryptor (XZAESDataCryptor)
 
 /// 构造 AES 加密器。
-/// - Parameters:
-///   - operation: 加密或解密
-///   - key: 密钥
-///   - vector: 初始化向量
-///   - mode: 加密模式
-///   - padding: 块对齐方式
-+ (XZDataCryptor *)AESCryptor:(XZDataCryptorOperation)operation key:(NSString *)key vector:(nullable NSString *)vector mode:(XZDataCryptorMode)mode padding:(XZDataCryptorPadding)padding NS_SWIFT_NAME(init(AES:key:vector:mode:padding:));
+/// @param operation 加密或解密
+/// @param key 密钥
+/// @param vector 初始化向量
+/// @param mode 加密模式
+/// @param padding 块对齐方式
+/// @param error 错误输出，错误域为 XZDataCryptorErrorDomain
+/// @return 构造好的加密器对象。
+/// @note 密钥与向量的长度由 XZDataCryptorAlgorithm 保证合法，只有在内存不足或算法与模式的组合不受支持时才返回 nil。
++ (nullable instancetype)AESCryptor:(XZDataCryptorOperation)operation key:(nullable NSData *)key vector:(nullable NSData *)vector mode:(XZDataCryptorMode)mode padding:(XZDataCryptorPadding)padding error:(NSError * _Nullable __autoreleasing * _Nullable)error NS_SWIFT_NAME(init(AES:key:vector:mode:padding:));
 /// 构造 AES 加密器，使用 CBC/PKCS7Padding 参数。
-/// - Parameters:
-///   - operation: 加密或解密
-///   - key: 密钥
-///   - vector: 初始化向量
-+ (XZDataCryptor *)AESCryptor:(XZDataCryptorOperation)operation key:(NSString *)key vector:(nullable NSString *)vector NS_SWIFT_NAME(init(AES:key:vector:));
+/// @param operation 加密或解密
+/// @param key 密钥
+/// @param vector 初始化向量
+/// @param error 错误输出，错误域为 XZDataCryptorErrorDomain
+/// @return 构造好的加密器对象。
+/// @note 密钥与向量的长度由 XZDataCryptorAlgorithm 保证合法，只有在内存不足或算法与模式的组合不受支持时才返回 nil。
++ (nullable instancetype)AESCryptor:(XZDataCryptorOperation)operation key:(nullable NSData *)key vector:(nullable NSData *)vector error:(NSError * _Nullable __autoreleasing * _Nullable)error NS_SWIFT_NAME(init(AES:key:vector:));
 
 /// 对数据执行 AES 加密或解密。
-/// - Parameters:
-///   - data: 待处理的数据
-///   - operation: 加密或解密
-///   - key: 密钥
-///   - vector: 初始化向量
-///   - mode: 加密模式
-///   - padding: 块对齐方式
-///   - error: 错误输出
-+ (nullable NSData *)AES:(NSData *)data operation:(XZDataCryptorOperation)operation key:(NSString *)key vector:(nullable NSString *)vector mode:(XZDataCryptorMode)mode padding:(XZDataCryptorPadding)padding error:(NSError * _Nullable __autoreleasing *)error NS_SWIFT_NAME(AES(_:operation:key:vector:mode:padding:));
+/// @note 一次性方法只支持 ECB 、CBC（noPadding/PKCS7Padding）、RC4 模式，传入其他模式会返回 kCCUnimplemented 错误；CFB/CTR/OFB/CFB8 请使用加密器实例。
+/// @param data 待处理的数据
+/// @param operation 加密或解密
+/// @param key 密钥
+/// @param vector 初始化向量
+/// @param mode 加密模式
+/// @param padding 块对齐方式
+/// @param error 错误输出，错误域为 XZDataCryptorErrorDomain
+/// @return 已加密/解密后的数据
++ (nullable NSData *)AES:(NSData *)data operation:(XZDataCryptorOperation)operation key:(nullable NSData *)key vector:(nullable NSData *)vector mode:(XZDataCryptorMode)mode padding:(XZDataCryptorPadding)padding error:(NSError * _Nullable __autoreleasing * _Nullable)error NS_SWIFT_NAME(AES(_:operation:key:vector:mode:padding:));
 /// 对数据执行 AES 加密或解密，使用 CBC/PKCS7Padding 参数。
-/// - Parameters:
-///   - data: 待处理的数据
-///   - operation: 加密或解密
-///   - key: 密钥
-///   - vector: 初始化向量
-///   - error: 错误输出
-+ (nullable NSData *)AES:(NSData *)data operation:(XZDataCryptorOperation)operation key:(NSString *)key vector:(nullable NSString *)vector error:(NSError * _Nullable __autoreleasing *)error NS_SWIFT_NAME(AES(_:operation:key:vector:));
+/// @param data 待处理的数据
+/// @param operation 加密或解密
+/// @param key 密钥
+/// @param vector 初始化向量
+/// @param error 错误输出，错误域为 XZDataCryptorErrorDomain
+/// @return 已加密/解密后的数据
++ (nullable NSData *)AES:(NSData *)data operation:(XZDataCryptorOperation)operation key:(nullable NSData *)key vector:(nullable NSData *)vector error:(NSError * _Nullable __autoreleasing * _Nullable)error NS_SWIFT_NAME(AES(_:operation:key:vector:));
 
 @end
 
@@ -133,42 +164,45 @@ NS_ASSUME_NONNULL_BEGIN
 @interface XZDataCryptor (XZDESDataCryptor)
 
 /// 构造 DES 加密器。
-/// - Parameters:
-///   - operation: 加密或解密
-///   - key: 密钥
-///   - vector: 初始化向量
-///   - mode: 加密模式
-///   - padding: 块对齐方式
-+ (XZDataCryptor *)DESCryptor:(XZDataCryptorOperation)operation key:(NSString *)key vector:(nullable NSString *)vector mode:(XZDataCryptorMode)mode padding:(XZDataCryptorPadding)padding NS_SWIFT_NAME(init(DES:key:vector:mode:padding:));
+/// @param operation 加密或解密
+/// @param key 密钥
+/// @param vector 初始化向量
+/// @param mode 加密模式
+/// @param padding 块对齐方式
+/// @param error 错误输出，错误域为 XZDataCryptorErrorDomain
+/// @return 构造好的加密器对象。
+/// @note 密钥与向量的长度由 XZDataCryptorAlgorithm 保证合法，只有在内存不足或算法与模式的组合不受支持时才返回 nil。
++ (nullable instancetype)DESCryptor:(XZDataCryptorOperation)operation key:(nullable NSData *)key vector:(nullable NSData *)vector mode:(XZDataCryptorMode)mode padding:(XZDataCryptorPadding)padding error:(NSError * _Nullable __autoreleasing * _Nullable)error NS_SWIFT_NAME(init(DES:key:vector:mode:padding:));
 /// 构造 DES 加密器，使用 CBC/PKCS7Padding 参数。
-/// - Parameters:
-///   - operation: 加密或解密
-///   - key: 密钥
-///   - vector: 初始化向量
-+ (XZDataCryptor *)DESCryptor:(XZDataCryptorOperation)operation key:(NSString *)key vector:(nullable NSString *)vector NS_SWIFT_NAME(init(DES:key:vector:));
+/// @param operation 加密或解密
+/// @param key 密钥
+/// @param vector 初始化向量
+/// @param error 错误输出，错误域为 XZDataCryptorErrorDomain
+/// @return 构造好的加密器对象。
+/// @note 密钥与向量的长度由 XZDataCryptorAlgorithm 保证合法，只有在内存不足或算法与模式的组合不受支持时才返回 nil。
++ (nullable instancetype)DESCryptor:(XZDataCryptorOperation)operation key:(nullable NSData *)key vector:(nullable NSData *)vector error:(NSError * _Nullable __autoreleasing * _Nullable)error NS_SWIFT_NAME(init(DES:key:vector:));
 
 /// 对数据执行 DES 加密或解密。
-/// - Parameters:
-///   - data: 待处理的数据
-///   - operation: 加密或解密
-///   - key: 密钥
-///   - vector: 初始化向量
-///   - mode: 加密模式
-///   - padding: 块对齐方式
-///   - error: 错误输出
-+ (nullable NSData *)DES:(NSData *)data operation:(XZDataCryptorOperation)operation key:(NSString *)key vector:(nullable NSString *)vector mode:(XZDataCryptorMode)mode padding:(XZDataCryptorPadding)padding error:(NSError * _Nullable __autoreleasing *)error NS_SWIFT_NAME(DES(_:operation:key:vector:mode:padding:));
+/// @note 一次性方法只支持 ECB 、CBC（noPadding/PKCS7Padding）、RC4 模式，传入其他模式会返回 kCCUnimplemented 错误；CFB/CTR/OFB/CFB8 请使用加密器实例。
+/// @param data 待处理的数据
+/// @param operation 加密或解密
+/// @param key 密钥
+/// @param vector 初始化向量
+/// @param mode 加密模式
+/// @param padding 块对齐方式
+/// @param error 错误输出，错误域为 XZDataCryptorErrorDomain
+/// @return 已加密/解密后的数据
++ (nullable NSData *)DES:(NSData *)data operation:(XZDataCryptorOperation)operation key:(nullable NSData *)key vector:(nullable NSData *)vector mode:(XZDataCryptorMode)mode padding:(XZDataCryptorPadding)padding error:(NSError * _Nullable __autoreleasing * _Nullable)error NS_SWIFT_NAME(DES(_:operation:key:vector:mode:padding:));
 /// 对数据执行 DES 加密或解密，使用 CBC/PKCS7Padding 参数。
-/// - Parameters:
-///   - data: 待处理的数据
-///   - operation: 加密或解密
-///   - key: 密钥
-///   - vector: 初始化向量
-///   - error: 错误输出
-+ (nullable NSData *)DES:(NSData *)data operation:(XZDataCryptorOperation)operation key:(NSString *)key vector:(nullable NSString *)vector error:(NSError * _Nullable __autoreleasing *)error NS_SWIFT_NAME(DES(_:operation:key:vector:));
+/// @param data 待处理的数据
+/// @param operation 加密或解密
+/// @param key 密钥
+/// @param vector 初始化向量
+/// @param error 错误输出，错误域为 XZDataCryptorErrorDomain
+/// @return 已加密/解密后的数据
++ (nullable NSData *)DES:(NSData *)data operation:(XZDataCryptorOperation)operation key:(nullable NSData *)key vector:(nullable NSData *)vector error:(NSError * _Nullable __autoreleasing * _Nullable)error NS_SWIFT_NAME(DES(_:operation:key:vector:));
 
 @end
-
-
 
 NS_ASSUME_NONNULL_END
 

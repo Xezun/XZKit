@@ -24,7 +24,7 @@ typedef NS_ENUM(NSUInteger, XZHexEncoding) {
 /// @discussion 十六进制编码，将一个二进制字节用两个十六进制字符表示，因此十六进制编码字符串的长度为必然是偶数，所以本方法会舍弃最后一个在奇数位上的字符，不论它是否为合法的十六进制编码字符。
 /// @param hexEncodedString 十六进制编码字符串
 /// @return NSData
-+ (instancetype)xz_dataWithHexEncodedString:(NSString *)hexEncodedString NS_SWIFT_NAME(init(hexEncodedString:));
++ (instancetype)xz_dataWithHexEncodedString:(nullable NSString *)hexEncodedString NS_SWIFT_NAME(init(hexEncoded:));
 
 /// 对当前二进制数据进行十六进制编码。
 /// @discussion 编码将完全反映数据的二进制形式，这可能与某些规则不同，例如某些Unicode编码方式，虽然也是十六进制编码，但是可能会添加额外的间隔符来分割字符，也可能会省略前置为 0 的空位。

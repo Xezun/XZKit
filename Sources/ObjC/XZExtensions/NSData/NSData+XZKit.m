@@ -16,6 +16,10 @@ static unsigned char const XZHexEncodingTable[2][16] = {
 @implementation NSData (XZKit)
 
 + (instancetype)xz_dataWithHexEncodedString:(NSString *)hexEncodedString {
+    if (hexEncodedString == nil || hexEncodedString.length == 0) {
+        return [[self alloc] init];
+    }
+    
     NSUInteger const length = hexEncodedString.length * 0.5;
     UInt8 *    const buffer = calloc(length, sizeof(UInt8));
     

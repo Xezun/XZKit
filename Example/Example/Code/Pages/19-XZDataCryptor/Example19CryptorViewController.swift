@@ -99,9 +99,9 @@ class Example19CryptorViewController: UITableViewController {
         let padding = self.cryptorPadding()
         
         algorithm.rounds = Int(self.roundsDetailLabel.text!) ?? 0
-    
+        
         do {
-            let cryptor = XZDataCryptor.init(operation: .encrypt, algorithm: algorithm, mode: mode, padding: padding)
+            let cryptor = try XZDataCryptor(algorithm: algorithm, operation: .encrypt, mode: mode, padding: padding)
             
             let data1 = try cryptor.crypt(data as Data)
             let data2 = try cryptor.final()
@@ -116,7 +116,7 @@ class Example19CryptorViewController: UITableViewController {
     private func decryptButtonAction() {
         self.dataTextField.resignFirstResponder()
         guard let string = self.dataTextField.text else { return }
-        let data = NSData.init(hexEncodedString: string)
+        let data = NSData.init(hexEncoded: string)
         
         let algorithm = self.cryptorAlgorithm()
         let mode = self.cryptorMode()
@@ -125,7 +125,8 @@ class Example19CryptorViewController: UITableViewController {
         algorithm.rounds = Int(self.roundsDetailLabel.text!) ?? 0
         
         do {
-            let cryptor = XZDataCryptor.init(operation: .decrypt, algorithm: algorithm, mode: mode, padding: padding)
+            let cryptor = try XZDataCryptor.init(algorithm: algorithm, operation: .decrypt, mode: mode, padding: padding)
+            
             let data1 = try cryptor.crypt(data as Data)
             let data2 = try cryptor.final()
             let data = data1 + data2
@@ -137,8 +138,8 @@ class Example19CryptorViewController: UITableViewController {
     }
     
     private func cryptorAlgorithm() -> XZDataCryptor.Algorithm {
-        let key    = self.keyDetailLabel.text ?? ""
-        let vector = self.vectorDetailLabel.text;
+        let key = self.keyDetailLabel.text?.data(using: .utf8)
+        let vector = self.vectorDetailLabel.text?.data(using: .utf8);
         switch algorithmDetailLabel.text {
         case "AES":
             return .AES(key: key, vector: vector)

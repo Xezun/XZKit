@@ -89,8 +89,8 @@ class View: UIView, XZMocoaView {
         
     }
     
-    override func prepareForViewModel() {
-        super.prepareForViewModel()
+    override func prepare(for viewModel: XZMocoaViewModel) {
+        super.prepare(for: viewModel)
         
     }
     
