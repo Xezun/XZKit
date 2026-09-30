@@ -88,11 +88,11 @@ FOUNDATION_STATIC_INLINE NSURL * _Nullable asNonEmpty(id _Nullable value, NSURL 
         return defaultValue;
     }
     if ([value isKindOfClass:NSURL.class]) {
-        return defaultValue;
+        return value;
     }
     if ([value isKindOfClass:NSString.class]) {
         value = [NSURL URLWithString:value];
-        return asNonEmpty(value, defaultValue);
+        return value ?: defaultValue;
     }
     return defaultValue;
 }

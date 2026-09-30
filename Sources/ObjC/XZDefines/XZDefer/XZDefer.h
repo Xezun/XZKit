@@ -14,6 +14,7 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
+// 提前定义 `XZ_DEFER` 宏即可屏蔽如下定义。
 #ifndef XZ_DEFER
 
 /// 包装 defer 代码的块函数类型。
@@ -30,7 +31,7 @@ FOUNDATION_EXPORT void __xz_defer_imp__(__strong __xz_defer_t__ _Nonnull * _Nonn
 FOUNDATION_EXPORT void defer(__xz_defer_t__ statements) NS_SWIFT_UNAVAILABLE("Use Swift.defer instead");
 
 #undef defer
-#define defer(statements) __xz_defer_t__ __strong xz_macro_paste(__xz_defer_, __LINE__) __attribute__((cleanup(__xz_defer_imp__), unused)) = statements
+#define defer(statements) __xz_defer_t__ __strong __XZX_PASTE__(__xz_defer_, __LINE__) __attribute__((cleanup(__xz_defer_imp__), unused)) = statements
 
 #endif
 

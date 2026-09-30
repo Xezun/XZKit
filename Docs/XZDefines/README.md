@@ -101,34 +101,11 @@ NSString *name = asNonEmpty(dict[@"name"], @"Visitor");
 
 ### XZMacro - 高级宏定义
 
-- `xz_macro_keyize`：让宏变成类似于`@selector()`形式的关键字宏。
+- `__XZX_KEYIZE__`：宏关键字化。
 
-```objc
-// use the xz_macro_keyize to define a macro
-#define log(...) xz_macro_keyize NSLog(__VA_ARGS__)
+- `__XZX_PASTE__`： 宏参数拼接。
 
-// Use the macro like a objc keyword
-@log(@"foobar");
-```
-
-- `xz_macro_paste(A, B)`： 直接将 A 和 B 拼接一起，主要用于设计高级宏。
-
-- `xz_macro_args_map(MACRO, SEP, ...)`：遍历宏参数，并对每个参数逐个应用 `MACRO(index, param)` 宏，每次结果用 `SEP` 分割。
-
-```objc
-// define the macro
-#define log(index, value)   NSLog(@"The value %ld is %@.", (long)index, value)
-#define logAll(...)         xz_macro_args_map(log, ;, __VA_ARGS__)
-
-// use the macro
-NSString *foo = @"foo";
-NSString *bar = @"bar";
-logAll(foo, bar);
-
-// The console outputs:
-// The value 0 is foo.
-// The value 1 is bar.
-```
+- `__XZX_ARGS_MAP__`：宏参数遍历。
 
 - `XZ_ATTR_OVERLOAD`：让函数可以重载。
 

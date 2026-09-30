@@ -11,63 +11,53 @@ NS_ASSUME_NONNULL_BEGIN
 
 #if DEBUG
 // 空的 @autoreleasepool 不会被优化，只在 DEBUG 中使用。
-#define xz_macro_keyize autoreleasepool {}
+#define __XZX_KEYIZE__ autoreleasepool {}
 #else
 // 空的 @try 在 5.x 的编译器中会被优化掉，但是会产生一条警告，所以只在 release 模式中使用。
-#define xz_macro_keyize try {} @catch (...) {}
+#define __XZX_KEYIZE__ try {} @catch (...) {}
 #endif
 
 /// 连接两个参数
-#define xz_macro_paste(A, B) __NSX_PASTE__(A, B)
+#define __XZX_PASTE__(A, B) __NSX_PASTE__(A, B)
 
-#pragma mark - xz_macro_args_first
+#pragma mark -  __XZX_ARGS_MAP__
 
-/// 获取参数列表中的第一个个参数。
-#define xz_macro_args_first(...) xz_macro_args_first_imp(__VA_ARGS__, 0)
-/// 宏 xz_macro_args_first 的实现。
-#define xz_macro_args_first_imp(FIRST, ...) FIRST
+/// 获取参数列表中的第一个参数。参数列表为空，结果也为空。
+#define __XZX_ARGS_FIRST__(...)             __XZX_ARGS_FIRST_IMP__(__VA_ARGS__, 0)
+#define __XZX_ARGS_FIRST_IMP__(FIRST, ...)  FIRST
 
-#pragma mark - xz_macro_args_at
+/// 获取宏参数列表中的第 N 个参数，最多支持 10 个参数，即 `N ∈ [0, 9]` 。
+#define __XZX_ARGS_AT__(N, ...)                                          __XZX_PASTE__(__XZX_ARGS_AT_IMP_, N)(__VA_ARGS__)
+#define __XZX_ARGS_AT_IMP_0(...)                                         __XZX_ARGS_FIRST__(__VA_ARGS__)
+#define __XZX_ARGS_AT_IMP_1(_0, ...)                                     __XZX_ARGS_FIRST__(__VA_ARGS__)
+#define __XZX_ARGS_AT_IMP_2(_0, _1, ...)                                 __XZX_ARGS_FIRST__(__VA_ARGS__)
+#define __XZX_ARGS_AT_IMP_3(_0, _1, _2, ...)                             __XZX_ARGS_FIRST__(__VA_ARGS__)
+#define __XZX_ARGS_AT_IMP_4(_0, _1, _2, _3, ...)                         __XZX_ARGS_FIRST__(__VA_ARGS__)
+#define __XZX_ARGS_AT_IMP_5(_0, _1, _2, _3, _4, ...)                     __XZX_ARGS_FIRST__(__VA_ARGS__)
+#define __XZX_ARGS_AT_IMP_6(_0, _1, _2, _3, _4, _5, ...)                 __XZX_ARGS_FIRST__(__VA_ARGS__)
+#define __XZX_ARGS_AT_IMP_7(_0, _1, _2, _3, _4, _5, _6, ...)             __XZX_ARGS_FIRST__(__VA_ARGS__)
+#define __XZX_ARGS_AT_IMP_8(_0, _1, _2, _3, _4, _5, _6, _7, ...)         __XZX_ARGS_FIRST__(__VA_ARGS__)
+#define __XZX_ARGS_AT_IMP_9(_0, _1, _2, _3, _4, _5, _6, _7, _8, ...)     __XZX_ARGS_FIRST__(__VA_ARGS__)
+#define __XZX_ARGS_AT_IMP_X(_0, _1, _2, _3, _4, _5, _6, _7, _8, _9, ...) __XZX_ARGS_FIRST__(__VA_ARGS__)
 
-/// 获取宏参数列表中的第 N 个参数，最多支持 9 个参数。
-/// 宏 xz_macro_args_at 的实现：
-/// 通过 xz_macro_paste 拼接 N 后，就变成下面对应的宏，
-/// 由于 0 到 N - 1 之间的参数已占位，这样参数列表 ... 就是 N 及之后的参数，
-/// 然后获取这个参数列表的第一个参数，即是原始参数列表的第 N 个参数。
-#define xz_macro_args_at(N, ...)                                        xz_macro_paste(xz_macro_args_at_imp_, N)(__VA_ARGS__)
-#define xz_macro_args_at_imp_0(...)                                     xz_macro_args_first(__VA_ARGS__)
-#define xz_macro_args_at_imp_1(_1, ...)                                 xz_macro_args_first(__VA_ARGS__)
-#define xz_macro_args_at_imp_2(_1, _2, ...)                             xz_macro_args_first(__VA_ARGS__)
-#define xz_macro_args_at_imp_3(_1, _2, _3, ...)                         xz_macro_args_first(__VA_ARGS__)
-#define xz_macro_args_at_imp_4(_1, _2, _3, _4, ...)                     xz_macro_args_first(__VA_ARGS__)
-#define xz_macro_args_at_imp_5(_1, _2, _3, _4, _5, ...)                 xz_macro_args_first(__VA_ARGS__)
-#define xz_macro_args_at_imp_6(_1, _2, _3, _4, _5, _6, ...)             xz_macro_args_first(__VA_ARGS__)
-#define xz_macro_args_at_imp_7(_1, _2, _3, _4, _5, _6, _7, ...)         xz_macro_args_first(__VA_ARGS__)
-#define xz_macro_args_at_imp_8(_1, _2, _3, _4, _5, _6, _7, _8, ...)     xz_macro_args_first(__VA_ARGS__)
-#define xz_macro_args_at_imp_9(_1, _2, _3, _4, _5, _6, _7, _8, _9, ...) xz_macro_args_first(__VA_ARGS__)
-
-#pragma mark - xz_macro_args_count
-
-/// 获取参数列表中参数的个数（最多10个）。
-/// 在参数列表后添加从 10 到 1 的数字，取得第 11 个元素，就是原始参数列表的个数。
-#define xz_macro_args_count(...) xz_macro_args_at(9, __VA_ARGS__, 9, 8, 7, 6, 5, 4, 3, 2, 1)
-
-#pragma mark - xz_macro_args_map
+/// 获取参数列表中参数的个数（最多 10 个）。
+#define __XZX_ARGS_COUNT__(...) __XZX_ARGS_AT__(X, __VA_ARGS__, X, 9, 8, 7, 6, 5, 4, 3, 2, 1)
 
 /// 遍历参数列表：对参数列表中的参数，逐个应用 MACRO(INDEX, ARG) 宏函数。
-#define xz_macro_args_map(MACRO, SEP, ...)                  xz_macro_args_map_imp(xz_macro_args_map_ctx, SEP, MACRO, __VA_ARGS__)
-#define xz_macro_args_map_imp(CONTEXT, SEP, MACRO, ...)     xz_macro_paste(xz_macro_args_map_imp_, xz_macro_args_count(__VA_ARGS__))(CONTEXT, SEP, MACRO, __VA_ARGS__)
-#define xz_macro_args_map_ctx(INDEX, MACRO, ARG)            MACRO(INDEX, ARG)
-#define xz_macro_args_map_imp_0(CONTEXT, SEP, MACRO)
-#define xz_macro_args_map_imp_1(CONTEXT, SEP, MACRO, _0)                                                                                                                    CONTEXT(0, MACRO, _0)
-#define xz_macro_args_map_imp_2(CONTEXT, SEP, MACRO, _0, _1)                                                         xz_macro_args_map_imp_1(CONTEXT, SEP, MACRO, _0)  SEP  CONTEXT(1, MACRO, _1)
-#define xz_macro_args_map_imp_3(CONTEXT, SEP, MACRO, _0, _1, _2)                                                 xz_macro_args_map_imp_2(CONTEXT, SEP, MACRO, _0, _1)  SEP  CONTEXT(2, MACRO, _2)
-#define xz_macro_args_map_imp_4(CONTEXT, SEP, MACRO, _0, _1, _2, _3)                                         xz_macro_args_map_imp_3(CONTEXT, SEP, MACRO, _0, _1, _2)  SEP  CONTEXT(3, MACRO, _3)
-#define xz_macro_args_map_imp_5(CONTEXT, SEP, MACRO, _0, _1, _2, _3, _4)                                 xz_macro_args_map_imp_4(CONTEXT, SEP, MACRO, _0, _1, _2, _3)  SEP  CONTEXT(4, MACRO, _4)
-#define xz_macro_args_map_imp_6(CONTEXT, SEP, MACRO, _0, _1, _2, _3, _4, _5)                         xz_macro_args_map_imp_5(CONTEXT, SEP, MACRO, _0, _1, _2, _3, _4)  SEP  CONTEXT(5, MACRO, _5)
-#define xz_macro_args_map_imp_7(CONTEXT, SEP, MACRO, _0, _1, _2, _3, _4, _5, _6)                 xz_macro_args_map_imp_6(CONTEXT, SEP, MACRO, _0, _1, _2, _3, _4, _5)  SEP  CONTEXT(6, MACRO, _6)
-#define xz_macro_args_map_imp_8(CONTEXT, SEP, MACRO, _0, _1, _2, _3, _4, _5, _6, _7)         xz_macro_args_map_imp_7(CONTEXT, SEP, MACRO, _0, _1, _2, _3, _4, _5, _6)  SEP  CONTEXT(7, MACRO, _7)
-#define xz_macro_args_map_imp_9(CONTEXT, SEP, MACRO, _0, _1, _2, _3, _4, _5, _6, _7, _8) xz_macro_args_map_imp_8(CONTEXT, SEP, MACRO, _0, _1, _2, _3, _4, _5, _6, _7)  SEP  CONTEXT(8, MACRO, _8)
+#define __XZX_ARGS_MAP__(MACRO, SEP, ...)                                                 __XZX_ARGS_MAP_IMP__(__XZX_ARGS_MAP_CTX__, SEP, MACRO, __VA_ARGS__)
+#define __XZX_ARGS_MAP_CTX__(INDEX, MACRO, ARG)                                           MACRO(INDEX, ARG)
+#define __XZX_ARGS_MAP_IMP__(CONTEXT, SEP, MACRO, ...)                                    __XZX_PASTE__(__XZX_ARGS_MAP_IMP_, __XZX_ARGS_COUNT__(__VA_ARGS__))(CONTEXT, SEP, MACRO, __VA_ARGS__)
+#define __XZX_ARGS_MAP_IMP_0(CONTEXT, SEP, MACRO)
+#define __XZX_ARGS_MAP_IMP_1(CONTEXT, SEP, MACRO, _0)                                     CONTEXT(0, MACRO, _0)
+#define __XZX_ARGS_MAP_IMP_2(CONTEXT, SEP, MACRO, _0, _1)                                 __XZX_ARGS_MAP_IMP_1(CONTEXT, SEP, MACRO, _0)  SEP  CONTEXT(1, MACRO, _1)
+#define __XZX_ARGS_MAP_IMP_3(CONTEXT, SEP, MACRO, _0, _1, _2)                             __XZX_ARGS_MAP_IMP_2(CONTEXT, SEP, MACRO, _0, _1)  SEP  CONTEXT(2, MACRO, _2)
+#define __XZX_ARGS_MAP_IMP_4(CONTEXT, SEP, MACRO, _0, _1, _2, _3)                         __XZX_ARGS_MAP_IMP_3(CONTEXT, SEP, MACRO, _0, _1, _2)  SEP  CONTEXT(3, MACRO, _3)
+#define __XZX_ARGS_MAP_IMP_5(CONTEXT, SEP, MACRO, _0, _1, _2, _3, _4)                     __XZX_ARGS_MAP_IMP_4(CONTEXT, SEP, MACRO, _0, _1, _2, _3)  SEP  CONTEXT(4, MACRO, _4)
+#define __XZX_ARGS_MAP_IMP_6(CONTEXT, SEP, MACRO, _0, _1, _2, _3, _4, _5)                 __XZX_ARGS_MAP_IMP_5(CONTEXT, SEP, MACRO, _0, _1, _2, _3, _4)  SEP  CONTEXT(5, MACRO, _5)
+#define __XZX_ARGS_MAP_IMP_7(CONTEXT, SEP, MACRO, _0, _1, _2, _3, _4, _5, _6)             __XZX_ARGS_MAP_IMP_6(CONTEXT, SEP, MACRO, _0, _1, _2, _3, _4, _5)  SEP  CONTEXT(6, MACRO, _6)
+#define __XZX_ARGS_MAP_IMP_8(CONTEXT, SEP, MACRO, _0, _1, _2, _3, _4, _5, _6, _7)         __XZX_ARGS_MAP_IMP_7(CONTEXT, SEP, MACRO, _0, _1, _2, _3, _4, _5, _6)  SEP  CONTEXT(7, MACRO, _7)
+#define __XZX_ARGS_MAP_IMP_9(CONTEXT, SEP, MACRO, _0, _1, _2, _3, _4, _5, _6, _7, _8)     __XZX_ARGS_MAP_IMP_8(CONTEXT, SEP, MACRO, _0, _1, _2, _3, _4, _5, _6, _7)  SEP  CONTEXT(8, MACRO, _8)
+#define __XZX_ARGS_MAP_IMP_X(CONTEXT, SEP, MACRO, _0, _1, _2, _3, _4, _5, _6, _7, _8, _9) __XZX_ARGS_MAP_IMP_9(CONTEXT, SEP, MACRO, _0, _1, _2, _3, _4, _5, _6, _7, _8)  SEP  CONTEXT(9, MACRO, _9)
 
 #pragma mark - XZ_ATTR
 
@@ -96,7 +86,7 @@ NS_ASSUME_NONNULL_BEGIN
 #pragma mark - @enweak & @deweak
 
 #ifndef enweak
-
+#ifndef deweak
 /// ### 弱引用的编码与解码
 ///
 /// 在 block 中，通常需要使用 `__weak` 来捕获外部变量，以避免内存泄漏，因此提供了 `@enweak` 和 `@deweak` 宏，以便可以更方便快捷的实现这一操作。
@@ -120,11 +110,9 @@ NS_ASSUME_NONNULL_BEGIN
 ///
 /// - Attention: 须搭配 `\@deweak` 一起使用。
 ///
-#define enweak(...)                 xz_macro_keyize xz_macro_args_map(__enweak_imp__, , __VA_ARGS__)
-#define __enweak_imp__(INDEX, VAR)  __typeof__(VAR) __weak const xz_macro_paste(__xz_weak_, VAR) = (VAR);
-#endif
+#define enweak(...)                 __XZX_KEYIZE__ __XZX_ARGS_MAP__(__enweak_imp__, , __VA_ARGS__)
+#define __enweak_imp__(INDEX, VAR)  __typeof__(VAR) __weak const __XZX_PASTE__(__xz_weak_, VAR) = (VAR);
 
-#ifndef deweak
 /// 弱引用解码：将 block 外使用 `@enweak` 弱引用编码的外部变量，解码为 block 内的局部强引用变量使用，变量名不变。
 /// @discussion 解码会增加引用计数，但可能为 nil 值，所以使用前应先判断。
 /// @seealso 请查看 `@enweak` 获取更多说明。
@@ -137,9 +125,11 @@ FOUNDATION_EXPORT void deweak(id var, ...) NS_SWIFT_UNAVAILABLE("Use swift weak 
 #define deweak(...)                                 \
 _Pragma("clang diagnostic push")                    \
 _Pragma("clang diagnostic ignored \"-Wshadow\"")    \
-xz_macro_keyize xz_macro_args_map(__deweak_imp__,, __VA_ARGS__)     \
+__XZX_KEYIZE__ __XZX_ARGS_MAP__(__deweak_imp__, , __VA_ARGS__)     \
 _Pragma("clang diagnostic pop")
-#define __deweak_imp__(INDEX, VAR)  __typeof__(xz_macro_paste(__xz_weak_, VAR)) __strong _Nullable VAR = xz_macro_paste(__xz_weak_, VAR);
+#define __deweak_imp__(INDEX, VAR)  __typeof__(__XZX_PASTE__(__xz_weak_, VAR)) __strong _Nullable VAR = __XZX_PASTE__(__xz_weak_, VAR);
+
+#endif
 #endif
 
 #ifndef XZ_DISPATCH_MACROS
@@ -274,8 +264,8 @@ FOUNDATION_EXPORT void dispatch_global_sync(intptr_t QOS_CLASS, id block, ...) N
 
 #define __dispatch_queue_macros_forwarding__(_00, _01, _02, _03, _04, _05, _06, _07, _08, _09, _10, ...) _10
 
-#define __dispatch_queue_macros_imp_args_0__(concurrency, queue, block)      xz_macro_paste(dispatch_, concurrency)(queue, block)
-#define __dispatch_queue_macros_imp_args_n__(concurrency, queue, block, ...) xz_macro_paste(dispatch_, concurrency)(queue, ^{ (block)(__VA_ARGS__); })
+#define __dispatch_queue_macros_imp_args_0__(concurrency, queue, block)      __XZX_PASTE__(dispatch_, concurrency)(queue, block)
+#define __dispatch_queue_macros_imp_args_n__(concurrency, queue, block, ...) __XZX_PASTE__(dispatch_, concurrency)(queue, ^{ (block)(__VA_ARGS__); })
 
 #define __dispatch_queue_macros_imp__(concurrency, queue, block, ...)   __dispatch_queue_macros_forwarding__(\
     10, ##__VA_ARGS__, \

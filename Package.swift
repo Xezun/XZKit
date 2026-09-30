@@ -31,10 +31,8 @@ let package = Package(
             sources: ["ObjC"],
             publicHeadersPath: "Header/XZKit/Public",
             cSettings: [
-                .headerSearchPath("Header/XZKit/Private")
-            ],
-            cxxSettings: [
-                .define("XZ_FRAMEWORK")
+                .headerSearchPath("Header/XZKit/Private"),
+                .define("XZ_FRAMEWORK", to: "1")
             ]
         ),
         .macro(

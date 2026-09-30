@@ -83,6 +83,9 @@ NSURL * _Nullable NSURLFromString(NSString * _Nullable urlString) {
 }
 
 NSURL *NSURLMake(NSString *format, ...) {
+    if (format == nil || ![format isKindOfClass:NSString.class] || format.length == 0) {
+        return nil;
+    }
     va_list arguments;
     va_start(arguments, format);
     NSString * const urlString = [[NSString alloc] initWithFormat:format arguments:arguments];
