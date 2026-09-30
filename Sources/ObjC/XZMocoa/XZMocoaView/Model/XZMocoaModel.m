@@ -9,8 +9,6 @@
 #import "XZRuntime.h"
 #import <objc/runtime.h>
 
-static const void * const _mocoaName = &_mocoaName;
-
 @implementation NSObject (XZMocoaModel)
 
 + (void)load {

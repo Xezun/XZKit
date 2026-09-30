@@ -13,6 +13,7 @@
 #import "XZMocoaKeyObserver.h"
 #import "XZMocoaKeyMappingTable.h"
 #import "XZObjc.h"
+#import "XZLog.h"
 
 @implementation XZMocoaViewModel {
     @private
@@ -308,6 +309,7 @@
 }
 
 - (void)sendActionsForKey:(XZMocoaKey)key {
+    if (!self.isReady) return;
     id const value = (key ? [self valueForKey:key] : nil);
     [_targetActions sendActionsForKey:key value:value];
 }
@@ -334,11 +336,12 @@
 }
 
 - (id)valueForUndefinedKey:(NSString *)key {
+    XZLog(@"[XZMocoa][KTA] %@ 没有名称为 %@ 的键，可能是绑定键名出错，若是纯事件键，请使用 addTarget 绑定事件，使用 sendActionsForKey:value: 发送事件", self, key);
     return nil;
 }
 
 - (void)setValue:(id)value forUndefinedKey:(NSString *)key {
-    
+    XZLog(@"[XZMocoa][KTA] %@ 没有名称为 %@ 的键，可能是绑定键名出错", self, key);
 }
 
 @end

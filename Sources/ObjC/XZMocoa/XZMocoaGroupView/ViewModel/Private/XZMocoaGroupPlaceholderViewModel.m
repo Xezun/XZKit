@@ -26,17 +26,23 @@
     id<XZMocoaModel>                const model      = viewModel.model;
     XZMocoaModule                 * const module     = viewModel.module;
     
-    NSString *reuseIdentifier = viewModel.reuseIdentifier;
-    _kind = [reuseIdentifier substringToIndex:[reuseIdentifier rangeOfString:@":"].location];
-    _kind = _kind.length ? _kind : @"cell";
+    {
+        NSString *reuseIdentifier = viewModel.reuseIdentifier;
+        NSRange const range = [reuseIdentifier rangeOfString:@":"];
+        if (range.location == NSNotFound || range.location == 0) {
+            _kind = @"cell";
+        } else {
+            _kind = [reuseIdentifier substringToIndex:range.location];
+        }
+    }
     
     if (module) {
         _moduleURLString = [NSString stringWithFormat:@"%@", module.url];
         
-        _detail = [NSString stringWithFormat:@"[M] %@\n", ((id)module.modelClass) ?: @"<None>"];
+        _detail = [NSString stringWithFormat:@"[M] %@\n", ((id)module.modelClass) ?: @"数据模型未注册"];
         switch (module.viewForm) {
             case XZMocoaModuleViewFormUnknown:
-                _detail = [_detail stringByAppendingFormat:@"[V] <None>\n"];
+                _detail = [_detail stringByAppendingFormat:@"[V] 视图未注册或视图类型不支持\n"];
                 break;
             case XZMocoaModuleViewFormClass:
                 _detail = [_detail stringByAppendingFormat:@"[V] class = %@\n", module.viewClass];
@@ -51,13 +57,13 @@
                 }
                 break;
             case XZMocoaModuleViewFormStoryboard:
-                _detail = [_detail stringByAppendingFormat:@"[V] storyboardName = %@ <注册错误，不支持>\n", module.viewStoryboardName];
+                _detail = [_detail stringByAppendingFormat:@"[V] 视图类型不支持，storyboardName = %@\n", module.viewStoryboardName];
                 break;
             case XZMocoaModuleViewFormStoryboardReusableView:
                 _detail = [_detail stringByAppendingFormat:@"[V] reuseIdentifier = %@\n", module.viewReuseIdentifier];
                 break;
         }
-        _detail = [_detail stringByAppendingFormat:@"[VM] %@\n--------------\n", ((id)module.viewModelClass) ?: @"<None>"];
+        _detail = [_detail stringByAppendingFormat:@"[VM] %@\n--------------\n", ((id)module.viewModelClass) ?: @"视图模型未注册"];
     } else {
         _moduleURLString = @"模块未注册";
         _detail = @"";

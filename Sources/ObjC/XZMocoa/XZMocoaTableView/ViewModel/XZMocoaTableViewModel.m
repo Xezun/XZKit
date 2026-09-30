@@ -122,10 +122,12 @@
 }
 
 - (void)didSelectCellAtIndexPath:(NSIndexPath *)indexPath animated:(BOOL)animated scrollPosition:(UITableViewScrollPosition)scrollPosition {
+    if (!self.isReady) return;
     [self.delegate tableViewModel:self didSelectCellAtIndexPath:indexPath animated:animated scrollPosition:scrollPosition];
 }
 
 - (void)didDeselectCellAtIndexPath:(NSIndexPath *)indexPath animated:(BOOL)animated {
+    if (!self.isReady) return;
     [self.delegate tableViewModel:self didDeselectCellAtIndexPath:indexPath animated:animated];
 }
 

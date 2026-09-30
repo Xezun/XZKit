@@ -239,8 +239,8 @@ extension MocoaMacro: MemberMacro {
             
             // 生成 activelyObservedModelKeys：只包含 @bind 标记的键，排除 @link 标记的键
             if !bindKeys.isEmpty {
-                // 生成数组元素
-                let arrayElements = bindKeys.joined(separator: ", ")
+                // 生成数组元素，先排序，以避免宏生成的代码不一致
+                let arrayElements = bindKeys.sorted().joined(separator: ", ")
                 let observedVariableSyntax = try VariableDeclSyntax(
                     """
                     public override class var activelyObservedModelKeys: [String]? {

@@ -37,8 +37,11 @@ NS_ASSUME_NONNULL_BEGIN
 - (void)didReceiveEvents:(XZMocoaEvents *)events;
 
 /// 判断列表是否为空。
+///
+/// 调用此方法会强制初始化视图模型。
 @property (nonatomic, readonly) BOOL isEmpty;
 
+// 以下方法或属性，必须在视图模型初始化之后调用。
 @property (nonatomic, readonly) NSInteger numberOfSections;
 - (NSInteger)numberOfCellsInSection:(NSInteger)section;
 - (__kindof XZMocoaGroupReusableViewModel *)viewModelForCellAtIndexPath:(NSIndexPath *)indexPath;

@@ -252,11 +252,11 @@ NS_SWIFT_UI_ACTOR @interface XZMocoaViewModel : NSObject <XZMocoaViewModel> {
 
 @interface XZMocoaViewModel (XZMocoaKeyTargetAction)
 
-/// 将 key 绑定到 target 的 action 方法。仅绑定，不触发方法。
+/// 将 key 绑定到 target 的 action 方法。仅绑定，不触发方法。绑定纯事件键，必须使用此方法。
 ///
 /// @li 视图模型对 target 为 weak 弱引用。
 /// @li 方法 action 必须无返回值，因为没有针对返回值的内存管理，可能会引起泄漏。
-/// @li 方法 action 的 value 参数不建议为 union 类型，除非 union 类型的大小为 1/2/4/8/16/32/64/128 字节。
+/// @li 方法 action 的 value 参数不支持 union 类型。
 /// @li 参数 action 方法形式如下：
 ///
 /// @code
@@ -279,28 +279,30 @@ NS_SWIFT_UI_ACTOR @interface XZMocoaViewModel : NSObject <XZMocoaViewModel> {
 ///
 /// @param target 绑定事件的对象
 /// @param action 绑定事件的方法
-/// @param key 绑定的事件，可使用 nil 或 kMocoaNilKey 或空字符串添加默认事件
-- (void)addTarget:(id)target action:(SEL)action forKey:(nullable XZMocoaKey)key;
+/// @param key 事件键
+- (void)addTarget:(id)target action:(SEL)action forKey:(XZMocoaKey)key;
 
 /// 执行 key 事件绑定的所有方法，并传递参数 value 值。
 ///
+/// 纯事件键，必须使用此方法触发事件，以避免 KVC 异常。
+///
 /// 没有属性关联的纯事件，必须使用此方法发送事件。
 ///
-/// @param key 绑定的事件，nil 表示发送默认事件
+/// @param key 事件键
 /// @param value 事件值
-- (void)sendActionsForKey:(nullable XZMocoaKey)key value:(nullable id)value;
+- (void)sendActionsForKey:(XZMocoaKey)key value:(nullable id)value;
 
 /// 执行 key 事件绑定的所有方法，事件值为视图模型以 key 为键，通过 KVC 取到的值。
 /// 
-/// @param key 绑定的事件
-- (void)sendActionsForKey:(nullable XZMocoaKey)key;
+/// @param key 事件键
+- (void)sendActionsForKey:(XZMocoaKey)key;
 
 /// 将事件 key 从 target 上移除指定绑定方法。
 /// @discussion
 /// 移除所有匹配 target、action、key 的事件，值 nil 表示匹配所有，例如都为 nil 会移除所有事件。
 /// @param target 绑定事件的对象
 /// @param action 绑定事件的方法
-/// @param key 绑定的事件
+/// @param key 事件键
 - (void)removeTarget:(nullable id)target action:(nullable SEL)action forKey:(nullable XZMocoaKey)key;
 
 /// 链接 target 对象，即使用 key 的当前值，执行一次 target 的 action 方法。
@@ -309,8 +311,8 @@ NS_SWIFT_UI_ACTOR @interface XZMocoaViewModel : NSObject <XZMocoaViewModel> {
 ///
 /// @param target 接收值的对象
 /// @param action 接收值的方法
-/// @param key 获取值的键
-- (void)linkTarget:(id)target action:(SEL)action forKey:(nullable XZMocoaKey)key;
+/// @param key 事件键
+- (void)linkTarget:(id)target action:(SEL)action forKey:(XZMocoaKey)key;
 
 /// 单向绑定：将 key 绑定到 target 的 action 方法，并立即触发一次 action 方法。
 /// 
@@ -320,8 +322,8 @@ NS_SWIFT_UI_ACTOR @interface XZMocoaViewModel : NSObject <XZMocoaViewModel> {
 /// 
 /// @param target 绑定事件的对象
 /// @param action 绑定事件的方法
-/// @param key 绑定的事件
-- (void)bindTarget:(id)target action:(SEL)action forKey:(nullable XZMocoaKey)key;
+/// @param key 事件键
+- (void)bindTarget:(id)target action:(SEL)action forKey:(XZMocoaKey)key;
 
 @end
 

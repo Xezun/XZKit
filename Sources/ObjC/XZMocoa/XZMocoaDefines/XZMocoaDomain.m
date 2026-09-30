@@ -66,6 +66,10 @@ static NSMutableDictionary<NSString *, XZMocoaDomain *> *_domainTable = nil;
     }
     
     module = [provider domain:self moduleForPath:path];
+    if (module == nil) {
+        return nil;
+    }
+    
     _keyedModules[path] = module;
     return module;
 }
