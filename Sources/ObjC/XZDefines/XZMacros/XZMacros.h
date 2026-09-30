@@ -145,9 +145,11 @@ _Pragma("clang diagnostic pop")
 #ifndef XZ_DISPATCH_MACROS
 #define XZ_DISPATCH_MACROS 1
 
-/// 请使用 `dispatch_queue/main/global_async/sync` 宏，此函数不可使用。
+/// # `dispatch_queue_macros` 系列宏函数
 ///
 /// 简化在列队 queue 中调用块函数的书写方式。
+///
+/// > 宏函数 `dispatch_queue` 目前支持调度参数不超过 9 的 block 块函数。
 ///
 /// 情形一：通常情况下，在 queue 在中执行 block 块函数的代码。
 ///
@@ -173,16 +175,6 @@ _Pragma("clang diagnostic pop")
 /// dispatch_queue_async(queue, block, NO);
 /// ```
 ///
-/// 宏函数 `dispatch_queue_macros` 会在调度列队前检查 `block` 是否为空值，如同上面“情形二”的做法一样。
-///
-/// 如果不需要对 `block` 判空时，比如在已经确定 `block` 为非空,或使用 `block` 字面量时，可以直接使用带 `_imp` 的宏函数。
-///
-/// ```objc
-/// dispatch_queue_async_imp(queue, ^(BOOL finished) {
-///     NSLog(@"do sth.");
-/// }, NO);
-/// ```
-///
 /// 主队列 mainQueue 和全局队列 globalQueue 的便利宏函数。
 ///
 /// ```objc
@@ -190,12 +182,14 @@ _Pragma("clang diagnostic pop")
 /// dispatch_global_async(QOS_CLASS_DEFAULT, block, NO);
 /// ```
 ///
-/// 宏函数 `dispatch_queue` 目前支持调度参数不超过 9 的 block 块函数。
+/// 宏函数 `dispatch_queue_macros` 会在调度列队前检查 `block` 是否为空值，如同上面“情形二”的做法一样。
 ///
-/// 使用 `dispatch_queue_macros` 宏函数与常规写法是等价的，不存在性能损失。比如，
+/// 直接使用 `block` 字面量时，或已经确定 `block` 为非空，不需要对 `block` 判空时，使用前缀与原生的相同的 `dispatch_macros` 宏。
+///
+/// 使用 `dispatch_macros` 宏函数与常规写法是等价的，不存在性能损失。比如，
 ///
 /// ```objc
-/// dispatch_main_async_imp(^{
+/// dispatch_async_main(^{
 ///     NSLog("do sth");
 /// })
 /// ```
@@ -207,38 +201,103 @@ _Pragma("clang diagnostic pop")
 ///     NSLog("do sth");
 /// })
 /// ```
-///
-/// 上面用的是 block 字面量，可以直接使用 `_imp` 版本。如果是不带 `_imp` 版本，则仅仅会多进行一步空值判断。
-///
+
+// 以下函数是给编译器补全代码用，并不是真正的函数，会被宏替代为真正的代码。
+
+/// 在指定队列 queue 异步调度已确定非空的块函数。
 /// - Parameters:
-///   - queue: 调度列队
-///   - block: 块函数
-FOUNDATION_EXPORT void dispatch_queue_macros(dispatch_queue_t queue, dispatch_block_t block, ...) NS_UNAVAILABLE;
+///   - queue: 队列
+///   - block: 任意类型的块函数
+FOUNDATION_EXPORT void dispatch_async_queue(dispatch_queue_t queue, dispatch_block_t block, ...) NS_SWIFT_UNAVAILABLE("");
+/// 在指定队列 queue 同步调度已确定非空的块函数。
+/// - Parameters:
+///   - queue: 队列
+///   - block: 任意类型的块函数
+FOUNDATION_EXPORT void dispatch_sync_queue(dispatch_queue_t queue, dispatch_block_t block, ...) NS_SWIFT_UNAVAILABLE("");
+/// 在 main 主队列异步调度已确定非空的块函数。
+/// - Parameter block: 任意类型的块函数
+FOUNDATION_EXPORT void dispatch_async_main(dispatch_block_t block, ...) NS_SWIFT_UNAVAILABLE("");
+/// 在 main 主队列同步调度已确定非空的块函数。
+/// - Parameter block: 任意类型的块函数
+FOUNDATION_EXPORT void dispatch_sync_main(dispatch_block_t block, ...) NS_SWIFT_UNAVAILABLE("");
+/// 在 global 全局队列异步调度已确定非空的块函数。
+/// - Parameters:
+///   - QOS_CLASS: 队列优先级
+///   - block: 任意类型的块函数
+FOUNDATION_EXPORT void dispatch_async_global(intptr_t QOS_CLASS, dispatch_block_t block, ...) NS_SWIFT_UNAVAILABLE("");
+/// 在 global 全局队列同步调度已确定非空的块函数。
+/// - Parameters:
+///   - QOS_CLASS: 队列优先级
+///   - block: 任意类型的块函数
+FOUNDATION_EXPORT void dispatch_sync_global(intptr_t QOS_CLASS, dispatch_block_t block, ...) NS_SWIFT_UNAVAILABLE("");
 
-#define __dispatch_queue_forward__(_00, _01, _02, _03, _04, _05, _06, _07, _08, _09, _10, ...) _10
+#undef dispatch_async_queue
+#undef dispatch_sync_queue
+#undef dispatch_async_main
+#undef dispatch_sync_main
+#undef dispatch_async_global
+#undef dispatch_sync_global
 
-#define __dispatch_queue_imp_0__(concurrency, queue, block)      xz_macro_paste(dispatch_, concurrency)(queue, block)
-#define __dispatch_queue_imp_1__(concurrency, queue, block, ...) xz_macro_paste(dispatch_, concurrency)(queue, ^{ (block)(__VA_ARGS__); })
+/// 仅在 block 块函数非空时，才在队列 queue 中异步调度它。
+/// - Parameters:
+///   - queue: 队列
+///   - block: 任意类型的块函数
+FOUNDATION_EXPORT void dispatch_queue_async(dispatch_queue_t queue, id block, ...) NS_SWIFT_UNAVAILABLE("");
+/// 仅在 block 块函数非空时，才在队列 queue 中同步调度它。
+/// - Parameters:
+///   - queue: 队列
+///   - block: 任意类型的块函数
+FOUNDATION_EXPORT void dispatch_queue_sync(dispatch_queue_t queue, id block, ...) NS_SWIFT_UNAVAILABLE("");
+/// 仅在 block 块函数非空时，才在主队列中异步调度它。
+/// - Parameter block: 任意类型的块函数
+FOUNDATION_EXPORT void dispatch_main_async(id block, ...) NS_SWIFT_UNAVAILABLE("");
+/// 仅在 block 块函数非空时，才在主队列中同步调度它。
+/// - Parameter block: 任意类型的块函数
+FOUNDATION_EXPORT void dispatch_main_sync(id block, ...) NS_SWIFT_UNAVAILABLE("");
+/// 仅在 block 块函数非空时，才在全局队列中异步调度它。
+/// - Parameters:
+///   - QOS_CLASS: 队列优先级
+///   - block: 任意类型的块函数
+FOUNDATION_EXPORT void dispatch_global_async(intptr_t QOS_CLASS, id block, ...) NS_SWIFT_UNAVAILABLE("");
+/// 仅在 block 块函数非空时，才在全局队列中同步调度它。
+/// - Parameters:
+///   - QOS_CLASS: 队列优先级
+///   - block: 任意类型的块函数   
+FOUNDATION_EXPORT void dispatch_global_sync(intptr_t QOS_CLASS, id block, ...) NS_SWIFT_UNAVAILABLE("");
 
-#define __dispatch_queue_imp__(concurrency, queue, block, ...) __dispatch_queue_forward__(10, ##__VA_ARGS__, \
-__dispatch_queue_imp_1__, __dispatch_queue_imp_1__, __dispatch_queue_imp_1__, \
-__dispatch_queue_imp_1__, __dispatch_queue_imp_1__, __dispatch_queue_imp_1__, \
-__dispatch_queue_imp_1__, __dispatch_queue_imp_1__, __dispatch_queue_imp_1__, \
-__dispatch_queue_imp_0__)(concurrency, queue, block, ##__VA_ARGS__)
+#undef dispatch_queue_async
+#undef dispatch_queue_sync
+#undef dispatch_main_async
+#undef dispatch_main_sync
+#undef dispatch_global_async
+#undef dispatch_global_sync
 
-#define dispatch_queue_async_imp(queue, block, ...)       __dispatch_queue_imp__(async, queue, block, ##__VA_ARGS__)
-#define dispatch_queue_sync_imp(queue, block, ...)        __dispatch_queue_imp__(sync, queue, block, ##__VA_ARGS__)
-#define dispatch_main_async_imp(block, ...)               __dispatch_queue_imp__(async, dispatch_get_main_queue(), block, ##__VA_ARGS__)
-#define dispatch_main_sync_imp(block, ...)                __dispatch_queue_imp__(sync, dispatch_get_main_queue(), block, ##__VA_ARGS__)
-#define dispatch_global_async_imp(QOS_CLASS_, block, ...) __dispatch_queue_imp__(async, dispatch_get_global_queue(QOS_CLASS_, 0), block, ##__VA_ARGS__)
-#define dispatch_global_sync_imp(QOS_CLASS_, block, ...)  __dispatch_queue_imp__(sync, dispatch_get_global_queue(QOS_CLASS_, 0), block, ##__VA_ARGS__)
+#define __dispatch_queue_macros_forwarding__(_00, _01, _02, _03, _04, _05, _06, _07, _08, _09, _10, ...) _10
 
-#define dispatch_queue_async(queue, block, ...)          { typeof(block) const handler = block; if (handler) { dispatch_queue_async_imp(queue, handler, ##__VA_ARGS__);         } }
-#define dispatch_queue_sync(queue, block, ...)           { typeof(block) const handler = block; if (handler) { dispatch_queue_sync_imp(queue, handler, ##__VA_ARGS__);          } }
-#define dispatch_main_async(block, ...)                  { typeof(block) const handler = block; if (handler) { dispatch_main_async_imp(handler, ##__VA_ARGS__);                 } }
-#define dispatch_main_sync(block, ...)                   { typeof(block) const handler = block; if (handler) { dispatch_main_sync_imp(handler, ##__VA_ARGS__);                  } }
-#define dispatch_global_async(QOS_CLASS_, block, ...)    { typeof(block) const handler = block; if (handler) { dispatch_global_async_imp(QOS_CLASS_, handler, ##__VA_ARGS__);   } }
-#define dispatch_global_sync(QOS_CLASS_, block, ...)     { typeof(block) const handler = block; if (handler) { dispatch_global_sync_imp(QOS_CLASS_, handler, ##__VA_ARGS__);    } }
+#define __dispatch_queue_macros_imp_args_0__(concurrency, queue, block)      xz_macro_paste(dispatch_, concurrency)(queue, block)
+#define __dispatch_queue_macros_imp_args_n__(concurrency, queue, block, ...) xz_macro_paste(dispatch_, concurrency)(queue, ^{ (block)(__VA_ARGS__); })
+
+#define __dispatch_queue_macros_imp__(concurrency, queue, block, ...)   __dispatch_queue_macros_forwarding__(\
+    10, ##__VA_ARGS__, \
+    __dispatch_queue_macros_imp_args_n__, __dispatch_queue_macros_imp_args_n__, __dispatch_queue_macros_imp_args_n__, \
+    __dispatch_queue_macros_imp_args_n__, __dispatch_queue_macros_imp_args_n__, __dispatch_queue_macros_imp_args_n__, \
+    __dispatch_queue_macros_imp_args_n__, __dispatch_queue_macros_imp_args_n__, __dispatch_queue_macros_imp_args_n__, \
+    __dispatch_queue_macros_imp_args_0__ \
+)(concurrency, queue, block, ##__VA_ARGS__)
+
+#define dispatch_async_queue(queue, block, ...)          __dispatch_queue_macros_imp__(async, queue, block, ##__VA_ARGS__)
+#define dispatch_sync_queue(queue, block, ...)           __dispatch_queue_macros_imp__(sync, queue, block, ##__VA_ARGS__)
+#define dispatch_async_main(block, ...)                  __dispatch_queue_macros_imp__(async, dispatch_get_main_queue(), block, ##__VA_ARGS__)
+#define dispatch_sync_main(block, ...)                   __dispatch_queue_macros_imp__(sync, dispatch_get_main_queue(), block, ##__VA_ARGS__)
+#define dispatch_async_global(QOS_CLASS, block, ...)     __dispatch_queue_macros_imp__(async, dispatch_get_global_queue(QOS_CLASS, 0), block, ##__VA_ARGS__)
+#define dispatch_sync_global(QOS_CLASS, block, ...)      __dispatch_queue_macros_imp__(sync, dispatch_get_global_queue(QOS_CLASS, 0), block, ##__VA_ARGS__)
+
+#define dispatch_queue_async(queue, block, ...)          { typeof(block) const __xz_block__ = block; if (__xz_block__) { dispatch_async_queue(queue, __xz_block__, ##__VA_ARGS__);        } }
+#define dispatch_queue_sync(queue, block, ...)           { typeof(block) const __xz_block__ = block; if (__xz_block__) { dispatch_sync_queue(queue, __xz_block__, ##__VA_ARGS__);         } }
+#define dispatch_main_async(block, ...)                  { typeof(block) const __xz_block__ = block; if (__xz_block__) { dispatch_async_main(__xz_block__, ##__VA_ARGS__);                } }
+#define dispatch_main_sync(block, ...)                   { typeof(block) const __xz_block__ = block; if (__xz_block__) { dispatch_sync_main(__xz_block__, ##__VA_ARGS__);                 } }
+#define dispatch_global_async(QOS_CLASS, block, ...)     { typeof(block) const __xz_block__ = block; if (__xz_block__) { dispatch_async_global(QOS_CLASS, __xz_block__, ##__VA_ARGS__);   } }
+#define dispatch_global_sync(QOS_CLASS, block, ...)      { typeof(block) const __xz_block__ = block; if (__xz_block__) { dispatch_sync_global(QOS_CLASS, __xz_block__, ##__VA_ARGS__);    } }
 
 #endif
 
