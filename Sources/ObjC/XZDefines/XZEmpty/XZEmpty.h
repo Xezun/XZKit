@@ -49,6 +49,10 @@ FOUNDATION_STATIC_INLINE BOOL isNonEmpty(NSDictionary * _Nullable value) XZ_ATTR
 FOUNDATION_STATIC_INLINE BOOL isNonEmpty(NSNumber * _Nullable value) XZ_ATTR_OVERLOAD {
     return (value && [value isKindOfClass:NSNumber.class] && value.boolValue);
 }
+/// 当 value 为非空 NSURL 对象时，返回 YES 值。对于 id 类型的变量，需要使用强转符号，才能命中此函数。
+FOUNDATION_STATIC_INLINE BOOL isNonEmpty(NSURL * _Nullable value) XZ_ATTR_OVERLOAD {
+    return (value && [value isKindOfClass:NSURL.class] && value.absoluteString.length > 0);
+}
 /// 当 value 不为 nil 和 NSNull.null 时，返回 YES 值。对于非 id 类型的变量，需要使用强转符号，才能命中此函数。
 FOUNDATION_STATIC_INLINE BOOL isNonEmpty(id _Nullable value) XZ_ATTR_OVERLOAD {
     return (value != nil && value != (id)kCFNull);
@@ -84,16 +88,8 @@ FOUNDATION_STATIC_INLINE NSNumber * _Nullable asNonEmpty(id _Nullable value, NSN
 /// 如果值 value 为合法的 URL 字符串，那么返回 value 构造的 NSURL 对象；
 /// 否则返回 defaultValue 值。
 FOUNDATION_STATIC_INLINE NSURL * _Nullable asNonEmpty(id _Nullable value, NSURL * _Nullable defaultValue) XZ_ATTR_OVERLOAD {
-    if (value == nil) {
-        return defaultValue;
-    }
-    if ([value isKindOfClass:NSURL.class]) {
-        return value;
-    }
-    if ([value isKindOfClass:NSString.class]) {
-        value = [NSURL URLWithString:value];
-        return value ?: defaultValue;
-    }
+    if (isNonEmpty((NSURL *)value)) return value;
+    if (isNonEmpty((NSString *)value)) return [NSURL URLWithString:value] ?: defaultValue;
     return defaultValue;
 }
 /// 如果值 value 不为 nil 且不为 NSNull 值，那么返回 value 值，否则返回 defaultValue 值。

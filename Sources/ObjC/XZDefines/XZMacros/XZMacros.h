@@ -27,6 +27,7 @@ NS_ASSUME_NONNULL_BEGIN
 #define __XZX_ARGS_FIRST_IMP__(FIRST, ...)  FIRST
 
 /// 获取宏参数列表中的第 N 个参数，最多支持 10 个参数，即 `N ∈ [0, 9]` 。
+/// 将 0 到 N - 1 位置上的参数占位，剩下参数的 `__VA_ARGS__` 参数列表的首位，就是获取第 N 位置上的参数。
 #define __XZX_ARGS_AT__(N, ...)                                          __XZX_PASTE__(__XZX_ARGS_AT_IMP_, N)(__VA_ARGS__)
 #define __XZX_ARGS_AT_IMP_0(...)                                         __XZX_ARGS_FIRST__(__VA_ARGS__)
 #define __XZX_ARGS_AT_IMP_1(_0, ...)                                     __XZX_ARGS_FIRST__(__VA_ARGS__)
@@ -38,12 +39,12 @@ NS_ASSUME_NONNULL_BEGIN
 #define __XZX_ARGS_AT_IMP_7(_0, _1, _2, _3, _4, _5, _6, ...)             __XZX_ARGS_FIRST__(__VA_ARGS__)
 #define __XZX_ARGS_AT_IMP_8(_0, _1, _2, _3, _4, _5, _6, _7, ...)         __XZX_ARGS_FIRST__(__VA_ARGS__)
 #define __XZX_ARGS_AT_IMP_9(_0, _1, _2, _3, _4, _5, _6, _7, _8, ...)     __XZX_ARGS_FIRST__(__VA_ARGS__)
-#define __XZX_ARGS_AT_IMP_X(_0, _1, _2, _3, _4, _5, _6, _7, _8, _9, ...) __XZX_ARGS_FIRST__(__VA_ARGS__)
+#define __XZX_ARGS_AT_IMP_10(_0, _1, _2, _3, _4, _5, _6, _7, _8, _9, ...) __XZX_ARGS_FIRST__(__VA_ARGS__)
 
-/// 获取参数列表中参数的个数（最多 10 个）。
-#define __XZX_ARGS_COUNT__(...) __XZX_ARGS_AT__(X, __VA_ARGS__, X, 9, 8, 7, 6, 5, 4, 3, 2, 1)
+/// 获取参数列表中参数的个数（最多 9 个）。
+#define __XZX_ARGS_COUNT__(...) __XZX_ARGS_AT__(9, ##__VA_ARGS__, 9, 8, 7, 6, 5, 4, 3, 2, 1, 0)
 
-/// 遍历参数列表：对参数列表中的参数，逐个应用 MACRO(INDEX, ARG) 宏函数。
+/// 遍历参数列表：对参数列表中的参数，逐个应用 MACRO(INDEX, ARG) 宏函数。参数列表，最多支持 9 个参数。
 #define __XZX_ARGS_MAP__(MACRO, SEP, ...)                                                 __XZX_ARGS_MAP_IMP__(__XZX_ARGS_MAP_CTX__, SEP, MACRO, __VA_ARGS__)
 #define __XZX_ARGS_MAP_CTX__(INDEX, MACRO, ARG)                                           MACRO(INDEX, ARG)
 #define __XZX_ARGS_MAP_IMP__(CONTEXT, SEP, MACRO, ...)                                    __XZX_PASTE__(__XZX_ARGS_MAP_IMP_, __XZX_ARGS_COUNT__(__VA_ARGS__))(CONTEXT, SEP, MACRO, __VA_ARGS__)
@@ -57,7 +58,6 @@ NS_ASSUME_NONNULL_BEGIN
 #define __XZX_ARGS_MAP_IMP_7(CONTEXT, SEP, MACRO, _0, _1, _2, _3, _4, _5, _6)             __XZX_ARGS_MAP_IMP_6(CONTEXT, SEP, MACRO, _0, _1, _2, _3, _4, _5)  SEP  CONTEXT(6, MACRO, _6)
 #define __XZX_ARGS_MAP_IMP_8(CONTEXT, SEP, MACRO, _0, _1, _2, _3, _4, _5, _6, _7)         __XZX_ARGS_MAP_IMP_7(CONTEXT, SEP, MACRO, _0, _1, _2, _3, _4, _5, _6)  SEP  CONTEXT(7, MACRO, _7)
 #define __XZX_ARGS_MAP_IMP_9(CONTEXT, SEP, MACRO, _0, _1, _2, _3, _4, _5, _6, _7, _8)     __XZX_ARGS_MAP_IMP_8(CONTEXT, SEP, MACRO, _0, _1, _2, _3, _4, _5, _6, _7)  SEP  CONTEXT(8, MACRO, _8)
-#define __XZX_ARGS_MAP_IMP_X(CONTEXT, SEP, MACRO, _0, _1, _2, _3, _4, _5, _6, _7, _8, _9) __XZX_ARGS_MAP_IMP_9(CONTEXT, SEP, MACRO, _0, _1, _2, _3, _4, _5, _6, _7, _8)  SEP  CONTEXT(9, MACRO, _9)
 
 #pragma mark - XZ_ATTR
 
@@ -262,17 +262,17 @@ FOUNDATION_EXPORT void dispatch_global_sync(intptr_t QOS_CLASS, id block, ...) N
 #undef dispatch_global_async
 #undef dispatch_global_sync
 
-#define __dispatch_queue_macros_forwarding__(_00, _01, _02, _03, _04, _05, _06, _07, _08, _09, _10, ...) _10
+#define __dispatch_queue_macros_forwarding__(_X, _9, _8, _7, _6, _5, _4, _3, _2, _1, _0, ...) _0
 
-#define __dispatch_queue_macros_imp_args_0__(concurrency, queue, block)      __XZX_PASTE__(dispatch_, concurrency)(queue, block)
-#define __dispatch_queue_macros_imp_args_n__(concurrency, queue, block, ...) __XZX_PASTE__(dispatch_, concurrency)(queue, ^{ (block)(__VA_ARGS__); })
+#define __dispatch_queue_macros_imp_0(concurrency, queue, block)      __XZX_PASTE__(dispatch_, concurrency)(queue, block)
+#define __dispatch_queue_macros_imp_n(concurrency, queue, block, ...) __XZX_PASTE__(dispatch_, concurrency)(queue, ^{ (block)(__VA_ARGS__); })
 
 #define __dispatch_queue_macros_imp__(concurrency, queue, block, ...)   __dispatch_queue_macros_forwarding__(\
     10, ##__VA_ARGS__, \
-    __dispatch_queue_macros_imp_args_n__, __dispatch_queue_macros_imp_args_n__, __dispatch_queue_macros_imp_args_n__, \
-    __dispatch_queue_macros_imp_args_n__, __dispatch_queue_macros_imp_args_n__, __dispatch_queue_macros_imp_args_n__, \
-    __dispatch_queue_macros_imp_args_n__, __dispatch_queue_macros_imp_args_n__, __dispatch_queue_macros_imp_args_n__, \
-    __dispatch_queue_macros_imp_args_0__ \
+    __dispatch_queue_macros_imp_n, __dispatch_queue_macros_imp_n, __dispatch_queue_macros_imp_n, \
+    __dispatch_queue_macros_imp_n, __dispatch_queue_macros_imp_n, __dispatch_queue_macros_imp_n, \
+    __dispatch_queue_macros_imp_n, __dispatch_queue_macros_imp_n, __dispatch_queue_macros_imp_n, \
+    __dispatch_queue_macros_imp_0 \
 )(concurrency, queue, block, ##__VA_ARGS__)
 
 #define dispatch_async_queue(queue, block, ...)          __dispatch_queue_macros_imp__(async, queue, block, ##__VA_ARGS__)

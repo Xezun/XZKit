@@ -223,7 +223,9 @@ static void barFunction(void) { }
 
 // bitfield
 
-- (void)unionValueChanged:(union FoobarUnion)value {
+- (void)unionValueChanged:(NSValue *)objectValue {
+    union FoobarUnion value;
+    [objectValue getValue:&value size:sizeof(union FoobarUnion)];
     XCTAssert(value.a == 100 || value.b == 200);
 }
 

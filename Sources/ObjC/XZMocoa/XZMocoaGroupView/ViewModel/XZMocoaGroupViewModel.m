@@ -63,8 +63,8 @@
     self = [super initWithModel:model];
     if (self) {
         _modelIndexPathTable = nil;
-        _viewModelSections = [NSMutableArray array];
-        _modelSections     = [NSMutableArray array];
+        _viewModelSections   = [NSMutableArray array];
+        _modelSections       = [NSMutableArray array];
         _supportedSupplementKinds = @[XZMocoaKindHeader, XZMocoaKindFooter];
         _needsDifferenceBatchUpdates = [NSMutableArray array];
     }
@@ -1160,7 +1160,8 @@
         return _identifier;
     }
     if (_kindedSupplements.count > 0) {
-        // supplements:kind1-hash0-hash1-hash2-hashN:kind2-hash0
+        // 由于刷新 supplements 需要刷新整个 section 所以有 supplements 时，以 supplements 的 hash 作为标识符。
+        // 标识符格式：supplements:kind1-hash0-hash1-hash2-hashN:kind2-hash0-...
         NSMutableString *identifier = [NSMutableString stringWithString:@"supplements"];
         NSArray *kinds = [_kindedSupplements.allKeys sortedArrayUsingSelector:@selector(compare:)];
         for (XZMocoaKind const kind in kinds) {
@@ -1172,6 +1173,7 @@
         };
         _identifier = identifier.xz_sha1.copy;
     } else {
+        // 没有 supplements 时。
         // cells:cell-hash0-hash1-hash2-hashN
         NSMutableString *identifier = [NSMutableString stringWithString:@"cells:cell"];
         for (NSObject *model in _cells) {
