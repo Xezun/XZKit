@@ -122,6 +122,7 @@ FOUNDATION_EXPORT XZMocoaKey const XZMocoaKeyPrefersLargeTitles;
 
 /// 重载事件。适用情形：通知上级，执行重载模块的操作（数据已经更新）。
 FOUNDATION_EXPORT XZMocoaKey const XZMocoaKeyReload;
+/// ``XZMocoaTableView``、``XZMocoaCollectionView`` 的子视图或子视图模型，可通过事件通道触发列表刷新。
 FOUNDATION_EXPORT XZMocoaKey const XZMocoaKeyReloadData;
 /// 更新操作。适用情形：通知上级，执行数据编辑的操作（数据还未编辑）。
 FOUNDATION_EXPORT XZMocoaKey const XZMocoaKeyModify;
