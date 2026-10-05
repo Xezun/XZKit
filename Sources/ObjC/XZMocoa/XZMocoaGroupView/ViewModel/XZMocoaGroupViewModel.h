@@ -33,7 +33,8 @@ NS_ASSUME_NONNULL_BEGIN
 /// @discussion 请在使用 viewModel 前设置此属性。
 @property (nonatomic, copy) NSArray<XZMocoaKind> *supportedSupplementKinds;
 
-/// 接收来自下级的 XZMocoaKeyReload 事件，并刷新视图，如果在批量更新的过程中，视图刷新可能会延迟。
+/// 处理来自下级的事件：
+/// - XZMocoaKeyReloadData: 重载所有数据，等同于调用 `-reloadData` 方法，事件参数将被忽略。
 - (void)didReceiveEvents:(XZMocoaEvents *)events;
 
 /// 判断列表是否为空。
