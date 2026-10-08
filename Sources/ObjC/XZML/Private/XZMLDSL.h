@@ -11,13 +11,14 @@ NS_ASSUME_NONNULL_BEGIN
 
 /// XZML 元素标记字符，一般使用成对的 ASCII 字符作为元素标记字符。
 /// @note XZML 使用结束标记符来代表或区分元素。
-typedef char XZMLElement;
+typedef char XZMLElement NS_TYPED_EXTENSIBLE_ENUM;
 
 /// XZML 样式标记字符，一般使用 ASCII 特殊标点符号作为标记字符。
-typedef char XZMLAttribute;
+typedef char XZMLAttribute NS_TYPED_EXTENSIBLE_ENUM;
 
 /// 元素的解析方式。
-/// - Note: 在 XZML 中，支持属性修改文本，因此提供了支持在解析的过程中，通过已解析的属性，决定元素的后续解析方式的能力，以提高解析效率。
+///
+/// 在 XZML 中，可通过属性控制文本。在解析的过程中，如果已解析的属性，已经决定后续解析方式，以提高解析效率。
 typedef NS_ENUM(NSUInteger, XZMLReadingOptions) {
     /// 不解析属性和文本
     XZMLReadingNone,
@@ -29,6 +30,8 @@ typedef NS_ENUM(NSUInteger, XZMLReadingOptions) {
 
 enum : XZMLElement {
     /// 标识非 XZML 元素的标记。
+    ///
+    /// 所有字符都是 XZML 字符，直到遇到字符串结尾字符。
     XZMLElementNotAnElement = '\0'
 };
 
@@ -90,5 +93,16 @@ FOUNDATION_EXPORT void XZMLDSL(NSString *XZMLString,
                                NS_NOESCAPE XZMLDSLFoundTextFragment     foundTextFragment,
                                NS_NOESCAPE XZMLDSLDidEndElement         didEndElement);
 
+@protocol XZMLDSL <NSObject>
+
+- (void)dsl:(void)null didBeginElement:(XZMLElement)element;
+- (void)dsl:(void)null didEndElement:(XZMLElement)element;
+
+- (BOOL)dsl:(void)null element:(XZMLElement)element shouldBeginAttribute:(char)character;
+- (XZMLReadingOptions)dsl:(void)null element:(XZMLElement)element foundAttribute:(XZMLAttribute)attribute value:(NSString *)value;
+
+- (nullable NSAttributedString *)dsl:(void)null element:(XZMLElement)element foundText:(NSString *)text fragment:(NSUInteger)fragment;
+
+@end
 
 NS_ASSUME_NONNULL_END
