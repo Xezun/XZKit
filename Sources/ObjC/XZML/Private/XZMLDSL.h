@@ -9,9 +9,9 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-/// XZML 元素标记字符，一般使用成对的 ASCII 字符作为元素标记字符。
-/// @note XZML 使用结束标记符来代表或区分元素。
-typedef char XZMLElement NS_TYPED_EXTENSIBLE_ENUM;
+/// XZML 元素的开始和结束标记，固定为 `<` 和 `>` 字符，不支持自定义。
+#define XZMLElementStart '<'
+#define XZMLElementEnd   '>'
 
 /// XZML 样式标记字符，一般使用 ASCII 特殊标点符号作为标记字符。
 typedef char XZMLAttribute NS_TYPED_EXTENSIBLE_ENUM;
@@ -28,41 +28,27 @@ typedef NS_ENUM(NSUInteger, XZMLReadingOptions) {
     XZMLReadingAll,
 };
 
-enum : XZMLElement {
-    /// 标识非 XZML 元素的标记。
-    ///
-    /// 所有字符都是 XZML 字符，直到遇到字符串结尾字符。
-    XZMLElementNotAnElement = '\0'
-};
-
 enum : XZMLAttribute {
     /// 标识 XZML 元素中普通文本的属性。
     XZMLAttributeText = '\0'
 };
 
-/// XZML 元素识别器。
-/// @discussion 返回元素的结束标记符，表示 character 是一个元素的开始标记符。
-/// @discussion 返回 XZMLElementNotAnElement 表示 character 不是元素标记符。
-/// @param character 元素的开始标记
-/// @returns 返回元素的结束标记
-typedef XZMLElement (^XZMLDSLShouldBeginElement)(char character);
-
 /// XZML 元素属性识别器。
 /// @param element 当前正识别的元素
 /// @param character 标记符
 /// @return 参数 character 是否为元素属性标记符
-typedef BOOL (^XZMLDSLShouldBeginAttribute)(XZMLElement element, char character);
+typedef BOOL (^XZMLDSLShouldBeginAttribute)(char character);
 
 /// 开始识别元素。
 /// @param element 元素的结束标记符
-typedef void (^XZMLDSLDidBeginElement)(XZMLElement element);
+typedef void (^XZMLDSLDidBeginElement)(void);
 
 /// 识别了属性。
 /// @param element 元素
 /// @param attribute 属性
 /// @param value 属性原始值
 /// @returns 返回 NO 将终止解析当前元素及子元素
-typedef XZMLReadingOptions (^XZMLDSLFoundAttribute)(XZMLElement element, XZMLAttribute attribute, NSString *value);
+typedef XZMLReadingOptions (^XZMLDSLFoundAttribute)(XZMLAttribute attribute, NSString *value);
 
 /// 识别了文本。
 /// @discussion 元素文本会被子元素分隔，从而导致元素的文本会被分段识别。
@@ -70,11 +56,11 @@ typedef XZMLReadingOptions (^XZMLDSLFoundAttribute)(XZMLElement element, XZMLAtt
 /// @param element 元素，如果为 XZMLElementNotAnElement 则表示文本不在元素内
 /// @param text 文本
 /// @param fragment 当前被识别的文本是当前元素的第几段文本，从0计数
-typedef void (^XZMLDSLFoundTextFragment)(XZMLElement element, NSString *text, NSUInteger fragment);
+typedef void (^XZMLDSLFoundTextFragment)(NSString *text, NSUInteger fragment);
 
 /// 识别元素结束，或者整个字符串识别结束。
 /// @param element 元素的结束标记符
-typedef void (^XZMLDSLDidEndElement)(XZMLElement element);
+typedef void (^XZMLDSLDidEndElement)(void);
 
 /// XZML 语法分析函数。
 /// @discussion XZML 是一种简化的超文本标记语言，只将 ASCII 字符作为元素和属性标记字符，支持简单的标记和套用规则，用最少的字符描述富文本。
@@ -86,7 +72,6 @@ typedef void (^XZMLDSLDidEndElement)(XZMLElement element);
 /// @param foundTextFragment 识别出了文本事件
 /// @param didEndElement 元素识别结束事件
 FOUNDATION_EXPORT void XZMLDSL(NSString *XZMLString,
-                               NS_NOESCAPE XZMLDSLShouldBeginElement    shouldBeginElement,
                                NS_NOESCAPE XZMLDSLShouldBeginAttribute  shouldBeginAttribute,
                                NS_NOESCAPE XZMLDSLDidBeginElement       didBeginElement,
                                NS_NOESCAPE XZMLDSLFoundAttribute        foundAttribute,
@@ -95,13 +80,13 @@ FOUNDATION_EXPORT void XZMLDSL(NSString *XZMLString,
 
 @protocol XZMLDSL <NSObject>
 
-- (void)dsl:(void)null didBeginElement:(XZMLElement)element;
-- (void)dsl:(void)null didEndElement:(XZMLElement)element;
+- (void)didBeginElement;
+- (void)didEndElement;
 
-- (BOOL)dsl:(void)null element:(XZMLElement)element shouldBeginAttribute:(char)character;
-- (XZMLReadingOptions)dsl:(void)null element:(XZMLElement)element foundAttribute:(XZMLAttribute)attribute value:(NSString *)value;
+- (BOOL)shouldBeginAttribute:(char)character;
+- (XZMLReadingOptions)foundAttribute:(XZMLAttribute)attribute value:(NSString *)value;
 
-- (nullable NSAttributedString *)dsl:(void)null element:(XZMLElement)element foundText:(NSString *)text fragment:(NSUInteger)fragment;
+- (nullable NSAttributedString *)foundText:(NSString *)text fragment:(NSUInteger)fragment;
 
 @end
 

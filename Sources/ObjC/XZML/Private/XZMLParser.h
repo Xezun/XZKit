@@ -132,47 +132,36 @@ typedef struct XZMLParserContext {
 
 // MARK: - 子类可通过重写如下方法来自定义解析过程
 
-/// 判断字符 character 是否为元素起始符。
-/// 1. 如果 character 是元素起始符号，那么应返回该元素的结束符号。
-/// 2. 返回 XZMLElementNotAnElement 表示这不是一个元素开始符号。
-/// - Parameter character: 待判断的字符
-+ (XZMLElement)shouldBeginElement:(char)character;
-
 /// 判断字符 character 是否为元素 element 的样式属性符号。
 /// - Parameters:
-///   - element: 当前正识别中的元素
 ///   - character: 待判断是否为样式标记符的字符
-+ (BOOL)element:(XZMLElement)element shouldBeginAttribute:(char)character;
++ (BOOL)shouldBeginAttribute:(char)character;
 
 /// 元素解析开始。
 /// - Parameters:
-///   - element: 被解析的元素的标记
 ///   - attributes: 元素的样式属性
-+ (void)didBeginElement:(XZMLElement)element context:(const XZMLParserContext)context;
++ (void)didBeginElement:(const XZMLParserContext)context;
 
 /// 解析出样式。
 /// - Note: 在识别属性的过程中，特定的属性，可以提前终止元素的解析，比如安全字符替换。
 /// - Parameters:
-///   - element: 识别中的元素
 ///   - attribute: 已识别的样式
 ///   - value: 识别出的样式值
 ///   - attributes: 元素的样式属性
 /// - Returns: 当前元素后续的解析方式
-+ (XZMLReadingOptions)element:(XZMLElement)element foundAttribute:(XZMLAttribute)attribute value:(NSString *)value context:(const XZMLParserContext)context;
++ (XZMLReadingOptions)foundAttribute:(XZMLAttribute)attribute value:(NSString *)value context:(const XZMLParserContext)context;
 
 /// 解析出文本。
 /// - Parameters:
-///   - element: 当前识别中的元素，也可能是非元素文本。
 ///   - text: 已识别出的文本
 ///   - fragment: 文本可能会被子元素分割成多段，该参数表明当前文本是其中的是第几段
 ///   - attributes: 富文本属性
 /// - Returns: 返回的富文本将拼接到结果中
-+ (nullable NSAttributedString *)element:(XZMLElement)element foundText:(NSString *)text fragment:(NSUInteger)fragment attributes:(nullable NSDictionary<NSAttributedStringKey,id> *)attributes;
++ (nullable NSAttributedString *)foundText:(NSString *)text fragment:(NSUInteger)fragment attributes:(nullable NSDictionary<NSAttributedStringKey,id> *)attributes;
 
 /// 元素解析结束。
-/// - Parameter element: 当前识别中的元素
 /// - Parameter attributes: 元素的样式属性
-+ (void)didEndElement:(XZMLElement)element context:(const XZMLParserContext)context;
++ (void)didEndElement:(const XZMLParserContext)context;
 
 @end
 
