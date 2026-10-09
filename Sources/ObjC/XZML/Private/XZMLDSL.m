@@ -16,7 +16,7 @@ typedef struct XZMLDSLContext {
     const NSUInteger   length;
     /// 当前指向的字节。
     NSUInteger         index;
-    ///
+    /// XZML 解析器。
     XZMLParser * const __unsafe_unretained parser;
 } XZMLDSLContext;
 
