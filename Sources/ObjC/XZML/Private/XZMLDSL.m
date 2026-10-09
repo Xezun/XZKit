@@ -6,6 +6,7 @@
 //
 
 #import "XZMLDSL.h"
+#import "XZMLParser.h"
 
 /// XZML 解析过程的中间量。
 typedef struct XZMLDSLContext {
@@ -15,6 +16,8 @@ typedef struct XZMLDSLContext {
     const NSUInteger   length;
     /// 当前指向的字节。
     NSUInteger         index;
+    ///
+    XZMLParser * const __unsafe_unretained parser;
 } XZMLDSLContext;
 
 /// 从 context 的当前位置开始，查找下一个 ASCII 字符的位置。
@@ -30,7 +33,29 @@ static inline NSUInteger XZMLDSLContextSearchASCII(XZMLDSLContext *context) {
     return index;
 }
 
+/// 判断字符是否为 XZML 属性标记符。
+static inline BOOL XZMLDSLAttributeCharacter(XZMLDSLContext *context, char character) {
+    return ((BOOL (*)(id, SEL, char))(context->parser->_isAttributeCharacter))(context->parser, @selector(isAttributeCharacter:), character);
+}
+
+static inline void XZMLDSLDidBeginElement(XZMLDSLContext *context) {
+    ((void (*)(id, SEL))(context->parser->_didBeginElement))(context->parser, @selector(didBeginElement));
+}
+
+static inline void XZMLDSLFoundText(XZMLDSLContext *context, NSString *value, NSUInteger fragment) {
+    (((void (*)(id, SEL, NSString *, NSUInteger))(context->parser->_foundText))(context->parser, @selector(foundText:fragment:), value, fragment));
+}
+
+static inline XZMLReadingMode XZMLDSLFoundAttribute(XZMLDSLContext *context, XZMLAttribute attribute, NSString *value) {
+    return (((XZMLReadingMode (*)(id, SEL, XZMLAttribute, NSString *))(context->parser->_foundAttribute))(context->parser, @selector(foundAttribute:value:), attribute, value));
+}
+
+static inline void XZMLDSLDidEndElement(XZMLDSLContext *context) {
+    ((void (*)(id, SEL))(context->parser->_didEndElement))(context->parser, @selector(didEndElement));
+}
+
 /// 跳过当前元素，包括子元素。
+/// TODO: 改造递归。
 static void XZMLElementDSLAbort(XZMLDSLContext * const context) {
     BOOL isEscaping = NO;
     do {
@@ -65,8 +90,8 @@ static void XZMLElementDSLAbort(XZMLDSLContext * const context) {
 }
 
 /// 仅识别当前元素中的文本，忽略属性。
-static NSString *XZMLElementDSLText(XZMLDSLContext * const context, NS_NOESCAPE XZMLDSLShouldBeginAttribute const shouldBeginAttribute) {
-    NSMutableString * const value = [NSMutableString stringWithCapacity:context->length - context->index];
+static NSData *XZMLElementDSLText(XZMLDSLContext * const context) {
+    NSMutableData * const value = [NSMutableData dataWithCapacity:context->length - context->index];
     
     /// 当前循环轮次是否处于逃逸模式
     BOOL isEscaping = NO;
@@ -74,16 +99,16 @@ static NSString *XZMLElementDSLText(XZMLDSLContext * const context, NS_NOESCAPE 
     BOOL shouldRecognizeAttributes = YES;
     /// 子元素的层级，遇到结束字符层级递减。
     NSInteger hierarchies = 1;
-    /// 统计
-    NSUInteger attributeStartIndex = 0;
+    /// 记录元素属性的起点，以便在识别到属性时从结果中删除属性字符
+    NSUInteger startIndex = 0;
+    
     do {
         NSUInteger const index = XZMLDSLContextSearchASCII(context);
         if (context->index < index) {
             // 当前字符被跳过了，说明是非 ASCII 字符。
             const char * const bytes = context->UTF8String + context->index;
             NSUInteger   const count = index - context->index;
-            NSString *string = [[NSString alloc] initWithBytes:bytes length:count encoding:NSUTF8StringEncoding];
-            [value appendString:string];
+            [value appendBytes:bytes length:count];
         }
         context->index = index + 1; // 指向下一个字节
 
@@ -92,7 +117,7 @@ static NSString *XZMLElementDSLText(XZMLDSLContext * const context, NS_NOESCAPE 
         // character 是逃逸字符
         if (isEscaping) {
             isEscaping = NO;
-            [value appendFormat:@"%c", character];
+            [value appendBytes:&character length:sizeof(char)];
             continue;
         }
 
@@ -110,6 +135,7 @@ static NSString *XZMLElementDSLText(XZMLDSLContext * const context, NS_NOESCAPE 
             }
             // 遇到子元素后，就不识别属性。
             shouldRecognizeAttributes = NO;
+            continue;
         }
         
         // 子元素开始：character 是元素开始字符
@@ -118,22 +144,22 @@ static NSString *XZMLElementDSLText(XZMLDSLContext * const context, NS_NOESCAPE 
             hierarchies += 1;
             // 子元素继续识别属性，父元素在子元素结束时，标记不识别属性。
             shouldRecognizeAttributes = YES;
-            // 子元素属性
-            attributeStartIndex = context->index;
+            // 记录子元素开始位置
+            startIndex = value.length;
             continue;
         }
 
         // 属性：character 是元素属性字符
-        if (shouldRecognizeAttributes && shouldBeginAttribute(character)) {
+        if (shouldRecognizeAttributes && XZMLDSLAttributeCharacter(context, character)) {
             // 已识别的字符为属性，直接删除
-            [value deleteCharactersInRange:NSMakeRange(attributeStartIndex, value.length - attributeStartIndex)];
+            [value replaceBytesInRange:NSMakeRange(startIndex, value.length - startIndex) withBytes:NULL length:0];
             // 开始新的属性
-            attributeStartIndex = context->index;
+            startIndex = value.length; 
             continue;
         }
-
+        
         // character 是普通字符
-        [value appendFormat:@"%c", character];
+        [value appendBytes:&character length:sizeof(char)];
     } while (context->index < context->length);
 
     return value;
@@ -142,17 +168,11 @@ static NSString *XZMLElementDSLText(XZMLDSLContext * const context, NS_NOESCAPE 
 /// 元素识别。
 /// 传入的 context->index 指向当前元素开始标记之后第一个字符，
 /// 本函数执行完毕 context->index 执行元素结束标记之后的第一个字符，或者指向字符串结束标志`\0`。
-static void XZMLElementDSL(XZMLDSLContext * const context,
-                           NSUInteger const hierarchies,
-                           NS_NOESCAPE XZMLDSLShouldBeginAttribute const shouldBeginAttribute,
-                           NS_NOESCAPE XZMLDSLDidBeginElement const didBeginElement,
-                           NS_NOESCAPE XZMLDSLFoundAttribute const foundAttribute,
-                           NS_NOESCAPE XZMLDSLFoundTextFragment const foundTextFragment,
-                           NS_NOESCAPE XZMLDSLDidEndElement const didEndElement) {
+static void XZMLElementDSL(XZMLDSLContext * const context, NSUInteger const hierarchies) {
     // 发送元素识别开始事件
-    didBeginElement();
+    XZMLDSLDidBeginElement(context);
     
-    NSMutableString * const value = [NSMutableString stringWithCapacity:context->length - context->index];
+    NSMutableData * const value = [NSMutableData dataWithCapacity:context->length - context->index];
     
     // 文本段。如果当前元素包含多个子元素，那么此值表示被子元素分隔在文本段的次序。
     NSUInteger fragment = 0;
@@ -161,24 +181,24 @@ static void XZMLElementDSL(XZMLDSLContext * const context,
     // 当前元素是否应该继续识别属性
     BOOL shouldRecognizeAttributes = YES;
     
-    // 因为元素识别是从元素开始标记后的第一个字符开始，所以直接用 do-while 循环。
     do {
         NSUInteger const index = XZMLDSLContextSearchASCII(context);
         if (context->index < index) {
             // 当前字符被跳过了，说明是非 ASCII 字符。
             const char * const bytes = context->UTF8String + context->index;
             NSUInteger   const count = index - context->index;
-            NSString *string = [[NSString alloc] initWithBytes:bytes length:count encoding:NSUTF8StringEncoding];
-            [value appendString:string];
+            [value appendBytes:bytes length:count];
         }
-        context->index = index + 1; // 指向下一个字节
-
+        // 指向下一个字符
+        context->index = index + 1;
+        
+        // 当前字符
         char const character = context->UTF8String[index];
 
         // character 是逃逸字符
         if (isEscaping) {
             isEscaping = NO;
-            [value appendFormat:@"%c", character];
+            [value appendBytes:&character length:sizeof(char)];
             continue;
         }
 
@@ -193,75 +213,83 @@ static void XZMLElementDSL(XZMLDSLContext * const context,
             break;
         }
 
-        // 先判断是否为元素标记字符，后判断是否为属性标记字符。
-        // 子元素开始：character 是元素开始字符
+        // character 是元素开始字符，子元素开始
         if (character == XZMLElementStart) {
             // 标记当前元素不再识别属性标记
             shouldRecognizeAttributes = NO;
             
-            // 发送文本识别事件：已识别的字符作为文本属性
+            // 发送文本识别事件：已识别的字符作为普通文本
             NSUInteger const length = value.length;
             if (length > 0) {
-                foundTextFragment(value.copy, fragment++);
-                [value deleteCharactersInRange:NSMakeRange(0, length)];
+                NSString * const text = [[NSString alloc] initWithData:value encoding:NSUTF8StringEncoding];
+                XZMLDSLFoundText(context, text, fragment++);
+                [value replaceBytesInRange:NSMakeRange(0, value.length) withBytes:NULL length:0];
             }
             
-            // 层级超出限制的子元素仅保留文本
+            // 子元素层级超出限制，仅保留文本
             if (hierarchies > 15) {
-                [value appendString:XZMLElementDSLText(context, shouldBeginAttribute)];
+                [value appendData:XZMLElementDSLText(context)];
                 continue;
             }
             
             // 识别子元素
-            XZMLElementDSL(context, hierarchies + 1, shouldBeginAttribute, didBeginElement, foundAttribute, foundTextFragment, didEndElement);
+            XZMLElementDSL(context, hierarchies + 1);
             continue;
         }
 
         // character 是元素属性字符
-        if (shouldRecognizeAttributes && shouldBeginAttribute(character)) {
-            NSString * const attributeValue = value.copy;
-            [value deleteCharactersInRange:NSMakeRange(0, value.length)];
+        if (shouldRecognizeAttributes && XZMLDSLAttributeCharacter(context, character)) {
+            NSString * const text = [[NSString alloc] initWithData:value encoding:NSUTF8StringEncoding];
+            [value replaceBytesInRange:NSMakeRange(0, value.length) withBytes:NULL length:0];
             
             // 发送属性识别事件
-            XZMLReadingOptions const mode = foundAttribute(character, attributeValue);
-            if (mode == XZMLReadingAll) {
-                continue;
+            XZMLReadingMode const mode = XZMLDSLFoundAttribute(context, character, text);
+            
+            // 仅识别文本
+            if (mode == XZMLReadingModeText) {
+                [value appendData:XZMLElementDSLText(context)];
+                break;
             }
             
-            if (mode == XZMLReadingText) {
-                // 提出文本
-                [value appendString:XZMLElementDSLText(context, shouldBeginAttribute)];
-            } else if (mode == XZMLReadingNone) {
-                // 终止当前元素
+            // 终止当前元素
+            if (mode == XZMLReadingModeSkip) {
                 XZMLElementDSLAbort(context);
+                break;
             }
-            break;
+            
+            // 继续识别
+            continue;
         }
 
         // character 是元素文本字符
-        [value appendFormat:@"%c", character];
+        [value appendBytes:&character length:sizeof(char)];
     } while (context->index < context->length);
 
     // 发送文本识别事件：已识别的字符作为文本属性
-    foundTextFragment(value, fragment);
+    NSString * const text = [[NSString alloc] initWithData:value encoding:NSUTF8StringEncoding];
+    XZMLDSLFoundText(context, text, fragment);
     
     // 发送元素识别结束事件
-    didEndElement();
+    XZMLDSLDidEndElement(context);
 }
 
-void XZMLDSL(NSString *XZMLString,
-             NS_NOESCAPE XZMLDSLShouldBeginAttribute const shouldBeginAttribute,
-             NS_NOESCAPE XZMLDSLDidBeginElement const didBeginElement,
-             NS_NOESCAPE XZMLDSLFoundAttribute const foundAttribute,
-             NS_NOESCAPE XZMLDSLFoundTextFragment const foundTextFragment,
-             NS_NOESCAPE XZMLDSLDidEndElement const didEndElement) {
-    NSCAssert([XZMLString isKindOfClass:NSString.class], @"XZML 必须为字符串");
-
+void XZMLDSL(NSString *XZMLString, XZMLParser * const parser) {
+    if (![XZMLString isKindOfClass:NSString.class]) {
+        return;
+    }
+    if (XZMLString.length == 0) {
+        return;
+    }
+    
     // 得到 UTF-8 编码的 C 字符串，以及字符串字节长度。
     const char * const str = [XZMLString cStringUsingEncoding:NSUTF8StringEncoding];
+    if (str == NULL) {
+        return;
+    }
     const NSUInteger   len = [XZMLString lengthOfBytesUsingEncoding:NSUTF8StringEncoding];
 
-    XZMLDSLContext context = { str, len, 0 };
+    XZMLDSLContext context = { str, len, 0, parser };
+    
     BOOL isEscaping = NO;
     NSUInteger fragment = 0;
     
@@ -291,11 +319,11 @@ void XZMLDSL(NSString *XZMLString,
                 const char * const bytes = context.UTF8String + start;
                 NSUInteger   const count = index - start;
                 NSString *value = [[NSString alloc] initWithBytes:bytes length:count encoding:NSUTF8StringEncoding];
-                foundTextFragment(value, fragment++);
+                XZMLDSLFoundText(&context, value, fragment++);
             }
 
             // 然后开始识别元素。
-            XZMLElementDSL(&context, 0, shouldBeginAttribute, didBeginElement, foundAttribute, foundTextFragment, didEndElement);
+            XZMLElementDSL(&context, 0);
 
             // 元素识别完成后，记录位置。
             start = context.index;
@@ -307,6 +335,6 @@ void XZMLDSL(NSString *XZMLString,
         const char * const bytes = context.UTF8String + start;
         NSUInteger   const count = context.index - start;
         NSString *value = [[NSString alloc] initWithBytes:bytes length:count encoding:NSUTF8StringEncoding];
-        foundTextFragment(value, fragment);
+        XZMLDSLFoundText(&context, value, fragment);
     }
 }

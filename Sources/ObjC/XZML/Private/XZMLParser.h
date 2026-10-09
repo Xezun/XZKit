@@ -7,16 +7,18 @@
 
 #import <Foundation/Foundation.h>
 #if __has_include(<XZKit/XZKit.h>)
-#import <XZKit/XZMLDSL.h>
+#import <XZKit/XZMacros.h>
 #else
-#import "XZMLDSL.h"
+#import "XZMacros.h"
 #endif
 
 NS_ASSUME_NONNULL_BEGIN
 
+/// XZML 样式标记字符，使用 ASCII 特殊标点符号作为标记字符。
 /// @attention 新增枚举请同时调整 NSCharacterSet.XZMLReservedCharacterSet 字符集。
+typedef char XZMLAttribute NS_TYPED_EXTENSIBLE_ENUM;
+
 enum : XZMLAttribute {
-    
     /// 颜色样式：文本前景色、文本背景色。颜色使用十六进制 RGB/RGBA 值。
     ///
     /// 属性值支持一下格式：
@@ -33,7 +35,7 @@ enum : XZMLAttribute {
     /// 字体样式：字体、字号、偏移。
     ///
     /// 格式：字体、@字号、字体@字号、字体@字号@基准线偏移
-    /// 
+    ///
     /// 推荐使用 `+setFoneName:forAbbreviation:` 方法注册字体名缩写，以减少`XZML`的长度。
     ///
     /// 字体缩写约定：
@@ -94,74 +96,62 @@ enum : XZMLAttribute {
     
 };
 
-typedef struct XZMLParserContext {
-    __unsafe_unretained NSMutableDictionary<NSAttributedStringKey, id> * _Nonnull  elementAttributes;
-    __unsafe_unretained NSDictionary<NSAttributedStringKey, id>        * _Nullable defaultAttributes;
-} XZMLParserContext;
+/// XZML 元素属性的行为。
+///
+/// 在 XZML 中，可通过属性控制文本。在解析的过程中，如果已解析的属性，已经决定后续解析方式，以提高解析效率。
+typedef NS_ENUM(NSUInteger, XZMLReadingMode) {
+    /// 无操作，正常模式，解析属性和文本。
+    XZMLReadingModeNone,
+    /// 只解析当前元素中的文本。
+    XZMLReadingModeText,
+    /// 跳过，不解析当前元素后续的属性和文本
+    XZMLReadingModeSkip,
+};
 
-@protocol XZMLParser <NSObject>
+@class NSJSONSerialization, NSXMLParser;
 
-/// 解析 XZML 为富文本。
-/// @discussion 默认属性中，
-/// @discussion 1、`NS-`属性，为所有文字默认属性；
-/// @discussion 2、`XZML-`属性，为`XZML`元素样式解析时的默认值应用于XZML文本，并覆盖同名的默认属性。
-/// @param XZMLString XZML
-/// @param attributedString 接收 XZML 富文本的对象
-/// @param attributes 默认属性 attributes
-+ (void)attributedString:(NSMutableAttributedString *)attributedString parse:(NSString *)XZMLString attributes:(nullable NSDictionary<NSAttributedStringKey, id> *)attributes;
+/// 解析 XZML 的对象。
+@interface XZMLParser : NSObject {
+    @package
+    IMP XZ_CONST _isAttributeCharacter;
+    IMP XZ_CONST _didBeginElement;
+    IMP XZ_CONST _foundAttribute;
+    IMP XZ_CONST _foundText;
+    IMP XZ_CONST _didEndElement;
+}
 
-/// 将 XZML 去掉样式，转为纯文本。
-/// @param XZMLString XZML 字符串
-/// @param string 接收 XZML 中纯文本的对象
-/// @param attributes 默认属性，比如在安全模式下，会得到被替换的字符
-+ (void)string:(NSMutableString *)string parse:(NSString *)XZMLString attributes:(nullable NSDictionary<NSAttributedStringKey, id> *)attributes;
+/// 默认的 XZML 解析器。
+///
+/// 为 Foundation 或 UIKit 原生类拓展支持 XZML 时，使用的是此解析器。
+///
+/// 此属性不是线程安全的，如果自定义了 XZML 请在任何逻辑使用解析前（比如在程序初始化时）设置此属性。
+@property (class, nonatomic) XZMLParser *defaultParser;
 
-@end
+- (NSMutableAttributedString *)attributedStringWithXZMLString:(NSString *)XZMLString attributes:(nullable NSDictionary<NSAttributedStringKey, id> *)attributes;
+- (NSMutableString *)stringWithXZMLString:(NSString *)XZMLString attributes:(nullable NSDictionary<NSAttributedStringKey, id> *)attributes;
 
-/// 解析 XZML 的对象，不需要实例化。
-@interface XZMLParser : NSObject <XZMLParser>
+- (void)attributedString:(NSMutableAttributedString *)attributedString appendXZMLString:(NSString *)XZMLString attributes:(nullable NSDictionary<NSAttributedStringKey, id> *)attributes;
+- (void)string:(NSMutableString *)string appendXZMLString:(NSString *)XZMLString attributes:(nullable NSDictionary<NSAttributedStringKey, id> *)attributes;
 
-@property (class, nonatomic, null_resettable) Class<XZMLParser> defaultParser;
+// 以下属性只有在解析过程中才有效。
 
-// MARK: - 公开方法
+@property (nonatomic, readonly) XZMLReadingMode mode;
+@property (nonatomic, readonly, nullable) NSMutableAttributedString *attributedString;
+@property (nonatomic, readonly, nullable) NSMutableString *string;
+@property (nonatomic, readonly) NSMutableDictionary<NSAttributedStringKey, id>    *currentAttributes;
+@property (nonatomic, readonly, nullable) NSDictionary<NSAttributedStringKey, id> *defaultAttributes;
 
-/// 解析 XZML 为富文本对象。
-/// @param XZMLString XZML 字符串
-/// @param attributes 默认属性
-+ (NSMutableAttributedString *)parse:(NSString *)XZMLString attributes:(nullable NSDictionary<NSAttributedStringKey, id> *)attributes;
-
-// MARK: - 子类可通过重写如下方法来自定义解析过程
-
-/// 判断字符 character 是否为元素 element 的样式属性符号。
-/// - Parameters:
-///   - character: 待判断是否为样式标记符的字符
-+ (BOOL)shouldBeginAttribute:(char)character;
-
-/// 元素解析开始。
-/// - Parameters:
-///   - attributes: 元素的样式属性
-+ (void)didBeginElement:(const XZMLParserContext)context;
-
-/// 解析出样式。
-/// - Note: 在识别属性的过程中，特定的属性，可以提前终止元素的解析，比如安全字符替换。
-/// - Parameters:
-///   - attribute: 已识别的样式
-///   - value: 识别出的样式值
-///   - attributes: 元素的样式属性
-/// - Returns: 当前元素后续的解析方式
-+ (XZMLReadingOptions)foundAttribute:(XZMLAttribute)attribute value:(NSString *)value context:(const XZMLParserContext)context;
-
-/// 解析出文本。
-/// - Parameters:
-///   - text: 已识别出的文本
-///   - fragment: 文本可能会被子元素分割成多段，该参数表明当前文本是其中的是第几段
-///   - attributes: 富文本属性
-/// - Returns: 返回的富文本将拼接到结果中
-+ (nullable NSAttributedString *)foundText:(NSString *)text fragment:(NSUInteger)fragment attributes:(nullable NSDictionary<NSAttributedStringKey,id> *)attributes;
-
-/// 元素解析结束。
-/// - Parameter attributes: 元素的样式属性
-+ (void)didEndElement:(const XZMLParserContext)context;
+/// 判断字符是否为 XZML 样式属性字符。
+/// - Parameter character: 待判断的字符
+- (BOOL)isAttributeCharacter:(char)character;
+/// 当 XZMLParser 开始解析一个新的 XZML 元素时，此方法会被调用。
+- (void)didBeginElement;
+/// 当 XZMLParser 解析出样式时，此方法会被调用。
+///
+/// 在此方法中，可根据元素的样式，返回当前元素，后续的解析模式。
+- (XZMLReadingMode)foundAttribute:(XZMLAttribute)attribute value:(NSString *)value;
+- (void)foundText:(NSString *)text fragment:(NSUInteger)fragment;
+- (void)didEndElement;
 
 @end
 
