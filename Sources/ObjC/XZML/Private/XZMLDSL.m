@@ -55,9 +55,9 @@ static inline void XZMLDSLDidEndElement(XZMLDSLContext *context) {
 }
 
 /// 跳过当前元素，包括子元素。
-/// TODO: 改造递归。
 static void XZMLElementDSLAbort(XZMLDSLContext * const context) {
     BOOL isEscaping = NO;
+    NSInteger hierarchies = 1;
     do {
         NSUInteger const index = XZMLDSLContextSearchASCII(context);
         context->index = index + 1; // 指向下一个字节
@@ -78,12 +78,17 @@ static void XZMLElementDSLAbort(XZMLDSLContext * const context) {
 
         // character 是元素结束字符
         if (character == XZMLElementEnd) {
-            break;
+            hierarchies -= 1;
+            if (hierarchies == 0) {
+                break;
+            }
+            continue;
         }
         
         // character 是元素开始字符
         if (character == XZMLElementStart) {
-            XZMLElementDSLAbort(context);
+            // 层数增加。
+            hierarchies += 1;
             continue;
         }
     } while (context->index < context->length);
