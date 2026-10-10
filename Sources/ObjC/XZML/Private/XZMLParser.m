@@ -98,12 +98,15 @@ static inline void XZMLParserExecuteWithMode(XZMLParser * const __unsafe_unretai
     parser->_currentStyle = nil;
     parser->_mode = mode;
     
-    XZMLDSL(XZMLString, parser);
-    
-    parser->_defaultStyle = nil;
-    parser->_currentStyle = nil;
-    [parser->_elementStyles removeAllObjects];
-    [parser->_computeStyles removeAllObjects];
+    @try {
+        XZMLDSL(XZMLString, parser);
+    } @finally {
+        // 无论正常结束还是异常穿越，都必须复位，避免残留样式栈污染下一次解析（跨调用串色）
+        parser->_defaultStyle = nil;
+        parser->_currentStyle = nil;
+        [parser->_elementStyles removeAllObjects];
+        [parser->_computeStyles removeAllObjects];
+    }
 }
 
 - (NSMutableAttributedString *)attributedStringWithXZMLString:(NSString *)XZMLString attributes:(NSDictionary<NSAttributedStringKey,id> *)attributes {
@@ -128,18 +131,6 @@ static inline void XZMLParserExecuteWithMode(XZMLParser * const __unsafe_unretai
     _string = string;
     XZMLParserExecuteWithMode(self, XZMLReadingModeTextOnly, XZMLString, attributes);
     _string = nil;
-}
-
-- (void)parse:(NSString *)XZMLString attributes:(NSDictionary<NSAttributedStringKey,id> *)attributes {
-    [_computeStyles addObject:[NSMutableDictionary dictionary]];
-    _defaultStyle = attributes.copy;
-    _currentStyle = nil;
-    
-    XZMLDSL(XZMLString, self);
-    
-    _defaultStyle = nil;
-    [_elementStyles removeAllObjects];
-    [_computeStyles removeAllObjects];
 }
 
 - (BOOL)isAttributeCharacter:(char)character {
