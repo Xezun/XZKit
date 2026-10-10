@@ -73,6 +73,8 @@ static Class _defaultParserClass = nil;
 }
 
 + (void)setDefaultParserClass:(Class)defaultParserClass {
+    // 非 XZMLParser 子类在解析时会 unrecognized selector 崩溃，入口即校验；传 nil 恢复默认
+    NSAssert(defaultParserClass == nil || [defaultParserClass isSubclassOfClass:[XZMLParser class]], @"defaultParserClass 必须是 XZMLParser 或其子类");
     _defaultParserClass = defaultParserClass;
 }
 
@@ -647,12 +649,14 @@ XZMLReadingMode XZMLParserParagraphAttribute(XZMLParser * const __unsafe_unretai
             }
             case 'A':
             case 'a': {
-                style.alignment = NSIntegerMakeParagraphValue(value, &range);
+                // 钳制到 NSTextAlignmentLeft(0) ~ NSTextAlignmentRight(2)，避免越界枚举导致渲染行为未定义
+                style.alignment = MIN(MAX(NSIntegerMakeParagraphValue(value, &range), 0), 2);
                 break;
             }
             case 'K':
             case 'k': {
-                style.lineBreakMode = NSIntegerMakeParagraphValue(value, &range);
+                // 钳制到 UIKit NSLineBreakMode 合法范围 0 ~ 5（NSLineBreakByTruncatingMiddle）
+                style.lineBreakMode = MIN(MAX(NSIntegerMakeParagraphValue(value, &range), 0), 5);
                 break;
             }
             case 'S':
@@ -662,7 +666,8 @@ XZMLReadingMode XZMLParserParagraphAttribute(XZMLParser * const __unsafe_unretai
             }
             case 'W':
             case 'w': {
-                style.baseWritingDirection = NSIntegerMakeParagraphValue(value, &range);
+                // 钳制到 NSWritingDirectionRightToLeft(-1) ~ NSWritingDirectionNatural(1)
+                style.baseWritingDirection = MIN(MAX(NSIntegerMakeParagraphValue(value, &range), -1), 1);
                 break;
             }
             case 'F':

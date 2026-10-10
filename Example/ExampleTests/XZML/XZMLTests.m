@@ -501,6 +501,28 @@
     XCTAssertEqualWithAccuracy(style.minimumLineHeight, 20, 0.001);
 }
 
+/// 段落枚举值越界时钳制到合法范围，不写入未定义枚举。
+- (void)testParagraphEnumClamp {
+    NSParagraphStyle *style = [self attributesAtIndex:0 ofString:[self attributedStringForXZML:@"<9A^x>" attributes:nil]][NSParagraphStyleAttributeName];
+    XCTAssertEqual(style.alignment, NSTextAlignmentRight);
+
+    style = [self attributesAtIndex:0 ofString:[self attributedStringForXZML:@"<9K^x>" attributes:nil]][NSParagraphStyleAttributeName];
+    // UIKit NSLineBreakMode 最大值为 5（NSLineBreakByTruncatingMiddle）
+    XCTAssertEqual((NSInteger)style.lineBreakMode, 5);
+
+    style = [self attributesAtIndex:0 ofString:[self attributedStringForXZML:@"<5W^x>" attributes:nil]][NSParagraphStyleAttributeName];
+    // NSWritingDirection 合法范围 -1 ~ 1，5 钳到上界 RightToLeft
+    XCTAssertEqual(style.baseWritingDirection, NSWritingDirectionRightToLeft);
+
+    style = [self attributesAtIndex:0 ofString:[self attributedStringForXZML:@"<-5W^x>" attributes:nil]][NSParagraphStyleAttributeName];
+    // 负值钳到下界 Natural(-1)
+    XCTAssertEqual(style.baseWritingDirection, NSWritingDirectionNatural);
+
+    // 负值钳到下界
+    style = [self attributesAtIndex:0 ofString:[self attributedStringForXZML:@"<-2A^x>" attributes:nil]][NSParagraphStyleAttributeName];
+    XCTAssertEqual(style.alignment, NSTextAlignmentLeft);
+}
+
 #pragma mark - 纯文本（字符串）API
 
 /// NSMutableString：只保留文本，丢弃样式标记。
