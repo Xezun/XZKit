@@ -60,6 +60,13 @@ static void XZMLElementDSLAbort(XZMLDSLContext * const context) {
     NSInteger hierarchies = 1;
     do {
         NSUInteger const index = XZMLDSLContextSearchASCII(context);
+
+        // 跳过了多字节字符：若处于转义状态，被转义的正是该多字节字符，状态在此消费，
+        // 否则转义会顺延到其后的 ASCII 字符（往往是 '>'）导致元素无法闭合。
+        if (context->index < index) {
+            isEscaping = NO;
+        }
+
         context->index = index + 1; // 指向下一个字节
 
         char const character = context->UTF8String[index];
@@ -112,6 +119,9 @@ static NSData *XZMLElementDSLText(XZMLDSLContext * const context) {
         
         // 当前字符被跳过了，说明是非 ASCII 字符。
         if (context->index < index) {
+            // 被转义的字符是多字节字符本身，状态在此消费，不能顺延到其后的 ASCII 字符
+            isEscaping = NO;
+
             const char * const bytes = context->UTF8String + context->index;
             NSUInteger   const count = index - context->index;
             [value appendBytes:bytes length:count];
@@ -198,6 +208,9 @@ static void XZMLElementDSL(XZMLDSLContext * const context, NSUInteger const hier
         
         // 当前字符被跳过了，说明是非 ASCII 字符。
         if (context->index < index) {
+            // 被转义的字符是多字节字符本身，状态在此消费，不能顺延到其后的 ASCII 字符
+            isEscaping = NO;
+
             const char * const bytes = context->UTF8String + context->index;
             NSUInteger   const count = index - context->index;
             [value appendBytes:bytes length:count];

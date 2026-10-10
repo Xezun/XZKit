@@ -164,6 +164,27 @@
     XCTAssertEqualObjects([self attributedStringForXZML:@"<F00#x\\>y>" attributes:nil].string, @"x>y");
 }
 
+/// 转义符后紧跟多字节字符：转义状态应在多字节字符处消费，元素正常闭合（回归：曾顺延至 '>' 导致串台/整段丢失）。
+- (void)testEscapingBeforeNonASCII {
+    // 元素内：`\<多字节>` 后元素应正常闭合，外层文本不受样式影响
+    NSAttributedString *string = [self attributedStringForXZML:@"<F00#\\中>tail" attributes:nil];
+    XCTAssertEqualObjects(string.string, @"中tail");
+    XCTAssertEqualObjects(NSStringFromUIColor([self attributesAtIndex:0 ofString:string][NSForegroundColorAttributeName]), @"#FF0000FF");
+    XCTAssertNil([self attributesAtIndex:1 ofString:string][NSForegroundColorAttributeName]);
+
+    // 代理对（emoji）同理
+    string = [self attributedStringForXZML:@"<F00#\\😀>x" attributes:nil];
+    XCTAssertEqualObjects(string.string, @"😀x");
+
+    // SkipElement 路径（Abort 扫描）：应在正确的 '>' 处结束，外层文本不丢失
+    string = [self attributedStringForXZML:@"<AB*\\中>tail" attributes:@{XZMLSecurityModeAttributeName: @YES}];
+    XCTAssertEqualObjects(string.string, @"ABtail");
+
+    // TextOnly 路径（安全模式星号替代）：星号数量与文本字符数一致
+    string = [self attributedStringForXZML:@"<*\\中>tail" attributes:@{XZMLSecurityModeAttributeName: @YES}];
+    XCTAssertEqualObjects(string.string, @"*tail");
+}
+
 /// 转义与还原往返：转义后的字符串解析应还原原文。
 - (void)testEscapeRoundTrip {
     NSArray<NSString *> *samples = @[@"a<b", @"a>b", @"a&b", @"a#b", @"a$b", @"a*b", @"a~b", @"a^b", @"a@b", @"a\\b", @"<@#&$*~^>\\"];
