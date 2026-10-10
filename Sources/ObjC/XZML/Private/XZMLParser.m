@@ -76,8 +76,9 @@ static Class _defaultParserClass = nil;
 static XZMLParser *_mainParser = nil;
 
 + (XZMLParser *)mainParser {
+    // 每次访问都校验主线程，避免单例创建后断言失效
+    NSAssert(NSThread.isMainThread, @"mainParser 只能在主线程使用");
     if (_mainParser == nil) {
-        NSAssert(NSThread.isMainThread, @"mainParser 只能在主线程使用");
         _mainParser = [[XZMLParser.defaultParserClass alloc] init];
     }
     return _mainParser;

@@ -23,7 +23,7 @@
         }
         attributes = newAttributes;
     }
-    self.attributedText = [XZMLParser.mainParser attributedStringWithXZMLString:XZMLString attributes:attributes];
+    self.attributedText = [XZMLParser.defaultParserClass.new attributedStringWithXZMLString:XZMLString attributes:attributes];
 }
 
 - (void)setXZML:(NSString *)XZMLString {
@@ -45,7 +45,7 @@
         }
         attributes = newAttributes;
     }
-    id const title = [XZMLParser.mainParser attributedStringWithXZMLString:XZMLString attributes:attributes];
+    id const title = [XZMLParser.defaultParserClass.new attributedStringWithXZMLString:XZMLString attributes:attributes];
     [self setAttributedTitle:title forState:state];
 }
 
@@ -69,7 +69,7 @@
         }
         attributes = newAttributes;
     }
-    self.attributedText = [XZMLParser.mainParser attributedStringWithXZMLString:XZMLString attributes:attributes];
+    self.attributedText = [XZMLParser.defaultParserClass.new attributedStringWithXZMLString:XZMLString attributes:attributes];
 }
 
 - (void)setXZML:(NSString *)XZMLString {
@@ -92,7 +92,7 @@
         }
         attributes = newAttributes;
     }
-    self.attributedText = [XZMLParser.mainParser attributedStringWithXZMLString:XZMLString attributes:attributes];
+    self.attributedText = [XZMLParser.defaultParserClass.new attributedStringWithXZMLString:XZMLString attributes:attributes];
 }
 
 - (void)setXZML:(NSString *)XZMLString {
