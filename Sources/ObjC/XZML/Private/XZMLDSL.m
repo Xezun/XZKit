@@ -230,6 +230,12 @@ static void XZMLElementDSL(XZMLDSLContext * const context, NSUInteger const hier
 
         // character 是元素结束字符
         if (character == XZMLElementEnd) {
+            // 顶层伪容器（hierarchies == 0）：未配对的裸 '>' 视为普通文本，
+            // 不能终止整体解析，否则其后的顶层内容与元素会全部丢失。
+            if (hierarchies == 0) {
+                [value appendBytes:&character length:sizeof(char)];
+                continue;
+            }
             break;
         }
 

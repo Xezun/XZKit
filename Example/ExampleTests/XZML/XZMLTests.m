@@ -145,6 +145,18 @@
     XCTAssertEqualObjects([self attributedStringForXZML:@"a\\\\b" attributes:nil].string, @"a\\b");
 }
 
+/// 顶层未转义的裸 `>` 作为普通文本，不应终止解析（回归：曾导致其后内容整体丢失）。
+- (void)testTopLevelUnescapedGreaterThan {
+    XCTAssertEqualObjects([self attributedStringForXZML:@"a > b" attributes:nil].string, @"a > b");
+    XCTAssertEqualObjects([self attributedStringForXZML:@">abc" attributes:nil].string, @">abc");
+    XCTAssertEqualObjects([self attributedStringForXZML:@"A>B<C&x>D" attributes:nil].string, @"A>BxD");
+    // 元素闭合后紧跟裸 '>'
+    NSAttributedString *string = [self attributedStringForXZML:@"<F00#red>>tail" attributes:nil];
+    XCTAssertEqualObjects(string.string, @"red>tail");
+    XCTAssertEqualObjects(NSStringFromUIColor([self attributesAtIndex:0 ofString:string][NSForegroundColorAttributeName]), @"#FF0000FF");
+    XCTAssertNil([self attributesAtIndex:4 ofString:string][NSForegroundColorAttributeName]);
+}
+
 /// 元素内转义：文本中的保留字符用 `\` 还原。
 - (void)testElementTextEscaping {
     XCTAssertEqualObjects([self attributedStringForXZML:@"<F00#a\\>b>" attributes:nil].string, @"a>b");
