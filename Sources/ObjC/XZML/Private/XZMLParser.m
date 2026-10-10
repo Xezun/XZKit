@@ -199,9 +199,10 @@ static inline void XZMLParserExecuteWithMode(XZMLParser * const __unsafe_unretai
             return XZMLReadingModeNormal;
             
         case XZMLReadingModeSkipElement:
-            // Parser 不会运行于此模式
-            break;
+            // Parser 不会运行于此模式（DSL 在此状态下不再查询属性），防御性返回，避免未定义返回值被误判为 TextOnly/SkipElement 触发错误分支
+            return XZMLReadingModeNormal;
     }
+    return XZMLReadingModeNormal;
 }
 
 - (void)foundText:(NSString *)text fragment:(NSUInteger)fragment {
