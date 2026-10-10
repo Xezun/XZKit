@@ -112,15 +112,15 @@ static NSData *XZMLElementDSLText(XZMLDSLContext * const context) {
         
         // 当前字符被跳过了，说明是非 ASCII 字符。
         if (context->index < index) {
-            if (index >= context->length) {
-                const char * const bytes = context->UTF8String + context->index;
-                NSUInteger   const count = context->length - 1 - context->index;
-                [value appendBytes:bytes length:count];
-                break;
-            }
             const char * const bytes = context->UTF8String + context->index;
             NSUInteger   const count = index - context->index;
             [value appendBytes:bytes length:count];
+        }
+        
+        // 已到达字符串末尾，推进 index，避免父级重复解析剩余字节
+        if (index >= context->length) {
+            context->index = context->length;
+            break;
         }
         
         // 指向下一个字符
@@ -198,16 +198,15 @@ static void XZMLElementDSL(XZMLDSLContext * const context, NSUInteger const hier
         
         // 当前字符被跳过了，说明是非 ASCII 字符。
         if (context->index < index) {
-            // 已经到了末尾
-            if (index >= context->length) {
-                const char * const bytes = context->UTF8String + context->index;
-                NSUInteger   const count = context->length - 1 - context->index;
-                [value appendBytes:bytes length:count];
-                break;
-            }
             const char * const bytes = context->UTF8String + context->index;
             NSUInteger   const count = index - context->index;
             [value appendBytes:bytes length:count];
+        }
+        
+        // 已到达字符串末尾，推进 index，避免父级重复解析剩余字节
+        if (index >= context->length) {
+            context->index = context->length;
+            break;
         }
         
         // 指向下一个字符
@@ -313,13 +312,8 @@ void XZMLDSL(NSString *XZMLString, XZMLParser * const parser) {
     }
 
     XZMLDSLContext context = { UTF8String, UTF8Length, 0, parser };
-        
-    if (UTF8String[0] == XZMLElementStart) {
-        // 顶层是元素
-        context.index = 1;
-        XZMLElementDSL(&context, 0, YES);
-    } else {
-        // 顶层是普通文本
-        XZMLElementDSL(&context, 0, NO);
-    }
+
+    // 统一按容器解析顶层内容（文本与元素串联），元素作为容器的子元素识别。
+    // 顶层不识别属性标记，样式只在元素内部生效。
+    XZMLElementDSL(&context, 0, NO);
 }

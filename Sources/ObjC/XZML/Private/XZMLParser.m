@@ -82,7 +82,7 @@ static inline void XZMLParserExecuteWithMode(XZMLParser * const __unsafe_unretai
     [parser->_computeStyles addObject:[NSMutableDictionary dictionary]];
     parser->_defaultStyle = attributes.copy;
     parser->_currentStyle = nil;
-    parser->_mode = XZMLReadingModeNormal;
+    parser->_mode = mode;
     
     XZMLDSL(XZMLString, parser);
     
