@@ -403,6 +403,16 @@
     XCTAssertEqualObjects([self attributedStringForXZML:@"<@64*abc>" attributes:securityMode].string, expected);
 }
 
+/// 安全模式的内部键不应泄漏到结果富文本的属性字典。
+- (void)testSecurityInternalKeysNotInResult {
+    NSAttributedString *string = [self attributedStringForXZML:@"<X@3*abc>" attributes:@{XZMLSecurityModeAttributeName: @YES}];
+    XCTAssertEqualObjects(string.string, @"XXX");
+    NSDictionary *attributes = [self attributesAtIndex:0 ofString:string];
+    XCTAssertNil(attributes[@"XZMLSecurityMarkAttributeName"]);
+    XCTAssertNil(attributes[@"XZMLSecurityRepeatAttributeName"]);
+    XCTAssertNil(attributes[@"XZMLSecurityModeAttributeName"]);
+}
+
 /// 安全模式：多字符替换符跳过子元素，重复 1 次。
 - (void)testSecurityMultiCharacterMark {
     NSDictionary *securityMode = @{XZMLSecurityModeAttributeName: @YES};

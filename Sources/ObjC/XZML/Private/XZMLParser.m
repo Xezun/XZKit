@@ -222,7 +222,16 @@ static inline void XZMLParserExecuteWithMode(XZMLParser * const __unsafe_unretai
     if (_mode == XZMLReadingModeTextOnly) {
         [_string appendString:XZMLParserText(computeStyle, text)];
     } else {
-        NSAttributedString * const attributedString = [[NSAttributedString alloc] initWithString:XZMLParserText(computeStyle, text) attributes:computeStyle];
+        NSString * const resultText = XZMLParserText(computeStyle, text);
+        // 内部 XZML 属性（如安全替换标记/次数）仅用于解析阶段，不能泄漏到结果富文本；
+        // 且不能原地删除（同层多个文本片段会复用 computeStyle），需拷贝后过滤。
+        NSMutableDictionary *attributes = computeStyle.mutableCopy;
+        for (NSAttributedStringKey key in attributes.allKeys) {
+            if ([key hasPrefix:@"XZML"]) {
+                [attributes removeObjectForKey:key];
+            }
+        }
+        NSAttributedString * const attributedString = [[NSAttributedString alloc] initWithString:resultText attributes:attributes];
         [_attributedString appendAttributedString:attributedString];
     }
 }
