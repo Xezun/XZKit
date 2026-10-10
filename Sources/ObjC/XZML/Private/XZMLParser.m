@@ -18,6 +18,9 @@ static NSAttributedStringKey const XZMLSecurityMarkAttributeName  = @"XZMLSecuri
 /// @note 0 表示重复次数默认与安全文本字符数相同。
 static NSAttributedStringKey const XZMLSecurityRepeatAttributeName = @"XZMLSecurityRepeatAttributeName";
 
+/// 安全文本替代字符最大重复次数，防止外部指定极端重复值导致内存问题。
+static NSInteger const XZMLSecurityRepeatLimit = 64;
+
 // 使用函数以提高性能。
 static XZMLReadingMode XZMLParserFontAttribute(XZMLParser * const __unsafe_unretained parser, NSString *value);
 static XZMLReadingMode XZMLParserColorAttribute(XZMLParser * const __unsafe_unretained parser, NSString *value);
@@ -704,9 +707,14 @@ XZMLReadingMode XZMLParserParagraphAttribute(XZMLParser * const __unsafe_unretai
 NSString *XZMLParserText(NSDictionary<NSAttributedStringKey, id> *attributes, NSString *text) {
     NSString * const mark = attributes[XZMLSecurityMarkAttributeName];
     if (mark) {
-        NSInteger const repeat = [attributes[XZMLSecurityRepeatAttributeName] integerValue];
-        NSInteger const length = mark.length * (repeat > 0 ? repeat : text.length);
-        return [mark stringByPaddingToLength:length withString:mark startingAtIndex:0];
+        NSInteger repeat = [attributes[XZMLSecurityRepeatAttributeName] integerValue];
+        if (repeat <= 0) {
+            // 默认与被隐藏文本字符数相同，与输入长度成正比，可接受
+            repeat = (NSInteger)text.length;
+        }
+        // repeat 可能来自服务端下发的 XZML，钳制上限，避免构造超大字符串打爆内存
+        repeat = MIN(repeat, XZMLSecurityRepeatLimit);
+        return [mark stringByPaddingToLength:mark.length * repeat withString:mark startingAtIndex:0];
     }
     return text;
 }

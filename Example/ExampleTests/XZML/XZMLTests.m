@@ -376,6 +376,15 @@
     XCTAssertEqualObjects([self attributedStringForXZML:@"<@5*secret>" attributes:securityMode].string, @"*****");
 }
 
+/// 安全模式：极端重复次数被钳制到上限 64，避免构造超大字符串。
+- (void)testSecurityRepeatLimit {
+    NSDictionary *securityMode = @{XZMLSecurityModeAttributeName: @YES};
+    NSString *expected = [@"" stringByPaddingToLength:64 withString:@"*" startingAtIndex:0];
+    XCTAssertEqualObjects([self attributedStringForXZML:@"<@1000000000*abc>" attributes:securityMode].string, expected);
+    // 未超限的重复次数不受影响
+    XCTAssertEqualObjects([self attributedStringForXZML:@"<@64*abc>" attributes:securityMode].string, expected);
+}
+
 /// 安全模式：多字符替换符跳过子元素，重复 1 次。
 - (void)testSecurityMultiCharacterMark {
     NSDictionary *securityMode = @{XZMLSecurityModeAttributeName: @YES};
