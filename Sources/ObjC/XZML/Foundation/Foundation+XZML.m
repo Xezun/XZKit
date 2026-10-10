@@ -26,7 +26,7 @@
 - (instancetype)initWithXZML:(NSString *)XZMLString attributes:(NSDictionary<NSAttributedStringKey, id> *)attributes {
     self = [self init];
     if (self) {
-        [XZMLParser.defaultParser attributedString:self appendXZMLString:XZMLString attributes:attributes];
+        [XZMLParser.new attributedString:self appendXZMLString:XZMLString attributes:attributes];
     }
     return self;
 }
@@ -79,7 +79,7 @@
 - (instancetype)initWithXZML:(NSString *)XZMLString attributes:(nullable NSDictionary<NSAttributedStringKey, id> *)attributes {
     self = [self init];
     if (self) {
-        [XZMLParser.defaultParser string:self appendXZMLString:XZMLString attributes:attributes];
+        [XZMLParser.new string:self appendXZMLString:XZMLString attributes:attributes];
     }
     return self;
 }
@@ -93,7 +93,7 @@
     static NSCharacterSet *_characterSet = nil;
     static dispatch_once_t onceToken;
     dispatch_once(&onceToken, ^{
-        _characterSet = [NSMutableCharacterSet characterSetWithCharactersInString:@"<@#&$*~^>"];
+        _characterSet = [NSMutableCharacterSet characterSetWithCharactersInString:@"<@#&$*~^>\\"];
     });
     return _characterSet;
 }
@@ -102,7 +102,6 @@
     @synchronized (self) {
         NSMutableCharacterSet *set = (id)NSCharacterSet.XZMLReservedCharacterSet;
         [set addCharactersInString:aString];
-        [NSCharacterSet URLHostAllowedCharacterSet];
     }
 }
 

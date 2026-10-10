@@ -109,13 +109,22 @@ static NSData *XZMLElementDSLText(XZMLDSLContext * const context) {
     
     do {
         NSUInteger const index = XZMLDSLContextSearchASCII(context);
+        
+        // 当前字符被跳过了，说明是非 ASCII 字符。
         if (context->index < index) {
-            // 当前字符被跳过了，说明是非 ASCII 字符。
+            if (index >= context->length) {
+                const char * const bytes = context->UTF8String + context->index;
+                NSUInteger   const count = context->length - 1 - context->index;
+                [value appendBytes:bytes length:count];
+                break;
+            }
             const char * const bytes = context->UTF8String + context->index;
             NSUInteger   const count = index - context->index;
             [value appendBytes:bytes length:count];
         }
-        context->index = index + 1; // 指向下一个字节
+        
+        // 指向下一个字符
+        context->index = index + 1;
 
         char const character = context->UTF8String[index];
 
@@ -173,7 +182,7 @@ static NSData *XZMLElementDSLText(XZMLDSLContext * const context) {
 /// 元素识别。
 /// 传入的 context->index 指向当前元素开始标记之后第一个字符，
 /// 本函数执行完毕 context->index 执行元素结束标记之后的第一个字符，或者指向字符串结束标志`\0`。
-static void XZMLElementDSL(XZMLDSLContext * const context, NSUInteger const hierarchies) {
+static void XZMLElementDSL(XZMLDSLContext * const context, NSUInteger const hierarchies, BOOL shouldRecognizeAttributes) {
     // 发送元素识别开始事件
     XZMLDSLDidBeginElement(context);
     
@@ -183,17 +192,24 @@ static void XZMLElementDSL(XZMLDSLContext * const context, NSUInteger const hier
     NSUInteger fragment = 0;
     // 当前循环轮次是否处于逃逸模式
     BOOL isEscaping = NO;
-    // 当前元素是否应该继续识别属性
-    BOOL shouldRecognizeAttributes = YES;
     
     do {
         NSUInteger const index = XZMLDSLContextSearchASCII(context);
+        
+        // 当前字符被跳过了，说明是非 ASCII 字符。
         if (context->index < index) {
-            // 当前字符被跳过了，说明是非 ASCII 字符。
+            // 已经到了末尾
+            if (index >= context->length) {
+                const char * const bytes = context->UTF8String + context->index;
+                NSUInteger   const count = context->length - 1 - context->index;
+                [value appendBytes:bytes length:count];
+                break;
+            }
             const char * const bytes = context->UTF8String + context->index;
             NSUInteger   const count = index - context->index;
             [value appendBytes:bytes length:count];
         }
+        
         // 指向下一个字符
         context->index = index + 1;
         
@@ -238,7 +254,7 @@ static void XZMLElementDSL(XZMLDSLContext * const context, NSUInteger const hier
             }
             
             // 识别子元素
-            XZMLElementDSL(context, hierarchies + 1);
+            XZMLElementDSL(context, hierarchies + 1, YES);
             continue;
         }
 
@@ -251,13 +267,13 @@ static void XZMLElementDSL(XZMLDSLContext * const context, NSUInteger const hier
             XZMLReadingMode const mode = XZMLDSLFoundAttribute(context, character, text);
             
             // 仅识别文本
-            if (mode == XZMLReadingModeText) {
+            if (mode == XZMLReadingModeTextOnly) {
                 [value appendData:XZMLElementDSLText(context)];
                 break;
             }
             
             // 终止当前元素
-            if (mode == XZMLReadingModeSkip) {
+            if (mode == XZMLReadingModeSkipElement) {
                 XZMLElementDSLAbort(context);
                 break;
             }
@@ -287,59 +303,23 @@ void XZMLDSL(NSString *XZMLString, XZMLParser * const parser) {
     }
     
     // 得到 UTF-8 编码的 C 字符串，以及字符串字节长度。
-    const char * const str = [XZMLString cStringUsingEncoding:NSUTF8StringEncoding];
-    if (str == NULL) {
+    const char * const UTF8String = [XZMLString cStringUsingEncoding:NSUTF8StringEncoding];
+    if (UTF8String == NULL) {
         return;
     }
-    const NSUInteger   len = [XZMLString lengthOfBytesUsingEncoding:NSUTF8StringEncoding];
-
-    XZMLDSLContext context = { str, len, 0, parser };
-    
-    BOOL isEscaping = NO;
-    NSUInteger fragment = 0;
-    
-    // 遍历整个字符串，遍历完成后，context.index 指向字符串最后一个字符后面的位置
-    NSInteger start = context.index;
-    while (context.index < context.length) {
-        NSInteger const index = XZMLDSLContextSearchASCII(&context);
-        context.index = index + 1; // 指向下一个字符
-        
-        char const character = context.UTF8String[index];
-        
-        // character 是逃逸字符
-        if (isEscaping) {
-            isEscaping = NO;
-            continue;
-        }
-
-        // character 是逃逸标记
-        if (character == '\\') {
-            isEscaping = YES;
-            continue;
-        }
-        
-        if (character == XZMLElementStart) {
-            // 识别元素前，处理非元素文本。
-            if (start < index) {
-                const char * const bytes = context.UTF8String + start;
-                NSUInteger   const count = index - start;
-                NSString *value = [[NSString alloc] initWithBytes:bytes length:count encoding:NSUTF8StringEncoding];
-                XZMLDSLFoundText(&context, value, fragment++);
-            }
-
-            // 然后开始识别元素。
-            XZMLElementDSL(&context, 0);
-
-            // 元素识别完成后，记录位置。
-            start = context.index;
-        }
+    const NSUInteger   UTF8Length = [XZMLString lengthOfBytesUsingEncoding:NSUTF8StringEncoding];
+    if (UTF8Length == 0) {
+        return;
     }
-    
-    // 最后一个元素结束时，字符串后面依然有字符。
-    if (start < context.index) {
-        const char * const bytes = context.UTF8String + start;
-        NSUInteger   const count = context.index - start;
-        NSString *value = [[NSString alloc] initWithBytes:bytes length:count encoding:NSUTF8StringEncoding];
-        XZMLDSLFoundText(&context, value, fragment);
+
+    XZMLDSLContext context = { UTF8String, UTF8Length, 0, parser };
+        
+    if (UTF8String[0] == XZMLElementStart) {
+        // 顶层是元素
+        context.index = 1;
+        XZMLElementDSL(&context, 0, YES);
+    } else {
+        // 顶层是普通文本
+        XZMLElementDSL(&context, 0, NO);
     }
 }

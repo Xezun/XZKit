@@ -53,7 +53,8 @@ NS_ASSUME_NONNULL_BEGIN
 @interface NSCharacterSet (XZML)
 
 /// XZML 保留字符集，这些字符在 XZML 中有特殊用途，在 XZML 中使用需要使用反斜杠转义。
-/// @attention 新增 XZML 标记需更新此字符集。
+///
+/// 新增 XZML 标记需更新此字符集，转义字符 `\` 也在此字符集中。
 @property (class, readonly) NSCharacterSet *XZMLReservedCharacterSet;
 
 /// 更新 XZML 保留字符符集。

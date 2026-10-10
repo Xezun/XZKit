@@ -6,11 +6,6 @@
 //
 
 #import <Foundation/Foundation.h>
-#if __has_include(<XZKit/XZKit.h>)
-#import <XZKit/XZMacros.h>
-#else
-#import "XZMacros.h"
-#endif
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -101,36 +96,39 @@ enum : XZMLAttribute {
 /// 在 XZML 中，可通过属性控制文本。在解析的过程中，如果已解析的属性，已经决定后续解析方式，以提高解析效率。
 typedef NS_ENUM(NSUInteger, XZMLReadingMode) {
     /// 无操作，正常模式，解析属性和文本。
-    XZMLReadingModeNone,
+    XZMLReadingModeNormal,
     /// 只解析当前元素中的文本。
-    XZMLReadingModeText,
-    /// 跳过，不解析当前元素后续的属性和文本
-    XZMLReadingModeSkip,
+    XZMLReadingModeTextOnly,
+    /// 跳过元素，不解析当前元素后续的属性和文本
+    XZMLReadingModeSkipElement,
 };
 
 @class NSJSONSerialization, NSXMLParser;
 
 /// 解析 XZML 的对象。
+///
+/// 非线程安全类型，多线程使用，需考虑并发冲突问题。
 @interface XZMLParser : NSObject {
     @package
-    IMP XZ_CONST _isAttributeCharacter;
-    IMP XZ_CONST _didBeginElement;
-    IMP XZ_CONST _foundAttribute;
-    IMP XZ_CONST _foundText;
-    IMP XZ_CONST _didEndElement;
+    IMP _isAttributeCharacter;
+    IMP _didBeginElement;
+    IMP _foundAttribute;
+    IMP _foundText;
+    IMP _didEndElement;
 }
 
-/// 默认的 XZML 解析器。
-///
-/// 为 Foundation 或 UIKit 原生类拓展支持 XZML 时，使用的是此解析器。
+/// 用于主线程的 XZML 解析器。
 ///
 /// 此属性不是线程安全的，如果自定义了 XZML 请在任何逻辑使用解析前（比如在程序初始化时）设置此属性。
-@property (class, nonatomic) XZMLParser *defaultParser;
+///
+/// - 为 UIKit 原生类拓展支持 XZML 时，使用的是此解析器。
+/// - 为 Foundation 原生类拓展支持 XZML 时，每次都会重新创建新的解析器。
+@property (class, nonatomic) XZMLParser *mainParser;
 
 - (NSMutableAttributedString *)attributedStringWithXZMLString:(NSString *)XZMLString attributes:(nullable NSDictionary<NSAttributedStringKey, id> *)attributes;
-- (NSMutableString *)stringWithXZMLString:(NSString *)XZMLString attributes:(nullable NSDictionary<NSAttributedStringKey, id> *)attributes;
-
 - (void)attributedString:(NSMutableAttributedString *)attributedString appendXZMLString:(NSString *)XZMLString attributes:(nullable NSDictionary<NSAttributedStringKey, id> *)attributes;
+
+- (NSMutableString *)stringWithXZMLString:(NSString *)XZMLString attributes:(nullable NSDictionary<NSAttributedStringKey, id> *)attributes;
 - (void)string:(NSMutableString *)string appendXZMLString:(NSString *)XZMLString attributes:(nullable NSDictionary<NSAttributedStringKey, id> *)attributes;
 
 // 以下属性只有在解析过程中才有效。

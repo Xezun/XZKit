@@ -56,8 +56,8 @@ FOUNDATION_EXPORT XZMLAttributeName const XZMLDecorationAttributeName NS_REFINED
 FOUNDATION_EXPORT XZMLAttributeName const XZMLSecurityModeAttributeName NS_REFINED_FOR_SWIFT;
 
 /// 通过此键为 XZML 样式预设超链接。
-/// 1. 值为 NSString 或 NSURL 对象。
-/// 2. 其中功能以 `~` 或 `/` 开头的 NSString 对象，会被认为是文件路径，用 `+[NSURL fileURLWithPath:]` 转换为 NSURL 对象。
+/// 1. 值为 NSString 或 NSURL 对象，建议为 NSURL 对象，会直接用于富文本构造。
+/// 2. 在 XZML 中，若字符串以 `~` 或 `/` 开头，会被认为是文件路径，用 `+[NSURL fileURLWithPath:]` 转换为 NSURL 对象。
 FOUNDATION_EXPORT XZMLAttributeName const XZMLLinkAttributeName NS_REFINED_FOR_SWIFT;
 
 /// 通过此键为 XZML 样式预设段落（最小）行高。
