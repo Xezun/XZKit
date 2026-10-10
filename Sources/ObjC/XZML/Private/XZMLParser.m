@@ -246,14 +246,27 @@ static NSMutableDictionary<NSString *, NSString *> *_fontNameAbbreviations = nil
 @implementation XZMLParser (XZMLExtendedParser)
 
 + (void)setFontName:(NSString *)fontName forAbbreviation:(NSString *)abbreviation {
-    if (!_fontNameAbbreviations) {
-        _fontNameAbbreviations = [NSMutableDictionary dictionary];
+    if (abbreviation.length == 0) {
+        return;
     }
-    _fontNameAbbreviations[abbreviation] = fontName;
+    // 懒初始化必须原子，否则并发首次注册会各自创建字典并丢失写入
+    static dispatch_once_t onceToken;
+    dispatch_once(&onceToken, ^{
+        _fontNameAbbreviations = [NSMutableDictionary dictionary];
+    });
+    @synchronized (_fontNameAbbreviations) {
+        _fontNameAbbreviations[abbreviation] = fontName;
+    }
 }
 
 + (NSString *)fontNameForAbbreviation:(NSString *)abbreviation {
-    return _fontNameAbbreviations[abbreviation] ?: abbreviation;
+    if (abbreviation.length == 0) {
+        return abbreviation ?: @"";
+    }
+    // 读取与写入可能跨线程（如后台构建富文本），需加锁避免并发变更 NSMutableDictionary
+    @synchronized (_fontNameAbbreviations) {
+        return _fontNameAbbreviations[abbreviation] ?: abbreviation;
+    }
 }
 
 @end
