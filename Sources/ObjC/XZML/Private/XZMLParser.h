@@ -16,15 +16,16 @@ typedef char XZMLAttribute NS_TYPED_EXTENSIBLE_ENUM;
 enum : XZMLAttribute {
     /// 颜色样式：文本前景色、文本背景色。颜色使用十六进制 RGB/RGBA 值。
     ///
-    /// 属性值支持一下格式：
+    /// 属性值支持以下格式（`@` 之前为前景色，之后为背景色）：
     /// - `#`，表示设置前景色为预设值
     /// - `RGB#`，表示设置前景色为 RGB 值
     /// - `@RGB#`，表示仅设置前景色为预设值，背景色为 RGB 值
-    /// - `RGB@#`，表示设置前景色为 RGB 值，背景色为预设值
-    /// - `RGB@RGB#`，表示设置前景色为 RGB 值，背景色为预设 RGB 值
-    /// - `@#`，表示设置前景色和背景色都为预设值
+    /// - `RGB@#`，表示设置前景色为 RGB 值，背景色不设置
+    /// - `RGB@RGB#`，表示设置前景色为 RGB 值，背景色为 RGB 值
+    /// - `@#`，表示设置前景色为预设值，背景色不设置
     ///
     /// - Note: 预设值：通过键XZMLForegroundColorAttributeName在`attributes`参数中预设的值。
+    /// - Note: 背景色仅支持直接指定的 RGB 值，不支持继承和预设，值为空时不设置背景色。
     XZMLAttributeColor = '#',
     
     /// 字体样式：字体、字号、偏移。
@@ -126,10 +127,10 @@ typedef NS_ENUM(NSUInteger, XZMLReadingMode) {
 ///
 /// 此属性不是线程安全的，请仅在主线程中使用。
 ///
-/// 默认使用 `defaultParserClass` 初始化解析器，自定义 XZML 解析器，建议在程序初始化时就设置此属性。
+/// 默认使用 `defaultParserClass` 初始化解析器，自定义 XZML 解析器，建议在程序初始化时就设置 `defaultParserClass`。
 ///
-/// - 为 UIKit 原生类拓展支持 XZML 时，使用的是此解析器。
-/// - 为 Foundation 原生类拓展支持 XZML 时，每次都会重新创建新的解析器。
+/// - UIKit 与 Foundation 原生类的 XZML 拓展，均使用 `defaultParserClass` 每次新建解析器，不经过此解析器。
+/// - 此解析器作为可选的共享实例提供，供需要避免反复创建解析器的主线程场景使用。
 @property (class, nonatomic) XZMLParser *mainParser;
 
 - (NSMutableAttributedString *)attributedStringWithXZMLString:(NSString *)XZMLString attributes:(nullable NSDictionary<NSAttributedStringKey, id> *)attributes;
@@ -139,6 +140,14 @@ typedef NS_ENUM(NSUInteger, XZMLReadingMode) {
 - (void)string:(NSMutableString *)string appendXZMLString:(NSString *)XZMLString attributes:(nullable NSDictionary<NSAttributedStringKey, id> *)attributes;
 
 // 以下属性只有在解析过程中才有效。
+//
+// 解析流程约定：
+// - 顶层内容按伪容器元素解析：无论字符串是否以元素开头，解析开始与结束都会各调用一次
+//   `didBeginElement`/`didEndElement`，顶层纯文本也通过 `foundText:fragment:` 上报
+//   （此时 `currentAttributes` 为空字典）。
+// - 顶层不识别样式标记，`foundAttribute:value:` 只在真实元素内部被调用。
+// - `fragment` 是被同级子元素分隔的文本片段序号，在每个元素内从 0 开始。
+// - 元素嵌套深度上限为 16 层，超出部分降级为普通文本，不再解析样式。
 
 @property (nonatomic, readonly) XZMLReadingMode mode;
 @property (nonatomic, readonly, nullable) NSMutableAttributedString *attributedString;
