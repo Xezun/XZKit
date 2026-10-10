@@ -152,42 +152,45 @@ static inline void XZMLParserExecuteWithMode(XZMLParser * const __unsafe_unretai
 }
 
 - (XZMLReadingMode)foundAttribute:(XZMLAttribute)attribute value:(NSString *)value {
-    if (_mode == XZMLReadingModeTextOnly) {
-        if (attribute == XZMLAttributeSecurity) {
-            switch (XZMLParserSecurityAttribute(self, value)) {
-                case XZMLReadingModeNormal:
-                    return XZMLReadingModeTextOnly;
-                case XZMLReadingModeTextOnly:
-                    return XZMLReadingModeTextOnly;
-                case XZMLReadingModeSkipElement:
-                    return XZMLReadingModeSkipElement;
+    switch (_mode) {
+        case XZMLReadingModeNormal:
+            // 普通模式，解析所有样式
+            switch (attribute) {
+                case XZMLAttributeColor: {
+                    return XZMLParserColorAttribute(self, value);
+                }
+                case XZMLAttributeFont: {
+                    return XZMLParserFontAttribute(self, value);
+                }
+                case XZMLAttributeDecoration: {
+                    return XZMLParserDecorationAttribute(self, value);
+                }
+                case XZMLAttributeSecurity: {
+                    return XZMLParserSecurityAttribute(self, value);
+                }
+                case XZMLAttributeLink: {
+                    return XZMLParserLinkAttribute(self, value);
+                }
+                case XZMLAttributeParagraph: {
+                    return XZMLParserParagraphAttribute(self, value);
+                }
+                default: {
+                    // 暂不支持
+                    return XZMLReadingModeNormal;
+                }
             }
-        }
-        return XZMLReadingModeTextOnly;
-    }
-    switch (attribute) {
-        case XZMLAttributeColor: {
-            return XZMLParserColorAttribute(self, value);
-        }
-        case XZMLAttributeFont: {
-            return XZMLParserFontAttribute(self, value);
-        }
-        case XZMLAttributeDecoration: {
-            return XZMLParserDecorationAttribute(self, value);
-        }
-        case XZMLAttributeSecurity: {
-            return XZMLParserSecurityAttribute(self, value);
-        }
-        case XZMLAttributeLink: {
-            return XZMLParserLinkAttribute(self, value);
-        }
-        case XZMLAttributeParagraph: {
-            return XZMLParserParagraphAttribute(self, value);
-        }
-        default: {
-            // 暂不支持
+            break;
+            
+        case XZMLReadingModeTextOnly:
+            // 纯文本模式，仅解析安全样式
+            if (attribute == XZMLAttributeSecurity) {
+                return XZMLParserSecurityAttribute(self, value);
+            }
             return XZMLReadingModeNormal;
-        }
+            
+        case XZMLReadingModeSkipElement:
+            // Parser 不会运行于此模式
+            break;
     }
 }
 

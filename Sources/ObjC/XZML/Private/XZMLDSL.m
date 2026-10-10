@@ -115,12 +115,12 @@ static NSData *XZMLElementDSLText(XZMLDSLContext * const context) {
             const char * const bytes = context->UTF8String + context->index;
             NSUInteger   const count = index - context->index;
             [value appendBytes:bytes length:count];
-        }
-        
-        // 已到达字符串末尾，推进 index，避免父级重复解析剩余字节
-        if (index >= context->length) {
-            context->index = context->length;
-            break;
+            
+            // 已到达字符串末尾，推进 index，避免父级重复解析剩余字节
+            if (index >= context->length) {
+                context->index = context->length;
+                break;
+            }
         }
         
         // 指向下一个字符
@@ -201,12 +201,12 @@ static void XZMLElementDSL(XZMLDSLContext * const context, NSUInteger const hier
             const char * const bytes = context->UTF8String + context->index;
             NSUInteger   const count = index - context->index;
             [value appendBytes:bytes length:count];
-        }
-        
-        // 已到达字符串末尾，推进 index，避免父级重复解析剩余字节
-        if (index >= context->length) {
-            context->index = context->length;
-            break;
+            
+            // 已到达字符串末尾，推进 index，避免父级重复解析剩余字节
+            if (index >= context->length) {
+                context->index = context->length;
+                break;
+            }
         }
         
         // 指向下一个字符
