@@ -31,7 +31,7 @@ NS_ASSUME_NONNULL_BEGIN
 @interface NSAttributedString (XZML) <XZMLSupporting>
 @end
 
-@interface NSMutableAttributedString (XZML)
+@interface NSMutableAttributedString (XZML) <XZMLSupporting>
 
 /// 使用 XZML 添加富文本。
 /// @param XZMLString XZML
@@ -47,7 +47,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 @end
 
-@interface NSMutableString (XZML)
+@interface NSMutableString (XZML) <XZMLSupporting>
 @end
 
 @interface NSCharacterSet (XZML)
