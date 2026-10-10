@@ -185,6 +185,24 @@
     XCTAssertEqualObjects(string.string, @"*tail");
 }
 
+/// 含未配对代理项的字符串（无法转换 UTF-8）降级为纯文本：内容不丢失（回归：曾整串丢弃）。
+- (void)testUnpairedSurrogateFallsBackToPlainText {
+    // 孤立代理项无法写成字面量，运行时构造 "A" + U+D800 + "B"
+    unichar const chars[] = { 'A', 0xD800, 'B' };
+    NSString *broken = [NSString stringWithCharacters:chars length:3];
+    // 前置条件：该字符串无法转换为 UTF-8
+    XCTAssertNil([broken dataUsingEncoding:NSUTF8StringEncoding]);
+
+    XCTAssertEqualObjects([self attributedStringForXZML:broken attributes:nil].string, broken);
+    // 纯文本 API 同样保留内容
+    XCTAssertEqualObjects([[NSString alloc] initWithXZML:broken attributes:nil], broken);
+
+    // 含元素标记的也整串保留（放弃样式）："<F00#red>" + U+D800
+    unichar const elementChars[] = { '<', 'F', '0', '0', '#', 'r', 'e', 'd', '>', 0xD800 };
+    NSString *element = [NSString stringWithCharacters:elementChars length:sizeof(elementChars) / sizeof(elementChars[0])];
+    XCTAssertEqualObjects([self attributedStringForXZML:element attributes:nil].string, element);
+}
+
 /// 转义与还原往返：转义后的字符串解析应还原原文。
 - (void)testEscapeRoundTrip {
     NSArray<NSString *> *samples = @[@"a<b", @"a>b", @"a&b", @"a#b", @"a$b", @"a*b", @"a~b", @"a^b", @"a@b", @"a\\b", @"<@#&$*~^>\\"];

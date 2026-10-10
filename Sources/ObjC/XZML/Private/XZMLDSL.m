@@ -321,8 +321,13 @@ void XZMLDSL(NSString *XZMLString, XZMLParser * const parser) {
     }
     
     // 得到 UTF-8 编码的 C 字符串，以及字符串字节长度。
+    // 含未配对代理项（如 substringToIndex: 切断 emoji、服务端截断字段）时转换会失败，
+    // 此时降级为纯文本输出：保住内容，放弃样式，避免整串内容静默丢失。
     const char * const UTF8String = [XZMLString cStringUsingEncoding:NSUTF8StringEncoding];
     if (UTF8String == NULL) {
+        NSLog(@"[XZML] 字符串无法转换为 UTF-8 编码（可能含未配对的代理项），将按纯文本处理：%@", XZMLString);
+        XZMLDSLContext context = { NULL, 0, 0, parser };
+        XZMLDSLFoundText(&context, XZMLString, 0);
         return;
     }
     const NSUInteger   UTF8Length = [XZMLString lengthOfBytesUsingEncoding:NSUTF8StringEncoding];
