@@ -8,6 +8,10 @@
 #import "XZMLDSL.h"
 #import "XZMLParser.h"
 
+/// XZML 元素的开始和结束标记，固定为 `<` 和 `>` 字符，不支持自定义。
+#define XZMLElementStart '<'
+#define XZMLElementEnd   '>'
+
 /// XZML 解析过程的中间量。
 typedef struct XZMLDSLContext {
     /// XZML 字符串 UTF-8 形式。
@@ -55,7 +59,7 @@ static inline void XZMLDSLDidEndElement(XZMLDSLContext *context) {
 }
 
 /// 跳过当前元素，包括子元素。
-static void XZMLElementDSLAbort(XZMLDSLContext * const context) {
+static void XZMLElementDSLAbort(XZMLDSLContext * const context, char const kCurrentElementEnd) {
     BOOL isEscaping = NO;
     NSInteger hierarchies = 1;
     do {
@@ -84,7 +88,7 @@ static void XZMLElementDSLAbort(XZMLDSLContext * const context) {
         }
 
         // character 是元素结束字符
-        if (character == XZMLElementEnd) {
+        if (character == kCurrentElementEnd) {
             hierarchies -= 1;
             if (hierarchies == 0) {
                 break;
@@ -102,7 +106,7 @@ static void XZMLElementDSLAbort(XZMLDSLContext * const context) {
 }
 
 /// 仅识别当前元素中的文本，忽略属性。
-static NSData *XZMLElementDSLText(XZMLDSLContext * const context) {
+static NSData *XZMLElementDSLText(XZMLDSLContext * const context, char const kCurrentElementEnd) {
     NSMutableData * const value = [NSMutableData dataWithCapacity:context->length - context->index];
     
     /// 当前循环轮次是否处于逃逸模式
@@ -152,7 +156,7 @@ static NSData *XZMLElementDSLText(XZMLDSLContext * const context) {
         }
 
         // character 是元素结束字符
-        if (character == XZMLElementEnd) {
+        if (character == kCurrentElementEnd) {
             hierarchies -= 1;
             if (hierarchies == 0) {
                 break;
@@ -192,7 +196,7 @@ static NSData *XZMLElementDSLText(XZMLDSLContext * const context) {
 /// 元素识别。
 /// 传入的 context->index 指向当前元素开始标记之后第一个字符，
 /// 本函数执行完毕 context->index 执行元素结束标记之后的第一个字符，或者指向字符串结束标志`\0`。
-static void XZMLElementDSL(XZMLDSLContext * const context, NSUInteger const hierarchies, BOOL shouldRecognizeAttributes) {
+static void XZMLElementDSL(XZMLDSLContext * const context, char const kCurrentElementEnd, NSUInteger const hierarchies, BOOL shouldRecognizeAttributes) {
     // 发送元素识别开始事件
     XZMLDSLDidBeginElement(context);
     
@@ -242,13 +246,7 @@ static void XZMLElementDSL(XZMLDSLContext * const context, NSUInteger const hier
         }
 
         // character 是元素结束字符
-        if (character == XZMLElementEnd) {
-            // 顶层伪容器（hierarchies == 0）：未配对的裸 '>' 视为普通文本，
-            // 不能终止整体解析，否则其后的顶层内容与元素会全部丢失。
-            if (hierarchies == 0) {
-                [value appendBytes:&character length:sizeof(char)];
-                continue;
-            }
+        if (character == kCurrentElementEnd) {
             break;
         }
 
@@ -267,12 +265,12 @@ static void XZMLElementDSL(XZMLDSLContext * const context, NSUInteger const hier
             
             // 子元素层级超出限制，仅保留文本
             if (hierarchies > 15) {
-                [value appendData:XZMLElementDSLText(context)];
+                [value appendData:XZMLElementDSLText(context, XZMLElementEnd)];
                 continue;
             }
             
             // 识别子元素
-            XZMLElementDSL(context, hierarchies + 1, YES);
+            XZMLElementDSL(context, XZMLElementEnd, hierarchies + 1, YES);
             continue;
         }
 
@@ -286,13 +284,13 @@ static void XZMLElementDSL(XZMLDSLContext * const context, NSUInteger const hier
             
             // 仅识别文本
             if (mode == XZMLReadingModeTextOnly) {
-                [value appendData:XZMLElementDSLText(context)];
+                [value appendData:XZMLElementDSLText(context, kCurrentElementEnd)];
                 break;
             }
             
             // 终止当前元素
             if (mode == XZMLReadingModeSkipElement) {
-                XZMLElementDSLAbort(context);
+                XZMLElementDSLAbort(context, kCurrentElementEnd);
                 break;
             }
             
@@ -330,14 +328,16 @@ void XZMLDSL(NSString *XZMLString, XZMLParser * const parser) {
         XZMLDSLFoundText(&context, XZMLString, 0);
         return;
     }
-    const NSUInteger   UTF8Length = [XZMLString lengthOfBytesUsingEncoding:NSUTF8StringEncoding];
+    
+    const NSUInteger UTF8Length = [XZMLString lengthOfBytesUsingEncoding:NSUTF8StringEncoding];
     if (UTF8Length == 0) {
         return;
     }
 
     XZMLDSLContext context = { UTF8String, UTF8Length, 0, parser };
-
-    // 统一按容器解析顶层内容（文本与元素串联），元素作为容器的子元素识别。
-    // 顶层不识别属性标记，样式只在元素内部生效。
-    XZMLElementDSL(&context, 0, NO);
+    
+    // 将顶层当作普通元素解析：
+    // 1. 顶层以字符串结束符 \0 作为结束符。
+    // 2. 顶层不解析样式，样式仅对被 `<`、`>` 包围的元素生效。
+    XZMLElementDSL(&context, '\0', 0, NO);
 }

@@ -9,10 +9,6 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-/// XZML 元素的开始和结束标记，固定为 `<` 和 `>` 字符，不支持自定义。
-#define XZMLElementStart '<'
-#define XZMLElementEnd   '>'
-
 @class XZMLParser;
 
 /// XZML 语法解析函数。

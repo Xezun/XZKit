@@ -18,13 +18,13 @@ enum : XZMLAttribute {
     ///
     /// 属性值支持以下格式（`@` 之前为前景色，之后为背景色）：
     /// - `#`，表示设置前景色为预设值
-    /// - `RGB#`，表示设置前景色为 RGB 值
-    /// - `@RGB#`，表示仅设置前景色为预设值，背景色为 RGB 值
-    /// - `RGB@#`，表示设置前景色为 RGB 值，背景色不设置
-    /// - `RGB@RGB#`，表示设置前景色为 RGB 值，背景色为 RGB 值
-    /// - `@#`，表示设置前景色为预设值，背景色不设置
+    /// - `AAA#`，表示设置前景色为 AAA 值
+    /// - `@BBB#`，表示仅设置前景色为预设值，背景色为 BBB 值
+    /// - `AAA@#`，表示设置前景色为 AAA 值，背景色为预设值
+    /// - `AAA@BBB#`，表示设置前景色为 AAA 值，背景色为 BBB 值
+    /// - `@#`，表示设置前景色为预设值，背景色为预设值
     ///
-    /// - Note: 预设值：通过键XZMLForegroundColorAttributeName在`attributes`参数中预设的值。
+    /// - Note: 预设值：通过键 XZMLForegroundColorAttributeName 在 `attributes` 参数中预设的值。
     /// - Note: 背景色仅支持直接指定的 RGB 值，不支持继承和预设，值为空时不设置背景色。
     XZMLAttributeColor = '#',
     
@@ -104,8 +104,6 @@ typedef NS_ENUM(NSUInteger, XZMLReadingMode) {
     XZMLReadingModeSkipElement,
 };
 
-@class NSJSONSerialization, NSXMLParser;
-
 /// 解析 XZML 的对象。
 ///
 /// 非线程安全类型，多线程使用，需考虑并发冲突问题。
@@ -127,10 +125,7 @@ typedef NS_ENUM(NSUInteger, XZMLReadingMode) {
 ///
 /// 此属性不是线程安全的，请仅在主线程中使用。
 ///
-/// 默认使用 `defaultParserClass` 初始化解析器，自定义 XZML 解析器，建议在程序初始化时就设置 `defaultParserClass`。
-///
-/// - UIKit 与 Foundation 原生类的 XZML 拓展，均使用 `defaultParserClass` 每次新建解析器，不经过此解析器。
-/// - 此解析器作为可选的共享实例提供，供需要避免反复创建解析器的主线程场景使用。
+/// 默认使用 `defaultParserClass` 初始化解析器，自定义 XZML 解析器，建议在程序初始化时就设置 `defaultParserClass` 属性。
 @property (class, nonatomic) XZMLParser *mainParser;
 
 - (NSMutableAttributedString *)attributedStringWithXZMLString:(NSString *)XZMLString attributes:(nullable NSDictionary<NSAttributedStringKey, id> *)attributes;

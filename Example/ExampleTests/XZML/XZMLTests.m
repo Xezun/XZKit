@@ -628,6 +628,7 @@ static BOOL _XZMLCustomParserBeginCalled = NO;
 /// 将 defaultParserClass 设为子类后，Foundation 分类应使用子类解析；完成后恢复默认。ZZ 确保最后执行。
 - (void)testZZCustomDefaultParserClass {
     _XZMLCustomParserBeginCalled = NO;
+    Class const oldClass = XZMLParser.defaultParserClass;
     XZMLParser.defaultParserClass = XZMLCustomParser.class;
     @try {
         // 合法子类，应无类型校验断言；且创建时缓存子类 IMP
@@ -635,7 +636,7 @@ static BOOL _XZMLCustomParserBeginCalled = NO;
         XCTAssertEqualObjects(string.string, @"abc");
         XCTAssertTrue(_XZMLCustomParserBeginCalled, @"应调用自定义解析器子类的 didBeginElement");
     } @finally {
-        XZMLParser.defaultParserClass = nil; // 恢复默认，避免污染其他用例
+        XZMLParser.defaultParserClass = oldClass; // 恢复默认，避免污染其他用例
     }
 }
 
