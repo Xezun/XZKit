@@ -21,7 +21,11 @@
 
 /// 指定范围内的第一个字符的属性字典。
 - (NSDictionary *)attributesAtIndex:(NSUInteger)index ofString:(NSAttributedString *)string {
-    XCTAssert(index < string.length, @"索引 %lu 超出范围 (%lu)", (unsigned long)index, (unsigned long)string.length);
+    if (index >= string.length) {
+        // 越界时干净失败并返回空字典，避免直接走到 attributesAtIndex: 抛 NSRangeException 导致整个测试崩溃
+        XCTFail(@"索引 %lu 超出范围 (长度 %lu)", (unsigned long)index, (unsigned long)string.length);
+        return @{};
+    }
     return [string attributesAtIndex:index effectiveRange:NULL];
 }
 
@@ -117,10 +121,10 @@
     XCTAssertNil([self attributesAtIndex:3 ofString:string][NSForegroundColorAttributeName]);
 }
 
-/// 子元素层级超过 15 层后降级为纯文本（第 16 层内的样式标记不再解析）。
+/// 元素嵌套深度上限为 16 层，第 17 层起样式不再解析、降级为普通文本。
 - (void)testDeepNestingLimit {
     NSMutableString *XZMLString = [NSMutableString string];
-    // 17 层红色元素 + 第 18 层蓝色元素（超限，应作为普通文本）
+    // 17 层红色元素 + 第 18 层蓝色元素：实测第 17 层起降级，蓝色不生效，文本保持浅层红色
     for (NSInteger i = 0; i < 17; i++) {
         [XZMLString appendString:@"<F00#"];
     }
@@ -329,6 +333,10 @@
     Class parser = NSClassFromString(@"XZMLParser");
     NSString *(*lookup)(id, SEL, id) = (void *)objc_msgSend;
     XCTAssertEqualObjects(lookup(parser, NSSelectorFromString(@"fontNameForAbbreviation:"), @"UnknownXZ"), @"UnknownXZ");
+
+    // 注销缩写（fontName 传 nil 即移除该键），避免污染同一 target 内后续用例
+    [self registerFontName:nil forAbbreviation:@"XZCR"];
+    XCTAssertEqualObjects(lookup(parser, NSSelectorFromString(@"fontNameForAbbreviation:"), @"XZCR"), @"XZCR");
 }
 
 #pragma mark - 文本修饰（$）
