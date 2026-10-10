@@ -10,9 +10,13 @@
 @import XZKit;
 
 /// XZML 全覆盖单元测试。
-/// 仅通过公开 API（Foundation/UIKit 分类）验证解析行为；
-/// XZMLParser 为内部实现（私有头文件），字体缩写注册表通过运行时调用。
+/// 通过公开 API（Foundation/UIKit 分类，及已公开的 XZMLParser 类）验证解析行为。
 @interface XZMLTests : XCTestCase
+@end
+
+/// 自定义解析器子类：验证 XZMLParser 已可外部子类化并通过 defaultParserClass 注入（M-2 公开）。
+static BOOL _XZMLCustomParserBeginCalled = NO;
+@interface XZMLCustomParser : XZMLParser
 @end
 
 @implementation XZMLTests
@@ -34,11 +38,9 @@
     return [[NSAttributedString alloc] initWithXZML:XZMLString attributes:attributes];
 }
 
-/// 注册字体缩写（XZMLParser 为私有类，通过运行时调用 +setFontName:forAbbreviation:）。
+/// 注册字体缩写（XZMLParser 已公开，直接调用类方法）。
 - (void)registerFontName:(NSString *)fontName forAbbreviation:(NSString *)abbreviation {
-    Class parser = NSClassFromString(@"XZMLParser");
-    XCTAssertNotNil(parser, @"XZMLParser 类不存在");
-    ((void (*)(id, SEL, id, id))objc_msgSend)(parser, NSSelectorFromString(@"setFontName:forAbbreviation:"), fontName, abbreviation);
+    [XZMLParser setFontName:fontName forAbbreviation:abbreviation];
 }
 
 #pragma mark - 基础语法
@@ -330,13 +332,11 @@
     XCTAssertEqualObjects(((UIFont *)attributes[NSFontAttributeName]).fontName, @"Courier");
 
     // 未注册的缩写按字体名处理，找不到时回退默认
-    Class parser = NSClassFromString(@"XZMLParser");
-    NSString *(*lookup)(id, SEL, id) = (void *)objc_msgSend;
-    XCTAssertEqualObjects(lookup(parser, NSSelectorFromString(@"fontNameForAbbreviation:"), @"UnknownXZ"), @"UnknownXZ");
+    XCTAssertEqualObjects([XZMLParser fontNameForAbbreviation:@"UnknownXZ"], @"UnknownXZ");
 
     // 注销缩写（fontName 传 nil 即移除该键），避免污染同一 target 内后续用例
     [self registerFontName:nil forAbbreviation:@"XZCR"];
-    XCTAssertEqualObjects(lookup(parser, NSSelectorFromString(@"fontNameForAbbreviation:"), @"XZCR"), @"XZCR");
+    XCTAssertEqualObjects([XZMLParser fontNameForAbbreviation:@"XZCR"], @"XZCR");
 }
 
 #pragma mark - 文本修饰（$）
@@ -621,6 +621,31 @@
     }]];
     XCTAssertNil(attributes[XZMLFontAttributeName]);
     XCTAssertNil(attributes[XZMLForegroundColorAttributeName]);
+}
+
+#pragma mark - 公开自定义解析器（M-2）
+
+/// 将 defaultParserClass 设为子类后，Foundation 分类应使用子类解析；完成后恢复默认。ZZ 确保最后执行。
+- (void)testZZCustomDefaultParserClass {
+    _XZMLCustomParserBeginCalled = NO;
+    XZMLParser.defaultParserClass = XZMLCustomParser.class;
+    @try {
+        // 合法子类，应无类型校验断言；且创建时缓存子类 IMP
+        NSAttributedString *string = [[NSAttributedString alloc] initWithXZML:@"<F00#abc>" attributes:nil];
+        XCTAssertEqualObjects(string.string, @"abc");
+        XCTAssertTrue(_XZMLCustomParserBeginCalled, @"应调用自定义解析器子类的 didBeginElement");
+    } @finally {
+        XZMLParser.defaultParserClass = nil; // 恢复默认，避免污染其他用例
+    }
+}
+
+@end
+
+@implementation XZMLCustomParser
+
+- (void)didBeginElement {
+    _XZMLCustomParserBeginCalled = YES;
+    [super didBeginElement];
 }
 
 @end
