@@ -26,7 +26,7 @@
 - (instancetype)initWithXZML:(NSString *)XZMLString attributes:(NSDictionary<NSAttributedStringKey, id> *)attributes {
     self = [self init];
     if (self) {
-        [XZMLParser.new attributedString:self appendXZMLString:XZMLString attributes:attributes];
+        [XZMLParser.defaultParserClass.new attributedString:self appendXZMLString:XZMLString attributes:attributes];
     }
     return self;
 }
@@ -79,7 +79,7 @@
 - (instancetype)initWithXZML:(NSString *)XZMLString attributes:(nullable NSDictionary<NSAttributedStringKey, id> *)attributes {
     self = [self init];
     if (self) {
-        [XZMLParser.new string:self appendXZMLString:XZMLString attributes:attributes];
+        [XZMLParser.defaultParserClass.new string:self appendXZMLString:XZMLString attributes:attributes];
     }
     return self;
 }

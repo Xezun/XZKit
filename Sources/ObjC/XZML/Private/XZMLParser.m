@@ -63,19 +63,29 @@ static NSString *XZMLParserText(NSDictionary<NSAttributedStringKey, id> * _Nulla
     return self;
 }
 
-static XZMLParser *_defaultParser = nil;
+static Class _defaultParserClass = nil;
 
-+ (XZMLParser *)mainParser {
-    if (_defaultParser == nil) {
-        NSAssert(NSThread.isMainThread, @"mainParser 只能在主线程使用");
-        _defaultParser = [[XZMLParser alloc] init];
-    }
-    return _defaultParser;
++ (Class)defaultParserClass {
+    return _defaultParserClass ?: [XZMLParser class];
 }
 
-+ (void)setMainParser:(XZMLParser *)defaultParser {
++ (void)setDefaultParserClass:(Class)defaultParserClass {
+    _defaultParserClass = defaultParserClass;
+}
+
+static XZMLParser *_mainParser = nil;
+
++ (XZMLParser *)mainParser {
+    if (_mainParser == nil) {
+        NSAssert(NSThread.isMainThread, @"mainParser 只能在主线程使用");
+        _mainParser = [[XZMLParser.defaultParserClass alloc] init];
+    }
+    return _mainParser;
+}
+
++ (void)setMainParser:(XZMLParser *)mainParser {
     NSAssert(NSThread.isMainThread, @"mainParser 只能在主线程使用");
-    _defaultParser = defaultParser;
+    _mainParser = mainParser;
 }
 
 static inline void XZMLParserExecuteWithMode(XZMLParser * const __unsafe_unretained parser, XZMLReadingMode mode, NSString *XZMLString, NSDictionary<NSAttributedStringKey,id> *attributes) {
@@ -235,10 +245,9 @@ static NSMutableDictionary<NSString *, NSString *> *_fontNameAbbreviations = nil
 @implementation XZMLParser (XZMLExtendedParser)
 
 + (void)setFontName:(NSString *)fontName forAbbreviation:(NSString *)abbreviation {
-    static dispatch_once_t onceToken;
-    dispatch_once(&onceToken, ^{
+    if (!_fontNameAbbreviations) {
         _fontNameAbbreviations = [NSMutableDictionary dictionary];
-    });
+    }
     _fontNameAbbreviations[abbreviation] = fontName;
 }
 

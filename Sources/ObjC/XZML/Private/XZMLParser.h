@@ -117,9 +117,16 @@ typedef NS_ENUM(NSUInteger, XZMLReadingMode) {
     IMP _didEndElement;
 }
 
+/// 默认解析器的类型。
+///
+/// 使用 Foundation 原生类的 XZML 拓展方法时，默认使用此类型创建解析器。
+@property (class, nonatomic) Class defaultParserClass;
+
 /// 用于主线程的 XZML 解析器。
 ///
-/// 此属性不是线程安全的，如果自定义了 XZML 请在任何逻辑使用解析前（比如在程序初始化时）设置此属性。
+/// 此属性不是线程安全的，请仅在主线程中使用。
+///
+/// 默认使用 `defaultParserClass` 初始化解析器，自定义 XZML 解析器，建议在程序初始化时就设置此属性。
 ///
 /// - 为 UIKit 原生类拓展支持 XZML 时，使用的是此解析器。
 /// - 为 Foundation 原生类拓展支持 XZML 时，每次都会重新创建新的解析器。
@@ -156,11 +163,15 @@ typedef NS_ENUM(NSUInteger, XZMLReadingMode) {
 @interface XZMLParser (XZMLExtendedParser)
 
 /// 设置字体名在 XZML 中的缩写。
+///
+/// 非线程安全方法，在使用 XZMLParser 实例前配置字体缩写，以避免并发问题。
+///
 /// @param fontName 字体名
 /// @param abbreviation 字体名缩写
 + (void)setFontName:(nullable NSString *)fontName forAbbreviation:(NSString *)abbreviation;
 
 /// 通过缩写获取字体名，如果不是缩写名，返回 abbreviation 自身。
+///
 /// @param abbreviation 字体名缩写
 + (NSString *)fontNameForAbbreviation:(NSString *)abbreviation;
 
