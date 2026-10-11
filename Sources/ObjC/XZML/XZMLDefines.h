@@ -9,26 +9,26 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-/// XZML 元素样式。
+/// 通过 ``XZMLAttributeName`` 键，指定 XZML 中元素的预设样式。
 ///
-/// ### 样式的值
+/// ### 样式值
+///
 /// - 指定值：在 XZML 中指定的样式值。
-/// - 预设值：在 attributes 参数中，通过 XZML~AttributeName 键预设的样式值。
 /// - 继承值：从父元素继承的样式值。
-/// - 默认值：在 attributes 参数中，通过 NS~AttributeName 键提供的样式值。
+/// - 预设值：在 attributes 参数中，通过 XZMLAttributeName 键预设的样式值。
+/// - 默认值：在 attributes 参数中，通过 NSAttributedStringKey 键提供的样式值。
 /// - 系统值：在无法确定时，兜底使用的值，但不是所有样式都有系统值。
 ///
 /// ### 样式属性
-/// - 普通子属性：属性可能会有多个子属性，比如字体名称、字体大小等。
-/// - 默认子属性：只有一个，可通过 XZML~AttributeName 键，在 attributes 参数中提供预设值。
 ///
-/// > 某些不可分割的样式值，作为预设值时，可能会同时携带普通子属性值，但该值优先级比默认值低。
-/// > 比如 UIFont 对象会同时提供字体名称和字体大小，其中，只有在无法确定时，才会使用字体大小。
+/// 样式可能会有多个子属性，比如字体样式，包含字体名和字体大小两个子属性，在 XZML 中用 `@` 符号分隔不同的属性。
 ///
-/// ### 取值优先级：
-/// - 默认子属性：指定值、继承值、预设值、默认值、系统值，其中默认值、系统值是兜底值。
-/// - 普通子属性：指定值、继承值、默认值、预设值、系统值，其中默认值、预设值、系统值是兜底值。
-/// > 普通子属性，一般情况下是不能通过 XZMLAttributeName 提供预设值，所以优先级比默认值低。
+/// ### 取值优先级
+///
+/// - 直接写在 XZML 中**指定值**和**继承值**优先级最高。
+/// - 在 `attributes` 参数中，通过 `XZMLAttributeName` 提供的**预设值**。
+/// - 在 `attributes` 参数中，通过 `NSAttributedStringKey` 提供的**默认值**。
+/// - 系统默认值。
 ///
 /// ```objc
 /// [[NSAttributedString alloc] initWithXZML:@"<F00#&XZML> is designed for rich text." attributes:@{
@@ -38,31 +38,29 @@ NS_ASSUME_NONNULL_BEGIN
 ///  ```
 typedef NSAttributedStringKey XZMLAttributeName;
 
-/// 通过此键为 XZML 样式预设字体名。
-/// 1. 值为 UIFont 对象。
-/// 2. 只有字体名是预设值，字体大小仅在指定值、继承值、默认值都不存在时才会使用。
+/// 通过此键为 XZML 预设字体样式，值为 UIFont 对象。
 FOUNDATION_EXPORT XZMLAttributeName const XZMLFontAttributeName NS_REFINED_FOR_SWIFT;
 
-/// 通过此键为 XZML 样式预设前景色。
-/// 1. 值为代表前景色的 UIColor 对象。
+/// 通过此键为 XZML 预设前景色样式，值为 UIColor 对象。
 FOUNDATION_EXPORT XZMLAttributeName const XZMLForegroundColorAttributeName NS_REFINED_FOR_SWIFT;
+/// 通过此键为 XZML 预设前景色样式，值为 UIColor 对象。
+FOUNDATION_EXPORT XZMLAttributeName const XZMLBackgroundColorAttributeName NS_REFINED_FOR_SWIFT;
 
-/// 通过此键为 XZML 样式预设文本修饰类型。
-/// 1. 值为代表文本修饰类型枚举 XZMLDecorationType 的值的 NSNumber 对象。
+/// 通过此键为 XZML 样式预设文本修饰类型，值为包装 XZMLDecorationType 枚举值的 NSNumber 对象。
 FOUNDATION_EXPORT XZMLAttributeName const XZMLDecorationAttributeName NS_REFINED_FOR_SWIFT;
 
-/// 通过此键为 XZML 样式预设安全模式。
-/// 1. 值为布尔值，YES 表示当前为安全模式，NO 为非安全模式。
+/// 通过此键为 XZML 样式预设安全模式，值为包装 BOOL 的 NSNumber 对象。
+///
+/// 值为布尔值，YES 表示当前为安全模式，NO 为非安全模式。
 FOUNDATION_EXPORT XZMLAttributeName const XZMLSecurityModeAttributeName NS_REFINED_FOR_SWIFT;
 
-/// 通过此键为 XZML 样式预设超链接。
-/// 1. 值为 NSString 或 NSURL 对象，建议为 NSURL 对象，会直接用于富文本构造。
-/// 2. 在 XZML 中，若字符串以 `~` 或 `/` 开头，会被认为是文件路径，用 `+[NSURL fileURLWithPath:]` 转换为 NSURL 对象。
+/// 通过此键为 XZML 样式预设超链接，值为 NSString 或 NSURL 对象，建议为 NSURL 对象，直接用于富文本构造。
+///
+/// 在 XZML 中，若字符串以 `~` 或 `/` 开头，会被认为是文件路径，用 `+[NSURL fileURLWithPath:]` 转换为 NSURL 对象。
 FOUNDATION_EXPORT XZMLAttributeName const XZMLLinkAttributeName NS_REFINED_FOR_SWIFT;
 
-/// 通过此键为 XZML 样式预设段落（最小）行高。
-/// 1. 值为代表文本段落最小行高的 CGFloat 值的 NSNumber 对象。
-FOUNDATION_EXPORT XZMLAttributeName const XZMLLineHeightAttributeName NS_REFINED_FOR_SWIFT;
+/// 通过此键为 XZML 样式预设段落样式，值为 NSParagraphStyle 对象。
+FOUNDATION_EXPORT XZMLAttributeName const XZMLParagraphStyleAttributeName NS_REFINED_FOR_SWIFT;
 
 
 /// 文本修饰类型枚举。
@@ -72,5 +70,8 @@ typedef NS_ENUM(NSUInteger, XZMLDecorationType) {
     /// 下划线
     XZMLDecorationTypeUnderline,
 };
+
+FOUNDATION_EXPORT void XZMLSetFontAbbreviations(NSDictionary<NSString *, NSString *> * _Nullable fontAbbreviations);
+FOUNDATION_EXPORT NSDictionary<NSString *, NSString *> * _Nullable XZMLGetFontAbbreviations(void);
 
 NS_ASSUME_NONNULL_END

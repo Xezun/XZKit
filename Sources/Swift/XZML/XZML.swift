@@ -18,6 +18,8 @@ extension NSAttributedString.Key {
         font: __XZMLFontAttributeName,
         /// 前景色。
         foregroundColor: __XZMLForegroundColorAttributeName,
+        /// 背景色。
+        backgroundColor: __XZMLBackgroundColorAttributeName,
         /// 文本修饰。
         decoration: __XZMLDecorationAttributeName,
         /// 安全模式。
@@ -25,7 +27,7 @@ extension NSAttributedString.Key {
         /// 超链接。
         link: __XZMLLinkAttributeName,
         /// 段落行高。
-        lineHeight: __XZMLLineHeightAttributeName
+        paragraphStyle: __XZMLParagraphStyleAttributeName
     );
     
 }

@@ -6,7 +6,7 @@
 //
 
 #import "Foundation+XZML.h"
-#import "XZMLParser.h"
+#import "XZMLDSL.h"
 
 @implementation NSAttributedString (XZML)
 
@@ -26,7 +26,7 @@
 - (instancetype)initWithXZML:(NSString *)XZMLString attributes:(NSDictionary<NSAttributedStringKey, id> *)attributes {
     self = [self init];
     if (self) {
-        [XZMLParser.defaultParserClass.new attributedString:self appendXZMLString:XZMLString attributes:attributes];
+        XZMLDSLWithAttributedString(XZMLString, self, attributes);
     }
     return self;
 }
@@ -79,7 +79,7 @@
 - (instancetype)initWithXZML:(NSString *)XZMLString attributes:(nullable NSDictionary<NSAttributedStringKey, id> *)attributes {
     self = [self init];
     if (self) {
-        [XZMLParser.defaultParserClass.new string:self appendXZMLString:XZMLString attributes:attributes];
+        XZMLDSLWithString(XZMLString, self, attributes);
     }
     return self;
 }

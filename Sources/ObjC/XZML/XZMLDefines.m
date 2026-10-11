@@ -9,7 +9,8 @@
 
 NSAttributedStringKey const XZMLFontAttributeName            = @"XZMLFontAttributeName";
 NSAttributedStringKey const XZMLForegroundColorAttributeName = @"XZMLForegroundColorAttributeName";
+NSAttributedStringKey const XZMLBackgroundColorAttributeName = @"XZMLBackgroundColorAttributeName";
 NSAttributedStringKey const XZMLDecorationAttributeName      = @"XZMLDecorationAttributeName";
 NSAttributedStringKey const XZMLSecurityModeAttributeName    = @"XZMLSecurityModeAttributeName";
 NSAttributedStringKey const XZMLLinkAttributeName            = @"XZMLLinkAttributeName";
-NSAttributedStringKey const XZMLLineHeightAttributeName      = @"XZMLLineHeightAttributeName";
+NSAttributedStringKey const XZMLParagraphStyleAttributeName  = @"XZMLParagraphStyleAttributeName";

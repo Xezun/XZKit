@@ -7,7 +7,6 @@
 
 #import "UIKit+XZML.h"
 #import "Foundation+XZML.h"
-#import "XZMLParser.h"
 
 @implementation UILabel (XZML)
 
@@ -23,7 +22,7 @@
         }
         attributes = newAttributes;
     }
-    self.attributedText = [XZMLParser.mainParser attributedStringWithXZMLString:XZMLString attributes:attributes];
+    self.attributedText = [[NSAttributedString alloc] initWithXZML:XZMLString attributes:attributes];
 }
 
 - (void)setXZML:(NSString *)XZMLString {
@@ -45,8 +44,8 @@
         }
         attributes = newAttributes;
     }
-    id const title = [XZMLParser.mainParser attributedStringWithXZMLString:XZMLString attributes:attributes];
-    [self setAttributedTitle:title forState:state];
+    NSAttributedString * const attributedTitle = [[NSAttributedString alloc] initWithXZML:XZMLString attributes:attributes];
+    [self setAttributedTitle:attributedTitle forState:state];
 }
 
 - (void)setXZML:(NSString *)XZMLString forState:(UIControlState)state {
@@ -69,7 +68,7 @@
         }
         attributes = newAttributes;
     }
-    self.attributedText = [XZMLParser.mainParser attributedStringWithXZMLString:XZMLString attributes:attributes];
+    self.attributedText = [[NSAttributedString alloc] initWithXZML:XZMLString attributes:attributes];
 }
 
 - (void)setXZML:(NSString *)XZMLString {
@@ -92,7 +91,7 @@
         }
         attributes = newAttributes;
     }
-    self.attributedText = [XZMLParser.mainParser attributedStringWithXZMLString:XZMLString attributes:attributes];
+    self.attributedText = [[NSAttributedString alloc] initWithXZML:XZMLString attributes:attributes];
 }
 
 - (void)setXZML:(NSString *)XZMLString {
