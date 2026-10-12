@@ -801,6 +801,15 @@ XZMLReadingMode didFindLinkAttribute(XZMLDSLContext * const context, NSString *v
     return XZMLReadingModeNormal;
 }
 
+/// 写入最小行高。
+/// style 初始已携带继承/预设/默认的段落样式，值为 0 或非数字（如无值的标记符落入残留值时）不写入，避免覆盖上层行高。
+FOUNDATION_STATIC_INLINE void XZMLParagraphSetMinimumLineHeight(NSMutableParagraphStyle *style, NSString *value, NSRange range) {
+    CGFloat const lineHeight = [value substringWithRange:range].doubleValue;
+    if (lineHeight > 0) {
+        style.minimumLineHeight = lineHeight;
+    }
+}
+
 XZMLReadingMode didFindParagraphAttribute(XZMLDSLContext * const context, NSString *value) {
     NSUInteger const length = [value lengthOfBytesUsingEncoding:NSUTF8StringEncoding];
     if (length == 0) {
@@ -824,7 +833,7 @@ XZMLReadingMode didFindParagraphAttribute(XZMLDSLContext * const context, NSStri
         if (start >= length) {
             // 如果还有未处理字符或未匹配到段落样式标记符，则默认为是行高值
             if (range.length > 0) {
-                style.minimumLineHeight = [value substringWithRange:range].doubleValue;
+                XZMLParagraphSetMinimumLineHeight(style, value, range);
             }
             break;
         }
@@ -839,7 +848,7 @@ XZMLReadingMode didFindParagraphAttribute(XZMLDSLContext * const context, NSStri
         switch (UTF8String[start]) {
             case 'L':
             case 'l': {
-                style.minimumLineHeight = [value substringWithRange:range].doubleValue;
+                XZMLParagraphSetMinimumLineHeight(style, value, range);
                 break;
             }
             case 'H':
