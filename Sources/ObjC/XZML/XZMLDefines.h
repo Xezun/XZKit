@@ -43,7 +43,7 @@ FOUNDATION_EXPORT XZMLAttributeName const XZMLFontAttributeName NS_REFINED_FOR_S
 
 /// 通过此键为 XZML 预设前景色样式，值为 UIColor 对象。
 FOUNDATION_EXPORT XZMLAttributeName const XZMLForegroundColorAttributeName NS_REFINED_FOR_SWIFT;
-/// 通过此键为 XZML 预设前景色样式，值为 UIColor 对象。
+/// 通过此键为 XZML 预设背景色样式，值为 UIColor 对象。
 FOUNDATION_EXPORT XZMLAttributeName const XZMLBackgroundColorAttributeName NS_REFINED_FOR_SWIFT;
 
 /// 通过此键为 XZML 样式预设文本修饰类型，值为包装 XZMLDecorationType 枚举值的 NSNumber 对象。
@@ -71,7 +71,17 @@ typedef NS_ENUM(NSUInteger, XZMLDecorationType) {
     XZMLDecorationTypeUnderline,
 };
 
+/// 设置 XZML 的字体名缩写表，值中的 key 为缩写、value 为完整字体名。
+///
+/// 调用会整体替换之前的缩写表；传 nil 清空。
+/// 未命中的名称会直接作为字体名查找，因此缩写与真实字体名可以直接混用。
+///
+/// @attention 请在程序初始化时（主线程）调用，不要与后台解析并发调用。
 FOUNDATION_EXPORT void XZMLSetFontAbbreviations(NSDictionary<NSString *, NSString *> * _Nullable fontAbbreviations);
+
+/// 获取当前的 XZML 字体名缩写表，未设置过时返回 nil。
+///
+/// 返回值仅包含已注册的缩写，未注册的缩写不在此表中。
 FOUNDATION_EXPORT NSDictionary<NSString *, NSString *> * _Nullable XZMLGetFontAbbreviations(void);
 
 NS_ASSUME_NONNULL_END

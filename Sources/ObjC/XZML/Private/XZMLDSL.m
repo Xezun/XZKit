@@ -21,8 +21,8 @@ static NSAttributedStringKey const XZMLSecurityMarkAttributeName  = @"XZMLSecuri
 static NSAttributedStringKey const XZMLSecurityRepeatAttributeName = @"XZMLSecurityRepeatAttributeName";
 /// 安全文本替代字符最大重复次数，防止外部指定极端重复值导致内存问题。
 static NSInteger const XZMLSecurityRepeatLimit = 64;
-/// 字体名缩写。
-static NSMutableDictionary<NSString *, NSString *> *_fontAbbreviations = nil;
+/// 字体名缩写表。key 为缩写，value 为完整字体名；由 XZMLSetFontAbbreviations 整体替换，解析期间只读。
+static NSDictionary<NSString *, NSString *> *_fontAbbreviations = nil;
 
 /// XZML 元素属性的行为。
 ///
@@ -79,7 +79,7 @@ static void didEndElement(XZMLDSLContext * const context);
 /// 从 context 的当前位置开始，查找下一个 ASCII 字符的位置。
 /// 如果当前位置就是 ASCII 字符，那么直接返回当前的 index 值。
 static inline NSUInteger XZMLDSLSearchASCII(XZMLDSLContext *context) {
-    return UTF8SearchASCII(context->UTF8String, context->index);;
+    return UTF8SearchASCII(context->UTF8String, context->index);
 }
 
 /// 检测字符是否为 XZML 样式属性标记符。
@@ -461,9 +461,10 @@ static void didFindText(XZMLDSLContext * const context, NSString *text, NSUInteg
     if (context->_string) {
         [context->_string appendString:text];
     } else {
-        // 暂不处理 computeStyle 中包含的 XZMLSecurity(Mark|Repeat)AttributeName 字段。
-        // - 不影响富文本构造。
-        // - 这两个字段不属于机密数据。
+        // computeStyle 中可能包含解析内部键 XZMLSecurity(Mark|Repeat)AttributeName，此处有意不做过滤：
+        // - 不影响富文本构造，两个键不属于 UIKit 认识的富文本属性，渲染时被忽略。
+        // - 这两个字段是样式配置（替代字符与重复次数），不属于机密数据。
+        // - 由 XZMLTests.testSecurityInternalKeysRetainedInResult 锁定该行为。
         NSAttributedString * const attributedString = [[NSAttributedString alloc] initWithString:text attributes:computeStyle];
         [context->_attributedString appendAttributedString:attributedString];
     }
@@ -664,7 +665,7 @@ FOUNDATION_STATIC_INLINE XZMLDecorationType XZMLDecorationAttributeMakeValue(XZM
     return XZMLDecorationTypeStrikethrough;
 }
 
-/// 暂不支持通过 parser->_defaultStyle 提供默认值。
+/// 文本修饰样式。修饰类型包含下划线与删除线两种互斥子样式，因此只覆盖同名子样式，另一类保留继承值。
 XZMLReadingMode didFindDecorationAttribute(XZMLDSLContext * const context, NSString *value) {
     XZMLDecorationType type = 0;                         // 样式 0 删除线 1 下划线
     NSUnderlineStyle  style = NSUnderlineStyleSingle;    // 线型 0 单线条 1 双线条 2 粗线条
@@ -812,7 +813,7 @@ XZMLReadingMode didFindParagraphAttribute(XZMLDSLContext * const context, NSStri
     NSMutableParagraphStyle * const style = [context->_currentAttribute[NSParagraphStyleAttributeName] mutableCopy]
         ?: [context->_defaultAttribute[XZMLParagraphStyleAttributeName] mutableCopy]
         ?: [context->_defaultAttribute[NSParagraphStyleAttributeName] mutableCopy]
-        ?: [[NSMutableParagraphStyle alloc] init];;
+        ?: [[NSMutableParagraphStyle alloc] init];
     
     const char * const UTF8String = [value cStringUsingEncoding:NSUTF8StringEncoding];
     NSUInteger start = 0;

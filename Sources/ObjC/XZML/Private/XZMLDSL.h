@@ -10,14 +10,25 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-@class XZMLParser;
-
-/// XZML 语法解析函数。
+/// 解析 XZML 字符串，将样式化的富文本追加到 `attributedString` 末尾。
+///
+/// 解析过程中的非法输入均降级处理、不抛异常：非字符串与空串不产生任何内容；
+/// 无法表示为 UTF-8 的字符串（如含未配对的代理项）不解析，不产生任何内容。
+///
 /// - Parameters:
 ///   - XZMLString: XZML 字符串
-///   - parser: 接收语法分析结果的解析器对象
-//FOUNDATION_EXPORT void XZMLDSL(NSString *XZMLString, XZMLParser *parser);
+///   - attributedString: 接收解析结果的富文本对象，内容由本函数追加
+///   - attributes: 默认样式与预设样式，可为 nil，详见 `XZMLAttributeName` 的取值优先级说明
 FOUNDATION_EXPORT void XZMLDSLWithAttributedString(NSString *XZMLString, NSMutableAttributedString *attributedString, NSDictionary<NSAttributedStringKey, id> * _Nullable attributes);
+
+/// 解析 XZML 字符串，仅提取纯文本并追加到 `string` 末尾，丢弃除安全模式以外的所有样式。
+///
+/// 安全模式（`XZMLSecurityModeAttributeName` 为 YES）下仍会执行星号遮蔽替换。
+///
+/// - Parameters:
+///   - XZMLString: XZML 字符串
+///   - string: 接收解析结果的字符串，内容由本函数追加
+///   - attributes: 默认样式与预设样式，可为 nil
 FOUNDATION_EXPORT void XZMLDSLWithString(NSString *XZMLString, NSMutableString *string, NSDictionary<NSAttributedStringKey, id> * _Nullable attributes);
 
 /// XZML 样式标记字符，使用 ASCII 特殊标点符号作为标记字符。
@@ -35,17 +46,20 @@ enum : XZMLAttribute {
     /// - `AAA@BBB#`，表示设置前景色为 AAA 值，背景色为 BBB 值
     /// - `@#`，表示设置前景色为预设值，背景色为预设值
     ///
-    /// - Note: 预设值：通过键 XZMLForegroundColorAttributeName 在 `attributes` 参数中预设的值。
-    /// - Note: 背景色仅支持直接指定的 RGB 值，不支持继承和预设，值为空时不设置背景色。
+    /// - Note: 前景色与背景色共用同一套取值优先级，仅各自的键不同：
+    ///   指定值 → 继承值 → 预设值（`XZMLForegroundColorAttributeName` / `XZMLBackgroundColorAttributeName`）
+    ///   → 默认值（`NSForegroundColorAttributeName` / `NSBackgroundColorAttributeName`）。
+    /// - Note: 子属性值为空或非法时不写入，沿用上述优先级取到的值，不会重置为透明色。
+    /// - Note: 不含 `@` 时只设置前景色，背景色保持原样（继承值或不变）。
     XZMLAttributeColor = '#',
     
     /// 字体样式：字体、字号、偏移。
     ///
     /// 格式：字体、@字号、字体@字号、字体@字号@基准线偏移
     ///
-    /// 推荐使用 `+setFoneName:forAbbreviation:` 方法注册字体名缩写，以减少`XZML`的长度。
+    /// 未注册缩写的名称直接作为字体名查找，因此 `<宋体&>`、`<Helvetica@20&>` 这类写法无需任何注册即可生效。
     ///
-    /// 字体缩写约定：
+    /// 缩写需由使用方通过 `XZMLSetFontAbbreviations()` 注册，本组件不提供内置缩写表。业务建议的缩写约定：
     /// - 1、数字常规：DR、D
     /// - 2、数字粗体：DB、B
     /// - 3、文本细体：TL、L
@@ -67,6 +81,8 @@ enum : XZMLAttribute {
     /// 安全文本样式：用占位字符替代目标文本的样式。
     /// 格式：替代符号、@重复次数、替代符号@重复次数。
     /// @discussion 替代符号默认为`*`星号；未指定重复次数时，默认与被替代文本的字符数相同（等长遮蔽）。
+    /// @discussion 此处“字符数”按 UTF-16 代码单元计数，代理对（如 emoji）计为 2。
+    /// @attention 重复次数上限为 64，超过部分被钳制，因此长度超过 64 的文本不再是等长遮蔽。
     /// @discussion 安全模式替换时，忽略所有子元素。
     /// @attention 在安全模式下，星号`*`之后样式、文本、子元素都会被忽略，因此通过`*`的位置控制替代字符的样式。
     /// @discussion 比如将删除线样式放在`*`之后，安全模式下，替代字符不会展示删除线。
@@ -81,22 +97,26 @@ enum : XZMLAttribute {
     /// @discussion L：minimumLineHeight 最小行高，默认
     /// @discussion H：maximumLineHeight 最大行高
     /// @discussion X：lineHeightMultiple 多倍行高
-    /// @discussion A：alignment 对齐方式，与枚举值对应
-    /// @discussion K：lineBreakMode 断行方式，与枚举值对应
+    /// @discussion A：alignment 对齐方式，取值 NSTextAlignmentLeft(0) ~ NSTextAlignmentNatural(4)
+    /// @discussion K：lineBreakMode 断行方式，取值 NSLineBreakByWordWrapping(0) ~ NSLineBreakByTruncatingMiddle(5)
     /// @discussion S：lineSpacing 行间距（行与行之间的距离）
-    /// @discussion W：baseWritingDirection 书写方向，与枚举值对应
+    /// @discussion W：baseWritingDirection 书写方向，取值 NSWritingDirectionNatural(-1) ~ NSWritingDirectionRightToLeft(1)
     /// @discussion F：firstLineHeadIndent 首行缩进
     /// @discussion I：headIndent 头缩进
     /// @discussion T：tailIndent 尾缩进
     /// @discussion P：paragraphSpacing 段间距
     /// @discussion B：paragraphSpacingBefore 段前距
     /// @discussion 格式：[值][标记]
-    /// @discussion 如果未指定样式标记符，则默认为最小行高`H`样式。示例：
+    /// @discussion 如果末尾存在未被任何标记符消耗的值，则按最小行高（`L`）处理。
+    /// @discussion `A`、`K`、`W` 仅接受上表范围内的枚举值，越界值被忽略（不钳制），段落样式沿用继承值或默认值。
+    /// @discussion 标记符前没有任何值时，该标记符被忽略，不会把继承/预设的段落属性覆盖为 0。
+    /// @discussion 行高类属性（`L`）的值非正数时不写入，沿用继承值或预设值。
+    /// @discussion 示例：
     /// @code
     /// NSString *XZML1 = @"<20L30H^Paragraph>";   // 最小行高 20.0 point 最大行高 30.0 point
     /// NSString *XZML2 = @"<1.5X^Paragraph>";     // 1.5 倍行高
-    /// NSString *XZML3 = @"<1.5X^Paragraph>";     // 1.5 倍行高
-    /// NSString *XZML4 = @"<34F20X^Paragraph>";   // 首行缩进 34.0 point 行高 20.0 point
+    /// NSString *XZML3 = @"<24^Paragraph>";       // 未指定标记符，最小行高 24.0 point
+    /// NSString *XZML4 = @"<34F20X^Paragraph>";   // 首行缩进 34.0 point 多倍行高 20.0
     /// @endcode
     /// @discussion 由于样式标记的存在，样式间隔符`@`是可选的，样式顺序也是任意的。
     XZMLAttributeParagraph = '^',

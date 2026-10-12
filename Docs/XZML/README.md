@@ -81,14 +81,14 @@ XZML 使用**固定格式**且简化的文本作为`样式值`，多属性样式
 | $  | 文本修饰 | 样式 | 线型 | 颜色 | `<$带删除线的文字>` |
 | *  | 安全模式 | 替代符号 | 重复次数 | | `<*安全模式变星星的文字>` |
 | ~  | 超链接 | URL  | | | `<https://www.xezun.com/~打开Xezun官网>` |
-| ^  | 文本段落 | `属性值` + `属性标记` | | | `<20H30M^最小行高20点，最大行高30点的段落>` |
+| ^  | 文本段落 | `属性值` + `属性标记` | | | `<20L30H^最小行高20点，最大行高30点的段落>` |
 
 【属性预设值】
 
 在实际开发中，可使用预设值，降低 XZML 的复杂度。
 
 ```objc
-[textLabel setAttributedTextWithXZMLString:@"文本甲 <&文本乙> <宋体&文本丙>" defaultAttributes:@{
+[textLabel setXZML:@"文本甲 <&文本乙> <宋体&文本丙>" attributes:@{
     NSFontAttributeName: [UIFont fontWithName:@"Text-Font" size:14.0],
     XZMLFontAttributeName: [UIFont fontWithName:@"Number-Font" size:14.0],
 }];
@@ -108,8 +108,10 @@ XZML 使用**固定格式**且简化的文本作为`样式值`，多属性样式
 由于字体名字可能较长，而在业务中，大部分情况下，所使用的都是固定字体，因此可以通过设置字体缩写，来简化样式的书写，比如`<B&0.02%>`中`B`字体名，是通过如下方法提前注册的。
 
 ```objc
-[XZMLParser setFontName:@"AmericanTypewriter-Bold" forAbbreviation:@"B"];
+XZMLSetFontAbbreviations(@{@"B": @"AmericanTypewriter-Bold"});
 ```
+
+该方法为整体替换语义，请在程序初始化时（主线程）调用。未命中缩写表的名称会直接作为字体名查找，因此`<宋体&>`这类写法无需注册即可生效。
 
 【颜色】
 
