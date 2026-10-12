@@ -368,15 +368,8 @@ static void XZMLDSL(NSString *XZMLString, NSMutableString *string, NSMutableAttr
         return;
     }
     
-    // 非 UTF-8 字符串直接丢弃
-    if (![XZMLString canBeConvertedToEncoding:NSUTF8StringEncoding]) {
-        NSData *data = [XZMLString dataUsingEncoding:NSUTF8StringEncoding allowLossyConversion:YES];
-        if (data == nil) {
-            return;
-        }
-        XZMLString = [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding];
-    }
-    
+    // XZML 的解析基于 UTF-8 字节流，无法表示为 UTF-8 的字符串（如含未配对的代理项）不解析，
+    // 不产生任何内容。此类字符串属于非法输入，调用方应在解析前保证编码合法。
     const char * const UTF8String = [XZMLString cStringUsingEncoding:NSUTF8StringEncoding];
     if (UTF8String == NULL) {
         return;
