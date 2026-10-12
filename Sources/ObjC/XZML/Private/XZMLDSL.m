@@ -562,7 +562,8 @@ XZMLReadingMode didFindColorAttribute(XZMLDSLContext * const context, NSString *
 }
 
 FOUNDATION_STATIC_INLINE UIFont * _Nullable XZMLFontAttributeMakeValue(XZMLDSLContext * const context, NSString * _Nullable nameString, NSString * _Nullable sizeString) {
-    NSString *name = (nameString ? _fontAbbreviations[nameString] : nil);
+    // 未命中缩写表的名称直接作为字体名使用，因此缩写与真实字体名可以直接混用
+    NSString *name = nameString.length > 0 ? (_fontAbbreviations[nameString] ?: nameString) : nil;
     CGFloat   size = sizeString.doubleValue;
     UIFont   *font = nil;
     
