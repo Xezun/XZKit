@@ -8,9 +8,9 @@
 #import "UIKit+XZML.h"
 #import "Foundation+XZML.h"
 
-@implementation UILabel (XZML)
+@implementation UILabel (XZMLSupporting)
 
-- (void)setXZML:(NSString *)XZMLString attributes:(nullable NSDictionary<NSAttributedStringKey, id> *)attributes {
+- (void)setXZMLString:(NSString *)XZMLString attributes:(nullable NSDictionary<NSAttributedStringKey, id> *)attributes {
     // 读取字体、字体颜色的默认值
     if (attributes == nil || attributes[NSFontAttributeName] == nil || attributes[NSForegroundColorAttributeName] == nil) {
         self.text = nil;
@@ -22,18 +22,18 @@
         }
         attributes = newAttributes;
     }
-    self.attributedText = [[NSAttributedString alloc] initWithXZML:XZMLString attributes:attributes];
+    self.attributedText = [[NSAttributedString alloc] initWithXZMLString:XZMLString attributes:attributes];
 }
 
-- (void)setXZML:(NSString *)XZMLString {
-    [self setXZML:XZMLString attributes:nil];
+- (void)setXZMLString:(NSString *)XZMLString {
+    [self setXZMLString:XZMLString attributes:nil];
 }
 
 @end
 
-@implementation UIButton (XZML)
+@implementation UIButton (XZMLSupporting)
 
-- (void)setXZML:(NSString *)XZMLString forState:(UIControlState)state attributes:(nullable NSDictionary<NSAttributedStringKey, id> *)attributes {
+- (void)setXZMLString:(NSString *)XZMLString forState:(UIControlState)state attributes:(nullable NSDictionary<NSAttributedStringKey, id> *)attributes {
     // 读取字体、字体颜色的默认值
     if (attributes == nil || attributes[NSFontAttributeName] == nil || attributes[NSForegroundColorAttributeName] == nil) {
         NSMutableDictionary *newAttributes = [NSMutableDictionary dictionaryWithCapacity:attributes.count + 2];
@@ -44,19 +44,19 @@
         }
         attributes = newAttributes;
     }
-    NSAttributedString * const attributedTitle = [[NSAttributedString alloc] initWithXZML:XZMLString attributes:attributes];
+    NSAttributedString * const attributedTitle = [[NSAttributedString alloc] initWithXZMLString:XZMLString attributes:attributes];
     [self setAttributedTitle:attributedTitle forState:state];
 }
 
-- (void)setXZML:(NSString *)XZMLString forState:(UIControlState)state {
-    [self setXZML:XZMLString forState:state attributes:nil];
+- (void)setXZMLString:(NSString *)XZMLString forState:(UIControlState)state {
+    [self setXZMLString:XZMLString forState:state attributes:nil];
 }
 
 @end
 
-@implementation UITextView (XZML)
+@implementation UITextView (XZMLSupporting)
 
-- (void)setXZML:(NSString *)XZMLString attributes:(NSDictionary<NSAttributedStringKey, id> *)attributes {
+- (void)setXZMLString:(NSString *)XZMLString attributes:(NSDictionary<NSAttributedStringKey, id> *)attributes {
     // 读取字体、字体颜色的默认值
     if (attributes == nil || attributes[NSFontAttributeName] == nil || attributes[NSForegroundColorAttributeName] == nil) {
         self.text = nil;
@@ -68,18 +68,18 @@
         }
         attributes = newAttributes;
     }
-    self.attributedText = [[NSAttributedString alloc] initWithXZML:XZMLString attributes:attributes];
+    self.attributedText = [[NSAttributedString alloc] initWithXZMLString:XZMLString attributes:attributes];
 }
 
-- (void)setXZML:(NSString *)XZMLString {
-    [self setXZML:XZMLString attributes:nil];
+- (void)setXZMLString:(NSString *)XZMLString {
+    [self setXZMLString:XZMLString attributes:nil];
 }
 
 @end
 
-@implementation UITextField (XZML)
+@implementation UITextField (XZMLSupporting)
 
-- (void)setXZML:(NSString *)XZMLString attributes:(NSDictionary<NSAttributedStringKey, id> *)attributes {
+- (void)setXZMLString:(NSString *)XZMLString attributes:(NSDictionary<NSAttributedStringKey, id> *)attributes {
     // 读取字体、字体颜色的默认值
     if (attributes == nil || attributes[NSFontAttributeName] == nil || attributes[NSForegroundColorAttributeName] == nil) {
         self.text = nil;
@@ -91,11 +91,11 @@
         }
         attributes = newAttributes;
     }
-    self.attributedText = [[NSAttributedString alloc] initWithXZML:XZMLString attributes:attributes];
+    self.attributedText = [[NSAttributedString alloc] initWithXZMLString:XZMLString attributes:attributes];
 }
 
-- (void)setXZML:(NSString *)XZMLString {
-    [self setXZML:XZMLString attributes:nil];
+- (void)setXZMLString:(NSString *)XZMLString {
+    [self setXZMLString:XZMLString attributes:nil];
 }
 
 @end

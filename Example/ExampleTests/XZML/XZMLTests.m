@@ -32,7 +32,7 @@
 
 /// 构造 XZML 富文本。
 - (NSAttributedString *)attributedStringForXZML:(NSString *)XZMLString attributes:(nullable NSDictionary<NSAttributedStringKey, id> *)attributes {
-    return [[NSAttributedString alloc] initWithXZML:XZMLString attributes:attributes];
+    return [[NSAttributedString alloc] initWithXZMLString:XZMLString attributes:attributes];
 }
 
 /// 注册字体缩写。XZMLSetFontAbbreviations 是整体替换语义，此处先在实例内累加再提交。
@@ -64,9 +64,9 @@
 - (void)testNilAndEmptyInput {
     XCTAssertEqual([[self attributedStringForXZML:nil attributes:nil] length], 0U);
     XCTAssertEqual([[self attributedStringForXZML:@"" attributes:nil] length], 0U);
-    XCTAssertEqualObjects([[NSMutableString alloc] initWithXZML:nil attributes:nil], @"");
-    XCTAssertEqualObjects([[NSMutableString alloc] initWithXZML:@"" attributes:nil], @"");
-    XCTAssertEqualObjects([[NSString alloc] initWithXZML:nil attributes:nil], @"");
+    XCTAssertEqualObjects([[NSMutableString alloc] initWithXZMLString:nil attributes:nil], @"");
+    XCTAssertEqualObjects([[NSMutableString alloc] initWithXZMLString:@"" attributes:nil], @"");
+    XCTAssertEqualObjects([[NSString alloc] initWithXZMLString:nil attributes:nil], @"");
 }
 
 /// 空元素不产生文本。
@@ -205,7 +205,7 @@
 
     XCTAssertEqual([[self attributedStringForXZML:broken attributes:nil] length], 0U);
     // 纯文本 API 同样不产生内容
-    XCTAssertEqualObjects([[NSString alloc] initWithXZML:broken attributes:nil], @"");
+    XCTAssertEqualObjects([[NSString alloc] initWithXZMLString:broken attributes:nil], @"");
 
     // 含元素标记的整串一并放弃："<F00#red>" + U+D800
     unichar const elementChars[] = { '<', 'F', '0', '0', '#', 'r', 'e', 'd', '>', 0xD800 };
@@ -568,14 +568,14 @@
 
 /// NSMutableString：只保留文本，丢弃样式标记。
 - (void)testStringOnlyMode {
-    XCTAssertEqualObjects([[NSMutableString alloc] initWithXZML:@"A <F00#B> C" attributes:nil], @"A B C");
-    XCTAssertEqualObjects([[NSMutableString alloc] initWithXZML:@"<F00#红色>" attributes:nil], @"红色");
-    XCTAssertEqualObjects([[NSString alloc] initWithXZML:@"<https://a.com/~链接>" attributes:nil], @"链接");
+    XCTAssertEqualObjects([[NSMutableString alloc] initWithXZMLString:@"A <F00#B> C" attributes:nil], @"A B C");
+    XCTAssertEqualObjects([[NSMutableString alloc] initWithXZMLString:@"<F00#红色>" attributes:nil], @"红色");
+    XCTAssertEqualObjects([[NSString alloc] initWithXZMLString:@"<https://a.com/~链接>" attributes:nil], @"链接");
 }
 
 /// 纯文本模式下安全模式仍然生效。
 - (void)testStringOnlySecurityMode {
-    NSMutableString *string = [[NSMutableString alloc] initWithXZML:@"<*abc>" attributes:@{XZMLSecurityModeAttributeName: @YES}];
+    NSMutableString *string = [[NSMutableString alloc] initWithXZMLString:@"<*abc>" attributes:@{XZMLSecurityModeAttributeName: @YES}];
     XCTAssertEqualObjects(string, @"***");
 }
 
@@ -584,8 +584,8 @@
     UILabel *label = [[UILabel alloc] init];
     UIFont *small = [UIFont systemFontOfSize:10];
     UIFont *large = [UIFont systemFontOfSize:20];
-    [label setXZML:@"A" attributes:@{NSFontAttributeName: small}];
-    [label setXZML:@"B" attributes:@{NSFontAttributeName: large}];
+    [label setXZMLString:@"A" attributes:@{NSFontAttributeName: small}];
+    [label setXZMLString:@"B" attributes:@{NSFontAttributeName: large}];
     XCTAssertEqualObjects([label.attributedText attributesAtIndex:0 effectiveRange:NULL][NSFontAttributeName], large, @"第二次调用不应沿用第一次的默认样式");
 }
 
@@ -595,7 +595,7 @@
     UILabel *label = [[UILabel alloc] init];
     label.font = [UIFont systemFontOfSize:16];
     label.textColor = UIColor.blueColor;
-    [label setXZML:@"<F00#红>蓝"];
+    [label setXZMLString:@"<F00#红>蓝"];
     XCTAssertEqualObjects(label.attributedText.string, @"红蓝");
     NSDictionary *attributes = [label.attributedText attributesAtIndex:0 effectiveRange:NULL];
     XCTAssertEqualObjects(NSStringFromUIColor(attributes[NSForegroundColorAttributeName]), @"#FF0000FF");
@@ -608,7 +608,7 @@
     UILabel *label = [[UILabel alloc] init];
     label.font = [UIFont systemFontOfSize:16];
     UIFont *font = [UIFont systemFontOfSize:30];
-    [label setXZML:@"x" attributes:@{
+    [label setXZMLString:@"x" attributes:@{
         NSFontAttributeName: font,
         NSForegroundColorAttributeName: UIColor.greenColor,
     }];
@@ -619,13 +619,13 @@
 /// nil XZML 不崩溃。
 - (void)testUILabelNilXZML {
     UILabel *label = [[UILabel alloc] init];
-    [label setXZML:nil attributes:nil];
+    [label setXZMLString:nil attributes:nil];
     XCTAssertEqual(label.attributedText.length, 0U);
 }
 
 - (void)testUIButtonXZML {
     UIButton *button = [UIButton buttonWithType:UIButtonTypeSystem];
-    [button setXZML:@"<F00#按钮>" forState:UIControlStateNormal];
+    [button setXZMLString:@"<F00#按钮>" forState:UIControlStateNormal];
     NSAttributedString *title = [button attributedTitleForState:UIControlStateNormal];
     XCTAssertEqualObjects(title.string, @"按钮");
     XCTAssertEqualObjects(NSStringFromUIColor([title attributesAtIndex:0 effectiveRange:NULL][NSForegroundColorAttributeName]), @"#FF0000FF");
@@ -634,13 +634,13 @@
 - (void)testUITextViewXZML {
     UITextView *textView = [[UITextView alloc] init];
     textView.font = [UIFont systemFontOfSize:17];
-    [textView setXZML:@"<B&文本>" attributes:nil];
+    [textView setXZMLString:@"<B&文本>" attributes:nil];
     XCTAssertEqualObjects(textView.attributedText.string, @"文本");
 }
 
 - (void)testUITextFieldXZML {
     UITextField *textField = [[UITextField alloc] init];
-    [textField setXZML:@"<F00#输入>" attributes:nil];
+    [textField setXZMLString:@"<F00#输入>" attributes:nil];
     XCTAssertEqualObjects(textField.attributedText.string, @"输入");
 }
 
