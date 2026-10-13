@@ -7,6 +7,7 @@
 
 #import "Foundation+XZML.h"
 #import "XZMLDSL.h"
+#import "XZMLDefines.h"
 
 @implementation NSAttributedString (XZMLSupporting)
 
@@ -93,16 +94,33 @@
     static NSCharacterSet *_characterSet = nil;
     static dispatch_once_t onceToken;
     dispatch_once(&onceToken, ^{
-        _characterSet = [NSMutableCharacterSet characterSetWithCharactersInString:@"<@#&$*~^>\\"];
+        NSMutableCharacterSet *characterSet = [NSMutableCharacterSet characterSetWithCharactersInString:@"<\\>"];
+        const NSInteger kAttributesCount = 6;
+        char kAttributes[] = {
+            XZMLAttributeColor,
+            XZMLAttributeFont,
+            XZMLAttributeDecoration,
+            XZMLAttributeLink,
+            XZMLAttributeSecurity,
+            XZMLAttributeParagraph
+        };
+        for (NSInteger i = 0; i < kAttributesCount; i++) {
+            char const attribute = kAttributes[i];
+            switch (attribute) {
+                case XZMLAttributeColor:
+                case XZMLAttributeFont:
+                case XZMLAttributeDecoration:
+                case XZMLAttributeLink:
+                case XZMLAttributeSecurity:
+                case XZMLAttributeParagraph:
+                    [characterSet addCharactersInRange:NSMakeRange(attribute, 1)];
+                    continue;
+            }
+            break;
+        }
+        _characterSet = characterSet.copy;
     });
     return _characterSet;
-}
-
-+ (void)addXZMLCharactersInString:(NSString *)aString {
-    @synchronized (self) {
-        NSMutableCharacterSet *set = (id)NSCharacterSet.XZMLReservedCharacterSet;
-        [set addCharactersInString:aString];
-    }
 }
 
 @end

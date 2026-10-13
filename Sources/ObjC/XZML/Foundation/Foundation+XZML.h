@@ -57,10 +57,6 @@ NS_ASSUME_NONNULL_BEGIN
 /// 新增 XZML 标记需更新此字符集，转义字符 `\` 也在此字符集中。
 @property (class, readonly) NSCharacterSet *XZMLReservedCharacterSet;
 
-/// 更新 XZML 保留字符符集。
-/// @param aString 包含新增的 XZML 保留字符的字符串
-+ (void)addXZMLCharactersInString:(NSString *)aString;
-
 @end
 
 

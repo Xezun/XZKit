@@ -230,9 +230,9 @@
 /// 保留字符集覆盖所有样式标记符与转义符。
 - (void)testReservedCharacterSet {
     NSCharacterSet *set = NSCharacterSet.XZMLReservedCharacterSet;
-    for (NSUInteger i = 0; i < @"<@#&$*~^>\\".length; i++) {
-        unichar c = [@"<@#&$*~^>\\" characterAtIndex:i];
-        XCTAssertTrue([set characterIsMember:c], @"U+%04X 应为保留字符", c);
+    for (NSUInteger i = 0; i < @"<#&$*~^>\\".length; i++) {
+        unichar c = [@"<#&$*~^>\\" characterAtIndex:i];
+        XCTAssertTrue([set characterIsMember:c], @"U+%04X => %c 应为保留字符", c, (char)c);
     }
 }
 
@@ -242,14 +242,6 @@
     XCTAssertEqualObjects(@"中文".stringByEscapingXZMLReservedCharacters, @"中文");
     XCTAssertEqualObjects(@"plain".stringByEscapingXZMLReservedCharacters, @"plain");
     XCTAssertEqualObjects(@"\\".stringByEscapingXZMLReservedCharacters, @"\\\\");
-}
-
-/// 追加自定义保留字符（全局生效，放在最后执行，避免污染其他用例）。
-- (void)testZZAddXZMLCharactersInString {
-    [NSCharacterSet addXZMLCharactersInString:@"§"];
-    unichar section = [@"§" characterAtIndex:0];
-    XCTAssertTrue([NSCharacterSet.XZMLReservedCharacterSet characterIsMember:section]);
-    XCTAssertEqualObjects(@"a§b".stringByEscapingXZMLReservedCharacters, @"a\\§b");
 }
 
 #pragma mark - 颜色样式（#）

@@ -140,10 +140,11 @@ typedef NS_ENUM(char, XZMLAttribute) {
     XZMLAttributeSecurity = '*',
     
     /// 超链接样式。
+    ///
     /// @discussion 将使用 NSURL 或 NSString 创建富文本 NSLinkAttributeName 属性。
-    XZMLAttributeLink = '~',
+    XZMLAttributeLink = '~', // => @
     
-    /// 段落样式。
+    /// 段落样式。[多倍行高|最小行高-最大行高]@行间距@首行缩进@对齐方式@断行模式@段间距@段前距@头缩进@尾缩进@书写方向
     /// @discussion 支持的段落属性包括：
     /// @discussion L：minimumLineHeight 最小行高，默认
     /// @discussion H：maximumLineHeight 最大行高
@@ -170,7 +171,7 @@ typedef NS_ENUM(char, XZMLAttribute) {
     /// NSString *XZML4 = @"<34F20X^Paragraph>";   // 首行缩进 34.0 point 多倍行高 20.0
     /// @endcode
     /// @discussion 由于样式标记的存在，样式间隔符`@`是可选的，样式顺序也是任意的。
-    XZMLAttributeParagraph = '^',
+    XZMLAttributeParagraph = '^', // => |
     
 };
 
