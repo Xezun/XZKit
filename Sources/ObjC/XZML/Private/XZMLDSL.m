@@ -15,6 +15,10 @@
 #define XZMLElementEnd   '>'
 #define XZMLEscapingMark '\\'
 
+/// XZML 元素属性的子属性分隔符，固定为 `,` 字符，不支持自定义。
+/// @note 仅在样式值区域（样式标记符之前）有意义，文本区域的 `,` 就是普通字符。
+#define XZMLAttributeSeparator @","
+
 /// 安全文本替代字符。默认替代字符为 `*` 星号。
 /// @note 在元素属性中，有此属性有值表明这是一个安全文本。
 static NSAttributedStringKey const XZMLSecurityMarkAttributeName  = @"XZMLSecurityMarkAttributeName";
@@ -525,8 +529,8 @@ FOUNDATION_STATIC_INLINE UIColor *XZMLColorAttributeMakeValue(XZMLDSLContext * c
 }
 
 XZMLReadingMode XZMLDSLDidFindColorAttribute(XZMLDSLContext * const context, NSString *value) {
-    if ([value containsString:@"@"]) {
-        NSArray<NSString *> * const values = [value componentsSeparatedByString:@"@"];
+    if ([value containsString:XZMLAttributeSeparator]) {
+        NSArray<NSString *> * const values = [value componentsSeparatedByString:XZMLAttributeSeparator];
         
         UIColor * const foregroundColor = XZMLColorAttributeMakeValue(context, XZMLForegroundColorAttributeName, NSForegroundColorAttributeName, values[0]);
         if (foregroundColor) {
@@ -599,8 +603,8 @@ FOUNDATION_STATIC_INLINE UIFont * _Nullable XZMLFontAttributeMakeValue(XZMLDSLCo
 }
 
 XZMLReadingMode XZMLDSLDidFindFontAttribute(XZMLDSLContext * const context, NSString *value) {
-    if ([value containsString:@"@"]) {
-        NSArray<NSString *> * const values = [value componentsSeparatedByString:@"@"];
+    if ([value containsString:XZMLAttributeSeparator]) {
+        NSArray<NSString *> * const values = [value componentsSeparatedByString:XZMLAttributeSeparator];
         
         UIFont * font = XZMLFontAttributeMakeValue(context, values[0], values[1]);
         if (font) {
@@ -662,8 +666,8 @@ XZMLReadingMode XZMLDSLDidFindDecorationAttribute(XZMLDSLContext * const context
     NSUnderlineStyle  style = NSUnderlineStyleSingle;    // 线型 0 单线条 1 双线条 2 粗线条
     UIColor *         color = nil;                       // 颜色 _ 默认色 x 指定色
     
-    if ([value containsString:@"@"]) {
-        NSArray<NSString *> * const values = [value componentsSeparatedByString:@"@"];
+    if ([value containsString:XZMLAttributeSeparator]) {
+        NSArray<NSString *> * const values = [value componentsSeparatedByString:XZMLAttributeSeparator];
         
         type = XZMLDecorationAttributeMakeValue(context, values[0]);
         
@@ -710,8 +714,8 @@ XZMLReadingMode XZMLDSLDidFindDecorationAttribute(XZMLDSLContext * const context
 XZMLReadingMode XZMLDSLDidFindSecurityAttribute(XZMLDSLContext * const context, NSString *value) {
     // 只有安全模式下，才需要解析安全字符样式
     if ([context->_defaultAttribute[XZMLSecurityModeAttributeName] boolValue]) {
-        if ([value containsString:@"@"]) {
-            NSArray<NSString *> * const values = [value componentsSeparatedByString:@"@"];
+        if ([value containsString:XZMLAttributeSeparator]) {
+            NSArray<NSString *> * const values = [value componentsSeparatedByString:XZMLAttributeSeparator];
             
             NSString * const mark   = values[0];
             NSInteger  const repeat = values[1].integerValue;
@@ -826,7 +830,7 @@ XZMLReadingMode XZMLDSLDidFindParagraphAttribute(XZMLDSLContext * const context,
         ?: [context->_defaultAttribute[NSParagraphStyleAttributeName] mutableCopy]
         ?: [[NSMutableParagraphStyle alloc] init];
     
-    NSArray<NSString *> *values = [value componentsSeparatedByString:@"@"];
+    NSArray<NSString *> *values = [value componentsSeparatedByString:XZMLAttributeSeparator];
     // 只识别 10 个位段的段落属性，多余的位段直接丢弃，前面的照常生效
     switch (MIN(values.count, 10)) {
         case 10: {
