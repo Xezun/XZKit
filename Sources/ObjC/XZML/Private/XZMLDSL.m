@@ -13,7 +13,6 @@
 /// XZML 元素的开始和结束标记，固定为 `<` 和 `>` 字符，不支持自定义。
 #define XZMLElementStart '<'
 #define XZMLElementEnd   '>'
-#define XZMLDocumentEnd  '\0'
 #define XZMLEscapingMark '\\'
 
 /// 安全文本替代字符。默认替代字符为 `*` 星号。
@@ -35,28 +34,28 @@ typedef NS_ENUM(NSUInteger, XZMLReadingMode) {
     XZMLReadingModeNormal,
     /// 只解析当前元素中的文本。
     XZMLReadingModeText,
-    /// 跳过元素，不解析当前元素后续的属性和文本
-    XZMLReadingModeSkipCurrent,
-    /// 跳过元素，整个元素跳过。
-    XZMLReadingModeSkipElement,
+    /// 提前结束当前元素，正在解析的元素，不解析后续的属性和文本。
+    XZMLReadingModeBreak,
+    /// 忽略元素，跳过元素，当作整个元素不存在，没有元素解析事件。
+    XZMLReadingModeIgnore,
 };
 
 /// XZML 解析过程的中间量。
 typedef struct XZMLDSLContext {
-    NSString                  * __unsafe_unretained _XZMLString;
-    NSUInteger                                      _XZMLLength;
+    NSString * __unsafe_unretained _XZML;
     
+    /// 纯文本模式时，此值不为 nil
     NSMutableString           * __unsafe_unretained _string;
+    /// 富文本模式时，此值不为 nil
     NSMutableAttributedString * __unsafe_unretained _attributedString;
     
-    /// 解析过程中元素原始样式栈
-    NSMutableArray<NSMutableDictionary *> * const __unsafe_unretained _elementAttributes;
+    /// 外部提供默认样式和预置样式。
+    NSDictionary<NSAttributedStringKey, id>  * const __unsafe_unretained _defaultAttribute;
+    /// 解析过程中元素内联样式栈
+    NSMutableArray<NSMutableDictionary *>    * const __unsafe_unretained _elementAttributes;
     /// 解析过程中元素计算样式栈
-    NSMutableArray<NSMutableDictionary *> * const __unsafe_unretained _computeAttributes;
-    
-    /// 当前正在解析中的文本的默认样式。
-    NSDictionary<NSAttributedStringKey, id>        * __unsafe_unretained _defaultAttribute;
-    /// 当前正在解析中的文本的内联样式。
+    NSMutableArray<NSMutableDictionary *>    * const __unsafe_unretained _computeAttributes;
+    /// 当前正在解析中的文本的内联样式，一般情况下就是 `_elementAttributes` 的最后一个元素。
     NSMutableDictionary<NSAttributedStringKey, id> * __unsafe_unretained _currentAttribute;
     /// XZMLReadingMode
     NSMutableArray<NSNumber *>                     * __unsafe_unretained _modes;
@@ -84,6 +83,7 @@ static inline BOOL XZMLDSLTestAttribute(char character) {
     }
 }
 
+/// 判断字符是否为 ASCII 字符。只有函数返回 YES 参数 character 的值才是 ASCII 字符。
 static inline BOOL XZMLDSLTestASCII(NSString * substring, NSRange range, unichar *character) {
     if (substring == nil || range.length == 0) {
         return NO;
@@ -97,7 +97,7 @@ static inline BOOL XZMLDSLTestASCII(NSString * substring, NSRange range, unichar
 }
 
 /// 非 UTF8 字符串的解析方式。
-static inline void XZMLDSL(XZMLDSLContext * const context) {
+static inline void XZMLDSL(XZMLDSLContext * const context, XZMLReadingMode mode) {
     /// 元素的层级
     NSUInteger __block hierarchies      = 0;
     /// 是否为逃逸模式
@@ -105,12 +105,14 @@ static inline void XZMLDSL(XZMLDSLContext * const context) {
     /// 元素是否还有样式需要解析。将顶层当作没有样式、没有开始结束标记的普通元素解析。
     BOOL       __block isAttributeEnded = YES;
     
+    context->_modes[hierarchies] = @(mode);
     XZMLDSLDidBeginElement(context, hierarchies);
     
-    char __block currentElementEnd = XZMLDocumentEnd;
-    
-    NSMutableString * const fragment = [NSMutableString string];
-    [context->_XZMLString enumerateSubstringsInRange:NSMakeRange(0, context->_XZMLLength) options:(NSStringEnumerationByComposedCharacterSequences) usingBlock:^(NSString * _Nullable substring, NSRange substringRange, NSRange enclosingRange, BOOL * _Nonnull stop) {
+    /// 文本段
+    NSMutableString          * const fragment = [NSMutableString string];
+    NSRange                    const eRange   = NSMakeRange(0, context->_XZML.length);
+    NSStringEnumerationOptions const eOptions = NSStringEnumerationByComposedCharacterSequences;
+    [context->_XZML enumerateSubstringsInRange:eRange options:eOptions usingBlock:^(NSString * _Nullable substring, NSRange substringRange, NSRange enclosingRange, BOOL * _Nonnull stop) {
         // 判断当前字符是否为 ASCII 字符
         unichar asciiCharacter = 0;
         BOOL const isASCIICharacter = XZMLDSLTestASCII(substring, substringRange, &asciiCharacter);
@@ -138,7 +140,13 @@ static inline void XZMLDSL(XZMLDSLContext * const context) {
                 }
                 
                 // 结束标记
-                if (asciiCharacter == currentElementEnd) {
+                if (asciiCharacter == XZMLElementEnd) {
+                    // 顶层元素
+                    if (hierarchies == 0) {
+                        [fragment appendString:substring];
+                        break;
+                    }
+                    
                     // 结算文本
                     NSUInteger const length = fragment.length;
                     if (length > 0) {
@@ -149,7 +157,6 @@ static inline void XZMLDSL(XZMLDSLContext * const context) {
                     // 结束元素
                     XZMLDSLDidEndElement(context, hierarchies);
                     hierarchies -= 1;       // 返回父元素层级
-                    currentElementEnd = hierarchies > 0 ? XZMLElementEnd : XZMLDocumentEnd;
                     isAttributeEnded = YES; // 子元素提前终止父元素的样式识别
                     return;
                 }
@@ -165,7 +172,6 @@ static inline void XZMLDSL(XZMLDSLContext * const context) {
                     
                     // 层级递进
                     hierarchies += 1;
-                    currentElementEnd = XZMLElementEnd;
                     isAttributeEnded = NO; 
                     context->_modes[hierarchies] = @(XZMLReadingModeNormal);
                     XZMLDSLDidBeginElement(context, hierarchies);
@@ -214,7 +220,12 @@ static inline void XZMLDSL(XZMLDSLContext * const context) {
                 }
                 
                 // 结束标记
-                if (asciiCharacter == currentElementEnd) {
+                if (asciiCharacter == XZMLElementEnd) {
+                    if (hierarchies == 0) {
+                        [fragment appendString:substring];
+                        return;
+                    }
+                    
                     // 结算文本
                     NSUInteger const length = fragment.length;
                     if (length > 0) {
@@ -225,7 +236,6 @@ static inline void XZMLDSL(XZMLDSLContext * const context) {
                     // 结束元素
                     XZMLDSLDidEndElement(context, hierarchies);
                     hierarchies -= 1;
-                    currentElementEnd = hierarchies > 0 ? XZMLElementEnd : XZMLDocumentEnd;
                     isAttributeEnded = YES;
                     return;
                 }
@@ -242,7 +252,6 @@ static inline void XZMLDSL(XZMLDSLContext * const context) {
                     // 层级递进
                     hierarchies += 1;
                     isAttributeEnded = NO;
-                    currentElementEnd = XZMLElementEnd;
                     context->_modes[hierarchies] = @(XZMLReadingModeText);
                     XZMLDSLDidBeginElement(context, hierarchies);
                     return;
@@ -268,7 +277,7 @@ static inline void XZMLDSL(XZMLDSLContext * const context) {
                 return;
             }
                 
-            case XZMLReadingModeSkipCurrent: {
+            case XZMLReadingModeBreak: {
                 if (!isASCIICharacter) {
                     isEscaping = NO;
                     return;
@@ -286,11 +295,15 @@ static inline void XZMLDSL(XZMLDSLContext * const context) {
                 }
                 
                 // 结束标记
-                if (asciiCharacter == currentElementEnd) {
+                if (asciiCharacter == XZMLElementEnd) {
+                    if (hierarchies == 0) {
+                        return;
+                    }
+                    
+                    // 元素提前终止，但是元素依然存在
                     XZMLDSLDidFindText(context, fragment);
                     
                     hierarchies -= 1;
-                    currentElementEnd = hierarchies > 0 ? XZMLElementEnd : XZMLDocumentEnd;
                     isAttributeEnded = YES;
                     XZMLDSLDidEndElement(context, hierarchies);
                 }
@@ -298,14 +311,13 @@ static inline void XZMLDSL(XZMLDSLContext * const context) {
                 // 开始标记
                 if (asciiCharacter == XZMLElementStart) {
                     hierarchies += 1;
-                    currentElementEnd = XZMLElementEnd;
                     isAttributeEnded = NO;
-                    context->_modes[hierarchies] = @(XZMLReadingModeSkipElement);
+                    context->_modes[hierarchies] = @(XZMLReadingModeIgnore);
                 }
                 return;
             }
                 
-            case XZMLReadingModeSkipElement: {
+            case XZMLReadingModeIgnore: {
                 if (!isASCIICharacter) {
                     isEscaping = NO;
                     return;
@@ -324,16 +336,17 @@ static inline void XZMLDSL(XZMLDSLContext * const context) {
                 }
                 
                 // 结束标记
-                if (asciiCharacter == currentElementEnd) {
+                if (asciiCharacter == XZMLElementEnd) {
+                    if (hierarchies == 0) {
+                        return;
+                    }
                     hierarchies -= 1;
-                    currentElementEnd = hierarchies > 0 ? XZMLElementEnd : XZMLDocumentEnd;
                 }
                 
                 // 开始标记
                 if (asciiCharacter == XZMLElementStart) {
                     hierarchies += 1;
-                    currentElementEnd = XZMLElementEnd;
-                    context->_modes[hierarchies] = @(XZMLReadingModeSkipElement);
+                    context->_modes[hierarchies] = @(XZMLReadingModeIgnore);
                 }
                 return;
             }
@@ -344,7 +357,28 @@ static inline void XZMLDSL(XZMLDSLContext * const context) {
         XZMLDSLDidFindText(context, fragment);
     }
     
-    XZMLDSLDidEndElement(context, hierarchies);
+    // 闭合所有元素
+    for (NSInteger i = hierarchies; i >= 0; i--) {
+        XZMLDSLDidEndElement(context, i);
+    }
+}
+
+static void XZMLDSLWithMode(NSString *XZMLString, XZMLReadingMode mode, NSMutableString * _Nullable string, NSMutableAttributedString * _Nullable attributedString, NSDictionary<NSAttributedStringKey, id> * _Nullable defaultAttributes) {
+    NSMutableArray * const modes = [NSMutableArray arrayWithCapacity:16];
+    NSMutableArray * const elementAttributes = [NSMutableArray arrayWithCapacity:16];
+    NSMutableArray * const computeAttributes = [NSMutableArray arrayWithCapacity:16];
+    [computeAttributes addObject:[NSMutableDictionary dictionary]];
+    XZMLDSLContext context = {
+        XZMLString,
+        string,
+        attributedString,
+        defaultAttributes,
+        elementAttributes,
+        computeAttributes,
+        nil, // currentAttribute
+        modes
+    };
+    XZMLDSL(&context, mode);
 }
 
 void XZMLDSLWithAttributedString(NSString *XZMLString, NSMutableAttributedString *attributedString, NSDictionary<NSAttributedStringKey, id> * _Nullable defaultAttributes) {
@@ -352,47 +386,15 @@ void XZMLDSLWithAttributedString(NSString *XZMLString, NSMutableAttributedString
         return;
     }
     
-    NSMutableArray * const modes = [NSMutableArray arrayWithObject:@(XZMLReadingModeNormal)];
-    NSMutableArray * const elementAttributes = [NSMutableArray arrayWithCapacity:32];
-    NSMutableArray * const computeAttributes = [NSMutableArray arrayWithCapacity:32];
-    [computeAttributes addObject:[NSMutableDictionary dictionary]];
-    XZMLDSLContext __block context = {
-        XZMLString,
-        [XZMLString length],
-        nil,
-        attributedString,
-        elementAttributes,
-        computeAttributes,
-        defaultAttributes,
-        nil,
-        modes
-    };
-    
-    XZMLDSL(&context);
+    XZMLDSLWithMode(XZMLString, XZMLReadingModeNormal, nil, attributedString, defaultAttributes);
 }
 
 void XZMLDSLWithString(NSString *XZMLString, NSMutableString *string, NSDictionary<NSAttributedStringKey, id> * _Nullable defaultAttributes) {
     if (XZMLString == nil || ![XZMLString isKindOfClass:NSString.class] || XZMLString.length == 0) {
         return;
     }
-    
-    NSMutableArray * const modes = [NSMutableArray arrayWithObject:@(XZMLReadingModeNormal)];
-    NSMutableArray * const elementAttributes = [NSMutableArray arrayWithCapacity:32];
-    NSMutableArray * const computeAttributes = [NSMutableArray arrayWithCapacity:32];
-    [computeAttributes addObject:[NSMutableDictionary dictionary]];
-    XZMLDSLContext __block context = {
-        XZMLString,
-        [XZMLString length],
-        string,
-        nil,
-        elementAttributes,
-        computeAttributes,
-        defaultAttributes,
-        nil,
-        modes
-    };
-    
-    XZMLDSL(&context);
+    XZMLReadingMode const mode = [defaultAttributes[XZMLSecurityModeAttributeName] boolValue] ? XZMLReadingModeNormal : XZMLReadingModeText;
+    XZMLDSLWithMode(XZMLString, mode, string, nil, defaultAttributes);
 }
 
 // MARK: - 内容解析
@@ -405,7 +407,7 @@ static XZMLReadingMode XZMLDSLDidFindLinkAttribute(XZMLDSLContext * const contex
 static XZMLReadingMode XZMLDSLDidFindParagraphAttribute(XZMLDSLContext * const context, NSString *value);
 
 static void XZMLDSLDidBeginElement(XZMLDSLContext * const context, NSUInteger const hierarchies) {
-    XZLog(@"%lu", hierarchies);
+    XZLog(@"XZMLDSLDidBeginElement: %lu", hierarchies);
     // 继承父元素样式，如果没有则新建
     NSMutableDictionary * const _currentAttribute = [context->_elementAttributes.lastObject mutableCopy] ?: [NSMutableDictionary dictionary];
     context->_currentAttribute = _currentAttribute;
@@ -416,7 +418,7 @@ static void XZMLDSLDidBeginElement(XZMLDSLContext * const context, NSUInteger co
 }
 
 static void XZMLDSLDidFindText(XZMLDSLContext * const context, NSString *text) {
-    XZLog(@"%@", text);
+    XZLog(@"XZMLDSLDidFindText: %@", text);
     // 找到元素文本，也可能顶层非元素文本
     NSMutableDictionary * const computeStyle = context->_computeAttributes.lastObject;
     // 样式为空，说明样式还没有合并
@@ -458,7 +460,7 @@ static void XZMLDSLDidFindText(XZMLDSLContext * const context, NSString *text) {
 }
 
 static XZMLReadingMode XZMLDSLDidFindAttribute(XZMLDSLContext * const context, XZMLAttribute attribute, NSString *value) {
-    XZLog(@"%c => %@", attribute, value);
+    XZLog(@"XZMLDSLDidFindAttribute: %c => %@", attribute, value);
     if (context->_string) {
         // 纯文本模式，仅解析安全样式
         if (attribute == XZMLAttributeSecurity) {
@@ -495,7 +497,7 @@ static XZMLReadingMode XZMLDSLDidFindAttribute(XZMLDSLContext * const context, X
 }
 
 static void XZMLDSLDidEndElement(XZMLDSLContext * const context, NSUInteger const hierarchies) {
-    XZLog(@"%lu", hierarchies);
+    XZLog(@"XZMLDSLDidEndElement: %lu", hierarchies);
     [context->_elementAttributes removeLastObject];
     [context->_computeAttributes removeLastObject];
     context->_currentAttribute = context->_elementAttributes.lastObject;
@@ -727,7 +729,7 @@ XZMLReadingMode XZMLDSLDidFindSecurityAttribute(XZMLDSLContext * const context, 
                         context->_currentAttribute[XZMLSecurityMarkAttributeName] = mark;
                         if ([mark rangeOfComposedCharacterSequenceAtIndex:0].length < mark.length) {
                             context->_currentAttribute[XZMLSecurityRepeatAttributeName] = @(1);
-                            return XZMLReadingModeSkipCurrent;
+                            return XZMLReadingModeBreak;
                         }
                         break;
                 }
@@ -737,7 +739,7 @@ XZMLReadingMode XZMLDSLDidFindSecurityAttribute(XZMLDSLContext * const context, 
             // 设置了重复次数，元素及子元素的就不需要解析了
             context->_currentAttribute[XZMLSecurityMarkAttributeName] = mark.length > 0 ? mark : @"*";
             context->_currentAttribute[XZMLSecurityRepeatAttributeName] = @(repeat);
-            return XZMLReadingModeSkipCurrent;
+            return XZMLReadingModeBreak;
         }
         
         // 仅指定了替换字符
@@ -747,7 +749,7 @@ XZMLReadingMode XZMLDSLDidFindSecurityAttribute(XZMLDSLContext * const context, 
             // 判断 mark 是不是单个语义字符。
             if ([mark rangeOfComposedCharacterSequenceAtIndex:0].length < mark.length) {
                 context->_currentAttribute[XZMLSecurityRepeatAttributeName] = @(1);
-                return XZMLReadingModeSkipCurrent;
+                return XZMLReadingModeBreak;
             }
             return XZMLReadingModeText;
             
