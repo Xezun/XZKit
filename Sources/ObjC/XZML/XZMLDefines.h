@@ -144,33 +144,33 @@ typedef NS_ENUM(char, XZMLAttribute) {
     /// @discussion 将使用 NSURL 或 NSString 创建富文本 NSLinkAttributeName 属性。
     XZMLAttributeLink = '~', // => @
     
-    /// 段落样式。[多倍行高|最小行高-最大行高]@行间距@首行缩进@对齐方式@断行模式@段间距@段前距@头缩进@尾缩进@书写方向
-    /// @discussion 支持的段落属性包括：
-    /// @discussion L：minimumLineHeight 最小行高，默认
-    /// @discussion H：maximumLineHeight 最大行高
-    /// @discussion X：lineHeightMultiple 多倍行高
-    /// @discussion A：alignment 对齐方式，取值 NSTextAlignmentLeft(0) ~ NSTextAlignmentNatural(4)
-    /// @discussion K：lineBreakMode 断行方式，取值 NSLineBreakByWordWrapping(0) ~ NSLineBreakByTruncatingMiddle(5)
-    /// @discussion S：lineSpacing 行间距（行与行之间的距离）
-    /// @discussion W：baseWritingDirection 书写方向，取值 NSWritingDirectionNatural(-1) ~ NSWritingDirectionRightToLeft(1)
-    /// @discussion F：firstLineHeadIndent 首行缩进
-    /// @discussion I：headIndent 头缩进
-    /// @discussion T：tailIndent 尾缩进
-    /// @discussion P：paragraphSpacing 段间距
-    /// @discussion B：paragraphSpacingBefore 段前距
-    /// @discussion 格式：[值][标记]
-    /// @discussion 如果末尾存在未被任何标记符消耗的值，则按最小行高（`L`）处理。
-    /// @discussion `A`、`K`、`W` 仅接受上表范围内的枚举值，越界值被忽略（不钳制），段落样式沿用继承值或默认值。
-    /// @discussion 标记符前没有任何值时，该标记符被忽略，不会把继承/预设的段落属性覆盖为 0。
-    /// @discussion 行高类属性（`L`）的值非正数时不写入，沿用继承值或预设值。
+    /// 段落样式。按位置指定段落属性：[多倍行高|最小行高-最大行高]@行间距@首行缩进@对齐方式@断行模式@段间距@段前距@头缩进@尾缩进@书写方向
+    /// @discussion 各位置对应的段落属性依次为：
+    /// @discussion 1. 行高：`最小行高-最大行高` 同时指定 minimumLineHeight 和 maximumLineHeight，两端大小颠倒时自动交换；
+    ///   不含 `-` 时按 lineHeightMultiple 多倍行高解析，值非正数时不写入。
+    /// @discussion 2. 行间距 lineSpacing
+    /// @discussion 3. 首行缩进 firstLineHeadIndent
+    /// @discussion 4. 对齐方式 alignment，取值 NSTextAlignmentLeft(0) ~ NSTextAlignmentNatural(4)
+    /// @discussion 5. 断行模式 lineBreakMode，取值 NSLineBreakByWordWrapping(0) ~ NSLineBreakByTruncatingMiddle(5)
+    /// @discussion 6. 段间距 paragraphSpacing
+    /// @discussion 7. 段前距 paragraphSpacingBefore
+    /// @discussion 8. 头缩进 headIndent
+    /// @discussion 9. 尾缩进 tailIndent
+    /// @discussion 10. 书写方向 baseWritingDirection，取值 NSWritingDirectionNatural(-1) ~ NSWritingDirectionRightToLeft(1)
+    /// @attention 段落属性是**位置相关**的：要设置第 N 个属性，必须同时给出前 N-1 个属性（可留空）；
+    ///   留空的数值属性按 0 处理，会覆盖继承值，只有行高留空或非法时不写入。
+    /// @discussion `alignment`、`lineBreakMode`、`baseWritingDirection` 仅接受上表范围内的枚举值，越界值被忽略（不钳制），段落样式沿用继承值或默认值。
+    /// @discussion 行高区间的 `-` 两侧必须都有内容，非法的区间写法（如 `30-`、`-5`）整个行高属性被忽略，不会降级按多倍行高解析。
+    /// @discussion 属性个数超过 10 时，多余的属性被丢弃，前 10 个属性照常生效。
     /// @discussion 示例：
     /// @code
-    /// NSString *XZML1 = @"<20L30H^Paragraph>";   // 最小行高 20.0 point 最大行高 30.0 point
-    /// NSString *XZML2 = @"<1.5X^Paragraph>";     // 1.5 倍行高
-    /// NSString *XZML3 = @"<24^Paragraph>";       // 未指定标记符，最小行高 24.0 point
-    /// NSString *XZML4 = @"<34F20X^Paragraph>";   // 首行缩进 34.0 point 多倍行高 20.0
+    /// NSString *XZML1 = @"<1.5^Paragraph>";              // 1.5 倍行高
+    /// NSString *XZML2 = @"<20-30^Paragraph>";            // 最小行高 20.0 point 最大行高 30.0 point
+    /// NSString *XZML3 = @"<0@5^Paragraph>";              // 行间距 5.0 point
+    /// NSString *XZML4 = @"<0@5@12@1^Paragraph>";         // 行间距 5.0、首行缩进 12.0、居中对齐
+    /// NSString *XZML5 = @"<20-30@5@12@1@4@8@6@20@0@-1^Paragraph>"; // 指定全部 10 个段落属性
     /// @endcode
-    /// @discussion 由于样式标记的存在，样式间隔符`@`是可选的，样式顺序也是任意的。
+    /// @discussion 由于段落属性按位置解析，属性之间的顺序是固定的，`@` 分隔符也是必需的。
     XZMLAttributeParagraph = '^', // => |
     
 };
