@@ -96,7 +96,7 @@ static inline BOOL XZMLDSLTestASCII(NSString * substring, NSRange range, unichar
     return isascii(*character);
 }
 
-/// 非 UTF8 字符串的解析方式。
+/// 按字符（组合字符序列）逐个扫描 XZML，解析元素、样式与文本。
 static inline void XZMLDSL(XZMLDSLContext * const context, XZMLReadingMode mode) {
     /// 元素的层级
     NSUInteger __block hierarchies      = 0;
@@ -790,18 +790,34 @@ XZMLReadingMode XZMLDSLDidFindLinkAttribute(XZMLDSLContext * const context, NSSt
     return XZMLReadingModeNormal;
 }
 
-/// 写入最小行高。
-/// style 初始已携带继承/预设/默认的段落样式，值为 0 或非数字（如无值的标记符落入残留值时）不写入，避免覆盖上层行高。
-FOUNDATION_STATIC_INLINE void XZMLParagraphSetMinimumLineHeight(NSMutableParagraphStyle *style, NSString *value, NSRange range) {
-    CGFloat const lineHeight = [value substringWithRange:range].doubleValue;
-    if (lineHeight > 0) {
-        style.minimumLineHeight = lineHeight;
+/// 解析行高字段（段落样式的第一个字段）。`style` 初始已携带继承/预设/默认的段落样式，
+/// 非法或未指定的值不写入，避免覆盖上层行高。
+///
+/// - 含 `-` 时按 `最小行高-最大行高` 区间解析，`-` 两侧必须都有内容，否则整字段忽略；
+///   区间两端大小颠倒时自动交换，避免产出 `maximumLineHeight < minimumLineHeight` 的非法段落样式。
+/// - 不含 `-` 时按多倍行高解析，值非正数时不写入。
+///
+/// @note 非法的区间写法不降级按多倍行高解析，避免 `30-` 被解读成 30 倍行高这类灾难值。
+FOUNDATION_STATIC_INLINE void XZMLParagraphSetLineHeight(NSMutableParagraphStyle *style, NSString *value) {
+    if ([value containsString:@"-"]) {
+        NSArray<NSString *> * const limits = [value componentsSeparatedByString:@"-"];
+        if (limits.count != 2 || limits[0].length == 0 || limits[1].length == 0) {
+            return;
+        }
+        CGFloat const lower = limits[0].doubleValue;
+        CGFloat const upper = limits[1].doubleValue;
+        style.minimumLineHeight = MIN(lower, upper);
+        style.maximumLineHeight = MAX(lower, upper);
+        return;
+    }
+    CGFloat const multiple = value.doubleValue;
+    if (multiple > 0) {
+        style.lineHeightMultiple = multiple;
     }
 }
 
 XZMLReadingMode XZMLDSLDidFindParagraphAttribute(XZMLDSLContext * const context, NSString *value) {
-    NSUInteger const length = [value lengthOfBytesUsingEncoding:NSUTF8StringEncoding];
-    if (length == 0) {
+    if (value.length == 0) {
         return XZMLReadingModeNormal;
     }
     
@@ -811,7 +827,8 @@ XZMLReadingMode XZMLDSLDidFindParagraphAttribute(XZMLDSLContext * const context,
         ?: [[NSMutableParagraphStyle alloc] init];
     
     NSArray<NSString *> *values = [value componentsSeparatedByString:@"@"];
-    switch (values.count) {
+    // 只识别 10 个位段的段落属性，多余的位段直接丢弃，前面的照常生效
+    switch (MIN(values.count, 10)) {
         case 10: {
             NSWritingDirection const baseWritingDirection = values[9].integerValue;
             switch (baseWritingDirection) {
@@ -860,14 +877,7 @@ XZMLReadingMode XZMLDSLDidFindParagraphAttribute(XZMLDSLContext * const context,
         case 2:
             style.lineSpacing = values[1].doubleValue;
         case 1: {
-            NSString * const value = values[0];
-            if ([value containsString:@"-"]) {
-                NSArray<NSString *> *values = [value componentsSeparatedByString:@"-"];
-                style.minimumLineHeight = values[0].doubleValue;
-                style.maximumLineHeight = values[1].doubleValue;
-            } else {
-                style.lineHeightMultiple = value.doubleValue;
-            }
+            XZMLParagraphSetLineHeight(style, values[0]);
             break;
         }
         default:
