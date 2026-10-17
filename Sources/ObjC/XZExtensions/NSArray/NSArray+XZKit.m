@@ -191,13 +191,11 @@
 }
 
 - (id)xz_removeLastObject {
-    NSUInteger const count = self.count;
-    if (count == 0) {
+    id const object = [self lastObject];
+    if (object == nil) {
         return nil;
     }
-    NSUInteger const index = count - 1;
-    id const object = [self objectAtIndex:index];
-    [self removeObjectAtIndex:index];
+    [self removeLastObject];
     return object;
 }
 

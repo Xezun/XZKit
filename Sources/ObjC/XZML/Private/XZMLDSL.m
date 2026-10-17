@@ -9,6 +9,7 @@
 #import "XZMLDefines.h"
 #import "UIColor+XZKit.h"
 #import "XZLog.h"
+#import "NSArray+XZKit.h"
 
 /// XZML 元素的开始和结束标记，固定为 `<` 和 `>` 字符，不支持自定义。
 #define XZMLElementStart '<'
@@ -30,15 +31,15 @@ static NSInteger const XZMLSecurityRepeatLimit = 64;
 /// 字体名缩写表。key 为缩写，value 为完整字体名；由 XZMLSetFontAbbreviations 整体替换，解析期间只读。
 static NSDictionary<NSString *, NSString *> *_fontAbbreviations = nil;
 
-/// XZML 元素属性的行为。
+/// 解析 XZML 元素的模式。
 ///
-/// 在 XZML 中，可通过属性控制文本。在解析的过程中，如果已解析的属性，已经决定后续解析方式，以提高解析效率。
+/// 在解析的过程中，如果已解析的样式，已经确定元素的显示内容，会切换后续解析模式，提高解析效率。
 typedef NS_ENUM(NSUInteger, XZMLReadingMode) {
-    /// 无操作，正常模式，解析属性和文本。
+    /// 正常模式，解析样式和文本。
     XZMLReadingModeNormal,
     /// 只解析当前元素中的文本。
     XZMLReadingModeText,
-    /// 提前结束当前元素，正在解析的元素，不解析后续的属性和文本。
+    /// 提前结束当前元素，正在解析的元素，不解析后续的样式和文本。
     XZMLReadingModeBreak,
     /// 忽略元素，跳过元素，当作整个元素不存在，没有元素解析事件。
     XZMLReadingModeIgnore,
@@ -47,6 +48,16 @@ typedef NS_ENUM(NSUInteger, XZMLReadingMode) {
 /// XZML 解析过程的中间量。
 typedef struct XZMLDSLContext {
     NSString * __unsafe_unretained _XZML;
+    /// 是否为逃逸模式。
+    BOOL _isEscaping; //       = NO;
+    /// 元素是否还有样式需要解析。将顶层当作没有样式、没有开始结束标记的普通元素解析。
+    BOOL _isAttributeEnded; // = YES;
+    /// 当前元素的解析模式。
+    XZMLReadingMode _currentMode;//     = mode;
+    /// 元素层级栈，存储已解析的元素解析模式，实际值为 XZMLReadingMode 枚举。
+    NSMutableArray<NSNumber *> * const _hierarchies;// = [NSMutableArray array];
+    /// 存储解析过程中的普通文本。
+    NSMutableString            * const _fragment;//    = [NSMutableString string];
     
     /// 纯文本模式时，此值不为 nil
     NSMutableString           * __unsafe_unretained _string;
@@ -61,16 +72,14 @@ typedef struct XZMLDSLContext {
     NSMutableArray<NSMutableDictionary *>    * const __unsafe_unretained _computeAttributes;
     /// 当前正在解析中的文本的内联样式，一般情况下就是 `_elementAttributes` 的最后一个元素。
     NSMutableDictionary<NSAttributedStringKey, id> * __unsafe_unretained _currentAttribute;
-    /// XZMLReadingMode
-    NSMutableArray<NSNumber *>                     * __unsafe_unretained _modes;
 } XZMLDSLContext;
 
 // MARK: - 语法解析
 
-static void XZMLDSLDidBeginElement(XZMLDSLContext * const context, NSUInteger const hierarchies);
+static void XZMLDSLDidBeginElement(XZMLDSLContext * const context);
 static void XZMLDSLDidFindText(XZMLDSLContext * const context, NSString *value);
 static XZMLReadingMode XZMLDSLDidFindAttribute(XZMLDSLContext * const context, XZMLAttribute attribute, NSString *value);
-static void XZMLDSLDidEndElement(XZMLDSLContext * const context, NSUInteger const hierarchies);
+static void XZMLDSLDidEndElement(XZMLDSLContext * const context);
 
 /// 检测字符是否为 XZML 样式属性标记符。
 static inline BOOL XZMLDSLTestAttribute(char character) {
@@ -87,302 +96,301 @@ static inline BOOL XZMLDSLTestAttribute(char character) {
     }
 }
 
-/// 判断字符是否为 ASCII 字符。只有函数返回 YES 参数 character 的值才是 ASCII 字符。
-static inline BOOL XZMLDSLTestASCII(NSString * substring, NSRange range, unichar *character) {
-    if (substring == nil || range.length == 0) {
-        return NO;
+/// 只有 isASCIICharacter  参数为 YES 时，参数 asciiCharacter 的值才是 ASCII 字符。
+static inline void XZMLDSLStringEnumerator(XZMLDSLContext * const context, NSString * const substring, BOOL const isASCIICharacter, unichar const asciiCharacter) {
+    switch (context->_currentMode) {
+        case XZMLReadingModeNormal: {
+            // 非 ASCII 字符
+            if (!isASCIICharacter) {
+                context->_isEscaping = NO;
+                [context->_fragment appendString:substring];
+                return;
+            }
+            
+            // 逃逸模式
+            if (context->_isEscaping) {
+                context->_isEscaping = NO;
+                [context->_fragment appendString:substring];
+                return;
+            }
+            
+            // 逃逸标记
+            if (asciiCharacter == XZMLEscapingMark) {
+                context->_isEscaping = YES;
+                return;
+            }
+            
+            // 结束标记
+            if (asciiCharacter == XZMLElementEnd) {
+                // 顶层元素
+                if (context->_hierarchies.count == 0) {
+                    [context->_fragment appendString:substring];
+                    break;
+                }
+                
+                // 结算文本
+                NSUInteger const length = context->_fragment.length;
+                if (length > 0) {
+                    XZMLDSLDidFindText(context, context->_fragment);
+                    [context->_fragment deleteCharactersInRange:NSMakeRange(0, length)];
+                }
+                
+                // 结束元素
+                context->_isAttributeEnded = YES; // 子元素提前终止父元素的样式识别
+                context->_currentMode = [[context->_hierarchies xz_removeLastObject] unsignedIntegerValue]; // 取出父元素的解析模式
+                XZMLDSLDidEndElement(context);
+                return;
+            }
+            
+            // 开始标记
+            if (asciiCharacter == XZMLElementStart) {
+                // 结算文本
+                NSUInteger const length = context->_fragment.length;
+                if (length > 0) {
+                    XZMLDSLDidFindText(context, context->_fragment);
+                    [context->_fragment deleteCharactersInRange:NSMakeRange(0, length)];
+                }
+                
+                // 层级递进
+                XZMLDSLDidBeginElement(context);
+                [context->_hierarchies addObject:@(context->_currentMode)]; // 将解析模式存入层级栈
+                context->_isAttributeEnded = NO;                   // 新元素开始，重新开始样式解析
+                return;
+            }
+                            
+            // 样式段已结束
+            if (context->_isAttributeEnded) {
+                [context->_fragment appendString:substring];
+                return;
+            }
+            
+            // 样式标记
+            if (XZMLDSLTestAttribute(asciiCharacter)) {
+                // 结算样式
+                context->_currentMode = XZMLDSLDidFindAttribute(context, asciiCharacter, context->_fragment);
+                [context->_fragment deleteCharactersInRange:NSMakeRange(0, context->_fragment.length)];
+                return;
+            }
+            
+            // 普通字符
+            [context->_fragment appendString:substring];
+            return;
+        }
+            
+        case XZMLReadingModeText: {
+            // 非 ASCII 字符
+            if (!isASCIICharacter) {
+                context->_isEscaping = NO;
+                if (substring) [context->_fragment appendString:substring];
+                return;
+            }
+            
+            // 逃逸模式
+            if (context->_isEscaping) {
+                context->_isEscaping = NO;
+                [context->_fragment appendString:substring];
+                return;
+            }
+            
+            // 逃逸标记
+            if (asciiCharacter == XZMLEscapingMark) {
+                context->_isEscaping = YES;
+                return;
+            }
+            
+            // 结束标记
+            if (asciiCharacter == XZMLElementEnd) {
+                if (context->_hierarchies.count == 0) {
+                    [context->_fragment appendString:substring];
+                    return;
+                }
+                
+                // 结算文本
+                NSUInteger const length = context->_fragment.length;
+                if (length > 0) {
+                    XZMLDSLDidFindText(context, context->_fragment);
+                    [context->_fragment deleteCharactersInRange:NSMakeRange(0, length)];
+                }
+                
+                // 结束元素
+                XZMLDSLDidEndElement(context);
+                context->_currentMode = [[context->_hierarchies xz_removeLastObject] unsignedIntegerValue];
+                context->_isAttributeEnded = YES;
+                return;
+            }
+            
+            // 开始标记
+            if (asciiCharacter == XZMLElementStart) {
+                // 结算文本
+                NSUInteger const length = context->_fragment.length;
+                if (length > 0) {
+                    XZMLDSLDidFindText(context, context->_fragment);
+                    [context->_fragment deleteCharactersInRange:NSMakeRange(0, length)];
+                }
+                
+                // 层级递进
+                [context->_hierarchies addObject:@(context->_currentMode)];
+                context->_isAttributeEnded = NO;
+                XZMLDSLDidBeginElement(context);
+                return;
+            }
+                            
+            // 样式段已结束
+            if (context->_isAttributeEnded) {
+                [context->_fragment appendString:substring];
+                return;
+            }
+            
+            // 样式标记
+            if (XZMLDSLTestAttribute(asciiCharacter)) {
+                NSUInteger const length = context->_fragment.length;
+                if (length > 0) {
+                    [context->_fragment deleteCharactersInRange:NSMakeRange(0, length)];
+                }
+                return;
+            }
+            
+            // 普通字符
+            [context->_fragment appendString:substring];
+            return;
+        }
+            
+        case XZMLReadingModeBreak: {
+            if (!isASCIICharacter) {
+                context->_isEscaping = NO;
+                return;
+            }
+            // 逃逸模式
+            if (context->_isEscaping) {
+                context->_isEscaping = NO;
+                return;
+            }
+            
+            // 逃逸标记
+            if (asciiCharacter == XZMLEscapingMark) {
+                context->_isEscaping = YES;
+                return;
+            }
+            
+            // 结束标记
+            if (asciiCharacter == XZMLElementEnd) {
+                if (context->_hierarchies.count == 0) {
+                    return;
+                }
+                
+                // 元素提前终止，但是元素依然存在
+                XZMLDSLDidFindText(context, context->_fragment);
+                
+                context->_currentMode = [[context->_hierarchies xz_removeLastObject] unsignedIntegerValue];
+                context->_isAttributeEnded = YES;
+                XZMLDSLDidEndElement(context);
+            }
+            
+            // 开始标记
+            if (asciiCharacter == XZMLElementStart) {
+                [context->_hierarchies addObject:@(context->_currentMode)];
+                context->_isAttributeEnded = NO;
+                context->_currentMode = XZMLReadingModeIgnore;
+            }
+            return;
+        }
+            
+        case XZMLReadingModeIgnore: {
+            if (!isASCIICharacter) {
+                context->_isEscaping = NO;
+                return;
+            }
+            
+            // 逃逸模式
+            if (context->_isEscaping) {
+                context->_isEscaping = NO;
+                return;
+            }
+            
+            // 逃逸标记
+            if (asciiCharacter == XZMLEscapingMark) {
+                context->_isEscaping = YES;
+                return;
+            }
+            
+            // 结束标记
+            if (asciiCharacter == XZMLElementEnd) {
+                if (context->_hierarchies.count == 0) {
+                    return;
+                }
+                context->_currentMode = [[context->_hierarchies xz_removeLastObject] unsignedIntegerValue];
+            }
+            
+            // 开始标记
+            if (asciiCharacter == XZMLElementStart) {
+                [context->_hierarchies addObject:@(context->_currentMode)];
+            }
+            return;
+        }
     }
-    // 多字节字符
-    if (range.length > 1) {
-        return NO;
-    }
-    *character = [substring characterAtIndex:0];
-    return isascii(*character);
 }
 
 /// 按字符（组合字符序列）逐个扫描 XZML，解析元素、样式与文本。
-static inline void XZMLDSL(XZMLDSLContext * const context, XZMLReadingMode mode) {
-    /// 元素的层级
-    NSUInteger __block hierarchies      = 0;
-    /// 是否为逃逸模式
-    BOOL       __block isEscaping       = NO;
-    /// 元素是否还有样式需要解析。将顶层当作没有样式、没有开始结束标记的普通元素解析。
-    BOOL       __block isAttributeEnded = YES;
+static inline void XZMLDSL(XZMLDSLContext * const context) {
+    XZMLDSLDidBeginElement(context);
     
-    context->_modes[hierarchies] = @(mode);
-    XZMLDSLDidBeginElement(context, hierarchies);
-    
-    /// 文本段
-    NSMutableString          * const fragment = [NSMutableString string];
+    // 遍历语义上的单个字符。
     NSRange                    const eRange   = NSMakeRange(0, context->_XZML.length);
     NSStringEnumerationOptions const eOptions = NSStringEnumerationByComposedCharacterSequences;
     [context->_XZML enumerateSubstringsInRange:eRange options:eOptions usingBlock:^(NSString * _Nullable substring, NSRange substringRange, NSRange enclosingRange, BOOL * _Nonnull stop) {
-        // 判断当前字符是否为 ASCII 字符
-        unichar asciiCharacter = 0;
-        BOOL const isASCIICharacter = XZMLDSLTestASCII(substring, substringRange, &asciiCharacter);
-        
-        switch ([context->_modes[hierarchies] unsignedIntegerValue]) {
-            case XZMLReadingModeNormal: {
-                // 非 ASCII 字符
-                if (!isASCIICharacter) {
-                    isEscaping = NO;
-                    if (substring) [fragment appendString:substring];
-                    return;
-                }
-                
-                // 逃逸模式
-                if (isEscaping) {
-                    isEscaping = NO;
-                    [fragment appendString:substring];
-                    return;
-                }
-                
-                // 逃逸标记
-                if (asciiCharacter == XZMLEscapingMark) {
-                    isEscaping = YES;
-                    return;
-                }
-                
-                // 结束标记
-                if (asciiCharacter == XZMLElementEnd) {
-                    // 顶层元素
-                    if (hierarchies == 0) {
-                        [fragment appendString:substring];
-                        break;
-                    }
-                    
-                    // 结算文本
-                    NSUInteger const length = fragment.length;
-                    if (length > 0) {
-                        XZMLDSLDidFindText(context, fragment);
-                        [fragment deleteCharactersInRange:NSMakeRange(0, length)];
-                    }
-                    
-                    // 结束元素
-                    XZMLDSLDidEndElement(context, hierarchies);
-                    hierarchies -= 1;       // 返回父元素层级
-                    isAttributeEnded = YES; // 子元素提前终止父元素的样式识别
-                    return;
-                }
-                
-                // 开始标记
-                if (asciiCharacter == XZMLElementStart) {
-                    // 结算文本
-                    NSUInteger const length = fragment.length;
-                    if (length > 0) {
-                        XZMLDSLDidFindText(context, fragment);
-                        [fragment deleteCharactersInRange:NSMakeRange(0, length)];
-                    }
-                    
-                    // 层级递进
-                    hierarchies += 1;
-                    isAttributeEnded = NO; 
-                    context->_modes[hierarchies] = @(XZMLReadingModeNormal);
-                    XZMLDSLDidBeginElement(context, hierarchies);
-                    return;
-                }
-                                
-                // 样式段已结束
-                if (isAttributeEnded) {
-                    [fragment appendString:substring];
-                    return;
-                }
-                
-                // 样式标记
-                if (XZMLDSLTestAttribute(asciiCharacter)) {
-                    // 结算样式
-                    XZMLReadingMode const newElementMode = XZMLDSLDidFindAttribute(context, asciiCharacter, fragment);
-                    [fragment deleteCharactersInRange:NSMakeRange(0, fragment.length)];
-                    context->_modes[hierarchies] = @(newElementMode);
-                    return;
-                }
-                
-                // 普通字符
-                [fragment appendString:substring];
-                return;
-            }
-                
-            case XZMLReadingModeText: {
-                // 非 ASCII 字符
-                if (!isASCIICharacter) {
-                    isEscaping = NO;
-                    if (substring) [fragment appendString:substring];
-                    return;
-                }
-                
-                // 逃逸模式
-                if (isEscaping) {
-                    isEscaping = NO;
-                    [fragment appendString:substring];
-                    return;
-                }
-                
-                // 逃逸标记
-                if (asciiCharacter == XZMLEscapingMark) {
-                    isEscaping = YES;
-                    return;
-                }
-                
-                // 结束标记
-                if (asciiCharacter == XZMLElementEnd) {
-                    if (hierarchies == 0) {
-                        [fragment appendString:substring];
-                        return;
-                    }
-                    
-                    // 结算文本
-                    NSUInteger const length = fragment.length;
-                    if (length > 0) {
-                        XZMLDSLDidFindText(context, fragment);
-                        [fragment deleteCharactersInRange:NSMakeRange(0, length)];
-                    }
-                    
-                    // 结束元素
-                    XZMLDSLDidEndElement(context, hierarchies);
-                    hierarchies -= 1;
-                    isAttributeEnded = YES;
-                    return;
-                }
-                
-                // 开始标记
-                if (asciiCharacter == XZMLElementStart) {
-                    // 结算文本
-                    NSUInteger const length = fragment.length;
-                    if (length > 0) {
-                        XZMLDSLDidFindText(context, fragment);
-                        [fragment deleteCharactersInRange:NSMakeRange(0, length)];
-                    }
-                    
-                    // 层级递进
-                    hierarchies += 1;
-                    isAttributeEnded = NO;
-                    context->_modes[hierarchies] = @(XZMLReadingModeText);
-                    XZMLDSLDidBeginElement(context, hierarchies);
-                    return;
-                }
-                                
-                // 样式段已结束
-                if (isAttributeEnded) {
-                    [fragment appendString:substring];
-                    return;
-                }
-                
-                // 样式标记
-                if (XZMLDSLTestAttribute(asciiCharacter)) {
-                    NSUInteger const length = fragment.length;
-                    if (length > 0) {
-                        [fragment deleteCharactersInRange:NSMakeRange(0, length)];
-                    }
-                    return;
-                }
-                
-                // 普通字符
-                [fragment appendString:substring];
-                return;
-            }
-                
-            case XZMLReadingModeBreak: {
-                if (!isASCIICharacter) {
-                    isEscaping = NO;
-                    return;
-                }
-                // 逃逸模式
-                if (isEscaping) {
-                    isEscaping = NO;
-                    return;
-                }
-                
-                // 逃逸标记
-                if (asciiCharacter == XZMLEscapingMark) {
-                    isEscaping = YES;
-                    return;
-                }
-                
-                // 结束标记
-                if (asciiCharacter == XZMLElementEnd) {
-                    if (hierarchies == 0) {
-                        return;
-                    }
-                    
-                    // 元素提前终止，但是元素依然存在
-                    XZMLDSLDidFindText(context, fragment);
-                    
-                    hierarchies -= 1;
-                    isAttributeEnded = YES;
-                    XZMLDSLDidEndElement(context, hierarchies);
-                }
-                
-                // 开始标记
-                if (asciiCharacter == XZMLElementStart) {
-                    hierarchies += 1;
-                    isAttributeEnded = NO;
-                    context->_modes[hierarchies] = @(XZMLReadingModeIgnore);
-                }
-                return;
-            }
-                
-            case XZMLReadingModeIgnore: {
-                if (!isASCIICharacter) {
-                    isEscaping = NO;
-                    return;
-                }
-                
-                // 逃逸模式
-                if (isEscaping) {
-                    isEscaping = NO;
-                    return;
-                }
-                
-                // 逃逸标记
-                if (asciiCharacter == XZMLEscapingMark) {
-                    isEscaping = YES;
-                    return;
-                }
-                
-                // 结束标记
-                if (asciiCharacter == XZMLElementEnd) {
-                    if (hierarchies == 0) {
-                        return;
-                    }
-                    hierarchies -= 1;
-                }
-                
-                // 开始标记
-                if (asciiCharacter == XZMLElementStart) {
-                    hierarchies += 1;
-                    context->_modes[hierarchies] = @(XZMLReadingModeIgnore);
-                }
-                return;
-            }
+        if (substring == nil || substringRange.length == 0) {
+            return;
+        }
+        if (substringRange.length > 1) {
+            // 多字节字符
+            XZMLDSLStringEnumerator(context, substring, NO, 0);
+        } else {
+            // NSString 默认是 UTF16 编码的
+            unichar const asciiCharacter   = [substring characterAtIndex:0];
+            BOOL    const isASCIICharacter = isascii(asciiCharacter);
+            XZMLDSLStringEnumerator(context, substring, isASCIICharacter, asciiCharacter);
         }
     }];
-    
-    if (fragment.length > 0) {
-        XZMLDSLDidFindText(context, fragment);
-    }
-    
     // 闭合所有元素
-    for (NSInteger i = hierarchies; i >= 0; i--) {
-        XZMLDSLDidEndElement(context, i);
+    while (context->_hierarchies.count > 0) {
+        NSRange range = NSMakeRange(context->_XZML.length, 1);
+        XZMLDSLStringEnumerator(context, @"", YES, XZMLElementEnd);
+        context->_currentMode = [[context->_hierarchies xz_removeLastObject] unsignedIntegerValue];
     }
+    
+    // 结算文本
+    if (context->_fragment.length > 0) {
+        XZMLDSLDidFindText(context, context->_fragment);
+    }
+    // 闭合顶层元素
+    XZMLDSLDidEndElement(context);
 }
 
 static void XZMLDSLWithMode(NSString *XZMLString, XZMLReadingMode mode, NSMutableString * _Nullable string, NSMutableAttributedString * _Nullable attributedString, NSDictionary<NSAttributedStringKey, id> * _Nullable defaultAttributes) {
-    NSMutableArray * const modes = [NSMutableArray arrayWithCapacity:16];
-    NSMutableArray * const elementAttributes = [NSMutableArray arrayWithCapacity:16];
-    NSMutableArray * const computeAttributes = [NSMutableArray arrayWithCapacity:16];
+    NSMutableArray  * const elementAttributes = [NSMutableArray arrayWithCapacity:16];
+    NSMutableArray  * const computeAttributes = [NSMutableArray arrayWithCapacity:16];
+    NSMutableArray  * const hierarchies       = [NSMutableArray array];
+    NSMutableString * const fragment          = [NSMutableString string];
+    
+    BOOL isEscaping = NO;
+    BOOL isAttributeEnded = NO;
+     
     [computeAttributes addObject:[NSMutableDictionary dictionary]];
     XZMLDSLContext context = {
         XZMLString,
+        NO,     // _isEscaping
+        YES,    // _isAttributeEnded
+        mode,   // _currentMode
+        hierarchies,
+        fragment,
         string,
         attributedString,
         defaultAttributes,
         elementAttributes,
         computeAttributes,
-        nil, // currentAttribute
-        modes
+        nil     // _currentAttribute
     };
-    XZMLDSL(&context, mode);
+    XZMLDSL(&context);
 }
 
 void XZMLDSLWithAttributedString(NSString *XZMLString, NSMutableAttributedString *attributedString, NSDictionary<NSAttributedStringKey, id> * _Nullable defaultAttributes) {
@@ -410,15 +418,15 @@ static XZMLReadingMode XZMLDSLDidFindSecurityAttribute(XZMLDSLContext * const co
 static XZMLReadingMode XZMLDSLDidFindLinkAttribute(XZMLDSLContext * const context, NSString *value);
 static XZMLReadingMode XZMLDSLDidFindParagraphAttribute(XZMLDSLContext * const context, NSString *value);
 
-static void XZMLDSLDidBeginElement(XZMLDSLContext * const context, NSUInteger const hierarchies) {
-    XZLog(@"XZMLDSLDidBeginElement: %lu", hierarchies);
+static void XZMLDSLDidBeginElement(XZMLDSLContext * const context) {
+    XZLog(@"XZMLDSLDidBeginElement");
     // 继承父元素样式，如果没有则新建
     NSMutableDictionary * const _currentAttribute = [context->_elementAttributes.lastObject mutableCopy] ?: [NSMutableDictionary dictionary];
     context->_currentAttribute = _currentAttribute;
     // 将当前样式入栈。
     [context->_elementAttributes addObject:context->_currentAttribute];
     // 合并后的样式
-    [context->_computeAttributes addObject:[NSMutableDictionary dictionary]];
+    [context->_computeAttributes addObject:[NSMutableDictionary dictionary]];    
 }
 
 static void XZMLDSLDidFindText(XZMLDSLContext * const context, NSString *text) {
@@ -500,8 +508,8 @@ static XZMLReadingMode XZMLDSLDidFindAttribute(XZMLDSLContext * const context, X
     }
 }
 
-static void XZMLDSLDidEndElement(XZMLDSLContext * const context, NSUInteger const hierarchies) {
-    XZLog(@"XZMLDSLDidEndElement: %lu", hierarchies);
+static void XZMLDSLDidEndElement(XZMLDSLContext * const context) {
+    XZLog(@"XZMLDSLDidEndElement");
     [context->_elementAttributes removeLastObject];
     [context->_computeAttributes removeLastObject];
     context->_currentAttribute = context->_elementAttributes.lastObject;

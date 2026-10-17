@@ -235,7 +235,7 @@
 - (void)testEscapeRoundTrip {
     NSArray<NSString *> *samples = @[@"a<b", @"a>b", @"a&b", @"a#b", @"a$b", @"a*b", @"a~b", @"a^b", @"a@b", @"a,b", @"a\\b", @"<,#&$*~^>\\"];
     for (NSString *sample in samples) {
-        NSString *escaped = sample.stringByEscapingXZMLReservedCharacters;
+        NSString *escaped = sample.stringByAddingXZMLEscapes;
         XCTAssertEqualObjects([self attributedStringForXZML:escaped attributes:nil].string, sample, @"往返失败: %@", sample);
     }
 }
@@ -255,11 +255,11 @@
 
 /// 转义属性：仅保留字符被转义，多字节字符不受影响。
 - (void)testStringByEscaping {
-    XCTAssertEqualObjects(@"a<b".stringByEscapingXZMLReservedCharacters, @"a\\<b");
-    XCTAssertEqualObjects(@"a,b".stringByEscapingXZMLReservedCharacters, @"a,b");
-    XCTAssertEqualObjects(@"中文".stringByEscapingXZMLReservedCharacters, @"中文");
-    XCTAssertEqualObjects(@"plain".stringByEscapingXZMLReservedCharacters, @"plain");
-    XCTAssertEqualObjects(@"\\".stringByEscapingXZMLReservedCharacters, @"\\\\");
+    XCTAssertEqualObjects(@"a<b".stringByAddingXZMLEscapes, @"a\\<b");
+    XCTAssertEqualObjects(@"a,b".stringByAddingXZMLEscapes, @"a,b");
+    XCTAssertEqualObjects(@"中文".stringByAddingXZMLEscapes, @"中文");
+    XCTAssertEqualObjects(@"plain".stringByAddingXZMLEscapes, @"plain");
+    XCTAssertEqualObjects(@"\\".stringByAddingXZMLEscapes, @"\\\\");
 }
 
 #pragma mark - 颜色样式（#）
