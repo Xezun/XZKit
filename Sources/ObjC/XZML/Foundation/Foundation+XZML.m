@@ -95,8 +95,8 @@
     static dispatch_once_t onceToken;
     dispatch_once(&onceToken, ^{
         NSMutableCharacterSet *characterSet = [NSMutableCharacterSet characterSetWithCharactersInString:@"<\\>"];
-        const NSInteger kAttributesCount = 6;
-        char kAttributes[] = {
+        NSInteger     const kAttributesCount   = 6;
+        XZMLAttribute const kAttributesArray[] = {
             XZMLAttributeColor,
             XZMLAttributeFont,
             XZMLAttributeDecoration,
@@ -105,7 +105,7 @@
             XZMLAttributeParagraph
         };
         for (NSInteger i = 0; i < kAttributesCount; i++) {
-            char const attribute = kAttributes[i];
+            XZMLAttribute const attribute = kAttributesArray[i];
             switch (attribute) {
                 case XZMLAttributeColor:
                 case XZMLAttributeFont:
