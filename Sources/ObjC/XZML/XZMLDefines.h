@@ -164,14 +164,14 @@ typedef NS_ENUM(char, XZMLAttribute) {
     /// @discussion 属性个数超过 10 时，多余的属性被丢弃，前 10 个属性照常生效。
     /// @discussion 示例：
     /// @code
-    /// NSString *XZML1 = @"<1.5^Paragraph>";              // 1.5 倍行高
-    /// NSString *XZML2 = @"<20-30^Paragraph>";            // 最小行高 20.0 point 最大行高 30.0 point
-    /// NSString *XZML3 = @"<0:5^Paragraph>";              // 行间距 5.0 point
-    /// NSString *XZML4 = @"<0:5:12:1^Paragraph>";         // 行间距 5.0、首行缩进 12.0、居中对齐
-    /// NSString *XZML5 = @"<20-30:5:12:1:4:8:6:20:0:-1^Paragraph>"; // 指定全部 10 个段落属性
+    /// NSString *XZML1 = @"<1.5|Paragraph>";              // 1.5 倍行高
+    /// NSString *XZML2 = @"<20-30|Paragraph>";            // 最小行高 20.0 point 最大行高 30.0 point
+    /// NSString *XZML3 = @"<0:5|Paragraph>";              // 行间距 5.0 point
+    /// NSString *XZML4 = @"<0:5:12:1|Paragraph>";         // 行间距 5.0、首行缩进 12.0、居中对齐
+    /// NSString *XZML5 = @"<20-30:5:12:1:4:8:6:20:0:-1|Paragraph>"; // 指定全部 10 个段落属性
     /// @endcode
     /// @discussion 由于段落属性按位置解析，属性之间的顺序是固定的，`:` 分隔符也是必需的。
-    XZMLAttributeParagraph = '^', // => |
+    XZMLAttributeParagraph = '|',
     
 };
 

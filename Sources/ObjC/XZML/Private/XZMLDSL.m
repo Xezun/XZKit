@@ -49,15 +49,15 @@ typedef NS_ENUM(NSUInteger, XZMLReadingMode) {
 typedef struct XZMLDSLContext {
     NSString * __unsafe_unretained _XZML;
     /// 是否为逃逸模式。
-    BOOL _isEscaping; //       = NO;
+    BOOL _isEscaping;
     /// 元素是否还有样式需要解析。将顶层当作没有样式、没有开始结束标记的普通元素解析。
-    BOOL _isAttributeEnded; // = YES;
+    BOOL _isAttributeEnded;
     /// 当前元素的解析模式。
-    XZMLReadingMode _currentMode;//     = mode;
+    XZMLReadingMode _currentMode;
     /// 元素层级栈，存储已解析的元素解析模式，实际值为 XZMLReadingMode 枚举。
-    NSMutableArray<NSNumber *> * const _hierarchies;// = [NSMutableArray array];
+    NSMutableArray<NSNumber *> * const _hierarchies;
     /// 存储解析过程中的普通文本。
-    NSMutableString            * const _fragment;//    = [NSMutableString string];
+    NSMutableString            * const _fragment;
     
     /// 纯文本模式时，此值不为 nil
     NSMutableString           * __unsafe_unretained _string;

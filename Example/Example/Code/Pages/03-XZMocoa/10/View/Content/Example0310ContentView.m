@@ -66,7 +66,7 @@
 
 - (void)setContent:(NSString *)content {
     // 首行缩进 28 行高25 两端对齐
-    NSString *xzml = [NSString stringWithFormat:@"<0-25:0:28:3^%@>", content];
+    NSString *xzml = [NSString stringWithFormat:@"<0-25:0:28:3|%@>", content];
     [_contentLabel setXZMLString:xzml];
 }
 
