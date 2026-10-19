@@ -233,7 +233,7 @@
 
 /// 转义与还原往返：转义后的字符串解析应还原原文。
 - (void)testEscapeRoundTrip {
-    NSArray<NSString *> *samples = @[@"a<b", @"a>b", @"a&b", @"a#b", @"a$b", @"a*b", @"a~b", @"a^b", @"a@b", @"a,b", @"a\\b", @"<,#&$*~^>\\"];
+    NSArray<NSString *> *samples = @[@"a<b", @"a>b", @"a&b", @"a#b", @"a$b", @"a*b", @"a~b", @"a^b", @"a@b", @"a:b", @"a\\b", @"<:#&$*~^>\\"];
     for (NSString *sample in samples) {
         NSString *escaped = sample.stringByAddingXZMLEscapes;
         XCTAssertEqualObjects([self attributedStringForXZML:escaped attributes:nil].string, sample, @"往返失败: %@", sample);
@@ -242,21 +242,21 @@
 
 #pragma mark - 保留字符集
 
-/// 保留字符集覆盖所有样式标记符与转义符；子属性分隔符 `,` 不是保留字符。
+/// 保留字符集覆盖所有样式标记符与转义符；子属性分隔符 `:` 不是保留字符。
 - (void)testReservedCharacterSet {
     NSCharacterSet *set = NSCharacterSet.XZMLReservedCharacterSet;
     for (NSUInteger i = 0; i < @"<#&$*~^>\\".length; i++) {
         unichar c = [@"<#&$*~^>\\" characterAtIndex:i];
         XCTAssertTrue([set characterIsMember:c], @"U+%04X => %c 应为保留字符", c, (char)c);
     }
-    // 分隔符仅在样式值区域生效，文本中的 `,` 无需转义
-    XCTAssertFalse([set characterIsMember:',']);
+    // 分隔符仅在样式值区域生效，文本中的 `:` 无需转义
+    XCTAssertFalse([set characterIsMember:':']);
 }
 
 /// 转义属性：仅保留字符被转义，多字节字符不受影响。
 - (void)testStringByEscaping {
     XCTAssertEqualObjects(@"a<b".stringByAddingXZMLEscapes, @"a\\<b");
-    XCTAssertEqualObjects(@"a,b".stringByAddingXZMLEscapes, @"a,b");
+    XCTAssertEqualObjects(@"a:b".stringByAddingXZMLEscapes, @"a:b");
     XCTAssertEqualObjects(@"中文".stringByAddingXZMLEscapes, @"中文");
     XCTAssertEqualObjects(@"plain".stringByAddingXZMLEscapes, @"plain");
     XCTAssertEqualObjects(@"\\".stringByAddingXZMLEscapes, @"\\\\");
@@ -273,15 +273,15 @@
     XCTAssertEqualObjects(NSStringFromUIColor([self attributesAtIndex:0 ofString:[self attributedStringForXZML:@"<D34B#x>" attributes:nil]][NSForegroundColorAttributeName]), @"#DD3344BB");
     // RRGGBBAA
     XCTAssertEqualObjects(NSStringFromUIColor([self attributesAtIndex:0 ofString:[self attributedStringForXZML:@"<12BC8955#x>" attributes:nil]][NSForegroundColorAttributeName]), @"#12BC8955");
-    // 前景色,背景色
-    NSDictionary *attributes = [self attributesAtIndex:0 ofString:[self attributedStringForXZML:@"<F00,00F#ab>" attributes:nil]];
+    // 前景色:背景色
+    NSDictionary *attributes = [self attributesAtIndex:0 ofString:[self attributedStringForXZML:@"<F00:00F#ab>" attributes:nil]];
     XCTAssertEqualObjects(NSStringFromUIColor(attributes[NSForegroundColorAttributeName]), @"#FF0000FF");
     XCTAssertEqualObjects(NSStringFromUIColor(attributes[NSBackgroundColorAttributeName]), @"#0000FFFF");
 }
 
 /// 颜色预设值：XZMLForegroundColorAttributeName。
 - (void)testColorPresetValue {
-    NSAttributedString *string = [self attributedStringForXZML:@"<,00F#x>" attributes:@{
+    NSAttributedString *string = [self attributedStringForXZML:@"<:00F#x>" attributes:@{
         XZMLForegroundColorAttributeName: UIColor.greenColor,
     }];
     // 前景色使用预设值，背景色使用指定值
@@ -310,22 +310,22 @@
 - (void)testFontSizeAndName {
     UIFont *defaultFont = [UIFont systemFontOfSize:14];
     // 指定字体名和字号
-    NSDictionary *attributes = [self attributesAtIndex:0 ofString:[self attributedStringForXZML:@"<Helvetica,20&x>" attributes:@{NSFontAttributeName: defaultFont}]];
+    NSDictionary *attributes = [self attributesAtIndex:0 ofString:[self attributedStringForXZML:@"<Helvetica:20&x>" attributes:@{NSFontAttributeName: defaultFont}]];
     UIFont *font = attributes[NSFontAttributeName];
     XCTAssertEqualObjects(font.fontName, @"Helvetica");
     XCTAssertEqualWithAccuracy(font.pointSize, 20, 0.001);
 
     // 仅字号：空字体名 + 字号
-    attributes = [self attributesAtIndex:0 ofString:[self attributedStringForXZML:@"<,18&x>" attributes:@{NSFontAttributeName: defaultFont}]];
+    attributes = [self attributesAtIndex:0 ofString:[self attributedStringForXZML:@"<:18&x>" attributes:@{NSFontAttributeName: defaultFont}]];
     font = attributes[NSFontAttributeName];
     XCTAssertEqualWithAccuracy(font.pointSize, 18, 0.001);
 
     // 基准线偏移
-    attributes = [self attributesAtIndex:0 ofString:[self attributedStringForXZML:@"<Helvetica,20,5&x>" attributes:nil]];
+    attributes = [self attributesAtIndex:0 ofString:[self attributedStringForXZML:@"<Helvetica:20:5&x>" attributes:nil]];
     XCTAssertEqualObjects(attributes[NSBaselineOffsetAttributeName], @(5));
 
     // 不存在的字体名：使用默认字体字形 + 指定字号
-    attributes = [self attributesAtIndex:0 ofString:[self attributedStringForXZML:@"<NoSuchFontXZ,22&x>" attributes:@{NSFontAttributeName: defaultFont}]];
+    attributes = [self attributesAtIndex:0 ofString:[self attributedStringForXZML:@"<NoSuchFontXZ:22&x>" attributes:@{NSFontAttributeName: defaultFont}]];
     font = attributes[NSFontAttributeName];
     XCTAssertEqualWithAccuracy(font.pointSize, 22, 0.001);
 }
@@ -333,7 +333,7 @@
 /// 字体预设值：XZMLFontAttributeName 决定字体名（默认子属性）。
 - (void)testFontPresetValue {
     UIFont *preset = [UIFont fontWithName:@"Courier" size:11];
-    NSDictionary *attributes = [self attributesAtIndex:0 ofString:[self attributedStringForXZML:@"<,30&x>" attributes:@{
+    NSDictionary *attributes = [self attributesAtIndex:0 ofString:[self attributedStringForXZML:@"<:30&x>" attributes:@{
         NSFontAttributeName: [UIFont systemFontOfSize:14],
         XZMLFontAttributeName: preset,
     }]];
@@ -346,7 +346,7 @@
 /// 缩写表只包含显式注册过的键；未命中的名称直接作为字体名查找。
 - (void)testFontAbbreviation {
     [self registerFontName:@"Courier" forAbbreviation:@"XZCR"];
-    NSDictionary *attributes = [self attributesAtIndex:0 ofString:[self attributedStringForXZML:@"<XZCR,12&x>" attributes:nil]];
+    NSDictionary *attributes = [self attributesAtIndex:0 ofString:[self attributedStringForXZML:@"<XZCR:12&x>" attributes:nil]];
     XCTAssertEqualObjects(((UIFont *)attributes[NSFontAttributeName]).fontName, @"Courier");
 
     // getter 返回当前生效的缩写表，未注册的键不存在
@@ -354,7 +354,7 @@
     XCTAssertNil(XZMLGetFontAbbreviations()[@"UnknownXZ"]);
 
     // 未注册缩写的真实字体名无需注册即可生效
-    attributes = [self attributesAtIndex:0 ofString:[self attributedStringForXZML:@"<Courier,12&x>" attributes:nil]];
+    attributes = [self attributesAtIndex:0 ofString:[self attributedStringForXZML:@"<Courier:12&x>" attributes:nil]];
     XCTAssertEqualObjects(((UIFont *)attributes[NSFontAttributeName]).fontName, @"Courier");
 
     // 注销缩写（fontName 传 nil 即移除该键），避免污染同一 target 内后续用例
@@ -377,11 +377,11 @@
     XCTAssertNil(attributes[NSStrikethroughStyleAttributeName]);
 
     // 双线删除线
-    attributes = [self attributesAtIndex:0 ofString:[self attributedStringForXZML:@"<0,1$x>" attributes:nil]];
+    attributes = [self attributesAtIndex:0 ofString:[self attributedStringForXZML:@"<0:1$x>" attributes:nil]];
     XCTAssertEqualObjects(attributes[NSStrikethroughStyleAttributeName], @(NSUnderlineStyleDouble));
 
     // 粗下划线 + 颜色
-    attributes = [self attributesAtIndex:0 ofString:[self attributedStringForXZML:@"<1,2,F00$x>" attributes:nil]];
+    attributes = [self attributesAtIndex:0 ofString:[self attributedStringForXZML:@"<1:2:F00$x>" attributes:nil]];
     XCTAssertEqualObjects(attributes[NSUnderlineStyleAttributeName], @(NSUnderlineStyleThick));
     XCTAssertEqualObjects(NSStringFromUIColor(attributes[NSUnderlineColorAttributeName]), @"#FF0000FF");
 }
@@ -419,26 +419,26 @@
 /// 安全模式：自定义替换符与重复次数。
 - (void)testSecurityMarkAndRepeat {
     NSDictionary *securityMode = @{XZMLSecurityModeAttributeName: @YES};
-    XCTAssertEqualObjects([self attributedStringForXZML:@"<X,3*abc>" attributes:securityMode].string, @"XXX");
-    XCTAssertEqualObjects([self attributedStringForXZML:@"<,2*abc>" attributes:securityMode].string, @"**");
+    XCTAssertEqualObjects([self attributedStringForXZML:@"<X:3*abc>" attributes:securityMode].string, @"XXX");
+    XCTAssertEqualObjects([self attributedStringForXZML:@"<:2*abc>" attributes:securityMode].string, @"**");
     // 指定重复次数时忽略文本长度
-    XCTAssertEqualObjects([self attributedStringForXZML:@"<,5*secret>" attributes:securityMode].string, @"*****");
+    XCTAssertEqualObjects([self attributedStringForXZML:@"<:5*secret>" attributes:securityMode].string, @"*****");
 }
 
 /// 安全模式：极端重复次数被钳制到上限 64，避免构造超大字符串。
 - (void)testSecurityRepeatLimit {
     NSDictionary *securityMode = @{XZMLSecurityModeAttributeName: @YES};
     NSString *expected = [@"" stringByPaddingToLength:64 withString:@"*" startingAtIndex:0];
-    XCTAssertEqualObjects([self attributedStringForXZML:@"<,1000000000*abc>" attributes:securityMode].string, expected);
+    XCTAssertEqualObjects([self attributedStringForXZML:@"<:1000000000*abc>" attributes:securityMode].string, expected);
     // 未超限的重复次数不受影响
-    XCTAssertEqualObjects([self attributedStringForXZML:@"<,64*abc>" attributes:securityMode].string, expected);
+    XCTAssertEqualObjects([self attributedStringForXZML:@"<:64*abc>" attributes:securityMode].string, expected);
 }
 
 /// 安全模式的解析内部键（替代字符、重复次数）会保留在结果富文本的属性字典中。
 /// 这两个键是解析器内部的私有键，仅供解析过程使用，不属于机密数据，
 /// 也不属于 UIKit 认识的富文本属性，保留在属性字典中不影响渲染，因此不做过滤。
 - (void)testSecurityInternalKeysRetainedInResult {
-    NSAttributedString *string = [self attributedStringForXZML:@"<X,3*abc>" attributes:@{XZMLSecurityModeAttributeName: @YES}];
+    NSAttributedString *string = [self attributedStringForXZML:@"<X:3*abc>" attributes:@{XZMLSecurityModeAttributeName: @YES}];
     XCTAssertEqualObjects(string.string, @"XXX");
     NSDictionary *attributes = [self attributesAtIndex:0 ofString:string];
     XCTAssertEqualObjects(attributes[@"XZMLSecurityMarkAttributeName"], @"X");
@@ -452,7 +452,7 @@
     NSDictionary *securityMode = @{XZMLSecurityModeAttributeName: @YES};
     XCTAssertEqualObjects([self attributedStringForXZML:@"<AB*abc>" attributes:securityMode].string, @"AB");
     // 组合字符（emoji 代理对）视为单字符，按次数重复
-    XCTAssertEqualObjects([self attributedStringForXZML:@"<😀,2*abc>" attributes:securityMode].string, @"😀😀");
+    XCTAssertEqualObjects([self attributedStringForXZML:@"<😀:2*abc>" attributes:securityMode].string, @"😀😀");
 }
 
 /// 安全模式忽略元素内子元素样式，仅统计文本。
@@ -501,7 +501,7 @@
     XCTAssertEqualWithAccuracy(style.lineHeightMultiple, 1.5, 0.001);
 
     // 完整的 10 个位置字段
-    style = [self attributesAtIndex:0 ofString:[self attributedStringForXZML:@"<20-30,5,12,1,4,8,6,20,0,-1^x>" attributes:nil]][NSParagraphStyleAttributeName];
+    style = [self attributesAtIndex:0 ofString:[self attributedStringForXZML:@"<20-30:5:12:1:4:8:6:20:0:-1^x>" attributes:nil]][NSParagraphStyleAttributeName];
     XCTAssertEqualWithAccuracy(style.minimumLineHeight, 20, 0.001);
     XCTAssertEqualWithAccuracy(style.maximumLineHeight, 30, 0.001);
     XCTAssertEqualWithAccuracy(style.lineSpacing, 5, 0.001);
@@ -514,8 +514,8 @@
     XCTAssertEqualWithAccuracy(style.tailIndent, 0, 0.001);
     XCTAssertEqual(style.baseWritingDirection, NSWritingDirectionNatural);
 
-    // 位置相关：前 4 个位段 行高,行间距,首行缩进,对齐方式
-    style = [self attributesAtIndex:0 ofString:[self attributedStringForXZML:@"<0,5,12,1^x>" attributes:nil]][NSParagraphStyleAttributeName];
+    // 位置相关：前 4 个位段 行高:行间距:首行缩进:对齐方式
+    style = [self attributesAtIndex:0 ofString:[self attributedStringForXZML:@"<0:5:12:1^x>" attributes:nil]][NSParagraphStyleAttributeName];
     XCTAssertEqualWithAccuracy(style.lineSpacing, 5, 0.001);
     XCTAssertEqualWithAccuracy(style.firstLineHeadIndent, 12, 0.001);
     XCTAssertEqual(style.alignment, NSTextAlignmentCenter);
@@ -539,7 +539,7 @@
     XCTAssertEqualWithAccuracy(style.lineHeightMultiple, 0, 0.001);
 
     // 只识别 10 个位段：多余的位段被丢弃，前 10 个属性照常生效
-    style = [self attributesAtIndex:0 ofString:[self attributedStringForXZML:@"<20-30,5,12,1,4,8,6,20,0,0,999,999^x>" attributes:nil]][NSParagraphStyleAttributeName];
+    style = [self attributesAtIndex:0 ofString:[self attributedStringForXZML:@"<20-30:5:12:1:4:8:6:20:0:0:999:999^x>" attributes:nil]][NSParagraphStyleAttributeName];
     XCTAssertEqualWithAccuracy(style.minimumLineHeight, 20, 0.001);
     XCTAssertEqualWithAccuracy(style.lineSpacing, 5, 0.001);
     XCTAssertEqual(style.alignment, NSTextAlignmentCenter);
@@ -555,7 +555,7 @@
     NSDictionary *attributes = @{XZMLParagraphStyleAttributeName: preset};
 
     // 行高留空，仅指定期间距
-    NSParagraphStyle *style = [self attributesAtIndex:0 ofString:[self attributedStringForXZML:@"<,5^x>" attributes:attributes]][NSParagraphStyleAttributeName];
+    NSParagraphStyle *style = [self attributesAtIndex:0 ofString:[self attributedStringForXZML:@"<:5^x>" attributes:attributes]][NSParagraphStyleAttributeName];
     XCTAssertEqualWithAccuracy(style.minimumLineHeight, 26, 0.001);
     XCTAssertEqualWithAccuracy(style.lineSpacing, 5, 0.001);
 
@@ -590,24 +590,24 @@
     NSDictionary *attributes = @{XZMLParagraphStyleAttributeName: preset};
 
     // alignment(9)、lineBreakMode(9)、baseWritingDirection(9) 均越界，沿用预设值
-    NSParagraphStyle *style = [self attributesAtIndex:0 ofString:[self attributedStringForXZML:@"<0,0,0,9,9,0,0,0,0,9^x>" attributes:attributes]][NSParagraphStyleAttributeName];
+    NSParagraphStyle *style = [self attributesAtIndex:0 ofString:[self attributedStringForXZML:@"<0:0:0:9:9:0:0:0:0:9^x>" attributes:attributes]][NSParagraphStyleAttributeName];
     XCTAssertEqual(style.alignment, NSTextAlignmentRight);
     XCTAssertEqual((NSInteger)style.lineBreakMode, (NSInteger)NSLineBreakByClipping);
     XCTAssertEqual(style.baseWritingDirection, NSWritingDirectionRightToLeft);
 
     // 负越界值同样被忽略：alignment(-1)、baseWritingDirection(-2)
-    style = [self attributesAtIndex:0 ofString:[self attributedStringForXZML:@"<0,0,0,-1,0,0,0,0,0,-2^x>" attributes:attributes]][NSParagraphStyleAttributeName];
+    style = [self attributesAtIndex:0 ofString:[self attributedStringForXZML:@"<0:0:0:-1:0:0:0:0:0:-2^x>" attributes:attributes]][NSParagraphStyleAttributeName];
     XCTAssertEqual(style.alignment, NSTextAlignmentRight);
     XCTAssertEqual(style.baseWritingDirection, NSWritingDirectionRightToLeft);
 
     // 合法边界值生效：alignment(0)、lineBreakMode(5)、baseWritingDirection(0)
-    style = [self attributesAtIndex:0 ofString:[self attributedStringForXZML:@"<0,0,0,0,5,0,0,0,0,0^x>" attributes:attributes]][NSParagraphStyleAttributeName];
+    style = [self attributesAtIndex:0 ofString:[self attributedStringForXZML:@"<0:0:0:0:5:0:0:0:0:0^x>" attributes:attributes]][NSParagraphStyleAttributeName];
     XCTAssertEqual(style.alignment, NSTextAlignmentLeft);
     XCTAssertEqual((NSInteger)style.lineBreakMode, (NSInteger)NSLineBreakByTruncatingMiddle);
     XCTAssertEqual(style.baseWritingDirection, NSWritingDirectionLeftToRight);
 
     // 合法值：alignment(3 Justified)、lineBreakMode(3 TruncatingHead)、baseWritingDirection(-1 Natural)
-    style = [self attributesAtIndex:0 ofString:[self attributedStringForXZML:@"<0,0,0,3,3,0,0,0,0,-1^x>" attributes:attributes]][NSParagraphStyleAttributeName];
+    style = [self attributesAtIndex:0 ofString:[self attributedStringForXZML:@"<0:0:0:3:3:0:0:0:0:-1^x>" attributes:attributes]][NSParagraphStyleAttributeName];
     XCTAssertEqual(style.alignment, NSTextAlignmentJustified);
     XCTAssertEqual((NSInteger)style.lineBreakMode, (NSInteger)NSLineBreakByTruncatingHead);
     XCTAssertEqual(style.baseWritingDirection, NSWritingDirectionNatural);

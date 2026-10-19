@@ -21,7 +21,7 @@ NS_ASSUME_NONNULL_BEGIN
 ///
 /// ### 样式属性
 ///
-/// 样式可能会有多个子属性，比如字体样式，包含字体名和字体大小两个子属性，在 XZML 中用 `,` 符号分隔不同的子属性。
+/// 样式可能会有多个子属性，比如字体样式，包含字体名和字体大小两个子属性，在 XZML 中用 `:` 符号分隔不同的子属性。
 ///
 /// ### 取值优先级
 ///
@@ -89,26 +89,26 @@ FOUNDATION_EXPORT NSDictionary<NSString *, NSString *> * _Nullable XZMLGetFontAb
 typedef NS_ENUM(char, XZMLAttribute) {
     /// 颜色样式：文本前景色、文本背景色。颜色使用十六进制 RGB/RGBA 值。
     ///
-    /// 属性值支持以下格式（`,` 之前为前景色，之后为背景色）：
+    /// 属性值支持以下格式（`:` 之前为前景色，之后为背景色）：
     /// - `#`，表示设置前景色为预设值
     /// - `AAA#`，表示设置前景色为 AAA 值
-    /// - `,BBB#`，表示仅设置前景色为预设值，背景色为 BBB 值
-    /// - `AAA,#`，表示设置前景色为 AAA 值，背景色为预设值
-    /// - `AAA,BBB#`，表示设置前景色为 AAA 值，背景色为 BBB 值
-    /// - `,#`，表示设置前景色为预设值，背景色为预设值
+    /// - `:BBB#`，表示仅设置前景色为预设值，背景色为 BBB 值
+    /// - `AAA:#`，表示设置前景色为 AAA 值，背景色为预设值
+    /// - `AAA:BBB#`，表示设置前景色为 AAA 值，背景色为 BBB 值
+    /// - `:#`，表示设置前景色为预设值，背景色为预设值
     ///
     /// - Note: 前景色与背景色共用同一套取值优先级，仅各自的键不同：
     ///   指定值 → 继承值 → 预设值（`XZMLForegroundColorAttributeName` / `XZMLBackgroundColorAttributeName`）
     ///   → 默认值（`NSForegroundColorAttributeName` / `NSBackgroundColorAttributeName`）。
     /// - Note: 子属性值为空或非法时不写入，沿用上述优先级取到的值，不会重置为透明色。
-    /// - Note: 不含 `,` 时只设置前景色，背景色保持原样（继承值或不变）。
+    /// - Note: 不含 `:` 时只设置前景色，背景色保持原样（继承值或不变）。
     XZMLAttributeColor = '#',
     
     /// 字体样式：字体、字号、偏移。
     ///
-    /// 格式：`字体名` 或 `,字号` 或 `字体名,字号` 或 `字体名,字号,基准线偏移`
+    /// 格式：`字体名` 或 `:字号` 或 `字体名:字号` 或 `字体名:字号:基准线偏移`
     ///
-    /// 未注册缩写的名称直接作为字体名查找，因此 `<宋体&>`、`<Helvetica,20&>` 这类写法无需任何注册即可生效。
+    /// 未注册缩写的名称直接作为字体名查找，因此 `<宋体&>`、`<Helvetica:20&>` 这类写法无需任何注册即可生效。
     ///
     /// 缩写需由使用方通过 `XZMLSetFontAbbreviations()` 注册，本组件不提供内置缩写表。业务建议的缩写约定：
     /// - 1、数字常规：DR、D
@@ -120,7 +120,7 @@ typedef NS_ENUM(char, XZMLAttribute) {
     XZMLAttributeFont = '&',
     
     /// 文本修饰样式。
-    /// 格式：`样式` 或 `样式,线型` 或 `样式,线型,颜色`
+    /// 格式：`样式` 或 `样式:线型` 或 `样式:线型:颜色`
     /// @discussion【样式】0，删除线（默认）；1，下划线
     /// @discussion【线型】0，单线条（默认）；1，双线条；2，粗线条
     /// @discussion【颜色】RGB/RGBA 颜色值，默认与文本颜色相同
@@ -130,7 +130,7 @@ typedef NS_ENUM(char, XZMLAttribute) {
     XZMLAttributeDecoration = '$',
     
     /// 安全文本样式：用占位字符替代目标文本的样式。
-    /// 格式：`替代符号` 或 `,重复次数` 或 `替代符号,重复次数`。
+    /// 格式：`替代符号` 或 `:重复次数` 或 `替代符号:重复次数`。
     /// @discussion 替代符号默认为`*`星号；未指定重复次数时，默认与被替代文本的字符数相同（等长遮蔽）。
     /// @discussion 此处“字符数”按 UTF-16 代码单元计数，代理对（如 emoji）计为 2。
     /// @attention 重复次数上限为 64，超过部分被钳制，因此长度超过 64 的文本不再是等长遮蔽。
@@ -144,7 +144,7 @@ typedef NS_ENUM(char, XZMLAttribute) {
     /// @discussion 将使用 NSURL 或 NSString 创建富文本 NSLinkAttributeName 属性。
     XZMLAttributeLink = '~', // => @
     
-    /// 段落样式。按位置指定段落属性：[多倍行高|最小行高-最大行高],行间距,首行缩进,对齐方式,断行模式,段间距,段前距,头缩进,尾缩进,书写方向
+    /// 段落样式。按位置指定段落属性：[多倍行高|最小行高-最大行高]:行间距:首行缩进:对齐方式:断行模式:段间距:段前距:头缩进:尾缩进:书写方向
     /// @discussion 各位置对应的段落属性依次为：
     /// @discussion 1. 行高：`最小行高-最大行高` 同时指定 minimumLineHeight 和 maximumLineHeight，两端大小颠倒时自动交换；
     ///   不含 `-` 时按 lineHeightMultiple 多倍行高解析，值非正数时不写入。
@@ -166,11 +166,11 @@ typedef NS_ENUM(char, XZMLAttribute) {
     /// @code
     /// NSString *XZML1 = @"<1.5^Paragraph>";              // 1.5 倍行高
     /// NSString *XZML2 = @"<20-30^Paragraph>";            // 最小行高 20.0 point 最大行高 30.0 point
-    /// NSString *XZML3 = @"<0,5^Paragraph>";              // 行间距 5.0 point
-    /// NSString *XZML4 = @"<0,5,12,1^Paragraph>";         // 行间距 5.0、首行缩进 12.0、居中对齐
-    /// NSString *XZML5 = @"<20-30,5,12,1,4,8,6,20,0,-1^Paragraph>"; // 指定全部 10 个段落属性
+    /// NSString *XZML3 = @"<0:5^Paragraph>";              // 行间距 5.0 point
+    /// NSString *XZML4 = @"<0:5:12:1^Paragraph>";         // 行间距 5.0、首行缩进 12.0、居中对齐
+    /// NSString *XZML5 = @"<20-30:5:12:1:4:8:6:20:0:-1^Paragraph>"; // 指定全部 10 个段落属性
     /// @endcode
-    /// @discussion 由于段落属性按位置解析，属性之间的顺序是固定的，`,` 分隔符也是必需的。
+    /// @discussion 由于段落属性按位置解析，属性之间的顺序是固定的，`:` 分隔符也是必需的。
     XZMLAttributeParagraph = '^', // => |
     
 };

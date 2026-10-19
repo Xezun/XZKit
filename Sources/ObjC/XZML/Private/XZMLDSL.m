@@ -16,9 +16,9 @@
 #define XZMLElementEnd   '>'
 #define XZMLEscapingMark '\\'
 
-/// XZML 元素属性的子属性分隔符，固定为 `,` 字符，不支持自定义。
-/// @note 仅在样式值区域（样式标记符之前）有意义，文本区域的 `,` 就是普通字符。
-#define XZMLAttributeSeparator @","
+/// XZML 元素属性的子属性分隔符，固定为 `:` 字符，不支持自定义。
+/// @note 仅在样式值区域（样式标记符之前）有意义，文本区域的 `:` 就是普通字符。
+#define XZMLAttributeSeparator @":"
 
 /// 安全文本替代字符。默认替代字符为 `*` 星号。
 /// @note 在元素属性中，有此属性有值表明这是一个安全文本。
