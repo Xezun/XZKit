@@ -28,8 +28,8 @@ static NSAttributedStringKey const XZMLSecurityMarkAttributeName  = @"XZMLSecuri
 static NSAttributedStringKey const XZMLSecurityRepeatAttributeName = @"XZMLSecurityRepeatAttributeName";
 /// 安全文本替代字符最大重复次数，防止外部指定极端重复值导致内存问题。
 static NSInteger const XZMLSecurityRepeatLimit = 64;
-/// 字体名缩写表。key 为缩写，value 为完整字体名；由 XZMLSetFontAbbreviations 整体替换，解析期间只读。
-static NSDictionary<NSString *, NSString *> *_fontAbbreviations = nil;
+/// 缩写表。
+static NSDictionary<NSString *, NSString *> * _Nullable _XZMLAbbreviations;
 
 /// 解析 XZML 元素的模式。
 ///
@@ -372,10 +372,6 @@ static void XZMLDSLWithMode(NSString *XZMLString, XZMLReadingMode mode, NSMutabl
     NSMutableArray  * const hierarchies       = [NSMutableArray array];
     NSMutableString * const fragment          = [NSMutableString string];
     
-    BOOL isEscaping = NO;
-    BOOL isAttributeEnded = NO;
-     
-    [computeAttributes addObject:[NSMutableDictionary dictionary]];
     XZMLDSLContext context = {
         XZMLString,
         NO,     // _isEscaping
@@ -397,7 +393,6 @@ void XZMLDSLWithAttributedString(NSString *XZMLString, NSMutableAttributedString
     if (XZMLString == nil || ![XZMLString isKindOfClass:NSString.class] || XZMLString.length == 0) {
         return;
     }
-    
     XZMLDSLWithMode(XZMLString, XZMLReadingModeNormal, nil, attributedString, defaultAttributes);
 }
 
@@ -420,13 +415,14 @@ static XZMLReadingMode XZMLDSLDidFindParagraphAttribute(XZMLDSLContext * const c
 
 static void XZMLDSLDidBeginElement(XZMLDSLContext * const context) {
     XZLog(@"XZMLDSLDidBeginElement");
-    // 继承父元素样式，如果没有则新建
+    // 新元素的内联样式：优先继承父元素样式
     NSMutableDictionary * const _currentAttribute = [context->_elementAttributes.lastObject mutableCopy] ?: [NSMutableDictionary dictionary];
+    // 更新当前样式引用
     context->_currentAttribute = _currentAttribute;
-    // 将当前样式入栈。
+    // 内联样式入栈
     [context->_elementAttributes addObject:context->_currentAttribute];
-    // 合并后的样式
-    [context->_computeAttributes addObject:[NSMutableDictionary dictionary]];    
+    // 计算样式入栈
+    [context->_computeAttributes addObject:[NSMutableDictionary dictionary]];
 }
 
 static void XZMLDSLDidFindText(XZMLDSLContext * const context, NSString *text) {
@@ -517,7 +513,7 @@ static void XZMLDSLDidEndElement(XZMLDSLContext * const context) {
 
 #pragma mark - 样式解析
 
-FOUNDATION_STATIC_INLINE UIColor *XZMLColorAttributeMakeValue(XZMLDSLContext * const context, XZMLAttributeName xzmlKey, NSAttributedStringKey nsKey, NSString *value) {
+FOUNDATION_STATIC_INLINE UIColor *XZMLDSLColorAttributeMakeValue(XZMLDSLContext * const context, XZMLAttributeName xzmlKey, NSAttributedStringKey nsKey, NSString *value) {
     // 使用指定值
     UIColor *color = rgba(value, nil);
     if (color) {
@@ -540,17 +536,17 @@ XZMLReadingMode XZMLDSLDidFindColorAttribute(XZMLDSLContext * const context, NSS
     if ([value containsString:XZMLAttributeSeparator]) {
         NSArray<NSString *> * const values = [value componentsSeparatedByString:XZMLAttributeSeparator];
         
-        UIColor * const foregroundColor = XZMLColorAttributeMakeValue(context, XZMLForegroundColorAttributeName, NSForegroundColorAttributeName, values[0]);
+        UIColor * const foregroundColor = XZMLDSLColorAttributeMakeValue(context, XZMLForegroundColorAttributeName, NSForegroundColorAttributeName, values[0]);
         if (foregroundColor) {
             context->_currentAttribute[NSForegroundColorAttributeName] = foregroundColor;
         }
         
-        UIColor * const backgroundColor = XZMLColorAttributeMakeValue(context, XZMLBackgroundColorAttributeName, NSBackgroundColorAttributeName, values[1]);
+        UIColor * const backgroundColor = XZMLDSLColorAttributeMakeValue(context, XZMLBackgroundColorAttributeName, NSBackgroundColorAttributeName, values[1]);
         if (backgroundColor) {
             context->_currentAttribute[NSBackgroundColorAttributeName] = backgroundColor;
         }
     } else {
-        UIColor *foregroundColor = XZMLColorAttributeMakeValue(context, XZMLForegroundColorAttributeName, NSForegroundColorAttributeName, value);
+        UIColor *foregroundColor = XZMLDSLColorAttributeMakeValue(context, XZMLForegroundColorAttributeName, NSForegroundColorAttributeName, value);
         if (foregroundColor != nil) {
             context->_currentAttribute[NSForegroundColorAttributeName] = foregroundColor;
         }
@@ -558,9 +554,16 @@ XZMLReadingMode XZMLDSLDidFindColorAttribute(XZMLDSLContext * const context, NSS
     return XZMLReadingModeNormal;
 }
 
-FOUNDATION_STATIC_INLINE UIFont * _Nullable XZMLFontAttributeMakeValue(XZMLDSLContext * const context, NSString * _Nullable nameString, NSString * _Nullable sizeString) {
+static inline NSString * _Nullable XZMLDSLAbbreviationForKey(NSString * _Nullable key) {
+    if (key == nil || key.length == 0) {
+        return key;
+    }
+    return _XZMLAbbreviations[key] ?: key;
+}
+
+FOUNDATION_STATIC_INLINE UIFont * _Nullable XZMLDSLFontAttributeMakeValue(XZMLDSLContext * const context, NSString * _Nullable nameString, NSString * _Nullable sizeString) {
     // 未命中缩写表的名称直接作为字体名使用，因此缩写与真实字体名可以直接混用
-    NSString *name = nameString.length > 0 ? (_fontAbbreviations[nameString] ?: nameString) : nil;
+    NSString *name = XZMLDSLAbbreviationForKey(nameString);
     CGFloat   size = sizeString.doubleValue;
     UIFont   *font = nil;
     
@@ -614,7 +617,7 @@ XZMLReadingMode XZMLDSLDidFindFontAttribute(XZMLDSLContext * const context, NSSt
     if ([value containsString:XZMLAttributeSeparator]) {
         NSArray<NSString *> * const values = [value componentsSeparatedByString:XZMLAttributeSeparator];
         
-        UIFont * font = XZMLFontAttributeMakeValue(context, values[0], values[1]);
+        UIFont * font = XZMLDSLFontAttributeMakeValue(context, values[0], values[1]);
         if (font) {
             context->_currentAttribute[NSFontAttributeName] = font;
         }
@@ -628,7 +631,7 @@ XZMLReadingMode XZMLDSLDidFindFontAttribute(XZMLDSLContext * const context, NSSt
         }
     } else {
         // 仅指定了一个参数，作为字体名使用
-        UIFont * font = XZMLFontAttributeMakeValue(context, value, nil);
+        UIFont * font = XZMLDSLFontAttributeMakeValue(context, value, nil);
         if (font) {
             context->_currentAttribute[NSFontAttributeName] = font;
         }
@@ -636,7 +639,7 @@ XZMLReadingMode XZMLDSLDidFindFontAttribute(XZMLDSLContext * const context, NSSt
     return XZMLReadingModeNormal;
 }
 
-FOUNDATION_STATIC_INLINE XZMLDecorationType XZMLDecorationAttributeMakeValue(XZMLDSLContext * const context, NSString *typeString) {
+FOUNDATION_STATIC_INLINE XZMLDecorationType XZMLDSLDecorationAttributeMakeValue(XZMLDSLContext * const context, NSString *typeString) {
     // 指定了修饰类型
     if (typeString.length > 0) {
         if ([typeString isEqualToString:@"0"]) {
@@ -677,7 +680,7 @@ XZMLReadingMode XZMLDSLDidFindDecorationAttribute(XZMLDSLContext * const context
     if ([value containsString:XZMLAttributeSeparator]) {
         NSArray<NSString *> * const values = [value componentsSeparatedByString:XZMLAttributeSeparator];
         
-        type = XZMLDecorationAttributeMakeValue(context, values[0]);
+        type = XZMLDSLDecorationAttributeMakeValue(context, values[0]);
         
         switch (values[1].integerValue) {
             case 1:
@@ -695,7 +698,7 @@ XZMLReadingMode XZMLDSLDidFindDecorationAttribute(XZMLDSLContext * const context
             color = rgba(values[2], nil);
         }
     } else {
-        type = XZMLDecorationAttributeMakeValue(context, value);
+        type = XZMLDSLDecorationAttributeMakeValue(context, value);
     }
     
     if (type == 1) {
@@ -802,29 +805,192 @@ XZMLReadingMode XZMLDSLDidFindLinkAttribute(XZMLDSLContext * const context, NSSt
     return XZMLReadingModeNormal;
 }
 
-/// 解析行高字段（段落样式的第一个字段）。`style` 初始已携带继承/预设/默认的段落样式，
-/// 非法或未指定的值不写入，避免覆盖上层行高。
-///
-/// - 含 `-` 时按 `最小行高-最大行高` 区间解析，`-` 两侧必须都有内容，否则整字段忽略；
-///   区间两端大小颠倒时自动交换，避免产出 `maximumLineHeight < minimumLineHeight` 的非法段落样式。
-/// - 不含 `-` 时按多倍行高解析，值非正数时不写入。
-///
-/// @note 非法的区间写法不降级按多倍行高解析，避免 `30-` 被解读成 30 倍行高这类灾难值。
-FOUNDATION_STATIC_INLINE void XZMLParagraphSetLineHeight(NSMutableParagraphStyle *style, NSString *value) {
-    if ([value containsString:@"-"]) {
-        NSArray<NSString *> * const limits = [value componentsSeparatedByString:@"-"];
-        if (limits.count != 2 || limits[0].length == 0 || limits[1].length == 0) {
-            return;
-        }
-        CGFloat const lower = limits[0].doubleValue;
-        CGFloat const upper = limits[1].doubleValue;
-        style.minimumLineHeight = MIN(lower, upper);
-        style.maximumLineHeight = MAX(lower, upper);
+/// 段落样式属性名枚举。枚举原始值与**位置相关**的位段顺序严格对应：
+/// 位段索引 N 直接强制为本枚举第 N 个 case，因此新增/调整 case 必须同步维护顺序。
+typedef NS_ENUM(NSUInteger, XZMLDSLParagraphStyleAttributeName) {
+    XZMLDSLParagraphStyleAttributeNameLineHeight,            // 0 行高
+    XZMLDSLParagraphStyleAttributeNameLineSpacing,           // 1 行间距
+    XZMLDSLParagraphStyleAttributeNameFirstLineHeadIndent,   // 2 首行缩进
+    XZMLDSLParagraphStyleAttributeNameAlignment,             // 3 对齐方式
+    XZMLDSLParagraphStyleAttributeNameLineBreakMode,         // 4 断行模式
+    XZMLDSLParagraphStyleAttributeNameParagraphSpacing,      // 5 段间距
+    XZMLDSLParagraphStyleAttributeNameParagraphSpacingBefore,// 6 段前距
+    XZMLDSLParagraphStyleAttributeNameHeadIndent,            // 7 头缩进
+    XZMLDSLParagraphStyleAttributeNameTailIndent,            // 8 尾缩进
+    XZMLDSLParagraphStyleAttributeNameWritingDirection,      // 9 书写方向
+    XZMLDSLParagraphStyleAttributeNameUnknown                // 10 未知/不支持
+};
+
+/// 将 `属性名=值` 具名语法中的属性名映射为枚举；空串或不认识的名称返回 Unknown。
+static XZMLDSLParagraphStyleAttributeName XZMLDSLParagraphStyleAttributeNameFromString(NSString *value) {
+    if (value.length == 0) {
+        return XZMLDSLParagraphStyleAttributeNameUnknown;
+    }
+    
+    if ([value isEqualToString:@"0"]) {
+        return XZMLDSLParagraphStyleAttributeNameLineHeight;
+    }
+    
+    NSInteger const numberValue = value.integerValue;
+    if (numberValue > 0 && numberValue < XZMLDSLParagraphStyleAttributeNameUnknown) {
+        return (XZMLDSLParagraphStyleAttributeName)numberValue;
+    }
+    
+    if ([value isEqualToString:@"lineHeight"]) {
+        return XZMLDSLParagraphStyleAttributeNameLineHeight;
+    }
+    if ([value isEqualToString:@"lineSpacing"]) {
+        return XZMLDSLParagraphStyleAttributeNameLineSpacing;
+    }
+    
+    if ([value isEqualToString:@"firstLineHeadIndent"]) {
+        return XZMLDSLParagraphStyleAttributeNameFirstLineHeadIndent;
+    }
+    
+    if ([value isEqualToString:@"alignment"]) {
+        return XZMLDSLParagraphStyleAttributeNameAlignment;
+    }
+    
+    if ([value isEqualToString:@"lineBreakMode"]) {
+        return XZMLDSLParagraphStyleAttributeNameLineBreakMode;
+    }
+    
+    if ([value isEqualToString:@"paragraphSpacing"]) {
+        return XZMLDSLParagraphStyleAttributeNameParagraphSpacing;
+    }
+    
+    if ([value isEqualToString:@"paragraphSpacingBefore"]) {
+        return XZMLDSLParagraphStyleAttributeNameParagraphSpacingBefore;
+    }
+    
+    if ([value isEqualToString:@"headIndent"]) {
+        return XZMLDSLParagraphStyleAttributeNameHeadIndent;
+    }
+    
+    if ([value isEqualToString:@"tailIndent"]) {
+        return XZMLDSLParagraphStyleAttributeNameTailIndent;
+    }
+    
+    if ([value isEqualToString:@"baseWritingDirection"]) {
+        return XZMLDSLParagraphStyleAttributeNameWritingDirection;
+    }
+    
+    return XZMLDSLParagraphStyleAttributeNameUnknown;
+}
+
+/// 将单个位段的值写入段落样式。仅当值字符串为空时不写入（保留继承/预设值），不对值的实质内容做合法性校验。
+static inline void XZMLDSLParagraphAttributeSetValue(NSMutableParagraphStyle * const style, XZMLDSLParagraphStyleAttributeName const attributeName, NSString * const attributeValue) {
+    // 只有空字符串才不写入，保留继承/预设值
+    if (attributeValue.length == 0) {
         return;
     }
-    CGFloat const multiple = value.doubleValue;
-    if (multiple > 0) {
-        style.lineHeightMultiple = multiple;
+    
+    switch ( attributeName ) {
+        case XZMLDSLParagraphStyleAttributeNameWritingDirection: {
+            NSWritingDirection const baseWritingDirection = attributeValue.integerValue;
+            switch (baseWritingDirection) {
+                case NSWritingDirectionLeftToRight:
+                case NSWritingDirectionRightToLeft:
+                    style.baseWritingDirection = baseWritingDirection;
+                    break;
+                case NSWritingDirectionNatural:
+                default:
+                    style.baseWritingDirection = NSWritingDirectionNatural;
+                    break;
+            }
+            break;
+        }
+        case XZMLDSLParagraphStyleAttributeNameTailIndent: {
+            style.tailIndent = attributeValue.doubleValue;
+            break;
+        }
+        case XZMLDSLParagraphStyleAttributeNameHeadIndent: {
+            style.headIndent = attributeValue.doubleValue;
+            break;
+        }
+        case XZMLDSLParagraphStyleAttributeNameParagraphSpacingBefore: {
+            style.paragraphSpacingBefore = attributeValue.doubleValue;
+            break;
+        }
+        case XZMLDSLParagraphStyleAttributeNameParagraphSpacing: {
+            style.paragraphSpacing = attributeValue.doubleValue;
+            break;
+        }
+        case XZMLDSLParagraphStyleAttributeNameLineBreakMode: {
+            NSLineBreakMode const lineBreakMode = attributeValue.integerValue;
+            switch (lineBreakMode) {
+                case NSLineBreakByWordWrapping:
+                case NSLineBreakByCharWrapping:
+                case NSLineBreakByClipping:
+                case NSLineBreakByTruncatingHead:
+                case NSLineBreakByTruncatingTail:
+                    style.lineBreakMode = lineBreakMode;
+                    break;
+                case NSLineBreakByTruncatingMiddle:
+                default:
+                    style.lineBreakMode = NSLineBreakByTruncatingMiddle;
+                    break;
+            }
+            break;
+        }
+        case XZMLDSLParagraphStyleAttributeNameAlignment: {
+            NSTextAlignment const alignment = attributeValue.integerValue;
+            switch (alignment) {
+                case NSTextAlignmentLeft:
+                case NSTextAlignmentCenter:
+                case NSTextAlignmentRight:
+                case NSTextAlignmentJustified:
+                    style.alignment = alignment;
+                    break;
+                case NSTextAlignmentNatural:
+                default:
+                    style.alignment = NSTextAlignmentNatural;
+                    break;
+            }
+            break;
+        }
+        case XZMLDSLParagraphStyleAttributeNameFirstLineHeadIndent: {
+            style.firstLineHeadIndent = attributeValue.doubleValue;
+            break;
+        }
+        case XZMLDSLParagraphStyleAttributeNameLineSpacing: {
+            style.lineSpacing = attributeValue.doubleValue;
+            break;
+        }
+        case XZMLDSLParagraphStyleAttributeNameLineHeight: {
+            if ([attributeValue containsString:@"-"]) {
+                // 复合行距，只判断有无，不校验值的合法性。
+                NSArray<NSString *> * const components = [attributeValue componentsSeparatedByString:@"-"];
+                NSString * const minimumLineHeight = components[0];
+                if (minimumLineHeight.length > 0) {
+                    style.minimumLineHeight = MAX(0, minimumLineHeight.doubleValue);
+                }
+                NSString * const maximumLineHeight = components[1];
+                if (maximumLineHeight.length > 0) {
+                    style.maximumLineHeight = MAX(0, maximumLineHeight.doubleValue);
+                }
+                NSString * const lineHeightMultiple = components.count > 2 ? components[2] : nil;
+                if (lineHeightMultiple && lineHeightMultiple.length > 0) {
+                    style.lineHeightMultiple = lineHeightMultiple.doubleValue;
+                }
+            } else if ([attributeValue hasPrefix:@"x"] || [attributeValue hasPrefix:@"X"]) {
+                // 多倍行距
+                if (attributeValue.length > 1) {
+                    NSString * const lineHeightMultiple = [attributeValue substringFromIndex:1];
+                    style.lineHeightMultiple = MAX(0, lineHeightMultiple.doubleValue);
+                }
+            } else {
+                // 固定行距
+                CGFloat const lineHeight = MAX(0, attributeValue.doubleValue);
+                style.minimumLineHeight = lineHeight;
+                style.maximumLineHeight = lineHeight;
+            }
+            break;
+        }
+        default: {
+            XZLog(@"[XZML] 段落样式 (%lu, %@) 暂不支持", (unsigned long)attributeName, attributeValue);
+            break;
+        }
     }
 }
 
@@ -838,62 +1004,24 @@ XZMLReadingMode XZMLDSLDidFindParagraphAttribute(XZMLDSLContext * const context,
         ?: [context->_defaultAttribute[NSParagraphStyleAttributeName] mutableCopy]
         ?: [[NSMutableParagraphStyle alloc] init];
     
-    NSArray<NSString *> *values = [value componentsSeparatedByString:XZMLAttributeSeparator];
-    // 只识别 10 个位段的段落属性，多余的位段直接丢弃，前面的照常生效
-    switch (MIN(values.count, 10)) {
-        case 10: {
-            NSWritingDirection const baseWritingDirection = values[9].integerValue;
-            switch (baseWritingDirection) {
-                case NSWritingDirectionNatural:
-                case NSWritingDirectionLeftToRight:
-                case NSWritingDirectionRightToLeft:
-                    style.baseWritingDirection = baseWritingDirection;
-                    break;
+    NSArray<NSString *> * const valueComponents = [value componentsSeparatedByString:XZMLAttributeSeparator];
+    
+    for (NSInteger index = valueComponents.count - 1; index >= 0; index--) {
+        NSString * const valueComponent = valueComponents[index];
+        
+        NSRange const range = [valueComponent rangeOfString:@"="];
+        if (range.location != NSNotFound) {
+            NSString * const attributeName  = [valueComponent substringToIndex:range.location];
+            NSString * const attributeValue = [valueComponent substringFromIndex:(range.location + range.length)];
+            if (range.location == 0) {
+                XZMLDSLParagraphAttributeSetValue(style, (XZMLDSLParagraphStyleAttributeName)index, attributeValue);
+                continue;
             }
+            // attributeName 名称不合法的样式会被忽略
+            XZMLDSLParagraphAttributeSetValue(style, XZMLDSLParagraphStyleAttributeNameFromString(attributeName), attributeValue);
+        } else {
+            XZMLDSLParagraphAttributeSetValue(style, (XZMLDSLParagraphStyleAttributeName)index, valueComponent);
         }
-        case 9:
-            style.tailIndent = values[8].doubleValue;
-        case 8:
-            style.headIndent = values[7].doubleValue;
-        case 7:
-            style.paragraphSpacingBefore = values[6].doubleValue;
-        case 6:
-            style.paragraphSpacing = values[5].doubleValue;
-        case 5: {
-            NSLineBreakMode const lineBreakMode = values[4].integerValue;
-            switch (lineBreakMode) {
-                case NSLineBreakByWordWrapping:
-                case NSLineBreakByCharWrapping:
-                case NSLineBreakByClipping:
-                case NSLineBreakByTruncatingHead:
-                case NSLineBreakByTruncatingTail:
-                case NSLineBreakByTruncatingMiddle:
-                    style.lineBreakMode = lineBreakMode;
-                    break;
-            }
-        }
-        case 4: {
-            NSTextAlignment const alignment = values[3].integerValue;
-            switch (alignment) {
-                case NSTextAlignmentLeft:
-                case NSTextAlignmentCenter:
-                case NSTextAlignmentRight:
-                case NSTextAlignmentJustified:
-                case NSTextAlignmentNatural:
-                    style.alignment = alignment;
-                    break;
-            }
-        }
-        case 3:
-            style.firstLineHeadIndent = values[2].doubleValue;
-        case 2:
-            style.lineSpacing = values[1].doubleValue;
-        case 1: {
-            XZMLParagraphSetLineHeight(style, values[0]);
-            break;
-        }
-        default:
-            break;
     }
     
     context->_currentAttribute[NSParagraphStyleAttributeName] = style;
@@ -901,11 +1029,12 @@ XZMLReadingMode XZMLDSLDidFindParagraphAttribute(XZMLDSLContext * const context,
     return XZMLReadingModeNormal;
 }
 
-void XZMLSetFontAbbreviations(NSDictionary<NSString *, NSString *> * _Nullable fontAbbreviations) {
-    NSCAssert(NSThread.isMainThread, @"请在程序初始化时（主线程）执行此方法");
-    _fontAbbreviations = fontAbbreviations.copy;
+// MARK: - 缩写表
+
+void XZMLSetAbbreviations(NSDictionary<NSString *, NSString *> * _Nullable abbreviations) {
+    _XZMLAbbreviations = (abbreviations.count == 0 ? nil : abbreviations.copy);
 }
 
-NSDictionary<NSString *, NSString *> * _Nullable XZMLGetFontAbbreviations(void) {
-    return _fontAbbreviations;
+NSDictionary<NSString *, NSString *> * _Nullable XZMLGetAbbreviations(void) {
+    return _XZMLAbbreviations;
 }

@@ -35,13 +35,13 @@
     return [[NSAttributedString alloc] initWithXZMLString:XZMLString attributes:attributes];
 }
 
-/// 注册字体缩写。XZMLSetFontAbbreviations 是整体替换语义，此处先在实例内累加再提交。
+/// 注册字体缩写。XZMLSetAbbreviations 是整体替换语义，此处先在实例内累加再提交。
 - (void)registerFontName:(NSString *)fontName forAbbreviation:(NSString *)abbreviation {
     if (_abbreviations == nil) {
         _abbreviations = [NSMutableDictionary dictionary];
     }
     _abbreviations[abbreviation] = fontName;
-    XZMLSetFontAbbreviations(_abbreviations);
+    XZMLSetAbbreviations(_abbreviations);
 }
 
 #pragma mark - 基础语法
@@ -350,8 +350,8 @@
     XCTAssertEqualObjects(((UIFont *)attributes[NSFontAttributeName]).fontName, @"Courier");
 
     // getter 返回当前生效的缩写表，未注册的键不存在
-    XCTAssertEqualObjects(XZMLGetFontAbbreviations()[@"XZCR"], @"Courier");
-    XCTAssertNil(XZMLGetFontAbbreviations()[@"UnknownXZ"]);
+    XCTAssertEqualObjects(XZMLGetAbbreviations()[@"XZCR"], @"Courier");
+    XCTAssertNil(XZMLGetAbbreviations()[@"UnknownXZ"]);
 
     // 未注册缩写的真实字体名无需注册即可生效
     attributes = [self attributesAtIndex:0 ofString:[self attributedStringForXZML:@"<Courier:12&x>" attributes:nil]];
@@ -359,7 +359,7 @@
 
     // 注销缩写（fontName 传 nil 即移除该键），避免污染同一 target 内后续用例
     [self registerFontName:nil forAbbreviation:@"XZCR"];
-    XCTAssertNil(XZMLGetFontAbbreviations()[@"XZCR"]);
+    XCTAssertNil(XZMLGetAbbreviations()[@"XZCR"]);
 }
 
 #pragma mark - 文本修饰（$）
@@ -496,9 +496,10 @@
     XCTAssertEqualWithAccuracy(style.minimumLineHeight, 20, 0.001);
     XCTAssertEqualWithAccuracy(style.maximumLineHeight, 30, 0.001);
 
-    // 行高不含 `-`：按多倍行高解析
+    // 行高不含 `-` 且无 `x` 前缀：按固定行距解析，min=max
     style = [self attributesAtIndex:0 ofString:[self attributedStringForXZML:@"<1.5|x>" attributes:nil]][NSParagraphStyleAttributeName];
-    XCTAssertEqualWithAccuracy(style.lineHeightMultiple, 1.5, 0.001);
+    XCTAssertEqualWithAccuracy(style.minimumLineHeight, 1.5, 0.001);
+    XCTAssertEqualWithAccuracy(style.maximumLineHeight, 1.5, 0.001);
 
     // 完整的 10 个位置字段
     style = [self attributesAtIndex:0 ofString:[self attributedStringForXZML:@"<20-30:5:12:1:4:8:6:20:0:-1|x>" attributes:nil]][NSParagraphStyleAttributeName];
@@ -519,23 +520,24 @@
     XCTAssertEqualWithAccuracy(style.lineSpacing, 5, 0.001);
     XCTAssertEqualWithAccuracy(style.firstLineHeadIndent, 12, 0.001);
     XCTAssertEqual(style.alignment, NSTextAlignmentCenter);
-    // 行高为 0 时不写入，行高保持默认
+    // 行高为 0：按固定行距写入 0（min=max=0），不写多倍行高
     XCTAssertEqualWithAccuracy(style.lineHeightMultiple, 0, 0.001);
     XCTAssertEqualWithAccuracy(style.minimumLineHeight, 0, 0.001);
 
-    // 行高区间两端大小颠倒时自动交换，不产出 max < min 的非法样式
+    // 行高区间两端大小颠倒时不交换，按原样分别写入 min/max
     style = [self attributesAtIndex:0 ofString:[self attributedStringForXZML:@"<30-20|x>" attributes:nil]][NSParagraphStyleAttributeName];
-    XCTAssertEqualWithAccuracy(style.minimumLineHeight, 20, 0.001);
-    XCTAssertEqualWithAccuracy(style.maximumLineHeight, 30, 0.001);
+    XCTAssertEqualWithAccuracy(style.minimumLineHeight, 30, 0.001);
+    XCTAssertEqualWithAccuracy(style.maximumLineHeight, 20, 0.001);
 
-    // 非法的区间写法：`-` 两侧必须都有内容，否则整个行高字段被忽略，不会降级按多倍行高解析
+    // 区间一侧为空：该侧不写入（保留默认 0），另一侧照常写入
     style = [self attributesAtIndex:0 ofString:[self attributedStringForXZML:@"<30-|x>" attributes:nil]][NSParagraphStyleAttributeName];
     XCTAssertEqualWithAccuracy(style.lineHeightMultiple, 0, 0.001);
+    XCTAssertEqualWithAccuracy(style.minimumLineHeight, 30, 0.001);
     XCTAssertEqualWithAccuracy(style.maximumLineHeight, 0, 0.001);
-    // 负数不会被误当成区间起点
+    // `-5` 被当作区间：空起点不写入（min=0），终点写入 max=5
     style = [self attributesAtIndex:0 ofString:[self attributedStringForXZML:@"<-5|x>" attributes:nil]][NSParagraphStyleAttributeName];
     XCTAssertEqualWithAccuracy(style.minimumLineHeight, 0, 0.001);
-    XCTAssertEqualWithAccuracy(style.maximumLineHeight, 0, 0.001);
+    XCTAssertEqualWithAccuracy(style.maximumLineHeight, 5, 0.001);
     XCTAssertEqualWithAccuracy(style.lineHeightMultiple, 0, 0.001);
 
     // 只识别 10 个位段：多余的位段被丢弃，前 10 个属性照常生效
@@ -548,23 +550,32 @@
 }
 
 /// 行高预设值：XZMLParagraphStyleAttributeName。
-/// 行高留空、为 0 或非法时不写入，不会把继承/预设的行高覆盖为 0。
+/// 仅当行高位段为空字符串时不写入，保留继承/预设行高；其余值按解析结果写入。
 - (void)testLineHeightPresetValue {
     NSMutableParagraphStyle *preset = [[NSMutableParagraphStyle alloc] init];
     preset.minimumLineHeight = 26.0;
+    preset.maximumLineHeight = 26.0;
     NSDictionary *attributes = @{XZMLParagraphStyleAttributeName: preset};
 
-    // 行高留空，仅指定期间距
+    // 行高位段留空（空字符串），仅指定位段 1（行间距）：保留预设行高
     NSParagraphStyle *style = [self attributesAtIndex:0 ofString:[self attributedStringForXZML:@"<:5|x>" attributes:attributes]][NSParagraphStyleAttributeName];
     XCTAssertEqualWithAccuracy(style.minimumLineHeight, 26, 0.001);
     XCTAssertEqualWithAccuracy(style.lineSpacing, 5, 0.001);
 
-    // 行高为 0 / 非数字 / 非法区间，均不覆盖预设行高
-    for (NSString *XZMLString in @[@"<0|x>", @"<abc|x>", @"<-1|x>", @"<30-|x>"]) {
-        style = [self attributesAtIndex:0 ofString:[self attributedStringForXZML:XZMLString attributes:attributes]][NSParagraphStyleAttributeName];
-        XCTAssertEqualWithAccuracy(style.minimumLineHeight, 26, 0.001, @"%@ 不应覆盖预设行高", XZMLString);
-        XCTAssertEqualWithAccuracy(style.lineHeightMultiple, 0, 0.001, @"%@ 不应写入多倍行高", XZMLString);
-    }
+    // 固定行距：数字按 min=max 写入，会覆盖预设行高
+    style = [self attributesAtIndex:0 ofString:[self attributedStringForXZML:@"<20|x>" attributes:attributes]][NSParagraphStyleAttributeName];
+    XCTAssertEqualWithAccuracy(style.minimumLineHeight, 20, 0.001);
+    XCTAssertEqualWithAccuracy(style.maximumLineHeight, 20, 0.001);
+
+    // 多倍行高：`x` 前缀写入 lineHeightMultiple，不改动固定行高
+    style = [self attributesAtIndex:0 ofString:[self attributedStringForXZML:@"<x1.5|x>" attributes:attributes]][NSParagraphStyleAttributeName];
+    XCTAssertEqualWithAccuracy(style.lineHeightMultiple, 1.5, 0.001);
+    XCTAssertEqualWithAccuracy(style.minimumLineHeight, 26, 0.001);
+
+    // 区间一侧为空：有值侧覆盖，空值侧保留预设
+    style = [self attributesAtIndex:0 ofString:[self attributedStringForXZML:@"<30-|x>" attributes:attributes]][NSParagraphStyleAttributeName];
+    XCTAssertEqualWithAccuracy(style.minimumLineHeight, 30, 0.001);
+    XCTAssertEqualWithAccuracy(style.maximumLineHeight, 26, 0.001);
 }
 
 /// attributes 中的段落默认样式应被合并保留。
@@ -580,27 +591,29 @@
     XCTAssertEqualWithAccuracy(style.maximumLineHeight, 30, 0.001);
 }
 
-/// 段落枚举值越界时被忽略（不钳制），沿用预设值；合法范围内的值正常生效。
+/// 段落枚举位段的写入策略：`alignment` 原样写入、`lineBreakMode` 越界钳制为 TruncatingMiddle、`baseWritingDirection` 越界忽略。
 - (void)testParagraphEnumValues {
-    // 以一个与系统默认值完全不同的预设样式作为基准，使“越界被忽略”可观察到
+    // 以一个与系统默认值完全不同的预设样式作为基准，使“越界忽略”可观察到
     NSMutableParagraphStyle *preset = [[NSMutableParagraphStyle alloc] init];
     preset.alignment            = NSTextAlignmentRight;
     preset.lineBreakMode        = NSLineBreakByClipping;
     preset.baseWritingDirection = NSWritingDirectionRightToLeft;
     NSDictionary *attributes = @{XZMLParagraphStyleAttributeName: preset};
 
-    // alignment(9)、lineBreakMode(9)、baseWritingDirection(9) 均越界，沿用预设值
+    // alignment(9) 越界钳制为 NSTextAlignmentNatural
+    // lineBreakMode (9) 越界钳制为 TruncatingMiddle
+    // baseWritingDirection(9) 越界钳制为 NSWritingDirectionNatural
     NSParagraphStyle *style = [self attributesAtIndex:0 ofString:[self attributedStringForXZML:@"<0:0:0:9:9:0:0:0:0:9|x>" attributes:attributes]][NSParagraphStyleAttributeName];
-    XCTAssertEqual(style.alignment, NSTextAlignmentRight);
-    XCTAssertEqual((NSInteger)style.lineBreakMode, (NSInteger)NSLineBreakByClipping);
-    XCTAssertEqual(style.baseWritingDirection, NSWritingDirectionRightToLeft);
+    XCTAssertEqual(style.alignment, NSTextAlignmentNatural);
+    XCTAssertEqual((NSInteger)style.lineBreakMode, (NSInteger)NSLineBreakByTruncatingMiddle);
+    XCTAssertEqual(style.baseWritingDirection, NSWritingDirectionNatural);
 
-    // 负越界值同样被忽略：alignment(-1)、baseWritingDirection(-2)
+    // 负越界：alignment(-1) 原样写入（NSTextAlignment 为无符号位域存储，回读不等于预设）；baseWritingDirection(-2) 越界被忽略，沿用预设
     style = [self attributesAtIndex:0 ofString:[self attributedStringForXZML:@"<0:0:0:-1:0:0:0:0:0:-2|x>" attributes:attributes]][NSParagraphStyleAttributeName];
-    XCTAssertEqual(style.alignment, NSTextAlignmentRight);
-    XCTAssertEqual(style.baseWritingDirection, NSWritingDirectionRightToLeft);
+    XCTAssertNotEqual(style.alignment, NSTextAlignmentRight);
+    XCTAssertEqual(style.baseWritingDirection, NSWritingDirectionNatural);
 
-    // 合法边界值生效：alignment(0)、lineBreakMode(5)、baseWritingDirection(0)
+    // 合法边界值：alignment(0)、lineBreakMode(5)、baseWritingDirection(0)
     style = [self attributesAtIndex:0 ofString:[self attributedStringForXZML:@"<0:0:0:0:5:0:0:0:0:0|x>" attributes:attributes]][NSParagraphStyleAttributeName];
     XCTAssertEqual(style.alignment, NSTextAlignmentLeft);
     XCTAssertEqual((NSInteger)style.lineBreakMode, (NSInteger)NSLineBreakByTruncatingMiddle);

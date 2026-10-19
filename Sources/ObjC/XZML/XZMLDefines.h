@@ -71,21 +71,25 @@ typedef NS_ENUM(NSUInteger, XZMLDecorationType) {
     XZMLDecorationTypeUnderline,
 };
 
-/// 设置 XZML 的字体名缩写表，值中的 key 为缩写、value 为完整字体名。
+/// 设置 XZML 缩写表。
 ///
-/// 调用会整体替换之前的缩写表；传 nil 清空。
-/// 未命中的名称会直接作为字体名查找，因此缩写与真实字体名可以直接混用。
+/// 目前仅字体会使用缩写表。通过此函数设置 XZML 的字体名缩写表，值中的 key 为缩写、value 为完整字体名。
 ///
-/// @attention 请在程序初始化时（主线程）调用，不要与后台解析并发调用。
-FOUNDATION_EXPORT void XZMLSetFontAbbreviations(NSDictionary<NSString *, NSString *> * _Nullable fontAbbreviations);
+/// 调用函数会整体替换之前的缩写表；传空字典清空。
+///
+/// > 未命中的名称会直接作为字体名查找，因此缩写与真实字体名可以直接混用。
+///
+/// > 请在程序初始化时（主线程）调用，不要与后台解析并发调用。
+///
+/// - Parameter abbreviations: 新缩写表，其中 nil 表示移除所有
+FOUNDATION_EXPORT void XZMLSetAbbreviations(NSDictionary<NSString *, NSString *> * _Nullable abbreviations);
 
-/// 获取当前的 XZML 字体名缩写表，未设置过时返回 nil。
-///
-/// 返回值仅包含已注册的缩写，未注册的缩写不在此表中。
-FOUNDATION_EXPORT NSDictionary<NSString *, NSString *> * _Nullable XZMLGetFontAbbreviations(void);
+/// 获取 XZML 缩写表。
+FOUNDATION_EXPORT NSDictionary<NSString *, NSString *> * _Nullable XZMLGetAbbreviations(void);
 
 /// XZML 样式标记字符，使用 ASCII 特殊标点符号作为标记字符。
-/// @attention 新增枚举请同时调整 NSCharacterSet.XZMLReservedCharacterSet 字符集。
+///
+/// 新增枚举请同时调整 NSCharacterSet.XZMLReservedCharacterSet 字符集。
 typedef NS_ENUM(char, XZMLAttribute) {
     /// 颜色样式：文本前景色、文本背景色。颜色使用十六进制 RGB/RGBA 值。
     ///
@@ -110,7 +114,7 @@ typedef NS_ENUM(char, XZMLAttribute) {
     ///
     /// 未注册缩写的名称直接作为字体名查找，因此 `<宋体&>`、`<Helvetica:20&>` 这类写法无需任何注册即可生效。
     ///
-    /// 缩写需由使用方通过 `XZMLSetFontAbbreviations()` 注册，本组件不提供内置缩写表。业务建议的缩写约定：
+    /// 缩写需由使用方通过 `XZMLSetAbbreviations()` 注册，本组件不提供内置缩写表。业务建议的缩写约定：
     /// - 1、数字常规：DR、D
     /// - 2、数字粗体：DB、B
     /// - 3、文本细体：TL、L
@@ -120,57 +124,67 @@ typedef NS_ENUM(char, XZMLAttribute) {
     XZMLAttributeFont = '&',
     
     /// 文本修饰样式。
+    ///
     /// 格式：`样式` 或 `样式:线型` 或 `样式:线型:颜色`
-    /// @discussion【样式】0，删除线（默认）；1，下划线
-    /// @discussion【线型】0，单线条（默认）；1，双线条；2，粗线条
-    /// @discussion【颜色】RGB/RGBA 颜色值，默认与文本颜色相同
-    /// @attention 文本修饰，包含多个样式，因此使用属性默认值解析，设置文本修饰样式，只会覆盖上层相同样式的设置。
-    /// @discussion 比如设置删除线样式，上层设置删除线样式会被覆盖，但是上层的下划线样式会保留。
-    /// @discussion 可以使用两个`$`可同时指定下划线和删除线。
+    ///
+    /// -【样式】0，删除线（默认）；1，下划线
+    /// -【线型】0，单线条（默认）；1，双线条；2，粗线条
+    /// -【颜色】RGB/RGBA 颜色值，默认与文本颜色相同
+    /// - 文本修饰，包含多个样式，因此使用属性默认值解析，设置文本修饰样式，只会覆盖上层相同样式的设置。
+    /// - 比如设置删除线样式，上层设置删除线样式会被覆盖，但是上层的下划线样式会保留。
+    /// - 可以使用两个`$`可同时指定下划线和删除线。
     XZMLAttributeDecoration = '$',
     
     /// 安全文本样式：用占位字符替代目标文本的样式。
+    ///
     /// 格式：`替代符号` 或 `:重复次数` 或 `替代符号:重复次数`。
-    /// @discussion 替代符号默认为`*`星号；未指定重复次数时，默认与被替代文本的字符数相同（等长遮蔽）。
-    /// @discussion 此处“字符数”按 UTF-16 代码单元计数，代理对（如 emoji）计为 2。
-    /// @attention 重复次数上限为 64，超过部分被钳制，因此长度超过 64 的文本不再是等长遮蔽。
-    /// @discussion 安全模式替换时，忽略所有子元素。
-    /// @attention 在安全模式下，星号`*`之后样式、文本、子元素都会被忽略，因此通过`*`的位置控制替代字符的样式。
-    /// @discussion 比如将删除线样式放在`*`之后，安全模式下，替代字符不会展示删除线。
+    ///
+    /// - 替代符号默认为`*`星号；未指定重复次数时，默认与被替代文本的字符数相同（等长遮蔽）。
+    /// - 此处“字符数”按 UTF-16 代码单元计数，代理对（如 emoji）计为 2。
+    /// - 重复次数上限为 64，超过部分被钳制，因此长度超过 64 的文本不再是等长遮蔽。
+    /// - 安全模式替换时，忽略所有子元素。
+    /// - 在安全模式下，星号`*`之后样式、文本、子元素都会被忽略，因此通过`*`的位置控制替代字符的样式。
+    /// - 比如将删除线样式放在`*`之后，安全模式下，替代字符不会展示删除线。
     XZMLAttributeSecurity = '*',
     
     /// 超链接样式。
     ///
-    /// @discussion 将使用 NSURL 或 NSString 创建富文本 NSLinkAttributeName 属性。
+    /// 将使用 NSURL 或 NSString 创建富文本 NSLinkAttributeName 属性。
     XZMLAttributeLink = '~', // => @
     
-    /// 段落样式。按位置指定段落属性：[多倍行高|最小行高-最大行高]:行间距:首行缩进:对齐方式:断行模式:段间距:段前距:头缩进:尾缩进:书写方向
-    /// @discussion 各位置对应的段落属性依次为：
-    /// @discussion 1. 行高：`最小行高-最大行高` 同时指定 minimumLineHeight 和 maximumLineHeight，两端大小颠倒时自动交换；
-    ///   不含 `-` 时按 lineHeightMultiple 多倍行高解析，值非正数时不写入。
-    /// @discussion 2. 行间距 lineSpacing
-    /// @discussion 3. 首行缩进 firstLineHeadIndent
-    /// @discussion 4. 对齐方式 alignment，取值 NSTextAlignmentLeft(0) ~ NSTextAlignmentNatural(4)
-    /// @discussion 5. 断行模式 lineBreakMode，取值 NSLineBreakByWordWrapping(0) ~ NSLineBreakByTruncatingMiddle(5)
-    /// @discussion 6. 段间距 paragraphSpacing
-    /// @discussion 7. 段前距 paragraphSpacingBefore
-    /// @discussion 8. 头缩进 headIndent
-    /// @discussion 9. 尾缩进 tailIndent
-    /// @discussion 10. 书写方向 baseWritingDirection，取值 NSWritingDirectionNatural(-1) ~ NSWritingDirectionRightToLeft(1)
-    /// @attention 段落属性是**位置相关**的：要设置第 N 个属性，必须同时给出前 N-1 个属性（可留空）；
-    ///   留空的数值属性按 0 处理，会覆盖继承值，只有行高留空或非法时不写入。
-    /// @discussion `alignment`、`lineBreakMode`、`baseWritingDirection` 仅接受上表范围内的枚举值，越界值被忽略（不钳制），段落样式沿用继承值或默认值。
-    /// @discussion 行高区间的 `-` 两侧必须都有内容，非法的区间写法（如 `30-`、`-5`）整个行高属性被忽略，不会降级按多倍行高解析。
-    /// @discussion 属性个数超过 10 时，多余的属性被丢弃，前 10 个属性照常生效。
-    /// @discussion 示例：
-    /// @code
-    /// NSString *XZML1 = @"<1.5|Paragraph>";              // 1.5 倍行高
-    /// NSString *XZML2 = @"<20-30|Paragraph>";            // 最小行高 20.0 point 最大行高 30.0 point
-    /// NSString *XZML3 = @"<0:5|Paragraph>";              // 行间距 5.0 point
-    /// NSString *XZML4 = @"<0:5:12:1|Paragraph>";         // 行间距 5.0、首行缩进 12.0、居中对齐
+    /// 段落样式。支持两种位段写法，可混用：
+    /// - **位置式**：按位段顺序依次指定 `[行高]:行间距:首行缩进:对齐方式:断行模式:段间距:段前距:头缩进:尾缩进:书写方向`；
+    /// - **具名式**：任意位段可写作 `属性名=值`（如 `lineHeight=20:lineSpacing=5`），`=` 左侧为空时退化为按位段位置解析。
+    /// 合法属性名：`lineHeight`、`lineSpacing`、`firstLineHeadIndent`、`alignment`、`lineBreakMode`、`paragraphSpacing`、`paragraphSpacingBefore`、`headIndent`、`tailIndent`、`baseWritingDirection`，非法名称的位段会被忽略。
+    ///
+    /// > 位段值**仅在为空字符串时不写入**（保留继承/预设值），其余情况一律按解析结果写入，不会因数值为 0 或非法而跳过。
+    ///
+    /// - 1. lineHeight - 行高，支持三种写法：
+    ///   - `x1.5`/`X1.5`：多倍行高，写入 lineHeightMultiple；
+    ///   - `20-30`：区间，分别写入 minimumLineHeight 和 maximumLineHeight，某一侧留空则该侧不写入（保留继承/预设值），**不校验大小、不自动交换**；还可追加第三段 `min-max-倍数` 同时指定 lineHeightMultiple；
+    ///   - 纯数字 `20`：固定行距，min=max；非数字按 0 处理。
+    /// - 2. lineSpacing - 行间距
+    /// - 3. firstLineHeadIndent - 首行缩进
+    /// - 4. alignment - 对齐方式，取值 NSTextAlignment 枚举的原始值，不合法默认 NSTextAlignmentNatural 
+    /// - 5. lineBreakMode - 断行模式，取值 NSLineBreakMode 枚举的原始值，不合法默认 NSLineBreakByTruncatingMiddle
+    /// - 6. paragraphSpacing - 段间距
+    /// - 7. paragraphSpacingBefore - 段前距
+    /// - 8. headIndent - 头缩进
+    /// - 9. tailIndent - 尾缩进
+    /// - 10. baseWritingDirection - 书写方向，取值 NSWritingDirection 枚举的原始值，不合法默认 NSWritingDirectionNatural
+    ///
+    /// > 段落属性是**位置相关**的：位置式要设置第 N 个属性，必须同时给出前 N-1 个位段（可留空）；位段之间顺序固定，`:` 分隔符必需。
+    ///
+    /// > 属性个数超过 10 时，多余的位段被丢弃，前 10 个照常生效。
+    ///
+    /// ```objc
+    /// NSString *XZML1 = @"<x1.5|Paragraph>";             // 1.5 倍行高
+    /// NSString *XZML2 = @"<20|Paragraph>";               // 固定行高 20.0 point（min=max）
+    /// NSString *XZML3 = @"<20-30|Paragraph>";            // 最小行高 20.0、最大行高 30.0
+    /// NSString *XZML4 = @"<0:5|Paragraph>";              // 行间距 5.0 point
     /// NSString *XZML5 = @"<20-30:5:12:1:4:8:6:20:0:-1|Paragraph>"; // 指定全部 10 个段落属性
-    /// @endcode
-    /// @discussion 由于段落属性按位置解析，属性之间的顺序是固定的，`:` 分隔符也是必需的。
+    /// NSString *XZML6 = @"<lineHeight=20:lineSpacing=5|Paragraph>"; // 具名式，无需占位前导位段
+    /// ```
     XZMLAttributeParagraph = '|',
     
 };
