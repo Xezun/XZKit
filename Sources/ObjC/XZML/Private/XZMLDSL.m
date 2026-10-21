@@ -78,18 +78,18 @@ typedef struct XZMLDSLContext {
 
 static void XZMLDSLDidBeginElement(XZMLDSLContext * const context);
 static void XZMLDSLDidFindText(XZMLDSLContext * const context, NSString *value);
-static XZMLReadingMode XZMLDSLDidFindAttribute(XZMLDSLContext * const context, XZMLAttribute attribute, NSString *value);
+static XZMLReadingMode XZMLDSLDidFindAttribute(XZMLDSLContext * const context, XZMLAttributeMarkup attribute, NSString *value);
 static void XZMLDSLDidEndElement(XZMLDSLContext * const context);
 
 /// 检测字符是否为 XZML 样式属性标记符。
 static inline BOOL XZMLDSLTestAttribute(char character) {
     switch (character) {
-        case XZMLAttributeColor:
-        case XZMLAttributeFont:
-        case XZMLAttributeDecoration:
-        case XZMLAttributeSecurity:
-        case XZMLAttributeLink:
-        case XZMLAttributeParagraph:
+        case XZMLColorAttributeMarkup:
+        case XZMLFontAttributeMarkup:
+        case XZMLDecorationAttributeMarkup:
+        case XZMLSecurityAttributeMarkup:
+        case XZMLLinkAttributeMarkup:
+        case XZMLParagraphAttributeMarkup:
             return YES;
         default:
             return NO;
@@ -467,11 +467,11 @@ static void XZMLDSLDidFindText(XZMLDSLContext * const context, NSString *text) {
     }
 }
 
-static XZMLReadingMode XZMLDSLDidFindAttribute(XZMLDSLContext * const context, XZMLAttribute attribute, NSString *value) {
+static XZMLReadingMode XZMLDSLDidFindAttribute(XZMLDSLContext * const context, XZMLAttributeMarkup attribute, NSString *value) {
     XZLog(@"XZMLDSLDidFindAttribute: %c => %@", attribute, value);
     if (context->_string) {
         // 纯文本模式，仅解析安全样式
-        if (attribute == XZMLAttributeSecurity) {
+        if (attribute == XZMLSecurityAttributeMarkup) {
             return XZMLDSLDidFindSecurityAttribute(context, value);
         }
         return XZMLReadingModeNormal;
@@ -479,22 +479,22 @@ static XZMLReadingMode XZMLDSLDidFindAttribute(XZMLDSLContext * const context, X
     
     // 普通模式，解析所有样式
     switch (attribute) {
-        case XZMLAttributeColor: {
+        case XZMLColorAttributeMarkup: {
             return XZMLDSLDidFindColorAttribute(context, value);
         }
-        case XZMLAttributeFont: {
+        case XZMLFontAttributeMarkup: {
             return XZMLDSLDidFindFontAttribute(context, value);
         }
-        case XZMLAttributeDecoration: {
+        case XZMLDecorationAttributeMarkup: {
             return XZMLDSLDidFindDecorationAttribute(context, value);
         }
-        case XZMLAttributeSecurity: {
+        case XZMLSecurityAttributeMarkup: {
             return XZMLDSLDidFindSecurityAttribute(context, value);
         }
-        case XZMLAttributeLink: {
+        case XZMLLinkAttributeMarkup: {
             return XZMLDSLDidFindLinkAttribute(context, value);
         }
-        case XZMLAttributeParagraph: {
+        case XZMLParagraphAttributeMarkup: {
             return XZMLDSLDidFindParagraphAttribute(context, value);
         }
         default: {

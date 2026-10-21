@@ -26,10 +26,21 @@ extension NSAttributedString.Key {
         securityMode: __XZMLSecurityModeAttributeName,
         /// 超链接。
         link: __XZMLLinkAttributeName,
-        /// 段落行高。
+        /// 段落样式。
         paragraphStyle: __XZMLParagraphStyleAttributeName
     );
     
+    
+    
 }
 
+/// XZML 缩写表。
+public var XZMLAbbreviations: [String: String]? {
+    get {
+        return __XZMLGetAbbreviations()
+    }
+    set {
+        __XZMLSetAbbreviations(newValue)
+    }
+}
 

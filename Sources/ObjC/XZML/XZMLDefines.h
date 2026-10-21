@@ -82,15 +82,15 @@ typedef NS_ENUM(NSUInteger, XZMLDecorationType) {
 /// > 请在程序初始化时（主线程）调用，不要与后台解析并发调用。
 ///
 /// - Parameter abbreviations: 新缩写表，其中 nil 表示移除所有
-FOUNDATION_EXPORT void XZMLSetAbbreviations(NSDictionary<NSString *, NSString *> * _Nullable abbreviations);
+FOUNDATION_EXPORT void XZMLSetAbbreviations(NSDictionary<NSString *, NSString *> * _Nullable abbreviations) NS_REFINED_FOR_SWIFT;
 
 /// 获取 XZML 缩写表。
-FOUNDATION_EXPORT NSDictionary<NSString *, NSString *> * _Nullable XZMLGetAbbreviations(void);
+FOUNDATION_EXPORT NSDictionary<NSString *, NSString *> * _Nullable XZMLGetAbbreviations(void) NS_REFINED_FOR_SWIFT;
 
 /// XZML 样式标记字符，使用 ASCII 特殊标点符号作为标记字符。
 ///
 /// 新增枚举请同时调整 NSCharacterSet.XZMLReservedCharacterSet 字符集。
-typedef NS_ENUM(char, XZMLAttribute) {
+typedef NS_ENUM(char, XZMLAttributeMarkup) {
     /// 颜色样式：文本前景色、文本背景色。颜色使用十六进制 RGB/RGBA 值。
     ///
     /// 属性值支持以下格式（`:` 之前为前景色，之后为背景色）：
@@ -106,7 +106,7 @@ typedef NS_ENUM(char, XZMLAttribute) {
     ///   → 默认值（`NSForegroundColorAttributeName` / `NSBackgroundColorAttributeName`）。
     /// - Note: 子属性值为空或非法时不写入，沿用上述优先级取到的值，不会重置为透明色。
     /// - Note: 不含 `:` 时只设置前景色，背景色保持原样（继承值或不变）。
-    XZMLAttributeColor = '#',
+    XZMLColorAttributeMarkup = '#',
     
     /// 字体样式：字体、字号、偏移。
     ///
@@ -121,7 +121,7 @@ typedef NS_ENUM(char, XZMLAttribute) {
     /// - 4、文本常规：TR、T
     /// - 5、文本中等：TM、M
     /// - 6、文本中粗：TS、S
-    XZMLAttributeFont = '&',
+    XZMLFontAttributeMarkup = '&',
     
     /// 文本修饰样式。
     ///
@@ -133,7 +133,7 @@ typedef NS_ENUM(char, XZMLAttribute) {
     /// - 文本修饰，包含多个样式，因此使用属性默认值解析，设置文本修饰样式，只会覆盖上层相同样式的设置。
     /// - 比如设置删除线样式，上层设置删除线样式会被覆盖，但是上层的下划线样式会保留。
     /// - 可以使用两个`$`可同时指定下划线和删除线。
-    XZMLAttributeDecoration = '$',
+    XZMLDecorationAttributeMarkup = '$',
     
     /// 安全文本样式：用占位字符替代目标文本的样式。
     ///
@@ -145,12 +145,12 @@ typedef NS_ENUM(char, XZMLAttribute) {
     /// - 安全模式替换时，忽略所有子元素。
     /// - 在安全模式下，星号`*`之后样式、文本、子元素都会被忽略，因此通过`*`的位置控制替代字符的样式。
     /// - 比如将删除线样式放在`*`之后，安全模式下，替代字符不会展示删除线。
-    XZMLAttributeSecurity = '*',
+    XZMLSecurityAttributeMarkup = '*',
     
     /// 超链接样式。
     ///
     /// 将使用 NSURL 或 NSString 创建富文本 NSLinkAttributeName 属性。
-    XZMLAttributeLink = '~', // => @
+    XZMLLinkAttributeMarkup = '~', // => @
     
     /// 段落样式。支持两种位段写法，可混用：
     /// - **位置式**：按位段顺序依次指定 `[行高]:行间距:首行缩进:对齐方式:断行模式:段间距:段前距:头缩进:尾缩进:书写方向`；
@@ -185,7 +185,7 @@ typedef NS_ENUM(char, XZMLAttribute) {
     /// NSString *XZML5 = @"<20-30:5:12:1:4:8:6:20:0:-1|Paragraph>"; // 指定全部 10 个段落属性
     /// NSString *XZML6 = @"<lineHeight=20:lineSpacing=5|Paragraph>"; // 具名式，无需占位前导位段
     /// ```
-    XZMLAttributeParagraph = '|',
+    XZMLParagraphAttributeMarkup = '|',
     
 };
 

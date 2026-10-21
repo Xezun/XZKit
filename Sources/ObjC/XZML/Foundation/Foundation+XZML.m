@@ -95,24 +95,24 @@
     static dispatch_once_t onceToken;
     dispatch_once(&onceToken, ^{
         NSMutableCharacterSet *characterSet = [NSMutableCharacterSet characterSetWithCharactersInString:@"<\\>"];
-        NSInteger     const kAttributesCount   = 6;
-        XZMLAttribute const kAttributesArray[] = {
-            XZMLAttributeColor,
-            XZMLAttributeFont,
-            XZMLAttributeDecoration,
-            XZMLAttributeLink,
-            XZMLAttributeSecurity,
-            XZMLAttributeParagraph
+        NSInteger           const kAttributesCount   = 6;
+        XZMLAttributeMarkup const kAttributesArray[] = {
+            XZMLColorAttributeMarkup,
+            XZMLFontAttributeMarkup,
+            XZMLDecorationAttributeMarkup,
+            XZMLLinkAttributeMarkup,
+            XZMLSecurityAttributeMarkup,
+            XZMLParagraphAttributeMarkup
         };
         for (NSInteger i = 0; i < kAttributesCount; i++) {
-            XZMLAttribute const attribute = kAttributesArray[i];
+            XZMLAttributeMarkup const attribute = kAttributesArray[i];
             switch (attribute) {
-                case XZMLAttributeColor:
-                case XZMLAttributeFont:
-                case XZMLAttributeDecoration:
-                case XZMLAttributeLink:
-                case XZMLAttributeSecurity:
-                case XZMLAttributeParagraph:
+                case XZMLColorAttributeMarkup:
+                case XZMLFontAttributeMarkup:
+                case XZMLDecorationAttributeMarkup:
+                case XZMLLinkAttributeMarkup:
+                case XZMLSecurityAttributeMarkup:
+                case XZMLParagraphAttributeMarkup:
                     [characterSet addCharactersInRange:NSMakeRange(attribute, 1)];
                     continue;
             }
