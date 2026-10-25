@@ -1,1 +1,1 @@
-../../../ObjC/XZRefresh/Core/UIScrollView+XZRefresh.h
+../../../ObjC/XZRefresh/UIScrollView+XZRefresh.h

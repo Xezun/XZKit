@@ -10,9 +10,9 @@
 NS_ASSUME_NONNULL_BEGIN
 
 /// 过渡动画所使用的时长 0.35 秒。
-FOUNDATION_EXPORT NSTimeInterval const XZRefreshAnimationDuration NS_SWIFT_NAME(animationDuration);
+FOUNDATION_EXPORT NSTimeInterval const XZRefreshAnimationDuration;
 /// 默认刷新视图的高度 44.0 点。
-FOUNDATION_EXPORT CGFloat        const XZRefreshHeight NS_SWIFT_NAME(refreshHeight);
+FOUNDATION_EXPORT CGFloat        const XZRefreshHeight;
 
 /// 刷新视图适配 UIScrollView 边距的方式。
 typedef NS_ENUM(NSUInteger, XZRefreshAdjustment) {
@@ -34,7 +34,7 @@ typedef NS_ENUM(NSUInteger, XZRefreshAdjustment) {
     /// - 头部刷新视图布局在 contentSize 区域上面。
     /// - 底部刷新视图布局在 contentSize 区域的下面。
     XZRefreshAdjustmentNone,
-} NS_SWIFT_NAME(Adjustment);
+};
 
 @class XZRefreshView, UIRefreshControl, UICollectionView;
 

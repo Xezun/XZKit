@@ -1,1 +1,1 @@
-../../../ObjC/XZRefresh/Core/XZRefreshView.h
+../../../ObjC/XZRefresh/XZRefreshView.h
