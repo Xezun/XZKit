@@ -80,8 +80,21 @@
 }
 
 - (void)setColors:(NSArray<UIColor *> *)colors {
-    NSParameterAssert(colors.count >= 3);
-    _colors = [colors subarrayWithRange:NSMakeRange(0, 3)];
+    switch (colors.count) {
+        case 0:
+            return;
+        case 1:
+            return;
+        case 2:
+            _colors = @[colors[0], colors[1], colors[0]];
+            break;
+        case 3:
+            _colors = colors.copy;
+            break;
+        default:
+            _colors = [colors subarrayWithRange:NSMakeRange(0, 3)];
+            break;
+    }
     [CATransaction begin];
     [CATransaction setDisableActions:YES];
     _dot0Layer.fillColor = _colors[1].CGColor;
