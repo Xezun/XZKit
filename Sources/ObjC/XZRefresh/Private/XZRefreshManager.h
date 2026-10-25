@@ -44,8 +44,8 @@ NS_ASSUME_NONNULL_BEGIN
 - (void)layoutRefreshViewsIfNeeded;
 
 - (BOOL)isRefreshViewAnimating:(XZRefreshView *)refreshingView;
-- (void)refreshingView:(XZRefreshView *)refreshingView beginAnimating:(BOOL)animated completion:(void (^)(BOOL finished))completion;
-- (void)refreshingView:(XZRefreshView *)refreshingView endAnimating:(BOOL)animated completion:(void (^)(BOOL finished))completion;
+- (void)refreshingView:(XZRefreshView *)refreshingView beginAnimating:(BOOL)animated completion:(void (^_Nullable)(BOOL finished))completion;
+- (void)refreshingView:(XZRefreshView *)refreshingView endAnimating:(BOOL)animated completion:(void (^_Nullable)(BOOL finished))completion;
 
 @end
 
