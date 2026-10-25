@@ -141,9 +141,9 @@ static void const * const _context = &_context;
         SEL          const selector = @selector(scrollViewWillEndDragging:withVelocity:targetContentOffset:);
         const char * const encoding = xz_objc_class_getMethodTypeEncoding(self.class, selector);
         xz_objc_class_addMethodWithBlock(aClass, selector, encoding, ^(id<UIScrollViewDelegate> self, UIScrollView *scrollView, CGPoint velocity, CGPoint *targetContentOffset) {
-            [scrollView.xz_refreshManager scrollViewWillEndDragging:scrollView withVelocity:velocity targetContentOffset:targetContentOffset];
+            [scrollView.xz_refreshManagerIfLoaded scrollViewWillEndDragging:scrollView withVelocity:velocity targetContentOffset:targetContentOffset];
         }, ^(id<UIScrollViewDelegate> self, UIScrollView *scrollView, CGPoint velocity, CGPoint *targetContentOffset) {
-            [scrollView.xz_refreshManager scrollViewWillEndDragging:scrollView withVelocity:velocity targetContentOffset:targetContentOffset];
+            [scrollView.xz_refreshManagerIfLoaded scrollViewWillEndDragging:scrollView withVelocity:velocity targetContentOffset:targetContentOffset];
             struct objc_super super = {
                 .receiver = self,
                 .super_class = class_getSuperclass(aClass)
@@ -151,7 +151,7 @@ static void const * const _context = &_context;
             ((void (*)(struct objc_super *, SEL, id, CGPoint, CGPoint *))objc_msgSendSuper)(&super, selector, scrollView, velocity, targetContentOffset);
         }, ^id _Nonnull(SEL  _Nonnull selector) {
             return ^(id<UIScrollViewDelegate> self, UIScrollView *scrollView, CGPoint velocity, CGPoint *targetContentOffset) {
-                [scrollView.xz_refreshManager scrollViewWillEndDragging:scrollView withVelocity:velocity targetContentOffset:targetContentOffset];
+                [scrollView.xz_refreshManagerIfLoaded scrollViewWillEndDragging:scrollView withVelocity:velocity targetContentOffset:targetContentOffset];
                 ((void (*)(id<UIScrollViewDelegate>, SEL, id, CGPoint, CGPoint *))objc_msgSend)(self, selector, scrollView, velocity, targetContentOffset);
             };
         });
@@ -161,9 +161,9 @@ static void const * const _context = &_context;
         SEL          const selector = @selector(scrollViewDidEndDecelerating:);
         const char * const encoding = xz_objc_class_getMethodTypeEncoding(self.class, selector);
         xz_objc_class_addMethodWithBlock(aClass, selector, encoding, ^(id<UIScrollViewDelegate> self, UIScrollView *scrollView) {
-            [scrollView.xz_refreshManager scrollViewDidEndDecelerating:scrollView];
+            [scrollView.xz_refreshManagerIfLoaded scrollViewDidEndDecelerating:scrollView];
         }, ^(id<UIScrollViewDelegate> self, UIScrollView *scrollView) {
-            [scrollView.xz_refreshManager scrollViewDidEndDecelerating:scrollView];
+            [scrollView.xz_refreshManagerIfLoaded scrollViewDidEndDecelerating:scrollView];
             struct objc_super super = {
                 .receiver = self,
                 .super_class = class_getSuperclass(aClass)
@@ -171,7 +171,7 @@ static void const * const _context = &_context;
             ((void (*)(struct objc_super *, SEL, id))objc_msgSendSuper)(&super, selector, scrollView);
         }, ^id _Nonnull(SEL  _Nonnull selector) {
             return ^(id<UIScrollViewDelegate> self, UIScrollView *scrollView) {
-                [scrollView.xz_refreshManager scrollViewDidEndDecelerating:scrollView];
+                [scrollView.xz_refreshManagerIfLoaded scrollViewDidEndDecelerating:scrollView];
                 ((void (*)(id<UIScrollViewDelegate>, SEL, id))objc_msgSend)(self, selector, scrollView);
             };
         });
@@ -181,9 +181,9 @@ static void const * const _context = &_context;
         SEL          const selector = @selector(scrollViewWillBeginDragging:);
         const char * const encoding = xz_objc_class_getMethodTypeEncoding(self.class, selector);
         xz_objc_class_addMethodWithBlock(aClass, selector, encoding, ^(id<UIScrollViewDelegate> self, UIScrollView *scrollView) {
-            [scrollView.xz_refreshManager scrollViewWillBeginDragging:scrollView];
+            [scrollView.xz_refreshManagerIfLoaded scrollViewWillBeginDragging:scrollView];
         }, ^(id<UIScrollViewDelegate> self, UIScrollView *scrollView) {
-            [scrollView.xz_refreshManager scrollViewWillBeginDragging:scrollView];
+            [scrollView.xz_refreshManagerIfLoaded scrollViewWillBeginDragging:scrollView];
             struct objc_super super = {
                 .receiver = self,
                 .super_class = class_getSuperclass(aClass)
@@ -191,7 +191,7 @@ static void const * const _context = &_context;
             ((void (*)(struct objc_super *, SEL, id))objc_msgSendSuper)(&super, selector, scrollView);
         }, ^id _Nonnull(SEL  _Nonnull selector) {
             return ^(id<UIScrollViewDelegate> self, UIScrollView *scrollView) {
-                [scrollView.xz_refreshManager scrollViewWillBeginDragging:scrollView];
+                [scrollView.xz_refreshManagerIfLoaded scrollViewWillBeginDragging:scrollView];
                 ((void (*)(id<UIScrollViewDelegate>, SEL, id))objc_msgSend)(self, selector, scrollView);
             };
         });
@@ -201,9 +201,9 @@ static void const * const _context = &_context;
         SEL          const selector = @selector(scrollViewDidEndDragging:willDecelerate:);
         const char * const encoding = xz_objc_class_getMethodTypeEncoding(self.class, selector);
         xz_objc_class_addMethodWithBlock(aClass, selector, encoding, ^(id<UIScrollViewDelegate> self, UIScrollView *scrollView, BOOL decelerate) {
-            [scrollView.xz_refreshManager scrollViewDidEndDragging:scrollView willDecelerate:decelerate];
+            [scrollView.xz_refreshManagerIfLoaded scrollViewDidEndDragging:scrollView willDecelerate:decelerate];
         }, ^(id<UIScrollViewDelegate> self, UIScrollView *scrollView, BOOL decelerate) {
-            [scrollView.xz_refreshManager scrollViewDidEndDragging:scrollView willDecelerate:decelerate];
+            [scrollView.xz_refreshManagerIfLoaded scrollViewDidEndDragging:scrollView willDecelerate:decelerate];
             struct objc_super super = {
                 .receiver = self,
                 .super_class = class_getSuperclass(aClass)
@@ -211,7 +211,7 @@ static void const * const _context = &_context;
             ((void (*)(struct objc_super *, SEL, id, BOOL))objc_msgSendSuper)(&super, selector, scrollView, decelerate);
         }, ^id _Nonnull(SEL  _Nonnull selector) {
             return ^(id<UIScrollViewDelegate> self, UIScrollView *scrollView, BOOL decelerate) {
-                [scrollView.xz_refreshManager scrollViewDidEndDragging:scrollView willDecelerate:decelerate];
+                [scrollView.xz_refreshManagerIfLoaded scrollViewDidEndDragging:scrollView willDecelerate:decelerate];
                 ((void (*)(id<UIScrollViewDelegate>, SEL, id, BOOL))objc_msgSend)(self, selector, scrollView, decelerate);
             };
         });
