@@ -282,12 +282,12 @@ FOUNDATION_EXPORT void dispatch_global_sync(intptr_t QOS_CLASS, id block, ...) N
 #define dispatch_async_global(QOS_CLASS, block, ...)     __dispatch_queue_macros_imp__(async, dispatch_get_global_queue(QOS_CLASS, 0), block, ##__VA_ARGS__)
 #define dispatch_sync_global(QOS_CLASS, block, ...)      __dispatch_queue_macros_imp__(sync, dispatch_get_global_queue(QOS_CLASS, 0), block, ##__VA_ARGS__)
 
-#define dispatch_queue_async(queue, block, ...)          { typeof(block) const __xz_block__ = block; if (__xz_block__) { dispatch_async_queue(queue, __xz_block__, ##__VA_ARGS__);        } }
-#define dispatch_queue_sync(queue, block, ...)           { typeof(block) const __xz_block__ = block; if (__xz_block__) { dispatch_sync_queue(queue, __xz_block__, ##__VA_ARGS__);         } }
-#define dispatch_main_async(block, ...)                  { typeof(block) const __xz_block__ = block; if (__xz_block__) { dispatch_async_main(__xz_block__, ##__VA_ARGS__);                } }
-#define dispatch_main_sync(block, ...)                   { typeof(block) const __xz_block__ = block; if (__xz_block__) { dispatch_sync_main(__xz_block__, ##__VA_ARGS__);                 } }
-#define dispatch_global_async(QOS_CLASS, block, ...)     { typeof(block) const __xz_block__ = block; if (__xz_block__) { dispatch_async_global(QOS_CLASS, __xz_block__, ##__VA_ARGS__);   } }
-#define dispatch_global_sync(QOS_CLASS, block, ...)      { typeof(block) const __xz_block__ = block; if (__xz_block__) { dispatch_sync_global(QOS_CLASS, __xz_block__, ##__VA_ARGS__);    } }
+#define dispatch_queue_async(queue, block, ...)          do { typeof(block) const __xz_block__ = block; if (__xz_block__) { dispatch_async_queue(queue, __xz_block__, ##__VA_ARGS__);        } } while (0)
+#define dispatch_queue_sync(queue, block, ...)           do { typeof(block) const __xz_block__ = block; if (__xz_block__) { dispatch_sync_queue(queue, __xz_block__, ##__VA_ARGS__);         } } while (0)
+#define dispatch_main_async(block, ...)                  do { typeof(block) const __xz_block__ = block; if (__xz_block__) { dispatch_async_main(__xz_block__, ##__VA_ARGS__);                } } while (0)
+#define dispatch_main_sync(block, ...)                   do { typeof(block) const __xz_block__ = block; if (__xz_block__) { dispatch_sync_main(__xz_block__, ##__VA_ARGS__);                 } } while (0)
+#define dispatch_global_async(QOS_CLASS, block, ...)     do { typeof(block) const __xz_block__ = block; if (__xz_block__) { dispatch_async_global(QOS_CLASS, __xz_block__, ##__VA_ARGS__);   } } while (0)
+#define dispatch_global_sync(QOS_CLASS, block, ...)      do { typeof(block) const __xz_block__ = block; if (__xz_block__) { dispatch_sync_global(QOS_CLASS, __xz_block__, ##__VA_ARGS__);    } } while (0)
 
 #endif
 
