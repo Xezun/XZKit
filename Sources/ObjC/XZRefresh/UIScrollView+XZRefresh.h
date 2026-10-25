@@ -28,10 +28,10 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic, strong, null_resettable, setter=xz_setFooterRefreshView:) __kindof XZRefreshView *xz_footerRefreshView NS_SWIFT_NAME(footerRefreshView);
 
 /// 头部刷新视图，非懒加载。
-@property (nonatomic, strong, nullable, readonly) __kindof XZRefreshView *xz_headerRefreshViewIfNeeded NS_SWIFT_NAME(headerRefreshViewIfNeeded);
+@property (nonatomic, strong, nullable, readonly) __kindof XZRefreshView *xz_headerRefreshViewIfLoaded NS_SWIFT_NAME(headerRefreshViewIfLoaded);
 
 /// 尾部刷新视图，非懒加载。
-@property (nonatomic, strong, nullable, readonly) __kindof XZRefreshView *xz_footerRefreshViewIfNeeded NS_SWIFT_NAME(footerRefreshViewIfNeeded);
+@property (nonatomic, strong, nullable, readonly) __kindof XZRefreshView *xz_footerRefreshViewIfLoaded NS_SWIFT_NAME(footerRefreshViewIfLoaded);
 
 /// 标记需要调整头部与尾部刷新视图的布局。
 - (void)xz_setNeedsLayoutRefreshViews NS_SWIFT_NAME(setNeedsLayoutRefreshViews());

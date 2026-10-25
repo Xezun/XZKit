@@ -27,11 +27,11 @@
     self.xz_refreshManager.footerRefreshView = xz_footerRefreshView;
 }
 
-- (XZRefreshView *)xz_headerRefreshViewIfNeeded {
+- (XZRefreshView *)xz_headerRefreshViewIfLoaded {
     return self.xz_refreshManagerIfLoaded.headerRefreshViewIfLoaded;
 }
 
-- (XZRefreshView *)xz_footerRefreshViewIfNeeded {
+- (XZRefreshView *)xz_footerRefreshViewIfLoaded {
     return self.xz_refreshManagerIfLoaded.footerRefreshViewIfLoaded;
 }
 
