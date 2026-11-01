@@ -87,7 +87,9 @@ typedef NS_ENUM(NSUInteger, XZRefreshState) {
     CGFloat _contentOffsetY;
     
     // MARK: - 布局时，记录所使用的刷新视图属性
+    /// 缓存布局时所使用的刷新高度，并在恢复时状态时使用。
     CGFloat _refreshHeight;
+    /// 缓存布局时所使用的适应模式，以便在恢复时使用。
     XZRefreshAdjustment _adjustment;
     CGFloat _offset;
 }
@@ -117,6 +119,7 @@ typedef NS_ENUM(NSUInteger, XZRefreshState) {
     /// 为了避免这种情况，在进入刷新时，如果此属性为 YES，那么就先保持 footer 位置不变，
     /// 然后在页面下落的过程中，跟随页面滚动调整 footer 直到 footer 回到正确位置。
     BOOL _needsFollowPageScrollWhileRefreshing;
+    
     // MARK: - 记录布局时，所使用的滚动视图属性
     CGRect       _bounds;
     CGSize       _contentSize;

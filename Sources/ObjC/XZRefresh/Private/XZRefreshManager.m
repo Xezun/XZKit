@@ -26,7 +26,7 @@
 //    比如从 sb/xib 中初始化的大小和最终大小不一致时，初始以 xib/sb 中预设的大小进行布局，但是在 scrollView 调整
 //    到最终大小后，虽然 frame.size/bounds.size 发生了改变，但是并没有触发 -scrollViewDidScroll: 滚动方法。
 //    因为对 bounds.x 进行了依赖，所有监听了 bounds 属性而不是 frame 属性。
-// 基于以上原因，在  中通过判断以下关键值，实时重新计算 header/footer 布局。
+// 基于以上原因 XZRefresh 通过以下关键值，判断是否需要重新计算 header/footer 布局。
 //
 // 1. 从 nib 加载宽度 320 点，实际展示宽度 375 点，scrollView.frame 虽然发生了改变，但是 KVO 监听 frame 属性并没有触发。
 // 2. 直接修改 frame 或 bounds 属性，不会触发 setNeedsLayout 方法，而是直接触发 layoutSubviews 方法，而 layoutSubviews 方法不可以注入。
@@ -116,7 +116,7 @@ static void const * const _context = &_context;
 
 /// 接管代理事件。
 - (void)scrollView:(UIScrollView *)scrollView delegateDidChange:(nullable id<UIScrollViewDelegate> const)delegate {
-    if (delegate == self || scrollView != _scrollView) {
+    if (delegate == self) {
         return;
     }
     if (delegate == nil) {
@@ -134,7 +134,7 @@ static void const * const _context = &_context;
     
     // 关于注入代理方法
     // 1. UIScrollView 缓存了代理方法 -scrollViewDidScroll: 的方法实现，以优化方法的执行效率，所以需要重新设置代理（重复设置无效，因为值未改变）来刷新缓存。
-    // 2. 仅对 -scrollViewDidScroll: 进行上述处理，但目前通过 KVO 监听 bounds 来感知滚动，所以不需要注入 -scrollViewDidScroll: 方法了。
+    // 2. UIScrollView 仅对 -scrollViewDidScroll: 方法进行上述处理，但目前通过 KVO 监听 bounds 来感知滚动，所以不需要注入 -scrollViewDidScroll: 方法了。
     // 3. 如下所有方法，普通注入即可生效，不需要重新设置代理。
     
     {
@@ -226,6 +226,8 @@ static void const * const _context = &_context;
         [self setFooterRefreshView:nil];
     }
     
+    // context 已缓存 headerView 的关键属性，视图可直接移除。
+    
     [_header->_refreshView removeFromSuperview];
     headerRefreshView.refreshManager = self;
     _header->_refreshView = headerRefreshView;
@@ -258,8 +260,8 @@ static void const * const _context = &_context;
         return _header->_refreshView;
     }
     UIScrollView *  const _scrollView = self->_scrollView;
-    CGFloat         const y           = -_scrollView.adjustedContentInset.top - XZRefreshHeight;
-    XZRefreshView * const refreshView = [[XZRefreshView.defaultHeaderClass alloc] initWithFrame:CGRectMake(0, y, _scrollView.frame.size.width, XZRefreshHeight)];
+    CGFloat         const y           = -_scrollView.adjustedContentInset.top - XZRefreshViewHeight;
+    XZRefreshView * const refreshView = [[XZRefreshView.defaultHeaderClass alloc] initWithFrame:CGRectMake(0, y, _scrollView.frame.size.width, XZRefreshViewHeight)];
     [self setHeaderRefreshView:refreshView];
     return refreshView;
 }
@@ -272,7 +274,7 @@ static void const * const _context = &_context;
     UIEdgeInsets    const insets = _scrollView.adjustedContentInset;
     CGRect          const bounds = _scrollView.bounds;
     CGFloat         const y      = MAX(_scrollView.contentSize.height, bounds.size.height - insets.top - insets.bottom) + insets.bottom;
-    XZRefreshView * const refreshView = [[XZRefreshView.defaultFooterClass alloc] initWithFrame:CGRectMake(0, y, bounds.size.width, XZRefreshHeight)];
+    XZRefreshView * const refreshView = [[XZRefreshView.defaultFooterClass alloc] initWithFrame:CGRectMake(0, y, bounds.size.width, XZRefreshViewHeight)];
     [self setFooterRefreshView:refreshView];
     return refreshView;
 }

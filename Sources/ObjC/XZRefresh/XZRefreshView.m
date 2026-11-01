@@ -44,13 +44,13 @@ static Class _defaultFooterClass = Nil;
 @synthesize refreshHeight = _refreshHeight;
 
 - (instancetype)init {
-    return [self initWithFrame:CGRectMake(0, 0, 320.0, XZRefreshHeight)];
+    return [self initWithFrame:CGRectMake(0, 0, 320.0, XZRefreshViewHeight)];
 }
 
 - (instancetype)initWithFrame:(CGRect)frame {
     self = [super initWithFrame:frame];
     if (self) {
-        _refreshHeight = XZRefreshHeight;
+        _refreshHeight = XZRefreshViewHeight;
         _adjustment = XZRefreshAdjustmentAutomatic;
         _automaticRefreshDistance = 0;
     }
@@ -60,7 +60,7 @@ static Class _defaultFooterClass = Nil;
 - (instancetype)initWithCoder:(NSCoder *)coder {
     self = [super initWithCoder:coder];
     if (self) {
-        _refreshHeight = XZRefreshHeight;
+        _refreshHeight = XZRefreshViewHeight;
         _adjustment = XZRefreshAdjustmentAutomatic;
         _automaticRefreshDistance = 0;
     }

@@ -8,4 +8,4 @@
 #import "XZRefreshDefines.h"
 
 NSTimeInterval const XZRefreshAnimationDuration = 0.35;
-CGFloat        const XZRefreshHeight            = 44.0;
+CGFloat        const XZRefreshViewHeight        = 44.0;
