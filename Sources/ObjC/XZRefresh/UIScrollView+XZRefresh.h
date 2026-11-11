@@ -19,12 +19,12 @@ NS_ASSUME_NONNULL_BEGIN
 
 /// 头部刷新视图。
 ///
-/// 懒加载，默认为 Style1 刷新样式。
+/// 懒加载，默认为 Style1 环形进度条刷新样式。
 @property (nonatomic, strong, null_resettable, setter=xz_setHeaderRefreshView:) __kindof XZRefreshView *xz_headerRefreshView NS_SWIFT_NAME(headerRefreshView);
 
 /// 尾部刷新视图。
 ///
-/// 懒加载，默认为 Style2 刷新样式。
+/// 懒加载，默认为 Style2 三圆点呼吸闪烁刷新样式。
 @property (nonatomic, strong, null_resettable, setter=xz_setFooterRefreshView:) __kindof XZRefreshView *xz_footerRefreshView NS_SWIFT_NAME(footerRefreshView);
 
 /// 头部刷新视图，非懒加载。

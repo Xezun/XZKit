@@ -54,9 +54,4 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic, strong, readonly, nullable) XZRefreshManager *xz_refreshManagerIfLoaded;
 @end
 
-@interface XZRefreshView (XZRefreshManager)
-/// 此属性在 XZRefreshView.m 中实现。
-@property (nonatomic, weak) XZRefreshManager *refreshManager;
-@end
-
 NS_ASSUME_NONNULL_END

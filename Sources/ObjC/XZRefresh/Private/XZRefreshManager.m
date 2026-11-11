@@ -229,7 +229,7 @@ static void const * const _context = &_context;
     // context 已缓存 headerView 的关键属性，视图可直接移除。
     
     [_header->_refreshView removeFromSuperview];
-    headerRefreshView.refreshManager = self;
+    headerRefreshView->_refreshManager = self;
     _header->_refreshView = headerRefreshView;
     if (headerRefreshView != nil) {
         [_scrollView addSubview:headerRefreshView];
@@ -246,7 +246,7 @@ static void const * const _context = &_context;
     }
     
     [_footer->_refreshView removeFromSuperview];
-    footerRefreshView.refreshManager = self;
+    footerRefreshView->_refreshManager = self;
     _footer->_refreshView = footerRefreshView;
     if (footerRefreshView != nil) {
         [_scrollView addSubview:footerRefreshView];

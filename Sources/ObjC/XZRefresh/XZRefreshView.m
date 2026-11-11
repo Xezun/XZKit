@@ -14,10 +14,7 @@
 static Class _defaultHeaderClass = Nil;
 static Class _defaultFooterClass = Nil;
 
-@interface XZRefreshView () {
-    // 由 manager 主动赋值
-    XZRefreshManager * __weak _refreshManager;
-}
+@interface XZRefreshView ()
 
 @end
 

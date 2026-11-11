@@ -14,16 +14,19 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-@class UIScrollView, UIRefreshControl, UIGestureRecognizer;
-
 @protocol XZRefreshDelegate;
+@class XZRefreshManager;
 
 /// 刷新视图。
 /// @discussion
 /// 基类，无动画效果，必须使用子类。
 /// @discussion
 /// 当视图进入刷新状态时，可通过`UIScrollView.delegate`接收事件。
-@interface XZRefreshView : UIView
+@interface XZRefreshView : UIView  {
+    // 由 manager 主动赋值
+    @package
+    XZRefreshManager * __weak _refreshManager;
+}
 
 /// 默认头部刷新视图。必须能够使用 `-initWithFrame:` 方法初始化。
 @property (class, nonatomic, null_resettable) Class defaultHeaderClass;
@@ -107,6 +110,13 @@ NS_ASSUME_NONNULL_BEGIN
 /// @param animated 当前结束刷新的过程，是否展示了退出刷新的动画效果
 - (void)scrollView:(UIScrollView *)scrollView didEndRefreshing:(BOOL)animated;
 
+@end
+
+@interface XZRefreshView (XZRefreshManager)
+/// XZRefreshManager 是私有的，不对外开放。
+///
+/// 公开声明此属性，避免子类重写意外覆盖。
+@property (nonatomic, weak, readonly) XZRefreshManager *refreshManager;
 @end
 
 NS_ASSUME_NONNULL_END
