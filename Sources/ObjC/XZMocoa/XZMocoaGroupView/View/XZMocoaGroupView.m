@@ -57,11 +57,11 @@
 #ifdef XZ_MOCOA_REFRESH_SUPPORTED
 @implementation XZMocoaGroupView (XZRefreshDelegate)
 
-- (void)scrollView:(UIScrollView *)scrollView headerDidBeginRefreshing:(XZRefreshView *)refreshView {
+- (void)scrollView:(UIScrollView *)scrollView didBeginHeaderRefreshing:(XZRefreshView *)refreshView {
     [self sendEventsWithKey:XZMocoaKeyHeaderDidBeginRefreshing value:refreshView];
 }
 
-- (void)scrollView:(UIScrollView *)scrollView footerDidBeginRefreshing:(XZRefreshView *)refreshView {
+- (void)scrollView:(UIScrollView *)scrollView didBeginFooterRefreshing:(XZRefreshView *)refreshView {
     [self sendEventsWithKey:XZMocoaKeyFooterDidBeginRefreshing value:refreshView];
 }
 

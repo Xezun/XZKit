@@ -8,6 +8,7 @@
 #import "ExampleAppDelegate.h"
 @import XZKit;
 @import OSLog;
+@import WebKit;
 
 @interface ExampleAppDelegate ()
 
@@ -21,7 +22,7 @@
     XZLogSystem.defaultSystem.isEnabled = [NSUserDefaults.standardUserDefaults boolForKey:@"XZLogSystem.defaultSystem.isEnabled"];
     XZLogSystem.XZKitSystem.isEnabled = [NSUserDefaults.standardUserDefaults boolForKey:@"XZLogSystem.XZKitSystem.isEnabled"];
     XZLog(@"App (%@) was launched: %@", XZLogSystem.defaultSystem.domain, launchOptions);
-    
+    WKWebView *webView;
     [NSNotificationCenter.defaultCenter addObserver:self selector:@selector(didChangePreferredLanguageNotification:) name:XZLocaleDidChangePreferredLanguageNotification object:nil];
     
     return YES;

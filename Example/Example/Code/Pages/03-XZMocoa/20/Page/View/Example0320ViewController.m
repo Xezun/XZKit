@@ -68,11 +68,11 @@
     XZLog(@"%@ => %@", scrollView, NSStringFromCGPoint(scrollView.contentOffset));
 }
 
-- (void)scrollView:(UIScrollView *)scrollView headerDidBeginRefreshing:(XZRefreshView *)refreshView {
+- (void)scrollView:(UIScrollView *)scrollView didBeginHeaderRefreshing:(XZRefreshView *)refreshView {
     [self sendEventsWithKey:XZMocoaKeyHeaderDidBeginRefreshing value:nil];
 }
 
-- (void)scrollView:(UIScrollView *)scrollView footerDidBeginRefreshing:(XZRefreshView *)refreshView {
+- (void)scrollView:(UIScrollView *)scrollView didBeginFooterRefreshing:(XZRefreshView *)refreshView {
     [self sendEventsWithKey:XZMocoaKeyFooterDidBeginRefreshing value:nil];
 }
 

@@ -37,7 +37,7 @@ NS_ASSUME_NONNULL_BEGIN
 /// @discussion
 /// 刷新事件会优先发送到此属性指定的对象，即，如果设置了此属性，那么`UIScrollView.delegate`将不会收到事件。
 /// @discussion
-/// 只会触发符合控件当前角色的代理事件，即，如果当前对象作为`refreshHeaderView`，那么只会触发`-scrollView:headerDidBeginRefreshing:`方法。
+/// 只会触发符合控件当前角色的代理事件，即，如果当前对象作为`refreshHeaderView`，那么只会触发`-scrollView:didBeginHeaderRefreshing:`方法。
 @property (nonatomic, weak) id<XZRefreshDelegate> delegate;
 
 /// 当前对象所在的 UIScrollView 视图。

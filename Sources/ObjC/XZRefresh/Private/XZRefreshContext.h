@@ -83,7 +83,7 @@ typedef NS_ENUM(NSUInteger, XZRefreshState) {
     BOOL _isAutomatic;
     CGFloat _automaticRefreshDistance;
     CGRect  _frame;
-    // 记录 header 或 footer 进入刷新状态要达到的临界值
+    /// 记录 header 或 footer 进入刷新状态要达到的临界值
     CGFloat _contentOffsetY;
     
     // MARK: - 布局时，记录所使用的刷新视图属性
@@ -92,22 +92,20 @@ typedef NS_ENUM(NSUInteger, XZRefreshState) {
     /// 缓存布局时所使用的适应模式，以便在恢复时使用。
     XZRefreshAdjustment _adjustment;
     CGFloat _offset;
+    
+    // MARK: - 记录布局时所使用的 UIScrollView 的属性值
+    /// 布局时 `scrollView.bounds` 值
+    CGRect       _bounds;
+    /// 布局所使用的边距，与 `_adjustment` 相关。
+    UIEdgeInsets _contentInsets;
+    /// 布局时 `scrollView.adjustedContentInset` 值
+    UIEdgeInsets _adjustedContentInsets;
 }
 - (BOOL)needsLayoutForBounds:(CGRect)bounds;
 - (BOOL)needsLayoutForAxises:(UIScrollView *)scrollView;
 @end
 
-// 记录布局 header/footer 时所依赖的 UIScrollView 属性值。
-
-
-@interface XZRefreshHeaderContext : XZRefreshContext {
-    @package
-    // MARK: - 布局时，记录所使用的滚动视图属性
-    CGRect       _bounds;
-    UIEdgeInsets _contentInsets;
-    UIEdgeInsets _adjustedContentInsets;
-}
-
+@interface XZRefreshHeaderContext : XZRefreshContext
 @end
 
 @interface XZRefreshFooterContext : XZRefreshContext {
@@ -121,10 +119,7 @@ typedef NS_ENUM(NSUInteger, XZRefreshState) {
     BOOL _needsFollowPageScrollWhileRefreshing;
     
     // MARK: - 记录布局时，所使用的滚动视图属性
-    CGRect       _bounds;
-    CGSize       _contentSize;
-    UIEdgeInsets _contentInsets;
-    UIEdgeInsets _adjustedContentInsets;
+    CGSize _contentSize;
 }
 - (BOOL)needsLayoutForContentSize:(CGSize)contentSize;
 @end

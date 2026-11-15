@@ -67,7 +67,7 @@
     [self.tableView reloadData];
 }
 
-- (void)scrollView:(__kindof UIScrollView *)scrollView headerDidBeginRefreshing:(XZRefreshView *)refreshView {
+- (void)scrollView:(__kindof UIScrollView *)scrollView didBeginHeaderRefreshing:(XZRefreshView *)refreshView {
 //    XZLog(@"%s", __PRETTY_FUNCTION__);
     NSTimeInterval time = arc4random_uniform(20) * 0.1 + 2.0;
     dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(time * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
@@ -85,7 +85,7 @@
     });
 }
 
-- (void)scrollView:(__kindof UIScrollView *)scrollView footerDidBeginRefreshing:(XZRefreshView *)refreshView {
+- (void)scrollView:(__kindof UIScrollView *)scrollView didBeginFooterRefreshing:(XZRefreshView *)refreshView {
 //    XZLog(@"%s", __PRETTY_FUNCTION__);
     NSTimeInterval time = arc4random_uniform(20) * 0.1 + 2.0;
     dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(time * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{

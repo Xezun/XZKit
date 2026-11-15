@@ -60,12 +60,12 @@ self.tableView.xz_headerRefreshView = [[XZRefreshStyle2View alloc] init];
 
 ```objc
 // 下拉刷新事件
-- (void)scrollView:(UIScrollView *)scrollView headerDidBeginRefreshing:(XZRefreshView *)refreshView {
+- (void)scrollView:(UIScrollView *)scrollView didBeginHeaderRefreshing:(XZRefreshView *)refreshView {
     // handle the pull down refreshing
     [refreshView endAnimating];
 }
 // 上拉加载事件
-- (void)scrollView:(UIScrollView *)scrollView footerDidBeginRefreshing:(XZRefreshView *)refreshView {
+- (void)scrollView:(UIScrollView *)scrollView didBeginFooterRefreshing:(XZRefreshView *)refreshView {
     // handle the pull up refreshing
     [refreshView endAnimating];
 }

@@ -64,8 +64,8 @@ NS_ASSUME_NONNULL_BEGIN
 
 #ifdef XZ_MOCOA_REFRESH_SUPPORTED
 @interface XZMocoaGroupView (XZRefreshDelegate) <XZRefreshDelegate>
-- (void)scrollView:(UIScrollView *)scrollView headerDidBeginRefreshing:(XZRefreshView *)refreshView;
-- (void)scrollView:(UIScrollView *)scrollView footerDidBeginRefreshing:(XZRefreshView *)refreshView;
+- (void)scrollView:(UIScrollView *)scrollView didBeginHeaderRefreshing:(XZRefreshView *)refreshView;
+- (void)scrollView:(UIScrollView *)scrollView didBeginFooterRefreshing:(XZRefreshView *)refreshView;
 @end
 #endif
 
