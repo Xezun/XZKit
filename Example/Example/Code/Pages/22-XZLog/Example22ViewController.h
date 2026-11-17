@@ -9,7 +9,7 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-@interface Example22ViewController : UIViewController
+@interface Example22ViewController : UICollectionViewController
 
 @end
 

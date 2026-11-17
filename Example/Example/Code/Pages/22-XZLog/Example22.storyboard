@@ -1,38 +1,98 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="24412" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="L3D-dW-etm">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="24506" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="L3D-dW-etm">
     <device id="retina6_12" orientation="portrait" appearance="light"/>
     <dependencies>
         <deployment identifier="iOS"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="24405"/>
-        <capability name="Safe area layout guides" minToolsVersion="9.0"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="24504"/>
         <capability name="System colors in document resources" minToolsVersion="11.0"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <scenes>
         <!--XZLog-->
-        <scene sceneID="s0d-6b-0kx">
+        <scene sceneID="byD-we-jBI">
             <objects>
-                <viewController id="Y6W-OH-hqX" sceneMemberID="viewController">
-                    <view key="view" contentMode="scaleToFill" id="5EZ-qb-Rvc">
+                <collectionViewController id="Vw2-bU-niM" customClass="Example22ViewController" sceneMemberID="viewController">
+                    <collectionView key="view" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" dataMode="prototypes" prefetchingEnabled="NO" id="zKd-gl-smm">
                         <rect key="frame" x="0.0" y="0.0" width="393" height="852"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
-                        <viewLayoutGuide key="safeArea" id="vDu-zF-Fre"/>
-                        <color key="backgroundColor" systemColor="systemBackgroundColor"/>
-                    </view>
-                    <toolbarItems/>
-                    <navigationItem key="navigationItem" title="XZLog" id="Fxf-55-xry">
-                        <barButtonItem key="leftBarButtonItem" image="xmark" catalog="system" id="7ri-1b-FTZ">
+                        <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                        <collectionViewFlowLayout key="collectionViewLayout" minimumLineSpacing="2" minimumInteritemSpacing="2" id="3nu-bW-vnW">
+                            <size key="itemSize" width="60" height="60"/>
+                            <size key="headerReferenceSize" width="0.0" height="0.0"/>
+                            <size key="footerReferenceSize" width="0.0" height="0.0"/>
+                            <inset key="sectionInset" minX="0.0" minY="0.0" maxX="0.0" maxY="0.0"/>
+                        </collectionViewFlowLayout>
+                        <cells>
+                            <collectionViewCell opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" reuseIdentifier="red" id="srZ-tf-7wD" customClass="Example22Cell">
+                                <rect key="frame" x="0.0" y="0.0" width="60" height="60"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <view key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" insetsLayoutMarginsFromSafeArea="NO">
+                                    <rect key="frame" x="0.0" y="0.0" width="60" height="60"/>
+                                    <autoresizingMask key="autoresizingMask"/>
+                                    <subviews>
+                                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="WZb-LF-ddN">
+                                            <rect key="frame" x="0.0" y="0.0" width="60" height="58"/>
+                                            <color key="backgroundColor" systemColor="systemGray6Color"/>
+                                            <fontDescription key="fontDescription" type="system" weight="semibold" pointSize="20"/>
+                                            <color key="textColor" systemColor="systemRedColor"/>
+                                            <nil key="highlightedColor"/>
+                                        </label>
+                                    </subviews>
+                                </view>
+                                <constraints>
+                                    <constraint firstItem="WZb-LF-ddN" firstAttribute="leading" secondItem="srZ-tf-7wD" secondAttribute="leading" id="R5M-Rg-l7o"/>
+                                    <constraint firstItem="WZb-LF-ddN" firstAttribute="top" secondItem="srZ-tf-7wD" secondAttribute="top" id="RDh-NZ-a77"/>
+                                    <constraint firstAttribute="trailing" secondItem="WZb-LF-ddN" secondAttribute="trailing" id="xSB-D1-bWe"/>
+                                    <constraint firstAttribute="bottom" secondItem="WZb-LF-ddN" secondAttribute="bottom" constant="2" id="yRP-O4-8EG"/>
+                                </constraints>
+                                <connections>
+                                    <outlet property="textLabel" destination="WZb-LF-ddN" id="jgD-QI-sEc"/>
+                                </connections>
+                            </collectionViewCell>
+                            <collectionViewCell opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" insetsLayoutMarginsFromSafeArea="NO" reuseIdentifier="blue" id="rHD-Os-2bq" customClass="Example22Cell">
+                                <rect key="frame" x="66.666666666666671" y="0.0" width="60" height="60"/>
+                                <autoresizingMask key="autoresizingMask"/>
+                                <view key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" insetsLayoutMarginsFromSafeArea="NO">
+                                    <rect key="frame" x="0.0" y="0.0" width="60" height="60"/>
+                                    <autoresizingMask key="autoresizingMask"/>
+                                    <subviews>
+                                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="pEt-Te-21g">
+                                            <rect key="frame" x="0.0" y="0.0" width="60" height="58"/>
+                                            <color key="backgroundColor" systemColor="systemGray6Color"/>
+                                            <fontDescription key="fontDescription" type="system" weight="semibold" pointSize="20"/>
+                                            <color key="textColor" systemColor="systemBlueColor"/>
+                                            <nil key="highlightedColor"/>
+                                        </label>
+                                    </subviews>
+                                </view>
+                                <constraints>
+                                    <constraint firstAttribute="bottom" secondItem="pEt-Te-21g" secondAttribute="bottom" constant="2" id="FU6-sA-XDR"/>
+                                    <constraint firstAttribute="trailing" secondItem="pEt-Te-21g" secondAttribute="trailing" id="TyD-ar-Nmu"/>
+                                    <constraint firstItem="pEt-Te-21g" firstAttribute="leading" secondItem="rHD-Os-2bq" secondAttribute="leading" id="eRY-Wa-XYG"/>
+                                    <constraint firstItem="pEt-Te-21g" firstAttribute="top" secondItem="rHD-Os-2bq" secondAttribute="top" id="lL6-hu-HFE"/>
+                                </constraints>
+                                <connections>
+                                    <outlet property="textLabel" destination="pEt-Te-21g" id="22d-IY-5BS"/>
+                                </connections>
+                            </collectionViewCell>
+                        </cells>
+                        <connections>
+                            <outlet property="dataSource" destination="Vw2-bU-niM" id="Osk-2b-uPp"/>
+                            <outlet property="delegate" destination="Vw2-bU-niM" id="Sen-2v-dOX"/>
+                        </connections>
+                    </collectionView>
+                    <navigationItem key="navigationItem" title="XZLog" id="QAp-Lx-Zfr">
+                        <barButtonItem key="leftBarButtonItem" image="xmark" catalog="system" id="7ri-1b-FTZ"/>
+                        <barButtonItem key="rightBarButtonItem" systemItem="refresh" id="Nba-7C-iv1">
                             <connections>
-                                <segue destination="Li5-ea-mcI" kind="unwind" unwindAction="unwindToMainPage:" id="y5J-S2-s5B"/>
+                                <action selector="buttonAction:" destination="Vw2-bU-niM" id="Y1c-8u-GMf"/>
                             </connections>
                         </barButtonItem>
                     </navigationItem>
-                    <simulatedToolbarMetrics key="simulatedBottomBarMetrics"/>
-                </viewController>
-                <placeholder placeholderIdentifier="IBFirstResponder" id="Ief-a0-LHa" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
-                <exit id="Li5-ea-mcI" userLabel="Exit" sceneMemberID="exit"/>
+                </collectionViewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="tg7-dY-iEr" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="1066.4122137404579" y="72.535211267605632"/>
+            <point key="canvasLocation" x="1248" y="73"/>
         </scene>
         <!--Navigation Controller-->
         <scene sceneID="4ln-q8-01b">
@@ -45,7 +105,7 @@
                     </navigationBar>
                     <nil name="viewControllers"/>
                     <connections>
-                        <segue destination="Y6W-OH-hqX" kind="relationship" relationship="rootViewController" id="46R-7y-ISK"/>
+                        <segue destination="Vw2-bU-niM" kind="relationship" relationship="rootViewController" id="WRN-f3-AMq"/>
                     </connections>
                 </navigationController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="fcj-kf-bJL" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
@@ -55,8 +115,14 @@
     </scenes>
     <resources>
         <image name="xmark" catalog="system" width="128" height="113"/>
-        <systemColor name="systemBackgroundColor">
-            <color white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+        <systemColor name="systemBlueColor">
+            <color red="0.0" green="0.53333333333333333" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+        </systemColor>
+        <systemColor name="systemGray6Color">
+            <color red="0.94901960784313721" green="0.94901960784313721" blue="0.96862745098039216" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+        </systemColor>
+        <systemColor name="systemRedColor">
+            <color red="1" green="0.2196078431372549" blue="0.23529411764705882" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
         </systemColor>
     </resources>
 </document>
