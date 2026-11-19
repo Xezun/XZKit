@@ -348,7 +348,7 @@ static void const * const _context = &_context;
         if (_refreshHeight != _header->_refreshHeight) {
             // 调整 contentInset 可能会引起 UIScrollView 出现非预期的滚动，比如弹性滚动的时。
             // 因此，若外部逻辑调整了 refreshHeight 的值，那么应该同时处理非预期的滚动。
-            _scrollView.contentInset = UIEdgeInsetsIncreaseTop(_scrollView.contentInset, _refreshHeight - _header->_refreshHeight);
+            _scrollView.contentInset = UIEdgeInsetsAddTop(_scrollView.contentInset, _refreshHeight - _header->_refreshHeight);
         }
         
         CGRect       const _bounds                = _scrollView.bounds;
@@ -364,14 +364,14 @@ static void const * const _context = &_context;
         _header->_contentOffsetY        = -_adjustedContentInsets.top;
         
         // 计算 header 的位置。
-        // 因为刷新高度 refreshHeight 已经合并到 .contentInset 中，
-        // 所以 _adjustedContentInsets 是合并后的值，所以直接使用 _adjustedContentInsets 来计算 y 坐标。
         _header->_frame.origin.x    = CGRectGetMinX(_bounds);
         _header->_frame.size.width  = CGRectGetWidth(_bounds);
         _header->_frame.size.height = CGRectGetHeight(_refreshView.frame);
         switch (_header->_adjustment) {
             case XZRefreshAdjustmentAutomatic: {
                 // 基于 adjustedContentInset 布局
+                // 因为刷新高度 refreshHeight 已经合并到 .contentInset 中，
+                // 所以 _adjustedContentInsets 是合并后的值，可直接使用 _adjustedContentInsets 来计算 y 坐标。
                 _header->_frame.origin.y = -(_adjustedContentInsets.top - _header->_refreshHeight) - _header->_frame.size.height;
                 _header->_contentInsets = _adjustedContentInsets;
                 break;
@@ -448,8 +448,7 @@ static void const * const _context = &_context;
 /// 尾部刷新视图的布局规则：
 /// 一、不刷新时。
 /// 刷新视图布局在页面底部之下，即，刷新视图的顶边，与可见区域的底边相同。
-/// 因此可通过 scrollViewHeight 计算出撑满一屏为最小高度公式为
-/// minHeight = scrollViewHeight - top - bottom 。
+/// 因此需要计算出撑满一屏为最小高度：minHeight = scrollViewHeight - top - bottom 。
 /// 二、正刷新时。
 /// 在附加了底部刷新高度边距后，如果页面高度仍不满足一屏，刷新视图刷新放在底部，
 /// 满足一屏，正常布局，放在页面尾部即可。
@@ -461,128 +460,118 @@ static void const * const _context = &_context;
     if (_footer->_state & XZRefreshStateContentInsetsMask) {
         CGFloat const _refreshHeight = _refreshView.refreshHeight;
         if (_refreshHeight != _header->_refreshHeight) {
-            _scrollView.contentInset = UIEdgeInsetsIncreaseBottom(_scrollView.contentInset, _refreshHeight - _header->_refreshHeight);
+            _scrollView.contentInset = UIEdgeInsetsAddBottom(_scrollView.contentInset, _refreshHeight - _header->_refreshHeight);
         }
         
+        BOOL         const isHeaderInEdgeInsets   = _header->_state & XZRefreshStateContentInsetsMask;
         CGRect       const _bounds                = _scrollView.bounds;
         CGSize       const _contentSize           = _scrollView.contentSize;
-        UIEdgeInsets const _adjustedContentInsets = _scrollView.adjustedContentInset;
-        // 在刷新过程中 .contentInset.bottom 的值为“原始值 + 刷新高度”
-        // 因此需要计算出原始值，然后再判断页面高度是否满足一屏。
-        // content
-        CGFloat      const minFullScreenHeight    = _bounds.size.height - _adjustedContentInsets.top - _adjustedContentInsets.bottom;
-        BOOL         const isFullScreenContent    = _contentSize.height >= minFullScreenHeight;
+        UIEdgeInsets const _adjustedContentInsets = UIEdgeInsetsAddTop(_scrollView.adjustedContentInset, isHeaderInEdgeInsets ? -_header->_refreshHeight : 0);
+        CGFloat      const minimumContentHeight   = _bounds.size.height - _adjustedContentInsets.top - _adjustedContentInsets.bottom;
         
         _footer->_refreshHeight = _refreshHeight;
         _footer->_adjustment    = _refreshView.adjustment;
         _footer->_offset        = _refreshView.offset;
+        _footer->_bounds        = _bounds;
+        _footer->_contentSize   = _contentSize;
+        _footer->_adjustedContentInsets = _adjustedContentInsets;
+        _footer->_needsScrollToRefresh  = (_adjustedContentInsets.top + _contentSize.height < _bounds.size.height);
         
-        CGFloat y = 0;
-        CGFloat contentOffsetY = 0;
+        _footer->_frame.origin.x    = CGRectGetMinX(_bounds);
+        _footer->_frame.size.width  = CGRectGetWidth(_bounds);
+        _footer->_frame.size.height = CGRectGetHeight(_refreshView.frame);
         switch (_footer->_adjustment) {
-            case XZRefreshAdjustmentAutomatic:
-                if (isFullScreenContent) {
-                    y = _contentSize.height + _adjustedContentInsets.bottom - _footer->_refreshHeight;
-                    contentOffsetY = _contentSize.height + _adjustedContentInsets.bottom - _bounds.size.height;
+            case XZRefreshAdjustmentAutomatic: {
+                if (_contentSize.height >= minimumContentHeight) {
+                    _footer->_frame.origin.y = _contentSize.height + _adjustedContentInsets.bottom - _footer->_refreshHeight;
+                    _footer->_contentOffsetY = _contentSize.height + _adjustedContentInsets.bottom - _bounds.size.height;
                 } else {
-                    y = _bounds.size.height - _adjustedContentInsets.top - _footer->_refreshHeight;
-                    contentOffsetY = -_adjustedContentInsets.top;
+                    _footer->_frame.origin.y = _bounds.size.height - _adjustedContentInsets.top - _footer->_refreshHeight;
+                    _footer->_contentOffsetY = -_adjustedContentInsets.top;
                 }
+                _footer->_contentInsets = _adjustedContentInsets;
                 break;
+            }
             case XZRefreshAdjustmentNormal: {
                 UIEdgeInsets const _contentInsets = _scrollView.contentInset;
-                if (isFullScreenContent) {
-                    y = _contentSize.height + _contentInsets.bottom - _footer->_refreshHeight;
-                    contentOffsetY = _contentSize.height + _adjustedContentInsets.bottom - _bounds.size.height;
+                if (_contentSize.height >= minimumContentHeight) {
+                    _footer->_frame.origin.y = _contentSize.height + _contentInsets.bottom - _footer->_refreshHeight;
+                    _footer->_contentOffsetY = _contentSize.height + _adjustedContentInsets.bottom - _bounds.size.height;
                 } else {
-                    y = _bounds.size.height - _adjustedContentInsets.top - _adjustedContentInsets.bottom + _contentInsets.bottom - _footer->_refreshHeight;
-                    contentOffsetY = -_adjustedContentInsets.top;
+                    _footer->_frame.origin.y = _bounds.size.height - _adjustedContentInsets.top - _adjustedContentInsets.bottom + _contentInsets.bottom - _footer->_refreshHeight;
+                    _footer->_contentOffsetY = -_adjustedContentInsets.top;
                 }
                 _footer->_contentInsets = _contentInsets;
                 break;
             }
             case XZRefreshAdjustmentNone:
-                if (isFullScreenContent) {
-                    y = _contentSize.height;
-                    contentOffsetY = _contentSize.height + _adjustedContentInsets.bottom - _bounds.size.height;
+                if (_contentSize.height >= minimumContentHeight) {
+                    _footer->_frame.origin.y = _contentSize.height;
+                    _footer->_contentOffsetY = _contentSize.height + _adjustedContentInsets.bottom - _bounds.size.height;
                 } else {
-                    y = _bounds.size.height - _adjustedContentInsets.top - _adjustedContentInsets.bottom;
-                    contentOffsetY = -_adjustedContentInsets.top;
+                    _footer->_frame.origin.y = _bounds.size.height - _adjustedContentInsets.top - _adjustedContentInsets.bottom;
+                    _footer->_contentOffsetY = -_adjustedContentInsets.top;
                 }
+                _footer->_contentInsets = UIEdgeInsetsZero;
                 break;
         }
-        CGRect const frame = CGRectMake(CGRectGetMinX(_bounds), y + _footer->_offset, CGRectGetWidth(_bounds), CGRectGetHeight(_refreshView.frame));
+        _footer->_frame.origin.y += _footer->_offset;
         
-        _footer->_frame = frame;
-        _footer->_contentOffsetY = contentOffsetY;
-        _footer->_needsFollowPageScrollWhileRefreshing = (_adjustedContentInsets.top + _contentSize.height < _bounds.size.height); // ScrollingAnimation
-        
-        _footer->_bounds = _bounds;
-        _footer->_contentSize = _contentSize;
-        _footer->_adjustedContentInsets = _adjustedContentInsets;
-        
-        _refreshView.frame = frame;
+        _refreshView.frame = _footer->_frame;
     } else {
+        BOOL         const isHeaderInEdgeInsets = _header->_state & XZRefreshStateContentInsetsMask;
+        CGRect       const _bounds              = _scrollView.bounds;
+        CGSize       const _contentSize         = _scrollView.contentSize;
+        UIEdgeInsets const _adjustedContentInsets = UIEdgeInsetsAddTop(_scrollView.adjustedContentInset, isHeaderInEdgeInsets ? -_header->_refreshHeight : 0);
+        CGFloat      const minimumContentHeight = _bounds.size.height - _adjustedContentInsets.top - _adjustedContentInsets.bottom;
+        
         _footer->_refreshHeight = _refreshView.refreshHeight;
         _footer->_adjustment    = _refreshView.adjustment;
         _footer->_offset        = _refreshView.offset;
+        _footer->_bounds        = _bounds;
+        _footer->_contentSize   = _contentSize;
+        _footer->_adjustedContentInsets = _adjustedContentInsets;
+        _footer->_needsScrollToRefresh  = NO;
         
-        CGRect       const _bounds      = _scrollView.bounds;
-        CGSize       const _contentSize = _scrollView.contentSize;
-        UIEdgeInsets const _adjustedContentInsets = _scrollView.adjustedContentInset;
-        
-        // 顶部在刷新时，顶部的边距需要减去刷新高度
-        BOOL         const isHeaderInEdgeInsets = _header->_state & XZRefreshStateContentInsetsMask;
-        UIEdgeInsets const adjustedContentInset = isHeaderInEdgeInsets ? UIEdgeInsetsIncreaseTop(_adjustedContentInsets, -_header->_refreshHeight) : _adjustedContentInsets;
-        CGFloat      const minFullScreenHeight = _bounds.size.height - adjustedContentInset.top - adjustedContentInset.bottom;
-        BOOL         const isFullScreenContent = _contentSize.height >= minFullScreenHeight;
-        
-        CGFloat y = 0;
-        CGFloat contentOffsetY = 0;
+        _footer->_frame.origin.x    = CGRectGetMinX(_bounds);
+        _footer->_frame.size.width  = CGRectGetWidth(_bounds);
+        _footer->_frame.size.height = CGRectGetHeight(_refreshView.frame);
         switch (_footer->_adjustment) {
             case XZRefreshAdjustmentAutomatic:
-                if (isFullScreenContent) {
-                    y = _contentSize.height + adjustedContentInset.bottom;
-                    contentOffsetY = _contentSize.height + adjustedContentInset.bottom - _bounds.size.height;
+                if (_contentSize.height >= minimumContentHeight) {
+                    _footer->_frame.origin.y = _contentSize.height + _adjustedContentInsets.bottom;
+                    _footer->_contentOffsetY = _contentSize.height + _adjustedContentInsets.bottom - _bounds.size.height;
                 } else {
-                    y = minFullScreenHeight + adjustedContentInset.bottom;
-                    contentOffsetY = -adjustedContentInset.top;
+                    _footer->_frame.origin.y = minimumContentHeight + _adjustedContentInsets.bottom;
+                    _footer->_contentOffsetY = -_adjustedContentInsets.top;
                 }
                 break;
             case XZRefreshAdjustmentNormal: {
                 UIEdgeInsets const _contentInsets = _scrollView.contentInset;
-                UIEdgeInsets const contentInset = isHeaderInEdgeInsets ? UIEdgeInsetsIncreaseTop(_contentInsets, -_header->_refreshHeight) : _contentInsets;
-                if (isFullScreenContent) {
-                    y = _contentSize.height + contentInset.bottom;
-                    contentOffsetY = _contentSize.height + adjustedContentInset.bottom - _bounds.size.height;
+                UIEdgeInsets const contentInset = isHeaderInEdgeInsets ? UIEdgeInsetsAddTop(_contentInsets, -_header->_refreshHeight) : _contentInsets;
+                if (_contentSize.height >= minimumContentHeight) {
+                    _footer->_frame.origin.y = _contentSize.height + contentInset.bottom;
+                    _footer->_contentOffsetY = _contentSize.height + _adjustedContentInsets.bottom - _bounds.size.height;
                 } else {
-                    y = minFullScreenHeight + contentInset.bottom;
-                    contentOffsetY = -adjustedContentInset.top;
+                    _footer->_frame.origin.y = minimumContentHeight + contentInset.bottom;
+                    _footer->_contentOffsetY = -_adjustedContentInsets.top;
                 }
                 _footer->_contentInsets = _contentInsets;
                 break;
             }
             case XZRefreshAdjustmentNone:
-                if (isFullScreenContent) {
-                    y = _contentSize.height;
-                    contentOffsetY = _contentSize.height + adjustedContentInset.bottom - _bounds.size.height;
+                if (_contentSize.height >= minimumContentHeight) {
+                    _footer->_frame.origin.y = _contentSize.height;
+                    _footer->_contentOffsetY = _contentSize.height + _adjustedContentInsets.bottom - _bounds.size.height;
                 } else {
-                    y = minFullScreenHeight;
-                    contentOffsetY = -adjustedContentInset.top;
+                    _footer->_frame.origin.y = minimumContentHeight;
+                    _footer->_contentOffsetY = -_adjustedContentInsets.top;
                 }
                 break;
         }
-        CGRect const frame = CGRectMake(CGRectGetMinX(_bounds), y + _footer->_offset, CGRectGetWidth(_bounds), CGRectGetHeight(_refreshView.frame));
+        _footer->_frame.origin.y += _footer->_offset;
         
-        _footer->_frame = frame;
-        _footer->_contentOffsetY = contentOffsetY;
-        _footer->_needsFollowPageScrollWhileRefreshing = NO;
-        
-        _footer->_bounds = _bounds;
-        _footer->_contentSize = _contentSize;
-        _footer->_adjustedContentInsets = _adjustedContentInsets;
-        
-        _refreshView.frame = frame;
+        _refreshView.frame = _footer->_frame;
     }
 }
 
@@ -631,7 +620,7 @@ static void const * const _context = &_context;
         // 1、增加到 contentInset 的边距会叠加到 adjustedContentInset 中
         // 2、改变 contentInset 会触发 didScroll 事件，且可能会改变 contentOffset 因此需要记录原始值，然后恢复
         CGPoint const contentOffset = _scrollView.contentOffset;
-        _scrollView.contentInset = UIEdgeInsetsIncreaseTop(_scrollView.contentInset, _header->_refreshHeight);
+        _scrollView.contentInset = UIEdgeInsetsAddTop(_scrollView.contentInset, _header->_refreshHeight);
         _scrollView.contentOffset = contentOffset;
         
         // 使用 UIView 动画直接进入刷新状态。
@@ -667,7 +656,7 @@ static void const * const _context = &_context;
         
         // 调整 contentInset
         CGPoint const contentOffset = _scrollView.contentOffset;
-        _scrollView.contentInset = UIEdgeInsetsIncreaseBottom(_scrollView.contentInset, _footer->_refreshHeight);
+        _scrollView.contentInset = UIEdgeInsetsAddBottom(_scrollView.contentInset, _footer->_refreshHeight);
         _scrollView.contentOffset = contentOffset;
         
         // 滚动到 footer
@@ -714,7 +703,7 @@ static void const * const _context = &_context;
         // 但是由于修改 contentInset/contentOffset 属性会触发 -scrollViewDidScroll: 方法，
         // 所以在还处于 refreshing 时修改，可以避免 -scrollViewDidScroll: 中的操作逻辑。
         if (_header->_state & XZRefreshStateContentInsetsMask) {
-            _scrollView.contentInset = UIEdgeInsetsIncreaseTop(_scrollView.contentInset, -_header->_refreshHeight);
+            _scrollView.contentInset = UIEdgeInsetsAddTop(_scrollView.contentInset, -_header->_refreshHeight);
         }
         // 使用 -setContentOffset:animated: 提前结束滚动减速过程。
         // 在 XZRefreshStateRecovering 状态下，减速动画结束时，会执行清理操作，可能会提前移除退场动画。
@@ -754,7 +743,7 @@ static void const * const _context = &_context;
         CGPoint const contentOffset = _scrollView.contentOffset;
         
         if (_footer->_state & XZRefreshStateContentInsetsMask) {
-            _scrollView.contentInset = UIEdgeInsetsIncreaseBottom(_scrollView.contentInset, -_footer->_refreshHeight);
+            _scrollView.contentInset = UIEdgeInsetsAddBottom(_scrollView.contentInset, -_footer->_refreshHeight);
         }
         [_scrollView setContentOffset:contentOffset animated:NO];
         
@@ -788,14 +777,14 @@ static void const * const _context = &_context;
     
     // 底部已处于刷新状态时，不响应页面滚动，但需处理底部的恢复动画。
     if (_footer->_state != XZRefreshStatePendinging) {
-        if (_footer->_needsFollowPageScrollWhileRefreshing) {
+        if (_footer->_needsScrollToRefresh) {
             CGRect  const bounds = _scrollView.bounds;
             CGFloat const newY   = _scrollView.contentOffset.y + bounds.size.height - _footer->_refreshHeight + _footer->_offset;
             CGRect newFrame = _footer->_refreshView.frame;
             if (newY <= _footer->_frame.origin.y) {
                 // footer 回归到正确位置后，不再跟随页面滚动
                 _footer->_refreshView.frame = _footer->_frame;
-                _footer->_needsFollowPageScrollWhileRefreshing = NO;
+                _footer->_needsScrollToRefresh = NO;
             } else if (newY < newFrame.origin.y) {
                 newFrame.origin.y = newY;
                 _footer->_refreshView.frame = newFrame;
@@ -968,7 +957,7 @@ static void const * const _context = &_context;
             _header->_state = XZRefreshStateRefreshing;
             
             CGPoint const contentOffset = _scrollView.contentOffset;
-            _scrollView.contentInset  = UIEdgeInsetsIncreaseTop(_scrollView.contentInset, _header->_refreshHeight);
+            _scrollView.contentInset  = UIEdgeInsetsAddTop(_scrollView.contentInset, _header->_refreshHeight);
             _scrollView.contentOffset = contentOffset;
             
             [self layoutHeaderRefreshViewIfNeeded:YES];
@@ -980,7 +969,7 @@ static void const * const _context = &_context;
             _header->_state = XZRefreshStateRecovering;
             
             CGPoint const contentOffset = _scrollView.contentOffset;
-            _scrollView.contentInset = UIEdgeInsetsIncreaseTop(_scrollView.contentInset, -_header->_refreshHeight);
+            _scrollView.contentInset = UIEdgeInsetsAddTop(_scrollView.contentInset, -_header->_refreshHeight);
             _scrollView.contentOffset = contentOffset;
             
             [self layoutHeaderRefreshViewIfNeeded:YES];
@@ -1010,7 +999,7 @@ static void const * const _context = &_context;
             _footer->_state = XZRefreshStateRefreshing;
             
             CGPoint const contentOffset = _scrollView.contentOffset;
-            _scrollView.contentInset = UIEdgeInsetsIncreaseBottom(_scrollView.contentInset, _footer->_refreshHeight);
+            _scrollView.contentInset = UIEdgeInsetsAddBottom(_scrollView.contentInset, _footer->_refreshHeight);
             _scrollView.contentOffset = contentOffset;
             
             [self layoutFooterRefreshViewIfNeeded:YES];
@@ -1022,7 +1011,7 @@ static void const * const _context = &_context;
             _footer->_state = XZRefreshStateRecovering;
             
             CGPoint const contentOffset = _scrollView.contentOffset;
-            _scrollView.contentInset = UIEdgeInsetsIncreaseBottom(_scrollView.contentInset, -_footer->_refreshHeight);
+            _scrollView.contentInset = UIEdgeInsetsAddBottom(_scrollView.contentInset, -_footer->_refreshHeight);
             _scrollView.contentOffset = contentOffset;
             
             [self layoutFooterRefreshViewIfNeeded:YES];
@@ -1099,7 +1088,7 @@ static void const * const _context = &_context;
     // 增加到 contentInset 的边距会叠加到 adjustedContentInset 中
     // 改变 contentInset 会触发 didScroll 方法，可能改变 contentOffset
     CGPoint const contentOffset = _scrollView.contentOffset;
-    _scrollView.contentInset  = UIEdgeInsetsIncreaseTop(_scrollView.contentInset, _header->_refreshHeight);
+    _scrollView.contentInset  = UIEdgeInsetsAddTop(_scrollView.contentInset, _header->_refreshHeight);
     _scrollView.contentOffset = contentOffset;
     
     [self layoutHeaderRefreshViewIfNeeded:YES];
@@ -1122,13 +1111,13 @@ static void const * const _context = &_context;
     _footer->_state = XZRefreshStateRefreshingDelayedEvents;
     
     CGPoint const contentOffset = _scrollView.contentOffset;
-    _scrollView.contentInset = UIEdgeInsetsIncreaseBottom(_scrollView.contentInset, _footer->_refreshHeight);
+    _scrollView.contentInset = UIEdgeInsetsAddBottom(_scrollView.contentInset, _footer->_refreshHeight);
     _scrollView.contentOffset = contentOffset;
 
     CGRect const oldFrame = _footer->_refreshView.frame;
     [self layoutFooterRefreshViewIfNeeded:YES];
     
-    if (_footer->_needsFollowPageScrollWhileRefreshing) {
+    if (_footer->_needsScrollToRefresh) {
         _footer->_refreshView.frame = oldFrame;
     }
     

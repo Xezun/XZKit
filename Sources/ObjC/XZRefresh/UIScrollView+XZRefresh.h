@@ -15,6 +15,8 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
+@class UITableView, UICollectionView;
+
 @interface UIScrollView (XZRefresh)
 
 /// 头部刷新视图。

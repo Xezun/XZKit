@@ -41,10 +41,10 @@ typedef NS_ENUM(NSUInteger, XZRefreshAdjustment) {
 /// XZRefresh 使用 UIScrollView.delegate 作为刷新事件的接收者。
 NS_SWIFT_UI_ACTOR @protocol XZRefreshDelegate <UIScrollViewDelegate>
 @optional
-/// 当开始首部刷新时，此方法会被调用。
+/// 当开始头部刷新时，此方法会被调用。
 ///
 /// @param scrollView 触发此方法的 UIScrollView 对象。
-/// @param refreshView 展示刷新状态的首部刷新视图。
+/// @param refreshView 展示刷新状态的头部刷新视图。
 - (void)scrollView:(UIScrollView *)scrollView didBeginHeaderRefreshing:(XZRefreshView *)refreshView;
 
 /// 当开始尾部刷新时，此方法会被调用。

@@ -116,7 +116,7 @@ typedef NS_ENUM(NSUInteger, XZRefreshState) {
     /// 但是处于上拉状态的页面，需要下落恢复正常位置，造成的效果就是 footer 先向上动画，然后再向下动画。
     /// 为了避免这种情况，在进入刷新时，如果此属性为 YES，那么就先保持 footer 位置不变，
     /// 然后在页面下落的过程中，跟随页面滚动调整 footer 直到 footer 回到正确位置。
-    BOOL _needsFollowPageScrollWhileRefreshing;
+    BOOL _needsScrollToRefresh;
     
     // MARK: - 记录布局时，所使用的滚动视图属性
     CGSize _contentSize;
@@ -133,12 +133,12 @@ UIKIT_STATIC_INLINE void UIViewAnimate(BOOL animated, void (^animations)(void), 
     }
 }
 
-UIKIT_STATIC_INLINE UIEdgeInsets UIEdgeInsetsIncreaseBottom(UIEdgeInsets insets, CGFloat bottom) {
+UIKIT_STATIC_INLINE UIEdgeInsets UIEdgeInsetsAddBottom(UIEdgeInsets insets, CGFloat bottom) {
     insets.bottom += bottom;
     return insets;
 }
 
-UIKIT_STATIC_INLINE UIEdgeInsets UIEdgeInsetsIncreaseTop(UIEdgeInsets insets, CGFloat top) {
+UIKIT_STATIC_INLINE UIEdgeInsets UIEdgeInsetsAddTop(UIEdgeInsets insets, CGFloat top) {
     insets.top += top;
     return insets;
 }
