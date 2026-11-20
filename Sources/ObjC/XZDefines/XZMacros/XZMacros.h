@@ -232,28 +232,28 @@ FOUNDATION_EXPORT void dispatch_sync_global(intptr_t QOS_CLASS, dispatch_block_t
 /// - Parameters:
 ///   - queue: 队列
 ///   - block: 任意类型的块函数
-FOUNDATION_EXPORT void dispatch_queue_async(dispatch_queue_t queue, id block, ...) NS_SWIFT_UNAVAILABLE("");
+FOUNDATION_EXPORT void dispatch_queue_async(dispatch_queue_t queue, _Nullable id block, ...) NS_SWIFT_UNAVAILABLE("");
 /// 仅在 block 块函数非空时，才在队列 queue 中同步调度它。
 /// - Parameters:
 ///   - queue: 队列
 ///   - block: 任意类型的块函数
-FOUNDATION_EXPORT void dispatch_queue_sync(dispatch_queue_t queue, id block, ...) NS_SWIFT_UNAVAILABLE("");
+FOUNDATION_EXPORT void dispatch_queue_sync(dispatch_queue_t queue, _Nullable id block, ...) NS_SWIFT_UNAVAILABLE("");
 /// 仅在 block 块函数非空时，才在主队列中异步调度它。
 /// - Parameter block: 任意类型的块函数
-FOUNDATION_EXPORT void dispatch_main_async(id block, ...) NS_SWIFT_UNAVAILABLE("");
+FOUNDATION_EXPORT void dispatch_main_async(_Nullable id block, ...) NS_SWIFT_UNAVAILABLE("");
 /// 仅在 block 块函数非空时，才在主队列中同步调度它。
 /// - Parameter block: 任意类型的块函数
-FOUNDATION_EXPORT void dispatch_main_sync(id block, ...) NS_SWIFT_UNAVAILABLE("");
+FOUNDATION_EXPORT void dispatch_main_sync(_Nullable id block, ...) NS_SWIFT_UNAVAILABLE("");
 /// 仅在 block 块函数非空时，才在全局队列中异步调度它。
 /// - Parameters:
 ///   - QOS_CLASS: 队列优先级
 ///   - block: 任意类型的块函数
-FOUNDATION_EXPORT void dispatch_global_async(intptr_t QOS_CLASS, id block, ...) NS_SWIFT_UNAVAILABLE("");
+FOUNDATION_EXPORT void dispatch_global_async(intptr_t QOS_CLASS, _Nullable id block, ...) NS_SWIFT_UNAVAILABLE("");
 /// 仅在 block 块函数非空时，才在全局队列中同步调度它。
 /// - Parameters:
 ///   - QOS_CLASS: 队列优先级
-///   - block: 任意类型的块函数   
-FOUNDATION_EXPORT void dispatch_global_sync(intptr_t QOS_CLASS, id block, ...) NS_SWIFT_UNAVAILABLE("");
+///   - block: 任意类型的块函数
+FOUNDATION_EXPORT void dispatch_global_sync(intptr_t QOS_CLASS, _Nullable id block, ...) NS_SWIFT_UNAVAILABLE("");
 
 #undef dispatch_queue_async
 #undef dispatch_queue_sync
@@ -275,19 +275,19 @@ FOUNDATION_EXPORT void dispatch_global_sync(intptr_t QOS_CLASS, id block, ...) N
     __dispatch_queue_macros_imp_0 \
 )(concurrency, queue, block, ##__VA_ARGS__)
 
-#define dispatch_async_queue(queue, block, ...)          __dispatch_queue_macros_imp__(async, queue, block, ##__VA_ARGS__)
-#define dispatch_sync_queue(queue, block, ...)           __dispatch_queue_macros_imp__(sync, queue, block, ##__VA_ARGS__)
-#define dispatch_async_main(block, ...)                  __dispatch_queue_macros_imp__(async, dispatch_get_main_queue(), block, ##__VA_ARGS__)
-#define dispatch_sync_main(block, ...)                   __dispatch_queue_macros_imp__(sync, dispatch_get_main_queue(), block, ##__VA_ARGS__)
-#define dispatch_async_global(QOS_CLASS, block, ...)     __dispatch_queue_macros_imp__(async, dispatch_get_global_queue(QOS_CLASS, 0), block, ##__VA_ARGS__)
-#define dispatch_sync_global(QOS_CLASS, block, ...)      __dispatch_queue_macros_imp__(sync, dispatch_get_global_queue(QOS_CLASS, 0), block, ##__VA_ARGS__)
+#define dispatch_async_queue(queue, nonnull_block, ...)          __dispatch_queue_macros_imp__(async, queue, nonnull_block, ##__VA_ARGS__)
+#define dispatch_sync_queue(queue, nonnull_block, ...)           __dispatch_queue_macros_imp__(sync, queue, nonnull_block, ##__VA_ARGS__)
+#define dispatch_async_main(nonnull_block, ...)                  __dispatch_queue_macros_imp__(async, dispatch_get_main_queue(), nonnull_block, ##__VA_ARGS__)
+#define dispatch_sync_main(nonnull_block, ...)                   __dispatch_queue_macros_imp__(sync, dispatch_get_main_queue(), nonnull_block, ##__VA_ARGS__)
+#define dispatch_async_global(QOS_CLASS, nonnull_block, ...)     __dispatch_queue_macros_imp__(async, dispatch_get_global_queue(QOS_CLASS, 0), nonnull_block, ##__VA_ARGS__)
+#define dispatch_sync_global(QOS_CLASS, nonnull_block, ...)      __dispatch_queue_macros_imp__(sync, dispatch_get_global_queue(QOS_CLASS, 0), nonnull_block, ##__VA_ARGS__)
 
-#define dispatch_queue_async(queue, block, ...)          do { typeof(block) const __xz_block__ = block; if (__xz_block__) { dispatch_async_queue(queue, __xz_block__, ##__VA_ARGS__);        } } while (0)
-#define dispatch_queue_sync(queue, block, ...)           do { typeof(block) const __xz_block__ = block; if (__xz_block__) { dispatch_sync_queue(queue, __xz_block__, ##__VA_ARGS__);         } } while (0)
-#define dispatch_main_async(block, ...)                  do { typeof(block) const __xz_block__ = block; if (__xz_block__) { dispatch_async_main(__xz_block__, ##__VA_ARGS__);                } } while (0)
-#define dispatch_main_sync(block, ...)                   do { typeof(block) const __xz_block__ = block; if (__xz_block__) { dispatch_sync_main(__xz_block__, ##__VA_ARGS__);                 } } while (0)
-#define dispatch_global_async(QOS_CLASS, block, ...)     do { typeof(block) const __xz_block__ = block; if (__xz_block__) { dispatch_async_global(QOS_CLASS, __xz_block__, ##__VA_ARGS__);   } } while (0)
-#define dispatch_global_sync(QOS_CLASS, block, ...)      do { typeof(block) const __xz_block__ = block; if (__xz_block__) { dispatch_sync_global(QOS_CLASS, __xz_block__, ##__VA_ARGS__);    } } while (0)
+#define dispatch_queue_async(queue, nullable_block, ...)          do { typeof(nullable_block) const __tmp_block__ = nullable_block; if (__tmp_block__) { dispatch_async_queue(queue, __tmp_block__, ##__VA_ARGS__);        } } while (0)
+#define dispatch_queue_sync(queue, nullable_block, ...)           do { typeof(nullable_block) const __tmp_block__ = nullable_block; if (__tmp_block__) { dispatch_sync_queue(queue, __tmp_block__, ##__VA_ARGS__);         } } while (0)
+#define dispatch_main_async(nullable_block, ...)                  do { typeof(nullable_block) const __tmp_block__ = nullable_block; if (__tmp_block__) { dispatch_async_main(__tmp_block__, ##__VA_ARGS__);                } } while (0)
+#define dispatch_main_sync(nullable_block, ...)                   do { typeof(nullable_block) const __tmp_block__ = nullable_block; if (__tmp_block__) { dispatch_sync_main(__tmp_block__, ##__VA_ARGS__);                 } } while (0)
+#define dispatch_global_async(QOS_CLASS, nullable_block, ...)     do { typeof(nullable_block) const __tmp_block__ = nullable_block; if (__tmp_block__) { dispatch_async_global(QOS_CLASS, __tmp_block__, ##__VA_ARGS__);   } } while (0)
+#define dispatch_global_sync(QOS_CLASS, nullable_block, ...)      do { typeof(nullable_block) const __tmp_block__ = nullable_block; if (__tmp_block__) { dispatch_sync_global(QOS_CLASS, __tmp_block__, ##__VA_ARGS__);    } } while (0)
 
 #endif
 

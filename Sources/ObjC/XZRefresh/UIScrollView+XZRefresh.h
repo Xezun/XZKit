@@ -19,6 +19,12 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface UIScrollView (XZRefresh)
 
+/// 默认头部刷新视图。必须能够使用 `-initWithFrame:` 方法初始化。
+@property (class, nonatomic, setter=xz_setHeaderRefreshClass:) Class xz_headerRefreshClass;
+
+/// 默认尾部刷新视图。必须能够使用 `-initWithFrame:` 方法初始化。
+@property (class, nonatomic, setter=xz_setFooterRefreshClass:) Class xz_footerRefreshClass;
+
 /// 头部刷新视图。
 ///
 /// 懒加载，默认为 Style1 环形进度条刷新样式。

@@ -11,43 +11,22 @@
 #import "XZRefreshStyle1View.h"
 #import "XZRefreshStyle2View.h"
 
-static Class _defaultHeaderClass = Nil;
-static Class _defaultFooterClass = Nil;
-
 @interface XZRefreshView ()
 
 @end
 
 @implementation XZRefreshView
 
-+ (Class)defaultHeaderClass {
-    return _defaultHeaderClass ?: [XZRefreshStyle1View class];
-}
-
-+ (void)setDefaultHeaderClass:(Class)defaultHeaderClass {
-    NSParameterAssert(defaultHeaderClass == nil || ([defaultHeaderClass isSubclassOfClass:[XZRefreshView class]] && defaultHeaderClass != [XZRefreshView class]));
-    _defaultHeaderClass = defaultHeaderClass;
-}
-
-+ (Class)defaultFooterClass {
-    return _defaultFooterClass ?: [XZRefreshStyle2View class];
-}
-
-+ (void)setDefaultFooterClass:(Class)defaultFooterClass {
-    NSParameterAssert(defaultFooterClass == nil || ([defaultFooterClass isSubclassOfClass:[XZRefreshView class]] && defaultFooterClass != [XZRefreshView class]));
-    _defaultFooterClass = defaultFooterClass;
-}
-
 @synthesize refreshHeight = _refreshHeight;
 
 - (instancetype)init {
-    return [self initWithFrame:CGRectMake(0, 0, 320.0, XZRefreshViewHeight)];
+    return [self initWithFrame:CGRectMake(0, 0, 375.0, XZRefreshHeight)];
 }
 
 - (instancetype)initWithFrame:(CGRect)frame {
     self = [super initWithFrame:frame];
     if (self) {
-        _refreshHeight = XZRefreshViewHeight;
+        _refreshHeight = XZRefreshHeight;
         _adjustment = XZRefreshAdjustmentAutomatic;
         _automaticRefreshDistance = 0;
     }
@@ -57,7 +36,7 @@ static Class _defaultFooterClass = Nil;
 - (instancetype)initWithCoder:(NSCoder *)coder {
     self = [super initWithCoder:coder];
     if (self) {
-        _refreshHeight = XZRefreshViewHeight;
+        _refreshHeight = XZRefreshHeight;
         _adjustment = XZRefreshAdjustmentAutomatic;
         _automaticRefreshDistance = 0;
     }
@@ -147,7 +126,9 @@ static Class _defaultFooterClass = Nil;
 @implementation XZRefreshView (XZRefreshManager)
 
 - (void)setRefreshManager:(XZRefreshManager * _Nullable)refreshManager {
-    _refreshManager = refreshManager;
+    if (_refreshManager != refreshManager) {
+        _refreshManager = refreshManager;
+    }
 }
 
 - (XZRefreshManager *)refreshManager {

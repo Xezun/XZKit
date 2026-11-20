@@ -20,7 +20,7 @@
         _isAutomatic = NO;
         _automaticRefreshDistance = 0;
         _frame = CGRectZero;
-        _contentOffsetY = 0;
+        _refreshOffsetY = 0;
     }
     return self;
 }
@@ -41,7 +41,7 @@
     self = [super init];
     if (self) {
         // 事件 scrollViewDidScroll 的触发可能比视图布局更早，避免事件发生时，此值不对而判断错了状态。
-        _contentOffsetY = -CGFLOAT_MAX;
+        _refreshOffsetY = -CGFLOAT_MAX;
     }
     return self;
 }
@@ -96,7 +96,7 @@
     self = [super init];
     if (self) {
         // 事件 scrollViewDidScroll 的触发可能比视图布局更早，避免事件发生时，此值不对而判断错了状态。
-        _contentOffsetY = +CGFLOAT_MAX;
+        _refreshOffsetY = +CGFLOAT_MAX;
         _needsScrollToRefresh = NO;
     }
     return self;

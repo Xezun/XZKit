@@ -8,8 +8,31 @@
 
 #import "UIScrollView+XZRefresh.h"
 #import "XZRefreshManager.h"
+#import "XZRefreshStyle1View.h"
+#import "XZRefreshStyle2View.h"
+
+static Class _headerRefreshClass = Nil;
+static Class _footerRefreshClass = Nil;
 
 @implementation UIScrollView (XZRefresh)
+
++ (Class)xz_headerRefreshClass {
+    return _headerRefreshClass ?: [XZRefreshStyle1View class];
+}
+
++ (void)xz_setHeaderRefreshClass:(Class const)headerRefreshClass {
+    NSParameterAssert(headerRefreshClass == nil || ([headerRefreshClass isSubclassOfClass:[XZRefreshView class]] && headerRefreshClass != [XZRefreshView class]));
+    _headerRefreshClass = headerRefreshClass;
+}
+
++ (Class)xz_footerRefreshClass {
+    return _footerRefreshClass ?: [XZRefreshStyle2View class];
+}
+
++ (void)xz_setFooterRefreshClass:(Class const)footerRefreshClass {
+    NSParameterAssert(footerRefreshClass == nil || ([footerRefreshClass isSubclassOfClass:[XZRefreshView class]] && footerRefreshClass != [XZRefreshView class]));
+    _footerRefreshClass = footerRefreshClass;
+}
 
 - (XZRefreshView *)xz_headerRefreshView {
     return self.xz_refreshManager.headerRefreshView;

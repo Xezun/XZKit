@@ -83,14 +83,15 @@ typedef NS_ENUM(NSUInteger, XZRefreshState) {
     BOOL _isAutomatic;
     CGFloat _automaticRefreshDistance;
     CGRect  _frame;
-    /// 记录 header 或 footer 进入刷新状态要达到的临界值
-    CGFloat _contentOffsetY;
+    /// header 进入下拉状态，或 footer 进入上拉状态，页面滚动位置要达到的临界值。
+    CGFloat _refreshOffsetY;
     
     // MARK: - 布局时，记录所使用的刷新视图属性
     /// 缓存布局时所使用的刷新高度，并在恢复时状态时使用。
     CGFloat _refreshHeight;
     /// 缓存布局时所使用的适应模式，以便在恢复时使用。
     XZRefreshAdjustment _adjustment;
+    /// 刷新视图位置偏移。
     CGFloat _offset;
     
     // MARK: - 记录布局时所使用的 UIScrollView 的属性值

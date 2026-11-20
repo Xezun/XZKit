@@ -28,10 +28,8 @@ NS_ASSUME_NONNULL_BEGIN
     XZRefreshManager * __weak _refreshManager;
 }
 
-/// 默认头部刷新视图。必须能够使用 `-initWithFrame:` 方法初始化。
-@property (class, nonatomic, null_resettable) Class defaultHeaderClass;
-/// 默认尾部刷新视图。必须能够使用 `-initWithFrame:` 方法初始化。
-@property (class, nonatomic, null_resettable) Class defaultFooterClass;
+- (instancetype)initWithFrame:(CGRect)frame NS_DESIGNATED_INITIALIZER;
+- (nullable instancetype)initWithCoder:(NSCoder *)coder NS_DESIGNATED_INITIALIZER;
 
 /// 处理刷新事件的代理对象。
 /// @discussion

@@ -218,6 +218,17 @@ static void const * const _context = &_context;
     }
 }
 
+#pragma mark - headerRefreshView
+
+- (XZRefreshView *)headerRefreshView {
+    if (_header->_refreshView != nil) {
+        return _header->_refreshView;
+    }
+    XZRefreshView * const refreshView = [[UIScrollView.xz_headerRefreshClass alloc] init];
+    [self setHeaderRefreshView:refreshView];
+    return refreshView;
+}
+
 - (void)setHeaderRefreshView:(XZRefreshView *)headerRefreshView {
     if (_header->_refreshView == headerRefreshView) {
         return;
@@ -231,10 +242,31 @@ static void const * const _context = &_context;
     [_header->_refreshView removeFromSuperview];
     headerRefreshView->_refreshManager = self;
     _header->_refreshView = headerRefreshView;
+    
     if (headerRefreshView != nil) {
+        UIEdgeInsets const insets = _scrollView.adjustedContentInset;
+        CGRect       const bounds = _scrollView.bounds;
+        CGRect frame = headerRefreshView.frame;
+        frame.origin.x = 0;
+        // 初始位置：头部可视区域之上
+        frame.origin.y = -insets.top - frame.size.height;
+        frame.size.width = bounds.size.width;
+        headerRefreshView.frame = frame;
         [_scrollView addSubview:headerRefreshView];
     }
+    
     [self setNeedsLayoutHeaderRefreshView];
+}
+
+#pragma mark - footerRefreshView
+
+- (XZRefreshView *)footerRefreshView {
+    if (_footer->_refreshView != nil) {
+        return _footer->_refreshView;
+    }
+    XZRefreshView * const refreshView   = [[UIScrollView.xz_footerRefreshClass alloc] init];
+    [self setFooterRefreshView:refreshView];
+    return refreshView;
 }
 
 - (void)setFooterRefreshView:(XZRefreshView *)footerRefreshView {
@@ -248,35 +280,21 @@ static void const * const _context = &_context;
     [_footer->_refreshView removeFromSuperview];
     footerRefreshView->_refreshManager = self;
     _footer->_refreshView = footerRefreshView;
+    
     if (footerRefreshView != nil) {
+        UIEdgeInsets const insets = _scrollView.adjustedContentInset;
+        CGRect       const bounds = _scrollView.bounds;
+        CGRect frame = footerRefreshView.frame;
+        frame.origin.x = 0;
+        // 初始位置：底部可视区域之下
+        frame.origin.y = _scrollView.contentSize.height + MAX(insets.bottom, 0) - MIN(insets.top, 0);
+        frame.origin.y = MAX(frame.origin.y, bounds.size.height - insets.top);
+        frame.size.width = bounds.size.width;
+        footerRefreshView.frame = frame;
         [_scrollView addSubview:footerRefreshView];
     }
     
     [self setNeedsLayoutFooterRefreshView];
-}
-
-- (XZRefreshView *)headerRefreshView {
-    if (_header->_refreshView != nil) {
-        return _header->_refreshView;
-    }
-    UIScrollView *  const _scrollView = self->_scrollView;
-    CGFloat         const y           = -_scrollView.adjustedContentInset.top - XZRefreshViewHeight;
-    XZRefreshView * const refreshView = [[XZRefreshView.defaultHeaderClass alloc] initWithFrame:CGRectMake(0, y, _scrollView.frame.size.width, XZRefreshViewHeight)];
-    [self setHeaderRefreshView:refreshView];
-    return refreshView;
-}
-
-- (XZRefreshView *)footerRefreshView {
-    if (_footer->_refreshView != nil) {
-        return _footer->_refreshView;
-    }
-    UIScrollView *  const _scrollView = self->_scrollView;
-    UIEdgeInsets    const insets = _scrollView.adjustedContentInset;
-    CGRect          const bounds = _scrollView.bounds;
-    CGFloat         const y      = MAX(_scrollView.contentSize.height, bounds.size.height - insets.top - insets.bottom) + insets.bottom;
-    XZRefreshView * const refreshView = [[XZRefreshView.defaultFooterClass alloc] initWithFrame:CGRectMake(0, y, bounds.size.width, XZRefreshViewHeight)];
-    [self setFooterRefreshView:refreshView];
-    return refreshView;
 }
 
 - (XZRefreshView *)headerRefreshViewIfLoaded {
@@ -334,9 +352,11 @@ static void const * const _context = &_context;
     }
 }
 
-// 1、头部刷新视图布局在可视区域之上，按边距适配方式确定可视区域。
-// 2、偏移 offset 为在默认默认布局基础之上，按 offset 向上偏移 -offset 。
-// 在刷新时，刷新高度 refreshHeight 会合并到 .contentInset.top 中。
+/// 布局头部刷新视图。
+/// - 1、未刷新时，头部刷新视图布局在可视区域之上，按适配方式 `_adjustment` 确定可视区域。
+/// - 2、刷新中时，刷新高度合并到 `contentInset` 中，头部视图布局在可视区域顶部，展示刷新视图底部高为刷新高度的区域。
+/// - 2、偏移 offset 为在默认默认布局基础之上，按 offset 向上偏移 -offset 。
+/// 在刷新时，刷新高度 refreshHeight 会合并到 .contentInset.top 中。
 - (void)layoutHeaderRefreshView {
     UIScrollView           * const _scrollView  = self->_scrollView;
     XZRefreshHeaderContext * const _header      = self->_header;
@@ -361,7 +381,7 @@ static void const * const _context = &_context;
         _header->_offset                = _refreshView.offset;
         _header->_bounds                = _bounds;
         _header->_adjustedContentInsets = _adjustedContentInsets;
-        _header->_contentOffsetY        = -_adjustedContentInsets.top;
+        _header->_refreshOffsetY        = -_adjustedContentInsets.top;
         
         // 计算 header 的位置。
         _header->_frame.origin.x    = CGRectGetMinX(_bounds);
@@ -402,7 +422,7 @@ static void const * const _context = &_context;
         _header->_offset                = _refreshView.offset;
         _header->_bounds                = _bounds;
         _header->_adjustedContentInsets = _adjustedContentInsets;
-        _header->_contentOffsetY        = -_adjustedContentInsets.top;
+        _header->_refreshOffsetY        = -_adjustedContentInsets.top;
         
         _header->_frame.origin.x    = CGRectGetMinX(_bounds);
         _header->_frame.size.width  = CGRectGetWidth(_bounds);
@@ -484,10 +504,10 @@ static void const * const _context = &_context;
             case XZRefreshAdjustmentAutomatic: {
                 if (_contentSize.height >= minimumContentHeight) {
                     _footer->_frame.origin.y = _contentSize.height + _adjustedContentInsets.bottom - _footer->_refreshHeight;
-                    _footer->_contentOffsetY = _contentSize.height + _adjustedContentInsets.bottom - _bounds.size.height;
+                    _footer->_refreshOffsetY = _contentSize.height + _adjustedContentInsets.bottom - _bounds.size.height;
                 } else {
                     _footer->_frame.origin.y = _bounds.size.height - _adjustedContentInsets.top - _footer->_refreshHeight;
-                    _footer->_contentOffsetY = -_adjustedContentInsets.top;
+                    _footer->_refreshOffsetY = -_adjustedContentInsets.top;
                 }
                 _footer->_contentInsets = _adjustedContentInsets;
                 break;
@@ -496,10 +516,11 @@ static void const * const _context = &_context;
                 UIEdgeInsets const _contentInsets = _scrollView.contentInset;
                 if (_contentSize.height >= minimumContentHeight) {
                     _footer->_frame.origin.y = _contentSize.height + _contentInsets.bottom - _footer->_refreshHeight;
-                    _footer->_contentOffsetY = _contentSize.height + _adjustedContentInsets.bottom - _bounds.size.height;
+                    _footer->_refreshOffsetY = _contentSize.height + _adjustedContentInsets.bottom - _bounds.size.height;
                 } else {
+                    // 内容高度不满一屏时，按满一屏时处理。
                     _footer->_frame.origin.y = _bounds.size.height - _adjustedContentInsets.top - _adjustedContentInsets.bottom + _contentInsets.bottom - _footer->_refreshHeight;
-                    _footer->_contentOffsetY = -_adjustedContentInsets.top;
+                    _footer->_refreshOffsetY = -_adjustedContentInsets.top;
                 }
                 _footer->_contentInsets = _contentInsets;
                 break;
@@ -507,10 +528,10 @@ static void const * const _context = &_context;
             case XZRefreshAdjustmentNone:
                 if (_contentSize.height >= minimumContentHeight) {
                     _footer->_frame.origin.y = _contentSize.height;
-                    _footer->_contentOffsetY = _contentSize.height + _adjustedContentInsets.bottom - _bounds.size.height;
+                    _footer->_refreshOffsetY = _contentSize.height + _adjustedContentInsets.bottom - _bounds.size.height;
                 } else {
                     _footer->_frame.origin.y = _bounds.size.height - _adjustedContentInsets.top - _adjustedContentInsets.bottom;
-                    _footer->_contentOffsetY = -_adjustedContentInsets.top;
+                    _footer->_refreshOffsetY = -_adjustedContentInsets.top;
                 }
                 _footer->_contentInsets = UIEdgeInsetsZero;
                 break;
@@ -540,10 +561,10 @@ static void const * const _context = &_context;
             case XZRefreshAdjustmentAutomatic:
                 if (_contentSize.height >= minimumContentHeight) {
                     _footer->_frame.origin.y = _contentSize.height + _adjustedContentInsets.bottom;
-                    _footer->_contentOffsetY = _contentSize.height + _adjustedContentInsets.bottom - _bounds.size.height;
+                    _footer->_refreshOffsetY = _contentSize.height + _adjustedContentInsets.bottom - _bounds.size.height;
                 } else {
                     _footer->_frame.origin.y = minimumContentHeight + _adjustedContentInsets.bottom;
-                    _footer->_contentOffsetY = -_adjustedContentInsets.top;
+                    _footer->_refreshOffsetY = -_adjustedContentInsets.top;
                 }
                 break;
             case XZRefreshAdjustmentNormal: {
@@ -551,10 +572,10 @@ static void const * const _context = &_context;
                 UIEdgeInsets const contentInset = isHeaderInEdgeInsets ? UIEdgeInsetsAddTop(_contentInsets, -_header->_refreshHeight) : _contentInsets;
                 if (_contentSize.height >= minimumContentHeight) {
                     _footer->_frame.origin.y = _contentSize.height + contentInset.bottom;
-                    _footer->_contentOffsetY = _contentSize.height + _adjustedContentInsets.bottom - _bounds.size.height;
+                    _footer->_refreshOffsetY = _contentSize.height + _adjustedContentInsets.bottom - _bounds.size.height;
                 } else {
                     _footer->_frame.origin.y = minimumContentHeight + contentInset.bottom;
-                    _footer->_contentOffsetY = -_adjustedContentInsets.top;
+                    _footer->_refreshOffsetY = -_adjustedContentInsets.top;
                 }
                 _footer->_contentInsets = _contentInsets;
                 break;
@@ -562,10 +583,10 @@ static void const * const _context = &_context;
             case XZRefreshAdjustmentNone:
                 if (_contentSize.height >= minimumContentHeight) {
                     _footer->_frame.origin.y = _contentSize.height;
-                    _footer->_contentOffsetY = _contentSize.height + _adjustedContentInsets.bottom - _bounds.size.height;
+                    _footer->_refreshOffsetY = _contentSize.height + _adjustedContentInsets.bottom - _bounds.size.height;
                 } else {
                     _footer->_frame.origin.y = minimumContentHeight;
-                    _footer->_contentOffsetY = -_adjustedContentInsets.top;
+                    _footer->_refreshOffsetY = -_adjustedContentInsets.top;
                 }
                 break;
         }
@@ -629,7 +650,7 @@ static void const * const _context = &_context;
         // 3. 修改 contentOffset 触发的 didScroll 事件，已在第一步通过状态屏蔽。
         UIViewAnimate(animated, ^{
             [self layoutHeaderRefreshViewIfNeeded:YES];
-            _scrollView.contentOffset = CGPointMake(0, _header->_contentOffsetY);
+            _scrollView.contentOffset = CGPointMake(0, _header->_refreshOffsetY);
             [_header->_refreshView scrollView:_scrollView didBeginRefreshing:animated];
         }, ^(BOOL finished) {
             dispatch_main_async(completion, finished);
@@ -662,7 +683,7 @@ static void const * const _context = &_context;
         // 滚动到 footer
         UIViewAnimate(animated, ^{
             [self layoutFooterRefreshViewIfNeeded:YES];
-            _scrollView.contentOffset = CGPointMake(0, _footer->_contentOffsetY);
+            _scrollView.contentOffset = CGPointMake(0, _footer->_refreshOffsetY);
             [_footer->_refreshView scrollView:_scrollView didBeginRefreshing:animated];
         }, ^(BOOL finished) {
             dispatch_main_async(completion, finished);
@@ -714,8 +735,8 @@ static void const * const _context = &_context;
         UIViewAnimate(animated, ^{
             [self layoutHeaderRefreshViewIfNeeded:YES];
             // 刷新视图不在展示区域内时，不需要调整页面位置。
-            if (contentOffset.y <= _header->_contentOffsetY + _header->_refreshHeight) {
-                _scrollView.contentOffset = CGPointMake(contentOffset.x, self->_header->_contentOffsetY);
+            if (contentOffset.y <= _header->_refreshOffsetY + _header->_refreshHeight) {
+                _scrollView.contentOffset = CGPointMake(contentOffset.x, self->_header->_refreshOffsetY);
             }
             [_header->_refreshView scrollView:_scrollView willEndRefreshing:animated];
         }, ^(BOOL finished) {
@@ -751,8 +772,8 @@ static void const * const _context = &_context;
         
         UIViewAnimate(animated, ^{
             [self layoutFooterRefreshViewIfNeeded:YES];
-            if (contentOffset.y >= _footer->_contentOffsetY - _footer->_refreshHeight) {
-                _scrollView.contentOffset = CGPointMake(contentOffset.x, _footer->_contentOffsetY);
+            if (contentOffset.y >= _footer->_refreshOffsetY - _footer->_refreshHeight) {
+                _scrollView.contentOffset = CGPointMake(contentOffset.x, _footer->_refreshOffsetY);
             }
             [_footer->_refreshView scrollView:_scrollView willEndRefreshing:animated];
         }, ^(BOOL finished) {
@@ -807,7 +828,7 @@ static void const * const _context = &_context;
 
     CGPoint const contentOffset = _scrollView.contentOffset;
     // 进入了下拉刷新的区域
-    if (contentOffset.y < _header->_contentOffsetY) {
+    if (contentOffset.y < _header->_refreshOffsetY) {
         
         // 如果上一个状态是上拉加载，通知 footer 上拉已经结束了。
         if (_distance > 0) {
@@ -815,13 +836,13 @@ static void const * const _context = &_context;
         }
         
         // 计算滚动距离
-        _distance = contentOffset.y - _header->_contentOffsetY;
+        _distance = contentOffset.y - _header->_refreshOffsetY;
         
         // 通知刷新视图下拉的距离
         [_header->_refreshView scrollView:_scrollView didScrollRefreshing:-_distance];
         
         // 如果满足自动刷新，则进入刷新状态
-        if (_header->_isAutomatic && contentOffset.y - _header->_contentOffsetY <= _header->_automaticRefreshDistance) {
+        if (_header->_isAutomatic && contentOffset.y - _header->_refreshOffsetY <= _header->_automaticRefreshDistance) {
             // 自动刷新
             _header->_isAutomatic = NO;
             [self scrollView:_scrollView header:_header wasDraggedToBeginRefreshing:NULL];
@@ -833,20 +854,20 @@ static void const * const _context = &_context;
     
     // 进入了上拉加载的区域
     // 如果满足自动刷新，则进入刷新状态，否则通知视图上拉进度
-    if (contentOffset.y > _footer->_contentOffsetY) {
+    if (contentOffset.y > _footer->_refreshOffsetY) {
         // 如果上一个状态是上拉加载，通知 header 下拉已经结束了。
         if (_distance < 0) {
             [_header->_refreshView scrollView:_scrollView didScrollRefreshing:0];
         }
         
         // 上拉距离
-        _distance = contentOffset.y - _footer->_contentOffsetY;
+        _distance = contentOffset.y - _footer->_refreshOffsetY;
         
         // 通知刷新视图上拉距离
         [_footer->_refreshView scrollView:_scrollView didScrollRefreshing:_distance];
         
         // 如果满足自动刷新，则进入刷新状态
-        if (_footer->_isAutomatic && _footer->_contentOffsetY - contentOffset.y <= _footer->_automaticRefreshDistance) {
+        if (_footer->_isAutomatic && _footer->_refreshOffsetY - contentOffset.y <= _footer->_automaticRefreshDistance) {
             _footer->_isAutomatic = NO;
             [self scrollView:_scrollView footer:_footer wasDraggedToBeginRefreshing:NULL];
         }
@@ -873,7 +894,7 @@ static void const * const _context = &_context;
             if (_header->_refreshView.automaticRefreshDistance > 0) {
                 CGFloat const y = _scrollView.contentOffset.y;
                 _header->_automaticRefreshDistance = _header->_refreshView.automaticRefreshDistance;
-                _header->_isAutomatic = (y - _header->_contentOffsetY > _header->_automaticRefreshDistance);
+                _header->_isAutomatic = (y - _header->_refreshOffsetY > _header->_automaticRefreshDistance);
             } else {
                 _header->_isAutomatic = NO;
             }
@@ -906,7 +927,7 @@ static void const * const _context = &_context;
             if (_footer->_refreshView.automaticRefreshDistance > 0) {
                 CGFloat const y = _scrollView.contentOffset.y;
                 _footer->_automaticRefreshDistance = _footer->_refreshView.automaticRefreshDistance;
-                _footer->_isAutomatic = (_footer->_contentOffsetY - y > _footer->_automaticRefreshDistance);
+                _footer->_isAutomatic = (_footer->_refreshOffsetY - y > _footer->_automaticRefreshDistance);
             } else {
                 _footer->_isAutomatic = NO;
             }
@@ -962,7 +983,7 @@ static void const * const _context = &_context;
             
             [self layoutHeaderRefreshViewIfNeeded:YES];
             
-            targetContentOffset->y = _header->_contentOffsetY;
+            targetContentOffset->y = _header->_refreshOffsetY;
             return;
         }
         case XZRefreshStateWillRecovering: {
@@ -974,8 +995,8 @@ static void const * const _context = &_context;
             
             [self layoutHeaderRefreshViewIfNeeded:YES];
             
-            if (contentOffset.y < _header->_contentOffsetY) {
-                targetContentOffset->y = _header->_contentOffsetY;
+            if (contentOffset.y < _header->_refreshOffsetY) {
+                targetContentOffset->y = _header->_refreshOffsetY;
             }
             return;
         }
@@ -1004,7 +1025,7 @@ static void const * const _context = &_context;
             
             [self layoutFooterRefreshViewIfNeeded:YES];
             
-            targetContentOffset->y = _footer->_contentOffsetY;
+            targetContentOffset->y = _footer->_refreshOffsetY;
             return;
         }
         case XZRefreshStateWillRecovering: {
@@ -1016,8 +1037,8 @@ static void const * const _context = &_context;
             
             [self layoutFooterRefreshViewIfNeeded:YES];
             
-            if (contentOffset.y > _footer->_contentOffsetY) {
-                targetContentOffset->y = _footer->_contentOffsetY;
+            if (contentOffset.y > _footer->_refreshOffsetY) {
+                targetContentOffset->y = _footer->_refreshOffsetY;
             }
             return;
         }
@@ -1096,7 +1117,7 @@ static void const * const _context = &_context;
     [_header->_refreshView scrollView:_scrollView didBeginRefreshing:NO];
     
     if (targetContentOffset) {
-        targetContentOffset->y = _header->_contentOffsetY;
+        targetContentOffset->y = _header->_refreshOffsetY;
     } else {
         _header->_state = XZRefreshStateRefreshing;
         id<XZRefreshDelegate> const delegate = _header->_refreshView.delegate ?: (id)_scrollView.delegate;
@@ -1125,7 +1146,7 @@ static void const * const _context = &_context;
     
     // 回弹的目标位置
     if (targetContentOffset) {
-        targetContentOffset->y = _footer->_contentOffsetY;
+        targetContentOffset->y = _footer->_refreshOffsetY;
     } else {
         _footer->_state = XZRefreshStateRefreshing;
         id<XZRefreshDelegate> const delegate = _footer->_refreshView.delegate ?: (id)_scrollView.delegate;
